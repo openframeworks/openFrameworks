@@ -1,5 +1,10 @@
 #ifndef OFUCUTILS_H_
 #define OFUCUTILS_H_
+
+#include "ofConstants.h"
+
+#ifdef TARGET_LINUX
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -50,5 +55,7 @@ private:
 	AVPicture * 			dst;
 	int 					src_pix_fmt;
 };
+
+#endif
 
 #endif /*OFUCUTILS_H_*/
