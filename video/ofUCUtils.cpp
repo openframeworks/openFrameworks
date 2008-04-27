@@ -1,4 +1,7 @@
 #include "ofUCUtils.h"
+
+#ifdef TARGET_LINUX
+
 #include <stdio.h>
 #include <stdint.h>
 
@@ -449,3 +452,4 @@ int ofUCUtils::getUC_Width(void) {
 
 }
 
+#endif
