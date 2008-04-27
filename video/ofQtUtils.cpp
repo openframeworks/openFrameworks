@@ -1,5 +1,5 @@
 #include "ofQtUtils.h"
-
+#ifndef TARGET_LINUX
 static bool bQuicktimeInitialized = false;
 
 //----------------------------------------
@@ -180,6 +180,6 @@ OSErr SaveSettingsPreference(CFStringRef inKey, UserData inUserData)
 
   return err;
 }
-
+#endif
 #endif
 
