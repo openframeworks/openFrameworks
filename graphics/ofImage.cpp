@@ -181,15 +181,18 @@ void ofImage::update(){
 
 
 	// this is check to see if it's a gif
-	bool bNoPallette 		= (FreeImage_GetColorType(bmp) != FIC_PALETTE);
+	bool bNoPallette = (FreeImage_GetColorType(bmp) != FIC_PALETTE) || type == OF_IMAGE_GRAYSCALE;
 
 	switch (bpp){
 		case 8:
 			if (bNoPallette) { //!bUsesPallette){
 				type = OF_IMAGE_GRAYSCALE;
 			} else {
-				// 	convert to RGB -
-				// 	this is a gif (or other) with 256 colors, not b&w.
+				//  convert to RGB -
+				//  this is a gif (or other) with 256 colors, not b&w.			
+				//  FIX: we set from OF_IMAGE_COLOR to OF_IMAGE_UNDEFINED as setImageType only converts to rgb 24 
+				//  if the image type is not OF_IMAGE_COLOR 
+				type = OF_IMAGE_UNDEFINED;
 				setImageType(OF_IMAGE_COLOR);
 			}
 			break;
@@ -255,6 +258,7 @@ void ofImage::loadImage(string fileName){
 	fileName = ofToDataPath(fileName);
 
 	bool bLoaded = false;
+	type = OF_IMAGE_UNDEFINED;
 
 	//----------------------------- find the format
 	FREE_IMAGE_FORMAT fif = FIF_UNKNOWN;
