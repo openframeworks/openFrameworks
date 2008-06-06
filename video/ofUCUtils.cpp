@@ -1,4 +1,5 @@
 #include "ofUCUtils.h"
+#include "ofConstants.h"
 
 #ifdef TARGET_LINUX
 
@@ -199,6 +200,13 @@ void ofUCUtils::set_format(int w, int h) {
 		int selected_format = 0;
 		if (rgb24 != -1)
 			selected_format = rgb24;
+		else{
+			for(selected_format=0;selected_format<format_count;selected_format++){
+				format = formats[selected_format];
+				if(fourcc_to_pix_fmt(format.fourcc)!=-1) 
+					break;
+			}
+		}
 		format = formats[selected_format];
 
 		bool sizeFounded = true;
