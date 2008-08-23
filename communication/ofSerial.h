@@ -52,6 +52,8 @@ class ofSerial{
 			int 			writeBytes(unsigned char * buffer, int length);
 			bool			writeByte(unsigned char singleByte);
 			int             readByte();  // returns -1 on no read or error...
+			void			flush(bool flushIn = true, bool flushOut = true);
+			int				available();
 			
 			bool 			bVerbose;
 			void 			setVerbose(bool bLoudmouth) { bVerbose = bLoudmouth; };

@@ -438,7 +438,7 @@ int ofSerial::writeBytes(unsigned char * buffer, int length){
 	//---------------------------------------------
 	#if defined( TARGET_OSX ) || defined( TARGET_LINUX )
 	    int numWritten = write(fd, buffer, length);
-		if(numWritten == 0) printf("ofSerial: Can't write to com port");
+		if(numWritten <= 0) printf("ofSerial: Can't write to com port");
 		else{
 			if (bVerbose){
 			 	printf("ofSerial: numWritten %i \n", numWritten);
@@ -504,15 +504,14 @@ bool ofSerial::writeByte(unsigned char singleByte){
 		return 0;
 	}
 
-	unsigned char tmpByte[10];
+	unsigned char tmpByte[1];
 	tmpByte[0] = singleByte;
 
 	//---------------------------------------------
 	#if defined( TARGET_OSX ) || defined( TARGET_LINUX )
-	    int len = 1;
 	    int numWritten = 0;
-	    numWritten = write(fd, tmpByte, len);
-		if(numWritten == 0 && len > 0){
+	    numWritten = write(fd, tmpByte, 1);
+		if(numWritten <= 0 ){
 			 printf("ofSerial: Can't write to com port");
 		} else{
 			if (bVerbose){
@@ -526,8 +525,7 @@ bool ofSerial::writeByte(unsigned char singleByte){
     //---------------------------------------------
 	#ifdef TARGET_WIN32
 		DWORD written = 0;
-		int len = 1;
-		if(!WriteFile(hComm, tmpByte, len, &written,0)){
+		if(!WriteFile(hComm, tmpByte, 1, &written,0)){
 			 printf("ofSerial: Can't write to com port");
 			 return 0;
 		} else{
@@ -549,12 +547,13 @@ int ofSerial::readByte(){
 		return -1;
 	}
 
-	unsigned char tmpByte[10];
+	unsigned char tmpByte[1];
+	memset(tmpByte, 0, 1);
 	
 	//---------------------------------------------
 	#if defined( TARGET_OSX ) || defined( TARGET_LINUX )
 		int nRead = read(fd, tmpByte, 1);	
-		if(nRead == 0){
+		if(nRead <= 0){
             printf("ofSerial: trouble reading from port\n");
             return -1;
         }
@@ -575,4 +574,62 @@ int ofSerial::readByte(){
 }
 
 
+//----------------------------------------------------------------
+void ofSerial::flush(bool flushIn, bool flushOut){
+
+	if (!bInited){
+		printf("ofSerial: serial not inited\n");
+		return;
+	}
+
+	int flushType = 0;
+
+	//---------------------------------------------
+	#if defined( TARGET_OSX ) || defined( TARGET_LINUX )
+		if( flushIn && flushOut) flushType = TCIOFLUSH;
+		else if(flushIn) flushType = TCIFLUSH;
+		else if(flushOut) flushType = TCOFLUSH;
+		else return;
+		
+		tcflush(fd, flushType);
+    #endif
+    //---------------------------------------------
+
+    //---------------------------------------------
+	#ifdef TARGET_WIN32
+		if( flushIn && flushOut) flushType = PURGE_TXCLEAR | PURGE_RXCLEAR;
+		else if(flushIn) flushType = PURGE_RXCLEAR;
+		else if(flushOut) flushType = PURGE_TXCLEAR;
+		else return;
+	
+		PurgeComm(hComm, flushType)
+	#endif
+	//---------------------------------------------
+	
+}
+
+//-------------------------------------------------------------
+int ofSerial::available(){
+
+	if (!bInited){
+		printf("ofSerial: serial not inited\n");
+		return 0;
+	}
+	
+	int numBytes = 0;
+
+	//---------------------------------------------
+	#if defined( TARGET_OSX ) || defined( TARGET_LINUX )
+		ioctl(fd,FIONREAD,&numBytes);
+	#endif
+    //---------------------------------------------
+	
+    //---------------------------------------------
+	#ifdef TARGET_WIN32
+		numBytes = GetFileSize(hComm);
+	#endif
+    //---------------------------------------------
+	
+	return numBytes;
+}
 

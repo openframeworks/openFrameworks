@@ -13,7 +13,10 @@ ofVideoGrabber::ofVideoGrabber(){
 	//---------------------------------
 
 		initializeQuicktime();
-		bSgInited		= false;
+		bSgInited				= false;
+		pixels					= NULL;
+		gSeqGrabber				= NULL;
+		offscreenGWorldPixels	= NULL;
 
 	//---------------------------------
 	#endif
@@ -99,32 +102,87 @@ void ofVideoGrabber::listDevices(){
 	//---------------------------------
 	#ifdef OF_VIDEO_CAPTURE_QUICKTIME
 	//---------------------------------
-
-		//initGrabbingComponent(vgd, true);		// if necessary, start the sg object
-
-		if (!bSgInited){
-			printf("error in list devices, couldn't allocate grabbing component\n");
-			return;
+	
+		bool bNeedToInitGrabberFirst = false;		
+	
+		if (!bSgInited) bNeedToInitGrabberFirst = true;
+		
+		//if we need to initialize the grabbing component then do it
+		if( bNeedToInitGrabberFirst ){
+			if( !qtInitSeqGrabber() ){
+				return;
+			}
 		}
+		
 		printf("-------------------------------------\n");
+		
+		/*
+			//input selection stuff (ie multiple webcams) 
+			//from http://developer.apple.com/samplecode/SGDevices/listing13.html
+			//and originally http://lists.apple.com/archives/QuickTime-API/2008/Jan/msg00178.html
+		*/
+
 		SGDeviceList deviceList;
 		SGGetChannelDeviceList (gVideoChannel, sgDeviceListIncludeInputs, &deviceList);
 		unsigned char pascalName[64];
-		if(true)
-		{
-			printf("listing available capture devices\n");
-			for(int i = 0 ; i < (*deviceList)->count ; ++i)
-			{
-				SGDeviceName nameRec;
-				nameRec = (*deviceList)->entry[i];
-				memcpy(pascalName, (*deviceList)->entry[i].name, sizeof(char) * 64);
-				if(nameRec.flags != sgDeviceNameFlagDeviceUnavailable) printf("device[%i] %s \n",  i, p2cstr(pascalName) );
-				else printf("(unavailable) device[%i] %s \n",  i, p2cstr(pascalName) );
+		unsigned char pascalNameInput[64];
+		
+		//this is our new way of enumerating devices
+		//quicktime can have multiple capture 'inputs' on the same capture 'device'
+		//ie the USB Video Class Video 'device' - can have multiple usb webcams attached on what QT calls 'inputs'
+		//The isight for example will show up as:
+		//USB Video Class Video - Built-in iSight ('input' 1 of the USB Video Class Video 'device')
+		//Where as another webcam also plugged whill show up as 
+		//USB Video Class Video - Philips SPC 1000NC Webcam ('input' 2 of the USB Video Class Video 'device')
 
+		//this means our the device ID we use for selection has to count both capture 'devices' and their 'inputs'
+		//this needs to be the same in our init grabber method so that we select the device we ask for
+		int deviceCount = 0;
+		
+		printf("listing available capture devices\n");
+		for(int i = 0 ; i < (*deviceList)->count ; ++i)
+		{
+			SGDeviceName nameRec;
+			nameRec = (*deviceList)->entry[i];
+			SGDeviceInputList deviceInputList = nameRec.inputs;
+			
+			int numInputs = 0;
+			if( deviceInputList ) numInputs = ((*deviceInputList)->count);
+		
+			memcpy(pascalName, (*deviceList)->entry[i].name, sizeof(char) * 64);
+						
+			//this means we can use the capture method
+			if(nameRec.flags != sgDeviceNameFlagDeviceUnavailable){
+			
+				//if we have a capture 'device' (qt's word not mine - I would prefer 'system' ) that is ready to be used 
+				//we go through its inputs to list all physical devices - as there could be more than one!
+				for(int j = 0; j < numInputs; j++){
+				
+					
+					//if our 'device' has inputs we get their names here
+					if( deviceInputList ){
+						SGDeviceInputName inputNameRec  = (*deviceInputList)->entry[j];
+						memcpy(pascalNameInput, inputNameRec.name, sizeof(char) * 64);
+					}
+					
+					printf("device[%i] %s - %s\n",  deviceCount, p2cstr(pascalName), p2cstr(pascalNameInput) );
+
+					//we count this way as we need to be able to distinguish multiple inputs as devices
+					deviceCount++;
+				}
+				
+			}else{
+				printf("(unavailable) device[%i] %s \n",  deviceCount, p2cstr(pascalName) );
+				deviceCount++;
 			}
 		}
 		printf("-------------------------------------\n");
-
+		
+		//if we initialized the grabbing component then close it
+		if( bNeedToInitGrabberFirst ){
+			qtCloseSeqGrabber();
+		}
+		
 	//---------------------------------
 	#endif
 	//---------------------------------
@@ -413,11 +471,7 @@ void ofVideoGrabber::close(){
 	#ifdef OF_VIDEO_CAPTURE_QUICKTIME
 	//---------------------------------
 
-		//thanks eloi!
-		if (gSeqGrabber != 0L){
-			CloseComponent (gSeqGrabber);
-			gSeqGrabber = 0L;
-		}
+		qtCloseSeqGrabber();
 
 	//---------------------------------
 	#endif
@@ -468,6 +522,7 @@ void ofVideoGrabber::close(){
 	//---------------------------------
 	if (pixels != NULL){
 		delete pixels;
+		pixels = NULL;
 	}
 
 	tex.clear();
@@ -481,7 +536,7 @@ void ofVideoGrabber::videoSettings(void){
 	#ifdef OF_VIDEO_CAPTURE_QUICKTIME
 	//---------------------------------
 
-		Rect	curBounds, curVideoRect;
+		Rect curBounds, curVideoRect;
 		ComponentResult	err;
 
 		// Get our current state
@@ -591,7 +646,7 @@ bool ofVideoGrabber::saveSettings(){
 //---------------------------------------------------------------------
 bool ofVideoGrabber::loadSettings(){
 
-   if (bGrabberInited != true) return false;
+   if (bGrabberInited != true || deviceName.length() == 0) return false;
 
    ComponentResult   err;
    UserData mySGVideoSettings = NULL;
@@ -601,7 +656,7 @@ bool ofVideoGrabber::loadSettings(){
    CFStringRef cameraString = CFStringCreateWithCString(kCFAllocatorDefault,pref.c_str(),kCFStringEncodingMacRoman);
 
    GetSettingsPreference(cameraString, &mySGVideoSettings);
-   if (mySGVideoSettings) {
+   if (mySGVideoSettings){
 
       Rect   curBounds, curVideoRect;
       ComponentResult   err;
@@ -643,6 +698,177 @@ bool ofVideoGrabber::loadSettings(){
 }
 
 
+//------------------------------------------------------
+bool ofVideoGrabber::qtInitSeqGrabber(){
+		
+		if (bSgInited != true){
+
+			OSErr err = noErr;
+
+			ComponentDescription	theDesc;
+			Component				sgCompID;
+	
+			// this crashes when we get to 
+			// SGNewChannel
+			// we get -9405 as error code for the channel
+			// -----------------------------------------
+			// gSeqGrabber = OpenDefaultComponent(SeqGrabComponentType, 0);
+					
+			// this seems to work instead (got it from hackTV) 
+			// -----------------------------------------
+			theDesc.componentType = SeqGrabComponentType;
+			theDesc.componentSubType = NULL;
+			theDesc.componentManufacturer = 'appl';
+			theDesc.componentFlags = NULL;
+			theDesc.componentFlagsMask = NULL;	
+			sgCompID = FindNextComponent (NULL, &theDesc);
+			// -----------------------------------------
+				
+			if (sgCompID == NULL){
+				printf("error:FindNextComponent did not return a valid component");
+				return false;
+			}
+			
+			gSeqGrabber = OpenComponent(sgCompID);
+						
+			err = GetMoviesError();
+			if (gSeqGrabber == NULL || err) {
+				printf("error: can't get default sequence grabber component");
+				return false;
+			}
+
+			err = SGInitialize(gSeqGrabber);
+			if (err != noErr) {
+				printf("error: can't initialize sequence grabber component");
+				return false;
+			}
+
+			err = SGSetDataRef(gSeqGrabber, 0, 0, seqGrabDontMakeMovie);
+			if (err != noErr) {
+				printf("error: can't set the destination data reference");
+				return false;
+			}
+
+			// windows crashes w/ out gworld, make a dummy for now...
+			// this took a long time to figure out.
+			err = SGSetGWorld(gSeqGrabber, 0, 0);
+			if (err != noErr) {
+				printf("error: setting up the gworld");
+				return false;
+			}
+
+			err = SGNewChannel(gSeqGrabber, VideoMediaType, &(gVideoChannel));
+			if (err != noErr) {
+				printf("error: creating a channel.  Check if you have any qt capable cameras attached\n");
+				return false;
+			}
+
+			bSgInited = true;
+			return true;
+		}		
+		
+		return false;
+}
+
+//--------------------------------------------------------------------
+bool ofVideoGrabber::qtCloseSeqGrabber(){
+
+	if (gSeqGrabber != NULL){
+		SGStop (gSeqGrabber);
+		CloseComponent (gSeqGrabber);
+		gSeqGrabber = NULL;
+		bSgInited = false;
+		return true;
+	}
+	
+	return false;
+	
+}
+
+//--------------------------------------------------------------------
+bool ofVideoGrabber::qtSelectDevice(int deviceNumber, bool didWeChooseADevice){
+				
+	//note - check for memory freeing possibly needed for the all SGGetChannelDeviceList mac stuff
+	// also see notes in listDevices() regarding new enunemeration method.
+	
+	//Generate a device list and enumerate
+	//all devices availble to the channel
+	SGDeviceList deviceList;
+	SGGetChannelDeviceList (gVideoChannel, sgDeviceListIncludeInputs, &deviceList);
+	unsigned char pascalName[64];
+	unsigned char pascalNameInput[64];
+
+	int numDevices = (*deviceList)->count;
+	if(numDevices == 0){
+		printf("error: No catpure devices found\n");
+		return false;
+	}
+				
+	int deviceCount = 0;
+	for(int i = 0 ; i < numDevices; ++i)
+	{
+		SGDeviceName nameRec;
+		nameRec = (*deviceList)->entry[i];
+		SGDeviceInputList deviceInputList = nameRec.inputs;
+	
+		int numInputs = 0;
+		if( deviceInputList ) numInputs = ((*deviceInputList)->count);
+
+		memcpy(pascalName, (*deviceList)->entry[i].name, sizeof(char) * 64);
+				
+		//this means we can use the capture method
+		if(nameRec.flags != sgDeviceNameFlagDeviceUnavailable){
+		
+			//if we have a capture 'device' (qt's word not mine - I would prefer 'system' ) that is ready to be used 
+			//we go through its inputs to list all physical devices - as there could be more than one!
+			for(int j = 0; j < numInputs; j++){
+			
+				//if our 'device' has inputs we get their names here
+				if( deviceInputList ){
+					SGDeviceInputName inputNameRec  = (*deviceInputList)->entry[j];
+					memcpy(pascalNameInput, inputNameRec.name, sizeof(char) * 64);
+				}
+				
+				//if the device number matches we try and setup the device
+				//if we didn't specifiy a device then we will try all devices till one works!
+				if( deviceCount == deviceNumber || !didWeChooseADevice ){
+					printf("attempting to open device[%i] %s - %s\n",  deviceCount, p2cstr(pascalName), p2cstr(pascalNameInput) );
+					
+					OSErr err1 = SGSetChannelDevice(gVideoChannel, pascalName);
+					OSErr err2 = SGSetChannelDeviceInput(gVideoChannel, j);
+					
+					//the device is opened!
+					if ( err1 == noErr && err2 == noErr){
+						deviceName = (char *)p2cstr(pascalName);
+						deviceName  += "-";
+						deviceName +=  (char *)p2cstr(pascalNameInput);
+						if(bVerbose)printf("device opened successfully\n");
+						return true;
+					}else{
+						//if we selected a device in particular but failed we want to go through the whole list again - starting from 0 and try any device.
+						//so we return false - and try one more time without a preference
+						if( didWeChooseADevice ){
+							if(bVerbose)printf("problems setting device[%i] %s - %s *****\n", deviceNumber, p2cstr(pascalName), p2cstr(pascalNameInput));
+							return false;
+						}else{
+							if(bVerbose)printf("unable to open device, trying next device\n");
+						}
+					}
+					
+				}
+
+				//we count this way as we need to be able to distinguish multiple inputs as devices
+				deviceCount++;
+			}
+		}else{
+			//printf("(unavailable) device[%i] %s \n",  deviceCount, p2cstr(pascalName) );
+			deviceCount++;
+		}
+	}
+			
+	return false;
+}
+
 //---------------------------------
 #endif
 //---------------------------------
@@ -654,60 +880,20 @@ void ofVideoGrabber::initGrabber(int w, int h){
 	//---------------------------------
 	#ifdef OF_VIDEO_CAPTURE_QUICKTIME
 	//---------------------------------
-
-
-		OSStatus err;
-
-		///initGrabbingComponent(vgd, true);
-
-		if (bSgInited != true){
-
-			OSErr err = noErr;
-
-			gSeqGrabber = OpenDefaultComponent(SeqGrabComponentType, 0);
-
-			err = GetMoviesError ();
-			if (gSeqGrabber == NULL || err) {
-				printf("error: can't get default sequence grabber component");
-				return;
-			}
-
-			err = SGInitialize(gSeqGrabber);
-			if (err != noErr) {
-				printf("error: can't initialize sequence grabber component");
-				return;
-			}
-
-			err = SGSetDataRef(gSeqGrabber, 0, 0, seqGrabDontMakeMovie);
-			if (err != noErr) {
-				printf("error: can't set the destination data reference");
-				return;
-			}
-
-			// windows crashes w/ out gworld, make a dummy for now...
-			// this took a long time to figure out.
-			err = SGSetGWorld(gSeqGrabber, 0, 0);
-			if (err != noErr) {
-				printf("error: setting up the gworld");
-				return;
-			}
-
-			err = SGNewChannel(gSeqGrabber, VideoMediaType, &(gVideoChannel));
-			if (err != noErr) {
-				printf("error: creating a channel.  Check if you have any qt capable cameras attached\n");
-				return;
-			}
-
-			bSgInited = true;
-
+		
+		//---------------------------------- 1 - open the sequence grabber	
+		if( !qtInitSeqGrabber() ){
+			printf("error: unable to initialize the seq grabber\n");
+			return;
 		}
-
+	
+		//---------------------------------- 2 - set the dimensions	
 		width 		= w;
 		height 		= h;
 
-		MacSetRect(&(videoRect),0, 0, width, height);
+		MacSetRect(&videoRect, 0, 0, width, height);
 
-		//---------------------------------- buffer allocation
+		//---------------------------------- 3 - buffer allocation
 		// Create a buffer big enough to hold the video data,
 		// make sure the pointer is 32-byte aligned.
 		// also the rgb image that people will grab
@@ -720,71 +906,37 @@ void ofVideoGrabber::initGrabber(int w, int h){
 		SGSetGWorld(gSeqGrabber, videogworld, nil);
 
 
-		//---------------------------------- choose a specific device to setup
-		bool didWeChooseADevice = false;
-
-		if(!bChooseDevice) setDeviceID(0);
-		else didWeChooseADevice = true;
-
-		if(bChooseDevice)
-		{
-
-			//Generate a device list and enumerate
-			//all devices availble to the channel
-			SGDeviceList deviceList;
-			SGGetChannelDeviceList (gVideoChannel, sgDeviceListIncludeInputs, &deviceList);
-
-			int deviceCount = (*deviceList)->count;
-			if(deviceCount == 0){
-				printf("No catpure devices found\n");
-				goto bail;
-			}
-
-			unsigned char pascalName[128];
-			//List all available devices
-			if(bVerbose && didWeChooseADevice)
-			{
-				printf("listing available capture devices\n");
-				for(int i = 0 ; i < deviceCount; ++i){
-					memcpy(pascalName, (*deviceList)->entry[i].name, sizeof(char) * 128);
-					printf("device[%i] %s \n",  i, p2cstr(pascalName) );
-				}
-			}
-
-			for(int i = 0 ; i < deviceCount; i++){
-
-					if(deviceID >= deviceCount) deviceID -= deviceCount;
-
-					SGDeviceName nameRec;
-					nameRec = (*deviceList)->entry[deviceID];
-					if(nameRec.flags != sgDeviceNameFlagDeviceUnavailable){
-
-						memcpy(pascalName, (*deviceList)->entry[deviceID].name, sizeof(char) * 128);
-						int len = strlen( (char *)p2cstr(pascalName) );
-
-						if(len > 0){
-							string str;
-							str = (char *)p2cstr(pascalName);
-
-							if(bVerbose)printf("attempting to setup device[%i] - %s \n",  deviceID, str.c_str());
-
-							err = SGSetChannelDevice(gVideoChannel, pascalName);
-							if ( err != noErr){
-								if(bVerbose && didWeChooseADevice)printf("problems setting device[%i] %s *****\n", deviceID, str.c_str());
-							}else{
-								deviceName = str;
-								if(bVerbose)printf("using device[%i] - %s\n", deviceID,  deviceName.c_str());
-								break;
-							}
-						}
-					} else {
-						if(bVerbose && didWeChooseADevice)printf("device[%i] in use - using next default device\n", deviceID);
-					}
-
-				deviceID++;
-			}
+		//---------------------------------- 4 - device selection
+		bool didWeChooseADevice = bChooseDevice;
+		bool deviceIsSelected	=  false;	
+								
+		//if we have a device selected then try first to setup 
+		//that device
+		if(didWeChooseADevice){
+			deviceIsSelected = qtSelectDevice(deviceID, true);
+			if(!deviceIsSelected && bVerbose) printf("unable to open device[%i] - will attempt other devices\n", deviceID);
 		}
-
+		
+		//if we couldn't select our required device
+		//or we aren't specifiying a device to setup
+		//then lets try to setup ANY device!
+		if(deviceIsSelected == false){
+			//lets list available devices 
+			if(bVerbose)listDevices();
+		
+			setDeviceID(0);
+			deviceIsSelected = qtSelectDevice(deviceID, false);
+		}
+		
+		//if we still haven't been able to setup a device
+		//we should error and stop!
+		if( deviceIsSelected == false){
+			goto bail;
+		}
+		
+		//---------------------------------- 5 - final initialization steps
+		OSStatus err;
+		
 	 	err = SGSetChannelUsage(gVideoChannel,seqGrabPreview);
 		if ( err != noErr ) goto bail;
 
@@ -807,6 +959,8 @@ void ofVideoGrabber::initGrabber(int w, int h){
 		}
 
 
+		//---------------------------------- 6 - setup texture if needed
+
 		if (bUseTexture){
 			// create the texture, set the pixels to black and
 			// upload them to the texture (so at least we see nothing black the callback)
@@ -815,9 +969,9 @@ void ofVideoGrabber::initGrabber(int w, int h){
 			tex.loadData(pixels, width, height, GL_RGB);
 		}
 
+		return;
 
 
-		return;				// good catch eloi/theo
 
 		//--------------------- (bail) something's wrong -----
 		bail:

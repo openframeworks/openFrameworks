@@ -71,6 +71,10 @@ class ofVideoGrabber{
 			Rect				videoRect;
 			bool 				bSgInited;
 			string				deviceName;
+			
+			bool				qtInitSeqGrabber();
+			bool				qtCloseSeqGrabber();
+			bool				qtSelectDevice(int deviceNumber, bool didWeChooseADevice);
 
 			//--------------------------------------------------------------------
 			#ifdef TARGET_OSX
