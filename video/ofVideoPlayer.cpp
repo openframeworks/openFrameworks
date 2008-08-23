@@ -154,7 +154,9 @@ void ofVideoPlayer::idleMovie(){
 		#ifndef  TARGET_LINUX  // !linux = quicktime...
 		//--------------------------------------------------------------
 
-			MoviesTask(moviePtr,0);
+			#ifdef TARGET_WIN32 || QT_USE_MOVIETASK
+				MoviesTask(moviePtr,0);
+			#endif
 
 		//--------------------------------------------------------------
 		#else // linux.

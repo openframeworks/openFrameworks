@@ -1,11 +1,9 @@
 #ifndef _QT_UTILS
 #define _QT_UTILS
 
-#include "ofConstants.h"	
 
-#ifndef TARGET_LINUX
-
-#include "ofGraphics.h" 
+#include "ofConstants.h"
+#include "ofGraphics.h" 	
 
 
 #if TARGET_OS_MAC
@@ -45,6 +43,4 @@ Boolean 	SeqGrabberModalFilterUPP(DialogPtr theDialog, const EventRecord *theEve
 	OSErr	SaveSettingsPreference(CFStringRef inKey, UserData inUserData);
 #endif
 
-#endif
-	
 #endif
