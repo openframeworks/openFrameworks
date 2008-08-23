@@ -875,7 +875,9 @@ bool ofVideoGrabber::qtSelectDevice(int deviceNumber, bool didWeChooseADevice){
 
 
 //--------------------------------------------------------------------
-void ofVideoGrabber::initGrabber(int w, int h){
+void ofVideoGrabber::initGrabber(int w, int h, bool setUseTexture){
+
+	bUseTexture = setUseTexture;
 
 	//---------------------------------
 	#ifdef OF_VIDEO_CAPTURE_QUICKTIME
@@ -960,7 +962,8 @@ void ofVideoGrabber::initGrabber(int w, int h){
 
 
 		//---------------------------------- 6 - setup texture if needed
-
+		bUseTexture = setUseTexture;
+		
 		if (bUseTexture){
 			// create the texture, set the pixels to black and
 			// upload them to the texture (so at least we see nothing black the callback)
