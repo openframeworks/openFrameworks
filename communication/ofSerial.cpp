@@ -478,7 +478,7 @@ int ofSerial::readBytes(unsigned char * buffer, int length){
 	#if defined( TARGET_OSX ) || defined( TARGET_LINUX )
 		int nRead = read(fd, buffer, length);	
 		if(nRead <= 0){
-			printf("ofSerial: trouble reading from port\n");
+			if (nRead == -1) printf("ofSerial: trouble reading from port\n");
 			return 0;
 		}
 		return nRead;
@@ -554,9 +554,9 @@ int ofSerial::readByte(){
 	#if defined( TARGET_OSX ) || defined( TARGET_LINUX )
 		int nRead = read(fd, tmpByte, 1);	
 		if(nRead <= 0){
-            printf("ofSerial: trouble reading from port\n");
-            return -1;
-        }
+			if (nRead == -1) printf("ofSerial: trouble reading from port\n");
+            		return -1;
+        	}
     #endif
     //---------------------------------------------
 
