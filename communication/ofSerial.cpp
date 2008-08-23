@@ -626,7 +626,17 @@ int ofSerial::available(){
 	
     //---------------------------------------------
 	#ifdef TARGET_WIN32
-		numBytes = GetFileSize(hComm);
+	   COMSTAT stat;
+       DWORD err;
+       if(hComm!=INVALID_HANDLE_VALUE){
+           if(!ClearCommError(hComm, &err, &stat)){
+               numBytes = 0;
+           } else {
+               numBytes = stat.cbInQue;
+           }
+       } else {
+           numBytes = 0;
+       }
 	#endif
     //---------------------------------------------
 	
