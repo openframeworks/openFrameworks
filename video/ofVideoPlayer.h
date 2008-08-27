@@ -49,6 +49,7 @@ class ofVideoPlayer{
 		void 				setVolume(int volume);
 		void 				setLoopState(int state);
 		void   				setSpeed(float speed);
+		void				setFrame(int frame);  // frame 0 = first frame...  
 		
 		void 				setUseTexture(bool bUse);
 		void 				draw(float x, float y, float w, float h);	
@@ -56,6 +57,12 @@ class ofVideoPlayer{
 		
 		void 				setPaused(bool bPause);
 		
+		int					getCurrentFrame(); 
+		int					getTotalNumFrames(){   return nFrames; }
+		
+		void				firstFrame();
+		void				nextFrame();
+		void				previousFrame();
 		
 		//--------------------------------------
 		#ifdef OF_VIDEO_PLAYER_FOBS
@@ -75,10 +82,12 @@ class ofVideoPlayer{
 			GWorldPtr 			offscreenGWorld;
 			Movie 			 	moviePtr;
 			unsigned char * 	offscreenGWorldPixels;	// 32 bit: argb (qt k32ARGBPixelFormat)	
+			void				qtGetFrameCount(Movie & movForcount);
 		//--------------------------------------
 		#endif
 		//--------------------------------------
 			
+		int					nFrames;				// number of frames
 		unsigned char * 	pixels;					// 24 bit: rgb
 		bool 				bHavePixelsChanged;
 		ofTexture 			tex;					// a ptr to the texture we are utilizing

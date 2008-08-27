@@ -115,6 +115,8 @@ ofVideoPlayer::ofVideoPlayer (){
 	bUseTexture					= true;
 	bStarted					= false;
 	pixels						= NULL;
+	nFrames						= 0;
+	bPaused						= false;
 
 	//--------------------------------------------------------------
     #ifndef  TARGET_LINUX  // !linux = quicktime...
@@ -404,6 +406,24 @@ bool ofVideoPlayer::loadMovie(string name){
 	    myDrawCompleteProc = NewMovieDrawingCompleteUPP (DrawCompleteProc);
 		SetMovieDrawingCompleteProc (moviePtr, movieDrawingCallWhenChanged,  myDrawCompleteProc, (long)this);
 
+		// ------------- get the total # of frames:
+		nFrames				= 0;
+		TimeValue			curMovieTime; 
+		curMovieTime		= 0;
+		TimeValue			duration; 
+		OSType whichMediaType	= VIDEO_TYPE; 
+		short flags				= nextTimeMediaSample + nextTimeEdgeOK; 
+		 
+		while( curMovieTime >= 0 ) { 
+			nFrames++; 
+			GetMovieNextInterestingTime(moviePtr,flags,1,&whichMediaType,curMovieTime,0,&curMovieTime,&duration); 
+			flags = nextTimeMediaSample; 
+		} 
+		nFrames--; // there's an extra time step at the end of themovie 
+
+		
+		
+		
 		// ------------- get some pixels in there ------
 		GoToBeginningOfMovie(moviePtr);
 		SetMovieActiveSegment(moviePtr, -1,-1);
@@ -472,6 +492,7 @@ bool ofVideoPlayer::loadMovie(string name){
 
 
 		iTotalFrames		= (int)(fobsDecoder->getFrameRate()*fobsDecoder->getDurationSeconds());
+		nFrames				= iTotalFrames;
 		positionPct 		= 0;
 		timeLastIdle 		= ofGetElapsedTimef();
         durationMillis      = fobsDecoder->getDurationSeconds() * 1000.0f;
@@ -564,6 +585,7 @@ void ofVideoPlayer::stop(){
 	StopMovie (moviePtr);
 	bPlaying = false;
 	SetMovieActive (moviePtr, false);
+	bStarted = false;
 
 	//--------------------------------------
 	#endif
@@ -649,6 +671,7 @@ void ofVideoPlayer::setPosition(float pct){
 		long total 		= GetMovieDuration(moviePtr );
 		long newPos 	= (long)((float)total * pct);
 		SetMovieTimeValue(moviePtr, newPos);
+		MoviesTask(moviePtr,0);
 
 	//--------------------------------------
 	#else
@@ -663,6 +686,36 @@ void ofVideoPlayer::setPosition(float pct){
 
 
 }
+
+//---------------------------------------------------------------------------
+void ofVideoPlayer::setFrame(int frame){
+	// frame 0 = first frame...  
+	
+	// this is the simple way...
+	//float durationPerFrame = getDuration() / getTotalNumFrames();
+	
+	// seems that freezing, doing this and unfreezing seems to work alot 
+	// better then just SetMovieTimeValue() ; 
+	
+	if (!bPaused) SetMovieRate(moviePtr, X2Fix(0));
+
+	// this is better with mpeg, etc:
+	double frameRate = 0;
+	double movieTimeScale = 0;
+	MovieGetStaticFrameRate(moviePtr, &frameRate);
+	movieTimeScale = GetMovieTimeScale(moviePtr);
+	
+	if (frameRate > 0){
+		double frameDuration = 1 / frameRate;
+		TimeValue t = (frame * frameDuration * movieTimeScale); 
+		SetMovieTimeValue(moviePtr, t);
+		MoviesTask(moviePtr, 0); 
+	}
+	
+   if (!bPaused) SetMovieRate(moviePtr, X2Fix(speed));
+	
+}
+
 
 //---------------------------------------------------------------------------
 float ofVideoPlayer::getDuration(){
@@ -709,6 +762,44 @@ float ofVideoPlayer::getPosition(){
 
 
 }
+
+//---------------------------------------------------------------------------
+int ofVideoPlayer::getCurrentFrame(){
+	
+	int frame = 0;
+	
+	// zach I think this may fail on variable length frames...
+	float pos = getPosition();
+	cout << "current pos: " << pos << endl;
+	
+	float  framePosInFloat = (getTotalNumFrames() * getPosition());
+	int    framePosInInt = (int)framePosInFloat;
+	float  floatRemainder = (framePosInFloat - framePosInInt);
+	if (floatRemainder > 0.5f) framePosInInt = framePosInInt + 1;
+	//frame = (int)ceil((getTotalNumFrames() * getPosition()));
+	frame = framePosInInt;
+	//cout << "frame pre round: " << (double)(getTotalNumFrames() * getPosition()) << endl;
+	//cout << "current frame: " << ceil(frame) << endl;
+	
+	return frame;
+}
+
+//---------------------------------------------------------------------------
+void ofVideoPlayer::firstFrame(){
+	setFrame(0);
+}
+
+//---------------------------------------------------------------------------
+void ofVideoPlayer::nextFrame(){
+	setFrame(getCurrentFrame() + 1);
+}
+
+//---------------------------------------------------------------------------
+void ofVideoPlayer::previousFrame(){
+	setFrame(getCurrentFrame() - 1);
+}
+
+
 
 //---------------------------------------------------------------------------
 void ofVideoPlayer::setSpeed(float _speed){
