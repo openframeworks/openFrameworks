@@ -36,7 +36,7 @@ class ofVideoGrabber{
 		bool 			isFrameNew();
 		void			grabFrame();
 		void			close();
-		void			initGrabber(int w, int h, bool bTexture = true);
+		bool			initGrabber(int w, int h, bool bTexture = true);
 		void			videoSettings();
 		unsigned char 	* getPixels();
 		void 			setVerbose(bool bTalkToMe);
