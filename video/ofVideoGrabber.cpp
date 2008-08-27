@@ -733,7 +733,7 @@ bool ofVideoGrabber::qtInitSeqGrabber(){
 						
 			err = GetMoviesError();
 			if (gSeqGrabber == NULL || err) {
-				printf("error: can't get default sequence grabber component");
+				printf("error: can't get default sequence grabber component\n");
 				return false;
 			}
 
@@ -837,13 +837,32 @@ bool ofVideoGrabber::qtSelectDevice(int deviceNumber, bool didWeChooseADevice){
 					OSErr err1 = SGSetChannelDevice(gVideoChannel, pascalName);
 					OSErr err2 = SGSetChannelDeviceInput(gVideoChannel, j);
 					
-					//the device is opened!
+					int successLevel = 0;
+					
+					//if there were no errors then we have opened the device without issue
 					if ( err1 == noErr && err2 == noErr){
+						successLevel = 2;
+					}
+						//parameter errors are not fatal so we will try and open but will caution the user
+					else if ( (err1 == paramErr || err1 == noErr) && (err2 == noErr || err2 == paramErr) ){
+						successLevel = 1;
+					}
+					
+					//the device is opened!
+					if ( successLevel > 0 ){
+					
 						deviceName = (char *)p2cstr(pascalName);
 						deviceName  += "-";
 						deviceName +=  (char *)p2cstr(pascalNameInput);
-						if(bVerbose)printf("device opened successfully\n");
+						
+						if(bVerbose){
+							if(successLevel == 2)printf("device opened successfully\n");
+							else printf("device opened with some paramater errors - should be fine though!\n");
+						}
+						
+						//no need to keep searching - return that we have opened a device!
 						return true;
+						
 					}else{
 						//if we selected a device in particular but failed we want to go through the whole list again - starting from 0 and try any device.
 						//so we return false - and try one more time without a preference
@@ -875,7 +894,7 @@ bool ofVideoGrabber::qtSelectDevice(int deviceNumber, bool didWeChooseADevice){
 
 
 //--------------------------------------------------------------------
-void ofVideoGrabber::initGrabber(int w, int h, bool setUseTexture){
+bool ofVideoGrabber::initGrabber(int w, int h, bool setUseTexture){
 
 	bUseTexture = setUseTexture;
 
@@ -886,7 +905,7 @@ void ofVideoGrabber::initGrabber(int w, int h, bool setUseTexture){
 		//---------------------------------- 1 - open the sequence grabber	
 		if( !qtInitSeqGrabber() ){
 			printf("error: unable to initialize the seq grabber\n");
-			return;
+			return false;
 		}
 	
 		//---------------------------------- 2 - set the dimensions	
@@ -962,7 +981,6 @@ void ofVideoGrabber::initGrabber(int w, int h, bool setUseTexture){
 
 
 		//---------------------------------- 6 - setup texture if needed
-		bUseTexture = setUseTexture;
 		
 		if (bUseTexture){
 			// create the texture, set the pixels to black and
@@ -972,8 +990,8 @@ void ofVideoGrabber::initGrabber(int w, int h, bool setUseTexture){
 			tex.loadData(pixels, width, height, GL_RGB);
 		}
 
-		return;
-
+		// we are done
+		return true;
 
 
 		//--------------------- (bail) something's wrong -----
@@ -985,8 +1003,11 @@ void ofVideoGrabber::initGrabber(int w, int h, bool setUseTexture){
 				printf ("\n");
 			}
 
+			//if we don't close this - it messes up the next device!
+			if(bSgInited) qtCloseSeqGrabber();
+
 			bGrabberInited = false;
-			return;
+			return false;
 
 	//---------------------------------
 	#endif
@@ -1036,9 +1057,12 @@ void ofVideoGrabber::initGrabber(int w, int h, bool setUseTexture){
 				memset(pixels, 0, width*height*3);
 				tex.loadData(pixels, width, height, GL_RGB);
 			}
+			
+			return true;
 		} else {
 			printf("error allocating a video device  \nplease check your camera with AMCAP or other software\n");
 			bGrabberInited = false;
+			return false;
 		}
 
 	//---------------------------------
@@ -1076,6 +1100,9 @@ void ofVideoGrabber::initGrabber(int w, int h, bool setUseTexture){
 			}
 			ucGrabber.start_capture();
 			bGrabberInited=true;
+			
+			//needs success or no success indication
+			return true;
 		}
 	//---------------------------------
 	#endif
@@ -1110,8 +1137,10 @@ void ofVideoGrabber::initGrabber(int w, int h, bool setUseTexture){
 			}
 			
 			printf("success allocating a video device \n");
+			return true;
 		} else {
 			printf("error allocating a video device \nplease check your camera and verify that your driver is correctly installed.\n");
+			return false;
 		}	//---------------------------------
 
 
