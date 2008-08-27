@@ -626,17 +626,17 @@ int ofSerial::available(){
 	
     //---------------------------------------------
 	#ifdef TARGET_WIN32
-	   COMSTAT stat;
-       DWORD err;
-       if(hComm!=INVALID_HANDLE_VALUE){
+	COMSTAT stat;
+       	DWORD err;
+       	if(hComm!=INVALID_HANDLE_VALUE){
            if(!ClearCommError(hComm, &err, &stat)){
                numBytes = 0;
            } else {
                numBytes = stat.cbInQue;
            }
-       } else {
+       	} else {
            numBytes = 0;
-       }
+       	}
 	#endif
     //---------------------------------------------
 	
