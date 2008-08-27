@@ -37,6 +37,12 @@ void 		initializeQuicktime();
 void 		closeQuicktime();
 void 		convertPixels(unsigned char * gWorldPixels, unsigned char * rgbPixels, int w, int h);
 Boolean 	SeqGrabberModalFilterUPP(DialogPtr theDialog, const EventRecord *theEvent, short *itemHit, long refCon);
+OSErr           IsMPEGMediaHandler(MediaHandler inMediaHandler, Boolean *outIsMPEG);
+ComponentResult MPEGMediaGetStaticFrameRate(MediaHandler inMPEGMediaHandler, Fixed *outStaticFrameRate);
+OSErr           MediaGetStaticFrameRate(Media inMovieMedia, double *outFPS);
+void            MovieGetVideoMediaAndMediaHandler(Movie inMovie, Media *outMedia, 
+				MediaHandler *outMediaHandler);
+void            MovieGetStaticFrameRate(Movie inMovie, double *outStaticFrameRate);
 
 #ifdef TARGET_OSX
 	OSErr	GetSettingsPreference(CFStringRef inKey, UserData *outUserData);

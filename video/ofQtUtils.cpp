@@ -181,5 +181,177 @@ OSErr SaveSettingsPreference(CFStringRef inKey, UserData inUserData)
   return err;
 }
 
+
+
+#define   kCharacteristicHasVideoFrameRate		FOUR_CHAR_CODE('vfrr')
+#define   kCharacteristicIsAnMpegTrack			FOUR_CHAR_CODE('mpeg')
+
+
+/*
+
+Calculate the static frame rate for a given movie.
+
+*/
+void MovieGetStaticFrameRate(Movie inMovie, double *outStaticFrameRate)
+{
+  assert(inMovie != NULL);
+  assert(outStaticFrameRate != NULL);
+
+  *outStaticFrameRate = 0;
+
+  Media movieMedia;
+  MediaHandler movieMediaHandler;
+  /* get the media identifier for the media that contains the first
+    video track's sample data, and also get the media handler for
+    this media. */
+  MovieGetVideoMediaAndMediaHandler(inMovie, &movieMedia, &movieMediaHandler);
+  if (movieMedia && movieMediaHandler)
+  {
+    Boolean isMPEG = false;
+    /* is this the MPEG-1/MPEG-2 media handler? */
+    OSErr err = IsMPEGMediaHandler(movieMediaHandler, &isMPEG);
+    if (err == noErr)
+    {
+      if (isMPEG) /* working with MPEG-1/MPEG-2 media */
+      {
+        Fixed staticFrameRate;
+        ComponentResult err = MPEGMediaGetStaticFrameRate(movieMediaHandler, &staticFrameRate);
+        if (err == noErr)
+        {
+          /* convert Fixed data result to type double */
+          *outStaticFrameRate = Fix2X(staticFrameRate);
+        }
+      }
+      else  /* working with non-MPEG-1/MPEG-2 media */
+      {
+        OSErr err = MediaGetStaticFrameRate(movieMedia, outStaticFrameRate);
+        assert(err == noErr);
+      }
+    }
+  }
+}
+
+/*
+
+Get the media identifier for the media that contains the first
+video track's sample data, and also get the media handler for
+this media.
+
+*/
+void MovieGetVideoMediaAndMediaHandler(Movie inMovie, Media *outMedia, MediaHandler *outMediaHandler)
+{
+  assert(inMovie != NULL);
+  assert(outMedia != NULL);
+  assert(outMediaHandler != NULL);
+
+  *outMedia = NULL;
+  *outMediaHandler = NULL;
+
+  /* get first video track */
+  Track videoTrack = GetMovieIndTrackType(inMovie, 1, kCharacteristicHasVideoFrameRate,
+              movieTrackCharacteristic | movieTrackEnabledOnly);
+  if (videoTrack != NULL)
+  {
+    /* get media ref. for track's sample data */
+    *outMedia = GetTrackMedia(videoTrack);
+    if (*outMedia)
+    {
+      /* get a reference to the media handler component */
+      *outMediaHandler = GetMediaHandler(*outMedia);
+    }
+  }
+}
+
+/*
+
+Return true if media handler reference is from the MPEG-1/MPEG-2 media handler.
+Return false otherwise.
+
+*/
+OSErr IsMPEGMediaHandler(MediaHandler inMediaHandler, Boolean *outIsMPEG)
+{
+  assert(inMediaHandler != NULL);
+  assert(outIsMPEG != NULL);
+
+  /* is this the MPEG-1/MPEG-2 media handler? */
+  return(MediaHasCharacteristic(inMediaHandler,
+                  kCharacteristicIsAnMpegTrack,
+                  outIsMPEG));
+}
+
+/*
+
+Given a reference to the media handler used for media in a MPEG-1/MPEG-2
+track, return the static frame rate.
+
+*/
+ComponentResult MPEGMediaGetStaticFrameRate(MediaHandler inMPEGMediaHandler, Fixed *outStaticFrameRate)
+{
+  assert(inMPEGMediaHandler != NULL);
+  assert(outStaticFrameRate != NULL);
+
+  *outStaticFrameRate = 0;
+
+  MHInfoEncodedFrameRateRecord encodedFrameRate;
+  Size encodedFrameRateSize = sizeof(encodedFrameRate);
+
+    /* get the static frame rate */
+  ComponentResult err = MediaGetPublicInfo(inMPEGMediaHandler,
+                       kMHInfoEncodedFrameRate,
+                       &encodedFrameRate,
+                       &encodedFrameRateSize);
+  if (err == noErr)
+  {
+    /* return frame rate at which the track was encoded */
+    *outStaticFrameRate = encodedFrameRate.encodedFrameRate;
+  }
+
+  return err;
+}
+
+/*
+
+Given a reference to the media that contains the sample data for a track,
+calculate the static frame rate.
+
+*/
+OSErr MediaGetStaticFrameRate(Media inMovieMedia, double *outFPS)
+{
+  assert(inMovieMedia != NULL);
+  assert(outFPS != NULL);
+
+  *outFPS = 0;
+
+    /* get the number of samples in the media */
+  long sampleCount = GetMediaSampleCount(inMovieMedia);
+  OSErr err = GetMoviesError();
+
+  if (sampleCount && err == noErr)
+  {
+      /* find the media duration */
+    TimeValue64 duration = GetMediaDisplayDuration(inMovieMedia);
+    err = GetMoviesError();
+    if (err == noErr)
+    {
+        /* get the media time scale */
+      TimeValue64 timeScale = GetMediaTimeScale(inMovieMedia);
+      err = GetMoviesError();
+      if (err == noErr)
+      {
+        /* calculate the frame rate:
+          frame rate = (sample count * media time scale) / media duration
+          */
+        *outFPS = (double)sampleCount * (double)timeScale / (double)duration;
+      }
+    }
+  }
+
+  return err;
+}
+
+
+
+
+
 #endif
 
