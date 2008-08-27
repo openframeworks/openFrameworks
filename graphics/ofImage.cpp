@@ -328,6 +328,7 @@ void ofImage::clone(const ofImage &mom){
 	
 	// clone:
 	bmp = FreeImage_Clone(mom.bmp);
+	type = mom.type;
 	// update:
 	update();
 }
