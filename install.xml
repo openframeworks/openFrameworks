@@ -1,0 +1,55 @@
+<install>
+
+	<version>
+		0.01
+	</version>
+
+	
+	<!-- ========================================================================= 	-->
+	<!--	setting for the "installation" of OF 					-->
+	<!-- ========================================================================= 	-->
+	
+	
+	<toAddAddonsH>
+
+//-------------------------------------------- xml settings
+#ifdef OF_ADDON_USING_OFXXMLSETTINGS
+	#include "ofxXmlSettings.h"
+#endif
+
+	</toAddAddonsH>
+	
+	
+	
+	<!-- ========================================================================= 	-->
+	<!--	setting per project 							-->
+	<!-- ========================================================================= 	-->
+	
+	<toAddPerProject>
+		
+		<folder name="addons/ofXmlSettings/src">	
+			<src>../../../addons/ofxXmlSettings/src/ofxXmlSettings.h</src>
+			<src>../../../addons/ofxXmlSettings/src/ofxXmlSettings.cpp</src>
+		</folder>
+		
+		<folder name="addons/ofXmlSettings/libs">
+			<src>../../../addons/ofxXmlSettings/libs/tinyxml.h</src>
+			<src>../../../addons/ofxXmlSettings/libs/tinyxml.cpp</src>
+			<src>../../../addons/ofxXmlSettings/libs/tinyxmlerror.cpp</src>
+			<src>../../../addons/ofxXmlSettings/libs/tinyxmlparser.cpp</src>
+		</folder>
+		
+	</toAddPerProject>
+	
+	<includePath>
+		<path>../../../addons/ofxXmlSettings/src</path>
+		<path>../../../addons/ofxXmlSettings/libs</path>
+	</includePath>
+				
+	<!-- ========================================================================= 	-->
+	<!--	any requirements?							-->
+	<!-- ========================================================================= 	-->
+	
+	<requires></requires>
+	
+</install>
