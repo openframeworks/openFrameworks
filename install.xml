@@ -1,0 +1,63 @@
+<install>
+
+	<version>0.01</version>
+	<author>damian frey</author>
+	<url></url>
+	<requires></requires>
+
+	<add>	
+
+		<!-- 	=====================================================================	-->
+		<!--	========================== add for the "installation" of OF =========	-->
+		<!-- 	=====================================================================	-->
+
+		<addons_h>
+		//-------------------------------------------- OSC
+		#ifdef OF_ADDON_USING_OFXOSC
+			#include "ofxOsc.h"
+		#endif
+		</addons_h>
+
+		<!-- 	=====================================================================	-->
+		<!--	========================== add per project using this addon =========	-->
+		<!-- 	=====================================================================	-->
+
+		<src>
+			<folder name="addons/ofxOsc/src">			
+			<file>../../../addons/ofxOsc/src/ofxOsc.h</file>
+			<file>../../../addons/ofxOsc/src/ofxOscArg.h</file>
+			<file>../../../addons/ofxOsc/src/ofxOsc.h</file>
+			<file>../../../addons/ofxOsc/src/ofxOscMessage.h</file>
+			<file>../../../addons/ofxOsc/src/ofxOscMessage.cpp</file>
+			<file>../../../addons/ofxOsc/src/ofxOscReceiver.h</file>
+			<file>../../../addons/ofxOsc/src/ofxOscReceiver.cpp</file>
+			<file>../../../addons/ofxOsc/src/ofxOscSender.cpp</file>
+			<file>../../../addons/ofxOsc/src/ofxOscSender.h</file>
+			</folder>
+		</src>
+
+		<include>
+			<path>../../../addons/ofxOsc/src</path>
+			<path>../../../addons/ofxOsc/libs/oscpack/include/ip</path>
+			<path>../../../addons/ofxOsc/libs/oscpack/include/osc</path>
+		</include>
+		
+		<link>
+			<lib os="win32" compiler="devcpp">../../../addons/ofxOsc/libs/oscpack/lib/win32/oscpack.a</lib>
+			<lib os="win32" compiler="visualstudio">../../../addons/ofxOsc/libs/oscpack/lib/win32/oscpack.lib</lib>
+			<lib os="win32" compiler="codewarrior">../../../addons/ofxOsc/libs/oscpack/lib/win32/oscpack_cw.lib</lib>
+			<lib os="win32" compiler="codewarrior">wsock32.lib</lib>
+			<lib os="linux" compiler="codeblocks, makefile">../../../addons/ofxOsc/libs/oscpack/lib/linux/liboscpack.so</lib>
+			<lib os="mac"   compiler="xcode">../../../addons/ofxOsc/libs/oscpack/lib/mac/libOsc.a</lib>
+		</link>
+
+		<sharedObjects>
+			<obj os="linux">../../../addons/ofxOsc/libs/oscpack/lib/linux/liboscpack.so</obj>
+			<obj os="linux">../../../addons/ofxOsc/libs/oscpack/lib/linux/liboscpack.so.1.0.2</obj>
+		</sharedObjects>
+
+
+	</add>
+	
+	
+</install>
