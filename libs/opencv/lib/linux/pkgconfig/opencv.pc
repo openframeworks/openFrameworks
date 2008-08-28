@@ -1,0 +1,12 @@
+# Package Information for pkg-config
+
+prefix=/opt/opencv
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include/opencv
+
+Name: OpenCV
+Description: Intel(R) Open Source Computer Vision Library
+Version: 1.0.0
+Libs: -L${libdir} -lcxcore -lcv -lhighgui -lcvaux -lml
+Cflags: -I${includedir}

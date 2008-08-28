@@ -1,0 +1,72 @@
+<install>
+
+	<version>0.02</version>
+	<author>zach lieberman</author>
+	<url></url>
+	<requires></requires>
+
+	<add>	
+
+		<!-- 	=====================================================================	-->
+		<!--	========================== add for the "installation" of OF =========	-->
+		<!-- 	=====================================================================	-->
+
+		<addons_h>
+		//--------------------------------------------- opencv
+		#ifdef OF_ADDON_USING_OFXOPENCV
+			#include "ofxCvMain.h"
+		#endif 
+		</addons_h>
+
+		<!-- 	=====================================================================	-->
+		<!--	========================== add per project using this addon =========	-->
+		<!-- 	=====================================================================	-->
+
+		<src>
+			<folder name="addons/ofxOpenCv/src">						
+				<file>../../../addons/ofxOpenCv/src/ofxCvBlob.h</file>
+				<file>../../../addons/ofxOpenCv/src/ofxCvColorImage.cpp</file>
+				<file>../../../addons/ofxOpenCv/src/ofxCvColorImage.h</file>
+				<file>../../../addons/ofxOpenCv/src/ofxCvConstants.h</file>
+				<file>../../../addons/ofxOpenCv/src/ofxCvContourFinder.cpp</file>
+				<file>../../../addons/ofxOpenCv/src/ofxCvContourFinder.h</file>
+				<file>../../../addons/ofxOpenCv/src/ofxCvFloatImage.cpp</file>
+				<file>../../../addons/ofxOpenCv/src/ofxCvFloatImage.h</file>
+				<file>../../../addons/ofxOpenCv/src/ofxCvGrayscaleImage.cpp</file>
+				<file>../../../addons/ofxOpenCv/src/ofxCvGrayscaleImage.h</file>
+				<file>../../../addons/ofxOpenCv/src/ofxCvImage.cpp</file>
+				<file>../../../addons/ofxOpenCv/src/ofxCvImage.h</file>
+				<file>../../../addons/ofxOpenCv/src/ofxCvMain.h</file>
+			</folder>
+		</src>
+
+		<include>
+			<path>../../../addons/ofxOpenCv/src</path>
+			<path>../../../addons/ofxOpenCv/libs/opencv/include</path>
+		</include>
+		
+
+		<link>
+			<lib os="win32" compiler="devcpp,codewarrior,visualstudio">../../../addons/ofxOpenCv/libs/opencv/lib/win32/cv.lib</lib>
+			<lib os="win32" compiler="devcpp,codewarrior,visualstudio">../../../addons/ofxOpenCv/libs/opencv/lib/win32/cxcore.lib</lib>
+			<lib os="mac"   compiler="xcode">../../../addons/ofxOpenCv/libs/opencv/lib/osx/libOpenCv.a</lib>
+			<lib os="linux" compiler="codeblocks, makefile">../../../addons/ofxOpenCv/libs/opencv/lib/linux/libcv.so.1.0.0</obj>
+			<lib os="linux" compiler="codeblocks, makefile">../../../addons/ofxOpenCv/libs/opencv/lib/linux/libcxcore.so.1.0.0</obj>
+		</link>
+		
+		
+		<sharedObjects>
+			<obj os="win32">../../../addons/ofxOpenCv/libs/opencv/bin/cv100.dll</obj>
+			<obj os="win32">../../../addons/ofxOpenCv/libs/opencv/bin/cxcore100.dll</obj>
+			<obj os="win32">../../../addons/ofxOpenCv/libs/opencv/bin/libguide40.dll</obj>
+			<obj os="linux">../../../addons/ofOpenCv/libs/opencv/lib/linux/libcv.so.1</obj>
+			<obj os="linux">../../../addons/ofOpenCv/libs/opencv/lib/linux/libcv.so.1.0.0</obj>
+			<obj os="linux">../../../addons/ofOpenCv/libs/opencv/lib/linux/libcxcore.so.1</obj>
+			<obj os="linux">../../../addons/ofOpenCv/libs/opencv/lib/linux/libcxcore.so.1.0.0</obj>		
+		</sharedObjects>	
+		
+
+	</add>
+	
+	
+</install>
