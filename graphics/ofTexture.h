@@ -20,7 +20,7 @@ class ofTexture {
 		ofTexture& operator=(const ofTexture& mom); 	// don't allow use of =
 		// -----------------------------------------------------------------------
 		
-		void allocate(int w, int h, int internalGlDataType);	 
+		void allocate(int w, int h, int internalGlDataType, bool bUseARBExtention = true);	 
 		void clear();
 		void loadData(unsigned char * data, int w, int h, int glDataType); 
 		void loadScreenData(int x, int y, int w, int h);

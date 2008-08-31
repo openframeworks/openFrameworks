@@ -4,26 +4,17 @@
 
 //----------------------------------------------------------
 ofTexture::ofTexture(){
-	textureName[0] = 0;
-	bFlipTexture = false;
-
-	if (GLEE_ARB_texture_rectangle){
-		textureTarget = GL_TEXTURE_RECTANGLE_ARB;
-	} else {
-		textureTarget = GL_TEXTURE_2D;
-	}
+	textureName[0]	= 0;
+	bFlipTexture	= false;
+	textureTarget	= GL_TEXTURE_2D;
 }
 
 //----------------------------------------------------------
 ofTexture::ofTexture(const ofTexture& mom){
-	textureName[0] = 0;
-	bFlipTexture = false;
-	if (GLEE_ARB_texture_rectangle){
-		textureTarget = GL_TEXTURE_RECTANGLE_ARB;
-	} else {
-		textureTarget = GL_TEXTURE_2D;
-	}
 	// do nothing. (since copying a texture via graphics card is not possible)
+	textureName[0]	= 0;
+	bFlipTexture	= false;
+	textureTarget	= GL_TEXTURE_2D;
 }	
 
 //----------------------------------------------------------			
@@ -44,38 +35,31 @@ void ofTexture::clear(){
 	if (textureName[0] != 0){
 		glDeleteTextures(1, (GLuint *)textureName);
 	}
-	width = 0;
-	height = 0;
-	bFlipTexture = false;
+	
+	width			= 0;
+	height			= 0;
+	bFlipTexture		= false;
 }
 
 //----------------------------------------------------------
-void ofTexture::allocate(int w, int h, int internalGlDataType){
+void ofTexture::allocate(int w, int h, int internalGlDataType, bool bUseARBExtention){
 
-	// 	can pass in anything (320x240) (10x5)
-	// 	here we make it power of 2 for opengl (512x256), (16x8)
-
-	if (GLEE_ARB_texture_rectangle){
+	//our graphics card might not support arb so we have to see if it is supported. 
+	if (bUseARBExtention && GLEE_ARB_texture_rectangle){
 		tex_w = w;
 		tex_h = h;
-	} else {
-		tex_w = ofNextPow2(w);
-		tex_h = ofNextPow2(h);
-	}
-
-
-
-
-
-	if (GLEE_ARB_texture_rectangle){
 		tex_t = w;
 		tex_u = h;
+		textureTarget = GL_TEXTURE_RECTANGLE_ARB;
 	} else {
+		//otherwise we need to calculate the next power of 2 for the requested dimensions
+		//ie (320x240) becomes (512x256)
+		tex_w = ofNextPow2(w);
+		tex_h = ofNextPow2(h);
 		tex_t = 1.0f;
 		tex_u = 1.0f;
+		textureTarget = GL_TEXTURE_2D;
 	}
-
-
 
 	// attempt to free the previous bound texture, if we can:
 	clear();
@@ -116,11 +100,12 @@ void ofTexture::loadData(unsigned char * data, int w, int h, int glDataType){
 		return;
 	}
 
+	//update our size with the new dimensions - this should be the same size or smaller than the allocated texture size
 	width 	= w;
 	height 	= h;
 
 	//compute new tex co-ords based on the ratio of data's w, h to texture w,h;
-	if (GLEE_ARB_texture_rectangle){
+	if (textureTarget == GL_TEXTURE_RECTANGLE_ARB){
 		tex_t = w;
 		tex_u = h;
 	} else {
@@ -164,7 +149,6 @@ void ofTexture::loadData(unsigned char * data, int w, int h, int glDataType){
 	//------------------------ back to normal.
 	glPixelStorei(GL_UNPACK_ALIGNMENT, prevAlignment);
 
-
 	bFlipTexture = false;
 }
 
@@ -172,24 +156,23 @@ void ofTexture::loadData(unsigned char * data, int w, int h, int glDataType){
 //----------------------------------------------------------
 void ofTexture::loadScreenData(int x, int y, int w, int h){
 
-
-	int height = ofGetHeight();
-	y = height - y;
+	int screenHeight = ofGetHeight();
+	y = screenHeight - y;
 	y -= h; // top, bottom issues
 	bFlipTexture = true;
-
 
 	if ( w > tex_w || h > tex_h) {
 		printf("image data too big for allocated texture. not uploading... \n");
 		return;
 	}
 
+	//update our size with the new dimensions - this should be the same size or smaller than the allocated texture size
 	width 	= w;
 	height 	= h;
 
 	//compute new tex co-ords based on the ratio of data's w, h to texture w,h;
 
-	if (GLEE_ARB_texture_rectangle){
+	if (textureTarget == GL_TEXTURE_RECTANGLE_ARB){
 		tex_t = (float)(w);
 		tex_u = (float)(h);
 	} else {
