@@ -8,11 +8,24 @@
 #include "FreeImage.h"
 
 
+typedef struct {
+	
+	unsigned char * pixels;
+	int width;
+	int height;
+	
+	int		bitsPerPixel;		// 8 = gray, 24 = rgb, 32 = rgba
+	int		bytesPerPixel;		// 1, 3, 4 bytes per pixels
+	GLint	glDataType;			// GL_LUMINANCE, GL_RGB, GL_RGBA
+	int		ofImageType;		// OF_IMAGE_GRAYSCALE, OF_IMAGE_COLOR, OF_IMAGE_COLOR_ALPHA
+	bool	bAllocated;
+	
+} ofPixels;
 
 
 //----------------------------------------------------
+// freeImage based stuff: 
 void 	ofCloseFreeImage();		// when we exit, we shut down ofImage
-
 
 
 //----------------------------------------------------
@@ -22,55 +35,64 @@ class 	ofImage {
 
 		ofImage();
 		~ofImage();
-		ofImage(const ofImage& mom);						// allocate in pass by copy
-		ofImage& operator= (const ofImage& mom); 	// copy via =, ie. imga = imgb;
+		
+		// alloation / deallocation routines
+		void 				allocate(int w, int h, int type);
+		void 				clear();
+				
+		// default copy overwriting (for = or std::vector)
+		ofImage(const ofImage& mom);						
+		ofImage& operator= (const ofImage& mom);	
+		
+		// copying: 
+		void 				clone(const ofImage &mom);
+	
+		// enable or disable using the texture of this image
+		void 				setUseTexture(bool bUse);
 
+		// file loading / saving
 		void 				loadImage(string fileName);
 		void 				saveImage(string fileName);
 
-		void 				allocate(int w, int h, int type);
-		void 				clear();
-
+		// getting the data
 		unsigned char * 	getPixels();			// up to you to get this right
+		
+		// alter the image 
 		void 				setFromPixels(unsigned char * pixels, int w, int h, int newType, bool bOrderIsRGB = true);
-
 		void 				setImageType(int type);
 		void 				resize(int newWidth, int newHeight);
 		void 				grabScreen(int x, int y, int w, int h);		// grab pixels from opengl, using glreadpixels
 
-		void 				clone(const ofImage &mom);
-
-		int 				type;			// what type of image it is (as above)
-		int 				width, height, bpp;		// w,h, bits per pixel
-
-		void 				setUseTexture(bool bUse);
+		// if you've altered the pixels (from getPixels()) call update() to see a change: 
+		void				update();
+		
+		// draw: 
 		void 				draw(float x, float y, float w, float h);
 		void 				draw(float x, float y);
 
+		int 				width, height, bpp;		// w,h, bits per pixel
+		int					type;					// OF_IMAGE_GRAYSCALE, OF_IMAGE_COLOR, OF_IMAGE_COLOR_ALPHA
+		
 	protected:
 
-		void 				swapChannels(bool bAlpha);
-		void 				update();
-		ofTexture 			tex;
+		// freeImage related functionality:
+				
+		void				loadImageIntoPixels(string fileName, ofPixels &pix);
+		void				saveImageFromPixels(string fileName, ofPixels &pix);
+		void				changeTypeOfPixels(ofPixels &pix, int newType);
+		void				resizePixels(ofPixels &pix, int newWidth, int newHeight);
+		FIBITMAP *			getBmpFromPixels(ofPixels &pix);
+		void				putBmpIntoPixels(FIBITMAP * bmp, ofPixels &pix);
+		
+		// utils: 
+		inline void			allocatePixels(ofPixels &pix, int width, int height, int bpp);
+		inline void			swapRgb(ofPixels &pix);
+	
+		ofPixels			myPixels;
 		bool				bUseTexture;
-		bool				bAllocatedPixels;
-
-		// ----------  stuff one shouldn't touch at all ! ------------------
-
-		FIBITMAP 			* bmp;
-
-		// when OF users ask for pixels
-		// we will get them contiguous memory
-		// ie, non-aligned
-		// see the pixel access chapter of the freeImage pdf
-		// these pixel will also be RGB
-		// on both platforms
-		// bmp will be RGB / BGR depending
-		// on the endianess of the platform.
-
-		unsigned char 		* imgPixels;
-		inline bool 		isValid();
-		inline void 		swap(FIBITMAP *dst);
+		ofTexture			tex;
+		
+		
 
 };
 
