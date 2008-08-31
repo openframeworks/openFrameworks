@@ -770,7 +770,7 @@ int ofVideoPlayer::getCurrentFrame(){
 	
 	// zach I think this may fail on variable length frames...
 	float pos = getPosition();
-	cout << "current pos: " << pos << endl;
+	
 	
 	float  framePosInFloat = (getTotalNumFrames() * getPosition());
 	int    framePosInInt = (int)framePosInFloat;
@@ -778,9 +778,6 @@ int ofVideoPlayer::getCurrentFrame(){
 	if (floatRemainder > 0.5f) framePosInInt = framePosInInt + 1;
 	//frame = (int)ceil((getTotalNumFrames() * getPosition()));
 	frame = framePosInInt;
-	//cout << "frame pre round: " << (double)(getTotalNumFrames() * getPosition()) << endl;
-	//cout << "current frame: " << ceil(frame) << endl;
-	
 	return frame;
 }
 
