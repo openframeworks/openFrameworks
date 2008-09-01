@@ -21,7 +21,7 @@ int 	ofGetHours();
 int     ofGetYear();
 int     ofGetMonth();
 int     ofGetDay();
-int     ofGetWeekDay();
+int     ofGetWeekday();
 
 void 	ofLaunchBrowser(string url);
 
