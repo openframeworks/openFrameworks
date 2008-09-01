@@ -689,6 +689,8 @@ void ofVideoPlayer::setPosition(float pct){
 
 //---------------------------------------------------------------------------
 void ofVideoPlayer::setFrame(int frame){
+	
+#ifndef TARGET_LINUX
 	// frame 0 = first frame...  
 	
 	// this is the simple way...
@@ -713,6 +715,9 @@ void ofVideoPlayer::setFrame(int frame){
 	}
 	
    if (!bPaused) SetMovieRate(moviePtr, X2Fix(speed));
+#else
+   fobsDecoder->setFrame(frame);
+#endif
 	
 }
 
@@ -765,8 +770,8 @@ float ofVideoPlayer::getPosition(){
 
 //---------------------------------------------------------------------------
 int ofVideoPlayer::getCurrentFrame(){
-	
 	int frame = 0;
+#ifndef TARGET_LINUX
 	
 	// zach I think this may fail on variable length frames...
 	float pos = getPosition();
@@ -778,6 +783,10 @@ int ofVideoPlayer::getCurrentFrame(){
 	if (floatRemainder > 0.5f) framePosInInt = framePosInInt + 1;
 	//frame = (int)ceil((getTotalNumFrames() * getPosition()));
 	frame = framePosInInt;
+	
+#else
+	frame = fobsDecoder->getFrameIndex();
+#endif
 	return frame;
 }
 
