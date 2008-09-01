@@ -34,18 +34,7 @@ ofVideoGrabber::ofVideoGrabber(){
 	#endif
 	//---------------------------------
 
-	//---------------------------------
-	#ifdef OF_VIDEO_CAPTURE_UNICAP
-	//--------------------------------
-
-
-		auxPixels			= NULL;
-
-	//---------------------------------
-	#endif
-	//---------------------------------
-
-
+		
 	//---------------------------------
 	#ifdef OF_VIDEO_CAPTURE_V4L				// kept around if people have unicap issues...
 	//--------------------------------
@@ -390,50 +379,7 @@ void ofVideoGrabber::grabFrame(){
 	//--------------------------------
 
 		if (bGrabberInited){
-
-
-			if (bDoWeNeedToResize == true){
-				bIsFrameNew = ucGrabber.getFrameUC(&auxPixels);
-				int inputW = ucGrabber.getUC_Width();
-				int inputH = ucGrabber.getUC_Height();
-
-				float scaleW =	(float)inputW / (float)width;
-				float scaleH =	(float)inputH / (float)height;
-
-				for(int i=0;i<width;i++){
-					for(int j=0;j<height;j++){
-
-						float posx = i * scaleW;
-						float posy = j * scaleH;
-
-						/*
-
-						// start of calculating
-						// for linear interpolation
-
-						int xbase = (int)floor(posx);
-						int xhigh = (int)ceil(posx);
-						float pctx = (posx - xbase);
-
-						int ybase = (int)floor(posy);
-						int yhigh = (int)ceil(posy);
-						float pcty = (posy - ybase);
-						*/
-
-						int posPix = (((int)posy * inputW * 3) + ((int)posx * 3));
-
-						pixels[(j*width*3) + i*3    ] = auxPixels[posPix  ];
-						pixels[(j*width*3) + i*3 + 1] = auxPixels[posPix+1];
-						pixels[(j*width*3) + i*3 + 2] = auxPixels[posPix+2];
-
-					}
-				}
-
-			} else {
-
-				bIsFrameNew = ucGrabber.getFrameUC(&pixels);
-
-			}
+			bIsFrameNew = ucGrabber.getFrameUC(&pixels);
 			if(bIsFrameNew) {
 				if (bUseTexture){
 					tex.loadData(pixels, width, height, GL_RGB);
@@ -512,9 +458,6 @@ void ofVideoGrabber::close(){
 			deviceID 			= 0;
 			bIsFrameNew 		= false;
 			bChooseDevice 		= false;
-			if(auxPixels != NULL){
-				delete auxPixels;
-			}
 		}
 
 	//---------------------------------
@@ -1073,21 +1016,13 @@ bool ofVideoGrabber::initGrabber(int w, int h, bool setUseTexture){
 	//---------------------------------
 	#ifdef OF_VIDEO_CAPTURE_UNICAP
 	//--------------------------------
-		if(!bGrabberInited){
-			if (!bChooseDevice){
+		if( !bGrabberInited ){
+			if ( !bChooseDevice ){
 				deviceID = 0;
 			}
-			ucGrabber.open_device (deviceID);
-			printf("choosing device %i: %s\n", deviceID,ucGrabber.device_identifier());
-			ucGrabber.set_format(w,h);
+			
 			width 	= w;
 			height 	= h;
-			if(w==ucGrabber.getUC_Width() && h==ucGrabber.getUC_Height()){
-				bDoWeNeedToResize=false;
-			}else{
-				bDoWeNeedToResize=true;
-				auxPixels	= new unsigned char[ucGrabber.getUC_Width() * ucGrabber.getUC_Height() * 3];
-			}
 			pixels	= new unsigned char[width * height * 3];
 
 			if (bUseTexture){
@@ -1097,11 +1032,15 @@ bool ofVideoGrabber::initGrabber(int w, int h, bool setUseTexture){
 				memset(pixels, 0, width*height*3);
 				tex.loadData(pixels, width, height, GL_RGB);
 			}
-			ucGrabber.start_capture();
-			bGrabberInited=true;
+						
+			bGrabberInited = ucGrabber.open_device (deviceID);
+			if( bGrabberInited ){
+				printf("choosing device %i: %s\n", deviceID,ucGrabber.device_identifier());
+				ucGrabber.set_format(w,h);
+				ucGrabber.start_capture();
+			}
 			
-			//needs success or no success indication
-			return true;
+			return bGrabberInited;
 		}
 	//---------------------------------
 	#endif

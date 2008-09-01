@@ -100,8 +100,6 @@ class ofVideoGrabber{
 
 		//--------------------------------- linux unicap
 		#ifdef OF_VIDEO_CAPTURE_UNICAP
-			bool 					bDoWeNeedToResize;
-			unsigned char *			auxPixels;
 			ofUCUtils				ucGrabber;
 		#endif
 
