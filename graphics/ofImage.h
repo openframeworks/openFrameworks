@@ -51,7 +51,7 @@ class 	ofImage {
 		void 				setUseTexture(bool bUse);
 
 		// file loading / saving
-		void 				loadImage(string fileName);
+		bool  				loadImage(string fileName);
 		void 				saveImage(string fileName);
 
 		// getting the data
@@ -77,7 +77,7 @@ class 	ofImage {
 
 		// freeImage related functionality:
 				
-		void				loadImageIntoPixels(string fileName, ofPixels &pix);
+		bool				loadImageIntoPixels(string fileName, ofPixels &pix);
 		void				saveImageFromPixels(string fileName, ofPixels &pix);
 		void				changeTypeOfPixels(ofPixels &pix, int newType);
 		void				resizePixels(ofPixels &pix, int newWidth, int newHeight);
