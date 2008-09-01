@@ -44,6 +44,7 @@ class ofVideoPlayer{
 		float 				getPosition();
 		float 				getSpeed();
 		float 				getDuration();	
+		bool				getIsMovieDone();
 		
 		void 				setPosition(float pct);
 		void 				setVolume(int volume);
