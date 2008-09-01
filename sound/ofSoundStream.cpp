@@ -2,7 +2,6 @@
 #include "RtAudio.h"
 
 //----------------------------------- static variables:
-static ofSimpleApp 	* 		OFSAptr;
 RtAudio				*		audio;
 int 						nInputChannels;
 int 						nOutputChannels;
@@ -28,26 +27,37 @@ int receiveAudioBufferAndCallSimpleApp(char *buffer, int bufferSize, void *data)
 	// doesn't produce audio, we pass silence instead of duplex...
 
 	if (nInputChannels > 0){
-		OFSAptr->audioReceived(fPtr, bufferSize, nInputChannels);
+    
+        //audioReceived()
+        ofAudioEvents.audioEventArgs.buffer = fPtr;
+        ofAudioEvents.audioEventArgs.bufferSize = bufferSize;
+        ofAudioEvents.audioEventArgs.nChannels = nInputChannels;
+        ofAudioEvents.notifyReceived( NULL );
 		memset(fPtr, 0, bufferSize * nInputChannels * sizeof(float));
 	}
-	if (nOutputChannels > 0) OFSAptr->audioRequested(fPtr, bufferSize, nOutputChannels);
+    
+	if (nOutputChannels > 0) {
+        //audioRequested()
+        ofAudioEvents.audioEventArgs.buffer = fPtr;
+        ofAudioEvents.audioEventArgs.bufferSize = bufferSize;
+        ofAudioEvents.audioEventArgs.nChannels = nOutputChannels;
+        ofAudioEvents.notifyRequested( NULL );        
+    }
 
 	return 0;
 }
 
 //---------------------------------------------------------
-void ofSoundStreamSetup(int nOutputs, int nInputs, ofSimpleApp * OFSA){
-	ofSoundStreamSetup(nOutputs, nInputs, OFSA, 44100, 256, 4);
+void ofSoundStreamSetup(int nOutputs, int nInputs){
+	ofSoundStreamSetup(nOutputs, nInputs, 44100, 256, 4);
 }
 
 //---------------------------------------------------------
-void ofSoundStreamSetup(int nOutputs, int nInputs, ofSimpleApp * OFSA, int sampleRate, int bufferSize, int nBuffers){
+void ofSoundStreamSetup(int nOutputs, int nInputs, int sampleRate, int bufferSize, int nBuffers){
 
 	nInputChannels 		=  nInputs;
 	nOutputChannels 	=  nOutputs;
 	int device 			=  0;        // default
-	OFSAptr 			=  OFSA;
 
 	bufferSize = ofNextPow2(bufferSize);	// must be pow2
 
@@ -67,7 +77,8 @@ void ofSoundStreamSetup(int nOutputs, int nInputs, ofSimpleApp * OFSA, int sampl
 		error.printMessage();
 	}
 }
-
+	
+	
 //---------------------------------------------------------
 void ofSoundStreamStop(){
 	try {

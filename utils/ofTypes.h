@@ -44,6 +44,10 @@ class ofRectangle {
 	width = _w;
 	height = _h;
    }
-}; 
+};
+
+
+class ofEventArgs{};
+
 
 #endif

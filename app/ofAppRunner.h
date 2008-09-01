@@ -3,10 +3,16 @@
 
 
 #include "ofMain.h"
-#include "ofSimpleApp.h"
 #include "ofGraphics.h"
 #include "ofMath.h"
 #include "ofUtils.h"
+
+#include "ofAppEvents.h"
+#include "ofKeyEvents.h"
+#include "ofMouseEvents.h"
+
+#include "ofSimpleApp.h"
+
 
 void 		ofSetupOpenGL(int w, int h, int screenMode);			// sets up the opengl context!
 void 		ofRunApp(ofSimpleApp * OFSA);

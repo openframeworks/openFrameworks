@@ -1,4 +1,3 @@
-
 void display(void);
 void mouse_cb(int button, int state, int x, int y);
 void motion_cb(int x, int y);
@@ -92,7 +91,7 @@ void display(void){
 	// we do nFrameCount < 3, so that the buffers are cleared at the start of the app
 	// or else we have video memory garbage to draw on to...
 
-	#ifdef TARGETWIN32
+	#ifdef TARGET_WIN32
 		//windows doesn't get accumulation in window mode
 		if ((bClearAuto == true || windowMode == OF_WINDOW) || nFrameCount < 3){
 	#else
@@ -104,7 +103,8 @@ void display(void){
 	}
 
 	ofSetupScreen();
-	OFSAptr->draw();
+    	ofAppEvents.notifyDraw( NULL );
+    
   	glutSwapBuffers();
 
   	// -------------- fps calculation:
@@ -127,15 +127,20 @@ void display(void){
 
 //------------------------------------------------------------
 void mouse_cb(int button, int state, int x, int y) {
-
 	if (nFrameCount > 0){
 		OFSAptr->mouseX = x;
 		OFSAptr->mouseY = y;
+
 		if (state == GLUT_DOWN) {
-			OFSAptr->mousePressed(x, y, button);
+            ofMouseEvents.mouseEventArgs.x = x;
+            ofMouseEvents.mouseEventArgs.y = y;
+            ofMouseEvents.mouseEventArgs.button = button;
+            ofMouseEvents.notifyPressed( NULL );
 		} else if (state == GLUT_UP) {
-			OFSAptr->mouseReleased();			// call the deprecated one, to keep old code working
-			OFSAptr->mouseReleased(x, y, button);		// call the new one, to support mouseReleased per button
+            ofMouseEvents.mouseEventArgs.x = x;
+            ofMouseEvents.mouseEventArgs.y = y;
+            ofMouseEvents.mouseEventArgs.button = button;
+            ofMouseEvents.notifyReleased( NULL );
 		}
 		buttonInUse = button;
 	}
@@ -143,24 +148,26 @@ void mouse_cb(int button, int state, int x, int y) {
 
 //------------------------------------------------------------
 void motion_cb(int x, int y) {
-
-
 	if (nFrameCount > 0){
 		OFSAptr->mouseX = x;
 		OFSAptr->mouseY = y;
-		OFSAptr->mouseDragged(x, y, buttonInUse);
+		
+		ofMouseEvents.mouseEventArgs.x = x;
+        ofMouseEvents.mouseEventArgs.y = y;
+        ofMouseEvents.mouseEventArgs.button = buttonInUse;
+        ofMouseEvents.notifyDragged( NULL );        
 	}
 }
 
 //------------------------------------------------------------
 void passive_motion_cb(int x, int y) {
-
-
-
 	if (nFrameCount > 0){
 		OFSAptr->mouseX = x;
 		OFSAptr->mouseY = y;
-		OFSAptr->mouseMoved(x, y);
+
+        ofMouseEvents.mouseEventArgs.x = x;
+        ofMouseEvents.mouseEventArgs.y = y;
+        ofMouseEvents.notifyMoved( NULL );
 	}
 }
 
@@ -184,14 +191,17 @@ void idle_cb(void) {
 		}   
 	}
 	prevMillis = ofGetElapsedTimeMillis(); // you have to measure here
-	OFSAptr->update();
+	
+    ofAppEvents.notifyUpdate( NULL );
+    
 	glutPostRedisplay();
 }
 
 
 //------------------------------------------------------------
 void keyboard_cb(unsigned char key, int x, int y) {
-	OFSAptr->keyPressed((int)key);
+    ofKeyEvents.keyEventArgs.key = key;
+    ofKeyEvents.notifyPressed( NULL );
 	if (key == 27){				// "escape"
 		OF_EXIT_APP(0);
 	}
@@ -199,16 +209,21 @@ void keyboard_cb(unsigned char key, int x, int y) {
 
 //------------------------------------------------------------
 void keyboard_up_cb(unsigned char key, int x, int y) {
-	OFSAptr->keyReleased((int)key);
+    ofKeyEvents.keyEventArgs.key = key;
+    ofKeyEvents.notifyReleased( NULL );
 }
 
 //------------------------------------------------------
 void special_key_cb(int key, int x, int y) {
-   OFSAptr->keyPressed((key | OF_KEY_MODIFIER));
-
+    ofKeyEvents.keyEventArgs.key = (key | OF_KEY_MODIFIER);
+    ofKeyEvents.notifyPressed( NULL );
 }
 
 //------------------------------------------------------------
 void special_key_up_cb(int key, int x, int y) {
-   OFSAptr->keyReleased((key | OF_KEY_MODIFIER));
+    ofKeyEvents.keyEventArgs.key = (key | OF_KEY_MODIFIER);
+    ofKeyEvents.notifyReleased( NULL );
 }
+
+
+

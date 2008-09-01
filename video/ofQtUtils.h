@@ -9,7 +9,7 @@
 #include "ofGraphics.h" 	
 
 
-#if TARGET_OS_MAC
+#ifdef TARGET_OSX
 	#include <Quicktime/QuickTime.h>
 	#include <CoreServices/CoreServices.h>
 	#include <ApplicationServices/ApplicationServices.h>

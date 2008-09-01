@@ -67,12 +67,12 @@ bool ofImage::loadImage(string fileName){
 	bLoadedOk = loadImageIntoPixels(fileName, myPixels);
 	
 	if (bLoadedOk == true){
-		if (myPixels.bAllocated == true && bUseTexture == true){
-			tex.allocate(myPixels.width, myPixels.height, myPixels.glDataType);
-		}
-		update();
+	if (myPixels.bAllocated == true && bUseTexture == true){
+		tex.allocate(myPixels.width, myPixels.height, myPixels.glDataType);
 	}	
-	
+	update();
+}
+
 	return bLoadedOk;
 }
 
@@ -562,10 +562,6 @@ void  ofImage::saveImageFromPixels(string fileName, ofPixels &pix){
 	#ifdef TARGET_LITTLE_ENDIAN
 		if (pix.bytesPerPixel != 1) swapRgb(pix);
 	#endif
-
-	int _width 		= FreeImage_GetWidth(bmp);
-	int _height 	= FreeImage_GetHeight(bmp);
-	int _bpp 		= FreeImage_GetBPP(bmp);
 
 	fileName = ofToDataPath(fileName);
 	if (pix.bAllocated == true){

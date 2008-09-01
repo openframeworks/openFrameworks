@@ -51,7 +51,7 @@ class 	ofImage {
 		void 				setUseTexture(bool bUse);
 
 		// file loading / saving
-		bool  				loadImage(string fileName);
+		bool 				loadImage(string fileName);
 		void 				saveImage(string fileName);
 
 		// getting the data

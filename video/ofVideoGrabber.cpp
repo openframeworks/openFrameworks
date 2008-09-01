@@ -659,7 +659,6 @@ bool ofVideoGrabber::loadSettings(){
    if (mySGVideoSettings){
 
       Rect   curBounds, curVideoRect;
-      ComponentResult   err;
 
       //we need to make sure the dimensions don't get effected
       //by our preferences
