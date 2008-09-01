@@ -27,8 +27,8 @@ class ofSimpleApp{
 		virtual void mouseMoved( int x, int y ){}
 		virtual void mouseDragged( int x, int y, int button ){}
 		virtual void mousePressed( int x, int y, int button ){}
-		virtual void mouseReleased(){}					// deprecated, but kept around to keep old code from breaking
-		virtual void mouseReleased(int button){}			// the better mouseReleased to use in your apps.
+		virtual void mouseReleased(){}									// deprecated, but kept around to keep old code from breaking
+		virtual void mouseReleased(int x, int y, int button){}			// the better mouseReleased to use in your apps.
 
 	
 		virtual void audioReceived 	(float * input, int bufferSize, int nChannels) {} 

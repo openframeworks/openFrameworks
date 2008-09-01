@@ -128,19 +128,14 @@ void display(void){
 //------------------------------------------------------------
 void mouse_cb(int button, int state, int x, int y) {
 
-
-	y = height - y;
-
-
 	if (nFrameCount > 0){
 		OFSAptr->mouseX = x;
-		OFSAptr->mouseY = height - y;
-
+		OFSAptr->mouseY = y;
 		if (state == GLUT_DOWN) {
-			OFSAptr->mousePressed(x, height - y, button);
+			OFSAptr->mousePressed(x, y, button);
 		} else if (state == GLUT_UP) {
 			OFSAptr->mouseReleased();			// call the deprecated one, to keep old code working
-			OFSAptr->mouseReleased(button);		// call the new one, to support mouseReleased per button
+			OFSAptr->mouseReleased(x, y, button);		// call the new one, to support mouseReleased per button
 		}
 		buttonInUse = button;
 	}
@@ -149,12 +144,11 @@ void mouse_cb(int button, int state, int x, int y) {
 //------------------------------------------------------------
 void motion_cb(int x, int y) {
 
-	y = height - y;
 
 	if (nFrameCount > 0){
 		OFSAptr->mouseX = x;
-		OFSAptr->mouseY = height - y;
-		OFSAptr->mouseDragged(x, height - y, buttonInUse);
+		OFSAptr->mouseY = y;
+		OFSAptr->mouseDragged(x, y, buttonInUse);
 	}
 }
 
@@ -162,12 +156,11 @@ void motion_cb(int x, int y) {
 void passive_motion_cb(int x, int y) {
 
 
-	y = height - y;
 
 	if (nFrameCount > 0){
 		OFSAptr->mouseX = x;
-		OFSAptr->mouseY = height - y;
-		OFSAptr->mouseMoved(x, height - y);
+		OFSAptr->mouseY = y;
+		OFSAptr->mouseMoved(x, y);
 	}
 }
 
