@@ -11,6 +11,7 @@
 #include <unicap.h>
 #include <unistd.h>
 #include <string.h>
+#include <pthread.h>
 
 struct AVPicture;
 
@@ -20,33 +21,31 @@ struct AVPicture;
 #define MAX_DEVICES 64
 #define MAX_FORMATS 64
 #define MAX_PROPERTIES 64
-
-
+#define VIDEOGRABBER_RESIZE_FLAGS SWS_X
 
 class ofUCUtils{
 	
 public:
-	
 	ofUCUtils();
 	~ofUCUtils();
 	
 	void set_format (int w, int h);
-	void open_device (int d);
+	bool open_device (int d);
 	void start_capture(void);
 	void queryUC_imageProperties(void);
 	bool getFrameUC(unsigned char ** _pixels);
 	void listUCDevices();
 	void close_unicap();
-	int getUC_Height(void);
-	int getUC_Width(void);
 	char * device_identifier(void);
-
+	void new_frame (unicap_data_buffer_t * buffer);
+	
 	bool verbose;
 	
 private:	
 	bool 					bUCFrameNew;
-	unicap_data_buffer_t 	buffer;
-	unicap_data_buffer_t *	returned_buffer;
+	unsigned char *			pixels;
+	bool					deviceReady;
+	
 	unicap_device_t 		device;
 	unicap_format_t 		format;
 	unicap_handle_t 		handle;
@@ -54,6 +53,12 @@ private:
 	AVPicture * 			src;
 	AVPicture * 			dst;
 	int 					src_pix_fmt;
+	int						d_width, d_height;
+	struct SwsContext *		toRGB_convert_ctx;
+	
+	pthread_mutex_t			capture_mutex;
+	void 					lock_buffer();
+	void 					unlock_buffer();
 };
 
 #endif

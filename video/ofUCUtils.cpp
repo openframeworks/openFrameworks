@@ -8,13 +8,16 @@
 
 extern "C"
 {
-#include <avcodec.h>
+#include <swscale.h>
+#include "avcodec.h"
 }
+
+
 
 #define FOURCC(a,b,c,d) (unsigned int)((((unsigned int)a))+(((unsigned int)b)<<8)+(((unsigned int)c)<<16)+(((unsigned int)d)<<24))
 
 typedef struct PixelFormatTag {
-    int pix_fmt;
+	PixelFormat pix_fmt;
     unsigned int fourcc;
 } PixelFormatTag;
 
@@ -84,13 +87,12 @@ static const PixelFormatTag pixelFormatTags[] = {
     { PIX_FMT_UYVY422, 	FOURCC('2', 'v', 'u', 'y') },
     { PIX_FMT_UYVY422, 	FOURCC('A', 'V', 'U', 'I') },
 
-    { -1, 0 },
+    { PIX_FMT_NONE, 0 },
 };
 
 
-
 //--------------------------------------------------------------------
-int fourcc_to_pix_fmt( unsigned int fourcc)
+PixelFormat fourcc_to_pix_fmt( unsigned int fourcc)
 {
 	const PixelFormatTag * tags = pixelFormatTags;
 	while (tags->pix_fmt >= 0) {
@@ -98,7 +100,13 @@ int fourcc_to_pix_fmt( unsigned int fourcc)
 			return tags->pix_fmt;
         tags++;
     }
-    return -1;
+    return PIX_FMT_NONE;
+}
+
+//--------------------------------------------------------------------
+void new_frame_cb (unicap_event_t event, unicap_handle_t handle,
+    	unicap_data_buffer_t * buffer, void *usr_data){
+	((ofUCUtils*)usr_data)->new_frame(buffer);
 }
 
 
@@ -107,46 +115,42 @@ ofUCUtils::ofUCUtils(){
 
 	verbose			= false;
 	bUCFrameNew		= false;
-	returned_buffer	= NULL;
+	pixels			= NULL;
 	src				= NULL;
 	dst				= NULL;
+	deviceReady		= false;
+	pthread_mutex_init(&capture_mutex,NULL);
 }
 
 
 //--------------------------------------------------------------------
 ofUCUtils::~ofUCUtils(){
 
-	unicap_stop_capture(handle);
-	if (buffer.data != NULL) {
-		free(buffer.data);
-	}
-	if (src != NULL){
-		avpicture_free(src);
-		delete src;
-	}
-	if (dst != NULL){
-		avpicture_free(dst);
-		delete dst;
-	}
+	close_unicap();
+	pthread_mutex_destroy(&capture_mutex);
 }
 
 
 //--------------------------------------------------------------------
-void ofUCUtils::open_device(int d) {
+bool ofUCUtils::open_device(int d) {
 
 	if (!SUCCESS(unicap_enumerate_devices (NULL, &device, d))) {
 		printf ("Unicap : Error selecting device %d\n", d);
+		return false;
 	} else {
+		
 		if (!SUCCESS(unicap_open (&handle, &device))) {
 			printf ("Unicap : Error opening device %d: %s\n", d,
 					device.identifier);
+			return false;
 		}
+		deviceReady = true;
 	}
 	if(verbose){
 	    printf("Unicap : Using device %s \n",device.device);
 	    printf("Unicap : Using module %s\n",device.vendor_name);
 	}
-
+	return true;
 }
 
 
@@ -171,7 +175,10 @@ char * ofUCUtils::device_identifier(void){
 // On some V4L devices using non-default width/heigth it reports BGR but returns RGB.
 // ffmpeg color conversion
 void ofUCUtils::set_format(int w, int h) {
-
+	if(!deviceReady)
+		return;
+	d_width=w;
+	d_height=h;
 	unicap_format_t formats[MAX_FORMATS];
 	int format_count;
 	unicap_status_t status = STATUS_SUCCESS;
@@ -317,26 +324,46 @@ void ofUCUtils::set_format(int w, int h) {
 			src=new AVPicture;
 			avpicture_alloc(src,src_pix_fmt,format.size.width,format.size.height);
 			dst=new AVPicture;
-			avpicture_alloc(dst,PIX_FMT_RGB24,format.size.width,format.size.height);
-			printf("Converting to RGB24");
+			avpicture_alloc(dst,PIX_FMT_RGB24,d_width,d_height);
+			
+			toRGB_convert_ctx = sws_getContext(
+							format.size.width, format.size.height, src_pix_fmt,
+							d_width, d_height, PIX_FMT_RGB24,
+							VIDEOGRABBER_RESIZE_FLAGS, NULL, NULL, NULL);
+			
+			//sws_setColorspaceDetails(toRGB_convert_ctx, NULL,255,NULL,255,100,100,100);
+			
+			//printf("fourcc %i : %i\n",format.fourcc,FOURCC('Y', 'U', 'Y', 'V'));
+			printf("Converting to RGB24 (%i,%i)\n",w,h);  
+			//pixels=new unsigned char[format.size.width*format.size.height*3];
+			pixels=new unsigned char[d_width*d_height*3];
 		}
+		
+		   if( !SUCCESS( unicap_get_format( handle, &format ) ) )
+		   {
+		/*       g_warning( "Failed to get current video format\n" ); */
+			   return;
+		   }
+		   
+		format.buffer_type = UNICAP_BUFFER_TYPE_SYSTEM;  
+		   
+	   if( !SUCCESS( unicap_set_format( handle, &format ) ) )
+	   {
+	      printf( "Failed to activate SYSTEM_BUFFERS\n" );
+	   }   
 	}
 }
 
 
 //--------------------------------------------------------------------
 void ofUCUtils::start_capture() {
-
-	 // Allocate memory for the image buffer
-	if ( !(buffer.data = (unsigned char *)malloc(format.buffer_size) )) {
-		printf("Unicap : Failed to allocate %d bytes\n", format.buffer_size);
+	if(!deviceReady)
 		return;
-	}
-	buffer.buffer_size = format.buffer_size;
-	if ( !SUCCESS( unicap_start_capture( handle ) )) {
-		printf("Unicap : Failed to start capture\n");
-	}
-
+	int status = STATUS_SUCCESS;
+	if (!SUCCESS ( status = unicap_register_callback (handle, UNICAP_EVENT_NEW_FRAME, (unicap_callback_t) new_frame_cb, (void *) this) ) )
+		printf("Unicap: error registering callback\n");
+	if (!SUCCESS ( status = unicap_start_capture (handle) ) )
+		printf("Unicap: error starting capture: %i,%i\n",status,STATUS_INVALID_HANDLE);
 }
 
 
@@ -381,33 +408,51 @@ void ofUCUtils::queryUC_imageProperties(void) {
 
 }
 
+//--------------------------------------------------------------------
+void ofUCUtils::new_frame (unicap_data_buffer_t * buffer)
+{
+	if(!deviceReady)
+		return;
+	
+	if(src_pix_fmt!=PIX_FMT_RGB24){
+		avpicture_fill(src,buffer->data,src_pix_fmt,format.size.width,format.size.height);
+		/*if(img_convert(dst,PIX_FMT_RGB24,src,src_pix_fmt,format.size.width,format.size.height)< 0){
+			printf("can't convert buffer to RGB24\n");
+			return;
+		}*/
+		
+		if(sws_scale(toRGB_convert_ctx,
+				src->data, src->linesize, 0, buffer->format.size.height,
+				dst->data, dst->linesize)<0)
+				printf("can't convert colorspaces\n");
+		
+		
+		
+		lock_buffer();
+			avpicture_layout(dst,PIX_FMT_RGB24,d_width,d_height,pixels,d_width*d_height*3);
+		
+	}else{
+		lock_buffer();
+			pixels=buffer->data;
+	}
+	bUCFrameNew = true;
+	unlock_buffer();
+}
+
 
 //--------------------------------------------------------------------
 bool ofUCUtils::getFrameUC(unsigned char ** _pixels) {
-
-	if ( !SUCCESS( unicap_queue_buffer( handle, &buffer ) )) {
-		printf("Unicap : Failed to queue a buffer\n");
-		return false;
-	}
-	/*
-	 Wait until the image buffer is ready
-	 */
-	if ( !SUCCESS( unicap_wait_buffer( handle, &returned_buffer ) )) {
-		printf("Unicap : Failed to wait for buffer\n");
-		return false;
-	}
-
-	if(src_pix_fmt!=PIX_FMT_RGB24){
-		avpicture_fill(src,returned_buffer->data,src_pix_fmt,format.size.width,format.size.height);
-		img_convert(dst,PIX_FMT_RGB24,src,src_pix_fmt,format.size.width,format.size.height);
-		avpicture_layout(dst,PIX_FMT_RGB24,format.size.width,format.size.height,*_pixels,format.size.width*format.size.height*3);
+	if(bUCFrameNew){
+		lock_buffer();
+		bUCFrameNew = false;
+		//memcpy(*_pixels,pixels,d_width*d_height*3);
+		*_pixels=pixels;
+		unlock_buffer();
+		return true;
 	}else{
-		*_pixels = returned_buffer->data;
+		return false;
 	}
-	return true;
-
 }
-
 
 //--------------------------------------------------------------------
 void ofUCUtils::listUCDevices() {
@@ -430,34 +475,37 @@ void ofUCUtils::listUCDevices() {
 void ofUCUtils::close_unicap() {
 
 	unicap_stop_capture(handle);
-	if (buffer.data != NULL) {
-		free(buffer.data);
+	bUCFrameNew=false;
+	
+	if( src_pix_fmt != PIX_FMT_RGB24 ){
+		
+		if ( dst != NULL ){
+			avpicture_free(dst);
+			delete dst;
+		}
+		
+		if ( pixels != NULL ) {
+			delete pixels;
+		}
+	
+		if ( src != NULL ){
+			avpicture_free(src);
+			delete src;
+		}
+		
 	}
-
-	if (src != NULL){
-		avpicture_free(src);
-		delete src;
-	}
-	if (dst != NULL){
-		avpicture_free(dst);
-		delete dst;
-	}
+	
 }
 
 
 //--------------------------------------------------------------------
-int ofUCUtils::getUC_Height(void) {
-
-	return format.size.height;
-
+void ofUCUtils::lock_buffer(){
+	pthread_mutex_lock( &capture_mutex );
 }
 
-
 //--------------------------------------------------------------------
-int ofUCUtils::getUC_Width(void) {
-
-	return format.size.width;
-
+void ofUCUtils::unlock_buffer(){
+	pthread_mutex_unlock( &capture_mutex );
 }
 
 #endif
