@@ -3,6 +3,9 @@
 
 
 #include "ofConstants.h"
+
+#ifndef TARGET_LINUX
+
 #include "ofGraphics.h" 	
 
 
@@ -47,6 +50,8 @@ void            MovieGetStaticFrameRate(Movie inMovie, double *outStaticFrameRat
 #ifdef TARGET_OSX
 	OSErr	GetSettingsPreference(CFStringRef inKey, UserData *outUserData);
 	OSErr	SaveSettingsPreference(CFStringRef inKey, UserData inUserData);
+#endif
+
 #endif
 
 #endif
