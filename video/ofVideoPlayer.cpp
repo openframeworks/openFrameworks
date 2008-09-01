@@ -781,6 +781,22 @@ int ofVideoPlayer::getCurrentFrame(){
 	return frame;
 }
 
+				
+//---------------------------------------------------------------------------
+bool ofVideoPlayer::getIsMovieDone(){
+	
+	//--------------------------------------
+	#ifdef OF_VIDEO_PLAYER_QUICKTIME
+	//--------------------------------------
+	
+		bool bIsMovieDone = IsMovieDone(moviePtr);
+		return bIsMovieDone;
+	//--------------------------------------
+	#endif
+	//--------------------------------------
+		
+}
+
 //---------------------------------------------------------------------------
 void ofVideoPlayer::firstFrame(){
 	setFrame(0);
