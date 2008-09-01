@@ -62,12 +62,18 @@ ofImage::~ofImage(){
 
 
 //----------------------------------------------------------
-void ofImage::loadImage(string fileName){
-	loadImageIntoPixels(fileName, myPixels);
-	if (myPixels.bAllocated == true && bUseTexture == true){
-		tex.allocate(myPixels.width, myPixels.height, myPixels.glDataType);
+bool ofImage::loadImage(string fileName){
+	bool bLoadedOk = false;
+	bLoadedOk = loadImageIntoPixels(fileName, myPixels);
+	
+	if (bLoadedOk == true){
+		if (myPixels.bAllocated == true && bUseTexture == true){
+			tex.allocate(myPixels.width, myPixels.height, myPixels.glDataType);
+		}
+		update();
 	}	
-	update();
+	
+	return bLoadedOk;
 }
 
 //----------------------------------------------------------
@@ -449,7 +455,8 @@ void ofCloseFreeImage(){
 }
 
 //----------------------------------------------------
-void  ofImage::loadImageIntoPixels(string fileName, ofPixels &pix){
+bool ofImage::loadImageIntoPixels(string fileName, ofPixels &pix){
+	
 	
 	int					width, height, bpp;
 	fileName			= ofToDataPath(fileName);
@@ -534,6 +541,8 @@ void  ofImage::loadImageIntoPixels(string fileName, ofPixels &pix){
 	if (bmp != NULL){
 		FreeImage_Unload(bmp);
 	}
+	
+	return bLoaded;
 }
 
 //----------------------------------------------------------------
