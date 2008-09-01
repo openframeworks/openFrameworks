@@ -139,7 +139,8 @@ void mouse_cb(int button, int state, int x, int y) {
 		if (state == GLUT_DOWN) {
 			OFSAptr->mousePressed(x, height - y, button);
 		} else if (state == GLUT_UP) {
-			OFSAptr->mouseReleased();
+			OFSAptr->mouseReleased();			// call the deprecated one, to keep old code working
+			OFSAptr->mouseReleased(button);		// call the new one, to support mouseReleased per button
 		}
 		buttonInUse = button;
 	}
