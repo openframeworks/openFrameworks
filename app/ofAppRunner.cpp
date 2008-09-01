@@ -2,7 +2,7 @@
 
 //========================================================================
 // static variables:
-static ofSimpleApp * 		OFSAptr;
+ofSimpleApp	*				OFSAptr;
 int							windowMode;
 bool 						bMousePressed;
 bool						bRightButton;
@@ -44,7 +44,6 @@ void ofSetupOpenGL(int w, int h, int screenMode){
 		char gameStr[64];
 		sprintf( gameStr, "%dx%d:%d@%d", w, h, 32, 60 );
 
-
     	glutGameModeString(gameStr);
 
     	if (!glutGameModeGet(GLUT_GAME_MODE_POSSIBLE)){
@@ -85,9 +84,7 @@ void ofExitCallback(){
 		timeEndPeriod(1);
 	#endif
 
-	OFSAptr->exit();
-
-	delete OFSAptr;
+    ofAppEvents.notifyExit( NULL );
 
 }
 
@@ -97,7 +94,7 @@ void ofRunApp(ofSimpleApp * OFSA){
 	OFSAptr = OFSA;
 	OFSAptr->mouseX = 0;
 	OFSAptr->mouseY = 0;
-	
+
 	atexit(ofExitCallback);
 
 	#ifdef WIN32_HIGH_RES_TIMING
@@ -136,7 +133,8 @@ void ofRunApp(ofSimpleApp * OFSA){
 	// 		(users can seed it to a value in setup
 	// 		if they want it fixed);
 
-	OFSA->setup();
+    ofAppEvents.notifySetup( NULL );
+    
 	glutMainLoop();
 }
 

@@ -51,8 +51,7 @@ void convertPixels(unsigned char * gWorldPixels, unsigned char * rgbPixels, int 
 	
 	int * rgbaPtr 			= (int *) gWorldPixels;
 	pix24 * rgbPtr 			= (pix24 *) rgbPixels;
-	int totalPixelCount 	= w * h;
-	unsigned char * rgbaStart;
+		unsigned char * rgbaStart;
 	
 	//	putting in the boolean, so we can work on 
 	//	0,0 in top right...
@@ -110,82 +109,8 @@ Boolean SeqGrabberModalFilterUPP (DialogPtr theDialog, const EventRecord *theEve
 }
 
 
-
-//----------------------------------------
-
-#ifdef TARGET_OSX
-// GetSettingsPreference
-//    Returns a preference for a specified key as QuickTime UserData
-// It is your responsibility to dispose of the returned UserData
-OSErr GetSettingsPreference(CFStringRef inKey, UserData *outUserData)
-{
-  CFPropertyListRef theCFSettings;
-  Handle            theHandle = NULL;
-  UserData          theUserData = NULL;
-  OSErr             err = paramErr;
-
-  // read the new setttings from our preferences
-  theCFSettings = CFPreferencesCopyAppValue(inKey,
-                                         kCFPreferencesCurrentApplication);
-  if (theCFSettings) {
-    err = PtrToHand(CFDataGetBytePtr((CFDataRef)theCFSettings), &theHandle,
-                    CFDataGetLength((CFDataRef)theCFSettings));
-					        
-    CFRelease(theCFSettings);
-    if (theHandle) {
-      err = NewUserDataFromHandle(theHandle, &theUserData);
-      if (theUserData) {
-        *outUserData = theUserData;
-      }
-      DisposeHandle(theHandle);
-    }
-  }
-
-  return err;
-}
-
-//----------------------------------------
-// SaveSettingsPreference
-//    Saves a preference for a specified key from QuickTime UserData
-OSErr SaveSettingsPreference(CFStringRef inKey, UserData inUserData)
-{
-  CFDataRef theCFSettings;
-  Handle    hSettings;
-  OSErr     err;
-    
-  if (NULL == inUserData) return paramErr;
-
-  hSettings = NewHandle(0);
-  err = MemError();
-    
-  if (noErr == err) {
-    err = PutUserDataIntoHandle(inUserData, hSettings); 
-        
-    if (noErr == err) {
-      HLock(hSettings);
-    
-      theCFSettings = CFDataCreate(kCFAllocatorDefault,
-                                   (UInt8 *)*hSettings,
-                                   GetHandleSize(hSettings));
-      if (theCFSettings) {
-        CFPreferencesSetAppValue(inKey, theCFSettings,
-                                 kCFPreferencesCurrentApplication);
-        CFPreferencesAppSynchronize(kCFPreferencesCurrentApplication);
-        CFRelease(theCFSettings);
-      }
-    }
-
-    DisposeHandle(hSettings);
-  }
-
-  return err;
-}
-
-
-
 #define   kCharacteristicHasVideoFrameRate		FOUR_CHAR_CODE('vfrr')
 #define   kCharacteristicIsAnMpegTrack			FOUR_CHAR_CODE('mpeg')
-
 
 /*
 
@@ -350,8 +275,77 @@ OSErr MediaGetStaticFrameRate(Media inMovieMedia, double *outFPS)
 }
 
 
+//----------------------------------------
 
+#ifdef TARGET_OSX
+// GetSettingsPreference
+//    Returns a preference for a specified key as QuickTime UserData
+// It is your responsibility to dispose of the returned UserData
+OSErr GetSettingsPreference(CFStringRef inKey, UserData *outUserData)
+{
+  CFPropertyListRef theCFSettings;
+  Handle            theHandle = NULL;
+  UserData          theUserData = NULL;
+  OSErr             err = paramErr;
 
+  // read the new setttings from our preferences
+  theCFSettings = CFPreferencesCopyAppValue(inKey,
+                                         kCFPreferencesCurrentApplication);
+  if (theCFSettings) {
+    err = PtrToHand(CFDataGetBytePtr((CFDataRef)theCFSettings), &theHandle,
+                    CFDataGetLength((CFDataRef)theCFSettings));
+					        
+    CFRelease(theCFSettings);
+    if (theHandle) {
+      err = NewUserDataFromHandle(theHandle, &theUserData);
+      if (theUserData) {
+        *outUserData = theUserData;
+      }
+      DisposeHandle(theHandle);
+    }
+  }
 
+  return err;
+}
+
+//----------------------------------------
+// SaveSettingsPreference
+//    Saves a preference for a specified key from QuickTime UserData
+OSErr SaveSettingsPreference(CFStringRef inKey, UserData inUserData)
+{
+  CFDataRef theCFSettings;
+  Handle    hSettings;
+  OSErr     err;
+    
+  if (NULL == inUserData) return paramErr;
+
+  hSettings = NewHandle(0);
+  err = MemError();
+    
+  if (noErr == err) {
+    err = PutUserDataIntoHandle(inUserData, hSettings); 
+        
+    if (noErr == err) {
+      HLock(hSettings);
+    
+      theCFSettings = CFDataCreate(kCFAllocatorDefault,
+                                   (UInt8 *)*hSettings,
+                                   GetHandleSize(hSettings));
+      if (theCFSettings) {
+        CFPreferencesSetAppValue(inKey, theCFSettings,
+                                 kCFPreferencesCurrentApplication);
+        CFPreferencesAppSynchronize(kCFPreferencesCurrentApplication);
+        CFRelease(theCFSettings);
+      }
+    }
+
+    DisposeHandle(hSettings);
+  }
+
+  return err;
+}
+
+//end mac specific stuff
 #endif
+
 #endif

@@ -770,6 +770,7 @@ float ofVideoPlayer::getPosition(){
 
 //---------------------------------------------------------------------------
 int ofVideoPlayer::getCurrentFrame(){
+	
 	int frame = 0;
 #ifndef TARGET_LINUX
 	
