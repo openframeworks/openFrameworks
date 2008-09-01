@@ -1,5 +1,5 @@
 #include "ofQtUtils.h"
-
+#ifndef TARGET_LINUX
 static bool bQuicktimeInitialized = false;
 
 //----------------------------------------
@@ -354,4 +354,4 @@ OSErr MediaGetStaticFrameRate(Media inMovieMedia, double *outFPS)
 
 
 #endif
-
+#endif
