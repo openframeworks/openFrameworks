@@ -7,6 +7,7 @@
 
 #ifdef OF_VIDEO_PLAYER_FOBS
 	#include "Decoder.h"
+	#include <pthread.h>
 #else 
 	#include "ofQtUtils.h"
 #endif
@@ -104,7 +105,17 @@ class ofVideoPlayer{
 		bool 				bPlaying;
 		bool 				bPaused;
 		bool 				bIsFrameNew;			// if we are new
-
+		
+		//--------------------------------------
+		#ifdef OF_VIDEO_PLAYER_FOBS
+		//--------------------------------------
+		pthread_mutex_t			time_mutex;
+		
+		void 					lock();
+		void 					unlock();
+		//--------------------------------------
+		#endif
+		//--------------------------------------
 
 
 };

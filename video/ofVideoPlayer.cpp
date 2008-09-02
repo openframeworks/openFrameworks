@@ -163,66 +163,42 @@ void ofVideoPlayer::idleMovie(){
 		//--------------------------------------------------------------
 		#else // linux.
 		//--------------------------------------------------------------
-
-			diffTime = (float)ofGetElapsedTimeMillis() - (float)(timeLastIdle);
-			timeLastIdle = (float)ofGetElapsedTimeMillis();
+				
+			
+			float currentTime = (float)ofGetElapsedTimeMillis();
+			diffTime = currentTime - timeLastIdle;
+			timeLastIdle = currentTime;
             float pctDone =  diffTime / durationMillis;   // given this much time, how much of the movie did we do?
 
+            lock();
+            if (!bPaused) {
+            	positionPct += (pctDone * speed); //speed;
 
+				//------------------------------------- now, let's do different things if we are looping or not:
+				if (loopMode == OF_LOOP_NONE){
+				  if (positionPct > 1) positionPct = 1;
+				  if (positionPct < 0) positionPct = 0;
+				} else if (loopMode == OF_LOOP_PALINDROME) {
+				  if (positionPct > 1) {
+				      float diff = positionPct - 1.0f;
+				      positionPct = 1 - diff;
+				      speed *= -1;
+				  }
+				  if (positionPct < 0){
+				      float diff = -positionPct;
+				      positionPct = 0 + diff;
+				      speed *= -1;
+				  }
+				} else {
+				    while (positionPct < 0) positionPct += 1;
+				    while (positionPct > 1) positionPct -= 1;
+				}
 
-            /* -----------------------------------------------------------
-            // legacy code, on it's way out.
-			in .h:
-                //float				frameTime;    // legacy but we keep it in here for now, will remove soon
-
-			in loadMovie:
-                //not used anymore, but kept around for reference for now
-                //istartTime 			= ofGetElapsedTimeMillis();
-                //frameTime 			= ((1.0f / fobsDecoder->getFrameRate())*1000.0f);
-
-			in idleMovie:
-                // for the given time, for speed = 1, we did this many frames:
-                this is another way of doing it, but I think it somehow drifts over a long time
-                (more calculations = more chances for error?
-                so we do it the other way (below)
-                float amountDone = (float)(diffTime) / (float)frameTime;
-                float pctDone = amountDone / (float)iTotalFrames;
-
-                // my drift test
-                static float adder = 0;
-                static float adder2 = 0;
-                adder += pctDone;
-                adder2 += pctDone2;
-                printf("%f %f   ----- %f \n", adder, adder2, ofGetElapsedTimef()/fobsDecoder->getDurationSeconds())
-			----------------------------------------------------------- */
-
-            if (bPaused != true) positionPct += (pctDone * speed); //speed;
-
-			//------------------------------------- now, let's do different things if we are looping or not:
-			if (loopMode == OF_LOOP_NONE){
-			  if (positionPct > 1) positionPct = 1;
-			  if (positionPct < 0) positionPct = 0;
-			} else if (loopMode == OF_LOOP_PALINDROME) {
-			  if (positionPct > 1) {
-			      float diff = positionPct - 1.0f;
-			      positionPct = 1 - diff;
-			      speed *= -1;
-			  }
-			  if (positionPct < 0){
-			      float diff = -positionPct;
-			      positionPct = 0 + diff;
-			      speed *= -1;
-			  }
-			} else {
-			    while (positionPct < 0) positionPct += 1;
-			    while (positionPct > 1) positionPct -= 1;
-			}
-
-			fobsDecoder->setFrame((int)(positionPct * iTotalFrames));
-
+				fobsDecoder->setPosition((omnividea::fobs::TimeStamp)(positionPct * durationMillis));
+            }
 			int curFrameIndex =  fobsDecoder->getFrameIndex();
             bHavePixelsChanged = curFrameIndex != lastFrameIndex;
-			if (curFrameIndex != lastFrameIndex){
+			if (bHavePixelsChanged){
 			    unsigned char *rgb = fobsDecoder->getRGB();
 			    memcpy(pixels, rgb, width*height*3);
 			    tex.loadData(pixels, width, height, GL_RGB);
@@ -230,7 +206,7 @@ void ofVideoPlayer::idleMovie(){
 
 
 			lastFrameIndex = curFrameIndex;
-
+			unlock();
 
 		//--------------------------------------------------------------
 		#endif
@@ -444,15 +420,19 @@ bool ofVideoPlayer::loadMovie(string name){
 	//--------------------------------------
 	#else
 	//--------------------------------------
-
+	
 		bLoaded      		= false;
-		bPaused 			= false;
+		bPaused 			= true;
 		speed 				= 1.0f;
 		bHavePixelsChanged 	= false;
 		name 					= ofToDataPath(name);
 		fobsDecoder 		= new omnividea::fobs::Decoder(name.c_str());
 		omnividea::fobs::ReturnCode error = fobsDecoder->open();
 
+		
+		if( error != omnividea::fobs::OkCode )
+			return false;
+		
 		width 					= fobsDecoder->getWidth();
 		height 					= fobsDecoder->getHeight();
 		pixels					= new unsigned char[width*height*3];
@@ -542,7 +522,16 @@ void ofVideoPlayer::start(){
 		bStarted = true;
 		bPlaying = true;
 	}
-
+	
+	//--------------------------------------
+	#else
+	//--------------------------------------
+	
+		bHavePixelsChanged = true;
+		bStarted = true;
+		bPlaying = true;
+		setPaused(false);
+		
 	//--------------------------------------
 	#endif
 	//--------------------------------------
@@ -569,9 +558,20 @@ void ofVideoPlayer::play(){
 	}
 
 	//--------------------------------------
+	#else
+	//--------------------------------------
+
+		if (!bStarted){
+		 	start();
+		}else {
+			setPaused(false);
+		}
+		
+	//--------------------------------------
 	#endif
 	//--------------------------------------
 
+	
 
 }
 
@@ -583,15 +583,17 @@ void ofVideoPlayer::stop(){
 	//--------------------------------------
 
 	StopMovie (moviePtr);
-	bPlaying = false;
 	SetMovieActive (moviePtr, false);
-	bStarted = false;
 
+	//--------------------------------------
+	#else
+	//--------------------------------------
+
+	setPaused(true);
+	
 	//--------------------------------------
 	#endif
 	//--------------------------------------
-
-
 }
 
 //--------------------------------------------------------
@@ -677,9 +679,11 @@ void ofVideoPlayer::setPosition(float pct){
 	#else
 	//--------------------------------------
 
+	lock();
         pct = CLAMP(pct, 0,1);
         positionPct = pct;  // check between 0 and 1;
-
+	unlock();
+		
 	//--------------------------------------
 	#endif
 	//--------------------------------------
@@ -690,7 +694,10 @@ void ofVideoPlayer::setPosition(float pct){
 //---------------------------------------------------------------------------
 void ofVideoPlayer::setFrame(int frame){
 	
-#ifndef TARGET_LINUX
+	//--------------------------------------
+	#ifdef OF_VIDEO_PLAYER_QUICKTIME
+	//--------------------------------------
+	
 	// frame 0 = first frame...  
 	
 	// this is the simple way...
@@ -715,9 +722,19 @@ void ofVideoPlayer::setFrame(int frame){
 	}
 	
    if (!bPaused) SetMovieRate(moviePtr, X2Fix(speed));
-#else
-   fobsDecoder->setFrame(frame);
-#endif
+   
+   //--------------------------------------
+	#else
+   //--------------------------------------
+   
+   lock();
+   		//fobsDecoder->setFrame(frame);
+   		positionPct = ((float)frame) / (float)iTotalFrames;
+   unlock();
+   
+   //--------------------------------------
+	#endif
+   //--------------------------------------
 	
 }
 
@@ -771,8 +788,10 @@ float ofVideoPlayer::getPosition(){
 //---------------------------------------------------------------------------
 int ofVideoPlayer::getCurrentFrame(){
 	
+	//--------------------------------------
+	#ifdef OF_VIDEO_PLAYER_QUICKTIME
+	//--------------------------------------
 	int frame = 0;
-#ifndef TARGET_LINUX
 	
 	// zach I think this may fail on variable length frames...
 	float pos = getPosition();
@@ -784,11 +803,19 @@ int ofVideoPlayer::getCurrentFrame(){
 	if (floatRemainder > 0.5f) framePosInInt = framePosInInt + 1;
 	//frame = (int)ceil((getTotalNumFrames() * getPosition()));
 	frame = framePosInInt;
-	
-#else
-	frame = fobsDecoder->getFrameIndex();
-#endif
 	return frame;
+	
+	//--------------------------------------
+	#else
+	//--------------------------------------
+	
+	return lastFrameIndex;
+	
+	//--------------------------------------
+	#endif
+	//--------------------------------------
+	
+	
 }
 
 				
@@ -805,21 +832,69 @@ bool ofVideoPlayer::getIsMovieDone(){
 	#endif
 	//--------------------------------------
 		
+	//--------------------------------------
+	#ifdef OF_VIDEO_PLAYER_FOBS
+	//--------------------------------------
+	lock();
+		bool bIsMovieDone = (lastFrameIndex == iTotalFrames);
+	unlock();
+	
+		return bIsMovieDone;
+	//--------------------------------------
+	#endif
+	//--------------------------------------
+		
 }
 
 //---------------------------------------------------------------------------
 void ofVideoPlayer::firstFrame(){
+	
 	setFrame(0);
+	
 }
 
 //---------------------------------------------------------------------------
 void ofVideoPlayer::nextFrame(){
+	//--------------------------------------
+	#ifdef OF_VIDEO_PLAYER_QUICKTIME
+	//--------------------------------------
+	
 	setFrame(getCurrentFrame() + 1);
+	
+	//--------------------------------------
+	#else
+	//--------------------------------------
+	
+	lock();
+		//fobsDecoder->nextFrame();
+		positionPct += (fobsDecoder->getNextFrameTime() - fobsDecoder->getFrameTime()) / getDuration(); 
+	unlock();
+	
+	//--------------------------------------
+	#endif
+	//--------------------------------------
 }
 
 //---------------------------------------------------------------------------
 void ofVideoPlayer::previousFrame(){
+	//--------------------------------------
+	#ifdef OF_VIDEO_PLAYER_QUICKTIME
+	//--------------------------------------
+	
 	setFrame(getCurrentFrame() - 1);
+	
+	//--------------------------------------
+	#else
+	//--------------------------------------
+	
+	lock();
+		//fobsDecoder->prevFrame();
+		positionPct -= (fobsDecoder->getNextFrameTime() - fobsDecoder->getFrameTime()) / getDuration(); 
+	unlock();
+	
+	//--------------------------------------
+	#endif
+	//--------------------------------------
 }
 
 
@@ -888,4 +963,20 @@ void ofVideoPlayer::draw(float _x, float _y){
 }
 
 
+//--------------------------------------
+#ifdef OF_VIDEO_PLAYER_FOBS
+//--------------------------------------
 
+//------------------------------------
+void ofVideoPlayer::lock(){
+	pthread_mutex_lock( &time_mutex );
+}
+
+//------------------------------------
+void ofVideoPlayer::unlock(){
+	pthread_mutex_unlock( &time_mutex );
+}
+
+//--------------------------------------
+#endif
+//--------------------------------------
