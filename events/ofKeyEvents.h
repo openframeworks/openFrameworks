@@ -18,7 +18,9 @@ class ofKeyListener {
   
 	virtual void keyPressed(int key){};
 	virtual void keyReleased(int key){};
-            
+  
+  
+  public:   
 	void keyPressed(const void* sender, ofKeyEventArgs& eventArgs){
 		keyPressed(eventArgs.key);
 	}

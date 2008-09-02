@@ -10,14 +10,15 @@
 
 class ofAppListener {
 
-  protected:
+protected:
   
 	virtual void setup(){};
 	virtual void update(){};
     virtual void draw(){};
 	virtual void exit(){};
     
-	//TODO: sleep now
+public:
+	
 	void setup(const void* sender, ofEventArgs& eventArgs){
 		setup();
 	}

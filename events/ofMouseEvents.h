@@ -24,6 +24,7 @@ class ofMouseListener {
 	virtual void mouseReleased(){}; //this will be depreciated - need so we don't break current code
 	virtual void mouseReleased(int x, int y, int button){};
     
+  public:
 	void mouseMoved(const void* sender, ofMouseEventArgs& eventArgs){
 		mouseMoved(eventArgs.x, eventArgs.y);
 	}
