@@ -193,9 +193,10 @@ void ofVideoPlayer::idleMovie(){
 				    while (positionPct < 0) positionPct += 1;
 				    while (positionPct > 1) positionPct -= 1;
 				}
-
-				fobsDecoder->setPosition((omnividea::fobs::TimeStamp)(positionPct * durationMillis));
             }
+			
+            fobsDecoder->setPosition((omnividea::fobs::TimeStamp)(positionPct * durationMillis));
+            
 			int curFrameIndex =  fobsDecoder->getFrameIndex();
             bHavePixelsChanged = curFrameIndex != lastFrameIndex;
 			if (bHavePixelsChanged){
@@ -680,7 +681,7 @@ void ofVideoPlayer::setPosition(float pct){
 	//--------------------------------------
 
 	lock();
-        pct = CLAMP(pct, 0,1);
+        //pct = CLAMP(pct, 0,1);
         positionPct = pct;  // check between 0 and 1;
 	unlock();
 		
@@ -776,7 +777,7 @@ float ofVideoPlayer::getPosition(){
 	#else
 	//--------------------------------------
 
-		return (float) fobsDecoder->getFrameTime() / getDuration();
+		return positionPct;
 
 	//--------------------------------------
 	#endif
