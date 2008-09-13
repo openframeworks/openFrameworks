@@ -464,7 +464,7 @@ void ofVideoGrabber::close(){
 	#endif
 	//---------------------------------
 	if (pixels != NULL){
-		delete pixels;
+		delete[] pixels;
 		pixels = NULL;
 	}
 
