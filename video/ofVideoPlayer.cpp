@@ -117,6 +117,8 @@ ofVideoPlayer::ofVideoPlayer (){
 	pixels						= NULL;
 	nFrames						= 0;
 	bPaused						= false;
+	
+	
 
 	//--------------------------------------------------------------
     #ifndef  TARGET_LINUX  // !linux = quicktime...
@@ -127,8 +129,16 @@ ofVideoPlayer::ofVideoPlayer (){
 	//--------------------------------------------------------------
     #else
     //--------------------------------------------------------------
-
+        iTotalFrames				= 0;
 		fobsDecoder					= NULL;
+		bIsFrameNew					= false;
+		loopMode					= OF_LOOP_NONE;
+		timeLastIdle				= 0;
+		diffTime					= 0;
+		positionPct					= 0;
+		lastFrameIndex				= 0;  // as we play, look for changed frames
+		durationMillis				= 0;
+		pthread_mutex_init(&time_mutex,NULL);
 	//--------------------------------------------------------------
 	#endif
 	//--------------------------------------------------------------
@@ -200,7 +210,7 @@ void ofVideoPlayer::idleMovie(){
 			int curFrameIndex =  fobsDecoder->getFrameIndex();
             bHavePixelsChanged = curFrameIndex != lastFrameIndex;
 			if (bHavePixelsChanged){
-			    unsigned char *rgb = fobsDecoder->getRGB();
+			    unsigned char *rgb = fobsDecoder->getRGB(width,height);
 			    memcpy(pixels, rgb, width*height*3);
 			    tex.loadData(pixels, width, height, GL_RGB);
 			}
@@ -431,9 +441,10 @@ bool ofVideoPlayer::loadMovie(string name){
 		omnividea::fobs::ReturnCode error = fobsDecoder->open();
 
 		
-		if( error != omnividea::fobs::OkCode )
+		if( error != omnividea::fobs::OkCode ){
+			printf("error loading movie\n");
 			return false;
-		
+		}
 		width 					= fobsDecoder->getWidth();
 		height 					= fobsDecoder->getHeight();
 		pixels					= new unsigned char[width*height*3];
@@ -452,7 +463,7 @@ bool ofVideoPlayer::loadMovie(string name){
 			tex.loadData(pixels, width, height, GL_RGB);
 		}
 
-
+		
 		error = fobsDecoder->setFrame(0);
 
 		if(error == omnividea::fobs::NoFrameError) {
@@ -462,8 +473,11 @@ bool ofVideoPlayer::loadMovie(string name){
 
 		if(omnividea::fobs::isOk(error)){
 			// get some pixels in:
-			unsigned char *rgb = fobsDecoder->getRGB();
-			if(rgb == NULL) error = omnividea::fobs::GenericError;
+			unsigned char *rgb = fobsDecoder->getRGB(width,height);
+			if(rgb == NULL){
+				printf("load movie: getRGB error\n");
+				error = omnividea::fobs::GenericError;
+			}
 			if(isOk(error))
 			{
 				memcpy(pixels, rgb, width*height*3);
