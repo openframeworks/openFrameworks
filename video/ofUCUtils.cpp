@@ -8,8 +8,11 @@
 
 extern "C"
 {
-#include <swscale.h>
-#include "avcodec.h"
+#include "libavformat/avformat.h"
+#include "libswscale/swscale.h"
+#include "libavcodec/opt.h"
+#include "libavutil/fifo.h"
+#include "libavutil/avstring.h"
 }
 
 
@@ -106,6 +109,7 @@ PixelFormat fourcc_to_pix_fmt( unsigned int fourcc)
 //--------------------------------------------------------------------
 void new_frame_cb (unicap_event_t event, unicap_handle_t handle,
     	unicap_data_buffer_t * buffer, void *usr_data){
+	
 	((ofUCUtils*)usr_data)->new_frame(buffer);
 }
 
@@ -331,19 +335,16 @@ void ofUCUtils::set_format(int w, int h) {
 							d_width, d_height, PIX_FMT_RGB24,
 							VIDEOGRABBER_RESIZE_FLAGS, NULL, NULL, NULL);
 			
-			//sws_setColorspaceDetails(toRGB_convert_ctx, NULL,255,NULL,255,100,100,100);
 			
-			//printf("fourcc %i : %i\n",format.fourcc,FOURCC('Y', 'U', 'Y', 'V'));
 			printf("Converting to RGB24 (%i,%i)\n",w,h);  
-			//pixels=new unsigned char[format.size.width*format.size.height*3];
+
 			pixels=new unsigned char[d_width*d_height*3];
 		}
 		
-		   if( !SUCCESS( unicap_get_format( handle, &format ) ) )
-		   {
-		/*       g_warning( "Failed to get current video format\n" ); */
-			   return;
-		   }
+	   if( !SUCCESS( unicap_get_format( handle, &format ) ) )
+	   {
+		   return;
+	   }
 		   
 		format.buffer_type = UNICAP_BUFFER_TYPE_SYSTEM;  
 		   
@@ -357,8 +358,10 @@ void ofUCUtils::set_format(int w, int h) {
 
 //--------------------------------------------------------------------
 void ofUCUtils::start_capture() {
+	
 	if(!deviceReady)
 		return;
+	
 	int status = STATUS_SUCCESS;
 	if (!SUCCESS ( status = unicap_register_callback (handle, UNICAP_EVENT_NEW_FRAME, (unicap_callback_t) new_frame_cb, (void *) this) ) )
 		printf("Unicap: error registering callback\n");
@@ -416,18 +419,12 @@ void ofUCUtils::new_frame (unicap_data_buffer_t * buffer)
 	
 	if(src_pix_fmt!=PIX_FMT_RGB24){
 		avpicture_fill(src,buffer->data,src_pix_fmt,format.size.width,format.size.height);
-		/*if(img_convert(dst,PIX_FMT_RGB24,src,src_pix_fmt,format.size.width,format.size.height)< 0){
-			printf("can't convert buffer to RGB24\n");
-			return;
-		}*/
-		
+				
 		if(sws_scale(toRGB_convert_ctx,
-				src->data, src->linesize, 0, buffer->format.size.height,
-				dst->data, dst->linesize)<0)
+			src->data, src->linesize, 0, buffer->format.size.height,
+			dst->data, dst->linesize)<0)
 				printf("can't convert colorspaces\n");
-		
-		
-		
+				
 		lock_buffer();
 			avpicture_layout(dst,PIX_FMT_RGB24,d_width,d_height,pixels,d_width*d_height*3);
 		
@@ -445,8 +442,8 @@ bool ofUCUtils::getFrameUC(unsigned char ** _pixels) {
 	if(bUCFrameNew){
 		lock_buffer();
 		bUCFrameNew = false;
-		//memcpy(*_pixels,pixels,d_width*d_height*3);
-		*_pixels=pixels;
+		memcpy(*_pixels,pixels,d_width*d_height*3);
+		//*_pixels=pixels;
 		unlock_buffer();
 		return true;
 	}else{
@@ -473,7 +470,10 @@ void ofUCUtils::listUCDevices() {
 }
 
 void ofUCUtils::close_unicap() {
-
+	
+	if(!deviceReady)
+		return;
+	
 	unicap_stop_capture(handle);
 	bUCFrameNew=false;
 	
@@ -485,15 +485,16 @@ void ofUCUtils::close_unicap() {
 		}
 		
 		if ( pixels != NULL ) {
-			delete pixels;
+			delete[] pixels;
 		}
 	
 		if ( src != NULL ){
-			avpicture_free(src);
+			//avpicture_free(src);
 			delete src;
 		}
 		
 	}
+	deviceReady=false;
 	
 }
 
