@@ -1,0 +1,47 @@
+<install>
+	
+	<version>0.01</version>
+	<author>chris sugrue, stefanix</author>
+	<url></url>
+	<requires></requires>
+	
+	<add>	
+		<!-- 	=====================================================================	-->
+		<!--	========================== add for the "installation" of OF =========	-->
+		<!-- 	=====================================================================	-->
+	
+		<addons_h>
+		//-------------------------------------------- ofxVectorMath
+		#ifdef OF_ADDON_USING_OFXVECTORMATH
+			#include "ofxVectorMath.h"
+		#endif
+		</addons_h>
+		
+		<!-- 	=====================================================================	-->
+		<!--	========================== add per project using this addon =========	-->
+		<!-- 	=====================================================================	-->
+	
+		<src>
+			<folder name="addons/ofxVectorMath/src">
+				<src>../../../addons/ofxVectorMath/src/ofxMatrix3x3.h</src>
+				<src>../../../addons/ofxVectorMath/src/ofxPoint2f.h</src>
+				<src>../../../addons/ofxVectorMath/src/ofxPoint3f.h</src>
+				<src>../../../addons/ofxVectorMath/src/ofxPoint4f.h</src>
+				<src>../../../addons/ofxVectorMath/src/ofxVec2f.h</src>
+				<src>../../../addons/ofxVectorMath/src/ofxVec3f.h</src>
+				<src>../../../addons/ofxVectorMath/src/ofxVec4f.h</src>
+				<src>../../../addons/ofxVectorMath/src/ofxVectorMath.h</src>
+			</folder>
+		</src>
+		
+		<include>
+			<path>../../../addons/ofxVectorMath/src</path>
+		</include>
+		
+	</add>
+	 
+</install>
+
+
+
+
