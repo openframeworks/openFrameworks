@@ -200,38 +200,38 @@ void ofxCvImage::remap( IplImage* mapX, IplImage* mapY ) {
 */
 
 //--------------------------------------------------------------------------------
-void ofxCvImage::warpPerspective( const ofPoint& A, const ofPoint& B,
-                                 const ofPoint& C, const ofPoint& D )
-{
-	// compute matrix for perspectival warping (homography)
-	CvPoint2D32f cvsrc[4];
-	CvPoint2D32f cvdst[4];
-	CvMat* translate = cvCreateMat( 3,3, CV_32FC1 );
-	cvSetZero( translate );
+void ofxCvImage::warpPerspective( const ofPoint& A, const ofPoint& B, 
+                                  const ofPoint& C, const ofPoint& D ) 
+{ 
+    // compute matrix for perspectival warping (homography) 
+    CvPoint2D32f cvsrc[4]; 
+    CvPoint2D32f cvdst[4]; 
+    CvMat* translate = cvCreateMat( 3,3, CV_32FC1 ); 
+    cvSetZero( translate ); 
 
-    cvsrc[0].x = 0;
-    cvsrc[0].y = 0;
-    cvsrc[1].x = width;
-    cvsrc[1].y = 0;
-    cvsrc[2].x = width;
-    cvsrc[2].y = height;
-    cvsrc[3].x = 0;
-    cvsrc[3].y = height;
+    cvdst[0].x = 0; 
+    cvdst[0].y = 0; 
+    cvdst[1].x = width; 
+    cvdst[1].y = 0; 
+    cvdst[2].x = width; 
+    cvdst[2].y = height; 
+    cvdst[3].x = 0; 
+    cvdst[3].y = height; 
 
-    cvdst[0].x = A.x;
-    cvdst[0].y = A.y;
-    cvdst[1].x = B.x;
-    cvdst[1].y = B.y;
-    cvdst[2].x = C.x;
-    cvdst[2].y = C.y;
-    cvdst[3].x = D.x;
-    cvdst[3].y = D.y;
+    cvsrc[0].x = A.x; 
+    cvsrc[0].y = A.y; 
+    cvsrc[1].x = B.x; 
+    cvsrc[1].y = B.y; 
+    cvsrc[2].x = C.x; 
+    cvsrc[2].y = C.y; 
+    cvsrc[3].x = D.x; 
+    cvsrc[3].y = D.y; 
 
-	cvWarpPerspectiveQMatrix( cvsrc, cvdst, translate );  // calculate homography
-	cvWarpPerspective( cvImage, cvImageTemp, translate );
-    swapTemp();
-	cvReleaseMat( &translate );
-}
+    cvWarpPerspectiveQMatrix( cvsrc, cvdst, translate );  // calculate homography 
+    cvWarpPerspective( cvImage, cvImageTemp, translate ); 
+    swapTemp(); 
+    cvReleaseMat( &translate ); 
+} 
 
 
 
