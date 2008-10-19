@@ -333,5 +333,4 @@ static inline ofxVec2f operator/( float f, const ofxVec2f& vec ) {
 
 
 
-
 #endif
