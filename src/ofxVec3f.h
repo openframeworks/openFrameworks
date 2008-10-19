@@ -20,6 +20,13 @@ class ofxVec3f : public ofPoint {
         z = _z;
     }
 
+    ofxVec3f( const ofPoint& pnt ) { 
+        x = pnt.x; 
+        y = pnt.y;
+        z = pnt.z;
+    } 
+
+
 
     // Getters and Setters.
     //

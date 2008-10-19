@@ -15,6 +15,13 @@ class ofxVec2f : public ofPoint {
         x = _x;
         y = _y;
     }
+    
+    ofxVec2f( const ofPoint& pnt ) { 
+        x = pnt.x; 
+        y = pnt.y;
+    } 
+
+
 
     // Getters and Setters.
     //
@@ -265,14 +272,15 @@ class ofxVec2f : public ofPoint {
         else
             return ofxVec2f();
     }
-
-    ofxVec2f& perpendicular() {
-        float length = (float)sqrt( x*x + y*y );
-        if( length > 0 ) {
-            x = -(y/length);
-            y = x/length;
-        }
-        return *this;
+    
+    ofxVec2f& perpendicular() { 
+        float length = (float)sqrt( x*x + y*y ); 
+        if( length > 0 ) { 
+            float _x = x; 
+            x = -(y/length); 
+            y = _x/length; 
+        } 
+        return *this; 
     }
 
 

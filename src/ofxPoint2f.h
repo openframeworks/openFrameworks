@@ -20,6 +20,12 @@ class ofxPoint2f : public ofPoint {
         y = _y;
     }
 
+    ofxPoint2f( const ofPoint& pnt ) { 
+        x = pnt.x; 
+        y = pnt.y;
+    } 
+
+
 
     // Getters and Setters.
     //
