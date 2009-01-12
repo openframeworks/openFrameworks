@@ -188,10 +188,10 @@ class ofxPoint4f : public ofPoint {
     }
 
     ofxPoint4f& operator/=( const ofxVec4f& vec ) {
-        vec.x!=0 ? x/vec.x : x;
-        vec.y!=0 ? y/vec.y : y;
-        vec.z!=0 ? z/vec.z : z;
-        vec.w!=0 ? w/vec.w : w;
+        vec.x!=0 ? x/=vec.x : x;
+        vec.y!=0 ? y/=vec.y : y;
+        vec.z!=0 ? z/=vec.z : z;
+        vec.w!=0 ? w/=vec.w : w;
         return *this;
     }
 

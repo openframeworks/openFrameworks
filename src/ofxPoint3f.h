@@ -122,9 +122,9 @@ class ofxPoint3f : public ofPoint {
     }
 
     ofxPoint3f& operator/=( const ofPoint& vec ) {
-        vec.x!=0 ? x/vec.x : x;
-        vec.y!=0 ? y/vec.y : y;
-        vec.z!=0 ? z/vec.z : z;
+        vec.x!=0 ? x/=vec.x : x;
+        vec.y!=0 ? y/=vec.y : y;
+        vec.z!=0 ? z/=vec.z : z;
         return *this;
     }
 

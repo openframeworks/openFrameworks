@@ -115,8 +115,8 @@ class ofxVec2f : public ofPoint {
     }
 
     ofxVec2f& operator/=( const ofPoint& vec ) {
-        vec.x!=0 ? x/vec.x : x;
-        vec.y!=0 ? y/vec.y : y;
+        vec.x!=0 ? x/=vec.x : x;
+        vec.y!=0 ? y/=vec.y : y;
         return *this;
     }
 
