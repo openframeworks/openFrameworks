@@ -82,7 +82,7 @@ float * ofxCvFloatImage::getPixelsAsFloats(){
 
 // Set Pixel Data - Arrays
 //--------------------------------------------------------------------------------
-void ofxCvFloatImage::operator =	( ofxCvGrayscaleImage& mom ) {
+void ofxCvFloatImage::operator =	( const ofxCvGrayscaleImage& mom ) {
 	if( mom.width == width && mom.height == height ) {
         cvConvert( mom.getCvImage(), cvImage );
 	} else {
@@ -91,7 +91,7 @@ void ofxCvFloatImage::operator =	( ofxCvGrayscaleImage& mom ) {
 }
 
 //--------------------------------------------------------------------------------
-void ofxCvFloatImage::operator =	( ofxCvColorImage& mom ) {
+void ofxCvFloatImage::operator =	( const ofxCvColorImage& mom ) {
 	if( mom.width == width && mom.height == height ) {
 		cvCvtColor( mom.getCvImage(), cvImage, CV_RGB2GRAY );
 	} else {
@@ -100,7 +100,7 @@ void ofxCvFloatImage::operator =	( ofxCvColorImage& mom ) {
 }
 
 //--------------------------------------------------------------------------------
-void ofxCvFloatImage::operator =	( ofxCvFloatImage& mom ) {
+void ofxCvFloatImage::operator =	( const ofxCvFloatImage& mom ) {
 	if( mom.width == width && mom.height == height ) {
 		cvCopy( mom.getCvImage(), cvImage, 0 );
 	} else {

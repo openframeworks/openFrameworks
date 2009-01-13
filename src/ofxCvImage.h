@@ -52,9 +52,9 @@ class ofxCvImage {
     // Set Pixel Data - Arrays
     //
     //
-    virtual void operator = ( ofxCvGrayscaleImage& mom ) = 0;
-    virtual void operator = ( ofxCvColorImage& mom ) = 0;
-    virtual void operator = ( ofxCvFloatImage& mom ) = 0;
+    virtual void operator = ( const ofxCvGrayscaleImage& mom ) = 0;
+    virtual void operator = ( const ofxCvColorImage& mom ) = 0;
+    virtual void operator = ( const ofxCvFloatImage& mom ) = 0;
 
 
     // Get Pixel Data

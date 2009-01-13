@@ -46,7 +46,7 @@ void ofxCvGrayscaleImage::operator =	( unsigned char* _pixels ) {
 }
 
 //--------------------------------------------------------------------------------
-void ofxCvGrayscaleImage::operator =	( ofxCvGrayscaleImage& mom ) {
+void ofxCvGrayscaleImage::operator =	( const ofxCvGrayscaleImage& mom ) {
 	if( mom.width == width && mom.height == height ) {
         cvCopy( mom.getCvImage(), cvImage, 0 );
 	} else {
@@ -55,7 +55,7 @@ void ofxCvGrayscaleImage::operator =	( ofxCvGrayscaleImage& mom ) {
 }
 
 //--------------------------------------------------------------------------------
-void ofxCvGrayscaleImage::operator =	( ofxCvColorImage& mom ) {
+void ofxCvGrayscaleImage::operator =	( const ofxCvColorImage& mom ) {
 	if( mom.width == width && mom.height == height ) {
 		cvCvtColor( mom.getCvImage(), cvImage, CV_RGB2GRAY );
 	} else {
@@ -64,7 +64,7 @@ void ofxCvGrayscaleImage::operator =	( ofxCvColorImage& mom ) {
 }
 
 //--------------------------------------------------------------------------------
-void ofxCvGrayscaleImage::operator =	( ofxCvFloatImage& mom ) {
+void ofxCvGrayscaleImage::operator =	( const ofxCvFloatImage& mom ) {
 	if( mom.width == width && mom.height == height ) {
 		cvConvertScale( mom.getCvImage(), cvImage, 1.0f, 0);
         //cvConvert( mom.getCvImage(), cvImage );  //this should do the same thing

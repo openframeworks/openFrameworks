@@ -24,9 +24,9 @@ class ofxCvColorImage : public ofxCvImage {
 
     void setFromPixels( unsigned char * _pixels, int w, int h );
     void operator = ( unsigned char* _pixels );
-    void operator = ( ofxCvGrayscaleImage& mom );
-    void operator = ( ofxCvColorImage& mom );
-    void operator = ( ofxCvFloatImage& mom );
+    void operator = ( const ofxCvGrayscaleImage& mom );
+    void operator = ( const ofxCvColorImage& mom );
+    void operator = ( const ofxCvFloatImage& mom );
     void operator -= ( ofxCvColorImage& mom );
     void operator += ( ofxCvColorImage& mom );
     void operator *= ( ofxCvColorImage& mom );

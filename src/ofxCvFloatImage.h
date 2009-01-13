@@ -17,9 +17,9 @@ class ofxCvFloatImage : public ofxCvImage {
         void setFromPixels( float * _pixels, int w, int h );
 
         // Set Pixel Data - Arrays
-        void operator = ( ofxCvGrayscaleImage& mom );
-        void operator = ( ofxCvColorImage& mom );
-        void operator = ( ofxCvFloatImage& mom );
+        void operator = ( const ofxCvGrayscaleImage& mom );
+        void operator = ( const ofxCvColorImage& mom );
+        void operator = ( const ofxCvFloatImage& mom );
         void operator -= ( ofxCvFloatImage& mom );
         void operator += ( ofxCvFloatImage& mom );
         void operator *= ( ofxCvFloatImage& mom );
