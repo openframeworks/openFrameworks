@@ -279,9 +279,9 @@ void ofxCvGrayscaleImage::resize( int w, int h ) {
 //--------------------------------------------------------------------------------
 void ofxCvGrayscaleImage::scaleIntoMe( ofxCvGrayscaleImage& mom, int interpolationMethod){
 
-    if ((interpolationMethod != CV_INTER_NN) ||
-        (interpolationMethod != CV_INTER_LINEAR) ||
-        (interpolationMethod != CV_INTER_AREA) ||
+    if ((interpolationMethod != CV_INTER_NN) &&
+        (interpolationMethod != CV_INTER_LINEAR) &&
+        (interpolationMethod != CV_INTER_AREA) &&
         (interpolationMethod != CV_INTER_CUBIC) ){
         printf("error in scaleIntoMe / interpolationMethod, setting to CV_INTER_NN \n");
 		interpolationMethod = CV_INTER_NN;
