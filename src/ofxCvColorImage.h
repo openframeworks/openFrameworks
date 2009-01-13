@@ -30,6 +30,7 @@ class ofxCvColorImage : public ofxCvImage {
     void operator -= ( ofxCvColorImage& mom );
     void operator += ( ofxCvColorImage& mom );
     void operator *= ( ofxCvColorImage& mom );
+    void operator &= ( ofxCvColorImage& mom );
 
     unsigned char*  getPixels();
 

@@ -141,6 +141,17 @@ void ofxCvFloatImage::operator *= ( ofxCvFloatImage& mom ) {
 }
 
 //--------------------------------------------------------------------------------
+void ofxCvFloatImage::operator &= ( ofxCvFloatImage& mom ) {
+	if( mom.width == width && mom.height == height ) {
+	    //this is doing it bit-wise; probably not what we want
+		cvAnd( cvImage, mom.getCvImage(), cvImageTemp );
+		swapTemp();
+	} else {
+        cout << "error in &=, images are different sizes" << endl;
+	}
+}
+
+//--------------------------------------------------------------------------------
 void ofxCvFloatImage::operator -=	( float scalar ){
     cvSubS(cvImage, cvScalar(scalar), cvImageTemp);
     swapTemp();

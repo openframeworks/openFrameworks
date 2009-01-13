@@ -138,6 +138,16 @@ void ofxCvColorImage::operator *= ( ofxCvColorImage& mom ) {
 	}
 }
 
+//--------------------------------------------------------------------------------
+void ofxCvColorImage::operator &= ( ofxCvColorImage& mom ) {
+	if( mom.width == width && mom.height == height ) {
+		cvAnd( cvImage, mom.getCvImage(), cvImageTemp );
+		swapTemp();
+	} else {
+        cout << "error in &=, images are different sizes" << endl;
+	}
+}
+
 
 // Get Pixel Data
 //--------------------------------------------------------------------------------

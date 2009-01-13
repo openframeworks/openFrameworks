@@ -23,6 +23,10 @@ class ofxCvFloatImage;
 
 
 class ofxCvImage {
+    
+  // the "= 0" after a method means "pure virtual"
+  // it also means they have to be implemented in
+  // ofxCvGrayscaleImage, ofxCvColorImage, ...
 
 
   public:
@@ -34,8 +38,7 @@ class ofxCvImage {
 
     ofxCvImage();
     virtual ~ofxCvImage();
-    virtual void allocate( int w, int h ) = 0;  // pure virtual, must be
-                                                // implemented by subclass
+    virtual void allocate( int w, int h ) = 0;
     virtual void clear();
     virtual void setUseTexture( bool bUse );
 
@@ -78,12 +81,13 @@ class ofxCvImage {
     virtual void dilate( );  // based on 3x3 shape
     virtual void blur( int value=3 );  // value = x*2+1, where x is an integer
     virtual void blurGaussian( int value=3 );  // value = x*2+1, where x is an integer
-
+    virtual void invert();
 
 
     // Image Transformation Operations
     //
     //
+    virtual void resize( int w, int h ) = 0;
     //virtual void setROI( int w, int h );  //TODO, support image regions
     virtual void mirror( bool bFlipVertically, bool bFlipHorizontally );
 

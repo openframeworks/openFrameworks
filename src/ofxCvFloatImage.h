@@ -23,6 +23,7 @@ class ofxCvFloatImage : public ofxCvImage {
         void operator -= ( ofxCvFloatImage& mom );
         void operator += ( ofxCvFloatImage& mom );
         void operator *= ( ofxCvFloatImage& mom );
+        void operator &= ( ofxCvFloatImage& mom );
 
         void operator -=	( float scalar );
     	void operator +=	( float scalar );

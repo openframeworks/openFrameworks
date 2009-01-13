@@ -232,6 +232,7 @@ void  ofxCvGrayscaleImage::drawBlobIntoMe( ofxCvBlob &blob, int color ) {
 
 
 // Image Filter Operations
+
 //--------------------------------------------------------------------------------
 void ofxCvGrayscaleImage::contrastStretch() {
 	double minVal, maxVal;
@@ -254,10 +255,6 @@ void ofxCvGrayscaleImage::threshold( int value, bool invert) {
 	swapTemp();
 }
 
-//--------------------------------------------------------------------------------
-void ofxCvGrayscaleImage::invert(){
-    cvNot(cvImage, cvImage);
-}
 
 // Image Transformation Operations
 //--------------------------------------------------------------------------------

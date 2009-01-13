@@ -20,7 +20,6 @@ class ofxCvGrayscaleImage : public ofxCvImage {
     // Set Pixel Data - Arrays
     void setFromPixels( unsigned char* _pixels, int w, int h );
     void set(int value);
-	void invert( );
 
 
     void operator = ( unsigned char* _pixels );

@@ -117,6 +117,10 @@ void ofxCvImage::blurGaussian( int value ) {
 	swapTemp();
 }
 
+//--------------------------------------------------------------------------------
+void ofxCvGrayscaleImage::invert(){
+    cvNot(cvImage, cvImage);
+}
 
 
 
