@@ -48,6 +48,8 @@ void ofxCvImage::clear() {
 		if( bUseTexture ) {
 			tex.clear();
 		}
+		
+		bAllocated = false;
 	}
 }
 
