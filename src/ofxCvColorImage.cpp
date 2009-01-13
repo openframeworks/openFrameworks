@@ -9,6 +9,7 @@
 
 //--------------------------------------------------------------------------------
 ofxCvColorImage::ofxCvColorImage( const ofxCvColorImage& mom ) {
+    allocate(mom.width, mom.height);    
     cvCopy( mom.getCvImage(), cvImage, 0 );
 }
 

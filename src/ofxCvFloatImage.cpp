@@ -8,6 +8,7 @@
 
 //--------------------------------------------------------------------------------
 ofxCvFloatImage::ofxCvFloatImage( const ofxCvFloatImage& mom ) {
+    allocate(mom.width, mom.height);    
     cvCopy( mom.getCvImage(), cvImage, 0 );
 }
 
