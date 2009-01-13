@@ -67,10 +67,8 @@ void ofxCvGrayscaleImage::operator =	( const ofxCvColorImage& mom ) {
 //--------------------------------------------------------------------------------
 void ofxCvGrayscaleImage::operator =	( const ofxCvFloatImage& mom ) {
 	if( mom.width == width && mom.height == height ) {
-		cvConvertScale( mom.getCvImage(), cvImage, 1.0f, 0);
-        //cvConvert( mom.getCvImage(), cvImage );  //this should do the same thing
-                                                   //and is optimized but cerupcat
-                                                   //had problems with it
+		//cvConvertScale( mom.getCvImage(), cvImage, 1.0f, 0);
+        cvConvert( mom.getCvImage(), cvImage );
 	} else {
         cout << "error in =, images are different sizes" << endl;
 	}
