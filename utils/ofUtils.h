@@ -8,7 +8,7 @@
 #endif
 
 
-int 	ofNextPow2( int input);
+int 	ofNextPow2(int input);
 
 float 	ofGetElapsedTimef();
 int		ofGetElapsedTimeMillis();
@@ -25,7 +25,10 @@ int     ofGetWeekday();
 
 void 	ofLaunchBrowser(string url);
 
+void	ofEnableDataPath();
+void	ofDisableDataPath();
 string 	ofToDataPath(string path);
+
 string  ofToString(double value, int precision = 7);
 string  ofToString(int  value);
 

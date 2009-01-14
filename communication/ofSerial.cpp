@@ -1,5 +1,5 @@
 #include "ofSerial.h"
-
+#include "ofMain.h"
 
 
 //---------------------------------------------
@@ -137,7 +137,7 @@ ofSerial::~ofSerial(){
 void ofSerial::enumerateDevices(){
 
 	//---------------------------------------------
-	#if defined( TARGET_OSX ) || defined( TARGET_LINUX )
+	#if defined( TARGET_OSX )
 	//---------------------------------------------
 
 		//----------------------------------------------------
@@ -166,6 +166,37 @@ void ofSerial::enumerateDevices(){
 	//---------------------------------------------
     #endif
     //---------------------------------------------
+
+	//---------------------------------------------
+	#if defined( TARGET_LINUX )
+	//---------------------------------------------
+
+		//----------------------------------------------------
+		//We will find serial devices by listing the directory
+
+		DIR *dir;
+		struct dirent *entry;
+		dir = opendir("/dev");
+		string str			= "";
+		string device		= "";
+		int deviceCount		= 0;
+
+		if (dir == NULL){
+			printf("ofSerial: error listing devices in /dev\n");
+		} else {
+			printf("ofSerial: listing devices\n");
+			while ((entry = readdir(dir)) != NULL){
+				str = (char *)entry->d_name;
+				if( str.substr(0,3) == "tty" || str.substr(0,3) == "rfc" ){
+					printf("device %i - %s  \n", deviceCount, str.c_str());
+					deviceCount++;
+				}
+			}
+		}
+
+	//---------------------------------------------
+	#endif
+	//---------------------------------------------
 
 	//---------------------------------------------
 	#ifdef TARGET_WIN32
@@ -295,7 +326,7 @@ bool ofSerial::setup(string portName, int baud){
 	//---------------------------------------------
 	
 	    printf("ofSerialInit: opening port %s @ %d bps\n", portName.c_str(), baud);
-		fd = open(portName.c_str(), O_RDWR | O_NOCTTY | O_NDELAY);
+		fd = open(portName.c_str(), O_RDWR | O_NOCTTY | O_NONBLOCK);
 		if(fd == -1){
 			printf("ofSerial: unable to open port\n");
 			return false;
@@ -438,7 +469,7 @@ int ofSerial::writeBytes(unsigned char * buffer, int length){
 	//---------------------------------------------
 	#if defined( TARGET_OSX ) || defined( TARGET_LINUX )
 	    int numWritten = write(fd, buffer, length);
-		if(numWritten <= 0) printf("ofSerial: Can't write to com port");
+		if(numWritten <= 0) printf("ofSerial: Can't write to com port\n");
 		else{
 			if (bVerbose){
 			 	printf("ofSerial: numWritten %i \n", numWritten);
@@ -477,10 +508,10 @@ int ofSerial::readBytes(unsigned char * buffer, int length){
 	//---------------------------------------------
 	#if defined( TARGET_OSX ) || defined( TARGET_LINUX )
 		int nRead = read(fd, buffer, length);	
-		if(nRead <= 0){
+		/*if(nRead <= 0){
 			if (nRead == -1) printf("ofSerial: trouble reading from port\n");
 			return 0;
-		}
+		}*/
 		return nRead;
     #endif
     //---------------------------------------------
@@ -495,6 +526,8 @@ int ofSerial::readBytes(unsigned char * buffer, int length){
 	#endif
 	//---------------------------------------------
 }
+
+
 
 //----------------------------------------------------------------
 bool ofSerial::writeByte(unsigned char singleByte){
@@ -553,10 +586,10 @@ int ofSerial::readByte(){
 	//---------------------------------------------
 	#if defined( TARGET_OSX ) || defined( TARGET_LINUX )
 		int nRead = read(fd, tmpByte, 1);	
-		if(nRead <= 0){
+		/*if(nRead <= 0){
 			if (nRead == -1) printf("ofSerial: trouble reading from port\n");
             		return -1;
-        	}
+        	}*/
     #endif
     //---------------------------------------------
 

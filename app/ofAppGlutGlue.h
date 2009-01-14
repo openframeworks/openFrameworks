@@ -7,6 +7,7 @@ void keyboard_cb(unsigned char key, int x, int y);
 void keyboard_up_cb(unsigned char key, int x, int y);
 void special_key_cb(int key, int x, int y) ;
 void special_key_up_cb(int key, int x, int y) ;
+void resize_cb(int w, int h);
 
 
 //--------------------------------
@@ -14,6 +15,7 @@ static float timeNow, timeThen, fps;
 static int nFramesForFPS;
 static int nFrameCount = 0;
 static int buttonInUse = 0;
+static bool enableSetupScreen	= true;
 
 static bool 	bFrameRateSet;
 int 			millisForFrame;
@@ -25,6 +27,8 @@ int				requestedWidth;
 int				requestedHeight;
 int 			nonFullScreenX = -1;
 int 			nonFullScreenY = -1;
+
+
 //---------------------------------
 
 //------------------------------------------------------------
@@ -102,8 +106,14 @@ void display(void){
 		glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	}
 
-	ofSetupScreen();
-    	ofAppEvents.notifyDraw( NULL );
+	if( enableSetupScreen )ofSetupScreen();
+
+	if(OFSAptr)
+		OFSAptr->draw();
+
+	#ifdef OF_USING_POCO
+		ofNotifyEvent( ofEvents.draw, voidEventArgs );
+	#endif
     
   	glutSwapBuffers();
 
@@ -128,19 +138,31 @@ void display(void){
 //------------------------------------------------------------
 void mouse_cb(int button, int state, int x, int y) {
 	if (nFrameCount > 0){
+		if(OFSAptr){
 		OFSAptr->mouseX = x;
 		OFSAptr->mouseY = y;
+		}
 
 		if (state == GLUT_DOWN) {
-            ofMouseEvents.mouseEventArgs.x = x;
-            ofMouseEvents.mouseEventArgs.y = y;
-            ofMouseEvents.mouseEventArgs.button = button;
-            ofMouseEvents.notifyPressed( NULL );
+			if(OFSAptr)
+				OFSAptr->mousePressed(x,y,button);
+
+			#ifdef OF_USING_POCO
+				mouseEventArgs.x = x;
+				mouseEventArgs.y = y;
+				mouseEventArgs.button = button;
+				ofNotifyEvent( ofEvents.mousePressed, mouseEventArgs );
+			#endif
 		} else if (state == GLUT_UP) {
-            ofMouseEvents.mouseEventArgs.x = x;
-            ofMouseEvents.mouseEventArgs.y = y;
-            ofMouseEvents.mouseEventArgs.button = button;
-            ofMouseEvents.notifyReleased( NULL );
+			if(OFSAptr)
+				OFSAptr->mouseReleased(x,y,button);
+
+			#ifdef OF_USING_POCO
+				mouseEventArgs.x = x;
+				mouseEventArgs.y = y;
+				mouseEventArgs.button = button;
+				ofNotifyEvent( ofEvents.mouseReleased, mouseEventArgs );
+			#endif
 		}
 		buttonInUse = button;
 	}
@@ -148,30 +170,42 @@ void mouse_cb(int button, int state, int x, int y) {
 
 //------------------------------------------------------------
 void motion_cb(int x, int y) {
+
 	if (nFrameCount > 0){
+		if(OFSAptr){
 		OFSAptr->mouseX = x;
 		OFSAptr->mouseY = y;
-		
-		ofMouseEvents.mouseEventArgs.x = x;
-        ofMouseEvents.mouseEventArgs.y = y;
-        ofMouseEvents.mouseEventArgs.button = buttonInUse;
-        ofMouseEvents.notifyDragged( NULL );        
+			OFSAptr->mouseDragged(x,y,buttonInUse);
+		}
+
+		#ifdef OF_USING_POCO
+			mouseEventArgs.x = x;
+			mouseEventArgs.y = y;
+			mouseEventArgs.button = buttonInUse;
+			ofNotifyEvent( ofEvents.mouseDragged, mouseEventArgs );
+		#endif
 	}
+
 }
 
 //------------------------------------------------------------
 void passive_motion_cb(int x, int y) {
 	if (nFrameCount > 0){
+		if(OFSAptr){
 		OFSAptr->mouseX = x;
 		OFSAptr->mouseY = y;
+			OFSAptr->mouseMoved(x,y);
+		}
 
-        ofMouseEvents.mouseEventArgs.x = x;
-        ofMouseEvents.mouseEventArgs.y = y;
-        ofMouseEvents.notifyMoved( NULL );
+		#ifdef OF_USING_POCO
+			mouseEventArgs.x = x;
+			mouseEventArgs.y = y;
+			ofNotifyEvent( ofEvents.mouseMoved, mouseEventArgs );
+		#endif
 	}
 }
 
-
+//------------------------------------------------------------
 void idle_cb(void) {
 
 	//	thanks to jorge for the fix:
@@ -192,7 +226,12 @@ void idle_cb(void) {
 	}
 	prevMillis = ofGetElapsedTimeMillis(); // you have to measure here
 	
-    ofAppEvents.notifyUpdate( NULL );
+	if(OFSAptr)
+		OFSAptr->update();
+
+	#ifdef OF_USING_POCO
+		ofNotifyEvent( ofEvents.update, voidEventArgs );
+	#endif
     
 	glutPostRedisplay();
 }
@@ -200,8 +239,14 @@ void idle_cb(void) {
 
 //------------------------------------------------------------
 void keyboard_cb(unsigned char key, int x, int y) {
-    ofKeyEvents.keyEventArgs.key = key;
-    ofKeyEvents.notifyPressed( NULL );
+	if(OFSAptr)
+		OFSAptr->keyPressed(key);
+
+	#ifdef OF_USING_POCO
+		keyEventArgs.key = key;
+		ofNotifyEvent( ofEvents.keyPressed, keyEventArgs );
+	#endif
+
 	if (key == 27){				// "escape"
 		OF_EXIT_APP(0);
 	}
@@ -209,21 +254,45 @@ void keyboard_cb(unsigned char key, int x, int y) {
 
 //------------------------------------------------------------
 void keyboard_up_cb(unsigned char key, int x, int y) {
-    ofKeyEvents.keyEventArgs.key = key;
-    ofKeyEvents.notifyReleased( NULL );
+	if(OFSAptr)
+		OFSAptr->keyReleased(key);
+
+	#ifdef OF_USING_POCO
+		keyEventArgs.key = key;
+		ofNotifyEvent( ofEvents.keyReleased, keyEventArgs );
+	#endif
 }
 
 //------------------------------------------------------
 void special_key_cb(int key, int x, int y) {
-    ofKeyEvents.keyEventArgs.key = (key | OF_KEY_MODIFIER);
-    ofKeyEvents.notifyPressed( NULL );
+	if(OFSAptr)
+		OFSAptr->keyPressed(key | OF_KEY_MODIFIER);
+
+	#ifdef OF_USING_POCO
+		keyEventArgs.key = (key | OF_KEY_MODIFIER);
+		ofNotifyEvent( ofEvents.keyPressed, keyEventArgs );
+	#endif
 }
 
 //------------------------------------------------------------
 void special_key_up_cb(int key, int x, int y) {
-    ofKeyEvents.keyEventArgs.key = (key | OF_KEY_MODIFIER);
-    ofKeyEvents.notifyReleased( NULL );
+	if(OFSAptr)
+		OFSAptr->keyReleased(key | OF_KEY_MODIFIER);
+
+	#ifdef OF_USING_POCO
+		keyEventArgs.key = (key | OF_KEY_MODIFIER);
+		ofNotifyEvent( ofEvents.keyReleased, keyEventArgs );
+	#endif
 }
 
+//------------------------------------------------------------
+void resize_cb(int w, int h) {
+	if(OFSAptr)
+		OFSAptr->resized(w,h);
 
-
+	#ifdef OF_USING_POCO
+		resizeEventArgs.width = w;
+		resizeEventArgs.height = h;
+		ofNotifyEvent( ofEvents.resize, resizeEventArgs );
+	#endif
+}

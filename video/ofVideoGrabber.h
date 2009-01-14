@@ -4,7 +4,7 @@
 #include "ofConstants.h"
 #include "ofTexture.h"
 #include "ofGraphics.h"
-
+#include "ofTypes.h"
 
 #ifdef OF_VIDEO_CAPTURE_QUICKTIME
 	#include "ofQtUtils.h"
@@ -25,7 +25,7 @@
 // 		image decompress options ala mung...
 
 
-class ofVideoGrabber{
+class ofVideoGrabber:public ofDrawable, public ofUpdatable{
 
 	public :
 
@@ -44,7 +44,9 @@ class ofVideoGrabber{
 		void 			setUseTexture(bool bUse);
 		void 			draw(float x, float y, float w, float h);
 		void 			draw(float x, float y);
-		int 			width, height;
+		void			update(){
+			grabFrame();
+		}
 
 	protected:
 

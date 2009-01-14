@@ -6,7 +6,7 @@
 #include "ofGraphics.h"
 #include "ofAppRunner.h"		// for height()
 #include "FreeImage.h"
-
+#include "ofUtils.h"
 
 typedef struct {
 	

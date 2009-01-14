@@ -2,9 +2,11 @@
 #include "RtAudio.h"
 
 //----------------------------------- static variables:
+static ofSimpleApp 	* 		OFSAptr;
 RtAudio				*		audio;
 int 						nInputChannels;
 int 						nOutputChannels;
+ofAudioEventArgs 			audioEventArgs;
 int 	receiveAudioBufferAndCallSimpleApp(char *buffer, int bufferSize, void *data);
 
 
@@ -13,7 +15,6 @@ int 	receiveAudioBufferAndCallSimpleApp(char *buffer, int bufferSize, void *data
 
 //------------------------------------------------------------------------------
 int receiveAudioBufferAndCallSimpleApp(char *buffer, int bufferSize, void *data){
-
 	// 	rtAudio uses a system by which the audio
 	// 	can be of different formats
 	// 	char, float, etc.
@@ -27,37 +28,51 @@ int receiveAudioBufferAndCallSimpleApp(char *buffer, int bufferSize, void *data)
 	// doesn't produce audio, we pass silence instead of duplex...
 
 	if (nInputChannels > 0){
-    
-        //audioReceived()
-        ofAudioEvents.audioEventArgs.buffer = fPtr;
-        ofAudioEvents.audioEventArgs.bufferSize = bufferSize;
-        ofAudioEvents.audioEventArgs.nChannels = nInputChannels;
-        ofAudioEvents.notifyReceived( NULL );
+		if(OFSAptr)
+			OFSAptr->audioReceived(fPtr, bufferSize, nInputChannels);
+
+		#ifdef OF_CORE_EVENTS_ENABLED
+			audioEventArgs.buffer = fPtr;
+			audioEventArgs.bufferSize = bufferSize;
+			audioEventArgs.nChannels = nInputChannels;
+			ofNotifyEvent( ofEvents.audioReceived, audioEventArgs );
+		#endif
+
 		memset(fPtr, 0, bufferSize * nInputChannels * sizeof(float));
 	}
-    
-	if (nOutputChannels > 0) {
-        //audioRequested()
-        ofAudioEvents.audioEventArgs.buffer = fPtr;
-        ofAudioEvents.audioEventArgs.bufferSize = bufferSize;
-        ofAudioEvents.audioEventArgs.nChannels = nOutputChannels;
-        ofAudioEvents.notifyRequested( NULL );        
+	if (nOutputChannels > 0){
+		if(OFSAptr)
+			OFSAptr->audioRequested(fPtr, bufferSize, nOutputChannels);
+
+		#ifdef OF_CORE_EVENTS_ENABLED
+			audioEventArgs.buffer = fPtr;
+			audioEventArgs.bufferSize = bufferSize;
+			audioEventArgs.nChannels = nOutputChannels;
+			ofNotifyEvent( ofEvents.audioRequested, audioEventArgs );
+		#endif
+
     }
 
 	return 0;
 }
 
 //---------------------------------------------------------
-void ofSoundStreamSetup(int nOutputs, int nInputs){
-	ofSoundStreamSetup(nOutputs, nInputs, 44100, 256, 4);
+void ofSoundStreamSetup(int nOutputs, int nInputs, ofSimpleApp * OFSA = NULL){
+	ofSoundStreamSetup(nOutputs, nInputs, OFSA, 44100, 256, 4);
 }
 
 //---------------------------------------------------------
 void ofSoundStreamSetup(int nOutputs, int nInputs, int sampleRate, int bufferSize, int nBuffers){
+	ofSoundStreamSetup(nOutputs, nInputs, NULL, sampleRate, bufferSize, nBuffers);
+}
+
+//---------------------------------------------------------
+void ofSoundStreamSetup(int nOutputs, int nInputs, ofSimpleApp * OFSA, int sampleRate, int bufferSize, int nBuffers){
 
 	nInputChannels 		=  nInputs;
 	nOutputChannels 	=  nOutputs;
 	int device 			=  0;        // default
+	OFSAptr 			=  OFSA;
 
 	bufferSize = ofNextPow2(bufferSize);	// must be pow2
 
@@ -77,7 +92,6 @@ void ofSoundStreamSetup(int nOutputs, int nInputs, int sampleRate, int bufferSiz
 		error.printMessage();
 	}
 }
-	
 	
 //---------------------------------------------------------
 void ofSoundStreamStop(){

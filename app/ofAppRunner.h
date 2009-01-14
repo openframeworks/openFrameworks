@@ -3,19 +3,11 @@
 
 
 #include "ofMain.h"
-#include "ofGraphics.h"
-#include "ofMath.h"
-#include "ofUtils.h"
-
-#include "ofAppEvents.h"
-#include "ofKeyEvents.h"
-#include "ofMouseEvents.h"
-
 #include "ofSimpleApp.h"
 
 
 void 		ofSetupOpenGL(int w, int h, int screenMode);			// sets up the opengl context!
-void 		ofRunApp(ofSimpleApp * OFSA);
+void 		ofRunApp(ofSimpleApp * OFSA = NULL);
 
 //-------------------------- time
 float 		ofGetFrameRate();
@@ -36,10 +28,13 @@ int 		ofGetHeight();
 void 		ofSetWindowPosition(int x, int y);
 void 		ofSetWindowShape(int width, int height);
 void 		ofSetWindowTitle(string title);
+void		ofEnableSetupScreen();
+void		ofDisableSetupScreen();
 void		ofSetFullscreen(bool fullscreen);
 void		ofToggleFullscreen();
 //-------------------------- sync					
 void 		ofSetVerticalSync(bool bSync);
+
 
 
 #endif	

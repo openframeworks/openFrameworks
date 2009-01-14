@@ -169,6 +169,9 @@
 #endif
 
 
+// comment out this line to disable all poco related code
+#define OF_USING_POCO
+
 
 // core: ---------------------------
 #include <stdio.h>
@@ -241,6 +244,7 @@ using namespace std;
 #define 	OF_IMAGE_COLOR_ALPHA	0x02
 #define 	OF_IMAGE_UNDEFINED		0x03
 
+#define		OF_MAX_STYLE_HISTORY	32
 
 // these are straight out of glu, but renamed and included here
 // for convenience

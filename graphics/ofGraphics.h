@@ -2,6 +2,7 @@
 #define OF_GEOM
 
 #include "ofConstants.h"
+#include "ofTypes.h"
 
 #define  	CIRC_RESOLUTION		    22				// 22 pts for a circle...
 
@@ -17,8 +18,6 @@ void 	ofSetRectMode(int mode);		// set the mode, either to OF_RECTMODE_CORNER or
 // OF's access to settings (bgAuto, origin, corner mode):
 bool 	ofbClearBg();
 int 	ofGetRectMode();				// default is OF_RECTMODE_CORNER
-
-
 
 // geometry 
 void ofTriangle(float x1,float y1,float x2,float y2,float x3, float y3);
@@ -36,6 +35,8 @@ void ofBezier(float x0, float y0, float x1, float y1, float x2, float y2, float 
 void ofNoFill();
 void ofFill();
 
+void ofSetLineWidth(float lineWidth);
+
 // color options
 void ofSetColor(int r, int g, int b); // 0-255
 void ofSetColor(int r, int g, int b, int a); // 0-255
@@ -49,6 +50,12 @@ void ofDisableAlphaBlending();
 void ofEnableSmoothing();
 void ofDisableSmoothing();
 
+// drawing style - combines color, fill, blending and smoothing
+ofStyle ofGetStyle();
+void ofSetStyle(ofStyle style);
+void ofPushStyle();
+void ofPopStyle();
+
 // bitmapped type
 // ** note, this uses glDrawPixels and may be S L 0 W on some graphics cards
 void ofDrawBitmapString(string textString, float x, float y);
@@ -56,12 +63,10 @@ void ofDrawBitmapString(string textString, float x, float y);
 // screen coordinate things...
 void ofSetupScreen();
 
-
 void ofCurveVertex(float x, float y);
 void ofBezierVertex(float x1, float y1, float x2, float y2, float x3, float y3);
 
 	
-
 // for polygons
 void ofSetPolyMode(int mode);	
 void ofBeginShape();
