@@ -25,7 +25,7 @@
 // 		image decompress options ala mung...
 
 
-class ofVideoGrabber:public ofDrawable, public ofUpdatable{
+class ofVideoGrabber : public ofBaseUpdate, public ofBaseDraw{
 
 	public :
 
@@ -44,9 +44,7 @@ class ofVideoGrabber:public ofDrawable, public ofUpdatable{
 		void 			setUseTexture(bool bUse);
 		void 			draw(float x, float y, float w, float h);
 		void 			draw(float x, float y);
-		void			update(){
-			grabFrame();
-		}
+		void			update();
 
 	protected:
 

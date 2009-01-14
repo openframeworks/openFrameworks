@@ -2,7 +2,7 @@
 #include "RtAudio.h"
 
 //----------------------------------- static variables:
-static ofSimpleApp 	* 		OFSAptr;
+static ofBaseApp 	* 		OFSAptr;
 RtAudio				*		audio;
 int 						nInputChannels;
 int 						nOutputChannels;
@@ -57,7 +57,7 @@ int receiveAudioBufferAndCallSimpleApp(char *buffer, int bufferSize, void *data)
 }
 
 //---------------------------------------------------------
-void ofSoundStreamSetup(int nOutputs, int nInputs, ofSimpleApp * OFSA = NULL){
+void ofSoundStreamSetup(int nOutputs, int nInputs, ofBaseApp * OFSA = NULL){
 	ofSoundStreamSetup(nOutputs, nInputs, OFSA, 44100, 256, 4);
 }
 
@@ -67,7 +67,7 @@ void ofSoundStreamSetup(int nOutputs, int nInputs, int sampleRate, int bufferSiz
 }
 
 //---------------------------------------------------------
-void ofSoundStreamSetup(int nOutputs, int nInputs, ofSimpleApp * OFSA, int sampleRate, int bufferSize, int nBuffers){
+void ofSoundStreamSetup(int nOutputs, int nInputs, ofBaseApp * OFSA, int sampleRate, int bufferSize, int nBuffers){
 
 	nInputChannels 		=  nInputs;
 	nOutputChannels 	=  nOutputs;

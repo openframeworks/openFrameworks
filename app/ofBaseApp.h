@@ -1,16 +1,16 @@
-#ifndef _OF_SIMPLE_APP
-#define _OF_SIMPLE_APP
+#ifndef _OF_BASE_APP
+#define _OF_BASE_APP
 
+#include "ofTypes.h"
 
-
-class ofSimpleApp {
+class ofBaseApp : public ofBaseUpdate, public ofBaseDraw{
 	
 	public:
-        ofSimpleApp() {
+        ofBaseApp() {
             mouseX = mouseY = 0;
-		}
-
-		virtual ~ofSimpleApp(){}
+        }
+    	
+		virtual ~ofBaseApp(){}
 		
 		virtual void setup(){}
 		virtual void update(){}
@@ -19,7 +19,7 @@ class ofSimpleApp {
 		
 
 		virtual void resized(int w, int h){}
-		
+
 		virtual void keyPressed( int key ){}
 		virtual void keyReleased( int key ){}
 		

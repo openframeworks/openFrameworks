@@ -23,7 +23,7 @@
 
 //--------------------------
 // app
-#include "ofSimpleApp.h"
+#include "ofBaseApp.h"
 #include "ofAppRunner.h"
 
 //--------------------------

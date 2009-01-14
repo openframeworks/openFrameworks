@@ -1,4 +1,5 @@
 #include "ofMath.h"
+#include "ofAppRunner.h"
 #include <sys/time.h>
 
 
@@ -54,4 +55,70 @@ float ofRandomuf() {
 	randNum = rand()/(RAND_MAX + 1.0); 
 	return randNum;
 }
+
+//---- new to 006
+//from the forums http://www.openframeworks.cc/forum/viewtopic.php?t=1413
+
 //--------------------------------------------------
+float ofNormalize(float value, float min, float max){ 
+   return ofClamp( (value - min) / (max - min), 0, 1);
+} 
+
+//check for division by zero???
+//--------------------------------------------------
+float ofMap(float value, float inputMin, float inputMax, float outputMin, float outputMax) { 
+   return ((value - inputMin) / (inputMax - inputMin) * (outputMax - outputMin) + outputMin); 
+} 
+
+//--------------------------------------------------
+float ofDist(float x1, float y1, float x2, float y2) { 
+   return sqrt(double((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2))); 
+} 
+
+//--------------------------------------------------
+float ofDistSquared(float x1, float y1, float x2, float y2) { 
+   return ( (x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2) ); 
+} 
+
+//--------------------------------------------------
+float ofClamp(float value, float min, float max) { 
+   return value < min ? min : value > max ? max : value; 
+} 
+
+// return sign of the number 
+//--------------------------------------------------
+int ofSign(float n) { 
+  if( n > 0 ) return 1;
+  else if(n < 0) return -1;
+  else return 0;
+} 
+
+//--------------------------------------------------
+bool ofInRange(float t, float min, float max) { 
+   return t>=min && t<=max; 
+} 
+
+//--------------------------------------------------
+float ofRadToDeg(float radians) { 
+   return radians * RAD_TO_DEG; 
+} 
+
+//--------------------------------------------------
+float ofDegToRad(float degrees) { 
+    return degrees * DEG_TO_RAD; 
+} 
+
+//--------------------------------------------------
+float ofLerp(float start, float stop, float amt) { 
+    return start + (stop-start) * amt; 
+} 
+
+//--------------------------------------------------
+float ofRandomWidth() { 
+   return ofRandom(0, ofGetWidth()); 
+} 
+
+//--------------------------------------------------
+float ofRandomHeight() { 
+   return ofRandom(0, ofGetHeight()); 
+}

@@ -34,6 +34,9 @@ string  ofToString(int  value);
 
 string 	ofGetVersionInfo();
 
+void	ofSaveScreen(string filename);
+void	ofSaveFrame();
+
 //----------------------- not for the public:
 void	setFrameNum(int num);
 
