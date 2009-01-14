@@ -49,6 +49,7 @@ class ofxCvImage {
     virtual void operator -= ( float value );
     virtual void operator += ( float value );
 
+    virtual void setFromPixels( unsigned char* _pixels, int w, int h ) = 0;
     virtual void operator = ( const ofxCvGrayscaleImage& mom ) = 0;
     virtual void operator = ( const ofxCvColorImage& mom ) = 0;
     virtual void operator = ( const ofxCvFloatImage& mom ) = 0;

@@ -41,6 +41,11 @@ void ofxCvFloatImage::set(float value){
 }
 
 //--------------------------------------------------------------------------------
+void ofxCvFloatImage::setFromPixels( unsigned char * _pixels, int w, int h ) {
+    cout << "error: setFromPixels not implemented for this image type" << endl;
+}
+
+//--------------------------------------------------------------------------------
 void ofxCvFloatImage::setFromPixels( float * _pixels, int w, int h ) {
 	for( int i = 0; i < h; i++ ) {
 		memcpy( cvImage->imageData+(i*cvImage->widthStep), _pixels+(i*w), w*sizeof(float));

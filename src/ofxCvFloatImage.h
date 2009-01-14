@@ -31,6 +31,7 @@ class ofxCvFloatImage : public ofxCvImage {
     void operator *= ( float scalar );
 	void operator /= ( float scalar );
 	      
+    void setFromPixels( unsigned char* _pixels, int w, int h );
     void setFromPixels( float * _pixels, int w, int h );
     void operator = ( const ofxCvGrayscaleImage& mom );
     void operator = ( const ofxCvColorImage& mom );
