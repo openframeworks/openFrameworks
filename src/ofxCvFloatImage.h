@@ -30,10 +30,10 @@ class ofxCvFloatImage : public ofxCvImage {
         void operator = ( const ofxCvColorImage& mom );
         void operator = ( const ofxCvFloatImage& mom );
         
-        void operator -= ( ofxCvFloatImage& mom );
-        void operator += ( ofxCvFloatImage& mom );
-        void operator *= ( ofxCvFloatImage& mom );
-        void operator &= ( ofxCvFloatImage& mom );
+        void operator -= ( const ofxCvFloatImage& mom );
+        void operator += ( const ofxCvFloatImage& mom );
+        void operator *= ( const ofxCvFloatImage& mom );
+        void operator &= ( const ofxCvFloatImage& mom );
 
         void operator -=	( float scalar );
     	void operator +=	( float scalar );
@@ -61,7 +61,7 @@ class ofxCvFloatImage : public ofxCvImage {
         // Image Transformation Operations
         //
         void resize( int w, int h );
-        void scaleIntoMe( ofxCvFloatImage& mom, int interpolationMethod = CV_INTER_NN);
+        void scaleIntoMe( const ofxCvImage& mom, int interpolationMethod = CV_INTER_NN);
 
 
     private :

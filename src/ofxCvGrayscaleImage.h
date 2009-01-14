@@ -28,10 +28,10 @@ class ofxCvGrayscaleImage : public ofxCvImage {
     void operator = ( const ofxCvColorImage& mom );
     void operator = ( const ofxCvFloatImage& mom );
     
-    void operator -= ( ofxCvGrayscaleImage& mom );
-    void operator += ( ofxCvGrayscaleImage& mom );
-    void operator *= ( ofxCvGrayscaleImage& mom );
-    void operator &= ( ofxCvGrayscaleImage& mom );
+    void operator -= ( const ofxCvGrayscaleImage& mom );
+    void operator += ( const ofxCvGrayscaleImage& mom );
+    void operator *= ( const ofxCvGrayscaleImage& mom );
+    void operator &= ( const ofxCvGrayscaleImage& mom );
     
     void operator -=	( float scalar );
 	void operator +=	( float scalar );
@@ -62,7 +62,7 @@ class ofxCvGrayscaleImage : public ofxCvImage {
     // Image Transformation Operations
     //
     void resize( int w, int h );
-    void scaleIntoMe( ofxCvGrayscaleImage& mom, int interpolationMethod = CV_INTER_NN);
+    void scaleIntoMe( const ofxCvImage& mom, int interpolationMethod = CV_INTER_NN);
 
 
    //---------------------------------------------

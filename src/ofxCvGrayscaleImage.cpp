@@ -82,7 +82,7 @@ void ofxCvGrayscaleImage::operator =	( const ofxCvFloatImage& mom ) {
 
 
 //--------------------------------------------------------------------------------
-void ofxCvGrayscaleImage::operator -= ( ofxCvGrayscaleImage& mom ) {
+void ofxCvGrayscaleImage::operator -= ( const ofxCvGrayscaleImage& mom ) {
 	if( mom.width == width && mom.height == height ) {
 		cvSub( cvImage, mom.getCvImage(), cvImageTemp );
 		swapTemp();
@@ -92,7 +92,7 @@ void ofxCvGrayscaleImage::operator -= ( ofxCvGrayscaleImage& mom ) {
 }
 
 //--------------------------------------------------------------------------------
-void ofxCvGrayscaleImage::operator += ( ofxCvGrayscaleImage& mom ) {
+void ofxCvGrayscaleImage::operator += ( const ofxCvGrayscaleImage& mom ) {
 	if( mom.width == width && mom.height == height ) {
 		cvAdd( cvImage, mom.getCvImage(), cvImageTemp );
 		swapTemp();
@@ -102,7 +102,7 @@ void ofxCvGrayscaleImage::operator += ( ofxCvGrayscaleImage& mom ) {
 }
 
 //--------------------------------------------------------------------------------
-void ofxCvGrayscaleImage::operator *= ( ofxCvGrayscaleImage& mom ) {
+void ofxCvGrayscaleImage::operator *= ( const ofxCvGrayscaleImage& mom ) {
     float scalef = 1.0f / 255.0f;
 	if( mom.width == width && mom.height == height ) {
 		cvMul( cvImage, mom.getCvImage(), cvImageTemp, scalef );
@@ -113,7 +113,7 @@ void ofxCvGrayscaleImage::operator *= ( ofxCvGrayscaleImage& mom ) {
 }
 
 //--------------------------------------------------------------------------------
-void ofxCvGrayscaleImage::operator &= ( ofxCvGrayscaleImage& mom ) {
+void ofxCvGrayscaleImage::operator &= ( const ofxCvGrayscaleImage& mom ) {
 	if( mom.width == width && mom.height == height ) {
 		cvAnd( cvImage, mom.getCvImage(), cvImageTemp );
 		swapTemp();
@@ -273,25 +273,29 @@ void ofxCvGrayscaleImage::resize( int w, int h ) {
 }
 
 //--------------------------------------------------------------------------------
-void ofxCvGrayscaleImage::scaleIntoMe( ofxCvGrayscaleImage& mom, int interpolationMethod){
+void ofxCvGrayscaleImage::scaleIntoMe( const ofxCvImage& mom, int interpolationMethod ){
+    //for interpolation you can pass in:
+    //CV_INTER_NN - nearest-neigbor interpolation,
+    //CV_INTER_LINEAR - bilinear interpolation (used by default)
+    //CV_INTER_AREA - resampling using pixel area relation. It is preferred method 
+    //                for image decimation that gives moire-free results. In case of 
+    //                zooming it is similar to CV_INTER_NN method.
+    //CV_INTER_CUBIC - bicubic interpolation.
+        
+    if( mom.getCvImage()->nChannels == cvImage->nChannels || 
+        mom.getCvImage()->depth == cvImage->depth ) {
+    
+        if ((interpolationMethod != CV_INTER_NN) &&
+            (interpolationMethod != CV_INTER_LINEAR) &&
+            (interpolationMethod != CV_INTER_AREA) &&
+            (interpolationMethod != CV_INTER_CUBIC) ){
+            printf("error in scaleIntoMe / interpolationMethod, setting to CV_INTER_NN \n");
+    		interpolationMethod = CV_INTER_NN;
+    	}
+        cvResize( mom.getCvImage(), cvImage, interpolationMethod );
 
-    if ((interpolationMethod != CV_INTER_NN) &&
-        (interpolationMethod != CV_INTER_LINEAR) &&
-        (interpolationMethod != CV_INTER_AREA) &&
-        (interpolationMethod != CV_INTER_CUBIC) ){
-        printf("error in scaleIntoMe / interpolationMethod, setting to CV_INTER_NN \n");
-		interpolationMethod = CV_INTER_NN;
-	}
-    cvResize( mom.getCvImage(), cvImage, interpolationMethod );
-
-    /*
-    you can pass in:
-    CV_INTER_NN - nearest-neigbor interpolation,
-    CV_INTER_LINEAR - bilinear interpolation (used by default)
-    CV_INTER_AREA - resampling using pixel area relation. It is preferred method for image decimation that gives moire-free results. In case of zooming it is similar to CV_INTER_NN method.
-    CV_INTER_CUBIC - bicubic interpolation.
-    ----> http://opencvlibrary.sourceforge.net/CvReference
-    */
-
+    } else {
+        printf("error in scaleIntoMe: mom image type has to match");
+    }
 }
 

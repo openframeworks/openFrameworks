@@ -54,10 +54,12 @@ class ofxCvImage {
     virtual void operator = ( const ofxCvFloatImage& mom ) = 0;
     
     //we have these in the derived classes
-    //void operator -= ( sameAsDerivedType& mom );
-    //void operator += ( sameAsDerivedType& mom );
-    //void operator *= ( sameAsDerivedType& mom );
-    //void operator &= ( sameAsDerivedType& mom );
+    //they can't be pure virtual because they always
+    //use the same argument type as "this"
+    //void operator -= ( const sameAsDerivedType& mom );
+    //void operator += ( const sameAsDerivedType& mom );
+    //void operator *= ( const sameAsDerivedType& mom );
+    //void operator &= ( const sameAsDerivedType& mom );
     
 
     // Get Pixel Data
@@ -85,8 +87,9 @@ class ofxCvImage {
 
     // Image Transformation Operations
     //
-    virtual void resize( int w, int h ) = 0;
     //virtual void setROI( int w, int h );  //TODO, support image regions
+    virtual void resize( int w, int h ) = 0;
+    virtual void scaleIntoMe( const ofxCvImage& mom, int interpolationMethod = CV_INTER_NN ) = 0;
     virtual void mirror( bool bFlipVertically, bool bFlipHorizontally );
 
     virtual void translate( float x, float y );
