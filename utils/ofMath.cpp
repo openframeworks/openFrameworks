@@ -1,4 +1,5 @@
 #include "ofMath.h"
+#include <sys/time.h>
 
 
 
@@ -12,8 +13,13 @@ int ofNextPow2(int a){
 
 //--------------------------------------------------
 void ofSeedRandom() {
-	// use time
-	srand(time(NULL));
+	struct timeval tv;
+	gettimeofday(&tv, 0);
+
+	// use XOR'd second, microsecond precision AND pid as seed
+	long int n = (tv.tv_sec ^ tv.tv_usec) ^ getpid();
+	srand(n);
+
 }
 
 //--------------------------------------------------

@@ -1,4 +1,5 @@
 #include "ofGraphics.h"
+#include "ofAppRunner.h"
 
 #ifdef TARGET_OSX
 	#include <OpenGL/glu.h>
@@ -18,15 +19,19 @@
     
 //----------------------------------------------------------
 // static
-GLuint 			precachedCircle = 0;
-static float	drawMode 		= OF_FILLED;
-static bool 	bSetupCircle 	= false;
-float 			bgColor[4] 		= {0,0,0,0};
+GLuint 			precachedCircle		= 0;
+static float	drawMode			= OF_FILLED;
+static bool 	bSetupCircle		= false;
+float 			bgColor[4]			= {0,0,0,0};
 void 			setupCircle();
-bool 			bSmoothHinted 	= false;
-bool 			bBakgroundAuto  = true;
-int 			cornerMode 		= OF_RECTMODE_CORNER;
-int 			polyMode 		= OF_POLY_WINDING_ODD;
+bool 			bSmoothHinted		= false;
+bool 			bBakgroundAuto		= true;
+int 			cornerMode			= OF_RECTMODE_CORNER;
+int 			polyMode			= OF_POLY_WINDING_ODD;
+
+//style stuff - new in 006
+ofStyle			currentStyle;
+vector <ofStyle> styleHistory;
 
 //----------------------------------------------------------
 void  ofSetRectMode(int mode){
@@ -70,12 +75,20 @@ void ofBackground(int r, int g, int b){
 //----------------------------------------------------------
 void ofNoFill(){
 	drawMode = OF_OUTLINE;
-};
+	currentStyle.bFill = false;	
+}
 
 //----------------------------------------------------------
 void ofFill(){
 	drawMode = OF_FILLED;
-};
+	currentStyle.bFill = true;	
+}
+
+//----------------------------------------------------------
+void ofSetLineWidth(float lineWidth){
+	glLineWidth(lineWidth);
+	currentStyle.lineWidth = lineWidth;
+}
 
 //----------------------------------------------------------
 void startSmoothing();
@@ -83,8 +96,10 @@ void startSmoothing(){
 		glPushAttrib(GL_COLOR_BUFFER_BIT | GL_ENABLE_BIT);
 		glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
 		glEnable(GL_LINE_SMOOTH);
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		
+		//why do we need this?
+		//glEnable(GL_BLEND);
+		//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
 
 
@@ -110,8 +125,10 @@ void setupCircle(){
 
 //----------------------------------------------------------
 void ofSetCircleResolution(int res){
-	if (res > 1){
+	if (res > 1 && res != currentStyle.circleResolution){
 		
+		currentStyle.circleResolution = res;
+				
 		if (precachedCircle != 0){	
 			glDeleteLists(precachedCircle, 1);
 		}
@@ -299,18 +316,19 @@ void ofBezier(float x0, float y0, float x1, float y1, float x2, float y2, float 
     	ofVertex(x,y);
     }
     ofEndShape();
-
-
 }
-
-
-
 
 //----------------------------------------------------------
 void ofSetColor(int _r, int _g, int _b){
 	float r = (float)_r / 255.0f; r = MAX(0,MIN(r,1.0f));
 	float g = (float)_g / 255.0f; g = MAX(0,MIN(g,1.0f));
 	float b = (float)_b / 255.0f; b = MAX(0,MIN(b,1.0f));
+	
+	currentStyle.color.r = r * 255.0;
+	currentStyle.color.g = g * 255.0;
+	currentStyle.color.b = b * 255.0;
+	currentStyle.color.a = 255;
+
 	glColor3f(r,g,b);
 }
 
@@ -321,6 +339,11 @@ void ofSetColor(int _r, int _g, int _b, int _a){
 	float g = (float)_g / 255.0f; g = MAX(0,MIN(g,1.0f));
 	float b = (float)_b / 255.0f; b = MAX(0,MIN(b,1.0f));
 	float a = (float)_a / 255.0f; a = MAX(0,MIN(a,1.0f));
+	
+	currentStyle.color.r = r * 255.0;
+	currentStyle.color.g = g * 255.0;
+	currentStyle.color.b = b * 255.0;
+	currentStyle.color.a = a * 255.0;	
 
 	glColor4f(r,g,b,a);
 }
@@ -337,11 +360,13 @@ void ofSetColor(int hexColor){
 void ofEnableAlphaBlending(){
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	currentStyle.blending = 1;		
 }
 
 //----------------------------------------------------------
 void ofDisableAlphaBlending(){
 	glDisable(GL_BLEND);
+	currentStyle.blending = 0;	
 }
 
 
@@ -350,14 +375,72 @@ void ofEnableSmoothing(){
 	// please see:
 	// http://www.opengl.org/resources/faq/technical/rasterization.htm
 	bSmoothHinted = true;
+	currentStyle.smoothing = 1;
 }
 
 //----------------------------------------------------------
 void ofDisableSmoothing(){
 	bSmoothHinted = false;
+	currentStyle.smoothing = 0;	
 }
 
+//----------------------------------------------------------
+void ofSetStyle(ofStyle style){
+	//color
+	ofSetColor(style.color.r, style.color.g, style.color.b, style.color.a);
 
+	//circle resolution - don't worry it only recalculates the display list if the res has changed
+	ofSetCircleResolution(style.circleResolution);
+	
+	//line width - finally!
+	ofSetLineWidth(style.lineWidth);
+	
+	//fill
+	if(style.bFill == 1){
+		ofFill();
+	}else if(style.bFill == 0){
+		ofNoFill();
+	}
+	
+	//smoothing
+	if(style.smoothing == 1){
+		ofEnableSmoothing();
+	}else if(style.smoothing == 0){
+		ofDisableSmoothing();
+	}
+
+	//blending
+	if(style.blending == 1){
+		ofEnableAlphaBlending();
+	}else if(style.blending == 0){
+		ofDisableAlphaBlending();
+	}	
+}
+
+//----------------------------------------------------------
+ofStyle ofGetStyle(){
+	return currentStyle;
+}
+
+//----------------------------------------------------------
+void ofPushStyle(){
+	styleHistory.insert(styleHistory.begin(), currentStyle);
+	
+	//if we are over the max number of styles we have set, then delete the oldest styles.
+	if( styleHistory.size() > OF_MAX_STYLE_HISTORY ){
+		styleHistory.erase(styleHistory.begin() + OF_MAX_STYLE_HISTORY, styleHistory.end());
+		//should we warn here?
+		//printf("ofPushStyle - warning: you have used ofPushStyle more than %i times without calling ofPopStyle - check your code! \n", OF_MAX_STYLE_HISTORY);
+	}
+}
+
+//----------------------------------------------------------
+void ofPopStyle(){
+	if( styleHistory.size() ){
+		ofSetStyle(styleHistory[0]);
+		styleHistory.erase(styleHistory.begin(), styleHistory.begin()+1);
+	}
+}
 
 //--------------------------------------------------
 void ofDrawBitmapString(string textString, float x, float y){
@@ -390,11 +473,10 @@ void ofDrawBitmapString(string textString, float x, float y){
 
 //----------------------------------------------------------
 void ofSetupScreen(){
-
 	int w, h;
 
-	w = glutGet(GLUT_WINDOW_WIDTH);
-	h = glutGet(GLUT_WINDOW_HEIGHT);
+	w = ofGetWidth();
+	h = ofGetHeight();
 
 	float halfFov, theTan, screenFov, aspect;
 	screenFov 		= 60.0f;

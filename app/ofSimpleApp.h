@@ -1,22 +1,13 @@
 #ifndef _OF_SIMPLE_APP
 #define _OF_SIMPLE_APP
 
-#include "ofAppEvents.h"
-#include "ofKeyEvents.h"
-#include "ofMouseEvents.h"
-#include "ofAudioEvents.h"
 
 
-class ofSimpleApp : public ofAppListener, public ofKeyListener, 
-                    public ofMouseListener, public ofAudioListener {
+class ofSimpleApp {
 	
 	public:
-	
         ofSimpleApp() {
-            ofAppEvents.addListener(this);
-            ofKeyEvents.addListener(this);
-            ofMouseEvents.addListener(this);
-            ofAudioEvents.addListener(this);
+            mouseX = mouseY = 0;
 		}
 
 		virtual ~ofSimpleApp(){}
@@ -25,6 +16,9 @@ class ofSimpleApp : public ofAppListener, public ofKeyListener,
 		virtual void update(){}
 		virtual void draw(){}
 		virtual void exit(){}
+		
+
+		virtual void resized(int w, int h){}
 		
 		virtual void keyPressed( int key ){}
 		virtual void keyReleased( int key ){}

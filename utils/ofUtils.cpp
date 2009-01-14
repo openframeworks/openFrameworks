@@ -1,5 +1,6 @@
 #include "ofUtils.h"
 
+static bool enableDataPath = true;
 
 //--------------------------------------------------
 // not for the public, just for glutGlue -> ofUtil comm.
@@ -86,15 +87,27 @@ int ofGetWeekday(){
   time(&curr);
   local   =*(localtime(&curr));
   return local.tm_wday;
+}
+
+//--------------------------------------------------
+void ofEnableDataPath(){
+	enableDataPath = true;
+}
+
+//--------------------------------------------------
+void ofDisableDataPath(){
+	enableDataPath = false;
 } 
 
 //--------------------------------------------------
 string ofToDataPath(string path){
+	if( enableDataPath ){
 	#ifdef TARGET_OSX
 		if(path.substr(0,1) != "/" && path.substr(0,14) != "../../../data/") path = "../../../data/"+path;
 	#else
 		if(path.substr(0,1) != "/" && path.substr(0,5) != "data/") path = "data/"+path;
 	#endif
+	}
 	return path;
 }
 
@@ -111,6 +124,8 @@ string ofToString(int value){
 	sstr << value;
 	return sstr.str();
 }
+
+
 
 //--------------------------------------------------
 void ofLaunchBrowser(string url){

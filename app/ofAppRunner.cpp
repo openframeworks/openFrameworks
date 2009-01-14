@@ -8,6 +8,20 @@ bool 						bMousePressed;
 bool						bRightButton;
 int							width, height;
 static float 				ofFrameRate;
+
+
+//========================================================================
+// core events instance:
+ofCoreEvents 				ofEvents;
+
+//========================================================================
+// core events arguments:
+ofEventArgs					voidEventArgs;
+ofMouseEventArgs 			mouseEventArgs;
+ofKeyEventArgs 				keyEventArgs;
+ofResizeEventArgs 			resizeEventArgs;
+
+
 //========================================================================
 // callbacks:
 #include "ofAppGlutGlue.h"
@@ -84,16 +98,22 @@ void ofExitCallback(){
 		timeEndPeriod(1);
 	#endif
 
-    ofAppEvents.notifyExit( NULL );
+	if(OFSAptr)
+		OFSAptr->exit();
 
+	#ifdef OF_USING_POCO
+		ofNotifyEvent( ofEvents.exit, voidEventArgs );
+	#endif
 }
 
 //--------------------------------------
 void ofRunApp(ofSimpleApp * OFSA){
 
 	OFSAptr = OFSA;
+	if(OFSAptr){
 	OFSAptr->mouseX = 0;
 	OFSAptr->mouseY = 0;
+	}
 
 	atexit(ofExitCallback);
 
@@ -125,6 +145,9 @@ void ofRunApp(ofSimpleApp * OFSA){
 	glutSpecialFunc(special_key_cb);
 	glutSpecialUpFunc(special_key_up_cb);
 
+	glutReshapeFunc(resize_cb);
+
+
 	//----------------------
 
 	ofSeedRandom();
@@ -133,7 +156,12 @@ void ofRunApp(ofSimpleApp * OFSA){
 	// 		(users can seed it to a value in setup
 	// 		if they want it fixed);
 
-    ofAppEvents.notifySetup( NULL );
+	if(OFSAptr)
+		OFSAptr->setup();
+
+	#ifdef OF_USING_POCO
+		ofNotifyEvent( ofEvents.setup, voidEventArgs );
+	#endif
     
 	glutMainLoop();
 }
@@ -233,6 +261,16 @@ int ofGetHeight(){
 //--------------------------------------
 void ofSetWindowTitle(string title){
 	glutSetWindowTitle(title.c_str());
+}
+
+//----------------------------------------------------------
+void ofEnableSetupScreen(){
+	enableSetupScreen = true;
+}
+
+//----------------------------------------------------------
+void ofDisableSetupScreen(){
+	enableSetupScreen = false;
 }
 
 //--------------------------------------
