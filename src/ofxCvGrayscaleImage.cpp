@@ -40,14 +40,6 @@ void ofxCvGrayscaleImage::set( float value ){
 }
 
 //--------------------------------------------------------------------------------
-void ofxCvGrayscaleImage::setFromPixels( unsigned char* _pixels, int w, int h ) {
-	for( int i = 0; i < h; i++ ) {
-		memcpy( cvImage->imageData+(i*cvImage->widthStep), _pixels+(i*w), w );
-	}
-}
-
-
-//--------------------------------------------------------------------------------
 void ofxCvGrayscaleImage::operator = ( unsigned char* _pixels ) {
     setFromPixels( _pixels, width, height );
 }
@@ -60,6 +52,13 @@ void ofxCvGrayscaleImage::operator = ( const ofxCvGrayscaleImage& mom ) {
         cvCopy( mom.getCvImage(), cvImage, 0 );
 	} else {
         cout << "error in =, images are different sizes" << endl;
+	}
+}
+
+//--------------------------------------------------------------------------------
+void ofxCvGrayscaleImage::setFromPixels( unsigned char* _pixels, int w, int h ) {
+	for( int i = 0; i < h; i++ ) {
+		memcpy( cvImage->imageData+(i*cvImage->widthStep), _pixels+(i*w), w );
 	}
 }
 
