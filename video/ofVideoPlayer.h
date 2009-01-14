@@ -21,7 +21,7 @@
 
 //---------------------------------------------
 
-class ofVideoPlayer{
+class ofVideoPlayer : public ofBaseUpdate, public ofBaseDraw{
 	
 	public:
 	
@@ -32,7 +32,8 @@ class ofVideoPlayer{
 		bool 				loadMovie(string name);
 		void 				closeMovie();
 		
-		void 				idleMovie();				// rename to updateMovie?
+		void				update();			//same as idleMovie
+		void 				idleMovie();		// rename to updateMovie?
 		void 				play();				
 		void 				stop();
 		

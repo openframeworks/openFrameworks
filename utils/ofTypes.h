@@ -17,7 +17,7 @@ typedef Poco::Timespan ofTimespan;
 //----------------------------------------------------------
 class ofPoint {
   public:
- 
+	virtual ~ofPoint(){}
 
     ofPoint( float _x=0.0f, float _y=0.0f, float _z=0.0f ) {
         x = _x;
@@ -170,8 +170,8 @@ class ofPoint {
 		
 		return *this;
     }   
-   
-    // union allows us to access the coordinates through
+      	
+	// union allows us to access the coordinates through
     // both an array 'v' and 'x', 'y', 'z' member varibles
     union  {
         struct {   
@@ -181,7 +181,7 @@ class ofPoint {
         };
         float v[3];
     };
-   
+
 };
 
 //----------------------------------------------------------
@@ -190,25 +190,29 @@ class ofPoint {
 
 class ofRectangle {
   public:
+	ofRectangle(){ x = y = width = height = 0; };
+	ofRectangle(float _x, float _y, float _w, float _h){
+		x = _x;
+		y = _y;
+		width = _w;
+		height = _h;
+	}  
+	virtual ~ofRectangle(){}
+
    float x;
    float y;
    float width;
    float height;   
-   ofRectangle(){ x = y = width = height = 0; };
-   ofRectangle(float _x, float _y, float _w, float _h){
-	x = _x;
-	y = _y;
-	width = _w;
-	height = _h;
-   }
+
 };
 
 //----------------------------------------------------------
-// ofDrawable
+// ofBaseDraw
 //----------------------------------------------------------
 
-class ofDrawable{
-public:
+class ofBaseDraw{
+public:	
+	virtual ~ofBaseDraw(){}
 	virtual void draw(){};
 	virtual void draw(float x,float y){};
 	virtual void draw(float x,float y,float w, float h){};
@@ -217,12 +221,13 @@ public:
 };
 
 //----------------------------------------------------------
-// ofUpdatable
+// ofBaseUpdate
 //----------------------------------------------------------
 
-class ofUpdatable{
+class ofBaseUpdate{
 public:
-	virtual void update()=0;
+	virtual ~ofBaseUpdate(){}
+	virtual void update(){};
 };
 
 //----------------------------------------------------------

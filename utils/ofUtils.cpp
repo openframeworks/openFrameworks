@@ -1,4 +1,5 @@
 #include "ofUtils.h"
+#include "ofImage.h"
 
 static bool enableDataPath = true;
 
@@ -174,4 +175,23 @@ string ofGetVersionInfo(){
 	stringstream sstr;
 	sstr << "of version: " << OF_VERSION << endl;
 	return sstr.str();
+}
+
+//---- new to 006
+//from the forums http://www.openframeworks.cc/forum/viewtopic.php?t=1413
+
+//--------------------------------------------------
+void ofSaveScreen(string filename) { 
+   ofImage screen; 
+   screen.allocate(ofGetWidth(), ofGetHeight(), OF_IMAGE_COLOR); 
+   screen.grabScreen(0, 0, ofGetWidth(), ofGetHeight()); 
+   screen.saveImage(filename); 
+} 
+
+//--------------------------------------------------
+int saveImageCounter = 0; 
+void ofSaveFrame(){ 
+   string fileName = ofToString(saveImageCounter) + ".png";   
+   ofSaveScreen(fileName);
+   saveImageCounter++;
 }

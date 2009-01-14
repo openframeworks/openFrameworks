@@ -2,7 +2,7 @@
 
 //========================================================================
 // static variables:
-ofSimpleApp	*				OFSAptr;
+ofBaseApp	*				OFSAptr;
 int							windowMode;
 bool 						bMousePressed;
 bool						bRightButton;
@@ -107,7 +107,7 @@ void ofExitCallback(){
 }
 
 //--------------------------------------
-void ofRunApp(ofSimpleApp * OFSA){
+void ofRunApp(ofBaseApp * OFSA){
 
 	OFSAptr = OFSA;
 	if(OFSAptr){

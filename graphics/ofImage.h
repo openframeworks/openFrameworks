@@ -29,7 +29,7 @@ void 	ofCloseFreeImage();		// when we exit, we shut down ofImage
 
 
 //----------------------------------------------------
-class 	ofImage {
+class ofImage : public ofBaseDraw{
 
 	public :
 

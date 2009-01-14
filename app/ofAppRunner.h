@@ -3,11 +3,11 @@
 
 
 #include "ofMain.h"
-#include "ofSimpleApp.h"
+#include "ofBaseApp.h"
 
 
 void 		ofSetupOpenGL(int w, int h, int screenMode);			// sets up the opengl context!
-void 		ofRunApp(ofSimpleApp * OFSA = NULL);
+void 		ofRunApp(ofBaseApp * OFSA = NULL);
 
 //-------------------------- time
 float 		ofGetFrameRate();

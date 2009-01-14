@@ -157,6 +157,11 @@ bool ofVideoPlayer::isFrameNew(){
 
 }
 
+//--------------------------------------------------------------------
+void ofVideoPlayer::update(){
+	idleMovie();
+}
+
 //---------------------------------------------------------------------------
 void ofVideoPlayer::idleMovie(){
 
@@ -353,7 +358,7 @@ bool ofVideoPlayer::loadMovie(string name){
 		closeMovie();					// if we have a movie open, close it
 		bLoaded 				= false;	// try to load now
 
-		if( name.substr(0, 7) == "http://"){
+		if( name.substr(0, 7) == "http://" || name.substr(0,7) == "rtsp://" ){
 			if(! createMovieFromURL(name, moviePtr) ) return false;
 		}else{
 			name 					= ofToDataPath(name);

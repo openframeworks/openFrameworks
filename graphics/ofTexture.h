@@ -5,7 +5,7 @@
 #include "ofGraphics.h"
 
 
-class ofTexture {
+class ofTexture : public ofBaseDraw{
 
 	public :
 		
