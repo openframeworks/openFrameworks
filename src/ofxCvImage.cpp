@@ -20,14 +20,6 @@ ofxCvImage::~ofxCvImage() {
     clear();
 }
 
-//--------------------------------------------------------------------------------
-void ofxCvImage::convertToRange(float scaleMin, float scaleMax ){
-    float range = (scaleMax - scaleMin);
-    float scale = 255/range;
-    float offset = - (scaleMin * scale);  // ie, 0.5 - 1 = scale by (255*2), subtract 255, 128-255 = scale by 1/2, subtract 128
-    cvConvertScale( cvImage, cvImageTemp, scale, offset );
-    swapTemp();
-}
 
 //--------------------------------------------------------------------------------
 void ofxCvImage::clear() {
@@ -72,11 +64,7 @@ void ofxCvImage::swapTemp() {
 
 
 
-// Set Pixel Data - Scalars
-//--------------------------------------------------------------------------------
-void ofxCvImage::set( int value ) {
-	cvSet( cvImage, cvScalar(value) );
-}
+// Set Pixel Data
 
 //--------------------------------------------------------------------------------
 void ofxCvImage::operator -= ( float scalar ) {
@@ -118,8 +106,17 @@ void ofxCvImage::blurGaussian( int value ) {
 }
 
 //--------------------------------------------------------------------------------
-void ofxCvGrayscaleImage::invert(){
+void ofxCvImage::invert(){
     cvNot(cvImage, cvImage);
+}
+
+//--------------------------------------------------------------------------------
+void ofxCvImage::convertToRange(float scaleMin, float scaleMax ){
+    float range = (scaleMax - scaleMin);
+    float scale = 255/range;
+    float offset = - (scaleMin * scale);  // ie, 0.5 - 1 = scale by (255*2), subtract 255, 128-255 = scale by 1/2, subtract 128
+    cvConvertScale( cvImage, cvImageTemp, scale, offset );
+    swapTemp();
 }
 
 

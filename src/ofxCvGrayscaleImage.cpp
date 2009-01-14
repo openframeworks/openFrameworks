@@ -34,12 +34,18 @@ void ofxCvGrayscaleImage::allocate( int w, int h ) {
 
 
 // Set Pixel Data - Arrays
+//-------------------------------------------------------------------------------------
+void ofxCvGrayscaleImage::set( float value ){
+	cvSet(cvImage, cvScalar(value));
+}
+
 //--------------------------------------------------------------------------------
 void ofxCvGrayscaleImage::setFromPixels( unsigned char* _pixels, int w, int h ) {
 	for( int i = 0; i < h; i++ ) {
 		memcpy( cvImage->imageData+(i*cvImage->widthStep), _pixels+(i*w), w );
 	}
 }
+
 
 //--------------------------------------------------------------------------------
 void ofxCvGrayscaleImage::operator =	( unsigned char* _pixels ) {
@@ -129,11 +135,6 @@ void ofxCvGrayscaleImage::operator +=	( float scalar ){
 	swapTemp();
 }
 
-
-//-------------------------------------------------------------------------------------
-void ofxCvGrayscaleImage::set(int value){
-	cvSet(cvImage, cvScalar(value));
-}
 
 
 //--------------------------------------------------------------------------------

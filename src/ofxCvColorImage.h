@@ -14,31 +14,43 @@ class ofxCvColorImage : public ofxCvImage {
     ofxCvColorImage( const ofxCvColorImage& mom );
     void allocate( int w, int h );
 
-    void set(int value);
-    void set(int valueR, int valueG, int valueB);
 
-    void convertRgbToHsv();
-    void convertHsvToRgb();
-    void setFromGrayscalePlanarImages(ofxCvGrayscaleImage& red, ofxCvGrayscaleImage& green, ofxCvGrayscaleImage& blue);
-    void convertToGrayscalePlanarImages(ofxCvGrayscaleImage& red, ofxCvGrayscaleImage& green, ofxCvGrayscaleImage& blue);
-
+    // Set Pixel Data
+    //
+    void set( float value );
+    void set( int valueR, int valueG, int valueB);
     void setFromPixels( unsigned char * _pixels, int w, int h );
+    void setFromGrayscalePlanarImages(ofxCvGrayscaleImage& red, ofxCvGrayscaleImage& green, ofxCvGrayscaleImage& blue);
+
     void operator = ( unsigned char* _pixels );
     void operator = ( const ofxCvGrayscaleImage& mom );
     void operator = ( const ofxCvColorImage& mom );
     void operator = ( const ofxCvFloatImage& mom );
+    
     void operator -= ( ofxCvColorImage& mom );
     void operator += ( ofxCvColorImage& mom );
     void operator *= ( ofxCvColorImage& mom );
     void operator &= ( ofxCvColorImage& mom );
 
-    unsigned char*  getPixels();
 
+    // Get Pixel Data
+    //
+    unsigned char*  getPixels();
+    void convertToGrayscalePlanarImages(ofxCvGrayscaleImage& red, ofxCvGrayscaleImage& green, ofxCvGrayscaleImage& blue);
+    
+
+    // Draw Image
+    //
     void draw( float x, float y );
     void draw( float x, float y, float w, float h );
 
+
+    // Image Transformation Operations
+    //
     void resize( int w, int h );
     void scaleIntoMe( ofxCvColorImage& mom, int interpolationMethod = CV_INTER_NN);
+    void convertRgbToHsv();
+    void convertHsvToRgb();    
 
 };
 

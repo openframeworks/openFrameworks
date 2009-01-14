@@ -31,7 +31,15 @@ void ofxCvFloatImage::allocate( int w, int h ) {
     }
 }
 
-// Set Pixel Data - Arrays
+
+
+// Set Pixel Data
+
+//-------------------------------------------------------------------------------------
+void ofxCvFloatImage::set(float value){  
+	cvSet(cvImage, cvScalar(value));
+}
+
 //--------------------------------------------------------------------------------
 void ofxCvFloatImage::setFromPixels( float * _pixels, int w, int h ) {
 	for( int i = 0; i < h; i++ ) {
@@ -39,49 +47,6 @@ void ofxCvFloatImage::setFromPixels( float * _pixels, int w, int h ) {
 	}
 }
 
-//--------------------------------------------------------------------------------
-void ofxCvFloatImage::drawWithScale( float x, float y, float scaleMin, float scaleMax){
-    drawWithScale(x,y,width, height, scaleMin, scaleMax);
-}
-
-//--------------------------------------------------------------------------------
-void ofxCvFloatImage::drawWithScale( float x, float y, float w, float h, float scaleMin, float scaleMax){
-    if( bUseTexture ) {
-        // note, this is a bit ineficient, as we have to
-        // copy the data out of the cvImage into the pixel array
-        // and then upload to texture.  We should add
-        // to the texture class an override for pixelstorei
-        // that allows stepped-width image upload:
-        tex.loadData(getPixels(scaleMin, scaleMax), width, height, GL_LUMINANCE);
-        tex.draw(x,y,w,h);
-    }
-}
-
-//--------------------------------------------------------------------------------
-unsigned char*  ofxCvFloatImage::getPixels(float scaleMin, float scaleMax){
-    float range = (scaleMax - scaleMin);
-    float scale = 255/range;
-    float offset = - (scaleMin * scale);  // ie, 0.5 - 1 = scale by (255*2), subtract 255, 128-255 = scale by 1/2, subtract 128
-    cvConvertScale( cvImage, cvGrayscaleImage, scale, offset );
-    for( int i = 0; i < height; i++ ) {
-		memcpy( pixels+(i*width),
-                cvGrayscaleImage->imageData+(i*cvGrayscaleImage->widthStep), width );
-	}
-	return pixels;
-}
-
-//--------------------------------------------------------------------------------
-float * ofxCvFloatImage::getPixelsAsFloats(){
-    // ok??
-    for( int i = 0; i < height; i++ ) {
-		memcpy( pixelsAsFloats+(i*width),
-                cvGrayscaleImage->imageData+(i*(cvGrayscaleImage->widthStep / 4)), width*4 );
-	}
-	return pixelsAsFloats;
-}
-
-
-// Set Pixel Data - Arrays
 //--------------------------------------------------------------------------------
 void ofxCvFloatImage::operator =	( const ofxCvGrayscaleImage& mom ) {
 	if( mom.width == width && mom.height == height ) {
@@ -207,7 +172,60 @@ void ofxCvFloatImage::addWeighted( ofxCvGrayscaleImage& mom, float f ) {
     }
 }
 
+
+
+// Get Pixel Data
+
+//--------------------------------------------------------------------------------
+unsigned char*  ofxCvFloatImage::getPixels(float scaleMin, float scaleMax){
+    float range = (scaleMax - scaleMin);
+    float scale = 255/range;
+    float offset = - (scaleMin * scale);  // ie, 0.5 - 1 = scale by (255*2), subtract 255, 128-255 = scale by 1/2, subtract 128
+    cvConvertScale( cvImage, cvGrayscaleImage, scale, offset );
+    for( int i = 0; i < height; i++ ) {
+		memcpy( pixels+(i*width),
+                cvGrayscaleImage->imageData+(i*cvGrayscaleImage->widthStep), width );
+	}
+	return pixels;
+}
+
+//--------------------------------------------------------------------------------
+float * ofxCvFloatImage::getPixelsAsFloats(){
+    // ok??
+    for( int i = 0; i < height; i++ ) {
+		memcpy( pixelsAsFloats+(i*width),
+                cvGrayscaleImage->imageData+(i*(cvGrayscaleImage->widthStep / 4)), width*4 );
+	}
+	return pixelsAsFloats;
+}
+
+
+
+// Draw Image
+
+//--------------------------------------------------------------------------------
+void ofxCvFloatImage::drawWithScale( float x, float y, float scaleMin, float scaleMax){
+    drawWithScale(x,y,width, height, scaleMin, scaleMax);
+}
+
+//--------------------------------------------------------------------------------
+void ofxCvFloatImage::drawWithScale( float x, float y, float w, float h, float scaleMin, float scaleMax){
+    if( bUseTexture ) {
+        // note, this is a bit ineficient, as we have to
+        // copy the data out of the cvImage into the pixel array
+        // and then upload to texture.  We should add
+        // to the texture class an override for pixelstorei
+        // that allows stepped-width image upload:
+        tex.loadData(getPixels(scaleMin, scaleMax), width, height, GL_LUMINANCE);
+        tex.draw(x,y,w,h);
+    }
+}
+
+
+
+
 // Image Transformation Operations
+
 //--------------------------------------------------------------------------------
 void ofxCvFloatImage::resize( int w, int h ) {
 

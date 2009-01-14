@@ -34,7 +34,6 @@ class ofxCvImage {
     int width;
     int height;
 	bool bAllocated;
-    virtual void convertToRange(float min, float max);
 
     ofxCvImage();
     virtual ~ofxCvImage();
@@ -44,30 +43,30 @@ class ofxCvImage {
 
 
 
-    // Set Pixel Data - Scalars
+    // Set Pixel Data
     //
-    //
-    virtual void set( int value );
+    virtual void set( float value ) = 0;
     virtual void operator -= ( float scalar );
     virtual void operator += ( float scalar );
 
-
-    // Set Pixel Data - Arrays
-    //
-    //
     virtual void operator = ( const ofxCvGrayscaleImage& mom ) = 0;
     virtual void operator = ( const ofxCvColorImage& mom ) = 0;
     virtual void operator = ( const ofxCvFloatImage& mom ) = 0;
-
+    
+    //we have these in the derived classes
+    //void operator -= ( sameAsDerivedType& mom );
+    //void operator += ( sameAsDerivedType& mom );
+    //void operator *= ( sameAsDerivedType& mom );
+    //void operator &= ( sameAsDerivedType& mom );
+    
 
     // Get Pixel Data
     //
-    //
+    virtual unsigned char*  getPixels() = 0;
     virtual IplImage*  getCvImage() const { return cvImage; };
 
 
     // Draw Image
-    //
     //
     virtual void draw( float x, float y ) = 0;
     virtual void draw( float x, float y, float w, float h ) = 0;
@@ -76,16 +75,15 @@ class ofxCvImage {
 
     // Image Filter Operations
     //
-    //
     virtual void erode( );  // based on 3x3 shape
     virtual void dilate( );  // based on 3x3 shape
     virtual void blur( int value=3 );  // value = x*2+1, where x is an integer
     virtual void blurGaussian( int value=3 );  // value = x*2+1, where x is an integer
     virtual void invert();
+    virtual void convertToRange(float min, float max);
 
 
     // Image Transformation Operations
-    //
     //
     virtual void resize( int w, int h ) = 0;
     //virtual void setROI( int w, int h );  //TODO, support image regions
@@ -119,7 +117,6 @@ class ofxCvImage {
 
 
     // Other Image Operations
-    //
     //
     virtual int countNonZeroInRegion( int x, int y, int w, int h ) const;
 

@@ -17,41 +17,53 @@ class ofxCvGrayscaleImage : public ofxCvImage {
     ofxCvGrayscaleImage( const ofxCvGrayscaleImage& mom );
     void allocate( int w, int h );
 
-    // Set Pixel Data - Arrays
+
+    // Set Pixel Data
+    //
+    void set( float value );
     void setFromPixels( unsigned char* _pixels, int w, int h );
-    void set(int value);
-
-
+    
     void operator = ( unsigned char* _pixels );
     void operator = ( const ofxCvGrayscaleImage& mom );
     void operator = ( const ofxCvColorImage& mom );
     void operator = ( const ofxCvFloatImage& mom );
+    
     void operator -= ( ofxCvGrayscaleImage& mom );
     void operator += ( ofxCvGrayscaleImage& mom );
     void operator *= ( ofxCvGrayscaleImage& mom );
     void operator &= ( ofxCvGrayscaleImage& mom );
+    
     void operator -=	( float scalar );
 	void operator +=	( float scalar );
 
     void absDiff( ofxCvGrayscaleImage& mom );
     void absDiff( ofxCvGrayscaleImage& mom, ofxCvGrayscaleImage& dad );
 
+
     // Get Pixel Data
+    //
     unsigned char*  getPixels();
 
+
     // Draw Image
+    //
     void draw( float x, float y );
     void draw( float x, float y, float w, float h );
 
     void drawBlobIntoMe( ofxCvBlob & blob, int color );
 
+
     // Image Filter Operations
+    //
     void contrastStretch();
     void threshold( int value, bool invert = false);
 
+
     // Image Transformation Operations
+    //
     void resize( int w, int h );
     void scaleIntoMe( ofxCvGrayscaleImage& mom, int interpolationMethod = CV_INTER_NN);
+
 
    //---------------------------------------------
     //---------------- legacy ---------------------

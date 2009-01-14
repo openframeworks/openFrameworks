@@ -32,8 +32,12 @@ void ofxCvColorImage::allocate( int w, int h ) {
     }
 }
 
+
+
+// Set Pixel Data
+
 //--------------------------------------------------------------------------------
-void ofxCvColorImage::set(int value){
+void ofxCvColorImage::set( float value ){
     cvSet(cvImage, cvScalar(value, value, value));
 }
 
@@ -43,15 +47,10 @@ void ofxCvColorImage::set(int valueR, int valueG, int valueB){
 }
 
 //--------------------------------------------------------------------------------
-void ofxCvColorImage::convertRgbToHsv(){
-    cvCvtColor( cvImage, cvImageTemp, CV_RGB2HSV);
-    swapTemp();
-}
-
-//--------------------------------------------------------------------------------
-void ofxCvColorImage::convertHsvToRgb(){
-    cvCvtColor( cvImage, cvImageTemp, CV_HSV2RGB);
-    swapTemp();
+void ofxCvColorImage::setFromPixels( unsigned char* _pixels, int w, int h ) {
+	for( int i = 0; i < h; i++ ) {
+		memcpy( cvImage->imageData+(i*cvImage->widthStep), _pixels+(i*width*3), width*3 );
+	}
 }
 
 //--------------------------------------------------------------------------------
@@ -59,19 +58,6 @@ void ofxCvColorImage::setFromGrayscalePlanarImages(ofxCvGrayscaleImage& red, ofx
      cvCvtPlaneToPix(red.getCvImage(), green.getCvImage(), blue.getCvImage(),NULL, cvImage);
 }
 
-//--------------------------------------------------------------------------------
-void ofxCvColorImage::convertToGrayscalePlanarImages(ofxCvGrayscaleImage& red, ofxCvGrayscaleImage& green, ofxCvGrayscaleImage& blue){
-    cvCvtPixToPlane(cvImage, red.getCvImage(), green.getCvImage(), blue.getCvImage(), NULL);
-}
-
-
-// Set Pixel Data - Arrays
-//--------------------------------------------------------------------------------
-void ofxCvColorImage::setFromPixels( unsigned char* _pixels, int w, int h ) {
-	for( int i = 0; i < h; i++ ) {
-		memcpy( cvImage->imageData+(i*cvImage->widthStep), _pixels+(i*width*3), width*3 );
-	}
-}
 
 //--------------------------------------------------------------------------------
 void ofxCvColorImage::operator =	( unsigned char* _pixels ) {
@@ -149,7 +135,9 @@ void ofxCvColorImage::operator &= ( ofxCvColorImage& mom ) {
 }
 
 
+
 // Get Pixel Data
+
 //--------------------------------------------------------------------------------
 unsigned char* ofxCvColorImage::getPixels() {
 	// copy each line of pixels:
@@ -160,10 +148,15 @@ unsigned char* ofxCvColorImage::getPixels() {
 	return pixels;
 }
 
+//--------------------------------------------------------------------------------
+void ofxCvColorImage::convertToGrayscalePlanarImages(ofxCvGrayscaleImage& red, ofxCvGrayscaleImage& green, ofxCvGrayscaleImage& blue){
+    cvCvtPixToPlane(cvImage, red.getCvImage(), green.getCvImage(), blue.getCvImage(), NULL);
+}
 
 
 
 // Draw Image
+
 //--------------------------------------------------------------------------------
 void ofxCvColorImage::draw( float x, float y ) {
 
@@ -209,7 +202,10 @@ void ofxCvColorImage::draw( float x, float y, float w, float h ) {
     }
 }
 
+
+
 // Image Transformation Operations
+
 //--------------------------------------------------------------------------------
 void ofxCvColorImage::resize( int w, int h ) {
 
@@ -246,3 +242,16 @@ void ofxCvColorImage::scaleIntoMe( ofxCvColorImage& mom, int interpolationMethod
     */
 
 }
+
+//--------------------------------------------------------------------------------
+void ofxCvColorImage::convertRgbToHsv(){
+    cvCvtColor( cvImage, cvImageTemp, CV_RGB2HSV);
+    swapTemp();
+}
+
+//--------------------------------------------------------------------------------
+void ofxCvColorImage::convertHsvToRgb(){
+    cvCvtColor( cvImage, cvImageTemp, CV_HSV2RGB);
+    swapTemp();
+}
+
