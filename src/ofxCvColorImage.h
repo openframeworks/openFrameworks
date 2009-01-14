@@ -19,18 +19,16 @@ class ofxCvColorImage : public ofxCvImage {
     //
     void set( float value );
     void set( int valueR, int valueG, int valueB);
+    virtual void operator -= ( float value );
+    virtual void operator += ( float value ); 
+        
     void setFromPixels( unsigned char * _pixels, int w, int h );
     void setFromGrayscalePlanarImages( const ofxCvGrayscaleImage& red, const ofxCvGrayscaleImage& green, const ofxCvGrayscaleImage& blue );
 
     void operator = ( unsigned char* _pixels );
     void operator = ( const ofxCvGrayscaleImage& mom );
     void operator = ( const ofxCvColorImage& mom );
-    void operator = ( const ofxCvFloatImage& mom );
-    
-    void operator -= ( const ofxCvColorImage& mom );
-    void operator += ( const ofxCvColorImage& mom );
-    void operator *= ( const ofxCvColorImage& mom );
-    void operator &= ( const ofxCvColorImage& mom );
+    void operator = ( const ofxCvFloatImage& mom );   
 
 
     // Get Pixel Data

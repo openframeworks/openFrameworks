@@ -48,12 +48,14 @@ void ofxCvGrayscaleImage::setFromPixels( unsigned char* _pixels, int w, int h ) 
 
 
 //--------------------------------------------------------------------------------
-void ofxCvGrayscaleImage::operator =	( unsigned char* _pixels ) {
+void ofxCvGrayscaleImage::operator = ( unsigned char* _pixels ) {
     setFromPixels( _pixels, width, height );
 }
 
 //--------------------------------------------------------------------------------
-void ofxCvGrayscaleImage::operator =	( const ofxCvGrayscaleImage& mom ) {
+void ofxCvGrayscaleImage::operator = ( const ofxCvGrayscaleImage& mom ) {
+    //if (this == &mom) return *this;  // Gracefully handle self assignment
+    
 	if( mom.width == width && mom.height == height ) {
         cvCopy( mom.getCvImage(), cvImage, 0 );
 	} else {
@@ -62,7 +64,7 @@ void ofxCvGrayscaleImage::operator =	( const ofxCvGrayscaleImage& mom ) {
 }
 
 //--------------------------------------------------------------------------------
-void ofxCvGrayscaleImage::operator =	( const ofxCvColorImage& mom ) {
+void ofxCvGrayscaleImage::operator = ( const ofxCvColorImage& mom ) {
 	if( mom.width == width && mom.height == height ) {
 		cvCvtColor( mom.getCvImage(), cvImage, CV_RGB2GRAY );
 	} else {
@@ -71,7 +73,7 @@ void ofxCvGrayscaleImage::operator =	( const ofxCvColorImage& mom ) {
 }
 
 //--------------------------------------------------------------------------------
-void ofxCvGrayscaleImage::operator =	( const ofxCvFloatImage& mom ) {
+void ofxCvGrayscaleImage::operator = ( const ofxCvFloatImage& mom ) {
 	if( mom.width == width && mom.height == height ) {
 		//cvConvertScale( mom.getCvImage(), cvImage, 1.0f, 0);
         cvConvert( mom.getCvImage(), cvImage );
@@ -79,62 +81,6 @@ void ofxCvGrayscaleImage::operator =	( const ofxCvFloatImage& mom ) {
         cout << "error in =, images are different sizes" << endl;
 	}
 }
-
-
-//--------------------------------------------------------------------------------
-void ofxCvGrayscaleImage::operator -= ( const ofxCvGrayscaleImage& mom ) {
-	if( mom.width == width && mom.height == height ) {
-		cvSub( cvImage, mom.getCvImage(), cvImageTemp );
-		swapTemp();
-	} else {
-        cout << "error in -=, images are different sizes" << endl;
-	}
-}
-
-//--------------------------------------------------------------------------------
-void ofxCvGrayscaleImage::operator += ( const ofxCvGrayscaleImage& mom ) {
-	if( mom.width == width && mom.height == height ) {
-		cvAdd( cvImage, mom.getCvImage(), cvImageTemp );
-		swapTemp();
-	} else {
-        cout << "error in +=, images are different sizes" << endl;
-	}
-}
-
-//--------------------------------------------------------------------------------
-void ofxCvGrayscaleImage::operator *= ( const ofxCvGrayscaleImage& mom ) {
-    float scalef = 1.0f / 255.0f;
-	if( mom.width == width && mom.height == height ) {
-		cvMul( cvImage, mom.getCvImage(), cvImageTemp, scalef );
-		swapTemp();
-	} else {
-        cout << "error in *=, images are different sizes" << endl;
-	}
-}
-
-//--------------------------------------------------------------------------------
-void ofxCvGrayscaleImage::operator &= ( const ofxCvGrayscaleImage& mom ) {
-	if( mom.width == width && mom.height == height ) {
-		cvAnd( cvImage, mom.getCvImage(), cvImageTemp );
-		swapTemp();
-	} else {
-        cout << "error in &=, images are different sizes" << endl;
-	}
-}
-
-
-//-------------------------------------------------------------------------------------
-void ofxCvGrayscaleImage::operator -=	( float scalar ){
-	cvSubS(cvImage, cvScalar(scalar), cvImageTemp);
-	swapTemp();
-}
-
-//-------------------------------------------------------------------------------------
-void ofxCvGrayscaleImage::operator +=	( float scalar ){
-	cvAddS(cvImage, cvScalar(scalar), cvImageTemp);
-	swapTemp();
-}
-
 
 
 //--------------------------------------------------------------------------------
@@ -282,7 +228,7 @@ void ofxCvGrayscaleImage::scaleIntoMe( const ofxCvImage& mom, int interpolationM
     //                zooming it is similar to CV_INTER_NN method.
     //CV_INTER_CUBIC - bicubic interpolation.
         
-    if( mom.getCvImage()->nChannels == cvImage->nChannels || 
+    if( mom.getCvImage()->nChannels == cvImage->nChannels && 
         mom.getCvImage()->depth == cvImage->depth ) {
     
         if ((interpolationMethod != CV_INTER_NN) &&

@@ -27,14 +27,6 @@ class ofxCvGrayscaleImage : public ofxCvImage {
     void operator = ( const ofxCvGrayscaleImage& mom );
     void operator = ( const ofxCvColorImage& mom );
     void operator = ( const ofxCvFloatImage& mom );
-    
-    void operator -= ( const ofxCvGrayscaleImage& mom );
-    void operator += ( const ofxCvGrayscaleImage& mom );
-    void operator *= ( const ofxCvGrayscaleImage& mom );
-    void operator &= ( const ofxCvGrayscaleImage& mom );
-    
-    void operator -=	( float scalar );
-	void operator +=	( float scalar );
 
     void absDiff( ofxCvGrayscaleImage& mom );
     void absDiff( ofxCvGrayscaleImage& mom, ofxCvGrayscaleImage& dad );

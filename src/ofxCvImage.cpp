@@ -67,16 +67,71 @@ void ofxCvImage::swapTemp() {
 // Set Pixel Data
 
 //--------------------------------------------------------------------------------
-void ofxCvImage::operator -= ( float scalar ) {
-	cvSubS( cvImage, cvScalar(scalar), cvImageTemp );
+void ofxCvImage::operator -= ( float value ) {
+	cvSubS( cvImage, cvScalar(value), cvImageTemp );
 	swapTemp();
 }
 
 //--------------------------------------------------------------------------------
-void ofxCvImage::operator += ( float scalar ) {
-	cvAddS( cvImage, cvScalar(scalar), cvImageTemp );
+void ofxCvImage::operator += ( float value ) {
+	cvAddS( cvImage, cvScalar(value), cvImageTemp );
 	swapTemp();
 }
+
+
+//--------------------------------------------------------------------------------
+void ofxCvImage::operator -= ( const ofxCvImage& mom ) {
+	if( mom.width == width && mom.height == height &&
+	    mom.getCvImage()->nChannels == cvImage->nChannels && 
+        mom.getCvImage()->depth == cvImage->depth )
+    {
+		cvSub( cvImage, mom.getCvImage(), cvImageTemp );
+		swapTemp();
+	} else {
+        cout << "error in -=, images need to match in size and type" << endl;
+	}
+}
+
+//--------------------------------------------------------------------------------
+void ofxCvImage::operator += ( const ofxCvImage& mom ) {
+	if( mom.width == width && mom.height == height &&
+	    mom.getCvImage()->nChannels == cvImage->nChannels && 
+        mom.getCvImage()->depth == cvImage->depth )
+    {
+		cvAdd( cvImage, mom.getCvImage(), cvImageTemp );
+		swapTemp();
+	} else {
+        cout << "error in +=, images need to match in size and type" << endl;
+	}
+}
+
+//--------------------------------------------------------------------------------
+void ofxCvImage::operator *= ( const ofxCvImage& mom ) {
+    float scalef = 1.0f / 255.0f;
+	if( mom.width == width && mom.height == height &&
+	    mom.getCvImage()->nChannels == cvImage->nChannels && 
+        mom.getCvImage()->depth == cvImage->depth )
+    {
+		cvMul( cvImage, mom.getCvImage(), cvImageTemp, scalef );
+		swapTemp();
+	} else {
+        cout << "error in *=, images need to match in size and type" << endl;
+	}
+}
+
+//--------------------------------------------------------------------------------
+void ofxCvImage::operator &= ( const ofxCvImage& mom ) {
+	if( mom.width == width && mom.height == height &&
+	    mom.getCvImage()->nChannels == cvImage->nChannels && 
+        mom.getCvImage()->depth == cvImage->depth )
+    {
+		cvAnd( cvImage, mom.getCvImage(), cvImageTemp );
+		swapTemp();
+	} else {
+        cout << "error in &=, images need to match in size and type" << endl;
+	}
+}
+
 
 
 

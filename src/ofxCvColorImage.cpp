@@ -47,6 +47,18 @@ void ofxCvColorImage::set(int valueR, int valueG, int valueB){
 }
 
 //--------------------------------------------------------------------------------
+void ofxCvColorImage::operator -= ( float value ) {
+	cvSubS( cvImage, cvScalar(value, value, value), cvImageTemp );
+	swapTemp();
+}
+
+//--------------------------------------------------------------------------------
+void ofxCvColorImage::operator += ( float value ) {
+	cvAddS( cvImage, cvScalar(value, value, value), cvImageTemp );
+	swapTemp();
+}
+
+//--------------------------------------------------------------------------------
 void ofxCvColorImage::setFromPixels( unsigned char* _pixels, int w, int h ) {
 	for( int i = 0; i < h; i++ ) {
 		memcpy( cvImage->imageData+(i*cvImage->widthStep), _pixels+(i*width*3), width*3 );
@@ -65,7 +77,7 @@ void ofxCvColorImage::operator =	( unsigned char* _pixels ) {
 }
 
 //--------------------------------------------------------------------------------
-void ofxCvColorImage::operator =	( const ofxCvGrayscaleImage& mom ) {
+void ofxCvColorImage::operator = ( const ofxCvGrayscaleImage& mom ) {
 	if( mom.width == width && mom.height == height ) {
 		cvCvtColor( mom.getCvImage(), cvImage, CV_GRAY2RGB );
 	} else {
@@ -74,7 +86,7 @@ void ofxCvColorImage::operator =	( const ofxCvGrayscaleImage& mom ) {
 }
 
 //--------------------------------------------------------------------------------
-void ofxCvColorImage::operator =	( const ofxCvColorImage& mom ) {
+void ofxCvColorImage::operator = ( const ofxCvColorImage& mom ) {
 	if( mom.width == width && mom.height == height ) {
 		cvCopy( mom.getCvImage(), cvImage, 0 );
 	} else {
@@ -83,54 +95,13 @@ void ofxCvColorImage::operator =	( const ofxCvColorImage& mom ) {
 }
 
 //--------------------------------------------------------------------------------
-void ofxCvColorImage::operator =	( const ofxCvFloatImage& mom ) {
+void ofxCvColorImage::operator = ( const ofxCvFloatImage& mom ) {
 	if( mom.width == width && mom.height == height ) {
 		//cvCopy(mom.getCvImage(), cvImage, 0);
 		//cvConvertScale( mom.getCvImage(), cvImage, 1, 0 );
 		cvConvert( mom.getCvImage(), cvImage ); // same as above but optimized
 	} else {
         cout << "error in =, images are different sizes" << endl;
-	}
-}
-
-//--------------------------------------------------------------------------------
-void ofxCvColorImage::operator -= ( const ofxCvColorImage& mom ) {
-	if( mom.width == width && mom.height == height ) {
-		cvSub( cvImage, mom.getCvImage(), cvImageTemp );
-		swapTemp();
-	} else {
-        cout << "error in -=, images are different sizes" << endl;
-	}
-}
-
-//--------------------------------------------------------------------------------
-void ofxCvColorImage::operator += ( const ofxCvColorImage& mom ) {
-	if( mom.width == width && mom.height == height ) {
-		cvAdd( cvImage, mom.getCvImage(), cvImageTemp );
-		swapTemp();
-	} else {
-        cout << "error in +=, images are different sizes" << endl;
-	}
-}
-
-//--------------------------------------------------------------------------------
-void ofxCvColorImage::operator *= ( const ofxCvColorImage& mom ) {
-    float scalef = 1.0f / 255.0f;
-	if( mom.width == width && mom.height == height ) {
-		cvMul( cvImage, mom.getCvImage(), cvImageTemp, scalef );
-		swapTemp();
-	} else {
-        cout << "error in *=, images are different sizes" << endl;
-	}
-}
-
-//--------------------------------------------------------------------------------
-void ofxCvColorImage::operator &= ( const ofxCvColorImage& mom ) {
-	if( mom.width == width && mom.height == height ) {
-		cvAnd( cvImage, mom.getCvImage(), cvImageTemp );
-		swapTemp();
-	} else {
-        cout << "error in &=, images are different sizes" << endl;
 	}
 }
 
@@ -230,7 +201,7 @@ void ofxCvColorImage::scaleIntoMe( const ofxCvImage& mom, int interpolationMetho
     //                zooming it is similar to CV_INTER_NN method.
     //CV_INTER_CUBIC - bicubic interpolation.
         
-    if( mom.getCvImage()->nChannels == cvImage->nChannels || 
+    if( mom.getCvImage()->nChannels == cvImage->nChannels && 
         mom.getCvImage()->depth == cvImage->depth ) {
     
         if ((interpolationMethod != CV_INTER_NN) &&

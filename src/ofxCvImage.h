@@ -46,20 +46,17 @@ class ofxCvImage {
     // Set Pixel Data
     //
     virtual void set( float value ) = 0;
-    virtual void operator -= ( float scalar );
-    virtual void operator += ( float scalar );
+    virtual void operator -= ( float value );
+    virtual void operator += ( float value );
 
     virtual void operator = ( const ofxCvGrayscaleImage& mom ) = 0;
     virtual void operator = ( const ofxCvColorImage& mom ) = 0;
     virtual void operator = ( const ofxCvFloatImage& mom ) = 0;
     
-    //we have these in the derived classes
-    //they can't be pure virtual because they always
-    //use the same argument type as "this"
-    //void operator -= ( const sameAsDerivedType& mom );
-    //void operator += ( const sameAsDerivedType& mom );
-    //void operator *= ( const sameAsDerivedType& mom );
-    //void operator &= ( const sameAsDerivedType& mom );
+    virtual void operator -= ( const ofxCvImage& mom );
+    virtual void operator += ( const ofxCvImage& mom );
+    virtual void operator *= ( const ofxCvImage& mom );
+    virtual void operator &= ( const ofxCvImage& mom );
     
 
     // Get Pixel Data

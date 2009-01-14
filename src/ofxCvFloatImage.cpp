@@ -48,86 +48,6 @@ void ofxCvFloatImage::setFromPixels( float * _pixels, int w, int h ) {
 }
 
 //--------------------------------------------------------------------------------
-void ofxCvFloatImage::operator =	( const ofxCvGrayscaleImage& mom ) {
-	if( mom.width == width && mom.height == height ) {
-        cvConvert( mom.getCvImage(), cvImage );
-	} else {
-        cout << "error in =, images are different sizes" << endl;
-	}
-}
-
-//--------------------------------------------------------------------------------
-void ofxCvFloatImage::operator =	( const ofxCvColorImage& mom ) {
-	if( mom.width == width && mom.height == height ) {
-		cvCvtColor( mom.getCvImage(), cvImage, CV_RGB2GRAY );
-	} else {
-        cout << "error in =, images are different sizes" << endl;
-	}
-}
-
-//--------------------------------------------------------------------------------
-void ofxCvFloatImage::operator =	( const ofxCvFloatImage& mom ) {
-	if( mom.width == width && mom.height == height ) {
-		cvCopy( mom.getCvImage(), cvImage, 0 );
-	} else {
-        cout << "error in =, images are different sizes" << endl;
-	}
-}
-
-
-//--------------------------------------------------------------------------------
-void ofxCvFloatImage::operator -= ( const ofxCvFloatImage& mom ) {
-	if( mom.width == width && mom.height == height ) {
-		cvSub( cvImage, mom.getCvImage(), cvImageTemp );
-		swapTemp();
-	} else {
-        cout << "error in -=, images are different sizes" << endl;
-	}
-}
-
-//--------------------------------------------------------------------------------
-void ofxCvFloatImage::operator += ( const ofxCvFloatImage& mom ) {
-	if( mom.width == width && mom.height == height ) {
-		cvAdd( cvImage, mom.getCvImage(), cvImageTemp );
-		swapTemp();
-	} else {
-        cout << "error in +=, images are different sizes" << endl;
-	}
-}
-
-//--------------------------------------------------------------------------------
-void ofxCvFloatImage::operator *= ( const ofxCvFloatImage& mom ) {
-	if( mom.width == width && mom.height == height ) {
-		cvMul( cvImage, mom.getCvImage(), cvImageTemp );
-		swapTemp();
-	} else {
-        cout << "error in *=, images are different sizes" << endl;
-	}
-}
-
-//--------------------------------------------------------------------------------
-void ofxCvFloatImage::operator &= ( const ofxCvFloatImage& mom ) {
-	if( mom.width == width && mom.height == height ) {
-	    //this is doing it bit-wise; probably not what we want
-		cvAnd( cvImage, mom.getCvImage(), cvImageTemp );
-		swapTemp();
-	} else {
-        cout << "error in &=, images are different sizes" << endl;
-	}
-}
-
-//--------------------------------------------------------------------------------
-void ofxCvFloatImage::operator -=	( float scalar ){
-    cvSubS(cvImage, cvScalar(scalar), cvImageTemp);
-    swapTemp();
-}
-//--------------------------------------------------------------------------------
-void ofxCvFloatImage::operator +=	( float scalar ){
-    cvAddS(cvImage, cvScalar(scalar), cvImageTemp);
-    swapTemp();
-}
-
-//--------------------------------------------------------------------------------
 void ofxCvFloatImage::operator *= ( float scalar ){
     // does this exist in opencv?
     int totalPixels = cvImage->width*cvImage->height;
@@ -141,6 +61,7 @@ void ofxCvFloatImage::operator *= ( float scalar ){
         ptr++;
     }
 }
+
 //--------------------------------------------------------------------------------
 void ofxCvFloatImage::operator /=    ( float scalar ){
     // does this exist in opencv?
@@ -158,6 +79,61 @@ void ofxCvFloatImage::operator /=    ( float scalar ){
         ptr++;
     }
 }
+
+//--------------------------------------------------------------------------------
+void ofxCvFloatImage::operator = ( const ofxCvGrayscaleImage& mom ) {
+	if( mom.width == width && mom.height == height ) {
+        cvConvert( mom.getCvImage(), cvImage );
+	} else {
+        cout << "error in =, images are different sizes" << endl;
+	}
+}
+
+//--------------------------------------------------------------------------------
+void ofxCvFloatImage::operator = ( const ofxCvColorImage& mom ) {
+	if( mom.width == width && mom.height == height ) {
+		cvCvtColor( mom.getCvImage(), cvImage, CV_RGB2GRAY );
+	} else {
+        cout << "error in =, images are different sizes" << endl;
+	}
+}
+
+//--------------------------------------------------------------------------------
+void ofxCvFloatImage::operator = ( const ofxCvFloatImage& mom ) {
+	if( mom.width == width && mom.height == height ) {
+		cvCopy( mom.getCvImage(), cvImage, 0 );
+	} else {
+        cout << "error in =, images are different sizes" << endl;
+	}
+}
+
+//--------------------------------------------------------------------------------
+void ofxCvFloatImage::operator *= ( const ofxCvImage& mom ) {
+	if( mom.width == width && mom.height == height &&
+	    mom.getCvImage()->nChannels == cvImage->nChannels && 
+        mom.getCvImage()->depth == cvImage->depth )
+    {
+		cvMul( cvImage, mom.getCvImage(), cvImageTemp );
+		swapTemp();
+	} else {
+        cout << "error in *=, images need to match in size and type" << endl;
+	}
+}
+
+//--------------------------------------------------------------------------------
+void ofxCvFloatImage::operator &= ( const ofxCvImage& mom ) {
+	if( mom.width == width && mom.height == height &&
+	    mom.getCvImage()->nChannels == cvImage->nChannels && 
+        mom.getCvImage()->depth == cvImage->depth )
+    {
+	    //this is doing it bit-wise; probably not what we want
+		cvAnd( cvImage, mom.getCvImage(), cvImageTemp );
+		swapTemp();
+	} else {
+        cout << "error in &=, images need to match in size and type" << endl;
+	}
+}
+
 
 //--------------------------------------------------------------------------------
 void ofxCvFloatImage::addWeighted( ofxCvGrayscaleImage& mom, float f ) {
@@ -250,7 +226,7 @@ void ofxCvFloatImage::scaleIntoMe( const ofxCvImage& mom, int interpolationMetho
     //                zooming it is similar to CV_INTER_NN method.
     //CV_INTER_CUBIC - bicubic interpolation.
         
-    if( mom.getCvImage()->nChannels == cvImage->nChannels || 
+    if( mom.getCvImage()->nChannels == cvImage->nChannels && 
         mom.getCvImage()->depth == cvImage->depth ) {
     
         if ((interpolationMethod != CV_INTER_NN) &&

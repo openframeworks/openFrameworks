@@ -25,20 +25,17 @@ class ofxCvFloatImage : public ofxCvImage {
         //
         virtual void set( float value );
         void setFromPixels( float * _pixels, int w, int h );
+        void operator *= ( float scalar );
+    	void operator /= ( float scalar );        
         
         void operator = ( const ofxCvGrayscaleImage& mom );
         void operator = ( const ofxCvColorImage& mom );
         void operator = ( const ofxCvFloatImage& mom );
         
-        void operator -= ( const ofxCvFloatImage& mom );
-        void operator += ( const ofxCvFloatImage& mom );
-        void operator *= ( const ofxCvFloatImage& mom );
-        void operator &= ( const ofxCvFloatImage& mom );
+        void operator *= ( const ofxCvImage& mom );
+        void operator &= ( const ofxCvImage& mom );  //bit-wise at the moment
 
-        void operator -=	( float scalar );
-    	void operator +=	( float scalar );
-        void operator *=	( float scalar );
-    	void operator /=    ( float scalar );
+
     	
     	void addWeighted( ofxCvGrayscaleImage& mom, float f );
     	
