@@ -969,6 +969,11 @@ void ofVideoPlayer::setPaused(bool _bPause){
 			if (bPaused == true) 	SetMovieRate(moviePtr, X2Fix(0));
 			else 					SetMovieRate(moviePtr, X2Fix(speed));
 		}
+	//--------------------------------------
+	#else
+	//--------------------------------------
+
+		timeLastIdle = ofGetElapsedTimeMillis();
 
 	//--------------------------------------
 	#endif
