@@ -57,7 +57,7 @@ int receiveAudioBufferAndCallSimpleApp(char *buffer, int bufferSize, void *data)
 }
 
 //---------------------------------------------------------
-void ofSoundStreamSetup(int nOutputs, int nInputs, ofBaseApp * OFSA = NULL){
+void ofSoundStreamSetup(int nOutputs, int nInputs, ofBaseApp * OFSA){
 	ofSoundStreamSetup(nOutputs, nInputs, OFSA, 44100, 256, 4);
 }
 
@@ -92,7 +92,7 @@ void ofSoundStreamSetup(int nOutputs, int nInputs, ofBaseApp * OFSA, int sampleR
 		error.printMessage();
 	}
 }
-	
+
 //---------------------------------------------------------
 void ofSoundStreamStop(){
 	try {

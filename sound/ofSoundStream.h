@@ -6,7 +6,8 @@
 #include "ofEvents.h"
 #include "ofMath.h"
 
-void ofSoundStreamSetup(int nOutputChannels, int nInputChannels, ofBaseApp * OFSA);
+void ofSoundStreamSetup(int nOutputChannels, int nInputChannels, ofBaseApp * OFSA = NULL);
+void ofSoundStreamSetup(int nOutputChannels, int nInputChannels, int sampleRate, int bufferSize, int nBuffers);
 void ofSoundStreamSetup(int nOutputChannels, int nInputChannels, ofBaseApp * OFSA, int sampleRate, int bufferSize, int nBuffers);
 void ofSoundStreamStop();
 void ofSoundStreamStart();
