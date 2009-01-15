@@ -14,7 +14,7 @@ ofxCvGrayscaleImage::ofxCvGrayscaleImage( const ofxCvGrayscaleImage& mom ) {
 void ofxCvGrayscaleImage::allocate( int w, int h ) {
 	
 	if (bAllocated == true){
-		printf ("warning: reallocating cvImage in ofxCvGrayscaleImage\n");
+		cout << "warning: reallocating cvImage in ofxCvGrayscaleImage" << endl;
 		clear();
 	}
 
@@ -234,13 +234,13 @@ void ofxCvGrayscaleImage::scaleIntoMe( const ofxCvImage& mom, int interpolationM
             (interpolationMethod != CV_INTER_LINEAR) &&
             (interpolationMethod != CV_INTER_AREA) &&
             (interpolationMethod != CV_INTER_CUBIC) ){
-            printf("error in scaleIntoMe / interpolationMethod, setting to CV_INTER_NN \n");
+            cout << "error in scaleIntoMe / interpolationMethod, setting to CV_INTER_NN" << endl;
     		interpolationMethod = CV_INTER_NN;
     	}
         cvResize( mom.getCvImage(), cvImage, interpolationMethod );
 
     } else {
-        printf("error in scaleIntoMe: mom image type has to match");
+        cout << "error in scaleIntoMe: mom image type has to match" << endl;
     }
 }
 

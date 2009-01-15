@@ -106,7 +106,7 @@ class ofxCvImage {
                             float focalX, float focalY,
                             float centerX, float centerY );
 
-    virtual void remap( IplImage* mapX, IplImage* mapY );
+    virtual void remap( const IplImage* mapX, const IplImage* mapY );
 
     virtual void warpPerspective( const ofPoint& A,
                                   const ofPoint& B,

@@ -15,20 +15,26 @@ ofxCvColorImage::ofxCvColorImage( const ofxCvColorImage& mom ) {
 
 //--------------------------------------------------------------------------------
 void ofxCvColorImage::allocate( int w, int h ) {
-	
 	if (bAllocated == true){
-		printf ("warning: reallocating cvImage in ofxCvColorImage\n");
+		cout << "warning: reallocating cvImage in ofxCvColorImage" << endl;
 		clear();
 	}
-	
 	cvImage = cvCreateImage( cvSize(w,h), IPL_DEPTH_8U, 3 );
 	cvImageTemp	= cvCreateImage( cvSize(w,h), IPL_DEPTH_8U, 3 );
+    cvGrayscaleImage = NULL;  //only allocated when needed
 	pixels = new unsigned char[w*h*3];
 	width = w;
 	height = h;
 	bAllocated = true;
     if( bUseTexture ) {
         tex.allocate( width, height, GL_RGB );
+    }
+}
+
+//--------------------------------------------------------------------------------
+ofxCvColorImage::~ofxCvColorImage() {
+    if (bAllocated == true && cvGrayscaleImage != NULL){
+        cvReleaseImage( &cvGrayscaleImage );
     }
 }
 
@@ -72,7 +78,7 @@ void ofxCvColorImage::setFromGrayscalePlanarImages( const ofxCvGrayscaleImage& r
 
 
 //--------------------------------------------------------------------------------
-void ofxCvColorImage::operator =	( unsigned char* _pixels ) {
+void ofxCvColorImage::operator = ( unsigned char* _pixels ) {
     setFromPixels( _pixels, width, height );
 }
 
@@ -97,9 +103,11 @@ void ofxCvColorImage::operator = ( const ofxCvColorImage& mom ) {
 //--------------------------------------------------------------------------------
 void ofxCvColorImage::operator = ( const ofxCvFloatImage& mom ) {
 	if( mom.width == width && mom.height == height ) {
-		//cvCopy(mom.getCvImage(), cvImage, 0);
-		//cvConvertScale( mom.getCvImage(), cvImage, 1, 0 );
-		cvConvert( mom.getCvImage(), cvImage ); // same as above but optimized
+        if( cvGrayscaleImage == NULL ) {
+            cvGrayscaleImage = cvCreateImage( cvSize(width,height), IPL_DEPTH_8U, 1 );
+        }
+		cvConvertScale( mom.getCvImage(), cvGrayscaleImage, 1, 0 );
+		cvCvtColor( cvGrayscaleImage, cvImage, CV_GRAY2RGB );
 	} else {
         cout << "error in =, images are different sizes" << endl;
 	}
@@ -208,13 +216,13 @@ void ofxCvColorImage::scaleIntoMe( const ofxCvImage& mom, int interpolationMetho
             (interpolationMethod != CV_INTER_LINEAR) &&
             (interpolationMethod != CV_INTER_AREA) &&
             (interpolationMethod != CV_INTER_CUBIC) ){
-            printf("error in scaleIntoMe / interpolationMethod, setting to CV_INTER_NN \n");
+            cout << "error in scaleIntoMe / interpolationMethod, setting to CV_INTER_NN" << endl;
     		interpolationMethod = CV_INTER_NN;
     	}
         cvResize( mom.getCvImage(), cvImage, interpolationMethod );
 
     } else {
-        printf("error in scaleIntoMe: mom image type has to match");
+        cout << "error in scaleIntoMe: mom image type has to match" << endl;
     }
 }
 

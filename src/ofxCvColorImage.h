@@ -12,24 +12,25 @@ class ofxCvColorImage : public ofxCvImage {
 
     ofxCvColorImage() {};
     ofxCvColorImage( const ofxCvColorImage& mom );
-    void allocate( int w, int h );
+    virtual ~ofxCvColorImage();
+    virtual void allocate( int w, int h );
     // virtual void clear();                        //in base class
     // virtual void setUseTexture( bool bUse );     //in base class    
 
 
     // Set Pixel Data
     //
-    void set( float value );
-    void set( int valueR, int valueG, int valueB);
+    virtual void set( float value );
+    virtual void set( int valueR, int valueG, int valueB);
     virtual void operator -= ( float value );
     virtual void operator += ( float value ); 
         
-    void setFromPixels( unsigned char * _pixels, int w, int h );
-    void setFromGrayscalePlanarImages( const ofxCvGrayscaleImage& red, const ofxCvGrayscaleImage& green, const ofxCvGrayscaleImage& blue );
-    void operator = ( unsigned char* _pixels );
-    void operator = ( const ofxCvGrayscaleImage& mom );
-    void operator = ( const ofxCvColorImage& mom );
-    void operator = ( const ofxCvFloatImage& mom );
+    virtual void setFromPixels( unsigned char * _pixels, int w, int h );
+    virtual void setFromGrayscalePlanarImages( const ofxCvGrayscaleImage& red, const ofxCvGrayscaleImage& green, const ofxCvGrayscaleImage& blue );
+    virtual void operator = ( unsigned char* _pixels );
+    virtual void operator = ( const ofxCvGrayscaleImage& mom );
+    virtual void operator = ( const ofxCvColorImage& mom );
+    virtual void operator = ( const ofxCvFloatImage& mom );
     
     // virtual void operator -= ( const ofxCvImage& mom );    //in base class 
     // virtual void operator += ( const ofxCvImage& mom );    //in base class 
@@ -39,15 +40,15 @@ class ofxCvColorImage : public ofxCvImage {
 
     // Get Pixel Data
     //
-    unsigned char*  getPixels();
-    void convertToGrayscalePlanarImages( ofxCvGrayscaleImage& red, ofxCvGrayscaleImage& green, ofxCvGrayscaleImage& blue );
+    virtual unsigned char*  getPixels();
+    virtual void convertToGrayscalePlanarImages( ofxCvGrayscaleImage& red, ofxCvGrayscaleImage& green, ofxCvGrayscaleImage& blue );
     // virtual IplImage*  getCvImage() const { return cvImage; };    //in base class
     
 
     // Draw Image
     //
-    void draw( float x, float y );
-    void draw( float x, float y, float w, float h );
+    virtual void draw( float x, float y );
+    virtual void draw( float x, float y, float w, float h );
 
 
     // Image Filter Operations
@@ -62,10 +63,10 @@ class ofxCvColorImage : public ofxCvImage {
 
     // Image Transformation Operations
     //
-    void resize( int w, int h );
-    void scaleIntoMe( const ofxCvImage& mom, int interpolationMethod = CV_INTER_NN);
-    void convertRgbToHsv();
-    void convertHsvToRgb();
+    virtual void resize( int w, int h );
+    virtual void scaleIntoMe( const ofxCvImage& mom, int interpolationMethod = CV_INTER_NN);
+    virtual void convertRgbToHsv();
+    virtual void convertHsvToRgb();
     // virtual void mirror( bool bFlipVertically, bool bFlipHorizontally );  //in base class
     // virtual void translate( float x, float y );                           //in base class
     // virtual void rotate( float angle, float centerX, float centerY );     //in base class
@@ -90,6 +91,11 @@ class ofxCvColorImage : public ofxCvImage {
     //
     // virtual int countNonZeroInRegion( int x, int y, int w, int h ) const; //in base class       
 
+
+  private:
+  
+    IplImage*  cvGrayscaleImage;     // internal IPL grayscale;
+      
 };
 
 

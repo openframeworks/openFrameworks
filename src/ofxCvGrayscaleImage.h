@@ -13,50 +13,50 @@ class ofxCvGrayscaleImage : public ofxCvImage {
 
     ofxCvGrayscaleImage() {};
     ofxCvGrayscaleImage( const ofxCvGrayscaleImage& mom );
-    void allocate( int w, int h );
+    virtual void allocate( int w, int h );
     // virtual void clear();                        //in base class
     // virtual void setUseTexture( bool bUse );     //in base class   
 
 
     // Set Pixel Data
     //
-    void set( float value );
+    virtual void set( float value );
     // virtual void operator -= ( float value );    //in base class 
     // virtual void operator += ( float value );    //in base class
     
-    void setFromPixels( unsigned char* _pixels, int w, int h );
-    void operator = ( unsigned char* _pixels );
-    void operator = ( const ofxCvGrayscaleImage& mom );
-    void operator = ( const ofxCvColorImage& mom );
-    void operator = ( const ofxCvFloatImage& mom );
+    virtual void setFromPixels( unsigned char* _pixels, int w, int h );
+    virtual void operator = ( unsigned char* _pixels );
+    virtual void operator = ( const ofxCvGrayscaleImage& mom );
+    virtual void operator = ( const ofxCvColorImage& mom );
+    virtual void operator = ( const ofxCvFloatImage& mom );
 
     // virtual void operator -= ( const ofxCvImage& mom );    //in base class 
     // virtual void operator += ( const ofxCvImage& mom );    //in base class 
     // virtual void operator *= ( const ofxCvImage& mom );    //in base class 
     // virtual void operator &= ( const ofxCvImage& mom );    //in base class 
 
-    void absDiff( ofxCvGrayscaleImage& mom );
-    void absDiff( ofxCvGrayscaleImage& mom, ofxCvGrayscaleImage& dad );
+    virtual void absDiff( ofxCvGrayscaleImage& mom );
+    virtual void absDiff( ofxCvGrayscaleImage& mom, ofxCvGrayscaleImage& dad );
 
 
     // Get Pixel Data
     //
-    unsigned char*  getPixels();
+    virtual unsigned char*  getPixels();
     // virtual IplImage*  getCvImage() const { return cvImage; };    //in base class
 
 
     // Draw Image
     //
-    void draw( float x, float y );
-    void draw( float x, float y, float w, float h );
+    virtual void draw( float x, float y );
+    virtual void draw( float x, float y, float w, float h );
 
-    void drawBlobIntoMe( ofxCvBlob & blob, int color );
+    virtual void drawBlobIntoMe( ofxCvBlob & blob, int color );
 
 
     // Image Filter Operations
     //
-    void contrastStretch();
-    void threshold( int value, bool invert = false);
+    virtual void contrastStretch();
+    virtual void threshold( int value, bool invert = false);
     // virtual void erode( );                                //in base class
     // virtual void dilate( );                               //in base class
     // virtual void blur( int value=3 );                     //in base class
@@ -67,8 +67,8 @@ class ofxCvGrayscaleImage : public ofxCvImage {
 
     // Image Transformation Operations
     //
-    void resize( int w, int h );
-    void scaleIntoMe( const ofxCvImage& mom, int interpolationMethod = CV_INTER_NN);
+    virtual void resize( int w, int h );
+    virtual void scaleIntoMe( const ofxCvImage& mom, int interpolationMethod = CV_INTER_NN);
     // virtual void mirror( bool bFlipVertically, bool bFlipHorizontally );  //in base class
     // virtual void translate( float x, float y );                           //in base class
     // virtual void rotate( float angle, float centerX, float centerY );     //in base class

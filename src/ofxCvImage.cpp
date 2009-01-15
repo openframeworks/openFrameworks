@@ -34,6 +34,7 @@ void ofxCvImage::clear() {
 			cvReleaseImage( &cvImageTemp );
 		}
 		delete pixels;
+        pixels = NULL;
 		width = 0;
 		height = 0;
 
@@ -150,12 +151,20 @@ void ofxCvImage::erode() {
 
 //--------------------------------------------------------------------------------
 void ofxCvImage::blur( int value ) {
+    if( value % 2 == 0 ) {
+        cout << "warning in blur: value not odd -> will add 1 to cover your back" << endl;
+        value++;
+    }
 	cvSmooth( cvImage, cvImageTemp, CV_BLUR , value);
 	swapTemp();
 }
 
 //--------------------------------------------------------------------------------
 void ofxCvImage::blurGaussian( int value ) {
+    if( value % 2 == 0 ) {
+        cout << "warning in blurGaussian: value not odd -> will add 1 to cover your back" << endl;
+        value++;
+    }
 	cvSmooth( cvImage, cvImageTemp, CV_GAUSSIAN ,value );
 	swapTemp();
 }
@@ -241,7 +250,7 @@ void ofxCvImage::undistort( float radialDistX, float radialDistY,
 
 
 //--------------------------------------------------------------------------------
-void ofxCvImage::remap( IplImage* mapX, IplImage* mapY ) {
+void ofxCvImage::remap( const IplImage* mapX, const IplImage* mapY ) {
     cvRemap( cvImage, cvImageTemp, mapX, mapY );
 	swapTemp();
 }

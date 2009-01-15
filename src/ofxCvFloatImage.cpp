@@ -15,7 +15,7 @@ ofxCvFloatImage::ofxCvFloatImage( const ofxCvFloatImage& mom ) {
 //--------------------------------------------------------------------------------
 void ofxCvFloatImage::allocate( int w, int h ) {
 	if (bAllocated == true){
-		printf ("warning: reallocating cvImage in ofxCvFloatImage\n");
+		cout << "warning: reallocating cvImage in ofxCvFloatImage" << endl;
 		clear();
 	}
 	cvImage = cvCreateImage( cvSize(w,h), IPL_DEPTH_32F, 1 );
@@ -31,6 +31,15 @@ void ofxCvFloatImage::allocate( int w, int h ) {
     }
 }
 
+//--------------------------------------------------------------------------------
+ofxCvFloatImage::~ofxCvFloatImage() {
+    if (bAllocated == true){
+        cvReleaseImage( &cvGrayscaleImage );
+        delete pixelsAsFloats;
+        pixelsAsFloats = NULL;
+    }
+}
+
 
 
 // Set Pixel Data
@@ -41,8 +50,11 @@ void ofxCvFloatImage::set(float value){
 }
 
 //--------------------------------------------------------------------------------
-void ofxCvFloatImage::setFromPixels( unsigned char * _pixels, int w, int h ) {
-    cout << "error: setFromPixels not implemented for this image type" << endl;
+void ofxCvFloatImage::setFromPixels( unsigned char * _pixels, int w, int h, float scaleMin, float scaleMax ) {
+    for( int i = 0; i < h; i++ ) {
+		memcpy( cvGrayscaleImage->imageData+(i*cvGrayscaleImage->widthStep), _pixels+(i*w), w );
+	}
+    cvConvert( cvGrayscaleImage, cvImage );
 }
 
 //--------------------------------------------------------------------------------
@@ -68,7 +80,7 @@ void ofxCvFloatImage::operator *= ( float scalar ){
 }
 
 //--------------------------------------------------------------------------------
-void ofxCvFloatImage::operator /=    ( float scalar ){
+void ofxCvFloatImage::operator /= ( float scalar ){
     // does this exist in opencv?
     int totalPixels = cvImage->width*cvImage->height;
     if(totalPixels == 0 || scalar == 0)return;
@@ -97,7 +109,8 @@ void ofxCvFloatImage::operator = ( const ofxCvGrayscaleImage& mom ) {
 //--------------------------------------------------------------------------------
 void ofxCvFloatImage::operator = ( const ofxCvColorImage& mom ) {
 	if( mom.width == width && mom.height == height ) {
-		cvCvtColor( mom.getCvImage(), cvImage, CV_RGB2GRAY );
+		cvCvtColor( mom.getCvImage(), cvGrayscaleImage, CV_RGB2GRAY );
+        cvConvert( cvGrayscaleImage, cvImage );
 	} else {
         cout << "error in =, images are different sizes" << endl;
 	}
@@ -238,12 +251,12 @@ void ofxCvFloatImage::scaleIntoMe( const ofxCvImage& mom, int interpolationMetho
             (interpolationMethod != CV_INTER_LINEAR) &&
             (interpolationMethod != CV_INTER_AREA) &&
             (interpolationMethod != CV_INTER_CUBIC) ){
-            printf("error in scaleIntoMe / interpolationMethod, setting to CV_INTER_NN \n");
+            cout << "error in scaleIntoMe / interpolationMethod, setting to CV_INTER_NN" << endl;
     		interpolationMethod = CV_INTER_NN;
     	}
         cvResize( mom.getCvImage(), cvImage, interpolationMethod );
 
     } else {
-        printf("error in scaleIntoMe: mom image type has to match");
+        cout << "error in scaleIntoMe: mom image type has to match" << endl;
     }
 }

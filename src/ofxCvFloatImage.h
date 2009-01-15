@@ -18,7 +18,8 @@ class ofxCvFloatImage : public ofxCvImage {
 
     ofxCvFloatImage() {};
     ofxCvFloatImage( const ofxCvFloatImage& mom );
-    void allocate( int w, int h );
+    virtual ~ofxCvFloatImage();
+    virtual void allocate( int w, int h );
     // virtual void clear();                        //in base class
     // virtual void setUseTexture( bool bUse );     //in base class          
 
@@ -28,37 +29,38 @@ class ofxCvFloatImage : public ofxCvImage {
     virtual void set( float value );
     // virtual void operator -= ( float value );    //in base class 
     // virtual void operator += ( float value );    //in base class     
-    void operator *= ( float scalar );
-	void operator /= ( float scalar );
+    virtual void operator *= ( float scalar );
+	virtual void operator /= ( float scalar );
 	      
-    void setFromPixels( unsigned char* _pixels, int w, int h );
-    void setFromPixels( float * _pixels, int w, int h );
-    void operator = ( const ofxCvGrayscaleImage& mom );
-    void operator = ( const ofxCvColorImage& mom );
-    void operator = ( const ofxCvFloatImage& mom );
+    virtual void setFromPixels( unsigned char* _pixels, int w, int h ) { setFromPixels(_pixels,w,h,0.0f,255.0f); };
+    virtual void setFromPixels( unsigned char* _pixels, int w, int h, float scaleMin, float scaleMax );
+    virtual void setFromPixels( float * _pixels, int w, int h );
+    virtual void operator = ( const ofxCvGrayscaleImage& mom );
+    virtual void operator = ( const ofxCvColorImage& mom );
+    virtual void operator = ( const ofxCvFloatImage& mom );
     
     // virtual void operator -= ( const ofxCvImage& mom );    //in base class 
     // virtual void operator += ( const ofxCvImage& mom );    //in base class     
-    void operator *= ( const ofxCvImage& mom );
-    void operator &= ( const ofxCvImage& mom );  //bit-wise at the moment
+    virtual void operator *= ( const ofxCvImage& mom );
+    virtual void operator &= ( const ofxCvImage& mom );  //bit-wise at the moment
 
 	void addWeighted( ofxCvGrayscaleImage& mom, float f );
 	
 	
 	// Get Pixel Data
 	//
-    unsigned char*      getPixels() { return getPixels( 0.0f, 255.0f); };
-    unsigned char*  	getPixels(float scaleMin, float scaleMax);
-    float * 			getPixelsAsFloats();
+    virtual unsigned char*      getPixels() { return getPixels( 0.0f, 255.0f); };
+    virtual unsigned char*  	getPixels(float scaleMin, float scaleMax);
+    virtual float * 			getPixelsAsFloats();
     // virtual IplImage*  getCvImage() const { return cvImage; };    //in base class 	
 
     
     // Draw Image
     //
-	void 	draw( float x, float y ) { drawWithScale(x,y,0.0f,255.0f); };
-	void 	draw( float x, float y, float w, float h ) { drawWithScale(x,y,w,h,0.0f,255.0f); };
-    void 	drawWithScale( float x, float y, float scaleMin, float scaleMax);
-    void 	drawWithScale( float x, float y, float w, float h, float scaleMin, float scaleMax);
+	virtual void 	draw( float x, float y ) { drawWithScale(x,y,0.0f,255.0f); };
+	virtual void 	draw( float x, float y, float w, float h ) { drawWithScale(x,y,w,h,0.0f,255.0f); };
+    virtual void 	drawWithScale( float x, float y, float scaleMin, float scaleMax);
+    virtual void 	drawWithScale( float x, float y, float w, float h, float scaleMin, float scaleMax);
 
 
     // Image Filter Operations
@@ -73,8 +75,8 @@ class ofxCvFloatImage : public ofxCvImage {
 
     // Image Transformation Operations
     //
-    void resize( int w, int h );
-    void scaleIntoMe( const ofxCvImage& mom, int interpolationMethod = CV_INTER_NN);
+    virtual void resize( int w, int h );
+    virtual void scaleIntoMe( const ofxCvImage& mom, int interpolationMethod = CV_INTER_NN);
     // virtual void mirror( bool bFlipVertically, bool bFlipHorizontally );  //in base class
     // virtual void translate( float x, float y );                           //in base class
     // virtual void rotate( float angle, float centerX, float centerY );     //in base class
