@@ -67,7 +67,6 @@ class ofPoint {
 		x = val;
 		y = val;
 		z = val;
-		printf("yes\n");
 		return *this;
 	}
 
@@ -207,30 +206,6 @@ class ofRectangle {
 };
 
 //----------------------------------------------------------
-// ofBaseDraw
-//----------------------------------------------------------
-
-class ofBaseDraw{
-public:	
-	virtual ~ofBaseDraw(){}
-	virtual void draw(){};
-	virtual void draw(float x,float y){};
-	virtual void draw(float x,float y,float w, float h){};
-	int height;
-	int width;
-};
-
-//----------------------------------------------------------
-// ofBaseUpdate
-//----------------------------------------------------------
-
-class ofBaseUpdate{
-public:
-	virtual ~ofBaseUpdate(){}
-	virtual void update(){};
-};
-
-//----------------------------------------------------------
 // ofColor
 //----------------------------------------------------------
 
@@ -266,6 +241,43 @@ class ofStyle{
 		int circleResolution;
 		float lineWidth;
 };
+
+
+//----------------------------------------------------------
+// ofBaseDraws
+//----------------------------------------------------------
+
+class ofBaseDraws{
+public:	
+	virtual ~ofBaseDraws(){}
+	virtual void draw(){};
+	virtual void draw(float x,float y){};
+	virtual void draw(float x,float y,float w, float h){};
+	int height;
+	int width;
+};
+
+//----------------------------------------------------------
+// ofBaseUpdates
+//----------------------------------------------------------
+
+class ofBaseUpdates{
+public:
+	virtual ~ofBaseUpdates(){}
+	virtual void update(){};
+};
+
+//----------------------------------------------------------
+// ofBaseHasTexture
+//----------------------------------------------------------
+class ofTexture;
+
+class ofBaseHasTexture{
+public:
+	virtual ~ofBaseHasTexture(){}
+	virtual ofTexture & getTextureReference()=0;
+};
+
 
 
 #endif

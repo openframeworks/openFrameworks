@@ -85,7 +85,7 @@ void ofTrueTypeFont::loadFont(string filename, int fontsize, bool _bAntiAliased,
 	//--------------- load the library and typeface
 	FT_Library library;
 	if (FT_Init_FreeType( &library )){
-		printf("PROBLEM WITH FT lib \n");
+		ofLog(OF_ERROR," PROBLEM WITH FT lib \n");
 		return;
 	}
 
@@ -99,7 +99,7 @@ void ofTrueTypeFont::loadFont(string filename, int fontsize, bool _bAntiAliased,
 
 	//------------------------------------------------------
 	//kerning would be great to support:
-	//printf("FT_HAS_KERNING ? %i \n", FT_HAS_KERNING(face));
+	//ofLog(OF_NOTICE,"FT_HAS_KERNING ? %i \n", FT_HAS_KERNING(face));
 	//------------------------------------------------------
 
 	nCharacters = bFullCharacterSet ? 256 : 128 - NUM_CHARACTER_TO_START;
@@ -114,7 +114,7 @@ void ofTrueTypeFont::loadFont(string filename, int fontsize, bool _bAntiAliased,
 
 		//------------------------------------------ anti aliased or not:
 		if(FT_Load_Glyph( face, FT_Get_Char_Index( face, (unsigned char)(i+NUM_CHARACTER_TO_START) ), FT_LOAD_DEFAULT )){
-			printf("error with FT_Load_Glyph %i \n", i);
+			ofLog(OF_ERROR,"error with FT_Load_Glyph %i \n", i);
 		}
 
 		if (bAntiAlised == true) FT_Render_Glyph(face->glyph, FT_RENDER_MODE_NORMAL);
@@ -160,7 +160,7 @@ void ofTrueTypeFont::loadFont(string filename, int fontsize, bool _bAntiAliased,
 
 
 		/* sanity check:
-		printf("%i %i %i %i %i %i \n",
+		ofLog(OF_NOTICE,"%i %i %i %i %i %i \n",
 		cps[i].value ,
 		cps[i].height ,
 		cps[i].width 	,
@@ -278,12 +278,12 @@ void ofTrueTypeFont::drawChar(int c, float x, float y) {
 
 	//----------------------- error checking
 	if (!bLoadedOk){
-		printf("Error : font not allocated -- line %d in %s\n", __LINE__,__FILE__);
+		ofLog(OF_ERROR,"Error : font not allocated -- line %d in %s\n", __LINE__,__FILE__);
 		return;
 	}
 
 	if (c >= nCharacters){
-		//printf("Error : char (%i) not allocated -- line %d in %s\n", (c + NUM_CHARACTER_TO_START), __LINE__,__FILE__);
+		//ofLog(OF_ERROR,"Error : char (%i) not allocated -- line %d in %s\n", (c + NUM_CHARACTER_TO_START), __LINE__,__FILE__);
 		return;
 	}
 	//-----------------------
@@ -332,7 +332,7 @@ void ofTrueTypeFont::drawChar(int c, float x, float y) {
 		//let's add verbosity levels somewhere...
 		//this error, for example, is kind of annoying to see
 		//all the time:
-		//printf("Warning : texture not bound for character -- line %d in %s\n", __LINE__,__FILE__);
+		//ofLog(OF_WARNING," texture not bound for character -- line %d in %s\n", __LINE__,__FILE__);
 	}
 
 }
@@ -426,7 +426,7 @@ float ofTrueTypeFont::stringHeight(string c) {
 void ofTrueTypeFont::drawString(string c, float x, float y) {
 
     if (!bLoadedOk){
-    	printf("Error : font not allocated -- line %d in %s\n", __LINE__,__FILE__);
+    	ofLog(OF_ERROR,"Error : font not allocated -- line %d in %s\n", __LINE__,__FILE__);
     	return;
     };
 

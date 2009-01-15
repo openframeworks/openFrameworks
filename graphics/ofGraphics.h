@@ -56,6 +56,17 @@ void ofSetStyle(ofStyle style);
 void ofPushStyle();
 void ofPopStyle();
 
+//our openGL wrappers
+void ofPushMatrix();
+void ofPopMatrix();
+void ofTranslate(float x, float y, float z = 0);
+void ofScale(float xAmnt, float yAmnt, float zAmnt = 1);
+void ofRotate(float degrees, float vecX, float vecY, float vecZ);
+void ofRotateX(float degrees);
+void ofRotateY(float degrees);
+void ofRotateZ(float degrees);
+void ofRotate(float degrees);
+
 // bitmapped type
 // ** note, this uses glDrawPixels and may be S L 0 W on some graphics cards
 void ofDrawBitmapString(string textString, float x, float y);

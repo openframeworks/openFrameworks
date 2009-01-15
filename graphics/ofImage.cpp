@@ -1,4 +1,3 @@
-
 #include "ofImage.h"
 
 
@@ -110,7 +109,7 @@ void ofImage::allocate(int w, int h, int type){
 			newBpp = 32;
 			break;
 		default:
-			printf("error = bad imageType in ofImage::allocate \n");
+			ofLog(OF_ERROR,"error = bad imageType in ofImage::allocate \n");
 			return;
 	}
 	
@@ -155,6 +154,15 @@ unsigned char * ofImage::getPixels(){
 }
 
 //------------------------------------
+//for getting a reference to the texture
+ofTexture & ofImage::getTextureReference(){
+	if(!tex.bAllocated() ){
+		ofLog(OF_WARNING, "ofImage - getTextureReference - texture is not allocated");
+	}
+	return tex;
+}
+
+//------------------------------------
 void  ofImage::setFromPixels(unsigned char * newPixels, int w, int h, int newType, bool bOrderIsRGB){
 	
 	if (!myPixels.bAllocated){
@@ -179,7 +187,7 @@ void  ofImage::setFromPixels(unsigned char * newPixels, int w, int h, int newTyp
 			newBpp = 32;
 			break;
 		default:
-			printf("error = bad imageType in ofImage::setFromPixels \n");
+			ofLog(OF_ERROR,"error = bad imageType in ofImage::setFromPixels \n");
 			return;
 	}
 	
@@ -318,7 +326,7 @@ inline void  ofImage::allocatePixels(ofPixels &pix, int width, int height, int b
 	bool bNeedToAllocate = false;
 	if (pix.bAllocated == true){
 		if ( (pix.width == width) && (pix.height == height) && (pix.bitsPerPixel == bpp)){
-			//printf("we are good, no reallocation needed \n");
+			//ofLog(OF_NOTICE,"we are good, no reallocation needed \n");
 			bNeedToAllocate = false;
 		 } else {
 			delete pix.pixels;
@@ -549,7 +557,7 @@ bool ofImage::loadImageIntoPixels(string fileName, ofPixels &pix){
 void  ofImage::saveImageFromPixels(string fileName, ofPixels &pix){
 	
 	if (pix.bAllocated == false){
-		printf("error saving image - pixels aren't allocated \n");
+		ofLog(OF_ERROR,"error saving image - pixels aren't allocated \n");
 		return;
 	}
 	

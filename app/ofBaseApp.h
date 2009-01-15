@@ -3,7 +3,7 @@
 
 #include "ofTypes.h"
 
-class ofBaseApp : public ofBaseUpdate, public ofBaseDraw{
+class ofBaseApp : public ofBaseUpdates, public ofBaseDraws{
 	
 	public:
         ofBaseApp() {

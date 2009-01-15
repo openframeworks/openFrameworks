@@ -109,7 +109,7 @@ PixelFormat fourcc_to_pix_fmt( unsigned int fourcc)
 //--------------------------------------------------------------------
 void new_frame_cb (unicap_event_t event, unicap_handle_t handle,
     	unicap_data_buffer_t * buffer, void *usr_data){
-	
+
 	((ofUCUtils*)usr_data)->new_frame(buffer);
 }
 
@@ -142,7 +142,7 @@ bool ofUCUtils::open_device(int d) {
 		printf ("Unicap : Error selecting device %d\n", d);
 		return false;
 	} else {
-		
+
 		if (!SUCCESS(unicap_open (&handle, &device))) {
 			printf ("Unicap : Error opening device %d: %s\n", d,
 					device.identifier);
@@ -214,7 +214,7 @@ void ofUCUtils::set_format(int w, int h) {
 		else{
 			for(selected_format=0;selected_format<format_count;selected_format++){
 				format = formats[selected_format];
-				if(fourcc_to_pix_fmt(format.fourcc)!=-1) 
+				if(fourcc_to_pix_fmt(format.fourcc)!=-1)
 					break;
 			}
 		}
@@ -329,39 +329,39 @@ void ofUCUtils::set_format(int w, int h) {
 			avpicture_alloc(src,src_pix_fmt,format.size.width,format.size.height);
 			dst=new AVPicture;
 			avpicture_alloc(dst,PIX_FMT_RGB24,d_width,d_height);
-			
+
 			toRGB_convert_ctx = sws_getContext(
 							format.size.width, format.size.height, src_pix_fmt,
 							d_width, d_height, PIX_FMT_RGB24,
 							VIDEOGRABBER_RESIZE_FLAGS, NULL, NULL, NULL);
-			
-			
-			printf("Converting to RGB24 (%i,%i)\n",w,h);  
+
+
+			printf("Converting to RGB24 (%i,%i)\n",w,h);
 
 			pixels=new unsigned char[d_width*d_height*3];
 		}
-		
+
 	   if( !SUCCESS( unicap_get_format( handle, &format ) ) )
 	   {
 		   return;
 	   }
-		   
-		format.buffer_type = UNICAP_BUFFER_TYPE_SYSTEM;  
-		   
+
+		format.buffer_type = UNICAP_BUFFER_TYPE_SYSTEM;
+
 	   if( !SUCCESS( unicap_set_format( handle, &format ) ) )
 	   {
 	      printf( "Failed to activate SYSTEM_BUFFERS\n" );
-	   }   
+	   }
 	}
 }
 
 
 //--------------------------------------------------------------------
 void ofUCUtils::start_capture() {
-	
+
 	if(!deviceReady)
 		return;
-	
+
 	int status = STATUS_SUCCESS;
 	if (!SUCCESS ( status = unicap_register_callback (handle, UNICAP_EVENT_NEW_FRAME, (unicap_callback_t) new_frame_cb, (void *) this) ) )
 		printf("Unicap: error registering callback\n");
@@ -416,18 +416,18 @@ void ofUCUtils::new_frame (unicap_data_buffer_t * buffer)
 {
 	if(!deviceReady)
 		return;
-	
+
 	if(src_pix_fmt!=PIX_FMT_RGB24){
 		avpicture_fill(src,buffer->data,src_pix_fmt,format.size.width,format.size.height);
-				
+
 		if(sws_scale(toRGB_convert_ctx,
 			src->data, src->linesize, 0, buffer->format.size.height,
 			dst->data, dst->linesize)<0)
 				printf("can't convert colorspaces\n");
-				
+
 		lock_buffer();
 			avpicture_layout(dst,PIX_FMT_RGB24,d_width,d_height,pixels,d_width*d_height*3);
-		
+
 	}else{
 		lock_buffer();
 			pixels=buffer->data;
@@ -470,32 +470,32 @@ void ofUCUtils::listUCDevices() {
 }
 
 void ofUCUtils::close_unicap() {
-	
+
 	if(!deviceReady)
 		return;
-	
+
 	unicap_stop_capture(handle);
 	bUCFrameNew=false;
-	
+
 	if( src_pix_fmt != PIX_FMT_RGB24 ){
-		
+
 		if ( dst != NULL ){
 			avpicture_free(dst);
 			delete dst;
 		}
-		
+
 		if ( pixels != NULL ) {
 			delete[] pixels;
 		}
-	
+
 		if ( src != NULL ){
 			//avpicture_free(src);
 			delete src;
 		}
-		
+
 	}
 	deviceReady=false;
-	
+
 }
 
 

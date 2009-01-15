@@ -4,23 +4,42 @@
 
 //----------------------------------------------------------
 ofTexture::ofTexture(){
-	textureName[0]	= 0;
-	bFlipTexture	= false;
-	textureTarget	= GL_TEXTURE_2D;
+	texData.bAllocated		= false;
+	texData.textureName[0]	= 0;
+	texData.bFlipTexture	= false;
+	texData.textureTarget	= GL_TEXTURE_2D;
+	texData.glTypeInternal  = 0;	
+	texData.glType			= 0;	
+	texData.width			= 0;	
+	texData.height			= 0;
+	texData.tex_w			= 0;	
+	texData.tex_h			= 0;	
+	texData.tex_t			= 0;	
+	texData.tex_u			= 0;
+}
+
+//----------------------------------------------------------
+bool ofTexture::bAllocated(){
+	return texData.bAllocated;
 }
 
 //----------------------------------------------------------
 ofTexture::ofTexture(const ofTexture& mom){
-	// do nothing. (since copying a texture via graphics card is not possible)
-	textureName[0]	= 0;
-	bFlipTexture	= false;
-	textureTarget	= GL_TEXTURE_2D;
+	texData = mom.texData;
 }	
 
 //----------------------------------------------------------			
 ofTexture& ofTexture::operator=(const ofTexture& mom){
-	// do nothing. (since copying a texture via graphics card is not possible)
-	return * this;
+	texData = mom.texData;
+	return *this;
+}
+
+//----------------------------------------------------------
+ofTextureData ofTexture::getTextureData(){
+	if(!texData.bAllocated){
+		//OFLOG message
+	}
+	return texData;
 }
 
 //----------------------------------------------------------
@@ -32,13 +51,11 @@ ofTexture::~ofTexture(){
 void ofTexture::clear(){
 	// try to free up the texture memory so we don't reallocate
 	// http://www.opengl.org/documentation/specs/man_pages/hardcopy/GL/html/gl/deletetextures.html
-	if (textureName[0] != 0){
-		glDeleteTextures(1, (GLuint *)textureName);
+	if (texData.textureName[0] != 0){
+		glDeleteTextures(1, (GLuint *)texData.textureName[0]);
 	}
 	
-	width			= 0;
-	height			= 0;
-	bFlipTexture		= false;
+	texData.bAllocated = false;
 }
 
 //----------------------------------------------------------
@@ -46,41 +63,44 @@ void ofTexture::allocate(int w, int h, int internalGlDataType, bool bUseARBExten
 
 	//our graphics card might not support arb so we have to see if it is supported. 
 	if (bUseARBExtention && GLEE_ARB_texture_rectangle){
-		tex_w = w;
-		tex_h = h;
-		tex_t = w;
-		tex_u = h;
-		textureTarget = GL_TEXTURE_RECTANGLE_ARB;
+		texData.tex_w = w;
+		texData.tex_h = h;
+		texData.tex_t = w;
+		texData.tex_u = h;
+		texData.textureTarget = GL_TEXTURE_RECTANGLE_ARB;
 	} else {
 		//otherwise we need to calculate the next power of 2 for the requested dimensions
 		//ie (320x240) becomes (512x256)
-		tex_w = ofNextPow2(w);
-		tex_h = ofNextPow2(h);
-		tex_t = 1.0f;
-		tex_u = 1.0f;
-		textureTarget = GL_TEXTURE_2D;
+		texData.tex_w = ofNextPow2(w);
+		texData.tex_h = ofNextPow2(h);
+		texData.tex_t = 1.0f;
+		texData.tex_u = 1.0f;
+		texData.textureTarget = GL_TEXTURE_2D;
 	}
+
+	texData.glTypeInternal = internalGlDataType;
 
 	// attempt to free the previous bound texture, if we can:
 	clear();
 
-	glGenTextures(1, (GLuint *)textureName);   // could be more then one, but for now, just one
+	glGenTextures(1, (GLuint *)texData.textureName);   // could be more then one, but for now, just one
 
-	glEnable(textureTarget);
+	glEnable(texData.textureTarget);
 
-		glBindTexture(textureTarget, (GLuint)textureName[0]);
-		glTexImage2D(textureTarget, 0, internalGlDataType, tex_w, tex_h, 0, GL_LUMINANCE, GL_UNSIGNED_BYTE, 0);  // init to black...
-		glTexParameterf(textureTarget, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-		glTexParameterf(textureTarget, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-		glTexParameterf(textureTarget, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		glTexParameterf(textureTarget, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glBindTexture(texData.textureTarget, (GLuint)texData.textureName[0]);
+		glTexImage2D(texData.textureTarget, 0, texData.glTypeInternal, texData.tex_w, texData.tex_h, 0, GL_LUMINANCE, GL_UNSIGNED_BYTE, 0);  // init to black...
+		glTexParameterf(texData.textureTarget, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameterf(texData.textureTarget, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		glTexParameterf(texData.textureTarget, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameterf(texData.textureTarget, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 
-	glDisable(textureTarget);
+	glDisable(texData.textureTarget);
 
-	width = w;
-	height = h;
-	bFlipTexture = false;
+	texData.width = w;
+	texData.height = h;
+	texData.bFlipTexture = false;
+	texData.bAllocated = true;	
 }
 
 //----------------------------------------------------------
@@ -95,22 +115,23 @@ void ofTexture::loadData(unsigned char * data, int w, int h, int glDataType){
 	//  but with a "step" size of w?
 	// 	check "glTexSubImage2D"
 
-	if ( w > tex_w || h > tex_h) {
-		printf("image data too big for allocated texture. not uploading... \n");
+	if ( w > texData.tex_w || h > texData.tex_h) {
+		ofLog(OF_ERROR,"image data too big for allocated texture. not uploading... \n");
 		return;
 	}
 
 	//update our size with the new dimensions - this should be the same size or smaller than the allocated texture size
-	width 	= w;
-	height 	= h;
+	texData.width 	= w;
+	texData.height 	= h;
+	texData.glType  = glDataType;
 
 	//compute new tex co-ords based on the ratio of data's w, h to texture w,h;
-	if (textureTarget == GL_TEXTURE_RECTANGLE_ARB){
-		tex_t = w;
-		tex_u = h;
+	if (texData.textureTarget == GL_TEXTURE_RECTANGLE_ARB){
+		texData.tex_t = w;
+		texData.tex_u = h;
 	} else {
-		tex_t = (float)(w) / (float)tex_w;
-		tex_u = (float)(h) / (float)tex_h;
+		texData.tex_t = (float)(w) / (float)texData.tex_w;
+		texData.tex_u = (float)(h) / (float)texData.tex_h;
 	}
 
 
@@ -141,15 +162,15 @@ void ofTexture::loadData(unsigned char * data, int w, int h, int glDataType){
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
 	// update the texture image:
-	glEnable(textureTarget);
-		glBindTexture(textureTarget, (GLuint)textureName[0]);
- 		glTexSubImage2D(textureTarget,0,0,0,w,h,glDataType,GL_UNSIGNED_BYTE,data);
-	glDisable(textureTarget);
+	glEnable(texData.textureTarget);
+		glBindTexture(texData.textureTarget, (GLuint)texData.textureName[0]);
+ 		glTexSubImage2D(texData.textureTarget,0,0,0,w,h,texData.glType,GL_UNSIGNED_BYTE,data);
+	glDisable(texData.textureTarget);
 
 	//------------------------ back to normal.
 	glPixelStorei(GL_UNPACK_ALIGNMENT, prevAlignment);
 
-	bFlipTexture = false;
+	texData.bFlipTexture = false;
 }
 
 
@@ -159,49 +180,50 @@ void ofTexture::loadScreenData(int x, int y, int w, int h){
 	int screenHeight = ofGetHeight();
 	y = screenHeight - y;
 	y -= h; // top, bottom issues
-	bFlipTexture = true;
+	texData.bFlipTexture = true;
 
-	if ( w > tex_w || h > tex_h) {
-		printf("image data too big for allocated texture. not uploading... \n");
+	if ( w > texData.tex_w || h > texData.tex_h) {
+		ofLog(OF_ERROR,"image data too big for allocated texture. not uploading... \n");
 		return;
 	}
 
 	//update our size with the new dimensions - this should be the same size or smaller than the allocated texture size
-	width 	= w;
-	height 	= h;
+	texData.width 	= w;
+	texData.height 	= h;
+	texData.glType  = GL_RGB;
 
 	//compute new tex co-ords based on the ratio of data's w, h to texture w,h;
 
-	if (textureTarget == GL_TEXTURE_RECTANGLE_ARB){
-		tex_t = (float)(w);
-		tex_u = (float)(h);
+	if (texData.textureTarget == GL_TEXTURE_RECTANGLE_ARB){
+		texData.tex_t = (float)(w);
+		texData.tex_u = (float)(h);
 	} else {
-		tex_t = (float)(w) / (float)tex_w;
-		tex_u = (float)(h) / (float)tex_h;
+		texData.tex_t = (float)(w) / (float)texData.tex_w;
+		texData.tex_u = (float)(h) / (float)texData.tex_h;
 	}
 
 
-	glEnable(textureTarget);
-	glBindTexture(textureTarget, (GLuint)textureName[0]);
-	glCopyTexSubImage2D(textureTarget, 0,0,0,x,y,w,h);
-	glDisable(textureTarget);
+	glEnable(texData.textureTarget);
+	glBindTexture(texData.textureTarget, (GLuint)texData.textureName[0]);
+	glCopyTexSubImage2D(texData.textureTarget, 0,0,0,x,y,w,h);
+	glDisable(texData.textureTarget);
 }
 
 
 //----------------------------------------------------------
 void ofTexture::draw(float x, float y, float w, float h){
 
-	glEnable(textureTarget);
+	glEnable(texData.textureTarget);
 
 	// bind the texture
-	glBindTexture( textureTarget, (GLuint)textureName[0] );
+	glBindTexture( texData.textureTarget, (GLuint)texData.textureName[0] );
 
 		GLint px0 = 0;		// up to you to get the aspect ratio right
 		GLint py0 = 0;
 		GLint px1 = (GLint)w;
 		GLint py1 = (GLint)h;
 
-		if (bFlipTexture == true){
+		if (texData.bFlipTexture == true){
 			GLint temp = py0;
 			py0 = py1;
 			py1 = temp;
@@ -226,16 +248,16 @@ void ofTexture::draw(float x, float y, float w, float h){
 		GLfloat offsetw = 0;
 		GLfloat offseth = 0;
 
-		if (textureTarget == GL_TEXTURE_2D){
-			offsetw = 1.0f/(tex_w);
-			offseth = 1.0f/(tex_h);
+		if (texData.textureTarget == GL_TEXTURE_2D){
+			offsetw = 1.0f/(texData.tex_w);
+			offseth = 1.0f/(texData.tex_h);
 		}
 		// -------------------------------------------------
 
 		GLfloat tx0 = 0+offsetw;
 		GLfloat ty0 = 0+offseth;
-		GLfloat tx1 = tex_t - offsetw;
-		GLfloat ty1 = tex_u - offseth;
+		GLfloat tx1 = texData.tex_t - offsetw;
+		GLfloat ty1 = texData.tex_u - offseth;
 
 		glPushMatrix();
 		glTranslated(x, y, 0);
@@ -247,13 +269,13 @@ void ofTexture::draw(float x, float y, float w, float h){
 		glEnd();
 		glPopMatrix();
 
-	glDisable(textureTarget);
+	glDisable(texData.textureTarget);
 }
 
 
 //----------------------------------------------------------
 void ofTexture::draw(float x, float y){
-	draw(x,y,width, height);
+	draw(x,y,texData.width, texData.height);
 }
 
 
