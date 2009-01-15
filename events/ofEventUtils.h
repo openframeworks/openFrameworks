@@ -5,7 +5,7 @@
 #include "Poco/FIFOEvent.h"
 #include "Poco/Delegate.h"
 
-using Poco::Delegate;
+using Poco::delegate;
 
 
 //-----------------------------------------
