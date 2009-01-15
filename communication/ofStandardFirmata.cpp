@@ -340,7 +340,7 @@ void ofStandardFirmata::processData(unsigned char inputData){
 				case FIRMATA_REPORT_VERSION: // report version
 					_majorProtocolVersion = _storedInputData[1];
 					_minorProtocolVersion = _storedInputData[0];
-					EProtocolVersionReceived.notify(this, _majorProtocolVersion);
+					ofNotifyEvent(EProtocolVersionReceived, _majorProtocolVersion, this);
 				break;
 				case FIRMATA_ANALOG_MESSAGE:
 					int previous = _analogHistory[_multiByteChannel].front();
@@ -351,7 +351,7 @@ void ofStandardFirmata::processData(unsigned char inputData){
 
 					// trigger an event if the pin has changed value
 					if(_analogHistory[_multiByteChannel].front()!=previous)
-						EAnalogPinChanged.notify(this, _multiByteChannel);
+						ofNotifyEvent(EAnalogPinChanged, _multiByteChannel, this);
 				break;
 			}
 
@@ -430,10 +430,10 @@ void ofStandardFirmata::processSysExData(vector<unsigned char> data){
 			}
 			_firmwareName = str;
 
-			EFirmwareVersionReceived.notify(this, _majorFirmwareVersion);
+			ofNotifyEvent(EFirmwareVersionReceived, _majorFirmwareVersion, this);
 
 			// trigger the initialization event
-			EInitialized.notify(this, _majorFirmwareVersion);
+			ofNotifyEvent(EInitialized, _majorFirmwareVersion, this);
 			_initialized = true;
 
 		break;
@@ -452,13 +452,13 @@ void ofStandardFirmata::processSysExData(vector<unsigned char> data){
 			if(_stringHistory.size()>_stringHistoryLength)
 					_stringHistory.pop_back();
 
-			EStringReceived.notify(this, str);
+			ofNotifyEvent(EStringReceived, str, this);
 		break;
 		default: // the message isn't in Firmatas extended command set
 			_sysExHistory.push_front(data);
 			if(_sysExHistory.size()>_sysExHistoryLength)
 					_sysExHistory.pop_back();
-			ESysExReceived.notify(this, data);
+			ofNotifyEvent(ESysExReceived, data, this);
 		break;
 
 	}
@@ -485,7 +485,7 @@ void ofStandardFirmata::processDigitalPort(int port, unsigned char value){
 
 					// trigger an event if the pin has changed value
 					if(_digitalHistory[pin].front()!=previous){
-							EDigitalPinChanged.notify(this, pin);
+						ofNotifyEvent(EDigitalPinChanged, pin, this);
 					}
 				}
 			}
@@ -505,7 +505,7 @@ void ofStandardFirmata::processDigitalPort(int port, unsigned char value){
 
 				// trigger an event if the pin has changed value
 				if(_digitalHistory[pin].front()!=previous){
-					EDigitalPinChanged.notify(this, pin);
+					ofNotifyEvent(EDigitalPinChanged, pin, this);
 				}
 			}
 		 }
@@ -524,7 +524,7 @@ void ofStandardFirmata::processDigitalPort(int port, unsigned char value){
 
 				// trigger an event if the pin has changed value
 				if(_digitalHistory[pin].front()!=previous){
-					EDigitalPinChanged.notify(this, pin);
+					ofNotifyEvent(EDigitalPinChanged, pin, this);
 				}
 			}
 		}
