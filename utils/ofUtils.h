@@ -37,6 +37,13 @@ string 	ofGetVersionInfo();
 void	ofSaveScreen(string filename);
 void	ofSaveFrame();
 
+//--------------------------------------------------
+void ofSetLogLevel(int logLevel);
+void ofLog(int logLevel, string message);
+void ofLog(int logLevel, const char* format, ...);
+void ofSetConsoleColor(int color);
+void ofRestoreConsoleColor();
+
 //----------------------- not for the public:
 void	setFrameNum(int num);
 

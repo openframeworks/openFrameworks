@@ -29,7 +29,7 @@ void 	ofCloseFreeImage();		// when we exit, we shut down ofImage
 
 
 //----------------------------------------------------
-class ofImage : public ofBaseDraw{
+class ofImage : public ofBaseDraws, public ofBaseHasTexture{
 
 	public :
 
@@ -49,6 +49,9 @@ class ofImage : public ofBaseDraw{
 	
 		// enable or disable using the texture of this image
 		void 				setUseTexture(bool bUse);
+		
+		//for getting a reference to the texture
+		ofTexture & getTextureReference();
 
 		// file loading / saving
 		bool 				loadImage(string fileName);

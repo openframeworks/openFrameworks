@@ -19,9 +19,9 @@
     
 //----------------------------------------------------------
 // static
-GLuint 			precachedCircle		= 0;
 static float	drawMode			= OF_FILLED;
 static bool 	bSetupCircle		= false;
+static int		numCirclePts		= CIRC_RESOLUTION;
 float 			bgColor[4]			= {0,0,0,0};
 void 			setupCircle();
 bool 			bSmoothHinted		= false;
@@ -32,6 +32,7 @@ int 			polyMode			= OF_POLY_WINDING_ODD;
 //style stuff - new in 006
 ofStyle			currentStyle;
 vector <ofStyle> styleHistory;
+float circlePts[OF_MAX_CIRCLE_PTS];
 
 //----------------------------------------------------------
 void  ofSetRectMode(int mode){
@@ -111,37 +112,38 @@ void endSmoothing(){
 
 //----------------------------------------------------------
 void setupCircle(){
-	precachedCircle = glGenLists(1);
-	glNewList(precachedCircle, GL_COMPILE);
+
+	numCirclePts = CIRC_RESOLUTION;
 	float angle = 0.0f;
 	float angleAdder = M_TWO_PI / (float)CIRC_RESOLUTION;
-	for (float i = 0; i < CIRC_RESOLUTION; i++){
-		glVertex2f( cos(angle), sin(angle));
+	int k = 0;
+	for (float i = 0; i < numCirclePts; i++){
+		circlePts[k] = cos(angle);
+		circlePts[k+1] = sin(angle);
 		angle += angleAdder;
+		k+=2;
 	}
-	glEndList();
+	currentStyle.circleResolution = CIRC_RESOLUTION;
 	bSetupCircle = true;
 }
 
 //----------------------------------------------------------
 void ofSetCircleResolution(int res){
-	if (res > 1 && res != currentStyle.circleResolution){
-		
-		currentStyle.circleResolution = res;
+	res = MIN(res, OF_MAX_CIRCLE_PTS);
+
+	if (res > 1 && res != numCirclePts){
+		numCirclePts = res;
+		currentStyle.circleResolution = numCirclePts;
 				
-		if (precachedCircle != 0){	
-			glDeleteLists(precachedCircle, 1);
-		}
-		
-		precachedCircle = glGenLists(1);
-		glNewList(precachedCircle, GL_COMPILE);
 		float angle = 0.0f;
 		float angleAdder = M_TWO_PI / (float)res;
-		for (float i = 0; i < res; i++){
-			glVertex2f( cos(angle), sin(angle));
+		int k = 0;
+		for (float i = 0; i < numCirclePts; i++){
+			circlePts[k] = cos(angle);
+			circlePts[k+1] = sin(angle);
 			angle += angleAdder;
+			k+=2;
 		}
-		glEndList();
 		bSetupCircle = true;
 	}
 }
@@ -149,7 +151,6 @@ void ofSetCircleResolution(int res){
 
 //----------------------------------------------------------
 void ofTriangle(float x1,float y1,float x2,float y2,float x3, float y3){
-
 
 	// use smoothness, if requested:
 	if (bSmoothHinted && drawMode == OF_OUTLINE) startSmoothing();
@@ -174,13 +175,13 @@ void ofCircle(float x,float y, float radius){
 	if (bSmoothHinted && drawMode == OF_OUTLINE) startSmoothing();
 
 	// draw:
-	glPushMatrix();
-		glTranslatef(x, y, 0);
-		glScalef(radius, radius, 1);
 		glBegin( (drawMode == OF_FILLED) ? GL_POLYGON : GL_LINE_LOOP);
-		glCallList(precachedCircle);
+	int k = 0;
+	for(int i = 0; i < numCirclePts; i++){
+		glVertex2f(x + circlePts[k] * radius, y + circlePts[k+1] * radius);
+		k+=2;
+	}
 		glEnd();
-	glPopMatrix();
 
 	// back to normal, if smoothness is on
 	if (bSmoothHinted && drawMode == OF_OUTLINE) endSmoothing();
@@ -195,14 +196,17 @@ void ofEllipse(float x, float y, float width, float height){
 	// use smoothness, if requested:
 	if (bSmoothHinted && drawMode == OF_OUTLINE) startSmoothing();
 
+	float hWidth	= width  * 0.5;
+	float hHeight	= height * 0.5;
+
 	// draw:
-	glPushMatrix();
-		glTranslatef(x, y, 0);
-		glScalef(width, height, 1);
 		glBegin( (drawMode == OF_FILLED) ? GL_POLYGON : GL_LINE_LOOP);
-		glCallList(precachedCircle);
+	int k = 0;
+	for(int i = 0; i < numCirclePts; i++){
+		glVertex2f(x + circlePts[k] * hWidth, y + circlePts[k+1] * hHeight);
+		k+=2;
+	}
 		glEnd();
-	glPopMatrix();
 
 	// back to normal, if smoothness is on
 	if (bSmoothHinted && drawMode == OF_OUTLINE) endSmoothing();
@@ -430,7 +434,7 @@ void ofPushStyle(){
 	if( styleHistory.size() > OF_MAX_STYLE_HISTORY ){
 		styleHistory.erase(styleHistory.begin() + OF_MAX_STYLE_HISTORY, styleHistory.end());
 		//should we warn here?
-		//printf("ofPushStyle - warning: you have used ofPushStyle more than %i times without calling ofPopStyle - check your code! \n", OF_MAX_STYLE_HISTORY);
+		//ofLog(OF_WARNING, "ofPushStyle - warning: you have used ofPushStyle more than %i times without calling ofPopStyle - check your code! \n", OF_MAX_STYLE_HISTORY);
 	}
 }
 
@@ -441,6 +445,55 @@ void ofPopStyle(){
 		styleHistory.erase(styleHistory.begin(), styleHistory.begin()+1);
 	}
 }
+
+
+//our openGL wrappers
+//----------------------------------------------------------
+void ofPushMatrix(){
+	glPushMatrix();
+}
+
+//----------------------------------------------------------
+void ofPopMatrix(){
+	glPopMatrix();
+}
+
+//----------------------------------------------------------
+void ofTranslate(float x, float y, float z){
+	glTranslatef(x, y, z);
+}
+
+//----------------------------------------------------------
+void ofScale(float xAmnt, float yAmnt, float zAmnt){
+	glScalef(xAmnt, yAmnt, zAmnt);
+}
+
+//----------------------------------------------------------
+void ofRotate(float degrees, float vecX, float vecY, float vecZ){
+	glRotatef(degrees, vecX, vecY, vecZ);
+}
+
+//----------------------------------------------------------
+void ofRotateX(float degrees){
+	glRotatef(degrees, 1, 0, 0);
+}
+
+//----------------------------------------------------------
+void ofRotateY(float degrees){
+	glRotatef(degrees, 0, 1, 0);
+}
+
+//----------------------------------------------------------
+void ofRotateZ(float degrees){
+	glRotatef(degrees, 0, 0, 1);
+}
+
+//same as ofRotateZ 
+//----------------------------------------------------------
+void ofRotate(float degrees){
+	glRotatef(degrees, 0, 0, 1);
+}
+
 
 //--------------------------------------------------
 void ofDrawBitmapString(string textString, float x, float y){
@@ -564,7 +617,7 @@ void clearCurveVertices();
 void CALLBACK tessError(GLenum errCode){
 	const GLubyte* estring;
 	estring = gluErrorString( errCode);
-	fprintf( stderr, "ERROR : %s\n", estring);
+	ofLog(OF_ERROR, "tessError: %s\n", estring);
 }
 
 //----------------------------------------------------------
@@ -655,7 +708,7 @@ void ofSetPolyMode(int mode){
 			polyMode = OF_POLY_WINDING_ABS_GEQ_TWO;
 			break;
 		default:
-			printf("error in ofSetPolyMode\n");
+			ofLog(OF_ERROR," error in ofSetPolyMode\n");
 
 	}
 }

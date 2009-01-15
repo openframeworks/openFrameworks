@@ -176,8 +176,20 @@
 class ofBaseApp;
 typedef ofBaseApp ofSimpleApp;
 
+typedef enum{
+	OF_NOTICE,
+	OF_WARNING,
+	OF_ERROR,
+	OF_FATAL_ERROR,
+	OF_SILENT	//this one is special and should always be last - set ofSetLogLevel to OF_SILENT to not recieve any messages
+};
+
+static int OF_DEFAULT_LOG_LEVEL =  OF_WARNING;
+static int currentLogLevel =  OF_DEFAULT_LOG_LEVEL;
+
 // core: ---------------------------
 #include <stdio.h>
+#include <stdarg.h>
 #include <math.h>
 #include <time.h>
 #include <stdlib.h>
@@ -248,6 +260,7 @@ using namespace std;
 #define 	OF_IMAGE_UNDEFINED		0x03
 
 #define		OF_MAX_STYLE_HISTORY	32
+#define		OF_MAX_CIRCLE_PTS 1024
 
 // these are straight out of glu, but renamed and included here
 // for convenience
@@ -326,6 +339,68 @@ using namespace std;
 #define OF_KEY_HOME			(GLUT_KEY_HOME | OF_KEY_MODIFIER)
 #define OF_KEY_END			(GLUT_KEY_END | OF_KEY_MODIFIER)
 #define OF_KEY_INSERT		(GLUT_KEY_INSERT | OF_KEY_MODIFIER)
+
+
+//--------------------------------------------
+//colors for our logger.
+
+#ifdef TARGET_WIN32
+//		fg_black = 0,
+//		fg_red = FOREGROUND_RED,
+//		fg_green = FOREGROUND_GREEN,
+//		fg_blue = FOREGROUND_BLUE,
+//		fg_yellow = fg_red | fg_green,
+//		fg_cyan = fg_green | fg_blue,
+//		fg_pink = fg_red | fg_blue,
+//		fg_white = fg_red | fg_green | fg_blue,
+//		fg_bright = FOREGROUND_INTENSITY,
+//		fg_bright_red = fg_bright | fg_red,
+//		fg_bright_green = fg_bright | fg_green,
+//		fg_bright_blue = fg_bright | fg_blue,
+//		fg_bright_yellow = fg_bright | fg_yellow,
+//		fg_bright_cyan = fg_bright | fg_cyan,
+//		fg_bright_pink = fg_bright | fg_pink,
+//		fg_bright_white = fg_bright | fg_white,
+//		bg_black = 0,
+//		bg_red = BACKGROUND_RED,
+//		bg_green = BACKGROUND_GREEN,
+//		bg_blue = BACKGROUND_BLUE,
+//		bg_yellow = bg_red | bg_green,
+//		bg_cyan = bg_green | bg_blue,
+//		bg_pink = bg_red | bg_blue,
+//		bg_white = bg_red | bg_green | bg_blue,
+//		bg_bright = BACKGROUND_INTENSITY,
+//		bg_bright_red = bg_bright | bg_red,
+//		bg_bright_green = bg_bright | bg_green,
+//		bg_bright_blue = bg_bright | bg_blue,
+//		bg_bright_yellow = bg_bright | bg_yellow,
+//		bg_bright_cyan = bg_bright | bg_cyan,
+//		bg_bright_pink = bg_bright | bg_pink,
+//		bg_bright_white = bg_bright | bg_white,
+//		
+	#define OF_CONSOLE_COLOR_RESTORE (0 | (FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE) )
+	#define OF_CONSOLE_COLOR_BLACK (0)
+	#define OF_CONSOLE_COLOR_RED (FOREGROUND_RED)
+	#define OF_CONSOLE_COLOR_GREEN (FOREGROUND_GREEN)
+	#define OF_CONSOLE_COLOR_YELLOW (FOREGROUND_RED|FOREGROUND_GREEN)
+	#define OF_CONSOLE_COLOR_BLUE (FOREGROUND_BLUE)
+	#define OF_CONSOLE_COLOR_PURPLE (FOREGROUND_RED | FOREGROUND_BLUE )
+	#define OF_CONSOLE_COLOR_CYAN (FOREGROUND_GREEN | FOREGROUND_BLUE)
+	#define OF_CONSOLE_COLOR_WHITE (FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE)
+		
+#else
+	
+	#define OF_CONSOLE_COLOR_RESTORE (0)
+	#define OF_CONSOLE_COLOR_BLACK (30)
+	#define OF_CONSOLE_COLOR_RED (31)
+	#define OF_CONSOLE_COLOR_GREEN (32)
+	#define OF_CONSOLE_COLOR_YELLOW (33)
+	#define OF_CONSOLE_COLOR_BLUE (34)
+	#define OF_CONSOLE_COLOR_PURPLE (35)
+	#define OF_CONSOLE_COLOR_CYAN (36)
+	#define OF_CONSOLE_COLOR_WHITE (37)
+ 
+#endif
 
 
 //--------------------------------------------

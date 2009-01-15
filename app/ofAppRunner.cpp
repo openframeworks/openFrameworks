@@ -61,7 +61,7 @@ void ofSetupOpenGL(int w, int h, int screenMode){
     	glutGameModeString(gameStr);
 
     	if (!glutGameModeGet(GLUT_GAME_MODE_POSSIBLE)){
-    		printf("game mode error: selected format (%s) not available \n", gameStr);
+    		ofLog(OF_ERROR,"game mode error: selected format (%s) not available \n", gameStr);
     	}
     	// start fullscreen game mode
     	glutEnterGameMode();

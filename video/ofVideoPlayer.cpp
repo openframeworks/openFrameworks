@@ -19,8 +19,8 @@ bool 	createMovieFromPath(char * path, Movie &movie){
 	#ifdef TARGET_WIN32
 		result = NativePathNameToFSSpec (path, &theFSSpec, 0);
 		if (result != noErr) {
-			printf("NativePathNameToFSSpec failed %d\n", result);
-			printf("ERROR LOADINGmovie \n");
+			ofLog(OF_ERROR,"NativePathNameToFSSpec failed %d\n", result);
+			ofLog(OF_ERROR,"Error loading movie \n");
 			return false;
 		}
 
@@ -31,9 +31,9 @@ bool 	createMovieFromPath(char * path, Movie &movie){
 	#ifdef TARGET_OSX
 		FSRef 		fsref;
 		result = FSPathMakeRef((const UInt8*)path, &fsref, &isdir);
-		if (result) { printf("FSPathMakeRef failed %d\n", result); printf("ERROR LOADINGmovie \n"); return false; }
+		if (result) { ofLog(OF_ERROR,"FSPathMakeRef failed %d\n", result); ofLog(OF_ERROR,"Error loading movie \n"); return false; }
 		result = FSGetCatalogInfo(&fsref, kFSCatInfoNone, NULL, NULL, &theFSSpec, NULL);
-		if (result) { printf("FSGetCatalogInfo failed %d\n", result); printf("ERROR LOADINGmovie \n"); return false; }
+		if (result) { ofLog(OF_ERROR,"FSGetCatalogInfo failed %d\n", result); ofLog(OF_ERROR,"Error loading movie \n"); return false; }
 	#endif
 
 
@@ -46,11 +46,11 @@ bool 	createMovieFromPath(char * path, Movie &movie){
 		if (result == noErr){
 			CloseMovieFile (movieResFile);
 		} else {
-			printf("NewMovieFromFile failed %d\n", result);
+			ofLog(OF_ERROR,"NewMovieFromFile failed %d\n", result);
 			return false;
 		}
 	} else {
-		printf("OpenMovieFile failed %d\n", result);
+		ofLog(OF_ERROR,"OpenMovieFile failed %d\n", result);
 		return false;
 	}
 
@@ -65,7 +65,7 @@ bool createMovieFromURL(string urlIn,  Movie &movie){
 	OSErr err;
 
 	urlDataRef = NewHandle(strlen(url) + 1);
-	if ( ( err = MemError()) != noErr){ printf("createMovieFromURL: error creating url handle\n"); return false;}
+	if ( ( err = MemError()) != noErr){ ofLog(OF_ERROR,"createMovieFromURL: error creating url handle\n"); return false;}
 
 	BlockMoveData(url, *urlDataRef, strlen(url) + 1);
 
@@ -73,7 +73,7 @@ bool createMovieFromURL(string urlIn,  Movie &movie){
 	DisposeHandle(urlDataRef);
 
 	if(err != noErr){
-		printf("createMovieFromURL: error loading url\n");
+		ofLog(OF_ERROR,"createMovieFromURL: error loading url\n");
 		return false;
 	}else{
 		return true;
@@ -149,6 +149,16 @@ ofVideoPlayer::ofVideoPlayer (){
 unsigned char * ofVideoPlayer::getPixels(){
 	return pixels;
 }
+
+//------------------------------------
+//for getting a reference to the texture
+ofTexture & ofVideoPlayer::getTextureReference(){
+	if(!tex.bAllocated() ){
+		ofLog(OF_WARNING, "ofVideoPlayer - getTextureReference - texture is not allocated");
+	}
+	return tex;
+}
+
 
 //---------------------------------------------------------------------------
 bool ofVideoPlayer::isFrameNew(){
@@ -448,7 +458,7 @@ bool ofVideoPlayer::loadMovie(string name){
 
 
 		if( error != omnividea::fobs::OkCode ){
-			printf("error loading movie\n");
+			ofLog(OF_ERROR,"error loading movie\n");
 			return false;
 		}
 		width 					= fobsDecoder->getWidth();
@@ -474,14 +484,14 @@ bool ofVideoPlayer::loadMovie(string name){
 
 		if(error == omnividea::fobs::NoFrameError) {
 			error = omnividea::fobs::OkCode;
-			printf("NoFrameError\n");
+			ofLog(OF_ERROR,"NoFrameError\n");
 		}
 
 		if(omnividea::fobs::isOk(error)){
 			// get some pixels in:
 			unsigned char *rgb = fobsDecoder->getRGB(width,height);
 			if(rgb == NULL){
-				printf("load movie: getRGB error\n");
+				ofLog(OF_ERROR,"load movie: getRGB error\n");
 				error = omnividea::fobs::GenericError;
 			}
 			if(isOk(error) && bUseTexture)

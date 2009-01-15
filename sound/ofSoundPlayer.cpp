@@ -42,10 +42,10 @@ float * ofSoundGetSpectrum(int nBands){
 	
 	// 	check what the user wants vs. what we can do:
 	if (nBands > 8192){
-		printf("error in ofSoundGetSpectrum, the maximum number of bands is 8192 - you asked for %i\nwe will return 8192\n", nBands);
+		ofLog(OF_ERROR, "error in ofSoundGetSpectrum, the maximum number of bands is 8192 - you asked for %i\nwe will return 8192\n", nBands);
 		nBands = 8192;	
 	} else if (nBands <= 0){
-		printf("error in ofSoundSpectrum, you've asked for %i bands, minimum is 1\n", nBands);
+		ofLog(OF_ERROR, "error in ofSoundSpectrum, you've asked for %i bands, minimum is 1\n", nBands);
 		return fftInterpValues;
 	}
 
@@ -92,7 +92,7 @@ float * ofSoundGetSpectrum(int nBands){
 				currentBand++;
 				// safety check: 
 				if (currentBand >= nBands){
-					printf("hmmm error \n");
+					ofLog(OF_ERROR, "ofSoundGetSpectrum - currentBand >= nBands \n");
 				}
 				
 				fftInterpValues[currentBand] += one_m_fraction * fftValues[i];
@@ -143,7 +143,7 @@ void ofSoundPlayer::initializeFmod(){
 	if(!bFmodInitialized){
 		FMOD_System_Create(&sys);
 		#ifdef TARGET_LINUX
-		FMOD_System_SetOutput(sys,FMOD_OUTPUTTYPE_ALSA);
+			FMOD_System_SetOutput(sys,FMOD_OUTPUTTYPE_ALSA);
 		#endif
 		FMOD_System_Init(sys, 32, FMOD_INIT_NORMAL, NULL);  //do we want just 32 channels?
 		FMOD_System_GetMasterChannelGroup(sys, &channelgroup);
@@ -194,7 +194,7 @@ void ofSoundPlayer::loadSound(string fileName, bool stream){
 
 	if (result != FMOD_OK){
 		bLoadedOk = false;
-		printf("ofSoundPlayer: Could not load sound file %s \n", fileName.c_str() );
+		ofLog(OF_ERROR,"ofSoundPlayer: Could not load sound file %s \n", fileName.c_str() );
 	} else {
 		bLoadedOk = true;
 		FMOD_Sound_GetLength(sound, &length, FMOD_TIMEUNIT_PCM);

@@ -21,7 +21,7 @@
 
 //---------------------------------------------
 
-class ofVideoPlayer : public ofBaseUpdate, public ofBaseDraw{
+class ofVideoPlayer : public ofBaseUpdates, public ofBaseDraws, public ofBaseHasTexture{	
 	
 	public:
 	
@@ -53,8 +53,9 @@ class ofVideoPlayer : public ofBaseUpdate, public ofBaseDraw{
 		void 				setLoopState(int state);
 		void   				setSpeed(float speed);
 		void				setFrame(int frame);  // frame 0 = first frame...  
-		
+
 		void 				setUseTexture(bool bUse);
+		ofTexture &			getTextureReference();
 		void 				draw(float x, float y, float w, float h);	
 		void 				draw(float x, float y);	
 		
