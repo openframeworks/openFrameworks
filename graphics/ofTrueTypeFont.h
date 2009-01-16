@@ -31,7 +31,7 @@ in ofTrueTypeFont::loadFont
 that solved the bouding-box problem but broke the drawString function of course.
 so i think in charProps the member height should be renamed to top and
 a new member height should be set to bitmap_rows
-stringHeight can then calculate the right bouding box. a stringTop function could also be introduced. 
+stringHeight can then calculate the right bouding box. a stringTop function could also be introduced.
 */
 
 //--------------------------------------------------
@@ -46,8 +46,8 @@ public:
 
 
 	ofTrueTypeFont();
-	~ofTrueTypeFont();
-	
+	virtual ~ofTrueTypeFont();
+
 	// 			-- default, non-full char set, anti aliased:
 	void 		loadFont(string filename, int fontsize);
 	void 		loadFont(string filename, int fontsize, bool _bAntiAliased, bool _bFullCharacterSet);
@@ -60,9 +60,9 @@ public:
   	void 		setLineHeight(float height);
 	float 		stringWidth(string s);
 	float 		stringHeight(string s);
-	
+
 	ofRectangle    getStringBoundingBox(string s, float x, float y);
-	
+
 	void 		drawString(string s, float x, float y);
 	int 		nCharacters;
 

@@ -30,7 +30,7 @@ class ofVideoGrabber : public ofBaseUpdates, public ofBaseDraws, public ofBaseHa
 	public :
 
 		ofVideoGrabber();
-		~ofVideoGrabber();
+		virtual ~ofVideoGrabber();
 
 		void 			listDevices();
 		bool 			isFrameNew();
@@ -46,7 +46,7 @@ class ofVideoGrabber : public ofBaseUpdates, public ofBaseDraws, public ofBaseHa
 		void 			draw(float x, float y, float w, float h);
 		void 			draw(float x, float y);
 		void			update();
-		
+
 	protected:
 
 		bool					bChooseDevice;
@@ -71,7 +71,7 @@ class ofVideoGrabber : public ofBaseUpdates, public ofBaseDraws, public ofBaseHa
 			Rect				videoRect;
 			bool 				bSgInited;
 			string				deviceName;
-			
+
 			bool				qtInitSeqGrabber();
 			bool				qtCloseSeqGrabber();
 			bool				qtSelectDevice(int deviceNumber, bool didWeChooseADevice);

@@ -29,18 +29,18 @@ float * ofSoundGetSpectrum(int nBands);			// max 512...
 
 
 // --------------------- player functions:
-class ofSoundPlayer{	
+class ofSoundPlayer{
 
 	public:
 
 		ofSoundPlayer();
-		~ofSoundPlayer();
-		
+		virtual ~ofSoundPlayer();
+
 		void  	loadSound(string fileName, bool stream = false);
 		void 	unloadSound();
 		void  	play();
 		void  	stop();
-		
+
 		void 	setVolume(float vol);
 		void 	setPan(float vol);
 		void 	setSpeed(float spd);
@@ -48,14 +48,14 @@ class ofSoundPlayer{
 		void  	setLoop(bool bLp);
 		void 	setMultiPlay(bool bMp);
 		void 	setPosition(float pct);	// 0 = start, 1 = end;
-		
+
 		float  	getPosition();
-		bool 	getIsPlaying(); 	
-		float 	getSpeed();	
-		float 	getPan();	
-		
-		static void initializeFmod();				
-		static void closeFmod();				
+		bool 	getIsPlaying();
+		float 	getSpeed();
+		float 	getPan();
+
+		static void initializeFmod();
+		static void closeFmod();
 
 		bool	isStreaming;
 		bool 	bMultiPlay;
@@ -67,7 +67,7 @@ class ofSoundPlayer{
 		float 	internalFreq;		// 44100 ?
 		float 	speed;				// -n to n, 1 = normal, -1 backwards
 		unsigned int 	length;		// in samples;
-									
+
 		FMOD_RESULT			result;
 		FMOD_CHANNEL 		*  channel;
 		FMOD_SOUND  		*  sound;
