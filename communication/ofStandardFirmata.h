@@ -144,7 +144,7 @@ class ofStandardFirmata{
         public:
                 ofStandardFirmata();
 
-                ~ofStandardFirmata();
+                virtual ~ofStandardFirmata();
 
                 // --- setup functions
                 int connect(string device, int baud=115200);

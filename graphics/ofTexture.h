@@ -37,7 +37,7 @@ class ofTexture : public ofBaseDraws{
 	public :
 
 		ofTexture();
-		~ofTexture();
+		virtual ~ofTexture();
 
 		// -----------------------------------------------------------------------
 		// we allow pass by copy and assignment operator

@@ -8,7 +8,7 @@
 #ifdef OF_VIDEO_PLAYER_FOBS
 	#include "Decoder.h"
 	#include <pthread.h>
-#else 
+#else
 	#include "ofQtUtils.h"
 #endif
 
@@ -21,53 +21,53 @@
 
 //---------------------------------------------
 
-class ofVideoPlayer : public ofBaseUpdates, public ofBaseDraws, public ofBaseHasTexture{	
-	
+class ofVideoPlayer : public ofBaseUpdates, public ofBaseDraws, public ofBaseHasTexture{
+
 	public:
-	
-	
+
+
 		ofVideoPlayer ();
-		~ofVideoPlayer();
-				
+		virtual ~ofVideoPlayer();
+
 		bool 				loadMovie(string name);
 		void 				closeMovie();
-		
+
 		void				update();			//same as idleMovie
 		void 				idleMovie();		// rename to updateMovie?
-		void 				play();				
+		void 				play();
 		void 				stop();
-		
+
 		int 				width, height;
 		float  				speed;
-		bool 				bLoaded;	
-				
+		bool 				bLoaded;
+
 		bool 				isFrameNew();
 		unsigned char * 	getPixels();
 		float 				getPosition();
 		float 				getSpeed();
-		float 				getDuration();	
+		float 				getDuration();
 		bool				getIsMovieDone();
-		
+
 		void 				setPosition(float pct);
 		void 				setVolume(int volume);
 		void 				setLoopState(int state);
 		void   				setSpeed(float speed);
-		void				setFrame(int frame);  // frame 0 = first frame...  
+		void				setFrame(int frame);  // frame 0 = first frame...
 
 		void 				setUseTexture(bool bUse);
 		ofTexture &			getTextureReference();
-		void 				draw(float x, float y, float w, float h);	
-		void 				draw(float x, float y);	
-		
+		void 				draw(float x, float y, float w, float h);
+		void 				draw(float x, float y);
+
 		void 				setPaused(bool bPause);
-		
-		int					getCurrentFrame(); 
+
+		int					getCurrentFrame();
 		int					getTotalNumFrames(){   return nFrames; }
-		
+
 		void				firstFrame();
 		void				nextFrame();
 		void				previousFrame();
-		
+
 		//--------------------------------------
 		#ifdef OF_VIDEO_PLAYER_FOBS
 		//--------------------------------------
@@ -85,22 +85,22 @@ class ofVideoPlayer : public ofBaseUpdates, public ofBaseDraws, public ofBaseHas
 			MovieController  	thePlayer;
 			GWorldPtr 			offscreenGWorld;
 			Movie 			 	moviePtr;
-			unsigned char * 	offscreenGWorldPixels;	// 32 bit: argb (qt k32ARGBPixelFormat)	
+			unsigned char * 	offscreenGWorldPixels;	// 32 bit: argb (qt k32ARGBPixelFormat)
 			void				qtGetFrameCount(Movie & movForcount);
 		//--------------------------------------
 		#endif
 		//--------------------------------------
-			
+
 		int					nFrames;				// number of frames
 		unsigned char * 	pixels;					// 24 bit: rgb
 		bool 				bHavePixelsChanged;
 		ofTexture 			tex;					// a ptr to the texture we are utilizing
-		bool 				bUseTexture;			// are we using a texture	
+		bool 				bUseTexture;			// are we using a texture
 		bool				allocated;				// so we know to free pixels or not
-		
+
 	protected:
-	
-		
+
+
 		void 				start();
 		void 				createImgMemAndGWorld();
 		bool 				bStarted;

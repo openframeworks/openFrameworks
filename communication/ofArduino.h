@@ -47,7 +47,7 @@ class ofArduino: public ofStandardFirmata{
         public:
                 ofArduino();
 
-                ~ofArduino();
+                virtual ~ofArduino();
 
 				int connect(string device, int baud=57600);
                 // opens a serial port connection to the arduino
