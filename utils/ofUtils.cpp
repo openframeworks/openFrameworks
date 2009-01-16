@@ -135,7 +135,7 @@ void ofLaunchBrowser(string url){
 
 	//make sure it is a properly formatted url
 	if(url.substr(0,7) != "http://"){
-		ofLog(OF_WARNING, "ofLaunchBrowser: url must begin http://\n");
+		ofLog(OF_WARNING, "ofLaunchBrowser: url must begin http://");
 		return;
 	}
 
@@ -221,8 +221,12 @@ void ofSetLogLevel(int logLevel){
 void ofLog(int logLevel, string message){
 	if(logLevel >= currentLogLevel){
 		if(logLevel == OF_NOTICE){
+			printf("OF_VERBOSE: ");
+		}
+		else if(logLevel == OF_NOTICE){
 			printf("OF_NOTICE: ");
-		}else if(logLevel == OF_WARNING){
+		}
+		else if(logLevel == OF_WARNING){
 			printf("OF_WARNING: ");
 		}
 		else if(logLevel == OF_ERROR){
