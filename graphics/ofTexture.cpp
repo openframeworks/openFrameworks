@@ -6,6 +6,7 @@
 ofTexture::ofTexture(){
 	texData.bAllocated		= false;
 	texData.textureName[0]	= 0;
+	texData.textureID		= 0;
 	texData.bFlipTexture	= false;
 	texData.textureTarget	= GL_TEXTURE_2D;
 	texData.glTypeInternal  = 0;
@@ -52,7 +53,7 @@ void ofTexture::clear(){
 	// try to free up the texture memory so we don't reallocate
 	// http://www.opengl.org/documentation/specs/man_pages/hardcopy/GL/html/gl/deletetextures.html
 	if (texData.textureName[0] != 0){
-		glDeleteTextures(1, (GLuint *)texData.textureName[0]);
+		glDeleteTextures(1, (GLuint *)texData.textureName);
 	}
 
 	texData.bAllocated = false;
