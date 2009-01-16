@@ -5,6 +5,7 @@
 
 #include <stdio.h>
 #include <stdint.h>
+#include "ofUtils.h"
 
 extern "C"
 {
@@ -139,21 +140,20 @@ ofUCUtils::~ofUCUtils(){
 bool ofUCUtils::open_device(int d) {
 
 	if (!SUCCESS(unicap_enumerate_devices (NULL, &device, d))) {
-		printf ("Unicap : Error selecting device %d\n", d);
+		ofLog(OF_ERROR,"Unicap : Error selecting device %d", d);
 		return false;
 	} else {
 
 		if (!SUCCESS(unicap_open (&handle, &device))) {
-			printf ("Unicap : Error opening device %d: %s\n", d,
+			ofLog(OF_ERROR,"Unicap : Error opening device %d: %s", d,
 					device.identifier);
 			return false;
 		}
 		deviceReady = true;
 	}
-	if(verbose){
-	    printf("Unicap : Using device %s \n",device.device);
-	    printf("Unicap : Using module %s\n",device.vendor_name);
-	}
+	ofLog(OF_NOTICE,"Unicap : Using device %s",device.device);
+	ofLog(OF_NOTICE,"Unicap : Using module %s",device.vendor_name);
+
 	return true;
 }
 
@@ -188,15 +188,15 @@ void ofUCUtils::set_format(int w, int h) {
 	unicap_status_t status = STATUS_SUCCESS;
 	int rgb24 = -1;
 
-	if(verbose) printf("Unicap : Available formats for this device:\n");
+	ofLog(OF_NOTICE,"Unicap : Available formats for this device:");
 	for (format_count = 0; SUCCESS (status) && (format_count < MAX_FORMATS); format_count++) {
 		status = unicap_enumerate_formats (handle, NULL, &formats[format_count], format_count);
 		if (SUCCESS (status)) {
 			if (formats[format_count].bpp == 24) {
 				rgb24 = format_count;
 			}
-			if(verbose) printf (
-					"Unicap : %d: %s, min size: %dx%d, max size:%dx%d, default size: %dx%d\n",
+			ofLog(OF_NOTICE,
+					"Unicap : %d: %s, min size: %dx%d, max size:%dx%d, default size: %dx%d",
 					format_count, formats[format_count].identifier,
 					formats[format_count].min_size.width,
 					formats[format_count].min_size.height,
@@ -235,12 +235,12 @@ void ofUCUtils::set_format(int w, int h) {
 		}
 
 		if(sizeFounded){
-			if(verbose && !exactMatch)
-				printf ("Unicap : Can't set video format %s, with size %dx%d\n",
+			if(!exactMatch)
+				ofLog(OF_WARNING, "Unicap : Can't set video format %s, with size %dx%d",
 								format.identifier, w, h);
 
 			if ( !SUCCESS ( unicap_set_format (handle, &format) ) ) {
-				printf ("Unicap : Failed to set alternative video format!\n");
+				ofLog(OF_ERROR, "Unicap : Failed to set alternative video format!");
 				return;
 			}
 		}else{
@@ -249,7 +249,7 @@ void ofUCUtils::set_format(int w, int h) {
 
 			//Try selected size
 			if (!SUCCESS (unicap_set_format (handle, &format))) {
-				printf ("Unicap : Can't set video format %s, with size %dx%d\n",
+				ofLog(OF_WARNING,"Unicap : Can't set video format %s, with size %dx%d",
 						format.identifier, w, h);
 
 
@@ -263,10 +263,10 @@ void ofUCUtils::set_format(int w, int h) {
 
 				//Try with unicap reported sizes
 				if(format.size_count > 0){
-					if(verbose)printf ("Unicap : Available sizes: %d\n",format.size_count);
+					ofLog(OF_NOTICE,"Unicap : Available sizes: %d",format.size_count);
 
 					for(int i = 0; i < format.size_count; i++){
-						if(verbose) printf ("%d,%d\n",format.sizes[i].width,format.sizes[i].height);
+						ofLog(OF_NOTICE,"%d,%d",format.sizes[i].width,format.sizes[i].height);
 						if(abs(w-format.sizes[i].width)<abs(w-nearW)){
 							nearW = format.sizes[i].width;
 							nearH = format.sizes[i].height;
@@ -303,24 +303,24 @@ void ofUCUtils::set_format(int w, int h) {
 				//If none of the above work, try default size
 				if(!sizeFounded){
 	       			if ( !SUCCESS( unicap_enumerate_formats( handle, &format_spec, &format, selected_format ) ) ) {
-						printf("Unicap : Failed to get alternative video format\n");
+	       				ofLog(OF_ERROR,"Unicap : Failed to get alternative video format");
 						return;
 					}
 
 					if ( !SUCCESS ( unicap_set_format (handle, &format) ) ) {
-						printf ("Unicap : Failed to set alternative video format!\n");
+						ofLog(OF_ERROR,"Unicap : Failed to set alternative video format!");
 						return;
 					}
 				}
 			}
 
 		}
-		if(verbose) printf("Unicap : Selected format: %s, with size %dx%d\n", format.identifier,
+		ofLog(OF_NOTICE,"Unicap : Selected format: %s, with size %dx%d\n", format.identifier,
 				format.size.width, format.size.height);
 
 		src_pix_fmt=fourcc_to_pix_fmt(format.fourcc);
 		if( src_pix_fmt==-1){
-			printf("Unicap : Format not suported\n");
+			ofLog(OF_ERROR,"Unicap : Format not suported\n");
 			return;
 		}
 
@@ -336,13 +336,14 @@ void ofUCUtils::set_format(int w, int h) {
 							VIDEOGRABBER_RESIZE_FLAGS, NULL, NULL, NULL);
 
 
-			printf("Converting to RGB24 (%i,%i)\n",w,h);
+			ofLog(OF_NOTICE,"Converting to RGB24 (%i,%i)\n",w,h);
 
 			pixels=new unsigned char[d_width*d_height*3];
 		}
 
 	   if( !SUCCESS( unicap_get_format( handle, &format ) ) )
 	   {
+		   ofLog(OF_ERROR, "can't get format" );
 		   return;
 	   }
 
@@ -350,7 +351,7 @@ void ofUCUtils::set_format(int w, int h) {
 
 	   if( !SUCCESS( unicap_set_format( handle, &format ) ) )
 	   {
-	      printf( "Failed to activate SYSTEM_BUFFERS\n" );
+		   ofLog(OF_WARNING, "Failed to activate SYSTEM_BUFFERS" );
 	   }
 	}
 }
@@ -364,9 +365,9 @@ void ofUCUtils::start_capture() {
 
 	int status = STATUS_SUCCESS;
 	if (!SUCCESS ( status = unicap_register_callback (handle, UNICAP_EVENT_NEW_FRAME, (unicap_callback_t) new_frame_cb, (void *) this) ) )
-		printf("Unicap: error registering callback\n");
+		ofLog(OF_ERROR,"Unicap: error registering callback");
 	if (!SUCCESS ( status = unicap_start_capture (handle) ) )
-		printf("Unicap: error starting capture: %i,%i\n",status,STATUS_INVALID_HANDLE);
+		ofLog(OF_ERROR,"Unicap: error starting capture: %i,%i",status,STATUS_INVALID_HANDLE);
 }
 
 
@@ -374,7 +375,7 @@ void ofUCUtils::start_capture() {
 void ofUCUtils::queryUC_imageProperties(void) {
 
 	unicap_property_t property;
-	printf("Unicap : Video settings:\n");
+	ofLog(OF_NOTICE,"Unicap : Video settings:");
 	const int PPTY_TYPE_MAPPED_FLOAT=UNICAP_PROPERTY_TYPE_UNKNOWN + 1;
 	int status = STATUS_SUCCESS;
 	int ppty_type;
@@ -385,7 +386,7 @@ void ofUCUtils::queryUC_imageProperties(void) {
 
 		status = unicap_get_property(handle, &property );
 		if ( !SUCCESS( status )) {
-			printf("Unicap : Error getting %s value\n", property.identifier);
+			ofLog(OF_ERROR,"Unicap : Error getting %s value\n", property.identifier);
 			return;
 		}
 
@@ -395,9 +396,9 @@ void ofUCUtils::queryUC_imageProperties(void) {
 		case UNICAP_PROPERTY_TYPE_RANGE:
 		case UNICAP_PROPERTY_TYPE_VALUE_LIST:
 			if (property.value>0 && property.value<1) {
-				printf("\t%s: 1/%.0f \n", property.identifier, 1/property.value);
+				ofLog(OF_NOTICE,"\t%s: 1/%.0f \n", property.identifier, 1/property.value);
 			} else {
-				printf("\t%s: %.2f \n", property.identifier, property.value);
+				ofLog(OF_NOTICE,"\t%s: %.2f \n", property.identifier, property.value);
 			}
 			break;
 		case UNICAP_PROPERTY_TYPE_MENU:
@@ -423,7 +424,7 @@ void ofUCUtils::new_frame (unicap_data_buffer_t * buffer)
 		if(sws_scale(toRGB_convert_ctx,
 			src->data, src->linesize, 0, buffer->format.size.height,
 			dst->data, dst->linesize)<0)
-				printf("can't convert colorspaces\n");
+				ofLog(OF_ERROR,"can't convert colorspaces");
 
 		lock_buffer();
 			avpicture_layout(dst,PIX_FMT_RGB24,d_width,d_height,pixels,d_width*d_height*3);
