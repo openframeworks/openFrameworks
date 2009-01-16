@@ -211,6 +211,7 @@ void ofSaveFrame(){
 // OF_ERROR
 // OF_FATAL_ERROR
 
+int currentLogLevel =  OF_DEFAULT_LOG_LEVEL;
 //--------------------------------------------------
 void ofSetLogLevel(int logLevel){
 	currentLogLevel = logLevel;
@@ -230,7 +231,7 @@ void ofLog(int logLevel, string message){
 		else if(logLevel == OF_FATAL_ERROR){
 			printf("OF_FATAL_ERROR: ");
 		}
-		printf(message.c_str());
+		printf("%s\n",message.c_str());
 	}
 }
 
@@ -254,7 +255,8 @@ void ofLog(int logLevel, const char* format, ...){
 			printf("OF_FATAL_ERROR: ");
 		}
 		vprintf( format, args );
-		va_end( args );		
+		printf("\n");
+		va_end( args );
 	}
 }
 

@@ -176,7 +176,7 @@
 class ofBaseApp;
 typedef ofBaseApp ofSimpleApp;
 
-typedef enum{
+enum ofLogLevel{
 	OF_NOTICE,
 	OF_WARNING,
 	OF_ERROR,
@@ -184,8 +184,7 @@ typedef enum{
 	OF_SILENT	//this one is special and should always be last - set ofSetLogLevel to OF_SILENT to not recieve any messages
 };
 
-static int OF_DEFAULT_LOG_LEVEL =  OF_WARNING;
-static int currentLogLevel =  OF_DEFAULT_LOG_LEVEL;
+#define OF_DEFAULT_LOG_LEVEL  OF_WARNING;
 
 // core: ---------------------------
 #include <stdio.h>
