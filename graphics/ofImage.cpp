@@ -10,7 +10,7 @@ static bool		bFreeImageInited = false;
 
 //----------------------------------------------------------
 ofImage::ofImage(){
-	
+
 	myPixels.width			= 0;
 	myPixels.height			= 0;
 	myPixels.bitsPerPixel		= 0;
@@ -18,14 +18,14 @@ ofImage::ofImage(){
 	myPixels.glDataType		= GL_LUMINANCE;
 	myPixels.ofImageType		= OF_IMAGE_UNDEFINED;
 	myPixels.bAllocated		= false;
-	
+
 	width				= 0;
 	height				= 0;
 	bpp				= 0;
 	type 				= OF_IMAGE_UNDEFINED;
 	bUseTexture 			= true;		// the default is, yes, use a texture
-	
-			
+
+
 	//----------------------- init free image if necessary
 	if (!bFreeImageInited){
 		FreeImage_Initialise();
@@ -35,21 +35,21 @@ ofImage::ofImage(){
 
 //----------------------------------------------------------
 ofImage& ofImage::operator=(const ofImage& mom) {
-	clone(mom); 
+	clone(mom);
 	update();
 	return *this;
 }
 
 //----------------------------------------------------------
-ofImage::ofImage(const ofImage& mom) { 
-	
+ofImage::ofImage(const ofImage& mom) {
+
 	if (!bFreeImageInited){
 		FreeImage_Initialise();
 		bFreeImageInited = true;
 	}
-	
+
 	clear();
-	clone(mom); 
+	clone(mom);
 	update();
 };
 
@@ -64,11 +64,11 @@ ofImage::~ofImage(){
 bool ofImage::loadImage(string fileName){
 	bool bLoadedOk = false;
 	bLoadedOk = loadImageIntoPixels(fileName, myPixels);
-	
+
 	if (bLoadedOk == true){
 	if (myPixels.bAllocated == true && bUseTexture == true){
 		tex.allocate(myPixels.width, myPixels.height, myPixels.glDataType);
-	}	
+	}
 	update();
 }
 
@@ -94,10 +94,10 @@ void ofImage::draw(float x, float y){
 
 //------------------------------------
 void ofImage::allocate(int w, int h, int type){
-	
-	
+
+
 	int newBpp = 0;
-	
+
 	switch (type){
 		case OF_IMAGE_GRAYSCALE:
 			newBpp = 8;
@@ -109,17 +109,17 @@ void ofImage::allocate(int w, int h, int type){
 			newBpp = 32;
 			break;
 		default:
-			ofLog(OF_ERROR,"error = bad imageType in ofImage::allocate \n");
+			ofLog(OF_ERROR,"error = bad imageType in ofImage::allocate");
 			return;
 	}
-	
+
 	allocatePixels(myPixels, w, h, newBpp);
-	
-	// take care of texture allocation -- 
+
+	// take care of texture allocation --
 	if (myPixels.bAllocated == true && bUseTexture == true){
 		tex.allocate(myPixels.width, myPixels.height, myPixels.glDataType);
 	}
-	
+
 	update();
 }
 
@@ -130,9 +130,9 @@ void ofImage::clear(){
 	if (myPixels.bAllocated == true){
 		delete myPixels.pixels;
 	}
-	
+
 	tex.clear();
-	
+
 	myPixels.width			= 0;
 	myPixels.height			= 0;
 	myPixels.bitsPerPixel	= 0;
@@ -140,7 +140,7 @@ void ofImage::clear(){
 	myPixels.glDataType		= GL_LUMINANCE;
 	myPixels.ofImageType	= OF_IMAGE_UNDEFINED;
 	myPixels.bAllocated		= false;
-	
+
 	width					= 0;
 	height					= 0;
 	bpp						= 0;
@@ -164,17 +164,17 @@ ofTexture & ofImage::getTextureReference(){
 
 //------------------------------------
 void  ofImage::setFromPixels(unsigned char * newPixels, int w, int h, int newType, bool bOrderIsRGB){
-	
+
 	if (!myPixels.bAllocated){
 		allocate(w, h, newType);
 	}
-	
+
 	if (!((width == w) && (height == h) && (type == newType))){
 		clear();
 		allocate(w,h, newType);
 	}
-	
-	
+
+
 	int newBpp = 0;
 	switch (type){
 		case OF_IMAGE_GRAYSCALE:
@@ -187,30 +187,30 @@ void  ofImage::setFromPixels(unsigned char * newPixels, int w, int h, int newTyp
 			newBpp = 32;
 			break;
 		default:
-			ofLog(OF_ERROR,"error = bad imageType in ofImage::setFromPixels \n");
+			ofLog(OF_ERROR,"error = bad imageType in ofImage::setFromPixels");
 			return;
 	}
-	
+
 	allocatePixels(myPixels, w, h, newBpp);
 	int bytesPerPixel = myPixels.bitsPerPixel / 8;
 	memcpy(myPixels.pixels, newPixels, w*h*bytesPerPixel);
-	
+
 	if (myPixels.bytesPerPixel > 1){
 		if (!bOrderIsRGB){
 			swapRgb(myPixels);
 		}
 	}
-	
+
 	update();
 }
 
 //------------------------------------
 void ofImage::update(){
-	
+
 	if (myPixels.bAllocated == true && bUseTexture == true){
 		tex.loadData(myPixels.pixels, myPixels.width, myPixels.height, myPixels.glDataType);
-	}	
-	
+	}
+
 	width	= myPixels.width;
 	height	= myPixels.height;
 	bpp		= myPixels.bitsPerPixel;
@@ -225,12 +225,12 @@ void ofImage::setUseTexture(bool bUse){
 
 //------------------------------------
 void ofImage::grabScreen(int _x, int _y, int _w, int _h){
-	
-	
+
+
 	if (!myPixels.bAllocated){
 		allocate(_w, _h, OF_IMAGE_COLOR);
 	}
-	
+
 	int screenHeight = ofGetHeight();
 	_y = screenHeight - _y;
 	_y -= _h; // top, bottom issues
@@ -238,15 +238,15 @@ void ofImage::grabScreen(int _x, int _y, int _w, int _h){
 	if (!((width == _w) && (height == _h))){
 		resize(_w, _h);
 	}
-	
-	
+
+
 	glPushClientAttrib( GL_CLIENT_PIXEL_STORE_BIT );											// be nice to anyone else who might use pixelStore
 	glPixelStorei(GL_PACK_ALIGNMENT, 1);														// set read non block aligned...
 	glReadPixels(_x, _y, _w, _h, myPixels.glDataType,GL_UNSIGNED_BYTE, myPixels.pixels);		// read the memory....
 	glPopClientAttrib();
-	
-	
-	
+
+
+
 	int sizeOfOneLineOfPixels = myPixels.width * myPixels.bytesPerPixel;
 	unsigned char tempLineOfPix[sizeOfOneLineOfPixels];
 	unsigned char * linea;
@@ -265,16 +265,16 @@ void ofImage::grabScreen(int _x, int _y, int _w, int _h){
 
 //------------------------------------
 void ofImage::clone(const ofImage &mom){
-	
+
 	allocatePixels(myPixels, mom.width, mom.height, mom.bpp);
 	memcpy(myPixels.pixels, mom.myPixels.pixels, myPixels.width*myPixels.height*myPixels.bytesPerPixel);
-	
+
 	tex.clear();
 	bUseTexture = mom.bUseTexture;
 	if (bUseTexture == true){
-		tex.allocate(myPixels.width, myPixels.height, myPixels.glDataType);	
+		tex.allocate(myPixels.width, myPixels.height, myPixels.glDataType);
 	}
-	
+
 	update();
 }
 
@@ -287,12 +287,12 @@ void ofImage::setImageType(int newType){
 //------------------------------------
 void ofImage::resize(int newWidth, int newHeight){
 	resizePixels(myPixels, newWidth, newHeight);
-	
+
 	tex.clear();
 	if (bUseTexture == true){
-		tex.allocate(myPixels.width, myPixels.height, myPixels.glDataType);	
+		tex.allocate(myPixels.width, myPixels.height, myPixels.glDataType);
 	}
-	
+
 	update();
 }
 
@@ -300,16 +300,16 @@ void ofImage::resize(int newWidth, int newHeight){
 //----------------------------------------------------------------------------------------------------
 //----------------------------------------------------------------------------------------------------
 //----------------------------------------------------------------------------------------------------
-// freeImage based code & utilities: 
+// freeImage based code & utilities:
 
 //----------------------------------------------------
 inline void ofImage::swapRgb(ofPixels &pix){
 	if (pix.bitsPerPixel != 8){
 		int sizePixels		= pix.width*pix.height;
 		int cnt				= 0;
-		unsigned char temp;	
+		unsigned char temp;
 		int byteCount		= pix.bitsPerPixel/8;
-		
+
 		while (cnt < sizePixels){
 			temp					= pix.pixels[cnt*byteCount];
 			pix.pixels[cnt*byteCount]		= pix.pixels[cnt*byteCount+2];
@@ -322,22 +322,22 @@ inline void ofImage::swapRgb(ofPixels &pix){
 
 //----------------------------------------------------
 inline void  ofImage::allocatePixels(ofPixels &pix, int width, int height, int bpp){
-	
+
 	bool bNeedToAllocate = false;
 	if (pix.bAllocated == true){
 		if ( (pix.width == width) && (pix.height == height) && (pix.bitsPerPixel == bpp)){
-			//ofLog(OF_NOTICE,"we are good, no reallocation needed \n");
+			//ofLog(OF_NOTICE,"we are good, no reallocation needed");
 			bNeedToAllocate = false;
 		 } else {
 			delete pix.pixels;
 			bNeedToAllocate = true;
 		 }
 	} else {
-		bNeedToAllocate = true; 
+		bNeedToAllocate = true;
 	}
 
 	int byteCount = bpp / 8;
-	
+
 	if (bNeedToAllocate == true){
 		pix.width			= width;
 		pix.height			= height;
@@ -357,7 +357,7 @@ inline void  ofImage::allocatePixels(ofPixels &pix, int width, int height, int b
 				pix.ofImageType		= OF_IMAGE_COLOR_ALPHA;
 				break;
 		}
-		
+
 		pix.pixels			= new unsigned char[pix.width*pix.height*byteCount];
 		pix.bAllocated		= true;
 	}
@@ -365,27 +365,27 @@ inline void  ofImage::allocatePixels(ofPixels &pix, int width, int height, int b
 
 //----------------------------------------------------
 FIBITMAP *  ofImage::getBmpFromPixels(ofPixels &pix){
-	
+
 	FIBITMAP * bmp = NULL;
-	
+
 	int w						= pix.width;
 	int h						= pix.height;
 	unsigned char * pixels		= pix.pixels;
 	int bpp						= pix.bitsPerPixel;
 	int bytesPerPixel			= pix.bitsPerPixel / 8;
-	
+
 	bmp							= FreeImage_ConvertFromRawBits(pixels, w,h, w*bytesPerPixel, bpp, 0,0,0, false);
-	
+
 	//this is for grayscale images they need to be paletted from: http://sourceforge.net/forum/message.php?msg_id=2856879
 	if( pix.ofImageType == OF_IMAGE_GRAYSCALE ){
-		RGBQUAD *pal = FreeImage_GetPalette(bmp);  
-		for(int i = 0; i < 256; i++) {  
-			pal[i].rgbRed = i;  
-			pal[i].rgbGreen = i;  
-			pal[i].rgbBlue = i;  
-		}  
+		RGBQUAD *pal = FreeImage_GetPalette(bmp);
+		for(int i = 0; i < 256; i++) {
+			pal[i].rgbRed = i;
+			pal[i].rgbGreen = i;
+			pal[i].rgbBlue = i;
+		}
 	}
-	
+
 	return bmp;
 }
 
@@ -403,21 +403,21 @@ void ofImage::putBmpIntoPixels(FIBITMAP * bmp, ofPixels &pix){
 
 //----------------------------------------------------
 void ofImage::resizePixels(ofPixels &pix, int newWidth, int newHeight){
-	 
+
 	FIBITMAP * bmp					= getBmpFromPixels(pix);
 	FIBITMAP * convertedBmp			= NULL;
-	
+
 	convertedBmp = FreeImage_Rescale(bmp, newWidth, newHeight, FILTER_BICUBIC);
 	putBmpIntoPixels(convertedBmp, pix);
-	
+
 	#ifdef TARGET_LITTLE_ENDIAN
 		if (pix.bytesPerPixel != 1) swapRgb(pix);
 	#endif
 
-	
+
 	if (bmp != NULL)				FreeImage_Unload(bmp);
 	if (convertedBmp != NULL)		FreeImage_Unload(convertedBmp);
-	
+
 }
 
 //----------------------------------------------------
@@ -427,9 +427,9 @@ void ofImage::changeTypeOfPixels(ofPixels &pix, int newType){
 
 	FIBITMAP * bmp					= getBmpFromPixels(pix);
 	FIBITMAP * convertedBmp			= NULL;
-	
-	
-	
+
+
+
 	// new type !
 	switch (newType){
 		//------------------------------------
@@ -445,16 +445,16 @@ void ofImage::changeTypeOfPixels(ofPixels &pix, int newType){
 			convertedBmp = FreeImage_ConvertTo32Bits(bmp);
 			break;
 	}
-	
+
 	putBmpIntoPixels(convertedBmp, pix);
 
 	if (bmp != NULL)				FreeImage_Unload(bmp);
 	if (convertedBmp != NULL)		FreeImage_Unload(convertedBmp);
-	
+
 }
 
 //----------------------------------------------------
-// freeImage based stuff: 
+// freeImage based stuff:
 void ofCloseFreeImage(){
 	if (bFreeImageInited){
 		FreeImage_DeInitialise();
@@ -464,14 +464,14 @@ void ofCloseFreeImage(){
 
 //----------------------------------------------------
 bool ofImage::loadImageIntoPixels(string fileName, ofPixels &pix){
-	
-	
+
+
 	int					width, height, bpp;
 	fileName			= ofToDataPath(fileName);
 	bool bLoaded		= false;
 	FIBITMAP 			* bmp = NULL;
-	
-	
+
+
 	FREE_IMAGE_FORMAT fif = FIF_UNKNOWN;
 	fif = FreeImage_GetFileType(fileName.c_str(), 0);
 	if(fif == FIF_UNKNOWN) {
@@ -488,16 +488,16 @@ bool ofImage::loadImageIntoPixels(string fileName, ofPixels &pix){
 	//-----------------------------
 
 	if (bLoaded ){
-		
+
 		width 		= FreeImage_GetWidth(bmp);
 		height 		= FreeImage_GetHeight(bmp);
 		bpp 		= FreeImage_GetBPP(bmp);
-		
+
 		bool bPallette = (FreeImage_GetColorType(bmp) == FIC_PALETTE);
 
 		switch (bpp){
 			case 8:
-				if (bPallette) { 
+				if (bPallette) {
 					FIBITMAP 	* bmpTemp =		FreeImage_ConvertTo24Bits(bmp);
 					if (bmp != NULL)			FreeImage_Unload(bmp);
 					bmp							= bmpTemp;
@@ -518,53 +518,53 @@ bool ofImage::loadImageIntoPixels(string fileName, ofPixels &pix){
 				bmp							= bmpTemp;
 				bpp							= FreeImage_GetBPP(bmp);
 		}
-		
-		
+
+
 		int byteCount = bpp / 8;
-		
+
 		//------------------------------------------
 		// call the allocation routine (which checks if really need to allocate) here:
 		allocatePixels(pix, width, height, bpp);
-		
-		
-		
+
+
+
 		FreeImage_ConvertToRawBits(pix.pixels, bmp, width*byteCount, bpp, FI_RGBA_RED_MASK, FI_RGBA_GREEN_MASK, FI_RGBA_BLUE_MASK, false);  // get bits
-		
+
 		//------------------------------------------
 		// RGB or RGBA swap
 		// this can be done with some ill pointer math.
 		// anyone game?
-		// 
-		
+		//
+
 		#ifdef TARGET_LITTLE_ENDIAN
 			if (byteCount != 1) swapRgb(pix);
 		#endif
 		//------------------------------------------
-		
-		
+
+
 	} else {
 		width = height = bpp = 0;
 	}
-	
+
 	if (bmp != NULL){
 		FreeImage_Unload(bmp);
 	}
-	
+
 	return bLoaded;
 }
 
 //----------------------------------------------------------------
 void  ofImage::saveImageFromPixels(string fileName, ofPixels &pix){
-	
+
 	if (pix.bAllocated == false){
-		ofLog(OF_ERROR,"error saving image - pixels aren't allocated \n");
+		ofLog(OF_ERROR,"error saving image - pixels aren't allocated");
 		return;
 	}
-	
+
 	#ifdef TARGET_LITTLE_ENDIAN
 		if (pix.bytesPerPixel != 1) swapRgb(pix);
 	#endif
-	
+
 	FIBITMAP * bmp	= getBmpFromPixels(pix);
 
 	#ifdef TARGET_LITTLE_ENDIAN
@@ -583,7 +583,7 @@ void  ofImage::saveImageFromPixels(string fileName, ofPixels &pix){
 			FreeImage_Save(fif, bmp, fileName.c_str(), 0);
 		}
 	}
-	
+
 	if (bmp != NULL){
 		FreeImage_Unload(bmp);
 	}
@@ -593,5 +593,5 @@ void  ofImage::saveImageFromPixels(string fileName, ofPixels &pix){
 //----------------------------------------------------------------------------------------------------
 
 
-		
-		
+
+

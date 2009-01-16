@@ -16,7 +16,7 @@
 #endif
 
 #include <vector>
-    
+
 //----------------------------------------------------------
 // static
 static float	drawMode			= OF_FILLED;
@@ -434,7 +434,7 @@ void ofPushStyle(){
 	if( styleHistory.size() > OF_MAX_STYLE_HISTORY ){
 		styleHistory.erase(styleHistory.begin() + OF_MAX_STYLE_HISTORY, styleHistory.end());
 		//should we warn here?
-		//ofLog(OF_WARNING, "ofPushStyle - warning: you have used ofPushStyle more than %i times without calling ofPopStyle - check your code! \n", OF_MAX_STYLE_HISTORY);
+		//ofLog(OF_WARNING, "ofPushStyle - warning: you have used ofPushStyle more than %i times without calling ofPopStyle - check your code!", OF_MAX_STYLE_HISTORY);
 	}
 }
 
@@ -617,7 +617,7 @@ void clearCurveVertices();
 void CALLBACK tessError(GLenum errCode){
 	const GLubyte* estring;
 	estring = gluErrorString( errCode);
-	ofLog(OF_ERROR, "tessError: %s\n", estring);
+	ofLog(OF_ERROR, "tessError: %s", estring);
 }
 
 //----------------------------------------------------------
@@ -708,7 +708,7 @@ void ofSetPolyMode(int mode){
 			polyMode = OF_POLY_WINDING_ABS_GEQ_TWO;
 			break;
 		default:
-			ofLog(OF_ERROR," error in ofSetPolyMode\n");
+			ofLog(OF_ERROR," error in ofSetPolyMode");
 
 	}
 }
@@ -741,7 +741,7 @@ void ofBeginShape(){
 	// --------------------------------------------------------
 
 	#if defined( TARGET_OSX)
-		#ifndef MAC_OS_X_VERSION_10_5 
+		#ifndef MAC_OS_X_VERSION_10_5
 			#define OF_NEED_GLU_FIX
 		#endif
 	#endif

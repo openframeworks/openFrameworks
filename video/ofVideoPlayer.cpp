@@ -19,8 +19,8 @@ bool 	createMovieFromPath(char * path, Movie &movie){
 	#ifdef TARGET_WIN32
 		result = NativePathNameToFSSpec (path, &theFSSpec, 0);
 		if (result != noErr) {
-			ofLog(OF_ERROR,"NativePathNameToFSSpec failed %d\n", result);
-			ofLog(OF_ERROR,"Error loading movie \n");
+			ofLog(OF_ERROR,"NativePathNameToFSSpec failed %d", result);
+			ofLog(OF_ERROR,"Error loading movie");
 			return false;
 		}
 
@@ -31,9 +31,17 @@ bool 	createMovieFromPath(char * path, Movie &movie){
 	#ifdef TARGET_OSX
 		FSRef 		fsref;
 		result = FSPathMakeRef((const UInt8*)path, &fsref, &isdir);
-		if (result) { ofLog(OF_ERROR,"FSPathMakeRef failed %d\n", result); ofLog(OF_ERROR,"Error loading movie \n"); return false; }
+		if (result) {
+			ofLog(OF_ERROR,"FSPathMakeRef failed %d", result);
+			ofLog(OF_ERROR,"Error loading movie");
+			return false;
+		}
 		result = FSGetCatalogInfo(&fsref, kFSCatInfoNone, NULL, NULL, &theFSSpec, NULL);
-		if (result) { ofLog(OF_ERROR,"FSGetCatalogInfo failed %d\n", result); ofLog(OF_ERROR,"Error loading movie \n"); return false; }
+		if (result) {
+			ofLog(OF_ERROR,"FSGetCatalogInfo failed %d", result);
+			ofLog(OF_ERROR,"Error loading movie");
+			return false;
+		}
 	#endif
 
 
@@ -46,11 +54,11 @@ bool 	createMovieFromPath(char * path, Movie &movie){
 		if (result == noErr){
 			CloseMovieFile (movieResFile);
 		} else {
-			ofLog(OF_ERROR,"NewMovieFromFile failed %d\n", result);
+			ofLog(OF_ERROR,"NewMovieFromFile failed %d", result);
 			return false;
 		}
 	} else {
-		ofLog(OF_ERROR,"OpenMovieFile failed %d\n", result);
+		ofLog(OF_ERROR,"OpenMovieFile failed %d", result);
 		return false;
 	}
 
@@ -65,7 +73,7 @@ bool createMovieFromURL(string urlIn,  Movie &movie){
 	OSErr err;
 
 	urlDataRef = NewHandle(strlen(url) + 1);
-	if ( ( err = MemError()) != noErr){ ofLog(OF_ERROR,"createMovieFromURL: error creating url handle\n"); return false;}
+	if ( ( err = MemError()) != noErr){ ofLog(OF_ERROR,"createMovieFromURL: error creating url handle"); return false;}
 
 	BlockMoveData(url, *urlDataRef, strlen(url) + 1);
 
@@ -73,7 +81,7 @@ bool createMovieFromURL(string urlIn,  Movie &movie){
 	DisposeHandle(urlDataRef);
 
 	if(err != noErr){
-		ofLog(OF_ERROR,"createMovieFromURL: error loading url\n");
+		ofLog(OF_ERROR,"createMovieFromURL: error loading url");
 		return false;
 	}else{
 		return true;
@@ -411,22 +419,22 @@ bool ofVideoPlayer::loadMovie(string name){
 
 		// ------------- get the total # of frames:
 		nFrames				= 0;
-		TimeValue			curMovieTime; 
+		TimeValue			curMovieTime;
 		curMovieTime		= 0;
-		TimeValue			duration; 
-		OSType whichMediaType	= VIDEO_TYPE; 
-		short flags				= nextTimeMediaSample + nextTimeEdgeOK; 
-		 
-		while( curMovieTime >= 0 ) { 
-			nFrames++; 
-			GetMovieNextInterestingTime(moviePtr,flags,1,&whichMediaType,curMovieTime,0,&curMovieTime,&duration); 
-			flags = nextTimeMediaSample; 
-		} 
-		nFrames--; // there's an extra time step at the end of themovie 
+		TimeValue			duration;
+		OSType whichMediaType	= VIDEO_TYPE;
+		short flags				= nextTimeMediaSample + nextTimeEdgeOK;
 
-		
-		
-		
+		while( curMovieTime >= 0 ) {
+			nFrames++;
+			GetMovieNextInterestingTime(moviePtr,flags,1,&whichMediaType,curMovieTime,0,&curMovieTime,&duration);
+			flags = nextTimeMediaSample;
+		}
+		nFrames--; // there's an extra time step at the end of themovie
+
+
+
+
 		// ------------- get some pixels in there ------
 		GoToBeginningOfMovie(moviePtr);
 		SetMovieActiveSegment(moviePtr, -1,-1);
@@ -458,7 +466,7 @@ bool ofVideoPlayer::loadMovie(string name){
 
 
 		if( error != omnividea::fobs::OkCode ){
-			ofLog(OF_ERROR,"error loading movie\n");
+			ofLog(OF_ERROR,"error loading movie");
 			return false;
 		}
 		width 					= fobsDecoder->getWidth();
@@ -484,14 +492,14 @@ bool ofVideoPlayer::loadMovie(string name){
 
 		if(error == omnividea::fobs::NoFrameError) {
 			error = omnividea::fobs::OkCode;
-			ofLog(OF_ERROR,"NoFrameError\n");
+			ofLog(OF_ERROR,"NoFrameError");
 		}
 
 		if(omnividea::fobs::isOk(error)){
 			// get some pixels in:
 			unsigned char *rgb = fobsDecoder->getRGB(width,height);
 			if(rgb == NULL){
-				ofLog(OF_ERROR,"load movie: getRGB error\n");
+				ofLog(OF_ERROR,"load movie: getRGB error");
 				error = omnividea::fobs::GenericError;
 			}
 			if(isOk(error) && bUseTexture)
@@ -724,19 +732,19 @@ void ofVideoPlayer::setPosition(float pct){
 
 //---------------------------------------------------------------------------
 void ofVideoPlayer::setFrame(int frame){
-	
+
 	//--------------------------------------
 	#ifdef OF_VIDEO_PLAYER_QUICKTIME
 	//--------------------------------------
 
-	// frame 0 = first frame...  
-	
+	// frame 0 = first frame...
+
 	// this is the simple way...
 	//float durationPerFrame = getDuration() / getTotalNumFrames();
-	
-	// seems that freezing, doing this and unfreezing seems to work alot 
-	// better then just SetMovieTimeValue() ; 
-	
+
+	// seems that freezing, doing this and unfreezing seems to work alot
+	// better then just SetMovieTimeValue() ;
+
 	if (!bPaused) SetMovieRate(moviePtr, X2Fix(0));
 
 	// this is better with mpeg, etc:
@@ -744,14 +752,14 @@ void ofVideoPlayer::setFrame(int frame){
 	double movieTimeScale = 0;
 	MovieGetStaticFrameRate(moviePtr, &frameRate);
 	movieTimeScale = GetMovieTimeScale(moviePtr);
-	
+
 	if (frameRate > 0){
 		double frameDuration = 1 / frameRate;
-		TimeValue t = (frame * frameDuration * movieTimeScale); 
+		TimeValue t = (frame * frameDuration * movieTimeScale);
 		SetMovieTimeValue(moviePtr, t);
-		MoviesTask(moviePtr, 0); 
+		MoviesTask(moviePtr, 0);
 	}
-	
+
    if (!bPaused) SetMovieRate(moviePtr, X2Fix(speed));
 
    //--------------------------------------
@@ -766,7 +774,7 @@ void ofVideoPlayer::setFrame(int frame){
    //--------------------------------------
 #endif
    //--------------------------------------
-	
+
 }
 
 
@@ -818,16 +826,16 @@ float ofVideoPlayer::getPosition(){
 
 //---------------------------------------------------------------------------
 int ofVideoPlayer::getCurrentFrame(){
-	
+
 	//--------------------------------------
 	#ifdef OF_VIDEO_PLAYER_QUICKTIME
 	//--------------------------------------
 	int frame = 0;
-	
+
 	// zach I think this may fail on variable length frames...
 	float pos = getPosition();
-	
-	
+
+
 	float  framePosInFloat = (getTotalNumFrames() * getPosition());
 	int    framePosInInt = (int)framePosInFloat;
 	float  floatRemainder = (framePosInFloat - framePosInInt);
@@ -849,20 +857,20 @@ int ofVideoPlayer::getCurrentFrame(){
 
 }
 
-				
+
 //---------------------------------------------------------------------------
 bool ofVideoPlayer::getIsMovieDone(){
-	
+
 	//--------------------------------------
 	#ifdef OF_VIDEO_PLAYER_QUICKTIME
 	//--------------------------------------
-	
+
 		bool bIsMovieDone = IsMovieDone(moviePtr);
 		return bIsMovieDone;
 	//--------------------------------------
 	#endif
 	//--------------------------------------
-		
+
 	//--------------------------------------
 	#ifdef OF_VIDEO_PLAYER_FOBS
 	//--------------------------------------

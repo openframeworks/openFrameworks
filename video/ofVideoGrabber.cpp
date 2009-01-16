@@ -35,7 +35,7 @@ ofVideoGrabber::ofVideoGrabber(){
 	#endif
 	//---------------------------------
 
-		
+
 	//---------------------------------
 	#ifdef OF_VIDEO_CAPTURE_V4L				// kept around if people have unicap issues...
 	//--------------------------------
@@ -92,22 +92,22 @@ void ofVideoGrabber::listDevices(){
 	//---------------------------------
 	#ifdef OF_VIDEO_CAPTURE_QUICKTIME
 	//---------------------------------
-	
-		bool bNeedToInitGrabberFirst = false;		
-	
+
+		bool bNeedToInitGrabberFirst = false;
+
 		if (!bSgInited) bNeedToInitGrabberFirst = true;
-		
+
 		//if we need to initialize the grabbing component then do it
 		if( bNeedToInitGrabberFirst ){
 			if( !qtInitSeqGrabber() ){
 				return;
 			}
 		}
-		
-		ofLog(OF_NOTICE, "-------------------------------------\n");
-		
+
+		ofLog(OF_NOTICE, "-------------------------------------");
+
 		/*
-			//input selection stuff (ie multiple webcams) 
+			//input selection stuff (ie multiple webcams)
 			//from http://developer.apple.com/samplecode/SGDevices/listing13.html
 			//and originally http://lists.apple.com/archives/QuickTime-API/2008/Jan/msg00178.html
 		*/
@@ -116,63 +116,63 @@ void ofVideoGrabber::listDevices(){
 		SGGetChannelDeviceList (gVideoChannel, sgDeviceListIncludeInputs, &deviceList);
 		unsigned char pascalName[256];
 		unsigned char pascalNameInput[256];
-		
+
 		//this is our new way of enumerating devices
 		//quicktime can have multiple capture 'inputs' on the same capture 'device'
 		//ie the USB Video Class Video 'device' - can have multiple usb webcams attached on what QT calls 'inputs'
 		//The isight for example will show up as:
 		//USB Video Class Video - Built-in iSight ('input' 1 of the USB Video Class Video 'device')
-		//Where as another webcam also plugged whill show up as 
+		//Where as another webcam also plugged whill show up as
 		//USB Video Class Video - Philips SPC 1000NC Webcam ('input' 2 of the USB Video Class Video 'device')
 
 		//this means our the device ID we use for selection has to count both capture 'devices' and their 'inputs'
 		//this needs to be the same in our init grabber method so that we select the device we ask for
 		int deviceCount = 0;
-		
-		ofLog(OF_NOTICE, "listing available capture devices\n");
+
+		ofLog(OF_NOTICE, "listing available capture devices");
 		for(int i = 0 ; i < (*deviceList)->count ; ++i)
 		{
 			SGDeviceName nameRec;
 			nameRec = (*deviceList)->entry[i];
 			SGDeviceInputList deviceInputList = nameRec.inputs;
-			
+
 			int numInputs = 0;
 			if( deviceInputList ) numInputs = ((*deviceInputList)->count);
-		
+
 			memcpy(pascalName, (*deviceList)->entry[i].name, sizeof(char) * 256);
-						
+
 			//this means we can use the capture method
 			if(nameRec.flags != sgDeviceNameFlagDeviceUnavailable){
-			
-				//if we have a capture 'device' (qt's word not mine - I would prefer 'system' ) that is ready to be used 
+
+				//if we have a capture 'device' (qt's word not mine - I would prefer 'system' ) that is ready to be used
 				//we go through its inputs to list all physical devices - as there could be more than one!
 				for(int j = 0; j < numInputs; j++){
-				
-					
+
+
 					//if our 'device' has inputs we get their names here
 					if( deviceInputList ){
 						SGDeviceInputName inputNameRec  = (*deviceInputList)->entry[j];
 						memcpy(pascalNameInput, inputNameRec.name, sizeof(char) * 256);
 					}
-					
-					ofLog(OF_NOTICE, "device[%i] %s - %s\n",  deviceCount, p2cstr(pascalName), p2cstr(pascalNameInput) );
+
+					ofLog(OF_NOTICE, "device[%i] %s - %s",  deviceCount, p2cstr(pascalName), p2cstr(pascalNameInput) );
 
 					//we count this way as we need to be able to distinguish multiple inputs as devices
 					deviceCount++;
 				}
-				
+
 			}else{
-				ofLog(OF_NOTICE, "(unavailable) device[%i] %s \n",  deviceCount, p2cstr(pascalName) );
+				ofLog(OF_NOTICE, "(unavailable) device[%i] %s",  deviceCount, p2cstr(pascalName) );
 				deviceCount++;
 			}
 		}
-		ofLog(OF_NOTICE, "-------------------------------------\n");
-		
+		ofLog(OF_NOTICE, "-------------------------------------");
+
 		//if we initialized the grabbing component then close it
 		if( bNeedToInitGrabberFirst ){
 			qtCloseSeqGrabber();
 		}
-		
+
 	//---------------------------------
 	#endif
 	//---------------------------------
@@ -181,9 +181,9 @@ void ofVideoGrabber::listDevices(){
 	//---------------------------------
 	#ifdef OF_VIDEO_CAPTURE_DIRECTSHOW
 	//---------------------------------
-		ofLog(OF_NOTICE, "---\n");
+		ofLog(OF_NOTICE, "---");
 		VI.listDevices();
-		ofLog(OF_NOTICE, "---\n");
+		ofLog(OF_NOTICE, "---");
 
 	//---------------------------------
 	#endif
@@ -208,18 +208,18 @@ void ofVideoGrabber::listDevices(){
 
 	struct stat st;
 
-	ofLog(OF_NOTICE, "listing available capture devices\n");
-	ofLog(OF_NOTICE, "---\n");
+	ofLog(OF_NOTICE, "listing available capture devices");
+	ofLog(OF_NOTICE, "---");
 	for (int i = 0; i < 8; i++)
 	{
 		sprintf(dev_name, "/dev/video%i", i);
 		if (stat (dev_name, &st) == 0) {
-			ofLog(OF_NOTICE, "Video device %i = /dev/video%i\n",i,i);
+			ofLog(OF_NOTICE, "Video device %i = /dev/video%i",i,i);
 		} else {
 
 		}
 	}
-	ofLog(OF_NOTICE, "---\n");
+	ofLog(OF_NOTICE, "---");
 
 	//---------------------------------
 	#endif
@@ -418,11 +418,11 @@ void ofVideoGrabber::grabFrame(){
 				}
 			}
 		}
-		
+
 	//---------------------------------
 	#endif
 	//---------------------------------
-	
+
 }
 
 //--------------------------------------------------------------------
@@ -500,19 +500,19 @@ void ofVideoGrabber::videoSettings(void){
 		// Get our current state
 		err = SGGetChannelBounds (gVideoChannel, &curBounds);
 		if (err != noErr){
-			ofLog(OF_ERROR, "Error in SGGetChannelBounds \n");
+			ofLog(OF_ERROR, "Error in SGGetChannelBounds");
 			return;
 		}
 		err = SGGetVideoRect (gVideoChannel, &curVideoRect);
 		if (err != noErr){
-			ofLog(OF_ERROR, "Error in SGGetVideoRect \n");
+			ofLog(OF_ERROR, "Error in SGGetVideoRect");
 			return;
 		}
 
 		// Pause
 		err = SGPause (gSeqGrabber, true);
 		if (err != noErr){
-			ofLog(OF_ERROR, "Error in SGPause\n");
+			ofLog(OF_ERROR, "Error in SGPause");
 			return;
 		}
 
@@ -523,7 +523,7 @@ void ofVideoGrabber::videoSettings(void){
 			static SGModalFilterUPP gSeqGrabberModalFilterUPP = NewSGModalFilterUPP(SeqGrabberModalFilterUPP);
 			ComponentResult result = SGSettingsDialog(gSeqGrabber,  gVideoChannel, 0, nil, seqGrabSettingsPreviewOnly, gSeqGrabberModalFilterUPP, nil);
 			if (result != noErr){
-				ofLog(OF_ERROR, "error in  dialogue\n");
+				ofLog(OF_ERROR, "error in  dialogue");
 				return;
 			}
 
@@ -588,7 +588,7 @@ bool ofVideoGrabber::saveSettings(){
 		// get the SGChannel settings cofigured by the user
 		err = SGGetChannelSettings(gSeqGrabber, gVideoChannel, &mySGVideoSettings, 0);
 		if ( err != noErr ){
-			ofLog(OF_ERROR, "Error getting camera settings %i\n",err);
+			ofLog(OF_ERROR, "Error getting camera settings %i",err);
 			return false;
 		}
 		string pref = "ofVideoSettings-"+deviceName;
@@ -624,17 +624,17 @@ bool ofVideoGrabber::loadSettings(){
       // Get our current state
       err = SGGetChannelBounds (gVideoChannel, &curBounds);
       if (err != noErr){
-         ofLog(OF_ERROR, "Error in SGGetChannelBounds \n");
+         ofLog(OF_ERROR, "Error in SGGetChannelBounds");
       }
       err = SGGetVideoRect (gVideoChannel, &curVideoRect);
       if (err != noErr){
-         ofLog(OF_ERROR, "Error in SGGetVideoRect \n");
+         ofLog(OF_ERROR, "Error in SGGetVideoRect");
       }
 
       // use the saved settings preference to configure the SGChannel
       err = SGSetChannelSettings(gSeqGrabber, gVideoChannel, mySGVideoSettings, 0);
       if ( err != noErr ) {
-         ofLog(OF_ERROR, "Error applying stored settings %i \n", err);
+         ofLog(OF_ERROR, "Error applying stored settings %i", err);
          return false;
       }
       DisposeUserData(mySGVideoSettings);
@@ -642,13 +642,13 @@ bool ofVideoGrabber::loadSettings(){
       // Pause
       err = SGPause (gSeqGrabber, true);
       if (err != noErr){
-         ofLog(OF_ERROR, "Error in SGPause\n");
+         ofLog(OF_ERROR, "Error in SGPause");
       }
       SGSetChannelBounds(gVideoChannel, &videoRect);
       SGPause (gSeqGrabber, false);
 
    }else{
-      ofLog(OF_WARNING, "No camera settings to load \n");
+      ofLog(OF_WARNING, "No camera settings to load");
       return false;
    }
    return true;
@@ -657,40 +657,40 @@ bool ofVideoGrabber::loadSettings(){
 
 //------------------------------------------------------
 bool ofVideoGrabber::qtInitSeqGrabber(){
-		
+
 		if (bSgInited != true){
 
 			OSErr err = noErr;
 
 			ComponentDescription	theDesc;
 			Component				sgCompID;
-	
-			// this crashes when we get to 
+
+			// this crashes when we get to
 			// SGNewChannel
 			// we get -9405 as error code for the channel
 			// -----------------------------------------
 			// gSeqGrabber = OpenDefaultComponent(SeqGrabComponentType, 0);
-					
-			// this seems to work instead (got it from hackTV) 
+
+			// this seems to work instead (got it from hackTV)
 			// -----------------------------------------
 			theDesc.componentType = SeqGrabComponentType;
 			theDesc.componentSubType = NULL;
 			theDesc.componentManufacturer = 'appl';
 			theDesc.componentFlags = NULL;
-			theDesc.componentFlagsMask = NULL;	
+			theDesc.componentFlagsMask = NULL;
 			sgCompID = FindNextComponent (NULL, &theDesc);
 			// -----------------------------------------
-				
+
 			if (sgCompID == NULL){
 				ofLog(OF_ERROR, "error:FindNextComponent did not return a valid component");
 				return false;
 			}
-			
+
 			gSeqGrabber = OpenComponent(sgCompID);
-						
+
 			err = GetMoviesError();
 			if (gSeqGrabber == NULL || err) {
-				ofLog(OF_ERROR, "error: can't get default sequence grabber component\n");
+				ofLog(OF_ERROR, "error: can't get default sequence grabber component");
 				return false;
 			}
 
@@ -716,14 +716,14 @@ bool ofVideoGrabber::qtInitSeqGrabber(){
 
 			err = SGNewChannel(gSeqGrabber, VideoMediaType, &(gVideoChannel));
 			if (err != noErr) {
-				ofLog(OF_ERROR, "error: creating a channel.  Check if you have any qt capable cameras attached\n");
+				ofLog(OF_ERROR, "error: creating a channel.  Check if you have any qt capable cameras attached");
 				return false;
 			}
 
 			bSgInited = true;
 			return true;
-		}		
-		
+		}
+
 		return false;
 }
 
@@ -737,66 +737,66 @@ bool ofVideoGrabber::qtCloseSeqGrabber(){
 		bSgInited = false;
 		return true;
 	}
-	
+
 	return false;
-	
+
 }
 
 //--------------------------------------------------------------------
 bool ofVideoGrabber::qtSelectDevice(int deviceNumber, bool didWeChooseADevice){
-				
+
 	//note - check for memory freeing possibly needed for the all SGGetChannelDeviceList mac stuff
 	// also see notes in listDevices() regarding new enunemeration method.
-	
+
 	//Generate a device list and enumerate
 	//all devices availble to the channel
 	SGDeviceList deviceList;
 	SGGetChannelDeviceList(gVideoChannel, sgDeviceListIncludeInputs, &deviceList);
-	
+
 	unsigned char pascalName[256];
 	unsigned char pascalNameInput[256];
 
 	int numDevices = (*deviceList)->count;
 	if(numDevices == 0){
-		ofLog(OF_ERROR, "error: No catpure devices found\n");
+		ofLog(OF_ERROR, "error: No catpure devices found");
 		return false;
 	}
-				
+
 	int deviceCount = 0;
 	for(int i = 0 ; i < numDevices; ++i)
 	{
 		SGDeviceName nameRec;
 		nameRec = (*deviceList)->entry[i];
 		SGDeviceInputList deviceInputList = nameRec.inputs;
-	
+
 		int numInputs = 0;
 		if( deviceInputList ) numInputs = ((*deviceInputList)->count);
 
 		memcpy(pascalName, (*deviceList)->entry[i].name, sizeof(char) * 256);
-				
+
 		//this means we can use the capture method
 		if(nameRec.flags != sgDeviceNameFlagDeviceUnavailable){
-		
-			//if we have a capture 'device' (qt's word not mine - I would prefer 'system' ) that is ready to be used 
+
+			//if we have a capture 'device' (qt's word not mine - I would prefer 'system' ) that is ready to be used
 			//we go through its inputs to list all physical devices - as there could be more than one!
 			for(int j = 0; j < numInputs; j++){
-			
+
 				//if our 'device' has inputs we get their names here
 				if( deviceInputList ){
 					SGDeviceInputName inputNameRec  = (*deviceInputList)->entry[j];
 					memcpy(pascalNameInput, inputNameRec.name, sizeof(char) * 256);
 				}
-				
+
 				//if the device number matches we try and setup the device
 				//if we didn't specifiy a device then we will try all devices till one works!
 				if( deviceCount == deviceNumber || !didWeChooseADevice ){
-					ofLog(OF_NOTICE, "attempting to open device[%i] %s   -   %s\n",  deviceCount, p2cstr(pascalName), p2cstr(pascalNameInput) );
-					
+					ofLog(OF_NOTICE, "attempting to open device[%i] %s   -   %s",  deviceCount, p2cstr(pascalName), p2cstr(pascalNameInput) );
+
 					OSErr err1 = SGSetChannelDevice(gVideoChannel, pascalNameInput);
 					OSErr err2 = SGSetChannelDeviceInput(gVideoChannel, j);
-					
+
 					int successLevel = 0;
-					
+
 					//if there were no errors then we have opened the device without issue
 					if ( err1 == noErr && err2 == noErr){
 						successLevel = 2;
@@ -805,42 +805,42 @@ bool ofVideoGrabber::qtSelectDevice(int deviceNumber, bool didWeChooseADevice){
 					else if ( (err1 == paramErr || err1 == noErr) && (err2 == noErr || err2 == paramErr) ){
 						successLevel = 1;
 					}
-					
+
 					//the device is opened!
 					if ( successLevel > 0 ){
-					
+
 						deviceName = (char *)p2cstr(pascalName);
 						deviceName  += "-";
 						deviceName +=  (char *)p2cstr(pascalNameInput);
-						
-						if(successLevel == 2)ofLog(OF_NOTICE, "device opened successfully\n");
-						else ofLog(OF_WARNING, "device opened with some paramater errors - should be fine though!\n");
-						
+
+						if(successLevel == 2)ofLog(OF_NOTICE, "device opened successfully");
+						else ofLog(OF_WARNING, "device opened with some paramater errors - should be fine though!");
+
 						//no need to keep searching - return that we have opened a device!
 						return true;
-						
+
 					}else{
 						//if we selected a device in particular but failed we want to go through the whole list again - starting from 0 and try any device.
 						//so we return false - and try one more time without a preference
 						if( didWeChooseADevice ){
-							ofLog(OF_WARNING, "problems setting device[%i] %s - %s *****\n", deviceNumber, p2cstr(pascalName), p2cstr(pascalNameInput));
+							ofLog(OF_WARNING, "problems setting device[%i] %s - %s *****", deviceNumber, p2cstr(pascalName), p2cstr(pascalNameInput));
 							return false;
 						}else{
-							ofLog(OF_WARNING, "unable to open device, trying next device\n");
+							ofLog(OF_WARNING, "unable to open device, trying next device");
 						}
 					}
-					
+
 				}
 
 				//we count this way as we need to be able to distinguish multiple inputs as devices
 				deviceCount++;
 			}
 		}else{
-			//ofLog(OF_ERROR, "(unavailable) device[%i] %s \n",  deviceCount, p2cstr(pascalName) );
+			//ofLog(OF_ERROR, "(unavailable) device[%i] %s",  deviceCount, p2cstr(pascalName) );
 			deviceCount++;
 		}
 	}
-			
+
 	return false;
 }
 
@@ -857,14 +857,14 @@ bool ofVideoGrabber::initGrabber(int w, int h, bool setUseTexture){
 	//---------------------------------
 	#ifdef OF_VIDEO_CAPTURE_QUICKTIME
 	//---------------------------------
-		
-		//---------------------------------- 1 - open the sequence grabber	
+
+		//---------------------------------- 1 - open the sequence grabber
 		if( !qtInitSeqGrabber() ){
-			ofLog(OF_ERROR, "error: unable to initialize the seq grabber\n");
+			ofLog(OF_ERROR, "error: unable to initialize the seq grabber");
 			return false;
 		}
-	
-		//---------------------------------- 2 - set the dimensions	
+
+		//---------------------------------- 2 - set the dimensions
 		width 		= w;
 		height 		= h;
 
@@ -885,35 +885,35 @@ bool ofVideoGrabber::initGrabber(int w, int h, bool setUseTexture){
 
 		//---------------------------------- 4 - device selection
 		bool didWeChooseADevice = bChooseDevice;
-		bool deviceIsSelected	=  false;	
-								
-		//if we have a device selected then try first to setup 
+		bool deviceIsSelected	=  false;
+
+		//if we have a device selected then try first to setup
 		//that device
 		if(didWeChooseADevice){
 			deviceIsSelected = qtSelectDevice(deviceID, true);
-			if(!deviceIsSelected && bVerbose) ofLog(OF_WARNING, "unable to open device[%i] - will attempt other devices\n", deviceID);
+			if(!deviceIsSelected && bVerbose) ofLog(OF_WARNING, "unable to open device[%i] - will attempt other devices", deviceID);
 		}
-		
+
 		//if we couldn't select our required device
 		//or we aren't specifiying a device to setup
 		//then lets try to setup ANY device!
 		if(deviceIsSelected == false){
-			//lets list available devices 
+			//lets list available devices
 			listDevices();
-		
+
 			setDeviceID(0);
 			deviceIsSelected = qtSelectDevice(deviceID, false);
 		}
-		
+
 		//if we still haven't been able to setup a device
 		//we should error and stop!
 		if( deviceIsSelected == false){
 			goto bail;
 		}
-		
+
 		//---------------------------------- 5 - final initialization steps
 		OSStatus err;
-		
+
 	 	err = SGSetChannelUsage(gVideoChannel,seqGrabPreview);
 		if ( err != noErr ) goto bail;
 
@@ -929,13 +929,12 @@ bool ofVideoGrabber::initGrabber(int w, int h, bool setUseTexture){
 		bGrabberInited = true;
 		loadSettings();
 
-		ofLog(OF_NOTICE,"end setup ofVideoGrabber\n");
+		ofLog(OF_NOTICE,"end setup ofVideoGrabber");
 		ofLog(OF_NOTICE,"-------------------------------------\n");
-		ofLog(OF_NOTICE,"\n");
 
 
 		//---------------------------------- 6 - setup texture if needed
-		
+
 		if (bUseTexture){
 			// create the texture, set the pixels to black and
 			// upload them to the texture (so at least we see nothing black the callback)
@@ -951,9 +950,8 @@ bool ofVideoGrabber::initGrabber(int w, int h, bool setUseTexture){
 		//--------------------- (bail) something's wrong -----
 		bail:
 
-			ofLog(OF_ERROR, "***** ofVideoGrabber error *****\n");
+			ofLog(OF_ERROR, "***** ofVideoGrabber error *****");
 			ofLog(OF_ERROR, "-------------------------------------\n");
-			ofLog(OF_ERROR, "\n");
 
 			//if we don't close this - it messes up the next device!
 			if(bSgInited) qtCloseSeqGrabber();
@@ -972,7 +970,7 @@ bool ofVideoGrabber::initGrabber(int w, int h, bool setUseTexture){
 
 		if (bChooseDevice){
 			device = deviceID;
-			ofLog(OF_NOTICE, "choosing %i  \n", deviceID);
+			ofLog(OF_NOTICE, "choosing %i", deviceID);
 		} else {
 			device = 0;
 		}
@@ -1009,10 +1007,11 @@ bool ofVideoGrabber::initGrabber(int w, int h, bool setUseTexture){
 				memset(pixels, 0, width*height*3);
 				tex.loadData(pixels, width, height, GL_RGB);
 			}
-			
+
 			return true;
 		} else {
-			ofLog(OF_ERROR, "error allocating a video device  \nplease check your camera with AMCAP or other software\n");
+			ofLog(OF_ERROR, "error allocating a video device");
+			ofLog(OF_ERROR, "please check your camera with AMCAP or other software");
 			bGrabberInited = false;
 			return false;
 		}
@@ -1030,7 +1029,7 @@ bool ofVideoGrabber::initGrabber(int w, int h, bool setUseTexture){
 			if ( !bChooseDevice ){
 				deviceID = 0;
 			}
-			
+
 			width 	= w;
 			height 	= h;
 			pixels	= new unsigned char[width * height * 3];
@@ -1042,14 +1041,14 @@ bool ofVideoGrabber::initGrabber(int w, int h, bool setUseTexture){
 				memset(pixels, 0, width*height*3);
 				tex.loadData(pixels, width, height, GL_RGB);
 			}
-						
+
 			bGrabberInited = ucGrabber.open_device (deviceID);
 			if( bGrabberInited ){
-			ofLog(OF_NOTICE, "choosing device %i: %s\n", deviceID,ucGrabber.device_identifier());
+			ofLog(OF_NOTICE, "choosing device %i: %s", deviceID,ucGrabber.device_identifier());
 				ucGrabber.set_format(w,h);
 				ucGrabber.start_capture();
 			}
-			
+
 		}
 			return bGrabberInited;
 	//---------------------------------
@@ -1066,7 +1065,7 @@ bool ofVideoGrabber::initGrabber(int w, int h, bool setUseTexture){
 			device = 0;
 		}
 		sprintf(dev_name, "/dev/video%i", device);
-		ofLog(OF_NOTICE, "choosing device "+dev_name+"\n");
+		ofLog(OF_NOTICE, "choosing device "+dev_name+"");
 
 		bool bOk = initV4L(w, h, dev_name);
 
@@ -1083,11 +1082,12 @@ bool ofVideoGrabber::initGrabber(int w, int h, bool setUseTexture){
 				//memset(pixels, 0, width*height*3);
 				//tex.loadData(pixels, width, height, GL_RGB);
 			}
-			
-			ofLog(OF_NOTICE, "success allocating a video device \n");
+
+			ofLog(OF_NOTICE, "success allocating a video device ");
 			return true;
 		} else {
-			ofLog(OF_ERROR, "error allocating a video device \nplease check your camera and verify that your driver is correctly installed.\n");
+			ofLog(OF_ERROR, "error allocating a video device");
+			ofLog(OF_ERROR, "please check your camera and verify that your driver is correctly installed.");
 			return false;
 		}	//---------------------------------
 

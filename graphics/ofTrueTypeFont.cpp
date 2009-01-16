@@ -31,20 +31,20 @@ ofTrueTypeFont::ofTrueTypeFont(){
 ofTrueTypeFont::~ofTrueTypeFont(){
 
 	if (bLoadedOk){
-	
+
 		if (cps != NULL){
 			delete cps;
-		}	
-		
+		}
+
 		if (texNames != NULL){
 			for (int i = 0; i < nCharacters; i++){
-				glDeleteTextures(1, &texNames[i]);	
+				glDeleteTextures(1, &texNames[i]);
 			}
 			delete texNames;
 		}
 	}
 }
-	
+
 
 //------------------------------------------------------------------
 void ofTrueTypeFont::loadFont(string filename, int fontsize){
@@ -54,27 +54,27 @@ void ofTrueTypeFont::loadFont(string filename, int fontsize){
 
 //------------------------------------------------------------------
 void ofTrueTypeFont::loadFont(string filename, int fontsize, bool _bAntiAliased, bool _bFullCharacterSet){
-	
-	
+
+
 	//------------------------------------------------
 	if (bLoadedOk == true){
-		
+
 		// we've already been loaded, try to clean up :
-		
+
 		if (cps != NULL){
 			delete cps;
-		}	
+		}
 		if (texNames != NULL){
 			for (int i = 0; i < nCharacters; i++){
-				glDeleteTextures(1, &texNames[i]);	
+				glDeleteTextures(1, &texNames[i]);
 			}
 			delete texNames;
 		}
 		bLoadedOk = false;
 	}
 	//------------------------------------------------
-	
-	
+
+
 	filename = ofToDataPath(filename);
 
 	bLoadedOk 			= false;
@@ -85,7 +85,7 @@ void ofTrueTypeFont::loadFont(string filename, int fontsize, bool _bAntiAliased,
 	//--------------- load the library and typeface
 	FT_Library library;
 	if (FT_Init_FreeType( &library )){
-		ofLog(OF_ERROR," PROBLEM WITH FT lib \n");
+		ofLog(OF_ERROR," PROBLEM WITH FT lib");
 		return;
 	}
 
@@ -99,7 +99,7 @@ void ofTrueTypeFont::loadFont(string filename, int fontsize, bool _bAntiAliased,
 
 	//------------------------------------------------------
 	//kerning would be great to support:
-	//ofLog(OF_NOTICE,"FT_HAS_KERNING ? %i \n", FT_HAS_KERNING(face));
+	//ofLog(OF_NOTICE,"FT_HAS_KERNING ? %i", FT_HAS_KERNING(face));
 	//------------------------------------------------------
 
 	nCharacters = bFullCharacterSet ? 256 : 128 - NUM_CHARACTER_TO_START;
@@ -114,7 +114,7 @@ void ofTrueTypeFont::loadFont(string filename, int fontsize, bool _bAntiAliased,
 
 		//------------------------------------------ anti aliased or not:
 		if(FT_Load_Glyph( face, FT_Get_Char_Index( face, (unsigned char)(i+NUM_CHARACTER_TO_START) ), FT_LOAD_DEFAULT )){
-			ofLog(OF_ERROR,"error with FT_Load_Glyph %i \n", i);
+			ofLog(OF_ERROR,"error with FT_Load_Glyph %i", i);
 		}
 
 		if (bAntiAlised == true) FT_Render_Glyph(face->glyph, FT_RENDER_MODE_NORMAL);
@@ -160,7 +160,7 @@ void ofTrueTypeFont::loadFont(string filename, int fontsize, bool _bAntiAliased,
 
 
 		/* sanity check:
-		ofLog(OF_NOTICE,"%i %i %i %i %i %i \n",
+		ofLog(OF_NOTICE,"%i %i %i %i %i %i",
 		cps[i].value ,
 		cps[i].height ,
 		cps[i].width 	,
@@ -169,7 +169,7 @@ void ofTrueTypeFont::loadFont(string filename, int fontsize, bool _bAntiAliased,
 		cps[i].leftExtent	);
 		*/
 
-		
+
 		// Allocate Memory For The Texture Data.
 		unsigned char* expanded_data = new unsigned char[ 2 * width * height];
 
@@ -242,9 +242,9 @@ void ofTrueTypeFont::loadFont(string filename, int fontsize, bool _bAntiAliased,
 
 
 		//With the texture created, we don't need to expanded data anymore
-    	
+
     	delete [] expanded_data;
-    	
+
    }
 
 	// ------------- close the library and typeface
@@ -278,12 +278,12 @@ void ofTrueTypeFont::drawChar(int c, float x, float y) {
 
 	//----------------------- error checking
 	if (!bLoadedOk){
-		ofLog(OF_ERROR,"Error : font not allocated -- line %d in %s\n", __LINE__,__FILE__);
+		ofLog(OF_ERROR,"Error : font not allocated -- line %d in %s", __LINE__,__FILE__);
 		return;
 	}
 
 	if (c >= nCharacters){
-		//ofLog(OF_ERROR,"Error : char (%i) not allocated -- line %d in %s\n", (c + NUM_CHARACTER_TO_START), __LINE__,__FILE__);
+		//ofLog(OF_ERROR,"Error : char (%i) not allocated -- line %d in %s", (c + NUM_CHARACTER_TO_START), __LINE__,__FILE__);
 		return;
 	}
 	//-----------------------
@@ -332,7 +332,7 @@ void ofTrueTypeFont::drawChar(int c, float x, float y) {
 		//let's add verbosity levels somewhere...
 		//this error, for example, is kind of annoying to see
 		//all the time:
-		//ofLog(OF_WARNING," texture not bound for character -- line %d in %s\n", __LINE__,__FILE__);
+		//ofLog(OF_WARNING," texture not bound for character -- line %d in %s", __LINE__,__FILE__);
 	}
 
 }
@@ -346,9 +346,9 @@ float ofTrueTypeFont::stringWidth(string c) {
 
 
 ofRectangle ofTrueTypeFont::getStringBoundingBox(string c, float x, float y){
-    
+
     ofRectangle myRect;
-    
+
 	GLint		index	= 0;
 	GLfloat		xoffset	= 0;
 	GLfloat		yoffset	= 0;
@@ -357,16 +357,16 @@ ofRectangle ofTrueTypeFont::getStringBoundingBox(string c, float x, float y){
     float       miny    = -1;
     float       maxx    = -1;
     float       maxy    = -1;
-    
+
     if (len < 1){
         myRect.x        = 0;
         myRect.y        = 0;
         myRect.width    = 0;
         myRect.height   = 0;
-        return myRect;    
+        return myRect;
     }
-    
-    bool bFirstCharacter = true;    
+
+    bool bFirstCharacter = true;
 	while(index < len){
 		int cy = (unsigned char)c[index] - NUM_CHARACTER_TO_START;
  	    if (cy < nCharacters){ 			// full char set or not?
@@ -426,7 +426,7 @@ float ofTrueTypeFont::stringHeight(string c) {
 void ofTrueTypeFont::drawString(string c, float x, float y) {
 
     if (!bLoadedOk){
-    	ofLog(OF_ERROR,"Error : font not allocated -- line %d in %s\n", __LINE__,__FILE__);
+    	ofLog(OF_ERROR,"Error : font not allocated -- line %d in %s", __LINE__,__FILE__);
     	return;
     };
 
