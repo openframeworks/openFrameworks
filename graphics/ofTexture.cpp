@@ -8,13 +8,13 @@ ofTexture::ofTexture(){
 	texData.textureName[0]	= 0;
 	texData.bFlipTexture	= false;
 	texData.textureTarget	= GL_TEXTURE_2D;
-	texData.glTypeInternal  = 0;	
-	texData.glType			= 0;	
-	texData.width			= 0;	
+	texData.glTypeInternal  = 0;
+	texData.glType			= 0;
+	texData.width			= 0;
 	texData.height			= 0;
-	texData.tex_w			= 0;	
-	texData.tex_h			= 0;	
-	texData.tex_t			= 0;	
+	texData.tex_w			= 0;
+	texData.tex_h			= 0;
+	texData.tex_t			= 0;
 	texData.tex_u			= 0;
 }
 
@@ -26,9 +26,9 @@ bool ofTexture::bAllocated(){
 //----------------------------------------------------------
 ofTexture::ofTexture(const ofTexture& mom){
 	texData = mom.texData;
-}	
+}
 
-//----------------------------------------------------------			
+//----------------------------------------------------------
 ofTexture& ofTexture::operator=(const ofTexture& mom){
 	texData = mom.texData;
 	return *this;
@@ -54,14 +54,14 @@ void ofTexture::clear(){
 	if (texData.textureName[0] != 0){
 		glDeleteTextures(1, (GLuint *)texData.textureName[0]);
 	}
-	
+
 	texData.bAllocated = false;
 }
 
 //----------------------------------------------------------
 void ofTexture::allocate(int w, int h, int internalGlDataType, bool bUseARBExtention){
 
-	//our graphics card might not support arb so we have to see if it is supported. 
+	//our graphics card might not support arb so we have to see if it is supported.
 	if (bUseARBExtention && GLEE_ARB_texture_rectangle){
 		texData.tex_w = w;
 		texData.tex_h = h;
@@ -100,7 +100,7 @@ void ofTexture::allocate(int w, int h, int internalGlDataType, bool bUseARBExten
 	texData.width = w;
 	texData.height = h;
 	texData.bFlipTexture = false;
-	texData.bAllocated = true;	
+	texData.bAllocated = true;
 }
 
 //----------------------------------------------------------
@@ -116,7 +116,7 @@ void ofTexture::loadData(unsigned char * data, int w, int h, int glDataType){
 	// 	check "glTexSubImage2D"
 
 	if ( w > texData.tex_w || h > texData.tex_h) {
-		ofLog(OF_ERROR,"image data too big for allocated texture. not uploading... \n");
+		ofLog(OF_ERROR,"image data too big for allocated texture. not uploading...");
 		return;
 	}
 
@@ -183,7 +183,7 @@ void ofTexture::loadScreenData(int x, int y, int w, int h){
 	texData.bFlipTexture = true;
 
 	if ( w > texData.tex_w || h > texData.tex_h) {
-		ofLog(OF_ERROR,"image data too big for allocated texture. not uploading... \n");
+		ofLog(OF_ERROR,"image data too big for allocated texture. not uploading...");
 		return;
 	}
 
