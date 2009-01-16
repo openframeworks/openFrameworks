@@ -177,6 +177,7 @@ class ofBaseApp;
 typedef ofBaseApp ofSimpleApp;
 
 enum ofLogLevel{
+	OF_VERBOSE,
 	OF_NOTICE,
 	OF_WARNING,
 	OF_ERROR,
@@ -185,6 +186,10 @@ enum ofLogLevel{
 };
 
 #define OF_DEFAULT_LOG_LEVEL  OF_WARNING;
+
+// serial error codes
+#define OF_SERIAL_NO_DATA 	 0
+#define OF_SERIAL_ERROR		-1
 
 // core: ---------------------------
 #include <stdio.h>
@@ -376,7 +381,7 @@ using namespace std;
 //		bg_bright_cyan = bg_bright | bg_cyan,
 //		bg_bright_pink = bg_bright | bg_pink,
 //		bg_bright_white = bg_bright | bg_white,
-//		
+//
 	#define OF_CONSOLE_COLOR_RESTORE (0 | (FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE) )
 	#define OF_CONSOLE_COLOR_BLACK (0)
 	#define OF_CONSOLE_COLOR_RED (FOREGROUND_RED)
