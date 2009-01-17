@@ -18,9 +18,8 @@ class ofxCvFloatImage : public ofxCvImage {
 
     ofxCvFloatImage() {};
     ofxCvFloatImage( const ofxCvFloatImage& mom );
-    virtual ~ofxCvFloatImage();
     virtual void allocate( int w, int h );
-    // virtual void clear();                        //in base class
+    virtual void clear();
     // virtual void setUseTexture( bool bUse );     //in base class          
 
 

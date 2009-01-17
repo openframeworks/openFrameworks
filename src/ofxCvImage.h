@@ -136,6 +136,7 @@ class ofxCvImage {
     unsigned char* 	pixels;	  // not width stepped
     ofTexture  tex;		      // internal tex
     bool bUseTexture;
+    bool bTextureDirty;       // texture needs to be reloaded before drawing 
 
 };
 

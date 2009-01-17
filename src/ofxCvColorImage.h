@@ -12,9 +12,8 @@ class ofxCvColorImage : public ofxCvImage {
 
     ofxCvColorImage() {};
     ofxCvColorImage( const ofxCvColorImage& mom );
-    virtual ~ofxCvColorImage();
     virtual void allocate( int w, int h );
-    // virtual void clear();                        //in base class
+    virtual void clear();
     // virtual void setUseTexture( bool bUse );     //in base class    
 
 

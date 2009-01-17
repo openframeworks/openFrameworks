@@ -27,6 +27,7 @@ void ofxCvGrayscaleImage::allocate( int w, int h ) {
 
     if( bUseTexture ) {
         tex.allocate( width, height, GL_LUMINANCE );
+        bTextureDirty = true;
     }
 }
 
@@ -37,11 +38,13 @@ void ofxCvGrayscaleImage::allocate( int w, int h ) {
 //-------------------------------------------------------------------------------------
 void ofxCvGrayscaleImage::set( float value ){
 	cvSet(cvImage, cvScalar(value));
+    bTextureDirty = true;
 }
 
 //--------------------------------------------------------------------------------
 void ofxCvGrayscaleImage::operator = ( unsigned char* _pixels ) {
     setFromPixels( _pixels, width, height );
+    bTextureDirty = true;
 }
 
 //--------------------------------------------------------------------------------
@@ -50,6 +53,7 @@ void ofxCvGrayscaleImage::operator = ( const ofxCvGrayscaleImage& mom ) {
     
 	if( mom.width == width && mom.height == height ) {
         cvCopy( mom.getCvImage(), cvImage, 0 );
+        bTextureDirty = true;
 	} else {
         cout << "error in =, images are different sizes" << endl;
 	}
@@ -60,12 +64,14 @@ void ofxCvGrayscaleImage::setFromPixels( unsigned char* _pixels, int w, int h ) 
 	for( int i = 0; i < h; i++ ) {
 		memcpy( cvImage->imageData+(i*cvImage->widthStep), _pixels+(i*w), w );
 	}
+    bTextureDirty = true;
 }
 
 //--------------------------------------------------------------------------------
 void ofxCvGrayscaleImage::operator = ( const ofxCvColorImage& mom ) {
 	if( mom.width == width && mom.height == height ) {
 		cvCvtColor( mom.getCvImage(), cvImage, CV_RGB2GRAY );
+        bTextureDirty = true;
 	} else {
         cout << "error in =, images are different sizes" << endl;
 	}
@@ -76,6 +82,7 @@ void ofxCvGrayscaleImage::operator = ( const ofxCvFloatImage& mom ) {
 	if( mom.width == width && mom.height == height ) {
 		//cvConvertScale( mom.getCvImage(), cvImage, 1.0f, 0);
         cvConvert( mom.getCvImage(), cvImage );
+        bTextureDirty = true;
 	} else {
         cout << "error in =, images are different sizes" << endl;
 	}
@@ -87,6 +94,7 @@ void ofxCvGrayscaleImage::absDiff( ofxCvGrayscaleImage& mom ) {
     if( mom.width == width && mom.height == height ) {
         cvAbsDiff( cvImage, mom.getCvImage(), cvImageTemp );
         swapTemp();
+        bTextureDirty = true;
     } else {
         cout << "error in absDiff, images are different sizes" << endl;
     }
@@ -94,10 +102,12 @@ void ofxCvGrayscaleImage::absDiff( ofxCvGrayscaleImage& mom ) {
 
 //--------------------------------------------------------------------------------
 void ofxCvGrayscaleImage::absDiff( ofxCvGrayscaleImage& mom,
-                                  ofxCvGrayscaleImage& dad ) {
-    if(( mom.width == width && mom.height == height ) &&
-       ( dad.width == width && dad.height == height )){
+                                   ofxCvGrayscaleImage& dad ) {
+    if( (mom.width == width && mom.height == height ) &&
+        (dad.width == width && dad.height == height ) )
+    {
         cvAbsDiff( mom.getCvImage(), dad.getCvImage(), cvImage );
+        bTextureDirty = true;
     } else {
         cout << "error in absDiff, images are different sizes" << endl;
     }
@@ -125,7 +135,10 @@ void ofxCvGrayscaleImage::draw( float x, float y ) {
         // and then upload to texture.  We should add
         // to the texture class an override for pixelstorei
         // that allows stepped-width image upload:
-        tex.loadData(getPixels(), width, height, GL_LUMINANCE);
+        if( bTextureDirty ) {
+            tex.loadData(getPixels(), width, height, GL_LUMINANCE);
+            bTextureDirty = false;
+        }
         tex.draw(x,y,width, height);
 
     } else {
@@ -144,7 +157,10 @@ void ofxCvGrayscaleImage::draw( float x, float y ) {
 //--------------------------------------------------------------------------------
 void ofxCvGrayscaleImage::draw( float x, float y, float w, float h ) {
     if( bUseTexture ) {
-        tex.loadData(getPixels(), width, height, GL_LUMINANCE);
+        if( bTextureDirty ) {
+            tex.loadData(getPixels(), width, height, GL_LUMINANCE);
+            bTextureDirty = false;
+        }
         tex.draw(x,y, w,h);
 
     } else {
@@ -173,6 +189,7 @@ void  ofxCvGrayscaleImage::drawBlobIntoMe( ofxCvBlob &blob, int color ) {
            cvFillPoly( cvImage, &pts, &nPts, 1,
                        CV_RGB(color,color,color) );
            delete pts;
+           bTextureDirty = true;
        }
 }
 
@@ -191,6 +208,7 @@ void ofxCvGrayscaleImage::contrastStretch() {
 	}
 	cvConvertScale( cvImage, cvImageTemp, scale, shift );
 	swapTemp();
+    bTextureDirty = true;
 }
 
 //--------------------------------------------------------------------------------
@@ -199,6 +217,7 @@ void ofxCvGrayscaleImage::threshold( int value, bool invert) {
 	if(invert) cvThreshold( cvImage, cvImageTemp, value, 255, CV_THRESH_BINARY_INV );
 	else cvThreshold( cvImage, cvImageTemp, value, 255, CV_THRESH_BINARY );
 	swapTemp();
+    bTextureDirty = true;
 }
 
 
@@ -238,6 +257,7 @@ void ofxCvGrayscaleImage::scaleIntoMe( const ofxCvImage& mom, int interpolationM
     		interpolationMethod = CV_INTER_NN;
     	}
         cvResize( mom.getCvImage(), cvImage, interpolationMethod );
+        bTextureDirty = true;
 
     } else {
         cout << "error in scaleIntoMe: mom image type has to match" << endl;

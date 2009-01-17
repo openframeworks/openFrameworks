@@ -28,15 +28,18 @@ void ofxCvColorImage::allocate( int w, int h ) {
 	bAllocated = true;
     if( bUseTexture ) {
         tex.allocate( width, height, GL_RGB );
+        bTextureDirty = true;
     }
 }
 
 //--------------------------------------------------------------------------------
-ofxCvColorImage::~ofxCvColorImage() {
+void ofxCvColorImage::clear() {
     if (bAllocated == true && cvGrayscaleImage != NULL){
         cvReleaseImage( &cvGrayscaleImage );
     }
+    ofxCvImage::clear();    //call clear in base class    
 }
+
 
 
 
@@ -45,23 +48,27 @@ ofxCvColorImage::~ofxCvColorImage() {
 //--------------------------------------------------------------------------------
 void ofxCvColorImage::set( float value ){
     cvSet(cvImage, cvScalar(value, value, value));
+    bTextureDirty = true;
 }
 
 //--------------------------------------------------------------------------------
 void ofxCvColorImage::set(int valueR, int valueG, int valueB){
     cvSet(cvImage, cvScalar(valueR, valueG, valueB));
+    bTextureDirty = true;
 }
 
 //--------------------------------------------------------------------------------
 void ofxCvColorImage::operator -= ( float value ) {
 	cvSubS( cvImage, cvScalar(value, value, value), cvImageTemp );
 	swapTemp();
+    bTextureDirty = true;
 }
 
 //--------------------------------------------------------------------------------
 void ofxCvColorImage::operator += ( float value ) {
 	cvAddS( cvImage, cvScalar(value, value, value), cvImageTemp );
 	swapTemp();
+    bTextureDirty = true;
 }
 
 //--------------------------------------------------------------------------------
@@ -69,23 +76,27 @@ void ofxCvColorImage::setFromPixels( unsigned char* _pixels, int w, int h ) {
 	for( int i = 0; i < h; i++ ) {
 		memcpy( cvImage->imageData+(i*cvImage->widthStep), _pixels+(i*width*3), width*3 );
 	}
+    bTextureDirty = true;
 }
 
 //--------------------------------------------------------------------------------
 void ofxCvColorImage::setFromGrayscalePlanarImages( const ofxCvGrayscaleImage& red, const ofxCvGrayscaleImage& green, const ofxCvGrayscaleImage& blue){
      cvCvtPlaneToPix(red.getCvImage(), green.getCvImage(), blue.getCvImage(),NULL, cvImage);
+     bTextureDirty = true;
 }
 
 
 //--------------------------------------------------------------------------------
 void ofxCvColorImage::operator = ( unsigned char* _pixels ) {
     setFromPixels( _pixels, width, height );
+    bTextureDirty = true;
 }
 
 //--------------------------------------------------------------------------------
 void ofxCvColorImage::operator = ( const ofxCvGrayscaleImage& mom ) {
 	if( mom.width == width && mom.height == height ) {
 		cvCvtColor( mom.getCvImage(), cvImage, CV_GRAY2RGB );
+        bTextureDirty = true;
 	} else {
         cout << "error in =, images are different sizes" << endl;
 	}
@@ -95,6 +106,7 @@ void ofxCvColorImage::operator = ( const ofxCvGrayscaleImage& mom ) {
 void ofxCvColorImage::operator = ( const ofxCvColorImage& mom ) {
 	if( mom.width == width && mom.height == height ) {
 		cvCopy( mom.getCvImage(), cvImage, 0 );
+        bTextureDirty = true;
 	} else {
         cout << "error in =, images are different sizes" << endl;
 	}
@@ -108,6 +120,7 @@ void ofxCvColorImage::operator = ( const ofxCvFloatImage& mom ) {
         }
 		cvConvertScale( mom.getCvImage(), cvGrayscaleImage, 1, 0 );
 		cvCvtColor( cvGrayscaleImage, cvImage, CV_GRAY2RGB );
+        bTextureDirty = true;
 	} else {
         cout << "error in =, images are different sizes" << endl;
 	}
@@ -146,7 +159,10 @@ void ofxCvColorImage::draw( float x, float y ) {
 	// that allows stepped-width image upload:
 
     if( bUseTexture ) {
-        tex.loadData( getPixels(), width, height, GL_RGB );
+        if( bTextureDirty ) {
+            tex.loadData(getPixels(), width, height, GL_RGB);
+            bTextureDirty = false;
+        }    
         tex.draw( x, y, width, height );
 
     } else {
@@ -165,7 +181,10 @@ void ofxCvColorImage::draw( float x, float y ) {
 //--------------------------------------------------------------------------------
 void ofxCvColorImage::draw( float x, float y, float w, float h ) {
     if( bUseTexture ) {
-        tex.loadData( getPixels(), width, height, GL_RGB );
+        if( bTextureDirty ) {
+            tex.loadData(getPixels(), width, height, GL_RGB);
+            bTextureDirty = false;
+        }    
         tex.draw( x, y, w, h );
 
     } else {
@@ -220,6 +239,7 @@ void ofxCvColorImage::scaleIntoMe( const ofxCvImage& mom, int interpolationMetho
     		interpolationMethod = CV_INTER_NN;
     	}
         cvResize( mom.getCvImage(), cvImage, interpolationMethod );
+        bTextureDirty = true;
 
     } else {
         cout << "error in scaleIntoMe: mom image type has to match" << endl;
@@ -230,11 +250,13 @@ void ofxCvColorImage::scaleIntoMe( const ofxCvImage& mom, int interpolationMetho
 void ofxCvColorImage::convertRgbToHsv(){
     cvCvtColor( cvImage, cvImageTemp, CV_RGB2HSV);
     swapTemp();
+    bTextureDirty = true;
 }
 
 //--------------------------------------------------------------------------------
 void ofxCvColorImage::convertHsvToRgb(){
     cvCvtColor( cvImage, cvImageTemp, CV_HSV2RGB);
     swapTemp();
+    bTextureDirty = true;
 }
 
