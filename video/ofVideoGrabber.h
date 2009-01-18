@@ -47,6 +47,12 @@ class ofVideoGrabber : public ofBaseUpdates, public ofBaseDraws, public ofBaseHa
 		void 			draw(float x, float y);
 		void			update();
 
+		float 			getHeight();
+		float 			getWidth();
+
+		int			height;
+		int			width;
+
 	protected:
 
 		bool					bChooseDevice;

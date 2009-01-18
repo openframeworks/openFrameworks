@@ -1006,6 +1006,15 @@ void ofVideoPlayer::draw(float _x, float _y){
 	draw(_x, _y, width, height);
 }
 
+//----------------------------------------------------------
+float ofVideoPlayer::getHeight(){
+	return height;
+}
+
+//----------------------------------------------------------
+float ofVideoPlayer::getWidth(){
+	return width;
+}
 
 //--------------------------------------
 #ifdef OF_VIDEO_PLAYER_FOBS

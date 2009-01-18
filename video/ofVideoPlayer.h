@@ -68,6 +68,8 @@ class ofVideoPlayer : public ofBaseUpdates, public ofBaseDraws, public ofBaseHas
 		void				nextFrame();
 		void				previousFrame();
 
+		float 				getHeight();
+		float 				getWidth();
 		//--------------------------------------
 		#ifdef OF_VIDEO_PLAYER_FOBS
 		//--------------------------------------
