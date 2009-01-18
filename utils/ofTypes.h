@@ -253,11 +253,10 @@ class ofStyle{
 class ofBaseDraws{
 public:
 	virtual ~ofBaseDraws(){}
-	virtual void draw(){};
-	virtual void draw(float x,float y){};
-	virtual void draw(float x,float y,float w, float h){};
-	int height;
-	int width;
+	virtual void draw(float x,float y)=0;
+	virtual void draw(float x,float y,float w, float h)=0;
+	virtual float getHeight()=0;
+	virtual float getWidth()=0;
 };
 
 //----------------------------------------------------------
@@ -267,7 +266,7 @@ public:
 class ofBaseUpdates{
 public:
 	virtual ~ofBaseUpdates(){}
-	virtual void update(){};
+	virtual void update()=0;
 };
 
 //----------------------------------------------------------
