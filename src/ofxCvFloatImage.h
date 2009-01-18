@@ -8,11 +8,13 @@
 
 class ofxCvFloatImage : public ofxCvImage {
 
-    // some methods use scaleMin and scaleMax
-    // they are used to convert from float to unsigned char...
-    // to get pixel values (0-255) as it's for example necessary for drawing
-    // default values convert from 0-255, but if you has floating point data between 0 and 1,
-    // you could pass in 0, 1, etc...
+    // Float Images and Value Range
+    // Float images are special in that they do not have unequivocal scale.
+    // We use a default scale of 0.0 - 1.0
+    // In most cases this class does the right conversion when going
+    // between different image depth/types
+    // In cases you are loading image data to/from float* you might
+    // want to pay closer attention to what the scales are.
 
   public:
 
@@ -20,7 +22,8 @@ class ofxCvFloatImage : public ofxCvImage {
     ofxCvFloatImage( const ofxCvFloatImage& mom );
     virtual void allocate( int w, int h );
     virtual void clear();
-    // virtual void setUseTexture( bool bUse );     //in base class          
+    // virtual void setUseTexture( bool bUse );     //in base class
+    virtual void setNativeScale( float _scaleMin, float _scaleMax );  
 
 
     // Set Pixel Data
@@ -31,11 +34,12 @@ class ofxCvFloatImage : public ofxCvImage {
     virtual void operator *= ( float scalar );
 	virtual void operator /= ( float scalar );
 	      
-    virtual void setFromPixels( unsigned char* _pixels, int w, int h ) { setFromPixels(_pixels,w,h,0.0f,255.0f); };
-    virtual void setFromPixels( unsigned char* _pixels, int w, int h, float scaleMin, float scaleMax );
-    virtual void setFromPixels( float * _pixels, int w, int h );
+    virtual void setFromPixels( unsigned char* _pixels, int w, int h);
+    virtual void setFromPixels( float * _pixels, int w, int h );  // no scale conversion takes place
+                                                                  // manually normalize or match input pixels
+                                                                  // by calling setNativeScale( scaleMin, scaleMax)
     virtual void operator = ( unsigned char* _pixels );
-    virtual void operator = ( float* _pixels );
+    virtual void operator = ( float* _pixels );                   // same as setFromPixels(float*)
     virtual void operator = ( const ofxCvGrayscaleImage& mom );
     virtual void operator = ( const ofxCvColorImage& mom );
     virtual void operator = ( const ofxCvFloatImage& mom );
@@ -50,18 +54,13 @@ class ofxCvFloatImage : public ofxCvImage {
 	
 	// Get Pixel Data
 	//
-    virtual unsigned char*      getPixels() { return getPixels( 0.0f, 255.0f); };
-    virtual unsigned char*  	getPixels(float scaleMin, float scaleMax);
+    virtual unsigned char*      getPixels();
     virtual float*  			getPixelsAsFloats();
     // virtual IplImage*  getCvImage() const { return cvImage; };    //in base class 	
 
     
     // Draw Image
     //
-	//virtual void draw( float x, float y ) { drawWithScale(x,y,0.0f,255.0f); };
-	//virtual void draw( float x, float y, float w, float h ) { drawWithScale(x,y,w,h,0.0f,255.0f); };
-    //virtual void drawWithScale( float x, float y, float scaleMin, float scaleMax);
-    //virtual void drawWithScale( float x, float y, float w, float h, float scaleMin, float scaleMax);
     virtual void drawWithoutTexture( float x, float y );
     virtual void drawWithoutTexture( float x, float y, float w, float h );    
 
@@ -108,13 +107,15 @@ class ofxCvFloatImage : public ofxCvImage {
   private:
 
     virtual void imageHasChanged();
+    virtual void convertFloatToGray( const IplImage* floatImg, IplImage* grayImg );
+    virtual void convertGrayToFloat( const IplImage* grayImg, IplImage* floatImg );
     
     float* pixelsAsFloats; // not width stepped.
     bool bFloatPixelsDirty;
     IplImage*  cvGrayscaleImage;     // internal IPL grayscale;
     
-    float rangeMin;
-    float rangeMax;
+    float scaleMin;
+    float scaleMax;
     
 };
 

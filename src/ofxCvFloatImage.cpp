@@ -11,8 +11,8 @@ ofxCvFloatImage::ofxCvFloatImage() {
     pixelsAsFloats = NULL;
     bFloatPixelsDirty = true;
     cvGrayscaleImage = NULL;
-    rangeMin = 0.0f;
-    rangeMax = 1.0f;
+    scaleMin = 0.0f;
+    scaleMax = 1.0f;
 }
 
 //--------------------------------------------------------------------------------
@@ -54,10 +54,30 @@ void ofxCvFloatImage::clear() {
 }
 
 //--------------------------------------------------------------------------------
+void ofxCvFloatImage::setNativeScale( float _scaleMin, float _scaleMax ) {
+    scaleMin = _scaleMin;
+    scaleMax = _scaleMax;
+}
+
+//--------------------------------------------------------------------------------
 void ofxCvFloatImage::imageHasChanged() {
     bFloatPixelsDirty = true;
     ofxCvImage::imageHasChanged();
 }
+
+//--------------------------------------------------------------------------------
+void ofxCvFloatImage::convertFloatToGray( const IplImage* floatImg, IplImage* grayImg ) {
+    // map from scaleMin-scaleMax to 0-255
+    float scale = 255.0f/(scaleMax-scaleMin);
+    cvConvertScale( floatImg, grayImg, scale, -(scaleMin*scale) );
+}
+
+//--------------------------------------------------------------------------------
+void ofxCvFloatImage::convertGrayToFloat( const IplImage* grayImg, IplImage* floatImg ) {
+    // map from 0-255 to scaleMin-scaleMax
+    cvConvertScale( grayImg, floatImg, (scaleMax-scaleMin)/255.0f, scaleMin );
+}
+
 
 
 
@@ -107,14 +127,15 @@ void ofxCvFloatImage::operator /= ( float scalar ){
 }
 
 //--------------------------------------------------------------------------------
-void ofxCvFloatImage::setFromPixels( unsigned char* _pixels, int w, int h, float scaleMin, float scaleMax ) {
+void ofxCvFloatImage::setFromPixels( unsigned char* _pixels, int w, int h ) {
     if( cvGrayscaleImage == NULL ) {
         cvGrayscaleImage = cvCreateImage( cvSize(width,height), IPL_DEPTH_8U, 1 );
     }
     for( int i = 0; i < h; i++ ) {
 		memcpy( cvGrayscaleImage->imageData+(i*cvGrayscaleImage->widthStep), _pixels+(i*w), w );
 	}
-    cvConvert( cvGrayscaleImage, cvImage );
+    
+    convertGrayToFloat(cvGrayscaleImage, cvImage);
     imageHasChanged();
 }
 
@@ -139,7 +160,7 @@ void ofxCvFloatImage::operator = ( float* _pixels ) {
 //--------------------------------------------------------------------------------
 void ofxCvFloatImage::operator = ( const ofxCvGrayscaleImage& mom ) {
 	if( mom.width == width && mom.height == height ) {
-        cvConvert( mom.getCvImage(), cvImage );
+        convertGrayToFloat(mom.getCvImage(), cvImage);       
         imageHasChanged();
 	} else {
         cout << "error in =, images are different sizes" << endl;
@@ -153,7 +174,7 @@ void ofxCvFloatImage::operator = ( const ofxCvColorImage& mom ) {
             cvGrayscaleImage = cvCreateImage( cvSize(width,height), IPL_DEPTH_8U, 1 );
         }    
 		cvCvtColor( mom.getCvImage(), cvGrayscaleImage, CV_RGB2GRAY );
-        cvConvert( cvGrayscaleImage, cvImage );
+        convertGrayToFloat(cvGrayscaleImage, cvImage);                
         imageHasChanged();
 	} else {
         cout << "error in =, images are different sizes" << endl;
@@ -208,7 +229,7 @@ void ofxCvFloatImage::operator &= ( const ofxCvImage& mom ) {
 void ofxCvFloatImage::addWeighted( ofxCvGrayscaleImage& mom, float f ) {
 	if( mom.width == width && mom.height == height ) {
          IplImage* cvTemp = cvCreateImage( cvSize(width,height), IPL_DEPTH_32F, 1 );
-         cvConvertScale( mom.getCvImage(), cvTemp, 1, 0 );
+         convertGrayToFloat(mom.getCvImage(), cvTemp);
          cvAddWeighted( cvTemp, f, cvImage, 1.0f-f,0, cvImageTemp );
          swapTemp();
          imageHasChanged();
@@ -223,15 +244,10 @@ void ofxCvFloatImage::addWeighted( ofxCvGrayscaleImage& mom, float f ) {
 // Get Pixel Data
 
 //--------------------------------------------------------------------------------
-unsigned char*  ofxCvFloatImage::getPixels(float scaleMin, float scaleMax){
+unsigned char*  ofxCvFloatImage::getPixels(){
     if(bPixelsDirty) {
-        float range = (scaleMax - scaleMin);
-        float scale = 255/range;
-        float offset = - (scaleMin * scale);  // ie, 0.5 - 1 = scale by (255*2), subtract 255, 128-255 = scale by 1/2, subtract 128
-        if( cvGrayscaleImage == NULL ) {
-            cvGrayscaleImage = cvCreateImage( cvSize(width,height), IPL_DEPTH_8U, 1 );
-        } 
-        cvConvertScale( cvImage, cvGrayscaleImage, scale, offset );
+        if( cvGrayscaleImage == NULL ) { cvGrayscaleImage = cvCreateImage( cvSize(width,height), IPL_DEPTH_8U, 1 ); } 
+        convertFloatToGray(cvImage, cvGrayscaleImage); 
         if(pixels == NULL) { pixels = new unsigned char[width*height]; };
         for( int i = 0; i < height; i++ ) {
             memcpy( pixels+(i*width),
@@ -278,7 +294,10 @@ void ofxCvFloatImage::drawWithoutTexture( float x, float y, float w, float h ) {
     IplImage* tempImg;
     tempImg = cvCreateImage( cvSize((int)w, (int)h), IPL_DEPTH_32F, 1 );
     cvResize( cvImage, tempImg, CV_INTER_NN );
-    cvConvertScale( tempImg, tempImg, 1/255.0, 0 );
+    
+    // map from scaleMin-scaleMax to 0-1
+    float scale = 1.0f/(scaleMax-scaleMin);
+    cvConvertScale( tempImg, tempImg, scale, -(scaleMin*scale) );    
     cvFlip( tempImg, tempImg, 0 );
     glDrawPixels( tempImg->width, tempImg->height ,
                  GL_LUMINANCE, GL_FLOAT, tempImg->imageData );
@@ -286,28 +305,6 @@ void ofxCvFloatImage::drawWithoutTexture( float x, float y, float w, float h ) {
     glRasterPos3f( -x, -(y+h), 0.0 );
 }
 
-/*
-//--------------------------------------------------------------------------------
-void ofxCvFloatImage::drawWithScale( float x, float y, float scaleMin, float scaleMax){
-    drawWithScale(x,y,width, height, scaleMin, scaleMax);
-}
-
-//--------------------------------------------------------------------------------
-void ofxCvFloatImage::drawWithScale( float x, float y, float w, float h, float scaleMin, float scaleMax){
-    if( bUseTexture ) {
-        // note, this is a bit ineficient, as we have to
-        // copy the data out of the cvImage into the pixel array
-        // and then upload to texture.  We should add
-        // to the texture class an override for pixelstorei
-        // that allows stepped-width image upload:
-        if( bTextureDirty ) {
-            tex.loadData(getPixels(scaleMin, scaleMax), width, height, GL_LUMINANCE);
-            bTextureDirty = false;
-        }        
-        tex.draw(x,y,w,h);
-    }
-}
-*/
 
 
 
