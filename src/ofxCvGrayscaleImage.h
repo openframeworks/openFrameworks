@@ -51,7 +51,6 @@ class ofxCvGrayscaleImage : public ofxCvImage {
     //virtual void  draw( float x, float y, float w, float h );                //in base class
     virtual void  drawWithoutTexture( float x, float y );
     virtual void  drawWithoutTexture( float x, float y, float w, float h );
-    virtual void  drawBlobIntoMe( ofxCvBlob & blob, int color );
 
 
     // Image Filter Operations
@@ -75,8 +74,8 @@ class ofxCvGrayscaleImage : public ofxCvImage {
     // virtual void  rotate( float angle, float centerX, float centerY );      //in base class
     // virtual void  scale( float scaleX, float sclaeY );                      //in base class
     // virtual void  transform( float angle, float centerX, float centerY,
-    //                         float scaleX, float scaleY,
-    //                         float moveX, float moveY );                     //in base class
+    //                          float scaleX, float scaleY,
+    //                          float moveX, float moveY );                    //in base class
     // virtual void  undistort( float radialDistX, float radialDistY,
     //                          float tangentDistX, float tangentDistY,
     //                          float focalX, float focalY,

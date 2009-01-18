@@ -158,21 +158,6 @@ void ofxCvGrayscaleImage::drawWithoutTexture( float x, float y, float w, float h
     glRasterPos3f( -x, -(y+h), 0.0 );
 }
 
-//--------------------------------------------------------------------------------
-void  ofxCvGrayscaleImage::drawBlobIntoMe( ofxCvBlob &blob, int color ) {
-       if( blob.pts.size() > 0 ) {
-           CvPoint* pts = new CvPoint[blob.nPts];
-           for( int i=0; i < blob.nPts ; i++ ) {
-               pts[i].x = (int)blob.pts[i].x;
-               pts[i].y = (int)blob.pts[i].y;
-           }
-           int nPts = blob.nPts;
-           cvFillPoly( cvImage, &pts, &nPts, 1,
-                       CV_RGB(color,color,color) );
-           delete pts;
-           imageHasChanged();
-       }
-}
 
 
 // Image Filter Operations

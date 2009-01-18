@@ -1,29 +1,21 @@
 
-#ifndef OFX_CV_FLOAT_IMAGE_H
-#define OFX_CV_FLOAT_IMAGE_H
+#ifndef OFX_CV_SHORT_IMAGE_H
+#define OFX_CV_SHORT_IMAGE_H
 
 
 #include "ofxCvImage.h"
 
 
-class ofxCvFloatImage : public ofxCvImage {
+class ofxCvShortImage : public ofxCvImage {
 
-    // Float Images and Value Range
-    // Float images are special in that they do not have unequivocal scale.
-    // We use a default scale of 0.0 - 1.0
-    // In most cases this class does the right conversion when going
-    // between different image depth/types
-    // In cases you are loading image data to/from float* you might
-    // want to pay closer attention to what the scales are.
 
   public:
 
-    ofxCvFloatImage();
-    ofxCvFloatImage( const ofxCvFloatImage& mom );
+    ofxCvShortImage();
+    ofxCvShortImage( const ofxCvShortImage& mom );
     virtual void  allocate( int w, int h );
     virtual void  clear();
-    // virtual void  setUseTexture( bool bUse );                              //in base class
-    virtual void  setNativeScale( float _scaleMin, float _scaleMax );  
+    // virtual void  setUseTexture( bool bUse );                              //in base class 
 
 
     // Set Pixel Data
@@ -31,21 +23,18 @@ class ofxCvFloatImage : public ofxCvImage {
     virtual void  set( float value );
     // virtual void  operator -= ( float value );                             //in base class 
     // virtual void  operator += ( float value );                             //in base class     
-    virtual void  operator *= ( float scalar );
-	virtual void  operator /= ( float scalar );
 	      
     virtual void  setFromPixels( unsigned char* _pixels, int w, int h);
-    virtual void  setFromPixels( float * _pixels, int w, int h );  //no scaling
+    virtual void  setFromPixels( unsigned short int* _pixels, int w, int h );
     virtual void  operator = ( unsigned char* _pixels );
-    virtual void  operator = ( float* _pixels );  //no scaling
+    virtual void  operator = ( unsigned short int* _pixels );  //no scaling
     virtual void  operator = ( const ofxCvGrayscaleImage& mom );
     virtual void  operator = ( const ofxCvColorImage& mom );
     virtual void  operator = ( const ofxCvFloatImage& mom );
+    virtual void  operator = ( const ofxCvShortImage& mom );
     
     // virtual void  operator -= ( const ofxCvImage& mom );                   //in base class 
     // virtual void  operator += ( const ofxCvImage& mom );                   //in base class     
-    virtual void  operator *= ( const ofxCvImage& mom );
-    virtual void  operator &= ( const ofxCvImage& mom );  //bit-wise at the moment
 
 	void  addWeighted( ofxCvGrayscaleImage& mom, float f );
 	
@@ -53,7 +42,6 @@ class ofxCvFloatImage : public ofxCvImage {
 	// Get Pixel Data
 	//
     virtual unsigned char*  getPixels();
-    virtual float*  getPixelsAsFloats();  //no scaling
     // virtual IplImage*  getCvImage() const { return cvImage; };             //in base class 	
 
     
@@ -104,16 +92,10 @@ class ofxCvFloatImage : public ofxCvImage {
 
   private:
 
-    virtual void imageHasChanged();
-    virtual void convertFloatToGray( const IplImage* floatImg, IplImage* grayImg );
-    virtual void convertGrayToFloat( const IplImage* grayImg, IplImage* floatImg );
+    virtual void convertShortToGray( const IplImage* floatImg, IplImage* grayImg );
+    virtual void convertGrayToShort( const IplImage* grayImg, IplImage* floatImg );
     
-    float* pixelsAsFloats;          // not width stepped.
-    bool bFloatPixelsDirty;
     IplImage*  cvGrayscaleImage;    // internal helper grayscale;
-    
-    float scaleMin;
-    float scaleMax;
     
 };
 

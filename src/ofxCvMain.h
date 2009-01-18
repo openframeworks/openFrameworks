@@ -12,6 +12,7 @@
 #include "ofxCvGrayscaleImage.h"
 #include "ofxCvColorImage.h"
 #include "ofxCvFloatImage.h"
+#include "ofxCvShortImage.h"
 
 //--------------------------
 // contours and blobs

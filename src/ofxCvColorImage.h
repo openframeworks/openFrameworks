@@ -74,7 +74,7 @@ class ofxCvColorImage : public ofxCvImage {
     // virtual void  scale( float scaleX, float sclaeY );                      //in base class
     // virtual void  transform( float angle, float centerX, float centerY,
     //                          float scaleX, float scaleY,
-    //                          float moveX, float moveY );                     //in base class
+    //                          float moveX, float moveY );                    //in base class
     // virtual void  undistort( float radialDistX, float radialDistY,
     //                          float tangentDistX, float tangentDistY,
     //                          float focalX, float focalY,
@@ -95,7 +95,7 @@ class ofxCvColorImage : public ofxCvImage {
 
   private:
   
-    IplImage*  cvGrayscaleImage;     // internal IPL grayscale;
+    IplImage*  cvGrayscaleImage;    // internal helper grayscale;
       
 };
 
