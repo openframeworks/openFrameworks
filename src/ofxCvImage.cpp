@@ -25,22 +25,22 @@ ofxCvImage::~ofxCvImage() {
 //--------------------------------------------------------------------------------
 void ofxCvImage::clear() {
 
-    // ------------------------------ only delete if the
-	// ------------------------------ image is really an image.
-	// ------------------------------ ie, w > 0, h > 0
-
 	if (bAllocated == true){
 		if (width > 0 && height > 0){
 			cvReleaseImage( &cvImage );
 			cvReleaseImage( &cvImageTemp );
 		}
-		delete pixels;
-        pixels = NULL;
+        if( pixels != NULL ) {
+            delete pixels;
+            pixels = NULL;
+            bPixelsDirty = true;
+        }
 		width = 0;
 		height = 0;
 
 		if( bUseTexture ) {
 			tex.clear();
+            bTextureDirty = true;
 		}
 		
 		bAllocated = false;

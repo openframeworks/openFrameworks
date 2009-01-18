@@ -7,6 +7,15 @@
 
 
 //--------------------------------------------------------------------------------
+ofxCvFloatImage::ofxCvFloatImage() {
+    pixelsAsFloats = NULL;
+    bFloatPixelsDirty = true;
+    cvGrayscaleImage = NULL;
+    rangeMin = 0.0f;
+    rangeMax = 1.0f;
+}
+
+//--------------------------------------------------------------------------------
 ofxCvFloatImage::ofxCvFloatImage( const ofxCvFloatImage& mom ) {
     allocate(mom.width, mom.height);    
     cvCopy( mom.getCvImage(), cvImage, 0 );
@@ -20,11 +29,6 @@ void ofxCvFloatImage::allocate( int w, int h ) {
 	}
 	cvImage = cvCreateImage( cvSize(w,h), IPL_DEPTH_32F, 1 );
 	cvImageTemp	= cvCreateImage( cvSize(w,h), IPL_DEPTH_32F, 1 );
-	cvGrayscaleImage = NULL;
-	pixels = new unsigned char[w*h];
-    bPixelsDirty = true;
-	pixelsAsFloats = NULL;
-    bFloatPixelsDirty = true;
     width = w;
 	height = h;
 	bAllocated = true;
@@ -43,6 +47,7 @@ void ofxCvFloatImage::clear() {
         if( pixelsAsFloats != NULL ) {
             delete pixelsAsFloats;
             pixelsAsFloats = NULL;
+            bFloatPixelsDirty = true;
         }
     }
     ofxCvImage::clear();    //call clear in base class    
@@ -225,8 +230,9 @@ unsigned char*  ofxCvFloatImage::getPixels(float scaleMin, float scaleMax){
         float offset = - (scaleMin * scale);  // ie, 0.5 - 1 = scale by (255*2), subtract 255, 128-255 = scale by 1/2, subtract 128
         if( cvGrayscaleImage == NULL ) {
             cvGrayscaleImage = cvCreateImage( cvSize(width,height), IPL_DEPTH_8U, 1 );
-        }    
+        } 
         cvConvertScale( cvImage, cvGrayscaleImage, scale, offset );
+        if(pixels == NULL) { pixels = new unsigned char[width*height]; };
         for( int i = 0; i < height; i++ ) {
             memcpy( pixels+(i*width),
                     cvGrayscaleImage->imageData+(i*cvGrayscaleImage->widthStep), width );

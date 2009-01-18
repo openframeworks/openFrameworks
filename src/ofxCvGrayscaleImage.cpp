@@ -12,16 +12,14 @@ ofxCvGrayscaleImage::ofxCvGrayscaleImage( const ofxCvGrayscaleImage& mom ) {
 
 //--------------------------------------------------------------------------------
 void ofxCvGrayscaleImage::allocate( int w, int h ) {
-	
 	if (bAllocated == true){
 		cout << "warning: reallocating cvImage in ofxCvGrayscaleImage" << endl;
 		clear();
 	}
-
+    
 	cvImage = cvCreateImage( cvSize(w,h), IPL_DEPTH_8U, 1 );
 	cvImageTemp	= cvCreateImage( cvSize(w,h), IPL_DEPTH_8U, 1 );
-	pixels = new unsigned char[w*h];
-    bPixelsDirty = true;
+    
 	width = w;
 	height = h;
 	bAllocated = true;
@@ -121,6 +119,7 @@ void ofxCvGrayscaleImage::absDiff( ofxCvGrayscaleImage& mom,
 //--------------------------------------------------------------------------------
 unsigned char* ofxCvGrayscaleImage::getPixels() {
     if(bPixelsDirty) {
+        if(pixels == NULL) { pixels = new unsigned char[width*height]; };
         for( int i = 0; i < height; i++ ) {
             memcpy( pixels+(i*width),
                     cvImage->imageData+(i*cvImage->widthStep), width );

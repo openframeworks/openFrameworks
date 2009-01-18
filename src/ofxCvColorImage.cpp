@@ -8,6 +8,11 @@
 
 
 //--------------------------------------------------------------------------------
+ofxCvColorImage::ofxCvColorImage() {
+    cvGrayscaleImage = NULL;
+}
+
+//--------------------------------------------------------------------------------
 ofxCvColorImage::ofxCvColorImage( const ofxCvColorImage& mom ) {
     allocate(mom.width, mom.height);    
     cvCopy( mom.getCvImage(), cvImage, 0 );
@@ -19,14 +24,14 @@ void ofxCvColorImage::allocate( int w, int h ) {
 		cout << "warning: reallocating cvImage in ofxCvColorImage" << endl;
 		clear();
 	}
+    
 	cvImage = cvCreateImage( cvSize(w,h), IPL_DEPTH_8U, 3 );
 	cvImageTemp	= cvCreateImage( cvSize(w,h), IPL_DEPTH_8U, 3 );
-    cvGrayscaleImage = NULL;  //only allocated when needed
-	pixels = new unsigned char[w*h*3];
-    bPixelsDirty = true;
+
 	width = w;
 	height = h;
 	bAllocated = true;
+
     if( bUseTexture ) {
         tex.allocate( width, height, GL_RGB );
         bTextureDirty = true;
@@ -137,6 +142,7 @@ void ofxCvColorImage::operator = ( const ofxCvFloatImage& mom ) {
 //--------------------------------------------------------------------------------
 unsigned char* ofxCvColorImage::getPixels() {
 	if(bPixelsDirty) {
+        if(pixels == NULL) { pixels = new unsigned char[width*height*3]; };
         for( int i=0; i<height; i++ ) {
             memcpy( pixels+(i*width*3),
                     cvImage->imageData+(i*cvImage->widthStep), width*3 );

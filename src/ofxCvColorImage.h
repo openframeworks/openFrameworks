@@ -10,7 +10,7 @@ class ofxCvColorImage : public ofxCvImage {
 
   public:
 
-    ofxCvColorImage() {};
+    ofxCvColorImage();
     ofxCvColorImage( const ofxCvColorImage& mom );
     virtual void allocate( int w, int h );
     virtual void clear();

@@ -126,7 +126,9 @@ class ofxCvImage {
 
   protected:
 
-    virtual void imageHasChanged();  // called whenever cvImage was changed
+    virtual void imageHasChanged();  // call this whenever cvImage is changed
+                                     // this flags all the helper images dirty
+                                     
     virtual void swapTemp();  // swap cvImageTemp back
                               // to cvImage after an image operation
 
@@ -135,7 +137,7 @@ class ofxCvImage {
                               // after an image operation with swapImage()
 
     unsigned char* 	pixels;	  // not width stepped
-    bool bPixelsDirty;         // pixels need to be reloaded
+    bool bPixelsDirty;        // pixels need to be reloaded
     ofTexture  tex;		      // internal tex
     bool bUseTexture;
     bool bTextureDirty;       // texture needs to be reloaded before drawing 

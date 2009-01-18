@@ -16,7 +16,7 @@ class ofxCvFloatImage : public ofxCvImage {
 
   public:
 
-    ofxCvFloatImage() {};
+    ofxCvFloatImage();
     ofxCvFloatImage( const ofxCvFloatImage& mom );
     virtual void allocate( int w, int h );
     virtual void clear();
@@ -109,9 +109,13 @@ class ofxCvFloatImage : public ofxCvImage {
 
     virtual void imageHasChanged();
     
-    float * pixelsAsFloats; // not width stepped.
+    float* pixelsAsFloats; // not width stepped.
     bool bFloatPixelsDirty;
     IplImage*  cvGrayscaleImage;     // internal IPL grayscale;
+    
+    float rangeMin;
+    float rangeMax;
+    
 };
 
 
