@@ -20,88 +20,86 @@ class ofxCvFloatImage : public ofxCvImage {
 
     ofxCvFloatImage();
     ofxCvFloatImage( const ofxCvFloatImage& mom );
-    virtual void allocate( int w, int h );
-    virtual void clear();
-    // virtual void setUseTexture( bool bUse );     //in base class
-    virtual void setNativeScale( float _scaleMin, float _scaleMax );  
+    virtual void  allocate( int w, int h );
+    virtual void  clear();
+    // virtual void  setUseTexture( bool bUse );                              //in base class
+    virtual void  setNativeScale( float _scaleMin, float _scaleMax );  
 
 
     // Set Pixel Data
     //
-    virtual void set( float value );
-    // virtual void operator -= ( float value );    //in base class 
-    // virtual void operator += ( float value );    //in base class     
-    virtual void operator *= ( float scalar );
-	virtual void operator /= ( float scalar );
+    virtual void  set( float value );
+    // virtual void  operator -= ( float value );                             //in base class 
+    // virtual void  operator += ( float value );                             //in base class     
+    virtual void  operator *= ( float scalar );
+	virtual void  operator /= ( float scalar );
 	      
-    virtual void setFromPixels( unsigned char* _pixels, int w, int h);
-    virtual void setFromPixels( float * _pixels, int w, int h );  // no scale conversion takes place
-                                                                  // manually normalize or match input pixels
-                                                                  // by calling setNativeScale( scaleMin, scaleMax)
-    virtual void operator = ( unsigned char* _pixels );
-    virtual void operator = ( float* _pixels );                   // same as setFromPixels(float*)
-    virtual void operator = ( const ofxCvGrayscaleImage& mom );
-    virtual void operator = ( const ofxCvColorImage& mom );
-    virtual void operator = ( const ofxCvFloatImage& mom );
+    virtual void  setFromPixels( unsigned char* _pixels, int w, int h);
+    virtual void  setFromPixels( float * _pixels, int w, int h );  //no scaling
+    virtual void  operator = ( unsigned char* _pixels );
+    virtual void  operator = ( float* _pixels );  //no scaling
+    virtual void  operator = ( const ofxCvGrayscaleImage& mom );
+    virtual void  operator = ( const ofxCvColorImage& mom );
+    virtual void  operator = ( const ofxCvFloatImage& mom );
     
-    // virtual void operator -= ( const ofxCvImage& mom );    //in base class 
-    // virtual void operator += ( const ofxCvImage& mom );    //in base class     
-    virtual void operator *= ( const ofxCvImage& mom );
-    virtual void operator &= ( const ofxCvImage& mom );  //bit-wise at the moment
+    // virtual void  operator -= ( const ofxCvImage& mom );                   //in base class 
+    // virtual void  operator += ( const ofxCvImage& mom );                   //in base class     
+    virtual void  operator *= ( const ofxCvImage& mom );
+    virtual void  operator &= ( const ofxCvImage& mom );  //bit-wise at the moment
 
-	void addWeighted( ofxCvGrayscaleImage& mom, float f );
+	void  addWeighted( ofxCvGrayscaleImage& mom, float f );
 	
 	
 	// Get Pixel Data
 	//
-    virtual unsigned char*      getPixels();
-    virtual float*  			getPixelsAsFloats();
-    // virtual IplImage*  getCvImage() const { return cvImage; };    //in base class 	
+    virtual unsigned char*  getPixels();
+    virtual float*  getPixelsAsFloats();  //no scaling
+    // virtual IplImage*  getCvImage() const { return cvImage; };             //in base class 	
 
     
     // Draw Image
     //
-    virtual void drawWithoutTexture( float x, float y );
-    virtual void drawWithoutTexture( float x, float y, float w, float h );    
+    virtual void  drawWithoutTexture( float x, float y );
+    virtual void  drawWithoutTexture( float x, float y, float w, float h );    
 
 
     // Image Filter Operations
     //
-    // virtual void erode( );                                //in base class
-    // virtual void dilate( );                               //in base class
-    // virtual void blur( int value=3 );                     //in base class
-    // virtual void blurGaussian( int value=3 );             //in base class
-    // virtual void invert();                                //in base class
-    // virtual void convertToRange(float min, float max);    //in base class    
+    // virtual void  erode( );                                                 //in base class
+    // virtual void  dilate( );                                                //in base class
+    // virtual void  blur( int value=3 );                                      //in base class
+    // virtual void  blurGaussian( int value=3 );                              //in base class
+    // virtual void  invert();                                                 //in base class
+    // virtual void  convertToRange(float min, float max);                     //in base class    
         
 
     // Image Transformation Operations
     //
-    virtual void resize( int w, int h );
-    virtual void scaleIntoMe( const ofxCvImage& mom, int interpolationMethod = CV_INTER_NN);
-    // virtual void mirror( bool bFlipVertically, bool bFlipHorizontally );  //in base class
-    // virtual void translate( float x, float y );                           //in base class
-    // virtual void rotate( float angle, float centerX, float centerY );     //in base class
-    // virtual void scale( float scaleX, float sclaeY );                     //in base class
-    // virtual void transform( float angle, float centerX, float centerY,
-    //                        float scaleX, float scaleY,
-    //                        float moveX, float moveY );                    //in base class
-    // virtual void undistort( float radialDistX, float radialDistY,
-    //                         float tangentDistX, float tangentDistY,
-    //                         float focalX, float focalY,
-    //                         float centerX, float centerY );               //in base class
-    // virtual void remap( IplImage* mapX, IplImage* mapY );                 //in base class
-    // virtual void warpPerspective( const ofPoint& A,
-    //                               const ofPoint& B,
-    //                               const ofPoint& C,
-    //                               const ofPoint& D );                     //in base class
-    // virtual void warpIntoMe( const ofxCvGrayscaleImage& mom,
-    //                          ofPoint src[4], ofPoint dst[4] );            //in base class
+    virtual void  resize( int w, int h );
+    virtual void  scaleIntoMe( const ofxCvImage& mom, int interpolationMethod = CV_INTER_NN);
+    // virtual void  mirror( bool bFlipVertically, bool bFlipHorizontally );   //in base class
+    // virtual void  translate( float x, float y );                            //in base class
+    // virtual void  rotate( float angle, float centerX, float centerY );      //in base class
+    // virtual void  scale( float scaleX, float sclaeY );                      //in base class
+    // virtual void  transform( float angle, float centerX, float centerY,
+    //                          float scaleX, float scaleY,
+    //                          float moveX, float moveY );                     //in base class
+    // virtual void  undistort( float radialDistX, float radialDistY,
+    //                          float tangentDistX, float tangentDistY,
+    //                          float focalX, float focalY,
+    //                          float centerX, float centerY );                //in base class
+    // virtual void  remap( IplImage* mapX, IplImage* mapY );                  //in base class
+    // virtual void  warpPerspective( const ofPoint& A,
+    //                                const ofPoint& B,
+    //                                const ofPoint& C,
+    //                                const ofPoint& D );                      //in base class
+    // virtual void  warpIntoMe( const ofxCvGrayscaleImage& mom,
+    //                           ofPoint src[4], ofPoint dst[4] );             //in base class
                              
 
     // Other Image Operations
     //
-    // virtual int countNonZeroInRegion( int x, int y, int w, int h ) const; //in base class
+    // virtual int  countNonZeroInRegion( int x, int y, int w, int h ) const;  //in base class
     
 
   private:

@@ -228,12 +228,10 @@ void ofxCvFloatImage::operator &= ( const ofxCvImage& mom ) {
 //--------------------------------------------------------------------------------
 void ofxCvFloatImage::addWeighted( ofxCvGrayscaleImage& mom, float f ) {
 	if( mom.width == width && mom.height == height ) {
-         IplImage* cvTemp = cvCreateImage( cvSize(width,height), IPL_DEPTH_32F, 1 );
-         convertGrayToFloat(mom.getCvImage(), cvTemp);
-         cvAddWeighted( cvTemp, f, cvImage, 1.0f-f,0, cvImageTemp );
-         swapTemp();
+         convertGrayToFloat(mom.getCvImage(), cvImageTemp);
+         cvAddWeighted( cvImageTemp, f, cvImage, 1.0f-f,0, cvImage );
          imageHasChanged();
-         cvReleaseImage( &cvTemp );
+         
     } else {
         cout << "error in addWeighted, images are different sizes" << endl;
     }

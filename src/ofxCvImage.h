@@ -24,11 +24,6 @@ class ofxCvFloatImage;
 
 class ofxCvImage {
     
-  // the "= 0" after a method means "pure virtual"
-  // it also means they have to be implemented in
-  // ofxCvGrayscaleImage, ofxCvColorImage, ...
-
-
   public:
 
     int width;
@@ -36,27 +31,27 @@ class ofxCvImage {
 	bool bAllocated;
 
     ofxCvImage();
-    virtual ~ofxCvImage();
-    virtual void allocate( int w, int h ) = 0;
-    virtual void clear();
-    virtual void setUseTexture( bool bUse );
+    virtual  ~ofxCvImage();
+    virtual void  allocate( int w, int h ) = 0;
+    virtual void  clear();
+    virtual void  setUseTexture( bool bUse );
 
 
     // Set Pixel Data
     //
-    virtual void set( float value ) = 0;
-    virtual void operator -= ( float value );
-    virtual void operator += ( float value );
+    virtual void  set( float value ) = 0;
+    virtual void  operator -= ( float value );
+    virtual void  operator += ( float value );
 
-    virtual void setFromPixels( unsigned char* _pixels, int w, int h ) = 0;
-    virtual void operator = ( const ofxCvGrayscaleImage& mom ) = 0;
-    virtual void operator = ( const ofxCvColorImage& mom ) = 0;
-    virtual void operator = ( const ofxCvFloatImage& mom ) = 0;
+    virtual void  setFromPixels( unsigned char* _pixels, int w, int h ) = 0;
+    virtual void  operator = ( const ofxCvGrayscaleImage& mom ) = 0;
+    virtual void  operator = ( const ofxCvColorImage& mom ) = 0;
+    virtual void  operator = ( const ofxCvFloatImage& mom ) = 0;
     
-    virtual void operator -= ( const ofxCvImage& mom );
-    virtual void operator += ( const ofxCvImage& mom );
-    virtual void operator *= ( const ofxCvImage& mom );
-    virtual void operator &= ( const ofxCvImage& mom );
+    virtual void  operator -= ( const ofxCvImage& mom );
+    virtual void  operator += ( const ofxCvImage& mom );
+    virtual void  operator *= ( const ofxCvImage& mom );
+    virtual void  operator &= ( const ofxCvImage& mom );
     
 
     // Get Pixel Data
@@ -67,59 +62,59 @@ class ofxCvImage {
 
     // Draw Image
     //
-    virtual void draw( float x, float y );
-    virtual void draw( float x, float y, float w, float h );
-    virtual void drawWithoutTexture( float x, float y ) {};
-    virtual void drawWithoutTexture( float x, float y, float w, float h ) {};    
+    virtual void  draw( float x, float y );
+    virtual void  draw( float x, float y, float w, float h );
+    virtual void  drawWithoutTexture( float x, float y ) {};
+    virtual void  drawWithoutTexture( float x, float y, float w, float h ) {};    
 
 
     // Image Filter Operations
     //
-    virtual void erode( );  // based on 3x3 shape
-    virtual void dilate( );  // based on 3x3 shape
-    virtual void blur( int value=3 );  // value = x*2+1, where x is an integer
-    virtual void blurGaussian( int value=3 );  // value = x*2+1, where x is an integer
-    virtual void invert();
-    virtual void convertToRange(float min, float max);
+    virtual void  erode( );                     // based on 3x3 shape
+    virtual void  dilate( );                    // based on 3x3 shape
+    virtual void  blur( int value=3 );          // value = x*2+1, where x is an integer
+    virtual void  blurGaussian( int value=3 );  // value = x*2+1, where x is an integer
+    virtual void  invert();
+    virtual void  convertToRange(float min, float max);
 
 
     // Image Transformation Operations
     //
-    //virtual void setROI( int w, int h );  //TODO, support image regions
-    virtual void resize( int w, int h ) = 0;
-    virtual void scaleIntoMe( const ofxCvImage& mom, int interpolationMethod = CV_INTER_NN ) = 0;
-    virtual void mirror( bool bFlipVertically, bool bFlipHorizontally );
+    //virtual void setROI( int w, int h );      //TODO, support image regions
+    virtual void  resize( int w, int h ) = 0;
+    virtual void  scaleIntoMe( const ofxCvImage& mom, int interpolationMethod = CV_INTER_NN ) = 0;
+    virtual void  mirror( bool bFlipVertically, bool bFlipHorizontally );
 
-    virtual void translate( float x, float y );
-    virtual void rotate( float angle, float centerX, float centerY );
-    virtual void scale( float scaleX, float sclaeY );
-    virtual void transform( float angle, float centerX, float centerY,
-                            float scaleX, float scaleY,
-                            float moveX, float moveY );
+    virtual void  translate( float x, float y );
+    virtual void  rotate( float angle, float centerX, float centerY );
+    virtual void  scale( float scaleX, float sclaeY );
+    virtual void  transform( float angle, float centerX, float centerY,
+                             float scaleX, float scaleY,
+                             float moveX, float moveY );
     /**
     * undistort Usage Example:
     * undistort( 0, 1, 0, 0, 200, 200, cwidth/2, cheight/2 );
     * creates kind of an old TV monitor distortion.
     */
-    virtual void undistort( float radialDistX, float radialDistY,
-                            float tangentDistX, float tangentDistY,
-                            float focalX, float focalY,
-                            float centerX, float centerY );
+    virtual void  undistort( float radialDistX, float radialDistY,
+                             float tangentDistX, float tangentDistY,
+                             float focalX, float focalY,
+                             float centerX, float centerY );
 
-    virtual void remap( const IplImage* mapX, const IplImage* mapY );
+    virtual void  remap( const IplImage* mapX, const IplImage* mapY );
 
-    virtual void warpPerspective( const ofPoint& A,
-                                  const ofPoint& B,
-                                  const ofPoint& C,
-                                  const ofPoint& D );
-    virtual void warpIntoMe( const ofxCvGrayscaleImage& mom,
-                             ofPoint src[4], ofPoint dst[4] );
+    virtual void  warpPerspective( const ofPoint& A,
+                                   const ofPoint& B,
+                                   const ofPoint& C,
+                                   const ofPoint& D );
+    virtual void  warpIntoMe( const ofxCvGrayscaleImage& mom,
+                              ofPoint src[4], ofPoint dst[4] );
 
 
 
     // Other Image Operations
     //
-    virtual int countNonZeroInRegion( int x, int y, int w, int h ) const;
+    virtual int  countNonZeroInRegion( int x, int y, int w, int h ) const;
 
 
 
