@@ -1118,3 +1118,13 @@ void ofVideoGrabber::draw(float _x, float _y){
 	draw(_x, _y, width, height);
 }
 
+
+//----------------------------------------------------------
+float ofVideoGrabber::getHeight(){
+	return height;
+}
+
+//----------------------------------------------------------
+float ofVideoGrabber::getWidth(){
+	return width;
+}
