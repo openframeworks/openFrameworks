@@ -94,8 +94,8 @@ int ofArduino::getServo(int pin){
 void ofArduino::processSysExData(vector<unsigned char> data){
 
 	vector<unsigned char>::iterator it;
-	unsigned char buffer;
-	int i = 1;
+	//unsigned char buffer;
+	//int i = 1;
 
 	// act on reserved sysEx messages (extended commands) or trigger SysEx event...
 	switch(data.front()) { //first byte in buffer is command

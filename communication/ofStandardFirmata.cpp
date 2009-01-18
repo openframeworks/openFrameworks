@@ -60,8 +60,8 @@ ofStandardFirmata::ofStandardFirmata(){
 	for (int i=0; i<ARD_TOTAL_ANALOG_PINS; ++i) {
 		_analogPinReporting[i] = ARD_OFF;
 		// analog pins used as digital
-		_digitalPinMode[i+16]=ARD_ANALOG;
-		_digitalPinValue[i+16] = -1;
+		_digitalPinMode[i]=ARD_ANALOG;
+		_digitalPinValue[i] = -1;
 	}
 }
 
@@ -158,8 +158,8 @@ void ofStandardFirmata::sendDigital(int pin, int value, bool force){
 
 		_digitalPinValue[pin] = value;
 
-		int port;
-		int bit;
+		int port=0;
+		int bit=0;
 
 		if(pin < 8 && pin >1){
 			port=0;
@@ -242,7 +242,7 @@ void ofStandardFirmata::sendReset(){
 
 void ofStandardFirmata::sendAnalogPinReporting(int pin, int mode){
 	int i;
-	bool send;
+	//bool send;
 
     // disable reporting for all pins on port 2
 	for(i=16; i<22; ++i) {
@@ -409,7 +409,7 @@ void ofStandardFirmata::processSysExData(vector<unsigned char> data){
 
 	vector<unsigned char>::iterator it;
 	unsigned char buffer;
-	int i = 1;
+	//int i = 1;
 
 	// act on reserved sysEx messages (extended commands) or trigger SysEx event...
 	switch(data.front()) { //first byte in buffer is command
