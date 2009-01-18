@@ -73,6 +73,9 @@ class ofImage : public ofBaseDraws, public ofBaseHasTexture{
 		void 				draw(float x, float y, float w, float h);
 		void 				draw(float x, float y);
 
+		float 				getHeight();
+		float 				getWidth();
+
 		int 				width, height, bpp;		// w,h, bits per pixel
 		int					type;					// OF_IMAGE_GRAYSCALE, OF_IMAGE_COLOR, OF_IMAGE_COLOR_ALPHA
 
