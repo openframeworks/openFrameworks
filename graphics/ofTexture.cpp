@@ -279,4 +279,12 @@ void ofTexture::draw(float x, float y){
 	draw(x,y,texData.width, texData.height);
 }
 
+//----------------------------------------------------------
+float ofTexture::getHeight(){
+	return texData.height;
+}
 
+//----------------------------------------------------------
+float ofTexture::getWidth(){
+	return texData.width;
+}

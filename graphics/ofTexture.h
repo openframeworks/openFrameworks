@@ -15,8 +15,8 @@ typedef struct{
 	float tex_u;
 	float tex_w;
 	float tex_h;
-	int width;
-	int height;
+	float width;
+	float height;
 	bool bFlipTexture;
 
 	//we do this because openGL expects an array
@@ -59,6 +59,9 @@ class ofTexture : public ofBaseDraws{
 		bool bAllocated();
 
 		ofTextureData getTextureData();
+
+		float 			getHeight();
+		float 			getWidth();
 
 	protected:
 		ofTextureData   texData;
