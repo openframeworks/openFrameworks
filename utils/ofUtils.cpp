@@ -189,20 +189,20 @@ string ofGetVersionInfo(){
 //from the forums http://www.openframeworks.cc/forum/viewtopic.php?t=1413
 
 //--------------------------------------------------
-void ofSaveScreen(string filename) { 
-   ofImage screen; 
-   screen.allocate(ofGetWidth(), ofGetHeight(), OF_IMAGE_COLOR); 
-   screen.grabScreen(0, 0, ofGetWidth(), ofGetHeight()); 
-   screen.saveImage(filename); 
-} 
+void ofSaveScreen(string filename) {
+   ofImage screen;
+   screen.allocate(ofGetWidth(), ofGetHeight(), OF_IMAGE_COLOR);
+   screen.grabScreen(0, 0, ofGetWidth(), ofGetHeight());
+   screen.saveImage(filename);
+}
 
 //--------------------------------------------------
-int saveImageCounter = 0; 
-void ofSaveFrame(){ 
-   string fileName = ofToString(saveImageCounter) + ".png";   
+int saveImageCounter = 0;
+void ofSaveFrame(){
+   string fileName = ofToString(saveImageCounter) + ".png";
    ofSaveScreen(fileName);
    saveImageCounter++;
-} 
+}
 
 //levels are currently:
 // see ofConstants.h
@@ -220,7 +220,7 @@ void ofSetLogLevel(int logLevel){
 //--------------------------------------------------
 void ofLog(int logLevel, string message){
 	if(logLevel >= currentLogLevel){
-		if(logLevel == OF_NOTICE){
+		if(logLevel == OF_VERBOSE){
 			printf("OF_VERBOSE: ");
 		}
 		else if(logLevel == OF_NOTICE){
@@ -243,13 +243,17 @@ void ofLog(int logLevel, string message){
 void ofLog(int logLevel, const char* format, ...){
 	//thanks stefan!
 	//http://www.ozzu.com/cpp-tutorials/tutorial-writing-custom-printf-wrapper-function-t89166.html
-	
+
 	if(logLevel >= currentLogLevel){
 		va_list args;
 		va_start( args, format );
-		if(logLevel == OF_NOTICE){
+		if(logLevel == OF_VERBOSE){
+			printf("OF_VERBOSE: ");
+		}
+		else if(logLevel == OF_NOTICE){
 			printf("OF_NOTICE: ");
-		}else if(logLevel == OF_WARNING){
+		}
+		else if(logLevel == OF_WARNING){
 			printf("OF_WARNING: ");
 		}
 		else if(logLevel == OF_ERROR){
