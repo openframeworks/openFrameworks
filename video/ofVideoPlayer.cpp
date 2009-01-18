@@ -623,6 +623,7 @@ void ofVideoPlayer::stop(){
 
 	StopMovie (moviePtr);
 	SetMovieActive (moviePtr, false);
+	bStarted = false;
 
 	//--------------------------------------
 	#else

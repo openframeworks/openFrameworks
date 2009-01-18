@@ -773,6 +773,7 @@ bool ofVideoGrabber::qtSelectDevice(int deviceNumber, bool didWeChooseADevice){
 		if( deviceInputList ) numInputs = ((*deviceInputList)->count);
 
 		memcpy(pascalName, (*deviceList)->entry[i].name, sizeof(char) * 256);
+		memset(pascalNameInput, 0, sizeof(char)*256);
 
 		//this means we can use the capture method
 		if(nameRec.flags != sgDeviceNameFlagDeviceUnavailable){
@@ -792,7 +793,7 @@ bool ofVideoGrabber::qtSelectDevice(int deviceNumber, bool didWeChooseADevice){
 				if( deviceCount == deviceNumber || !didWeChooseADevice ){
 					ofLog(OF_NOTICE, "attempting to open device[%i] %s   -   %s",  deviceCount, p2cstr(pascalName), p2cstr(pascalNameInput) );
 
-					OSErr err1 = SGSetChannelDevice(gVideoChannel, pascalNameInput);
+					OSErr err1 = SGSetChannelDevice(gVideoChannel, pascalName);
 					OSErr err2 = SGSetChannelDeviceInput(gVideoChannel, j);
 
 					int successLevel = 0;
