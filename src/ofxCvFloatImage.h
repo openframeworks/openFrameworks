@@ -34,6 +34,8 @@ class ofxCvFloatImage : public ofxCvImage {
     virtual void setFromPixels( unsigned char* _pixels, int w, int h ) { setFromPixels(_pixels,w,h,0.0f,255.0f); };
     virtual void setFromPixels( unsigned char* _pixels, int w, int h, float scaleMin, float scaleMax );
     virtual void setFromPixels( float * _pixels, int w, int h );
+    virtual void operator = ( unsigned char* _pixels );
+    virtual void operator = ( float* _pixels );
     virtual void operator = ( const ofxCvGrayscaleImage& mom );
     virtual void operator = ( const ofxCvColorImage& mom );
     virtual void operator = ( const ofxCvFloatImage& mom );
@@ -50,16 +52,18 @@ class ofxCvFloatImage : public ofxCvImage {
 	//
     virtual unsigned char*      getPixels() { return getPixels( 0.0f, 255.0f); };
     virtual unsigned char*  	getPixels(float scaleMin, float scaleMax);
-    virtual float * 			getPixelsAsFloats();
+    virtual float*  			getPixelsAsFloats();
     // virtual IplImage*  getCvImage() const { return cvImage; };    //in base class 	
 
     
     // Draw Image
     //
-	virtual void 	draw( float x, float y ) { drawWithScale(x,y,0.0f,255.0f); };
-	virtual void 	draw( float x, float y, float w, float h ) { drawWithScale(x,y,w,h,0.0f,255.0f); };
-    virtual void 	drawWithScale( float x, float y, float scaleMin, float scaleMax);
-    virtual void 	drawWithScale( float x, float y, float w, float h, float scaleMin, float scaleMax);
+	//virtual void draw( float x, float y ) { drawWithScale(x,y,0.0f,255.0f); };
+	//virtual void draw( float x, float y, float w, float h ) { drawWithScale(x,y,w,h,0.0f,255.0f); };
+    //virtual void drawWithScale( float x, float y, float scaleMin, float scaleMax);
+    //virtual void drawWithScale( float x, float y, float w, float h, float scaleMin, float scaleMax);
+    virtual void drawWithoutTexture( float x, float y );
+    virtual void drawWithoutTexture( float x, float y, float w, float h );    
 
 
     // Image Filter Operations
@@ -103,7 +107,10 @@ class ofxCvFloatImage : public ofxCvImage {
 
   private:
 
+    virtual void imageHasChanged();
+    
     float * pixelsAsFloats; // not width stepped.
+    bool bFloatPixelsDirty;
     IplImage*  cvGrayscaleImage;     // internal IPL grayscale;
 };
 

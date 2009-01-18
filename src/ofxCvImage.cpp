@@ -14,13 +14,13 @@ ofxCvImage::ofxCvImage() {
     bTextureDirty   = true;
 	bAllocated		= false;
 	pixels			= NULL;
+    bPixelsDirty    = true;
 }
 
 //--------------------------------------------------------------------------------
 ofxCvImage::~ofxCvImage() {
     clear();
 }
-
 
 //--------------------------------------------------------------------------------
 void ofxCvImage::clear() {
@@ -47,12 +47,10 @@ void ofxCvImage::clear() {
 	}
 }
 
-
 //--------------------------------------------------------------------------------
 void ofxCvImage::setUseTexture( bool bUse ) {
 	bUseTexture = bUse;
 }
-
 
 //--------------------------------------------------------------------------------
 void ofxCvImage::swapTemp() {
@@ -62,6 +60,11 @@ void ofxCvImage::swapTemp() {
 	cvImageTemp	= temp;
 }
 
+//--------------------------------------------------------------------------------
+void ofxCvImage::imageHasChanged() {
+    bTextureDirty = true;
+    bPixelsDirty = true;
+}
 
 
 
@@ -72,14 +75,14 @@ void ofxCvImage::swapTemp() {
 void ofxCvImage::operator -= ( float value ) {
 	cvSubS( cvImage, cvScalar(value), cvImageTemp );
 	swapTemp();
-    bTextureDirty = true;
+    imageHasChanged();
 }
 
 //--------------------------------------------------------------------------------
 void ofxCvImage::operator += ( float value ) {
 	cvAddS( cvImage, cvScalar(value), cvImageTemp );
 	swapTemp();
-    bTextureDirty = true;
+    imageHasChanged();
 }
 
 
@@ -91,7 +94,7 @@ void ofxCvImage::operator -= ( const ofxCvImage& mom ) {
     {
 		cvSub( cvImage, mom.getCvImage(), cvImageTemp );
 		swapTemp();
-        bTextureDirty = true;
+        imageHasChanged();
 	} else {
         cout << "error in -=, images need to match in size and type" << endl;
 	}
@@ -105,7 +108,7 @@ void ofxCvImage::operator += ( const ofxCvImage& mom ) {
     {
 		cvAdd( cvImage, mom.getCvImage(), cvImageTemp );
 		swapTemp();
-        bTextureDirty = true;
+        imageHasChanged();
 	} else {
         cout << "error in +=, images need to match in size and type" << endl;
 	}
@@ -120,7 +123,7 @@ void ofxCvImage::operator *= ( const ofxCvImage& mom ) {
     {
 		cvMul( cvImage, mom.getCvImage(), cvImageTemp, scalef );
 		swapTemp();
-        bTextureDirty = true;
+        imageHasChanged();
 	} else {
         cout << "error in *=, images need to match in size and type" << endl;
 	}
@@ -134,10 +137,39 @@ void ofxCvImage::operator &= ( const ofxCvImage& mom ) {
     {
 		cvAnd( cvImage, mom.getCvImage(), cvImageTemp );
 		swapTemp();
-        bTextureDirty = true;
+        imageHasChanged();
 	} else {
         cout << "error in &=, images need to match in size and type" << endl;
 	}
+}
+
+
+
+// Draw Image
+
+//--------------------------------------------------------------------------------
+void ofxCvImage::draw( float x, float y ) {
+    draw( x,y, width,height );
+}
+
+//--------------------------------------------------------------------------------
+void ofxCvImage::draw( float x, float y, float w, float h ) {
+
+    // set GL format
+    int glformat = GL_LUMINANCE;
+    if(cvImage->nChannels == 1) glformat = GL_LUMINANCE;
+    else if(cvImage->nChannels == 3) glformat = GL_RGB;
+    
+    if( bUseTexture ) {
+        if( bTextureDirty ) {
+            tex.loadData(getPixels(), width, height, glformat);
+            bTextureDirty = false;
+        }
+        tex.draw(x,y, w,h);
+
+    } else {
+        // ofLog( OF_NOTICE, "Can't draw! Maybe you can use drawWithoutTexture(...)\n" );
+    }
 }
 
 
@@ -148,14 +180,14 @@ void ofxCvImage::operator &= ( const ofxCvImage& mom ) {
 void ofxCvImage::dilate() {
 	cvDilate( cvImage, cvImageTemp, 0, 1 );
 	swapTemp();
-    bTextureDirty = true;
+    imageHasChanged();
 }
 
 //--------------------------------------------------------------------------------
 void ofxCvImage::erode() {
 	cvErode( cvImage, cvImageTemp, 0, 1 );
 	swapTemp();
-    bTextureDirty = true;
+    imageHasChanged();
 }
 
 //--------------------------------------------------------------------------------
@@ -166,7 +198,7 @@ void ofxCvImage::blur( int value ) {
     }
 	cvSmooth( cvImage, cvImageTemp, CV_BLUR , value);
 	swapTemp();
-    bTextureDirty = true;
+    imageHasChanged();
 }
 
 //--------------------------------------------------------------------------------
@@ -177,13 +209,13 @@ void ofxCvImage::blurGaussian( int value ) {
     }
 	cvSmooth( cvImage, cvImageTemp, CV_GAUSSIAN ,value );
 	swapTemp();
-    bTextureDirty = true;
+    imageHasChanged();
 }
 
 //--------------------------------------------------------------------------------
 void ofxCvImage::invert(){
     cvNot(cvImage, cvImage);
-    bTextureDirty = true;
+    imageHasChanged();
 }
 
 //--------------------------------------------------------------------------------
@@ -193,7 +225,7 @@ void ofxCvImage::convertToRange(float scaleMin, float scaleMax ){
     float offset = - (scaleMin * scale);  // ie, 0.5 - 1 = scale by (255*2), subtract 255, 128-255 = scale by 1/2, subtract 128
     cvConvertScale( cvImage, cvImageTemp, scale, offset );
     swapTemp();
-    bTextureDirty = true;
+    imageHasChanged();
 }
 
 
@@ -212,25 +244,25 @@ void ofxCvImage::mirror( bool bFlipVertically, bool bFlipHorizontally ) {
 
 	cvFlip( cvImage, cvImageTemp, flipMode );
 	swapTemp();
-    bTextureDirty = true;
+    imageHasChanged();
 }
 
 //--------------------------------------------------------------------------------
 void ofxCvImage::translate( float x, float y ) {
     transform( 0, 0,0, 1,1, x,y );
-    bTextureDirty = true;
+    imageHasChanged();
 }
 
 //--------------------------------------------------------------------------------
 void ofxCvImage::rotate( float angle, float centerX, float centerY ) {
     transform( angle, centerX, centerY, 1,1, 0,0 );
-    bTextureDirty = true;
+    imageHasChanged();
 }
 
 //--------------------------------------------------------------------------------
 void ofxCvImage::scale( float scaleX, float scaleY ) {
     transform( 0, 0,0, scaleX,scaleY, 0,0 );
-    bTextureDirty = true;
+    imageHasChanged();
 }
 
 //--------------------------------------------------------------------------------
@@ -250,7 +282,7 @@ void ofxCvImage::transform( float angle, float centerX, float centerY,
 
     cvWarpAffine( cvImage, cvImageTemp, transmat );
 	swapTemp();
-    bTextureDirty = true;
+    imageHasChanged();
 
     cvReleaseMat( &transmat );
 }
@@ -264,7 +296,7 @@ void ofxCvImage::undistort( float radialDistX, float radialDistY,
     float distortionCoeffs[] = { radialDistX, radialDistY, tangentDistX, tangentDistY };
     cvUnDistortOnce( cvImage, cvImageTemp, camIntrinsics, distortionCoeffs, 1 );
 	swapTemp();
-    bTextureDirty = true;
+    imageHasChanged();
 }
 
 
@@ -272,7 +304,7 @@ void ofxCvImage::undistort( float radialDistX, float radialDistY,
 void ofxCvImage::remap( const IplImage* mapX, const IplImage* mapY ) {
     cvRemap( cvImage, cvImageTemp, mapX, mapY );
 	swapTemp();
-    bTextureDirty = true;
+    imageHasChanged();
 }
 
 
@@ -317,7 +349,7 @@ void ofxCvImage::warpPerspective( const ofPoint& A, const ofPoint& B,
     cvWarpPerspectiveQMatrix( cvsrc, cvdst, translate );  // calculate homography 
     cvWarpPerspective( cvImage, cvImageTemp, translate ); 
     swapTemp();
-    bTextureDirty = true;
+    imageHasChanged();
     cvReleaseMat( &translate ); 
 } 
 
@@ -340,7 +372,7 @@ void ofxCvImage::warpIntoMe( const ofxCvGrayscaleImage& mom,
 	}
 	cvWarpPerspectiveQMatrix( cvsrc, cvdst, translate );  // calculate homography
 	cvWarpPerspective( mom.getCvImage(), cvImage, translate);
-    bTextureDirty = true;
+    imageHasChanged();
 	cvReleaseMat( &translate );
 }
 

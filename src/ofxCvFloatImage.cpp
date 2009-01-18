@@ -22,7 +22,9 @@ void ofxCvFloatImage::allocate( int w, int h ) {
 	cvImageTemp	= cvCreateImage( cvSize(w,h), IPL_DEPTH_32F, 1 );
 	cvGrayscaleImage = NULL;
 	pixels = new unsigned char[w*h];
+    bPixelsDirty = true;
 	pixelsAsFloats = NULL;
+    bFloatPixelsDirty = true;
     width = w;
 	height = h;
 	bAllocated = true;
@@ -46,6 +48,12 @@ void ofxCvFloatImage::clear() {
     ofxCvImage::clear();    //call clear in base class    
 }
 
+//--------------------------------------------------------------------------------
+void ofxCvFloatImage::imageHasChanged() {
+    bFloatPixelsDirty = true;
+    ofxCvImage::imageHasChanged();
+}
+
 
 
 // Set Pixel Data
@@ -53,27 +61,7 @@ void ofxCvFloatImage::clear() {
 //-------------------------------------------------------------------------------------
 void ofxCvFloatImage::set(float value){  
 	cvSet(cvImage, cvScalar(value));
-    bTextureDirty = true;
-}
-
-//--------------------------------------------------------------------------------
-void ofxCvFloatImage::setFromPixels( unsigned char * _pixels, int w, int h, float scaleMin, float scaleMax ) {
-    if( cvGrayscaleImage == NULL ) {
-        cvGrayscaleImage = cvCreateImage( cvSize(width,height), IPL_DEPTH_8U, 1 );
-    }
-    for( int i = 0; i < h; i++ ) {
-		memcpy( cvGrayscaleImage->imageData+(i*cvGrayscaleImage->widthStep), _pixels+(i*w), w );
-	}
-    cvConvert( cvGrayscaleImage, cvImage );
-    bTextureDirty = true;
-}
-
-//--------------------------------------------------------------------------------
-void ofxCvFloatImage::setFromPixels( float * _pixels, int w, int h ) {
-	for( int i = 0; i < h; i++ ) {
-		memcpy( cvImage->imageData+(i*cvImage->widthStep), _pixels+(i*w), w*sizeof(float));
-	}
-    bTextureDirty = true;
+    imageHasChanged();
 }
 
 //--------------------------------------------------------------------------------
@@ -90,7 +78,7 @@ void ofxCvFloatImage::operator *= ( float scalar ){
         ptr++;
     }
     
-    bTextureDirty = true;
+    imageHasChanged();
 }
 
 //--------------------------------------------------------------------------------
@@ -110,14 +98,44 @@ void ofxCvFloatImage::operator /= ( float scalar ){
         ptr++;
     }
     
-    bTextureDirty = true;
+    imageHasChanged();
+}
+
+//--------------------------------------------------------------------------------
+void ofxCvFloatImage::setFromPixels( unsigned char* _pixels, int w, int h, float scaleMin, float scaleMax ) {
+    if( cvGrayscaleImage == NULL ) {
+        cvGrayscaleImage = cvCreateImage( cvSize(width,height), IPL_DEPTH_8U, 1 );
+    }
+    for( int i = 0; i < h; i++ ) {
+		memcpy( cvGrayscaleImage->imageData+(i*cvGrayscaleImage->widthStep), _pixels+(i*w), w );
+	}
+    cvConvert( cvGrayscaleImage, cvImage );
+    imageHasChanged();
+}
+
+//--------------------------------------------------------------------------------
+void ofxCvFloatImage::setFromPixels( float* _pixels, int w, int h ) {
+	for( int i = 0; i < h; i++ ) {
+		memcpy( cvImage->imageData+(i*cvImage->widthStep), _pixels+(i*w), w*sizeof(float));
+	}
+    imageHasChanged();
+}
+
+//--------------------------------------------------------------------------------
+void ofxCvFloatImage::operator = ( unsigned char* _pixels ) {
+    setFromPixels( _pixels, width, height );
+}
+
+//--------------------------------------------------------------------------------
+void ofxCvFloatImage::operator = ( float* _pixels ) {
+    setFromPixels( _pixels, width, height );
 }
 
 //--------------------------------------------------------------------------------
 void ofxCvFloatImage::operator = ( const ofxCvGrayscaleImage& mom ) {
 	if( mom.width == width && mom.height == height ) {
         cvConvert( mom.getCvImage(), cvImage );
-        bTextureDirty = true;
+        imageHasChanged();
 	} else {
         cout << "error in =, images are different sizes" << endl;
 	}
@@ -131,7 +149,7 @@ void ofxCvFloatImage::operator = ( const ofxCvColorImage& mom ) {
         }    
 		cvCvtColor( mom.getCvImage(), cvGrayscaleImage, CV_RGB2GRAY );
         cvConvert( cvGrayscaleImage, cvImage );
-        bTextureDirty = true;
+        imageHasChanged();
 	} else {
         cout << "error in =, images are different sizes" << endl;
 	}
@@ -139,12 +157,16 @@ void ofxCvFloatImage::operator = ( const ofxCvColorImage& mom ) {
 
 //--------------------------------------------------------------------------------
 void ofxCvFloatImage::operator = ( const ofxCvFloatImage& mom ) {
-	if( mom.width == width && mom.height == height ) {
-		cvCopy( mom.getCvImage(), cvImage, 0 );
-        bTextureDirty = true;
-	} else {
-        cout << "error in =, images are different sizes" << endl;
-	}
+    if(this != &mom) {  //check for self-assignment
+        if( mom.width == width && mom.height == height ) {
+            cvCopy( mom.getCvImage(), cvImage, 0 );
+            imageHasChanged();
+        } else {
+            cout << "error in =, images are different sizes" << endl;
+        }
+    } else {
+        cout << "warning: ignoring self-assignment in ofxCvFloatImage::operator =" << endl;
+    }
 }
 
 //--------------------------------------------------------------------------------
@@ -155,7 +177,7 @@ void ofxCvFloatImage::operator *= ( const ofxCvImage& mom ) {
     {
 		cvMul( cvImage, mom.getCvImage(), cvImageTemp );
 		swapTemp();
-        bTextureDirty = true;
+        imageHasChanged();
 	} else {
         cout << "error in *=, images need to match in size and type" << endl;
 	}
@@ -170,7 +192,7 @@ void ofxCvFloatImage::operator &= ( const ofxCvImage& mom ) {
 	    //this is doing it bit-wise; probably not what we want
 		cvAnd( cvImage, mom.getCvImage(), cvImageTemp );
 		swapTemp();
-        bTextureDirty = true;
+        imageHasChanged();
 	} else {
         cout << "error in &=, images need to match in size and type" << endl;
 	}
@@ -184,7 +206,7 @@ void ofxCvFloatImage::addWeighted( ofxCvGrayscaleImage& mom, float f ) {
          cvConvertScale( mom.getCvImage(), cvTemp, 1, 0 );
          cvAddWeighted( cvTemp, f, cvImage, 1.0f-f,0, cvImageTemp );
          swapTemp();
-         bTextureDirty = true;
+         imageHasChanged();
          cvReleaseImage( &cvTemp );
     } else {
         cout << "error in addWeighted, images are different sizes" << endl;
@@ -197,33 +219,33 @@ void ofxCvFloatImage::addWeighted( ofxCvGrayscaleImage& mom, float f ) {
 
 //--------------------------------------------------------------------------------
 unsigned char*  ofxCvFloatImage::getPixels(float scaleMin, float scaleMax){
-    float range = (scaleMax - scaleMin);
-    float scale = 255/range;
-    float offset = - (scaleMin * scale);  // ie, 0.5 - 1 = scale by (255*2), subtract 255, 128-255 = scale by 1/2, subtract 128
-    if( cvGrayscaleImage == NULL ) {
-        cvGrayscaleImage = cvCreateImage( cvSize(width,height), IPL_DEPTH_8U, 1 );
-    }    
-    cvConvertScale( cvImage, cvGrayscaleImage, scale, offset );
-    for( int i = 0; i < height; i++ ) {
-		memcpy( pixels+(i*width),
-                cvGrayscaleImage->imageData+(i*cvGrayscaleImage->widthStep), width );
-	}
+    if(bPixelsDirty) {
+        float range = (scaleMax - scaleMin);
+        float scale = 255/range;
+        float offset = - (scaleMin * scale);  // ie, 0.5 - 1 = scale by (255*2), subtract 255, 128-255 = scale by 1/2, subtract 128
+        if( cvGrayscaleImage == NULL ) {
+            cvGrayscaleImage = cvCreateImage( cvSize(width,height), IPL_DEPTH_8U, 1 );
+        }    
+        cvConvertScale( cvImage, cvGrayscaleImage, scale, offset );
+        for( int i = 0; i < height; i++ ) {
+            memcpy( pixels+(i*width),
+                    cvGrayscaleImage->imageData+(i*cvGrayscaleImage->widthStep), width );
+        }
+        bPixelsDirty = false;
+    }
 	return pixels;
 }
 
 //--------------------------------------------------------------------------------
-float * ofxCvFloatImage::getPixelsAsFloats(){
-    // ok??
-    if( cvGrayscaleImage == NULL ) {
-        cvGrayscaleImage = cvCreateImage( cvSize(width,height), IPL_DEPTH_8U, 1 );
+float*  ofxCvFloatImage::getPixelsAsFloats(){
+    if(bFloatPixelsDirty) {
+        if( pixelsAsFloats == NULL ) { pixelsAsFloats = new float[width*height]; }
+        for( int i = 0; i < height; i++ ) {
+            memcpy( pixelsAsFloats+(i*width),
+                    cvImage->imageData+(i*cvImage->widthStep), width*4 );
+        }
+        bFloatPixelsDirty = false;
     }
-    if( pixelsAsFloats == NULL ) {
-        pixelsAsFloats = new float[width*height];
-    }
-    for( int i = 0; i < height; i++ ) {
-		memcpy( pixelsAsFloats+(i*width),
-                cvGrayscaleImage->imageData+(i*(cvGrayscaleImage->widthStep / 4)), width*4 );
-	}
 	return pixelsAsFloats;
 }
 
@@ -231,6 +253,34 @@ float * ofxCvFloatImage::getPixelsAsFloats(){
 
 // Draw Image
 
+//--------------------------------------------------------------------------------
+void ofxCvFloatImage::drawWithoutTexture( float x, float y ) {
+    drawWithoutTexture( x,y, width, height );
+}
+
+//--------------------------------------------------------------------------------
+void ofxCvFloatImage::drawWithoutTexture( float x, float y, float w, float h ) {
+    // this is slower than the typical draw method based on textures
+    // but useful when dealing with threads GL textures often don't work
+    
+    if( x == 0) {
+        x += 0.01;
+        //ofLog( OF_NOTICE, "BUG: can't draw at x==0 in texture-less mode.\n");
+    }
+    
+    glRasterPos3f( x, y+h, 0.0 );
+    IplImage* tempImg;
+    tempImg = cvCreateImage( cvSize((int)w, (int)h), IPL_DEPTH_32F, 1 );
+    cvResize( cvImage, tempImg, CV_INTER_NN );
+    cvConvertScale( tempImg, tempImg, 1/255.0, 0 );
+    cvFlip( tempImg, tempImg, 0 );
+    glDrawPixels( tempImg->width, tempImg->height ,
+                 GL_LUMINANCE, GL_FLOAT, tempImg->imageData );
+    cvReleaseImage( &tempImg );
+    glRasterPos3f( -x, -(y+h), 0.0 );
+}
+
+/*
 //--------------------------------------------------------------------------------
 void ofxCvFloatImage::drawWithScale( float x, float y, float scaleMin, float scaleMax){
     drawWithScale(x,y,width, height, scaleMin, scaleMax);
@@ -251,7 +301,7 @@ void ofxCvFloatImage::drawWithScale( float x, float y, float w, float h, float s
         tex.draw(x,y,w,h);
     }
 }
-
+*/
 
 
 
@@ -292,7 +342,7 @@ void ofxCvFloatImage::scaleIntoMe( const ofxCvImage& mom, int interpolationMetho
     		interpolationMethod = CV_INTER_NN;
     	}
         cvResize( mom.getCvImage(), cvImage, interpolationMethod );
-        bTextureDirty = true;
+        imageHasChanged();
 
     } else {
         cout << "error in scaleIntoMe: mom image type has to match" << endl;

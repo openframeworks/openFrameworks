@@ -42,7 +42,6 @@ class ofxCvImage {
     virtual void setUseTexture( bool bUse );
 
 
-
     // Set Pixel Data
     //
     virtual void set( float value ) = 0;
@@ -68,9 +67,10 @@ class ofxCvImage {
 
     // Draw Image
     //
-    virtual void draw( float x, float y ) = 0;
-    virtual void draw( float x, float y, float w, float h ) = 0;
-
+    virtual void draw( float x, float y );
+    virtual void draw( float x, float y, float w, float h );
+    virtual void drawWithoutTexture( float x, float y ) {};
+    virtual void drawWithoutTexture( float x, float y, float w, float h ) {};    
 
 
     // Image Filter Operations
@@ -126,6 +126,7 @@ class ofxCvImage {
 
   protected:
 
+    virtual void imageHasChanged();  // called whenever cvImage was changed
     virtual void swapTemp();  // swap cvImageTemp back
                               // to cvImage after an image operation
 
@@ -134,6 +135,7 @@ class ofxCvImage {
                               // after an image operation with swapImage()
 
     unsigned char* 	pixels;	  // not width stepped
+    bool bPixelsDirty;         // pixels need to be reloaded
     ofTexture  tex;		      // internal tex
     bool bUseTexture;
     bool bTextureDirty;       // texture needs to be reloaded before drawing 
