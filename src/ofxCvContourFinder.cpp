@@ -4,21 +4,14 @@
 
 
 //--------------------------------------------------------------------------------
-static int qsort_carea_compare( const void* _a, const void* _b) {
-	int out = 0;
-	// pointers, ugh.... sorry about this
-	CvSeq* a = *((CvSeq **)_a);
-	CvSeq* b = *((CvSeq **)_b);
+bool sort_carea_compare( const CvSeq* a, const CvSeq* b) {
 	// use opencv to calc size, then sort based on size
 	float areaa = fabs(cvContourArea(a, CV_WHOLE_SEQ));
 	float areab = fabs(cvContourArea(b, CV_WHOLE_SEQ));
-	// note, based on the -1 / 1 flip
-	// we sort biggest to smallest, not smallest to biggest
-	if( areaa > areab ) { out = -1; }
-	else {                out =  1; }
-	return out;
-}
 
+    //return 0;
+	return (areaa > areab);
+}
 
 
 
@@ -36,6 +29,7 @@ ofxCvContourFinder::~ofxCvContourFinder() {
 
 //--------------------------------------------------------------------------------
 void ofxCvContourFinder::reset() {
+    cvSeqBlobs.clear();
     blobs.clear();
     nBlobs = 0;
 }
@@ -119,30 +113,25 @@ int ofxCvContourFinder::findContours( ofxCvGrayscaleImage&  input,
                     sizeof(CvContour), retrieve_mode, bUseApproximation ? CV_CHAIN_APPROX_SIMPLE : CV_CHAIN_APPROX_NONE );
 	CvSeq* contour_ptr = contour_list;
 
-	nCvSeqsFound = 0;
-
 	// put the contours from the linked list, into an array for sorting
 	while( (contour_ptr != NULL) ) {
 		float area = fabs( cvContourArea(contour_ptr, CV_WHOLE_SEQ) );
 		if( (area > minArea) && (area < maxArea) ) {
-                if (nCvSeqsFound < MAX_NUM_CONTOURS_TO_FIND){
-				cvSeqBlobs[nCvSeqsFound] = contour_ptr;	 // copy the pointer
-                nCvSeqsFound++;
-				}
+            cvSeqBlobs.push_back(contour_ptr);
 		}
 		contour_ptr = contour_ptr->h_next;
 	}
 
 
 	// sort the pointers based on size
-	if( nCvSeqsFound > 0 ) {
-		qsort( cvSeqBlobs, nCvSeqsFound, sizeof(CvSeq*), qsort_carea_compare);
+	if( cvSeqBlobs.size() > 1 ) {
+        sort( cvSeqBlobs.begin(), cvSeqBlobs.end(), sort_carea_compare );
 	}
 
 
-	// now, we have nCvSeqsFound contours, sorted by size in the array
+	// now, we have cvSeqBlobs.size() contours, sorted by size in the array
     // cvSeqBlobs let's get the data out and into our structures that we like
-	for( int i = 0; i < MIN(nConsidered, nCvSeqsFound); i++ ) {
+	for( int i = 0; i < MIN(nConsidered, cvSeqBlobs.size()); i++ ) {
 		blobs.push_back( ofxCvBlob() );
 		float area = cvContourArea( cvSeqBlobs[i], CV_WHOLE_SEQ );
 		CvRect rect	= cvBoundingRect( cvSeqBlobs[i], 0 );
@@ -179,5 +168,6 @@ int ofxCvContourFinder::findContours( ofxCvGrayscaleImage&  input,
 	if( storage != NULL ) { cvReleaseMemStorage(&storage); }
 
 	return nBlobs;
+    
 }
 

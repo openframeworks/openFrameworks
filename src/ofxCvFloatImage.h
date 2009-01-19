@@ -1,5 +1,5 @@
 /*
-* ofxCvShortImage.h
+* ofxCvFloatImage.h
 * by stefanix, zach
 *
 * This is essentially an IPL_DEPTH_32F with one channel.
