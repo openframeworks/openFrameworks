@@ -5,7 +5,7 @@
 * This is the common abstract base class of all the different
 * image types used in this addon. Methods with "= 0" at the end
 * are pure virtual and need to be implemented by the inheriting
-* image calss.
+* image class.
 *
 */
 

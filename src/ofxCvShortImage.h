@@ -1,3 +1,13 @@
+/*
+* ofxCvShortImage.h
+* by stefanix
+*
+* This is essentially an IPL_DEPTH_16U with one channel.
+* Pixel values are typically from 0-65535.
+*
+*/
+
+
 
 #ifndef OFX_CV_SHORT_IMAGE_H
 #define OFX_CV_SHORT_IMAGE_H

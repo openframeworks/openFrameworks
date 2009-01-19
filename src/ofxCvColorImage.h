@@ -1,3 +1,12 @@
+/*
+* ofxCvFloatImage.h
+* by stefanix, zach
+*
+* This is essentially an IPL_DEPTH_8U with three channels.
+* Pixel values are typically from 0-255 for each channel.
+*
+*/
+
 
 #ifndef OFX_CV_COLOR_IMAGE_H
 #define OFX_CV_COLOR_IMAGE_H

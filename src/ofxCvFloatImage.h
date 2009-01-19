@@ -1,3 +1,13 @@
+/*
+* ofxCvShortImage.h
+* by stefanix, zach
+*
+* This is essentially an IPL_DEPTH_32F with one channel.
+* Pixel values are typically from 0-1.0 but this range
+* can be set to pretty much any values.
+*
+*/
+
 
 #ifndef OFX_CV_FLOAT_IMAGE_H
 #define OFX_CV_FLOAT_IMAGE_H

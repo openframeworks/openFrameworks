@@ -1,3 +1,13 @@
+/*
+* ofxCvGrayscaleImage.h
+* by stefanix, zach
+*
+* This is essentially an IPL_DEPTH_8U with one channel.
+* Pixel values are typically from 0-255.
+*
+*/
+
+
 #ifndef OFX_CV_GRAYSCALE_IMAGE_H
 #define OFX_CV_GRAYSCALE_IMAGE_H
 
