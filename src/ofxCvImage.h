@@ -22,7 +22,7 @@ class ofxCvFloatImage;
 
 
 
-class ofxCvImage {
+class ofxCvImage : public ofBaseHasTexture {
     
   public:
 
@@ -35,6 +35,7 @@ class ofxCvImage {
     virtual void  allocate( int w, int h ) = 0;
     virtual void  clear();
     virtual void  setUseTexture( bool bUse );
+    virtual ofTexture&  getTextureReference();
 
 
     // Set Pixel Data
@@ -75,7 +76,8 @@ class ofxCvImage {
     virtual void  blur( int value=3 );          // value = x*2+1, where x is an integer
     virtual void  blurGaussian( int value=3 );  // value = x*2+1, where x is an integer
     virtual void  invert();
-    virtual void  convertToRange(float min, float max);
+    virtual void  contrastStretch() = 0;
+    virtual void  convertToRange(float min, float max) = 0;
 
 
     // Image Transformation Operations
@@ -121,6 +123,8 @@ class ofxCvImage {
 
   protected:
 
+    virtual void  rangeMap( IplImage* img, float min1, float max1, float min2, float max2 );
+    
     virtual void imageHasChanged();  // call this whenever cvImage is changed
                                      // this flags all the helper images dirty
                                      

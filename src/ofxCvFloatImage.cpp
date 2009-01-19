@@ -24,7 +24,7 @@ ofxCvFloatImage::ofxCvFloatImage( const ofxCvFloatImage& mom ) {
 //--------------------------------------------------------------------------------
 void ofxCvFloatImage::allocate( int w, int h ) {
 	if (bAllocated == true){
-		cout << "warning: reallocating cvImage in ofxCvFloatImage" << endl;
+		ofLog(OF_WARNING, "in allocate, reallocating a ofxCvFloatImage");
 		clear();
 	}
 	cvImage = cvCreateImage( cvSize(w,h), IPL_DEPTH_32F, 1 );
@@ -163,7 +163,7 @@ void ofxCvFloatImage::operator = ( const ofxCvGrayscaleImage& mom ) {
         convertGrayToFloat(mom.getCvImage(), cvImage);       
         imageHasChanged();
 	} else {
-        cout << "error in =, images are different sizes" << endl;
+        ofLog(OF_ERROR, "in =, images are different sizes");
 	}
 }
 
@@ -177,7 +177,7 @@ void ofxCvFloatImage::operator = ( const ofxCvColorImage& mom ) {
         convertGrayToFloat(cvGrayscaleImage, cvImage);                
         imageHasChanged();
 	} else {
-        cout << "error in =, images are different sizes" << endl;
+        ofLog(OF_ERROR, "in =, images are different sizes");
 	}
 }
 
@@ -188,10 +188,10 @@ void ofxCvFloatImage::operator = ( const ofxCvFloatImage& mom ) {
             cvCopy( mom.getCvImage(), cvImage, 0 );
             imageHasChanged();
         } else {
-            cout << "error in =, images are different sizes" << endl;
+            ofLog(OF_ERROR, "in =, images are different sizes");
         }
     } else {
-        cout << "warning: ignoring self-assignment in ofxCvFloatImage::operator =" << endl;
+        ofLog(OF_WARNING, "in =, you are assigning a ofxCvFloatImage to itself");
     }
 }
 
@@ -205,7 +205,7 @@ void ofxCvFloatImage::operator *= ( const ofxCvImage& mom ) {
 		swapTemp();
         imageHasChanged();
 	} else {
-        cout << "error in *=, images need to match in size and type" << endl;
+        ofLog(OF_ERROR, "in *=, images need to match in size and type");
 	}
 }
 
@@ -220,7 +220,7 @@ void ofxCvFloatImage::operator &= ( const ofxCvImage& mom ) {
 		swapTemp();
         imageHasChanged();
 	} else {
-        cout << "error in &=, images need to match in size and type" << endl;
+        ofLog(OF_ERROR, "in &=, images need to match in size and type");
 	}
 }
 
@@ -233,7 +233,7 @@ void ofxCvFloatImage::addWeighted( ofxCvGrayscaleImage& mom, float f ) {
          imageHasChanged();
          
     } else {
-        cout << "error in addWeighted, images are different sizes" << endl;
+        ofLog(OF_ERROR, "in addWeighted, images are different sizes");
     }
 }
 
@@ -285,7 +285,7 @@ void ofxCvFloatImage::drawWithoutTexture( float x, float y, float w, float h ) {
     
     if( x == 0) {
         x += 0.01;
-        //ofLog( OF_NOTICE, "BUG: can't draw at x==0 in texture-less mode.\n");
+        ofLog(OF_NOTICE, "BUG: can't draw at x==0 in texture-less mode.");
     }
     
     glRasterPos3f( x, y+h, 0.0 );
@@ -303,6 +303,23 @@ void ofxCvFloatImage::drawWithoutTexture( float x, float y, float w, float h ) {
     glRasterPos3f( -x, -(y+h), 0.0 );
 }
 
+
+
+// Image Filter Operations
+
+//--------------------------------------------------------------------------------
+void ofxCvFloatImage::contrastStretch() {
+	double minVal, maxVal;
+	cvMinMaxLoc( cvImage, &minVal, &maxVal, NULL, NULL, 0 );
+    rangeMap( cvImage, minVal,maxVal, scaleMin,scaleMax );
+    imageHasChanged();
+}
+
+//--------------------------------------------------------------------------------
+void ofxCvFloatImage::convertToRange(float min, float max ){
+    rangeMap( cvImage, scaleMin,scaleMax, min,max);
+    imageHasChanged();
+}
 
 
 
@@ -339,13 +356,13 @@ void ofxCvFloatImage::scaleIntoMe( const ofxCvImage& mom, int interpolationMetho
             (interpolationMethod != CV_INTER_LINEAR) &&
             (interpolationMethod != CV_INTER_AREA) &&
             (interpolationMethod != CV_INTER_CUBIC) ){
-            cout << "error in scaleIntoMe / interpolationMethod, setting to CV_INTER_NN" << endl;
+            ofLog(OF_WARNING, "in scaleIntoMe, setting interpolationMethod to CV_INTER_NN");
     		interpolationMethod = CV_INTER_NN;
     	}
         cvResize( mom.getCvImage(), cvImage, interpolationMethod );
         imageHasChanged();
 
     } else {
-        cout << "error in scaleIntoMe: mom image type has to match" << endl;
+        ofLog(OF_ERROR, "in scaleIntoMe, mom image type has to match");
     }
 }

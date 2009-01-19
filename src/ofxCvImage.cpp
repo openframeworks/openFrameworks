@@ -53,6 +53,11 @@ void ofxCvImage::setUseTexture( bool bUse ) {
 }
 
 //--------------------------------------------------------------------------------
+ofTexture& ofxCvImage::getTextureReference() {
+	return tex;
+}
+
+//--------------------------------------------------------------------------------
 void ofxCvImage::swapTemp() {
 	IplImage*  temp;
 	temp = cvImage;
@@ -64,6 +69,13 @@ void ofxCvImage::swapTemp() {
 void ofxCvImage::imageHasChanged() {
     bTextureDirty = true;
     bPixelsDirty = true;
+}
+
+//--------------------------------------------------------------------------------
+void ofxCvImage::rangeMap( IplImage* img, float min1, float max1, float min2, float max2 ) {
+    // map from min1-max1 to min2-max2
+    float scale = (max2-min2)/(max1-min1);
+    cvConvertScale( img, img, scale, -(min1*scale)+min2 );
 }
 
 
@@ -96,7 +108,7 @@ void ofxCvImage::operator -= ( const ofxCvImage& mom ) {
 		swapTemp();
         imageHasChanged();
 	} else {
-        cout << "error in -=, images need to match in size and type" << endl;
+        ofLog(OF_ERROR, "in -=, images need to match in size and type");
 	}
 }
 
@@ -110,7 +122,7 @@ void ofxCvImage::operator += ( const ofxCvImage& mom ) {
 		swapTemp();
         imageHasChanged();
 	} else {
-        cout << "error in +=, images need to match in size and type" << endl;
+        ofLog(OF_ERROR, "in +=, images need to match in size and type");
 	}
 }
 
@@ -125,7 +137,7 @@ void ofxCvImage::operator *= ( const ofxCvImage& mom ) {
 		swapTemp();
         imageHasChanged();
 	} else {
-        cout << "error in *=, images need to match in size and type" << endl;
+        ofLog(OF_ERROR, "in *=, images need to match in size and type");
 	}
 }
 
@@ -139,7 +151,7 @@ void ofxCvImage::operator &= ( const ofxCvImage& mom ) {
 		swapTemp();
         imageHasChanged();
 	} else {
-        cout << "error in &=, images need to match in size and type" << endl;
+        ofLog(OF_ERROR, "in &=, images need to match in size and type");
 	}
 }
 
@@ -168,7 +180,7 @@ void ofxCvImage::draw( float x, float y, float w, float h ) {
         tex.draw(x,y, w,h);
 
     } else {
-        // ofLog( OF_NOTICE, "Can't draw! Maybe you can use drawWithoutTexture(...)\n" );
+        ofLog(OF_WARNING, "in draw, no texture! Maybe you can use drawWithoutTexture(...)");
     }
 }
 
@@ -193,7 +205,7 @@ void ofxCvImage::erode() {
 //--------------------------------------------------------------------------------
 void ofxCvImage::blur( int value ) {
     if( value % 2 == 0 ) {
-        cout << "warning in blur: value not odd -> will add 1 to cover your back" << endl;
+        ofLog(OF_NOTICE, "in blur, value not odd -> will add 1 to cover your back");
         value++;
     }
 	cvSmooth( cvImage, cvImageTemp, CV_BLUR , value);
@@ -204,7 +216,7 @@ void ofxCvImage::blur( int value ) {
 //--------------------------------------------------------------------------------
 void ofxCvImage::blurGaussian( int value ) {
     if( value % 2 == 0 ) {
-        cout << "warning in blurGaussian: value not odd -> will add 1 to cover your back" << endl;
+        ofLog(OF_NOTICE, "in blurGaussian, value not odd -> will add 1 to cover your back");
         value++;
     }
 	cvSmooth( cvImage, cvImageTemp, CV_GAUSSIAN ,value );
@@ -215,16 +227,6 @@ void ofxCvImage::blurGaussian( int value ) {
 //--------------------------------------------------------------------------------
 void ofxCvImage::invert(){
     cvNot(cvImage, cvImage);
-    imageHasChanged();
-}
-
-//--------------------------------------------------------------------------------
-void ofxCvImage::convertToRange(float scaleMin, float scaleMax ){
-    float range = (scaleMax - scaleMin);
-    float scale = 255/range;
-    float offset = - (scaleMin * scale);  // ie, 0.5 - 1 = scale by (255*2), subtract 255, 128-255 = scale by 1/2, subtract 128
-    cvConvertScale( cvImage, cvImageTemp, scale, offset );
-    swapTemp();
     imageHasChanged();
 }
 

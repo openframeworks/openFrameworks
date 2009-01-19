@@ -13,7 +13,7 @@ ofxCvGrayscaleImage::ofxCvGrayscaleImage( const ofxCvGrayscaleImage& mom ) {
 //--------------------------------------------------------------------------------
 void ofxCvGrayscaleImage::allocate( int w, int h ) {
 	if (bAllocated == true){
-		cout << "warning: reallocating cvImage in ofxCvGrayscaleImage" << endl;
+		ofLog(OF_WARNING, "in allocate, reallocating a ofxCvGrayscaleImage");
 		clear();
 	}
     
@@ -60,10 +60,10 @@ void ofxCvGrayscaleImage::operator = ( const ofxCvGrayscaleImage& mom ) {
             cvCopy( mom.getCvImage(), cvImage, 0 );
             imageHasChanged();
         } else {
-            cout << "error in =, images are different sizes" << endl;
+            ofLog(OF_ERROR, "in =, images are different sizes");
         }
     } else {
-        cout << "warning: ignoring self-assignment in ofxCvGrayscaleImage::operator =" << endl;
+        ofLog(OF_WARNING, "in =, you are assigning a ofxCvGrayscaleImage to itself");
     }
 }
 
@@ -73,7 +73,7 @@ void ofxCvGrayscaleImage::operator = ( const ofxCvColorImage& mom ) {
 		cvCvtColor( mom.getCvImage(), cvImage, CV_RGB2GRAY );
         imageHasChanged();
 	} else {
-        cout << "error in =, images are different sizes" << endl;
+        ofLog(OF_ERROR, "in =, images are different sizes");
 	}
 }
 
@@ -84,7 +84,7 @@ void ofxCvGrayscaleImage::operator = ( const ofxCvFloatImage& mom ) {
         cvConvert( mom.getCvImage(), cvImage );
         imageHasChanged();
 	} else {
-        cout << "error in =, images are different sizes" << endl;
+        ofLog(OF_ERROR, "in =, images are different sizes");
 	}
 }
 
@@ -96,7 +96,7 @@ void ofxCvGrayscaleImage::absDiff( ofxCvGrayscaleImage& mom ) {
         swapTemp();
         imageHasChanged();
     } else {
-        cout << "error in absDiff, images are different sizes" << endl;
+        ofLog(OF_ERROR, "in absDiff, images are different sizes");
     }
 }
 
@@ -109,7 +109,7 @@ void ofxCvGrayscaleImage::absDiff( ofxCvGrayscaleImage& mom,
         cvAbsDiff( mom.getCvImage(), dad.getCvImage(), cvImage );
         imageHasChanged();
     } else {
-        cout << "error in absDiff, images are different sizes" << endl;
+        ofLog(OF_ERROR, "in absDiff, images are different sizes");
     }
 
 }
@@ -144,7 +144,7 @@ void ofxCvGrayscaleImage::drawWithoutTexture( float x, float y, float w, float h
     
     if( x == 0) {
         x += 0.01;
-        //ofLog( OF_NOTICE, "BUG: can't draw at x==0 in texture-less mode.\n");
+        ofLog(OF_NOTICE, "BUG: can't draw at x==0 in texture-less mode.");
     }
     
     glRasterPos3f( x, y+h, 0.0 );
@@ -166,14 +166,13 @@ void ofxCvGrayscaleImage::drawWithoutTexture( float x, float y, float w, float h
 void ofxCvGrayscaleImage::contrastStretch() {
 	double minVal, maxVal;
 	cvMinMaxLoc( cvImage, &minVal, &maxVal, NULL, NULL, 0 );
-	double scale=1.0f;
-	double shift=0;
-	if( (maxVal-minVal) != 0 ) {
-		scale=255.0/(maxVal-minVal);
-    	shift=-minVal*scale;
-	}
-	cvConvertScale( cvImage, cvImageTemp, scale, shift );
-	swapTemp();
+    rangeMap( cvImage, minVal,maxVal, 0,255 );
+    imageHasChanged();
+}
+
+//--------------------------------------------------------------------------------
+void ofxCvGrayscaleImage::convertToRange(float min, float max ){
+    rangeMap( cvImage, 0, 255, min, max);
     imageHasChanged();
 }
 
@@ -185,6 +184,7 @@ void ofxCvGrayscaleImage::threshold( int value, bool invert) {
 	swapTemp();
     imageHasChanged();
 }
+
 
 
 // Image Transformation Operations
@@ -219,14 +219,14 @@ void ofxCvGrayscaleImage::scaleIntoMe( const ofxCvImage& mom, int interpolationM
             (interpolationMethod != CV_INTER_LINEAR) &&
             (interpolationMethod != CV_INTER_AREA) &&
             (interpolationMethod != CV_INTER_CUBIC) ){
-            cout << "error in scaleIntoMe / interpolationMethod, setting to CV_INTER_NN" << endl;
+            ofLog(OF_WARNING, "in scaleIntoMe, setting interpolationMethod to CV_INTER_NN");
     		interpolationMethod = CV_INTER_NN;
     	}
         cvResize( mom.getCvImage(), cvImage, interpolationMethod );
         imageHasChanged();
 
     } else {
-        cout << "error in scaleIntoMe: mom image type has to match" << endl;
+        ofLog(OF_ERROR, "in scaleIntoMe: mom image type has to match");
     }
 }
 

@@ -21,7 +21,7 @@ ofxCvShortImage::ofxCvShortImage( const ofxCvShortImage& mom ) {
 //--------------------------------------------------------------------------------
 void ofxCvShortImage::allocate( int w, int h ) {
 	if (bAllocated == true){
-		cout << "warning: reallocating cvImage in ofxCvShortImage" << endl;
+		ofLog(OF_WARNING, "in allocate, reallocating a ofxCvShortImage");
 		clear();
 	}
 	cvImage = cvCreateImage( cvSize(w,h), IPL_DEPTH_16U, 1 );
@@ -106,7 +106,7 @@ void ofxCvShortImage::operator = ( const ofxCvGrayscaleImage& mom ) {
         convertGrayToShort(mom.getCvImage(), cvImage);       
         imageHasChanged();
 	} else {
-        cout << "error in =, images are different sizes" << endl;
+        ofLog(OF_ERROR, "in =, images are different sizes");
 	}
 }
 
@@ -120,7 +120,7 @@ void ofxCvShortImage::operator = ( const ofxCvColorImage& mom ) {
         convertGrayToShort(cvGrayscaleImage, cvImage);                
         imageHasChanged();
 	} else {
-        cout << "error in =, images are different sizes" << endl;
+        ofLog(OF_ERROR, "in =, images are different sizes");
 	}
 }
 
@@ -133,7 +133,7 @@ void ofxCvShortImage::operator = ( const ofxCvFloatImage& mom ) {
         
         imageHasChanged();
     } else {
-        cout << "error in =, images are different sizes" << endl;
+        ofLog(OF_ERROR, "in =, images are different sizes");
     }
 }
 
@@ -144,10 +144,10 @@ void ofxCvShortImage::operator = ( const ofxCvShortImage& mom ) {
             cvCopy( mom.getCvImage(), cvImage, 0 ); 
             imageHasChanged();
         } else {
-            cout << "error in =, images are different sizes" << endl;
+            ofLog(OF_ERROR, "in =, images are different sizes");
         }
     } else {
-        cout << "warning: ignoring self-assignment in ofxCvShortImage::operator =" << endl;
+        ofLog(OF_WARNING, "in =, you are assigning a ofxCvShortImage to itself");
     }
 }
 
@@ -160,7 +160,7 @@ void ofxCvShortImage::addWeighted( ofxCvGrayscaleImage& mom, float f ) {
          imageHasChanged();
          
     } else {
-        cout << "error in addWeighted, images are different sizes" << endl;
+        ofLog(OF_ERROR, "in addWeighted, images are different sizes");
     }
 }
 
@@ -199,7 +199,7 @@ void ofxCvShortImage::drawWithoutTexture( float x, float y, float w, float h ) {
     
     if( x == 0) {
         x += 0.01;
-        //ofLog( OF_NOTICE, "BUG: can't draw at x==0 in texture-less mode.\n");
+        ofLog( OF_NOTICE, "BUG: can't draw at x==0 in texture-less mode.");
     }
     
     glRasterPos3f( x, y+h, 0.0 );
@@ -214,6 +214,23 @@ void ofxCvShortImage::drawWithoutTexture( float x, float y, float w, float h ) {
     glRasterPos3f( -x, -(y+h), 0.0 );
 }
 
+
+
+// Image Filter Operations
+
+//--------------------------------------------------------------------------------
+void ofxCvShortImage::contrastStretch() {
+	double minVal, maxVal;
+	cvMinMaxLoc( cvImage, &minVal, &maxVal, NULL, NULL, 0 );
+    rangeMap( cvImage, minVal,maxVal, 0,65535 );
+    imageHasChanged();
+}
+
+//--------------------------------------------------------------------------------
+void ofxCvShortImage::convertToRange(float min, float max ){
+    rangeMap( cvImage, 0,65535, min,max);
+    imageHasChanged();
+}
 
 
 
@@ -250,13 +267,13 @@ void ofxCvShortImage::scaleIntoMe( const ofxCvImage& mom, int interpolationMetho
             (interpolationMethod != CV_INTER_LINEAR) &&
             (interpolationMethod != CV_INTER_AREA) &&
             (interpolationMethod != CV_INTER_CUBIC) ){
-            cout << "error in scaleIntoMe / interpolationMethod, setting to CV_INTER_NN" << endl;
+            ofLog(OF_WARNING, "in scaleIntoMe, setting interpolationMethod to CV_INTER_NN");
     		interpolationMethod = CV_INTER_NN;
     	}
         cvResize( mom.getCvImage(), cvImage, interpolationMethod );
         imageHasChanged();
 
     } else {
-        cout << "error in scaleIntoMe: mom image type has to match" << endl;
+        ofLog(OF_ERROR, "in scaleIntoMe, mom image type has to match");
     }
 }

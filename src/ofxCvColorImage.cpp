@@ -21,7 +21,7 @@ ofxCvColorImage::ofxCvColorImage( const ofxCvColorImage& mom ) {
 //--------------------------------------------------------------------------------
 void ofxCvColorImage::allocate( int w, int h ) {
 	if (bAllocated == true){
-		cout << "warning: reallocating cvImage in ofxCvColorImage" << endl;
+		ofLog(OF_WARNING, "in allocate, reallocating a ofxCvColorImage");
 		clear();
 	}
     
@@ -103,7 +103,7 @@ void ofxCvColorImage::operator = ( const ofxCvGrayscaleImage& mom ) {
 		cvCvtColor( mom.getCvImage(), cvImage, CV_GRAY2RGB );
         imageHasChanged();
 	} else {
-        cout << "error in =, images are different sizes" << endl;
+        ofLog(OF_ERROR, "in =, images are different sizes");
 	}
 }
 
@@ -114,10 +114,10 @@ void ofxCvColorImage::operator = ( const ofxCvColorImage& mom ) {
             cvCopy( mom.getCvImage(), cvImage, 0 );
             imageHasChanged();
         } else {
-            cout << "error in =, images are different sizes" << endl;
+            ofLog(OF_ERROR, "in =, images are different sizes");
         }
     } else {
-        cout << "warning: ignoring self-assignment in ofxCvColorImage::operator =" << endl;
+        ofLog(OF_WARNING, "in =, you are assigning a ofxCvColorImage to itself");
     }
 }
 
@@ -131,7 +131,7 @@ void ofxCvColorImage::operator = ( const ofxCvFloatImage& mom ) {
 		cvCvtColor( cvGrayscaleImage, cvImage, CV_GRAY2RGB );
         imageHasChanged();
 	} else {
-        cout << "error in =, images are different sizes" << endl;
+        ofLog(OF_ERROR, "in =, images are different sizes");
 	}
 }
 
@@ -173,7 +173,7 @@ void ofxCvColorImage::drawWithoutTexture( float x, float y, float w, float h ) {
     
     if( x == 0) {
         x += 0.01;
-        //ofLog( OF_NOTICE, "BUG: can't draw at x==0 in texture-less mode.\n");
+        ofLog( OF_NOTICE, "BUG: can't draw at x==0 in texture-less mode.");
     }
     
     glRasterPos3f( x, y+h, 0.0 );
@@ -185,6 +185,21 @@ void ofxCvColorImage::drawWithoutTexture( float x, float y, float w, float h ) {
                  GL_RGB, GL_UNSIGNED_BYTE, tempImg->imageData );
     cvReleaseImage( &tempImg );
     glRasterPos3f( -x, -(y+h), 0.0 );
+}
+
+
+
+// Image Filter Operations
+
+//--------------------------------------------------------------------------------
+void ofxCvColorImage::contrastStretch() {
+	ofLog(OF_WARNING, "in contrastStratch, not implemented for ofxCvColorImage");
+}
+
+//--------------------------------------------------------------------------------
+void ofxCvColorImage::convertToRange(float min, float max ){
+    rangeMap( cvImage, 0,255, min,max);
+    imageHasChanged();
 }
 
 
@@ -222,14 +237,14 @@ void ofxCvColorImage::scaleIntoMe( const ofxCvImage& mom, int interpolationMetho
             (interpolationMethod != CV_INTER_LINEAR) &&
             (interpolationMethod != CV_INTER_AREA) &&
             (interpolationMethod != CV_INTER_CUBIC) ){
-            cout << "error in scaleIntoMe / interpolationMethod, setting to CV_INTER_NN" << endl;
+            ofLog(OF_WARNING, "in scaleIntoMe, setting interpolationMethod to CV_INTER_NN");
     		interpolationMethod = CV_INTER_NN;
     	}
         cvResize( mom.getCvImage(), cvImage, interpolationMethod );
         imageHasChanged();
 
     } else {
-        cout << "error in scaleIntoMe: mom image type has to match" << endl;
+        ofLog(OF_ERROR, "in scaleIntoMe, mom image type has to match");
     }
 }
 

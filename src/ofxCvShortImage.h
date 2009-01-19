@@ -53,12 +53,13 @@ class ofxCvShortImage : public ofxCvImage {
 
     // Image Filter Operations
     //
+    virtual void  contrastStretch();
+    virtual void  convertToRange( float min, float max );    
     // virtual void  erode( );                                                 //in base class
     // virtual void  dilate( );                                                //in base class
     // virtual void  blur( int value=3 );                                      //in base class
     // virtual void  blurGaussian( int value=3 );                              //in base class
     // virtual void  invert();                                                 //in base class
-    // virtual void  convertToRange(float min, float max);                     //in base class    
         
 
     // Image Transformation Operations
