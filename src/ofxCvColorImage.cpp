@@ -54,27 +54,27 @@ void ofxCvColorImage::clear() {
 //--------------------------------------------------------------------------------
 void ofxCvColorImage::set( float value ){
     cvSet(cvImage, cvScalar(value, value, value));
-    imageHasChanged();
+    flagImageChanged();
 }
 
 //--------------------------------------------------------------------------------
 void ofxCvColorImage::set(int valueR, int valueG, int valueB){
     cvSet(cvImage, cvScalar(valueR, valueG, valueB));
-    imageHasChanged();
+    flagImageChanged();
 }
 
 //--------------------------------------------------------------------------------
 void ofxCvColorImage::operator -= ( float value ) {
 	cvSubS( cvImage, cvScalar(value, value, value), cvImageTemp );
 	swapTemp();
-    imageHasChanged();
+    flagImageChanged();
 }
 
 //--------------------------------------------------------------------------------
 void ofxCvColorImage::operator += ( float value ) {
 	cvAddS( cvImage, cvScalar(value, value, value), cvImageTemp );
 	swapTemp();
-    imageHasChanged();
+    flagImageChanged();
 }
 
 //--------------------------------------------------------------------------------
@@ -82,13 +82,13 @@ void ofxCvColorImage::setFromPixels( unsigned char* _pixels, int w, int h ) {
 	for( int i = 0; i < h; i++ ) {
 		memcpy( cvImage->imageData+(i*cvImage->widthStep), _pixels+(i*width*3), width*3 );
 	}
-    imageHasChanged();
+    flagImageChanged();
 }
 
 //--------------------------------------------------------------------------------
 void ofxCvColorImage::setFromGrayscalePlanarImages( const ofxCvGrayscaleImage& red, const ofxCvGrayscaleImage& green, const ofxCvGrayscaleImage& blue){
      cvCvtPlaneToPix(red.getCvImage(), green.getCvImage(), blue.getCvImage(),NULL, cvImage);
-     imageHasChanged();
+     flagImageChanged();
 }
 
 
@@ -101,7 +101,7 @@ void ofxCvColorImage::operator = ( unsigned char* _pixels ) {
 void ofxCvColorImage::operator = ( const ofxCvGrayscaleImage& mom ) {
 	if( mom.width == width && mom.height == height ) {
 		cvCvtColor( mom.getCvImage(), cvImage, CV_GRAY2RGB );
-        imageHasChanged();
+        flagImageChanged();
 	} else {
         ofLog(OF_ERROR, "in =, images are different sizes");
 	}
@@ -112,7 +112,7 @@ void ofxCvColorImage::operator = ( const ofxCvColorImage& mom ) {
     if(this != &mom) {  //check for self-assignment
         if( mom.width == width && mom.height == height ) {
             cvCopy( mom.getCvImage(), cvImage, 0 );
-            imageHasChanged();
+            flagImageChanged();
         } else {
             ofLog(OF_ERROR, "in =, images are different sizes");
         }
@@ -129,7 +129,7 @@ void ofxCvColorImage::operator = ( const ofxCvFloatImage& mom ) {
         }
 		cvConvertScale( mom.getCvImage(), cvGrayscaleImage, 1, 0 );
 		cvCvtColor( cvGrayscaleImage, cvImage, CV_GRAY2RGB );
-        imageHasChanged();
+        flagImageChanged();
 	} else {
         ofLog(OF_ERROR, "in =, images are different sizes");
 	}
@@ -199,7 +199,7 @@ void ofxCvColorImage::contrastStretch() {
 //--------------------------------------------------------------------------------
 void ofxCvColorImage::convertToRange(float min, float max ){
     rangeMap( cvImage, 0,255, min,max);
-    imageHasChanged();
+    flagImageChanged();
 }
 
 
@@ -241,7 +241,7 @@ void ofxCvColorImage::scaleIntoMe( const ofxCvImage& mom, int interpolationMetho
     		interpolationMethod = CV_INTER_NN;
     	}
         cvResize( mom.getCvImage(), cvImage, interpolationMethod );
-        imageHasChanged();
+        flagImageChanged();
 
     } else {
         ofLog(OF_ERROR, "in scaleIntoMe, mom image type has to match");
@@ -252,13 +252,13 @@ void ofxCvColorImage::scaleIntoMe( const ofxCvImage& mom, int interpolationMetho
 void ofxCvColorImage::convertRgbToHsv(){
     cvCvtColor( cvImage, cvImageTemp, CV_RGB2HSV);
     swapTemp();
-    imageHasChanged();
+    flagImageChanged();
 }
 
 //--------------------------------------------------------------------------------
 void ofxCvColorImage::convertHsvToRgb(){
     cvCvtColor( cvImage, cvImageTemp, CV_HSV2RGB);
     swapTemp();
-    imageHasChanged();
+    flagImageChanged();
 }
 

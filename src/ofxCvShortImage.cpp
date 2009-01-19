@@ -66,7 +66,7 @@ void ofxCvShortImage::convertGrayToShort( const IplImage* grayImg, IplImage* flo
 //-------------------------------------------------------------------------------------
 void ofxCvShortImage::set(float value){  
 	cvSet(cvImage, cvScalar(value));
-    imageHasChanged();
+    flagImageChanged();
 }
 
 //--------------------------------------------------------------------------------
@@ -79,7 +79,7 @@ void ofxCvShortImage::setFromPixels( unsigned char* _pixels, int w, int h ) {
 	}
     
     convertGrayToShort(cvGrayscaleImage, cvImage);
-    imageHasChanged();
+    flagImageChanged();
 }
 
 //--------------------------------------------------------------------------------
@@ -87,7 +87,7 @@ void ofxCvShortImage::setFromPixels( unsigned short int* _pixels, int w, int h )
 	for( int i = 0; i < h; i++ ) {
 		memcpy( cvImage->imageData+(i*cvImage->widthStep), _pixels+(i*w), w*sizeof(float));
 	}
-    imageHasChanged();
+    flagImageChanged();
 }
 
 //--------------------------------------------------------------------------------
@@ -104,7 +104,7 @@ void ofxCvShortImage::operator = ( unsigned short int* _pixels ) {
 void ofxCvShortImage::operator = ( const ofxCvGrayscaleImage& mom ) {
 	if( mom.width == width && mom.height == height ) {
         convertGrayToShort(mom.getCvImage(), cvImage);       
-        imageHasChanged();
+        flagImageChanged();
 	} else {
         ofLog(OF_ERROR, "in =, images are different sizes");
 	}
@@ -118,7 +118,7 @@ void ofxCvShortImage::operator = ( const ofxCvColorImage& mom ) {
         }    
 		cvCvtColor( mom.getCvImage(), cvGrayscaleImage, CV_RGB2GRAY );
         convertGrayToShort(cvGrayscaleImage, cvImage);                
-        imageHasChanged();
+        flagImageChanged();
 	} else {
         ofLog(OF_ERROR, "in =, images are different sizes");
 	}
@@ -131,7 +131,7 @@ void ofxCvShortImage::operator = ( const ofxCvFloatImage& mom ) {
         // map from 0-1 to 0-65535
         cvConvertScale( mom.getCvImage(), cvImage, 65535, 0 ); 
         
-        imageHasChanged();
+        flagImageChanged();
     } else {
         ofLog(OF_ERROR, "in =, images are different sizes");
     }
@@ -142,7 +142,7 @@ void ofxCvShortImage::operator = ( const ofxCvShortImage& mom ) {
     if(this != &mom) {  //check for self-assignment
         if( mom.width == width && mom.height == height ) {
             cvCopy( mom.getCvImage(), cvImage, 0 ); 
-            imageHasChanged();
+            flagImageChanged();
         } else {
             ofLog(OF_ERROR, "in =, images are different sizes");
         }
@@ -157,7 +157,7 @@ void ofxCvShortImage::addWeighted( ofxCvGrayscaleImage& mom, float f ) {
 	if( mom.width == width && mom.height == height ) {
          convertGrayToShort(mom.getCvImage(), cvImageTemp);
          cvAddWeighted( cvImageTemp, f, cvImage, 1.0f-f,0, cvImage );
-         imageHasChanged();
+         flagImageChanged();
          
     } else {
         ofLog(OF_ERROR, "in addWeighted, images are different sizes");
@@ -223,13 +223,13 @@ void ofxCvShortImage::contrastStretch() {
 	double minVal, maxVal;
 	cvMinMaxLoc( cvImage, &minVal, &maxVal, NULL, NULL, 0 );
     rangeMap( cvImage, minVal,maxVal, 0,65535 );
-    imageHasChanged();
+    flagImageChanged();
 }
 
 //--------------------------------------------------------------------------------
 void ofxCvShortImage::convertToRange(float min, float max ){
     rangeMap( cvImage, 0,65535, min,max);
-    imageHasChanged();
+    flagImageChanged();
 }
 
 
@@ -271,7 +271,7 @@ void ofxCvShortImage::scaleIntoMe( const ofxCvImage& mom, int interpolationMetho
     		interpolationMethod = CV_INTER_NN;
     	}
         cvResize( mom.getCvImage(), cvImage, interpolationMethod );
-        imageHasChanged();
+        flagImageChanged();
 
     } else {
         ofLog(OF_ERROR, "in scaleIntoMe, mom image type has to match");

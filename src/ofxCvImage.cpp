@@ -66,7 +66,7 @@ void ofxCvImage::swapTemp() {
 }
 
 //--------------------------------------------------------------------------------
-void ofxCvImage::imageHasChanged() {
+void ofxCvImage::flagImageChanged() {
     bTextureDirty = true;
     bPixelsDirty = true;
 }
@@ -87,14 +87,14 @@ void ofxCvImage::rangeMap( IplImage* img, float min1, float max1, float min2, fl
 void ofxCvImage::operator -= ( float value ) {
 	cvSubS( cvImage, cvScalar(value), cvImageTemp );
 	swapTemp();
-    imageHasChanged();
+    flagImageChanged();
 }
 
 //--------------------------------------------------------------------------------
 void ofxCvImage::operator += ( float value ) {
 	cvAddS( cvImage, cvScalar(value), cvImageTemp );
 	swapTemp();
-    imageHasChanged();
+    flagImageChanged();
 }
 
 
@@ -106,7 +106,7 @@ void ofxCvImage::operator -= ( const ofxCvImage& mom ) {
     {
 		cvSub( cvImage, mom.getCvImage(), cvImageTemp );
 		swapTemp();
-        imageHasChanged();
+        flagImageChanged();
 	} else {
         ofLog(OF_ERROR, "in -=, images need to match in size and type");
 	}
@@ -120,7 +120,7 @@ void ofxCvImage::operator += ( const ofxCvImage& mom ) {
     {
 		cvAdd( cvImage, mom.getCvImage(), cvImageTemp );
 		swapTemp();
-        imageHasChanged();
+        flagImageChanged();
 	} else {
         ofLog(OF_ERROR, "in +=, images need to match in size and type");
 	}
@@ -135,7 +135,7 @@ void ofxCvImage::operator *= ( const ofxCvImage& mom ) {
     {
 		cvMul( cvImage, mom.getCvImage(), cvImageTemp, scalef );
 		swapTemp();
-        imageHasChanged();
+        flagImageChanged();
 	} else {
         ofLog(OF_ERROR, "in *=, images need to match in size and type");
 	}
@@ -149,7 +149,7 @@ void ofxCvImage::operator &= ( const ofxCvImage& mom ) {
     {
 		cvAnd( cvImage, mom.getCvImage(), cvImageTemp );
 		swapTemp();
-        imageHasChanged();
+        flagImageChanged();
 	} else {
         ofLog(OF_ERROR, "in &=, images need to match in size and type");
 	}
@@ -192,14 +192,14 @@ void ofxCvImage::draw( float x, float y, float w, float h ) {
 void ofxCvImage::dilate() {
 	cvDilate( cvImage, cvImageTemp, 0, 1 );
 	swapTemp();
-    imageHasChanged();
+    flagImageChanged();
 }
 
 //--------------------------------------------------------------------------------
 void ofxCvImage::erode() {
 	cvErode( cvImage, cvImageTemp, 0, 1 );
 	swapTemp();
-    imageHasChanged();
+    flagImageChanged();
 }
 
 //--------------------------------------------------------------------------------
@@ -210,7 +210,7 @@ void ofxCvImage::blur( int value ) {
     }
 	cvSmooth( cvImage, cvImageTemp, CV_BLUR , value);
 	swapTemp();
-    imageHasChanged();
+    flagImageChanged();
 }
 
 //--------------------------------------------------------------------------------
@@ -221,13 +221,13 @@ void ofxCvImage::blurGaussian( int value ) {
     }
 	cvSmooth( cvImage, cvImageTemp, CV_GAUSSIAN ,value );
 	swapTemp();
-    imageHasChanged();
+    flagImageChanged();
 }
 
 //--------------------------------------------------------------------------------
 void ofxCvImage::invert(){
     cvNot(cvImage, cvImage);
-    imageHasChanged();
+    flagImageChanged();
 }
 
 
@@ -246,25 +246,25 @@ void ofxCvImage::mirror( bool bFlipVertically, bool bFlipHorizontally ) {
 
 	cvFlip( cvImage, cvImageTemp, flipMode );
 	swapTemp();
-    imageHasChanged();
+    flagImageChanged();
 }
 
 //--------------------------------------------------------------------------------
 void ofxCvImage::translate( float x, float y ) {
     transform( 0, 0,0, 1,1, x,y );
-    imageHasChanged();
+    flagImageChanged();
 }
 
 //--------------------------------------------------------------------------------
 void ofxCvImage::rotate( float angle, float centerX, float centerY ) {
     transform( angle, centerX, centerY, 1,1, 0,0 );
-    imageHasChanged();
+    flagImageChanged();
 }
 
 //--------------------------------------------------------------------------------
 void ofxCvImage::scale( float scaleX, float scaleY ) {
     transform( 0, 0,0, scaleX,scaleY, 0,0 );
-    imageHasChanged();
+    flagImageChanged();
 }
 
 //--------------------------------------------------------------------------------
@@ -284,7 +284,7 @@ void ofxCvImage::transform( float angle, float centerX, float centerY,
 
     cvWarpAffine( cvImage, cvImageTemp, transmat );
 	swapTemp();
-    imageHasChanged();
+    flagImageChanged();
 
     cvReleaseMat( &transmat );
 }
@@ -298,7 +298,7 @@ void ofxCvImage::undistort( float radialDistX, float radialDistY,
     float distortionCoeffs[] = { radialDistX, radialDistY, tangentDistX, tangentDistY };
     cvUnDistortOnce( cvImage, cvImageTemp, camIntrinsics, distortionCoeffs, 1 );
 	swapTemp();
-    imageHasChanged();
+    flagImageChanged();
 }
 
 
@@ -306,7 +306,7 @@ void ofxCvImage::undistort( float radialDistX, float radialDistY,
 void ofxCvImage::remap( const IplImage* mapX, const IplImage* mapY ) {
     cvRemap( cvImage, cvImageTemp, mapX, mapY );
 	swapTemp();
-    imageHasChanged();
+    flagImageChanged();
 }
 
 
@@ -351,7 +351,7 @@ void ofxCvImage::warpPerspective( const ofPoint& A, const ofPoint& B,
     cvWarpPerspectiveQMatrix( cvsrc, cvdst, translate );  // calculate homography 
     cvWarpPerspective( cvImage, cvImageTemp, translate ); 
     swapTemp();
-    imageHasChanged();
+    flagImageChanged();
     cvReleaseMat( &translate ); 
 } 
 
@@ -374,7 +374,7 @@ void ofxCvImage::warpIntoMe( const ofxCvGrayscaleImage& mom,
 	}
 	cvWarpPerspectiveQMatrix( cvsrc, cvdst, translate );  // calculate homography
 	cvWarpPerspective( mom.getCvImage(), cvImage, translate);
-    imageHasChanged();
+    flagImageChanged();
 	cvReleaseMat( &translate );
 }
 

@@ -28,6 +28,8 @@ class ofxCvImage : public ofBaseHasTexture {
 
     int width;
     int height;
+    int offsetX;
+    int offsetY;
 	bool bAllocated;
 
     ofxCvImage();
@@ -36,6 +38,15 @@ class ofxCvImage : public ofBaseHasTexture {
     virtual void  clear();
     virtual void  setUseTexture( bool bUse );
     virtual ofTexture&  getTextureReference();
+    virtual void flagImageChanged();  //mostly used internally
+    
+    
+    // ROI - region of interest - TODO
+    //
+    //virtual void  setROI( int x, int y, int w, int h );
+    //virtual void  setROI( const ofRectange& );
+    //virtual const ofRectange&  getROI();
+    //virtual void  resetROI();
 
 
     // Set Pixel Data
@@ -82,7 +93,6 @@ class ofxCvImage : public ofBaseHasTexture {
 
     // Image Transformation Operations
     //
-    //virtual void setROI( int w, int h );      //TODO, support image regions
     virtual void  resize( int w, int h ) = 0;
     virtual void  scaleIntoMe( const ofxCvImage& mom, int interpolationMethod = CV_INTER_NN ) = 0;
     virtual void  mirror( bool bFlipVertically, bool bFlipHorizontally );
@@ -124,9 +134,6 @@ class ofxCvImage : public ofBaseHasTexture {
   protected:
 
     virtual void  rangeMap( IplImage* img, float min1, float max1, float min2, float max2 );
-    
-    virtual void imageHasChanged();  // call this whenever cvImage is changed
-                                     // this flags all the helper images dirty
                                      
     virtual void swapTemp();  // swap cvImageTemp back
                               // to cvImage after an image operation
