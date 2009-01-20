@@ -101,12 +101,28 @@ void ofDisableDataPath(){
 }
 
 //--------------------------------------------------
-string ofToDataPath(string path){
+string ofToDataPath(string path, bool absolute){
 	if( enableDataPath ){
 		#ifdef TARGET_OSX
-			if(path.substr(0,1) != "/" && path.substr(0,14) != "../../../data/") path = "../../../data/"+path;
+			if(path.substr(0,1) != "/" && path.substr(0,14) != "../../../data/"){
+				path = "../../../data/"+path;
+
+				if(absolute){
+					char currDir[1024];
+					path = "/"+path;
+					path = getcwd(currDir, 1024)+path;
+				}
+			}
 		#else
-			if(path.substr(0,1) != "/" && path.substr(0,5) != "data/") path = "data/"+path;
+			if(path.substr(0,1) != "/" && path.substr(0,5) != "data/"){
+				path = "data/"+path;
+
+				if(absolute){
+					char currDir[1024];
+					path = "/"+path;
+					path = getcwd(currDir, 1024)+path;
+				}
+			}
 		#endif
 	}
 	return path;

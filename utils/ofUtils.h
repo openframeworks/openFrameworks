@@ -27,7 +27,7 @@ void 	ofLaunchBrowser(string url);
 
 void	ofEnableDataPath();
 void	ofDisableDataPath();
-string 	ofToDataPath(string path);
+string 	ofToDataPath(string path, bool absolute=false);
 
 string  ofToString(double value, int precision = 7);
 string  ofToString(int  value);
