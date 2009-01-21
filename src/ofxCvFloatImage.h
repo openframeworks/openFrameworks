@@ -30,11 +30,19 @@ class ofxCvFloatImage : public ofxCvImage {
 
     ofxCvFloatImage();
     ofxCvFloatImage( const ofxCvFloatImage& mom );
-    virtual void  allocate( int w, int h );
+    // virtual void  allocate( int w, int h );                                //in base class
     virtual void  clear();
     // virtual void  setUseTexture( bool bUse );                              //in base class
     virtual void  setNativeScale( float _scaleMin, float _scaleMax );  
 
+
+    // ROI - region of interest
+    //
+    // virtual void  setROI( int x, int y, int w, int h );                    //in base class
+    // virtual void  setROI( const ofRectangle& rect );                       //in base class
+    // virtual ofRectangle  getROI();                                         //in base class
+    // virtual void  resetROI();                                              //in base class
+    
 
     // Set Pixel Data
     //
@@ -69,8 +77,8 @@ class ofxCvFloatImage : public ofxCvImage {
     
     // Draw Image
     //
-    virtual void  drawWithoutTexture( float x, float y );
-    virtual void  drawWithoutTexture( float x, float y, float w, float h );    
+    //virtual void  draw( float x, float y );                                  //in base class
+    //virtual void  draw( float x, float y, float w, float h );                //in base class
 
 
     // Image Filter Operations
@@ -119,9 +127,13 @@ class ofxCvFloatImage : public ofxCvImage {
     virtual void convertFloatToGray( const IplImage* floatImg, IplImage* grayImg );
     virtual void convertGrayToFloat( const IplImage* grayImg, IplImage* floatImg );
     
-    float* pixelsAsFloats;          // not width stepped.
+    float* floatPixels;             // not width stepped for getPixelsAsFloats()
+                                    // allocated on demand
+    int  floatPixelsW;
+    int  floatPixelsH;
+    
     bool bFloatPixelsDirty;
-    IplImage*  cvGrayscaleImage;    // internal helper grayscale;
+    IplImage*  cvGrayscaleImage;    // internal helper grayscale, allocated on demand
     
     float scaleMin;
     float scaleMax;

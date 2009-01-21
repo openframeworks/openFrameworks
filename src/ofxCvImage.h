@@ -26,27 +26,26 @@ class ofxCvImage : public ofBaseHasTexture {
     
   public:
 
-    int width;
-    int height;
-    int offsetX;
-    int offsetY;
+    int width;                 // width of this image or its ROI width
+    int height;                // height of this image or its ROI height
 	bool bAllocated;
 
     ofxCvImage();
     virtual  ~ofxCvImage();
-    virtual void  allocate( int w, int h ) = 0;
+    virtual void  allocate( int w, int h );
     virtual void  clear();
     virtual void  setUseTexture( bool bUse );
     virtual ofTexture&  getTextureReference();
     virtual void flagImageChanged();  //mostly used internally
+    virtual void setUseRoiOffsetWhenDrawing( bool bUse );
     
     
-    // ROI - region of interest - TODO
+    // ROI - region of interest
     //
-    //virtual void  setROI( int x, int y, int w, int h );
-    //virtual void  setROI( const ofRectange& );
-    //virtual const ofRectange&  getROI();
-    //virtual void  resetROI();
+    virtual void  setROI( int x, int y, int w, int h );
+    virtual void  setROI( const ofRectangle& rect );
+    virtual ofRectangle  getROI();
+    virtual void  resetROI();
 
 
     // Set Pixel Data
@@ -133,20 +132,37 @@ class ofxCvImage : public ofBaseHasTexture {
 
   protected:
 
+    //virtual void  allocateTexture( int width, int height ) = 0;
     virtual void  rangeMap( IplImage* img, float min1, float max1, float min2, float max2 );
                                      
     virtual void swapTemp();  // swap cvImageTemp back
                               // to cvImage after an image operation
+                          
+    virtual ofRectangle   getIntersectionRectangle( const ofRectangle& rec1, const ofRectangle& rec2 );
 
     IplImage*  cvImage;
     IplImage*  cvImageTemp;   // this is typically swapped back into cvImage
                               // after an image operation with swapImage()
+                              
+    int roiX;                 // region of interest offset x
+    int roiY;                 // region of interest offset y    
+                              
+    int ipldepth;             // IPL_DEPTH_8U, IPL_DEPTH_16U, IPL_DEPTH_32F, ...
+    int iplchannels;          // 1, 3, 4, ...
 
-    unsigned char* 	pixels;	  // not width stepped
+    int gldepth;              // GL_UNSIGNED_BYTE, GL_UNSIGNED_SHORT, GL_FLOAT, ...
+    int glchannels;           // GL_LUMINANCE, GL_RGB, GL_RGBA, ...
+    
+    unsigned char* 	pixels;	  // not width stepped for getPixels(), allocated on demand
+    int  pixelsWidth;
+    int  pixelsHeight;
     bool bPixelsDirty;        // pixels need to be reloaded
+    
     ofTexture  tex;		      // internal tex
     bool bUseTexture;
-    bool bTextureDirty;       // texture needs to be reloaded before drawing 
+    bool bTextureDirty;       // texture needs to be reloaded before drawing
+    
+    bool bUseRoiOffsetWhenDrawing;
 
 };
 

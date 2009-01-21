@@ -10,16 +10,41 @@
 ofxCvImage::ofxCvImage() {
     width			= 0;
     height			= 0;
+    roiX            = 0;
+    roiY            = 0;
     bUseTexture		= true;
     bTextureDirty   = true;
 	bAllocated		= false;
 	pixels			= NULL;
     bPixelsDirty    = true;
+    pixelsWidth     = 0;
+    pixelsHeight    = 0;
+    bUseRoiOffsetWhenDrawing = false;
 }
 
 //--------------------------------------------------------------------------------
 ofxCvImage::~ofxCvImage() {
     clear();
+}
+
+//--------------------------------------------------------------------------------
+void ofxCvImage::allocate( int w, int h ) {
+	if (bAllocated == true){
+		ofLog(OF_WARNING, "in allocate, reallocating a ofxCvImage");
+		clear();
+	}
+    
+	cvImage = cvCreateImage( cvSize(w,h), ipldepth, iplchannels );
+	cvImageTemp	= cvCreateImage( cvSize(w,h), ipldepth, iplchannels );
+
+	width = w;
+	height = h;
+	bAllocated = true;
+
+    if( bUseTexture ) {
+        tex.allocate( width, height, glchannels );
+        bTextureDirty = true;
+    }
 }
 
 //--------------------------------------------------------------------------------
@@ -34,9 +59,13 @@ void ofxCvImage::clear() {
             delete pixels;
             pixels = NULL;
             bPixelsDirty = true;
+            pixelsWidth = 0;
+            pixelsHeight = 0;            
         }
 		width = 0;
 		height = 0;
+        roiX = 0;    
+        roiY = 0;    
 
 		if( bUseTexture ) {
 			tex.clear();
@@ -72,13 +101,94 @@ void ofxCvImage::flagImageChanged() {
 }
 
 //--------------------------------------------------------------------------------
+void ofxCvImage::setUseRoiOffsetWhenDrawing( bool bUse ) {
+    bUseRoiOffsetWhenDrawing = bUse;
+}
+
+//--------------------------------------------------------------------------------
 void ofxCvImage::rangeMap( IplImage* img, float min1, float max1, float min2, float max2 ) {
     // map from min1-max1 to min2-max2
     float scale = (max2-min2)/(max1-min1);
     cvConvertScale( img, img, scale, -(min1*scale)+min2 );
 }
 
+//--------------------------------------------------------------------------------
+ofRectangle ofxCvImage::getIntersectionRectangle( const ofRectangle& r1, const ofRectangle& r2 ) {
+    int r1x1 = r1.x;
+    int r1y1 = r1.y;
+    int r1x2 = r1.x+width;
+    int r1y2 = r1.y+height;
 
+    int r2x1 = r2.x;
+    int r2y1 = r2.y;
+    int r2x2 = r2.x+width;
+    int r2y2 = r2.y+height;
+
+    int r3x1 = 0;
+    int r3y1 = 0;
+    int r3x2 = 0;
+    int r3y2 = 0;
+    
+    bool bIntersect =  ( ( ofInRange(r2x1, r1x1,r1x2) || ofInRange(r1x1, r2x1,r2x2) ) &&
+                         ( ofInRange(r2y1, r1y1,r1y2) || ofInRange(r1y1, r2y1,r2y2) ) );
+
+    if( bIntersect ){
+        r3x1 = MAX( r1x1, r2x1 );
+        r3y1 = MAX( r1y1, r2y1 );
+
+        r3x2 = MIN( r1x2, r2x2 );
+        r3y2 = MIN( r1y2, r2y2 );
+    
+        return ofRectangle( r3x1,r3y1, r3x2-r3x1,r3y2-r3y1 );
+        
+    } else {
+        return ofRectangle( 0,0, 0,0 );
+    }
+}
+
+
+
+// ROI - region of interest
+
+//--------------------------------------------------------------------------------
+void ofxCvImage::setROI( int x, int y, int w, int h ) {
+    
+    x = ofClamp(x, 0, cvImage->width-1);
+    y = ofClamp(y, 0, cvImage->height-1);
+    w = ofClamp(w, 0, cvImage->width - x);
+    h = ofClamp(h, 0, cvImage->height - y);
+    
+    cvSetImageROI( cvImage, cvRect(x,y, w,h) );
+    cvSetImageROI( cvImageTemp, cvRect(x,y, w,h) );
+    width = w;
+    height = h;
+    roiX = x;
+    roiY = y;
+    flagImageChanged();
+}
+
+//--------------------------------------------------------------------------------
+void ofxCvImage::setROI( const ofRectangle& rect ) {
+    setROI( rect.x, rect.y, rect.width, rect.height );
+}
+
+//--------------------------------------------------------------------------------
+ofRectangle ofxCvImage::getROI() {
+    CvRect rect = cvGetImageROI( cvImage );
+    return ofRectangle( rect.x, rect.y, rect.width, rect.height );
+    //return ofRectangle( roiX, roiY, width, height );
+}
+
+//--------------------------------------------------------------------------------
+void ofxCvImage::resetROI() {
+    cvResetImageROI( cvImage );
+    cvResetImageROI( cvImageTemp );
+    width = cvImage->width;
+    height = cvImage->height;
+    roiX = 0;
+    roiY = 0;
+}
+    
 
 
 // Set Pixel Data
@@ -165,22 +275,52 @@ void ofxCvImage::draw( float x, float y ) {
 }
 
 //--------------------------------------------------------------------------------
-void ofxCvImage::draw( float x, float y, float w, float h ) {
-
-    // set GL format
-    int glformat = GL_LUMINANCE;
-    if(cvImage->nChannels == 1) glformat = GL_LUMINANCE;
-    else if(cvImage->nChannels == 3) glformat = GL_RGB;
-    
+void ofxCvImage::draw( float x, float y, float w, float h ) {    
     if( bUseTexture ) {
         if( bTextureDirty ) {
-            tex.loadData(getPixels(), width, height, glformat);
+            if(tex.getWidth() != width || tex.getHeight() != height) {
+                //ROI was changed
+                // reallocating texture - this could be faster with ROI support
+                tex.clear();
+                tex.allocate( width, height, glchannels );
+            }
+            tex.loadData( getPixels(), width, height, glchannels );
             bTextureDirty = false;
         }
-        tex.draw(x,y, w,h);
+        if( bUseRoiOffsetWhenDrawing ){
+            tex.draw(x+roiX, y+roiY, w,h);
+        } else {
+            tex.draw(x,y, w,h);
+        }
 
     } else {
-        ofLog(OF_WARNING, "in draw, no texture! Maybe you can use drawWithoutTexture(...)");
+        // this is slower than the typical draw method based on textures
+        // but useful when dealing with threads GL textures often don't work
+        ofLog(OF_NOTICE, "in draw, using slow texture-less drawing");
+        
+        if( x == 0) {
+            x += 0.01;
+            ofLog(OF_NOTICE, "BUG: can't draw at x==0 in texture-less mode.");
+        }
+        
+        glRasterPos3f( x+roiX, y+h+roiY, 0.0 );
+        if( bUseRoiOffsetWhenDrawing ){
+            glRasterPos3f( x+roiX, y+h+roiY, 0.0 );
+        } else {
+            glRasterPos3f( x, y+h, 0.0 );
+        }        
+        IplImage* tempImg;
+        tempImg = cvCreateImage( cvSize((int)w, (int)h), ipldepth, iplchannels );        
+        cvResize( cvImage, tempImg, CV_INTER_NN );
+        cvFlip( tempImg, tempImg, 0 );
+        glDrawPixels( tempImg->width, tempImg->height ,
+                      glchannels, gldepth, tempImg->imageData );
+        cvReleaseImage( &tempImg );
+        if( bUseRoiOffsetWhenDrawing ){
+            glRasterPos3f( -(x+roiX), -(y+h+roiY), 0.0 ); 
+        } else {
+            glRasterPos3f( -x, -(y+h), 0.0 ); 
+        }         
     }
 }
 
@@ -385,11 +525,22 @@ void ofxCvImage::warpIntoMe( const ofxCvGrayscaleImage& mom,
 
 //--------------------------------------------------------------------------------
 int ofxCvImage::countNonZeroInRegion( int x, int y, int w, int h ) const {
+    //TODO: test this method
+    
 	if (w == 0 || h == 0) return 0;
     int count = 0;
-	cvSetImageROI( cvImage, cvRect(x,y,w,h) );
+    
+    // intersect the global ROI with the region to check
+    ofRectangle roi = getROI();
+    ofRectangle inputROI = ofRectangle(x,y,w,h);
+    ofRectangle iRoi = getIntersectionRectangle( roi, inputROI );
+        
+	cvSetImageROI( cvImage, cvRect(iRoi.x, iRoi.y, iRoi.width, iRoi.height) );
 	count = cvCountNonZero( cvImage );
-	cvResetImageROI( cvImage );
+    
+    // restore global ROI
+    cvSetImageROI( cvImage, cvRect(roi.x, roi.y, roi.width, roi.height) );
+        
 	return count;
 }
 

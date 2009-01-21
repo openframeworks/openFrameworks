@@ -4,32 +4,20 @@
 #include "ofxCvFloatImage.h"
 
 
+
+//--------------------------------------------------------------------------------
+ofxCvGrayscaleImage::ofxCvGrayscaleImage() {
+    ipldepth = IPL_DEPTH_8U;
+    iplchannels = 1;
+    gldepth = GL_UNSIGNED_BYTE;
+    glchannels = GL_LUMINANCE;
+}
+
 //--------------------------------------------------------------------------------
 ofxCvGrayscaleImage::ofxCvGrayscaleImage( const ofxCvGrayscaleImage& mom ) {
     allocate(mom.width, mom.height);
     cvCopy( mom.getCvImage(), cvImage, 0 );
 }
-
-//--------------------------------------------------------------------------------
-void ofxCvGrayscaleImage::allocate( int w, int h ) {
-	if (bAllocated == true){
-		ofLog(OF_WARNING, "in allocate, reallocating a ofxCvGrayscaleImage");
-		clear();
-	}
-    
-	cvImage = cvCreateImage( cvSize(w,h), IPL_DEPTH_8U, 1 );
-	cvImageTemp	= cvCreateImage( cvSize(w,h), IPL_DEPTH_8U, 1 );
-    
-	width = w;
-	height = h;
-	bAllocated = true;
-
-    if( bUseTexture ) {
-        tex.allocate( width, height, GL_LUMINANCE );
-        bTextureDirty = true;
-    }
-}
-
 
 
 
@@ -42,10 +30,21 @@ void ofxCvGrayscaleImage::set( float value ){
 
 //--------------------------------------------------------------------------------
 void ofxCvGrayscaleImage::setFromPixels( unsigned char* _pixels, int w, int h ) {
-	for( int i = 0; i < h; i++ ) {
-		memcpy( cvImage->imageData+(i*cvImage->widthStep), _pixels+(i*w), w );
-	}
-    flagImageChanged();
+    ofRectangle roi = getROI();
+    ofRectangle inputROI = ofRectangle( roi.x, roi.y, w, h);
+    ofRectangle iRoi = getIntersectionRectangle( roi, inputROI );
+        
+    if( iRoi.width > 0 && iRoi.height > 0 ) {
+        // copy pixels from _pixels, however many we have or will fit in cvImage
+        for( int i=0; i < iRoi.height; i++ ) {
+            memcpy( cvImage->imageData + ((i+(int)iRoi.y)*cvImage->widthStep) + (int)iRoi.x,
+                    _pixels + (i*w),
+                    iRoi.width );
+        }
+        flagImageChanged();
+    } else {
+        ofLog(OF_ERROR, "in setFromPixels, ROI mismatch");
+    }
 }
 
 //--------------------------------------------------------------------------------
@@ -119,10 +118,24 @@ void ofxCvGrayscaleImage::absDiff( ofxCvGrayscaleImage& mom,
 //--------------------------------------------------------------------------------
 unsigned char* ofxCvGrayscaleImage::getPixels() {
     if(bPixelsDirty) {
-        if(pixels == NULL) { pixels = new unsigned char[width*height]; };
+        if(pixels == NULL) {
+            // we need pixels, allocate it
+            pixels = new unsigned char[width*height];
+            pixelsWidth = width;
+            pixelsHeight = height;            
+        } else if(pixelsWidth != width || pixelsHeight != height) {
+            // ROI changed, reallocate pixels for new size
+            delete pixels;
+            pixels = new unsigned char[width*height];
+            pixelsWidth = width;
+            pixelsHeight = height;
+        }
+        
+        // copy from ROI to pixels
         for( int i = 0; i < height; i++ ) {
-            memcpy( pixels+(i*width),
-                    cvImage->imageData+(i*cvImage->widthStep), width );
+            memcpy( pixels + (i*width),
+                    cvImage->imageData + ((i+roiY)*cvImage->widthStep) + roiX,
+                    width );
         }
         bPixelsDirty = false;
     }
@@ -131,32 +144,6 @@ unsigned char* ofxCvGrayscaleImage::getPixels() {
 
 
 // Draw Image
-
-//--------------------------------------------------------------------------------
-void ofxCvGrayscaleImage::drawWithoutTexture( float x, float y ) {
-    drawWithoutTexture( x,y, width, height );
-}
-
-//--------------------------------------------------------------------------------
-void ofxCvGrayscaleImage::drawWithoutTexture( float x, float y, float w, float h ) {
-    // this is slower than the typical draw method based on textures
-    // but useful when dealing with threads GL textures often don't work
-    
-    if( x == 0) {
-        x += 0.01;
-        ofLog(OF_NOTICE, "BUG: can't draw at x==0 in texture-less mode.");
-    }
-    
-    glRasterPos3f( x, y+h, 0.0 );
-    IplImage* tempImg;
-    tempImg = cvCreateImage( cvSize((int)w, (int)h), IPL_DEPTH_8U, 1 );
-    cvResize( cvImage, tempImg, CV_INTER_NN );
-    cvFlip( tempImg, tempImg, 0 );
-    glDrawPixels( tempImg->width, tempImg->height ,
-                 GL_LUMINANCE, GL_UNSIGNED_BYTE, tempImg->imageData );
-    cvReleaseImage( &tempImg );
-    glRasterPos3f( -x, -(y+h), 0.0 );
-}
 
 
 

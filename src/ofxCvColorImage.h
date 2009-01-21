@@ -21,11 +21,19 @@ class ofxCvColorImage : public ofxCvImage {
 
     ofxCvColorImage();
     ofxCvColorImage( const ofxCvColorImage& mom );
-    virtual void  allocate( int w, int h );
+    // virtual void  allocate( int w, int h );                                //in base class
     virtual void  clear();
     // virtual void  setUseTexture( bool bUse );                              //in base class    
     // virtual ofTexture&  getTextureReference();                             //in base class    
 
+
+    // ROI - region of interest
+    //
+    // virtual void  setROI( int x, int y, int w, int h );                    //in base class
+    // virtual void  setROI( const ofRectangle& rect );                       //in base class
+    // virtual ofRectangle  getROI();                                         //in base class
+    // virtual void  resetROI();                                              //in base class
+    
 
     // Set Pixel Data
     //
@@ -58,8 +66,6 @@ class ofxCvColorImage : public ofxCvImage {
     //
     //virtual void  draw( float x, float y );                                 //in base class
     //virtual void  draw( float x, float y, float w, float h );               //in base class
-    virtual void  drawWithoutTexture( float x, float y );
-    virtual void  drawWithoutTexture( float x, float y, float w, float h );  
     
 
     // Image Filter Operations
@@ -106,7 +112,7 @@ class ofxCvColorImage : public ofxCvImage {
 
   private:
   
-    IplImage*  cvGrayscaleImage;    // internal helper grayscale;
+    IplImage*  cvGrayscaleImage;    // internal helper grayscale, allocated on demand
       
 };
 

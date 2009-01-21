@@ -21,13 +21,21 @@ class ofxCvGrayscaleImage : public ofxCvImage {
 
   public:
 
-    ofxCvGrayscaleImage() {};
+    ofxCvGrayscaleImage();
     ofxCvGrayscaleImage( const ofxCvGrayscaleImage& mom );
-    virtual void  allocate( int w, int h );
+    // virtual void  allocate( int w, int h );                                //in base class
     // virtual void  clear();                                                 //in base class
     // virtual void  setUseTexture( bool bUse );                              //in base class   
 
 
+    // ROI - region of interest
+    //
+    // virtual void  setROI( int x, int y, int w, int h );                    //in base class
+    // virtual void  setROI( const ofRectangle& rect );                       //in base class
+    // virtual ofRectangle  getROI();                                         //in base class
+    // virtual void  resetROI();                                              //in base class
+    
+    
     // Set Pixel Data
     //
     virtual void  set( float value );
@@ -59,8 +67,6 @@ class ofxCvGrayscaleImage : public ofxCvImage {
     //
     //virtual void  draw( float x, float y );                                  //in base class
     //virtual void  draw( float x, float y, float w, float h );                //in base class
-    virtual void  drawWithoutTexture( float x, float y );
-    virtual void  drawWithoutTexture( float x, float y, float w, float h );
 
 
     // Image Filter Operations

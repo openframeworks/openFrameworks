@@ -8,8 +8,14 @@
 
 //--------------------------------------------------------------------------------
 ofxCvFloatImage::ofxCvFloatImage() {
-    pixelsAsFloats = NULL;
+    ipldepth = IPL_DEPTH_32F;
+    iplchannels = 1;
+    gldepth = GL_FLOAT;
+    glchannels = GL_LUMINANCE;
+    floatPixels = NULL; 
     bFloatPixelsDirty = true;
+    floatPixelsW = 0;
+    floatPixelsH = 0;   
     cvGrayscaleImage = NULL;
     scaleMin = 0.0f;
     scaleMax = 1.0f;
@@ -21,22 +27,6 @@ ofxCvFloatImage::ofxCvFloatImage( const ofxCvFloatImage& mom ) {
     cvCopy( mom.getCvImage(), cvImage, 0 );
 }
 
-//--------------------------------------------------------------------------------
-void ofxCvFloatImage::allocate( int w, int h ) {
-	if (bAllocated == true){
-		ofLog(OF_WARNING, "in allocate, reallocating a ofxCvFloatImage");
-		clear();
-	}
-	cvImage = cvCreateImage( cvSize(w,h), IPL_DEPTH_32F, 1 );
-	cvImageTemp	= cvCreateImage( cvSize(w,h), IPL_DEPTH_32F, 1 );
-    width = w;
-	height = h;
-	bAllocated = true;
-    if( bUseTexture ) {
-        tex.allocate(width, height, GL_LUMINANCE);
-        bTextureDirty = true;
-    }
-}
 
 //--------------------------------------------------------------------------------
 void ofxCvFloatImage::clear() {
@@ -44,10 +34,12 @@ void ofxCvFloatImage::clear() {
         if( cvGrayscaleImage != NULL ){
             cvReleaseImage( &cvGrayscaleImage );
         }
-        if( pixelsAsFloats != NULL ) {
-            delete pixelsAsFloats;
-            pixelsAsFloats = NULL;
+        if( floatPixels != NULL ) {
+            delete floatPixels;
+            floatPixels = NULL;
             bFloatPixelsDirty = true;
+            floatPixelsW = 0;
+            floatPixelsH = 0;             
         }
     }
     ofxCvImage::clear();    //call clear in base class    
@@ -91,60 +83,68 @@ void ofxCvFloatImage::set(float value){
 
 //--------------------------------------------------------------------------------
 void ofxCvFloatImage::operator *= ( float scalar ){
-    // does this exist in opencv?
-    int totalPixels = cvImage->width*cvImage->height;
-    if(totalPixels <= 0)return;
-
-    float * ptr = ((float *)cvImage->imageData);
-
-    for (int i = 0; i < totalPixels; i++){
-       ( *ptr ) *= scalar;
-        if( ( *ptr ) < 0.00001 ) (*ptr) = 0.0;
-        ptr++;
-    }
-    
-    flagImageChanged();
+    for( int i=0; i<height; i++ ) { 
+        float* ptr = (float*)(cvImage->imageData + (i+roiY)*cvImage->widthStep); 
+        for( int j=0; j<width; j++ ) { 
+            ptr[(j+roiX)] *= scalar; 
+        } 
+    } 
 }
 
 //--------------------------------------------------------------------------------
 void ofxCvFloatImage::operator /= ( float scalar ){
-    // does this exist in opencv?
-    int totalPixels = cvImage->width*cvImage->height;
-    if(totalPixels == 0 || scalar == 0)return;
-
-    //inverse and then multiply
     scalar = 1.0 / scalar;
-
-    float * ptr = ((float *)cvImage->imageData);
-
-    for (int i = 0; i < totalPixels; i++){
-       ( *ptr ) *= scalar;
-        if( ( *ptr ) < 0.00001 ) (*ptr) = 0.0;
-        ptr++;
-    }
-    
-    flagImageChanged();
+    for( int i=0; i<height; i++ ) { 
+        float* ptr = (float*)(cvImage->imageData + (i+roiY)*cvImage->widthStep); 
+        for( int j=0; j<width; j++ ) { 
+            ptr[(j+roiX)] *= scalar; 
+        } 
+    } 
 }
 
 //--------------------------------------------------------------------------------
-void ofxCvFloatImage::setFromPixels( unsigned char* _pixels, int w, int h ) {
+void ofxCvFloatImage::setFromPixels( unsigned char* _pixels, int w, int h ) {    
     if( cvGrayscaleImage == NULL ) {
-        cvGrayscaleImage = cvCreateImage( cvSize(width,height), IPL_DEPTH_8U, 1 );
+        cvGrayscaleImage = cvCreateImage( cvSize(cvImage->width,cvImage->height), IPL_DEPTH_8U, 1 );
     }
-    for( int i = 0; i < h; i++ ) {
-		memcpy( cvGrayscaleImage->imageData+(i*cvGrayscaleImage->widthStep), _pixels+(i*w), w );
-	}
     
-    convertGrayToFloat(cvGrayscaleImage, cvImage);
-    flagImageChanged();
+    cvSetImageROI(cvGrayscaleImage, cvRect(roiX,roiY,width,height));  //make sure ROI is in sync
+
+    ofRectangle roi = getROI();
+    ofRectangle inputROI = ofRectangle( roi.x, roi.y, w, h);
+    ofRectangle iRoi = getIntersectionRectangle( roi, inputROI );
+        
+    if( iRoi.width > 0 && iRoi.height > 0 ) {
+        // copy pixels from _pixels, however many we have or will fit in cvGrayscaleImage
+        for( int i=0; i < iRoi.height; i++ ) {
+            memcpy( cvGrayscaleImage->imageData + ((i+(int)iRoi.y)*cvGrayscaleImage->widthStep) + (int)iRoi.x,
+                    _pixels + (i*w),
+                    iRoi.width );
+        }
+        convertGrayToFloat(cvGrayscaleImage, cvImage);
+        flagImageChanged();
+    } else {
+        ofLog(OF_ERROR, "in setFromPixels, ROI mismatch");
+    }    
 }
 
 //--------------------------------------------------------------------------------
 void ofxCvFloatImage::setFromPixels( float* _pixels, int w, int h ) {
-	for( int i = 0; i < h; i++ ) {
-		memcpy( cvImage->imageData+(i*cvImage->widthStep), _pixels+(i*w), w*sizeof(float));
-	}
-    flagImageChanged();
+    ofRectangle roi = getROI();
+    ofRectangle inputROI = ofRectangle( roi.x, roi.y, w, h);
+    ofRectangle iRoi = getIntersectionRectangle( roi, inputROI );
+        
+    if( iRoi.width > 0 && iRoi.height > 0 ) {
+        // copy pixels from _pixels, however many we have or will fit in cvImage
+        for( int i=0; i < iRoi.height; i++ ) {
+            memcpy( cvImage->imageData + ((i+(int)iRoi.y)*cvImage->widthStep) + (int)iRoi.x*sizeof(float),
+                    _pixels + (i*w),
+                    iRoi.width*sizeof(float) );
+        }
+        flagImageChanged();
+    } else {
+        ofLog(OF_ERROR, "in setFromPixels, ROI mismatch");
+    }     
 }
 
 //--------------------------------------------------------------------------------
@@ -171,8 +171,9 @@ void ofxCvFloatImage::operator = ( const ofxCvGrayscaleImage& mom ) {
 void ofxCvFloatImage::operator = ( const ofxCvColorImage& mom ) {
 	if( mom.width == width && mom.height == height ) {
         if( cvGrayscaleImage == NULL ) {
-            cvGrayscaleImage = cvCreateImage( cvSize(width,height), IPL_DEPTH_8U, 1 );
-        }    
+            cvGrayscaleImage = cvCreateImage( cvSize(cvImage->width,cvImage->height), IPL_DEPTH_8U, 1 );
+        }
+        cvSetImageROI(cvGrayscaleImage, cvRect(roiX,roiY,width,height));  //make sure ROI is in sync
 		cvCvtColor( mom.getCvImage(), cvGrayscaleImage, CV_RGB2GRAY );
         convertGrayToFloat(cvGrayscaleImage, cvImage);                
         flagImageChanged();
@@ -244,64 +245,68 @@ void ofxCvFloatImage::addWeighted( ofxCvGrayscaleImage& mom, float f ) {
 //--------------------------------------------------------------------------------
 unsigned char*  ofxCvFloatImage::getPixels(){
     if(bPixelsDirty) {
-        if( cvGrayscaleImage == NULL ) { cvGrayscaleImage = cvCreateImage( cvSize(width,height), IPL_DEPTH_8U, 1 ); } 
-        convertFloatToGray(cvImage, cvGrayscaleImage); 
-        if(pixels == NULL) { pixels = new unsigned char[width*height]; };
+    
+        if( cvGrayscaleImage == NULL ) {
+            cvGrayscaleImage = cvCreateImage( cvSize(cvImage->width,cvImage->height), IPL_DEPTH_8U, 1 );
+        }
+         
+        cvSetImageROI(cvGrayscaleImage, cvRect(roiX,roiY,width,height));  //make sure ROI is in sync
+        convertFloatToGray(cvImage, cvGrayscaleImage);   
+    
+        if(pixels == NULL) {
+            // we need pixels, allocate it
+            pixels = new unsigned char[width*height];
+            pixelsWidth = width;
+            pixelsHeight = height;            
+        } else if(pixelsWidth != width || pixelsHeight != height) {
+            // ROI changed, reallocate pixels for new size
+            delete pixels;
+            pixels = new unsigned char[width*height];
+            pixelsWidth = width;
+            pixelsHeight = height;
+        }
+        
+        // copy from ROI to pixels
         for( int i = 0; i < height; i++ ) {
-            memcpy( pixels+(i*width),
-                    cvGrayscaleImage->imageData+(i*cvGrayscaleImage->widthStep), width );
+            memcpy( pixels + (i*width),
+                    cvGrayscaleImage->imageData + ((i+roiY)*cvGrayscaleImage->widthStep) + roiX,
+                    width );
         }
         bPixelsDirty = false;
     }
-	return pixels;
+	return pixels;        
 }
 
 //--------------------------------------------------------------------------------
 float*  ofxCvFloatImage::getPixelsAsFloats(){
     if(bFloatPixelsDirty) {
-        if( pixelsAsFloats == NULL ) { pixelsAsFloats = new float[width*height]; }
+        if(floatPixels == NULL) {
+            // we need pixels, allocate it
+            floatPixels = new float[width*height];
+            floatPixelsW = width;
+            floatPixelsH = height;            
+        } else if(floatPixelsW != width || floatPixelsH != height) {
+            // ROI changed, reallocate floatPixels for new size
+            delete floatPixels;
+            floatPixels = new float[width*height];
+            floatPixelsW = width;
+            floatPixelsH = height;
+        }
+        
+        // copy from ROI to pixels
         for( int i = 0; i < height; i++ ) {
-            memcpy( pixelsAsFloats+(i*width),
-                    cvImage->imageData+(i*cvImage->widthStep), width*4 );
+            memcpy( floatPixels + (i*width),
+                    cvImage->imageData + ((i+roiY)*cvImage->widthStep) + roiX*sizeof(float),
+                    width*sizeof(float) );
         }
         bFloatPixelsDirty = false;
     }
-	return pixelsAsFloats;
+	return floatPixels;     
 }
 
 
 
 // Draw Image
-
-//--------------------------------------------------------------------------------
-void ofxCvFloatImage::drawWithoutTexture( float x, float y ) {
-    drawWithoutTexture( x,y, width, height );
-}
-
-//--------------------------------------------------------------------------------
-void ofxCvFloatImage::drawWithoutTexture( float x, float y, float w, float h ) {
-    // this is slower than the typical draw method based on textures
-    // but useful when dealing with threads GL textures often don't work
-    
-    if( x == 0) {
-        x += 0.01;
-        ofLog(OF_NOTICE, "BUG: can't draw at x==0 in texture-less mode.");
-    }
-    
-    glRasterPos3f( x, y+h, 0.0 );
-    IplImage* tempImg;
-    tempImg = cvCreateImage( cvSize((int)w, (int)h), IPL_DEPTH_32F, 1 );
-    cvResize( cvImage, tempImg, CV_INTER_NN );
-    
-    // map from scaleMin-scaleMax to 0-1
-    float scale = 1.0f/(scaleMax-scaleMin);
-    cvConvertScale( tempImg, tempImg, scale, -(scaleMin*scale) );    
-    cvFlip( tempImg, tempImg, 0 );
-    glDrawPixels( tempImg->width, tempImg->height ,
-                 GL_LUMINANCE, GL_FLOAT, tempImg->imageData );
-    cvReleaseImage( &tempImg );
-    glRasterPos3f( -x, -(y+h), 0.0 );
-}
 
 
 

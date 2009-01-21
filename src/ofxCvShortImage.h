@@ -23,10 +23,18 @@ class ofxCvShortImage : public ofxCvImage {
 
     ofxCvShortImage();
     ofxCvShortImage( const ofxCvShortImage& mom );
-    virtual void  allocate( int w, int h );
+    // virtual void  allocate( int w, int h );                                //in base class
     virtual void  clear();
     // virtual void  setUseTexture( bool bUse );                              //in base class 
 
+
+    // ROI - region of interest
+    //
+    // virtual void  setROI( int x, int y, int w, int h );                    //in base class
+    // virtual void  setROI( const ofRectangle& rect );                       //in base class
+    // virtual ofRectangle  getROI();                                         //in base class
+    // virtual void  resetROI();                                              //in base class
+    
 
     // Set Pixel Data
     //
@@ -35,9 +43,7 @@ class ofxCvShortImage : public ofxCvImage {
     // virtual void  operator += ( float value );                             //in base class     
 	      
     virtual void  setFromPixels( unsigned char* _pixels, int w, int h);
-    virtual void  setFromPixels( unsigned short int* _pixels, int w, int h );
     virtual void  operator = ( unsigned char* _pixels );
-    virtual void  operator = ( unsigned short int* _pixels );  //no scaling
     virtual void  operator = ( const ofxCvGrayscaleImage& mom );
     virtual void  operator = ( const ofxCvColorImage& mom );
     virtual void  operator = ( const ofxCvFloatImage& mom );
@@ -57,8 +63,8 @@ class ofxCvShortImage : public ofxCvImage {
     
     // Draw Image
     //
-    virtual void  drawWithoutTexture( float x, float y );
-    virtual void  drawWithoutTexture( float x, float y, float w, float h );    
+    //virtual void  draw( float x, float y );                                  //in base class
+    //virtual void  draw( float x, float y, float w, float h );                //in base class
 
 
     // Image Filter Operations
@@ -106,7 +112,7 @@ class ofxCvShortImage : public ofxCvImage {
     virtual void convertShortToGray( const IplImage* floatImg, IplImage* grayImg );
     virtual void convertGrayToShort( const IplImage* grayImg, IplImage* floatImg );
     
-    IplImage*  cvGrayscaleImage;    // internal helper grayscale;
+    IplImage*  cvGrayscaleImage;    // internal helper grayscale, allocated on demand
     
 };
 
