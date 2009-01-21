@@ -66,7 +66,7 @@ void ofxCvShortImage::setFromPixels( unsigned char* _pixels, int w, int h ) {
     cvSetImageROI(cvGrayscaleImage, cvRect(roiX,roiY,width,height));  //make sure ROI is in sync
     ofRectangle roi = ofRectangle( roiX, roiY, width, height );
     ofRectangle inputROI = ofRectangle( roiX, roiY, w, h );
-    ofRectangle iRoi = getIntersectionRectangle( roi, inputROI );
+    ofRectangle iRoi = getIntersectionROI( roi, inputROI );
     
     if( iRoi.width > 0 && iRoi.height > 0 ) {
         // copy pixels from _pixels, however many we have or will fit in cvGrayscaleImage

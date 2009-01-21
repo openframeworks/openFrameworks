@@ -42,11 +42,15 @@ class ofxCvImage : public ofBaseHasTexture {
     
     // ROI - region of interest
     //
+    virtual void  pushROI();
+    virtual void  popROI();
     virtual void  setROI( int x, int y, int w, int h );
     virtual void  setROI( const ofRectangle& rect );
-    virtual ofRectangle  getROI();
+    virtual ofRectangle  getROI() const;
     virtual void  resetROI();
-
+    virtual ofRectangle  getIntersectionROI( const ofRectangle& rec1,
+                                             const ofRectangle& rec2 ) const;
+    
 
     // Set Pixel Data
     //
@@ -138,12 +142,14 @@ class ofxCvImage : public ofBaseHasTexture {
     virtual void swapTemp();  // swap cvImageTemp back
                               // to cvImage after an image operation
                           
-    virtual ofRectangle   getIntersectionRectangle( const ofRectangle& rec1, const ofRectangle& rec2 );
-
     IplImage*  cvImage;
     IplImage*  cvImageTemp;   // this is typically swapped back into cvImage
                               // after an image operation with swapImage()
-                              
+
+    vector<ofRectangle>  roiStack;      // ROI stack
+                                        // last rectangle is used for ROI
+                                        // used with pushROI(), popROI()
+                                                                      
     int roiX;                 // region of interest offset x
     int roiY;                 // region of interest offset y    
                               

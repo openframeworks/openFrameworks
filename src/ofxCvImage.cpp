@@ -39,6 +39,7 @@ void ofxCvImage::allocate( int w, int h ) {
 
 	width = w;
 	height = h;
+    roiStack.push_back( ofRectangle(0,0,w,h) );   // set ROI to full image
 	bAllocated = true;
 
     if( bUseTexture ) {
@@ -65,7 +66,8 @@ void ofxCvImage::clear() {
 		width = 0;
 		height = 0;
         roiX = 0;    
-        roiY = 0;    
+        roiY = 0;
+        roiStack.clear(); 
 
 		if( bUseTexture ) {
 			tex.clear();
@@ -112,17 +114,83 @@ void ofxCvImage::rangeMap( IplImage* img, float min1, float max1, float min2, fl
     cvConvertScale( img, img, scale, -(min1*scale)+min2 );
 }
 
+
+
+// ROI - region of interest
+
 //--------------------------------------------------------------------------------
-ofRectangle ofxCvImage::getIntersectionRectangle( const ofRectangle& r1, const ofRectangle& r2 ) {
+void ofxCvImage::pushROI() {
+    roiStack.push_back( ofRectangle() );
+    setROI(0,0,cvImage->width,cvImage->height);
+    
+}
+
+//--------------------------------------------------------------------------------
+void ofxCvImage::popROI() {
+    if(roiStack.size() > 1) {
+        roiStack.pop_back();
+    } else {
+        ofLog(OF_WARNING, "in popROI, not popping since there is only one element left.");
+    }
+    width = roiStack.back().width;
+    height = roiStack.back().height;
+    roiX = roiStack.back().x;
+    roiY = roiStack.back().y;
+}
+
+//--------------------------------------------------------------------------------
+void ofxCvImage::setROI( int x, int y, int w, int h ) {
+    
+    x = ofClamp(x, 0, cvImage->width-1);
+    y = ofClamp(y, 0, cvImage->height-1);
+    w = ofClamp(w, 0, cvImage->width - x);
+    h = ofClamp(h, 0, cvImage->height - y);
+    
+    cvSetImageROI( cvImage, cvRect(x,y, w,h) );
+    cvSetImageROI( cvImageTemp, cvRect(x,y, w,h) );
+    width = w;
+    height = h;
+    roiX = x;
+    roiY = y;
+    roiStack.back().x = x;
+    roiStack.back().y = y;
+    roiStack.back().width = w;
+    roiStack.back().height = h;    
+    flagImageChanged();
+}
+
+//--------------------------------------------------------------------------------
+void ofxCvImage::setROI( const ofRectangle& rect ) {
+    setROI( rect.x, rect.y, rect.width, rect.height );
+}
+
+//--------------------------------------------------------------------------------
+ofRectangle ofxCvImage::getROI() const {
+    return roiStack.back();
+}
+
+//--------------------------------------------------------------------------------
+void ofxCvImage::resetROI() {
+    cvResetImageROI( cvImage );
+    cvResetImageROI( cvImageTemp );
+    width = cvImage->width;
+    height = cvImage->height;
+    roiX = 0;
+    roiY = 0;
+    setROI( 0,0, cvImage->width, cvImage->height );
+}
+
+//--------------------------------------------------------------------------------
+ofRectangle ofxCvImage::getIntersectionROI( const ofRectangle& r1, const ofRectangle& r2 ) const {
     int r1x1 = r1.x;
     int r1y1 = r1.y;
-    int r1x2 = r1.x+width;
-    int r1y2 = r1.y+height;
+    int r1x2 = r1.x+r1.width;
+    int r1y2 = r1.y+r1.height;
 
     int r2x1 = r2.x;
     int r2y1 = r2.y;
-    int r2x2 = r2.x+width;
-    int r2y2 = r2.y+height;
+    int r2x2 = r2.x+r2.width;
+    int r2y2 = r2.y+r2.height;
 
     int r3x1 = 0;
     int r3y1 = 0;
@@ -147,48 +215,6 @@ ofRectangle ofxCvImage::getIntersectionRectangle( const ofRectangle& r1, const o
 }
 
 
-
-// ROI - region of interest
-
-//--------------------------------------------------------------------------------
-void ofxCvImage::setROI( int x, int y, int w, int h ) {
-    
-    x = ofClamp(x, 0, cvImage->width-1);
-    y = ofClamp(y, 0, cvImage->height-1);
-    w = ofClamp(w, 0, cvImage->width - x);
-    h = ofClamp(h, 0, cvImage->height - y);
-    
-    cvSetImageROI( cvImage, cvRect(x,y, w,h) );
-    cvSetImageROI( cvImageTemp, cvRect(x,y, w,h) );
-    width = w;
-    height = h;
-    roiX = x;
-    roiY = y;
-    flagImageChanged();
-}
-
-//--------------------------------------------------------------------------------
-void ofxCvImage::setROI( const ofRectangle& rect ) {
-    setROI( rect.x, rect.y, rect.width, rect.height );
-}
-
-//--------------------------------------------------------------------------------
-ofRectangle ofxCvImage::getROI() {
-    CvRect rect = cvGetImageROI( cvImage );
-    return ofRectangle( rect.x, rect.y, rect.width, rect.height );
-    //return ofRectangle( roiX, roiY, width, height );
-}
-
-//--------------------------------------------------------------------------------
-void ofxCvImage::resetROI() {
-    cvResetImageROI( cvImage );
-    cvResetImageROI( cvImageTemp );
-    width = cvImage->width;
-    height = cvImage->height;
-    roiX = 0;
-    roiY = 0;
-}
-    
 
 
 // Set Pixel Data
@@ -523,6 +549,7 @@ void ofxCvImage::warpIntoMe( const ofxCvGrayscaleImage& mom,
 
 // Other Image Operations
 
+/*
 //--------------------------------------------------------------------------------
 int ofxCvImage::countNonZeroInRegion( int x, int y, int w, int h ) {
     //TODO: test this method
@@ -533,8 +560,8 @@ int ofxCvImage::countNonZeroInRegion( int x, int y, int w, int h ) {
     // intersect the global ROI with the region to check
     ofRectangle roi = getROI();
     ofRectangle inputROI = ofRectangle(x,y,w,h);
-    ofRectangle iRoi = getIntersectionRectangle( roi, inputROI );
-        
+    ofRectangle iRoi = getIntersectionROI( roi, inputROI );
+    
 	cvSetImageROI( cvImage, cvRect(iRoi.x, iRoi.y, iRoi.width, iRoi.height) );
 	count = cvCountNonZero( cvImage );
     
@@ -543,7 +570,28 @@ int ofxCvImage::countNonZeroInRegion( int x, int y, int w, int h ) {
         
 	return count;
 }
+*/
 
+
+//--------------------------------------------------------------------------------
+int ofxCvImage::countNonZeroInRegion( int x, int y, int w, int h ) {
+    //TODO: test this method
+    
+	if (w == 0 || h == 0) return 0;
+    int count = 0;
+    
+    // intersect the global ROI with the region to check
+    ofRectangle iRoi = getIntersectionROI( getROI(), ofRectangle(x,y,w,h) );
+    
+    pushROI();
+    setROI(iRoi);
+
+	count = cvCountNonZero( cvImage );
+    
+    popROI();
+        
+	return count;
+}
 
 
 

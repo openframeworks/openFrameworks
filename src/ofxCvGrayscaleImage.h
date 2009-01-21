@@ -30,10 +30,15 @@ class ofxCvGrayscaleImage : public ofxCvImage {
 
     // ROI - region of interest
     //
+    // virtual void  pushROI();                                               //in base class
+    // virtual void  popROI();                                                //in base class
     // virtual void  setROI( int x, int y, int w, int h );                    //in base class
     // virtual void  setROI( const ofRectangle& rect );                       //in base class
     // virtual ofRectangle  getROI();                                         //in base class
     // virtual void  resetROI();                                              //in base class
+    // virtual ofRectangle  getIntersectionROI( const ofRectangle& rec1,      
+    //                                  const ofRectangle& rec2 ) const;      // inbase class
+    
     
     
     // Set Pixel Data

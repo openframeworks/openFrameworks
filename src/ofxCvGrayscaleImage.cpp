@@ -32,7 +32,7 @@ void ofxCvGrayscaleImage::set( float value ){
 void ofxCvGrayscaleImage::setFromPixels( unsigned char* _pixels, int w, int h ) {
     ofRectangle roi = getROI();
     ofRectangle inputROI = ofRectangle( roi.x, roi.y, w, h);
-    ofRectangle iRoi = getIntersectionRectangle( roi, inputROI );
+    ofRectangle iRoi = getIntersectionROI( roi, inputROI );
         
     if( iRoi.width > 0 && iRoi.height > 0 ) {
         // copy pixels from _pixels, however many we have or will fit in cvImage
