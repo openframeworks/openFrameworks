@@ -524,7 +524,7 @@ void ofxCvImage::warpIntoMe( const ofxCvGrayscaleImage& mom,
 // Other Image Operations
 
 //--------------------------------------------------------------------------------
-int ofxCvImage::countNonZeroInRegion( int x, int y, int w, int h ) const {
+int ofxCvImage::countNonZeroInRegion( int x, int y, int w, int h ) {
     //TODO: test this method
     
 	if (w == 0 || h == 0) return 0;

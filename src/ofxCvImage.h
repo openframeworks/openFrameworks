@@ -125,7 +125,7 @@ class ofxCvImage : public ofBaseHasTexture {
 
     // Other Image Operations
     //
-    virtual int  countNonZeroInRegion( int x, int y, int w, int h ) const;
+    virtual int  countNonZeroInRegion( int x, int y, int w, int h );
 
 
 
