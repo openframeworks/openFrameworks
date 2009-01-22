@@ -93,7 +93,7 @@ class ofCoreEvents {
 
 
 
-extern ofCoreEvents ofEvents;
+extern ofCoreEvents & ofEvents;
 
 
 
