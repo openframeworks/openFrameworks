@@ -46,10 +46,10 @@ class ofxCvImage : public ofBaseHasTexture {
     virtual void  popROI();
     virtual void  setROI( int x, int y, int w, int h );
     virtual void  setROI( const ofRectangle& rect );
-    virtual ofRectangle  getROI() const;
+    virtual ofRectangle  getROI();
     virtual void  resetROI();
     virtual ofRectangle  getIntersectionROI( const ofRectangle& rec1,
-                                             const ofRectangle& rec2 ) const;
+                                             const ofRectangle& rec2 );
     
 
     // Set Pixel Data
@@ -63,16 +63,16 @@ class ofxCvImage : public ofBaseHasTexture {
     virtual void  operator = ( const ofxCvColorImage& mom ) = 0;
     virtual void  operator = ( const ofxCvFloatImage& mom ) = 0;
     
-    virtual void  operator -= ( const ofxCvImage& mom );
-    virtual void  operator += ( const ofxCvImage& mom );
-    virtual void  operator *= ( const ofxCvImage& mom );
-    virtual void  operator &= ( const ofxCvImage& mom );
+    virtual void  operator -= ( ofxCvImage& mom );
+    virtual void  operator += ( ofxCvImage& mom );
+    virtual void  operator *= ( ofxCvImage& mom );
+    virtual void  operator &= ( ofxCvImage& mom );
     
 
     // Get Pixel Data
     //
     virtual unsigned char*  getPixels() = 0;
-    virtual IplImage*  getCvImage() const { return cvImage; };
+    virtual IplImage*  getCvImage() { return cvImage; };
 
 
     // Draw Image
@@ -97,7 +97,7 @@ class ofxCvImage : public ofBaseHasTexture {
     // Image Transformation Operations
     //
     virtual void  resize( int w, int h ) = 0;
-    virtual void  scaleIntoMe( const ofxCvImage& mom, int interpolationMethod = CV_INTER_NN ) = 0;
+    virtual void  scaleIntoMe( ofxCvImage& mom, int interpolationMethod = CV_INTER_NN ) = 0;
     virtual void  mirror( bool bFlipVertically, bool bFlipHorizontally );
 
     virtual void  translate( float x, float y );
@@ -116,14 +116,12 @@ class ofxCvImage : public ofBaseHasTexture {
                              float focalX, float focalY,
                              float centerX, float centerY );
 
-    virtual void  remap( const IplImage* mapX, const IplImage* mapY );
+    virtual void  remap( IplImage* mapX, IplImage* mapY );
 
-    virtual void  warpPerspective( const ofPoint& A,
-                                   const ofPoint& B,
-                                   const ofPoint& C,
-                                   const ofPoint& D );
-    virtual void  warpIntoMe( const ofxCvGrayscaleImage& mom,
-                              ofPoint src[4], ofPoint dst[4] );
+    virtual void  warpPerspective( const ofPoint& A, const ofPoint& B,
+                                   const ofPoint& C, const ofPoint& D );
+    virtual void  warpIntoMe( ofxCvGrayscaleImage& mom,
+                              const ofPoint src[4], const ofPoint dst[4] );
 
 
 
@@ -136,7 +134,8 @@ class ofxCvImage : public ofBaseHasTexture {
 
   protected:
 
-    //virtual void  allocateTexture( int width, int height ) = 0;
+    bool pushSetBothToTheirIntersectionROI( ofxCvImage& img1, ofxCvImage& img2 );
+
     virtual void  rangeMap( IplImage* img, float min1, float max1, float min2, float max2 );
                                      
     virtual void swapTemp();  // swap cvImageTemp back

@@ -17,7 +17,9 @@ ofxCvColorImage::ofxCvColorImage() {
 }
 
 //--------------------------------------------------------------------------------
-ofxCvColorImage::ofxCvColorImage( const ofxCvColorImage& mom ) {
+ofxCvColorImage::ofxCvColorImage( const ofxCvColorImage& _mom ) {
+    // cast non-const,  to get read access to the mon::cvImage
+    ofxCvColorImage& mom = const_cast<ofxCvColorImage&>(_mom); 
     allocate(mom.width, mom.height);    
     cvCopy( mom.getCvImage(), cvImage, 0 );
 }
@@ -81,7 +83,7 @@ void ofxCvColorImage::setFromPixels( unsigned char* _pixels, int w, int h ) {
 }
 
 //--------------------------------------------------------------------------------
-void ofxCvColorImage::setFromGrayscalePlanarImages( const ofxCvGrayscaleImage& red, const ofxCvGrayscaleImage& green, const ofxCvGrayscaleImage& blue){     
+void ofxCvColorImage::setFromGrayscalePlanarImages( ofxCvGrayscaleImage& red, ofxCvGrayscaleImage& green, ofxCvGrayscaleImage& blue){     
 	if( red.width == width && red.height == height &&
         green.width == width && green.height == height &&
         blue.width == width && blue.height == height )
@@ -100,9 +102,13 @@ void ofxCvColorImage::operator = ( unsigned char* _pixels ) {
 }
 
 //--------------------------------------------------------------------------------
-void ofxCvColorImage::operator = ( const ofxCvGrayscaleImage& mom ) {
-	if( mom.width == width && mom.height == height ) {
+void ofxCvColorImage::operator = ( const ofxCvGrayscaleImage& _mom ) {
+    // cast non-const,  no worries, we will reverse any chages
+    ofxCvGrayscaleImage& mom = const_cast<ofxCvGrayscaleImage&>(_mom);
+	if( pushSetBothToTheirIntersectionROI(*this,mom) ) {
 		cvCvtColor( mom.getCvImage(), cvImage, CV_GRAY2RGB );
+        popROI();       //restore prevoius ROI
+        mom.popROI();   //restore prevoius ROI         
         flagImageChanged();
 	} else {
         ofLog(OF_ERROR, "in =, images are different sizes");
@@ -110,10 +116,14 @@ void ofxCvColorImage::operator = ( const ofxCvGrayscaleImage& mom ) {
 }
 
 //--------------------------------------------------------------------------------
-void ofxCvColorImage::operator = ( const ofxCvColorImage& mom ) {
-    if(this != &mom) {  //check for self-assignment
-        if( mom.width == width && mom.height == height ) {
+void ofxCvColorImage::operator = ( const ofxCvColorImage& _mom ) {
+    if(this != &_mom) {  //check for self-assignment
+        // cast non-const,  no worries, we will reverse any chages
+        ofxCvColorImage& mom = const_cast<ofxCvColorImage&>(_mom);    
+        if( pushSetBothToTheirIntersectionROI(*this,mom) ) {
             cvCopy( mom.getCvImage(), cvImage, 0 );
+            popROI();       //restore prevoius ROI
+            mom.popROI();   //restore prevoius ROI              
             flagImageChanged();
         } else {
             ofLog(OF_ERROR, "in =, images are different sizes");
@@ -124,14 +134,19 @@ void ofxCvColorImage::operator = ( const ofxCvColorImage& mom ) {
 }
 
 //--------------------------------------------------------------------------------
-void ofxCvColorImage::operator = ( const ofxCvFloatImage& mom ) {
-	if( mom.width == width && mom.height == height ) {
+void ofxCvColorImage::operator = ( const ofxCvFloatImage& _mom ) {
+    // cast non-const,  no worries, we will reverse any chages
+    ofxCvFloatImage& mom = const_cast<ofxCvFloatImage&>(_mom); 
+	if( pushSetBothToTheirIntersectionROI(*this,mom) ) {
         if( cvGrayscaleImage == NULL ) {
             cvGrayscaleImage = cvCreateImage( cvSize(cvImage->width,cvImage->height), IPL_DEPTH_8U, 1 );
         }
-        cvSetImageROI(cvGrayscaleImage, cvRect(roiX,roiY,width,height));  //make sure ROI is in sync
+        cvSetImageROI(cvGrayscaleImage, cvRect(roiX,roiY,width,height));
 		cvConvertScale( mom.getCvImage(), cvGrayscaleImage, 1, 0 );
 		cvCvtColor( cvGrayscaleImage, cvImage, CV_GRAY2RGB );
+        popROI();       //restore prevoius ROI
+        mom.popROI();   //restore prevoius ROI          
+        cvSetImageROI(cvGrayscaleImage, cvRect(roiX,roiY,width,height));
         flagImageChanged();
 	} else {
         ofLog(OF_ERROR, "in =, images are different sizes");
@@ -219,7 +234,7 @@ void ofxCvColorImage::resize( int w, int h ) {
 }
 
 //--------------------------------------------------------------------------------
-void ofxCvColorImage::scaleIntoMe( const ofxCvImage& mom, int interpolationMethod ){
+void ofxCvColorImage::scaleIntoMe( ofxCvImage& mom, int interpolationMethod ){
     //for interpolation you can pass in:
     //CV_INTER_NN - nearest-neigbor interpolation,
     //CV_INTER_LINEAR - bilinear interpolation (used by default)

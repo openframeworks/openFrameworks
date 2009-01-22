@@ -32,11 +32,11 @@ class ofxCvColorImage : public ofxCvImage {
     // virtual void  pushROI();                                               //in base class
     // virtual void  popROI();                                                //in base class
     // virtual void  setROI( int x, int y, int w, int h );                    //in base class
-    // virtual void  setROI( const ofRectangle& rect );                       //in base class
+    // virtual void  setROI( ofRectangle& rect );                             //in base class
     // virtual ofRectangle  getROI();                                         //in base class
     // virtual void  resetROI();                                              //in base class
-    // virtual ofRectangle  getIntersectionROI( const ofRectangle& rec1,      
-    //                                  const ofRectangle& rec2 ) const;      // inbase class
+    // virtual ofRectangle  getIntersectionROI( ofRectangle& rec1,      
+    //                                          ofRectangle& rec2 );          // inbase class
     
 
     // Set Pixel Data
@@ -47,23 +47,23 @@ class ofxCvColorImage : public ofxCvImage {
     virtual void  operator += ( float value ); 
         
     virtual void  setFromPixels( unsigned char * _pixels, int w, int h );
-    virtual void  setFromGrayscalePlanarImages( const ofxCvGrayscaleImage& red, const ofxCvGrayscaleImage& green, const ofxCvGrayscaleImage& blue );
+    virtual void  setFromGrayscalePlanarImages( ofxCvGrayscaleImage& red, ofxCvGrayscaleImage& green, ofxCvGrayscaleImage& blue );
     virtual void  operator = ( unsigned char* _pixels );
     virtual void  operator = ( const ofxCvGrayscaleImage& mom );
     virtual void  operator = ( const ofxCvColorImage& mom );
     virtual void  operator = ( const ofxCvFloatImage& mom );
     
-    // virtual void  operator -= ( const ofxCvImage& mom );                   //in base class 
-    // virtual void  operator += ( const ofxCvImage& mom );                   //in base class 
-    // virtual void  operator *= ( const ofxCvImage& mom );                   //in base class 
-    // virtual void  operator &= ( const ofxCvImage& mom );                   //in base class     
+    // virtual void  operator -= ( ofxCvImage& mom );                         //in base class 
+    // virtual void  operator += ( ofxCvImage& mom );                         //in base class 
+    // virtual void  operator *= ( ofxCvImage& mom );                         //in base class 
+    // virtual void  operator &= ( ofxCvImage& mom );                         //in base class     
 
 
     // Get Pixel Data
     //
     virtual unsigned char*  getPixels();
     virtual void  convertToGrayscalePlanarImages( ofxCvGrayscaleImage& red, ofxCvGrayscaleImage& green, ofxCvGrayscaleImage& blue );
-    // virtual IplImage*  getCvImage() const { return cvImage; };             //in base class
+    // virtual IplImage*  getCvImage();                                        //in base class
     
 
     // Draw Image
@@ -86,7 +86,7 @@ class ofxCvColorImage : public ofxCvImage {
     // Image Transformation Operations
     //
     virtual void  resize( int w, int h );
-    virtual void  scaleIntoMe( const ofxCvImage& mom, int interpolationMethod = CV_INTER_NN);
+    virtual void  scaleIntoMe( ofxCvImage& mom, int interpolationMethod = CV_INTER_NN);
     virtual void  convertRgbToHsv();
     virtual void  convertHsvToRgb();
     // virtual void  mirror( bool bFlipVertically, bool bFlipHorizontally );   //in base class
@@ -101,17 +101,15 @@ class ofxCvColorImage : public ofxCvImage {
     //                          float focalX, float focalY,
     //                          float centerX, float centerY );                //in base class
     // virtual void  remap( IplImage* mapX, IplImage* mapY );                  //in base class
-    // virtual void  warpPerspective( const ofPoint& A,
-    //                                const ofPoint& B,
-    //                                const ofPoint& C,
-    //                                const ofPoint& D );                      //in base class
-    // virtual void  warpIntoMe( const ofxCvGrayscaleImage& mom,
+    // virtual void  warpPerspective( ofPoint& A, ofPoint& B,
+    //                                ofPoint& C, ofPoint& D );                //in base class
+    // virtual void  warpIntoMe( ofxCvGrayscaleImage& mom,
     //                           ofPoint src[4], ofPoint dst[4] );             //in base class
                              
 
     // Other Image Operations
     //
-    // virtual int  countNonZeroInRegion( int x, int y, int w, int h ) const;  //in base class       
+    // virtual int  countNonZeroInRegion( int x, int y, int w, int h );  //in base class       
 
 
   private:

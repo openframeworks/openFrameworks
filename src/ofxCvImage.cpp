@@ -114,6 +114,22 @@ void ofxCvImage::rangeMap( IplImage* img, float min1, float max1, float min2, fl
     cvConvertScale( img, img, scale, -(min1*scale)+min2 );
 }
 
+//--------------------------------------------------------------------------------
+bool ofxCvImage::pushSetBothToTheirIntersectionROI( ofxCvImage& img1, ofxCvImage& img2 ) {
+    // calculates intersection ROI
+    // pushes the intersection ROI on both the images' roiStack
+    // use popROI() to restore previous ROI
+    ofRectangle iRoi = getIntersectionROI( img1.getROI(), img2.getROI() );
+    if( iRoi.width > 0 && iRoi.height > 0 ) { 
+        img1.pushROI();
+        img1.setROI( iRoi );
+        img2.pushROI();
+        img2.setROI( iRoi );            
+        return true;
+    } else {
+        return false;
+    }
+}
 
 
 // ROI - region of interest
@@ -132,10 +148,7 @@ void ofxCvImage::popROI() {
     } else {
         ofLog(OF_WARNING, "in popROI, not popping since there is only one element left.");
     }
-    width = roiStack.back().width;
-    height = roiStack.back().height;
-    roiX = roiStack.back().x;
-    roiY = roiStack.back().y;
+    setROI( roiStack.back() );
 }
 
 //--------------------------------------------------------------------------------
@@ -165,7 +178,7 @@ void ofxCvImage::setROI( const ofRectangle& rect ) {
 }
 
 //--------------------------------------------------------------------------------
-ofRectangle ofxCvImage::getROI() const {
+ofRectangle ofxCvImage::getROI() {
     return roiStack.back();
 }
 
@@ -181,7 +194,7 @@ void ofxCvImage::resetROI() {
 }
 
 //--------------------------------------------------------------------------------
-ofRectangle ofxCvImage::getIntersectionROI( const ofRectangle& r1, const ofRectangle& r2 ) const {
+ofRectangle ofxCvImage::getIntersectionROI( const ofRectangle& r1, const ofRectangle& r2 ) {
     int r1x1 = r1.x;
     int r1y1 = r1.y;
     int r1x2 = r1.x+r1.width;
@@ -235,7 +248,7 @@ void ofxCvImage::operator += ( float value ) {
 
 
 //--------------------------------------------------------------------------------
-void ofxCvImage::operator -= ( const ofxCvImage& mom ) {
+void ofxCvImage::operator -= ( ofxCvImage& mom ) {
 	if( mom.width == width && mom.height == height &&
 	    mom.getCvImage()->nChannels == cvImage->nChannels && 
         mom.getCvImage()->depth == cvImage->depth )
@@ -249,7 +262,7 @@ void ofxCvImage::operator -= ( const ofxCvImage& mom ) {
 }
 
 //--------------------------------------------------------------------------------
-void ofxCvImage::operator += ( const ofxCvImage& mom ) {
+void ofxCvImage::operator += ( ofxCvImage& mom ) {
 	if( mom.width == width && mom.height == height &&
 	    mom.getCvImage()->nChannels == cvImage->nChannels && 
         mom.getCvImage()->depth == cvImage->depth )
@@ -263,7 +276,7 @@ void ofxCvImage::operator += ( const ofxCvImage& mom ) {
 }
 
 //--------------------------------------------------------------------------------
-void ofxCvImage::operator *= ( const ofxCvImage& mom ) {
+void ofxCvImage::operator *= ( ofxCvImage& mom ) {
     float scalef = 1.0f / 255.0f;
 	if( mom.width == width && mom.height == height &&
 	    mom.getCvImage()->nChannels == cvImage->nChannels && 
@@ -278,7 +291,7 @@ void ofxCvImage::operator *= ( const ofxCvImage& mom ) {
 }
 
 //--------------------------------------------------------------------------------
-void ofxCvImage::operator &= ( const ofxCvImage& mom ) {
+void ofxCvImage::operator &= ( ofxCvImage& mom ) {
 	if( mom.width == width && mom.height == height &&
 	    mom.getCvImage()->nChannels == cvImage->nChannels && 
         mom.getCvImage()->depth == cvImage->depth )
@@ -436,8 +449,7 @@ void ofxCvImage::scale( float scaleX, float scaleY ) {
 //--------------------------------------------------------------------------------
 void ofxCvImage::transform( float angle, float centerX, float centerY,
                             float scaleX, float scaleY,
-                            float moveX, float moveY )
-{
+                            float moveX, float moveY ){
     float sina = sin(angle * DEG_TO_RAD);
     float cosa = cos(angle * DEG_TO_RAD);
     CvMat*  transmat = cvCreateMat( 2,3, CV_32F );
@@ -457,9 +469,9 @@ void ofxCvImage::transform( float angle, float centerX, float centerY,
 
 //--------------------------------------------------------------------------------
 void ofxCvImage::undistort( float radialDistX, float radialDistY,
-                           float tangentDistX, float tangentDistY,
-                           float focalX, float focalY,
-                           float centerX, float centerY ){
+                            float tangentDistX, float tangentDistY,
+                            float focalX, float focalY,
+                            float centerX, float centerY ){
     float camIntrinsics[] = { focalX, 0, centerX, 0, focalY, centerY, 0, 0, 1 };
     float distortionCoeffs[] = { radialDistX, radialDistY, tangentDistX, tangentDistY };
     cvUnDistortOnce( cvImage, cvImageTemp, camIntrinsics, distortionCoeffs, 1 );
@@ -469,7 +481,7 @@ void ofxCvImage::undistort( float radialDistX, float radialDistY,
 
 
 //--------------------------------------------------------------------------------
-void ofxCvImage::remap( const IplImage* mapX, const IplImage* mapY ) {
+void ofxCvImage::remap( IplImage* mapX, IplImage* mapY ) {
     cvRemap( cvImage, cvImageTemp, mapX, mapY );
 	swapTemp();
     flagImageChanged();
@@ -487,9 +499,7 @@ void ofxCvImage::remap( const IplImage* mapX, const IplImage* mapY ) {
 */
 
 //--------------------------------------------------------------------------------
-void ofxCvImage::warpPerspective( const ofPoint& A, const ofPoint& B, 
-                                  const ofPoint& C, const ofPoint& D ) 
-{ 
+void ofxCvImage::warpPerspective( const ofPoint& A, const ofPoint& B, const ofPoint& C, const ofPoint& D ) { 
     // compute matrix for perspectival warping (homography) 
     CvPoint2D32f cvsrc[4]; 
     CvPoint2D32f cvdst[4]; 
@@ -524,9 +534,7 @@ void ofxCvImage::warpPerspective( const ofPoint& A, const ofPoint& B,
 
 
 //--------------------------------------------------------------------------------
-void ofxCvImage::warpIntoMe( const ofxCvGrayscaleImage& mom,
-                            ofPoint src[4], ofPoint dst[4] )
-{
+void ofxCvImage::warpIntoMe( ofxCvGrayscaleImage& mom, const ofPoint src[4], const ofPoint dst[4] ){
 	// compute matrix for perspectival warping (homography)
 	CvPoint2D32f cvsrc[4];
 	CvPoint2D32f cvdst[4];
@@ -548,30 +556,6 @@ void ofxCvImage::warpIntoMe( const ofxCvGrayscaleImage& mom,
 
 
 // Other Image Operations
-
-/*
-//--------------------------------------------------------------------------------
-int ofxCvImage::countNonZeroInRegion( int x, int y, int w, int h ) {
-    //TODO: test this method
-    
-	if (w == 0 || h == 0) return 0;
-    int count = 0;
-    
-    // intersect the global ROI with the region to check
-    ofRectangle roi = getROI();
-    ofRectangle inputROI = ofRectangle(x,y,w,h);
-    ofRectangle iRoi = getIntersectionROI( roi, inputROI );
-    
-	cvSetImageROI( cvImage, cvRect(iRoi.x, iRoi.y, iRoi.width, iRoi.height) );
-	count = cvCountNonZero( cvImage );
-    
-    // restore global ROI
-    cvSetImageROI( cvImage, cvRect(roi.x, roi.y, roi.width, roi.height) );
-        
-	return count;
-}
-*/
-
 
 //--------------------------------------------------------------------------------
 int ofxCvImage::countNonZeroInRegion( int x, int y, int w, int h ) {

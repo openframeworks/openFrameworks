@@ -41,11 +41,11 @@ class ofxCvFloatImage : public ofxCvImage {
     // virtual void  pushROI();                                               //in base class
     // virtual void  popROI();                                                //in base class
     // virtual void  setROI( int x, int y, int w, int h );                    //in base class
-    // virtual void  setROI( const ofRectangle& rect );                       //in base class
+    // virtual void  setROI( ofRectangle& rect );                             //in base class
     // virtual ofRectangle  getROI();                                         //in base class
     // virtual void  resetROI();                                              //in base class
-    // virtual ofRectangle  getIntersectionROI( const ofRectangle& rec1,      
-    //                                  const ofRectangle& rec2 ) const;      // inbase class
+    // virtual ofRectangle  getIntersectionROI( ofRectangle& rec1,      
+    //                                          ofRectangle& rec2 );          // inbase class
     
 
     // Set Pixel Data
@@ -64,10 +64,10 @@ class ofxCvFloatImage : public ofxCvImage {
     virtual void  operator = ( const ofxCvColorImage& mom );
     virtual void  operator = ( const ofxCvFloatImage& mom );
     
-    // virtual void  operator -= ( const ofxCvImage& mom );                   //in base class 
-    // virtual void  operator += ( const ofxCvImage& mom );                   //in base class     
-    virtual void  operator *= ( const ofxCvImage& mom );
-    virtual void  operator &= ( const ofxCvImage& mom );  //bit-wise at the moment
+    // virtual void  operator -= ( ofxCvImage& mom );                         //in base class 
+    // virtual void  operator += ( ofxCvImage& mom );                         //in base class     
+    virtual void  operator *= ( ofxCvImage& mom );
+    virtual void  operator &= ( ofxCvImage& mom );  //bit-wise at the moment
 
 	void  addWeighted( ofxCvGrayscaleImage& mom, float f );
 	
@@ -76,7 +76,7 @@ class ofxCvFloatImage : public ofxCvImage {
 	//
     virtual unsigned char*  getPixels();
     virtual float*  getPixelsAsFloats();  //no scaling
-    // virtual IplImage*  getCvImage() const { return cvImage; };             //in base class 	
+    // virtual IplImage*  getCvImage();                                        //in base class
 
     
     // Draw Image
@@ -99,7 +99,7 @@ class ofxCvFloatImage : public ofxCvImage {
     // Image Transformation Operations
     //
     virtual void  resize( int w, int h );
-    virtual void  scaleIntoMe( const ofxCvImage& mom, int interpolationMethod = CV_INTER_NN);
+    virtual void  scaleIntoMe( ofxCvImage& mom, int interpolationMethod = CV_INTER_NN);
     // virtual void  mirror( bool bFlipVertically, bool bFlipHorizontally );   //in base class
     // virtual void  translate( float x, float y );                            //in base class
     // virtual void  rotate( float angle, float centerX, float centerY );      //in base class
@@ -112,24 +112,22 @@ class ofxCvFloatImage : public ofxCvImage {
     //                          float focalX, float focalY,
     //                          float centerX, float centerY );                //in base class
     // virtual void  remap( IplImage* mapX, IplImage* mapY );                  //in base class
-    // virtual void  warpPerspective( const ofPoint& A,
-    //                                const ofPoint& B,
-    //                                const ofPoint& C,
-    //                                const ofPoint& D );                      //in base class
-    // virtual void  warpIntoMe( const ofxCvGrayscaleImage& mom,
+    // virtual void  warpPerspective( ofPoint& A, ofPoint& B,
+    //                                ofPoint& C, ofPoint& D );                //in base class
+    // virtual void  warpIntoMe( ofxCvGrayscaleImage& mom,
     //                           ofPoint src[4], ofPoint dst[4] );             //in base class
                              
 
     // Other Image Operations
     //
-    // virtual int  countNonZeroInRegion( int x, int y, int w, int h ) const;  //in base class
+    // virtual int  countNonZeroInRegion( int x, int y, int w, int h );        //in base class
     
 
   private:
 
     virtual void flagImageChanged();
-    virtual void convertFloatToGray( const IplImage* floatImg, IplImage* grayImg );
-    virtual void convertGrayToFloat( const IplImage* grayImg, IplImage* floatImg );
+    virtual void convertFloatToGray( IplImage* floatImg, IplImage* grayImg );
+    virtual void convertGrayToFloat( IplImage* grayImg, IplImage* floatImg );
     
     float* floatPixels;             // not width stepped for getPixelsAsFloats()
                                     // allocated on demand
