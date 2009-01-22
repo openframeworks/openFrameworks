@@ -2,15 +2,6 @@
 #define _OF_TYPES
 
 #include "ofConstants.h"
-#include "Poco/Timestamp.h"
-#include "Poco/Timespan.h"
-
-//----------------------------------------------------------
-// ofTimestamp / ofTimespan
-//----------------------------------------------------------
-
-typedef Poco::Timestamp ofTimestamp;
-typedef Poco::Timespan ofTimespan;
 
 //----------------------------------------------------------
 // ofPoint
@@ -279,7 +270,6 @@ public:
 	virtual ~ofBaseHasTexture(){}
 	virtual ofTexture & getTextureReference()=0;
 };
-
 
 
 #endif
