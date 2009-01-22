@@ -1,29 +1,52 @@
 #include "ofUtils.h"
 #include "ofImage.h"
 
-static bool enableDataPath = true;
 
-//--------------------------------------------------
-// not for the public, just for glutGlue -> ofUtil comm.
-static int numFrames = 0;
-void setFrameNum(int num){
-	numFrames = num;
-}
+
+static bool enableDataPath = true;
+static unsigned long startTime = ofGetSystemTime();   //  better at the first frame ?? (currently, there is some delay from static init, to running.
 
 //--------------------------------------
 int ofGetFrameNum(){
-	return numFrames;
+	return ofAppWindow->getFrameNum();
 }
 
 //--------------------------------------
 int ofGetElapsedTimeMillis(){
-	return (int)(glutGet(GLUT_ELAPSED_TIME));
+	return (int)(ofGetSystemTime() - startTime);
 }
 
 //--------------------------------------
 float ofGetElapsedTimef(){
-	return (float)(glutGet(GLUT_ELAPSED_TIME))/1000.0f;
+	return ((float) ((int)(ofGetSystemTime() - startTime)) / 1000.0f);
 }
+
+//--------------------------------------
+void ofResetElapsedTimeCounter(){
+	startTime = ofGetSystemTime();
+}
+
+//=======================================
+// this is from freeglut, and used internally:
+/* Platform-dependent time in milliseconds, as an unsigned 32-bit integer.
+ * This value wraps every 49.7 days, but integer overflows cancel
+ * when subtracting an initial start time, unless the total time exceeds
+ * 32-bit, where the GLUT API return value is also overflowed.
+ */
+unsigned long ofGetSystemTime( ) {
+	#ifndef TARGET_WIN32
+		struct timeval now;
+		gettimeofday( &now, NULL );
+		return now.tv_usec/1000 + now.tv_sec*1000;
+	#else
+		#if defined(_WIN32_WCE)
+			return GetTickCount();
+		#else
+			return timeGetTime();
+		#endif
+	#endif
+}
+
 
 //--------------------------------------------------
 int ofGetSeconds(){

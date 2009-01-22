@@ -10,6 +10,7 @@
 
 int 	ofNextPow2(int input);
 
+void	ofResetElapsedTimeCounter();		// this happens on the first frame
 float 	ofGetElapsedTimef();
 int		ofGetElapsedTimeMillis();
 int 	ofGetFrameNum();
@@ -17,6 +18,8 @@ int 	ofGetFrameNum();
 int 	ofGetSeconds();
 int 	ofGetMinutes();
 int 	ofGetHours();
+
+unsigned long ofGetSystemTime( );			// system time in milliseconds;
 
 int     ofGetYear();
 int     ofGetMonth();
@@ -44,8 +47,6 @@ void ofLog(int logLevel, const char* format, ...);
 void ofSetConsoleColor(int color);
 void ofRestoreConsoleColor();
 
-//----------------------- not for the public:
-void	setFrameNum(int num);
 
 #endif
 

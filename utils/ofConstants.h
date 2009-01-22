@@ -7,6 +7,7 @@
 #define OF_VERSION	6
 //-------------------------------
 
+#define OF_WINDOWING_GLUT
 
 //-------------------------------
 //  find the system type --------
@@ -35,8 +36,7 @@
 	#define WIN32_LEAN_AND_MEAN
 	#include <windows.h>
 	#include "GLee.h"
-	#define GLUT_BUILDING_LIB
-	#include "glut.h"
+	#include "glu.h"
 	#define __WINDOWS_DS__
 	#define __WINDOWS_MM__
 	#if (_MSC_VER)       // microsoft visual studio
@@ -77,7 +77,7 @@
 	#endif
 	#include <unistd.h>
 	#include "GLee.h"
-	#include <GLUT/glut.h>
+	#include <GLUT/glu.h>
 	#include <ApplicationServices/ApplicationServices.h>
 
 	#if defined(__LITTLE_ENDIAN__)
@@ -88,7 +88,7 @@
 #ifdef TARGET_LINUX
         #include <unistd.h>
         #include "GLee.h"
-        #include <GL/glut.h>
+        #include <GL/glu.h>
 
     // for some reason, this isn't defined at compile time,
     // so this hack let's us work
@@ -106,7 +106,7 @@
 #endif
 
 #ifndef __MWERKS__
-#define OF_EXIT_APP(val)		exit(val);
+#define OF_EXIT_APP(val)		std::exit(val);
 #else
 #define OF_EXIT_APP(val)		std::exit(val);
 #endif
@@ -163,7 +163,7 @@
 
 
 #ifdef TARGET_LINUX
-	#define OF_VIDEO_PLAYER_FOBS
+	#define OF_VIDEO_PLAYER_GSTREAMER
 #else
 	#define OF_VIDEO_PLAYER_QUICKTIME
 #endif
@@ -302,47 +302,52 @@ using namespace std;
 // 	letters.. now they will be 256 + 104, 256 + 105....)
 
 
-#define OF_KEY_MODIFIER 	0x0100
+#ifdef OF_WINDOWING_GLUT
 
-#define OF_KEY_RETURN		13
+	#define OF_KEY_MODIFIER 	0x0100
+	#define OF_KEY_RETURN		13
 
-// http://www.openframeworks.cc/forum/viewtopic.php?t=494
-// some issues with keys across platforms:
+	// http://www.openframeworks.cc/forum/viewtopic.php?t=494
+	// some issues with keys across platforms:
 
-#ifdef TARGET_OSX
-	#define OF_KEY_BACKSPACE	127
-	#define OF_KEY_DEL			8
-#else
-	#define OF_KEY_BACKSPACE	8
-	#define OF_KEY_DEL			127
+	#ifdef TARGET_OSX
+		#define OF_KEY_BACKSPACE	127
+		#define OF_KEY_DEL			8
+	#else
+		#define OF_KEY_BACKSPACE	8
+		#define OF_KEY_DEL			127
+	#endif
+
+	// zach - there are more of these keys, we can add them here...
+	// these are keys that are not coming through "special keys"
+	// via glut, but just other keys on your keyboard like
+
+	#define OF_KEY_F1			(GLUT_KEY_F1 | OF_KEY_MODIFIER)
+	#define OF_KEY_F2			(GLUT_KEY_F2 | OF_KEY_MODIFIER)
+	#define OF_KEY_F3			(GLUT_KEY_F3 | OF_KEY_MODIFIER)
+	#define OF_KEY_F4			(GLUT_KEY_F4 | OF_KEY_MODIFIER)
+	#define OF_KEY_F5			(GLUT_KEY_F5 | OF_KEY_MODIFIER)
+	#define OF_KEY_F6			(GLUT_KEY_F6 | OF_KEY_MODIFIER)
+	#define OF_KEY_F7			(GLUT_KEY_F7 | OF_KEY_MODIFIER)
+	#define OF_KEY_F8			(GLUT_KEY_F8 | OF_KEY_MODIFIER)
+	#define OF_KEY_F9			(GLUT_KEY_F9 | OF_KEY_MODIFIER)
+	#define OF_KEY_F10			(GLUT_KEY_F10 | OF_KEY_MODIFIER)
+	#define OF_KEY_F11			(GLUT_KEY_F11 | OF_KEY_MODIFIER)
+	#define OF_KEY_F12			(GLUT_KEY_F12 | OF_KEY_MODIFIER)
+
+	#define OF_KEY_LEFT			(GLUT_KEY_LEFT | OF_KEY_MODIFIER)
+	#define OF_KEY_UP			(GLUT_KEY_UP | OF_KEY_MODIFIER)
+	#define OF_KEY_RIGHT		(GLUT_KEY_RIGHT | OF_KEY_MODIFIER)
+	#define OF_KEY_DOWN			(GLUT_KEY_DOWN | OF_KEY_MODIFIER)
+	#define OF_KEY_PAGE_UP		(GLUT_KEY_PAGE_UP | OF_KEY_MODIFIER)
+	#define OF_KEY_PAGE_DOWN	(GLUT_KEY_PAGE_DOWN | OF_KEY_MODIFIER)
+	#define OF_KEY_HOME			(GLUT_KEY_HOME | OF_KEY_MODIFIER)
+	#define OF_KEY_END			(GLUT_KEY_END | OF_KEY_MODIFIER)
+	#define OF_KEY_INSERT		(GLUT_KEY_INSERT | OF_KEY_MODIFIER)
+
 #endif
 
-// zach - there are more of these keys, we can add them here...
-// these are keys that are not coming through "special keys"
-// via glut, but just other keys on your keyboard like
-
-#define OF_KEY_F1			(GLUT_KEY_F1 | OF_KEY_MODIFIER)
-#define OF_KEY_F2			(GLUT_KEY_F2 | OF_KEY_MODIFIER)
-#define OF_KEY_F3			(GLUT_KEY_F3 | OF_KEY_MODIFIER)
-#define OF_KEY_F4			(GLUT_KEY_F4 | OF_KEY_MODIFIER)
-#define OF_KEY_F5			(GLUT_KEY_F5 | OF_KEY_MODIFIER)
-#define OF_KEY_F6			(GLUT_KEY_F6 | OF_KEY_MODIFIER)
-#define OF_KEY_F7			(GLUT_KEY_F7 | OF_KEY_MODIFIER)
-#define OF_KEY_F8			(GLUT_KEY_F8 | OF_KEY_MODIFIER)
-#define OF_KEY_F9			(GLUT_KEY_F9 | OF_KEY_MODIFIER)
-#define OF_KEY_F10			(GLUT_KEY_F10 | OF_KEY_MODIFIER)
-#define OF_KEY_F11			(GLUT_KEY_F11 | OF_KEY_MODIFIER)
-#define OF_KEY_F12			(GLUT_KEY_F12 | OF_KEY_MODIFIER)
-
-#define OF_KEY_LEFT			(GLUT_KEY_LEFT | OF_KEY_MODIFIER)
-#define OF_KEY_UP			(GLUT_KEY_UP | OF_KEY_MODIFIER)
-#define OF_KEY_RIGHT		(GLUT_KEY_RIGHT | OF_KEY_MODIFIER)
-#define OF_KEY_DOWN			(GLUT_KEY_DOWN | OF_KEY_MODIFIER)
-#define OF_KEY_PAGE_UP		(GLUT_KEY_PAGE_UP | OF_KEY_MODIFIER)
-#define OF_KEY_PAGE_DOWN	(GLUT_KEY_PAGE_DOWN | OF_KEY_MODIFIER)
-#define OF_KEY_HOME			(GLUT_KEY_HOME | OF_KEY_MODIFIER)
-#define OF_KEY_END			(GLUT_KEY_END | OF_KEY_MODIFIER)
-#define OF_KEY_INSERT		(GLUT_KEY_INSERT | OF_KEY_MODIFIER)
+// not sure what to do in the case of non-glut apps....
 
 
 //--------------------------------------------
@@ -391,9 +396,9 @@ using namespace std;
 	#define OF_CONSOLE_COLOR_PURPLE (FOREGROUND_RED | FOREGROUND_BLUE )
 	#define OF_CONSOLE_COLOR_CYAN (FOREGROUND_GREEN | FOREGROUND_BLUE)
 	#define OF_CONSOLE_COLOR_WHITE (FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE)
-		
+
 #else
-	
+
 	#define OF_CONSOLE_COLOR_RESTORE (0)
 	#define OF_CONSOLE_COLOR_BLACK (30)
 	#define OF_CONSOLE_COLOR_RED (31)
@@ -403,7 +408,7 @@ using namespace std;
 	#define OF_CONSOLE_COLOR_PURPLE (35)
 	#define OF_CONSOLE_COLOR_CYAN (36)
 	#define OF_CONSOLE_COLOR_WHITE (37)
- 
+
 #endif
 
 
