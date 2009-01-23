@@ -11,8 +11,31 @@ ofAppBaseWindow * ofAppWindow  = ofGlutWindow;
 
 
 //========================================================================
-// core events instance & arguments
-ofCoreEvents & ofEvents = ofGlutWindow->appEvents;
+// static variables:
+int				windowMode;
+static bool		bNewScreenMode;
+static float	timeNow, timeThen, fps;
+static int		nFramesForFPS;
+static int		nFrameCount;
+static int		buttonInUse;
+static bool		bEnableSetupScreen;
+
+static float	ofFrameRate;
+
+int				requestedWidth;
+int				requestedHeight;
+int 			nonFullScreenX;
+int 			nonFullScreenY;
+int				mouseX, mouseY;
+bool			buttonPressed;
+
+int 			millisForFrame;
+int 			prevMillis;
+int 			diffMillis;
+static bool 	bFrameRateSet;
+
+ofBaseApp *		ofAppPtr;
+
 
 //----------------------------------------------------------
 ofAppGlutWindow::ofAppGlutWindow(){
@@ -88,7 +111,7 @@ void ofAppGlutWindow::initializeWindow(){
 }
 
 void ofAppGlutWindow::runAppViaInfiniteLoop(ofBaseApp * appPtr){
-
+	static ofEventArgs voidEventArgs;
 	ofAppPtr = appPtr;
 
 	if(ofAppPtr){
@@ -133,7 +156,7 @@ int	ofAppGlutWindow::getWindowMode(){
 }
 
 float ofAppGlutWindow::getFrameRate(){
-	return frameRate;
+	return ofFrameRate;
 }
 
 void ofAppGlutWindow::setWindowPosition(int x, int y){
@@ -172,7 +195,7 @@ void ofAppGlutWindow::setFrameRate(float targetRate){
 	float durationOfFrame 	= 1.0f / (float)targetRate;
 	int millisForFrame 			= (int)(1000.0f * durationOfFrame);
 
-	frameRate = targetRate;
+	ofFrameRate = targetRate;
 
 	glutIdleFunc(NULL);
 	glutTimerFunc(millisForFrame, timer_cb, millisForFrame);
@@ -225,15 +248,15 @@ void ofAppGlutWindow::timer_cb(int value) {
 
 //------------------------------------------------------------
 void ofAppGlutWindow::idle_cb(void) {
-
+	static ofEventArgs voidEventArgs;
 	//	thanks to jorge for the fix:
 	//	http://www.openframeworks.cc/forum/viewtopic.php?t=515&highlight=frame+rate
 
-	if(ofGlutWindow->ofAppPtr)
-		ofGlutWindow->ofAppPtr->update();
+	if(ofAppPtr)
+		ofAppPtr->update();
 
 	#ifdef OF_USING_POCO
-		ofNotifyEvent( ofEvents.update, ofGlutWindow->voidEventArgs );
+		ofNotifyEvent( ofEvents.update, voidEventArgs );
 	#endif
 
 	glutPostRedisplay();
@@ -244,7 +267,7 @@ void ofAppGlutWindow::idle_cb(void) {
 // callbacks
 
 void ofAppGlutWindow::display(void){
-
+	static ofEventArgs voidEventArgs;
 	//--------------------------------
 	// when I had "glutFullScreen()"
 	// in the initOpenGl, I was gettings a "heap" allocation error
@@ -253,14 +276,14 @@ void ofAppGlutWindow::display(void){
 	// by removing something unrelated, but everything seems
 	// to work if I put fullscreen on the first frame of display.
 
-	if (ofGlutWindow->windowMode != OF_GAME_MODE){
-		if ( ofGlutWindow->bNewScreenMode ){
-			if( ofGlutWindow->windowMode == OF_FULLSCREEN){
+	if (windowMode != OF_GAME_MODE){
+		if ( bNewScreenMode ){
+			if( windowMode == OF_FULLSCREEN){
 
 				//----------------------------------------------------
 				// before we go fullscreen, take a snapshot of where we are:
-				ofGlutWindow->nonFullScreenX = glutGet(GLUT_WINDOW_X);
-				ofGlutWindow->nonFullScreenY = glutGet(GLUT_WINDOW_Y);
+				nonFullScreenX = glutGet(GLUT_WINDOW_X);
+				nonFullScreenY = glutGet(GLUT_WINDOW_Y);
 				//----------------------------------------------------
 
 				glutFullScreen();
@@ -269,15 +292,15 @@ void ofAppGlutWindow::display(void){
 					SetSystemUIMode(kUIModeAllHidden,NULL);
 				#endif
 
-			}else if( ofGlutWindow->windowMode == OF_WINDOW ){
+			}else if( windowMode == OF_WINDOW ){
 
-				ofGlutWindow->setWindowPosition(ofGlutWindow->nonFullScreenX,ofGlutWindow->nonFullScreenY);
+				ofGlutWindow->setWindowPosition(nonFullScreenX,nonFullScreenY);
 
 				//----------------------------------------------------
 				// if we have recorded the screen posion, put it there
 				// if not, better to let the system do it (and put it where it wants)
-				if (ofGlutWindow->nFrameCount > 0){
-					ofGlutWindow->setWindowShape(ofGlutWindow->requestedWidth, ofGlutWindow->requestedHeight);
+				if (nFrameCount > 0){
+					ofGlutWindow->setWindowShape(requestedWidth, requestedHeight);
 				}
 				//----------------------------------------------------
 
@@ -285,7 +308,7 @@ void ofAppGlutWindow::display(void){
 					SetSystemUIMode(kUIModeNormal,NULL);
 				#endif
 			}
-			ofGlutWindow->bNewScreenMode = false;
+			bNewScreenMode = false;
 		}
 	}
 
@@ -313,43 +336,45 @@ void ofAppGlutWindow::display(void){
 		if ((bClearAuto == true || windowMode == OF_WINDOW) || nFrameCount < 3){
 	#else
 		//mac and linux does :)
-		if ( bClearAuto == true || ofGlutWindow->nFrameCount < 3){
+		if ( bClearAuto == true || nFrameCount < 3){
 	#endif
 		glClearColor(bgPtr[0],bgPtr[1],bgPtr[2], bgPtr[3]);
 		glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	}
 
-	if( ofGlutWindow->bEnableSetupScreen )ofSetupScreen();
+	if( bEnableSetupScreen )ofSetupScreen();
 
-	if(ofGlutWindow->ofAppPtr)
-		ofGlutWindow->ofAppPtr->draw();
+	if(ofAppPtr)
+		ofAppPtr->draw();
 
 	#ifdef OF_USING_POCO
-		ofNotifyEvent( ofEvents.draw, ofGlutWindow->voidEventArgs );
+		ofNotifyEvent( ofEvents.draw, voidEventArgs );
 	#endif
 
   	glutSwapBuffers();
 
   	// -------------- fps calculation:
-  	ofGlutWindow->timeNow = ofGetElapsedTimef();
-	if( (ofGlutWindow->timeNow-ofGlutWindow->timeThen) > 0.05f || ofGlutWindow->nFramesForFPS == 0 ) {
-		ofGlutWindow->fps = (double)ofGlutWindow->nFramesForFPS / (ofGlutWindow->timeNow-ofGlutWindow->timeThen);
-		ofGlutWindow->timeThen = ofGlutWindow->timeNow;
-		ofGlutWindow->nFramesForFPS = 0;
-		ofGlutWindow->frameRate = 0.9f * ofGlutWindow->frameRate + 0.1f * ofGlutWindow->fps;
+  	timeNow = ofGetElapsedTimef();
+	if( (timeNow-timeThen) > 0.05f || nFramesForFPS == 0 ) {
+		fps = (double)nFramesForFPS / (timeNow-timeThen);
+		timeThen = timeNow;
+		nFramesForFPS = 0;
+		ofFrameRate = 0.9f * ofFrameRate + 0.1f * fps;
   	}
-	ofGlutWindow->nFramesForFPS++;
+	nFramesForFPS++;
   	// --------------
 
-	ofGlutWindow->nFrameCount++;		// increase the overall frame count
+	nFrameCount++;		// increase the overall frame count
 
 }
 
 
 //------------------------------------------------------------
 void ofAppGlutWindow::exit(){
-	if(ofGlutWindow->ofAppPtr)
-		ofGlutWindow->ofAppPtr->exit();
+	static ofEventArgs voidEventArgs;
+
+	if(ofAppPtr)
+		ofAppPtr->exit();
 
 	#ifdef OF_USING_POCO
 		ofNotifyEvent( ofEvents.exit, voidEventArgs );
@@ -359,54 +384,56 @@ void ofAppGlutWindow::exit(){
 
 //------------------------------------------------------------
 void ofAppGlutWindow::mouse_cb(int button, int state, int x, int y) {
-	if (ofGlutWindow->nFrameCount > 0){
-		if(ofGlutWindow->ofAppPtr){
-			ofGlutWindow->ofAppPtr->mouseX = x;
-			ofGlutWindow->ofAppPtr->mouseY = y;
+	static ofMouseEventArgs mouseEventArgs;
+
+	if (nFrameCount > 0){
+		if(ofAppPtr){
+			ofAppPtr->mouseX = x;
+			ofAppPtr->mouseY = y;
 		}
 
 		if (state == GLUT_DOWN) {
-			if(ofGlutWindow->ofAppPtr)
-				ofGlutWindow->ofAppPtr->mousePressed(x,y,button);
+			if(ofAppPtr)
+				ofAppPtr->mousePressed(x,y,button);
 
 			#ifdef OF_USING_POCO
-				ofGlutWindow->mouseEventArgs.x = x;
-				ofGlutWindow->mouseEventArgs.y = y;
-				ofGlutWindow->mouseEventArgs.button = button;
-				ofNotifyEvent( ofEvents.mousePressed, ofGlutWindow->mouseEventArgs );
+				mouseEventArgs.x = x;
+				mouseEventArgs.y = y;
+				mouseEventArgs.button = button;
+				ofNotifyEvent( ofEvents.mousePressed, mouseEventArgs );
 			#endif
 		} else if (state == GLUT_UP) {
-			if(ofGlutWindow->ofAppPtr){
-				ofGlutWindow->ofAppPtr->mouseReleased(x,y,button);
-				ofGlutWindow->ofAppPtr->mouseReleased();
+			if(ofAppPtr){
+				ofAppPtr->mouseReleased(x,y,button);
+				ofAppPtr->mouseReleased();
 			}
 
 			#ifdef OF_USING_POCO
-				ofGlutWindow->mouseEventArgs.x = x;
-				ofGlutWindow->mouseEventArgs.y = y;
-				ofGlutWindow->mouseEventArgs.button = button;
-				ofNotifyEvent( ofEvents.mouseReleased, ofGlutWindow->mouseEventArgs );
+				mouseEventArgs.x = x;
+				mouseEventArgs.y = y;
+				mouseEventArgs.button = button;
+				ofNotifyEvent( ofEvents.mouseReleased, mouseEventArgs );
 			#endif
 		}
-		ofGlutWindow->buttonInUse = button;
+		buttonInUse = button;
 	}
 }
 
 //------------------------------------------------------------
 void ofAppGlutWindow::motion_cb(int x, int y) {
-
-	if (ofGlutWindow->nFrameCount > 0){
-		if(ofGlutWindow->ofAppPtr){
-			ofGlutWindow->ofAppPtr->mouseX = x;
-			ofGlutWindow->ofAppPtr->mouseY = y;
-			ofGlutWindow->ofAppPtr->mouseDragged(x,y,ofGlutWindow->buttonInUse);
+	static ofMouseEventArgs mouseEventArgs;
+	if (nFrameCount > 0){
+		if(ofAppPtr){
+			ofAppPtr->mouseX = x;
+			ofAppPtr->mouseY = y;
+			ofAppPtr->mouseDragged(x,y,buttonInUse);
 		}
 
 		#ifdef OF_USING_POCO
-			ofGlutWindow->mouseEventArgs.x = x;
-			ofGlutWindow->mouseEventArgs.y = y;
-			ofGlutWindow->mouseEventArgs.button = ofGlutWindow->buttonInUse;
-			ofNotifyEvent( ofEvents.mouseDragged, ofGlutWindow->mouseEventArgs );
+			mouseEventArgs.x = x;
+			mouseEventArgs.y = y;
+			mouseEventArgs.button = buttonInUse;
+			ofNotifyEvent( ofEvents.mouseDragged, mouseEventArgs );
 		#endif
 	}
 
@@ -414,29 +441,33 @@ void ofAppGlutWindow::motion_cb(int x, int y) {
 
 //------------------------------------------------------------
 void ofAppGlutWindow::passive_motion_cb(int x, int y) {
-	if (ofGlutWindow->nFrameCount > 0){
-		if(ofGlutWindow->ofAppPtr){
-			ofGlutWindow->ofAppPtr->mouseX = x;
-			ofGlutWindow->ofAppPtr->mouseY = y;
-			ofGlutWindow->ofAppPtr->mouseMoved(x,y);
+	static ofMouseEventArgs mouseEventArgs;
+
+	if (nFrameCount > 0){
+		if(ofAppPtr){
+			ofAppPtr->mouseX = x;
+			ofAppPtr->mouseY = y;
+			ofAppPtr->mouseMoved(x,y);
 		}
 
 		#ifdef OF_USING_POCO
-			ofGlutWindow->mouseEventArgs.x = x;
-			ofGlutWindow->mouseEventArgs.y = y;
-			ofNotifyEvent( ofEvents.mouseMoved, ofGlutWindow->mouseEventArgs );
+			mouseEventArgs.x = x;
+			mouseEventArgs.y = y;
+			ofNotifyEvent( ofEvents.mouseMoved, mouseEventArgs );
 		#endif
 	}
 }
 
 //------------------------------------------------------------
 void ofAppGlutWindow::keyboard_cb(unsigned char key, int x, int y) {
-	if(ofGlutWindow->ofAppPtr)
-		ofGlutWindow->ofAppPtr->keyPressed(key);
+	static ofKeyEventArgs keyEventArgs;
+
+	if(ofAppPtr)
+		ofAppPtr->keyPressed(key);
 
 	#ifdef OF_USING_POCO
-		ofGlutWindow->keyEventArgs.key = key;
-		ofNotifyEvent( ofEvents.keyPressed, ofGlutWindow->keyEventArgs );
+		keyEventArgs.key = key;
+		ofNotifyEvent( ofEvents.keyPressed, keyEventArgs );
 	#endif
 
 	if (key == 27){				// "escape"
@@ -446,46 +477,53 @@ void ofAppGlutWindow::keyboard_cb(unsigned char key, int x, int y) {
 
 //------------------------------------------------------------
 void ofAppGlutWindow::keyboard_up_cb(unsigned char key, int x, int y) {
-	if(ofGlutWindow->ofAppPtr)
-		ofGlutWindow->ofAppPtr->keyReleased(key);
+	static ofKeyEventArgs keyEventArgs;
+
+	if(ofAppPtr)
+		ofAppPtr->keyReleased(key);
 
 	#ifdef OF_USING_POCO
-		ofGlutWindow->keyEventArgs.key = key;
-		ofNotifyEvent( ofEvents.keyReleased, ofGlutWindow->keyEventArgs );
+		keyEventArgs.key = key;
+		ofNotifyEvent( ofEvents.keyReleased, keyEventArgs );
 	#endif
 }
 
 //------------------------------------------------------
 void ofAppGlutWindow::special_key_cb(int key, int x, int y) {
-	if(ofGlutWindow->ofAppPtr)
-		ofGlutWindow->ofAppPtr->keyPressed(key | OF_KEY_MODIFIER);
+	static ofKeyEventArgs keyEventArgs;
+	if(ofAppPtr)
+		ofAppPtr->keyPressed(key | OF_KEY_MODIFIER);
 
 	#ifdef OF_USING_POCO
-		ofGlutWindow->keyEventArgs.key = (key | OF_KEY_MODIFIER);
-		ofNotifyEvent( ofEvents.keyPressed, ofGlutWindow->keyEventArgs );
+		keyEventArgs.key = (key | OF_KEY_MODIFIER);
+		ofNotifyEvent( ofEvents.keyPressed, keyEventArgs );
 	#endif
 }
 
 //------------------------------------------------------------
 void ofAppGlutWindow::special_key_up_cb(int key, int x, int y) {
-	if(ofGlutWindow->ofAppPtr)
-		ofGlutWindow->ofAppPtr->keyReleased(key | OF_KEY_MODIFIER);
+	static ofKeyEventArgs keyEventArgs;
+
+	if(ofAppPtr)
+		ofAppPtr->keyReleased(key | OF_KEY_MODIFIER);
 
 	#ifdef OF_USING_POCO
-		ofGlutWindow->keyEventArgs.key = (key | OF_KEY_MODIFIER);
-		ofNotifyEvent( ofEvents.keyReleased, ofGlutWindow->keyEventArgs );
+		keyEventArgs.key = (key | OF_KEY_MODIFIER);
+		ofNotifyEvent( ofEvents.keyReleased, keyEventArgs );
 	#endif
 }
 
 //------------------------------------------------------------
 void ofAppGlutWindow::resize_cb(int w, int h) {
-	if(ofGlutWindow->ofAppPtr)
-		ofGlutWindow->ofAppPtr->resized(w,h);
+	static ofResizeEventArgs resizeEventArgs;
+
+	if(ofAppPtr)
+		ofAppPtr->resized(w,h);
 
 	#ifdef OF_USING_POCO
-		ofGlutWindow->resizeEventArgs.width = w;
-		ofGlutWindow->resizeEventArgs.height = h;
-		ofNotifyEvent( ofEvents.resize, ofGlutWindow->resizeEventArgs );
+		resizeEventArgs.width = w;
+		resizeEventArgs.height = h;
+		ofNotifyEvent( ofEvents.resize, resizeEventArgs );
 	#endif
 }
 

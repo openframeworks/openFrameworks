@@ -61,6 +61,7 @@ public:
 
 	void		setVerticalSync(bool bSync){}; // no specific glut set sync
 
+private:
 	// callbacks
 	static void	display(void);
 	static void mouse_cb(int button, int state, int x, int y);
@@ -75,33 +76,6 @@ public:
 	static void resize_cb(int w, int h);
 
 
-	//--------------------------------------------
-	// window events
-	ofCoreEvents	appEvents;
-
-private:
-	//vars
-	int				windowMode;
-	bool			bNewScreenMode;
-	float			timeNow, timeThen, fps;
-	int				nFramesForFPS;
-	int				nFrameCount;
-	int				buttonInUse;
-	bool			bEnableSetupScreen;
-
-	float 			frameRate;
-
-	int				requestedWidth;
-	int				requestedHeight;
-	int 			nonFullScreenX;
-	int 			nonFullScreenY;
-	int				mouseX, mouseY;
-	ofBaseApp *		ofAppPtr;
-
-	ofMouseEventArgs 			mouseEventArgs;
-	ofKeyEventArgs 				keyEventArgs;
-	ofResizeEventArgs 			resizeEventArgs;
-	ofEventArgs					voidEventArgs;
 };
 
 #endif //OF_WINDOWING_GLUT
