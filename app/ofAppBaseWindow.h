@@ -43,6 +43,8 @@ public:
 	virtual void		enableSetupScreen()=0;
 	virtual void		disableSetupScreen()=0;
 
+	virtual void		setVerticalSync(bool bSync)=0;
+
 	virtual void		exit()=0;
 
 };

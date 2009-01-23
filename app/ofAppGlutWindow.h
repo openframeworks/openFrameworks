@@ -59,6 +59,8 @@ public:
 
 	void		exit();
 
+	void		setVerticalSync(bool bSync){}; // no specific glut set sync
+
 	// callbacks
 	static void	display(void);
 	static void mouse_cb(int button, int state, int x, int y);

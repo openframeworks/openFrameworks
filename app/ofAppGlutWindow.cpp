@@ -6,8 +6,8 @@
 #include "ofMain.h"
 #include "ofEvents.h"
 
-ofAppBaseWindow * ofAppWindow	= new ofAppGlutWindow();
-ofAppGlutWindow * ofGlutWindow 	= (ofAppGlutWindow *) ofAppWindow;
+ofAppGlutWindow * ofGlutWindow = new ofAppGlutWindow;
+ofAppBaseWindow * ofAppWindow  = ofGlutWindow;
 
 
 //========================================================================
@@ -271,13 +271,13 @@ void ofAppGlutWindow::display(void){
 
 			}else if( ofGlutWindow->windowMode == OF_WINDOW ){
 
-				glutReshapeWindow(ofGlutWindow->requestedWidth, ofGlutWindow->requestedHeight);
+				ofGlutWindow->setWindowPosition(ofGlutWindow->nonFullScreenX,ofGlutWindow->nonFullScreenY);
 
 				//----------------------------------------------------
 				// if we have recorded the screen posion, put it there
 				// if not, better to let the system do it (and put it where it wants)
 				if (ofGlutWindow->nFrameCount > 0){
-					glutPositionWindow(ofGlutWindow->nonFullScreenX,ofGlutWindow->nonFullScreenY);
+					ofGlutWindow->setWindowShape(ofGlutWindow->requestedWidth, ofGlutWindow->requestedHeight);
 				}
 				//----------------------------------------------------
 
