@@ -36,7 +36,7 @@
 	#define WIN32_LEAN_AND_MEAN
 	#include <windows.h>
 	#include "GLee.h"
-	#include "glu.h"
+    #include "glu.h"
 	#define __WINDOWS_DS__
 	#define __WINDOWS_MM__
 	#if (_MSC_VER)       // microsoft visual studio
@@ -77,7 +77,7 @@
 	#endif
 	#include <unistd.h>
 	#include "GLee.h"
-	#include <GLUT/glu.h>
+	#include <OpenGL/glu.h>
 	#include <ApplicationServices/ApplicationServices.h>
 
 	#if defined(__LITTLE_ENDIAN__)
