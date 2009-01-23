@@ -198,6 +198,13 @@ void ofSetVerticalSync(bool bSync){
 	// glXGetVideoSyncSGI(&count); // but needs to be at the end of every "draw?
 	// also, see this:
    	// glXWaitVideoSyncSGI(2,0,&count);
+	//--------------------------------------
+	#ifdef TARGET_LINUX
+	//--------------------------------------
+		ofAppWindow->setVerticalSync(bSync);
+	//--------------------------------------
+	#endif
+	//--------------------------------------
 }
 
 
