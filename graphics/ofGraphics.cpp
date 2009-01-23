@@ -1,15 +1,6 @@
 #include "ofGraphics.h"
 #include "ofAppRunner.h"
-
-#ifdef TARGET_OSX
-	#include <OpenGL/glu.h>
-#else
-    #ifdef TARGET_LINUX
-        #include "GL/glu.h"
-    #else // win32
-        #include "glu.h"
-    #endif
-#endif
+#include "ofBitmapFont.h"
 
 #ifdef TARGET_LINUX
     #define CALLBACK
@@ -21,7 +12,7 @@
 // static
 static float	drawMode			= OF_FILLED;
 static bool 	bSetupCircle		= false;
-static int		numCirclePts		= CIRC_RESOLUTION;
+static int		numCirclePts		= 0;
 float 			bgColor[4]			= {0,0,0,0};
 void 			setupCircle();
 bool 			bSmoothHinted		= false;
@@ -76,13 +67,13 @@ void ofBackground(int r, int g, int b){
 //----------------------------------------------------------
 void ofNoFill(){
 	drawMode = OF_OUTLINE;
-	currentStyle.bFill = false;	
+	currentStyle.bFill = false;
 }
 
 //----------------------------------------------------------
 void ofFill(){
 	drawMode = OF_FILLED;
-	currentStyle.bFill = true;	
+	currentStyle.bFill = true;
 }
 
 //----------------------------------------------------------
@@ -97,7 +88,7 @@ void startSmoothing(){
 		glPushAttrib(GL_COLOR_BUFFER_BIT | GL_ENABLE_BIT);
 		glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
 		glEnable(GL_LINE_SMOOTH);
-		
+
 		//why do we need this?
 		//glEnable(GL_BLEND);
 		//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -113,18 +104,7 @@ void endSmoothing(){
 //----------------------------------------------------------
 void setupCircle(){
 
-	numCirclePts = CIRC_RESOLUTION;
-	float angle = 0.0f;
-	float angleAdder = M_TWO_PI / (float)CIRC_RESOLUTION;
-	int k = 0;
-	for (float i = 0; i < numCirclePts; i++){
-		circlePts[k] = cos(angle);
-		circlePts[k+1] = sin(angle);
-		angle += angleAdder;
-		k+=2;
-	}
-	currentStyle.circleResolution = CIRC_RESOLUTION;
-	bSetupCircle = true;
+	ofSetCircleResolution(CIRC_RESOLUTION);
 }
 
 //----------------------------------------------------------
@@ -134,11 +114,12 @@ void ofSetCircleResolution(int res){
 	if (res > 1 && res != numCirclePts){
 		numCirclePts = res;
 		currentStyle.circleResolution = numCirclePts;
-				
+
 		float angle = 0.0f;
-		float angleAdder = M_TWO_PI / (float)res;
+		float angleAdder = M_TWO_PI / (float)res * 2.0;
 		int k = 0;
-		for (float i = 0; i < numCirclePts; i++){
+		for (int i = 0; i < numCirclePts/2; i++){
+			ofLog(OF_VERBOSE,"allocating circle point num: %i",k+1);
 			circlePts[k] = cos(angle);
 			circlePts[k+1] = sin(angle);
 			angle += angleAdder;
@@ -177,7 +158,8 @@ void ofCircle(float x,float y, float radius){
 	// draw:
 		glBegin( (drawMode == OF_FILLED) ? GL_POLYGON : GL_LINE_LOOP);
 	int k = 0;
-	for(int i = 0; i < numCirclePts; i++){
+	for(int i = 0; i < numCirclePts/2; i++){
+		//ofLog(OF_VERBOSE,"drawing circle point num: %i",k+1);
 		glVertex2f(x + circlePts[k] * radius, y + circlePts[k+1] * radius);
 		k+=2;
 	}
@@ -327,7 +309,7 @@ void ofSetColor(int _r, int _g, int _b){
 	float r = (float)_r / 255.0f; r = MAX(0,MIN(r,1.0f));
 	float g = (float)_g / 255.0f; g = MAX(0,MIN(g,1.0f));
 	float b = (float)_b / 255.0f; b = MAX(0,MIN(b,1.0f));
-	
+
 	currentStyle.color.r = r * 255.0;
 	currentStyle.color.g = g * 255.0;
 	currentStyle.color.b = b * 255.0;
@@ -343,11 +325,11 @@ void ofSetColor(int _r, int _g, int _b, int _a){
 	float g = (float)_g / 255.0f; g = MAX(0,MIN(g,1.0f));
 	float b = (float)_b / 255.0f; b = MAX(0,MIN(b,1.0f));
 	float a = (float)_a / 255.0f; a = MAX(0,MIN(a,1.0f));
-	
+
 	currentStyle.color.r = r * 255.0;
 	currentStyle.color.g = g * 255.0;
 	currentStyle.color.b = b * 255.0;
-	currentStyle.color.a = a * 255.0;	
+	currentStyle.color.a = a * 255.0;
 
 	glColor4f(r,g,b,a);
 }
@@ -364,13 +346,13 @@ void ofSetColor(int hexColor){
 void ofEnableAlphaBlending(){
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	currentStyle.blending = 1;		
+	currentStyle.blending = 1;
 }
 
 //----------------------------------------------------------
 void ofDisableAlphaBlending(){
 	glDisable(GL_BLEND);
-	currentStyle.blending = 0;	
+	currentStyle.blending = 0;
 }
 
 
@@ -385,7 +367,7 @@ void ofEnableSmoothing(){
 //----------------------------------------------------------
 void ofDisableSmoothing(){
 	bSmoothHinted = false;
-	currentStyle.smoothing = 0;	
+	currentStyle.smoothing = 0;
 }
 
 //----------------------------------------------------------
@@ -395,17 +377,17 @@ void ofSetStyle(ofStyle style){
 
 	//circle resolution - don't worry it only recalculates the display list if the res has changed
 	ofSetCircleResolution(style.circleResolution);
-	
+
 	//line width - finally!
 	ofSetLineWidth(style.lineWidth);
-	
+
 	//fill
 	if(style.bFill == 1){
 		ofFill();
 	}else if(style.bFill == 0){
 		ofNoFill();
 	}
-	
+
 	//smoothing
 	if(style.smoothing == 1){
 		ofEnableSmoothing();
@@ -418,7 +400,7 @@ void ofSetStyle(ofStyle style){
 		ofEnableAlphaBlending();
 	}else if(style.blending == 0){
 		ofDisableAlphaBlending();
-	}	
+	}
 }
 
 //----------------------------------------------------------
@@ -429,7 +411,7 @@ ofStyle ofGetStyle(){
 //----------------------------------------------------------
 void ofPushStyle(){
 	styleHistory.insert(styleHistory.begin(), currentStyle);
-	
+
 	//if we are over the max number of styles we have set, then delete the oldest styles.
 	if( styleHistory.size() > OF_MAX_STYLE_HISTORY ){
 		styleHistory.erase(styleHistory.begin() + OF_MAX_STYLE_HISTORY, styleHistory.end());
@@ -488,7 +470,7 @@ void ofRotateZ(float degrees){
 	glRotatef(degrees, 0, 0, 1);
 }
 
-//same as ofRotateZ 
+//same as ofRotateZ
 //----------------------------------------------------------
 void ofRotate(float degrees){
 	glRotatef(degrees, 0, 0, 1);
@@ -498,10 +480,15 @@ void ofRotate(float degrees){
 //--------------------------------------------------
 void ofDrawBitmapString(string textString, float x, float y){
 
-	//---------------------------------------------------
-	// 	for now this is fixed to the 8_BY_13 glut character
-	//	http://pyopengl.sourceforge.net/documentation/manual/glutBitmapCharacter.3GLUT.html
-	//---------------------------------------------------
+
+
+    glPushClientAttrib( GL_CLIENT_PIXEL_STORE_BIT );
+    glPixelStorei( GL_UNPACK_SWAP_BYTES,  GL_FALSE );
+    glPixelStorei( GL_UNPACK_LSB_FIRST,   GL_FALSE );
+    glPixelStorei( GL_UNPACK_ROW_LENGTH,  0        );
+    glPixelStorei( GL_UNPACK_SKIP_ROWS,   0        );
+    glPixelStorei( GL_UNPACK_SKIP_PIXELS, 0        );
+    glPixelStorei( GL_UNPACK_ALIGNMENT,   1        );
 
 	int len = (int)textString.length();
 	float yOffset = 0;
@@ -519,9 +506,11 @@ void ofDrawBitmapString(string textString, float x, float y){
 			// < 32 = control characters - don't draw
 			// solves a bug with control characters
 			// getting drawn when they ought to not be
-			glutBitmapCharacter(GLUT_BITMAP_8_BY_13, textString[c]);
+			ofDrawBitmapCharacter(textString[c]);
 		}
 	}
+
+	glPopClientAttrib( );
 }
 
 //----------------------------------------------------------
@@ -553,6 +542,7 @@ void ofSetupScreen(){
 
 	glScalef(1, -1, 1);           // invert Y axis so increasing Y goes down.
   	glTranslatef(0, -h, 0);       // shift origin up to upper-left corner.
+
 }
 
 
@@ -596,7 +586,7 @@ std::vector <double*> polyVertices;
 //---------------------------- and for curve vertexes, since we need 4 to make a curve
 std::vector <double*> curveVertices;
 
-static int 				currentStartVertex = 0; 
+static int 				currentStartVertex = 0;
 
 // what is the starting vertex of the shape we are drawing
 // this allows multi contour polygons;
@@ -673,9 +663,9 @@ void clearTessVertices(){
     // -------------------------------------------------
 
     clearCurveVertices();
-    
-    
-    currentStartVertex = 0; 
+
+
+    currentStartVertex = 0;
 }
 
 //----------------------------------------------------------
@@ -726,10 +716,10 @@ void ofBeginShape(){
 	// etc...
 
 	clearTessVertices();
-	
-	
-	// now get the tesselator object up and ready: 
-	
+
+
+	// now get the tesselator object up and ready:
+
 	tobj = gluNewTess();
 
 
