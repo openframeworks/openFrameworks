@@ -2,7 +2,7 @@
 #include "ofAppRunner.h"
 #include "ofBitmapFont.h"
 
-#ifdef TARGET_LINUX
+#ifndef TARGET_WIN32
     #define CALLBACK
 #endif
 
@@ -119,7 +119,6 @@ void ofSetCircleResolution(int res){
 		float angleAdder = M_TWO_PI / (float)res * 2.0;
 		int k = 0;
 		for (int i = 0; i < numCirclePts/2; i++){
-			ofLog(OF_VERBOSE,"allocating circle point num: %i",k+1);
 			circlePts[k] = cos(angle);
 			circlePts[k+1] = sin(angle);
 			angle += angleAdder;
@@ -159,7 +158,6 @@ void ofCircle(float x,float y, float radius){
 		glBegin( (drawMode == OF_FILLED) ? GL_POLYGON : GL_LINE_LOOP);
 	int k = 0;
 	for(int i = 0; i < numCirclePts/2; i++){
-		//ofLog(OF_VERBOSE,"drawing circle point num: %i",k+1);
 		glVertex2f(x + circlePts[k] * radius, y + circlePts[k+1] * radius);
 		k+=2;
 	}
