@@ -1,12 +1,16 @@
 #include "ofAppRunner.h"
 
-//--------------------------------------
-void ofSetupOpenGL(int w, int h, int screenMode){
 
+
+//========================================================================
+// core events instance, declared in ofEvents.h:
+ofCoreEvents 				ofEvents;
+
+
+void ofSetupOpenGL(int w, int h, int screenMode){
 	ofAppWindow->setupOpenGL(w, h, screenMode);
 
 }
-
 //----------------------- 	gets called when the app exits
 // 							currently looking at who to turn off
 //							at the end of the application
@@ -77,6 +81,11 @@ float ofGetFrameRate(){
 void ofSetFrameRate(int targetRate){
 
 	ofAppWindow->setFrameRate(targetRate);
+}
+
+//--------------------------------------
+int ofGetFrameNum(){
+	return ofAppWindow->getFrameNum();
 }
 
 //--------------------------------------
@@ -206,5 +215,3 @@ void ofSetVerticalSync(bool bSync){
 	#endif
 	//--------------------------------------
 }
-
-
