@@ -5,12 +5,15 @@
 #include "ofMain.h"
 #include "ofBaseApp.h"
 #include "ofAppBaseWindow.h"
+#include "ofAppGlutWindow.h"
 
-void 		ofSetupOpenGL(int w, int h, int screenMode);			// sets up the opengl context!
+void 		ofSetupOpenGL(ofAppBaseWindow * windowPtr, int w, int h, int screenMode);	// sets up the opengl context!
+void 		ofSetupOpenGL(int w, int h, int screenMode);	// sets up the opengl context!
 void 		ofRunApp(ofBaseApp * OFSA = NULL);
 
 //-------------------------- time
 float 		ofGetFrameRate();
+int			ofGetFrameNum();
 void 		ofSetFrameRate(int targetRate);
 void		ofSleepMillis(int millis);
 //-------------------------- cursor
@@ -34,5 +37,7 @@ void		ofSetFullscreen(bool fullscreen);
 void		ofToggleFullscreen();
 //-------------------------- sync
 void 		ofSetVerticalSync(bool bSync);
+
+
 
 #endif

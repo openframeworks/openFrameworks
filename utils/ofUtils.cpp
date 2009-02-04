@@ -7,11 +7,6 @@ static bool enableDataPath = true;
 static unsigned long startTime = ofGetSystemTime();   //  better at the first frame ?? (currently, there is some delay from static init, to running.
 
 //--------------------------------------
-int ofGetFrameNum(){
-	return ofAppWindow->getFrameNum();
-}
-
-//--------------------------------------
 int ofGetElapsedTimeMillis(){
 	return (int)(ofGetSystemTime() - startTime);
 }
@@ -46,7 +41,6 @@ unsigned long ofGetSystemTime( ) {
 		#endif
 	#endif
 }
-
 
 //--------------------------------------------------
 int ofGetSeconds(){

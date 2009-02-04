@@ -89,18 +89,9 @@ class ofCoreEvents {
 		audioReceived.enable();
 		audioRequested.enable();
 	}
-
-	// this are used to notify events from ofAppWindow
-	ofEventArgs			voidArgs;
-	ofMouseEventArgs 	mouseArgs;
-	ofKeyEventArgs		keyArgs;
-	ofAudioEventArgs	audioArgs;
-	ofResizeEventArgs 	resizeArgs;
 };
 
 
-// defined by ofAppRunner.cpp
-extern ofCoreEvents ofEvents;
 
 
 

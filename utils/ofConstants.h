@@ -7,7 +7,6 @@
 #define OF_VERSION	6
 //-------------------------------
 
-#define OF_WINDOWING_GLUT
 
 //-------------------------------
 //  find the system type --------
@@ -36,7 +35,6 @@
 	#define WIN32_LEAN_AND_MEAN
 	#include <windows.h>
 	#include "GLee.h"
-    #include "glu.h"
 	#define __WINDOWS_DS__
 	#define __WINDOWS_MM__
 	#if (_MSC_VER)       // microsoft visual studio
@@ -302,10 +300,9 @@ using namespace std;
 // 	letters.. now they will be 256 + 104, 256 + 105....)
 
 
-#ifdef OF_WINDOWING_GLUT
-
 	#define OF_KEY_MODIFIER 	0x0100
 	#define OF_KEY_RETURN		13
+	#define OF_KEY_ESC			27
 
 	// http://www.openframeworks.cc/forum/viewtopic.php?t=494
 	// some issues with keys across platforms:
@@ -322,30 +319,27 @@ using namespace std;
 	// these are keys that are not coming through "special keys"
 	// via glut, but just other keys on your keyboard like
 
-	#define OF_KEY_F1			(GLUT_KEY_F1 | OF_KEY_MODIFIER)
-	#define OF_KEY_F2			(GLUT_KEY_F2 | OF_KEY_MODIFIER)
-	#define OF_KEY_F3			(GLUT_KEY_F3 | OF_KEY_MODIFIER)
-	#define OF_KEY_F4			(GLUT_KEY_F4 | OF_KEY_MODIFIER)
-	#define OF_KEY_F5			(GLUT_KEY_F5 | OF_KEY_MODIFIER)
-	#define OF_KEY_F6			(GLUT_KEY_F6 | OF_KEY_MODIFIER)
-	#define OF_KEY_F7			(GLUT_KEY_F7 | OF_KEY_MODIFIER)
-	#define OF_KEY_F8			(GLUT_KEY_F8 | OF_KEY_MODIFIER)
-	#define OF_KEY_F9			(GLUT_KEY_F9 | OF_KEY_MODIFIER)
-	#define OF_KEY_F10			(GLUT_KEY_F10 | OF_KEY_MODIFIER)
-	#define OF_KEY_F11			(GLUT_KEY_F11 | OF_KEY_MODIFIER)
-	#define OF_KEY_F12			(GLUT_KEY_F12 | OF_KEY_MODIFIER)
-
-	#define OF_KEY_LEFT			(GLUT_KEY_LEFT | OF_KEY_MODIFIER)
-	#define OF_KEY_UP			(GLUT_KEY_UP | OF_KEY_MODIFIER)
-	#define OF_KEY_RIGHT		(GLUT_KEY_RIGHT | OF_KEY_MODIFIER)
-	#define OF_KEY_DOWN			(GLUT_KEY_DOWN | OF_KEY_MODIFIER)
-	#define OF_KEY_PAGE_UP		(GLUT_KEY_PAGE_UP | OF_KEY_MODIFIER)
-	#define OF_KEY_PAGE_DOWN	(GLUT_KEY_PAGE_DOWN | OF_KEY_MODIFIER)
-	#define OF_KEY_HOME			(GLUT_KEY_HOME | OF_KEY_MODIFIER)
-	#define OF_KEY_END			(GLUT_KEY_END | OF_KEY_MODIFIER)
-	#define OF_KEY_INSERT		(GLUT_KEY_INSERT | OF_KEY_MODIFIER)
-
-#endif
+	#define OF_KEY_F1			(1 | OF_KEY_MODIFIER)
+	#define OF_KEY_F2			(2 | OF_KEY_MODIFIER)
+	#define OF_KEY_F3			(3 | OF_KEY_MODIFIER)
+	#define OF_KEY_F4			(4 | OF_KEY_MODIFIER)
+	#define OF_KEY_F5			(5 | OF_KEY_MODIFIER)
+	#define OF_KEY_F6			(6 | OF_KEY_MODIFIER)
+	#define OF_KEY_F7			(7 | OF_KEY_MODIFIER)
+	#define OF_KEY_F8			(8 | OF_KEY_MODIFIER)
+	#define OF_KEY_F9			(9 | OF_KEY_MODIFIER)
+	#define OF_KEY_F10			(10 | OF_KEY_MODIFIER)
+	#define OF_KEY_F11			(11 | OF_KEY_MODIFIER)
+	#define OF_KEY_F12			(12 | OF_KEY_MODIFIER)
+	#define OF_KEY_LEFT			(100 | OF_KEY_MODIFIER)
+	#define OF_KEY_UP			(101 | OF_KEY_MODIFIER)
+	#define OF_KEY_RIGHT		(102 | OF_KEY_MODIFIER)
+	#define OF_KEY_DOWN			(103 | OF_KEY_MODIFIER)
+	#define OF_KEY_PAGE_UP		(104 | OF_KEY_MODIFIER)
+	#define OF_KEY_PAGE_DOWN	(105 | OF_KEY_MODIFIER)
+	#define OF_KEY_HOME			(106 | OF_KEY_MODIFIER)
+	#define OF_KEY_END			(107 | OF_KEY_MODIFIER)
+	#define OF_KEY_INSERT		(108 | OF_KEY_MODIFIER)
 
 // not sure what to do in the case of non-glut apps....
 
