@@ -1,52 +1,44 @@
 #include "ofAppGlutWindow.h"
-
-#ifdef OF_WINDOWING_GLUT
-
 #include "ofBaseApp.h"
 #include "ofMain.h"
-#include "ofEvents.h"
 
-ofAppGlutWindow * ofGlutWindow = new ofAppGlutWindow;
-ofAppBaseWindow * ofAppWindow  = ofGlutWindow;
+// glut works with static callbacks UGH, so we need static variables here:
 
-
-//========================================================================
-// static variables:
 int				windowMode;
-static bool		bNewScreenMode;
-static float	timeNow, timeThen, fps;
-static int		nFramesForFPS;
-static int		nFrameCount;
-static int		buttonInUse;
-static bool		bEnableSetupScreen;
+bool			bNewScreenMode;
+float			timeNow, timeThen, fps;
+int				nFramesForFPS;
+int				nFrameCount;
+int				buttonInUse;
+bool			bEnableSetupScreen;
 
-static float	ofFrameRate;
+bool			bFrameRateSet;
+int 			millisForFrame;
+int 			prevMillis;
+int 			diffMillis;
+
+float 			frameRate;
 
 int				requestedWidth;
 int				requestedHeight;
 int 			nonFullScreenX;
 int 			nonFullScreenY;
 int				mouseX, mouseY;
-bool			buttonPressed;
-
-int 			millisForFrame;
-int 			prevMillis;
-int 			diffMillis;
-static bool 	bFrameRateSet;
-
 ofBaseApp *		ofAppPtr;
 
+extern ofCoreEvents 		ofEvents;
 
 //----------------------------------------------------------
 ofAppGlutWindow::ofAppGlutWindow(){
 	bEnableSetupScreen	= true;
 	nFrameCount			= 0;
 	buttonInUse			= 0;
+	bEnableSetupScreen	= true;
 	nonFullScreenX		= -1;
 	nonFullScreenY		= -1;
 }
 
-
+//------------------------------------------------------------
 void ofAppGlutWindow::setupOpenGL(int w, int h, int screenMode){
 
 	int argc = 1;
@@ -87,7 +79,7 @@ void ofAppGlutWindow::setupOpenGL(int w, int h, int screenMode){
 	}
 }
 
-
+//------------------------------------------------------------
 void ofAppGlutWindow::initializeWindow(){
 
 
@@ -107,62 +99,85 @@ void ofAppGlutWindow::initializeWindow(){
 
 	 glutReshapeFunc(resize_cb);
 
-
 }
 
+//------------------------------------------------------------
 void ofAppGlutWindow::runAppViaInfiniteLoop(ofBaseApp * appPtr){
 	static ofEventArgs voidEventArgs;
+
 	ofAppPtr = appPtr;
 
-	if(ofAppPtr){
+	if(ofAppPtr)
 		ofAppPtr->setup();
-		ofAppPtr->update();
-	}
 
 	#ifdef OF_USING_POCO
 		ofNotifyEvent( ofEvents.setup, voidEventArgs );
-		ofNotifyEvent( ofEvents.update, voidEventArgs );
 	#endif
 
 
 	glutMainLoop();
 }
 
+//------------------------------------------------------------
+void ofAppGlutWindow::exitApp(){
 
+//  -- This already exists in ofExitCallback
+
+//	static ofEventArgs voidEventArgs;
+//
+//	if(ofAppPtr)ofAppPtr->exit();
+//
+//	#ifdef OF_USING_POCO
+//		ofNotifyEvent( ofEvents.exit, voidEventArgs );
+//	#endif
+	
+	ofLog(OF_VERBOSE,"GLUT OF app is being terminated!");
+
+	OF_EXIT_APP(0);
+}
+
+//------------------------------------------------------------
+float ofAppGlutWindow::getFrameRate(){
+	return frameRate;
+}
+
+//------------------------------------------------------------
+int ofAppGlutWindow::getFrameNum(){
+	return nFrameCount;
+}
+
+//------------------------------------------------------------
 void ofAppGlutWindow::setWindowTitle(string title){
 	glutSetWindowTitle(title.c_str());
 }
 
+//------------------------------------------------------------
 ofPoint ofAppGlutWindow::getWindowSize(){
 	int width = glutGet(GLUT_WINDOW_WIDTH);
 	int height = glutGet(GLUT_WINDOW_HEIGHT);
 	return ofPoint(width, height,0);
 }
 
+//------------------------------------------------------------
 ofPoint ofAppGlutWindow::getWindowPosition(){
 	int x = glutGet(GLUT_WINDOW_X);
 	int y = glutGet(GLUT_WINDOW_Y);
 	return ofPoint(x,y,0);
 }
 
+//------------------------------------------------------------
 ofPoint ofAppGlutWindow::getScreenSize(){
 	int width = glutGet(GLUT_SCREEN_WIDTH);
 	int height = glutGet(GLUT_SCREEN_HEIGHT);
 	return ofPoint(width, height,0);
 }
 
-int	ofAppGlutWindow::getWindowMode(){
-	return windowMode;
-}
-
-float ofAppGlutWindow::getFrameRate(){
-	return ofFrameRate;
-}
-
+//------------------------------------------------------------
 void ofAppGlutWindow::setWindowPosition(int x, int y){
 	glutPositionWindow(x,y);
 }
 
+//------------------------------------------------------------
 void ofAppGlutWindow::setWindowShape(int w, int h){
 	glutReshapeWindow(w, h);
 	// this is useful, esp if we are in the first frame (setup):
@@ -170,6 +185,7 @@ void ofAppGlutWindow::setWindowShape(int w, int h){
 	requestedHeight = h;
 }
 
+//------------------------------------------------------------
 void ofAppGlutWindow::hideCursor(){
 	#ifdef TARGET_OSX
 		CGDisplayHideCursor(kCGDirectMainDisplay);
@@ -178,6 +194,7 @@ void ofAppGlutWindow::hideCursor(){
 	#endif
 };
 
+//------------------------------------------------------------
 void ofAppGlutWindow::showCursor(){
 	#ifdef TARGET_OSX
 		CGDisplayShowCursor(kCGDirectMainDisplay);
@@ -186,88 +203,37 @@ void ofAppGlutWindow::showCursor(){
 	#endif
 };
 
+//------------------------------------------------------------
 void ofAppGlutWindow::setFrameRate(float targetRate){
 	// given this FPS, what is the amount of millis per frame
 	// that should elapse?
 
 	// --- > f / s
 
+	if (targetRate == 0){
+		bFrameRateSet = false;
+		return;
+	}
+	
+	bFrameRateSet 			= true;
 	float durationOfFrame 	= 1.0f / (float)targetRate;
-	int millisForFrame 			= (int)(1000.0f * durationOfFrame);
-
-	ofFrameRate = targetRate;
-
-	glutIdleFunc(NULL);
-	glutTimerFunc(millisForFrame, timer_cb, millisForFrame);
+	millisForFrame 			= (int)(1000.0f * durationOfFrame);
 };
 
+//------------------------------------------------------------
 void ofAppGlutWindow::enableSetupScreen(){
 	bEnableSetupScreen = true;
 };
 
+//------------------------------------------------------------
 void ofAppGlutWindow::disableSetupScreen(){
 	bEnableSetupScreen = false;
 };
 
 //------------------------------------------------------------
-int ofAppGlutWindow::getFrameNum(){
-	return nFrameCount;
-}
-
-//------------------------------------------------------------
-void ofAppGlutWindow::setFullscreen(bool fullscreen){
-	if (windowMode == OF_GAME_MODE) return;
-
-	if(fullscreen && windowMode==OF_WINDOW){
-		windowMode    = OF_FULLSCREEN;
-		bNewScreenMode = true;
-	}
-	else if(!fullscreen && windowMode==OF_FULLSCREEN){
-		windowMode    = OF_WINDOW;
-		bNewScreenMode = true;
-	}
-}
-
-//------------------------------------------------------------
-void ofAppGlutWindow::toggleFullscreen(){
-	if (windowMode == OF_GAME_MODE) return;
-
-	bNewScreenMode = true;
-	if (windowMode == OF_WINDOW){
-		windowMode = OF_FULLSCREEN;
-	} else {
-		windowMode = OF_WINDOW;
-	}
-}
-
-//------------------------------------------------------------
-void ofAppGlutWindow::timer_cb(int value) {
-	glutTimerFunc(value, timer_cb, value);
-	idle_cb();
-}
-
-//------------------------------------------------------------
-void ofAppGlutWindow::idle_cb(void) {
-	static ofEventArgs voidEventArgs;
-	//	thanks to jorge for the fix:
-	//	http://www.openframeworks.cc/forum/viewtopic.php?t=515&highlight=frame+rate
-
-	if(ofAppPtr)
-		ofAppPtr->update();
-
-	#ifdef OF_USING_POCO
-		ofNotifyEvent( ofEvents.update, voidEventArgs );
-	#endif
-
-	glutPostRedisplay();
-
-}
-
-//--------------------------------------------
-// callbacks
-
 void ofAppGlutWindow::display(void){
 	static ofEventArgs voidEventArgs;
+	
 	//--------------------------------
 	// when I had "glutFullScreen()"
 	// in the initOpenGl, I was gettings a "heap" allocation error
@@ -294,13 +260,13 @@ void ofAppGlutWindow::display(void){
 
 			}else if( windowMode == OF_WINDOW ){
 
-				ofGlutWindow->setWindowPosition(nonFullScreenX,nonFullScreenY);
+				glutReshapeWindow(requestedWidth, requestedHeight);
 
 				//----------------------------------------------------
 				// if we have recorded the screen posion, put it there
 				// if not, better to let the system do it (and put it where it wants)
 				if (nFrameCount > 0){
-					ofGlutWindow->setWindowShape(requestedWidth, requestedHeight);
+					glutPositionWindow(nonFullScreenX,nonFullScreenY);
 				}
 				//----------------------------------------------------
 
@@ -354,33 +320,21 @@ void ofAppGlutWindow::display(void){
   	glutSwapBuffers();
 
   	// -------------- fps calculation:
-  	timeNow = ofGetElapsedTimef();
+	timeNow = ofGetElapsedTimef();
 	if( (timeNow-timeThen) > 0.05f || nFramesForFPS == 0 ) {
-		fps = (double)nFramesForFPS / (timeNow-timeThen);
-		timeThen = timeNow;
+ 		fps = (double)nFramesForFPS / (timeNow-timeThen);
+      	timeThen = timeNow;
 		nFramesForFPS = 0;
-		ofFrameRate = 0.9f * ofFrameRate + 0.1f * fps;
+		frameRate = 0.9f * frameRate + 0.1f * fps;
   	}
-	nFramesForFPS++;
+  	nFramesForFPS++;
   	// --------------
 
 	nFrameCount++;		// increase the overall frame count
 
+	//setFrameNum(nFrameCount); // get this info to ofUtils for people to access
+
 }
-
-
-//------------------------------------------------------------
-void ofAppGlutWindow::exit(){
-	static ofEventArgs voidEventArgs;
-
-	if(ofAppPtr)
-		ofAppPtr->exit();
-
-	#ifdef OF_USING_POCO
-		ofNotifyEvent( ofEvents.exit, voidEventArgs );
-	#endif
-}
-
 
 //------------------------------------------------------------
 void ofAppGlutWindow::mouse_cb(int button, int state, int x, int y) {
@@ -388,8 +342,8 @@ void ofAppGlutWindow::mouse_cb(int button, int state, int x, int y) {
 
 	if (nFrameCount > 0){
 		if(ofAppPtr){
-			ofAppPtr->mouseX = x;
-			ofAppPtr->mouseY = y;
+		ofAppPtr->mouseX = x;
+		ofAppPtr->mouseY = y;
 		}
 
 		if (state == GLUT_DOWN) {
@@ -403,10 +357,8 @@ void ofAppGlutWindow::mouse_cb(int button, int state, int x, int y) {
 				ofNotifyEvent( ofEvents.mousePressed, mouseEventArgs );
 			#endif
 		} else if (state == GLUT_UP) {
-			if(ofAppPtr){
+			if(ofAppPtr)
 				ofAppPtr->mouseReleased(x,y,button);
-				ofAppPtr->mouseReleased();
-			}
 
 			#ifdef OF_USING_POCO
 				mouseEventArgs.x = x;
@@ -422,10 +374,11 @@ void ofAppGlutWindow::mouse_cb(int button, int state, int x, int y) {
 //------------------------------------------------------------
 void ofAppGlutWindow::motion_cb(int x, int y) {
 	static ofMouseEventArgs mouseEventArgs;
+
 	if (nFrameCount > 0){
 		if(ofAppPtr){
-			ofAppPtr->mouseX = x;
-			ofAppPtr->mouseY = y;
+		ofAppPtr->mouseX = x;
+		ofAppPtr->mouseY = y;
 			ofAppPtr->mouseDragged(x,y,buttonInUse);
 		}
 
@@ -445,8 +398,8 @@ void ofAppGlutWindow::passive_motion_cb(int x, int y) {
 
 	if (nFrameCount > 0){
 		if(ofAppPtr){
-			ofAppPtr->mouseX = x;
-			ofAppPtr->mouseY = y;
+		ofAppPtr->mouseX = x;
+		ofAppPtr->mouseY = y;
 			ofAppPtr->mouseMoved(x,y);
 		}
 
@@ -457,6 +410,39 @@ void ofAppGlutWindow::passive_motion_cb(int x, int y) {
 		#endif
 	}
 }
+
+//------------------------------------------------------------
+void ofAppGlutWindow::idle_cb(void) {
+	static ofEventArgs voidEventArgs;
+
+	//	thanks to jorge for the fix:
+	//	http://www.openframeworks.cc/forum/viewtopic.php?t=515&highlight=frame+rate
+	
+	if (nFrameCount != 0 && bFrameRateSet == true){
+		diffMillis = ofGetElapsedTimeMillis() - prevMillis;
+		if (diffMillis > millisForFrame){
+			; // we do nothing, we are already slower than target frame
+		} else {
+			int waitMillis = millisForFrame - diffMillis;
+			#ifdef TARGET_WIN32
+				Sleep(waitMillis);         //windows sleep in milliseconds
+			#else
+				usleep(waitMillis * 1000);   //mac sleep in microseconds - cooler :)
+			#endif
+		}   
+		}
+	prevMillis = ofGetElapsedTimeMillis(); // you have to measure here
+	
+	if(ofAppPtr)
+		ofAppPtr->update();
+
+		#ifdef OF_USING_POCO
+		ofNotifyEvent( ofEvents.update, voidEventArgs);
+		#endif
+    
+	glutPostRedisplay();
+}
+
 
 //------------------------------------------------------------
 void ofAppGlutWindow::keyboard_cb(unsigned char key, int x, int y) {
@@ -470,8 +456,8 @@ void ofAppGlutWindow::keyboard_cb(unsigned char key, int x, int y) {
 		ofNotifyEvent( ofEvents.keyPressed, keyEventArgs );
 	#endif
 
-	if (key == 27){				// "escape"
-		OF_EXIT_APP(0);
+	if (key == OF_KEY_ESC){				// "escape"
+		exitApp();
 	}
 }
 
@@ -491,6 +477,7 @@ void ofAppGlutWindow::keyboard_up_cb(unsigned char key, int x, int y) {
 //------------------------------------------------------
 void ofAppGlutWindow::special_key_cb(int key, int x, int y) {
 	static ofKeyEventArgs keyEventArgs;
+
 	if(ofAppPtr)
 		ofAppPtr->keyPressed(key | OF_KEY_MODIFIER);
 
@@ -526,5 +513,3 @@ void ofAppGlutWindow::resize_cb(int w, int h) {
 		ofNotifyEvent( ofEvents.resize, resizeEventArgs );
 	#endif
 }
-
-#endif

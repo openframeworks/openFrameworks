@@ -1,23 +1,47 @@
 #include "ofAppRunner.h"
 
+//========================================================================
+// static variables:
+
+ofBaseApp	*				OFSAptr;
+bool 						bMousePressed;
+bool						bRightButton;
+int							width, height;
+
+ofAppBaseWindow *			window = NULL;
+
+//========================================================================
+// core events instance & arguments
+
+ofCoreEvents 				ofEvents;
+ofEventArgs					voidEventArgs;
 
 
 //========================================================================
-// core events instance, declared in ofEvents.h:
-ofCoreEvents 				ofEvents;
+// callbacks:
+#include "ofAppGlutWindow.h"
 
 
+//--------------------------------------
+void ofSetupOpenGL(ofAppBaseWindow * windowPtr, int w, int h, int screenMode){
+	window = windowPtr;
+	window->setupOpenGL(w, h, screenMode);
+}
+
+//--------------------------------------
 void ofSetupOpenGL(int w, int h, int screenMode){
-	ofAppWindow->setupOpenGL(w, h, screenMode);
+
+	window = new ofAppGlutWindow();
+	window->setupOpenGL(w, h, screenMode);
 
 }
+
 //----------------------- 	gets called when the app exits
 // 							currently looking at who to turn off
 //							at the end of the application
 
 void ofExitCallback();
 void ofExitCallback(){
-
 
 	//------------------------
 	// try to close FMOD:
@@ -41,14 +65,21 @@ void ofExitCallback(){
 		timeEndPeriod(1);
 	#endif
 
-	//---------------------
-	// close the app window
-	ofAppWindow->exit();
+	if(OFSAptr)OFSAptr->exit();
 
+	#ifdef OF_USING_POCO
+		ofNotifyEvent( ofEvents.exit, voidEventArgs );
+	#endif
 }
 
 //--------------------------------------
 void ofRunApp(ofBaseApp * OFSA){
+
+	OFSAptr = OFSA;
+	if(OFSAptr){
+	OFSAptr->mouseX = 0;
+	OFSAptr->mouseY = 0;
+	}
 
 	atexit(ofExitCallback);
 
@@ -64,28 +95,29 @@ void ofRunApp(ofBaseApp * OFSA){
 
 	#endif
 
-	ofAppWindow->initializeWindow();
+	window->initializeWindow();
 
 	ofSeedRandom();
+	ofResetElapsedTimeCounter();
 
-	ofAppWindow->runAppViaInfiniteLoop(OFSA);
+	window->runAppViaInfiniteLoop(OFSAptr);
 
 }
 
 //--------------------------------------
+int ofGetFrameNum(){
+	return window->getFrameNum();
+}
+
+//--------------------------------------
 float ofGetFrameRate(){
-	return ofAppWindow->getFrameRate();
+	return window->getFrameRate();
 }
 
 //--------------------------------------
 void ofSetFrameRate(int targetRate){
 
-	ofAppWindow->setFrameRate(targetRate);
-}
-
-//--------------------------------------
-int ofGetFrameNum(){
-	return ofAppWindow->getFrameNum();
+	window->setFrameRate(targetRate);
 }
 
 //--------------------------------------
@@ -99,83 +131,85 @@ void ofSleepMillis(int millis){
 
 //--------------------------------------
 void ofHideCursor(){
-	ofAppWindow->hideCursor();
+	window->hideCursor();
 }
 
 //--------------------------------------
 void ofShowCursor(){
-	ofAppWindow->showCursor();
+	window->showCursor();
 }
 
 
 //--------------------------------------
 void ofSetWindowPosition(int x, int y){
-	ofAppWindow->setWindowPosition(x,y);
+	window->setWindowPosition(x,y);
 }
 
 //--------------------------------------
 void ofSetWindowShape(int width, int height){
-	ofAppWindow->setWindowShape(width, height);
+	window->setWindowShape(width, height);
 }
 
 //--------------------------------------
 int ofGetWindowPositionX(){
-	return (int)ofAppWindow->getWindowPosition().x;
+	return (int)window->getWindowPosition().x;
 }
 
 //--------------------------------------
 int ofGetWindowPositionY(){
-	return (int)ofAppWindow->getWindowPosition().y;
+	return (int)window->getWindowPosition().y;
 }
 
 //--------------------------------------
 int ofGetScreenWidth(){
-	return (int)ofAppWindow->getScreenSize().x;
+	return (int)window->getScreenSize().x;
 }
 
 //--------------------------------------
 int ofGetScreenHeight(){
-	return (int)ofAppWindow->getScreenSize().y;
+	return (int)window->getScreenSize().y;
 }
 
 //--------------------------------------------------
 int ofGetWidth(){
-	return (int)ofAppWindow->getWindowSize().x;
+	return (int)window->getWindowSize().x;
 }
 //--------------------------------------------------
 int ofGetHeight(){
-	return (int)ofAppWindow->getWindowSize().y;
+	return (int)window->getWindowSize().y;
 }
 
 //--------------------------------------
 void ofSetWindowTitle(string title){
-	ofAppWindow->setWindowTitle(title);
+	window->setWindowTitle(title);
 }
 
 //----------------------------------------------------------
-void ofEnableSetupScreen(){
-	ofAppWindow->enableSetupScreen();
-}
-
+//void ofEnableSetupScreen(){
+//	window->enableSetupScreen();
+//}
+//
 //----------------------------------------------------------
-void ofDisableSetupScreen(){
-	ofAppWindow->disableSetupScreen();
-}
+//void ofDisableSetupScreen(){
+//	window->disableSetupScreen();
+//}
 
 //--------------------------------------
 void ofToggleFullscreen(){
-	ofAppWindow->toggleFullscreen();
+	// put this in
+	window->toggleFullscreen();
 }
 
 //--------------------------------------
 void ofSetFullscreen(bool fullscreen){
 
-	ofAppWindow->setFullscreen(fullscreen);
+	window->setFullscreen(fullscreen);
 }
 
 //--------------------------------------
 int ofGetWindowMode(){
-	return ofAppWindow->getWindowMode();
+	// TODO fix this
+	return 0; // window->windowMode;
 }
 
 //--------------------------------------
@@ -207,11 +241,6 @@ void ofSetVerticalSync(bool bSync){
 	// glXGetVideoSyncSGI(&count); // but needs to be at the end of every "draw?
 	// also, see this:
    	// glXWaitVideoSyncSGI(2,0,&count);
-	//--------------------------------------
-	#ifdef TARGET_LINUX
-	//--------------------------------------
-		ofAppWindow->setVerticalSync(bSync);
-	//--------------------------------------
-	#endif
-	//--------------------------------------
 }
+
+

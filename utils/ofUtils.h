@@ -15,6 +15,8 @@ float 	ofGetElapsedTimef();
 int		ofGetElapsedTimeMillis();
 int 	ofGetFrameNum();
 
+float	ofCalcFrameRate();
+
 int 	ofGetSeconds();
 int 	ofGetMinutes();
 int 	ofGetHours();
@@ -46,7 +48,6 @@ void ofLog(int logLevel, string message);
 void ofLog(int logLevel, const char* format, ...);
 void ofSetConsoleColor(int color);
 void ofRestoreConsoleColor();
-
 
 #endif
 
