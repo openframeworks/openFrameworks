@@ -26,7 +26,6 @@ int 			nonFullScreenY;
 int				mouseX, mouseY;
 ofBaseApp *		ofAppPtr;
 
-extern ofCoreEvents 		ofEvents;
 
 //----------------------------------------------------------
 ofAppGlutWindow::ofAppGlutWindow(){
@@ -130,7 +129,7 @@ void ofAppGlutWindow::exitApp(){
 //	#ifdef OF_USING_POCO
 //		ofNotifyEvent( ofEvents.exit, voidEventArgs );
 //	#endif
-	
+
 	ofLog(OF_VERBOSE,"GLUT OF app is being terminated!");
 
 	OF_EXIT_APP(0);
@@ -214,7 +213,7 @@ void ofAppGlutWindow::setFrameRate(float targetRate){
 		bFrameRateSet = false;
 		return;
 	}
-	
+
 	bFrameRateSet 			= true;
 	float durationOfFrame 	= 1.0f / (float)targetRate;
 	millisForFrame 			= (int)(1000.0f * durationOfFrame);
@@ -233,7 +232,7 @@ void ofAppGlutWindow::disableSetupScreen(){
 //------------------------------------------------------------
 void ofAppGlutWindow::display(void){
 	static ofEventArgs voidEventArgs;
-	
+
 	//--------------------------------
 	// when I had "glutFullScreen()"
 	// in the initOpenGl, I was gettings a "heap" allocation error
@@ -417,7 +416,7 @@ void ofAppGlutWindow::idle_cb(void) {
 
 	//	thanks to jorge for the fix:
 	//	http://www.openframeworks.cc/forum/viewtopic.php?t=515&highlight=frame+rate
-	
+
 	if (nFrameCount != 0 && bFrameRateSet == true){
 		diffMillis = ofGetElapsedTimeMillis() - prevMillis;
 		if (diffMillis > millisForFrame){
@@ -429,17 +428,17 @@ void ofAppGlutWindow::idle_cb(void) {
 			#else
 				usleep(waitMillis * 1000);   //mac sleep in microseconds - cooler :)
 			#endif
-		}   
+		}
 		}
 	prevMillis = ofGetElapsedTimeMillis(); // you have to measure here
-	
+
 	if(ofAppPtr)
 		ofAppPtr->update();
 
 		#ifdef OF_USING_POCO
 		ofNotifyEvent( ofEvents.update, voidEventArgs);
 		#endif
-    
+
 	glutPostRedisplay();
 }
 
