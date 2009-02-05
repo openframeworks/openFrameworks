@@ -15,7 +15,6 @@ float 	ofGetElapsedTimef();
 int		ofGetElapsedTimeMillis();
 int 	ofGetFrameNum();
 
-float	ofCalcFrameRate();
 
 int 	ofGetSeconds();
 int 	ofGetMinutes();
