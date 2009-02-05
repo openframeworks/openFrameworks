@@ -212,6 +212,11 @@ void ofxCvFloatImage::operator = ( const ofxCvFloatImage& _mom ) {
 }
 
 //--------------------------------------------------------------------------------
+void ofxCvFloatImage::operator = ( const IplImage* _mom ) {
+    ofxCvImage::operator = (_mom);
+}
+
+//--------------------------------------------------------------------------------
 void ofxCvFloatImage::operator *= ( ofxCvImage& mom ) {
 	if( mom.getCvImage()->nChannels == cvImage->nChannels && 
         mom.getCvImage()->depth == cvImage->depth )

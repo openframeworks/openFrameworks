@@ -159,6 +159,11 @@ void ofxCvShortImage::operator = ( const ofxCvShortImage& _mom ) {
     }
 }
 
+//--------------------------------------------------------------------------------
+void ofxCvShortImage::operator = ( const IplImage* _mom ) {
+    ofxCvImage::operator = (_mom);
+}
+
 
 //--------------------------------------------------------------------------------
 void ofxCvShortImage::addWeighted( ofxCvGrayscaleImage& mom, float f ) {

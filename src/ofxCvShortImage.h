@@ -52,6 +52,7 @@ class ofxCvShortImage : public ofxCvImage {
     virtual void  operator = ( const ofxCvColorImage& mom );
     virtual void  operator = ( const ofxCvFloatImage& mom );
     virtual void  operator = ( const ofxCvShortImage& mom );
+    virtual void  operator = ( const IplImage* mom );        
     
     // virtual void  operator -= ( ofxCvImage& mom );                         //in base class 
     // virtual void  operator += ( ofxCvImage& mom );                         //in base class     

@@ -233,6 +233,19 @@ ofRectangle ofxCvImage::getIntersectionROI( const ofRectangle& r1, const ofRecta
 // Set Pixel Data
 
 //--------------------------------------------------------------------------------
+void  ofxCvImage::operator = ( const IplImage* mom ) {
+	if( mom->width == width && mom->height == height &&
+	    mom->nChannels == cvImage->nChannels && 
+        mom->depth == cvImage->depth )
+    {
+		cvCopy( mom, cvImage );
+        flagImageChanged();
+	} else {
+        ofLog(OF_ERROR, "in =, images need to match in size, channels, and depth");
+	}
+}
+
+//--------------------------------------------------------------------------------
 void ofxCvImage::operator -= ( float value ) {
 	cvSubS( cvImage, cvScalar(value), cvImageTemp );
 	swapTemp();

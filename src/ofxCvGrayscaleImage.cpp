@@ -102,6 +102,10 @@ void ofxCvGrayscaleImage::operator = ( const ofxCvFloatImage& _mom ) {
 	}
 }
 
+//--------------------------------------------------------------------------------
+void ofxCvGrayscaleImage::operator = ( const IplImage* _mom ) {
+    ofxCvImage::operator = (_mom);
+}
 
 //--------------------------------------------------------------------------------
 void ofxCvGrayscaleImage::absDiff( ofxCvGrayscaleImage& mom ) {

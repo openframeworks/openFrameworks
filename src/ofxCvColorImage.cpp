@@ -153,6 +153,10 @@ void ofxCvColorImage::operator = ( const ofxCvFloatImage& _mom ) {
 	}
 }
 
+//--------------------------------------------------------------------------------
+void ofxCvColorImage::operator = ( const IplImage* _mom ) {
+    ofxCvImage::operator = (_mom);
+}
 
 
 // Get Pixel Data
