@@ -262,58 +262,78 @@ void ofxCvImage::operator += ( float value ) {
 
 //--------------------------------------------------------------------------------
 void ofxCvImage::operator -= ( ofxCvImage& mom ) {
-	if( mom.width == width && mom.height == height &&
-	    mom.getCvImage()->nChannels == cvImage->nChannels && 
+	if( mom.getCvImage()->nChannels == cvImage->nChannels && 
         mom.getCvImage()->depth == cvImage->depth )
     {
-		cvSub( cvImage, mom.getCvImage(), cvImageTemp );
-		swapTemp();
-        flagImageChanged();
+        if( pushSetBothToTheirIntersectionROI(*this,mom) ) {
+            cvSub( cvImage, mom.getCvImage(), cvImageTemp );
+            swapTemp();
+            popROI();       //restore prevoius ROI
+            mom.popROI();   //restore prevoius ROI              
+            flagImageChanged();
+        } else {
+            ofLog(OF_ERROR, "in -=, ROI mismatch");
+        }
 	} else {
-        ofLog(OF_ERROR, "in -=, images need to match in size and type");
+        ofLog(OF_ERROR, "in -=, images need to have matching type");
 	}
 }
 
 //--------------------------------------------------------------------------------
 void ofxCvImage::operator += ( ofxCvImage& mom ) {
-	if( mom.width == width && mom.height == height &&
-	    mom.getCvImage()->nChannels == cvImage->nChannels && 
+	if( mom.getCvImage()->nChannels == cvImage->nChannels && 
         mom.getCvImage()->depth == cvImage->depth )
     {
-		cvAdd( cvImage, mom.getCvImage(), cvImageTemp );
-		swapTemp();
-        flagImageChanged();
+        if( pushSetBothToTheirIntersectionROI(*this,mom) ) {
+            cvAdd( cvImage, mom.getCvImage(), cvImageTemp );
+            swapTemp();
+            popROI();       //restore prevoius ROI
+            mom.popROI();   //restore prevoius ROI              
+            flagImageChanged();
+        } else {
+            ofLog(OF_ERROR, "in +=, ROI mismatch");
+        }
 	} else {
-        ofLog(OF_ERROR, "in +=, images need to match in size and type");
+        ofLog(OF_ERROR, "in +=, images need to have matching type");
 	}
 }
 
 //--------------------------------------------------------------------------------
 void ofxCvImage::operator *= ( ofxCvImage& mom ) {
-    float scalef = 1.0f / 255.0f;
-	if( mom.width == width && mom.height == height &&
-	    mom.getCvImage()->nChannels == cvImage->nChannels && 
+	if( mom.getCvImage()->nChannels == cvImage->nChannels && 
         mom.getCvImage()->depth == cvImage->depth )
     {
-		cvMul( cvImage, mom.getCvImage(), cvImageTemp, scalef );
-		swapTemp();
-        flagImageChanged();
+        if( pushSetBothToTheirIntersectionROI(*this,mom) ) {
+            float scalef = 1.0f / 255.0f;
+            cvMul( cvImage, mom.getCvImage(), cvImageTemp, scalef );
+            swapTemp();
+            popROI();       //restore prevoius ROI
+            mom.popROI();   //restore prevoius ROI              
+            flagImageChanged();
+        } else {
+            ofLog(OF_ERROR, "in *=, ROI mismatch");
+        }
 	} else {
-        ofLog(OF_ERROR, "in *=, images need to match in size and type");
+        ofLog(OF_ERROR, "in *=, images need to have matching type");
 	}
 }
 
 //--------------------------------------------------------------------------------
 void ofxCvImage::operator &= ( ofxCvImage& mom ) {
-	if( mom.width == width && mom.height == height &&
-	    mom.getCvImage()->nChannels == cvImage->nChannels && 
+	if( mom.getCvImage()->nChannels == cvImage->nChannels && 
         mom.getCvImage()->depth == cvImage->depth )
     {
-		cvAnd( cvImage, mom.getCvImage(), cvImageTemp );
-		swapTemp();
-        flagImageChanged();
+        if( pushSetBothToTheirIntersectionROI(*this,mom) ) {
+            cvAnd( cvImage, mom.getCvImage(), cvImageTemp );
+            swapTemp();
+            popROI();       //restore prevoius ROI
+            mom.popROI();   //restore prevoius ROI              
+            flagImageChanged();
+        } else {
+            ofLog(OF_ERROR, "in &=, ROI mismatch");
+        }
 	} else {
-        ofLog(OF_ERROR, "in &=, images need to match in size and type");
+        ofLog(OF_ERROR, "in &=, images need to have matching type");
 	}
 }
 

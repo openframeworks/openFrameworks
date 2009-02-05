@@ -169,7 +169,7 @@ void ofxCvFloatImage::operator = ( const ofxCvGrayscaleImage& _mom ) {
         mom.popROI();   //restore prevoius ROI              
         flagImageChanged();
 	} else {
-        ofLog(OF_ERROR, "in =, images are different sizes");
+        ofLog(OF_ERROR, "in =, ROI mismatch");
 	}
 }
 
@@ -189,7 +189,7 @@ void ofxCvFloatImage::operator = ( const ofxCvColorImage& _mom ) {
         cvSetImageROI(cvGrayscaleImage, cvRect(roiX,roiY,width,height));
         flagImageChanged();
 	} else {
-        ofLog(OF_ERROR, "in =, images are different sizes");
+        ofLog(OF_ERROR, "in =, ROI mismatch");
 	}
 }
 
@@ -204,7 +204,7 @@ void ofxCvFloatImage::operator = ( const ofxCvFloatImage& _mom ) {
             mom.popROI();   //restore prevoius ROI             
             flagImageChanged();
         } else {
-            ofLog(OF_ERROR, "in =, images are different sizes");
+            ofLog(OF_ERROR, "in =, ROI mismatch");
         }
     } else {
         ofLog(OF_WARNING, "in =, you are assigning a ofxCvFloatImage to itself");
@@ -227,9 +227,11 @@ void ofxCvFloatImage::operator *= ( ofxCvImage& mom ) {
             popROI();       //restore prevoius ROI
             mom.popROI();   //restore prevoius ROI              
             flagImageChanged();
+        } else {
+            ofLog(OF_ERROR, "in *=, ROI mismatch");
         }
 	} else {
-        ofLog(OF_ERROR, "in *=, images need to match in size and type");
+        ofLog(OF_ERROR, "in *=, images need to have matching type");
 	}
 }
 
@@ -245,9 +247,11 @@ void ofxCvFloatImage::operator &= ( ofxCvImage& mom ) {
             popROI();       //restore prevoius ROI
             mom.popROI();   //restore prevoius ROI              
             flagImageChanged();
+        } else {
+            ofLog(OF_ERROR, "in &=, ROI mismatch");
         }
 	} else {
-        ofLog(OF_ERROR, "in &=, images need to match in size and type");
+        ofLog(OF_ERROR, "in &=, images need to have matching type");
 	}
 }
 
@@ -261,7 +265,7 @@ void ofxCvFloatImage::addWeighted( ofxCvGrayscaleImage& mom, float f ) {
         mom.popROI();   //restore prevoius ROI           
         flagImageChanged();
     } else {
-        ofLog(OF_ERROR, "in addWeighted, images are different sizes");
+        ofLog(OF_ERROR, "in addWeighted, ROI mismatch");
     }
 }
 

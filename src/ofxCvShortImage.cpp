@@ -100,7 +100,7 @@ void ofxCvShortImage::operator = ( const ofxCvGrayscaleImage& _mom ) {
         mom.popROI();   //restore prevoius ROI               
         flagImageChanged();
 	} else {
-        ofLog(OF_ERROR, "in =, images are different sizes");
+        ofLog(OF_ERROR, "in =, ROI mismatch");
 	}
 }
 
@@ -120,7 +120,7 @@ void ofxCvShortImage::operator = ( const ofxCvColorImage& _mom ) {
         cvSetImageROI(cvGrayscaleImage, cvRect(roiX,roiY,width,height));                      
         flagImageChanged();
 	} else {
-        ofLog(OF_ERROR, "in =, images are different sizes");
+        ofLog(OF_ERROR, "in =, ROI mismatch");
 	}
 }
 
@@ -137,7 +137,7 @@ void ofxCvShortImage::operator = ( const ofxCvFloatImage& _mom ) {
         mom.popROI();   //restore prevoius ROI        
         flagImageChanged();
     } else {
-        ofLog(OF_ERROR, "in =, images are different sizes");
+        ofLog(OF_ERROR, "in =, ROI mismatch");
     }
 }
 
@@ -152,7 +152,7 @@ void ofxCvShortImage::operator = ( const ofxCvShortImage& _mom ) {
             mom.popROI();   //restore prevoius ROI             
             flagImageChanged();
         } else {
-            ofLog(OF_ERROR, "in =, images are different sizes");
+            ofLog(OF_ERROR, "in =, ROI mismatch");
         }
     } else {
         ofLog(OF_WARNING, "in =, you are assigning a ofxCvShortImage to itself");
@@ -174,7 +174,7 @@ void ofxCvShortImage::addWeighted( ofxCvGrayscaleImage& mom, float f ) {
         mom.popROI();   //restore prevoius ROI           
         flagImageChanged();
     } else {
-        ofLog(OF_ERROR, "in addWeighted, images are different sizes");
+        ofLog(OF_ERROR, "in addWeighted, ROI mismatch");
     }
 }
 

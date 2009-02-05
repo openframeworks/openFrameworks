@@ -111,7 +111,7 @@ void ofxCvColorImage::operator = ( const ofxCvGrayscaleImage& _mom ) {
         mom.popROI();   //restore prevoius ROI         
         flagImageChanged();
 	} else {
-        ofLog(OF_ERROR, "in =, images are different sizes");
+        ofLog(OF_ERROR, "in =, ROI mismatch");
 	}
 }
 
@@ -126,7 +126,7 @@ void ofxCvColorImage::operator = ( const ofxCvColorImage& _mom ) {
             mom.popROI();   //restore prevoius ROI              
             flagImageChanged();
         } else {
-            ofLog(OF_ERROR, "in =, images are different sizes");
+            ofLog(OF_ERROR, "in =, ROI mismatch");
         }
     } else {
         ofLog(OF_WARNING, "in =, you are assigning a ofxCvColorImage to itself");
@@ -149,7 +149,7 @@ void ofxCvColorImage::operator = ( const ofxCvFloatImage& _mom ) {
         cvSetImageROI(cvGrayscaleImage, cvRect(roiX,roiY,width,height));
         flagImageChanged();
 	} else {
-        ofLog(OF_ERROR, "in =, images are different sizes");
+        ofLog(OF_ERROR, "in =, ROI mismatch");
 	}
 }
 

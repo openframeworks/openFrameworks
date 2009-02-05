@@ -66,7 +66,7 @@ void ofxCvGrayscaleImage::operator = ( const ofxCvGrayscaleImage& _mom ) {
             mom.popROI();   //restore prevoius ROI              
             flagImageChanged();
         } else {
-            ofLog(OF_ERROR, "in =, images are different sizes");
+            ofLog(OF_ERROR, "in =, ROI mismatch");
         }
     } else {
         ofLog(OF_WARNING, "in =, you are assigning a ofxCvGrayscaleImage to itself");
@@ -83,7 +83,7 @@ void ofxCvGrayscaleImage::operator = ( const ofxCvColorImage& _mom ) {
         mom.popROI();   //restore prevoius ROI         
         flagImageChanged();
 	} else {
-        ofLog(OF_ERROR, "in =, images are different sizes");
+        ofLog(OF_ERROR, "in =, ROI mismatch");
 	}
 }
 
@@ -98,7 +98,7 @@ void ofxCvGrayscaleImage::operator = ( const ofxCvFloatImage& _mom ) {
         mom.popROI();   //restore prevoius ROI          
         flagImageChanged();
 	} else {
-        ofLog(OF_ERROR, "in =, images are different sizes");
+        ofLog(OF_ERROR, "in =, ROI mismatch");
 	}
 }
 
@@ -108,14 +108,16 @@ void ofxCvGrayscaleImage::operator = ( const IplImage* _mom ) {
 }
 
 //--------------------------------------------------------------------------------
-void ofxCvGrayscaleImage::absDiff( ofxCvGrayscaleImage& mom ) {
-    if( mom.width == width && mom.height == height ) {
+void ofxCvGrayscaleImage::absDiff( ofxCvGrayscaleImage& mom ) {    
+    if( pushSetBothToTheirIntersectionROI(*this,mom) ) {
         cvAbsDiff( cvImage, mom.getCvImage(), cvImageTemp );
         swapTemp();
+        popROI();       //restore prevoius ROI
+        mom.popROI();   //restore prevoius ROI              
         flagImageChanged();
     } else {
-        ofLog(OF_ERROR, "in absDiff, images are different sizes");
-    }
+        ofLog(OF_ERROR, "in *=, ROI mismatch");
+    }    
 }
 
 //--------------------------------------------------------------------------------
