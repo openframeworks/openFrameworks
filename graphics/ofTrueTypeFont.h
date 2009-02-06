@@ -52,10 +52,10 @@ public:
 
 	ofTrueTypeFont();
 	virtual ~ofTrueTypeFont();
-	
+		
 	// 			-- default, non-full char set, anti aliased:
 	void 		loadFont(string filename, int fontsize);
-	void 		loadFont(string filename, int fontsize, bool _bAntiAliased, bool _bFullCharacterSet);
+	void 		loadFont(string filename, int fontsize, bool _bAntiAliased, bool _bFullCharacterSet, bool makeContours = false);
 
 	bool		bLoadedOk;
 	bool 		bAntiAlised;
@@ -69,19 +69,24 @@ public:
 	ofRectangle    getStringBoundingBox(string s, float x, float y);
 	
 	void 		drawString(string s, float x, float y);
+	void		drawStringAsShapes(string s, float x, float y);
+	
 	int 		nCharacters;
 	
 	ofTTFCharacter getCharacterAsPoints(int character);
-	vector <ofTTFCharacter> charOutlines;
 
 protected:
+	vector <ofTTFCharacter> charOutlines;
 
 	float 			lineHeight;
 	charProps 		* 	cps;			// properties for each character
 	GLuint			*	texNames;		// textures for each character
 	int				fontSize;
+	bool			bMakeContours;
 
 	void 			drawChar(int c, float x, float y);
+	void			drawCharAsShape(int c, float x, float y);
+	
 	int 			ofNextPow2(int a);
 	int				border, visibleBorder;
 

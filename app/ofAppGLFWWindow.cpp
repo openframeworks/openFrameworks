@@ -28,7 +28,7 @@ ofAppGLFWWindow::ofAppGLFWWindow():ofAppBaseWindow(){
 	nonFullScreenY		= 0;
 	nonFullScreenW		= 0;
 	nonFullScreenH		= 0;
-
+	
 	millisForFrame		= 0;
 	prevMillis			= 0;
 	diffMillis			= 0;
@@ -39,7 +39,7 @@ ofAppGLFWWindow::ofAppGLFWWindow():ofAppBaseWindow(){
 	nFramesForFPS		= 0;
 	timeNow				= 0;
 	timeThen			= 0;
-	frameRate			= 0;
+	frameRate			= 0;	
 
 //	 OF_KEY_MODIFIER = 0x0000;
 //	 OF_KEY_RETURN	= 294;
@@ -123,7 +123,7 @@ void ofAppGLFWWindow::setupOpenGL(int w, int h, int screenMode){
 
 	requestedHeight = requestedHeight < 1 ? 1 : requestedHeight;
 	glfwGetWindowSize( &requestedWidth, &requestedHeight );
-
+	
 	nonFullScreenW = ofGetWidth();
 	nonFullScreenH = ofGetHeight();
 
@@ -210,12 +210,12 @@ void ofAppGLFWWindow::runAppViaInfiniteLoop(ofBaseApp * appPtr){
 
 void ofAppGLFWWindow::changeMode(){
 	//glfwToggleFullscreen();
-
+	
 	if( windowMode == OF_FULLSCREEN){
-
+	
 		nonFullScreenW = ofGetWidth();
 		nonFullScreenH = ofGetHeight();
-
+	
 		//----------------------------------------------------
 		ofAppGLFWWindow::setWindowShape(getScreenSize().x, getScreenSize().y);
 		ofAppGLFWWindow::setWindowPosition(0,0);
@@ -256,7 +256,7 @@ ofPoint ofAppGLFWWindow::getWindowSize(){
 ofPoint ofAppGLFWWindow::getWindowPosition(){
 	/*int x = glutGet(GLUT_WINDOW_X);
 	int y = glutGet(GLUT_WINDOW_Y);*/
-
+		
 	return ofPoint(nonFullScreenX,nonFullScreenY,0);
 }
 
@@ -289,7 +289,7 @@ void ofAppGLFWWindow::hideCursor(){
 //	#else
 		glfwDisable( GLFW_MOUSE_CURSOR );
 //	#endif
-};
+}
 
 void ofAppGLFWWindow::showCursor(){
 //	#ifdef TARGET_OSX
@@ -298,7 +298,7 @@ void ofAppGLFWWindow::showCursor(){
 //	#else
 		glfwEnable( GLFW_MOUSE_CURSOR );
 //	#endif
-};
+}
 
 void ofAppGLFWWindow::setFrameRate(float targetRate){
 	// given this FPS, what is the amount of millis per frame
@@ -312,11 +312,11 @@ void ofAppGLFWWindow::setFrameRate(float targetRate){
 
 	frameRate = targetRate;
 
-};
+}
 
 void ofAppGLFWWindow::enableSetupScreen(){
 	bEnableSetupScreen = true;
-};
+}
 
 void ofAppGLFWWindow::disableSetupScreen(){
 	bEnableSetupScreen = false;
@@ -436,7 +436,7 @@ void ofAppGLFWWindow::exitApp(){
 //	#ifdef OF_USING_POCO
 //		ofNotifyEvent( ofEvents.exit, voidEventArgs );
 //	#endif
-
+	
 	ofLog(OF_VERBOSE,"GLFW app is being terminated!");
 
 	// Terminate GLFW
@@ -524,7 +524,7 @@ void ofAppGLFWWindow::keyboard_cb(int key, int state) {
 	static ofKeyEventArgs keyEventArgs;
 
 	ofLog(OF_VERBOSE,"key: %i, state: %i",key,state);
-
+	
 	switch (key) {
 		case GLFW_KEY_ESC:
 			key = OF_KEY_ESC;
@@ -534,78 +534,78 @@ void ofAppGLFWWindow::keyboard_cb(int key, int state) {
 			break;
 		case GLFW_KEY_F2:
 			key = OF_KEY_F2;
-			break;
+			break;	
 		case GLFW_KEY_F3:
 			key = OF_KEY_F3;
-			break;
+			break;	
 		case GLFW_KEY_F4:
 			key = OF_KEY_F4;
-			break;
+			break;			
 		case GLFW_KEY_F5:
 			key = OF_KEY_F5;
-			break;
+			break;			
 		case GLFW_KEY_F6:
 			key = OF_KEY_F6;
-			break;
+			break;			
 		case GLFW_KEY_F7:
 			key = OF_KEY_F7;
-			break;
+			break;			
 		case GLFW_KEY_F8:
 			key = OF_KEY_F8;
-			break;
+			break;			
 		case GLFW_KEY_F9:
 			key = OF_KEY_F9;
-			break;
+			break;	
 		case GLFW_KEY_F10:
 			key = OF_KEY_F10;
-			break;
+			break;			
 		case GLFW_KEY_F11:
 			key = OF_KEY_F11;
-			break;
+			break;			
 		case GLFW_KEY_F12:
 			key = OF_KEY_F12;
-			break;
+			break;		
 		case GLFW_KEY_LEFT:
 			key = OF_KEY_LEFT;
-			break;
+			break;	
 		case GLFW_KEY_RIGHT:
 			key = OF_KEY_RIGHT;
-			break;
+			break;			
 		case GLFW_KEY_UP:
 			key = OF_KEY_UP;
-			break;
+			break;																				
 		case GLFW_KEY_DOWN:
 			key = OF_KEY_DOWN;
-			break;
+			break;	
 		case GLFW_KEY_PAGEUP:
 			key = OF_KEY_PAGE_UP;
-			break;
+			break;	
 		case GLFW_KEY_PAGEDOWN:
 			key = OF_KEY_PAGE_DOWN;
-			break;
+			break;		
 		case GLFW_KEY_HOME:
 			key = OF_KEY_HOME;
-			break;
+			break;		
 		case GLFW_KEY_END:
 			key = OF_KEY_END;
-			break;
+			break;	
 		case GLFW_KEY_INSERT:
 			key = OF_KEY_INSERT;
-			break;
+			break;	
 		case GLFW_KEY_ENTER:
 			key = OF_KEY_RETURN;
-			break;
+			break;				
 		default:
 			break;
 	}
-
+	
 	//GLFW defaults to uppercase - OF users are used to lowercase
 	//if we are uppercase make lowercase
 	// a better approach would be to check if shift keys are held down - and apply based on that
 	if( key >= 65 && key <= 90 ){
 		key += 32;
 	}
-
+	
 	if(state == GLFW_PRESS){
 		if(ofAppPtr)ofAppPtr->keyPressed(key);
 
@@ -633,7 +633,7 @@ void ofAppGLFWWindow::resize_cb(int w, int h) {
 
 	#ifdef OF_USING_POCO
 		static ofResizeEventArgs resizeEventArgs;
-
+	
 		resizeEventArgs.width = w;
 		resizeEventArgs.height = h;
 		ofNotifyEvent( ofEvents.resize, resizeEventArgs );

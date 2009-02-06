@@ -31,7 +31,7 @@ public:
 
 	void hideCursor();
 	void showCursor();
-
+	
 	static void exitApp();
 
 	void setWindowTitle(string title);

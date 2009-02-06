@@ -887,7 +887,7 @@ bool ofVideoGrabber::initGrabber(int w, int h, bool setUseTexture){
 		//---------------------------------- 4 - device selection
 		bool didWeChooseADevice = bChooseDevice;
 		bool deviceIsSelected	=  false;
-
+		
 		//if we have a device selected then try first to setup
 		//that device
 		if(didWeChooseADevice){

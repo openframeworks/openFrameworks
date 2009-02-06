@@ -97,7 +97,7 @@ void ofAppGlutWindow::initializeWindow(){
 	 glutSpecialUpFunc(special_key_up_cb);
 
 	 glutReshapeFunc(resize_cb);
-
+	
 }
 
 //------------------------------------------------------------
@@ -129,7 +129,7 @@ void ofAppGlutWindow::exitApp(){
 //	#ifdef OF_USING_POCO
 //		ofNotifyEvent( ofEvents.exit, voidEventArgs );
 //	#endif
-
+	
 	ofLog(OF_VERBOSE,"GLUT OF app is being terminated!");
 
 	OF_EXIT_APP(0);
@@ -191,7 +191,7 @@ void ofAppGlutWindow::hideCursor(){
 	#else
 		glutSetCursor(GLUT_CURSOR_NONE);
 	#endif
-};
+}
 
 //------------------------------------------------------------
 void ofAppGlutWindow::showCursor(){
@@ -200,7 +200,7 @@ void ofAppGlutWindow::showCursor(){
 	#else
 		glutSetCursor(GLUT_CURSOR_LEFT_ARROW);
 	#endif
-};
+}
 
 //------------------------------------------------------------
 void ofAppGlutWindow::setFrameRate(float targetRate){
@@ -213,26 +213,26 @@ void ofAppGlutWindow::setFrameRate(float targetRate){
 		bFrameRateSet = false;
 		return;
 	}
-
+	
 	bFrameRateSet 			= true;
 	float durationOfFrame 	= 1.0f / (float)targetRate;
 	millisForFrame 			= (int)(1000.0f * durationOfFrame);
-};
+}
 
 //------------------------------------------------------------
 void ofAppGlutWindow::enableSetupScreen(){
 	bEnableSetupScreen = true;
-};
+}
 
 //------------------------------------------------------------
 void ofAppGlutWindow::disableSetupScreen(){
 	bEnableSetupScreen = false;
-};
+}
 
 //------------------------------------------------------------
 void ofAppGlutWindow::display(void){
 	static ofEventArgs voidEventArgs;
-
+	
 	//--------------------------------
 	// when I had "glutFullScreen()"
 	// in the initOpenGl, I was gettings a "heap" allocation error
@@ -416,7 +416,7 @@ void ofAppGlutWindow::idle_cb(void) {
 
 	//	thanks to jorge for the fix:
 	//	http://www.openframeworks.cc/forum/viewtopic.php?t=515&highlight=frame+rate
-
+	
 	if (nFrameCount != 0 && bFrameRateSet == true){
 		diffMillis = ofGetElapsedTimeMillis() - prevMillis;
 		if (diffMillis > millisForFrame){
@@ -428,17 +428,17 @@ void ofAppGlutWindow::idle_cb(void) {
 			#else
 				usleep(waitMillis * 1000);   //mac sleep in microseconds - cooler :)
 			#endif
-		}
+		}   
 		}
 	prevMillis = ofGetElapsedTimeMillis(); // you have to measure here
-
+	
 	if(ofAppPtr)
 		ofAppPtr->update();
 
 		#ifdef OF_USING_POCO
 		ofNotifyEvent( ofEvents.update, voidEventArgs);
 		#endif
-
+    
 	glutPostRedisplay();
 }
 
@@ -463,7 +463,7 @@ void ofAppGlutWindow::keyboard_cb(unsigned char key, int x, int y) {
 //------------------------------------------------------------
 void ofAppGlutWindow::keyboard_up_cb(unsigned char key, int x, int y) {
 	static ofKeyEventArgs keyEventArgs;
-
+	
 	if(ofAppPtr)
 		ofAppPtr->keyReleased(key);
 
@@ -502,7 +502,7 @@ void ofAppGlutWindow::special_key_up_cb(int key, int x, int y) {
 //------------------------------------------------------------
 void ofAppGlutWindow::resize_cb(int w, int h) {
 	static ofResizeEventArgs resizeEventArgs;
-
+	
 	if(ofAppPtr)
 		ofAppPtr->resized(w,h);
 

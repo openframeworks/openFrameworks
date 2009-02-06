@@ -222,20 +222,20 @@ string ofGetVersionInfo(){
 //from the forums http://www.openframeworks.cc/forum/viewtopic.php?t=1413
 
 //--------------------------------------------------
-void ofSaveScreen(string filename) {
-   ofImage screen;
-   screen.allocate(ofGetWidth(), ofGetHeight(), OF_IMAGE_COLOR);
-   screen.grabScreen(0, 0, ofGetWidth(), ofGetHeight());
-   screen.saveImage(filename);
-}
+void ofSaveScreen(string filename) { 
+   ofImage screen; 
+   screen.allocate(ofGetWidth(), ofGetHeight(), OF_IMAGE_COLOR); 
+   screen.grabScreen(0, 0, ofGetWidth(), ofGetHeight()); 
+   screen.saveImage(filename); 
+} 
 
 //--------------------------------------------------
-int saveImageCounter = 0;
-void ofSaveFrame(){
-   string fileName = ofToString(saveImageCounter) + ".png";
+int saveImageCounter = 0; 
+void ofSaveFrame(){ 
+   string fileName = ofToString(saveImageCounter) + ".png";   
    ofSaveScreen(fileName);
    saveImageCounter++;
-}
+} 
 
 //levels are currently:
 // see ofConstants.h
@@ -276,7 +276,7 @@ void ofLog(int logLevel, string message){
 void ofLog(int logLevel, const char* format, ...){
 	//thanks stefan!
 	//http://www.ozzu.com/cpp-tutorials/tutorial-writing-custom-printf-wrapper-function-t89166.html
-
+	
 	if(logLevel >= currentLogLevel){
 		va_list args;
 		va_start( args, format );
@@ -297,7 +297,7 @@ void ofLog(int logLevel, const char* format, ...){
 		}
 		vprintf( format, args );
 		printf("\n");
-		va_end( args );
+		va_end( args );		
 	}
 }
 

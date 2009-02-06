@@ -24,7 +24,7 @@ int 		ofGetWindowPositionX();
 int 		ofGetWindowPositionY();
 int 		ofGetScreenWidth();
 int 		ofGetScreenHeight();
-int			ofGetWindowMode();
+int			ofGetWindowMode();	
 int 		ofGetWidth();			// <-- should we call this ofGetWindowWidth?
 int 		ofGetHeight();
 
@@ -35,9 +35,9 @@ void		ofEnableSetupScreen();
 void		ofDisableSetupScreen();
 void		ofSetFullscreen(bool fullscreen);
 void		ofToggleFullscreen();
-//-------------------------- sync
+//-------------------------- sync					
 void 		ofSetVerticalSync(bool bSync);
 
 
 
-#endif
+#endif	

@@ -38,9 +38,8 @@ public:
 	virtual void	setFullscreen(bool fullscreen){};
 	virtual void	toggleFullscreen(){};
 	
-	//WHAT IS THIS ? DELETE ME?
-	//void				enableSetupScreen(){};
-	//void				disableSetupScreen(){};
+	virtual void	enableSetupScreen(){};
+	virtual void	disableSetupScreen(){};
 	
 
 };
