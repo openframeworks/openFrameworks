@@ -185,14 +185,14 @@ void ofSetWindowTitle(string title){
 }
 
 //----------------------------------------------------------
-//void ofEnableSetupScreen(){
-//	window->enableSetupScreen();
-//}
-//
+void ofEnableSetupScreen(){
+	window->enableSetupScreen();
+}
+
 //----------------------------------------------------------
-//void ofDisableSetupScreen(){
-//	window->disableSetupScreen();
-//}
+void ofDisableSetupScreen(){
+	window->disableSetupScreen();
+}
 
 //--------------------------------------
 void ofToggleFullscreen(){

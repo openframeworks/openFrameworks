@@ -39,6 +39,8 @@ float circlePts[OF_MAX_CIRCLE_PTS];
 void  ofSetRectMode(int mode){
 	if (mode == OF_RECTMODE_CORNER) 		cornerMode = OF_RECTMODE_CORNER;
 	else if (mode == OF_RECTMODE_CENTER) 	cornerMode = OF_RECTMODE_CENTER;
+	
+	currentStyle.rectMode = cornerMode;
 }
 
 //----------------------------------------------------------
@@ -389,6 +391,12 @@ void ofSetStyle(ofStyle style){
 	//line width - finally!
 	ofSetLineWidth(style.lineWidth);
 	
+	//rect mode: corner/center
+	ofSetRectMode(style.rectMode);
+	
+	//poly mode: winding type
+	ofSetPolyMode(style.polyMode);
+	
 	//fill
 	if(style.bFill == 1){
 		ofFill();
@@ -707,6 +715,8 @@ void ofSetPolyMode(int mode){
 			ofLog(OF_ERROR," error in ofSetPolyMode");
 
 	}
+	
+	currentStyle.polyMode = polyMode;
 }
 
 //----------------------------------------------------------
