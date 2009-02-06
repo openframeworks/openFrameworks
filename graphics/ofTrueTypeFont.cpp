@@ -20,6 +20,46 @@
 
 
 
+void quad_bezier(vector <ofPoint> &ptsList, float x1, float y1, float x2, float y2, float x3, float y3, int res){
+	for(int i=0; i <= res; i++){
+        double t = (double)i / (double)(res);
+        double a = pow((1.0 - t), 2.0);
+        double b = 2.0 * t * (1.0 - t);
+        double c = pow(t, 2.0);
+        double x = a * x1 + b * x2 + c * x3;
+        double y = a * y1 + b * y2 + c * y3;
+        ptsList.push_back(ofPoint(x, y));
+    }
+}
+
+
+static void cubic_bezier(vector <ofPoint> &ptsList, float x0, float y0, float x1, float y1, float x2, float y2, float x3, float y3, int res){
+	float   ax, bx, cx;
+    float   ay, by, cy;
+    float   t, t2, t3;
+    float   x, y;
+
+    // polynomial coefficients
+    cx = 3.0f * (x1 - x0);
+    bx = 3.0f * (x2 - x1) - cx;
+    ax = x3 - x0 - cx - bx;
+
+    cy = 3.0f * (y1 - y0);
+    by = 3.0f * (y2 - y1) - cy;
+    ay = y3 - y0 - cy - by;
+
+
+    int resolution = res;
+
+    for (int i = 0; i < resolution; i++){
+    	t 	=  (float)i / (float)(resolution-1);
+    	t2 = t * t;
+    	t3 = t2 * t;
+		x = (ax * t3) + (bx * t2) + (cx * t) + x0;
+    	y = (ay * t3) + (by * t2) + (cy * t) + y0;
+    	ptsList.push_back(ofPoint(x,y) );
+    }
+}
 
 
 //------------------------------------------------------------------
@@ -45,6 +85,14 @@ ofTrueTypeFont::~ofTrueTypeFont(){
 	}
 }
 
+//------------------------------------------------------------------
+ofTTFCharacter ofTrueTypeFont::getCharacterAsPoints(int character){
+	if( charOutlines.size() > 0 && character >= NUM_CHARACTER_TO_START && character - NUM_CHARACTER_TO_START < charOutlines.size() ){
+		return charOutlines[character-NUM_CHARACTER_TO_START];
+	}else{
+		return ofTTFCharacter();
+	}
+}
 
 //------------------------------------------------------------------
 void ofTrueTypeFont::loadFont(string filename, int fontsize){
@@ -109,6 +157,8 @@ void ofTrueTypeFont::loadFont(string filename, int fontsize, bool _bAntiAliased,
 	texNames  = new GLuint[nCharacters];
 	glGenTextures(nCharacters, texNames);
 
+	charOutlines.assign(nCharacters, ofTTFCharacter());
+
 	//--------------------- load each char -----------------------
 	for (int i = 0 ; i < nCharacters; i++){
 
@@ -129,6 +179,101 @@ void ofTrueTypeFont::loadFont(string filename, int fontsize, bool _bAntiAliased,
 
 		border			= 3;
 		visibleBorder	= 2;
+
+		//if( i == 'g' - NUM_CHARACTER_TO_START ){
+		
+		
+		int num			= face->glyph->outline.n_points;
+		int nContours	= face->glyph->outline.n_contours;
+		int startPos	= 0;
+
+		printf("\n\n%c \n", char(i + NUM_CHARACTER_TO_START));
+		printf("%i %i\n", num, nContours);		
+
+		for(int k = 0; k < nContours; k++){
+			if( k > 0 ){
+				startPos = face->glyph->outline.contours[k-1]+1;
+			}
+			int endPos = face->glyph->outline.contours[k]+1;
+			
+			printf("--NEW CONTOUR\n\n");
+			
+			vector <ofPoint> testOutline;
+			ofPoint lastPoint;
+			
+			for(int j = startPos; j < endPos; j++){
+			
+				char * tags		= face->glyph->outline.tags;
+				FT_Vector * vec = face->glyph->outline.points;
+			
+				if( (tags[j] << 0) == 0x01 ){
+					lastPoint.set(  vec[j].x,  -vec[j].y, 0 );
+					printf("flag[%i] is set to 1 - regular point\n", j);
+					testOutline.push_back(lastPoint);
+					
+				}else{
+					printf("flag[%i] is set to 0 - control point ", j);
+					if( (tags[j] << 1) == 0x02 ){
+						printf("- bit 2 is set to 2 - CUBIC\n", j);
+						
+						//we need two control points to draw a cubic bezier
+						if( j > 0 && (tags[j-1] << 0 == 0x01) && (tags[j-1] << 1 == 0x02) ){
+							ofPoint controlPoint1( vec[j-1].x,  -vec[j-1].y );
+							ofPoint controlPoint2( vec[j].x,  -vec[j].y );
+							ofPoint nextPoint( vec[j+1].x,  -vec[j+1].y );
+						
+							cubic_bezier(testOutline, lastPoint.x, lastPoint.y, controlPoint1.x, controlPoint1.y, controlPoint2.x, controlPoint2.y, nextPoint.x, nextPoint.y, 20);
+						}
+					}else{
+						printf("- bit 2 is set to 0 - conic\n", j);
+						
+						ofPoint conicPoint( (float)vec[j].x,  -(float)vec[j].y );
+
+						if( j == startPos && tags[endPos-1] << 0 != 0x01 && tags[endPos-1] << 1 != 0x02 ){
+							ofPoint lastConnic( vec[endPos-1].x,  -vec[endPos-1].y );
+							lastPoint = (conicPoint + lastConnic) / 2;
+							printf("NEED TO MIX WITH LAST\n");
+						 } 
+						
+						bool doubleConic = false;
+						
+						int nextIndex = j+1; 
+						if( nextIndex >= endPos){
+							nextIndex = startPos;
+						}
+						
+						ofPoint nextPoint( (float)vec[nextIndex].x,  -(float)vec[nextIndex].y );						
+						
+						if( tags[nextIndex] << 0 != 0x01 && tags[nextIndex] << 1 != 0x02 ){
+							nextPoint = (conicPoint + nextPoint) / 2;
+							doubleConic = true;
+							printf("|_______ double connic!\n");
+						}
+						
+						quad_bezier(testOutline, lastPoint.x, lastPoint.y, conicPoint.x, conicPoint.y, nextPoint.x, nextPoint.y, 20);
+						//testOutline.push_back(conicPoint);
+						
+						if( doubleConic ){
+							lastPoint = nextPoint;
+						}
+					}
+				}
+			
+			//end for
+			} 
+			
+			for(int g =0; g < testOutline.size(); g++){
+				testOutline[g] /= 64.0f;
+			}
+			
+			charOutlines[i].contours.push_back(ofTTFContour());
+			charOutlines[i].contours.back().pts = testOutline;
+									
+			//}
+		
+			
+			
+		}
 
 		// prepare the texture:
 		int width  = ofNextPow2( bitmap.width + border*2 );
