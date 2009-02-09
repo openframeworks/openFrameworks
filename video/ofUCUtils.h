@@ -15,8 +15,6 @@
 
 struct AVPicture;
 
-//#include <gtk/gtk.h>
-//#include <unicapgtk.h>
 
 #define MAX_DEVICES 64
 #define MAX_FORMATS 64
@@ -24,11 +22,11 @@ struct AVPicture;
 #define VIDEOGRABBER_RESIZE_FLAGS SWS_X
 
 class ofUCUtils{
-	
+
 public:
 	ofUCUtils();
 	virtual ~ofUCUtils();
-	
+
 	void set_format (int w, int h);
 	bool open_device (int d);
 	void start_capture(void);
@@ -38,24 +36,24 @@ public:
 	void close_unicap();
 	char * device_identifier(void);
 	void new_frame (unicap_data_buffer_t * buffer);
-	
+
 	bool verbose;
-	
-private:	
+
+private:
 	bool 					bUCFrameNew;
 	unsigned char *			pixels;
 	bool					deviceReady;
-	
+
 	unicap_device_t 		device;
 	unicap_format_t 		format;
 	unicap_handle_t 		handle;
-	
+
 	AVPicture * 			src;
 	AVPicture * 			dst;
 	int 					src_pix_fmt;
 	int						d_width, d_height;
 	struct SwsContext *		toRGB_convert_ctx;
-	
+
 	pthread_mutex_t			capture_mutex;
 	void 					lock_buffer();
 	void 					unlock_buffer();

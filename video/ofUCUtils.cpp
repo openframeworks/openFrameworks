@@ -9,11 +9,10 @@
 
 extern "C"
 {
-#include "libavformat/avformat.h"
-#include "libswscale/swscale.h"
-#include "libavcodec/opt.h"
-#include "libavutil/fifo.h"
-#include "libavutil/avstring.h"
+#include "ffmpeg/avformat.h"
+#include "ffmpeg/swscale.h"
+#include "ffmpeg/opt.h"
+#include "ffmpeg/fifo.h"
 }
 
 
@@ -204,6 +203,10 @@ void ofUCUtils::set_format(int w, int h) {
 					formats[format_count].max_size.height,
 					formats[format_count].size.width,
 					formats[format_count].size.height);
+			ofLog(OF_VERBOSE,"Unicap: available sizes for this format:");
+			for(int i=0; i<formats[format_count].size_count;i++){
+				ofLog(OF_VERBOSE,"          %dx%d",formats[format_count].sizes[i].width,formats[format_count].sizes[i].height);
+			}
 		}
 	}
 
@@ -222,98 +225,32 @@ void ofUCUtils::set_format(int w, int h) {
 
 		bool sizeFounded = true;
 		bool exactMatch  = false;
-		if(w == format.size.width && h == format.size.height){
-			exactMatch = true;
-		}else if(w <= format.min_size.width && h <= format.min_size.height){
-			format.size.width  = format.min_size.width;
-			format.size.height = format.min_size.height;
-		}else if(w >= format.max_size.width && h >= format.max_size.height){
-			format.size.width  = format.max_size.width;
-			format.size.height = format.max_size.height;
-		}else{
-			sizeFounded=false;
+		int sizeDiff = 99999999;
+		int mostAproxSize = -1;
+
+		for(int i=0; i<format.size_count;i++){
+			if(format.sizes[i].width == w && format.sizes[i].height==h){
+				exactMatch=true;
+				format.size.width  = format.sizes[i].width;
+				format.size.height = format.sizes[i].height;
+				break;
+			}else{
+				if(abs(format.sizes[i].width-w)+abs(format.sizes[i].height-h)<sizeDiff){
+					sizeDiff=abs(format.sizes[i].width-w)+abs(format.sizes[i].height-h);
+					mostAproxSize=i;
+				}
+			}
 		}
+		if(!exactMatch){
+			format.size.width  = format.sizes[mostAproxSize].width;
+			format.size.height = format.sizes[mostAproxSize].height;
 
-		if(sizeFounded){
-			if(!exactMatch)
-				ofLog(OF_WARNING, "Unicap : Can't set video format %s, with size %dx%d",
-								format.identifier, w, h);
-
-			if ( !SUCCESS ( unicap_set_format (handle, &format) ) ) {
-				ofLog(OF_ERROR, "Unicap : Failed to set alternative video format!");
-				return;
-			}
-		}else{
-			format.size.width  = w;
-			format.size.height = h;
-
-			//Try selected size
-			if (!SUCCESS (unicap_set_format (handle, &format))) {
-				ofLog(OF_WARNING,"Unicap : Can't set video format %s, with size %dx%d",
-						format.identifier, w, h);
-
-
-				// If selected size doesn't work try to find a supported one
-				unicap_format_t format_spec;
-				unicap_void_format(&format_spec);
-
-				int nearW				= 9999999;
-				int nearH				= 9999999;
-
-
-				//Try with unicap reported sizes
-				if(format.size_count > 0){
-					ofLog(OF_NOTICE,"Unicap : Available sizes: %d",format.size_count);
-
-					for(int i = 0; i < format.size_count; i++){
-						ofLog(OF_NOTICE,"%d,%d",format.sizes[i].width,format.sizes[i].height);
-						if(abs(w-format.sizes[i].width)<abs(w-nearW)){
-							nearW = format.sizes[i].width;
-							nearH = format.sizes[i].height;
-						}
-					}
-					format.size.width  = nearW;
-		            format.size.height = nearH;
-
-		        //Try with stepping
-				}else if(format.h_stepping > 1 || format.v_stepping > 1){
-					//This is how many diff sizes are available for the format
-		            int stepX = format.h_stepping;
-		            int stepY = format.v_stepping;
-		            for(int x = format.min_size.x; x <= format.max_size.x; x+= stepX)
-		            {
-		            	if( abs(w-x) < abs(w-nearW) ){
-		            		nearW = x;
-		            	}
-		            }
-
-		            for(int y = format.min_size.y; y <= format.max_size.y; y+= stepY)
-		            {
-		            	if( abs(h-y) < abs(h-nearH) ){
-		            		nearH = y;
-		            	}
-		            }
-		            format.size.width  = nearW;
-		            format.size.height = nearH;
-				}
-
-				//Try to set founded size
-				sizeFounded = SUCCESS ( unicap_set_format (handle, &format) );
-
-				//If none of the above work, try default size
-				if(!sizeFounded){
-	       			if ( !SUCCESS( unicap_enumerate_formats( handle, &format_spec, &format, selected_format ) ) ) {
-	       				ofLog(OF_ERROR,"Unicap : Failed to get alternative video format");
-						return;
-					}
-
-					if ( !SUCCESS ( unicap_set_format (handle, &format) ) ) {
-						ofLog(OF_ERROR,"Unicap : Failed to set alternative video format!");
-						return;
-					}
-				}
-			}
-
+			ofLog(OF_WARNING, "Unicap : Can't set video format %s, with size %dx%d, will use %dx%d",
+							format.identifier, w, h, format.size.width, format.size.height);
+		}
+		if ( !SUCCESS ( unicap_set_format (handle, &format) ) ) {
+			ofLog(OF_ERROR, "Unicap : Failed to set alternative video format!");
+			return;
 		}
 		ofLog(OF_NOTICE,"Unicap : Selected format: %s, with size %dx%d\n", format.identifier,
 				format.size.width, format.size.height);
@@ -324,7 +261,7 @@ void ofUCUtils::set_format(int w, int h) {
 			return;
 		}
 
-		if(src_pix_fmt!=PIX_FMT_RGB24){
+		if(src_pix_fmt!=PIX_FMT_RGB24 || !exactMatch){
 			src=new AVPicture;
 			avpicture_alloc(src,src_pix_fmt,format.size.width,format.size.height);
 			dst=new AVPicture;
