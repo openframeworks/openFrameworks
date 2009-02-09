@@ -80,9 +80,6 @@ class ofxCvImage : public ofBaseHasTexture {
     //
     virtual void  draw( float x, float y );
     virtual void  draw( float x, float y, float w, float h );
-    virtual void  drawWithoutTexture( float x, float y ) {};
-    virtual void  drawWithoutTexture( float x, float y, float w, float h ) {};    
-
 
     // Image Filter Operations
     //
