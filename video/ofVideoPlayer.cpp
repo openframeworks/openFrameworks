@@ -1,6 +1,8 @@
 #include "ofVideoPlayer.h"
 #include "ofUtils.h"
 
+#include <gst/video/video.h>
+
 //--------------------------------------------------------------
 #ifdef  OF_VIDEO_PLAYER_QUICKTIME
 //--------------------------------------------------------------
@@ -107,6 +109,64 @@ OSErr 	DrawCompleteProc(Movie theMovie, long refCon){
 }
 
 //--------------------------------------------------------------
+#else
+//--------------------------------------------------------------
+
+#include "gstappsink.h"
+
+static bool plugin_registered = false;
+
+//------------------------------------
+void ofGstDataLock(ofGstVideoData * data){
+	pthread_mutex_lock( &(data->buffer_mutex) );
+}
+
+//------------------------------------
+void ofGstDataUnlock(ofGstVideoData * data){
+	pthread_mutex_unlock( &(data->buffer_mutex) );
+}
+
+
+
+// called when the appsink notifies us that there is a new buffer ready for
+// processing
+
+static void
+on_new_buffer_from_source (GstElement * elt, ofGstVideoData * data)
+{
+  guint size;
+  GstBuffer *buffer;
+
+  //get the buffer from appsink
+  buffer = gst_app_sink_pull_buffer (GST_APP_SINK (elt));
+
+  size = GST_BUFFER_SIZE (buffer);
+  //ofLog(OF_VERBOSE,"new buffer of size %d", size);
+
+  ofGstDataLock(data);
+	  if(data->pixels){
+		  memcpy (data->pixels, GST_BUFFER_DATA (buffer), size);
+		  data->bHasPixelsChanged=true;
+	  }
+  ofGstDataUnlock(data);
+
+  if( !data->nFrames && data->pipelineState==GST_STATE_PLAYING && data->speed==1 ){
+	  data->nFrames=data->durationNanos/buffer->duration;
+  }
+
+  /// we don't need the appsink buffer anymore
+  gst_buffer_unref (buffer);
+}
+
+static gboolean
+appsink_plugin_init (GstPlugin * plugin)
+{
+  gst_element_register (plugin, "appsink", GST_RANK_NONE, GST_TYPE_APP_SINK);
+
+  return TRUE;
+}
+
+//--------------------------------------------------------------
 #endif
 //--------------------------------------------------------------
 
@@ -137,16 +197,33 @@ ofVideoPlayer::ofVideoPlayer (){
 	//--------------------------------------------------------------
     #else
     //--------------------------------------------------------------
-        iTotalFrames				= 0;
-		fobsDecoder					= NULL;
+
+        gstPipeline					= NULL;
 		bIsFrameNew					= false;
 		loopMode					= OF_LOOP_NONE;
-		timeLastIdle				= 0;
-		diffTime					= 0;
-		positionPct					= 0;
-		lastFrameIndex				= 0;  // as we play, look for changed frames
-		durationMillis				= 0;
-		pthread_mutex_init(&time_mutex,NULL);
+
+		durationNanos				= 0;
+		bIsMovieDone				= false;
+		posChangingPaused			= false;
+		isStream					= false;
+
+		gstData.durationNanos		= 0;
+		gstData.nFrames				= 0;
+		gstData.speed				= speed;
+
+		pthread_mutex_init(&(gstData.buffer_mutex),NULL);
+
+		/*if(!g_thread_supported()){
+			g_thread_init(NULL);
+		}*/
+		gst_init (NULL, NULL);
+		if(!plugin_registered){
+			gst_plugin_register_static(GST_VERSION_MAJOR, GST_VERSION_MINOR,
+			 			"appsink", "Element application sink",
+			 			appsink_plugin_init, "0.1", "LGPL", "ofVideoPlayer", "openFrameworks",
+			 			"http://openframeworks.cc/");
+			plugin_registered=true;
+		}
 	//--------------------------------------------------------------
 	#endif
 	//--------------------------------------------------------------
@@ -183,12 +260,11 @@ void ofVideoPlayer::update(){
 //---------------------------------------------------------------------------
 void ofVideoPlayer::idleMovie(){
 
-    if (bLoaded == true){
 
 		//--------------------------------------------------------------
 		#ifndef  TARGET_LINUX  // !linux = quicktime...
 		//--------------------------------------------------------------
-
+		if (bLoaded == true){
 			#ifdef TARGET_WIN32 || QT_USE_MOVIETASK
 				MoviesTask(moviePtr,0);
 			#endif
@@ -198,50 +274,20 @@ void ofVideoPlayer::idleMovie(){
 		//--------------------------------------------------------------
 
 
-			float currentTime = (float)ofGetElapsedTimeMillis();
-			diffTime = currentTime - timeLastIdle;
-			timeLastIdle = currentTime;
-            float pctDone =  diffTime / durationMillis;   // given this much time, how much of the movie did we do?
 
-            lock();
-            if (!bPaused) {
-            	positionPct += (pctDone * speed); //speed;
+		gstHandleMessage();
+		if (bLoaded == true){
+            ofGstDataLock(&gstData);
 
-			//------------------------------------- now, let's do different things if we are looping or not:
-			if (loopMode == OF_LOOP_NONE){
-			  if (positionPct > 1) positionPct = 1;
-			  if (positionPct < 0) positionPct = 0;
-			} else if (loopMode == OF_LOOP_PALINDROME) {
-			  if (positionPct > 1) {
-			      float diff = positionPct - 1.0f;
-			      positionPct = 1 - diff;
-			      speed *= -1;
-			  }
-			  if (positionPct < 0){
-			      float diff = -positionPct;
-			      positionPct = 0 + diff;
-			      speed *= -1;
-			  }
-			} else {
-			    while (positionPct < 0) positionPct += 1;
-			    while (positionPct > 1) positionPct -= 1;
-			}
+				bHavePixelsChanged = gstData.bHasPixelsChanged;
+				if (bHavePixelsChanged){
+					gstData.bHasPixelsChanged=false;
+					bIsMovieDone = false;
+					if(bUseTexture)
+						tex.loadData(pixels, width, height, GL_RGB);
+				}
 
-            fobsDecoder->setPosition((omnividea::fobs::TimeStamp)(positionPct * durationMillis));
-
-            }
-			int curFrameIndex =  fobsDecoder->getFrameIndex();
-            bHavePixelsChanged = curFrameIndex != lastFrameIndex;
-			if (bHavePixelsChanged){
-			    unsigned char *rgb = fobsDecoder->getRGB(width,height);
-			    memcpy(pixels, rgb, width*height*3);
-			    if(bUseTexture)
-			    tex.loadData(pixels, width, height, GL_RGB);
-			}
-
-
-			lastFrameIndex = curFrameIndex;
-			unlock();
+			ofGstDataUnlock(&gstData);
 
 		//--------------------------------------------------------------
 		#endif
@@ -285,7 +331,9 @@ void ofVideoPlayer::closeMovie(){
 	#else
 	//--------------------------------------
 
-	 fobsDecoder->close();
+	gst_element_set_state(GST_ELEMENT(gstPipeline), GST_STATE_NULL);
+	g_object_unref(gstSink);
+	g_object_unref(gstPipeline);
 
 	//--------------------------------------
 	#endif
@@ -310,10 +358,7 @@ ofVideoPlayer::~ofVideoPlayer(){
 	#else
 	//--------------------------------------
 
-		// [CHECK] anything else necessary for FOBS ? please check
-		if (fobsDecoder != NULL){
-			delete fobsDecoder;
-		}
+		closeMovie();
 
 		if (pixels != NULL){
 			delete pixels;
@@ -456,66 +501,61 @@ bool ofVideoPlayer::loadMovie(string name){
 	#else
 	//--------------------------------------
 
+
 		bLoaded      		= false;
 		bPaused 			= true;
 		speed 				= 1.0f;
 		bHavePixelsChanged 	= false;
-		name 					= ofToDataPath(name);
-		fobsDecoder 		= new omnividea::fobs::Decoder(name.c_str());
-		omnividea::fobs::ReturnCode error = fobsDecoder->open();
+		if( name.find( "://",0 ) == string::npos){
+			name 			= "file://"+ofToDataPath(name,true);
+			isStream		= false;
+		}else{
+			isStream		= true;
+		}
+		ofLog(OF_VERBOSE,"loading "+name);
+
+		gstData.loop		= g_main_loop_new (NULL, FALSE);
 
 
-		if( error != omnividea::fobs::OkCode ){
-			ofLog(OF_ERROR,"error loading movie");
+
+		gstPipeline = gst_element_factory_make("playbin","player");
+		g_object_set(G_OBJECT(gstPipeline), "uri", name.c_str(), NULL);
+
+		// create the oF appsink for video rgb without sync to clock
+		gstSink = gst_element_factory_make("appsink", NULL);
+		GstCaps *caps = gst_caps_new_simple("video/x-raw-rgb", NULL);
+		gst_app_sink_set_caps(GST_APP_SINK(gstSink), caps);
+		gst_caps_unref(caps);
+		gst_base_sink_set_sync(GST_BASE_SINK(gstSink), false);
+
+		g_object_set (G_OBJECT(gstPipeline),"video-sink",gstSink,NULL);
+
+
+		GstElement *audioSink = gst_element_factory_make("gconfaudiosink", NULL);
+		g_object_set (G_OBJECT(gstPipeline),"audio-sink",audioSink,NULL);
+
+
+		// pause the pipeline
+		if(gst_element_set_state(GST_ELEMENT(gstPipeline), GST_STATE_PAUSED) ==
+		   GST_STATE_CHANGE_FAILURE) {
+			ofLog(OF_ERROR, "GStreamer: unable to set pipeline to paused\n");
+			gst_object_unref(gstPipeline);
 			return false;
 		}
-		width 					= fobsDecoder->getWidth();
-		height 					= fobsDecoder->getHeight();
-		pixels					= new unsigned char[width*height*3];
 
-		if (!fobsDecoder->isVideoPresent()){
-			return false;
-		}
+		gstData.pipeline=gstPipeline;
 
-		bLoaded = true;
+		// set the appsink to emit signals to get eos and errors
+		g_object_set (G_OBJECT (gstSink), "emit-signals", TRUE, "sync", TRUE, NULL);
+		g_signal_connect (gstSink, "new-buffer", G_CALLBACK (on_new_buffer_from_source), &gstData);
 
-		if (bUseTexture){
-			// create the texture, set the pixels to black and
-			// upload them to the texture (so at least we see nothing black the callback)
-			tex.allocate(width,height,GL_RGB);
-			memset(pixels, 0, width*height*3);
-			tex.loadData(pixels, width, height, GL_RGB);
+		if(!isStream){
+			return allocate();
 		}
 
 
-		error = fobsDecoder->setFrame(0);
-
-		if(error == omnividea::fobs::NoFrameError) {
-			error = omnividea::fobs::OkCode;
-			ofLog(OF_ERROR,"NoFrameError");
-		}
-
-		if(omnividea::fobs::isOk(error)){
-			// get some pixels in:
-			unsigned char *rgb = fobsDecoder->getRGB(width,height);
-			if(rgb == NULL){
-				ofLog(OF_ERROR,"load movie: getRGB error");
-				error = omnividea::fobs::GenericError;
-			}
-			if(isOk(error) && bUseTexture)
-			{
-				memcpy(pixels, rgb, width*height*3);
-				tex.loadData(pixels, width, height, GL_RGB);
-			}
-		}
-
-
-		iTotalFrames		= (int)(fobsDecoder->getFrameRate()*fobsDecoder->getDurationSeconds());
-		nFrames				= iTotalFrames;
-		positionPct 		= 0;
-		timeLastIdle 		= ofGetElapsedTimef();
-        durationMillis      = fobsDecoder->getDurationSeconds() * 1000.0f;
-
+		// unreference all elements so they get deleted on close
+		gst_object_unref(audioSink);
 
 		return true;
 
@@ -603,9 +643,9 @@ void ofVideoPlayer::play(){
 		if (!bStarted){
 		 	start();
 		}else {
+			bPlaying = true;
 			setPaused(false);
 		}
-
 	//--------------------------------------
 	#endif
 	//--------------------------------------
@@ -644,14 +684,19 @@ void ofVideoPlayer::setVolume(int volume){
 	//--------------------------------------
 
 	SetMovieVolume(moviePtr, volume);
+	//--------------------------------------
+	#else
+	//--------------------------------------
+
+	volume = CLAMP(volume,0,10);
+	g_object_set(G_OBJECT(gstPipeline), "volume", volume, NULL);
 
 	//--------------------------------------
 	#endif
 	//--------------------------------------
 
-	// no volume currently for FOBS players :(
-
 }
+
 
 //--------------------------------------------------------
 void ofVideoPlayer::setLoopState(int state){
@@ -719,11 +764,34 @@ void ofVideoPlayer::setPosition(float pct){
 	#else
 	//--------------------------------------
 
-	lock();
-        //pct = CLAMP(pct, 0,1);
-        positionPct = pct;  // check between 0 and 1;
-	unlock();
+	//pct = CLAMP(pct, 0,1);// check between 0 and 1;
+	GstFormat format = GST_FORMAT_TIME;
+	GstSeekFlags flags = (GstSeekFlags) (GST_SEEK_FLAG_FLUSH|GST_SEEK_FLAG_ACCURATE);
 
+	gint64 pos = (guint64)(pct*(float)durationNanos);
+	if(speed>0){
+		if(!gst_element_seek(GST_ELEMENT(gstPipeline),speed, 	format,
+				flags,
+				GST_SEEK_TYPE_SET,
+				pos,
+				GST_SEEK_TYPE_SET,
+				-1)) {
+		ofLog(OF_WARNING,"GStreamer: unable to change speed");
+		}
+	}else{
+		if(!gst_element_seek(GST_ELEMENT(gstPipeline),speed, 	format,
+				flags,
+				GST_SEEK_TYPE_SET,
+				0,
+				GST_SEEK_TYPE_SET,
+				pos)) {
+		ofLog(OF_WARNING,"GStreamer: unable to change speed");
+		}
+	}
+	if(bPaused){
+		gst_element_set_state (gstPipeline, GST_STATE_PLAYING);
+		posChangingPaused = true;
+	}
 	//--------------------------------------
 	#endif
 	//--------------------------------------
@@ -738,42 +806,40 @@ void ofVideoPlayer::setFrame(int frame){
 	#ifdef OF_VIDEO_PLAYER_QUICKTIME
 	//--------------------------------------
 
-	// frame 0 = first frame...
+		// frame 0 = first frame...
 
-	// this is the simple way...
-	//float durationPerFrame = getDuration() / getTotalNumFrames();
+		// this is the simple way...
+		//float durationPerFrame = getDuration() / getTotalNumFrames();
 
-	// seems that freezing, doing this and unfreezing seems to work alot
-	// better then just SetMovieTimeValue() ;
+		// seems that freezing, doing this and unfreezing seems to work alot
+		// better then just SetMovieTimeValue() ;
 
-	if (!bPaused) SetMovieRate(moviePtr, X2Fix(0));
+		if (!bPaused) SetMovieRate(moviePtr, X2Fix(0));
 
-	// this is better with mpeg, etc:
-	double frameRate = 0;
-	double movieTimeScale = 0;
-	MovieGetStaticFrameRate(moviePtr, &frameRate);
-	movieTimeScale = GetMovieTimeScale(moviePtr);
+		// this is better with mpeg, etc:
+		double frameRate = 0;
+		double movieTimeScale = 0;
+		MovieGetStaticFrameRate(moviePtr, &frameRate);
+		movieTimeScale = GetMovieTimeScale(moviePtr);
 
-	if (frameRate > 0){
-		double frameDuration = 1 / frameRate;
-		TimeValue t = (frame * frameDuration * movieTimeScale);
-		SetMovieTimeValue(moviePtr, t);
-		MoviesTask(moviePtr, 0);
-	}
+		if (frameRate > 0){
+			double frameDuration = 1 / frameRate;
+			TimeValue t = (frame * frameDuration * movieTimeScale);
+			SetMovieTimeValue(moviePtr, t);
+			MoviesTask(moviePtr, 0);
+		}
 
-   if (!bPaused) SetMovieRate(moviePtr, X2Fix(speed));
-
-   //--------------------------------------
-#else
-   //--------------------------------------
-
-   lock();
-   		//fobsDecoder->setFrame(frame);
-   		positionPct = ((float)frame) / (float)iTotalFrames;
-   unlock();
+	   if (!bPaused) SetMovieRate(moviePtr, X2Fix(speed));
 
    //--------------------------------------
-#endif
+	#else
+   //--------------------------------------
+
+	   float pct = (float)frame / (float)gstData.nFrames;
+	   setPosition(pct);
+
+   //--------------------------------------
+	#endif
    //--------------------------------------
 
 }
@@ -792,7 +858,7 @@ float ofVideoPlayer::getDuration(){
 	#else
 	//--------------------------------------
 
-		return fobsDecoder->getDurationSeconds();
+		return (float)durationNanos/(float)GST_SECOND;
 
 	//--------------------------------------
 	#endif
@@ -815,8 +881,11 @@ float ofVideoPlayer::getPosition(){
 	//--------------------------------------
 	#else
 	//--------------------------------------
-
-		return positionPct;
+		gint64 pos=0;
+		GstFormat format=GST_FORMAT_TIME;
+		if(!gst_element_query_position(GST_ELEMENT(gstPipeline),&format,&pos))
+			ofLog(OF_ERROR,"GStreamer: cannot query position");
+		return (float)pos/(float)durationNanos;
 
 	//--------------------------------------
 	#endif
@@ -828,33 +897,20 @@ float ofVideoPlayer::getPosition(){
 //---------------------------------------------------------------------------
 int ofVideoPlayer::getCurrentFrame(){
 
-	//--------------------------------------
-	#ifdef OF_VIDEO_PLAYER_QUICKTIME
-	//--------------------------------------
 	int frame = 0;
 
 	// zach I think this may fail on variable length frames...
 	float pos = getPosition();
 
 
-	float  framePosInFloat = (getTotalNumFrames() * getPosition());
+	float  framePosInFloat = ((float)getTotalNumFrames() * pos);
 	int    framePosInInt = (int)framePosInFloat;
 	float  floatRemainder = (framePosInFloat - framePosInInt);
 	if (floatRemainder > 0.5f) framePosInInt = framePosInInt + 1;
 	//frame = (int)ceil((getTotalNumFrames() * getPosition()));
 	frame = framePosInInt;
+
 	return frame;
-
-	//--------------------------------------
-	#else
-	//--------------------------------------
-
-	return lastFrameIndex;
-
-	//--------------------------------------
-	#endif
-	//--------------------------------------
-
 
 }
 
@@ -865,20 +921,11 @@ bool ofVideoPlayer::getIsMovieDone(){
 	//--------------------------------------
 	#ifdef OF_VIDEO_PLAYER_QUICKTIME
 	//--------------------------------------
-
 		bool bIsMovieDone = IsMovieDone(moviePtr);
 		return bIsMovieDone;
 	//--------------------------------------
-	#endif
+	#else
 	//--------------------------------------
-
-	//--------------------------------------
-	#ifdef OF_VIDEO_PLAYER_FOBS
-	//--------------------------------------
-	lock();
-		bool bIsMovieDone = (lastFrameIndex == iTotalFrames);
-	unlock();
-
 		return bIsMovieDone;
 	//--------------------------------------
 	#endif
@@ -895,46 +942,16 @@ void ofVideoPlayer::firstFrame(){
 
 //---------------------------------------------------------------------------
 void ofVideoPlayer::nextFrame(){
-	//--------------------------------------
-	#ifdef OF_VIDEO_PLAYER_QUICKTIME
-	//--------------------------------------
 
 	setFrame(getCurrentFrame() + 1);
 
-	//--------------------------------------
-	#else
-	//--------------------------------------
-
-	lock();
-		//fobsDecoder->nextFrame();
-		positionPct += (fobsDecoder->getNextFrameTime() - fobsDecoder->getFrameTime()) / getDuration();
-	unlock();
-
-	//--------------------------------------
-	#endif
-	//--------------------------------------
 }
 
 //---------------------------------------------------------------------------
 void ofVideoPlayer::previousFrame(){
-	//--------------------------------------
-	#ifdef OF_VIDEO_PLAYER_QUICKTIME
-	//--------------------------------------
 
 	setFrame(getCurrentFrame() - 1);
 
-	//--------------------------------------
-	#else
-	//--------------------------------------
-
-	lock();
-		//fobsDecoder->prevFrame();
-		positionPct -= (fobsDecoder->getNextFrameTime() - fobsDecoder->getFrameTime()) / getDuration();
-	unlock();
-
-	//--------------------------------------
-	#endif
-	//--------------------------------------
 }
 
 
@@ -947,10 +964,53 @@ void ofVideoPlayer::setSpeed(float _speed){
 	//--------------------------------------
 	#ifdef OF_VIDEO_PLAYER_QUICKTIME
 	//--------------------------------------
-	if (bPlaying == true){
-		//setMovieRate actually plays, so let's call it only when we are playing
-		SetMovieRate(moviePtr, X2Fix(speed));
-	}
+
+		if (bPlaying == true){
+			//setMovieRate actually plays, so let's call it only when we are playing
+			SetMovieRate(moviePtr, X2Fix(speed));
+		}
+
+	//--------------------------------------
+	#else
+	//--------------------------------------
+
+		GstFormat format = GST_FORMAT_TIME;
+		GstSeekFlags flags = (GstSeekFlags) (GST_SEEK_FLAG_FLUSH |GST_SEEK_FLAG_ACCURATE);
+		gint64 pos;
+
+		if(speed==0){
+			gst_element_set_state (gstPipeline, GST_STATE_PAUSED);
+			return;
+		}
+
+		if(!gst_element_query_position(GST_ELEMENT(gstPipeline),&format,&pos))
+			ofLog(OF_ERROR,"GStreamer: cannot query position");
+
+		if(!bPaused)
+			gst_element_set_state (gstPipeline, GST_STATE_PLAYING);
+
+		if(speed>0){
+			if(!gst_element_seek(GST_ELEMENT(gstPipeline),speed, 	format,
+					flags,
+					GST_SEEK_TYPE_SET,
+					pos,
+					GST_SEEK_TYPE_SET,
+					-1)) {
+			ofLog(OF_WARNING,"GStreamer: unable to change speed");
+			}
+		}else{
+			if(!gst_element_seek(GST_ELEMENT(gstPipeline),speed, 	format,
+					flags,
+					GST_SEEK_TYPE_SET,
+					0,
+					GST_SEEK_TYPE_SET,
+					pos)) {
+			ofLog(OF_WARNING,"GStreamer: unable to change speed");
+			}
+		}
+
+		ofLog(OF_VERBOSE,"Gstreamer: speed change to %f", speed);
+
 	//--------------------------------------
 	#endif
 	//--------------------------------------
@@ -982,7 +1042,13 @@ void ofVideoPlayer::setPaused(bool _bPause){
 	#else
 	//--------------------------------------
 
-		timeLastIdle = ofGetElapsedTimeMillis();
+		//timeLastIdle = ofGetElapsedTimeMillis();
+		if(bLoaded){
+			if(bPaused)
+				gst_element_set_state (gstPipeline, GST_STATE_PAUSED);
+			else
+				gst_element_set_state (gstPipeline, GST_STATE_PLAYING);
+		}
 
 	//--------------------------------------
 	#endif
@@ -1007,6 +1073,22 @@ void ofVideoPlayer::draw(float _x, float _y){
 	draw(_x, _y, width, height);
 }
 
+//------------------------------------
+int ofVideoPlayer::getTotalNumFrames(){
+	//--------------------------------------
+	#ifdef OF_VIDEO_PLAYER_QUICKTIME
+	//--------------------------------------
+	return nFrames;
+	//--------------------------------------
+	#else
+	//--------------------------------------
+	return gstData.nFrames;
+	//--------------------------------------
+	#endif
+	//--------------------------------------
+
+}
+
 //----------------------------------------------------------
 float ofVideoPlayer::getHeight(){
 	return height;
@@ -1017,20 +1099,189 @@ float ofVideoPlayer::getWidth(){
 	return width;
 }
 
+
 //--------------------------------------
-#ifdef OF_VIDEO_PLAYER_FOBS
+#ifdef OF_VIDEO_PLAYER_GSTREAMER
 //--------------------------------------
 
-//------------------------------------
-void ofVideoPlayer::lock(){
-	pthread_mutex_lock( &time_mutex );
+//----------------------------------------------------------
+bool ofVideoPlayer::allocate(){
+	// wait for paused state to query the duration
+	GstState state = GST_STATE_PAUSED;
+	gst_element_get_state(gstPipeline,&state,NULL,2*GST_SECOND);
+	GstFormat format=GST_FORMAT_TIME;
+	if(!gst_element_query_duration(gstPipeline,&format,&durationNanos))
+		ofLog(OF_WARNING,"GStreamer: cannot query duration");
+
+	gstData.durationNanos = durationNanos;
+	gstData.nFrames		  = 0;
+
+
+
+
+	// query width, height, fps and do data allocation
+	if (GstPad* pad = gst_element_get_static_pad(gstSink, "sink")) {
+		if(gst_video_get_size(GST_PAD(pad), &width, &height) && bUseTexture){
+			pixels=new unsigned char[width*height*3];
+			gstData.pixels=pixels;
+			memset(pixels,0,width*height*3);
+			tex.allocate(width,height,GL_RGB,true);
+			tex.loadData(pixels,width,height,GL_RGB);
+			allocated = true;
+		}else{
+			ofLog(OF_ERROR,"GStreamer: cannot query width and height");
+			return false;
+		}
+
+		/*GstCaps * caps = gst_pad_get_caps(pad);
+		if(caps){
+			int fps_n;
+			int fps_d;
+
+			if(!gst_video_parse_caps_framerate (caps,&fps_n,&fps_d))
+				ofLog(OF_VERBOSE,"fps_n:%d fps_d:%d",fps_n,fps_d);
+			else
+				ofLog(OF_WARNING,"Gstreamer: cannot get framerate, frame seek won't work");
+		}else{
+			ofLog(OF_WARNING,"Gstreamer: cannot get pad caps, frame seek won't work");
+		}*/
+		gst_object_unref(GST_OBJECT(pad));
+	}else{
+		ofLog(OF_ERROR,"GStreamer: cannot get sink pad");
+		return false;
+	}
+	bLoaded = true;
+	return bLoaded;
 }
 
-//------------------------------------
-void ofVideoPlayer::unlock(){
-	pthread_mutex_unlock( &time_mutex );
-}
 
+//----------------------------------------------------------
+void ofVideoPlayer::gstHandleMessage()
+{
+
+	GstBus *bus = gst_pipeline_get_bus(GST_PIPELINE(gstPipeline));
+	while(gst_bus_have_pending(bus)) {
+		GstMessage* msg = gst_bus_pop(bus);
+
+		ofLog(OF_VERBOSE,"GStreamer: Got %s message", GST_MESSAGE_TYPE_NAME(msg));
+
+		switch (GST_MESSAGE_TYPE (msg)) {
+
+			case GST_MESSAGE_BUFFERING:
+				gint pctBuffered;
+				gst_message_parse_buffering(msg,&pctBuffered);
+				ofLog(OF_VERBOSE,"GStreamer: buffering %i\%", pctBuffered);
+				if(isStream && !bLoaded){
+					allocate();
+				}
+				if(pctBuffered<100){
+					gst_element_set_state (gstPipeline, GST_STATE_PAUSED);
+				}else if(!bPaused){
+					gst_element_set_state (gstPipeline, GST_STATE_PLAYING);
+				}
+			break;
+
+			case GST_MESSAGE_DURATION:{
+				GstFormat format=GST_FORMAT_TIME;
+				if(!gst_element_query_duration(gstPipeline,&format,&durationNanos))
+					ofLog(OF_WARNING,"GStreamer: cannot query duration");
+			}break;
+
+			case GST_MESSAGE_STATE_CHANGED:
+				if(posChangingPaused){
+					gst_element_set_state (gstPipeline, GST_STATE_PAUSED);
+					posChangingPaused=false;
+				}
+
+				GstState oldstate, newstate, pendstate;
+				gst_message_parse_state_changed(msg, &oldstate, &newstate, &pendstate);
+				gstData.pipelineState=newstate;
+				ofLog(OF_VERBOSE,"GStreamer: state changed from %d to %d (%d)", oldstate, newstate, pendstate);
+			break;
+
+			case GST_MESSAGE_ASYNC_DONE:
+				gstData.speed=speed;
+				ofLog(OF_VERBOSE,"GStreamer: async done");
+			break;
+
+			case GST_MESSAGE_ERROR: {
+				GError *err;
+				gchar *debug;
+				gst_message_parse_error(msg, &err, &debug);
+
+				ofLog(OF_ERROR, "GStreamer Plugin: Embedded video playback halted; module %s reported: %s",
+					  gst_element_get_name(GST_MESSAGE_SRC (msg)), err->message);
+
+				g_error_free(err);
+				g_free(debug);
+
+				gst_element_set_state(GST_ELEMENT(gstPipeline), GST_STATE_NULL);
+
+			}break;
+
+			case GST_MESSAGE_EOS:
+				ofLog(OF_VERBOSE,"GStreamer: end of the stream.");
+				bIsMovieDone = true;
+
+				switch(loopMode){
+
+					case OF_LOOP_NORMAL:{
+						GstFormat format = GST_FORMAT_TIME;
+						GstSeekFlags flags = (GstSeekFlags) (GST_SEEK_FLAG_FLUSH |GST_SEEK_FLAG_KEY_UNIT);
+						gint64 pos;
+						gst_element_query_position(GST_ELEMENT(gstPipeline),&format,&pos);
+
+						float loopSpeed;
+						if(pos>0)
+							loopSpeed=-speed;
+						else
+							loopSpeed=speed;
+						if(!gst_element_seek(GST_ELEMENT(gstPipeline),
+											speed,
+											format,
+											flags,
+											GST_SEEK_TYPE_SET,
+											0,
+											GST_SEEK_TYPE_SET,
+											durationNanos)) {
+							ofLog(OF_WARNING,"GStreamer: unable to seek");
+						}
+					}break;
+
+					case OF_LOOP_PALINDROME:{
+						GstFormat format = GST_FORMAT_TIME;
+						GstSeekFlags flags = (GstSeekFlags) (GST_SEEK_FLAG_FLUSH |GST_SEEK_FLAG_KEY_UNIT);
+						gint64 pos;
+						gst_element_query_position(GST_ELEMENT(gstPipeline),&format,&pos);
+						float loopSpeed;
+						if(pos>0)
+							loopSpeed=-speed;
+						else
+							loopSpeed=speed;
+						if(!gst_element_seek(GST_ELEMENT(gstPipeline),
+											loopSpeed,
+											GST_FORMAT_UNDEFINED,
+											flags,
+											GST_SEEK_TYPE_NONE,
+											0,
+											GST_SEEK_TYPE_NONE,
+											0)) {
+							ofLog(OF_WARNING,"GStreamer: unable to seek");
+						}
+					}break;
+				}
+
+			break;
+
+			default:
+				ofLog(OF_VERBOSE,"GStreamer: unhandled message");
+			break;
+		}
+		gst_message_unref(msg);
+	}
+
+	gst_object_unref(GST_OBJECT(bus));
+}
 //--------------------------------------
 #endif
 //--------------------------------------
