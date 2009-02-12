@@ -12,7 +12,7 @@
     #endif
 #endif
 
-#ifndef TARGET_WIN32 
+#ifndef TARGET_WIN32
     #define CALLBACK
 #endif
 
@@ -33,13 +33,14 @@ int 			polyMode			= OF_POLY_WINDING_ODD;
 //style stuff - new in 006
 ofStyle			currentStyle;
 vector <ofStyle> styleHistory;
-float circlePts[OF_MAX_CIRCLE_PTS];
+float circlePts[OF_MAX_CIRCLE_PTS*2];
+
 
 //----------------------------------------------------------
 void  ofSetRectMode(int mode){
 	if (mode == OF_RECTMODE_CORNER) 		cornerMode = OF_RECTMODE_CORNER;
 	else if (mode == OF_RECTMODE_CENTER) 	cornerMode = OF_RECTMODE_CENTER;
-	
+
 	currentStyle.rectMode = cornerMode;
 }
 
@@ -79,13 +80,13 @@ void ofBackground(int r, int g, int b){
 //----------------------------------------------------------
 void ofNoFill(){
 	drawMode = OF_OUTLINE;
-	currentStyle.bFill = false;	
+	currentStyle.bFill = false;
 }
 
 //----------------------------------------------------------
 void ofFill(){
 	drawMode = OF_FILLED;
-	currentStyle.bFill = true;	
+	currentStyle.bFill = true;
 }
 
 //----------------------------------------------------------
@@ -100,7 +101,7 @@ void startSmoothing(){
 		glPushAttrib(GL_COLOR_BUFFER_BIT | GL_ENABLE_BIT);
 		glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
 		glEnable(GL_LINE_SMOOTH);
-		
+
 		//why do we need this?
 		//glEnable(GL_BLEND);
 		//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -126,9 +127,9 @@ void ofSetCircleResolution(int res){
 	if (res > 1 && res != numCirclePts){
 		numCirclePts = res;
 		currentStyle.circleResolution = numCirclePts;
-				
+
 		float angle = 0.0f;
-		float angleAdder = M_TWO_PI / (float)res;
+		float angleAdder = M_TWO_PI / (float)res * 2.0;
 		int k = 0;
 		for (int i = 0; i < numCirclePts; i++){
 			circlePts[k] = cos(angle);
@@ -157,8 +158,6 @@ void ofTriangle(float x1,float y1,float x2,float y2,float x3, float y3){
 	// back to normal, if smoothness is on
 	if (bSmoothHinted && drawMode == OF_OUTLINE) endSmoothing();
 }
-
-//----------------------------------------------------------
 void ofCircle(float x,float y, float radius){
 
 	if (!bSetupCircle) setupCircle();
@@ -167,18 +166,19 @@ void ofCircle(float x,float y, float radius){
 	if (bSmoothHinted && drawMode == OF_OUTLINE) startSmoothing();
 
 	// draw:
-		glBegin( (drawMode == OF_FILLED) ? GL_POLYGON : GL_LINE_LOOP);
+	glBegin( (drawMode == OF_FILLED) ? GL_POLYGON : GL_LINE_LOOP);
 	int k = 0;
 	for(int i = 0; i < numCirclePts; i++){
 		glVertex2f(x + circlePts[k] * radius, y + circlePts[k+1] * radius);
 		k+=2;
 	}
-		glEnd();
+	glEnd();
 
 	// back to normal, if smoothness is on
 	if (bSmoothHinted && drawMode == OF_OUTLINE) endSmoothing();
 
 }
+
 
 //----------------------------------------------------------
 void ofEllipse(float x, float y, float width, float height){
@@ -319,7 +319,7 @@ void ofSetColor(int _r, int _g, int _b){
 	float r = (float)_r / 255.0f; r = MAX(0,MIN(r,1.0f));
 	float g = (float)_g / 255.0f; g = MAX(0,MIN(g,1.0f));
 	float b = (float)_b / 255.0f; b = MAX(0,MIN(b,1.0f));
-	
+
 	currentStyle.color.r = r * 255.0;
 	currentStyle.color.g = g * 255.0;
 	currentStyle.color.b = b * 255.0;
@@ -335,11 +335,11 @@ void ofSetColor(int _r, int _g, int _b, int _a){
 	float g = (float)_g / 255.0f; g = MAX(0,MIN(g,1.0f));
 	float b = (float)_b / 255.0f; b = MAX(0,MIN(b,1.0f));
 	float a = (float)_a / 255.0f; a = MAX(0,MIN(a,1.0f));
-	
+
 	currentStyle.color.r = r * 255.0;
 	currentStyle.color.g = g * 255.0;
 	currentStyle.color.b = b * 255.0;
-	currentStyle.color.a = a * 255.0;	
+	currentStyle.color.a = a * 255.0;
 
 	glColor4f(r,g,b,a);
 }
@@ -356,13 +356,13 @@ void ofSetColor(int hexColor){
 void ofEnableAlphaBlending(){
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	currentStyle.blending = 1;		
+	currentStyle.blending = 1;
 }
 
 //----------------------------------------------------------
 void ofDisableAlphaBlending(){
 	glDisable(GL_BLEND);
-	currentStyle.blending = 0;	
+	currentStyle.blending = 0;
 }
 
 
@@ -377,7 +377,7 @@ void ofEnableSmoothing(){
 //----------------------------------------------------------
 void ofDisableSmoothing(){
 	bSmoothHinted = false;
-	currentStyle.smoothing = 0;	
+	currentStyle.smoothing = 0;
 }
 
 //----------------------------------------------------------
@@ -387,23 +387,23 @@ void ofSetStyle(ofStyle style){
 
 	//circle resolution - don't worry it only recalculates the display list if the res has changed
 	ofSetCircleResolution(style.circleResolution);
-	
+
 	//line width - finally!
 	ofSetLineWidth(style.lineWidth);
-	
+
 	//rect mode: corner/center
 	ofSetRectMode(style.rectMode);
-	
+
 	//poly mode: winding type
 	ofSetPolyMode(style.polyMode);
-	
+
 	//fill
 	if(style.bFill == 1){
 		ofFill();
 	}else if(style.bFill == 0){
 		ofNoFill();
 	}
-	
+
 	//smoothing
 	if(style.smoothing == 1){
 		ofEnableSmoothing();
@@ -416,7 +416,7 @@ void ofSetStyle(ofStyle style){
 		ofEnableAlphaBlending();
 	}else if(style.blending == 0){
 		ofDisableAlphaBlending();
-	}	
+	}
 }
 
 //----------------------------------------------------------
@@ -427,7 +427,7 @@ ofStyle ofGetStyle(){
 //----------------------------------------------------------
 void ofPushStyle(){
 	styleHistory.insert(styleHistory.begin(), currentStyle);
-	
+
 	//if we are over the max number of styles we have set, then delete the oldest styles.
 	if( styleHistory.size() > OF_MAX_STYLE_HISTORY ){
 		styleHistory.erase(styleHistory.begin() + OF_MAX_STYLE_HISTORY, styleHistory.end());
@@ -486,7 +486,7 @@ void ofRotateZ(float degrees){
 	glRotatef(degrees, 0, 0, 1);
 }
 
-//same as ofRotateZ 
+//same as ofRotateZ
 //----------------------------------------------------------
 void ofRotate(float degrees){
 	glRotatef(degrees, 0, 0, 1);
@@ -523,9 +523,9 @@ void ofDrawBitmapString(string textString, float x, float y){
 			ofDrawBitmapCharacter(textString[c]);
 		}
 	}
-	
+
 	glPopClientAttrib( );
-	
+
 }
 
 //----------------------------------------------------------
@@ -600,7 +600,7 @@ std::vector <double*> polyVertices;
 //---------------------------- and for curve vertexes, since we need 4 to make a curve
 std::vector <double*> curveVertices;
 
-static int 				currentStartVertex = 0; 
+static int 				currentStartVertex = 0;
 
 // what is the starting vertex of the shape we are drawing
 // this allows multi contour polygons;
@@ -677,9 +677,9 @@ void clearTessVertices(){
     // -------------------------------------------------
 
     clearCurveVertices();
-    
-    
-    currentStartVertex = 0; 
+
+
+    currentStartVertex = 0;
 }
 
 //----------------------------------------------------------
@@ -715,7 +715,7 @@ void ofSetPolyMode(int mode){
 			ofLog(OF_ERROR," error in ofSetPolyMode");
 
 	}
-	
+
 	currentStyle.polyMode = polyMode;
 }
 
@@ -732,10 +732,10 @@ void ofBeginShape(){
 	// etc...
 
 	clearTessVertices();
-	
-	
-	// now get the tesselator object up and ready: 
-	
+
+
+	// now get the tesselator object up and ready:
+
 	tobj = gluNewTess();
 
 
