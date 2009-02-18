@@ -75,22 +75,22 @@ int ofStandardFirmata::connect(string device, int baud){
 	return _port.setup(device.c_str(), baud);
 }
 
-void ofStandardFirmata::setDigitalHistoryLength(uint length){
+void ofStandardFirmata::setDigitalHistoryLength(int length){
 	if(length>=2)
 		_digitalHistoryLength=length;
 }
 
-void ofStandardFirmata::setAnalogHistoryLength(uint length){
+void ofStandardFirmata::setAnalogHistoryLength(int length){
 	if(length>=2)
 		_analogHistoryLength=length;
 }
 
-void ofStandardFirmata::setSysExHistoryLength(uint length){
+void ofStandardFirmata::setSysExHistoryLength(int length){
 	if(length>=1)
 		_sysExHistoryLength=length;
 }
 
-void ofStandardFirmata::setStringHistoryLength(uint length){
+void ofStandardFirmata::setStringHistoryLength(int length){
 	if(length>=1)
 		_stringHistoryLength=length;
 }
