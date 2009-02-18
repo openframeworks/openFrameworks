@@ -1,7 +1,9 @@
 #include "ofVideoPlayer.h"
 #include "ofUtils.h"
 
-#include <gst/video/video.h>
+#ifdef TARGET_LINUX
+	#include <gst/video/video.h>
+#endif
 
 //--------------------------------------------------------------
 #ifdef  OF_VIDEO_PLAYER_QUICKTIME
@@ -467,7 +469,10 @@ bool ofVideoPlayer::loadMovie(string name){
 		TimeValue			curMovieTime;
 		curMovieTime		= 0;
 		TimeValue			duration;
-		OSType whichMediaType	= VIDEO_TYPE;
+
+		//OSType whichMediaType	= VIDEO_TYPE; // mingw chokes on this
+		OSType whichMediaType	= FOUR_CHAR_CODE('vide');
+
 		short flags				= nextTimeMediaSample + nextTimeEdgeOK;
 
 		while( curMovieTime >= 0 ) {
@@ -806,40 +811,42 @@ void ofVideoPlayer::setFrame(int frame){
 	#ifdef OF_VIDEO_PLAYER_QUICKTIME
 	//--------------------------------------
 
-		// frame 0 = first frame...
+	// frame 0 = first frame...
 
-		// this is the simple way...
-		//float durationPerFrame = getDuration() / getTotalNumFrames();
+	// this is the simple way...
+	//float durationPerFrame = getDuration() / getTotalNumFrames();
 
-		// seems that freezing, doing this and unfreezing seems to work alot
-		// better then just SetMovieTimeValue() ;
+	// seems that freezing, doing this and unfreezing seems to work alot
+	// better then just SetMovieTimeValue() ;
 
-		if (!bPaused) SetMovieRate(moviePtr, X2Fix(0));
+	if (!bPaused) SetMovieRate(moviePtr, X2Fix(0));
 
-		// this is better with mpeg, etc:
-		double frameRate = 0;
-		double movieTimeScale = 0;
-		MovieGetStaticFrameRate(moviePtr, &frameRate);
-		movieTimeScale = GetMovieTimeScale(moviePtr);
+	// this is better with mpeg, etc:
+	double frameRate = 0;
+	double movieTimeScale = 0;
+	MovieGetStaticFrameRate(moviePtr, &frameRate);
+	movieTimeScale = GetMovieTimeScale(moviePtr);
 
-		if (frameRate > 0){
-			double frameDuration = 1 / frameRate;
-			TimeValue t = (frame * frameDuration * movieTimeScale);
-			SetMovieTimeValue(moviePtr, t);
-			MoviesTask(moviePtr, 0);
-		}
+	if (frameRate > 0){
+		double frameDuration = 1 / frameRate;
+		TimeValue t = (frame * frameDuration * movieTimeScale);
+		SetMovieTimeValue(moviePtr, t);
+		MoviesTask(moviePtr, 0);
+	}
 
-	   if (!bPaused) SetMovieRate(moviePtr, X2Fix(speed));
-
-   //--------------------------------------
-	#else
-   //--------------------------------------
-
-	   float pct = (float)frame / (float)gstData.nFrames;
-	   setPosition(pct);
+   if (!bPaused) SetMovieRate(moviePtr, X2Fix(speed));
 
    //--------------------------------------
-	#endif
+#else
+   //--------------------------------------
+
+   lock();
+   		//fobsDecoder->setFrame(frame);
+   		positionPct = ((float)frame) / (float)iTotalFrames;
+   unlock();
+
+   //--------------------------------------
+#endif
    //--------------------------------------
 
 }
@@ -1059,6 +1066,24 @@ void ofVideoPlayer::setPaused(bool _bPause){
 //------------------------------------
 void ofVideoPlayer::setUseTexture(bool bUse){
 	bUseTexture = bUse;
+}
+
+//we could cap these values - but it might be more useful
+//to be able to set anchor points outside the image
+
+//----------------------------------------------------------
+void ofVideoPlayer::setAnchorPct(float xPct, float yPct){
+    if (bUseTexture)tex.setAnchorPct(xPct, yPct);
+}
+
+//----------------------------------------------------------
+void ofVideoPlayer::setAnchorPt(int x, int y){
+    if (bUseTexture)tex.setAnchorPt(x, y);
+}
+
+//----------------------------------------------------------
+void ofVideoPlayer::resetAnchor(){
+   	if (bUseTexture)tex.resetAnchor();
 }
 
 //------------------------------------

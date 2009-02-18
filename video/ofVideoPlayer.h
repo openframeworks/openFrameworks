@@ -73,6 +73,12 @@ class ofVideoPlayer : public ofBaseUpdates, public ofBaseDraws, public ofBaseHas
 		void 				draw(float x, float y, float w, float h);
 		void 				draw(float x, float y);
 
+		//a more accurate way to set the point which the image is drawn from
+		//this makes rotating an image around a point easier.
+        void                setAnchorPct(float xPct, float yPct);
+        void                setAnchorPt(int x, int y);
+        void                resetAnchor();
+
 		void 				setPaused(bool bPause);
 
 		int					getCurrentFrame();

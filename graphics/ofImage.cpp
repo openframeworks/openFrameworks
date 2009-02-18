@@ -58,8 +58,6 @@ ofImage::~ofImage(){
 	clear();
 }
 
-
-
 //----------------------------------------------------------
 bool ofImage::loadImage(string fileName){
 	bool bLoadedOk = false;
@@ -78,6 +76,24 @@ bool ofImage::loadImage(string fileName){
 //----------------------------------------------------------
 void ofImage::saveImage(string fileName){
 	saveImageFromPixels(fileName, myPixels);
+}
+
+//we could cap these values - but it might be more useful
+//to be able to set anchor points outside the image
+
+//----------------------------------------------------------
+void ofImage::setAnchorPct(float xPct, float yPct){
+    if (bUseTexture)tex.setAnchorPct(xPct, yPct);
+}
+
+//----------------------------------------------------------
+void ofImage::setAnchorPt(int x, int y){
+    if (bUseTexture)tex.setAnchorPt(x, y);
+}
+
+//----------------------------------------------------------
+void ofImage::resetAnchor(){
+   	if (bUseTexture)tex.resetAnchor();
 }
 
 //------------------------------------
@@ -239,12 +255,14 @@ void ofImage::grabScreen(int _x, int _y, int _w, int _h){
 		resize(_w, _h);
 	}
 
-
+#ifndef TARGET_OF_IPHONE
 	glPushClientAttrib( GL_CLIENT_PIXEL_STORE_BIT );											// be nice to anyone else who might use pixelStore
+#endif
 	glPixelStorei(GL_PACK_ALIGNMENT, 1);														// set read non block aligned...
 	glReadPixels(_x, _y, _w, _h, myPixels.glDataType,GL_UNSIGNED_BYTE, myPixels.pixels);		// read the memory....
+#ifndef TARGET_OF_IPHONE
 	glPopClientAttrib();
-
+#endif
 
 
 	int sizeOfOneLineOfPixels = myPixels.width * myPixels.bytesPerPixel;

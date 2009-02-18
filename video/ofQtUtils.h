@@ -18,6 +18,8 @@
 	#include <FixMath.h>
 	#include <QuickTimeComponents.h>
 	#include <TextUtils.h>	
+	#include <MediaHandlers.h>
+	//#include <MoviesFormat.h>
 #endif
 
 //p2cstr depreciation fix - thanks pickard!

@@ -69,6 +69,12 @@ class ofImage : public ofBaseDraws, public ofBaseHasTexture{
 		// if you've altered the pixels (from getPixels()) call update() to see a change: 
 		void				update();
 		
+		//a more accurate way to set the point which the image is drawn from
+		//this makes rotating an image around a point easier.
+        void setAnchorPct(float xPct, float yPct);
+        void setAnchorPt(int x, int y);
+        void resetAnchor();
+
 		// draw: 
 		void 				draw(float x, float y, float w, float h);
 		void 				draw(float x, float y);

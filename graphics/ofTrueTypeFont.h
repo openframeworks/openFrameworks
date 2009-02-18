@@ -34,13 +34,16 @@ a new member height should be set to bitmap_rows
 stringHeight can then calculate the right bouding box. a stringTop function could also be introduced. 
 */
 
-typedef struct{
-	vector <ofPoint>pts;
-}ofTTFContour;
+class ofTTFContour{
+	public:
+		vector <ofPoint>pts;
+};
 
-typedef struct{
-	vector <ofTTFContour> contours;
-}ofTTFCharacter;
+
+class ofTTFCharacter{
+	public:
+		vector <ofTTFContour> contours;
+};
 
 //--------------------------------------------------
 #define NUM_CHARACTER_TO_START		33		// 0 - 32 are control characters, no graphics needed.

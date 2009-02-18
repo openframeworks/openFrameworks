@@ -10,9 +10,11 @@
 
 //--------------------------
 // communication
+#ifndef TARGET_OF_IPHONE			
 #include "ofSerial.h"
 #include "ofStandardFirmata.h"
 #include "ofArduino.h"
+#endif
 
 //--------------------------
 // graphics
@@ -28,14 +30,17 @@
 
 //--------------------------
 // audio
+#ifndef TARGET_OF_IPHONE			//(temp for now, until this is ported)
 #include "ofSoundStream.h"
 #include "ofSoundPlayer.h"
+#endif
 
 //--------------------------
 // video
+#ifndef TARGET_OF_IPHONE			//(temp for now, until this is ported)
 #include "ofVideoGrabber.h"
 #include "ofVideoPlayer.h"
-
+#endif
 //--------------------------
 // events
 #include "ofEvents.h"

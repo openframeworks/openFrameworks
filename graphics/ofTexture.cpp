@@ -17,6 +17,8 @@ ofTexture::ofTexture(){
 	texData.tex_h			= 0;
 	texData.tex_t			= 0;
 	texData.tex_u			= 0;
+
+	resetAnchor();
 }
 
 //----------------------------------------------------------
@@ -63,13 +65,16 @@ void ofTexture::clear(){
 void ofTexture::allocate(int w, int h, int internalGlDataType, bool bUseARBExtention){
 
 	//our graphics card might not support arb so we have to see if it is supported.
+#ifndef TARGET_OF_IPHONE
 	if (bUseARBExtention && GLEE_ARB_texture_rectangle){
 		texData.tex_w = w;
 		texData.tex_h = h;
 		texData.tex_t = w;
 		texData.tex_u = h;
 		texData.textureTarget = GL_TEXTURE_RECTANGLE_ARB;
-	} else {
+	} else 
+#endif
+	{
 		//otherwise we need to calculate the next power of 2 for the requested dimensions
 		//ie (320x240) becomes (512x256)
 		texData.tex_w = ofNextPow2(w);
@@ -89,7 +94,15 @@ void ofTexture::allocate(int w, int h, int internalGlDataType, bool bUseARBExten
 	glEnable(texData.textureTarget);
 
 		glBindTexture(texData.textureTarget, (GLuint)texData.textureName[0]);
+	#ifndef TARGET_OF_IPHONE 
+		// can't do this on OpenGL ES: on full-blown OpenGL, 
+		// internalGlDataType and glDataType (GL_LUMINANCE below)
+		// can be different; on ES they must be exactly the same.
 		glTexImage2D(texData.textureTarget, 0, texData.glTypeInternal, texData.tex_w, texData.tex_h, 0, GL_LUMINANCE, GL_UNSIGNED_BYTE, 0);  // init to black...
+	#else
+		glTexImage2D(texData.textureTarget, 0, texData.glTypeInternal, texData.tex_w, texData.tex_h, 0, texData.glTypeInternal, GL_UNSIGNED_BYTE, 0);
+	#endif
+	
 		glTexParameterf(texData.textureTarget, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 		glTexParameterf(texData.textureTarget, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 		glTexParameterf(texData.textureTarget, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -100,7 +113,11 @@ void ofTexture::allocate(int w, int h, int internalGlDataType, bool bUseARBExten
 
 	texData.width = w;
 	texData.height = h;
-	texData.bFlipTexture = false;
+	#ifdef TARGET_OF_IPHONE
+		texData.bFlipTexture = true; // textures need to be flipped for the iphone
+	#else
+		texData.bFlipTexture = false;
+	#endif
 	texData.bAllocated = true;
 }
 
@@ -127,10 +144,13 @@ void ofTexture::loadData(unsigned char * data, int w, int h, int glDataType){
 	texData.glType  = glDataType;
 
 	//compute new tex co-ords based on the ratio of data's w, h to texture w,h;
+#ifndef TARGET_OF_IPHONE	
 	if (texData.textureTarget == GL_TEXTURE_RECTANGLE_ARB){
 		texData.tex_t = w;
 		texData.tex_u = h;
-	} else {
+	} else 
+#endif
+	{
 		texData.tex_t = (float)(w) / (float)texData.tex_w;
 		texData.tex_u = (float)(h) / (float)texData.tex_h;
 	}
@@ -171,7 +191,12 @@ void ofTexture::loadData(unsigned char * data, int w, int h, int glDataType){
 	//------------------------ back to normal.
 	glPixelStorei(GL_UNPACK_ALIGNMENT, prevAlignment);
 
+#ifdef TARGET_OF_IPHONE
+	texData.bFlipTexture = true; // textures need to be flipped for the iphone
+#else
 	texData.bFlipTexture = false;
+#endif
+
 }
 
 
@@ -194,11 +219,13 @@ void ofTexture::loadScreenData(int x, int y, int w, int h){
 	texData.glType  = GL_RGB;
 
 	//compute new tex co-ords based on the ratio of data's w, h to texture w,h;
-
+#ifndef TARGET_OF_IPHONE // DAMIAN
 	if (texData.textureTarget == GL_TEXTURE_RECTANGLE_ARB){
 		texData.tex_t = (float)(w);
 		texData.tex_u = (float)(h);
-	} else {
+	} else 
+#endif
+	{
 		texData.tex_t = (float)(w) / (float)texData.tex_w;
 		texData.tex_u = (float)(h) / (float)texData.tex_h;
 	}
@@ -211,6 +238,31 @@ void ofTexture::loadScreenData(int x, int y, int w, int h){
 }
 
 
+//we could cap these values - but it might be more useful
+//to be able to set anchor points outside the image
+
+//----------------------------------------------------------
+void ofTexture::setAnchorPct(float xPct, float yPct){
+    anchor.x  = xPct;
+    anchor.y  = yPct;
+
+    bAnchorIsPct = true;
+}
+
+//----------------------------------------------------------
+void ofTexture::setAnchorPt(int x, int y){
+    anchor.x = x;
+    anchor.y = y;
+
+    bAnchorIsPct = false;
+}
+
+//----------------------------------------------------------
+void ofTexture::resetAnchor(){
+    anchor       = 0;
+    bAnchorIsPct = false;
+}
+
 //----------------------------------------------------------
 void ofTexture::draw(float x, float y, float w, float h){
 
@@ -219,10 +271,10 @@ void ofTexture::draw(float x, float y, float w, float h){
 	// bind the texture
 	glBindTexture( texData.textureTarget, (GLuint)texData.textureName[0] );
 
-		GLint px0 = 0;		// up to you to get the aspect ratio right
-		GLint py0 = 0;
-		GLint px1 = (GLint)w;
-		GLint py1 = (GLint)h;
+		GLfloat px0 = 0;		// up to you to get the aspect ratio right
+		GLfloat py0 = 0;
+		GLfloat px1 = w;
+		GLfloat py1 = h;
 
 		if (texData.bFlipTexture == true){
 			GLint temp = py0;
@@ -232,11 +284,31 @@ void ofTexture::draw(float x, float y, float w, float h){
 
 		// for rect mode center, let's do this:
 		if (ofGetRectMode() == OF_RECTMODE_CENTER){
-			px0 = (GLint)-w/2;
-			py0 = (GLint)-h/2;
-			px1 = (GLint)+w/2;
-			py1 = (GLint)+h/2;
+			px0 = -w/2;
+			py0 = -h/2;
+			px1 = +w/2;
+			py1 = +h/2;
 		}
+
+		//we translate our drawing points by our anchor point.
+        //we still respect ofRectMode so if you have rect mode set to
+        //OF_RECTMODE_CENTER your anchor will be relative to that.
+		GLfloat anchorX;
+		GLfloat anchorY;
+
+		if(bAnchorIsPct){
+		    anchorX = anchor.x * w;
+		    anchorY = anchor.y * h;
+		}else{
+            anchorX = anchor.x;
+            anchorY = anchor.y;
+		}
+
+		px0 -= anchorX;
+		py0 -= anchorY;
+		px1 -= anchorX;
+		py1 -= anchorY;
+
 
 		// -------------------------------------------------
 		// complete hack to remove border artifacts.
@@ -260,16 +332,31 @@ void ofTexture::draw(float x, float y, float w, float h){
 		GLfloat tx1 = texData.tex_t - offsetw;
 		GLfloat ty1 = texData.tex_u - offseth;
 
-		glPushMatrix();
-		glTranslated(x, y, 0);
-		glBegin( GL_QUADS );
-			glTexCoord2f(tx0,ty0);			glVertex3i(px0, py0,0);
-			glTexCoord2f(tx1,ty0);			glVertex3i(px1, py0,0);
-			glTexCoord2f(tx1,ty1);			glVertex3i(px1, py1,0);
-			glTexCoord2f(tx0,ty1);			glVertex3i(px0, py1,0);
-		glEnd();
-		glPopMatrix();
+	glPushMatrix(); 
+	
+		glTranslatef(x,y,0.0f);
+		
+		GLfloat tex_coords[] = {
+			tx0,ty0,
+			tx1,ty0,
+			tx1,ty1,
+			tx0,ty1
+		};
+		GLfloat verts[] = {
+			px0,py0,
+			px1,py0,
+			px1,py1,
+			px0,py1
+		};
+		
+		glEnableClientState( GL_TEXTURE_COORD_ARRAY );
+			glTexCoordPointer(2, GL_FLOAT, 0, tex_coords );
+			glEnableClientState(GL_VERTEX_ARRAY);		
+			glVertexPointer(2, GL_FLOAT, 0, verts );
+			glDrawArrays( GL_TRIANGLE_FAN, 0, 4 );
+		glDisableClientState( GL_TEXTURE_COORD_ARRAY );
 
+	glPopMatrix();
 	glDisable(texData.textureTarget);
 }
 

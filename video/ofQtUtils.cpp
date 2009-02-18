@@ -256,7 +256,12 @@ OSErr MediaGetStaticFrameRate(Media inMovieMedia, double *outFPS)
   if (sampleCount && err == noErr)
   {
       /* find the media duration */
-    TimeValue64 duration = GetMediaDisplayDuration(inMovieMedia);
+
+    //Quicktime 7.0 code
+    //TimeValue64 duration = GetMediaDisplayDuration(inMovieMedia);
+    TimeValue64 duration = GetMediaDuration(inMovieMedia);
+
+
     err = GetMoviesError();
     if (err == noErr)
     {
