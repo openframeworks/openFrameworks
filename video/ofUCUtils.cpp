@@ -9,10 +9,8 @@
 
 extern "C"
 {
-#include "ffmpeg/avformat.h"
-#include "ffmpeg/swscale.h"
-#include "ffmpeg/opt.h"
-#include "ffmpeg/fifo.h"
+#include "avformat.h"
+#include "swscale.h"
 }
 
 
@@ -223,7 +221,6 @@ void ofUCUtils::set_format(int w, int h) {
 		}
 		format = formats[selected_format];
 
-		bool sizeFounded = true;
 		bool exactMatch  = false;
 		int sizeDiff = 99999999;
 		int mostAproxSize = -1;
