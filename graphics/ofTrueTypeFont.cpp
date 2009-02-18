@@ -9,7 +9,7 @@
 	#include <freetype/fttrigon.h>
 #endif
 
-#if defined (TARGET_OSX) || defined (TARGET_OF_IPHONE) 
+#if defined (TARGET_OSX) || defined (TARGET_OF_IPHONE)
 	#include "ft2build.h"
 	#include "freetype.h"
 	#include "ftglyph.h"
@@ -19,7 +19,7 @@
 
 static bool printVectorInfo = false;
 
-//This is for polygon/contour simplification - we use it to reduce the number of points needed in 
+//This is for polygon/contour simplification - we use it to reduce the number of points needed in
 //representing the letters as openGL shapes - will soon be moved to ofGraphics.cpp
 
 // From: http://softsurfer.com/Archive/algorithm_0205/algorithm_0205.htm
@@ -75,11 +75,11 @@ static void simplifyDP(float tol, ofPoint* v, int j, int k, int* mk ){
         }
         // test with current max distance squared
         if (dv2 <= maxd2) continue;
-		
+
         // v[i] is a new max vertex
         maxi = i;
         maxd2 = dv2;
-    } 
+    }
     if (maxd2 > tol2)        // error is worse than the tolerance
     {
         // split the polyline at the farthest vertex from S
@@ -126,10 +126,10 @@ static vector <ofPoint> ofSimplifyContour(vector <ofPoint> &V, float tol){
     for (i=m=0; i<k; i++) {
         if (mk[i]) sV[m++] = vt[i];
     }
-	
+
 	//get rid of the unused points
 	if( m < sV.size() ) sV.erase( sV.begin()+m, sV.end() );
-	return sV;    	
+	return sV;
 }
 
 
@@ -178,14 +178,14 @@ static void cubic_bezier(vector <ofPoint> &ptsList, float x0, float y0, float x1
 //--------------------------------------------------------
 static ofTTFCharacter makeContoursForCharacter(FT_Face &face);
 static ofTTFCharacter makeContoursForCharacter(FT_Face &face){
-		
-		int num			= face->glyph->outline.n_points;
+
+		//int num			= face->glyph->outline.n_points;
 		int nContours	= face->glyph->outline.n_contours;
 		int startPos	= 0;
 
 		char * tags		= face->glyph->outline.tags;
 		FT_Vector * vec = face->glyph->outline.points;
-		
+
 		ofTTFCharacter charOutlines;
 
 		for(int k = 0; k < nContours; k++){
@@ -193,99 +193,99 @@ static ofTTFCharacter makeContoursForCharacter(FT_Face &face){
 				startPos = face->glyph->outline.contours[k-1]+1;
 			}
 			int endPos = face->glyph->outline.contours[k]+1;
-			
+
 			if( printVectorInfo )printf("--NEW CONTOUR\n\n");
-			
+
 			vector <ofPoint> testOutline;
 			ofPoint lastPoint;
-			
+
 			for(int j = startPos; j < endPos; j++){
-			
+
 				if( FT_CURVE_TAG(tags[j]) == FT_CURVE_TAG_ON ){
 					lastPoint.set(  vec[j].x,  -vec[j].y, 0 );
 					if( printVectorInfo )printf("flag[%i] is set to 1 - regular point - %f %f \n", j, lastPoint.x, lastPoint.y);
 					testOutline.push_back(lastPoint);
-					
+
 				}else{
 					if( printVectorInfo )printf("flag[%i] is set to 0 - control point \n", j);
-					
+
 					if( FT_CURVE_TAG(tags[j]) == FT_CURVE_TAG_CUBIC ){
 						if( printVectorInfo )printf("- bit 2 is set to 2 - CUBIC\n");
-						
+
 						int prevPoint = j-1;
 						if( j == 0){
 							prevPoint = endPos-1;
 						}
-						
-						int nextIndex = j+1; 
+
+						int nextIndex = j+1;
 						if( nextIndex >= endPos){
 							nextIndex = startPos;
 						}
-						
-						ofPoint nextPoint( (float)vec[nextIndex].x,  -(float)vec[nextIndex].y );				
-						
+
+						ofPoint nextPoint( (float)vec[nextIndex].x,  -(float)vec[nextIndex].y );
+
 						//we need two control points to draw a cubic bezier
 						bool lastPointCubic =  ( FT_CURVE_TAG(tags[prevPoint]) != FT_CURVE_TAG_ON ) && ( FT_CURVE_TAG(tags[prevPoint]) == FT_CURVE_TAG_CUBIC);
-					
+
 						if( lastPointCubic ){
 							ofPoint controlPoint1( vec[prevPoint].x,  -vec[prevPoint].y );
 							ofPoint controlPoint2( vec[j].x,  -vec[j].y );
-							ofPoint nextPoint( (float)vec[nextIndex].x,  -(float)vec[nextIndex].y );				
-					
+							ofPoint nextPoint( (float)vec[nextIndex].x,  -(float)vec[nextIndex].y );
+
 							cubic_bezier(testOutline, lastPoint.x, lastPoint.y, controlPoint1.x, controlPoint1.y, controlPoint2.x, controlPoint2.y, nextPoint.x, nextPoint.y, 8);
 						}
-						
+
 					}else{
-						
+
 						ofPoint conicPoint( (float)vec[j].x,  -(float)vec[j].y );
-						
+
 						if( printVectorInfo )printf("- bit 2 is set to 0 - conic- \n");
 						if( printVectorInfo )printf("--- conicPoint point is %f %f \n", conicPoint.x, conicPoint.y);
 
 						//If the first point is connic and the last point is connic then we need to create a virutal point which acts as a wrap around
 						if( j == startPos ){
 							bool prevIsConnic = (  FT_CURVE_TAG( tags[endPos-1] ) != FT_CURVE_TAG_ON ) && ( FT_CURVE_TAG( tags[endPos-1]) != FT_CURVE_TAG_CUBIC );
-							
+
 							if( prevIsConnic ){
 								ofPoint lastConnic( vec[endPos-1].x,  -vec[endPos-1].y );
 								lastPoint = (conicPoint + lastConnic) / 2;
-							
+
 								if( printVectorInfo )	printf("NEED TO MIX WITH LAST\n");
 								if( printVectorInfo )printf("last is %f %f \n", lastPoint.x, lastPoint.y);
 							}
-						} 
-						
-						bool doubleConic = false;
-						
-						int nextIndex = j+1; 
+						}
+
+						//bool doubleConic = false;
+
+						int nextIndex = j+1;
 						if( nextIndex >= endPos){
 							nextIndex = startPos;
 						}
-						
-						ofPoint nextPoint( (float)vec[nextIndex].x,  -(float)vec[nextIndex].y );	
-											
+
+						ofPoint nextPoint( (float)vec[nextIndex].x,  -(float)vec[nextIndex].y );
+
 						if( printVectorInfo )printf("--- last point is %f %f \n", lastPoint.x, lastPoint.y);
-						
+
 						bool nextIsConnic = (  FT_CURVE_TAG( tags[nextIndex] ) != FT_CURVE_TAG_ON ) && ( FT_CURVE_TAG( tags[nextIndex]) != FT_CURVE_TAG_CUBIC );
-					
+
 						//create a 'virtual on point' if we have two connic points
 						if( nextIsConnic ){
 							nextPoint = (conicPoint + nextPoint) / 2;
 							if( printVectorInfo )printf("|_______ double connic!\n");
 						}
 						if( printVectorInfo )printf("--- next point is %f %f \n", nextPoint.x, nextPoint.y);
-						
+
 						quad_bezier(testOutline, lastPoint.x, lastPoint.y, conicPoint.x, conicPoint.y, nextPoint.x, nextPoint.y, 8);
-						
+
 						if( nextIsConnic ){
 							lastPoint = nextPoint;
 						}
 					}
 				}
-			
+
 			//end for
-			} 
-			
+			}
+
 			for(int g =0; g < testOutline.size(); g++){
 				testOutline[g] /= 64.0f;
 			}
@@ -298,7 +298,7 @@ static ofTTFCharacter makeContoursForCharacter(FT_Face &face){
 				charOutlines.contours.back().pts = testOutline;
 			}
 		}
-		
+
 	return charOutlines;
 }
 
@@ -415,11 +415,11 @@ void ofTrueTypeFont::loadFont(string filename, int fontsize, bool _bAntiAliased,
 
 		border			= 3;
 		visibleBorder	= 2;
-		
-		if(bMakeContours){			
+
+		if(bMakeContours){
 			if( printVectorInfo )printf("\n\ncharacter %c: \n", char( i+NUM_CHARACTER_TO_START ) );
-		
-			int character = i + NUM_CHARACTER_TO_START; 
+
+			//int character = i + NUM_CHARACTER_TO_START;
 			charOutlines[i] = makeContoursForCharacter( face );
 		}
 
@@ -525,14 +525,14 @@ void ofTrueTypeFont::loadFont(string filename, int fontsize, bool _bAntiAliased,
 		//Here we actually create the texture itself, notice
 		//that we are using GL_LUMINANCE_ALPHA to indicate that
 		//we are using 2 channel data.
-		
+
 		#ifndef TARGET_OF_IPHONE // gluBuild2DMipmaps doesn't seem to exist in anything i had in the iphone build... so i commented it out
 			bool b_use_mipmaps = false;  // FOR now this is fixed to false, could be an option, left in for legacy...
 			if (b_use_mipmaps){
 				gluBuild2DMipmaps(
 					GL_TEXTURE_2D, GL_LUMINANCE_ALPHA, width, height,
 					GL_LUMINANCE_ALPHA, GL_UNSIGNED_BYTE, expanded_data);
-			} else 
+			} else
 		#endif
 		{
 	    	glTexImage2D( GL_TEXTURE_2D, 0, GL_LUMINANCE_ALPHA, width, height,
@@ -576,7 +576,7 @@ ofTTFCharacter ofTrueTypeFont::getCharacterAsPoints(int character){
 	if( bMakeContours == false ){
 		ofLog(OF_ERROR, "getCharacterAsPoints: contours not created,  call loadFont with makeContours set to true" );
 	}
-	
+
 	if( bMakeContours && charOutlines.size() > 0 && character >= NUM_CHARACTER_TO_START && character - NUM_CHARACTER_TO_START < charOutlines.size() ){
 		return charOutlines[character-NUM_CHARACTER_TO_START];
 	}else{
@@ -633,18 +633,18 @@ void ofTrueTypeFont::drawChar(int c, float x, float y) {
 		glBindTexture(GL_TEXTURE_2D, texNames[cu]);
 		glNormal3f(0, 0, 1);
 
-		GLfloat verts[] = { x2,y2, 
-			x2, y1, 
+		GLfloat verts[] = { x2,y2,
+			x2, y1,
 			x1, y1,
 		x1, y2 };
 		GLfloat tex_coords[] = { t2, v2,
 			t2, v1,
-			t1, v1, 
+			t1, v1,
 		t1, v2 };
 
-		glEnableClientState( GL_TEXTURE_COORD_ARRAY );		
+		glEnableClientState( GL_TEXTURE_COORD_ARRAY );
 		glTexCoordPointer(2, GL_FLOAT, 0, tex_coords );
-		glEnableClientState( GL_VERTEX_ARRAY );		
+		glEnableClientState( GL_VERTEX_ARRAY );
 		glVertexPointer(2, GL_FLOAT, 0, verts );
 		glDrawArrays( GL_TRIANGLE_FAN, 0, 4 );
 		glDisableClientState( GL_TEXTURE_COORD_ARRAY );
@@ -667,13 +667,13 @@ void ofTrueTypeFont::drawCharAsShape(int c, float x, float y) {
 		ofLog(OF_ERROR,"Error : font not allocated -- line %d in %s", __LINE__,__FILE__);
 		return;
 	}
-	
+
 	//----------------------- error checking
 	if (!bMakeContours){
 		ofLog(OF_ERROR,"Error : contours not created for this font - call loadFont with makeContours set to true");
 		return;
 	}
-	
+
 	if (c >= nCharacters){
 		//ofLog(OF_ERROR,"Error : char (%i) not allocated -- line %d in %s", (c + NUM_CHARACTER_TO_START), __LINE__,__FILE__);
 		return;
@@ -682,7 +682,7 @@ void ofTrueTypeFont::drawCharAsShape(int c, float x, float y) {
 
 	int cu = c;
 	ofTTFCharacter & charRef = charOutlines[cu];
-	
+
 	ofBeginShape();
 		for(int k = 0; k < charRef.contours.size(); k++){
 			if( k!= 0)ofNextContour(true);
@@ -691,7 +691,7 @@ void ofTrueTypeFont::drawCharAsShape(int c, float x, float y) {
 			}
 		}
 	ofEndShape( true );
-	
+
 }
 
 //-----------------------------------------------------------
@@ -813,7 +813,7 @@ void ofTrueTypeFont::drawString(string c, float x, float y) {
 		glGetIntegerv( GL_BLEND_SRC, &blend_src );
 		glGetIntegerv( GL_BLEND_DST, &blend_dst );
 	#endif
-	
+
     // (b) enable our regular ALPHA blending!
     glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -852,7 +852,7 @@ void ofTrueTypeFont::drawString(string c, float x, float y) {
 	#ifndef TARGET_OF_IPHONE
 		glPopAttrib();
 	#else
-		if( !blend_enabled ) 
+		if( !blend_enabled )
 			glDisable(GL_BLEND);
 		if( !texture_2d_enabled )
 			glDisable(GL_TEXTURE_2D);
@@ -880,7 +880,7 @@ void ofTrueTypeFont::drawStringAsShapes(string c, float x, float y) {
 	GLfloat		Y		= 0;
 
 	glPushMatrix();
-	glTranslatef(x, y, 0);			
+	glTranslatef(x, y, 0);
 	int len = (int)c.length();
 
 	while(index < len){
@@ -903,7 +903,7 @@ void ofTrueTypeFont::drawStringAsShapes(string c, float x, float y) {
 		}
 		index++;
 	}
-	
+
 	glPopMatrix();
 
 }
