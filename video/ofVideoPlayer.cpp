@@ -117,7 +117,7 @@ OSErr 	DrawCompleteProc(Movie theMovie, long refCon){
 #include "gstappsink.h"
 
 static bool plugin_registered = false;
-
+static bool gst_inited = false;
 //------------------------------------
 void ofGstDataLock(ofGstVideoData * data){
 	pthread_mutex_lock( &(data->buffer_mutex) );
@@ -218,7 +218,10 @@ ofVideoPlayer::ofVideoPlayer (){
 		/*if(!g_thread_supported()){
 			g_thread_init(NULL);
 		}*/
-		gst_init (NULL, NULL);
+		if(!gst_inited){
+			gst_init (NULL, NULL);
+			gst_inited=true;
+		}
 		if(!plugin_registered){
 			gst_plugin_register_static(GST_VERSION_MAJOR, GST_VERSION_MINOR,
 			 			"appsink", "Element application sink",
