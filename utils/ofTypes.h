@@ -211,7 +211,7 @@ class ofColor{
 			a = 255;
 		}
 		virtual ~ofColor(){}
-		int r, g, b, a;
+		float r, g, b, a;
 };
 
 //----------------------------------------------------------
@@ -221,9 +221,9 @@ class ofColor{
 class ofStyle{
 	public:
 		ofStyle(){
-			bFill				= 1;
-			blending			= 0;
-			smoothing			= 0;
+			bFill				= true;
+			blending			= false;
+			smoothing			= false;
 			circleResolution	= 20;
 			lineWidth			= 1.0;
 			polyMode			= OF_POLY_WINDING_ODD;
@@ -235,9 +235,9 @@ class ofStyle{
 		ofColor color;
 		int polyMode;
 		int rectMode;
-		int bFill;
-		int blending;
-		int smoothing;
+		bool bFill;
+		bool blending;
+		bool smoothing;
 		int circleResolution;
 		float lineWidth;
 };
@@ -270,6 +270,7 @@ public:
 	virtual ~ofBaseUpdates(){}
 	virtual void update()=0;
 };
+
 
 //----------------------------------------------------------
 // ofBaseHasTexture

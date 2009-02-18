@@ -124,8 +124,8 @@ void ofDisableDataPath(){
 }
 
 
+//use ofSetDataPathRoot() to override this
 #if defined TARGET_OSX
-	//use ofSetDataPathRoot() to override this
 	static string dataPathRoot = "../../../data/";
 #else
 	static string dataPathRoot = "data/";
@@ -173,8 +173,6 @@ string ofToString(int value){
 	sstr << value;
 	return sstr.str();
 }
-
-
 
 //--------------------------------------------------
 void ofLaunchBrowser(string url){

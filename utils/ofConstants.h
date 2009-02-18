@@ -1,8 +1,6 @@
 #ifndef OF_CONSTANTS
 #define OF_CONSTANTS
 
-
-
 //-------------------------------
 #define OF_VERSION	6
 //-------------------------------
@@ -19,7 +17,7 @@
 #elif defined( __APPLE_CC__)
 	#include <TargetConditionals.h>		
 	
-	#if (TARGET_OF_IPHONE_SIMULATOR) || (TARGET_OS_IPHONE) || (TARGET_IPHONE)			// MEMO
+	#if (TARGET_OF_IPHONE_SIMULATOR) || (TARGET_OS_IPHONE) || (TARGET_IPHONE)
 		#define TARGET_OF_IPHONE
 		#define TARGET_OPENGLES
 	#else
@@ -361,42 +359,10 @@ using namespace std;
 
 
 //--------------------------------------------
-//colors for our logger.
+//console colors for our logger - shame this doesn't work with the xcode console
 
 #ifdef TARGET_WIN32
-//		fg_black = 0,
-//		fg_red = FOREGROUND_RED,
-//		fg_green = FOREGROUND_GREEN,
-//		fg_blue = FOREGROUND_BLUE,
-//		fg_yellow = fg_red | fg_green,
-//		fg_cyan = fg_green | fg_blue,
-//		fg_pink = fg_red | fg_blue,
-//		fg_white = fg_red | fg_green | fg_blue,
-//		fg_bright = FOREGROUND_INTENSITY,
-//		fg_bright_red = fg_bright | fg_red,
-//		fg_bright_green = fg_bright | fg_green,
-//		fg_bright_blue = fg_bright | fg_blue,
-//		fg_bright_yellow = fg_bright | fg_yellow,
-//		fg_bright_cyan = fg_bright | fg_cyan,
-//		fg_bright_pink = fg_bright | fg_pink,
-//		fg_bright_white = fg_bright | fg_white,
-//		bg_black = 0,
-//		bg_red = BACKGROUND_RED,
-//		bg_green = BACKGROUND_GREEN,
-//		bg_blue = BACKGROUND_BLUE,
-//		bg_yellow = bg_red | bg_green,
-//		bg_cyan = bg_green | bg_blue,
-//		bg_pink = bg_red | bg_blue,
-//		bg_white = bg_red | bg_green | bg_blue,
-//		bg_bright = BACKGROUND_INTENSITY,
-//		bg_bright_red = bg_bright | bg_red,
-//		bg_bright_green = bg_bright | bg_green,
-//		bg_bright_blue = bg_bright | bg_blue,
-//		bg_bright_yellow = bg_bright | bg_yellow,
-//		bg_bright_cyan = bg_bright | bg_cyan,
-//		bg_bright_pink = bg_bright | bg_pink,
-//		bg_bright_white = bg_bright | bg_white,
-//
+
 	#define OF_CONSOLE_COLOR_RESTORE (0 | (FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE) )
 	#define OF_CONSOLE_COLOR_BLACK (0)
 	#define OF_CONSOLE_COLOR_RED (FOREGROUND_RED)
@@ -421,9 +387,6 @@ using namespace std;
  
 #endif
 
-
 //--------------------------------------------
-
-
 
 #endif

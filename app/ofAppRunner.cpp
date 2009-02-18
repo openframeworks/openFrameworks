@@ -196,20 +196,17 @@ void ofDisableSetupScreen(){
 
 //--------------------------------------
 void ofToggleFullscreen(){
-	// put this in
 	window->toggleFullscreen();
 }
 
 //--------------------------------------
 void ofSetFullscreen(bool fullscreen){
-
 	window->setFullscreen(fullscreen);
 }
 
 //--------------------------------------
 int ofGetWindowMode(){
-	// TODO fix this
-	return 0; // window->windowMode;
+	return window->getWindowMode();
 }
 
 //--------------------------------------

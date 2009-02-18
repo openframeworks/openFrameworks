@@ -1,7 +1,6 @@
 #include "ofTrueTypeFont.h"
 //--------------------------
 
-
 #if defined (TARGET_WIN32) || defined (TARGET_LINUX)
 	#include <ft2build.h>
 	#include <freetype/freetype.h>
@@ -20,33 +19,119 @@
 
 static bool printVectorInfo = false;
 
-//#include "polylineSimplify.h"
-//
-//
-//static void simplify(vector <ofPoint> &contourIn, vector <ofPoint> &contourOut, float tolerance){
-//	int length = contourIn.size();
-//
-//	//the polyLine simplify class needs data as a vector of ofxPoint3fs
-//	ofPoint  polyLineIn[length];
-//	ofPoint  polyLineOut[length];
-//
-//	//first we copy over the data to a 3d point array
-//	for(int i = 0; i < length; i++){
-//		polyLineIn[i].x = contourIn[i].x;
-//		polyLineIn[i].y = contourIn[i].y;
-//	}
-//
-//	int numPoints = poly_simplify(tolerance, polyLineIn, length, polyLineOut);
-//	contourOut.clear();
-//	contourOut.assign(numPoints, ofPoint());
-//
-//	//copy the data to our contourOut vector
-//	for(int i = 0; i < numPoints; i++){
-//		contourOut[i].x = polyLineOut[i].x;
-//		contourOut[i].y = polyLineOut[i].y;
-//	}
-//
-//}
+//This is for polygon/contour simplification - we use it to reduce the number of points needed in 
+//representing the letters as openGL shapes - will soon be moved to ofGraphics.cpp
+
+// From: http://softsurfer.com/Archive/algorithm_0205/algorithm_0205.htm
+// Copyright 2002, softSurfer (www.softsurfer.com)
+// This code may be freely used and modified for any purpose
+// providing that this copyright notice is included with it.
+// SoftSurfer makes no warranty for this code, and cannot be held
+// liable for any real or imagined damage resulting from its use.
+// Users of this code must verify correctness for their application.
+
+typedef struct{
+	ofPoint P0;
+	ofPoint P1;
+}Segment;
+
+// dot product (3D) which allows vector operations in arguments
+#define dot(u,v)   ((u).x * (v).x + (u).y * (v).y + (u).z * (v).z)
+#define norm2(v)   dot(v,v)        // norm2 = squared length of vector
+#define norm(v)    sqrt(norm2(v))  // norm = length of vector
+#define d2(u,v)    norm2(u-v)      // distance squared = norm2 of difference
+#define d(u,v)     norm(u-v)       // distance = norm of difference
+
+static void simplifyDP(float tol, ofPoint* v, int j, int k, int* mk ){
+    if (k <= j+1) // there is nothing to simplify
+        return;
+
+    // check for adequate approximation by segment S from v[j] to v[k]
+    int     maxi	= j;          // index of vertex farthest from S
+    float   maxd2	= 0;         // distance squared of farthest vertex
+    float   tol2	= tol * tol;  // tolerance squared
+    Segment S		= {v[j], v[k]};  // segment from v[j] to v[k]
+    ofPoint u;
+	u				= S.P1 - S.P0;   // segment direction vector
+    double  cu		= dot(u,u);     // segment length squared
+
+    // test each vertex v[i] for max distance from S
+    // compute using the Feb 2001 Algorithm's dist_ofPoint_to_Segment()
+    // Note: this works in any dimension (2D, 3D, ...)
+    ofPoint  w;
+    ofPoint   Pb;                // base of perpendicular from v[i] to S
+    float  b, cw, dv2;        // dv2 = distance v[i] to S squared
+
+    for (int i=j+1; i<k; i++){
+        // compute distance squared
+        w = v[i] - S.P0;
+        cw = dot(w,u);
+        if ( cw <= 0 ) dv2 = d2(v[i], S.P0);
+        else if ( cu <= cw ) dv2 = d2(v[i], S.P1);
+        else {
+            b = cw / cu;
+            Pb = S.P0 + u*b;
+            dv2 = d2(v[i], Pb);
+        }
+        // test with current max distance squared
+        if (dv2 <= maxd2) continue;
+		
+        // v[i] is a new max vertex
+        maxi = i;
+        maxd2 = dv2;
+    } 
+    if (maxd2 > tol2)        // error is worse than the tolerance
+    {
+        // split the polyline at the farthest vertex from S
+        mk[maxi] = 1;      // mark v[maxi] for the simplified polyline
+        // recursively simplify the two subpolylines at v[maxi]
+        simplifyDP( tol, v, j, maxi, mk );  // polyline v[j] to v[maxi]
+        simplifyDP( tol, v, maxi, k, mk );  // polyline v[maxi] to v[k]
+    }
+    // else the approximation is OK, so ignore intermediate vertices
+    return;
+}
+
+
+//-------------------------------------------------------------------
+// needs simplifyDP which is above
+static vector <ofPoint> ofSimplifyContour(vector <ofPoint> &V, float tol){
+	int n = V.size();
+
+	vector <ofPoint> sV;
+	sV.assign(n, ofPoint());
+
+    int    i, k, m, pv;            // misc counters
+    float  tol2 = tol * tol;       // tolerance squared
+    ofPoint vt[n];
+    int  mk[n];
+
+	memset(&mk, 0, sizeof(int) * n );
+
+    // STAGE 1.  Vertex Reduction within tolerance of prior vertex cluster
+    vt[0] = V[0];              // start at the beginning
+    for (i=k=1, pv=0; i<n; i++) {
+        if (d2(V[i], V[pv]) < tol2) continue;
+
+        vt[k++] = V[i];
+        pv = i;
+    }
+    if (pv < n-1) vt[k++] = V[n-1];      // finish at the end
+
+    // STAGE 2.  Douglas-Peucker polyline simplification
+    mk[0] = mk[k-1] = 1;       // mark the first and last vertices
+    simplifyDP( tol, vt, 0, k-1, mk );
+
+    // copy marked vertices to the output simplified polyline
+    for (i=m=0; i<k; i++) {
+        if (mk[i]) sV[m++] = vt[i];
+    }
+	
+	//get rid of the unused points
+	if( m < sV.size() ) sV.erase( sV.begin()+m, sV.end() );
+	return sV;    	
+}
+
 
 //------------------------------------------------------------
 static void quad_bezier(vector <ofPoint> &ptsList, float x1, float y1, float x2, float y2, float x3, float y3, int res){
@@ -204,19 +289,14 @@ static ofTTFCharacter makeContoursForCharacter(FT_Face &face){
 			for(int g =0; g < testOutline.size(); g++){
 				testOutline[g] /= 64.0f;
 			}
-			
+
 			charOutlines.contours.push_back(ofTTFContour());
 
-//			if( testOutline.size() ){
-//				vector <ofPoint> simplifiedPts;
-//				simplify( testOutline, simplifiedPts, 0.3);
-//
-//				charOutlines.contours.back().pts = simplifiedPts;
-//				//printf("removed %i points = %f % \n", testOutline.size()-simplifiedPts.size(), 100 * ( (float)(testOutline.size()-simplifiedPts.size())/testOutline.size()));
-//
-//			}else{
+			if( testOutline.size() ){
+				charOutlines.contours.back().pts = ofSimplifyContour(testOutline, TTF_SHAPE_SIMPLIFICATION_AMNT);
+			}else{
 				charOutlines.contours.back().pts = testOutline;
-//			}
+			}
 		}
 		
 	return charOutlines;
@@ -429,10 +509,10 @@ void ofTrueTypeFont::loadFont(string filename, int fontsize, bool _bAntiAliased,
 
 		//Now we just setup some texture paramaters.
 		glBindTexture( GL_TEXTURE_2D, texNames[i]);
-#ifndef TARGET_OF_IPHONE // DAMIAN
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-   		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-#endif
+		#ifndef TARGET_OF_IPHONE
+			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+		#endif
    		if (bAntiAlised == true){
 			glTexParameterf(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
 			glTexParameterf(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
@@ -446,14 +526,14 @@ void ofTrueTypeFont::loadFont(string filename, int fontsize, bool _bAntiAliased,
 		//that we are using GL_LUMINANCE_ALPHA to indicate that
 		//we are using 2 channel data.
 		
-#ifndef TARGET_OF_IPHONE // ZACH G   - > gluBuild2DMipmaps doesn't seem to exist in anything i had in the iphone build... so i commented it out
-		bool b_use_mipmaps = false;  // FOR now this is fixed to false, could be an option, left in for legacy...
-		if (b_use_mipmaps){
-   			gluBuild2DMipmaps(
-   				GL_TEXTURE_2D, GL_LUMINANCE_ALPHA, width, height,
-            	GL_LUMINANCE_ALPHA, GL_UNSIGNED_BYTE, expanded_data);
-		} else 
-#endif
+		#ifndef TARGET_OF_IPHONE // gluBuild2DMipmaps doesn't seem to exist in anything i had in the iphone build... so i commented it out
+			bool b_use_mipmaps = false;  // FOR now this is fixed to false, could be an option, left in for legacy...
+			if (b_use_mipmaps){
+				gluBuild2DMipmaps(
+					GL_TEXTURE_2D, GL_LUMINANCE_ALPHA, width, height,
+					GL_LUMINANCE_ALPHA, GL_UNSIGNED_BYTE, expanded_data);
+			} else 
+		#endif
 		{
 	    	glTexImage2D( GL_TEXTURE_2D, 0, GL_LUMINANCE_ALPHA, width, height,
 			   0, GL_LUMINANCE_ALPHA, GL_UNSIGNED_BYTE, expanded_data );
@@ -553,14 +633,6 @@ void ofTrueTypeFont::drawChar(int c, float x, float y) {
 		glBindTexture(GL_TEXTURE_2D, texNames[cu]);
 		glNormal3f(0, 0, 1);
 
-//#ifndef TARGET_OF_IPHONE // DAMIAN
-//		glBegin(GL_QUADS);
-//			glTexCoord2d(t1,v1);	glVertex2i(x1, y1);
-//			glTexCoord2d(t1,v2);	glVertex2i(x1, y2);
-//			glTexCoord2d(t2,v2);	glVertex2i(x2, y2);
-//			glTexCoord2d(t2,v1);	glVertex2i(x2, y1);
-//		glEnd();
-//#else
 		GLfloat verts[] = { x2,y2, 
 			x2, y1, 
 			x1, y1,
@@ -576,12 +648,12 @@ void ofTrueTypeFont::drawChar(int c, float x, float y) {
 		glVertexPointer(2, GL_FLOAT, 0, verts );
 		glDrawArrays( GL_TRIANGLE_FAN, 0, 4 );
 		glDisableClientState( GL_TEXTURE_COORD_ARRAY );
-//#endif
+
 	} else {
 		//let's add verbosity levels somewhere...
 		//this error, for example, is kind of annoying to see
 		//all the time:
-		//ofLog(OF_WARNING," texture not bound for character -- line %d in %s", __LINE__,__FILE__);
+		ofLog(OF_WARNING," texture not bound for character -- line %d in %s", __LINE__,__FILE__);
 	}
 
 }
@@ -732,15 +804,15 @@ void ofTrueTypeFont::drawString(string c, float x, float y) {
 	GLfloat		Y		= 0;
 
 	// (a) record the current "alpha state, blend func, etc"
-#ifndef TARGET_OF_IPHONE
-    glPushAttrib(GL_COLOR_BUFFER_BIT);
-#else
-	GLboolean blend_enabled = glIsEnabled(GL_BLEND);
-	GLboolean texture_2d_enabled = glIsEnabled(GL_TEXTURE_2D);
-	GLint blend_src, blend_dst;
-	glGetIntegerv( GL_BLEND_SRC, &blend_src );
-	glGetIntegerv( GL_BLEND_DST, &blend_dst );
-#endif
+	#ifndef TARGET_OF_IPHONE
+		glPushAttrib(GL_COLOR_BUFFER_BIT);
+	#else
+		GLboolean blend_enabled = glIsEnabled(GL_BLEND);
+		GLboolean texture_2d_enabled = glIsEnabled(GL_TEXTURE_2D);
+		GLint blend_src, blend_dst;
+		glGetIntegerv( GL_BLEND_SRC, &blend_src );
+		glGetIntegerv( GL_BLEND_DST, &blend_dst );
+	#endif
 	
     // (b) enable our regular ALPHA blending!
     glEnable(GL_BLEND);
@@ -777,15 +849,15 @@ void ofTrueTypeFont::drawString(string c, float x, float y) {
 	glPopMatrix();
 	glDisable(GL_TEXTURE_2D);
     // (c) return back to the way things were (with blending, blend func, etc)
-#ifndef TARGET_OF_IPHONE
-    glPopAttrib();
-#else
-	if ( !blend_enabled ) 
-		glDisable(GL_BLEND);
-	if ( !texture_2d_enabled )
-		glDisable(GL_TEXTURE_2D);
-	glBlendFunc( blend_src, blend_dst );
-#endif
+	#ifndef TARGET_OF_IPHONE
+		glPopAttrib();
+	#else
+		if( !blend_enabled ) 
+			glDisable(GL_BLEND);
+		if( !texture_2d_enabled )
+			glDisable(GL_TEXTURE_2D);
+		glBlendFunc( blend_src, blend_dst );
+	#endif
 
 }
 

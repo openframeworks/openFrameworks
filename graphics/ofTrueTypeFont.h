@@ -21,18 +21,11 @@ typedef struct {
 	float yOff;
 } charProps;
 
-/*
-i tried to solve this problem by replacing
-cps[i].height = face->glyph->bitmap_top;
-with
-cps[i].height = face->glyph->bitmap.rows;
-in ofTrueTypeFont::loadFont
-
-that solved the bouding-box problem but broke the drawString function of course.
-so i think in charProps the member height should be renamed to top and
-a new member height should be set to bitmap_rows
-stringHeight can then calculate the right bouding box. a stringTop function could also be introduced. 
-*/
+//For drawStringAsShapes and getCharacterAsPoints only
+//Make this number smaller to create TTF shapes with more pts = slower but accurate
+//Make this number larger to create TTF shapes with less pts  = faster but not as accurate
+//Our default is 0.3 which removes segments that are less than 0.3 of a pixel in length
+#define TTF_SHAPE_SIMPLIFICATION_AMNT (0.3)
 
 class ofTTFContour{
 	public:
