@@ -30,10 +30,7 @@
 
 //--------------------------
 // audio
-#ifndef TARGET_OF_IPHONE			//(temp for now, until this is ported)
-	#include "ofSoundStream.h"
-	#include "ofSoundPlayer.h"
-#endif
+#include "ofSoundStream.h"#include "ofSoundPlayer.h"
 
 //--------------------------
 // video

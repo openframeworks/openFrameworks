@@ -3,10 +3,11 @@
 
 #include "ofConstants.h"
 
-extern "C"{
+#ifndef TARGET_OF_IPHONE			extern "C"{
 	#include "fmod.h"
 	#include "fmod_errors.h"
 }
+#endif
 
 
 //		TO DO :
@@ -68,9 +69,9 @@ class ofSoundPlayer{
 		float 	speed;				// -n to n, 1 = normal, -1 backwards
 		unsigned int 	length;		// in samples;
 
-		FMOD_RESULT			result;
+	#ifndef TARGET_OF_IPHONE		FMOD_RESULT			result;
 		FMOD_CHANNEL 		*  channel;
 		FMOD_SOUND  		*  sound;
-};
+	#endif	};
 
 #endif // _OF_SAMPLE_SOUND

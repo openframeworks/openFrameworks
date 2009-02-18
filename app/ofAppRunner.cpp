@@ -12,14 +12,16 @@ ofAppBaseWindow *			window = NULL;
 
 //========================================================================
 // core events instance & arguments
-
-ofCoreEvents 				ofEvents;
-ofEventArgs					voidEventArgs;
-
+#ifdef OF_USING_POCO			ofCoreEvents 				ofEvents;
+	ofEventArgs					voidEventArgs;
+#endif
 
 //========================================================================
 // callbacks:
-#include "ofAppGlutWindow.h"
+#ifdef TARGET_OF_IPHONE				
+	#include "ofAppiPhoneWindow.h"#else
+	#include "ofAppGlutWindow.h"
+#endif
 
 
 //--------------------------------------
@@ -28,12 +30,15 @@ void ofSetupOpenGL(ofAppBaseWindow * windowPtr, int w, int h, int screenMode){
 	window->setupOpenGL(w, h, screenMode);
 }
 
-//--------------------------------------
+//--------------------------------------
 void ofSetupOpenGL(int w, int h, int screenMode){
+	#ifdef TARGET_OF_IPHONE
+		window = new ofAppiPhoneWindow();
+	#else
+		window = new ofAppGlutWindow();
+	#endif
 
-	window = new ofAppGlutWindow();
 	window->setupOpenGL(w, h, screenMode);
-
 }
 
 //----------------------- 	gets called when the app exits

@@ -880,8 +880,7 @@ void ofTrueTypeFont::drawStringAsShapes(string c, float x, float y) {
 	GLfloat		Y		= 0;
 
 	glPushMatrix();
-	glTranslated(x, y, 0);
-
+	glTranslatef(x, y, 0);			
 	int len = (int)c.length();
 
 	while(index < len){
