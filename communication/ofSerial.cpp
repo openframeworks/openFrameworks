@@ -634,7 +634,7 @@ void ofSerial::flush(bool flushIn, bool flushOut){
 		else if(flushOut) flushType = PURGE_TXCLEAR;
 		else return;
 	
-		PurgeComm(hComm, flushType)
+		PurgeComm(hComm, flushType);
 	#endif
 	//---------------------------------------------
 	
