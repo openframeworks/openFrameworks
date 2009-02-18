@@ -74,7 +74,7 @@ float * ofSoundGetSpectrum(int nBands){
 	} else {
 
 		float step 		= (float)nBandsToGet / (float)nBands;
-		float pos 		= 0;
+		//float pos 		= 0;
 		// so for example, if nBands = 33, nBandsToGet = 64, step = 1.93f;
 		int currentBand = 0;
 
