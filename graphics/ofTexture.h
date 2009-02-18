@@ -52,7 +52,14 @@ class ofTexture : public ofBaseDraws{
 		void allocate(int w, int h, int internalGlDataType, bool bUseARBExtention = true);	 
 		void clear();
 		void loadData(unsigned char * data, int w, int h, int glDataType); 
-		void loadScreenData(int x, int y, int w, int h);
+        void loadScreenData(int x, int y, int w, int h);
+
+		//a more accurate way to set the point which the image is drawn from
+		//this makes rotating an image around a point easier.
+        void setAnchorPct(float xPct, float yPct);
+        void setAnchorPt(int x, int y);
+        void resetAnchor();
+
 		void draw(float x, float y, float w, float h);
 		void draw(float x, float y);
 		
@@ -65,6 +72,9 @@ class ofTexture : public ofBaseDraws{
 
 	protected:		
 		ofTextureData   texData;
+        ofPoint         anchor;
+        bool            bAnchorIsPct;
+
 			
 }; 
 

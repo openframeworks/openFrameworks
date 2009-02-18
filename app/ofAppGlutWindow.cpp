@@ -6,16 +6,16 @@
 
 int				windowMode;
 bool			bNewScreenMode;
-float			timeNow, timeThen, fps;
+float			timeNow, timeThen, fps = 0;
 int				nFramesForFPS;
 int				nFrameCount;
 int				buttonInUse;
 bool			bEnableSetupScreen;
 
 bool			bFrameRateSet;
-int 			millisForFrame;
-int 			prevMillis;
-int 			diffMillis;
+int 			millisForFrame = 0;
+int 			prevMillis = 0;
+int 			diffMillis = 0;
 
 float 			frameRate;
 
@@ -35,6 +35,10 @@ ofAppGlutWindow::ofAppGlutWindow(){
 	bEnableSetupScreen	= true;
 	nonFullScreenX		= -1;
 	nonFullScreenY		= -1;
+	frameRate           = 30;
+	nFramesForFPS       = 0;
+	nFrameCount         = 0;
+
 }
 
 //------------------------------------------------------------
@@ -330,7 +334,10 @@ void ofAppGlutWindow::display(void){
  		fps = (double)nFramesForFPS / (timeNow-timeThen);
       	timeThen = timeNow;
 		nFramesForFPS = 0;
-		frameRate = 0.9f * frameRate + 0.1f * fps;
+		
+		//hack for windows - was getting NAN - maybe unitialized vars???
+		if( nFrameCount < 5) frameRate = fps;
+		else frameRate = 0.9f * frameRate + 0.1f * fps;
   	}
   	nFramesForFPS++;
   	// --------------

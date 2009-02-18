@@ -1,7 +1,13 @@
 #include "ofUtils.h"
 #include "ofImage.h"
 
+#ifdef TARGET_OF_IPHONE
+	#include "sys/time.h"	
+#endif
 
+#ifdef TARGET_WIN32
+    #include <mmsystem.h>
+#endif
 
 static bool enableDataPath = true;
 static unsigned long startTime = ofGetSystemTime();   //  better at the first frame ?? (currently, there is some delay from static init, to running.
@@ -117,30 +123,39 @@ void ofDisableDataPath(){
 	enableDataPath = false;
 }
 
+
+#if defined TARGET_OSX
+	//use ofSetDataPathRoot() to override this
+	static string dataPathRoot = "../../../data/";
+#else
+	static string dataPathRoot = "data/";
+#endif
+
 //--------------------------------------------------
-string ofToDataPath(string path, bool absolute){
+void ofSetDataPathRoot(string newRoot){
+	dataPathRoot = newRoot;
+}
+
+//--------------------------------------------------
+string ofToDataPath(string path, bool makeAbsolute){
 	if( enableDataPath ){
-		#ifdef TARGET_OSX
-			if(path.substr(0,1) != "/" && path.substr(0,14) != "../../../data/"){
-				path = "../../../data/"+path;
+	
+		//check if absolute path has been passed or if data path has already been applied
+		//do we want to check for C: D: etc ?? like  substr(1, 2) == ':' ??
+		if( path.substr(0,1) != "/" && path.substr(0,dataPathRoot.length()) != dataPathRoot){
+			path = dataPathRoot+path;
+		}
+		
+		if(makeAbsolute && path.substr(0,1) != "/"){
+			#ifndef TARGET_OF_IPHONE 
+				char currDir[1024];
+				path = "/"+path;
+				path = getcwd(currDir, 1024)+path;
+			#else
+				//do we need iphone specific code here?
+			#endif
+		}
 
-				if(absolute){
-					char currDir[1024];
-					path = "/"+path;
-					path = getcwd(currDir, 1024)+path;
-				}
-			}
-		#else
-			if(path.substr(0,1) != "/" && path.substr(0,5) != "data/"){
-				path = "data/"+path;
-
-				if(absolute){
-					char currDir[1024];
-					path = "/"+path;
-					path = getcwd(currDir, 1024)+path;
-				}
-			}
-		#endif
 	}
 	return path;
 }

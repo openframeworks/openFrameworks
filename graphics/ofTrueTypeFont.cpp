@@ -10,7 +10,7 @@
 	#include <freetype/fttrigon.h>
 #endif
 
-#if defined (TARGET_OSX)
+#if defined (TARGET_OSX) || defined (TARGET_OF_IPHONE) 
 	#include "ft2build.h"
 	#include "freetype.h"
 	#include "ftglyph.h"
@@ -19,6 +19,34 @@
 #endif
 
 static bool printVectorInfo = false;
+
+//#include "polylineSimplify.h"
+//
+//
+//static void simplify(vector <ofPoint> &contourIn, vector <ofPoint> &contourOut, float tolerance){
+//	int length = contourIn.size();
+//
+//	//the polyLine simplify class needs data as a vector of ofxPoint3fs
+//	ofPoint  polyLineIn[length];
+//	ofPoint  polyLineOut[length];
+//
+//	//first we copy over the data to a 3d point array
+//	for(int i = 0; i < length; i++){
+//		polyLineIn[i].x = contourIn[i].x;
+//		polyLineIn[i].y = contourIn[i].y;
+//	}
+//
+//	int numPoints = poly_simplify(tolerance, polyLineIn, length, polyLineOut);
+//	contourOut.clear();
+//	contourOut.assign(numPoints, ofPoint());
+//
+//	//copy the data to our contourOut vector
+//	for(int i = 0; i < numPoints; i++){
+//		contourOut[i].x = polyLineOut[i].x;
+//		contourOut[i].y = polyLineOut[i].y;
+//	}
+//
+//}
 
 //------------------------------------------------------------
 static void quad_bezier(vector <ofPoint> &ptsList, float x1, float y1, float x2, float y2, float x3, float y3, int res){
@@ -178,7 +206,17 @@ static ofTTFCharacter makeContoursForCharacter(FT_Face &face){
 			}
 			
 			charOutlines.contours.push_back(ofTTFContour());
-			charOutlines.contours.back().pts = testOutline;
+
+//			if( testOutline.size() ){
+//				vector <ofPoint> simplifiedPts;
+//				simplify( testOutline, simplifiedPts, 0.3);
+//
+//				charOutlines.contours.back().pts = simplifiedPts;
+//				//printf("removed %i points = %f % \n", testOutline.size()-simplifiedPts.size(), 100 * ( (float)(testOutline.size()-simplifiedPts.size())/testOutline.size()));
+//
+//			}else{
+				charOutlines.contours.back().pts = testOutline;
+//			}
 		}
 		
 	return charOutlines;
@@ -391,8 +429,10 @@ void ofTrueTypeFont::loadFont(string filename, int fontsize, bool _bAntiAliased,
 
 		//Now we just setup some texture paramaters.
 		glBindTexture( GL_TEXTURE_2D, texNames[i]);
+#ifndef TARGET_OF_IPHONE // DAMIAN
 		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
    		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+#endif
    		if (bAntiAlised == true){
 			glTexParameterf(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
 			glTexParameterf(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
@@ -405,12 +445,16 @@ void ofTrueTypeFont::loadFont(string filename, int fontsize, bool _bAntiAliased,
 		//Here we actually create the texture itself, notice
 		//that we are using GL_LUMINANCE_ALPHA to indicate that
 		//we are using 2 channel data.
+		
+#ifndef TARGET_OF_IPHONE // ZACH G   - > gluBuild2DMipmaps doesn't seem to exist in anything i had in the iphone build... so i commented it out
 		bool b_use_mipmaps = false;  // FOR now this is fixed to false, could be an option, left in for legacy...
 		if (b_use_mipmaps){
    			gluBuild2DMipmaps(
    				GL_TEXTURE_2D, GL_LUMINANCE_ALPHA, width, height,
             	GL_LUMINANCE_ALPHA, GL_UNSIGNED_BYTE, expanded_data);
-		} else {
+		} else 
+#endif
+		{
 	    	glTexImage2D( GL_TEXTURE_2D, 0, GL_LUMINANCE_ALPHA, width, height,
 			   0, GL_LUMINANCE_ALPHA, GL_UNSIGNED_BYTE, expanded_data );
 		}
@@ -509,13 +553,30 @@ void ofTrueTypeFont::drawChar(int c, float x, float y) {
 		glBindTexture(GL_TEXTURE_2D, texNames[cu]);
 		glNormal3f(0, 0, 1);
 
-		glBegin(GL_QUADS);
-			glTexCoord2d(t1,v1);	glVertex2i(x1, y1);
-			glTexCoord2d(t1,v2);	glVertex2i(x1, y2);
-			glTexCoord2d(t2,v2);	glVertex2i(x2, y2);
-			glTexCoord2d(t2,v1);	glVertex2i(x2, y1);
-		glEnd();
+//#ifndef TARGET_OF_IPHONE // DAMIAN
+//		glBegin(GL_QUADS);
+//			glTexCoord2d(t1,v1);	glVertex2i(x1, y1);
+//			glTexCoord2d(t1,v2);	glVertex2i(x1, y2);
+//			glTexCoord2d(t2,v2);	glVertex2i(x2, y2);
+//			glTexCoord2d(t2,v1);	glVertex2i(x2, y1);
+//		glEnd();
+//#else
+		GLfloat verts[] = { x2,y2, 
+			x2, y1, 
+			x1, y1,
+		x1, y2 };
+		GLfloat tex_coords[] = { t2, v2,
+			t2, v1,
+			t1, v1, 
+		t1, v2 };
 
+		glEnableClientState( GL_TEXTURE_COORD_ARRAY );		
+		glTexCoordPointer(2, GL_FLOAT, 0, tex_coords );
+		glEnableClientState( GL_VERTEX_ARRAY );		
+		glVertexPointer(2, GL_FLOAT, 0, verts );
+		glDrawArrays( GL_TRIANGLE_FAN, 0, 4 );
+		glDisableClientState( GL_TEXTURE_COORD_ARRAY );
+//#endif
 	} else {
 		//let's add verbosity levels somewhere...
 		//this error, for example, is kind of annoying to see
@@ -671,7 +732,16 @@ void ofTrueTypeFont::drawString(string c, float x, float y) {
 	GLfloat		Y		= 0;
 
 	// (a) record the current "alpha state, blend func, etc"
+#ifndef TARGET_OF_IPHONE
     glPushAttrib(GL_COLOR_BUFFER_BIT);
+#else
+	GLboolean blend_enabled = glIsEnabled(GL_BLEND);
+	GLboolean texture_2d_enabled = glIsEnabled(GL_TEXTURE_2D);
+	GLint blend_src, blend_dst;
+	glGetIntegerv( GL_BLEND_SRC, &blend_src );
+	glGetIntegerv( GL_BLEND_DST, &blend_dst );
+#endif
+	
     // (b) enable our regular ALPHA blending!
     glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -679,7 +749,7 @@ void ofTrueTypeFont::drawString(string c, float x, float y) {
 	glEnable(GL_TEXTURE_2D);
 	// (d) store the current matrix position and do a translation to the drawing position
 	glPushMatrix();
-	glTranslated(x, y, 0);
+	glTranslatef(x, y, 0);
 
 	int len = (int)c.length();
 
@@ -689,17 +759,17 @@ void ofTrueTypeFont::drawString(string c, float x, float y) {
 		  if (c[index] == '\n') {
 
 				Y = (int)lineHeight;
-				glTranslated(-X, Y, 0);
+				glTranslatef(-X, Y, 0);
 				X = 0 ; //reset X Pos back to zero
 
 		  }else if (c[index] == ' ') {
 				 int cy = (int)'p' - NUM_CHARACTER_TO_START;
 				 X += cps[cy].width;
-				 glTranslated(cps[cy].width, 0, 0);
+				 glTranslatef(cps[cy].width, 0, 0);
 		  } else {
 				drawChar(cy, 0, 0);
 				X += cps[cy].setWidth;
-				glTranslated(cps[cy].setWidth, 0, 0);
+				glTranslatef(cps[cy].setWidth, 0, 0);
 		  }
 		}
 		index++;
@@ -707,7 +777,15 @@ void ofTrueTypeFont::drawString(string c, float x, float y) {
 	glPopMatrix();
 	glDisable(GL_TEXTURE_2D);
     // (c) return back to the way things were (with blending, blend func, etc)
+#ifndef TARGET_OF_IPHONE
     glPopAttrib();
+#else
+	if ( !blend_enabled ) 
+		glDisable(GL_BLEND);
+	if ( !texture_2d_enabled )
+		glDisable(GL_TEXTURE_2D);
+	glBlendFunc( blend_src, blend_dst );
+#endif
 
 }
 
@@ -758,4 +836,5 @@ void ofTrueTypeFont::drawStringAsShapes(string c, float x, float y) {
 	glPopMatrix();
 
 }
+
 

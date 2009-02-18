@@ -2,7 +2,10 @@
 #include "ofAppRunner.h"
 #include <sys/time.h>
 
-
+#ifdef TARGET_WIN32
+    #include <process.h>
+    #define getpid _getpid
+#endif
 
 //--------------------------------------------------
 int ofNextPow2(int a){

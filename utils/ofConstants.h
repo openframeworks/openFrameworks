@@ -1,6 +1,8 @@
 #ifndef OF_CONSTANTS
 #define OF_CONSTANTS
 
+
+
 //-------------------------------
 #define OF_VERSION	6
 //-------------------------------
@@ -15,7 +17,14 @@
 #if defined( __WIN32__ ) || defined( _WIN32 )
 	#define TARGET_WIN32
 #elif defined( __APPLE_CC__)
-	#define TARGET_OSX
+	#include <TargetConditionals.h>		
+	
+	#if (TARGET_OF_IPHONE_SIMULATOR) || (TARGET_OS_IPHONE) || (TARGET_IPHONE)			// MEMO
+		#define TARGET_OF_IPHONE
+		#define TARGET_OPENGLES
+	#else
+		#define TARGET_OSX
+	#endif
 #else
 	#define TARGET_LINUX
 #endif
@@ -32,6 +41,7 @@
 	#define WIN32_LEAN_AND_MEAN
 	#include <windows.h>
 	#include "GLee.h"
+   	#include "glu.h"
 	#define __WINDOWS_DS__
 	#define __WINDOWS_MM__
 	#if (_MSC_VER)       // microsoft visual studio
@@ -100,6 +110,13 @@
 
 #endif
 
+
+#ifdef TARGET_OF_IPHONE						
+	#import <OpenGLES/ES1/gl.h>
+	#import <OpenGLES/ES1/glext.h>
+#endif
+
+
 #ifndef __MWERKS__
 #define OF_EXIT_APP(val)		std::exit(val);
 #else
@@ -164,7 +181,9 @@
 #endif
 
 // comment out this line to disable all poco related code
-#define OF_USING_POCO
+#ifndef TARGET_OF_IPHONE
+	#define OF_USING_POCO
+#endif
 
 //we don't want to break old code that uses ofSimpleApp
 //so we forward declare ofBaseApp and make ofSimpleApp mean the same thing

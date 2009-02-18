@@ -196,6 +196,8 @@ class ofRectangle {
 
 };
 
+
+
 //----------------------------------------------------------
 // ofColor
 //----------------------------------------------------------
@@ -252,6 +254,11 @@ public:
 	virtual void draw(float x,float y,float w, float h)=0;
 	virtual float getHeight()=0;
 	virtual float getWidth()=0;
+
+	virtual void setAnchorPct(float xPct, float yPct)=0;
+    virtual void setAnchorPt(int x, int y)=0;
+	virtual void resetAnchor()=0;
+
 };
 
 //----------------------------------------------------------

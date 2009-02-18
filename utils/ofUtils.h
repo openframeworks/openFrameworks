@@ -15,7 +15,6 @@ float 	ofGetElapsedTimef();
 int		ofGetElapsedTimeMillis();
 int 	ofGetFrameNum();
 
-
 int 	ofGetSeconds();
 int 	ofGetMinutes();
 int 	ofGetHours();
@@ -32,6 +31,12 @@ void 	ofLaunchBrowser(string url);
 void	ofEnableDataPath();
 void	ofDisableDataPath();
 string 	ofToDataPath(string path, bool absolute=false);
+
+
+//set the root path that ofToDataPath will try to 
+//tack on to the start of the passed-in path
+//MUST HAVE TRAILING SLASH (/) !!!!
+void	ofSetDataPathRoot( string root ); 
 
 string  ofToString(double value, int precision = 7);
 string  ofToString(int  value);

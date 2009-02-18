@@ -35,6 +35,10 @@ using namespace std;
 #include <string>
 #include <iostream>
 
+#ifndef uint
+    #define uint unsigned int
+#endif
+
 #include "ofEvents.h"
 
 #include "ofSerial.h"
