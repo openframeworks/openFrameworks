@@ -14,28 +14,28 @@ class ofPoint {
         x = _x;
         y = _y;
         z = _z;
-    } 
+    }
 
     ofPoint( const ofPoint & pnt){
         x = pnt.x;
         y = pnt.y;
         z = pnt.z;
-    } 
-	    
+    }
+
     void set(float _x, float _y, float _z = 0){
         x = _x;
         y = _y;
         z = _z;
-    }   
-	
-	
+    }
+
+
 	//------ Operators:
-  
+
   	//Negative
     ofPoint operator-() const {
         return ofPoint( -x, -y, -z );
     }
-   
+
     //equality
     bool operator==( const ofPoint& pnt ) {
         return (x == pnt.x) && (y == pnt.y) && (z == pnt.z);
@@ -45,8 +45,8 @@ class ofPoint {
     bool operator!=( const ofPoint& pnt ) {
         return (x != pnt.x) || (y != pnt.y) || (z != pnt.z);
     }
-	
-	//Set 
+
+	//Set
 	ofPoint & operator=( const ofPoint& pnt ){
 		x = pnt.x;
 		y = pnt.y;
@@ -88,7 +88,7 @@ class ofPoint {
     ofPoint operator-(const ofPoint& pnt) const {
         return ofPoint( x-pnt.x, y-pnt.y, z-pnt.z );
     }
-	
+
     ofPoint operator-(const float& val) const {
         return ofPoint( x-val, y-val, z-val);
     }
@@ -111,11 +111,11 @@ class ofPoint {
     ofPoint operator*( const ofPoint& pnt ) const {
         return ofPoint( x*pnt.x, y*pnt.y, z*pnt.z );
     }
-	
+
     ofPoint operator*(const float& val) const {
         return ofPoint( x*val, y*val, z*val);
     }
-	
+
     ofPoint & operator*=( const ofPoint& pnt ) {
         x*=pnt.x;
         y*=pnt.y;
@@ -157,14 +157,14 @@ class ofPoint {
 			y /= val;
 			z /= val;
 		}
-		
+
 		return *this;
-    }   
-      	
+    }
+
 	// union allows us to access the coordinates through
     // both an array 'v' and 'x', 'y', 'z' member varibles
     union  {
-        struct {   
+        struct {
             float x;
             float y;
             float z;
@@ -186,13 +186,13 @@ class ofRectangle {
 		y = _y;
 		width = _w;
 		height = _h;
-	}  
+	}
 	virtual ~ofRectangle(){}
 
    float x;
    float y;
    float width;
-   float height;   
+   float height;
 
 };
 
@@ -229,7 +229,7 @@ class ofStyle{
 			polyMode			= OF_POLY_WINDING_ODD;
 			rectMode			= OF_RECTMODE_CORNER;
 		}
-	
+
 		virtual ~ofStyle(){}
 
 		ofColor color;
@@ -248,7 +248,7 @@ class ofStyle{
 //----------------------------------------------------------
 
 class ofBaseDraws{
-public:	
+public:
 	virtual ~ofBaseDraws(){}
 	virtual void draw(float x,float y)=0;
 	virtual void draw(float x,float y,float w, float h)=0;
@@ -283,5 +283,22 @@ public:
 	virtual ofTexture & getTextureReference()=0;
 };
 
+//----------------------------------------------------------
+// ofBaseHasPixels
+//----------------------------------------------------------
+class ofBaseHasPixels{
+public:
+	virtual ~ofBaseHasPixels(){}
+	virtual unsigned char * getPixels()=0;
+};
 
+//----------------------------------------------------------
+// ofBaseVideo
+//----------------------------------------------------------
+class ofBaseVideo: public ofBaseDraws, public ofBaseUpdates, public ofBaseHasTexture, public ofBaseHasPixels{
+public:
+	virtual ~ofBaseVideo(){}
+	virtual unsigned char * getPixels()=0;
+	virtual void close()=0;
+};
 #endif

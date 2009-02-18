@@ -25,7 +25,7 @@
 // 		image decompress options ala mung...
 
 
-class ofVideoGrabber : public ofBaseUpdates, public ofBaseDraws, public ofBaseHasTexture{
+class ofVideoGrabber : public ofBaseVideo{
 
 	public :
 
@@ -58,7 +58,7 @@ class ofVideoGrabber : public ofBaseUpdates, public ofBaseDraws, public ofBaseHa
 
 		int			height;
 		int			width;
-		
+
 	protected:
 
 		bool					bChooseDevice;
@@ -83,7 +83,7 @@ class ofVideoGrabber : public ofBaseUpdates, public ofBaseDraws, public ofBaseHa
 			Rect				videoRect;
 			bool 				bSgInited;
 			string				deviceName;
-			
+
 			bool				qtInitSeqGrabber();
 			bool				qtCloseSeqGrabber();
 			bool				qtSelectDevice(int deviceNumber, bool didWeChooseADevice);
