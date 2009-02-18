@@ -24,18 +24,13 @@ public:
 	virtual void	setWindowPosition(int x, int y) {}
 	virtual void	setWindowShape(int w, int h) {}
 	
-	virtual int		getFrameNum() {}
-	virtual	float	getFrameRate() {}
+	virtual int		getFrameNum() { return 0; }		 	virtual	float	getFrameRate() {return 0; }			
 
-	virtual ofPoint	getWindowPosition() {}
-	virtual ofPoint	getWindowSize(){}
-	virtual ofPoint	getScreenSize(){}
-	
+	virtual ofPoint	getWindowPosition() {return ofPoint(); }	 	virtual ofPoint	getWindowSize(){return ofPoint(); }		 	virtual ofPoint	getScreenSize(){return ofPoint(); }		 	
 	virtual void	setFrameRate(float targetRate){}
 	virtual void	setWindowTitle(string title){}
 	
-	virtual int		getWindowMode() {}
-	
+	virtual int		getWindowMode() {return 0;}			 	
 	virtual void	setFullscreen(bool fullscreen){}
 	virtual void	toggleFullscreen(){}
 	
