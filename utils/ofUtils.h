@@ -35,7 +35,7 @@ string 	ofToDataPath(string path, bool absolute=false);
 
 //set the root path that ofToDataPath will use to search for files relative to the app
 //the path must have a trailing slash (/) !!!!
-void	ofSetDataPathRoot( string root ); 
+void	ofSetDataPathRoot( string root );
 
 string  ofToString(double value, int precision = 7);
 string  ofToString(int  value);
@@ -44,6 +44,8 @@ string 	ofGetVersionInfo();
 
 void	ofSaveScreen(string filename);
 void	ofSaveFrame();
+
+vector<string>	ofSplitString(const string & text, const string & delimiter);
 
 //--------------------------------------------------
 void ofSetLogLevel(int logLevel);

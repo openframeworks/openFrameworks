@@ -2,7 +2,7 @@
 #include "ofImage.h"
 
 #ifdef TARGET_OF_IPHONE
-	#include "sys/time.h"	
+	#include "sys/time.h"
 #endif
 
 #ifdef TARGET_WIN32
@@ -139,15 +139,15 @@ void ofSetDataPathRoot(string newRoot){
 //--------------------------------------------------
 string ofToDataPath(string path, bool makeAbsolute){
 	if( enableDataPath ){
-	
+
 		//check if absolute path has been passed or if data path has already been applied
 		//do we want to check for C: D: etc ?? like  substr(1, 2) == ':' ??
 		if( path.substr(0,1) != "/" && path.substr(0,dataPathRoot.length()) != dataPathRoot){
 			path = dataPathRoot+path;
 		}
-		
+
 		if(makeAbsolute && path.substr(0,1) != "/"){
-			#ifndef TARGET_OF_IPHONE 
+			#ifndef TARGET_OF_IPHONE
 				char currDir[1024];
 				path = "/"+path;
 				path = getcwd(currDir, 1024)+path;
@@ -172,6 +172,26 @@ string ofToString(int value){
 	stringstream sstr;
 	sstr << value;
 	return sstr.str();
+}
+
+//--------------------------------------------------
+vector<string> ofSplitString(const string& str, const string& delimiter = " "){
+    vector<string> elements;
+	// Skip delimiters at beginning.
+    string::size_type lastPos = str.find_first_not_of(delimiter, 0);
+    // Find first "non-delimiter".
+    string::size_type pos     = str.find_first_of(delimiter, lastPos);
+
+    while (string::npos != pos || string::npos != lastPos)
+    {
+        // Found a token, add it to the vector.
+    	elements.push_back(str.substr(lastPos, pos - lastPos));
+        // Skip delimiters.  Note the "not_of"
+        lastPos = str.find_first_not_of(delimiter, pos);
+        // Find next "non-delimiter"
+        pos = str.find_first_of(delimiter, lastPos);
+    }
+    return elements;
 }
 
 //--------------------------------------------------
@@ -235,20 +255,20 @@ string ofGetVersionInfo(){
 //from the forums http://www.openframeworks.cc/forum/viewtopic.php?t=1413
 
 //--------------------------------------------------
-void ofSaveScreen(string filename) { 
-   ofImage screen; 
-   screen.allocate(ofGetWidth(), ofGetHeight(), OF_IMAGE_COLOR); 
-   screen.grabScreen(0, 0, ofGetWidth(), ofGetHeight()); 
-   screen.saveImage(filename); 
-} 
+void ofSaveScreen(string filename) {
+   ofImage screen;
+   screen.allocate(ofGetWidth(), ofGetHeight(), OF_IMAGE_COLOR);
+   screen.grabScreen(0, 0, ofGetWidth(), ofGetHeight());
+   screen.saveImage(filename);
+}
 
 //--------------------------------------------------
-int saveImageCounter = 0; 
-void ofSaveFrame(){ 
-   string fileName = ofToString(saveImageCounter) + ".png";   
+int saveImageCounter = 0;
+void ofSaveFrame(){
+   string fileName = ofToString(saveImageCounter) + ".png";
    ofSaveScreen(fileName);
    saveImageCounter++;
-} 
+}
 
 //levels are currently:
 // see ofConstants.h
@@ -289,7 +309,7 @@ void ofLog(int logLevel, string message){
 void ofLog(int logLevel, const char* format, ...){
 	//thanks stefan!
 	//http://www.ozzu.com/cpp-tutorials/tutorial-writing-custom-printf-wrapper-function-t89166.html
-	
+
 	if(logLevel >= currentLogLevel){
 		va_list args;
 		va_start( args, format );
@@ -310,7 +330,7 @@ void ofLog(int logLevel, const char* format, ...){
 		}
 		vprintf( format, args );
 		printf("\n");
-		va_end( args );		
+		va_end( args );
 	}
 }
 
