@@ -35,7 +35,7 @@
 
 //---------------------------------------------
 
-class ofVideoPlayer : public ofBaseUpdates, public ofBaseDraws, public ofBaseHasTexture{
+class ofVideoPlayer : public ofBaseVideo{
 
 	public:
 
@@ -45,6 +45,7 @@ class ofVideoPlayer : public ofBaseUpdates, public ofBaseDraws, public ofBaseHas
 
 		bool 				loadMovie(string name);
 		void 				closeMovie();
+		void 				close();
 
 		void				update();			//same as idleMovie
 		void 				idleMovie();		// rename to updateMovie?
