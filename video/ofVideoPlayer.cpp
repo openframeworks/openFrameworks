@@ -114,7 +114,7 @@ OSErr 	DrawCompleteProc(Movie theMovie, long refCon){
 #else
 //--------------------------------------------------------------
 
-#include "gstappsink.h"
+#include "gst/app/gstappsink.h"
 
 static bool plugin_registered = false;
 static bool gst_inited = false;
@@ -843,10 +843,8 @@ void ofVideoPlayer::setFrame(int frame){
 #else
    //--------------------------------------
 
-   lock();
-   		//fobsDecoder->setFrame(frame);
-   		positionPct = ((float)frame) / (float)iTotalFrames;
-   unlock();
+	   float pct = (float)frame / (float)gstData.nFrames;
+	   setPosition(pct);
 
    //--------------------------------------
 #endif
