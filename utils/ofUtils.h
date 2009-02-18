@@ -33,9 +33,8 @@ void	ofDisableDataPath();
 string 	ofToDataPath(string path, bool absolute=false);
 
 
-//set the root path that ofToDataPath will try to 
-//tack on to the start of the passed-in path
-//MUST HAVE TRAILING SLASH (/) !!!!
+//set the root path that ofToDataPath will use to search for files relative to the app
+//the path must have a trailing slash (/) !!!!
 void	ofSetDataPathRoot( string root ); 
 
 string  ofToString(double value, int precision = 7);

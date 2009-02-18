@@ -40,7 +40,7 @@ ofTexture& ofTexture::operator=(const ofTexture& mom){
 //----------------------------------------------------------
 ofTextureData ofTexture::getTextureData(){
 	if(!texData.bAllocated){
-		//OFLOG message
+		ofLog(OF_ERROR, "getTextureData() - texture has not been allocated");
 	}
 	return texData;
 }
@@ -65,15 +65,15 @@ void ofTexture::clear(){
 void ofTexture::allocate(int w, int h, int internalGlDataType, bool bUseARBExtention){
 
 	//our graphics card might not support arb so we have to see if it is supported.
-#ifndef TARGET_OF_IPHONE
-	if (bUseARBExtention && GLEE_ARB_texture_rectangle){
-		texData.tex_w = w;
-		texData.tex_h = h;
-		texData.tex_t = w;
-		texData.tex_u = h;
-		texData.textureTarget = GL_TEXTURE_RECTANGLE_ARB;
-	} else 
-#endif
+	#ifndef TARGET_OF_IPHONE
+		if (bUseARBExtention && GLEE_ARB_texture_rectangle){
+			texData.tex_w = w;
+			texData.tex_h = h;
+			texData.tex_t = w;
+			texData.tex_u = h;
+			texData.textureTarget = GL_TEXTURE_RECTANGLE_ARB;
+		} else 
+	#endif
 	{
 		//otherwise we need to calculate the next power of 2 for the requested dimensions
 		//ie (320x240) becomes (512x256)
@@ -144,12 +144,12 @@ void ofTexture::loadData(unsigned char * data, int w, int h, int glDataType){
 	texData.glType  = glDataType;
 
 	//compute new tex co-ords based on the ratio of data's w, h to texture w,h;
-#ifndef TARGET_OF_IPHONE	
-	if (texData.textureTarget == GL_TEXTURE_RECTANGLE_ARB){
-		texData.tex_t = w;
-		texData.tex_u = h;
-	} else 
-#endif
+	#ifndef TARGET_OF_IPHONE	
+		if (texData.textureTarget == GL_TEXTURE_RECTANGLE_ARB){
+			texData.tex_t = w;
+			texData.tex_u = h;
+		} else 
+	#endif
 	{
 		texData.tex_t = (float)(w) / (float)texData.tex_w;
 		texData.tex_u = (float)(h) / (float)texData.tex_h;
@@ -191,11 +191,11 @@ void ofTexture::loadData(unsigned char * data, int w, int h, int glDataType){
 	//------------------------ back to normal.
 	glPixelStorei(GL_UNPACK_ALIGNMENT, prevAlignment);
 
-#ifdef TARGET_OF_IPHONE
-	texData.bFlipTexture = true; // textures need to be flipped for the iphone
-#else
-	texData.bFlipTexture = false;
-#endif
+	#ifdef TARGET_OF_IPHONE
+		texData.bFlipTexture = true; // textures need to be flipped for the iphone
+	#else
+		texData.bFlipTexture = false;
+	#endif
 
 }
 
@@ -219,12 +219,12 @@ void ofTexture::loadScreenData(int x, int y, int w, int h){
 	texData.glType  = GL_RGB;
 
 	//compute new tex co-ords based on the ratio of data's w, h to texture w,h;
-#ifndef TARGET_OF_IPHONE // DAMIAN
-	if (texData.textureTarget == GL_TEXTURE_RECTANGLE_ARB){
-		texData.tex_t = (float)(w);
-		texData.tex_u = (float)(h);
-	} else 
-#endif
+	#ifndef TARGET_OF_IPHONE // DAMIAN
+		if (texData.textureTarget == GL_TEXTURE_RECTANGLE_ARB){
+			texData.tex_t = (float)(w);
+			texData.tex_u = (float)(h);
+		} else 
+	#endif
 	{
 		texData.tex_t = (float)(w) / (float)texData.tex_w;
 		texData.tex_u = (float)(h) / (float)texData.tex_h;

@@ -70,12 +70,12 @@ void ofRotate(float degrees);
 // ** note, this uses glDrawPixels and may be S L 0 W on some graphics cards
 void ofDrawBitmapString(string textString, float x, float y);
 
-// screen coordinate things...
+// screen coordinate things / default gl values
+void ofSetupGraphicDefaults();
 void ofSetupScreen();
 
 void ofCurveVertex(float x, float y);
 void ofBezierVertex(float x1, float y1, float x2, float y2, float x3, float y3);
-
 
 // for polygons
 void ofSetPolyMode(int mode);	

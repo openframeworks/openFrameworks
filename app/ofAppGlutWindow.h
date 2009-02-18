@@ -32,6 +32,9 @@ public:
 	void hideCursor();
 	void showCursor();
 	
+	void setFullscreen(bool fullScreen);
+	void toggleFullscreen();
+	
 	static void exitApp();
 
 	void setWindowTitle(string title);
@@ -41,6 +44,8 @@ public:
 	ofPoint		getWindowPosition();
 	ofPoint		getWindowSize();
 	ofPoint		getScreenSize();
+
+	int			getWindowMode();
 
 	int			getFrameNum();
 	float		getFrameRate();

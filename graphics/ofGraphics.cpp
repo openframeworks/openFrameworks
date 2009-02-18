@@ -22,8 +22,6 @@
     #define CALLBACK
 #endif
 
-//#define DEBUG_TESS
-
 #include <vector>
 
 //----------------------------------------------------------
@@ -143,7 +141,7 @@ void ofSetCircleResolution(int res){
 	if (res > 1 && res != numCirclePts){
 		numCirclePts = res;
 		currentStyle.circleResolution = numCirclePts;
-
+				
 		float angle = 0.0f;
 		float angleAdder = M_TWO_PI / (float)res;
 		int k = 0;
@@ -164,7 +162,7 @@ void ofTriangle(float x1,float y1,float x2,float y2,float x3, float y3){
 	// use smoothness, if requested:
 	if (bSmoothHinted && drawMode == OF_OUTLINE) startSmoothing();
 
-	// draw:
+	// draw:	
 	trianglePoints[0] = x1;
 	trianglePoints[1] = y1;
 	trianglePoints[2] = x2;
@@ -197,9 +195,8 @@ void ofCircle(float x,float y, float radius){
 	
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glVertexPointer(2, GL_FLOAT, 0, &circlePtsScaled[0]);
-	//glDrawArrays( (drawMode == OF_FILLED) ? GL_POLYGON : GL_LINE_LOOP, 0, numCirclePts);
-	glDrawArrays( (drawMode == OF_FILLED) ? GL_TRIANGLE_FAN : GL_LINE_LOOP, 0, numCirclePts); // ZACH G
-
+	glDrawArrays( (drawMode == OF_FILLED) ? GL_TRIANGLE_FAN : GL_LINE_LOOP, 0, numCirclePts);
+	
 	// back to normal, if smoothness is on
 	if (bSmoothHinted && drawMode == OF_OUTLINE) endSmoothing();
 
@@ -222,8 +219,7 @@ void ofEllipse(float x, float y, float width, float height){
 
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glVertexPointer(2, GL_FLOAT, 0, &circlePtsScaled[0]);
-	//glDrawArrays( (drawMode == OF_FILLED) ? GL_POLYGON : GL_LINE_LOOP, 0, numCirclePts);
-	glDrawArrays( (drawMode == OF_FILLED) ? GL_TRIANGLE_FAN : GL_LINE_LOOP, 0, numCirclePts); // ZACH G
+	glDrawArrays( (drawMode == OF_FILLED) ? GL_TRIANGLE_FAN : GL_LINE_LOOP, 0, numCirclePts); 
 
 	// back to normal, if smoothness is on
 	if (bSmoothHinted && drawMode == OF_OUTLINE) endSmoothing();
@@ -243,7 +239,7 @@ void ofLine(float x1,float y1,float x2,float y2){
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glVertexPointer(2, GL_FLOAT, 0, &linePoints[0]);
 	glDrawArrays(GL_LINES, 0, 2);
-
+	
 	// back to normal, if smoothness is on
 	if (bSmoothHinted) endSmoothing();
 
@@ -254,7 +250,7 @@ void ofRect(float x,float y,float w,float h){
 
 	// use smoothness, if requested:
 	if (bSmoothHinted && drawMode == OF_OUTLINE) startSmoothing();
-
+	
 	if (cornerMode == OF_RECTMODE_CORNER){
 		rectPoints[0] = x;
 		rectPoints[1] = y;
@@ -283,8 +279,7 @@ void ofRect(float x,float y,float w,float h){
 	
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glVertexPointer(2, GL_FLOAT, 0, &rectPoints[0]);
-	//glDrawArrays((drawMode == OF_FILLED) ? GL_QUADS : GL_LINE_LOOP, 0, 4);	
-	glDrawArrays((drawMode == OF_FILLED) ? GL_TRIANGLE_FAN : GL_LINE_LOOP, 0, 4); // ZACH G
+	glDrawArrays((drawMode == OF_FILLED) ? GL_TRIANGLE_FAN : GL_LINE_LOOP, 0, 4);
 
 	
 	// use smoothness, if requested:
@@ -362,7 +357,7 @@ void ofSetColor(int _r, int _g, int _b){
 	float r = (float)_r / 255.0f; r = MAX(0,MIN(r,1.0f));
 	float g = (float)_g / 255.0f; g = MAX(0,MIN(g,1.0f));
 	float b = (float)_b / 255.0f; b = MAX(0,MIN(b,1.0f));
-
+	
 	currentStyle.color.r = r * 255.0;
 	currentStyle.color.g = g * 255.0;
 	currentStyle.color.b = b * 255.0;
@@ -378,11 +373,11 @@ void ofSetColor(int _r, int _g, int _b, int _a){
 	float g = (float)_g / 255.0f; g = MAX(0,MIN(g,1.0f));
 	float b = (float)_b / 255.0f; b = MAX(0,MIN(b,1.0f));
 	float a = (float)_a / 255.0f; a = MAX(0,MIN(a,1.0f));
-
+	
 	currentStyle.color.r = r * 255.0;
 	currentStyle.color.g = g * 255.0;
 	currentStyle.color.b = b * 255.0;
-	currentStyle.color.a = a * 255.0;
+	currentStyle.color.a = a * 255.0;	
 
 	glColor4f(r,g,b,a);
 }
@@ -399,13 +394,13 @@ void ofSetColor(int hexColor){
 void ofEnableAlphaBlending(){
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	currentStyle.blending = 1;
+	currentStyle.blending = 1;		
 }
 
 //----------------------------------------------------------
 void ofDisableAlphaBlending(){
 	glDisable(GL_BLEND);
-	currentStyle.blending = 0;
+	currentStyle.blending = 0;	
 }
 
 
@@ -420,7 +415,7 @@ void ofEnableSmoothing(){
 //----------------------------------------------------------
 void ofDisableSmoothing(){
 	bSmoothHinted = false;
-	currentStyle.smoothing = 0;
+	currentStyle.smoothing = 0;	
 }
 
 //----------------------------------------------------------
@@ -430,36 +425,36 @@ void ofSetStyle(ofStyle style){
 
 	//circle resolution - don't worry it only recalculates the display list if the res has changed
 	ofSetCircleResolution(style.circleResolution);
-
+	
 	//line width - finally!
 	ofSetLineWidth(style.lineWidth);
-
+	
 	//rect mode: corner/center
 	ofSetRectMode(style.rectMode);
-
+	
 	//poly mode: winding type
 	ofSetPolyMode(style.polyMode);
-
+	
 	//fill
-	if(style.bFill == 1){
+	if(style.bFill ){
 		ofFill();
-	}else if(style.bFill == 0){
+	}else{
 		ofNoFill();
 	}
-
+	
 	//smoothing
-	if(style.smoothing == 1){
+	if(style.smoothing ){
 		ofEnableSmoothing();
-	}else if(style.smoothing == 0){
+	}else{
 		ofDisableSmoothing();
 	}
 
 	//blending
-	if(style.blending == 1){
+	if(style.blending ){
 		ofEnableAlphaBlending();
-	}else if(style.blending == 0){
+	}else{
 		ofDisableAlphaBlending();
-	}
+	}	
 }
 
 //----------------------------------------------------------
@@ -470,7 +465,7 @@ ofStyle ofGetStyle(){
 //----------------------------------------------------------
 void ofPushStyle(){
 	styleHistory.insert(styleHistory.begin(), currentStyle);
-
+	
 	//if we are over the max number of styles we have set, then delete the oldest styles.
 	if( styleHistory.size() > OF_MAX_STYLE_HISTORY ){
 		styleHistory.erase(styleHistory.begin() + OF_MAX_STYLE_HISTORY, styleHistory.end());
@@ -529,7 +524,7 @@ void ofRotateZ(float degrees){
 	glRotatef(degrees, 0, 0, 1);
 }
 
-//same as ofRotateZ
+//same as ofRotateZ 
 //----------------------------------------------------------
 void ofRotate(float degrees){
 	glRotatef(degrees, 0, 0, 1);
@@ -567,9 +562,25 @@ void ofDrawBitmapString(string textString, float x, float y){
 			ofDrawBitmapCharacter(textString[c]);
 		}
 	}
-
+	
 	glPopClientAttrib( );
 #endif
+}
+
+
+//----------------------------------------------------------
+//Resets openGL parameters back to OF defaults
+void ofSetupGraphicDefaults(){
+	
+	glEnableClientState(GL_VERTEX_ARRAY);		
+	glDisableClientState(GL_NORMAL_ARRAY);		
+	glDisableClientState(GL_COLOR_ARRAY);		
+	glDisableClientState(GL_TEXTURE_COORD_ARRAY);		
+
+	ofDisableSmoothing();
+	ofDisableAlphaBlending();
+	ofBackground(200, 200, 200);	
+	ofSetColor(255, 255, 255, 255);
 }
 
 //----------------------------------------------------------
@@ -674,21 +685,11 @@ void CALLBACK tessError(GLenum errCode){
 void CALLBACK tessBegin(GLint type){
 	shapeType = type;
 	tessVertices.clear();
-	
-	#ifdef DEBUG_TESS
-		printf("tessBegin() - clearing points and storing shape type \n");
-	#endif	
-	
 }
 
 //----------------------------------------------------------
 void CALLBACK tessEnd(){
-	
-	#ifdef DEBUG_TESS
-		printf("tessEnd() drawing here - gltype is %i - array is %i pts \n", shapeType, tessVertices.size()/3);
-	#endif
-	
-	//we draw as 2d not 3d: change 2s bellow to 3 and uncomment the 3rd push_back in tessVertex to do 3D
+	//we draw as 3d not 2d: change 3s bellow to 2 and comment the 3rd push_back in tessVertex to do 2D
 
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glVertexPointer(3, GL_FLOAT, 0, &tessVertices[0]);			
@@ -699,32 +700,10 @@ void CALLBACK tessEnd(){
 
 //----------------------------------------------------------
 void CALLBACK tessVertex( void* data){
-
-	/*
-	// we used to have an issue with nans, but
-	// newer versions of glu fix that.
-	// this is helpful code, so we leave it here
-	// in case we need to debug in the future
-
-	GLdouble *ptr;
-	ptr = (GLdouble *) data;
-	if (ptr[0] != ptr[0] ||
-		ptr[1] != ptr[1]){
-		printf("nan error in tessVertex %i \n");
-		return;
-	}
-	*/
-
-	//glVertex3dv((GLdouble *) data);
 	
 	tessVertices.push_back( ( (double *)data)[0] );
 	tessVertices.push_back( ( (double *)data)[1] );
-	tessVertices.push_back( ( (double *)data)[2] );	//No need for z for now?
-	
-	#ifdef DEBUG_TESS
-		printf("tessVertex() - storing points %f %f %f \n", tessVertices[tessVertices.size()-3], tessVertices[tessVertices.size()-2],  tessVertices[tessVertices.size()-1] );
-	#endif		
-	
+	tessVertices.push_back( ( (double *)data)[2] );	//No need for z for now? 	
 }
 
 
@@ -748,7 +727,7 @@ void clearTessVertices(){
         delete [] (*itr);
     }
     polyVertices.clear();
-
+	
     // combine callback also makes new vertices, let's clear them:
     for(vector<double*>::iterator itr=newVectrices.begin();
         itr!=newVectrices.end();
@@ -757,13 +736,9 @@ void clearTessVertices(){
     }
     newVectrices.clear();
     // -------------------------------------------------
-
-
+	
     clearCurveVertices();
-
-	//tessVertices.clear();
-
-    currentStartVertex = 0;
+    currentStartVertex = 0; 
 }
 
 //----------------------------------------------------------
@@ -799,7 +774,7 @@ void ofSetPolyMode(int mode){
 			ofLog(OF_ERROR," error in ofSetPolyMode");
 
 	}
-
+	
 	currentStyle.polyMode = polyMode;
 }
 
@@ -816,10 +791,10 @@ void ofBeginShape(){
 	// etc...
 
 	clearTessVertices();
-
-
-	// now get the tesselator object up and ready:
-
+	
+	
+	// now get the tesselator object up and ready: 
+	
 	tobj = gluNewTess();
 
 
@@ -1018,18 +993,9 @@ void ofNextContour(bool bClose){
  		}
 	}
 
-
 	if ((polyMode == OF_POLY_WINDING_ODD) && (drawMode == OF_OUTLINE)){
-
 		// let's just draw via another method, like glLineLoop
 		// much, much faster, and *no* tess / computation necessary
-//		glBegin(GL_LINE_STRIP);
-//		for (int i=currentStartVertex; i< polyVertices.size(); i++) {
-//	   		float x = polyVertices[i][0];
-//	   		float y = polyVertices[i][1];
-//	   		glVertex2f(x,y);
-//		}
-//		glEnd();
 
 		int numToDraw = polyVertices.size()-currentStartVertex;
 		if( numToDraw > 0){
@@ -1089,14 +1055,6 @@ void ofEndShape(bool bClose){
 
 		// let's just draw via another method, like glLineLoop
 		// much, much faster, and *no* tess / computation necessary
-
-//		glBegin(GL_LINE_STRIP);
-//		for (int i=currentStartVertex; i< polyVertices.size(); i++) {
-//	   		float x = polyVertices[i][0];
-//	   		float y = polyVertices[i][1];
-//	   		glVertex2f(x,y);
-//		}
-//		glEnd();
 
 		int numToDraw = polyVertices.size()-currentStartVertex;
 		if( numToDraw > 0){
