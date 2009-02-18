@@ -35,10 +35,6 @@ using namespace std;
 #include <string>
 #include <iostream>
 
-#ifndef uint
-    #define uint unsigned int
-#endif
-
 #include "ofEvents.h"
 
 #include "ofSerial.h"
@@ -163,10 +159,10 @@ class ofStandardFirmata{
 				bool isInitialized();
                 // returns true if a succesfull connection has been established and the Arduino has reported a firmware
 
-                void setDigitalHistoryLength(uint length);
-                void setAnalogHistoryLength(uint length);
-                void setStringHistoryLength(uint length);
-                void setSysExHistoryLength(uint nSysEx);
+                void setDigitalHistoryLength(int length);
+                void setAnalogHistoryLength(int length);
+                void setStringHistoryLength(int length);
+                void setSysExHistoryLength(int nSysEx);
 
                 // --- senders
 
