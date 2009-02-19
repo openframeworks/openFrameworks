@@ -126,6 +126,7 @@ class ofxCvFloatImage : public ofxCvImage {
 
   private:
 
+    void init();
     virtual void flagImageChanged();
     virtual void convertFloatToGray( IplImage* floatImg, IplImage* grayImg );
     virtual void convertGrayToFloat( IplImage* grayImg, IplImage* floatImg );

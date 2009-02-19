@@ -9,16 +9,13 @@
 
 //--------------------------------------------------------------------------------
 ofxCvShortImage::ofxCvShortImage() {
-    ipldepth = IPL_DEPTH_16U;
-    iplchannels = 1;
-    gldepth = GL_UNSIGNED_SHORT;
-    glchannels = GL_LUMINANCE;
-    cvGrayscaleImage = NULL;
+    init();
 }
 
 //--------------------------------------------------------------------------------
 ofxCvShortImage::ofxCvShortImage( const ofxCvShortImage& _mom ) {
     if( _mom.bAllocated ) {
+        init();   
         // cast non-const,  to get read access to the mon::cvImage
         ofxCvShortImage& mom = const_cast<ofxCvShortImage&>(_mom); 
         allocate(mom.width, mom.height);    
@@ -26,6 +23,15 @@ ofxCvShortImage::ofxCvShortImage( const ofxCvShortImage& _mom ) {
     } else {
         ofLog(OF_NOTICE, "in ofxCvShortImage copy constructor, mom not allocated");
     }    
+}
+
+//--------------------------------------------------------------------------------
+void ofxCvShortImage::init() {
+    ipldepth = IPL_DEPTH_16U;
+    iplchannels = 1;
+    gldepth = GL_UNSIGNED_SHORT;
+    glchannels = GL_LUMINANCE;
+    cvGrayscaleImage = NULL;
 }
 
 //--------------------------------------------------------------------------------

@@ -115,6 +115,7 @@ class ofxCvColorImage : public ofxCvImage {
 
   private:
   
+    void init();
     IplImage*  cvGrayscaleImage;    // internal helper grayscale, allocated on demand
       
 };

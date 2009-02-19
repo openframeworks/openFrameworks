@@ -127,6 +127,12 @@ class ofxCvGrayscaleImage : public ofxCvImage {
 	void setFromColorImage(ofxCvColorImage& mom) { *this = mom; };
 	void setFromFloatImage(ofxCvFloatImage& mom) { *this = mom; };
 
+
+
+  private:
+  
+    void init();
+    
 };
 
 

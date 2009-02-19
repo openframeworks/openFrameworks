@@ -7,15 +7,13 @@
 
 //--------------------------------------------------------------------------------
 ofxCvGrayscaleImage::ofxCvGrayscaleImage() {
-    ipldepth = IPL_DEPTH_8U;
-    iplchannels = 1;
-    gldepth = GL_UNSIGNED_BYTE;
-    glchannels = GL_LUMINANCE;
+    init();
 }
 
 //--------------------------------------------------------------------------------
 ofxCvGrayscaleImage::ofxCvGrayscaleImage( const ofxCvGrayscaleImage& _mom ) {
     if( _mom.bAllocated ) {
+        init();   
         // cast non-const,  to get read access to the mon::cvImage
         ofxCvGrayscaleImage& mom = const_cast<ofxCvGrayscaleImage&>(_mom);
         allocate(mom.width, mom.height);
@@ -25,6 +23,13 @@ ofxCvGrayscaleImage::ofxCvGrayscaleImage( const ofxCvGrayscaleImage& _mom ) {
     }
 }
 
+//--------------------------------------------------------------------------------
+void ofxCvGrayscaleImage::init() {
+    ipldepth = IPL_DEPTH_8U;
+    iplchannels = 1;
+    gldepth = GL_UNSIGNED_BYTE;
+    glchannels = GL_LUMINANCE;
+}
 
 
 // Set Pixel Data - Arrays

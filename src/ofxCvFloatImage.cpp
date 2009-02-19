@@ -8,6 +8,24 @@
 
 //--------------------------------------------------------------------------------
 ofxCvFloatImage::ofxCvFloatImage() {
+    init();
+}
+
+//--------------------------------------------------------------------------------
+ofxCvFloatImage::ofxCvFloatImage( const ofxCvFloatImage& _mom ) {
+    if( _mom.bAllocated ) {
+        init();
+        // cast non-const,  to get read access to the mon::cvImage
+        ofxCvFloatImage& mom = const_cast<ofxCvFloatImage&>(_mom); 
+        allocate(mom.width, mom.height);    
+        cvCopy( mom.getCvImage(), cvImage, 0 );
+    } else {
+        ofLog(OF_NOTICE, "in ofxCvFloatImage copy constructor, mom not allocated");
+    }    
+}
+
+//--------------------------------------------------------------------------------
+void ofxCvFloatImage::init() {
     ipldepth = IPL_DEPTH_32F;
     iplchannels = 1;
     gldepth = GL_FLOAT;
@@ -20,19 +38,6 @@ ofxCvFloatImage::ofxCvFloatImage() {
     scaleMin = 0.0f;
     scaleMax = 1.0f;
 }
-
-//--------------------------------------------------------------------------------
-ofxCvFloatImage::ofxCvFloatImage( const ofxCvFloatImage& _mom ) {
-    if( _mom.bAllocated ) {
-        // cast non-const,  to get read access to the mon::cvImage
-        ofxCvFloatImage& mom = const_cast<ofxCvFloatImage&>(_mom); 
-        allocate(mom.width, mom.height);    
-        cvCopy( mom.getCvImage(), cvImage, 0 );
-    } else {
-        ofLog(OF_NOTICE, "in ofxCvFloatImage copy constructor, mom not allocated");
-    }    
-}
-
 
 //--------------------------------------------------------------------------------
 void ofxCvFloatImage::clear() {

@@ -111,7 +111,8 @@ class ofxCvShortImage : public ofxCvImage {
     
 
   private:
-
+    
+    void init();
     virtual void convertShortToGray( IplImage* floatImg, IplImage* grayImg );
     virtual void convertGrayToShort( IplImage* grayImg, IplImage* floatImg );
     
