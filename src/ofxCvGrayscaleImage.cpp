@@ -12,8 +12,8 @@ ofxCvGrayscaleImage::ofxCvGrayscaleImage() {
 
 //--------------------------------------------------------------------------------
 ofxCvGrayscaleImage::ofxCvGrayscaleImage( const ofxCvGrayscaleImage& _mom ) {
+    init();
     if( _mom.bAllocated ) {
-        init();   
         // cast non-const,  to get read access to the mon::cvImage
         ofxCvGrayscaleImage& mom = const_cast<ofxCvGrayscaleImage&>(_mom);
         allocate(mom.width, mom.height);

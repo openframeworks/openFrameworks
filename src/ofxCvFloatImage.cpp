@@ -13,8 +13,8 @@ ofxCvFloatImage::ofxCvFloatImage() {
 
 //--------------------------------------------------------------------------------
 ofxCvFloatImage::ofxCvFloatImage( const ofxCvFloatImage& _mom ) {
+    init(); 
     if( _mom.bAllocated ) {
-        init();
         // cast non-const,  to get read access to the mon::cvImage
         ofxCvFloatImage& mom = const_cast<ofxCvFloatImage&>(_mom); 
         allocate(mom.width, mom.height);    

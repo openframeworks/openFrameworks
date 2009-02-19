@@ -14,8 +14,8 @@ ofxCvShortImage::ofxCvShortImage() {
 
 //--------------------------------------------------------------------------------
 ofxCvShortImage::ofxCvShortImage( const ofxCvShortImage& _mom ) {
+    init(); 
     if( _mom.bAllocated ) {
-        init();   
         // cast non-const,  to get read access to the mon::cvImage
         ofxCvShortImage& mom = const_cast<ofxCvShortImage&>(_mom); 
         allocate(mom.width, mom.height);    

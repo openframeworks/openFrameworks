@@ -14,8 +14,8 @@ ofxCvColorImage::ofxCvColorImage() {
 
 //--------------------------------------------------------------------------------
 ofxCvColorImage::ofxCvColorImage( const ofxCvColorImage& _mom ) {
+    init(); 
     if( _mom.bAllocated ) {
-        init();
         // cast non-const,  to get read access to the mon::cvImage
         ofxCvColorImage& mom = const_cast<ofxCvColorImage&>(_mom); 
         allocate(mom.width, mom.height);    
