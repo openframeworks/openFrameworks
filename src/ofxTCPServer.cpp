@@ -8,7 +8,7 @@ ofxTCPServer::ofxTCPServer(){
 	count		= 0;
 	port		= 0;
 	str			= "";
-	
+
 	TCPConnections = new ofxTCPClient[TCP_MAX_CLIENTS];
 }
 
@@ -17,12 +17,12 @@ ofxTCPServer::~ofxTCPServer(){
 	close();
 }
 
-//--------------------------			
+//--------------------------
 void ofxTCPServer::setVerbose(bool _verbose){
 	verbose = _verbose;
 }
 
-//--------------------------	
+//--------------------------
 bool ofxTCPServer::setup(int _port, bool blocking){
 	if( !TCPServer.Create() ){
 		if(verbose)printf("ofxTCPServer: create() failed\n");
@@ -32,26 +32,26 @@ bool ofxTCPServer::setup(int _port, bool blocking){
 		if(verbose)printf("ofxTCPServer: bind(port = %i) failed\n", _port);
 		return false;
 	}
-	
+
 	connected		= true;
 	port			= _port;
 	bClientBlocking = blocking;
-	
+
 	startThread(true, false);
 	return true;
 }
 
 //--------------------------
 bool ofxTCPServer::close(){
-	
+
 	if(!connected) return true;
-	
+
 	for(int i = 0; i < count; i++){
 		TCPConnections[i].close();
 	}
-	
+
 	stopThread(); //stop the thread
-	
+
 	if( !TCPServer.Close() ){
 		if(verbose)printf("ofxTCPServer: unable to close connection\n");
 		return false;
@@ -101,9 +101,9 @@ string ofxTCPServer::receive(int clientID){
 		if(verbose)printf("ofxTCPServer: client %i doesn't exist\n", clientID);
 		return "client doesn't exist";
 	}
-	
+
 	return TCPConnections[clientID].receive();
-}		
+}
 
 //--------------------------
 bool ofxTCPServer::sendRawBytes(int clientID, const char * rawBytes, const int numBytes){
@@ -132,7 +132,7 @@ int ofxTCPServer::getNumReceivedBytes(int clientID){
 		if(verbose)printf("ofxTCPServer: client %i doesn't exist\n", clientID);
 		return 0;
 	}
-	
+
 	return TCPConnections[clientID].getNumReceivedBytes();
 }
 
@@ -142,8 +142,8 @@ int ofxTCPServer::receiveRawBytes(int clientID, char * receiveBytes,  int numByt
 		if(verbose)printf("ofxTCPServer: client %i doesn't exist\n", clientID);
 		return 0;
 	}
-	
-	return TCPConnections[clientID].receiveRawBytes(receiveBytes, numBytes);	
+
+	return TCPConnections[clientID].receiveRawBytes(receiveBytes, numBytes);
 }
 
 //--------------------------
@@ -172,38 +172,38 @@ int ofxTCPServer::getNumClients(){
 //--------------------------
 int ofxTCPServer::getPort(){
 	return port;
-}	
+}
 
 //--------------------------
 bool ofxTCPServer::isConnected(){
 	return connected;
 }
 
-//--------------------------		
+//--------------------------
 bool ofxTCPServer::isClientSetup(int clientID){
-	return (clientID < count && clientID < TCP_MAX_CLIENTS); 
+	return (clientID < count && clientID < TCP_MAX_CLIENTS);
 }
 
-//--------------------------		
+//--------------------------
 bool ofxTCPServer::isClientConnected(int clientID){
-	return isClientSetup(clientID) && TCPConnections[clientID].isConnected(); 
+	return isClientSetup(clientID) && TCPConnections[clientID].isConnected();
 }
 
 //don't call this
 //--------------------------
 void ofxTCPServer::threadedFunction(){
-				
+
 	while( isThreadRunning() ){
-		
+
 		if(count == TCP_MAX_CLIENTS){
 			if(verbose)printf("ofxTCPServer: reached max connected clients! \nofxTCPServer: no more connections accepted\n");
 			break;
 		}
-		
+
 		if( !TCPServer.Listen(TCP_MAX_CLIENTS) ){
 			if(verbose)printf("ofxTCPServer: Listen() failed\n");
 		}
-		
+
 		if( !TCPServer.Accept(TCPConnections[count].TCPClient) ){
 			if(verbose)printf("ofxTCPServer: Accept() failed\n");
 			continue;
@@ -216,7 +216,7 @@ void ofxTCPServer::threadedFunction(){
 	if(verbose)printf("ofxTCPServer: listen thread ended\n");
 }
 
-	
+
 
 
 

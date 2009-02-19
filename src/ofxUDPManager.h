@@ -126,7 +126,7 @@ public:
 
 	bool Close();
 	bool Create();
-	bool Connect(char *pHost, unsigned short usPort);
+	bool Connect(const char *pHost, unsigned short usPort);
 	bool ConnectMcast(char *pMcast, unsigned short usPort);
 	bool Bind(unsigned short usPort);
 	bool BindMcast(char *pMcast, unsigned short usPort);

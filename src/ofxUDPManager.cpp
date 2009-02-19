@@ -24,7 +24,7 @@ ofxUDPManager::ofxUDPManager()
 	m_iListenPort= -1;
 
 	canGetRemoteAddress	= false;
-	nonBlocking			= false;
+	nonBlocking			= true;
 
 };
 
@@ -54,11 +54,11 @@ bool ofxUDPManager::Create()
 {
 	if (m_hSocket != INVALID_SOCKET)
 		return(false);
-	m_hSocket =	socket(AF_INET,	SOCK_DGRAM,	IPPROTO_UDP);
+	m_hSocket =	socket(AF_INET,	SOCK_DGRAM,	0);
 	if (m_hSocket != INVALID_SOCKET)
 	{
-		bool val = true;
-		setsockopt(m_hSocket, SOL_SOCKET, SO_REUSEADDR, (char*)&val, sizeof(bool));
+		int unused = true;
+		setsockopt(m_hSocket, SOL_SOCKET, SO_REUSEADDR, (char*)&unused, sizeof(unused));
 	}
 	return(m_hSocket !=	INVALID_SOCKET);
 }
@@ -126,7 +126,7 @@ bool ofxUDPManager::BindMcast(char *pMcast, unsigned short usPort)
 }
 
 //--------------------------------------------------------------------------------
-bool ofxUDPManager::Connect(char *pHost, unsigned short usPort)
+bool ofxUDPManager::Connect(const char *pHost, unsigned short usPort)
 {
 	//	sockaddr_in	addr_in= {0};
 	memset(&saClient, 0, sizeof(sockaddr_in));
@@ -140,7 +140,14 @@ bool ofxUDPManager::Connect(char *pHost, unsigned short usPort)
 	saClient.sin_family= AF_INET; // host byte order
 	saClient.sin_port  = htons(usPort);	// short, network byte order
 	//	saClient.sin_addr  = *((struct g_addr *)he->h_addr_list);
-	saClient.sin_addr.s_addr= inet_addr( pHost );
+	//cout << inet_addr( pHost ) << endl;
+	//saClient.sin_addr.s_addr= inet_addr( pHost );
+	//saClient.sin_addr = *((struct in_addr *)he->h_addr);
+	memcpy((char *) &saClient.sin_addr.s_addr,
+		 he->h_addr_list[0], he->h_length);
+
+    memset(&(saClient.sin_zero), '\0', 8);  // zero the rest of the struct
+
 
 	return true;
 }
@@ -185,15 +192,17 @@ int	ofxUDPManager::Send(const char* pBuff,	const int iSize)
 {
 	if (m_hSocket == INVALID_SOCKET) return(SOCKET_ERROR);
 
-	if (m_dwTimeoutSend	!= NO_TIMEOUT)
+	/*if (m_dwTimeoutSend	!= NO_TIMEOUT)
 	{
-		fd_set fd= {1, m_hSocket};
+		fd_set fd;
+		FD_ZERO(&fd);
+		FD_SET(m_hSocket, &fd);
 		timeval	tv=	{m_dwTimeoutSend, 0};
-		if(select(0, NULL, &fd,	NULL, &tv) == 0)
+		if(select(m_hSocket+1,NULL,&fd,NULL,&tv)== 0)
 		{
 			return(SOCKET_TIMEOUT);
 		}
-	}
+	}*/
 
 	return (sendto(m_hSocket, (char*)pBuff,	iSize, 0, (sockaddr *)&saClient, sizeof(sockaddr)));
 	//	return(send(m_hSocket, pBuff, iSize, 0));
@@ -209,9 +218,11 @@ int	ofxUDPManager::SendAll(const char*	pBuff, const int iSize)
 
 	if (m_dwTimeoutSend	!= NO_TIMEOUT)
 	{
-		fd_set fd= {1, m_hSocket};
+		fd_set fd;
+		FD_ZERO(&fd);
+		FD_SET(m_hSocket, &fd);
 		timeval	tv=	{m_dwTimeoutSend, 0};
-		if(select(0, NULL, &fd,	NULL, &tv) == 0)
+		if(select(m_hSocket+1,NULL,&fd,NULL,&tv)== 0)
 		{
 			return(SOCKET_TIMEOUT);
 		}
@@ -220,7 +231,7 @@ int	ofxUDPManager::SendAll(const char*	pBuff, const int iSize)
 
 	int	total= 0;
 	int	bytesleft =	iSize;
-	int	n;
+	int	n=0;
 
 	while (total < iSize)
 	{
@@ -250,15 +261,17 @@ int	ofxUDPManager::Receive(char* pBuff, const int iSize)
 
 	}
 
-	if (m_dwTimeoutReceive != NO_TIMEOUT)
+	/*if (m_dwTimeoutSend	!= NO_TIMEOUT)
 	{
-		fd_set fd= {1, m_hSocket};
-		timeval	tv=	{m_dwTimeoutReceive, 0};
-		if(select(0, &fd, NULL,	NULL, &tv) == 0) {
-		printf("SOCKET_TIMEOUT");
+		fd_set fd;
+		FD_ZERO(&fd);
+		FD_SET(m_hSocket, &fd);
+		timeval	tv=	{m_dwTimeoutSend, 0};
+		if(select(m_hSocket+1,&fd,NULL,NULL,&tv)== 0)
+		{
 			return(SOCKET_TIMEOUT);
 		}
-	}
+	}*/
 
 	#ifndef TARGET_WIN32
 		socklen_t nLen= sizeof(sockaddr);
