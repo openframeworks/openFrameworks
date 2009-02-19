@@ -567,22 +567,29 @@ void ofxCvImage::warpPerspective( const ofPoint& A, const ofPoint& B, const ofPo
 
 
 //--------------------------------------------------------------------------------
-void ofxCvImage::warpIntoMe( ofxCvGrayscaleImage& mom, const ofPoint src[4], const ofPoint dst[4] ){
-	// compute matrix for perspectival warping (homography)
-	CvPoint2D32f cvsrc[4];
-	CvPoint2D32f cvdst[4];
-	CvMat* translate = cvCreateMat( 3, 3, CV_32FC1 );
-	cvSetZero( translate );
-	for (int i = 0; i < 4; i++ ) {
-		cvsrc[i].x = src[i].x;
-		cvsrc[i].y = src[i].y;
-		cvdst[i].x = dst[i].x;
-		cvdst[i].y = dst[i].y;
-	}
-	cvWarpPerspectiveQMatrix( cvsrc, cvdst, translate );  // calculate homography
-	cvWarpPerspective( mom.getCvImage(), cvImage, translate);
-    flagImageChanged();
-	cvReleaseMat( &translate );
+void ofxCvImage::warpIntoMe( ofxCvImage& mom, const ofPoint src[4], const ofPoint dst[4] ){
+    if( mom.getCvImage()->nChannels == cvImage->nChannels && 
+        mom.getCvImage()->depth == cvImage->depth ) {
+    
+    	// compute matrix for perspectival warping (homography)
+    	CvPoint2D32f cvsrc[4];
+    	CvPoint2D32f cvdst[4];
+    	CvMat* translate = cvCreateMat( 3, 3, CV_32FC1 );
+    	cvSetZero( translate );
+    	for (int i = 0; i < 4; i++ ) {
+    		cvsrc[i].x = src[i].x;
+    		cvsrc[i].y = src[i].y;
+    		cvdst[i].x = dst[i].x;
+    		cvdst[i].y = dst[i].y;
+    	}
+    	cvWarpPerspectiveQMatrix( cvsrc, cvdst, translate );  // calculate homography
+    	cvWarpPerspective( mom.getCvImage(), cvImage, translate);
+        flagImageChanged();
+    	cvReleaseMat( &translate );
+
+    } else {
+        ofLog(OF_ERROR, "in warpIntoMe: mom image type has to match");
+    }	
 }
 
 

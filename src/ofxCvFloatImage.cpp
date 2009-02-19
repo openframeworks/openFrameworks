@@ -23,10 +23,14 @@ ofxCvFloatImage::ofxCvFloatImage() {
 
 //--------------------------------------------------------------------------------
 ofxCvFloatImage::ofxCvFloatImage( const ofxCvFloatImage& _mom ) {
-    // cast non-const,  to get read access to the mon::cvImage
-    ofxCvFloatImage& mom = const_cast<ofxCvFloatImage&>(_mom); 
-    allocate(mom.width, mom.height);    
-    cvCopy( mom.getCvImage(), cvImage, 0 );
+    if( _mom.bAllocated ) {
+        // cast non-const,  to get read access to the mon::cvImage
+        ofxCvFloatImage& mom = const_cast<ofxCvFloatImage&>(_mom); 
+        allocate(mom.width, mom.height);    
+        cvCopy( mom.getCvImage(), cvImage, 0 );
+    } else {
+        ofLog(OF_NOTICE, "in ofxCvFloatImage copy constructor, mom not allocated");
+    }    
 }
 
 

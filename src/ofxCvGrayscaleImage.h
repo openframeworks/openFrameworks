@@ -105,7 +105,7 @@ class ofxCvGrayscaleImage : public ofxCvImage {
     // virtual void  remap( IplImage* mapX, IplImage* mapY );                  //in base class
     // virtual void  warpPerspective( ofPoint& A, ofPoint& B,
     //                                ofPoint& C, ofPoint& D );                //in base class
-    // virtual void  warpIntoMe( ofxCvGrayscaleImage& mom,
+    // virtual void  warpIntoMe( ofxCvImage& mom,
     //                           ofPoint src[4], ofPoint dst[4] );             //in base class
                              
 

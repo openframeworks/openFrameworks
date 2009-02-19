@@ -1,5 +1,12 @@
-#ifndef OFX_CV_H
-#define OFX_CV_H
+#ifndef OFX_CV_MAIN_H
+#define OFX_CV_MAIN_H
+
+/*
+*
+**** This file is DEPRECATED !!!!!
+**** use ofxOpenCv.h instead
+*
+*/
 
 
 //--------------------------

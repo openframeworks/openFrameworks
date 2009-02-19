@@ -15,10 +15,14 @@ ofxCvGrayscaleImage::ofxCvGrayscaleImage() {
 
 //--------------------------------------------------------------------------------
 ofxCvGrayscaleImage::ofxCvGrayscaleImage( const ofxCvGrayscaleImage& _mom ) {
-    // cast non-const,  to get read access to the mon::cvImage
-    ofxCvGrayscaleImage& mom = const_cast<ofxCvGrayscaleImage&>(_mom);
-    allocate(mom.width, mom.height);
-    cvCopy( mom.getCvImage(), cvImage, 0 );
+    if( _mom.bAllocated ) {
+        // cast non-const,  to get read access to the mon::cvImage
+        ofxCvGrayscaleImage& mom = const_cast<ofxCvGrayscaleImage&>(_mom);
+        allocate(mom.width, mom.height);
+        cvCopy( mom.getCvImage(), cvImage, 0 );
+    } else {
+        ofLog(OF_NOTICE, "in ofxCvGrayscaleImage copy constructor, mom not allocated");
+    }
 }
 
 

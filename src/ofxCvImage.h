@@ -118,7 +118,7 @@ class ofxCvImage : public ofBaseHasTexture {
 
     virtual void  warpPerspective( const ofPoint& A, const ofPoint& B,
                                    const ofPoint& C, const ofPoint& D );
-    virtual void  warpIntoMe( ofxCvGrayscaleImage& mom,
+    virtual void  warpIntoMe( ofxCvImage& mom,
                               const ofPoint src[4], const ofPoint dst[4] );
 
 
