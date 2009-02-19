@@ -15,8 +15,8 @@
 #if defined( __WIN32__ ) || defined( _WIN32 )
 	#define TARGET_WIN32
 #elif defined( __APPLE_CC__)
-	#include <TargetConditionals.h>		
-	
+	#include <TargetConditionals.h>
+
 	#if (TARGET_OF_IPHONE_SIMULATOR) || (TARGET_OS_IPHONE) || (TARGET_IPHONE)
 		#define TARGET_OF_IPHONE
 		#define TARGET_OPENGLES
@@ -109,7 +109,7 @@
 #endif
 
 
-#ifdef TARGET_OF_IPHONE						
+#ifdef TARGET_OF_IPHONE
 	#import <OpenGLES/ES1/gl.h>
 	#import <OpenGLES/ES1/glext.h>
 #endif
@@ -200,7 +200,7 @@ enum ofLogLevel{
 #define OF_DEFAULT_LOG_LEVEL  OF_WARNING;
 
 // serial error codes
-#define OF_SERIAL_NO_DATA 	 0
+#define OF_SERIAL_NO_DATA 	-2
 #define OF_SERIAL_ERROR		-1
 
 // core: ---------------------------
@@ -317,7 +317,7 @@ using namespace std;
 	#define OF_KEY_MODIFIER 	0x0100
 	#define OF_KEY_RETURN		13
 	#define OF_KEY_ESC			27
-	
+
 	// http://www.openframeworks.cc/forum/viewtopic.php?t=494
 	// some issues with keys across platforms:
 
@@ -355,7 +355,7 @@ using namespace std;
 	#define OF_KEY_END			(107 | OF_KEY_MODIFIER)
 	#define OF_KEY_INSERT		(108 | OF_KEY_MODIFIER)
 
-// not sure what to do in the case of non-glut apps.... 
+// not sure what to do in the case of non-glut apps....
 
 
 //--------------------------------------------
@@ -372,9 +372,9 @@ using namespace std;
 	#define OF_CONSOLE_COLOR_PURPLE (FOREGROUND_RED | FOREGROUND_BLUE )
 	#define OF_CONSOLE_COLOR_CYAN (FOREGROUND_GREEN | FOREGROUND_BLUE)
 	#define OF_CONSOLE_COLOR_WHITE (FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE)
-		
+
 #else
-	
+
 	#define OF_CONSOLE_COLOR_RESTORE (0)
 	#define OF_CONSOLE_COLOR_BLACK (30)
 	#define OF_CONSOLE_COLOR_RED (31)
@@ -384,7 +384,7 @@ using namespace std;
 	#define OF_CONSOLE_COLOR_PURPLE (35)
 	#define OF_CONSOLE_COLOR_CYAN (36)
 	#define OF_CONSOLE_COLOR_WHITE (37)
- 
+
 #endif
 
 //--------------------------------------------
