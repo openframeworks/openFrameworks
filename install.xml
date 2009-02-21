@@ -23,14 +23,14 @@
 	
 		<src>
 			<folder name="addons/ofxVectorMath/src">
-				<src>../../../addons/ofxVectorMath/src/ofxMatrix3x3.h</src>
-				<src>../../../addons/ofxVectorMath/src/ofxPoint2f.h</src>
-				<src>../../../addons/ofxVectorMath/src/ofxPoint3f.h</src>
-				<src>../../../addons/ofxVectorMath/src/ofxPoint4f.h</src>
-				<src>../../../addons/ofxVectorMath/src/ofxVec2f.h</src>
-				<src>../../../addons/ofxVectorMath/src/ofxVec3f.h</src>
-				<src>../../../addons/ofxVectorMath/src/ofxVec4f.h</src>
-				<src>../../../addons/ofxVectorMath/src/ofxVectorMath.h</src>
+				<file>../../../addons/ofxVectorMath/src/ofxMatrix3x3.h</file>
+				<file>../../../addons/ofxVectorMath/src/ofxPoint2f.h</file>
+				<file>../../../addons/ofxVectorMath/src/ofxPoint3f.h</file>
+				<file>../../../addons/ofxVectorMath/src/ofxPoint4f.h</file>
+				<file>../../../addons/ofxVectorMath/src/ofxVec2f.h</file>
+				<file>../../../addons/ofxVectorMath/src/ofxVec3f.h</file>
+				<file>../../../addons/ofxVectorMath/src/ofxVec4f.h</file>
+				<file>../../../addons/ofxVectorMath/src/ofxVectorMath.h</file>
 			</folder>
 		</src>
 		
