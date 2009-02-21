@@ -12,13 +12,13 @@ ofAppBaseWindow *			window = NULL;
 
 //========================================================================
 // core events instance & arguments
-#ifdef OF_USING_POCO			ofCoreEvents 				ofEvents;
+#ifdef OF_USING_POCO	ofCoreEvents 				ofEvents;
 	ofEventArgs					voidEventArgs;
 #endif
 
 //========================================================================
 // callbacks:
-#ifdef TARGET_OF_IPHONE				
+#ifdef TARGET_OF_IPHONE
 	#include "ofAppiPhoneWindow.h"#else
 	#include "ofAppGlutWindow.h"
 #endif
@@ -75,6 +75,8 @@ void ofExitCallback(){
 	#ifdef OF_USING_POCO
 		ofNotifyEvent( ofEvents.exit, voidEventArgs );
 	#endif
+
+	if(OFSAptr)delete OFSAptr;
 }
 
 //--------------------------------------
