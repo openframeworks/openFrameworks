@@ -42,8 +42,6 @@
 
 		<link>
 			<lib os="win32" compiler="devcpp">wsock32</lib>
-			<lib os="win32" compiler="codewarrior"><!-- NOT DONE --></lib>
-			<lib os="win32" compiler="visualstudio"><!-- NOT DONE --></lib>
 		</link>
 	
 	</add>
