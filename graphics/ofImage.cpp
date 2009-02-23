@@ -41,6 +41,7 @@ ofImage& ofImage::operator=(const ofImage& mom) {
 
 //----------------------------------------------------------
 ofImage::ofImage(const ofImage& mom) {
+	myPixels.bAllocated			= false;
 
 	if (!bFreeImageInited){
 		FreeImage_Initialise();
