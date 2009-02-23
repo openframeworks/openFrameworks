@@ -101,7 +101,11 @@ OSErr 	DrawCompleteProc(Movie theMovie, long refCon);
 OSErr 	DrawCompleteProc(Movie theMovie, long refCon){
 
 	ofVideoPlayer * ofvp = (ofVideoPlayer *)refCon;
-	convertPixels(ofvp->offscreenGWorldPixels, ofvp->pixels, ofvp->width, ofvp->height);
+	
+	#if defined(TARGET_OSX) && defined(BIG_ENDIAN)
+		convertPixels(ofvp->offscreenGWorldPixels, ofvp->pixels, ofvp->width, ofvp->height);
+	#endif
+	
 	ofvp->bHavePixelsChanged = true;
 	if (ofvp->bUseTexture == true){
 		ofvp->tex.loadData(ofvp->pixels, ofvp->width, ofvp->height, GL_RGB);
@@ -397,7 +401,13 @@ void ofVideoPlayer::createImgMemAndGWorld(){
 	movieRect.right 		= width;
 	offscreenGWorldPixels 	= new unsigned char[4 * width * height + 32];
 	pixels					= new unsigned char[width*height*3];
-	QTNewGWorldFromPtr (&(offscreenGWorld), k32ARGBPixelFormat, &(movieRect), NULL, NULL, 0, (offscreenGWorldPixels), 4 * width);
+	
+	#if defined(TARGET_OSX) && defined(BIG_ENDIAN)
+		QTNewGWorldFromPtr (&(offscreenGWorld), k32ARGBPixelFormat, &(movieRect), NULL, NULL, 0, (offscreenGWorldPixels), 4 * width);
+	#else
+		QTNewGWorldFromPtr (&(offscreenGWorld), k24RGBPixelFormat, &(movieRect), NULL, NULL, 0, (pixels), 3 * width); 
+	#endif
+	
 	LockPixels(GetGWorldPixMap(offscreenGWorld));
 	SetGWorld (offscreenGWorld, NULL);
 	SetMovieGWorld (moviePtr, offscreenGWorld, nil);
@@ -497,7 +507,11 @@ bool ofVideoPlayer::loadMovie(string name){
 		GoToBeginningOfMovie(moviePtr);
 		SetMovieActiveSegment(moviePtr, -1,-1);
 		MoviesTask(moviePtr,0);
-		convertPixels(offscreenGWorldPixels, pixels, width, height);
+		
+		#if defined(TARGET_OSX) && defined(BIG_ENDIAN)
+			convertPixels(offscreenGWorldPixels, pixels, width, height);
+		#endif
+		
 		if (bUseTexture == true){
 			tex.loadData(pixels, width, height, GL_RGB);
 		}
@@ -605,7 +619,9 @@ void ofVideoPlayer::start(){
 
 		// get some pixels in there right away:
 		MoviesTask(moviePtr,0);
-		convertPixels(offscreenGWorldPixels, pixels, width, height);
+		#if defined(TARGET_OSX) && defined(BIG_ENDIAN)
+			convertPixels(offscreenGWorldPixels, pixels, width, height);
+		#endif
 		bHavePixelsChanged = true;
 		if (bUseTexture == true){
 			tex.loadData(pixels, width, height, GL_RGB);
