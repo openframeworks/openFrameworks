@@ -3,7 +3,7 @@
 //========================================================================
 // static variables:
 
-ofBaseApp	*				OFSAptr;
+ofBaseApp	*				OFSAptr = NULL;
 bool 						bMousePressed;
 bool						bRightButton;
 int							width, height;
