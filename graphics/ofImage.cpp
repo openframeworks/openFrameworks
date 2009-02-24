@@ -82,13 +82,13 @@ void ofImage::saveImage(string fileName){
 //to be able to set anchor points outside the image
 
 //----------------------------------------------------------
-void ofImage::setAnchorPct(float xPct, float yPct){
-    if (bUseTexture)tex.setAnchorPct(xPct, yPct);
+void ofImage::setAnchorPercent(float xPct, float yPct){
+    if (bUseTexture)tex.setAnchorPercent(xPct, yPct);
 }
 
 //----------------------------------------------------------
-void ofImage::setAnchorPt(int x, int y){
-    if (bUseTexture)tex.setAnchorPt(x, y);
+void ofImage::setAnchorPoint(int x, int y){
+    if (bUseTexture)tex.setAnchorPoint(x, y);
 }
 
 //----------------------------------------------------------

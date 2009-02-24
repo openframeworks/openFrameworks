@@ -242,7 +242,7 @@ void ofTexture::loadScreenData(int x, int y, int w, int h){
 //to be able to set anchor points outside the image
 
 //----------------------------------------------------------
-void ofTexture::setAnchorPct(float xPct, float yPct){
+void ofTexture::setAnchorPercent(float xPct, float yPct){
     anchor.x  = xPct;
     anchor.y  = yPct;
 
@@ -250,7 +250,7 @@ void ofTexture::setAnchorPct(float xPct, float yPct){
 }
 
 //----------------------------------------------------------
-void ofTexture::setAnchorPt(int x, int y){
+void ofTexture::setAnchorPoint(int x, int y){
     anchor.x = x;
     anchor.y = y;
 

@@ -1111,13 +1111,13 @@ void ofVideoGrabber::setUseTexture(bool bUse){
 //to be able to set anchor points outside the image
 
 //----------------------------------------------------------
-void ofVideoGrabber::setAnchorPct(float xPct, float yPct){
-    if (bUseTexture)tex.setAnchorPct(xPct, yPct);
+void ofVideoGrabber::setAnchorPercent(float xPct, float yPct){
+    if (bUseTexture)tex.setAnchorPercent(xPct, yPct);
 }
 
 //----------------------------------------------------------
-void ofVideoGrabber::setAnchorPt(int x, int y){
-    if (bUseTexture)tex.setAnchorPt(x, y);
+void ofVideoGrabber::setAnchorPoint(int x, int y){
+    if (bUseTexture)tex.setAnchorPoint(x, y);
 }
 
 //----------------------------------------------------------

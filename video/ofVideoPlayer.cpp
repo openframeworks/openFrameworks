@@ -1094,13 +1094,13 @@ void ofVideoPlayer::setUseTexture(bool bUse){
 //to be able to set anchor points outside the image
 
 //----------------------------------------------------------
-void ofVideoPlayer::setAnchorPct(float xPct, float yPct){
-    if (bUseTexture)tex.setAnchorPct(xPct, yPct);
+void ofVideoPlayer::setAnchorPercent(float xPct, float yPct){
+    if (bUseTexture)tex.setAnchorPercent(xPct, yPct);
 }
 
 //----------------------------------------------------------
-void ofVideoPlayer::setAnchorPt(int x, int y){
-    if (bUseTexture)tex.setAnchorPt(x, y);
+void ofVideoPlayer::setAnchorPoint(int x, int y){
+    if (bUseTexture)tex.setAnchorPoint(x, y);
 }
 
 //----------------------------------------------------------
