@@ -22,23 +22,25 @@ class ofxCvFloatImage;
 
 
 
-class ofxCvImage : public ofBaseHasTexture {
+class ofxCvImage : public ofBaseDraws, public ofBaseHasTexture, public ofBaseHasPixels {
     
   public:
 
-    int width;                 // width of this image or its ROI width
-    int height;                // height of this image or its ROI height
+    int width;                 // DEPRACATED, will be made private, use getWidth() instead !!
+    int height;                // DEPRACATED, will be made private, use getHeight() instead !!
 	bool bAllocated;
 
     ofxCvImage();
     virtual  ~ofxCvImage();
     virtual void  allocate( int w, int h );
     virtual void  clear();
+	virtual float getWidth();        // get width of this image or its ROI width
+	virtual float getHeight();       // get height of this image or its ROI height
     virtual void  setUseTexture( bool bUse );
     virtual ofTexture&  getTextureReference();
     virtual void flagImageChanged();  //mostly used internally
     virtual void setUseRoiOffsetWhenDrawing( bool bUse );
-    
+
     
     // ROI - region of interest
     //
@@ -51,7 +53,7 @@ class ofxCvImage : public ofBaseHasTexture {
     virtual ofRectangle  getIntersectionROI( const ofRectangle& rec1,
                                              const ofRectangle& rec2 );
     
-
+    
     // Set Pixel Data
     //
     virtual void  set( float value ) = 0;
@@ -80,7 +82,11 @@ class ofxCvImage : public ofBaseHasTexture {
     //
     virtual void  draw( float x, float y );
     virtual void  draw( float x, float y, float w, float h );
-
+    virtual void setAnchorPercent( float xPct, float yPct );
+    virtual void setAnchorPoint( int x, int y );
+    virtual void resetAnchor();
+    
+    
     // Image Filter Operations
     //
     virtual void  erode( );                     // based on 3x3 shape
@@ -166,6 +172,9 @@ class ofxCvImage : public ofBaseHasTexture {
     bool bTextureDirty;       // texture needs to be reloaded before drawing
     
     bool bUseRoiOffsetWhenDrawing;
+    
+    ofPoint  anchor;
+    bool  bAnchorIsPct;    
 
 };
 

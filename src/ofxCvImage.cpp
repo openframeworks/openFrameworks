@@ -79,6 +79,16 @@ void ofxCvImage::clear() {
 }
 
 //--------------------------------------------------------------------------------
+float ofxCvImage::getWidth(){
+	return height;
+}
+
+//--------------------------------------------------------------------------------
+float ofxCvImage::getHeight(){
+	return width;
+}
+
+//--------------------------------------------------------------------------------
 void ofxCvImage::setUseTexture( bool bUse ) {
 	bUseTexture = bUse;
 }
@@ -359,28 +369,41 @@ void ofxCvImage::draw( float x, float y, float w, float h ) {
             tex.loadData( getPixels(), width, height, glchannels );
             bTextureDirty = false;
         }
+        
         if( bUseRoiOffsetWhenDrawing ){
-            tex.draw(x+roiX, y+roiY, w,h);
-        } else {
-            tex.draw(x,y, w,h);
-        }
+            x += roiX;
+            y += roiY;
+        }        
+
+        tex.draw(x,y, w,h);
 
     } else {
         // this is slower than the typical draw method based on textures
         // but useful when dealing with threads GL textures often don't work
         ofLog(OF_NOTICE, "in draw, using slow texture-less drawing");
+        ofLog(OF_NOTICE, "texture-less drawing - be aware, unlike texture drawing, \
+                          this always draws window aligned, rotation not supported");
         
         if( x == 0) {
             x += 0.01;
             ofLog(OF_NOTICE, "BUG: can't draw at x==0 in texture-less mode.");
         }
         
-        glRasterPos3f( x+roiX, y+h+roiY, 0.0 );
+        if(bAnchorIsPct){
+			x -= anchor.x * w;
+			y -= anchor.y * h;
+		}else{
+			x -= anchor.x;
+			y -= anchor.y;
+		}
+        
         if( bUseRoiOffsetWhenDrawing ){
-            glRasterPos3f( x+roiX, y+h+roiY, 0.0 );
-        } else {
-            glRasterPos3f( x, y+h, 0.0 );
-        }        
+            x += roiX;
+            y += roiY;
+        }
+                
+        glRasterPos2f( x, y+h );
+
         IplImage* tempImg;
         tempImg = cvCreateImage( cvSize((int)w, (int)h), ipldepth, iplchannels );        
         cvResize( cvImage, tempImg, CV_INTER_NN );
@@ -388,14 +411,43 @@ void ofxCvImage::draw( float x, float y, float w, float h ) {
         glDrawPixels( tempImg->width, tempImg->height ,
                       glchannels, gldepth, tempImg->imageData );
         cvReleaseImage( &tempImg );
-        if( bUseRoiOffsetWhenDrawing ){
-            glRasterPos3f( -(x+roiX), -(y+h+roiY), 0.0 ); 
-        } else {
-            glRasterPos3f( -x, -(y+h), 0.0 ); 
-        }         
+       
     }
 }
 
+//--------------------------------------------------------------------------------
+void ofxCvImage::setAnchorPercent( float xPct, float yPct ){
+    if( bUseTexture ) {
+    	tex.setAnchorPercent(xPct,yPct);
+    } else {
+        anchor.x = xPct;
+        anchor.y = yPct;
+
+        bAnchorIsPct = true;
+    }
+}
+
+//--------------------------------------------------------------------------------
+void ofxCvImage::setAnchorPoint( int x, int y ){
+    if( bUseTexture ) {
+    	tex.setAnchorPoint(x,y);
+    }else{
+        anchor.x = x;
+        anchor.y = y;
+
+        bAnchorIsPct = false;
+    }
+}
+
+//--------------------------------------------------------------------------------
+void ofxCvImage::resetAnchor(){
+    if( bUseTexture ) {
+    	tex.resetAnchor();
+    }else{
+        anchor.set(0,0);
+        bAnchorIsPct = false;
+    }
+}
 
 
 

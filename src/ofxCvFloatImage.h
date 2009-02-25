@@ -32,6 +32,8 @@ class ofxCvFloatImage : public ofxCvImage {
     ofxCvFloatImage( const ofxCvFloatImage& mom );
     // virtual void  allocate( int w, int h );                                //in base class
     virtual void  clear();
+	//virtual float getWidth();                                               //in base class
+	//virtual float getHeight();                                              //in base class    
     // virtual void  setUseTexture( bool bUse );                              //in base class
     virtual void  setNativeScale( float _scaleMin, float _scaleMax );  
 
@@ -84,6 +86,9 @@ class ofxCvFloatImage : public ofxCvImage {
     //
     //virtual void  draw( float x, float y );                                  //in base class
     //virtual void  draw( float x, float y, float w, float h );                //in base class
+    //virtual void setAnchorPercent( float xPct, float yPct );                 //in base class
+    //virtual void setAnchorPoint( int x, int y );                             //in base class
+    //virtual void resetAnchor();                                              //in base class    
 
 
     // Image Filter Operations
