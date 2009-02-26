@@ -62,6 +62,11 @@ void ofTexture::clear(){
 }
 
 //----------------------------------------------------------
+void ofTexture::allocate(int w, int h, int internalGlDataType){
+	allocate(w, h, internalGlDataType, ofGetUsingArbTex());
+}
+
+//----------------------------------------------------------
 void ofTexture::allocate(int w, int h, int internalGlDataType, bool bUseARBExtention){
 
 	//our graphics card might not support arb so we have to see if it is supported.
@@ -261,6 +266,18 @@ void ofTexture::setAnchorPoint(int x, int y){
 void ofTexture::resetAnchor(){
     anchor       = 0;
     bAnchorIsPct = false;
+}
+
+//----------------------------------------------------------
+void ofTexture::bind(){
+	//we could check if it has been allocated - but we don't do that in draw() 
+	glEnable(texData.textureTarget);
+	glBindTexture( texData.textureTarget, (GLuint)texData.textureName[0]);
+}
+
+//----------------------------------------------------------
+void ofTexture::unbind(){
+	glDisable(texData.textureTarget);
 }
 
 //----------------------------------------------------------

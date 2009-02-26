@@ -1172,7 +1172,7 @@ bool ofVideoPlayer::allocate(){
 			pixels=new unsigned char[width*height*3];
 			gstData.pixels=pixels;
 			memset(pixels,0,width*height*3);
-			tex.allocate(width,height,GL_RGB,true);
+			tex.allocate(width,height,GL_RGB);
 			tex.loadData(pixels,width,height,GL_RGB);
 			allocated = true;
 		}else{
