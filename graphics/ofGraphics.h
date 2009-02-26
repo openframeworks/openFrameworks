@@ -16,8 +16,8 @@ void 	ofSetRectMode(int mode);		// set the mode, either to OF_RECTMODE_CORNER or
 
 //set whether OF uses ARB rectangular texture or the more traditonal GL_TEXTURE_2D
 bool ofGetUsingArbTex();
-bool ofEnableArbTex();
-bool ofDisableArbTex();
+void ofEnableArbTex();
+void ofDisableArbTex();
 
 // OF's access to settings (bgAuto, origin, corner mode):
 bool 	ofbClearBg();

@@ -66,12 +66,12 @@ bool ofGetUsingArbTex(){
 }
 
 //----------------------------------------------------------
-bool ofEnableArbTex(){
+void ofEnableArbTex(){
 	bUsingArbTex = true;
 }
 
 //----------------------------------------------------------
-bool ofDisableArbTex(){
+void ofDisableArbTex(){
 	bUsingArbTex = false;
 }
 
