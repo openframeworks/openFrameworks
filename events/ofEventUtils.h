@@ -25,7 +25,7 @@ class ofEvent: public Poco::FIFOEvent<ArgumentsType> {};
 //     void method(ArgumentsType & args)
 //     void method(const void * sender, ArgumentsType &args)
 // ie:
-//     ofAddListenerMethod(addon.newIntEvent, this, &Class::method)
+//     ofAddListener(addon.newIntEvent, this, &Class::method)
 
 template <class EventType,typename ArgumentsType, class ListenerClass>
 static void ofAddListener(EventType & event, ListenerClass  * listener, void (ListenerClass::*listenerMethod)(ArgumentsType&)){
@@ -40,7 +40,7 @@ static void ofAddListener(EventType & event, ListenerClass  * listener, void (Li
 //     void method(ArgumentsType & args)
 //     void method(const void * sender, ArgumentsType &args)
 // ie:
-//     ofAddListenerMethod(addon.newIntEvent, this, &Class::method)
+//     ofAddListener(addon.newIntEvent, this, &Class::method)
 
 template <class EventType,typename ArgumentsType, class ListenerClass>
 static void ofRemoveListener(EventType & event, ListenerClass  * listener, void (ListenerClass::*listenerMethod)(ArgumentsType&)){
@@ -51,10 +51,10 @@ static void ofRemoveListener(EventType & event, ListenerClass  * listener, void 
 // notifies an event so all the registered listeners
 // get called
 // ie:
-//	ofEvents::notify(addon.newIntEvent, intArgument, this)
+//	ofNotifyEvent(addon.newIntEvent, intArgument, this)
 //
 // or in case there's no sender:
-//	ofEvents::notify(addon.newIntEvent, intArgument)
+//	ofNotifyEvent(addon.newIntEvent, intArgument)
 
 template <class EventType,typename ArgumentsType, typename SenderType>
 static void ofNotifyEvent(EventType & event, ArgumentsType & args, SenderType * sender){
