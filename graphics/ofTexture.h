@@ -49,7 +49,8 @@ class ofTexture : public ofBaseDraws{
 		ofTexture& operator=(const ofTexture& mom); 	
 		// -----------------------------------------------------------------------
 		
-		void allocate(int w, int h, int internalGlDataType, bool bUseARBExtention = true);	 
+		void allocate(int w, int h, int internalGlDataType);						 //uses the currently set OF texture type - default ARB texture
+		void allocate(int w, int h, int internalGlDataType, bool bUseARBExtention);	 //lets you overide the default OF texture type
 		void clear();
 		void loadData(unsigned char * data, int w, int h, int glDataType); 
         void loadScreenData(int x, int y, int w, int h);
@@ -63,6 +64,10 @@ class ofTexture : public ofBaseDraws{
 		void draw(float x, float y, float w, float h);
 		void draw(float x, float y);
 		
+		//for the advanced user who wants to draw textures in their own way
+		void bind();
+		void unbind();
+		
 		bool bAllocated();
 		
 		ofTextureData getTextureData();
@@ -70,8 +75,8 @@ class ofTexture : public ofBaseDraws{
 		float 			getHeight();
 		float 			getWidth();
 
-	protected:		
 		ofTextureData   texData;
+	protected:		
         ofPoint         anchor;
         bool            bAnchorIsPct;
 

@@ -32,6 +32,7 @@ static int		numCirclePts		= 0;
 float 			bgColor[4]			= {0,0,0,0};
 void 			setupCircle();
 bool 			bSmoothHinted		= false;
+bool			bUsingArbTex		= true;
 bool 			bBakgroundAuto		= true;
 int 			cornerMode			= OF_RECTMODE_CORNER;
 int 			polyMode			= OF_POLY_WINDING_ODD;
@@ -57,6 +58,21 @@ void  ofSetRectMode(int mode){
 //----------------------------------------------------------
 int ofGetRectMode(){
 	return 	cornerMode;
+}
+
+//----------------------------------------------------------
+bool ofGetUsingArbTex(){
+	return bUsingArbTex; 
+}
+
+//----------------------------------------------------------
+bool ofEnableArbTex(){
+	bUsingArbTex = true;
+}
+
+//----------------------------------------------------------
+bool ofDisableArbTex(){
+	bUsingArbTex = false;
 }
 
 //----------------------------------------------------------
