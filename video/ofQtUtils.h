@@ -6,18 +6,18 @@
 
 #ifndef TARGET_LINUX
 
-#include "ofGraphics.h" 	
+#include "ofGraphics.h"
 
 
 #ifdef TARGET_OSX
-	#include <Quicktime/QuickTime.h>
+	#include <QuickTime/QuickTime.h>
 	#include <CoreServices/CoreServices.h>
 	#include <ApplicationServices/ApplicationServices.h>
 #else
 	#include <QTML.h>
 	#include <FixMath.h>
 	#include <QuickTimeComponents.h>
-	#include <TextUtils.h>	
+	#include <TextUtils.h>
 	#include <MediaHandlers.h>
 	//#include <MoviesFormat.h>
 #endif
@@ -29,8 +29,8 @@
 
 //-------------------------- helpful for rgba->rgb conversion
 typedef struct{
-	unsigned char r; 
-	unsigned char g; 
+	unsigned char r;
+	unsigned char g;
 	unsigned char b;
 } pix24;
 
@@ -45,7 +45,7 @@ Boolean 	SeqGrabberModalFilterUPP(DialogPtr theDialog, const EventRecord *theEve
 OSErr           IsMPEGMediaHandler(MediaHandler inMediaHandler, Boolean *outIsMPEG);
 ComponentResult MPEGMediaGetStaticFrameRate(MediaHandler inMPEGMediaHandler, Fixed *outStaticFrameRate);
 OSErr           MediaGetStaticFrameRate(Media inMovieMedia, double *outFPS);
-void            MovieGetVideoMediaAndMediaHandler(Movie inMovie, Media *outMedia, 
+void            MovieGetVideoMediaAndMediaHandler(Movie inMovie, Media *outMedia,
 				MediaHandler *outMediaHandler);
 void            MovieGetStaticFrameRate(Movie inMovie, double *outStaticFrameRate);
 
