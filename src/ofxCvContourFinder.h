@@ -22,7 +22,7 @@ class ofxCvContourFinder : public ofBaseDraws {
   public:
   
     vector<ofxCvBlob>  blobs;
-    int                nBlobs;    // how many did we find
+    int                nBlobs;    // DEPRECATED: use blobs.size() instead
       
 
     ofxCvContourFinder();
