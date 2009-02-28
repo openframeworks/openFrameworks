@@ -84,7 +84,9 @@ class ofxCvGrayscaleImage : public ofxCvImage {
     //
     virtual void  contrastStretch();
     virtual void  convertToRange( float min, float max );
-    virtual void  threshold( int value, bool invert = false);
+    virtual void  threshold( int value, bool invert=false);
+    virtual void  adaptiveThreshold( int blockSize, int offset=0,
+                                     bool invert=false, bool gauss=false);
     // virtual void  erode( );                                                 //in base class
     // virtual void  dilate( );                                                //in base class
     // virtual void  blur( int value=3 );                                      //in base class
@@ -95,7 +97,7 @@ class ofxCvGrayscaleImage : public ofxCvImage {
     // Image Transformation Operations
     //
     virtual void  resize( int w, int h );
-    virtual void  scaleIntoMe( ofxCvImage& mom, int interpolationMethod = CV_INTER_NN);
+    virtual void  scaleIntoMe( ofxCvImage& mom, int interpolationMethod=CV_INTER_NN);
     // virtual void  mirror( bool bFlipVertically, bool bFlipHorizontally );   //in base class
     // virtual void  translate( float x, float y );                            //in base class
     // virtual void  rotate( float angle, float centerX, float centerY );      //in base class
