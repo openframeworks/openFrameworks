@@ -137,19 +137,18 @@ ofUCUtils::~ofUCUtils(){
 bool ofUCUtils::open_device(int d) {
 
 	if (!SUCCESS(unicap_enumerate_devices (NULL, &device, d))) {
-		ofLog(OF_ERROR,"Unicap : Error selecting device %d", d);
+		ofLog(OF_ERROR,"ofUCUtils: Error selecting device %d", d);
 		return false;
 	} else {
 
 		if (!SUCCESS(unicap_open (&handle, &device))) {
-			ofLog(OF_ERROR,"Unicap : Error opening device %d: %s", d,
-					device.identifier);
+			ofLog(OF_ERROR,"ofUCUtils: Error opening device %d: %s", d,	device.identifier);
 			return false;
 		}
 		deviceReady = true;
 	}
-	ofLog(OF_NOTICE,"Unicap : Using device %s",device.device);
-	ofLog(OF_NOTICE,"Unicap : Using module %s",device.vendor_name);
+	ofLog(OF_NOTICE,"ofUCUtils: Using device %s",device.device);
+	ofLog(OF_NOTICE,"ofUCUtils: Using module %s",device.vendor_name);
 
 	return true;
 }
@@ -185,7 +184,7 @@ void ofUCUtils::set_format(int w, int h) {
 	unicap_status_t status = STATUS_SUCCESS;
 	int rgb24 = -1;
 
-	ofLog(OF_NOTICE,"Unicap : Available formats for this device:");
+	ofLog(OF_NOTICE,"ofUCUtils : Available formats for this device:");
 	for (format_count = 0; SUCCESS (status) && (format_count < MAX_FORMATS); format_count++) {
 		status = unicap_enumerate_formats (handle, NULL, &formats[format_count], format_count);
 		if (SUCCESS (status)) {
@@ -193,7 +192,7 @@ void ofUCUtils::set_format(int w, int h) {
 				rgb24 = format_count;
 			}
 			ofLog(OF_NOTICE,
-					"Unicap : %d: %s, min size: %dx%d, max size:%dx%d, default size: %dx%d",
+					"ofUCUtils : %d: %s, min size: %dx%d, max size:%dx%d, default size: %dx%d",
 					format_count, formats[format_count].identifier,
 					formats[format_count].min_size.width,
 					formats[format_count].min_size.height,
@@ -201,7 +200,7 @@ void ofUCUtils::set_format(int w, int h) {
 					formats[format_count].max_size.height,
 					formats[format_count].size.width,
 					formats[format_count].size.height);
-			ofLog(OF_VERBOSE,"Unicap: available sizes for this format:");
+			ofLog(OF_VERBOSE,"ofUCUtils: available sizes for this format:");
 			for(int i=0; i<formats[format_count].size_count;i++){
 				ofLog(OF_VERBOSE,"          %dx%d",formats[format_count].sizes[i].width,formats[format_count].sizes[i].height);
 			}
@@ -238,23 +237,43 @@ void ofUCUtils::set_format(int w, int h) {
 				}
 			}
 		}
-		if(!exactMatch){
+		if(!exactMatch && mostAproxSize!=-1){
 			format.size.width  = format.sizes[mostAproxSize].width;
 			format.size.height = format.sizes[mostAproxSize].height;
 
-			ofLog(OF_WARNING, "Unicap : Can't set video format %s, with size %dx%d, will use %dx%d",
-							format.identifier, w, h, format.size.width, format.size.height);
+			ofLog(OF_WARNING, "ofUCUtils : Can't set video format %s, with size %dx%d, will use %dx%d",
+							format.identifier, w, h,
+							format.size.width, format.size.height);
+		}else if(format.size_count==0){
+			int defaultFormatWidth = format.size.width;
+			int defaultFormatHeight = format.size.height;
+
+			format.size.width  = w;
+			format.size.height = h;
+
+			ofLog(OF_WARNING, "ofUCUtils : Can't recognize supported video sizes for %s, trying with requested size: %i,%i",
+										format.identifier, format.size.width, format.size.height);
+
+			if ( !SUCCESS ( unicap_set_format (handle, &format) ) ) {
+				format.size.width  = defaultFormatWidth;
+				format.size.height = defaultFormatHeight;
+
+				ofLog(OF_WARNING, "ofUCUtils : Can't set requested size, trying with format defaults: %i,%i",
+						defaultFormatWidth, defaultFormatHeight);
+			}
+			ofLog(OF_WARNING, "ofUCUtils : If this doesn't work try using the reported default size in initGrabber:",
+					defaultFormatWidth, defaultFormatHeight);
 		}
 		if ( !SUCCESS ( unicap_set_format (handle, &format) ) ) {
-			ofLog(OF_ERROR, "Unicap : Failed to set alternative video format!");
+			ofLog(OF_ERROR, "ofUCUtils : Failed to set alternative video format!");
 			return;
 		}
-		ofLog(OF_NOTICE,"Unicap : Selected format: %s, with size %dx%d\n", format.identifier,
+		ofLog(OF_NOTICE,"ofUCUtils : Selected format: %s, with size %dx%d\n", format.identifier,
 				format.size.width, format.size.height);
 
 		src_pix_fmt=fourcc_to_pix_fmt(format.fourcc);
 		if( src_pix_fmt==-1){
-			ofLog(OF_ERROR,"Unicap : Format not suported\n");
+			ofLog(OF_ERROR,"ofUCUtils : Format not suported\n");
 			return;
 		}
 
@@ -270,7 +289,7 @@ void ofUCUtils::set_format(int w, int h) {
 							VIDEOGRABBER_RESIZE_FLAGS, NULL, NULL, NULL);
 
 
-			ofLog(OF_NOTICE,"Converting to RGB24 (%i,%i)\n",w,h);
+			ofLog(OF_NOTICE,"ofUCUtils: Converting to RGB24 (%i,%i)\n",w,h);
 
 			pixels=new unsigned char[d_width*d_height*3];
 		}
@@ -285,7 +304,7 @@ void ofUCUtils::set_format(int w, int h) {
 
 	   if( !SUCCESS( unicap_set_format( handle, &format ) ) )
 	   {
-		   ofLog(OF_WARNING, "Failed to activate SYSTEM_BUFFERS" );
+		   ofLog(OF_WARNING, "ofUCUtils: Failed to activate SYSTEM_BUFFERS" );
 	   }
 	}
 }
@@ -299,9 +318,9 @@ void ofUCUtils::start_capture() {
 
 	int status = STATUS_SUCCESS;
 	if (!SUCCESS ( status = unicap_register_callback (handle, UNICAP_EVENT_NEW_FRAME, (unicap_callback_t) new_frame_cb, (void *) this) ) )
-		ofLog(OF_ERROR,"Unicap: error registering callback");
+		ofLog(OF_ERROR,"ofUCUtils: error registering callback");
 	if (!SUCCESS ( status = unicap_start_capture (handle) ) )
-		ofLog(OF_ERROR,"Unicap: error starting capture: %i,%i",status,STATUS_INVALID_HANDLE);
+		ofLog(OF_ERROR,"ofUCUtils: error starting capture: %i,%i",status,STATUS_INVALID_HANDLE);
 }
 
 
@@ -309,7 +328,7 @@ void ofUCUtils::start_capture() {
 void ofUCUtils::queryUC_imageProperties(void) {
 
 	unicap_property_t property;
-	ofLog(OF_NOTICE,"Unicap : Video settings:");
+	ofLog(OF_NOTICE,"ofUCUtils : Video settings:");
 	const int PPTY_TYPE_MAPPED_FLOAT=UNICAP_PROPERTY_TYPE_UNKNOWN + 1;
 	int status = STATUS_SUCCESS;
 	int ppty_type;
@@ -320,7 +339,7 @@ void ofUCUtils::queryUC_imageProperties(void) {
 
 		status = unicap_get_property(handle, &property );
 		if ( !SUCCESS( status )) {
-			ofLog(OF_ERROR,"Unicap : Error getting %s value\n", property.identifier);
+			ofLog(OF_ERROR,"ofUCUtils : Error getting %s value\n", property.identifier);
 			return;
 		}
 
@@ -358,7 +377,7 @@ void ofUCUtils::new_frame (unicap_data_buffer_t * buffer)
 		if(sws_scale(toRGB_convert_ctx,
 			src->data, src->linesize, 0, buffer->format.size.height,
 			dst->data, dst->linesize)<0)
-				ofLog(OF_ERROR,"can't convert colorspaces");
+				ofLog(OF_ERROR,"ofUCUtils: can't convert colorspaces");
 
 		lock_buffer();
 			avpicture_layout(dst,PIX_FMT_RGB24,d_width,d_height,pixels,d_width*d_height*3);
