@@ -68,7 +68,7 @@ ofVideoGrabber::~ofVideoGrabber(){
 	#ifdef OF_VIDEO_CAPTURE_QUICKTIME
 	//---------------------------------
 		if (offscreenGWorldPixels != NULL){
-			delete offscreenGWorldPixels;
+			delete[] offscreenGWorldPixels;
 		}
 	//---------------------------------
 	#endif

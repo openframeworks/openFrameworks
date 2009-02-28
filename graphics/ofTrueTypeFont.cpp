@@ -322,7 +322,7 @@ ofTrueTypeFont::~ofTrueTypeFont(){
 			for (int i = 0; i < nCharacters; i++){
 				glDeleteTextures(1, &texNames[i]);
 			}
-			delete texNames;
+			delete[] texNames;
 		}
 	}
 }
