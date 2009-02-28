@@ -18,6 +18,8 @@ bool sort_carea_compare( const CvSeq* a, const CvSeq* b) {
 
 //--------------------------------------------------------------------------------
 ofxCvContourFinder::ofxCvContourFinder() {
+    _width = 0;
+    _height = 0;
 	myMoments = (CvMoments*)malloc( sizeof(CvMoments) );
 	reset();
 }
@@ -35,43 +37,14 @@ void ofxCvContourFinder::reset() {
 }
 
 //--------------------------------------------------------------------------------
-void ofxCvContourFinder::draw( float x, float y ) {
-
-
-	// ---------------------------- draw the bounding rectangle
-	ofSetColor(0xDD00CC);
-    glPushMatrix();
-    glTranslatef( x, y, 0.0 );
-
-	ofNoFill();
-	for( int i=0; i<blobs.size(); i++ ) {
-		ofRect( blobs[i].boundingRect.x, blobs[i].boundingRect.y,
-                blobs[i].boundingRect.width, blobs[i].boundingRect.height );
-	}
-
-	// ---------------------------- draw the blobs
-	ofSetColor(0x00FFFF);
-
-	for( int i=0; i<blobs.size(); i++ ) {
-		ofNoFill();
-		ofBeginShape();
-		for( int j=0; j<blobs[i].nPts; j++ ) {
-			ofVertex( blobs[i].pts[j].x, blobs[i].pts[j].y );
-		}
-		ofEndShape();
-
-	}
-	glPopMatrix();
-}
-
-
-//--------------------------------------------------------------------------------
 int ofxCvContourFinder::findContours( ofxCvGrayscaleImage&  input,
 									  int minArea,
 									  int maxArea,
 									  int nConsidered,
 									  bool bFindHoles,
                                       bool bUseApproximation) {
+    _width = input.width;
+    _height = input.height;
 	reset();
 
 	// opencv will clober the image it detects contours on, so we want to
@@ -101,7 +74,6 @@ int ofxCvContourFinder::findContours( ofxCvGrayscaleImage&  input,
 			inputCopy = input;
 		}
 	}
-
 
 	CvSeq* contour_list = NULL;
 	contour_storage = cvCreateMemStorage( 1000 );
@@ -170,4 +142,68 @@ int ofxCvContourFinder::findContours( ofxCvGrayscaleImage&  input,
 	return nBlobs;
     
 }
+
+//--------------------------------------------------------------------------------
+void ofxCvContourFinder::draw( float x, float y, float w, float h ) {
+
+    float scalex = 0.0f;
+    float scaley = 0.0f;
+    if( _width != 0 ) { scalex = w/_width; } else { scalex = 1.0f; }
+    if( _height != 0 ) { scaley = h/_height; } else { scaley = 1.0f; }
+    
+    if(bAnchorIsPct){
+        x -= anchor.x * w;
+        y -= anchor.y * h;
+    }else{
+        x -= anchor.x;
+        y -= anchor.y;
+    }    
+
+	// ---------------------------- draw the bounding rectangle
+	ofSetColor(0xDD00CC);
+    glPushMatrix();
+    glTranslatef( x, y, 0.0 );
+    glScalef( scalex, scaley, 0.0 );
+
+	ofNoFill();
+	for( int i=0; i<blobs.size(); i++ ) {
+		ofRect( blobs[i].boundingRect.x, blobs[i].boundingRect.y,
+                blobs[i].boundingRect.width, blobs[i].boundingRect.height );
+	}
+
+	// ---------------------------- draw the blobs
+	ofSetColor(0x00FFFF);
+
+	for( int i=0; i<blobs.size(); i++ ) {
+		ofNoFill();
+		ofBeginShape();
+		for( int j=0; j<blobs[i].nPts; j++ ) {
+			ofVertex( blobs[i].pts[j].x, blobs[i].pts[j].y );
+		}
+		ofEndShape();
+
+	}
+	glPopMatrix();
+}
+
+//--------------------------------------------------------------------------------
+void ofxCvContourFinder::setAnchorPercent( float xPct, float yPct ){
+    anchor.x = xPct;
+    anchor.y = yPct;
+    bAnchorIsPct = true;
+}
+
+//--------------------------------------------------------------------------------
+void ofxCvContourFinder::setAnchorPoint( int x, int y ){
+    anchor.x = x;
+    anchor.y = y;
+    bAnchorIsPct = false;
+}
+
+//--------------------------------------------------------------------------------
+void ofxCvContourFinder::resetAnchor(){
+    anchor.set(0,0);
+    bAnchorIsPct = false;
+}
+
 

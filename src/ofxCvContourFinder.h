@@ -17,7 +17,7 @@
 #include "ofxCvGrayscaleImage.h"
 #include <algorithm>
 
-class ofxCvContourFinder {
+class ofxCvContourFinder : public ofBaseDraws {
 
   public:
   
@@ -27,6 +27,10 @@ class ofxCvContourFinder {
 
     ofxCvContourFinder();
     virtual  ~ofxCvContourFinder();
+    
+	virtual float getWidth() { return _width; };    //set after first findContours call
+	virtual float getHeight() { return _height; };  //set after first findContours call
+    
     virtual int  findContours( ofxCvGrayscaleImage& input,
                                int minArea, int maxArea,
                                int nConsidered, bool bFindHoles,
@@ -35,19 +39,28 @@ class ofxCvContourFinder {
                                // of the contour, if the contour runs
                                // along a straight line, for example...
 
-    virtual void  draw() { draw (0,0); };
-    virtual void  draw( float x, float y );
+    virtual void  draw() { draw(0,0, _width, _height); };
+    virtual void  draw( float x, float y ) { draw(x,y, _width, _height); };
+    virtual void  draw( float x, float y, float w, float h );
+	virtual void setAnchorPercent(float xPct, float yPct);
+    virtual void setAnchorPoint(int x, int y);
+	virtual void resetAnchor();      
     //virtual ofxCvBlob  getBlob(int num);
 
 
 
   protected:
 
+    int  _width;
+    int  _height;
     ofxCvGrayscaleImage     inputCopy;
     CvMemStorage*           contour_storage;
     CvMemStorage*           storage;
     CvMoments*              myMoments;
     vector<CvSeq*>          cvSeqBlobs;  //these will become blobs
+    
+    ofPoint  anchor;
+    bool  bAnchorIsPct;      
 
     virtual void reset();
 
