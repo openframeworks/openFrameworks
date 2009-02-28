@@ -144,7 +144,7 @@ void ofImage::allocate(int w, int h, int type){
 void ofImage::clear(){
 
 	if (myPixels.bAllocated == true){
-		delete myPixels.pixels;
+		delete[] myPixels.pixels;
 	}
 
 	tex.clear();
