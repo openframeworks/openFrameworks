@@ -1,6 +1,19 @@
 #include "ofTexture.h"
 #include "ofUtils.h"		// for nextPow2()
 #include "ofAppRunner.h"	// for getWidth()
+
+static bool bTexHackEnabled = true;
+
+//---------------------------------
+void ofEnableTextureEdgeHack(){
+	bTexHackEnabled = true;
+}
+
+//---------------------------------
+void ofDisableTectureEdgeHack(){
+	bTexHackEnabled = false;
+}
+
 //----------------------------------------------------------
 ofTexture::ofTexture() {
 	texData.bAllocated = false;
@@ -337,7 +350,7 @@ void ofTexture::draw(float x, float y, float w, float h) {
 	GLfloat offsetw = 0;
 	GLfloat offseth = 0;
 
-	if (texData.textureTarget == GL_TEXTURE_2D) {
+	if (texData.textureTarget == GL_TEXTURE_2D && bTexHackEnabled) {
 		offsetw = 1.0f / (texData.tex_w);
 		offseth = 1.0f / (texData.tex_h);
 	}

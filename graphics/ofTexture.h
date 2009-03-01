@@ -21,18 +21,23 @@ typedef struct {
 	//we do this because openGL expects an array
 	//but we don't want people to work with textureName[1]
 	//so we make textureID point to the same location
-	union {
-		struct {
-			unsigned int textureID; //use me
-		};
-		unsigned int textureName[1]; //don't use me
+	union{
+		struct{
+			unsigned int textureID;	//use me
+		};		
+		unsigned int textureName[1];  //don't use me
 	};
+		
+}ofTextureData;
 
-} ofTextureData;
+//enable / disable the slight offset we add to ofTexture's texture coords to compensate for bad edge artifiacts
+//enabled by default
+void ofEnableTextureEdgeHack();
+void ofDisableTectureEdgeHack();
 
-class ofTexture: public ofBaseDraws {
+class ofTexture : public ofBaseDraws{
 
-public:
+	public :
 
 	ofTexture();
 	virtual ~ofTexture();
