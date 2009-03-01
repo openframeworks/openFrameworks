@@ -3,40 +3,41 @@
 //========================================================================
 // static variables:
 
-ofBaseApp	*				OFSAptr = NULL;
-bool 						bMousePressed;
-bool						bRightButton;
-int							width, height;
+ofBaseApp * OFSAptr = NULL;
+bool bMousePressed;
+bool bRightButton;
+int width, height;
 
-ofAppBaseWindow *			window = NULL;
+ofAppBaseWindow * window = NULL;
 
 //========================================================================
 // core events instance & arguments
-#ifdef OF_USING_POCO	ofCoreEvents 				ofEvents;
-	ofEventArgs					voidEventArgs;
+#ifdef OF_USING_POCO
+	ofCoreEvents ofEvents;
+	ofEventArgs voidEventArgs;
 #endif
 
 //========================================================================
 // callbacks:
 #ifdef TARGET_OF_IPHONE
-	#include "ofAppiPhoneWindow.h"#else
+	#include "ofAppiPhoneWindow.h"
+#else
 	#include "ofAppGlutWindow.h"
 #endif
 
-
 //--------------------------------------
-void ofSetupOpenGL(ofAppBaseWindow * windowPtr, int w, int h, int screenMode){
+void ofSetupOpenGL(ofAppBaseWindow * windowPtr, int w, int h, int screenMode) {
 	window = windowPtr;
 	window->setupOpenGL(w, h, screenMode);
 }
 
-//--------------------------------------
-void ofSetupOpenGL(int w, int h, int screenMode){
-	#ifdef TARGET_OF_IPHONE
-		window = new ofAppiPhoneWindow();
-	#else
-		window = new ofAppGlutWindow();
-	#endif
+//--------------------------------------
+void ofSetupOpenGL(int w, int h, int screenMode) {
+#ifdef TARGET_OF_IPHONE
+	window = new ofAppiPhoneWindow();
+#else
+	window = new ofAppGlutWindow();
+#endif
 
 	window->setupOpenGL(w, h, screenMode);
 }
@@ -46,7 +47,7 @@ void ofSetupOpenGL(int w, int h, int screenMode){
 //							at the end of the application
 
 void ofExitCallback();
-void ofExitCallback(){
+void ofExitCallback() {
 
 	//------------------------
 	// try to close FMOD:
@@ -54,10 +55,9 @@ void ofExitCallback(){
 	//------------------------
 	// try to close quicktime, for non-linux systems:
 
-	#if defined( TARGET_OSX ) || defined( TARGET_WIN32 )
+#if defined( TARGET_OSX ) || defined( TARGET_WIN32 )
 	closeQuicktime();
-	#endif
-
+#endif
 
 	//------------------------
 	// try to close freeImage:
@@ -66,41 +66,43 @@ void ofExitCallback(){
 	// try to close free type:
 	// ....
 
-	#ifdef WIN32_HIGH_RES_TIMING
-		timeEndPeriod(1);
-	#endif
+#ifdef WIN32_HIGH_RES_TIMING
+	timeEndPeriod(1);
+#endif
 
-	if(OFSAptr)OFSAptr->exit();
+	if (OFSAptr)
+		OFSAptr->exit();
 
-	#ifdef OF_USING_POCO
-		ofNotifyEvent( ofEvents.exit, voidEventArgs );
-	#endif
+#ifdef OF_USING_POCO
+	ofNotifyEvent(ofEvents.exit, voidEventArgs);
+#endif
 
-	if(OFSAptr)delete OFSAptr;
+	if (OFSAptr)
+		delete OFSAptr;
 }
 
 //--------------------------------------
-void ofRunApp(ofBaseApp * OFSA){
+void ofRunApp(ofBaseApp * OFSA) {
 
 	OFSAptr = OFSA;
-	if(OFSAptr){
-	OFSAptr->mouseX = 0;
-	OFSAptr->mouseY = 0;
+	if (OFSAptr) {
+		OFSAptr->mouseX = 0;
+		OFSAptr->mouseY = 0;
 	}
 
 	atexit(ofExitCallback);
 
-	#ifdef WIN32_HIGH_RES_TIMING
-		timeBeginPeriod(1);		// ! experimental, sets high res time
-								// you need to call timeEndPeriod.
-								// if you quit the app other than "esc"
-								// (ie, close the console, kill the process, etc)
-								// at exit wont get called, and the time will
-								// remain high res, that could mess things
-								// up on your system.
-								// info here:http://www.geisswerks.com/ryan/FAQS/timing.html
+#ifdef WIN32_HIGH_RES_TIMING
+	timeBeginPeriod(1); // ! experimental, sets high res time
+	// you need to call timeEndPeriod.
+	// if you quit the app other than "esc"
+	// (ie, close the console, kill the process, etc)
+	// at exit wont get called, and the time will
+	// remain high res, that could mess things
+	// up on your system.
+	// info here:http://www.geisswerks.com/ryan/FAQS/timing.html
 
-	#endif
+#endif
 
 	window->initializeWindow();
 
@@ -112,131 +114,130 @@ void ofRunApp(ofBaseApp * OFSA){
 }
 
 //--------------------------------------
-int ofGetFrameNum(){
+int ofGetFrameNum() {
 	return window->getFrameNum();
 }
 
 //--------------------------------------
-float ofGetFrameRate(){
+float ofGetFrameRate() {
 	return window->getFrameRate();
 }
 
 //--------------------------------------
-void ofSetFrameRate(int targetRate){
+void ofSetFrameRate(int targetRate) {
 
 	window->setFrameRate(targetRate);
 }
 
 //--------------------------------------
-void ofSleepMillis(int millis){
-	#ifdef TARGET_WIN32
-		Sleep(millis);			//windows sleep in milliseconds
-	#else
-		usleep(millis * 1000);	//mac sleep in microseconds - cooler :)
-	#endif
+void ofSleepMillis(int millis) {
+#ifdef TARGET_WIN32
+	Sleep(millis); //windows sleep in milliseconds
+#else
+	usleep(millis * 1000); //mac sleep in microseconds - cooler :)
+#endif
 }
 
 //--------------------------------------
-void ofHideCursor(){
+void ofHideCursor() {
 	window->hideCursor();
 }
 
 //--------------------------------------
-void ofShowCursor(){
+void ofShowCursor() {
 	window->showCursor();
 }
 
-
 //--------------------------------------
-void ofSetWindowPosition(int x, int y){
-	window->setWindowPosition(x,y);
+void ofSetWindowPosition(int x, int y) {
+	window->setWindowPosition(x, y);
 }
 
 //--------------------------------------
-void ofSetWindowShape(int width, int height){
+void ofSetWindowShape(int width, int height) {
 	window->setWindowShape(width, height);
 }
 
 //--------------------------------------
-int ofGetWindowPositionX(){
-	return (int)window->getWindowPosition().x;
+int ofGetWindowPositionX() {
+	return (int) window->getWindowPosition().x;
 }
 
 //--------------------------------------
-int ofGetWindowPositionY(){
-	return (int)window->getWindowPosition().y;
+int ofGetWindowPositionY() {
+	return (int) window->getWindowPosition().y;
 }
 
 //--------------------------------------
-int ofGetScreenWidth(){
-	return (int)window->getScreenSize().x;
+int ofGetScreenWidth() {
+	return (int) window->getScreenSize().x;
 }
 
 //--------------------------------------
-int ofGetScreenHeight(){
-	return (int)window->getScreenSize().y;
+int ofGetScreenHeight() {
+	return (int) window->getScreenSize().y;
 }
 
 //--------------------------------------------------
-int ofGetWidth(){
-	return (int)window->getWindowSize().x;
+int ofGetWidth() {
+	return (int) window->getWindowSize().x;
 }
 //--------------------------------------------------
-int ofGetHeight(){
-	return (int)window->getWindowSize().y;
+int ofGetHeight() {
+	return (int) window->getWindowSize().y;
 }
 
 //--------------------------------------
-void ofSetWindowTitle(string title){
+void ofSetWindowTitle(string title) {
 	window->setWindowTitle(title);
 }
 
 //----------------------------------------------------------
-void ofEnableSetupScreen(){
+void ofEnableSetupScreen() {
 	window->enableSetupScreen();
 }
 
 //----------------------------------------------------------
-void ofDisableSetupScreen(){
+void ofDisableSetupScreen() {
 	window->disableSetupScreen();
 }
 
 //--------------------------------------
-void ofToggleFullscreen(){
+void ofToggleFullscreen() {
 	window->toggleFullscreen();
 }
 
 //--------------------------------------
-void ofSetFullscreen(bool fullscreen){
+void ofSetFullscreen(bool fullscreen) {
 	window->setFullscreen(fullscreen);
 }
 
 //--------------------------------------
-int ofGetWindowMode(){
+int ofGetWindowMode() {
 	return window->getWindowMode();
 }
 
 //--------------------------------------
-void ofSetVerticalSync(bool bSync){
+void ofSetVerticalSync(bool bSync) {
 	//----------------------------
-	#ifdef TARGET_WIN32
+#ifdef TARGET_WIN32
 	//----------------------------
-		if (bSync) {
-			if (GLEE_WGL_EXT_swap_control) wglSwapIntervalEXT (1);
-		} else {
-			if (GLEE_WGL_EXT_swap_control) wglSwapIntervalEXT (0);
-		}
+	if (bSync) {
+		if (GLEE_WGL_EXT_swap_control) wglSwapIntervalEXT (1);
+	} else {
+		if (GLEE_WGL_EXT_swap_control) wglSwapIntervalEXT (0);
+	}
 	//----------------------------
-	#endif
+#endif
 	//----------------------------
 
 	//--------------------------------------
-	#ifdef TARGET_OSX
+#ifdef TARGET_OSX
 	//--------------------------------------
-		long sync = bSync == true ? 1 : 0;
-		CGLSetParameter (CGLGetCurrentContext(), kCGLCPSwapInterval, &sync);
+	long sync = bSync == true ? 1 : 0;
+	CGLSetParameter (CGLGetCurrentContext(), kCGLCPSwapInterval, &sync);
 	//--------------------------------------
-	#endif
+#endif
 	//--------------------------------------
 
 
@@ -244,7 +245,6 @@ void ofSetVerticalSync(bool bSync){
 	// http://www.inb.uni-luebeck.de/~boehme/xvideo_sync.html
 	// glXGetVideoSyncSGI(&count); // but needs to be at the end of every "draw?
 	// also, see this:
-   	// glXWaitVideoSyncSGI(2,0,&count);
+	// glXWaitVideoSyncSGI(2,0,&count);
 }
-
 
