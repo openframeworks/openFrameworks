@@ -2,7 +2,7 @@
 #define _OFX_VEC2f
 
 #include "ofConstants.h"
-
+#include "ofTypes.h"
 
 
 
@@ -15,11 +15,11 @@ class ofxVec2f : public ofPoint {
         x = _x;
         y = _y;
     }
-    
-    ofxVec2f( const ofPoint& pnt ) { 
-        x = pnt.x; 
+
+    ofxVec2f( const ofPoint& pnt ) {
+        x = pnt.x;
         y = pnt.y;
-    } 
+    }
 
 
 
@@ -272,15 +272,15 @@ class ofxVec2f : public ofPoint {
         else
             return ofxVec2f();
     }
-    
-    ofxVec2f& perpendicular() { 
-        float length = (float)sqrt( x*x + y*y ); 
-        if( length > 0 ) { 
-            float _x = x; 
-            x = -(y/length); 
-            y = _x/length; 
-        } 
-        return *this; 
+
+    ofxVec2f& perpendicular() {
+        float length = (float)sqrt( x*x + y*y );
+        if( length > 0 ) {
+            float _x = x;
+            x = -(y/length);
+            y = _x/length;
+        }
+        return *this;
     }
 
 
