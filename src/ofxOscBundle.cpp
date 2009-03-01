@@ -19,41 +19,39 @@
  along with ofxOsc.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _TEST_APP
-#define _TEST_APP
+#include "ofxOscBundle.h"
 
-#include "ofMain.h"
 
-#define OF_ADDON_USING_OFXOSC
+ofxOscBundle::ofxOscBundle()
+{
+}
 
-#include "ofAddons.h"
+ofxOscBundle::~ofxOscBundle()
+{
+}
 
-#define HOST "localhost"
-#define PORT 12345
+ofxOscBundle& ofxOscBundle::copy( const ofxOscBundle& other )
+{
+	for ( int i=0; i<other.bundles.size(); i++ )
+	{
+		bundles.push_back( other.bundles[i] );
+	}
+	for ( int i=0; i<other.messages.size(); i++ )
+	{
+		messages.push_back( other.messages[i] );
+	}
+	return *this;
+}
 
-//--------------------------------------------------------
-class testApp : public ofSimpleApp{
-	
-	public:
-		
-		void setup();
-		void update();
-		void draw();
-		
-		void keyPressed  (int key);
-		void mouseMoved(int x, int y );
-		void mouseDragged(int x, int y, int button);
-		void mousePressed(int x, int y, int button);
-		void mouseReleased();
-		
-		ofTrueTypeFont		font;
 
-	private:
-		
-		ofxOscSender sender;
-			
-		
-		
-};
 
-#endif	
+void ofxOscBundle::addBundle( const ofxOscBundle& bundle )
+{
+	bundles.push_back( bundle );
+}
+
+void ofxOscBundle::addMessage( const ofxOscMessage& message )
+{
+	messages.push_back( message );
+}
+

@@ -66,12 +66,6 @@ void testApp::update(){
 				else 
 					strcat( msg_string, "unknown" );
 			}
-			// add to the list of strings to display
-			msg_strings[current_msg_string] = msg_string;
-			timers[current_msg_string] = ofGetElapsedTimef() + 5.0f;
-			current_msg_string = ( current_msg_string + 1 ) % NUM_MSG_STRINGS;
-			// clear the next line
-			msg_strings[current_msg_string] = "";
 		}
 		
 	}
@@ -89,6 +83,7 @@ void testApp::draw(){
 	sprintf( buf, "mouse: % 4d % 4d", mouseX, mouseY );
 	ofDrawBitmapString( buf, 430, 20 );
 	ofDrawBitmapString( mouseButtonState, 580, 20 );
+	
 	
 	for ( int i=0; i<NUM_MSG_STRINGS; i++ )
 	{
