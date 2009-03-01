@@ -22,7 +22,7 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
- 
+
 #ifndef OF_ARDUINO_H
 #define OF_ARDUINO_H
 
@@ -38,7 +38,7 @@
 /**
         This class extend ofStandardFirmata and provides additional functionality like servo support through SysEx messages.
 		use the OFstdFirmata for servo support...
- 
+
 **/
 
 
@@ -52,18 +52,18 @@ class ofArduino: public ofStandardFirmata{
 				int connect(string device, int baud=57600);
                 // opens a serial port connection to the arduino
 				// Note: GlueFirmata is set to use 57600 bps by default since 115200 (the firmata default) has proven to be unreliable
-				
+
 				bool isArduinoReady();
-	
-	
+
+
 				void  setUseDelay(bool bDelay);
-	
-	
+
+
 				// -- servo
 			    void sendServo(int pin, int value, bool force=false);
                 // pin: 9, 10
 				// the pin has to have a servo attached
-				
+
                 void sendServoAttach(int pin, int minPulse=544, int maxPulse=2400, int angle=180);
 				// pin: 9, 10
                 // attaches a servo to a pin
@@ -71,27 +71,27 @@ class ofArduino: public ofStandardFirmata{
                 void sendServoDetach(int pin);
 				// pin: 9, 10
                 // detaches a servo from a pin, the pin mode remains as OUTPUT
-				
+
 				int getServo(int pin);
 				// returns the last set servo value for a pin if the pin has a servo attached
-								
+
 		protected:
-		
+
 				bool bUseDelay;
-				
+
 				float connectTime;
-	
+
 				void processSysExData(vector<unsigned char> data);
-				
+
 				int _servoValue[ARD_TOTAL_DIGITAL_PINS];
                 // the last set servo values
-				
+
 				float _temp;
 				// the last received temperature
-				
+
 				float _humidity;
 				// the last received humidity
-				
+
 };
 
 #endif
