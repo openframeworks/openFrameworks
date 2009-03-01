@@ -26,7 +26,8 @@
 			<folder name="addons/ofxOsc/src">			
 			<file>../../../addons/ofxOsc/src/ofxOsc.h</file>
 			<file>../../../addons/ofxOsc/src/ofxOscArg.h</file>
-			<file>../../../addons/ofxOsc/src/ofxOsc.h</file>
+			<file>../../../addons/ofxOsc/src/ofxOscBundle.cpp</file>
+			<file>../../../addons/ofxOsc/src/ofxOscBundle.h</file>
 			<file>../../../addons/ofxOsc/src/ofxOscMessage.h</file>
 			<file>../../../addons/ofxOsc/src/ofxOscMessage.cpp</file>
 			<file>../../../addons/ofxOsc/src/ofxOscReceiver.h</file>
