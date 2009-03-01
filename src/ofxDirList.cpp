@@ -170,7 +170,14 @@ int ofxDirList::listDir(string directory)
 //----------------------------------------------------------
 ofxDirList::~ofxDirList()
 {
-	delete pathArray;
-	delete nameArray;
-	delete allowedFileExt;
+	for(int k = 0; k < OF_DL_MAX_EXTS; k++)
+		delete allowedFileExt[k];
+
+	for(int k = 0; k < OF_DL_MAX_RESULTS; k++){
+		delete nameArray[k];
+		delete pathArray[k];
+	}
+	delete[] pathArray;
+	delete[] nameArray;
+	delete[] allowedFileExt;
 }

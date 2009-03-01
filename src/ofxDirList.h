@@ -34,7 +34,7 @@ class ofxDirList{
 
 	public:
 		ofxDirList();
-		~ofxDirList();
+		virtual ~ofxDirList();
 		void setVerbose(bool _verbose);
 		string getName(int pos);
 		string getPath(int pos);
