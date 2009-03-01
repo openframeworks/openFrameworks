@@ -8,6 +8,12 @@
 #define STR_END_MSG "[/TCP]"
 #define STR_END_MSG_LEN 6
 
+#ifndef TARGET_WIN32
+	#define TCP_CONNRESET ECONNRESET
+#else
+	#define TCP_CONNRESET WSAECONNRESET
+#endif
+
 class ofxTCPClient{
 
 
