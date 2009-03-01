@@ -234,7 +234,7 @@ void ofSetVerticalSync(bool bSync) {
 	//--------------------------------------
 #ifdef TARGET_OSX
 	//--------------------------------------
-	long sync = bSync == true ? 1 : 0;
+		GLint sync = bSync == true ? 1 : 0;
 	CGLSetParameter (CGLGetCurrentContext(), kCGLCPSwapInterval, &sync);
 	//--------------------------------------
 #endif
