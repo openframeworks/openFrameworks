@@ -353,9 +353,10 @@ void model3DS::readChunk(std::ifstream *modelFile, const int objectStart, const 
 
 void material3DS::loadTexture(std::string filename, int chunkType){
 
-	std::transform(filename.begin(),filename.end(),filename.begin(), ::tolower);
+	string lowerCaseStr = filename;
+	std::transform(lowerCaseStr.begin(),lowerCaseStr.end(),lowerCaseStr.begin(), ::tolower);
 
-	if((filename.find(".jpg") == std::string::npos) && (filename.find(".png") == std::string::npos) && (filename.find(".tga") == std::string::npos) && (filename.find(".bmp") == std::string::npos)){
+	if((lowerCaseStr.find(".jpg") == std::string::npos) && (lowerCaseStr.find(".png") == std::string::npos) && (lowerCaseStr.find(".tga") == std::string::npos) && (lowerCaseStr.find(".bmp") == std::string::npos)){
 		std::cout<<"[3DS] WARNING: Could not load map '"<<filename<<"'\n[3DS] WARNING: (texture must be TGA, PNG, JPG or BMP)"<<std::endl;
 		return;
 	}
