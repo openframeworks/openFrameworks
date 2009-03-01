@@ -140,7 +140,7 @@ int ofxCvContourFinder::findContours( ofxCvGrayscaleImage&  input,
 	if( storage != NULL ) { cvReleaseMemStorage(&storage); }
 
 	return nBlobs;
-    
+
 }
 
 //--------------------------------------------------------------------------------
