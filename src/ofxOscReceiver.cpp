@@ -1,9 +1,22 @@
 /*
- *  ofxOscReceiver.cpp
- *  openFrameworks OSC addon
- *
- *  damian@frey.co.nz
- *
+ 
+ Copyright 2007, 2008 Damian Stewart damian@frey.co.nz
+ Distributed under the terms of the GNU Lesser General Public License v3
+ 
+ This file is part of the ofxOsc openFrameworks OSC addon.
+ 
+ ofxOsc is free software: you can redistribute it and/or modify
+ it under the terms of the GNU Lesser General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+ 
+ ofxOsc is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+ 
+ You should have received a copy of the GNU Lesser General Public License
+ along with ofxOsc.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "ofxOscReceiver.h"
@@ -28,12 +41,12 @@ void ofxOscReceiver::setup( int listen_port )
 	listen_socket = new UdpListeningReceiveSocket( IpEndpointName( IpEndpointName::ANY_ADDRESS, listen_port ), this );
 #ifdef TARGET_WIN32
 	thread	= CreateThread(
-	   NULL,              // default security attributes
-	   0,                 // use default stack size
-	   &ofxOscReceiver::startThread,        // thread function
-	   (void*)(listen_socket),             // argument to thread function
-	   0,                 // use default creation flags
-	   NULL);             // we don't the the thread id
+							   NULL,              // default security attributes
+							   0,                 // use default stack size
+							&ofxOscReceiver::startThread,        // thread function
+							   (void*)(listen_socket),             // argument to thread function
+							   0,                 // use default creation flags
+							   NULL);             // we don't the the thread id
 
 #else
 	pthread_create( &thread, NULL, &ofxOscReceiver::startThread, (void*)(listen_socket) );
@@ -64,14 +77,14 @@ DWORD WINAPI
 void*
 #endif
 
-ofxOscReceiver::startThread( void* _socket )
+		ofxOscReceiver::startThread( void* _socket )
 {
 	UdpListeningReceiveSocket* socket = (UdpListeningReceiveSocket*)_socket;
 	socket->Run();
     #ifdef TARGET_WIN32
     	return 0;
     #else
-    	return NULL;
+	return NULL;
     #endif
 }
 
