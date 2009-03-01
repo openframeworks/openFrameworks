@@ -2,19 +2,12 @@
 #define _TEST_APP
 
 
-#define OF_ADDON_USING_OFXOPENCV
-#define OF_ADDON_USING_OFXOBJLOADER
-#define OF_ADDON_USING_OFXDIRLIST
-#define OF_ADDON_USING_OFXVECTORMATH
-#define OF_ADDON_USING_OFXNETWORK
-#define OF_ADDON_USING_OFXVECTORGRAPHICS
-#define OF_ADDON_USING_OFXOSC
-#define OF_ADDON_USING_OFXTHREAD
-#define OF_ADDON_USING_OFXXMLSETTINGS
-
-
 #include "ofMain.h"
+
+#define OF_ADDON_USING_OFXDIRLIST
+
 #include "ofAddons.h"
+
 
 class testApp : public ofSimpleApp{
 	
@@ -32,19 +25,14 @@ class testApp : public ofSimpleApp{
 		void mousePressed(int x, int y, int button);
 		void mouseReleased();
 		
-		// we don't actually use these
-		// just checking to see if they 
-		// all work in the same place :)
+		// we will have a dynamic number of images, based on the content of a director:
+              
+		int 		nImages;
+		ofImage	* 	images;
+        ofxDirList   DIR;
+        
+        int         currentImage;
 		
-		ofxCvGrayscaleImage cvGray;
-		ofxObjLoader obj;
-		ofxDirList dirList;
-		ofxVec2f p;
-		ofxTCPClient client;
-		ofxTCPServer server;
-		ofxOscSender osc_sender;
-		ofxThread thread;
-		ofxXmlSettings settings;
 };
 
 #endif

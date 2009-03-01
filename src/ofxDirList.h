@@ -8,8 +8,9 @@ OpenFrameworks Library
 File: 			ofxDirList.h
 Description: 	List the contents of a directory
 Notes:			Now takes string arguements and starts at the data/ folder level
+                Now all C++ strings! No more arrays.
 
-Last Modified: 2007.07.18
+Last Modified: 2009.03.01
 Creator: Theodore Watson
 
 ************************************************************/
@@ -25,16 +26,11 @@ Creator: Theodore Watson
 	#include <dirent.h>
 #endif
 
-#define OF_DL_MAX_RESULTS 200
-#define OF_DL_FILELEN 512
-#define OF_DL_MAX_EXTS 100
-#define OF_DL_EXT_SIZE 64
 
 class ofxDirList{
 
 	public:
 		ofxDirList();
-		virtual ~ofxDirList();
 		void setVerbose(bool _verbose);
 		string getName(int pos);
 		string getPath(int pos);
@@ -43,15 +39,11 @@ class ofxDirList{
 		int listDir(string directory);								// returns number of files found
 
 	private:
-		char ** allowedFileExt;
-		char ** nameArray;
-		char ** pathArray;
-		int 	allowCount;
-		int		count;
-		bool	verbose;
+        vector <string> allowedFileExt;
+        vector <string> nameArray;
+        vector <string> pathArray;
+
 };
-
-
 
 
 

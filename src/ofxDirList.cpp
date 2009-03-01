@@ -1,183 +1,142 @@
 #include "ofxDirList.h"
+#include <algorithm>
+#include <string>
+
+
+// Handy string functions
+
+static std::string::size_type idx;
+static string getExt(string filename){
+    idx = filename.rfind('.');
+
+    if(idx != std::string::npos){
+        return filename.substr(idx+1);
+    }
+    else{
+        return "";
+    }
+}
+
+static string strToLower(string myStr){
+    transform( myStr.begin(), myStr.end(), myStr.begin(), ::tolower );
+    return myStr;
+}
 
 //----------------------------------------------------------
-ofxDirList::ofxDirList()
-{
-
-	allowedFileExt = new char*[OF_DL_MAX_EXTS];
-	nameArray = new char*[OF_DL_MAX_RESULTS];
-	pathArray = new char*[OF_DL_MAX_RESULTS];
-
-	for(int k = 0; k < OF_DL_MAX_EXTS; k++)
-		allowedFileExt[k] = new char[OF_DL_EXT_SIZE];
-
-	for(int k = 0; k < OF_DL_MAX_RESULTS; k++){
-		nameArray[k] = new char[OF_DL_FILELEN];
-		pathArray[k] = new char[OF_DL_FILELEN];
-	}
-	//an allowCount of 0 means no extensions are to be checked,
-	allowCount  = 0;
-	verbose		= true;
-
+ofxDirList::ofxDirList(){
+    reset();
 }
 
 //----------------------------------------------------------
 void ofxDirList::reset(){
-	allowCount  = 0;
+	allowedFileExt.clear();
+	nameArray.clear();
+	pathArray.clear();
 }
 
 //----------------------------------------------------------
-void ofxDirList::setVerbose(bool _verbose)
-{
-	verbose = _verbose;
+void ofxDirList::setVerbose(bool _verbose){
+    ofLog(OF_WARNING, "ofxDirList setVerbose is depreciated use ofSetLogLevel instead");
 }
 
 //----------------------------------------------------------
-bool ofxDirList::allowExt(string ext)
-{
-
-	if(allowCount >= OF_DL_MAX_EXTS -1){if(verbose)printf("ofxDirList - no of extensions > OF_DL_MAX_EXTS\n");   return false; }
-	if(ext.length() >= OF_DL_EXT_SIZE){if(verbose)printf("ofxDirList - extension is > OF_DL_EXT_SIZE\n");   return false; }
-
-	sprintf(allowedFileExt[allowCount], "%s", (char *)ext.c_str());
-
-	allowCount++;
-
+bool ofxDirList::allowExt(string ext){
+	allowedFileExt.push_back( strToLower(ext) );
 	return true;
 }
 
 //----------------------------------------------------------
-string ofxDirList::getName(int pos)
-{
-	if(pos >= count) return 0;
-	return string(nameArray[pos]);
+string ofxDirList::getName(int pos){
+	if(pos >= nameArray.size()) return 0;
+	return nameArray[pos];
 }
 
 //----------------------------------------------------------
-string ofxDirList::getPath(int pos)
-{
-	if(pos >= count) return 0;
-	return string(pathArray[pos]);
+string ofxDirList::getPath(int pos){
+	if(pos >= pathArray.size()) return 0;
+	return pathArray[pos];
 }
 
 //----------------------------------------------------------
-int ofxDirList::listDir(string directory)
-{
-	directory = ofToDataPath(directory);
+int ofxDirList::listDir(string directory){
+    directory = ofToDataPath(directory);
 
-	DIR *dir;
-	char *extension;
-	struct dirent *entry;
-	bool skip = false;
+    if(directory.length() <= 0)return 0;
 
-	//if no dir is specified look in same folder as executable
-	if(directory.length() == 0) 	dir = opendir(".");
-	else dir = opendir(directory.c_str());
-
-	if (dir == NULL){
-		if(verbose)printf("ofxDirList - error opening directory\n");
-		return 0;
+    //if the trailing slash was not added - then add it
+	if( directory[directory.length()-1] != '/'){
+        directory = directory + "/";
 	}
 
-	count = 0;
-	while ((entry = readdir(dir)) != NULL && count < OF_DL_MAX_RESULTS)
-	{
+	DIR *dir = NULL;
+	struct dirent *entry;
 
-		//make sure we are not looking at ./  or ../ on unix based systems
-		char * pch;
-		pch = (char*) memchr ((char *)entry->d_name, '.', 1);
-		if(pch != NULL) continue;
+    //open the directory
+    ofLog(OF_VERBOSE, "ofxDirList - attempting to open %s", directory.c_str());
+    dir = opendir(directory.c_str());
+
+	if(dir == NULL){
+		ofLog(OF_ERROR, "ofxDirList - error opening directory");
+		return 0;
+	}else{
+		ofLog(OF_VERBOSE, "ofxDirList - success opening directory");
+	}
+
+    string entry_name = "";
+    string ext = "";
+	bool skip = false;
+
+	while ((entry = readdir(dir)) != NULL){
+
+        //turn it into a C++ string
+        entry_name = entry->d_name;
+
+        //lets get the length of the string here as we query it again
+        int fileLen = entry_name.length();
+
+		if(fileLen <= 0)continue; //if the name is not existant
+		if(entry_name[0] == '.')continue; //ignore invisible files, ./ and ../
 
 		//by default we don't skip files unless we are checking extensions
 		skip = false;
 
-		if(allowCount > 0)
-		{
+		if(allowedFileExt.size() > 0){
 			//we will skip this files unless it has an allowed extension
 			skip = true;
-			for(int i = 0; i < allowCount; i++)
-			{
-				//if the wildecard * (42) has been entered for an ext type then don't check any extensions
-				if( allowedFileExt[i][0] == 42){ skip = false; break; }
+			for(int i = 0; i < allowedFileExt.size(); i++){
 
-				//get the lengths of both the filename and the extention
-				int extLen  = strlen(allowedFileExt[i]);
-				int fileLen = strlen(entry->d_name);
+				//if the wildecard * has been entered for an ext type then don't check any extensions
+				if( allowedFileExt[i] == "*"){ skip = false; break; }
 
-				//the extension has to be shorter than the filename
+
+				int extLen = allowedFileExt[i].length();
+
+				//the extension has to be shorter than the filename - simple check
 				if(extLen >= fileLen) continue;
 
-				//lets check if there is a fullstop/peroid where we expect it to be
-				if(entry->d_name[fileLen-extLen-1] != '.') continue;
+                //lets get the ext as lowercase
+                ext = strToLower( getExt(entry_name) );
 
-				//so now lets see if the extensions match
-				bool checkExt = true;
-				for(int j = 0; j < extLen; j++)
-				{
-					if( tolower(entry->d_name[(fileLen - 1) - j] ) != tolower(allowedFileExt[i][(extLen - 1) - j]) ) {checkExt = false; break; }
-				}
+                //if no ext - then skip this ext check
+                if( ext == "" )continue;
 
-				//they do match so we don't skip this entry
-				if(checkExt == true){ skip = false; break;}
+                //if we find a match then stop checking and approve this file
+                if(ext == allowedFileExt[i]){
+                    skip = false;
+                    break;
+                }
 			}
 		}
 
 		if(skip) continue;
 
-		//if the file is too long for our string
-		if(strlen(entry->d_name) >= OF_DL_FILELEN)
-		{
-			if(verbose)printf("ofxDirList - file name > OF_DL_FILELEN\n");
-			return 0;
-		}
+		//finally we store the result
+        pathArray.push_back(directory + entry_name);
+        nameArray.push_back(entry_name);
 
-		//Otherwise lets copy it to our results list
-
-
-		//MAKE OUR PATH ARRAY
-		//lets check that the full path can fit in the char * we have for it
-		if(OF_DL_FILELEN > strlen(entry->d_name) + directory.length() )
-		{
-			//if some muppet forgot the trailing slash lets add it for them
-			if(directory.substr(directory.length()-1) != "/") sprintf(pathArray[count],"%s/%s",directory.c_str(),entry->d_name);
-			else  sprintf(pathArray[count],"%s%s",directory.c_str(),entry->d_name);
-		}
-		else
-		{
-			if(verbose)printf("ofxDirList - path %s too long for string",entry->d_name);
-			continue;
-		}
-
-		//MAKE OUR NAME ARRAY
-		//lets check that the filename can fit in the char * we have for it
-		if(OF_DL_FILELEN > strlen(entry->d_name) )sprintf(nameArray[count],entry->d_name);
-		else
-		{
-			if(verbose)printf("ofxDirList - path %s too long for string",entry->d_name);
-			continue;
-		}
-
-
-		if(verbose)printf("ofxDirList - listing %s \n", nameArray[count]);
-		count++;
+		ofLog(OF_VERBOSE, "ofxDirList - listing %s ", nameArray.back().c_str());
 	}
 
-	if(verbose)printf("ofxDirList - listed %i files in %s\n", count, directory.c_str());
-	return count;
-}
-
-//Clean up
-//----------------------------------------------------------
-ofxDirList::~ofxDirList()
-{
-	for(int k = 0; k < OF_DL_MAX_EXTS; k++)
-		delete allowedFileExt[k];
-
-	for(int k = 0; k < OF_DL_MAX_RESULTS; k++){
-		delete nameArray[k];
-		delete pathArray[k];
-	}
-	delete[] pathArray;
-	delete[] nameArray;
-	delete[] allowedFileExt;
+	ofLog(OF_VERBOSE, "ofxDirList - listed %i files in %s", nameArray.size(), directory.c_str());
+	return nameArray.size();
 }
