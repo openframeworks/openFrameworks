@@ -1,11 +1,13 @@
 #ifndef _QT_UTILS
 #define _QT_UTILS
 
+
 #include "ofConstants.h"
 
 #ifndef TARGET_LINUX
 
 #include "ofGraphics.h"
+
 
 #ifdef TARGET_OSX
 	#include <QuickTime/QuickTime.h>
@@ -26,27 +28,30 @@
 #endif
 
 //-------------------------- helpful for rgba->rgb conversion
-typedef struct {
+typedef struct{
 	unsigned char r;
 	unsigned char g;
 	unsigned char b;
-}pix24;
+} pix24;
+
+
 
 //----------------------------------------
 
-void initializeQuicktime();
-void closeQuicktime();
-void convertPixels(unsigned char * gWorldPixels, unsigned char * rgbPixels, int w, int h);
-Boolean SeqGrabberModalFilterUPP(DialogPtr theDialog, const EventRecord *theEvent, short *itemHit, long refCon);
-OSErr IsMPEGMediaHandler(MediaHandler inMediaHandler, Boolean *outIsMPEG);
+void 		initializeQuicktime();
+void 		closeQuicktime();
+void 		convertPixels(unsigned char * gWorldPixels, unsigned char * rgbPixels, int w, int h);
+Boolean 	SeqGrabberModalFilterUPP(DialogPtr theDialog, const EventRecord *theEvent, short *itemHit, long refCon);
+OSErr           IsMPEGMediaHandler(MediaHandler inMediaHandler, Boolean *outIsMPEG);
 ComponentResult MPEGMediaGetStaticFrameRate(MediaHandler inMPEGMediaHandler, Fixed *outStaticFrameRate);
-OSErr MediaGetStaticFrameRate(Media inMovieMedia, double *outFPS);
-void MovieGetVideoMediaAndMediaHandler(Movie inMovie, Media *outMedia, MediaHandler *outMediaHandler);
-void MovieGetStaticFrameRate(Movie inMovie, double *outStaticFrameRate);
+OSErr           MediaGetStaticFrameRate(Media inMovieMedia, double *outFPS);
+void            MovieGetVideoMediaAndMediaHandler(Movie inMovie, Media *outMedia,
+				MediaHandler *outMediaHandler);
+void            MovieGetStaticFrameRate(Movie inMovie, double *outStaticFrameRate);
 
 #ifdef TARGET_OSX
-	OSErr GetSettingsPreference(CFStringRef inKey, UserData *outUserData);
-	OSErr SaveSettingsPreference(CFStringRef inKey, UserData inUserData);
+	OSErr	GetSettingsPreference(CFStringRef inKey, UserData *outUserData);
+	OSErr	SaveSettingsPreference(CFStringRef inKey, UserData inUserData);
 #endif
 
 #endif

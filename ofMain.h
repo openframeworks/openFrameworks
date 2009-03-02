@@ -39,6 +39,7 @@
 	#include "ofVideoGrabber.h"
 	#include "ofVideoPlayer.h"
 #endif
+
 //--------------------------
 // events
 #include "ofEvents.h"
