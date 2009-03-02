@@ -350,9 +350,9 @@ void ofTexture::draw(float x, float y, float w, float h){
 		GLfloat offsetw = 0;
 		GLfloat offseth = 0;
 
-		if (texData.textureTarget == GL_TEXTURE_2D){
-			offsetw = 1.0f/(texData.tex_w);
-			offseth = 1.0f/(texData.tex_h);
+		if (texData.textureTarget == GL_TEXTURE_2D && bTexHackEnabled) {
+			offsetw = 1.0f / (texData.tex_w);
+			offseth = 1.0f / (texData.tex_h);
 		}
 		// -------------------------------------------------
 

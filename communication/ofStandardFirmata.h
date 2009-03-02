@@ -131,7 +131,7 @@ using namespace std;
  It currently supports the Arduino NG and Diecimila boards and other ATmega168 based Arduino compatible boards.
  The class can be extended to accomodate modified versions of ofStandardFirmata.
  **/
-class ofStandardFirmata {
+class ofStandardFirmata{
 
 	public:
 		ofStandardFirmata();
