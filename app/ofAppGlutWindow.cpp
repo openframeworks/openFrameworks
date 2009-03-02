@@ -258,15 +258,15 @@ void ofAppGlutWindow::toggleFullscreen(){
 
 //------------------------------------------------------------
 void ofAppGlutWindow::setFullscreen(bool fullscreen){
-	if( windowMode == OF_GAME_MODE)return;
+    if( windowMode == OF_GAME_MODE)return;
 
-	if(fullscreen){
-		windowMode = OF_FULLSCREEN;
-	}else{
-		windowMode = OF_WINDOW;
-	}
-
-	bNewScreenMode = true;
+    if(fullscreen && windowMode != OF_FULLSCREEN){
+        bNewScreenMode  = true;
+        windowMode      = OF_FULLSCREEN;
+    }else if(!fullscreen && windowMode != OF_WINDOW) {
+        bNewScreenMode  = true;
+        windowMode      = OF_WINDOW;
+    }
 }
 
 //------------------------------------------------------------
