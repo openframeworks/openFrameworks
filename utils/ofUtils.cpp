@@ -7,6 +7,10 @@
 
 #ifdef TARGET_WIN32
     #include <mmsystem.h>
+	#ifdef _MSC_VER
+		#include <direct.h>
+	#endif
+
 #endif
 
 static bool enableDataPath = true;
@@ -148,9 +152,35 @@ string ofToDataPath(string path, bool makeAbsolute){
 
 		if(makeAbsolute && path.substr(0,1) != "/"){
 			#ifndef TARGET_OF_IPHONE
+				
+			#ifndef _MSC_VER 
 				char currDir[1024];
 				path = "/"+path;
 				path = getcwd(currDir, 1024)+path;
+			#else
+
+				char currDir[1024];
+				path = "/"+path;
+				path = _getcwd(currDir, 1024)+path;
+				/*
+				char fileName[1024];
+				memset(fileName,0,1024);	
+				GetModuleFileNameA(0,fileName,1024);
+				size_t len = strlen(fileName);
+				for(size_t s = len - 1; s > 0; s--){
+					if(fileName[s] == '\\')
+					{
+						fileName[s] = 0;
+						//return fileName;
+						break;
+					}
+				}
+				path = std::string(fileName)+ "//" +path;
+				*/
+
+			#endif
+
+
 			#else
 				//do we need iphone specific code here?
 			#endif

@@ -50,6 +50,8 @@
 		#pragma warning(disable : 4311)		// type cast pointer truncation (qt vp)
 		#pragma warning(disable : 4018)		// signed/unsigned mismatch (since vector.size() is a size_t)
 		#pragma warning(disable : 4267)		// conversion from size_t to Size warning... possible loss of data
+		#pragma warning(disable : 4800)		// 'Boolean' : forcing value to bool 'true' or 'false'
+		#pragma warning(disable : 4099)		// for debug, PDB 'vc80.pdb' was not found with...
 	#endif
 
 	#define TARGET_LITTLE_ENDIAN			// intel cpu

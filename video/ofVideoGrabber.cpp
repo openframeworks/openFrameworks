@@ -1134,16 +1134,16 @@ void ofVideoGrabber::draw(float _x, float _y, float _w, float _h){
 
 //------------------------------------
 void ofVideoGrabber::draw(float _x, float _y){
-	draw(_x, _y, width, height);
+	draw(_x, _y, (float)width, (float)height);
 }
 
 
 //----------------------------------------------------------
 float ofVideoGrabber::getHeight(){
-	return height;
+	return (float)height;
 }
 
 //----------------------------------------------------------
 float ofVideoGrabber::getWidth(){
-	return width;
+	return (float)width;
 }

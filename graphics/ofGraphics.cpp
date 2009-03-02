@@ -1015,7 +1015,9 @@ void ofNextContour(bool bClose){
 
 		int numToDraw = polyVertices.size()-currentStartVertex;
 		if( numToDraw > 0){
-			GLfloat points[numToDraw * 2]; 
+			
+			// GLfloat points[numToDraw * 2];	// zach, we can't do this on VS 2008
+			GLfloat * points = new GLfloat[numToDraw * 2];
 			int k = 0;
 		
 			for (int i=currentStartVertex; i< polyVertices.size(); i++) {			
@@ -1027,6 +1029,8 @@ void ofNextContour(bool bClose){
 			glEnableClientState(GL_VERTEX_ARRAY);
 			glVertexPointer(2, GL_FLOAT, 0, &points[0]);
 			glDrawArrays(GL_LINE_STRIP, 0, numToDraw);
+
+			delete [] points;
 		}
 
 	} else {
@@ -1074,7 +1078,11 @@ void ofEndShape(bool bClose){
 
 		int numToDraw = polyVertices.size()-currentStartVertex;
 		if( numToDraw > 0){
-			GLfloat points[numToDraw * 2]; 
+			
+			// GLfloat points[numToDraw * 2]; // zach, needed for VS 2008
+			
+			GLfloat * points = new GLfloat[numToDraw * 2];
+
 			int k = 0;
 			
 			for (int i=currentStartVertex; i< polyVertices.size(); i++) {			
@@ -1087,6 +1095,8 @@ void ofEndShape(bool bClose){
 			glEnableClientState(GL_VERTEX_ARRAY);
 			glVertexPointer(2, GL_FLOAT, 0, &points[0]);
 			glDrawArrays(GL_LINE_STRIP, 0, numToDraw);
+
+			delete [] points;
 		}
 
 
