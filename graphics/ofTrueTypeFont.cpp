@@ -69,7 +69,7 @@ static void simplifyDP(float tol, ofPoint* v, int j, int k, int* mk ){
         if ( cw <= 0 ) dv2 = d2(v[i], S.P0);
         else if ( cu <= cw ) dv2 = d2(v[i], S.P1);
         else {
-            b = cw / cu;
+            b = (float)(cw / cu);
             Pb = S.P0 + u*b;
             dv2 = d2(v[i], Pb);
         }
@@ -103,8 +103,8 @@ static vector <ofPoint> ofSimplifyContour(vector <ofPoint> &V, float tol){
 
     int    i, k, m, pv;            // misc counters
     float  tol2 = tol * tol;       // tolerance squared
-    ofPoint vt[n];
-    int  mk[n];
+    ofPoint * vt = new ofPoint[n];
+	int * mk = new int[n];
 
 	memset(&mk, 0, sizeof(int) * n );
 
@@ -129,6 +129,10 @@ static vector <ofPoint> ofSimplifyContour(vector <ofPoint> &V, float tol){
 
 	//get rid of the unused points
 	if( m < sV.size() ) sV.erase( sV.begin()+m, sV.end() );
+
+	delete [] vt;
+	delete [] mk;
+
 	return sV;
 }
 
@@ -142,7 +146,7 @@ static void quad_bezier(vector <ofPoint> &ptsList, float x1, float y1, float x2,
         double c = pow(t, 2.0);
         double x = a * x1 + b * x2 + c * x3;
         double y = a * y1 + b * y2 + c * y3;
-        ptsList.push_back(ofPoint(x, y));
+		ptsList.push_back(ofPoint((float)x, (float)y));
     }
 }
 
@@ -202,7 +206,7 @@ static ofTTFCharacter makeContoursForCharacter(FT_Face &face){
 			for(int j = startPos; j < endPos; j++){
 
 				if( FT_CURVE_TAG(tags[j]) == FT_CURVE_TAG_ON ){
-					lastPoint.set(  vec[j].x,  -vec[j].y, 0 );
+					lastPoint.set((float)vec[j].x, (float)-vec[j].y, 0);
 					if( printVectorInfo )printf("flag[%i] is set to 1 - regular point - %f %f \n", j, lastPoint.x, lastPoint.y);
 					testOutline.push_back(lastPoint);
 
@@ -228,9 +232,9 @@ static ofTTFCharacter makeContoursForCharacter(FT_Face &face){
 						bool lastPointCubic =  ( FT_CURVE_TAG(tags[prevPoint]) != FT_CURVE_TAG_ON ) && ( FT_CURVE_TAG(tags[prevPoint]) == FT_CURVE_TAG_CUBIC);
 
 						if( lastPointCubic ){
-							ofPoint controlPoint1( vec[prevPoint].x,  -vec[prevPoint].y );
-							ofPoint controlPoint2( vec[j].x,  -vec[j].y );
-							ofPoint nextPoint( (float)vec[nextIndex].x,  -(float)vec[nextIndex].y );
+							ofPoint controlPoint1((float)vec[prevPoint].x,	(float)-vec[prevPoint].y);
+							ofPoint controlPoint2((float)vec[j].x, (float)-vec[j].y);
+							ofPoint nextPoint((float) vec[nextIndex].x,	-(float) vec[nextIndex].y);
 
 							cubic_bezier(testOutline, lastPoint.x, lastPoint.y, controlPoint1.x, controlPoint1.y, controlPoint2.x, controlPoint2.y, nextPoint.x, nextPoint.y, 8);
 						}
@@ -247,7 +251,7 @@ static ofTTFCharacter makeContoursForCharacter(FT_Face &face){
 							bool prevIsConnic = (  FT_CURVE_TAG( tags[endPos-1] ) != FT_CURVE_TAG_ON ) && ( FT_CURVE_TAG( tags[endPos-1]) != FT_CURVE_TAG_CUBIC );
 
 							if( prevIsConnic ){
-								ofPoint lastConnic( vec[endPos-1].x,  -vec[endPos-1].y );
+								ofPoint lastConnic((float)vec[endPos - 1].x, (float)-vec[endPos - 1].y);
 								lastPoint = (conicPoint + lastConnic) / 2;
 
 								if( printVectorInfo )	printf("NEED TO MIX WITH LAST\n");
@@ -293,7 +297,7 @@ static ofTTFCharacter makeContoursForCharacter(FT_Face &face){
 			charOutlines.contours.push_back(ofTTFContour());
 
 			if( testOutline.size() ){
-				charOutlines.contours.back().pts = ofSimplifyContour(testOutline, TTF_SHAPE_SIMPLIFICATION_AMNT);
+				charOutlines.contours.back().pts = ofSimplifyContour(testOutline, (float)TTF_SHAPE_SIMPLIFICATION_AMNT);
 			}else{
 				charOutlines.contours.back().pts = testOutline;
 			}
@@ -607,12 +611,12 @@ void ofTrueTypeFont::drawChar(int c, float x, float y) {
 	GLint top		= cps[cu].topExtent - cps[cu].height;
 	GLint lextent	= cps[cu].leftExtent;
 
-	GLint	x1, y1, x2, y2, corr, stretch;
+	GLfloat	x1, y1, x2, y2, corr, stretch;
 	GLfloat t1, v1, t2, v2;
 
 	//this accounts for the fact that we are showing 2*visibleBorder extra pixels
 	//so we make the size of each char that many pixels bigger
-	stretch = visibleBorder * 2;
+	stretch = (float)(visibleBorder * 2);
 
 
 	t2		= cps[cu].xOff;
@@ -620,11 +624,11 @@ void ofTrueTypeFont::drawChar(int c, float x, float y) {
 	t1		= cps[cu].tTex + t2;
 	v1		= cps[cu].vTex + v2;
 
-	corr	= ( (fontSize - height) + top) - fontSize;
+	corr	= (float)(( (fontSize - height) + top) - fontSize);
 
 	x1		= lextent + bwidth + stretch;
 	y1		= height + corr + stretch;
-	x2		= lextent;
+	x2		= (float) lextent;
 	y2		= -top + corr;
 
 
@@ -739,9 +743,9 @@ ofRectangle ofTrueTypeFont::getStringBoundingBox(string c, float x, float y){
             	GLint top		= cps[cy].topExtent - cps[cy].height;
             	GLint lextent	= cps[cy].leftExtent;
             	float	x1, y1, x2, y2, corr, stretch;
-            	stretch = visibleBorder * 2;
-	            corr	= ( (fontSize - height) + top) - fontSize;
-            	x1		= (x + xoffset + lextent + bwidth + stretch);
+            	stretch = (float)visibleBorder * 2;
+				corr = (float)(((fontSize - height) + top) - fontSize);
+				x1		= (x + xoffset + lextent + bwidth + stretch);
             	y1		= (y + yoffset + height + corr + stretch);
             	x2		= (x + xoffset + lextent);
             	y2		= (y + yoffset + -top + corr);
@@ -830,18 +834,18 @@ void ofTrueTypeFont::drawString(string c, float x, float y) {
 		if (cy < nCharacters){ 			// full char set or not?
 		  if (c[index] == '\n') {
 
-				Y = (int)lineHeight;
+				Y = (float) lineHeight;
 				glTranslatef(-X, Y, 0);
 				X = 0 ; //reset X Pos back to zero
 
 		  }else if (c[index] == ' ') {
 				 int cy = (int)'p' - NUM_CHARACTER_TO_START;
 				 X += cps[cy].width;
-				 glTranslatef(cps[cy].width, 0, 0);
+				 glTranslatef((float)cps[cy].width, 0, 0);
 		  } else {
 				drawChar(cy, 0, 0);
 				X += cps[cy].setWidth;
-				glTranslatef(cps[cy].setWidth, 0, 0);
+				glTranslatef((float)cps[cy].setWidth, 0, 0);
 		  }
 		}
 		index++;
@@ -888,7 +892,7 @@ void ofTrueTypeFont::drawStringAsShapes(string c, float x, float y) {
 		if (cy < nCharacters){ 			// full char set or not?
 		  if (c[index] == '\n') {
 
-				Y = (int)lineHeight;
+				Y = lineHeight;
 				X = 0 ; //reset X Pos back to zero
 
 		  }else if (c[index] == ' ') {

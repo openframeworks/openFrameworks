@@ -274,7 +274,7 @@ void ofVideoPlayer::idleMovie(){
 		#ifndef  TARGET_LINUX  // !linux = quicktime...
 		//--------------------------------------------------------------
 		if (bLoaded == true){
-			#ifdef TARGET_WIN32 || QT_USE_MOVIETASK
+			#if defined(TARGET_WIN32) || defined(QT_USE_MOVIETASK)
 				MoviesTask(moviePtr,0);
 			#endif
 
@@ -853,7 +853,7 @@ void ofVideoPlayer::setFrame(int frame){
 
 	if (frameRate > 0){
 		double frameDuration = 1 / frameRate;
-		TimeValue t = (frame * frameDuration * movieTimeScale);
+		TimeValue t = (TimeValue)(frame * frameDuration * movieTimeScale);
 		SetMovieTimeValue(moviePtr, t);
 		MoviesTask(moviePtr, 0);
 	}
@@ -881,7 +881,7 @@ float ofVideoPlayer::getDuration(){
 	#ifdef OF_VIDEO_PLAYER_QUICKTIME
 	//--------------------------------------
 
-		return GetMovieDuration (moviePtr) / (double) GetMovieTimeScale (moviePtr);
+		return (float) (GetMovieDuration (moviePtr) / (double) GetMovieTimeScale (moviePtr));
 
 	//--------------------------------------
 	#else
@@ -950,7 +950,7 @@ bool ofVideoPlayer::getIsMovieDone(){
 	//--------------------------------------
 	#ifdef OF_VIDEO_PLAYER_QUICKTIME
 	//--------------------------------------
-		bool bIsMovieDone = IsMovieDone(moviePtr);
+		bool bIsMovieDone = (bool)IsMovieDone(moviePtr);
 		return bIsMovieDone;
 	//--------------------------------------
 	#else
@@ -1117,7 +1117,7 @@ void ofVideoPlayer::draw(float _x, float _y, float _w, float _h){
 
 //------------------------------------
 void ofVideoPlayer::draw(float _x, float _y){
-	draw(_x, _y, width, height);
+	draw(_x, _y, (float)width, (float)height);
 }
 
 //------------------------------------
@@ -1138,12 +1138,12 @@ int ofVideoPlayer::getTotalNumFrames(){
 
 //----------------------------------------------------------
 float ofVideoPlayer::getHeight(){
-	return height;
+	return (float)height;
 }
 
 //----------------------------------------------------------
 float ofVideoPlayer::getWidth(){
-	return width;
+	return (float)width;
 }
 
 

@@ -121,8 +121,6 @@ Calculate the static frame rate for a given movie.
 */
 void MovieGetStaticFrameRate(Movie inMovie, double *outStaticFrameRate)
 {
-  assert(inMovie != NULL);
-  assert(outStaticFrameRate != NULL);
 
   *outStaticFrameRate = 0;
 
@@ -152,7 +150,8 @@ void MovieGetStaticFrameRate(Movie inMovie, double *outStaticFrameRate)
       else  /* working with non-MPEG-1/MPEG-2 media */
       {
         OSErr err = MediaGetStaticFrameRate(movieMedia, outStaticFrameRate);
-        assert(err == noErr);
+        if (err != noErr) ofLog(OF_ERROR, "error in MediaGetStaticFrameRate, ofQtUtils");
+        //assert(err == noErr);
       }
     }
   }
@@ -167,9 +166,6 @@ this media.
 */
 void MovieGetVideoMediaAndMediaHandler(Movie inMovie, Media *outMedia, MediaHandler *outMediaHandler)
 {
-  assert(inMovie != NULL);
-  assert(outMedia != NULL);
-  assert(outMediaHandler != NULL);
 
   *outMedia = NULL;
   *outMediaHandler = NULL;
@@ -197,13 +193,11 @@ Return false otherwise.
 */
 OSErr IsMPEGMediaHandler(MediaHandler inMediaHandler, Boolean *outIsMPEG)
 {
-  assert(inMediaHandler != NULL);
-  assert(outIsMPEG != NULL);
 
-  /* is this the MPEG-1/MPEG-2 media handler? */
-  return(MediaHasCharacteristic(inMediaHandler,
-                  kCharacteristicIsAnMpegTrack,
-                  outIsMPEG));
+  	/* is this the MPEG-1/MPEG-2 media handler? */
+	return((OSErr) MediaHasCharacteristic(inMediaHandler,
+					kCharacteristicIsAnMpegTrack,
+					outIsMPEG));
 }
 
 /*
@@ -214,9 +208,6 @@ track, return the static frame rate.
 */
 ComponentResult MPEGMediaGetStaticFrameRate(MediaHandler inMPEGMediaHandler, Fixed *outStaticFrameRate)
 {
-  assert(inMPEGMediaHandler != NULL);
-  assert(outStaticFrameRate != NULL);
-
   *outStaticFrameRate = 0;
 
   MHInfoEncodedFrameRateRecord encodedFrameRate;
@@ -244,9 +235,6 @@ calculate the static frame rate.
 */
 OSErr MediaGetStaticFrameRate(Media inMovieMedia, double *outFPS)
 {
-  assert(inMovieMedia != NULL);
-  assert(outFPS != NULL);
-
   *outFPS = 0;
 
     /* get the number of samples in the media */
