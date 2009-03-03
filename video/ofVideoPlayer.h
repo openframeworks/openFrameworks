@@ -74,8 +74,8 @@ class ofVideoPlayer : public ofBaseVideo{
 		void 				draw(float x, float y, float w, float h);
 		void 				draw(float x, float y);
 
-		//the anchor is the point the image is drawn around. 
-		//this can be useful if you want to rotate an image around a particular point. 
+		//the anchor is the point the image is drawn around.
+		//this can be useful if you want to rotate an image around a particular point.
         void				setAnchorPercent(float xPct, float yPct);	//set the anchor as a percentage of the image width/height ( 0.0-1.0 range )
         void				setAnchorPoint(int x, int y);				//set the anchor point in pixels
         void				resetAnchor();								//resets the anchor to (0, 0)
@@ -132,9 +132,12 @@ class ofVideoPlayer : public ofBaseVideo{
 		gint64          	durationNanos;
 		int					loopMode;
 
-		bool				posChangingPaused;
+		bool				    posChangingPaused;
 
 
+		pthread_mutex_t 	seek_mutex;
+		void                seek_lock();
+		void                seek_unlock();
 		void 				gstHandleMessage();
 		bool 				allocate();
 		//--------------------------------------
