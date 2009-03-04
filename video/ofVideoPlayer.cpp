@@ -342,8 +342,8 @@ void ofVideoPlayer::closeMovie(){
 	//--------------------------------------
 
 	gst_element_set_state(GST_ELEMENT(gstPipeline), GST_STATE_NULL);
-	g_object_unref(gstSink);
-	g_object_unref(gstPipeline);
+	//gst_object_unref(gstSink);
+	gst_object_unref(gstPipeline);
 
 	//--------------------------------------
 	#endif
@@ -870,34 +870,7 @@ void ofVideoPlayer::setFrame(int frame){
 	   float pct = (float)frame / (float)gstData.nFrames;
 	   setPosition(pct);
 
-        //pct = CLAMP(pct, 0,1);// check between 0 and 1;
-       /* GstFormat format = GST_FORMAT_BUFFERS;
-        GstSeekFlags flags = (GstSeekFlags) (GST_SEEK_FLAG_FLUSH|GST_SEEK_FLAG_ACCURATE);
 
-        if(bPaused){
-            gst_element_set_state (gstPipeline, GST_STATE_PLAYING);
-            posChangingPaused = true;
-        }
-        gint64 pos = (guint64)frame;
-        if(speed>0){
-            if(!gst_element_seek(GST_ELEMENT(gstPipeline),speed, 	format,
-                    flags,
-                    GST_SEEK_TYPE_SET,
-                    pos,
-                    GST_SEEK_TYPE_SET,
-                    -1)) {
-            ofLog(OF_WARNING,"GStreamer: unable to change speed");
-            }
-        }else{
-            if(!gst_element_seek(GST_ELEMENT(gstPipeline),speed, 	format,
-                    flags,
-                    GST_SEEK_TYPE_SET,
-                    0,
-                    GST_SEEK_TYPE_SET,
-                    pos)) {
-            ofLog(OF_WARNING,"GStreamer: unable to change speed");
-            }
-        }*/
    //--------------------------------------
     #endif
    //--------------------------------------
@@ -1189,7 +1162,7 @@ bool ofVideoPlayer::allocate(){
 	gst_element_get_state(gstPipeline,&state,NULL,2*GST_SECOND);
 	GstFormat format=GST_FORMAT_TIME;
 	if(!gst_element_query_duration(gstPipeline,&format,&durationNanos))
-		ofLog(OF_WARNING,"GStreamer: cannot query duration");
+		ofLog(OF_WARNING,"GStreamer: cannot query time duration");
 
 	gstData.durationNanos = durationNanos;
 	gstData.nFrames		  = 0;
@@ -1216,15 +1189,15 @@ bool ofVideoPlayer::allocate(){
 			int fps_n;
 			int fps_d;
 
-			if(!gst_video_parse_caps_framerate (caps,&fps_n,&fps_d))
+			if(gst_video_parse_caps_framerate (caps,&fps_n,&fps_d))
 				ofLog(OF_VERBOSE,"fps_n:%d fps_d:%d",fps_n,fps_d);
 			else
 				ofLog(OF_WARNING,"Gstreamer: cannot get framerate, frame seek won't work");
 		}else{
 			ofLog(OF_WARNING,"Gstreamer: cannot get pad caps, frame seek won't work");
 		}*/
-		gst_object_unref(GST_OBJECT(pad));
-	}else{
+        gst_object_unref(GST_OBJECT(pad));
+    }else{
 		ofLog(OF_ERROR,"GStreamer: cannot get sink pad");
 		return false;
 	}
