@@ -106,7 +106,7 @@ static vector <ofPoint> ofSimplifyContour(vector <ofPoint> &V, float tol){
     ofPoint * vt = new ofPoint[n];
 	int * mk = new int[n];
 
-	memset(&mk, 0, sizeof(int) * n );
+	memset(mk, 0, sizeof(int) * n );
 
     // STAGE 1.  Vertex Reduction within tolerance of prior vertex cluster
     vt[0] = V[0];              // start at the beginning
