@@ -3,19 +3,8 @@
 	<version>0.01</version>
 	<author>theo watson</author>
 	<url></url>
-	<requires></requires>
 	
-	<add>	
-		<!-- 	=====================================================================	-->
-		<!--	========================== add for the "installation" of OF =========	-->
-		<!-- 	=====================================================================	-->
-	
-		<addons_h>
-		//--------------------------------------------- ofxThread
-		#ifdef OF_ADDON_USING_OFTHREAD
-			#include "ofxThread.h"
-		#endif 
-		</addons_h>
+	<add>
 		
 		<!-- 	=====================================================================	-->
 		<!--	========================== add per project using this addon =========	-->
