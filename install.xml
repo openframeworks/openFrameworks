@@ -3,27 +3,16 @@
 	<version>0.01</version>
 	<author>christian nagelhofer, theo watson</author>
 	<url></url>
-	<requires></requires>
+	<requires>ofxThread</requires>
 	
-	<add>	
-
-		<!-- 	=====================================================================	-->
-		<!--	========================== add for the "installation" of OF =========	-->
-		<!-- 	=====================================================================	-->
-	
-		<addons_h>
-		//--------------------------------------------- obj loader
-		#ifdef OF_ADDON_USING_OFXNETWORK
-			#include "ofxNetwork.h"
-		#endif 
-		</addons_h>
+	<add>
 		
 		<!-- 	=====================================================================	-->
 		<!--	========================== add per project using this addon =========	-->
 		<!-- 	=====================================================================	-->
 
 		<src>
-			<folder name="addons/ofNetwork/src">
+			<folder name="addons/ofxNetwork/src">
 				<file>../../../addons/ofxNetwork/src/ofxNetwork.h</file>
 				<file>../../../addons/ofxNetwork/src/ofxTCPClient.cpp</file>
 				<file>../../../addons/ofxNetwork/src/ofxTCPClient.h</file>
