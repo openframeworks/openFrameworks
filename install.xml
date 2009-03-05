@@ -3,20 +3,8 @@
 	<version>0.02</version>
 	<author>zach lieberman</author>
 	<url></url>
-	<requires></requires>
 
-	<add>	
-
-		<!-- 	=====================================================================	-->
-		<!--	========================== add for the "installation" of OF =========	-->
-		<!-- 	=====================================================================	-->
-
-		<addons_h>
-		//--------------------------------------------- opencv
-		#ifdef OF_ADDON_USING_OFXOPENCV
-			#include "ofxCvMain.h"
-		#endif 
-		</addons_h>
+	<add>
 
 		<!-- 	=====================================================================	-->
 		<!--	========================== add per project using this addon =========	-->
