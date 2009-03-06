@@ -43,8 +43,12 @@ int ofxCvContourFinder::findContours( ofxCvGrayscaleImage&  input,
 									  int nConsidered,
 									  bool bFindHoles,
                                       bool bUseApproximation) {
-    _width = input.width;
-    _height = input.height;
+              
+    // get width/height disregarding ROI
+    IplImage* ipltemp = input.getCvImage();
+    _width = ipltemp->width;
+    _height = ipltemp->height;
+    
 	reset();
 
 	// opencv will clober the image it detects contours on, so we want to
@@ -58,22 +62,15 @@ int ofxCvContourFinder::findContours( ofxCvGrayscaleImage&  input,
     // one, because you will get penalized less.
 
 	if( inputCopy.width == 0 ) {
-		inputCopy.allocate( input.width, input.height );
-		inputCopy = input;
-	} else {
-		if( inputCopy.width == input.width && inputCopy.height == input.height ) {
-			inputCopy = input;
-		} else {
-			// we are allocated, but to the wrong size --
-			// been checked for memory leaks, but a warning:
-			// be careful if you call this function with alot of different
-			// sized "input" images!, it does allocation every time
-			// a new size is passed in....
-			inputCopy.clear();
-			inputCopy.allocate( input.width, input.height );
-			inputCopy = input;
-		}
+		inputCopy.allocate( _width, _height );
+	} else if( inputCopy.width != _width || inputCopy.height != _height ) {
+        // reallocate to new size
+        inputCopy.clear();
+        inputCopy.allocate( _width, _height );
 	}
+    
+    inputCopy = input;
+    inputCopy.setROI( input.getROI() );    
 
 	CvSeq* contour_list = NULL;
 	contour_storage = cvCreateMemStorage( 1000 );
@@ -140,7 +137,7 @@ int ofxCvContourFinder::findContours( ofxCvGrayscaleImage&  input,
 	if( storage != NULL ) { cvReleaseMemStorage(&storage); }
 
 	return nBlobs;
-
+    
 }
 
 //--------------------------------------------------------------------------------
