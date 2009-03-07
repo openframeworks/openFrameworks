@@ -79,6 +79,8 @@ class ofArduino: public ofStandardFirmata{
 
 				bool bUseDelay;
 
+				bool connected;
+
 				float connectTime;
 
 				void processSysExData(vector<unsigned char> data);
