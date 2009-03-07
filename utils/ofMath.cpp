@@ -1,14 +1,10 @@
 #include "ofMath.h"
 #include "ofAppRunner.h"
 
-#ifndef _MSC_VER
+#ifndef TARGET_WIN32
 	#include <sys/time.h>
 #endif
 
-#ifdef TARGET_WIN32
-	#include <process.h>
-	#define getpid _getpid
-#endif
 
 
 //--------------------------------------------------
@@ -25,7 +21,7 @@ void ofSeedRandom() {
 	// good info here:
 	// http://stackoverflow.com/questions/322938/recommended-way-to-initialize-srand
 
-	#ifdef _MSC_VER
+	#ifdef TARGET_WIN32
 		srand(GetTickCount());
 	#else
 		// use XOR'd second, microsecond precision AND pid as seed
