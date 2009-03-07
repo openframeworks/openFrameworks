@@ -41,12 +41,15 @@ ofArduino::~ofArduino() {
 
 int ofArduino::connect(string device, int baud){
 	connectTime = ofGetElapsedTimef();
-	return ofStandardFirmata::connect(device, baud);
+	connected = ofStandardFirmata::connect(device, baud);
+	return connected;
 }
 
 bool ofArduino::isArduinoReady(){
-	bool bOk = (ofGetElapsedTimef() - connectTime) > OF_ARDUINO_DELAY_LENGTH ? true : false;
-	return bOk;
+	if(bUseDelay)
+		return (ofGetElapsedTimef() - connectTime) > OF_ARDUINO_DELAY_LENGTH ? connected : false;
+	else
+		return connected;
 }
 
 void  ofArduino::setUseDelay(bool bDelay){
