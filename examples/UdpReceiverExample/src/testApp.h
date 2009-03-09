@@ -5,7 +5,7 @@
 #include "ofMain.h"
 #include "ofxNetwork.h"
 
-class testApp : public ofSimpleApp{
+class testApp : public ofBaseApp{
 
 	public:
 
