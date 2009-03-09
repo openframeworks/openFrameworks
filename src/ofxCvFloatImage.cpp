@@ -20,7 +20,7 @@ ofxCvFloatImage::ofxCvFloatImage( const ofxCvFloatImage& _mom ) {
         allocate(mom.width, mom.height);    
         cvCopy( mom.getCvImage(), cvImage, 0 );
     } else {
-        ofLog(OF_NOTICE, "in ofxCvFloatImage copy constructor, mom not allocated");
+        ofLog(OF_LOG_NOTICE, "in ofxCvFloatImage copy constructor, mom not allocated");
     }    
 }
 
@@ -135,7 +135,7 @@ void ofxCvFloatImage::setFromPixels( unsigned char* _pixels, int w, int h ) {
         convertGrayToFloat(cvGrayscaleImage, cvImage);
         flagImageChanged();
     } else {
-        ofLog(OF_ERROR, "in setFromPixels, ROI mismatch");
+        ofLog(OF_LOG_ERROR, "in setFromPixels, ROI mismatch");
     }    
 }
 
@@ -154,7 +154,7 @@ void ofxCvFloatImage::setFromPixels( float* _pixels, int w, int h ) {
         }
         flagImageChanged();
     } else {
-        ofLog(OF_ERROR, "in setFromPixels, ROI mismatch");
+        ofLog(OF_LOG_ERROR, "in setFromPixels, ROI mismatch");
     }     
 }
 
@@ -178,7 +178,7 @@ void ofxCvFloatImage::operator = ( const ofxCvGrayscaleImage& _mom ) {
         mom.popROI();   //restore prevoius ROI              
         flagImageChanged();
 	} else {
-        ofLog(OF_ERROR, "in =, ROI mismatch");
+        ofLog(OF_LOG_ERROR, "in =, ROI mismatch");
 	}
 }
 
@@ -198,7 +198,7 @@ void ofxCvFloatImage::operator = ( const ofxCvColorImage& _mom ) {
         cvSetImageROI(cvGrayscaleImage, cvRect(roiX,roiY,width,height));
         flagImageChanged();
 	} else {
-        ofLog(OF_ERROR, "in =, ROI mismatch");
+        ofLog(OF_LOG_ERROR, "in =, ROI mismatch");
 	}
 }
 
@@ -213,10 +213,10 @@ void ofxCvFloatImage::operator = ( const ofxCvFloatImage& _mom ) {
             mom.popROI();   //restore prevoius ROI             
             flagImageChanged();
         } else {
-            ofLog(OF_ERROR, "in =, ROI mismatch");
+            ofLog(OF_LOG_ERROR, "in =, ROI mismatch");
         }
     } else {
-        ofLog(OF_WARNING, "in =, you are assigning a ofxCvFloatImage to itself");
+        ofLog(OF_LOG_WARNING, "in =, you are assigning a ofxCvFloatImage to itself");
     }
 }
 
@@ -237,10 +237,10 @@ void ofxCvFloatImage::operator *= ( ofxCvImage& mom ) {
             mom.popROI();   //restore prevoius ROI              
             flagImageChanged();
         } else {
-            ofLog(OF_ERROR, "in *=, ROI mismatch");
+            ofLog(OF_LOG_ERROR, "in *=, ROI mismatch");
         }
 	} else {
-        ofLog(OF_ERROR, "in *=, images need to have matching type");
+        ofLog(OF_LOG_ERROR, "in *=, images need to have matching type");
 	}
 }
 
@@ -257,10 +257,10 @@ void ofxCvFloatImage::operator &= ( ofxCvImage& mom ) {
             mom.popROI();   //restore prevoius ROI              
             flagImageChanged();
         } else {
-            ofLog(OF_ERROR, "in &=, ROI mismatch");
+            ofLog(OF_LOG_ERROR, "in &=, ROI mismatch");
         }
 	} else {
-        ofLog(OF_ERROR, "in &=, images need to have matching type");
+        ofLog(OF_LOG_ERROR, "in &=, images need to have matching type");
 	}
 }
 
@@ -274,7 +274,7 @@ void ofxCvFloatImage::addWeighted( ofxCvGrayscaleImage& mom, float f ) {
         mom.popROI();   //restore prevoius ROI           
         flagImageChanged();
     } else {
-        ofLog(OF_ERROR, "in addWeighted, ROI mismatch");
+        ofLog(OF_LOG_ERROR, "in addWeighted, ROI mismatch");
     }
 }
 
@@ -401,13 +401,13 @@ void ofxCvFloatImage::scaleIntoMe( ofxCvImage& mom, int interpolationMethod ){
             (interpolationMethod != CV_INTER_LINEAR) &&
             (interpolationMethod != CV_INTER_AREA) &&
             (interpolationMethod != CV_INTER_CUBIC) ){
-            ofLog(OF_WARNING, "in scaleIntoMe, setting interpolationMethod to CV_INTER_NN");
+            ofLog(OF_LOG_WARNING, "in scaleIntoMe, setting interpolationMethod to CV_INTER_NN");
     		interpolationMethod = CV_INTER_NN;
     	}
         cvResize( mom.getCvImage(), cvImage, interpolationMethod );
         flagImageChanged();
 
     } else {
-        ofLog(OF_ERROR, "in scaleIntoMe, mom image type has to match");
+        ofLog(OF_LOG_ERROR, "in scaleIntoMe, mom image type has to match");
     }
 }

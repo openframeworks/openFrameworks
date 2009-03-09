@@ -21,7 +21,7 @@ ofxCvColorImage::ofxCvColorImage( const ofxCvColorImage& _mom ) {
         allocate(mom.width, mom.height);    
         cvCopy( mom.getCvImage(), cvImage, 0 );
     } else {
-        ofLog(OF_NOTICE, "in ofxCvColorImage copy constructor, mom not allocated");
+        ofLog(OF_LOG_NOTICE, "in ofxCvColorImage copy constructor, mom not allocated");
     }    
 }
 
@@ -88,7 +88,7 @@ void ofxCvColorImage::setFromPixels( unsigned char* _pixels, int w, int h ) {
         }
         flagImageChanged();
     } else {
-        ofLog(OF_ERROR, "in setFromPixels, ROI mismatch");
+        ofLog(OF_LOG_ERROR, "in setFromPixels, ROI mismatch");
     }    
 }
 
@@ -101,7 +101,7 @@ void ofxCvColorImage::setFromGrayscalePlanarImages( ofxCvGrayscaleImage& red, of
          cvCvtPlaneToPix(red.getCvImage(), green.getCvImage(), blue.getCvImage(),NULL, cvImage);
          flagImageChanged();
 	} else {
-        ofLog(OF_ERROR, "in setFromGrayscalePlanarImages, images are different sizes");
+        ofLog(OF_LOG_ERROR, "in setFromGrayscalePlanarImages, images are different sizes");
 	}     
 }
 
@@ -121,7 +121,7 @@ void ofxCvColorImage::operator = ( const ofxCvGrayscaleImage& _mom ) {
         mom.popROI();   //restore prevoius ROI         
         flagImageChanged();
 	} else {
-        ofLog(OF_ERROR, "in =, ROI mismatch");
+        ofLog(OF_LOG_ERROR, "in =, ROI mismatch");
 	}
 }
 
@@ -136,10 +136,10 @@ void ofxCvColorImage::operator = ( const ofxCvColorImage& _mom ) {
             mom.popROI();   //restore prevoius ROI              
             flagImageChanged();
         } else {
-            ofLog(OF_ERROR, "in =, ROI mismatch");
+            ofLog(OF_LOG_ERROR, "in =, ROI mismatch");
         }
     } else {
-        ofLog(OF_WARNING, "in =, you are assigning a ofxCvColorImage to itself");
+        ofLog(OF_LOG_WARNING, "in =, you are assigning a ofxCvColorImage to itself");
     }
 }
 
@@ -159,7 +159,7 @@ void ofxCvColorImage::operator = ( const ofxCvFloatImage& _mom ) {
         cvSetImageROI(cvGrayscaleImage, cvRect(roiX,roiY,width,height));
         flagImageChanged();
 	} else {
-        ofLog(OF_ERROR, "in =, ROI mismatch");
+        ofLog(OF_LOG_ERROR, "in =, ROI mismatch");
 	}
 }
 
@@ -206,7 +206,7 @@ void ofxCvColorImage::convertToGrayscalePlanarImages(ofxCvGrayscaleImage& red, o
     {
         cvCvtPixToPlane(cvImage, red.getCvImage(), green.getCvImage(), blue.getCvImage(), NULL);
 	} else {
-        ofLog(OF_ERROR, "in convertToGrayscalePlanarImages, images are different sizes");
+        ofLog(OF_LOG_ERROR, "in convertToGrayscalePlanarImages, images are different sizes");
 	}     
 }
 
@@ -220,7 +220,7 @@ void ofxCvColorImage::convertToGrayscalePlanarImages(ofxCvGrayscaleImage& red, o
 
 //--------------------------------------------------------------------------------
 void ofxCvColorImage::contrastStretch() {
-	ofLog(OF_WARNING, "in contrastStratch, not implemented for ofxCvColorImage");
+	ofLog(OF_LOG_WARNING, "in contrastStratch, not implemented for ofxCvColorImage");
 }
 
 //--------------------------------------------------------------------------------
@@ -264,14 +264,14 @@ void ofxCvColorImage::scaleIntoMe( ofxCvImage& mom, int interpolationMethod ){
             (interpolationMethod != CV_INTER_LINEAR) &&
             (interpolationMethod != CV_INTER_AREA) &&
             (interpolationMethod != CV_INTER_CUBIC) ){
-            ofLog(OF_WARNING, "in scaleIntoMe, setting interpolationMethod to CV_INTER_NN");
+            ofLog(OF_LOG_WARNING, "in scaleIntoMe, setting interpolationMethod to CV_INTER_NN");
     		interpolationMethod = CV_INTER_NN;
     	}
         cvResize( mom.getCvImage(), cvImage, interpolationMethod );
         flagImageChanged();
 
     } else {
-        ofLog(OF_ERROR, "in scaleIntoMe, mom image type has to match");
+        ofLog(OF_LOG_ERROR, "in scaleIntoMe, mom image type has to match");
     }
 }
 

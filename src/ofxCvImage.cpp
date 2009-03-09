@@ -30,7 +30,7 @@ ofxCvImage::~ofxCvImage() {
 //--------------------------------------------------------------------------------
 void ofxCvImage::allocate( int w, int h ) {
 	if (bAllocated == true){
-		ofLog(OF_WARNING, "in allocate, reallocating a ofxCvImage");
+		ofLog(OF_LOG_WARNING, "in allocate, reallocating a ofxCvImage");
 		clear();
 	}
     
@@ -156,7 +156,7 @@ void ofxCvImage::popROI() {
     if(roiStack.size() > 1) {
         roiStack.pop_back();
     } else {
-        ofLog(OF_WARNING, "in popROI, not popping since there is only one element left.");
+        ofLog(OF_LOG_WARNING, "in popROI, not popping since there is only one element left.");
     }
     setROI( roiStack.back() );
 }
@@ -251,7 +251,7 @@ void  ofxCvImage::operator = ( const IplImage* mom ) {
 		cvCopy( mom, cvImage );
         flagImageChanged();
 	} else {
-        ofLog(OF_ERROR, "in =, images need to match in size, channels, and depth");
+        ofLog(OF_LOG_ERROR, "in =, images need to match in size, channels, and depth");
 	}
 }
 
@@ -282,10 +282,10 @@ void ofxCvImage::operator -= ( ofxCvImage& mom ) {
             mom.popROI();   //restore prevoius ROI              
             flagImageChanged();
         } else {
-            ofLog(OF_ERROR, "in -=, ROI mismatch");
+            ofLog(OF_LOG_ERROR, "in -=, ROI mismatch");
         }
 	} else {
-        ofLog(OF_ERROR, "in -=, images need to have matching type");
+        ofLog(OF_LOG_ERROR, "in -=, images need to have matching type");
 	}
 }
 
@@ -301,10 +301,10 @@ void ofxCvImage::operator += ( ofxCvImage& mom ) {
             mom.popROI();   //restore prevoius ROI              
             flagImageChanged();
         } else {
-            ofLog(OF_ERROR, "in +=, ROI mismatch");
+            ofLog(OF_LOG_ERROR, "in +=, ROI mismatch");
         }
 	} else {
-        ofLog(OF_ERROR, "in +=, images need to have matching type");
+        ofLog(OF_LOG_ERROR, "in +=, images need to have matching type");
 	}
 }
 
@@ -321,10 +321,10 @@ void ofxCvImage::operator *= ( ofxCvImage& mom ) {
             mom.popROI();   //restore prevoius ROI              
             flagImageChanged();
         } else {
-            ofLog(OF_ERROR, "in *=, ROI mismatch");
+            ofLog(OF_LOG_ERROR, "in *=, ROI mismatch");
         }
 	} else {
-        ofLog(OF_ERROR, "in *=, images need to have matching type");
+        ofLog(OF_LOG_ERROR, "in *=, images need to have matching type");
 	}
 }
 
@@ -340,10 +340,10 @@ void ofxCvImage::operator &= ( ofxCvImage& mom ) {
             mom.popROI();   //restore prevoius ROI              
             flagImageChanged();
         } else {
-            ofLog(OF_ERROR, "in &=, ROI mismatch");
+            ofLog(OF_LOG_ERROR, "in &=, ROI mismatch");
         }
 	} else {
-        ofLog(OF_ERROR, "in &=, images need to have matching type");
+        ofLog(OF_LOG_ERROR, "in &=, images need to have matching type");
 	}
 }
 
@@ -380,13 +380,13 @@ void ofxCvImage::draw( float x, float y, float w, float h ) {
     } else {
         // this is slower than the typical draw method based on textures
         // but useful when dealing with threads GL textures often don't work
-        ofLog(OF_NOTICE, "in draw, using slow texture-less drawing");
-        ofLog(OF_NOTICE, "texture-less drawing - be aware, unlike texture drawing, \
+        ofLog(OF_LOG_NOTICE, "in draw, using slow texture-less drawing");
+        ofLog(OF_LOG_NOTICE, "texture-less drawing - be aware, unlike texture drawing, \
                           this always draws window aligned, rotation not supported");
         
         if( x == 0) {
             x += 0.01;
-            ofLog(OF_NOTICE, "BUG: can't draw at x==0 in texture-less mode.");
+            ofLog(OF_LOG_NOTICE, "BUG: can't draw at x==0 in texture-less mode.");
         }
         
         if(bAnchorIsPct){
@@ -469,7 +469,7 @@ void ofxCvImage::erode() {
 //--------------------------------------------------------------------------------
 void ofxCvImage::blur( int value ) {
     if( value % 2 == 0 ) {
-        ofLog(OF_NOTICE, "in blur, value not odd -> will add 1 to cover your back");
+        ofLog(OF_LOG_NOTICE, "in blur, value not odd -> will add 1 to cover your back");
         value++;
     }
 	cvSmooth( cvImage, cvImageTemp, CV_BLUR , value);
@@ -480,7 +480,7 @@ void ofxCvImage::blur( int value ) {
 //--------------------------------------------------------------------------------
 void ofxCvImage::blurGaussian( int value ) {
     if( value % 2 == 0 ) {
-        ofLog(OF_NOTICE, "in blurGaussian, value not odd -> will add 1 to cover your back");
+        ofLog(OF_LOG_NOTICE, "in blurGaussian, value not odd -> will add 1 to cover your back");
         value++;
     }
 	cvSmooth( cvImage, cvImageTemp, CV_GAUSSIAN ,value );
@@ -640,7 +640,7 @@ void ofxCvImage::warpIntoMe( ofxCvImage& mom, const ofPoint src[4], const ofPoin
     	cvReleaseMat( &translate );
 
     } else {
-        ofLog(OF_ERROR, "in warpIntoMe: mom image type has to match");
+        ofLog(OF_LOG_ERROR, "in warpIntoMe: mom image type has to match");
     }	
 }
 
