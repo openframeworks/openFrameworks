@@ -42,10 +42,10 @@ float * ofSoundGetSpectrum(int nBands){
 
 	// 	check what the user wants vs. what we can do:
 	if (nBands > 8192){
-		ofLog(OF_ERROR, "error in ofSoundGetSpectrum, the maximum number of bands is 8192 - you asked for %i we will return 8192", nBands);
+		ofLog(OF_LOG_ERROR, "error in ofSoundGetSpectrum, the maximum number of bands is 8192 - you asked for %i we will return 8192", nBands);
 		nBands = 8192;
 	} else if (nBands <= 0){
-		ofLog(OF_ERROR, "error in ofSoundSpectrum, you've asked for %i bands, minimum is 1", nBands);
+		ofLog(OF_LOG_ERROR, "error in ofSoundSpectrum, you've asked for %i bands, minimum is 1", nBands);
 		return fftInterpValues;
 	}
 
@@ -92,7 +92,7 @@ float * ofSoundGetSpectrum(int nBands){
 				currentBand++;
 				// safety check:
 				if (currentBand >= nBands){
-					ofLog(OF_ERROR, "ofSoundGetSpectrum - currentBand >= nBands");
+					ofLog(OF_LOG_ERROR, "ofSoundGetSpectrum - currentBand >= nBands");
 				}
 
 				fftInterpValues[currentBand] += one_m_fraction * fftValues[i];
@@ -194,7 +194,7 @@ void ofSoundPlayer::loadSound(string fileName, bool stream){
 
 	if (result != FMOD_OK){
 		bLoadedOk = false;
-		ofLog(OF_ERROR,"ofSoundPlayer: Could not load sound file %s", fileName.c_str() );
+		ofLog(OF_LOG_ERROR,"ofSoundPlayer: Could not load sound file %s", fileName.c_str() );
 	} else {
 		bLoadedOk = true;
 		FMOD_Sound_GetLength(sound, &length, FMOD_TIMEUNIT_PCM);

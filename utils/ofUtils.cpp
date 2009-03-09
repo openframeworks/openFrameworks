@@ -218,7 +218,7 @@ void ofLaunchBrowser(string url){
 
 	//make sure it is a properly formatted url
 	if(url.substr(0,7) != "http://"){
-		ofLog(OF_WARNING, "ofLaunchBrowser: url must begin http://");
+		ofLog(OF_LOG_WARNING, "ofLaunchBrowser: url must begin http://");
 		return;
 	}
 
@@ -303,19 +303,19 @@ void ofSetLogLevel(int logLevel){
 //--------------------------------------------------
 void ofLog(int logLevel, string message){
 	if(logLevel >= currentLogLevel){
-		if(logLevel == OF_VERBOSE){
+		if(logLevel == OF_LOG_VERBOSE){
 			printf("OF_VERBOSE: ");
 		}
-		else if(logLevel == OF_NOTICE){
+		else if(logLevel == OF_LOG_NOTICE){
 			printf("OF_NOTICE: ");
 		}
-		else if(logLevel == OF_WARNING){
+		else if(logLevel == OF_LOG_WARNING){
 			printf("OF_WARNING: ");
 		}
-		else if(logLevel == OF_ERROR){
+		else if(logLevel == OF_LOG_ERROR){
 			printf("OF_ERROR: ");
 		}
-		else if(logLevel == OF_FATAL_ERROR){
+		else if(logLevel == OF_LOG_FATAL_ERROR){
 			printf("OF_FATAL_ERROR: ");
 		}
 		printf("%s\n",message.c_str());
@@ -330,19 +330,19 @@ void ofLog(int logLevel, const char* format, ...){
 	if(logLevel >= currentLogLevel){
 		va_list args;
 		va_start( args, format );
-		if(logLevel == OF_VERBOSE){
+		if(logLevel == OF_LOG_VERBOSE){
 			printf("OF_VERBOSE: ");
 		}
-		else if(logLevel == OF_NOTICE){
+		else if(logLevel == OF_LOG_NOTICE){
 			printf("OF_NOTICE: ");
 		}
-		else if(logLevel == OF_WARNING){
+		else if(logLevel == OF_LOG_WARNING){
 			printf("OF_WARNING: ");
 		}
-		else if(logLevel == OF_ERROR){
+		else if(logLevel == OF_LOG_ERROR){
 			printf("OF_ERROR: ");
 		}
-		else if(logLevel == OF_FATAL_ERROR){
+		else if(logLevel == OF_LOG_FATAL_ERROR){
 			printf("OF_FATAL_ERROR: ");
 		}
 		vprintf( format, args );

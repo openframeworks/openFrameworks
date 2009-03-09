@@ -693,7 +693,7 @@ void clearCurveVertices();
 void CALLBACK tessError(GLenum errCode){
 	const GLubyte* estring;
 	estring = gluErrorString( errCode);
-	ofLog(OF_ERROR, "tessError: %s", estring);
+	ofLog(OF_LOG_ERROR, "tessError: %s", estring);
 }
 
 
@@ -787,7 +787,7 @@ void ofSetPolyMode(int mode){
 			polyMode = OF_POLY_WINDING_ABS_GEQ_TWO;
 			break;
 		default:
-			ofLog(OF_ERROR," error in ofSetPolyMode");
+			ofLog(OF_LOG_ERROR," error in ofSetPolyMode");
 
 	}
 

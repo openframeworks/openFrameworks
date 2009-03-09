@@ -23,8 +23,8 @@ bool 	createMovieFromPath(char * path, Movie &movie){
 	#ifdef TARGET_WIN32
 		result = NativePathNameToFSSpec (path, &theFSSpec, 0);
 		if (result != noErr) {
-			ofLog(OF_ERROR,"NativePathNameToFSSpec failed %d", result);
-			ofLog(OF_ERROR,"Error loading movie");
+			ofLog(OF_LOG_ERROR,"NativePathNameToFSSpec failed %d", result);
+			ofLog(OF_LOG_ERROR,"Error loading movie");
 			return false;
 		}
 
@@ -36,14 +36,14 @@ bool 	createMovieFromPath(char * path, Movie &movie){
 		FSRef 		fsref;
 		result = FSPathMakeRef((const UInt8*)path, &fsref, &isdir);
 		if (result) {
-			ofLog(OF_ERROR,"FSPathMakeRef failed %d", result);
-			ofLog(OF_ERROR,"Error loading movie");
+			ofLog(OF_LOG_ERROR,"FSPathMakeRef failed %d", result);
+			ofLog(OF_LOG_ERROR,"Error loading movie");
 			return false;
 		}
 		result = FSGetCatalogInfo(&fsref, kFSCatInfoNone, NULL, NULL, &theFSSpec, NULL);
 		if (result) {
-			ofLog(OF_ERROR,"FSGetCatalogInfo failed %d", result);
-			ofLog(OF_ERROR,"Error loading movie");
+			ofLog(OF_LOG_ERROR,"FSGetCatalogInfo failed %d", result);
+			ofLog(OF_LOG_ERROR,"Error loading movie");
 			return false;
 		}
 	#endif
@@ -58,11 +58,11 @@ bool 	createMovieFromPath(char * path, Movie &movie){
 		if (result == noErr){
 			CloseMovieFile (movieResFile);
 		} else {
-			ofLog(OF_ERROR,"NewMovieFromFile failed %d", result);
+			ofLog(OF_LOG_ERROR,"NewMovieFromFile failed %d", result);
 			return false;
 		}
 	} else {
-		ofLog(OF_ERROR,"OpenMovieFile failed %d", result);
+		ofLog(OF_LOG_ERROR,"OpenMovieFile failed %d", result);
 		return false;
 	}
 
@@ -77,7 +77,7 @@ bool createMovieFromURL(string urlIn,  Movie &movie){
 	OSErr err;
 
 	urlDataRef = NewHandle(strlen(url) + 1);
-	if ( ( err = MemError()) != noErr){ ofLog(OF_ERROR,"createMovieFromURL: error creating url handle"); return false;}
+	if ( ( err = MemError()) != noErr){ ofLog(OF_LOG_ERROR,"createMovieFromURL: error creating url handle"); return false;}
 
 	BlockMoveData(url, *urlDataRef, strlen(url) + 1);
 
@@ -85,7 +85,7 @@ bool createMovieFromURL(string urlIn,  Movie &movie){
 	DisposeHandle(urlDataRef);
 
 	if(err != noErr){
-		ofLog(OF_ERROR,"createMovieFromURL: error loading url");
+		ofLog(OF_LOG_ERROR,"createMovieFromURL: error loading url");
 		return false;
 	}else{
 		return true;
@@ -249,7 +249,7 @@ unsigned char * ofVideoPlayer::getPixels(){
 //for getting a reference to the texture
 ofTexture & ofVideoPlayer::getTextureReference(){
 	if(!tex.bAllocated() ){
-		ofLog(OF_WARNING, "ofVideoPlayer - getTextureReference - texture is not allocated");
+		ofLog(OF_LOG_WARNING, "ofVideoPlayer - getTextureReference - texture is not allocated");
 	}
 	return tex;
 }
@@ -542,7 +542,7 @@ bool ofVideoPlayer::loadMovie(string name){
 		}else{
 			isStream		= true;
 		}
-		ofLog(OF_VERBOSE,"loading "+name);
+		ofLog(OF_LOG_VERBOSE,"loading "+name);
 
 		gstData.loop		= g_main_loop_new (NULL, FALSE);
 
@@ -568,7 +568,7 @@ bool ofVideoPlayer::loadMovie(string name){
 		// pause the pipeline
 		if(gst_element_set_state(GST_ELEMENT(gstPipeline), GST_STATE_PAUSED) ==
 		   GST_STATE_CHANGE_FAILURE) {
-			ofLog(OF_ERROR, "GStreamer: unable to set pipeline to paused\n");
+			ofLog(OF_LOG_ERROR, "GStreamer: unable to set pipeline to paused\n");
 			gst_object_unref(gstPipeline);
 			return false;
 		}
@@ -813,7 +813,7 @@ void ofVideoPlayer::setPosition(float pct){
 				pos,
 				GST_SEEK_TYPE_SET,
 				-1)) {
-		ofLog(OF_WARNING,"GStreamer: unable to change speed");
+		ofLog(OF_LOG_WARNING,"GStreamer: unable to change speed");
 		}
 	}else{
 		if(!gst_element_seek(GST_ELEMENT(gstPipeline),speed, 	format,
@@ -822,7 +822,7 @@ void ofVideoPlayer::setPosition(float pct){
 				0,
 				GST_SEEK_TYPE_SET,
 				pos)) {
-		ofLog(OF_WARNING,"GStreamer: unable to change speed");
+		ofLog(OF_LOG_WARNING,"GStreamer: unable to change speed");
 		}
 	}
 
@@ -919,7 +919,7 @@ float ofVideoPlayer::getPosition(){
 		gint64 pos=0;
 		GstFormat format=GST_FORMAT_TIME;
 		if(!gst_element_query_position(GST_ELEMENT(gstPipeline),&format,&pos))
-			ofLog(OF_ERROR,"GStreamer: cannot query position");
+			ofLog(OF_LOG_ERROR,"GStreamer: cannot query position");
 		return (float)pos/(float)durationNanos;
 
 	//--------------------------------------
@@ -1019,7 +1019,7 @@ void ofVideoPlayer::setSpeed(float _speed){
 		}
 
 		if(!gst_element_query_position(GST_ELEMENT(gstPipeline),&format,&pos))
-			ofLog(OF_ERROR,"GStreamer: cannot query position");
+			ofLog(OF_LOG_ERROR,"GStreamer: cannot query position");
 
 		if(!bPaused)
 			gst_element_set_state (gstPipeline, GST_STATE_PLAYING);
@@ -1031,7 +1031,7 @@ void ofVideoPlayer::setSpeed(float _speed){
 					pos,
 					GST_SEEK_TYPE_SET,
 					-1)) {
-			ofLog(OF_WARNING,"GStreamer: unable to change speed");
+			ofLog(OF_LOG_WARNING,"GStreamer: unable to change speed");
 			}
 		}else{
 			if(!gst_element_seek(GST_ELEMENT(gstPipeline),speed, 	format,
@@ -1040,11 +1040,11 @@ void ofVideoPlayer::setSpeed(float _speed){
 					0,
 					GST_SEEK_TYPE_SET,
 					pos)) {
-			ofLog(OF_WARNING,"GStreamer: unable to change speed");
+			ofLog(OF_LOG_WARNING,"GStreamer: unable to change speed");
 			}
 		}
 
-		ofLog(OF_VERBOSE,"Gstreamer: speed change to %f", speed);
+		ofLog(OF_LOG_VERBOSE,"Gstreamer: speed change to %f", speed);
 
 	//--------------------------------------
 	#endif
@@ -1164,7 +1164,7 @@ bool ofVideoPlayer::allocate(){
 	gst_element_get_state(gstPipeline,&state,NULL,2*GST_SECOND);
 	GstFormat format=GST_FORMAT_TIME;
 	if(!gst_element_query_duration(gstPipeline,&format,&durationNanos))
-		ofLog(OF_WARNING,"GStreamer: cannot query time duration");
+		ofLog(OF_LOG_WARNING,"GStreamer: cannot query time duration");
 
 	gstData.durationNanos = durationNanos;
 	gstData.nFrames		  = 0;
@@ -1182,7 +1182,7 @@ bool ofVideoPlayer::allocate(){
 			tex.loadData(pixels,width,height,GL_RGB);
 			allocated = true;
 		}else{
-			ofLog(OF_ERROR,"GStreamer: cannot query width and height");
+			ofLog(OF_LOG_ERROR,"GStreamer: cannot query width and height");
 			return false;
 		}
 
@@ -1200,7 +1200,7 @@ bool ofVideoPlayer::allocate(){
 		}*/
         gst_object_unref(GST_OBJECT(pad));
     }else{
-		ofLog(OF_ERROR,"GStreamer: cannot get sink pad");
+		ofLog(OF_LOG_ERROR,"GStreamer: cannot get sink pad");
 		return false;
 	}
 	bLoaded = true;
@@ -1216,14 +1216,14 @@ void ofVideoPlayer::gstHandleMessage()
 	while(gst_bus_have_pending(bus)) {
 		GstMessage* msg = gst_bus_pop(bus);
 
-		ofLog(OF_VERBOSE,"GStreamer: Got %s message", GST_MESSAGE_TYPE_NAME(msg));
+		ofLog(OF_LOG_VERBOSE,"GStreamer: Got %s message", GST_MESSAGE_TYPE_NAME(msg));
 
 		switch (GST_MESSAGE_TYPE (msg)) {
 
 			case GST_MESSAGE_BUFFERING:
 				gint pctBuffered;
 				gst_message_parse_buffering(msg,&pctBuffered);
-				ofLog(OF_VERBOSE,"GStreamer: buffering %i\%", pctBuffered);
+				ofLog(OF_LOG_VERBOSE,"GStreamer: buffering %i\%", pctBuffered);
 				if(isStream && !bLoaded){
 					allocate();
 				}
@@ -1237,7 +1237,7 @@ void ofVideoPlayer::gstHandleMessage()
 			case GST_MESSAGE_DURATION:{
 				GstFormat format=GST_FORMAT_TIME;
 				if(!gst_element_query_duration(gstPipeline,&format,&durationNanos))
-					ofLog(OF_WARNING,"GStreamer: cannot query duration");
+					ofLog(OF_LOG_WARNING,"GStreamer: cannot query duration");
 			}break;
 
 			case GST_MESSAGE_STATE_CHANGED:
@@ -1252,12 +1252,12 @@ void ofVideoPlayer::gstHandleMessage()
 				seek_unlock();
 
 
-				ofLog(OF_VERBOSE,"GStreamer: state changed from %d to %d (%d)", oldstate, newstate, pendstate);
+				ofLog(OF_LOG_VERBOSE,"GStreamer: state changed from %d to %d (%d)", oldstate, newstate, pendstate);
 			break;
 
 			case GST_MESSAGE_ASYNC_DONE:
 				gstData.speed=speed;
-				ofLog(OF_VERBOSE,"GStreamer: async done");
+				ofLog(OF_LOG_VERBOSE,"GStreamer: async done");
 			break;
 
 			case GST_MESSAGE_ERROR: {
@@ -1265,7 +1265,7 @@ void ofVideoPlayer::gstHandleMessage()
 				gchar *debug;
 				gst_message_parse_error(msg, &err, &debug);
 
-				ofLog(OF_ERROR, "GStreamer Plugin: Embedded video playback halted; module %s reported: %s",
+				ofLog(OF_LOG_ERROR, "GStreamer Plugin: Embedded video playback halted; module %s reported: %s",
 					  gst_element_get_name(GST_MESSAGE_SRC (msg)), err->message);
 
 				g_error_free(err);
@@ -1276,7 +1276,7 @@ void ofVideoPlayer::gstHandleMessage()
 			}break;
 
 			case GST_MESSAGE_EOS:
-				ofLog(OF_VERBOSE,"GStreamer: end of the stream.");
+				ofLog(OF_LOG_VERBOSE,"GStreamer: end of the stream.");
 				bIsMovieDone = true;
 
 				switch(loopMode){
@@ -1300,7 +1300,7 @@ void ofVideoPlayer::gstHandleMessage()
 											0,
 											GST_SEEK_TYPE_SET,
 											durationNanos)) {
-							ofLog(OF_WARNING,"GStreamer: unable to seek");
+							ofLog(OF_LOG_WARNING,"GStreamer: unable to seek");
 						}
 					}break;
 
@@ -1322,7 +1322,7 @@ void ofVideoPlayer::gstHandleMessage()
 											0,
 											GST_SEEK_TYPE_NONE,
 											0)) {
-							ofLog(OF_WARNING,"GStreamer: unable to seek");
+							ofLog(OF_LOG_WARNING,"GStreamer: unable to seek");
 						}
 					}break;
 				}
@@ -1330,7 +1330,7 @@ void ofVideoPlayer::gstHandleMessage()
 			break;
 
 			default:
-				ofLog(OF_VERBOSE,"GStreamer: unhandled message");
+				ofLog(OF_LOG_VERBOSE,"GStreamer: unhandled message");
 			break;
 		}
 		gst_message_unref(msg);

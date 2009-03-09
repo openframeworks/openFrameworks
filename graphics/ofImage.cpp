@@ -125,7 +125,7 @@ void ofImage::allocate(int w, int h, int type){
 			newBpp = 32;
 			break;
 		default:
-			ofLog(OF_ERROR,"error = bad imageType in ofImage::allocate");
+			ofLog(OF_LOG_ERROR,"error = bad imageType in ofImage::allocate");
 			return;
 	}
 
@@ -173,7 +173,7 @@ unsigned char * ofImage::getPixels(){
 //for getting a reference to the texture
 ofTexture & ofImage::getTextureReference(){
 	if(!tex.bAllocated() ){
-		ofLog(OF_WARNING, "ofImage - getTextureReference - texture is not allocated");
+		ofLog(OF_LOG_WARNING, "ofImage - getTextureReference - texture is not allocated");
 	}
 	return tex;
 }
@@ -203,7 +203,7 @@ void  ofImage::setFromPixels(unsigned char * newPixels, int w, int h, int newTyp
 			newBpp = 32;
 			break;
 		default:
-			ofLog(OF_ERROR,"error = bad imageType in ofImage::setFromPixels");
+			ofLog(OF_LOG_ERROR,"error = bad imageType in ofImage::setFromPixels");
 			return;
 	}
 
@@ -573,7 +573,7 @@ bool ofImage::loadImageIntoPixels(string fileName, ofPixels &pix){
 void  ofImage::saveImageFromPixels(string fileName, ofPixels &pix){
 
 	if (pix.bAllocated == false){
-		ofLog(OF_ERROR,"error saving image - pixels aren't allocated");
+		ofLog(OF_LOG_ERROR,"error saving image - pixels aren't allocated");
 		return;
 	}
 
