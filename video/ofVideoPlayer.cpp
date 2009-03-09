@@ -341,9 +341,11 @@ void ofVideoPlayer::closeMovie(){
 	#else
 	//--------------------------------------
 
-	gst_element_set_state(GST_ELEMENT(gstPipeline), GST_STATE_NULL);
-	//gst_object_unref(gstSink);
-	gst_object_unref(gstPipeline);
+	if(bLoaded){
+		gst_element_set_state(GST_ELEMENT(gstPipeline), GST_STATE_NULL);
+		//gst_object_unref(gstSink);
+		gst_object_unref(gstPipeline);
+	}
 
 	//--------------------------------------
 	#endif
