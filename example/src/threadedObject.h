@@ -2,22 +2,21 @@
 #define _THREADED_OBJECT
 
 #include "ofMain.h"
-#define OF_ADDON_USING_OFXTHREAD
-#include "ofAddons.h"
+#include "ofxThread.h"
 
-// this is not a very exciting example yet 
-// but ofThread provides the basis for ofNetwork and other 
+// this is not a very exciting example yet
+// but ofThread provides the basis for ofNetwork and other
 // operations that require threading.
 //
-// please be careful - threading problems are notoriously hard 
+// please be careful - threading problems are notoriously hard
 // to debug and working with threads can be quite difficult
 
 
 class threadedObject : public ofxThread{
 
 	public:
-	   
-	   
+
+
 	    int count;  // threaded fucntions that share data need to use lock (mutex)
 	                // and unlock in order to write to that data
 	                // otherwise it's possible to get crashes.
@@ -25,23 +24,23 @@ class threadedObject : public ofxThread{
 	                // also no opengl specific stuff will work in a thread...
 	                // threads can't create textures, or draw stuff on the screen
 	                // since opengl is single thread safe
-	                
+
 		//--------------------------
 		threadedObject(){
 			count = 0;
 		}
-		
+
 		void start(){
             startThread(true, false);   // blocking, verbose
         }
-        
+
         void stop(){
-            stopThread(); 
+            stopThread();
         }
-		
+
 		//--------------------------
 		void threadedFunction(){
-			
+
 			while( isThreadRunning() != 0 ){
 				if( lock() ){
 					count++;
@@ -54,20 +53,20 @@ class threadedObject : public ofxThread{
 
 		//--------------------------
 		void draw(){
-			
+
 			string str = "I am a slowly increasing thread. \nmy current count is: ";
-		
+
 			if( lock() ){
 				str += ofToString(count);
 				unlock();
 			}else{
 				str = "can't lock!\neither an error\nor the thread has stopped";
-			}						
+			}
 			ofDrawBitmapString(str, 50, 56);
 		}
 
 
-	
+
 };
 
 #endif

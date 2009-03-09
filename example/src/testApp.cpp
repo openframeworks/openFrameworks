@@ -4,13 +4,13 @@
 bool locked = false;
 
 //--------------------------------------------------------------
-void testApp::setup(){	 
+void testApp::setup(){
 	mainAppsCount = 0;
 	TO.start();
 }
 
 //--------------------------------------------------------------
-void testApp::update(){	
+void testApp::update(){
 	ofBackground(0,0,0);   // black because threads are EVIL ;)
 	mainAppsCount++;
 }
@@ -24,18 +24,18 @@ void testApp::draw(){
     string str = "I am a the main opengl thread.\nmy current count is: ";
 	str += ofToString(mainAppsCount);
     ofDrawBitmapString(str, 350, 56);
-    
-    
+
+
     ofSetColor(0xff0033);
-    
+
     ofDrawBitmapString("press 's' to stop the thread and 'a' to start it", 50, 160);
 }
 
 //--------------------------------------------------------------
-void testApp::keyPressed  (int key){ 
-    
+void testApp::keyPressed  (int key){
+
     if (key == 'a'){
-        TO.start();   
+        TO.start();
     } else if (key == 's'){
         TO.stop();
     }
@@ -47,14 +47,21 @@ void testApp::mouseMoved(int x, int y ){
 
 //--------------------------------------------------------------
 void testApp::mouseDragged(int x, int y, int button){
-	
+
 }
 
 //--------------------------------------------------------------
 void testApp::mousePressed(int x, int y, int button){
-	
+
 }
 
 //--------------------------------------------------------------
-void testApp::mouseReleased(){
+void testApp::mouseReleased(int x, int y, int button){
+
 }
+
+//--------------------------------------------------------------
+void testApp::resized(int w, int h){
+
+}
+
