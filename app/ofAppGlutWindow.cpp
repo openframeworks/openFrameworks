@@ -560,11 +560,11 @@ void ofAppGlutWindow::resize_cb(int w, int h) {
 	static ofResizeEventArgs resizeEventArgs;
 
 	if(ofAppPtr)
-		ofAppPtr->resized(w,h);
+		ofAppPtr->windowResized(w,h);
 
 	#ifdef OF_USING_POCO
 		resizeEventArgs.width = w;
 		resizeEventArgs.height = h;
-		ofNotifyEvent( ofEvents.resize, resizeEventArgs );
+		ofNotifyEvent( ofEvents.windowResized, resizeEventArgs );
 	#endif
 }

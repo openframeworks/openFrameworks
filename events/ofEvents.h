@@ -49,7 +49,7 @@
 		ofEvent<ofEventArgs> 		update;
 		ofEvent<ofEventArgs> 		draw;
 		ofEvent<ofEventArgs> 		exit;
-		ofEvent<ofResizeEventArgs> 	resize;
+		ofEvent<ofResizeEventArgs> 	windowResized;
 
 		ofEvent<ofKeyEventArgs> 	keyPressed;
 		ofEvent<ofKeyEventArgs> 	keyReleased;
