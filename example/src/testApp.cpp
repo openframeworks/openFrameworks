@@ -242,7 +242,7 @@ void testApp::mousePressed(int x, int y, int button){
 }
 
 //--------------------------------------------------------------
-void testApp::mouseReleased(){
+void testApp::mouseReleased(int x, int y, int button){
 
 	//update the colors to the XML structure when the mouse is released
 	XML.setValue("BACKGROUND:COLOR:RED", red);
@@ -252,7 +252,9 @@ void testApp::mouseReleased(){
 }
 
 
-
+//--------------------------------------------------------------
+void testApp::resized(int w, int h){
+}
 
 
 
