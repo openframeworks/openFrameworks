@@ -36,7 +36,7 @@ void ofxDirList::reset(){
 
 //----------------------------------------------------------
 void ofxDirList::setVerbose(bool _verbose){
-    ofLog(OF_WARNING, "ofxDirList setVerbose is depreciated use ofSetLogLevel instead");
+    ofLog(OF_LOG_WARNING, "ofxDirList setVerbose is depreciated use ofSetLogLevel instead");
 }
 
 //----------------------------------------------------------
@@ -72,14 +72,14 @@ int ofxDirList::listDir(string directory){
 	struct dirent *entry;
 
     //open the directory
-    ofLog(OF_VERBOSE, "ofxDirList - attempting to open %s", directory.c_str());
+    ofLog(OF_LOG_VERBOSE, "ofxDirList - attempting to open %s", directory.c_str());
     dir = opendir(directory.c_str());
 
 	if(dir == NULL){
-		ofLog(OF_ERROR, "ofxDirList - error opening directory");
+		ofLog(OF_LOG_ERROR, "ofxDirList - error opening directory");
 		return 0;
 	}else{
-		ofLog(OF_VERBOSE, "ofxDirList - success opening directory");
+		ofLog(OF_LOG_VERBOSE, "ofxDirList - success opening directory");
 	}
 
     string entry_name = "";
@@ -134,9 +134,9 @@ int ofxDirList::listDir(string directory){
         pathArray.push_back(directory + entry_name);
         nameArray.push_back(entry_name);
 
-		ofLog(OF_VERBOSE, "ofxDirList - listing %s ", nameArray.back().c_str());
+		ofLog(OF_LOG_VERBOSE, "ofxDirList - listing %s ", nameArray.back().c_str());
 	}
 
-	ofLog(OF_VERBOSE, "ofxDirList - listed %i files in %s", nameArray.size(), directory.c_str());
+	ofLog(OF_LOG_VERBOSE, "ofxDirList - listed %i files in %s", nameArray.size(), directory.c_str());
 	return nameArray.size();
 }
