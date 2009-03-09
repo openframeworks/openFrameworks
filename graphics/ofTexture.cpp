@@ -52,7 +52,7 @@ ofTexture& ofTexture::operator=(const ofTexture& mom){
 //----------------------------------------------------------
 ofTextureData ofTexture::getTextureData(){
 	if(!texData.bAllocated){
-		ofLog(OF_ERROR, "getTextureData() - texture has not been allocated");
+		ofLog(OF_LOG_ERROR, "getTextureData() - texture has not been allocated");
 	}
 	return texData;
 }
@@ -151,7 +151,7 @@ void ofTexture::loadData(unsigned char * data, int w, int h, int glDataType){
 	// 	check "glTexSubImage2D"
 
 	if ( w > texData.tex_w || h > texData.tex_h) {
-		ofLog(OF_ERROR,"image data too big for allocated texture. not uploading...");
+		ofLog(OF_LOG_ERROR,"image data too big for allocated texture. not uploading...");
 		return;
 	}
 
@@ -226,7 +226,7 @@ void ofTexture::loadScreenData(int x, int y, int w, int h){
 	texData.bFlipTexture = true;
 
 	if ( w > texData.tex_w || h > texData.tex_h) {
-		ofLog(OF_ERROR,"image data too big for allocated texture. not uploading...");
+		ofLog(OF_LOG_ERROR,"image data too big for allocated texture. not uploading...");
 		return;
 	}
 
