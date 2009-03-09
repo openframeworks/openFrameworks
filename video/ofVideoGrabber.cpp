@@ -838,7 +838,7 @@ bool ofVideoGrabber::qtSelectDevice(int deviceNumber, bool didWeChooseADevice){
 				deviceCount++;
 			}
 		}else{
-			//ofLog(OF_ERROR, "(unavailable) device[%i] %s",  deviceCount, p2cstr(pascalName) );
+			//ofLog(OF_LOG_ERROR, "(unavailable) device[%i] %s",  deviceCount, p2cstr(pascalName) );
 			deviceCount++;
 		}
 	}

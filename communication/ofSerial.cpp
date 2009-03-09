@@ -437,7 +437,7 @@ bool ofSerial::setup(string portName, int baud){
 	if(!SetCommState(hComm,&cfg.dcb)){
 		ofLog(OF_LOG_ERROR,"ofSerial: Can't set comm state");
 	}
-	//ofLog(OF_NOTICE,buf,"bps=%d, xio=%d/%d",cfg.dcb.BaudRate,cfg.dcb.fOutX,cfg.dcb.fInX);
+	//ofLog(OF_LOG_NOTICE,buf,"bps=%d, xio=%d/%d",cfg.dcb.BaudRate,cfg.dcb.fOutX,cfg.dcb.fInX);
 
 	// Set communication timeouts (NT)
 	COMMTIMEOUTS tOut;

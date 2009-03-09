@@ -342,7 +342,7 @@ inline void  ofImage::allocatePixels(ofPixels &pix, int width, int height, int b
 	bool bNeedToAllocate = false;
 	if (pix.bAllocated == true){
 		if ( (pix.width == width) && (pix.height == height) && (pix.bitsPerPixel == bpp)){
-			//ofLog(OF_NOTICE,"we are good, no reallocation needed");
+			//ofLog(OF_LOG_NOTICE,"we are good, no reallocation needed");
 			bNeedToAllocate = false;
 		 } else {
 			delete pix.pixels;
