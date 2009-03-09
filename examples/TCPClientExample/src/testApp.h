@@ -4,35 +4,35 @@
 
 
 
-#define OF_ADDON_USING_OFXNETWORK
 
 #include "ofMain.h"
-#include "ofAddons.h"
+#include "ofxNetwork.h"
 
-class testApp : public ofSimpleApp{
-	
+class testApp : public ofBaseApp{
+
 	public:
-		
+
 		void setup();
 		void update();
 		void draw();
-		
+
 		void keyPressed(int key);
 		void keyReleased(int key);
 		void mouseMoved(int x, int y );
 		void mouseDragged(int x, int y, int button);
 		void mousePressed(int x, int y, int button);
-		void mouseReleased();
+		void mouseReleased(int x, int y, int button);
+		void resized(int w, int h);
 
 		ofxTCPClient tcpClient;
 		string msgTx, msgRx;
-		
+
 		ofTrueTypeFont  mono;
 		ofTrueTypeFont  monosm;
-	
+
 		float counter;
 		int connectTime;
-		int deltaTime;		
+		int deltaTime;
 
 		bool weConnected;
 
@@ -41,5 +41,5 @@ class testApp : public ofSimpleApp{
 		bool typed;
 };
 
-#endif	
+#endif
 
