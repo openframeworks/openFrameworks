@@ -8,12 +8,12 @@ void testApp::setup(){
 	// we don't want to be running to fast
 	ofSetVerticalSync(true);
 	ofSetFrameRate(60);
+
 	//load our type
 	mono.loadFont("type/mono.ttf",9);
 	monosm.loadFont("type/mono.ttf",8);
 
-
-	// Create the socket and set to send to localhost
+    //create the socket and set to send to 127.0.0.1:11999
 	udpConnection.Create();
 	udpConnection.Connect("127.0.0.1",11999);
 	udpConnection.SetNonBlocking(true);
