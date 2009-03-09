@@ -346,7 +346,7 @@ void ofStandardFirmata::processData(unsigned char inputData){
 					int previous = _analogHistory[_multiByteChannel].front();
 
 					_analogHistory[_multiByteChannel].push_front((_storedInputData[0] << 7) | _storedInputData[1]);
-					if(_analogHistory[_multiByteChannel].size()>_analogHistoryLength)
+					if((int)_analogHistory[_multiByteChannel].size()>_analogHistoryLength)
 						_analogHistory[_multiByteChannel].pop_back();
 
 					// trigger an event if the pin has changed value
@@ -449,14 +449,14 @@ void ofStandardFirmata::processSysExData(vector<unsigned char> data){
 			}
 
 			_stringHistory.push_front(str);
-			if(_stringHistory.size()>_stringHistoryLength)
+			if((int)_stringHistory.size()>_stringHistoryLength)
 					_stringHistory.pop_back();
 
 			ofNotifyEvent(EStringReceived, str, this);
 		break;
 		default: // the message isn't in Firmatas extended command set
 			_sysExHistory.push_front(data);
-			if(_sysExHistory.size()>_sysExHistoryLength)
+			if((int)_sysExHistory.size()>_sysExHistoryLength)
 					_sysExHistory.pop_back();
 			ofNotifyEvent(ESysExReceived, data, this);
 		break;
@@ -480,7 +480,7 @@ void ofStandardFirmata::processDigitalPort(int port, unsigned char value){
 					mask = 1 << i;
 					_digitalHistory[pin].push_front((value & mask)>>i);
 
-					if(_digitalHistory[pin].size()>_digitalHistoryLength)
+					if((int)_digitalHistory[pin].size()>_digitalHistoryLength)
 							_digitalHistory[pin].pop_back();
 
 					// trigger an event if the pin has changed value
@@ -500,7 +500,7 @@ void ofStandardFirmata::processDigitalPort(int port, unsigned char value){
 				mask = 1 << i;
 				_digitalHistory[pin].push_front((value & mask)>>i);
 
-				if(_digitalHistory[pin].size()>_digitalHistoryLength)
+				if((int)_digitalHistory[pin].size()>_digitalHistoryLength)
 					_digitalHistory[pin].pop_back();
 
 				// trigger an event if the pin has changed value
@@ -519,7 +519,7 @@ void ofStandardFirmata::processDigitalPort(int port, unsigned char value){
 				mask = 1 << i;
 				_digitalHistory[pin].push_front((value & mask)>>i);
 
-				if(_digitalHistory[pin].size()>_digitalHistoryLength)
+				if((int)_digitalHistory[pin].size()>_digitalHistoryLength)
 					_digitalHistory[pin].pop_back();
 
 				// trigger an event if the pin has changed value
