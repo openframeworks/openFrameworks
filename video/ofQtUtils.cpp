@@ -17,15 +17,15 @@ void initializeQuicktime(){
 		#ifdef TARGET_WIN32
 			myErr = InitializeQTML(0);
 			if (myErr != noErr){
-				ofLog(OF_ERROR, "-----------------------------------------------------");
-				ofLog(OF_ERROR, "sorry, there is a problem with quicktime starting up... please check!");
+				ofLog(OF_LOG_ERROR, "-----------------------------------------------------");
+				ofLog(OF_LOG_ERROR, "sorry, there is a problem with quicktime starting up... please check!");
                 OF_EXIT_APP(0);
 			}
 		#endif
 		myErr = EnterMovies ();
 		if (myErr != noErr){
-			ofLog(OF_ERROR, "-----------------------------------------------------");
-			ofLog(OF_ERROR, "sorry, there is a problem with quicktime starting up... please check!");
+			ofLog(OF_LOG_ERROR, "-----------------------------------------------------");
+			ofLog(OF_LOG_ERROR, "sorry, there is a problem with quicktime starting up... please check!");
 			OF_EXIT_APP(0);
 		}
 
@@ -150,7 +150,7 @@ void MovieGetStaticFrameRate(Movie inMovie, double *outStaticFrameRate)
       else  /* working with non-MPEG-1/MPEG-2 media */
       {
         OSErr err = MediaGetStaticFrameRate(movieMedia, outStaticFrameRate);
-        if (err != noErr) ofLog(OF_ERROR, "error in MediaGetStaticFrameRate, ofQtUtils");
+        if (err != noErr) ofLog(OF_LOG_ERROR, "error in MediaGetStaticFrameRate, ofQtUtils");
         //assert(err == noErr);
       }
     }
