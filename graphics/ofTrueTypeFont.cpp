@@ -385,7 +385,7 @@ void ofTrueTypeFont::loadFont(string filename, int fontsize, bool _bAntiAliased,
 
 	//------------------------------------------------------
 	//kerning would be great to support:
-	//ofLog(OF_NOTICE,"FT_HAS_KERNING ? %i", FT_HAS_KERNING(face));
+	//ofLog(OF_LOG_NOTICE,"FT_HAS_KERNING ? %i", FT_HAS_KERNING(face));
 	//------------------------------------------------------
 
 	nCharacters = bFullCharacterSet ? 256 : 128 - NUM_CHARACTER_TO_START;
@@ -457,7 +457,7 @@ void ofTrueTypeFont::loadFont(string filename, int fontsize, bool _bAntiAliased,
 
 
 		/* sanity check:
-		ofLog(OF_NOTICE,"%i %i %i %i %i %i",
+		ofLog(OF_LOG_NOTICE,"%i %i %i %i %i %i",
 		cps[i].value ,
 		cps[i].height ,
 		cps[i].width 	,
@@ -599,7 +599,7 @@ void ofTrueTypeFont::drawChar(int c, float x, float y) {
 	}
 
 	if (c >= nCharacters){
-		//ofLog(OF_ERROR,"Error : char (%i) not allocated -- line %d in %s", (c + NUM_CHARACTER_TO_START), __LINE__,__FILE__);
+		//ofLog(OF_LOG_ERROR,"Error : char (%i) not allocated -- line %d in %s", (c + NUM_CHARACTER_TO_START), __LINE__,__FILE__);
 		return;
 	}
 	//-----------------------
@@ -679,7 +679,7 @@ void ofTrueTypeFont::drawCharAsShape(int c, float x, float y) {
 	}
 
 	if (c >= nCharacters){
-		//ofLog(OF_ERROR,"Error : char (%i) not allocated -- line %d in %s", (c + NUM_CHARACTER_TO_START), __LINE__,__FILE__);
+		//ofLog(OF_LOG_ERROR,"Error : char (%i) not allocated -- line %d in %s", (c + NUM_CHARACTER_TO_START), __LINE__,__FILE__);
 		return;
 	}
 	//-----------------------

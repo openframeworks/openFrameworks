@@ -289,10 +289,10 @@ void ofSaveFrame(){
 
 //levels are currently:
 // see ofConstants.h
-// OF_NOTICE
-// OF_WARNING
-// OF_ERROR
-// OF_FATAL_ERROR
+// OF_LOG_NOTICE
+// OF_LOG_WARNING
+// OF_LOG_ERROR
+// OF_LOG_FATAL_ERROR
 
 int currentLogLevel =  OF_DEFAULT_LOG_LEVEL;
 //--------------------------------------------------

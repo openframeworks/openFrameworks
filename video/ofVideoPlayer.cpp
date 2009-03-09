@@ -147,7 +147,7 @@ on_new_buffer_from_source (GstElement * elt, ofGstVideoData * data)
   buffer = gst_app_sink_pull_buffer (GST_APP_SINK (elt));
 
   size = GST_BUFFER_SIZE (buffer);
-  //ofLog(OF_VERBOSE,"new buffer of size %d", size);
+  //ofLog(OF_LOG_VERBOSE,"new buffer of size %d", size);
 
   ofGstDataLock(data);
 	  if(data->pixels){
@@ -1192,11 +1192,11 @@ bool ofVideoPlayer::allocate(){
 			int fps_d;
 
 			if(gst_video_parse_caps_framerate (caps,&fps_n,&fps_d))
-				ofLog(OF_VERBOSE,"fps_n:%d fps_d:%d",fps_n,fps_d);
+				ofLog(OF_LOG_VERBOSE,"fps_n:%d fps_d:%d",fps_n,fps_d);
 			else
-				ofLog(OF_WARNING,"Gstreamer: cannot get framerate, frame seek won't work");
+				ofLog(OF_LOG_WARNING,"Gstreamer: cannot get framerate, frame seek won't work");
 		}else{
-			ofLog(OF_WARNING,"Gstreamer: cannot get pad caps, frame seek won't work");
+			ofLog(OF_LOG_WARNING,"Gstreamer: cannot get pad caps, frame seek won't work");
 		}*/
         gst_object_unref(GST_OBJECT(pad));
     }else{
