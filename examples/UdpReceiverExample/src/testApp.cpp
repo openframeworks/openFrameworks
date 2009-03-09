@@ -12,10 +12,11 @@ void testApp::setup(){
 	mono.loadFont("type/mono.ttf", 9);
 	monosm.loadFont("type/mono.ttf", 8);
 
-
+    //create the socket and bind to port 11999
 	udpConnection.Create();
 	udpConnection.Bind(11999);
 	udpConnection.SetNonBlocking(true);
+
 	ofBackground(255, 255, 255);
 	ofSetBackgroundAuto(false);
 }
