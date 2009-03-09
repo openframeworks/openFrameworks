@@ -22,7 +22,7 @@ class testApp : public ofBaseApp{
 		void mouseDragged(int x, int y, int button);
 		void mousePressed(int x, int y, int button);
 		void mouseReleased(int x, int y, int button);
-		void resized(int w, int h);
+		void windowResized(int w, int h);
 
 		// we will have a dynaimic number of images, based on the content of a director:
 
