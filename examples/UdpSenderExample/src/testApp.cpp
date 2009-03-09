@@ -76,5 +76,5 @@ void testApp::mouseReleased(int x, int y, int button){
 }
 
 //--------------------------------------------------------------
-void testApp::resized(int w, int h){
+void testApp::windowResized(int w, int h){
 }
