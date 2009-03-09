@@ -11,7 +11,6 @@ void testApp::setup(){
 	ofBackground(255,255,255);
 		
 	ofSetVerticalSync(true);
-	ofSetLogLevel(OF_VERBOSE);
 
     //some model / light stuff
     glEnable (GL_DEPTH_TEST);
