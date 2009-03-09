@@ -121,6 +121,7 @@ ofUCUtils::ofUCUtils(){
 	src				= NULL;
 	dst				= NULL;
 	deviceReady		= false;
+	doConversion	= false;
 	pthread_mutex_init(&capture_mutex,NULL);
 }
 
@@ -245,24 +246,8 @@ void ofUCUtils::set_format(int w, int h) {
 							format.identifier, w, h,
 							format.size.width, format.size.height);
 		}else if(format.size_count==0){
-			int defaultFormatWidth = format.size.width;
-			int defaultFormatHeight = format.size.height;
-
-			format.size.width  = w;
-			format.size.height = h;
-
-			ofLog(OF_WARNING, "ofUCUtils : Can't recognize supported video sizes for %s, trying with requested size: %i,%i",
+			ofLog(OF_WARNING, "ofUCUtils : Can't recognize supported video sizes for %s, trying with default size: %i,%i",
 										format.identifier, format.size.width, format.size.height);
-
-			if ( !SUCCESS ( unicap_set_format (handle, &format) ) ) {
-				format.size.width  = defaultFormatWidth;
-				format.size.height = defaultFormatHeight;
-
-				ofLog(OF_WARNING, "ofUCUtils : Can't set requested size, trying with format defaults: %i,%i",
-						defaultFormatWidth, defaultFormatHeight);
-			}
-			ofLog(OF_WARNING, "ofUCUtils : If this doesn't work try using the reported default size in initGrabber:",
-					defaultFormatWidth, defaultFormatHeight);
 		}
 		if ( !SUCCESS ( unicap_set_format (handle, &format) ) ) {
 			ofLog(OF_ERROR, "ofUCUtils : Failed to set alternative video format!");
@@ -278,9 +263,10 @@ void ofUCUtils::set_format(int w, int h) {
 		}
 
 		if(src_pix_fmt!=PIX_FMT_RGB24 || !exactMatch){
-			src=new AVPicture;
+			doConversion = true;
+			src = new AVPicture;
 			avpicture_alloc(src,src_pix_fmt,format.size.width,format.size.height);
-			dst=new AVPicture;
+			dst = new AVPicture;
 			avpicture_alloc(dst,PIX_FMT_RGB24,d_width,d_height);
 
 			toRGB_convert_ctx = sws_getContext(
@@ -371,7 +357,7 @@ void ofUCUtils::new_frame (unicap_data_buffer_t * buffer)
 	if(!deviceReady)
 		return;
 
-	if(src_pix_fmt!=PIX_FMT_RGB24){
+	if(doConversion){
 		avpicture_fill(src,buffer->data,src_pix_fmt,format.size.width,format.size.height);
 
 		if(sws_scale(toRGB_convert_ctx,

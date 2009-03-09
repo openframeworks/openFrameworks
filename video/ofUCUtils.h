@@ -54,6 +54,8 @@ private:
 	int						d_width, d_height;
 	struct SwsContext *		toRGB_convert_ctx;
 
+	bool					doConversion;
+
 	pthread_mutex_t			capture_mutex;
 	void 					lock_buffer();
 	void 					unlock_buffer();
