@@ -128,7 +128,7 @@ static vector <ofPoint> ofSimplifyContour(vector <ofPoint> &V, float tol){
     }
 
 	//get rid of the unused points
-	if( m < sV.size() ) sV.erase( sV.begin()+m, sV.end() );
+	if( m < (int)sV.size() ) sV.erase( sV.begin()+m, sV.end() );
 
 	delete [] vt;
 	delete [] mk;
@@ -290,7 +290,7 @@ static ofTTFCharacter makeContoursForCharacter(FT_Face &face){
 			//end for
 			}
 
-			for(int g =0; g < testOutline.size(); g++){
+			for(int g =0; g < (int)testOutline.size(); g++){
 				testOutline[g] /= 64.0f;
 			}
 
@@ -581,7 +581,7 @@ ofTTFCharacter ofTrueTypeFont::getCharacterAsPoints(int character){
 		ofLog(OF_LOG_ERROR, "getCharacterAsPoints: contours not created,  call loadFont with makeContours set to true" );
 	}
 
-	if( bMakeContours && charOutlines.size() > 0 && character >= NUM_CHARACTER_TO_START && character - NUM_CHARACTER_TO_START < charOutlines.size() ){
+	if( bMakeContours && (int)charOutlines.size() > 0 && character >= NUM_CHARACTER_TO_START && character - NUM_CHARACTER_TO_START < (int)charOutlines.size() ){
 		return charOutlines[character-NUM_CHARACTER_TO_START];
 	}else{
 		return ofTTFCharacter();
@@ -688,9 +688,9 @@ void ofTrueTypeFont::drawCharAsShape(int c, float x, float y) {
 	ofTTFCharacter & charRef = charOutlines[cu];
 
 	ofBeginShape();
-		for(int k = 0; k < charRef.contours.size(); k++){
+		for(int k = 0; k < (int)charRef.contours.size(); k++){
 			if( k!= 0)ofNextContour(true);
-			for(int i = 0; i < charRef.contours[k].pts.size(); i++){
+			for(int i = 0; i < (int)charRef.contours[k].pts.size(); i++){
 				ofVertex(charRef.contours[k].pts[i].x + x, charRef.contours[k].pts[i].y + y);
 			}
 		}

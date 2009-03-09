@@ -999,7 +999,7 @@ void ofNextContour(bool bClose){
 
 	if ((bClose == true)){
 		//---------------------------
-		if (polyVertices.size() > currentStartVertex){
+		if ((int)polyVertices.size() > currentStartVertex){
 
 			double* point = new double[3];
 	 		point[0] = polyVertices[currentStartVertex][0];
@@ -1020,7 +1020,7 @@ void ofNextContour(bool bClose){
 			GLfloat * points = new GLfloat[numToDraw * 2];
 			int k = 0;
 
-			for (int i=currentStartVertex; i< polyVertices.size(); i++) {
+			for (int i=currentStartVertex; i< (int)polyVertices.size(); i++) {
 				points[k] = polyVertices[i][0];
 				points[k+1] = polyVertices[i][1];
 				k+=2;
@@ -1037,7 +1037,7 @@ void ofNextContour(bool bClose){
 
 		if ( tobj != NULL){
 	      gluTessBeginContour( tobj);
-			for (int i=currentStartVertex; i<polyVertices.size(); i++) {
+			for (int i=currentStartVertex; i<(int)polyVertices.size(); i++) {
 	   			gluTessVertex( tobj, polyVertices[i],polyVertices[i]);
 			}
 			gluTessEndContour( tobj);
@@ -1057,7 +1057,7 @@ void ofEndShape(bool bClose){
 
 	if ((bClose == true)){
 		//---------------------------
-		if (polyVertices.size() > currentStartVertex){
+		if ((int)polyVertices.size() > currentStartVertex){
 
 			double* point = new double[3];
 	 		point[0] = polyVertices[currentStartVertex][0];
@@ -1085,7 +1085,7 @@ void ofEndShape(bool bClose){
 
 			int k = 0;
 
-			for (int i=currentStartVertex; i< polyVertices.size(); i++) {
+			for (int i=currentStartVertex; i< (int)polyVertices.size(); i++) {
 				points[k] = polyVertices[i][0];
 				points[k+1] = polyVertices[i][1];
 
@@ -1104,7 +1104,7 @@ void ofEndShape(bool bClose){
 
 		if ( tobj != NULL){
 	    	gluTessBeginContour( tobj);
-			for (int i=currentStartVertex; i<polyVertices.size(); i++) {
+			for (int i=currentStartVertex; i<(int)polyVertices.size(); i++) {
 	   			gluTessVertex( tobj, polyVertices[i],polyVertices[i]);
 			}
 
