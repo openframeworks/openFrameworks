@@ -496,7 +496,7 @@ void ofTrueTypeFont::loadFont(string filename, int fontsize, bool _bAntiAliased,
 			// here we unpack it:
 			unsigned char *src =  bitmap.buffer;
 			for(int j=0; j <bitmap.rows;j++) {
-				unsigned char b;
+				unsigned char b=0;
 				unsigned char *bptr =  src;
 				for(int k=0; k < bitmap.width ; k++){
 					expanded_data[2*((k+1)+(j+1)*width)] = 255;
