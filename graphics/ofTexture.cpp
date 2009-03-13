@@ -115,11 +115,11 @@ void ofTexture::allocate(int w, int h, int internalGlDataType, bool bUseARBExten
 		// can't do this on OpenGL ES: on full-blown OpenGL, 
 		// internalGlDataType and glDataType (GL_LUMINANCE below)
 		// can be different; on ES they must be exactly the same.
-		glTexImage2D(texData.textureTarget, 0, texData.glTypeInternal, texData.tex_w, texData.tex_h, 0, GL_LUMINANCE, GL_UNSIGNED_BYTE, 0);  // init to black...
+		glTexImage2D(texData.textureTarget, 0, texData.glTypeInternal, (GLint)texData.tex_w, (GLint)texData.tex_h, 0, GL_LUMINANCE, GL_UNSIGNED_BYTE, 0);  // init to black...
 	#else
 		glTexImage2D(texData.textureTarget, 0, texData.glTypeInternal, texData.tex_w, texData.tex_h, 0, texData.glTypeInternal, GL_UNSIGNED_BYTE, 0);
 	#endif
-	
+
 		glTexParameterf(texData.textureTarget, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 		glTexParameterf(texData.textureTarget, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 		glTexParameterf(texData.textureTarget, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -306,7 +306,7 @@ void ofTexture::draw(float x, float y, float w, float h){
 		GLfloat py1 = h;
 
 		if (texData.bFlipTexture == true){
-			GLint temp = py0;
+			GLint temp = (GLint)py0;
 			py0 = py1;
 			py1 = temp;
 		}
