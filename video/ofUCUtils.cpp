@@ -7,12 +7,25 @@
 #include <stdint.h>
 #include "ofUtils.h"
 
+
+// this will probably break in new versions
+// of ubuntu and debian, if so just uncomment
+// the following line to make it work with the new paths
+
+//#define OF_UCUTILS_NEW_FFMPEG
+#ifndef OF_UCUTILS_NEW_FFMPEG
 extern "C"
 {
 #include "avformat.h"
 #include "swscale.h"
 }
-
+#elif
+extern "C"
+{
+#include "libavformat/avformat.h"
+#include "libswscale/swscale.h"
+}
+#endif
 
 
 #define FOURCC(a,b,c,d) (unsigned int)((((unsigned int)a))+(((unsigned int)b)<<8)+(((unsigned int)c)<<16)+(((unsigned int)d)<<24))
