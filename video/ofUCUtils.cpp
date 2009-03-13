@@ -8,24 +8,19 @@
 #include "ofUtils.h"
 
 
-// this will probably break in new versions
-// of ubuntu and debian, if so just uncomment
-// the following line to make it work with the new paths
-
-//#define OF_UCUTILS_NEW_FFMPEG
-#ifndef OF_UCUTILS_NEW_FFMPEG
+// ugly hack to make this work with
+// new ffmpeg include path in ubuntu jaunty
+// with -MMD flag in the compiler
+// this will throw a warning instead of an error
+// comment out the two lines that doesn't work for you
+// to avoid the warnings
 extern "C"
 {
-#include "avformat.h"
-#include "swscale.h"
+#include <avformat.h>
+#include <swscale.h>
+#include <libavformat/avformat.h>
+#include <libswscale/swscale.h>
 }
-#elif
-extern "C"
-{
-#include "libavformat/avformat.h"
-#include "libswscale/swscale.h"
-}
-#endif
 
 
 #define FOURCC(a,b,c,d) (unsigned int)((((unsigned int)a))+(((unsigned int)b)<<8)+(((unsigned int)c)<<16)+(((unsigned int)d)<<24))
