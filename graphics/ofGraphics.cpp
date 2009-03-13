@@ -679,8 +679,8 @@ static int currentStartVertex = 0;
 // this allows multi contour polygons;
 
 static GLUtesselator * tobj = NULL;
-static bool tessInited = false;
-static GLdouble point[3];
+//static bool tessInited = false;
+//static GLdouble point[3];
 static GLint shapeType;
 
 void CALLBACK tessError(GLenum);
