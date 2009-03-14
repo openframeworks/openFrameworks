@@ -720,8 +720,8 @@ void ofVideoPlayer::setVolume(int volume){
 	#else
 	//--------------------------------------
 
-	volume = CLAMP(volume,0,10);
-	g_object_set(G_OBJECT(gstPipeline), "volume", volume, NULL);
+	gdouble gvolume = CLAMP(volume,0,10);
+	g_object_set(G_OBJECT(gstPipeline), "volume", gvolume, NULL);
 
 	//--------------------------------------
 	#endif
