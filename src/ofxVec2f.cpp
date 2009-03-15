@@ -171,7 +171,7 @@ ofxVec2f& ofxVec2f::operator/=( const float f ) {
 }
 
 ofxVec2f ofxVec2f::rescaled( const float length ) const {
-	getScaled(length);
+	return getScaled(length);
 }
 
 ofxVec2f ofxVec2f::getScaled( const float length ) const {
