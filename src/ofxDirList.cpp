@@ -47,13 +47,13 @@ bool ofxDirList::allowExt(string ext){
 
 //----------------------------------------------------------
 string ofxDirList::getName(int pos){
-	if(pos >= nameArray.size()) return 0;
+	if(pos >= (int)nameArray.size()) return 0;
 	return nameArray[pos];
 }
 
 //----------------------------------------------------------
 string ofxDirList::getPath(int pos){
-	if(pos >= pathArray.size()) return 0;
+	if(pos >= (int)pathArray.size()) return 0;
 	return pathArray[pos];
 }
 
@@ -103,7 +103,7 @@ int ofxDirList::listDir(string directory){
 		if(allowedFileExt.size() > 0){
 			//we will skip this files unless it has an allowed extension
 			skip = true;
-			for(int i = 0; i < allowedFileExt.size(); i++){
+			for(int i = 0; i < (int)allowedFileExt.size(); i++){
 
 				//if the wildecard * has been entered for an ext type then don't check any extensions
 				if( allowedFileExt[i] == "*"){ skip = false; break; }
