@@ -43,12 +43,12 @@ int ofxCvContourFinder::findContours( ofxCvGrayscaleImage&  input,
 									  int nConsidered,
 									  bool bFindHoles,
                                       bool bUseApproximation) {
-              
+
     // get width/height disregarding ROI
     IplImage* ipltemp = input.getCvImage();
     _width = ipltemp->width;
     _height = ipltemp->height;
-    
+
 	reset();
 
 	// opencv will clober the image it detects contours on, so we want to
@@ -68,9 +68,9 @@ int ofxCvContourFinder::findContours( ofxCvGrayscaleImage&  input,
         inputCopy.clear();
         inputCopy.allocate( _width, _height );
 	}
-    
+
     inputCopy = input;
-    inputCopy.setROI( input.getROI() );    
+    inputCopy.setROI( input.getROI() );
 
 	CvSeq* contour_list = NULL;
 	contour_storage = cvCreateMemStorage( 1000 );
@@ -100,7 +100,7 @@ int ofxCvContourFinder::findContours( ofxCvGrayscaleImage&  input,
 
 	// now, we have cvSeqBlobs.size() contours, sorted by size in the array
     // cvSeqBlobs let's get the data out and into our structures that we like
-	for( int i = 0; i < MIN(nConsidered, cvSeqBlobs.size()); i++ ) {
+	for( int i = 0; i < MIN(nConsidered, (int)cvSeqBlobs.size()); i++ ) {
 		blobs.push_back( ofxCvBlob() );
 		float area = cvContourArea( cvSeqBlobs[i], CV_WHOLE_SEQ );
 		CvRect rect	= cvBoundingRect( cvSeqBlobs[i], 0 );
@@ -137,7 +137,7 @@ int ofxCvContourFinder::findContours( ofxCvGrayscaleImage&  input,
 	if( storage != NULL ) { cvReleaseMemStorage(&storage); }
 
 	return nBlobs;
-    
+
 }
 
 //--------------------------------------------------------------------------------
@@ -147,14 +147,14 @@ void ofxCvContourFinder::draw( float x, float y, float w, float h ) {
     float scaley = 0.0f;
     if( _width != 0 ) { scalex = w/_width; } else { scalex = 1.0f; }
     if( _height != 0 ) { scaley = h/_height; } else { scaley = 1.0f; }
-    
+
     if(bAnchorIsPct){
         x -= anchor.x * w;
         y -= anchor.y * h;
     }else{
         x -= anchor.x;
         y -= anchor.y;
-    }    
+    }
 
 	// ---------------------------- draw the bounding rectangle
 	ofSetColor(0xDD00CC);
@@ -163,7 +163,7 @@ void ofxCvContourFinder::draw( float x, float y, float w, float h ) {
     glScalef( scalex, scaley, 0.0 );
 
 	ofNoFill();
-	for( int i=0; i<blobs.size(); i++ ) {
+	for( int i=0; i<(int)blobs.size(); i++ ) {
 		ofRect( blobs[i].boundingRect.x, blobs[i].boundingRect.y,
                 blobs[i].boundingRect.width, blobs[i].boundingRect.height );
 	}
@@ -171,7 +171,7 @@ void ofxCvContourFinder::draw( float x, float y, float w, float h ) {
 	// ---------------------------- draw the blobs
 	ofSetColor(0x00FFFF);
 
-	for( int i=0; i<blobs.size(); i++ ) {
+	for( int i=0; i<(int)blobs.size(); i++ ) {
 		ofNoFill();
 		ofBeginShape();
 		for( int j=0; j<blobs[i].nPts; j++ ) {
