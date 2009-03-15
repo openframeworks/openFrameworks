@@ -16,10 +16,10 @@ void model3DS::loadModel(string filename, float scale){
 }
 
 void model3DS::loadModel(const char* filename, float scale){
-	
+
 	m_filename	= filename;
 	m_scale		= scale;
-    
+
 	std::ifstream *modelFile = new std::ifstream(filename,std::ios::in | std::ios::binary | std::ios::ate);
 
     if(!modelFile->is_open()){
@@ -508,7 +508,7 @@ void mesh3DS::draw(){
 
 		// Apply material colors
 		if(glIsEnabled(GL_LIGHTING)){
-			const GLfloat matZero[4]={0,0,0,0};
+			//const GLfloat matZero[4]={0,0,0,0};
 			const GLfloat matOne[4]={1,1,1,1};
 			if(hasTextureMap){ //replace color with texture, but keep lighting contribution
 				glMaterialfv(materialFaces, GL_DIFFUSE, matOne);
