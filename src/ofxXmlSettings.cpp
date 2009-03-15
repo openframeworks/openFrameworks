@@ -96,7 +96,7 @@ void ofxXmlSettings::removeTag(string  tag, int which){
 
 	if(which < 0) which = 0;
 
-	for(int x=0;x<tokens.size();x++){
+	for(int x=0;x<(int)tokens.size();x++){
 
 		//we only support multi tags
 		//with same name at root level
@@ -106,7 +106,7 @@ void ofxXmlSettings::removeTag(string  tag, int which){
 
 		if ( !isRealHandle.Node() ) break;
 		else{
-			if (x == tokens.size()-1){
+			if (x == (int)tokens.size()-1){
 				//if we are at the last tag and it exists
 				//we use its parent to remove it - haha
 				tagHandle.ToNode()->RemoveChild( isRealHandle.ToNode() );
@@ -166,7 +166,7 @@ bool ofxXmlSettings::readTag(string  tag, char * valueString, int which){
 	vector<string> tokens = tokenize(tag,":");
 
 	TiXmlHandle tagHandle = *storedHandle;
-	for(int x=0;x<tokens.size();x++){
+	for(int x=0;x<(int)tokens.size();x++){
 		if(x == 0)tagHandle = tagHandle.ChildElement(tokens.at(x), which);
 		else tagHandle = tagHandle.FirstChildElement( tokens.at(x) );
 	}
@@ -244,7 +244,7 @@ bool ofxXmlSettings::tagExists(string  tag, int which){
 
 	if(which < 0) which = 0;
 
-	for(int x=0;x<tokens.size();x++){
+	for(int x=0;x<(int)tokens.size();x++){
 
 		//we only support multi tags
 		//with same name at root level
@@ -306,7 +306,7 @@ int ofxXmlSettings::writeTag(string  tag, char * valueStr, int which){
 
 	// allocate then clean up :
 	TiXmlElement ** elements = new TiXmlElement*[tokens.size()];
-	for(int x=0;x<tokens.size();x++){
+	for(int x=0;x<(int)tokens.size();x++){
 		elements[x] = new TiXmlElement(tokens.at(x));
 	}
 
@@ -319,7 +319,7 @@ int ofxXmlSettings::writeTag(string  tag, char * valueStr, int which){
 	bool addNewTag = false;
 	if(which == -1)addNewTag = true;
 
-	for(int x=0;x<tokens.size();x++){
+	for(int x=0;x<(int)tokens.size();x++){
 
 		if( x > 0 ){
 			//multi tags of same name
@@ -333,7 +333,7 @@ int ofxXmlSettings::writeTag(string  tag, char * valueStr, int which){
 		if ( !isRealHandle.Node() ||  addNewTag){
 
 			for(int i=tokens.size()-1;i>=x;i--){
-				if (i == tokens.size()-1){
+				if (i == (int)tokens.size()-1){
 					elements[i]->InsertEndChild(Value);
 				} else {
 					elements[i]->InsertEndChild(*(elements[i+1]));
@@ -346,7 +346,7 @@ int ofxXmlSettings::writeTag(string  tag, char * valueStr, int which){
 
 		} else {
 			 tagHandle = isRealHandle;
-			 if (x == tokens.size()-1){
+			 if (x == (int)tokens.size()-1){
 				// what we want to change : TiXmlHandle valHandle = tagHandle.Child( 0 );
 				tagHandle.ToNode()->Clear();
 				tagHandle.ToNode()->InsertEndChild(Value);
