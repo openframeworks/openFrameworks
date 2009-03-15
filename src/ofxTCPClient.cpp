@@ -104,7 +104,7 @@ bool ofxTCPClient::send(string message){
 	}else if(ret<0){
 		if(verbose)printf("ofxTCPClient: sendAll() failed\n");
 		return false;
-	}else if(ret<message.length()){
+	}else if(ret<(int)message.length()){
 		// in case of partial send, store the
 		// part that hasn't been sent and send
 		// with the next message to not corrupt
