@@ -48,8 +48,8 @@
 #define _CVVERSION_H_
 
 #define CV_MAJOR_VERSION    1
-#define CV_MINOR_VERSION    0
+#define CV_MINOR_VERSION    1
 #define CV_SUBMINOR_VERSION 0
-#define CV_VERSION          "1.0.0"
+#define CV_VERSION          "1.1.0"
 
 #endif /*_CVVERSION_H_*/

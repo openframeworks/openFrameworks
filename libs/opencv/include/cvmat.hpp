@@ -1814,27 +1814,27 @@ inline _CvMAT_MUL_ADD_ operator - ( const _CvMAT_T_& b, const _CvMAT_MUL_& a )
 {   return _CvMAT_MUL_ADD_( a.a, a.b, -a.alpha, &b.a, b.alpha, a.t_ab + 4 );  }
 
 
-/* mmuladd = mat_scaled_shited * mat */
+/* mmuladd = mat_scaled_shifted * mat */
 inline _CvMAT_MUL_ADD_ operator * ( const _CvMAT_SCALE_SHIFT_& a, const CvMAT& b )
 {   return _CvMAT_MUL_ADD_( a.a, &b, a.alpha, &b, a.beta, 0 );  }
 
-/* mmuladd = mat * mat_scaled_shited */
+/* mmuladd = mat * mat_scaled_shifted */
 inline _CvMAT_MUL_ADD_ operator * ( const CvMAT& b, const _CvMAT_SCALE_SHIFT_& a )
 {   return _CvMAT_MUL_ADD_( &b, a.a, a.alpha, &b, a.beta, 0 );  }
 
-/* mmuladd = mat_scaled_shited * mat_scaled */
+/* mmuladd = mat_scaled_shifted * mat_scaled */
 inline _CvMAT_MUL_ADD_ operator * ( const _CvMAT_SCALE_SHIFT_& a, const _CvMAT_SCALE_& b )
 {   return _CvMAT_MUL_ADD_( a.a, b.a, a.alpha*b.alpha, b.a, a.beta*b.alpha, 0 );  }
 
-/* mmuladd = mat_scaled * mat_scaled_shited */
+/* mmuladd = mat_scaled * mat_scaled_shifted */
 inline _CvMAT_MUL_ADD_ operator * ( const _CvMAT_SCALE_& b, const _CvMAT_SCALE_SHIFT_& a )
 {   return _CvMAT_MUL_ADD_( b.a, a.a, a.alpha*b.alpha, b.a, a.beta*b.alpha, 0 );  }
 
-/* mmuladd = mat_scaled_shited * (mat^t) */
+/* mmuladd = mat_scaled_shifted * (mat^t) */
 inline _CvMAT_MUL_ADD_ operator * ( const _CvMAT_SCALE_SHIFT_& a, const _CvMAT_T_& b )
 {   return _CvMAT_MUL_ADD_( a.a, &b.a, a.alpha*b.alpha, &b.a, a.beta*b.alpha, 6 );  }
 
-/* mmuladd = (mat^t) * mat_scaled_shited */
+/* mmuladd = (mat^t) * mat_scaled_shifted */
 inline _CvMAT_MUL_ADD_ operator * ( const _CvMAT_T_& b, const _CvMAT_SCALE_SHIFT_& a )
 {   return _CvMAT_MUL_ADD_( &b.a, a.a, a.alpha*b.alpha, &b.a, a.beta*b.alpha, 5 );  }
 

@@ -112,7 +112,7 @@ public:
     { return m_back_project; }
 
     float query( int* bin ) const
-    { return m_hist ? cvQueryHistValue_nD( m_hist, bin ) : 0.f; }
+    { return m_hist ? (float)cvGetRealND(m_hist->bins, bin) : 0.f; }
     
 protected:
 

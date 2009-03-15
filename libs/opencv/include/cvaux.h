@@ -42,7 +42,7 @@
 #ifndef __CVAUX__H__
 #define __CVAUX__H__
 
-#include <cv.h>
+#include "cv.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -555,16 +555,16 @@ CVAPI(int) icvConvertWarpCoordinates(double coeffs[3][3],
                                 CvPoint2D32f* warpPoint,
                                 int direction);
 
-CVAPI(int) icvGetSymPoint3D(  CvPoint3D64d pointCorner,
-                            CvPoint3D64d point1,
-                            CvPoint3D64d point2,
-                            CvPoint3D64d *pointSym2);
+CVAPI(int) icvGetSymPoint3D(  CvPoint3D64f pointCorner,
+                            CvPoint3D64f point1,
+                            CvPoint3D64f point2,
+                            CvPoint3D64f *pointSym2);
 
-CVAPI(void) icvGetPieceLength3D(CvPoint3D64d point1,CvPoint3D64d point2,double* dist);
+CVAPI(void) icvGetPieceLength3D(CvPoint3D64f point1,CvPoint3D64f point2,double* dist);
 
 CVAPI(int) icvCompute3DPoint(    double alpha,double betta,
                             CvStereoLineCoeff* coeffs,
-                            CvPoint3D64d* point);
+                            CvPoint3D64f* point);
 
 CVAPI(int) icvCreateConvertMatrVect( CvMatr64d     rotMatr1,
                                 CvMatr64d     transVect1,
@@ -573,8 +573,8 @@ CVAPI(int) icvCreateConvertMatrVect( CvMatr64d     rotMatr1,
                                 CvMatr64d     convRotMatr,
                                 CvMatr64d     convTransVect);
 
-CVAPI(int) icvConvertPointSystem(CvPoint3D64d  M2,
-                            CvPoint3D64d* M1,
+CVAPI(int) icvConvertPointSystem(CvPoint3D64f  M2,
+                            CvPoint3D64f* M1,
                             CvMatr64d     rotMatr,
                             CvMatr64d     transVect
                             );
@@ -598,10 +598,10 @@ CVAPI(int) icvComputeRestStereoParams(CvStereoCamera *stereoparams);
 
 CVAPI(void) cvComputePerspectiveMap( const double coeffs[3][3], CvArr* rectMapX, CvArr* rectMapY );
 
-CVAPI(int) icvComCoeffForLine(   CvPoint2D64d point1,
-                            CvPoint2D64d point2,
-                            CvPoint2D64d point3,
-                            CvPoint2D64d point4,
+CVAPI(int) icvComCoeffForLine(   CvPoint2D64f point1,
+                            CvPoint2D64f point2,
+                            CvPoint2D64f point3,
+                            CvPoint2D64f point4,
                             CvMatr64d    camMatr1,
                             CvMatr64d    rotMatr1,
                             CvMatr64d    transVect1,
@@ -611,17 +611,17 @@ CVAPI(int) icvComCoeffForLine(   CvPoint2D64d point1,
                             CvStereoLineCoeff*    coeffs,
                             int* needSwapCameras);
 
-CVAPI(int) icvGetDirectionForPoint(  CvPoint2D64d point,
+CVAPI(int) icvGetDirectionForPoint(  CvPoint2D64f point,
                                 CvMatr64d camMatr,
-                                CvPoint3D64d* direct);
+                                CvPoint3D64f* direct);
 
-CVAPI(int) icvGetCrossLines(CvPoint3D64d point11,CvPoint3D64d point12,
-                       CvPoint3D64d point21,CvPoint3D64d point22,
-                       CvPoint3D64d* midPoint);
+CVAPI(int) icvGetCrossLines(CvPoint3D64f point11,CvPoint3D64f point12,
+                       CvPoint3D64f point21,CvPoint3D64f point22,
+                       CvPoint3D64f* midPoint);
 
-CVAPI(int) icvComputeStereoLineCoeffs(   CvPoint3D64d pointA,
-                                    CvPoint3D64d pointB,
-                                    CvPoint3D64d pointCam1,
+CVAPI(int) icvComputeStereoLineCoeffs(   CvPoint3D64f pointA,
+                                    CvPoint3D64f pointB,
+                                    CvPoint3D64f pointCam1,
                                     double gamma,
                                     CvStereoLineCoeff*    coeffs);
 
@@ -631,18 +631,18 @@ CVAPI(int) icvComputeStereoLineCoeffs(   CvPoint3D64d pointA,
                                     CvMatr64d     camMatr2,
                                     CvMatr64d     rotMatr2,
                                     CvVect64d     transVect2,
-                                    CvPoint2D64d* epipole1,
-                                    CvPoint2D64d* epipole2,
+                                    CvPoint2D64f* epipole1,
+                                    CvPoint2D64f* epipole2,
                                     CvMatr64d     fundMatr);*/
 
-CVAPI(int) icvGetAngleLine( CvPoint2D64d startPoint, CvSize imageSize,CvPoint2D64d *point1,CvPoint2D64d *point2);
+CVAPI(int) icvGetAngleLine( CvPoint2D64f startPoint, CvSize imageSize,CvPoint2D64f *point1,CvPoint2D64f *point2);
 
-CVAPI(void) icvGetCoefForPiece(   CvPoint2D64d p_start,CvPoint2D64d p_end,
+CVAPI(void) icvGetCoefForPiece(   CvPoint2D64f p_start,CvPoint2D64f p_end,
                         double *a,double *b,double *c,
                         int* result);
 
 /*CVAPI(void) icvGetCommonArea( CvSize imageSize,
-                    CvPoint2D64d epipole1,CvPoint2D64d epipole2,
+                    CvPoint2D64f epipole1,CvPoint2D64f epipole2,
                     CvMatr64d fundMatr,
                     CvVect64d coeff11,CvVect64d coeff12,
                     CvVect64d coeff21,CvVect64d coeff22,
@@ -661,27 +661,27 @@ CVAPI(void) icvComputeeInfiniteProject2(CvMatr64d    rotMatr,
                                      CvPoint2D32f point2);
 
 CVAPI(void) icvGetCrossDirectDirect(  CvVect64d direct1,CvVect64d direct2,
-                            CvPoint2D64d *cross,int* result);
+                            CvPoint2D64f *cross,int* result);
 
-CVAPI(void) icvGetCrossPieceDirect(   CvPoint2D64d p_start,CvPoint2D64d p_end,
+CVAPI(void) icvGetCrossPieceDirect(   CvPoint2D64f p_start,CvPoint2D64f p_end,
                             double a,double b,double c,
-                            CvPoint2D64d *cross,int* result);
+                            CvPoint2D64f *cross,int* result);
 
-CVAPI(void) icvGetCrossPiecePiece( CvPoint2D64d p1_start,CvPoint2D64d p1_end,
-                            CvPoint2D64d p2_start,CvPoint2D64d p2_end,
-                            CvPoint2D64d* cross,
+CVAPI(void) icvGetCrossPiecePiece( CvPoint2D64f p1_start,CvPoint2D64f p1_end,
+                            CvPoint2D64f p2_start,CvPoint2D64f p2_end,
+                            CvPoint2D64f* cross,
                             int* result);
                             
-CVAPI(void) icvGetPieceLength(CvPoint2D64d point1,CvPoint2D64d point2,double* dist);
+CVAPI(void) icvGetPieceLength(CvPoint2D64f point1,CvPoint2D64f point2,double* dist);
 
 CVAPI(void) icvGetCrossRectDirect(    CvSize imageSize,
                             double a,double b,double c,
-                            CvPoint2D64d *start,CvPoint2D64d *end,
+                            CvPoint2D64f *start,CvPoint2D64f *end,
                             int* result);
 
-CVAPI(void) icvProjectPointToImage(   CvPoint3D64d point,
+CVAPI(void) icvProjectPointToImage(   CvPoint3D64f point,
                             CvMatr64d camMatr,CvMatr64d rotMatr,CvVect64d transVect,
-                            CvPoint2D64d* projPoint);
+                            CvPoint2D64f* projPoint);
 
 CVAPI(void) icvGetQuadsTransform( CvSize        imageSize,
                         CvMatr64d     camMatr1,
@@ -694,8 +694,8 @@ CVAPI(void) icvGetQuadsTransform( CvSize        imageSize,
                         double quad1[4][2],
                         double quad2[4][2],
                         CvMatr64d     fundMatr,
-                        CvPoint3D64d* epipole1,
-                        CvPoint3D64d* epipole2
+                        CvPoint3D64f* epipole1,
+                        CvPoint3D64f* epipole2
                         );
 
 CVAPI(void) icvGetQuadsTransformStruct(  CvStereoCamera* stereoCamera);
@@ -703,24 +703,24 @@ CVAPI(void) icvGetQuadsTransformStruct(  CvStereoCamera* stereoCamera);
 CVAPI(void) icvComputeStereoParamsForCameras(CvStereoCamera* stereoCamera);
 
 CVAPI(void) icvGetCutPiece(   CvVect64d areaLineCoef1,CvVect64d areaLineCoef2,
-                    CvPoint2D64d epipole,
+                    CvPoint2D64f epipole,
                     CvSize imageSize,
-                    CvPoint2D64d* point11,CvPoint2D64d* point12,
-                    CvPoint2D64d* point21,CvPoint2D64d* point22,
+                    CvPoint2D64f* point11,CvPoint2D64f* point12,
+                    CvPoint2D64f* point21,CvPoint2D64f* point22,
                     int* result);
 
-CVAPI(void) icvGetMiddleAnglePoint(   CvPoint2D64d basePoint,
-                            CvPoint2D64d point1,CvPoint2D64d point2,
-                            CvPoint2D64d* midPoint);
+CVAPI(void) icvGetMiddleAnglePoint(   CvPoint2D64f basePoint,
+                            CvPoint2D64f point1,CvPoint2D64f point2,
+                            CvPoint2D64f* midPoint);
 
-CVAPI(void) icvGetNormalDirect(CvVect64d direct,CvPoint2D64d point,CvVect64d normDirect);
+CVAPI(void) icvGetNormalDirect(CvVect64d direct,CvPoint2D64f point,CvVect64d normDirect);
 
-CVAPI(double) icvGetVect(CvPoint2D64d basePoint,CvPoint2D64d point1,CvPoint2D64d point2);
+CVAPI(double) icvGetVect(CvPoint2D64f basePoint,CvPoint2D64f point1,CvPoint2D64f point2);
 
-CVAPI(void) icvProjectPointToDirect(  CvPoint2D64d point,CvVect64d lineCoeff,
-                            CvPoint2D64d* projectPoint);
+CVAPI(void) icvProjectPointToDirect(  CvPoint2D64f point,CvVect64d lineCoeff,
+                            CvPoint2D64f* projectPoint);
 
-CVAPI(void) icvGetDistanceFromPointToDirect( CvPoint2D64d point,CvVect64d lineCoef,double*dist);
+CVAPI(void) icvGetDistanceFromPointToDirect( CvPoint2D64f point,CvVect64d lineCoef,double*dist);
 
 CVAPI(IplImage*) icvCreateIsometricImage( IplImage* src, IplImage* dst,
                               int desired_depth, int desired_num_channels );
@@ -1117,9 +1117,39 @@ CVAPI(void)  cvDeleteMoire( IplImage*  img );
 *                           Background/foreground segmentation                           *
 \****************************************************************************************/
 
-#define CV_BG_MODEL_FGD     0
-#define CV_BG_MODEL_MOG     1
-#define CV_BG_MODEL_FGD_SIMPLE   2
+/* We discriminate between foreground and background pixels
+ * by building and maintaining a model of the background.
+ * Any pixel which does not fit this model is then deemed
+ * to be foreground.
+ *
+ * At present we support two core background models,
+ * one of which has two variations:
+ *
+ *  o CV_BG_MODEL_FGD: latest and greatest algorithm, described in
+ *    
+ *	 Foreground Object Detection from Videos Containing Complex Background.
+ *	 Liyuan Li, Weimin Huang, Irene Y.H. Gu, and Qi Tian. 
+ *	 ACM MM2003 9p
+ *
+ *  o CV_BG_MODEL_FGD_SIMPLE:
+ *       A code comment describes this as a simplified version of the above,
+ *       but the code is in fact currently identical
+ *
+ *  o CV_BG_MODEL_MOG: "Mixture of Gaussians", older algorithm, described in
+ *
+ *       Moving target classification and tracking from real-time video.
+ *       A Lipton, H Fujijoshi, R Patil
+ *       Proceedings IEEE Workshop on Application of Computer Vision pp 8-14 1998
+ *
+ *       Learning patterns of activity using real-time tracking
+ *       C Stauffer and W Grimson  August 2000
+ *       IEEE Transactions on Pattern Analysis and Machine Intelligence 22(8):747-757
+ */
+
+
+#define CV_BG_MODEL_FGD		0
+#define CV_BG_MODEL_MOG		1			/* "Mixture of Gaussians".	*/
+#define CV_BG_MODEL_FGD_SIMPLE	2
 
 struct CvBGStatModel;
 
@@ -1172,11 +1202,9 @@ CVAPI(int)  cvChangeDetection( IplImage*  prev_frame,
 
 /*
   Interface of ACM MM2003 algorithm
-  (Liyuan Li, Weimin Huang, Irene Y.H. Gu, and Qi Tian. 
-  "Foreground Object Detection from Videos Containing Complex Background. ACM MM2003")
 */
 
-/* default paremeters of foreground detection algorithm */
+/* Default parameters of foreground detection algorithm: */
 #define  CV_BGFG_FGD_LC              128
 #define  CV_BGFG_FGD_N1C             15
 #define  CV_BGFG_FGD_N2C             25
@@ -1185,11 +1213,12 @@ CVAPI(int)  cvChangeDetection( IplImage*  prev_frame,
 #define  CV_BGFG_FGD_N1CC            25
 #define  CV_BGFG_FGD_N2CC            40
 
-/* BG reference image update parameter */
+/* Background reference image update parameter: */
 #define  CV_BGFG_FGD_ALPHA_1         0.1f
 
 /* stat model update parameter
-   0.002f ~ 1K frame(~45sec), 0.005 ~ 18sec (if 25fps and absolutely static BG) */
+ * 0.002f ~ 1K frame(~45sec), 0.005 ~ 18sec (if 25fps and absolutely static BG)
+ */
 #define  CV_BGFG_FGD_ALPHA_2         0.005f
 
 /* start value for alpha parameter (to fast initiate statistic model) */
@@ -1203,10 +1232,42 @@ CVAPI(int)  cvChangeDetection( IplImage*  prev_frame,
 
 #define  CV_BGFG_FGD_BG_UPDATE_TRESH 0.5f
 
+/* See the above-referenced Li/Huang/Gu/Tian paper
+ * for a full description of these background-model
+ * tuning parameters.
+ *
+ * Nomenclature:  'c'  == "color", a three-component red/green/blue vector.
+ *                         We use histograms of these to model the range of
+ *                         colors we've seen at a given background pixel.
+ *
+ *                'cc' == "color co-occurrence", a six-component vector giving
+ *                         RGB color for both this frame and preceding frame.
+ *                             We use histograms of these to model the range of
+ *                         color CHANGES we've seen at a given background pixel.
+ */
 typedef struct CvFGDStatModelParams
 {
-    int           Lc, N1c, N2c, Lcc, N1cc, N2cc, is_obj_without_holes, perform_morphing;
-    float         alpha1, alpha2, alpha3, delta, T, minArea;
+    int    Lc;			/* Quantized levels per 'color' component. Power of two, typically 32, 64 or 128.				*/
+    int    N1c;			/* Number of color vectors used to model normal background color variation at a given pixel.			*/
+    int    N2c;			/* Number of color vectors retained at given pixel.  Must be > N1c, typically ~ 5/3 of N1c.			*/
+				/* Used to allow the first N1c vectors to adapt over time to changing background.				*/
+
+    int    Lcc;			/* Quantized levels per 'color co-occurrence' component.  Power of two, typically 16, 32 or 64.			*/
+    int    N1cc;		/* Number of color co-occurrence vectors used to model normal background color variation at a given pixel.	*/
+    int    N2cc;		/* Number of color co-occurrence vectors retained at given pixel.  Must be > N1cc, typically ~ 5/3 of N1cc.	*/
+				/* Used to allow the first N1cc vectors to adapt over time to changing background.				*/
+
+    int    is_obj_without_holes;/* If TRUE we ignore holes within foreground blobs. Defaults to TRUE.						*/
+    int    perform_morphing;	/* Number of erode-dilate-erode foreground-blob cleanup iterations.						*/
+				/* These erase one-pixel junk blobs and merge almost-touching blobs. Default value is 1.			*/
+
+    float  alpha1;		/* How quickly we forget old background pixel values seen.  Typically set to 0.1  				*/
+    float  alpha2;		/* "Controls speed of feature learning". Depends on T. Typical value circa 0.005. 				*/
+    float  alpha3;		/* Alternate to alpha2, used (e.g.) for quicker initial convergence. Typical value 0.1.				*/
+
+    float  delta;		/* Affects color and color co-occurrence quantization, typically set to 2.					*/
+    float  T;			/* "A percentage value which determines when new features can be recognized as new background." (Typically 0.9).*/
+    float  minArea;		/* Discard foreground blobs whose bounding box is smaller than this threshold.					*/
 }
 CvFGDStatModelParams;
 
@@ -1253,10 +1314,14 @@ CVAPI(CvBGStatModel*) cvCreateFGDStatModel( IplImage* first_frame,
 
 /* 
    Interface of Gaussian mixture algorithm
-   (P. KadewTraKuPong and R. Bowden,
+
    "An improved adaptive background mixture model for real-time tracking with shadow detection"
-   in Proc. 2nd European Workshp on Advanced Video-Based Surveillance Systems, 2001.")
+   P. KadewTraKuPong and R. Bowden,
+   Proc. 2nd European Workshp on Advanced Video-Based Surveillance Systems, 2001."
+   http://personal.ee.surrey.ac.uk/Personal/R.Bowden/publications/avbs01/avbs01.pdf
 */
+
+/* Note:  "MOG" == "Mixture Of Gaussians": */
 
 #define CV_BGFG_MOG_MAX_NGAUSSIANS 500
 
@@ -1309,6 +1374,51 @@ CvGaussBGModel;
 /* Creates Gaussian mixture background model */
 CVAPI(CvBGStatModel*) cvCreateGaussianBGModel( IplImage* first_frame,
                 CvGaussBGStatModelParams* parameters CV_DEFAULT(NULL));
+
+
+typedef struct CvBGCodeBookElem
+{
+    struct CvBGCodeBookElem* next;
+    int tLastUpdate;
+    int stale;
+    uchar boxMin[3];
+    uchar boxMax[3];
+    uchar learnMin[3];
+    uchar learnMax[3];
+}
+CvBGCodeBookElem;
+
+typedef struct CvBGCodeBookModel
+{
+    CvSize size;
+    int t;
+    uchar cbBounds[3];
+    uchar modMin[3];
+    uchar modMax[3];
+    CvBGCodeBookElem** cbmap;
+    CvMemStorage* storage;
+    CvBGCodeBookElem* freeList;
+}
+CvBGCodeBookModel;
+
+CVAPI(CvBGCodeBookModel*) cvCreateBGCodeBookModel();
+CVAPI(void) cvReleaseBGCodeBookModel( CvBGCodeBookModel** model );
+
+CVAPI(void) cvBGCodeBookUpdate( CvBGCodeBookModel* model, const CvArr* image,
+                                CvRect roi CV_DEFAULT(cvRect(0,0,0,0)),
+                                const CvArr* mask CV_DEFAULT(0) );
+
+CVAPI(int) cvBGCodeBookDiff( const CvBGCodeBookModel* model, const CvArr* image,
+                             CvArr* fgmask, CvRect roi CV_DEFAULT(cvRect(0,0,0,0)) );
+
+CVAPI(void) cvBGCodeBookClearStale( CvBGCodeBookModel* model, int staleThresh,
+                                    CvRect roi CV_DEFAULT(cvRect(0,0,0,0)),
+                                    const CvArr* mask CV_DEFAULT(0) );
+
+CVAPI(CvSeq*) cvSegmentFGMask( CvArr *fgmask, int poly1Hull0 CV_DEFAULT(1),
+                               float perimScale CV_DEFAULT(4.f),
+                               CvMemStorage* storage CV_DEFAULT(0),
+                               CvPoint offset CV_DEFAULT(cvPoint(0,0)));
 
 #ifdef __cplusplus
 }

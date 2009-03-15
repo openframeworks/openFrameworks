@@ -365,6 +365,43 @@ protected:
 };
 
 
+//////////////////////////////////////////////////////////////////////////////////////////
+
+struct CV_EXPORTS CvLevMarq
+{
+    CvLevMarq();
+    CvLevMarq( int nparams, int nerrs, CvTermCriteria criteria=
+        cvTermCriteria(CV_TERMCRIT_EPS+CV_TERMCRIT_ITER,30,DBL_EPSILON),
+        bool completeSymmFlag=false );
+    ~CvLevMarq();
+    void init( int nparams, int nerrs, CvTermCriteria criteria=
+        cvTermCriteria(CV_TERMCRIT_EPS+CV_TERMCRIT_ITER,30,DBL_EPSILON),
+        bool completeSymmFlag=false );
+    bool update( const CvMat*& param, CvMat*& J, CvMat*& err );
+    bool updateAlt( const CvMat*& param, CvMat*& JtJ, CvMat*& JtErr, double*& errNorm );
+
+    void clear();
+    void step();
+    enum { DONE=0, STARTED=1, CALC_J=2, CHECK_ERR=3 };
+
+    CvMat* mask;
+    CvMat* prevParam;
+    CvMat* param;
+    CvMat* J;
+    CvMat* err;
+    CvMat* JtJ;
+    CvMat* JtJN;
+    CvMat* JtErr;
+    CvMat* JtJV;
+    CvMat* JtJW;
+    double prevErrNorm, errNorm;
+    int lambdaLg10;
+    CvTermCriteria criteria;
+    int state;
+    int iters;
+    bool completeSymmFlag;
+};
+
 #endif /* __cplusplus */
 
 #endif /* _CV_HPP_ */

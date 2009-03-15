@@ -109,7 +109,7 @@
 #endif
 
 #if 0 /*def  CV_CHECK_FOR_NANS*/
-    #define CV_CHECK_NANS( arr ) cvCheckArray((arr))  
+    #define CV_CHECK_NANS( arr ) cvCheckArray((arr))
 #else
     #define CV_CHECK_NANS( arr )
 #endif
@@ -147,11 +147,7 @@
 
 #define CV_IMPL CV_EXTERN_C
 
-#if defined WIN32 && !defined WIN64 && (_MSC_VER >= 1200 || defined CV_ICC)
-    #define CV_DBG_BREAK() __asm int 3
-#else
-    #define CV_DBG_BREAK() assert(0);
-#endif
+#define CV_DBG_BREAK() { volatile int* crashMe = 0; *crashMe = 0; }
 
 /* default step, set in case of continuous data
    to work around checks for valid step in some ipp functions */
@@ -192,9 +188,9 @@
 #define  CV_NONZERO(a)      ((a) != 0)
 #define  CV_NONZERO_FLT(a)  (((a)+(a)) != 0)
 
-/* general-purpose saturation macros */ 
+/* general-purpose saturation macros */
 #define  CV_CAST_8U(t)  (uchar)(!((t) & ~255) ? (t) : (t) > 0 ? 255 : 0)
-#define  CV_CAST_8S(t)  (char)(!(((t)+128) & ~255) ? (t) : (t) > 0 ? 127 : -128)
+#define  CV_CAST_8S(t)  (schar)(!(((t)+128) & ~255) ? (t) : (t) > 0 ? 127 : -128)
 #define  CV_CAST_16U(t) (ushort)(!((t) & ~65535) ? (t) : (t) > 0 ? 65535 : 0)
 #define  CV_CAST_16S(t) (short)(!(((t)+32768) & ~65535) ? (t) : (t) > 0 ? 32767 : -32768)
 #define  CV_CAST_32S(t) (int)(t)
@@ -224,7 +220,7 @@
 
 #define  CV_UN_ENTRY_C1(worktype)           \
     worktype s0 = scalar[0]
-    
+
 #define  CV_UN_ENTRY_C2(worktype)           \
     worktype s0 = scalar[0], s1 = scalar[1]
 
@@ -273,14 +269,14 @@ CvFastDiv;
 CV_INLINE CvFastDiv cvFastDiv( int divisor )
 {
     CvFastDiv fastdiv;
-    
+
     assert( divisor >= 1 );
     uint64 temp = ((uint64)1 << CV_FAST_DIV_SHIFT)/divisor;
 
     fastdiv.divisor = divisor;
     fastdiv.delta = (unsigned)(((temp & 1) ^ 1) + divisor - 1);
     fastdiv.scale = (unsigned)((temp + 1) >> 1);
-    
+
     return fastdiv;
 }
 
@@ -361,7 +357,7 @@ CV_INLINE CvFastDiv cvFastDiv( int divisor )
 
 
 /****************************************************************************************\
-  
+
   Generic implementation of QuickSort algorithm.
   ----------------------------------------------
   Using this macro user can declare customized sort function that can be much faster
@@ -595,7 +591,7 @@ void func_name( T *array, size_t total, user_data_type aux )                    
 
 /* IPP-compatible return codes */
 typedef enum CvStatus
-{         
+{
     CV_BADMEMBLOCK_ERR          = -113,
     CV_INPLACE_NOT_SUPPORTED_ERR= -112,
     CV_UNMATCHED_ROI_ERR        = -111,
@@ -671,10 +667,10 @@ CvStatus;
 #endif
 
 #define IPCVAPI_EX(type,name,ipp_name,ipp_search_modules,args)  \
-    IPCVAPI(type,CV_STDCALL,name,args) 
+    IPCVAPI(type,CV_STDCALL,name,args)
 
 #define IPCVAPI_C_EX(type,name,ipp_name,ipp_search_modules,args)\
-    IPCVAPI(type,CV_CDECL,name,args) 
+    IPCVAPI(type,CV_CDECL,name,args)
 
 #ifndef IPCVAPI_IMPL
 #define IPCVAPI_IMPL(type,name,args,arg_names)                  \

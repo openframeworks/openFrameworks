@@ -101,7 +101,7 @@ typedef struct CvChainPtReader
     CV_SEQ_READER_FIELDS()
     char      code;
     CvPoint   pt;
-    char      deltas[8][2];
+    schar     deltas[8][2];
 }
 CvChainPtReader;
 
@@ -166,7 +166,7 @@ CvSubdiv2DPoint;
     CvSubdiv2DEdge recent_edge; \
     CvPoint2D32f  topleft;      \
     CvPoint2D32f  bottomright;
-    
+
 typedef struct CvSubdiv2D
 {
     CV_SUBDIV2D_FIELDS()
@@ -378,6 +378,8 @@ typedef struct CvAvgComp
     int neighbors;
 }
 CvAvgComp;
+
+struct CvFeatureTree;
 
 #endif /*_CVTYPES_H_*/
 

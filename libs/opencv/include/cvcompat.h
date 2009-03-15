@@ -110,7 +110,7 @@
 CV_INLINE CvMat cvMatArray( int rows, int cols, int type,
                             int count, void* data CV_DEFAULT(0))
 {
-    return cvMat( rows*count, cols, type, data );    
+    return cvMat( rows*count, cols, type, data );
 }
 
 #define cvUpdateMHIByTime  cvUpdateMotionHistory
@@ -199,7 +199,7 @@ CV_INLINE  void  cvRandSetRange( CvRandState* state, double param1,
     {
         state->param[0].val[0] = state->param[0].val[1] =
         state->param[0].val[2] = state->param[0].val[3] = param1;
-        state->param[1].val[0] = state->param[1].val[1] = 
+        state->param[1].val[0] = state->param[1].val[1] =
         state->param[1].val[2] = state->param[1].val[3] = param2;
     }
     else
@@ -240,7 +240,7 @@ CV_INLINE void cvRand( CvRandState* state, CvArr* arr )
         cvError( CV_StsNullPtr, "cvRand", "Null pointer to RNG state", "cvcompat.h", 0 );
         return;
     }
-    cvRandArr( &state->state, arr, state->disttype, state->param[0], state->param[1] ); 
+    cvRandArr( &state->state, arr, state->disttype, state->param[0], state->param[1] );
 }
 
 #define cvRandNext( _state ) cvRandInt( &(_state)->state )
@@ -385,7 +385,7 @@ CV_INLINE void cvConvexHull( CvPoint* points, int num_points,
 {
     CvMat points1 = cvMat( 1, num_points, CV_32SC2, points );
     CvMat hull1 = cvMat( 1, num_points, CV_32SC1, hull );
-    
+
     cvConvexHull2( &points1, &hull1, orientation, 0 );
     *hullsize = hull1.cols;
 }
@@ -438,7 +438,7 @@ CV_INLINE  void  cvFitLine3D( CvPoint3D32f* points, int count, int dist,
     cvFitLine( &mat, dist, _param, reps, aeps, line );
 }
 
-/* Fits a line into set of 2d points in a robust way (M-estimator technique) */ 
+/* Fits a line into set of 2d points in a robust way (M-estimator technique) */
 CV_INLINE  void  cvFitLine2D( CvPoint2D32f* points, int count, int dist,
                               void *param, float reps, float aeps, float* line )
 {
@@ -466,7 +466,7 @@ CV_INLINE  void  cvProject3D( CvPoint3D32f* points3D, int count,
     CvMat dst = cvMat( 1, count, CV_32FC2, points2D );
     float m[6] = {0,0,0,0,0,0};
     CvMat M = cvMat( 2, 3, CV_32F, m );
-    
+
     assert( (unsigned)xIndx < 3 && (unsigned)yIndx < 3 );
     m[xIndx] = m[yIndx+3] = 1.f;
 
@@ -504,7 +504,7 @@ CV_INLINE  int  cvHoughLines( CvArr* image, double rho,
                               double theta, int threshold,
                               float* lines, int linesNumber )
 {
-    CvMat linesMat = cvMat( 1, linesNumber, CV_32FC2, lines ); 
+    CvMat linesMat = cvMat( 1, linesNumber, CV_32FC2, lines );
     cvHoughLines2( image, &linesMat, CV_HOUGH_STANDARD,
                    rho, theta, threshold, 0, 0 );
 
@@ -517,7 +517,7 @@ CV_INLINE  int  cvHoughLinesP( CvArr* image, double rho,
                                int lineLength, int lineGap,
                                int* lines, int linesNumber )
 {
-    CvMat linesMat = cvMat( 1, linesNumber, CV_32SC4, lines ); 
+    CvMat linesMat = cvMat( 1, linesNumber, CV_32SC4, lines );
     cvHoughLines2( image, &linesMat, CV_HOUGH_PROBABILISTIC,
                    rho, theta, threshold, lineLength, lineGap );
 
@@ -529,7 +529,7 @@ CV_INLINE  int  cvHoughLinesSDiv( CvArr* image, double rho, int srn,
                                   double theta, int stn, int threshold,
                                   float* lines, int linesNumber )
 {
-    CvMat linesMat = cvMat( 1, linesNumber, CV_32FC2, lines ); 
+    CvMat linesMat = cvMat( 1, linesNumber, CV_32FC2, lines );
     cvHoughLines2( image, &linesMat, CV_HOUGH_MULTI_SCALE,
                    rho, theta, threshold, srn, stn );
 
@@ -729,7 +729,7 @@ CV_INLINE void  cvProjectPoints( int point_count, CvPoint3D64f* _object_points,
 
     cvProjectPoints2( &object_points, &rotation_vector, &translation_vector,
                       &camera_matrix, &dist_coeffs, &image_points,
-                      &dpdr, &dpdt, &dpdf, &dpdc, &dpdk );
+                      &dpdr, &dpdt, &dpdf, &dpdc, &dpdk, 0 );
 }
 
 
@@ -747,7 +747,7 @@ CV_INLINE void  cvProjectPointsSimple( int point_count, CvPoint3D64f* _object_po
 
     cvProjectPoints2( &object_points, &rotation_matrix, &translation_vector,
                       &camera_matrix, &dist_coeffs, &image_points,
-                      0, 0, 0, 0, 0 );
+                      0, 0, 0, 0, 0, 0 );
 }
 
 
@@ -763,7 +763,7 @@ CV_INLINE void cvUnDistortOnce( const CvArr* src, CvArr* dst,
 
 
 /* the two functions below have quite hackerish implementations, use with care
-   (or, which is better, switch to cvUndistortInitMap and cvRemap instead */ 
+   (or, which is better, switch to cvUndistortInitMap and cvRemap instead */
 CV_INLINE void cvUnDistortInit( const CvArr* CV_UNREFERENCED(src),
                                 CvArr* undistortion_map,
                                 const float* A, const float* k,
@@ -791,7 +791,7 @@ CV_INLINE void  cvUnDistort( const CvArr* src, CvArr* dst,
     assert( sz.width >= 8 );
     a[0] = data.fl[0]; a[4] = data.fl[1];
     a[2] = data.fl[2]; a[5] = data.fl[3];
-    cvUnDistortOnce( src, dst, a, data.fl + 4, 1 ); 
+    cvUnDistortOnce( src, dst, a, data.fl + 4, 1 );
 }
 
 
@@ -805,7 +805,7 @@ CV_INLINE  float  cvCalcEMD( const float* signature1, int size1,
     CvMat sign1 = cvMat( size1, dims + 1, CV_32FC1, (void*)signature1 );
     CvMat sign2 = cvMat( size2, dims + 1, CV_32FC1, (void*)signature2 );
 
-    return cvCalcEMD2( &sign1, &sign2, dist_type, dist_func, 0, 0, lower_bound, user_param ); 
+    return cvCalcEMD2( &sign1, &sign2, dist_type, dist_func, 0, 0, lower_bound, user_param );
 }
 
 
@@ -828,7 +828,7 @@ CV_INLINE void  cvStartScanGraph( CvGraph* graph, CvGraphScanner* scanner,
                                   int mask CV_DEFAULT(CV_GRAPH_ALL_ITEMS))
 {
     CvGraphScanner* temp_scanner;
-    
+
     if( !scanner )
         cvError( CV_StsNullPtr, "cvStartScanGraph", "Null scanner pointer", "cvcompat.h", 0 );
 
@@ -887,10 +887,12 @@ CV_INLINE  void  cvPolyLineAA( CvArr* img, CvPoint** pts, int* npts, int contour
 }
 
 
-#define cvMake2DPoints cvConvertPointsHomogenious
-#define cvMake3DPoints cvConvertPointsHomogenious
+#define cvMake2DPoints cvConvertPointsHomogeneous
+#define cvMake3DPoints cvConvertPointsHomogeneous
 
 #define cvWarpPerspectiveQMatrix cvGetPerspectiveTransform
+
+#define cvConvertPointsHomogenious cvConvertPointsHomogeneous
 
 /****************************************************************************************\
 *                                   Pixel Access Macros                                  *
@@ -898,9 +900,9 @@ CV_INLINE  void  cvPolyLineAA( CvArr* img, CvPoint** pts, int* npts, int contour
 
 typedef struct _CvPixelPosition8u
 {
-    unsigned char*   currline;      /* pointer to the start of the current pixel line   */
-    unsigned char*   topline;       /* pointer to the start of the top pixel line       */
-    unsigned char*   bottomline;    /* pointer to the start of the first line           */
+    uchar*  currline;      /* pointer to the start of the current pixel line   */
+    uchar*  topline;       /* pointer to the start of the top pixel line       */
+    uchar*  bottomline;    /* pointer to the start of the first line           */
                                     /* which is below the image                         */
     int     x;                      /* current x coordinate ( in pixels )               */
     int     width;                  /* width of the image  ( in pixels )                */
@@ -914,9 +916,9 @@ typedef struct _CvPixelPosition8u
 /* this structure differs from the above only in data type */
 typedef struct _CvPixelPosition8s
 {
-    char*   currline;
-    char*   topline;
-    char*   bottomline;
+    schar*  currline;
+    schar*  topline;
+    schar*  bottomline;
     int     x;
     int     width;
     int     height;
@@ -971,64 +973,64 @@ typedef struct _CvPixelPosition32f
 /*  x, y   - coordinates of the new position  */
 /*  cs     - number of the image channels     */
 #define CV_GET_CURRENT( pos, cs )  ((pos).currline + (pos).x * (cs))
- 
+
 /* Move by one pixel relatively to current position */
 /*  pos    - position structure                     */
 /*  cs     - number of the image channels           */
- 
+
 /* left */
 #define CV_MOVE_LEFT( pos, cs ) \
  ( --(pos).x >= 0 ? (pos).currline + (pos).x*(cs) : 0 )
- 
+
 /* right */
 #define CV_MOVE_RIGHT( pos, cs ) \
  ( ++(pos).x < (pos).width ? (pos).currline + (pos).x*(cs) : 0 )
- 
+
 /* up */
 #define CV_MOVE_UP( pos, cs ) \
  (((pos).currline -= (pos).step) != (pos).topline ? (pos).currline + (pos).x*(cs) : 0 )
- 
+
 /* down */
 #define CV_MOVE_DOWN( pos, cs ) \
  (((pos).currline += (pos).step) != (pos).bottomline ? (pos).currline + (pos).x*(cs) : 0 )
- 
+
 /* left up */
 #define CV_MOVE_LU( pos, cs ) ( CV_MOVE_LEFT(pos, cs), CV_MOVE_UP(pos, cs))
- 
+
 /* right up */
 #define CV_MOVE_RU( pos, cs ) ( CV_MOVE_RIGHT(pos, cs), CV_MOVE_UP(pos, cs))
- 
+
 /* left down */
 #define CV_MOVE_LD( pos, cs ) ( CV_MOVE_LEFT(pos, cs), CV_MOVE_DOWN(pos, cs))
- 
+
 /* right down */
 #define CV_MOVE_RD( pos, cs ) ( CV_MOVE_RIGHT(pos, cs), CV_MOVE_DOWN(pos, cs))
- 
- 
- 
+
+
+
 /* Move by one pixel relatively to current position with wrapping when the position     */
 /* achieves image boundary                                                              */
 /*  pos    - position structure                                                         */
 /*  cs     - number of the image channels                                               */
- 
+
 /* left */
 #define CV_MOVE_LEFT_WRAP( pos, cs ) \
  ((pos).currline + ( --(pos).x >= 0 ? (pos).x : ((pos).x = (pos).width-1))*(cs))
- 
+
 /* right */
 #define CV_MOVE_RIGHT_WRAP( pos, cs ) \
  ((pos).currline + ( ++(pos).x < (pos).width ? (pos).x : ((pos).x = 0))*(cs) )
- 
+
 /* up */
 #define CV_MOVE_UP_WRAP( pos, cs ) \
     ((((pos).currline -= (pos).step) != (pos).topline ? \
     (pos).currline : ((pos).currline = (pos).bottomline - (pos).step)) + (pos).x*(cs) )
- 
+
 /* down */
 #define CV_MOVE_DOWN_WRAP( pos, cs ) \
     ((((pos).currline += (pos).step) != (pos).bottomline ? \
     (pos).currline : ((pos).currline = (pos).topline + (pos).step)) + (pos).x*(cs) )
- 
+
 /* left up */
 #define CV_MOVE_LU_WRAP( pos, cs ) ( CV_MOVE_LEFT_WRAP(pos, cs), CV_MOVE_UP_WRAP(pos, cs))
 /* right up */
@@ -1037,7 +1039,7 @@ typedef struct _CvPixelPosition32f
 #define CV_MOVE_LD_WRAP( pos, cs ) ( CV_MOVE_LEFT_WRAP(pos, cs), CV_MOVE_DOWN_WRAP(pos, cs))
 /* right down */
 #define CV_MOVE_RD_WRAP( pos, cs ) ( CV_MOVE_RIGHT_WRAP(pos, cs), CV_MOVE_DOWN_WRAP(pos, cs))
- 
+
 /* Numeric constants which used for moving in arbitrary direction  */
 #define CV_SHIFT_NONE   2
 #define CV_SHIFT_LEFT   1
@@ -1048,7 +1050,7 @@ typedef struct _CvPixelPosition32f
 #define CV_SHIFT_RU     7
 #define CV_SHIFT_LD     9
 #define CV_SHIFT_RD    11
- 
+
 /* Move by one pixel in specified direction                                     */
 /*  pos    - position structure                                                 */
 /*  shift  - direction ( it's value must be one of the CV_SHIFT_… constants ) */
@@ -1057,7 +1059,7 @@ typedef struct _CvPixelPosition32f
     ( (pos).currline += (pos).step_arr[(shift)>>2], (pos).x += ((shift)&3)-2,       \
     ((pos).currline != (pos).topline && (pos).currline != (pos).bottomline &&       \
     (pos).x >= 0 && (pos).x < (pos).width) ? (pos).currline + (pos).x*(cs) : 0 )
- 
+
 /* Move by one pixel in specified direction with wrapping when the               */
 /* position achieves image boundary                                              */
 /*  pos    - position structure                                                  */

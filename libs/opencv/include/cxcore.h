@@ -113,7 +113,7 @@ CVAPI(void)  cvReleaseImage( IplImage** image );
 /* Creates a copy of IPL image (widthStep may differ) */
 CVAPI(IplImage*) cvCloneImage( const IplImage* image );
 
-/* Sets a Channel Of Interest (only a few functions support COI) - 
+/* Sets a Channel Of Interest (only a few functions support COI) -
    use cvCopy to extract the selected channel and/or put it back */
 CVAPI(void)  cvSetImageCOI( IplImage* image, int coi );
 
@@ -532,7 +532,7 @@ CVAPI(void)  cvSubRS( const CvArr* src, CvScalar value, CvArr* dst,
 CVAPI(void)  cvMul( const CvArr* src1, const CvArr* src2,
                     CvArr* dst, double scale CV_DEFAULT(1) );
 
-/* element-wise division/inversion with scaling: 
+/* element-wise division/inversion with scaling:
     dst(idx) = src1(idx) * scale / src2(idx)
     or dst(idx) = scale / src2(idx) if src1 == 0 */
 CVAPI(void)  cvDiv( const CvArr* src1, const CvArr* src2,
@@ -661,7 +661,7 @@ CVAPI(float)  cvCbrt( float value );
 /* Checks array values for NaNs, Infs or simply for too large numbers
    (if CV_CHECK_RANGE is set). If CV_CHECK_QUIET is set,
    no runtime errors is raised (function returns zero value in case of "bad" values).
-   Otherwise cvError is called */ 
+   Otherwise cvError is called */
 #define  CV_CHECK_RANGE    1
 #define  CV_CHECK_QUIET    2
 CVAPI(int)  cvCheckArr( const CvArr* arr, int flags CV_DEFAULT(0),
@@ -676,8 +676,21 @@ CVAPI(void) cvRandArr( CvRNG* rng, CvArr* arr, int dist_type,
 CVAPI(void) cvRandShuffle( CvArr* mat, CvRNG* rng,
                            double iter_factor CV_DEFAULT(1.));
 
+#define CV_SORT_EVERY_ROW 0
+#define CV_SORT_EVERY_COLUMN 1
+#define CV_SORT_ASCENDING 0
+#define CV_SORT_DESCENDING 16
+
+CVAPI(void) cvSort( const CvArr* src, CvArr* dst CV_DEFAULT(NULL),
+                    CvArr* idxmat CV_DEFAULT(NULL),
+                    int flags CV_DEFAULT(0));
+
 /* Finds real roots of a cubic equation */
 CVAPI(int) cvSolveCubic( const CvMat* coeffs, CvMat* roots );
+
+/* Finds all real and complex roots of a polynomial equation */
+CVAPI(void) cvSolvePoly(const CvMat* coeffs, CvMat *roots,
+			int maxiter CV_DEFAULT(0), int fig CV_DEFAULT(0));
 
 /****************************************************************************************\
 *                                Matrix operations                                       *
@@ -720,6 +733,8 @@ CVAPI(void) cvMulTransposed( const CvArr* src, CvArr* dst, int order,
 CVAPI(void)  cvTranspose( const CvArr* src, CvArr* dst );
 #define cvT cvTranspose
 
+/* Completes the symmetric matrix from the lower (LtoR=0) or from the upper (LtoR!=0) part */
+CVAPI(void)  cvCompleteSymm( CvMat* matrix, int LtoR CV_DEFAULT(0) );
 
 /* Mirror array data around horizontal (flip=0),
    vertical (flip=1) or both(flip=-1) axises:
@@ -746,6 +761,8 @@ CVAPI(void)   cvSVBkSb( const CvArr* W, const CvArr* U,
 #define CV_LU  0
 #define CV_SVD 1
 #define CV_SVD_SYM 2
+#define CV_LSQ 8
+
 /* Inverts matrix */
 CVAPI(double)  cvInvert( const CvArr* src, CvArr* dst,
                          int method CV_DEFAULT(CV_LU));
@@ -795,7 +812,7 @@ CVAPI(CvArr*)  cvRange( CvArr* mat, double start, double end );
 CVAPI(void)  cvCalcCovarMatrix( const CvArr** vects, int count,
                                 CvArr* cov_mat, CvArr* avg, int flags );
 
-#define CV_PCA_DATA_AS_ROW 0 
+#define CV_PCA_DATA_AS_ROW 0
 #define CV_PCA_DATA_AS_COL 1
 #define CV_PCA_USE_AVG 2
 CVAPI(void)  cvCalcPCA( const CvArr* data, CvArr* mean,
@@ -951,11 +968,11 @@ CVAPI(void)  cvSetSeqBlockSize( CvSeq* seq, int delta_elems );
 
 
 /* Adds new element to the end of sequence. Returns pointer to the element */
-CVAPI(char*)  cvSeqPush( CvSeq* seq, void* element CV_DEFAULT(NULL));
+CVAPI(schar*)  cvSeqPush( CvSeq* seq, void* element CV_DEFAULT(NULL));
 
 
 /* Adds new element to the beginning of sequence. Returns pointer to it */
-CVAPI(char*)  cvSeqPushFront( CvSeq* seq, void* element CV_DEFAULT(NULL));
+CVAPI(schar*)  cvSeqPushFront( CvSeq* seq, void* element CV_DEFAULT(NULL));
 
 
 /* Removes the last element from sequence and optionally saves it */
@@ -978,8 +995,8 @@ CVAPI(void)  cvSeqPopMulti( CvSeq* seq, void* elements,
 
 /* Inserts a new element in the middle of sequence.
    cvSeqInsert(seq,0,elem) == cvSeqPushFront(seq,elem) */
-CVAPI(char*)  cvSeqInsert( CvSeq* seq, int before_index,
-                           void* element CV_DEFAULT(NULL));
+CVAPI(schar*)  cvSeqInsert( CvSeq* seq, int before_index,
+                            void* element CV_DEFAULT(NULL));
 
 /* Removes specified sequence element */
 CVAPI(void)  cvSeqRemove( CvSeq* seq, int index );
@@ -991,10 +1008,10 @@ CVAPI(void)  cvSeqRemove( CvSeq* seq, int index );
 CVAPI(void)  cvClearSeq( CvSeq* seq );
 
 
-/* Retrives pointer to specified sequence element.
+/* Retrieves pointer to specified sequence element.
    Negative indices are supported and mean counting from the end
    (e.g -1 means the last sequence element) */
-CVAPI(char*)  cvGetSeqElem( const CvSeq* seq, int index );
+CVAPI(schar*)  cvGetSeqElem( const CvSeq* seq, int index );
 
 /* Calculates index of the specified sequence element.
    Returns -1 if element does not belong to the sequence */
@@ -1071,9 +1088,9 @@ typedef int (CV_CDECL* CvCmpFunc)(const void* a, const void* b, void* userdata )
 CVAPI(void) cvSeqSort( CvSeq* seq, CvCmpFunc func, void* userdata CV_DEFAULT(NULL) );
 
 /* Finds element in a [sorted] sequence */
-CVAPI(char*) cvSeqSearch( CvSeq* seq, const void* elem, CvCmpFunc func,
-                          int is_sorted, int* elem_idx,
-                          void* userdata CV_DEFAULT(NULL) );
+CVAPI(schar*) cvSeqSearch( CvSeq* seq, const void* elem, CvCmpFunc func,
+                           int is_sorted, int* elem_idx,
+                           void* userdata CV_DEFAULT(NULL) );
 
 /* Reverses order of sequence elements in-place */
 CVAPI(void) cvSeqInvert( CvSeq* seq );
@@ -1298,7 +1315,7 @@ CV_INLINE  void  cvEllipseBox( CvArr* img, CvBox2D box, CvScalar color,
     CvSize axes;
     axes.width = cvRound(box.size.height*0.5);
     axes.height = cvRound(box.size.width*0.5);
-    
+
     cvEllipse( img, cvPointFrom32f( box.center ), axes, box.angle,
                0, 360, color, thickness, line_type, shift );
 }
@@ -1350,14 +1367,14 @@ CVAPI(int)  cvInitLineIterator( const CvArr* image, CvPoint pt1, CvPoint pt2,
 #define CV_FONT_HERSHEY_SIMPLEX         0
 #define CV_FONT_HERSHEY_PLAIN           1
 #define CV_FONT_HERSHEY_DUPLEX          2
-#define CV_FONT_HERSHEY_COMPLEX         3 
+#define CV_FONT_HERSHEY_COMPLEX         3
 #define CV_FONT_HERSHEY_TRIPLEX         4
 #define CV_FONT_HERSHEY_COMPLEX_SMALL   5
 #define CV_FONT_HERSHEY_SCRIPT_SIMPLEX  6
 #define CV_FONT_HERSHEY_SCRIPT_COMPLEX  7
 
 /* font flags */
-#define CV_FONT_ITALIC                 16  
+#define CV_FONT_ITALIC                 16
 
 #define CV_FONT_VECTOR0    CV_FONT_HERSHEY_SIMPLEX
 
@@ -1740,6 +1757,19 @@ CVAPI(int)  cvGetNumThreads( void );
 CVAPI(void) cvSetNumThreads( int threads CV_DEFAULT(0) );
 /* get index of the thread being executed */
 CVAPI(int)  cvGetThreadNum( void );
+
+/*************** Convenience functions for better interaction with HighGUI **************/
+
+typedef IplImage* (CV_CDECL * CvLoadImageFunc)( const char* filename, int colorness );
+typedef CvMat* (CV_CDECL * CvLoadImageMFunc)( const char* filename, int colorness );
+typedef int (CV_CDECL * CvSaveImageFunc)( const char* filename, const CvArr* image );
+typedef void (CV_CDECL * CvShowImageFunc)( const char* windowname, const CvArr* image );
+
+CVAPI(int) cvSetImageIOFunctions( CvLoadImageFunc _load_image, CvLoadImageMFunc _load_image_m,
+                            CvSaveImageFunc _save_image, CvShowImageFunc _show_image );
+
+#define CV_SET_IMAGE_IO_FUNCTIONS() \
+    cvSetImageIOFunctions( cvLoadImage, cvLoadImageM, cvSaveImage, cvShowImage )
 
 #ifdef __cplusplus
 }
