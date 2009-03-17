@@ -157,13 +157,13 @@ class ofxVec4f : public ofPoint {
 // Non-Member operators
 //
 //
-inline ofxVec4f operator+( float f, const ofxVec4f& vec );
+ofxVec4f operator+( float f, const ofxVec4f& vec );
 
-inline ofxVec4f operator-( float f, const ofxVec4f& vec );
+ofxVec4f operator-( float f, const ofxVec4f& vec );
 
-inline ofxVec4f operator*( float f, const ofxVec4f& vec );
+ofxVec4f operator*( float f, const ofxVec4f& vec );
 
-inline ofxVec4f operator/( float f, const ofxVec4f& vec );
+ofxVec4f operator/( float f, const ofxVec4f& vec );
 
 
 #endif

@@ -162,13 +162,13 @@ class ofxPoint4f : public ofPoint {
 // Non-Member operators
 //
 //
-inline ofxPoint4f operator+( float f, const ofxPoint4f& pnt );
+ofxPoint4f operator+( float f, const ofxPoint4f& pnt );
 
-inline ofxPoint4f operator-( float f, const ofxPoint4f& pnt );
+ofxPoint4f operator-( float f, const ofxPoint4f& pnt );
 
-inline ofxPoint4f operator*( float f, const ofxPoint4f& pnt );
+ofxPoint4f operator*( float f, const ofxPoint4f& pnt );
 
-inline ofxPoint4f operator/( float f, const ofxPoint4f& pnt );
+ofxPoint4f operator/( float f, const ofxPoint4f& pnt );
 
 
 #endif
