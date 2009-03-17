@@ -191,13 +191,13 @@ class ofxPoint2f : public ofPoint {
 // Non-Member operators
 //
 //
-inline ofxPoint2f operator+( float f, const ofxPoint2f& pnt );
+ofxPoint2f operator+( float f, const ofxPoint2f& pnt );
 
-inline ofxPoint2f operator-( float f, const ofxPoint2f& pnt );
+ofxPoint2f operator-( float f, const ofxPoint2f& pnt );
 
-inline ofxPoint2f operator*( float f, const ofxPoint2f& pnt );
+ofxPoint2f operator*( float f, const ofxPoint2f& pnt );
 
-inline ofxPoint2f operator/( float f, const ofxPoint2f& pnt );
+ofxPoint2f operator/( float f, const ofxPoint2f& pnt );
 
 
 #endif

@@ -217,13 +217,13 @@ class ofxPoint3f : public ofPoint {
 // Non-Member operators
 //
 //
-inline ofxPoint3f operator+( float f, const ofxPoint3f& pnt );
+ofxPoint3f operator+( float f, const ofxPoint3f& pnt );
 
-inline ofxPoint3f operator-( float f, const ofxPoint3f& pnt );
+ofxPoint3f operator-( float f, const ofxPoint3f& pnt );
 
-inline ofxPoint3f operator*( float f, const ofxPoint3f& pnt );
+ofxPoint3f operator*( float f, const ofxPoint3f& pnt );
 
-inline ofxPoint3f operator/( float f, const ofxPoint3f& pnt );
+ofxPoint3f operator/( float f, const ofxPoint3f& pnt );
 
 
 #endif
