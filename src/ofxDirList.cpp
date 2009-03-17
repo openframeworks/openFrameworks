@@ -61,6 +61,9 @@ string ofxDirList::getPath(int pos){
 int ofxDirList::listDir(string directory){
     directory = ofToDataPath(directory);
 
+	nameArray.clear();
+	pathArray.clear();
+
     if(directory.length() <= 0)return 0;
 
     //if the trailing slash was not added - then add it
