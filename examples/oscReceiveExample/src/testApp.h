@@ -34,11 +34,11 @@ private:
 		ofxOscReceiver	receiver;
 
 		int				current_msg_string;
-		std::string		msg_strings[NUM_MSG_STRINGS];
+		string		msg_strings[NUM_MSG_STRINGS];
 		float			timers[NUM_MSG_STRINGS];
 
 		int				mouseX, mouseY;
-		char			mouseButtonState[128];
+		string			mouseButtonState;
 };
 
 #endif
