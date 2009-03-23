@@ -30,7 +30,7 @@
 ofxOscReceiver::ofxOscReceiver()
 {
 #ifdef TARGET_WIN32
-	mutex = CreateMutexA( NULL, FALSE, NULL );
+	mutex = CreateMutex( NULL, FALSE, NULL );
 #else
 	pthread_mutex_init( &mutex, NULL );
 #endif
@@ -95,6 +95,11 @@ void ofxOscReceiver::ProcessMessage( const osc::ReceivedMessage &m, const IpEndp
 
 	// set the address
 	ofMessage->setAddress( m.AddressPattern() );
+
+	// set the sender ip/host
+	char endpoint_host[ IpEndpointName::ADDRESS_STRING_LENGTH ];
+	remoteEndpoint.AddressAsString( endpoint_host );
+    ofMessage->setRemoteEndpoint( endpoint_host, remoteEndpoint.port );
 
 	// transfer the arguments
 	for ( osc::ReceivedMessage::const_iterator arg = m.ArgumentsBegin();
