@@ -194,10 +194,10 @@ ofxPoint3f ofxPoint3f::getRotated( float angle,
 	float ty = y - pivot.y;
 	float tz = z - pivot.z;
 
-	float a = angle*DEG_TO_RAD;
+	float a = (float)(angle*DEG_TO_RAD);
 	float sina = sin( a );
 	float cosa = cos( a );
-	float cosb = 1.0 - cosa;
+	float cosb = 1.0f - cosa;
 
 	float xrot = tx*(ax.x*ax.x*cosb + cosa)
 			   + ty*(ax.x*ax.y*cosb - ax.z*sina)
@@ -226,7 +226,7 @@ ofxPoint3f ofxPoint3f::getRotatedRad( float angle,
 	float a = angle;
 	float sina = sin( a );
 	float cosa = cos( a );
-	float cosb = 1.0 - cosa;
+	float cosb = 1.0f - cosa;
 
 	float xrot = tx*(ax.x*ax.x*cosb + cosa)
 			   + ty*(ax.x*ax.y*cosb - ax.z*sina)
@@ -252,10 +252,10 @@ ofxPoint3f& ofxPoint3f::rotate( float angle,
 	y -= pivot.y;
 	z -= pivot.z;
 
-	float a = angle*DEG_TO_RAD;
+	float a = (float)(angle*DEG_TO_RAD);
 	float sina = sin( a );
 	float cosa = cos( a );
-	float cosb = 1.0 - cosa;
+	float cosb = 1.0f - cosa;
 
 	float xrot = x*(ax.x*ax.x*cosb + cosa)
 			   + y*(ax.x*ax.y*cosb - ax.z*sina)
@@ -287,7 +287,7 @@ ofxPoint3f& ofxPoint3f::rotateRad( float angle,
 	float a = angle;
 	float sina = sin( a );
 	float cosa = cos( a );
-	float cosb = 1.0 - cosa;
+	float cosb = 1.0f - cosa;
 
 	float xrot = x*(ax.x*ax.x*cosb + cosa)
 			   + y*(ax.x*ax.y*cosb - ax.z*sina)
@@ -395,13 +395,13 @@ ofxPoint3f ofxPoint3f::middled( const ofxPoint3f& pnt ) const {
 }
 
 ofxPoint3f ofxPoint3f::getMiddle( const ofxPoint3f& pnt ) const {
-	return ofxPoint3f( (x+pnt.x)/2.0, (y+pnt.y)/2.0, (z+pnt.z)/2.0 );
+	return ofxPoint3f( (x+pnt.x)/2.0f, (y+pnt.y)/2.0f, (z+pnt.z)/2.0f );
 }
 
 ofxPoint3f& ofxPoint3f::middle( const ofxPoint3f& pnt ) {
-	x = (x+pnt.x)/2.0;
-	y = (y+pnt.y)/2.0;
-	z = (z+pnt.z)/2.0;
+	x = (x+pnt.x)/2.0f;
+	y = (y+pnt.y)/2.0f;
+	z = (z+pnt.z)/2.0f;
 	return *this;
 }
 

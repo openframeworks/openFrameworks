@@ -228,10 +228,10 @@ ofxVec3f ofxVec3f::rotated( float angle, const ofxVec3f& axis ) const {
 }
 ofxVec3f ofxVec3f::getRotated( float angle, const ofxVec3f& axis ) const {
 	ofxVec3f ax = axis.normalized();
-	float a = angle*DEG_TO_RAD;
+	float a = (float)(angle*DEG_TO_RAD);
 	float sina = sin( a );
 	float cosa = cos( a );
-	float cosb = 1.0 - cosa;
+	float cosb = 1.0f - cosa;
 
 	return ofxVec3f( x*(ax.x*ax.x*cosb + cosa)
 				  + y*(ax.x*ax.y*cosb - ax.z*sina)
@@ -249,7 +249,7 @@ ofxVec3f ofxVec3f::getRotatedRad( float angle, const ofxVec3f& axis ) const {
 	float a = angle;
 	float sina = sin( a );
 	float cosa = cos( a );
-	float cosb = 1.0 - cosa;
+	float cosb = 1.0f - cosa;
 
 	return ofxVec3f( x*(ax.x*ax.x*cosb + cosa)
 				  + y*(ax.x*ax.y*cosb - ax.z*sina)
@@ -264,10 +264,10 @@ ofxVec3f ofxVec3f::getRotatedRad( float angle, const ofxVec3f& axis ) const {
 
 ofxVec3f& ofxVec3f::rotate( float angle, const ofxVec3f& axis ) {
 	ofxVec3f ax = axis.normalized();
-	float a = angle*DEG_TO_RAD;
+	float a = (float)(angle*DEG_TO_RAD);
 	float sina = sin( a );
 	float cosa = cos( a );
-	float cosb = 1.0 - cosa;
+	float cosb = 1.0f - cosa;
 
 	float nx = x*(ax.x*ax.x*cosb + cosa)
 	  + y*(ax.x*ax.y*cosb - ax.z*sina)
@@ -288,7 +288,7 @@ ofxVec3f& ofxVec3f::rotateRad(float angle, const ofxVec3f& axis ) {
 	float a = angle;
 	float sina = sin( a );
 	float cosa = cos( a );
-	float cosb = 1.0 - cosa;
+	float cosb = 1.0f - cosa;
 
 	float nx = x*(ax.x*ax.x*cosb + cosa)
 	  + y*(ax.x*ax.y*cosb - ax.z*sina)
@@ -309,12 +309,12 @@ ofxVec3f ofxVec3f::rotated(float ax, float ay, float az) {
 }
 
 ofxVec3f ofxVec3f::getRotated(float ax, float ay, float az) const {
-	float a = cos(DEG_TO_RAD*(ax));
-	float b = sin(DEG_TO_RAD*(ax));
-	float c = cos(DEG_TO_RAD*(ay));
-	float d = sin(DEG_TO_RAD*(ay));
-	float e = cos(DEG_TO_RAD*(az));
-	float f = sin(DEG_TO_RAD*(az));
+	float a = (float)cos(DEG_TO_RAD*(ax));
+	float b = (float)sin(DEG_TO_RAD*(ax));
+	float c = (float)cos(DEG_TO_RAD*(ay));
+	float d = (float)sin(DEG_TO_RAD*(ay));
+	float e = (float)cos(DEG_TO_RAD*(az));
+	float f = (float)sin(DEG_TO_RAD*(az));
 
 	float nx = c * e * x - c * f * y + d * z;
 	float ny = (a * f + b * d * e) * x + (a * e - b * d * f) * y - b * c * z;
@@ -340,12 +340,12 @@ ofxVec3f ofxVec3f::getRotatedRad(float ax, float ay, float az) const {
 
 
 ofxVec3f& ofxVec3f::rotate(float ax, float ay, float az) {
-	float a = cos(DEG_TO_RAD*(ax));
-	float b = sin(DEG_TO_RAD*(ax));
-	float c = cos(DEG_TO_RAD*(ay));
-	float d = sin(DEG_TO_RAD*(ay));
-	float e = cos(DEG_TO_RAD*(az));
-	float f = sin(DEG_TO_RAD*(az));
+	float a = (float)cos(DEG_TO_RAD*(ax));
+	float b = (float)sin(DEG_TO_RAD*(ax));
+	float c = (float)cos(DEG_TO_RAD*(ay));
+	float d = (float)sin(DEG_TO_RAD*(ay));
+	float e = (float)cos(DEG_TO_RAD*(az));
+	float f = (float)sin(DEG_TO_RAD*(az));
 
 	float nx = c * e * x - c * f * y + d * z;
 	float ny = (a * f + b * d * e) * x + (a * e - b * d * f) * y - b * c * z;
@@ -520,13 +520,13 @@ float ofxVec3f::squareLength() const {
 float ofxVec3f::angle( const ofxVec3f& vec ) const {
 	ofxVec3f n1 = this->normalized();
 	ofxVec3f n2 = vec.normalized();
-	return acos( n1.dot(n2) )*RAD_TO_DEG;
+	return (float)(acos( n1.dot(n2) )*RAD_TO_DEG);
 }
 
 float ofxVec3f::angleRad( const ofxVec3f& vec ) const {
 	ofxVec3f n1 = this->normalized();
 	ofxVec3f n2 = vec.normalized();
-	return acos( n1.dot(n2) );
+	return (float)acos( n1.dot(n2) );
 }
 
 
