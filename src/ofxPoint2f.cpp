@@ -171,13 +171,13 @@ ofxPoint2f ofxPoint2f::rotated( float angle, const ofxPoint2f& pivot ) const {
 }
 
 ofxPoint2f ofxPoint2f::getRotated( float angle, const ofxPoint2f& pivot ) const {
-	float a = angle * DEG_TO_RAD;
+	float a = (float)(angle * DEG_TO_RAD);
 	return ofxPoint2f( ((x-pivot.x)*cos(a) - (y-pivot.y)*sin(a)) + pivot.x,
 					  ((x-pivot.x)*sin(a) + (y-pivot.y)*cos(a)) + pivot.y );
 }
 
 ofxPoint2f& ofxPoint2f::rotate( float angle, const ofxPoint2f& pivot ) {
-	float a = angle * DEG_TO_RAD;
+	float a = (float)(angle * DEG_TO_RAD);
 	float xrot = ((x-pivot.x)*cos(a) - (y-pivot.y)*sin(a)) + pivot.x;
 	y = ((x-pivot.x)*sin(a) + (y-pivot.y)*cos(a)) + pivot.y;
 	x = xrot;
@@ -279,12 +279,12 @@ ofxPoint2f ofxPoint2f::middled( const ofxPoint2f& pnt ) const{
 }
 
 ofxPoint2f ofxPoint2f::getMiddle( const ofxPoint2f& pnt ) const {
-	return ofxPoint2f( (x+pnt.x)/2.0, (y+pnt.y)/2.0 );
+	return ofxPoint2f( (x+pnt.x)/2.0f, (y+pnt.y)/2.0f );
 }
 
 ofxPoint2f& ofxPoint2f::middle( const ofxPoint2f& pnt ) {
-	x = (x+pnt.x)/2.0;
-	y = (y+pnt.y)/2.0;
+	x = (x+pnt.x)/2.0f;
+	y = (y+pnt.y)/2.0f;
 	return *this;
 }
 

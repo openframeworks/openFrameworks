@@ -245,15 +245,15 @@ ofxPoint4f ofxPoint4f::middled( const ofxPoint4f& pnt ) const {
 }
 
 ofxPoint4f ofxPoint4f::getMiddle( const ofxPoint4f& pnt ) const {
-	return ofxPoint4f( (x+pnt.x)/2.0, (y+pnt.y)/2.0,
-					   (z+pnt.z)/2.0, (w+pnt.w)/2.0 );
+	return ofxPoint4f( (x+pnt.x)/2.0f, (y+pnt.y)/2.0f,
+					   (z+pnt.z)/2.0f, (w+pnt.w)/2.0f );
 }
 
 ofxPoint4f& ofxPoint4f::middle( const ofxPoint4f& pnt ) {
-	x = (x+pnt.x)/2.0;
-	y = (y+pnt.y)/2.0;
-	z = (z+pnt.z)/2.0;
-	w = (w+pnt.w)/2.0;
+	x = (x+pnt.x)/2.0f;
+	y = (y+pnt.y)/2.0f;
+	z = (z+pnt.z)/2.0f;
+	w = (w+pnt.w)/2.0f;
 	return *this;
 }
 

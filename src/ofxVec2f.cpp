@@ -205,7 +205,7 @@ ofxVec2f ofxVec2f::rotated( float angle ) const {
 }
 
 ofxVec2f ofxVec2f::getRotated( float angle ) const {
-	float a = angle*DEG_TO_RAD;
+	float a = (float)(angle*DEG_TO_RAD);
 	return ofxVec2f( x*cos(a) - y*sin(a),
 					x*sin(a) + y*cos(a) );
 }
@@ -217,7 +217,7 @@ ofxVec2f ofxVec2f::getRotatedRad( float angle ) const {
 }
 
 ofxVec2f& ofxVec2f::rotate( float angle ) {
-	float a = angle * DEG_TO_RAD;
+	float a = (float)(angle * DEG_TO_RAD);
 	float xrot = x*cos(a) - y*sin(a);
 	y = x*sin(a) + y*cos(a);
 	x = xrot;
@@ -336,7 +336,7 @@ float ofxVec2f::squareLength() const {
 * This is a signed relative angle between -180 and 180.
 */
 float ofxVec2f::angle( const ofxVec2f& vec ) const {
-	return atan2( x*vec.y-y*vec.x, x*vec.x + y*vec.y )*RAD_TO_DEG;
+	return (float)(atan2( x*vec.y-y*vec.x, x*vec.x + y*vec.y )*RAD_TO_DEG);
 }
 
 /**
