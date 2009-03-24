@@ -130,7 +130,7 @@ void ofxCvFloatImage::setFromPixels( unsigned char* _pixels, int w, int h ) {
         for( int i=0; i < iRoi.height; i++ ) {
             memcpy( cvGrayscaleImage->imageData + ((i+(int)iRoi.y)*cvGrayscaleImage->widthStep) + (int)iRoi.x,
                     _pixels + (i*w),
-                    iRoi.width );
+                    (int)(iRoi.width) );
         }
         convertGrayToFloat(cvGrayscaleImage, cvImage);
         flagImageChanged();
@@ -150,7 +150,7 @@ void ofxCvFloatImage::setFromPixels( float* _pixels, int w, int h ) {
         for( int i=0; i < iRoi.height; i++ ) {
             memcpy( cvImage->imageData + ((i+(int)iRoi.y)*cvImage->widthStep) + (int)iRoi.x*sizeof(float),
                     _pixels + (i*w),
-                    iRoi.width*sizeof(float) );
+                    (int)(iRoi.width*sizeof(float)) );
         }
         flagImageChanged();
     } else {

@@ -164,10 +164,10 @@ void ofxCvImage::popROI() {
 //--------------------------------------------------------------------------------
 void ofxCvImage::setROI( int x, int y, int w, int h ) {
     
-    x = ofClamp(x, 0, cvImage->width-1);
-    y = ofClamp(y, 0, cvImage->height-1);
-    w = ofClamp(w, 0, cvImage->width - x);
-    h = ofClamp(h, 0, cvImage->height - y);
+    x = (int)ofClamp(x, 0, (int)cvImage->width-1);
+    y = (int)ofClamp(y, 0, (int)cvImage->height-1);
+    w = (int)ofClamp(w, 0, (int)cvImage->width - x);
+    h = (int)ofClamp(h, 0, (int)cvImage->height - y);
     
     cvSetImageROI( cvImage, cvRect(x,y, w,h) );
     cvSetImageROI( cvImageTemp, cvRect(x,y, w,h) );
@@ -184,7 +184,7 @@ void ofxCvImage::setROI( int x, int y, int w, int h ) {
 
 //--------------------------------------------------------------------------------
 void ofxCvImage::setROI( const ofRectangle& rect ) {
-    setROI( rect.x, rect.y, rect.width, rect.height );
+    setROI( (int)rect.x, (int)rect.y, (int)rect.width, (int)rect.height );
 }
 
 //--------------------------------------------------------------------------------
@@ -205,15 +205,15 @@ void ofxCvImage::resetROI() {
 
 //--------------------------------------------------------------------------------
 ofRectangle ofxCvImage::getIntersectionROI( const ofRectangle& r1, const ofRectangle& r2 ) {
-    int r1x1 = r1.x;
-    int r1y1 = r1.y;
-    int r1x2 = r1.x+r1.width;
-    int r1y2 = r1.y+r1.height;
+    int r1x1 = (int)r1.x;
+    int r1y1 = (int)r1.y;
+    int r1x2 = (int)(r1.x+r1.width);
+    int r1y2 = (int)(r1.y+r1.height);
 
-    int r2x1 = r2.x;
-    int r2y1 = r2.y;
-    int r2x2 = r2.x+r2.width;
-    int r2y2 = r2.y+r2.height;
+    int r2x1 = (int)r2.x;
+    int r2y1 = (int)r2.y;
+    int r2x2 = (int)(r2.x+r2.width);
+    int r2y2 = (int)(r2.y+r2.height);
 
     int r3x1 = 0;
     int r3y1 = 0;
