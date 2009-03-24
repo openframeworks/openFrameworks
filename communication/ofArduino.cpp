@@ -101,11 +101,16 @@ void ofArduino::processSysExData(vector<unsigned char> data){
 	//int i = 1;
 
 	// act on reserved sysEx messages (extended commands) or trigger SysEx event...
+	/*
+	
+	// zach - altered because VS is unhappy with switches that have no case.
+
 	switch(data.front()) { //first byte in buffer is command
 		default: // the message isn't in this class extended command set, pass it...
 			ofStandardFirmata::processSysExData(data);
 		break;
+	}*/
 
-	}
+	ofStandardFirmata::processSysExData(data);
 }
 

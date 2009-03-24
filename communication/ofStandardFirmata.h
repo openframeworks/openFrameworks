@@ -29,7 +29,7 @@
 #ifndef OF_STANDARD_FIRMATA_H
 #define OF_STANDARD_FIRMATA_H
 
-using namespace std;
+
 #include <list>
 #include <vector>
 #include <string>
@@ -38,6 +38,8 @@ using namespace std;
 #include "ofEvents.h"
 
 #include "ofSerial.h"
+
+using namespace std;
 
 /*
  * Version numbers for the protocol. The protocol is still changing, so these
