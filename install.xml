@@ -33,17 +33,9 @@
 		<link>
 			<lib os="win32" compiler="devcpp">../../../addons/ofxOsc/libs/oscpack/lib/win32/oscpack.a</lib>
 			<lib os="win32" compiler="visualstudio">../../../addons/ofxOsc/libs/oscpack/lib/win32/oscpack.lib</lib>
-			<lib os="win32" compiler="codewarrior">../../../addons/ofxOsc/libs/oscpack/lib/win32/oscpack_cw.lib</lib>
-			<lib os="win32" compiler="codewarrior">wsock32.lib</lib>
-			<lib os="linux" compiler="codeblocks, makefile">../../../addons/ofxOsc/libs/oscpack/lib/linux/liboscpack.so</lib>
+			<lib os="linux" compiler="codeblocks, makefile">../../../addons/ofxOsc/libs/oscpack/lib/linux/liboscpack.a</lib>
 			<lib os="mac"   compiler="xcode">../../../addons/ofxOsc/libs/oscpack/lib/mac/libOsc.a</lib>
 		</link>
-
-		<sharedObjects>
-			<obj os="linux">../../../addons/ofxOsc/libs/oscpack/lib/linux/liboscpack.so</obj>
-			<obj os="linux">../../../addons/ofxOsc/libs/oscpack/lib/linux/liboscpack.so.1.0.2</obj>
-		</sharedObjects>
-
 
 	</add>
 	
