@@ -45,6 +45,10 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include <math.h>
 #include <time.h>
 
+#if (_MSC_VER)       // microsoft visual studio
+		#pragma warning(disable : 4996)     // disable all deprecation warnings
+#endif
+
 /*********************************************************
  * The attribute classes for CreEPS
  *********************************************************/
@@ -282,7 +286,7 @@ bool CAt::inheritLineDash( const CAt& A,
 				zero_dist = linethickness;
 				break;
 			case SQUARE :
-				solid_dot = 0.0001;
+				solid_dot = 0.0001f;
 				zero_dist = linethickness;
 				break;
 			default : break;
@@ -531,7 +535,7 @@ bool CAt::inheritFillingPattern( const CAt& A,
 						         m_ff1, BoxHeight - 0.5*m_ff1,
 						         BoxWidth, BoxHeight - 0.5*m_ff1 );
 					} else {
-						float diff = m_ff3 - 3.14159265358979323846 / 2;
+						float diff = (float)(m_ff3 - 3.14159265358979323846 / 2);
 						if( diff < 0 )  diff = -diff;
 						// vertical lines
 						if( diff < 0.0087266 ) {
@@ -809,13 +813,13 @@ CAtStripeFilling::CAtStripeFilling( const float width,
 
 	m_ff1 = width;
 	m_ff2 = distance;
-	m_ff3 = angle;
+	m_ff3 = (float)angle;
 
 	// make angle ranging in [0,180)
 	while( m_ff3 <    0 )  m_ff3 += 180;
 	while( m_ff3 >= 180 )  m_ff3 -= 180;
 	// -> rad
-	m_ff3 *= (3.14159265358979323846 / 180);
+	m_ff3 *= (float)(3.14159265358979323846 / 180);
 }
 
 
@@ -823,7 +827,7 @@ CAtStripeFilling::CAtStripeFilling( const float width,
  * CreEPS                                                                      *
  ******************************************************************************/
 
-const float CreEPS::m_INCH2MM = 72.0/25.4; // = 2.834645669291...
+const float CreEPS::m_INCH2MM = 72.0f/25.4f; // = 2.834645669291...
 const int CreEPS::m_BUFFERLENGTH = 1024;
 
 /******************************************************************************/
@@ -1063,7 +1067,7 @@ bool CreEPS::embedEPS( const char* const filename ) {
 	           filename );
 
 	// compensate scaling for INCH2MM
-	applyScaling( 1.0/m_INCH2MM );
+	applyScaling( 1.0f/m_INCH2MM );
 	fprintf( m_FileHandle, "%%%%BeginDocument: %s\n", filename );
 
 	// allocate buffer
