@@ -50,7 +50,7 @@ void ofxCvGrayscaleImage::setFromPixels( unsigned char* _pixels, int w, int h ) 
         for( int i=0; i < iRoi.height; i++ ) {
             memcpy( cvImage->imageData + ((i+(int)iRoi.y)*cvImage->widthStep) + (int)iRoi.x,
                     _pixels + (i*w),
-                    iRoi.width );
+                    (int)(iRoi.width));
         }
         flagImageChanged();
     } else {

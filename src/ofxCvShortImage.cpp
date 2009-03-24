@@ -85,7 +85,7 @@ void ofxCvShortImage::setFromPixels( unsigned char* _pixels, int w, int h ) {
         for( int i=0; i < iRoi.height; i++ ) {
             memcpy( cvGrayscaleImage->imageData + ((i+(int)iRoi.y)*cvGrayscaleImage->widthStep) + (int)iRoi.x,
                     _pixels + (i*w),
-                    iRoi.width );
+                    (int)iRoi.width );
         }
         convertGrayToShort(cvGrayscaleImage, cvImage);
         flagImageChanged();

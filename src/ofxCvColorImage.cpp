@@ -84,7 +84,7 @@ void ofxCvColorImage::setFromPixels( unsigned char* _pixels, int w, int h ) {
         for( int i=0; i < iRoi.height; i++ ) {
             memcpy( cvImage->imageData + ((i+(int)iRoi.y)*cvImage->widthStep) + (int)iRoi.x*3,
                     _pixels + (i*w*3),
-                    iRoi.width*3 );
+                    (int)(iRoi.width*3) );
         }
         flagImageChanged();
     } else {
