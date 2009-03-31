@@ -33,7 +33,7 @@ void ofxCvImage::allocate( int w, int h ) {
 		ofLog(OF_LOG_WARNING, "in allocate, reallocating a ofxCvImage");
 		clear();
 	}
-    
+
 	cvImage = cvCreateImage( cvSize(w,h), ipldepth, iplchannels );
 	cvImageTemp	= cvCreateImage( cvSize(w,h), ipldepth, iplchannels );
 
@@ -61,31 +61,31 @@ void ofxCvImage::clear() {
             pixels = NULL;
             bPixelsDirty = true;
             pixelsWidth = 0;
-            pixelsHeight = 0;            
+            pixelsHeight = 0;
         }
 		width = 0;
 		height = 0;
-        roiX = 0;    
+        roiX = 0;
         roiY = 0;
-        roiStack.clear(); 
+        roiStack.clear();
 
 		if( bUseTexture ) {
 			tex.clear();
             bTextureDirty = true;
 		}
-		
+
 		bAllocated = false;
 	}
 }
 
 //--------------------------------------------------------------------------------
 float ofxCvImage::getWidth(){
-	return height;
+	return width;
 }
 
 //--------------------------------------------------------------------------------
 float ofxCvImage::getHeight(){
-	return width;
+	return height;
 }
 
 //--------------------------------------------------------------------------------
@@ -130,11 +130,11 @@ bool ofxCvImage::pushSetBothToTheirIntersectionROI( ofxCvImage& img1, ofxCvImage
     // pushes the intersection ROI on both the images' roiStack
     // use popROI() to restore previous ROI
     ofRectangle iRoi = getIntersectionROI( img1.getROI(), img2.getROI() );
-    if( iRoi.width > 0 && iRoi.height > 0 ) { 
+    if( iRoi.width > 0 && iRoi.height > 0 ) {
         img1.pushROI();
         img1.setROI( iRoi );
         img2.pushROI();
-        img2.setROI( iRoi );            
+        img2.setROI( iRoi );
         return true;
     } else {
         return false;
@@ -148,7 +148,7 @@ bool ofxCvImage::pushSetBothToTheirIntersectionROI( ofxCvImage& img1, ofxCvImage
 void ofxCvImage::pushROI() {
     roiStack.push_back( ofRectangle() );
     setROI(0,0,cvImage->width,cvImage->height);
-    
+
 }
 
 //--------------------------------------------------------------------------------
@@ -163,12 +163,12 @@ void ofxCvImage::popROI() {
 
 //--------------------------------------------------------------------------------
 void ofxCvImage::setROI( int x, int y, int w, int h ) {
-    
+
     x = (int)ofClamp(x, 0, (int)cvImage->width-1);
     y = (int)ofClamp(y, 0, (int)cvImage->height-1);
     w = (int)ofClamp(w, 0, (int)cvImage->width - x);
     h = (int)ofClamp(h, 0, (int)cvImage->height - y);
-    
+
     cvSetImageROI( cvImage, cvRect(x,y, w,h) );
     cvSetImageROI( cvImageTemp, cvRect(x,y, w,h) );
     width = w;
@@ -178,7 +178,7 @@ void ofxCvImage::setROI( int x, int y, int w, int h ) {
     roiStack.back().x = x;
     roiStack.back().y = y;
     roiStack.back().width = w;
-    roiStack.back().height = h;    
+    roiStack.back().height = h;
     flagImageChanged();
 }
 
@@ -219,7 +219,7 @@ ofRectangle ofxCvImage::getIntersectionROI( const ofRectangle& r1, const ofRecta
     int r3y1 = 0;
     int r3x2 = 0;
     int r3y2 = 0;
-    
+
     bool bIntersect =  ( ( ofInRange(r2x1, r1x1,r1x2) || ofInRange(r1x1, r2x1,r2x2) ) &&
                          ( ofInRange(r2y1, r1y1,r1y2) || ofInRange(r1y1, r2y1,r2y2) ) );
 
@@ -229,9 +229,9 @@ ofRectangle ofxCvImage::getIntersectionROI( const ofRectangle& r1, const ofRecta
 
         r3x2 = MIN( r1x2, r2x2 );
         r3y2 = MIN( r1y2, r2y2 );
-    
+
         return ofRectangle( r3x1,r3y1, r3x2-r3x1,r3y2-r3y1 );
-        
+
     } else {
         return ofRectangle( 0,0, 0,0 );
     }
@@ -245,7 +245,7 @@ ofRectangle ofxCvImage::getIntersectionROI( const ofRectangle& r1, const ofRecta
 //--------------------------------------------------------------------------------
 void  ofxCvImage::operator = ( const IplImage* mom ) {
 	if( mom->width == width && mom->height == height &&
-	    mom->nChannels == cvImage->nChannels && 
+	    mom->nChannels == cvImage->nChannels &&
         mom->depth == cvImage->depth )
     {
 		cvCopy( mom, cvImage );
@@ -272,14 +272,14 @@ void ofxCvImage::operator += ( float value ) {
 
 //--------------------------------------------------------------------------------
 void ofxCvImage::operator -= ( ofxCvImage& mom ) {
-	if( mom.getCvImage()->nChannels == cvImage->nChannels && 
+	if( mom.getCvImage()->nChannels == cvImage->nChannels &&
         mom.getCvImage()->depth == cvImage->depth )
     {
         if( pushSetBothToTheirIntersectionROI(*this,mom) ) {
             cvSub( cvImage, mom.getCvImage(), cvImageTemp );
             swapTemp();
             popROI();       //restore prevoius ROI
-            mom.popROI();   //restore prevoius ROI              
+            mom.popROI();   //restore prevoius ROI
             flagImageChanged();
         } else {
             ofLog(OF_LOG_ERROR, "in -=, ROI mismatch");
@@ -291,14 +291,14 @@ void ofxCvImage::operator -= ( ofxCvImage& mom ) {
 
 //--------------------------------------------------------------------------------
 void ofxCvImage::operator += ( ofxCvImage& mom ) {
-	if( mom.getCvImage()->nChannels == cvImage->nChannels && 
+	if( mom.getCvImage()->nChannels == cvImage->nChannels &&
         mom.getCvImage()->depth == cvImage->depth )
     {
         if( pushSetBothToTheirIntersectionROI(*this,mom) ) {
             cvAdd( cvImage, mom.getCvImage(), cvImageTemp );
             swapTemp();
             popROI();       //restore prevoius ROI
-            mom.popROI();   //restore prevoius ROI              
+            mom.popROI();   //restore prevoius ROI
             flagImageChanged();
         } else {
             ofLog(OF_LOG_ERROR, "in +=, ROI mismatch");
@@ -310,7 +310,7 @@ void ofxCvImage::operator += ( ofxCvImage& mom ) {
 
 //--------------------------------------------------------------------------------
 void ofxCvImage::operator *= ( ofxCvImage& mom ) {
-	if( mom.getCvImage()->nChannels == cvImage->nChannels && 
+	if( mom.getCvImage()->nChannels == cvImage->nChannels &&
         mom.getCvImage()->depth == cvImage->depth )
     {
         if( pushSetBothToTheirIntersectionROI(*this,mom) ) {
@@ -318,7 +318,7 @@ void ofxCvImage::operator *= ( ofxCvImage& mom ) {
             cvMul( cvImage, mom.getCvImage(), cvImageTemp, scalef );
             swapTemp();
             popROI();       //restore prevoius ROI
-            mom.popROI();   //restore prevoius ROI              
+            mom.popROI();   //restore prevoius ROI
             flagImageChanged();
         } else {
             ofLog(OF_LOG_ERROR, "in *=, ROI mismatch");
@@ -330,14 +330,14 @@ void ofxCvImage::operator *= ( ofxCvImage& mom ) {
 
 //--------------------------------------------------------------------------------
 void ofxCvImage::operator &= ( ofxCvImage& mom ) {
-	if( mom.getCvImage()->nChannels == cvImage->nChannels && 
+	if( mom.getCvImage()->nChannels == cvImage->nChannels &&
         mom.getCvImage()->depth == cvImage->depth )
     {
         if( pushSetBothToTheirIntersectionROI(*this,mom) ) {
             cvAnd( cvImage, mom.getCvImage(), cvImageTemp );
             swapTemp();
             popROI();       //restore prevoius ROI
-            mom.popROI();   //restore prevoius ROI              
+            mom.popROI();   //restore prevoius ROI
             flagImageChanged();
         } else {
             ofLog(OF_LOG_ERROR, "in &=, ROI mismatch");
@@ -357,7 +357,7 @@ void ofxCvImage::draw( float x, float y ) {
 }
 
 //--------------------------------------------------------------------------------
-void ofxCvImage::draw( float x, float y, float w, float h ) {    
+void ofxCvImage::draw( float x, float y, float w, float h ) {
     if( bUseTexture ) {
         if( bTextureDirty ) {
             if(tex.getWidth() != width || tex.getHeight() != height) {
@@ -369,11 +369,11 @@ void ofxCvImage::draw( float x, float y, float w, float h ) {
             tex.loadData( getPixels(), width, height, glchannels );
             bTextureDirty = false;
         }
-        
+
         if( bUseRoiOffsetWhenDrawing ){
             x += roiX;
             y += roiY;
-        }        
+        }
 
         tex.draw(x,y, w,h);
 
@@ -383,12 +383,12 @@ void ofxCvImage::draw( float x, float y, float w, float h ) {
         ofLog(OF_LOG_NOTICE, "in draw, using slow texture-less drawing");
         ofLog(OF_LOG_NOTICE, "texture-less drawing - be aware, unlike texture drawing, \
                           this always draws window aligned, rotation not supported");
-        
+
         if( x == 0) {
             x += 0.01;
             ofLog(OF_LOG_NOTICE, "BUG: can't draw at x==0 in texture-less mode.");
         }
-        
+
         if(bAnchorIsPct){
 			x -= anchor.x * w;
 			y -= anchor.y * h;
@@ -396,22 +396,22 @@ void ofxCvImage::draw( float x, float y, float w, float h ) {
 			x -= anchor.x;
 			y -= anchor.y;
 		}
-        
+
         if( bUseRoiOffsetWhenDrawing ){
             x += roiX;
             y += roiY;
         }
-                
+
         glRasterPos2f( x, y+h );
 
         IplImage* tempImg;
-        tempImg = cvCreateImage( cvSize((int)w, (int)h), ipldepth, iplchannels );        
+        tempImg = cvCreateImage( cvSize((int)w, (int)h), ipldepth, iplchannels );
         cvResize( cvImage, tempImg, CV_INTER_NN );
         cvFlip( tempImg, tempImg, 0 );
         glDrawPixels( tempImg->width, tempImg->height ,
                       glchannels, gldepth, tempImg->imageData );
         cvReleaseImage( &tempImg );
-       
+
     }
 }
 
@@ -584,45 +584,45 @@ void ofxCvImage::remap( IplImage* mapX, IplImage* mapY ) {
 */
 
 //--------------------------------------------------------------------------------
-void ofxCvImage::warpPerspective( const ofPoint& A, const ofPoint& B, const ofPoint& C, const ofPoint& D ) { 
-    // compute matrix for perspectival warping (homography) 
-    CvPoint2D32f cvsrc[4]; 
-    CvPoint2D32f cvdst[4]; 
-    CvMat* translate = cvCreateMat( 3,3, CV_32FC1 ); 
-    cvSetZero( translate ); 
+void ofxCvImage::warpPerspective( const ofPoint& A, const ofPoint& B, const ofPoint& C, const ofPoint& D ) {
+    // compute matrix for perspectival warping (homography)
+    CvPoint2D32f cvsrc[4];
+    CvPoint2D32f cvdst[4];
+    CvMat* translate = cvCreateMat( 3,3, CV_32FC1 );
+    cvSetZero( translate );
 
-    cvdst[0].x = 0; 
-    cvdst[0].y = 0; 
-    cvdst[1].x = width; 
-    cvdst[1].y = 0; 
-    cvdst[2].x = width; 
-    cvdst[2].y = height; 
-    cvdst[3].x = 0; 
-    cvdst[3].y = height; 
+    cvdst[0].x = 0;
+    cvdst[0].y = 0;
+    cvdst[1].x = width;
+    cvdst[1].y = 0;
+    cvdst[2].x = width;
+    cvdst[2].y = height;
+    cvdst[3].x = 0;
+    cvdst[3].y = height;
 
-    cvsrc[0].x = A.x; 
-    cvsrc[0].y = A.y; 
-    cvsrc[1].x = B.x; 
-    cvsrc[1].y = B.y; 
-    cvsrc[2].x = C.x; 
-    cvsrc[2].y = C.y; 
-    cvsrc[3].x = D.x; 
-    cvsrc[3].y = D.y; 
+    cvsrc[0].x = A.x;
+    cvsrc[0].y = A.y;
+    cvsrc[1].x = B.x;
+    cvsrc[1].y = B.y;
+    cvsrc[2].x = C.x;
+    cvsrc[2].y = C.y;
+    cvsrc[3].x = D.x;
+    cvsrc[3].y = D.y;
 
-    cvWarpPerspectiveQMatrix( cvsrc, cvdst, translate );  // calculate homography 
-    cvWarpPerspective( cvImage, cvImageTemp, translate ); 
+    cvWarpPerspectiveQMatrix( cvsrc, cvdst, translate );  // calculate homography
+    cvWarpPerspective( cvImage, cvImageTemp, translate );
     swapTemp();
     flagImageChanged();
-    cvReleaseMat( &translate ); 
-} 
+    cvReleaseMat( &translate );
+}
 
 
 
 //--------------------------------------------------------------------------------
 void ofxCvImage::warpIntoMe( ofxCvImage& mom, const ofPoint src[4], const ofPoint dst[4] ){
-    if( mom.getCvImage()->nChannels == cvImage->nChannels && 
+    if( mom.getCvImage()->nChannels == cvImage->nChannels &&
         mom.getCvImage()->depth == cvImage->depth ) {
-    
+
     	// compute matrix for perspectival warping (homography)
     	CvPoint2D32f cvsrc[4];
     	CvPoint2D32f cvdst[4];
@@ -641,7 +641,7 @@ void ofxCvImage::warpIntoMe( ofxCvImage& mom, const ofPoint src[4], const ofPoin
 
     } else {
         ofLog(OF_LOG_ERROR, "in warpIntoMe: mom image type has to match");
-    }	
+    }
 }
 
 
@@ -652,20 +652,20 @@ void ofxCvImage::warpIntoMe( ofxCvImage& mom, const ofPoint src[4], const ofPoin
 //--------------------------------------------------------------------------------
 int ofxCvImage::countNonZeroInRegion( int x, int y, int w, int h ) {
     //TODO: test this method
-    
+
 	if (w == 0 || h == 0) return 0;
     int count = 0;
-    
+
     // intersect the global ROI with the region to check
     ofRectangle iRoi = getIntersectionROI( getROI(), ofRectangle(x,y,w,h) );
-    
+
     pushROI();
     setROI(iRoi);
 
 	count = cvCountNonZero( cvImage );
-    
+
     popROI();
-        
+
 	return count;
 }
 
