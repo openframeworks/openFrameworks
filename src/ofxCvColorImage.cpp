@@ -205,6 +205,9 @@ void ofxCvColorImage::convertToGrayscalePlanarImages(ofxCvGrayscaleImage& red, o
         blue.width == width && blue.height == height )
     {
         cvCvtPixToPlane(cvImage, red.getCvImage(), green.getCvImage(), blue.getCvImage(), NULL);
+        red.flagImageChanged();
+        green.flagImageChanged();
+        blue.flagImageChanged();
 	} else {
         ofLog(OF_LOG_ERROR, "in convertToGrayscalePlanarImages, images are different sizes");
 	}     
