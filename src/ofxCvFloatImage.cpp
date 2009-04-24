@@ -208,7 +208,15 @@ void ofxCvFloatImage::operator = ( const ofxCvFloatImage& _mom ) {
         // cast non-const,  no worries, we will reverse any chages
         ofxCvFloatImage& mom = const_cast<ofxCvFloatImage&>(_mom);     
         if( pushSetBothToTheirIntersectionROI(*this,mom) ) {
-            cvCopy( mom.getCvImage(), cvImage, 0 );
+            if( getNativeScaleMin() == mom.getNativeScaleMin() && 
+                getNativeScaleMax() == mom.getNativeScaleMax() )
+            {
+                cvCopy( mom.getCvImage(), cvImage, 0 );
+            } else {
+                rangeMap( mom.getCvImage(), cvImage, 
+                          mom.getNativeScaleMin(), mom.getNativeScaleMax(), 
+                          getNativeScaleMin(), getNativeScaleMax() );            
+            }
             popROI();       //restore prevoius ROI
             mom.popROI();   //restore prevoius ROI             
             flagImageChanged();

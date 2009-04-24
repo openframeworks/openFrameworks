@@ -101,8 +101,8 @@ void ofxCvGrayscaleImage::operator = ( const ofxCvFloatImage& _mom ) {
     // cast non-const,  no worries, we will reverse any chages
     ofxCvFloatImage& mom = const_cast<ofxCvFloatImage&>(_mom); 
 	if( pushSetBothToTheirIntersectionROI(*this,mom) ) {
-		//cvConvertScale( mom.getCvImage(), cvImage, 1.0f, 0);
-        cvConvert( mom.getCvImage(), cvImage );
+        rangeMap( mom.getCvImage(), cvImage, 
+                  mom.getNativeScaleMin(), mom.getNativeScaleMax(), 0, 255.0f );
         popROI();       //restore prevoius ROI
         mom.popROI();   //restore prevoius ROI          
         flagImageChanged();

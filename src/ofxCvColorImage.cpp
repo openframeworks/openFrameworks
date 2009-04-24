@@ -152,7 +152,8 @@ void ofxCvColorImage::operator = ( const ofxCvFloatImage& _mom ) {
             cvGrayscaleImage = cvCreateImage( cvSize(cvImage->width,cvImage->height), IPL_DEPTH_8U, 1 );
         }
         cvSetImageROI(cvGrayscaleImage, cvRect(roiX,roiY,width,height));
-		cvConvertScale( mom.getCvImage(), cvGrayscaleImage, 1, 0 );
+        rangeMap( mom.getCvImage(), cvGrayscaleImage, 
+                  mom.getNativeScaleMin(), mom.getNativeScaleMax(), 0, 255.0f );
 		cvCvtColor( cvGrayscaleImage, cvImage, CV_GRAY2RGB );
         popROI();       //restore prevoius ROI
         mom.popROI();   //restore prevoius ROI          
