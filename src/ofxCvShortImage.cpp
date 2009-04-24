@@ -45,16 +45,16 @@ void ofxCvShortImage::clear() {
 }
 
 //--------------------------------------------------------------------------------
-void ofxCvShortImage::convertShortToGray( IplImage* floatImg, IplImage* grayImg ) {
+void ofxCvShortImage::convertShortToGray( IplImage* shortImg, IplImage* grayImg ) {
     // map from 0-65535 to 0-255
     float scale = 255.0f/65535.0f;
-    cvConvertScale( floatImg, grayImg, scale, 0 );
+    cvConvertScale( shortImg, grayImg, scale, 0 );
 }
 
 //--------------------------------------------------------------------------------
-void ofxCvShortImage::convertGrayToShort( IplImage* grayImg, IplImage* floatImg ) {
+void ofxCvShortImage::convertGrayToShort( IplImage* grayImg, IplImage* shortImg ) {
     // map from 0-255 to 0-65535
-    cvConvertScale( grayImg, floatImg, 65535.0f/255.0f, 0 );
+    cvConvertScale( grayImg, shortImg, 65535.0f/255.0f, 0 );
 }
 
 

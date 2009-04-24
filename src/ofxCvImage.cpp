@@ -385,40 +385,43 @@ void ofxCvImage::draw( float x, float y, float w, float h ) {
         tex.draw(x,y, w,h);
 
     } else {
-        // this is slower than the typical draw method based on textures
-        // but useful when dealing with threads GL textures often don't work
-        ofLog(OF_LOG_NOTICE, "in draw, using slow texture-less drawing");
-        ofLog(OF_LOG_NOTICE, "texture-less drawing - be aware, unlike texture drawing, \
-                          this always draws window aligned, rotation not supported");
+        #ifdef TARGET_OPENGLES
+            ofLog(OF_LOG_ERROR, "texture-less drawing not supported in OpenGL ES");
+        #else
+            // this is slower than the typical draw method based on textures
+            // but useful when dealing with threads GL textures often don't work
+            ofLog(OF_LOG_NOTICE, "in draw, using slow texture-less drawing");
+            ofLog(OF_LOG_NOTICE, "texture-less drawing - be aware, unlike texture drawing, \
+                              this always draws window aligned, rotation not supported");
 
-        if( x == 0) {
-            x += 0.01;
-            ofLog(OF_LOG_NOTICE, "BUG: can't draw at x==0 in texture-less mode.");
-        }
+            if( x == 0) {
+                x += 0.01;
+                ofLog(OF_LOG_NOTICE, "BUG: can't draw at x==0 in texture-less mode.");
+            }
 
-        if(bAnchorIsPct){
-			x -= anchor.x * w;
-			y -= anchor.y * h;
-		}else{
-			x -= anchor.x;
-			y -= anchor.y;
-		}
+            if(bAnchorIsPct){
+                x -= anchor.x * w;
+                y -= anchor.y * h;
+            }else{
+                x -= anchor.x;
+                y -= anchor.y;
+            }
 
-        if( bUseRoiOffsetWhenDrawing ){
-            x += roiX;
-            y += roiY;
-        }
+            if( bUseRoiOffsetWhenDrawing ){
+                x += roiX;
+                y += roiY;
+            }
 
-        glRasterPos2f( x, y+h );
+            glRasterPos2f( x, y+h );
 
-        IplImage* tempImg;
-        tempImg = cvCreateImage( cvSize((int)w, (int)h), ipldepth, iplchannels );
-        cvResize( cvImage, tempImg, CV_INTER_NN );
-        cvFlip( tempImg, tempImg, 0 );
-        glDrawPixels( tempImg->width, tempImg->height ,
-                      glchannels, gldepth, tempImg->imageData );
-        cvReleaseImage( &tempImg );
-
+            IplImage* tempImg;
+            tempImg = cvCreateImage( cvSize((int)w, (int)h), ipldepth, iplchannels );
+            cvResize( cvImage, tempImg, CV_INTER_NN );
+            cvFlip( tempImg, tempImg, 0 );
+            glDrawPixels( tempImg->width, tempImg->height ,
+                          glchannels, gldepth, tempImg->imageData );
+            cvReleaseImage( &tempImg );
+        #endif
     }
 }
 
