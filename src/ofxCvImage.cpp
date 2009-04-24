@@ -100,10 +100,18 @@ ofTexture& ofxCvImage::getTextureReference() {
 
 //--------------------------------------------------------------------------------
 void ofxCvImage::swapTemp() {
-	IplImage*  temp;
-	temp = cvImage;
-	cvImage	= cvImageTemp;
-	cvImageTemp	= temp;
+	if (getROI().x != 0 ||
+		getROI().y != 0 ||
+		getROI().width != cvImage->width ||
+		getROI().height != cvImage->height )
+    {
+		cvCopy( cvImageTemp, cvImage );
+	} else {	
+		IplImage*  temp;
+		temp = cvImage;
+		cvImage	= cvImageTemp;
+		cvImageTemp	= temp;
+	}
 }
 
 //--------------------------------------------------------------------------------
