@@ -19,6 +19,7 @@
 class ofxCvGrayscaleImage;
 class ofxCvColorImage;
 class ofxCvFloatImage;
+class ofxCvShortImage;
 
 
 
@@ -64,6 +65,7 @@ class ofxCvImage : public ofBaseDraws, public ofBaseHasTexture, public ofBaseHas
     virtual void  operator = ( const ofxCvGrayscaleImage& mom ) = 0;
     virtual void  operator = ( const ofxCvColorImage& mom ) = 0;
     virtual void  operator = ( const ofxCvFloatImage& mom ) = 0;
+    virtual void  operator = ( const ofxCvShortImage& mom ) = 0;
     virtual void  operator = ( const IplImage* mom );
     
     virtual void  operator -= ( ofxCvImage& mom );

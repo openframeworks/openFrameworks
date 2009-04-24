@@ -2,6 +2,7 @@
 #include "ofxCvGrayscaleImage.h"
 #include "ofxCvColorImage.h"
 #include "ofxCvFloatImage.h"
+#include "ofxCvShortImage.h"
 
 
 
@@ -225,6 +226,21 @@ void ofxCvFloatImage::operator = ( const ofxCvFloatImage& _mom ) {
         }
     } else {
         ofLog(OF_LOG_WARNING, "in =, you are assigning a ofxCvFloatImage to itself");
+    }
+}
+
+//--------------------------------------------------------------------------------
+void ofxCvFloatImage::operator = ( const ofxCvShortImage& _mom ) {
+    // cast non-const,  no worries, we will reverse any chages
+    ofxCvShortImage& mom = const_cast<ofxCvShortImage&>(_mom); 
+    if( pushSetBothToTheirIntersectionROI(*this,mom) ) {
+        rangeMap( mom.getCvImage(), cvImage, 
+                  0, 65535.0f, getNativeScaleMin(), getNativeScaleMax() );        
+        popROI();       //restore prevoius ROI
+        mom.popROI();   //restore prevoius ROI             
+        flagImageChanged();
+    } else {
+        ofLog(OF_LOG_ERROR, "in =, ROI mismatch");
     }
 }
 
