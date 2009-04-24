@@ -139,9 +139,9 @@ void ofxCvShortImage::operator = ( const ofxCvFloatImage& _mom ) {
     // cast non-const,  no worries, we will reverse any chages
     ofxCvFloatImage& mom = const_cast<ofxCvFloatImage&>(_mom); 
     if( pushSetBothToTheirIntersectionROI(*this,mom) ) {
-    
-        // map from 0-1 to 0-65535
-        cvConvertScale( mom.getCvImage(), cvImage, 65535, 0 ); 
+            
+        rangeMap( mom.getCvImage(), cvImage, 
+                  mom.getNativeScaleMin(), mom.getNativeScaleMax(), 0, 65535.0f );        
         
         popROI();       //restore prevoius ROI
         mom.popROI();   //restore prevoius ROI        

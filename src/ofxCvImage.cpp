@@ -125,6 +125,13 @@ void ofxCvImage::rangeMap( IplImage* img, float min1, float max1, float min2, fl
 }
 
 //--------------------------------------------------------------------------------
+void ofxCvImage::rangeMap( IplImage* mom, IplImage* kid, float min1, float max1, float min2, float max2 ) {
+    // map from min1-max1 to min2-max2
+    float scale = (max2-min2)/(max1-min1);
+    cvConvertScale( mom, kid, scale, -(min1*scale)+min2 );
+}
+
+//--------------------------------------------------------------------------------
 bool ofxCvImage::pushSetBothToTheirIntersectionROI( ofxCvImage& img1, ofxCvImage& img2 ) {
     // calculates intersection ROI
     // pushes the intersection ROI on both the images' roiStack

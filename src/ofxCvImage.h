@@ -141,6 +141,7 @@ class ofxCvImage : public ofBaseDraws, public ofBaseHasTexture, public ofBaseHas
     bool pushSetBothToTheirIntersectionROI( ofxCvImage& img1, ofxCvImage& img2 );
 
     virtual void  rangeMap( IplImage* img, float min1, float max1, float min2, float max2 );
+    virtual void  rangeMap( IplImage* mom, IplImage* kid, float min1, float max1, float min2, float max2 );
                                      
     virtual void swapTemp();  // swap cvImageTemp back
                               // to cvImage after an image operation

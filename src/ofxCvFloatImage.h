@@ -18,7 +18,7 @@
 
 class ofxCvFloatImage : public ofxCvImage {
 
-    // Float Images and Value Range
+    // Float Images and Value Range:
     // Float images are special in that they do not have unequivocal scale.
     // We use a default scale of 0.0 - 1.0
     // In most cases this class does the right conversion when going
@@ -35,7 +35,9 @@ class ofxCvFloatImage : public ofxCvImage {
 	//virtual float getWidth();                                               //in base class
 	//virtual float getHeight();                                              //in base class    
     // virtual void  setUseTexture( bool bUse );                              //in base class
-    virtual void  setNativeScale( float _scaleMin, float _scaleMax );  
+    virtual void  setNativeScale( float _scaleMin, float _scaleMax ); 
+    virtual float  getNativeScaleMin() {return scaleMin;}; 
+    virtual float  getNativeScaleMax() {return scaleMax;}; 
 
 
     // ROI - region of interest
