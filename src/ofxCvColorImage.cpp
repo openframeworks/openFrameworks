@@ -3,6 +3,7 @@
 #include "ofxCvGrayscaleImage.h"
 #include "ofxCvColorImage.h"
 #include "ofxCvFloatImage.h"
+#include "ofxCvShortImage.h"
 
 
 
@@ -162,6 +163,25 @@ void ofxCvColorImage::operator = ( const ofxCvFloatImage& _mom ) {
 	} else {
         ofLog(OF_LOG_ERROR, "in =, ROI mismatch");
 	}
+}
+
+//--------------------------------------------------------------------------------
+void ofxCvColorImage::operator = ( const ofxCvShortImage& _mom ) {
+    // cast non-const,  no worries, we will reverse any chages
+    ofxCvShortImage& mom = const_cast<ofxCvShortImage&>(_mom); 
+    if( pushSetBothToTheirIntersectionROI(*this,mom) ) {
+        if( cvGrayscaleImage == NULL ) {
+            cvGrayscaleImage = cvCreateImage( cvSize(cvImage->width,cvImage->height), IPL_DEPTH_8U, 1 );
+        }
+        cvSetImageROI(cvGrayscaleImage, cvRect(roiX,roiY,width,height));
+        rangeMap( mom.getCvImage(), cvGrayscaleImage, 0, 65535.0f, 0, 255.0f );
+		cvCvtColor( cvGrayscaleImage, cvImage, CV_GRAY2RGB );       
+        popROI();       //restore prevoius ROI
+        mom.popROI();   //restore prevoius ROI             
+        flagImageChanged();
+    } else {
+        ofLog(OF_LOG_ERROR, "in =, ROI mismatch");
+    }
 }
 
 //--------------------------------------------------------------------------------
