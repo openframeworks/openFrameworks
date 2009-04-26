@@ -6,5 +6,9 @@
 #include <vector>
 #include "ofMain.h"
 
+enum ofxCvRoiMode {
+    OFX_CV_ROI_MODE_INTERSECT,
+    OFX_CV_ROI_MODE_NONINTERSECT
+};
 
 #endif

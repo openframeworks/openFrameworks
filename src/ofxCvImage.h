@@ -62,6 +62,7 @@ class ofxCvImage : public ofBaseDraws, public ofBaseHasTexture, public ofBaseHas
     virtual void  operator += ( float value );
 
     virtual void  setFromPixels( unsigned char* _pixels, int w, int h ) = 0;
+    virtual void  setRoiFromPixels( unsigned char* _pixels, int w, int h ) = 0;
     virtual void  operator = ( const ofxCvGrayscaleImage& mom ) = 0;
     virtual void  operator = ( const ofxCvColorImage& mom ) = 0;
     virtual void  operator = ( const ofxCvFloatImage& mom ) = 0;
@@ -77,6 +78,7 @@ class ofxCvImage : public ofBaseDraws, public ofBaseHasTexture, public ofBaseHas
     // Get Pixel Data
     //
     virtual unsigned char*  getPixels() = 0;
+    virtual unsigned char*  getRoiPixels() = 0;
     virtual IplImage*  getCvImage() { return cvImage; };
 
 
@@ -84,6 +86,8 @@ class ofxCvImage : public ofBaseDraws, public ofBaseHasTexture, public ofBaseHas
     //
     virtual void  draw( float x, float y );
     virtual void  draw( float x, float y, float w, float h );
+    virtual void  drawROI( float x, float y );
+    virtual void  drawROI( float x, float y, float w, float h );
     virtual void setAnchorPercent( float xPct, float yPct );
     virtual void setAnchorPoint( int x, int y );
     virtual void resetAnchor();
@@ -140,7 +144,8 @@ class ofxCvImage : public ofBaseDraws, public ofBaseHasTexture, public ofBaseHas
 
   protected:
 
-    bool pushSetBothToTheirIntersectionROI( ofxCvImage& img1, ofxCvImage& img2 );
+    bool matchROI( ofxCvImage& img1, ofxCvImage& img2 );
+    void unmatchROI( ofxCvImage& img1, ofxCvImage& img2 );
 
     virtual void  rangeMap( IplImage* img, float min1, float max1, float min2, float max2 );
     virtual void  rangeMap( IplImage* mom, IplImage* kid, float min1, float max1, float min2, float max2 );
@@ -181,5 +186,24 @@ class ofxCvImage : public ofBaseDraws, public ofBaseHasTexture, public ofBaseHas
 
 };
 
+
+// ROI Mode
+//
+// The ROI mode is globally settable for ofxOpenCv and
+// determines how certain methods behave.
+// The methods in question are the ones that operate on
+// two images. Depending on the mode these methods
+// either intersect the two images' ROIs or simply
+// check if the dimensions are the same.
+// By default ofxOpenCv does not intersect ROIs which
+// means dimensions need to match for the operation to
+// succeede ( OFX_CV_ROI_MODE_NONINTERSECT )
+// Alternatively the mode can be set to 
+// OFX_CV_ROI_MODE_INTERSECT in which case the intersection
+// takes place and the operation is executed on the 
+// overlapping area.
+//
+void ofxCvSetRoiMode( int roiMode );
+int ofxCvGetRoiMode();
 
 #endif

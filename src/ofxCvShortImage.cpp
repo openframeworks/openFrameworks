@@ -70,17 +70,39 @@ void ofxCvShortImage::set(float value){
 
 //--------------------------------------------------------------------------------
 void ofxCvShortImage::setFromPixels( unsigned char* _pixels, int w, int h ) {
-
-    if(cvGrayscaleImage == NULL) {
-        cvGrayscaleImage = cvCreateImage( cvSize(cvImage->width,cvImage->height), IPL_DEPTH_8U, 1 );
+    // This sets the internal image ignoring any ROI
+        
+    if( w == cvImage->width &&  h == cvImage->height ) {
+        pushROI();
+        if(cvGrayscaleImage == NULL) {
+            cvGrayscaleImage = cvCreateImage( cvSize(cvImage->width,cvImage->height), IPL_DEPTH_8U, 1 );
+        }        
+        cvResetImageROI(cvGrayscaleImage);
+        // copy _pixels into cvGrayscaleImage
+        for( int i=0; i < cvImage->height; i++ ) {
+            memcpy( cvGrayscaleImage->imageData + (i*cvGrayscaleImage->widthStep),
+                    _pixels + (i*w), width );
+        }
+        convertGrayToShort(cvGrayscaleImage, cvImage);
+        popROI();
+        flagImageChanged();
+    } else {
+        ofLog(OF_LOG_ERROR, "in setFromPixels, size mismatch");
     }
     
-    cvSetImageROI(cvGrayscaleImage, cvRect(roiX,roiY,width,height));  //make sure ROI is in sync
-    ofRectangle roi = ofRectangle( roiX, roiY, width, height );
-    ofRectangle inputROI = ofRectangle( roiX, roiY, w, h );
+}
+
+//--------------------------------------------------------------------------------
+void ofxCvShortImage::setRoiFromPixels( unsigned char* _pixels, int w, int h ) {    
+    ofRectangle roi = getROI();
+    ofRectangle inputROI = ofRectangle( roi.x, roi.y, w, h );
     ofRectangle iRoi = getIntersectionROI( roi, inputROI );
     
     if( iRoi.width > 0 && iRoi.height > 0 ) {
+        if(cvGrayscaleImage == NULL) {
+            cvGrayscaleImage = cvCreateImage( cvSize(cvImage->width,cvImage->height), IPL_DEPTH_8U, 1 );
+        }
+        cvSetImageROI(cvGrayscaleImage, cvRect(roi.x,roi.y,roi.width,roi.height));  //make sure ROI is in sync
         // copy pixels from _pixels, however many we have or will fit in cvGrayscaleImage
         for( int i=0; i < iRoi.height; i++ ) {
             memcpy( cvGrayscaleImage->imageData + ((i+(int)iRoi.y)*cvGrayscaleImage->widthStep) + (int)iRoi.x,
@@ -90,24 +112,23 @@ void ofxCvShortImage::setFromPixels( unsigned char* _pixels, int w, int h ) {
         convertGrayToShort(cvGrayscaleImage, cvImage);
         flagImageChanged();
     } else {
-        ofLog(OF_LOG_ERROR, "in setFromPixels, ROI mismatch");
+        ofLog(OF_LOG_ERROR, "in setRoiFromPixels, ROI mismatch");
     }
     
 }
 
 //--------------------------------------------------------------------------------
 void ofxCvShortImage::operator = ( unsigned char* _pixels ) {
-    setFromPixels( _pixels, width, height );
+    setFromPixels( _pixels, cvImage->width, cvImage->height );
 }
 
 //--------------------------------------------------------------------------------
 void ofxCvShortImage::operator = ( const ofxCvGrayscaleImage& _mom ) {
     // cast non-const,  no worries, we will reverse any chages
     ofxCvGrayscaleImage& mom = const_cast<ofxCvGrayscaleImage&>(_mom); 
-	if( pushSetBothToTheirIntersectionROI(*this,mom) ) {
+	if( matchROI(*this,mom) ) {
         convertGrayToShort(mom.getCvImage(), cvImage);
-        popROI();       //restore prevoius ROI
-        mom.popROI();   //restore prevoius ROI               
+        unmatchROI(*this,mom);           
         flagImageChanged();
 	} else {
         ofLog(OF_LOG_ERROR, "in =, ROI mismatch");
@@ -118,16 +139,16 @@ void ofxCvShortImage::operator = ( const ofxCvGrayscaleImage& _mom ) {
 void ofxCvShortImage::operator = ( const ofxCvColorImage& _mom ) {
     // cast non-const,  no worries, we will reverse any chages
     ofxCvColorImage& mom = const_cast<ofxCvColorImage&>(_mom); 
-	if( pushSetBothToTheirIntersectionROI(*this,mom) ) {
+	if( matchROI(*this,mom) ) {
         if( cvGrayscaleImage == NULL ) {
             cvGrayscaleImage = cvCreateImage( cvSize(cvImage->width,cvImage->height), IPL_DEPTH_8U, 1 );
         }
-        cvSetImageROI(cvGrayscaleImage, cvRect(roiX,roiY,width,height));
+        ofRectangle roi = getROI();
+        cvSetImageROI(cvGrayscaleImage, cvRect(roi.x,roi.y,roi.width,roi.height));
 		cvCvtColor( mom.getCvImage(), cvGrayscaleImage, CV_RGB2GRAY );
         convertGrayToShort(cvGrayscaleImage, cvImage);
-        popROI();       //restore prevoius ROI
-        mom.popROI();   //restore prevoius ROI
-        cvSetImageROI(cvGrayscaleImage, cvRect(roiX,roiY,width,height));                      
+        unmatchROI(*this,mom);
+        cvSetImageROI(cvGrayscaleImage, cvRect(roi.x,roi.y,roi.width,roi.height));                      
         flagImageChanged();
 	} else {
         ofLog(OF_LOG_ERROR, "in =, ROI mismatch");
@@ -138,13 +159,10 @@ void ofxCvShortImage::operator = ( const ofxCvColorImage& _mom ) {
 void ofxCvShortImage::operator = ( const ofxCvFloatImage& _mom ) {
     // cast non-const,  no worries, we will reverse any chages
     ofxCvFloatImage& mom = const_cast<ofxCvFloatImage&>(_mom); 
-    if( pushSetBothToTheirIntersectionROI(*this,mom) ) {
-            
+    if( matchROI(*this,mom) ) {
         rangeMap( mom.getCvImage(), cvImage, 
                   mom.getNativeScaleMin(), mom.getNativeScaleMax(), 0, 65535.0f );        
-        
-        popROI();       //restore prevoius ROI
-        mom.popROI();   //restore prevoius ROI        
+        unmatchROI(*this,mom);       
         flagImageChanged();
     } else {
         ofLog(OF_LOG_ERROR, "in =, ROI mismatch");
@@ -156,10 +174,9 @@ void ofxCvShortImage::operator = ( const ofxCvShortImage& _mom ) {
     if(this != &_mom) {  //check for self-assignment
         // cast non-const,  no worries, we will reverse any chages
         ofxCvShortImage& mom = const_cast<ofxCvShortImage&>(_mom); 
-        if( pushSetBothToTheirIntersectionROI(*this,mom) ) {
+        if( matchROI(*this,mom) ) {
             cvCopy( mom.getCvImage(), cvImage, 0 ); 
-            popROI();       //restore prevoius ROI
-            mom.popROI();   //restore prevoius ROI             
+            unmatchROI(*this,mom);       
             flagImageChanged();
         } else {
             ofLog(OF_LOG_ERROR, "in =, ROI mismatch");
@@ -177,11 +194,10 @@ void ofxCvShortImage::operator = ( const IplImage* _mom ) {
 
 //--------------------------------------------------------------------------------
 void ofxCvShortImage::addWeighted( ofxCvGrayscaleImage& mom, float f ) {
-	if( pushSetBothToTheirIntersectionROI(*this,mom) ) {
+	if( matchROI(*this,mom) ) {
         convertGrayToShort(mom.getCvImage(), cvImageTemp);
         cvAddWeighted( cvImageTemp, f, cvImage, 1.0f-f,0, cvImage );
-        popROI();       //restore prevoius ROI
-        mom.popROI();   //restore prevoius ROI           
+        unmatchROI(*this,mom);        
         flagImageChanged();
     } else {
         ofLog(OF_LOG_ERROR, "in addWeighted, ROI mismatch");
@@ -193,39 +209,78 @@ void ofxCvShortImage::addWeighted( ofxCvGrayscaleImage& mom, float f ) {
 // Get Pixel Data
 
 //--------------------------------------------------------------------------------
-unsigned char*  ofxCvShortImage::getPixels(){    
-    if(bPixelsDirty) {
+unsigned char*  ofxCvShortImage::getPixels(){
+    // get pixels ignoring any ROI
     
+    if(bPixelsDirty) {
         if( cvGrayscaleImage == NULL ) {
             cvGrayscaleImage = cvCreateImage( cvSize(cvImage->width,cvImage->height), IPL_DEPTH_8U, 1 );
         }
          
-        cvSetImageROI(cvGrayscaleImage, cvRect(roiX,roiY,width,height));  //make sure ROI is in sync
-        convertShortToGray(cvImage, cvGrayscaleImage);    
+        pushROI();
+        cvResetImageROI(cvGrayscaleImage);
+        convertShortToGray(cvImage, cvGrayscaleImage);
+        popROI();   
     
         if(pixels == NULL) {
             // we need pixels, allocate it
-            pixels = new unsigned char[width*height];
-            pixelsWidth = width;
-            pixelsHeight = height;            
-        } else if(pixelsWidth != width || pixelsHeight != height) {
+            pixels = new unsigned char[cvImage->width*cvImage->height];
+            pixelsWidth = cvImage->width;
+            pixelsHeight = cvImage->height;            
+        } else if(pixelsWidth != cvImage->width || pixelsHeight != cvImage->height) {
             // ROI changed, reallocate pixels for new size
+            // this is needed because getRoiPixels() might change size of pixels
             delete pixels;
-            pixels = new unsigned char[width*height];
-            pixelsWidth = width;
-            pixelsHeight = height;
+            pixels = new unsigned char[cvImage->width*cvImage->height];
+            pixelsWidth = cvImage->width;
+            pixelsHeight = cvImage->height;
         }
         
         // copy from ROI to pixels
-        for( int i = 0; i < height; i++ ) {
-            memcpy( pixels + (i*width),
-                    cvGrayscaleImage->imageData + ((i+roiY)*cvGrayscaleImage->widthStep) + roiX,
-                    width );
+        for( int i = 0; i < cvImage->height; i++ ) {
+            memcpy( pixels + (i*cvImage->width),
+                    cvGrayscaleImage->imageData + (i*cvGrayscaleImage->widthStep),
+                    cvImage->width );
         }
         bPixelsDirty = false;
     }
 	return pixels;    
     
+}
+
+//--------------------------------------------------------------------------------
+unsigned char*  ofxCvShortImage::getRoiPixels(){    
+    if(bPixelsDirty) {
+        if( cvGrayscaleImage == NULL ) {
+            cvGrayscaleImage = cvCreateImage( cvSize(cvImage->width,cvImage->height), IPL_DEPTH_8U, 1 );
+        }
+        
+        ofRectangle roi = getROI();
+        cvSetImageROI(cvGrayscaleImage, cvRect(roi.x,roi.y,roi.width,roi.height));  //make sure ROI is in sync
+        convertShortToGray(cvImage, cvGrayscaleImage);    
+    
+        if(pixels == NULL) {
+            // we need pixels, allocate it
+            pixels = new unsigned char[(int)(roi.width*roi.height)];
+            pixelsWidth = roi.width;
+            pixelsHeight = roi.height;            
+        } else if(pixelsWidth != roi.width || pixelsHeight != roi.height) {
+            // ROI changed, reallocate pixels for new size
+            delete pixels;
+            pixels = new unsigned char[(int)(roi.width*roi.height)];
+            pixelsWidth = roi.width;
+            pixelsHeight = roi.height;
+        }
+        
+        // copy from ROI to pixels
+        for( int i = 0; i < roi.height; i++ ) {
+            memcpy( pixels + (int)(i*roi.width),
+                    cvGrayscaleImage->imageData + ((int)(i+roi.y)*cvGrayscaleImage->widthStep) + (int)roi.x,
+                    roi.width );
+        }
+        bPixelsDirty = false;
+    }
+	return pixels;
 }
 
 
