@@ -50,6 +50,7 @@ class ofxCvGrayscaleImage : public ofxCvImage {
     // virtual void  operator += ( float value );                              //in base class
     
     virtual void  setFromPixels( unsigned char* _pixels, int w, int h );
+    virtual void  setRoiFromPixels( unsigned char* _pixels, int w, int h );
     virtual void  operator = ( unsigned char* _pixels );
     virtual void  operator = ( const ofxCvGrayscaleImage& mom );
     virtual void  operator = ( const ofxCvColorImage& mom );
@@ -69,6 +70,7 @@ class ofxCvGrayscaleImage : public ofxCvImage {
     // Get Pixel Data
     //
     virtual unsigned char*  getPixels();
+    virtual unsigned char*  getRoiPixels();
     // virtual IplImage*  getCvImage();                                        //in base class
 
 
@@ -76,6 +78,7 @@ class ofxCvGrayscaleImage : public ofxCvImage {
     //
     //virtual void  draw( float x, float y );                                  //in base class
     //virtual void  draw( float x, float y, float w, float h );                //in base class
+    //virtual void  drawROI( float x, float y, float w, float h );             //in base class    
     //virtual void setAnchorPercent( float xPct, float yPct );                 //in base class
     //virtual void setAnchorPoint( int x, int y );                             //in base class
     //virtual void resetAnchor();                                              //in base class
