@@ -44,11 +44,12 @@ void ofxCvGrayscaleImage::set( float value ){
 void ofxCvGrayscaleImage::setFromPixels( unsigned char* _pixels, int w, int h ) { 
     // This sets the internal image ignoring any ROI
     
-    if( w == cvImage->width && h == cvImage->height ) {
+    if( w == width && h == height ) {
         // copy pixels from _pixels, however many we have or will fit in cvImage
-        for( int i=0; i < cvImage->height; i++ ) {
+        for( int i=0; i < height; i++ ) {
             memcpy( cvImage->imageData + (i*cvImage->widthStep),
-                    _pixels + (i*w), cvImage->width);
+                    _pixels + (i*w), 
+                    width);
         }
         flagImageChanged();
     } else {
@@ -77,7 +78,7 @@ void ofxCvGrayscaleImage::setRoiFromPixels( unsigned char* _pixels, int w, int h
 
 //--------------------------------------------------------------------------------
 void ofxCvGrayscaleImage::operator = ( unsigned char* _pixels ) {
-    setFromPixels( _pixels, cvImage->width, cvImage->height );
+    setFromPixels( _pixels, width, height );
 }
 
 //--------------------------------------------------------------------------------
@@ -173,23 +174,23 @@ unsigned char* ofxCvGrayscaleImage::getPixels() {
     if(bPixelsDirty) {
         if(pixels == NULL) {
             // we need pixels, allocate it
-            pixels = new unsigned char[cvImage->width*cvImage->height];
-            pixelsWidth = cvImage->width;
-            pixelsHeight = cvImage->height;            
-        } else if(pixelsWidth != cvImage->width || pixelsHeight != cvImage->height) {
+            pixels = new unsigned char[width*height];
+            pixelsWidth = width;
+            pixelsHeight = height;            
+        } else if(pixelsWidth != width || pixelsHeight != height) {
             // ROI changed, reallocate pixels for new size
             // this is needed because getRoiPixels() might change size of pixels
             delete pixels;
-            pixels = new unsigned char[cvImage->width*cvImage->height];
-            pixelsWidth = cvImage->width;
-            pixelsHeight = cvImage->height;
+            pixels = new unsigned char[width*height];
+            pixelsWidth = width;
+            pixelsHeight = height;
         }
         
         // copy from ROI to pixels
-        for( int i = 0; i < cvImage->height; i++ ) {
-            memcpy( pixels + (i*cvImage->width),
+        for( int i = 0; i < height; i++ ) {
+            memcpy( pixels + (i*width),
                     cvImage->imageData + (i*cvImage->widthStep),
-                    cvImage->width );
+                    width );
         }
         bPixelsDirty = false;
     }
