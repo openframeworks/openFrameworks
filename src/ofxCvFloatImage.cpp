@@ -214,9 +214,8 @@ void ofxCvFloatImage::operator = ( float* _pixels ) {
 void ofxCvFloatImage::operator = ( const ofxCvGrayscaleImage& _mom ) {
     // cast non-const,  no worries, we will reverse any chages
     ofxCvGrayscaleImage& mom = const_cast<ofxCvGrayscaleImage&>(_mom); 
-	if( matchROI(*this,mom) ) {
+	if( matchingROI(getROI(), mom.getROI()) ) {
         convertGrayToFloat(mom.getCvImage(), cvImage);
-        unmatchROI(*this,mom);    
         flagImageChanged();
 	} else {
         ofLog(OF_LOG_ERROR, "in =, ROI mismatch");
@@ -227,7 +226,7 @@ void ofxCvFloatImage::operator = ( const ofxCvGrayscaleImage& _mom ) {
 void ofxCvFloatImage::operator = ( const ofxCvColorImage& _mom ) {
     // cast non-const,  no worries, we will reverse any chages
     ofxCvColorImage& mom = const_cast<ofxCvColorImage&>(_mom); 
-	if( matchROI(*this,mom) ) {
+	if( matchingROI(getROI(), mom.getROI()) ) {
         if( cvGrayscaleImage == NULL ) {
             cvGrayscaleImage = cvCreateImage( cvSize(cvImage->width,cvImage->height), IPL_DEPTH_8U, 1 );
         }
@@ -235,7 +234,6 @@ void ofxCvFloatImage::operator = ( const ofxCvColorImage& _mom ) {
         cvSetImageROI(cvGrayscaleImage, cvRect(roi.x,roi.y,roi.width,roi.height));
 		cvCvtColor( mom.getCvImage(), cvGrayscaleImage, CV_RGB2GRAY );
         convertGrayToFloat(cvGrayscaleImage, cvImage);                
-        unmatchROI(*this,mom); 
         flagImageChanged();
 	} else {
         ofLog(OF_LOG_ERROR, "in =, ROI mismatch");
@@ -247,7 +245,7 @@ void ofxCvFloatImage::operator = ( const ofxCvFloatImage& _mom ) {
     if(this != &_mom) {  //check for self-assignment
         // cast non-const,  no worries, we will reverse any chages
         ofxCvFloatImage& mom = const_cast<ofxCvFloatImage&>(_mom);     
-        if( matchROI(*this,mom) ) {
+        if( matchingROI(getROI(), mom.getROI()) ) {
             if( getNativeScaleMin() == mom.getNativeScaleMin() && 
                 getNativeScaleMax() == mom.getNativeScaleMax() )
             {
@@ -257,7 +255,6 @@ void ofxCvFloatImage::operator = ( const ofxCvFloatImage& _mom ) {
                           mom.getNativeScaleMin(), mom.getNativeScaleMax(), 
                           getNativeScaleMin(), getNativeScaleMax() );            
             }
-            unmatchROI(*this,mom);           
             flagImageChanged();
         } else {
             ofLog(OF_LOG_ERROR, "in =, ROI mismatch");
@@ -271,10 +268,9 @@ void ofxCvFloatImage::operator = ( const ofxCvFloatImage& _mom ) {
 void ofxCvFloatImage::operator = ( const ofxCvShortImage& _mom ) {
     // cast non-const,  no worries, we will reverse any chages
     ofxCvShortImage& mom = const_cast<ofxCvShortImage&>(_mom); 
-    if( matchROI(*this,mom) ) {
+    if( matchingROI(getROI(), mom.getROI()) ) {
         rangeMap( mom.getCvImage(), cvImage, 
                   0, 65535.0f, getNativeScaleMin(), getNativeScaleMax() );        
-        unmatchROI(*this,mom);
         flagImageChanged();
     } else {
         ofLog(OF_LOG_ERROR, "in =, ROI mismatch");
@@ -291,10 +287,9 @@ void ofxCvFloatImage::operator *= ( ofxCvImage& mom ) {
 	if( mom.getCvImage()->nChannels == cvImage->nChannels && 
         mom.getCvImage()->depth == cvImage->depth )
     {
-        if( matchROI(*this,mom) ) {
+        if( matchingROI(getROI(), mom.getROI()) ) {
             cvMul( cvImage, mom.getCvImage(), cvImageTemp );
             swapTemp();
-            unmatchROI(*this,mom);          
             flagImageChanged();
         } else {
             ofLog(OF_LOG_ERROR, "in *=, ROI mismatch");
@@ -309,11 +304,10 @@ void ofxCvFloatImage::operator &= ( ofxCvImage& mom ) {
 	if( mom.getCvImage()->nChannels == cvImage->nChannels && 
         mom.getCvImage()->depth == cvImage->depth )
     {
-        if( matchROI(*this,mom) ) {
+        if( matchingROI(getROI(), mom.getROI()) ) {
             //this is doing it bit-wise; probably not what we want
             cvAnd( cvImage, mom.getCvImage(), cvImageTemp );
             swapTemp();
-            unmatchROI(*this,mom);            
             flagImageChanged();
         } else {
             ofLog(OF_LOG_ERROR, "in &=, ROI mismatch");
@@ -326,10 +320,9 @@ void ofxCvFloatImage::operator &= ( ofxCvImage& mom ) {
 
 //--------------------------------------------------------------------------------
 void ofxCvFloatImage::addWeighted( ofxCvGrayscaleImage& mom, float f ) {
-	if( matchROI(*this,mom) ) {
+	if( matchingROI(getROI(), mom.getROI()) ) {
         convertGrayToFloat(mom.getCvImage(), cvImageTemp);
         cvAddWeighted( cvImageTemp, f, cvImage, 1.0f-f,0, cvImage );
-        unmatchROI(*this,mom);     
         flagImageChanged();
     } else {
         ofLog(OF_LOG_ERROR, "in addWeighted, ROI mismatch");

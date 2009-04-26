@@ -143,8 +143,7 @@ class ofxCvImage : public ofBaseDraws, public ofBaseHasTexture, public ofBaseHas
 
   protected:
 
-    bool matchROI( ofxCvImage& img1, ofxCvImage& img2 );
-    void unmatchROI( ofxCvImage& img1, ofxCvImage& img2 );
+    bool matchingROI( const ofRectangle& rec1, const ofRectangle& rec2 );
 
     virtual void  rangeMap( IplImage* img, float min1, float max1, float min2, float max2 );
     virtual void  rangeMap( IplImage* mom, IplImage* kid, float min1, float max1, float min2, float max2 );
@@ -182,24 +181,5 @@ class ofxCvImage : public ofBaseDraws, public ofBaseHasTexture, public ofBaseHas
 
 };
 
-
-// ROI Mode
-//
-// The ROI mode is globally settable for ofxOpenCv and
-// determines how certain methods behave.
-// The methods in question are the ones that operate on
-// two images. Depending on the mode these methods
-// either intersect the two images' ROIs or simply
-// check if the dimensions are the same.
-// By default ofxOpenCv does not intersect ROIs which
-// means dimensions need to match for the operation to
-// succeede ( OFX_CV_ROI_MODE_NONINTERSECT )
-// Alternatively the mode can be set to 
-// OFX_CV_ROI_MODE_INTERSECT in which case the intersection
-// takes place and the operation is executed on the 
-// overlapping area.
-//
-void ofxCvSetRoiMode( int roiMode );
-int ofxCvGetRoiMode();
 
 #endif
