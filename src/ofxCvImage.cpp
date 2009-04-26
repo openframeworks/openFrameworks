@@ -42,7 +42,7 @@ void ofxCvImage::allocate( int w, int h ) {
 	bAllocated = true;
 
     if( bUseTexture ) {
-        tex.allocate( cvImage->width, cvImage->height, glchannels );
+        tex.allocate( width, height, glchannels );
         bTextureDirty = true;
     }
 }
@@ -51,7 +51,7 @@ void ofxCvImage::allocate( int w, int h ) {
 void ofxCvImage::clear() {
 
 	if (bAllocated == true){
-		if (cvImage->width > 0 && cvImage->height > 0){
+		if (width > 0 && height > 0){
 			cvReleaseImage( &cvImage );
 			cvReleaseImage( &cvImageTemp );
 		}
@@ -77,12 +77,12 @@ void ofxCvImage::clear() {
 
 //--------------------------------------------------------------------------------
 float ofxCvImage::getWidth(){
-	return cvImage->width;
+	return width;
 }
 
 //--------------------------------------------------------------------------------
 float ofxCvImage::getHeight(){
-	return cvImage->height;
+	return height;
 }
 
 //--------------------------------------------------------------------------------
@@ -96,48 +96,9 @@ ofTexture& ofxCvImage::getTextureReference() {
 }
 
 //--------------------------------------------------------------------------------
-void ofxCvImage::swapTemp() {
-	if (getROI().x != 0 ||
-		getROI().y != 0 ||
-		getROI().width != cvImage->width ||
-		getROI().height != cvImage->height )
-    {
-		cvCopy( cvImageTemp, cvImage );
-	} else {	
-		IplImage*  temp;
-		temp = cvImage;
-		cvImage	= cvImageTemp;
-		cvImageTemp	= temp;
-	}
-}
-
-//--------------------------------------------------------------------------------
 void ofxCvImage::flagImageChanged() {
     bTextureDirty = true;
     bPixelsDirty = true;
-}
-
-//--------------------------------------------------------------------------------
-void ofxCvImage::rangeMap( IplImage* img, float min1, float max1, float min2, float max2 ) {
-    // map from min1-max1 to min2-max2
-    float scale = (max2-min2)/(max1-min1);
-    cvConvertScale( img, img, scale, -(min1*scale)+min2 );
-}
-
-//--------------------------------------------------------------------------------
-void ofxCvImage::rangeMap( IplImage* mom, IplImage* kid, float min1, float max1, float min2, float max2 ) {
-    // map from min1-max1 to min2-max2
-    float scale = (max2-min2)/(max1-min1);
-    cvConvertScale( mom, kid, scale, -(min1*scale)+min2 );
-}
-
-//--------------------------------------------------------------------------------
-bool ofxCvImage::matchingROI( const ofRectangle& rec1, const ofRectangle& rec2 ) {
-    if( rec1.width == rec2.width && rec1.height == rec2.height ) {
-        return true;
-    } else {
-        return false;
-    }
 }
 
 
@@ -147,7 +108,7 @@ bool ofxCvImage::matchingROI( const ofRectangle& rec1, const ofRectangle& rec2 )
 //--------------------------------------------------------------------------------
 void ofxCvImage::pushROI() {
     roiStack.push_back( ofRectangle() );
-    setROI(0,0,cvImage->width,cvImage->height);
+    setROI(0,0,width,height);
 
 }
 
@@ -164,10 +125,10 @@ void ofxCvImage::popROI() {
 //--------------------------------------------------------------------------------
 void ofxCvImage::setROI( int x, int y, int w, int h ) {
 
-    x = (int)ofClamp(x, 0, (int)cvImage->width-1);
-    y = (int)ofClamp(y, 0, (int)cvImage->height-1);
-    w = (int)ofClamp(w, 0, (int)cvImage->width - x);
-    h = (int)ofClamp(h, 0, (int)cvImage->height - y);
+    x = (int)ofClamp(x, 0, (int)width-1);
+    y = (int)ofClamp(y, 0, (int)height-1);
+    w = (int)ofClamp(w, 0, (int)width - x);
+    h = (int)ofClamp(h, 0, (int)height - y);
 
     cvSetImageROI( cvImage, cvRect(x,y, w,h) );
     cvSetImageROI( cvImageTemp, cvRect(x,y, w,h) );
@@ -192,7 +153,7 @@ ofRectangle ofxCvImage::getROI() {
 void ofxCvImage::resetROI() {
     cvResetImageROI( cvImage );
     cvResetImageROI( cvImageTemp );
-    setROI( 0,0, cvImage->width, cvImage->height );
+    setROI( 0,0, width, height );
 }
 
 //--------------------------------------------------------------------------------
@@ -255,7 +216,7 @@ ofRectangle ofxCvImage::getIntersectionROI( const ofRectangle& r1, const ofRecta
 
 //--------------------------------------------------------------------------------
 void  ofxCvImage::operator = ( const IplImage* mom ) {
-	if( mom->width == cvImage->width && mom->height == cvImage->height &&
+	if( mom->width == width && mom->height == height &&
 	    mom->nChannels == cvImage->nChannels &&
         mom->depth == cvImage->depth )
     {
@@ -356,20 +317,20 @@ void ofxCvImage::operator &= ( ofxCvImage& mom ) {
 
 //--------------------------------------------------------------------------------
 void ofxCvImage::draw( float x, float y ) {
-    draw( x,y, cvImage->width, cvImage->height );
+    draw( x,y, width, height );
 }
 
 //--------------------------------------------------------------------------------
 void ofxCvImage::draw( float x, float y, float w, float h ) {
     if( bUseTexture ) {
         if( bTextureDirty ) {
-            if(tex.getWidth() != cvImage->width || tex.getHeight() != cvImage->height) {
+            if(tex.getWidth() != width || tex.getHeight() != height) {
                 //ROI was changed
                 // reallocating texture - this could be faster with ROI support
                 tex.clear();
-                tex.allocate( cvImage->width, cvImage->height, glchannels );
+                tex.allocate( width, height, glchannels );
             }
-            tex.loadData( getPixels(), cvImage->width, cvImage->height, glchannels );
+            tex.loadData( getPixels(), width, height, glchannels );
             bTextureDirty = false;
         }
 
@@ -617,12 +578,12 @@ void ofxCvImage::warpPerspective( const ofPoint& A, const ofPoint& B, const ofPo
 
     cvdst[0].x = 0;
     cvdst[0].y = 0;
-    cvdst[1].x = cvImage->width;
+    cvdst[1].x = width;
     cvdst[1].y = 0;
-    cvdst[2].x = cvImage->width;
-    cvdst[2].y = cvImage->height;
+    cvdst[2].x = width;
+    cvdst[2].y = height;
     cvdst[3].x = 0;
-    cvdst[3].y = cvImage->height;
+    cvdst[3].y = height;
 
     cvsrc[0].x = A.x;
     cvsrc[0].y = A.y;
@@ -689,6 +650,60 @@ int ofxCvImage::countNonZeroInRegion( int x, int y, int w, int h ) {
     popROI();
 
 	return count;
+}
+
+
+
+
+// private methods
+
+//--------------------------------------------------------------------------------
+void ofxCvImage::swapTemp() {
+	if (getROI().x != 0 ||
+		getROI().y != 0 ||
+		getROI().width != width ||
+		getROI().height != height )
+    {
+		cvCopy( cvImageTemp, cvImage );
+	} else {	
+		IplImage*  temp;
+		temp = cvImage;
+		cvImage	= cvImageTemp;
+		cvImageTemp	= temp;
+	}
+}
+
+//--------------------------------------------------------------------------------
+void ofxCvImage::rangeMap( IplImage* img, float min1, float max1, float min2, float max2 ) {
+    // map from min1-max1 to min2-max2
+    float scale = (max2-min2)/(max1-min1);
+    cvConvertScale( img, img, scale, -(min1*scale)+min2 );
+}
+
+//--------------------------------------------------------------------------------
+void ofxCvImage::rangeMap( IplImage* mom, IplImage* kid, float min1, float max1, float min2, float max2 ) {
+    // map from min1-max1 to min2-max2
+    float scale = (max2-min2)/(max1-min1);
+    cvConvertScale( mom, kid, scale, -(min1*scale)+min2 );
+}
+
+//--------------------------------------------------------------------------------
+bool ofxCvImage::matchingROI( const ofRectangle& rec1, const ofRectangle& rec2 ) {
+    if( rec1.width == rec2.width && rec1.height == rec2.height ) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+//--------------------------------------------------------------------------------
+void  ofxCvImage::setImageROI( IplImage* img, const ofRectangle& roi ) {
+    cvSetImageROI(img, cvRect(roi.x,roi.y,roi.width,roi.height));
+}
+
+//--------------------------------------------------------------------------------
+void  ofxCvImage::resetImageROI( IplImage* img ) {
+    cvResetImageROI(img);
 }
 
 

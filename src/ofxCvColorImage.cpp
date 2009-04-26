@@ -78,11 +78,11 @@ void ofxCvColorImage::operator += ( float value ) {
 void ofxCvColorImage::setFromPixels( unsigned char* _pixels, int w, int h ) {
     // copy pixels ignoring any ROI
     
-    if( w == cvImage->width && h == cvImage->height ) {
-        for( int i=0; i < cvImage->height; i++ ) {
+    if( w == width && h == height ) {
+        for( int i=0; i < height; i++ ) {
             memcpy( cvImage->imageData + (i*cvImage->widthStep),
                     _pixels + (i*w*3),
-                    cvImage->width*3 );
+                    width*3 );
         }
         flagImageChanged();
     } else {
@@ -112,9 +112,12 @@ void ofxCvColorImage::setRoiFromPixels( unsigned char* _pixels, int w, int h ) {
 //--------------------------------------------------------------------------------
 void ofxCvColorImage::setFromGrayscalePlanarImages( ofxCvGrayscaleImage& red, ofxCvGrayscaleImage& green, ofxCvGrayscaleImage& blue){     
 	ofRectangle roi = getROI();
-    if( red.getROI().width == roi.width && red.getROI().height == roi.height &&
-        green.getROI().width == roi.width && green.getROI().height == roi.height &&
-        blue.getROI().width == roi.width && blue.getROI().height == roi.height )
+    ofRectangle redRoi = red.getROI();
+    ofRectangle greenRoi = green.getROI();    
+    ofRectangle blueRoi = blue.getROI();       
+    if( redRoi.width == roi.width && redRoi.height == roi.height &&
+        greenRoi.width == roi.width && greenRoi.height == roi.height &&
+        blueRoi.width == roi.width && blueRoi.height == roi.height )
     {
          cvCvtPlaneToPix(red.getCvImage(), green.getCvImage(), blue.getCvImage(),NULL, cvImage);
          flagImageChanged();
@@ -126,7 +129,7 @@ void ofxCvColorImage::setFromGrayscalePlanarImages( ofxCvGrayscaleImage& red, of
 
 //--------------------------------------------------------------------------------
 void ofxCvColorImage::operator = ( unsigned char* _pixels ) {
-    setFromPixels( _pixels, cvImage->width, cvImage->height );
+    setFromPixels( _pixels, width, height );
 }
 
 //--------------------------------------------------------------------------------
@@ -163,10 +166,10 @@ void ofxCvColorImage::operator = ( const ofxCvFloatImage& _mom ) {
     ofxCvFloatImage& mom = const_cast<ofxCvFloatImage&>(_mom); 
 	if( matchingROI(getROI(), mom.getROI()) ) {
         if( cvGrayscaleImage == NULL ) {
-            cvGrayscaleImage = cvCreateImage( cvSize(cvImage->width,cvImage->height), IPL_DEPTH_8U, 1 );
+            cvGrayscaleImage = cvCreateImage( cvSize(width,height), IPL_DEPTH_8U, 1 );
         }
         ofRectangle roi = getROI();
-        cvSetImageROI(cvGrayscaleImage, cvRect(roi.x,roi.y,roi.width,roi.height));
+        setImageROI(cvGrayscaleImage, roi);
         rangeMap( mom.getCvImage(), cvGrayscaleImage, 
                   mom.getNativeScaleMin(), mom.getNativeScaleMax(), 0, 255.0f );
 		cvCvtColor( cvGrayscaleImage, cvImage, CV_GRAY2RGB );
@@ -182,10 +185,10 @@ void ofxCvColorImage::operator = ( const ofxCvShortImage& _mom ) {
     ofxCvShortImage& mom = const_cast<ofxCvShortImage&>(_mom); 
     if( matchingROI(getROI(), mom.getROI()) ) {
         if( cvGrayscaleImage == NULL ) {
-            cvGrayscaleImage = cvCreateImage( cvSize(cvImage->width,cvImage->height), IPL_DEPTH_8U, 1 );
+            cvGrayscaleImage = cvCreateImage( cvSize(width,height), IPL_DEPTH_8U, 1 );
         }
         ofRectangle roi = getROI();
-        cvSetImageROI(cvGrayscaleImage, cvRect(roi.x,roi.y,roi.width,roi.height));
+        setImageROI(cvGrayscaleImage, roi);
         rangeMap( mom.getCvImage(), cvGrayscaleImage, 0, 65535.0f, 0, 255.0f );
 		cvCvtColor( cvGrayscaleImage, cvImage, CV_GRAY2RGB );       
         flagImageChanged();
@@ -207,23 +210,23 @@ unsigned char* ofxCvColorImage::getPixels() {
     if(bPixelsDirty) {
         if(pixels == NULL) {
             // we need pixels, allocate it
-            pixels = new unsigned char[cvImage->width*cvImage->height*3];
-            pixelsWidth = cvImage->width;
-            pixelsHeight = cvImage->height;            
-        } else if(pixelsWidth != cvImage->width || pixelsHeight != cvImage->height) {
+            pixels = new unsigned char[width*height*3];
+            pixelsWidth = width;
+            pixelsHeight = height;            
+        } else if(pixelsWidth != width || pixelsHeight != height) {
             // ROI changed, reallocate pixels for new size
             // this is needed because getRoiPixels() might change size of pixels
             delete pixels;
-            pixels = new unsigned char[cvImage->width*cvImage->height*3];
-            pixelsWidth = cvImage->width;
-            pixelsHeight = cvImage->height;
+            pixels = new unsigned char[width*height*3];
+            pixelsWidth = width;
+            pixelsHeight = height;
         }
         
         // copy from ROI to pixels
-        for( int i = 0; i < cvImage->height; i++ ) {
-            memcpy( pixels + (i*cvImage->width*3),
+        for( int i = 0; i < height; i++ ) {
+            memcpy( pixels + (i*width*3),
                     cvImage->imageData + (i*cvImage->widthStep),
-                    cvImage->width*3 );
+                    width*3 );
         }
         bPixelsDirty = false;
     }
@@ -261,9 +264,12 @@ unsigned char* ofxCvColorImage::getRoiPixels() {
 //--------------------------------------------------------------------------------
 void ofxCvColorImage::convertToGrayscalePlanarImages(ofxCvGrayscaleImage& red, ofxCvGrayscaleImage& green, ofxCvGrayscaleImage& blue){
     ofRectangle roi = getROI();
-	if( red.getROI().width == roi.width && red.getROI().height == roi.height &&
-        green.getROI().width == roi.width && green.getROI().height == roi.height &&
-        blue.getROI().width == roi.width && blue.getROI().height == roi.height )
+    ofRectangle redRoi = red.getROI();
+    ofRectangle greenRoi = green.getROI();    
+    ofRectangle blueRoi = blue.getROI();    
+	if( redRoi.width == roi.width && redRoi.height == roi.height &&
+        greenRoi.width == roi.width && greenRoi.height == roi.height &&
+        blueRoi.width == roi.width && blueRoi.height == roi.height )
     {
         cvCvtPixToPlane(cvImage, red.getCvImage(), green.getCvImage(), blue.getCvImage(), NULL);
         red.flagImageChanged();

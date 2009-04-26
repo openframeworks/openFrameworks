@@ -144,6 +144,8 @@ class ofxCvImage : public ofBaseDraws, public ofBaseHasTexture, public ofBaseHas
   protected:
 
     bool matchingROI( const ofRectangle& rec1, const ofRectangle& rec2 );
+    virtual void  setImageROI( IplImage* img, const ofRectangle& rect );
+    virtual void  resetImageROI( IplImage* img );
 
     virtual void  rangeMap( IplImage* img, float min1, float max1, float min2, float max2 );
     virtual void  rangeMap( IplImage* mom, IplImage* kid, float min1, float max1, float min2, float max2 );

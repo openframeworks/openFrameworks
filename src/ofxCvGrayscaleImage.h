@@ -78,6 +78,7 @@ class ofxCvGrayscaleImage : public ofxCvImage {
     //
     //virtual void  draw( float x, float y );                                  //in base class
     //virtual void  draw( float x, float y, float w, float h );                //in base class
+    //virtual void  drawROI( float x, float y );                               //in base class
     //virtual void  drawROI( float x, float y, float w, float h );             //in base class    
     //virtual void setAnchorPercent( float xPct, float yPct );                 //in base class
     //virtual void setAnchorPoint( int x, int y );                             //in base class
