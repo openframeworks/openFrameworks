@@ -17,7 +17,7 @@ ofxCvGrayscaleImage::ofxCvGrayscaleImage( const ofxCvGrayscaleImage& _mom ) {
     if( _mom.bAllocated ) {
         // cast non-const,  to get read access to the mon::cvImage
         ofxCvGrayscaleImage& mom = const_cast<ofxCvGrayscaleImage&>(_mom);
-        allocate(mom.width, mom.height);
+        allocate(mom.getWidth(), mom.getHeight());
         cvCopy( mom.getCvImage(), cvImage, 0 );
     } else {
         ofLog(OF_LOG_NOTICE, "in ofxCvGrayscaleImage copy constructor, mom not allocated");
@@ -158,8 +158,10 @@ void ofxCvGrayscaleImage::absDiff( ofxCvGrayscaleImage& mom ) {
 void ofxCvGrayscaleImage::absDiff( ofxCvGrayscaleImage& mom,
                                    ofxCvGrayscaleImage& dad ) {
     ofRectangle roi = getROI();
-    if( (mom.width == roi.width && mom.height == roi.height ) &&
-        (dad.width == roi.width && dad.height == roi.height ) )
+    ofRectangle momRoi = mom.getROI();
+    ofRectangle dadRoi = dad.getROI();
+    if( (momRoi.width == roi.width && momRoi.height == roi.height ) &&
+        (dadRoi.width == roi.width && dadRoi.height == roi.height ) )
     {
         cvAbsDiff( mom.getCvImage(), dad.getCvImage(), cvImage );
         flagImageChanged();

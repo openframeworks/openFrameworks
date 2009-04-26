@@ -18,7 +18,7 @@ ofxCvFloatImage::ofxCvFloatImage( const ofxCvFloatImage& _mom ) {
     if( _mom.bAllocated ) {
         // cast non-const,  to get read access to the mon::cvImage
         ofxCvFloatImage& mom = const_cast<ofxCvFloatImage&>(_mom); 
-        allocate(mom.width, mom.height);    
+        allocate(mom.getWidth(), mom.getHeight());    
         cvCopy( mom.getCvImage(), cvImage, 0 );
     } else {
         ofLog(OF_LOG_NOTICE, "in ofxCvFloatImage copy constructor, mom not allocated");
@@ -96,7 +96,7 @@ void ofxCvFloatImage::set(float value){
 //--------------------------------------------------------------------------------
 void ofxCvFloatImage::operator *= ( float scalar ){
     ofRectangle roi = getROI();
-    for( int i=0; i<height; i++ ) { 
+    for( int i=0; i<roi.height; i++ ) { 
         float* ptr = (float*)(cvImage->imageData + (int)(i+roi.y)*cvImage->widthStep); 
         for( int j=0; j<roi.width; j++ ) { 
             ptr[(int)(j+roi.x)] *= scalar; 
@@ -108,7 +108,7 @@ void ofxCvFloatImage::operator *= ( float scalar ){
 void ofxCvFloatImage::operator /= ( float scalar ){
     scalar = 1.0 / scalar;
     ofRectangle roi = getROI();
-    for( int i=0; i<height; i++ ) { 
+    for( int i=0; i<roi.height; i++ ) { 
         float* ptr = (float*)(cvImage->imageData + (int)(i+roi.y)*cvImage->widthStep); 
         for( int j=0; j<roi.width; j++ ) { 
             ptr[(int)(j+roi.x)] *= scalar; 

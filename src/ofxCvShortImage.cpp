@@ -18,7 +18,7 @@ ofxCvShortImage::ofxCvShortImage( const ofxCvShortImage& _mom ) {
     if( _mom.bAllocated ) {
         // cast non-const,  to get read access to the mon::cvImage
         ofxCvShortImage& mom = const_cast<ofxCvShortImage&>(_mom); 
-        allocate(mom.width, mom.height);    
+        allocate(mom.getWidth(), mom.getHeight());    
         cvCopy( mom.getCvImage(), cvImage, 0 );
     } else {
         ofLog(OF_LOG_NOTICE, "in ofxCvShortImage copy constructor, mom not allocated");
@@ -81,7 +81,8 @@ void ofxCvShortImage::setFromPixels( unsigned char* _pixels, int w, int h ) {
         // copy _pixels into cvGrayscaleImage
         for( int i=0; i < cvImage->height; i++ ) {
             memcpy( cvGrayscaleImage->imageData + (i*cvGrayscaleImage->widthStep),
-                    _pixels + (i*w), width );
+                    _pixels + (i*w), 
+                    cvImage->width );
         }
         convertGrayToShort(cvGrayscaleImage, cvImage);
         popROI();
