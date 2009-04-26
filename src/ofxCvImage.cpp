@@ -12,8 +12,6 @@
 ofxCvImage::ofxCvImage() {
     width			= 0;
     height			= 0;
-    roiX            = 0;
-    roiY            = 0;
     bUseTexture		= true;
     bTextureDirty   = true;
 	bAllocated		= false;
@@ -21,7 +19,6 @@ ofxCvImage::ofxCvImage() {
     bPixelsDirty    = true;
     pixelsWidth     = 0;
     pixelsHeight    = 0;
-    bUseRoiOffsetWhenDrawing = false;
 }
 
 //--------------------------------------------------------------------------------
@@ -45,7 +42,7 @@ void ofxCvImage::allocate( int w, int h ) {
 	bAllocated = true;
 
     if( bUseTexture ) {
-        tex.allocate( width, height, glchannels );
+        tex.allocate( cvImage->width, cvImage->height, glchannels );
         bTextureDirty = true;
     }
 }
@@ -54,7 +51,7 @@ void ofxCvImage::allocate( int w, int h ) {
 void ofxCvImage::clear() {
 
 	if (bAllocated == true){
-		if (width > 0 && height > 0){
+		if (cvImage->width > 0 && cvImage->height > 0){
 			cvReleaseImage( &cvImage );
 			cvReleaseImage( &cvImageTemp );
 		}
@@ -67,8 +64,6 @@ void ofxCvImage::clear() {
         }
 		width = 0;
 		height = 0;
-        roiX = 0;
-        roiY = 0;
         roiStack.clear();
 
 		if( bUseTexture ) {
@@ -82,12 +77,12 @@ void ofxCvImage::clear() {
 
 //--------------------------------------------------------------------------------
 float ofxCvImage::getWidth(){
-	return width;
+	return cvImage->width;
 }
 
 //--------------------------------------------------------------------------------
 float ofxCvImage::getHeight(){
-	return height;
+	return cvImage->height;
 }
 
 //--------------------------------------------------------------------------------
@@ -120,11 +115,6 @@ void ofxCvImage::swapTemp() {
 void ofxCvImage::flagImageChanged() {
     bTextureDirty = true;
     bPixelsDirty = true;
-}
-
-//--------------------------------------------------------------------------------
-void ofxCvImage::setUseRoiOffsetWhenDrawing( bool bUse ) {
-    bUseRoiOffsetWhenDrawing = bUse;
 }
 
 //--------------------------------------------------------------------------------
@@ -224,10 +214,6 @@ void ofxCvImage::setROI( int x, int y, int w, int h ) {
 
     cvSetImageROI( cvImage, cvRect(x,y, w,h) );
     cvSetImageROI( cvImageTemp, cvRect(x,y, w,h) );
-    width = w;
-    height = h;
-    roiX = x;
-    roiY = y;
     roiStack.back().x = x;
     roiStack.back().y = y;
     roiStack.back().width = w;
@@ -249,10 +235,6 @@ ofRectangle ofxCvImage::getROI() {
 void ofxCvImage::resetROI() {
     cvResetImageROI( cvImage );
     cvResetImageROI( cvImageTemp );
-    width = cvImage->width;
-    height = cvImage->height;
-    roiX = 0;
-    roiY = 0;
     setROI( 0,0, cvImage->width, cvImage->height );
 }
 
@@ -297,7 +279,7 @@ ofRectangle ofxCvImage::getIntersectionROI( const ofRectangle& r1, const ofRecta
 
 //--------------------------------------------------------------------------------
 void  ofxCvImage::operator = ( const IplImage* mom ) {
-	if( mom->width == width && mom->height == height &&
+	if( mom->width == cvImage->width && mom->height == cvImage->height &&
 	    mom->nChannels == cvImage->nChannels &&
         mom->depth == cvImage->depth )
     {
@@ -402,26 +384,21 @@ void ofxCvImage::operator &= ( ofxCvImage& mom ) {
 
 //--------------------------------------------------------------------------------
 void ofxCvImage::draw( float x, float y ) {
-    draw( x,y, width,height );
+    draw( x,y, cvImage->width, cvImage->height );
 }
 
 //--------------------------------------------------------------------------------
 void ofxCvImage::draw( float x, float y, float w, float h ) {
     if( bUseTexture ) {
         if( bTextureDirty ) {
-            if(tex.getWidth() != width || tex.getHeight() != height) {
+            if(tex.getWidth() != cvImage->width || tex.getHeight() != cvImage->height) {
                 //ROI was changed
                 // reallocating texture - this could be faster with ROI support
                 tex.clear();
-                tex.allocate( width, height, glchannels );
+                tex.allocate( cvImage->width, cvImage->height, glchannels );
             }
-            tex.loadData( getPixels(), width, height, glchannels );
+            tex.loadData( getPixels(), cvImage->width, cvImage->height, glchannels );
             bTextureDirty = false;
-        }
-
-        if( bUseRoiOffsetWhenDrawing ){
-            x += roiX;
-            y += roiY;
         }
 
         tex.draw(x,y, w,h);
@@ -447,11 +424,6 @@ void ofxCvImage::draw( float x, float y, float w, float h ) {
             }else{
                 x -= anchor.x;
                 y -= anchor.y;
-            }
-
-            if( bUseRoiOffsetWhenDrawing ){
-                x += roiX;
-                y += roiY;
             }
 
             glRasterPos2f( x, y+h );
@@ -486,11 +458,6 @@ void ofxCvImage::drawROI( float x, float y, float w, float h ) {
             }
             tex.loadData( getRoiPixels(), roi.width, roi.height, glchannels );
             bTextureDirty = false;
-        }
-
-        if( bUseRoiOffsetWhenDrawing ){
-            x += roi.x;
-            y += roi.y;
         }
 
         tex.draw(x,y, w,h);
@@ -678,12 +645,12 @@ void ofxCvImage::warpPerspective( const ofPoint& A, const ofPoint& B, const ofPo
 
     cvdst[0].x = 0;
     cvdst[0].y = 0;
-    cvdst[1].x = width;
+    cvdst[1].x = cvImage->width;
     cvdst[1].y = 0;
-    cvdst[2].x = width;
-    cvdst[2].y = height;
+    cvdst[2].x = cvImage->width;
+    cvdst[2].y = cvImage->height;
     cvdst[3].x = 0;
-    cvdst[3].y = height;
+    cvdst[3].y = cvImage->height;
 
     cvsrc[0].x = A.x;
     cvsrc[0].y = A.y;

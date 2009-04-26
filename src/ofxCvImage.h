@@ -40,7 +40,6 @@ class ofxCvImage : public ofBaseDraws, public ofBaseHasTexture, public ofBaseHas
     virtual void  setUseTexture( bool bUse );
     virtual ofTexture&  getTextureReference();
     virtual void flagImageChanged();  //mostly used internally
-    virtual void setUseRoiOffsetWhenDrawing( bool bUse );
 
     
     // ROI - region of interest
@@ -160,9 +159,6 @@ class ofxCvImage : public ofBaseDraws, public ofBaseHasTexture, public ofBaseHas
     vector<ofRectangle>  roiStack;      // ROI stack
                                         // last rectangle is used for ROI
                                         // used with pushROI(), popROI()
-                                                                      
-    int roiX;                 // region of interest offset x
-    int roiY;                 // region of interest offset y    
                               
     int ipldepth;             // IPL_DEPTH_8U, IPL_DEPTH_16U, IPL_DEPTH_32F, ...
     int iplchannels;          // 1, 3, 4, ...
