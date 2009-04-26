@@ -127,9 +127,8 @@ void ofxCvShortImage::operator = ( unsigned char* _pixels ) {
 void ofxCvShortImage::operator = ( const ofxCvGrayscaleImage& _mom ) {
     // cast non-const,  no worries, we will reverse any chages
     ofxCvGrayscaleImage& mom = const_cast<ofxCvGrayscaleImage&>(_mom); 
-	if( matchROI(*this,mom) ) {
+	if( matchingROI(getROI(), mom.getROI()) ) {
         convertGrayToShort(mom.getCvImage(), cvImage);
-        unmatchROI(*this,mom);           
         flagImageChanged();
 	} else {
         ofLog(OF_LOG_ERROR, "in =, ROI mismatch");
@@ -140,7 +139,7 @@ void ofxCvShortImage::operator = ( const ofxCvGrayscaleImage& _mom ) {
 void ofxCvShortImage::operator = ( const ofxCvColorImage& _mom ) {
     // cast non-const,  no worries, we will reverse any chages
     ofxCvColorImage& mom = const_cast<ofxCvColorImage&>(_mom); 
-	if( matchROI(*this,mom) ) {
+	if( matchingROI(getROI(), mom.getROI()) ) {
         if( cvGrayscaleImage == NULL ) {
             cvGrayscaleImage = cvCreateImage( cvSize(cvImage->width,cvImage->height), IPL_DEPTH_8U, 1 );
         }
@@ -148,7 +147,6 @@ void ofxCvShortImage::operator = ( const ofxCvColorImage& _mom ) {
         cvSetImageROI(cvGrayscaleImage, cvRect(roi.x,roi.y,roi.width,roi.height));
 		cvCvtColor( mom.getCvImage(), cvGrayscaleImage, CV_RGB2GRAY );
         convertGrayToShort(cvGrayscaleImage, cvImage);
-        unmatchROI(*this,mom);
         cvSetImageROI(cvGrayscaleImage, cvRect(roi.x,roi.y,roi.width,roi.height));                      
         flagImageChanged();
 	} else {
@@ -160,10 +158,9 @@ void ofxCvShortImage::operator = ( const ofxCvColorImage& _mom ) {
 void ofxCvShortImage::operator = ( const ofxCvFloatImage& _mom ) {
     // cast non-const,  no worries, we will reverse any chages
     ofxCvFloatImage& mom = const_cast<ofxCvFloatImage&>(_mom); 
-    if( matchROI(*this,mom) ) {
+    if( matchingROI(getROI(), mom.getROI()) ) {
         rangeMap( mom.getCvImage(), cvImage, 
                   mom.getNativeScaleMin(), mom.getNativeScaleMax(), 0, 65535.0f );        
-        unmatchROI(*this,mom);       
         flagImageChanged();
     } else {
         ofLog(OF_LOG_ERROR, "in =, ROI mismatch");
@@ -175,9 +172,8 @@ void ofxCvShortImage::operator = ( const ofxCvShortImage& _mom ) {
     if(this != &_mom) {  //check for self-assignment
         // cast non-const,  no worries, we will reverse any chages
         ofxCvShortImage& mom = const_cast<ofxCvShortImage&>(_mom); 
-        if( matchROI(*this,mom) ) {
+        if( matchingROI(getROI(), mom.getROI()) ) {
             cvCopy( mom.getCvImage(), cvImage, 0 ); 
-            unmatchROI(*this,mom);       
             flagImageChanged();
         } else {
             ofLog(OF_LOG_ERROR, "in =, ROI mismatch");
@@ -195,10 +191,9 @@ void ofxCvShortImage::operator = ( const IplImage* _mom ) {
 
 //--------------------------------------------------------------------------------
 void ofxCvShortImage::addWeighted( ofxCvGrayscaleImage& mom, float f ) {
-	if( matchROI(*this,mom) ) {
+	if( matchingROI(getROI(), mom.getROI()) ) {
         convertGrayToShort(mom.getCvImage(), cvImageTemp);
         cvAddWeighted( cvImageTemp, f, cvImage, 1.0f-f,0, cvImage );
-        unmatchROI(*this,mom);        
         flagImageChanged();
     } else {
         ofLog(OF_LOG_ERROR, "in addWeighted, ROI mismatch");

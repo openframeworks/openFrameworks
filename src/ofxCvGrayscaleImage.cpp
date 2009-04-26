@@ -85,9 +85,8 @@ void ofxCvGrayscaleImage::operator = ( const ofxCvGrayscaleImage& _mom ) {
     if(this != &_mom) {  //check for self-assignment
         // cast non-const,  no worries, we will reverse any chages
         ofxCvGrayscaleImage& mom = const_cast<ofxCvGrayscaleImage&>(_mom);
-        if( matchROI(*this,mom) ) {
+        if( matchingROI(getROI(), mom.getROI()) ) {
             cvCopy( mom.getCvImage(), cvImage, 0 );
-            unmatchROI(*this,mom);           
             flagImageChanged();
         } else {
             ofLog(OF_LOG_ERROR, "in =, ROI mismatch");
@@ -101,9 +100,8 @@ void ofxCvGrayscaleImage::operator = ( const ofxCvGrayscaleImage& _mom ) {
 void ofxCvGrayscaleImage::operator = ( const ofxCvColorImage& _mom ) {
     // cast non-const,  no worries, we will reverse any chages
     ofxCvColorImage& mom = const_cast<ofxCvColorImage&>(_mom); 
-	if( matchROI(*this,mom) ) {
+	if( matchingROI(getROI(), mom.getROI()) ) {
 		cvCvtColor( mom.getCvImage(), cvImage, CV_RGB2GRAY );
-        unmatchROI(*this,mom);    
         flagImageChanged();
 	} else {
         ofLog(OF_LOG_ERROR, "in =, ROI mismatch");
@@ -114,10 +112,9 @@ void ofxCvGrayscaleImage::operator = ( const ofxCvColorImage& _mom ) {
 void ofxCvGrayscaleImage::operator = ( const ofxCvFloatImage& _mom ) {
     // cast non-const,  no worries, we will reverse any chages
     ofxCvFloatImage& mom = const_cast<ofxCvFloatImage&>(_mom); 
-	if( matchROI(*this,mom) ) {
+	if( matchingROI(getROI(), mom.getROI()) ) {
         rangeMap( mom.getCvImage(), cvImage, 
                   mom.getNativeScaleMin(), mom.getNativeScaleMax(), 0, 255.0f );
-        unmatchROI(*this,mom);   
         flagImageChanged();
 	} else {
         ofLog(OF_LOG_ERROR, "in =, ROI mismatch");
@@ -128,9 +125,8 @@ void ofxCvGrayscaleImage::operator = ( const ofxCvFloatImage& _mom ) {
 void ofxCvGrayscaleImage::operator = ( const ofxCvShortImage& _mom ) {
     // cast non-const,  no worries, we will reverse any chages
     ofxCvShortImage& mom = const_cast<ofxCvShortImage&>(_mom); 
-    if( matchROI(*this,mom) ) {
+    if( matchingROI(getROI(), mom.getROI()) ) {
         rangeMap( mom.getCvImage(), cvImage, 0, 65535.0f, 0, 255.0f );        
-        unmatchROI(*this,mom);        
         flagImageChanged();
     } else {
         ofLog(OF_LOG_ERROR, "in =, ROI mismatch");
@@ -144,10 +140,9 @@ void ofxCvGrayscaleImage::operator = ( const IplImage* _mom ) {
 
 //--------------------------------------------------------------------------------
 void ofxCvGrayscaleImage::absDiff( ofxCvGrayscaleImage& mom ) {    
-    if( matchROI(*this,mom) ) {
+    if( matchingROI(getROI(), mom.getROI()) ) {
         cvAbsDiff( cvImage, mom.getCvImage(), cvImageTemp );
         swapTemp();
-        unmatchROI(*this,mom);            
         flagImageChanged();
     } else {
         ofLog(OF_LOG_ERROR, "in *=, ROI mismatch");

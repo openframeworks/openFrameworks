@@ -132,54 +132,11 @@ void ofxCvImage::rangeMap( IplImage* mom, IplImage* kid, float min1, float max1,
 }
 
 //--------------------------------------------------------------------------------
-bool ofxCvImage::matchROI( ofxCvImage& img1, ofxCvImage& img2 ) {
-    // This does one of two things depending what the global ROI mode is.
-    // ( You can set it with ofxCvSetRoiMode(...) )
-    // It either tries to interset the images' ROIs or it simply
-    // checks if the ROI dimensions match.
-    // The pattern to use this method is something like this
-    // (take note of the umatchROI(...) call):
-    //
-    //  if( matchROI(img1, img2) ) {
-    //      // do image operation here
-    //      // swapTemp() here if needed
-    //      unmatchROI(img1, img2);
-    //      flagImageChanged();
-    //  } else {
-    //      ofLog(OF_LOG_ERROR, "ROI mismatch");
-    //  }
-    //
-    
-    if( ofxCvGetRoiMode() == OFX_CV_ROI_MODE_INTERSECT ) {
-        ofRectangle iRoi = getIntersectionROI( img1.getROI(), img2.getROI() );
-        if( iRoi.width > 0 && iRoi.height > 0 ) {
-            img1.pushROI();
-            img1.setROI( iRoi );
-            img2.pushROI();
-            img2.setROI( iRoi );
-            return true;
-        } else {
-            return false;
-        }
-    } else if( ofxCvGetRoiMode() == OFX_CV_ROI_MODE_NONINTERSECT ) {
-        ofRectangle roi1 = img1.getROI();
-        ofRectangle roi2 = img2.getROI();
-        if( roi1.width == roi2.width && roi1.height == roi2.height ) {
-            return true;
-        } else {
-            return false;
-        }    
+bool ofxCvImage::matchingROI( const ofRectangle& rec1, const ofRectangle& rec2 ) {
+    if( rec1.width == rec2.width && rec1.height == rec2.height ) {
+        return true;
     } else {
-        ofLog(OF_LOG_ERROR, "in matchROI, invalid ROI mode");
         return false;
-    }
-}
-
-//--------------------------------------------------------------------------------
-void ofxCvImage::unmatchROI( ofxCvImage& img1, ofxCvImage& img2 ) {
-    if( ofxCvGetRoiMode() == OFX_CV_ROI_MODE_INTERSECT ) {
-        img1.popROI();
-        img2.popROI();
     }
 }
 
@@ -240,6 +197,24 @@ void ofxCvImage::resetROI() {
 
 //--------------------------------------------------------------------------------
 ofRectangle ofxCvImage::getIntersectionROI( const ofRectangle& r1, const ofRectangle& r2 ) {
+    // Calculates the intersection rectangle of two overlapping rectangles.
+    // The following pattern can be used to do image operation
+    // on the intersection (overlapping part) of two ROIs
+    //
+    // ofRectangle iRoi = img1.getIntersectionROI( img1.getROI(), img2.getROI() );
+    // if( iRoi.width > 0 && iRoi.height > 0 ) {
+    //     img1.pushROI();
+    //     img1.setROI( iRoi );
+    //     img2.pushROI();
+    //     img2.setROI( iRoi );
+    //
+    //     // do image operation here
+    //
+    //     img1.popROI();
+    //     img2.popROI();
+    // }
+    //
+    
     int r1x1 = (int)r1.x;
     int r1y1 = (int)r1.y;
     int r1x2 = (int)(r1.x+r1.width);
@@ -271,6 +246,7 @@ ofRectangle ofxCvImage::getIntersectionROI( const ofRectangle& r1, const ofRecta
         return ofRectangle( 0,0, 0,0 );
     }
 }
+
 
 
 
@@ -310,10 +286,9 @@ void ofxCvImage::operator -= ( ofxCvImage& mom ) {
 	if( mom.getCvImage()->nChannels == cvImage->nChannels &&
         mom.getCvImage()->depth == cvImage->depth )
     {
-        if( matchROI(*this,mom) ) {
+        if( matchingROI(getROI(), mom.getROI()) ) {
             cvSub( cvImage, mom.getCvImage(), cvImageTemp );
             swapTemp();
-            unmatchROI(*this,mom);
             flagImageChanged();
         } else {
             ofLog(OF_LOG_ERROR, "in -=, ROI mismatch");
@@ -328,10 +303,9 @@ void ofxCvImage::operator += ( ofxCvImage& mom ) {
 	if( mom.getCvImage()->nChannels == cvImage->nChannels &&
         mom.getCvImage()->depth == cvImage->depth )
     {
-        if( matchROI(*this,mom) ) {
+        if( matchingROI(getROI(), mom.getROI()) ) {
             cvAdd( cvImage, mom.getCvImage(), cvImageTemp );
             swapTemp();
-            unmatchROI(*this,mom);
             flagImageChanged();
         } else {
             ofLog(OF_LOG_ERROR, "in +=, ROI mismatch");
@@ -346,11 +320,10 @@ void ofxCvImage::operator *= ( ofxCvImage& mom ) {
 	if( mom.getCvImage()->nChannels == cvImage->nChannels &&
         mom.getCvImage()->depth == cvImage->depth )
     {
-        if( matchROI(*this,mom) ) {
+        if( matchingROI(getROI(), mom.getROI()) ) {
             float scalef = 1.0f / 255.0f;
             cvMul( cvImage, mom.getCvImage(), cvImageTemp, scalef );
             swapTemp();
-            unmatchROI(*this,mom);
             flagImageChanged();
         } else {
             ofLog(OF_LOG_ERROR, "in *=, ROI mismatch");
@@ -365,10 +338,9 @@ void ofxCvImage::operator &= ( ofxCvImage& mom ) {
 	if( mom.getCvImage()->nChannels == cvImage->nChannels &&
         mom.getCvImage()->depth == cvImage->depth )
     {
-        if( matchROI(*this,mom) ) {
+        if( matchingROI(getROI(), mom.getROI()) ) {
             cvAnd( cvImage, mom.getCvImage(), cvImageTemp );
             swapTemp();
-            unmatchROI(*this,mom);
             flagImageChanged();
         } else {
             ofLog(OF_LOG_ERROR, "in &=, ROI mismatch");
@@ -713,30 +685,12 @@ int ofxCvImage::countNonZeroInRegion( int x, int y, int w, int h ) {
 
     pushROI();
     setROI(iRoi);
-
 	count = cvCountNonZero( cvImage );
-
     popROI();
 
 	return count;
 }
 
-
-
-
-
-
-// Roi Mode
-//---------------------------------------------------
-int ofxCvRoiMode = OFX_CV_ROI_MODE_NONINTERSECT;
-
-void ofxCvSetRoiMode( int roiMode ){
-	ofxCvRoiMode = roiMode;
-}
-
-int ofxCvGetRoiMode(){
-	return ofxCvRoiMode;
-}
 
 
 
