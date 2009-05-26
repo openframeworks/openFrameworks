@@ -40,6 +40,9 @@ void	ofSetDataPathRoot( string root );
 string  ofToString(double value, int precision = 7);
 string  ofToString(int  value);
 
+int ofToInt(const string& intString);
+float ofToFloat(const string& floatString);
+
 string 	ofGetVersionInfo();
 
 void	ofSaveScreen(string filename);
