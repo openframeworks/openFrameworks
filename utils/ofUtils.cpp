@@ -152,8 +152,8 @@ string ofToDataPath(string path, bool makeAbsolute){
 
 		if(makeAbsolute && path.substr(0,1) != "/"){
 			#ifndef TARGET_OF_IPHONE
-				
-			#ifndef _MSC_VER 
+
+			#ifndef _MSC_VER
 				char currDir[1024];
 				path = "/"+path;
 				path = getcwd(currDir, 1024)+path;
@@ -163,7 +163,7 @@ string ofToDataPath(string path, bool makeAbsolute){
 				path = "\\"+path;
 				path = _getcwd(currDir, 1024)+path;
 				std::replace( path.begin(), path.end(), '/', '\\' ); // fix any unixy paths...
-				
+
 
 			#endif
 
@@ -191,6 +191,18 @@ string ofToString(int value){
 	return sstr.str();
 }
 
+//--------------------------------------------------
+int ofToInt(const string& intString) {
+   int x;
+   sscanf(intString.c_str(), "%d", &x);
+   return x;
+}
+
+float ofToFloat(const string& floatString) {
+   float x;
+   sscanf(floatString.c_str(), "%f", &x);
+   return x;
+}
 //--------------------------------------------------
 vector<string> ofSplitString(const string& str, const string& delimiter = " "){
     vector<string> elements;
