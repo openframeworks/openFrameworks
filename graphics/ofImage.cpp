@@ -264,7 +264,7 @@ void ofImage::grabScreen(int _x, int _y, int _w, int _h){
 	#endif
 
 	int sizeOfOneLineOfPixels = myPixels.width * myPixels.bytesPerPixel;
-	unsigned char * tempLineOfPix = new unsigned char[sizeOfOneLineOfPixels]; 
+	unsigned char * tempLineOfPix = new unsigned char[sizeOfOneLineOfPixels];
 	unsigned char * linea;
 	unsigned char * lineb;
 	for (int i = 0; i < myPixels.height/2; i++){
@@ -345,7 +345,7 @@ inline void  ofImage::allocatePixels(ofPixels &pix, int width, int height, int b
 			//ofLog(OF_LOG_NOTICE,"we are good, no reallocation needed");
 			bNeedToAllocate = false;
 		 } else {
-			delete pix.pixels;
+			delete[] pix.pixels;
 			bNeedToAllocate = true;
 		 }
 	} else {
