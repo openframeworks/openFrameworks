@@ -426,11 +426,6 @@ void ofImage::resizePixels(ofPixels &pix, int newWidth, int newHeight){
 	convertedBmp = FreeImage_Rescale(bmp, newWidth, newHeight, FILTER_BICUBIC);
 	putBmpIntoPixels(convertedBmp, pix);
 
-	#ifdef TARGET_LITTLE_ENDIAN
-		if (pix.bytesPerPixel != 1) swapRgb(pix);
-	#endif
-
-
 	if (bmp != NULL)				FreeImage_Unload(bmp);
 	if (convertedBmp != NULL)		FreeImage_Unload(convertedBmp);
 
