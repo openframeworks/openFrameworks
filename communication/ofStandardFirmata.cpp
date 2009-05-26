@@ -69,7 +69,7 @@ ofStandardFirmata::~ofStandardFirmata() {
 	_port.close();
 }
 
-int ofStandardFirmata::connect(string device, int baud){
+bool ofStandardFirmata::connect(string device, int baud){
 	_initialized = false;
 	_port.enumerateDevices();
 	return _port.setup(device.c_str(), baud);
