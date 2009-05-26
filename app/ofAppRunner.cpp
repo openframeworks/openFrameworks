@@ -242,12 +242,14 @@ void ofSetVerticalSync(bool bSync){
 	#endif
 	//--------------------------------------
 
+	//--------------------------------------
+	#ifdef TARGET_LINUX
+	//--------------------------------------
+		if (GLEE_GLX_SGI_swap_control) glXSwapIntervalSGI(bSync ? 1 : 0);
+	//--------------------------------------
+	#endif
+	//--------------------------------------
 
-	// linux ofSetVerticalSync needed -- anyone want to help w/ this?
-	// http://www.inb.uni-luebeck.de/~boehme/xvideo_sync.html
-	// glXGetVideoSyncSGI(&count); // but needs to be at the end of every "draw?
-	// also, see this:
-   	// glXWaitVideoSyncSGI(2,0,&count);
 }
 
 
