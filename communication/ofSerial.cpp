@@ -153,11 +153,11 @@ void ofSerial::enumerateDevices(){
 		if (dir == NULL){
 			ofLog(OF_LOG_ERROR,"ofSerial: error listing devices in /dev");
 		} else {
-			ofLog(OF_LOG_NOTICE,"ofSerial: listing devices");
+			printf("ofSerial: listing devices");
 			while ((entry = readdir(dir)) != NULL){
 				str = (char *)entry->d_name;
 				if( str.substr(0,3) == "cu." ){
-					ofLog(OF_LOG_NOTICE,"device %i - %s", deviceCount, str.c_str());
+					printf("device %i - %s", deviceCount, str.c_str());
 					deviceCount++;
 				}
 			}
@@ -184,11 +184,11 @@ void ofSerial::enumerateDevices(){
 		if (dir == NULL){
 			ofLog(OF_LOG_ERROR,"ofSerial: error listing devices in /dev");
 		} else {
-			ofLog(OF_LOG_NOTICE,"ofSerial: listing devices");
+			printf("ofSerial: listing devices");
 			while ((entry = readdir(dir)) != NULL){
 				str = (char *)entry->d_name;
 				if( str.substr(0,3) == "tty" || str.substr(0,3) == "rfc" ){
-					ofLog(OF_LOG_NOTICE,"device %i - %s", deviceCount, str.c_str());
+					printf("device %i - %s", deviceCount, str.c_str());
 					deviceCount++;
 				}
 			}
@@ -203,9 +203,9 @@ void ofSerial::enumerateDevices(){
 	//---------------------------------------------
 
 		enumerateWin32Ports();
-		ofLog(OF_LOG_NOTICE,"ofSerial: listing devices (%i total)\n", nPorts);
+		printf("ofSerial: listing devices (%i total)\n", nPorts);
 		for (int i = 0; i < nPorts; i++){
-			ofLog(OF_LOG_ERROR,"device %i -- %s", i, portNamesFriendly[i]);
+			printf("device %i -- %s", i, portNamesFriendly[i]);
 		}
 
 	//---------------------------------------------
