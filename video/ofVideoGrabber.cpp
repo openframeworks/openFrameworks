@@ -104,7 +104,7 @@ void ofVideoGrabber::listDevices(){
 			}
 		}
 
-		ofLog(OF_LOG_NOTICE, "-------------------------------------");
+		printf("-------------------------------------");
 
 		/*
 			//input selection stuff (ie multiple webcams)
@@ -155,18 +155,18 @@ void ofVideoGrabber::listDevices(){
 						memcpy(pascalNameInput, inputNameRec.name, sizeof(char) * 256);
 					}
 
-					ofLog(OF_LOG_NOTICE, "device[%i] %s - %s",  deviceCount, p2cstr(pascalName), p2cstr(pascalNameInput) );
+					printf( "device[%i] %s - %s",  deviceCount, p2cstr(pascalName), p2cstr(pascalNameInput) );
 
 					//we count this way as we need to be able to distinguish multiple inputs as devices
 					deviceCount++;
 				}
 
 			}else{
-				ofLog(OF_LOG_NOTICE, "(unavailable) device[%i] %s",  deviceCount, p2cstr(pascalName) );
+				printf( "(unavailable) device[%i] %s",  deviceCount, p2cstr(pascalName) );
 				deviceCount++;
 			}
 		}
-		ofLog(OF_LOG_NOTICE, "-------------------------------------");
+		printf( "-------------------------------------");
 
 		//if we initialized the grabbing component then close it
 		if( bNeedToInitGrabberFirst ){
@@ -208,18 +208,18 @@ void ofVideoGrabber::listDevices(){
 
 	struct stat st;
 
-	ofLog(OF_LOG_NOTICE, "listing available capture devices");
-	ofLog(OF_LOG_NOTICE, "---");
+	printf( "listing available capture devices");
+	printf( "---");
 	for (int i = 0; i < 8; i++)
 	{
 		sprintf(dev_name, "/dev/video%i", i);
 		if (stat (dev_name, &st) == 0) {
-			ofLog(OF_LOG_NOTICE, "Video device %i = /dev/video%i",i,i);
+			printf( "Video device %i = /dev/video%i",i,i);
 		} else {
 
 		}
 	}
-	ofLog(OF_LOG_NOTICE, "---");
+	printf( "---");
 
 	//---------------------------------
 	#endif
@@ -1067,7 +1067,7 @@ bool ofVideoGrabber::initGrabber(int w, int h, bool setUseTexture){
 			device = 0;
 		}
 		sprintf(dev_name, "/dev/video%i", device);
-		ofLog(OF_LOG_NOTICE, "choosing device "+dev_name+"");
+		ofLog(OF_LOG_NOTICE, "choosing device %s",dev_name);
 
 		bool bOk = initV4L(w, h, dev_name);
 
