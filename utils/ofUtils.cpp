@@ -1,7 +1,7 @@
 #include "ofUtils.h"
 #include "ofImage.h"
 
-#if defined(TARGET_OF_IPHONE) || defined(TARGET_OSX )
+#if defined(TARGET_OF_IPHONE) || defined(TARGET_OSX ) || defined(TARGET_LINUX)
 	#include "sys/time.h"
 #endif
 
