@@ -141,7 +141,7 @@ class ofStandardFirmata{
 		virtual ~ofStandardFirmata();
 
 		// --- setup functions
-		int connect(string device, int baud = 115200);
+		bool connect(string device, int baud = 115200);
 		// opens a serial port connection to the arduino
 
 		void disconnect();
