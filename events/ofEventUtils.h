@@ -5,7 +5,6 @@
 #include "Poco/FIFOEvent.h"
 #include "Poco/Delegate.h"
 
-using Poco::delegate;
 
 
 //-----------------------------------------
@@ -29,7 +28,7 @@ class ofEvent: public Poco::FIFOEvent<ArgumentsType> {};
 
 template <class EventType,typename ArgumentsType, class ListenerClass>
 static void ofAddListener(EventType & event, ListenerClass  * listener, void (ListenerClass::*listenerMethod)(ArgumentsType&)){
-    event += delegate(listener, listenerMethod);
+    event += Poco::delegate(listener, listenerMethod);
 }
 
 
@@ -44,7 +43,7 @@ static void ofAddListener(EventType & event, ListenerClass  * listener, void (Li
 
 template <class EventType,typename ArgumentsType, class ListenerClass>
 static void ofRemoveListener(EventType & event, ListenerClass  * listener, void (ListenerClass::*listenerMethod)(ArgumentsType&)){
-    event -= delegate(listener, listenerMethod);
+    event -= Poco::delegate(listener, listenerMethod);
 }
 
 //----------------------------------------------------
