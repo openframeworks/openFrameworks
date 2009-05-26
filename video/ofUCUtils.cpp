@@ -63,7 +63,7 @@ static const PixelFormatTag pixelFormatTags[] = {
     { PIX_FMT_YUV411P, 	FOURCC('4', '1', '1', 'P') },
     { PIX_FMT_NV12,    	FOURCC('N', 'V', '1', '2') },
     { PIX_FMT_NV21,    	FOURCC('N', 'V', '2', '1') },
-    { PIX_FMT_YUV422,  	FOURCC('Y', 'Y', 'U', 'V') },
+    //{ PIX_FMT_YUV422,  	FOURCC('Y', 'Y', 'U', 'V') },
     { PIX_FMT_RGB32_1, 	FOURCC('R', 'G', 'B', '1') },	// is this correct?
     { PIX_FMT_RGB555,  	FOURCC('R', 'G', 'B', 'O') },
     { PIX_FMT_RGB565,  	FOURCC('R', 'G', 'B', 'P') },
@@ -293,12 +293,12 @@ void ofUCUtils::set_format(int w, int h) {
 		if(src_pix_fmt!=PIX_FMT_RGB24 || !exactMatch){
 			doConversion = true;
 			src=new AVPicture;
-			avpicture_alloc(src,src_pix_fmt,format.size.width,format.size.height);
+			avpicture_alloc(src,(PixelFormat)src_pix_fmt,format.size.width,format.size.height);
 			dst=new AVPicture;
 			avpicture_alloc(dst,PIX_FMT_RGB24,d_width,d_height);
 
 			toRGB_convert_ctx = sws_getContext(
-							format.size.width, format.size.height, src_pix_fmt,
+							format.size.width, format.size.height, (PixelFormat)src_pix_fmt,
 							d_width, d_height, PIX_FMT_RGB24,
 							VIDEOGRABBER_RESIZE_FLAGS, NULL, NULL, NULL);
 
