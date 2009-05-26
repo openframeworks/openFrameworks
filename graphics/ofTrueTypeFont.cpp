@@ -319,7 +319,7 @@ ofTrueTypeFont::~ofTrueTypeFont(){
 	if (bLoadedOk){
 
 		if (cps != NULL){
-			delete cps;
+			delete[] cps;
 		}
 
 		if (texNames != NULL){
@@ -348,13 +348,13 @@ void ofTrueTypeFont::loadFont(string filename, int fontsize, bool _bAntiAliased,
 		// we've already been loaded, try to clean up :
 
 		if (cps != NULL){
-			delete cps;
+			delete[] cps;
 		}
 		if (texNames != NULL){
 			for (int i = 0; i < nCharacters; i++){
 				glDeleteTextures(1, &texNames[i]);
 			}
-			delete texNames;
+			delete[] texNames;
 		}
 		bLoadedOk = false;
 	}
