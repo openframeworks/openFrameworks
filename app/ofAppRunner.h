@@ -10,6 +10,7 @@
 void 		ofSetupOpenGL(ofAppBaseWindow * windowPtr, int w, int h, int screenMode);	// sets up the opengl context!
 void 		ofSetupOpenGL(int w, int h, int screenMode);	// sets up the opengl context!
 void 		ofRunApp(ofBaseApp * OFSA = NULL);
+ofBaseApp * ofGetAppPtr();
 
 //-------------------------- time
 float 		ofGetFrameRate();
@@ -24,7 +25,7 @@ int 		ofGetWindowPositionX();
 int 		ofGetWindowPositionY();
 int 		ofGetScreenWidth();
 int 		ofGetScreenHeight();
-int			ofGetWindowMode();	
+int			ofGetWindowMode();
 int 		ofGetWidth();			// <-- should we call this ofGetWindowWidth?
 int 		ofGetHeight();
 
@@ -35,9 +36,9 @@ void		ofEnableSetupScreen();
 void		ofDisableSetupScreen();
 void		ofSetFullscreen(bool fullscreen);
 void		ofToggleFullscreen();
-//-------------------------- sync					
+//-------------------------- sync
 void 		ofSetVerticalSync(bool bSync);
 
 
 
-#endif	
+#endif

@@ -115,6 +115,11 @@ void ofRunApp(ofBaseApp * OFSA){
 }
 
 //--------------------------------------
+ofBaseApp * ofGetAppPtr(){
+	return OFSAptr;
+}
+
+//--------------------------------------
 int ofGetFrameNum(){
 	return window->getFrameNum();
 }
