@@ -70,46 +70,53 @@ float ofRandomuf() {
 
 //--------------------------------------------------
 float ofNormalize(float value, float min, float max){
-   return ofClamp( (value - min) / (max - min), 0, 1);
+	return ofClamp( (value - min) / (max - min), 0, 1);
 }
 
 //check for division by zero???
 //--------------------------------------------------
 float ofMap(float value, float inputMin, float inputMax, float outputMin, float outputMax) {
-   return ((value - inputMin) / (inputMax - inputMin) * (outputMax - outputMin) + outputMin);
+	
+	if (fabs(inputMin - inputMax) < FLT_EPSILON){
+		ofLog(OF_LOG_WARNING, "ofMap: avoiding possible divide by zero, check inputMin and inputMax\n");
+		return outputMin;
+	} else {
+		return ((value - inputMin) / (inputMax - inputMin) * (outputMax - outputMin) + outputMin);
+	}
+
 }
 
 //--------------------------------------------------
 float ofDist(float x1, float y1, float x2, float y2) {
-   return sqrt(double((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2)));
+	return sqrt(double((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2)));
 }
 
 //--------------------------------------------------
 float ofDistSquared(float x1, float y1, float x2, float y2) {
-   return ( (x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2) );
+	return ( (x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2) );
 }
 
 //--------------------------------------------------
 float ofClamp(float value, float min, float max) {
-   return value < min ? min : value > max ? max : value;
+	return value < min ? min : value > max ? max : value;
 }
 
 // return sign of the number
 //--------------------------------------------------
 int ofSign(float n) {
-  if( n > 0 ) return 1;
-  else if(n < 0) return -1;
-  else return 0;
+	if( n > 0 ) return 1;
+	else if(n < 0) return -1;
+	else return 0;
 }
 
 //--------------------------------------------------
 bool ofInRange(float t, float min, float max) {
-   return t>=min && t<=max;
+	return t>=min && t<=max;
 }
 
 //--------------------------------------------------
 float ofRadToDeg(float radians) {
-   return radians * RAD_TO_DEG;
+	return radians * RAD_TO_DEG;
 }
 
 //--------------------------------------------------
@@ -119,15 +126,15 @@ float ofDegToRad(float degrees) {
 
 //--------------------------------------------------
 float ofLerp(float start, float stop, float amt) {
-    return start + (stop-start) * amt;
+	return start + (stop-start) * amt;
 }
 
 //--------------------------------------------------
 float ofRandomWidth() {
-   return ofRandom(0, ofGetWidth());
+	return ofRandom(0, ofGetWidth());
 }
 
 //--------------------------------------------------
 float ofRandomHeight() {
-   return ofRandom(0, ofGetHeight());
+	return ofRandom(0, ofGetHeight());
 }
