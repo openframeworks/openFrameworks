@@ -216,6 +216,8 @@ ofVideoPlayer::ofVideoPlayer (){
 		gstData.durationNanos		= 0;
 		gstData.nFrames				= 0;
 		gstData.speed				= speed;
+		gstData.bHasPixelsChanged	= false;
+		bHavePixelsChanged			= false;
 
 		pthread_mutex_init(&(gstData.buffer_mutex),NULL);
 		pthread_mutex_init(&seek_mutex,NULL);
@@ -1333,7 +1335,7 @@ void ofVideoPlayer::gstHandleMessage()
 				ofLog(OF_LOG_VERBOSE,"GStreamer: unhandled message");
 			break;
 		}
-		gst_message_unref(msg);
+		//gst_message_unref(msg);
 	}
 
 	gst_object_unref(GST_OBJECT(bus));
