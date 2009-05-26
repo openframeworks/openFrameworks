@@ -368,18 +368,14 @@ void ofAppGlutWindow::display(void){
 
   	glutSwapBuffers();
 
-  	// -------------- fps calculation:
-	timeNow = ofGetElapsedTimef();
-	if( (timeNow-timeThen) > 0.05f || nFramesForFPS == 0 ) {
- 		fps = (double)nFramesForFPS / (timeNow-timeThen);
-      	timeThen = timeNow;
-		nFramesForFPS = 0;
-
-		//hack for windows - was getting NAN - maybe unitialized vars???
-		if( nFrameCount < 5) frameRate = fps;
-		else frameRate = 0.9f * frameRate + 0.1f * fps;
-  	}
-  	nFramesForFPS++;
+    // -------------- fps calculation:
+  	timeNow = ofGetElapsedTimef();
+  	if( ( timeNow - timeThen ) > 0 ) {
+    fps = 1.0 / (timeNow-timeThen);
+    frameRate *= 0.9f;
+       frameRate += 0.1f*fps;
+    }
+    timeThen = timeNow;
   	// --------------
 
 	nFrameCount++;		// increase the overall frame count
