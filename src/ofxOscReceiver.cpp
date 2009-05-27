@@ -29,6 +29,7 @@
 
 ofxOscReceiver::ofxOscReceiver()
 {
+listen_socket = NULL;
 #ifdef TARGET_WIN32
 	mutex = CreateMutexA( NULL, FALSE, NULL );
 #else
@@ -38,6 +39,7 @@ ofxOscReceiver::ofxOscReceiver()
 
 void ofxOscReceiver::setup( int listen_port )
 {
+	if(listen_socket) delete listen_socket;
 	listen_socket = new UdpListeningReceiveSocket( IpEndpointName( IpEndpointName::ANY_ADDRESS, listen_port ), this );
 #ifdef TARGET_WIN32
 	thread	= CreateThread(
