@@ -40,7 +40,6 @@ class ofxCvImage : public ofBaseDraws, public ofBaseHasTexture, public ofBaseHas
     virtual void  setUseTexture( bool bUse );
     virtual ofTexture&  getTextureReference();
     virtual void  flagImageChanged();  //mostly used internally
-    virtual void  setAlwaysUseRoiWhenDrawing( bool bUse );
 
     
     // ROI - region of interest
@@ -176,8 +175,6 @@ class ofxCvImage : public ofBaseDraws, public ofBaseHasTexture, public ofBaseHas
     ofTexture  tex;		      // internal tex
     bool bUseTexture;
     bool bTextureDirty;       // texture needs to be reloaded before drawing
-    
-    bool bAlwaysUseRoiWhenDrawing;
     
     ofPoint  anchor;
     bool  bAnchorIsPct;    
