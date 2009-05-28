@@ -58,8 +58,10 @@ class ofxCvColorImage : public ofxCvImage {
     virtual void  operator = ( const ofxCvShortImage& mom );
     virtual void  operator = ( const IplImage* mom );    
     
-    virtual void  operator -= ( ofxCvImage& mom );
-    virtual void  operator += ( ofxCvImage& mom );
+    // virtual void  operator -= ( ofxCvImage& mom );                         //in base class
+    // virtual void  operator += ( ofxCvImage& mom );                         //in base class
+    using ofxCvImage::operator+=;  //force inheritance 
+    using ofxCvImage::operator-=;  //force inheritance
     // virtual void  operator *= ( ofxCvImage& mom );                         //in base class 
     // virtual void  operator &= ( ofxCvImage& mom );                         //in base class     
 

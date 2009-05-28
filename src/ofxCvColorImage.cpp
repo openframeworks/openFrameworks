@@ -202,20 +202,6 @@ void ofxCvColorImage::operator = ( const IplImage* _mom ) {
     ofxCvImage::operator = (_mom);
 }
 
-//--------------------------------------------------------------------------------
-void ofxCvColorImage::operator -= ( ofxCvImage& mom ) {
-    // "force inheritance" since otherwise the operator -= (float)
-    // seems to inhibit the inheritance
-    ofxCvImage::operator -= (mom);
-}
-
-//--------------------------------------------------------------------------------
-void ofxCvColorImage::operator += ( ofxCvImage& mom ) {
-    // "force inheritance" since otherwise the operator += (float)
-    // seems to inhibit the inheritance
-    ofxCvImage::operator += (mom);
-}
-
 
 // Get Pixel Data
 
