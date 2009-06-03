@@ -3,7 +3,7 @@
 #include "ofxCvGrayscaleImage.h"
 #include "ofxCvColorImage.h"
 #include "ofxCvFloatImage.h"
-
+#include "ofxCvBlob.h"
 
 
 
@@ -309,6 +309,21 @@ void ofxCvImage::operator &= ( ofxCvImage& mom ) {
 	} else {
         ofLog(OF_LOG_ERROR, "in &=, images need to have matching type");
 	}
+}
+
+//--------------------------------------------------------------------------------
+void  ofxCvImage::drawBlobIntoMe( ofxCvBlob& blob, int color ) {
+       if( blob.pts.size() > 0 ) {
+           CvPoint* pts = new CvPoint[blob.nPts];
+           for( int i=0; i < blob.nPts ; i++ ) {
+               pts[i].x = (int)blob.pts[i].x;
+               pts[i].y = (int)blob.pts[i].y;
+           }
+           int nPts = blob.nPts;
+           cvFillPoly( cvImage, &pts, &nPts, 1,
+                       CV_RGB(color,color,color) );
+           delete pts;
+       }
 }
 
 

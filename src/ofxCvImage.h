@@ -20,6 +20,7 @@ class ofxCvGrayscaleImage;
 class ofxCvColorImage;
 class ofxCvFloatImage;
 class ofxCvShortImage;
+class ofxCvBlob;
 
 
 
@@ -72,6 +73,8 @@ class ofxCvImage : public ofBaseDraws, public ofBaseHasTexture, public ofBaseHas
     virtual void  operator += ( ofxCvImage& mom );
     virtual void  operator *= ( ofxCvImage& mom );
     virtual void  operator &= ( ofxCvImage& mom );
+    
+    virtual void  drawBlobIntoMe( ofxCvBlob& blob, int color );
     
 
     // Get Pixel Data
