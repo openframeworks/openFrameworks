@@ -28,8 +28,8 @@ class ofxCvImage : public ofBaseDraws, public ofBaseHasTexture, public ofBaseHas
     
   public:
 
-    int width;                 // DEPRACATED, will be made private, use getWidth() instead !!
-    int height;                // DEPRACATED, will be made private, use getHeight() instead !!
+    int width;
+    int height;
 	bool bAllocated;
 
     ofxCvImage();
