@@ -23,6 +23,8 @@ int				requestedWidth;
 int				requestedHeight;
 int 			nonFullScreenX;
 int 			nonFullScreenY;
+int				windowW;
+int				windowH;
 int				mouseX, mouseY;
 ofBaseApp *		ofAppPtr;
 
@@ -97,6 +99,8 @@ void ofAppGlutWindow::setupOpenGL(int w, int h, int screenMode){
     	// start fullscreen game mode
     	glutEnterGameMode();
 	}
+	windowW = glutGet(GLUT_WINDOW_WIDTH);
+	windowH = glutGet(GLUT_WINDOW_HEIGHT);
 }
 
 //------------------------------------------------------------
@@ -176,9 +180,7 @@ void ofAppGlutWindow::setWindowTitle(string title){
 
 //------------------------------------------------------------
 ofPoint ofAppGlutWindow::getWindowSize(){
-	int width = glutGet(GLUT_WINDOW_WIDTH);
-	int height = glutGet(GLUT_WINDOW_HEIGHT);
-	return ofPoint(width, height,0);
+	return ofPoint(windowW, windowH,0);
 }
 
 //------------------------------------------------------------
@@ -554,6 +556,9 @@ void ofAppGlutWindow::special_key_up_cb(int key, int x, int y) {
 //------------------------------------------------------------
 void ofAppGlutWindow::resize_cb(int w, int h) {
 	static ofResizeEventArgs resizeEventArgs;
+
+	windowW = w;
+	windowH = h;
 
 	if(ofAppPtr)
 		ofAppPtr->windowResized(w,h);
