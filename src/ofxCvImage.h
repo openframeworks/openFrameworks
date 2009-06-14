@@ -40,7 +40,7 @@ class ofxCvImage : public ofBaseDraws, public ofBaseHasTexture, public ofBaseHas
 	virtual float getHeight();       // get height of this image or its ROI height
     virtual void  setUseTexture( bool bUse );
     virtual ofTexture&  getTextureReference();
-    virtual void  flagImageChanged();  //mostly used internally
+    virtual void flagImageChanged();  //mostly used internally
 
     
     // ROI - region of interest
@@ -75,7 +75,7 @@ class ofxCvImage : public ofBaseDraws, public ofBaseHasTexture, public ofBaseHas
     virtual void  operator &= ( ofxCvImage& mom );
     
     virtual void  drawBlobIntoMe( ofxCvBlob& blob, int color );
-    
+        
 
     // Get Pixel Data
     //
