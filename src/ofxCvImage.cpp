@@ -175,7 +175,7 @@ ofRectangle ofxCvImage::getIntersectionROI( const ofRectangle& r1, const ofRecta
     //     img2.popROI();
     // }
     //
-    
+
     int r1x1 = (int)r1.x;
     int r1y1 = (int)r1.y;
     int r1x2 = (int)(r1.x+r1.width);
@@ -327,7 +327,6 @@ void  ofxCvImage::drawBlobIntoMe( ofxCvBlob& blob, int color ) {
 }
 
 
-
 // Draw Image
 
 //--------------------------------------------------------------------------------
@@ -336,7 +335,7 @@ void ofxCvImage::draw( float x, float y ) {
 }
 
 //--------------------------------------------------------------------------------
-void ofxCvImage::draw( float x, float y, float w, float h ) { 
+void ofxCvImage::draw( float x, float y, float w, float h ) {
     if( bUseTexture ) {
         if( bTextureDirty ) {
             if(tex.getWidth() != width || tex.getHeight() != height) {
@@ -402,9 +401,9 @@ void ofxCvImage::drawROI( float x, float y, float w, float h ) {
                 //ROI was changed
                 // reallocating texture - this could be faster with ROI support
                 tex.clear();
-                tex.allocate( roi.width, roi.height, glchannels );
+                tex.allocate( (int)roi.width, (int)roi.height, glchannels );
             }
-            tex.loadData( getRoiPixels(), roi.width, roi.height, glchannels );
+            tex.loadData( getRoiPixels(), (int)roi.width, (int)roi.height, glchannels );
             bTextureDirty = false;
         }
 
@@ -680,7 +679,7 @@ void ofxCvImage::swapTemp() {
 		getROI().height != height )
     {
 		cvCopy( cvImageTemp, cvImage );
-	} else {	
+	} else {
 		IplImage*  temp;
 		temp = cvImage;
 		cvImage	= cvImageTemp;
@@ -713,7 +712,7 @@ bool ofxCvImage::matchingROI( const ofRectangle& rec1, const ofRectangle& rec2 )
 
 //--------------------------------------------------------------------------------
 void  ofxCvImage::setImageROI( IplImage* img, const ofRectangle& roi ) {
-    cvSetImageROI(img, cvRect(roi.x,roi.y,roi.width,roi.height));
+    cvSetImageROI(img, cvRect((int)roi.x,(int)roi.y,(int)roi.width,(int)roi.height));
 }
 
 //--------------------------------------------------------------------------------

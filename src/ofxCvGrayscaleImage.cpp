@@ -17,7 +17,7 @@ ofxCvGrayscaleImage::ofxCvGrayscaleImage( const ofxCvGrayscaleImage& _mom ) {
     if( _mom.bAllocated ) {
         // cast non-const,  to get read access to the mon::cvImage
         ofxCvGrayscaleImage& mom = const_cast<ofxCvGrayscaleImage&>(_mom);
-        allocate(mom.getWidth(), mom.getHeight());
+        allocate( (int)mom.getWidth(), (int)mom.getHeight() );
         cvCopy( mom.getCvImage(), cvImage, 0 );
     } else {
         ofLog(OF_LOG_NOTICE, "in ofxCvGrayscaleImage copy constructor, mom not allocated");
@@ -41,14 +41,14 @@ void ofxCvGrayscaleImage::set( float value ){
 }
 
 //--------------------------------------------------------------------------------
-void ofxCvGrayscaleImage::setFromPixels( unsigned char* _pixels, int w, int h ) { 
+void ofxCvGrayscaleImage::setFromPixels( unsigned char* _pixels, int w, int h ) {
     // This sets the internal image ignoring any ROI
-    
+
     if( w == width && h == height ) {
         // copy pixels from _pixels, however many we have or will fit in cvImage
         for( int i=0; i < height; i++ ) {
             memcpy( cvImage->imageData + (i*cvImage->widthStep),
-                    _pixels + (i*w), 
+                    _pixels + (i*w),
                     width);
         }
         flagImageChanged();
@@ -62,7 +62,7 @@ void ofxCvGrayscaleImage::setRoiFromPixels( unsigned char* _pixels, int w, int h
     ofRectangle roi = getROI();
     ofRectangle inputROI = ofRectangle( roi.x, roi.y, w, h);
     ofRectangle iRoi = getIntersectionROI( roi, inputROI );
-        
+
     if( iRoi.width > 0 && iRoi.height > 0 ) {
         // copy pixels from _pixels, however many we have or will fit in cvImage
         for( int i=0; i < iRoi.height; i++ ) {
@@ -100,7 +100,7 @@ void ofxCvGrayscaleImage::operator = ( const ofxCvGrayscaleImage& _mom ) {
 //--------------------------------------------------------------------------------
 void ofxCvGrayscaleImage::operator = ( const ofxCvColorImage& _mom ) {
     // cast non-const,  no worries, we will reverse any chages
-    ofxCvColorImage& mom = const_cast<ofxCvColorImage&>(_mom); 
+    ofxCvColorImage& mom = const_cast<ofxCvColorImage&>(_mom);
 	if( matchingROI(getROI(), mom.getROI()) ) {
 		cvCvtColor( mom.getCvImage(), cvImage, CV_RGB2GRAY );
         flagImageChanged();
@@ -112,9 +112,9 @@ void ofxCvGrayscaleImage::operator = ( const ofxCvColorImage& _mom ) {
 //--------------------------------------------------------------------------------
 void ofxCvGrayscaleImage::operator = ( const ofxCvFloatImage& _mom ) {
     // cast non-const,  no worries, we will reverse any chages
-    ofxCvFloatImage& mom = const_cast<ofxCvFloatImage&>(_mom); 
+    ofxCvFloatImage& mom = const_cast<ofxCvFloatImage&>(_mom);
 	if( matchingROI(getROI(), mom.getROI()) ) {
-        rangeMap( mom.getCvImage(), cvImage, 
+        rangeMap( mom.getCvImage(), cvImage,
                   mom.getNativeScaleMin(), mom.getNativeScaleMax(), 0, 255.0f );
         flagImageChanged();
 	} else {
@@ -125,9 +125,9 @@ void ofxCvGrayscaleImage::operator = ( const ofxCvFloatImage& _mom ) {
 //--------------------------------------------------------------------------------
 void ofxCvGrayscaleImage::operator = ( const ofxCvShortImage& _mom ) {
     // cast non-const,  no worries, we will reverse any chages
-    ofxCvShortImage& mom = const_cast<ofxCvShortImage&>(_mom); 
+    ofxCvShortImage& mom = const_cast<ofxCvShortImage&>(_mom);
     if( matchingROI(getROI(), mom.getROI()) ) {
-        rangeMap( mom.getCvImage(), cvImage, 0, 65535.0f, 0, 255.0f );        
+        rangeMap( mom.getCvImage(), cvImage, 0, 65535.0f, 0, 255.0f );
         flagImageChanged();
     } else {
         ofLog(OF_LOG_ERROR, "in =, ROI mismatch");
@@ -140,14 +140,14 @@ void ofxCvGrayscaleImage::operator = ( const IplImage* _mom ) {
 }
 
 //--------------------------------------------------------------------------------
-void ofxCvGrayscaleImage::absDiff( ofxCvGrayscaleImage& mom ) {    
+void ofxCvGrayscaleImage::absDiff( ofxCvGrayscaleImage& mom ) {
     if( matchingROI(getROI(), mom.getROI()) ) {
         cvAbsDiff( cvImage, mom.getCvImage(), cvImageTemp );
         swapTemp();
         flagImageChanged();
     } else {
         ofLog(OF_LOG_ERROR, "in *=, ROI mismatch");
-    }    
+    }
 }
 
 //--------------------------------------------------------------------------------
@@ -176,7 +176,7 @@ unsigned char* ofxCvGrayscaleImage::getPixels() {
             // we need pixels, allocate it
             pixels = new unsigned char[width*height];
             pixelsWidth = width;
-            pixelsHeight = height;            
+            pixelsHeight = height;
         } else if(pixelsWidth != width || pixelsHeight != height) {
             // ROI changed, reallocate pixels for new size
             // this is needed because getRoiPixels() might change size of pixels
@@ -185,7 +185,7 @@ unsigned char* ofxCvGrayscaleImage::getPixels() {
             pixelsWidth = width;
             pixelsHeight = height;
         }
-        
+
         // copy from ROI to pixels
         for( int i = 0; i < height; i++ ) {
             memcpy( pixels + (i*width),
@@ -204,21 +204,21 @@ unsigned char* ofxCvGrayscaleImage::getRoiPixels() {
         if(pixels == NULL) {
             // we need pixels, allocate it
             pixels = new unsigned char[(int)(roi.width*roi.height)];
-            pixelsWidth = roi.width;
-            pixelsHeight = roi.height;            
+            pixelsWidth = (int)roi.width;
+            pixelsHeight = (int)roi.height;
         } else if(pixelsWidth != roi.width || pixelsHeight != roi.height) {
             // ROI changed, reallocate pixels for new size
             delete pixels;
             pixels = new unsigned char[(int)(roi.width*roi.height)];
-            pixelsWidth = roi.width;
-            pixelsHeight = roi.height;
+            pixelsWidth = (int)roi.width;
+            pixelsHeight = (int)roi.height;
         }
-        
+
         // copy from ROI to pixels
         for( int i = 0; i < roi.height; i++ ) {
             memcpy( pixels + (int)(i*roi.width),
                     cvImage->imageData + ((int)(i+roi.y)*cvImage->widthStep) + (int)roi.x,
-                    roi.width );
+                    (int)roi.width );
         }
         bPixelsDirty = false;
     }
@@ -256,29 +256,29 @@ void ofxCvGrayscaleImage::threshold( int value, bool invert) {
 }
 
 //--------------------------------------------------------------------------------
-void ofxCvGrayscaleImage::adaptiveThreshold( int blockSize, int offset, 
+void ofxCvGrayscaleImage::adaptiveThreshold( int blockSize, int offset,
                                              bool invert, bool gauss) {
     if( blockSize < 2 ) {
         ofLog(OF_LOG_NOTICE, "in adaptiveThreshold, value < 2, will make it 3");
         blockSize = 3;
     }
-    
+
     if( blockSize % 2 == 0 ) {
         ofLog(OF_LOG_NOTICE, "in adaptiveThreshold, value not odd -> will add 1 to cover your back");
         blockSize++;
     }
-                                                 
+
     int threshold_type = CV_THRESH_BINARY;
     if(invert) threshold_type = CV_THRESH_BINARY_INV;
 
     int adaptive_method = CV_ADAPTIVE_THRESH_MEAN_C;
     if(gauss) adaptive_method = CV_ADAPTIVE_THRESH_GAUSSIAN_C;
-                    
-    cvAdaptiveThreshold( cvImage, cvImageTemp, 255, adaptive_method, 
+
+    cvAdaptiveThreshold( cvImage, cvImageTemp, 255, adaptive_method,
                          threshold_type, blockSize, offset);
    swapTemp();
-   flagImageChanged(); 
-} 
+   flagImageChanged();
+}
 
 
 
@@ -302,14 +302,14 @@ void ofxCvGrayscaleImage::scaleIntoMe( ofxCvImage& mom, int interpolationMethod 
     //for interpolation you can pass in:
     //CV_INTER_NN - nearest-neigbor interpolation,
     //CV_INTER_LINEAR - bilinear interpolation (used by default)
-    //CV_INTER_AREA - resampling using pixel area relation. It is preferred method 
-    //                for image decimation that gives moire-free results. In case of 
+    //CV_INTER_AREA - resampling using pixel area relation. It is preferred method
+    //                for image decimation that gives moire-free results. In case of
     //                zooming it is similar to CV_INTER_NN method.
     //CV_INTER_CUBIC - bicubic interpolation.
-        
-    if( mom.getCvImage()->nChannels == cvImage->nChannels && 
+
+    if( mom.getCvImage()->nChannels == cvImage->nChannels &&
         mom.getCvImage()->depth == cvImage->depth ) {
-    
+
         if ((interpolationMethod != CV_INTER_NN) &&
             (interpolationMethod != CV_INTER_LINEAR) &&
             (interpolationMethod != CV_INTER_AREA) &&

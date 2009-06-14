@@ -14,15 +14,15 @@ ofxCvShortImage::ofxCvShortImage() {
 
 //--------------------------------------------------------------------------------
 ofxCvShortImage::ofxCvShortImage( const ofxCvShortImage& _mom ) {
-    init(); 
+    init();
     if( _mom.bAllocated ) {
         // cast non-const,  to get read access to the mon::cvImage
-        ofxCvShortImage& mom = const_cast<ofxCvShortImage&>(_mom); 
-        allocate(mom.getWidth(), mom.getHeight());    
+        ofxCvShortImage& mom = const_cast<ofxCvShortImage&>(_mom);
+        allocate( (int)mom.getWidth(), (int)mom.getHeight() );
         cvCopy( mom.getCvImage(), cvImage, 0 );
     } else {
         ofLog(OF_LOG_NOTICE, "in ofxCvShortImage copy constructor, mom not allocated");
-    }    
+    }
 }
 
 //--------------------------------------------------------------------------------
@@ -41,7 +41,7 @@ void ofxCvShortImage::clear() {
             cvReleaseImage( &cvGrayscaleImage );
         }
     }
-    ofxCvImage::clear();    //call clear in base class    
+    ofxCvImage::clear();    //call clear in base class
 }
 
 //--------------------------------------------------------------------------------
@@ -63,7 +63,7 @@ void ofxCvShortImage::convertGrayToShort( IplImage* grayImg, IplImage* shortImg 
 // Set Pixel Data
 
 //-------------------------------------------------------------------------------------
-void ofxCvShortImage::set(float value){  
+void ofxCvShortImage::set(float value){
 	cvSet(cvImage, cvScalar(value));
     flagImageChanged();
 }
@@ -71,17 +71,17 @@ void ofxCvShortImage::set(float value){
 //--------------------------------------------------------------------------------
 void ofxCvShortImage::setFromPixels( unsigned char* _pixels, int w, int h ) {
     // This sets the internal image ignoring any ROI
-        
+
     if( w == width &&  h == height ) {
         pushROI();
         if(cvGrayscaleImage == NULL) {
             cvGrayscaleImage = cvCreateImage( cvSize(width,height), IPL_DEPTH_8U, 1 );
-        }        
+        }
         resetImageROI(cvGrayscaleImage);
         // copy _pixels into cvGrayscaleImage
         for( int i=0; i < height; i++ ) {
             memcpy( cvGrayscaleImage->imageData + (i*cvGrayscaleImage->widthStep),
-                    _pixels + (i*w), 
+                    _pixels + (i*w),
                     width );
         }
         convertGrayToShort(cvGrayscaleImage, cvImage);
@@ -90,15 +90,15 @@ void ofxCvShortImage::setFromPixels( unsigned char* _pixels, int w, int h ) {
     } else {
         ofLog(OF_LOG_ERROR, "in setFromPixels, size mismatch");
     }
-    
+
 }
 
 //--------------------------------------------------------------------------------
-void ofxCvShortImage::setRoiFromPixels( unsigned char* _pixels, int w, int h ) {    
+void ofxCvShortImage::setRoiFromPixels( unsigned char* _pixels, int w, int h ) {
     ofRectangle roi = getROI();
     ofRectangle inputROI = ofRectangle( roi.x, roi.y, w, h );
     ofRectangle iRoi = getIntersectionROI( roi, inputROI );
-    
+
     if( iRoi.width > 0 && iRoi.height > 0 ) {
         if(cvGrayscaleImage == NULL) {
             cvGrayscaleImage = cvCreateImage( cvSize(width,height), IPL_DEPTH_8U, 1 );
@@ -115,7 +115,7 @@ void ofxCvShortImage::setRoiFromPixels( unsigned char* _pixels, int w, int h ) {
     } else {
         ofLog(OF_LOG_ERROR, "in setRoiFromPixels, ROI mismatch");
     }
-    
+
 }
 
 //--------------------------------------------------------------------------------
@@ -126,7 +126,7 @@ void ofxCvShortImage::operator = ( unsigned char* _pixels ) {
 //--------------------------------------------------------------------------------
 void ofxCvShortImage::operator = ( const ofxCvGrayscaleImage& _mom ) {
     // cast non-const,  no worries, we will reverse any chages
-    ofxCvGrayscaleImage& mom = const_cast<ofxCvGrayscaleImage&>(_mom); 
+    ofxCvGrayscaleImage& mom = const_cast<ofxCvGrayscaleImage&>(_mom);
 	if( matchingROI(getROI(), mom.getROI()) ) {
         convertGrayToShort(mom.getCvImage(), cvImage);
         flagImageChanged();
@@ -138,7 +138,7 @@ void ofxCvShortImage::operator = ( const ofxCvGrayscaleImage& _mom ) {
 //--------------------------------------------------------------------------------
 void ofxCvShortImage::operator = ( const ofxCvColorImage& _mom ) {
     // cast non-const,  no worries, we will reverse any chages
-    ofxCvColorImage& mom = const_cast<ofxCvColorImage&>(_mom); 
+    ofxCvColorImage& mom = const_cast<ofxCvColorImage&>(_mom);
 	if( matchingROI(getROI(), mom.getROI()) ) {
         if( cvGrayscaleImage == NULL ) {
             cvGrayscaleImage = cvCreateImage( cvSize(width,height), IPL_DEPTH_8U, 1 );
@@ -147,7 +147,7 @@ void ofxCvShortImage::operator = ( const ofxCvColorImage& _mom ) {
         setImageROI(cvGrayscaleImage, roi);
 		cvCvtColor( mom.getCvImage(), cvGrayscaleImage, CV_RGB2GRAY );
         convertGrayToShort(cvGrayscaleImage, cvImage);
-        setImageROI(cvGrayscaleImage, roi);                      
+        setImageROI(cvGrayscaleImage, roi);
         flagImageChanged();
 	} else {
         ofLog(OF_LOG_ERROR, "in =, ROI mismatch");
@@ -157,10 +157,10 @@ void ofxCvShortImage::operator = ( const ofxCvColorImage& _mom ) {
 //--------------------------------------------------------------------------------
 void ofxCvShortImage::operator = ( const ofxCvFloatImage& _mom ) {
     // cast non-const,  no worries, we will reverse any chages
-    ofxCvFloatImage& mom = const_cast<ofxCvFloatImage&>(_mom); 
+    ofxCvFloatImage& mom = const_cast<ofxCvFloatImage&>(_mom);
     if( matchingROI(getROI(), mom.getROI()) ) {
-        rangeMap( mom.getCvImage(), cvImage, 
-                  mom.getNativeScaleMin(), mom.getNativeScaleMax(), 0, 65535.0f );        
+        rangeMap( mom.getCvImage(), cvImage,
+                  mom.getNativeScaleMin(), mom.getNativeScaleMax(), 0, 65535.0f );
         flagImageChanged();
     } else {
         ofLog(OF_LOG_ERROR, "in =, ROI mismatch");
@@ -171,9 +171,9 @@ void ofxCvShortImage::operator = ( const ofxCvFloatImage& _mom ) {
 void ofxCvShortImage::operator = ( const ofxCvShortImage& _mom ) {
     if(this != &_mom) {  //check for self-assignment
         // cast non-const,  no worries, we will reverse any chages
-        ofxCvShortImage& mom = const_cast<ofxCvShortImage&>(_mom); 
+        ofxCvShortImage& mom = const_cast<ofxCvShortImage&>(_mom);
         if( matchingROI(getROI(), mom.getROI()) ) {
-            cvCopy( mom.getCvImage(), cvImage, 0 ); 
+            cvCopy( mom.getCvImage(), cvImage, 0 );
             flagImageChanged();
         } else {
             ofLog(OF_LOG_ERROR, "in =, ROI mismatch");
@@ -207,22 +207,22 @@ void ofxCvShortImage::addWeighted( ofxCvGrayscaleImage& mom, float f ) {
 //--------------------------------------------------------------------------------
 unsigned char*  ofxCvShortImage::getPixels(){
     // get pixels ignoring any ROI
-    
+
     if(bPixelsDirty) {
         if( cvGrayscaleImage == NULL ) {
             cvGrayscaleImage = cvCreateImage( cvSize(width,height), IPL_DEPTH_8U, 1 );
         }
-         
+
         pushROI();
         resetImageROI(cvGrayscaleImage);
         convertShortToGray(cvImage, cvGrayscaleImage);
-        popROI();   
-    
+        popROI();
+
         if(pixels == NULL) {
             // we need pixels, allocate it
             pixels = new unsigned char[width*height];
             pixelsWidth = width;
-            pixelsHeight = height;            
+            pixelsHeight = height;
         } else if(pixelsWidth != width || pixelsHeight != height) {
             // ROI changed, reallocate pixels for new size
             // this is needed because getRoiPixels() might change size of pixels
@@ -231,7 +231,7 @@ unsigned char*  ofxCvShortImage::getPixels(){
             pixelsWidth = width;
             pixelsHeight = height;
         }
-        
+
         // copy from ROI to pixels
         for( int i = 0; i < height; i++ ) {
             memcpy( pixels + (i*width),
@@ -240,39 +240,39 @@ unsigned char*  ofxCvShortImage::getPixels(){
         }
         bPixelsDirty = false;
     }
-	return pixels;    
-    
+	return pixels;
+
 }
 
 //--------------------------------------------------------------------------------
-unsigned char*  ofxCvShortImage::getRoiPixels(){    
+unsigned char*  ofxCvShortImage::getRoiPixels(){
     if(bPixelsDirty) {
         if( cvGrayscaleImage == NULL ) {
             cvGrayscaleImage = cvCreateImage( cvSize(width,height), IPL_DEPTH_8U, 1 );
         }
-        
+
         ofRectangle roi = getROI();
         setImageROI(cvGrayscaleImage, roi);  //make sure ROI is in sync
-        convertShortToGray(cvImage, cvGrayscaleImage);    
-    
+        convertShortToGray(cvImage, cvGrayscaleImage);
+
         if(pixels == NULL) {
             // we need pixels, allocate it
             pixels = new unsigned char[(int)(roi.width*roi.height)];
-            pixelsWidth = roi.width;
-            pixelsHeight = roi.height;            
+            pixelsWidth = (int)roi.width;
+            pixelsHeight = (int)roi.height;
         } else if(pixelsWidth != roi.width || pixelsHeight != roi.height) {
             // ROI changed, reallocate pixels for new size
             delete pixels;
             pixels = new unsigned char[(int)(roi.width*roi.height)];
-            pixelsWidth = roi.width;
-            pixelsHeight = roi.height;
+            pixelsWidth = (int)roi.width;
+            pixelsHeight = (int)roi.height;
         }
-        
+
         // copy from ROI to pixels
         for( int i = 0; i < roi.height; i++ ) {
             memcpy( pixels + (int)(i*roi.width),
                     cvGrayscaleImage->imageData + ((int)(i+roi.y)*cvGrayscaleImage->widthStep) + (int)roi.x,
-                    roi.width );
+                    (int)roi.width );
         }
         bPixelsDirty = false;
     }
@@ -323,14 +323,14 @@ void ofxCvShortImage::scaleIntoMe( ofxCvImage& mom, int interpolationMethod ){
     //for interpolation you can pass in:
     //CV_INTER_NN - nearest-neigbor interpolation,
     //CV_INTER_LINEAR - bilinear interpolation (used by default)
-    //CV_INTER_AREA - resampling using pixel area relation. It is preferred method 
-    //                for image decimation that gives moire-free results. In case of 
+    //CV_INTER_AREA - resampling using pixel area relation. It is preferred method
+    //                for image decimation that gives moire-free results. In case of
     //                zooming it is similar to CV_INTER_NN method.
     //CV_INTER_CUBIC - bicubic interpolation.
-        
-    if( mom.getCvImage()->nChannels == cvImage->nChannels && 
+
+    if( mom.getCvImage()->nChannels == cvImage->nChannels &&
         mom.getCvImage()->depth == cvImage->depth ) {
-    
+
         if ((interpolationMethod != CV_INTER_NN) &&
             (interpolationMethod != CV_INTER_LINEAR) &&
             (interpolationMethod != CV_INTER_AREA) &&
