@@ -7,10 +7,10 @@ for example in $( ls . )
 do
 echo "-----------------------------------------------------------------"
 echo "building " + $example
-export example_arch=${example}_$1
+export example_arch=${example}_${1}
 cd $example
 echo "creating makefile for " + $example_arch.cbp
-cbp2makefile.py $example_arch.cbp Makefile
+cbp2makefile.py $example_arch.cbp Makefile_$1
 cd ../
 echo "-----------------------------------------------------------------"
 echo ""
