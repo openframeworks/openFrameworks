@@ -1,5 +1,6 @@
 #include "ofMath.h"
 #include "ofAppRunner.h"
+#include "float.h"
 
 #ifndef TARGET_WIN32
 	#include <sys/time.h>
@@ -76,7 +77,7 @@ float ofNormalize(float value, float min, float max){
 //check for division by zero???
 //--------------------------------------------------
 float ofMap(float value, float inputMin, float inputMax, float outputMin, float outputMax) {
-	
+
 	if (fabs(inputMin - inputMax) < FLT_EPSILON){
 		ofLog(OF_LOG_WARNING, "ofMap: avoiding possible divide by zero, check inputMin and inputMax\n");
 		return outputMin;
