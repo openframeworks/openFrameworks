@@ -31,9 +31,10 @@
 		</include>
 		
 		<link>
-			<lib os="win32" compiler="devcpp">../../../addons/ofxOsc/libs/oscpack/lib/win32/oscpack.a</lib>
-			<lib os="win32" compiler="visualstudio">../../../addons/ofxOsc/libs/oscpack/lib/win32/oscpack.lib</lib>
+			<lib os="win_cb" compiler="codeblocks">../../../addons/ofxOsc/libs/oscpack/lib/win32/oscpack.a</lib>
+			<lib os="win_vs2008" compiler="visualstudio">../../../addons/ofxOsc/libs/oscpack/lib/win32/oscpack.lib</lib>
 			<lib os="linux" compiler="codeblocks, makefile">../../../addons/ofxOsc/libs/oscpack/lib/linux/liboscpack.a</lib>
+			<lib os="linux64" compiler="codeblocks, makefile">../../../addons/ofxOsc/libs/oscpack/lib/linux64/liboscpack.a</lib>
 			<lib os="mac"   compiler="xcode">../../../addons/ofxOsc/libs/oscpack/lib/mac/libOsc.a</lib>
 		</link>
 
