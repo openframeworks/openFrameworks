@@ -50,7 +50,7 @@
 			<Add directory="../../../libs/openFrameworks/video"/>
 			<Add directory="../../../libs/openFrameworks/utils"/>
 			<Add directory="../../../libs/openFrameworks/sound"/>
-			<Add directory="../../../libs/rtAudio/include"/>
+			<Add directory="../../../libs/rtAudio"/>
 			<Add directory="../../../libs/fmodex/inc"/>
 			<Add directory="../../../libs/glee/include"/>
 			<Add directory="../../../libs/glee/"/>
@@ -85,7 +85,7 @@
 			<Add directory="../../../libs/fmodex/lib/linux64"/>
 			<Add directory="../../../libs/unicap/lib/linux64"/>
 			<Add directory="../../../libs/poco/lib/linux64"/>
-		<Add library="../../../addons/ofxOsc/libs/oscpack/lib/linux/liboscpack.a"/></Linker>
+		<Add library="../../../addons/ofxOsc/libs/oscpack/lib/linux64/liboscpack.a"/></Linker>
 		<ExtraCommands>
 			<Add after="#"/>
 			<Add after="#      copy libs and shell script to bin directory:"/>
