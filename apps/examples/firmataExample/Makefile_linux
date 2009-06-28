@@ -4,20 +4,19 @@
 CC = gcc
 PROJECT_DIR = ./
 CFLAGS += -Wall -fexceptions 
-CFLAGS += -I../../../addons/ -I../../../libs/openFrameworks/ -I../../../libs/openFrameworks/events -I../../../libs/openFrameworks/app -I../../../libs/openFrameworks/communication -I../../../libs/openFrameworks/graphics -I../../../libs/openFrameworks/video -I../../../libs/openFrameworks/utils -I../../../libs/openFrameworks/sound -I../../../libs/rtAudio -I../../../libs/fmodex/inc -I../../../libs/glee/include -I../../../libs/glee/ -I../../../libs/freeimage/Source -I../../../libs/FreeImage -I../../../libs/alsa/include -I../../../libs/alsa/include/alsa -I../../../libs/freetype/include -I../../../libs/freetype/include/freetype2 -I../../../libs/unicap/include -I../../../libs/gstappsink/include -I../../../addons -I../../../libs/poco/include -I../../../addons/ofxOsc/src -I../../../addons/ofxOsc/libs/oscpack/include/ip -I../../../addons/ofxOsc/libs/oscpack/include/osc
+CFLAGS += -I../../../addons/ -I../../../libs/openFrameworks/ -I../../../libs/openFrameworks/events -I../../../libs/openFrameworks/app -I../../../libs/openFrameworks/communication -I../../../libs/openFrameworks/graphics -I../../../libs/openFrameworks/video -I../../../libs/openFrameworks/utils -I../../../libs/openFrameworks/sound -I../../../libs/rtAudio -I../../../libs/fmodex/inc -I../../../libs/glee/include -I../../../libs/FreeImage/include -I../../../libs/freetype/include -I../../../libs/freetype/include/freetype2 -I../../../libs/unicap/include -I../../../libs/gstappsink/include -I../../../addons -I../../../libs/poco/include
 CFLAGS +=`pkg-config  gstreamer-0.10 gstreamer-video-0.10 gstreamer-base-0.10 libavcodec libavformat libavutil libswscale --cflags`
-LDFLAGS += -L../../../addons/ofxOsc/libs/oscpack/lib/linux -L../../../libs/fmodex/lib -L../../../libs/unicap/lib -L../../../libs/poco/lib -L./bin/libs
-LIBS += -lfmodex -lraw1394 -lglut -lGL -lGLU -lXxf86vm -lasound -lPocoFoundation -lunicap -loscpack
+LDFLAGS += -L../../../libs/freetype/lib/linux -L../../../libs/FreeImage/lib/linux -L../../../libs/rtAudio/lib/linux -L../../../libs/glee/lib/linux -L../../../libs/gstappsink/lib/linux -L../../../libs/fmodex/lib/linux -L../../../libs/unicap/lib/linux -L../../../libs/poco/lib/linux
+LIBS += -lfmodex -lraw1394 -lglut -lGL -lGLU -lXxf86vm -lasound -lPocoFoundation -lunicap -lfreetype -lfreeimage -lRtAudio -lGLee -loFappsink
 LIBS +=`pkg-config  gstreamer-0.10 gstreamer-video-0.10 gstreamer-base-0.10 libavcodec libavformat libavutil libswscale --libs`
-LIBS += ../../../libs/freetype/lib/libfreetype.a ../../../libs/FreeImage/libfreeimage.a ../../../libs/rtAudio/libRtAudio.a ../../../libs/glee/libGLee.a ../../../libs/gstappsink/lib/liboFappsink.a
 CFLAGS += -DLINUX
 
-OBJS = libs/openframeworks/communication/ofSerial.o src/main.o addons/ofxOsc/srcofxOscSender.o libs/openframeworks/video/ofUCUtils.o libs/openframeworks/graphics/ofImage.o libs/openframeworks/app/ofAppGlutWindow.o libs/openframeworks/video/ofVideoPlayer.o libs/openframeworks/sound/ofSoundStream.o libs/openframeworks/graphics/ofGraphics.o addons/ofxOsc/srcofxOscMessage.o libs/openframeworks/graphics/ofTrueTypeFont.o libs/openframeworks/communication/ofStandardFirmata.o libs/openframeworks/video/ofVideoGrabber.o addons/ofxOsc/src/ofxOscBundle.o addons/ofxOsc/srcofxOscReceiver.o libs/openframeworks/graphics/ofBitmapFont.o libs/openframeworks/communication/ofArduino.o libs/openframeworks/graphics/ofTexture.o src/testApp.o libs/openframeworks/utils/ofMath.o libs/openframeworks/sound/ofSoundPlayer.o libs/openframeworks/app/ofAppRunner.o libs/openframeworks/utils/ofUtils.o
+OBJS = src/main.o libs/openframeworks/graphics/ofBitmapFont.o libs/openframeworks/video/ofUCUtils.o libs/openframeworks/graphics/ofImage.o libs/openframeworks/app/ofAppGlutWindow.o libs/openframeworks/video/ofVideoPlayer.o libs/openframeworks/sound/ofSoundStream.o libs/openframeworks/communication/ofSerial.o libs/openframeworks/graphics/ofTrueTypeFont.o libs/openframeworks/communication/ofStandardFirmata.o libs/openframeworks/video/ofVideoGrabber.o libs/openframeworks/graphics/ofGraphics.o libs/openframeworks/communication/ofArduino.o libs/openframeworks/graphics/ofTexture.o src/testApp.o libs/openframeworks/utils/ofMath.o libs/openframeworks/sound/ofSoundPlayer.o libs/openframeworks/app/ofAppRunner.o libs/openframeworks/utils/ofUtils.o
 
 Debug: TARGET_NAME = Debug
 Debug: OBJ_OUTPUT = obj/Debug/
-Debug: OUTPUT = bin/oscSenderExample_debug
-Debug: TARGET_OUTPUT_BASENAME = oscSenderExample_debug
+Debug: OUTPUT = bin/firmataExample_debug
+Debug: TARGET_OUTPUT_BASENAME = firmataExample_debug
 Debug: CC = gcc
 Debug: CFLAGS += -g -MMD
 
@@ -25,8 +24,8 @@ OBJS_Debug = $(addprefix obj/Debug/, $(OBJS) )
 
 Release: TARGET_NAME = Release
 Release: OBJ_OUTPUT = obj/Release/
-Release: OUTPUT = bin/oscSenderExample
-Release: TARGET_OUTPUT_BASENAME = oscSenderExample
+Release: OUTPUT = bin/firmataExample
+Release: TARGET_OUTPUT_BASENAME = firmataExample
 Release: CC = gcc
 Release: CFLAGS += -O3 -MMD
 Release: LDFLAGS += -s
@@ -35,13 +34,13 @@ OBJS_Release = $(addprefix obj/Release/, $(OBJS) )
 
 .PHONY: after
 
-Debug: bin/oscSenderExample_debug after
-Release: bin/oscSenderExample after
-bin/oscSenderExample_debug: $(OBJS_Debug)
+Debug: bin/firmataExample_debug after
+Release: bin/firmataExample after
+bin/firmataExample_debug: $(OBJS_Debug)
 	mkdir -p bin/
 	$(CC) $(LDFLAGS) -o $@ $(OBJS_Debug) $(LIBS)
 
-bin/oscSenderExample: $(OBJS_Release)
+bin/firmataExample: $(OBJS_Release)
 	mkdir -p bin/
 	$(CC) $(LDFLAGS) -o $@ $(OBJS_Release) $(LIBS)
 
@@ -49,8 +48,8 @@ after:
 	#
 	#      copy libs and shell script to bin directory:
 	#
-	cp -r ../../../export/libs $(PROJECT_DIR)bin/
-	cp ../../../export/clickToLaunchApp.sh $(PROJECT_DIR)bin/clickToLaunchApp_$(TARGET_NAME).sh
+	cp -r ../../../export/linux/libs $(PROJECT_DIR)bin/
+	cp ../../../export/linux/clickToLaunchApp.sh $(PROJECT_DIR)bin/clickToLaunchApp_$(TARGET_NAME).sh
 	sed -i s/applicationName/$(TARGET_OUTPUT_BASENAME)/g  $(PROJECT_DIR)bin/clickToLaunchApp_$(TARGET_NAME).sh
 	#
 	#    this is a shell script that can either (a) run the app or (b) launch nautilus to a good directory for you to run the app
@@ -63,15 +62,12 @@ after:
 	#     currently this is disabled, but allows you to run the app from w/in CB.
 	#
 
-obj/Debug/libs/openframeworks/communication/ofSerial.o obj/Release/libs/openframeworks/communication/ofSerial.o: ../../../libs/openFrameworks/communication/ofSerial.cpp
-	mkdir -p $(OBJ_OUTPUT)libs/openframeworks/communication/
-	$(CC) -c $< -o $(OBJ_OUTPUT)libs/openframeworks/communication/ofSerial.o $(CFLAGS)
 obj/Debug/src/main.o obj/Release/src/main.o: src/main.cpp
 	mkdir -p $(OBJ_OUTPUT)src/
 	$(CC) -c $< -o $(OBJ_OUTPUT)src/main.o $(CFLAGS)
-obj/Debug/addons/ofxOsc/srcofxOscSender.o obj/Release/addons/ofxOsc/srcofxOscSender.o: ../../../addons/ofxOsc/src/ofxOscSender.cpp
-	mkdir -p $(OBJ_OUTPUT)addons/ofxOsc/
-	$(CC) -c $< -o $(OBJ_OUTPUT)addons/ofxOsc/srcofxOscSender.o $(CFLAGS)
+obj/Debug/libs/openframeworks/graphics/ofBitmapFont.o obj/Release/libs/openframeworks/graphics/ofBitmapFont.o: ../../../libs/openFrameworks/graphics/ofBitmapFont.cpp
+	mkdir -p $(OBJ_OUTPUT)libs/openframeworks/graphics/
+	$(CC) -c $< -o $(OBJ_OUTPUT)libs/openframeworks/graphics/ofBitmapFont.o $(CFLAGS)
 obj/Debug/libs/openframeworks/video/ofUCUtils.o obj/Release/libs/openframeworks/video/ofUCUtils.o: ../../../libs/openFrameworks/video/ofUCUtils.cpp
 	mkdir -p $(OBJ_OUTPUT)libs/openframeworks/video/
 	$(CC) -c $< -o $(OBJ_OUTPUT)libs/openframeworks/video/ofUCUtils.o $(CFLAGS)
@@ -87,12 +83,9 @@ obj/Debug/libs/openframeworks/video/ofVideoPlayer.o obj/Release/libs/openframewo
 obj/Debug/libs/openframeworks/sound/ofSoundStream.o obj/Release/libs/openframeworks/sound/ofSoundStream.o: ../../../libs/openFrameworks/sound/ofSoundStream.cpp
 	mkdir -p $(OBJ_OUTPUT)libs/openframeworks/sound/
 	$(CC) -c $< -o $(OBJ_OUTPUT)libs/openframeworks/sound/ofSoundStream.o $(CFLAGS)
-obj/Debug/libs/openframeworks/graphics/ofGraphics.o obj/Release/libs/openframeworks/graphics/ofGraphics.o: ../../../libs/openFrameworks/graphics/ofGraphics.cpp
-	mkdir -p $(OBJ_OUTPUT)libs/openframeworks/graphics/
-	$(CC) -c $< -o $(OBJ_OUTPUT)libs/openframeworks/graphics/ofGraphics.o $(CFLAGS)
-obj/Debug/addons/ofxOsc/srcofxOscMessage.o obj/Release/addons/ofxOsc/srcofxOscMessage.o: ../../../addons/ofxOsc/src/ofxOscMessage.cpp
-	mkdir -p $(OBJ_OUTPUT)addons/ofxOsc/
-	$(CC) -c $< -o $(OBJ_OUTPUT)addons/ofxOsc/srcofxOscMessage.o $(CFLAGS)
+obj/Debug/libs/openframeworks/communication/ofSerial.o obj/Release/libs/openframeworks/communication/ofSerial.o: ../../../libs/openFrameworks/communication/ofSerial.cpp
+	mkdir -p $(OBJ_OUTPUT)libs/openframeworks/communication/
+	$(CC) -c $< -o $(OBJ_OUTPUT)libs/openframeworks/communication/ofSerial.o $(CFLAGS)
 obj/Debug/libs/openframeworks/graphics/ofTrueTypeFont.o obj/Release/libs/openframeworks/graphics/ofTrueTypeFont.o: ../../../libs/openFrameworks/graphics/ofTrueTypeFont.cpp
 	mkdir -p $(OBJ_OUTPUT)libs/openframeworks/graphics/
 	$(CC) -c $< -o $(OBJ_OUTPUT)libs/openframeworks/graphics/ofTrueTypeFont.o $(CFLAGS)
@@ -102,15 +95,9 @@ obj/Debug/libs/openframeworks/communication/ofStandardFirmata.o obj/Release/libs
 obj/Debug/libs/openframeworks/video/ofVideoGrabber.o obj/Release/libs/openframeworks/video/ofVideoGrabber.o: ../../../libs/openFrameworks/video/ofVideoGrabber.cpp
 	mkdir -p $(OBJ_OUTPUT)libs/openframeworks/video/
 	$(CC) -c $< -o $(OBJ_OUTPUT)libs/openframeworks/video/ofVideoGrabber.o $(CFLAGS)
-obj/Debug/addons/ofxOsc/src/ofxOscBundle.o obj/Release/addons/ofxOsc/src/ofxOscBundle.o: ../../../addons/ofxOsc/src/ofxOscBundle.cpp
-	mkdir -p $(OBJ_OUTPUT)addons/ofxOsc/src/
-	$(CC) -c $< -o $(OBJ_OUTPUT)addons/ofxOsc/src/ofxOscBundle.o $(CFLAGS)
-obj/Debug/addons/ofxOsc/srcofxOscReceiver.o obj/Release/addons/ofxOsc/srcofxOscReceiver.o: ../../../addons/ofxOsc/src/ofxOscReceiver.cpp
-	mkdir -p $(OBJ_OUTPUT)addons/ofxOsc/
-	$(CC) -c $< -o $(OBJ_OUTPUT)addons/ofxOsc/srcofxOscReceiver.o $(CFLAGS)
-obj/Debug/libs/openframeworks/graphics/ofBitmapFont.o obj/Release/libs/openframeworks/graphics/ofBitmapFont.o: ../../../libs/openFrameworks/graphics/ofBitmapFont.cpp
+obj/Debug/libs/openframeworks/graphics/ofGraphics.o obj/Release/libs/openframeworks/graphics/ofGraphics.o: ../../../libs/openFrameworks/graphics/ofGraphics.cpp
 	mkdir -p $(OBJ_OUTPUT)libs/openframeworks/graphics/
-	$(CC) -c $< -o $(OBJ_OUTPUT)libs/openframeworks/graphics/ofBitmapFont.o $(CFLAGS)
+	$(CC) -c $< -o $(OBJ_OUTPUT)libs/openframeworks/graphics/ofGraphics.o $(CFLAGS)
 obj/Debug/libs/openframeworks/communication/ofArduino.o obj/Release/libs/openframeworks/communication/ofArduino.o: ../../../libs/openFrameworks/communication/ofArduino.cpp
 	mkdir -p $(OBJ_OUTPUT)libs/openframeworks/communication/
 	$(CC) -c $< -o $(OBJ_OUTPUT)libs/openframeworks/communication/ofArduino.o $(CFLAGS)
@@ -134,32 +121,27 @@ obj/Debug/libs/openframeworks/utils/ofUtils.o obj/Release/libs/openframeworks/ut
 	$(CC) -c $< -o $(OBJ_OUTPUT)libs/openframeworks/utils/ofUtils.o $(CFLAGS)
 
 clean:
-	-rm bin/oscSenderExample_debug bin/oscSenderExample
+	-rm bin/firmataExample_debug bin/firmataExample
 	-rm $(OBJS_Debug) $(OBJS_Release)
-	-rmdir --ignore-fail-on-non-empty -p obj/Debug/libs/openframeworks/communication/ obj/Debug/src/ obj/Debug/addons/ofxOsc/ obj/Debug/libs/openframeworks/video/ obj/Debug/libs/openframeworks/graphics/ obj/Debug/libs/openframeworks/app/ obj/Debug/libs/openframeworks/video/ obj/Debug/libs/openframeworks/sound/ obj/Debug/libs/openframeworks/graphics/ obj/Debug/addons/ofxOsc/ obj/Debug/libs/openframeworks/graphics/ obj/Debug/libs/openframeworks/communication/ obj/Debug/libs/openframeworks/video/ obj/Debug/addons/ofxOsc/src/ obj/Debug/addons/ofxOsc/ obj/Debug/libs/openframeworks/graphics/ obj/Debug/libs/openframeworks/communication/ obj/Debug/libs/openframeworks/graphics/ obj/Debug/src/ obj/Debug/libs/openframeworks/utils/ obj/Debug/libs/openframeworks/sound/ obj/Debug/libs/openframeworks/app/ obj/Debug/libs/openframeworks/utils/
-	-rm obj/Debug/libs/openframeworks/communication/ofSerial.dep obj/Debug/src/main.dep obj/Debug/addons/ofxOsc/srcofxOscSender.dep obj/Debug/libs/openframeworks/video/ofUCUtils.dep obj/Debug/libs/openframeworks/graphics/ofImage.dep obj/Debug/libs/openframeworks/app/ofAppGlutWindow.dep obj/Debug/libs/openframeworks/video/ofVideoPlayer.dep obj/Debug/libs/openframeworks/sound/ofSoundStream.dep obj/Debug/libs/openframeworks/graphics/ofGraphics.dep obj/Debug/addons/ofxOsc/srcofxOscMessage.dep obj/Debug/libs/openframeworks/graphics/ofTrueTypeFont.dep obj/Debug/libs/openframeworks/communication/ofStandardFirmata.dep obj/Debug/libs/openframeworks/video/ofVideoGrabber.dep obj/Debug/addons/ofxOsc/src/ofxOscBundle.dep obj/Debug/addons/ofxOsc/srcofxOscReceiver.dep obj/Debug/libs/openframeworks/graphics/ofBitmapFont.dep obj/Debug/libs/openframeworks/communication/ofArduino.dep obj/Debug/libs/openframeworks/graphics/ofTexture.dep obj/Debug/src/testApp.dep obj/Debug/libs/openframeworks/utils/ofMath.dep obj/Debug/libs/openframeworks/sound/ofSoundPlayer.dep obj/Debug/libs/openframeworks/app/ofAppRunner.dep obj/Debug/libs/openframeworks/utils/ofUtils.dep
-	-rmdir --ignore-fail-on-non-empty -p obj/Debug/libs/openframeworks/communication/ obj/Debug/src/ obj/Debug/addons/ofxOsc/ obj/Debug/libs/openframeworks/video/ obj/Debug/libs/openframeworks/graphics/ obj/Debug/libs/openframeworks/app/ obj/Debug/libs/openframeworks/video/ obj/Debug/libs/openframeworks/sound/ obj/Debug/libs/openframeworks/graphics/ obj/Debug/addons/ofxOsc/ obj/Debug/libs/openframeworks/graphics/ obj/Debug/libs/openframeworks/communication/ obj/Debug/libs/openframeworks/video/ obj/Debug/addons/ofxOsc/src/ obj/Debug/addons/ofxOsc/ obj/Debug/libs/openframeworks/graphics/ obj/Debug/libs/openframeworks/communication/ obj/Debug/libs/openframeworks/graphics/ obj/Debug/src/ obj/Debug/libs/openframeworks/utils/ obj/Debug/libs/openframeworks/sound/ obj/Debug/libs/openframeworks/app/ obj/Debug/libs/openframeworks/utils/
+	-rmdir --ignore-fail-on-non-empty -p obj/Debug/src/ obj/Debug/libs/openframeworks/graphics/ obj/Debug/libs/openframeworks/video/ obj/Debug/libs/openframeworks/graphics/ obj/Debug/libs/openframeworks/app/ obj/Debug/libs/openframeworks/video/ obj/Debug/libs/openframeworks/sound/ obj/Debug/libs/openframeworks/communication/ obj/Debug/libs/openframeworks/graphics/ obj/Debug/libs/openframeworks/communication/ obj/Debug/libs/openframeworks/video/ obj/Debug/libs/openframeworks/graphics/ obj/Debug/libs/openframeworks/communication/ obj/Debug/libs/openframeworks/graphics/ obj/Debug/src/ obj/Debug/libs/openframeworks/utils/ obj/Debug/libs/openframeworks/sound/ obj/Debug/libs/openframeworks/app/ obj/Debug/libs/openframeworks/utils/
+	-rm obj/Debug/src/main.dep obj/Debug/libs/openframeworks/graphics/ofBitmapFont.dep obj/Debug/libs/openframeworks/video/ofUCUtils.dep obj/Debug/libs/openframeworks/graphics/ofImage.dep obj/Debug/libs/openframeworks/app/ofAppGlutWindow.dep obj/Debug/libs/openframeworks/video/ofVideoPlayer.dep obj/Debug/libs/openframeworks/sound/ofSoundStream.dep obj/Debug/libs/openframeworks/communication/ofSerial.dep obj/Debug/libs/openframeworks/graphics/ofTrueTypeFont.dep obj/Debug/libs/openframeworks/communication/ofStandardFirmata.dep obj/Debug/libs/openframeworks/video/ofVideoGrabber.dep obj/Debug/libs/openframeworks/graphics/ofGraphics.dep obj/Debug/libs/openframeworks/communication/ofArduino.dep obj/Debug/libs/openframeworks/graphics/ofTexture.dep obj/Debug/src/testApp.dep obj/Debug/libs/openframeworks/utils/ofMath.dep obj/Debug/libs/openframeworks/sound/ofSoundPlayer.dep obj/Debug/libs/openframeworks/app/ofAppRunner.dep obj/Debug/libs/openframeworks/utils/ofUtils.dep
+	-rmdir --ignore-fail-on-non-empty -p obj/Debug/src/ obj/Debug/libs/openframeworks/graphics/ obj/Debug/libs/openframeworks/video/ obj/Debug/libs/openframeworks/graphics/ obj/Debug/libs/openframeworks/app/ obj/Debug/libs/openframeworks/video/ obj/Debug/libs/openframeworks/sound/ obj/Debug/libs/openframeworks/communication/ obj/Debug/libs/openframeworks/graphics/ obj/Debug/libs/openframeworks/communication/ obj/Debug/libs/openframeworks/video/ obj/Debug/libs/openframeworks/graphics/ obj/Debug/libs/openframeworks/communication/ obj/Debug/libs/openframeworks/graphics/ obj/Debug/src/ obj/Debug/libs/openframeworks/utils/ obj/Debug/libs/openframeworks/sound/ obj/Debug/libs/openframeworks/app/ obj/Debug/libs/openframeworks/utils/
 	-rmdir --ignore-fail-on-non-empty -p bin/
-	-rmdir --ignore-fail-on-non-empty -p obj/Release/libs/openframeworks/communication/ obj/Release/src/ obj/Release/addons/ofxOsc/ obj/Release/libs/openframeworks/video/ obj/Release/libs/openframeworks/graphics/ obj/Release/libs/openframeworks/app/ obj/Release/libs/openframeworks/video/ obj/Release/libs/openframeworks/sound/ obj/Release/libs/openframeworks/graphics/ obj/Release/addons/ofxOsc/ obj/Release/libs/openframeworks/graphics/ obj/Release/libs/openframeworks/communication/ obj/Release/libs/openframeworks/video/ obj/Release/addons/ofxOsc/src/ obj/Release/addons/ofxOsc/ obj/Release/libs/openframeworks/graphics/ obj/Release/libs/openframeworks/communication/ obj/Release/libs/openframeworks/graphics/ obj/Release/src/ obj/Release/libs/openframeworks/utils/ obj/Release/libs/openframeworks/sound/ obj/Release/libs/openframeworks/app/ obj/Release/libs/openframeworks/utils/
-	-rm obj/Release/libs/openframeworks/communication/ofSerial.dep obj/Release/src/main.dep obj/Release/addons/ofxOsc/srcofxOscSender.dep obj/Release/libs/openframeworks/video/ofUCUtils.dep obj/Release/libs/openframeworks/graphics/ofImage.dep obj/Release/libs/openframeworks/app/ofAppGlutWindow.dep obj/Release/libs/openframeworks/video/ofVideoPlayer.dep obj/Release/libs/openframeworks/sound/ofSoundStream.dep obj/Release/libs/openframeworks/graphics/ofGraphics.dep obj/Release/addons/ofxOsc/srcofxOscMessage.dep obj/Release/libs/openframeworks/graphics/ofTrueTypeFont.dep obj/Release/libs/openframeworks/communication/ofStandardFirmata.dep obj/Release/libs/openframeworks/video/ofVideoGrabber.dep obj/Release/addons/ofxOsc/src/ofxOscBundle.dep obj/Release/addons/ofxOsc/srcofxOscReceiver.dep obj/Release/libs/openframeworks/graphics/ofBitmapFont.dep obj/Release/libs/openframeworks/communication/ofArduino.dep obj/Release/libs/openframeworks/graphics/ofTexture.dep obj/Release/src/testApp.dep obj/Release/libs/openframeworks/utils/ofMath.dep obj/Release/libs/openframeworks/sound/ofSoundPlayer.dep obj/Release/libs/openframeworks/app/ofAppRunner.dep obj/Release/libs/openframeworks/utils/ofUtils.dep
-	-rmdir --ignore-fail-on-non-empty -p obj/Release/libs/openframeworks/communication/ obj/Release/src/ obj/Release/addons/ofxOsc/ obj/Release/libs/openframeworks/video/ obj/Release/libs/openframeworks/graphics/ obj/Release/libs/openframeworks/app/ obj/Release/libs/openframeworks/video/ obj/Release/libs/openframeworks/sound/ obj/Release/libs/openframeworks/graphics/ obj/Release/addons/ofxOsc/ obj/Release/libs/openframeworks/graphics/ obj/Release/libs/openframeworks/communication/ obj/Release/libs/openframeworks/video/ obj/Release/addons/ofxOsc/src/ obj/Release/addons/ofxOsc/ obj/Release/libs/openframeworks/graphics/ obj/Release/libs/openframeworks/communication/ obj/Release/libs/openframeworks/graphics/ obj/Release/src/ obj/Release/libs/openframeworks/utils/ obj/Release/libs/openframeworks/sound/ obj/Release/libs/openframeworks/app/ obj/Release/libs/openframeworks/utils/
+	-rmdir --ignore-fail-on-non-empty -p obj/Release/src/ obj/Release/libs/openframeworks/graphics/ obj/Release/libs/openframeworks/video/ obj/Release/libs/openframeworks/graphics/ obj/Release/libs/openframeworks/app/ obj/Release/libs/openframeworks/video/ obj/Release/libs/openframeworks/sound/ obj/Release/libs/openframeworks/communication/ obj/Release/libs/openframeworks/graphics/ obj/Release/libs/openframeworks/communication/ obj/Release/libs/openframeworks/video/ obj/Release/libs/openframeworks/graphics/ obj/Release/libs/openframeworks/communication/ obj/Release/libs/openframeworks/graphics/ obj/Release/src/ obj/Release/libs/openframeworks/utils/ obj/Release/libs/openframeworks/sound/ obj/Release/libs/openframeworks/app/ obj/Release/libs/openframeworks/utils/
+	-rm obj/Release/src/main.dep obj/Release/libs/openframeworks/graphics/ofBitmapFont.dep obj/Release/libs/openframeworks/video/ofUCUtils.dep obj/Release/libs/openframeworks/graphics/ofImage.dep obj/Release/libs/openframeworks/app/ofAppGlutWindow.dep obj/Release/libs/openframeworks/video/ofVideoPlayer.dep obj/Release/libs/openframeworks/sound/ofSoundStream.dep obj/Release/libs/openframeworks/communication/ofSerial.dep obj/Release/libs/openframeworks/graphics/ofTrueTypeFont.dep obj/Release/libs/openframeworks/communication/ofStandardFirmata.dep obj/Release/libs/openframeworks/video/ofVideoGrabber.dep obj/Release/libs/openframeworks/graphics/ofGraphics.dep obj/Release/libs/openframeworks/communication/ofArduino.dep obj/Release/libs/openframeworks/graphics/ofTexture.dep obj/Release/src/testApp.dep obj/Release/libs/openframeworks/utils/ofMath.dep obj/Release/libs/openframeworks/sound/ofSoundPlayer.dep obj/Release/libs/openframeworks/app/ofAppRunner.dep obj/Release/libs/openframeworks/utils/ofUtils.dep
+	-rmdir --ignore-fail-on-non-empty -p obj/Release/src/ obj/Release/libs/openframeworks/graphics/ obj/Release/libs/openframeworks/video/ obj/Release/libs/openframeworks/graphics/ obj/Release/libs/openframeworks/app/ obj/Release/libs/openframeworks/video/ obj/Release/libs/openframeworks/sound/ obj/Release/libs/openframeworks/communication/ obj/Release/libs/openframeworks/graphics/ obj/Release/libs/openframeworks/communication/ obj/Release/libs/openframeworks/video/ obj/Release/libs/openframeworks/graphics/ obj/Release/libs/openframeworks/communication/ obj/Release/libs/openframeworks/graphics/ obj/Release/src/ obj/Release/libs/openframeworks/utils/ obj/Release/libs/openframeworks/sound/ obj/Release/libs/openframeworks/app/ obj/Release/libs/openframeworks/utils/
 	-rmdir --ignore-fail-on-non-empty -p bin/
 
 ifneq ($MAKECMDGOALS,clean)
-obj/Debug/libs/openframeworks/communication/ofSerial.dep: ../../../libs/openFrameworks/communication/ofSerial.cpp
-	mkdir -p obj/Debug/libs/openframeworks/communication/
-	$(CC) -M -MT obj/Debug/libs/openframeworks/communication/ofSerial.o $(CFLAGS) ../../../libs/openFrameworks/communication/ofSerial.cpp -MF obj/Debug/libs/openframeworks/communication/ofSerial.dep
--include obj/Debug/libs/openframeworks/communication/ofSerial.dep
-
 obj/Debug/src/main.dep: src/main.cpp
 	mkdir -p obj/Debug/src/
 	$(CC) -M -MT obj/Debug/src/main.o $(CFLAGS) src/main.cpp -MF obj/Debug/src/main.dep
 -include obj/Debug/src/main.dep
 
-obj/Debug/addons/ofxOsc/srcofxOscSender.dep: ../../../addons/ofxOsc/src/ofxOscSender.cpp
-	mkdir -p obj/Debug/addons/ofxOsc/
-	$(CC) -M -MT obj/Debug/addons/ofxOsc/srcofxOscSender.o $(CFLAGS) ../../../addons/ofxOsc/src/ofxOscSender.cpp -MF obj/Debug/addons/ofxOsc/srcofxOscSender.dep
--include obj/Debug/addons/ofxOsc/srcofxOscSender.dep
+obj/Debug/libs/openframeworks/graphics/ofBitmapFont.dep: ../../../libs/openFrameworks/graphics/ofBitmapFont.cpp
+	mkdir -p obj/Debug/libs/openframeworks/graphics/
+	$(CC) -M -MT obj/Debug/libs/openframeworks/graphics/ofBitmapFont.o $(CFLAGS) ../../../libs/openFrameworks/graphics/ofBitmapFont.cpp -MF obj/Debug/libs/openframeworks/graphics/ofBitmapFont.dep
+-include obj/Debug/libs/openframeworks/graphics/ofBitmapFont.dep
 
 obj/Debug/libs/openframeworks/video/ofUCUtils.dep: ../../../libs/openFrameworks/video/ofUCUtils.cpp
 	mkdir -p obj/Debug/libs/openframeworks/video/
@@ -186,15 +168,10 @@ obj/Debug/libs/openframeworks/sound/ofSoundStream.dep: ../../../libs/openFramewo
 	$(CC) -M -MT obj/Debug/libs/openframeworks/sound/ofSoundStream.o $(CFLAGS) ../../../libs/openFrameworks/sound/ofSoundStream.cpp -MF obj/Debug/libs/openframeworks/sound/ofSoundStream.dep
 -include obj/Debug/libs/openframeworks/sound/ofSoundStream.dep
 
-obj/Debug/libs/openframeworks/graphics/ofGraphics.dep: ../../../libs/openFrameworks/graphics/ofGraphics.cpp
-	mkdir -p obj/Debug/libs/openframeworks/graphics/
-	$(CC) -M -MT obj/Debug/libs/openframeworks/graphics/ofGraphics.o $(CFLAGS) ../../../libs/openFrameworks/graphics/ofGraphics.cpp -MF obj/Debug/libs/openframeworks/graphics/ofGraphics.dep
--include obj/Debug/libs/openframeworks/graphics/ofGraphics.dep
-
-obj/Debug/addons/ofxOsc/srcofxOscMessage.dep: ../../../addons/ofxOsc/src/ofxOscMessage.cpp
-	mkdir -p obj/Debug/addons/ofxOsc/
-	$(CC) -M -MT obj/Debug/addons/ofxOsc/srcofxOscMessage.o $(CFLAGS) ../../../addons/ofxOsc/src/ofxOscMessage.cpp -MF obj/Debug/addons/ofxOsc/srcofxOscMessage.dep
--include obj/Debug/addons/ofxOsc/srcofxOscMessage.dep
+obj/Debug/libs/openframeworks/communication/ofSerial.dep: ../../../libs/openFrameworks/communication/ofSerial.cpp
+	mkdir -p obj/Debug/libs/openframeworks/communication/
+	$(CC) -M -MT obj/Debug/libs/openframeworks/communication/ofSerial.o $(CFLAGS) ../../../libs/openFrameworks/communication/ofSerial.cpp -MF obj/Debug/libs/openframeworks/communication/ofSerial.dep
+-include obj/Debug/libs/openframeworks/communication/ofSerial.dep
 
 obj/Debug/libs/openframeworks/graphics/ofTrueTypeFont.dep: ../../../libs/openFrameworks/graphics/ofTrueTypeFont.cpp
 	mkdir -p obj/Debug/libs/openframeworks/graphics/
@@ -211,20 +188,10 @@ obj/Debug/libs/openframeworks/video/ofVideoGrabber.dep: ../../../libs/openFramew
 	$(CC) -M -MT obj/Debug/libs/openframeworks/video/ofVideoGrabber.o $(CFLAGS) ../../../libs/openFrameworks/video/ofVideoGrabber.cpp -MF obj/Debug/libs/openframeworks/video/ofVideoGrabber.dep
 -include obj/Debug/libs/openframeworks/video/ofVideoGrabber.dep
 
-obj/Debug/addons/ofxOsc/src/ofxOscBundle.dep: ../../../addons/ofxOsc/src/ofxOscBundle.cpp
-	mkdir -p obj/Debug/addons/ofxOsc/src/
-	$(CC) -M -MT obj/Debug/addons/ofxOsc/src/ofxOscBundle.o $(CFLAGS) ../../../addons/ofxOsc/src/ofxOscBundle.cpp -MF obj/Debug/addons/ofxOsc/src/ofxOscBundle.dep
--include obj/Debug/addons/ofxOsc/src/ofxOscBundle.dep
-
-obj/Debug/addons/ofxOsc/srcofxOscReceiver.dep: ../../../addons/ofxOsc/src/ofxOscReceiver.cpp
-	mkdir -p obj/Debug/addons/ofxOsc/
-	$(CC) -M -MT obj/Debug/addons/ofxOsc/srcofxOscReceiver.o $(CFLAGS) ../../../addons/ofxOsc/src/ofxOscReceiver.cpp -MF obj/Debug/addons/ofxOsc/srcofxOscReceiver.dep
--include obj/Debug/addons/ofxOsc/srcofxOscReceiver.dep
-
-obj/Debug/libs/openframeworks/graphics/ofBitmapFont.dep: ../../../libs/openFrameworks/graphics/ofBitmapFont.cpp
+obj/Debug/libs/openframeworks/graphics/ofGraphics.dep: ../../../libs/openFrameworks/graphics/ofGraphics.cpp
 	mkdir -p obj/Debug/libs/openframeworks/graphics/
-	$(CC) -M -MT obj/Debug/libs/openframeworks/graphics/ofBitmapFont.o $(CFLAGS) ../../../libs/openFrameworks/graphics/ofBitmapFont.cpp -MF obj/Debug/libs/openframeworks/graphics/ofBitmapFont.dep
--include obj/Debug/libs/openframeworks/graphics/ofBitmapFont.dep
+	$(CC) -M -MT obj/Debug/libs/openframeworks/graphics/ofGraphics.o $(CFLAGS) ../../../libs/openFrameworks/graphics/ofGraphics.cpp -MF obj/Debug/libs/openframeworks/graphics/ofGraphics.dep
+-include obj/Debug/libs/openframeworks/graphics/ofGraphics.dep
 
 obj/Debug/libs/openframeworks/communication/ofArduino.dep: ../../../libs/openFrameworks/communication/ofArduino.cpp
 	mkdir -p obj/Debug/libs/openframeworks/communication/
@@ -261,20 +228,15 @@ obj/Debug/libs/openframeworks/utils/ofUtils.dep: ../../../libs/openFrameworks/ut
 	$(CC) -M -MT obj/Debug/libs/openframeworks/utils/ofUtils.o $(CFLAGS) ../../../libs/openFrameworks/utils/ofUtils.cpp -MF obj/Debug/libs/openframeworks/utils/ofUtils.dep
 -include obj/Debug/libs/openframeworks/utils/ofUtils.dep
 
-obj/Release/libs/openframeworks/communication/ofSerial.dep: ../../../libs/openFrameworks/communication/ofSerial.cpp
-	mkdir -p obj/Release/libs/openframeworks/communication/
-	$(CC) -M -MT obj/Release/libs/openframeworks/communication/ofSerial.o $(CFLAGS) ../../../libs/openFrameworks/communication/ofSerial.cpp -MF obj/Release/libs/openframeworks/communication/ofSerial.dep
--include obj/Release/libs/openframeworks/communication/ofSerial.dep
-
 obj/Release/src/main.dep: src/main.cpp
 	mkdir -p obj/Release/src/
 	$(CC) -M -MT obj/Release/src/main.o $(CFLAGS) src/main.cpp -MF obj/Release/src/main.dep
 -include obj/Release/src/main.dep
 
-obj/Release/addons/ofxOsc/srcofxOscSender.dep: ../../../addons/ofxOsc/src/ofxOscSender.cpp
-	mkdir -p obj/Release/addons/ofxOsc/
-	$(CC) -M -MT obj/Release/addons/ofxOsc/srcofxOscSender.o $(CFLAGS) ../../../addons/ofxOsc/src/ofxOscSender.cpp -MF obj/Release/addons/ofxOsc/srcofxOscSender.dep
--include obj/Release/addons/ofxOsc/srcofxOscSender.dep
+obj/Release/libs/openframeworks/graphics/ofBitmapFont.dep: ../../../libs/openFrameworks/graphics/ofBitmapFont.cpp
+	mkdir -p obj/Release/libs/openframeworks/graphics/
+	$(CC) -M -MT obj/Release/libs/openframeworks/graphics/ofBitmapFont.o $(CFLAGS) ../../../libs/openFrameworks/graphics/ofBitmapFont.cpp -MF obj/Release/libs/openframeworks/graphics/ofBitmapFont.dep
+-include obj/Release/libs/openframeworks/graphics/ofBitmapFont.dep
 
 obj/Release/libs/openframeworks/video/ofUCUtils.dep: ../../../libs/openFrameworks/video/ofUCUtils.cpp
 	mkdir -p obj/Release/libs/openframeworks/video/
@@ -301,15 +263,10 @@ obj/Release/libs/openframeworks/sound/ofSoundStream.dep: ../../../libs/openFrame
 	$(CC) -M -MT obj/Release/libs/openframeworks/sound/ofSoundStream.o $(CFLAGS) ../../../libs/openFrameworks/sound/ofSoundStream.cpp -MF obj/Release/libs/openframeworks/sound/ofSoundStream.dep
 -include obj/Release/libs/openframeworks/sound/ofSoundStream.dep
 
-obj/Release/libs/openframeworks/graphics/ofGraphics.dep: ../../../libs/openFrameworks/graphics/ofGraphics.cpp
-	mkdir -p obj/Release/libs/openframeworks/graphics/
-	$(CC) -M -MT obj/Release/libs/openframeworks/graphics/ofGraphics.o $(CFLAGS) ../../../libs/openFrameworks/graphics/ofGraphics.cpp -MF obj/Release/libs/openframeworks/graphics/ofGraphics.dep
--include obj/Release/libs/openframeworks/graphics/ofGraphics.dep
-
-obj/Release/addons/ofxOsc/srcofxOscMessage.dep: ../../../addons/ofxOsc/src/ofxOscMessage.cpp
-	mkdir -p obj/Release/addons/ofxOsc/
-	$(CC) -M -MT obj/Release/addons/ofxOsc/srcofxOscMessage.o $(CFLAGS) ../../../addons/ofxOsc/src/ofxOscMessage.cpp -MF obj/Release/addons/ofxOsc/srcofxOscMessage.dep
--include obj/Release/addons/ofxOsc/srcofxOscMessage.dep
+obj/Release/libs/openframeworks/communication/ofSerial.dep: ../../../libs/openFrameworks/communication/ofSerial.cpp
+	mkdir -p obj/Release/libs/openframeworks/communication/
+	$(CC) -M -MT obj/Release/libs/openframeworks/communication/ofSerial.o $(CFLAGS) ../../../libs/openFrameworks/communication/ofSerial.cpp -MF obj/Release/libs/openframeworks/communication/ofSerial.dep
+-include obj/Release/libs/openframeworks/communication/ofSerial.dep
 
 obj/Release/libs/openframeworks/graphics/ofTrueTypeFont.dep: ../../../libs/openFrameworks/graphics/ofTrueTypeFont.cpp
 	mkdir -p obj/Release/libs/openframeworks/graphics/
@@ -326,20 +283,10 @@ obj/Release/libs/openframeworks/video/ofVideoGrabber.dep: ../../../libs/openFram
 	$(CC) -M -MT obj/Release/libs/openframeworks/video/ofVideoGrabber.o $(CFLAGS) ../../../libs/openFrameworks/video/ofVideoGrabber.cpp -MF obj/Release/libs/openframeworks/video/ofVideoGrabber.dep
 -include obj/Release/libs/openframeworks/video/ofVideoGrabber.dep
 
-obj/Release/addons/ofxOsc/src/ofxOscBundle.dep: ../../../addons/ofxOsc/src/ofxOscBundle.cpp
-	mkdir -p obj/Release/addons/ofxOsc/src/
-	$(CC) -M -MT obj/Release/addons/ofxOsc/src/ofxOscBundle.o $(CFLAGS) ../../../addons/ofxOsc/src/ofxOscBundle.cpp -MF obj/Release/addons/ofxOsc/src/ofxOscBundle.dep
--include obj/Release/addons/ofxOsc/src/ofxOscBundle.dep
-
-obj/Release/addons/ofxOsc/srcofxOscReceiver.dep: ../../../addons/ofxOsc/src/ofxOscReceiver.cpp
-	mkdir -p obj/Release/addons/ofxOsc/
-	$(CC) -M -MT obj/Release/addons/ofxOsc/srcofxOscReceiver.o $(CFLAGS) ../../../addons/ofxOsc/src/ofxOscReceiver.cpp -MF obj/Release/addons/ofxOsc/srcofxOscReceiver.dep
--include obj/Release/addons/ofxOsc/srcofxOscReceiver.dep
-
-obj/Release/libs/openframeworks/graphics/ofBitmapFont.dep: ../../../libs/openFrameworks/graphics/ofBitmapFont.cpp
+obj/Release/libs/openframeworks/graphics/ofGraphics.dep: ../../../libs/openFrameworks/graphics/ofGraphics.cpp
 	mkdir -p obj/Release/libs/openframeworks/graphics/
-	$(CC) -M -MT obj/Release/libs/openframeworks/graphics/ofBitmapFont.o $(CFLAGS) ../../../libs/openFrameworks/graphics/ofBitmapFont.cpp -MF obj/Release/libs/openframeworks/graphics/ofBitmapFont.dep
--include obj/Release/libs/openframeworks/graphics/ofBitmapFont.dep
+	$(CC) -M -MT obj/Release/libs/openframeworks/graphics/ofGraphics.o $(CFLAGS) ../../../libs/openFrameworks/graphics/ofGraphics.cpp -MF obj/Release/libs/openframeworks/graphics/ofGraphics.dep
+-include obj/Release/libs/openframeworks/graphics/ofGraphics.dep
 
 obj/Release/libs/openframeworks/communication/ofArduino.dep: ../../../libs/openFrameworks/communication/ofArduino.cpp
 	mkdir -p obj/Release/libs/openframeworks/communication/
