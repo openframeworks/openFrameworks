@@ -99,7 +99,7 @@ x) Close()
 #else
 	//windows includes
 	#include <winsock2.h>
-	#include <Ws2tcpip.h>		// TCP/IP annex needed for multicasting
+	#include <ws2tcpip.h>		// TCP/IP annex needed for multicasting
 #endif
 
 /// Socket constants.
