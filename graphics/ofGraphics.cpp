@@ -37,6 +37,8 @@ bool 			bBakgroundAuto		= true;
 int 			cornerMode			= OF_RECTMODE_CORNER;
 int 			polyMode			= OF_POLY_WINDING_ODD;
 
+int				curveResolution = 20;
+
 //style stuff - new in 006
 ofStyle			currentStyle;
 vector <ofStyle> styleHistory;
@@ -119,6 +121,10 @@ void ofFill(){
 void ofSetLineWidth(float lineWidth){
 	glLineWidth(lineWidth);
 	currentStyle.lineWidth = lineWidth;
+}
+
+void ofSetCurveResolution(int res){
+	curveResolution = res;
 }
 
 //----------------------------------------------------------
@@ -306,7 +312,7 @@ void ofRect(float x,float y,float w,float h){
 //----------------------------------------------------------
 void ofCurve(float x0, float y0, float x1, float y1, float x2, float y2, float x3, float y3){
 
-	int resolution = 20;
+	int resolution = curveResolution;
 
 	float t,t2,t3;
 	float x,y;
@@ -354,7 +360,7 @@ void ofBezier(float x0, float y0, float x1, float y1, float x2, float y2, float 
     ay = y3 - y0 - cy - by;
 
 
-    int resolution = 20;
+    int resolution = curveResolution;
 
     ofBeginShape();
     for (int i = 0; i < resolution; i++){
@@ -914,7 +920,7 @@ void ofCurveVertex(float x, float y){
  		float x3 = curveVertices[startPos + 3][0];
 	   	float y3 = curveVertices[startPos + 3][1];
 
- 		int resolution = 20;
+ 		int resolution = curveResolution;
 
 		float t,t2,t3;
 		float x,y;
@@ -977,7 +983,7 @@ void ofBezierVertex(float x1, float y1, float x2, float y2, float x3, float y3){
 		ay = y3 - y0 - cy - by;
 
 		// arbitrary ! can we fix??
-		int resolution = 20;
+		int resolution = curveResolution;
 
 		for (int i = 0; i < resolution; i++){
 			t 	=  (float)i / (float)(resolution-1);

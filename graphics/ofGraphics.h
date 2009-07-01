@@ -23,6 +23,8 @@ void ofDisableArbTex();
 bool 	ofbClearBg();
 int 	ofGetRectMode();				// default is OF_RECTMODE_CORNER
 
+void ofSetCurveResolution(int res);
+
 // geometry 
 void ofTriangle(float x1,float y1,float x2,float y2,float x3, float y3);
 void ofCircle(float x,float y, float radius);
