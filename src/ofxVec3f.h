@@ -80,6 +80,14 @@ class ofxVec3f : public ofPoint {
     ofxVec3f  getRotatedRad(float ax, float ay, float az) const;
     ofxVec3f& rotate(float ax, float ay, float az);
     ofxVec3f& rotateRad(float ax, float ay, float az);
+    
+    
+    // Rotation - point around pivot
+    //    
+    ofxVec3f   getRotated( float angle, const ofPoint& pivot, const ofxVec3f& axis ) const;
+    ofxVec3f&  rotate( float angle, const ofPoint& pivot, const ofxVec3f& axis );
+    ofxVec3f   getRotatedRad( float angle, const ofPoint& pivot, const ofxVec3f& axis ) const;
+    ofxVec3f&  rotateRad( float angle, const ofPoint& pivot, const ofxVec3f& axis );    
 
 
     // Map point to coordinate system defined by origin, vx, vy, and vz.
@@ -198,7 +206,12 @@ class ofxVec3f : public ofPoint {
     ofxVec3f 	interpolated( const ofPoint& pnt, float p ) const;
 
     // use getMiddle
-    ofxVec3f 	middled( const ofPoint& pnt ) const;    
+    ofxVec3f 	middled( const ofPoint& pnt ) const;
+    
+    // use getRotated
+    ofxVec3f 	rotated( float angle,
+                         const ofPoint& pivot,
+                         const ofxVec3f& axis ) const;    
 };
 
 
@@ -591,6 +604,139 @@ inline ofxVec3f& ofxVec3f::rotateRad(float ax, float ay, float az) {
 	x = nx; y = ny; z = nz;
 	return *this;
 }
+
+
+// Rotate point by angle (deg) around line defined by pivot and axis.
+//
+//
+inline ofxVec3f ofxVec3f::rotated( float angle,
+                                   const ofPoint& pivot,
+                                   const ofxVec3f& axis ) const{
+	return getRotated(angle, pivot, axis);
+}
+
+inline ofxVec3f ofxVec3f::getRotated( float angle,
+                                      const ofPoint& pivot,
+                                      const ofxVec3f& axis ) const
+{
+	ofxVec3f ax = axis.normalized();
+	float tx = x - pivot.x;
+	float ty = y - pivot.y;
+	float tz = z - pivot.z;
+
+	float a = (float)(angle*DEG_TO_RAD);
+	float sina = sin( a );
+	float cosa = cos( a );
+	float cosb = 1.0f - cosa;
+
+	float xrot = tx*(ax.x*ax.x*cosb + cosa)
+			   + ty*(ax.x*ax.y*cosb - ax.z*sina)
+			   + tz*(ax.x*ax.z*cosb + ax.y*sina);
+	float yrot = tx*(ax.y*ax.x*cosb + ax.z*sina)
+			   + ty*(ax.y*ax.y*cosb + cosa)
+			   + tz*(ax.y*ax.z*cosb - ax.x*sina);
+	float zrot = tx*(ax.z*ax.x*cosb - ax.y*sina)
+			   + ty*(ax.z*ax.y*cosb + ax.x*sina)
+			   + tz*(ax.z*ax.z*cosb + cosa);
+
+
+	return ofxVec3f( xrot+pivot.x, yrot+pivot.y, zrot+pivot.z );
+}
+
+
+inline ofxVec3f ofxVec3f::getRotatedRad( float angle,
+                                         const ofPoint& pivot,
+                                         const ofxVec3f& axis ) const
+{
+	ofxVec3f ax = axis.normalized();
+	float tx = x - pivot.x;
+	float ty = y - pivot.y;
+	float tz = z - pivot.z;
+
+	float a = angle;
+	float sina = sin( a );
+	float cosa = cos( a );
+	float cosb = 1.0f - cosa;
+
+	float xrot = tx*(ax.x*ax.x*cosb + cosa)
+			   + ty*(ax.x*ax.y*cosb - ax.z*sina)
+			   + tz*(ax.x*ax.z*cosb + ax.y*sina);
+	float yrot = tx*(ax.y*ax.x*cosb + ax.z*sina)
+			   + ty*(ax.y*ax.y*cosb + cosa)
+			   + tz*(ax.y*ax.z*cosb - ax.x*sina);
+	float zrot = tx*(ax.z*ax.x*cosb - ax.y*sina)
+			   + ty*(ax.z*ax.y*cosb + ax.x*sina)
+			   + tz*(ax.z*ax.z*cosb + cosa);
+
+
+	return ofxVec3f( xrot+pivot.x, yrot+pivot.y, zrot+pivot.z );
+}
+
+
+inline ofxVec3f& ofxVec3f::rotate( float angle,
+                                   const ofPoint& pivot,
+                                   const ofxVec3f& axis )
+{
+	ofxVec3f ax = axis.normalized();
+	x -= pivot.x;
+	y -= pivot.y;
+	z -= pivot.z;
+
+	float a = (float)(angle*DEG_TO_RAD);
+	float sina = sin( a );
+	float cosa = cos( a );
+	float cosb = 1.0f - cosa;
+
+	float xrot = x*(ax.x*ax.x*cosb + cosa)
+			   + y*(ax.x*ax.y*cosb - ax.z*sina)
+			   + z*(ax.x*ax.z*cosb + ax.y*sina);
+	float yrot = x*(ax.y*ax.x*cosb + ax.z*sina)
+			   + y*(ax.y*ax.y*cosb + cosa)
+			   + z*(ax.y*ax.z*cosb - ax.x*sina);
+	float zrot = x*(ax.z*ax.x*cosb - ax.y*sina)
+			   + y*(ax.z*ax.y*cosb + ax.x*sina)
+			   + z*(ax.z*ax.z*cosb + cosa);
+
+	x = xrot + pivot.x;
+	y = yrot + pivot.y;
+	z = zrot + pivot.z;
+
+	return *this;
+}
+
+
+inline ofxVec3f& ofxVec3f::rotateRad( float angle,
+                                      const ofPoint& pivot,
+                                      const ofxVec3f& axis )
+{
+	ofxVec3f ax = axis.normalized();
+	x -= pivot.x;
+	y -= pivot.y;
+	z -= pivot.z;
+
+	float a = angle;
+	float sina = sin( a );
+	float cosa = cos( a );
+	float cosb = 1.0f - cosa;
+
+	float xrot = x*(ax.x*ax.x*cosb + cosa)
+			   + y*(ax.x*ax.y*cosb - ax.z*sina)
+			   + z*(ax.x*ax.z*cosb + ax.y*sina);
+	float yrot = x*(ax.y*ax.x*cosb + ax.z*sina)
+			   + y*(ax.y*ax.y*cosb + cosa)
+			   + z*(ax.y*ax.z*cosb - ax.x*sina);
+	float zrot = x*(ax.z*ax.x*cosb - ax.y*sina)
+			   + y*(ax.z*ax.y*cosb + ax.x*sina)
+			   + z*(ax.z*ax.z*cosb + cosa);
+
+	x = xrot + pivot.x;
+	y = yrot + pivot.y;
+	z = zrot + pivot.z;
+
+	return *this;
+}
+
+
 
 
 // Map point to coordinate system defined by origin, vx, vy, and vz.
