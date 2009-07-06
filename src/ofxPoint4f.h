@@ -15,7 +15,7 @@
 #include "ofxVec4f.h"
 
 
-class ofxPoint4f : public ofxVec4f {};
+typedef ofxVec4f  ofxPoint4f;
 
 
 

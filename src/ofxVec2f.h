@@ -97,7 +97,7 @@ class ofxVec2f : public ofPoint {
     //
     float distance( const ofPoint& pnt) const;
     float squareDistance( const ofPoint& pnt ) const;
-    
+
 
     // Linear interpolation.
     //
