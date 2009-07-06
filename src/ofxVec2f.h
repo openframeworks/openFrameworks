@@ -168,6 +168,17 @@ class ofxVec2f : public ofPoint {
     // squareLength
     float lengthSquared() const;
 
+    // getInterpolated
+    ofxVec2f interpolated( const ofPoint& pnt, float p ) const;
+    
+    // getMiddled
+    ofxVec2f middled( const ofPoint& pnt ) const;
+    
+    // getMapped 
+    ofxVec2f mapped( const ofPoint& origin, const ofPoint& vx, const ofPoint& vy ) const;
+    
+    // squareDistance
+    float distanceSquared( const ofPoint& pnt ) const;
 };
 
 
@@ -430,13 +441,13 @@ inline ofxVec2f& ofxVec2f::rotateRad( float angle ) {
 //
 
 // This method is deprecated in 006 please use getMapped instead
-ofxVec2f ofxVec2f::mapped( const ofPoint& origin,
+inline ofxVec2f ofxVec2f::mapped( const ofPoint& origin,
 					  const ofPoint& vx,
 					  const ofPoint& vy ) const{
 	return getMapped(origin, vx, vy);
 }
 
-ofxVec2f ofxVec2f::getMapped( const ofPoint& origin,
+inline ofxVec2f ofxVec2f::getMapped( const ofPoint& origin,
 				  const ofPoint& vx,
 				  const ofPoint& vy ) const
 {
@@ -444,7 +455,7 @@ ofxVec2f ofxVec2f::getMapped( const ofPoint& origin,
 					  origin.y + x*vx.y + y*vy.y );
 }
 
-ofxVec2f& ofxVec2f::map( const ofPoint& origin,
+inline ofxVec2f& ofxVec2f::map( const ofPoint& origin,
 				const ofPoint& vx, const ofPoint& vy )
 {
 	float xmap = origin.x + x*vx.x + y*vy.x;
@@ -457,18 +468,18 @@ ofxVec2f& ofxVec2f::map( const ofPoint& origin,
 // Distance between two points.
 //
 //
-float ofxVec2f::distance( const ofPoint& pnt) const {
+inline float ofxVec2f::distance( const ofPoint& pnt) const {
 	float vx = x-pnt.x;
 	float vy = y-pnt.y;
 	return (float)sqrt(vx*vx + vy*vy);
 }
 
 //this method is deprecated in 006 please use squareDistance
-float ofxVec2f::distanceSquared( const ofPoint& pnt ) const {
+inline float ofxVec2f::distanceSquared( const ofPoint& pnt ) const {
 	return squareDistance(pnt);
 }
 
-float ofxVec2f::squareDistance( const ofPoint& pnt ) const {
+inline float ofxVec2f::squareDistance( const ofPoint& pnt ) const {
 	float vx = x-pnt.x;
 	float vy = y-pnt.y;
 	return vx*vx + vy*vy;
@@ -485,30 +496,30 @@ float ofxVec2f::squareDistance( const ofPoint& pnt ) const {
 */
 
 // this method is deprecated in 006 please use getInterpolated
-ofxVec2f ofxVec2f::interpolated( const ofPoint& pnt, float p ) const{
+inline ofxVec2f ofxVec2f::interpolated( const ofPoint& pnt, float p ) const{
 	return getInterpolated(pnt, p);
 }
 
-ofxVec2f ofxVec2f::getInterpolated( const ofPoint& pnt, float p ) const {
+inline ofxVec2f ofxVec2f::getInterpolated( const ofPoint& pnt, float p ) const {
 	return ofxVec2f( x*(1-p) + pnt.x*p, y*(1-p) + pnt.y*p );
 }
 
-ofxVec2f& ofxVec2f::interpolate( const ofPoint& pnt, float p ) {
+inline ofxVec2f& ofxVec2f::interpolate( const ofPoint& pnt, float p ) {
 	x = x*(1-p) + pnt.x*p;
 	y = y*(1-p) + pnt.y*p;
 	return *this;
 }
 
 // this method is deprecated in 006 please use getMiddle
-ofxVec2f ofxVec2f::middled( const ofPoint& pnt ) const{
+inline ofxVec2f ofxVec2f::middled( const ofPoint& pnt ) const{
 	return getMiddle(pnt);
 }
 
-ofxVec2f ofxVec2f::getMiddle( const ofPoint& pnt ) const {
+inline ofxVec2f ofxVec2f::getMiddle( const ofPoint& pnt ) const {
 	return ofxVec2f( (x+pnt.x)/2.0f, (y+pnt.y)/2.0f );
 }
 
-ofxVec2f& ofxVec2f::middle( const ofPoint& pnt ) {
+inline ofxVec2f& ofxVec2f::middle( const ofPoint& pnt ) {
 	x = (x+pnt.x)/2.0f;
 	y = (y+pnt.y)/2.0f;
 	return *this;
@@ -520,7 +531,7 @@ ofxVec2f& ofxVec2f::middle( const ofPoint& pnt ) {
 // Addition is sometimes useful for calculating averages too.
 //
 //
-ofxVec2f& ofxVec2f::average( const ofPoint* points, int num ) {
+inline ofxVec2f& ofxVec2f::average( const ofPoint* points, int num ) {
 	x = 0.f;
 	y = 0.f;
 	for( int i=0; i<num; i++) {
