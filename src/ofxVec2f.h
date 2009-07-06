@@ -75,6 +75,14 @@ class ofxVec2f : public ofPoint {
     ofxVec2f& rotate( float angle );
     ofxVec2f& rotateRad( float angle );
 
+    
+    // Rotation - point around pivot
+    //
+    ofxVec2f  getRotated( float angle, const ofPoint& pivot ) const;
+    ofxVec2f& rotate( float angle, const ofPoint& pivot );
+    ofxVec2f  getRotatedRad( float angle, const ofPoint& pivot ) const;
+    ofxVec2f& rotateRad( float angle, const ofPoint& pivot );
+        
 
     // Map point to coordinate system defined by origin, vx, and vy.
     //
@@ -179,6 +187,9 @@ class ofxVec2f : public ofPoint {
     
     // squareDistance
     float distanceSquared( const ofPoint& pnt ) const;
+    
+    // use getRotated
+    ofxVec2f rotated( float angle, const ofPoint& pivot ) const;    
 };
 
 
@@ -430,6 +441,45 @@ inline ofxVec2f& ofxVec2f::rotateRad( float angle ) {
 	float a = angle;
 	float xrot = x*cos(a) - y*sin(a);
 	y = x*sin(a) + y*cos(a);
+	x = xrot;
+	return *this;
+}
+
+
+
+// Rotate point by angle (deg) around pivot point.
+//
+//
+
+// This method is deprecated in 006 please use getRotated instead
+inline ofxVec2f ofxVec2f::rotated( float angle, const ofPoint& pivot ) const {
+	return getRotated(angle, pivot);
+}
+
+inline ofxVec2f ofxVec2f::getRotated( float angle, const ofPoint& pivot ) const {
+	float a = (float)(angle * DEG_TO_RAD);
+	return ofxVec2f( ((x-pivot.x)*cos(a) - (y-pivot.y)*sin(a)) + pivot.x,
+                     ((x-pivot.x)*sin(a) + (y-pivot.y)*cos(a)) + pivot.y );
+}
+
+inline ofxVec2f& ofxVec2f::rotate( float angle, const ofPoint& pivot ) {
+	float a = (float)(angle * DEG_TO_RAD);
+	float xrot = ((x-pivot.x)*cos(a) - (y-pivot.y)*sin(a)) + pivot.x;
+	y = ((x-pivot.x)*sin(a) + (y-pivot.y)*cos(a)) + pivot.y;
+	x = xrot;
+	return *this;
+}
+
+inline ofxVec2f ofxVec2f::getRotatedRad( float angle, const ofPoint& pivot ) const {
+	float a = angle;
+	return ofxVec2f( ((x-pivot.x)*cos(a) - (y-pivot.y)*sin(a)) + pivot.x,
+                     ((x-pivot.x)*sin(a) + (y-pivot.y)*cos(a)) + pivot.y );
+}
+
+inline ofxVec2f& ofxVec2f::rotateRad( float angle, const ofPoint& pivot ) {
+	float a = angle;
+	float xrot = ((x-pivot.x)*cos(a) - (y-pivot.y)*sin(a)) + pivot.x;
+	y = ((x-pivot.x)*sin(a) + (y-pivot.y)*cos(a)) + pivot.y;
 	x = xrot;
 	return *this;
 }
