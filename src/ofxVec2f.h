@@ -79,10 +79,10 @@ class ofxVec2f : public ofPoint {
     // Map point to coordinate system defined by origin, vx, and vy.
     //
     ofxVec2f getMapped( const ofPoint& origin,
-                        const ofPoint& vx,
-                        const ofPoint& vy ) const;
+                        const ofxVec2f& vx,
+                        const ofxVec2f& vy ) const;
     ofxVec2f& map( const ofPoint& origin,
-                  const ofPoint& vx, const ofPoint& vy );
+                   const ofxVec2f& vx, const ofxVec2f& vy );
 
 
     // Distance between two points.
@@ -98,11 +98,11 @@ class ofxVec2f : public ofPoint {
     * p==0.0 results in this point, p==0.5 results in the
     * midpoint, and p==1.0 results in pnt being returned.
     */
-    ofxVec2f  getInterpolated( const ofPoint& pnt, float p ) const;
-    ofxVec2f& interpolate( const ofPoint& pnt, float p );
-    ofxVec2f  getMiddle( const ofPoint& pnt ) const;
-    ofxVec2f& middle( const ofPoint& pnt );
-    ofxVec2f& average( const ofPoint* points, int num );
+    ofxVec2f   getInterpolated( const ofPoint& pnt, float p ) const;
+    ofxVec2f&  interpolate( const ofPoint& pnt, float p );
+    ofxVec2f   getMiddle( const ofPoint& pnt ) const;
+    ofxVec2f&  middle( const ofPoint& pnt );
+    ofxVec2f&  average( const ofPoint* points, int num );
     
     
     // Normalization
@@ -175,7 +175,7 @@ class ofxVec2f : public ofPoint {
     ofxVec2f middled( const ofPoint& pnt ) const;
     
     // getMapped 
-    ofxVec2f mapped( const ofPoint& origin, const ofPoint& vx, const ofPoint& vy ) const;
+    ofxVec2f mapped( const ofPoint& origin, const ofxVec2f& vx, const ofxVec2f& vy ) const;
     
     // squareDistance
     float distanceSquared( const ofPoint& pnt ) const;
@@ -442,21 +442,21 @@ inline ofxVec2f& ofxVec2f::rotateRad( float angle ) {
 
 // This method is deprecated in 006 please use getMapped instead
 inline ofxVec2f ofxVec2f::mapped( const ofPoint& origin,
-					  const ofPoint& vx,
-					  const ofPoint& vy ) const{
+					              const ofxVec2f& vx,
+					              const ofxVec2f& vy ) const{
 	return getMapped(origin, vx, vy);
 }
 
 inline ofxVec2f ofxVec2f::getMapped( const ofPoint& origin,
-				  const ofPoint& vx,
-				  const ofPoint& vy ) const
+				                     const ofxVec2f& vx,
+				                     const ofxVec2f& vy ) const
 {
 	return ofxVec2f( origin.x + x*vx.x + y*vy.x,
-					  origin.y + x*vx.y + y*vy.y );
+                     origin.y + x*vx.y + y*vy.y );
 }
 
 inline ofxVec2f& ofxVec2f::map( const ofPoint& origin,
-				const ofPoint& vx, const ofPoint& vy )
+				                const ofxVec2f& vx, const ofxVec2f& vy )
 {
 	float xmap = origin.x + x*vx.x + y*vy.x;
 	y = origin.y + x*vx.y + y*vy.y;

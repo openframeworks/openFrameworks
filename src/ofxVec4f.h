@@ -61,6 +61,25 @@ class ofxVec4f : public ofPoint {
     ofxVec4f& scale( const float length );
 
 
+    // Distance between two points.
+    //
+    float distance( const ofxVec4f& pnt) const;
+    float squareDistance( const ofxVec4f& pnt ) const;
+
+
+    // Linear interpolation.
+    //
+    /**
+    * p==0.0 results in this point, p==0.5 results in the
+    * midpoint, and p==1.0 results in pnt being returned.
+    */
+    ofxVec4f   getInterpolated( const ofxVec4f& pnt, float p ) const;
+    ofxVec4f&  interpolate( const ofxVec4f& pnt, float p );
+    ofxVec4f   getMiddle( const ofxVec4f& pnt ) const;
+    ofxVec4f&  middle( const ofxVec4f& pnt );
+    ofxVec4f&  average( const ofxVec4f* points, int num );
+    
+
     // Normalization
     //
     ofxVec4f  getNormalized() const;
@@ -102,6 +121,15 @@ class ofxVec4f : public ofPoint {
 
     // squareLength
     float lengthSquared() const;
+
+    // use squareDistance
+    float  distanceSquared( const ofxVec4f& pnt ) const;
+
+    // use getInterpolated
+    ofxVec4f 	interpolated( const ofxVec4f& pnt, float p ) const;
+
+    // use getMiddle
+    ofxVec4f 	middled( const ofxVec4f& pnt ) const;    
 };
 
 
@@ -326,6 +354,99 @@ inline ofxVec4f& ofxVec4f::scale( const float length ) {
 		z = (z/l)*length;
 		w = (w/l)*length;
 	}
+	return *this;
+}
+
+
+
+// Distance between two points.
+//
+//
+inline float ofxVec4f::distance( const ofxVec4f& pnt) const {
+	float vx = x-pnt.x;
+	float vy = y-pnt.y;
+	float vz = z-pnt.z;
+	float vw = w-pnt.w;
+	return (float)sqrt( vx*vx + vy*vy + vz*vz + vw*vw );
+}
+
+inline float ofxVec4f::distanceSquared( const ofxVec4f& pnt ) const {
+	return squareDistance(pnt);
+}
+
+inline float ofxVec4f::squareDistance( const ofxVec4f& pnt ) const {
+	float vx = x-pnt.x;
+	float vy = y-pnt.y;
+	float vz = z-pnt.z;
+	float vw = w-pnt.w;
+	return vx*vx + vy*vy + vz*vz + vw*vw;
+}
+
+
+
+// Linear interpolation.
+//
+//
+/**
+* p==0.0 results in this point, p==0.5 results in the
+* midpoint, and p==1.0 results in pnt being returned.
+*/
+inline ofxVec4f ofxVec4f::interpolated( const ofxVec4f& pnt, float p ) const{
+	return getInterpolated(pnt,p);
+}
+
+inline ofxVec4f ofxVec4f::getInterpolated( const ofxVec4f& pnt, float p ) const {
+	return ofxVec4f( x*(1-p) + pnt.x*p,
+                     y*(1-p) + pnt.y*p,
+                     z*(1-p) + pnt.z*p,
+                     w*(1-p) + pnt.w*p );
+}
+
+inline ofxVec4f& ofxVec4f::interpolate( const ofxVec4f& pnt, float p ) {
+	x = x*(1-p) + pnt.x*p;
+	y = y*(1-p) + pnt.y*p;
+	z = z*(1-p) + pnt.z*p;
+	w = w*(1-p) + pnt.w*p;
+	return *this;
+}
+
+inline ofxVec4f ofxVec4f::middled( const ofxVec4f& pnt ) const {
+	return getMiddle(pnt);
+}
+
+inline ofxVec4f ofxVec4f::getMiddle( const ofxVec4f& pnt ) const {
+	return ofxVec4f( (x+pnt.x)/2.0f, (y+pnt.y)/2.0f,
+                      (z+pnt.z)/2.0f, (w+pnt.w)/2.0f );
+}
+
+inline ofxVec4f& ofxVec4f::middle( const ofxVec4f& pnt ) {
+	x = (x+pnt.x)/2.0f;
+	y = (y+pnt.y)/2.0f;
+	z = (z+pnt.z)/2.0f;
+	w = (w+pnt.w)/2.0f;
+	return *this;
+}
+
+
+// Average (centroid) among points.
+// (Addition is sometimes useful for calculating averages too)
+//
+//
+inline ofxVec4f& ofxVec4f::average( const ofxVec4f* points, int num ) {
+	x = 0.f;
+	y = 0.f;
+	z = 0.f;
+	w = 0.f;
+	for( int i=0; i<num; i++) {
+		x += points[i].x;
+		y += points[i].y;
+		z += points[i].z;
+		w += points[i].w;
+	}
+	x /= num;
+	y /= num;
+	z /= num;
+	w /= num;
 	return *this;
 }
 
