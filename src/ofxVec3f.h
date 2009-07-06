@@ -82,6 +82,37 @@ class ofxVec3f : public ofPoint {
     ofxVec3f& rotateRad(float ax, float ay, float az);
 
 
+    // Map point to coordinate system defined by origin, vx, vy, and vz.
+    //
+    ofxVec3f getMapped( const ofPoint& origin,
+                        const ofxVec3f& vx,
+                        const ofxVec3f& vy,
+                        const ofxVec3f& vz ) const;
+    ofxVec3f& map( const ofPoint& origin,
+                   const ofxVec3f& vx,
+                   const ofxVec3f& vy,
+                   const ofxVec3f& vz );
+
+
+    // Distance between two points.
+    //
+    float distance( const ofPoint& pnt) const;
+    float squareDistance( const ofPoint& pnt ) const;
+
+
+    // Linear interpolation.
+    //
+    /**
+    * p==0.0 results in this point, p==0.5 results in the
+    * midpoint, and p==1.0 results in pnt being returned.
+    */
+    ofxVec3f   getInterpolated( const ofPoint& pnt, float p ) const;
+    ofxVec3f&  interpolate( const ofPoint& pnt, float p );
+    ofxVec3f   getMiddle( const ofPoint& pnt ) const;
+    ofxVec3f&  middle( const ofPoint& pnt );
+    ofxVec3f&  average( const ofPoint* points, int num );
+    
+
     // Normalization
     //
     ofxVec3f  getNormalized() const;
@@ -153,6 +184,21 @@ class ofxVec3f : public ofPoint {
 
     // squareLength
     float lengthSquared() const;
+    
+    // use getMapped
+    ofxVec3f  mapped( const ofPoint& origin,
+                      const ofxVec3f& vx,
+                      const ofxVec3f& vy,
+                      const ofxVec3f& vz ) const;
+
+    // use squareDistance
+    float  distanceSquared( const ofPoint& pnt ) const;
+
+    // use getInterpolated
+    ofxVec3f 	interpolated( const ofPoint& pnt, float p ) const;
+
+    // use getMiddle
+    ofxVec3f 	middled( const ofPoint& pnt ) const;    
 };
 
 
@@ -545,6 +591,126 @@ inline ofxVec3f& ofxVec3f::rotateRad(float ax, float ay, float az) {
 	x = nx; y = ny; z = nz;
 	return *this;
 }
+
+
+// Map point to coordinate system defined by origin, vx, vy, and vz.
+//
+//
+inline ofxVec3f ofxVec3f::mapped( const ofPoint& origin,
+                                  const ofxVec3f& vx,
+                                  const ofxVec3f& vy,
+                                  const ofxVec3f& vz ) const{
+	return getMapped(origin, vx, vy, vz);
+}
+
+inline ofxVec3f ofxVec3f::getMapped( const ofPoint& origin,
+                                     const ofxVec3f& vx,
+                                     const ofxVec3f& vy,
+                                     const ofxVec3f& vz ) const
+{
+	return ofxVec3f( origin.x + x*vx.x + y*vy.x + z*vz.x,
+                     origin.y + x*vx.y + y*vy.y + z*vz.y,
+                     origin.z + x*vx.z + y*vy.z + z*vz.z );
+}
+
+inline ofxVec3f& ofxVec3f::map( const ofPoint& origin,
+                                const ofxVec3f& vx,
+                                const ofxVec3f& vy,
+                                const ofxVec3f& vz )
+{
+	float xmap = origin.x + x*vx.x + y*vy.x + z*vz.x;
+	float ymap =  origin.y + x*vx.y + y*vy.y + z*vz.y;
+	z = origin.z + x*vx.z + y*vy.z + z*vz.z;
+	x = xmap;
+	y = ymap;
+	return *this;
+}
+
+
+// Distance between two points.
+//
+//
+inline float ofxVec3f::distance( const ofPoint& pnt) const {
+	float vx = x-pnt.x;
+	float vy = y-pnt.y;
+	float vz = z-pnt.z;
+	return (float)sqrt(vx*vx + vy*vy + vz*vz);
+}
+
+inline float  ofxVec3f::distanceSquared( const ofPoint& pnt ) const{
+	return squareDistance(pnt);
+}
+
+inline float  ofxVec3f::squareDistance( const ofPoint& pnt ) const {
+	float vx = x-pnt.x;
+	float vy = y-pnt.y;
+	float vz = z-pnt.z;
+	return vx*vx + vy*vy + vz*vz;
+}
+
+
+
+// Linear interpolation.
+//
+//
+/**
+* p==0.0 results in this point, p==0.5 results in the
+* midpoint, and p==1.0 results in pnt being returned.
+*/
+
+inline ofxVec3f ofxVec3f::interpolated( const ofPoint& pnt, float p ) const {
+	return getInterpolated(pnt,p);
+}
+
+inline ofxVec3f ofxVec3f::getInterpolated( const ofPoint& pnt, float p ) const {
+	return ofxVec3f( x*(1-p) + pnt.x*p,
+                     y*(1-p) + pnt.y*p,
+                     z*(1-p) + pnt.z*p );
+}
+
+inline ofxVec3f& ofxVec3f::interpolate( const ofPoint& pnt, float p ) {
+	x = x*(1-p) + pnt.x*p;
+	y = y*(1-p) + pnt.y*p;
+	z = z*(1-p) + pnt.z*p;
+	return *this;
+}
+
+
+inline ofxVec3f ofxVec3f::middled( const ofPoint& pnt ) const {
+	return getMiddle(pnt);
+}
+
+inline ofxVec3f ofxVec3f::getMiddle( const ofPoint& pnt ) const {
+	return ofxVec3f( (x+pnt.x)/2.0f, (y+pnt.y)/2.0f, (z+pnt.z)/2.0f );
+}
+
+inline ofxVec3f& ofxVec3f::middle( const ofPoint& pnt ) {
+	x = (x+pnt.x)/2.0f;
+	y = (y+pnt.y)/2.0f;
+	z = (z+pnt.z)/2.0f;
+	return *this;
+}
+
+
+// Average (centroid) among points.
+// Addition is sometimes useful for calculating averages too.
+//
+//
+inline ofxVec3f& ofxVec3f::average( const ofPoint* points, int num ) {
+	x = 0.f;
+	y = 0.f;
+	z = 0.f;
+	for( int i=0; i<num; i++) {
+		x += points[i].x;
+		y += points[i].y;
+		z += points[i].z;
+	}
+	x /= num;
+	y /= num;
+	z /= num;
+	return *this;
+}
+
 
 
 // Normalization
