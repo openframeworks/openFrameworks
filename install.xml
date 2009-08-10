@@ -1,7 +1,7 @@
 <install>
 
 	<version>0.02</version>
-	<author>zach lieberman</author>
+	<author>zach lieberman, stefan hechenberger</author>
 	<url></url>
 
 	<add>
@@ -25,6 +25,8 @@
 				<file>../../../addons/ofxOpenCv/src/ofxCvImage.cpp</file>
 				<file>../../../addons/ofxOpenCv/src/ofxCvImage.h</file>
 				<file>../../../addons/ofxOpenCv/src/ofxCvMain.h</file>
+				<file>../../../addons/ofxOpenCv/src/ofxCvShortImage.cpp</file>
+				<file>../../../addons/ofxOpenCv/src/ofxCvShortImage.h</file>				
 				<file>../../../addons/ofxOpenCv/src/ofxOpenCv.h</file>
 			</folder>
 		</src>
@@ -36,8 +38,10 @@
 		
 
 		<link>
-			<lib os="win_cb" compiler="codeblocks">../../../addons/ofxOpenCv/libs/opencv/lib/win32/cv.a</lib>
-			<lib os="win_cb" compiler="devcpp,codewarrior,visualstudio">../../../addons/ofxOpenCv/libs/opencv/lib/win32/cxcore.a</lib>
+			<lib os="win32" compiler="codeblocks">../../../addons/ofxOpenCv/libs/opencv/lib/win32/libcv.a</lib>
+			<lib os="win32" compiler="codeblocks">../../../addons/ofxOpenCv/libs/opencv/lib/win32/libcxcore.a</lib>
+			<lib os="win32" compiler="visualstudio">../../../addons/ofxOpenCv/libs/opencv/lib/win32/cv110.lib</lib>
+			<lib os="win32" compiler="visualstudio">../../../addons/ofxOpenCv/libs/opencv/lib/win32/cxcore110.lib</lib>
 			<lib os="mac"   compiler="xcode">../../../addons/ofxOpenCv/libs/opencv/lib/osx/libOpenCv.a</lib>
 			<lib os="linux" compiler="codeblocks, makefile">../../../addons/ofxOpenCv/libs/opencv/lib/linux/libcv.a</lib>
 			<lib os="linux" compiler="codeblocks, makefile">../../../addons/ofxOpenCv/libs/opencv/lib/linux/libcxcore.a</lib>
