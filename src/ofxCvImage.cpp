@@ -39,7 +39,6 @@ void ofxCvImage::allocate( int w, int h ) {
 
 	width = w;
 	height = h;
-    roiStack.push_back( ofRectangle(0,0,w,h) );   // set ROI to full image
 	bAllocated = true;
 
     if( bUseTexture ) {
@@ -65,7 +64,6 @@ void ofxCvImage::clear() {
         }
 		width = 0;
 		height = 0;
-        roiStack.clear();
 
 		if( bUseTexture ) {
 			tex.clear();
@@ -106,22 +104,6 @@ void ofxCvImage::flagImageChanged() {
 
 // ROI - region of interest
 
-//--------------------------------------------------------------------------------
-void ofxCvImage::pushROI() {
-    roiStack.push_back( ofRectangle() );
-    setROI(0,0,width,height);
-
-}
-
-//--------------------------------------------------------------------------------
-void ofxCvImage::popROI() {
-    if(roiStack.size() > 1) {
-        roiStack.pop_back();
-    } else {
-        ofLog(OF_LOG_WARNING, "in popROI, not popping since there is only one element left.");
-    }
-    setROI( roiStack.back() );
-}
 
 //--------------------------------------------------------------------------------
 void ofxCvImage::setROI( int x, int y, int w, int h ) {
@@ -133,10 +115,6 @@ void ofxCvImage::setROI( int x, int y, int w, int h ) {
 
     cvSetImageROI( cvImage, cvRect(x,y, w,h) );
     cvSetImageROI( cvImageTemp, cvRect(x,y, w,h) );
-    roiStack.back().x = x;
-    roiStack.back().y = y;
-    roiStack.back().width = w;
-    roiStack.back().height = h;
     flagImageChanged();
 }
 
@@ -147,14 +125,14 @@ void ofxCvImage::setROI( const ofRectangle& rect ) {
 
 //--------------------------------------------------------------------------------
 ofRectangle ofxCvImage::getROI() {
-    return roiStack.back();
+    CvRect rect = cvGetImageROI(cvImage);
+    return ofRectangle((float)rect.x, (float)rect.y, (float)rect.width, (float)rect.height);
 }
 
 //--------------------------------------------------------------------------------
 void ofxCvImage::resetROI() {
     cvResetImageROI( cvImage );
     cvResetImageROI( cvImageTemp );
-    setROI( 0,0, width, height );
 }
 
 //--------------------------------------------------------------------------------
@@ -659,10 +637,10 @@ int ofxCvImage::countNonZeroInRegion( int x, int y, int w, int h ) {
     // intersect the global ROI with the region to check
     ofRectangle iRoi = getIntersectionROI( getROI(), ofRectangle(x,y,w,h) );
 
-    pushROI();
+    ofRectangle lastROI = getROI();
     setROI(iRoi);
 	count = cvCountNonZero( cvImage );
-    popROI();
+    setROI(lastROI);
 
 	return count;
 }

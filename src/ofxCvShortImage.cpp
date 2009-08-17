@@ -73,7 +73,7 @@ void ofxCvShortImage::setFromPixels( unsigned char* _pixels, int w, int h ) {
     // This sets the internal image ignoring any ROI
 
     if( w == width &&  h == height ) {
-        pushROI();
+        ofRectangle lastROI = getROI();
         if(cvGrayscaleImage == NULL) {
             cvGrayscaleImage = cvCreateImage( cvSize(width,height), IPL_DEPTH_8U, 1 );
         }
@@ -85,7 +85,7 @@ void ofxCvShortImage::setFromPixels( unsigned char* _pixels, int w, int h ) {
                     width );
         }
         convertGrayToShort(cvGrayscaleImage, cvImage);
-        popROI();
+        setROI(lastROI);
         flagImageChanged();
     } else {
         ofLog(OF_LOG_ERROR, "in setFromPixels, size mismatch");
@@ -213,10 +213,11 @@ unsigned char*  ofxCvShortImage::getPixels(){
             cvGrayscaleImage = cvCreateImage( cvSize(width,height), IPL_DEPTH_8U, 1 );
         }
 
-        pushROI();
+        ofRectangle lastROI = getROI();
+        
         resetImageROI(cvGrayscaleImage);
         convertShortToGray(cvImage, cvGrayscaleImage);
-        popROI();
+        setROI(lastROI);
 
         if(pixels == NULL) {
             // we need pixels, allocate it
