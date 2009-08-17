@@ -140,7 +140,7 @@ class ofxCvGrayscaleImage : public ofxCvImage {
 
 
 
-  private:
+  protected:
   
     void init();
     

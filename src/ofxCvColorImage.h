@@ -123,7 +123,7 @@ class ofxCvColorImage : public ofxCvImage {
     // virtual int  countNonZeroInRegion( int x, int y, int w, int h );  //in base class       
 
 
-  private:
+  protected:
   
     void init();
     IplImage*  cvGrayscaleImage;    // internal helper grayscale, allocated on demand

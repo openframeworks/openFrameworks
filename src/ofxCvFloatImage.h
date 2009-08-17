@@ -138,7 +138,7 @@ class ofxCvFloatImage : public ofxCvImage {
     // virtual int  countNonZeroInRegion( int x, int y, int w, int h );        //in base class
     
 
-  private:
+  protected:
 
     void init();
     virtual void convertFloatToGray( IplImage* floatImg, IplImage* grayImg );

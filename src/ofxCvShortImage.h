@@ -117,7 +117,7 @@ class ofxCvShortImage : public ofxCvImage {
     // virtual int  countNonZeroInRegion( int x, int y, int w, int h );  //in base class
     
 
-  private:
+  protected:
     
     void init();
     virtual void convertShortToGray( IplImage* floatImg, IplImage* grayImg );
