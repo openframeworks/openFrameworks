@@ -27,7 +27,8 @@ class ofxCvGrayscaleImage : public ofxCvImage {
     // virtual void  clear();                                                 //in base class
 	//virtual float getWidth();                                               //in base class
 	//virtual float getHeight();                                              //in base class
-    // virtual void  setUseTexture( bool bUse );                              //in base class   
+    // virtual void  setUseTexture( bool bUse );                              //in base class
+    // virtual ofTexture&  getTextureReference();                             //in base class
 
 
     // ROI - region of interest
