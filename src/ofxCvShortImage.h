@@ -32,8 +32,6 @@ class ofxCvShortImage : public ofxCvImage {
 
     // ROI - region of interest
     //
-    // virtual void  pushROI();                                               //in base class
-    // virtual void  popROI();                                                //in base class
     // virtual void  setROI( int x, int y, int w, int h );                    //in base class
     // virtual void  setROI( ofRectangle& rect );                             //in base class
     // virtual ofRectangle  getROI();                                         //in base class

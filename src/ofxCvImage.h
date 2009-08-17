@@ -45,8 +45,6 @@ class ofxCvImage : public ofBaseDraws, public ofBaseHasTexture, public ofBaseHas
     
     // ROI - region of interest
     //
-    virtual void  pushROI();
-    virtual void  popROI();
     virtual void  setROI( int x, int y, int w, int h );
     virtual void  setROI( const ofRectangle& rect );
     virtual ofRectangle  getROI();
@@ -159,10 +157,6 @@ class ofxCvImage : public ofBaseDraws, public ofBaseHasTexture, public ofBaseHas
     IplImage*  cvImage;
     IplImage*  cvImageTemp;   // this is typically swapped back into cvImage
                               // after an image operation with swapImage()
-
-    vector<ofRectangle>  roiStack;      // ROI stack
-                                        // last rectangle is used for ROI
-                                        // used with pushROI(), popROI()
                               
     int ipldepth;             // IPL_DEPTH_8U, IPL_DEPTH_16U, IPL_DEPTH_32F, ...
     int iplchannels;          // 1, 3, 4, ...
