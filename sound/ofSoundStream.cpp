@@ -31,7 +31,7 @@ int receiveAudioBufferAndCallSimpleApp(char *buffer, int bufferSize, void *data)
 		if(OFSAptr)
 			OFSAptr->audioReceived(fPtr, bufferSize, nInputChannels);
 
-		#ifdef OF_CORE_EVENTS_ENABLED
+		#ifdef OF_USING_POCO
 			audioEventArgs.buffer = fPtr;
 			audioEventArgs.bufferSize = bufferSize;
 			audioEventArgs.nChannels = nInputChannels;
@@ -44,7 +44,7 @@ int receiveAudioBufferAndCallSimpleApp(char *buffer, int bufferSize, void *data)
 		if(OFSAptr)
 			OFSAptr->audioRequested(fPtr, bufferSize, nOutputChannels);
 
-		#ifdef OF_CORE_EVENTS_ENABLED
+		#ifdef OF_USING_POCO
 			audioEventArgs.buffer = fPtr;
 			audioEventArgs.bufferSize = bufferSize;
 			audioEventArgs.nChannels = nOutputChannels;
