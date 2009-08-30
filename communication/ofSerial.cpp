@@ -271,7 +271,7 @@ bool ofSerial::setup(int deviceNumber, int baud){
 
 		while ((entry = readdir(dir)) != NULL){
 			str = (char *)entry->d_name;
-			if( str.substr(0,3) == "cu." ){
+			if( str.substr(0,3) == "cu." || str.substr(0,3) == "tty" || str.substr(0,3) == "rfc" ){
 				if(deviceCount == deviceNumber){
 					device = "/dev/"+str;
 					deviceFound = true;
