@@ -82,7 +82,7 @@ int32_t ofxOscMessage::getArgAsInt32( int index ) const
 	    if ( getArgType( index ) == OFXOSC_TYPE_FLOAT )
         {
             fprintf(stderr, "ofxOscMessage:getArgAsInt32: warning: converting int32 to float for argument %i\n", index );
-            return ((ofxOscArgFloat*)args[index])->get();
+            return (int32_t)((ofxOscArgFloat*)args[index])->get();
         }
         else
         {
@@ -102,7 +102,7 @@ float ofxOscMessage::getArgAsFloat( int index ) const
 	    if ( getArgType( index ) == OFXOSC_TYPE_INT32 )
         {
             fprintf(stderr, "ofxOscMessage:getArgAsFloat: warning: converting float to int32 for argument %i\n", index );
-            return ((ofxOscArgInt32*)args[index])->get();
+            return (int32_t)((ofxOscArgInt32*)args[index])->get();
         }
         else
         {
