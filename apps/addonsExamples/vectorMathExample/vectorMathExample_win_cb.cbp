@@ -36,7 +36,7 @@
 			<Add directory="../../../libs/glu"/>
 			<Add directory="../../../libs/freetype/include"/>
 			<Add directory="../../../libs/freetype/include/freetype2"/>
-			<Add directory="../../../libs/FreeImage/include"/>
+			<Add directory="../../../libs/FreeImage/include_win"/>
 			<Add directory="../../../libs/quicktime/CIncludes"/>
 			<Add directory="../../../libs/rtAudio/include"/>
 			<Add directory="../../../libs/fmodex/inc"/>
@@ -86,8 +86,8 @@
 			<Add option="-lws2_32"/>
 		</Linker>
 		<ExtraCommands>
-			<Add after='xcopy /e /i /y "$(PROJECT_DIR)../../../other/export/coreDlls_cbWin32/*.dll"  bin'/>
-			<Add after="cmd /c if not exist bin/data mkdir bin/data"/>
+			<Add after='xcopy /e /i /y "$(PROJECT_DIR)../../../export/win_cb/*.dll" $(PROJECT_DIR)bin'/>
+			<Add after="cmd /c if not exist $(PROJECT_DIR)bin/data mkdir $(PROJECT_DIR)bin/data"/>
 			<Mode after="always"/>
 		</ExtraCommands>
 		<Unit filename="src/main.cpp">
