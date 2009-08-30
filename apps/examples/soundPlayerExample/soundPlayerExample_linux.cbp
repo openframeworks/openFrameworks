@@ -104,9 +104,6 @@
 			<Add after="#"/>
 			<Mode after="always"/>
 		</ExtraCommands>
-		<Unit filename="../../../addons/ofAddons.h">
-			<Option virtualFolder="addons/"/>
-		</Unit>
 		<Unit filename="src/main.cpp">
 			<Option virtualFolder="src/"/>
 		</Unit>
