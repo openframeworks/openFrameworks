@@ -146,8 +146,7 @@ void ofImage::clear(){
 	if (myPixels.bAllocated == true){
 		delete[] myPixels.pixels;
 	}
-
-	tex.clear();
+	if(bUseTexture)	tex.clear();
 
 	myPixels.width			= 0;
 	myPixels.height			= 0;
@@ -304,8 +303,8 @@ void ofImage::setImageType(int newType){
 void ofImage::resize(int newWidth, int newHeight){
 	resizePixels(myPixels, newWidth, newHeight);
 
-	tex.clear();
 	if (bUseTexture == true){
+		tex.clear();
 		tex.allocate(myPixels.width, myPixels.height, myPixels.glDataType);
 	}
 
