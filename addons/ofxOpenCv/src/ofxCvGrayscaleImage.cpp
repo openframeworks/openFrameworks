@@ -45,12 +45,19 @@ void ofxCvGrayscaleImage::setFromPixels( unsigned char* _pixels, int w, int h ) 
     // This sets the internal image ignoring any ROI
 
     if( w == width && h == height ) {
+		
+		if( cvImage->width == cvImage->widthStep ){
+			memcpy( cvImage->imageData,  _pixels, w*h);
+		}else{
+		
         // copy pixels from _pixels, however many we have or will fit in cvImage
         for( int i=0; i < height; i++ ) {
             memcpy( cvImage->imageData + (i*cvImage->widthStep),
                     _pixels + (i*w),
                     width);
         }
+			
+		}
         flagImageChanged();
     } else {
         ofLog(OF_LOG_ERROR, "in setFromPixels, size mismatch");
@@ -171,6 +178,13 @@ void ofxCvGrayscaleImage::absDiff( ofxCvGrayscaleImage& mom,
 // Get Pixel Data
 //--------------------------------------------------------------------------------
 unsigned char* ofxCvGrayscaleImage::getPixels() {
+	//Note this possible introduces a bug where pixels doesn't contain the current image.
+	//Also it means that modifying the pointer return by get pixels - affects the internal cvImage
+	//Where as with the slower way below modifying the pointer doesn't change the image. 
+	if(  cvImage->width == cvImage->widthStep ){
+		return (unsigned char *)cvImage->imageData;
+	}
+
     if(bPixelsDirty) {
         if(pixels == NULL) {
             // we need pixels, allocate it

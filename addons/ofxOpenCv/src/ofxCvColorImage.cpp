@@ -79,11 +79,19 @@ void ofxCvColorImage::setFromPixels( unsigned char* _pixels, int w, int h ) {
     // copy pixels ignoring any ROI
 
     if( w == width && h == height ) {
-        for( int i=0; i < height; i++ ) {
-            memcpy( cvImage->imageData + (i*cvImage->widthStep),
-                    _pixels + (i*w*3),
-                    width*3 );
-        }
+	
+		if( cvImage->width == cvImage->widthStep ){
+			memcpy( cvImage->imageData,  _pixels, w*h*3);
+		}else{
+			
+ 		 	for( int i=0; i < height; i++ ) {
+            		memcpy( cvImage->imageData + (i*cvImage->widthStep),
+ 	                   _pixels + (i*w*3),
+        	            width*3 );
+        		}
+			
+		}
+		
         flagImageChanged();
     } else {
         ofLog(OF_LOG_ERROR, "in setFromPixels, size mismatch");
@@ -207,6 +215,13 @@ void ofxCvColorImage::operator = ( const IplImage* _mom ) {
 
 //--------------------------------------------------------------------------------
 unsigned char* ofxCvColorImage::getPixels() {
+	//Note this possible introduces a bug where pixels doesn't contain the current image.
+	//Also it means that modifying the pointer return by get pixels - affects the internal cvImage
+	//Where as with the slower way below modifying the pointer doesn't change the image. 
+	if(  cvImage->width == cvImage->widthStep ){
+		return (unsigned char *)cvImage->imageData;
+	}
+
     if(bPixelsDirty) {
         if(pixels == NULL) {
             // we need pixels, allocate it
