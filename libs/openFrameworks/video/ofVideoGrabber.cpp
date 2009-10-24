@@ -1116,7 +1116,7 @@ void ofVideoGrabber::setAnchorPercent(float xPct, float yPct){
 }
 
 //----------------------------------------------------------
-void ofVideoGrabber::setAnchorPoint(int x, int y){
+void ofVideoGrabber::setAnchorPoint(float x, float y){
     if (bUseTexture)tex.setAnchorPoint(x, y);
 }
 

@@ -267,7 +267,7 @@ void ofTexture::setAnchorPercent(float xPct, float yPct){
 }
 
 //----------------------------------------------------------
-void ofTexture::setAnchorPoint(int x, int y){
+void ofTexture::setAnchorPoint(float x, float y){
     anchor.x = x;
     anchor.y = y;
 

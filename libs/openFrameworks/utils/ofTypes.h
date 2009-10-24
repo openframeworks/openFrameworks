@@ -256,7 +256,7 @@ public:
 	virtual float getWidth()=0;
 
 	virtual void setAnchorPercent(float xPct, float yPct){};
-    virtual void setAnchorPoint(int x, int y){};
+    virtual void setAnchorPoint(float x, float y){};
 	virtual void resetAnchor(){};
 
 };
