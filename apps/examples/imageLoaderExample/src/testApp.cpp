@@ -23,10 +23,7 @@ void testApp::update(){
 
 
 //--------------------------------------------------------------
-void testApp::draw(){
-
-	ofSetupScreen();
-	
+void testApp::draw(){	
 	ofSetColor(0xFFFFFF);
 
 	bikers.draw(0,0);
