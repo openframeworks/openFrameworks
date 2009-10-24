@@ -1107,7 +1107,7 @@ void ofVideoPlayer::setAnchorPercent(float xPct, float yPct){
 }
 
 //----------------------------------------------------------
-void ofVideoPlayer::setAnchorPoint(int x, int y){
+void ofVideoPlayer::setAnchorPoint(float x, float y){
     if (bUseTexture)tex.setAnchorPoint(x, y);
 }
 

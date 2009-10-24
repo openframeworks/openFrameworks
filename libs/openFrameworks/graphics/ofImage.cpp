@@ -87,7 +87,7 @@ void ofImage::setAnchorPercent(float xPct, float yPct){
 }
 
 //----------------------------------------------------------
-void ofImage::setAnchorPoint(int x, int y){
+void ofImage::setAnchorPoint(float x, float y){
     if (bUseTexture)tex.setAnchorPoint(x, y);
 }
 
