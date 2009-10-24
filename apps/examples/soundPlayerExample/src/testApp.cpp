@@ -1,5 +1,4 @@
 #include "testApp.h"
-#include "stdio.h"
 
 //--------------------------------------------------------------
 void testApp::setup(){	 
