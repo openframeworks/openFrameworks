@@ -406,7 +406,7 @@ void ofxCvImage::setAnchorPercent( float xPct, float yPct ){
 }
 
 //--------------------------------------------------------------------------------
-void ofxCvImage::setAnchorPoint( int x, int y ){
+void ofxCvImage::setAnchorPoint( float x, float y ){
     if( bUseTexture ) {
     	tex.setAnchorPoint(x,y);
     }else{
