@@ -1,2 +1,5 @@
 *.mode1v3 #xcode user prefs
 *.pbxuser #xcode user prefs
+build/    #ignore xcode build folders
+obj/      #ignore codeblocks obj folders
+*.o       #ignore all object files
