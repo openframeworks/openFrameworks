@@ -89,7 +89,7 @@ class ofxCvImage : public ofBaseDraws, public ofBaseHasTexture, public ofBaseHas
     virtual void  drawROI( float x, float y );
     virtual void  drawROI( float x, float y, float w, float h );
     virtual void setAnchorPercent( float xPct, float yPct );
-    virtual void setAnchorPoint( int x, int y );
+    virtual void setAnchorPoint( float x, float y );
     virtual void resetAnchor();
     
     
