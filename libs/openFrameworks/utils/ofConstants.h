@@ -5,6 +5,11 @@
 #define OF_VERSION	6
 //-------------------------------
 
+
+#define OF_LOOP_NONE					0x01
+#define OF_LOOP_PALINDROME				0x02
+#define OF_LOOP_NORMAL					0x03
+
 //-------------------------------
 //  find the system type --------
 //-------------------------------
@@ -138,16 +143,17 @@
 
 	// (if you change this, you might need to clean and rebuild, in CB build->rebuild)
 
-	#define OF_SWITCH_TO_UNICAP_FOR_LINUX_VIDCAP
+	//#define OF_SWITCH_TO_UNICAP_FOR_LINUX_VIDCAP
+
 
 
 
 	#ifdef OF_SWITCH_TO_UNICAP_FOR_LINUX_VIDCAP
 		#define OF_VIDEO_CAPTURE_UNICAP
     #else
-		#define OF_VIDEO_CAPTURE_V4L
+		//#define OF_VIDEO_CAPTURE_V4L
+		#define OF_VIDEO_CAPTURE_GSTREAMER
 	#endif
-
 
 
 #else

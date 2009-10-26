@@ -96,6 +96,7 @@ ofVideoGrabber::~ofVideoGrabber(){
 	#endif
 	//---------------------------------
 
+
 }
 
 
@@ -214,6 +215,16 @@ void ofVideoGrabber::listDevices(){
 	#endif
 	//---------------------------------
 
+	//---------------------------------
+	#ifdef OF_VIDEO_CAPTURE_GSTREAMER
+	//--------------------------------
+
+
+		gstUtils.listDevices();
+
+	//---------------------------------
+	#endif
+	//---------------------------------
 
 	//---------------------------------
 	#ifdef OF_VIDEO_CAPTURE_V4L
@@ -268,7 +279,19 @@ void ofVideoGrabber::setDesiredFramerate(int framerate){
 
 //---------------------------------------------------------------------------
 unsigned char * ofVideoGrabber::getPixels(){
-	return pixels;
+
+	//---------------------------------
+	#ifdef OF_VIDEO_CAPTURE_GSTREAMER
+	//--------------------------------
+		return gstUtils.getPixels();
+
+	//---------------------------------
+	#else
+	//---------------------------------
+		return pixels;
+	//---------------------------------
+	#endif
+	//---------------------------------
 }
 
 //------------------------------------
@@ -427,6 +450,24 @@ void ofVideoGrabber::grabFrame(){
 	//---------------------------------
 
 	//---------------------------------
+	#ifdef OF_VIDEO_CAPTURE_GSTREAMER
+	//--------------------------------
+
+		if (bGrabberInited){
+			gstUtils.update();
+			bIsFrameNew = gstUtils.isFrameNew();
+			if(bIsFrameNew) {
+				if (bUseTexture){
+					tex.loadData(gstUtils.getPixels(), width, height, GL_RGB);
+				}
+			}
+		}
+
+	//---------------------------------
+	#endif
+	//---------------------------------
+
+	//---------------------------------
 	#ifdef OF_VIDEO_CAPTURE_V4L
 	//--------------------------------
 
@@ -495,6 +536,16 @@ void ofVideoGrabber::close(){
 			bIsFrameNew 		= false;
 			bChooseDevice 		= false;
 		}
+
+	//---------------------------------
+	#endif
+	//---------------------------------
+
+	//---------------------------------
+	#ifdef OF_VIDEO_CAPTURE_GSTREAMER
+	//--------------------------------
+
+		gstUtils.close();
 
 	//---------------------------------
 	#endif
@@ -1111,6 +1162,34 @@ bool ofVideoGrabber::initGrabber(int w, int h, bool setUseTexture){
 	#endif
 	//---------------------------------
 
+	//---------------------------------
+	#ifdef OF_VIDEO_CAPTURE_GSTREAMER
+	//--------------------------------
+		if(gstUtils.initGrabber(w,h)){
+			if ( !bChooseDevice ){
+				deviceID = 0;
+			}
+
+			width 	= w;
+			height 	= h;
+			if (bUseTexture){
+				// create the texture, set the pixels to black and
+				// upload them to the texture (so at least we see nothing black the callback)
+				tex.allocate(width,height,GL_RGB);
+				tex.loadData(gstUtils.getPixels(), width, height, GL_RGB);
+			}
+			bGrabberInited = true;
+			ofLog(OF_LOG_VERBOSE, "ofVideoGrabber: initied");
+		}else{
+			bGrabberInited = false;
+			ofLog(OF_LOG_ERROR, "ofVideoGrabber: couldn't init");
+		}
+		return bGrabberInited;
+
+
+	//---------------------------------
+	#endif
+	//---------------------------------
 
 	//---------------------------------
 	#ifdef OF_VIDEO_CAPTURE_V4L
@@ -1170,7 +1249,7 @@ void ofVideoGrabber::setAnchorPercent(float xPct, float yPct){
 }
 
 //----------------------------------------------------------
-void ofVideoGrabber::setAnchorPoint(float x, float y){
+void ofVideoGrabber::setAnchorPoint(int x, int y){
     if (bUseTexture)tex.setAnchorPoint(x, y);
 }
 
