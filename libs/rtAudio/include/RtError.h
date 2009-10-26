@@ -12,12 +12,13 @@
 #ifndef RTERROR_H
 #define RTERROR_H
 
+#include <exception>
 #include <iostream>
 #include <string>
 
-class RtError
+class RtError : public std::exception
 {
-public:
+ public:
   //! Defined RtError types.
   enum Type {
     WARNING,           /*!< A non-critical error. */
@@ -25,36 +26,35 @@ public:
     UNSPECIFIED,       /*!< The default, unspecified error type. */
     NO_DEVICES_FOUND,  /*!< No devices found on system. */
     INVALID_DEVICE,    /*!< An invalid device ID was specified. */
-    INVALID_STREAM,    /*!< An invalid stream ID was specified. */
     MEMORY_ERROR,      /*!< An error occured during memory allocation. */
     INVALID_PARAMETER, /*!< An invalid parameter was specified to a function. */
+    INVALID_USE,       /*!< The function was called incorrectly. */
     DRIVER_ERROR,      /*!< A system driver error occured. */
     SYSTEM_ERROR,      /*!< A system error occured. */
     THREAD_ERROR       /*!< A thread error occured. */
   };
 
-protected:
-  std::string message_;
-  Type type_;
-
-public:
   //! The constructor.
-  RtError(const std::string& message, Type type = RtError::UNSPECIFIED) : message_(message), type_(type) {}
-
+  RtError( const std::string& message, Type type = RtError::UNSPECIFIED ) throw() : message_(message), type_(type) {}
+ 
   //! The destructor.
-  virtual ~RtError(void) {};
+  virtual ~RtError( void ) throw() {}
 
   //! Prints thrown error message to stderr.
-  virtual void printMessage(void) { std::cerr << '\n' << message_ << "\n\n"; }
+  virtual void printMessage( void ) throw() { std::cerr << '\n' << message_ << "\n\n"; }
 
   //! Returns the thrown error message type.
-  virtual const Type& getType(void) { return type_; }
+  virtual const Type& getType(void) throw() { return type_; }
 
   //! Returns the thrown error message string.
-  virtual const std::string& getMessage(void) { return message_; }
+  virtual const std::string& getMessage(void) throw() { return message_; }
 
-  //! Returns the thrown error message as a C string.
-  virtual const char *getMessageString(void) { return message_.c_str(); }
+  //! Returns the thrown error message as a c-style string.
+  virtual const char* what( void ) const throw() { return message_.c_str(); }
+
+ protected:
+  std::string message_;
+  Type type_;
 };
 
 #endif
