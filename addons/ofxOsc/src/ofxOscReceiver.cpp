@@ -79,8 +79,14 @@ void ofxOscReceiver::shutdown()
 		listen_socket->AsynchronousBreak();
 		// wait for shutdown to complete
 		while (!socketHasShutdown)
+		{
+			#ifdef TARGET_WIN32
+			Sleep(1);
+			#else
 			// sleep 0.1ms
 			usleep(100);
+			#endif
+		}
 		
 		// thread will clean up itself
 		
