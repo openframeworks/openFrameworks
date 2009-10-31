@@ -1,8 +1,8 @@
 <install>
 
-	<version>0.02</version>
-	<author>damian frey</author>
-	<url></url>
+	<version>0.04</version>
+	<author>damian stewart</author>
+	<url>http://frey.co.nz/ofxosc</url>
 
 	<add>	
 		<!-- 	=====================================================================	-->
@@ -42,3 +42,4 @@
 	
 	
 </install>
+

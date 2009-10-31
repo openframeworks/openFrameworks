@@ -31,6 +31,7 @@
 #define _ofxOscRECEIVER_H
 
 #include <deque>
+#include "ofMain.h"
 
 #ifdef TARGET_WIN32
 // threads
