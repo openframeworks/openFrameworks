@@ -266,7 +266,8 @@ void ofLaunchBrowser(string url){
 	#ifdef TARGET_LINUX
 	//--------------------------------------
 		string commandStr = "xdg-open "+url;
-		system(commandStr.c_str());
+		int ret = system(commandStr.c_str());
+		if(ret!=0) ofLog(OF_LOG_ERROR,"ofLaunchBrowser: couldn't open browser");
 	//----------------------------
 	#endif
 	//----------------------------
