@@ -1,10 +1,3 @@
-/*
- * ofGstUtils.h
- *
- *  Created on: 06-jun-2009
- *      Author: art
- */
-
 #ifndef OFGSTUTILS_H_
 #define OFGSTUTILS_H_
 
