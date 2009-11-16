@@ -96,13 +96,18 @@ void ofSoundStreamSetup(int nOutputs, int nInputs, ofBaseApp * OFSA, int sampleR
 		inputParameters->deviceId = audio->getDefaultInputDevice();
 		inputParameters->nChannels = nInputChannels;
 	}
+
 	unsigned int bufferFrames = (unsigned int)bufferSize; // 256 sample frames
 
+	RtAudio::StreamOptions options;
+	options.flags = RTAUDIO_SCHEDULE_REALTIME;
+	options.numberOfBuffers = nBuffers;
+	options.priority = 1;
 
 	try {
 
 		audio ->openStream( outputParameters, inputParameters, RTAUDIO_FLOAT32,
-							sampleRate, &bufferFrames, &receiveAudioBufferAndCallSimpleApp);
+							sampleRate, &bufferFrames, &receiveAudioBufferAndCallSimpleApp, &options);
 		audio->startStream();
 	} catch (RtError &error) {
 		error.printMessage();
