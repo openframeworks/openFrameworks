@@ -1,10 +1,3 @@
-/*
- * ofGstUtils.cpp
- *
- *  Created on: 06-jun-2009
- *      Author: art
- */
-
 #include "ofGstUtils.h"
 #include "ofUtils.h"
 #include <gst/app/gstappsink.h>
@@ -15,7 +8,9 @@
 #include <libhal.h>
 #include <dbus/dbus.h>
 #else
+// not needed any more, keeping it for compatibility with previous version
 #define LIBUDEV_I_KNOW_THE_API_IS_SUBJECT_TO_CHANGE
+
 extern "C" {
 	#include <libudev.h>
 }
@@ -885,6 +880,11 @@ ofGstVideoFormat * ofGstUtils::selectFormat(int w, int h){
 bool ofGstUtils::initGrabber(int w, int h){
 	bpp = 3;
 	if(!camData.bInited) get_video_devices(camData);
+
+	if(camData.num_webcam_devices==0){
+		ofLog(OF_LOG_ERROR,"ofGstUtils: no devices found exiting without initializing");
+		return false;
+	}
 
 	ofGstVideoFormat * format = selectFormat(w,h);
 
