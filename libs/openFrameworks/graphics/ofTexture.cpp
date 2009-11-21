@@ -17,7 +17,6 @@ void ofDisableTectureEdgeHack(){
 //----------------------------------------------------------
 ofTexture::ofTexture(){
 	texData.bAllocated		= false;
-	texData.textureName[0]	= 0;
 	texData.textureID		= 0;
 	texData.bFlipTexture	= false;
 	texData.textureTarget	= GL_TEXTURE_2D;
@@ -66,8 +65,8 @@ ofTexture::~ofTexture(){
 void ofTexture::clear(){
 	// try to free up the texture memory so we don't reallocate
 	// http://www.opengl.org/documentation/specs/man_pages/hardcopy/GL/html/gl/deletetextures.html
-	if (texData.textureName[0] != 0){
-		glDeleteTextures(1, (GLuint *)texData.textureName);
+	if (texData.textureID != 0){
+		glDeleteTextures(1, (GLuint *)&texData.textureID);
 	}
 
 	texData.bAllocated = false;
@@ -106,11 +105,11 @@ void ofTexture::allocate(int w, int h, int internalGlDataType, bool bUseARBExten
 	// attempt to free the previous bound texture, if we can:
 	clear();
 
-	glGenTextures(1, (GLuint *)texData.textureName);   // could be more then one, but for now, just one
+	glGenTextures(1, (GLuint *)&texData.textureID);   // could be more then one, but for now, just one
 
 	glEnable(texData.textureTarget);
 
-		glBindTexture(texData.textureTarget, (GLuint)texData.textureName[0]);
+		glBindTexture(texData.textureTarget, (GLuint)texData.textureID);
 	#ifndef TARGET_OF_IPHONE 
 		// can't do this on OpenGL ES: on full-blown OpenGL, 
 		// internalGlDataType and glDataType (GL_LUMINANCE below)
@@ -201,7 +200,7 @@ void ofTexture::loadData(unsigned char * data, int w, int h, int glDataType){
 
 	// update the texture image:
 	glEnable(texData.textureTarget);
-		glBindTexture(texData.textureTarget, (GLuint)texData.textureName[0]);
+		glBindTexture(texData.textureTarget, (GLuint)texData.textureID);
  		glTexSubImage2D(texData.textureTarget,0,0,0,w,h,texData.glType,GL_UNSIGNED_BYTE,data);
 	glDisable(texData.textureTarget);
 
@@ -249,7 +248,7 @@ void ofTexture::loadScreenData(int x, int y, int w, int h){
 
 
 	glEnable(texData.textureTarget);
-	glBindTexture(texData.textureTarget, (GLuint)texData.textureName[0]);
+	glBindTexture(texData.textureTarget, (GLuint)texData.textureID);
 	glCopyTexSubImage2D(texData.textureTarget, 0,0,0,x,y,w,h);
 	glDisable(texData.textureTarget);
 }
@@ -284,7 +283,7 @@ void ofTexture::resetAnchor(){
 void ofTexture::bind(){
 	//we could check if it has been allocated - but we don't do that in draw() 
 	glEnable(texData.textureTarget);
-	glBindTexture( texData.textureTarget, (GLuint)texData.textureName[0]);
+	glBindTexture( texData.textureTarget, (GLuint)texData.textureID);
 }
 
 //----------------------------------------------------------
@@ -298,7 +297,7 @@ void ofTexture::draw(float x, float y, float w, float h){
 	glEnable(texData.textureTarget);
 
 	// bind the texture
-	glBindTexture( texData.textureTarget, (GLuint)texData.textureName[0] );
+	glBindTexture( texData.textureTarget, (GLuint)texData.textureID );
 
 		GLfloat px0 = 0;		// up to you to get the aspect ratio right
 		GLfloat py0 = 0;
