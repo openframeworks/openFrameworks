@@ -4,6 +4,10 @@
 REPO=git://github.com/openframeworks/openFrameworks.git
 BRANCH=master
 
+libsnotinmac="unicap gstappsink glu glut quicktime videoInput"
+libsnotinlinux="quicktime videoInput glut glu"
+libsnotinwindows="unicap gstappsink"
+
 if [ ! -d openFrameworks/.git ]; then
     git clone $REPO 
     gitfinishedok=$?
@@ -137,7 +141,7 @@ function createPackage {
         otherplatforms="linux linux64 macosx win_cb win_vs2008"
     fi
 
-
+    #delete libraries for other platforms
     cd $3/libs  
     for lib in $( ls . )
     do
@@ -147,10 +151,21 @@ function createPackage {
         rm -Rf $otherplatforms
         cd $3/libs 
     done
+    if [ "$1" = "macosx"]; then
+        rm -Rf $libsnotinmac
+    elif [ "$1" = "linux" ] || [ "$1" = "linux64" ]; then
+        rm -Rf $libsnotinlinux
+    elif [ "$1" = "win_cb" ] || [ "$1" = "win_vs2008" ]; then
+        rm -Rf $libsnotinwindows
+    fi
 
     #delete dynamic libraries for other platforms
     cd $3/export
     rm -Rf $otherplatforms
+    if [ "$1" = "macosx" ]; then
+        cd ..
+        rmdir export
+    fi
 
     #delete scripts
     cd $3/scripts
@@ -161,6 +176,7 @@ function createPackage {
     else
         rm -Rf *
     fi
+    rm create_package.sh
 
     #delete .svn dirs
     cd $3
