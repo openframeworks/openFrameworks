@@ -1,4 +1,5 @@
 <install>
+    <name>ofx3DModelLoader</name>
 	
 	<version>0.01</version>
 	<author>theo watson</author>
