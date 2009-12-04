@@ -1,8 +1,8 @@
 # $1 -> platform: win_cb, linux, linux64, vs2008, macosx, iphone, all
 # $2 -> version number: 006
 
-REPO=git://github.com/arturoc/openFrameworks.git
-BRANCH=gstreamer_utils
+REPO=git://github.com/openframeworks/openFrameworks.git
+BRANCH=master
 
 if [ ! -d openFrameworks/.git ]; then
     git clone $REPO 
