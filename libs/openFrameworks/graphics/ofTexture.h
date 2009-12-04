@@ -26,7 +26,7 @@ typedef struct{
 //enable / disable the slight offset we add to ofTexture's texture coords to compensate for bad edge artifiacts
 //enabled by default
 void ofEnableTextureEdgeHack();
-void ofDisableTectureEdgeHack();
+void ofDisableTextureEdgeHack();
 
 class ofTexture : public ofBaseDraws{
 
