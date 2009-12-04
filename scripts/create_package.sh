@@ -22,9 +22,8 @@ fi
 cd openFrameworks
 if [ "$BRANCH" != "master" ]; then
     git checkout --track -b $BRANCH origin/$BRANCH
-    git pull origin $BRANCH
 fi
-
+git pull origin $BRANCH
 
 
 packageroot=$PWD
