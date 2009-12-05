@@ -51,8 +51,14 @@ ofAppGlutWindow::ofAppGlutWindow(){
 	nonFullScreenY		= -1;
 	mouseX				= 0;
 	mouseY				= 0;
+	displayString		= "";
 
 }
+
+//------------------------------------------------------------
+ void ofAppGlutWindow::setGlutDisplayString(string displayStr){
+	displayString = displayStr;
+ }
 
 //------------------------------------------------------------
 void ofAppGlutWindow::setupOpenGL(int w, int h, int screenMode){
@@ -61,8 +67,13 @@ void ofAppGlutWindow::setupOpenGL(int w, int h, int screenMode){
 	char *argv = "openframeworks";
 	char **vptr = &argv;
 	glutInit(&argc, vptr);
-	glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH | GLUT_ALPHA );
-
+	
+	if( displayString != ""){
+		glutInitDisplayString( displayString.c_str() );
+	}else{
+		glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH | GLUT_ALPHA );
+	}
+	
 	windowMode = screenMode;
 	bNewScreenMode = true;
 
@@ -86,7 +97,12 @@ void ofAppGlutWindow::setupOpenGL(int w, int h, int screenMode){
 		requestedWidth  = glutGet(GLUT_WINDOW_WIDTH);
 		requestedHeight = glutGet(GLUT_WINDOW_HEIGHT);
 	} else {
-		glutInitDisplayMode( GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH | GLUT_ALPHA );
+		if( displayString != ""){
+			glutInitDisplayString( displayString.c_str() );
+		}else{
+			glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH | GLUT_ALPHA );
+		}
+
     	// w x h, 32bit pixel depth, 60Hz refresh rate
 		char gameStr[64];
 		sprintf( gameStr, "%dx%d:%d@%d", w, h, 32, 60 );
