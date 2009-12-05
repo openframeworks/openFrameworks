@@ -102,7 +102,7 @@ OSErr 	DrawCompleteProc(Movie theMovie, long refCon){
 
 	ofVideoPlayer * ofvp = (ofVideoPlayer *)refCon;
 
-	#if defined(TARGET_OSX) && defined(BIG_ENDIAN)
+	#if defined(TARGET_OSX) && defined(__BIG_ENDIAN__)
 		convertPixels(ofvp->offscreenGWorldPixels, ofvp->pixels, ofvp->width, ofvp->height);
 	#endif
 
@@ -333,9 +333,8 @@ void ofVideoPlayer::closeMovie(){
 	if (bLoaded == true){
 
 	    DisposeMovie (moviePtr);
-	    #ifdef TARGET_WIN32
-			DisposeMovieDrawingCompleteUPP (myDrawCompleteProc);
-	    #endif
+		DisposeMovieDrawingCompleteUPP(myDrawCompleteProc);
+
 		moviePtr = NULL;
     }
 
@@ -407,8 +406,8 @@ void ofVideoPlayer::createImgMemAndGWorld(){
 	offscreenGWorldPixels 	= new unsigned char[4 * width * height + 32];
 	pixels					= new unsigned char[width*height*3];
 
-	#if defined(TARGET_OSX) && defined(BIG_ENDIAN)
-		QTNewGWorldFromPtr (&(offscreenGWorld), k32ARGBPixelFormat, &(movieRect), NULL, NULL, 0, (offscreenGWorldPixels), 4 * width);
+	#if defined(TARGET_OSX) && defined(__BIG_ENDIAN__)
+		QTNewGWorldFromPtr (&(offscreenGWorld), k32ARGBPixelFormat, &(movieRect), NULL, NULL, 0, (offscreenGWorldPixels), 4 * width);		
 	#else
 		QTNewGWorldFromPtr (&(offscreenGWorld), k24RGBPixelFormat, &(movieRect), NULL, NULL, 0, (pixels), 3 * width);
 	#endif
@@ -483,7 +482,6 @@ bool ofVideoPlayer::loadMovie(string name){
 		}
 
 		//----------------- callback method
-	    MovieDrawingCompleteUPP myDrawCompleteProc;
 	    myDrawCompleteProc = NewMovieDrawingCompleteUPP (DrawCompleteProc);
 		SetMovieDrawingCompleteProc (moviePtr, movieDrawingCallWhenChanged,  myDrawCompleteProc, (long)this);
 
@@ -513,7 +511,7 @@ bool ofVideoPlayer::loadMovie(string name){
 		SetMovieActiveSegment(moviePtr, -1,-1);
 		MoviesTask(moviePtr,0);
 
-		#if defined(TARGET_OSX) && defined(BIG_ENDIAN)
+		#if defined(TARGET_OSX) && defined(__BIG_ENDIAN__)
 			convertPixels(offscreenGWorldPixels, pixels, width, height);
 		#endif
 
@@ -624,7 +622,7 @@ void ofVideoPlayer::start(){
 
 		// get some pixels in there right away:
 		MoviesTask(moviePtr,0);
-		#if defined(TARGET_OSX) && defined(BIG_ENDIAN)
+		#if defined(TARGET_OSX) && defined(__BIG_ENDIAN__)
 			convertPixels(offscreenGWorldPixels, pixels, width, height);
 		#endif
 		bHavePixelsChanged = true;

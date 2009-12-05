@@ -139,6 +139,16 @@ void ofTexture::allocate(int w, int h, int internalGlDataType, bool bUseARBExten
 
 //----------------------------------------------------------
 void ofTexture::loadData(unsigned char * data, int w, int h, int glDataType){
+	loadData( (void *)data, w, h, glDataType);
+}
+
+//----------------------------------------------------------
+void ofTexture::loadData(float * data, int w, int h, int glDataType){
+	loadData( (void *)data, w, h, glDataType);
+}
+
+//----------------------------------------------------------
+void ofTexture::loadData(void * data, int w, int h, int glDataType){
 
 	//	can we allow for uploads bigger then texture and
 	//	just take as much as the texture can?

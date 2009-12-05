@@ -35,7 +35,7 @@ class ofxThread{
 			static unsigned int __stdcall thread(void * objPtr){
 				ofxThread* me	= (ofxThread*)objPtr;
 				me->threadedFunction();
-				stopThread();
+				me->stopThread();
 				return 0;
 			}
 
@@ -43,7 +43,7 @@ class ofxThread{
 			static void * thread(void * objPtr){
 				ofxThread* me	= (ofxThread*)objPtr;
 				me->threadedFunction();
-				stopThread();
+				me->stopThread();
 				return 0;
 			}
 		#endif
