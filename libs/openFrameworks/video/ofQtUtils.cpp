@@ -60,7 +60,7 @@ void convertPixels(unsigned char * gWorldPixels, unsigned char * rgbPixels, int 
 	//	bool bFlipVertically 	= true;
 
 	bool bFlipVertically 	= false;
-
+	
 	// -------------------------------------------
 	// we flip vertically because the 0,0 position in OF
 	// is the bottom left (not top left, like processing)

@@ -84,7 +84,8 @@ class ofVideoGrabber : public ofBaseVideo{
 			Rect				videoRect;
 			bool 				bSgInited;
 			string				deviceName;
-
+			SGGrabCompleteBottleUPP	myGrabCompleteProc;
+			
 			bool				qtInitSeqGrabber();
 			bool				qtCloseSeqGrabber();
 			bool				qtSelectDevice(int deviceNumber, bool didWeChooseADevice);
