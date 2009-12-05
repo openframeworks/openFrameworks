@@ -433,26 +433,44 @@ void ofImage::resizePixels(ofPixels &pix, int newWidth, int newHeight){
 //----------------------------------------------------
 void ofImage::changeTypeOfPixels(ofPixels &pix, int newType){
 
+	
+		
 	if (pix.ofImageType == newType) return;
 
 	FIBITMAP * bmp					= getBmpFromPixels(pix);
 	FIBITMAP * convertedBmp			= NULL;
 
-
-
+	// check if we need to reallocate the texture.
+	bool bNeedNewTexture = false;
+	int oldType = pix.ofImageType;
+	if (newType > oldType){ 
+		bNeedNewTexture = true;
+	}
+	
 	// new type !
 	switch (newType){
+			
 		//------------------------------------
 		case OF_IMAGE_GRAYSCALE:
 			convertedBmp = FreeImage_ConvertToGreyscale(bmp);
 			break;
+			
 		//------------------------------------
 		case OF_IMAGE_COLOR:
 			convertedBmp = FreeImage_ConvertTo24Bits(bmp);
+			if (bNeedNewTexture){
+				tex.clear();
+				tex.allocate(myPixels.width, myPixels.height, GL_RGB);
+			}
 			break;
+		
 		//------------------------------------
 		case OF_IMAGE_COLOR_ALPHA:
 			convertedBmp = FreeImage_ConvertTo32Bits(bmp);
+			if (bNeedNewTexture){
+				tex.clear();
+				tex.allocate(myPixels.width, myPixels.height, GL_RGBA);
+			}
 			break;
 	}
 
