@@ -26,7 +26,8 @@ extern "C" {
 // --------------------- global functions:
 void ofSoundStopAll();
 void ofSoundSetVolume(float vol);
-float * ofSoundGetSpectrum(int nBands); // max 512...
+void ofSoundUpdate();						// calls FMOD update.
+float * ofSoundGetSpectrum(int nBands);		// max 512...
 
 
 // --------------------- player functions:
