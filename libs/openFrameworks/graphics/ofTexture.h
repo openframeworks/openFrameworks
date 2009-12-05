@@ -11,6 +11,7 @@ typedef struct{
 	int glType;
 	int glTypeInternal;
 	int textureTarget;
+	int pixelType;  // MEMO: added this (GL_FLOAT, GL_UNSIGNED_BYTE etc.
 	float tex_t;
 	float tex_u;
 	float tex_w;
@@ -73,6 +74,8 @@ class ofTexture : public ofBaseDraws{
 	ofPoint getCoordFromPoint(float xPos, float yPos);		
 	ofPoint getCoordFromPercent(float xPts, float yPts);		
 	
+	void setTextureWrap(GLint wrapModeHorizontal, GLint wrapModeVertical);
+	void setTextureMinMagFilter(GLint minFilter, GLint maxFilter);
 
 	bool bAllocated();
 

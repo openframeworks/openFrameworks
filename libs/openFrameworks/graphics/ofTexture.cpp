@@ -22,6 +22,7 @@ ofTexture::ofTexture(){
 	texData.textureTarget	= GL_TEXTURE_2D;
 	texData.glTypeInternal  = 0;
 	texData.glType			= 0;
+	texData.pixelType		= GL_UNSIGNED_BYTE;
 	texData.width			= 0;
 	texData.height			= 0;
 	texData.tex_w			= 0;
@@ -81,7 +82,7 @@ void ofTexture::allocate(int w, int h, int internalGlDataType){
 void ofTexture::allocate(int w, int h, int internalGlDataType, bool bUseARBExtention){
 
 	//our graphics card might not support arb so we have to see if it is supported.
-	#ifndef TARGET_OF_IPHONE
+	#ifndef TARGET_OPENGLES
 		if (bUseARBExtention && GLEE_ARB_texture_rectangle){
 			texData.tex_w = w;
 			texData.tex_h = h;
@@ -102,6 +103,31 @@ void ofTexture::allocate(int w, int h, int internalGlDataType, bool bUseARBExten
 
 	texData.glTypeInternal = internalGlDataType;
 
+	
+	// MEMO: todo, add more types
+	switch(texData.glTypeInternal) {
+#ifndef TARGET_OPENGLES	
+		case GL_RGBA32F_ARB:
+			texData.glType		= GL_RGBA;
+			texData.pixelType	= GL_FLOAT;
+			break;
+			
+		case GL_RGB32F_ARB:
+			texData.glType		= GL_RGB;
+			texData.pixelType	= GL_FLOAT;
+			break;
+
+		case GL_LUMINANCE32F_ARB:
+			texData.glType		= GL_LUMINANCE;
+			texData.pixelType	= GL_FLOAT;
+			break;
+#endif			
+			
+		default:
+			texData.glType		= GL_LUMINANCE;
+			texData.pixelType	= GL_UNSIGNED_BYTE;
+	}
+
 	// attempt to free the previous bound texture, if we can:
 	clear();
 
@@ -110,20 +136,23 @@ void ofTexture::allocate(int w, int h, int internalGlDataType, bool bUseARBExten
 	glEnable(texData.textureTarget);
 
 		glBindTexture(texData.textureTarget, (GLuint)texData.textureID);
-	#ifndef TARGET_OF_IPHONE 
+	#ifndef TARGET_OPENGLES
 		// can't do this on OpenGL ES: on full-blown OpenGL, 
 		// internalGlDataType and glDataType (GL_LUMINANCE below)
 		// can be different; on ES they must be exactly the same.
-		glTexImage2D(texData.textureTarget, 0, texData.glTypeInternal, (GLint)texData.tex_w, (GLint)texData.tex_h, 0, GL_LUMINANCE, GL_UNSIGNED_BYTE, 0);  // init to black...
+//		glTexImage2D(texData.textureTarget, 0, texData.glTypeInternal, (GLint)texData.tex_w, (GLint)texData.tex_h, 0, GL_LUMINANCE, PIXEL_TYPE, 0);  // init to black...
+		glTexImage2D(texData.textureTarget, 0, texData.glTypeInternal, (GLint)texData.tex_w, (GLint)texData.tex_h, 0, texData.glType, texData.pixelType, 0);  // init to black...
 	#else
 		glTexImage2D(texData.textureTarget, 0, texData.glTypeInternal, texData.tex_w, texData.tex_h, 0, texData.glTypeInternal, GL_UNSIGNED_BYTE, 0);
 	#endif
 
-		glTexParameterf(texData.textureTarget, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-		glTexParameterf(texData.textureTarget, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-		glTexParameterf(texData.textureTarget, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		glTexParameterf(texData.textureTarget, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+	
+	glTexParameterf(texData.textureTarget, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameterf(texData.textureTarget, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameterf(texData.textureTarget, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameterf(texData.textureTarget, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	
+	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 
 	glDisable(texData.textureTarget);
 
@@ -211,7 +240,7 @@ void ofTexture::loadData(void * data, int w, int h, int glDataType){
 	// update the texture image:
 	glEnable(texData.textureTarget);
 		glBindTexture(texData.textureTarget, (GLuint)texData.textureID);
- 		glTexSubImage2D(texData.textureTarget,0,0,0,w,h,texData.glType,GL_UNSIGNED_BYTE,data);
+ 		glTexSubImage2D(texData.textureTarget, 0, 0, 0, w, h, texData.glType, texData.pixelType, data); // MEMO: important to use pixelType here
 	glDisable(texData.textureTarget);
 
 	//------------------------ back to normal.
@@ -357,6 +386,25 @@ ofPoint ofTexture::getCoordFromPercent(float xPct, float yPct){
 	
 	return temp;
 }
+
+
+//----------------------------------------------------------
+void ofTexture::setTextureWrap(GLint wrapModeHorizontal, GLint wrapModeVertical) {
+	bind();
+	glTexParameterf(texData.textureTarget, GL_TEXTURE_WRAP_S, wrapModeHorizontal);
+	glTexParameterf(texData.textureTarget, GL_TEXTURE_WRAP_T, wrapModeVertical);
+	unbind();
+}
+
+//----------------------------------------------------------
+void ofTexture::setTextureMinMagFilter(GLint minFilter, GLint maxFilter){
+	bind();
+	glTexParameteri(texData.textureTarget, GL_TEXTURE_MAG_FILTER, maxFilter);
+	glTexParameteri(texData.textureTarget, GL_TEXTURE_MIN_FILTER, minFilter);
+	unbind();
+}
+
+
 
 //----------------------------------------------------------
 void ofTexture::draw(float x, float y, float w, float h){
