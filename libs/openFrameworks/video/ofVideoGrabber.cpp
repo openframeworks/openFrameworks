@@ -6,6 +6,18 @@
 #endif
 
 
+//--------------------------------------------------------------
+static ComponentResult 	frameIsGrabbedProc(SGChannel sgChan, short nBufferNum, Boolean *pbDone, long lRefCon);
+static ComponentResult  frameIsGrabbedProc(SGChannel sgChan, short nBufferNum, Boolean *pbDone, long lRefCon){
+
+ 	ComponentResult err = SGGrabFrameComplete( sgChan, nBufferNum, pbDone );
+	
+	bool * havePixChanged = (bool *)lRefCon;
+	*havePixChanged = true;
+
+	return err;
+}
+
 //--------------------------------------------------------------------
 ofVideoGrabber::ofVideoGrabber(){
 
@@ -104,7 +116,7 @@ void ofVideoGrabber::listDevices(){
 			}
 		}
 
-		printf("-------------------------------------");
+		printf("-------------------------------------\n");
 
 		/*
 			//input selection stuff (ie multiple webcams)
@@ -155,18 +167,18 @@ void ofVideoGrabber::listDevices(){
 						memcpy(pascalNameInput, inputNameRec.name, sizeof(char) * 256);
 					}
 
-					printf( "device[%i] %s - %s",  deviceCount, p2cstr(pascalName), p2cstr(pascalNameInput) );
+					printf( "device[%i] %s - %s\n",  deviceCount, p2cstr(pascalName), p2cstr(pascalNameInput) );
 
 					//we count this way as we need to be able to distinguish multiple inputs as devices
 					deviceCount++;
 				}
 
 			}else{
-				printf( "(unavailable) device[%i] %s",  deviceCount, p2cstr(pascalName) );
+				printf( "(unavailable) device[%i] %s\n",  deviceCount, p2cstr(pascalName) );
 				deviceCount++;
 			}
 		}
-		printf( "-------------------------------------");
+		printf( "-------------------------------------\n");
 
 		//if we initialized the grabbing component then close it
 		if( bNeedToInitGrabberFirst ){
@@ -286,10 +298,12 @@ void ofVideoGrabber::grabFrame(){
 			// was a new frame or not..
 			// or else we will process way more than necessary
 			// (ie opengl is running at 60fps +, capture at 30fps)
-			if (offscreenGWorldPixels[0] != 0x00){
-				offscreenGWorldPixels[0] = 0x00;
-				bHavePixelsChanged = true;
-				convertPixels(offscreenGWorldPixels, pixels, width, height);
+			if (bHavePixelsChanged){
+				
+				#if defined(TARGET_OSX) && defined(__BIG_ENDIAN__)
+					convertPixels(offscreenGWorldPixels, pixels, width, height);
+				#endif
+				
 				if (bUseTexture){
 					tex.loadData(pixels, width, height, GL_RGB);
 				}
@@ -434,6 +448,7 @@ void ofVideoGrabber::close(){
 	//---------------------------------
 
 		qtCloseSeqGrabber();
+		DisposeSGGrabCompleteBottleUPP(myGrabCompleteProc);
 
 	//---------------------------------
 	#endif
@@ -853,7 +868,6 @@ bool ofVideoGrabber::qtSelectDevice(int deviceNumber, bool didWeChooseADevice){
 
 //--------------------------------------------------------------------
 bool ofVideoGrabber::initGrabber(int w, int h, bool setUseTexture){
-
 	bUseTexture = setUseTexture;
 
 	//---------------------------------
@@ -879,12 +893,18 @@ bool ofVideoGrabber::initGrabber(int w, int h, bool setUseTexture){
 
 		offscreenGWorldPixels 	= (unsigned char*)malloc(4 * width * height + 32);
 		pixels					= new unsigned char[width*height*3];
-		QTNewGWorldFromPtr (&videogworld, k32ARGBPixelFormat, &videoRect, NULL, NULL, 0, offscreenGWorldPixels, 4 * width);
+		
+		#if defined(TARGET_OSX) && defined(__BIG_ENDIAN__)
+			QTNewGWorldFromPtr (&(videogworld), k32ARGBPixelFormat, &(videoRect), NULL, NULL, 0, (offscreenGWorldPixels), 4 * width);		
+		#else
+			QTNewGWorldFromPtr (&(videogworld), k24RGBPixelFormat, &(videoRect), NULL, NULL, 0, (pixels), 3 * width);
+		#endif		
+		
 		LockPixels(GetGWorldPixMap(videogworld));
 		SetGWorld (videogworld, NULL);
 		SGSetGWorld(gSeqGrabber, videogworld, nil);
 
-
+		
 		//---------------------------------- 4 - device selection
 		bool didWeChooseADevice = bChooseDevice;
 		bool deviceIsSelected	=  false;
@@ -919,6 +939,25 @@ bool ofVideoGrabber::initGrabber(int w, int h, bool setUseTexture){
 	 	err = SGSetChannelUsage(gVideoChannel,seqGrabPreview);
 		if ( err != noErr ) goto bail;
 
+	
+		//----------------- callback method for notifying new frame
+		err = SGSetChannelRefCon(gVideoChannel, (long)&bHavePixelsChanged );
+		if(!err) {
+
+			VideoBottles vb; 
+			/* get the current bottlenecks */ 
+			vb.procCount = 9; 
+			err = SGGetVideoBottlenecks(gVideoChannel, &vb); 
+			if (!err) { 			
+				myGrabCompleteProc = NewSGGrabCompleteBottleUPP(frameIsGrabbedProc);
+				vb.grabCompleteProc = myGrabCompleteProc;
+			
+				/* add our GrabFrameComplete function */ 
+				err = SGSetVideoBottlenecks(gVideoChannel, &vb); 	
+			}
+		
+		}
+				
 		err = SGSetChannelBounds(gVideoChannel, &videoRect);
 		if ( err != noErr ) goto bail;
 

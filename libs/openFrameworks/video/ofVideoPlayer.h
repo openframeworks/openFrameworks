@@ -95,6 +95,7 @@ class ofVideoPlayer : public ofBaseVideo{
 		//--------------------------------------
 		#ifdef OF_VIDEO_PLAYER_QUICKTIME
 		//--------------------------------------
+			MovieDrawingCompleteUPP myDrawCompleteProc;
 			MovieController  	thePlayer;
 			GWorldPtr 			offscreenGWorld;
 			Movie 			 	moviePtr;
