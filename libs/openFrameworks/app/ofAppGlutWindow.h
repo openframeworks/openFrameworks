@@ -28,6 +28,9 @@ public:
 	void setupOpenGL(int w, int h, int screenMode);
 	void initializeWindow();
 	void runAppViaInfiniteLoop(ofBaseApp * appPtr);
+	
+	//note if you fail to set a compatible string the app will not launch
+	void setGlutDisplayString(string str);
 
 	void hideCursor();
 	void showCursor();
@@ -49,6 +52,7 @@ public:
 
 	int			getFrameNum();
 	float		getFrameRate();
+	double		getLastFrameTime();
 	void		setFrameRate(float targetRate);
 
 	void		enableSetupScreen();
@@ -66,7 +70,7 @@ public:
 	static void resize_cb(int w, int h);
 
 
-	
+	string displayString;
 	 
 };
 

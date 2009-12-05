@@ -1636,3 +1636,84 @@ bool TiXmlText::Blank() const
 	return true;
 }
 
+
+bool TiXmlDocument::ReadFromMemory( const char* pBuf, size_t sz, TiXmlEncoding encoding)
+{
+    // Delete the existing data:
+    Clear();
+    location.Clear();
+
+    // Get the file size, so we can pre-allocate the string. HUGE speed impact.
+    long length = (long) sz;
+
+    // Strange case, but good to handle up front.
+    if ( length == 0 )
+    {
+        SetError( TIXML_ERROR_DOCUMENT_EMPTY, 0, 0, TIXML_ENCODING_UNKNOWN );
+        return false;
+    }
+
+    // If we have a file, assume it is all one big XML file, and read it in.
+    // The document parser may decide the document ends sooner than the entire file, however.
+    TIXML_STRING data;
+    data.reserve( length );
+
+
+    char* buf = new char[ length+1 ];
+    memset(buf,0,length+1);
+
+    memcpy(buf, pBuf, length);
+
+    const char* lastPos = buf;
+    const char* p = buf;
+
+    buf[length] = 0;
+    while( *p ) {
+        assert( p < (buf+length) );
+        if ( *p == 0xa ) {
+            // Newline character. No special rules for this. Append all the characters
+            // since the last string, and include the newline.
+            data.append( lastPos, (p-lastPos+1) );  // append, include the newline
+            ++p;                                    // move past the newline
+            lastPos = p;                            // and point to the new buffer (may be 0)
+            assert( p <= (buf+length) );
+        }
+        else if ( *p == 0xd ) {
+            // Carriage return. Append what we have so far, then
+            // handle moving forward in the buffer.
+            if ( (p-lastPos) > 0 ) {
+                data.append( lastPos, p-lastPos );  // do not add the CR
+            }
+            data += (char)0xa;                      // a proper newline
+
+            if ( *(p+1) == 0xa ) {
+                // Carriage return - new line sequence
+                p += 2;
+                lastPos = p;
+                assert( p <= (buf+length) );
+            }
+            else {
+                // it was followed by something else...that is presumably characters again.
+                ++p;
+                lastPos = p;
+                assert( p <= (buf+length) );
+            }
+        }
+        else {
+            ++p;
+        }
+    }
+    // Handle any left over characters.
+    if ( p-lastPos ) {
+        data.append( lastPos, p-lastPos );
+    }
+    delete [] buf;
+    buf = 0;
+
+    Parse( data.c_str(), 0, encoding );
+
+    if (  Error() )
+			return false;
+    else
+	return true;
+}

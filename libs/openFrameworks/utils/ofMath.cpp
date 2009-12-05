@@ -76,13 +76,16 @@ float ofNormalize(float value, float min, float max){
 
 //check for division by zero???
 //--------------------------------------------------
-float ofMap(float value, float inputMin, float inputMax, float outputMin, float outputMax) {
+float ofMap(float value, float inputMin, float inputMax, float outputMin, float outputMax, bool clamp) {
 
 	if (fabs(inputMin - inputMax) < FLT_EPSILON){
 		ofLog(OF_LOG_WARNING, "ofMap: avoiding possible divide by zero, check inputMin and inputMax\n");
 		return outputMin;
 	} else {
-		return ((value - inputMin) / (inputMax - inputMin) * (outputMax - outputMin) + outputMin);
+		float outVal = ((value - inputMin) / (inputMax - inputMin) * (outputMax - outputMin) + outputMin);
+	
+		if( clamp ) return outVal < outputMin ? outputMin : outVal > outputMax ? outputMax : outVal;
+		return outVal;
 	}
 
 }
