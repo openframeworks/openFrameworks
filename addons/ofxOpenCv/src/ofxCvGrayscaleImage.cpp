@@ -294,6 +294,54 @@ void ofxCvGrayscaleImage::adaptiveThreshold( int blockSize, int offset,
    flagImageChanged();
 }
 
+//--------------------------------------------------------------------------------
+void ofxCvGrayscaleImage::brightnessContrast(float brightness, float contrast){
+
+	int i;
+	
+	/*
+	 * The algorithm is by Werner D. Streidt
+	 * (http://visca.com/ffactory/archives/5-99/msg00021.html)
+	 * (note: uses values between -100 and 100)
+	 */
+	
+	if( contrast > 0 )
+	{
+		double delta = 127.*contrast;
+		double a = 255./(255. - delta*2);
+		double b = a*(brightness*100 - delta);
+		for( i = 0; i < 256; i++ )
+		{
+			int v = cvRound(a*i + b);
+			if( v < 0 )
+				v = 0;
+				if( v > 255 )
+					v = 255;
+					briConLut[i] = (uchar)v;
+					}
+	}
+	else
+	{
+		double delta = -128.*contrast;
+		double a = (256.-delta*2)/255.;
+		double b = a*brightness*100. + delta;
+		for( i = 0; i < 256; i++ )
+		{
+			int v = cvRound(a*i + b);
+			if( v < 0 )
+				v = 0;
+				if( v > 255 )
+					v = 255;
+					briConLut[i] = (uchar)v;
+					}
+	}
+
+	cvSetData( briConLutMatrix, briConLut, 0 );
+
+	cvLUT( cvImage, cvImageTemp, briConLutMatrix); 
+	swapTemp();
+	flagImageChanged();
+}
 
 
 // Image Transformation Operations
