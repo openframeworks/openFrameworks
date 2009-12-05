@@ -24,7 +24,7 @@ class ofxCvBlob;
 
 
 
-class ofxCvImage : public ofBaseDraws, public ofBaseHasTexture, public ofBaseHasPixels {
+class ofxCvImage : public ofBaseImage {
     
   public:
 
