@@ -40,12 +40,12 @@ bool ofTexture::bAllocated(){
 
 //----------------------------------------------------------
 ofTexture::ofTexture(const ofTexture& mom){
-	texData = mom.texData;
+	ofLog(OF_LOG_WARNING, "overloaded ofTexture copy constructor to do nothing. please use FBO or other means to copy textures");
 }
 
 //----------------------------------------------------------
 ofTexture& ofTexture::operator=(const ofTexture& mom){
-	texData = mom.texData;
+	ofLog(OF_LOG_WARNING, "overloaded ofTexture = operator to do nothing. please use FBO or other means to copy textures");
 	return *this;
 }
 
