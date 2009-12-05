@@ -48,7 +48,10 @@ class ofTexture : public ofBaseDraws{
 	void allocate(int w, int h, int internalGlDataType); //uses the currently set OF texture type - default ARB texture
 	void allocate(int w, int h, int internalGlDataType, bool bUseARBExtention); //lets you overide the default OF texture type
 	void clear();
+
+	void loadData(float * data, int w, int h, int glDataType);
 	void loadData(unsigned char * data, int w, int h, int glDataType);
+
 	void loadScreenData(int x, int y, int w, int h);
 
 	//the anchor is the point the image is drawn around.
@@ -80,6 +83,8 @@ class ofTexture : public ofBaseDraws{
 
 	ofTextureData texData;
 protected:
+	void loadData(void * data, int w, int h, int glDataType);
+
 	ofPoint anchor;
 	bool bAnchorIsPct;
 
