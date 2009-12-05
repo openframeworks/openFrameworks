@@ -52,6 +52,7 @@ public:
 
 	int			getFrameNum();
 	float		getFrameRate();
+	double		getLastFrameTime();
 	void		setFrameRate(float targetRate);
 
 	void		enableSetupScreen();
