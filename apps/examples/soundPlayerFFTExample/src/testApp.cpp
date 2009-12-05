@@ -32,6 +32,9 @@ void testApp::update(){
 	
 	ofBackground(80,80,20);
 
+	// update the sound playing system:
+	ofSoundUpdate();	
+	
 	// (1) we increase px and py by adding vx and vy
 	px += vx;
 	py += vy;
