@@ -272,11 +272,12 @@ void ofVideoPlayer::update(){
 //---------------------------------------------------------------------------
 void ofVideoPlayer::idleMovie(){
 
-
+	if (bLoaded == true){
+		
 		//--------------------------------------------------------------
-		#ifndef  TARGET_LINUX  // !linux = quicktime...
+		#ifndef TARGET_LINUX  // !linux = quicktime...
 		//--------------------------------------------------------------
-		if (bLoaded == true){
+		
 			#if defined(TARGET_WIN32) || defined(QT_USE_MOVIETASK)
 				MoviesTask(moviePtr,0);
 			#endif
@@ -285,35 +286,35 @@ void ofVideoPlayer::idleMovie(){
 		#else // linux.
 		//--------------------------------------------------------------
 
-
-
 		gstHandleMessage();
-		if (bLoaded == true){
-            ofGstDataLock(&gstData);
+		ofGstDataLock(&gstData);
 
-				bHavePixelsChanged = gstData.bHasPixelsChanged;
-				if (bHavePixelsChanged){
-					gstData.bHasPixelsChanged=false;
-					bIsMovieDone = false;
-					if(bUseTexture)
-						tex.loadData(pixels, width, height, GL_RGB);
-				}
+		bHavePixelsChanged = gstData.bHasPixelsChanged;
+		if (bHavePixelsChanged){
+			gstData.bHasPixelsChanged=false;
+			bIsMovieDone = false;
+			if(bUseTexture)
+				tex.loadData(pixels, width, height, GL_RGB);
+		}
 
-			ofGstDataUnlock(&gstData);
+		ofGstDataUnlock(&gstData);
 
 		//--------------------------------------------------------------
 		#endif
 		//--------------------------------------------------------------
+	
+	}
 
-
-		// ---------------------------------------------------
-		// 		on all platforms,
-		// 		do "new"ness ever time we idle...
-		// 		before "isFrameNew" was clearning,
-		// 		people had issues with that...
-		// 		and it was badly named so now, newness happens
-		// 		per-idle not per isNew call
-		// ---------------------------------------------------
+	// ---------------------------------------------------
+	// 		on all platforms,
+	// 		do "new"ness ever time we idle...
+	// 		before "isFrameNew" was clearning,
+	// 		people had issues with that...
+	// 		and it was badly named so now, newness happens
+	// 		per-idle not per isNew call
+	// ---------------------------------------------------
+	
+	if (bLoaded == true){
 
 		bIsFrameNew = bHavePixelsChanged;
 		if (bHavePixelsChanged == true) {
