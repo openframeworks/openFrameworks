@@ -113,8 +113,8 @@ int ofxCvContourFinder::findContours( ofxCvGrayscaleImage&  input,
 		blobs[i].boundingRect.y           = rect.y;
 		blobs[i].boundingRect.width       = rect.width;
 		blobs[i].boundingRect.height      = rect.height;
-		blobs[i].centroid.x 			  = (int) (myMoments->m10 / myMoments->m00);
-		blobs[i].centroid.y 			  = (int) (myMoments->m01 / myMoments->m00);
+		blobs[i].centroid.x 			  = (myMoments->m10 / myMoments->m00);
+		blobs[i].centroid.y 			  = (myMoments->m01 / myMoments->m00);
 
 		// get the points for the blob:
 		CvPoint           pt;
