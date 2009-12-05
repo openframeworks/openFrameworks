@@ -68,6 +68,7 @@ ofVideoGrabber::ofVideoGrabber(){
 	width 					= 320;	// default setting
 	height 					= 240;	// default setting
 	pixels					= NULL;
+	attemptFramerate		= -1;
 }
 
 
@@ -254,11 +255,15 @@ void ofVideoGrabber::setVerbose(bool bTalkToMe){
 	//---------------------------------
 }
 
-
 //--------------------------------------------------------------------
 void ofVideoGrabber::setDeviceID(int _deviceID){
 	deviceID		= _deviceID;
 	bChooseDevice	= true;
+}
+
+//--------------------------------------------------------------------
+void ofVideoGrabber::setDesiredFramerate(int framerate){
+	attemptFramerate = framerate;
 }
 
 //---------------------------------------------------------------------------
@@ -969,7 +974,14 @@ bool ofVideoGrabber::initGrabber(int w, int h, bool setUseTexture){
 
 		bGrabberInited = true;
 		loadSettings();
-
+		
+		if( attemptFramerate >= 0 ){
+			err = SGSetFrameRate(gVideoChannel, IntToFixed(attemptFramerate) );
+			if ( err != noErr ){
+				ofLog(OF_LOG_ERROR,"initGrabber error setting framerate to %i", attemptFramerate);
+			}		
+		}
+		
 		ofLog(OF_LOG_NOTICE,"end setup ofVideoGrabber");
 		ofLog(OF_LOG_NOTICE,"-------------------------------------\n");
 
@@ -1019,7 +1031,10 @@ bool ofVideoGrabber::initGrabber(int w, int h, bool setUseTexture){
 		width = w;
 		height = h;
 		bGrabberInited = false;
-
+		
+		if( attemptFramerate >= 0)
+			VI.setIdealFramerate(device, attemptFramerate);
+		}
 		bool bOk = VI.setupDevice(device, width, height);
 
 		int ourRequestedWidth = width;
