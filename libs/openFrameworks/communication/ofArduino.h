@@ -403,4 +403,6 @@ class ofArduino{
 
 };
 
+typedef ofArduino ofStandardFirmata;
+
 #endif
