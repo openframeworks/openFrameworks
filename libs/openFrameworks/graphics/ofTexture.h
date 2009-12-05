@@ -63,6 +63,13 @@ class ofTexture : public ofBaseDraws{
 	//for the advanced user who wants to draw textures in their own way
 	void bind();
 	void unbind();
+	
+	// these are helpers to allow you to get points for the texture ala "glTexCoordf" 
+	// but are texture type independent. 
+	// use them for immediate or non immediate mode
+	ofPoint getCoordFromPoint(float xPos, float yPos);		
+	ofPoint getCoordFromPercent(float xPts, float yPts);		
+	
 
 	bool bAllocated();
 

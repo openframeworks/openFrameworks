@@ -291,6 +291,63 @@ void ofTexture::unbind(){
 	glDisable(texData.textureTarget);
 }
 
+
+//----------------------------------------------------------
+ofPoint ofTexture::getCoordFromPoint(float xPos, float yPos){
+	
+	ofPoint temp;
+	
+	if (!bAllocated()) return temp;
+	
+	
+	if (texData.textureTarget == GL_TEXTURE_RECTANGLE_ARB){
+		
+		temp.set(xPos, yPos);
+		
+	} else {
+		
+		// non arb textures are 0 to 1, so we 
+		// (a) convert to a pct: 
+		
+		float pctx = xPos / texData.width;
+		float pcty = yPos / texData.height;
+		
+		// (b) mult by our internal pct (since we might not be 0-1 insternally)
+		
+		pctx *= texData.tex_t;
+		pcty *= texData.tex_u;
+		
+		temp.set(pctx, pcty);
+
+	}
+	
+	return temp;
+	
+}
+
+//----------------------------------------------------------
+ofPoint ofTexture::getCoordFromPercent(float xPct, float yPct){
+	
+	ofPoint temp;
+	
+	if (!bAllocated()) return temp;
+
+	
+	if (texData.textureTarget == GL_TEXTURE_RECTANGLE_ARB){
+		
+		temp.set(xPct * texData.width, yPct * texData.height);
+		
+	} else {
+	
+		xPct *= texData.tex_t;
+		yPct *= texData.tex_u;
+		temp.set(xPct, yPct);
+		
+	}
+	
+	return temp;
+}
+
 //----------------------------------------------------------
 void ofTexture::draw(float x, float y, float w, float h){
 

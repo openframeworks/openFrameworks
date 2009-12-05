@@ -44,29 +44,30 @@ using namespace std;
 class ofxXmlSettings{
 
 	public:
-		ofxXmlSettings();
+        ofxXmlSettings();
+        ~ofxXmlSettings();
 
 		void setVerbose(bool _verbose);
 
-		bool loadFile(string xmlFile);	//this is not relative to your data/ path - use ofDataPath(...) to make it relative
-		void saveFile(string  xmlFile); //this is not relative to your data/ path - use ofDataPath(...) to make it relative
+		bool loadFile(const string& xmlFile);	//this is not relative to your data/ path - use ofDataPath(...) to make it relative
+		void saveFile(const string& xmlFile);   //this is not relative to your data/ path - use ofDataPath(...) to make it relative
 
-		void clearTagContents(string tag, int which = 0);
-		void removeTag(string  tag, int which = 0);
+		void clearTagContents(const string& tag, int which = 0);
+		void removeTag(const string& tag, int which = 0);
 
-		bool tagExists(string tag, int which = 0);
+		bool tagExists(const string& tag, int which = 0);
 
 		// removes all tags from within either the whole document
 		// or the tag you are currently at using pushTag
 		void	clear();
 
-		int 	getValue(string  tag, int  	 	defaultValue, int which = 0);
-		float 	getValue(string  tag, double  	defaultValue, int which = 0);
-		string 	getValue(string  tag, string 	defaultValue, int which = 0);
+		int 	getValue(const string&  tag, int            defaultValue, int which = 0);
+		double 	getValue(const string&  tag, double         defaultValue, int which = 0);
+		string 	getValue(const string&  tag, const string& 	defaultValue, int which = 0);
 
-		int 	setValue(string  tag, int    	value, int which = 0);
-		int 	setValue(string  tag, double  	value, int which = 0);
-		int 	setValue(string  tag, string 	value, int which = 0);
+		int 	setValue(const string&  tag, int            value, int which = 0);
+		int 	setValue(const string&  tag, double         value, int which = 0);
+		int 	setValue(const string&  tag, const string& 	value, int which = 0);
 
 		//advanced
 
@@ -78,7 +79,7 @@ class ofxXmlSettings{
 		//the pushed tag - normally addValue only lets you create multiple tags of the same
 		//at the top most level.
 
-		bool	pushTag(string  tag, int which = 0);
+		bool	pushTag(const string&  tag, int which = 0);
 		int		popTag();
 		int		getPushLevel();
 
@@ -87,7 +88,7 @@ class ofxXmlSettings{
 		//use pushTag and popTag to get number of tags whithin other tags
 		// both getNumTags("PT"); and getNumTags("PT:X"); will just return the
 		//number of <PT> tags at the current root level.
-		int		getNumTags(string tag);
+		int		getNumTags(const string& tag);
 
 		//-- addValue/addTag
 		//adds a tag to the document even if a tag with the same name
@@ -97,25 +98,65 @@ class ofxXmlSettings{
 		//-- important - this only works for top level tags
 		//   to put multiple tags inside other tags - use pushTag() and popTag()
 
-		int 	addValue(string  tag, int    	value);
-		int 	addValue(string  tag, double  	value);
-		int 	addValue(string  tag, string 	value);
+		int 	addValue(const string&  tag, int            value);
+		int 	addValue(const string&  tag, double         value);
+		int 	addValue(const string&  tag, const string& 	value);
 
-		int		addTag(string tag); //adds an empty tag at the current level
+		int		addTag(const string& tag); //adds an empty tag at the current level
 
+    
+        // Attribute-related methods
+		int		addAttribute(const string& tag, const string& attribute, int value, int which = 0);
+		int		addAttribute(const string& tag, const string& attribute, double value, int which = 0);
+		int		addAttribute(const string& tag, const string& attribute, const string& value, int which = 0);
+		
+		int		addAttribute(const string& tag, const string& attribute, int value);
+		int		addAttribute(const string& tag, const string& attribute, double value);
+		int		addAttribute(const string& tag, const string& attribute, const string& value);
+		
+		void	removeAttribute(const string& tag, const string& attribute, int which = 0);
+		void	clearTagAttributes(const string& tag, int which = 0);
+		
+		int		getNumAttributes(const string& tag, int which = 0);
+		
+		bool	attributeExists(const string& tag, const string& attribute, int which = 0);
+		
+		bool    getAttributeNames(const string& tag, vector<string>& outNames, int which = 0);
+		
+		int		getAttribute(const string& tag, const string& attribute, int defaultValue, int which = 0);
+		double	getAttribute(const string& tag, const string& attribute, double defaultValue, int which = 0);
+		string	getAttribute(const string& tag, const string& attribute, const string& defaultValue, int which = 0);
+		
+		int		setAttribute(const string& tag, const string& attribute, int value, int which = 0);
+		int		setAttribute(const string& tag, const string& attribute, double value, int which = 0);
+		int		setAttribute(const string& tag, const string& attribute, const string& value, int which = 0);
+		
+		int		setAttribute(const string& tag, const string& attribute, int value);
+		int		setAttribute(const string& tag, const string& attribute, double value);
+		int		setAttribute(const string& tag, const string& attribute, const string& value);
 
+		void	loadFromBuffer( string buffer );
+		void	copyXmlToString(string & str);
+	
 		TiXmlDocument 	doc;
 		bool 			bDocLoaded;
 
 	protected:
 
-		TiXmlHandle * storedHandle;
-		int		level;
+		TiXmlHandle     storedHandle;
+		int             level;
 
-		int 	writeTag(string  tag, char * valueString, int which = 0);
-		bool 	readTag(string  tag, char * valueString, int which = 0);	// max 1024 chars...
+    
+		int 	writeTag(const string&  tag, const string& valueString, int which = 0);
+		bool 	readTag(const string&  tag, TiXmlHandle& valHandle, int which = 0);	// max 1024 chars...
 
+    
+		int		writeAttribute(const string& tag, const string& attribute, const string& valueString, int which = 0);
 
+        TiXmlElement* getElementForAttribute(const string& tag, int which);
+        bool readIntAttribute(const string& tag, const string& attribute, int& valueString, int which);
+        bool readDoubleAttribute(const string& tag, const string& attribute, double& outValue, int which);
+        bool readStringAttribute(const string& tag, const string& attribute, string& outValue, int which);
 };
 
 #endif

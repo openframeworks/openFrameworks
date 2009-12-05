@@ -19,6 +19,8 @@ int 			diffMillis;
 
 float 			frameRate;
 
+double			lastFrameTime;
+
 int				requestedWidth;
 int				requestedHeight;
 int 			nonFullScreenX;
@@ -51,8 +53,15 @@ ofAppGlutWindow::ofAppGlutWindow(){
 	nonFullScreenY		= -1;
 	mouseX				= 0;
 	mouseY				= 0;
+	lastFrameTime		= 0.0;
+	displayString		= "";
 
 }
+
+//------------------------------------------------------------
+ void ofAppGlutWindow::setGlutDisplayString(string displayStr){
+	displayString = displayStr;
+ }
 
 //------------------------------------------------------------
 void ofAppGlutWindow::setupOpenGL(int w, int h, int screenMode){
@@ -61,8 +70,13 @@ void ofAppGlutWindow::setupOpenGL(int w, int h, int screenMode){
 	char *argv = "openframeworks";
 	char **vptr = &argv;
 	glutInit(&argc, vptr);
-	glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH | GLUT_ALPHA );
-
+	
+	if( displayString != ""){
+		glutInitDisplayString( displayString.c_str() );
+	}else{
+		glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH | GLUT_ALPHA );
+	}
+	
 	windowMode = screenMode;
 	bNewScreenMode = true;
 
@@ -86,7 +100,12 @@ void ofAppGlutWindow::setupOpenGL(int w, int h, int screenMode){
 		requestedWidth  = glutGet(GLUT_WINDOW_WIDTH);
 		requestedHeight = glutGet(GLUT_WINDOW_HEIGHT);
 	} else {
-		glutInitDisplayMode( GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH | GLUT_ALPHA );
+		if( displayString != ""){
+			glutInitDisplayString( displayString.c_str() );
+		}else{
+			glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH | GLUT_ALPHA );
+		}
+
     	// w x h, 32bit pixel depth, 60Hz refresh rate
 		char gameStr[64];
 		sprintf( gameStr, "%dx%d:%d@%d", w, h, 32, 60 );
@@ -166,6 +185,11 @@ void ofAppGlutWindow::exitApp(){
 //------------------------------------------------------------
 float ofAppGlutWindow::getFrameRate(){
 	return frameRate;
+}
+
+//------------------------------------------------------------
+double ofAppGlutWindow::getLastFrameTime(){
+	return lastFrameTime;
 }
 
 //------------------------------------------------------------
@@ -371,13 +395,19 @@ void ofAppGlutWindow::display(void){
   	glutSwapBuffers();
 
     // -------------- fps calculation:
-  	timeNow = ofGetElapsedTimef();
-  	if( ( timeNow - timeThen ) > 0 ) {
-    fps = 1.0 / (timeNow-timeThen);
-    frameRate *= 0.9f;
-       frameRate += 0.1f*fps;
-    }
-    timeThen = timeNow;
+	// theo - please don't mess with this without letting me know. 
+	// there was some very strange issues with doing ( timeNow-timeThen ) producing different values to: double diff = timeNow-timeThen;
+	// http://www.openframeworks.cc/forum/viewtopic.php?f=7&t=1892&p=11166#p11166
+	
+	timeNow = ofGetElapsedTimef();
+	double diff = timeNow-timeThen;
+	if( diff  > 0.0f ) {
+		fps			= 1.0 / diff;
+		frameRate	*= 0.9f;
+		frameRate	+= 0.1f*fps;
+	 }
+	 lastFrameTime	= diff;
+	 timeThen		= timeNow;
   	// --------------
 
 	nFrameCount++;		// increase the overall frame count
