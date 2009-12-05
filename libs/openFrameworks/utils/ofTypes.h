@@ -243,6 +243,8 @@ class ofStyle{
 };
 
 
+
+
 //----------------------------------------------------------
 // ofBaseDraws
 //----------------------------------------------------------
@@ -281,6 +283,7 @@ class ofBaseHasTexture{
 public:
 	virtual ~ofBaseHasTexture(){}
 	virtual ofTexture & getTextureReference()=0;
+	virtual void setUseTexture(bool bUseTex)=0;
 };
 
 //----------------------------------------------------------
@@ -293,9 +296,17 @@ public:
 };
 
 //----------------------------------------------------------
+// ofBaseImage
+//----------------------------------------------------------
+class ofBaseImage: public ofBaseDraws, public ofBaseHasTexture, public ofBaseHasPixels{
+public:
+
+};
+
+//----------------------------------------------------------
 // ofBaseVideo
 //----------------------------------------------------------
-class ofBaseVideo: public ofBaseDraws, public ofBaseUpdates, public ofBaseHasTexture, public ofBaseHasPixels{
+class ofBaseVideo: public ofBaseImage, public ofBaseUpdates{
 public:
 	virtual ~ofBaseVideo(){}
 	virtual unsigned char * getPixels()=0;
