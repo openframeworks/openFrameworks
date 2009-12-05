@@ -12,7 +12,6 @@
 // communication
 #ifndef TARGET_OF_IPHONE
 	#include "ofSerial.h"
-	#include "ofStandardFirmata.h"
 	#include "ofArduino.h"
 #endif
 
