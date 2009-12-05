@@ -537,7 +537,7 @@ void ofVideoGrabber::videoSettings(void){
 			loadSettings();
 
 			static SGModalFilterUPP gSeqGrabberModalFilterUPP = NewSGModalFilterUPP(SeqGrabberModalFilterUPP);
-			ComponentResult result = SGSettingsDialog(gSeqGrabber,  gVideoChannel, 0, nil, seqGrabSettingsPreviewOnly, gSeqGrabberModalFilterUPP, nil);
+			ComponentResult result = SGSettingsDialog(gSeqGrabber,  gVideoChannel, 0, nil, 0, gSeqGrabberModalFilterUPP, nil);
 			if (result != noErr){
 				ofLog(OF_LOG_ERROR, "error in  dialogue");
 				return;
