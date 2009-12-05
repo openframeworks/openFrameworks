@@ -10,7 +10,7 @@ void ofEnableTextureEdgeHack(){
 }
 
 //---------------------------------
-void ofDisableTectureEdgeHack(){
+void ofDisableTextureEdgeHack(){
 	bTexHackEnabled = false;
 }
 

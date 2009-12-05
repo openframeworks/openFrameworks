@@ -24,7 +24,7 @@ float 		ofRandomf();							// random (-1 - 1)
 float 		ofRandomuf();							// random (0 - 1) 
 
 float		ofNormalize(float value, float min, float max);
-float		ofMap(float value, float inputMin, float inputMax, float outputMin, float outputMax);
+float		ofMap(float value, float inputMin, float inputMax, float outputMin, float outputMax, bool clamp = false);
 float		ofClamp(float value, float min, float max);
 float		ofLerp(float start, float stop, float amt);
 float		ofDist(float x1, float y1, float x2, float y2);

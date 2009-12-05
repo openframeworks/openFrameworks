@@ -1,5 +1,5 @@
 <install>
-
+	<name>ofxOsc</name>
 	<version>0.04</version>
 	<author>damian stewart</author>
 	<url>http://frey.co.nz/ofxosc</url>
