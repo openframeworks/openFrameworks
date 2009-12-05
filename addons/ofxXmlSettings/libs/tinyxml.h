@@ -1392,6 +1392,9 @@ public:
 	/// Create a document with a name. The name of the document is also the filename of the xml.
 	TiXmlDocument( const char * documentName );
 
+    // Altered header
+    bool ReadFromMemory( const char* pBuf, size_t sz, TiXmlEncoding encoding = TIXML_DEFAULT_ENCODING);
+
 	#ifdef TIXML_USE_STL
 	/// Constructor.
 	TiXmlDocument( const std::string& documentName );
