@@ -30,6 +30,13 @@ void ofSoundSetVolume(float vol){
 }
 
 //--------------------
+void ofSoundUpdate(){
+	if (bFmodInitialized){
+		FMOD_System_Update(sys);
+	}
+}
+
+//--------------------
 float * ofSoundGetSpectrum(int nBands){
 
 	ofSoundPlayer::initializeFmod();
