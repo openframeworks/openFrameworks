@@ -126,18 +126,6 @@ class ofVideoGrabber : public ofBaseVideo{
 			ofGstUtils				gstUtils;
 		#endif
 
-		//--------------------------------- linux V4L
-		// if unicap doesn't work, we keep linux v4l in here....
-		// so folks can switch, in ofConstants.h
-		#ifdef OF_VIDEO_CAPTURE_V4L
-			int 					device;
-			char 					dev_name[80];
-			bool					bV4LGrabberInited;
-		#endif
-
-
-
-
 };
 
 
