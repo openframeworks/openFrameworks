@@ -30,13 +30,14 @@ int				windowH;
 int				mouseX, mouseY;
 ofBaseApp *		ofAppPtr;
 
+int             nFramesSinceWindowResized;
 
 #ifdef TARGET_WIN32
 
 //------------------------------------------------
 
-// this is to fix a bug with glut that doesn't properly close the app 
-// with window closing.  we grab the window procedure, store it, and parse windows messages, 
+// this is to fix a bug with glut that doesn't properly close the app
+// with window closing.  we grab the window procedure, store it, and parse windows messages,
 // using the close and destroy messages and passing on the others...
 
 //------------------------------------------------
@@ -48,7 +49,7 @@ static LRESULT CALLBACK winProc(HWND hwnd, UINT Msg, WPARAM wParam, LPARAM lPara
 
    //we catch close and destroy messages
    //and send them to OF
-   
+
    switch(Msg){
 
       case WM_CLOSE:
@@ -92,6 +93,7 @@ ofAppGlutWindow::ofAppGlutWindow(){
 	windowMode			= OF_WINDOW;
 	bNewScreenMode		= true;
 	nFramesForFPS		= 0;
+	nFramesSinceWindowResized = 0;
 	nFrameCount			= 0;
 	buttonInUse			= 0;
 	bEnableSetupScreen	= true;
@@ -181,27 +183,30 @@ void ofAppGlutWindow::setupOpenGL(int w, int h, int screenMode){
 void ofAppGlutWindow::initializeWindow(){
 
 
-	 //----------------------
-	 // setup the callbacks
+    //----------------------
+    // setup the callbacks
 
-	 glutMouseFunc(mouse_cb);
-	 glutMotionFunc(motion_cb);
-	 glutPassiveMotionFunc(passive_motion_cb);
-	 glutIdleFunc(idle_cb);
-	 glutDisplayFunc(display);
+    glutMouseFunc(mouse_cb);
+    glutMotionFunc(motion_cb);
+    glutPassiveMotionFunc(passive_motion_cb);
+    glutIdleFunc(idle_cb);
+    glutDisplayFunc(display);
 
-	 glutKeyboardFunc(keyboard_cb);
-	 glutKeyboardUpFunc(keyboard_up_cb);
-	 glutSpecialFunc(special_key_cb);
-	 glutSpecialUpFunc(special_key_up_cb);
+    glutKeyboardFunc(keyboard_cb);
+    glutKeyboardUpFunc(keyboard_up_cb);
+    glutSpecialFunc(special_key_cb);
+    glutSpecialUpFunc(special_key_up_cb);
 
-	 glutReshapeFunc(resize_cb);
-	
-	#ifdef TARGET_WIN32
-		//----------------------
-		// this is specific to windows (respond properly to close / destroy)
-		fixCloseWindowOnWin32();
-	 #endif
+    glutReshapeFunc(resize_cb);
+
+    nFramesSinceWindowResized = 0;
+
+    #ifdef TARGET_WIN32
+        //----------------------
+        // this is specific to windows (respond properly to close / destroy)
+        fixCloseWindowOnWin32();
+    #endif
+
 }
 
 //------------------------------------------------------------
@@ -424,26 +429,22 @@ void ofAppGlutWindow::display(void){
 	float * bgPtr = ofBgColorPtr();
 	bool bClearAuto = ofbClearBg();
 
-	// I don't know why, I need more than one frame at the start in fullscreen mode
-	// also, in non-fullscreen mode, windows/intel graphics, this bClearAuto just fails.
-	// I seem to have 2 buffers, alot of flickering
-	// and don't accumulate the way I expect.
-	// with this line:   if ((bClearAuto == true) || nFrameCount < 3){
-	// we do nFrameCount < 3, so that the buffers are cleared at the start of the app
-	// or else we have video memory garbage to draw on to...
+    // to do non auto clear on PC for now - we do something like "single" buffering --
+    // it's not that pretty but it work for the most part
 
-	#ifdef TARGET_WIN32
-		//windows doesn't get accumulation in window mode
-		if ((bClearAuto == true || windowMode == OF_WINDOW) || nFrameCount < 3){
-	#else
-		//mac and linux does :)
-		if ( bClearAuto == true || nFrameCount < 3){
-	#endif
+    #ifdef TARGET_WIN32
+    if (bClearAuto == false){
+        glDrawBuffer (GL_FRONT);
+    }
+    #endif
+
+	if ( bClearAuto == true || nFrameCount < 3){
 		glClearColor(bgPtr[0],bgPtr[1],bgPtr[2], bgPtr[3]);
 		glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	}
 
 	if( bEnableSetupScreen )ofSetupScreen();
+
 
 	if(ofAppPtr)
 		ofAppPtr->draw();
@@ -452,7 +453,33 @@ void ofAppGlutWindow::display(void){
 		ofNotifyEvent( ofEvents.draw, voidEventArgs );
 	#endif
 
-  	glutSwapBuffers();
+
+    #ifdef TARGET_WIN32
+    if (bClearAuto == false){
+        // on a PC resizing a window with this method of accumulation (essentially single buffering)
+        // is BAD, so we clear on resize events.
+        if (nFramesSinceWindowResized < 3){
+            glClearColor(bgPtr[0],bgPtr[1],bgPtr[2], bgPtr[3]);
+            glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        } else {
+            if (nFrameCount < 3 || nFramesSinceWindowResized < 3)    glutSwapBuffers();
+            else                                                     glFlush();
+        }
+    } else {
+        glutSwapBuffers();
+    }
+    #else
+		if (bClearAuto == false){
+			// in accum mode resizing a window is BAD, so we clear on resize events.
+			if (nFramesSinceWindowResized < 3){
+				glClearColor(bgPtr[0],bgPtr[1],bgPtr[2], bgPtr[3]);
+				glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+			}
+		}
+        glutSwapBuffers();
+    #endif
+
+    nFramesSinceWindowResized++;
 
     // -------------- fps calculation:
 	// theo - please don't mess with this without letting me know.
@@ -658,4 +685,6 @@ void ofAppGlutWindow::resize_cb(int w, int h) {
 		resizeEventArgs.height = h;
 		ofNotifyEvent( ofEvents.windowResized, resizeEventArgs );
 	#endif
+
+	nFramesSinceWindowResized = 0;
 }
