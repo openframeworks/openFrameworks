@@ -3,7 +3,7 @@
 //
 // Design and implementation by
 // - Floris van den Berg (flvdberg@wxs.nl)
-// - Hervé Drolon (drolon@infonie.fr)
+// - HervÃˆ Drolon (drolon@infonie.fr)
 //
 // Contributors:
 // - Adam Gates (radad@xoasis.com)
@@ -24,7 +24,7 @@
 // - Petr Pytelka (pyta@lightcomp.com)
 // - Riley McNiff (rmcniff@marexgroup.com)
 // - Ryan Rubley (ryan@lostreality.org)
-// - Volker Gärtner (volkerg@gmx.at)
+// - Volker Gâ€°rtner (volkerg@gmx.at)
 //
 // This file is part of FreeImage 3
 //
@@ -154,18 +154,18 @@ FI_STRUCT (FIMULTIBITMAP) { void *data; };
 #ifndef _MSC_VER
 // define portable types for 32-bit / 64-bit OS
 #include <inttypes.h>
-typedef int32_t BOOL;
-typedef uint8_t BYTE;
-typedef uint16_t WORD;
-typedef uint32_t DWORD;
-typedef int32_t LONG;
+#define BOOL int32_t
+#define BYTE uint8_t
+#define WORD uint16_t
+#define DWORD uint32_t 
+#define LONG int32_t
 #else
 // MS is not C99 ISO compliant
-typedef long BOOL;
-typedef unsigned char BYTE;
-typedef unsigned short WORD;
-typedef unsigned long DWORD;
-typedef long LONG;
+#define BOOL long
+#define BYTE unsigned char
+#define WORD unsigned short
+#define DWORD unsigned long
+#define LONG long
 #endif // _MSC_VER
 
 #if (defined(_WIN32) || defined(__WIN32__))
@@ -1086,5 +1086,11 @@ DLL_API FIBITMAP *DLL_CALLCONV FreeImage_MultigridPoissonSolver(FIBITMAP *Laplac
 #ifdef __cplusplus
 }
 #endif
+
+#undef BOOL;
+#undef BYTE;
+#undef WORD;
+#undef DWORD;
+#undef LONG;
 
 #endif // FREEIMAGE_H
