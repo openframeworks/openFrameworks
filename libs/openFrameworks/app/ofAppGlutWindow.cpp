@@ -469,6 +469,13 @@ void ofAppGlutWindow::display(void){
         glutSwapBuffers();
     }
     #else
+		if (bClearAuto == false){
+			// in accum mode resizing a window is BAD, so we clear on resize events.
+			if (nFramesSinceWindowResized < 3){
+				glClearColor(bgPtr[0],bgPtr[1],bgPtr[2], bgPtr[3]);
+				glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+			}
+		}
         glutSwapBuffers();
     #endif
 
