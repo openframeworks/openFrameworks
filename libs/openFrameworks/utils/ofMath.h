@@ -36,4 +36,16 @@ float		ofDegToRad(float degrees);
 float		ofRandomWidth();
 float		ofRandomHeight();
 
+			//returns noise in 0.0 to 1.0 range
+float		ofNoise(float x);
+float		ofNoise(float x, float y);
+float		ofNoise(float x, float y, float z);
+float		ofNoise(float x, float y, float z, float w);
+
+			//returns noise in -1.0 to 1.0 range
+float		ofSignedNoise(float x);
+float		ofSignedNoise(float x, float y);
+float		ofSignedNoise(float x, float y, float z);
+float		ofSignedNoise(float x, float y, float z, float w);
+
 #endif
