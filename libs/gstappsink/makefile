@@ -43,7 +43,7 @@ C_DEPS += \
 %.o: ./%.c
 	@echo 'Building file: $<'
 	@echo 'Invoking: GCC C Compiler'
-	gcc -O3 -Wall -c -fmessage-length=0 `pkg-config --cflags gstreamer-0.10` -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -o"$@" "$<"
+	gcc -m32 -O3 -Wall -c -fmessage-length=0 `pkg-config --cflags gstreamer-0.10` -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -o"$@" "$<"
 	@echo 'Finished building: $<'
 	@echo ' '
 
@@ -81,7 +81,7 @@ liboFappsink.a: $(OBJS) $(USER_OBJS)
 
 # Other Targets
 clean:
-	-$(RM) $(OBJS)$(C_DEPS)$(ARCHIVES) lib/liboFappsink.a
+	-$(RM) $(OBJS)$(C_DEPS)$(ARCHIVES) lib/linux/liboFappsink.a
 	-@echo ' '
 
 .PHONY: all clean dependents

@@ -18,7 +18,9 @@
 	#include "ofUCUtils.h"
 #endif
 
-
+#ifdef OF_VIDEO_CAPTURE_GSTREAMER
+	#include "ofGstUtils.h"
+#endif
 
 // todo:
 // 		QT - callback, via SGSetDataProc - couldn't get this to work yet
@@ -49,10 +51,10 @@ class ofVideoGrabber : public ofBaseVideo{
 		void			update();
 
 
-		//the anchor is the point the image is drawn around. 
-		//this can be useful if you want to rotate an image around a particular point. 
+		//the anchor is the point the image is drawn around.
+		//this can be useful if you want to rotate an image around a particular point.
         void			setAnchorPercent(float xPct, float yPct);	//set the anchor as a percentage of the image width/height ( 0.0-1.0 range )
-        void			setAnchorPoint(float x, float y);				//set the anchor point in pixels
+        void			setAnchorPoint(int x, int y);				//set the anchor point in pixels
         void			resetAnchor();								//resets the anchor to (0, 0)
 
 		float 			getHeight();
@@ -120,6 +122,9 @@ class ofVideoGrabber : public ofBaseVideo{
 			ofUCUtils				ucGrabber;
 		#endif
 
+		#ifdef OF_VIDEO_CAPTURE_GSTREAMER
+			ofGstUtils				gstUtils;
+		#endif
 
 		//--------------------------------- linux V4L
 		// if unicap doesn't work, we keep linux v4l in here....
