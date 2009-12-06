@@ -3,6 +3,7 @@
 
 #include <gst/gst.h>
 #include <pthread.h>
+#include <map>
 #include "ofConstants.h"
 
 typedef struct{
@@ -30,41 +31,25 @@ typedef struct
 
 typedef struct
 {
-  char *mimetype;
-  int   width;
-  int   height;
-  int   num_framerates;
-  ofGstFramerate *framerates;
-  ofGstFramerate highest_framerate;
+  string mimetype;
+  int    width;
+  int    height;
+  vector<ofGstFramerate> framerates;
+  ofGstFramerate choosen_framerate;
 } ofGstVideoFormat;
 
 typedef struct
 {
-  char *video_device;
-  char *hal_udi;
-  char *gstreamer_src;
-  char *product_name;
-  int   num_video_formats;
-  vector<ofGstVideoFormat*> video_formats;
-
-  /* Hash table for resolution based lookup of video_formats */
-  GHashTable *supported_resolutions;
-  ofGstVideoFormat * current_format;
+  string video_device;
+  string gstreamer_src;
+  string product_name;
+  vector<ofGstVideoFormat> video_formats;
+  int current_format;
 } ofGstDevice;
-
-
-
 
 typedef struct
 {
-  int num_webcam_devices;
-  char *device_name;
-  ofGstDevice *webcam_devices;
-  int x_resolution;
-  int y_resolution;
-  int selected_device;
-
-  guint eos_timeout_id;
+  vector<ofGstDevice> webcam_devices;
   bool bInited;
 } ofGstCamData;
 
@@ -76,8 +61,8 @@ public:
 	bool loadMovie(string uri);
 
 	void listDevices();
-	void setDeviceID(int id);
-	bool initGrabber(int w, int h);
+	void setDeviceID(unsigned id);
+	bool initGrabber(int w, int h, int framerate=-1);
 
 	bool setPipeline(string pipeline, int bpp=3, bool isStream = false);
 	bool setPipelineWithSink(string pipeline);
@@ -120,7 +105,7 @@ protected:
 	void 				gstHandleMessage();
 	bool 				allocate();
 	bool				startPipeline();
-	ofGstVideoFormat*	selectFormat(int w, int h);
+	ofGstVideoFormat&	selectFormat(int w, int h, int desired_framerate);
 
 	bool 				bStarted;
 	bool 				bPlaying;

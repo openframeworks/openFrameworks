@@ -6,6 +6,9 @@
 #endif
 
 
+//---------------------------------
+#ifdef OF_VIDEO_CAPTURE_QUICKTIME
+//---------------------------------
 //--------------------------------------------------------------
 static ComponentResult 	frameIsGrabbedProc(SGChannel sgChan, short nBufferNum, Boolean *pbDone, long lRefCon);
 static ComponentResult  frameIsGrabbedProc(SGChannel sgChan, short nBufferNum, Boolean *pbDone, long lRefCon){
@@ -17,6 +20,10 @@ static ComponentResult  frameIsGrabbedProc(SGChannel sgChan, short nBufferNum, B
 
 	return err;
 }
+//---------------------------------
+#endif
+//---------------------------------
+
 
 //--------------------------------------------------------------------
 ofVideoGrabber::ofVideoGrabber(){
@@ -1165,11 +1172,9 @@ bool ofVideoGrabber::initGrabber(int w, int h, bool setUseTexture){
 	//---------------------------------
 	#ifdef OF_VIDEO_CAPTURE_GSTREAMER
 	//--------------------------------
-		if(gstUtils.initGrabber(w,h)){
-			if ( !bChooseDevice ){
-				deviceID = 0;
-			}
+		gstUtils.setDeviceID(deviceID);
 
+		if(gstUtils.initGrabber(w,h,attemptFramerate)){
 			width 	= w;
 			height 	= h;
 			if (bUseTexture){
