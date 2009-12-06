@@ -44,7 +44,7 @@ class ofVideoGrabber : public ofBaseVideo{
 		ofTexture &		getTextureReference();
 		void 			setVerbose(bool bTalkToMe);
 		void			setDeviceID(int _deviceID);
-		void			setDesiredFramerate(int framerate);
+		void			setDesiredFrameRate(int framerate);
 		void 			setUseTexture(bool bUse);
 		void 			draw(float x, float y, float w, float h);
 		void 			draw(float x, float y);
