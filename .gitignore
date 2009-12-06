@@ -6,6 +6,7 @@ obj/
 openFrameworks.a
 openFrameworksDebug.a
 openFrameworksUniversal.a
+*.app/
 
 #eclipse build folders
 #Mac OS X
