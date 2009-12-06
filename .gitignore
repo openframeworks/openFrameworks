@@ -1,8 +1,11 @@
-*.mode1v3 #xcode user prefs
-*.pbxuser #xcode user prefs
-build/    #ignore xcode build folders
-obj/      #ignore codeblocks obj folders
-*.o       #ignore all object files
+*.mode1v3
+*.pbxuser
+build/
+obj/
+*.o
+openFrameworks.a
+openFrameworksDebug.a
+openFrameworksUniversal.a
 
 #eclipse build folders
 #Mac OS X
