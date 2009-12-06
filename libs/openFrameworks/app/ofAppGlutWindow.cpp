@@ -31,6 +31,58 @@ int				mouseX, mouseY;
 ofBaseApp *		ofAppPtr;
 
 
+#ifdef TARGET_WIN32
+
+//------------------------------------------------
+
+// this is to fix a bug with glut that doesn't properly close the app 
+// with window closing.  we grab the window procedure, store it, and parse windows messages, 
+// using the close and destroy messages and passing on the others...
+
+//------------------------------------------------
+
+static WNDPROC currentWndProc;
+static HWND handle  = NULL;
+
+static LRESULT CALLBACK winProc(HWND hwnd, UINT Msg, WPARAM wParam, LPARAM lParam){
+
+   //we catch close and destroy messages
+   //and send them to OF
+   
+   switch(Msg){
+
+      case WM_CLOSE:
+         OF_EXIT_APP(0);
+      break;
+      case WM_DESTROY:
+         OF_EXIT_APP(0);
+         break;
+      default:
+         return CallWindowProc(currentWndProc, handle, Msg, wParam, lParam);
+      break;
+    }
+
+    return 0;
+}
+
+//--------------------------------------
+static void fixCloseWindowOnWin32(){
+
+	//get the HWND
+	handle = WindowFromDC(wglGetCurrentDC());
+
+	//store the current message event handler for the window
+	currentWndProc = (WNDPROC)GetWindowLongPtr(handle, GWL_WNDPROC);
+
+	//tell the window to now use our event handler!
+	SetWindowLongPtr(handle, GWL_WNDPROC, (long)winProc);
+}
+
+#endif
+
+
+
+
 //----------------------------------------------------------
 ofAppGlutWindow::ofAppGlutWindow(){
 	timeNow				= 0;
@@ -144,7 +196,12 @@ void ofAppGlutWindow::initializeWindow(){
 	 glutSpecialUpFunc(special_key_up_cb);
 
 	 glutReshapeFunc(resize_cb);
-
+	
+	#ifdef TARGET_WIN32
+		//----------------------
+		// this is specific to windows (respond properly to close / destroy)
+		fixCloseWindowOnWin32();
+	 #endif
 }
 
 //------------------------------------------------------------
@@ -404,7 +461,7 @@ void ofAppGlutWindow::display(void){
 
 	timeNow = ofGetElapsedTimef();
 	double diff = timeNow-timeThen;
-	if( diff  > 0.0f ) {
+	if( diff  > 0.00001 ){
 		fps			= 1.0 / diff;
 		frameRate	*= 0.9f;
 		frameRate	+= 0.1f*fps;
