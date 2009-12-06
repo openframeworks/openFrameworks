@@ -16,9 +16,9 @@ else
     #echo $UBUNTU_DISTRIBUTIONS
     
     wget http://apt.wxwidgets.org/dists -q -O /tmp/oFtemp
-	WX_DISTRIBUTIONS=$(cat /tmp/oFtemp | grep "<img src=\"/icons/folder.gif\"" | sed -e s/"<img src=\"\/icons\/folder.gif\" alt\=\"\[DIR\]\"> <a href=\"\(.*\)\/\">.*<\/a>.*"/\\1/g | grep [a-z] )
-	#echo $WX_DISTRIBUTIONS
-	for dist in $WX_DISTRIBUTIONS;
+    WX_DISTRIBUTIONS=$(cat /tmp/oFtemp | grep "<img src=\"/icons/folder.gif\"" | sed -e s/"<img src=\"\/icons\/folder.gif\" alt\=\"\[DIR\]\"> <a href=\"\(.*\)\/\">.*<\/a>.*"/\\1/g | grep [a-z] )
+    #echo $WX_DISTRIBUTIONS
+    for dist in $WX_DISTRIBUTIONS;
     do
         if [ "$(echo $UBUNTU_DISTRIBUTIONS | grep ${dist})" != "" ]; then
             WX_DEB="deb http://apt.wxwidgets.org/ $dist main"
@@ -38,4 +38,13 @@ apt-get update
 
 apt-get install libcodeblocks0 codeblocks libwxsmithlib0 codeblocks-contrib libwxgtk2.8-0
 
+## fix pkg-config by installing missing dependencies
 
+pkg-config --list-all 2>/dev/null 1>/dev/null
+ret=$?
+while [ $ret -ne 0 ]; do
+    pkg=$(pkg-config --list-all 2>&1 1>/dev/null | grep "Package '.*'," | sed "s/Package '\(\.*\)/\1/g" | sed "s/\(\.*\)'.*/\1/g")
+    sudo apt-get install ${pkg}-dev
+    pkg-config --list-all 2>/dev/null 1>/dev/null
+    ret=$?
+done
