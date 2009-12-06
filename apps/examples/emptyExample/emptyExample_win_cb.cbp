@@ -71,10 +71,10 @@
 			<Add option="../../../libs/fmodex/lib/win_cb/libfmodex.a" />
 			<Add option="../../../libs/glee/lib/win_cb/GLee.lib" />
 			<Add option="../../../libs/glu/lib/win_cb/glu32.lib" />
-			<Add option="../../../libs/poco/lib/win_cb/libPocoFoundationmt.a" />
+			<Add option="../../../libs/poco/lib/win_cb/libPocoNetmt.a" />
 			<Add option="../../../libs/poco/lib/win_cb/libPocoUtilmt.a" />
 			<Add option="../../../libs/poco/lib/win_cb/libPocoXMLmt.a" />
-			<Add option="../../../libs/poco/lib/win_cb/libPocoNetmt.a" />
+			<Add option="../../../libs/poco/lib/win_cb/libPocoFoundationmt.a" />
 			<Add option="-lopengl32" />
 			<Add option="-lglu32" />
 			<Add option="-ldsound" />
@@ -89,6 +89,7 @@
 			<Add option="-lsetupapi" />
 			<Add option="-lwsock32" />
 			<Add option="-lws2_32" />
+			<Add option="-lIphlpapi" />
 		</Linker>
 		<ExtraCommands>
 			<Add after='xcopy /e /i /y &quot;$(PROJECT_DIR)..\..\..\export\win_cb\*.dll&quot;  &quot;$(PROJECT_DIR)bin&quot;' />
