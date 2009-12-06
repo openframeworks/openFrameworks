@@ -197,9 +197,11 @@ void ofAppGlutWindow::initializeWindow(){
 
 	 glutReshapeFunc(resize_cb);
 	
-	 //----------------------
-	 // this is specific to windows (respond properly to close / destroy)
-	 fixCloseWindowOnWin32();
+	#ifdef TARGET_WIN32
+		//----------------------
+		// this is specific to windows (respond properly to close / destroy)
+		fixCloseWindowOnWin32();
+	 #endif
 }
 
 //------------------------------------------------------------
@@ -459,7 +461,7 @@ void ofAppGlutWindow::display(void){
 
 	timeNow = ofGetElapsedTimef();
 	double diff = timeNow-timeThen;
-	if( diff  > 0.0f ) {
+	if( diff  > 0.00001 ){
 		fps			= 1.0 / diff;
 		frameRate	*= 0.9f;
 		frameRate	+= 0.1f*fps;
