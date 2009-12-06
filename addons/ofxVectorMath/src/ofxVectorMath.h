@@ -7,8 +7,8 @@
 #include "ofxVec4f.h"
 #include "ofxMatrix3x3.h"
 
-#include "ofxPoint2f.h"
-#include "ofxPoint3f.h"
-#include "ofxPoint4f.h"
+typedef ofxVec2f  ofxPoint2f;
+typedef ofxVec3f  ofxPoint3f;
+typedef ofxVec4f  ofxPoint4f;
 
 #endif

@@ -242,7 +242,7 @@ void ofVideoGrabber::setDeviceID(int _deviceID){
 }
 
 //--------------------------------------------------------------------
-void ofVideoGrabber::setDesiredFramerate(int framerate){
+void ofVideoGrabber::setDesiredFrameRate(int framerate){
 	attemptFramerate = framerate;
 }
 
