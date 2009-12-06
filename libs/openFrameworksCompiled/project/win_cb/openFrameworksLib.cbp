@@ -2,7 +2,7 @@
 <CodeBlocks_project_file>
 	<FileVersion major="1" minor="6" />
 	<Project>
-		<Option title="libopenFrameworks" />
+		<Option title="openFrameworksLib" />
 		<Option pch_mode="2" />
 		<Option compiler="gcc" />
 		<Option virtualFolders="openframeworks\;openframeworks\app\;openframeworks\communication\;openframeworks\graphics\;openframeworks\sound\;openframeworks\utils\;openframeworks\video\;openframeworks\events\;" />
@@ -34,7 +34,7 @@
 			<Add directory="..\..\..\glu" />
 			<Add directory="..\..\..\freetype\include" />
 			<Add directory="..\..\..\freetype\include\freetype2" />
-			<Add directory="..\..\..\FreeImage\include_win" />
+			<Add directory="..\..\..\FreeImage\include" />
 			<Add directory="..\..\..\quicktime\CIncludes" />
 			<Add directory="..\..\..\rtAudio\include" />
 			<Add directory="..\..\..\fmodex\inc" />
@@ -79,12 +79,6 @@
 			<Option virtualFolder="openframeworks\communication\" />
 		</Unit>
 		<Unit filename="..\..\..\openFrameworks\communication\ofSerial.h">
-			<Option virtualFolder="openframeworks\communication\" />
-		</Unit>
-		<Unit filename="..\..\..\openFrameworks\communication\ofStandardFirmata.cpp">
-			<Option virtualFolder="openframeworks\communication\" />
-		</Unit>
-		<Unit filename="..\..\..\openFrameworks\communication\ofStandardFirmata.h">
 			<Option virtualFolder="openframeworks\communication\" />
 		</Unit>
 		<Unit filename="..\..\..\openFrameworks\events\ofEventUtils.h">
