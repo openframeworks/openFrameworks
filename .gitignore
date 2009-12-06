@@ -31,3 +31,4 @@ apps/*/*/*.depend
 apps/*/*/bin/clickToLaunch*
 apps/*/*/bin/libs
 apps/*/*/obj
+apps
