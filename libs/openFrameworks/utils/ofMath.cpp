@@ -6,7 +6,7 @@
 	#include <sys/time.h>
 #endif
 
-
+#include "ofNoise.h"
 
 //--------------------------------------------------
 int ofNextPow2(int a){
@@ -142,3 +142,44 @@ float ofRandomWidth() {
 float ofRandomHeight() {
 	return ofRandom(0, ofGetHeight());
 }
+
+//--------------------------------------------------
+float ofNoise(float x){
+	return _slang_library_noise1(x)*0.5f + 0.5f;
+}
+
+//--------------------------------------------------
+float ofNoise(float x, float y){
+	return _slang_library_noise2(x,y)*0.5f + 0.5f;
+}
+
+//--------------------------------------------------
+float ofNoise(float x, float y, float z){
+	return _slang_library_noise3(x,y,z)*0.5f + 0.5f;
+}
+
+//--------------------------------------------------
+float ofNoise(float x, float y, float z, float w){
+	return _slang_library_noise4(x,y,z,w)*0.5f + 0.5f;
+}
+
+//--------------------------------------------------
+float ofSignedNoise(float x){
+	return _slang_library_noise1(x);
+}
+
+//--------------------------------------------------
+float ofSignedNoise(float x, float y){
+	return _slang_library_noise2(x,y);
+}
+
+//--------------------------------------------------
+float ofSignedNoise(float x, float y, float z){
+	return _slang_library_noise3(x,y,z);
+}
+
+//--------------------------------------------------
+float ofSignedNoise(float x, float y, float z, float w){
+	return _slang_library_noise4(x,y,z,w);
+}
+
