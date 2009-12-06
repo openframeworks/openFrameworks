@@ -1016,7 +1016,7 @@ bool ofVideoGrabber::initGrabber(int w, int h, bool setUseTexture){
 		height = h;
 		bGrabberInited = false;
 		
-		if( attemptFramerate >= 0)
+		if( attemptFramerate >= 0){
 			VI.setIdealFramerate(device, attemptFramerate);
 		}
 		bool bOk = VI.setupDevice(device, width, height);
