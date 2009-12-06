@@ -35,7 +35,8 @@ ofBaseApp *		ofAppPtr;
 ofAppGlutWindow::ofAppGlutWindow(){
 	timeNow				= 0;
 	timeThen			= 0;
-	fps					= 60; //give a realistic starting value - win32 issues
+	fps					= 60.0; //give a realistic starting value - win32 issues
+	frameRate			= 60.0;
 	windowMode			= OF_WINDOW;
 	bNewScreenMode		= true;
 	nFramesForFPS		= 0;
@@ -46,7 +47,6 @@ ofAppGlutWindow::ofAppGlutWindow(){
 	millisForFrame		= 0;
 	prevMillis			= 0;
 	diffMillis			= 0;
-	frameRate			= 0;
 	requestedWidth		= 0;
 	requestedHeight		= 0;
 	nonFullScreenX		= -1;
