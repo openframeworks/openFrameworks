@@ -1,10 +1,6 @@
 #include "ofVideoGrabber.h"
 #include "ofUtils.h"
 
-#ifdef OF_VIDEO_CAPTURE_V4L
-	#include "ofV4LUtils.h"
-#endif
-
 
 //---------------------------------
 #ifdef OF_VIDEO_CAPTURE_QUICKTIME
@@ -49,17 +45,6 @@ ofVideoGrabber::ofVideoGrabber(){
 
 		bVerbose 			= false;
 		bDoWeNeedToResize 	= false;
-
-	//---------------------------------
-	#endif
-	//---------------------------------
-
-
-	//---------------------------------
-	#ifdef OF_VIDEO_CAPTURE_V4L				// kept around if people have unicap issues...
-	//--------------------------------
-
-		bV4LGrabberInited 	= false;
 
 	//---------------------------------
 	#endif
@@ -228,29 +213,6 @@ void ofVideoGrabber::listDevices(){
 
 
 		gstUtils.listDevices();
-
-	//---------------------------------
-	#endif
-	//---------------------------------
-
-	//---------------------------------
-	#ifdef OF_VIDEO_CAPTURE_V4L
-	//--------------------------------
-
-	struct stat st;
-
-	printf( "listing available capture devices");
-	printf( "---");
-	for (int i = 0; i < 8; i++)
-	{
-		sprintf(dev_name, "/dev/video%i", i);
-		if (stat (dev_name, &st) == 0) {
-			printf( "Video device %i = /dev/video%i",i,i);
-		} else {
-
-		}
-	}
-	printf( "---");
 
 	//---------------------------------
 	#endif
@@ -474,23 +436,6 @@ void ofVideoGrabber::grabFrame(){
 	#endif
 	//---------------------------------
 
-	//---------------------------------
-	#ifdef OF_VIDEO_CAPTURE_V4L
-	//--------------------------------
-
-		if (bV4LGrabberInited == true){
-			bIsFrameNew = getFrameV4L(pixels);
-			if(bIsFrameNew) {
-				if (bUseTexture){
-					tex.loadData(pixels, width, height, GL_RGB);
-				}
-			}
-		}
-
-	//---------------------------------
-	#endif
-	//---------------------------------
-
 }
 
 //--------------------------------------------------------------------
@@ -502,17 +447,6 @@ void ofVideoGrabber::close(){
 
 		qtCloseSeqGrabber();
 		DisposeSGGrabCompleteBottleUPP(myGrabCompleteProc);
-
-	//---------------------------------
-	#endif
-	//---------------------------------
-
-
-	//---------------------------------
-	#ifdef OF_VIDEO_CAPTURE_V4L
-	//--------------------------------
-
-		closeV4L();
 
 	//---------------------------------
 	#endif
@@ -640,15 +574,7 @@ void ofVideoGrabber::videoSettings(void){
 	#endif
 	//---------------------------------
 
-	//---------------------------------
-	#ifdef OF_VIDEO_CAPTURE_V4L
-	//--------------------------------
-
-		queryV4L_imageProperties();
-
-	//---------------------------------
-	#endif
-	//---------------------------------
+	//TODO: add some kind of show settings for gstreamer
 
 }
 
@@ -1195,48 +1121,6 @@ bool ofVideoGrabber::initGrabber(int w, int h, bool setUseTexture){
 	//---------------------------------
 	#endif
 	//---------------------------------
-
-	//---------------------------------
-	#ifdef OF_VIDEO_CAPTURE_V4L
-	//--------------------------------
-		if (bChooseDevice){
-			device = deviceID;
-		} else {
-			device = 0;
-		}
-		sprintf(dev_name, "/dev/video%i", device);
-		ofLog(OF_LOG_NOTICE, "choosing device %s",dev_name);
-
-		bool bOk = initV4L(w, h, dev_name);
-
-		if (bOk == true){
-			bV4LGrabberInited = true;
-			width 	= getV4L_Width();
-			height 	= getV4L_Height();
-			pixels	= new unsigned char[width * height * 3];
-
-			if (bUseTexture){
-				// create the texture, set the pixels to black and
-				// upload them to the texture (so at least we see nothing black the callback)
-				tex.allocate(width,height,GL_RGB);
-				//memset(pixels, 0, width*height*3);
-				//tex.loadData(pixels, width, height, GL_RGB);
-			}
-
-			ofLog(OF_LOG_NOTICE, "success allocating a video device ");
-			return true;
-		} else {
-			ofLog(OF_LOG_ERROR, "error allocating a video device");
-			ofLog(OF_LOG_ERROR, "please check your camera and verify that your driver is correctly installed.");
-			return false;
-		}	//---------------------------------
-
-
-	//---------------------------------
-	#endif
-	//---------------------------------
-
-
 
 }
 

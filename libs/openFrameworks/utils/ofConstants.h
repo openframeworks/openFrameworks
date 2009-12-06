@@ -137,21 +137,17 @@
 #ifdef TARGET_LINUX
 
 
-	// some cameras don't seem to work in unicap, so we keep
-	// V4l code here.  comment out this next line, to switch to the older
-	// V4l code...
+	// firewire cameras doesn't work yet with gstreamer you can change
+	// to unicap by uncommenting the following define. note that this can make
+	// your app GPL
 
 	// (if you change this, you might need to clean and rebuild, in CB build->rebuild)
 
 	//#define OF_SWITCH_TO_UNICAP_FOR_LINUX_VIDCAP
 
-
-
-
 	#ifdef OF_SWITCH_TO_UNICAP_FOR_LINUX_VIDCAP
 		#define OF_VIDEO_CAPTURE_UNICAP
     #else
-		//#define OF_VIDEO_CAPTURE_V4L
 		#define OF_VIDEO_CAPTURE_GSTREAMER
 	#endif
 
