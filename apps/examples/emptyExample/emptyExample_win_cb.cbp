@@ -11,7 +11,7 @@
 				<Option output="bin\$(PROJECT_NAME)" prefix_auto="1" extension_auto="1" />
 				<Option working_dir="bin" />
 				<Option object_output="obj\release" />
-				<Option external_deps="..\..\..\libs\openFrameworksCompiled\lib\win_cb\libopenFrameworks.a;" />
+				<Option external_deps="..\..\..\libs\openFrameworksCompiled\lib\win_cb\openFrameworks.lib;" />
 				<Option type="1" />
 				<Option compiler="gcc" />
 				<Option projectLinkerOptionsRelation="2" />
@@ -20,14 +20,14 @@
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
-					<Add option="../../../libs/openFrameworksCompiled/lib/win_cb/libopenFrameworks.a" />
+					<Add option="../../../libs/openFrameworksCompiled/lib/win_cb/openFrameworks.lib" />
 				</Linker>
 			</Target>
 			<Target title="debug">
 				<Option output="bin\$(PROJECT_NAME)_DEBUG" prefix_auto="1" extension_auto="1" />
 				<Option working_dir="bin" />
 				<Option object_output="obj\debug\" />
-				<Option external_deps="..\..\..\libs\openFrameworksCompiled\lib\win_cb\libopenFrameworksDebug.a;" />
+				<Option external_deps="..\..\..\libs\openFrameworksCompiled\lib\win_cb\openFrameworksDebug.lib;" />
 				<Option type="1" />
 				<Option compiler="gcc" />
 				<Option projectLinkerOptionsRelation="2" />
@@ -35,7 +35,7 @@
 					<Add option="-g" />
 				</Compiler>
 				<Linker>
-					<Add option="../../../libs/openFrameworksCompiled/lib/win_cb/libopenFrameworksDebug.a" />
+					<Add option="../../../libs/openFrameworksCompiled/lib/win_cb/openFrameworksDebug.lib" />
 				</Linker>
 			</Target>
 		</Build>
