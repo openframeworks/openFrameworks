@@ -389,7 +389,7 @@ FIBITMAP *  ofImage::getBmpFromPixels(ofPixels &pix){
 	int bpp						= pix.bitsPerPixel;
 	int bytesPerPixel			= pix.bitsPerPixel / 8;
 
-	bmp							= FreeImage_ConvertFromRawBits(pixels, w,h, w*bytesPerPixel, bpp, 0,0,0, false);
+	bmp							= FreeImage_ConvertFromRawBits(pixels, w,h, w*bytesPerPixel, bpp, 0,0,0, true);
 
 	//this is for grayscale images they need to be paletted from: http://sourceforge.net/forum/message.php?msg_id=2856879
 	if( pix.ofImageType == OF_IMAGE_GRAYSCALE ){
@@ -413,7 +413,7 @@ void ofImage::putBmpIntoPixels(FIBITMAP * bmp, ofPixels &pix){
 	//------------------------------------------
 	// call the allocation routine (which checks if really need to allocate) here:
 	allocatePixels(pix, width, height, bpp);
-	FreeImage_ConvertToRawBits(pix.pixels, bmp, width*bytesPerPixel, bpp, FI_RGBA_RED_MASK, FI_RGBA_GREEN_MASK, FI_RGBA_BLUE_MASK, false);  // get bits
+	FreeImage_ConvertToRawBits(pix.pixels, bmp, width*bytesPerPixel, bpp, FI_RGBA_RED_MASK, FI_RGBA_GREEN_MASK, FI_RGBA_BLUE_MASK, true);  // get bits
 }
 
 //----------------------------------------------------
@@ -556,7 +556,7 @@ bool ofImage::loadImageIntoPixels(string fileName, ofPixels &pix){
 
 
 
-		FreeImage_ConvertToRawBits(pix.pixels, bmp, width*byteCount, bpp, FI_RGBA_RED_MASK, FI_RGBA_GREEN_MASK, FI_RGBA_BLUE_MASK, false);  // get bits
+		FreeImage_ConvertToRawBits(pix.pixels, bmp, width*byteCount, bpp, FI_RGBA_RED_MASK, FI_RGBA_GREEN_MASK, FI_RGBA_BLUE_MASK, true);  // get bits
 
 		//------------------------------------------
 		// RGB or RGBA swap
