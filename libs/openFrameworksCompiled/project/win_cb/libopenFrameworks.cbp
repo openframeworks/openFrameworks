@@ -8,14 +8,14 @@
 		<Option virtualFolders="openframeworks\;openframeworks\app\;openframeworks\communication\;openframeworks\graphics\;openframeworks\sound\;openframeworks\utils\;openframeworks\video\;openframeworks\events\;" />
 		<Build>
 			<Target title="debug">
-				<Option output="..\..\lib\win_cb\libopenFrameworksDebug" prefix_auto="1" extension_auto="1" />
+				<Option output="..\..\lib\win_cb\openFrameworksDebug.lib" prefix_auto="0" extension_auto="0" />
 				<Option working_dir="" />
 				<Option object_output="obj\debug" />
 				<Option type="2" />
 				<Option compiler="gcc" />
 			</Target>
 			<Target title="release">
-				<Option output="..\..\lib\win_cb\libopenFrameworks" prefix_auto="1" extension_auto="1" />
+				<Option output="..\..\lib\win_cb\openFrameworks.lib" prefix_auto="0" extension_auto="0" />
 				<Option working_dir="" />
 				<Option object_output="obj\release" />
 				<Option type="2" />
