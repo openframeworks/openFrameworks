@@ -18,7 +18,7 @@ int receiveAudioBufferAndCallSimpleApp(void *outputBuffer, void *inputBuffer, un
            double streamTime, RtAudioStreamStatus status, void *data){
 
 
-	if ( status ) std::cout << "Stream over/underflow detected. yo" << std::endl;
+	if ( status ) std::cout << "Stream over/underflow detected." << std::endl;
 
 	// 	rtAudio uses a system by which the audio
 	// 	can be of different formats
