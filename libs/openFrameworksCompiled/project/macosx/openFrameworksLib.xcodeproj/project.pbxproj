@@ -95,92 +95,10 @@
 		E4B27AF910CBE9B900536013 /* fmod_output.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = fmod_output.h; path = ../../../fmodex/inc/fmod_output.h; sourceTree = SOURCE_ROOT; };
 		E4B27AFA10CBE9B900536013 /* fmodlinux.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = fmodlinux.h; path = ../../../fmodex/inc/fmodlinux.h; sourceTree = SOURCE_ROOT; };
 		E4B27B1210CBE9B900536013 /* FreeImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FreeImage.h; path = ../../../FreeImage/include/FreeImage.h; sourceTree = SOURCE_ROOT; };
-		E4B27B5910CBE9B900536013 /* ftccache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ftccache.h; path = ../../../freetype/include_macosx/freetype2/freetype/cache/ftccache.h; sourceTree = SOURCE_ROOT; };
-		E4B27B5A10CBE9B900536013 /* ftccmap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ftccmap.h; path = ../../../freetype/include_macosx/freetype2/freetype/cache/ftccmap.h; sourceTree = SOURCE_ROOT; };
-		E4B27B5B10CBE9B900536013 /* ftcglyph.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ftcglyph.h; path = ../../../freetype/include_macosx/freetype2/freetype/cache/ftcglyph.h; sourceTree = SOURCE_ROOT; };
-		E4B27B5C10CBE9B900536013 /* ftcimage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ftcimage.h; path = ../../../freetype/include_macosx/freetype2/freetype/cache/ftcimage.h; sourceTree = SOURCE_ROOT; };
-		E4B27B5D10CBE9B900536013 /* ftcmanag.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ftcmanag.h; path = ../../../freetype/include_macosx/freetype2/freetype/cache/ftcmanag.h; sourceTree = SOURCE_ROOT; };
-		E4B27B5E10CBE9B900536013 /* ftcmru.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ftcmru.h; path = ../../../freetype/include_macosx/freetype2/freetype/cache/ftcmru.h; sourceTree = SOURCE_ROOT; };
-		E4B27B5F10CBE9B900536013 /* ftcsbits.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ftcsbits.h; path = ../../../freetype/include_macosx/freetype2/freetype/cache/ftcsbits.h; sourceTree = SOURCE_ROOT; };
-		E4B27B6110CBE9B900536013 /* ftconfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ftconfig.h; path = ../../../freetype/include_macosx/freetype2/freetype/config/ftconfig.h; sourceTree = SOURCE_ROOT; };
-		E4B27B6210CBE9B900536013 /* ftheader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ftheader.h; path = ../../../freetype/include_macosx/freetype2/freetype/config/ftheader.h; sourceTree = SOURCE_ROOT; };
-		E4B27B6310CBE9B900536013 /* ftmodule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ftmodule.h; path = ../../../freetype/include_macosx/freetype2/freetype/config/ftmodule.h; sourceTree = SOURCE_ROOT; };
-		E4B27B6410CBE9B900536013 /* ftoption.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ftoption.h; path = ../../../freetype/include_macosx/freetype2/freetype/config/ftoption.h; sourceTree = SOURCE_ROOT; };
-		E4B27B6510CBE9B900536013 /* ftstdlib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ftstdlib.h; path = ../../../freetype/include_macosx/freetype2/freetype/config/ftstdlib.h; sourceTree = SOURCE_ROOT; };
-		E4B27B6610CBE9B900536013 /* freetype.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = freetype.h; path = ../../../freetype/include_macosx/freetype2/freetype/freetype.h; sourceTree = SOURCE_ROOT; };
-		E4B27B6710CBE9B900536013 /* ftbbox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ftbbox.h; path = ../../../freetype/include_macosx/freetype2/freetype/ftbbox.h; sourceTree = SOURCE_ROOT; };
-		E4B27B6810CBE9B900536013 /* ftbdf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ftbdf.h; path = ../../../freetype/include_macosx/freetype2/freetype/ftbdf.h; sourceTree = SOURCE_ROOT; };
-		E4B27B6910CBE9B900536013 /* ftbitmap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ftbitmap.h; path = ../../../freetype/include_macosx/freetype2/freetype/ftbitmap.h; sourceTree = SOURCE_ROOT; };
-		E4B27B6A10CBE9B900536013 /* ftcache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ftcache.h; path = ../../../freetype/include_macosx/freetype2/freetype/ftcache.h; sourceTree = SOURCE_ROOT; };
-		E4B27B6B10CBE9B900536013 /* ftchapters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ftchapters.h; path = ../../../freetype/include_macosx/freetype2/freetype/ftchapters.h; sourceTree = SOURCE_ROOT; };
-		E4B27B6C10CBE9B900536013 /* fterrdef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = fterrdef.h; path = ../../../freetype/include_macosx/freetype2/freetype/fterrdef.h; sourceTree = SOURCE_ROOT; };
-		E4B27B6D10CBE9B900536013 /* fterrors.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = fterrors.h; path = ../../../freetype/include_macosx/freetype2/freetype/fterrors.h; sourceTree = SOURCE_ROOT; };
-		E4B27B6E10CBE9B900536013 /* ftglyph.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ftglyph.h; path = ../../../freetype/include_macosx/freetype2/freetype/ftglyph.h; sourceTree = SOURCE_ROOT; };
-		E4B27B6F10CBE9B900536013 /* ftgzip.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ftgzip.h; path = ../../../freetype/include_macosx/freetype2/freetype/ftgzip.h; sourceTree = SOURCE_ROOT; };
-		E4B27B7010CBE9B900536013 /* ftimage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ftimage.h; path = ../../../freetype/include_macosx/freetype2/freetype/ftimage.h; sourceTree = SOURCE_ROOT; };
-		E4B27B7110CBE9B900536013 /* ftincrem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ftincrem.h; path = ../../../freetype/include_macosx/freetype2/freetype/ftincrem.h; sourceTree = SOURCE_ROOT; };
-		E4B27B7210CBE9B900536013 /* ftlist.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ftlist.h; path = ../../../freetype/include_macosx/freetype2/freetype/ftlist.h; sourceTree = SOURCE_ROOT; };
-		E4B27B7310CBE9B900536013 /* ftlzw.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ftlzw.h; path = ../../../freetype/include_macosx/freetype2/freetype/ftlzw.h; sourceTree = SOURCE_ROOT; };
-		E4B27B7410CBE9B900536013 /* ftmac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ftmac.h; path = ../../../freetype/include_macosx/freetype2/freetype/ftmac.h; sourceTree = SOURCE_ROOT; };
-		E4B27B7510CBE9B900536013 /* ftmm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ftmm.h; path = ../../../freetype/include_macosx/freetype2/freetype/ftmm.h; sourceTree = SOURCE_ROOT; };
-		E4B27B7610CBE9B900536013 /* ftmodapi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ftmodapi.h; path = ../../../freetype/include_macosx/freetype2/freetype/ftmodapi.h; sourceTree = SOURCE_ROOT; };
-		E4B27B7710CBE9B900536013 /* ftmoderr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ftmoderr.h; path = ../../../freetype/include_macosx/freetype2/freetype/ftmoderr.h; sourceTree = SOURCE_ROOT; };
-		E4B27B7810CBE9B900536013 /* ftotval.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ftotval.h; path = ../../../freetype/include_macosx/freetype2/freetype/ftotval.h; sourceTree = SOURCE_ROOT; };
-		E4B27B7910CBE9B900536013 /* ftoutln.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ftoutln.h; path = ../../../freetype/include_macosx/freetype2/freetype/ftoutln.h; sourceTree = SOURCE_ROOT; };
-		E4B27B7A10CBE9B900536013 /* ftpfr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ftpfr.h; path = ../../../freetype/include_macosx/freetype2/freetype/ftpfr.h; sourceTree = SOURCE_ROOT; };
-		E4B27B7B10CBE9B900536013 /* ftrender.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ftrender.h; path = ../../../freetype/include_macosx/freetype2/freetype/ftrender.h; sourceTree = SOURCE_ROOT; };
-		E4B27B7C10CBE9B900536013 /* ftsizes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ftsizes.h; path = ../../../freetype/include_macosx/freetype2/freetype/ftsizes.h; sourceTree = SOURCE_ROOT; };
-		E4B27B7D10CBE9B900536013 /* ftsnames.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ftsnames.h; path = ../../../freetype/include_macosx/freetype2/freetype/ftsnames.h; sourceTree = SOURCE_ROOT; };
-		E4B27B7E10CBE9B900536013 /* ftstroke.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ftstroke.h; path = ../../../freetype/include_macosx/freetype2/freetype/ftstroke.h; sourceTree = SOURCE_ROOT; };
-		E4B27B7F10CBE9B900536013 /* ftsynth.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ftsynth.h; path = ../../../freetype/include_macosx/freetype2/freetype/ftsynth.h; sourceTree = SOURCE_ROOT; };
-		E4B27B8010CBE9B900536013 /* ftsysio.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ftsysio.h; path = ../../../freetype/include_macosx/freetype2/freetype/ftsysio.h; sourceTree = SOURCE_ROOT; };
-		E4B27B8110CBE9B900536013 /* ftsysmem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ftsysmem.h; path = ../../../freetype/include_macosx/freetype2/freetype/ftsysmem.h; sourceTree = SOURCE_ROOT; };
-		E4B27B8210CBE9B900536013 /* ftsystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ftsystem.h; path = ../../../freetype/include_macosx/freetype2/freetype/ftsystem.h; sourceTree = SOURCE_ROOT; };
-		E4B27B8310CBE9B900536013 /* fttrigon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = fttrigon.h; path = ../../../freetype/include_macosx/freetype2/freetype/fttrigon.h; sourceTree = SOURCE_ROOT; };
-		E4B27B8410CBE9B900536013 /* fttypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = fttypes.h; path = ../../../freetype/include_macosx/freetype2/freetype/fttypes.h; sourceTree = SOURCE_ROOT; };
-		E4B27B8510CBE9B900536013 /* ftwinfnt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ftwinfnt.h; path = ../../../freetype/include_macosx/freetype2/freetype/ftwinfnt.h; sourceTree = SOURCE_ROOT; };
-		E4B27B8610CBE9B900536013 /* ftxf86.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ftxf86.h; path = ../../../freetype/include_macosx/freetype2/freetype/ftxf86.h; sourceTree = SOURCE_ROOT; };
-		E4B27B8810CBE9B900536013 /* autohint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = autohint.h; path = ../../../freetype/include_macosx/freetype2/freetype/internal/autohint.h; sourceTree = SOURCE_ROOT; };
-		E4B27B8910CBE9B900536013 /* ftcalc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ftcalc.h; path = ../../../freetype/include_macosx/freetype2/freetype/internal/ftcalc.h; sourceTree = SOURCE_ROOT; };
-		E4B27B8A10CBE9B900536013 /* ftdebug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ftdebug.h; path = ../../../freetype/include_macosx/freetype2/freetype/internal/ftdebug.h; sourceTree = SOURCE_ROOT; };
-		E4B27B8B10CBE9B900536013 /* ftdriver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ftdriver.h; path = ../../../freetype/include_macosx/freetype2/freetype/internal/ftdriver.h; sourceTree = SOURCE_ROOT; };
-		E4B27B8C10CBE9B900536013 /* ftgloadr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ftgloadr.h; path = ../../../freetype/include_macosx/freetype2/freetype/internal/ftgloadr.h; sourceTree = SOURCE_ROOT; };
-		E4B27B8D10CBE9B900536013 /* ftmemory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ftmemory.h; path = ../../../freetype/include_macosx/freetype2/freetype/internal/ftmemory.h; sourceTree = SOURCE_ROOT; };
-		E4B27B8E10CBE9B900536013 /* ftobjs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ftobjs.h; path = ../../../freetype/include_macosx/freetype2/freetype/internal/ftobjs.h; sourceTree = SOURCE_ROOT; };
-		E4B27B8F10CBE9B900536013 /* ftrfork.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ftrfork.h; path = ../../../freetype/include_macosx/freetype2/freetype/internal/ftrfork.h; sourceTree = SOURCE_ROOT; };
-		E4B27B9010CBE9B900536013 /* ftserv.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ftserv.h; path = ../../../freetype/include_macosx/freetype2/freetype/internal/ftserv.h; sourceTree = SOURCE_ROOT; };
-		E4B27B9110CBE9B900536013 /* ftstream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ftstream.h; path = ../../../freetype/include_macosx/freetype2/freetype/internal/ftstream.h; sourceTree = SOURCE_ROOT; };
-		E4B27B9210CBE9B900536013 /* fttrace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = fttrace.h; path = ../../../freetype/include_macosx/freetype2/freetype/internal/fttrace.h; sourceTree = SOURCE_ROOT; };
-		E4B27B9310CBE9B900536013 /* ftvalid.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ftvalid.h; path = ../../../freetype/include_macosx/freetype2/freetype/internal/ftvalid.h; sourceTree = SOURCE_ROOT; };
-		E4B27B9410CBE9B900536013 /* internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = internal.h; path = ../../../freetype/include_macosx/freetype2/freetype/internal/internal.h; sourceTree = SOURCE_ROOT; };
-		E4B27B9510CBE9B900536013 /* pcftypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = pcftypes.h; path = ../../../freetype/include_macosx/freetype2/freetype/internal/pcftypes.h; sourceTree = SOURCE_ROOT; };
-		E4B27B9610CBE9B900536013 /* psaux.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = psaux.h; path = ../../../freetype/include_macosx/freetype2/freetype/internal/psaux.h; sourceTree = SOURCE_ROOT; };
-		E4B27B9710CBE9B900536013 /* pshints.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = pshints.h; path = ../../../freetype/include_macosx/freetype2/freetype/internal/pshints.h; sourceTree = SOURCE_ROOT; };
-		E4B27B9810CBE9B900536013 /* sfnt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = sfnt.h; path = ../../../freetype/include_macosx/freetype2/freetype/internal/sfnt.h; sourceTree = SOURCE_ROOT; };
-		E4B27B9910CBE9B900536013 /* svbdf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = svbdf.h; path = ../../../freetype/include_macosx/freetype2/freetype/internal/svbdf.h; sourceTree = SOURCE_ROOT; };
-		E4B27B9A10CBE9B900536013 /* svgldict.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = svgldict.h; path = ../../../freetype/include_macosx/freetype2/freetype/internal/svgldict.h; sourceTree = SOURCE_ROOT; };
-		E4B27B9B10CBE9B900536013 /* svmm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = svmm.h; path = ../../../freetype/include_macosx/freetype2/freetype/internal/svmm.h; sourceTree = SOURCE_ROOT; };
-		E4B27B9C10CBE9B900536013 /* svotval.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = svotval.h; path = ../../../freetype/include_macosx/freetype2/freetype/internal/svotval.h; sourceTree = SOURCE_ROOT; };
-		E4B27B9D10CBE9B900536013 /* svpfr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = svpfr.h; path = ../../../freetype/include_macosx/freetype2/freetype/internal/svpfr.h; sourceTree = SOURCE_ROOT; };
-		E4B27B9E10CBE9B900536013 /* svpostnm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = svpostnm.h; path = ../../../freetype/include_macosx/freetype2/freetype/internal/svpostnm.h; sourceTree = SOURCE_ROOT; };
-		E4B27B9F10CBE9B900536013 /* svpscmap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = svpscmap.h; path = ../../../freetype/include_macosx/freetype2/freetype/internal/svpscmap.h; sourceTree = SOURCE_ROOT; };
-		E4B27BA010CBE9B900536013 /* svpsinfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = svpsinfo.h; path = ../../../freetype/include_macosx/freetype2/freetype/internal/svpsinfo.h; sourceTree = SOURCE_ROOT; };
-		E4B27BA110CBE9B900536013 /* svsfnt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = svsfnt.h; path = ../../../freetype/include_macosx/freetype2/freetype/internal/svsfnt.h; sourceTree = SOURCE_ROOT; };
-		E4B27BA210CBE9B900536013 /* svttcmap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = svttcmap.h; path = ../../../freetype/include_macosx/freetype2/freetype/internal/svttcmap.h; sourceTree = SOURCE_ROOT; };
-		E4B27BA310CBE9B900536013 /* svwinfnt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = svwinfnt.h; path = ../../../freetype/include_macosx/freetype2/freetype/internal/svwinfnt.h; sourceTree = SOURCE_ROOT; };
-		E4B27BA410CBE9B900536013 /* svxf86nm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = svxf86nm.h; path = ../../../freetype/include_macosx/freetype2/freetype/internal/svxf86nm.h; sourceTree = SOURCE_ROOT; };
-		E4B27BA510CBE9B900536013 /* t1types.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = t1types.h; path = ../../../freetype/include_macosx/freetype2/freetype/internal/t1types.h; sourceTree = SOURCE_ROOT; };
-		E4B27BA610CBE9B900536013 /* tttypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = tttypes.h; path = ../../../freetype/include_macosx/freetype2/freetype/internal/tttypes.h; sourceTree = SOURCE_ROOT; };
-		E4B27BA710CBE9B900536013 /* t1tables.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = t1tables.h; path = ../../../freetype/include_macosx/freetype2/freetype/t1tables.h; sourceTree = SOURCE_ROOT; };
-		E4B27BA810CBE9B900536013 /* ttnameid.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ttnameid.h; path = ../../../freetype/include_macosx/freetype2/freetype/ttnameid.h; sourceTree = SOURCE_ROOT; };
-		E4B27BA910CBE9B900536013 /* tttables.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = tttables.h; path = ../../../freetype/include_macosx/freetype2/freetype/tttables.h; sourceTree = SOURCE_ROOT; };
-		E4B27BAA10CBE9B900536013 /* tttags.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = tttags.h; path = ../../../freetype/include_macosx/freetype2/freetype/tttags.h; sourceTree = SOURCE_ROOT; };
-		E4B27BAB10CBE9B900536013 /* ttunpat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ttunpat.h; path = ../../../freetype/include_macosx/freetype2/freetype/ttunpat.h; sourceTree = SOURCE_ROOT; };
-		E4B27BAC10CBE9B900536013 /* ft2build.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ft2build.h; path = ../../../freetype/include_macosx/ft2build.h; sourceTree = SOURCE_ROOT; };
 		E4B27BBD10CBE9B900536013 /* GLee.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GLee.h; path = ../../../glee/include/GLee.h; sourceTree = SOURCE_ROOT; };
 		E4B27BCE10CBE9B900536013 /* RtAudio.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RtAudio.h; path = ../../../rtAudio/include/RtAudio.h; sourceTree = SOURCE_ROOT; };
 		E4B27BCF10CBE9B900536013 /* RtError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RtError.h; path = ../../../rtAudio/include/RtError.h; sourceTree = SOURCE_ROOT; };
-		E4B27C1510CBEB8E00536013 /* openFrameworksUniversal.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = openFrameworksUniversal.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		E4B27C1510CBEB8E00536013 /* openFrameworks.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = openFrameworks.a; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -217,7 +135,6 @@
 			children = (
 				E4B27AF110CBE9B900536013 /* fmodex */,
 				E4B27B1010CBE9B900536013 /* FreeImage */,
-				E4B27B2310CBE9B900536013 /* freetype */,
 				E4B27BBB10CBE9B900536013 /* glee */,
 				E4B27BCC10CBE9B900536013 /* rtAudio */,
 			);
@@ -404,150 +321,6 @@
 			path = ../../../FreeImage/include;
 			sourceTree = SOURCE_ROOT;
 		};
-		E4B27B2310CBE9B900536013 /* freetype */ = {
-			isa = PBXGroup;
-			children = (
-				E4B27B5510CBE9B900536013 /* include_macosx */,
-			);
-			name = freetype;
-			path = ../../../freetype;
-			sourceTree = SOURCE_ROOT;
-		};
-		E4B27B5510CBE9B900536013 /* include_macosx */ = {
-			isa = PBXGroup;
-			children = (
-				E4B27B5610CBE9B900536013 /* freetype2 */,
-				E4B27BAC10CBE9B900536013 /* ft2build.h */,
-			);
-			name = include_macosx;
-			path = ../../../freetype/include_macosx;
-			sourceTree = SOURCE_ROOT;
-		};
-		E4B27B5610CBE9B900536013 /* freetype2 */ = {
-			isa = PBXGroup;
-			children = (
-				E4B27B5710CBE9B900536013 /* freetype */,
-			);
-			name = freetype2;
-			path = ../../../freetype/include_macosx/freetype2;
-			sourceTree = SOURCE_ROOT;
-		};
-		E4B27B5710CBE9B900536013 /* freetype */ = {
-			isa = PBXGroup;
-			children = (
-				E4B27B5810CBE9B900536013 /* cache */,
-				E4B27B6010CBE9B900536013 /* config */,
-				E4B27B6610CBE9B900536013 /* freetype.h */,
-				E4B27B6710CBE9B900536013 /* ftbbox.h */,
-				E4B27B6810CBE9B900536013 /* ftbdf.h */,
-				E4B27B6910CBE9B900536013 /* ftbitmap.h */,
-				E4B27B6A10CBE9B900536013 /* ftcache.h */,
-				E4B27B6B10CBE9B900536013 /* ftchapters.h */,
-				E4B27B6C10CBE9B900536013 /* fterrdef.h */,
-				E4B27B6D10CBE9B900536013 /* fterrors.h */,
-				E4B27B6E10CBE9B900536013 /* ftglyph.h */,
-				E4B27B6F10CBE9B900536013 /* ftgzip.h */,
-				E4B27B7010CBE9B900536013 /* ftimage.h */,
-				E4B27B7110CBE9B900536013 /* ftincrem.h */,
-				E4B27B7210CBE9B900536013 /* ftlist.h */,
-				E4B27B7310CBE9B900536013 /* ftlzw.h */,
-				E4B27B7410CBE9B900536013 /* ftmac.h */,
-				E4B27B7510CBE9B900536013 /* ftmm.h */,
-				E4B27B7610CBE9B900536013 /* ftmodapi.h */,
-				E4B27B7710CBE9B900536013 /* ftmoderr.h */,
-				E4B27B7810CBE9B900536013 /* ftotval.h */,
-				E4B27B7910CBE9B900536013 /* ftoutln.h */,
-				E4B27B7A10CBE9B900536013 /* ftpfr.h */,
-				E4B27B7B10CBE9B900536013 /* ftrender.h */,
-				E4B27B7C10CBE9B900536013 /* ftsizes.h */,
-				E4B27B7D10CBE9B900536013 /* ftsnames.h */,
-				E4B27B7E10CBE9B900536013 /* ftstroke.h */,
-				E4B27B7F10CBE9B900536013 /* ftsynth.h */,
-				E4B27B8010CBE9B900536013 /* ftsysio.h */,
-				E4B27B8110CBE9B900536013 /* ftsysmem.h */,
-				E4B27B8210CBE9B900536013 /* ftsystem.h */,
-				E4B27B8310CBE9B900536013 /* fttrigon.h */,
-				E4B27B8410CBE9B900536013 /* fttypes.h */,
-				E4B27B8510CBE9B900536013 /* ftwinfnt.h */,
-				E4B27B8610CBE9B900536013 /* ftxf86.h */,
-				E4B27B8710CBE9B900536013 /* internal */,
-				E4B27BA710CBE9B900536013 /* t1tables.h */,
-				E4B27BA810CBE9B900536013 /* ttnameid.h */,
-				E4B27BA910CBE9B900536013 /* tttables.h */,
-				E4B27BAA10CBE9B900536013 /* tttags.h */,
-				E4B27BAB10CBE9B900536013 /* ttunpat.h */,
-			);
-			name = freetype;
-			path = ../../../freetype/include_macosx/freetype2/freetype;
-			sourceTree = SOURCE_ROOT;
-		};
-		E4B27B5810CBE9B900536013 /* cache */ = {
-			isa = PBXGroup;
-			children = (
-				E4B27B5910CBE9B900536013 /* ftccache.h */,
-				E4B27B5A10CBE9B900536013 /* ftccmap.h */,
-				E4B27B5B10CBE9B900536013 /* ftcglyph.h */,
-				E4B27B5C10CBE9B900536013 /* ftcimage.h */,
-				E4B27B5D10CBE9B900536013 /* ftcmanag.h */,
-				E4B27B5E10CBE9B900536013 /* ftcmru.h */,
-				E4B27B5F10CBE9B900536013 /* ftcsbits.h */,
-			);
-			name = cache;
-			path = ../../../freetype/include_macosx/freetype2/freetype/cache;
-			sourceTree = SOURCE_ROOT;
-		};
-		E4B27B6010CBE9B900536013 /* config */ = {
-			isa = PBXGroup;
-			children = (
-				E4B27B6110CBE9B900536013 /* ftconfig.h */,
-				E4B27B6210CBE9B900536013 /* ftheader.h */,
-				E4B27B6310CBE9B900536013 /* ftmodule.h */,
-				E4B27B6410CBE9B900536013 /* ftoption.h */,
-				E4B27B6510CBE9B900536013 /* ftstdlib.h */,
-			);
-			name = config;
-			path = ../../../freetype/include_macosx/freetype2/freetype/config;
-			sourceTree = SOURCE_ROOT;
-		};
-		E4B27B8710CBE9B900536013 /* internal */ = {
-			isa = PBXGroup;
-			children = (
-				E4B27B8810CBE9B900536013 /* autohint.h */,
-				E4B27B8910CBE9B900536013 /* ftcalc.h */,
-				E4B27B8A10CBE9B900536013 /* ftdebug.h */,
-				E4B27B8B10CBE9B900536013 /* ftdriver.h */,
-				E4B27B8C10CBE9B900536013 /* ftgloadr.h */,
-				E4B27B8D10CBE9B900536013 /* ftmemory.h */,
-				E4B27B8E10CBE9B900536013 /* ftobjs.h */,
-				E4B27B8F10CBE9B900536013 /* ftrfork.h */,
-				E4B27B9010CBE9B900536013 /* ftserv.h */,
-				E4B27B9110CBE9B900536013 /* ftstream.h */,
-				E4B27B9210CBE9B900536013 /* fttrace.h */,
-				E4B27B9310CBE9B900536013 /* ftvalid.h */,
-				E4B27B9410CBE9B900536013 /* internal.h */,
-				E4B27B9510CBE9B900536013 /* pcftypes.h */,
-				E4B27B9610CBE9B900536013 /* psaux.h */,
-				E4B27B9710CBE9B900536013 /* pshints.h */,
-				E4B27B9810CBE9B900536013 /* sfnt.h */,
-				E4B27B9910CBE9B900536013 /* svbdf.h */,
-				E4B27B9A10CBE9B900536013 /* svgldict.h */,
-				E4B27B9B10CBE9B900536013 /* svmm.h */,
-				E4B27B9C10CBE9B900536013 /* svotval.h */,
-				E4B27B9D10CBE9B900536013 /* svpfr.h */,
-				E4B27B9E10CBE9B900536013 /* svpostnm.h */,
-				E4B27B9F10CBE9B900536013 /* svpscmap.h */,
-				E4B27BA010CBE9B900536013 /* svpsinfo.h */,
-				E4B27BA110CBE9B900536013 /* svsfnt.h */,
-				E4B27BA210CBE9B900536013 /* svttcmap.h */,
-				E4B27BA310CBE9B900536013 /* svwinfnt.h */,
-				E4B27BA410CBE9B900536013 /* svxf86nm.h */,
-				E4B27BA510CBE9B900536013 /* t1types.h */,
-				E4B27BA610CBE9B900536013 /* tttypes.h */,
-			);
-			name = internal;
-			path = ../../../freetype/include_macosx/freetype2/freetype/internal;
-			sourceTree = SOURCE_ROOT;
-		};
 		E4B27BBB10CBE9B900536013 /* glee */ = {
 			isa = PBXGroup;
 			children = (
@@ -590,7 +363,7 @@
 			children = (
 				E4B27AAA10CBE92A00536013 /* openFrameworks */,
 				E45BE0360E8CC5DE009D7055 /* libs */,
-				E4B27C1510CBEB8E00536013 /* openFrameworksUniversal.a */,
+				E4B27C1510CBEB8E00536013 /* openFrameworks.a */,
 			);
 			sourceTree = "<group>";
 		};
@@ -621,7 +394,7 @@
 			);
 			name = openFrameworks;
 			productName = openFrameworksLib;
-			productReference = E4B27C1510CBEB8E00536013 /* openFrameworksUniversal.a */;
+			productReference = E4B27C1510CBEB8E00536013 /* openFrameworks.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 /* End PBXNativeTarget section */
@@ -629,7 +402,7 @@
 /* Begin PBXProject section */
 		E4B69B4C0A3A1720003C02F2 /* Project object */ = {
 			isa = PBXProject;
-			buildConfigurationList = E4B69B4D0A3A1720003C02F2 /* Build configuration list for PBXProject "openFrameworks" */;
+			buildConfigurationList = E4B69B4D0A3A1720003C02F2 /* Build configuration list for PBXProject "openFrameworksLib" */;
 			compatibilityVersion = "Xcode 2.4";
 			hasScannedForEncodings = 0;
 			mainGroup = E4B69B4A0A3A1720003C02F2;
@@ -719,7 +492,11 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = NO;
 				GCC_WARN_UNUSED_VALUE = NO;
 				GCC_WARN_UNUSED_VARIABLE = NO;
-				HEADER_SEARCH_PATHS = ../../../../libs/poco/include;
+				HEADER_SEARCH_PATHS = (
+					../../../../libs/freetype/include/,
+					../../../../libs/freetype/include/freetype2,
+					../../../../libs/poco/include,
+				);
 				OTHER_CPLUSPLUSFLAGS = (
 					"-D__MACOSX_CORE__",
 					"-lpthread",
@@ -762,7 +539,11 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = NO;
 				GCC_WARN_UNUSED_VALUE = NO;
 				GCC_WARN_UNUSED_VARIABLE = NO;
-				HEADER_SEARCH_PATHS = ../../../../libs/poco/include;
+				HEADER_SEARCH_PATHS = (
+					../../../../libs/freetype/include/,
+					../../../../libs/freetype/include/freetype2,
+					../../../../libs/poco/include,
+				);
 				OTHER_CPLUSPLUSFLAGS = (
 					"-D__MACOSX_CORE__",
 					"-lpthread",
@@ -793,7 +574,11 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = NO;
 				GCC_WARN_UNUSED_VALUE = NO;
 				GCC_WARN_UNUSED_VARIABLE = NO;
-				HEADER_SEARCH_PATHS = ../../../../libs/poco/include;
+				HEADER_SEARCH_PATHS = (
+					../../../../libs/freetype/include/,
+					../../../../libs/freetype/include/freetype2,
+					../../../../libs/poco/include,
+				);
 				OTHER_CPLUSPLUSFLAGS = (
 					"-D__MACOSX_CORE__",
 					"-lpthread",
@@ -816,7 +601,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		E4B69B4D0A3A1720003C02F2 /* Build configuration list for PBXProject "openFrameworks" */ = {
+		E4B69B4D0A3A1720003C02F2 /* Build configuration list for PBXProject "openFrameworksLib" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				E4B69B4E0A3A1720003C02F2 /* Debug */,
