@@ -60,7 +60,7 @@ ofAppGlutWindow::ofAppGlutWindow(){
 
 //lets you enable alpha blending using a display string like:
 // "rgba double samples>=4 depth" ( mac )
-// "rgb double depth alpha samples>=4" ( some pcs ) 
+// "rgb double depth alpha samples>=4" ( some pcs )
 //------------------------------------------------------------
  void ofAppGlutWindow::setGlutDisplayString(string displayStr){
 	displayString = displayStr;
@@ -70,16 +70,16 @@ ofAppGlutWindow::ofAppGlutWindow(){
 void ofAppGlutWindow::setupOpenGL(int w, int h, int screenMode){
 
 	int argc = 1;
-	char *argv = "openframeworks";
+	char *argv = (char*)"openframeworks";
 	char **vptr = &argv;
 	glutInit(&argc, vptr);
-	
+
 	if( displayString != ""){
 		glutInitDisplayString( displayString.c_str() );
 	}else{
 		glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH | GLUT_ALPHA );
 	}
-	
+
 	windowMode = screenMode;
 	bNewScreenMode = true;
 
@@ -398,10 +398,10 @@ void ofAppGlutWindow::display(void){
   	glutSwapBuffers();
 
     // -------------- fps calculation:
-	// theo - please don't mess with this without letting me know. 
+	// theo - please don't mess with this without letting me know.
 	// there was some very strange issues with doing ( timeNow-timeThen ) producing different values to: double diff = timeNow-timeThen;
 	// http://www.openframeworks.cc/forum/viewtopic.php?f=7&t=1892&p=11166#p11166
-	
+
 	timeNow = ofGetElapsedTimef();
 	double diff = timeNow-timeThen;
 	if( diff  > 0.0f ) {
