@@ -183,28 +183,30 @@ void ofAppGlutWindow::setupOpenGL(int w, int h, int screenMode){
 void ofAppGlutWindow::initializeWindow(){
 
 
-	 //----------------------
-	 // setup the callbacks
+    //----------------------
+    // setup the callbacks
 
-	 glutMouseFunc(mouse_cb);
-	 glutMotionFunc(motion_cb);
-	 glutPassiveMotionFunc(passive_motion_cb);
-	 glutIdleFunc(idle_cb);
-	 glutDisplayFunc(display);
+    glutMouseFunc(mouse_cb);
+    glutMotionFunc(motion_cb);
+    glutPassiveMotionFunc(passive_motion_cb);
+    glutIdleFunc(idle_cb);
+    glutDisplayFunc(display);
 
-	 glutKeyboardFunc(keyboard_cb);
-	 glutKeyboardUpFunc(keyboard_up_cb);
-	 glutSpecialFunc(special_key_cb);
-	 glutSpecialUpFunc(special_key_up_cb);
+    glutKeyboardFunc(keyboard_cb);
+    glutKeyboardUpFunc(keyboard_up_cb);
+    glutSpecialFunc(special_key_cb);
+    glutSpecialUpFunc(special_key_up_cb);
 
-	 glutReshapeFunc(resize_cb);
+    glutReshapeFunc(resize_cb);
 
-	 //----------------------
-	 // this is specific to windows (respond properly to close / destroy)
-	 fixCloseWindowOnWin32();
+    nFramesSinceWindowResized = 0;
 
+    #ifdef TARGET_WIN32
+        //----------------------
+        // this is specific to windows (respond properly to close / destroy)
+        fixCloseWindowOnWin32();
+    #endif
 
-	 nFramesSinceWindowResized = 0;
 }
 
 //------------------------------------------------------------
@@ -479,7 +481,7 @@ void ofAppGlutWindow::display(void){
 
 	timeNow = ofGetElapsedTimef();
 	double diff = timeNow-timeThen;
-	if( diff  > 0.0f ) {
+	if( diff  > 0.00001 ){
 		fps			= 1.0 / diff;
 		frameRate	*= 0.9f;
 		frameRate	+= 0.1f*fps;
