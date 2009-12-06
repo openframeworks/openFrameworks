@@ -3,7 +3,6 @@
 
 #include <gst/gst.h>
 #include <pthread.h>
-#include <map>
 #include "ofConstants.h"
 
 typedef struct{

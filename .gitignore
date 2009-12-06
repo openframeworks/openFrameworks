@@ -31,3 +31,8 @@ apps/*/*/*.depend
 apps/*/*/bin/clickToLaunch*
 apps/*/*/bin/libs
 apps/*/*/obj
+apps
+
+libs/openFrameworksCompiled/project/*/*.depend
+libs/openFrameworksCompiled/project/*/*.layout
+*~
