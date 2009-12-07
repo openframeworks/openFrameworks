@@ -5,7 +5,7 @@ echo loading variables
 
 call "C:\Program Files\Microsoft Visual Studio 9.0\VC\vcvarsall.bat"
 
-for /d %%X in (..\apps\*) do ( 
+for /d %%X in (..\..\apps\*) do ( 
 
 cd %%X
 
@@ -25,4 +25,4 @@ cd %%X
 cd ../
 )
 
-cd ../scripts
+cd ../scripts/win_vs2008
