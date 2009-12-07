@@ -184,7 +184,7 @@ bool ofxXmlSettings::pushTag(const string&  tag, int which){
 		return true;
 	}else{
 		printf("pushTag - <");
-		printf(tag.c_str());
+		printf("%s",tag.c_str());
 		printf("> tag not found\n");
 	}
 
