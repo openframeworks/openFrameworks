@@ -592,7 +592,7 @@ CAt::inheritFillingPattern( const CAt &A,
 					// m_ff1 == distance between the balls
 					// m_ff2 == radius of the balls
 					BoxWidth  = m_ff1;
-					BoxHeight = sqrt(3)*m_ff1;
+					BoxHeight = sqrtf(3)*m_ff1;
 					startFillingBox( file, BoxWidth, BoxHeight );
 					fprintf( file, CreEPS_CC("%g %g %g o f ")
 					               CreEPS_CC("%g %g %g o f ")
