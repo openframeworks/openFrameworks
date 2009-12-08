@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cd  ../../apps/addonExamples/
+cd  ../../apps/addonsExamples/
 for example in $( ls )
 do
 echo "-----------------------------------------------------------------"
