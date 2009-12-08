@@ -2,7 +2,7 @@
 
 #careful...
 
-cd ../apps/addonsExamples
+cd ../../apps/addonsExamples
 
 for example in $( ls . )
 do
