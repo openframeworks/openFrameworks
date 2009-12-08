@@ -19,6 +19,8 @@ int 			diffMillis;
 
 float 			frameRate;
 
+double			lastFrameTime;
+
 int				requestedWidth;
 int				requestedHeight;
 int 			nonFullScreenX;
@@ -28,15 +30,70 @@ int				windowH;
 int				mouseX, mouseY;
 ofBaseApp *		ofAppPtr;
 
+int             nFramesSinceWindowResized;
+
+#ifdef TARGET_WIN32
+
+//------------------------------------------------
+
+// this is to fix a bug with glut that doesn't properly close the app
+// with window closing.  we grab the window procedure, store it, and parse windows messages,
+// using the close and destroy messages and passing on the others...
+
+//------------------------------------------------
+
+static WNDPROC currentWndProc;
+static HWND handle  = NULL;
+
+static LRESULT CALLBACK winProc(HWND hwnd, UINT Msg, WPARAM wParam, LPARAM lParam){
+
+   //we catch close and destroy messages
+   //and send them to OF
+
+   switch(Msg){
+
+      case WM_CLOSE:
+         OF_EXIT_APP(0);
+      break;
+      case WM_DESTROY:
+         OF_EXIT_APP(0);
+         break;
+      default:
+         return CallWindowProc(currentWndProc, handle, Msg, wParam, lParam);
+      break;
+    }
+
+    return 0;
+}
+
+//--------------------------------------
+static void fixCloseWindowOnWin32(){
+
+	//get the HWND
+	handle = WindowFromDC(wglGetCurrentDC());
+
+	//store the current message event handler for the window
+	currentWndProc = (WNDPROC)GetWindowLongPtr(handle, GWL_WNDPROC);
+
+	//tell the window to now use our event handler!
+	SetWindowLongPtr(handle, GWL_WNDPROC, (long)winProc);
+}
+
+#endif
+
+
+
 
 //----------------------------------------------------------
 ofAppGlutWindow::ofAppGlutWindow(){
 	timeNow				= 0;
 	timeThen			= 0;
-	fps					= 60; //give a realistic starting value - win32 issues
+	fps					= 60.0; //give a realistic starting value - win32 issues
+	frameRate			= 60.0;
 	windowMode			= OF_WINDOW;
 	bNewScreenMode		= true;
 	nFramesForFPS		= 0;
+	nFramesSinceWindowResized = 0;
 	nFrameCount			= 0;
 	buttonInUse			= 0;
 	bEnableSetupScreen	= true;
@@ -44,24 +101,38 @@ ofAppGlutWindow::ofAppGlutWindow(){
 	millisForFrame		= 0;
 	prevMillis			= 0;
 	diffMillis			= 0;
-	frameRate			= 0;
 	requestedWidth		= 0;
 	requestedHeight		= 0;
 	nonFullScreenX		= -1;
 	nonFullScreenY		= -1;
 	mouseX				= 0;
 	mouseY				= 0;
+	lastFrameTime		= 0.0;
+	displayString		= "";
 
 }
+
+//lets you enable alpha blending using a display string like:
+// "rgba double samples>=4 depth" ( mac )
+// "rgb double depth alpha samples>=4" ( some pcs )
+//------------------------------------------------------------
+ void ofAppGlutWindow::setGlutDisplayString(string displayStr){
+	displayString = displayStr;
+ }
 
 //------------------------------------------------------------
 void ofAppGlutWindow::setupOpenGL(int w, int h, int screenMode){
 
 	int argc = 1;
-	char *argv = "openframeworks";
+	char *argv = (char*)"openframeworks";
 	char **vptr = &argv;
 	glutInit(&argc, vptr);
-	glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH | GLUT_ALPHA );
+
+	if( displayString != ""){
+		glutInitDisplayString( displayString.c_str() );
+	}else{
+		glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH | GLUT_ALPHA );
+	}
 
 	windowMode = screenMode;
 	bNewScreenMode = true;
@@ -86,7 +157,12 @@ void ofAppGlutWindow::setupOpenGL(int w, int h, int screenMode){
 		requestedWidth  = glutGet(GLUT_WINDOW_WIDTH);
 		requestedHeight = glutGet(GLUT_WINDOW_HEIGHT);
 	} else {
-		glutInitDisplayMode( GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH | GLUT_ALPHA );
+		if( displayString != ""){
+			glutInitDisplayString( displayString.c_str() );
+		}else{
+			glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH | GLUT_ALPHA );
+		}
+
     	// w x h, 32bit pixel depth, 60Hz refresh rate
 		char gameStr[64];
 		sprintf( gameStr, "%dx%d:%d@%d", w, h, 32, 60 );
@@ -107,21 +183,29 @@ void ofAppGlutWindow::setupOpenGL(int w, int h, int screenMode){
 void ofAppGlutWindow::initializeWindow(){
 
 
-	 //----------------------
-	 // setup the callbacks
+    //----------------------
+    // setup the callbacks
 
-	 glutMouseFunc(mouse_cb);
-	 glutMotionFunc(motion_cb);
-	 glutPassiveMotionFunc(passive_motion_cb);
-	 glutIdleFunc(idle_cb);
-	 glutDisplayFunc(display);
+    glutMouseFunc(mouse_cb);
+    glutMotionFunc(motion_cb);
+    glutPassiveMotionFunc(passive_motion_cb);
+    glutIdleFunc(idle_cb);
+    glutDisplayFunc(display);
 
-	 glutKeyboardFunc(keyboard_cb);
-	 glutKeyboardUpFunc(keyboard_up_cb);
-	 glutSpecialFunc(special_key_cb);
-	 glutSpecialUpFunc(special_key_up_cb);
+    glutKeyboardFunc(keyboard_cb);
+    glutKeyboardUpFunc(keyboard_up_cb);
+    glutSpecialFunc(special_key_cb);
+    glutSpecialUpFunc(special_key_up_cb);
 
-	 glutReshapeFunc(resize_cb);
+    glutReshapeFunc(resize_cb);
+
+    nFramesSinceWindowResized = 0;
+
+    #ifdef TARGET_WIN32
+        //----------------------
+        // this is specific to windows (respond properly to close / destroy)
+        fixCloseWindowOnWin32();
+    #endif
 
 }
 
@@ -166,6 +250,11 @@ void ofAppGlutWindow::exitApp(){
 //------------------------------------------------------------
 float ofAppGlutWindow::getFrameRate(){
 	return frameRate;
+}
+
+//------------------------------------------------------------
+double ofAppGlutWindow::getLastFrameTime(){
+	return lastFrameTime;
 }
 
 //------------------------------------------------------------
@@ -340,26 +429,22 @@ void ofAppGlutWindow::display(void){
 	float * bgPtr = ofBgColorPtr();
 	bool bClearAuto = ofbClearBg();
 
-	// I don't know why, I need more than one frame at the start in fullscreen mode
-	// also, in non-fullscreen mode, windows/intel graphics, this bClearAuto just fails.
-	// I seem to have 2 buffers, alot of flickering
-	// and don't accumulate the way I expect.
-	// with this line:   if ((bClearAuto == true) || nFrameCount < 3){
-	// we do nFrameCount < 3, so that the buffers are cleared at the start of the app
-	// or else we have video memory garbage to draw on to...
+    // to do non auto clear on PC for now - we do something like "single" buffering --
+    // it's not that pretty but it work for the most part
 
-	#ifdef TARGET_WIN32
-		//windows doesn't get accumulation in window mode
-		if ((bClearAuto == true || windowMode == OF_WINDOW) || nFrameCount < 3){
-	#else
-		//mac and linux does :)
-		if ( bClearAuto == true || nFrameCount < 3){
-	#endif
+    #ifdef TARGET_WIN32
+    if (bClearAuto == false){
+        glDrawBuffer (GL_FRONT);
+    }
+    #endif
+
+	if ( bClearAuto == true || nFrameCount < 3){
 		glClearColor(bgPtr[0],bgPtr[1],bgPtr[2], bgPtr[3]);
 		glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	}
 
 	if( bEnableSetupScreen )ofSetupScreen();
+
 
 	if(ofAppPtr)
 		ofAppPtr->draw();
@@ -368,16 +453,48 @@ void ofAppGlutWindow::display(void){
 		ofNotifyEvent( ofEvents.draw, voidEventArgs );
 	#endif
 
-  	glutSwapBuffers();
+
+    #ifdef TARGET_WIN32
+    if (bClearAuto == false){
+        // on a PC resizing a window with this method of accumulation (essentially single buffering)
+        // is BAD, so we clear on resize events.
+        if (nFramesSinceWindowResized < 3){
+            glClearColor(bgPtr[0],bgPtr[1],bgPtr[2], bgPtr[3]);
+            glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        } else {
+            if (nFrameCount < 3 || nFramesSinceWindowResized < 3)    glutSwapBuffers();
+            else                                                     glFlush();
+        }
+    } else {
+        glutSwapBuffers();
+    }
+    #else
+		if (bClearAuto == false){
+			// in accum mode resizing a window is BAD, so we clear on resize events.
+			if (nFramesSinceWindowResized < 3){
+				glClearColor(bgPtr[0],bgPtr[1],bgPtr[2], bgPtr[3]);
+				glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+			}
+		}
+        glutSwapBuffers();
+    #endif
+
+    nFramesSinceWindowResized++;
 
     // -------------- fps calculation:
-  	timeNow = ofGetElapsedTimef();
-  	if( ( timeNow - timeThen ) > 0 ) {
-    fps = 1.0 / (timeNow-timeThen);
-    frameRate *= 0.9f;
-       frameRate += 0.1f*fps;
-    }
-    timeThen = timeNow;
+	// theo - please don't mess with this without letting me know.
+	// there was some very strange issues with doing ( timeNow-timeThen ) producing different values to: double diff = timeNow-timeThen;
+	// http://www.openframeworks.cc/forum/viewtopic.php?f=7&t=1892&p=11166#p11166
+
+	timeNow = ofGetElapsedTimef();
+	double diff = timeNow-timeThen;
+	if( diff  > 0.00001 ){
+		fps			= 1.0 / diff;
+		frameRate	*= 0.9f;
+		frameRate	+= 0.1f*fps;
+	 }
+	 lastFrameTime	= diff;
+	 timeThen		= timeNow;
   	// --------------
 
 	nFrameCount++;		// increase the overall frame count
@@ -568,4 +685,6 @@ void ofAppGlutWindow::resize_cb(int w, int h) {
 		resizeEventArgs.height = h;
 		ofNotifyEvent( ofEvents.windowResized, resizeEventArgs );
 	#endif
+
+	nFramesSinceWindowResized = 0;
 }

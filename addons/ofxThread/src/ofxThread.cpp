@@ -3,6 +3,7 @@
 //------------------------------------------------- 
 ofxThread::ofxThread(){ 
    threadRunning = false; 
+   verbose = false;
    #ifdef TARGET_WIN32 
       InitializeCriticalSection(&critSec); 
    #else 

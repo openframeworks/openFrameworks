@@ -24,6 +24,7 @@ public:
 
 	virtual int		getFrameNum() { return 0; }
 	virtual	float	getFrameRate() {return 0; }
+	virtual double  getLastFrameTime(){ return 0.0; }
 
 	virtual ofPoint	getWindowPosition() {return ofPoint(); }
 	virtual ofPoint	getWindowSize(){return ofPoint(); }

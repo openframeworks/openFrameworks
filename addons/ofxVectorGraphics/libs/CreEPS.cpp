@@ -1,71 +1,88 @@
 /*******************************************************************************
  
-CreEPS = Creating EPS  Version 1.32
+CreEPS = Creating EPS  Version 2.00
  
 Uwe Fabricius : http://uwefabricius.de/
 Thomas Pohl   : http://thomas-pohl.info/
  
-Copyright (C) 2002, 2003, 2004  Uwe Fabricius & Thomas Pohl
+Copyright (c) 2002 - 2009  Uwe Fabricius, Thomas Pohl
 
-This program is free software; you can redistribute it and/or
-modify it under the terms of the GNU General Public License
-as published by the Free Software Foundation; either version 2
-of the License, or (at your option) any later version.
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
 
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
 
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
 
 *******************************************************************************/
 
-/* Comment in the following line to get umlaut support for many common umlauts.
-   If you plan to use umlauts only with LaTeX font output, leave it disabled.
-   Enabling umlaut support increases the size of the resulting EPS files by a
-   constant size of about 500 bytes. */
+#include "CreEPS.hpp"
+
+namespace ns_creeps
+{
+
+// Comment in the following line to get umlaut support for many common
+// umlauts. If you plan to use umlauts only with LaTeX font output,
+// leave it disabled. Enabling umlaut support increases the size of
+// the resulting EPS files by a constant size of about 500 bytes.
+
 #define ENABLE_UMLAUT
 
 // Size of the buffer, that is used to embed an external
 // EPS file. Used in function CreEPS::embedEPS
+
 #ifndef  CREEPS_EMBEDEPS_BUFF_SIZE
 #define  CREEPS_EMBEDEPS_BUFF_SIZE  1024
 #endif
 
-#define  CREEPS_VERSION  "1.32"
+// The comment below is used by the Makefile. Do not change layout and
+// keep version string consistent. 
+// MAKE_RELEASE CREEPS_VERSION  2.00
+#define  CREEPS_MAJOR_VERSION  2
+#define  CREEPS_MINOR_VERSION  0
 
-#include "CreEPS.hpp"
+/*********************************************************/
+
+#define  CREATE_VERSION_STRING( MAJORVERSIOM, MINORVERSION ) \
+	#MAJORVERSIOM "." #MINORVERSION
+#define  CREEPS_VERSION_STR \
+	CREATE_VERSION_STRING(CREEPS_MAJOR_VERSION, CREEPS_MINOR_VERSION)
+
+/*********************************************************/
+
 #include <stdlib.h>
-#include <stdarg.h>
 #include <string.h>
-#include <stdio.h>
 #include <math.h>
 #include <time.h>
-
-#if (_MSC_VER)       // microsoft visual studio
-		#pragma warning(disable : 4996)     // disable all deprecation warnings
-#endif
 
 /*********************************************************
  * The attribute classes for CreEPS
  *********************************************************/
 
 CAt::CAt()
-   : m_LineThickness(-1),
-     m_LineJoin(LJ_KEEP),
-     m_LineCap(LC_KEEP),
-     m_LineDashOffset(-1),
-     m_LineDashType(LD_KEEP),
-     m_LineDashFactor(-1),
-     m_Red(-1), m_Green(-1), m_Blue(-1),
-     m_BgRed(-1), m_BgGreen(-1), m_BgBlue(-1),
-     m_FontScale(-1),
-     m_TextAlignment(TA_KEEP),
-     m_FillingPattern(FP_KEEP),
-     m_ff1(-1), m_ff2(-1), m_ff3(-1)
+	: m_LineThickness(-1),
+	  m_LineDashOffset(-1),
+	  m_LineDashFactor(-1),
+	  m_Red(-1), m_Green(-1), m_Blue(-1),
+	  m_BgRed(-1), m_BgGreen(-1), m_BgBlue(-1),
+	  m_FontScale(-1),
+	  m_ff1(-1), m_ff2(-1), m_ff3(-1),
+	  m_LineJoin(LJ_KEEP),
+	  m_LineCap(LC_KEEP),
+	  m_LineDashType(LD_KEEP),
+	  m_TextAlignment(TA_KEEP),
+	  m_FillingPattern(FP_KEEP)
 {
 	m_FontString[0] = '-';
 	m_FontString[1] = '1';
@@ -75,45 +92,51 @@ CAt::CAt()
 }
 
 CAt::CAt( const CAt& A )
-   : m_LineThickness( A.getLineThickness() ),
-     m_LineJoin( (LINEJOIN)A.getLineJoin() ),
-     m_LineCap( (LINECAP)A.getLineCap() ),
-     m_LineDashOffset( A.getLineDashOffset() ),
-     m_LineDashType( (LINEDASH)A.getLineDashType() ),
-     m_LineDashFactor( A.getLineDashFactor() ),
-     m_Red( A.getRed() ),
-     m_Green( A.getGreen() ),
-     m_Blue( A.getBlue() ),
-     m_BgRed( A.getBackgroundRed() ),
-     m_BgGreen( A.getBackgroundGreen() ),
-     m_BgBlue( A.getBackgroundBlue() ),
-     m_FontScale( A.getFontScale() ),
-     m_TextAlignment( (TEXTALIGNMENT)A.getTextAlignment() ),
-     m_FillingPattern( (FILLINGPATTERN)A.getFillingPattern() ),
-     m_ff1( A.m_ff1 ), m_ff2( A.m_ff2 ), m_ff3( A.m_ff3 )
+	: m_LineThickness( A.m_LineThickness ),
+	  m_LineDashOffset( A.m_LineDashOffset ),
+	  m_LineDashFactor( A.m_LineDashFactor ),
+	  m_Red( A.m_Red ),
+	  m_Green( A.m_Green ),
+	  m_Blue( A.m_Blue ),
+	  m_BgRed( A.m_BgRed ),
+	  m_BgGreen( A.m_BgGreen ),
+	  m_BgBlue( A.m_BgBlue ),
+	  m_FontScale( A.m_FontScale ),
+	  m_ff1( A.m_ff1 ),
+	  m_ff2( A.m_ff2 ),
+	  m_ff3( A.m_ff3 ),
+	  m_LineJoin( A.m_LineJoin ),
+	  m_LineCap( A.m_LineCap ),
+	  m_LineDashType( A.m_LineDashType ),
+	  m_TextAlignment( A.m_TextAlignment ),
+	  m_FillingPattern( A.m_FillingPattern )
 {
-	for( int i = 0; i < CREEPS_MAX_FONT_STRING_LENGTH; i++ )
-		m_FontString[i] = A.getFontString()[i];
+	for( int i = 0; i < CREEPS_MAX_FONT_STRING_LENGTH; i++ ) {
+		m_FontString[i] = A.m_FontString[i];
+	}
 	
-	for( int j = 0; j < CREEPS_MAX_DASH_STRING_LENGTH; j++ )
-		m_LineDashString[j] = A.getLineDashString()[j];
+	for( int j = 0; j < CREEPS_MAX_DASH_STRING_LENGTH; j++ ) {
+		m_LineDashString[j] = A.m_LineDashString[j];
+	}
 }
 
 /*********************************************************/
 
-bool CAt::inheritAttributes( const CAt& A,
-                             FILE* file,
-                             bool gsave_written )
+bool
+CAt::inheritAttributes( const CAt &A,
+                        FILE      *file,
+                        bool       gsave_written )
 {
     bool changed = gsave_written;
-    		
-    changed |= inheritLineThickness( A, file, changed );
-    changed |= inheritLineJoin( A, file, changed );
-    changed |= inheritLineCap( A, file, changed );
+
+	changed |= inheritLineThickness( A, file, changed );
+	changed |= inheritLineJoin( A, file, changed );
+	changed |= inheritLineCap( A, file, changed );
 	changed |= inheritLineDash( A, file, changed );
 	
 	// do not use the return value of inheritBackgroundColor,
 	// because there no "gsave" is written
+	
 	inheritBackgroundColor( A, file );
 	changed |= inheritColor( A, file, changed );
 	changed |= inheritFont( A, file, changed );
@@ -122,6 +145,7 @@ bool CAt::inheritAttributes( const CAt& A,
 	// because even if the alignment has been changed, no
 	// "gsave" has been written, because the alignment is
 	// not set by a PostScript command
+	
 	inheritTextAlignment( A, file );
 	changed |= inheritFillingPattern( A, file, changed );
     
@@ -130,8 +154,9 @@ bool CAt::inheritAttributes( const CAt& A,
 
 /*********************************************************/
 
-bool CAt::writeChanges( const CAt& A,
-                        FILE* file )
+bool
+CAt::writeChanges( const CAt& A,
+                   FILE* file )
 {
     CAt temp( *this );
     return  temp.inheritAttributes( A, file, false );
@@ -139,8 +164,9 @@ bool CAt::writeChanges( const CAt& A,
 
 /*********************************************************/
 
-bool CAt::setAttributes( const CAt& A,
-                         FILE* file )
+bool
+CAt::setAttributes( const CAt& A,
+                    FILE* file )
 {
 	return inheritAttributes( A, file, true );
 }
@@ -157,47 +183,60 @@ CAt CAt::operator | ( const CAt& attributes )
 /*********************************************************/
 
 void CAt::startFillingBox( FILE* file,
-                           const float width,
-                           const float height )
+                           const CreEPS_FLOAT width,
+                           const CreEPS_FLOAT height )
 {
-	fprintf( file, "<<\n/PatternType 1 /PaintType 1 /TilingType 1\n"
-	               "/BBox[0  0 %g %g]\n"
-	               "/XStep %g /YStep %g\n"
-	               "/PaintProc { begin x ",
+	fprintf( file,
+	         CreEPS_CC("<<\n/PatternType 1 /PaintType 1 /TilingType 1\n")
+	         CreEPS_CC("/BBox[0  0 %g %g]\n")
+	         CreEPS_CC("/XStep %g /YStep %g\n")
+	         CreEPS_CC("/PaintProc { begin x "),
 	         width, height,
 	         width, height  );
 	
 	if( m_BgRed >= 0 && m_BgGreen >= 0 && m_BgBlue >= 0 )
-		fprintf( file, "%g %g %g sc 0 0 %g %g rf ",
+	{
+		fprintf( file,
+		         CreEPS_CC("%g %g %g sc 0 0 %g %g rf "),
 		         m_BgRed, m_BgGreen, m_BgBlue, width, height );
+	}
 
 	if( m_Red >= 0 && m_Green >= 0 && m_Blue >= 0 )
-	    fprintf( file, "%g %g %g sc ", m_Red, m_Green, m_Blue );
+	{
+	    fprintf( file,
+	             CreEPS_CC("%g %g %g sc "),
+	             m_Red, m_Green, m_Blue );
+	}
 }
 
 /*********************************************************/
 
 void CAt::endFillingBox( FILE* file )
 {
-	fprintf( file, " y end }\n" );
+	fprintf( file, CreEPS_CC(" y end }\n") );
 }
 
 /*********************************************************/
 
-bool CAt::inheritLineThickness( const CAt& A,
-                                FILE* file,
-                                bool  gsave_written )
+bool
+CAt::inheritLineThickness( const CAt &A,
+                           FILE      *file,
+                           bool       gsave_written )
 {
 	bool changed = false;
 
-	if( A.getLineThickness() != -1                 &&
-	    A.getLineThickness() != getLineThickness()    )
+	if( A.m_LineThickness != -1              &&
+	    A.m_LineThickness != m_LineThickness    )
 	{
-		m_LineThickness = A.getLineThickness();
+		m_LineThickness = A.m_LineThickness;
+		
 		if( file != NULL ) {
-			if( gsave_written == false )  fprintf( file, "x\n" );
-			fprintf( file, "%g sw\n", getLineThickness() );
+			if( gsave_written == false ) {
+				fprintf( file, CreEPS_CC("x\n") );
+			}
+			fprintf( file, CreEPS_CC("%g sw\n"), m_LineThickness );
 		}
+		
 		changed = true;
 	}
 
@@ -206,20 +245,25 @@ bool CAt::inheritLineThickness( const CAt& A,
 
 /*********************************************************/
 
-bool CAt::inheritLineJoin( const CAt& A,
-                           FILE* file,
-                           bool  gsave_written )
+bool
+CAt::inheritLineJoin( const CAt &A,
+                      FILE      *file,
+                      bool       gsave_written )
 {
 	bool changed = false;
 
-	if( A.getLineJoin() != LJ_KEEP       &&
-	    A.getLineJoin() != getLineJoin()    )
+	if( A.m_LineJoin != LJ_KEEP    &&
+	    A.m_LineJoin != m_LineJoin    )
 	{
-		m_LineJoin = (LINEJOIN)A.getLineJoin();
+		m_LineJoin = A.m_LineJoin;
+		
 		if( file != NULL ) {
-			if( gsave_written == false )  fprintf( file, "x\n" );
-			fprintf( file, "%d sj\n", getLineJoin() );
+			if( gsave_written == false ) {
+				fprintf( file, CreEPS_CC("x\n") );
+			}
+			fprintf( file, CreEPS_CC("%d sj\n"), m_LineJoin );
 		}
+		
 		changed = true;
 	}
 
@@ -228,20 +272,25 @@ bool CAt::inheritLineJoin( const CAt& A,
 
 /*********************************************************/
 
-bool CAt::inheritLineCap( const CAt& A,
-                          FILE* file,
-                          bool gsave_written )
+bool
+CAt::inheritLineCap( const CAt &A,
+                     FILE      *file,
+                     bool       gsave_written )
 {
 	bool changed = false;
 
-	if( A.getLineCap() != LC_KEEP      &&
-	    A.getLineCap() != getLineCap()    )
+	if( A.m_LineCap != LC_KEEP   &&
+	    A.m_LineCap != m_LineCap    )
 	{
-		m_LineCap = (LINECAP)A.getLineCap();
+		m_LineCap = A.m_LineCap;
+		
 		if( file != NULL ) {
-			if( gsave_written == false )  fprintf( file, "x\n" );
-			fprintf( file, "%d sp\n", getLineCap() );
+			if( gsave_written == false ) {
+				fprintf( file, CreEPS_CC("x\n") );
+			}
+			fprintf( file, CreEPS_CC("%d sp\n"), m_LineCap );
 		}
+		
 		changed = true;
 	}
 
@@ -250,35 +299,38 @@ bool CAt::inheritLineCap( const CAt& A,
 
 /*********************************************************/
 
-bool CAt::inheritLineDash( const CAt& A,
-                           FILE* file,
-                           bool gsave_written )
+bool
+CAt::inheritLineDash( const CAt &A,
+                      FILE      *file,
+                      bool       gsave_written )
 {
 	bool changed = false;
 	CAt tempA( A );
 	
 	// line dashes set with the enum-constant
-	if(      tempA.getLineDashType()   != LD_KEEP
-	    && ( tempA.getLineDashType()   != m_LineDashType   ||
-	         tempA.getLineDashFactor() != m_LineDashFactor ||
-	         tempA.getLineThickness()  != m_LineThickness  ||
-	         tempA.getLineCap()        != m_LineCap          ) )
+	if( (tempA.m_LineDashType   != LD_KEEP            ) &&
+	    (tempA.m_LineDashType   != m_LineDashType   ||
+	     tempA.m_LineDashFactor != m_LineDashFactor ||
+	     tempA.m_LineThickness  != m_LineThickness  ||
+	     tempA.m_LineCap        != m_LineCap          )    )
 	{
-		m_LineDashType = (LINEDASH)tempA.getLineDashType();
-		if( tempA.getLineDashFactor() >= 1 ) {
-			m_LineDashFactor = tempA.getLineDashFactor();
+		m_LineDashType = tempA.m_LineDashType;
+		if( tempA.m_LineDashFactor >= 1 ) {
+			m_LineDashFactor = tempA.m_LineDashFactor;
 		}
 		m_LineDashOffset = 0;
 		
 		float solid_dot     = 0,
 		      zero_dist     = 0,
-		      linethickness = tempA.getLineThickness(),
+		      linethickness = tempA.m_LineThickness,
 		      factor        = m_LineDashFactor > 1 ? m_LineDashFactor : 1;
-		int   linecap       = tempA.getLineCap() >= 0 ? tempA.getLineCap() : m_LineCap;
+		int   linecap       = tempA.m_LineCap >= 0 ? tempA.m_LineCap : m_LineCap;
+		
 		if( linethickness < 0 )  linethickness = m_LineThickness;
 		if( linecap       < 0 )  linecap       = (LINECAP)BUTT;
 		
-		switch( linecap ) {
+		switch( linecap )
+		{
 			case BUTT :
 				solid_dot = linethickness;
 				break;
@@ -286,7 +338,7 @@ bool CAt::inheritLineDash( const CAt& A,
 				zero_dist = linethickness;
 				break;
 			case SQUARE :
-				solid_dot = 0.0001f;
+				solid_dot = 0.0001;
 				zero_dist = linethickness;
 				break;
 			default : break;
@@ -300,21 +352,21 @@ bool CAt::inheritLineDash( const CAt& A,
 				
 			case DOT :
 				sprintf( tempA.m_LineDashString,
-				         "%g %g",
+				         CreEPS_CC("%g %g"),
 				         solid_dot,
 				         factor * linethickness + zero_dist );
 				break;
 				
 			case DASH :
 				sprintf( tempA.m_LineDashString,
-				         "%g %g",
+				         CreEPS_CC("%g %g"),
 				         factor * linethickness + solid_dot - linethickness,
 				         factor * linethickness + zero_dist );
 				break;
 				
 			case DOTDASH :
 				sprintf( tempA.m_LineDashString,
-				         "%g %g %g %g",
+				         CreEPS_CC("%g %g %g %g"),
 				         solid_dot,
 				         0.5 * factor * linethickness + zero_dist,
 				               factor * linethickness + solid_dot - linethickness ,
@@ -326,19 +378,26 @@ bool CAt::inheritLineDash( const CAt& A,
 	}
 	
 	// inheriting the string
-	if( ( tempA.getLineDashString()[0] != 0 ||
-	      tempA.getLineDashOffset()    >= 0    )
+	if( ( tempA.m_LineDashString[0] != 0 ||
+	      tempA.m_LineDashOffset    >= 0    )
 	    &&
-	    ( tempA.getLineDashOffset() != m_LineDashOffset ||
-	      strncmp(tempA.getLineDashString(), m_LineDashString,
-	              CREEPS_MAX_DASH_STRING_LENGTH)          ) )
+	    ( tempA.m_LineDashOffset != m_LineDashOffset ||
+	      strncmp(tempA.m_LineDashString,
+	              m_LineDashString,
+	              CREEPS_MAX_DASH_STRING_LENGTH) )
+	  )
 	{
-		memcpy( m_LineDashString, tempA.getLineDashString(), CREEPS_MAX_DASH_STRING_LENGTH );
-		m_LineDashOffset = tempA.getLineDashOffset();
+		memcpy( m_LineDashString,
+		        tempA.m_LineDashString,
+		        CREEPS_MAX_DASH_STRING_LENGTH );
+		
+		m_LineDashOffset = tempA.m_LineDashOffset;
 		if( file != NULL ) {
-			if( gsave_written == false )  fprintf( file, "x\n" );
+			if( gsave_written == false ) {
+				fprintf( file, CreEPS_CC("x\n") );
+			}
 			fprintf( file,
-			         "[%s] %g sd\n",
+			         CreEPS_CC("[%s] %g sd\n"),
 			         m_LineDashString,
 			         m_LineDashOffset >= 0 ? m_LineDashOffset : 0 );
 		}
@@ -350,25 +409,41 @@ bool CAt::inheritLineDash( const CAt& A,
 
 /*********************************************************/
 
-bool CAt::inheritColor( const CAt& A,
-                        FILE* file,
-                        bool gsave_written )
+bool
+CAt::inheritColor( const CAt &A,
+                   FILE      *file,
+                   bool       gsave_written )
 {
 	bool changed = false;
 
-	if( (A.getRed() >= 0 && getRed() != A.getRed()) ) {
-		m_Red = A.getRed();  changed = true; }
-	if( (A.getGreen() >= 0 && getGreen() != A.getGreen()) ) {
-		m_Green = A.getGreen(); changed = true; }
-	if( (A.getBlue()  >= 0 && getBlue()  != A.getBlue()) ) {
-		m_Blue = A.getBlue(); changed = true; }
+	if( A.m_Red >= 0 && m_Red != A.m_Red ) {
+		m_Red = A.m_Red;
+		changed = true;
+	}
+	if( A.m_Green >= 0 && m_Green != A.m_Green ) {
+		m_Green = A.m_Green;
+		changed = true;
+	}
+	if( A.m_Blue >= 0 && m_Blue != A.m_Blue ) {
+		m_Blue = A.m_Blue;
+		changed = true;
+	}
 
-	if( changed == true && file != NULL ) {
-		if( gsave_written == false )  fprintf( file, "x\n" );
-		if( m_Red == m_Green && m_Green == m_Blue ) {
-			fprintf( file, "%g sg\n", m_Red );
+	if( changed == true && file != NULL )
+	{
+		if( gsave_written == false )
+		{
+			fprintf( file, CreEPS_CC("x\n") );
+		}
+		if( m_Red == m_Green && m_Green == m_Blue )
+		{
+			fprintf( file,
+			         CreEPS_CC("%g sg\n"),
+			         m_Red );
 		} else {
-			fprintf( file, "%g %g %g sc\n", m_Red, m_Green, m_Blue );
+			fprintf( file,
+			         CreEPS_CC("%g %g %g sc\n"),
+			         m_Red, m_Green, m_Blue );
 		}
 	}
 
@@ -377,24 +452,37 @@ bool CAt::inheritColor( const CAt& A,
 
 /*********************************************************/
 
-bool CAt::inheritBackgroundColor( const CAt& A,
-                                  FILE* file )
+bool
+CAt::inheritBackgroundColor( const CAt &A,
+                             FILE      *file )
 {
 	bool changed = false;
 
 	// the background in A is explicitly transparent, so make
 	// the background in *this attribute transparent, too
-	if( A.getBackgroundRed() < -1 ) {
+	
+	if( A.m_BgRed < -1 )
+	{
 		if( m_BgRed != -1 )  changed = true;
 		m_BgRed = m_BgGreen = m_BgBlue = -2;
+	}
+
 	// the background in A has a specifyed color, accept it
-	} else if( A.getBackgroundRed() != -1 ) {
-		if( getBackgroundRed() != A.getBackgroundRed() ) {
-			m_BgRed = A.getBackgroundRed();  changed = true; }
-		if( getBackgroundGreen() != A.getBackgroundGreen() ) {
-			m_BgGreen = A.getBackgroundGreen(); changed = true; }
-		if( getBackgroundBlue() != A.getBackgroundBlue() ) {
-			m_BgBlue = A.getBackgroundBlue(); changed = true; }
+
+	else if( A.m_BgRed != -1 )
+	{
+		if( m_BgRed != A.m_BgRed ) {
+			m_BgRed = A.m_BgRed;
+			changed = true;
+		}
+		if( m_BgGreen != A.m_BgGreen ) {
+			m_BgGreen = A.m_BgGreen;
+			changed   = true;
+		}
+		if( m_BgBlue != A.m_BgBlue ) {
+			m_BgBlue = A.m_BgBlue;
+			changed  = true;
+		}
 	}
 
 	// don't write anything, because the background color is
@@ -405,16 +493,17 @@ bool CAt::inheritBackgroundColor( const CAt& A,
 
 /*********************************************************/
 
-bool CAt::inheritFont( const CAt& A,
-                       FILE* file,
-                       bool gsave_written )
+bool
+CAt::inheritFont( const CAt &A,
+                  FILE      *file,
+                  bool       gsave_written )
 {
 	bool changed = false;
 	
 	// check, if the font strings are different
-	if( A.getFontString()[0] != '-' ) {
+	if( A.m_FontString[0] != '-' ) {
 		for( int i = 0; i < CREEPS_MAX_FONT_STRING_LENGTH; i++ ) {
-			if( m_FontString[i] != A.getFontString()[i] ) {
+			if( m_FontString[i] != A.m_FontString[i] ) {
 				changed = true;
 				break;
 			}
@@ -424,22 +513,27 @@ bool CAt::inheritFont( const CAt& A,
 	// if the font strings are different copy the string
 	if( changed ) {
 		for( int j = 0; j < CREEPS_MAX_FONT_STRING_LENGTH; j++ ) {
-			m_FontString[j] = A.getFontString()[j];
+			m_FontString[j] = A.m_FontString[j];
 		}
 	}
 	
 	// set font scale
-	if( A.getFontScale() >= 1           &&
-	    A.getFontScale() != m_FontScale    )
+	if( A.m_FontScale >= 1           &&
+	    A.m_FontScale != m_FontScale    )
 	{
-		m_FontScale = A.getFontScale();
-		changed = true;
+		m_FontScale = A.m_FontScale;
+		changed     = true;
 	}
 	
-	if( changed == true && file != NULL ) {
-		if( gsave_written == false )  fprintf( file, "x\n" );
-		fprintf( file, "%g /%s fss\n",
-		        m_FontScale < 0 ? 0.35277778 : m_FontScale*0.35277778, m_FontString );
+	if( changed == true && file != NULL )
+	{
+		if( gsave_written == false ) {
+			fprintf( file, CreEPS_CC("x\n") );
+		}
+		
+		fprintf( file, CreEPS_CC("%g /%s fss\n"),
+		         m_FontScale < 0 ? 0.35277778 : m_FontScale*0.35277778,
+		         m_FontString );
 	}
 	
 	return changed;
@@ -447,15 +541,16 @@ bool CAt::inheritFont( const CAt& A,
 
 /*********************************************************/
 
-bool CAt::inheritTextAlignment( const CAt& A,
-                                FILE* file )
+bool
+CAt::inheritTextAlignment( const CAt &A,
+                           FILE      *file )
 {
 	bool changed = false;
 	
-	if( A.getTextAlignment() != -1              &&
-		A.getTextAlignment() != m_TextAlignment    )
+	if( A.m_TextAlignment != -1              &&
+		A.m_TextAlignment != m_TextAlignment    )
 	{
-		m_TextAlignment = (TEXTALIGNMENT)A.getTextAlignment();
+		m_TextAlignment = A.m_TextAlignment;
 		changed = true;
 	}
 
@@ -464,24 +559,25 @@ bool CAt::inheritTextAlignment( const CAt& A,
 
 /*********************************************************/
 
-bool CAt::inheritFillingPattern( const CAt& A,
-                                 FILE* file,
-                                 bool gsave_written )
+bool
+CAt::inheritFillingPattern( const CAt &A,
+                            FILE      *file,
+                            bool       gsave_written )
 {
 	bool  changed   = false;
 	float BoxWidth  = 0,
 	      BoxHeight = 0;
 
-	if(    ( A.getFillingPattern() != -1               &&
-	         A.getFillingPattern() != m_FillingPattern    )
-	    || ( ( A.getFillingPattern() == HEXDOT       ||
-	           A.getFillingPattern() == CHECKERBOARD    ) &&
-	         ( m_ff1 != A.m_ff1 || m_ff2 != A.m_ff2     )    )
-	    || ( ( A.getFillingPattern() == STRIPE          ) &&
-	         ( m_ff1 != A.m_ff1 || m_ff2 != A.m_ff2  ||
-	           m_ff3 != A.m_ff3                         )    )  )
+	if(    ( A.m_FillingPattern != -1               &&
+	         A.m_FillingPattern != m_FillingPattern    )
+	    || ( (A.m_FillingPattern == HEXDOT       ||
+	          A.m_FillingPattern == CHECKERBOARD   ) &&
+	         (m_ff1 != A.m_ff1 || m_ff2 != A.m_ff2 )    )
+	    || ( (A.m_FillingPattern == STRIPE         ) &&
+	         (m_ff1 != A.m_ff1 || m_ff2 != A.m_ff2 ||
+	          m_ff3 != A.m_ff3                         ))  )
 	{
-		m_FillingPattern = (FILLINGPATTERN)A.getFillingPattern();
+		m_FillingPattern = A.m_FillingPattern;
 		m_ff1 = A.m_ff1;
 		m_ff2 = A.m_ff2;
 		m_ff3 = A.m_ff3;
@@ -496,13 +592,13 @@ bool CAt::inheritFillingPattern( const CAt& A,
 					// m_ff1 == distance between the balls
 					// m_ff2 == radius of the balls
 					BoxWidth  = m_ff1;
-					BoxHeight = sqrt((float)3)*m_ff1;
+					BoxHeight = sqrtf(3)*m_ff1;
 					startFillingBox( file, BoxWidth, BoxHeight );
-					fprintf( file, "%g %g %g o f "
-					               "%g %g %g o f "
-					               "%g %g %g o f "
-					               "%g %g %g o f "
-					               "%g %g %g o f ",
+					fprintf( file, CreEPS_CC("%g %g %g o f ")
+					               CreEPS_CC("%g %g %g o f ")
+					               CreEPS_CC("%g %g %g o f ")
+					               CreEPS_CC("%g %g %g o f ")
+					               CreEPS_CC("%g %g %g o f "),
 					                    0.0,             0.0, m_ff2,
 					               BoxWidth,             0.0, m_ff2,
 					         0.5 * BoxWidth, 0.5 * BoxHeight, m_ff2,
@@ -517,7 +613,8 @@ bool CAt::inheritFillingPattern( const CAt& A,
 					BoxWidth  = 2*m_ff1;
 					BoxHeight = 2*m_ff2;
 					startFillingBox( file, BoxWidth, BoxHeight );
-					fprintf( file, "0 0 %g %g rf %g %g %g %g rf",
+					fprintf( file,
+					         CreEPS_CC("0 0 %g %g rf %g %g %g %g rf"),
 					         m_ff1, m_ff2, m_ff1, m_ff2, m_ff1, m_ff2 );
 					endFillingBox( file );
 					break;
@@ -530,20 +627,20 @@ bool CAt::inheritFillingPattern( const CAt& A,
 						BoxWidth  = 5,
 						BoxHeight = m_ff1 + m_ff2;
 						startFillingBox( file, BoxWidth, BoxHeight );
-						fprintf( file, "x %g sw "
-						               "0 %g m %g %g l s y ",
+						fprintf( file, CreEPS_CC("x %g sw ")
+						               CreEPS_CC("0 %g m %g %g l s y "),
 						         m_ff1, BoxHeight - 0.5*m_ff1,
 						         BoxWidth, BoxHeight - 0.5*m_ff1 );
 					} else {
-						float diff = (float)(m_ff3 - 3.14159265358979323846 / 2);
+						float diff = m_ff3 - 3.14159265358979323846 / 2;
 						if( diff < 0 )  diff = -diff;
 						// vertical lines
 						if( diff < 0.0087266 ) {
 							BoxWidth  = m_ff1 + m_ff2;
 							BoxHeight = 5;
 							startFillingBox( file, BoxWidth, BoxHeight );
-							fprintf( file, "x %g sw "
-							               "%g 0 m %g %g l s y ",
+							fprintf( file, CreEPS_CC("x %g sw ")
+							               CreEPS_CC("%g 0 m %g %g l s y "),
 							         m_ff1, 0.5*m_ff1, 0.5*m_ff1, BoxHeight );
 						// regular angle
 						} else {
@@ -551,11 +648,12 @@ bool CAt::inheritFillingPattern( const CAt& A,
 							BoxHeight = (m_ff1 + m_ff2) / cos(m_ff3);
 							if( BoxHeight > 0 ) {
 								startFillingBox( file, BoxWidth, BoxHeight );
-								fprintf( file, "x %g sw "
-								               "0 0 m %g %g l s "
-								               "%g 0 m %g %g l s "
-								               "0 %g m %g %g l s "
-								               "y ",
+								fprintf( file,
+								         CreEPS_CC("x %g sw ")
+								         CreEPS_CC("0 0 m %g %g l s ")
+								         CreEPS_CC("%g 0 m %g %g l s ")
+								         CreEPS_CC("0 %g m %g %g l s ")
+								         CreEPS_CC("y "),
 								          m_ff1,
 								          BoxWidth,    BoxHeight,
 								         -BoxWidth,    BoxWidth,  2*BoxHeight,
@@ -563,11 +661,12 @@ bool CAt::inheritFillingPattern( const CAt& A,
 							} else {
 								BoxHeight = -BoxHeight;
 								startFillingBox( file, BoxWidth, BoxHeight );
-								fprintf( file, "x %g sw "
-								               "0 %g m %g 0 l s "
-								               "0 %g m %g 0 l s "
-								               "%g %g m %g %g l s "
-								               "y ",
+								fprintf( file,
+								         CreEPS_CC("x %g sw ")
+								         CreEPS_CC("0 %g m %g 0 l s ")
+								         CreEPS_CC("0 %g m %g 0 l s ")
+								         CreEPS_CC("%g %g m %g %g l s ")
+								         CreEPS_CC("y "),
 								          m_ff1,
 								          BoxHeight,   BoxWidth,
 								        2*BoxHeight, 2*BoxWidth,
@@ -581,7 +680,8 @@ bool CAt::inheritFillingPattern( const CAt& A,
 
 				default : break;
 			}
-			fprintf( file, ">>\nmatrix makepattern\n/Pattern setcolorspace setcolor\n" );
+			fprintf( file,
+			         CreEPS_CC(">>\nmatrix makepattern\n/Pattern setcolorspace setcolor\n") );
 		}
 		
 		changed = true;
@@ -592,11 +692,11 @@ bool CAt::inheritFillingPattern( const CAt& A,
 
 /*********************************************************/
 
-CAtLineThickness::CAtLineThickness( const float thickness,
+CAtLineThickness::CAtLineThickness( const CreEPS_FLOAT thickness,
                                     const CAt& A )
 {
 	inheritAttributes( A );
-	m_LineThickness = thickness >= 0 ? thickness : -1;
+	m_LineThickness = thickness >= 0 ? static_cast<float>(thickness) : -1;
 }
 
 /*********************************************************/
@@ -620,18 +720,18 @@ CAtLineCap::CAtLineCap( const LINECAP linecap,
 /*********************************************************/
 
 CAtLineDash::CAtLineDash( const char *const dashstring,
-                          const float       offset,
+                          const CreEPS_FLOAT offset,
                           const CAt& A )
 {
 	inheritAttributes( A );
 	strncpy( m_LineDashString, dashstring, CREEPS_MAX_FONT_STRING_LENGTH );
-	m_LineDashOffset = offset;
+	m_LineDashOffset = static_cast<float>( offset );
 	m_LineDashType = LD_KEEP;
 }
 
 
 CAtLineDash::CAtLineDash( const LINEDASH dash,
-                          const float    factor,
+                          const CreEPS_FLOAT factor,
                           const CAt& A )
 {
 	inheritAttributes( A );
@@ -642,50 +742,56 @@ CAtLineDash::CAtLineDash( const LINEDASH dash,
 
 /*********************************************************/
 
-CAtColor::CAtColor( const float red,
-                    const float green,
-                    const float blue,
+CAtColor::CAtColor( const CreEPS_FLOAT red,
+                    const CreEPS_FLOAT green,
+                    const CreEPS_FLOAT blue,
                     const CAt& A  )
 {
 	inheritAttributes( A );
 
 	if( red   < 0 || 1 < red   ||
 	    green < 0 || 1 < green ||
-	    blue  < 0 || 1 < blue     ) {
-		::printf( "CreEPS: at least one of the RGB components "
-		          "(%.2f,%.2f,%.2f) exceeds the range [0,1] and will "
-		          "be truncated\n", red, green, blue );
+	    blue  < 0 || 1 < blue     )
+	{
+		CreEPS::getWarningMessageHandler()(
+			CreEPS_CC("CreEPS: at least one of the RGB components ")
+		    CreEPS_CC("(%.2f,%.2f,%.2f) exceeds the range [0,1] and will ")
+		    CreEPS_CC("be truncated\n"),
+		    red, green, blue );
 	}
 
 	// truncate the colors to range [0,1]
-	if     ( red < 0 )  m_Red   = 0;
-	else if( red > 1 )  m_Red   = 1;
-	else                m_Red   = red;
+	if     ( red < 0 )  m_Red = 0;
+	else if( red > 1 )  m_Red = 1;
+	else                m_Red = red;
 	
 	if     ( green < 0 )  m_Green = 0;
 	else if( green > 1 )  m_Green = 1;
 	else                  m_Green = green;
 	
-	if     ( blue < 0 )  m_Blue  = 0;
-	else if( blue > 1 )  m_Blue  = 1;
-	else                 m_Blue  = blue;
+	if     ( blue < 0 )  m_Blue = 0;
+	else if( blue > 1 )  m_Blue = 1;
+	else                 m_Blue = blue;
 }
 
 /*********************************************************/
 
-CAtBackgroundColor::CAtBackgroundColor( const float red,
-                                        const float green,
-                                        const float blue,
+CAtBackgroundColor::CAtBackgroundColor( const CreEPS_FLOAT red,
+                                        const CreEPS_FLOAT green,
+                                        const CreEPS_FLOAT blue,
                                         const CAt& A  )
 {
 	inheritAttributes( A );
 
 	if( red   < 0 || 1 < red   ||
 	    green < 0 || 1 < green ||
-	    blue  < 0 || 1 < blue     ) {
-		::printf( "CreEPS: at least one of the RGB components "
-		          "(%.2f,%.2f,%.2f) exceeds the range [0,1] and will "
-		          "be truncated\n", red, green, blue );
+	    blue  < 0 || 1 < blue     )
+	{
+		CreEPS::getWarningMessageHandler()(
+			CreEPS_CC("CreEPS: at least one of the RGB components ")
+		    CreEPS_CC("(%.2f,%.2f,%.2f) exceeds the range [0,1] and will ")
+		    CreEPS_CC("be truncated\n"),
+		    red, green, blue );
 	}
 
 	// truncate the colors to range [0,1]
@@ -714,7 +820,7 @@ CAtTransparentBackground::CAtTransparentBackground( const CAt& A )
 /*********************************************************/
 
 CAtFont::CAtFont( const char *fontstring,
-                  const float scale,
+                  const CreEPS_FLOAT scale,
                   const CAt& A )
 {
 	inheritAttributes( A );
@@ -742,7 +848,7 @@ CAtFont::CAtFont( const char *fontstring,
 }
 
 
-CAtFont::CAtFont( const float scale,
+CAtFont::CAtFont( const CreEPS_FLOAT scale,
                   const CAt& A )
 {
 	inheritAttributes( A );
@@ -751,14 +857,17 @@ CAtFont::CAtFont( const float scale,
 
 /*********************************************************/
 
-CAtGrayScale::CAtGrayScale( const float grayscale,
+CAtGrayScale::CAtGrayScale( const CreEPS_FLOAT grayscale,
                             const CAt& A )
 {
 	inheritAttributes( A );
 	
-	if( grayscale < 0 || 1 < grayscale ) {
-		::printf( "CreEPS: grayscale value %.2f is out of range "
-		          "and will be truncated\n", grayscale );
+	if( grayscale < 0 || 1 < grayscale )
+	{
+		CreEPS::getWarningMessageHandler()(
+			CreEPS_CC("CreEPS: grayscale value %.2f is out of range ")
+		    CreEPS_CC("and will be truncated\n"),
+		    grayscale );
 	}
 	
 	if     ( grayscale < 0 )  m_Red = m_Green = m_Blue = 0;
@@ -768,7 +877,7 @@ CAtGrayScale::CAtGrayScale( const float grayscale,
 
 /*********************************************************/
 
-CAtTextAlignment::CAtTextAlignment( const int alignment,
+CAtTextAlignment::CAtTextAlignment( const CreEPS_INT alignment,
                                     const CAt& A )
 {
 	inheritAttributes( A );
@@ -777,8 +886,8 @@ CAtTextAlignment::CAtTextAlignment( const int alignment,
 
 /*********************************************************/
 
-CAtHexDotFilling::CAtHexDotFilling( const float radius,
-                                    const float distance,
+CAtHexDotFilling::CAtHexDotFilling( const CreEPS_FLOAT radius,
+                                    const CreEPS_FLOAT distance,
                                     const CAt& A )
 {
 	inheritAttributes( A );
@@ -789,8 +898,8 @@ CAtHexDotFilling::CAtHexDotFilling( const float radius,
 
 /*********************************************************/
 
-CAtCheckerboardFilling::CAtCheckerboardFilling( const float x,
-                                                const float y,
+CAtCheckerboardFilling::CAtCheckerboardFilling( const CreEPS_FLOAT x,
+                                                const CreEPS_FLOAT y,
                                                 const CAt& A )
 {
 	inheritAttributes( A );
@@ -802,9 +911,9 @@ CAtCheckerboardFilling::CAtCheckerboardFilling( const float x,
 
 /*********************************************************/
 
-CAtStripeFilling::CAtStripeFilling( const float width,
-                                    const float distance,
-                                    const int   angle,
+CAtStripeFilling::CAtStripeFilling( const CreEPS_FLOAT width,
+                                    const CreEPS_FLOAT distance,
+                                    const CreEPS_INT   angle,
                                     const CAt& A )
 {
 	inheritAttributes( A );
@@ -813,13 +922,13 @@ CAtStripeFilling::CAtStripeFilling( const float width,
 
 	m_ff1 = width;
 	m_ff2 = distance;
-	m_ff3 = (float)angle;
+	m_ff3 = angle;
 
 	// make angle ranging in [0,180)
 	while( m_ff3 <    0 )  m_ff3 += 180;
 	while( m_ff3 >= 180 )  m_ff3 -= 180;
 	// -> rad
-	m_ff3 *= (float)(3.14159265358979323846 / 180);
+	m_ff3 *= (3.14159265358979323846 / 180);
 }
 
 
@@ -827,36 +936,67 @@ CAtStripeFilling::CAtStripeFilling( const float width,
  * CreEPS                                                                      *
  ******************************************************************************/
 
-const float CreEPS::m_INCH2MM = 72.0f/25.4f; // = 2.834645669291...
-const int CreEPS::m_BUFFERLENGTH = 1024;
+const float CreEPS::m_INCH2MM      = 72.0 / 25.4; // = 2.834645669291...
+const int   CreEPS::m_BUFFERLENGTH = 1024;
+
+CreEPS::MessageHandler CreEPS::m_warningMessageHandler = CreEPS::StdMessageHandler;
+CreEPS::MessageHandler CreEPS::m_errorMessageHandler   = CreEPS::StdMessageHandler;
 
 /******************************************************************************/
 
-CreEPS::CreEPS( const char* filename, const float startX, const float startY,
-                                      const float   endX, const float   endY,
-                const bool latex, const char* altEPSFilename ) {
+CreEPS::CreEPS()
+	: m_initialized ( false ),
+	  m_FileHandle( 0x0 ),
+	  m_LatexFileHandle( 0x0 )
+{
+}
+
+CreEPS::CreEPS( const char  *filename,
+                const CreEPS_FLOAT  startX,
+                const CreEPS_FLOAT  startY,
+                const CreEPS_FLOAT  endX,
+                const CreEPS_FLOAT  endY,
+                const CreEPS_BOOL   latex,
+                const char  *altEPSFilename )
+
+	: m_initialized ( false ),
+	  m_FileHandle( 0x0 ),
+	  m_LatexFileHandle( 0x0 )
+{
 	initialize( filename, startX, startY, endX, endY, latex, altEPSFilename );
 }
 
 /******************************************************************************/
 
-CreEPS::CreEPS( const char* filename, const float width, const float height,
-		            const bool latex, const char* altEPSFilename ) {
+CreEPS::CreEPS( const char  *filename,
+                const CreEPS_FLOAT  width,
+                const CreEPS_FLOAT  height,
+		        const bool   latex,
+		        const char  *altEPSFilename )
+
+	: m_initialized ( false ),
+	  m_FileHandle( 0x0 ),
+	  m_LatexFileHandle( 0x0 )
+{
 	initialize( filename, 0, 0, width, height, latex, altEPSFilename );
 }
 
 /******************************************************************************/
 
-void CreEPS::initialize( const char* filename,
-                         const float startX, const float startY,
-                         const float   endX, const float   endY,
-                         const bool latex, const char* altEPSFilename )
+void CreEPS::initialize( const char  *filename,
+                         const CreEPS_FLOAT  startX,
+                         const CreEPS_FLOAT  startY,
+                         const CreEPS_FLOAT  endX,
+                         const CreEPS_FLOAT  endY,
+                         const bool   latex,
+                         const char  *altEPSFilename )
 {
 	m_FileHandle = m_LatexFileHandle = NULL;
 
 	m_FileHandle = fopen( filename, "w" );
-	if( ! m_FileHandle ) {
-		::printf( "CreEPS: Could not open output file!\n" );
+	if( ! m_FileHandle )
+	{
+		m_errorMessageHandler( CreEPS_CC("CreEPS: Could not open output file!\n") );
 		exit( 1 );
 	}
 
@@ -869,8 +1009,9 @@ void CreEPS::initialize( const char* filename,
 		latexFilename[length+2] = 0;
 		
 		m_LatexFileHandle = fopen( latexFilename, "w" );
-		if( ! m_LatexFileHandle ) {
-			::printf( "Could not open latex file!\n" );
+		if( ! m_LatexFileHandle )
+		{
+			m_errorMessageHandler( CreEPS_CC("Could not open latex file!\n") );
 			exit( 1 );
 		}
 		delete [] latexFilename;
@@ -883,11 +1024,11 @@ void CreEPS::initialize( const char* filename,
 	         "%%!PS-Adobe-3.0 EPSF-3.0\n"
 	         "%%%%BoundingBox: %d %d %d %d\n"
 	         "%%%%HiResBoundingBox: %g %g %g %g\n"
-	         "%%%%Creator: CreEPS" CREEPS_VERSION "\n"
+	         "%%%%Creator: CreEPS" CREEPS_VERSION_STR "\n"
 	         "%%%%CreationDate: %s"
 	         "%%%%EndComments\n"
 	         "%%CreEPS by Uwe Fabricius, http://uwefabricius.de/ &\n"
-	         "%%          Thomas Pohl,   http://thomas-pohl.info/\n"
+	         "%%		  Thomas Pohl,   http://thomas-pohl.info/\n"
 	         "gsave\n"
 	         "/a {arc} bind def\n"
 	         "/an {arcn} bind def\n"
@@ -932,7 +1073,9 @@ void CreEPS::initialize( const char* filename,
 	         (int)(endX*m_INCH2MM), (int)(endY*m_INCH2MM),
 	         startX*m_INCH2MM, startY*m_INCH2MM, endX*m_INCH2MM, endY*m_INCH2MM,
 	         ctime( &currentTime ));
-	if( ! m_LatexFileHandle /*|| true*/ ) { //! only for testing
+	
+	if( ! m_LatexFileHandle /*|| true*/ )
+	{ //! only for testing
 		fprintf( m_FileHandle,
 		         "/tacwh {x n 0 0 m dup true charpath pathbbox 3 -1 roll 4 2 roll exch sub 3 1 roll y} bind def\n"
 		         "/ta {m tacwh} bind def\n"
@@ -949,7 +1092,7 @@ void CreEPS::initialize( const char* filename,
 		         "/tact {ta pop neg 0 exch rmoveto 2 div neg 0 rmoveto show} bind def\n"
 		         "/tart {ta pop neg 0 exch rmoveto neg 0 rmoveto show} bind def\n"
 
-		         "/tar {m tacwh x 5 -1 roll r} bind def\n"
+		          "/tar {m tacwh x 5 -1 roll r} bind def\n"
 		         "/tarlb {tar neg 0 exch rmoveto pop pop show y} bind def\n"
 		         "/tarcb {tar neg 0 exch rmoveto pop 2 div neg 0 rmoveto show y} bind def\n"
 		         "/tarrb {tar neg 0 exch rmoveto pop neg 0 rmoveto show y} bind def\n"
@@ -989,9 +1132,9 @@ void CreEPS::initialize( const char* filename,
 
 	if( m_LatexFileHandle ) {
 		fprintf( m_LatexFileHandle,
-		         "%%File created with CreEPS v" CREEPS_VERSION "\n"
+		         "%%File created with CreEPS v" CREEPS_VERSION_STR "\n"
 		         "%%CreEPS by Uwe Fabricius, http://uwefabricius.de/ &\n"
-		         "%%          Thomas Pohl,   http://thomas-pohl.info/\n"
+		         "%%		  Thomas Pohl,   http://thomas-pohl.info/\n"
 		         "%%LaTeX file structure shamelessly stolen from xfig... :-)\n"
 		         "\\setlength{\\unitlength}{1mm}%%\n"
 		         "\\begin{picture}(0,0)%%\n"
@@ -1021,22 +1164,56 @@ void CreEPS::initialize( const char* filename,
 
 /******************************************************************************/
 
-void CreEPS::finalize() {
-	if( m_initialized ) {
-		if( m_nStoredTransformations != 0 ) {
-			::printf( "CreEPS: Finalizing file although %i transformations are still "
-			          "on stack!\n", m_nStoredTransformations );
-			while( m_nStoredTransformations > 0 ) loadTransformation();
+CreEPS::MessageHandler
+CreEPS::setWarningMessageHandler( MessageHandler msgHandler )
+{
+	MessageHandler prevHandler = m_warningMessageHandler;
+
+	m_warningMessageHandler = msgHandler;
+
+	return prevHandler;
+}
+
+/******************************************************************************/
+
+CreEPS::MessageHandler
+CreEPS::setErrorMessageHandler( MessageHandler msgHandler )
+{
+	MessageHandler prevHandler = m_errorMessageHandler;
+
+	m_errorMessageHandler = msgHandler;
+
+	return prevHandler;
+}
+
+/******************************************************************************/
+
+void CreEPS::finalize()
+{
+	if( m_initialized )
+	{
+		if( m_nStoredTransformations != 0 )
+		{
+			m_warningMessageHandler(
+				CreEPS_CC("CreEPS: Finalizing file although %i transformations ")
+				CreEPS_CC("are still on stack!\n"),
+				m_nStoredTransformations );
+				
+			while( m_nStoredTransformations > 0 ) {
+				loadTransformation();
+			}
 		}
 
-		if( m_FileHandle ) {
+		if( m_FileHandle )
+		{
 			fprintf( m_FileHandle, "y\nend\nshowpage\n%%End of CreEPS generated "
 			         "file\n%%%%EOF\n" );
 			fclose( m_FileHandle );
 			m_FileHandle = NULL;
 		}
 
-		if( m_LatexFileHandle ) {
+		if( m_LatexFileHandle )
+		{
 			fprintf( m_LatexFileHandle, "\\end{picture}%%\n" );
 			fclose( m_LatexFileHandle );
 			m_LatexFileHandle = NULL;
@@ -1048,10 +1225,14 @@ void CreEPS::finalize() {
 
 /******************************************************************************/
 
-bool CreEPS::embedEPS( const char* const filename ) {
-	if( m_Mode != IDLE ) {
-		::printf( "CreEPS: Embedding external EPS in non-IDLE "
-		          "mode is forbidden!\n" );
+bool CreEPS::embedEPS( const char* const filename )
+{
+	if( m_Mode != IDLE )
+	{
+		m_errorMessageHandler(
+			CreEPS_CC("CreEPS: Embedding external EPS in non-IDLE mode is ")
+			CreEPS_CC("forbidden!\n") );
+		
 		return false;
 	}
 	
@@ -1067,14 +1248,17 @@ bool CreEPS::embedEPS( const char* const filename ) {
 	           filename );
 
 	// compensate scaling for INCH2MM
-	applyScaling( 1.0f/m_INCH2MM );
+	applyScaling( 1.0/m_INCH2MM );
 	fprintf( m_FileHandle, "%%%%BeginDocument: %s\n", filename );
 
 	// allocate buffer
 	char *buff = new char [CREEPS_EMBEDEPS_BUFF_SIZE];
-	if( buff == NULL ) {
-		::printf( "CreEPS: Cannot allocate buffer for embedding \"%s\"\n",
-		          filename );
+	if( buff == NULL )
+	{
+		m_errorMessageHandler(
+			CreEPS_CC("CreEPS: Cannot allocate buffer for embedding \"%s\"\n"),
+		    filename );
+		
 		fclose( file );
 		return false;
 	}
@@ -1099,8 +1283,10 @@ bool CreEPS::embedEPS( const char* const filename ) {
 
 /******************************************************************************/
 
-const char* CreEPS::restoreAttributes( const bool changed,
-                                       const bool newpath ) {
+const char*
+CreEPS::restoreAttributes( const bool changed,
+                           const bool newpath )
+{
 	static const char* DORESTORE        = "y\n";
 	static const char* DORESTORENEWPATH = "y n\n";
 	static const char* NORESTORE        = "";
@@ -1110,9 +1296,14 @@ const char* CreEPS::restoreAttributes( const bool changed,
 
 /******************************************************************************/
 
-void CreEPS::startPath( const float x, const float y ) {
-	if( m_Mode != IDLE ) {
-		::printf( "CreEPS: Starting path in non-IDLE mode is forbidden!\n" );
+void CreEPS::startPath( const CreEPS_FLOAT x,
+                        const CreEPS_FLOAT y )
+{
+	if( m_Mode != IDLE )
+	{
+		m_errorMessageHandler(
+			CreEPS_CC("CreEPS: Starting path in non-IDLE mode is forbidden!\n") );
+		
 		exit( 1 );
 	}
 
@@ -1122,9 +1313,13 @@ void CreEPS::startPath( const float x, const float y ) {
 
 /******************************************************************************/
 
-void CreEPS::startPath() {
-	if( m_Mode != IDLE ) {
-		::printf( "CreEPS: Starting path in non-IDLE mode is forbidden!\n" );
+void CreEPS::startPath()
+{
+	if( m_Mode != IDLE )
+	{
+		m_errorMessageHandler(
+			CreEPS_CC("CreEPS: Starting path in non-IDLE mode is forbidden!\n") );
+		
 		exit( 1 );
 	}
 
@@ -1133,9 +1328,14 @@ void CreEPS::startPath() {
 
 /******************************************************************************/
 
-void CreEPS::addMove( const float x, const float y ) {
-	if( m_Mode != PATH ) {
-		::printf( "CreEPS: Adding move in non-PATH mode is forbidden!\n" );
+void CreEPS::addMove( const CreEPS_FLOAT x,
+                      const CreEPS_FLOAT y )
+{
+	if( m_Mode != PATH )
+	{
+		m_errorMessageHandler(
+			CreEPS_CC("CreEPS: Adding move in non-PATH mode is forbidden!\n") );
+		
 		exit( 1 );
 	}
 
@@ -1144,9 +1344,14 @@ void CreEPS::addMove( const float x, const float y ) {
 
 /******************************************************************************/
 
-void CreEPS::addRelativeMove( const float dx, const float dy ) {
-	if( m_Mode != PATH ) {
-		::printf( "CreEPS: Adding relative move in non-PATH mode is forbidden!\n" );
+void CreEPS::addRelativeMove( const CreEPS_FLOAT dx,
+                              const CreEPS_FLOAT dy )
+{
+	if( m_Mode != PATH )
+	{
+		m_errorMessageHandler(
+			CreEPS_CC("CreEPS: Adding relative move in non-PATH mode is forbidden!\n") );
+		
 		exit( 1 );
 	}
 
@@ -1155,9 +1360,14 @@ void CreEPS::addRelativeMove( const float dx, const float dy ) {
 
 /******************************************************************************/
 
-void CreEPS::addLine( const float x, const float y ) {
-	if( m_Mode != PATH ) {
-		::printf( "CreEPS: Adding line in non-PATH mode is forbidden!\n" );
+void CreEPS::addLine( const CreEPS_FLOAT x,
+                      const CreEPS_FLOAT y )
+{
+	if( m_Mode != PATH )
+	{
+		m_errorMessageHandler(
+			CreEPS_CC("CreEPS: Adding line in non-PATH mode is forbidden!\n") );
+		
 		exit( 1 );
 	}
 
@@ -1166,9 +1376,14 @@ void CreEPS::addLine( const float x, const float y ) {
 
 /******************************************************************************/
 
-void CreEPS::addRelativeLine( const float dx, const float dy ) {
-	if( m_Mode != PATH ) {
-		::printf( "CreEPS: Adding relative line in non-PATH mode is forbidden!\n" );
+void CreEPS::addRelativeLine( const CreEPS_FLOAT dx,
+                              const CreEPS_FLOAT dy )
+{
+	if( m_Mode != PATH )
+	{
+		m_errorMessageHandler(
+			CreEPS_CC("CreEPS: Adding relative line in non-PATH mode is forbidden!\n") );
+		
 		exit( 1 );
 	}
 
@@ -1177,10 +1392,17 @@ void CreEPS::addRelativeLine( const float dx, const float dy ) {
 
 /******************************************************************************/
 
-void CreEPS::addArc( const float x, const float y, const float r,
-                     const float a1, const float a2 ) {
-	if( m_Mode != PATH ) {
-		::printf( "CreEPS: Adding arc in non-PATH mode is forbidden!\n" );
+void CreEPS::addArc( const CreEPS_FLOAT x,
+                     const CreEPS_FLOAT y,
+                     const CreEPS_FLOAT r,
+                     const CreEPS_FLOAT a1,
+                     const CreEPS_FLOAT a2 )
+{
+	if( m_Mode != PATH )
+	{
+		m_errorMessageHandler(
+			CreEPS_CC("CreEPS: Adding arc in non-PATH mode is forbidden!\n") );
+		
 		exit( 1 );
 	}
 
@@ -1189,10 +1411,17 @@ void CreEPS::addArc( const float x, const float y, const float r,
 
 /******************************************************************************/
 
-void CreEPS::addArcN( const float x, const float y, const float r,
-                      const float a1, const float a2 ) {
-	if( m_Mode != PATH ) {
-		::printf( "CreEPS: Adding arcN in non-PATH mode is forbidden!\n" );
+void CreEPS::addArcN( const CreEPS_FLOAT x,
+                      const CreEPS_FLOAT y,
+                      const CreEPS_FLOAT r,
+                      const CreEPS_FLOAT a1,
+                      const CreEPS_FLOAT a2 )
+{
+	if( m_Mode != PATH )
+	{
+		m_errorMessageHandler(
+			CreEPS_CC("CreEPS: Adding arcN in non-PATH mode is forbidden!\n") );
+		
 		exit( 1 );
 	}
 
@@ -1201,9 +1430,15 @@ void CreEPS::addArcN( const float x, const float y, const float r,
 
 /******************************************************************************/
 
-void CreEPS::addCircle( const float x, const float y, const float r ) {
-	if( m_Mode != PATH ) {
-		::printf( "CreEPS: Adding circle in non-PATH mode is forbidden!\n" );
+void CreEPS::addCircle( const CreEPS_FLOAT x,
+                        const CreEPS_FLOAT y,
+                        const CreEPS_FLOAT r )
+{
+	if( m_Mode != PATH )
+	{
+		m_errorMessageHandler(
+			CreEPS_CC("CreEPS: Adding circle in non-PATH mode is forbidden!\n") );
+		
 		exit( 1 );
 	}
 
@@ -1213,12 +1448,19 @@ void CreEPS::addCircle( const float x, const float y, const float r ) {
 
 /******************************************************************************/
 
-void CreEPS::addEllipseArc( const float x, const float y,
-                            const float a, const float b,
-                            const float a1, const float a2,
-                            const float alpha ) {
-	if( m_Mode != PATH ) {
-		::printf( "CreEPS: Adding ellipse arc in non-PATH mode is forbidden!\n" );
+void CreEPS::addEllipseArc( const CreEPS_FLOAT x,
+                            const CreEPS_FLOAT y,
+                            const CreEPS_FLOAT a,
+                            const CreEPS_FLOAT b,
+                            const CreEPS_FLOAT a1,
+                            const CreEPS_FLOAT a2,
+                            const CreEPS_FLOAT alpha )
+{
+	if( m_Mode != PATH )
+	{
+		m_errorMessageHandler(
+			CreEPS_CC("CreEPS: Adding ellipse arc in non-PATH mode is forbidden!\n") );
+		
 		exit( 1 );
 	}
 
@@ -1228,12 +1470,19 @@ void CreEPS::addEllipseArc( const float x, const float y,
 
 /******************************************************************************/
 
-void CreEPS::addEllipseArcN( const float x, const float y,
-                             const float a, const float b,
-                             const float a1, const float a2,
-                             const float alpha ) {
-	if( m_Mode != PATH ) {
-		::printf( "CreEPS: Adding ellipse arcN in non-PATH mode is forbidden!\n" );
+void CreEPS::addEllipseArcN( const CreEPS_FLOAT x,
+                             const CreEPS_FLOAT y,
+                             const CreEPS_FLOAT a,
+                             const CreEPS_FLOAT b,
+                             const CreEPS_FLOAT a1,
+                             const CreEPS_FLOAT a2,
+                             const CreEPS_FLOAT alpha )
+{
+	if( m_Mode != PATH )
+	{
+		m_errorMessageHandler(
+			CreEPS_CC("CreEPS: Adding ellipse arcN in non-PATH mode is forbidden!\n") );
+		
 		exit( 1 );
 	}
 
@@ -1243,11 +1492,17 @@ void CreEPS::addEllipseArcN( const float x, const float y,
 
 /******************************************************************************/
 
-void CreEPS::addEllipse( const float x, const float y,
-                         const float a, const float b,
-                         const float alpha ) {
-	if( m_Mode != PATH ) {
-		::printf( "CreEPS: Adding ellipse in non-PATH mode is forbidden!\n" );
+void CreEPS::addEllipse( const CreEPS_FLOAT x,
+                         const CreEPS_FLOAT y,
+                         const CreEPS_FLOAT a,
+                         const CreEPS_FLOAT b,
+                         const CreEPS_FLOAT alpha )
+{
+	if( m_Mode != PATH )
+	{
+		m_errorMessageHandler(
+			CreEPS_CC("CreEPS: Adding ellipse in non-PATH mode is forbidden!\n") );
+		
 		exit( 1 );
 	}
 
@@ -1257,10 +1512,17 @@ void CreEPS::addEllipse( const float x, const float y,
 
 /******************************************************************************/
 
-void CreEPS::addArcT( const float x1, const float y1,
-                      const float x2, const float y2, const float r ) {
-	if( m_Mode != PATH ) {
-		::printf( "CreEPS: Adding arcT in non-PATH mode is forbidden!\n" );
+void CreEPS::addArcT( const CreEPS_FLOAT x1,
+                      const CreEPS_FLOAT y1,
+                      const CreEPS_FLOAT x2,
+                      const CreEPS_FLOAT y2,
+                      const CreEPS_FLOAT r )
+{
+	if( m_Mode != PATH )
+	{
+		m_errorMessageHandler(
+			CreEPS_CC("CreEPS: Adding arcT in non-PATH mode is forbidden!\n") );
+		
 		exit( 1 );
 	}
 
@@ -1269,19 +1531,30 @@ void CreEPS::addArcT( const float x1, const float y1,
 
 /******************************************************************************/
 
-void CreEPS::addArcTLine( const float x1, const float y1,
-                          const float x2, const float y2, const float r ) {
+void CreEPS::addArcTLine( const CreEPS_FLOAT x1,
+                          const CreEPS_FLOAT y1,
+                          const CreEPS_FLOAT x2,
+                          const CreEPS_FLOAT y2,
+                          const CreEPS_FLOAT r )
+{
 	addArcT( x1, y1, x2, y2, r );
 	addLine( x2, y2 );
 }
 
 /******************************************************************************/
 
-void CreEPS::addCurve( const float x1, const float y1,
-                       const float x2, const float y2,
-                       const float x3, const float y3 ) {
-	if( m_Mode != PATH ) {
-		::printf( "CreEPS: Adding curve in non-PATH mode is forbidden!\n" );
+void CreEPS::addCurve( const CreEPS_FLOAT x1,
+                       const CreEPS_FLOAT y1,
+                       const CreEPS_FLOAT x2,
+                       const CreEPS_FLOAT y2,
+                       const CreEPS_FLOAT x3,
+                       const CreEPS_FLOAT y3 )
+{
+	if( m_Mode != PATH )
+	{
+		m_errorMessageHandler(
+			CreEPS_CC("CreEPS: Adding curve in non-PATH mode is forbidden!\n") );
+		
 		exit( 1 );
 	}
 
@@ -1290,14 +1563,23 @@ void CreEPS::addCurve( const float x1, const float y1,
 
 /******************************************************************************/
 
-void CreEPS::addRelativeCurve( const float x1, const float y1,
-                               const float x2, const float y2,
-                               const float x3, const float y3 ) {
-	::printf( "CreEPS: addRelativeCurve is not yet completely implemented! "
-	          "Do not use it!\n");
-	if( m_Mode != PATH ) {
-		::printf( "CreEPS: Adding relative curve in non-PATH mode is "
-		          "forbidden!\n" );
+void CreEPS::addRelativeCurve( const CreEPS_FLOAT x1,
+                               const CreEPS_FLOAT y1,
+                               const CreEPS_FLOAT x2,
+                               const CreEPS_FLOAT y2,
+                               const CreEPS_FLOAT x3,
+                               const CreEPS_FLOAT y3 )
+{
+	m_errorMessageHandler(
+		CreEPS_CC("CreEPS: addRelativeCurve is not yet completely implemented!")
+		CreEPS_CC(" Do not use it!\n") );
+	
+	if( m_Mode != PATH )
+	{
+		m_errorMessageHandler(
+			CreEPS_CC("CreEPS: Adding relative curve in non-PATH mode is ")
+			CreEPS_CC("forbidden!\n") );
+		
 		exit( 1 );
 	}
 
@@ -1306,7 +1588,8 @@ void CreEPS::addRelativeCurve( const float x1, const float y1,
 
 /******************************************************************************/
 
-void CreEPS::endPath() {
+void CreEPS::endPath()
+{
 	if( m_Mode != PATH ) {
 		::printf( "CreEPS: Ending path in non-PATH mode is forbidden!\n" );
 		exit( 1 );
@@ -1318,11 +1601,15 @@ void CreEPS::endPath() {
 
 /******************************************************************************/
 
-void CreEPS::endPath( const DrawMode drawMode, const CAt& attr  ) {
+void CreEPS::endPath( const DrawMode drawMode, const CAt& attr  )
+{
 	static const char* DRAWMODE[] = {"f", "ef", "s", "cp n", "ec n"};
 
-	if( m_Mode != PATH ) {
-		::printf( "CreEPS: Ending path in non-PATH mode is forbidden!\n" );
+	if( m_Mode != PATH )
+	{
+		m_errorMessageHandler(
+			CreEPS_CC("CreEPS: Ending path in non-PATH mode is forbidden!\n") );
+		
 		exit( 1 );
 	}
 
@@ -1334,19 +1621,27 @@ void CreEPS::endPath( const DrawMode drawMode, const CAt& attr  ) {
 
 /******************************************************************************/
 
-void CreEPS::endPath( const DrawMode drawMode1, const DrawMode drawMode2,
-                      const CAt& attr1, const CAt& attr2 ) {
+void CreEPS::endPath( const DrawMode drawMode1,
+                      const DrawMode drawMode2,
+                      const CAt& attr1,
+                      const CAt& attr2 )
+{
 	usePath( drawMode1, attr1 );
 	endPath( drawMode2, attr2 );
 }
 
 /******************************************************************************/
 
-void CreEPS::usePath( const DrawMode drawMode, const CAt& attr ) {
+void CreEPS::usePath( const DrawMode drawMode,
+                      const CAt& attr )
+{
 	static const char* DRAWMODE[] = {"f y", "ef y", "s y", "cp", "ec"};
 
-	if( m_Mode != PATH ) {
-		::printf( "CreEPS: Using path in non-PATH mode is forbidden!\n" );
+	if( m_Mode != PATH )
+	{
+		m_errorMessageHandler(
+			CreEPS_CC("CreEPS: Using path in non-PATH mode is forbidden!\n") );
+		
 		exit( 1 );
 	}
 
@@ -1359,9 +1654,13 @@ void CreEPS::usePath( const DrawMode drawMode, const CAt& attr ) {
 
 /******************************************************************************/
 
-void CreEPS::closeSubpath() {
-		if( m_Mode != PATH ) {
-		::printf( "CreEPS: Closing subpath in non-PATH mode is forbidden!\n" );
+void CreEPS::closeSubpath()
+{
+	if( m_Mode != PATH )
+	{
+		m_errorMessageHandler(
+			CreEPS_CC("CreEPS: Closing subpath in non-PATH mode is forbidden!\n") );
+		
 		exit( 1 );
 	}
 
@@ -1371,11 +1670,18 @@ void CreEPS::closeSubpath() {
 
 /******************************************************************************/
 
-void CreEPS::line( const float x1, const float y1,
-                   const float x2, const float y2, const CAt& attr ) {
-	if( m_Mode == PATH ) {
-		::printf( "CreEPS: Drawing a line is not allowed in PATH mode! "
-		          "Use addLine() instead.\n" );
+void CreEPS::line( const CreEPS_FLOAT x1,
+                   const CreEPS_FLOAT y1,
+                   const CreEPS_FLOAT x2,
+                   const CreEPS_FLOAT y2,
+                   const CAt& attr )
+{
+	if( m_Mode == PATH )
+	{
+		m_errorMessageHandler(
+			CreEPS_CC("CreEPS: Drawing a line is not allowed in PATH mode)! ")
+			CreEPS_CC("Use addLine() instead.\n") );
+		
 		exit( 1 );
 	}
 
@@ -1386,10 +1692,17 @@ void CreEPS::line( const float x1, const float y1,
 
 /******************************************************************************/
 
-void CreEPS::rectStroke( const float x, const float y,
-                         const float w, const float h, const CAt& attr ) {
-	if( m_Mode == PATH ) {
-		::printf( "CreEPS: Drawing a rectangular is not allowed in PATH mode!\n" );
+void CreEPS::rectStroke( const CreEPS_FLOAT x,
+                         const CreEPS_FLOAT y,
+                         const CreEPS_FLOAT w,
+                         const CreEPS_FLOAT h,
+                         const CAt& attr )
+{
+	if( m_Mode == PATH )
+	{
+		m_errorMessageHandler(
+			CreEPS_CC("CreEPS: Drawing a rectangular is not allowed in PATH mode!\n") );
+		
 		exit( 1 );
 	}
 
@@ -1400,11 +1713,18 @@ void CreEPS::rectStroke( const float x, const float y,
 
 /******************************************************************************/
 
-void CreEPS::rectFill( const float x, const float y,
-                       const float w, const float h, const CAt& attr ) {
-	if( m_Mode == PATH ) {
-		::printf( "CreEPS: Drawing a filled rectangular is not allowed in PATH "
-		          "mode!\n" );
+void CreEPS::rectFill( const CreEPS_FLOAT x,
+                       const CreEPS_FLOAT y,
+                       const CreEPS_FLOAT w,
+                       const CreEPS_FLOAT h,
+                       const CAt& attr )
+{
+	if( m_Mode == PATH )
+	{
+		m_errorMessageHandler(
+			CreEPS_CC("CreEPS: Drawing a filled rectangular is not allowed in PATH ")
+			CreEPS_CC("mode!\n") );
+		
 		exit( 1 );
 	}
 
@@ -1415,13 +1735,18 @@ void CreEPS::rectFill( const float x, const float y,
 
 /******************************************************************************/
 
-void CreEPS::curve( const float x0, const float y0,
-                    const float x1, const float y1,
-                    const float x2, const float y2,
-                    const float x3, const float y3, const CAt& attr ) {
-	if( m_Mode == PATH ) {
-		::printf( "CreEPS: Drawing a curve is not allowed in  PATH mode! "
-		          "Use addCurve() instead.\n" );
+void CreEPS::curve( const CreEPS_FLOAT x0, const CreEPS_FLOAT y0,
+                    const CreEPS_FLOAT x1, const CreEPS_FLOAT y1,
+                    const CreEPS_FLOAT x2, const CreEPS_FLOAT y2,
+                    const CreEPS_FLOAT x3, const CreEPS_FLOAT y3,
+                    const CAt& attr )
+{
+	if( m_Mode == PATH )
+	{
+		m_errorMessageHandler(
+			CreEPS_CC("CreEPS: Drawing a curve is not allowed in  PATH mode)! ")
+			CreEPS_CC("Use addCurve() instead.\n") );
+		
 		exit( 1 );
 	}
 
@@ -1432,11 +1757,19 @@ void CreEPS::curve( const float x0, const float y0,
 
 /******************************************************************************/
 
-void CreEPS::arc( const float x, const float y, const float r,
-                  const float a1, const float a2, const CAt& attr ) {
-	if( m_Mode == PATH ) {
-		::printf( "CreEPS: Drawing an arc is not allowed in PATH mode! "
-		          "Use addArc() instead.\n" );
+void CreEPS::arc( const CreEPS_FLOAT x,
+                  const CreEPS_FLOAT y,
+                  const CreEPS_FLOAT r,
+                  const CreEPS_FLOAT a1,
+                  const CreEPS_FLOAT a2,
+                  const CAt& attr )
+{
+	if( m_Mode == PATH )
+	{
+		m_errorMessageHandler(
+			CreEPS_CC("CreEPS: Drawing an arc is not allowed in PATH mode)! ")
+			CreEPS_CC("Use addArc() instead.\n") );
+		
 		exit( 1 );
 	}
 
@@ -1447,11 +1780,15 @@ void CreEPS::arc( const float x, const float y, const float r,
 
 /******************************************************************************/
 
-void CreEPS::circle( const float x, const float y, const float r,
-                     const CAt& attr ) {
-	if( m_Mode == PATH ) {
-		::printf( "CreEPS: Drawing an circle is not allowed in PATH mode! "
-		          "Use addCircle() instead.\n" );
+void CreEPS::circle( const CreEPS_FLOAT x, const CreEPS_FLOAT y, const CreEPS_FLOAT r,
+                     const CAt& attr )
+{
+	if( m_Mode == PATH )
+	{
+		m_errorMessageHandler(
+			CreEPS_CC("CreEPS: Drawing an circle is not allowed in PATH mode)! ")
+			CreEPS_CC("Use addCircle() instead.\n") );
+		
 		exit( 1 );
 	}
 
@@ -1462,14 +1799,21 @@ void CreEPS::circle( const float x, const float y, const float r,
 
 /******************************************************************************/
 
-void CreEPS::ellipseArc( const float x, const float y,
-                         const float a, const float b,
-                         const float a1, const float a2,
-                         const float alpha,
-                         const CAt& attr ) {
-	if( m_Mode == PATH ) {
-		::printf( "CreEPS: Drawing an ellipse arc is not allowed in PATH mode! "
-		          "Use addEllipseArc() instead.\n" );
+void CreEPS::ellipseArc( const CreEPS_FLOAT x,
+                         const CreEPS_FLOAT y,
+                         const CreEPS_FLOAT a,
+                         const CreEPS_FLOAT b,
+                         const CreEPS_FLOAT a1,
+                         const CreEPS_FLOAT a2,
+                         const CreEPS_FLOAT alpha,
+                         const CAt& attr )
+{
+	if( m_Mode == PATH )
+	{
+		m_errorMessageHandler(
+			CreEPS_CC("CreEPS: Drawing an ellipse arc is not allowed in PATH mode)! ")
+			CreEPS_CC("Use addEllipseArc() instead.\n") );
+		
 		exit( 1 );
 	}
 
@@ -1480,21 +1824,32 @@ void CreEPS::ellipseArc( const float x, const float y,
 
 /******************************************************************************/
 
-void CreEPS::ellipseArc( const float x, const float y,
-                         const float a, const float b,
-                         const float a1, const float a2,
-                         const CAt& attr ) {
+void CreEPS::ellipseArc( const CreEPS_FLOAT x,
+                         const CreEPS_FLOAT y,
+                         const CreEPS_FLOAT a,
+                         const CreEPS_FLOAT b,
+                         const CreEPS_FLOAT a1,
+                         const CreEPS_FLOAT a2,
+                         const CAt& attr )
+{
 	ellipseArc( x, y, a, b, a1, a2, 0, attr );
 }
 
 /******************************************************************************/
 
-void CreEPS::ellipse( const float x, const float y,
-                      const float a, const float b, const float alpha,
-                      const CAt& attr ) {
-	if( m_Mode == PATH ) {
-		::printf( "CreEPS: Drawing an ellipse is not allowed in PATH mode! "
-		          "Use addEllipse() instead.\n" );
+void CreEPS::ellipse( const CreEPS_FLOAT x,
+                      const CreEPS_FLOAT y,
+                      const CreEPS_FLOAT a,
+                      const CreEPS_FLOAT b,
+                      const CreEPS_FLOAT alpha,
+                      const CAt& attr )
+{
+	if( m_Mode == PATH )
+	{
+		m_errorMessageHandler(
+			CreEPS_CC("CreEPS: Drawing an ellipse is not allowed in PATH mode)! ")
+			CreEPS_CC("Use addEllipse() instead.\n") );
+		
 		exit( 1 );
 	}
 
@@ -1505,16 +1860,22 @@ void CreEPS::ellipse( const float x, const float y,
 
 /******************************************************************************/
 
-void CreEPS::ellipse( const float x, const float y,
-                      const float a, const float b,
-                      const CAt& attr ) {
+void CreEPS::ellipse( const CreEPS_FLOAT x,
+                      const CreEPS_FLOAT y,
+                      const CreEPS_FLOAT a,
+                      const CreEPS_FLOAT b,
+                      const CAt& attr )
+{
 	ellipse( x, y, a, b, 0, attr );
 }
 
 /******************************************************************************/
 
-void CreEPS::disk( const float x, const float y, const float r,
-                   const CAt& attr ) {
+void CreEPS::disk( const CreEPS_FLOAT x,
+                   const CreEPS_FLOAT y,
+                   const CreEPS_FLOAT r,
+                   const CAt& attr )
+{
 	startPath();
 	addCircle( x, y, r );
 	endPath( FILL, attr );
@@ -1522,19 +1883,33 @@ void CreEPS::disk( const float x, const float y, const float r,
 
 /******************************************************************************/
 
-void CreEPS::print( const float x, const float y, const float alpha,
-                    const char* text, const CAt& attr ) {
-	static const char* TEXTALIGNMENT[] = {"ln", "lb", "lc", "lt",
-	                                      "cn", "cb", "cc", "ct",
-	                                      "rn", "rb", "rc", "rt",
-	                                      "ln", "lb", "lc", "lt"};
-	static const char* LATEXTEXTALIGNMENT[] = {"[l]{\\smash", "[lb]{", "[l]{", "[lt]{",
-	                                              "{\\smash",  "[b]{",    "{",  "[t]{",
-	                                           "[r]{\\smash", "[rb]{", "[r]{", "[rt]{",
-	                                           "[l]{\\smash", "[lb]{", "[l]{", "[lt]{"};
+void CreEPS::print( const CreEPS_FLOAT x,
+                    const CreEPS_FLOAT y,
+                    const CreEPS_FLOAT alpha,
+                    const char* text,
+                    const CAt& attr )
+{
+	static const char* TEXTALIGNMENT[] =
+	{
+		"ln", "lb", "lc", "lt",
+	    "cn", "cb", "cc", "ct",
+	    "rn", "rb", "rc", "rt",
+	    "ln", "lb", "lc", "lt"
+	};
+	
+	static const char* LATEXTEXTALIGNMENT[] =
+	{
+		"[l]{\\smash", "[lb]{", "[l]{", "[lt]{",
+	    "{\\smash",  "[b]{",    "{",  "[t]{",
+	    "[r]{\\smash", "[rb]{", "[r]{", "[rt]{",
+	    "[l]{\\smash", "[lb]{", "[l]{", "[lt]{"
+	};
 
-	if( m_Mode == PATH ) {
-		::printf( "CreEPS: Printing is not allowed in PATH mode!\n" );
+	if( m_Mode == PATH )
+	{
+		m_errorMessageHandler(
+			CreEPS_CC("CreEPS: Printing is not allowed in PATH mode!\n") );
+		
 		exit( 1 );
 	}
 
@@ -1543,21 +1918,32 @@ void CreEPS::print( const float x, const float y, const float alpha,
 		tmp.inheritAttributes( attr, NULL );
 
 		if (alpha > -0.01 && alpha < 0.01)
+		{
 			fprintf( m_LatexFileHandle,
 			       "\\put(%f,%f){\\makebox(0,0)%s{\\SetFigFont{%f}{%f}{"
 			       "\\familydefault}{\\mddefault}{\\updefault}{"
-			       "\\color[rgb]{%f,%f,%f}%s}}}}%%\n", x, y,
-			       LATEXTEXTALIGNMENT[tmp.getTextAlignment()], tmp.getFontScale(),
-			       tmp.getFontScale()*1.2, tmp.getRed(), tmp.getGreen(),
-			       tmp.getBlue(), text );
+			       "\\color[rgb]{%f,%f,%f}%s}}}}%%\n",
+			       x, y,
+			       LATEXTEXTALIGNMENT[tmp.getTextAlignment()],
+			       tmp.getFontScale(),
+			       tmp.getFontScale()*1.2,
+			       tmp.getRed(), tmp.getGreen(), tmp.getBlue(),
+			       text );
+		}
 		else
+		{
 			fprintf( m_LatexFileHandle,
 			       "\\put(%f,%f){\\rotatebox{%f}{\\makebox(0,0)%s{\\SetFigFont{%f}"
 			       "{%f}{\\familydefault}{\\mddefault}{\\updefault}{\\color[rgb]"
-			       "{%f,%f,%f}%s}}}}}%%\n", x, y, alpha,
-			       LATEXTEXTALIGNMENT[tmp.getTextAlignment()], tmp.getFontScale(),
-			       tmp.getFontScale()*1.2, tmp.getRed(), tmp.getGreen(),
-			       tmp.getBlue(), text );
+			       "{%f,%f,%f}%s}}}}}%%\n",
+			       x, y, alpha,
+			       LATEXTEXTALIGNMENT[tmp.getTextAlignment()],
+			       tmp.getFontScale(),
+			       tmp.getFontScale()*1.2,
+			       tmp.getRed(), tmp.getGreen(), tmp.getBlue(),
+			       text );
+		}
+		
 		return; //! comment out for testing both text outputs simultaneously
 	}
 
@@ -1587,29 +1973,36 @@ void CreEPS::print( const float x, const float y, const float alpha,
 	
 	CAt tmp( m_Attr );
 	bool changed = tmp.inheritAttributes( attr, m_FileHandle );
-	if (alpha > -0.01 && alpha < 0.01)
+	if (alpha > -0.01 && alpha < 0.01) {
 		fprintf( m_FileHandle, "(%s) %g %g ta%s\n%s", buffer, x, y,
 		         TEXTALIGNMENT[tmp.getTextAlignment()],
 		         restoreAttributes( changed ) );
-	else
+	} else {
 		fprintf( m_FileHandle, "%g (%s) %g %g tar%s\n%s", alpha, buffer, x, y,
 		         TEXTALIGNMENT[tmp.getTextAlignment()],
-		          restoreAttributes( changed ) );
+		         restoreAttributes( changed ) );
+	}
 
 	delete [] buffer;
 }
 
 /******************************************************************************/
 
-void CreEPS::print( const float x, const float y,
-                    const char* text, const CAt& attr ) {
+void CreEPS::print( const CreEPS_FLOAT x,
+                    const CreEPS_FLOAT y,
+                    const char* text,
+                    const CAt& attr )
+{
 	print( x, y, 0, text, attr );
 }
 
 /******************************************************************************/
 
-void CreEPS::printf( const CAt& attr, const float x, const float y,
-                     const char* text, ... ) {
+void CreEPS::printf( const CAt& attr,
+                     const CreEPS_FLOAT x,
+                     const CreEPS_FLOAT y,
+                     const char* text, ... )
+{
 	char buffer[m_BUFFERLENGTH];
 	va_list arg;
 
@@ -1622,8 +2015,12 @@ void CreEPS::printf( const CAt& attr, const float x, const float y,
 
 /******************************************************************************/
 
-void CreEPS::printf( const CAt& attr, const float x, const float y,
-                     const float alpha, const char* text, ... ) {
+void CreEPS::printf( const CAt          &attr,
+                     const CreEPS_FLOAT  x,
+                     const CreEPS_FLOAT  y,
+                     const CreEPS_FLOAT  alpha,
+                     const char  *text, ... )
+{
 	char buffer[m_BUFFERLENGTH];
 	va_list arg;
 
@@ -1636,7 +2033,10 @@ void CreEPS::printf( const CAt& attr, const float x, const float y,
 
 /******************************************************************************/
 
-void CreEPS::printf( const float x, const float y, const char* text, ... ) {
+void CreEPS::printf( const CreEPS_FLOAT x,
+                     const CreEPS_FLOAT y,
+                     const char* text, ... )
+{
 	char buffer[m_BUFFERLENGTH];
 	va_list arg;
 
@@ -1649,8 +2049,11 @@ void CreEPS::printf( const float x, const float y, const char* text, ... ) {
 
 /******************************************************************************/
 
-void CreEPS::printf( const float x, const float y, const float alpha,
-                     const char* text, ... ) {
+void CreEPS::printf( const CreEPS_FLOAT  x,
+                     const CreEPS_FLOAT  y,
+                     const CreEPS_FLOAT  alpha,
+                     const char  *text, ... )
+{
 	char buffer[m_BUFFERLENGTH];
 	va_list  arg;
 
@@ -1663,31 +2066,38 @@ void CreEPS::printf( const float x, const float y, const float alpha,
 
 /******************************************************************************/
 
-void CreEPS::applyRotation( const float alpha ) {
+void CreEPS::applyRotation( const CreEPS_FLOAT alpha )
+{
 	fprintf( m_FileHandle, "%g r\n", alpha );	
 }
 
 /******************************************************************************/
 
-void CreEPS::applyTranslation( const float dx, const float dy ) {
+void CreEPS::applyTranslation( const CreEPS_FLOAT dx,
+                               const CreEPS_FLOAT dy )
+{
 	fprintf( m_FileHandle, "%g %g t\n", dx, dy );
 }
 
 /******************************************************************************/
 
-void CreEPS::applyScaling( const float s ) {
+void CreEPS::applyScaling( const CreEPS_FLOAT s )
+{
 	applyScaling( s, s );	
 }
 
 /******************************************************************************/
 
-void CreEPS::applyScaling( const float sx, const float sy ) {
+void CreEPS::applyScaling( const CreEPS_FLOAT sx,
+                           const CreEPS_FLOAT sy )
+{
 	fprintf( m_FileHandle, "%g %g sl\n", sx, sy );	
 }
 
 /******************************************************************************/
 
-void CreEPS::applyTransformation( const float m[3][2] ) {
+void CreEPS::applyTransformation( const CreEPS_FLOAT m[3][2] )
+{
 	fprintf( m_FileHandle, "[ %g %g %g %g %g %g ] cc\n",
 	         m[0][0], m[0][1],
 	         m[1][0], m[1][1],
@@ -1696,29 +2106,36 @@ void CreEPS::applyTransformation( const float m[3][2] ) {
 
 /******************************************************************************/
 
-void CreEPS::resetTransformations() {
+void CreEPS::resetTransformations()
+{
 	fprintf( m_FileHandle, "im\n" );	
 }
 
 /******************************************************************************/
 
-void CreEPS::resetClipping() {
+void CreEPS::resetClipping()
+{
 	fprintf( m_FileHandle, "ic\n" );	
 }
 
 /******************************************************************************/
 
-void CreEPS::saveTransformation() {
+void CreEPS::saveTransformation()
+{
 	fprintf( m_FileHandle, "ms\n" );
 	m_nStoredTransformations++;
 }
 
 /******************************************************************************/
 
-bool CreEPS::loadTransformation() {
-	if( m_nStoredTransformations <= 0 ) {
-		::printf( "CreEPS: Tried to load transformation, but no transformation "
-		          "on stack!\n" );
+bool CreEPS::loadTransformation()
+{
+	if( m_nStoredTransformations <= 0 )
+	{
+		m_warningMessageHandler(
+			CreEPS_CC("CreEPS: Tried to load transformation, but no transformatio)n ")
+			CreEPS_CC("on stack!\n") );
+		
 		return false;
 	}
 	else {
@@ -1730,13 +2147,15 @@ bool CreEPS::loadTransformation() {
 
 /******************************************************************************/
 
-void CreEPS::setAttributes( const CAt& attr ) {
+void CreEPS::setAttributes( const CAt& attr )
+{
 	m_Attr.setAttributes( attr, m_FileHandle );
 }
 
 /******************************************************************************/
 
-void CreEPS::special( const char* text, ... ) {
+void CreEPS::special( const char* text, ... )
+{
 	va_list  arg;
 
 	va_start( arg, text );
@@ -1746,10 +2165,14 @@ void CreEPS::special( const char* text, ... ) {
 
 /******************************************************************************/
 
-void CreEPS::newFile( const char* filename,
-                      const float startX, const float startY,
-                      const float   endX, const float   endY,
-                      const bool latex, const char* altEPSFilename ) {
+void CreEPS::newFile( const char  *filename,
+                      const CreEPS_FLOAT  startX,
+                      const CreEPS_FLOAT  startY,
+                      const CreEPS_FLOAT  endX,
+                      const CreEPS_FLOAT  endY,
+                      const bool   latex,
+                      const char  *altEPSFilename )
+{
 	finalize();
 	m_Attr = CAt();
 	initialize( filename, startX, startY, endX, endY, latex, altEPSFilename );
@@ -1757,12 +2180,43 @@ void CreEPS::newFile( const char* filename,
 
 /******************************************************************************/
 
-void CreEPS::newFile( const char* filename,
-                      const float width, const float height,
-                      const bool latex, const char* altEPSFilename ) {
+void CreEPS::newFile( const char  *filename,
+                      const CreEPS_FLOAT  width,
+                      const CreEPS_FLOAT  height,
+                      const bool   latex,
+                      const char  *altEPSFilename )
+{
 	finalize();
 	m_Attr = CAt();
 	initialize( filename, 0, 0, width, height, latex, altEPSFilename );
 }
 
 /******************************************************************************/
+
+void CreEPS::StdMessageHandler( const CreEPS_CHAR* const msg, ... )
+{
+	va_list pargs;
+
+	va_start( pargs, msg );
+	::vprintf( (const char*)msg, pargs );
+	va_end( pargs );
+
+}
+
+/******************************************************************************/
+
+CreEPS_INT CreEPS::getMajorVersion()
+{
+	return CREEPS_MAJOR_VERSION;
+}
+
+/******************************************************************************/
+
+CreEPS_INT CreEPS::getMinorVersion()
+{
+	return CREEPS_MINOR_VERSION;
+}
+
+/******************************************************************************/
+
+} // end of namespace 'ns_CreEPS'

@@ -1,5 +1,5 @@
 <install>
-	
+	<name>ofxThread</name>
 	<version>0.01</version>
 	<author>theo watson</author>
 	<url></url>

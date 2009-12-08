@@ -1,21 +1,11 @@
 #include "ofTrueTypeFont.h"
 //--------------------------
 
-#if defined (TARGET_WIN32) || defined (TARGET_LINUX)
-	#include <ft2build.h>
-	#include <freetype/freetype.h>
-	#include <freetype/ftglyph.h>
-	#include <freetype/ftoutln.h>
-	#include <freetype/fttrigon.h>
-#endif
-
-#if defined (TARGET_OSX) || defined (TARGET_OF_IPHONE)
-	#include "ft2build.h"
-	#include "freetype.h"
-	#include "ftglyph.h"
-	#include "ftoutln.h"
-	#include "fttrigon.h"
-#endif
+#include <ft2build.h>
+#include <freetype/freetype.h>
+#include <freetype/ftglyph.h>
+#include <freetype/ftoutln.h>
+#include <freetype/fttrigon.h>
 
 static bool printVectorInfo = false;
 

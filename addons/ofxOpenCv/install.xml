@@ -1,5 +1,5 @@
 <install>
-
+    <name>ofxOpenCv</name>
 	<version>0.02</version>
 	<author>zach lieberman, stefan hechenberger</author>
 	<url></url>

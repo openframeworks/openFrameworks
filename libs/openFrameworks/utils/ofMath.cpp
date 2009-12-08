@@ -6,7 +6,7 @@
 	#include <sys/time.h>
 #endif
 
-
+#include "ofNoise.h"
 
 //--------------------------------------------------
 int ofNextPow2(int a){
@@ -76,13 +76,16 @@ float ofNormalize(float value, float min, float max){
 
 //check for division by zero???
 //--------------------------------------------------
-float ofMap(float value, float inputMin, float inputMax, float outputMin, float outputMax) {
+float ofMap(float value, float inputMin, float inputMax, float outputMin, float outputMax, bool clamp) {
 
 	if (fabs(inputMin - inputMax) < FLT_EPSILON){
 		ofLog(OF_LOG_WARNING, "ofMap: avoiding possible divide by zero, check inputMin and inputMax\n");
 		return outputMin;
 	} else {
-		return ((value - inputMin) / (inputMax - inputMin) * (outputMax - outputMin) + outputMin);
+		float outVal = ((value - inputMin) / (inputMax - inputMin) * (outputMax - outputMin) + outputMin);
+	
+		if( clamp ) return outVal < outputMin ? outputMin : outVal > outputMax ? outputMax : outVal;
+		return outVal;
 	}
 
 }
@@ -139,3 +142,44 @@ float ofRandomWidth() {
 float ofRandomHeight() {
 	return ofRandom(0, ofGetHeight());
 }
+
+//--------------------------------------------------
+float ofNoise(float x){
+	return _slang_library_noise1(x)*0.5f + 0.5f;
+}
+
+//--------------------------------------------------
+float ofNoise(float x, float y){
+	return _slang_library_noise2(x,y)*0.5f + 0.5f;
+}
+
+//--------------------------------------------------
+float ofNoise(float x, float y, float z){
+	return _slang_library_noise3(x,y,z)*0.5f + 0.5f;
+}
+
+//--------------------------------------------------
+float ofNoise(float x, float y, float z, float w){
+	return _slang_library_noise4(x,y,z,w)*0.5f + 0.5f;
+}
+
+//--------------------------------------------------
+float ofSignedNoise(float x){
+	return _slang_library_noise1(x);
+}
+
+//--------------------------------------------------
+float ofSignedNoise(float x, float y){
+	return _slang_library_noise2(x,y);
+}
+
+//--------------------------------------------------
+float ofSignedNoise(float x, float y, float z){
+	return _slang_library_noise3(x,y,z);
+}
+
+//--------------------------------------------------
+float ofSignedNoise(float x, float y, float z, float w){
+	return _slang_library_noise4(x,y,z,w);
+}
+

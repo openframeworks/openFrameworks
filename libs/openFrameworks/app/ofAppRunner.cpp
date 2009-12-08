@@ -129,6 +129,10 @@ float ofGetFrameRate(){
 	return window->getFrameRate();
 }
 
+double ofGetLastFrameTime(){
+	return window->getLastFrameTime();
+}
+
 //--------------------------------------
 void ofSetFrameRate(int targetRate){
 

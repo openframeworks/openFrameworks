@@ -10,7 +10,7 @@ void ofEnableTextureEdgeHack(){
 }
 
 //---------------------------------
-void ofDisableTectureEdgeHack(){
+void ofDisableTextureEdgeHack(){
 	bTexHackEnabled = false;
 }
 
@@ -22,6 +22,7 @@ ofTexture::ofTexture(){
 	texData.textureTarget	= GL_TEXTURE_2D;
 	texData.glTypeInternal  = 0;
 	texData.glType			= 0;
+	texData.pixelType		= GL_UNSIGNED_BYTE;
 	texData.width			= 0;
 	texData.height			= 0;
 	texData.tex_w			= 0;
@@ -39,12 +40,12 @@ bool ofTexture::bAllocated(){
 
 //----------------------------------------------------------
 ofTexture::ofTexture(const ofTexture& mom){
-	texData = mom.texData;
+	ofLog(OF_LOG_WARNING, "overloaded ofTexture copy constructor to do nothing. please use FBO or other means to copy textures");
 }
 
 //----------------------------------------------------------
 ofTexture& ofTexture::operator=(const ofTexture& mom){
-	texData = mom.texData;
+	ofLog(OF_LOG_WARNING, "overloaded ofTexture = operator to do nothing. please use FBO or other means to copy textures");
 	return *this;
 }
 
@@ -146,19 +147,12 @@ void ofTexture::allocate(int w, int h, int internalGlDataType, bool bUseARBExten
 	#endif
 
 	
-	//***** only set texture parameters if not manually set by user
-	if(!ofGetUsingCustomMinMagFilters()) {
-		glTexParameterf(texData.textureTarget, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		glTexParameterf(texData.textureTarget, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	}
-
-	if(!ofGetUsingCustomTextureWrap()) {
-		glTexParameterf(texData.textureTarget, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-		glTexParameterf(texData.textureTarget, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	}
+	glTexParameterf(texData.textureTarget, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameterf(texData.textureTarget, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameterf(texData.textureTarget, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameterf(texData.textureTarget, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	
-	
-		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 
 	glDisable(texData.textureTarget);
 
@@ -170,6 +164,16 @@ void ofTexture::allocate(int w, int h, int internalGlDataType, bool bUseARBExten
 		texData.bFlipTexture = false;
 	#endif
 	texData.bAllocated = true;
+}
+
+//----------------------------------------------------------
+void ofTexture::loadData(unsigned char * data, int w, int h, int glDataType){
+	loadData( (void *)data, w, h, glDataType);
+}
+
+//----------------------------------------------------------
+void ofTexture::loadData(float * data, int w, int h, int glDataType){
+	loadData( (void *)data, w, h, glDataType);
 }
 
 //----------------------------------------------------------
@@ -325,6 +329,82 @@ void ofTexture::bind(){
 void ofTexture::unbind(){
 	glDisable(texData.textureTarget);
 }
+
+
+//----------------------------------------------------------
+ofPoint ofTexture::getCoordFromPoint(float xPos, float yPos){
+	
+	ofPoint temp;
+	
+	if (!bAllocated()) return temp;
+	
+	
+	if (texData.textureTarget == GL_TEXTURE_RECTANGLE_ARB){
+		
+		temp.set(xPos, yPos);
+		
+	} else {
+		
+		// non arb textures are 0 to 1, so we 
+		// (a) convert to a pct: 
+		
+		float pctx = xPos / texData.width;
+		float pcty = yPos / texData.height;
+		
+		// (b) mult by our internal pct (since we might not be 0-1 insternally)
+		
+		pctx *= texData.tex_t;
+		pcty *= texData.tex_u;
+		
+		temp.set(pctx, pcty);
+
+	}
+	
+	return temp;
+	
+}
+
+//----------------------------------------------------------
+ofPoint ofTexture::getCoordFromPercent(float xPct, float yPct){
+	
+	ofPoint temp;
+	
+	if (!bAllocated()) return temp;
+
+	
+	if (texData.textureTarget == GL_TEXTURE_RECTANGLE_ARB){
+		
+		temp.set(xPct * texData.width, yPct * texData.height);
+		
+	} else {
+	
+		xPct *= texData.tex_t;
+		yPct *= texData.tex_u;
+		temp.set(xPct, yPct);
+		
+	}
+	
+	return temp;
+}
+
+
+//----------------------------------------------------------
+void ofTexture::setTextureWrap(GLint wrapModeHorizontal, GLint wrapModeVertical) {
+	bind();
+	glTexParameterf(texData.textureTarget, GL_TEXTURE_WRAP_S, wrapModeHorizontal);
+	glTexParameterf(texData.textureTarget, GL_TEXTURE_WRAP_T, wrapModeVertical);
+	unbind();
+}
+
+//----------------------------------------------------------
+void ofTexture::setTextureMinMagFilter(GLint minFilter, GLint maxFilter){
+	bind();
+	glTexParameteri(texData.textureTarget, GL_TEXTURE_MAG_FILTER, maxFilter);
+	glTexParameteri(texData.textureTarget, GL_TEXTURE_MIN_FILTER, minFilter);
+	unbind();
+}
+
+
 
 //----------------------------------------------------------
 void ofTexture::draw(float x, float y, float w, float h){

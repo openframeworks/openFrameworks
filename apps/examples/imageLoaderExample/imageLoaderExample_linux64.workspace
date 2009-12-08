@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_workspace_file>
+	<Workspace title="imageLoaderExample">
+		<Project filename="imageLoaderExample_linux64.cbp" active="1">
+			<Depends filename="../../../libs/openFrameworksCompiled/project/linux64/libopenFrameworks.cbp" />
+		</Project>
+		<Project filename="../../../libs/openFrameworksCompiled/project/linux64/libopenFrameworks.cbp" />
+	</Workspace>
+</CodeBlocks_workspace_file>

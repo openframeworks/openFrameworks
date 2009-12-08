@@ -295,6 +295,39 @@ void ofxCvColorImage::convertToGrayscalePlanarImages(ofxCvGrayscaleImage& red, o
 	}
 }
 
+//--------------------------------------------------------------------------------
+void ofxCvColorImage::convertToGrayscalePlanarImage (ofxCvGrayscaleImage& grayImage, int whichPlane){
+	
+	ofRectangle roi = getROI();
+    ofRectangle grayRoi = grayImage.getROI();
+   
+	if( grayRoi.width == roi.width && grayRoi.height == roi.height ){
+
+		switch (whichPlane){
+				
+			case 0:
+				cvCvtPixToPlane(cvImage, grayImage.getCvImage(), NULL, NULL, NULL);
+				grayImage.flagImageChanged();
+				break;
+			case 1:
+				cvCvtPixToPlane(cvImage, NULL, grayImage.getCvImage(), NULL, NULL);
+				grayImage.flagImageChanged();
+				break;
+			case 2:
+				cvCvtPixToPlane(cvImage, NULL, NULL, grayImage.getCvImage(), NULL);
+				grayImage.flagImageChanged();
+				break;
+		}
+			
+	} else {
+    
+		ofLog(OF_LOG_ERROR, "in convertToGrayscalePlanarImages, ROI/size mismatch");
+	
+	}
+	
+}
+
+
 
 
 // Draw Image

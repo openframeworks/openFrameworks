@@ -1,5 +1,39 @@
-*.mode1v3 #xcode user prefs
-*.pbxuser #xcode user prefs
-build/    #ignore xcode build folders
-obj/      #ignore codeblocks obj folders
-*.o       #ignore all object files
+*.mode1v3
+*.pbxuser
+build/
+obj/
+*.o
+openFrameworks.a
+openFrameworksDebug.a
+openFrameworksUniversal.a
+*.app/
+
+#eclipse build folders
+#Mac OS X
+addons/Debug Mac OS X
+addons/Release Mac OS X
+libs/openFrameworks/Debug Mac OS X
+libs/openFrameworks/Release Mac OS X
+apps/*/*/Debug Mac OS X
+apps/*/*/Release Mac OS X
+
+#Linux
+addons/Debug Linux
+addons/Release Linux
+libs/openFrameworks/Debug Linux
+libs/openFrameworks/Release Linux
+apps/*/*/Debug Linux
+apps/*/*/Release Linux
+apps/*/*/Debug Linux64
+apps/*/*/Release Linux64
+
+apps/*/*/*.layout
+apps/*/*/*.depend
+apps/*/*/bin/clickToLaunch*
+apps/*/*/bin/libs
+apps/*/*/obj
+apps
+
+libs/openFrameworksCompiled/project/*/*.depend
+libs/openFrameworksCompiled/project/*/*.layout
+*~

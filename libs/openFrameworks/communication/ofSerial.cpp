@@ -153,11 +153,11 @@ void ofSerial::enumerateDevices(){
 		if (dir == NULL){
 			ofLog(OF_LOG_ERROR,"ofSerial: error listing devices in /dev");
 		} else {
-			printf("ofSerial: listing devices");
+			printf("ofSerial: listing devices\n");
 			while ((entry = readdir(dir)) != NULL){
 				str = (char *)entry->d_name;
 				if( str.substr(0,3) == "cu." ){
-					printf("device %i - %s", deviceCount, str.c_str());
+					printf("device %i - %s\n", deviceCount, str.c_str());
 					deviceCount++;
 				}
 			}
@@ -184,11 +184,11 @@ void ofSerial::enumerateDevices(){
 		if (dir == NULL){
 			ofLog(OF_LOG_ERROR,"ofSerial: error listing devices in /dev");
 		} else {
-			printf("ofSerial: listing devices");
+			printf("ofSerial: listing devices\n");
 			while ((entry = readdir(dir)) != NULL){
 				str = (char *)entry->d_name;
 				if( str.substr(0,3) == "tty" || str.substr(0,3) == "rfc" ){
-					printf("device %i - %s", deviceCount, str.c_str());
+					printf("device %i - %s\n", deviceCount, str.c_str());
 					deviceCount++;
 				}
 			}
