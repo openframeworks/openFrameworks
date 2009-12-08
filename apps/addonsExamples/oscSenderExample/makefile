@@ -128,7 +128,7 @@ Debug: $(TARGET) after
 $(DEPFILES): $(SOURCES)
 	echo "creating dependencies"
 	mkdir -p $(@D)
-	$(CXX) $(TARGET_CFLAGS) $(CFLAGS) $(ADDONSCFLAGS) -MM -MT $@ `echo $@ | sed "s/$(SED_OUTPUT)//" | sed "s/\.d/\.cpp/"` > $@
+	$(CXX) $(TARGET_CFLAGS) $(CFLAGS) $(ADDONSCFLAGS) $(USER_CFLAGS) -MM -MT $@ `echo $@ | sed "s/$(SED_OUTPUT)//" | sed "s/\.d/\.cpp/"` > $@
 	
 
 #This rule does the compilation
@@ -136,16 +136,16 @@ $(OBJS): $(SOURCES) $(DEPFILES)
 	echo "compiling objects"
 	echo $@ | sed "s/$(SED_OUTPUT)//" | sed "s/\.o/\.cpp/"
 	mkdir -p $(@D)
-	$(CXX) $(TARGET_CFLAGS) $(CFLAGS) $(ADDONSCFLAGS) -o $@ -c `echo $@ | sed "s/$(SED_OUTPUT)//" | sed "s/\.o/\.cpp/"`
+	$(CXX) $(TARGET_CFLAGS) $(CFLAGS) $(ADDONSCFLAGS) $(USER_CFLAGS) -o $@ -c `echo $@ | sed "s/$(SED_OUTPUT)//" | sed "s/\.o/\.cpp/"`
 
 $(ADDONS_OBJS): $(ADDONS_SOURCES)
 	echo $@ | sed "s/$(SED_OUTPUT)//" | sed "s/\.o/\.cpp/"
 	mkdir -p $(@D)
-	$(CXX) $(TARGET_CFLAGS) $(CFLAGS) $(ADDONSCFLAGS) -o $@ -c ../../../`echo $@ | sed "s/$(SED_OUTPUT)//" | sed "s/\.o/\.cpp/"`
+	$(CXX) $(TARGET_CFLAGS) $(CFLAGS) $(ADDONSCFLAGS) $(USER_CFLAGS) -o $@ -c ../../../`echo $@ | sed "s/$(SED_OUTPUT)//" | sed "s/\.o/\.cpp/"`
 	
 $(TARGET) : $(OBJS) $(ADDONS_OBJS)
 	echo "linking" $(TARGET)
-	$(CXX) -o $@ $(OBJS) $(ADDONS_OBJS) $(TARGET_CFLAGS) $(CFLAGS) $(ADDONSCFLAGS) $(LDFLAGS) $(TARGET_LIBS) $(LIBS) $(ADDONSLIBS)
+	$(CXX) -o $@ $(OBJS) $(ADDONS_OBJS) $(TARGET_CFLAGS) $(CFLAGS) $(ADDONSCFLAGS) $(USER_CFLAGS) $(LDFLAGS) $(USER_LDFLAGS) $(TARGET_LIBS) $(LIBS) $(ADDONSLIBS) $(USER_LIBS)
 
 .PHONY: clean CleanDebug CleanRelease
 clean:
