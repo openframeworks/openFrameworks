@@ -15,7 +15,12 @@ void testApp::setup(){
 
 //--------------------------------------------------------------
 void testApp::update(){	
+	
 	ofBackground(255,255,255);
+	
+	// update the sound playing system:
+	ofSoundUpdate();
+	
 }
 
 //--------------------------------------------------------------

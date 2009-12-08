@@ -25,6 +25,10 @@ class ofEvent: public Poco::FIFOEvent<ArgumentsType> {};
 //     void method(const void * sender, ArgumentsType &args)
 // ie:
 //     ofAddListener(addon.newIntEvent, this, &Class::method)
+template <class EventType,typename ArgumentsType, class ListenerClass>
+static void ofAddListener(EventType & event, ListenerClass  * listener, void (ListenerClass::*listenerMethod)(const void*, ArgumentsType&)){
+    event += Poco::delegate(listener, listenerMethod);
+}
 
 template <class EventType,typename ArgumentsType, class ListenerClass>
 static void ofAddListener(EventType & event, ListenerClass  * listener, void (ListenerClass::*listenerMethod)(ArgumentsType&)){
@@ -40,6 +44,11 @@ static void ofAddListener(EventType & event, ListenerClass  * listener, void (Li
 //     void method(const void * sender, ArgumentsType &args)
 // ie:
 //     ofAddListener(addon.newIntEvent, this, &Class::method)
+
+template <class EventType,typename ArgumentsType, class ListenerClass>
+static void ofRemoveListener(EventType & event, ListenerClass  * listener, void (ListenerClass::*listenerMethod)(const void*, ArgumentsType&)){
+    event -= Poco::delegate(listener, listenerMethod);
+}
 
 template <class EventType,typename ArgumentsType, class ListenerClass>
 static void ofRemoveListener(EventType & event, ListenerClass  * listener, void (ListenerClass::*listenerMethod)(ArgumentsType&)){

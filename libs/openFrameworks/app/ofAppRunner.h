@@ -17,6 +17,8 @@ float 		ofGetFrameRate();
 int			ofGetFrameNum();
 void 		ofSetFrameRate(int targetRate);
 void		ofSleepMillis(int millis);
+double		ofGetLastFrameTime();
+
 //-------------------------- cursor
 void 		ofHideCursor();
 void 		ofShowCursor();

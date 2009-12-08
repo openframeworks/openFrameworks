@@ -27,7 +27,7 @@ typedef struct{
 //enable / disable the slight offset we add to ofTexture's texture coords to compensate for bad edge artifiacts
 //enabled by default
 void ofEnableTextureEdgeHack();
-void ofDisableTectureEdgeHack();
+void ofDisableTextureEdgeHack();
 
 class ofTexture : public ofBaseDraws{
 
@@ -49,7 +49,10 @@ class ofTexture : public ofBaseDraws{
 	void allocate(int w, int h, int internalGlDataType); //uses the currently set OF texture type - default ARB texture
 	void allocate(int w, int h, int internalGlDataType, bool bUseARBExtention); //lets you overide the default OF texture type
 	void clear();
-	void loadData(void * data, int w, int h, int glDataType);   // MEMO: takes void* instead of unsigned char*
+
+	void loadData(float * data, int w, int h, int glDataType);
+	void loadData(unsigned char * data, int w, int h, int glDataType);
+
 	void loadScreenData(int x, int y, int w, int h);
 
 	//the anchor is the point the image is drawn around.
@@ -64,6 +67,15 @@ class ofTexture : public ofBaseDraws{
 	//for the advanced user who wants to draw textures in their own way
 	void bind();
 	void unbind();
+	
+	// these are helpers to allow you to get points for the texture ala "glTexCoordf" 
+	// but are texture type independent. 
+	// use them for immediate or non immediate mode
+	ofPoint getCoordFromPoint(float xPos, float yPos);		
+	ofPoint getCoordFromPercent(float xPts, float yPts);		
+	
+	void setTextureWrap(GLint wrapModeHorizontal, GLint wrapModeVertical);
+	void setTextureMinMagFilter(GLint minFilter, GLint maxFilter);
 
 	bool bAllocated();
 
@@ -74,6 +86,8 @@ class ofTexture : public ofBaseDraws{
 
 	ofTextureData texData;
 protected:
+	void loadData(void * data, int w, int h, int glDataType);
+
 	ofPoint anchor;
 	bool bAnchorIsPct;
 

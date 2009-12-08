@@ -1,5 +1,5 @@
 <install>
-
+	<name>ofxNetwork</name>
 	<version>0.01</version>
 	<author>christian nagelhofer, theo watson</author>
 	<url></url>

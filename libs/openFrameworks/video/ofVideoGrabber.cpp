@@ -1,9 +1,24 @@
 #include "ofVideoGrabber.h"
 #include "ofUtils.h"
 
-#ifdef OF_VIDEO_CAPTURE_V4L
-	#include "ofV4LUtils.h"
+
+//---------------------------------
+#ifdef OF_VIDEO_CAPTURE_QUICKTIME
+//---------------------------------
+//--------------------------------------------------------------
+static ComponentResult 	frameIsGrabbedProc(SGChannel sgChan, short nBufferNum, Boolean *pbDone, long lRefCon);
+static ComponentResult  frameIsGrabbedProc(SGChannel sgChan, short nBufferNum, Boolean *pbDone, long lRefCon){
+
+ 	ComponentResult err = SGGrabFrameComplete( sgChan, nBufferNum, pbDone );
+	
+	bool * havePixChanged = (bool *)lRefCon;
+	*havePixChanged = true;
+
+	return err;
+}
+//---------------------------------
 #endif
+//---------------------------------
 
 
 //--------------------------------------------------------------------
@@ -35,17 +50,6 @@ ofVideoGrabber::ofVideoGrabber(){
 	#endif
 	//---------------------------------
 
-
-	//---------------------------------
-	#ifdef OF_VIDEO_CAPTURE_V4L				// kept around if people have unicap issues...
-	//--------------------------------
-
-		bV4LGrabberInited 	= false;
-
-	//---------------------------------
-	#endif
-	//---------------------------------
-
 	// common
 	bIsFrameNew				= false;
 	bVerbose 				= false;
@@ -56,6 +60,7 @@ ofVideoGrabber::ofVideoGrabber(){
 	width 					= 320;	// default setting
 	height 					= 240;	// default setting
 	pixels					= NULL;
+	attemptFramerate		= -1;
 }
 
 
@@ -83,6 +88,7 @@ ofVideoGrabber::~ofVideoGrabber(){
 	#endif
 	//---------------------------------
 
+
 }
 
 
@@ -104,7 +110,7 @@ void ofVideoGrabber::listDevices(){
 			}
 		}
 
-		printf("-------------------------------------");
+		printf("-------------------------------------\n");
 
 		/*
 			//input selection stuff (ie multiple webcams)
@@ -155,18 +161,18 @@ void ofVideoGrabber::listDevices(){
 						memcpy(pascalNameInput, inputNameRec.name, sizeof(char) * 256);
 					}
 
-					printf( "device[%i] %s - %s",  deviceCount, p2cstr(pascalName), p2cstr(pascalNameInput) );
+					printf( "device[%i] %s - %s\n",  deviceCount, p2cstr(pascalName), p2cstr(pascalNameInput) );
 
 					//we count this way as we need to be able to distinguish multiple inputs as devices
 					deviceCount++;
 				}
 
 			}else{
-				printf( "(unavailable) device[%i] %s",  deviceCount, p2cstr(pascalName) );
+				printf( "(unavailable) device[%i] %s\n",  deviceCount, p2cstr(pascalName) );
 				deviceCount++;
 			}
 		}
-		printf( "-------------------------------------");
+		printf( "-------------------------------------\n");
 
 		//if we initialized the grabbing component then close it
 		if( bNeedToInitGrabberFirst ){
@@ -201,25 +207,12 @@ void ofVideoGrabber::listDevices(){
 	#endif
 	//---------------------------------
 
-
 	//---------------------------------
-	#ifdef OF_VIDEO_CAPTURE_V4L
+	#ifdef OF_VIDEO_CAPTURE_GSTREAMER
 	//--------------------------------
 
-	struct stat st;
 
-	printf( "listing available capture devices");
-	printf( "---");
-	for (int i = 0; i < 8; i++)
-	{
-		sprintf(dev_name, "/dev/video%i", i);
-		if (stat (dev_name, &st) == 0) {
-			printf( "Video device %i = /dev/video%i",i,i);
-		} else {
-
-		}
-	}
-	printf( "---");
+		gstUtils.listDevices();
 
 	//---------------------------------
 	#endif
@@ -242,16 +235,32 @@ void ofVideoGrabber::setVerbose(bool bTalkToMe){
 	//---------------------------------
 }
 
-
 //--------------------------------------------------------------------
 void ofVideoGrabber::setDeviceID(int _deviceID){
 	deviceID		= _deviceID;
 	bChooseDevice	= true;
 }
 
+//--------------------------------------------------------------------
+void ofVideoGrabber::setDesiredFrameRate(int framerate){
+	attemptFramerate = framerate;
+}
+
 //---------------------------------------------------------------------------
 unsigned char * ofVideoGrabber::getPixels(){
-	return pixels;
+
+	//---------------------------------
+	#ifdef OF_VIDEO_CAPTURE_GSTREAMER
+	//--------------------------------
+		return gstUtils.getPixels();
+
+	//---------------------------------
+	#else
+	//---------------------------------
+		return pixels;
+	//---------------------------------
+	#endif
+	//---------------------------------
 }
 
 //------------------------------------
@@ -286,10 +295,12 @@ void ofVideoGrabber::grabFrame(){
 			// was a new frame or not..
 			// or else we will process way more than necessary
 			// (ie opengl is running at 60fps +, capture at 30fps)
-			if (offscreenGWorldPixels[0] != 0x00){
-				offscreenGWorldPixels[0] = 0x00;
-				bHavePixelsChanged = true;
-				convertPixels(offscreenGWorldPixels, pixels, width, height);
+			if (bHavePixelsChanged){
+				
+				#if defined(TARGET_OSX) && defined(__BIG_ENDIAN__)
+					convertPixels(offscreenGWorldPixels, pixels, width, height);
+				#endif
+				
 				if (bUseTexture){
 					tex.loadData(pixels, width, height, GL_RGB);
 				}
@@ -408,14 +419,15 @@ void ofVideoGrabber::grabFrame(){
 	//---------------------------------
 
 	//---------------------------------
-	#ifdef OF_VIDEO_CAPTURE_V4L
+	#ifdef OF_VIDEO_CAPTURE_GSTREAMER
 	//--------------------------------
 
-		if (bV4LGrabberInited == true){
-			bIsFrameNew = getFrameV4L(pixels);
+		if (bGrabberInited){
+			gstUtils.update();
+			bIsFrameNew = gstUtils.isFrameNew();
 			if(bIsFrameNew) {
 				if (bUseTexture){
-					tex.loadData(pixels, width, height, GL_RGB);
+					tex.loadData(gstUtils.getPixels(), width, height, GL_RGB);
 				}
 			}
 		}
@@ -434,17 +446,7 @@ void ofVideoGrabber::close(){
 	//---------------------------------
 
 		qtCloseSeqGrabber();
-
-	//---------------------------------
-	#endif
-	//---------------------------------
-
-
-	//---------------------------------
-	#ifdef OF_VIDEO_CAPTURE_V4L
-	//--------------------------------
-
-		closeV4L();
+		DisposeSGGrabCompleteBottleUPP(myGrabCompleteProc);
 
 	//---------------------------------
 	#endif
@@ -475,6 +477,16 @@ void ofVideoGrabber::close(){
 			bIsFrameNew 		= false;
 			bChooseDevice 		= false;
 		}
+
+	//---------------------------------
+	#endif
+	//---------------------------------
+
+	//---------------------------------
+	#ifdef OF_VIDEO_CAPTURE_GSTREAMER
+	//--------------------------------
+
+		gstUtils.close();
 
 	//---------------------------------
 	#endif
@@ -522,7 +534,7 @@ void ofVideoGrabber::videoSettings(void){
 			loadSettings();
 
 			static SGModalFilterUPP gSeqGrabberModalFilterUPP = NewSGModalFilterUPP(SeqGrabberModalFilterUPP);
-			ComponentResult result = SGSettingsDialog(gSeqGrabber,  gVideoChannel, 0, nil, seqGrabSettingsPreviewOnly, gSeqGrabberModalFilterUPP, nil);
+			ComponentResult result = SGSettingsDialog(gSeqGrabber,  gVideoChannel, 0, nil, 0, gSeqGrabberModalFilterUPP, nil);
 			if (result != noErr){
 				ofLog(OF_LOG_ERROR, "error in  dialogue");
 				return;
@@ -562,15 +574,7 @@ void ofVideoGrabber::videoSettings(void){
 	#endif
 	//---------------------------------
 
-	//---------------------------------
-	#ifdef OF_VIDEO_CAPTURE_V4L
-	//--------------------------------
-
-		queryV4L_imageProperties();
-
-	//---------------------------------
-	#endif
-	//---------------------------------
+	//TODO: add some kind of show settings for gstreamer
 
 }
 
@@ -853,7 +857,6 @@ bool ofVideoGrabber::qtSelectDevice(int deviceNumber, bool didWeChooseADevice){
 
 //--------------------------------------------------------------------
 bool ofVideoGrabber::initGrabber(int w, int h, bool setUseTexture){
-
 	bUseTexture = setUseTexture;
 
 	//---------------------------------
@@ -879,12 +882,18 @@ bool ofVideoGrabber::initGrabber(int w, int h, bool setUseTexture){
 
 		offscreenGWorldPixels 	= (unsigned char*)malloc(4 * width * height + 32);
 		pixels					= new unsigned char[width*height*3];
-		QTNewGWorldFromPtr (&videogworld, k32ARGBPixelFormat, &videoRect, NULL, NULL, 0, offscreenGWorldPixels, 4 * width);
+		
+		#if defined(TARGET_OSX) && defined(__BIG_ENDIAN__)
+			QTNewGWorldFromPtr (&(videogworld), k32ARGBPixelFormat, &(videoRect), NULL, NULL, 0, (offscreenGWorldPixels), 4 * width);		
+		#else
+			QTNewGWorldFromPtr (&(videogworld), k24RGBPixelFormat, &(videoRect), NULL, NULL, 0, (pixels), 3 * width);
+		#endif		
+		
 		LockPixels(GetGWorldPixMap(videogworld));
 		SetGWorld (videogworld, NULL);
 		SGSetGWorld(gSeqGrabber, videogworld, nil);
 
-
+		
 		//---------------------------------- 4 - device selection
 		bool didWeChooseADevice = bChooseDevice;
 		bool deviceIsSelected	=  false;
@@ -919,6 +928,25 @@ bool ofVideoGrabber::initGrabber(int w, int h, bool setUseTexture){
 	 	err = SGSetChannelUsage(gVideoChannel,seqGrabPreview);
 		if ( err != noErr ) goto bail;
 
+	
+		//----------------- callback method for notifying new frame
+		err = SGSetChannelRefCon(gVideoChannel, (long)&bHavePixelsChanged );
+		if(!err) {
+
+			VideoBottles vb; 
+			/* get the current bottlenecks */ 
+			vb.procCount = 9; 
+			err = SGGetVideoBottlenecks(gVideoChannel, &vb); 
+			if (!err) { 			
+				myGrabCompleteProc = NewSGGrabCompleteBottleUPP(frameIsGrabbedProc);
+				vb.grabCompleteProc = myGrabCompleteProc;
+			
+				/* add our GrabFrameComplete function */ 
+				err = SGSetVideoBottlenecks(gVideoChannel, &vb); 	
+			}
+		
+		}
+				
 		err = SGSetChannelBounds(gVideoChannel, &videoRect);
 		if ( err != noErr ) goto bail;
 
@@ -930,7 +958,14 @@ bool ofVideoGrabber::initGrabber(int w, int h, bool setUseTexture){
 
 		bGrabberInited = true;
 		loadSettings();
-
+		
+		if( attemptFramerate >= 0 ){
+			err = SGSetFrameRate(gVideoChannel, IntToFixed(attemptFramerate) );
+			if ( err != noErr ){
+				ofLog(OF_LOG_ERROR,"initGrabber error setting framerate to %i", attemptFramerate);
+			}		
+		}
+		
 		ofLog(OF_LOG_NOTICE,"end setup ofVideoGrabber");
 		ofLog(OF_LOG_NOTICE,"-------------------------------------\n");
 
@@ -980,7 +1015,10 @@ bool ofVideoGrabber::initGrabber(int w, int h, bool setUseTexture){
 		width = w;
 		height = h;
 		bGrabberInited = false;
-
+		
+		if( attemptFramerate >= 0){
+			VI.setIdealFramerate(device, attemptFramerate);
+		}
 		bool bOk = VI.setupDevice(device, width, height);
 
 		int ourRequestedWidth = width;
@@ -1057,48 +1095,32 @@ bool ofVideoGrabber::initGrabber(int w, int h, bool setUseTexture){
 	#endif
 	//---------------------------------
 
-
 	//---------------------------------
-	#ifdef OF_VIDEO_CAPTURE_V4L
+	#ifdef OF_VIDEO_CAPTURE_GSTREAMER
 	//--------------------------------
-		if (bChooseDevice){
-			device = deviceID;
-		} else {
-			device = 0;
-		}
-		sprintf(dev_name, "/dev/video%i", device);
-		ofLog(OF_LOG_NOTICE, "choosing device %s",dev_name);
+		gstUtils.setDeviceID(deviceID);
 
-		bool bOk = initV4L(w, h, dev_name);
-
-		if (bOk == true){
-			bV4LGrabberInited = true;
-			width 	= getV4L_Width();
-			height 	= getV4L_Height();
-			pixels	= new unsigned char[width * height * 3];
-
+		if(gstUtils.initGrabber(w,h,attemptFramerate)){
+			width 	= w;
+			height 	= h;
 			if (bUseTexture){
 				// create the texture, set the pixels to black and
 				// upload them to the texture (so at least we see nothing black the callback)
 				tex.allocate(width,height,GL_RGB);
-				//memset(pixels, 0, width*height*3);
-				//tex.loadData(pixels, width, height, GL_RGB);
+				tex.loadData(gstUtils.getPixels(), width, height, GL_RGB);
 			}
-
-			ofLog(OF_LOG_NOTICE, "success allocating a video device ");
-			return true;
-		} else {
-			ofLog(OF_LOG_ERROR, "error allocating a video device");
-			ofLog(OF_LOG_ERROR, "please check your camera and verify that your driver is correctly installed.");
-			return false;
-		}	//---------------------------------
+			bGrabberInited = true;
+			ofLog(OF_LOG_VERBOSE, "ofVideoGrabber: initied");
+		}else{
+			bGrabberInited = false;
+			ofLog(OF_LOG_ERROR, "ofVideoGrabber: couldn't init");
+		}
+		return bGrabberInited;
 
 
 	//---------------------------------
 	#endif
 	//---------------------------------
-
-
 
 }
 
@@ -1116,7 +1138,7 @@ void ofVideoGrabber::setAnchorPercent(float xPct, float yPct){
 }
 
 //----------------------------------------------------------
-void ofVideoGrabber::setAnchorPoint(float x, float y){
+void ofVideoGrabber::setAnchorPoint(int x, int y){
     if (bUseTexture)tex.setAnchorPoint(x, y);
 }
 

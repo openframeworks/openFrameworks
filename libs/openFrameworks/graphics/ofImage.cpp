@@ -389,7 +389,7 @@ FIBITMAP *  ofImage::getBmpFromPixels(ofPixels &pix){
 	int bpp						= pix.bitsPerPixel;
 	int bytesPerPixel			= pix.bitsPerPixel / 8;
 
-	bmp							= FreeImage_ConvertFromRawBits(pixels, w,h, w*bytesPerPixel, bpp, 0,0,0, false);
+	bmp							= FreeImage_ConvertFromRawBits(pixels, w,h, w*bytesPerPixel, bpp, 0,0,0, true);
 
 	//this is for grayscale images they need to be paletted from: http://sourceforge.net/forum/message.php?msg_id=2856879
 	if( pix.ofImageType == OF_IMAGE_GRAYSCALE ){
@@ -413,7 +413,7 @@ void ofImage::putBmpIntoPixels(FIBITMAP * bmp, ofPixels &pix){
 	//------------------------------------------
 	// call the allocation routine (which checks if really need to allocate) here:
 	allocatePixels(pix, width, height, bpp);
-	FreeImage_ConvertToRawBits(pix.pixels, bmp, width*bytesPerPixel, bpp, FI_RGBA_RED_MASK, FI_RGBA_GREEN_MASK, FI_RGBA_BLUE_MASK, false);  // get bits
+	FreeImage_ConvertToRawBits(pix.pixels, bmp, width*bytesPerPixel, bpp, FI_RGBA_RED_MASK, FI_RGBA_GREEN_MASK, FI_RGBA_BLUE_MASK, true);  // get bits
 }
 
 //----------------------------------------------------
@@ -433,26 +433,44 @@ void ofImage::resizePixels(ofPixels &pix, int newWidth, int newHeight){
 //----------------------------------------------------
 void ofImage::changeTypeOfPixels(ofPixels &pix, int newType){
 
+	
+		
 	if (pix.ofImageType == newType) return;
 
 	FIBITMAP * bmp					= getBmpFromPixels(pix);
 	FIBITMAP * convertedBmp			= NULL;
 
-
-
+	// check if we need to reallocate the texture.
+	bool bNeedNewTexture = false;
+	int oldType = pix.ofImageType;
+	if (newType > oldType){ 
+		bNeedNewTexture = true;
+	}
+	
 	// new type !
 	switch (newType){
+			
 		//------------------------------------
 		case OF_IMAGE_GRAYSCALE:
 			convertedBmp = FreeImage_ConvertToGreyscale(bmp);
 			break;
+			
 		//------------------------------------
 		case OF_IMAGE_COLOR:
 			convertedBmp = FreeImage_ConvertTo24Bits(bmp);
+			if (bNeedNewTexture){
+				tex.clear();
+				tex.allocate(myPixels.width, myPixels.height, GL_RGB);
+			}
 			break;
+		
 		//------------------------------------
 		case OF_IMAGE_COLOR_ALPHA:
 			convertedBmp = FreeImage_ConvertTo32Bits(bmp);
+			if (bNeedNewTexture){
+				tex.clear();
+				tex.allocate(myPixels.width, myPixels.height, GL_RGBA);
+			}
 			break;
 	}
 
@@ -538,7 +556,7 @@ bool ofImage::loadImageIntoPixels(string fileName, ofPixels &pix){
 
 
 
-		FreeImage_ConvertToRawBits(pix.pixels, bmp, width*byteCount, bpp, FI_RGBA_RED_MASK, FI_RGBA_GREEN_MASK, FI_RGBA_BLUE_MASK, false);  // get bits
+		FreeImage_ConvertToRawBits(pix.pixels, bmp, width*byteCount, bpp, FI_RGBA_RED_MASK, FI_RGBA_GREEN_MASK, FI_RGBA_BLUE_MASK, true);  // get bits
 
 		//------------------------------------------
 		// RGB or RGBA swap

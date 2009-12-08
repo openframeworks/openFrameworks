@@ -11,7 +11,7 @@
 	//ofNextContour
 	//shape -winding mode
 
-
+using namespace ns_creeps;
 
 class ofxVectorGraphics{
 

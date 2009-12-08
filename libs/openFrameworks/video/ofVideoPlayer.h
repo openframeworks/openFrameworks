@@ -6,31 +6,13 @@
 
 
 #ifdef OF_VIDEO_PLAYER_GSTREAMER
-	#include <gst/gst.h>
-	#include <pthread.h>
-
-	typedef struct{
-		GMainLoop 		*	loop;
-		GstElement 		*	pipeline;
-		unsigned char 	*	pixels;
-		pthread_mutex_t 	buffer_mutex;
-		bool				bHasPixelsChanged;
-
-		guint64				durationNanos;
-		guint64				nFrames;
-		int					pipelineState;
-		float				speed;
-	}ofGstVideoData;
-
+	#include "ofGstUtils.h"
 #else
 	#include "ofQtUtils.h"
 #endif
 
 
 
-#define OF_LOOP_NONE					0x01
-#define OF_LOOP_PALINDROME				0x02
-#define OF_LOOP_NORMAL					0x03
 
 
 //---------------------------------------------
@@ -77,7 +59,7 @@ class ofVideoPlayer : public ofBaseVideo{
 		//the anchor is the point the image is drawn around.
 		//this can be useful if you want to rotate an image around a particular point.
         void				setAnchorPercent(float xPct, float yPct);	//set the anchor as a percentage of the image width/height ( 0.0-1.0 range )
-        void				setAnchorPoint(float x, float y);				//set the anchor point in pixels
+        void				setAnchorPoint(int x, int y);				//set the anchor point in pixels
         void				resetAnchor();								//resets the anchor to (0, 0)
 
 		void 				setPaused(bool bPause);
@@ -95,11 +77,20 @@ class ofVideoPlayer : public ofBaseVideo{
 		//--------------------------------------
 		#ifdef OF_VIDEO_PLAYER_QUICKTIME
 		//--------------------------------------
+			MovieDrawingCompleteUPP myDrawCompleteProc;
 			MovieController  	thePlayer;
 			GWorldPtr 			offscreenGWorld;
 			Movie 			 	moviePtr;
 			unsigned char * 	offscreenGWorldPixels;	// 32 bit: argb (qt k32ARGBPixelFormat)
 			void				qtGetFrameCount(Movie & movForcount);
+		//--------------------------------------
+		#endif
+		//--------------------------------------
+
+		//--------------------------------------
+		#ifdef OF_VIDEO_PLAYER_GSTREAMER
+		//--------------------------------------
+		ofGstUtils 			gstUtils;
 		//--------------------------------------
 		#endif
 		//--------------------------------------
@@ -121,28 +112,7 @@ class ofVideoPlayer : public ofBaseVideo{
 		bool 				bPaused;
 		bool 				bIsFrameNew;			// if we are new
 
-		//--------------------------------------
-		#ifdef OF_VIDEO_PLAYER_GSTREAMER
-		//--------------------------------------
-		ofGstVideoData 		gstData;
-		bool				bIsMovieDone;
-		bool				isStream;
-		GstElement	* 		gstPipeline;
-		GstElement  *		gstSink;
-		gint64          	durationNanos;
-		int					loopMode;
 
-		bool				    posChangingPaused;
-
-
-		pthread_mutex_t 	seek_mutex;
-		void                seek_lock();
-		void                seek_unlock();
-		void 				gstHandleMessage();
-		bool 				allocate();
-		//--------------------------------------
-		#endif
-		//--------------------------------------
 
 
 };

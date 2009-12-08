@@ -59,7 +59,6 @@ void testApp::update(){
 		contourFinder.findContours(grayDiff, 20, (340*240)/3, 10, true);	// find holes
 	}
 
-	printf("%f \n", ofGetFrameRate());
 }
 
 //--------------------------------------------------------------
