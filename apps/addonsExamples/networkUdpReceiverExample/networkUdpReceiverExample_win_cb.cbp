@@ -60,7 +60,9 @@
 			<Add directory="../../../libs/openFrameworks/video"/>
 			<Add directory="../../../libs/openFrameworks/communication"/>
 			<Add directory="../../../libs/poco/include"/>
-		<Add directory="../../../addons/ofxNetwork/src"/></Compiler>
+			<Add directory="../../../addons/ofxNetwork/src"/>
+			<Add directory="../../../addons/ofxThread/src"/>
+		</Compiler>
 		<Linker>
 			<Add option="../../../libs/FreeImage/lib/win_cb/FreeImage.lib"/>
 			<Add option="../../../libs/rtAudio/lib/win_cb/RtAudio.a"/>
@@ -113,5 +115,16 @@
 			<debugger/>
 			<envvars/>
 		</Extensions>
-	<Unit filename="../../../addons/ofxNetwork/src/ofxNetwork.h"><Option virtualFolder="addons/ofxNetwork/src"/></Unit><Unit filename="../../../addons/ofxNetwork/src/ofxTCPClient.cpp"><Option virtualFolder="addons/ofxNetwork/src"/></Unit><Unit filename="../../../addons/ofxNetwork/src/ofxTCPClient.h"><Option virtualFolder="addons/ofxNetwork/src"/></Unit><Unit filename="../../../addons/ofxNetwork/src/ofxTCPManager.cpp"><Option virtualFolder="addons/ofxNetwork/src"/></Unit><Unit filename="../../../addons/ofxNetwork/src/ofxTCPManager.h"><Option virtualFolder="addons/ofxNetwork/src"/></Unit><Unit filename="../../../addons/ofxNetwork/src/ofxTCPServer.cpp"><Option virtualFolder="addons/ofxNetwork/src"/></Unit><Unit filename="../../../addons/ofxNetwork/src/ofxTCPServer.h"><Option virtualFolder="addons/ofxNetwork/src"/></Unit><Unit filename="../../../addons/ofxNetwork/src/ofxUDPManager.cpp"><Option virtualFolder="addons/ofxNetwork/src"/></Unit><Unit filename="../../../addons/ofxNetwork/src/ofxUDPManager.h"><Option virtualFolder="addons/ofxNetwork/src"/></Unit></Project>
+			<Unit filename="../../../addons/ofxNetwork/src/ofxNetwork.h"><Option virtualFolder="addons/ofxNetwork/src"/></Unit>
+			<Unit filename="../../../addons/ofxNetwork/src/ofxTCPClient.cpp"><Option virtualFolder="addons/ofxNetwork/src"/></Unit>
+			<Unit filename="../../../addons/ofxNetwork/src/ofxTCPClient.h"><Option virtualFolder="addons/ofxNetwork/src"/></Unit>
+			<Unit filename="../../../addons/ofxNetwork/src/ofxTCPManager.cpp"><Option virtualFolder="addons/ofxNetwork/src"/></Unit>
+			<Unit filename="../../../addons/ofxNetwork/src/ofxTCPManager.h"><Option virtualFolder="addons/ofxNetwork/src"/></Unit>
+			<Unit filename="../../../addons/ofxNetwork/src/ofxTCPServer.cpp"><Option virtualFolder="addons/ofxNetwork/src"/></Unit>
+			<Unit filename="../../../addons/ofxNetwork/src/ofxTCPServer.h"><Option virtualFolder="addons/ofxNetwork/src"/></Unit>
+			<Unit filename="../../../addons/ofxNetwork/src/ofxUDPManager.cpp"><Option virtualFolder="addons/ofxNetwork/src"/></Unit>
+			<Unit filename="../../../addons/ofxNetwork/src/ofxUDPManager.h"><Option virtualFolder="addons/ofxNetwork/src"/></Unit>
+			<Unit filename="../../../addons/ofxThread/src/ofxThread.cpp"><Option virtualFolder="addons/ofxThread/src"/></Unit>
+			<Unit filename="../../../addons/ofxThread/src/ofxThread.h"><Option virtualFolder="addons/ofxThread/src"/></Unit>
+	</Project>
 </CodeBlocks_project_file>
