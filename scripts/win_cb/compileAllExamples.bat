@@ -1,6 +1,13 @@
 
 
-for /d %%X in (..\apps\*) do ( 
+
+
+cd ..\..\libs\openFrameworksCompiled\project\win_cb\
+"C:\Program Files\CodeBlocks\codeblocks.exe" /na /nd --build "openFrameworksLib.cbp"
+cd ../../../../scripts/win_cb
+
+
+for /d %%X in (..\..\apps\*) do ( 
 cd %%X
 
 	for /d %%Y in (*) do ( 
@@ -18,4 +25,4 @@ cd %%X
 cd ../
 )
 
-cd ../scripts
+cd ../scripts/win_cb
