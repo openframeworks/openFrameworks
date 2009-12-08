@@ -8,7 +8,7 @@
 		<Option virtualFolders="addons/;src/;"/>
 		<Build>
 			<Target title="Debug">
-				<Option output="bin/advancedEventsExample_debug" extension_auto="1" prefix_auto="1"/>
+				<Option output="bin/emptyExample_debug" extension_auto="1" prefix_auto="1"/>
 				<Option working_dir="bin"/>
 				<Option object_output="obj/Debug/"/>
 				<Option external_deps="../../../libs/openFrameworksCompiled/lib/linux64/libopenFrameworksDebug.a;"/>
@@ -24,7 +24,7 @@
 				</Linker>
 			</Target>
 			<Target title="Release">
-				<Option output="bin/advancedEventsExample" extension_auto="1" prefix_auto="1"/>
+				<Option output="bin/emptyExample" extension_auto="1" prefix_auto="1"/>
 				<Option working_dir="bin"/>
 				<Option object_output="obj/Release/"/>
 				<Option external_deps="../../../libs/openFrameworksCompiled/lib/linux64/libopenFrameworks.a;"/>

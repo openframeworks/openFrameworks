@@ -8,7 +8,7 @@
 		<Option virtualFolders="addons/;src/;"/>
 		<Build>
 			<Target title="Debug">
-				<Option output="bin/allAddonsExample_debug" extension_auto="1" prefix_auto="1"/>
+				<Option output="bin/oscSenderExample_debug" extension_auto="1" prefix_auto="1"/>
 				<Option working_dir="bin"/>
 				<Option object_output="obj/Debug/"/>
 				<Option external_deps="../../../libs/openFrameworksCompiled/lib/linux64/libopenFrameworksDebug.a;"/>
@@ -24,7 +24,7 @@
 				</Linker>
 			</Target>
 			<Target title="Release">
-				<Option output="bin/allAddonsExample" extension_auto="1" prefix_auto="1"/>
+				<Option output="bin/oscSenderExample" extension_auto="1" prefix_auto="1"/>
 				<Option working_dir="bin"/>
 				<Option object_output="obj/Release/"/>
 				<Option external_deps="../../../libs/openFrameworksCompiled/lib/linux64/libopenFrameworks.a;"/>
@@ -147,6 +147,7 @@
 				<lib name="gstreamer-0.10"/>
 				<lib name="gstreamer-video-0.10"/>
 				<lib name="gstreamer-base-0.10"/>
+				<lib name="libudev"/>
 			</lib_finder>
 			<code_completion/>
 			<envvars/>
