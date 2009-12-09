@@ -1,14 +1,14 @@
-# $1 -> platform: win_cb, linux, linux64, vs2008, macosx, iphone, all
+# $1 -> platform: win_cb, linux, linux64, vs2008, osx, iphone, all
 # $2 -> version number: 006
 
 platform=$1
 version=$2
 
-if [ "$platform" != "win_cb" ] && [ "$platform" != "linux" ] && [ "$platform" != "linux64" ] && [ "$platform" != "vs2008" ] && [ "$platform" != "macosx" ] && [ "$platform" != "all" ]; then
+if [ "$platform" != "win_cb" ] && [ "$platform" != "linux" ] && [ "$platform" != "linux64" ] && [ "$platform" != "vs2008" ] && [ "$platform" != "osx" ] && [ "$platform" != "all" ]; then
     echo usage: 
     echo ./create_package.sh platform version
     echo platform:
-    echo win_cb, linux, linux64, vs2008, macosx, all
+    echo win_cb, linux, linux64, vs2008, osx, all
     exit 1
 fi
 
@@ -16,7 +16,7 @@ if [ "$version" == "" ]; then
     echo usage: 
     echo ./create_package.sh platform version
     echo platform:
-    echo win_cb, linux, linux64, vs2008, macosx, all
+    echo win_cb, linux, linux64, vs2008, osx, all
     exit 1
 fi
 
@@ -76,7 +76,7 @@ function deleteProjectFiles {
             rm makefile cb_build_runner.sh *.make
         fi
 
-        #delete macosx files
+        #delete osx files
         rm -Rf *.xcodeproj
         rm openFrameworks-Info.plist
 
@@ -98,7 +98,7 @@ function deleteProjectFiles {
         elif [ "$plaform" = "linux64" ]; then
             rm -Rf ${oflib_root}/*/linux
         fi
-        rm -Rf ${oflib_root}/*/macosx
+        rm -Rf ${oflib_root}/*/osx
         rm -Rf ${oflib_root}/*/vs2008
         rm -Rf ${oflib_root}/*/iphone
         
@@ -106,8 +106,8 @@ function deleteProjectFiles {
 
 
 
-    #macosx
-    if [ "$platform" = "macosx" ]; then
+    #osx
+    if [ "$platform" = "osx" ]; then
 
         #delete codeblock files
         rm *.cbp
@@ -146,12 +146,12 @@ function deleteProjectFiles {
         rm makefile
         rm *.make
 
-        #delete macosx files
+        #delete osx files
         rm -Rf *.xcodeproj
         rm openFrameworks-Info.plist
         
         #delete OFLib project files
-        rm -Rf ${oflib_root}/*/macosx
+        rm -Rf ${oflib_root}/*/osx
         rm -Rf ${oflib_root}/*/linux
         rm -Rf ${oflib_root}/*/linux64
         rm -Rf ${oflib_root}/*/win_cb
@@ -188,27 +188,27 @@ function createPackage {
 
     #delete other platform libraries
     if [ "$pkg_platform" = "linux" ]; then
-        otherplatforms="linux64 macosx win_cb win_vs2008 iphone"
+        otherplatforms="linux64 osx win_cb win_vs2008 iphone"
     fi
 
     if [ "$pkg_platform" = "linux64" ]; then
-        otherplatforms="linux macosx win_cb win_vs2008 iphone"
+        otherplatforms="linux osx win_cb win_vs2008 iphone"
     fi
 
-    if [ "$pkg_platform" = "macosx" ]; then
+    if [ "$pkg_platform" = "osx" ]; then
         otherplatforms="linux linux64 win_cb win_vs2008 iphone"
     fi
 
     if [ "$pkg_platform" = "win_cb" ]; then
-        otherplatforms="linux linux64 macosx win_vs2008 iphone"
+        otherplatforms="linux linux64 osx win_vs2008 iphone"
     fi
 
     if [ "$pkg_platform" = "vs2008" ]; then
-        otherplatforms="linux linux64 macosx win_cb iphone"
+        otherplatforms="linux linux64 osx win_cb iphone"
     fi
 
     if [ "$pkg_platform" = "iphone" ]; then
-        otherplatforms="linux linux64 macosx win_cb win_vs2008"
+        otherplatforms="linux linux64 osx win_cb win_vs2008"
     fi
 
     #delete libraries for other platforms
@@ -221,7 +221,7 @@ function createPackage {
         rm -Rf $otherplatforms
         cd $pkg_ofroot/libs 
     done
-    if [ "$pkg_platform" = "macosx" ]; then
+    if [ "$pkg_platform" = "osx" ]; then
         rm -Rf $libsnotinmac
     elif [ "$platform" = "linux" ] || [ "$platform" = "linux64" ]; then
         rm -Rf $libsnotinlinux
@@ -232,7 +232,7 @@ function createPackage {
     #delete dynamic libraries for other platforms
     cd $pkg_ofroot/export
     rm -Rf $otherplatforms
-    if [ "$pkg_platform" = "macosx" ]; then
+    if [ "$pkg_platform" = "osx" ]; then
         cd $pkg_ofroot
         rmdir export
     fi
@@ -277,7 +277,7 @@ function createPackage {
 
 
 if [ "$platform" = "all" ]; then
-    for eachplatform in win_cb linux linux64 vs2008 macosx 
+    for eachplatform in win_cb linux linux64 vs2008 osx 
     do
         cd $packageroot
         mkdir of_preRelease_v${version}_${eachplatform}
