@@ -45,7 +45,7 @@
 			<Add directory="..\..\..\libs\freetype\include"/>
 			<Add directory="..\..\..\libs\freetype\include\freetype2"/>
 			<Add directory="..\..\..\libs\FreeImage\include"/>
-			<Add directory="..\..\..\libs\quicktime\CIncludes"/>
+			<Add directory="..\..\..\libs\quicktime\include"/>
 			<Add directory="..\..\..\libs\rtAudio\include"/>
 			<Add directory="..\..\..\libs\fmodex\inc"/>
 			<Add directory="..\..\..\libs\videoInput\include"/>
