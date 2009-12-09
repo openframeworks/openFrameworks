@@ -92,7 +92,7 @@
 			<Add option="../../../libs/poco/lib/win_cb/libPocoFoundationmt.a"/>
 			<Add option="../../../addons/ofxOpenCv/libs/opencv/lib/win32/libcv.a"/>
 			<Add option="../../../addons/ofxOpenCv/libs/opencv/lib/win32/libcxcore.a"/>
-			<Add option="../../../addons/ofxOsc/libs/oscpack/lib/win32/oscpack.a"/>
+			<Add option="../../../addons/ofxOsc/libs/oscpack/win_cb/oscpack.a"/>
 			<Add option="-lopengl32"/>
 			<Add option="-lglu32"/>
 			<Add option="-ldsound"/>
@@ -108,7 +108,7 @@
 			<Add option="-lwsock32"/>
 			<Add option="-lws2_32"/>
 			<Add option="-lIphlpapi"/>
-		<Add library="../../../addons/ofxOsc/libs/oscpack/lib/win32/oscpack.a"/></Linker>
+		<Add library="../../../addons/ofxOsc/libs/oscpack/win_cb/oscpack.a"/></Linker>
 		<ExtraCommands>
 			<Add after='xcopy /e /i /y "$(PROJECT_DIR)..\..\..\export\win_cb\*.dll"  "$(PROJECT_DIR)bin"'/>
 			<Add after='cmd /c if not exist "$(PROJECT_DIR)bin/data" mkdir "$(PROJECT_DIR)bin/data"'/>
