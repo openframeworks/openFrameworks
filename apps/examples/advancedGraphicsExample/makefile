@@ -30,17 +30,11 @@ USER_LD_FLAGS =
 USER_LIBS = 
 
 
-# you shouldn't touch anything below this line
+# you shouldn't modify anything below this line
 
 
 SHELL =  /bin/sh
 CXX =  g++
-
-NODEPS = clean
-SOURCE_DIRS = $(shell find . -maxdepth 1 -mindepth 1 -type d | grep -v $(EXCLUDE_FROM_SOURCE) | sed s/.\\///)
-SOURCES = $(shell find $(SOURCE_DIRS) -name "*.cpp")
-OBJFILES = $(patsubst %.cpp,%.o,$(SOURCES))
-APPNAME = $(shell basename `pwd`)
 
 ARCH = $(shell uname -m)
 ifeq ($(ARCH),x86_64)
@@ -49,16 +43,43 @@ else
 	LIBSPATH=linux
 endif
 
+NODEPS = clean
+SOURCE_DIRS = $(shell find . -maxdepth 1 -mindepth 1 -type d | grep -v $(EXCLUDE_FROM_SOURCE) | sed s/.\\///)
+SOURCES = $(shell find $(SOURCE_DIRS) -name "*.cpp")
+OBJFILES = $(patsubst %.cpp,%.o,$(SOURCES))
+APPNAME = $(shell basename `pwd`)
+CORE_INCLUDES = $(shell find ../../../libs/openFrameworks/ -type d)
+CORE_INCLUDE_FLAGS = $(addprefix -I,$(CORE_INCLUDES))
+INCLUDES = $(shell find ../../../libs/*/include -type d)
+INCLUDES_FLAGS = $(addprefix -I,$(INCLUDES))
+LIB_STATIC = $(shell ls ../../../libs/*/lib/$(LIBSPATH)/*.a | grep -v openFrameworksCompiled)
+LIB_SHARED = $(shell ls ../../../libs/*/lib/$(LIBSPATH)/*.so | grep -v openFrameworksCompiled)
+
+LIB_PATHS_FLAGS = -L../../../libs/openFrameworksCompiled/lib/$(LIBSPATH)
+
 CFLAGS = -Wall -fexceptions
-CFLAGS += -I. -I../../../addons/ -I../../../libs/openFrameworks/ -I../../../libs/openFrameworks/events -I../../../libs/openFrameworks/app -I../../../libs/openFrameworks/communication -I../../../libs/openFrameworks/graphics -I../../../libs/openFrameworks/video -I../../../libs/openFrameworks/utils -I../../../libs/openFrameworks/sound -I../../../libs/rtAudio/include -I../../../libs/fmodex/inc -I../../../libs/glee/include -I../../../libs/glee/ -I../../../libs/FreeImage/include -I../../../libs/freetype/include -I../../../libs/freetype/include/freetype2 -I../../../libs/unicap/include -I../../../libs/gstappsink/include -I../../../addons -I../../../libs/poco/include
+CFLAGS += -I. 
+CFLAGS += $(INCLUDES_FLAGS)
+CFLAGS += $(CORE_INCLUDE_FLAGS)
 CFLAGS +=`pkg-config  gstreamer-0.10 gstreamer-video-0.10 gstreamer-base-0.10 libudev --cflags`
 
-LDFLAGS = -L../../../libs/freetype/lib/$(LIBSPATH) -L../../../libs/FreeImage/lib/$(LIBSPATH) -L../../../libs/rtAudio/lib/$(LIBSPATH) -L../../../libs/glee/lib/$(LIBSPATH) -L../../../libs/gstappsink/lib/$(LIBSPATH) -L../../../libs/fmodex/lib/$(LIBSPATH) -L../../../libs/unicap/lib/$(LIBSPATH) -L../../../libs/poco/lib/$(LIBSPATH) -L../../../libs/openFrameworksCompiled/lib/$(LIBSPATH) -s
+LDFLAGS = $(LIB_PATHS_FLAGS) -s
+
+LIBS = $(LIB_SHARED)
+LIBS += $(LIB_STATIC)
+LIBS +=`pkg-config  gstreamer-0.10 gstreamer-video-0.10 gstreamer-base-0.10 libudev --libs`
+LIBS += -lglut -lGL -lasound
 
 ifeq ($(findstring addons.make,$(wildcard *.make)),addons.make)
-	ADDONSCFLAGS = -I../../../addons/ofx3DModelLoader/src/3DS/ -I../../../addons/ofx3DModelLoader/src/ -I../../../addons/ofxNetwork/src -I../../../addons/ofxOsc/src -I../../../addons/ofxOsc/libs/oscpack/include/ip -I../../../addons/ofxOsc/libs/oscpack/include/osc -I../../../addons/ofxVectorMath/src -I../../../addons/ofxVectorGraphics/src -I../../../addons/ofxVectorGraphics/libs -I../../../addons/ofxOpenCv/src -I../../../addons/ofxOpenCv/libs/opencv/include -I../../../addons/ofxThread/src -I../../../addons/ofxDirList/src -I../../../addons/ofxXmlSettings/src -I../../../addons/ofxXmlSettings/libs
+	ADDONS_INCLUDES = $(shell find ../../../addons/*/src/ -type d)
+	ADDONS_INCLUDES += $(shell find ../../../addons/*/libs/ -type d)
+	ADDONSCFLAGS = $(addprefix -I,$(ADDONS_INCLUDES))
+	
+	ADDONS_LIBS_STATICS = $(shell ls ../../../addons/*/libs/*/lib/$(LIBSPATH)/*.a)
+	ADDONS_LIBS_SHARED = $(shell ls ../../../addons/*/libs/*/lib/$(LIBSPATH)/*.so)
 
-	ADDONSLIBS = ../../../addons/ofxOsc/libs/oscpack/lib/$(LIBSPATH)/liboscpack.a ../../../addons/ofxOpenCv/libs/opencv/lib/$(LIBSPATH)/libcv.a ../../../addons/ofxOpenCv/libs/opencv/lib/$(LIBSPATH)/libcxcore.a
+	ADDONSLIBS = $(ADDONS_LIBS_STATICS)
+	ADDONSLIBS += $(ADDONS_LIBS_SHARED)
 
 	ADDONS = $(shell cat addons.make)
 	ADDONS_REL_DIRS = $(addsuffix /src, $(ADDONS))
@@ -70,8 +91,7 @@ ifeq ($(findstring addons.make,$(wildcard *.make)),addons.make)
 	ADDONS_OBJFILES = $(subst ../../../, ,$(patsubst %.cpp,%.o,$(ADDONS_SOURCES)))
 endif
 
-LIBS = -lfmodex64-4.22.00 -lraw1394 -lglut -lGL -lGLU -lXxf86vm -lasound -lPocoFoundation -lunicap -lfreetype -lfreeimage -lRtAudio -lGLee -loFappsink
-LIBS +=`pkg-config  gstreamer-0.10 gstreamer-video-0.10 gstreamer-base-0.10 libudev --libs`
+
 
 ifeq ($(findstring Debug,$(MAKECMDGOALS)),Debug)
 	TARGET_CFLAGS = -g
