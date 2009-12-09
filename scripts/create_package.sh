@@ -1,6 +1,25 @@
 # $1 -> platform: win_cb, linux, linux64, vs2008, macosx, iphone, all
 # $2 -> version number: 006
 
+platform=$1
+version=$2
+
+if [ "$platform" != "win_cb" ] && [ "$platform" != "linux" ] && [ "$platform" != "linux64" ] && [ "$platform" != "vs2008" ] && [ "$platform" != "macosx" ] && [ "$platform" != "all" ]; then
+    echo usage: 
+    echo ./create_package.sh platform version
+    echo platform:
+    echo win_cb, linux, linux64, vs2008, macosx, all
+    exit 1
+fi
+
+if [ "$version" == "" ]; then
+    echo usage: 
+    echo ./create_package.sh platform version
+    echo platform:
+    echo win_cb, linux, linux64, vs2008, macosx, all
+    exit 1
+fi
+
 REPO=git://github.com/openframeworks/openFrameworks.git
 BRANCH=master
 
@@ -23,208 +42,263 @@ cd openFrameworks
 if [ "$BRANCH" != "master" ]; then
     git checkout --track -b $BRANCH origin/$BRANCH
 fi
+git reset --hard
 git pull origin $BRANCH
 
 
 packageroot=$PWD
 
 function deleteProjectFiles {
+    platform=$1
+    ofroot=$2
+    current_example=$3
+    oflib_root=${ofroot}/libs/openFrameworksCompiled    
+    example_name=`echo ${current_example} | sed "s/\.\\///"`
+    
+    cd $current_example
+    
+    echo "deleting projects for $platform $example in $ofroot"
+    echo "oflib in $oflib_root"
+    echo "current dir: " `pwd`
+    echo "current example $example_name"
+    
     #codeblocks
-    if [ "$1" = "linux" ] || [ "$1" = "linux64" ] || [ "$1" = "win_cb" ]; then 
-        cd $3
-        cp ${3}_$1.cbp $example.newcbp
-        rm *.cbp
-        mv $3.newcbp $3.cbp
+    if [ "$platform" = "linux" ] || [ "$platform" = "linux64" ] || [ "$platform" = "win_cb" ]; then 
+        cp ${current_example}_$platform.cbp $current_example.newcbp
+        cp ${current_example}_$platform.workspace $current_example.newworkspace
+        rm *.cbp *.workspace
+        mv $current_example.newcbp $current_example.cbp
+        mv $current_example.newworkspace $current_example.workspace
+        sed -i s/${example_name}_${platform}/${example_name}/g $current_example.workspace
 
         #delete makefiles on windows
-        if [ "$1" = "win_cb" ]; then
-            rm Makefile_*
-        else
-            mv Makefile_$1 Makefile
-            rm Makefile_*
+        if [ "$platform" = "win_cb" ]; then
+            rm makefile cb_build_runner.sh *.make
         fi
 
         #delete macosx files
-        rm -Rf openFrameworks.xcodeproj
+        rm -Rf *.xcodeproj
         rm openFrameworks-Info.plist
 
         #delete vs files
         rm *.sln
         rm *.vcproj
         rm *.vcproj.user
-
+        
+        #delete OFLib project files
+        if [ "$platform" = "win_cb" ]; then
+            rm -Rf ${oflib_root}/*/linux
+            rm -Rf ${oflib_root}/*/linux64
+        else
+            rm -Rf ${oflib_root}/*/win_cb
+        fi
+        
+        if [ "$platform" = "linux" ]; then
+            rm -Rf ${oflib_root}/*/linux64
+        elif [ "$plaform" = "linux64" ]; then
+            rm -Rf ${oflib_root}/*/linux
+        fi
+        rm -Rf ${oflib_root}/*/macosx
+        rm -Rf ${oflib_root}/*/vs2008
+        rm -Rf ${oflib_root}/*/iphone
+        
     fi
 
 
 
     #macosx
-    if [ "$1" = "macosx" ]; then
-        cd $3
+    if [ "$platform" = "macosx" ]; then
 
         #delete codeblock files
         rm *.cbp
         rm *.sh
+        rm *.workspace
 
         #delete makefiles
-        rm Makefile_*
+        rm makefile
+        rm *.make
 
         #delete vs files
         rm *.sln
         rm *.vcproj
         rm *.vcproj.user
+        
+        #delete OFLib project files
+        rm -Rf ${oflib_root}/*/vs2008
+        rm -Rf ${oflib_root}/*/linux
+        rm -Rf ${oflib_root}/*/linux64
+        rm -Rf ${oflib_root}/*/win_cb
+        rm -Rf ${oflib_root}/*/iphone
 
     fi
 
 
 
     #visual studio
-    if [ "$1" = "vs2008" ]; then
-        cd $3
+    if [ "$platform" = "vs2008" ]; then
 
         #delete codeblock files
         rm *.cbp
         rm *.sh
+        rm *.workspace
 
         #delete makefiles
-        rm Makefile_*
+        rm makefile
+        rm *.make
 
         #delete macosx files
-        rm -Rf openFrameworks.xcodeproj
+        rm -Rf *.xcodeproj
         rm openFrameworks-Info.plist
-
+        
+        #delete OFLib project files
+        rm -Rf ${oflib_root}/*/macosx
+        rm -Rf ${oflib_root}/*/linux
+        rm -Rf ${oflib_root}/*/linux64
+        rm -Rf ${oflib_root}/*/win_cb
+        rm -Rf ${oflib_root}/*/iphone
     fi
 }
 
 function createPackage {
+    pkg_platform=$1
+    pkg_version=$2
+    pkg_ofroot=$3
+    
+    echo "creating package $pkg_platform $version in $pkg_ofroot"
+    
     #delete other platforms example project files
-    cd $3/apps/examples
+    cd $pkg_ofroot/apps/examples
 
-    for example in $( ls . )
+    for example in $( find . -maxdepth 1 -mindepth 1 -type d )
     do
-        deleteProjectFiles $1 $2 $example
-        cd $3/apps/examples
+        echo deleting $example
+        deleteProjectFiles $pkg_platform $pkg_ofroot $example
+        cd $pkg_ofroot/apps/examples
     done
 
 
     #delete other platforms addons examples project files
-    cd $3/apps/addonsExamples
+    cd $pkg_ofroot/apps/addonsExamples
 
-    for example in $( ls . )
+    for example in $( find . -maxdepth 1 -mindepth 1 -type d )
     do
-        deleteProjectFiles $1 $2 $example
-        cd $3/apps/addonsExamples
+        deleteProjectFiles $pkg_platform $pkg_ofroot $example
+        cd $pkg_ofroot/apps/addonsExamples
     done
 
     #delete other platform libraries
-    if [ "$1" = "linux" ]; then
+    if [ "$pkg_platform" = "linux" ]; then
         otherplatforms="linux64 macosx win_cb win_vs2008 iphone"
     fi
 
-    if [ "$1" = "linux64" ]; then
+    if [ "$pkg_platform" = "linux64" ]; then
         otherplatforms="linux macosx win_cb win_vs2008 iphone"
     fi
 
-    if [ "$1" = "macosx" ]; then
+    if [ "$pkg_platform" = "macosx" ]; then
         otherplatforms="linux linux64 win_cb win_vs2008 iphone"
     fi
 
-    if [ "$1" = "win_cb" ]; then
+    if [ "$pkg_platform" = "win_cb" ]; then
         otherplatforms="linux linux64 macosx win_vs2008 iphone"
     fi
 
-    if [ "$1" = "vs2008" ]; then
+    if [ "$pkg_platform" = "vs2008" ]; then
         otherplatforms="linux linux64 macosx win_cb iphone"
     fi
 
-    if [ "$1" = "iphone" ]; then
+    if [ "$pkg_platform" = "iphone" ]; then
         otherplatforms="linux linux64 macosx win_cb win_vs2008"
     fi
 
     #delete libraries for other platforms
-    cd $3/libs  
-    for lib in $( ls . )
+    cd $pkg_ofroot/libs  
+    for lib in $( find . -maxdepth 1 -mindepth 1 -type d )
     do
         echo $PWD
         echo deleting $lib/lib
         cd $lib/lib
         rm -Rf $otherplatforms
-        cd $3/libs 
+        cd $pkg_ofroot/libs 
     done
-    if [ "$1" = "macosx"]; then
+    if [ "$pkg_platform" = "macosx" ]; then
         rm -Rf $libsnotinmac
-    elif [ "$1" = "linux" ] || [ "$1" = "linux64" ]; then
+    elif [ "$platform" = "linux" ] || [ "$platform" = "linux64" ]; then
         rm -Rf $libsnotinlinux
-    elif [ "$1" = "win_cb" ] || [ "$1" = "win_vs2008" ]; then
+    elif [ "$platform" = "win_cb" ] || [ "$platform" = "win_vs2008" ]; then
         rm -Rf $libsnotinwindows
     fi
 
     #delete dynamic libraries for other platforms
-    cd $3/export
+    cd $pkg_ofroot/export
     rm -Rf $otherplatforms
-    if [ "$1" = "macosx" ]; then
-        cd ..
+    if [ "$pkg_platform" = "macosx" ]; then
+        cd $pkg_ofroot
         rmdir export
     fi
 
     #delete scripts
-    cd $3/scripts
-    if [ "$1" = "linux" ] || [ "$1" = "linux64" ]; then
-        rm -Rf win_cb
-    elif [ "$1" = "win_cb" ]; then
-        rm -Rf linux
-    else
-        rm -Rf *
-    fi
+    cd $pkg_ofroot/scripts
+    rm -Rf $otherplatforms
     rm create_package.sh
 
     #delete .svn dirs
-    cd $3
-    rm -Rf `find . -type d -name .svn`
+    cd $pkg_ofroot
+    rm -Rf $(find . -type d -name .svn)
+    
+    #delete .gitignore 
+    cd $pkg_ofroot
+    rm -Rf $(find . -name .gitignore)
+    
+    #delete dev folders
+    cd $pkg_ofroot/apps
+    rm -Rf devApps
+    cd ${pkg_ofroot}/scripts
+    rm -Rf dev
 
     #create compressed package
-    cd $3/..
-    if [ "$1" = "linux" ] || [ "$1" = "linux64" ]; then
-        mkdir of_preRelease_v$2_$1
-        mv openFrameworks/* of_preRelease_v$2_$1
-        tar czf of_preRelease_v$2_$1_FAT.tar.gz of_preRelease_v$2_$1
-        rm -Rf of_preRelease_v${2}_${1}/addons of_preRelease_v${2}_${1}/apps/addonsExamples
-        tar czf of_preRelease_v$2_$1.tar.gz of_preRelease_v$2_$1
-        rm -Rf of_preRelease_v${2}_${1}
+    cd $pkg_ofroot/..
+    if [ "$pkg_platform" = "linux" ] || [ "$pkg_platform" = "linux64" ]; then
+        mkdir of_preRelease_v${pkg_version}_${pkg_platform}
+        mv openFrameworks/* of_preRelease_v${pkg_version}_${pkg_platform}
+        tar czf of_preRelease_v${pkg_version}_${pkg_platform}_FAT.tar.gz of_preRelease_v${pkg_version}_${pkg_platform}
+        rm -Rf of_preRelease_v${pkg_version}_${pkg_platform}/addons of_preRelease_v${pkg_version}_${pkg_platform}/apps/addonsExamples
+        tar czf of_preRelease_v${pkg_version}_${pkg_platform}.tar.gz of_preRelease_v${pkg_version}_${pkg_platform}
+        rm -Rf of_preRelease_v${pkg_version}_${pkg_platform}
     else
-        mkdir of_preRelease_v$2_$1
-        mv openFrameworks/* of_preRelease_v$2_$1
-        zip -r of_preRelease_v$2_$1_FAT.zip of_preRelease_v$2_$1
-        rm -Rf of_preRelease_v${2}_${1}/addons of_preRelease_v${2}_${1}/apps/addonsExamples
-        zip -r of_preRelease_v$2_$1.zip of_preRelease_v$2_$1
-        rm -Rf of_preRelease_v${2}_${1}
+        mkdir of_preRelease_v${pkg_version}_${pkg_platform}
+        mv openFrameworks/* of_preRelease_v${pkg_version}_${pkg_platform}
+        zip -r of_preRelease_v${pkg_version}_${pkg_platform}_FAT.zip of_preRelease_v${pkg_version}_${pkg_platform}
+        rm -Rf of_preRelease_v${pkg_version}_${pkg_platform}/addons of_preRelease_v${pkg_version}_${pkg_platform}/apps/addonsExamples
+        zip -r of_preRelease_v${pkg_version}_${pkg_platform}.zip of_preRelease_v${pkg_version}_${pkg_platform}
+        rm -Rf of_preRelease_v${pkg_version}_${pkg_platform}
     fi
 }
 
 
-
-if [ "$1" = "all" ]; then
-    for platform in win_cb linux linux64 vs2008 macosx 
+if [ "$platform" = "all" ]; then
+    for eachplatform in win_cb linux linux64 vs2008 macosx 
     do
         cd $packageroot
-        mkdir of_preRelease_v${2}_${platform}
-        cp -R addons apps export libs other scripts of_preRelease_v${2}_${platform}
-        cd of_preRelease_v${2}_${platform}
-        createPackage $platform $2 $PWD
+        mkdir of_preRelease_v${version}_${eachplatform}
+        cp -R addons apps export libs other scripts of_preRelease_v${version}_${eachplatform}
+        cd of_preRelease_v${version}_${eachplatform}
+        createPackage $eachplatform $2 $PWD
     done
     
     cd $packageroot
     echo dir: $PWD
-    mkdir of_preRelease_v${2}_all
-    mv addons apps export libs other scripts $packageroot/of_preRelease_v${2}_all
+    mkdir of_preRelease_v${version}_all
+    mv addons apps export libs other scripts $packageroot/of_preRelease_v${version}_all
 
-    tar czf of_preRelease_v$2_all_FAT.tar.gz of_preRelease_v${2}_all
-    rm -Rf of_preRelease_v${2}_all/addons of_preRelease_v${2}_all/apps/addonsExamples
-    tar czf of_preRelease_v$2_all.tar.gz of_preRelease_v$2_all
-    rm -Rf of_preRelease_v${2}_all
+    tar czf of_preRelease_v$version_all_FAT.tar.gz of_preRelease_v${version}_all
+    rm -Rf of_preRelease_v${version}_all/addons of_preRelease_v${version}_all/apps/addonsExamples
+    tar czf of_preRelease_v$version_all.tar.gz of_preRelease_v$version_all
+    rm -Rf of_preRelease_v${version}_all
     mv * $packageroot/..
     #rm -Rf $packageroot
 else
-    createPackage $1 $2 $packageroot
+    createPackage $platform $version $packageroot
 fi
 
 cd $packageroot

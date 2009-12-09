@@ -65,7 +65,7 @@
 				AdditionalDependencies="openframeworksLibDebug.lib OpenGL32.lib GLu32.lib kernel32.lib setupapi.lib glut32.lib rtAudioD.lib videoInput.lib libfreetype.lib FreeImage.lib qtmlClient.lib dsound.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib GLee.lib fmodex_vc.lib glu32.lib PocoFoundationmtd.lib PocoNetmtd.lib PocoUtilmtd.lib PocoXMLmtd.lib Ws2_32.lib ..\..\..\addons\ofxOpenCv\libs\opencv\lib\win32\cv110d.lib ..\..\..\addons\ofxOpenCv\libs\opencv\lib\win32\cvaux110d.lib ..\..\..\addons\ofxOpenCv\libs\opencv\lib\win32\cxcore110d.lib ..\..\..\addons\ofxOsc\libs\oscpack\lib\win32\oscpackd.lib"
 				OutputFile="$(OutDir)\$(ProjectName)_debug.exe"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="..\..\..\libs\glut\lib\win_vs2008;..\..\..\libs\rtAudio\lib\win_vs2008;..\..\..\libs\FreeImage\lib\win_vs2008;..\..\..\libs\freetype\lib\win_vs2008;..\..\..\libs\quicktime\lib\win_vs2008;..\..\..\libs\fmodex\lib\win_vs2008;..\..\..\libs\videoInput\lib\win_vs2008;..\..\..\libs\glee\lib\win_vs2008;..\..\..\libs\glu\lib\win_vs2008;..\..\..\libs\Poco\lib\win_vs2008;..\..\..\libs\openFrameworksCompiled\lib\win_vs2008"
+				AdditionalLibraryDirectories="..\..\..\libs\glut\lib\vs2008;..\..\..\libs\rtAudio\lib\vs2008;..\..\..\libs\FreeImage\lib\vs2008;..\..\..\libs\freetype\lib\vs2008;..\..\..\libs\quicktime\lib\vs2008;..\..\..\libs\fmodex\lib\vs2008;..\..\..\libs\videoInput\lib\vs2008;..\..\..\libs\glee\lib\vs2008;..\..\..\libs\glu\lib\vs2008;..\..\..\libs\Poco\lib\vs2008;..\..\..\libs\openFrameworksCompiled\lib\vs2008"
 				GenerateManifest="true"
 				IgnoreDefaultLibraryNames="atlthunk.lib; LIBC.lib; LIBCMT;"
 				GenerateDebugInformation="true"
@@ -96,7 +96,7 @@
 			<Tool
 				Name="VCPostBuildEventTool"
 				Description="adding DLLs and creating data folder"
-				CommandLine="xcopy /e /i /y &quot;$(ProjectDir)\..\..\..\export\win_vs2008\*.dll&quot; &quot;$(ProjectDir)\bin&quot;&#x0D;&#x0A;if not exist &quot;$(ProjectDir)\bin\data&quot; mkdir  &quot;$(ProjectDir)\bin\data&quot;&#x0D;&#x0A;&#x0D;&#x0A;"
+				CommandLine="xcopy /e /i /y &quot;$(ProjectDir)\..\..\..\export\vs2008\*.dll&quot; &quot;$(ProjectDir)\bin&quot;&#x0D;&#x0A;if not exist &quot;$(ProjectDir)\bin\data&quot; mkdir  &quot;$(ProjectDir)\bin\data&quot;&#x0D;&#x0A;&#x0D;&#x0A;"
 			/>
 		</Configuration>
 		<Configuration
@@ -146,7 +146,7 @@
 				Name="VCLinkerTool"
 				AdditionalDependencies="openframeworksLib.lib OpenGL32.lib GLu32.lib kernel32.lib setupapi.lib glut32.lib rtAudio.lib videoInput.lib libfreetype.lib FreeImage.lib qtmlClient.lib dsound.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib GLee.lib fmodex_vc.lib glu32.lib PocoFoundationmt.lib PocoNetmt.lib PocoUtilmt.lib PocoXMLmt.lib Ws2_32.lib ..\..\..\addons\ofxOpenCv\libs\opencv\lib\win32\cv110.lib ..\..\..\addons\ofxOpenCv\libs\opencv\lib\win32\cvaux110.lib ..\..\..\addons\ofxOpenCv\libs\opencv\lib\win32\cxcore110.lib  ..\..\..\addons\ofxOsc\libs\oscpack\lib\win32\oscpack.lib"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="..\..\..\libs\glut\lib\win_vs2008;..\..\..\libs\rtAudio\lib\win_vs2008;..\..\..\libs\FreeImage\lib\win_vs2008;..\..\..\libs\freetype\lib\win_vs2008;..\..\..\libs\quicktime\lib\win_vs2008;..\..\..\libs\fmodex\lib\win_vs2008;..\..\..\libs\videoInput\lib\win_vs2008;..\..\..\libs\glee\lib\win_vs2008;..\..\..\libs\glu\lib\win_vs2008;..\..\..\libs\Poco\lib\win_vs2008;..\..\..\libs\openFrameworksCompiled\lib\win_vs2008"
+				AdditionalLibraryDirectories="..\..\..\libs\glut\lib\vs2008;..\..\..\libs\rtAudio\lib\vs2008;..\..\..\libs\FreeImage\lib\vs2008;..\..\..\libs\freetype\lib\vs2008;..\..\..\libs\quicktime\lib\vs2008;..\..\..\libs\fmodex\lib\vs2008;..\..\..\libs\videoInput\lib\vs2008;..\..\..\libs\glee\lib\vs2008;..\..\..\libs\glu\lib\vs2008;..\..\..\libs\Poco\lib\vs2008;..\..\..\libs\openFrameworksCompiled\lib\vs2008"
 				IgnoreAllDefaultLibraries="false"
 				IgnoreDefaultLibraryNames="atlthunk.lib; LIBC.lib; LIBCMT;"
 				GenerateDebugInformation="false"
@@ -178,7 +178,7 @@
 			<Tool
 				Name="VCPostBuildEventTool"
 				Description="adding DLLs and creating data folder"
-				CommandLine="xcopy /e /i /y &quot;$(ProjectDir)\..\..\..\export\win_vs2008\*.dll&quot; &quot;$(ProjectDir)\bin&quot;&#x0D;&#x0A;if not exist &quot;$(ProjectDir)\bin\data&quot; mkdir  &quot;$(ProjectDir)\bin\data&quot;&#x0D;&#x0A;&#x0D;&#x0A;"
+				CommandLine="xcopy /e /i /y &quot;$(ProjectDir)\..\..\..\export\vs2008\*.dll&quot; &quot;$(ProjectDir)\bin&quot;&#x0D;&#x0A;if not exist &quot;$(ProjectDir)\bin\data&quot; mkdir  &quot;$(ProjectDir)\bin\data&quot;&#x0D;&#x0A;&#x0D;&#x0A;"
 			/>
 		</Configuration>
 	</Configurations>
