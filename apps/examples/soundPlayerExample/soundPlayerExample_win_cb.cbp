@@ -50,7 +50,7 @@
 			<Add directory="..\..\..\libs\fmodex\include"/>
 			<Add directory="..\..\..\libs\videoInput\include"/>
 			<Add directory="..\..\..\libs\glee\include"/>
-			<Add directory="..\..\..\libs\glut"/>
+			<Add directory="..\..\..\libs\glut\include"/>
 			<Add directory="..\..\..\libs\openFrameworks"/>
 			<Add directory="..\..\..\libs\openFrameworks\app"/>
 			<Add directory="..\..\..\libs\openFrameworks\events"/>
