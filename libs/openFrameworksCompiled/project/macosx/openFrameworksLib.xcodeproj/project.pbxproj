@@ -86,14 +86,14 @@
 		E4B27ADC10CBE92A00536013 /* ofVideoGrabber.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofVideoGrabber.h; path = ../../../openFrameworks/video/ofVideoGrabber.h; sourceTree = SOURCE_ROOT; };
 		E4B27ADD10CBE92A00536013 /* ofVideoPlayer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofVideoPlayer.cpp; path = ../../../openFrameworks/video/ofVideoPlayer.cpp; sourceTree = SOURCE_ROOT; };
 		E4B27ADE10CBE92A00536013 /* ofVideoPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofVideoPlayer.h; path = ../../../openFrameworks/video/ofVideoPlayer.h; sourceTree = SOURCE_ROOT; };
-		E4B27AF310CBE9B900536013 /* fmod.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = fmod.h; path = ../../../fmodex/inc/fmod.h; sourceTree = SOURCE_ROOT; };
-		E4B27AF410CBE9B900536013 /* fmod.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = fmod.hpp; path = ../../../fmodex/inc/fmod.hpp; sourceTree = SOURCE_ROOT; };
-		E4B27AF510CBE9B900536013 /* fmod_codec.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = fmod_codec.h; path = ../../../fmodex/inc/fmod_codec.h; sourceTree = SOURCE_ROOT; };
-		E4B27AF610CBE9B900536013 /* fmod_dsp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = fmod_dsp.h; path = ../../../fmodex/inc/fmod_dsp.h; sourceTree = SOURCE_ROOT; };
-		E4B27AF710CBE9B900536013 /* fmod_errors.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = fmod_errors.h; path = ../../../fmodex/inc/fmod_errors.h; sourceTree = SOURCE_ROOT; };
-		E4B27AF810CBE9B900536013 /* fmod_memoryinfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = fmod_memoryinfo.h; path = ../../../fmodex/inc/fmod_memoryinfo.h; sourceTree = SOURCE_ROOT; };
-		E4B27AF910CBE9B900536013 /* fmod_output.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = fmod_output.h; path = ../../../fmodex/inc/fmod_output.h; sourceTree = SOURCE_ROOT; };
-		E4B27AFA10CBE9B900536013 /* fmodlinux.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = fmodlinux.h; path = ../../../fmodex/inc/fmodlinux.h; sourceTree = SOURCE_ROOT; };
+		E4B27AF310CBE9B900536013 /* fmod.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = fmod.h; path = ../../../fmodex/include/fmod.h; sourceTree = SOURCE_ROOT; };
+		E4B27AF410CBE9B900536013 /* fmod.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = fmod.hpp; path = ../../../fmodex/include/fmod.hpp; sourceTree = SOURCE_ROOT; };
+		E4B27AF510CBE9B900536013 /* fmod_codec.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = fmod_codec.h; path = ../../../fmodex/include/fmod_codec.h; sourceTree = SOURCE_ROOT; };
+		E4B27AF610CBE9B900536013 /* fmod_dsp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = fmod_dsp.h; path = ../../../fmodex/include/fmod_dsp.h; sourceTree = SOURCE_ROOT; };
+		E4B27AF710CBE9B900536013 /* fmod_errors.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = fmod_errors.h; path = ../../../fmodex/include/fmod_errors.h; sourceTree = SOURCE_ROOT; };
+		E4B27AF810CBE9B900536013 /* fmod_memoryinfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = fmod_memoryinfo.h; path = ../../../fmodex/include/fmod_memoryinfo.h; sourceTree = SOURCE_ROOT; };
+		E4B27AF910CBE9B900536013 /* fmod_output.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = fmod_output.h; path = ../../../fmodex/include/fmod_output.h; sourceTree = SOURCE_ROOT; };
+		E4B27AFA10CBE9B900536013 /* fmodlinux.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = fmodlinux.h; path = ../../../fmodex/include/fmodlinux.h; sourceTree = SOURCE_ROOT; };
 		E4B27B1210CBE9B900536013 /* FreeImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FreeImage.h; path = ../../../FreeImage/include/FreeImage.h; sourceTree = SOURCE_ROOT; };
 		E4B27BBD10CBE9B900536013 /* GLee.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GLee.h; path = ../../../glee/include/GLee.h; sourceTree = SOURCE_ROOT; };
 		E4B27BCE10CBE9B900536013 /* RtAudio.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RtAudio.h; path = ../../../rtAudio/include/RtAudio.h; sourceTree = SOURCE_ROOT; };
@@ -300,7 +300,7 @@
 				E4B27AFA10CBE9B900536013 /* fmodlinux.h */,
 			);
 			name = inc;
-			path = ../../../fmodex/inc;
+			path = ../../../fmodex/include;
 			sourceTree = SOURCE_ROOT;
 		};
 		E4B27B1010CBE9B900536013 /* FreeImage */ = {
