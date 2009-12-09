@@ -47,7 +47,7 @@
 			<Add directory="..\..\..\libs\FreeImage\include"/>
 			<Add directory="..\..\..\libs\quicktime\include"/>
 			<Add directory="..\..\..\libs\rtAudio\include"/>
-			<Add directory="..\..\..\libs\fmodex\inc"/>
+			<Add directory="..\..\..\libs\fmodex\include"/>
 			<Add directory="..\..\..\libs\videoInput\include"/>
 			<Add directory="..\..\..\libs\glee\include"/>
 			<Add directory="..\..\..\libs\glut"/>
