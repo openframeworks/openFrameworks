@@ -5,37 +5,37 @@
 		<Option title="xmlSettingsExample"/>
 		<Option pch_mode="2"/>
 		<Option compiler="gcc"/>
-		<Option virtualFolders="addons\;src\;" />
+		<Option virtualFolders="addons\;src\;"/>
 		<Build>
 			<Target title="release">
-				<Option output="bin\$(PROJECT_NAME)" prefix_auto="1" extension_auto="1" />
-				<Option working_dir="bin" />
-				<Option object_output="obj\release" />
-				<Option external_deps="..\..\..\libs\openFrameworksCompiled\lib\win_cb\openFrameworks.lib;" />
-				<Option type="1" />
-				<Option compiler="gcc" />
-				<Option projectLinkerOptionsRelation="2" />
+				<Option output="bin\$(PROJECT_NAME)" prefix_auto="1" extension_auto="1"/>
+				<Option working_dir="bin"/>
+				<Option object_output="obj\release"/>
+				<Option external_deps="..\..\..\libs\openFrameworksCompiled\lib\win_cb\openFrameworks.lib;"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Option projectLinkerOptionsRelation="2"/>
 				<Compiler>
-					<Add option="-O2" />
+					<Add option="-O2"/>
 				</Compiler>
 				<Linker>
-					<Add option="-s" />
-					<Add option="../../../libs/openFrameworksCompiled/lib/win_cb/openFrameworks.lib" />
+					<Add option="-s"/>
+					<Add option="../../../libs/openFrameworksCompiled/lib/win_cb/openFrameworks.lib"/>
 				</Linker>
 			</Target>
 			<Target title="debug">
-				<Option output="bin\$(PROJECT_NAME)_DEBUG" prefix_auto="1" extension_auto="1" />
-				<Option working_dir="bin" />
-				<Option object_output="obj\debug\" />
-				<Option external_deps="..\..\..\libs\openFrameworksCompiled\lib\win_cb\openFrameworksDebug.lib;" />
-				<Option type="1" />
-				<Option compiler="gcc" />
-				<Option projectLinkerOptionsRelation="2" />
+				<Option output="bin\$(PROJECT_NAME)_DEBUG" prefix_auto="1" extension_auto="1"/>
+				<Option working_dir="bin"/>
+				<Option object_output="obj\debug\"/>
+				<Option external_deps="..\..\..\libs\openFrameworksCompiled\lib\win_cb\openFrameworksDebug.lib;"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Option projectLinkerOptionsRelation="2"/>
 				<Compiler>
-					<Add option="-g" />
+					<Add option="-g"/>
 				</Compiler>
 				<Linker>
-					<Add option="../../../libs/openFrameworksCompiled/lib/win_cb/openFrameworksDebug.lib" />
+					<Add option="../../../libs/openFrameworksCompiled/lib/win_cb/openFrameworksDebug.lib"/>
 				</Linker>
 			</Target>
 		</Build>
@@ -60,7 +60,22 @@
 			<Add directory="../../../libs/openFrameworks/video"/>
 			<Add directory="../../../libs/openFrameworks/communication"/>
 			<Add directory="../../../libs/poco/include"/>
-		<Add directory="../../../addons/ofxXmlSettings/src"/><Add directory="../../../addons/ofxXmlSettings/libs"/></Compiler>
+		    <Add directory="../../../addons/ofx3DModelLoader/src/3DS/"/>
+		    <Add directory="../../../addons/ofx3DModelLoader/src/"/>
+		    <Add directory="../../../addons/ofxNetwork/src"/>
+		    <Add directory="../../../addons/ofxOsc/src"/>
+		    <Add directory="../../../addons/ofxOsc/libs/oscpack/include/ip"/>
+		    <Add directory="../../../addons/ofxOsc/libs/oscpack/include/osc"/>
+		    <Add directory="../../../addons/ofxVectorMath/src"/>
+		    <Add directory="../../../addons/ofxVectorGraphics/src"/>
+		    <Add directory="../../../addons/ofxVectorGraphics/libs"/>
+		    <Add directory="../../../addons/ofxOpenCv/src"/>
+		    <Add directory="../../../addons/ofxOpenCv/libs/opencv/include"/>
+		    <Add directory="../../../addons/ofxThread/src"/>
+		    <Add directory="../../../addons/ofxDirList/src"/>
+		    <Add directory="../../../addons/ofxXmlSettings/src"/>
+		    <Add directory="../../../addons/ofxXmlSettings/libs"/>
+		</Compiler>
 		<Linker>
 			<Add option="../../../libs/FreeImage/lib/win_cb/FreeImage.lib"/>
 			<Add option="../../../libs/rtAudio/lib/win_cb/RtAudio.a"/>
@@ -71,10 +86,10 @@
 			<Add option="../../../libs/fmodex/lib/win_cb/libfmodex.a"/>
 			<Add option="../../../libs/glee/lib/win_cb/GLee.lib"/>
 			<Add option="../../../libs/glu/lib/win_cb/glu32.lib"/>
-			<Add option="../../../libs/poco/lib/win_cb/libPocoNetmt.a" />
-			<Add option="../../../libs/poco/lib/win_cb/libPocoUtilmt.a" />
-			<Add option="../../../libs/poco/lib/win_cb/libPocoXMLmt.a" />
-			<Add option="../../../libs/poco/lib/win_cb/libPocoFoundationmt.a" />
+			<Add option="../../../libs/poco/lib/win_cb/libPocoNetmt.a"/>
+			<Add option="../../../libs/poco/lib/win_cb/libPocoUtilmt.a"/>
+			<Add option="../../../libs/poco/lib/win_cb/libPocoXMLmt.a"/>
+			<Add option="../../../libs/poco/lib/win_cb/libPocoFoundationmt.a"/>
 			<Add option="../../../addons/ofxOpenCv/libs/opencv/lib/win32/libcv.a"/>
 			<Add option="../../../addons/ofxOpenCv/libs/opencv/lib/win32/libcxcore.a"/>
 			<Add option="../../../addons/ofxOsc/libs/oscpack/lib/win32/oscpack.a"/>
@@ -91,13 +106,13 @@
 			<Add option="-loleaut32"/>
 			<Add option="-lsetupapi"/>
 			<Add option="-lwsock32"/>
-			<Add option="-lws2_32" />
-			<Add option="-lIphlpapi" />
+			<Add option="-lws2_32"/>
+			<Add option="-lIphlpapi"/>
 		</Linker>
 		<ExtraCommands>
-			<Add after='xcopy /e /i /y &quot;$(PROJECT_DIR)..\..\..\export\win_cb\*.dll&quot;  &quot;$(PROJECT_DIR)bin&quot;' />
-			<Add after='cmd /c if not exist &quot;$(PROJECT_DIR)bin/data&quot; mkdir &quot;$(PROJECT_DIR)bin/data&quot;' />
-			<Mode after="always" />
+			<Add after='xcopy /e /i /y "$(PROJECT_DIR)..\..\..\export\win_cb\*.dll"  "$(PROJECT_DIR)bin"'/>
+			<Add after='cmd /c if not exist "$(PROJECT_DIR)bin/data" mkdir "$(PROJECT_DIR)bin/data"'/>
+			<Mode after="always"/>
 		</ExtraCommands>
 		<Unit filename="src/main.cpp">
 			<Option virtualFolder="src/"/>
