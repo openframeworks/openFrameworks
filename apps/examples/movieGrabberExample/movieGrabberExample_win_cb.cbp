@@ -41,7 +41,7 @@
 		</Build>
 		<Compiler>
 			<Add option="-Wno-multichar"/>
-			<Add directory="..\..\..\libs\glu"/>
+			<Add directory="..\..\..\libs\glu\include"/>
 			<Add directory="..\..\..\libs\freetype\include"/>
 			<Add directory="..\..\..\libs\freetype\include\freetype2"/>
 			<Add directory="..\..\..\libs\FreeImage\include"/>
