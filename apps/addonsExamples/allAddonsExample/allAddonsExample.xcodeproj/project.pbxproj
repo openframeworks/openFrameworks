@@ -692,7 +692,7 @@
 		E45BE0370E8CC647009D7055 /* freeimage */ = {
 			isa = PBXGroup;
 			children = (
-				E49DA7E110CD40AD0006B5A8 /* macosx */,
+				E49DA7E110CD40AD0006B5A8 /* osx */,
 				E45BE0380E8CC647009D7055 /* include */,
 			);
 			name = freeimage;
@@ -712,7 +712,7 @@
 			isa = PBXGroup;
 			children = (
 				E45BE03E0E8CC650009D7055 /* inc */,
-				E4C2428E10CC5C18004149E2 /* macosx */,
+				E4C2428E10CC5C18004149E2 /* osx */,
 			);
 			name = fmodex;
 			path = ../../../libs/fmodex;
@@ -749,7 +749,7 @@
 		E45BE0490E8CC676009D7055 /* freetype */ = {
 			isa = PBXGroup;
 			children = (
-				E4C2429210CC5C38004149E2 /* macosx */,
+				E4C2429210CC5C38004149E2 /* osx */,
 			);
 			name = freetype;
 			path = ../../../libs/freetype;
@@ -843,7 +843,7 @@
 		E45BEC7B0E8CC911009D7055 /* poco */ = {
 			isa = PBXGroup;
 			children = (
-				E4C2427910CC5B66004149E2 /* macosx */,
+				E4C2427910CC5B66004149E2 /* osx */,
 			);
 			name = poco;
 			path = ../../../libs/poco;
@@ -858,12 +858,12 @@
 			name = core;
 			sourceTree = "<group>";
 		};
-		E49DA7E110CD40AD0006B5A8 /* macosx */ = {
+		E49DA7E110CD40AD0006B5A8 /* osx */ = {
 			isa = PBXGroup;
 			children = (
 				E49DA7E210CD40AD0006B5A8 /* freeimage.a */,
 			);
-			name = macosx;
+			name = osx;
 			path = ../../../libs/FreeImage/lib/osx;
 			sourceTree = SOURCE_ROOT;
 		};
@@ -917,22 +917,22 @@
 		E4C2425D10CC5A78004149E2 /* lib */ = {
 			isa = PBXGroup;
 			children = (
-				E4C2425E10CC5A78004149E2 /* macosx */,
+				E4C2425E10CC5A78004149E2 /* osx */,
 			);
 			name = lib;
 			path = ../../../libs/glut/lib;
 			sourceTree = SOURCE_ROOT;
 		};
-		E4C2425E10CC5A78004149E2 /* macosx */ = {
+		E4C2425E10CC5A78004149E2 /* osx */ = {
 			isa = PBXGroup;
 			children = (
 				E4C2425F10CC5A78004149E2 /* GLUT.framework */,
 			);
-			name = macosx;
+			name = osx;
 			path = ../../../libs/glut/lib/osx;
 			sourceTree = SOURCE_ROOT;
 		};
-		E4C2427910CC5B66004149E2 /* macosx */ = {
+		E4C2427910CC5B66004149E2 /* osx */ = {
 			isa = PBXGroup;
 			children = (
 				E4C2427A10CC5B66004149E2 /* CppUnit.a */,
@@ -941,25 +941,25 @@
 				E4C2427D10CC5B66004149E2 /* PocoUtil.a */,
 				E4C2427E10CC5B66004149E2 /* PocoXML.a */,
 			);
-			name = macosx;
+			name = osx;
 			path = ../../../libs/poco/lib/osx;
 			sourceTree = SOURCE_ROOT;
 		};
-		E4C2428E10CC5C18004149E2 /* macosx */ = {
+		E4C2428E10CC5C18004149E2 /* osx */ = {
 			isa = PBXGroup;
 			children = (
 				E4C242CC10CC650E004149E2 /* libfmodex.dylib */,
 			);
-			name = macosx;
+			name = osx;
 			path = ../../../libs/fmodex/lib/osx;
 			sourceTree = SOURCE_ROOT;
 		};
-		E4C2429210CC5C38004149E2 /* macosx */ = {
+		E4C2429210CC5C38004149E2 /* osx */ = {
 			isa = PBXGroup;
 			children = (
 				E4C2429310CC5C38004149E2 /* freetype.a */,
 			);
-			name = macosx;
+			name = osx;
 			path = ../../../libs/freetype/lib/osx;
 			sourceTree = SOURCE_ROOT;
 		};
