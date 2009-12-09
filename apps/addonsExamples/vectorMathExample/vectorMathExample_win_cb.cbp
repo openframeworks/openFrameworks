@@ -90,8 +90,8 @@
 			<Add option="../../../libs/poco/lib/win_cb/libPocoUtilmt.a"/>
 			<Add option="../../../libs/poco/lib/win_cb/libPocoXMLmt.a"/>
 			<Add option="../../../libs/poco/lib/win_cb/libPocoFoundationmt.a"/>
-			<Add option="../../../addons/ofxOpenCv/libs/opencv/lib/win32/libcv.a"/>
-			<Add option="../../../addons/ofxOpenCv/libs/opencv/lib/win32/libcxcore.a"/>
+			<Add option="../../../addons/ofxOpenCv/libs/opencv/win_cb/libcv.a"/>
+			<Add option="../../../addons/ofxOpenCv/libs/opencv/win_cb/libcxcore.a"/>
 			<Add option="../../../addons/ofxOsc/libs/oscpack/win_cb/oscpack.a"/>
 			<Add option="-lopengl32"/>
 			<Add option="-lglu32"/>
