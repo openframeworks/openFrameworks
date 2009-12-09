@@ -114,10 +114,10 @@
 		E45BE0430E8CC650009D7055 /* fmod_errors.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = fmod_errors.h; path = ../../../libs/fmodex/include/fmod_errors.h; sourceTree = SOURCE_ROOT; };
 		E45BE0440E8CC650009D7055 /* fmod_output.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = fmod_output.h; path = ../../../libs/fmodex/include/fmod_output.h; sourceTree = SOURCE_ROOT; };
 		E45BE0A70E8CC67C009D7055 /* GLee.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GLee.h; path = ../../../libs/GLee/include/GLee.h; sourceTree = SOURCE_ROOT; };
-		E45BE0A90E8CC67C009D7055 /* GLee.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = GLee.a; path = ../../../libs/GLee/lib/macosx/GLee.a; sourceTree = SOURCE_ROOT; };
+		E45BE0A90E8CC67C009D7055 /* GLee.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = GLee.a; path = ../../../libs/GLee/lib/osx/GLee.a; sourceTree = SOURCE_ROOT; };
 		E45BE2E00E8CC69C009D7055 /* RtAudio.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RtAudio.h; path = ../../../libs/rtAudio/include/RtAudio.h; sourceTree = SOURCE_ROOT; };
 		E45BE2E10E8CC69C009D7055 /* RtError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RtError.h; path = ../../../libs/rtAudio/include/RtError.h; sourceTree = SOURCE_ROOT; };
-		E45BE2E30E8CC69C009D7055 /* rtAudio.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = rtAudio.a; path = ../../../libs/rtAudio/lib/macosx/rtAudio.a; sourceTree = SOURCE_ROOT; };
+		E45BE2E30E8CC69C009D7055 /* rtAudio.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = rtAudio.a; path = ../../../libs/rtAudio/lib/osx/rtAudio.a; sourceTree = SOURCE_ROOT; };
 		E45BE9710E8CC7DD009D7055 /* AGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AGL.framework; path = /System/Library/Frameworks/AGL.framework; sourceTree = "<absolute>"; };
 		E45BE9720E8CC7DD009D7055 /* ApplicationServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ApplicationServices.framework; path = /System/Library/Frameworks/ApplicationServices.framework; sourceTree = "<absolute>"; };
 		E45BE9730E8CC7DD009D7055 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = /System/Library/Frameworks/AudioToolbox.framework; sourceTree = "<absolute>"; };
@@ -127,7 +127,7 @@
 		E45BE9770E8CC7DD009D7055 /* CoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreServices.framework; path = /System/Library/Frameworks/CoreServices.framework; sourceTree = "<absolute>"; };
 		E45BE9790E8CC7DD009D7055 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = /System/Library/Frameworks/OpenGL.framework; sourceTree = "<absolute>"; };
 		E45BE97A0E8CC7DD009D7055 /* QuickTime.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuickTime.framework; path = /System/Library/Frameworks/QuickTime.framework; sourceTree = "<absolute>"; };
-		E49DA86510CD41910006B5A8 /* freeimage.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = freeimage.a; path = ../../../libs/FreeImage/lib/macosx/freeimage.a; sourceTree = SOURCE_ROOT; };
+		E49DA86510CD41910006B5A8 /* freeimage.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = freeimage.a; path = ../../../libs/FreeImage/lib/osx/freeimage.a; sourceTree = SOURCE_ROOT; };
 		E4B69B5B0A3A1756003C02F2 /* openFrameworksDebug.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = openFrameworksDebug.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E4B69E1D0A3A1BDC003C02F2 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = main.cpp; path = src/main.cpp; sourceTree = SOURCE_ROOT; };
 		E4B69E1E0A3A1BDC003C02F2 /* testApp.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 30; name = testApp.cpp; path = src/testApp.cpp; sourceTree = SOURCE_ROOT; };
@@ -137,15 +137,15 @@
 		E4C2424410CC5A17004149E2 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		E4C2424510CC5A17004149E2 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
 		E4C2424610CC5A17004149E2 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = /System/Library/Frameworks/IOKit.framework; sourceTree = "<absolute>"; };
-		E4C2425F10CC5A78004149E2 /* GLUT.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLUT.framework; path = ../../../libs/glut/lib/macosx/GLUT.framework; sourceTree = SOURCE_ROOT; };
-		E4C2427A10CC5B66004149E2 /* CppUnit.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = CppUnit.a; path = ../../../libs/poco/lib/macosx/CppUnit.a; sourceTree = SOURCE_ROOT; };
-		E4C2427B10CC5B66004149E2 /* PocoFoundation.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = PocoFoundation.a; path = ../../../libs/poco/lib/macosx/PocoFoundation.a; sourceTree = SOURCE_ROOT; };
-		E4C2427C10CC5B66004149E2 /* PocoNet.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = PocoNet.a; path = ../../../libs/poco/lib/macosx/PocoNet.a; sourceTree = SOURCE_ROOT; };
-		E4C2427D10CC5B66004149E2 /* PocoUtil.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = PocoUtil.a; path = ../../../libs/poco/lib/macosx/PocoUtil.a; sourceTree = SOURCE_ROOT; };
-		E4C2427E10CC5B66004149E2 /* PocoXML.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = PocoXML.a; path = ../../../libs/poco/lib/macosx/PocoXML.a; sourceTree = SOURCE_ROOT; };
+		E4C2425F10CC5A78004149E2 /* GLUT.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLUT.framework; path = ../../../libs/glut/lib/osx/GLUT.framework; sourceTree = SOURCE_ROOT; };
+		E4C2427A10CC5B66004149E2 /* CppUnit.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = CppUnit.a; path = ../../../libs/poco/lib/osx/CppUnit.a; sourceTree = SOURCE_ROOT; };
+		E4C2427B10CC5B66004149E2 /* PocoFoundation.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = PocoFoundation.a; path = ../../../libs/poco/lib/osx/PocoFoundation.a; sourceTree = SOURCE_ROOT; };
+		E4C2427C10CC5B66004149E2 /* PocoNet.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = PocoNet.a; path = ../../../libs/poco/lib/osx/PocoNet.a; sourceTree = SOURCE_ROOT; };
+		E4C2427D10CC5B66004149E2 /* PocoUtil.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = PocoUtil.a; path = ../../../libs/poco/lib/osx/PocoUtil.a; sourceTree = SOURCE_ROOT; };
+		E4C2427E10CC5B66004149E2 /* PocoXML.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = PocoXML.a; path = ../../../libs/poco/lib/osx/PocoXML.a; sourceTree = SOURCE_ROOT; };
 		E4C2428610CC5BBD004149E2 /* osc.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = osc.a; path = ../../../addons/ofxOsc/libs/oscpack/lib/osx/osc.a; sourceTree = SOURCE_ROOT; };
-		E4C2429310CC5C38004149E2 /* freetype.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = freetype.a; path = ../../../libs/freetype/lib/macosx/freetype.a; sourceTree = SOURCE_ROOT; };
-		E4C242CC10CC650E004149E2 /* libfmodex.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libfmodex.dylib; path = ../../../libs/fmodex/lib/macosx/libfmodex.dylib; sourceTree = SOURCE_ROOT; };
+		E4C2429310CC5C38004149E2 /* freetype.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = freetype.a; path = ../../../libs/freetype/lib/osx/freetype.a; sourceTree = SOURCE_ROOT; };
+		E4C242CC10CC650E004149E2 /* libfmodex.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libfmodex.dylib; path = ../../../libs/fmodex/lib/osx/libfmodex.dylib; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -396,7 +396,7 @@
 				E45BE0A90E8CC67C009D7055 /* GLee.a */,
 			);
 			name = lib;
-			path = ../../../libs/GLee/lib/macosx;
+			path = ../../../libs/GLee/lib/osx;
 			sourceTree = SOURCE_ROOT;
 		};
 		E45BE2D50E8CC69C009D7055 /* rtAudio */ = {
@@ -434,7 +434,7 @@
 				E45BE2E30E8CC69C009D7055 /* rtAudio.a */,
 			);
 			name = lib;
-			path = ../../../libs/rtAudio/lib/macosx;
+			path = ../../../libs/rtAudio/lib/osx;
 			sourceTree = SOURCE_ROOT;
 		};
 		E45BE5980E8CC70C009D7055 /* core frameworks */ = {
@@ -480,7 +480,7 @@
 				E49DA86510CD41910006B5A8 /* freeimage.a */,
 			);
 			name = macosx;
-			path = ../../../libs/FreeImage/lib/macosx;
+			path = ../../../libs/FreeImage/lib/osx;
 			sourceTree = SOURCE_ROOT;
 		};
 		E4B69B4A0A3A1720003C02F2 = {
@@ -545,7 +545,7 @@
 				E4C2425F10CC5A78004149E2 /* GLUT.framework */,
 			);
 			name = macosx;
-			path = ../../../libs/glut/lib/macosx;
+			path = ../../../libs/glut/lib/osx;
 			sourceTree = SOURCE_ROOT;
 		};
 		E4C2427910CC5B66004149E2 /* macosx */ = {
@@ -558,7 +558,7 @@
 				E4C2427E10CC5B66004149E2 /* PocoXML.a */,
 			);
 			name = macosx;
-			path = ../../../libs/poco/lib/macosx;
+			path = ../../../libs/poco/lib/osx;
 			sourceTree = SOURCE_ROOT;
 		};
 		E4C2428E10CC5C18004149E2 /* macosx */ = {
@@ -567,7 +567,7 @@
 				E4C242CC10CC650E004149E2 /* libfmodex.dylib */,
 			);
 			name = macosx;
-			path = ../../../libs/fmodex/lib/macosx;
+			path = ../../../libs/fmodex/lib/osx;
 			sourceTree = SOURCE_ROOT;
 		};
 		E4C2429210CC5C38004149E2 /* macosx */ = {
@@ -576,7 +576,7 @@
 				E4C2429310CC5C38004149E2 /* freetype.a */,
 			);
 			name = macosx;
-			path = ../../../libs/freetype/lib/macosx;
+			path = ../../../libs/freetype/lib/osx;
 			sourceTree = SOURCE_ROOT;
 		};
 /* End PBXGroup section */
@@ -648,7 +648,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "cp -f ../../../libs/fmodex/lib/macosx/libfmodex.dylib \"$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/MacOS/libfmodex.dylib\"\ninstall_name_tool -change ./libfmodex.dylib @executable_path/libfmodex.dylib \"$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/MacOS/$PRODUCT_NAME\" ";
+			shellScript = "cp -f ../../../libs/fmodex/lib/osx/libfmodex.dylib \"$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/MacOS/libfmodex.dylib\"\ninstall_name_tool -change ./libfmodex.dylib @executable_path/libfmodex.dylib \"$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/MacOS/$PRODUCT_NAME\" ";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -724,7 +724,7 @@
 					"$(inherited)",
 					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
 				);
-				FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)/../../../libs/glut/lib/macosx\"";
+				FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)/../../../libs/glut/lib/osx\"";
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_MODEL_TUNING = G4;
@@ -751,20 +751,20 @@
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_15)",
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_9)",
 				);
-				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)/../../../libs/freeimage/lib/macosx\"";
-				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_11 = "\"$(SRCROOT)/../../../libs/poco/lib/macosx\"";
+				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)/../../../libs/freeimage/lib/osx\"";
+				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_11 = "\"$(SRCROOT)/../../../libs/poco/lib/osx\"";
 				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_12 = "\"$(SRCROOT)/../../../addons/ofxOpenCv/libs/opencv/lib/osx\"";
 				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_13 = "\"$(SRCROOT)/../../../addons/ofxOsc/libs/oscpack/lib/osx\"";
-				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_14 = "\"$(SRCROOT)/../../../libs/fmodex/lib/macosx\"";
-				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_15 = "\"$(SRCROOT)/../../../libs/freetype/lib/macosx\"";
-				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_2 = "\"$(SRCROOT)/../../../libs/fmodex/lib/macosx\"";
-				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_3 = "\"$(SRCROOT)/../../../libs/freetype/lib/macosx\"";
-				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_4 = "\"$(SRCROOT)/../../../libs/GLee/lib/macosx\"";
-				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_5 = "\"$(SRCROOT)/../../../libs/poco/lib/macosx\"";
-				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_6 = "\"$(SRCROOT)/../../../libs/rtAudio/lib/macosx\"";
+				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_14 = "\"$(SRCROOT)/../../../libs/fmodex/lib/osx\"";
+				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_15 = "\"$(SRCROOT)/../../../libs/freetype/lib/osx\"";
+				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_2 = "\"$(SRCROOT)/../../../libs/fmodex/lib/osx\"";
+				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_3 = "\"$(SRCROOT)/../../../libs/freetype/lib/osx\"";
+				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_4 = "\"$(SRCROOT)/../../../libs/GLee/lib/osx\"";
+				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_5 = "\"$(SRCROOT)/../../../libs/poco/lib/osx\"";
+				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_6 = "\"$(SRCROOT)/../../../libs/rtAudio/lib/osx\"";
 				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_7 = "\"$(SRCROOT)/../../../addons/ofxOpenCv/libs/opencv/lib/osx\"";
 				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_8 = "\"$(SRCROOT)/../../../addons/ofxOsc/libs/oscpack/lib/osx\"";
-				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_9 = "\"$(SRCROOT)/../../../libs/FreeImage/lib/macosx\"";
+				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_9 = "\"$(SRCROOT)/../../../libs/FreeImage/lib/osx\"";
 				PREBINDING = NO;
 				PRODUCT_NAME = openFrameworksUniversal;
 				WRAPPER_EXTENSION = app;
@@ -850,7 +850,7 @@
 					"$(inherited)",
 					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
 				);
-				FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)/../../../libs/glut/lib/macosx\"";
+				FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)/../../../libs/glut/lib/osx\"";
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
@@ -879,20 +879,20 @@
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_15)",
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_9)",
 				);
-				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)/../../../libs/freeimage/lib/macosx\"";
-				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_11 = "\"$(SRCROOT)/../../../libs/poco/lib/macosx\"";
+				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)/../../../libs/freeimage/lib/osx\"";
+				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_11 = "\"$(SRCROOT)/../../../libs/poco/lib/osx\"";
 				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_12 = "\"$(SRCROOT)/../../../addons/ofxOpenCv/libs/opencv/lib/osx\"";
 				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_13 = "\"$(SRCROOT)/../../../addons/ofxOsc/libs/oscpack/lib/osx\"";
-				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_14 = "\"$(SRCROOT)/../../../libs/fmodex/lib/macosx\"";
-				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_15 = "\"$(SRCROOT)/../../../libs/freetype/lib/macosx\"";
-				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_2 = "\"$(SRCROOT)/../../../libs/fmodex/lib/macosx\"";
-				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_3 = "\"$(SRCROOT)/../../../libs/freetype/lib/macosx\"";
-				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_4 = "\"$(SRCROOT)/../../../libs/GLee/lib/macosx\"";
-				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_5 = "\"$(SRCROOT)/../../../libs/poco/lib/macosx\"";
-				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_6 = "\"$(SRCROOT)/../../../libs/rtAudio/lib/macosx\"";
+				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_14 = "\"$(SRCROOT)/../../../libs/fmodex/lib/osx\"";
+				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_15 = "\"$(SRCROOT)/../../../libs/freetype/lib/osx\"";
+				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_2 = "\"$(SRCROOT)/../../../libs/fmodex/lib/osx\"";
+				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_3 = "\"$(SRCROOT)/../../../libs/freetype/lib/osx\"";
+				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_4 = "\"$(SRCROOT)/../../../libs/GLee/lib/osx\"";
+				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_5 = "\"$(SRCROOT)/../../../libs/poco/lib/osx\"";
+				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_6 = "\"$(SRCROOT)/../../../libs/rtAudio/lib/osx\"";
 				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_7 = "\"$(SRCROOT)/../../../addons/ofxOpenCv/libs/opencv/lib/osx\"";
 				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_8 = "\"$(SRCROOT)/../../../addons/ofxOsc/libs/oscpack/lib/osx\"";
-				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_9 = "\"$(SRCROOT)/../../../libs/FreeImage/lib/macosx\"";
+				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_9 = "\"$(SRCROOT)/../../../libs/FreeImage/lib/osx\"";
 				PREBINDING = NO;
 				PRODUCT_NAME = openFrameworksDebug;
 				WRAPPER_EXTENSION = app;
@@ -908,7 +908,7 @@
 					"$(inherited)",
 					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
 				);
-				FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)/../../../libs/glut/lib/macosx\"";
+				FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)/../../../libs/glut/lib/osx\"";
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_MODEL_TUNING = G4;
@@ -935,20 +935,20 @@
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_15)",
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_9)",
 				);
-				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)/../../../libs/freeimage/lib/macosx\"";
-				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_11 = "\"$(SRCROOT)/../../../libs/poco/lib/macosx\"";
+				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)/../../../libs/freeimage/lib/osx\"";
+				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_11 = "\"$(SRCROOT)/../../../libs/poco/lib/osx\"";
 				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_12 = "\"$(SRCROOT)/../../../addons/ofxOpenCv/libs/opencv/lib/osx\"";
 				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_13 = "\"$(SRCROOT)/../../../addons/ofxOsc/libs/oscpack/lib/osx\"";
-				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_14 = "\"$(SRCROOT)/../../../libs/fmodex/lib/macosx\"";
-				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_15 = "\"$(SRCROOT)/../../../libs/freetype/lib/macosx\"";
-				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_2 = "\"$(SRCROOT)/../../../libs/fmodex/lib/macosx\"";
-				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_3 = "\"$(SRCROOT)/../../../libs/freetype/lib/macosx\"";
-				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_4 = "\"$(SRCROOT)/../../../libs/GLee/lib/macosx\"";
-				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_5 = "\"$(SRCROOT)/../../../libs/poco/lib/macosx\"";
-				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_6 = "\"$(SRCROOT)/../../../libs/rtAudio/lib/macosx\"";
+				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_14 = "\"$(SRCROOT)/../../../libs/fmodex/lib/osx\"";
+				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_15 = "\"$(SRCROOT)/../../../libs/freetype/lib/osx\"";
+				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_2 = "\"$(SRCROOT)/../../../libs/fmodex/lib/osx\"";
+				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_3 = "\"$(SRCROOT)/../../../libs/freetype/lib/osx\"";
+				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_4 = "\"$(SRCROOT)/../../../libs/GLee/lib/osx\"";
+				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_5 = "\"$(SRCROOT)/../../../libs/poco/lib/osx\"";
+				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_6 = "\"$(SRCROOT)/../../../libs/rtAudio/lib/osx\"";
 				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_7 = "\"$(SRCROOT)/../../../addons/ofxOpenCv/libs/opencv/lib/osx\"";
 				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_8 = "\"$(SRCROOT)/../../../addons/ofxOsc/libs/oscpack/lib/osx\"";
-				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_9 = "\"$(SRCROOT)/../../../libs/FreeImage/lib/macosx\"";
+				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_9 = "\"$(SRCROOT)/../../../libs/FreeImage/lib/osx\"";
 				PREBINDING = NO;
 				PRODUCT_NAME = openFrameworks;
 				WRAPPER_EXTENSION = app;
