@@ -1,8 +1,16 @@
-# $1 -> platform: win_cb, linux, linux64, vs2008, osx, iphone, all
+# $1 -> platform: win_cb, linux, linux64, vs2008, osx, osxSL, iphone, all
 # $2 -> version number: 006
 
 platform=$1
 version=$2
+
+runOSXSLScript=0
+
+if [ "$platform" = "osxSL" ]; then
+    platform="osx"
+    runOSXSLScript=1
+    echo "will make changes for snow leopard"
+fi
 
 if [ "$platform" != "win_cb" ] && [ "$platform" != "linux" ] && [ "$platform" != "linux64" ] && [ "$platform" != "vs2008" ] && [ "$platform" != "osx" ] && [ "$platform" != "all" ]; then
     echo usage: 
@@ -23,7 +31,7 @@ fi
 REPO=git://github.com/openframeworks/openFrameworks.git
 BRANCH=master
 
-libsnotinmac="unicap gstappsink glu glut quicktime videoInput"
+libsnotinmac="unicap gstappsink glu quicktime videoInput"
 libsnotinlinux="quicktime videoInput glut glu"
 libsnotinwindows="unicap gstappsink"
 
@@ -255,6 +263,14 @@ function createPackage {
     rm -Rf devApps
     cd ${pkg_ofroot}/scripts
     rm -Rf dev
+
+    #if snow leopard change 10.4u to 10.5
+    if [ $runOSXSLScript = 1 ]; then
+        cd $pkg_ofroot
+        echo "replacing 10.4u with 10.5 for snow leopard"
+        find . -name '*.pbxproj' | xargs perl -pi -e 's/10\.4u/10\.5/g'
+        pkg_platform="osxSL"
+    fi
 
     #create compressed package
     cd $pkg_ofroot/..
