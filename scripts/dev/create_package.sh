@@ -196,23 +196,23 @@ function createPackage {
 
     #delete other platform libraries TODO: add iphone
     if [ "$pkg_platform" = "linux" ]; then
-        otherplatforms="linux64 osx win_cb vs2008"
+        otherplatforms="linux64 osx win_cb vs2008 iphone"
     fi
 
     if [ "$pkg_platform" = "linux64" ]; then
-        otherplatforms="linux osx win_cb vs2008"
+        otherplatforms="linux osx win_cb vs2008 iphone"
     fi
 
     if [ "$pkg_platform" = "osx" ]; then
-        otherplatforms="linux linux64 win_cb vs2008"
+        otherplatforms="linux linux64 win_cb vs2008 iphone"
     fi
 
     if [ "$pkg_platform" = "win_cb" ]; then
-        otherplatforms="linux linux64 osx vs2008"
+        otherplatforms="linux linux64 osx vs2008 iphone"
     fi
 
     if [ "$pkg_platform" = "vs2008" ]; then
-        otherplatforms="linux linux64 osx win_cb"
+        otherplatforms="linux linux64 osx win_cb iphone"
     fi
 
     if [ "$pkg_platform" = "iphone" ]; then
