@@ -296,16 +296,18 @@ function createPackage {
     #create compressed package
     cd $pkg_ofroot/..
     if [ "$pkg_platform" = "linux" ] || [ "$pkg_platform" = "linux64" ]; then
-        mkdir of_preRelease_v${pkg_version}_${pkg_platform}
-        mv openFrameworks/* of_preRelease_v${pkg_version}_${pkg_platform}
-        tar czf of_preRelease_v${pkg_version}_${pkg_platform}_FAT.tar.gz of_preRelease_v${pkg_version}_${pkg_platform}
+        mkdir of_preRelease_v${pkg_version}_${pkg_platform}_FAT
+        mv openFrameworks/* of_preRelease_v${pkg_version}_${pkg_platform}_FAT
+        tar czf of_preRelease_v${pkg_version}_${pkg_platform}_FAT.tar.gz of_preRelease_v${pkg_version}_${pkg_platform}_FAT
+        mv of_preRelease_v${pkg_version}_${pkg_platform}_FAT of_preRelease_v${pkg_version}_${pkg_platform}
         rm -Rf of_preRelease_v${pkg_version}_${pkg_platform}/addons of_preRelease_v${pkg_version}_${pkg_platform}/apps/addonsExamples
         tar czf of_preRelease_v${pkg_version}_${pkg_platform}.tar.gz of_preRelease_v${pkg_version}_${pkg_platform}
         rm -Rf of_preRelease_v${pkg_version}_${pkg_platform}
     else
-        mkdir of_preRelease_v${pkg_version}_${pkg_platform}
-        mv openFrameworks/* of_preRelease_v${pkg_version}_${pkg_platform}
-        zip -r of_preRelease_v${pkg_version}_${pkg_platform}_FAT.zip of_preRelease_v${pkg_version}_${pkg_platform}
+        mkdir of_preRelease_v${pkg_version}_FAT_${pkg_platform}_FAT
+        mv openFrameworks/* of_preRelease_v${pkg_version}_${pkg_platform}_FAT
+        zip -r of_preRelease_v${pkg_version}_${pkg_platform}_FAT.zip of_preRelease_v${pkg_version}_${pkg_platform}_FAT
+        mv of_preRelease_v${pkg_version}_${pkg_platform}_FAT of_preRelease_v${pkg_version}_${pkg_platform}        
         rm -Rf of_preRelease_v${pkg_version}_${pkg_platform}/addons of_preRelease_v${pkg_version}_${pkg_platform}/apps/addonsExamples
         zip -r of_preRelease_v${pkg_version}_${pkg_platform}.zip of_preRelease_v${pkg_version}_${pkg_platform}
         rm -Rf of_preRelease_v${pkg_version}_${pkg_platform}
@@ -325,10 +327,10 @@ if [ "$platform" = "all" ]; then
     
     cd $packageroot
     echo dir: $PWD
-    mkdir of_preRelease_v${version}_all
-    mv addons apps export libs other scripts $packageroot/of_preRelease_v${version}_all
-
-    tar czf of_preRelease_v$version_all_FAT.tar.gz of_preRelease_v${version}_all
+    mkdir of_preRelease_v${version}_all_FAT
+    mv addons apps export libs other scripts $packageroot/of_preRelease_v${version}_all_FAT
+    tar czf of_preRelease_v$version_all_FAT.tar.gz of_preRelease_v${version}_all_FAT
+    mv of_preRelease_v${version}_all_FAT of_preRelease_v${version}_all
     rm -Rf of_preRelease_v${version}_all/addons of_preRelease_v${version}_all/apps/addonsExamples
     tar czf of_preRelease_v$version_all.tar.gz of_preRelease_v$version_all
     rm -Rf of_preRelease_v${version}_all
