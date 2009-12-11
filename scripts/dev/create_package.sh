@@ -194,7 +194,7 @@ function createPackage {
         cd $pkg_ofroot/apps/addonsExamples
     done
 
-    #delete other platform libraries TODO: add iphone
+    #delete other platform libraries
     if [ "$pkg_platform" = "linux" ]; then
         otherplatforms="linux64 osx win_cb vs2008 iphone"
     fi
@@ -257,7 +257,11 @@ function createPackage {
 
     #delete scripts
     cd $pkg_ofroot/scripts
-    rm -Rf $otherplatforms
+	if [ "$pkg_platform" != "linux64" ]; then
+    	rm -Rf $otherplatforms
+	else
+    	rm -Rf win_cb vs2008 osx iphone
+	fi
     rm create_package.sh
 
     #delete .svn dirs
