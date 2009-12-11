@@ -73,7 +73,7 @@
 		</Compiler>
 		<Linker>
 			<Add library="openFrameworks"/>
-			<Add library="fmodex-4.22.00"/>
+			<Add library="fmodex"/>
 			<Add library="raw1394"/>
 			<Add library="glut"/>
 			<Add library="GL"/>
