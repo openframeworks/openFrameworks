@@ -51,7 +51,7 @@ if [ "$BRANCH" != "master" ]; then
     git checkout --track -b $BRANCH origin/$BRANCH
 fi
 git reset --hard
-git pull origin $BRANCH
+git pull $REPO $BRANCH
 
 
 packageroot=$PWD
@@ -194,25 +194,25 @@ function createPackage {
         cd $pkg_ofroot/apps/addonsExamples
     done
 
-    #delete other platform libraries
+    #delete other platform libraries TODO: add iphone
     if [ "$pkg_platform" = "linux" ]; then
-        otherplatforms="linux64 osx win_cb vs2008 iphone"
+        otherplatforms="linux64 osx win_cb vs2008"
     fi
 
     if [ "$pkg_platform" = "linux64" ]; then
-        otherplatforms="linux osx win_cb vs2008 iphone"
+        otherplatforms="linux osx win_cb vs2008"
     fi
 
     if [ "$pkg_platform" = "osx" ]; then
-        otherplatforms="linux linux64 win_cb vs2008 iphone"
+        otherplatforms="linux linux64 win_cb vs2008"
     fi
 
     if [ "$pkg_platform" = "win_cb" ]; then
-        otherplatforms="linux linux64 osx vs2008 iphone"
+        otherplatforms="linux linux64 osx vs2008"
     fi
 
     if [ "$pkg_platform" = "vs2008" ]; then
-        otherplatforms="linux linux64 osx win_cb iphone"
+        otherplatforms="linux linux64 osx win_cb"
     fi
 
     if [ "$pkg_platform" = "iphone" ]; then
@@ -236,6 +236,16 @@ function createPackage {
     elif [ "$platform" = "win_cb" ] || [ "$platform" = "vs2008" ]; then
         rm -Rf $libsnotinwindows
     fi
+    
+    cd ${pkg_ofroot}/addons
+    for lib in $( ls */libs/*/lib/  -d )
+    do
+        cd ${lib}
+        echo $PWD
+        echo deleting $lib
+        rm -Rf $otherplatforms
+        cd $pkg_ofroot/addons
+    done
 
     #delete dynamic libraries for other platforms
     cd $pkg_ofroot/export
@@ -273,7 +283,7 @@ function createPackage {
     fi
     
     #choose readme
-    cd $pkg_root
+    cd $pkg_ofroot
     if [ "$platform" = "linux" ] || [ "$platform" = "linux64" ]; then
         mv readme.linux readme
     fi
@@ -304,7 +314,7 @@ function createPackage {
         tar czf of_preRelease_v${pkg_version}_${pkg_platform}.tar.gz of_preRelease_v${pkg_version}_${pkg_platform}
         rm -Rf of_preRelease_v${pkg_version}_${pkg_platform}
     else
-        mkdir of_preRelease_v${pkg_version}_FAT_${pkg_platform}_FAT
+        mkdir of_preRelease_v${pkg_version}_${pkg_platform}_FAT
         mv openFrameworks/* of_preRelease_v${pkg_version}_${pkg_platform}_FAT
         zip -r of_preRelease_v${pkg_version}_${pkg_platform}_FAT.zip of_preRelease_v${pkg_version}_${pkg_platform}_FAT
         mv of_preRelease_v${pkg_version}_${pkg_platform}_FAT of_preRelease_v${pkg_version}_${pkg_platform}        
