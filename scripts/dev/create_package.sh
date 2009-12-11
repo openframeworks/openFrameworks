@@ -271,6 +271,27 @@ function createPackage {
         find . -name '*.pbxproj' | xargs perl -pi -e 's/10\.4u/10\.5/g'
         pkg_platform="osxSL"
     fi
+    
+    #choose readme
+    cd $pkg_root
+    if [ "$platform" = "linux" ] || [ "$platform" = "linux64" ]; then
+        mv readme.linux readme
+    fi
+    
+    if [ "$platform" = "vs2008" ]; then
+        mv readme.vs2008 readme
+    fi
+    
+    if [ "$platform" = "win_cb" ]; then
+        mv readme.win_cb readme
+    fi
+    
+    if [ "$platform" = "osx" ]; then
+        mv readme.osx readme
+    fi
+    
+    rm readme.*
+    mv readme readme.txt
 
     #create compressed package
     cd $pkg_ofroot/..
