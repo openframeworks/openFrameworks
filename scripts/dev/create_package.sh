@@ -172,6 +172,10 @@ function createPackage {
     pkg_version=$2
     pkg_ofroot=$3
     
+    #remove previously created package 
+    cd $pkg_ofroot/..
+    rm -Rf of_preRelease_v${pkg_version}_${pkg_platform}*
+    
     echo "creating package $pkg_platform $version in $pkg_ofroot"
     
     #delete other platforms example project files
