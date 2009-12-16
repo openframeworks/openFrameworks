@@ -31,16 +31,16 @@
 		</Build>
 		<Compiler>
 			<Add option="-Wno-multichar" />
-			<Add directory="..\..\..\glu" />
+			<Add directory="..\..\..\glu\include" />
 			<Add directory="..\..\..\freetype\include" />
 			<Add directory="..\..\..\freetype\include\freetype2" />
 			<Add directory="..\..\..\FreeImage\include" />
-			<Add directory="..\..\..\quicktime\CIncludes" />
+			<Add directory="..\..\..\quicktime\include" />
 			<Add directory="..\..\..\rtAudio\include" />
 			<Add directory="..\..\..\fmodex\include" />
 			<Add directory="..\..\..\videoInput\include" />
 			<Add directory="..\..\..\glee\include" />
-			<Add directory="..\..\..\glut" />
+			<Add directory="..\..\..\glut\include" />
 			<Add directory="..\..\..\openFrameworks" />
 			<Add directory="..\..\..\openFrameworks\app" />
 			<Add directory="..\..\..\openFrameworks\events" />
