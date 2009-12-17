@@ -1,0 +1,29 @@
+K 25
+svn:wc:ra_dav:version-url
+V 22
+/svn/!svn/ver/45/trunk
+END
+LICENSE.txt
+K 25
+svn:wc:ra_dav:version-url
+V 34
+/svn/!svn/ver/12/trunk/LICENSE.txt
+END
+changelog.txt
+K 25
+svn:wc:ra_dav:version-url
+V 36
+/svn/!svn/ver/45/trunk/changelog.txt
+END
+ofxiPhone.h
+K 25
+svn:wc:ra_dav:version-url
+V 34
+/svn/!svn/ver/45/trunk/ofxiPhone.h
+END
+ofxiPhoneExtras.h
+K 25
+svn:wc:ra_dav:version-url
+V 40
+/svn/!svn/ver/46/trunk/ofxiPhoneExtras.h
+END
