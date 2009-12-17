@@ -61,7 +61,7 @@
 			<Add directory="../../../libs/openFrameworks/utils"/>
 			<Add directory="../../../libs/openFrameworks/sound"/>
 			<Add directory="../../../libs/rtAudio"/>
-			<Add directory="../../../libs/fmodex/inc"/>
+			<Add directory="../../../libs/fmodex/include"/>
 			<Add directory="../../../libs/glee/include"/>
 			<Add directory="../../../libs/FreeImage/include"/>
 			<Add directory="../../../libs/freetype/include"/>
@@ -73,7 +73,7 @@
 		</Compiler>
 		<Linker>
 			<Add library="openFrameworks"/>
-			<Add library="fmodex-4.22.00"/>
+			<Add library="fmodex"/>
 			<Add library="raw1394"/>
 			<Add library="glut"/>
 			<Add library="GL"/>

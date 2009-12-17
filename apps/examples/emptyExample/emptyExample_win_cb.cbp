@@ -41,16 +41,16 @@
 		</Build>
 		<Compiler>
 			<Add option="-Wno-multichar" />
-			<Add directory="..\..\..\libs\glu" />
+			<Add directory="..\..\..\libs\glu\include" />
 			<Add directory="..\..\..\libs\freetype\include" />
 			<Add directory="..\..\..\libs\freetype\include\freetype2" />
 			<Add directory="..\..\..\libs\FreeImage\include" />
-			<Add directory="..\..\..\libs\quicktime\CIncludes" />
+			<Add directory="..\..\..\libs\quicktime\include" />
 			<Add directory="..\..\..\libs\rtAudio\include" />
-			<Add directory="..\..\..\libs\fmodex\inc" />
+			<Add directory="..\..\..\libs\fmodex\include" />
 			<Add directory="..\..\..\libs\videoInput\include" />
 			<Add directory="..\..\..\libs\glee\include" />
-			<Add directory="..\..\..\libs\glut" />
+			<Add directory="..\..\..\libs\glut\include" />
 			<Add directory="..\..\..\libs\openFrameworks" />
 			<Add directory="..\..\..\libs\openFrameworks\app" />
 			<Add directory="..\..\..\libs\openFrameworks\events" />
