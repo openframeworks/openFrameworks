@@ -44,7 +44,7 @@
 			<Add directory="../../../openFrameworks/utils" />
 			<Add directory="../../../openFrameworks/sound" />
 			<Add directory="../../../rtAudio/include" />
-			<Add directory="../../../fmodex/inc" />
+			<Add directory="../../../fmodex/include" />
 			<Add directory="../../../glee/include" />
 			<Add directory="../../../glee/" />
 			<Add directory="../../../FreeImage/include" />

@@ -8,7 +8,7 @@
 		<Option virtualFolders="addons/;src/;"/>
 		<Build>
 			<Target title="Debug">
-				<Option output="bin/allAddonsExample_debug" extension_auto="1" prefix_auto="1"/>
+				<Option output="bin/oscSenderExample_debug" extension_auto="1" prefix_auto="1"/>
 				<Option working_dir="bin"/>
 				<Option object_output="obj/Debug/"/>
 				<Option external_deps="../../../libs/openFrameworksCompiled/lib/linux64/libopenFrameworksDebug.a;"/>
@@ -24,7 +24,7 @@
 				</Linker>
 			</Target>
 			<Target title="Release">
-				<Option output="bin/allAddonsExample" extension_auto="1" prefix_auto="1"/>
+				<Option output="bin/oscSenderExample" extension_auto="1" prefix_auto="1"/>
 				<Option working_dir="bin"/>
 				<Option object_output="obj/Release/"/>
 				<Option external_deps="../../../libs/openFrameworksCompiled/lib/linux64/libopenFrameworks.a;"/>
@@ -60,7 +60,7 @@
 			<Add directory="../../../libs/openFrameworks/utils"/>
 			<Add directory="../../../libs/openFrameworks/sound"/>
 			<Add directory="../../../libs/rtAudio/include"/>
-			<Add directory="../../../libs/fmodex/inc"/>
+			<Add directory="../../../libs/fmodex/include"/>
 			<Add directory="../../../libs/glee/include"/>
 			<Add directory="../../../libs/glee/"/>
 			<Add directory="../../../libs/FreeImage/include"/>
@@ -87,7 +87,7 @@
 			<Add directory="../../../addons/ofxXmlSettings/libs"/>
 		</Compiler>
 		<Linker>
-			<Add library="fmodex64-4.22.00"/>
+			<Add library="fmodex"/>
 			<Add library="raw1394"/>
 			<Add library="glut"/>
 			<Add library="GL"/>
@@ -147,6 +147,7 @@
 				<lib name="gstreamer-0.10"/>
 				<lib name="gstreamer-video-0.10"/>
 				<lib name="gstreamer-base-0.10"/>
+				<lib name="libudev"/>
 			</lib_finder>
 			<code_completion/>
 			<envvars/>

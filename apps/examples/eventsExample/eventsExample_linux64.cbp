@@ -8,7 +8,7 @@
 		<Option virtualFolders="addons/;src/;"/>
 		<Build>
 			<Target title="Debug">
-				<Option output="bin/advancedEventsExample_debug" prefix_auto="1" extension_auto="1"/>
+				<Option output="bin/eventsExample_debug" prefix_auto="1" extension_auto="1"/>
 				<Option working_dir="bin"/>
 				<Option object_output="obj/Debug/"/>
 				<Option external_deps="../../../libs/openFrameworksCompiled/lib/linux64/libopenFrameworksDebug.a;"/>
@@ -24,7 +24,7 @@
 				</Linker>
 			</Target>
 			<Target title="Release">
-				<Option output="bin/advancedEventsExample" prefix_auto="1" extension_auto="1"/>
+				<Option output="bin/eventsExample" prefix_auto="1" extension_auto="1"/>
 				<Option working_dir="bin"/>
 				<Option object_output="obj/Release/"/>
 				<Option external_deps="../../../libs/openFrameworksCompiled/lib/linux64/libopenFrameworks.a;"/>
@@ -60,7 +60,7 @@
 			<Add directory="../../../libs/openFrameworks/utils"/>
 			<Add directory="../../../libs/openFrameworks/sound"/>
 			<Add directory="../../../libs/rtAudio/include"/>
-			<Add directory="../../../libs/fmodex/inc"/>
+			<Add directory="../../../libs/fmodex/include"/>
 			<Add directory="../../../libs/glee/include"/>
 			<Add directory="../../../libs/glee/"/>
 			<Add directory="../../../libs/FreeImage/include"/>
@@ -72,7 +72,7 @@
 			<Add directory="../../../libs/poco/include"/>
 		</Compiler>
 		<Linker>
-			<Add library="fmodex64-4.22.00"/>
+			<Add library="fmodex"/>
 			<Add library="raw1394"/>
 			<Add library="glut"/>
 			<Add library="GL"/>
