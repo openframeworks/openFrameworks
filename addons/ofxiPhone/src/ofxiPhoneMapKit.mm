@@ -141,13 +141,17 @@ ofxMapKitLocation ofxiPhoneMapKit::getLocationForScreenCoordinates(float x, floa
 
 // convert location (latitude, longitude) and span (in degrees) to screen coordinates (i.e. pixels)
 ofRectangle ofxiPhoneMapKit::getScreenRectForRegion(double latitude, double latitudeDelta, double longitudeDelta) {
+	ofRectangle r;
 	//	- (CGRect)convertRegion:(MKCoordinateRegion)region toRectToView:(UIView *)view
 	//	CGRect	cgRect = [mapView convertRegion:
+	return r;
 }
 
 
 // convert location (latitude, longitude) and span (in meters) to screen coordinates (i.e. pixels)
 ofRectangle ofxiPhoneMapKit::getScreenRectForRegionWithMeters(double latitude, double longitude, double metersLatitude, double metersLongitude) {
+	ofRectangle r;
+	return r;
 }
 
 

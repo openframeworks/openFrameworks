@@ -32,14 +32,14 @@
 			isa = PBXContainerItemProxy;
 			containerPortal = BB24E22F10DAA8A700E9C588 /* iPhone+OF Lib.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = BB24DED610DA7A3F00E9C588 /* libiPhone+OF_Debug.a */;
+			remoteGlobalIDString = BB24DED610DA7A3F00E9C588;
 			remoteInfo = "iPhone+OF Static Library";
 		};
 		BB24E23D10DAA93400E9C588 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = BB24E22F10DAA8A700E9C588 /* iPhone+OF Lib.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = BB24DE5C10DA7A3F00E9C588 /* iPhone+OF Static Library */;
+			remoteGlobalIDString = BB24DE5C10DA7A3F00E9C588;
 			remoteInfo = "iPhone+OF Static Library";
 		};
 /* End PBXContainerItemProxy section */
@@ -535,7 +535,13 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = iPhone_Prefix.pch;
 				GCC_THUMB_SUPPORT = NO;
-				HEADER_SEARCH_PATHS = "../../../libs/freetype/**";
+				HEADER_SEARCH_PATHS = (
+					"../../../addons/ofxAccelerometer/**",
+					"../../../addons/ofxMultitouch/**",
+					"../../../addons/ofxiPhone/**",
+					"../../../libs/openFrameworks/**",
+					"../../../libs/freetype/**",
+				);
 				INFOPLIST_FILE = "ofxiphone-Info.plist";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -573,7 +579,13 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = iPhone_Prefix.pch;
 				GCC_THUMB_SUPPORT = NO;
-				HEADER_SEARCH_PATHS = "../../../libs/freetype/**";
+				HEADER_SEARCH_PATHS = (
+					"../../../addons/ofxAccelerometer/**",
+					"../../../addons/ofxMultitouch/**",
+					"../../../addons/ofxiPhone/**",
+					"../../../libs/openFrameworks/**",
+					"../../../libs/freetype/**",
+				);
 				INFOPLIST_FILE = "ofxiphone-Info.plist";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -624,7 +636,13 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = iPhone_Prefix.pch;
 				GCC_THUMB_SUPPORT = NO;
-				HEADER_SEARCH_PATHS = "../../../libs/freetype/**";
+				HEADER_SEARCH_PATHS = (
+					"../../../addons/ofxAccelerometer/**",
+					"../../../addons/ofxMultitouch/**",
+					"../../../addons/ofxiPhone/**",
+					"../../../libs/openFrameworks/**",
+					"../../../libs/freetype/**",
+				);
 				INFOPLIST_FILE = "ofxiphone-Info.plist";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
