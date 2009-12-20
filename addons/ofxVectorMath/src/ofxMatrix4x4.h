@@ -123,6 +123,7 @@ public:
 	// init related to another matrix
 	bool makeInvertOf( const ofxMatrix4x4& rhs);
 	void makeOrthoNormalOf(const ofxMatrix4x4& rhs);
+	void makeFromMultiplicationOf( const ofxMatrix4x4&, const ofxMatrix4x4& );
 
 
 	//---------------------------------------------
@@ -241,14 +242,44 @@ public:
 
 
 	//---------------------------------------------
-	// matrix vector multiplication
-	// opengl uses premultiplication
+	// matrix - vector multiplication
+	// although opengl uses premultiplication
+	// because of the way matrices are used in opengl:
+	//
+	// ofxMatrix4x4				openGL
+	// [0]  [1]  [2]  [3]		[0] [4] [8]  [12]
+	// [4]  [5]  [6]  [7]		[1] [5] [9]  [13]
+	// [8]  [9]  [10] [11]		[2] [6] [10] [14]
+	// [12] [13] [14] [15]		[3] [7] [11] [15]
+	//
+	// in memory though both are layed in the same way
+	// so when uploading a matrix it just works without
+	// needing to transpose
+	//
+	// so although opengl docs explain transformations
+	// like:
+	//
+	// ofxVec3f c = rotateZ 30º ofxVec3f a around ofxVec3f b
+	//
+	// openGL docs says: c = T(b)*R(30)*a;
+	//
+	// with ofxMatrix4x4:
+	// ofxMatrix4x4 R = ofxMatrix4x4::newRotationMatrix(30,0,0,1);
+	// ofxMatrix4x4 T = ofxMatrix4x4::newTranlationMatrix(b);
+	// ofxVec3f c = a*R*T;
+	// where * is calling postMult
+
 	inline ofxVec3f preMult( const ofxVec3f& v ) const;
 	inline ofxVec3f postMult( const ofxVec3f& v ) const;
-	inline ofxVec3f operator* ( const ofxVec3f& v ) const;
+	inline ofxVec3f ofxMatrix4x4::operator* (const ofxVec3f& v) const {
+		return postMult(v);
+	}
+
 	inline ofxVec4f preMult( const ofxVec4f& v ) const;
 	inline ofxVec4f postMult( const ofxVec4f& v ) const;
-	inline ofxVec4f operator* ( const ofxVec4f& v ) const;
+	inline ofxVec4f ofxMatrix4x4::operator* (const ofxVec4f& v) const {
+		return postMult(v);
+	}
 
 
 	//---------------------------------------------
@@ -275,7 +306,6 @@ public:
 	inline static ofxVec3f transform3x3(const ofxMatrix4x4& m, const ofxVec3f& v);
 
 	// basic Matrixf multiplication, our workhorse methods.
-	void mult( const ofxMatrix4x4&, const ofxMatrix4x4& );
 	void preMult( const ofxMatrix4x4& );
 	void postMult( const ofxMatrix4x4& );
 
@@ -308,7 +338,7 @@ public:
 
 	inline ofxMatrix4x4 operator * ( const ofxMatrix4x4 &m ) const {
 		ofxMatrix4x4 r;
-		r.mult(*this, m);
+		r.makeFromMultiplicationOf(*this, m);
 		return  r;
 	}
 };
@@ -344,7 +374,7 @@ inline void ofxMatrix4x4::set(double const * const ptr) {
 	for (int i = 0;i < 16;++i) local_ptr[i] = (float)ptr[i];
 }
 
-bool ofxMatrix4x4::isIdentity() const {
+inline bool ofxMatrix4x4::isIdentity() const {
 	return _mat[0][0] == 1.0f && _mat[0][1] == 0.0f && _mat[0][2] == 0.0f &&  _mat[0][3] == 0.0f &&
 		   _mat[1][0] == 0.0f && _mat[1][1] == 1.0f && _mat[1][2] == 0.0f &&  _mat[1][3] == 0.0f &&
 		   _mat[2][0] == 0.0f && _mat[2][1] == 0.0f && _mat[2][2] == 1.0f &&  _mat[2][3] == 0.0f &&
@@ -639,11 +669,6 @@ inline ofxVec4f operator* (const ofxVec4f& v, const ofxMatrix4x4& m ) {
 	return m.preMult(v);
 }
 
-inline ofxVec3f ofxMatrix4x4::operator* (const ofxVec3f& v) const {
-	return postMult(v);
-}
-inline ofxVec4f ofxMatrix4x4::operator* (const ofxVec4f& v) const {
-	return postMult(v);
-}
+
 
 #endif
