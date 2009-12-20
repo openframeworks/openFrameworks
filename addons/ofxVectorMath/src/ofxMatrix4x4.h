@@ -12,7 +12,7 @@
 
 #include "ofxVec3f.h"
 #include "ofxVec4f.h"
-#include "ofxQuat.h"
+#include "ofxQuaternion.h"
 #include <cmath>
 
 
@@ -22,23 +22,27 @@ class ofxMatrix4x4 {
 public:
 	float _mat[4][4];
 
-	inline ofxMatrix4x4() {
-		makeIdentity();
+	//---------------------------------------------
+	// constructors
+	ofxMatrix4x4() {
+		makeIdentityMatrix();
 	}
-	inline ofxMatrix4x4( const ofxMatrix4x4& mat) {
+	ofxMatrix4x4( const ofxMatrix4x4& mat) {
 		set(mat.ptr());
 	}
-	inline explicit ofxMatrix4x4( float const * const ptr ) {
+	ofxMatrix4x4( float const * const ptr ) {
 		set(ptr);
 	}
-	inline explicit ofxMatrix4x4( const ofxQuat& quat ) {
-		makeRotate(quat);
+	ofxMatrix4x4( const ofxQuaternion& quat ) {
+		makeRotationMatrix(quat);
 	}
 	ofxMatrix4x4(	float a00, float a01, float a02, float a03,
 	              float a10, float a11, float a12, float a13,
 	              float a20, float a21, float a22, float a23,
 	              float a30, float a31, float a32, float a33);
 
+	//---------------------------------------------
+	// destructor
 	~ofxMatrix4x4() {}
 
 //	int compare(const ofxMatrix4x4& m) const;
@@ -47,48 +51,43 @@ public:
 //	bool operator == (const ofxMatrix4x4& m) const { return compare(m)==0; }
 //	bool operator != (const ofxMatrix4x4& m) const { return compare(m)!=0; }
 
-	inline float& operator()(int row, int col) {
-		return _mat[row][col];
-	}
-	inline float operator()(int row, int col) const {
+	//---------------------------------------------
+	// write data with matrix(row,col)=number
+	float& operator()(int row, int col) {
 		return _mat[row][col];
 	}
 
-	inline bool valid() const {
+	//---------------------------------------------
+	// read data with var=matrix(row,col)
+	float operator()(int row, int col) const {
+		return _mat[row][col];
+	}
+
+	//---------------------------------------------
+	// check if the matrix is valid
+	bool isValid() const {
 		return !isNaN();
 	}
-	inline bool isNaN() const {
-		return std::isnan(_mat[0][0]) || std::isnan(_mat[0][1]) || std::isnan(_mat[0][2]) || std::isnan(_mat[0][3]) ||
-		       std::isnan(_mat[1][0]) || std::isnan(_mat[1][1]) || std::isnan(_mat[1][2]) || std::isnan(_mat[1][3]) ||
-		       std::isnan(_mat[2][0]) || std::isnan(_mat[2][1]) || std::isnan(_mat[2][2]) || std::isnan(_mat[2][3]) ||
-		       std::isnan(_mat[3][0]) || std::isnan(_mat[3][1]) || std::isnan(_mat[3][2]) || std::isnan(_mat[3][3]);
-	}
 
-	inline ofxMatrix4x4& operator = (const ofxMatrix4x4& rhs) {
-		if ( &rhs == this ) return *this;
-		set(rhs.ptr());
-		return *this;
-	}
+	bool isNaN() const;
 
-	inline void set(const ofxMatrix4x4& rhs) {
-		set(rhs.ptr());
-	}
+	//---------------------------------------------
+	// copy a matrix using = operator
+	ofxMatrix4x4& operator = (const ofxMatrix4x4& rhs);
 
-	inline void set(float const * const ptr) {
-		float* local_ptr = (float*)_mat;
-		for (int i = 0;i < 16;++i) local_ptr[i] = (float)ptr[i];
-	}
-
-	inline void set(double const * const ptr) {
-		float* local_ptr = (float*)_mat;
-		for (int i = 0;i < 16;++i) local_ptr[i] = (float)ptr[i];
-	}
-
+	//---------------------------------------------
+	// methods to set the data of the matrix
+	void set(const ofxMatrix4x4& rhs);
+	void set(float const * const ptr);
+	void set(double const * const ptr);
 	void set(float a00, float a01, float a02, float a03,
 	         float a10, float a11, float a12, float a13,
 	         float a20, float a21, float a22, float a23,
 	         float a30, float a31, float a32, float a33);
 
+	//---------------------------------------------
+	// access the internal data in float* format
+	// useful for opengl matrix transformations
 	float * ptr() {
 		return (float*)_mat;
 	}
@@ -96,83 +95,74 @@ public:
 		return (const float *)_mat;
 	}
 
-	bool isIdentity() const {
-		return _mat[0][0] == 1.0f && _mat[0][1] == 0.0f && _mat[0][2] == 0.0f &&  _mat[0][3] == 0.0f &&
-		       _mat[1][0] == 0.0f && _mat[1][1] == 1.0f && _mat[1][2] == 0.0f &&  _mat[1][3] == 0.0f &&
-		       _mat[2][0] == 0.0f && _mat[2][1] == 0.0f && _mat[2][2] == 1.0f &&  _mat[2][3] == 0.0f &&
-		       _mat[3][0] == 0.0f && _mat[3][1] == 0.0f && _mat[3][2] == 0.0f &&  _mat[3][3] == 1.0f;
-	}
+	//---------------------------------------------
+	// check matrix identity
+	bool isIdentity() const;
 
 
-	void makeIdentity();
+	//---------------------------------------------
+	// init matrix as identity, scale, translation...
+	// all make* methods delete the current data
+	void makeIdentityMatrix();
 
-	void makeScale( const ofxVec3f& );
-	void makeScale( float, float, float );
+	void makeScaleMatrix( const ofxVec3f& );
+	void makeScaleMatrix( float, float, float );
 
-	void makeTranslate( const ofxVec3f& );
-	void makeTranslate( float, float, float );
+	void makeTranslationMatrix( const ofxVec3f& );
+	void makeTranslationMatrix( float, float, float );
 
-	void makeRotate( const ofxVec3f& from, const ofxVec3f& to );
-	void makeRotate( float angle, const ofxVec3f& axis );
-	void makeRotate( float angle, float x, float y, float z );
-	void makeRotate( const ofxQuat& );
-	void makeRotate( float angle1, const ofxVec3f& axis1,
+	void makeRotationMatrix( const ofxVec3f& from, const ofxVec3f& to );
+	void makeRotationMatrix( float angle, const ofxVec3f& axis );
+	void makeRotationMatrix( float angle, float x, float y, float z );
+	void makeRotationMatrix( const ofxQuaternion& );
+	void makeRotationMatrix( float angle1, const ofxVec3f& axis1,
 	                 float angle2, const ofxVec3f& axis2,
 	                 float angle3, const ofxVec3f& axis3);
 
 
-	/** decompose the matrix into translation, rotation, scale and scale orientation.*/
-	void decompose( ofxVec3f& translation,
-	                ofxQuat& rotation,
-	                ofxVec3f& scale,
-	                ofxQuat& so ) const;
+	// init related to another matrix
+	bool makeInvertOf( const ofxMatrix4x4& rhs);
+	void makeOrthoNormalOf(const ofxMatrix4x4& rhs);
 
 
-	/** Set to an orthographic projection.
-	 * See glOrtho for further details.
-	 */
-	void makeOrtho(double left,   double right,
+	//---------------------------------------------
+	// init as opengl related matrix for perspective settings
+	// see opengl docs of the related funciton for further details
+
+	// glOrtho
+	void makeOrthoMatrix(double left,   double right,
 	               double bottom, double top,
 	               double zNear,  double zFar);
 
-	/** Get the orthographic settings of the orthographic projection matrix.
-	 * Note, if matrix is not an orthographic matrix then invalid values
-	 * will be returned.
-	 */
+	// glOrtho2D
+	void makeOrtho2DMatrix(double left,   double right,
+	                        double bottom, double top);
+
+	// glFrustum
+	void makeFrustumMatrix(double left,   double right,
+	                 double bottom, double top,
+	                 double zNear,  double zFar);
+
+	// gluPerspective
+	// Aspect ratio is defined as width/height.
+	void makePerspectiveMatrix(double fovy,  double aspectRatio,
+						 double zNear, double zFar);
+
+	// gluLookAt.
+	void makeLookAtMatrix(const ofxVec3f& eye, const ofxVec3f& center, const ofxVec3f& up);
+
+
+	//---------------------------------------------
+	// Get the perspective components from a matrix
+	// this only works with pure perspective projection matrices
+
 	bool getOrtho(double& left,   double& right,
 	              double& bottom, double& top,
 	              double& zNear,  double& zFar) const;
 
-	/** Set to a 2D orthographic projection.
-	 * See glOrtho2D for further details.
-	 */
-	inline void makeOrtho2D(double left,   double right,
-	                        double bottom, double top) {
-		makeOrtho(left, right, bottom, top, -1.0, 1.0);
-	}
-
-
-	/** Set to a perspective projection.
-	 * See glFrustum for further details.
-	 */
-	void makeFrustum(double left,   double right,
-	                 double bottom, double top,
-	                 double zNear,  double zFar);
-
-	/** Get the frustum settings of a perspective projection matrix.
-	 * Note, if matrix is not a perspective matrix then invalid values
-	 * will be returned.
-	 */
 	bool getFrustum(double& left,   double& right,
 	                double& bottom, double& top,
 	                double& zNear,  double& zFar) const;
-
-	/** Set to a symmetrical perspective projection.
-	 * See gluPerspective for further details.
-	 * Aspect ratio is defined as width/height.
-	 */
-	void makePerspective(double fovy,  double aspectRatio,
-	                     double zNear, double zFar);
 
 	/** Get the frustum settings of a symmetric perspective projection
 	 * matrix.
@@ -187,83 +177,72 @@ public:
 	bool getPerspective(double& fovy,  double& aspectRatio,
 	                    double& zNear, double& zFar) const;
 
-	/** Set the position and orientation to be a view matrix,
-	 * using the same convention as gluLookAt.
-	 */
-	void makeLookAt(const ofxVec3f& eye, const ofxVec3f& center, const ofxVec3f& up);
-
-	/** Get to the position and orientation of a modelview matrix,
-	 * using the same convention as gluLookAt.
-	 */
+	// will only work for modelview matrices
 	void getLookAt(ofxVec3f& eye, ofxVec3f& center, ofxVec3f& up,
 	               float lookDistance = 1.0f) const;
 
-	/** invert the matrix rhs, automatically select invert_4x3 or invert_4x4. */
-	inline bool invert( const ofxMatrix4x4& rhs) {
-		bool is_4x3 = (rhs._mat[0][3] == 0.0f && rhs._mat[1][3] == 0.0f &&  rhs._mat[2][3] == 0.0f && rhs._mat[3][3] == 1.0f);
-		return is_4x3 ? invert_4x3(rhs) :  invert_4x4(rhs);
-	}
 
-	/** 4x3 matrix invert, not right hand column is assumed to be 0,0,0,1. */
-	bool invert_4x3( const ofxMatrix4x4& rhs);
 
-	/** full 4x4 matrix invert. */
-	bool invert_4x4( const ofxMatrix4x4& rhs);
+	//---------------------------------------------
+	// decompose the matrix into translation, rotation,
+	// scale and scale orientation.
+	void decompose( ofxVec3f& translation,
+					ofxQuaternion& rotation,
+					ofxVec3f& scale,
+					ofxQuaternion& so ) const;
 
-	/** ortho-normalize the 3x3 rotation & scale matrix */
-	void orthoNormalize(const ofxMatrix4x4& rhs);
 
-	//basic utility functions to create new matrices
-	inline static ofxMatrix4x4 identity( void );
-	inline static ofxMatrix4x4 scale( const ofxVec3f& sv);
-	inline static ofxMatrix4x4 scale( float sx, float sy, float sz);
-	inline static ofxMatrix4x4 translate( const ofxVec3f& dv);
-	inline static ofxMatrix4x4 translate( float x, float y, float z);
-	inline static ofxMatrix4x4 rotate( const ofxVec3f& from, const ofxVec3f& to);
-	inline static ofxMatrix4x4 rotate( float angle, float x, float y, float z);
-	inline static ofxMatrix4x4 rotate( float angle, const ofxVec3f& axis);
-	inline static ofxMatrix4x4 rotate( float angle1, const ofxVec3f& axis1,
+	//---------------------------------------------
+	// basic utility functions to create new matrices
+	inline static ofxMatrix4x4 newIdentityMatrix( void );
+	inline static ofxMatrix4x4 newScaleMatrix( const ofxVec3f& sv);
+	inline static ofxMatrix4x4 newScaleMatrix( float sx, float sy, float sz);
+	inline static ofxMatrix4x4 newTranslationMatrix( const ofxVec3f& dv);
+	inline static ofxMatrix4x4 newTranslationMatrix( float x, float y, float z);
+	inline static ofxMatrix4x4 newRotationMatrix( const ofxVec3f& from, const ofxVec3f& to);
+	inline static ofxMatrix4x4 newRotationMatrix( float angle, float x, float y, float z);
+	inline static ofxMatrix4x4 newRotationMatrix( float angle, const ofxVec3f& axis);
+	inline static ofxMatrix4x4 newRotationMatrix( float angle1, const ofxVec3f& axis1,
 	                                   float angle2, const ofxVec3f& axis2,
 	                                   float angle3, const ofxVec3f& axis3);
-	inline static ofxMatrix4x4 rotate( const ofxQuat& quat);
-	inline static ofxMatrix4x4 inverse( const ofxMatrix4x4& matrix);
-	inline static ofxMatrix4x4 transpose( const ofxMatrix4x4& matrix);
-	inline static ofxMatrix4x4 orthoNormal(const ofxMatrix4x4& matrix);
+	inline static ofxMatrix4x4 newRotationMatrix( const ofxQuaternion& quat);
 
-	/** Create an orthographic projection matrix.
-	 * See glOrtho for further details.
-	 */
-	inline static ofxMatrix4x4 ortho(double left,   double right,
+
+	// create new matrices as transformation of another
+	inline static ofxMatrix4x4 getInverseOf( const ofxMatrix4x4& matrix);
+	inline static ofxMatrix4x4 getTransposedOf( const ofxMatrix4x4& matrix);
+	inline static ofxMatrix4x4 getOrthoNormalOf(const ofxMatrix4x4& matrix);
+
+
+	// create new matrices related to glFunctions
+
+	// glOrtho
+	inline static ofxMatrix4x4 newOrthoMatrix(double left,   double right,
 	                                 double bottom, double top,
 	                                 double zNear,  double zFar);
 
-	/** Create a 2D orthographic projection.
-	 * See glOrtho for further details.
-	 */
-	inline static ofxMatrix4x4 ortho2D(double left,   double right,
+	// glOrtho2D
+	inline static ofxMatrix4x4 newOrtho2DMatrix(double left,   double right,
 	                                   double bottom, double top);
 
-	/** Create a perspective projection.
-	 * See glFrustum for further details.
-	 */
-	inline static ofxMatrix4x4 frustum(double left,   double right,
+	// glFrustum
+	inline static ofxMatrix4x4 newFrustumMatrix(double left,   double right,
 	                                   double bottom, double top,
 	                                   double zNear,  double zFar);
 
-	/** Create a symmetrical perspective projection.
-	 * See gluPerspective for further details.
-	 * Aspect ratio is defined as width/height.
-	 */
-	inline static ofxMatrix4x4 perspective(double fovy,  double aspectRatio,
+	// gluPerspective
+	inline static ofxMatrix4x4 newPerspectiveMatrix(double fovy,  double aspectRatio,
 	                                       double zNear, double zFar);
 
-	/** Create the position and orientation as per a camera,
-	 * using the same convention as gluLookAt.
-	 */
-	inline static ofxMatrix4x4 lookAt(const ofxVec3f& eye,
+	// gluLookAt
+	inline static ofxMatrix4x4 newLookAtMatrix(const ofxVec3f& eye,
 	                                  const ofxVec3f& center,
 	                                  const ofxVec3f& up);
 
+
+	//---------------------------------------------
+	// matrix vector multiplication
+	// opengl uses premultiplication
 	inline ofxVec3f preMult( const ofxVec3f& v ) const;
 	inline ofxVec3f postMult( const ofxVec3f& v ) const;
 	inline ofxVec3f operator* ( const ofxVec3f& v ) const;
@@ -271,32 +250,28 @@ public:
 	inline ofxVec4f postMult( const ofxVec4f& v ) const;
 	inline ofxVec4f operator* ( const ofxVec4f& v ) const;
 
-	void setRotate(const ofxQuat& q);
-	/** Get the matrix rotation as a Quat. Note that this function
-	 * assumes a non-scaled matrix and will return incorrect results
-	 * for scaled matrixces. Consider decompose() instead.
-	 */
-	ofxQuat getRotate() const;
+
+	//---------------------------------------------
+	// set methods: all these alter the components
+	// deleting the previous data only in that components
+	void setRotate(const ofxQuaternion& q);
+	void setTranslation( float tx, float ty, float tz );
+	void setTranslation( const ofxVec3f& v );
+
+	//---------------------------------------------
+	// get methods: return matrix components
+	// rotation and scale can only be used if the matrix
+	// only has rotation or scale.
+	// for matrices with both use decompose instead.
+	ofxQuaternion getRotate() const;
+	ofxVec3f getTranslation() const;
+	ofxVec3f getScale() const;
 
 
-	void setTrans( float tx, float ty, float tz );
-	void setTrans( const ofxVec3f& v );
-
-	inline ofxVec3f getTrans() const {
-		return ofxVec3f(_mat[3][0], _mat[3][1], _mat[3][2]);
-	}
-
-	inline ofxVec3f getScale() const {
-		ofxVec3f x_vec(_mat[0][0], _mat[1][0], _mat[2][0]);
-		ofxVec3f y_vec(_mat[0][1], _mat[1][1], _mat[2][1]);
-		ofxVec3f z_vec(_mat[0][2], _mat[1][2], _mat[2][2]);
-		return ofxVec3f(x_vec.length(), y_vec.length(), z_vec.length());
-	}
-
-	/** apply a 3x3 transform of v*M[0..2,0..2]. */
+	// apply a 3x3 transform of v*M[0..2,0..2].
 	inline static ofxVec3f transform3x3(const ofxVec3f& v, const ofxMatrix4x4& m);
 
-	/** apply a 3x3 transform of M[0..2,0..2]*v. */
+	// apply a 3x3 transform of M[0..2,0..2]*v.
 	inline static ofxVec3f transform3x3(const ofxMatrix4x4& m, const ofxVec3f& v);
 
 	// basic Matrixf multiplication, our workhorse methods.
@@ -315,9 +290,9 @@ public:
 	inline void postMultScale( const ofxVec3f& v );
 
 	/** Optimized version of preMult(rotate(q)); */
-	inline void preMultRotate( const ofxQuat& q );
+	inline void preMultRotate( const ofxQuaternion& q );
 	/** Optimized version of postMult(rotate(q)); */
-	inline void postMultRotate( const ofxQuat& q );
+	inline void postMultRotate( const ofxQuaternion& q );
 
 	// AARON METHODS
 	inline void postMultTranslate(float x, float y, float z);
@@ -339,67 +314,119 @@ public:
 };
 
 
+//--------------------------------------------------
+// implementation of inline methods
+
+inline bool ofxMatrix4x4::isNaN() const {
+	return std::isnan(_mat[0][0]) || std::isnan(_mat[0][1]) || std::isnan(_mat[0][2]) || std::isnan(_mat[0][3]) ||
+	       std::isnan(_mat[1][0]) || std::isnan(_mat[1][1]) || std::isnan(_mat[1][2]) || std::isnan(_mat[1][3]) ||
+	       std::isnan(_mat[2][0]) || std::isnan(_mat[2][1]) || std::isnan(_mat[2][2]) || std::isnan(_mat[2][3]) ||
+	       std::isnan(_mat[3][0]) || std::isnan(_mat[3][1]) || std::isnan(_mat[3][2]) || std::isnan(_mat[3][3]);
+}
+
+inline ofxMatrix4x4& ofxMatrix4x4::operator = (const ofxMatrix4x4& rhs) {
+	if ( &rhs == this ) return *this;
+	set(rhs.ptr());
+	return *this;
+}
+
+inline void ofxMatrix4x4::set(const ofxMatrix4x4& rhs) {
+	set(rhs.ptr());
+}
+
+inline void ofxMatrix4x4::set(float const * const ptr) {
+	float* local_ptr = (float*)_mat;
+	for (int i = 0;i < 16;++i) local_ptr[i] = (float)ptr[i];
+}
+
+inline void ofxMatrix4x4::set(double const * const ptr) {
+	float* local_ptr = (float*)_mat;
+	for (int i = 0;i < 16;++i) local_ptr[i] = (float)ptr[i];
+}
+
+bool ofxMatrix4x4::isIdentity() const {
+	return _mat[0][0] == 1.0f && _mat[0][1] == 0.0f && _mat[0][2] == 0.0f &&  _mat[0][3] == 0.0f &&
+		   _mat[1][0] == 0.0f && _mat[1][1] == 1.0f && _mat[1][2] == 0.0f &&  _mat[1][3] == 0.0f &&
+		   _mat[2][0] == 0.0f && _mat[2][1] == 0.0f && _mat[2][2] == 1.0f &&  _mat[2][3] == 0.0f &&
+		   _mat[3][0] == 0.0f && _mat[3][1] == 0.0f && _mat[3][2] == 0.0f &&  _mat[3][3] == 1.0f;
+}
+
+inline void ofxMatrix4x4::makeOrtho2DMatrix(double left,   double right,
+	                        double bottom, double top) {
+	makeOrthoMatrix(left, right, bottom, top, -1.0, 1.0);
+}
+
+inline ofxVec3f ofxMatrix4x4::getTranslation() const {
+	return ofxVec3f(_mat[3][0], _mat[3][1], _mat[3][2]);
+}
+
+inline ofxVec3f ofxMatrix4x4::getScale() const {
+	ofxVec3f x_vec(_mat[0][0], _mat[1][0], _mat[2][0]);
+	ofxVec3f y_vec(_mat[0][1], _mat[1][1], _mat[2][1]);
+	ofxVec3f z_vec(_mat[0][2], _mat[1][2], _mat[2][2]);
+	return ofxVec3f(x_vec.length(), y_vec.length(), z_vec.length());
+}
 
 //static utility methods
-inline ofxMatrix4x4 ofxMatrix4x4::identity(void) {
+inline ofxMatrix4x4 ofxMatrix4x4::newIdentityMatrix(void) {
 	ofxMatrix4x4 m;
-	m.makeIdentity();
+	m.makeIdentityMatrix();
 	return m;
 }
 
-inline ofxMatrix4x4 ofxMatrix4x4::scale(float sx, float sy, float sz) {
+inline ofxMatrix4x4 ofxMatrix4x4::newScaleMatrix(float sx, float sy, float sz) {
 	ofxMatrix4x4 m;
-	m.makeScale(sx, sy, sz);
+	m.makeScaleMatrix(sx, sy, sz);
 	return m;
 }
 
-inline ofxMatrix4x4 ofxMatrix4x4::scale(const ofxVec3f& v ) {
-	return scale(v.x, v.y, v.z );
+inline ofxMatrix4x4 ofxMatrix4x4::newScaleMatrix(const ofxVec3f& v ) {
+	return newScaleMatrix(v.x, v.y, v.z );
 }
 
-inline ofxMatrix4x4 ofxMatrix4x4::translate(float tx, float ty, float tz) {
+inline ofxMatrix4x4 ofxMatrix4x4::newTranslationMatrix(float tx, float ty, float tz) {
 	ofxMatrix4x4 m;
-	m.makeTranslate(tx, ty, tz);
+	m.makeTranslationMatrix(tx, ty, tz);
 	return m;
 }
 
-inline ofxMatrix4x4 ofxMatrix4x4::translate(const ofxVec3f& v ) {
-	return translate(v.x, v.y, v.z );
+inline ofxMatrix4x4 ofxMatrix4x4::newTranslationMatrix(const ofxVec3f& v ) {
+	return newTranslationMatrix(v.x, v.y, v.z );
 }
 
-inline ofxMatrix4x4 ofxMatrix4x4::rotate( const ofxQuat& q ) {
+inline ofxMatrix4x4 ofxMatrix4x4::newRotationMatrix( const ofxQuaternion& q ) {
 	return ofxMatrix4x4(q);
 }
-inline ofxMatrix4x4 ofxMatrix4x4::rotate(float angle, float x, float y, float z ) {
+inline ofxMatrix4x4 ofxMatrix4x4::newRotationMatrix(float angle, float x, float y, float z ) {
 	ofxMatrix4x4 m;
-	m.makeRotate(angle, x, y, z);
+	m.makeRotationMatrix(angle, x, y, z);
 	return m;
 }
-inline ofxMatrix4x4 ofxMatrix4x4::rotate(float angle, const ofxVec3f& axis ) {
+inline ofxMatrix4x4 ofxMatrix4x4::newRotationMatrix(float angle, const ofxVec3f& axis ) {
 	ofxMatrix4x4 m;
-	m.makeRotate(angle, axis);
+	m.makeRotationMatrix(angle, axis);
 	return m;
 }
-inline ofxMatrix4x4 ofxMatrix4x4::rotate(	float angle1, const ofxVec3f& axis1,
+inline ofxMatrix4x4 ofxMatrix4x4::newRotationMatrix(	float angle1, const ofxVec3f& axis1,
     float angle2, const ofxVec3f& axis2,
     float angle3, const ofxVec3f& axis3) {
 	ofxMatrix4x4 m;
-	m.makeRotate(angle1, axis1, angle2, axis2, angle3, axis3);
+	m.makeRotationMatrix(angle1, axis1, angle2, axis2, angle3, axis3);
 	return m;
 }
-inline ofxMatrix4x4 ofxMatrix4x4::rotate(const ofxVec3f& from, const ofxVec3f& to ) {
+inline ofxMatrix4x4 ofxMatrix4x4::newRotationMatrix(const ofxVec3f& from, const ofxVec3f& to ) {
 	ofxMatrix4x4 m;
-	m.makeRotate(from, to);
+	m.makeRotationMatrix(from, to);
 	return m;
 }
 
-inline ofxMatrix4x4 ofxMatrix4x4::inverse( const ofxMatrix4x4& matrix) {
+inline ofxMatrix4x4 ofxMatrix4x4::getInverseOf( const ofxMatrix4x4& matrix) {
 	ofxMatrix4x4 m;
-	m.invert(matrix);
+	m.makeInvertOf(matrix);
 	return m;
 }
 
-inline ofxMatrix4x4 ofxMatrix4x4::transpose( const ofxMatrix4x4& matrix) {
+inline ofxMatrix4x4 ofxMatrix4x4::getTransposedOf( const ofxMatrix4x4& matrix) {
 	ofxMatrix4x4 m(matrix._mat[0][0], matrix._mat[1][0], matrix._mat[2][0],
 	               matrix._mat[3][0], matrix._mat[0][1], matrix._mat[1][1], matrix._mat[2][1],
 	               matrix._mat[3][1], matrix._mat[0][2], matrix._mat[1][2], matrix._mat[2][2],
@@ -408,45 +435,45 @@ inline ofxMatrix4x4 ofxMatrix4x4::transpose( const ofxMatrix4x4& matrix) {
 	return m;
 }
 
-inline ofxMatrix4x4 ofxMatrix4x4::orthoNormal(const ofxMatrix4x4& matrix) {
+inline ofxMatrix4x4 ofxMatrix4x4::getOrthoNormalOf(const ofxMatrix4x4& matrix) {
 	ofxMatrix4x4 m;
-	m.orthoNormalize(matrix);
+	m.makeOrthoNormalOf(matrix);
 	return m;
 }
 
-inline ofxMatrix4x4 ofxMatrix4x4::ortho(double left, double right,
+inline ofxMatrix4x4 ofxMatrix4x4::newOrthoMatrix(double left, double right,
                                         double bottom, double top,
                                         double zNear, double zFar) {
 	ofxMatrix4x4 m;
-	m.makeOrtho(left, right, bottom, top, zNear, zFar);
+	m.makeOrthoMatrix(left, right, bottom, top, zNear, zFar);
 	return m;
 }
 
-inline ofxMatrix4x4 ofxMatrix4x4::ortho2D(double left, double right,
+inline ofxMatrix4x4 ofxMatrix4x4::newOrtho2DMatrix(double left, double right,
     double bottom, double top) {
 	ofxMatrix4x4 m;
-	m.makeOrtho2D(left, right, bottom, top);
+	m.makeOrtho2DMatrix(left, right, bottom, top);
 	return m;
 }
 
-inline ofxMatrix4x4 ofxMatrix4x4::frustum(double left, double right,
+inline ofxMatrix4x4 ofxMatrix4x4::newFrustumMatrix(double left, double right,
     double bottom, double top,
     double zNear, double zFar) {
 	ofxMatrix4x4 m;
-	m.makeFrustum(left, right, bottom, top, zNear, zFar);
+	m.makeFrustumMatrix(left, right, bottom, top, zNear, zFar);
 	return m;
 }
 
-inline ofxMatrix4x4 ofxMatrix4x4::perspective(double fovy, double aspectRatio,
+inline ofxMatrix4x4 ofxMatrix4x4::newPerspectiveMatrix(double fovy, double aspectRatio,
     double zNear, double zFar) {
 	ofxMatrix4x4 m;
-	m.makePerspective(fovy, aspectRatio, zNear, zFar);
+	m.makePerspectiveMatrix(fovy, aspectRatio, zNear, zFar);
 	return m;
 }
 
-inline ofxMatrix4x4 ofxMatrix4x4::lookAt(const ofxVec3f& eye, const ofxVec3f& center, const ofxVec3f& up) {
+inline ofxMatrix4x4 ofxMatrix4x4::newLookAtMatrix(const ofxVec3f& eye, const ofxVec3f& center, const ofxVec3f& up) {
 	ofxMatrix4x4 m;
-	m.makeLookAt(eye, center, up);
+	m.makeLookAtMatrix(eye, center, up);
 	return m;
 }
 
@@ -582,7 +609,7 @@ inline void ofxMatrix4x4::postMultScale( float x, float y, float z ) {
 }
 
 
-inline void ofxMatrix4x4::preMultRotate( const ofxQuat& q ) {
+inline void ofxMatrix4x4::preMultRotate( const ofxQuaternion& q ) {
 	if (q.zeroRotation())
 		return;
 	ofxMatrix4x4 r;
@@ -590,7 +617,7 @@ inline void ofxMatrix4x4::preMultRotate( const ofxQuat& q ) {
 	preMult(r);
 }
 
-inline void ofxMatrix4x4::postMultRotate( const ofxQuat& q ) {
+inline void ofxMatrix4x4::postMultRotate( const ofxQuaternion& q ) {
 	if (q.zeroRotation())
 		return;
 	ofxMatrix4x4 r;
@@ -601,7 +628,7 @@ inline void ofxMatrix4x4::postMultRotate( const ofxQuat& q ) {
 // AARON METHOD
 inline void ofxMatrix4x4::postMultRotate(float angle, float x, float y, float z) {
 	ofxMatrix4x4 r;
-	r.makeRotate(angle, x, y, z);
+	r.makeRotationMatrix(angle, x, y, z);
 	postMult(r);
 }
 
