@@ -398,7 +398,7 @@ void ofxMatrix4x4::makeRotationMatrix( float angle1, const ofxVec3f& axis1,
     setRotate(quat);
 }
 
-void ofxMatrix4x4::mult( const ofxMatrix4x4& lhs, const ofxMatrix4x4& rhs )
+void ofxMatrix4x4::makeFromMultiplicationOf( const ofxMatrix4x4& lhs, const ofxMatrix4x4& rhs )
 {
     if (&lhs==this)
     {
