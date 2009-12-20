@@ -1,5 +1,5 @@
 /*
- *  ofxQuat.h
+ *  ofxQuaternion.h
  *  splineTest
  *
  *  Created by Aaron Meyers on 6/22/09.
@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _OFX_QUAT
-#define _OFX_QUAT 1
+#ifndef _OFX_QUATERNION
+#define _OFX_QUATERNION
 
 #include "ofxVec3f.h"
 #include "ofxVec4f.h"
@@ -16,41 +16,41 @@
 
 class ofxMatrix4x4;
 
-class ofxQuat {
+class ofxQuaternion {
 public:
 	float _v[4];
 
-	inline ofxQuat() {
+	inline ofxQuaternion() {
 		_v[0] = 0.0f;
 		_v[1] = 0.0f;
 		_v[2] = 0.0f;
 		_v[3] = 1.0f;
 	}
-	inline ofxQuat( float x, float y, float z, float w ) {
+	inline ofxQuaternion( float x, float y, float z, float w ) {
 		_v[0] = x;
 		_v[1] = y;
 		_v[2] = z;
 		_v[3] = w;
 	}
 
-	inline ofxQuat( const ofxVec4f& v ) {
+	inline ofxQuaternion( const ofxVec4f& v ) {
 		_v[0] = v.x;
 		_v[1] = v.y;
 		_v[2] = v.z;
 		_v[3] = v.w;
 	}
 
-	inline ofxQuat( float angle, const ofxVec3f& axis) {
+	inline ofxQuaternion( float angle, const ofxVec3f& axis) {
 		makeRotate(angle, axis);
 	}
 
-	inline ofxQuat( float angle1, const ofxVec3f& axis1,
+	inline ofxQuaternion( float angle1, const ofxVec3f& axis1,
 	                float angle2, const ofxVec3f& axis2,
 	                float angle3, const ofxVec3f& axis3) {
 		makeRotate(angle1, axis1, angle2, axis2, angle3, axis3);
 	}
 
-	inline ofxQuat& operator = (const ofxQuat& v) {
+	inline ofxQuaternion& operator = (const ofxQuaternion& v) {
 		_v[0] = v._v[0];
 		_v[1] = v._v[1];
 		_v[2] = v._v[2];
@@ -58,15 +58,15 @@ public:
 		return *this;
 	}
 
-	inline bool operator == (const ofxQuat& v) const {
+	inline bool operator == (const ofxQuaternion& v) const {
 		return _v[0] == v._v[0] && _v[1] == v._v[1] && _v[2] == v._v[2] && _v[3] == v._v[3];
 	}
 
-	inline bool operator != (const ofxQuat& v) const {
+	inline bool operator != (const ofxQuaternion& v) const {
 		return _v[0] != v._v[0] || _v[1] != v._v[1] || _v[2] != v._v[2] || _v[3] != v._v[3];
 	}
 
-	inline bool operator <  (const ofxQuat& v) const {
+	inline bool operator <  (const ofxQuaternion& v) const {
 		if (_v[0] < v._v[0]) return true;
 		else if (_v[0] > v._v[0]) return false;
 		else if (_v[1] < v._v[1]) return true;
@@ -156,12 +156,12 @@ public:
 	 Also define methods for conjugate and the multiplicative inverse.
 	 ------------------------------------------------------------- */
 	/// Multiply by scalar
-	inline const ofxQuat operator * (float rhs) const {
-		return ofxQuat(_v[0]*rhs, _v[1]*rhs, _v[2]*rhs, _v[3]*rhs);
+	inline const ofxQuaternion operator * (float rhs) const {
+		return ofxQuaternion(_v[0]*rhs, _v[1]*rhs, _v[2]*rhs, _v[3]*rhs);
 	}
 
 	/// Unary multiply by scalar
-	inline ofxQuat& operator *= (float rhs) {
+	inline ofxQuaternion& operator *= (float rhs) {
 		_v[0] *= rhs;
 		_v[1] *= rhs;
 		_v[2] *= rhs;
@@ -170,15 +170,15 @@ public:
 	}
 
 	/// Binary multiply
-	inline const ofxQuat operator*(const ofxQuat& rhs) const {
-		return ofxQuat( rhs._v[3]*_v[0] + rhs._v[0]*_v[3] + rhs._v[1]*_v[2] - rhs._v[2]*_v[1],
+	inline const ofxQuaternion operator*(const ofxQuaternion& rhs) const {
+		return ofxQuaternion( rhs._v[3]*_v[0] + rhs._v[0]*_v[3] + rhs._v[1]*_v[2] - rhs._v[2]*_v[1],
 		                rhs._v[3]*_v[1] - rhs._v[0]*_v[2] + rhs._v[1]*_v[3] + rhs._v[2]*_v[0],
 		                rhs._v[3]*_v[2] + rhs._v[0]*_v[1] - rhs._v[1]*_v[0] + rhs._v[2]*_v[3],
 		                rhs._v[3]*_v[3] - rhs._v[0]*_v[0] - rhs._v[1]*_v[1] - rhs._v[2]*_v[2] );
 	}
 
 	/// Unary multiply
-	inline ofxQuat& operator*=(const ofxQuat& rhs) {
+	inline ofxQuaternion& operator*=(const ofxQuaternion& rhs) {
 		float x = rhs._v[3] * _v[0] + rhs._v[0] * _v[3] + rhs._v[1] * _v[2] - rhs._v[2] * _v[1];
 		float y = rhs._v[3] * _v[1] - rhs._v[0] * _v[2] + rhs._v[1] * _v[3] + rhs._v[2] * _v[0];
 		float z = rhs._v[3] * _v[2] + rhs._v[0] * _v[1] - rhs._v[1] * _v[0] + rhs._v[2] * _v[3];
@@ -192,13 +192,13 @@ public:
 	}
 
 	/// Divide by scalar
-	inline ofxQuat operator / (float rhs) const {
+	inline ofxQuaternion operator / (float rhs) const {
 		float div = 1.0 / rhs;
-		return ofxQuat(_v[0]*div, _v[1]*div, _v[2]*div, _v[3]*div);
+		return ofxQuaternion(_v[0]*div, _v[1]*div, _v[2]*div, _v[3]*div);
 	}
 
 	/// Unary divide by scalar
-	inline ofxQuat& operator /= (float rhs) {
+	inline ofxQuaternion& operator /= (float rhs) {
 		float div = 1.0 / rhs;
 		_v[0] *= div;
 		_v[1] *= div;
@@ -208,24 +208,24 @@ public:
 	}
 
 	/// Binary divide
-	inline const ofxQuat operator/(const ofxQuat& denom) const {
+	inline const ofxQuaternion operator/(const ofxQuaternion& denom) const {
 		return ( (*this) * denom.inverse() );
 	}
 
 	/// Unary divide
-	inline ofxQuat& operator/=(const ofxQuat& denom) {
+	inline ofxQuaternion& operator/=(const ofxQuaternion& denom) {
 		(*this) = (*this) * denom.inverse();
 		return (*this);            // enable nesting
 	}
 
 	/// Binary addition
-	inline const ofxQuat operator + (const ofxQuat& rhs) const {
-		return ofxQuat(_v[0] + rhs._v[0], _v[1] + rhs._v[1],
+	inline const ofxQuaternion operator + (const ofxQuaternion& rhs) const {
+		return ofxQuaternion(_v[0] + rhs._v[0], _v[1] + rhs._v[1],
 		               _v[2] + rhs._v[2], _v[3] + rhs._v[3]);
 	}
 
 	/// Unary addition
-	inline ofxQuat& operator += (const ofxQuat& rhs) {
+	inline ofxQuaternion& operator += (const ofxQuaternion& rhs) {
 		_v[0] += rhs._v[0];
 		_v[1] += rhs._v[1];
 		_v[2] += rhs._v[2];
@@ -234,13 +234,13 @@ public:
 	}
 
 	/// Binary subtraction
-	inline const ofxQuat operator - (const ofxQuat& rhs) const {
-		return ofxQuat(_v[0] - rhs._v[0], _v[1] - rhs._v[1],
+	inline const ofxQuaternion operator - (const ofxQuaternion& rhs) const {
+		return ofxQuaternion(_v[0] - rhs._v[0], _v[1] - rhs._v[1],
 		               _v[2] - rhs._v[2], _v[3] - rhs._v[3] );
 	}
 
 	/// Unary subtraction
-	inline ofxQuat& operator -= (const ofxQuat& rhs) {
+	inline ofxQuaternion& operator -= (const ofxQuaternion& rhs) {
 		_v[0] -= rhs._v[0];
 		_v[1] -= rhs._v[1];
 		_v[2] -= rhs._v[2];
@@ -250,8 +250,8 @@ public:
 
 	/** Negation operator - returns the negative of the quaternion.
 	 Basically just calls operator - () on the Vec4 */
-	inline const ofxQuat operator - () const {
-		return ofxQuat (-_v[0], -_v[1], -_v[2], -_v[3]);
+	inline const ofxQuaternion operator - () const {
+		return ofxQuaternion (-_v[0], -_v[1], -_v[2], -_v[3]);
 	}
 
 	/// Length of the quaternion = sqrt( vec . vec )
@@ -265,12 +265,12 @@ public:
 	}
 
 	/// Conjugate
-	inline ofxQuat conj () const {
-		return ofxQuat( -_v[0], -_v[1], -_v[2], _v[3] );
+	inline ofxQuaternion conj () const {
+		return ofxQuaternion( -_v[0], -_v[1], -_v[2], _v[3] );
 	}
 
 	/// Multiplicative inverse method: q^(-1) = q^*/(q.q^*)
-	inline const ofxQuat inverse () const {
+	inline const ofxQuaternion inverse () const {
 		return conj() / length2();
 	}
 
@@ -308,7 +308,7 @@ public:
 
 	/** Spherical Linear Interpolation.
 	 As t goes from 0 to 1, the Quat object goes from "from" to "to". */
-	void slerp   ( float  t, const ofxQuat& from, const ofxQuat& to);
+	void slerp   ( float  t, const ofxQuaternion& from, const ofxQuaternion& to);
 
 	/** Rotate a vector by this quaternion.*/
 	ofxVec3f operator* (const ofxVec3f& v) const {
