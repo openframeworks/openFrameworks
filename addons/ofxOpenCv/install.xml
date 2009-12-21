@@ -1,0 +1,55 @@
+<install>
+    <name>ofxOpenCv</name>
+	<version>0.02</version>
+	<author>zach lieberman, stefan hechenberger</author>
+	<url></url>
+
+	<add>
+
+		<!-- 	=====================================================================	-->
+		<!--	========================== add per project using this addon =========	-->
+		<!-- 	=====================================================================	-->
+
+		<src>
+			<folder name="addons/ofxOpenCv/src">						
+				<file>../../../addons/ofxOpenCv/src/ofxCvBlob.h</file>
+				<file>../../../addons/ofxOpenCv/src/ofxCvColorImage.cpp</file>
+				<file>../../../addons/ofxOpenCv/src/ofxCvColorImage.h</file>
+				<file>../../../addons/ofxOpenCv/src/ofxCvConstants.h</file>
+				<file>../../../addons/ofxOpenCv/src/ofxCvContourFinder.cpp</file>
+				<file>../../../addons/ofxOpenCv/src/ofxCvContourFinder.h</file>
+				<file>../../../addons/ofxOpenCv/src/ofxCvFloatImage.cpp</file>
+				<file>../../../addons/ofxOpenCv/src/ofxCvFloatImage.h</file>
+				<file>../../../addons/ofxOpenCv/src/ofxCvGrayscaleImage.cpp</file>
+				<file>../../../addons/ofxOpenCv/src/ofxCvGrayscaleImage.h</file>
+				<file>../../../addons/ofxOpenCv/src/ofxCvImage.cpp</file>
+				<file>../../../addons/ofxOpenCv/src/ofxCvImage.h</file>
+				<file>../../../addons/ofxOpenCv/src/ofxCvMain.h</file>
+				<file>../../../addons/ofxOpenCv/src/ofxCvShortImage.cpp</file>
+				<file>../../../addons/ofxOpenCv/src/ofxCvShortImage.h</file>				
+				<file>../../../addons/ofxOpenCv/src/ofxOpenCv.h</file>
+			</folder>
+		</src>
+
+		<include>
+			<path>../../../addons/ofxOpenCv/src</path>
+			<path>../../../addons/ofxOpenCv/libs/opencv/include</path>
+		</include>
+		
+
+		<link>
+			<lib os="win32" compiler="codeblocks">../../../addons/ofxOpenCv/libs/opencv/lib/win32/libcv.a</lib>
+			<lib os="win32" compiler="codeblocks">../../../addons/ofxOpenCv/libs/opencv/lib/win32/libcxcore.a</lib>
+			<lib os="win32" compiler="visualstudio">../../../addons/ofxOpenCv/libs/opencv/lib/win32/cv110.lib</lib>
+			<lib os="win32" compiler="visualstudio">../../../addons/ofxOpenCv/libs/opencv/lib/win32/cxcore110.lib</lib>
+			<lib os="mac"   compiler="xcode">../../../addons/ofxOpenCv/libs/opencv/lib/osx/libOpenCv.a</lib>
+			<lib os="linux" compiler="codeblocks, makefile">../../../addons/ofxOpenCv/libs/opencv/lib/linux/libcv.a</lib>
+			<lib os="linux" compiler="codeblocks, makefile">../../../addons/ofxOpenCv/libs/opencv/lib/linux/libcxcore.a</lib>
+			<lib os="linux64" compiler="codeblocks, makefile">../../../addons/ofxOpenCv/libs/opencv/lib/linux64/libcv.a</lib>
+			<lib os="linux64" compiler="codeblocks, makefile">../../../addons/ofxOpenCv/libs/opencv/lib/linux64/libcxcore.a</lib>
+		</link>
+		
+	</add>
+	
+	
+</install>

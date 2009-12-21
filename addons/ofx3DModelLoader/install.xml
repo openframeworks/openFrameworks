@@ -1,0 +1,33 @@
+<install>
+    <name>ofx3DModelLoader</name>
+	
+	<version>0.01</version>
+	<author>theo watson</author>
+	<url></url>
+	
+	<add>	
+		<!-- 	=====================================================================	-->
+		<!--	========================== add per project using this addon =========	-->
+		<!-- 	=====================================================================	-->
+	
+		<src>
+			<folder name="addons/ofxDirList/src">
+				<file>../../../addons/ofx3DModelLoader/src/ofx3DBaseLoader.h</file>
+				<file>../../../addons/ofx3DModelLoader/src/ofx3dModelLoader.cpp</file>
+				<file>../../../addons/ofx3DModelLoader/src/ofx3DModelLoader.h</file>
+				<file>../../../addons/ofx3DModelLoader/src/3DS/model3DS.cpp</file>
+				<file>../../../addons/ofx3DModelLoader/src/3DS/model3DS.h</file>
+				<file>../../../addons/ofx3DModelLoader/src/3DS/texture3DS.cpp</file>
+				<file>../../../addons/ofx3DModelLoader/src/3DS/texture3DS.h</file>
+				<file>../../../addons/ofx3DModelLoader/src/3DS/Vector3DS.h</file>
+			</folder>
+		</src>
+		
+		<include>
+			<path>../../../addons/ofx3DModelLoader/src/3DS/</path>
+			<path>../../../addons/ofx3DModelLoader/src/</path>
+		</include>
+		
+	</add>
+	 
+</install>

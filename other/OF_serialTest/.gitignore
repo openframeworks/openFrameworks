@@ -1,0 +1,16 @@
+applet/HardwareSerial.cpp.o
+applet/OF_serialTest.cpp.eep
+applet/OF_serialTest.cpp.elf
+applet/OF_serialTest.cpp.hex
+applet/OF_serialTest.cpp.o
+applet/Print.cpp.o
+applet/WInterrupts.c.o
+applet/WMath.cpp.o
+applet/core.a
+applet/pins_arduino.c.o
+applet/wiring.c.o
+applet/wiring_analog.c.o
+applet/wiring_digital.c.o
+applet/wiring_pulse.c.o
+applet/wiring_shift.c.o
+

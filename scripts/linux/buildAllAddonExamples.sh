@@ -1,7 +1,7 @@
 #!/bin/bash
 
 export LC_ALL=C
-cd ../apps/addonsExamples
+cd ../../apps/addonsExamples
 
 for example in $( ls . )
 do
@@ -10,8 +10,19 @@ echo "building " + $example
 cd $example
 #codeblocks --build --target="Debug" "$example.cbp"
 #codeblocks --build --target="Release" "$example.cbp"
-#make Debug
+make Debug
+ret=$?
+if [ $ret -ne 0 ]; then
+  echo error comiling $example
+  exit
+fi
 make Release
+ret=$?
+if [ $ret -ne 0 ]; then
+  echo error comiling $example
+  exit
+fi
+
 cd ../
 echo "-----------------------------------------------------------------"
 echo ""

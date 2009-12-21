@@ -1,0 +1,34 @@
+<install>
+	<name>ofxVectorMath</name>
+	<version>0.01</version>
+	<author>chris sugrue, stefan hechenberger</author>
+	<url></url>
+	
+	<add>
+		
+		<!-- 	=====================================================================	-->
+		<!--	========================== add per project using this addon =========	-->
+		<!-- 	=====================================================================	-->
+	
+		<src>
+			<folder name="addons/ofxVectorMath/src">
+				<file>../../../addons/ofxVectorMath/src/ofxMatrix3x3.h</file>
+				<file>../../../addons/ofxVectorMath/src/ofxVec2f.h</file>
+				<file>../../../addons/ofxVectorMath/src/ofxVec3f.h</file>
+				<file>../../../addons/ofxVectorMath/src/ofxVec4f.h</file>
+				<file>../../../addons/ofxVectorMath/src/ofxMatrix3x3.cpp</file>
+				<file>../../../addons/ofxVectorMath/src/ofxVectorMath.h</file>
+			</folder>
+		</src>
+		
+		<include>
+			<path>../../../addons/ofxVectorMath/src</path>
+		</include>
+		
+	</add>
+	 
+</install>
+
+
+
+

@@ -59,7 +59,6 @@ void testApp::update(){
 		contourFinder.findContours(grayDiff, 20, (340*240)/3, 10, true);	// find holes
 	}
 
-	printf("%f \n", ofGetFrameRate());
 }
 
 //--------------------------------------------------------------
@@ -92,7 +91,7 @@ void testApp::draw(){
 
 	ofSetColor(0xffffff);
 	char reportStr[1024];
-	sprintf(reportStr, "bg subtraction and blob detection\npress ' ' to capture bg\nthreshold %i (press: +/-)\nnum blobs found %i", threshold, contourFinder.nBlobs);
+	sprintf(reportStr, "bg subtraction and blob detection\npress ' ' to capture bg\nthreshold %i (press: +/-)\nnum blobs found %i, fps: %f", threshold, contourFinder.nBlobs, ofGetFrameRate());
 	ofDrawBitmapString(reportStr, 20, 600);
 
 }

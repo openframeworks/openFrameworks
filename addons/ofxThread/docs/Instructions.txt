@@ -1,0 +1,77 @@
+ofThread install instructions
+
+
+Step 0) Copy ofThread.h and ofThread.cpp to libs/openFrameworks/utils
+
+Step 1) Duplicate a project and rename it threadExample and replace testApp.h
+	testApp.cpp and main.cpp with the thread demo files.
+
+Step 2) in ofMain.h add underneath the line "#include ofUtils.h"
+
+#include "ofThread.h"
+
+
+Step 3) in of Constants.h change the line 
+
+// then the the platform specific includes:
+#ifdef TARGET_WIN32
+
+To:
+
+// then the the platform specific includes:
+#ifdef TARGET_WIN32
+	//this is for TryEnterCriticalSection
+	//http://www.zeroc.com/forums/help-center/351-ice-1-2-tryentercriticalsection-problem.html
+	#ifndef _WIN32_WINNT
+		#   define _WIN32_WINNT 0x400
+	#endif
+
+
+
+Step 4) To run the demo app make sure in ofConstants.h you have 
+
+using namespace std;
+#include <string>   
+#include <sstream>  //for ostringsream
+#include <iomanip>  //for setprecision
+
+
+Step 5) Also to run the demo make sure you have in ofUtils.cpp
+
+//--------------------------------------------------
+string ofToString(double value, int precision){
+	stringstream sstr;
+	sstr << fixed << setprecision(precision) << value;
+	return sstr.str();
+}
+
+//--------------------------------------------------
+string ofToString(int value){
+	stringstream sstr;
+	sstr << value;
+	return sstr.str();
+}
+
+And also in in ofUtils.h:
+
+string  ofToString(double value, int precision = 7);
+string  ofToString(int  value);
+
+
+
+Step 6) Add ofSleepMillis()
+
+add the line bellow to ofAppRunner.h:
+void		ofSleepMillis(int millis);
+
+
+and add the code bellow to ofAppRunner.cpp
+//--------------------------------------
+void ofSleepMillis(int millis){
+	#ifdef TARGET_WIN32
+		Sleep(millis);			//windows sleep in milliseconds
+	#else
+		usleep(millis * 1000);	//mac sleep in microseconds - cooler :)
+	#endif 
+}
+

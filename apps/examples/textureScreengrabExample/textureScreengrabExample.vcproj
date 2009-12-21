@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="9,00"
+	Version="9.00"
 	Name="textureScreengrabExample"
 	ProjectGUID="{7FD42DF7-442E-479A-BA76-D0022F99702A}"
 	RootNamespace="textureScreengrabExample"
@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\..\..\libs\openFrameworks;..\..\..\libs\openFrameworks\graphics;..\..\..\libs\openFrameworks\app;..\..\..\libs\openFrameworks\sound;..\..\..\libs\openFrameworks\utils;..\..\..\libs\openFrameworks\communication;..\..\..\libs\openFrameworks\video;..\..\..\libs\openFrameworks\events;..\..\..\libs\glut;..\..\..\libs\rtAudio\include;..\..\..\libs\quicktime\CIncludes;..\..\..\libs\freetype\include;..\..\..\libs\freetype\include\freetype2;..\..\..\libs\freeImage\include_win;..\..\..\libs\fmodex\inc;..\..\..\libs\videoInput\include;..\..\..\libs\glee\include;..\..\..\libs\glu;..\..\..\libs\poco\include;..\..\..\addons"
+				AdditionalIncludeDirectories="..\..\..\libs\openFrameworks;..\..\..\libs\openFrameworks\graphics;..\..\..\libs\openFrameworks\app;..\..\..\libs\openFrameworks\sound;..\..\..\libs\openFrameworks\utils;..\..\..\libs\openFrameworks\communication;..\..\..\libs\openFrameworks\video;..\..\..\libs\openFrameworks\events;..\..\..\libs\glut\include;..\..\..\libs\rtAudio\include;..\..\..\libs\quicktime\include;..\..\..\libs\freetype\include;..\..\..\libs\freetype\include\freetype2;..\..\..\libs\freeImage\include;..\..\..\libs\fmodex\include;..\..\..\libs\videoInput\include;..\..\..\libs\glee\include;..\..\..\libs\glu\include;..\..\..\libs\poco\include;..\..\..\addons"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;POCO_STATIC"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -62,10 +62,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="OpenGL32.lib GLu32.lib kernel32.lib setupapi.lib glut32.lib rtAudioD.lib videoInput.lib libfreetype.lib FreeImage.lib qtmlClient.lib dsound.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib GLee.lib fmodex_vc.lib glu32.lib PocoFoundationmtd.lib PocoNetmtd.lib PocoUtilmtd.lib PocoXMLmtd.lib"
+				AdditionalDependencies="openframeworksLibDebug.lib OpenGL32.lib GLu32.lib kernel32.lib setupapi.lib glut32.lib rtAudioD.lib videoInput.lib libfreetype.lib FreeImage.lib qtmlClient.lib dsound.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib GLee.lib fmodex_vc.lib glu32.lib PocoFoundationmtd.lib PocoNetmtd.lib PocoUtilmtd.lib PocoXMLmtd.lib"
 				OutputFile="$(OutDir)\$(ProjectName)_debug.exe"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="..\..\..\libs\glut\lib\win_vs2008;..\..\..\libs\rtAudio\lib\win_vs2008;..\..\..\libs\FreeImage\lib\win_vs2008;..\..\..\libs\freetype\lib\win_vs2008;..\..\..\libs\quicktime\lib\win_vs2008;..\..\..\libs\fmodex\lib\win_vs2008;..\..\..\libs\videoInput\lib\win_vs2008;..\..\..\libs\glee\lib\win_vs2008;..\..\..\libs\glu\lib\win_vs2008;..\..\..\libs\Poco\lib\win_vs2008"
+				AdditionalLibraryDirectories="..\..\..\libs\glut\lib\vs2008;..\..\..\libs\rtAudio\lib\vs2008;..\..\..\libs\FreeImage\lib\vs2008;..\..\..\libs\freetype\lib\vs2008;..\..\..\libs\quicktime\lib\vs2008;..\..\..\libs\fmodex\lib\vs2008;..\..\..\libs\videoInput\lib\vs2008;..\..\..\libs\glee\lib\vs2008;..\..\..\libs\glu\lib\vs2008;..\..\..\libs\Poco\lib\vs2008;..\..\..\libs\openFrameworksCompiled\lib\vs2008"
 				GenerateManifest="true"
 				IgnoreDefaultLibraryNames="atlthunk.lib; LIBC.lib; LIBCMT;"
 				GenerateDebugInformation="true"
@@ -96,7 +96,7 @@
 			<Tool
 				Name="VCPostBuildEventTool"
 				Description="adding DLLs and creating data folder"
-				CommandLine="xcopy /e /i /y &quot;$(ProjectDir)..\..\..\export\win_vs2008\*.dll&quot; &quot;$(ProjectDir)bin&quot;&#x0D;&#x0A;if not exist &quot;$(ProjectDir)bin\data&quot; mkdir  &quot;$(ProjectDir)bin\data&quot;&#x0D;&#x0A;"
+				CommandLine="xcopy /e /i /y &quot;$(ProjectDir)..\..\..\export\vs2008\*.dll&quot; &quot;$(ProjectDir)bin&quot;&#x0D;&#x0A;if not exist &quot;$(ProjectDir)bin\data&quot; mkdir  &quot;$(ProjectDir)bin\data&quot;&#x0D;&#x0A;"
 			/>
 		</Configuration>
 		<Configuration
@@ -125,7 +125,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				WholeProgramOptimization="false"
-				AdditionalIncludeDirectories="..\..\..\libs\openFrameworks;..\..\..\libs\openFrameworks\graphics;..\..\..\libs\openFrameworks\app;..\..\..\libs\openFrameworks\sound;..\..\..\libs\openFrameworks\utils;..\..\..\libs\openFrameworks\communication;..\..\..\libs\openFrameworks\video;..\..\..\libs\openFrameworks\events;..\..\..\libs\glut;..\..\..\libs\rtAudio\include;..\..\..\libs\quicktime\CIncludes;..\..\..\libs\freetype\include;..\..\..\libs\freetype\include\freetype2;..\..\..\libs\freeImage\include_win;..\..\..\libs\fmodex\inc;..\..\..\libs\videoInput\include;..\..\..\libs\glee\include;..\..\..\libs\glu;..\..\..\libs\poco\include;..\..\..\addons"
+				AdditionalIncludeDirectories="..\..\..\libs\openFrameworks;..\..\..\libs\openFrameworks\graphics;..\..\..\libs\openFrameworks\app;..\..\..\libs\openFrameworks\sound;..\..\..\libs\openFrameworks\utils;..\..\..\libs\openFrameworks\communication;..\..\..\libs\openFrameworks\video;..\..\..\libs\openFrameworks\events;..\..\..\libs\glut\include;..\..\..\libs\rtAudio\include;..\..\..\libs\quicktime\include;..\..\..\libs\freetype\include;..\..\..\libs\freetype\include\freetype2;..\..\..\libs\freeImage\include;..\..\..\libs\fmodex\include;..\..\..\libs\videoInput\include;..\..\..\libs\glee\include;..\..\..\libs\glu\include;..\..\..\libs\poco\include;..\..\..\addons"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;POCO_STATIC"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
@@ -144,9 +144,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="OpenGL32.lib GLu32.lib kernel32.lib setupapi.lib glut32.lib rtAudio.lib videoInput.lib libfreetype.lib FreeImage.lib qtmlClient.lib dsound.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib GLee.lib fmodex_vc.lib glu32.lib PocoFoundationmt.lib PocoNetmt.lib PocoUtilmt.lib PocoXMLmt.lib"
+				AdditionalDependencies="openframeworksLib.lib OpenGL32.lib GLu32.lib kernel32.lib setupapi.lib glut32.lib rtAudio.lib videoInput.lib libfreetype.lib FreeImage.lib qtmlClient.lib dsound.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib GLee.lib fmodex_vc.lib glu32.lib PocoFoundationmt.lib PocoNetmt.lib PocoUtilmt.lib PocoXMLmt.lib"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="..\..\..\libs\glut\lib\win_vs2008;..\..\..\libs\rtAudio\lib\win_vs2008;..\..\..\libs\FreeImage\lib\win_vs2008;..\..\..\libs\freetype\lib\win_vs2008;..\..\..\libs\quicktime\lib\win_vs2008;..\..\..\libs\fmodex\lib\win_vs2008;..\..\..\libs\videoInput\lib\win_vs2008;..\..\..\libs\glee\lib\win_vs2008;..\..\..\libs\glu\lib\win_vs2008;..\..\..\libs\Poco\lib\win_vs2008"
+				AdditionalLibraryDirectories="..\..\..\libs\glut\lib\vs2008;..\..\..\libs\rtAudio\lib\vs2008;..\..\..\libs\FreeImage\lib\vs2008;..\..\..\libs\freetype\lib\vs2008;..\..\..\libs\quicktime\lib\vs2008;..\..\..\libs\fmodex\lib\vs2008;..\..\..\libs\videoInput\lib\vs2008;..\..\..\libs\glee\lib\vs2008;..\..\..\libs\glu\lib\vs2008;..\..\..\libs\Poco\lib\vs2008;..\..\..\libs\openFrameworksCompiled\lib\vs2008"
 				IgnoreAllDefaultLibraries="false"
 				IgnoreDefaultLibraryNames="atlthunk.lib; LIBC.lib; LIBCMT;"
 				GenerateDebugInformation="false"
@@ -178,7 +178,7 @@
 			<Tool
 				Name="VCPostBuildEventTool"
 				Description="adding DLLs and creating data folder"
-				CommandLine="xcopy /e /i /y &quot;$(ProjectDir)\..\..\..\export\win_vs2008\*.dll&quot; &quot;$(ProjectDir)\bin&quot;&#x0D;&#x0A;if not exist &quot;$(ProjectDir)\bin\data&quot; mkdir  &quot;$(ProjectDir)\bin\data&quot;&#x0D;&#x0A;&#x0D;&#x0A;"
+				CommandLine="xcopy /e /i /y &quot;$(ProjectDir)\..\..\..\export\vs2008\*.dll&quot; &quot;$(ProjectDir)\bin&quot;&#x0D;&#x0A;if not exist &quot;$(ProjectDir)\bin\data&quot; mkdir  &quot;$(ProjectDir)\bin\data&quot;&#x0D;&#x0A;&#x0D;&#x0A;"
 			/>
 		</Configuration>
 	</Configurations>
@@ -200,210 +200,6 @@
 			</File>
 			<File
 				RelativePath=".\src\testApp.h"
-				>
-			</File>
-		</Filter>
-		<Filter
-			Name="libs"
-			>
-			<Filter
-				Name="openFrameworks"
-				>
-				<File
-					RelativePath="..\..\..\libs\openFrameworks\ofMain.h"
-					>
-				</File>
-				<Filter
-					Name="app"
-					>
-					<File
-						RelativePath="..\..\..\libs\openFrameworks\app\ofAppGlutWindow.cpp"
-						>
-					</File>
-					<File
-						RelativePath="..\..\..\libs\openFrameworks\app\ofAppGlutWindow.h"
-						>
-					</File>
-					<File
-						RelativePath="..\..\..\libs\openFrameworks\app\ofAppRunner.cpp"
-						>
-					</File>
-					<File
-						RelativePath="..\..\..\libs\openFrameworks\app\ofAppRunner.h"
-						>
-					</File>
-					<File
-						RelativePath="..\..\..\libs\openFrameworks\app\ofSimpleApp.h"
-						>
-					</File>
-				</Filter>
-				<Filter
-					Name="graphics"
-					>
-					<File
-						RelativePath="..\..\..\libs\openFrameworks\graphics\ofBitmapFont.cpp"
-						>
-					</File>
-					<File
-						RelativePath="..\..\..\libs\openFrameworks\graphics\ofBitmapFont.h"
-						>
-					</File>
-					<File
-						RelativePath="..\..\..\libs\openFrameworks\graphics\ofGraphics.cpp"
-						>
-					</File>
-					<File
-						RelativePath="..\..\..\libs\openFrameworks\graphics\ofGraphics.h"
-						>
-					</File>
-					<File
-						RelativePath="..\..\..\libs\openFrameworks\graphics\ofImage.cpp"
-						>
-					</File>
-					<File
-						RelativePath="..\..\..\libs\openFrameworks\graphics\ofImage.h"
-						>
-					</File>
-					<File
-						RelativePath="..\..\..\libs\openFrameworks\graphics\ofTexture.cpp"
-						>
-					</File>
-					<File
-						RelativePath="..\..\..\libs\openFrameworks\graphics\ofTexture.h"
-						>
-					</File>
-					<File
-						RelativePath="..\..\..\libs\openFrameworks\graphics\ofTrueTypeFont.cpp"
-						>
-					</File>
-					<File
-						RelativePath="..\..\..\libs\openFrameworks\graphics\ofTrueTypefont.h"
-						>
-					</File>
-				</Filter>
-				<Filter
-					Name="sound"
-					>
-					<File
-						RelativePath="..\..\..\libs\openFrameworks\sound\ofSoundPlayer.cpp"
-						>
-					</File>
-					<File
-						RelativePath="..\..\..\libs\openFrameworks\sound\ofSoundPlayer.h"
-						>
-					</File>
-					<File
-						RelativePath="..\..\..\libs\openFrameworks\sound\ofSoundStream.cpp"
-						>
-					</File>
-					<File
-						RelativePath="..\..\..\libs\openFrameworks\sound\ofSoundStream.h"
-						>
-					</File>
-				</Filter>
-				<Filter
-					Name="util"
-					>
-					<File
-						RelativePath="..\..\..\libs\openFrameworks\utils\ofConstants.h"
-						>
-					</File>
-					<File
-						RelativePath="..\..\..\libs\openFrameworks\utils\ofMath.cpp"
-						>
-					</File>
-					<File
-						RelativePath="..\..\..\libs\openFrameworks\utils\ofMath.h"
-						>
-					</File>
-					<File
-						RelativePath="..\..\..\libs\openFrameworks\utils\ofTypes.h"
-						>
-					</File>
-					<File
-						RelativePath="..\..\..\libs\openFrameworks\utils\ofUtils.cpp"
-						>
-					</File>
-					<File
-						RelativePath="..\..\..\libs\openFrameworks\utils\ofUtils.h"
-						>
-					</File>
-				</Filter>
-				<Filter
-					Name="video"
-					>
-					<File
-						RelativePath="..\..\..\libs\openFrameworks\video\ofQtUtils.cpp"
-						>
-					</File>
-					<File
-						RelativePath="..\..\..\libs\openFrameworks\video\ofQtUtils.h"
-						>
-					</File>
-					<File
-						RelativePath="..\..\..\libs\openFrameworks\video\ofVideoGrabber.cpp"
-						>
-					</File>
-					<File
-						RelativePath="..\..\..\libs\openFrameworks\video\ofVideoGrabber.h"
-						>
-					</File>
-					<File
-						RelativePath="..\..\..\libs\openFrameworks\video\ofVideoPlayer.cpp"
-						>
-					</File>
-					<File
-						RelativePath="..\..\..\libs\openFrameworks\video\ofVideoPlayer.h"
-						>
-					</File>
-				</Filter>
-				<Filter
-					Name="communication"
-					>
-					<File
-						RelativePath="..\..\..\libs\openFrameworks\communication\ofArduino.cpp"
-						>
-					</File>
-					<File
-						RelativePath="..\..\..\libs\openFrameworks\communication\ofArduino.h"
-						>
-					</File>
-					<File
-						RelativePath="..\..\..\libs\openFrameworks\communication\ofSerial.cpp"
-						>
-					</File>
-					<File
-						RelativePath="..\..\..\libs\openFrameworks\communication\ofSerial.h"
-						>
-					</File>
-					<File
-						RelativePath="..\..\..\libs\openFrameworks\communication\ofStandardFirmata.cpp"
-						>
-					</File>
-					<File
-						RelativePath="..\..\..\libs\openFrameworks\communication\ofStandardFirmata.h"
-						>
-					</File>
-				</Filter>
-				<Filter
-					Name="events"
-					>
-					<File
-						RelativePath="..\..\..\libs\openFrameworks\events\ofEvents.h"
-						>
-					</File>
-					<File
-						RelativePath="..\..\..\libs\openFrameworks\events\ofEventUtils.h"
-						>
-					</File>
-				</Filter>
-			</Filter>
-		</Filter>
-		<Filter
-			Name="addons"
-			>
-			<File
-				RelativePath="..\..\..\addons\ofAddons.h"
 				>
 			</File>
 		</Filter>
