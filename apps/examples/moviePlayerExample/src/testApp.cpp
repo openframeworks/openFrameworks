@@ -1,14 +1,10 @@
 #include "testApp.h"
-#include "stdio.h"
-
-//--------------------------------------------------------------
-testApp::testApp(){
-
-}
 
 //--------------------------------------------------------------
 void testApp::setup(){
 	ofBackground(255,255,255);
+	
+	frameByframe = false;
 
 	fingerMovie.loadMovie("movies/fingers.mov");
 	fingerMovie.play();
@@ -109,7 +105,8 @@ void testApp::mousePressed(int x, int y, int button){
 	}
 }
 
-//--------------------------------------------------------------
+
+//--------------------------------------------------------------
 void testApp::mouseReleased(int x, int y, int button){
 	if(!frameByframe){
         fingerMovie.setPaused(false);

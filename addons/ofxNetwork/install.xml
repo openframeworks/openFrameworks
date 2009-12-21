@@ -1,0 +1,38 @@
+<install>
+	<name>ofxNetwork</name>
+	<version>0.01</version>
+	<author>christian nagelhofer, theo watson</author>
+	<url></url>
+	<requires>ofxThread</requires>
+	
+	<add>
+		
+		<!-- 	=====================================================================	-->
+		<!--	========================== add per project using this addon =========	-->
+		<!-- 	=====================================================================	-->
+
+		<src>
+			<folder name="addons/ofxNetwork/src">
+				<file>../../../addons/ofxNetwork/src/ofxNetwork.h</file>
+				<file>../../../addons/ofxNetwork/src/ofxTCPClient.cpp</file>
+				<file>../../../addons/ofxNetwork/src/ofxTCPClient.h</file>
+				<file>../../../addons/ofxNetwork/src/ofxTCPManager.cpp</file>
+				<file>../../../addons/ofxNetwork/src/ofxTCPManager.h</file>
+				<file>../../../addons/ofxNetwork/src/ofxTCPServer.cpp</file>
+				<file>../../../addons/ofxNetwork/src/ofxTCPServer.h</file>
+				<file>../../../addons/ofxNetwork/src/ofxUDPManager.cpp</file>
+				<file>../../../addons/ofxNetwork/src/ofxUDPManager.h</file>
+			</folder>
+		</src>
+
+		<include>
+			<path>../../../addons/ofxNetwork/src</path>
+		</include>
+
+		<link>
+			<lib os="win32" compiler="devcpp">wsock32</lib>
+		</link>
+	
+	</add>
+	
+</install>

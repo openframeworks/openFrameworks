@@ -12,7 +12,13 @@ void testApp::setup(){
 	bgImage.loadImage("firmata.png");
 	font.loadFont("franklinGothic.otf", 20);
 
-	ard.connect("/dev/ttyUSB0", 115200);
+	// the connection speed has been changing in the
+	// arduino firmata sketch. in 0017 it's 57600
+	// if you have problems try commenting/uncommenting
+	// to change the speed
+
+	// ard.connect("/dev/ttyUSB0", 115200);
+	ard.connect("/dev/ttyUSB0", 57600);
 
 	bSetupArduino	= false;							// flag so we setup arduino when its ready, you don't need to touch this :)
 }

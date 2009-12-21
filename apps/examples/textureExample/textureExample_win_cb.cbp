@@ -1,228 +1,114 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<?xml version="1.0" encoding="UTF-8"?>
 <CodeBlocks_project_file>
-	<FileVersion major="1" minor="6" />
+	<FileVersion major="1" minor="6"/>
 	<Project>
-		<Option title="textureExample" />
-		<Option pch_mode="2" />
-		<Option compiler="gcc" />
-		<Option virtualFolders="addons\;libs\;src\;libs\openframeworks\;libs\openframeworks\app\;libs\openframeworks\communication\;libs\openframeworks\graphics\;libs\openframeworks\sound\;libs\openframeworks\utils\;libs\openframeworks\video\;libs\openframeworks\events\;" />
+		<Option title="textureExample"/>
+		<Option pch_mode="2"/>
+		<Option compiler="gcc"/>
+		<Option virtualFolders="addons\;src\;"/>
 		<Build>
 			<Target title="release">
-				<Option output="bin\$(PROJECT_NAME)" prefix_auto="1" extension_auto="1" />
-				<Option working_dir="bin" />
-				<Option object_output="obj\release" />
-				<Option type="1" />
-				<Option compiler="gcc" />
+				<Option output="bin\$(PROJECT_NAME)" extension_auto="1" prefix_auto="1"/>
+				<Option working_dir="bin"/>
+				<Option object_output="obj\release"/>
+				<Option external_deps="..\..\..\libs\openFrameworksCompiled\lib\win_cb\openFrameworks.lib;"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Option projectLinkerOptionsRelation="2"/>
 				<Compiler>
-					<Add option="-O2" />
+					<Add option="-O2"/>
 				</Compiler>
 				<Linker>
-					<Add option="-s" />
+					<Add option="-s"/>
+					<Add option="../../../libs/openFrameworksCompiled/lib/win_cb/openFrameworks.lib"/>
 				</Linker>
 			</Target>
 			<Target title="debug">
-				<Option output="bin\$(PROJECT_NAME)_DEBUG" prefix_auto="1" extension_auto="1" />
-				<Option working_dir="bin" />
-				<Option object_output="obj\debug\" />
-				<Option type="1" />
-				<Option compiler="gcc" />
+				<Option output="bin\$(PROJECT_NAME)_DEBUG" extension_auto="1" prefix_auto="1"/>
+				<Option working_dir="bin"/>
+				<Option object_output="obj\debug\"/>
+				<Option external_deps="..\..\..\libs\openFrameworksCompiled\lib\win_cb\openFrameworksDebug.lib;"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Option projectLinkerOptionsRelation="2"/>
 				<Compiler>
-					<Add option="-g" />
+					<Add option="-g"/>
 				</Compiler>
+				<Linker>
+					<Add option="../../../libs/openFrameworksCompiled/lib/win_cb/openFrameworksDebug.lib"/>
+				</Linker>
 			</Target>
 		</Build>
 		<Compiler>
-			<Add option="-Wno-multichar" />
-			<Add directory="..\..\..\libs\glu" />
-			<Add directory="..\..\..\libs\freetype\include" />
-			<Add directory="..\..\..\libs\freetype\include\freetype2" />
-			<Add directory="..\..\..\libs\FreeImage\include_win" />
-			<Add directory="..\..\..\libs\quicktime\CIncludes" />
-			<Add directory="..\..\..\libs\rtAudio\include" />
-			<Add directory="..\..\..\libs\fmodex\inc" />
-			<Add directory="..\..\..\libs\videoInput\include" />
-			<Add directory="..\..\..\libs\glee\include" />
-			<Add directory="..\..\..\libs\glut" />
-			<Add directory="..\..\..\libs\openFrameworks" />
-			<Add directory="..\..\..\libs\openFrameworks\app" />
-			<Add directory="..\..\..\libs\openFrameworks\events" />
-			<Add directory="..\..\..\libs\openFrameworks\graphics" />
-			<Add directory="..\..\..\libs\openFrameworks\utils" />
-			<Add directory="..\..\..\libs\openFrameworks\sound" />
-			<Add directory="..\..\..\libs\openFrameworks\video" />
-			<Add directory="..\..\..\libs\openFrameworks\communication" />
-			<Add directory="..\..\..\libs\poco\include" />
+			<Add option="-Wno-multichar"/>
+			<Add directory="..\..\..\libs\glu\include"/>
+			<Add directory="..\..\..\libs\freetype\include"/>
+			<Add directory="..\..\..\libs\freetype\include\freetype2"/>
+			<Add directory="..\..\..\libs\FreeImage\include"/>
+			<Add directory="..\..\..\libs\quicktime\include"/>
+			<Add directory="..\..\..\libs\rtAudio\include"/>
+			<Add directory="..\..\..\libs\fmodex\include"/>
+			<Add directory="..\..\..\libs\videoInput\include"/>
+			<Add directory="..\..\..\libs\glee\include"/>
+			<Add directory="..\..\..\libs\glut\include"/>
+			<Add directory="..\..\..\libs\openFrameworks"/>
+			<Add directory="..\..\..\libs\openFrameworks\app"/>
+			<Add directory="..\..\..\libs\openFrameworks\events"/>
+			<Add directory="..\..\..\libs\openFrameworks\graphics"/>
+			<Add directory="..\..\..\libs\openFrameworks\utils"/>
+			<Add directory="..\..\..\libs\openFrameworks\sound"/>
+			<Add directory="..\..\..\libs\openFrameworks\video"/>
+			<Add directory="..\..\..\libs\openFrameworks\communication"/>
+			<Add directory="..\..\..\libs\poco\include"/>
 		</Compiler>
 		<Linker>
-			<Add option="../../../libs/FreeImage/lib/win_cb/FreeImage.lib" />
-			<Add option="../../../libs/rtAudio/lib/win_cb/RtAudio.a" />
-			<Add option="../../../libs/quicktime/lib/win_cb/qtmlClient.lib" />
-			<Add option="../../../libs/freetype/lib/win_cb/libfreetype.a" />
-			<Add option="../../../libs/glut/lib/win_cb/libglut.a" />
-			<Add option="../../../libs/videoInput/lib/win_cb/videoInputLib.a" />
-			<Add option="../../../libs/fmodex/lib/win_cb/libfmodex.a" />
-			<Add option="../../../libs/glee/lib/win_cb/GLee.lib" />
-			<Add option="../../../libs/glu/lib/win_cb/glu32.lib" />
-			<Add option="../../../libs/poco/lib/win_cb/libPocoFoundationmt.a" />
-			<Add option="../../../libs/poco/lib/win_cb/libPocoUtilmt.a" />
-			<Add option="../../../libs/poco/lib/win_cb/libPocoXMLmt.a" />
-			<Add option="../../../libs/poco/lib/win_cb/libPocoNetmt.a" />
-			<Add option="-lopengl32" />
-			<Add option="-lglu32" />
-			<Add option="-ldsound" />
-			<Add option="-lwinmm" />
-			<Add option="-ldxguid" />
-			<Add option="-lstrmbase" />
-			<Add option="-lstrmiids" />
-			<Add option="-lz" />
-			<Add option="-luuid" />
-			<Add option="-lole32" />
-			<Add option="-loleaut32" />
-			<Add option="-lsetupapi" />
-			<Add option="-lwsock32" />
-			<Add option="-lws2_32" />
+			<Add option="../../../libs/FreeImage/lib/win_cb/FreeImage.lib"/>
+			<Add option="../../../libs/rtAudio/lib/win_cb/RtAudio.a"/>
+			<Add option="../../../libs/quicktime/lib/win_cb/qtmlClient.lib"/>
+			<Add option="../../../libs/freetype/lib/win_cb/libfreetype.a"/>
+			<Add option="../../../libs/glut/lib/win_cb/libglut.a"/>
+			<Add option="../../../libs/videoInput/lib/win_cb/videoInputLib.a"/>
+			<Add option="../../../libs/fmodex/lib/win_cb/libfmodex.a"/>
+			<Add option="../../../libs/glee/lib/win_cb/GLee.lib"/>
+			<Add option="../../../libs/glu/lib/win_cb/glu32.lib"/>
+			<Add option="../../../libs/poco/lib/win_cb/libPocoNetmt.a"/>
+			<Add option="../../../libs/poco/lib/win_cb/libPocoUtilmt.a"/>
+			<Add option="../../../libs/poco/lib/win_cb/libPocoXMLmt.a"/>
+			<Add option="../../../libs/poco/lib/win_cb/libPocoFoundationmt.a"/>
+			<Add option="-lopengl32"/>
+			<Add option="-lglu32"/>
+			<Add option="-ldsound"/>
+			<Add option="-lwinmm"/>
+			<Add option="-ldxguid"/>
+			<Add option="-lstrmbase"/>
+			<Add option="-lstrmiids"/>
+			<Add option="-lz"/>
+			<Add option="-luuid"/>
+			<Add option="-lole32"/>
+			<Add option="-loleaut32"/>
+			<Add option="-lsetupapi"/>
+			<Add option="-lwsock32"/>
+			<Add option="-lws2_32"/>
+			<Add option="-lIphlpapi"/>
 		</Linker>
 		<ExtraCommands>
-			<Add after='xcopy /e /i /y &quot;$(PROJECT_DIR)..\..\..\export\win_cb\*.dll&quot;  &quot;$(PROJECT_DIR)bin&quot;' />
-			<Add after='cmd /c if not exist &quot;$(PROJECT_DIR)bin/data&quot; mkdir &quot;$(PROJECT_DIR)bin/data&quot;' />
-			<Mode after="always" />
+			<Add after='xcopy /e /i /y "$(PROJECT_DIR)..\..\..\export\win_cb\*.dll"  "$(PROJECT_DIR)bin"'/>
+			<Add after='cmd /c if not exist "$(PROJECT_DIR)bin/data" mkdir "$(PROJECT_DIR)bin/data"'/>
+			<Mode after="always"/>
 		</ExtraCommands>
 		<Unit filename="src\main.cpp">
-			<Option virtualFolder="src\" />
+			<Option virtualFolder="src\"/>
 		</Unit>
 		<Unit filename="src\testApp.cpp">
-			<Option virtualFolder="src\" />
+			<Option virtualFolder="src\"/>
 		</Unit>
 		<Unit filename="src\testApp.h">
-			<Option virtualFolder="src\" />
-		</Unit>
-		<Unit filename="..\..\..\libs\openFrameworks\app\ofAppBaseWindow.h">
-			<Option virtualFolder="libs\openframeworks\app\" />
-		</Unit>
-		<Unit filename="..\..\..\libs\openFrameworks\app\ofAppGlutWindow.cpp">
-			<Option virtualFolder="libs\openframeworks\app\" />
-		</Unit>
-		<Unit filename="..\..\..\libs\openFrameworks\app\ofAppGlutWindow.h">
-			<Option virtualFolder="libs\openframeworks\app\" />
-		</Unit>
-		<Unit filename="..\..\..\libs\openFrameworks\app\ofAppRunner.cpp">
-			<Option virtualFolder="libs\openframeworks\app\" />
-		</Unit>
-		<Unit filename="..\..\..\libs\openFrameworks\app\ofAppRunner.h">
-			<Option virtualFolder="libs\openframeworks\app\" />
-		</Unit>
-		<Unit filename="..\..\..\libs\openFrameworks\app\ofBaseApp.h">
-			<Option virtualFolder="libs\openframeworks\app\" />
-		</Unit>
-		<Unit filename="..\..\..\libs\openFrameworks\communication\ofArduino.cpp">
-			<Option virtualFolder="libs\openframeworks\communication\" />
-		</Unit>
-		<Unit filename="..\..\..\libs\openFrameworks\communication\ofArduino.h">
-			<Option virtualFolder="libs\openframeworks\communication\" />
-		</Unit>
-		<Unit filename="..\..\..\libs\openFrameworks\communication\ofSerial.cpp">
-			<Option virtualFolder="libs\openframeworks\communication\" />
-		</Unit>
-		<Unit filename="..\..\..\libs\openFrameworks\communication\ofSerial.h">
-			<Option virtualFolder="libs\openframeworks\communication\" />
-		</Unit>
-		<Unit filename="..\..\..\libs\openFrameworks\communication\ofStandardFirmata.cpp">
-			<Option virtualFolder="libs\openframeworks\communication\" />
-		</Unit>
-		<Unit filename="..\..\..\libs\openFrameworks\communication\ofStandardFirmata.h">
-			<Option virtualFolder="libs\openframeworks\communication\" />
-		</Unit>
-		<Unit filename="..\..\..\libs\openFrameworks\events\ofEventUtils.h">
-			<Option virtualFolder="libs\openframeworks\events\" />
-		</Unit>
-		<Unit filename="..\..\..\libs\openFrameworks\events\ofEvents.h">
-			<Option virtualFolder="libs\openframeworks\events\" />
-		</Unit>
-		<Unit filename="..\..\..\libs\openFrameworks\graphics\ofBitmapFont.cpp">
-			<Option virtualFolder="libs\openframeworks\graphics\" />
-		</Unit>
-		<Unit filename="..\..\..\libs\openFrameworks\graphics\ofBitmapFont.h">
-			<Option virtualFolder="libs\openframeworks\graphics\" />
-		</Unit>
-		<Unit filename="..\..\..\libs\openFrameworks\graphics\ofGraphics.cpp">
-			<Option virtualFolder="libs\openframeworks\graphics\" />
-		</Unit>
-		<Unit filename="..\..\..\libs\openFrameworks\graphics\ofGraphics.h">
-			<Option virtualFolder="libs\openframeworks\graphics\" />
-		</Unit>
-		<Unit filename="..\..\..\libs\openFrameworks\graphics\ofImage.cpp">
-			<Option virtualFolder="libs\openframeworks\graphics\" />
-		</Unit>
-		<Unit filename="..\..\..\libs\openFrameworks\graphics\ofImage.h">
-			<Option virtualFolder="libs\openframeworks\graphics\" />
-		</Unit>
-		<Unit filename="..\..\..\libs\openFrameworks\graphics\ofTexture.cpp">
-			<Option virtualFolder="libs\openframeworks\graphics\" />
-		</Unit>
-		<Unit filename="..\..\..\libs\openFrameworks\graphics\ofTexture.h">
-			<Option virtualFolder="libs\openframeworks\graphics\" />
-		</Unit>
-		<Unit filename="..\..\..\libs\openFrameworks\graphics\ofTrueTypeFont.cpp">
-			<Option virtualFolder="libs\openframeworks\graphics\" />
-		</Unit>
-		<Unit filename="..\..\..\libs\openFrameworks\graphics\ofTrueTypeFont.h">
-			<Option virtualFolder="libs\openframeworks\graphics\" />
-		</Unit>
-		<Unit filename="..\..\..\libs\openFrameworks\ofMain.h">
-			<Option virtualFolder="libs\openframeworks\" />
-		</Unit>
-		<Unit filename="..\..\..\libs\openFrameworks\sound\ofSoundPlayer.cpp">
-			<Option virtualFolder="libs\openframeworks\sound\" />
-		</Unit>
-		<Unit filename="..\..\..\libs\openFrameworks\sound\ofSoundPlayer.h">
-			<Option virtualFolder="libs\openframeworks\sound\" />
-		</Unit>
-		<Unit filename="..\..\..\libs\openFrameworks\sound\ofSoundStream.cpp">
-			<Option virtualFolder="libs\openframeworks\sound\" />
-		</Unit>
-		<Unit filename="..\..\..\libs\openFrameworks\sound\ofSoundStream.h">
-			<Option virtualFolder="libs\openframeworks\sound\" />
-		</Unit>
-		<Unit filename="..\..\..\libs\openFrameworks\utils\ofConstants.h">
-			<Option virtualFolder="libs\openframeworks\utils\" />
-		</Unit>
-		<Unit filename="..\..\..\libs\openFrameworks\utils\ofMath.cpp">
-			<Option virtualFolder="libs\openframeworks\utils\" />
-		</Unit>
-		<Unit filename="..\..\..\libs\openFrameworks\utils\ofMath.h">
-			<Option virtualFolder="libs\openframeworks\utils\" />
-		</Unit>
-		<Unit filename="..\..\..\libs\openFrameworks\utils\ofTypes.h">
-			<Option virtualFolder="libs\openframeworks\utils\" />
-		</Unit>
-		<Unit filename="..\..\..\libs\openFrameworks\utils\ofUtils.cpp">
-			<Option virtualFolder="libs\openframeworks\utils\" />
-		</Unit>
-		<Unit filename="..\..\..\libs\openFrameworks\utils\ofUtils.h">
-			<Option virtualFolder="libs\openframeworks\utils\" />
-		</Unit>
-		<Unit filename="..\..\..\libs\openFrameworks\video\ofQtUtils.cpp">
-			<Option virtualFolder="libs\openframeworks\video\" />
-		</Unit>
-		<Unit filename="..\..\..\libs\openFrameworks\video\ofQtUtils.h">
-			<Option virtualFolder="libs\openframeworks\video\" />
-		</Unit>
-		<Unit filename="..\..\..\libs\openFrameworks\video\ofVideoGrabber.cpp">
-			<Option virtualFolder="libs\openframeworks\video\" />
-		</Unit>
-		<Unit filename="..\..\..\libs\openFrameworks\video\ofVideoGrabber.h">
-			<Option virtualFolder="libs\openframeworks\video\" />
-		</Unit>
-		<Unit filename="..\..\..\libs\openFrameworks\video\ofVideoPlayer.cpp">
-			<Option virtualFolder="libs\openframeworks\video\" />
-		</Unit>
-		<Unit filename="..\..\..\libs\openFrameworks\video\ofVideoPlayer.h">
-			<Option virtualFolder="libs\openframeworks\video\" />
+			<Option virtualFolder="src\"/>
 		</Unit>
 		<Extensions>
-			<code_completion />
-			<debugger />
-			<envvars />
+			<code_completion/>
+			<debugger/>
+			<envvars/>
 		</Extensions>
 	</Project>
 </CodeBlocks_project_file>

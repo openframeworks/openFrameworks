@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_workspace_file>
+	<Workspace title="opencvExample">
+		<Project filename="../../../libs/openFrameworksCompiled/project/linux64/libopenFrameworks.cbp" />
+		<Project filename="opencvExample_linux64.cbp" active="1">
+			<Depends filename="../../../libs/openFrameworksCompiled/project/linux64/libopenFrameworks.cbp" />
+		</Project>
+	</Workspace>
+</CodeBlocks_workspace_file>

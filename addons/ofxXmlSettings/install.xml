@@ -1,0 +1,33 @@
+<install>
+    <name>ofxXmlSettings</name>
+	<version>0.01</version>
+	<author></author>
+	<url></url>
+	
+    <add>	
+		<!-- 	=====================================================================	-->
+		<!--	========================== add per project using this addon =========	-->
+		<!-- 	=====================================================================	-->
+	
+	    <src>
+		
+		    <folder name="addons/ofXmlSettings/src">	
+			    <file>../../../addons/ofxXmlSettings/src/ofxXmlSettings.h</file>
+			    <file>../../../addons/ofxXmlSettings/src/ofxXmlSettings.cpp</file>
+		    </folder>
+		
+		    <folder name="addons/ofXmlSettings/libs">
+			    <file>../../../addons/ofxXmlSettings/libs/tinyxml.h</file>
+			    <file>../../../addons/ofxXmlSettings/libs/tinyxml.cpp</file>
+			    <file>../../../addons/ofxXmlSettings/libs/tinyxmlerror.cpp</file>
+			    <file>../../../addons/ofxXmlSettings/libs/tinyxmlparser.cpp</file>
+		    </folder>
+		
+	    </src>
+	
+	    <include>
+		    <path>../../../addons/ofxXmlSettings/src</path>
+		    <path>../../../addons/ofxXmlSettings/libs</path>
+	    </include>    </add>
+    
+</install>

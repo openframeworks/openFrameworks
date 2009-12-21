@@ -1,0 +1,34 @@
+<install>
+	<name>ofxVectorMath</name>
+	<author>theo watson</author>
+	<version>0.01</version>
+	
+	
+	<add>
+		<!-- 	=====================================================================	-->
+		<!--	========================== add per project using this addon =========	-->
+		<!-- 	=====================================================================	-->
+	
+	    <src>
+	
+		    <folder name="addons/ofxVectorGraphics/src">
+			    <file>../../../addons/ofxVectorGraphics/src/ofxVectorGraphics.cpp</file>
+			    <file>../../../addons/ofxVectorGraphics/src/ofxVectorGraphics.h</file>
+		    </folder>
+		
+		    <folder name="addons/ofxVectorGraphics/libs">
+			    <file>../../../addons/ofxVectorGraphics/libs/CreEPS.cpp</file>
+			    <file>../../../addons/ofxVectorGraphics/libs/CreEPS.hpp</file>
+		    </folder>
+	
+	    </src>
+	
+	    <include>
+		    <path>../../../addons/ofxVectorGraphics/src</path>
+		    <path>../../../addons/ofxVectorGraphics/libs</path>
+	    </include>
+				
+	</add>
+	
+	
+</install>

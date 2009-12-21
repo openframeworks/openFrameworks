@@ -1,5 +1,4 @@
 #include "testApp.h"
-#include "stdio.h"
 
 //--------------------------------------------------------------
 void testApp::setup(){	 
@@ -16,7 +15,12 @@ void testApp::setup(){
 
 //--------------------------------------------------------------
 void testApp::update(){	
+	
 	ofBackground(255,255,255);
+	
+	// update the sound playing system:
+	ofSoundUpdate();
+	
 }
 
 //--------------------------------------------------------------
