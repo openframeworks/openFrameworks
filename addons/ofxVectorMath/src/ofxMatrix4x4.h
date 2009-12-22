@@ -274,13 +274,13 @@ public:
 
 	inline ofxVec3f preMult( const ofxVec3f& v ) const;
 	inline ofxVec3f postMult( const ofxVec3f& v ) const;
-	inline ofxVec3f ofxMatrix4x4::operator* (const ofxVec3f& v) const {
+	inline ofxVec3f operator* (const ofxVec3f& v) const {
 		return postMult(v);
 	}
 
 	inline ofxVec4f preMult( const ofxVec4f& v ) const;
 	inline ofxVec4f postMult( const ofxVec4f& v ) const;
-	inline ofxVec4f ofxMatrix4x4::operator* (const ofxVec4f& v) const {
+	inline ofxVec4f operator* (const ofxVec4f& v) const {
 		return postMult(v);
 	}
 
