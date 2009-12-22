@@ -1,0 +1,87 @@
+
+
+1) installing visual studio 2008 Express Edition:
+--------------------------------------------------------------------------------
+
+follow the steps here:
+
+http://www.openframeworks.cc/setup/vs-2008
+
+
+2) solution / compiled OF	
+--------------------------------------------------------------------------------
+
+From 0.061, we've moved to having a compiled version of openframeworks.
+
+each example (imageSaver, soundPlayer, etc) contains a solution, that load both the project
+for that example and the project that contains the openframeworks library. 
+
+With visual studio, the IDE is typically pretty smart -- if you open up 
+
+
+2) if you want to make a new project:
+--------------------------------------------------------------------------------
+
+a) copy the folder inside of apps and paste in the same directory
+
+ie (copy "emptyExample" and paste "copy of emptyExample")
+
+b) rename the folder, and inside the folder, rename the .vcproj and .sln
+
+ie, rename  
+
+emptyExample.vcproj
+
+to
+
+coolExample.vcproj
+
+c) open the . vcproj file with a text editor.  change the occurrences of the old name to the new name:
+
+<?xml version="1.0" encoding="Windows-1252"?>
+<VisualStudioProject
+	ProjectType="Visual C++"
+	Version="9.00"
+	Name="emptyExample"
+	ProjectGUID="{7FD42DF7-442E-479A-BA76-D0022F99702A}"
+	RootNamespace="emptyExample"
+
+
+for example, if I copied emptyexample and wanted to call it "coolExample" would look like:
+
+<?xml version="1.0" encoding="Windows-1252"?>
+<VisualStudioProject
+	ProjectType="Visual C++"
+	Version="9.00"
+	Name="coolExample"
+	ProjectGUID="{7FD42DF7-442E-479A-BA76-D0022F99702A}"
+	RootNamespace="coolExample"
+
+in the solution file, change the name of .vcproj file:
+
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "emptyExample", "emptyExample.vcproj", "{7FD42DF7-442E-479A-BA76-D0022F99702A}"
+	ProjectSection(ProjectDependencies) = postProject
+		{5837595D-ACA9-485C-8E76-729040CE4B0B} = {5837595D-ACA9-485C-8E76-729040CE4B0B}
+	EndProjectSection
+EndProject
+
+to whatever you've renamed the vcproj to:
+
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "coolExample", "coolExample.vcproj", "{7FD42DF7-442E-479A-BA76-D0022F99702A}"
+	ProjectSection(ProjectDependencies) = postProject
+		{5837595D-ACA9-485C-8E76-729040CE4B0B} = {5837595D-ACA9-485C-8E76-729040CE4B0B}
+	EndProjectSection
+EndProject
+
+
+
+
+
+as always if you have issues, check or post on the forum:  openframeworks.cc/forum
+
+have fun! 
+
+
+
+
+
