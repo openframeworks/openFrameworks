@@ -1,7 +1,10 @@
 
 :: load the vars file to get access to vcbuild
+@echo off
 
 echo loading variables
+
+set OLDDIR=%CD%
 
 call "C:\Program Files\Microsoft Visual Studio 9.0\VC\vcvarsall.bat"
 
@@ -21,8 +24,6 @@ cd %%X
 		cd ../
 	)
 
-
-cd ../
 )
 
-cd ../scripts/win_vs2008
+chdir /d %OLDDIR%
