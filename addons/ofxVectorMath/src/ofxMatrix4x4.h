@@ -1,11 +1,14 @@
+
 /*
  *  ofxMatrix4x4.h
- *  splineTest
- *
- *  Created by Aaron Meyers on 6/22/09.
- *  Copyright 2009 __MyCompanyName__. All rights reserved.
- *
+ *  
+ *  Created by Aaron Meyers on 6/22/09 -- modified by Artuo Castro and Zach Lieberman
+ *  based on code from OSG - 
+ *  see OSG license for more details: 
+ *  http://www.openscenegraph.org/projects/osg/wiki/Legal
+ * 
  */
+
 
 #ifndef _OFX_MATRIX_4X4
 #define _OFX_MATRIX_4X4 1
@@ -28,7 +31,7 @@ public:
 		makeIdentityMatrix();
 	}
 	ofxMatrix4x4( const ofxMatrix4x4& mat) {
-		set(mat.ptr());
+		set(mat.getPtr());
 	}
 	ofxMatrix4x4( float const * const ptr ) {
 		set(ptr);
@@ -88,10 +91,10 @@ public:
 	//---------------------------------------------
 	// access the internal data in float* format
 	// useful for opengl matrix transformations
-	float * ptr() {
+	float * getPtr() {
 		return (float*)_mat;
 	}
-	const float * ptr() const {
+	const float * getPtr() const {
 		return (const float *)_mat;
 	}
 
@@ -356,12 +359,12 @@ inline bool ofxMatrix4x4::isNaN() const {
 
 inline ofxMatrix4x4& ofxMatrix4x4::operator = (const ofxMatrix4x4& rhs) {
 	if ( &rhs == this ) return *this;
-	set(rhs.ptr());
+	set(rhs.getPtr());
 	return *this;
 }
 
 inline void ofxMatrix4x4::set(const ofxMatrix4x4& rhs) {
-	set(rhs.ptr());
+	set(rhs.getPtr());
 }
 
 inline void ofxMatrix4x4::set(float const * const ptr) {

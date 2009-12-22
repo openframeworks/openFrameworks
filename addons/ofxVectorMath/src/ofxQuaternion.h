@@ -1,10 +1,11 @@
 /*
  *  ofxQuaternion.h
- *  splineTest
- *
- *  Created by Aaron Meyers on 6/22/09.
- *  Copyright 2009 __MyCompanyName__. All rights reserved.
- *
+ *  
+ *  Created by Aaron Meyers on 6/22/09 -- modified by Artuo Castro and Zach Lieberman
+ *  based on code from OSG - 
+ *  see OSG license for more details: 
+ *  http://www.openscenegraph.org/projects/osg/wiki/Legal
+ * 
  */
 
 #ifndef _OFX_QUATERNION

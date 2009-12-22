@@ -1,12 +1,3 @@
-/*
- *  ofxQuat.cpp
- *  splineTest
- *
- *  Created by Aaron Meyers on 6/22/09.
- *  Copyright 2009 __MyCompanyName__. All rights reserved.
- *
- */
-
 
 #include <stdio.h>
 #include "ofxQuaternion.h"
