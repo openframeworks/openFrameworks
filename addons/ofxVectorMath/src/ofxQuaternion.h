@@ -1,7 +1,7 @@
 /*
  *  ofxQuaternion.h
  *  
- *  Created by Aaron Meyers on 6/22/09 -- modified by Artuo Castro and Zach Lieberman
+ *  Created by Aaron Meyers on 6/22/09 -- modified by Arturo Castro and Zach Lieberman
  *  based on code from OSG - 
  *  see OSG license for more details: 
  *  http://www.openscenegraph.org/projects/osg/wiki/Legal
