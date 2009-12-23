@@ -302,36 +302,17 @@ public:
 	ofxVec3f getScale() const;
 
 
+	//---------------------------------------------
 	// apply a 3x3 transform of v*M[0..2,0..2].
 	inline static ofxVec3f transform3x3(const ofxVec3f& v, const ofxMatrix4x4& m);
 
 	// apply a 3x3 transform of M[0..2,0..2]*v.
 	inline static ofxVec3f transform3x3(const ofxMatrix4x4& m, const ofxVec3f& v);
 
+
+	//---------------------------------------------
 	// basic Matrixf multiplication, our workhorse methods.
-	void preMult( const ofxMatrix4x4& );
 	void postMult( const ofxMatrix4x4& );
-
-	/** Optimized version of preMult(translate(v)); */
-	inline void preMultTranslate( const ofxVec3f& v );
-	/** Optimized version of postMult(translate(v)); */
-	inline void postMultTranslate( const ofxVec3f& v );
-
-	/** Optimized version of preMult(scale(v)); */
-	inline void preMultScale( const ofxVec3f& v );
-	/** Optimized version of postMult(scale(v)); */
-	inline void postMultScale( const ofxVec3f& v );
-
-	/** Optimized version of preMult(rotate(q)); */
-	inline void preMultRotate( const ofxQuaternion& q );
-	/** Optimized version of postMult(rotate(q)); */
-	inline void postMultRotate( const ofxQuaternion& q );
-
-	// AARON METHODS
-	inline void postMultTranslate(float x, float y, float z);
-	inline void postMultRotate(float angle, float x, float y, float z);
-	inline void postMultScale(float x, float y, float z);
-
 	inline void operator *= ( const ofxMatrix4x4& other ) {
 		if ( this == &other ) {
 			ofxMatrix4x4 temp(other);
@@ -344,6 +325,37 @@ public:
 		r.makeFromMultiplicationOf(*this, m);
 		return  r;
 	}
+
+	void preMult( const ofxMatrix4x4& );
+
+
+
+	//---------------------------------------------
+	// specialized postMult methods, usually you want to use this
+	// for transforming ofxVec not preMult
+	// equivalent to postMult(newTranslationMatrix(v)); */
+	inline void postMultTranslate( const ofxVec3f& v );
+	// equivalent to postMult(scale(v));
+	inline void postMultScale( const ofxVec3f& v );
+	// equivalent to postMult(newRotationMatrix(q));
+	inline void postMultRotate( const ofxQuaternion& q );
+
+	// AARON METHODS
+	inline void postMultTranslate(float x, float y, float z);
+	inline void postMultRotate(float angle, float x, float y, float z);
+	inline void postMultScale(float x, float y, float z);
+
+
+	//---------------------------------------------
+	// equivalent to preMult(newScaleMatrix(v));
+	inline void preMultScale( const ofxVec3f& v );
+	// equivalent to preMult(newTranslationMatrix(v));
+	inline void preMultTranslate( const ofxVec3f& v );
+	// equivalent to preMult(newRotationMatrix(q));
+	inline void preMultRotate( const ofxQuaternion& q );
+
+
+
 };
 
 
