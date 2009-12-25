@@ -15,6 +15,12 @@
 #include "ofxVec4f.h"
 #include <cmath>
 
+#if (_MSC_VER)       
+		// make microsoft visual studio complain less about double / float conversion.
+		#pragma warning(disable : 4244)
+#endif
+
+
 class ofxMatrix4x4;
 
 class ofxQuaternion {
