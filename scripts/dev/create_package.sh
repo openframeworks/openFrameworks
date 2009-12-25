@@ -235,9 +235,9 @@ function createPackage {
     done
     if [ "$pkg_platform" = "osx" ]; then
         rm -Rf $libsnotinmac
-    elif [ "$platform" = "linux" ] || [ "$platform" = "linux64" ]; then
+    elif [ "$pkg_platform" = "linux" ] || [ "$pkg_platform" = "linux64" ]; then
         rm -Rf $libsnotinlinux
-    elif [ "$platform" = "win_cb" ] || [ "$platform" = "vs2008" ]; then
+    elif [ "$pkg_platform" = "win_cb" ] || [ "$pkg_platform" = "vs2008" ]; then
         rm -Rf $libsnotinwindows
     fi
     
@@ -281,6 +281,27 @@ function createPackage {
     rm -Rf devApps
     cd ${pkg_ofroot}/scripts
     rm -Rf dev
+
+	#download and copy OF compiled
+	cd $pkg_ofroot/libs/openFrameworksCompiled/lib/${pkg_platform}
+	if [ "$pkg_platform" = "linux" ] || [ "$pkg_platform" = "linux64" ]; then
+		wget http://openframeworks.com/git_pkgs/OF_compiled/${pkg_platform}/libopenFrameworks.a
+		wget http://openframeworks.com/git_pkgs/OF_compiled/${pkg_platform}/libopenFrameworksDebug.a
+	elif [ "$pkg_platform" = "win_cb" ]
+		wget http://openframeworks.com/git_pkgs/OF_compiled/${pkg_platform}/openFrameworks.lib
+		wget http://openframeworks.com/git_pkgs/OF_compiled/${pkg_platform}/openFrameworksDebug.lib
+	elif [ "$pkg_platform" = "vs2008" ]
+		wget http://openframeworks.com/git_pkgs/OF_compiled/${pkg_platform}/openFrameworksLib.lib
+		wget http://openframeworks.com/git_pkgs/OF_compiled/${pkg_platform}/openFrameworksDebugLib.lib
+	elif [ "$pkg_platform" = "osx" ]
+		if [ $runOSXSLScript = 1 ]; then
+			wget http://openframeworks.com/git_pkgs/OF_compiled/osxSL/openFrameworks.a
+			wget http://openframeworks.com/git_pkgs/OF_compiled/osxSL/openFrameworksDebug.a
+		else
+			wget http://openframeworks.com/git_pkgs/OF_compiled/osx/openFrameworks.a
+			wget http://openframeworks.com/git_pkgs/OF_compiled/osx/openFrameworksDebug.a
+		fi
+	fi
 
     #if snow leopard change 10.4u to 10.5
     if [ $runOSXSLScript = 1 ]; then
