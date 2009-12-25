@@ -14,6 +14,7 @@
 class eventsObject{
 public:
 	eventsObject(){
+	    counter = 0;
 	}
 
 	void enable(){
