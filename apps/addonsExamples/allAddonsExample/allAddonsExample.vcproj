@@ -473,6 +473,22 @@
 						>
 					</File>
 					<File
+						RelativePath="..\..\..\addons\ofxVectorMath\src\ofxMatrix4x4.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\..\addons\ofxVectorMath\src\ofxMatrix4x4.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\..\addons\ofxVectorMath\src\ofxQuaternion.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\..\addons\ofxVectorMath\src\ofxQuaternion.cpp"
+						>
+					</File>
+					<File
 						RelativePath="..\..\..\addons\ofxVectorMath\src\ofxVectorMath.h"
 						>
 					</File>
