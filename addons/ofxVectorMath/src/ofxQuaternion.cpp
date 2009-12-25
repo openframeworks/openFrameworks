@@ -41,11 +41,13 @@ void ofxQuaternion::makeRotate( float angle, const ofxVec3f& vec ) {
 
 
 void ofxQuaternion::makeRotate ( float angle1, const ofxVec3f& axis1,
-                           float angle2, const ofxVec3f& axis2,
-                           float angle3, const ofxVec3f& axis3) {
-	makeRotate(angle1, ofxVec3f(axis1),
-	           angle2, ofxVec3f(axis2),
-	           angle3, ofxVec3f(axis3));
+                          float angle2, const ofxVec3f& axis2,
+                          float angle3, const ofxVec3f& axis3) {
+       ofxQuaternion q1; q1.makeRotate(angle1,axis1);
+       ofxQuaternion q2; q2.makeRotate(angle2,axis2);
+       ofxQuaternion q3; q3.makeRotate(angle3,axis3);
+
+       *this = q1*q2*q3;
 }
 
 /** Make a rotation Quat which will rotate vec1 to vec2
