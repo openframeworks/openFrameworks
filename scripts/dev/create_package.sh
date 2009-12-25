@@ -285,21 +285,21 @@ function createPackage {
 	#download and copy OF compiled
 	cd $pkg_ofroot/libs/openFrameworksCompiled/lib/${pkg_platform}
 	if [ "$pkg_platform" = "linux" ] || [ "$pkg_platform" = "linux64" ]; then
-		wget http://openframeworks.com/git_pkgs/OF_compiled/${pkg_platform}/libopenFrameworks.a
-		wget http://openframeworks.com/git_pkgs/OF_compiled/${pkg_platform}/libopenFrameworksDebug.a
+		wget http://openframeworks.cc/git_pkgs/OF_compiled/${pkg_platform}/libopenFrameworks.a
+		wget http://openframeworks.cc/git_pkgs/OF_compiled/${pkg_platform}/libopenFrameworksDebug.a
 	elif [ "$pkg_platform" = "win_cb" ]; then
-		wget http://openframeworks.com/git_pkgs/OF_compiled/${pkg_platform}/openFrameworks.lib
-		wget http://openframeworks.com/git_pkgs/OF_compiled/${pkg_platform}/openFrameworksDebug.lib
+		wget http://openframeworks.cc/git_pkgs/OF_compiled/${pkg_platform}/openFrameworks.lib
+		wget http://openframeworks.cc/git_pkgs/OF_compiled/${pkg_platform}/openFrameworksDebug.lib
 	elif [ "$pkg_platform" = "vs2008" ]; then
-		wget http://openframeworks.com/git_pkgs/OF_compiled/${pkg_platform}/openFrameworksLib.lib
-		wget http://openframeworks.com/git_pkgs/OF_compiled/${pkg_platform}/openFrameworksDebugLib.lib
+		wget http://openframeworks.cc/git_pkgs/OF_compiled/${pkg_platform}/openFrameworksLib.lib
+		wget http://openframeworks.cc/git_pkgs/OF_compiled/${pkg_platform}/openFrameworksDebugLib.lib
 	elif [ "$pkg_platform" = "osx" ]; then
 		if [ $runOSXSLScript = 1 ]; then
-			wget http://openframeworks.com/git_pkgs/OF_compiled/osxSL/openFrameworks.a
-			wget http://openframeworks.com/git_pkgs/OF_compiled/osxSL/openFrameworksDebug.a
+			wget http://openframeworks.cc/git_pkgs/OF_compiled/osxSL/openFrameworks.a
+			wget http://openframeworks.cc/git_pkgs/OF_compiled/osxSL/openFrameworksDebug.a
 		else
-			wget http://openframeworks.com/git_pkgs/OF_compiled/osx/openFrameworks.a
-			wget http://openframeworks.com/git_pkgs/OF_compiled/osx/openFrameworksDebug.a
+			wget http://openframeworks.cc/git_pkgs/OF_compiled/osx/openFrameworks.a
+			wget http://openframeworks.cc/git_pkgs/OF_compiled/osx/openFrameworksDebug.a
 		fi
 	fi
 
