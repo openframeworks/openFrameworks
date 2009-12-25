@@ -125,6 +125,9 @@
 		<Unit filename="src/testApp.h">
 			<Option virtualFolder="src/"/>
 		</Unit>
+		<Unit filename="src\eventsObject.h">
+			<Option virtualFolder="src\"/>
+		</Unit>
 		<Extensions>
 			<lib_finder>
 				<lib name="gstreamer-0.10"/>
