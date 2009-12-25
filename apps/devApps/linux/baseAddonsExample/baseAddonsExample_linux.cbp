@@ -87,7 +87,7 @@
 			<Add directory="../../../addons/ofxXmlSettings/libs" />
 		</Compiler>
 		<Linker>
-			<Add library="fmodex64-4.22.00"/>
+			<Add library="fmodex"/>
 			<Add library="raw1394" />
 			<Add library="glut" />
 			<Add library="GL" />

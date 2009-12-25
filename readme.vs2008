@@ -1,0 +1,124 @@
+
+
+--------------------------------------------------------------------------------
+installing visual studio 2008 Express Edition:
+--------------------------------------------------------------------------------
+
+follow the steps here:
+
+http://www.openframeworks.cc/setup/vs-2008
+
+--------------------------------------------------------------------------------
+solution / compiled OF	
+--------------------------------------------------------------------------------
+
+From 0.061, we've moved to having a compiled version of openframeworks.
+
+each example (imageSaver, soundPlayer, etc) contains a solution, that load both the project
+for that example and the project that contains the openframeworks library. 
+
+With visual studio, the IDE is typically pretty smart -- if you open up 
+
+--------------------------------------------------------------------------------
+how to make a new project:
+--------------------------------------------------------------------------------
+
+a) copy the folder inside of apps and paste in the same directory
+
+ie (copy "emptyExample" and paste "copy of emptyExample")
+
+b) rename the folder, and inside the folder, rename the .vcproj and .sln
+
+ie, rename  
+
+emptyExample.vcproj
+
+to
+
+coolExample.vcproj
+
+c) open the . vcproj file with a text editor.  change the occurrences of the old name to the new name:
+
+<?xml version="1.0" encoding="Windows-1252"?>
+<VisualStudioProject
+	ProjectType="Visual C++"
+	Version="9.00"
+	Name="emptyExample"
+	ProjectGUID="{7FD42DF7-442E-479A-BA76-D0022F99702A}"
+	RootNamespace="emptyExample"
+
+
+for example, if I copied emptyexample and wanted to call it "coolExample" would look like:
+
+<?xml version="1.0" encoding="Windows-1252"?>
+<VisualStudioProject
+	ProjectType="Visual C++"
+	Version="9.00"
+	Name="coolExample"
+	ProjectGUID="{7FD42DF7-442E-479A-BA76-D0022F99702A}"
+	RootNamespace="coolExample"
+
+in the solution file, change the name of .vcproj file:
+
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "emptyExample", "emptyExample.vcproj", "{7FD42DF7-442E-479A-BA76-D0022F99702A}"
+	ProjectSection(ProjectDependencies) = postProject
+		{5837595D-ACA9-485C-8E76-729040CE4B0B} = {5837595D-ACA9-485C-8E76-729040CE4B0B}
+	EndProjectSection
+EndProject
+
+to whatever you've renamed the vcproj to:
+
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "coolExample", "coolExample.vcproj", "{7FD42DF7-442E-479A-BA76-D0022F99702A}"
+	ProjectSection(ProjectDependencies) = postProject
+		{5837595D-ACA9-485C-8E76-729040CE4B0B} = {5837595D-ACA9-485C-8E76-729040CE4B0B}
+	EndProjectSection
+EndProject
+
+
+--------------------------------------------------------------------------------
+run examples from within visual studio
+--------------------------------------------------------------------------------
+
+(ie debug, or start without debugging)
+
+for projects that load in external data (movies, fonts, etc) make sure that the following is set:
+
+openFrameworkApp properties > configuration properties > debugging 
+
+the value for working directory should be:  $(ConfigurationName)
+
+this is because visual studio, when it loads the exe, will by default run the exe from the project directory,
+instead of the directory where the exe is compiled to.
+
+We've tried to include a "dummy" .user file, (projectName.vcproj.user) so that this setting is kept as
+you open the project, but be sure that it is set if you have trouble loading fonts/images/movies.  When you
+launch the project for the first time, a real ".user" file is made which duplicates the dummy file, and that should 
+keep the setting from the dummy file.
+
+if you have issues with this, be sure to check the "working directory" for the configuration
+
+--------------------------------------------------------------------------------
+msvcp90d.dll missing
+--------------------------------------------------------------------------------
+
+if VS 2008 complains about msvcp90d.dll, try: 
+
+clean -> build
+
+it seems to happen on FAT32 drives (ie, typically macintosh drives running bootcamp, etc).   There is a 
+recommendation about fixes (including a FAT32 specific fix) here: 
+
+http://social.msdn.microsoft.com/Forums/en/Vsexpressvc/thread/6c090997-57a6-4b16-a998-22af447cb253
+
+
+
+
+
+as always if you have issues, check or post on the forum:  openframeworks.cc/forum
+
+have fun! 
+
+
+
+
+
