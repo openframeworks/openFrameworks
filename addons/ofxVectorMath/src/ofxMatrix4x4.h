@@ -18,6 +18,11 @@
 #include "ofxQuaternion.h"
 #include <cmath>
 
+#if (_MSC_VER)       
+		// make microsoft visual studio complain less about double / float conversion.
+		#pragma warning(disable : 4244)
+#endif
+
 
 class ofxMatrix4x4;
 
@@ -364,10 +369,25 @@ public:
 // implementation of inline methods
 
 inline bool ofxMatrix4x4::isNaN() const {
-	return std::isnan(_mat[0][0]) || std::isnan(_mat[0][1]) || std::isnan(_mat[0][2]) || std::isnan(_mat[0][3]) ||
+	
+#if (_MSC_VER)
+#ifndef isnan
+#define isnan(a) ((a) != (a))
+#endif
+
+return isnan(_mat[0][0]) || isnan(_mat[0][1]) || isnan(_mat[0][2]) || isnan(_mat[0][3]) ||
+	       isnan(_mat[1][0]) || isnan(_mat[1][1]) || isnan(_mat[1][2]) || isnan(_mat[1][3]) ||
+	       isnan(_mat[2][0]) || isnan(_mat[2][1]) || isnan(_mat[2][2]) || isnan(_mat[2][3]) ||
+	       isnan(_mat[3][0]) || isnan(_mat[3][1]) || isnan(_mat[3][2]) || isnan(_mat[3][3]);
+
+#else
+return std::isnan(_mat[0][0]) || std::isnan(_mat[0][1]) || std::isnan(_mat[0][2]) || std::isnan(_mat[0][3]) ||
 	       std::isnan(_mat[1][0]) || std::isnan(_mat[1][1]) || std::isnan(_mat[1][2]) || std::isnan(_mat[1][3]) ||
 	       std::isnan(_mat[2][0]) || std::isnan(_mat[2][1]) || std::isnan(_mat[2][2]) || std::isnan(_mat[2][3]) ||
 	       std::isnan(_mat[3][0]) || std::isnan(_mat[3][1]) || std::isnan(_mat[3][2]) || std::isnan(_mat[3][3]);
+
+#endif
+	
 }
 
 inline ofxMatrix4x4& ofxMatrix4x4::operator = (const ofxMatrix4x4& rhs) {

@@ -1,9 +1,15 @@
 
+
+
+
 #include "ofxMatrix4x4.h"
 #include <limits>
 #include <stdlib.h>
 
-
+#if (_MSC_VER)
+#undef min
+// see: http://stackoverflow.com/questions/1904635/warning-c4003-and-errors-c2589-and-c2059-on-x-stdnumericlimitsintmax
+#endif
 
 inline bool equivalent(double lhs,double rhs,double epsilon=1e-6)
 { double delta = rhs-lhs; return delta<0.0?delta>=-epsilon:delta<=epsilon; }
