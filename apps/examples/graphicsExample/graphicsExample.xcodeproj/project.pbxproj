@@ -453,7 +453,7 @@
 			dependencies = (
 				E4C2422810CC54DA004149E2 /* PBXTargetDependency */,
 			);
-			name = stupidApp;
+			name = graphicsExample;
 			productName = myOFApp;
 			productReference = E4B69B5B0A3A1756003C02F2 /* openFrameworksDebug.app */;
 			productType = "com.apple.product-type.application";
