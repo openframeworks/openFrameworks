@@ -291,7 +291,7 @@ function createPackage {
 		wget http://openframeworks.cc/git_pkgs/OF_compiled/${pkg_platform}/openFrameworks.lib
 		wget http://openframeworks.cc/git_pkgs/OF_compiled/${pkg_platform}/openFrameworksDebug.lib
 	elif [ "$pkg_platform" = "vs2008" ]; then
-		wget http://www.openframeworks.cc/git_pkgs/OF_compiled/${pkg_platform}/openFrameworksLib.lib
+		wget http://www.openframeworks.cc/git_pkgs/OF_compiled/${pkg_platform}/openframeworksLib.lib
 		wget http://www.openframeworks.cc/git_pkgs/OF_compiled/${pkg_platform}/openframeworksLibDebug.lib
 	elif [ "$pkg_platform" = "osx" ]; then
 		if [ $runOSXSLScript = 1 ]; then
