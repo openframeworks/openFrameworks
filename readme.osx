@@ -15,9 +15,21 @@ You can also uncheck the documentation if you wish to save disk space.
  
 a) copy the folder inside of apps/exampleApps/ and paste in the same directory
  
-ie (copy "emptyExample" and paste "copy of emptyExample")
+ie: (copy "emptyExample" and paste "copy of emptyExample")
  
-b) rename the folder, and inside the folder, rename the .xcodeproj file
+b) rename the folder, and inside the folder, rename the .xcodeproj file - ie: myExperimentalApp.xcodeproj
+
+c) open the project
+
+d) in the sidebar scroll down to Targets and expand it to show the target. ie: emptyExample
+
+e) with the target selected do Get Info ( either right click or Command-i ) 
+
+f) in the General Tab rename the Name text field ie: from emptyExample to myExperimentalApp
+
+e and f alternative ) you can also just do right click on the target -> rename in the sidebar directly
+
+g) after you have renamed the target you should change the build from Debug to Release then back again. This refreshes the target app. 
  
 
 
