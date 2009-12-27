@@ -174,7 +174,7 @@ function createPackage {
     
     #remove previously created package 
     cd $pkg_ofroot/..
-	if [ runOSXSLScript = 1 ]; then
+	if [ $runOSXSLScript = 1 ]; then
 		rm -Rf of_preRelease_v${pkg_version}_osxSL*
 	else
 	    rm -Rf of_preRelease_v${pkg_version}_${pkg_platform}.*
