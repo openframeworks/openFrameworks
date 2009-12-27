@@ -10,7 +10,7 @@ rpm -Uvh http://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-stabl
 
 yum install ffmpeg-devel libtheora-devel libvorbis-devel
 
-ARCH = $(uname -m)
+ARCH=$(uname -m)
 if [ "$ARCH" = "x86_64" ]; then
         LIBSPATH=linux64
 else
