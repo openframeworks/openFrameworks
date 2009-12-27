@@ -363,15 +363,21 @@ void ofArduino::processData(unsigned char inputData){
 					ofNotifyEvent(EProtocolVersionReceived, _majorProtocolVersion, this);
 				break;
 				case FIRMATA_ANALOG_MESSAGE:
-					int previous = _analogHistory[_multiByteChannel].front();
+					if(_analogHistory[_multiByteChannel].size()>0){
+						int previous = _analogHistory[_multiByteChannel].front();
 
-					_analogHistory[_multiByteChannel].push_front((_storedInputData[0] << 7) | _storedInputData[1]);
-					if((int)_analogHistory[_multiByteChannel].size()>_analogHistoryLength)
-						_analogHistory[_multiByteChannel].pop_back();
+						_analogHistory[_multiByteChannel].push_front((_storedInputData[0] << 7) | _storedInputData[1]);
+						if((int)_analogHistory[_multiByteChannel].size()>_analogHistoryLength)
+							_analogHistory[_multiByteChannel].pop_back();
 
-					// trigger an event if the pin has changed value
-					if(_analogHistory[_multiByteChannel].front()!=previous)
-						ofNotifyEvent(EAnalogPinChanged, _multiByteChannel, this);
+						// trigger an event if the pin has changed value
+						if(_analogHistory[_multiByteChannel].front()!=previous)
+							ofNotifyEvent(EAnalogPinChanged, _multiByteChannel, this);
+					}else{
+						_analogHistory[_multiByteChannel].push_front((_storedInputData[0] << 7) | _storedInputData[1]);
+						if((int)_analogHistory[_multiByteChannel].size()>_analogHistoryLength)
+							_analogHistory[_multiByteChannel].pop_back();
+					}
 				break;
 			}
 
