@@ -174,8 +174,12 @@ function createPackage {
     
     #remove previously created package 
     cd $pkg_ofroot/..
-    rm -Rf of_preRelease_v${pkg_version}_${pkg_platform}*
-    
+	if [ runOSXSLScript = 1 ]; then
+		rm -Rf of_preRelease_v${pkg_version}_osxSL*
+	else
+	    rm -Rf of_preRelease_v${pkg_version}_${pkg_platform}.*
+		rm -Rf of_preRelease_v${pkg_version}_${pkg_platform}_*
+    fi
     echo "creating package $pkg_platform $version in $pkg_ofroot"
     
     #delete other platforms example project files
