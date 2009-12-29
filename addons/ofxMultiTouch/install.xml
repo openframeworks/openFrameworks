@@ -1,0 +1,28 @@
+<install>
+
+	<version>0.4</version>
+	<author>Mehmet Akten</author>
+	<url>code.google.com/p/ofxmsaof/</url>
+
+    <requires>
+	</requires>
+    
+	<add>	
+		<src>
+			<folder name="addons/ofxMultiTouch/src">			
+				<file>../../../addons/ofxMultiTouch/src/ofxMultiTouch.h</file>
+				<file>../../../addons/ofxMultiTouch/src/ofxMultiTouch.cpp</file>
+				<file>../../../addons/ofxMultiTouch/src/ofxMultiTouchListener.h</file>
+			</folder>
+		</src>
+
+		<include>
+			<path>../../../addons/ofxMultiTouch/src</path>
+		</include>
+		
+		<link>
+		</link>
+
+	</add>
+	
+</install>
