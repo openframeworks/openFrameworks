@@ -12,13 +12,13 @@
 		288765FD0DF74451002DB57D /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 288765FC0DF74451002DB57D /* CoreGraphics.framework */; };
 		5326AEA810A23A0500278DE6 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5326AEA710A23A0500278DE6 /* CoreLocation.framework */; };
 		53F323EB10A20EDB00E0DAE4 /* OpenAL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53F323EA10A20EDB00E0DAE4 /* OpenAL.framework */; };
-		5EC7340310EC36040090AEFE /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = 5EC733FA10EC36040090AEFE /* Default.png */; };
-		5EC7340410EC36040090AEFE /* Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 5EC733FB10EC36040090AEFE /* Icon.png */; };
-		5EC7341310EC36150090AEFE /* images in Resources */ = {isa = PBXBuildFile; fileRef = 5EC7340B10EC36150090AEFE /* images */; };
-		5EC7341910EC362F0090AEFE /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 5EC7341810EC362F0090AEFE /* Info.plist */; };
+		5E82F6BD10EC5A6800A839D4 /* images in Resources */ = {isa = PBXBuildFile; fileRef = 5E82F6B510EC5A6800A839D4 /* images */; };
 		BB16EBD20F2B2A9500518274 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB16EBD10F2B2A9500518274 /* OpenGLES.framework */; };
 		BB16EBD90F2B2AB500518274 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB16EBD80F2B2AB500518274 /* QuartzCore.framework */; };
 		BB16F3AD0F2B73B000518274 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BB16F3A80F2B73B000518274 /* main.cpp */; };
+		BB24DD8F10DA77E000E9C588 /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = BB24DD8C10DA77E000E9C588 /* Default.png */; };
+		BB24DD9010DA77E000E9C588 /* Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = BB24DD8D10DA77E000E9C588 /* Icon.png */; };
+		BB24DDCA10DA781C00E9C588 /* ofxiphone-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = BB24DDC910DA781C00E9C588 /* ofxiphone-Info.plist */; };
 		BB24DE2F10DA785000E9C588 /* libFreeImage_iphone_universal.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BB24DDD210DA784F00E9C588 /* libFreeImage_iphone_universal.a */; };
 		BB24DE3510DA785000E9C588 /* libFreeType_iphone_universal.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BB24DE1310DA785000E9C588 /* libFreeType_iphone_universal.a */; };
 		BB24DE3C10DA785000E9C588 /* libGLU.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BB24DE2710DA785000E9C588 /* libGLU.a */; };
@@ -53,14 +53,14 @@
 		32CA4F630368D1EE00C91783 /* iPhone_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iPhone_Prefix.pch; sourceTree = "<group>"; };
 		5326AEA710A23A0500278DE6 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		53F323EA10A20EDB00E0DAE4 /* OpenAL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenAL.framework; path = System/Library/Frameworks/OpenAL.framework; sourceTree = SDKROOT; };
-		5EC733FA10EC36040090AEFE /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Default.png; path = data/Default.png; sourceTree = SOURCE_ROOT; };
-		5EC733FB10EC36040090AEFE /* Icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Icon.png; path = data/Icon.png; sourceTree = SOURCE_ROOT; };
-		5EC7340B10EC36150090AEFE /* images */ = {isa = PBXFileReference; lastKnownFileType = folder; name = images; path = data/images; sourceTree = SOURCE_ROOT; };
-		5EC7341810EC362F0090AEFE /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = SOURCE_ROOT; };
+		5E82F6B510EC5A6800A839D4 /* images */ = {isa = PBXFileReference; lastKnownFileType = folder; name = images; path = data/images; sourceTree = SOURCE_ROOT; };
 		BB16EBD10F2B2A9500518274 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
 		BB16EBD80F2B2AB500518274 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		BB16F3A80F2B73B000518274 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		BB16F3AA0F2B73B000518274 /* testApp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = testApp.h; sourceTree = "<group>"; };
+		BB24DD8C10DA77E000E9C588 /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Default.png; sourceTree = "<group>"; };
+		BB24DD8D10DA77E000E9C588 /* Icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Icon.png; sourceTree = "<group>"; };
+		BB24DDC910DA781C00E9C588 /* ofxiphone-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "ofxiphone-Info.plist"; sourceTree = "<group>"; };
 		BB24DDCF10DA784F00E9C588 /* FreeImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FreeImage.h; sourceTree = "<group>"; };
 		BB24DDD210DA784F00E9C588 /* libFreeImage_iphone_universal.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libFreeImage_iphone_universal.a; sourceTree = "<group>"; };
 		BB24DDE210DA785000E9C588 /* ftconfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ftconfig.h; sourceTree = "<group>"; };
@@ -153,9 +153,9 @@
 		29B97314FDCFA39411CA2CEA /* CustomTemplate */ = {
 			isa = PBXGroup;
 			children = (
-				5EC7341810EC362F0090AEFE /* Info.plist */,
+				BB24DDC910DA781C00E9C588 /* ofxiphone-Info.plist */,
 				BB16F3A50F2B73B000518274 /* src */,
-				5EC733F910EC36040090AEFE /* data */,
+				BB24DD8B10DA77E000E9C588 /* data */,
 				BB24E1F710DAA51900E9C588 /* openFrameworks */,
 				BB16F26B0F2B646B00518274 /* addons */,
 				BB16E9930F2B1E5900518274 /* libs */,
@@ -187,16 +187,6 @@
 			name = "core frameworks";
 			sourceTree = "<group>";
 		};
-		5EC733F910EC36040090AEFE /* data */ = {
-			isa = PBXGroup;
-			children = (
-				5EC7340B10EC36150090AEFE /* images */,
-				5EC733FA10EC36040090AEFE /* Default.png */,
-				5EC733FB10EC36040090AEFE /* Icon.png */,
-			);
-			path = data;
-			sourceTree = SOURCE_ROOT;
-		};
 		BB16E9930F2B1E5900518274 /* libs */ = {
 			isa = PBXGroup;
 			children = (
@@ -220,6 +210,17 @@
 				BB16F3A80F2B73B000518274 /* main.cpp */,
 			);
 			path = src;
+			sourceTree = "<group>";
+		};
+		BB24DD8B10DA77E000E9C588 /* data */ = {
+			isa = PBXGroup;
+			children = (
+				5E82F6B510EC5A6800A839D4 /* images */,
+				BB24DD8C10DA77E000E9C588 /* Default.png */,
+				BB24DD8D10DA77E000E9C588 /* Icon.png */,
+			);
+			name = data;
+			path = bin/data;
 			sourceTree = "<group>";
 		};
 		BB24DDCD10DA784F00E9C588 /* FreeImage */ = {
@@ -497,10 +498,10 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5EC7340310EC36040090AEFE /* Default.png in Resources */,
-				5EC7340410EC36040090AEFE /* Icon.png in Resources */,
-				5EC7341310EC36150090AEFE /* images in Resources */,
-				5EC7341910EC362F0090AEFE /* Info.plist in Resources */,
+				BB24DD8F10DA77E000E9C588 /* Default.png in Resources */,
+				BB24DD9010DA77E000E9C588 /* Icon.png in Resources */,
+				BB24DDCA10DA781C00E9C588 /* ofxiphone-Info.plist in Resources */,
+				5E82F6BD10EC5A6800A839D4 /* images in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -545,7 +546,7 @@
 					"../../../libs/openFrameworks/**",
 					"../../../libs/freetype/**",
 				);
-				INFOPLIST_FILE = Info.plist;
+				INFOPLIST_FILE = "ofxiphone-Info.plist";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../../../libs/freetype/lib\"",
@@ -589,7 +590,7 @@
 					"../../../libs/openFrameworks/**",
 					"../../../libs/freetype/**",
 				);
-				INFOPLIST_FILE = Info.plist;
+				INFOPLIST_FILE = "ofxiphone-Info.plist";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../../../libs/freetype/lib\"",
@@ -646,7 +647,7 @@
 					"../../../libs/openFrameworks/**",
 					"../../../libs/freetype/**",
 				);
-				INFOPLIST_FILE = Info.plist;
+				INFOPLIST_FILE = "ofxiphone-Info.plist";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../../../libs/freetype/lib\"",
