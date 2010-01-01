@@ -28,7 +28,6 @@ void testApp::setup(){
 
 //--------------------------------------------------------------
 void testApp::update() {
-	ofNotifyEvent( ofEvents.update, voidEventArgs);
 }
 
 //--------------------------------------------------------------
