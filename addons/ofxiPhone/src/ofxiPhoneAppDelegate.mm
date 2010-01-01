@@ -118,6 +118,7 @@
 
 
 -(void) applicationDidFinishLaunching:(UIApplication *)application {    
+	static ofEventArgs voidEventArgs;
 	ofLog(OF_LOG_VERBOSE, "applicationDidFinishLaunching() start");
 	
 	// create fullscreen window
@@ -153,6 +154,10 @@
 	
 	// call testApp::setup()
 	ofGetAppPtr()->setup();
+	#ifdef OF_USING_POCO
+		ofNotifyEvent( ofEvents.setup, voidEventArgs );
+		ofNotifyEvent( ofEvents.update, voidEventArgs );
+	#endif
 	
 	// if user didn't set framerate in setup(), default to 60
 	if(targetFrameRate == -1) [self setFrameRate:60];
