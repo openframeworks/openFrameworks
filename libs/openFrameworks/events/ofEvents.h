@@ -31,6 +31,7 @@
 			int id;
 			int time;
 			float x, y;
+			int numTouches;
 			float width, height;
 			float angle;
 			float minoraxis, majoraxis;
@@ -121,32 +122,6 @@
 
 
 	extern ofCoreEvents ofEvents;
-
-
-	class ofTouchListener{
-	public:
-		ofTouchListener(){}
-		virtual ~ofTouchListener(){}
-
-		void registerTouchEvents(){
-			ofAddListener(ofEvents.touchDown,this,&ofTouchListener::touchDown);
-			ofAddListener(ofEvents.touchUp,this,&ofTouchListener::touchUp);
-			ofAddListener(ofEvents.touchMoved,this,&ofTouchListener::touchMoved);
-			ofAddListener(ofEvents.touchDoubleTap,this,&ofTouchListener::touchDoubleTap);
-		}
-
-		void unregisterTouchEvents(){
-			ofRemoveListener(ofEvents.touchDown,this,&ofTouchListener::touchDown);
-			ofRemoveListener(ofEvents.touchUp,this,&ofTouchListener::touchUp);
-			ofRemoveListener(ofEvents.touchMoved,this,&ofTouchListener::touchMoved);
-			ofRemoveListener(ofEvents.touchDoubleTap,this,&ofTouchListener::touchDoubleTap);
-		}
-
-		virtual void touchDown(ofTouchEventArgs & touch){}
-		virtual void touchMoved(ofTouchEventArgs & touch){}
-		virtual void touchUp(ofTouchEventArgs & touch){}
-		virtual void touchDoubleTap(ofTouchEventArgs & touch){}
-	};
 
 
 	#endif
