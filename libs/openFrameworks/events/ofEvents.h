@@ -72,6 +72,7 @@
 		ofEvent<ofTouchEventArgs>	touchDown;
 		ofEvent<ofTouchEventArgs>	touchUp;
 		ofEvent<ofTouchEventArgs>	touchMoved;
+		ofEvent<ofTouchEventArgs>	touchDoubleTap;
 
 		void disable(){
 			setup.disable();
@@ -89,6 +90,7 @@
 			touchDown.disable();
 			touchUp.disable();
 			touchMoved.disable();
+			touchDoubleTap.disable();
 		}
 
 		void enable(){
@@ -107,6 +109,7 @@
 			touchDown.enable();
 			touchUp.enable();
 			touchMoved.enable();
+			touchDoubleTap.enable();
 		}
 	};
 

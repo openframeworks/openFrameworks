@@ -36,6 +36,7 @@ class ofBaseApp{
 		virtual void touchDown(float x, float y, int touchId){}
 		virtual void touchMoved(float x, float y, int touchId){}
 		virtual void touchUp(float x, float y, int touchId){}
+		virtual void touchDoubleTap(float x, float y, int touchId){}
 
 		virtual void touchDown(ofTouchEventArgs & touch){
 			touchDown(touch.x, touch.y, touch.id);
@@ -47,6 +48,10 @@ class ofBaseApp{
 
 		virtual void touchUp(ofTouchEventArgs & touch){
 			touchUp(touch.x,touch.y,touch.id);
+		}
+
+		void touchDoubleTap(ofTouchEventArgs & touch){
+			touchDoubleTap(touch.x,touch.y,touch.id);
 		}
 
 
