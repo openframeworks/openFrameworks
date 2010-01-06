@@ -174,8 +174,12 @@ function createPackage {
     
     #remove previously created package 
     cd $pkg_ofroot/..
-    rm -Rf of_preRelease_v${pkg_version}_${pkg_platform}*
-    
+	if [ $runOSXSLScript = 1 ]; then
+		rm -Rf of_preRelease_v${pkg_version}_osxSL*
+	else
+	    rm -Rf of_preRelease_v${pkg_version}_${pkg_platform}.*
+		rm -Rf of_preRelease_v${pkg_version}_${pkg_platform}_*
+    fi
     echo "creating package $pkg_platform $version in $pkg_ofroot"
     
     #delete other platforms example project files
@@ -235,9 +239,9 @@ function createPackage {
     done
     if [ "$pkg_platform" = "osx" ]; then
         rm -Rf $libsnotinmac
-    elif [ "$platform" = "linux" ] || [ "$platform" = "linux64" ]; then
+    elif [ "$pkg_platform" = "linux" ] || [ "$pkg_platform" = "linux64" ]; then
         rm -Rf $libsnotinlinux
-    elif [ "$platform" = "win_cb" ] || [ "$platform" = "vs2008" ]; then
+    elif [ "$pkg_platform" = "win_cb" ] || [ "$pkg_platform" = "vs2008" ]; then
         rm -Rf $libsnotinwindows
     fi
     
@@ -281,6 +285,29 @@ function createPackage {
     rm -Rf devApps
     cd ${pkg_ofroot}/scripts
     rm -Rf dev
+
+	#download and copy OF compiled
+	cd $pkg_ofroot/libs/openFrameworksCompiled/lib/${pkg_platform}
+	if [ "$pkg_platform" = "linux" ] || [ "$pkg_platform" = "linux64" ]; then
+		wget http://openframeworks.cc/git_pkgs/OF_compiled/${pkg_platform}/libopenFrameworks.a
+		wget http://openframeworks.cc/git_pkgs/OF_compiled/${pkg_platform}/libopenFrameworksDebug.a
+	elif [ "$pkg_platform" = "win_cb" ]; then
+		wget http://openframeworks.cc/git_pkgs/OF_compiled/${pkg_platform}/openFrameworks.lib
+		wget http://openframeworks.cc/git_pkgs/OF_compiled/${pkg_platform}/openFrameworksDebug.lib
+	elif [ "$pkg_platform" = "vs2008" ]; then
+		wget http://www.openframeworks.cc/git_pkgs/OF_compiled/${pkg_platform}/openframeworksLib.lib
+		wget http://www.openframeworks.cc/git_pkgs/OF_compiled/${pkg_platform}/openframeworksLibDebug.lib
+	elif [ "$pkg_platform" = "osx" ]; then
+		if [ $runOSXSLScript = 1 ]; then
+			wget http://openframeworks.cc/git_pkgs/OF_compiled/osxSL/openFrameworks.a
+			wget http://openframeworks.cc/git_pkgs/OF_compiled/osxSL/openFrameworksDebug.a
+			wget http://openframeworks.cc/git_pkgs/OF_compiled/osxSL/openFrameworksUniversal.a
+		else
+			wget http://openframeworks.cc/git_pkgs/OF_compiled/osx/openFrameworks.a
+			wget http://openframeworks.cc/git_pkgs/OF_compiled/osx/openFrameworksDebug.a
+			wget http://openframeworks.cc/git_pkgs/OF_compiled/osx/openFrameworksUniversal.a
+		fi
+	fi
 
     #if snow leopard change 10.4u to 10.5
     if [ $runOSXSLScript = 1 ]; then

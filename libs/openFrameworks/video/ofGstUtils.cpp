@@ -1029,18 +1029,23 @@ void ofGstUtils::setLoopState(int state){
 }
 
 void ofGstUtils::setSpeed(float _speed){
-	speed 				= _speed;
+
+
 	GstFormat format = GST_FORMAT_TIME;
 	GstSeekFlags flags = (GstSeekFlags) (GST_SEEK_FLAG_FLUSH | GST_SEEK_FLAG_SKIP | GST_SEEK_FLAG_ACCURATE);
 	gint64 pos;
 
-	if(speed==0){
+	if(_speed==0){
 		gst_element_set_state (gstPipeline, GST_STATE_PAUSED);
 		return;
 	}
 
-	if(!gst_element_query_position(GST_ELEMENT(gstPipeline),&format,&pos))
-		ofLog(OF_LOG_ERROR,"GStreamer: cannot query position");
+	if(!gst_element_query_position(GST_ELEMENT(gstPipeline),&format,&pos) || pos<0){
+		//ofLog(OF_LOG_ERROR,"GStreamer: cannot query position");
+		return;
+	}
+
+	speed 				= _speed;
 	//pos = (float)gstData.lastFrame * (float)fps_d / (float)fps_n * GST_SECOND;
 
 	if(!bPaused)

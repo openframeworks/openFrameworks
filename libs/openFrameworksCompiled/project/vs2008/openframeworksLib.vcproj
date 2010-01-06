@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\..\..\..\libs\openFrameworks;..\..\..\..\libs\openFrameworks\graphics;..\..\..\..\libs\openFrameworks\app;..\..\..\..\libs\openFrameworks\sound;..\..\..\..\libs\openFrameworks\utils;..\..\..\..\libs\openFrameworks\communication;..\..\..\..\libs\openFrameworks\video;..\..\..\..\libs\openFrameworks\events;..\..\..\..\libs\glut\include;..\..\..\..\libs\rtAudio\include;..\..\..\..\libs\quicktime\CIncludes;..\..\..\..\libs\freetype\include;..\..\..\..\libs\freetype\include\freetype2;..\..\..\..\libs\freeImage\include;..\..\..\..\libs\fmodex\include;..\..\..\..\libs\videoInput\include;..\..\..\..\libs\glee\include;..\..\..\..\libs\glu\include;..\..\..\..\libs\poco\include;..\..\..\addons"
+				AdditionalIncludeDirectories="..\..\..\..\libs\openFrameworks;..\..\..\..\libs\openFrameworks\graphics;..\..\..\..\libs\openFrameworks\app;..\..\..\..\libs\openFrameworks\sound;..\..\..\..\libs\openFrameworks\utils;..\..\..\..\libs\openFrameworks\communication;..\..\..\..\libs\openFrameworks\video;..\..\..\..\libs\openFrameworks\events;..\..\..\..\libs\glut\include;..\..\..\..\libs\rtAudio\include;..\..\..\..\libs\quicktime\include;..\..\..\..\libs\freetype\include;..\..\..\..\libs\freetype\include\freetype2;..\..\..\..\libs\freeImage\include;..\..\..\..\libs\fmodex\include;..\..\..\..\libs\videoInput\include;..\..\..\..\libs\glee\include;..\..\..\..\libs\glu\include;..\..\..\..\libs\poco\include;..\..\..\addons"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;POCO_STATIC"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -107,7 +107,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				WholeProgramOptimization="false"
-				AdditionalIncludeDirectories="..\..\..\..\libs\openFrameworks;..\..\..\..\libs\openFrameworks\graphics;..\..\..\..\libs\openFrameworks\app;..\..\..\..\libs\openFrameworks\sound;..\..\..\..\libs\openFrameworks\utils;..\..\..\..\libs\openFrameworks\communication;..\..\..\..\libs\openFrameworks\video;..\..\..\..\libs\openFrameworks\events;..\..\..\..\libs\glut\include;..\..\..\..\libs\rtAudio\include;..\..\..\..\libs\quicktime\CIncludes;..\..\..\..\libs\freetype\include;..\..\..\..\libs\freetype\include\freetype2;..\..\..\..\libs\freeImage\include;..\..\..\..\libs\fmodex\include;..\..\..\..\libs\videoInput\include;..\..\..\..\libs\glee\include;..\..\..\..\libs\glu\include;..\..\..\..\libs\poco\include;..\..\..\addons"
+				AdditionalIncludeDirectories="..\..\..\..\libs\openFrameworks;..\..\..\..\libs\openFrameworks\graphics;..\..\..\..\libs\openFrameworks\app;..\..\..\..\libs\openFrameworks\sound;..\..\..\..\libs\openFrameworks\utils;..\..\..\..\libs\openFrameworks\communication;..\..\..\..\libs\openFrameworks\video;..\..\..\..\libs\openFrameworks\events;..\..\..\..\libs\glut\include;..\..\..\..\libs\rtAudio\include;..\..\..\..\libs\quicktime\include;..\..\..\..\libs\freetype\include;..\..\..\..\libs\freetype\include\freetype2;..\..\..\..\libs\freeImage\include;..\..\..\..\libs\fmodex\include;..\..\..\..\libs\videoInput\include;..\..\..\..\libs\glee\include;..\..\..\..\libs\glu\include;..\..\..\..\libs\poco\include;..\..\..\addons"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;POCO_STATIC"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
