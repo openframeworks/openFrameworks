@@ -823,12 +823,19 @@
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				HEADER_SEARCH_PATHS = (
+					../../../poco/include,
 					../../../../libs/freetype/include/,
 					../../../../libs/freetype/include/freetype2,
 				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\\\"$(SRCROOT)/../../../libs/glu/lib/iphone\\\"",
+					"\"$(DEVELOPER_DIR)/openFrameworks/libs/poco/lib/linux\"",
+					"\"$(DEVELOPER_DIR)/openFrameworks/libs/poco/lib/linux64\"",
+					"\"$(DEVELOPER_DIR)/openFrameworks/libs/poco/lib/osx\"",
+					"\"$(DEVELOPER_DIR)/openFrameworks/libs/poco/lib/vs2008\"",
+					"\"$(DEVELOPER_DIR)/openFrameworks/libs/poco/lib/win_cb\"",
+					"\"$(DEVELOPER_DIR)/openFrameworks/libs/poco/lib/armv6\"",
 				);
 				PREBINDING = NO;
 				PRODUCT_NAME = "iPhone+OF_Debug";
@@ -848,12 +855,19 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				HEADER_SEARCH_PATHS = (
+					../../../poco/include,
 					../../../../libs/freetype/include/,
 					../../../../libs/freetype/include/freetype2,
 				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\\\"$(SRCROOT)/../../../libs/glu/lib/iphone\\\"",
+					"\"$(DEVELOPER_DIR)/openFrameworks/libs/poco/lib/linux\"",
+					"\"$(DEVELOPER_DIR)/openFrameworks/libs/poco/lib/linux64\"",
+					"\"$(DEVELOPER_DIR)/openFrameworks/libs/poco/lib/osx\"",
+					"\"$(DEVELOPER_DIR)/openFrameworks/libs/poco/lib/vs2008\"",
+					"\"$(DEVELOPER_DIR)/openFrameworks/libs/poco/lib/win_cb\"",
+					"\"$(DEVELOPER_DIR)/openFrameworks/libs/poco/lib/armv6\"",
 				);
 				PREBINDING = NO;
 				PRODUCT_NAME = "iPhone+OF_Release";
@@ -871,12 +885,19 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/../../lib/iphone/";
 				HEADER_SEARCH_PATHS = (
+					../../../poco/include,
 					../../../../libs/freetype/include/,
 					../../../../libs/freetype/include/freetype2,
 				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\\\"$(SRCROOT)/../../../libs/glu/lib/iphone\\\"",
+					"\"$(DEVELOPER_DIR)/openFrameworks/libs/poco/lib/linux\"",
+					"\"$(DEVELOPER_DIR)/openFrameworks/libs/poco/lib/linux64\"",
+					"\"$(DEVELOPER_DIR)/openFrameworks/libs/poco/lib/osx\"",
+					"\"$(DEVELOPER_DIR)/openFrameworks/libs/poco/lib/vs2008\"",
+					"\"$(DEVELOPER_DIR)/openFrameworks/libs/poco/lib/win_cb\"",
+					"\"$(DEVELOPER_DIR)/openFrameworks/libs/poco/lib/armv6\"",
 				);
 				PREBINDING = NO;
 				PRODUCT_NAME = "iPhone+OF_Distribution";
@@ -894,6 +915,7 @@
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = ../../../poco/include;
 				PREBINDING = NO;
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "CBB7D4DA-CBD7-4672-8C35-CB67CB1FEC3A";
 				SDKROOT = iphoneos2.2.1;
@@ -908,6 +930,7 @@
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = ../../../poco/include;
 				ONLY_ACTIVE_ARCH = YES;
 				PREBINDING = NO;
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "B2B6A4F8-E7E4-4A49-84A2-821B26E52F18";
@@ -923,6 +946,7 @@
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = ../../../poco/include;
 				PREBINDING = NO;
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "B2B6A4F8-E7E4-4A49-84A2-821B26E52F18";
 				SDKROOT = iphoneos2.2.1;
