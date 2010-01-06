@@ -30,7 +30,7 @@
 		  public:
 			int id;
 			int time;
-			int x, y;
+			float x, y;
 			float width, height;
 			float angle;
 			float minoraxis, majoraxis;
