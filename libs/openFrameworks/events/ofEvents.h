@@ -28,9 +28,15 @@
 
 		class ofTouchEventArgs : public ofEventArgs {
 		  public:
-			int x;
-			int y;
 			int id;
+			int time;
+			int x, y;
+			float width, height;
+			float angle;
+			float minoraxis, majoraxis;
+			float pressure;
+			float xspeed, yspeed;
+			float xaccel, yaccel;
 		};
 
 		class ofAudioEventArgs : public ofEventArgs {
@@ -136,26 +142,10 @@
 			ofRemoveListener(ofEvents.touchDoubleTap,this,&ofTouchListener::touchDoubleTap);
 		}
 
-		virtual void touchDown(float x, float y, int touchId){}
-		virtual void touchMoved(float x, float y, int touchId){}
-		virtual void touchUp(float x, float y, int touchId){}
-		virtual void touchDoubleTap(float x, float y, int touchId){}
-
-		virtual void touchDown(ofTouchEventArgs & touch){
-			touchDown(touch.x, touch.y, touch.id);
-		}
-
-		virtual void touchMoved(ofTouchEventArgs & touch){
-			touchMoved(touch.x, touch.y, touch.id);
-		}
-
-		virtual void touchUp(ofTouchEventArgs & touch){
-			touchUp(touch.x,touch.y,touch.id);
-		}
-
-		void touchDoubleTap(ofTouchEventArgs & touch){
-			touchDoubleTap(touch.x,touch.y,touch.id);
-		}
+		virtual void touchDown(ofTouchEventArgs & touch){}
+		virtual void touchMoved(ofTouchEventArgs & touch){}
+		virtual void touchUp(ofTouchEventArgs & touch){}
+		virtual void touchDoubleTap(ofTouchEventArgs & touch){}
 	};
 
 
