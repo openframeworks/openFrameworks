@@ -49,7 +49,6 @@
 		#include "ofxEventUtils.h"
 	#endif
 
-
 	class ofCoreEvents {
 	  public:
 		ofEvent<ofEventArgs> 		setup;
@@ -116,6 +115,49 @@
 
 
 	extern ofCoreEvents ofEvents;
+
+
+	class ofTouchListener{
+	public:
+		ofTouchListener(){}
+		virtual ~ofTouchListener(){}
+
+		void registerTouchEvents(){
+			ofAddListener(ofEvents.touchDown,this,&ofTouchListener::touchDown);
+			ofAddListener(ofEvents.touchUp,this,&ofTouchListener::touchUp);
+			ofAddListener(ofEvents.touchMoved,this,&ofTouchListener::touchMoved);
+			ofAddListener(ofEvents.touchDoubleTap,this,&ofTouchListener::touchDoubleTap);
+		}
+
+		void unregisterTouchEvents(){
+			ofRemoveListener(ofEvents.touchDown,this,&ofTouchListener::touchDown);
+			ofRemoveListener(ofEvents.touchUp,this,&ofTouchListener::touchUp);
+			ofRemoveListener(ofEvents.touchMoved,this,&ofTouchListener::touchMoved);
+			ofRemoveListener(ofEvents.touchDoubleTap,this,&ofTouchListener::touchDoubleTap);
+		}
+
+		virtual void touchDown(float x, float y, int touchId){}
+		virtual void touchMoved(float x, float y, int touchId){}
+		virtual void touchUp(float x, float y, int touchId){}
+		virtual void touchDoubleTap(float x, float y, int touchId){}
+
+		virtual void touchDown(ofTouchEventArgs & touch){
+			touchDown(touch.x, touch.y, touch.id);
+		}
+
+		virtual void touchMoved(ofTouchEventArgs & touch){
+			touchMoved(touch.x, touch.y, touch.id);
+		}
+
+		virtual void touchUp(ofTouchEventArgs & touch){
+			touchUp(touch.x,touch.y,touch.id);
+		}
+
+		void touchDoubleTap(ofTouchEventArgs & touch){
+			touchDoubleTap(touch.x,touch.y,touch.id);
+		}
+	};
+
 
 	#endif
 

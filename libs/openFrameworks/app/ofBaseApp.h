@@ -2,7 +2,6 @@
 #define _OF_BASE_APP
 
 #include "ofTypes.h"
-#include "ofEvents.h"
 
 class ofBaseApp{
 
@@ -32,27 +31,6 @@ class ofBaseApp{
 
 		virtual void audioReceived( float * input, int bufferSize, int nChannels ){}
 		virtual void audioRequested( float * output, int bufferSize, int nChannels ){}
-
-		virtual void touchDown(float x, float y, int touchId){}
-		virtual void touchMoved(float x, float y, int touchId){}
-		virtual void touchUp(float x, float y, int touchId){}
-		virtual void touchDoubleTap(float x, float y, int touchId){}
-
-		virtual void touchDown(ofTouchEventArgs & touch){
-			touchDown(touch.x, touch.y, touch.id);
-		}
-
-		virtual void touchMoved(ofTouchEventArgs & touch){
-			touchMoved(touch.x, touch.y, touch.id);
-		}
-
-		virtual void touchUp(ofTouchEventArgs & touch){
-			touchUp(touch.x,touch.y,touch.id);
-		}
-
-		void touchDoubleTap(ofTouchEventArgs & touch){
-			touchDoubleTap(touch.x,touch.y,touch.id);
-		}
 
 
 		int mouseX, mouseY;			// for processing heads
