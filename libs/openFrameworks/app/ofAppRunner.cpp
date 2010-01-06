@@ -110,6 +110,10 @@ void ofRunApp(ofBaseApp * OFSA){
 	ofSeedRandom();
 	ofResetElapsedTimeCounter();
 
+	ofAddListener(ofEvents.touchDown, OFSAptr, &ofBaseApp::touchDown);
+	ofAddListener(ofEvents.touchUp, OFSAptr, &ofBaseApp::touchUp);
+	ofAddListener(ofEvents.touchMoved, OFSAptr, &ofBaseApp::touchMoved);
+
 	window->runAppViaInfiniteLoop(OFSAptr);
 
 }
