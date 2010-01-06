@@ -227,8 +227,12 @@
 		//		if([touch tapCount] == 1) ofxMultiTouch.touchDown(touchPoint.x, touchPoint.y, touchIndex, &multitouchData);
 		//		else ofxMultiTouch.touchDoubleTap(touchPoint.x, touchPoint.y, touchIndex, &multitouchData);
 		
-		if([touch tapCount] == 2) ofxMultiTouch.touchDoubleTap(touchPoint.x, touchPoint.y, touchIndex, &multitouchData);	// send doubletap
-		ofxMultiTouch.touchDown(touchPoint.x, touchPoint.y, touchIndex, &multitouchData);	// but also send tap (upto app programmer to ignore this if doubletap came that frame)
+		ofTouchEventArgs touchArgs;
+		touchArgs.x = touchPoint.x;
+		touchArgs.y = touchPoint.y;
+		touchArgs.id = touchIndex;
+		if([touch tapCount] == 2) ofNotify(ofEvents.touchDoubleTap,touchArgs);	// send doubletap
+		ofNotify(ofEvents.touchDown,touch);	// but also send tap (upto app programmer to ignore this if doubletap came that frame)
 	}
 	
 //	[self.nextResponder touchesBegan:touches withEvent:event];
@@ -236,7 +240,6 @@
 
 //------------------------------------------------------
 - (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event {
-	multitouchData.numTouches = [[event touchesForView:self] count];
 	//	NSLog(@"touchesMoved: %i %i %i", [touches count],  [[event touchesForView:self] count], multitouchData.numTouches);
 	
 	for(UITouch *touch in touches) {
@@ -254,9 +257,13 @@
 			ofGetAppPtr()->mouseX = touchPoint.x;
 			ofGetAppPtr()->mouseY = touchPoint.y;
 			ofGetAppPtr()->mouseDragged(touchPoint.x, touchPoint.y, 1);
-		}
-		
-		ofxMultiTouch.touchMoved(touchPoint.x, touchPoint.y, touchIndex, &multitouchData);
+		}		
+		ofTouchEventArgs touchArgs;
+		touchArgs.numTouches = [[event touchesForView:self] count];
+		touchArgs.x = touchPoint.x;
+		touchArgs.y = touchPoint.y;
+		touchArgs.id = touchIndex;
+		ofNotify(ofEvents.touchMoved, touchArgs);
 	}
 	
 //	[self.nextResponder touchesMoved:touches withEvent:event];
@@ -264,7 +271,6 @@
 
 //------------------------------------------------------
 - (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event {
-	multitouchData.numTouches = [[event touchesForView:self] count] - [touches count];
 	//	NSLog(@"touchesEnded: %i %i %i", [touches count],  [[event touchesForView:self] count], multitouchData.numTouches);
 	
 	for(UITouch *touch in touches) {
@@ -287,14 +293,18 @@
 			ofGetAppPtr()->mouseReleased();
 		}
 		
-		ofxMultiTouch.touchUp(touchPoint.x, touchPoint.y, touchIndex, &multitouchData);
+		ofTouchEventArgs touchArgs;
+		touchArgs.numTouches = [[event touchesForView:self] count] - [touches count];
+		touchArgs.x = touchPoint.x;
+		touchArgs.y = touchPoint.y;
+		touchArgs.id = touchIndex;
+		ofNotify(ofEvents.touchUp, touchArgs);
 	}
 //	[self.nextResponder touchesEnded:touches withEvent:event];
 }
 
 //------------------------------------------------------
 - (void)touchesCancelled:(NSSet *)touches withEvent:(UIEvent *)event {
-	multitouchData.numTouches = 0;
 	
 	for(int i=0; i<OF_MAX_TOUCHES; i++){
 		if(activeTouches[i]){
@@ -310,7 +320,12 @@
 				ofGetAppPtr()->mouseReleased(touchPoint.x, touchPoint.y, 1);
 				ofGetAppPtr()->mouseReleased();
 			}
-			ofxMultiTouch.touchUp(touchPoint.x, touchPoint.y, i, &multitouchData);
+			ofTouchEventArgs touchArgs;
+			touchArgs.numTouches = 0;
+			touchArgs.x = touchPoint.x;
+			touchArgs.y = touchPoint.y;
+			touchArgs.id = touchIndex;
+			ofNotify(ofEvents.touchUp, touchArgs);
 		}
 	}
 //	[self.nextResponder touchesCancelled:touches withEvent:event];
