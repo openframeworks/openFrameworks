@@ -26,6 +26,13 @@
 			int button;
 		};
 
+		class ofTouchEventArgs : public ofEventArgs {
+		  public:
+			int x;
+			int y;
+			int id;
+		};
+
 		class ofAudioEventArgs : public ofEventArgs {
 		  public:
 			float* buffer;
@@ -62,6 +69,10 @@
 		ofEvent<ofAudioEventArgs> 	audioReceived;
 		ofEvent<ofAudioEventArgs> 	audioRequested;
 
+		ofEvent<ofTouchEventArgs>	touchDown;
+		ofEvent<ofTouchEventArgs>	touchUp;
+		ofEvent<ofTouchEventArgs>	touchMoved;
+
 		void disable(){
 			setup.disable();
 			draw.disable();
@@ -75,6 +86,9 @@
 			mouseMoved.disable();
 			audioReceived.disable();
 			audioRequested.disable();
+			touchDown.disable();
+			touchUp.disable();
+			touchMoved.disable();
 		}
 
 		void enable(){
@@ -90,6 +104,9 @@
 			mouseMoved.enable();
 			audioReceived.enable();
 			audioRequested.enable();
+			touchDown.enable();
+			touchUp.enable();
+			touchMoved.enable();
 		}
 	};
 
