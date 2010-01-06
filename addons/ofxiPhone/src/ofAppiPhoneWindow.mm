@@ -252,8 +252,14 @@ void ofAppiPhoneWindow::rotateXY(float &x, float &y) {
 
 
 void ofAppiPhoneWindow::timerLoop() {
+	static ofEventArgs voidEventArgs;
+	
 	ofGetAppPtr()->update();
-
+	
+	#ifdef OF_USING_POCO
+		ofNotifyEvent( ofEvents.update, voidEventArgs);
+	#endif
+	
 	// this could be taken out and included in ofAppBaseWIndow
 	if(orientation == OFXIPHONE_ORIENTATION_PORTRAIT || orientation == OFXIPHONE_ORIENTATION_UPSIDEDOWN)
 		glViewport( 0, 0, ofGetWidth(), ofGetHeight() );
@@ -324,6 +330,10 @@ void ofAppiPhoneWindow::timerLoop() {
 	
 	
 	ofGetAppPtr()->draw();
+	#ifdef OF_USING_POCO
+		ofNotifyEvent( ofEvents.draw, voidEventArgs );
+	#endif
+	
 	[iPhoneGetGLView() swapBuffers];
 	
 	
