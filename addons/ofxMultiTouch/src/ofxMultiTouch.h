@@ -32,60 +32,29 @@
 
 #pragma once
 
-#include <list>
+#include "ofMain.h"
 #include "ofxMultiTouchListener.h"
 
 class ofxMultiTouchHandler : public ofxMultiTouchListener {
 public:
 	void addListener(ofxMultiTouchListener* o) {
-		listeners.push_back(o);
-		o->registerTouchEvents();
+//		listeners.push_back(o);
+//		o->registerTouchEvents();
+		ofAddListener(ofEvents.touchDown, o, &ofxMultiTouchListener::_touchDown);
+		ofAddListener(ofEvents.touchUp, o, &ofxMultiTouchListener::_touchUp);
+		ofAddListener(ofEvents.touchMoved, o, &ofxMultiTouchListener::_touchMoved);
+		ofAddListener(ofEvents.touchDoubleTap, o, &ofxMultiTouchListener::_touchDoubleTap);
 	}
 	
 	void removeListener(ofxMultiTouchListener* o) {
-		listeners.remove(o);
-		o->unregisterTouchEvents();
+//		listeners.remove(o);
+//		o->unregisterTouchEvents();
+		ofRemoveListener(ofEvents.touchDown, o, &ofxMultiTouchListener::_touchDown);
+		ofRemoveListener(ofEvents.touchUp, o, &ofxMultiTouchListener::_touchUp);
+		ofRemoveListener(ofEvents.touchMoved, o, &ofxMultiTouchListener::_touchMoved);
+		ofRemoveListener(ofEvents.touchDoubleTap, o, &ofxMultiTouchListener::_touchDoubleTap);
 	}
 	
-	// multitouch engine should call this when a 'down' is detected
-	// use ofxMultiTouchCustomData *data to send any platform specific data
-	void touchDown(float x, float y, int touchId, ofxMultiTouchCustomData *data = 0) {
-		for(std::list<ofxMultiTouchListener*>::iterator it=listeners.begin(); it!=listeners.end(); ++it) {
-			ofxMultiTouchListener* o = *it;
-			o->touchDown(x, y, touchId, data);
-		}
-	}
-	
-	// multitouch engine should call this when a 'move' (drag) is detected
-	// use ofxMultiTouchCustomData *data to send any platform specific data
-	void touchMoved(float x, float y, int touchId, ofxMultiTouchCustomData *data = 0) {
-		for(std::list<ofxMultiTouchListener*>::iterator it=listeners.begin(); it!=listeners.end(); ++it) {
-			ofxMultiTouchListener* o = *it;
-			o->touchMoved(x, y, touchId, data);
-		}
-	}
-	
-	// multitouch engine should call this when an 'up' is detected
-	// use ofxMultiTouchCustomData *data to send any platform specific data
-	void touchUp(float x, float y, int touchId, ofxMultiTouchCustomData *data = 0) {
-		for(std::list<ofxMultiTouchListener*>::iterator it=listeners.begin(); it!=listeners.end(); ++it) {
-			ofxMultiTouchListener* o = *it;
-			o->touchUp(x, y, touchId, data);
-		}
-	}
-	
-	// multitouch engine should call this when a 'double tap' is detected
-	// use ofxMultiTouchCustomData *data to send any platform specific data	
-	void touchDoubleTap(float x, float y, int touchId, ofxMultiTouchCustomData *data = 0) {
-		for(std::list<ofxMultiTouchListener*>::iterator it=listeners.begin(); it!=listeners.end(); ++it) {
-			ofxMultiTouchListener* o = *it;
-			o->touchDoubleTap(x, y, touchId, data);
-		}
-	}
-
-	
-protected:
-	std::list<ofxMultiTouchListener*> listeners;
 	
 };
 

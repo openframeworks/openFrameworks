@@ -34,32 +34,33 @@
 #include "ofEvents.h"
 
 // contains custom data which specific implementations can override and add to
-struct ofxMultiTouchCustomData {
-	int numTouches;
-};
+//struct ofxMultiTouchCustomData {
+//	int numTouches;
+//};
 
+#define ofxMultiTouchCustomData ofTouchEventArgs
 
 /****** protocol, delegate, interface, whatever you want to call it ******/
-class ofxMultiTouchListener: ofTouchListener {
+class ofxMultiTouchListener /*: ofTouchListener*/ {
 public:
 	virtual ~ofxMultiTouchListener() {}
 
-	virtual void touchDown(float x, float y, int touchId, ofxMultiTouchCustomData *data = NULL)			= 0;
-	virtual void touchMoved(float x, float y, int touchId, ofxMultiTouchCustomData *data = NULL)		= 0;
-	virtual void touchUp(float x, float y, int touchId, ofxMultiTouchCustomData *data = NULL)			= 0;
-	virtual void touchDoubleTap(float x, float y, int touchId, ofxMultiTouchCustomData *data = NULL)	= 0;
+	virtual void touchDown(float x, float y, int touchId, ofxMultiTouchCustomData *data = NULL) {}
+	virtual void touchMoved(float x, float y, int touchId, ofxMultiTouchCustomData *data = NULL) {}
+	virtual void touchUp(float x, float y, int touchId, ofxMultiTouchCustomData *data = NULL) {}
+	virtual void touchDoubleTap(float x, float y, int touchId, ofxMultiTouchCustomData *data = NULL) {}
 
 
-	virtual void touchDown(ofTouchEventArgs & touch){
-		touchDown(touch.x,touch.y,touch.id);
+	virtual void _touchDown(ofTouchEventArgs & touch){
+		touchDown(touch.x,touch.y,touch.id, &touch);
 	}
-	virtual void touchMoved(ofTouchEventArgs & touch){
-		touchMoved(touch.x,touch.y,touch.id);
+	virtual void _touchMoved(ofTouchEventArgs & touch){
+		touchMoved(touch.x,touch.y,touch.id, &touch);
 	}
-	virtual void touchUp(ofTouchEventArgs & touch){
-		touchUp(touch.x,touch.y,touch.id);
+	virtual void _touchUp(ofTouchEventArgs & touch){
+		touchUp(touch.x,touch.y,touch.id, &touch);
 	}
-	virtual void touchDoubleTap(ofTouchEventArgs & touch){
-		touchDoubleTap(touch.x,touch.y,touch.id);
+	virtual void _touchDoubleTap(ofTouchEventArgs & touch){
+		touchDoubleTap(touch.x,touch.y,touch.id, &touch);
 	}
 };

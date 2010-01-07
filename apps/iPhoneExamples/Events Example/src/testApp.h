@@ -4,7 +4,7 @@
 #include "ofxiPhone.h"
 #include "eventsObject.h"
 
-class testApp : public ofxiPhoneApp {
+class testApp : public ofxiPhoneApp, public ofxMultiTouchListener {
 	
 public:
 	void setup();
