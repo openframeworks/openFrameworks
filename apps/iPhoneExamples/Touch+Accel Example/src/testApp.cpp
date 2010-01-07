@@ -39,21 +39,21 @@ void testApp::exit() {
 
 //--------------------------------------------------------------
 void testApp::touchDown(ofTouchEventArgs & touch){
-	printf("touch %i down at (%i,%i)\n", touch.id, touch.x,touch.y);
+	printf("touch %i down at (%f,%f)\n", touch.id, touch.x,touch.y);
 	balls[touch.id].moveTo(touch.x, touch.y);
 }
 //--------------------------------------------------------------
 void testApp::touchMoved(ofTouchEventArgs & touch){
-	printf("touch %i moved at (%i,%i)\n", touch.id, touch.x,touch.y);
+	printf("touch %i moved at (%f,%f)\n", touch.id, touch.x,touch.y);
 	balls[touch.id].moveTo(touch.x, touch.y);
 }
 //--------------------------------------------------------------
 void testApp::touchUp(ofTouchEventArgs & touch){
-	printf("touch %i up at (%i,%i)\n", touch.id, touch.x,touch.y);
+	printf("touch %i up at (%f,%f)\n", touch.id, touch.x,touch.y);
 }
 //--------------------------------------------------------------
 void testApp::touchDoubleTap(ofTouchEventArgs & touch){
-	printf("touch %i double tap at (%i,%i)\n", touch.id, touch.x,touch.y);
+	printf("touch %i double tap at (%f,%f)\n", touch.id, touch.x,touch.y);
 }
 //--------------------------------------------------------------
 void testApp::lostFocus()
