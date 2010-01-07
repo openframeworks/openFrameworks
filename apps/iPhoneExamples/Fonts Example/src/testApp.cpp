@@ -2,19 +2,21 @@
 #include "testApp.h"
 
 
-
-
-
 //--------------------------------------------------------------
 void testApp::setup(){	
-	ofBackground(50, 50, 50);
+	// initialize the accelerometer
+	ofxAccelerometer.setup();
 	
-	// touch events will be sent to myTouchListener
-	ofxMultiTouch.addListener(this);
+	// register touch events
+	ofAddListener(ofEvents.touchDown, this, &testApp::touchDown);
+	ofAddListener(ofEvents.touchUp, this, &testApp::touchUp);
+	ofAddListener(ofEvents.touchMoved, this, &testApp::touchMoved);
+	ofAddListener(ofEvents.touchDoubleTap, this, &testApp::touchDoubleTap);
 	
 	//iPhoneAlerts will be sent to this.
 	ofxiPhoneAlerts.addListener(this);
 	
+	ofBackground(50, 50, 50);
 	// this load font loads the non-full character set
 	// (ie ASCII 33-128), at size "32"
 	
@@ -98,38 +100,38 @@ void testApp::draw()
 	glPopMatrix();
 }
 
+//--------------------------------------------------------------
 void testApp::exit() {
 }
 
 
 //--------------------------------------------------------------
-void testApp::touchDown(float x, float y, int touchId, ofxMultiTouchCustomData *data){
+void testApp::touchDown(ofTouchEventArgs &touch){
 }
 
 //--------------------------------------------------------------
-void testApp::touchMoved(float x, float y, int touchId, ofxMultiTouchCustomData *data){
+void testApp::touchMoved(ofTouchEventArgs &touch){
 }
 
 //--------------------------------------------------------------
-void testApp::touchUp(float x, float y, int touchId, ofxMultiTouchCustomData *data){
+void testApp::touchUp(ofTouchEventArgs &touch){
 }
 
 //--------------------------------------------------------------
-void testApp::touchDoubleTap(float x, float y, int touchId, ofxMultiTouchCustomData *data){
+void testApp::touchDoubleTap(ofTouchEventArgs &touch){
+}
+
+
+//--------------------------------------------------------------
+void testApp::lostFocus() {
 }
 
 //--------------------------------------------------------------
-void testApp::lostFocus()
-{
+void testApp::gotFocus() {
 }
 
 //--------------------------------------------------------------
-void testApp::gotFocus()
-{
+void testApp::gotMemoryWarning() {
 }
 
-//--------------------------------------------------------------
-void testApp::gotMemoryWarning()
-{
-}
 

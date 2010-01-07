@@ -12,7 +12,17 @@
 		288765FD0DF74451002DB57D /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 288765FC0DF74451002DB57D /* CoreGraphics.framework */; };
 		5326AEA810A23A0500278DE6 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5326AEA710A23A0500278DE6 /* CoreLocation.framework */; };
 		53F323EB10A20EDB00E0DAE4 /* OpenAL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53F323EA10A20EDB00E0DAE4 /* OpenAL.framework */; };
-		5E82F6BD10EC5A6800A839D4 /* images in Resources */ = {isa = PBXBuildFile; fileRef = 5E82F6B510EC5A6800A839D4 /* images */; };
+		5E25689710ED26CC00A9501C /* CppUnit.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E25687010ED26CC00A9501C /* CppUnit.a */; };
+		5E25689810ED26CC00A9501C /* PocoFoundation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E25687110ED26CC00A9501C /* PocoFoundation.a */; };
+		5E25689910ED26CC00A9501C /* PocoNet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E25687210ED26CC00A9501C /* PocoNet.a */; };
+		5E25689A10ED26CC00A9501C /* PocoUtil.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E25687310ED26CC00A9501C /* PocoUtil.a */; };
+		5E25689B10ED26CC00A9501C /* PocoXML.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E25687410ED26CC00A9501C /* PocoXML.a */; };
+		5E2568A410ED26CD00A9501C /* CppUnit.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E25688010ED26CC00A9501C /* CppUnit.a */; };
+		5E2568A510ED26CD00A9501C /* PocoFoundation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E25688110ED26CC00A9501C /* PocoFoundation.a */; };
+		5E2568A610ED26CD00A9501C /* PocoNet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E25688210ED26CC00A9501C /* PocoNet.a */; };
+		5E2568A710ED26CD00A9501C /* PocoUtil.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E25688310ED26CC00A9501C /* PocoUtil.a */; };
+		5E2568A810ED26CD00A9501C /* PocoXML.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E25688410ED26CC00A9501C /* PocoXML.a */; };
+		BB0ECA6310F55E7900A35406 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB0ECA6210F55E7900A35406 /* MapKit.framework */; };
 		BB16EBD20F2B2A9500518274 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB16EBD10F2B2A9500518274 /* OpenGLES.framework */; };
 		BB16EBD90F2B2AB500518274 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB16EBD80F2B2AB500518274 /* QuartzCore.framework */; };
 		BB16F3AD0F2B73B000518274 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BB16F3A80F2B73B000518274 /* main.cpp */; };
@@ -24,6 +34,7 @@
 		BB24DE3C10DA785000E9C588 /* libGLU.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BB24DE2710DA785000E9C588 /* libGLU.a */; };
 		BB24DE3D10DA785000E9C588 /* libGLU_arm.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BB24DE2810DA785000E9C588 /* libGLU_arm.a */; };
 		BB24E23510DAA8AD00E9C588 /* libiPhone+OF_Debug.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BB24E23410DAA8A700E9C588 /* libiPhone+OF_Debug.a */; };
+		BB5930CB10F68E48005EE3B4 /* images in Resources */ = {isa = PBXBuildFile; fileRef = BB5930C310F68E48005EE3B4 /* images */; };
 		BB73D3DB0F4B08B60092FC06 /* testApp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BB73D3DA0F4B08B60092FC06 /* testApp.cpp */; };
 		BBE5EAB80F49AD8400F28951 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BBE5EAB70F49AD8400F28951 /* AudioToolbox.framework */; };
 /* End PBXBuildFile section */
@@ -53,7 +64,17 @@
 		32CA4F630368D1EE00C91783 /* iPhone_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iPhone_Prefix.pch; sourceTree = "<group>"; };
 		5326AEA710A23A0500278DE6 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		53F323EA10A20EDB00E0DAE4 /* OpenAL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenAL.framework; path = System/Library/Frameworks/OpenAL.framework; sourceTree = SDKROOT; };
-		5E82F6B510EC5A6800A839D4 /* images */ = {isa = PBXFileReference; lastKnownFileType = folder; name = images; path = data/images; sourceTree = SOURCE_ROOT; };
+		5E25687010ED26CC00A9501C /* CppUnit.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = CppUnit.a; path = ../../../libs/poco/lib/armv6/CppUnit.a; sourceTree = SOURCE_ROOT; };
+		5E25687110ED26CC00A9501C /* PocoFoundation.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = PocoFoundation.a; path = ../../../libs/poco/lib/armv6/PocoFoundation.a; sourceTree = SOURCE_ROOT; };
+		5E25687210ED26CC00A9501C /* PocoNet.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = PocoNet.a; path = ../../../libs/poco/lib/armv6/PocoNet.a; sourceTree = SOURCE_ROOT; };
+		5E25687310ED26CC00A9501C /* PocoUtil.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = PocoUtil.a; path = ../../../libs/poco/lib/armv6/PocoUtil.a; sourceTree = SOURCE_ROOT; };
+		5E25687410ED26CC00A9501C /* PocoXML.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = PocoXML.a; path = ../../../libs/poco/lib/armv6/PocoXML.a; sourceTree = SOURCE_ROOT; };
+		5E25688010ED26CC00A9501C /* CppUnit.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = CppUnit.a; path = ../../../libs/poco/lib/osx/CppUnit.a; sourceTree = SOURCE_ROOT; };
+		5E25688110ED26CC00A9501C /* PocoFoundation.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = PocoFoundation.a; path = ../../../libs/poco/lib/osx/PocoFoundation.a; sourceTree = SOURCE_ROOT; };
+		5E25688210ED26CC00A9501C /* PocoNet.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = PocoNet.a; path = ../../../libs/poco/lib/osx/PocoNet.a; sourceTree = SOURCE_ROOT; };
+		5E25688310ED26CC00A9501C /* PocoUtil.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = PocoUtil.a; path = ../../../libs/poco/lib/osx/PocoUtil.a; sourceTree = SOURCE_ROOT; };
+		5E25688410ED26CC00A9501C /* PocoXML.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = PocoXML.a; path = ../../../libs/poco/lib/osx/PocoXML.a; sourceTree = SOURCE_ROOT; };
+		BB0ECA6210F55E7900A35406 /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
 		BB16EBD10F2B2A9500518274 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
 		BB16EBD80F2B2AB500518274 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		BB16F3A80F2B73B000518274 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
@@ -114,6 +135,7 @@
 		BB24DE2710DA785000E9C588 /* libGLU.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libGLU.a; sourceTree = "<group>"; };
 		BB24DE2810DA785000E9C588 /* libGLU_arm.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libGLU_arm.a; sourceTree = "<group>"; };
 		BB24E22F10DAA8A700E9C588 /* iPhone+OF Lib.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = "iPhone+OF Lib.xcodeproj"; path = "../../../libs/openFrameworksCompiled/project/iphone/iPhone+OF Lib.xcodeproj"; sourceTree = SOURCE_ROOT; };
+		BB5930C310F68E48005EE3B4 /* images */ = {isa = PBXFileReference; lastKnownFileType = folder; path = images; sourceTree = "<group>"; };
 		BB73D3DA0F4B08B60092FC06 /* testApp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = testApp.cpp; sourceTree = "<group>"; };
 		BBE5EAB70F49AD8400F28951 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
@@ -136,6 +158,17 @@
 				BB24DE3C10DA785000E9C588 /* libGLU.a in Frameworks */,
 				BB24DE3D10DA785000E9C588 /* libGLU_arm.a in Frameworks */,
 				BB24E23510DAA8AD00E9C588 /* libiPhone+OF_Debug.a in Frameworks */,
+				5E25689710ED26CC00A9501C /* CppUnit.a in Frameworks */,
+				5E25689810ED26CC00A9501C /* PocoFoundation.a in Frameworks */,
+				5E25689910ED26CC00A9501C /* PocoNet.a in Frameworks */,
+				5E25689A10ED26CC00A9501C /* PocoUtil.a in Frameworks */,
+				5E25689B10ED26CC00A9501C /* PocoXML.a in Frameworks */,
+				5E2568A410ED26CD00A9501C /* CppUnit.a in Frameworks */,
+				5E2568A510ED26CD00A9501C /* PocoFoundation.a in Frameworks */,
+				5E2568A610ED26CD00A9501C /* PocoNet.a in Frameworks */,
+				5E2568A710ED26CD00A9501C /* PocoUtil.a in Frameworks */,
+				5E2568A810ED26CD00A9501C /* PocoXML.a in Frameworks */,
+				BB0ECA6310F55E7900A35406 /* MapKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -183,9 +216,54 @@
 				288765FC0DF74451002DB57D /* CoreGraphics.framework */,
 				53F323EA10A20EDB00E0DAE4 /* OpenAL.framework */,
 				5326AEA710A23A0500278DE6 /* CoreLocation.framework */,
+				BB0ECA6210F55E7900A35406 /* MapKit.framework */,
 			);
 			name = "core frameworks";
 			sourceTree = "<group>";
+		};
+		5E25686A10ED26BE00A9501C /* poco */ = {
+			isa = PBXGroup;
+			children = (
+				5E25686E10ED26CC00A9501C /* lib */,
+			);
+			name = poco;
+			sourceTree = "<group>";
+		};
+		5E25686E10ED26CC00A9501C /* lib */ = {
+			isa = PBXGroup;
+			children = (
+				5E25686F10ED26CC00A9501C /* armv6 */,
+				5E25687F10ED26CC00A9501C /* osx */,
+			);
+			name = lib;
+			path = ../../../libs/poco/lib;
+			sourceTree = SOURCE_ROOT;
+		};
+		5E25686F10ED26CC00A9501C /* armv6 */ = {
+			isa = PBXGroup;
+			children = (
+				5E25687010ED26CC00A9501C /* CppUnit.a */,
+				5E25687110ED26CC00A9501C /* PocoFoundation.a */,
+				5E25687210ED26CC00A9501C /* PocoNet.a */,
+				5E25687310ED26CC00A9501C /* PocoUtil.a */,
+				5E25687410ED26CC00A9501C /* PocoXML.a */,
+			);
+			name = armv6;
+			path = ../../../libs/poco/lib/armv6;
+			sourceTree = SOURCE_ROOT;
+		};
+		5E25687F10ED26CC00A9501C /* osx */ = {
+			isa = PBXGroup;
+			children = (
+				5E25688010ED26CC00A9501C /* CppUnit.a */,
+				5E25688110ED26CC00A9501C /* PocoFoundation.a */,
+				5E25688210ED26CC00A9501C /* PocoNet.a */,
+				5E25688310ED26CC00A9501C /* PocoUtil.a */,
+				5E25688410ED26CC00A9501C /* PocoXML.a */,
+			);
+			name = osx;
+			path = ../../../libs/poco/lib/osx;
+			sourceTree = SOURCE_ROOT;
 		};
 		BB16E9930F2B1E5900518274 /* libs */ = {
 			isa = PBXGroup;
@@ -215,9 +293,9 @@
 		BB24DD8B10DA77E000E9C588 /* data */ = {
 			isa = PBXGroup;
 			children = (
-				5E82F6B510EC5A6800A839D4 /* images */,
 				BB24DD8C10DA77E000E9C588 /* Default.png */,
 				BB24DD8D10DA77E000E9C588 /* Icon.png */,
+				BB5930C310F68E48005EE3B4 /* images */,
 			);
 			name = data;
 			path = bin/data;
@@ -422,6 +500,7 @@
 		BB3F144E0F4C6BF200A33527 /* core libraries */ = {
 			isa = PBXGroup;
 			children = (
+				5E25686A10ED26BE00A9501C /* poco */,
 				BB24DDCD10DA784F00E9C588 /* FreeImage */,
 				BB24DDDD10DA785000E9C588 /* freetype */,
 				BB24DE1F10DA785000E9C588 /* glu */,
@@ -501,7 +580,7 @@
 				BB24DD8F10DA77E000E9C588 /* Default.png in Resources */,
 				BB24DD9010DA77E000E9C588 /* Icon.png in Resources */,
 				BB24DDCA10DA781C00E9C588 /* ofxiphone-Info.plist in Resources */,
-				5E82F6BD10EC5A6800A839D4 /* images in Resources */,
+				BB5930CB10F68E48005EE3B4 /* images in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -540,6 +619,7 @@
 				GCC_PREFIX_HEADER = iPhone_Prefix.pch;
 				GCC_THUMB_SUPPORT = NO;
 				HEADER_SEARCH_PATHS = (
+					../../../libs/poco/include,
 					"../../../addons/ofxAccelerometer/**",
 					"../../../addons/ofxMultitouch/**",
 					"../../../addons/ofxiPhone/**",
@@ -567,9 +647,16 @@
 					"\"$(SRCROOT)/../../../libs/glu/lib/iphone\"",
 					"\"$(SRCROOT)/../../../libs/glu/lib/vs2008\"",
 					"\"$(SRCROOT)/../../../libs/glu/lib/win_cb\"",
+					"\"$(DEVELOPER_DIR)/openFrameworks/libs/poco/lib/armv6\"",
+					"\"$(DEVELOPER_DIR)/openFrameworks/libs/poco/lib/linux\"",
+					"\"$(DEVELOPER_DIR)/openFrameworks/libs/poco/lib/linux64\"",
+					"\"$(DEVELOPER_DIR)/openFrameworks/libs/poco/lib/osx\"",
+					"\"$(DEVELOPER_DIR)/openFrameworks/libs/poco/lib/vs2008\"",
+					"\"$(DEVELOPER_DIR)/openFrameworks/libs/poco/lib/win_cb\"",
 				);
 				PRODUCT_NAME = ofxiPhone;
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
+				SDKROOT = iphoneos3.0;
 			};
 			name = Debug;
 		};
@@ -584,6 +671,7 @@
 				GCC_PREFIX_HEADER = iPhone_Prefix.pch;
 				GCC_THUMB_SUPPORT = NO;
 				HEADER_SEARCH_PATHS = (
+					../../../libs/poco/include,
 					"../../../addons/ofxAccelerometer/**",
 					"../../../addons/ofxMultitouch/**",
 					"../../../addons/ofxiPhone/**",
@@ -611,9 +699,16 @@
 					"\"$(SRCROOT)/../../../libs/glu/lib/iphone\"",
 					"\"$(SRCROOT)/../../../libs/glu/lib/vs2008\"",
 					"\"$(SRCROOT)/../../../libs/glu/lib/win_cb\"",
+					"\"$(DEVELOPER_DIR)/openFrameworks/libs/poco/lib/armv6\"",
+					"\"$(DEVELOPER_DIR)/openFrameworks/libs/poco/lib/linux\"",
+					"\"$(DEVELOPER_DIR)/openFrameworks/libs/poco/lib/linux64\"",
+					"\"$(DEVELOPER_DIR)/openFrameworks/libs/poco/lib/osx\"",
+					"\"$(DEVELOPER_DIR)/openFrameworks/libs/poco/lib/vs2008\"",
+					"\"$(DEVELOPER_DIR)/openFrameworks/libs/poco/lib/win_cb\"",
 				);
 				PRODUCT_NAME = ofxiPhone;
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
+				SDKROOT = iphoneos3.0;
 			};
 			name = Release;
 		};
@@ -621,12 +716,12 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: MSA Visuals Ltd";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				PREBINDING = NO;
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "CBB7D4DA-CBD7-4672-8C35-CB67CB1FEC3A";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
 				SDKROOT = iphoneos2.2.1;
 			};
 			name = Distribution;
@@ -641,6 +736,7 @@
 				GCC_PREFIX_HEADER = iPhone_Prefix.pch;
 				GCC_THUMB_SUPPORT = NO;
 				HEADER_SEARCH_PATHS = (
+					../../../libs/poco/include,
 					"../../../addons/ofxAccelerometer/**",
 					"../../../addons/ofxMultitouch/**",
 					"../../../addons/ofxiPhone/**",
@@ -668,9 +764,16 @@
 					"\"$(SRCROOT)/../../../libs/glu/lib/iphone\"",
 					"\"$(SRCROOT)/../../../libs/glu/lib/vs2008\"",
 					"\"$(SRCROOT)/../../../libs/glu/lib/win_cb\"",
+					"\"$(DEVELOPER_DIR)/openFrameworks/libs/poco/lib/armv6\"",
+					"\"$(DEVELOPER_DIR)/openFrameworks/libs/poco/lib/linux\"",
+					"\"$(DEVELOPER_DIR)/openFrameworks/libs/poco/lib/linux64\"",
+					"\"$(DEVELOPER_DIR)/openFrameworks/libs/poco/lib/osx\"",
+					"\"$(DEVELOPER_DIR)/openFrameworks/libs/poco/lib/vs2008\"",
+					"\"$(DEVELOPER_DIR)/openFrameworks/libs/poco/lib/win_cb\"",
 				);
 				PRODUCT_NAME = ofxiPhone;
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
+				SDKROOT = iphoneos3.0;
 			};
 			name = Distribution;
 		};
@@ -694,12 +797,12 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Mehmet Akten";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				PREBINDING = NO;
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "B2B6A4F8-E7E4-4A49-84A2-821B26E52F18";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
 				SDKROOT = iphoneos2.2.1;
 			};
 			name = Release;

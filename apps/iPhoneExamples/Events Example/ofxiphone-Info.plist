@@ -7,7 +7,7 @@
 	<key>CFBundleShortVersionString</key>
 	<string>1.0</string>
 	<key>CFBundleIdentifier</key>
-	<string>com.heavyephemeralindustries.${PRODUCT_NAME:identifier}</string>
+	<string>${PRODUCT_NAME:identifier}</string>
 	<key>UIStatusBarHidden</key>
 	<true/>
 	<key>CFBundleDevelopmentRegion</key>
