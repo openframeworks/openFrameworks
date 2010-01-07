@@ -232,7 +232,7 @@
 		touchArgs.y = touchPoint.y;
 		touchArgs.id = touchIndex;
 		if([touch tapCount] == 2) ofNotifyEvent(ofEvents.touchDoubleTap,touchArgs);	// send doubletap
-		ofNotifyEvent(ofEvents.touchDown,touch);	// but also send tap (upto app programmer to ignore this if doubletap came that frame)
+		ofNotifyEvent(ofEvents.touchDown,touchArgs);	// but also send tap (upto app programmer to ignore this if doubletap came that frame)
 	}
 	
 //	[self.nextResponder touchesBegan:touches withEvent:event];
