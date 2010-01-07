@@ -4,9 +4,14 @@
 
 //--------------------------------------------------------------
 void testApp::setup(){	
-	ofBackground(50,50,50);
-	// touch events will be sent to myTouchListener
-	ofxMultiTouch.addListener(this);
+	// initialize the accelerometer
+	ofxAccelerometer.setup();
+	
+	// register touch events
+	ofAddListener(ofEvents.touchDown, this, &testApp::touchDown);
+	ofAddListener(ofEvents.touchUp, this, &testApp::touchUp);
+	ofAddListener(ofEvents.touchMoved, this, &testApp::touchMoved);
+	ofAddListener(ofEvents.touchDoubleTap, this, &testApp::touchDoubleTap);
 	
 	//iPhoneAlerts will be sent to this.
 	ofxiPhoneAlerts.addListener(this);
@@ -21,50 +26,47 @@ void testApp::setup(){
 
 
 //--------------------------------------------------------------
-void testApp::update()
-{
-	
+void testApp::update() {
 }
 
 //--------------------------------------------------------------
-void testApp::draw()
-{
+void testApp::draw() {
 }
 
+//--------------------------------------------------------------
 void testApp::exit() {
-	printf("exit()\n");
+}
+
+
+//--------------------------------------------------------------
+void testApp::touchDown(ofTouchEventArgs &touch){
+	if(!keyboard->isKeyboardShowing()) keyboard->openKeyboard();	
 }
 
 //--------------------------------------------------------------
-void testApp::touchDown(float x, float y, int touchId, ofxMultiTouchCustomData *data){
-	
-	printf("touch %i down at (%i,%i)\n", touchId, x,y);
-	
-	if(!keyboard->isKeyboardShowing())
-		keyboard->openKeyboard();
+void testApp::touchMoved(ofTouchEventArgs &touch){
 }
 
 //--------------------------------------------------------------
-void testApp::touchMoved(float x, float y, int touchId, ofxMultiTouchCustomData *data){
+void testApp::touchUp(ofTouchEventArgs &touch){
 }
 
 //--------------------------------------------------------------
-void testApp::touchUp(float x, float y, int touchId, ofxMultiTouchCustomData *data){
+void testApp::touchDoubleTap(ofTouchEventArgs &touch){
+}
+
+
+//--------------------------------------------------------------
+void testApp::lostFocus() {
 }
 
 //--------------------------------------------------------------
-void testApp::touchDoubleTap(float x, float y, int touchId, ofxMultiTouchCustomData *data){
+void testApp::gotFocus() {
 }
+
 //--------------------------------------------------------------
-void testApp::lostFocus()
-{
+void testApp::gotMemoryWarning() {
 }
-//--------------------------------------------------------------
-void testApp::gotFocus()
-{
-}
-//--------------------------------------------------------------
-void testApp::gotMemoryWarning()
-{
-}
+
+
 

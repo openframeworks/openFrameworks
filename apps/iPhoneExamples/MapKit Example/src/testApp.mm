@@ -9,13 +9,14 @@
 
 //--------------------------------------------------------------
 void testApp::setup(){	
-	
 	// initialize the accelerometer
 	ofxAccelerometer.setup();
 	
-	// touch events will be sent to testApp
-	ofxMultiTouch.addListener(this);
-	
+	// register touch events
+	ofAddListener(ofEvents.touchDown, this, &testApp::touchDown);
+	ofAddListener(ofEvents.touchUp, this, &testApp::touchUp);
+	ofAddListener(ofEvents.touchMoved, this, &testApp::touchMoved);
+	ofAddListener(ofEvents.touchDoubleTap, this, &testApp::touchDoubleTap);
 	
 	//iPhoneAlerts will be sent to this.
 	ofxiPhoneAlerts.addListener(this);
@@ -115,9 +116,6 @@ void testApp::draw() {
 	
 }
 
-void testApp::exit() {
-}
-
 
 void testApp::regionWillChange(bool animated) {
 	printf("testApp::regionWillChange | animated: %i\n", animated);
@@ -141,22 +139,26 @@ void testApp::errorLoadingMap(string errorDescription) {
 
 
 //--------------------------------------------------------------
-void testApp::touchDown(float x, float y, int touchId, ofxMultiTouchCustomData *data){
-	// to receive events in opengl view, set mapKit.setAllowUserInteraction(false) in setup
-	printf("testApp::touchDown - if you can see me, the opengl view is receiving touch events!\n");
+void testApp::exit() {
+}
+
+
+//--------------------------------------------------------------
+void testApp::touchDown(ofTouchEventArgs &touch){
 }
 
 //--------------------------------------------------------------
-void testApp::touchMoved(float x, float y, int touchId, ofxMultiTouchCustomData *data){
+void testApp::touchMoved(ofTouchEventArgs &touch){
 }
 
 //--------------------------------------------------------------
-void testApp::touchUp(float x, float y, int touchId, ofxMultiTouchCustomData *data){
+void testApp::touchUp(ofTouchEventArgs &touch){
 }
 
 //--------------------------------------------------------------
-void testApp::touchDoubleTap(float x, float y, int touchId, ofxMultiTouchCustomData *data){
+void testApp::touchDoubleTap(ofTouchEventArgs &touch){
 }
+
 
 //--------------------------------------------------------------
 void testApp::lostFocus() {
@@ -169,4 +171,5 @@ void testApp::gotFocus() {
 //--------------------------------------------------------------
 void testApp::gotMemoryWarning() {
 }
+
 

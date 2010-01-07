@@ -9,13 +9,12 @@ public:
 	void setup();
 	void update();
 	void draw();
-	
-	void touchDown(float x, float y, int touchId, ofxMultiTouchCustomData *data);
-	void touchMoved(float x, float y, int touchId, ofxMultiTouchCustomData *data);
-	void touchUp(float x, float y, int touchId, ofxMultiTouchCustomData *data);
-	void touchDoubleTap(float x, float y, int touchId, ofxMultiTouchCustomData *data);
-	
 	void exit();
+	
+	void touchDown(ofTouchEventArgs &touch);
+	void touchMoved(ofTouchEventArgs &touch);
+	void touchUp(ofTouchEventArgs &touch);
+	void touchDoubleTap(ofTouchEventArgs &touch);
 	
 	void lostFocus();
 	void gotFocus();
