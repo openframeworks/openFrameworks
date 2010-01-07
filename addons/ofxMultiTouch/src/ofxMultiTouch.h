@@ -39,10 +39,12 @@ class ofxMultiTouchHandler : public ofxMultiTouchListener {
 public:
 	void addListener(ofxMultiTouchListener* o) {
 		listeners.push_back(o);
+		o->registerTouchEvents();
 	}
 	
 	void removeListener(ofxMultiTouchListener* o) {
 		listeners.remove(o);
+		o->unregisterTouchEvents();
 	}
 	
 	// multitouch engine should call this when a 'down' is detected

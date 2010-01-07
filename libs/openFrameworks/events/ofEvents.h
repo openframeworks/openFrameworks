@@ -26,6 +26,20 @@
 			int button;
 		};
 
+		class ofTouchEventArgs : public ofEventArgs {
+		  public:
+			int id;
+			int time;
+			float x, y;
+			int numTouches;
+			float width, height;
+			float angle;
+			float minoraxis, majoraxis;
+			float pressure;
+			float xspeed, yspeed;
+			float xaccel, yaccel;
+		};
+
 		class ofAudioEventArgs : public ofEventArgs {
 		  public:
 			float* buffer;
@@ -41,7 +55,6 @@
 	#else
 		#include "ofxEventUtils.h"
 	#endif
-
 
 	class ofCoreEvents {
 	  public:
@@ -62,6 +75,11 @@
 		ofEvent<ofAudioEventArgs> 	audioReceived;
 		ofEvent<ofAudioEventArgs> 	audioRequested;
 
+		ofEvent<ofTouchEventArgs>	touchDown;
+		ofEvent<ofTouchEventArgs>	touchUp;
+		ofEvent<ofTouchEventArgs>	touchMoved;
+		ofEvent<ofTouchEventArgs>	touchDoubleTap;
+
 		void disable(){
 			setup.disable();
 			draw.disable();
@@ -75,6 +93,10 @@
 			mouseMoved.disable();
 			audioReceived.disable();
 			audioRequested.disable();
+			touchDown.disable();
+			touchUp.disable();
+			touchMoved.disable();
+			touchDoubleTap.disable();
 		}
 
 		void enable(){
@@ -90,12 +112,17 @@
 			mouseMoved.enable();
 			audioReceived.enable();
 			audioRequested.enable();
+			touchDown.enable();
+			touchUp.enable();
+			touchMoved.enable();
+			touchDoubleTap.enable();
 		}
 	};
 
 
 
 	extern ofCoreEvents ofEvents;
+
 
 	#endif
 

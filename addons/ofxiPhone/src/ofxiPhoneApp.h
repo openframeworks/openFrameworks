@@ -10,11 +10,11 @@
 #pragma once
 
 #include "ofMain.h"
-#include "ofxMultiTouch.h"
+#include "ofEvents.h"
 #include "ofxiPhoneAlerts.h"
 
 
-class ofxiPhoneApp : public ofSimpleApp, public ofxMultiTouchListener, public ofxiPhoneAlertsListener {
+class ofxiPhoneApp : public ofSimpleApp, public ofxiPhoneAlertsListener {
 	
 public:
 	void setup() {};
@@ -22,10 +22,10 @@ public:
 	void draw() {};
 	void exit() {};
 	
-	void touchDown(float x, float y, int touchId, ofxMultiTouchCustomData *data = NULL) {};
-	void touchMoved(float x, float y, int touchId, ofxMultiTouchCustomData *data = NULL) {};
-	void touchUp(float x, float y, int touchId, ofxMultiTouchCustomData *data = NULL) {};
-	void touchDoubleTap(float x, float y, int touchId, ofxMultiTouchCustomData *data = NULL) {};
+	void touchDown(ofTouchEventArgs & touch) {};
+	void touchMoved(ofTouchEventArgs & touch) {};
+	void touchUp(ofTouchEventArgs & touch) {};
+	void touchDoubleTap(ofTouchEventArgs & touch) {};
 	
 	void lostFocus() {}
 	void gotFocus() {}
