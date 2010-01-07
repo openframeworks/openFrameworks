@@ -63,7 +63,6 @@
 	
 	// multitouch stuff
 	UITouch					*activeTouches[OF_MAX_TOUCHES];
-	ofxMultiTouchCustomData multitouchData;
 }
 - (id) initWithFrame:(CGRect)frame; //These also set the current context
 - (id) initWithFrame:(CGRect)frame pixelFormat:(GLuint)format;
