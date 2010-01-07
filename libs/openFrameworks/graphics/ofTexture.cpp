@@ -159,11 +159,7 @@ void ofTexture::allocate(int w, int h, int internalGlDataType, bool bUseARBExten
 
 	texData.width = w;
 	texData.height = h;
-	#ifdef TARGET_OF_IPHONE
-		texData.bFlipTexture = true; // textures need to be flipped for the iphone
-	#else
-		texData.bFlipTexture = false;
-	#endif
+	texData.bFlipTexture = false;
 	texData.bAllocated = true;
 }
 
@@ -247,11 +243,7 @@ void ofTexture::loadData(void * data, int w, int h, int glDataType){
 	//------------------------ back to normal.
 	glPixelStorei(GL_UNPACK_ALIGNMENT, prevAlignment);
 
-	#ifdef TARGET_OF_IPHONE
-		texData.bFlipTexture = true; // textures need to be flipped for the iphone
-	#else
-		texData.bFlipTexture = false;
-	#endif
+	texData.bFlipTexture = false;
 
 }
 
