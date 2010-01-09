@@ -252,7 +252,7 @@ double ofxiPhoneCoreLocation::getHeadingAccuracy()
 
 //--------------------------------------------------------------
 
-#ifdef OF_TARGET_BUILD_SDK_IS_3_PLUS
+#ifdef __IPHONE_3_0
 //called when the heading is updated
 - (void)locationManager:(CLLocationManager *)manager didUpdateHeading:(CLHeading *)newHeading
 {

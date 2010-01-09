@@ -28,6 +28,9 @@
  *
  * ***********************************************************************/ 
 
+#include <Availability.h>
+#ifdef __IPHONE_3_0
+
 #import <MapKit/MapKit.h>
 
 class ofxiPhoneMapKit;
@@ -46,3 +49,6 @@ class ofxiPhoneMapKit;
 - (void)mapViewDidFailLoadingMap:(MKMapView *)mapView withError:(NSError *)error;
 
 @end
+
+
+#endif
