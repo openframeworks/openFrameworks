@@ -1,5 +1,13 @@
 ofxiPhone changelog
 
+v0.92
+--------------------
+- ofxMultitouch no longer needed (only provided for backwards compatibility), multitouch handling now in openframeworks core
+- poco support
+- mapkit support
+- openframeworks and ofxiPhone precompiled (similar to openFrameworks 0.061)
+
+
 v0.9
 --------------------
 - no more iPhoneGlobals struct (replaced by lots of iPhoneGet_____() functions defined in ofxiPhoneExtras.h)
