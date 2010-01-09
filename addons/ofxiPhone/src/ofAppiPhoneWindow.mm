@@ -50,9 +50,9 @@ ofAppiPhoneWindow* ofAppiPhoneWindow::getInstance() {
 /******** Constructor ************/
 
 ofAppiPhoneWindow::ofAppiPhoneWindow() {
+	ofLog(OF_LOG_VERBOSE, "ofAppiPhoneWindow::ofAppiPhoneWindow()");
 	if(_instance == NULL) _instance = this;
 	else ofLog(OF_LOG_ERROR, "Instanciating ofAppiPhoneWindow more than once! how come?");
-	ofLog(OF_LOG_VERBOSE, "ofAppiPhoneWindow::ofAppiPhoneWindow()");
 	nFrameCount = 0;
 	bEnableSetupScreen = true;
 	
@@ -77,12 +77,12 @@ void ofAppiPhoneWindow::setupOpenGL(int w, int h, int screenMode) {
 
 
 void ofAppiPhoneWindow::initializeWindow() {
+	ofLog(OF_LOG_VERBOSE, "ofAppiPhoneWindow::initializeWindow()");
 	// DO NOTHING, window will be created when the app is launched
 }
 
 
 void  ofAppiPhoneWindow::runAppViaInfiniteLoop(ofBaseApp * appPtr) {
-	
 	ofLog(OF_LOG_VERBOSE, "ofAppiPhoneWindow::runAppViaInfiniteLoop()");
 	
 	NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
