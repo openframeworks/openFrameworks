@@ -1,0 +1,51 @@
+ofxMSAShape3D changelog
+
+v0.8	16/05/2009
+--------------------
+- fixed bug with normals and texture coordinates (thanks jonbro)
+
+
+v0.71	29/04/2009
+--------------------
+- restores all client states to how they were before modding (only in safe mode)
+
+
+v0.6	07/04/2009
+--------------------
+- changed license to revised BSD (a lot more more permissive than GPL)
+
+
+v0.5	 19/02/09
+--------------------
+- renamed methods to avoid confusion with opengl functions:
+   - glVertex is now addVertex
+   - glColor is now setColor
+   - glNormal is now setNormal
+   - glTexCoord is now setTexCoord
+   - glBegin / glEnd are now begin / end
+   - glRect is now drawRect
+
+- added safeMode option (on by default)
+- with safeMode on (default):
+   - array is automatically reallocated when space runs out
+   - all client states are enabled and disabled as nessecary
+- with safeMode off (for advanced users) you can get much better performance if you know what to do, see docs. 
+- lots of other optimizations and restructuring
+- all methods now inline
+- using normal arrays instead of vectors
+
+
+v0.3	04/02/09
+--------------------
+- added draw() to redraw the cached shape
+
+
+v0.2	30/01/09
+--------------------
+- added glRect()
+
+
+
+v0.1	27/01/09
+--------------------
+- initial version
