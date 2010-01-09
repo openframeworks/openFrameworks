@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 45
+/svn/!svn/ver/101/trunk/ofxMSAShape3D/example
+END
+testApp.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/svn/!svn/ver/99/trunk/ofxMSAShape3D/example/testApp.cpp
+END
+main.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/svn/!svn/ver/101/trunk/ofxMSAShape3D/example/main.cpp
+END
+testApp.h
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/svn/!svn/ver/99/trunk/ofxMSAShape3D/example/testApp.h
+END
