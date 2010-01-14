@@ -56,7 +56,7 @@ INCLUDES_FLAGS = $(addprefix -I,$(INCLUDES))
 CFLAGS = -Wall -fexceptions
 CFLAGS += $(INCLUDES_FLAGS)
 CFLAGS += $(CORE_INCLUDE_FLAGS)
-CFLAGS +=`pkg-config  gstreamer-0.10 gstreamer-video-0.10 gstreamer-base-0.10 libudev --cflags`
+CFLAGS +=`pkg-config  gstreamer-0.10 gstreamer-video-0.10 gstreamer-base-0.10 libudev libavcodec libavformat libavutil --cflags`
 
 
 ifeq ($(findstring Debug,$(MAKECMDGOALS)),Debug)
