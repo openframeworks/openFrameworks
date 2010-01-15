@@ -147,6 +147,7 @@
 				<lib name="gstreamer-0.10" />
 				<lib name="gstreamer-video-0.10" />
 				<lib name="gstreamer-base-0.10" />
+				<lib name="libudev"/>
 			</lib_finder>
 			<code_completion />
 			<envvars />
