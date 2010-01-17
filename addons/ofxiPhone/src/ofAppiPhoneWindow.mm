@@ -85,6 +85,12 @@ void ofAppiPhoneWindow::initializeWindow() {
 void  ofAppiPhoneWindow::runAppViaInfiniteLoop(ofBaseApp * appPtr) {
 	ofLog(OF_LOG_VERBOSE, "ofAppiPhoneWindow::runAppViaInfiniteLoop()");
 	
+	ofxiPhoneApp * iPhoneApp = (ofxiPhoneApp*)appPtr;
+	ofAddListener(ofEvents.touchDown, iPhoneApp, &ofxiPhoneApp::touchDown);
+	ofAddListener(ofEvents.touchUp, iPhoneApp, &ofxiPhoneApp::touchUp);
+	ofAddListener(ofEvents.touchMoved, iPhoneApp, &ofxiPhoneApp::touchMoved);
+	ofAddListener(ofEvents.touchDoubleTap, iPhoneApp, &ofxiPhoneApp::touchDoubleTap);
+	
 	NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
 	UIApplicationMain(nil, nil, nil, @"ofxiPhoneAppDelegate");		// this will run the infinite loop checking all events
 	[pool release];	

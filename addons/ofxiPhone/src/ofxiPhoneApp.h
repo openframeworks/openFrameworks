@@ -22,10 +22,10 @@ public:
 	void draw() {};
 	void exit() {};
 	
-	void touchDown(ofTouchEventArgs & touch) {};
-	void touchMoved(ofTouchEventArgs & touch) {};
-	void touchUp(ofTouchEventArgs & touch) {};
-	void touchDoubleTap(ofTouchEventArgs & touch) {};
+	virtual void touchDown(ofTouchEventArgs & touch) {};
+	virtual void touchMoved(ofTouchEventArgs & touch) {};
+	virtual void touchUp(ofTouchEventArgs & touch) {};
+	virtual void touchDoubleTap(ofTouchEventArgs & touch) {};
 	
 	void lostFocus() {}
 	void gotFocus() {}
