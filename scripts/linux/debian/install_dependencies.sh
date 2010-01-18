@@ -14,12 +14,12 @@ if [ $? != 0 ]; then
         echo "please report this problem in the forums"
         exit
 fi
-chown -R $ID:$ID obj ../../lib/linux64/*
+chown -R $ID:$ID obj ../../lib/${LIBSPATH}/*
 make Release
 if [ $? != 0 ]; then
         echo "there has been a problem compiling Debug OF library"
         echo "please report this problem in the forums"
 fi
-chown -R $ID:$ID obj ../../lib/linux64/*
+chown -R $ID:$ID obj ../../lib/${LIBSPATH}/*
 
 # libpoco-dev 
