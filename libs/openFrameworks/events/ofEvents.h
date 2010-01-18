@@ -2,6 +2,7 @@
 #define _OF_EVENTS
 
 #include "ofConstants.h"
+#include "ofUtils.h"
 
 #ifdef OF_USING_POCO
 
