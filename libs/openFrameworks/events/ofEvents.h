@@ -123,6 +123,27 @@
 
 	extern ofCoreEvents ofEvents;
 
+	template<class ListenerClass>
+	void ofRegisterMouseEvents(ListenerClass * listener){
+		ofAddListener(ofEvents.mouseDragged,listener,&ListenerClass::mouseDragged);
+		ofAddListener(ofEvents.mouseMoved,listener,&ListenerClass::mouseMoved);
+		ofAddListener(ofEvents.mousePressed,listener,&ListenerClass::mousePressed);
+		ofAddListener(ofEvents.mouseReleased,listener,&ListenerClass::mouseReleased);
+	}
+
+	template<class ListenerClass>
+	void ofRegisterKeyEvents(ListenerClass * listener){
+		ofAddListener(ofEvents.keyPressed, listener, &ListenerClass::keyPressed);
+		ofAddListener(ofEvents.keyReleased, listener, &ListenerClass::keyReleased);
+	}
+
+	template<class ListenerClass>
+	void ofRegisterTouchEvents(ListenerClass * listener){
+		ofAddListener(ofEvents.touchDoubleTap, listener, &ListenerClass::touchDoubleTap);
+		ofAddListener(ofEvents.touchDown, listener, &ListenerClass::touchDown);
+		ofAddListener(ofEvents.touchMoved, listener, &ListenerClass::touchMoved);
+		ofAddListener(ofEvents.touchUp, listener, &ListenerClass::touchUp);
+	}
 
 	#endif
 
