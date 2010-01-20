@@ -92,7 +92,6 @@
 		BB24E10B10DA9F7A00E9C588 /* ftsizes.h in Headers */ = {isa = PBXBuildFile; fileRef = BB24DFAB10DA7C1B00E9C588 /* ftsizes.h */; };
 		BB24E10C10DA9F7A00E9C588 /* ftpfr.h in Headers */ = {isa = PBXBuildFile; fileRef = BB24DFA910DA7C1B00E9C588 /* ftpfr.h */; };
 		BB24E10D10DA9F7A00E9C588 /* fttypes.h in Headers */ = {isa = PBXBuildFile; fileRef = BB24DFB110DA7C1B00E9C588 /* fttypes.h */; };
-		BB24E10E10DA9F7A00E9C588 /* glu.h in Headers */ = {isa = PBXBuildFile; fileRef = BB24DFCE10DA7C1B00E9C588 /* glu.h */; };
 		BB24E10F10DA9F7B00E9C588 /* ftoption.h in Headers */ = {isa = PBXBuildFile; fileRef = BB24DF9010DA7C1B00E9C588 /* ftoption.h */; };
 		BB24E11010DA9F7B00E9C588 /* fterrors.h in Headers */ = {isa = PBXBuildFile; fileRef = BB24DF9910DA7C1B00E9C588 /* fterrors.h */; };
 		BB24E11110DA9F7B00E9C588 /* ftchapters.h in Headers */ = {isa = PBXBuildFile; fileRef = BB24DF9710DA7C1B00E9C588 /* ftchapters.h */; };
@@ -111,7 +110,6 @@
 		BB24E11E10DA9F7F00E9C588 /* ftmac.h in Headers */ = {isa = PBXBuildFile; fileRef = BB24DFA310DA7C1B00E9C588 /* ftmac.h */; };
 		BB24E11F10DA9F7F00E9C588 /* freetype.h in Headers */ = {isa = PBXBuildFile; fileRef = BB24DF9210DA7C1B00E9C588 /* freetype.h */; };
 		BB24E12010DA9F7F00E9C588 /* ttunpat.h in Headers */ = {isa = PBXBuildFile; fileRef = BB24DFB810DA7C1B00E9C588 /* ttunpat.h */; };
-		BB24E12110DA9F8000E9C588 /* gluos.h in Headers */ = {isa = PBXBuildFile; fileRef = BB24DFCF10DA7C1B00E9C588 /* gluos.h */; };
 		BB24E12210DA9F8000E9C588 /* ftmm.h in Headers */ = {isa = PBXBuildFile; fileRef = BB24DFA410DA7C1B00E9C588 /* ftmm.h */; };
 		BB24E12310DA9F8100E9C588 /* ftconfig.h in Headers */ = {isa = PBXBuildFile; fileRef = BB24DF8D10DA7C1B00E9C588 /* ftconfig.h */; };
 		BB24E12410DA9F8100E9C588 /* fterrdef.h in Headers */ = {isa = PBXBuildFile; fileRef = BB24DF9810DA7C1B00E9C588 /* fterrdef.h */; };
@@ -122,6 +120,8 @@
 		BB24E12910DA9F8400E9C588 /* fttrigon.h in Headers */ = {isa = PBXBuildFile; fileRef = BB24DFB010DA7C1B00E9C588 /* fttrigon.h */; };
 		BB24E12A10DA9F8400E9C588 /* ft2build.h in Headers */ = {isa = PBXBuildFile; fileRef = BB24DFB910DA7C1B00E9C588 /* ft2build.h */; };
 		BB24E12B10DA9F8400E9C588 /* ftincrem.h in Headers */ = {isa = PBXBuildFile; fileRef = BB24DF9F10DA7C1B00E9C588 /* ftincrem.h */; };
+		DA78520C1105C1BF007EFC90 /* glu.h in Headers */ = {isa = PBXBuildFile; fileRef = DA78520A1105C1BF007EFC90 /* glu.h */; };
+		DA78520D1105C1BF007EFC90 /* gluos.h in Headers */ = {isa = PBXBuildFile; fileRef = DA78520B1105C1BF007EFC90 /* gluos.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -204,8 +204,6 @@
 		BB24DFB710DA7C1B00E9C588 /* tttags.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tttags.h; sourceTree = "<group>"; };
 		BB24DFB810DA7C1B00E9C588 /* ttunpat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ttunpat.h; sourceTree = "<group>"; };
 		BB24DFB910DA7C1B00E9C588 /* ft2build.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ft2build.h; sourceTree = "<group>"; };
-		BB24DFCE10DA7C1B00E9C588 /* glu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = glu.h; sourceTree = "<group>"; };
-		BB24DFCF10DA7C1B00E9C588 /* gluos.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gluos.h; sourceTree = "<group>"; };
 		BB24E01D10DA7C6100E9C588 /* changelog.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = changelog.txt; sourceTree = "<group>"; };
 		BB24E01E10DA7C6100E9C588 /* install.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = install.xml; sourceTree = "<group>"; };
 		BB24E01F10DA7C6100E9C588 /* LICENSE.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE.txt; sourceTree = "<group>"; };
@@ -249,6 +247,8 @@
 		BB24E04A10DA7C6100E9C588 /* ofxMultiTouch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxMultiTouch.h; sourceTree = "<group>"; };
 		BB24E04B10DA7C6100E9C588 /* ofxMultiTouchListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxMultiTouchListener.h; sourceTree = "<group>"; };
 		BBE5EAB70F49AD8400F28951 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
+		DA78520A1105C1BF007EFC90 /* glu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = glu.h; sourceTree = "<group>"; };
+		DA78520B1105C1BF007EFC90 /* gluos.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gluos.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -517,28 +517,11 @@
 		BB24DFCA10DA7C1B00E9C588 /* glu */ = {
 			isa = PBXGroup;
 			children = (
-				BB24DFCB10DA7C1B00E9C588 /* include */,
+				DA7852091105C1BF007EFC90 /* include_iphone */,
 			);
 			name = glu;
 			path = ../../../glu;
 			sourceTree = SOURCE_ROOT;
-		};
-		BB24DFCB10DA7C1B00E9C588 /* include */ = {
-			isa = PBXGroup;
-			children = (
-				BB24DFCD10DA7C1B00E9C588 /* iphone */,
-			);
-			path = include;
-			sourceTree = "<group>";
-		};
-		BB24DFCD10DA7C1B00E9C588 /* iphone */ = {
-			isa = PBXGroup;
-			children = (
-				BB24DFCE10DA7C1B00E9C588 /* glu.h */,
-				BB24DFCF10DA7C1B00E9C588 /* gluos.h */,
-			);
-			path = iphone;
-			sourceTree = "<group>";
 		};
 		BB24E01C10DA7C6100E9C588 /* ofxAccelerometer */ = {
 			isa = PBXGroup;
@@ -649,6 +632,15 @@
 			name = core;
 			sourceTree = "<group>";
 		};
+		DA7852091105C1BF007EFC90 /* include_iphone */ = {
+			isa = PBXGroup;
+			children = (
+				DA78520A1105C1BF007EFC90 /* glu.h */,
+				DA78520B1105C1BF007EFC90 /* gluos.h */,
+			);
+			path = include_iphone;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -709,7 +701,6 @@
 				BB24E10B10DA9F7A00E9C588 /* ftsizes.h in Headers */,
 				BB24E10C10DA9F7A00E9C588 /* ftpfr.h in Headers */,
 				BB24E10D10DA9F7A00E9C588 /* fttypes.h in Headers */,
-				BB24E10E10DA9F7A00E9C588 /* glu.h in Headers */,
 				BB24E10F10DA9F7B00E9C588 /* ftoption.h in Headers */,
 				BB24E11010DA9F7B00E9C588 /* fterrors.h in Headers */,
 				BB24E11110DA9F7B00E9C588 /* ftchapters.h in Headers */,
@@ -728,7 +719,6 @@
 				BB24E11E10DA9F7F00E9C588 /* ftmac.h in Headers */,
 				BB24E11F10DA9F7F00E9C588 /* freetype.h in Headers */,
 				BB24E12010DA9F7F00E9C588 /* ttunpat.h in Headers */,
-				BB24E12110DA9F8000E9C588 /* gluos.h in Headers */,
 				BB24E12210DA9F8000E9C588 /* ftmm.h in Headers */,
 				BB24E12310DA9F8100E9C588 /* ftconfig.h in Headers */,
 				BB24E12410DA9F8100E9C588 /* fterrdef.h in Headers */,
@@ -739,6 +729,8 @@
 				BB24E12910DA9F8400E9C588 /* fttrigon.h in Headers */,
 				BB24E12A10DA9F8400E9C588 /* ft2build.h in Headers */,
 				BB24E12B10DA9F8400E9C588 /* ftincrem.h in Headers */,
+				DA78520C1105C1BF007EFC90 /* glu.h in Headers */,
+				DA78520D1105C1BF007EFC90 /* gluos.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

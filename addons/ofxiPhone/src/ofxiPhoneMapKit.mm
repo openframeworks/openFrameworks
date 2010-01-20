@@ -28,6 +28,8 @@
  *
  * ***********************************************************************/ 
 
+#include <Availability.h>
+#ifdef __IPHONE_3_0
 
 #include "ofxiPhoneMapKit.h"
 #include "ofxiPhoneExtras.h"
@@ -224,29 +226,4 @@ void ofxiPhoneMapKit::errorLoadingMap(string errorDescription) {
 }
 
 
-
-/*
- class ofRectangle {
- union {
- typedef struct {
- ofPoint2 origin;
- ofPoint2 size;
- };
- typedef struct {
- float x;
- float y;
- float width;
- float height;
- };
- };
- 
- void set(ofPoint &o, ofPoint &s);
- }
- 
- 
- ofRectangle myRect;
- 
- myRect.origin += vel;
- myRect.size *= 2;
- 
- */
+#endif
