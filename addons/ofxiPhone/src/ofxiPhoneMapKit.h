@@ -30,6 +30,10 @@
 
 #pragma once
 
+#include <Availability.h>
+#ifdef __IPHONE_3_0
+
+
 #include "ofMain.h"
 #include <MapKit/MapKit.h>
 #include "ofxiPhoneMapKitListener.h"
@@ -144,3 +148,5 @@ protected:
 	
 	void _setRegion(CLLocationCoordinate2D center, MKCoordinateSpan span, bool animated);
 };
+
+#endif

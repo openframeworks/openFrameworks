@@ -131,8 +131,6 @@
 		BB24DE0D10DA785000E9C588 /* ttunpat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ttunpat.h; sourceTree = "<group>"; };
 		BB24DE0E10DA785000E9C588 /* ft2build.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ft2build.h; sourceTree = "<group>"; };
 		BB24DE1310DA785000E9C588 /* libFreeType_iphone_universal.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libFreeType_iphone_universal.a; sourceTree = "<group>"; };
-		BB24DE2310DA785000E9C588 /* glu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = glu.h; sourceTree = "<group>"; };
-		BB24DE2410DA785000E9C588 /* gluos.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gluos.h; sourceTree = "<group>"; };
 		BB24DE2710DA785000E9C588 /* libGLU.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libGLU.a; sourceTree = "<group>"; };
 		BB24DE2810DA785000E9C588 /* libGLU_arm.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libGLU_arm.a; sourceTree = "<group>"; };
 		BB24E22F10DAA8A700E9C588 /* iPhone+OF Lib.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = "iPhone+OF Lib.xcodeproj"; path = "../../../libs/openFrameworksCompiled/project/iphone/iPhone+OF Lib.xcodeproj"; sourceTree = SOURCE_ROOT; };
@@ -140,6 +138,8 @@
 		BB59309C10F68E0E005EE3B4 /* verdana.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = verdana.ttf; sourceTree = "<group>"; };
 		BB73D3DA0F4B08B60092FC06 /* testApp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = testApp.cpp; sourceTree = "<group>"; };
 		BBE5EAB70F49AD8400F28951 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
+		DA7850951105BFED007EFC90 /* glu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = glu.h; sourceTree = "<group>"; };
+		DA7850961105BFED007EFC90 /* gluos.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gluos.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -443,29 +443,12 @@
 		BB24DE1F10DA785000E9C588 /* glu */ = {
 			isa = PBXGroup;
 			children = (
-				BB24DE2010DA785000E9C588 /* include */,
+				DA7850941105BFED007EFC90 /* include_iphone */,
 				BB24DE2510DA785000E9C588 /* lib */,
 			);
 			name = glu;
 			path = ../../../libs/glu;
 			sourceTree = SOURCE_ROOT;
-		};
-		BB24DE2010DA785000E9C588 /* include */ = {
-			isa = PBXGroup;
-			children = (
-				BB24DE2210DA785000E9C588 /* iphone */,
-			);
-			path = include;
-			sourceTree = "<group>";
-		};
-		BB24DE2210DA785000E9C588 /* iphone */ = {
-			isa = PBXGroup;
-			children = (
-				BB24DE2310DA785000E9C588 /* glu.h */,
-				BB24DE2410DA785000E9C588 /* gluos.h */,
-			);
-			path = iphone;
-			sourceTree = "<group>";
 		};
 		BB24DE2510DA785000E9C588 /* lib */ = {
 			isa = PBXGroup;
@@ -519,6 +502,15 @@
 				29B97323FDCFA39411CA2CEA /* core frameworks */,
 			);
 			name = core;
+			sourceTree = "<group>";
+		};
+		DA7850941105BFED007EFC90 /* include_iphone */ = {
+			isa = PBXGroup;
+			children = (
+				DA7850951105BFED007EFC90 /* glu.h */,
+				DA7850961105BFED007EFC90 /* gluos.h */,
+			);
+			path = include_iphone;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
