@@ -229,6 +229,8 @@
 			<key>Layout</key>
 			<array>
 				<dict>
+					<key>BecomeActive</key>
+					<true/>
 					<key>ContentConfiguration</key>
 					<dict>
 						<key>PBXBottomSmartGroupGIDs</key>
@@ -265,13 +267,18 @@
 							<array>
 								<string>29B97314FDCFA39411CA2CEA</string>
 								<string>BB16F3A50F2B73B000518274</string>
+								<string>BB16E9930F2B1E5900518274</string>
+								<string>BBE5E94E0F497BD800F28951</string>
+								<string>BB3F144E0F4C6BF200A33527</string>
 								<string>1C37FABC05509CD000000102</string>
 							</array>
 							<key>PBXSmartGroupTreeModuleOutlineStateSelectionKey</key>
 							<array>
 								<array>
-									<integer>4</integer>
-									<integer>2</integer>
+									<integer>15</integer>
+									<integer>11</integer>
+									<integer>10</integer>
+									<integer>9</integer>
 									<integer>0</integer>
 								</array>
 							</array>
@@ -306,8 +313,6 @@
 					<key>Dock</key>
 					<array>
 						<dict>
-							<key>BecomeActive</key>
-							<true/>
 							<key>ContentConfiguration</key>
 							<dict>
 								<key>PBXProjectModuleGUID</key>
@@ -325,13 +330,13 @@
 										<key>_historyCapacity</key>
 										<integer>40</integer>
 										<key>bookmark</key>
-										<string>BB6DC579110BE10F00E0577A</string>
+										<string>BB6DC69F110BE7E700E0577A</string>
 										<key>history</key>
 										<array>
 											<string>BB0ECB5610F5EC1400A35406</string>
 											<string>BB59306010F68C64005EE3B4</string>
 											<string>BB59306110F68C64005EE3B4</string>
-											<string>BB59306310F68C64005EE3B4</string>
+											<string>BB6DC579110BE10F00E0577A</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>
@@ -389,9 +394,9 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>BB6DC57A110BE10F00E0577A</string>
+				<string>BB6DC6A0110BE7E700E0577A</string>
 				<string>1CE0B1FE06471DED0097A5F4</string>
-				<string>BB6DC57B110BE10F00E0577A</string>
+				<string>BB6DC6A1110BE7E700E0577A</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20506471E060097A5F4</string>
 			</array>
@@ -529,7 +534,6 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
-		<string>1CD10A99069EF8BA00B06720</string>
 		<string>BB0ECA5210F55E1100A35406</string>
 		<string>/Users/Memo/Lab/openFrameworks/git/openFrameworks/apps/iPhoneExamples/CoreLocation Example/iPhone Core Location Example.xcodeproj</string>
 	</array>
@@ -611,7 +615,7 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>BB0ECA5210F55E1100A35406</string>
-				<string>BB6DC57C110BE10F00E0577A</string>
+				<string>BB6DC6A2110BE7E700E0577A</string>
 				<string>1CD0528F0623707200166675</string>
 				<string>XCMainBuildResultsModuleGUID</string>
 			</array>

@@ -229,6 +229,8 @@
 			<key>Layout</key>
 			<array>
 				<dict>
+					<key>BecomeActive</key>
+					<true/>
 					<key>ContentConfiguration</key>
 					<dict>
 						<key>PBXBottomSmartGroupGIDs</key>
@@ -266,13 +268,19 @@
 								<string>29B97314FDCFA39411CA2CEA</string>
 								<string>BB16F3A50F2B73B000518274</string>
 								<string>BB24DD8B10DA77E000E9C588</string>
+								<string>BB16E9930F2B1E5900518274</string>
+								<string>BBE5E94E0F497BD800F28951</string>
+								<string>BB3F144E0F4C6BF200A33527</string>
+								<string>BB24DE1F10DA785000E9C588</string>
 								<string>1C37FABC05509CD000000102</string>
 							</array>
 							<key>PBXSmartGroupTreeModuleOutlineStateSelectionKey</key>
 							<array>
 								<array>
-									<integer>4</integer>
-									<integer>2</integer>
+									<integer>19</integer>
+									<integer>15</integer>
+									<integer>14</integer>
+									<integer>13</integer>
 									<integer>0</integer>
 								</array>
 							</array>
@@ -307,8 +315,6 @@
 					<key>Dock</key>
 					<array>
 						<dict>
-							<key>BecomeActive</key>
-							<true/>
 							<key>ContentConfiguration</key>
 							<dict>
 								<key>PBXProjectModuleGUID</key>
@@ -326,7 +332,7 @@
 										<key>_historyCapacity</key>
 										<integer>40</integer>
 										<key>bookmark</key>
-										<string>BB6DC5A1110BE16700E0577A</string>
+										<string>BB6DC6C5110BE81A00E0577A</string>
 										<key>history</key>
 										<array>
 											<string>BB0ECB5610F5EC1400A35406</string>
@@ -336,7 +342,7 @@
 											<string>BB5930B010F68E32005EE3B4</string>
 											<string>BB5930B110F68E32005EE3B4</string>
 											<string>BB5930B310F68E32005EE3B4</string>
-											<string>BB5930B510F68E32005EE3B4</string>
+											<string>BB6DC5A1110BE16700E0577A</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>
@@ -394,9 +400,9 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>BB6DC5A2110BE16700E0577A</string>
+				<string>BB6DC6C6110BE81A00E0577A</string>
 				<string>1CE0B1FE06471DED0097A5F4</string>
-				<string>BB6DC5A3110BE16700E0577A</string>
+				<string>BB6DC6C7110BE81A00E0577A</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20506471E060097A5F4</string>
 			</array>
@@ -615,7 +621,7 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>BB0ECA5210F55E1100A35406</string>
-				<string>BB6DC5A4110BE16700E0577A</string>
+				<string>BB6DC6C8110BE81A00E0577A</string>
 				<string>1CD0528F0623707200166675</string>
 				<string>XCMainBuildResultsModuleGUID</string>
 			</array>
