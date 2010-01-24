@@ -654,6 +654,7 @@
 					"\"$(DEVELOPER_DIR)/openFrameworks/libs/poco/lib/vs2008\"",
 					"\"$(DEVELOPER_DIR)/openFrameworks/libs/poco/lib/win_cb\"",
 				);
+				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "«PROJECTNAME»";
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
 				SDKROOT = iphoneos3.0;
@@ -706,6 +707,7 @@
 					"\"$(DEVELOPER_DIR)/openFrameworks/libs/poco/lib/vs2008\"",
 					"\"$(DEVELOPER_DIR)/openFrameworks/libs/poco/lib/win_cb\"",
 				);
+				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "«PROJECTNAME»";
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
 				SDKROOT = iphoneos3.0;
@@ -771,6 +773,7 @@
 					"\"$(DEVELOPER_DIR)/openFrameworks/libs/poco/lib/vs2008\"",
 					"\"$(DEVELOPER_DIR)/openFrameworks/libs/poco/lib/win_cb\"",
 				);
+				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "«PROJECTNAME»";
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
 				SDKROOT = iphoneos3.0;

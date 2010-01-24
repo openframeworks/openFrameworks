@@ -41,8 +41,8 @@
 					PBXFileDataSource_Target_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 284593820;
-			PBXWorkspaceStateSaveDate = 284593820;
+			PBXPerProjectTemplateStateSaveDate = 285991300;
+			PBXWorkspaceStateSaveDate = 285991300;
 		};
 		perUserProjectItems = {
 			BB0ECB5610F5EC1400A35406 /* PBXTextBookmark */ = BB0ECB5610F5EC1400A35406 /* PBXTextBookmark */;
@@ -51,8 +51,8 @@
 			BB59310910F68F72005EE3B4 /* PBXBookmark */ = BB59310910F68F72005EE3B4 /* PBXBookmark */;
 			BB59310A10F68F72005EE3B4 /* PBXTextBookmark */ = BB59310A10F68F72005EE3B4 /* PBXTextBookmark */;
 			BB59310B10F68F72005EE3B4 /* PBXTextBookmark */ = BB59310B10F68F72005EE3B4 /* PBXTextBookmark */;
-			BB59310D10F68F72005EE3B4 /* PBXTextBookmark */ = BB59310D10F68F72005EE3B4 /* PBXTextBookmark */;
 			BB59310E10F68F72005EE3B4 /* PBXTextBookmark */ = BB59310E10F68F72005EE3B4 /* PBXTextBookmark */;
+			BB6DC5C2110BE1A000E0577A /* PBXTextBookmark */ = BB6DC5C2110BE1A000E0577A /* PBXTextBookmark */;
 		};
 		sourceControlManager = BB0ECA4C10F55DF800A35406 /* Source Control */;
 		userBuildSettings = {
@@ -126,9 +126,9 @@
 	};
 	BB5930F110F68EE4005EE3B4 /* testApp.mm */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1531, 1209}}";
-			sepNavSelRange = "{800, 0}";
-			sepNavVisRange = "{0, 1875}";
+			sepNavIntBoundsRect = "{{0, 0}, {1531, 1170}}";
+			sepNavSelRange = "{473, 0}";
+			sepNavVisRange = "{309, 1690}";
 		};
 	};
 	BB59310610F68F72005EE3B4 /* PBXBookmark */ = {
@@ -141,6 +141,7 @@
 	};
 	BB59310810F68F72005EE3B4 /* instructions.png */ = {
 		isa = PBXFileReference;
+		lastKnownFileType = image.png;
 		name = instructions.png;
 		path = "/Users/Memo/Lab/openFrameworks/git/openFrameworks/apps/iPhoneExamples/Image Picker Example/bin/data/images/instructions.png";
 		sourceTree = "<absolute>";
@@ -171,28 +172,29 @@
 	};
 	BB59310C10F68F72005EE3B4 /* ofEvents.h */ = {
 		isa = PBXFileReference;
+		lastKnownFileType = sourcecode.c.h;
 		name = ofEvents.h;
 		path = /Users/Memo/Lab/openFrameworks/git/openFrameworks/libs/openFrameworks/events/ofEvents.h;
 		sourceTree = "<absolute>";
-	};
-	BB59310D10F68F72005EE3B4 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = BB5930F110F68EE4005EE3B4 /* testApp.mm */;
-		name = "testApp.mm: 57";
-		rLen = 16;
-		rLoc = 1600;
-		rType = 0;
-		vrLen = 1824;
-		vrLoc = 162;
 	};
 	BB59310E10F68F72005EE3B4 /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
 		fRef = BB5930F110F68EE4005EE3B4 /* testApp.mm */;
 		name = "testApp.mm: 29";
 		rLen = 0;
-		rLoc = 800;
+		rLoc = 570;
 		rType = 0;
 		vrLen = 1875;
 		vrLoc = 0;
+	};
+	BB6DC5C2110BE1A000E0577A /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = BB5930F110F68EE4005EE3B4 /* testApp.mm */;
+		name = "testApp.mm: 20";
+		rLen = 0;
+		rLoc = 473;
+		rType = 0;
+		vrLen = 1690;
+		vrLoc = 309;
 	};
 }

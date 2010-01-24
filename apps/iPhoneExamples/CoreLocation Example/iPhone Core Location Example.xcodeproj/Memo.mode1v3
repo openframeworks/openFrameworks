@@ -325,13 +325,13 @@
 										<key>_historyCapacity</key>
 										<integer>40</integer>
 										<key>bookmark</key>
-										<string>BB59306310F68C64005EE3B4</string>
+										<string>BB6DC579110BE10F00E0577A</string>
 										<key>history</key>
 										<array>
 											<string>BB0ECB5610F5EC1400A35406</string>
 											<string>BB59306010F68C64005EE3B4</string>
 											<string>BB59306110F68C64005EE3B4</string>
-											<string>BB59306210F68C64005EE3B4</string>
+											<string>BB59306310F68C64005EE3B4</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>
@@ -389,9 +389,9 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>BB59306410F68C64005EE3B4</string>
+				<string>BB6DC57A110BE10F00E0577A</string>
 				<string>1CE0B1FE06471DED0097A5F4</string>
-				<string>BB59306510F68C64005EE3B4</string>
+				<string>BB6DC57B110BE10F00E0577A</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20506471E060097A5F4</string>
 			</array>
@@ -529,7 +529,6 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
-		<string>1C78EAAD065D492600B07095</string>
 		<string>1CD10A99069EF8BA00B06720</string>
 		<string>BB0ECA5210F55E1100A35406</string>
 		<string>/Users/Memo/Lab/openFrameworks/git/openFrameworks/apps/iPhoneExamples/CoreLocation Example/iPhone Core Location Example.xcodeproj</string>
@@ -612,7 +611,7 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>BB0ECA5210F55E1100A35406</string>
-				<string>BB59305810F68C4E005EE3B4</string>
+				<string>BB6DC57C110BE10F00E0577A</string>
 				<string>1CD0528F0623707200166675</string>
 				<string>XCMainBuildResultsModuleGUID</string>
 			</array>
@@ -734,13 +733,13 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>1CD10A99069EF8BA00B06720</string>
-				<string>BB59305910F68C4E005EE3B4</string>
+				<string>BB6DC57D110BE10F00E0577A</string>
 				<string>1C162984064C10D400B95A72</string>
-				<string>BB59305A10F68C4E005EE3B4</string>
-				<string>BB59305B10F68C4E005EE3B4</string>
-				<string>BB59305C10F68C4E005EE3B4</string>
-				<string>BB59305D10F68C4E005EE3B4</string>
-				<string>BB59305E10F68C4E005EE3B4</string>
+				<string>BB6DC57E110BE10F00E0577A</string>
+				<string>BB6DC57F110BE10F00E0577A</string>
+				<string>BB6DC580110BE10F00E0577A</string>
+				<string>BB6DC581110BE10F00E0577A</string>
+				<string>BB6DC582110BE10F00E0577A</string>
 			</array>
 			<key>ToolbarConfiguration</key>
 			<string>xcode.toolbar.config.debugV3</string>
