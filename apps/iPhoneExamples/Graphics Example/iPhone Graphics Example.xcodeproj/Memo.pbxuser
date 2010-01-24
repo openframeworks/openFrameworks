@@ -41,15 +41,15 @@
 					PBXFileDataSource_Target_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 284593724;
-			PBXWorkspaceStateSaveDate = 284593724;
+			PBXPerProjectTemplateStateSaveDate = 285991276;
+			PBXWorkspaceStateSaveDate = 285991276;
 		};
 		perUserProjectItems = {
 			BB0ECB5610F5EC1400A35406 /* PBXTextBookmark */ = BB0ECB5610F5EC1400A35406 /* PBXTextBookmark */;
 			BB5930DB10F68E95005EE3B4 /* PlistBookmark */ = BB5930DB10F68E95005EE3B4 /* PlistBookmark */;
 			BB5930DC10F68E95005EE3B4 /* PBXTextBookmark */ = BB5930DC10F68E95005EE3B4 /* PBXTextBookmark */;
-			BB5930DD10F68E95005EE3B4 /* PBXTextBookmark */ = BB5930DD10F68E95005EE3B4 /* PBXTextBookmark */;
 			BB5930DE10F68E95005EE3B4 /* PBXTextBookmark */ = BB5930DE10F68E95005EE3B4 /* PBXTextBookmark */;
+			BB6DC5B3110BE17F00E0577A /* PBXTextBookmark */ = BB6DC5B3110BE17F00E0577A /* PBXTextBookmark */;
 		};
 		sourceControlManager = BB0ECA4C10F55DF800A35406 /* Source Control */;
 		userBuildSettings = {
@@ -130,7 +130,7 @@
 		);
 		name = "/Users/Memo/Lab/openFrameworks/git/openFrameworks/apps/iPhoneExamples/Graphics Example/ofxiphone-Info.plist";
 		rLen = 0;
-		rLoc = 9223372036854775807;
+		rLoc = 9223372036854775808;
 	};
 	BB5930DC10F68E95005EE3B4 /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
@@ -142,16 +142,6 @@
 		vrLen = 518;
 		vrLoc = 0;
 	};
-	BB5930DD10F68E95005EE3B4 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = BB73D3DA0F4B08B60092FC06 /* testApp.cpp */;
-		name = "testApp.cpp: 71";
-		rLen = 0;
-		rLoc = 1958;
-		rType = 0;
-		vrLen = 1694;
-		vrLoc = 1274;
-	};
 	BB5930DE10F68E95005EE3B4 /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
 		fRef = BB73D3DA0F4B08B60092FC06 /* testApp.cpp */;
@@ -162,11 +152,21 @@
 		vrLen = 1695;
 		vrLoc = 1273;
 	};
+	BB6DC5B3110BE17F00E0577A /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = BB73D3DA0F4B08B60092FC06 /* testApp.cpp */;
+		name = "testApp.cpp: 63";
+		rLen = 0;
+		rLoc = 1679;
+		rType = 0;
+		vrLen = 1697;
+		vrLoc = 1271;
+	};
 	BB73D3DA0F4B08B60092FC06 /* testApp.cpp */ = {
 		uiCtxt = {
 			sepNavIntBoundsRect = "{{0, 0}, {1531, 1508}}";
-			sepNavSelRange = "{2036, 0}";
-			sepNavVisRange = "{1273, 1695}";
+			sepNavSelRange = "{1679, 0}";
+			sepNavVisRange = "{1271, 1697}";
 		};
 	};
 }

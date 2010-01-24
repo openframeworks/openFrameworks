@@ -326,13 +326,13 @@
 										<key>_historyCapacity</key>
 										<integer>40</integer>
 										<key>bookmark</key>
-										<string>BB5930DE10F68E95005EE3B4</string>
+										<string>BB6DC5B3110BE17F00E0577A</string>
 										<key>history</key>
 										<array>
 											<string>BB0ECB5610F5EC1400A35406</string>
 											<string>BB5930DB10F68E95005EE3B4</string>
 											<string>BB5930DC10F68E95005EE3B4</string>
-											<string>BB5930DD10F68E95005EE3B4</string>
+											<string>BB5930DE10F68E95005EE3B4</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>
@@ -390,9 +390,9 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>BB5930C010F68E3D005EE3B4</string>
+				<string>BB6DC5B4110BE17F00E0577A</string>
 				<string>1CE0B1FE06471DED0097A5F4</string>
-				<string>BB5930C110F68E3D005EE3B4</string>
+				<string>BB6DC5B5110BE17F00E0577A</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20506471E060097A5F4</string>
 			</array>
@@ -530,8 +530,6 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
-		<string>1C78EAAD065D492600B07095</string>
-		<string>1CD10A99069EF8BA00B06720</string>
 		<string>BB0ECA5210F55E1100A35406</string>
 		<string>/Users/Memo/Lab/openFrameworks/git/openFrameworks/apps/iPhoneExamples/Graphics Example/iPhone Graphics Example.xcodeproj</string>
 	</array>
@@ -613,7 +611,7 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>BB0ECA5210F55E1100A35406</string>
-				<string>BB5930C210F68E3D005EE3B4</string>
+				<string>BB6DC5B6110BE17F00E0577A</string>
 				<string>1CD0528F0623707200166675</string>
 				<string>XCMainBuildResultsModuleGUID</string>
 			</array>
