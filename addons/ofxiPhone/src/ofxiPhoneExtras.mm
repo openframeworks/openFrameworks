@@ -171,41 +171,53 @@ void iPhoneUIImageToGLTexture(UIImage *uiImage, GLuint *spriteTexture) {
 void iPhoneUIImageToOFImage(UIImage *uiImage, ofImage &outImage) {
 	if(!uiImage) return;
 	
-	CGImageRef cgImage;
 	CGContextRef spriteContext;
-	GLubyte *pixels;
-	size_t	width, height;
-	int bpp = 4;
+	CGImageRef	cgImage = uiImage.CGImage;
+
+	int bytesPerPixel	= CGImageGetBitsPerPixel(cgImage)/8;
+	if(bytesPerPixel == 3) bytesPerPixel = 4;
 	
-	// Creates a Core Graphics image from an image file
-	cgImage = uiImage.CGImage;
-	
-	// Get the width and height of the image
-	width = CGImageGetWidth(cgImage);
-	height = CGImageGetHeight(cgImage);
-	
+	int width			= CGImageGetWidth(cgImage);
+	int height			= CGImageGetHeight(cgImage);
 	
 	// Allocated memory needed for the bitmap context
-	pixels = (GLubyte *) malloc(width * height * bpp);
+	GLubyte *pixels		= (GLubyte *) malloc(width * height * bytesPerPixel);
+	
 	// Uses the bitmatp creation function provided by the Core Graphics framework. 
-	spriteContext = CGBitmapContextCreate(pixels, width, height, 8, width * 4, CGImageGetColorSpace(cgImage), kCGImageAlphaPremultipliedLast);
+	spriteContext = CGBitmapContextCreate(pixels, width, height, CGImageGetBitsPerComponent(cgImage), width * bytesPerPixel, CGImageGetColorSpace(cgImage), bytesPerPixel == 4 ? kCGImageAlphaPremultipliedLast : kCGImageAlphaNone);
+
 	// After you create the context, you can draw the sprite image to the context.
 	CGContextDrawImage(spriteContext, CGRectMake(0.0, 0.0, (CGFloat)width, (CGFloat)height), cgImage);
+	
 	// You don't need the context at this point, so you need to release it to avoid memory leaks.
 	CGContextRelease(spriteContext);
 	
 	// vertically flip
-	GLubyte *pixelsFlipped = (GLubyte *) malloc(width * height * bpp);
-	int numBytesPerRow = width * bpp;
-	for(int y=0; y<height; y++) {
-		memcpy(pixelsFlipped + (numBytesPerRow * y), pixels + (numBytesPerRow * (height - 1 - y)), numBytesPerRow);
+//	GLubyte *pixelsFlipped = (GLubyte *) malloc(width * height * bytesPerPixel);
+//	int numBytesPerRow = width * bytesPerPixel;
+//	for(int y=0; y<height; y++) {
+//		memcpy(pixelsFlipped + (numBytesPerRow * y), pixels + (numBytesPerRow * (height - 1 - y)), numBytesPerRow);
+//	}
+//	outImage.setFromPixels(pixelsFlipped, width, height, OF_IMAGE_COLOR_ALPHA, true);
+//	free(pixelsFlipped);
+	
+	int ofImageMode;
+	
+	switch(bytesPerPixel) {
+		case 1:
+			ofImageMode = OF_IMAGE_GRAYSCALE;
+			break;
+		case 3: 
+			ofImageMode = OF_IMAGE_COLOR;
+			break;
+		case 4: 
+		default:
+			ofImageMode = OF_IMAGE_COLOR_ALPHA; break;
 	}
-	
-	
-	outImage.setFromPixels(pixelsFlipped, width, height, OF_IMAGE_COLOR_ALPHA, true);
-	
+			
+	outImage.setFromPixels(pixels, width, height, ofImageMode, true);
+
 	free(pixels);
-	free(pixelsFlipped);
 }
 
 //--------------------------------------------------------------

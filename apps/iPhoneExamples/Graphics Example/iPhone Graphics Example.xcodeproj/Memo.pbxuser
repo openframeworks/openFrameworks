@@ -41,15 +41,21 @@
 					PBXFileDataSource_Target_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 285992991;
-			PBXWorkspaceStateSaveDate = 285992991;
+			PBXPerProjectTemplateStateSaveDate = 285996433;
+			PBXWorkspaceStateSaveDate = 285996433;
 		};
 		perUserProjectItems = {
 			BB0ECB5610F5EC1400A35406 /* PBXTextBookmark */ = BB0ECB5610F5EC1400A35406 /* PBXTextBookmark */;
 			BB5930DB10F68E95005EE3B4 /* PlistBookmark */ = BB5930DB10F68E95005EE3B4 /* PlistBookmark */;
 			BB5930DC10F68E95005EE3B4 /* PBXTextBookmark */ = BB5930DC10F68E95005EE3B4 /* PBXTextBookmark */;
-			BB6DC5B3110BE17F00E0577A /* PBXTextBookmark */ = BB6DC5B3110BE17F00E0577A /* PBXTextBookmark */;
-			BB6DC6D7110BE82500E0577A /* PBXTextBookmark */ = BB6DC6D7110BE82500E0577A /* PBXTextBookmark */;
+			BBFE1B9D110BF59C0056A011 /* PBXTextBookmark */ = BBFE1B9D110BF59C0056A011 /* PBXTextBookmark */;
+			BBFE1B9E110BF59C0056A011 /* PBXBookmark */ = BBFE1B9E110BF59C0056A011 /* PBXBookmark */;
+			BBFE1BA0110BF59C0056A011 /* PBXBookmark */ = BBFE1BA0110BF59C0056A011 /* PBXBookmark */;
+			BBFE1BA2110BF59C0056A011 /* PBXBookmark */ = BBFE1BA2110BF59C0056A011 /* PBXBookmark */;
+			BBFE1BA4110BF59C0056A011 /* PBXBookmark */ = BBFE1BA4110BF59C0056A011 /* PBXBookmark */;
+			BBFE1BA6110BF59C0056A011 /* PBXBookmark */ = BBFE1BA6110BF59C0056A011 /* PBXBookmark */;
+			BBFE1BA8110BF59C0056A011 /* PBXBookmark */ = BBFE1BA8110BF59C0056A011 /* PBXBookmark */;
+			BBFE1BB6110BF5AA0056A011 /* PBXBookmark */ = BBFE1BB6110BF5AA0056A011 /* PBXBookmark */;
 		};
 		sourceControlManager = BB0ECA4C10F55DF800A35406 /* Source Control */;
 		userBuildSettings = {
@@ -142,31 +148,91 @@
 		vrLen = 518;
 		vrLoc = 0;
 	};
-	BB6DC5B3110BE17F00E0577A /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = BB73D3DA0F4B08B60092FC06 /* testApp.cpp */;
-		name = "testApp.cpp: 63";
-		rLen = 0;
-		rLoc = 1679;
-		rType = 0;
-		vrLen = 1697;
-		vrLoc = 1271;
-	};
-	BB6DC6D7110BE82500E0577A /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = BB73D3DA0F4B08B60092FC06 /* testApp.cpp */;
-		name = "testApp.cpp: 63";
-		rLen = 0;
-		rLoc = 1679;
-		rType = 0;
-		vrLen = 1696;
-		vrLoc = 1271;
-	};
 	BB73D3DA0F4B08B60092FC06 /* testApp.cpp */ = {
 		uiCtxt = {
 			sepNavIntBoundsRect = "{{0, 0}, {1531, 1508}}";
 			sepNavSelRange = "{1679, 0}";
-			sepNavVisRange = "{1271, 1696}";
+			sepNavVisRange = "{1247, 1720}";
 		};
+	};
+	BBFE1B9A110BF5910056A011 /* transparency.png */ = {
+		isa = PBXFileReference;
+		lastKnownFileType = image.png;
+		path = transparency.png;
+		sourceTree = "<group>";
+	};
+	BBFE1B9D110BF59C0056A011 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = BB73D3DA0F4B08B60092FC06 /* testApp.cpp */;
+		name = "testApp.cpp: 63";
+		rLen = 0;
+		rLoc = 1679;
+		rType = 0;
+		vrLen = 1720;
+		vrLoc = 1247;
+	};
+	BBFE1B9E110BF59C0056A011 /* PBXBookmark */ = {
+		isa = PBXBookmark;
+		fRef = BBFE1B9F110BF59C0056A011 /* bike_icon.gif */;
+	};
+	BBFE1B9F110BF59C0056A011 /* bike_icon.gif */ = {
+		isa = PBXFileReference;
+		name = bike_icon.gif;
+		path = "/Users/Memo/Lab/openFrameworks/git/openFrameworks/apps/iPhoneExamples/Graphics Example/bin/data/images/bike_icon.gif";
+		sourceTree = "<absolute>";
+	};
+	BBFE1BA0110BF59C0056A011 /* PBXBookmark */ = {
+		isa = PBXBookmark;
+		fRef = BBFE1BA1110BF59C0056A011 /* bike_icon.png */;
+	};
+	BBFE1BA1110BF59C0056A011 /* bike_icon.png */ = {
+		isa = PBXFileReference;
+		name = bike_icon.png;
+		path = "/Users/Memo/Lab/openFrameworks/git/openFrameworks/apps/iPhoneExamples/Graphics Example/bin/data/images/bike_icon.png";
+		sourceTree = "<absolute>";
+	};
+	BBFE1BA2110BF59C0056A011 /* PBXBookmark */ = {
+		isa = PBXBookmark;
+		fRef = BBFE1BA3110BF59C0056A011 /* bikers.jpg */;
+	};
+	BBFE1BA3110BF59C0056A011 /* bikers.jpg */ = {
+		isa = PBXFileReference;
+		name = bikers.jpg;
+		path = "/Users/Memo/Lab/openFrameworks/git/openFrameworks/apps/iPhoneExamples/Graphics Example/bin/data/images/bikers.jpg";
+		sourceTree = "<absolute>";
+	};
+	BBFE1BA4110BF59C0056A011 /* PBXBookmark */ = {
+		isa = PBXBookmark;
+		fRef = BBFE1BA5110BF59C0056A011 /* gears.gif */;
+	};
+	BBFE1BA5110BF59C0056A011 /* gears.gif */ = {
+		isa = PBXFileReference;
+		name = gears.gif;
+		path = "/Users/Memo/Lab/openFrameworks/git/openFrameworks/apps/iPhoneExamples/Graphics Example/bin/data/images/gears.gif";
+		sourceTree = "<absolute>";
+	};
+	BBFE1BA6110BF59C0056A011 /* PBXBookmark */ = {
+		isa = PBXBookmark;
+		fRef = BBFE1BA7110BF59C0056A011 /* tdf_1972_poster.jpg */;
+	};
+	BBFE1BA7110BF59C0056A011 /* tdf_1972_poster.jpg */ = {
+		isa = PBXFileReference;
+		name = tdf_1972_poster.jpg;
+		path = "/Users/Memo/Lab/openFrameworks/git/openFrameworks/apps/iPhoneExamples/Graphics Example/bin/data/images/tdf_1972_poster.jpg";
+		sourceTree = "<absolute>";
+	};
+	BBFE1BA8110BF59C0056A011 /* PBXBookmark */ = {
+		isa = PBXBookmark;
+		fRef = BBFE1B9A110BF5910056A011 /* transparency.png */;
+	};
+	BBFE1BB6110BF5AA0056A011 /* PBXBookmark */ = {
+		isa = PBXBookmark;
+		fRef = BBFE1BB7110BF5AA0056A011 /* transparency.png */;
+	};
+	BBFE1BB7110BF5AA0056A011 /* transparency.png */ = {
+		isa = PBXFileReference;
+		name = transparency.png;
+		path = "/Users/Memo/Lab/openFrameworks/git/openFrameworks/apps/iPhoneExamples/Graphics Example/bin/data/images/transparency.png";
+		sourceTree = "<absolute>";
 	};
 }
