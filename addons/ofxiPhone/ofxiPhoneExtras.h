@@ -155,8 +155,10 @@ void iPhoneUIImageToGLTexture(UIImage *uiImage, GLuint *spriteTexture);
 
 // create an ofImage out of a UIImage
 // you do not need to allocate anything before calling this, it is done in the function
+// targetWidth, targetHeight are target dimensions (UIImage is resized to this size and ofImage is created)
+// .... omit targetWidth & targetHeight to use original image dimensions and not resize
 // TODO: take into consideration UI image orentation
-void iPhoneUIImageToOFImage(UIImage *uiImage, ofImage &outImage);
+void iPhoneUIImageToOFImage(UIImage *uiImage, ofImage &outImage, int targetWidth = 0, int targetHeight = 0);
 
 
 // save current opengl screen to photos app
