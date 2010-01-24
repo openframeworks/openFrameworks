@@ -168,7 +168,7 @@ void iPhoneUIImageToGLTexture(UIImage *uiImage, GLuint *spriteTexture) {
 
 
 //--------------------------------------------------------------
-void iPhoneUIImageToOFImage(UIImage *uiImage, ofImage &outImage) {
+void iPhoneUIImageToOFImage(UIImage *uiImage, ofImage &outImage, int targetWidth, int targetHeight) {
 	if(!uiImage) return;
 	
 	CGContextRef spriteContext;
@@ -177,8 +177,8 @@ void iPhoneUIImageToOFImage(UIImage *uiImage, ofImage &outImage) {
 	int bytesPerPixel	= CGImageGetBitsPerPixel(cgImage)/8;
 	if(bytesPerPixel == 3) bytesPerPixel = 4;
 	
-	int width			= CGImageGetWidth(cgImage);
-	int height			= CGImageGetHeight(cgImage);
+	int width			= targetWidth > 0 ? targetWidth : CGImageGetWidth(cgImage);
+	int height			= targetHeight > 0 ? targetHeight : CGImageGetHeight(cgImage);
 	
 	// Allocated memory needed for the bitmap context
 	GLubyte *pixels		= (GLubyte *) malloc(width * height * bytesPerPixel);
