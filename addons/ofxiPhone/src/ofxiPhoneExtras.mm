@@ -94,13 +94,25 @@ void iPhoneSetGLViewUserInteraction(bool b) {
 
 //--------------------------------------------------------------
 void iPhoneEnableIdleTimer() {
-	[UIApplication sharedApplication].idleTimerDisabled = true;
+	[UIApplication sharedApplication].idleTimerDisabled = false;
 }
 
 
 //--------------------------------------------------------------
 void iPhoneDisableIdleTimer() {
-	[UIApplication sharedApplication].idleTimerDisabled = false;
+	[UIApplication sharedApplication].idleTimerDisabled = true;
+}
+
+
+//--------------------------------------------------------------
+void iPhoneLockGLContext() {
+	[iPhoneGetAppDelegate() lockGL];
+}
+
+
+//--------------------------------------------------------------
+void iPhoneUnlockGLContext() {
+	[iPhoneGetAppDelegate() unlockGL];
 }
 
 
@@ -123,14 +135,14 @@ UIDeviceOrientation iPhoneGetOrientation() {
 
 
 //--------------------------------------------------------------
-void iPhoneBundleImageToGLTexture(NSString *filename, GLuint *spriteTexture) {
-	iPhoneUIImageToGLTexture([UIImage imageNamed:filename], spriteTexture);
+bool iPhoneBundleImageToGLTexture(NSString *filename, GLuint *spriteTexture) {
+	return iPhoneUIImageToGLTexture([UIImage imageNamed:filename], spriteTexture);
 }
 
 
 //--------------------------------------------------------------
-void iPhoneUIImageToGLTexture(UIImage *uiImage, GLuint *spriteTexture) {
-	if(!uiImage) return;
+bool iPhoneUIImageToGLTexture(UIImage *uiImage, GLuint *spriteTexture) {
+	if(!uiImage) return false;
 	
 	CGImageRef cgImage;
 	CGContextRef spriteContext;
@@ -164,12 +176,14 @@ void iPhoneUIImageToGLTexture(UIImage *uiImage, GLuint *spriteTexture) {
 	
 	// Set the texture parameters to use a minifying filter and a linear filer (weighted average)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	
+	return true;
 }
 
 
 //--------------------------------------------------------------
-void iPhoneUIImageToOFImage(UIImage *uiImage, ofImage &outImage, int targetWidth, int targetHeight) {
-	if(!uiImage) return;
+bool iPhoneUIImageToOFImage(UIImage *uiImage, ofImage &outImage, int targetWidth, int targetHeight) {
+	if(!uiImage) return false;
 	
 	CGContextRef spriteContext;
 	CGImageRef	cgImage = uiImage.CGImage;
@@ -184,12 +198,21 @@ void iPhoneUIImageToOFImage(UIImage *uiImage, ofImage &outImage, int targetWidth
 	GLubyte *pixels		= (GLubyte *) malloc(width * height * bytesPerPixel);
 	
 	// Uses the bitmatp creation function provided by the Core Graphics framework. 
+	ofLog(OF_LOG_VERBOSE, "about to CGBitmapContextCreate");
 	spriteContext = CGBitmapContextCreate(pixels, width, height, CGImageGetBitsPerComponent(cgImage), width * bytesPerPixel, CGImageGetColorSpace(cgImage), bytesPerPixel == 4 ? kCGImageAlphaPremultipliedLast : kCGImageAlphaNone);
+	
+	if(spriteContext == NULL) {
+		ofLog(OF_LOG_ERROR, "iPhoneUIImageToOFImage - CGBitmapContextCreate returned NULL");
+		free(pixels);
+		return false;
+	}
 
 	// After you create the context, you can draw the sprite image to the context.
+	ofLog(OF_LOG_VERBOSE, "about to CGContextDrawImage");
 	CGContextDrawImage(spriteContext, CGRectMake(0.0, 0.0, (CGFloat)width, (CGFloat)height), cgImage);
 	
 	// You don't need the context at this point, so you need to release it to avoid memory leaks.
+	ofLog(OF_LOG_VERBOSE, "about to CGContextRelease");
 	CGContextRelease(spriteContext);
 	
 	// vertically flip
@@ -215,9 +238,12 @@ void iPhoneUIImageToOFImage(UIImage *uiImage, ofImage &outImage, int targetWidth
 			ofImageMode = OF_IMAGE_COLOR_ALPHA; break;
 	}
 			
+	ofLog(OF_LOG_VERBOSE, "about to setFromPixels");
 	outImage.setFromPixels(pixels, width, height, ofImageMode, true);
 
 	free(pixels);
+	
+	return true;
 }
 
 //--------------------------------------------------------------
