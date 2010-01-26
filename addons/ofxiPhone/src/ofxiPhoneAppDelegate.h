@@ -45,11 +45,16 @@
 	uint64_t			frameLength;			// nanoseconds between successive frames at targetFrameRate
 	bool				killThread;
 	bool				loopInThreadIsEnabled;
+	
+	NSLock				*glLock;
 }
 
 -(void) setFrameRate:(float)frameRate;
 -(void) enableLoopInThread;
 -(EAGLView*) getGLView;
+
+-(void)lockGL;
+-(void)unlockGL;
 
 @end
 
