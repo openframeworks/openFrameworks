@@ -24,7 +24,7 @@
 				<Option type="2" />
 				<Option compiler="gcc" />
 				<Compiler>
-					<Add option="-march=core2" />
+					<Add option="-march=native" />
 					<Add option="-O3" />
 				</Compiler>
 				<Linker>
