@@ -185,6 +185,21 @@
 	if(loopInThreadIsEnabled) {
 		[NSThread detachNewThreadSelector:@selector(timerLoopThreaded:) toTarget:self withObject:nil];
 	}
+    
+    // Listen to did rotate event
+    [[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
+    [[NSNotificationCenter defaultCenter] addObserver: self 
+                                             selector: @selector(receivedRotate:) 
+                                                 name: UIDeviceOrientationDidChangeNotification 
+                                               object: nil];  
+}
+
+-(void) receivedRotate:(NSNotification*)notification {
+	UIDeviceOrientation interfaceOrientation = [[UIDevice currentDevice] orientation];
+    ofLog(OF_LOG_NOTICE, "Device orientation changed to %i", interfaceOrientation);
+	
+	if(interfaceOrientation != UIDeviceOrientationUnknown)
+        ofxiPhoneAlerts.deviceOrientationChanged(interfaceOrientation);
 }
 
 
@@ -239,6 +254,10 @@
 		[timer invalidate];
 	}
 	
+    // stop listening for orientation change notifications
+    [[NSNotificationCenter defaultCenter] removeObserver: self];
+    [[UIDevice currentDevice] endGeneratingDeviceOrientationNotifications];
+    
 	[glView release];
 	
 }

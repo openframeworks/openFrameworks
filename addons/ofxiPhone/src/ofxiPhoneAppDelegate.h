@@ -49,6 +49,7 @@
 	NSLock				*glLock;
 }
 
+-(void) receivedRotate:(NSNotification*)notification;
 -(void) setFrameRate:(float)frameRate;
 -(void) enableLoopInThread;
 -(EAGLView*) getGLView;

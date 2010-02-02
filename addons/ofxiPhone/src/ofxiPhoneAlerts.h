@@ -69,6 +69,15 @@ public:
 			o->gotMemoryWarning();
 		}
 	}
+    
+    //alerts engine will call this when the program receives an orientation changed notification 
+	void deviceOrientationChanged(int newOrientation)
+    {
+		for(std::list<ofxiPhoneAlertsListener*>::iterator it=listeners.begin(); it!=listeners.end(); ++it) {
+			ofxiPhoneAlertsListener* o = *it;
+			o->deviceOrientationChanged(newOrientation);
+		}
+	}
 	
 	
 protected:

@@ -39,4 +39,5 @@ public:
 	virtual void lostFocus()			= 0;
 	virtual void gotFocus()				= 0;
 	virtual void gotMemoryWarning()		= 0;
+    virtual void deviceOrientationChanged(int newOrientation) = 0;
 };
