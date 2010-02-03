@@ -32,7 +32,7 @@
 				<Option compiler="gcc" />
 				<Option projectLinkerOptionsRelation="2" />
 				<Compiler>
-					<Add option="-march=core2" />
+					<Add option="-march=native" />
 					<Add option="-O3" />
 					<Add option="-MMD" />
 				</Compiler>
