@@ -23,7 +23,7 @@
 # edit the following  vars to customize the makefile
 
 
-COMPILER_OPTIMIZATION = -march=native -mtune=native -mmmx -msse -msse2 -msse3  -finline-functions -funroll-all-loops  -O3
+COMPILER_OPTIMIZATION = -march=native -mtune=native -finline-functions -funroll-all-loops  -O3
 EXCLUDE_FROM_SOURCE=_
 USER_CFLAGS = 
 USER_LD_FLAGS = 
