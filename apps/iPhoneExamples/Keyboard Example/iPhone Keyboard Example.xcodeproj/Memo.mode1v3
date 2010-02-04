@@ -326,7 +326,7 @@
 										<key>_historyCapacity</key>
 										<integer>40</integer>
 										<key>bookmark</key>
-										<string>BB59312C10F690A7005EE3B4</string>
+										<string>BB6DC5CD110BE1BA00E0577A</string>
 										<key>history</key>
 										<array>
 											<string>BB0ECB5610F5EC1400A35406</string>
@@ -334,7 +334,7 @@
 											<string>BB59312810F690A7005EE3B4</string>
 											<string>BB59312910F690A7005EE3B4</string>
 											<string>BB59312A10F690A7005EE3B4</string>
-											<string>BB59312B10F690A7005EE3B4</string>
+											<string>BB59312C10F690A7005EE3B4</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>
@@ -392,9 +392,9 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>BB59311610F68F81005EE3B4</string>
+				<string>BB6DC5CE110BE1BA00E0577A</string>
 				<string>1CE0B1FE06471DED0097A5F4</string>
-				<string>BB59311710F68F81005EE3B4</string>
+				<string>BB6DC5CF110BE1BA00E0577A</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20506471E060097A5F4</string>
 			</array>
@@ -532,8 +532,6 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
-		<string>1C78EAAD065D492600B07095</string>
-		<string>1CD10A99069EF8BA00B06720</string>
 		<string>BB0ECA5210F55E1100A35406</string>
 		<string>/Users/Memo/Lab/openFrameworks/git/openFrameworks/apps/iPhoneExamples/Keyboard Example/iPhone Keyboard Example.xcodeproj</string>
 	</array>
@@ -615,7 +613,7 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>BB0ECA5210F55E1100A35406</string>
-				<string>BB59311810F68F81005EE3B4</string>
+				<string>BB6DC5D0110BE1BA00E0577A</string>
 				<string>1CD0528F0623707200166675</string>
 				<string>XCMainBuildResultsModuleGUID</string>
 			</array>

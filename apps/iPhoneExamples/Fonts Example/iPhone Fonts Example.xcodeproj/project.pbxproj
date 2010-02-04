@@ -33,7 +33,7 @@
 		BB24DE3510DA785000E9C588 /* libFreeType_iphone_universal.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BB24DE1310DA785000E9C588 /* libFreeType_iphone_universal.a */; };
 		BB24DE3C10DA785000E9C588 /* libGLU.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BB24DE2710DA785000E9C588 /* libGLU.a */; };
 		BB24DE3D10DA785000E9C588 /* libGLU_arm.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BB24DE2810DA785000E9C588 /* libGLU_arm.a */; };
-		BB24E23510DAA8AD00E9C588 /* libiPhone+OF_Debug.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BB24E23410DAA8A700E9C588 /* libiPhone+OF_Debug.a */; };
+		BB24E23510DAA8AD00E9C588 /* libiPhone+OF_Release.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BB24E23410DAA8A700E9C588 /* libiPhone+OF_Release.a */; };
 		BB59309D10F68E0E005EE3B4 /* frabk.ttf in Resources */ = {isa = PBXBuildFile; fileRef = BB59309B10F68E0E005EE3B4 /* frabk.ttf */; };
 		BB59309E10F68E0E005EE3B4 /* verdana.ttf in Resources */ = {isa = PBXBuildFile; fileRef = BB59309C10F68E0E005EE3B4 /* verdana.ttf */; };
 		BB73D3DB0F4B08B60092FC06 /* testApp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BB73D3DA0F4B08B60092FC06 /* testApp.cpp */; };
@@ -159,7 +159,7 @@
 				BB24DE3510DA785000E9C588 /* libFreeType_iphone_universal.a in Frameworks */,
 				BB24DE3C10DA785000E9C588 /* libGLU.a in Frameworks */,
 				BB24DE3D10DA785000E9C588 /* libGLU_arm.a in Frameworks */,
-				BB24E23510DAA8AD00E9C588 /* libiPhone+OF_Debug.a in Frameworks */,
+				BB24E23510DAA8AD00E9C588 /* libiPhone+OF_Release.a in Frameworks */,
 				5E25689710ED26CC00A9501C /* CppUnit.a in Frameworks */,
 				5E25689810ED26CC00A9501C /* PocoFoundation.a in Frameworks */,
 				5E25689910ED26CC00A9501C /* PocoNet.a in Frameworks */,
@@ -478,7 +478,7 @@
 		BB24E23010DAA8A700E9C588 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				BB24E23410DAA8A700E9C588 /* libiPhone+OF_Debug.a */,
+				BB24E23410DAA8A700E9C588 /* libiPhone+OF_Release.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -558,10 +558,10 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		BB24E23410DAA8A700E9C588 /* libiPhone+OF_Debug.a */ = {
+		BB24E23410DAA8A700E9C588 /* libiPhone+OF_Release.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = "libiPhone+OF_Debug.a";
+			path = "libiPhone+OF_Release.a";
 			remoteRef = BB24E23310DAA8A700E9C588 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
@@ -650,6 +650,7 @@
 					"\"$(DEVELOPER_DIR)/openFrameworks/libs/poco/lib/vs2008\"",
 					"\"$(DEVELOPER_DIR)/openFrameworks/libs/poco/lib/win_cb\"",
 				);
+				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = ofxiPhone;
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
 				SDKROOT = iphoneos3.0;
@@ -702,6 +703,7 @@
 					"\"$(DEVELOPER_DIR)/openFrameworks/libs/poco/lib/vs2008\"",
 					"\"$(DEVELOPER_DIR)/openFrameworks/libs/poco/lib/win_cb\"",
 				);
+				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = ofxiPhone;
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
 				SDKROOT = iphoneos3.0;
@@ -767,6 +769,7 @@
 					"\"$(DEVELOPER_DIR)/openFrameworks/libs/poco/lib/vs2008\"",
 					"\"$(DEVELOPER_DIR)/openFrameworks/libs/poco/lib/win_cb\"",
 				);
+				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = ofxiPhone;
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
 				SDKROOT = iphoneos3.0;

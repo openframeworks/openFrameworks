@@ -7,7 +7,7 @@
 		);
 	};
 	29B97313FDCFA39411CA2CEA /* Project object */ = {
-		activeBuildConfigurationName = Debug;
+		activeBuildConfigurationName = Release;
 		activeExecutable = BB0ECA4410F55DD900A35406 /* ofxiPhone */;
 		activeSDKPreference = iphonesimulator3.0;
 		activeTarget = 1D6058900D05DD3D006BFB54 /* ofxiPhone */;
@@ -41,8 +41,8 @@
 					PBXFileDataSource_Target_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 284594560;
-			PBXWorkspaceStateSaveDate = 284594560;
+			PBXPerProjectTemplateStateSaveDate = 285991384;
+			PBXWorkspaceStateSaveDate = 285991384;
 		};
 		perUserProjectItems = {
 			BB0ECB5610F5EC1400A35406 /* PBXTextBookmark */ = BB0ECB5610F5EC1400A35406 /* PBXTextBookmark */;
@@ -52,8 +52,8 @@
 			BB592FE810F68A16005EE3B4 /* PBXTextBookmark */ = BB592FE810F68A16005EE3B4 /* PBXTextBookmark */;
 			BB59300310F68A73005EE3B4 /* PBXTextBookmark */ = BB59300310F68A73005EE3B4 /* PBXTextBookmark */;
 			BB59300410F68A73005EE3B4 /* PBXTextBookmark */ = BB59300410F68A73005EE3B4 /* PBXTextBookmark */;
-			BB59302610F68AC5005EE3B4 /* PBXTextBookmark */ = BB59302610F68AC5005EE3B4 /* PBXTextBookmark */;
 			BB59317210F691B0005EE3B4 /* PBXTextBookmark */ = BB59317210F691B0005EE3B4 /* PBXTextBookmark */;
+			BB6DC5F4110BE21E00E0577A /* PBXTextBookmark */ = BB6DC5F4110BE21E00E0577A /* PBXTextBookmark */;
 		};
 		sourceControlManager = BB0ECA4C10F55DF800A35406 /* Source Control */;
 		userBuildSettings = {
@@ -188,31 +188,31 @@
 		vrLen = 483;
 		vrLoc = 0;
 	};
-	BB59302610F68AC5005EE3B4 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = BB73D3DA0F4B08B60092FC06 /* testApp.cpp */;
-		name = "testApp.cpp: 6";
-		rLen = 423;
-		rLoc = 112;
-		rType = 0;
-		vrLen = 2095;
-		vrLoc = 0;
-	};
 	BB59317210F691B0005EE3B4 /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
 		fRef = BB73D3DA0F4B08B60092FC06 /* testApp.cpp */;
 		name = "testApp.cpp: 27";
 		rLen = 0;
-		rLoc = 777;
+		rLoc = 772;
 		rType = 0;
-		vrLen = 2095;
+		vrLen = 1870;
+		vrLoc = 0;
+	};
+	BB6DC5F4110BE21E00E0577A /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = BB73D3DA0F4B08B60092FC06 /* testApp.cpp */;
+		name = "testApp.cpp: 44";
+		rLen = 0;
+		rLoc = 1192;
+		rType = 0;
+		vrLen = 1865;
 		vrLoc = 0;
 	};
 	BB73D3DA0F4B08B60092FC06 /* testApp.cpp */ = {
 		uiCtxt = {
 			sepNavIntBoundsRect = "{{0, 0}, {1531, 973}}";
-			sepNavSelRange = "{777, 0}";
-			sepNavVisRange = "{0, 2095}";
+			sepNavSelRange = "{1192, 0}";
+			sepNavVisRange = "{0, 1865}";
 		};
 	};
 }

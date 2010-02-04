@@ -3,11 +3,11 @@
 
 //--------------------------------------------------------------
 void testApp::setup(){	
+	// register touch events
+	ofRegisterTouchEvents(this);
+	
 	// initialize the accelerometer
 	ofxAccelerometer.setup();
-	
-	// register multitouch events
-	ofRegisterTouchEvents(this);
 	
 	//iPhoneAlerts will be sent to this.
 	ofxiPhoneAlerts.addListener(this);
