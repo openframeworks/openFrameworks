@@ -32,7 +32,7 @@
 		BB24DE3510DA785000E9C588 /* libFreeType_iphone_universal.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BB24DE1310DA785000E9C588 /* libFreeType_iphone_universal.a */; };
 		BB24DE3C10DA785000E9C588 /* libGLU.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BB24DE2710DA785000E9C588 /* libGLU.a */; };
 		BB24DE3D10DA785000E9C588 /* libGLU_arm.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BB24DE2810DA785000E9C588 /* libGLU_arm.a */; };
-		BB24E23510DAA8AD00E9C588 /* libiPhone+OF_Release.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BB24E23410DAA8A700E9C588 /* libiPhone+OF_Release.a */; };
+		BB24E23510DAA8AD00E9C588 /* libiPhone+OF_Release-iphoneos.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BB24E23410DAA8A700E9C588 /* libiPhone+OF_Release-iphoneos.a */; };
 		BB5930EC10F68EA8005EE3B4 /* images in Resources */ = {isa = PBXBuildFile; fileRef = BB5930E910F68EA8005EE3B4 /* images */; };
 		BB5930F210F68EE4005EE3B4 /* main.mm in Sources */ = {isa = PBXBuildFile; fileRef = BB5930F010F68EE4005EE3B4 /* main.mm */; };
 		BB5930F310F68EE4005EE3B4 /* testApp.mm in Sources */ = {isa = PBXBuildFile; fileRef = BB5930F110F68EE4005EE3B4 /* testApp.mm */; };
@@ -157,7 +157,7 @@
 				BB24DE3510DA785000E9C588 /* libFreeType_iphone_universal.a in Frameworks */,
 				BB24DE3C10DA785000E9C588 /* libGLU.a in Frameworks */,
 				BB24DE3D10DA785000E9C588 /* libGLU_arm.a in Frameworks */,
-				BB24E23510DAA8AD00E9C588 /* libiPhone+OF_Release.a in Frameworks */,
+				BB24E23510DAA8AD00E9C588 /* libiPhone+OF_Release-iphoneos.a in Frameworks */,
 				5E25689710ED26CC00A9501C /* CppUnit.a in Frameworks */,
 				5E25689810ED26CC00A9501C /* PocoFoundation.a in Frameworks */,
 				5E25689910ED26CC00A9501C /* PocoNet.a in Frameworks */,
@@ -475,7 +475,7 @@
 		BB24E23010DAA8A700E9C588 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				BB24E23410DAA8A700E9C588 /* libiPhone+OF_Release.a */,
+				BB24E23410DAA8A700E9C588 /* libiPhone+OF_Release-iphoneos.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -555,10 +555,10 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		BB24E23410DAA8A700E9C588 /* libiPhone+OF_Release.a */ = {
+		BB24E23410DAA8A700E9C588 /* libiPhone+OF_Release-iphoneos.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = "libiPhone+OF_Release.a";
+			path = "libiPhone+OF_Release-iphoneos.a";
 			remoteRef = BB24E23310DAA8A700E9C588 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
