@@ -48,13 +48,21 @@
 	NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
 	
 	iPhoneGetOFWindow()->timerLoop();
-	
+		
 	// release pool
 	[pool release];
 }
 
 -(EAGLView*) getGLView {
 	return glView;
+}
+
+-(void)lockGL {
+	[glLock lock];
+}
+
+-(void)unlockGL {
+	[glLock unlock];
 }
 
 
@@ -120,6 +128,9 @@
 -(void) applicationDidFinishLaunching:(UIApplication *)application {    
 	static ofEventArgs voidEventArgs;
 	ofLog(OF_LOG_VERBOSE, "applicationDidFinishLaunching() start");
+	
+	// create an NSLock for GL Context locking
+	glLock = [[NSLock alloc] init];
 	
 	// create fullscreen window
 	UIWindow *window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
@@ -200,6 +211,7 @@
 		[timer release];		// THREAD MOD
 	}
     [iPhoneGetUIWindow() release];
+	[glLock release];
     [super dealloc];
 }
 

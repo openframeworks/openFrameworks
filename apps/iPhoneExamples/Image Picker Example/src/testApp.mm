@@ -4,14 +4,11 @@
 
 //--------------------------------------------------------------
 void testApp::setup(){	
+	// register touch events
+	ofRegisterTouchEvents(this);
+	
 	// initialize the accelerometer
 	ofxAccelerometer.setup();
-	
-	// register touch events
-	ofAddListener(ofEvents.touchDown, this, &testApp::touchDown);
-	ofAddListener(ofEvents.touchUp, this, &testApp::touchUp);
-	ofAddListener(ofEvents.touchMoved, this, &testApp::touchMoved);
-	ofAddListener(ofEvents.touchDoubleTap, this, &testApp::touchDoubleTap);
 	
 	//iPhoneAlerts will be sent to this.
 	ofxiPhoneAlerts.addListener(this);

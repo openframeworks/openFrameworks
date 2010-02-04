@@ -255,11 +255,13 @@ void ofAppiPhoneWindow::timerLoop() {
 	static ofEventArgs voidEventArgs;
 	
 	ofGetAppPtr()->update();
-	
+		
 	#ifdef OF_USING_POCO
 		ofNotifyEvent( ofEvents.update, voidEventArgs);
 	#endif
 	
+	[iPhoneGetAppDelegate() lockGL];
+
 	// this could be taken out and included in ofAppBaseWIndow
 	if(orientation == OFXIPHONE_ORIENTATION_PORTRAIT || orientation == OFXIPHONE_ORIENTATION_UPSIDEDOWN)
 		glViewport( 0, 0, ofGetWidth(), ofGetHeight() );
@@ -335,6 +337,9 @@ void ofAppiPhoneWindow::timerLoop() {
 	#endif
 	
 	[iPhoneGetGLView() swapBuffers];
+	
+	[iPhoneGetAppDelegate() unlockGL];
+
 	
 	
 	

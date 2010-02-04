@@ -194,8 +194,12 @@ void ofSoundStreamSetup(int nOutputs, int nInputs, ofBaseApp * OFSA, int sampleR
 	
 	// this is supposed to make the audio come out of the speaker rather
 	// than the receiver, but I don't think it works when using the microphone as well.
-	UInt32 category = kAudioSessionOverrideAudioRoute_Speaker;
-	AudioSessionSetProperty(kAudioSessionProperty_OverrideAudioRoute, sizeof(category), &category);
+//	UInt32 category = kAudioSessionOverrideAudioRoute_Speaker;
+//	AudioSessionSetProperty(kAudioSessionProperty_OverrideAudioRoute, sizeof(category), &category);
+	
+	UInt32 category = 1;
+	AudioSessionSetProperty(kAudioSessionOverrideAudioRoute_Speaker, sizeof(category), &category);
+
 	
 	// Describe format
 	audioFormat.mSampleRate			= (double)sampleRate;

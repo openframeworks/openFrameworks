@@ -126,6 +126,13 @@ void iPhoneDisableIdleTimer();
 void iPhoneEnableIdleTimer();
 
 
+// lock/unlock the opengl context to allow sharing between threads
+// (you'll also need to use a sharegroup)
+// http://developer.apple.com/iphone/library/documentation/3DDrawing/Conceptual/OpenGLES_ProgrammingGuide/WorkingwithEAGLContexts/WorkingwithEAGLContexts.html#//apple_ref/doc/uid/TP40008793-CH103-SW12
+void iPhoneLockGLContext();
+void iPhoneUnlockGLContext();
+
+
 
 // experimental feature.
 // call this once in testApp::setup() to run the update+draw in a separate NSThread instead of NSTimer
@@ -145,18 +152,20 @@ UIDeviceOrientation iPhoneGetOrientation();
 // load an image from the app bundle into a texture
 // NOTE: renamed this function to something more clearer
 // WAS: void iPhoneLoadImageFromBundle(NSString *filename, GLuint *spriteTexture);
-void iPhoneBundleImageToGLTexture(NSString *filename, GLuint *spriteTexture);
+bool iPhoneBundleImageToGLTexture(NSString *filename, GLuint *spriteTexture);
 
 // load an image from UIImage into an opengl texture
 // NOTE: renamed this function to something more clearer
 // WAS: void iPhoneLoadImageFromUIImage(UIImage *uiImage, GLuint *spriteTexture);
-void iPhoneUIImageToGLTexture(UIImage *uiImage, GLuint *spriteTexture);
+bool iPhoneUIImageToGLTexture(UIImage *uiImage, GLuint *spriteTexture);
 
 
 // create an ofImage out of a UIImage
 // you do not need to allocate anything before calling this, it is done in the function
+// targetWidth, targetHeight are target dimensions (UIImage is resized to this size and ofImage is created)
+// .... omit targetWidth & targetHeight to use original image dimensions and not resize
 // TODO: take into consideration UI image orentation
-void iPhoneUIImageToOFImage(UIImage *uiImage, ofImage &outImage);
+bool iPhoneUIImageToOFImage(UIImage *uiImage, ofImage &outImage, int targetWidth = 0, int targetHeight = 0);
 
 
 // save current opengl screen to photos app

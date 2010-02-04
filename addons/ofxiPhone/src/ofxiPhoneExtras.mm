@@ -94,13 +94,25 @@ void iPhoneSetGLViewUserInteraction(bool b) {
 
 //--------------------------------------------------------------
 void iPhoneEnableIdleTimer() {
-	[UIApplication sharedApplication].idleTimerDisabled = true;
+	[UIApplication sharedApplication].idleTimerDisabled = false;
 }
 
 
 //--------------------------------------------------------------
 void iPhoneDisableIdleTimer() {
-	[UIApplication sharedApplication].idleTimerDisabled = false;
+	[UIApplication sharedApplication].idleTimerDisabled = true;
+}
+
+
+//--------------------------------------------------------------
+void iPhoneLockGLContext() {
+	[iPhoneGetAppDelegate() lockGL];
+}
+
+
+//--------------------------------------------------------------
+void iPhoneUnlockGLContext() {
+	[iPhoneGetAppDelegate() unlockGL];
 }
 
 
@@ -123,14 +135,14 @@ UIDeviceOrientation iPhoneGetOrientation() {
 
 
 //--------------------------------------------------------------
-void iPhoneBundleImageToGLTexture(NSString *filename, GLuint *spriteTexture) {
-	iPhoneUIImageToGLTexture([UIImage imageNamed:filename], spriteTexture);
+bool iPhoneBundleImageToGLTexture(NSString *filename, GLuint *spriteTexture) {
+	return iPhoneUIImageToGLTexture([UIImage imageNamed:filename], spriteTexture);
 }
 
 
 //--------------------------------------------------------------
-void iPhoneUIImageToGLTexture(UIImage *uiImage, GLuint *spriteTexture) {
-	if(!uiImage) return;
+bool iPhoneUIImageToGLTexture(UIImage *uiImage, GLuint *spriteTexture) {
+	if(!uiImage) return false;
 	
 	CGImageRef cgImage;
 	CGContextRef spriteContext;
@@ -164,48 +176,74 @@ void iPhoneUIImageToGLTexture(UIImage *uiImage, GLuint *spriteTexture) {
 	
 	// Set the texture parameters to use a minifying filter and a linear filer (weighted average)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	
+	return true;
 }
 
 
 //--------------------------------------------------------------
-void iPhoneUIImageToOFImage(UIImage *uiImage, ofImage &outImage) {
-	if(!uiImage) return;
+bool iPhoneUIImageToOFImage(UIImage *uiImage, ofImage &outImage, int targetWidth, int targetHeight) {
+	if(!uiImage) return false;
 	
-	CGImageRef cgImage;
 	CGContextRef spriteContext;
-	GLubyte *pixels;
-	size_t	width, height;
-	int bpp = 4;
+	CGImageRef	cgImage = uiImage.CGImage;
+
+	int bytesPerPixel	= CGImageGetBitsPerPixel(cgImage)/8;
+	if(bytesPerPixel == 3) bytesPerPixel = 4;
 	
-	// Creates a Core Graphics image from an image file
-	cgImage = uiImage.CGImage;
-	
-	// Get the width and height of the image
-	width = CGImageGetWidth(cgImage);
-	height = CGImageGetHeight(cgImage);
-	
+	int width			= targetWidth > 0 ? targetWidth : CGImageGetWidth(cgImage);
+	int height			= targetHeight > 0 ? targetHeight : CGImageGetHeight(cgImage);
 	
 	// Allocated memory needed for the bitmap context
-	pixels = (GLubyte *) malloc(width * height * bpp);
+	GLubyte *pixels		= (GLubyte *) malloc(width * height * bytesPerPixel);
+	
 	// Uses the bitmatp creation function provided by the Core Graphics framework. 
-	spriteContext = CGBitmapContextCreate(pixels, width, height, 8, width * 4, CGImageGetColorSpace(cgImage), kCGImageAlphaPremultipliedLast);
+	ofLog(OF_LOG_VERBOSE, "about to CGBitmapContextCreate");
+	spriteContext = CGBitmapContextCreate(pixels, width, height, CGImageGetBitsPerComponent(cgImage), width * bytesPerPixel, CGImageGetColorSpace(cgImage), bytesPerPixel == 4 ? kCGImageAlphaPremultipliedLast : kCGImageAlphaNone);
+	
+	if(spriteContext == NULL) {
+		ofLog(OF_LOG_ERROR, "iPhoneUIImageToOFImage - CGBitmapContextCreate returned NULL");
+		free(pixels);
+		return false;
+	}
+
 	// After you create the context, you can draw the sprite image to the context.
+	ofLog(OF_LOG_VERBOSE, "about to CGContextDrawImage");
 	CGContextDrawImage(spriteContext, CGRectMake(0.0, 0.0, (CGFloat)width, (CGFloat)height), cgImage);
+	
 	// You don't need the context at this point, so you need to release it to avoid memory leaks.
+	ofLog(OF_LOG_VERBOSE, "about to CGContextRelease");
 	CGContextRelease(spriteContext);
 	
 	// vertically flip
-	GLubyte *pixelsFlipped = (GLubyte *) malloc(width * height * bpp);
-	int numBytesPerRow = width * bpp;
-	for(int y=0; y<height; y++) {
-		memcpy(pixelsFlipped + (numBytesPerRow * y), pixels + (numBytesPerRow * (height - 1 - y)), numBytesPerRow);
+//	GLubyte *pixelsFlipped = (GLubyte *) malloc(width * height * bytesPerPixel);
+//	int numBytesPerRow = width * bytesPerPixel;
+//	for(int y=0; y<height; y++) {
+//		memcpy(pixelsFlipped + (numBytesPerRow * y), pixels + (numBytesPerRow * (height - 1 - y)), numBytesPerRow);
+//	}
+//	outImage.setFromPixels(pixelsFlipped, width, height, OF_IMAGE_COLOR_ALPHA, true);
+//	free(pixelsFlipped);
+	
+	int ofImageMode;
+	
+	switch(bytesPerPixel) {
+		case 1:
+			ofImageMode = OF_IMAGE_GRAYSCALE;
+			break;
+		case 3: 
+			ofImageMode = OF_IMAGE_COLOR;
+			break;
+		case 4: 
+		default:
+			ofImageMode = OF_IMAGE_COLOR_ALPHA; break;
 	}
-	
-	
-	outImage.setFromPixels(pixelsFlipped, width, height, OF_IMAGE_COLOR_ALPHA, true);
-	
+			
+	ofLog(OF_LOG_VERBOSE, "about to setFromPixels");
+	outImage.setFromPixels(pixels, width, height, ofImageMode, true);
+
 	free(pixels);
-	free(pixelsFlipped);
+	
+	return true;
 }
 
 //--------------------------------------------------------------
