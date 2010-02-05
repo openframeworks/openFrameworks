@@ -60,6 +60,7 @@
 			<Add directory="../../../libs/openFrameworks/video"/>
 			<Add directory="../../../libs/openFrameworks/communication"/>
 			<Add directory="../../../libs/poco/include"/>
+		    <Add directory="../../../addons/"/>
 		    <Add directory="../../../addons/ofx3DModelLoader/src/3DS/"/>
 		    <Add directory="../../../addons/ofx3DModelLoader/src/"/>
 		    <Add directory="../../../addons/ofxNetwork/src"/>
