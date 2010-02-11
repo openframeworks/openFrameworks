@@ -77,6 +77,62 @@ void ofDisableArbTex(){
 	bUsingArbTex = false;
 }
 
+//***** add global functions to override texture settings
+//----------------------------------------------------------
+static bool bUseCustomTextureWrap = false;
+
+//----------------------------------------------------------
+void ofSetTextureWrap(GLfloat wrapS, GLfloat wrapT) {
+	bUseCustomTextureWrap = true;
+	GLenum textureTarget = GL_TEXTURE_2D;
+#ifndef TARGET_OPENGLES
+	if (ofGetUsingArbTex() && GLEE_ARB_texture_rectangle){
+		textureTarget = GL_TEXTURE_RECTANGLE_ARB;
+	};
+#endif
+	glTexParameterf(textureTarget, GL_TEXTURE_WRAP_S, wrapS);
+	glTexParameterf(textureTarget, GL_TEXTURE_WRAP_T, wrapT);
+}
+
+//----------------------------------------------------------
+bool ofGetUsingCustomTextureWrap() {
+	return bUseCustomTextureWrap;
+}
+
+//----------------------------------------------------------
+void ofRestoreTextureWrap() {
+	bUseCustomTextureWrap = false;
+}
+
+
+
+static bool bUseCustomMinMagFilters = false;
+//----------------------------------------------------------
+void ofSetMinMagFilters(GLfloat minFilter, GLfloat maxFilter) {
+	bUseCustomMinMagFilters = true;
+	GLenum textureTarget = GL_TEXTURE_2D;
+#ifndef TARGET_OPENGLES
+	if (ofGetUsingArbTex() && GLEE_ARB_texture_rectangle){
+		textureTarget = GL_TEXTURE_RECTANGLE_ARB;
+	};
+#endif
+	glTexParameterf(textureTarget, GL_TEXTURE_MIN_FILTER, minFilter);
+	glTexParameterf(textureTarget, GL_TEXTURE_MAG_FILTER, maxFilter);
+}
+
+//----------------------------------------------------------
+bool ofGetUsingCustomMinMagFilters() {
+	return bUseCustomMinMagFilters;
+}
+
+//----------------------------------------------------------
+void ofRestoreMinMagFilters() {
+	bUseCustomMinMagFilters = false;
+}
+
+//***** global functions to override texture settings
+
+
 //----------------------------------------------------------
 void ofSetBackgroundAuto(bool bAuto){
 	bBakgroundAuto = bAuto;
