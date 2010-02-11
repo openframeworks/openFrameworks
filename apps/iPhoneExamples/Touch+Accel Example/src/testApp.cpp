@@ -20,6 +20,8 @@ void testApp::setup(){
 //--------------------------------------------------------------
 void testApp::update() {
 	for(int i=0; i<NUM_POINTS; i++) balls[i].update();
+	
+	printf("x = %f   y = %f \n", ofxAccelerometer.getForce().x, ofxAccelerometer.getForce().y);
 }
 
 //--------------------------------------------------------------
