@@ -29,7 +29,7 @@ void testApp::setup(){
 	tdfSmall.loadImage("images/tdf_1972_poster.jpg");
 	tdfSmall.resize(tdf.width / 4, tdf.height / 4);
 	tdfSmall.setImageType(OF_IMAGE_GRAYSCALE);
-	transparency.loadImage("images/transparency.png");
+	transparency.loadImage("transparency.png");
 	bikeIcon.loadImage("images/bike_icon.png");
 	bikeIcon.setImageType(OF_IMAGE_GRAYSCALE);
 }

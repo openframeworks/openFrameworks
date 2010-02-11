@@ -30,8 +30,7 @@ void testApp::update() {
 //--------------------------------------------------------------
 void testApp::draw()
 {
-	if(hasCompass)
-	{
+	if(hasCompass){
 		//compass 3GS only:
 		float cx = cos(ofDegToRad(coreLocation->getTrueHeading()) ) * 100;
 		float cy = sin(ofDegToRad(coreLocation->getTrueHeading()) ) * 100;
@@ -41,9 +40,8 @@ void testApp::draw()
 		ofLine(x,y,x+cx,y+cy);
 		cout<<coreLocation->getTrueHeading()<<" | ";
 	}
-	if(hasGPS)
-	{
-		cout<<coreLocation->getLatitude()<<" | "<<coreLocation->getLatitude()<<endl;
+	if(hasGPS){
+		cout<<coreLocation->getLatitude()<<" | "<<coreLocation->getLongitude()<<endl;
 	}
 }
 

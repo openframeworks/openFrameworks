@@ -1,11 +1,14 @@
 
 #include "testApp.h"
 
-#define POS1_LATITUDE		51.538034
-#define POS1_LONGITUDE		-0.021286
+#define POS1_LATITUDE		40.6767
+#define POS1_LONGITUDE		-73.9722
 
-#define POS2_LATITUDE		43.530038
-#define POS2_LONGITUDE		5.440958
+//40.7197 | -74.0019
+
+
+#define POS2_LATITUDE		40.7197
+#define POS2_LONGITUDE		 -74.0019
 
 //--------------------------------------------------------------
 void testApp::setup(){	
@@ -31,7 +34,6 @@ void testApp::setup(){
 	mapKit.open();
 	
 	// set initial position to specified coordinates, and cover 1000 Km x 1000 Km area
-//	mapKit.setRegionWithMeters(POS2_LATITUDE, POS2_LONGITUDE, 1000 * 1000, 1000 * 1000);
 	mapKit.setRegionWithMeters(POS2_LATITUDE, POS2_LONGITUDE, 1000, 1000);
 	
 
@@ -70,7 +72,6 @@ void testApp::setup(){
 //--------------------------------------------------------------
 void testApp::update() {
 	if(mapKit.isOpen()) {
-		
 //		printf("User is %son screen\n", mapKit.isUserOnScreen() ? "" : "not ");
 	}
 	

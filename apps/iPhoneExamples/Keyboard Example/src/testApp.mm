@@ -15,7 +15,7 @@ void testApp::setup(){
 		
 	keyboard = new ofxiPhoneKeyboard(0,32,300,32);
 	keyboard->setVisible(true);
-	keyboard->setBgColor(0, 0, 0, 255);
+	keyboard->setBgColor(100, 100, 100, 255);
 	keyboard->setFontColor(255,255,255,255);
 	keyboard->setFontSize(26);
 	
@@ -28,6 +28,10 @@ void testApp::update() {
 
 //--------------------------------------------------------------
 void testApp::draw() {
+	
+	ofSetColor(255, 0, 0);
+	ofRect(10,10,50,50);
+	//keyboard->getText()
 }
 
 //--------------------------------------------------------------
@@ -37,7 +41,17 @@ void testApp::exit() {
 
 //--------------------------------------------------------------
 void testApp::touchDown(ofTouchEventArgs &touch){
-	if(!keyboard->isKeyboardShowing()) keyboard->openKeyboard();	
+	
+	if (touch.id == 1){
+		
+		if(!keyboard->isKeyboardShowing()){
+			keyboard->openKeyboard();
+			keyboard->setVisible(true);
+		} else{
+			keyboard->setVisible(false);
+		}	
+		
+	}
 }
 
 //--------------------------------------------------------------
@@ -50,6 +64,8 @@ void testApp::touchUp(ofTouchEventArgs &touch){
 
 //--------------------------------------------------------------
 void testApp::touchDoubleTap(ofTouchEventArgs &touch){
+	
+	
 }
 
 
