@@ -441,6 +441,8 @@ bool ofVideoPlayer::loadMovie(string name){
 				tex.allocate(gstUtils.getWidth(),gstUtils.getHeight(),GL_RGB,false);
 				tex.loadData(gstUtils.getPixels(), gstUtils.getWidth(), gstUtils.getHeight(), GL_RGB);
 			}
+			height=gstUtils.getHeight();
+			width=gstUtils.getWidth();
 			bLoaded = true;
 			allocated = true;
 			ofLog(OF_LOG_VERBOSE,"ofVideoPlayer: movie loaded");
