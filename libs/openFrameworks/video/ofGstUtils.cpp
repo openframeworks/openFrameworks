@@ -662,7 +662,7 @@ bool ofGstUtils::initGrabber(int w, int h, int framerate){
 	string format_str_pipeline = string("%s name=video_source device=%s ! ") +
 								 "%s,width=%d,height=%d,framerate=%d/%d ! " +
 								 "%s %s " +
-								 "video/x-raw-rgb, width=%d, height=%d, depth=24 ! appsink name=sink  caps=video/x-raw-rgb";
+								 "video/x-raw-rgb, width=%d, height=%d, depth=24 ! appsink name=sink  caps=\"video/x-raw-rgb\"";
 	gchar* pipeline_string =g_strdup_printf (
 				      format_str_pipeline.c_str(),
 				      camData.webcam_devices[deviceID].gstreamer_src.c_str(),
