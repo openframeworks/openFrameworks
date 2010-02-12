@@ -12,9 +12,10 @@
 #include "ofMain.h"
 #include "ofEvents.h"
 #include "ofxiPhoneAlerts.h"
+#include "ofxMultiTouch.h"
 
 
-class ofxiPhoneApp : public ofSimpleApp, public ofxiPhoneAlertsListener {
+class ofxiPhoneApp : public ofSimpleApp, public ofxiPhoneAlertsListener, public ofxMultiTouchListener {
 	
 public:
 	void setup() {};
