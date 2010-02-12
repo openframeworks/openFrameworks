@@ -21,14 +21,28 @@ public:
 	void update() {};
 	void draw() {};
 	void exit() {};
-	
-	virtual void touchDown(ofTouchEventArgs & touch) {};
-	virtual void touchMoved(ofTouchEventArgs & touch) {};
-	virtual void touchUp(ofTouchEventArgs & touch) {};
-	virtual void touchDoubleTap(ofTouchEventArgs & touch) {};
+
+	virtual void touchDown(int x, int y, int id) {};
+	virtual void touchMoved(int x, int y, int id) {};
+	virtual void touchUp(int x, int y, int id) {};
+	virtual void touchDoubleTap(int x, int y, int id) {};
 	
 	void lostFocus() {}
 	void gotFocus() {}
 	void gotMemoryWarning() {}
+
+	virtual void touchDown(ofTouchEventArgs & touch) {
+		touchDown(touch.x, touch.y, touch.id);
+	};
+	virtual void touchMoved(ofTouchEventArgs & touch) {
+		touchMoved(touch.x, touch.y, touch.id);
+	};
+	virtual void touchUp(ofTouchEventArgs & touch) {
+		touchUp(touch.x, touch.y, touch.id);
+	};
+	virtual void touchDoubleTap(ofTouchEventArgs & touch) {
+		touchDoubleTap(touch.x, touch.y, touch.id);
+	};
+
 };
 
