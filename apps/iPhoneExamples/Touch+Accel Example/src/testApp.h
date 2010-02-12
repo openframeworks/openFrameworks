@@ -16,10 +16,10 @@ public:
 	void draw();
 	void exit();
 
-	void touchDown(ofTouchEventArgs & touch);
-	void touchMoved(ofTouchEventArgs & touch);
-	void touchUp(ofTouchEventArgs & touch);
-	void touchDoubleTap(ofTouchEventArgs & touch);
+	void touchDown(int x, int y, int id);
+	void touchMoved(int x, int y, int id);
+	void touchUp(int x, int y, int id);
+	void touchDoubleTap(int x, int y, int id);
 	
 	void lostFocus();
 	void gotFocus();
