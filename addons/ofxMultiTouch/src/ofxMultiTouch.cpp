@@ -31,6 +31,20 @@
 
 
 #include "ofxMultiTouch.h"
+#include "ofxiPhoneApp.h"
 
 ofxMultiTouchHandler ofxMultiTouch;
 
+void ofxRegisterMultitouch(ofxiPhoneApp * app){
+	ofAddListener(ofEvents.touchDown, app, &ofxiPhoneApp::touchDown);
+	ofAddListener(ofEvents.touchUp, app, &ofxiPhoneApp::touchUp);
+	ofAddListener(ofEvents.touchMoved, app, &ofxiPhoneApp::touchMoved);
+	ofAddListener(ofEvents.touchDoubleTap, app, &ofxiPhoneApp::touchDoubleTap);
+}
+
+void ofxUnregisterMultitouch(ofxiPhoneApp * app){
+	ofRemoveListener(ofEvents.touchDown, app, &ofxiPhoneApp::touchDown);
+	ofRemoveListener(ofEvents.touchUp, app, &ofxiPhoneApp::touchUp);
+	ofRemoveListener(ofEvents.touchMoved, app, &ofxiPhoneApp::touchMoved);
+	ofRemoveListener(ofEvents.touchDoubleTap, app, &ofxiPhoneApp::touchDoubleTap);
+}

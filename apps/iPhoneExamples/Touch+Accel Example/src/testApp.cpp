@@ -4,7 +4,7 @@
 //--------------------------------------------------------------
 void testApp::setup(){	
 	// register touch events
-	ofRegisterTouchEvents(this);
+	ofxRegisterMultitouch(this);
 	
 	// initialize the accelerometer
 	ofxAccelerometer.setup();
@@ -35,24 +35,24 @@ void testApp::exit() {
 
 //--------------------------------------------------------------
 void testApp::touchDown(int x, int y, int id){
-	printf("touch %i down at (%f,%f)\n", id, x,y);
-	balls[touch.id].moveTo(touch.x, touch.y);
+	printf("touch %i down at (%i,%i)\n", id, x,y);
+	balls[id].moveTo(x, y);
 }
 
 //--------------------------------------------------------------
 void testApp::touchMoved(int x, int y, int id){
-	printf("touch %i moved at (%f,%f)\n", id, x, y);
-	balls[touch.id].moveTo(touch.x, touch.y);
+	printf("touch %i moved at (%i,%i)\n", id, x, y);
+	balls[id].moveTo(x, y);
 }
 
 //--------------------------------------------------------------
 void testApp::touchUp(int x, int y, int id){
-	printf("touch %i up at (%f,%f)\n", id, x, y);
+	printf("touch %i up at (%i,%i)\n", id, x, y);
 }
 
 //--------------------------------------------------------------
 void testApp::touchDoubleTap(int x, int y, int id){
-	printf("touch %i double tap at (%f,%f)\n", id, x, y);
+	printf("touch %i double tap at (%i,%i)\n", id, x, y);
 }
 
 //--------------------------------------------------------------
