@@ -21,6 +21,7 @@ public:
 	void lostFocus();
 	void gotFocus();
 	void gotMemoryWarning();
+	void deviceOrientationChanged(int newOrientation);
 	
 	//method that will receive events from ofxEventsAddon
 	void newFloat(float & f);
