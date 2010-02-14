@@ -611,6 +611,7 @@ void ofRotate(float degrees){
 
 //--------------------------------------------------
 void ofDrawBitmapString(string textString, float x, float y){
+
 #ifndef TARGET_OPENGLES	// temp for now, until is ported from existing iphone implementations
 
     glPushClientAttrib( GL_CLIENT_PIXEL_STORE_BIT );
@@ -638,10 +639,34 @@ void ofDrawBitmapString(string textString, float x, float y){
 			// solves a bug with control characters
 			// getting drawn when they ought to not be
 			ofDrawBitmapCharacter(textString[c]);
+			//ofDrawBitmapCharacter(textString[c], x + (c * 8), y);
 		}
 	}
 
 	glPopClientAttrib( );
+#else 
+	
+	int len = (int)textString.length();
+	float yOffset = 0;
+	float fontSize = 8.0f;
+	bool bOrigin = false;
+	for(int c = 0; c < len; c++)
+	{
+		if(textString[c] == '\n')
+		{
+			
+			yOffset += bOrigin ? -1 : 1 * (fontSize*1.7);
+			x = 0;
+			
+			//glRasterPos2f(x,y + (int)yOffset);
+		} else if (textString[c] >= 32){
+			// < 32 = control characters - don't draw
+			// solves a bug with control characters
+			// getting drawn when they ought to not be
+			ofDrawBitmapCharacter(textString[c], x + (c * 8), y + (int)yOffset);
+		}
+	}
+	
 #endif
 }
 
