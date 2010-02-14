@@ -264,6 +264,14 @@ NSString * ofxStringToNSString(string s)
 	return [[[NSString alloc] initWithCString: s.c_str()] autorelease];
 }
 
+//--------------------------------------------------------------
+
+string ofxiPhoneGetDocumentsDirectory()
+{
+	NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+	return ofxNSStringToString([paths objectAtIndex:0]) + "/";
+}
+
 
 /******************** ofxiPhoneScreenGrab *********************/
 

@@ -176,3 +176,6 @@ void iPhoneScreenGrab(id delegate);
 // utility fuctions for converting strings and NSStrings back and forth
 string ofxNSStringToString(NSString * s);
 NSString * ofxStringToNSString(string s);
+
+// It returns the path to the folder which your app has read/write access to.
+string ofxiPhoneGetDocumentsDirectory();
