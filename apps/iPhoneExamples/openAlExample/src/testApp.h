@@ -26,6 +26,7 @@ public:
 	void lostFocus();
 	void gotFocus();
 	void gotMemoryWarning();
+	void deviceOrientationChanged(int newOrientation);
 	
 	ofxALSoundPlayer synth[10]; //load in 10 instances so that they can be played multiple times (sort of). Right now ofxALSoundPlayer doesn't work with multiPlay
 	int lastSoundPlayed; //counter to keep track of which sound we're playing

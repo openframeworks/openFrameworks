@@ -22,6 +22,7 @@ public:
 	void lostFocus();
 	void gotFocus();
 	void gotMemoryWarning();
+	void deviceOrientationChanged(int newOrientation);
 	
 	ofTrueTypeFont  franklinBook;
 	ofTrueTypeFont	verdana;

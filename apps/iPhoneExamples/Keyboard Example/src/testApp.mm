@@ -81,5 +81,9 @@ void testApp::gotFocus() {
 void testApp::gotMemoryWarning() {
 }
 
+//--------------------------------------------------------------
+void testApp::deviceOrientationChanged(int newOrientation){
+}
+
 
 

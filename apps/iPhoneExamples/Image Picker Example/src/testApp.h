@@ -23,6 +23,7 @@ public:
 	void lostFocus();
 	void gotFocus();
 	void gotMemoryWarning();
+	void deviceOrientationChanged(int newOrientation);
 	
 	unsigned char * cameraPixels;	// the camera image needs to be flipped, so we'll use this memory for that. 
 	ofxiPhoneImagePicker * camera;

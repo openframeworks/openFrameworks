@@ -19,6 +19,7 @@ public:
 	void lostFocus();
 	void gotFocus();
 	void gotMemoryWarning();
+	void deviceOrientationChanged(int newOrientation);
 	
 	
 	// font for writing latitude longitude info
