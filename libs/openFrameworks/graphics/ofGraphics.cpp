@@ -646,6 +646,17 @@ void ofDrawBitmapString(string textString, float x, float y){
 	glPopClientAttrib( );
 #else 
 	
+	// this is copied from the ofTrueTypeFont
+	GLboolean blend_enabled = glIsEnabled(GL_BLEND);
+	GLint blend_src, blend_dst;
+	glGetIntegerv( GL_BLEND_SRC, &blend_src );
+	glGetIntegerv( GL_BLEND_DST, &blend_dst );
+	
+    	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	// (c) enable texture once before we start drawing each char (no point turning it on and off constantly)
+	
+	
 	int len = (int)textString.length();
 	float yOffset = 0;
 	float fontSize = 8.0f;
@@ -666,6 +677,11 @@ void ofDrawBitmapString(string textString, float x, float y){
 			ofDrawBitmapCharacter(textString[c], x + (c * 8), y + (int)yOffset);
 		}
 	}
+	
+	if( !blend_enabled )
+		glDisable(GL_BLEND);
+	glBlendFunc( blend_src, blend_dst );
+	
 	
 #endif
 }

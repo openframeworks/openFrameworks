@@ -360,11 +360,11 @@ void  ofDrawBitmapCharacter(int character , int x , int y){
 			for (int j = 1; j < 15; j++){
 				for (int k = 0; k < 8; k++){
 					if ( ((face[15-j] << k) & (128)) > 0 ){
-						myLetterPixels[(((int)(i/16))*16*16*14+(i%16)*16 + (j-1)*16*16 + k)*2] = 255;
-						myLetterPixels[(((int)(i/16))*16*16*14+(i%16)*16 + (j-1)*16*16 + k)*2+1] = 255;
+						myLetterPixels[(((int)(i/16))*16*16*16+(i%16)*16 + (j-1)*16*16 + k)*2] = 255;
+						myLetterPixels[(((int)(i/16))*16*16*16+(i%16)*16 + (j-1)*16*16 + k)*2+1] = 255;
 					}else{
-						myLetterPixels[(((int)(i/16))*16*16*14+(i%16)*16 + (j-1)*16*16 + k)*2] = 0;
-						myLetterPixels[(((int)(i/16))*16*16*14+(i%16)*16 + (j-1)*16*16 + k)*2+1] = 0;
+						myLetterPixels[(((int)(i/16))*16*16*16+(i%16)*16 + (j-1)*16*16 + k)*2] = 0;
+						myLetterPixels[(((int)(i/16))*16*16*16+(i%16)*16 + (j-1)*16*16 + k)*2+1] = 0;
 					}
 				}
 			}
@@ -378,14 +378,12 @@ void  ofDrawBitmapCharacter(int character , int x , int y){
 	
 	if (character < 128) {
 		
-		ofEnableAlphaBlending();
-		
 		glesBitmappedFontTexture.bind();
 		
 		float widthTex = 8.0f/256.0f;
-		float heightTex = 13.0f/256.0f;
+		float heightTex = 14.0f/256.0f;
 		float posTexW = (float)(character % 16)/16.0f;
-		float posTexH = ((int)(character / 16.0f))/16.0f - heightTex;
+		float posTexH = ((int)(character / 16.0f))/16.0f;
 		
 		GLfloat tex_coords[] = {
 			posTexW,posTexH,
@@ -395,8 +393,8 @@ void  ofDrawBitmapCharacter(int character , int x , int y){
 		};
 		GLfloat verts[] = {
 			x,y,
-			x,y+13,
-			x+8,y+13,
+			x,y+14,
+			x+8,y+14,
 			x+8,y
 		};
 		
@@ -425,10 +423,11 @@ void  ofDrawBitmapCharacter(int character , int x , int y){
 		 
 		 */
 		
+		/*
+		// for debugging
 		if (character == 'c'){
-			glesBitmappedFontTexture.draw(100,200);
-		}
-		ofDisableAlphaBlending();
+			glesBitmappedFontTexture.draw(50,200);
+		}*/
 	}	
     
 }
