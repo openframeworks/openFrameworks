@@ -1,0 +1,12 @@
+# Package information for pkg-config
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@/openFrameworks
+
+Name: openFrameworks
+Description: OpenFrameworks 
+Version: @OPENFRAMEWORKS_VERSION@
+Libs: -lopenFrameworks @libs@
+Libs.private: @privateLibs@
+Cflags: @flags@
