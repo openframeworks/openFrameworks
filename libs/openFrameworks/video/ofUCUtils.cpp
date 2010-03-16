@@ -386,7 +386,7 @@ void ofUCUtils::new_frame (unicap_data_buffer_t * buffer)
 		return;
 
 	if(doConversion){
-		avpicture_fill(src,buffer->data,src_pix_fmt,format.size.width,format.size.height);
+		avpicture_fill(src,buffer->data,(PixelFormat)src_pix_fmt,format.size.width,format.size.height);
 
 		if(sws_scale(toRGB_convert_ctx,
 			src->data, src->linesize, 0, buffer->format.size.height,
