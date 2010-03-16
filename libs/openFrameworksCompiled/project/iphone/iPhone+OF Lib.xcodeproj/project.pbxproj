@@ -1,0 +1,984 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 45;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		5E2E99DD10ED147800587639 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E2E99DC10ED147800587639 /* MapKit.framework */; };
+		92BFCD071128AC3E0081DD61 /* ofBitmapFont.h in Headers */ = {isa = PBXBuildFile; fileRef = 92BFCD051128AC3E0081DD61 /* ofBitmapFont.h */; };
+		92BFCD081128AC3E0081DD61 /* ofBitmapFont.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 92BFCD061128AC3E0081DD61 /* ofBitmapFont.cpp */; };
+		BB24DECA10DA7A3F00E9C588 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BBE5EAB70F49AD8400F28951 /* AudioToolbox.framework */; };
+		BB24DECB10DA7A3F00E9C588 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB16EBD10F2B2A9500518274 /* OpenGLES.framework */; };
+		BB24DECC10DA7A3F00E9C588 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DF5F4DF0D08C38300B7A737 /* UIKit.framework */; };
+		BB24DECD10DA7A3F00E9C588 /* OpenAL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53F323EA10A20EDB00E0DAE4 /* OpenAL.framework */; };
+		BB24DECE10DA7A3F00E9C588 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D30AB110D05D00D00671497 /* Foundation.framework */; };
+		BB24DECF10DA7A3F00E9C588 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 288765FC0DF74451002DB57D /* CoreGraphics.framework */; };
+		BB24DED010DA7A3F00E9C588 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5326AEA710A23A0500278DE6 /* CoreLocation.framework */; };
+		BB24DED110DA7A3F00E9C588 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB16EBD80F2B2AB500518274 /* QuartzCore.framework */; };
+		BB24E0C210DA9F4100E9C588 /* ofxiPhoneSoundPlayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = BB24E04210DA7C6100E9C588 /* ofxiPhoneSoundPlayer.mm */; };
+		BB24E0C310DA9F4200E9C588 /* ofxMultiTouch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BB24E04910DA7C6100E9C588 /* ofxMultiTouch.cpp */; };
+		BB24E0C410DA9F4200E9C588 /* ofxiPhoneKeyboard.h in Headers */ = {isa = PBXBuildFile; fileRef = BB24E03B10DA7C6100E9C588 /* ofxiPhoneKeyboard.h */; };
+		BB24E0C510DA9F4300E9C588 /* ofxiPhoneAppDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = BB24E03410DA7C6100E9C588 /* ofxiPhoneAppDelegate.h */; };
+		BB24E0C610DA9F4400E9C588 /* ofxiPhoneImagePicker.h in Headers */ = {isa = PBXBuildFile; fileRef = BB24E03910DA7C6100E9C588 /* ofxiPhoneImagePicker.h */; };
+		BB24E0C710DA9F4400E9C588 /* ofxMultiTouchListener.h in Headers */ = {isa = PBXBuildFile; fileRef = BB24E04B10DA7C6100E9C588 /* ofxMultiTouchListener.h */; };
+		BB24E0C810DA9F4500E9C588 /* ofxiPhoneMapKit.mm in Sources */ = {isa = PBXBuildFile; fileRef = BB24E03E10DA7C6100E9C588 /* ofxiPhoneMapKit.mm */; };
+		BB24E0C910DA9F4600E9C588 /* ofxiPhoneCoreLocation.h in Headers */ = {isa = PBXBuildFile; fileRef = BB24E03610DA7C6100E9C588 /* ofxiPhoneCoreLocation.h */; };
+		BB24E0CA10DA9F4600E9C588 /* ofxiPhoneAlertsListener.h in Headers */ = {isa = PBXBuildFile; fileRef = BB24E03210DA7C6100E9C588 /* ofxiPhoneAlertsListener.h */; };
+		BB24E0CB10DA9F4700E9C588 /* ofxiPhoneMapKit.h in Headers */ = {isa = PBXBuildFile; fileRef = BB24E03D10DA7C6100E9C588 /* ofxiPhoneMapKit.h */; };
+		BB24E0CC10DA9F4800E9C588 /* ofxiPhoneExtras.mm in Sources */ = {isa = PBXBuildFile; fileRef = BB24E03810DA7C6100E9C588 /* ofxiPhoneExtras.mm */; };
+		BB24E0CD10DA9F4800E9C588 /* ofxAccelerometer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BB24E02110DA7C6100E9C588 /* ofxAccelerometer.cpp */; };
+		BB24E0CE10DA9F4900E9C588 /* ofxiPhoneApp.h in Headers */ = {isa = PBXBuildFile; fileRef = BB24E03310DA7C6100E9C588 /* ofxiPhoneApp.h */; };
+		BB24E0CF10DA9F4C00E9C588 /* ofxiPhoneMapKitDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = BB24E03F10DA7C6100E9C588 /* ofxiPhoneMapKitDelegate.h */; };
+		BB24E0D010DA9F4C00E9C588 /* ofxiPhoneAlerts.h in Headers */ = {isa = PBXBuildFile; fileRef = BB24E03010DA7C6100E9C588 /* ofxiPhoneAlerts.h */; };
+		BB24E0D110DA9F4D00E9C588 /* ofAppiPhoneWindow.mm in Sources */ = {isa = PBXBuildFile; fileRef = BB24E02E10DA7C6100E9C588 /* ofAppiPhoneWindow.mm */; };
+		BB24E0D210DA9F4D00E9C588 /* ofxiPhoneImagePicker.mm in Sources */ = {isa = PBXBuildFile; fileRef = BB24E03A10DA7C6100E9C588 /* ofxiPhoneImagePicker.mm */; };
+		BB24E0D310DA9F4E00E9C588 /* ofxiPhoneSoundStream.mm in Sources */ = {isa = PBXBuildFile; fileRef = BB24E04310DA7C6100E9C588 /* ofxiPhoneSoundStream.mm */; };
+		BB24E0D410DA9F4F00E9C588 /* ofxiPhoneKeyboard.mm in Sources */ = {isa = PBXBuildFile; fileRef = BB24E03C10DA7C6100E9C588 /* ofxiPhoneKeyboard.mm */; };
+		BB24E0D510DA9F4F00E9C588 /* EAGLView.mm in Sources */ = {isa = PBXBuildFile; fileRef = BB24E02A10DA7C6100E9C588 /* EAGLView.mm */; };
+		BB24E0D610DA9F5000E9C588 /* ofxiPhoneCoreLocation.mm in Sources */ = {isa = PBXBuildFile; fileRef = BB24E03710DA7C6100E9C588 /* ofxiPhoneCoreLocation.mm */; };
+		BB24E0D710DA9F5100E9C588 /* ofxiPhone.h in Headers */ = {isa = PBXBuildFile; fileRef = BB24E02610DA7C6100E9C588 /* ofxiPhone.h */; };
+		BB24E0D810DA9F5200E9C588 /* ofAppiPhoneWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = BB24E02D10DA7C6100E9C588 /* ofAppiPhoneWindow.h */; };
+		BB24E0D910DA9F5400E9C588 /* ofxiPhoneMapKitDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = BB24E04010DA7C6100E9C588 /* ofxiPhoneMapKitDelegate.mm */; };
+		BB24E0DA10DA9F5500E9C588 /* ofxiPhoneExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = BB24E02710DA7C6100E9C588 /* ofxiPhoneExtras.h */; };
+		BB24E0DB10DA9F5600E9C588 /* ofxiPhoneAppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = BB24E03510DA7C6100E9C588 /* ofxiPhoneAppDelegate.mm */; };
+		BB24E0DC10DA9F5700E9C588 /* ofxAccelerometer.h in Headers */ = {isa = PBXBuildFile; fileRef = BB24E02210DA7C6100E9C588 /* ofxAccelerometer.h */; };
+		BB24E0DD10DA9F5800E9C588 /* ofxiPhoneAccelerometer.mm in Sources */ = {isa = PBXBuildFile; fileRef = BB24E02F10DA7C6100E9C588 /* ofxiPhoneAccelerometer.mm */; };
+		BB24E0DE10DA9F5800E9C588 /* ofxMultiTouch.h in Headers */ = {isa = PBXBuildFile; fileRef = BB24E04A10DA7C6100E9C588 /* ofxMultiTouch.h */; };
+		BB24E0DF10DA9F5900E9C588 /* MSARootViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = BB24E02B10DA7C6100E9C588 /* MSARootViewController.h */; };
+		BB24E0E010DA9F5B00E9C588 /* MSARootViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = BB24E02C10DA7C6100E9C588 /* MSARootViewController.mm */; };
+		BB24E0E110DA9F5C00E9C588 /* EAGLView.h in Headers */ = {isa = PBXBuildFile; fileRef = BB24E02910DA7C6100E9C588 /* EAGLView.h */; };
+		BB24E0E210DA9F5C00E9C588 /* ofxiPhoneMapKitListener.h in Headers */ = {isa = PBXBuildFile; fileRef = BB24E04110DA7C6100E9C588 /* ofxiPhoneMapKitListener.h */; };
+		BB24E0E310DA9F5D00E9C588 /* ofxiPhoneAlerts.mm in Sources */ = {isa = PBXBuildFile; fileRef = BB24E03110DA7C6100E9C588 /* ofxiPhoneAlerts.mm */; };
+		BB24E0E410DA9F6000E9C588 /* ofEventUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = BB24DF0410DA7BEF00E9C588 /* ofEventUtils.h */; };
+		BB24E0E510DA9F6100E9C588 /* ofEvents.h in Headers */ = {isa = PBXBuildFile; fileRef = BB24DF0310DA7BEF00E9C588 /* ofEvents.h */; };
+		BB24E0E610DA9F6200E9C588 /* ofNoise.h in Headers */ = {isa = PBXBuildFile; fileRef = BB24DF1A10DA7BEF00E9C588 /* ofNoise.h */; };
+		BB24E0E710DA9F6300E9C588 /* ofTrueTypeFont.h in Headers */ = {isa = PBXBuildFile; fileRef = BB24DF0F10DA7BEF00E9C588 /* ofTrueTypeFont.h */; };
+		BB24E0E810DA9F6300E9C588 /* ofAppRunner.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BB24DEFA10DA7BEF00E9C588 /* ofAppRunner.cpp */; };
+		BB24E0E910DA9F6300E9C588 /* ofAppBaseWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = BB24DEF710DA7BEF00E9C588 /* ofAppBaseWindow.h */; };
+		BB24E0EA10DA9F6400E9C588 /* ofTrueTypeFont.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BB24DF0E10DA7BEF00E9C588 /* ofTrueTypeFont.cpp */; };
+		BB24E0EB10DA9F6400E9C588 /* ofTexture.h in Headers */ = {isa = PBXBuildFile; fileRef = BB24DF0D10DA7BEF00E9C588 /* ofTexture.h */; };
+		BB24E0EC10DA9F6400E9C588 /* ofMath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BB24DF1810DA7BEF00E9C588 /* ofMath.cpp */; };
+		BB24E0ED10DA9F6400E9C588 /* ofImage.h in Headers */ = {isa = PBXBuildFile; fileRef = BB24DF0B10DA7BEF00E9C588 /* ofImage.h */; };
+		BB24E0EE10DA9F6400E9C588 /* ofAppRunner.h in Headers */ = {isa = PBXBuildFile; fileRef = BB24DEFB10DA7BEF00E9C588 /* ofAppRunner.h */; };
+		BB24E0EF10DA9F6500E9C588 /* ofMain.h in Headers */ = {isa = PBXBuildFile; fileRef = BB24DF1010DA7BEF00E9C588 /* ofMain.h */; };
+		BB24E0F010DA9F6500E9C588 /* ofGraphics.h in Headers */ = {isa = PBXBuildFile; fileRef = BB24DF0910DA7BEF00E9C588 /* ofGraphics.h */; };
+		BB24E0F110DA9F6500E9C588 /* ofTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = BB24DF1B10DA7BEF00E9C588 /* ofTypes.h */; };
+		BB24E0F210DA9F6500E9C588 /* ofUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = BB24DF1D10DA7BEF00E9C588 /* ofUtils.h */; };
+		BB24E0F310DA9F6600E9C588 /* ofUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BB24DF1C10DA7BEF00E9C588 /* ofUtils.cpp */; };
+		BB24E0F410DA9F6600E9C588 /* ofGraphics.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BB24DF0810DA7BEF00E9C588 /* ofGraphics.cpp */; };
+		BB24E0F510DA9F6700E9C588 /* ofMath.h in Headers */ = {isa = PBXBuildFile; fileRef = BB24DF1910DA7BEF00E9C588 /* ofMath.h */; };
+		BB24E0F610DA9F6700E9C588 /* ofImage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BB24DF0A10DA7BEF00E9C588 /* ofImage.cpp */; };
+		BB24E0F710DA9F6800E9C588 /* ofTexture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BB24DF0C10DA7BEF00E9C588 /* ofTexture.cpp */; };
+		BB24E0F810DA9F6800E9C588 /* ofBaseApp.h in Headers */ = {isa = PBXBuildFile; fileRef = BB24DEFC10DA7BEF00E9C588 /* ofBaseApp.h */; };
+		BB24E0F910DA9F6900E9C588 /* ofConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = BB24DF1710DA7BEF00E9C588 /* ofConstants.h */; };
+		BB24E0FA10DA9F6A00E9C588 /* ofSoundStream.h in Headers */ = {isa = PBXBuildFile; fileRef = BB24DF1510DA7BEF00E9C588 /* ofSoundStream.h */; };
+		BB24E0FB10DA9F6A00E9C588 /* ofSoundPlayer.h in Headers */ = {isa = PBXBuildFile; fileRef = BB24DF1310DA7BEF00E9C588 /* ofSoundPlayer.h */; };
+		BB24E0FC10DA9F7700E9C588 /* ftotval.h in Headers */ = {isa = PBXBuildFile; fileRef = BB24DFA710DA7C1B00E9C588 /* ftotval.h */; };
+		BB24E0FD10DA9F7700E9C588 /* t1tables.h in Headers */ = {isa = PBXBuildFile; fileRef = BB24DFB410DA7C1B00E9C588 /* t1tables.h */; };
+		BB24E0FE10DA9F7700E9C588 /* ftlist.h in Headers */ = {isa = PBXBuildFile; fileRef = BB24DFA110DA7C1B00E9C588 /* ftlist.h */; };
+		BB24E0FF10DA9F7700E9C588 /* ftsynth.h in Headers */ = {isa = PBXBuildFile; fileRef = BB24DFAE10DA7C1B00E9C588 /* ftsynth.h */; };
+		BB24E10010DA9F7800E9C588 /* ftimage.h in Headers */ = {isa = PBXBuildFile; fileRef = BB24DF9E10DA7C1B00E9C588 /* ftimage.h */; };
+		BB24E10110DA9F7800E9C588 /* ftgxval.h in Headers */ = {isa = PBXBuildFile; fileRef = BB24DF9C10DA7C1B00E9C588 /* ftgxval.h */; };
+		BB24E10210DA9F7800E9C588 /* ftsystem.h in Headers */ = {isa = PBXBuildFile; fileRef = BB24DFAF10DA7C1B00E9C588 /* ftsystem.h */; };
+		BB24E10310DA9F7800E9C588 /* ftcache.h in Headers */ = {isa = PBXBuildFile; fileRef = BB24DF9610DA7C1B00E9C588 /* ftcache.h */; };
+		BB24E10410DA9F7800E9C588 /* tttables.h in Headers */ = {isa = PBXBuildFile; fileRef = BB24DFB610DA7C1B00E9C588 /* tttables.h */; };
+		BB24E10510DA9F7800E9C588 /* ttnameid.h in Headers */ = {isa = PBXBuildFile; fileRef = BB24DFB510DA7C1B00E9C588 /* ttnameid.h */; };
+		BB24E10610DA9F7900E9C588 /* ftrender.h in Headers */ = {isa = PBXBuildFile; fileRef = BB24DFAA10DA7C1B00E9C588 /* ftrender.h */; };
+		BB24E10710DA9F7900E9C588 /* ftoutln.h in Headers */ = {isa = PBXBuildFile; fileRef = BB24DFA810DA7C1B00E9C588 /* ftoutln.h */; };
+		BB24E10810DA9F7900E9C588 /* ftlcdfil.h in Headers */ = {isa = PBXBuildFile; fileRef = BB24DFA010DA7C1B00E9C588 /* ftlcdfil.h */; };
+		BB24E10910DA9F7900E9C588 /* ftbitmap.h in Headers */ = {isa = PBXBuildFile; fileRef = BB24DF9510DA7C1B00E9C588 /* ftbitmap.h */; };
+		BB24E10A10DA9F7A00E9C588 /* FreeImage.h in Headers */ = {isa = PBXBuildFile; fileRef = BB24DF7A10DA7C1B00E9C588 /* FreeImage.h */; };
+		BB24E10B10DA9F7A00E9C588 /* ftsizes.h in Headers */ = {isa = PBXBuildFile; fileRef = BB24DFAB10DA7C1B00E9C588 /* ftsizes.h */; };
+		BB24E10C10DA9F7A00E9C588 /* ftpfr.h in Headers */ = {isa = PBXBuildFile; fileRef = BB24DFA910DA7C1B00E9C588 /* ftpfr.h */; };
+		BB24E10D10DA9F7A00E9C588 /* fttypes.h in Headers */ = {isa = PBXBuildFile; fileRef = BB24DFB110DA7C1B00E9C588 /* fttypes.h */; };
+		BB24E10F10DA9F7B00E9C588 /* ftoption.h in Headers */ = {isa = PBXBuildFile; fileRef = BB24DF9010DA7C1B00E9C588 /* ftoption.h */; };
+		BB24E11010DA9F7B00E9C588 /* fterrors.h in Headers */ = {isa = PBXBuildFile; fileRef = BB24DF9910DA7C1B00E9C588 /* fterrors.h */; };
+		BB24E11110DA9F7B00E9C588 /* ftchapters.h in Headers */ = {isa = PBXBuildFile; fileRef = BB24DF9710DA7C1B00E9C588 /* ftchapters.h */; };
+		BB24E11210DA9F7B00E9C588 /* ftwinfnt.h in Headers */ = {isa = PBXBuildFile; fileRef = BB24DFB210DA7C1B00E9C588 /* ftwinfnt.h */; };
+		BB24E11310DA9F7B00E9C588 /* ftsnames.h in Headers */ = {isa = PBXBuildFile; fileRef = BB24DFAC10DA7C1B00E9C588 /* ftsnames.h */; };
+		BB24E11410DA9F7C00E9C588 /* ftmodapi.h in Headers */ = {isa = PBXBuildFile; fileRef = BB24DFA510DA7C1B00E9C588 /* ftmodapi.h */; };
+		BB24E11510DA9F7C00E9C588 /* ftstdlib.h in Headers */ = {isa = PBXBuildFile; fileRef = BB24DF9110DA7C1B00E9C588 /* ftstdlib.h */; };
+		BB24E11610DA9F7C00E9C588 /* ftxf86.h in Headers */ = {isa = PBXBuildFile; fileRef = BB24DFB310DA7C1B00E9C588 /* ftxf86.h */; };
+		BB24E11710DA9F7C00E9C588 /* ftbdf.h in Headers */ = {isa = PBXBuildFile; fileRef = BB24DF9410DA7C1B00E9C588 /* ftbdf.h */; };
+		BB24E11810DA9F7D00E9C588 /* ftlzw.h in Headers */ = {isa = PBXBuildFile; fileRef = BB24DFA210DA7C1B00E9C588 /* ftlzw.h */; };
+		BB24E11910DA9F7D00E9C588 /* ftgzip.h in Headers */ = {isa = PBXBuildFile; fileRef = BB24DF9D10DA7C1B00E9C588 /* ftgzip.h */; };
+		BB24E11A10DA9F7D00E9C588 /* ftmodule.h in Headers */ = {isa = PBXBuildFile; fileRef = BB24DF8F10DA7C1B00E9C588 /* ftmodule.h */; };
+		BB24E11B10DA9F7D00E9C588 /* ftgasp.h in Headers */ = {isa = PBXBuildFile; fileRef = BB24DF9A10DA7C1B00E9C588 /* ftgasp.h */; };
+		BB24E11C10DA9F7D00E9C588 /* ftheader.h in Headers */ = {isa = PBXBuildFile; fileRef = BB24DF8E10DA7C1B00E9C588 /* ftheader.h */; };
+		BB24E11D10DA9F7E00E9C588 /* ftbbox.h in Headers */ = {isa = PBXBuildFile; fileRef = BB24DF9310DA7C1B00E9C588 /* ftbbox.h */; };
+		BB24E11E10DA9F7F00E9C588 /* ftmac.h in Headers */ = {isa = PBXBuildFile; fileRef = BB24DFA310DA7C1B00E9C588 /* ftmac.h */; };
+		BB24E11F10DA9F7F00E9C588 /* freetype.h in Headers */ = {isa = PBXBuildFile; fileRef = BB24DF9210DA7C1B00E9C588 /* freetype.h */; };
+		BB24E12010DA9F7F00E9C588 /* ttunpat.h in Headers */ = {isa = PBXBuildFile; fileRef = BB24DFB810DA7C1B00E9C588 /* ttunpat.h */; };
+		BB24E12210DA9F8000E9C588 /* ftmm.h in Headers */ = {isa = PBXBuildFile; fileRef = BB24DFA410DA7C1B00E9C588 /* ftmm.h */; };
+		BB24E12310DA9F8100E9C588 /* ftconfig.h in Headers */ = {isa = PBXBuildFile; fileRef = BB24DF8D10DA7C1B00E9C588 /* ftconfig.h */; };
+		BB24E12410DA9F8100E9C588 /* fterrdef.h in Headers */ = {isa = PBXBuildFile; fileRef = BB24DF9810DA7C1B00E9C588 /* fterrdef.h */; };
+		BB24E12510DA9F8100E9C588 /* tttags.h in Headers */ = {isa = PBXBuildFile; fileRef = BB24DFB710DA7C1B00E9C588 /* tttags.h */; };
+		BB24E12610DA9F8200E9C588 /* ftmoderr.h in Headers */ = {isa = PBXBuildFile; fileRef = BB24DFA610DA7C1B00E9C588 /* ftmoderr.h */; };
+		BB24E12710DA9F8400E9C588 /* ftglyph.h in Headers */ = {isa = PBXBuildFile; fileRef = BB24DF9B10DA7C1B00E9C588 /* ftglyph.h */; };
+		BB24E12810DA9F8400E9C588 /* ftstroke.h in Headers */ = {isa = PBXBuildFile; fileRef = BB24DFAD10DA7C1B00E9C588 /* ftstroke.h */; };
+		BB24E12910DA9F8400E9C588 /* fttrigon.h in Headers */ = {isa = PBXBuildFile; fileRef = BB24DFB010DA7C1B00E9C588 /* fttrigon.h */; };
+		BB24E12A10DA9F8400E9C588 /* ft2build.h in Headers */ = {isa = PBXBuildFile; fileRef = BB24DFB910DA7C1B00E9C588 /* ft2build.h */; };
+		BB24E12B10DA9F8400E9C588 /* ftincrem.h in Headers */ = {isa = PBXBuildFile; fileRef = BB24DF9F10DA7C1B00E9C588 /* ftincrem.h */; };
+		DA78520C1105C1BF007EFC90 /* glu.h in Headers */ = {isa = PBXBuildFile; fileRef = DA78520A1105C1BF007EFC90 /* glu.h */; };
+		DA78520D1105C1BF007EFC90 /* gluos.h in Headers */ = {isa = PBXBuildFile; fileRef = DA78520B1105C1BF007EFC90 /* gluos.h */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		1D30AB110D05D00D00671497 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		1DF5F4DF0D08C38300B7A737 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		288765FC0DF74451002DB57D /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		5326AEA710A23A0500278DE6 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
+		53F323EA10A20EDB00E0DAE4 /* OpenAL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenAL.framework; path = System/Library/Frameworks/OpenAL.framework; sourceTree = SDKROOT; };
+		5E2E99DC10ED147800587639 /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
+		92BFCD051128AC3E0081DD61 /* ofBitmapFont.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofBitmapFont.h; sourceTree = "<group>"; };
+		92BFCD061128AC3E0081DD61 /* ofBitmapFont.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofBitmapFont.cpp; sourceTree = "<group>"; };
+		BB16EBD10F2B2A9500518274 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
+		BB16EBD80F2B2AB500518274 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		BB24DED610DA7A3F00E9C588 /* libofxiPhoneOFLib_iphoneos _Debug.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libofxiPhoneOFLib_iphoneos _Debug.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		BB24DEF710DA7BEF00E9C588 /* ofAppBaseWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofAppBaseWindow.h; sourceTree = "<group>"; };
+		BB24DEFA10DA7BEF00E9C588 /* ofAppRunner.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofAppRunner.cpp; sourceTree = "<group>"; };
+		BB24DEFB10DA7BEF00E9C588 /* ofAppRunner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofAppRunner.h; sourceTree = "<group>"; };
+		BB24DEFC10DA7BEF00E9C588 /* ofBaseApp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofBaseApp.h; sourceTree = "<group>"; };
+		BB24DF0310DA7BEF00E9C588 /* ofEvents.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofEvents.h; sourceTree = "<group>"; };
+		BB24DF0410DA7BEF00E9C588 /* ofEventUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofEventUtils.h; sourceTree = "<group>"; };
+		BB24DF0810DA7BEF00E9C588 /* ofGraphics.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofGraphics.cpp; sourceTree = "<group>"; };
+		BB24DF0910DA7BEF00E9C588 /* ofGraphics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofGraphics.h; sourceTree = "<group>"; };
+		BB24DF0A10DA7BEF00E9C588 /* ofImage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofImage.cpp; sourceTree = "<group>"; };
+		BB24DF0B10DA7BEF00E9C588 /* ofImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofImage.h; sourceTree = "<group>"; };
+		BB24DF0C10DA7BEF00E9C588 /* ofTexture.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofTexture.cpp; sourceTree = "<group>"; };
+		BB24DF0D10DA7BEF00E9C588 /* ofTexture.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofTexture.h; sourceTree = "<group>"; };
+		BB24DF0E10DA7BEF00E9C588 /* ofTrueTypeFont.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofTrueTypeFont.cpp; sourceTree = "<group>"; };
+		BB24DF0F10DA7BEF00E9C588 /* ofTrueTypeFont.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofTrueTypeFont.h; sourceTree = "<group>"; };
+		BB24DF1010DA7BEF00E9C588 /* ofMain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofMain.h; sourceTree = "<group>"; };
+		BB24DF1310DA7BEF00E9C588 /* ofSoundPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofSoundPlayer.h; sourceTree = "<group>"; };
+		BB24DF1510DA7BEF00E9C588 /* ofSoundStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofSoundStream.h; sourceTree = "<group>"; };
+		BB24DF1710DA7BEF00E9C588 /* ofConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofConstants.h; sourceTree = "<group>"; };
+		BB24DF1810DA7BEF00E9C588 /* ofMath.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofMath.cpp; sourceTree = "<group>"; };
+		BB24DF1910DA7BEF00E9C588 /* ofMath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofMath.h; sourceTree = "<group>"; };
+		BB24DF1A10DA7BEF00E9C588 /* ofNoise.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofNoise.h; sourceTree = "<group>"; };
+		BB24DF1B10DA7BEF00E9C588 /* ofTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofTypes.h; sourceTree = "<group>"; };
+		BB24DF1C10DA7BEF00E9C588 /* ofUtils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofUtils.cpp; sourceTree = "<group>"; };
+		BB24DF1D10DA7BEF00E9C588 /* ofUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofUtils.h; sourceTree = "<group>"; };
+		BB24DF7A10DA7C1B00E9C588 /* FreeImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FreeImage.h; sourceTree = "<group>"; };
+		BB24DF8D10DA7C1B00E9C588 /* ftconfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ftconfig.h; sourceTree = "<group>"; };
+		BB24DF8E10DA7C1B00E9C588 /* ftheader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ftheader.h; sourceTree = "<group>"; };
+		BB24DF8F10DA7C1B00E9C588 /* ftmodule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ftmodule.h; sourceTree = "<group>"; };
+		BB24DF9010DA7C1B00E9C588 /* ftoption.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ftoption.h; sourceTree = "<group>"; };
+		BB24DF9110DA7C1B00E9C588 /* ftstdlib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ftstdlib.h; sourceTree = "<group>"; };
+		BB24DF9210DA7C1B00E9C588 /* freetype.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = freetype.h; sourceTree = "<group>"; };
+		BB24DF9310DA7C1B00E9C588 /* ftbbox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ftbbox.h; sourceTree = "<group>"; };
+		BB24DF9410DA7C1B00E9C588 /* ftbdf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ftbdf.h; sourceTree = "<group>"; };
+		BB24DF9510DA7C1B00E9C588 /* ftbitmap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ftbitmap.h; sourceTree = "<group>"; };
+		BB24DF9610DA7C1B00E9C588 /* ftcache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ftcache.h; sourceTree = "<group>"; };
+		BB24DF9710DA7C1B00E9C588 /* ftchapters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ftchapters.h; sourceTree = "<group>"; };
+		BB24DF9810DA7C1B00E9C588 /* fterrdef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fterrdef.h; sourceTree = "<group>"; };
+		BB24DF9910DA7C1B00E9C588 /* fterrors.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fterrors.h; sourceTree = "<group>"; };
+		BB24DF9A10DA7C1B00E9C588 /* ftgasp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ftgasp.h; sourceTree = "<group>"; };
+		BB24DF9B10DA7C1B00E9C588 /* ftglyph.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ftglyph.h; sourceTree = "<group>"; };
+		BB24DF9C10DA7C1B00E9C588 /* ftgxval.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ftgxval.h; sourceTree = "<group>"; };
+		BB24DF9D10DA7C1B00E9C588 /* ftgzip.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ftgzip.h; sourceTree = "<group>"; };
+		BB24DF9E10DA7C1B00E9C588 /* ftimage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ftimage.h; sourceTree = "<group>"; };
+		BB24DF9F10DA7C1B00E9C588 /* ftincrem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ftincrem.h; sourceTree = "<group>"; };
+		BB24DFA010DA7C1B00E9C588 /* ftlcdfil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ftlcdfil.h; sourceTree = "<group>"; };
+		BB24DFA110DA7C1B00E9C588 /* ftlist.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ftlist.h; sourceTree = "<group>"; };
+		BB24DFA210DA7C1B00E9C588 /* ftlzw.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ftlzw.h; sourceTree = "<group>"; };
+		BB24DFA310DA7C1B00E9C588 /* ftmac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ftmac.h; sourceTree = "<group>"; };
+		BB24DFA410DA7C1B00E9C588 /* ftmm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ftmm.h; sourceTree = "<group>"; };
+		BB24DFA510DA7C1B00E9C588 /* ftmodapi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ftmodapi.h; sourceTree = "<group>"; };
+		BB24DFA610DA7C1B00E9C588 /* ftmoderr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ftmoderr.h; sourceTree = "<group>"; };
+		BB24DFA710DA7C1B00E9C588 /* ftotval.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ftotval.h; sourceTree = "<group>"; };
+		BB24DFA810DA7C1B00E9C588 /* ftoutln.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ftoutln.h; sourceTree = "<group>"; };
+		BB24DFA910DA7C1B00E9C588 /* ftpfr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ftpfr.h; sourceTree = "<group>"; };
+		BB24DFAA10DA7C1B00E9C588 /* ftrender.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ftrender.h; sourceTree = "<group>"; };
+		BB24DFAB10DA7C1B00E9C588 /* ftsizes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ftsizes.h; sourceTree = "<group>"; };
+		BB24DFAC10DA7C1B00E9C588 /* ftsnames.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ftsnames.h; sourceTree = "<group>"; };
+		BB24DFAD10DA7C1B00E9C588 /* ftstroke.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ftstroke.h; sourceTree = "<group>"; };
+		BB24DFAE10DA7C1B00E9C588 /* ftsynth.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ftsynth.h; sourceTree = "<group>"; };
+		BB24DFAF10DA7C1B00E9C588 /* ftsystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ftsystem.h; sourceTree = "<group>"; };
+		BB24DFB010DA7C1B00E9C588 /* fttrigon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fttrigon.h; sourceTree = "<group>"; };
+		BB24DFB110DA7C1B00E9C588 /* fttypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fttypes.h; sourceTree = "<group>"; };
+		BB24DFB210DA7C1B00E9C588 /* ftwinfnt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ftwinfnt.h; sourceTree = "<group>"; };
+		BB24DFB310DA7C1B00E9C588 /* ftxf86.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ftxf86.h; sourceTree = "<group>"; };
+		BB24DFB410DA7C1B00E9C588 /* t1tables.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = t1tables.h; sourceTree = "<group>"; };
+		BB24DFB510DA7C1B00E9C588 /* ttnameid.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ttnameid.h; sourceTree = "<group>"; };
+		BB24DFB610DA7C1B00E9C588 /* tttables.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tttables.h; sourceTree = "<group>"; };
+		BB24DFB710DA7C1B00E9C588 /* tttags.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tttags.h; sourceTree = "<group>"; };
+		BB24DFB810DA7C1B00E9C588 /* ttunpat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ttunpat.h; sourceTree = "<group>"; };
+		BB24DFB910DA7C1B00E9C588 /* ft2build.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ft2build.h; sourceTree = "<group>"; };
+		BB24E01D10DA7C6100E9C588 /* changelog.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = changelog.txt; sourceTree = "<group>"; };
+		BB24E01E10DA7C6100E9C588 /* install.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = install.xml; sourceTree = "<group>"; };
+		BB24E01F10DA7C6100E9C588 /* LICENSE.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE.txt; sourceTree = "<group>"; };
+		BB24E02110DA7C6100E9C588 /* ofxAccelerometer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxAccelerometer.cpp; sourceTree = "<group>"; };
+		BB24E02210DA7C6100E9C588 /* ofxAccelerometer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxAccelerometer.h; sourceTree = "<group>"; };
+		BB24E02410DA7C6100E9C588 /* changelog.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = changelog.txt; sourceTree = "<group>"; };
+		BB24E02510DA7C6100E9C588 /* LICENSE.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE.txt; sourceTree = "<group>"; };
+		BB24E02610DA7C6100E9C588 /* ofxiPhone.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxiPhone.h; sourceTree = "<group>"; };
+		BB24E02710DA7C6100E9C588 /* ofxiPhoneExtras.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxiPhoneExtras.h; sourceTree = "<group>"; };
+		BB24E02910DA7C6100E9C588 /* EAGLView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EAGLView.h; sourceTree = "<group>"; };
+		BB24E02A10DA7C6100E9C588 /* EAGLView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = EAGLView.mm; sourceTree = "<group>"; };
+		BB24E02B10DA7C6100E9C588 /* MSARootViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MSARootViewController.h; sourceTree = "<group>"; };
+		BB24E02C10DA7C6100E9C588 /* MSARootViewController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MSARootViewController.mm; sourceTree = "<group>"; };
+		BB24E02D10DA7C6100E9C588 /* ofAppiPhoneWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofAppiPhoneWindow.h; sourceTree = "<group>"; };
+		BB24E02E10DA7C6100E9C588 /* ofAppiPhoneWindow.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ofAppiPhoneWindow.mm; sourceTree = "<group>"; };
+		BB24E02F10DA7C6100E9C588 /* ofxiPhoneAccelerometer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ofxiPhoneAccelerometer.mm; sourceTree = "<group>"; };
+		BB24E03010DA7C6100E9C588 /* ofxiPhoneAlerts.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxiPhoneAlerts.h; sourceTree = "<group>"; };
+		BB24E03110DA7C6100E9C588 /* ofxiPhoneAlerts.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ofxiPhoneAlerts.mm; sourceTree = "<group>"; };
+		BB24E03210DA7C6100E9C588 /* ofxiPhoneAlertsListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxiPhoneAlertsListener.h; sourceTree = "<group>"; };
+		BB24E03310DA7C6100E9C588 /* ofxiPhoneApp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxiPhoneApp.h; sourceTree = "<group>"; };
+		BB24E03410DA7C6100E9C588 /* ofxiPhoneAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxiPhoneAppDelegate.h; sourceTree = "<group>"; };
+		BB24E03510DA7C6100E9C588 /* ofxiPhoneAppDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ofxiPhoneAppDelegate.mm; sourceTree = "<group>"; };
+		BB24E03610DA7C6100E9C588 /* ofxiPhoneCoreLocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxiPhoneCoreLocation.h; sourceTree = "<group>"; };
+		BB24E03710DA7C6100E9C588 /* ofxiPhoneCoreLocation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ofxiPhoneCoreLocation.mm; sourceTree = "<group>"; };
+		BB24E03810DA7C6100E9C588 /* ofxiPhoneExtras.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ofxiPhoneExtras.mm; sourceTree = "<group>"; };
+		BB24E03910DA7C6100E9C588 /* ofxiPhoneImagePicker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxiPhoneImagePicker.h; sourceTree = "<group>"; };
+		BB24E03A10DA7C6100E9C588 /* ofxiPhoneImagePicker.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ofxiPhoneImagePicker.mm; sourceTree = "<group>"; };
+		BB24E03B10DA7C6100E9C588 /* ofxiPhoneKeyboard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxiPhoneKeyboard.h; sourceTree = "<group>"; };
+		BB24E03C10DA7C6100E9C588 /* ofxiPhoneKeyboard.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ofxiPhoneKeyboard.mm; sourceTree = "<group>"; };
+		BB24E03D10DA7C6100E9C588 /* ofxiPhoneMapKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxiPhoneMapKit.h; sourceTree = "<group>"; };
+		BB24E03E10DA7C6100E9C588 /* ofxiPhoneMapKit.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ofxiPhoneMapKit.mm; sourceTree = "<group>"; };
+		BB24E03F10DA7C6100E9C588 /* ofxiPhoneMapKitDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxiPhoneMapKitDelegate.h; sourceTree = "<group>"; };
+		BB24E04010DA7C6100E9C588 /* ofxiPhoneMapKitDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ofxiPhoneMapKitDelegate.mm; sourceTree = "<group>"; };
+		BB24E04110DA7C6100E9C588 /* ofxiPhoneMapKitListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxiPhoneMapKitListener.h; sourceTree = "<group>"; };
+		BB24E04210DA7C6100E9C588 /* ofxiPhoneSoundPlayer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ofxiPhoneSoundPlayer.mm; sourceTree = "<group>"; };
+		BB24E04310DA7C6100E9C588 /* ofxiPhoneSoundStream.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ofxiPhoneSoundStream.mm; sourceTree = "<group>"; };
+		BB24E04510DA7C6100E9C588 /* changelog.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = changelog.txt; sourceTree = "<group>"; };
+		BB24E04610DA7C6100E9C588 /* install.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = install.xml; sourceTree = "<group>"; };
+		BB24E04710DA7C6100E9C588 /* LICENSE.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE.txt; sourceTree = "<group>"; };
+		BB24E04910DA7C6100E9C588 /* ofxMultiTouch.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxMultiTouch.cpp; sourceTree = "<group>"; };
+		BB24E04A10DA7C6100E9C588 /* ofxMultiTouch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxMultiTouch.h; sourceTree = "<group>"; };
+		BB24E04B10DA7C6100E9C588 /* ofxMultiTouchListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxMultiTouchListener.h; sourceTree = "<group>"; };
+		BBE5EAB70F49AD8400F28951 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
+		DA78520A1105C1BF007EFC90 /* glu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = glu.h; sourceTree = "<group>"; };
+		DA78520B1105C1BF007EFC90 /* gluos.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gluos.h; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		BB24DEC910DA7A3F00E9C588 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BB24DECA10DA7A3F00E9C588 /* AudioToolbox.framework in Frameworks */,
+				BB24DECB10DA7A3F00E9C588 /* OpenGLES.framework in Frameworks */,
+				BB24DECC10DA7A3F00E9C588 /* UIKit.framework in Frameworks */,
+				BB24DECD10DA7A3F00E9C588 /* OpenAL.framework in Frameworks */,
+				BB24DECE10DA7A3F00E9C588 /* Foundation.framework in Frameworks */,
+				BB24DECF10DA7A3F00E9C588 /* CoreGraphics.framework in Frameworks */,
+				BB24DED010DA7A3F00E9C588 /* CoreLocation.framework in Frameworks */,
+				BB24DED110DA7A3F00E9C588 /* QuartzCore.framework in Frameworks */,
+				5E2E99DD10ED147800587639 /* MapKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		19C28FACFE9D520D11CA2CBB /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				BB24DED610DA7A3F00E9C588 /* libofxiPhoneOFLib_iphoneos _Debug.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		29B97314FDCFA39411CA2CEA /* CustomTemplate */ = {
+			isa = PBXGroup;
+			children = (
+				BB16F26B0F2B646B00518274 /* addons */,
+				BB24DEF510DA7BEF00E9C588 /* openFrameworks */,
+				BB16E9930F2B1E5900518274 /* libs */,
+				19C28FACFE9D520D11CA2CBB /* Products */,
+			);
+			name = CustomTemplate;
+			sourceTree = "<group>";
+		};
+		29B97323FDCFA39411CA2CEA /* core frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				5E2E99DC10ED147800587639 /* MapKit.framework */,
+				BBE5EAB70F49AD8400F28951 /* AudioToolbox.framework */,
+				BB16EBD80F2B2AB500518274 /* QuartzCore.framework */,
+				BB16EBD10F2B2A9500518274 /* OpenGLES.framework */,
+				1DF5F4DF0D08C38300B7A737 /* UIKit.framework */,
+				1D30AB110D05D00D00671497 /* Foundation.framework */,
+				288765FC0DF74451002DB57D /* CoreGraphics.framework */,
+				53F323EA10A20EDB00E0DAE4 /* OpenAL.framework */,
+				5326AEA710A23A0500278DE6 /* CoreLocation.framework */,
+			);
+			name = "core frameworks";
+			sourceTree = "<group>";
+		};
+		BB16E9930F2B1E5900518274 /* libs */ = {
+			isa = PBXGroup;
+			children = (
+				BBE5E94E0F497BD800F28951 /* core */,
+			);
+			name = libs;
+			sourceTree = "<group>";
+		};
+		BB16F26B0F2B646B00518274 /* addons */ = {
+			isa = PBXGroup;
+			children = (
+				BB24E01C10DA7C6100E9C588 /* ofxAccelerometer */,
+				BB24E02310DA7C6100E9C588 /* ofxiPhone */,
+				BB24E04410DA7C6100E9C588 /* ofxMultiTouch */,
+			);
+			name = addons;
+			sourceTree = "<group>";
+		};
+		BB24DEF510DA7BEF00E9C588 /* openFrameworks */ = {
+			isa = PBXGroup;
+			children = (
+				BB24DEF610DA7BEF00E9C588 /* app */,
+				BB24DEFD10DA7BEF00E9C588 /* communication */,
+				BB24DF0210DA7BEF00E9C588 /* events */,
+				BB24DF0510DA7BEF00E9C588 /* graphics */,
+				BB24DF1010DA7BEF00E9C588 /* ofMain.h */,
+				BB24DF1110DA7BEF00E9C588 /* sound */,
+				BB24DF1610DA7BEF00E9C588 /* utils */,
+				BB24DF1E10DA7BEF00E9C588 /* video */,
+			);
+			name = openFrameworks;
+			path = ../../../openFrameworks;
+			sourceTree = SOURCE_ROOT;
+		};
+		BB24DEF610DA7BEF00E9C588 /* app */ = {
+			isa = PBXGroup;
+			children = (
+				BB24DEF710DA7BEF00E9C588 /* ofAppBaseWindow.h */,
+				BB24DEFA10DA7BEF00E9C588 /* ofAppRunner.cpp */,
+				BB24DEFB10DA7BEF00E9C588 /* ofAppRunner.h */,
+				BB24DEFC10DA7BEF00E9C588 /* ofBaseApp.h */,
+			);
+			path = app;
+			sourceTree = "<group>";
+		};
+		BB24DEFD10DA7BEF00E9C588 /* communication */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = communication;
+			sourceTree = "<group>";
+		};
+		BB24DF0210DA7BEF00E9C588 /* events */ = {
+			isa = PBXGroup;
+			children = (
+				BB24DF0310DA7BEF00E9C588 /* ofEvents.h */,
+				BB24DF0410DA7BEF00E9C588 /* ofEventUtils.h */,
+			);
+			path = events;
+			sourceTree = "<group>";
+		};
+		BB24DF0510DA7BEF00E9C588 /* graphics */ = {
+			isa = PBXGroup;
+			children = (
+				92BFCD051128AC3E0081DD61 /* ofBitmapFont.h */,
+				92BFCD061128AC3E0081DD61 /* ofBitmapFont.cpp */,
+				BB24DF0810DA7BEF00E9C588 /* ofGraphics.cpp */,
+				BB24DF0910DA7BEF00E9C588 /* ofGraphics.h */,
+				BB24DF0A10DA7BEF00E9C588 /* ofImage.cpp */,
+				BB24DF0B10DA7BEF00E9C588 /* ofImage.h */,
+				BB24DF0C10DA7BEF00E9C588 /* ofTexture.cpp */,
+				BB24DF0D10DA7BEF00E9C588 /* ofTexture.h */,
+				BB24DF0E10DA7BEF00E9C588 /* ofTrueTypeFont.cpp */,
+				BB24DF0F10DA7BEF00E9C588 /* ofTrueTypeFont.h */,
+			);
+			path = graphics;
+			sourceTree = "<group>";
+		};
+		BB24DF1110DA7BEF00E9C588 /* sound */ = {
+			isa = PBXGroup;
+			children = (
+				BB24DF1310DA7BEF00E9C588 /* ofSoundPlayer.h */,
+				BB24DF1510DA7BEF00E9C588 /* ofSoundStream.h */,
+			);
+			path = sound;
+			sourceTree = "<group>";
+		};
+		BB24DF1610DA7BEF00E9C588 /* utils */ = {
+			isa = PBXGroup;
+			children = (
+				BB24DF1710DA7BEF00E9C588 /* ofConstants.h */,
+				BB24DF1810DA7BEF00E9C588 /* ofMath.cpp */,
+				BB24DF1910DA7BEF00E9C588 /* ofMath.h */,
+				BB24DF1A10DA7BEF00E9C588 /* ofNoise.h */,
+				BB24DF1B10DA7BEF00E9C588 /* ofTypes.h */,
+				BB24DF1C10DA7BEF00E9C588 /* ofUtils.cpp */,
+				BB24DF1D10DA7BEF00E9C588 /* ofUtils.h */,
+			);
+			path = utils;
+			sourceTree = "<group>";
+		};
+		BB24DF1E10DA7BEF00E9C588 /* video */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = video;
+			sourceTree = "<group>";
+		};
+		BB24DF7810DA7C1B00E9C588 /* FreeImage */ = {
+			isa = PBXGroup;
+			children = (
+				BB24DF7910DA7C1B00E9C588 /* include */,
+			);
+			name = FreeImage;
+			path = ../../../FreeImage;
+			sourceTree = SOURCE_ROOT;
+		};
+		BB24DF7910DA7C1B00E9C588 /* include */ = {
+			isa = PBXGroup;
+			children = (
+				BB24DF7A10DA7C1B00E9C588 /* FreeImage.h */,
+			);
+			path = include;
+			sourceTree = "<group>";
+		};
+		BB24DF8810DA7C1B00E9C588 /* freetype */ = {
+			isa = PBXGroup;
+			children = (
+				BB24DF8910DA7C1B00E9C588 /* include */,
+			);
+			name = freetype;
+			path = ../../../freetype;
+			sourceTree = SOURCE_ROOT;
+		};
+		BB24DF8910DA7C1B00E9C588 /* include */ = {
+			isa = PBXGroup;
+			children = (
+				BB24DF8A10DA7C1B00E9C588 /* freetype2 */,
+				BB24DFB910DA7C1B00E9C588 /* ft2build.h */,
+			);
+			path = include;
+			sourceTree = "<group>";
+		};
+		BB24DF8A10DA7C1B00E9C588 /* freetype2 */ = {
+			isa = PBXGroup;
+			children = (
+				BB24DF8B10DA7C1B00E9C588 /* freetype */,
+			);
+			path = freetype2;
+			sourceTree = "<group>";
+		};
+		BB24DF8B10DA7C1B00E9C588 /* freetype */ = {
+			isa = PBXGroup;
+			children = (
+				BB24DF8C10DA7C1B00E9C588 /* config */,
+				BB24DF9210DA7C1B00E9C588 /* freetype.h */,
+				BB24DF9310DA7C1B00E9C588 /* ftbbox.h */,
+				BB24DF9410DA7C1B00E9C588 /* ftbdf.h */,
+				BB24DF9510DA7C1B00E9C588 /* ftbitmap.h */,
+				BB24DF9610DA7C1B00E9C588 /* ftcache.h */,
+				BB24DF9710DA7C1B00E9C588 /* ftchapters.h */,
+				BB24DF9810DA7C1B00E9C588 /* fterrdef.h */,
+				BB24DF9910DA7C1B00E9C588 /* fterrors.h */,
+				BB24DF9A10DA7C1B00E9C588 /* ftgasp.h */,
+				BB24DF9B10DA7C1B00E9C588 /* ftglyph.h */,
+				BB24DF9C10DA7C1B00E9C588 /* ftgxval.h */,
+				BB24DF9D10DA7C1B00E9C588 /* ftgzip.h */,
+				BB24DF9E10DA7C1B00E9C588 /* ftimage.h */,
+				BB24DF9F10DA7C1B00E9C588 /* ftincrem.h */,
+				BB24DFA010DA7C1B00E9C588 /* ftlcdfil.h */,
+				BB24DFA110DA7C1B00E9C588 /* ftlist.h */,
+				BB24DFA210DA7C1B00E9C588 /* ftlzw.h */,
+				BB24DFA310DA7C1B00E9C588 /* ftmac.h */,
+				BB24DFA410DA7C1B00E9C588 /* ftmm.h */,
+				BB24DFA510DA7C1B00E9C588 /* ftmodapi.h */,
+				BB24DFA610DA7C1B00E9C588 /* ftmoderr.h */,
+				BB24DFA710DA7C1B00E9C588 /* ftotval.h */,
+				BB24DFA810DA7C1B00E9C588 /* ftoutln.h */,
+				BB24DFA910DA7C1B00E9C588 /* ftpfr.h */,
+				BB24DFAA10DA7C1B00E9C588 /* ftrender.h */,
+				BB24DFAB10DA7C1B00E9C588 /* ftsizes.h */,
+				BB24DFAC10DA7C1B00E9C588 /* ftsnames.h */,
+				BB24DFAD10DA7C1B00E9C588 /* ftstroke.h */,
+				BB24DFAE10DA7C1B00E9C588 /* ftsynth.h */,
+				BB24DFAF10DA7C1B00E9C588 /* ftsystem.h */,
+				BB24DFB010DA7C1B00E9C588 /* fttrigon.h */,
+				BB24DFB110DA7C1B00E9C588 /* fttypes.h */,
+				BB24DFB210DA7C1B00E9C588 /* ftwinfnt.h */,
+				BB24DFB310DA7C1B00E9C588 /* ftxf86.h */,
+				BB24DFB410DA7C1B00E9C588 /* t1tables.h */,
+				BB24DFB510DA7C1B00E9C588 /* ttnameid.h */,
+				BB24DFB610DA7C1B00E9C588 /* tttables.h */,
+				BB24DFB710DA7C1B00E9C588 /* tttags.h */,
+				BB24DFB810DA7C1B00E9C588 /* ttunpat.h */,
+			);
+			path = freetype;
+			sourceTree = "<group>";
+		};
+		BB24DF8C10DA7C1B00E9C588 /* config */ = {
+			isa = PBXGroup;
+			children = (
+				BB24DF8D10DA7C1B00E9C588 /* ftconfig.h */,
+				BB24DF8E10DA7C1B00E9C588 /* ftheader.h */,
+				BB24DF8F10DA7C1B00E9C588 /* ftmodule.h */,
+				BB24DF9010DA7C1B00E9C588 /* ftoption.h */,
+				BB24DF9110DA7C1B00E9C588 /* ftstdlib.h */,
+			);
+			path = config;
+			sourceTree = "<group>";
+		};
+		BB24DFCA10DA7C1B00E9C588 /* glu */ = {
+			isa = PBXGroup;
+			children = (
+				DA7852091105C1BF007EFC90 /* include_iphone */,
+			);
+			name = glu;
+			path = ../../../glu;
+			sourceTree = SOURCE_ROOT;
+		};
+		BB24E01C10DA7C6100E9C588 /* ofxAccelerometer */ = {
+			isa = PBXGroup;
+			children = (
+				BB24E01D10DA7C6100E9C588 /* changelog.txt */,
+				BB24E01E10DA7C6100E9C588 /* install.xml */,
+				BB24E01F10DA7C6100E9C588 /* LICENSE.txt */,
+				BB24E02010DA7C6100E9C588 /* src */,
+			);
+			name = ofxAccelerometer;
+			path = ../../../../addons/ofxAccelerometer;
+			sourceTree = SOURCE_ROOT;
+		};
+		BB24E02010DA7C6100E9C588 /* src */ = {
+			isa = PBXGroup;
+			children = (
+				BB24E02110DA7C6100E9C588 /* ofxAccelerometer.cpp */,
+				BB24E02210DA7C6100E9C588 /* ofxAccelerometer.h */,
+			);
+			path = src;
+			sourceTree = "<group>";
+		};
+		BB24E02310DA7C6100E9C588 /* ofxiPhone */ = {
+			isa = PBXGroup;
+			children = (
+				BB24E02410DA7C6100E9C588 /* changelog.txt */,
+				BB24E02510DA7C6100E9C588 /* LICENSE.txt */,
+				BB24E02610DA7C6100E9C588 /* ofxiPhone.h */,
+				BB24E02710DA7C6100E9C588 /* ofxiPhoneExtras.h */,
+				BB24E02810DA7C6100E9C588 /* src */,
+			);
+			name = ofxiPhone;
+			path = ../../../../addons/ofxiPhone;
+			sourceTree = SOURCE_ROOT;
+		};
+		BB24E02810DA7C6100E9C588 /* src */ = {
+			isa = PBXGroup;
+			children = (
+				BB24E02910DA7C6100E9C588 /* EAGLView.h */,
+				BB24E02A10DA7C6100E9C588 /* EAGLView.mm */,
+				BB24E02B10DA7C6100E9C588 /* MSARootViewController.h */,
+				BB24E02C10DA7C6100E9C588 /* MSARootViewController.mm */,
+				BB24E02D10DA7C6100E9C588 /* ofAppiPhoneWindow.h */,
+				BB24E02E10DA7C6100E9C588 /* ofAppiPhoneWindow.mm */,
+				BB24E02F10DA7C6100E9C588 /* ofxiPhoneAccelerometer.mm */,
+				BB24E03010DA7C6100E9C588 /* ofxiPhoneAlerts.h */,
+				BB24E03110DA7C6100E9C588 /* ofxiPhoneAlerts.mm */,
+				BB24E03210DA7C6100E9C588 /* ofxiPhoneAlertsListener.h */,
+				BB24E03310DA7C6100E9C588 /* ofxiPhoneApp.h */,
+				BB24E03410DA7C6100E9C588 /* ofxiPhoneAppDelegate.h */,
+				BB24E03510DA7C6100E9C588 /* ofxiPhoneAppDelegate.mm */,
+				BB24E03610DA7C6100E9C588 /* ofxiPhoneCoreLocation.h */,
+				BB24E03710DA7C6100E9C588 /* ofxiPhoneCoreLocation.mm */,
+				BB24E03810DA7C6100E9C588 /* ofxiPhoneExtras.mm */,
+				BB24E03910DA7C6100E9C588 /* ofxiPhoneImagePicker.h */,
+				BB24E03A10DA7C6100E9C588 /* ofxiPhoneImagePicker.mm */,
+				BB24E03B10DA7C6100E9C588 /* ofxiPhoneKeyboard.h */,
+				BB24E03C10DA7C6100E9C588 /* ofxiPhoneKeyboard.mm */,
+				BB24E03D10DA7C6100E9C588 /* ofxiPhoneMapKit.h */,
+				BB24E03E10DA7C6100E9C588 /* ofxiPhoneMapKit.mm */,
+				BB24E03F10DA7C6100E9C588 /* ofxiPhoneMapKitDelegate.h */,
+				BB24E04010DA7C6100E9C588 /* ofxiPhoneMapKitDelegate.mm */,
+				BB24E04110DA7C6100E9C588 /* ofxiPhoneMapKitListener.h */,
+				BB24E04210DA7C6100E9C588 /* ofxiPhoneSoundPlayer.mm */,
+				BB24E04310DA7C6100E9C588 /* ofxiPhoneSoundStream.mm */,
+			);
+			path = src;
+			sourceTree = "<group>";
+		};
+		BB24E04410DA7C6100E9C588 /* ofxMultiTouch */ = {
+			isa = PBXGroup;
+			children = (
+				BB24E04510DA7C6100E9C588 /* changelog.txt */,
+				BB24E04610DA7C6100E9C588 /* install.xml */,
+				BB24E04710DA7C6100E9C588 /* LICENSE.txt */,
+				BB24E04810DA7C6100E9C588 /* src */,
+			);
+			name = ofxMultiTouch;
+			path = ../../../../addons/ofxMultiTouch;
+			sourceTree = SOURCE_ROOT;
+		};
+		BB24E04810DA7C6100E9C588 /* src */ = {
+			isa = PBXGroup;
+			children = (
+				BB24E04910DA7C6100E9C588 /* ofxMultiTouch.cpp */,
+				BB24E04A10DA7C6100E9C588 /* ofxMultiTouch.h */,
+				BB24E04B10DA7C6100E9C588 /* ofxMultiTouchListener.h */,
+			);
+			path = src;
+			sourceTree = "<group>";
+		};
+		BB3F144E0F4C6BF200A33527 /* core libraries */ = {
+			isa = PBXGroup;
+			children = (
+				BB24DF7810DA7C1B00E9C588 /* FreeImage */,
+				BB24DF8810DA7C1B00E9C588 /* freetype */,
+				BB24DFCA10DA7C1B00E9C588 /* glu */,
+			);
+			name = "core libraries";
+			sourceTree = "<group>";
+		};
+		BBE5E94E0F497BD800F28951 /* core */ = {
+			isa = PBXGroup;
+			children = (
+				BB3F144E0F4C6BF200A33527 /* core libraries */,
+				29B97323FDCFA39411CA2CEA /* core frameworks */,
+			);
+			name = core;
+			sourceTree = "<group>";
+		};
+		DA7852091105C1BF007EFC90 /* include_iphone */ = {
+			isa = PBXGroup;
+			children = (
+				DA78520A1105C1BF007EFC90 /* glu.h */,
+				DA78520B1105C1BF007EFC90 /* gluos.h */,
+			);
+			path = include_iphone;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		BB24DE5D10DA7A3F00E9C588 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BB24E0C410DA9F4200E9C588 /* ofxiPhoneKeyboard.h in Headers */,
+				BB24E0C510DA9F4300E9C588 /* ofxiPhoneAppDelegate.h in Headers */,
+				BB24E0C610DA9F4400E9C588 /* ofxiPhoneImagePicker.h in Headers */,
+				BB24E0C710DA9F4400E9C588 /* ofxMultiTouchListener.h in Headers */,
+				BB24E0C910DA9F4600E9C588 /* ofxiPhoneCoreLocation.h in Headers */,
+				BB24E0CA10DA9F4600E9C588 /* ofxiPhoneAlertsListener.h in Headers */,
+				BB24E0CB10DA9F4700E9C588 /* ofxiPhoneMapKit.h in Headers */,
+				BB24E0CE10DA9F4900E9C588 /* ofxiPhoneApp.h in Headers */,
+				BB24E0CF10DA9F4C00E9C588 /* ofxiPhoneMapKitDelegate.h in Headers */,
+				BB24E0D010DA9F4C00E9C588 /* ofxiPhoneAlerts.h in Headers */,
+				BB24E0D710DA9F5100E9C588 /* ofxiPhone.h in Headers */,
+				BB24E0D810DA9F5200E9C588 /* ofAppiPhoneWindow.h in Headers */,
+				BB24E0DA10DA9F5500E9C588 /* ofxiPhoneExtras.h in Headers */,
+				BB24E0DC10DA9F5700E9C588 /* ofxAccelerometer.h in Headers */,
+				BB24E0DE10DA9F5800E9C588 /* ofxMultiTouch.h in Headers */,
+				BB24E0DF10DA9F5900E9C588 /* MSARootViewController.h in Headers */,
+				BB24E0E110DA9F5C00E9C588 /* EAGLView.h in Headers */,
+				BB24E0E210DA9F5C00E9C588 /* ofxiPhoneMapKitListener.h in Headers */,
+				BB24E0E410DA9F6000E9C588 /* ofEventUtils.h in Headers */,
+				BB24E0E510DA9F6100E9C588 /* ofEvents.h in Headers */,
+				BB24E0E610DA9F6200E9C588 /* ofNoise.h in Headers */,
+				BB24E0E710DA9F6300E9C588 /* ofTrueTypeFont.h in Headers */,
+				BB24E0E910DA9F6300E9C588 /* ofAppBaseWindow.h in Headers */,
+				BB24E0EB10DA9F6400E9C588 /* ofTexture.h in Headers */,
+				BB24E0ED10DA9F6400E9C588 /* ofImage.h in Headers */,
+				BB24E0EE10DA9F6400E9C588 /* ofAppRunner.h in Headers */,
+				BB24E0EF10DA9F6500E9C588 /* ofMain.h in Headers */,
+				BB24E0F010DA9F6500E9C588 /* ofGraphics.h in Headers */,
+				BB24E0F110DA9F6500E9C588 /* ofTypes.h in Headers */,
+				BB24E0F210DA9F6500E9C588 /* ofUtils.h in Headers */,
+				BB24E0F510DA9F6700E9C588 /* ofMath.h in Headers */,
+				BB24E0F810DA9F6800E9C588 /* ofBaseApp.h in Headers */,
+				BB24E0F910DA9F6900E9C588 /* ofConstants.h in Headers */,
+				BB24E0FA10DA9F6A00E9C588 /* ofSoundStream.h in Headers */,
+				BB24E0FB10DA9F6A00E9C588 /* ofSoundPlayer.h in Headers */,
+				BB24E0FC10DA9F7700E9C588 /* ftotval.h in Headers */,
+				BB24E0FD10DA9F7700E9C588 /* t1tables.h in Headers */,
+				BB24E0FE10DA9F7700E9C588 /* ftlist.h in Headers */,
+				BB24E0FF10DA9F7700E9C588 /* ftsynth.h in Headers */,
+				BB24E10010DA9F7800E9C588 /* ftimage.h in Headers */,
+				BB24E10110DA9F7800E9C588 /* ftgxval.h in Headers */,
+				BB24E10210DA9F7800E9C588 /* ftsystem.h in Headers */,
+				BB24E10310DA9F7800E9C588 /* ftcache.h in Headers */,
+				BB24E10410DA9F7800E9C588 /* tttables.h in Headers */,
+				BB24E10510DA9F7800E9C588 /* ttnameid.h in Headers */,
+				BB24E10610DA9F7900E9C588 /* ftrender.h in Headers */,
+				BB24E10710DA9F7900E9C588 /* ftoutln.h in Headers */,
+				BB24E10810DA9F7900E9C588 /* ftlcdfil.h in Headers */,
+				BB24E10910DA9F7900E9C588 /* ftbitmap.h in Headers */,
+				BB24E10A10DA9F7A00E9C588 /* FreeImage.h in Headers */,
+				BB24E10B10DA9F7A00E9C588 /* ftsizes.h in Headers */,
+				BB24E10C10DA9F7A00E9C588 /* ftpfr.h in Headers */,
+				BB24E10D10DA9F7A00E9C588 /* fttypes.h in Headers */,
+				BB24E10F10DA9F7B00E9C588 /* ftoption.h in Headers */,
+				BB24E11010DA9F7B00E9C588 /* fterrors.h in Headers */,
+				BB24E11110DA9F7B00E9C588 /* ftchapters.h in Headers */,
+				BB24E11210DA9F7B00E9C588 /* ftwinfnt.h in Headers */,
+				BB24E11310DA9F7B00E9C588 /* ftsnames.h in Headers */,
+				BB24E11410DA9F7C00E9C588 /* ftmodapi.h in Headers */,
+				BB24E11510DA9F7C00E9C588 /* ftstdlib.h in Headers */,
+				BB24E11610DA9F7C00E9C588 /* ftxf86.h in Headers */,
+				BB24E11710DA9F7C00E9C588 /* ftbdf.h in Headers */,
+				BB24E11810DA9F7D00E9C588 /* ftlzw.h in Headers */,
+				BB24E11910DA9F7D00E9C588 /* ftgzip.h in Headers */,
+				BB24E11A10DA9F7D00E9C588 /* ftmodule.h in Headers */,
+				BB24E11B10DA9F7D00E9C588 /* ftgasp.h in Headers */,
+				BB24E11C10DA9F7D00E9C588 /* ftheader.h in Headers */,
+				BB24E11D10DA9F7E00E9C588 /* ftbbox.h in Headers */,
+				BB24E11E10DA9F7F00E9C588 /* ftmac.h in Headers */,
+				BB24E11F10DA9F7F00E9C588 /* freetype.h in Headers */,
+				BB24E12010DA9F7F00E9C588 /* ttunpat.h in Headers */,
+				BB24E12210DA9F8000E9C588 /* ftmm.h in Headers */,
+				BB24E12310DA9F8100E9C588 /* ftconfig.h in Headers */,
+				BB24E12410DA9F8100E9C588 /* fterrdef.h in Headers */,
+				BB24E12510DA9F8100E9C588 /* tttags.h in Headers */,
+				BB24E12610DA9F8200E9C588 /* ftmoderr.h in Headers */,
+				BB24E12710DA9F8400E9C588 /* ftglyph.h in Headers */,
+				BB24E12810DA9F8400E9C588 /* ftstroke.h in Headers */,
+				BB24E12910DA9F8400E9C588 /* fttrigon.h in Headers */,
+				BB24E12A10DA9F8400E9C588 /* ft2build.h in Headers */,
+				BB24E12B10DA9F8400E9C588 /* ftincrem.h in Headers */,
+				DA78520C1105C1BF007EFC90 /* glu.h in Headers */,
+				DA78520D1105C1BF007EFC90 /* gluos.h in Headers */,
+				92BFCD071128AC3E0081DD61 /* ofBitmapFont.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		BB24DE5C10DA7A3F00E9C588 /* iPhone+OF Static Library */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = BB24DED210DA7A3F00E9C588 /* Build configuration list for PBXNativeTarget "iPhone+OF Static Library" */;
+			buildPhases = (
+				BB24DE5D10DA7A3F00E9C588 /* Headers */,
+				BB24DEB110DA7A3F00E9C588 /* Sources */,
+				BB24DEC910DA7A3F00E9C588 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "iPhone+OF Static Library";
+			productName = "Static Library";
+			productReference = BB24DED610DA7A3F00E9C588 /* libofxiPhoneOFLib_iphoneos _Debug.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		29B97313FDCFA39411CA2CEA /* Project object */ = {
+			isa = PBXProject;
+			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "iPhone+OF Lib" */;
+			compatibilityVersion = "Xcode 3.1";
+			hasScannedForEncodings = 1;
+			mainGroup = 29B97314FDCFA39411CA2CEA /* CustomTemplate */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				BB24DE5C10DA7A3F00E9C588 /* iPhone+OF Static Library */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		BB24DEB110DA7A3F00E9C588 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BB24E0C210DA9F4100E9C588 /* ofxiPhoneSoundPlayer.mm in Sources */,
+				BB24E0C310DA9F4200E9C588 /* ofxMultiTouch.cpp in Sources */,
+				BB24E0C810DA9F4500E9C588 /* ofxiPhoneMapKit.mm in Sources */,
+				BB24E0CC10DA9F4800E9C588 /* ofxiPhoneExtras.mm in Sources */,
+				BB24E0CD10DA9F4800E9C588 /* ofxAccelerometer.cpp in Sources */,
+				BB24E0D110DA9F4D00E9C588 /* ofAppiPhoneWindow.mm in Sources */,
+				BB24E0D210DA9F4D00E9C588 /* ofxiPhoneImagePicker.mm in Sources */,
+				BB24E0D310DA9F4E00E9C588 /* ofxiPhoneSoundStream.mm in Sources */,
+				BB24E0D410DA9F4F00E9C588 /* ofxiPhoneKeyboard.mm in Sources */,
+				BB24E0D510DA9F4F00E9C588 /* EAGLView.mm in Sources */,
+				BB24E0D610DA9F5000E9C588 /* ofxiPhoneCoreLocation.mm in Sources */,
+				BB24E0D910DA9F5400E9C588 /* ofxiPhoneMapKitDelegate.mm in Sources */,
+				BB24E0DB10DA9F5600E9C588 /* ofxiPhoneAppDelegate.mm in Sources */,
+				BB24E0DD10DA9F5800E9C588 /* ofxiPhoneAccelerometer.mm in Sources */,
+				BB24E0E010DA9F5B00E9C588 /* MSARootViewController.mm in Sources */,
+				BB24E0E310DA9F5D00E9C588 /* ofxiPhoneAlerts.mm in Sources */,
+				BB24E0E810DA9F6300E9C588 /* ofAppRunner.cpp in Sources */,
+				BB24E0EA10DA9F6400E9C588 /* ofTrueTypeFont.cpp in Sources */,
+				BB24E0EC10DA9F6400E9C588 /* ofMath.cpp in Sources */,
+				BB24E0F310DA9F6600E9C588 /* ofUtils.cpp in Sources */,
+				BB24E0F410DA9F6600E9C588 /* ofGraphics.cpp in Sources */,
+				BB24E0F610DA9F6700E9C588 /* ofImage.cpp in Sources */,
+				BB24E0F710DA9F6800E9C588 /* ofTexture.cpp in Sources */,
+				92BFCD081128AC3E0081DD61 /* ofBitmapFont.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		BB24DED310DA7A3F00E9C588 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/../../lib/iphone/";
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				HEADER_SEARCH_PATHS = (
+					../../../poco/include,
+					../../../../libs/freetype/include/,
+					../../../../libs/freetype/include/freetype2,
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\\\"$(SRCROOT)/../../../libs/glu/lib/iphone\\\"",
+					"\"$(DEVELOPER_DIR)/openFrameworks/libs/poco/lib/linux\"",
+					"\"$(DEVELOPER_DIR)/openFrameworks/libs/poco/lib/linux64\"",
+					"\"$(DEVELOPER_DIR)/openFrameworks/libs/poco/lib/osx\"",
+					"\"$(DEVELOPER_DIR)/openFrameworks/libs/poco/lib/vs2008\"",
+					"\"$(DEVELOPER_DIR)/openFrameworks/libs/poco/lib/win_cb\"",
+					"\"$(DEVELOPER_DIR)/openFrameworks/libs/poco/lib/armv6\"",
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = "ofxiPhoneOFLib_${PLATFORM_NAME} _Debug";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
+				SDKROOT = iphoneos2.2.1;
+				SYMROOT = build;
+			};
+			name = Debug;
+		};
+		BB24DED410DA7A3F00E9C588 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/../../lib/iphone/";
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				HEADER_SEARCH_PATHS = (
+					../../../poco/include,
+					../../../../libs/freetype/include/,
+					../../../../libs/freetype/include/freetype2,
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\\\"$(SRCROOT)/../../../libs/glu/lib/iphone\\\"",
+					"\"$(DEVELOPER_DIR)/openFrameworks/libs/poco/lib/linux\"",
+					"\"$(DEVELOPER_DIR)/openFrameworks/libs/poco/lib/linux64\"",
+					"\"$(DEVELOPER_DIR)/openFrameworks/libs/poco/lib/osx\"",
+					"\"$(DEVELOPER_DIR)/openFrameworks/libs/poco/lib/vs2008\"",
+					"\"$(DEVELOPER_DIR)/openFrameworks/libs/poco/lib/win_cb\"",
+					"\"$(DEVELOPER_DIR)/openFrameworks/libs/poco/lib/armv6\"",
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = "ofxiPhoneOFLib_${PLATFORM_NAME} _Release";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
+				SDKROOT = iphoneos2.2.1;
+				SYMROOT = build;
+				ZERO_LINK = NO;
+			};
+			name = Release;
+		};
+		BB24DED510DA7A3F00E9C588 /* Distribution */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
+				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/../../lib/iphone/";
+				HEADER_SEARCH_PATHS = (
+					../../../poco/include,
+					../../../../libs/freetype/include/,
+					../../../../libs/freetype/include/freetype2,
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\\\"$(SRCROOT)/../../../libs/glu/lib/iphone\\\"",
+					"\"$(DEVELOPER_DIR)/openFrameworks/libs/poco/lib/linux\"",
+					"\"$(DEVELOPER_DIR)/openFrameworks/libs/poco/lib/linux64\"",
+					"\"$(DEVELOPER_DIR)/openFrameworks/libs/poco/lib/osx\"",
+					"\"$(DEVELOPER_DIR)/openFrameworks/libs/poco/lib/vs2008\"",
+					"\"$(DEVELOPER_DIR)/openFrameworks/libs/poco/lib/win_cb\"",
+					"\"$(DEVELOPER_DIR)/openFrameworks/libs/poco/lib/armv6\"",
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = "ofxiPhoneOFLib_${PLATFORM_NAME} _Distribution";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
+				SDKROOT = iphoneos2.2.1;
+				SYMROOT = build;
+			};
+			name = Distribution;
+		};
+		BBD1C20A0F391092007FCFB3 /* Distribution */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: MSA Visuals Ltd";
+				GCC_C_LANGUAGE_STANDARD = c99;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = ../../../poco/include;
+				PREBINDING = NO;
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "CBB7D4DA-CBD7-4672-8C35-CB67CB1FEC3A";
+				SDKROOT = iphoneos2.2.1;
+			};
+			name = Distribution;
+		};
+		C01FCF4F08A954540054247B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Mehmet Akten";
+				GCC_C_LANGUAGE_STANDARD = c99;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = ../../../poco/include;
+				ONLY_ACTIVE_ARCH = YES;
+				OTHER_LDFLAGS = "";
+				PREBINDING = NO;
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "B2B6A4F8-E7E4-4A49-84A2-821B26E52F18";
+				SDKROOT = iphoneos3.0;
+				WARNING_LDFLAGS = "-w";
+			};
+			name = Debug;
+		};
+		C01FCF5008A954540054247B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Mehmet Akten";
+				GCC_C_LANGUAGE_STANDARD = c99;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = ../../../poco/include;
+				PREBINDING = NO;
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "B2B6A4F8-E7E4-4A49-84A2-821B26E52F18";
+				SDKROOT = iphoneos2.2.1;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		BB24DED210DA7A3F00E9C588 /* Build configuration list for PBXNativeTarget "iPhone+OF Static Library" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				BB24DED310DA7A3F00E9C588 /* Debug */,
+				BB24DED410DA7A3F00E9C588 /* Release */,
+				BB24DED510DA7A3F00E9C588 /* Distribution */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C01FCF4E08A954540054247B /* Build configuration list for PBXProject "iPhone+OF Lib" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C01FCF4F08A954540054247B /* Debug */,
+				C01FCF5008A954540054247B /* Release */,
+				BBD1C20A0F391092007FCFB3 /* Distribution */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 29B97313FDCFA39411CA2CEA /* Project object */;
+}
