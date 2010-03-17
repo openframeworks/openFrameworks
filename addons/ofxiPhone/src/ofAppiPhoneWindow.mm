@@ -160,7 +160,7 @@ float ofAppiPhoneWindow::getFrameRate() {
 
 /******** Other stuff ************/
 void ofAppiPhoneWindow::setFrameRate(float targetRate) {
-	[iPhoneGetAppDelegate() setFrameRate:targetRate];
+	[ofxiPhoneGetAppDelegate() setFrameRate:targetRate];
 }
 
 int	ofAppiPhoneWindow::getFrameNum() {
@@ -260,7 +260,7 @@ void ofAppiPhoneWindow::timerLoop() {
 		ofNotifyEvent( ofEvents.update, voidEventArgs);
 	#endif
 	
-	[iPhoneGetAppDelegate() lockGL];
+	[ofxiPhoneGetAppDelegate() lockGL];
 
 	// this could be taken out and included in ofAppBaseWIndow
 	if(orientation == OFXIPHONE_ORIENTATION_PORTRAIT || orientation == OFXIPHONE_ORIENTATION_UPSIDEDOWN)
@@ -336,9 +336,9 @@ void ofAppiPhoneWindow::timerLoop() {
 		ofNotifyEvent( ofEvents.draw, voidEventArgs );
 	#endif
 	
-	[iPhoneGetGLView() swapBuffers];
+	[ofxiPhoneGetGLView() swapBuffers];
 	
-	[iPhoneGetAppDelegate() unlockGL];
+	[ofxiPhoneGetAppDelegate() unlockGL];
 
 	
 	

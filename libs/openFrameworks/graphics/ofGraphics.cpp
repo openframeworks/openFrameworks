@@ -661,20 +661,26 @@ void ofDrawBitmapString(string textString, float x, float y){
 	float yOffset = 0;
 	float fontSize = 8.0f;
 	bool bOrigin = false;
+	
+	float sx = x;
+	float sy = y - fontSize;
+	
 	for(int c = 0; c < len; c++)
 	{
 		if(textString[c] == '\n')
 		{
 			
-			yOffset += bOrigin ? -1 : 1 * (fontSize*1.7);
-			x = 0;
+			sy += bOrigin ? -1 : 1 * (fontSize*1.7);
+			sx = x;
 			
 			//glRasterPos2f(x,y + (int)yOffset);
 		} else if (textString[c] >= 32){
 			// < 32 = control characters - don't draw
 			// solves a bug with control characters
 			// getting drawn when they ought to not be
-			ofDrawBitmapCharacter(textString[c], x + (c * 8), y + (int)yOffset);
+			ofDrawBitmapCharacter(textString[c], (int)sx, (int)sy);
+			
+			sx += fontSize;
 		}
 	}
 	

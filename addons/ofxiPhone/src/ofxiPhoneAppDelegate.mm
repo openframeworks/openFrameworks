@@ -225,7 +225,7 @@
 	if(!loopInThreadIsEnabled) {
 		[timer release];		// THREAD MOD
 	}
-    [iPhoneGetUIWindow() release];
+    [ofxiPhoneGetUIWindow() release];
 	[glLock release];
     [super dealloc];
 }

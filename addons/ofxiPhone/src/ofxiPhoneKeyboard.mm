@@ -161,7 +161,7 @@ bool ofxiPhoneKeyboard::isKeyboardShowing()
 	{			
 		_textField = [[UITextField alloc] initWithFrame:CGRectMake(0, 0, w, h)];
 		
-		switch (iPhoneGetOrientation()) 
+		switch (ofxiPhoneGetOrientation()) 
 		{
 			case OFXIPHONE_ORIENTATION_LANDSCAPE_LEFT:
 				_textField.transform = CGAffineTransformMakeRotation(-M_PI_2);
@@ -209,7 +209,7 @@ bool ofxiPhoneKeyboard::isKeyboardShowing()
 //--------------------------------------------------------------
 - (void) showText
 {
-	[iPhoneGetUIWindow() addSubview:_textField];
+	[ofxiPhoneGetUIWindow() addSubview:_textField];
 }
 
 //--------------------------------------------------------------
@@ -266,7 +266,7 @@ bool ofxiPhoneKeyboard::isKeyboardShowing()
 //--------------------------------------------------------------
 - (void) setFrame: (CGRect) rect
 {
-	switch (iPhoneGetOrientation()) 
+	switch (ofxiPhoneGetOrientation()) 
 	{
 		case OFXIPHONE_ORIENTATION_LANDSCAPE_LEFT:
 			[_textField setFrame: CGRectMake(rect.origin.y-rect.size.height, 480-rect.size.width-rect.origin.x, rect.size.height, rect.size.width)];
