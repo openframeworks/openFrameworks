@@ -52,7 +52,7 @@ void ofxiPhoneMapKit::open() {
 		mapView	= [[MKMapView alloc] initWithFrame:CGRectMake(0, 0, ofGetWidth(), ofGetHeight())];
 		mapView.delegate	= NULL;
 	}
-	[iPhoneGetUIWindow() addSubview:mapView];
+	[ofxiPhoneGetUIWindow() addSubview:mapView];
 }
 
 

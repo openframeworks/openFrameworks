@@ -150,11 +150,11 @@ CGRect scrollFrame;
 			[UIView setAnimationTransition:UIViewAnimationTransitionCurlDown forView:iPhoneGetUIWindow() cache:YES];
 			[UIView setAnimationCurve: ANIMATION_CURVE];
 			[self viewWillAppear:YES];
-			[iPhoneGetUIWindow() addSubview:self.view];
+			[ofxiPhoneGetUIWindow() addSubview:self.view];
 			[self viewDidAppear:YES];
 			[UIView commitAnimations];
 		} else {
-			[iPhoneGetUIWindow() addSubview:self.view];
+			[ofxiPhoneGetUIWindow() addSubview:self.view];
 		}
 
 		activityIndicator.hidesWhenStopped = YES;

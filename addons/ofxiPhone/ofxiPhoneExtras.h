@@ -73,64 +73,64 @@ enum ofxiPhoneDeviceType {
 #define OFXIPHONE_ORIENTATION_LANDSCAPE_LEFT	UIDeviceOrientationLandscapeLeft
 
 // whether device has audio in
-bool iPhoneHasAudioIn();
+bool ofxiPhoneHasAudioIn();
 
 
 // returns normalized (0...1) Average and Peak audio levels on mic
-float iPhoneGetMicAverageLevel();
+float ofxiPhoneGetMicAverageLevel();
 //float iPhoneGetMicPeakLevel();
 
 // return device type
-ofxiPhoneDeviceType	iPhoneGetDeviceType();
+ofxiPhoneDeviceType	ofxiPhoneGetDeviceType();
 
 // return device revision
-string iPhoneGetDeviceRevision();
+string ofxiPhoneGetDeviceRevision();
 
 // return application key UIWindow
-UIWindow *iPhoneGetUIWindow();
+UIWindow *ofxiPhoneGetUIWindow();
 
 // return openglview
-EAGLView *iPhoneGetGLView();
+EAGLView *ofxiPhoneGetGLView();
 
 // return OpenFrameworks iPhone Window
-ofAppiPhoneWindow* iPhoneGetOFWindow();
+ofAppiPhoneWindow* ofxiPhoneGetOFWindow();
 
 // return application delegate
-ofxiPhoneAppDelegate *iPhoneGetAppDelegate();
+ofxiPhoneAppDelegate *ofxiPhoneGetAppDelegate();
 
 
 // brings the OpenGL view to the front of any other UIViews
 // the OpenGL view will receive touchXXXXX events, but other UIViews will not
 // disable OpenGL user interaction (iPhoneSetGLViewUserInteraction) to allow UIViews to receive touch events
-void iPhoneSendGLViewToFront();
+void ofxiPhoneSendGLViewToFront();
 
 
 // send OpenGL view to back of any other UIViews
 // the OpenGL view will not receive touchXXX events if the other UIViews have userInteraction enabled
-void iPhoneSendGLViewToBack();
+void ofxiPhoneSendGLViewToBack();
 
 
 // make the background of the opengl view transparent or not
 // useful to make OpenGL View transparent if it's in front of other UIViews (see iPhoneSendGLViewToBack)
-void iPhoneSetGLViewTransparent(bool b);
+void ofxiPhoneSetGLViewTransparent(bool b);
 
 
 // enable or disable User interaction in OpenGL View
 // if disabled, touchXXXX events will not be called, but UIViews behind the OpenGL view will receive touch events
-void iPhoneSetGLViewUserInteraction(bool b);
+void ofxiPhoneSetGLViewUserInteraction(bool b);
 
 
 // enable or disable the iPhone idle timer
 // (screen dims and goes off after x amount of inactivity)
-void iPhoneDisableIdleTimer();
-void iPhoneEnableIdleTimer();
+void ofxiPhoneDisableIdleTimer();
+void ofxiPhoneEnableIdleTimer();
 
 
 // lock/unlock the opengl context to allow sharing between threads
 // (you'll also need to use a sharegroup)
 // http://developer.apple.com/iphone/library/documentation/3DDrawing/Conceptual/OpenGLES_ProgrammingGuide/WorkingwithEAGLContexts/WorkingwithEAGLContexts.html#//apple_ref/doc/uid/TP40008793-CH103-SW12
-void iPhoneLockGLContext();
-void iPhoneUnlockGLContext();
+void ofxiPhoneLockGLContext();
+void ofxiPhoneUnlockGLContext();
 
 
 
@@ -138,12 +138,12 @@ void iPhoneUnlockGLContext();
 // call this once in testApp::setup() to run the update+draw in a separate NSThread instead of NSTimer
 // MUST be called before ofSetFrameRate(xx);
 // disabled by default
-void iPhoneEnableLoopInThread();
+void ofxiPhoneEnableLoopInThread();
 
 
 // set orientation of device (affects statusbar, opengl viewport, touch positions)
-void iPhoneSetOrientation(UIDeviceOrientation orientation);
-UIDeviceOrientation iPhoneGetOrientation();
+void ofxiPhoneSetOrientation(UIDeviceOrientation orientation);
+UIDeviceOrientation ofxiPhoneGetOrientation();
 
 
 //void iPhoneEnableMultitouch();
@@ -152,12 +152,12 @@ UIDeviceOrientation iPhoneGetOrientation();
 // load an image from the app bundle into a texture
 // NOTE: renamed this function to something more clearer
 // WAS: void iPhoneLoadImageFromBundle(NSString *filename, GLuint *spriteTexture);
-bool iPhoneBundleImageToGLTexture(NSString *filename, GLuint *spriteTexture);
+bool ofxiPhoneBundleImageToGLTexture(NSString *filename, GLuint *spriteTexture);
 
 // load an image from UIImage into an opengl texture
 // NOTE: renamed this function to something more clearer
 // WAS: void iPhoneLoadImageFromUIImage(UIImage *uiImage, GLuint *spriteTexture);
-bool iPhoneUIImageToGLTexture(UIImage *uiImage, GLuint *spriteTexture);
+bool ofxiPhoneUIImageToGLTexture(UIImage *uiImage, GLuint *spriteTexture);
 
 
 // create an ofImage out of a UIImage
@@ -165,12 +165,12 @@ bool iPhoneUIImageToGLTexture(UIImage *uiImage, GLuint *spriteTexture);
 // targetWidth, targetHeight are target dimensions (UIImage is resized to this size and ofImage is created)
 // .... omit targetWidth & targetHeight to use original image dimensions and not resize
 // TODO: take into consideration UI image orentation
-bool iPhoneUIImageToOFImage(UIImage *uiImage, ofImage &outImage, int targetWidth = 0, int targetHeight = 0);
+bool ofxiPhoneUIImageToOFImage(UIImage *uiImage, ofImage &outImage, int targetWidth = 0, int targetHeight = 0);
 
 
 // save current opengl screen to photos app
 // based on code from http://www.bit-101.com/blog/?p=1861
-void iPhoneScreenGrab(id delegate);
+void ofxiPhoneScreenGrab(id delegate);
 
 
 // utility fuctions for converting strings and NSStrings back and forth
@@ -179,3 +179,31 @@ NSString * ofxStringToNSString(string s);
 
 // It returns the path to the folder which your app has read/write access to.
 string ofxiPhoneGetDocumentsDirectory();
+
+//-------------------------------------------------------------------------------
+// backwards compatibility
+//
+
+#define iPhoneHasAudioIn ofxiPhoneHasAudioIn
+#define iPhoneGetMicAverageLevel ofxiPhoneGetMicAverageLevel
+#define iPhoneGetDeviceType ofxiPhoneGetDeviceType
+#define iPhoneGetDeviceRevision ofxiPhoneGetDeviceRevision
+#define iPhoneGetUIWindow ofxiPhoneGetUIWindow
+#define iPhoneGetGLView ofxiPhoneGetGLView
+#define iPhoneGetOFWindow ofxiPhoneGetOFWindow
+#define iPhoneGetAppDelegate ofxiPhoneGetAppDelegate
+#define iPhoneSendGLViewToFront ofxiPhoneSendGLViewToFront
+#define iPhoneSendGLViewToBack ofxiPhoneSendGLViewToBack
+#define iPhoneSetGLViewTransparent ofxiPhoneSetGLViewTransparent
+#define iPhoneSetGLViewUserInteraction ofxiPhoneSetGLViewUserInteraction
+#define iPhoneDisableIdleTimer ofxiPhoneDisableIdleTimer
+#define iPhoneEnableIdleTimer ofxiPhoneEnableIdleTimer
+#define iPhoneLockGLContext ofxiPhoneLockGLContext
+#define iPhoneUnlockGLContext ofxiPhoneUnlockGLContext
+#define iPhoneEnableLoopInThread ofxiPhoneEnableLoopInThread
+#define iPhoneSetOrientation ofxiPhoneSetOrientation
+#define iPhoneGetOrientation ofxiPhoneGetOrientation
+#define iPhoneBundleImageToGLTexture ofxiPhoneBundleImageToGLTexture 
+#define iPhoneUIImageToGLTexture ofxiPhoneUIImageToGLTexture
+#define iPhoneUIImageToOFImage ofxiPhoneUIImageToOFImage
+#define iPhoneScreenGrab ofxiPhoneScreenGrab
