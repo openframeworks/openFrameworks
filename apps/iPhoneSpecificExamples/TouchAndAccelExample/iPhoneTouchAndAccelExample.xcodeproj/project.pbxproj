@@ -33,10 +33,8 @@
 		BB24DE3D10DA785000E9C588 /* libGLU_arm.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BB24DE2810DA785000E9C588 /* libGLU_arm.a */; };
 		BB24E23510DAA8AD00E9C588 /* libofxiPhoneOFLib_iphoneos _Debug.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BB24E23410DAA8A700E9C588 /* libofxiPhoneOFLib_iphoneos _Debug.a */; };
 		BBE5EAB80F49AD8400F28951 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BBE5EAB70F49AD8400F28951 /* AudioToolbox.framework */; };
-		E4CC6F10115008230013E1D3 /* Batang.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E4CC6F0E115008230013E1D3 /* Batang.ttf */; };
-		E4CC6F11115008230013E1D3 /* cooperBlack.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E4CC6F0F115008230013E1D3 /* cooperBlack.ttf */; };
-		E4D892F6115279BF007E1F53 /* main.mm in Sources */ = {isa = PBXBuildFile; fileRef = E4D892F3115279BF007E1F53 /* main.mm */; };
-		E4D892F7115279BF007E1F53 /* testApp.mm in Sources */ = {isa = PBXBuildFile; fileRef = E4D892F5115279BF007E1F53 /* testApp.mm */; };
+		E4D894A411528BAF007E1F53 /* main.mm in Sources */ = {isa = PBXBuildFile; fileRef = E4D894A111528BAF007E1F53 /* main.mm */; };
+		E4D894A511528BAF007E1F53 /* testApp.mm in Sources */ = {isa = PBXBuildFile; fileRef = E4D894A311528BAF007E1F53 /* testApp.mm */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -58,7 +56,7 @@
 
 /* Begin PBXFileReference section */
 		1D30AB110D05D00D00671497 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
-		1D6058910D05DD3D006BFB54 /* fontShapesExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = fontShapesExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		1D6058910D05DD3D006BFB54 /* touchAndAccel.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = touchAndAccel.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1DF5F4DF0D08C38300B7A737 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		288765FC0DF74451002DB57D /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		32CA4F630368D1EE00C91783 /* iPhone_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iPhone_Prefix.pch; sourceTree = "<group>"; };
@@ -133,11 +131,10 @@
 		BBE5EAB70F49AD8400F28951 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		DA7851271105C039007EFC90 /* glu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = glu.h; sourceTree = "<group>"; };
 		DA7851281105C039007EFC90 /* gluos.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gluos.h; sourceTree = "<group>"; };
-		E4CC6F0E115008230013E1D3 /* Batang.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = Batang.ttf; path = bin/data/Batang.ttf; sourceTree = SOURCE_ROOT; };
-		E4CC6F0F115008230013E1D3 /* cooperBlack.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = cooperBlack.ttf; path = bin/data/cooperBlack.ttf; sourceTree = SOURCE_ROOT; };
-		E4D892F3115279BF007E1F53 /* main.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = main.mm; path = src/main.mm; sourceTree = SOURCE_ROOT; };
-		E4D892F4115279BF007E1F53 /* testApp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = testApp.h; path = src/testApp.h; sourceTree = SOURCE_ROOT; };
-		E4D892F5115279BF007E1F53 /* testApp.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = testApp.mm; path = src/testApp.mm; sourceTree = SOURCE_ROOT; };
+		E4D894A011528BAF007E1F53 /* Ball.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Ball.h; path = src/Ball.h; sourceTree = SOURCE_ROOT; };
+		E4D894A111528BAF007E1F53 /* main.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = main.mm; path = src/main.mm; sourceTree = SOURCE_ROOT; };
+		E4D894A211528BAF007E1F53 /* testApp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = testApp.h; path = src/testApp.h; sourceTree = SOURCE_ROOT; };
+		E4D894A311528BAF007E1F53 /* testApp.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = testApp.mm; path = src/testApp.mm; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -177,7 +174,7 @@
 		19C28FACFE9D520D11CA2CBB /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				1D6058910D05DD3D006BFB54 /* fontShapesExample.app */,
+				1D6058910D05DD3D006BFB54 /* touchAndAccel.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -186,7 +183,7 @@
 			isa = PBXGroup;
 			children = (
 				BB24DDC910DA781C00E9C588 /* ofxiphone-Info.plist */,
-				E4D892F2115279BF007E1F53 /* src */,
+				E4D8949F11528BAF007E1F53 /* src */,
 				BB24DD8B10DA77E000E9C588 /* data */,
 				BB24E1F710DAA51900E9C588 /* openFrameworks */,
 				BB16F26B0F2B646B00518274 /* addons */,
@@ -281,8 +278,6 @@
 		BB24DD8B10DA77E000E9C588 /* data */ = {
 			isa = PBXGroup;
 			children = (
-				E4CC6F0E115008230013E1D3 /* Batang.ttf */,
-				E4CC6F0F115008230013E1D3 /* cooperBlack.ttf */,
 				BB24DD8C10DA77E000E9C588 /* Default.png */,
 				BB24DD8D10DA77E000E9C588 /* Icon.png */,
 			);
@@ -499,12 +494,13 @@
 			path = include_iphone;
 			sourceTree = "<group>";
 		};
-		E4D892F2115279BF007E1F53 /* src */ = {
+		E4D8949F11528BAF007E1F53 /* src */ = {
 			isa = PBXGroup;
 			children = (
-				E4D892F3115279BF007E1F53 /* main.mm */,
-				E4D892F5115279BF007E1F53 /* testApp.mm */,
-				E4D892F4115279BF007E1F53 /* testApp.h */,
+				E4D894A111528BAF007E1F53 /* main.mm */,
+				E4D894A311528BAF007E1F53 /* testApp.mm */,
+				E4D894A211528BAF007E1F53 /* testApp.h */,
+				E4D894A011528BAF007E1F53 /* Ball.h */,
 			);
 			path = src;
 			sourceTree = SOURCE_ROOT;
@@ -512,9 +508,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		1D6058900D05DD3D006BFB54 /* fontShapesExample */ = {
+		1D6058900D05DD3D006BFB54 /* touchAndAccel */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 1D6058960D05DD3E006BFB54 /* Build configuration list for PBXNativeTarget "fontShapesExample" */;
+			buildConfigurationList = 1D6058960D05DD3E006BFB54 /* Build configuration list for PBXNativeTarget "touchAndAccel" */;
 			buildPhases = (
 				1D60588D0D05DD3D006BFB54 /* Resources */,
 				1D60588E0D05DD3D006BFB54 /* Sources */,
@@ -526,9 +522,9 @@
 			dependencies = (
 				BB24E23E10DAA93400E9C588 /* PBXTargetDependency */,
 			);
-			name = fontShapesExample;
+			name = touchAndAccel;
 			productName = iPhone;
-			productReference = 1D6058910D05DD3D006BFB54 /* fontShapesExample.app */;
+			productReference = 1D6058910D05DD3D006BFB54 /* touchAndAccel.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -536,7 +532,7 @@
 /* Begin PBXProject section */
 		29B97313FDCFA39411CA2CEA /* Project object */ = {
 			isa = PBXProject;
-			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "iPhoneFontShapesExample" */;
+			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "iPhoneTouchAndAccelExample" */;
 			compatibilityVersion = "Xcode 3.1";
 			hasScannedForEncodings = 1;
 			mainGroup = 29B97314FDCFA39411CA2CEA /* CustomTemplate */;
@@ -549,7 +545,7 @@
 			);
 			projectRoot = "";
 			targets = (
-				1D6058900D05DD3D006BFB54 /* fontShapesExample */,
+				1D6058900D05DD3D006BFB54 /* touchAndAccel */,
 			);
 		};
 /* End PBXProject section */
@@ -572,8 +568,6 @@
 				BB24DD8F10DA77E000E9C588 /* Default.png in Resources */,
 				BB24DD9010DA77E000E9C588 /* Icon.png in Resources */,
 				BB24DDCA10DA781C00E9C588 /* ofxiphone-Info.plist in Resources */,
-				E4CC6F10115008230013E1D3 /* Batang.ttf in Resources */,
-				E4CC6F11115008230013E1D3 /* cooperBlack.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -600,8 +594,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E4D892F6115279BF007E1F53 /* main.mm in Sources */,
-				E4D892F7115279BF007E1F53 /* testApp.mm in Sources */,
+				E4D894A411528BAF007E1F53 /* main.mm in Sources */,
+				E4D894A511528BAF007E1F53 /* testApp.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -837,7 +831,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		1D6058960D05DD3E006BFB54 /* Build configuration list for PBXNativeTarget "fontShapesExample" */ = {
+		1D6058960D05DD3E006BFB54 /* Build configuration list for PBXNativeTarget "touchAndAccel" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				1D6058940D05DD3E006BFB54 /* Debug */,
@@ -847,7 +841,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		C01FCF4E08A954540054247B /* Build configuration list for PBXProject "iPhoneFontShapesExample" */ = {
+		C01FCF4E08A954540054247B /* Build configuration list for PBXProject "iPhoneTouchAndAccelExample" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C01FCF4F08A954540054247B /* Debug */,

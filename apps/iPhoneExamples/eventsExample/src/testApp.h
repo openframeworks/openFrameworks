@@ -2,6 +2,7 @@
 
 #include "ofMain.h"
 #include "ofxiPhone.h"
+#include "ofxiPhoneExtras.h"
 
 class testApp : public ofxiPhoneApp {
 	
