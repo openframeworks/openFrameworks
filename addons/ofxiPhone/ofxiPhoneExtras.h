@@ -75,7 +75,6 @@ enum ofxiPhoneDeviceType {
 // whether device has audio in
 bool ofxiPhoneHasAudioIn();
 
-
 // returns normalized (0...1) Average and Peak audio levels on mic
 float ofxiPhoneGetMicAverageLevel();
 //float iPhoneGetMicPeakLevel();

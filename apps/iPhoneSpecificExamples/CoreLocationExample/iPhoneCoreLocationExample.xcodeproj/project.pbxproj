@@ -277,9 +277,9 @@
 		BB16F3A50F2B73B000518274 /* src */ = {
 			isa = PBXGroup;
 			children = (
+				921454DE11132B3C0052F895 /* main.mm */,
 				921454DD11132B3C0052F895 /* testApp.mm */,
 				BB16F3AA0F2B73B000518274 /* testApp.h */,
-				921454DE11132B3C0052F895 /* main.mm */,
 			);
 			path = src;
 			sourceTree = "<group>";

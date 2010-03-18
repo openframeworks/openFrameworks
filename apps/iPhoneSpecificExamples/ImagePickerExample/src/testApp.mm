@@ -27,7 +27,6 @@ void testApp::update()
 	if(camera->imageUpdated){
 		
 		// the pixels seem to be flipped, so let's unflip them: 
-		
 		if (cameraPixels == NULL){
 			// first time, let's get memory based on how big the image is: 
 			cameraPixels = new unsigned char [camera->width * camera->height*4];
