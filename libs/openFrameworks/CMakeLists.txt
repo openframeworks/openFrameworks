@@ -71,7 +71,7 @@ set (OFX_SOURCE_FILES
             app/ofAppRunner.cpp
             app/ofAppGlutWindow.cpp
             video/ofVideoPlayer.cpp
-            video/ofGstUtils.cpp
+            #video/ofGstUtils.cpp
             video/ofUCUtils.cpp
             video/ofVideoGrabber.cpp
             video/ofQtUtils.cpp
@@ -99,10 +99,15 @@ set (OFX_SOURCE_FILES
             video/ofVideoPlayer.h
             video/ofUCUtils.h
             video/ofQtUtils.h
-            video/ofGstUtils.h
+            #video/ofGstUtils.h
             video/ofVideoGrabber.h
 )
+if ( LINUX ) 
+set (OFX_SOURCE_FILES ${OFX_SOURCE_FILES}
+    video/ofGstUtils.cpp
+    video/ofGstUtils.h )
 
+endif ( LINUX )
 
 
 set(ofincludes       . 
