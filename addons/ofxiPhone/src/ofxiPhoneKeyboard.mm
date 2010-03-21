@@ -266,14 +266,17 @@ bool ofxiPhoneKeyboard::isKeyboardShowing()
 //--------------------------------------------------------------
 - (void) setFrame: (CGRect) rect
 {
+
+	CGSize s = [[[UIApplication sharedApplication] keyWindow] bounds].size;		
+
 	switch (ofxiPhoneGetOrientation()) 
 	{
 		case OFXIPHONE_ORIENTATION_LANDSCAPE_LEFT:
-			[_textField setFrame: CGRectMake(rect.origin.y-rect.size.height, 480-rect.size.width-rect.origin.x, rect.size.height, rect.size.width)];
+			[_textField setFrame: CGRectMake(rect.origin.y-rect.size.height, s.height-rect.size.width-rect.origin.x, rect.size.height, rect.size.width)];
 			break;
 			
 		case OFXIPHONE_ORIENTATION_LANDSCAPE_RIGHT:
-			[_textField setFrame: CGRectMake(320-rect.origin.y , rect.origin.x, rect.size.height, rect.size.width)];
+			[_textField setFrame: CGRectMake(s.width-rect.origin.y , rect.origin.x, rect.size.height, rect.size.width)];
 			break;
 			
 		/*case OFXIPHONE_ORIENTATION_UPSIDEDOWN:
