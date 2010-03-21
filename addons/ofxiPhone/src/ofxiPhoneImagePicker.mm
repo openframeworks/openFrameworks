@@ -154,9 +154,11 @@ void ofxiPhoneImagePicker::saveImage()
 		cameraIsAvailable = false;
 		
 		_imagePicker = [[UIImagePickerController alloc] init];
-		
+	
+		CGSize s = [[[UIApplication sharedApplication] keyWindow] bounds].size;		
+										
 		overlay = [[OverlayView alloc]
-				   initWithFrame:CGRectMake(0, 0, 320, 480) andDelegate:_imagePicker];
+				   initWithFrame:CGRectMake(0, 0, s.width, s.height) andDelegate:_imagePicker];
 		
 		_imagePicker.delegate = self;
 		
@@ -460,7 +462,10 @@ void ofxiPhoneImagePicker::saveImage()
 		
         UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
         [button setTitle:@"" forState:UIControlStateNormal];
-        button.frame = CGRectMake(0, 0, 480, 320); // change these numbers to move the location of the button.
+		
+		CGSize s = [[[UIApplication sharedApplication] keyWindow] bounds].size;		
+				
+        button.frame = CGRectMake(0, 0, s.height, s.width); // change these numbers to move the location of the button.
 		button.opaque = NO;
 		
 		[button addTarget:self action:@selector(takePhoto:) forControlEvents:UIControlEventTouchUpInside];

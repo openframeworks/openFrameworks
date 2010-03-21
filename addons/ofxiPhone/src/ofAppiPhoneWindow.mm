@@ -279,8 +279,9 @@ void ofAppiPhoneWindow::timerLoop() {
 	if(bEnableSetupScreen) {
 		int w, h;
 		
-		w = 320;
-		h = 480;
+		CGSize s = [[[UIApplication sharedApplication] keyWindow] bounds].size;
+		w = s.width;
+		h = s.height;
 		
 		float halfFov, theTan, screenFov, aspect;
 		screenFov 		= 60.0f;
