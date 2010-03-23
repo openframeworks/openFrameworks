@@ -405,11 +405,12 @@ void ofTexture::bind(){
 		glPushMatrix();
 		glLoadIdentity();
 		
-		if(texData.textureTarget == GL_TEXTURE_RECTANGLE_ARB) {
+#ifndef TARGET_OPENGLES	
+		if(texData.textureTarget == GL_TEXTURE_RECTANGLE_ARB)
 			glScalef(texData.width, texData.height, 1.0f);
-		} else {
+		else 
+#endif			
 			glScalef(texData.width / texData.tex_w, texData.height / texData.tex_h, 1.0f);
-		}
 		
 		glMatrixMode(GL_MODELVIEW);  		
 	}
