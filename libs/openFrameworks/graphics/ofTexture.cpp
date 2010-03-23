@@ -399,11 +399,31 @@ void ofTexture::bind(){
 	//we could check if it has been allocated - but we don't do that in draw() 
 	glEnable(texData.textureTarget);
 	glBindTexture( texData.textureTarget, (GLuint)texData.textureID);
+	
+	if(ofGetUsingNormalizedTexCoords()) {
+		glMatrixMode(GL_TEXTURE);
+		glPushMatrix();
+		glLoadIdentity();
+		
+		if(texData.textureTarget == GL_TEXTURE_RECTANGLE_ARB) {
+			glScalef(texData.width, texData.height, 1.0f);
+		} else {
+			glScalef(texData.width / texData.tex_w, texData.height / texData.tex_h, 1.0f);
+		}
+		
+		glMatrixMode(GL_MODELVIEW);  		
+	}
 }
 
 //----------------------------------------------------------
 void ofTexture::unbind(){
 	glDisable(texData.textureTarget);
+	
+	if(ofGetUsingNormalizedTexCoords()) {
+		glMatrixMode(GL_TEXTURE);
+		glPopMatrix();
+		glMatrixMode(GL_MODELVIEW); 
+	}
 }
 
 
