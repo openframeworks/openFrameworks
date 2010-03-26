@@ -9,12 +9,13 @@
 #import "MyGuiView.h"
 #include "ofxiPhoneExtras.h"
 
-//these are defined in testApp.mm
-extern int numPoints;
-extern float lengthRatio;
-extern bool bFill;
 
 @implementation MyGuiView
+
+// called automatically after the view is loaded, can be treated like the constructor or setup() of this class
+-(void)viewDidLoad {
+	myApp = (testApp*)ofGetAppPtr();
+}
 
 //----------------------------------------------------------------
 -(void)setStatusString:(NSString *)trackStr{
@@ -23,20 +24,20 @@ extern bool bFill;
 
 //----------------------------------------------------------------
 -(IBAction)more:(id)sender{
-	lengthRatio += 0.1;
+	myApp->lengthRatio += 0.1;
 	
-	string statusStr = " Status: ratio is " + ofToString(lengthRatio, 2);
+	string statusStr = " Status: ratio is " + ofToString(myApp->lengthRatio, 2);
 	[self setStatusString:ofxStringToNSString(statusStr)];		
 }
 
 //----------------------------------------------------------------
 -(IBAction)less:(id)sender{
-	lengthRatio -= 0.1;
-	if( lengthRatio < 0.1 ){
-		lengthRatio = 0.1;
+	myApp->lengthRatio -= 0.1;
+	if( myApp->lengthRatio < 0.1 ){
+		myApp->lengthRatio = 0.1;
 	}
 
-	string statusStr = " Status: ratio is " + ofToString(lengthRatio, 2);
+	string statusStr = " Status: ratio is " + ofToString(myApp->lengthRatio, 2);
 	[self setStatusString:ofxStringToNSString(statusStr)];		
 }
 
@@ -51,9 +52,9 @@ extern bool bFill;
 	UISlider * slider = sender;
 	printf("slider value is - %f\n", [slider value]);
 	
-	numPoints = 3 + [slider value] * 28;
+	myApp->numPoints = 3 + [slider value] * 28;
 	
-	string statusStr = " Status: numPoints is " + ofToString(numPoints);
+	string statusStr = " Status: numPoints is " + ofToString(myApp->numPoints);
 	[self setStatusString:ofxStringToNSString(statusStr)];
 	
 }
@@ -64,9 +65,9 @@ extern bool bFill;
 	UISwitch * toggle = sender;
 	printf("switch value is - %i\n", [toggle isOn]);
 	
-	bFill = [toggle isOn];
+	myApp->bFill = [toggle isOn];
 	
-	string statusStr = " Status: fill is " + ofToString(bFill);
+	string statusStr = " Status: fill is " + ofToString(myApp->bFill);
 	[self setStatusString:ofxStringToNSString(statusStr)];	
 }
 

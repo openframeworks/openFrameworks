@@ -1,14 +1,8 @@
 #include "testApp.h"
-
 #include "MyGuiView.h"
+
 MyGuiView * myGuiViewController;
 
-//these are static variables which we use to communicate with the gui class.
-//kind of ghetto but easier than messages/events for simple stuff
-
-float lengthRatio	= 0.5;
-int numPoints		= 5;
-bool bFill			= true;
 
 //--------------------------------------------------------------
 void testApp::setup(){	
@@ -17,9 +11,14 @@ void testApp::setup(){
 		
 	//NOTE WE WON'T RECEIVE TOUCH EVENTS INSIDE OUR APP WHEN THERE IS A VIEW ON TOP OF THE OF VIEW
 
+	lengthRatio	= 0.5;
+	numPoints	= 5;
+	bFill		= true;
+	
+
 	//Our Gui setup
 	myGuiViewController	= [[MyGuiView alloc] initWithNibName:@"MyGuiView" bundle:nil];
-	[[[UIApplication sharedApplication] keyWindow] addSubview:myGuiViewController.view];
+	[ofxiPhoneGetUIWindow() addSubview:myGuiViewController.view];
 
 	ofBackground(255,255,255);
 }
