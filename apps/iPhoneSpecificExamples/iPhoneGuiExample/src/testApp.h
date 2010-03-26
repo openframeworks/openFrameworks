@@ -7,6 +7,12 @@
 class testApp : public ofxiPhoneApp {
 	
 public:
+	
+	float lengthRatio;
+	int numPoints;
+	bool bFill;
+
+	
 	void setup();
 	void update();
 	void draw();
