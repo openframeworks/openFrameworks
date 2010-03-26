@@ -34,13 +34,13 @@ int receiveAudioBufferAndCallSimpleApp(void *outputBuffer, void *inputBuffer, un
 
 	if (nInputChannels > 0){
 		OFSAptr->audioReceived(fPtrIn, bufferSize, nInputChannels);
-		memset(fPtrIn, 0, bufferSize * nInputChannels * sizeof(float));
 		#ifdef OF_USING_POCO
 			audioEventArgs.buffer = fPtrIn;
 			audioEventArgs.bufferSize = bufferSize;
 			audioEventArgs.nChannels = nInputChannels;
 			ofNotifyEvent( ofEvents.audioReceived, audioEventArgs );
 		#endif
+		memset(fPtrIn, 0, bufferSize * nInputChannels * sizeof(float));
 	}
 
 
