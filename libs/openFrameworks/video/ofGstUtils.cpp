@@ -843,10 +843,10 @@ bool ofGstUtils::allocate(){
 
 	// query width, height, fps and do data allocation
 	if (bIsCamera || (width!=0 && height!=0)) {
-		pixels=new unsigned char[width*height*bpp];
-		gstData.pixels=new unsigned char[width*height*bpp];
-		memset(pixels,0,width*height*bpp);
-		memset(gstData.pixels,0,width*height*bpp);
+		pixels=new unsigned char[width*height*bpp/8];
+		gstData.pixels=new unsigned char[width*height*bpp/8];
+		memset(pixels,0,width*height*bpp/8);
+		memset(gstData.pixels,0,width*height*bpp/8);
 		gstData.width = width;
 		gstData.height = height;
 		gstData.totalsize = 0;
