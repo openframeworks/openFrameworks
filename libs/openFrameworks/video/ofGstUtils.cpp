@@ -719,12 +719,12 @@ bool ofGstUtils::setPipeline(string pipeline, int bpp, bool isStream, int w, int
 	}
 
 	string caps;
-	if(bpp==1)
+	if(bpp==8)
 		caps="video/x-raw-gray, depth=8, bpp=8";
-	else if(bpp==3)
-		caps="video/x-raw-rgb, depth=24, bpp=24";
-	else if(bpp==4)
+	else if(bpp==32)
 		caps="video/x-raw-rgb, depth=32, bpp=32";
+	else
+		caps="video/x-raw-rgb, depth=24, bpp=24";
 
 	gchar* pipeline_string =
 		g_strdup((pipeline + " ! appsink name=sink caps=\"" + caps + "\"").c_str()); // caps=video/x-raw-rgb
