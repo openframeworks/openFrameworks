@@ -119,15 +119,14 @@ all: $(TARGET)
 $(DEPFILES): $(SOURCES)
 	echo "creating dependencies"
 	mkdir -p $(@D)
-	$(CXX) $(TARGET_CFLAGS) $(CFLAGS) $(USER_CFLAGS) -MM -MT $@ `echo ../../../$@ | sed "s/$(SED_OUTPUT)//" | sed "s/\.d/\.cpp/"` > $@
+	$(CXX) $(TARGET_CFLAGS) $(CFLAGS) $(USER_CFLAGS) -MM -MT $@ $(patsubst $(OBJ_OUTPUT)%.d,../../../%.cpp,$@) > $@
 	
 
 #This rule does the compilation
 $(OBJS): $(SOURCES) $(DEPFILES)
 	echo "compiling objects"
-	echo $@ | sed "s/$(SED_OUTPUT)//" | sed "s/\.o/\.cpp/"
 	mkdir -p $(@D)
-	$(CXX) $(TARGET_CFLAGS) $(CFLAGS) $(USER_CFLAGS) -MMD -MP -MF `echo $@ | sed "s/\.o/\.d/"` -o $@ -c `echo ../../../$@ | sed "s/$(SED_OUTPUT)//" | sed "s/\.o/\.cpp/"`
+	$(CXX) $(TARGET_CFLAGS) $(CFLAGS) $(USER_CFLAGS) -MMD -MP -MF $(patsubst %.o,%.d,$@) -o $@ -c $(patsubst $(OBJ_OUTPUT)%.o,../../../%.cpp,$@)
 
 $(TARGET) : $(OBJS) 
 	echo "creating " $(TARGET)
