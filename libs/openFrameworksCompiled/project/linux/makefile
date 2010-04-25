@@ -77,6 +77,15 @@ ifeq ($(findstring Release,$(MAKECMDGOALS)),Release)
 	CLEANTARGET = CleanRelease
 endif
 
+ifeq ($(findstring all,$(MAKECMDGOALS)),all)
+        TARGET_CFLAGS = $(COMPILER_OPTIMIZATION)
+        OBJ_OUTPUT = obj/Release/
+        SED_OUTPUT = obj\\/Release\\/
+        TARGET_NAME = Release
+        TARGET = ../../lib/$(LIBSPATH)/libopenFrameworks.a
+        CLEANTARGET = CleanRelease
+endif
+
 ifeq ($(MAKECMDGOALS),)
 	TARGET_CFLAGS = $(COMPILER_OPTIMIZATION)
 	OBJ_OUTPUT = obj/Release/
@@ -92,11 +101,13 @@ endif
 DEPFILES = $(addprefix $(OBJ_OUTPUT),$(patsubst %.cpp,%.d,$(SOURCES)))
 OBJS = $(addprefix $(OBJ_OUTPUT), $(OBJFILES))
 
-.PHONY: Debug Release after
+.PHONY: Debug Release all after
 	
 Release: $(TARGET) 
 
 Debug: $(TARGET) 
+
+all: $(TARGET)
 
 
 
