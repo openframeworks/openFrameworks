@@ -69,7 +69,7 @@ LDFLAGS = $(LIB_PATHS_FLAGS) -s
 LIBS = $(LIB_SHARED)
 LIBS += $(LIB_STATIC)
 LIBS +=`pkg-config  gstreamer-0.10 gstreamer-video-0.10 gstreamer-base-0.10 libudev --libs`
-LIBS += -lglut -lGL -lasound
+LIBS += -lglut -lGL -lGLU -lasound
 
 ifeq ($(findstring addons.make,$(wildcard *.make)),addons.make)
 	ADDONS_INCLUDES = $(shell find ../../../addons/*/src/ -type d)
@@ -123,6 +123,16 @@ ifeq ($(MAKECMDGOALS),)
 	TARGET = bin/$(APPNAME)
 endif
 
+ifeq ($(findstring all,$(MAKECMDGOALS)),all)
+        TARGET_CFLAGS = $(COMPILER_OPTIMIZATION)
+        TARGET_LIBS = -lopenFrameworks
+        OBJ_OUTPUT = obj/Release/
+        SED_OUTPUT = obj\\/Release\\/
+        TARGET_NAME = Release
+        TARGET = bin/$(APPNAME)
+        CLEANTARGET = CleanRelease
+endif
+
 ifeq ($(MAKECMDGOALS),clean)
 	TARGET = bin/$(APPNAME)_debug bin/$(APPNAME)
 endif
@@ -133,11 +143,13 @@ ifeq ($(findstring addons.make,$(wildcard *.make)),addons.make)
 	ADDONS_OBJS = $(addprefix $(OBJ_OUTPUT), $(ADDONS_OBJFILES))
 endif
 
-.PHONY: Debug Release after
+.PHONY: Debug Release all after
 	
 Release: $(TARGET) after
 
 Debug: $(TARGET) after
+
+all: $(TARGET) after
 
 
 

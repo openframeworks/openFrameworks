@@ -52,10 +52,11 @@ CORE_INCLUDES = $(shell find ../../../libs/openFrameworks/ -type d)
 CORE_INCLUDE_FLAGS = $(addprefix -I,$(CORE_INCLUDES))
 INCLUDES = $(shell find ../../../libs/*/include -type d)
 INCLUDES_FLAGS = $(addprefix -I,$(INCLUDES))
-LIB_STATIC = $(shell ls ../../../libs/*/lib/$(LIBSPATH)/*.a | grep -v openFrameworksCompiled)
-LIB_SHARED = $(shell ls ../../../libs/*/lib/$(LIBSPATH)/*.so | grep -v openFrameworksCompiled)
+LIB_STATIC = $(shell ls ../../../libs/*/lib/$(LIBSPATH)/*.a | grep -v openFrameworksCompiled | sed "s/.*\\/lib\([^/]*\)\.a/-l\1/")
+LIB_SHARED = $(shell ls ../../../libs/*/lib/$(LIBSPATH)/*.so | grep -v openFrameworksCompiled| sed "s/.*\\/lib\([^/]*\)\.so/-l\1/")
 
-LIB_PATHS_FLAGS = -L../../../libs/openFrameworksCompiled/lib/$(LIBSPATH)
+#LIB_PATHS_FLAGS = -L../../../libs/openFrameworksCompiled/lib/$(LIBSPATH)
+LIB_PATHS_FLAGS = $(shell ls -d ../../../libs/*/lib/$(LIBSPATH) | sed "s/\(\.*\)/-L\1/")
 
 CFLAGS = -Wall -fexceptions
 CFLAGS += -I. 
@@ -68,7 +69,7 @@ LDFLAGS = $(LIB_PATHS_FLAGS) -s
 LIBS = $(LIB_SHARED)
 LIBS += $(LIB_STATIC)
 LIBS +=`pkg-config  gstreamer-0.10 gstreamer-video-0.10 gstreamer-base-0.10 libudev --libs`
-LIBS += -lglut -lGL -lasound
+LIBS += -lglut -lGL -lGLU -lasound
 
 ifeq ($(findstring addons.make,$(wildcard *.make)),addons.make)
 	ADDONS_INCLUDES = $(shell find ../../../addons/*/src/ -type d)
@@ -122,6 +123,16 @@ ifeq ($(MAKECMDGOALS),)
 	TARGET = bin/$(APPNAME)
 endif
 
+ifeq ($(findstring all,$(MAKECMDGOALS)),all)
+        TARGET_CFLAGS = $(COMPILER_OPTIMIZATION)
+        TARGET_LIBS = -lopenFrameworks
+        OBJ_OUTPUT = obj/Release/
+        SED_OUTPUT = obj\\/Release\\/
+        TARGET_NAME = Release
+        TARGET = bin/$(APPNAME)
+        CLEANTARGET = CleanRelease
+endif
+
 ifeq ($(MAKECMDGOALS),clean)
 	TARGET = bin/$(APPNAME)_debug bin/$(APPNAME)
 endif
@@ -132,11 +143,13 @@ ifeq ($(findstring addons.make,$(wildcard *.make)),addons.make)
 	ADDONS_OBJS = $(addprefix $(OBJ_OUTPUT), $(ADDONS_OBJFILES))
 endif
 
-.PHONY: Debug Release after
+.PHONY: Debug Release all after
 	
 Release: $(TARGET) after
 
 Debug: $(TARGET) after
+
+all: $(TARGET) after
 
 
 
