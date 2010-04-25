@@ -3,6 +3,11 @@
 #include <gst/app/gstappsink.h>
 #include <gst/video/video.h>
 
+#include <glib-object.h>
+#include <glib.h>
+#include <algorithm>
+
+#ifdef TARGET_LINUX
 // not needed any more, keeping it for compatibility with previous version
 #define LIBUDEV_I_KNOW_THE_API_IS_SUBJECT_TO_CHANGE
 
@@ -10,9 +15,6 @@ extern "C" {
 	#include <libudev.h>
 }
 
-#include <glib-object.h>
-#include <glib.h>
-#include <algorithm>
 
 /* for ioctl query */
 #include <fcntl.h>
@@ -20,6 +22,7 @@ extern "C" {
 #include <sys/ioctl.h>
 #include <linux/videodev.h>
 
+#endif
 
 static bool plugin_registered = false;
 static bool gst_inited = false;
@@ -106,9 +109,10 @@ static gboolean appsink_plugin_init (GstPlugin * plugin)
   return TRUE;
 }
 
+
 static void get_video_devices (ofGstCamData & cam_data)
 {
-
+#ifdef TARGET_LINUX
 	int fd, ok;
 
 	struct udev * my_udev;
@@ -231,8 +235,9 @@ static void get_video_devices (ofGstCamData & cam_data)
 	}
 
 	cam_data.bInited=true;
-
+#endif
 }
+
 
 static void get_supported_framerates (ofGstVideoFormat &video_format, GstStructure &structure)
 {
@@ -552,7 +557,7 @@ ofGstUtils::~ofGstUtils() {
 }
 
 bool ofGstUtils::loadMovie(string name){
-	bpp 				= 3;
+	bpp 				= 24;
 	bLoaded      		= false;
 	bPaused 			= true;
 	speed 				= 1.0f;
@@ -575,7 +580,14 @@ bool ofGstUtils::loadMovie(string name){
 	// create the oF appsink for video rgb without sync to clock
 	gstSink = gst_element_factory_make("appsink", NULL);
 	GstCaps *caps = gst_caps_new_simple("video/x-raw-rgb",
-										"depth", G_TYPE_INT, 24,
+										"bpp", G_TYPE_INT, 24,
+										//"depth", G_TYPE_INT, 24,
+										/*"endianness",G_TYPE_INT,4321,
+										"red_mask",G_TYPE_INT,0xff0000,
+										"green_mask",G_TYPE_INT,0x00ff00,
+										"blue_mask",G_TYPE_INT,0x0000ff,*/
+
+
 										NULL);
 	gst_app_sink_set_caps(GST_APP_SINK(gstSink), caps);
 	gst_caps_unref(caps);
@@ -629,7 +641,7 @@ ofGstVideoFormat & ofGstUtils::selectFormat(int w, int h, int desired_framerate)
 }
 
 bool ofGstUtils::initGrabber(int w, int h, int framerate){
-	bpp = 3;
+	bpp = 24;
 	if(!camData.bInited) get_video_devices(camData);
 
 	if(camData.webcam_devices.size()==0){
@@ -654,15 +666,15 @@ bool ofGstUtils::initGrabber(int w, int h, int framerate){
 	if(format.mimetype != "video/x-raw-yuv" && format.mimetype != "video/x-raw-rgb")
 		decodebin = "decodebin !";
 
-	const char * scale = "";
-	if( format.mimetype != "video/x-raw-rgb" ) scale = "ffmpegcolorspace !";
+	const char * scale = "ffmpegcolorspace !";
 	if( w!=format.width || h!=format.height )	scale = "ffvideoscale method=2 !";
 
 
 	string format_str_pipeline = string("%s name=video_source device=%s ! ") +
 								 "%s,width=%d,height=%d,framerate=%d/%d ! " +
 								 "%s %s " +
-								 "video/x-raw-rgb, width=%d, height=%d, depth=24 ! appsink name=sink  caps=\"video/x-raw-rgb\"";
+								 "appsink name=sink  caps=\"video/x-raw-rgb, width=%d, height=%d, bpp=24\"";
+
 	gchar* pipeline_string =g_strdup_printf (
 				      format_str_pipeline.c_str(),
 				      camData.webcam_devices[deviceID].gstreamer_src.c_str(),
@@ -804,11 +816,11 @@ bool ofGstUtils::allocate(){
 	}
 
 	// query width, height, fps and do data allocation
-	if (bIsCamera) {
-		pixels=new unsigned char[width*height*bpp];
-		gstData.pixels=new unsigned char[width*height*bpp];
-		memset(pixels,0,width*height*bpp);
-		memset(gstData.pixels,0,width*height*bpp);
+	if (bIsCamera || (width!=0 && height!=0)) {
+		pixels=new unsigned char[width*height*bpp/8];
+		gstData.pixels=new unsigned char[width*height*bpp/8];
+		memset(pixels,0,width*height*bpp/8);
+		memset(gstData.pixels,0,width*height*bpp/8);
 		gstData.width = width;
 		gstData.height = height;
 		gstData.totalsize = 0;
@@ -816,10 +828,10 @@ bool ofGstUtils::allocate(){
 	}else if(gstSink!=NULL){
 		if(GstPad* pad = gst_element_get_static_pad(gstSink, "sink")){
 			if(gst_video_get_size(GST_PAD(pad), &width, &height)){
-				pixels=new unsigned char[width*height*bpp];
-				gstData.pixels=new unsigned char[width*height*bpp];;
-				memset(pixels,0,width*height*bpp);
-				memset(gstData.pixels,0,width*height*bpp);
+				pixels=new unsigned char[width*height*bpp/8];
+				gstData.pixels=new unsigned char[width*height*bpp/8];
+				memset(pixels,0,width*height*bpp/8);
+				memset(gstData.pixels,0,width*height*bpp/8);
 				gstData.width = width;
 				gstData.height = height;
 				gstData.totalsize = 0;
@@ -873,7 +885,7 @@ void ofGstUtils::update(){
 				if (bHavePixelsChanged){
 					gstData.bHavePixelsChanged=false;
 					bIsMovieDone = false;
-					memcpy(pixels,gstData.pixels,width*height*bpp);
+					memcpy(pixels,gstData.pixels,width*height*bpp/8);
 				}
 
 			ofGstDataUnlock(&gstData);
