@@ -146,11 +146,11 @@ string ofToDataPath(string path, bool makeAbsolute){
 
 		//check if absolute path has been passed or if data path has already been applied
 		//do we want to check for C: D: etc ?? like  substr(1, 2) == ':' ??
-		if( path.substr(0,1) != "/" &&  path.substr(1,1) != ":" &&  path.substr(0,dataPathRoot.length()) != dataPathRoot){
+		if( path.length()==0 || (path.substr(0,1) != "/" &&  path.substr(1,1) != ":" &&  path.substr(0,dataPathRoot.length()) != dataPathRoot)){
 			path = dataPathRoot+path;
 		}
 
-		if(makeAbsolute && path.substr(0,1) != "/"){
+		if(makeAbsolute && (path.length()==0 || path.substr(0,1) != "/")){
 			#ifndef TARGET_OF_IPHONE
 
 			#ifndef _MSC_VER
