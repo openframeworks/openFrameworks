@@ -99,7 +99,7 @@ void ofxCvFloatImage::operator *= ( float scalar ){
     for( int i=0; i<roi.height; i++ ) {
         float* ptr = (float*)(cvImage->imageData + (int)(i+roi.y)*cvImage->widthStep);
         for( int j=0; j<roi.width; j++ ) {
-            ptr[(int)(j+roi.x)] *= scalar;
+            ptr[(int)(j+roi.x)] = ptr[(int)(j+roi.x)]<0.00001 ? 0 : ptr[(int)(j+roi.x)]*scalar;
         }
     }
 }
