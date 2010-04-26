@@ -1,3 +1,7 @@
+#ifndef _OF_EVENTS
+#error "ofEventUtils shouldn't be included directly, include ofEvents.h or ofMain.h"
+#endif
+
 #include "ofConstants.h"
 
 #ifdef OF_USING_POCO

@@ -140,10 +140,32 @@
 
 	template<class ListenerClass>
 	void ofRegisterTouchEvents(ListenerClass * listener){
-		ofAddListener(ofEvents.touchDoubleTap, listener, &ListenerClass::touchDoubleTap);
-		ofAddListener(ofEvents.touchDown, listener, &ListenerClass::touchDown);
-		ofAddListener(ofEvents.touchMoved, listener, &ListenerClass::touchMoved);
-		ofAddListener(ofEvents.touchUp, listener, &ListenerClass::touchUp);
+		ofRemoveListener(ofEvents.touchDoubleTap, listener, &ListenerClass::touchDoubleTap);
+		ofRemoveListener(ofEvents.touchDown, listener, &ListenerClass::touchDown);
+		ofRemoveListener(ofEvents.touchMoved, listener, &ListenerClass::touchMoved);
+		ofRemoveListener(ofEvents.touchUp, listener, &ListenerClass::touchUp);
+	}
+
+	template<class ListenerClass>
+	void ofUnregisterMouseEvents(ListenerClass * listener){
+		ofRemoveListener(ofEvents.mouseDragged,listener,&ListenerClass::mouseDragged);
+		ofRemoveListener(ofEvents.mouseMoved,listener,&ListenerClass::mouseMoved);
+		ofRemoveListener(ofEvents.mousePressed,listener,&ListenerClass::mousePressed);
+		ofRemoveListener(ofEvents.mouseReleased,listener,&ListenerClass::mouseReleased);
+	}
+
+	template<class ListenerClass>
+	void ofUnregisterKeyEvents(ListenerClass * listener){
+		ofRemoveListener(ofEvents.keyPressed, listener, &ListenerClass::keyPressed);
+		ofRemoveListener(ofEvents.keyReleased, listener, &ListenerClass::keyReleased);
+	}
+
+	template<class ListenerClass>
+	void ofUnregisterTouchEvents(ListenerClass * listener){
+		ofRemoveListener(ofEvents.touchDoubleTap, listener, &ListenerClass::touchDoubleTap);
+		ofRemoveListener(ofEvents.touchDown, listener, &ListenerClass::touchDown);
+		ofRemoveListener(ofEvents.touchMoved, listener, &ListenerClass::touchMoved);
+		ofRemoveListener(ofEvents.touchUp, listener, &ListenerClass::touchUp);
 	}
 
 	#endif
