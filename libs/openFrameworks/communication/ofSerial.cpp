@@ -156,7 +156,7 @@ void ofSerial::enumerateDevices(){
 			printf("ofSerial: listing devices\n");
 			while ((entry = readdir(dir)) != NULL){
 				str = (char *)entry->d_name;
-				if( str.substr(0,3) == "cu." ){
+				if( str.substr(0,3) == "cu." || str.substr(0,4) == "tty." ){
 					printf("device %i - %s\n", deviceCount, str.c_str());
 					deviceCount++;
 				}
@@ -187,7 +187,7 @@ void ofSerial::enumerateDevices(){
 			printf("ofSerial: listing devices\n");
 			while ((entry = readdir(dir)) != NULL){
 				str = (char *)entry->d_name;
-				if( str.substr(0,3) == "tty" || str.substr(0,3) == "rfc" ){
+				if( str.substr(0,4) == "ttyS" || str.substr(0,6) == "ttyUSB" || str.substr(0,3) == "rfc" ){
 					printf("device %i - %s\n", deviceCount, str.c_str());
 					deviceCount++;
 				}
@@ -271,7 +271,11 @@ bool ofSerial::setup(int deviceNumber, int baud){
 
 		while ((entry = readdir(dir)) != NULL){
 			str = (char *)entry->d_name;
-			if( str.substr(0,3) == "cu." || str.substr(0,3) == "tty" || str.substr(0,3) == "rfc" ){
+			#ifdef TARGET_OSX
+			if( str.substr(0,3) == "cu." || str.substr(0,4) == "tty." ){
+			#else
+			if( str.substr(0,4) == "ttyS" || str.substr(0,6) == "ttyUSB" || str.substr(0,3) == "rfc" ){
+			#endif
 				if(deviceCount == deviceNumber){
 					device = "/dev/"+str;
 					deviceFound = true;
