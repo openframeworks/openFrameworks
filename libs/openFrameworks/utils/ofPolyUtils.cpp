@@ -7,11 +7,12 @@
 
 #include "ofPolyUtils.h"
 
-
+//--------------------------------------------------
 bool ofInsidePoly(const ofPoint & p, const vector<ofPoint> & poly){
 	return ofInsidePoly(p.x,p.y,poly);
 }
 
+//--------------------------------------------------
 bool ofInsidePoly(float x, float y, const vector<ofPoint> & polygon){
 	int counter = 0;
 	int i;
@@ -78,5 +79,40 @@ ofPoint ofLineSegmentIntersection(ofPoint line1Start, ofPoint line1End, ofPoint 
 	intersection.y =  ((lDetLineA*lDiffLB.y) - (lDiffLA.y*lDetLineB)) * lDetDivInv ;
 
 	return intersection;
+
+}
+
+//--------------------------------------------------
+ofPoint ofBezierPoint( ofPoint a, ofPoint b, ofPoint c, ofPoint d, float t){
+    float tp = 1.0 - t;
+    return a*tp*tp*tp + b*3*t*tp*tp + c*3*t*t*tp + d*t*t*t;
+}
+
+//--------------------------------------------------
+ofPoint ofCurvePoint( ofPoint a, ofPoint b, ofPoint c, ofPoint d, float t){
+    ofPoint pt;
+    float t2 = t * t;
+    float t3 = t2 * t;
+    pt.x = 0.5f * ( ( 2.0f * b.x ) +
+                   ( -a.x + c.x ) * t +
+                   ( 2.0f * a.x - 5.0f * b.x + 4 * c.x - d.x ) * t2 +
+                   ( -a.x + 3.0f * b.x - 3.0f * c.x + d.x ) * t3 );
+    pt.y = 0.5f * ( ( 2.0f * b.y ) +
+                   ( -a.y + c.y ) * t +
+                   ( 2.0f * a.y - 5.0f * b.y + 4 * c.y - d.y ) * t2 +
+                   ( -a.y + 3.0f * b.y - 3.0f * c.y + d.y ) * t3 );
+    return pt;
+}
+
+//--------------------------------------------------
+ofPoint ofBezierTangent( ofPoint a, ofPoint b, ofPoint c, ofPoint d, float t){
+    return (d-a-c*3+b*3)*(t*t)*3 + (a+c-b*2)*t*6 - a*3+b*3;
+}
+
+//--------------------------------------------------
+ofPoint ofCurveTangent( ofPoint a, ofPoint b, ofPoint c, ofPoint d, float t){
+    ofPoint v0 = ( c - a )*0.5;
+    ofPoint v1 = ( d - b )*0.5;
+    return ( b*2 -c*2 + v0 + v1)*(3*t*t) + ( c*3 - b*3 - v1 - v0*2 )*( 2*t) + v0;
 
 }
