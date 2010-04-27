@@ -189,6 +189,17 @@ class ofRectangle {
 	}
 	virtual ~ofRectangle(){}
 
+	bool inside (ofPoint p){
+		return inside(p.x, p.y);
+	}
+
+	bool inside(float px, float py){
+		if( px < x && py < y && px > x + width && py > y + height ){
+		    return false;
+		}
+		return true;
+	}
+
    float x;
    float y;
    float width;
