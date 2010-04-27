@@ -142,6 +142,24 @@ float ofLerp(float start, float stop, float amt) {
 }
 
 //--------------------------------------------------
+float ofLerpDegrees(float currentAngle, float targetAngle, float pct) {
+    float diff = targetAngle - currentAngle;
+    while(diff > 180.0f)  diff -= 360.0f;
+    while(diff < -180.0f) diff += 360.0f;
+
+    return currentAngle + diff * pct;
+}
+
+//--------------------------------------------------
+float ofLerpRadians(float currentAngle, float targetAngle, float pct) {
+    float diff = targetAngle - currentAngle;
+    while(diff > PI)  diff -= TWO_PI;
+    while(diff < -PI) diff += TWO_PI;
+
+    return currentAngle + diff * pct;
+}
+
+//--------------------------------------------------
 float ofRandomWidth() {
 	return ofRandom(0, ofGetWidth());
 }
@@ -190,4 +208,3 @@ float ofSignedNoise(float x, float y, float z){
 float ofSignedNoise(float x, float y, float z, float w){
 	return _slang_library_noise4(x,y,z,w);
 }
-

@@ -33,6 +33,8 @@ int			ofSign(float n);
 bool		ofInRange(float t, float min, float max);
 float		ofRadToDeg(float radians);
 float		ofDegToRad(float degrees);
+float 		ofLerpDegrees(float currentAngle, float targetAngle, float pct);
+float 		ofLerpRadians(float currentAngle, float targetAngle, float pct);
 float		ofRandomWidth();
 float		ofRandomHeight();
 
