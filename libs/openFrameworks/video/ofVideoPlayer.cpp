@@ -260,6 +260,13 @@ void ofVideoPlayer::closeMovie(){
 	#endif
     //--------------------------------------
 
+	if(bLoaded){
+		tex.clear();
+		if(pixels){
+			delete[] pixels;
+			pixels = NULL;
+		}
+	}
     bLoaded = false;
 
 }
