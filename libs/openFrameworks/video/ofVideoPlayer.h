@@ -74,6 +74,10 @@ class ofVideoPlayer : public ofBaseVideo{
 		float 				getHeight();
 		float 				getWidth();
 
+		bool				isPaused();
+		bool				isLoaded();
+		bool				isPlaying();
+
 		//--------------------------------------
 		#ifdef OF_VIDEO_PLAYER_QUICKTIME
 		//--------------------------------------
