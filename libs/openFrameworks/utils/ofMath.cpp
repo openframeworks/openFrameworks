@@ -153,8 +153,8 @@ float ofLerpDegrees(float currentAngle, float targetAngle, float pct) {
 //--------------------------------------------------
 float ofLerpRadians(float currentAngle, float targetAngle, float pct) {
     float diff = targetAngle - currentAngle;
-    while(diff > PI)  diff -= TWO_PI;
-    while(diff < -PI) diff += TWO_PI;
+    while(diff > TWO_PI)  diff -= 2*TWO_PI;
+    while(diff < -TWO_PI) diff += 2*TWO_PI;
 
     return currentAngle + diff * pct;
 }
@@ -308,3 +308,20 @@ ofPoint ofCurveTangent( ofPoint a, ofPoint b, ofPoint c, ofPoint d, float t){
     return ( b*2 -c*2 + v0 + v1)*(3*t*t) + ( c*3 - b*3 - v1 - v0*2 )*( 2*t) + v0;
 
 }
+
+//--------------------------------------------------
+float ofAngleDifferenceDegrees(float currentAngle, float targetAngle) {
+    float diff = targetAngle - currentAngle;
+    while(diff > 180.0f)  diff -= 360.0f;
+    while(diff < -180.0f) diff += 360.0f;
+    return diff;
+}
+
+//--------------------------------------------------
+float ofAngleDifferenceRadians(float currentAngle, float targetAngle) {
+    float diff = targetAngle - currentAngle;
+    while(diff > TWO_PI)  diff -= 2*TWO_PI;
+    while(diff < -TWO_PI) diff += 2*TWO_PI;
+    return diff;
+}
+
