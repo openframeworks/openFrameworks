@@ -7,7 +7,6 @@
 #include "ofMath.h"
 #include "ofUtils.h"
 #include "ofTypes.h"
-#include "ofPolyUtils.h"
 
 //--------------------------
 // communication

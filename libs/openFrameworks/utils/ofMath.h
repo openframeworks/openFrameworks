@@ -15,6 +15,7 @@
 
 
 #include "ofConstants.h"
+#include "ofTypes.h"
 
 int 		ofNextPow2 ( int a );
 void 		ofSeedRandom();
@@ -49,5 +50,17 @@ float		ofSignedNoise(float x);
 float		ofSignedNoise(float x, float y);
 float		ofSignedNoise(float x, float y, float z);
 float		ofSignedNoise(float x, float y, float z, float w);
+
+
+bool 		ofInsidePoly(float x, float y, const vector<ofPoint> & poly);
+bool 		ofInsidePoly(const ofPoint & p, const vector<ofPoint> & poly);
+
+bool 		ofLineSegmentIntersection(ofPoint line1Start, ofPoint line1End, ofPoint line2Start, ofPoint line2End, ofPoint & intersection);
+
+ofPoint 	ofBezierPoint( ofPoint a, ofPoint b, ofPoint c, ofPoint d, float t);
+ofPoint 	ofCurvePoint( ofPoint a, ofPoint b, ofPoint c, ofPoint d, float t);
+ofPoint 	ofBezierTangent( ofPoint a, ofPoint b, ofPoint c, ofPoint d, float t);
+ofPoint 	ofCurveTangent( ofPoint a, ofPoint b, ofPoint c, ofPoint d, float t);
+
 
 #endif
