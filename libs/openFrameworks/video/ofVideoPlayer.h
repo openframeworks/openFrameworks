@@ -7,7 +7,7 @@
 
 #ifdef OF_VIDEO_PLAYER_GSTREAMER
 	#include "ofGstUtils.h"
-#else
+#elif defined(OF_VIDEO_PLAYER_QUICKTIME)
 	#include "ofQtUtils.h"
 #endif
 

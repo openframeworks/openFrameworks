@@ -3,7 +3,7 @@
 
 #include "ofConstants.h"
 
-#if defined( TARGET_OSX ) || defined( TARGET_LINUX )
+#if defined( TARGET_OSX ) || defined( TARGET_LINUX ) || defined (TARGET_ANDROID)
 	#include <termios.h>
 	#include <sys/ioctl.h>
 	#include <getopt.h>
