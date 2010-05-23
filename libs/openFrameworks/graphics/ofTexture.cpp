@@ -202,7 +202,7 @@ void ofTexture::loadData(void * data, int w, int h, int glDataType){
 	texData.glType  = glDataType;
 
 	//compute new tex co-ords based on the ratio of data's w, h to texture w,h;
-	#ifndef TARGET_OF_IPHONE	
+	#ifndef TARGET_OPENGLES
 		if (texData.textureTarget == GL_TEXTURE_RECTANGLE_ARB){
 			texData.tex_t = w;
 			texData.tex_u = h;
@@ -242,8 +242,10 @@ void ofTexture::loadData(void * data, int w, int h, int glDataType){
 
 	
 	//Sosolimited: texture compression
+#ifndef TARGET_OPENGLES
 	if ((!texData.useCompression) || (texData.compressionType == OF_COMPRESS_NONE))
 	{
+#endif
 		//STANDARD openFrameworks: no compression
 
 		//update the texture image: 
@@ -251,6 +253,7 @@ void ofTexture::loadData(void * data, int w, int h, int glDataType){
 		glBindTexture(texData.textureTarget, (GLuint)texData.textureID);
  		glTexSubImage2D(texData.textureTarget, 0, 0, 0, w, h, texData.glType, texData.pixelType, data); // MEMO: important to use pixelType here
 		glDisable(texData.textureTarget);
+#ifndef TARGET_OPENGLES
 	}
 	else
 	{
@@ -322,7 +325,7 @@ void ofTexture::loadData(void * data, int w, int h, int glDataType){
 		glDisable(texData.textureTarget);
 
 	}
-
+#endif
 	//------------------------ back to normal.
 	glPixelStorei(GL_UNPACK_ALIGNMENT, prevAlignment);
 
@@ -350,7 +353,7 @@ void ofTexture::loadScreenData(int x, int y, int w, int h){
 	texData.glType  = GL_RGB;
 
 	//compute new tex co-ords based on the ratio of data's w, h to texture w,h;
-	#ifndef TARGET_OF_IPHONE // DAMIAN
+	#ifndef TARGET_OPENGLES // DAMIAN
 		if (texData.textureTarget == GL_TEXTURE_RECTANGLE_ARB){
 			texData.tex_t = (float)(w);
 			texData.tex_u = (float)(h);

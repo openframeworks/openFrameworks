@@ -253,12 +253,12 @@ void ofImage::grabScreen(int _x, int _y, int _w, int _h){
 		resize(_w, _h);
 	}
 
-	#ifndef TARGET_OF_IPHONE
+	#ifndef TARGET_OPENGLES
 		glPushClientAttrib( GL_CLIENT_PIXEL_STORE_BIT );											// be nice to anyone else who might use pixelStore
 	#endif
 		glPixelStorei(GL_PACK_ALIGNMENT, 1);														// set read non block aligned...
 		glReadPixels(_x, _y, _w, _h, myPixels.glDataType,GL_UNSIGNED_BYTE, myPixels.pixels);		// read the memory....
-	#ifndef TARGET_OF_IPHONE
+	#ifndef TARGET_OPENGLES
 		glPopClientAttrib();
 	#endif
 

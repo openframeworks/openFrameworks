@@ -5,12 +5,13 @@
 
 
 //--------------------------------------------------------------
-void testApp::setup(){	 
+void testApp::setup(){
 	
 	camWidth 		= 320;	// try to grab at this size. 
 	camHeight 		= 240;
 	
 	vidGrabber.setVerbose(true);
+	vidGrabber.setDeviceID(1);
 	vidGrabber.initGrabber(camWidth,camHeight);
 	
 	videoInverted 	= new unsigned char[camWidth*camHeight*3];

@@ -29,7 +29,8 @@
 		#define TARGET_OSX
 	#endif
 #else
-	#define TARGET_LINUX
+	#define TARGET_ANDROID
+	#define TARGET_OPENGLES
 #endif
 //-------------------------------
 
@@ -121,6 +122,10 @@
 	#import <OpenGLES/ES1/glext.h>
 #endif
 
+#ifdef TARGET_ANDROID
+	#include <GLES/gl.h>
+#endif
+
 
 #ifndef __MWERKS__
 #include <cstdlib>
@@ -153,7 +158,7 @@
 	#endif
 
 
-#else
+#elif defined(TARGET_OSX) || defined(TARGET_WIN32)
 
     // non - linux, pc or osx
 
@@ -179,7 +184,7 @@
 
 #ifdef TARGET_LINUX
 	#define OF_VIDEO_PLAYER_GSTREAMER
-#else
+#elif defined(TARGET_OSX) || defined(TARGET_WIN32)
 	#define OF_VIDEO_PLAYER_QUICKTIME
 #endif
 

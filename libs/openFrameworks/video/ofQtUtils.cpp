@@ -1,7 +1,7 @@
 #include "ofQtUtils.h"
 #include "ofUtils.h"
 
-#ifndef TARGET_LINUX
+#if defined (TARGET_WIN32) || defined (TARGET_OSX)
 static bool bQuicktimeInitialized = false;
 
 //----------------------------------------

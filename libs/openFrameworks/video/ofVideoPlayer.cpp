@@ -137,7 +137,7 @@ ofVideoPlayer::ofVideoPlayer (){
 
 
 	//--------------------------------------------------------------
-    #ifndef  TARGET_LINUX  // !linux = quicktime...
+    #if defined(TARGET_OSX) || defined(TARGET_WIN32) // !linux = quicktime...
     //--------------------------------------------------------------
     	moviePtr	 				= NULL;
     	allocated 					= false;
@@ -156,7 +156,7 @@ unsigned char * ofVideoPlayer::getPixels(){
 	//--------------------------------------
 	return pixels;
 	//--------------------------------------
-	#else
+	#elif defined(OF_VIDEO_PLAYER_GSTREAMER)
 	//--------------------------------------
 	return gstUtils.getPixels();
 	//--------------------------------------
@@ -200,7 +200,7 @@ void ofVideoPlayer::idleMovie(){
 			#endif
 
 		//--------------------------------------------------------------
-		#else // gstreamer.
+		#elif defined(OF_VIDEO_PLAYER_GSTREAMER)
 		//--------------------------------------------------------------
 
 			gstUtils.update();
@@ -251,7 +251,7 @@ void ofVideoPlayer::closeMovie(){
     }
 
     //--------------------------------------
-	#else
+	#elif defined(OF_VIDEO_PLAYER_GSTREAMER)
 	//--------------------------------------
 
 		gstUtils.close();
@@ -288,7 +288,7 @@ ofVideoPlayer::~ofVideoPlayer(){
 		if ((offscreenGWorld)) DisposeGWorld((offscreenGWorld));
 
 	 //--------------------------------------
-	#else
+	#elif defined(OF_VIDEO_PLAYER_GSTREAMER)
 	//--------------------------------------
 
 		closeMovie();
@@ -439,7 +439,7 @@ bool ofVideoPlayer::loadMovie(string name){
 		return true;
 
 	//--------------------------------------
-	#else
+	#elif defined(OF_VIDEO_PLAYER_GSTREAMER)
 	//--------------------------------------
 
 
@@ -530,7 +530,7 @@ void ofVideoPlayer::play(){
 	}
 
 	//--------------------------------------
-	#else
+	#elif defined(OF_VIDEO_PLAYER_GSTREAMER)
 	//--------------------------------------
 		gstUtils.play();
 	//--------------------------------------
@@ -552,7 +552,7 @@ void ofVideoPlayer::stop(){
 	SetMovieActive (moviePtr, false);
 	bStarted = false;
 	//--------------------------------------
-	#else
+	#elif defined(OF_VIDEO_PLAYER_GSTREAMER)
 	//--------------------------------------
 
 	gstUtils.setPaused(true);
@@ -574,7 +574,7 @@ void ofVideoPlayer::setVolume(int volume){
 
 	SetMovieVolume(moviePtr, volume);
 	//--------------------------------------
-	#else
+	#elif defined(OF_VIDEO_PLAYER_GSTREAMER)
 	//--------------------------------------
 
 	gstUtils.setVolume(volume);
@@ -621,7 +621,7 @@ void ofVideoPlayer::setLoopState(int state){
 		SetTimeBaseFlags(myTimeBase, myFlags);
 
 	//--------------------------------------
-	#else
+	#elif defined(OF_VIDEO_PLAYER_GSTREAMER)
 	//--------------------------------------
 
 		gstUtils.setLoopState(state);
@@ -649,7 +649,7 @@ void ofVideoPlayer::setPosition(float pct){
 		MoviesTask(moviePtr,0);
 
 	//--------------------------------------
-	#else
+	#elif defined(OF_VIDEO_PLAYER_GSTREAMER)
 	//--------------------------------------
 
 		gstUtils.setPosition(pct);
@@ -694,7 +694,7 @@ void ofVideoPlayer::setFrame(int frame){
    if (!bPaused) SetMovieRate(moviePtr, X2Fix(speed));
 
    //--------------------------------------
-    #else
+	#elif defined(OF_VIDEO_PLAYER_GSTREAMER)
    //--------------------------------------
 
 	   gstUtils.setFrame(frame);
@@ -717,7 +717,7 @@ float ofVideoPlayer::getDuration(){
 		return (float) (GetMovieDuration (moviePtr) / (double) GetMovieTimeScale (moviePtr));
 
 	//--------------------------------------
-	#else
+	#elif defined(OF_VIDEO_PLAYER_GSTREAMER)
 	//--------------------------------------
 
 		return gstUtils.getDuration();
@@ -741,7 +741,7 @@ float ofVideoPlayer::getPosition(){
 		return pct;
 
 	//--------------------------------------
-	#else
+	#elif defined(OF_VIDEO_PLAYER_GSTREAMER)
 	//--------------------------------------
 
 		return gstUtils.getPosition();
@@ -773,7 +773,7 @@ int ofVideoPlayer::getCurrentFrame(){
 
 	return frame;
 	//--------------------------------------
-	#else
+	#elif defined(OF_VIDEO_PLAYER_GSTREAMER)
 	//--------------------------------------
 
 	return gstUtils.getCurrentFrame();
@@ -794,7 +794,7 @@ bool ofVideoPlayer::getIsMovieDone(){
 		bool bIsMovieDone = (bool)IsMovieDone(moviePtr);
 		return bIsMovieDone;
 	//--------------------------------------
-	#else
+	#elif defined(OF_VIDEO_PLAYER_GSTREAMER)
 	//--------------------------------------
 		return gstUtils.getIsMovieDone();
 	//--------------------------------------
@@ -810,7 +810,7 @@ void ofVideoPlayer::firstFrame(){
 	//--------------------------------------
 	setFrame(0);
 	//--------------------------------------
-	#else
+	#elif defined(OF_VIDEO_PLAYER_GSTREAMER)
 	//--------------------------------------
 	gstUtils.firstFrame();
 	//--------------------------------------
@@ -826,7 +826,7 @@ void ofVideoPlayer::nextFrame(){
 	//--------------------------------------
 	setFrame(getCurrentFrame() + 1);
 	//--------------------------------------
-	#else
+	#elif defined(OF_VIDEO_PLAYER_GSTREAMER)
 	//--------------------------------------
 	gstUtils.nextFrame();
 	//--------------------------------------
@@ -841,7 +841,7 @@ void ofVideoPlayer::previousFrame(){
 	//--------------------------------------
 	setFrame(getCurrentFrame() - 1);
 	//--------------------------------------
-	#else
+	#elif defined(OF_VIDEO_PLAYER_GSTREAMER)
 	//--------------------------------------
 	gstUtils.previousFrame();
 	//--------------------------------------
@@ -866,7 +866,7 @@ void ofVideoPlayer::setSpeed(float _speed){
 		}
 
 	//--------------------------------------
-	#else
+	#elif defined(OF_VIDEO_PLAYER_GSTREAMER)
 	//--------------------------------------
 
 		gstUtils.setSpeed(_speed);
@@ -899,7 +899,7 @@ void ofVideoPlayer::setPaused(bool _bPause){
 			else 					SetMovieRate(moviePtr, X2Fix(speed));
 		}
 	//--------------------------------------
-	#else
+	#elif defined(OF_VIDEO_PLAYER_GSTREAMER)
 	//--------------------------------------
 
 		gstUtils.setPaused(_bPause);
@@ -952,7 +952,7 @@ int ofVideoPlayer::getTotalNumFrames(){
 	//--------------------------------------
 	return nFrames;
 	//--------------------------------------
-	#else
+	#elif defined(OF_VIDEO_PLAYER_GSTREAMER)
 	//--------------------------------------
 	return gstUtils.getTotalNumFrames();
 	//--------------------------------------
@@ -968,7 +968,7 @@ float ofVideoPlayer::getHeight(){
 	//--------------------------------------
 	return (float)height;
 	//--------------------------------------
-	#else
+	#elif defined(OF_VIDEO_PLAYER_GSTREAMER)
 	//--------------------------------------
 	return gstUtils.getHeight();
 	//--------------------------------------
@@ -983,7 +983,7 @@ float ofVideoPlayer::getWidth(){
 	//--------------------------------------
 	return (float)width;
 	//--------------------------------------
-	#else
+	#elif defined(OF_VIDEO_PLAYER_GSTREAMER)
 	//--------------------------------------
 	return gstUtils.getWidth();
 	//--------------------------------------

@@ -1,9 +1,10 @@
 #ifndef OFGSTUTILS_H_
 #define OFGSTUTILS_H_
 
+#include "ofConstants.h"
+#ifndef TARGET_ANDROID
 #include <gst/gst.h>
 #include <pthread.h>
-#include "ofConstants.h"
 
 typedef struct{
 	GMainLoop 		*	loop;
@@ -151,5 +152,5 @@ protected:
 	int					deviceID;
 
 };
-
+#endif
 #endif /* OFGSTUTILS_H_ */
