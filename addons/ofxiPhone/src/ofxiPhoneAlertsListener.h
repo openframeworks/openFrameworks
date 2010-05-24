@@ -36,8 +36,8 @@ class ofxiPhoneAlertsListener {
 public:
 	virtual ~ofxiPhoneAlertsListener() {}				
 	
-	virtual void lostFocus()			= 0;
-	virtual void gotFocus()				= 0;
-	virtual void gotMemoryWarning()		= 0;
-    virtual void deviceOrientationChanged(int newOrientation) = 0;
+	virtual void lostFocus(){};
+	virtual void gotFocus(){};
+	virtual void gotMemoryWarning(){};
+    virtual void deviceOrientationChanged(int newOrientation){};
 };
