@@ -16,7 +16,12 @@
 				<file>../../../addons/ofxVectorMath/src/ofxVec2f.h</file>
 				<file>../../../addons/ofxVectorMath/src/ofxVec3f.h</file>
 				<file>../../../addons/ofxVectorMath/src/ofxVec4f.h</file>
+				<file>../../../addons/ofxVectorMath/src/ofxMatrix3x3.h</file>
 				<file>../../../addons/ofxVectorMath/src/ofxMatrix3x3.cpp</file>
+				<file>../../../addons/ofxVectorMath/src/ofxMatrix4x4.h</file>
+				<file>../../../addons/ofxVectorMath/src/ofxMatrix4x4.cpp</file>
+				<file>../../../addons/ofxVectorMath/src/ofxQuaternion.cpp</file>
+				<file>../../../addons/ofxVectorMath/src/ofxQuaternion.h</file>
 				<file>../../../addons/ofxVectorMath/src/ofxVectorMath.h</file>
 			</folder>
 		</src>

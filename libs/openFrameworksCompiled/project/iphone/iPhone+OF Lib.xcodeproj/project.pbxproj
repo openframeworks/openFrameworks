@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		5E2E99DD10ED147800587639 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E2E99DC10ED147800587639 /* MapKit.framework */; };
+		92BFCD071128AC3E0081DD61 /* ofBitmapFont.h in Headers */ = {isa = PBXBuildFile; fileRef = 92BFCD051128AC3E0081DD61 /* ofBitmapFont.h */; };
+		92BFCD081128AC3E0081DD61 /* ofBitmapFont.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 92BFCD061128AC3E0081DD61 /* ofBitmapFont.cpp */; };
 		BB24DECA10DA7A3F00E9C588 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BBE5EAB70F49AD8400F28951 /* AudioToolbox.framework */; };
 		BB24DECB10DA7A3F00E9C588 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB16EBD10F2B2A9500518274 /* OpenGLES.framework */; };
 		BB24DECC10DA7A3F00E9C588 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DF5F4DF0D08C38300B7A737 /* UIKit.framework */; };
@@ -131,6 +133,8 @@
 		5326AEA710A23A0500278DE6 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		53F323EA10A20EDB00E0DAE4 /* OpenAL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenAL.framework; path = System/Library/Frameworks/OpenAL.framework; sourceTree = SDKROOT; };
 		5E2E99DC10ED147800587639 /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
+		92BFCD051128AC3E0081DD61 /* ofBitmapFont.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofBitmapFont.h; sourceTree = "<group>"; };
+		92BFCD061128AC3E0081DD61 /* ofBitmapFont.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofBitmapFont.cpp; sourceTree = "<group>"; };
 		BB16EBD10F2B2A9500518274 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
 		BB16EBD80F2B2AB500518274 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		BB24DED610DA7A3F00E9C588 /* libofxiPhoneOFLib_iphoneos _Debug.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libofxiPhoneOFLib_iphoneos _Debug.a"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -370,6 +374,8 @@
 		BB24DF0510DA7BEF00E9C588 /* graphics */ = {
 			isa = PBXGroup;
 			children = (
+				92BFCD051128AC3E0081DD61 /* ofBitmapFont.h */,
+				92BFCD061128AC3E0081DD61 /* ofBitmapFont.cpp */,
 				BB24DF0810DA7BEF00E9C588 /* ofGraphics.cpp */,
 				BB24DF0910DA7BEF00E9C588 /* ofGraphics.h */,
 				BB24DF0A10DA7BEF00E9C588 /* ofImage.cpp */,
@@ -731,6 +737,7 @@
 				BB24E12B10DA9F8400E9C588 /* ftincrem.h in Headers */,
 				DA78520C1105C1BF007EFC90 /* glu.h in Headers */,
 				DA78520D1105C1BF007EFC90 /* gluos.h in Headers */,
+				92BFCD071128AC3E0081DD61 /* ofBitmapFont.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -799,6 +806,7 @@
 				BB24E0F410DA9F6600E9C588 /* ofGraphics.cpp in Sources */,
 				BB24E0F610DA9F6700E9C588 /* ofImage.cpp in Sources */,
 				BB24E0F710DA9F6800E9C588 /* ofTexture.cpp in Sources */,
+				92BFCD081128AC3E0081DD61 /* ofBitmapFont.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

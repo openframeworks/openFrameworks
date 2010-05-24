@@ -123,6 +123,7 @@
 
 
 #ifndef __MWERKS__
+#include <cstdlib>
 #define OF_EXIT_APP(val)		std::exit(val);
 #else
 #define OF_EXIT_APP(val)		std::exit(val);
@@ -217,6 +218,7 @@ enum ofLogLevel{
 #include <string>
 #include <sstream>  //for ostringsream
 #include <iomanip>  //for setprecision
+#include <fstream>
 using namespace std;
 
 #ifndef PI

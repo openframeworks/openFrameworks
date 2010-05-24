@@ -33,6 +33,7 @@ float 			bgColor[4]			= {0,0,0,0};
 void 			setupCircle();
 bool 			bSmoothHinted		= false;
 bool			bUsingArbTex		= true;
+bool			bUsingNormalizedTexCoords = false;
 bool 			bBakgroundAuto		= true;
 int 			cornerMode			= OF_RECTMODE_CORNER;
 int 			polyMode			= OF_POLY_WINDING_ODD;
@@ -76,6 +77,20 @@ void ofEnableArbTex(){
 void ofDisableArbTex(){
 	bUsingArbTex = false;
 }
+
+bool ofGetUsingNormalizedTexCoords() {
+	return bUsingNormalizedTexCoords;
+}
+
+void ofEnableNormalizedTexCoords() {
+	bUsingNormalizedTexCoords = true;
+}
+
+void ofDisableNormalizedTexCoords() {
+	bUsingNormalizedTexCoords = false;
+}
+
+
 
 //***** add global functions to override texture settings
 //----------------------------------------------------------
@@ -611,6 +626,7 @@ void ofRotate(float degrees){
 
 //--------------------------------------------------
 void ofDrawBitmapString(string textString, float x, float y){
+
 #ifndef TARGET_OPENGLES	// temp for now, until is ported from existing iphone implementations
 
     glPushClientAttrib( GL_CLIENT_PIXEL_STORE_BIT );
@@ -638,10 +654,56 @@ void ofDrawBitmapString(string textString, float x, float y){
 			// solves a bug with control characters
 			// getting drawn when they ought to not be
 			ofDrawBitmapCharacter(textString[c]);
+			//ofDrawBitmapCharacter(textString[c], x + (c * 8), y);
 		}
 	}
 
 	glPopClientAttrib( );
+#else 
+	
+	// this is copied from the ofTrueTypeFont
+	GLboolean blend_enabled = glIsEnabled(GL_BLEND);
+	GLint blend_src, blend_dst;
+	glGetIntegerv( GL_BLEND_SRC, &blend_src );
+	glGetIntegerv( GL_BLEND_DST, &blend_dst );
+	
+    	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	// (c) enable texture once before we start drawing each char (no point turning it on and off constantly)
+	
+	
+	int len = (int)textString.length();
+	float yOffset = 0;
+	float fontSize = 8.0f;
+	bool bOrigin = false;
+	
+	float sx = x;
+	float sy = y - fontSize;
+	
+	for(int c = 0; c < len; c++)
+	{
+		if(textString[c] == '\n')
+		{
+			
+			sy += bOrigin ? -1 : 1 * (fontSize*1.7);
+			sx = x;
+			
+			//glRasterPos2f(x,y + (int)yOffset);
+		} else if (textString[c] >= 32){
+			// < 32 = control characters - don't draw
+			// solves a bug with control characters
+			// getting drawn when they ought to not be
+			ofDrawBitmapCharacter(textString[c], (int)sx, (int)sy);
+			
+			sx += fontSize;
+		}
+	}
+	
+	if( !blend_enabled )
+		glDisable(GL_BLEND);
+	glBlendFunc( blend_src, blend_dst );
+	
+	
 #endif
 }
 

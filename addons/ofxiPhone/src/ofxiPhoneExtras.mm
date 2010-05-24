@@ -33,115 +33,115 @@
 #import "ofxiPhoneExtras.h"
 
 //--------------------------------------------------------------
-ofxiPhoneDeviceType iPhoneGetDeviceType() {
+ofxiPhoneDeviceType ofxiPhoneGetDeviceType() {
 	return [[[UIDevice currentDevice] model] caseInsensitiveCompare:@"iPhone"] == NSOrderedSame ? OFXIPHONE_DEVICE_IPHONE : OFXIPHONE_DEVICE_IPODTOUCH;
 }
 
 
 //--------------------------------------------------------------
-string iPhoneGetDeviceRevision() {
+string ofxiPhoneGetDeviceRevision() {
 	// ZACH TODO
 }
 
 //--------------------------------------------------------------
-UIWindow *iPhoneGetUIWindow() {
+UIWindow *ofxiPhoneGetUIWindow() {
 	return [[UIApplication sharedApplication] keyWindow];
 }
 
 
 //--------------------------------------------------------------
-EAGLView *iPhoneGetGLView() {
-	return [iPhoneGetAppDelegate() getGLView];
+EAGLView *ofxiPhoneGetGLView() {
+	return [ofxiPhoneGetAppDelegate() getGLView];
 }
 
 
 //--------------------------------------------------------------
-ofAppiPhoneWindow* iPhoneGetOFWindow() {
+ofAppiPhoneWindow* ofxiPhoneGetOFWindow() {
 	return ofAppiPhoneWindow::getInstance();
 }
 
 
 //--------------------------------------------------------------
-ofxiPhoneAppDelegate *iPhoneGetAppDelegate() {
+ofxiPhoneAppDelegate *ofxiPhoneGetAppDelegate() {
 	return [[UIApplication sharedApplication] delegate];
 }
 
 
 //--------------------------------------------------------------
-void iPhoneSendGLViewToFront() {
-	[iPhoneGetUIWindow() bringSubviewToFront:iPhoneGetGLView()];
+void ofxiPhoneSendGLViewToFront() {
+	[ofxiPhoneGetUIWindow() bringSubviewToFront:iPhoneGetGLView()];
 }
 
 
 //--------------------------------------------------------------
-void iPhoneSendGLViewToBack() {
-	[iPhoneGetUIWindow() sendSubviewToBack:iPhoneGetGLView()];
+void ofxiPhoneSendGLViewToBack() {
+	[ofxiPhoneGetUIWindow() sendSubviewToBack:iPhoneGetGLView()];
 }
 
 
 //--------------------------------------------------------------
-void iPhoneSetGLViewTransparent(bool b) {
-	iPhoneGetGLView().opaque = !b;
+void ofxiPhoneSetGLViewTransparent(bool b) {
+	ofxiPhoneGetGLView().opaque = !b;
 }
 
 
 //--------------------------------------------------------------
-void iPhoneSetGLViewUserInteraction(bool b) {
-	iPhoneGetGLView().userInteractionEnabled = b;
+void ofxiPhoneSetGLViewUserInteraction(bool b) {
+	ofxiPhoneGetGLView().userInteractionEnabled = b;
 }
 
 
 
 //--------------------------------------------------------------
-void iPhoneEnableIdleTimer() {
+void ofxiPhoneEnableIdleTimer() {
 	[UIApplication sharedApplication].idleTimerDisabled = false;
 }
 
 
 //--------------------------------------------------------------
-void iPhoneDisableIdleTimer() {
+void ofxiPhoneDisableIdleTimer() {
 	[UIApplication sharedApplication].idleTimerDisabled = true;
 }
 
 
 //--------------------------------------------------------------
-void iPhoneLockGLContext() {
-	[iPhoneGetAppDelegate() lockGL];
+void ofxiPhoneLockGLContext() {
+	[ofxiPhoneGetAppDelegate() lockGL];
 }
 
 
 //--------------------------------------------------------------
-void iPhoneUnlockGLContext() {
-	[iPhoneGetAppDelegate() unlockGL];
+void ofxiPhoneUnlockGLContext() {
+	[ofxiPhoneGetAppDelegate() unlockGL];
 }
 
 
 //--------------------------------------------------------------
-void iPhoneEnableLoopInThread() {
-	[iPhoneGetAppDelegate() enableLoopInThread];
+void ofxiPhoneEnableLoopInThread() {
+	[ofxiPhoneGetAppDelegate() enableLoopInThread];
 }
 
 
 //--------------------------------------------------------------
-void iPhoneSetOrientation(UIDeviceOrientation orientation) {
-	iPhoneGetOFWindow()->setOrientation(orientation);
+void ofxiPhoneSetOrientation(UIDeviceOrientation orientation) {
+	ofxiPhoneGetOFWindow()->setOrientation(orientation);
 }
 
 
 //--------------------------------------------------------------
-UIDeviceOrientation iPhoneGetOrientation() {
-	return (UIDeviceOrientation)iPhoneGetOFWindow()->getOrientation();;
+UIDeviceOrientation ofxiPhoneGetOrientation() {
+	return (UIDeviceOrientation)ofxiPhoneGetOFWindow()->getOrientation();
 }
 
 
 //--------------------------------------------------------------
-bool iPhoneBundleImageToGLTexture(NSString *filename, GLuint *spriteTexture) {
-	return iPhoneUIImageToGLTexture([UIImage imageNamed:filename], spriteTexture);
+bool ofxiPhoneBundleImageToGLTexture(NSString *filename, GLuint *spriteTexture) {
+	return ofxiPhoneUIImageToGLTexture([UIImage imageNamed:filename], spriteTexture);
 }
 
 
 //--------------------------------------------------------------
-bool iPhoneUIImageToGLTexture(UIImage *uiImage, GLuint *spriteTexture) {
+bool ofxiPhoneUIImageToGLTexture(UIImage *uiImage, GLuint *spriteTexture) {
 	if(!uiImage) return false;
 	
 	CGImageRef cgImage;
@@ -182,7 +182,7 @@ bool iPhoneUIImageToGLTexture(UIImage *uiImage, GLuint *spriteTexture) {
 
 
 //--------------------------------------------------------------
-bool iPhoneUIImageToOFImage(UIImage *uiImage, ofImage &outImage, int targetWidth, int targetHeight) {
+bool ofxiPhoneUIImageToOFImage(UIImage *uiImage, ofImage &outImage, int targetWidth, int targetHeight) {
 	if(!uiImage) return false;
 	
 	CGContextRef spriteContext;
@@ -310,7 +310,7 @@ void releaseData(void *info, const void *data, size_t dataSize) {
 }
 
 
-void iPhoneScreenGrab(id delegate) {
+void ofxiPhoneScreenGrab(id delegate) {
 	CGRect rect = [[UIScreen mainScreen] bounds];
 	int width = rect.size.width;
 	int height =  rect.size.height;
