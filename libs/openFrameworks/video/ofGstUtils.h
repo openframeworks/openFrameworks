@@ -63,7 +63,7 @@ public:
 	void setDeviceID(unsigned id);
 	bool initGrabber(int w, int h, int framerate=-1);
 
-	bool setPipeline(string pipeline, int bpp=3, bool isStream = false);
+	bool setPipeline(string pipeline, int bpp=24, bool isStream=false, int w=-1, int h=-1);
 	bool setPipelineWithSink(string pipeline);
 
 	bool isFrameNew();

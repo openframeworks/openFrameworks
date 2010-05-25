@@ -1,0 +1,103 @@
+ofxiPhone changelog
+
+v0.92
+--------------------
+- ofxMultitouch no longer needed (only provided for backwards compatibility), multitouch handling now in openframeworks core
+- poco support
+- mapkit support
+- openframeworks and ofxiPhone precompiled (similar to openFrameworks 0.061)
+
+
+v0.9
+--------------------
+- no more iPhoneGlobals struct (replaced by lots of iPhoneGet_____() functions defined in ofxiPhoneExtras.h)
+- introduction of ofxiPhone.h vs ofxiPhoneExtras.h
+- CoreLocation support added (will need the CoreLocation.framework)
+- lots of new files, so probably best to use the new xcodeproject and re-add your source files
+
+
+v0.81
+--------------------
+- call saveComplete as selector instead of message (to avoid warning)
+
+v0.8	07/04/2009
+--------------------
+- changed license to revised BSD (a lot more more permissive than GPL)
+
+
+v0.77
+--------------------
+- moved ofDisableTectureEdgeHack(); so it gets called
+- another minor fix but I can't remember
+ 
+
+v0.76
+--------------------
+- touchDown is sent even on doubletap, upto app coder to ignore if s/he wishes too on doubletap
+
+
+v0.75
+--------------------
+- added ofxiPhoneAlerts & lostfocus/gotfocus/lowmemory events
+
+
+v0.74
+--------------------
+- updated examples
+
+
+v0.73
+--------------------
+- checking delegate for image save
+- updated examples
+
+
+v0.72
+--------------------
+- optimized multitouch handling (finger persistence etc.)
+- added device types
+
+
+
+v0.71
+--------------------
+- expanded image load functionality from bundle or UIImage*
+
+
+v0.7
+--------------------
+- added ofSoundStream replacement for audio input
+- added shell ofSoundPlayer replacement (no functionality)
+- clear glView after calling setup
+- updated window creation for oF 006
+
+
+v0.61
+--------------------
+- setup data path
+
+v0.6
+--------------------
+- utility functions enable/disable idle timer
+- multitouch checking back in ofxiPhone core
+
+v0.5
+--------------------
+- fixed setFrameRate
+- included iphone accelerometer & iphone multitouch implementations into ofxiPhone
+- organized files
+- removed multitouch checking from core
+- added utility functions:
+	* ofxiPhoneSaveImage
+	* ofxiPhoneLoadImage
+
+
+
+v0.2
+--------------------
+- implemented all ofAppBaseWindow methods
+
+
+v0.1
+--------------------
+- initial version

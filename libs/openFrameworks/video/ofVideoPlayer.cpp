@@ -1,7 +1,7 @@
 #include "ofVideoPlayer.h"
 #include "ofUtils.h"
 
-#ifdef TARGET_LINUX
+#ifdef OF_VIDEO_PLAYER_GSTREAMER
 	#include <gst/video/video.h>
 #endif
 
@@ -132,7 +132,7 @@ ofVideoPlayer::ofVideoPlayer (){
 	bStarted					= false;
 	pixels						= NULL;
 	nFrames						= 0;
-	bPaused						= false;
+	bPaused						= true;
 
 
 
@@ -192,7 +192,7 @@ void ofVideoPlayer::idleMovie(){
 	if (bLoaded == true){
 
 		//--------------------------------------------------------------
-		#ifndef TARGET_LINUX  // !linux = quicktime...
+		#ifdef OF_VIDEO_PLAYER_QUICKTIME
 		//--------------------------------------------------------------
 
 			#if defined(TARGET_WIN32) || defined(QT_USE_MOVIETASK)
@@ -200,7 +200,7 @@ void ofVideoPlayer::idleMovie(){
 			#endif
 
 		//--------------------------------------------------------------
-		#else // linux.
+		#else // gstreamer.
 		//--------------------------------------------------------------
 
 			gstUtils.update();
@@ -441,6 +441,8 @@ bool ofVideoPlayer::loadMovie(string name){
 				tex.allocate(gstUtils.getWidth(),gstUtils.getHeight(),GL_RGB,false);
 				tex.loadData(gstUtils.getPixels(), gstUtils.getWidth(), gstUtils.getHeight(), GL_RGB);
 			}
+			height=gstUtils.getHeight();
+			width=gstUtils.getWidth();
 			bLoaded = true;
 			allocated = true;
 			ofLog(OF_LOG_VERBOSE,"ofVideoPlayer: movie loaded");
@@ -502,7 +504,8 @@ void ofVideoPlayer::start(){
 
 //--------------------------------------------------------
 void ofVideoPlayer::play(){
-
+	bPlaying = true;
+	bPaused = false;
 	//--------------------------------------
 	#ifdef OF_VIDEO_PLAYER_QUICKTIME
 	//--------------------------------------
@@ -512,7 +515,6 @@ void ofVideoPlayer::play(){
 	}else {
 		// ------------ lower level "startMovie"
 		// ------------ use desired speed & time (-1,1,etc) to Preroll...
-		bPlaying = true;
 		TimeValue timeNow;
 	   	timeNow = GetMovieTime(moviePtr, nil);
 		PrerollMovie(moviePtr, timeNow, X2Fix(speed));

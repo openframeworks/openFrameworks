@@ -156,7 +156,7 @@ void ofSerial::enumerateDevices(){
 			printf("ofSerial: listing devices\n");
 			while ((entry = readdir(dir)) != NULL){
 				str = (char *)entry->d_name;
-				if( str.substr(0,3) == "cu." ){
+				if( str.substr(0,3) == "cu." || str.substr(0,4) == "tty." ){
 					printf("device %i - %s\n", deviceCount, str.c_str());
 					deviceCount++;
 				}
@@ -187,7 +187,7 @@ void ofSerial::enumerateDevices(){
 			printf("ofSerial: listing devices\n");
 			while ((entry = readdir(dir)) != NULL){
 				str = (char *)entry->d_name;
-				if( str.substr(0,3) == "tty" || str.substr(0,3) == "rfc" ){
+				if( str.substr(0,4) == "ttyS" || str.substr(0,6) == "ttyUSB" || str.substr(0,3) == "rfc" ){
 					printf("device %i - %s\n", deviceCount, str.c_str());
 					deviceCount++;
 				}
@@ -271,7 +271,11 @@ bool ofSerial::setup(int deviceNumber, int baud){
 
 		while ((entry = readdir(dir)) != NULL){
 			str = (char *)entry->d_name;
-			if( str.substr(0,3) == "cu." || str.substr(0,3) == "tty" || str.substr(0,3) == "rfc" ){
+			#ifdef TARGET_OSX
+			if( str.substr(0,3) == "cu." || str.substr(0,4) == "tty." ){
+			#else
+			if( str.substr(0,4) == "ttyS" || str.substr(0,6) == "ttyUSB" || str.substr(0,3) == "rfc" ){
+			#endif
 				if(deviceCount == deviceNumber){
 					device = "/dev/"+str;
 					deviceFound = true;
@@ -470,7 +474,9 @@ int ofSerial::writeBytes(unsigned char * buffer, int length){
 	#if defined( TARGET_OSX ) || defined( TARGET_LINUX )
 	    int numWritten = write(fd, buffer, length);
 		if(numWritten <= 0){
-			ofLog(OF_LOG_ERROR,"ofSerial: Can't write to com port");
+			if ( errno == EAGAIN )
+				return 0;
+			ofLog(OF_LOG_ERROR,"ofSerial: Can't write to com port, errno %i (%s)", errno, strerror(errno));
 			return OF_SERIAL_ERROR;
 		}
 
@@ -506,7 +512,9 @@ int ofSerial::readBytes(unsigned char * buffer, int length){
 	#if defined( TARGET_OSX ) || defined( TARGET_LINUX )
 		int nRead = read(fd, buffer, length);
 		if(nRead < 0){
-			ofLog(OF_LOG_ERROR,"ofSerial: trouble reading from port");
+			if ( errno == EAGAIN )
+				return OF_SERIAL_NO_DATA;
+			ofLog(OF_LOG_ERROR,"ofSerial: trouble reading from port, errno %i (%s)", errno, strerror(errno));
 			return OF_SERIAL_ERROR;
 		}
 		return nRead;
@@ -543,7 +551,9 @@ bool ofSerial::writeByte(unsigned char singleByte){
 	    int numWritten = 0;
 	    numWritten = write(fd, tmpByte, 1);
 		if(numWritten <= 0 ){
-			 ofLog(OF_LOG_ERROR,"ofSerial: Can't write to com port");
+			if ( errno == EAGAIN )
+				return 0;
+			 ofLog(OF_LOG_ERROR,"ofSerial: Can't write to com port, errno %i (%s)", errno, strerror(errno));
 			 return OF_SERIAL_ERROR;
 		}
 		ofLog(OF_LOG_VERBOSE,"ofSerial: written byte");
@@ -584,7 +594,9 @@ int ofSerial::readByte(){
 	#if defined( TARGET_OSX ) || defined( TARGET_LINUX )
 		int nRead = read(fd, tmpByte, 1);
 		if(nRead < 0){
-			ofLog(OF_LOG_ERROR,"ofSerial: trouble reading from port");
+			if ( errno == EAGAIN )
+				return OF_SERIAL_NO_DATA;
+			ofLog(OF_LOG_ERROR,"ofSerial: trouble reading from port, errno %i (%s)", errno, strerror(errno));
             return OF_SERIAL_ERROR;
 		}
 		if(nRead == 0)
