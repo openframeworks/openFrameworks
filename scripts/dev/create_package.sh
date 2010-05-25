@@ -12,11 +12,11 @@ if [ "$platform" = "osxSL" ]; then
     echo "will make changes for snow leopard"
 fi
 
-if [ "$platform" != "win_cb" ] && [ "$platform" != "linux" ] && [ "$platform" != "linux64" ] && [ "$platform" != "vs2008" ] && [ "$platform" != "osx" ] && [ "$platform" != "all" ]; then
+if [ "$platform" != "win_cb" ] && [ "$platform" != "linux" ] && [ "$platform" != "linux64" ] && [ "$platform" != "vs2008" ] && [ "$platform" != "vs2010" ] && [ "$platform" != "osx" ] && [ "$platform" != "all" ]; then
     echo usage: 
     echo ./create_package.sh platform version
     echo platform:
-    echo win_cb, linux, linux64, vs2008, osx, all
+    echo win_cb, linux, linux64, vs2008, vs2010, osx, all
     exit 1
 fi
 
@@ -92,7 +92,9 @@ function deleteProjectFiles {
         rm *.sln
         rm *.vcproj
         rm *.vcproj.user
-        
+		rm *.vcxproj
+	    rm *.vcxproj.user
+
         #delete OFLib project files
         if [ "$platform" = "win_cb" ]; then
             rm -Rf ${oflib_root}/*/linux
@@ -108,6 +110,7 @@ function deleteProjectFiles {
         fi
         rm -Rf ${oflib_root}/*/osx
         rm -Rf ${oflib_root}/*/vs2008
+		rm -Rf ${oflib_root}/*/vs2010
         rm -Rf ${oflib_root}/*/iphone
         
     fi
@@ -130,9 +133,12 @@ function deleteProjectFiles {
         rm *.sln
         rm *.vcproj
         rm *.vcproj.user
-        
+        rm *.vcxproj
+        rm *.vcxproj.user
+		
         #delete OFLib project files
         rm -Rf ${oflib_root}/*/vs2008
+		rm -Rf ${oflib_root}/*/vs2010
         rm -Rf ${oflib_root}/*/linux
         rm -Rf ${oflib_root}/*/linux64
         rm -Rf ${oflib_root}/*/win_cb
@@ -157,6 +163,11 @@ function deleteProjectFiles {
         #delete osx files
         rm -Rf *.xcodeproj
         rm openFrameworks-Info.plist
+
+		#delete vs2010 files
+		rm *vs2010.vcxproj
+		rm *vs2010.vcxproj.user
+		rm *vs2010.sln
         
         #delete OFLib project files
         rm -Rf ${oflib_root}/*/osx
@@ -165,6 +176,38 @@ function deleteProjectFiles {
         rm -Rf ${oflib_root}/*/win_cb
         rm -Rf ${oflib_root}/*/iphone
     fi
+
+
+	#visual studio
+    if [ "$platform" = "vs2010" ]; then
+
+        #delete codeblock files
+        rm *.cbp
+        rm *.sh
+        rm *.workspace
+
+        #delete makefiles
+        rm makefile
+        rm *.make
+
+        #delete osx files
+        rm -Rf *.xcodeproj
+        rm openFrameworks-Info.plist
+
+		#delete vs2008 files
+		rm *.vcproj
+		rm *.vcproj.user
+		# [zach - don't know how to delete non _v2010.sln here... requires some logic] rm *.sln
+
+        #delete OFLib project files
+        rm -Rf ${oflib_root}/*/osx
+        rm -Rf ${oflib_root}/*/linux
+        rm -Rf ${oflib_root}/*/linux64
+        rm -Rf ${oflib_root}/*/win_cb
+        rm -Rf ${oflib_root}/*/iphone
+    fi
+
+
 }
 
 function createPackage {
@@ -204,27 +247,31 @@ function createPackage {
 
     #delete other platform libraries
     if [ "$pkg_platform" = "linux" ]; then
-        otherplatforms="linux64 osx win_cb vs2008 iphone"
+        otherplatforms="linux64 osx win_cb vs2008 vs2010 iphone"
     fi
 
     if [ "$pkg_platform" = "linux64" ]; then
-        otherplatforms="linux osx win_cb vs2008 iphone"
+        otherplatforms="linux osx win_cb vs2008 vs2010 iphone"
     fi
 
     if [ "$pkg_platform" = "osx" ]; then
-        otherplatforms="linux linux64 win_cb vs2008 iphone"
+        otherplatforms="linux linux64 win_cb vs2008 vs2010 iphone"
     fi
 
     if [ "$pkg_platform" = "win_cb" ]; then
-        otherplatforms="linux linux64 osx vs2008 iphone"
+        otherplatforms="linux linux64 osx vs2008 vs2010 iphone"
     fi
 
     if [ "$pkg_platform" = "vs2008" ]; then
-        otherplatforms="linux linux64 osx win_cb iphone"
+        otherplatforms="linux linux64 osx win_cb vs2010 iphone"
+    fi
+
+	if [ "$pkg_platform" = "vs2010" ]; then
+        otherplatforms="linux linux64 osx win_cb vs2008 iphone"
     fi
 
     if [ "$pkg_platform" = "iphone" ]; then
-        otherplatforms="linux linux64 osx win_cb vs2008"
+        otherplatforms="linux linux64 osx win_cb vs2008 vs2010"
     fi
 
     #delete libraries for other platforms
@@ -241,7 +288,7 @@ function createPackage {
         rm -Rf $libsnotinmac
     elif [ "$pkg_platform" = "linux" ] || [ "$pkg_platform" = "linux64" ]; then
         rm -Rf $libsnotinlinux
-    elif [ "$pkg_platform" = "win_cb" ] || [ "$pkg_platform" = "vs2008" ]; then
+    elif [ "$pkg_platform" = "win_cb" ] || [ "$pkg_platform" = "vs2008" ] || [ "$pkg_platform" = "vs2010" ]; then
         rm -Rf $libsnotinwindows
     fi
     
