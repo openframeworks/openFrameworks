@@ -290,7 +290,7 @@ public:
 		filebuf *pbuf=file->rdbuf();
 
 		// get file size using buffer's members
-		size = pbuf->pubseekoff (0,ios::end,ios::in);
+		size = (long)pbuf->pubseekoff (0,ios::end,ios::in);
 		pbuf->pubseekpos (0,ios::in);
 
 		// get file data
