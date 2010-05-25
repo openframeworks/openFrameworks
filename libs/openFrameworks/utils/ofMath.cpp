@@ -254,12 +254,12 @@ bool ofLineSegmentIntersection(ofPoint line1Start, ofPoint line1End, ofPoint lin
 	compareB = diffLB.x*line2Start.y - diffLB.y*line2Start.x;
 	if (
 		(
-			( ( diffLA.x*line2Start.y - diffLA.y*line2Start.x ) < compareA ) xor
+			( ( diffLA.x*line2Start.y - diffLA.y*line2Start.x ) < compareA ) ^
 			( ( diffLA.x*line2End.y - diffLA.y*line2End.x ) < compareA )
 		)
-		and
+		&&
 		(
-			( ( diffLB.x*line1Start.y - diffLB.y*line1Start.x ) < compareB ) xor
+			( ( diffLB.x*line1Start.y - diffLB.y*line1Start.x ) < compareB ) ^
 			( ( diffLB.x*line1End.y - diffLB.y*line1End.x) < compareB )
 		)
 	)
