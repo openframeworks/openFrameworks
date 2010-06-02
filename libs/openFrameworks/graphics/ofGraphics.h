@@ -54,7 +54,6 @@ void ofSetCircleResolution(int res);  		// if there 22 is a problem, you can cha
 void ofCurve(float x0, float y0, float x1, float y1, float x2, float y2, float x3, float y3);
 void ofBezier(float x0, float y0, float x1, float y1, float x2, float y2, float x3, float y3);
 
-
 // drawing options
 void ofNoFill();
 void ofFill();
@@ -103,10 +102,11 @@ void ofCurveVertex(float x, float y);
 void ofBezierVertex(float x1, float y1, float x2, float y2, float x3, float y3);
 
 // for polygons
-void ofSetPolyMode(int mode);	
+void ofSetPolyMode(int mode);
 void ofBeginShape();
 void ofVertex(float x, float y);
 void ofEndShape(bool bClose = false);
 void ofNextContour(bool bClose = false);  // for multi contour shapes!
+
 
 #endif

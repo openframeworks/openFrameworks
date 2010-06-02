@@ -123,7 +123,9 @@
 #endif
 
 #ifdef TARGET_ANDROID
+	#include <unistd.h>
 	#include <GLES/gl.h>
+	#include "glu.h"
 #endif
 
 
@@ -189,7 +191,9 @@
 #endif
 
 // comment out this line to disable all poco related code
-#define OF_USING_POCO
+#ifndef TARGET_ANDROID
+	#define OF_USING_POCO
+#endif
 
 //we don't want to break old code that uses ofSimpleApp
 //so we forward declare ofBaseApp and make ofSimpleApp mean the same thing

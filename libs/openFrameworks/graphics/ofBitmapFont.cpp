@@ -347,7 +347,7 @@ unsigned char	myLetterPixels[16*16 * 16*16 * 2];			// letter size:8x14pixels, te
 //---------------------------------------------------------------------
 void  ofDrawBitmapCharacter(int character , int x , int y){
 
-#ifndef TARGET_ANDROID
+
 	if (!bBitmapTexturePrepared){
 		
 		glesBitmappedFontTexture.allocate(16*16, 16*16, GL_LUMINANCE_ALPHA, false);
@@ -429,7 +429,7 @@ void  ofDrawBitmapCharacter(int character , int x , int y){
 			glesBitmappedFontTexture.draw(50,200);
 		}*/
 	}	
-#endif
+
 }
 
 #endif
