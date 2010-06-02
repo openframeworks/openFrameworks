@@ -8,7 +8,7 @@ bool 						bMousePressed;
 bool						bRightButton;
 int							width, height;
 
-ofAppBaseWindow *			window = NULL;
+static ofAppBaseWindow *			window = NULL;
 
 //========================================================================
 // core events instance & arguments
@@ -21,6 +21,8 @@ ofEventArgs					voidEventArgs;
 // default windowing
 #ifdef TARGET_OF_IPHONE
 	#include "ofAppiPhoneWindow.h"
+#elif defined TARGET_ANDROID
+	#include "ofAppAndroidWindow.h"
 #else
 	#include "ofAppGlutWindow.h"
 #endif
@@ -37,6 +39,8 @@ void ofSetupOpenGL(ofAppBaseWindow * windowPtr, int w, int h, int screenMode){
 void ofSetupOpenGL(int w, int h, int screenMode){
 	#ifdef TARGET_OF_IPHONE
 		window = new ofAppiPhoneWindow();
+	#elif defined TARGET_ANDROID
+		window = new ofAppAndroidWindow();
 	#else
 		window = new ofAppGlutWindow();
 	#endif

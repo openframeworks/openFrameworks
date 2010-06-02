@@ -744,17 +744,18 @@ void ofSetupScreen(){
 
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	//gluPerspective(screenFov, aspect, nearDist, farDist);
+	gluPerspective(screenFov, aspect, nearDist, farDist);
 
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-	//gluLookAt(eyeX, eyeY, dist, eyeX, eyeY, 0.0, 0.0, 1.0, 0.0);
+	gluLookAt(eyeX, eyeY, dist, eyeX, eyeY, 0.0, 0.0, 1.0, 0.0);
 
 	glScalef(1, -1, 1);           // invert Y axis so increasing Y goes down.
   	glTranslatef(0, -h, 0);       // shift origin up to upper-left corner.
 }
 
-#ifndef TARGET_ANDROID
+
+
 //-------------- polygons ----------------------------------
 //
 // to do polygons, we need tesselation
@@ -1251,4 +1252,4 @@ void ofEndShape(bool bClose){
 
 }
 
-#endif
+
