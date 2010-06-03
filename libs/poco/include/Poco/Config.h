@@ -1,7 +1,7 @@
 //
 // Config.h
 //
-// $Id: //poco/1.3/Foundation/include/Poco/Config.h#8 $
+// $Id: //poco/1.3/Foundation/include/Poco/Config.h#9 $
 //
 // Library: Foundation
 // Package: Core
@@ -9,7 +9,7 @@
 //
 // Feature configuration for the POCO libraries.
 //
-// Copyright (c) 2006-2008, Applied Informatics Software Engineering GmbH.
+// Copyright (c) 2006-2009, Applied Informatics Software Engineering GmbH.
 // and Contributors.
 //
 // Permission is hereby granted, free of charge, to any person or organization
@@ -63,6 +63,42 @@
 // Define to desired default thread stack size
 // Zero means OS default
 #define POCO_THREAD_STACK_SIZE 0
+
+
+// Following are options to remove certain features
+// to reduce library/executable size for smaller
+// embedded platforms. By enabling these options,
+// the size of a statically executable can be
+// reduced by a few 100 Kbytes.
+
+
+// No automatic registration of FileChannel in
+// LoggingFactory - avoids FileChannel and friends 
+// being linked to executable.
+// #define POCO_NO_FILECHANNEL
+
+
+// No automatic registration of SplitterChannel in
+// LoggingFactory - avoids SplitterChannel being
+// linked to executable.
+// #define POCO_NO_SPLITTERCHANNEL
+
+
+// No automatic registration of SyslogChannel in
+// LoggingFactory - avoids SyslogChannel being
+// linked to executable on Unix/Linux systems.
+// #define POCO_NO_SYSLOGCHANNEL
+
+
+// No support for INI file configurations in
+// Poco::Util::Application.
+// #define POCO_UTIL_NO_INIFILECONFIGURATION
+
+
+// No support for XML configuration in 
+// Poco::Util::Application. Avoids linking of XML
+// library and saves a few 100 Kbytes.
+// #define POCO_UTIL_NO_XMLCONFIGURATION
 
 
 #endif // Foundation_Config_INCLUDED

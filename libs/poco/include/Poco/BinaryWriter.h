@@ -1,7 +1,7 @@
 //
 // BinaryWriter.h
 //
-// $Id: //poco/1.3/Foundation/include/Poco/BinaryWriter.h#1 $
+// $Id: //poco/1.3/Foundation/include/Poco/BinaryWriter.h#2 $
 //
 // Library: Foundation
 // Package: Streams
@@ -122,6 +122,9 @@ public:
 
 	void writeRaw(const std::string& rawData);
 		/// Writes the string as-is to the stream.
+		
+	void writeRaw(const char* buffer, std::streamsize length);
+		/// Writes length raw bytes from the given buffer to the stream.
 
 	void writeBOM();
 		/// Writes a byte-order mark to the stream. A byte order mark is

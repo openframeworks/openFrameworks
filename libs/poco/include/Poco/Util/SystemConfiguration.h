@@ -1,7 +1,7 @@
 //
 // SystemConfiguration.h
 //
-// $Id: //poco/1.3/Util/include/Poco/Util/SystemConfiguration.h#2 $
+// $Id: //poco/1.3/Util/include/Poco/Util/SystemConfiguration.h#3 $
 //
 // Library: Util
 // Package: Configuration
@@ -60,6 +60,8 @@ class Util_API SystemConfiguration: public AbstractConfiguration
 	///   - system.currentDir: the current working directory
 	///   - system.homeDir: the user's home directory
 	///   - system.tempDir: the system's temporary directory
+	///   - system.dateTime: the current UTC date and time, formatted in ISO 8601 format.
+	///   - system.pid: the current process ID.
 	///   - system.env.<NAME>: the environment variable with the given <NAME>.
 	///
 	/// An attempt to set a system variable will result in an
@@ -88,6 +90,8 @@ private:
 	static const std::string CURRENTDIR;
 	static const std::string HOMEDIR;
 	static const std::string TEMPDIR;
+	static const std::string DATETIME;
+	static const std::string PID;
 	static const std::string ENV;
 };
 

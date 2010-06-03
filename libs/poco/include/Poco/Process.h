@@ -1,7 +1,7 @@
 //
 // Process.h
 //
-// $Id: //poco/1.3/Foundation/include/Poco/Process.h#1 $
+// $Id: //poco/1.3/Foundation/include/Poco/Process.h#2 $
 //
 // Library: Foundation
 // Package: Processes
@@ -139,7 +139,7 @@ public:
 		/// Usage example:
 		///     Pipe outPipe;
 		///     Process::Args args;
-		///     ProcessHandle ph(launch("/bin/ps", args, &outPipe, 0, 0));
+		///     ProcessHandle ph(launch("/bin/ps", args, 0, &outPipe, 0));
 		///     PipeInputStream istr(outPipe);
 		///     ... // read output of ps from istr
 		///     int rc = ph.wait();

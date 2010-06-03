@@ -43,8 +43,6 @@
 
 //--------------------------
 // events
-#ifndef TARGET_ANDROID
 #include "ofEvents.h"
-#endif
 
 #endif

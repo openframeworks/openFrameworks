@@ -1,7 +1,7 @@
 //
 // RWLock.h
 //
-// $Id: //poco/1.3/Foundation/include/Poco/RWLock.h#1 $
+// $Id: //poco/1.3/Foundation/include/Poco/RWLock.h#2 $
 //
 // Library: Foundation
 // Package: Threading
@@ -55,6 +55,8 @@ namespace Poco {
 
 
 class ScopedRWLock;
+class ScopedReadRWLock;
+class ScopedWriteRWLock;
 
 
 class Foundation_API RWLock: private RWLockImpl
@@ -63,6 +65,8 @@ class Foundation_API RWLock: private RWLockImpl
 {
 public:
 	typedef ScopedRWLock ScopedLock;
+	typedef ScopedReadRWLock ScopedReadLock;
+	typedef ScopedWriteRWLock ScopedWriteLock;
 
 	RWLock();
 		/// Creates the Reader/Writer lock.
@@ -114,6 +118,24 @@ private:
 };
 
 
+class Foundation_API ScopedReadRWLock : public ScopedRWLock
+	/// A variant of ScopedLock for reader locks.
+{
+public:
+	ScopedReadRWLock(RWLock& rwl);
+	~ScopedReadRWLock();
+};
+
+
+class Foundation_API ScopedWriteRWLock : public ScopedRWLock
+	/// A variant of ScopedLock for writer locks.
+{
+public:
+	ScopedWriteRWLock(RWLock& rwl);
+	~ScopedWriteRWLock();
+};
+
+
 //
 // inlines
 //
@@ -159,6 +181,26 @@ inline ScopedRWLock::ScopedRWLock(RWLock& rwl, bool write): _rwl(rwl)
 inline ScopedRWLock::~ScopedRWLock()
 {
 	_rwl.unlock();
+}
+
+
+inline ScopedReadRWLock::ScopedReadRWLock(RWLock& rwl): ScopedRWLock(rwl, false)
+{
+}
+
+
+inline ScopedReadRWLock::~ScopedReadRWLock()
+{
+}
+
+
+inline ScopedWriteRWLock::ScopedWriteRWLock(RWLock& rwl): ScopedRWLock(rwl, true)
+{
+}
+
+
+inline ScopedWriteRWLock::~ScopedWriteRWLock()
+{
 }
 
 

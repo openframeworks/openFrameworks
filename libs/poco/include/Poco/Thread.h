@@ -1,7 +1,7 @@
 //
 // Thread.h
 //
-// $Id: //poco/1.3/Foundation/include/Poco/Thread.h#5 $
+// $Id: //poco/1.3/Foundation/include/Poco/Thread.h#6 $
 //
 // Library: Foundation
 // Package: Threading
@@ -68,6 +68,8 @@ class Foundation_API Thread: private ThreadImpl
 	/// The name of a thread can be changed at any time.
 {
 public:	
+	typedef ThreadImpl::TIDImpl TID;
+
 	using ThreadImpl::Callable;
 
 	enum Priority
@@ -91,6 +93,9 @@ public:
 
 	int id() const;
 		/// Returns the unique thread ID of the thread.
+
+	TID tid() const;
+		/// Returns the native thread ID of the thread.
 
 	std::string name() const;
 		/// Returns the name of the thread.
@@ -172,6 +177,9 @@ public:
 		/// Returns the Thread object for the currently active thread.
 		/// If the current thread is the main thread, 0 is returned.
 
+ 	static TID currentTid();
+ 		/// Returns the native thread ID for the current thread.    
+
 protected:
 	ThreadLocalStorage& tls();
 		/// Returns a reference to the thread's local storage.
@@ -202,6 +210,12 @@ private:
 //
 // inlines
 //
+inline Thread::TID Thread::tid() const
+{
+	return tidImpl();
+}
+
+
 inline int Thread::id() const
 {
 	return _id;
@@ -281,6 +295,12 @@ inline void Thread::setStackSize(int size)
 inline int Thread::getStackSize() const
 {
 	return getStackSizeImpl();
+}
+
+
+inline Thread::TID Thread::currentTid()
+{
+	return currentTidImpl();
 }
 
 
