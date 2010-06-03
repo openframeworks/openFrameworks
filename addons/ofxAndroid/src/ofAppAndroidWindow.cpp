@@ -81,7 +81,14 @@ void ofAppAndroidWindow::disableSetupScreen(){
 
 extern "C"{
 
-//extern void initAndroidOF();
+void
+Java_cc_openframeworks_OFAndroidWindow_setAppName( JNIEnv*  env, jobject  thiz, jstring app_name )
+{
+	jboolean iscopy;
+	const char *mfile = env->GetStringUTFChars(app_name, &iscopy);
+
+    ofSetDataPathRoot(string("/sdcard/")+mfile+"/");
+}
 
 void
 Java_cc_openframeworks_OFAndroidWindow_setup( JNIEnv*  env, jobject  thiz )

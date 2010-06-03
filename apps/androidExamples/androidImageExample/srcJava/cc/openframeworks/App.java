@@ -20,53 +20,55 @@ public class App extends Activity{
     public void onCreate(Bundle savedInstanceState)
     { 
         super.onCreate(savedInstanceState);
-        
-        Field[] files = R.raw.class.getDeclaredFields();
-        for(int i=0; i<files.length; i++){
-        	int fileId;
-        	String fileName;
-        	try {
-				fileId = files[i].getInt(null);
-				fileName = files[i].getName();
-			} catch (IllegalArgumentException e) {
-				e.printStackTrace();
-				continue;
-			} catch (IllegalAccessException e) {
-				e.printStackTrace();
-				continue;
-			}
+        try {
+			// try to find if R class exists will throw
+        	// an exception if not
+        	Class.forName("cc.openframeworks.R");
 			
-			
-			InputStream from=null;
-			File toFile=null;
-			FileOutputStream to=null;
-			try {
-				from = getResources().openRawResource(fileId);
-				toFile = new File("/sdcard/" + fileName);
-				to = new FileOutputStream(toFile);
-				byte[] buffer = new byte[4096];
-				int bytesRead;
+        	// if it exists copy all the raw resources
+        	// to a folder in the sdcard
+	        Field[] files = R.raw.class.getDeclaredFields();
+
+    		try{
+    			new File("/sdcard/" + getResources().getText(R.string.app_name)).mkdir();
+    		}catch(Exception e){
+    			
+    		}
+    		
+	        for(int i=0; i<files.length; i++){
+	        	int fileId;
+	        	String fileName;
 				
-				while ((bytesRead = from.read(buffer)) != -1)
-				    to.write(buffer, 0, bytesRead); // write
-			} catch (Exception e) {
-				e.printStackTrace();
-			} finally {
-		      if (from != null)
-		          try {
-		            from.close();
-		          } catch (IOException e) {
-		            ;
-		          }
-		        if (to != null)
-		          try {
-		            to.close();
-		          } catch (IOException e) {
-		            ;
-		          }
-			}
-			
-        }
+				InputStream from=null;
+				File toFile=null;
+				FileOutputStream to=null;
+	        	try {
+					fileId = files[i].getInt(null);
+					fileName = files[i].getName();
+					
+					from = getResources().openRawResource(fileId);
+					toFile = new File("/sdcard/" + getResources().getText(R.string.app_name) + "/" +fileName);
+					to = new FileOutputStream(toFile);
+					byte[] buffer = new byte[4096];
+					int bytesRead;
+					
+					while ((bytesRead = from.read(buffer)) != -1)
+					    to.write(buffer, 0, bytesRead); // write
+				} catch (Exception e) {
+					e.printStackTrace();
+				} finally {
+					if (from != null)
+					  try {
+					    from.close();
+					  } catch (IOException e) { }
+					  
+			        if (to != null)
+			          try {
+			            to.close();
+			          } catch (IOException e) { }
+				}
+	        }
+        } catch (ClassNotFoundException e1) { }
         mGLView = new OFGLSurfaceView(this);
         setContentView(mGLView);
     }
@@ -86,27 +88,20 @@ public class App extends Activity{
     private GLSurfaceView mGLView;
 	 
 	 static {
-		 //try{
-			System.loadLibrary("OFAndroidApp"); 
-		 //System.load("/data/data/cc.openframeworks/lib/libandroidtest.so");
-		 /*}catch(UnsatisfiedLinkError e){
-			 Log.println(Log.ERROR, "tag", e.getMessage());
-			 throw e;
-		 }*/
+		 System.loadLibrary("OFAndroidApp"); 
 	 }
 }
 
 class OFGLSurfaceView extends GLSurfaceView {
     public OFGLSurfaceView(Context context) {
         super(context);
-        mRenderer = new OFAndroidWindow();
+        mRenderer = new OFAndroidWindow(context.getResources().getText(R.string.app_name).toString());
         setRenderer(mRenderer);
     }
 
     public boolean onTouchEvent(final MotionEvent event) {
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
             for(int i=0;i<event.getPointerCount();i++){
-            	Log.i("OFApp", event.getX(i) +","+ event.getY(i));
             	onTouchDown(event.getPointerId(i), event.getX(i), event.getY(i), event.getPressure(i));
             }
         }
@@ -133,7 +128,12 @@ class OFGLSurfaceView extends GLSurfaceView {
 }
 
 class OFAndroidWindow implements GLSurfaceView.Renderer {
+	public OFAndroidWindow(String app_name){
+		this.app_name = app_name;
+	}
+	
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
+    	setAppName(app_name);
     	init();
         setup();
         
@@ -148,6 +148,8 @@ class OFAndroidWindow implements GLSurfaceView.Renderer {
         render();
     }
 
+    private String app_name;
+    private static native void setAppName(String app_name);
     private static native void init();
     private static native void setup();
     private static native void resize(int w, int h);
