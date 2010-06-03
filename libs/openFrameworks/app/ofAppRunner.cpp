@@ -57,7 +57,9 @@ void ofExitCallback(){
 
 	//------------------------
 	// try to close FMOD:
+	#ifndef TARGET_ANDROID
 	ofSoundPlayer::closeFmod();
+	#endif
 	//------------------------
 	// try to close quicktime, for non-linux systems:
 
