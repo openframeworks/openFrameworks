@@ -1,7 +1,7 @@
 //
 // Logger.h
 //
-// $Id: //poco/1.3/Foundation/include/Poco/Logger.h#2 $
+// $Id: //poco/1.3/Foundation/include/Poco/Logger.h#3 $
 //
 // Library: Foundation
 // Package: Logging
@@ -323,29 +323,29 @@ private:
 // convenience macros
 //
 #define poco_fatal(logger, msg) \
-	if ((logger).fatal()) (logger).fatal(msg) else (void) 0
+	if ((logger).fatal()) (logger).fatal(msg); else (void) 0
 
 #define poco_critical(logger, msg) \
-	if ((logger).critical()) (logger).critical(msg) else (void) 0
+	if ((logger).critical()) (logger).critical(msg); else (void) 0
 
 #define poco_error(logger, msg) \
-	if ((logger).error()) (logger).error(msg) else (void) 0
+	if ((logger).error()) (logger).error(msg); else (void) 0
 
 #define poco_warning(logger, msg) \
-	if ((logger).warning()) (logger).warning(msg) else (void) 0
+	if ((logger).warning()) (logger).warning(msg); else (void) 0
 	
 #define poco_notice(logger, msg) \
-	if ((logger).notice()) (logger).notice(msg) else (void) 0
+	if ((logger).notice()) (logger).notice(msg); else (void) 0
 
 #define poco_information(logger, msg) \
-	if ((logger).information()) (logger).information(msg) else (void) 0
+	if ((logger).information()) (logger).information(msg); else (void) 0
 
 #if defined(_DEBUG)
 	#define poco_debug(logger, msg) \
-		if ((logger).debug()) (logger).debug(msg) else (void) 0
+		if ((logger).debug()) (logger).debug(msg); else (void) 0
 
 	#define poco_trace(logger, msg) \
-		if ((logger).trace()) (logger).trace(msg) else (void) 0
+		if ((logger).trace()) (logger).trace(msg); else (void) 0
 #else
 	#define poco_debug(logger, msg)
 	#define poco_trace(logger, msg)

@@ -1,7 +1,7 @@
 //
 // BinaryReader.h
 //
-// $Id: //poco/1.3/Foundation/include/Poco/BinaryReader.h#1 $
+// $Id: //poco/1.3/Foundation/include/Poco/BinaryReader.h#2 $
 //
 // Library: Foundation
 // Package: Streams
@@ -102,8 +102,11 @@ public:
 		/// of the compression algorithm.
 #endif
 
-	void readRaw(int length, std::string& value);
+	void readRaw(std::streamsize length, std::string& value);
 		/// Reads length bytes of raw data into value.
+
+	void readRaw(char* buffer, std::streamsize length);
+		/// Reads length bytes of raw data into buffer.
 
 	void readBOM();
 		/// Reads a byte-order mark from the stream and configures

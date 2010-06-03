@@ -1,7 +1,7 @@
 //
 // AbstractStrategy.h
 //
-// $Id: //poco/1.3/Foundation/include/Poco/AbstractStrategy.h#1 $
+// $Id: //poco/1.3/Foundation/include/Poco/AbstractStrategy.h#2 $
 //
 // Library: Foundation
 // Package: Cache
@@ -43,6 +43,7 @@
 #include "Poco/KeyValueArgs.h"
 #include "Poco/ValidArgs.h"
 #include "Poco/EventArgs.h"
+#include <set>
 
 
 namespace Poco {

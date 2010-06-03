@@ -1,7 +1,7 @@
 //
 // File.h
 //
-// $Id: //poco/1.3/Foundation/include/Poco/File.h#6 $
+// $Id: //poco/1.3/Foundation/include/Poco/File.h#7 $
 //
 // Library: Foundation
 // Package: Filesystem
@@ -129,6 +129,9 @@ public:
 		
 	bool isDirectory() const;
 		/// Returns true iff the file is a directory.
+		
+	bool isDevice() const;
+		/// Returns true iff the file is a device.
 
 	bool isHidden() const;
 		/// Returns true if the file is hidden.

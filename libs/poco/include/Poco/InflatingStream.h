@@ -1,7 +1,7 @@
 //
 // InflatingStream.h
 //
-// $Id: //poco/1.3/Foundation/include/Poco/InflatingStream.h#2 $
+// $Id: //poco/1.3/Foundation/include/Poco/InflatingStream.h#4 $
 //
 // Library: Foundation
 // Package: Streams
@@ -44,7 +44,11 @@
 #include "Poco/BufferedStreamBuf.h"
 #include <istream>
 #include <ostream>
+#if defined(POCO_UNBUNDLED)
+#include <zlib.h>
+#else
 #include "Poco/zlib.h"
+#endif
 
 
 namespace Poco {
@@ -69,6 +73,7 @@ public:
 	InflatingStreamBuf(std::ostream& ostr, StreamType type);
 	~InflatingStreamBuf();
 	int close();
+	void reset();
 
 protected:
 	int readFromDevice(char* buffer, std::streamsize length);
@@ -110,6 +115,7 @@ protected:
 class Foundation_API InflatingOutputStream: public InflatingIOS, public std::ostream
 	/// This stream decompresses all data passing through it
 	/// using zlib's inflate algorithm.
+	///
 	/// After all data has been written to the stream, close()
 	/// must be called to ensure completion of decompression.
 {
@@ -128,10 +134,15 @@ class Foundation_API InflatingInputStream: public InflatingIOS, public std::istr
 	///     InflatingInputStream inflater(istr, InflatingStreamBuf::STREAM_GZIP);
 	///     std::string data;
 	///     istr >> data;
+	///
+	/// The underlying input stream can contain more than one gzip/deflate stream.
+	/// After a gzip/deflate stream has been processed, reset() can be called
+	/// to inflate the next stream.
 {
 public:
 	InflatingInputStream(std::istream& istr, InflatingStreamBuf::StreamType type = InflatingStreamBuf::STREAM_ZLIB);
 	~InflatingInputStream();
+	void reset();
 };
 
 

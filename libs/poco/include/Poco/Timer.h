@@ -1,7 +1,7 @@
 //
 // Timer.h
 //
-// $Id: //poco/1.3/Foundation/include/Poco/Timer.h#3 $
+// $Id: //poco/1.3/Foundation/include/Poco/Timer.h#6 $
 //
 // Library: Foundation
 // Package: Threading
@@ -45,6 +45,7 @@
 #include "Poco/Mutex.h"
 #include "Poco/Event.h"
 #include "Poco/Thread.h"
+#include "Poco/Timestamp.h"
 
 
 namespace Poco {
@@ -70,6 +71,14 @@ class Foundation_API Timer: protected Runnable
 	/// The exact interval at which the callback is called depends on many 
 	/// factors like operating system, CPU performance and system load and
 	/// may differ from the specified interval.
+	///
+	/// The time needed to execute the timer callback is not included
+	/// in the interval between invocations. For example, if the interval
+	/// is 500 milliseconds, and the callback needs 400 milliseconds to
+	/// execute, the callback function is nevertheless called every 500
+	/// milliseconds. If the callback takes longer to execute than the
+	/// interval, the callback function will be immediately called again
+	/// once it returns.
 	///
 	/// The timer thread is taken from a thread pool, so
 	/// there is a limit to the number of available concurrent timers.
@@ -152,6 +161,7 @@ private:
 	Event         _wakeUp;
 	Event         _done;
 	AbstractTimerCallback* _pCallback;
+	Timestamp              _nextInvocation;
 	mutable FastMutex      _mutex;
 	
 	Timer(const Timer&);

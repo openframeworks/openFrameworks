@@ -1,7 +1,7 @@
 //
 // ServerApplication.h
 //
-// $Id: //poco/1.3/Util/include/Poco/Util/ServerApplication.h#3 $
+// $Id: //poco/1.3/Util/include/Poco/Util/ServerApplication.h#4 $
 //
 // Library: Util
 // Package: Application
@@ -100,14 +100,18 @@ class Util_API ServerApplication: public Application
 	///
 	/// Note that the working directory for an application running as a service
 	/// is the Windows system directory (e.g., C:\Windows\system32). Take this
-	/// into account when working with relative filesystem paths.
+	/// into account when working with relative filesystem paths. Also, services
+	/// run under a different user account, so an application that works when
+	/// started from the command line may fail to run as a service if it depends
+	/// on a certain environment (e.g., the PATH environment variable).
 	///
 	/// An application registered as a Windows service can be started
 	/// with the NET START <name> command and stopped with the NET STOP <name>
 	/// command. Alternatively, the Services MMC applet can be used.
 	///
 	/// On Unix platforms, an application built on top of the ServerApplication
-	/// class can be optionally run as a daemon. A daemon, when launched, immediately
+	/// class can be optionally run as a daemon by giving the --daemon
+	/// command line option. A daemon, when launched, immediately
 	/// forks off a background process that does the actual work. After launching
 	/// the background process, the foreground process exits.
 	/// 
@@ -124,6 +128,11 @@ class Util_API ServerApplication: public Application
 	///     {
 	///         // do daemon specific things
 	///     }
+	///
+	/// When running as a daemon, specifying the --pidfile option (e.g.,
+	/// --pidfile=/var/run/sample.pid) may be useful to record the process ID of 
+	/// the daemon in a file. The PID file will be removed when the daemon process 
+	/// terminates (but not, if it crashes).
 {
 public:
 	ServerApplication();
