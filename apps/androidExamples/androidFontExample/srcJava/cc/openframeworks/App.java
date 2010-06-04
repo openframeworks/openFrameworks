@@ -20,6 +20,7 @@ public class App extends Activity{
     public void onCreate(Bundle savedInstanceState)
     { 
         super.onCreate(savedInstanceState);
+        Log.i("OF","3"+getResources().getText(R.raw.bikers).toString());
         try {
 			// try to find if R class exists will throw
         	// an exception if not
@@ -44,7 +45,8 @@ public class App extends Activity{
 				FileOutputStream to=null;
 	        	try {
 					fileId = files[i].getInt(null);
-					fileName = files[i].getName();
+					String resName = getResources().getText(fileId).toString();
+					fileName = resName.substring(resName.lastIndexOf("/"));
 					
 					from = getResources().openRawResource(fileId);
 					toFile = new File("/sdcard/" + getResources().getText(R.string.app_name) + "/" +fileName);
