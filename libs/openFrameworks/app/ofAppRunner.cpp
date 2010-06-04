@@ -87,9 +87,14 @@ void ofRunApp(ofBaseApp * OFSA){
 
 	OFSAptr = OFSA;
 	if(OFSAptr){
-	OFSAptr->mouseX = 0;
-	OFSAptr->mouseY = 0;
+		OFSAptr->mouseX = 0;
+		OFSAptr->mouseY = 0;
 	}
+	
+	#ifdef TARGET_OSX 
+		//this internally checks the executable path for osx
+		ofSetDataPathRoot("../../../data/");
+	#endif
 
 	atexit(ofExitCallback);
 

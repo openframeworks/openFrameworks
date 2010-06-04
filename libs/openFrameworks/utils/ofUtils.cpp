@@ -13,6 +13,11 @@
 
 #endif
 
+#ifdef TARGET_OSX
+	#include <mach-o/dyld.h>
+#endif 
+
+
 static bool enableDataPath = true;
 static unsigned long startTime = ofGetSystemTime();   //  better at the first frame ?? (currently, there is some delay from static init, to running.
 
@@ -127,7 +132,7 @@ void ofDisableDataPath(){
 	enableDataPath = false;
 }
 
-
+//--------------------------------------------------
 //use ofSetDataPathRoot() to override this
 #if defined TARGET_OSX
 	static string dataPathRoot = "../../../data/";
@@ -137,7 +142,34 @@ void ofDisableDataPath(){
 
 //--------------------------------------------------
 void ofSetDataPathRoot(string newRoot){
-	dataPathRoot = newRoot;
+	string newPath = "";
+	
+	#ifdef TARGET_OSX
+		#ifndef TARGET_OF_IPHONE 
+			char path[1024];
+			uint32_t size = sizeof(path);
+			if (_NSGetExecutablePath(path, &size) == 0){
+				//printf("executable path is %s\n", path);
+				string pathStr = string(path);
+				//theo: check this with having '/' as a character in a folder name - OSX treats the '/' as a ':'
+				//checked with spaces too!
+				vector < string> pathBrokenUp = ofSplitString( pathStr, "/");
+				newPath = "/";
+				for(int i = 0; i < pathBrokenUp.size()-1; i++){
+					newPath += pathBrokenUp[i];
+					newPath += "/";
+				}
+				//cout << newPath << endl;   // some sanity checks here
+				//system( "pwd" );
+				chdir ( newPath.c_str() );
+				//system("pwd");				
+			}else{
+				ofLog(OF_LOG_FATAL_ERROR, "buffer too small; need size %u\n", size);
+			}
+		#endif 
+	#endif
+		
+	dataPathRoot = newPath+newRoot;
 }
 
 //--------------------------------------------------
