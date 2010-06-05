@@ -50,4 +50,10 @@ apps/*/*/Release Linux
 apps/*/*/Debug Linux64
 apps/*/*/Release Linux64
 
-
+#Android
+addons/Debug Android
+addons/Release Android
+libs/openFrameworks/Debug Android
+libs/openFrameworks/Release Android
+apps/*/*/Debug Android
+apps/*/*/Release Android
