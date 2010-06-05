@@ -28,9 +28,11 @@
 	#else
 		#define TARGET_OSX
 	#endif
-#else
+#elif defined (ANDROID)
 	#define TARGET_ANDROID
 	#define TARGET_OPENGLES
+#else
+	#define TARGET_LINUX
 #endif
 //-------------------------------
 
