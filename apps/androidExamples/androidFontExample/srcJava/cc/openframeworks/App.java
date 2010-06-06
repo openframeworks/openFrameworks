@@ -8,7 +8,6 @@ import java.lang.reflect.Field;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.util.Log;
 import android.opengl.GLSurfaceView;
 import javax.microedition.khronos.opengles.GL10;
 import javax.microedition.khronos.egl.EGLConfig;
@@ -20,15 +19,15 @@ public class App extends Activity{
     public void onCreate(Bundle savedInstanceState)
     { 
         super.onCreate(savedInstanceState);
-        Log.i("OF","3"+getResources().getText(R.raw.bikers).toString());
         try {
 			// try to find if R class exists will throw
         	// an exception if not
-        	Class.forName("cc.openframeworks.R");
+        	Class<?> classRraw = Class.forName("cc.openframeworks.R.raw");
 			
+        	
         	// if it exists copy all the raw resources
         	// to a folder in the sdcard
-	        Field[] files = R.raw.class.getDeclaredFields();
+	        Field[] files = classRraw.getDeclaredFields();
 
     		try{
     			new File("/sdcard/" + getResources().getText(R.string.app_name)).mkdir();
