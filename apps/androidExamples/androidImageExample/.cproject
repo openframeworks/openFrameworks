@@ -51,6 +51,10 @@
 <listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofAddons/ofxVectorMath/src}&quot;"/>
 <listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofAddons/ofxXmlSettings/src}&quot;"/>
 <listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofAddons/ofxXmlSettings/libs}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofAddons/ofxOsc/src}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofAddons/ofxOsc/libs/oscpack/include}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofAddons/ofxOsc/libs/oscpack/include/osc}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofAddons/ofxOsc/libs/oscpack/include/ip}&quot;"/>
 </option>
 <option id="gnu.cpp.compiler.option.preprocessor.def.456175513" name="Defined symbols (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" valueType="definedSymbols">
 <listOptionValue builtIn="false" value="ANDROID"/>
@@ -71,6 +75,7 @@
 <option id="gnu.cpp.link.option.flags.229932810" name="Linker flags" superClass="gnu.cpp.link.option.flags" value="-Wl,-rpath-link=${NDK_ROOT}/build/platforms/${NDK_PLATFORM}/arch-arm/usr/lib/ -fno-rtti -s" valueType="string"/>
 <option id="gnu.cpp.link.option.libs.1018087712" name="Libraries (-l)" superClass="gnu.cpp.link.option.libs" valueType="libs">
 <listOptionValue builtIn="false" value="ofAddons"/>
+<listOptionValue builtIn="false" value="oscpack"/>
 <listOptionValue builtIn="false" value="openFrameworks"/>
 <listOptionValue builtIn="false" value="PocoUtil"/>
 <listOptionValue builtIn="false" value="PocoFoundation"/>
@@ -93,6 +98,7 @@
 <listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/freetype/lib/android}&quot;"/>
 <listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/glu/lib/android}&quot;"/>
 <listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/poco/lib/android}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofAddons/ofxOsc/libs/oscpack/lib/android}&quot;"/>
 <listOptionValue builtIn="false" value="&quot;${NDK_ROOT}/build/platforms/${NDK_PLATFORM}/arch-arm/usr/lib/&quot;"/>
 <listOptionValue builtIn="false" value="&quot;${NDK_ROOT}/build/prebuilt/linux-x86/arm-eabi-4.4.0/lib/gcc/arm-eabi/4.4.0/&quot;"/>
 </option>
@@ -1410,6 +1416,10 @@
 <listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofAddons/ofxVectorMath/src}&quot;"/>
 <listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofAddons/ofxXmlSettings/src}&quot;"/>
 <listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofAddons/ofxXmlSettings/libs}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofAddons/ofxOsc/src}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofAddons/ofxOsc/libs/oscpack/include}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofAddons/ofxOsc/libs/oscpack/include/osc}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofAddons/ofxOsc/libs/oscpack/include/ip}&quot;"/>
 </option>
 <option id="gnu.cpp.compiler.option.preprocessor.def.1648308445" name="Defined symbols (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" valueType="definedSymbols">
 <listOptionValue builtIn="false" value="ANDROID"/>
@@ -1431,6 +1441,7 @@
 <option id="gnu.cpp.link.option.flags.737643132" name="Linker flags" superClass="gnu.cpp.link.option.flags" value="-Wl,-rpath-link=${NDK_ROOT}/build/platforms/${NDK_PLATFORM}/arch-arm/usr/lib/ -fno-rtti " valueType="string"/>
 <option id="gnu.cpp.link.option.libs.633412171" name="Libraries (-l)" superClass="gnu.cpp.link.option.libs" valueType="libs">
 <listOptionValue builtIn="false" value="ofAddons"/>
+<listOptionValue builtIn="false" value="oscpack"/>
 <listOptionValue builtIn="false" value="openFrameworks"/>
 <listOptionValue builtIn="false" value="PocoUtil"/>
 <listOptionValue builtIn="false" value="PocoFoundation"/>
@@ -1453,6 +1464,7 @@
 <listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/freetype/lib/android}&quot;"/>
 <listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/glu/lib/android}&quot;"/>
 <listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/poco/lib/android}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofAddons/ofxOsc/libs/oscpack/lib/android}&quot;"/>
 <listOptionValue builtIn="false" value="&quot;${NDK_ROOT}/build/platforms/${NDK_PLATFORM}/arch-arm/usr/lib/&quot;"/>
 <listOptionValue builtIn="false" value="&quot;${NDK_ROOT}/build/prebuilt/linux-x86/arm-eabi-4.4.0/lib/gcc/arm-eabi/4.4.0/&quot;"/>
 </option>
@@ -2765,6 +2777,10 @@
 <listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofAddons/ofxVectorMath/src}&quot;"/>
 <listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofAddons/ofxXmlSettings/src}&quot;"/>
 <listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofAddons/ofxXmlSettings/libs}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofAddons/ofxOsc/src}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofAddons/ofxOsc/libs/oscpack/include}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofAddons/ofxOsc/libs/oscpack/include/osc}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofAddons/ofxOsc/libs/oscpack/include/ip}&quot;"/>
 </option>
 <option id="gnu.cpp.compiler.option.preprocessor.def.144800426" name="Defined symbols (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" valueType="definedSymbols">
 <listOptionValue builtIn="false" value="ANDROID"/>
@@ -2785,6 +2801,7 @@
 <option id="gnu.cpp.link.option.flags.1226742704" name="Linker flags" superClass="gnu.cpp.link.option.flags" value="-Wl,-rpath-link=${NDK_ROOT}/build/platforms/${NDK_PLATFORM}/arch-arm/usr/lib/ -fno-rtti -entry=main" valueType="string"/>
 <option id="gnu.cpp.link.option.libs.1278816758" name="Libraries (-l)" superClass="gnu.cpp.link.option.libs" valueType="libs">
 <listOptionValue builtIn="false" value="ofAddons"/>
+<listOptionValue builtIn="false" value="oscpack"/>
 <listOptionValue builtIn="false" value="openFrameworks"/>
 <listOptionValue builtIn="false" value="PocoUtil"/>
 <listOptionValue builtIn="false" value="PocoFoundation"/>
@@ -2807,6 +2824,7 @@
 <listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/freetype/lib/android}&quot;"/>
 <listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/glu/lib/android}&quot;"/>
 <listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/poco/lib/android}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofAddons/ofxOsc/libs/oscpack/lib/android}&quot;"/>
 <listOptionValue builtIn="false" value="&quot;${NDK_ROOT}/build/platforms/${NDK_PLATFORM}/arch-arm/usr/lib/&quot;"/>
 <listOptionValue builtIn="false" value="&quot;${NDK_ROOT}/build/prebuilt/linux-x86/arm-eabi-4.4.0/lib/gcc/arm-eabi/4.4.0/&quot;"/>
 </option>
