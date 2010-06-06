@@ -2650,6 +2650,10 @@
 <listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofAddons/ofxVectorMath/src}&quot;"/>
 <listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofAddons/ofxXmlSettings/src}&quot;"/>
 <listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofAddons/ofxXmlSettings/libs}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofAddons/ofxOsc/src}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofAddons/ofxOsc/libs/oscpack/include}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofAddons/ofxOsc/libs/oscpack/include/osc}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofAddons/ofxOsc/libs/oscpack/include/ip}&quot;"/>
 </option>
 <option id="gnu.cpp.compiler.option.preprocessor.def.1967698973" name="Defined symbols (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" valueType="definedSymbols">
 <listOptionValue builtIn="false" value="ANDROID"/>
@@ -2705,7 +2709,7 @@
 </toolChain>
 </folderInfo>
 <sourceEntries>
-<entry excluding="ofxMultiTouch|ofxVectorGraphics|ofxiPhone|ofxAccelerometer|ofxOsc|ofxOpenCv|ofx3DModelLoader|app/ofAppGlutWindow.h|app/ofAppGlutWindow.cpp|communication|video|sound|events|bin" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+<entry excluding="ofxMultiTouch|ofxVectorGraphics|ofxiPhone|ofxAccelerometer|ofxOpenCv|ofx3DModelLoader|app/ofAppGlutWindow.h|app/ofAppGlutWindow.cpp|communication|video|sound|events|bin" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 </sourceEntries>
 </configuration>
 </storageModule>
@@ -3173,6 +3177,10 @@
 <listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofAddons/ofxVectorMath/src}&quot;"/>
 <listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofAddons/ofxXmlSettings/src}&quot;"/>
 <listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofAddons/ofxXmlSettings/libs}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofAddons/ofxOsc/src}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofAddons/ofxOsc/libs/oscpack/include}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofAddons/ofxOsc/libs/oscpack/include/osc}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofAddons/ofxOsc/libs/oscpack/include/ip}&quot;"/>
 </option>
 <option id="gnu.cpp.compiler.option.preprocessor.def.1947396259" name="Defined symbols (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" valueType="definedSymbols">
 <listOptionValue builtIn="false" value="ANDROID"/>
@@ -3228,7 +3236,7 @@
 </toolChain>
 </folderInfo>
 <sourceEntries>
-<entry excluding="ofxMultiTouch|ofxVectorGraphics|ofxiPhone|ofxAccelerometer|ofxOsc|ofxOpenCv|ofx3DModelLoader|app/ofAppGlutWindow.h|app/ofAppGlutWindow.cpp|communication|video|sound|events|bin" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+<entry excluding="ofxMultiTouch|ofxVectorGraphics|ofxiPhone|ofxAccelerometer|ofxOpenCv|ofx3DModelLoader|app/ofAppGlutWindow.h|app/ofAppGlutWindow.cpp|communication|video|sound|events|bin" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 </sourceEntries>
 </configuration>
 </storageModule>
