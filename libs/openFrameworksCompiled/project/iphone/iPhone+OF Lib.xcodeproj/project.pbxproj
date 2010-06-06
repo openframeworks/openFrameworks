@@ -122,6 +122,11 @@
 		BB24E12910DA9F8400E9C588 /* fttrigon.h in Headers */ = {isa = PBXBuildFile; fileRef = BB24DFB010DA7C1B00E9C588 /* fttrigon.h */; };
 		BB24E12A10DA9F8400E9C588 /* ft2build.h in Headers */ = {isa = PBXBuildFile; fileRef = BB24DFB910DA7C1B00E9C588 /* ft2build.h */; };
 		BB24E12B10DA9F8400E9C588 /* ftincrem.h in Headers */ = {isa = PBXBuildFile; fileRef = BB24DF9F10DA7C1B00E9C588 /* ftincrem.h */; };
+		BB3140C011BB09220019348E /* ES1Renderer.h in Headers */ = {isa = PBXBuildFile; fileRef = BB3140BC11BB09220019348E /* ES1Renderer.h */; };
+		BB3140C111BB09220019348E /* ES1Renderer.mm in Sources */ = {isa = PBXBuildFile; fileRef = BB3140BD11BB09220019348E /* ES1Renderer.mm */; };
+		BB3140C211BB09220019348E /* ES2Renderer.h in Headers */ = {isa = PBXBuildFile; fileRef = BB3140BE11BB09220019348E /* ES2Renderer.h */; };
+		BB3140C311BB09220019348E /* ES2Renderer.mm in Sources */ = {isa = PBXBuildFile; fileRef = BB3140BF11BB09220019348E /* ES2Renderer.mm */; };
+		BB3140C611BB098A0019348E /* ESRenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = BB3140C511BB098A0019348E /* ESRenderer.h */; };
 		DA78520C1105C1BF007EFC90 /* glu.h in Headers */ = {isa = PBXBuildFile; fileRef = DA78520A1105C1BF007EFC90 /* glu.h */; };
 		DA78520D1105C1BF007EFC90 /* gluos.h in Headers */ = {isa = PBXBuildFile; fileRef = DA78520B1105C1BF007EFC90 /* gluos.h */; };
 /* End PBXBuildFile section */
@@ -137,7 +142,7 @@
 		92BFCD061128AC3E0081DD61 /* ofBitmapFont.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofBitmapFont.cpp; sourceTree = "<group>"; };
 		BB16EBD10F2B2A9500518274 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
 		BB16EBD80F2B2AB500518274 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
-		BB24DED610DA7A3F00E9C588 /* libofxiPhoneOFLib_iphoneos _Debug.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libofxiPhoneOFLib_iphoneos _Debug.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		BB24DED610DA7A3F00E9C588 /* libofxiPhoneOFLib_iphoneos _Release.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libofxiPhoneOFLib_iphoneos _Release.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		BB24DEF710DA7BEF00E9C588 /* ofAppBaseWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofAppBaseWindow.h; sourceTree = "<group>"; };
 		BB24DEFA10DA7BEF00E9C588 /* ofAppRunner.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofAppRunner.cpp; sourceTree = "<group>"; };
 		BB24DEFB10DA7BEF00E9C588 /* ofAppRunner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofAppRunner.h; sourceTree = "<group>"; };
@@ -250,6 +255,11 @@
 		BB24E04910DA7C6100E9C588 /* ofxMultiTouch.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxMultiTouch.cpp; sourceTree = "<group>"; };
 		BB24E04A10DA7C6100E9C588 /* ofxMultiTouch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxMultiTouch.h; sourceTree = "<group>"; };
 		BB24E04B10DA7C6100E9C588 /* ofxMultiTouchListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxMultiTouchListener.h; sourceTree = "<group>"; };
+		BB3140BC11BB09220019348E /* ES1Renderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ES1Renderer.h; sourceTree = "<group>"; };
+		BB3140BD11BB09220019348E /* ES1Renderer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ES1Renderer.mm; sourceTree = "<group>"; };
+		BB3140BE11BB09220019348E /* ES2Renderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ES2Renderer.h; sourceTree = "<group>"; };
+		BB3140BF11BB09220019348E /* ES2Renderer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ES2Renderer.mm; sourceTree = "<group>"; };
+		BB3140C511BB098A0019348E /* ESRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ESRenderer.h; sourceTree = "<group>"; };
 		BBE5EAB70F49AD8400F28951 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		DA78520A1105C1BF007EFC90 /* glu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = glu.h; sourceTree = "<group>"; };
 		DA78520B1105C1BF007EFC90 /* gluos.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gluos.h; sourceTree = "<group>"; };
@@ -278,7 +288,7 @@
 		19C28FACFE9D520D11CA2CBB /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				BB24DED610DA7A3F00E9C588 /* libofxiPhoneOFLib_iphoneos _Debug.a */,
+				BB24DED610DA7A3F00E9C588 /* libofxiPhoneOFLib_iphoneos _Release.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -568,6 +578,11 @@
 			children = (
 				BB24E02910DA7C6100E9C588 /* EAGLView.h */,
 				BB24E02A10DA7C6100E9C588 /* EAGLView.mm */,
+				BB3140C511BB098A0019348E /* ESRenderer.h */,
+				BB3140BC11BB09220019348E /* ES1Renderer.h */,
+				BB3140BD11BB09220019348E /* ES1Renderer.mm */,
+				BB3140BE11BB09220019348E /* ES2Renderer.h */,
+				BB3140BF11BB09220019348E /* ES2Renderer.mm */,
 				BB24E02B10DA7C6100E9C588 /* MSARootViewController.h */,
 				BB24E02C10DA7C6100E9C588 /* MSARootViewController.mm */,
 				BB24E02D10DA7C6100E9C588 /* ofAppiPhoneWindow.h */,
@@ -738,6 +753,9 @@
 				DA78520C1105C1BF007EFC90 /* glu.h in Headers */,
 				DA78520D1105C1BF007EFC90 /* gluos.h in Headers */,
 				92BFCD071128AC3E0081DD61 /* ofBitmapFont.h in Headers */,
+				BB3140C011BB09220019348E /* ES1Renderer.h in Headers */,
+				BB3140C211BB09220019348E /* ES2Renderer.h in Headers */,
+				BB3140C611BB098A0019348E /* ESRenderer.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -758,7 +776,7 @@
 			);
 			name = "iPhone+OF Static Library";
 			productName = "Static Library";
-			productReference = BB24DED610DA7A3F00E9C588 /* libofxiPhoneOFLib_iphoneos _Debug.a */;
+			productReference = BB24DED610DA7A3F00E9C588 /* libofxiPhoneOFLib_iphoneos _Release.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 /* End PBXNativeTarget section */
@@ -807,6 +825,8 @@
 				BB24E0F610DA9F6700E9C588 /* ofImage.cpp in Sources */,
 				BB24E0F710DA9F6800E9C588 /* ofTexture.cpp in Sources */,
 				92BFCD081128AC3E0081DD61 /* ofBitmapFont.cpp in Sources */,
+				BB3140C111BB09220019348E /* ES1Renderer.mm in Sources */,
+				BB3140C311BB09220019348E /* ES2Renderer.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -827,6 +847,7 @@
 					../../../../libs/freetype/include/,
 					../../../../libs/freetype/include/freetype2,
 				);
+				IPHONEOS_DEPLOYMENT_TARGET = 3.1;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\\\"$(SRCROOT)/../../../libs/glu/lib/iphone\\\"",
@@ -840,8 +861,8 @@
 				PREBINDING = NO;
 				PRODUCT_NAME = "ofxiPhoneOFLib_${PLATFORM_NAME} _Debug";
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
-				SDKROOT = iphoneos2.2.1;
 				SYMROOT = build;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
 		};
@@ -859,6 +880,7 @@
 					../../../../libs/freetype/include/,
 					../../../../libs/freetype/include/freetype2,
 				);
+				IPHONEOS_DEPLOYMENT_TARGET = 3.1;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\\\"$(SRCROOT)/../../../libs/glu/lib/iphone\\\"",
@@ -872,8 +894,8 @@
 				PREBINDING = NO;
 				PRODUCT_NAME = "ofxiPhoneOFLib_${PLATFORM_NAME} _Release";
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
-				SDKROOT = iphoneos2.2.1;
 				SYMROOT = build;
+				TARGETED_DEVICE_FAMILY = "1,2";
 				ZERO_LINK = NO;
 			};
 			name = Release;
@@ -889,6 +911,7 @@
 					../../../../libs/freetype/include/,
 					../../../../libs/freetype/include/freetype2,
 				);
+				IPHONEOS_DEPLOYMENT_TARGET = 3.1;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\\\"$(SRCROOT)/../../../libs/glu/lib/iphone\\\"",
@@ -902,40 +925,41 @@
 				PREBINDING = NO;
 				PRODUCT_NAME = "ofxiPhoneOFLib_${PLATFORM_NAME} _Distribution";
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
-				SDKROOT = iphoneos2.2.1;
 				SYMROOT = build;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Distribution;
 		};
 		BBD1C20A0F391092007FCFB3 /* Distribution */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				ARCHS = "$(ARCHS_UNIVERSAL_IPHONE_OS)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: MSA Visuals Ltd";
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = ../../../poco/include;
+				ONLY_ACTIVE_ARCH = NO;
 				PREBINDING = NO;
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "CBB7D4DA-CBD7-4672-8C35-CB67CB1FEC3A";
-				SDKROOT = iphoneos2.2.1;
+				SDKROOT = iphoneos3.2;
 			};
 			name = Distribution;
 		};
 		C01FCF4F08A954540054247B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				ARCHS = "$(ARCHS_UNIVERSAL_IPHONE_OS)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Mehmet Akten";
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = ../../../poco/include;
-				ONLY_ACTIVE_ARCH = YES;
+				ONLY_ACTIVE_ARCH = NO;
 				OTHER_LDFLAGS = "";
 				PREBINDING = NO;
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "B2B6A4F8-E7E4-4A49-84A2-821B26E52F18";
-				SDKROOT = iphoneos3.0;
+				SDKROOT = iphoneos3.2;
 				WARNING_LDFLAGS = "-w";
 			};
 			name = Debug;
@@ -943,15 +967,16 @@
 		C01FCF5008A954540054247B /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				ARCHS = "$(ARCHS_UNIVERSAL_IPHONE_OS)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Mehmet Akten";
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = ../../../poco/include;
+				ONLY_ACTIVE_ARCH = NO;
 				PREBINDING = NO;
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "B2B6A4F8-E7E4-4A49-84A2-821B26E52F18";
-				SDKROOT = iphoneos2.2.1;
+				SDKROOT = iphoneos3.2;
 			};
 			name = Release;
 		};
