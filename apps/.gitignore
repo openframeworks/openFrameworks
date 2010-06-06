@@ -7,3 +7,8 @@
 !androidExamples
 !androidExamples/**
 !androidExamples/*/**
+androidExamples/.metadata
+androidExamples/*/Debug
+androidExamples/*/Release
+androidExamples/*/bin
+libOFAndroidApp.so
