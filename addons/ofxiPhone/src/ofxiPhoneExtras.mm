@@ -41,6 +41,8 @@ ofxiPhoneDeviceType ofxiPhoneGetDeviceType() {
 //--------------------------------------------------------------
 string ofxiPhoneGetDeviceRevision() {
 	// ZACH TODO
+	ofLog(OF_LOG_WARNING, "ofxiPhoneGetDeviceRevision() not implemented yet");
+	return "";
 }
 
 //--------------------------------------------------------------
@@ -248,13 +250,8 @@ bool ofxiPhoneUIImageToOFImage(UIImage *uiImage, ofImage &outImage, int targetWi
 
 //--------------------------------------------------------------
 
-string ofxNSStringToString(NSString * s)
-{
-	char newChars[ [s length]+1 ];
-	
-	[s getCString:newChars];
-	
-	return string(newChars);
+string ofxNSStringToString(NSString * s) {
+	return string([s UTF8String]);
 }
 
 //--------------------------------------------------------------
