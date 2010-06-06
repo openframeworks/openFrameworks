@@ -30,174 +30,86 @@
  * ***********************************************************************/ 
 
 
-#import <QuartzCore/QuartzCore.h>
-#import <OpenGLES/EAGLDrawable.h>
+#import "ofMain.h"
+#import  "ofxiPhoneExtras.h"
 
 #import "EAGLView.h"
 
-
-#import "ofMain.h"
-//#import "iPhoneGlobals.h"
-#import  "ofxiPhoneExtras.h"
-
-
-//CLASS IMPLEMENTATIONS:
+#import "ES1Renderer.h"
+#import "ES2Renderer.h"
 
 @implementation EAGLView
 
-@synthesize surfaceSize=_size, framebuffer = _framebuffer, pixelFormat = _format, depthFormat = _depthFormat, context = _context;
-
+// You must implement this method
 + (Class) layerClass
 {
 	return [CAEAGLLayer class];
 }
 
-- (BOOL) _createSurface
-{
-	CAEAGLLayer*			eaglLayer = (CAEAGLLayer*)[self layer];
-	CGSize					newSize;
-	GLuint					oldRenderbuffer;
-	GLuint					oldFramebuffer;
-	
-	if(![EAGLContext setCurrentContext:_context]) {
-		return NO;
-	}
-	
-	newSize = [eaglLayer bounds].size;
-	newSize.width = roundf(newSize.width);
-	newSize.height = roundf(newSize.height);
-	
-	glGetIntegerv(GL_RENDERBUFFER_BINDING_OES, (GLint *) &oldRenderbuffer);
-	glGetIntegerv(GL_FRAMEBUFFER_BINDING_OES, (GLint *) &oldFramebuffer);
-	
-	glGenRenderbuffersOES(1, &_renderbuffer);
-	glBindRenderbufferOES(GL_RENDERBUFFER_OES, _renderbuffer);
-	
-	if(![_context renderbufferStorage:GL_RENDERBUFFER_OES fromDrawable:(id<EAGLDrawable>)eaglLayer]) {
-		glDeleteRenderbuffersOES(1, &_renderbuffer);
-		glBindRenderbufferOES(GL_RENDERBUFFER_BINDING_OES, oldRenderbuffer);
-		return NO;
-	}
-	
-	glGenFramebuffersOES(1, &_framebuffer);
-	glBindFramebufferOES(GL_FRAMEBUFFER_OES, _framebuffer);
-	glFramebufferRenderbufferOES(GL_FRAMEBUFFER_OES, GL_COLOR_ATTACHMENT0_OES, GL_RENDERBUFFER_OES, _renderbuffer);
-	if (_depthFormat) {
-		glGenRenderbuffersOES(1, &_depthBuffer);
-		glBindRenderbufferOES(GL_RENDERBUFFER_OES, _depthBuffer);
-		glRenderbufferStorageOES(GL_RENDERBUFFER_OES, _depthFormat, newSize.width, newSize.height);
-		glFramebufferRenderbufferOES(GL_FRAMEBUFFER_OES, GL_DEPTH_ATTACHMENT_OES, GL_RENDERBUFFER_OES, _depthBuffer);
-	}
-	
-	_size = newSize;
-	if(!_hasBeenCurrent) {
-		glViewport(0, 0, newSize.width, newSize.height);
-		glScissor(0, 0, newSize.width, newSize.height);
-		_hasBeenCurrent = YES;
-	}
-	else {
-		glBindFramebufferOES(GL_FRAMEBUFFER_OES, oldFramebuffer);
-	}
-	glBindRenderbufferOES(GL_RENDERBUFFER_OES, oldRenderbuffer);
-	
-	//	isLandscape = false;
-	
-	return YES;
-}
-
-- (void) _destroySurface
-{
-	EAGLContext *oldContext = [EAGLContext currentContext];
-	
-	if (oldContext != _context)
-		[EAGLContext setCurrentContext:_context];
-	
-	if(_depthFormat) {
-		glDeleteRenderbuffersOES(1, &_depthBuffer);
-		_depthBuffer = 0;
-	}
-	
-	glDeleteRenderbuffersOES(1, &_renderbuffer);
-	_renderbuffer = 0;
-	
-	glDeleteFramebuffersOES(1, &_framebuffer);
-	_framebuffer = 0;
-	
-	if (oldContext != _context)
-		[EAGLContext setCurrentContext:oldContext];
-}
 
 - (id) initWithFrame:(CGRect)frame
 {
-	return [self initWithFrame:frame pixelFormat:GL_RGB565_OES depthFormat:0 preserveBackbuffer:NO];
-}
-
-- (id) initWithFrame:(CGRect)frame pixelFormat:(GLuint)format 
-{
-	return [self initWithFrame:frame pixelFormat:format depthFormat:0 preserveBackbuffer:NO];
-}
-
-- (id) initWithFrame:(CGRect)frame pixelFormat:(GLuint)format depthFormat:(GLuint)depth preserveBackbuffer:(bool)retained
-{
 	if((self = [super initWithFrame:frame])) {
-		CAEAGLLayer*			eaglLayer = (CAEAGLLayer*)[self layer];
+        // Get the layer
+        CAEAGLLayer *eaglLayer = (CAEAGLLayer *)super.layer;
 		
+        eaglLayer.opaque = true;
 		eaglLayer.drawableProperties = [NSDictionary dictionaryWithObjectsAndKeys:
 										[NSNumber numberWithBool:YES], kEAGLDrawablePropertyRetainedBacking, kEAGLColorFormatRGBA8, kEAGLDrawablePropertyColorFormat, nil];
 		
-		_format = format;
-		_depthFormat = depth;
+		// TODO: add initSettings to override ES2Renderer even if available
+        renderer = [[ES2Renderer alloc] init];
 		
-		_context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES1];
-		if(_context == nil) {
+        if (!renderer) {
+            renderer = [[ES1Renderer alloc] init];
+		
+            if (!renderer) {
 			[self release];
 			return nil;
 		}
+        }
 		
-		if(![self _createSurface]) {
-			[self release];
-			return nil;
-		}
+		[[self context] renderbufferStorage:GL_RENDERBUFFER_OES fromDrawable:eaglLayer];
+		
 		
 		self.multipleTouchEnabled = true;
-		self.opaque = YES;
-		bzero(activeTouches, sizeof(activeTouches));
+		self.opaque = true;
+		activeTouches = [[NSMutableDictionary alloc] init];
 	}
 	
 	return self;
 }
-/*
- - (void) setLandscape:(bool)landscape
+
+- (void)startRender
  {
- isLandscape = landscape;
+    [renderer startRender];
  }
- */
-- (void) swapBuffers
+	
+- (void)finishRender
 {
-	EAGLContext *oldContext = [EAGLContext currentContext];
-	GLuint oldRenderbuffer;
-	
-	if(oldContext != _context)
-		[EAGLContext setCurrentContext:_context];
-	
-	glGetIntegerv(GL_RENDERBUFFER_BINDING_OES, (GLint *) &oldRenderbuffer);
-	glBindRenderbufferOES(GL_RENDERBUFFER_OES, _renderbuffer);
-	
-	if(![_context presentRenderbuffer:GL_RENDERBUFFER_OES])
-		ofLog(OF_LOG_ERROR, string("Failed to swap renderbuffer in ") + __FUNCTION__);
-	
-	if(oldContext != _context)
-		[EAGLContext setCurrentContext:oldContext];
+    [renderer finishRender];
 }
+	
+	
+- (void)layoutSubviews
+{
+	//	NSLog(@"layoutSubviews");
+	//    [renderer resizeFromLayer:(CAEAGLLayer*)self.layer];
+	//    [renderer startRender];
+	//    [renderer finishRender];
+}
+
 
 - (void) dealloc
 {
-	[self _destroySurface];
-	
-	[_context release];
-	_context = nil;
-	
+    [renderer release];
+	[activeTouches release];
 	[super dealloc];
+}
+
+-(EAGLContext*) context
+{
+	return [renderer context];
 }
 
 
@@ -207,13 +119,11 @@
 	
 	for(UITouch *touch in touches) {
 		int touchIndex = 0;
-		while(touchIndex < OF_MAX_TOUCHES && activeTouches[touchIndex] != 0) touchIndex++;
-		if(touchIndex==OF_MAX_TOUCHES) {
-			ofLog(OF_LOG_WARNING, "touchesBegan - weird!");
-			touchIndex=0;	
+		while([[activeTouches allValues] containsObject:[NSNumber numberWithInt:touchIndex]]) {
+			touchIndex++;
 		}
 		
-		activeTouches[touchIndex] = touch;
+		[activeTouches setObject:[NSNumber numberWithInt:touchIndex] forKey:[NSValue valueWithPointer:touch]];
 		
 		CGPoint touchPoint = [touch locationInView:self];
 		iPhoneGetOFWindow()->rotateXY(touchPoint.x, touchPoint.y);
@@ -224,9 +134,6 @@
 			ofGetAppPtr()->mousePressed(touchPoint.x, touchPoint.y, 1);
 		}
 		
-		//		if([touch tapCount] == 1) ofxMultiTouch.touchDown(touchPoint.x, touchPoint.y, touchIndex, &multitouchData);
-		//		else ofxMultiTouch.touchDoubleTap(touchPoint.x, touchPoint.y, touchIndex, &multitouchData);
-		
 		ofTouchEventArgs touchArgs;
 		touchArgs.x = touchPoint.x;
 		touchArgs.y = touchPoint.y;
@@ -235,7 +142,6 @@
 		ofNotifyEvent(ofEvents.touchDown,touchArgs);	// but also send tap (upto app programmer to ignore this if doubletap came that frame)
 	}
 	
-//	[self.nextResponder touchesBegan:touches withEvent:event];
 }
 
 //------------------------------------------------------
@@ -243,12 +149,8 @@
 	//	NSLog(@"touchesMoved: %i %i %i", [touches count],  [[event touchesForView:self] count], multitouchData.numTouches);
 	
 	for(UITouch *touch in touches) {
-		int touchIndex = 0;
-		while(touchIndex < OF_MAX_TOUCHES && (activeTouches[touchIndex] != touch)) touchIndex++;
-		if(touchIndex==OF_MAX_TOUCHES) {
-			ofLog(OF_LOG_WARNING, "touchesMoved - weird!");
-			continue;	
-		}
+		int touchIndex = [[activeTouches objectForKey:[NSValue valueWithPointer:touch]] intValue];
+		//		[activeTouches setObject:[NSNumber numberWithInt:touchIndex] forKey:[NSValue valueWithPointer:touch]];
 		
 		CGPoint touchPoint = [touch locationInView:self];
 		iPhoneGetOFWindow()->rotateXY(touchPoint.x, touchPoint.y);
@@ -266,7 +168,6 @@
 		ofNotifyEvent(ofEvents.touchMoved, touchArgs);
 	}
 	
-//	[self.nextResponder touchesMoved:touches withEvent:event];
 }
 
 //------------------------------------------------------
@@ -274,14 +175,9 @@
 	//	NSLog(@"touchesEnded: %i %i %i", [touches count],  [[event touchesForView:self] count], multitouchData.numTouches);
 	
 	for(UITouch *touch in touches) {
-		int touchIndex = 0;
-		while(touchIndex < OF_MAX_TOUCHES && (activeTouches[touchIndex] != touch)) touchIndex++;
-		if(touchIndex==OF_MAX_TOUCHES) {
-			ofLog(OF_LOG_WARNING, "touchesEnded - weird!");
-			continue;	
-		}
+		int touchIndex = [[activeTouches objectForKey:[NSValue valueWithPointer:touch]] intValue];
 		
-		activeTouches[touchIndex] = 0;
+		[activeTouches removeObjectForKey:[NSValue valueWithPointer:touch]];
 		
 		CGPoint touchPoint = [touch locationInView:self];
 		iPhoneGetOFWindow()->rotateXY(touchPoint.x, touchPoint.y);
@@ -300,35 +196,11 @@
 		touchArgs.id = touchIndex;
 		ofNotifyEvent(ofEvents.touchUp, touchArgs);
 	}
-//	[self.nextResponder touchesEnded:touches withEvent:event];
 }
 
 //------------------------------------------------------
 - (void)touchesCancelled:(NSSet *)touches withEvent:(UIEvent *)event {
-	
-	for(int i=0; i<OF_MAX_TOUCHES; i++){
-		if(activeTouches[i]){
-			
-			CGPoint touchPoint = [activeTouches[i] locationInView:self];
-			iPhoneGetOFWindow()->rotateXY(touchPoint.x, touchPoint.y);
-			
-			activeTouches[i] = 0;
-			
-			if( i==0 ){
-				ofGetAppPtr()->mouseX = touchPoint.x;
-				ofGetAppPtr()->mouseY = touchPoint.y;
-				ofGetAppPtr()->mouseReleased(touchPoint.x, touchPoint.y, 1);
-				ofGetAppPtr()->mouseReleased();
-			}
-			ofTouchEventArgs touchArgs;
-			touchArgs.numTouches = 0;
-			touchArgs.x = touchPoint.x;
-			touchArgs.y = touchPoint.y;
-			touchArgs.id = i;
-			ofNotifyEvent(ofEvents.touchUp, touchArgs);
-		}
-	}
-//	[self.nextResponder touchesCancelled:touches withEvent:event];
+	[self touchesEnded:touches withEvent:event];
 }
 
 @end

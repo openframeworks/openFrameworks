@@ -120,7 +120,8 @@ void ofxiPhoneUnlockGLContext() {
 
 //--------------------------------------------------------------
 void ofxiPhoneEnableLoopInThread() {
-	[ofxiPhoneGetAppDelegate() enableLoopInThread];
+//	[ofxiPhoneGetAppDelegate() enableLoopInThread];
+	ofLog(OF_LOG_WARNING, "ofxiPhoneEnableLoopInThread is not used anymore. CADisplayLink provides better animation loop");
 }
 
 
