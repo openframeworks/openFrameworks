@@ -202,7 +202,7 @@ void ofTexture::loadData(void * data, int w, int h, int glDataType){
 	texData.glType  = glDataType;
 
 	//compute new tex co-ords based on the ratio of data's w, h to texture w,h;
-	#ifndef TARGET_OF_IPHONE	
+	#ifndef TARGET_OPENGLES	
 		if (texData.textureTarget == GL_TEXTURE_RECTANGLE_ARB){
 			texData.tex_t = w;
 			texData.tex_u = h;
@@ -257,6 +257,7 @@ void ofTexture::loadData(void * data, int w, int h, int glDataType){
 		//SOSOLIMITED: setup mipmaps and use compression
 
 		//need proper tex_u and tex_t positions, with mipmaps they are the nearest power of 2
+#ifndef TARGET_OPENGLES		
 		if (texData.textureTarget == GL_TEXTURE_RECTANGLE_ARB){
 			
 			//need to find closest powers of two
@@ -272,19 +273,21 @@ void ofTexture::loadData(void * data, int w, int h, int glDataType){
 
 			//printf("ofTexture::loadData w:%.1f, h:%.1f, tex_t:%.1f, tex_u:%.1f \n", texData.width,texData.height,texData.tex_t,texData.tex_u);
 		}
-
+#endif
 		glEnable(texData.textureTarget);
 		glBindTexture(texData.textureTarget, (GLuint)texData.textureID);
 
 		glHint(GL_GENERATE_MIPMAP_HINT, GL_NICEST);
 		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+#ifndef TARGET_OPENGLES		
 		glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP_SGIS, true);
-
+#endif
 		glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 		glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 		glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 		glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 		
+#ifndef TARGET_OPENGLES		
 		//using sRGB compression
 		if (texData.compressionType == OF_COMPRESS_SRGB)
 		{
@@ -316,7 +319,7 @@ void ofTexture::loadData(void * data, int w, int h, int glDataType){
 			else if(texData.glType == GL_LUMINANCE)
 				gluBuild2DMipmaps(texData.textureTarget, GL_COMPRESSED_LUMINANCE_ARB, w, h, texData.glType, GL_UNSIGNED_BYTE, data);
 		}
-
+#endif
 		
 
 		glDisable(texData.textureTarget);
@@ -350,7 +353,7 @@ void ofTexture::loadScreenData(int x, int y, int w, int h){
 	texData.glType  = GL_RGB;
 
 	//compute new tex co-ords based on the ratio of data's w, h to texture w,h;
-	#ifndef TARGET_OF_IPHONE // DAMIAN
+	#ifndef TARGET_OPENGLES // DAMIAN
 		if (texData.textureTarget == GL_TEXTURE_RECTANGLE_ARB){
 			texData.tex_t = (float)(w);
 			texData.tex_u = (float)(h);

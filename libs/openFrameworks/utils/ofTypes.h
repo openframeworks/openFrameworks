@@ -173,6 +173,11 @@ class ofPoint {
         float v[3];
     };
 
+	// MEMO (from Cinder):
+	float& operator[]( int n )
+	{
+		return v[n];
+	}
 };
 
 //----------------------------------------------------------
@@ -224,6 +229,17 @@ class ofColor{
 		}
 		virtual ~ofColor(){}
 		float r, g, b, a;
+	
+	// MEMO (from Cinder):
+	float & operator[]( int n )
+	{
+		if( 0 == n )
+			return r;
+		else if( 1 == n )
+			return g;
+		else
+			return b;
+	}
 };
 
 //----------------------------------------------------------
