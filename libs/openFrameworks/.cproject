@@ -34,15 +34,15 @@
 <option id="gnu.cpp.compiler.exe.debug.option.optimization.level.774026649" name="Optimization Level" superClass="gnu.cpp.compiler.exe.debug.option.optimization.level" value="gnu.cpp.compiler.optimization.level.none" valueType="enumerated"/>
 <option id="gnu.cpp.compiler.exe.debug.option.debugging.level.1142501360" name="Debug Level" superClass="gnu.cpp.compiler.exe.debug.option.debugging.level" value="gnu.cpp.compiler.debugging.level.max" valueType="enumerated"/>
 <option id="gnu.cpp.compiler.option.include.paths.390906970" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" valueType="includePath">
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/fmodex/inc}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/rtAudio/include}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/portaudio/include}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/glee/include}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/FreeImage/include}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/freetype/include/freetype2}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/freetype/include}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/unicap/include}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/poco/include}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/fmodex/inc}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/rtAudio/include}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/portaudio/include}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/glee/include}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/FreeImage/include}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/freetype/include/freetype2}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/freetype/include}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/unicap/include}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/poco/include}&quot;"/>
 <listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/communication}&quot;"/>
 <listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/events}&quot;"/>
 <listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/sound}&quot;"/>
@@ -106,7 +106,7 @@
 <listOptionValue builtIn="false" value="openFrameworks"/>
 <listOptionValue builtIn="false" value="RtAudio"/>
 <listOptionValue builtIn="false" value="oscpack"/>
-<listOptionValue builtIn="false" value="ofAddons"/>
+<listOptionValue builtIn="false" value="addons"/>
 <listOptionValue builtIn="false" value="unicap"/>
 <listOptionValue builtIn="false" value="dcam"/>
 <listOptionValue builtIn="false" value="v4l"/>
@@ -114,22 +114,22 @@
 <listOptionValue builtIn="false" value="vid21394"/>
 </option>
 <option id="gnu.cpp.link.option.paths.1159830331" name="Library search path (-L)" superClass="gnu.cpp.link.option.paths" valueType="libPaths">
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofAddons/ofxOsc/libs/oscpack/lib/linux}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofAddons/ofxOpenCv/libs/opencv/lib/linux}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofAddons/Release}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/fmodex/lib}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/ffmpeg/libavcodec}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/ffmpeg/libavformat}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/ffmpeg/libavutil}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/rtAudio}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/unicap/lib}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/glee}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/fobs/lib}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/FreeImage}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/freetype/lib/freetype2}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/ffmpeg/libavutil}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/ffmpeg/libavcodec}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/ffmpeg/libavformat}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/addons/ofxOsc/libs/oscpack/lib/linux}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/addons/ofxOpenCv/libs/opencv/lib/linux}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/addons/Release}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/fmodex/lib}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/ffmpeg/libavcodec}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/ffmpeg/libavformat}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/ffmpeg/libavutil}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/rtAudio}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/unicap/lib}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/glee}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/fobs/lib}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/FreeImage}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/freetype/lib/freetype2}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/ffmpeg/libavutil}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/ffmpeg/libavcodec}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/ffmpeg/libavformat}&quot;"/>
 <listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/Release}&quot;"/>
 </option>
 <option id="gnu.cpp.link.option.shared.1459400839" name="Shared (-shared)" superClass="gnu.cpp.link.option.shared"/>
@@ -1352,17 +1352,17 @@
 <option id="gnu.cpp.compiler.exe.debug.option.optimization.level.461840305" name="Optimization Level" superClass="gnu.cpp.compiler.exe.debug.option.optimization.level" value="gnu.cpp.compiler.optimization.level.none" valueType="enumerated"/>
 <option id="gnu.cpp.compiler.exe.debug.option.debugging.level.1632510231" name="Debug Level" superClass="gnu.cpp.compiler.exe.debug.option.debugging.level" value="gnu.cpp.compiler.debugging.level.max" valueType="enumerated"/>
 <option id="gnu.cpp.compiler.option.include.paths.1992540799" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" valueType="includePath">
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/fmodex/inc}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/rtAudio/include}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/glut}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/glee/include}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/FreeImage/include}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/freetype/include_macosx/freetype2}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/freetype/include_macosx/freetype2/freetype}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/freetype/include_macosx/freetype2/freetype/config}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/freetype/include_macosx/freetype2/freetype/internal}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/freetype/include_macosx}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/poco/include}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/fmodex/inc}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/rtAudio/include}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/glut}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/glee/include}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/FreeImage/include}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/freetype/include_macosx/freetype2}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/freetype/include_macosx/freetype2/freetype}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/freetype/include_macosx/freetype2/freetype/config}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/freetype/include_macosx/freetype2/freetype/internal}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/freetype/include_macosx}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/poco/include}&quot;"/>
 <listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/communication}&quot;"/>
 <listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/events}&quot;"/>
 <listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/sound}&quot;"/>
@@ -1417,7 +1417,7 @@
 <listOptionValue builtIn="false" value="openFrameworks"/>
 <listOptionValue builtIn="false" value="RtAudio"/>
 <listOptionValue builtIn="false" value="oscpack"/>
-<listOptionValue builtIn="false" value="ofAddons"/>
+<listOptionValue builtIn="false" value="addons"/>
 <listOptionValue builtIn="false" value="unicap"/>
 <listOptionValue builtIn="false" value="dcam"/>
 <listOptionValue builtIn="false" value="v4l"/>
@@ -1425,22 +1425,22 @@
 <listOptionValue builtIn="false" value="vid21394"/>
 </option>
 <option id="gnu.cpp.link.option.paths.548475118" name="Library search path (-L)" superClass="gnu.cpp.link.option.paths" valueType="libPaths">
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofAddons/ofxOsc/libs/oscpack/lib/linux}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofAddons/ofxOpenCv/libs/opencv/lib/linux}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofAddons/Release}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/fmodex/lib}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/ffmpeg/libavcodec}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/ffmpeg/libavformat}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/ffmpeg/libavutil}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/rtAudio}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/unicap/lib}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/glee}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/fobs/lib}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/FreeImage}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/freetype/lib/freetype2}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/ffmpeg/libavutil}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/ffmpeg/libavcodec}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/ffmpeg/libavformat}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/addons/ofxOsc/libs/oscpack/lib/linux}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/addons/ofxOpenCv/libs/opencv/lib/linux}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/addons/Release}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/fmodex/lib}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/ffmpeg/libavcodec}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/ffmpeg/libavformat}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/ffmpeg/libavutil}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/rtAudio}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/unicap/lib}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/glee}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/fobs/lib}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/FreeImage}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/freetype/lib/freetype2}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/ffmpeg/libavutil}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/ffmpeg/libavcodec}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/ffmpeg/libavformat}&quot;"/>
 <listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/Release}&quot;"/>
 </option>
 <inputType id="cdt.managedbuild.tool.gnu.cpp.linker.input.681123691" superClass="cdt.managedbuild.tool.gnu.cpp.linker.input">
@@ -2663,17 +2663,17 @@
 <option id="gnu.cpp.compiler.exe.debug.option.optimization.level.1543575096" name="Optimization Level" superClass="gnu.cpp.compiler.exe.debug.option.optimization.level" value="gnu.cpp.compiler.optimization.level.most" valueType="enumerated"/>
 <option id="gnu.cpp.compiler.exe.debug.option.debugging.level.1491539138" name="Debug Level" superClass="gnu.cpp.compiler.exe.debug.option.debugging.level" value="gnu.cpp.compiler.debugging.level.none" valueType="enumerated"/>
 <option id="gnu.cpp.compiler.option.include.paths.956656430" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" valueType="includePath">
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/fmodex/inc}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/rtAudio/include}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/glut}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/glee/include}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/FreeImage/include}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/freetype/include_macosx/freetype2}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/freetype/include_macosx/freetype2/freetype}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/freetype/include_macosx/freetype2/freetype/config}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/freetype/include_macosx/freetype2/freetype/internal}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/freetype/include_macosx}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/poco/include}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/fmodex/inc}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/rtAudio/include}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/glut}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/glee/include}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/FreeImage/include}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/freetype/include_macosx/freetype2}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/freetype/include_macosx/freetype2/freetype}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/freetype/include_macosx/freetype2/freetype/config}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/freetype/include_macosx/freetype2/freetype/internal}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/freetype/include_macosx}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/poco/include}&quot;"/>
 <listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/communication}&quot;"/>
 <listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/events}&quot;"/>
 <listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/sound}&quot;"/>
@@ -2728,7 +2728,7 @@
 <listOptionValue builtIn="false" value="openFrameworks"/>
 <listOptionValue builtIn="false" value="RtAudio"/>
 <listOptionValue builtIn="false" value="oscpack"/>
-<listOptionValue builtIn="false" value="ofAddons"/>
+<listOptionValue builtIn="false" value="addons"/>
 <listOptionValue builtIn="false" value="unicap"/>
 <listOptionValue builtIn="false" value="dcam"/>
 <listOptionValue builtIn="false" value="v4l"/>
@@ -2736,22 +2736,22 @@
 <listOptionValue builtIn="false" value="vid21394"/>
 </option>
 <option id="gnu.cpp.link.option.paths.1254698027" name="Library search path (-L)" superClass="gnu.cpp.link.option.paths" valueType="libPaths">
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofAddons/ofxOsc/libs/oscpack/lib/linux}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofAddons/ofxOpenCv/libs/opencv/lib/linux}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofAddons/Release}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/fmodex/lib}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/ffmpeg/libavcodec}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/ffmpeg/libavformat}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/ffmpeg/libavutil}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/rtAudio}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/unicap/lib}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/glee}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/fobs/lib}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/FreeImage}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/freetype/lib/freetype2}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/ffmpeg/libavutil}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/ffmpeg/libavcodec}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/ffmpeg/libavformat}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/addons/ofxOsc/libs/oscpack/lib/linux}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/addons/ofxOpenCv/libs/opencv/lib/linux}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/addons/Release}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/fmodex/lib}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/ffmpeg/libavcodec}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/ffmpeg/libavformat}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/ffmpeg/libavutil}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/rtAudio}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/unicap/lib}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/glee}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/fobs/lib}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/FreeImage}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/freetype/lib/freetype2}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/ffmpeg/libavutil}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/ffmpeg/libavcodec}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/ffmpeg/libavformat}&quot;"/>
 <listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/Release}&quot;"/>
 </option>
 <inputType id="cdt.managedbuild.tool.gnu.cpp.linker.input.1885430569" superClass="cdt.managedbuild.tool.gnu.cpp.linker.input">
@@ -3974,14 +3974,14 @@
 <option id="gnu.cpp.compiler.exe.debug.option.optimization.level.1088721348" name="Optimization Level" superClass="gnu.cpp.compiler.exe.debug.option.optimization.level" value="gnu.cpp.compiler.optimization.level.most" valueType="enumerated"/>
 <option id="gnu.cpp.compiler.exe.debug.option.debugging.level.780648974" name="Debug Level" superClass="gnu.cpp.compiler.exe.debug.option.debugging.level" value="gnu.cpp.compiler.debugging.level.none" valueType="enumerated"/>
 <option id="gnu.cpp.compiler.option.include.paths.393904229" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" valueType="includePath">
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/fmodex/inc}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/rtAudio/include}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/glee/include}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/FreeImage/include}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/freetype/include/freetype2}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/freetype/include}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/unicap/include}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/poco/include}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/fmodex/inc}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/rtAudio/include}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/glee/include}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/FreeImage/include}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/freetype/include/freetype2}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/freetype/include}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/unicap/include}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/poco/include}&quot;"/>
 <listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/communication}&quot;"/>
 <listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/events}&quot;"/>
 <listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/sound}&quot;"/>
@@ -3990,7 +3990,7 @@
 <listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks}&quot;"/>
 <listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/graphics}&quot;"/>
 <listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/app}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/portaudio/include}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/portaudio/include}&quot;"/>
 <listOptionValue builtIn="false" value="/usr/include/gstreamer-0.10"/>
 <listOptionValue builtIn="false" value="/usr/include/ffmpeg"/>
 <listOptionValue builtIn="false" value="/usr/include/glib-2.0"/>
@@ -4044,7 +4044,7 @@
 <listOptionValue builtIn="false" value="openFrameworks"/>
 <listOptionValue builtIn="false" value="RtAudio"/>
 <listOptionValue builtIn="false" value="oscpack"/>
-<listOptionValue builtIn="false" value="ofAddons"/>
+<listOptionValue builtIn="false" value="addons"/>
 <listOptionValue builtIn="false" value="unicap"/>
 <listOptionValue builtIn="false" value="dcam"/>
 <listOptionValue builtIn="false" value="v4l"/>
@@ -4052,22 +4052,22 @@
 <listOptionValue builtIn="false" value="vid21394"/>
 </option>
 <option id="gnu.cpp.link.option.paths.392222661" name="Library search path (-L)" superClass="gnu.cpp.link.option.paths" valueType="libPaths">
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofAddons/ofxOsc/libs/oscpack/lib/linux}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofAddons/ofxOpenCv/libs/opencv/lib/linux}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofAddons/Release}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/fmodex/lib}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/ffmpeg/libavcodec}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/ffmpeg/libavformat}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/ffmpeg/libavutil}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/rtAudio}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/unicap/lib}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/glee}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/fobs/lib}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/FreeImage}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/freetype/lib/freetype2}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/ffmpeg/libavutil}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/ffmpeg/libavcodec}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/ffmpeg/libavformat}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/addons/ofxOsc/libs/oscpack/lib/linux}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/addons/ofxOpenCv/libs/opencv/lib/linux}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/addons/Release}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/fmodex/lib}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/ffmpeg/libavcodec}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/ffmpeg/libavformat}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/ffmpeg/libavutil}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/rtAudio}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/unicap/lib}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/glee}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/fobs/lib}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/FreeImage}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/freetype/lib/freetype2}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/ffmpeg/libavutil}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/ffmpeg/libavcodec}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/ffmpeg/libavformat}&quot;"/>
 <listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/Release}&quot;"/>
 </option>
 <inputType id="cdt.managedbuild.tool.gnu.cpp.linker.input.1001822974" superClass="cdt.managedbuild.tool.gnu.cpp.linker.input">
@@ -5295,12 +5295,12 @@
 <listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/graphics}&quot;"/>
 <listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/utils}&quot;"/>
 <listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/glu/include_android}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/freetype/include}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/freetype/include/freetype2}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/FreeImage/include}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/poco/include}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofAddons/ofxAndroid/src}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/glu/include_android}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/freetype/include}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/freetype/include/freetype2}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/FreeImage/include}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/poco/include}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/addons/ofxAndroid/src}&quot;"/>
 </option>
 <option id="gnu.cpp.compiler.option.preprocessor.def.885108254" name="Defined symbols (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" valueType="definedSymbols">
 <listOptionValue builtIn="false" value="ANDROID"/>
@@ -5335,9 +5335,9 @@
 </option>
 <option id="gnu.cpp.link.option.paths.126858891" name="Library search path (-L)" superClass="gnu.cpp.link.option.paths" valueType="libPaths">
 <listOptionValue builtIn="false" value="&quot;${workspace_loc:/androidtest/Debug}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/FreeImage/lib/android}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/freetype/lib/android}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/glu/lib/android}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/FreeImage/lib/android}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/freetype/lib/android}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/glu/lib/android}&quot;"/>
 <listOptionValue builtIn="false" value="&quot;${NDK_ROOT}/build/platforms/${NDK_PLATFORM}/arch-arm/usr/lib/&quot;"/>
 <listOptionValue builtIn="false" value="&quot;${NDK_ROOT}/build/prebuilt/linux-x86/arm-eabi-4.4.0/lib/gcc/arm-eabi/4.4.0/&quot;"/>
 </option>
@@ -6562,12 +6562,12 @@
 <listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/graphics}&quot;"/>
 <listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/utils}&quot;"/>
 <listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/glu/include_android}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/freetype/include}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/freetype/include/freetype2}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/FreeImage/include}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/poco/include}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofAddons/ofxAndroid/src}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/glu/include_android}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/freetype/include}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/freetype/include/freetype2}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/FreeImage/include}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/poco/include}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/addons/ofxAndroid/src}&quot;"/>
 </option>
 <option id="gnu.cpp.compiler.option.preprocessor.def.1498295340" name="Defined symbols (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" valueType="definedSymbols">
 <listOptionValue builtIn="false" value="ANDROID"/>
@@ -6602,9 +6602,9 @@
 </option>
 <option id="gnu.cpp.link.option.paths.686566720" name="Library search path (-L)" superClass="gnu.cpp.link.option.paths" valueType="libPaths">
 <listOptionValue builtIn="false" value="&quot;${workspace_loc:/androidtest/Debug}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/FreeImage/lib/android}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/freetype/lib/android}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/glu/lib/android}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/FreeImage/lib/android}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/freetype/lib/android}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/glu/lib/android}&quot;"/>
 <listOptionValue builtIn="false" value="&quot;${NDK_ROOT}/build/platforms/${NDK_PLATFORM}/arch-arm/usr/lib/&quot;"/>
 <listOptionValue builtIn="false" value="&quot;${NDK_ROOT}/build/prebuilt/linux-x86/arm-eabi-4.4.0/lib/gcc/arm-eabi/4.4.0/&quot;"/>
 </option>
