@@ -131,7 +131,6 @@ class ofPoint {
         return *this;
     }
 
-
 	// Divide
     ofPoint operator/( const ofPoint& pnt ) const {
         return ofPoint( pnt.x!=0 ? x/pnt.x : x , pnt.y!=0 ? y/pnt.y : y, pnt.z!=0 ? z/pnt.z : z );
@@ -173,9 +172,7 @@ class ofPoint {
         float v[3];
     };
 
-	// MEMO (from Cinder):
-	float& operator[]( int n )
-	{
+	float& operator[]( int n ){
 		return v[n];
 	}
 };
@@ -230,16 +227,21 @@ class ofColor{
 		virtual ~ofColor(){}
 		float r, g, b, a;
 	
-	// MEMO (from Cinder):
-	float & operator[]( int n )
-	{
-		if( 0 == n )
-			return r;
-		else if( 1 == n )
-			return g;
-		else
-			return b;
-	}
+		float & operator[]( int n ){
+			switch( n ){
+				case 0:
+					return r;
+				case 1:
+					return g;
+				case 2:
+					return b;
+				case 3: 
+					return a;
+				default:
+					return r;
+				break;
+			}
+		}
 };
 
 //----------------------------------------------------------
