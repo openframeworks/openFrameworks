@@ -260,6 +260,13 @@ void ofVideoPlayer::closeMovie(){
 	#endif
     //--------------------------------------
 
+	if(bLoaded){
+		tex.clear();
+		if(pixels){
+			delete[] pixels;
+			pixels = NULL;
+		}
+	}
     bLoaded = false;
 
 }
@@ -544,7 +551,6 @@ void ofVideoPlayer::stop(){
 	StopMovie (moviePtr);
 	SetMovieActive (moviePtr, false);
 	bStarted = false;
-
 	//--------------------------------------
 	#else
 	//--------------------------------------
@@ -554,6 +560,9 @@ void ofVideoPlayer::stop(){
 	//--------------------------------------
 	#endif
 	//--------------------------------------
+
+
+	bPlaying = false;
 }
 
 //--------------------------------------------------------
@@ -981,4 +990,16 @@ float ofVideoPlayer::getWidth(){
 	#endif
 	//--------------------------------------
 
+}
+
+bool ofVideoPlayer::isPaused(){
+	return bPaused;
+}
+
+bool ofVideoPlayer::isLoaded(){
+	return bLoaded;
+}
+
+bool ofVideoPlayer::isPlaying(){
+	return bPlaying;
 }
