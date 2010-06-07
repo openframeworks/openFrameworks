@@ -39,22 +39,22 @@
 <listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/graphics}&quot;"/>
 <listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/utils}&quot;"/>
 <listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/glu/include_android}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/freetype/include}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/freetype/include/freetype2}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/FreeImage/include}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/poco/include}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofAddons/ofxAndroid/src}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofAddons/ofxDirList/src}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofAddons/ofxNetwork/src}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofAddons/ofxThread/src}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofAddons/ofxVectorMath/src}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofAddons/ofxXmlSettings/src}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofAddons/ofxXmlSettings/libs}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofAddons/ofxOsc/src}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofAddons/ofxOsc/libs/oscpack/include}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofAddons/ofxOsc/libs/oscpack/include/osc}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofAddons/ofxOsc/libs/oscpack/include/ip}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/glu/include_android}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/freetype/include}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/freetype/include/freetype2}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/FreeImage/include}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/poco/include}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/addons/ofxAndroid/src}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/addons/ofxDirList/src}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/addons/ofxNetwork/src}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/addons/ofxThread/src}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/addons/ofxVectorMath/src}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/addons/ofxXmlSettings/src}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/addons/ofxXmlSettings/libs}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/addons/ofxOsc/src}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/addons/ofxOsc/libs/oscpack/include}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/addons/ofxOsc/libs/oscpack/include/osc}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/addons/ofxOsc/libs/oscpack/include/ip}&quot;"/>
 </option>
 <option id="gnu.cpp.compiler.option.preprocessor.def.456175513" name="Defined symbols (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" valueType="definedSymbols">
 <listOptionValue builtIn="false" value="ANDROID"/>
@@ -74,7 +74,7 @@
 <option defaultValue="true" id="gnu.cpp.link.option.shared.99542771" name="Shared (-shared)" superClass="gnu.cpp.link.option.shared" valueType="boolean"/>
 <option id="gnu.cpp.link.option.flags.229932810" name="Linker flags" superClass="gnu.cpp.link.option.flags" value="-Wl,-rpath-link=${NDK_ROOT}/build/platforms/${NDK_PLATFORM}/arch-arm/usr/lib/ -fno-rtti -s" valueType="string"/>
 <option id="gnu.cpp.link.option.libs.1018087712" name="Libraries (-l)" superClass="gnu.cpp.link.option.libs" valueType="libs">
-<listOptionValue builtIn="false" value="ofAddons"/>
+<listOptionValue builtIn="false" value="addons"/>
 <listOptionValue builtIn="false" value="oscpack"/>
 <listOptionValue builtIn="false" value="openFrameworks"/>
 <listOptionValue builtIn="false" value="PocoUtil"/>
@@ -93,12 +93,12 @@
 </option>
 <option id="gnu.cpp.link.option.paths.1329821418" name="Library search path (-L)" superClass="gnu.cpp.link.option.paths" valueType="libPaths">
 <listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/Release Android}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofAddons/Release Android}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/FreeImage/lib/android}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/freetype/lib/android}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/glu/lib/android}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/poco/lib/android}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofAddons/ofxOsc/libs/oscpack/lib/android}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/addons/Release Android}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/FreeImage/lib/android}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/freetype/lib/android}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/glu/lib/android}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/poco/lib/android}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/addons/ofxOsc/libs/oscpack/lib/android}&quot;"/>
 <listOptionValue builtIn="false" value="&quot;${NDK_ROOT}/build/platforms/${NDK_PLATFORM}/arch-arm/usr/lib/&quot;"/>
 <listOptionValue builtIn="false" value="&quot;${NDK_ROOT}/build/prebuilt/linux-x86/arm-eabi-4.4.0/lib/gcc/arm-eabi/4.4.0/&quot;"/>
 </option>
@@ -1404,22 +1404,22 @@
 <listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/graphics}&quot;"/>
 <listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/utils}&quot;"/>
 <listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/glu/include_android}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/freetype/include}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/freetype/include/freetype2}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/FreeImage/include}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/poco/include}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofAddons/ofxAndroid/src}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofAddons/ofxDirList/src}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofAddons/ofxNetwork/src}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofAddons/ofxThread/src}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofAddons/ofxVectorMath/src}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofAddons/ofxXmlSettings/src}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofAddons/ofxXmlSettings/libs}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofAddons/ofxOsc/src}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofAddons/ofxOsc/libs/oscpack/include}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofAddons/ofxOsc/libs/oscpack/include/osc}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofAddons/ofxOsc/libs/oscpack/include/ip}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/glu/include_android}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/freetype/include}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/freetype/include/freetype2}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/FreeImage/include}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/poco/include}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/addons/ofxAndroid/src}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/addons/ofxDirList/src}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/addons/ofxNetwork/src}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/addons/ofxThread/src}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/addons/ofxVectorMath/src}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/addons/ofxXmlSettings/src}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/addons/ofxXmlSettings/libs}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/addons/ofxOsc/src}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/addons/ofxOsc/libs/oscpack/include}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/addons/ofxOsc/libs/oscpack/include/osc}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/addons/ofxOsc/libs/oscpack/include/ip}&quot;"/>
 </option>
 <option id="gnu.cpp.compiler.option.preprocessor.def.1648308445" name="Defined symbols (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" valueType="definedSymbols">
 <listOptionValue builtIn="false" value="ANDROID"/>
@@ -1440,7 +1440,7 @@
 <option defaultValue="true" id="gnu.cpp.link.option.shared.1163868896" name="Shared (-shared)" superClass="gnu.cpp.link.option.shared" valueType="boolean"/>
 <option id="gnu.cpp.link.option.flags.737643132" name="Linker flags" superClass="gnu.cpp.link.option.flags" value="-Wl,-rpath-link=${NDK_ROOT}/build/platforms/${NDK_PLATFORM}/arch-arm/usr/lib/ -fno-rtti " valueType="string"/>
 <option id="gnu.cpp.link.option.libs.633412171" name="Libraries (-l)" superClass="gnu.cpp.link.option.libs" valueType="libs">
-<listOptionValue builtIn="false" value="ofAddons"/>
+<listOptionValue builtIn="false" value="addons"/>
 <listOptionValue builtIn="false" value="oscpack"/>
 <listOptionValue builtIn="false" value="openFrameworks"/>
 <listOptionValue builtIn="false" value="PocoUtil"/>
@@ -1459,12 +1459,12 @@
 </option>
 <option id="gnu.cpp.link.option.paths.1199962141" name="Library search path (-L)" superClass="gnu.cpp.link.option.paths" valueType="libPaths">
 <listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/Release Android}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofAddons/Release Android}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/FreeImage/lib/android}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/freetype/lib/android}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/glu/lib/android}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/poco/lib/android}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofAddons/ofxOsc/libs/oscpack/lib/android}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/addons/Release Android}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/FreeImage/lib/android}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/freetype/lib/android}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/glu/lib/android}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/poco/lib/android}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/addons/ofxOsc/libs/oscpack/lib/android}&quot;"/>
 <listOptionValue builtIn="false" value="&quot;${NDK_ROOT}/build/platforms/${NDK_PLATFORM}/arch-arm/usr/lib/&quot;"/>
 <listOptionValue builtIn="false" value="&quot;${NDK_ROOT}/build/prebuilt/linux-x86/arm-eabi-4.4.0/lib/gcc/arm-eabi/4.4.0/&quot;"/>
 </option>
@@ -2765,22 +2765,22 @@
 <listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/graphics}&quot;"/>
 <listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/utils}&quot;"/>
 <listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/glu/include_android}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/freetype/include}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/freetype/include/freetype2}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/FreeImage/include}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/poco/include}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofAddons/ofxAndroid/src}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofAddons/ofxDirList/src}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofAddons/ofxNetwork/src}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofAddons/ofxThread/src}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofAddons/ofxVectorMath/src}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofAddons/ofxXmlSettings/src}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofAddons/ofxXmlSettings/libs}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofAddons/ofxOsc/src}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofAddons/ofxOsc/libs/oscpack/include}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofAddons/ofxOsc/libs/oscpack/include/osc}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofAddons/ofxOsc/libs/oscpack/include/ip}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/glu/include_android}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/freetype/include}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/freetype/include/freetype2}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/FreeImage/include}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/poco/include}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/addons/ofxAndroid/src}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/addons/ofxDirList/src}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/addons/ofxNetwork/src}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/addons/ofxThread/src}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/addons/ofxVectorMath/src}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/addons/ofxXmlSettings/src}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/addons/ofxXmlSettings/libs}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/addons/ofxOsc/src}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/addons/ofxOsc/libs/oscpack/include}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/addons/ofxOsc/libs/oscpack/include/osc}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/addons/ofxOsc/libs/oscpack/include/ip}&quot;"/>
 </option>
 <option id="gnu.cpp.compiler.option.preprocessor.def.144800426" name="Defined symbols (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" valueType="definedSymbols">
 <listOptionValue builtIn="false" value="ANDROID"/>
@@ -2800,7 +2800,7 @@
 <option id="gnu.cpp.link.option.shared.168556849" name="Shared (-shared)" superClass="gnu.cpp.link.option.shared"/>
 <option id="gnu.cpp.link.option.flags.1226742704" name="Linker flags" superClass="gnu.cpp.link.option.flags" value="-Wl,-rpath-link=${NDK_ROOT}/build/platforms/${NDK_PLATFORM}/arch-arm/usr/lib/ -fno-rtti -entry=main" valueType="string"/>
 <option id="gnu.cpp.link.option.libs.1278816758" name="Libraries (-l)" superClass="gnu.cpp.link.option.libs" valueType="libs">
-<listOptionValue builtIn="false" value="ofAddons"/>
+<listOptionValue builtIn="false" value="addons"/>
 <listOptionValue builtIn="false" value="oscpack"/>
 <listOptionValue builtIn="false" value="openFrameworks"/>
 <listOptionValue builtIn="false" value="PocoUtil"/>
@@ -2819,12 +2819,12 @@
 </option>
 <option id="gnu.cpp.link.option.paths.300170395" name="Library search path (-L)" superClass="gnu.cpp.link.option.paths" valueType="libPaths">
 <listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/Release Android}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofAddons/Release Android}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/FreeImage/lib/android}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/freetype/lib/android}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/glu/lib/android}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/poco/lib/android}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofAddons/ofxOsc/libs/oscpack/lib/android}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/addons/Release Android}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/FreeImage/lib/android}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/freetype/lib/android}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/glu/lib/android}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/poco/lib/android}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/addons/ofxOsc/libs/oscpack/lib/android}&quot;"/>
 <listOptionValue builtIn="false" value="&quot;${NDK_ROOT}/build/platforms/${NDK_PLATFORM}/arch-arm/usr/lib/&quot;"/>
 <listOptionValue builtIn="false" value="&quot;${NDK_ROOT}/build/prebuilt/linux-x86/arm-eabi-4.4.0/lib/gcc/arm-eabi/4.4.0/&quot;"/>
 </option>

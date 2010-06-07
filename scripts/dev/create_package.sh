@@ -231,7 +231,7 @@ function deleteProjectFiles {
     fi
 
     #android
-    if [ "$platform" = "vs2010" ]; then
+    if [ "$platform" = "android" ]; then
 
         #delete codeblock files
         rm *.cbp
