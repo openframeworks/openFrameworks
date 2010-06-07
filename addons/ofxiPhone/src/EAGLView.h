@@ -1,6 +1,6 @@
 /***********************************************************************
  
- Copyright (c) 2008, 2009, Memo Akten, www.memo.tv
+ Copyright (c) 2008, 2009, 2010 Memo Akten, www.memo.tv
  *** The Mega Super Awesome Visuals Company ***
  * All rights reserved.
  *
@@ -29,55 +29,27 @@
  *
  * ***********************************************************************/ 
 
-
-#ifndef _EAGLVIEW_H
-#define _EAGLVIEW_H
-
 #import <UIKit/UIKit.h>
-#import <OpenGLES/EAGL.h>
-#import <OpenGLES/ES1/gl.h>
-#import <OpenGLES/ES1/glext.h>
-#import "ofxMultiTouch.h"
+#import <QuartzCore/QuartzCore.h>
 
-//CLASSES:
+#import "ESRenderer.h"
 
-#define	OF_MAX_TOUCHES			5		// iphone has max 5 finger support
+#include "ofxiPhone.h"
 
-/*
- This class wraps the CAEAGLLayer from CoreAnimation into a convenient UIView subclass.
- The view content is basically an EAGL surface you render your OpenGL scene into.
- Note that setting the view non-opaque will only work if the EAGL surface has an alpha channel.
- */
+// This class wraps the CAEAGLLayer from CoreAnimation into a convenient UIView subclass.
+// The view content is basically an EAGL surface you render your OpenGL scene into.
+// Note that setting the view non-opaque will only work if the EAGL surface has an alpha channel.
 @interface EAGLView : UIView
 {
 @private
-	GLuint					_format;
-	GLuint					_depthFormat;
-	EAGLContext				*_context;
-	GLuint					_framebuffer;
-	GLuint					_renderbuffer;
-	GLuint					_depthBuffer;
-	CGSize					_size;
-	BOOL					_hasBeenCurrent;
-//	bool					isLandscape;
-	
-	// multitouch stuff
-	UITouch					*activeTouches[OF_MAX_TOUCHES];
+    id <ESRenderer> renderer;
+	NSMutableDictionary		*activeTouches;
 }
-- (id) initWithFrame:(CGRect)frame; //These also set the current context
-- (id) initWithFrame:(CGRect)frame pixelFormat:(GLuint)format;
-- (id) initWithFrame:(CGRect)frame pixelFormat:(GLuint)format depthFormat:(GLuint)depth preserveBackbuffer:(bool)retained;
-//- (void) setLandscape:(bool)landscape; // this is needed to pass orientation information to the eagl surface
 
-@property(readonly) GLuint framebuffer;
-@property(readonly) GLuint pixelFormat;
-@property(readonly) GLuint depthFormat;
-@property(readonly) EAGLContext *context;
-@property(readonly, nonatomic) CGSize surfaceSize;
+- (void) startRender;
+- (void) finishRender;
+- (EAGLContext*) context;
 
--(void) swapBuffers; //This also checks the current OpenGL error and logs an error if needed
 
 
 @end
-
-#endif

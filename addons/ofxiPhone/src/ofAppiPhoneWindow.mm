@@ -262,6 +262,8 @@ void ofAppiPhoneWindow::timerLoop() {
 	
 	[ofxiPhoneGetAppDelegate() lockGL];
 
+	[ofxiPhoneGetGLView() startRender];
+
 	// this could be taken out and included in ofAppBaseWIndow
 	if(orientation == OFXIPHONE_ORIENTATION_PORTRAIT || orientation == OFXIPHONE_ORIENTATION_UPSIDEDOWN)
 		glViewport( 0, 0, ofGetWidth(), ofGetHeight() );
@@ -337,7 +339,7 @@ void ofAppiPhoneWindow::timerLoop() {
 		ofNotifyEvent( ofEvents.draw, voidEventArgs );
 	#endif
 	
-	[ofxiPhoneGetGLView() swapBuffers];
+	[ofxiPhoneGetGLView() finishRender];
 	
 	[ofxiPhoneGetAppDelegate() unlockGL];
 

@@ -66,13 +66,14 @@ public:
 - (bool) openCamera;
 #ifdef __IPHONE_3_1
 - (bool) showCameraOverlay;
+- (void) hideCameraOverlay;
 #endif
 - (bool) openSavedPhotos;
 
 - (bool) isCameraAvailable;
 - (bool) isPhotoLibraryAvailable;
 - (bool) isSavedPhotosAvailable;
-- (bool) wasNewImagePicked;
+//- (bool) wasNewImagePicked;
 
 - (void) saveImageToPhotoAlbum;
 

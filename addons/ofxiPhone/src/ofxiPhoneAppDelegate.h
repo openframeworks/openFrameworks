@@ -37,21 +37,19 @@
 #import "ofAppiPhoneWindow.h"
 
 @interface ofxiPhoneAppDelegate : NSObject <UIApplicationDelegate> {
-	NSTimer				*timer;
-	float				targetFrameRate;
+	NSTimer				*animationTimer;
+    BOOL				animating;
+    BOOL				displayLinkSupported;
+    NSInteger			animationFrameInterval;
+    id					displayLink;
 	
 	EAGLView			*glView;
 
-	uint64_t			frameLength;			// nanoseconds between successive frames at targetFrameRate
-	bool				killThread;
-	bool				loopInThreadIsEnabled;
-	
 	NSLock				*glLock;
 }
 
 -(void) receivedRotate:(NSNotification*)notification;
 -(void) setFrameRate:(float)frameRate;
--(void) enableLoopInThread;
 -(EAGLView*) getGLView;
 
 -(void)lockGL;
