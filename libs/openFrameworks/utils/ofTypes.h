@@ -199,9 +199,23 @@ class ofRectangle {
 		height	= h;
 	}
 
+	void set(ofPoint pos, float w, float h){
+		x		= pos.x;
+		y		= pos.y;
+		width	= w;
+		height	= h;
+	}
+
 	void setFromCenter(float px, float py, float w, float h){
 		x		= px - w*0.5;
 		y		= py - h*0.5;
+		width	= w;
+		height	= h;
+	}
+
+	void setFromCenter(ofPoint pos, float w, float h){
+		x		= pos.x - w*0.5;
+		y		= pos.y - h*0.5;
 		width	= w;
 		height	= h;
 	}
