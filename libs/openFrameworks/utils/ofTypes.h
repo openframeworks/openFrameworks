@@ -192,6 +192,24 @@ class ofRectangle {
 	}
 	virtual ~ofRectangle(){}
 
+	void set(float px, float py, float w, float h){
+		x		= px;
+		y		= py;
+		width	= w;
+		height	= h;
+	}
+
+	void setFromCenter(float px, float py, float w, float h){
+		x		= px - w*0.5;
+		y		= py - h*0.5;
+		width	= w;
+		height	= h;
+	}
+	
+	ofPoint getCenter(){
+		return ofPoint(x + width * 0.5, y + height * 0.5, 0);
+	}
+
 	bool inside (ofPoint p){
 		return inside(p.x, p.y);
 	}
