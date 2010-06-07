@@ -64,6 +64,7 @@ class ofVideoPlayer : public ofBaseVideo{
 
 		void 				setPaused(bool bPause);
 
+		int					currentLoopState;
 		int					getCurrentFrame();
 		int					getTotalNumFrames();
 
