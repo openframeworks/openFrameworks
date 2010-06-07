@@ -20,6 +20,10 @@ void ofEnableArbTex();
 void ofDisableArbTex();
 
 
+bool ofGetUsingNormalizedTexCoords();
+void ofEnableNormalizedTexCoords();
+void ofDisableNormalizedTexCoords();
+
 
 //***** add global functions to override texture settings
 void ofSetTextureWrap(GLfloat wrapS = GL_CLAMP_TO_EDGE, GLfloat wrapT = GL_CLAMP_TO_EDGE);

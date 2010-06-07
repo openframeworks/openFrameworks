@@ -33,6 +33,7 @@ float 			bgColor[4]			= {0,0,0,0};
 void 			setupCircle();
 bool 			bSmoothHinted		= false;
 bool			bUsingArbTex		= true;
+bool			bUsingNormalizedTexCoords = false;
 bool 			bBakgroundAuto		= true;
 int 			cornerMode			= OF_RECTMODE_CORNER;
 int 			polyMode			= OF_POLY_WINDING_ODD;
@@ -76,6 +77,20 @@ void ofEnableArbTex(){
 void ofDisableArbTex(){
 	bUsingArbTex = false;
 }
+
+bool ofGetUsingNormalizedTexCoords() {
+	return bUsingNormalizedTexCoords;
+}
+
+void ofEnableNormalizedTexCoords() {
+	bUsingNormalizedTexCoords = true;
+}
+
+void ofDisableNormalizedTexCoords() {
+	bUsingNormalizedTexCoords = false;
+}
+
+
 
 //***** add global functions to override texture settings
 //----------------------------------------------------------
