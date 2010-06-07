@@ -481,21 +481,9 @@ void ofAppGlutWindow::display(void){
 
     nFramesSinceWindowResized++;
 
-    // -------------- fps calculation:
-	// theo - please don't mess with this without letting me know.
-	// there was some very strange issues with doing ( timeNow-timeThen ) producing different values to: double diff = timeNow-timeThen;
-	// http://www.openframeworks.cc/forum/viewtopic.php?f=7&t=1892&p=11166#p11166
-
-	timeNow = ofGetElapsedTimef();
-	double diff = timeNow-timeThen;
-	if( diff  > 0.00001 ){
-		fps			= 1.0 / diff;
-		frameRate	*= 0.9f;
-		frameRate	+= 0.1f*fps;
-	 }
-	 lastFrameTime	= diff;
-	 timeThen		= timeNow;
-  	// --------------
+	//fps calculation moved to idle_cb as we were having fps speedups when heavy drawing was occuring
+	//wasn't reflecting on the actual app fps which was in reality slower. 
+	//could be caused by some sort of deferred drawing? 
 
 	nFrameCount++;		// increase the overall frame count
 
@@ -602,6 +590,26 @@ void ofAppGlutWindow::idle_cb(void) {
 		}
 	}
 	prevMillis = ofGetElapsedTimeMillis(); // you have to measure here
+	
+    // -------------- fps calculation:
+	// theo - now moved from display to idle_cb
+	// discuss here: http://github.com/openframeworks/openFrameworks/issues/labels/0062#issue/187
+	// 
+	//
+	// theo - please don't mess with this without letting me know.
+	// there was some very strange issues with doing ( timeNow-timeThen ) producing different values to: double diff = timeNow-timeThen;
+	// http://www.openframeworks.cc/forum/viewtopic.php?f=7&t=1892&p=11166#p11166
+
+	timeNow = ofGetElapsedTimef();
+	double diff = timeNow-timeThen;
+	if( diff  > 0.00001 ){
+		fps			= 1.0 / diff;
+		frameRate	*= 0.9f;
+		frameRate	+= 0.1f*fps;
+	 }
+	 lastFrameTime	= diff;
+	 timeThen		= timeNow;
+  	// --------------	
 
 	if(ofAppPtr)
 		ofAppPtr->update();

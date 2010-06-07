@@ -140,10 +140,10 @@
 
 	template<class ListenerClass>
 	void ofRegisterTouchEvents(ListenerClass * listener){
-		ofRemoveListener(ofEvents.touchDoubleTap, listener, &ListenerClass::touchDoubleTap);
-		ofRemoveListener(ofEvents.touchDown, listener, &ListenerClass::touchDown);
-		ofRemoveListener(ofEvents.touchMoved, listener, &ListenerClass::touchMoved);
-		ofRemoveListener(ofEvents.touchUp, listener, &ListenerClass::touchUp);
+		ofAddListener(ofEvents.touchDoubleTap, listener, &ListenerClass::touchDoubleTap);
+		ofAddListener(ofEvents.touchDown, listener, &ListenerClass::touchDown);
+		ofAddListener(ofEvents.touchMoved, listener, &ListenerClass::touchMoved);
+		ofAddListener(ofEvents.touchUp, listener, &ListenerClass::touchUp);
 	}
 
 	template<class ListenerClass>

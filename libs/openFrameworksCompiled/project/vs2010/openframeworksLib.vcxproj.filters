@@ -1,0 +1,150 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="libs">
+      <UniqueIdentifier>{99fb9456-40f9-40c0-97db-c85505d9b444}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libs\openFrameworks">
+      <UniqueIdentifier>{d9bb24da-9646-4c59-b5c2-d199d354f8f2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libs\openFrameworks\app">
+      <UniqueIdentifier>{e4b39d1b-e874-4566-8826-09f2182ff3ca}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libs\openFrameworks\graphics">
+      <UniqueIdentifier>{ee48c0fc-200b-4e93-83d3-9e2c20d4bf9e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libs\openFrameworks\sound">
+      <UniqueIdentifier>{be31c78d-2c42-4129-b235-b5c0723f734c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libs\openFrameworks\util">
+      <UniqueIdentifier>{e769ef16-c02a-402a-8eff-5d109f5a3a86}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libs\openFrameworks\video">
+      <UniqueIdentifier>{b78d61d8-4705-4dd6-b395-b0340c42a6a8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libs\openFrameworks\communication">
+      <UniqueIdentifier>{608df362-91fb-44e3-9d2e-cf29cde4fe28}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libs\openFrameworks\events">
+      <UniqueIdentifier>{a041d3e4-3b1a-4e1f-ab95-064102e6ddc2}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\openFrameworks\ofMain.h">
+      <Filter>libs\openFrameworks</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\openFrameworks\app\ofAppGlutWindow.h">
+      <Filter>libs\openFrameworks\app</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\openFrameworks\app\ofAppRunner.h">
+      <Filter>libs\openFrameworks\app</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\openFrameworks\app\ofSimpleApp.h">
+      <Filter>libs\openFrameworks\app</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\openFrameworks\graphics\ofBitmapFont.h">
+      <Filter>libs\openFrameworks\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\openFrameworks\graphics\ofGraphics.h">
+      <Filter>libs\openFrameworks\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\openFrameworks\graphics\ofImage.h">
+      <Filter>libs\openFrameworks\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\openFrameworks\graphics\ofTexture.h">
+      <Filter>libs\openFrameworks\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\openFrameworks\graphics\ofTrueTypefont.h">
+      <Filter>libs\openFrameworks\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\openFrameworks\sound\ofSoundPlayer.h">
+      <Filter>libs\openFrameworks\sound</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\openFrameworks\sound\ofSoundStream.h">
+      <Filter>libs\openFrameworks\sound</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\openFrameworks\utils\ofConstants.h">
+      <Filter>libs\openFrameworks\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\openFrameworks\utils\ofMath.h">
+      <Filter>libs\openFrameworks\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\openFrameworks\utils\ofTypes.h">
+      <Filter>libs\openFrameworks\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\openFrameworks\utils\ofUtils.h">
+      <Filter>libs\openFrameworks\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\openFrameworks\video\ofQtUtils.h">
+      <Filter>libs\openFrameworks\video</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\openFrameworks\video\ofVideoGrabber.h">
+      <Filter>libs\openFrameworks\video</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\openFrameworks\video\ofVideoPlayer.h">
+      <Filter>libs\openFrameworks\video</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\openFrameworks\communication\ofArduino.h">
+      <Filter>libs\openFrameworks\communication</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\openFrameworks\communication\ofSerial.h">
+      <Filter>libs\openFrameworks\communication</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\openFrameworks\events\ofEvents.h">
+      <Filter>libs\openFrameworks\events</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\openFrameworks\events\ofEventUtils.h">
+      <Filter>libs\openFrameworks\events</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\openFrameworks\app\ofAppGlutWindow.cpp">
+      <Filter>libs\openFrameworks\app</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\openFrameworks\app\ofAppRunner.cpp">
+      <Filter>libs\openFrameworks\app</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\openFrameworks\graphics\ofBitmapFont.cpp">
+      <Filter>libs\openFrameworks\graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\openFrameworks\graphics\ofGraphics.cpp">
+      <Filter>libs\openFrameworks\graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\openFrameworks\graphics\ofImage.cpp">
+      <Filter>libs\openFrameworks\graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\openFrameworks\graphics\ofTexture.cpp">
+      <Filter>libs\openFrameworks\graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\openFrameworks\graphics\ofTrueTypeFont.cpp">
+      <Filter>libs\openFrameworks\graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\openFrameworks\sound\ofSoundPlayer.cpp">
+      <Filter>libs\openFrameworks\sound</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\openFrameworks\sound\ofSoundStream.cpp">
+      <Filter>libs\openFrameworks\sound</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\openFrameworks\utils\ofMath.cpp">
+      <Filter>libs\openFrameworks\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\openFrameworks\utils\ofUtils.cpp">
+      <Filter>libs\openFrameworks\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\openFrameworks\video\ofQtUtils.cpp">
+      <Filter>libs\openFrameworks\video</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\openFrameworks\video\ofVideoGrabber.cpp">
+      <Filter>libs\openFrameworks\video</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\openFrameworks\video\ofVideoPlayer.cpp">
+      <Filter>libs\openFrameworks\video</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\openFrameworks\communication\ofArduino.cpp">
+      <Filter>libs\openFrameworks\communication</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\openFrameworks\communication\ofSerial.cpp">
+      <Filter>libs\openFrameworks\communication</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

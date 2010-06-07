@@ -1122,6 +1122,15 @@ void ofGstUtils::close(){
 		gst_element_set_state(GST_ELEMENT(gstPipeline), GST_STATE_NULL);
 		//gst_object_unref(gstSink);
 		gst_object_unref(gstPipeline);
+		if(pixels){
+			delete[] pixels;
+			pixels = NULL;
+		}
+		if(gstData.pixels){
+			delete[] gstData.pixels;
+			gstData.pixels = NULL;
+		}
+
 	}
 
 	bLoaded = false;

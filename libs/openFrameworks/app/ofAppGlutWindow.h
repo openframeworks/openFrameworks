@@ -3,7 +3,6 @@
 #include "ofConstants.h"
 #include "ofAppBaseWindow.h"
 
-
 #ifdef TARGET_WIN32
 	#define GLUT_BUILDING_LIB
 	#include "glut.h"
