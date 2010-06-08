@@ -4,6 +4,16 @@
 platform=$1
 version=$2
 
+REPO=http://github.com/openframeworks/openFrameworks.git
+REPO_ALIAS=origin
+BRANCH=master
+
+libsnotinmac="unicap gstappsink glu quicktime videoInput"
+libsnotinlinux="quicktime videoInput glut glu"
+libsnotinwindows="unicap gstappsink"
+libsnotinandroid="glut unicap gstappsink quicktime videoInput fmodex glee rtAudio"
+libsnotiniphone="glut unicap gstappsink quicktime videoInput fmodex glee rtAudio"
+
 runOSXSLScript=0
 
 if [ "$platform" = "osxSL" ]; then
@@ -28,15 +38,6 @@ if [ "$version" == "" ]; then
     exit 1
 fi
 
-REPO=git://github.com/openframeworks/openFrameworks.git
-REPO_ALIAS=ofmain
-BRANCH=master
-
-libsnotinmac="unicap gstappsink glu quicktime videoInput"
-libsnotinlinux="quicktime videoInput glut glu"
-libsnotinwindows="unicap gstappsink"
-libsnotinandroid="glut unicap gstappsink quicktime videoInput fmodex glee rtAudio"
-libsnotiniphone="glut unicap gstappsink quicktime videoInput fmodex glee rtAudio"
 
 if [ ! -d openFrameworks/.git ]; then
     git clone $REPO 
@@ -55,6 +56,7 @@ if [ "$BRANCH" != "master" ]; then
 	git fetch $REPO_ALIAS
     git checkout --track -b $BRANCH ${REPO_ALIAS}/${BRANCH}
 fi
+git checkout $BRANCH
 git reset --hard
 git pull $REPO $BRANCH
 
