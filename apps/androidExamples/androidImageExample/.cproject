@@ -74,7 +74,7 @@
 <option defaultValue="true" id="gnu.cpp.link.option.shared.99542771" name="Shared (-shared)" superClass="gnu.cpp.link.option.shared" valueType="boolean"/>
 <option id="gnu.cpp.link.option.flags.229932810" name="Linker flags" superClass="gnu.cpp.link.option.flags" value="-Wl,-rpath-link=${NDK_ROOT}/build/platforms/${NDK_PLATFORM}/arch-arm/usr/lib/ -fno-rtti -s" valueType="string"/>
 <option id="gnu.cpp.link.option.libs.1018087712" name="Libraries (-l)" superClass="gnu.cpp.link.option.libs" valueType="libs">
-<listOptionValue builtIn="false" value="addons"/>
+<listOptionValue builtIn="false" value="ofAddons"/>
 <listOptionValue builtIn="false" value="oscpack"/>
 <listOptionValue builtIn="false" value="openFrameworks"/>
 <listOptionValue builtIn="false" value="PocoUtil"/>
