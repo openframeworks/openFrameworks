@@ -207,21 +207,21 @@ class ofRectangle {
 	}
 
 	void setFromCenter(float px, float py, float w, float h){
-		x		= px - w*0.5;
-		y		= py - h*0.5;
+		x		= px - w*0.5f;
+		y		= py - h*0.5f;
 		width	= w;
 		height	= h;
 	}
 
 	void setFromCenter(ofPoint pos, float w, float h){
-		x		= pos.x - w*0.5;
-		y		= pos.y - h*0.5;
+		x		= pos.x - w*0.5f;
+		y		= pos.y - h*0.5f;
 		width	= w;
 		height	= h;
 	}
 	
 	ofPoint getCenter(){
-		return ofPoint(x + width * 0.5, y + height * 0.5, 0);
+		return ofPoint(x + width * 0.5f, y + height * 0.5f, 0);
 	}
 
 	bool inside (ofPoint p){
