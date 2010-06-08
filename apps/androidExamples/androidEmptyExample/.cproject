@@ -74,7 +74,7 @@
 <option defaultValue="true" id="gnu.cpp.link.option.shared.1959715175" name="Shared (-shared)" superClass="gnu.cpp.link.option.shared" valueType="boolean"/>
 <option id="gnu.cpp.link.option.flags.433795085" name="Linker flags" superClass="gnu.cpp.link.option.flags" value="-Wl,-rpath-link=${NDK_ROOT}/build/platforms/${NDK_PLATFORM}/arch-arm/usr/lib/ -fno-rtti -s" valueType="string"/>
 <option id="gnu.cpp.link.option.libs.1000308541" name="Libraries (-l)" superClass="gnu.cpp.link.option.libs" valueType="libs">
-<listOptionValue builtIn="false" value="ofAddons"/>
+<listOptionValue builtIn="false" value="addons"/>
 <listOptionValue builtIn="false" value="oscpack"/>
 <listOptionValue builtIn="false" value="openFrameworks"/>
 <listOptionValue builtIn="false" value="PocoUtil"/>
@@ -92,8 +92,8 @@
 <listOptionValue builtIn="false" value="c"/>
 </option>
 <option id="gnu.cpp.link.option.paths.1007381096" name="Library search path (-L)" superClass="gnu.cpp.link.option.paths" valueType="libPaths">
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/Release Android}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/addons/Release Android}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/Release}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/addons/Release}&quot;"/>
 <listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/FreeImage/lib/android}&quot;"/>
 <listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/freetype/lib/android}&quot;"/>
 <listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/glu/lib/android}&quot;"/>
@@ -1111,7 +1111,7 @@
 <option id="gnu.cpp.link.option.shared.1627795890" name="Shared (-shared)" superClass="gnu.cpp.link.option.shared"/>
 <option id="gnu.cpp.link.option.flags.2101114865" name="Linker flags" superClass="gnu.cpp.link.option.flags" value="-Wl,-rpath-link=${NDK_ROOT}/build/platforms/${NDK_PLATFORM}/arch-arm/usr/lib/ -fno-rtti -entry=main" valueType="string"/>
 <option id="gnu.cpp.link.option.libs.198749057" name="Libraries (-l)" superClass="gnu.cpp.link.option.libs" valueType="libs">
-<listOptionValue builtIn="false" value="ofAddons"/>
+<listOptionValue builtIn="false" value="addons"/>
 <listOptionValue builtIn="false" value="oscpack"/>
 <listOptionValue builtIn="false" value="openFrameworks"/>
 <listOptionValue builtIn="false" value="PocoUtil"/>
@@ -2149,7 +2149,7 @@
 <option defaultValue="true" id="gnu.cpp.link.option.shared.211884424" name="Shared (-shared)" superClass="gnu.cpp.link.option.shared" valueType="boolean"/>
 <option id="gnu.cpp.link.option.flags.988193305" name="Linker flags" superClass="gnu.cpp.link.option.flags" value="-Wl,-rpath-link=${NDK_ROOT}/build/platforms/${NDK_PLATFORM}/arch-arm/usr/lib/ -fno-rtti " valueType="string"/>
 <option id="gnu.cpp.link.option.libs.1009650578" name="Libraries (-l)" superClass="gnu.cpp.link.option.libs" valueType="libs">
-<listOptionValue builtIn="false" value="ofAddons"/>
+<listOptionValue builtIn="false" value="addons"/>
 <listOptionValue builtIn="false" value="oscpack"/>
 <listOptionValue builtIn="false" value="openFrameworks"/>
 <listOptionValue builtIn="false" value="PocoUtil"/>

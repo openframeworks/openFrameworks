@@ -28,7 +28,7 @@
 <targetPlatform id="cdt.managedbuild.target.gnu.platform.exe.debug.1469995607" name="Debug Platform" superClass="cdt.managedbuild.target.gnu.platform.exe.debug"/>
 <builder buildPath="${workspace_loc:/androidGraphicsExample/Debug}" id="cdt.managedbuild.target.gnu.builder.exe.debug.455463942" keepEnvironmentInBuildfile="false" managedBuildOn="true" name="Gnu Make Builder" superClass="cdt.managedbuild.target.gnu.builder.exe.debug"/>
 <tool id="cdt.managedbuild.tool.gnu.archiver.base.1217365279" name="GCC Archiver" superClass="cdt.managedbuild.tool.gnu.archiver.base"/>
-<tool command="arm-eabi-g++" id="cdt.managedbuild.tool.gnu.cpp.compiler.exe.debug.363957296" name="GCC C++ Compiler" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.exe.debug">
+<tool command="arm-eabi-g++" commandLinePattern="${COMMAND} ${FLAGS} ${OUTPUT_FLAG}${OUTPUT_PREFIX}${OUTPUT} ${INPUTS}" id="cdt.managedbuild.tool.gnu.cpp.compiler.exe.debug.363957296" name="GCC C++ Compiler" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.exe.debug">
 <option id="gnu.cpp.compiler.exe.debug.option.optimization.level.1724770009" name="Optimization Level" superClass="gnu.cpp.compiler.exe.debug.option.optimization.level" value="gnu.cpp.compiler.optimization.level.none" valueType="enumerated"/>
 <option id="gnu.cpp.compiler.exe.debug.option.debugging.level.1677536412" name="Debug Level" superClass="gnu.cpp.compiler.exe.debug.option.debugging.level" value="gnu.cpp.compiler.debugging.level.max" valueType="enumerated"/>
 <option id="gnu.cpp.compiler.option.other.other.1016555000" name="Other flags" superClass="gnu.cpp.compiler.option.other.other" value="-c -nostdlib -fno-rtti -fno-short-enums" valueType="string"/>
@@ -74,7 +74,7 @@
 <option defaultValue="true" id="gnu.cpp.link.option.shared.99542771" name="Shared (-shared)" superClass="gnu.cpp.link.option.shared" valueType="boolean"/>
 <option id="gnu.cpp.link.option.flags.229932810" name="Linker flags" superClass="gnu.cpp.link.option.flags" value="-Wl,-rpath-link=${NDK_ROOT}/build/platforms/${NDK_PLATFORM}/arch-arm/usr/lib/ -fno-rtti -s" valueType="string"/>
 <option id="gnu.cpp.link.option.libs.1018087712" name="Libraries (-l)" superClass="gnu.cpp.link.option.libs" valueType="libs">
-<listOptionValue builtIn="false" value="ofAddons"/>
+<listOptionValue builtIn="false" value="addons"/>
 <listOptionValue builtIn="false" value="oscpack"/>
 <listOptionValue builtIn="false" value="openFrameworks"/>
 <listOptionValue builtIn="false" value="PocoUtil"/>
@@ -92,8 +92,8 @@
 <listOptionValue builtIn="false" value="c"/>
 </option>
 <option id="gnu.cpp.link.option.paths.1329821418" name="Library search path (-L)" superClass="gnu.cpp.link.option.paths" valueType="libPaths">
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/Release Android}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/addons/Release Android}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/Release}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/addons/Release}&quot;"/>
 <listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/FreeImage/lib/android}&quot;"/>
 <listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/freetype/lib/android}&quot;"/>
 <listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/glu/lib/android}&quot;"/>
@@ -1458,8 +1458,8 @@
 <listOptionValue builtIn="false" value="c"/>
 </option>
 <option id="gnu.cpp.link.option.paths.1199962141" name="Library search path (-L)" superClass="gnu.cpp.link.option.paths" valueType="libPaths">
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/Release Android}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/addons/Release Android}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/Release}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/addons/Release}&quot;"/>
 <listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/FreeImage/lib/android}&quot;"/>
 <listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/freetype/lib/android}&quot;"/>
 <listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/glu/lib/android}&quot;"/>
@@ -2818,8 +2818,8 @@
 <listOptionValue builtIn="false" value="c"/>
 </option>
 <option id="gnu.cpp.link.option.paths.300170395" name="Library search path (-L)" superClass="gnu.cpp.link.option.paths" valueType="libPaths">
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/Release Android}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/addons/Release Android}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/Release}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/addons/Release}&quot;"/>
 <listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/FreeImage/lib/android}&quot;"/>
 <listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/freetype/lib/android}&quot;"/>
 <listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/glu/lib/android}&quot;"/>
