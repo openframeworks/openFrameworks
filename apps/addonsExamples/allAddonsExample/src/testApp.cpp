@@ -7,6 +7,7 @@ void testApp::setup(){
 
 //--------------------------------------------------------------
 void testApp::update(){
+	string s = ofToString(5);
 }
 
 
