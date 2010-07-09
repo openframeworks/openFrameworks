@@ -12,11 +12,11 @@ if [ "$platform" = "osxSL" ]; then
     echo "will make changes for snow leopard"
 fi
 
-if [ "$platform" != "win_cb" ] && [ "$platform" != "linux" ] && [ "$platform" != "linux64" ] && [ "$platform" != "vs2008" ] && [ "$platform" != "osx" ] && [ "$platform" != "all" ]; then
+if [ "$platform" != "win_cb" ] && [ "$platform" != "linux" ] && [ "$platform" != "linux64" ] && [ "$platform" != "vs2008" ] && [ "$platform" != "vs2010" ] && [ "$platform" != "osx" ] && [ "$platform" != "android" ] && [ "$platform" != "iphone" ] && [ "$platform" != "all" ]; then
     echo usage: 
     echo ./create_package.sh platform version
     echo platform:
-    echo win_cb, linux, linux64, vs2008, osx, all
+    echo win_cb, linux, linux64, vs2008, vs2010, osx, android, iphone, all
     exit 1
 fi
 
@@ -24,16 +24,19 @@ if [ "$version" == "" ]; then
     echo usage: 
     echo ./create_package.sh platform version
     echo platform:
-    echo win_cb, linux, linux64, vs2008, osx, all
+    echo win_cb, linux, linux64, vs2008, osx, android, all
     exit 1
 fi
 
 REPO=git://github.com/openframeworks/openFrameworks.git
+REPO_ALIAS=ofmain
 BRANCH=master
 
 libsnotinmac="unicap gstappsink glu quicktime videoInput"
 libsnotinlinux="quicktime videoInput glut glu"
 libsnotinwindows="unicap gstappsink"
+libsnotinandroid="glut unicap gstappsink quicktime videoInput fmodex glee rtAudio"
+libsnotiniphone="glut unicap gstappsink quicktime videoInput fmodex glee rtAudio"
 
 if [ ! -d openFrameworks/.git ]; then
     git clone $REPO 
@@ -48,7 +51,9 @@ fi
 
 cd openFrameworks
 if [ "$BRANCH" != "master" ]; then
-    git checkout --track -b $BRANCH origin/$BRANCH
+	git remote add $REPO_ALIAS $REPO
+	git fetch $REPO_ALIAS
+    git checkout --track -b $BRANCH ${REPO_ALIAS}/${BRANCH}
 fi
 git reset --hard
 git pull $REPO $BRANCH
@@ -92,7 +97,12 @@ function deleteProjectFiles {
         rm *.sln
         rm *.vcproj
         rm *.vcproj.user
-        
+		rm *.vcxproj
+	    rm *.vcxproj.user
+
+		#delete eclipse project
+		rm $(find . -name .*project)
+
         #delete OFLib project files
         if [ "$platform" = "win_cb" ]; then
             rm -Rf ${oflib_root}/*/linux
@@ -108,7 +118,9 @@ function deleteProjectFiles {
         fi
         rm -Rf ${oflib_root}/*/osx
         rm -Rf ${oflib_root}/*/vs2008
+		rm -Rf ${oflib_root}/*/vs2010
         rm -Rf ${oflib_root}/*/iphone
+        rm -Rf ${oflib_root}/*/android
         
     fi
 
@@ -130,13 +142,20 @@ function deleteProjectFiles {
         rm *.sln
         rm *.vcproj
         rm *.vcproj.user
-        
+        rm *.vcxproj
+        rm *.vcxproj.user
+
+		#delete eclipse project
+		rm $(find . -name .*project)
+		
         #delete OFLib project files
         rm -Rf ${oflib_root}/*/vs2008
+		rm -Rf ${oflib_root}/*/vs2010
         rm -Rf ${oflib_root}/*/linux
         rm -Rf ${oflib_root}/*/linux64
         rm -Rf ${oflib_root}/*/win_cb
         rm -Rf ${oflib_root}/*/iphone
+        rm -Rf ${oflib_root}/*/android
 
     fi
 
@@ -157,8 +176,87 @@ function deleteProjectFiles {
         #delete osx files
         rm -Rf *.xcodeproj
         rm openFrameworks-Info.plist
+
+		#delete vs2010 files
+		rm *vs2010.vcxproj
+		rm *vs2010.vcxproj.user
+		rm *vs2010.sln
+
+		#delete eclipse project
+		rm $(find . -name .*project)
         
         #delete OFLib project files
+		rm -Rf ${oflib_root}/*/vs2010
+        rm -Rf ${oflib_root}/*/osx
+        rm -Rf ${oflib_root}/*/linux
+        rm -Rf ${oflib_root}/*/linux64
+        rm -Rf ${oflib_root}/*/win_cb
+        rm -Rf ${oflib_root}/*/iphone
+        rm -Rf ${oflib_root}/*/android
+    fi
+
+
+	#visual studio
+    if [ "$platform" = "vs2010" ]; then
+
+        #delete codeblock files
+        rm *.cbp
+        rm *.sh
+        rm *.workspace
+
+        #delete makefiles
+        rm makefile
+        rm *.make
+
+        #delete osx files
+        rm -Rf *.xcodeproj
+        rm openFrameworks-Info.plist
+
+		#delete vs2008 files
+		rm *.vcproj
+		rm *.vcproj.user
+		# [zach - don't know how to delete non _v2010.sln here... requires some logic] rm *.sln
+
+		#delete eclipse project
+		rm $(find . -name .*project)
+
+        #delete OFLib project files
+        rm -Rf ${oflib_root}/*/vs2008
+        rm -Rf ${oflib_root}/*/osx
+        rm -Rf ${oflib_root}/*/linux
+        rm -Rf ${oflib_root}/*/linux64
+        rm -Rf ${oflib_root}/*/win_cb
+        rm -Rf ${oflib_root}/*/iphone
+        rm -Rf ${oflib_root}/*/android
+    fi
+
+    #android
+    if [ "$platform" = "vs2010" ]; then
+
+        #delete codeblock files
+        rm *.cbp
+        rm *.sh
+        rm *.workspace
+
+        #delete makefiles
+        rm makefile
+        rm *.make
+
+        #delete osx files
+        rm -Rf *.xcodeproj
+        rm openFrameworks-Info.plist
+
+		#delete vs files
+		rm *.vcproj
+		rm *.vcproj.user
+		rm *.vxproj
+		rm *.vxproj.user
+		rm *.sln
+		# [zach - don't know how to delete non _v2010.sln here... requires some logic] rm *.sln
+
+        #delete OFLib project files
+        rm -Rf ${oflib_root}/*/vs2008
+		rm -Rf ${oflib_root}/*/vs2010
         rm -Rf ${oflib_root}/*/osx
         rm -Rf ${oflib_root}/*/linux
         rm -Rf ${oflib_root}/*/linux64
@@ -202,29 +300,57 @@ function createPackage {
         cd $pkg_ofroot/apps/addonsExamples
     done
 
+	#delete iphone examples in other platforms
+	cd $pkg_ofroot/apps
+
+	if [ "$pkg_platform" != "iphone" ]; then 
+		rm -Rf iPhoneSpecificExamples
+		rm -Rf iPhoneExamples
+		rm -Rf iPhoneAddonsExamples
+	fi
+
+	#delete android examples in other platforms
+	if [ "$pkg_platform" != "android" ]; then 
+		rm -Rf androidExamples
+	fi
+
+	#delete desktop examples in mobile packages
+	if [ "$pkg_platform" == "android" ] || [ "$pkg_platform" == "iphone" ]; then 
+		rm -Rf examples
+		rm -Rf addonsExamples
+	fi 
+
     #delete other platform libraries
     if [ "$pkg_platform" = "linux" ]; then
-        otherplatforms="linux64 osx win_cb vs2008 iphone"
+        otherplatforms="linux64 osx win_cb vs2008 vs2010 iphone android"
     fi
 
     if [ "$pkg_platform" = "linux64" ]; then
-        otherplatforms="linux osx win_cb vs2008 iphone"
+        otherplatforms="linux osx win_cb vs2008 vs2010 iphone android"
     fi
 
     if [ "$pkg_platform" = "osx" ]; then
-        otherplatforms="linux linux64 win_cb vs2008 iphone"
+        otherplatforms="linux linux64 win_cb vs2008 vs2010 iphone android"
     fi
 
     if [ "$pkg_platform" = "win_cb" ]; then
-        otherplatforms="linux linux64 osx vs2008 iphone"
+        otherplatforms="linux linux64 osx vs2008 vs2010 iphone android"
     fi
 
     if [ "$pkg_platform" = "vs2008" ]; then
-        otherplatforms="linux linux64 osx win_cb iphone"
+        otherplatforms="linux linux64 osx win_cb vs2010 iphone android"
+    fi
+
+	if [ "$pkg_platform" = "vs2010" ]; then
+        otherplatforms="linux linux64 osx win_cb vs2008 iphone android"
     fi
 
     if [ "$pkg_platform" = "iphone" ]; then
-        otherplatforms="linux linux64 osx win_cb vs2008"
+        otherplatforms="linux linux64 osx win_cb vs2008 vs2010 android"
+    fi
+
+    if [ "$pkg_platform" = "android" ]; then
+        otherplatforms="linux linux64 osx win_cb vs2008 vs2010 iphone"
     fi
 
     #delete libraries for other platforms
@@ -241,8 +367,12 @@ function createPackage {
         rm -Rf $libsnotinmac
     elif [ "$pkg_platform" = "linux" ] || [ "$pkg_platform" = "linux64" ]; then
         rm -Rf $libsnotinlinux
-    elif [ "$pkg_platform" = "win_cb" ] || [ "$pkg_platform" = "vs2008" ]; then
+    elif [ "$pkg_platform" = "win_cb" ] || [ "$pkg_platform" = "vs2008" ] || [ "$pkg_platform" = "vs2010" ]; then
         rm -Rf $libsnotinwindows
+    elif [ "$pkg_platform" = "android" ]; then
+        rm -Rf $libsnotinandroid
+    elif [ "$pkg_platform" = "iphone" ]; then
+        rm -Rf $libsnotiniphone
     fi
     
     cd ${pkg_ofroot}/addons
@@ -254,6 +384,22 @@ function createPackage {
         rm -Rf $otherplatforms
         cd $pkg_ofroot/addons
     done
+
+	cd ${pkg_ofroot}/libs
+	#delete specific include folders non-android
+	if [ "$pkg_platform" != "android" ]; then
+		rm -Rf $( ls */include_android  -d )
+	fi
+
+	#delete specific include folders for non-iphone
+	if [ "$pkg_platform" != "iphone" ]; then
+		rm -Rf $( ls */include_iphone  -d )
+	fi
+
+	#delete generic includes for libs that has specific ones in android
+	if [ "$pkg_platform" == "android" ] || [ "$pkg_platform" == "iphone" ]; then
+		rm -Rf glu/include
+	fi
 
     #delete dynamic libraries for other platforms
     cd $pkg_ofroot/export
@@ -268,7 +414,7 @@ function createPackage {
 	if [ "$pkg_platform" != "linux64" ]; then
     	rm -Rf $otherplatforms
 	else
-    	rm -Rf win_cb vs2008 osx iphone
+    	rm -Rf win_cb vs2008 vs2010 osx iphone
 	fi
     rm create_package.sh
 
@@ -285,6 +431,15 @@ function createPackage {
     rm -Rf devApps
     cd ${pkg_ofroot}/scripts
     rm -Rf dev
+
+	#delete xcode templates in other platforms
+	cd $pkg_ofroot
+	if [ "$pkg_platform" != "osx" ] && [ "$pkg_platform" != "iphone" ]; then
+		rm -Rf "xcode templates"
+	fi
+
+	#delete eclipse project
+	rm $(find . -name .*project)
 
 	#download and copy OF compiled
 	cd $pkg_ofroot/libs/openFrameworksCompiled/lib/${pkg_platform}
@@ -334,13 +489,17 @@ function createPackage {
     if [ "$platform" = "osx" ]; then
         mv readme.osx readme
     fi
+
+    if [ "$platform" = "android" ]; then
+        mv readme.android readme
+    fi
     
     rm readme.*
     mv readme readme.txt
 
     #create compressed package
     cd $pkg_ofroot/..
-    if [ "$pkg_platform" = "linux" ] || [ "$pkg_platform" = "linux64" ]; then
+    if [ "$pkg_platform" = "linux" ] || [ "$pkg_platform" = "linux64" ] || [ "$pkg_platform" = "android" ]; then
         mkdir of_preRelease_v${pkg_version}_${pkg_platform}_FAT
         mv openFrameworks/* of_preRelease_v${pkg_version}_${pkg_platform}_FAT
         tar czf of_preRelease_v${pkg_version}_${pkg_platform}_FAT.tar.gz of_preRelease_v${pkg_version}_${pkg_platform}_FAT
@@ -388,5 +547,5 @@ fi
 cd $packageroot
 git reset --hard
 
-cd $pacakgeroot/.. 
+cd $packageroot/.. 
     

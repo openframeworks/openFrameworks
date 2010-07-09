@@ -311,7 +311,7 @@ double ofxiPhoneCoreLocation::getHeadingAccuracy()
 	}
 	
 	// Send the update to our delegate
-	NSLog(errorString);
+	NSLog(@"%@", errorString);
 }
 
 @end
