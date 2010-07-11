@@ -32,7 +32,7 @@
 							<tool command="arm-eabi-g++" commandLinePattern="${COMMAND} ${FLAGS} ${OUTPUT_FLAG}${OUTPUT_PREFIX}${OUTPUT} ${INPUTS}" id="cdt.managedbuild.tool.gnu.cpp.compiler.exe.debug.717436220" name="GCC C++ Compiler" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.exe.debug">
 								<option id="gnu.cpp.compiler.exe.debug.option.optimization.level.1747964154" name="Optimization Level" superClass="gnu.cpp.compiler.exe.debug.option.optimization.level" value="gnu.cpp.compiler.optimization.level.none" valueType="enumerated"/>
 								<option id="gnu.cpp.compiler.exe.debug.option.debugging.level.492529171" name="Debug Level" superClass="gnu.cpp.compiler.exe.debug.option.debugging.level" value="gnu.cpp.compiler.debugging.level.max" valueType="enumerated"/>
-								<option id="gnu.cpp.compiler.option.other.other.644349698" name="Other flags" superClass="gnu.cpp.compiler.option.other.other" value="-c -nostdlib -fno-rtti -fno-short-enums" valueType="string"/>
+								<option id="gnu.cpp.compiler.option.other.other.644349698" name="Other flags" superClass="gnu.cpp.compiler.option.other.other" value="-c -nostdlib -fno-short-enums" valueType="string"/>
 								<option id="gnu.cpp.compiler.option.include.paths.663701515" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${NDK_ROOT}/build/platforms/${NDK_PLATFORM}/arch-arm/usr/include/&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/app}&quot;"/>
@@ -75,7 +75,7 @@
 							</tool>
 							<tool command="arm-eabi-g++" id="cdt.managedbuild.tool.gnu.cpp.linker.exe.debug.1221613596" name="GCC C++ Linker" superClass="cdt.managedbuild.tool.gnu.cpp.linker.exe.debug">
 								<option defaultValue="true" id="gnu.cpp.link.option.shared.475098949" name="Shared (-shared)" superClass="gnu.cpp.link.option.shared" valueType="boolean"/>
-								<option id="gnu.cpp.link.option.flags.1373951986" name="Linker flags" superClass="gnu.cpp.link.option.flags" value="-Wl,-rpath-link=${NDK_ROOT}/build/platforms/${NDK_PLATFORM}/arch-arm/usr/lib/ -fno-rtti -s" valueType="string"/>
+								<option id="gnu.cpp.link.option.flags.1373951986" name="Linker flags" superClass="gnu.cpp.link.option.flags" value="-Wl,-rpath-link=${NDK_ROOT}/build/platforms/${NDK_PLATFORM}/arch-arm/usr/lib/ -s" valueType="string"/>
 								<option id="gnu.cpp.link.option.libs.2058068270" name="Libraries (-l)" superClass="gnu.cpp.link.option.libs" valueType="libs">
 									<listOptionValue builtIn="false" value="addons"/>
 									<listOptionValue builtIn="false" value="oscpack"/>
@@ -1400,7 +1400,7 @@
 							<tool command="arm-eabi-g++" commandLinePattern="${COMMAND} ${FLAGS} ${OUTPUT_FLAG}${OUTPUT_PREFIX}${OUTPUT} ${INPUTS}" id="cdt.managedbuild.tool.gnu.cpp.compiler.exe.debug.1734780853" name="GCC C++ Compiler" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.exe.debug">
 								<option id="gnu.cpp.compiler.exe.debug.option.optimization.level.2042472842" name="Optimization Level" superClass="gnu.cpp.compiler.exe.debug.option.optimization.level" value="gnu.cpp.compiler.optimization.level.most" valueType="enumerated"/>
 								<option id="gnu.cpp.compiler.exe.debug.option.debugging.level.231814331" name="Debug Level" superClass="gnu.cpp.compiler.exe.debug.option.debugging.level" value="gnu.cpp.compiler.debugging.level.none" valueType="enumerated"/>
-								<option id="gnu.cpp.compiler.option.other.other.1288117198" name="Other flags" superClass="gnu.cpp.compiler.option.other.other" value="-c -nostdlib -fno-rtti -fno-short-enums" valueType="string"/>
+								<option id="gnu.cpp.compiler.option.other.other.1288117198" name="Other flags" superClass="gnu.cpp.compiler.option.other.other" value="-c -nostdlib -fno-short-enums" valueType="string"/>
 								<option id="gnu.cpp.compiler.option.include.paths.205700930" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${NDK_ROOT}/build/platforms/${NDK_PLATFORM}/arch-arm/usr/include/&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/app}&quot;"/>
@@ -1444,7 +1444,7 @@
 							</tool>
 							<tool command="arm-eabi-g++" id="cdt.managedbuild.tool.gnu.cpp.linker.exe.debug.926791806" name="GCC C++ Linker" superClass="cdt.managedbuild.tool.gnu.cpp.linker.exe.debug">
 								<option defaultValue="true" id="gnu.cpp.link.option.shared.605886799" name="Shared (-shared)" superClass="gnu.cpp.link.option.shared" valueType="boolean"/>
-								<option id="gnu.cpp.link.option.flags.1407072413" name="Linker flags" superClass="gnu.cpp.link.option.flags" value="-Wl,-rpath-link=${NDK_ROOT}/build/platforms/${NDK_PLATFORM}/arch-arm/usr/lib/ -fno-rtti " valueType="string"/>
+								<option id="gnu.cpp.link.option.flags.1407072413" name="Linker flags" superClass="gnu.cpp.link.option.flags" value="-Wl,-rpath-link=${NDK_ROOT}/build/platforms/${NDK_PLATFORM}/arch-arm/usr/lib/ -s" valueType="string"/>
 								<option id="gnu.cpp.link.option.libs.295639830" name="Libraries (-l)" superClass="gnu.cpp.link.option.libs" valueType="libs">
 									<listOptionValue builtIn="false" value="addons"/>
 									<listOptionValue builtIn="false" value="oscpack"/>
@@ -2764,7 +2764,7 @@
 							<tool command="arm-eabi-g++" id="cdt.managedbuild.tool.gnu.cpp.compiler.exe.debug.25920769" name="GCC C++ Compiler" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.exe.debug">
 								<option id="gnu.cpp.compiler.exe.debug.option.optimization.level.1373200399" name="Optimization Level" superClass="gnu.cpp.compiler.exe.debug.option.optimization.level" value="gnu.cpp.compiler.optimization.level.none" valueType="enumerated"/>
 								<option id="gnu.cpp.compiler.exe.debug.option.debugging.level.103301490" name="Debug Level" superClass="gnu.cpp.compiler.exe.debug.option.debugging.level" value="gnu.cpp.compiler.debugging.level.max" valueType="enumerated"/>
-								<option id="gnu.cpp.compiler.option.other.other.847808382" name="Other flags" superClass="gnu.cpp.compiler.option.other.other" value="-c -nostdlib -fno-rtti -fno-short-enums" valueType="string"/>
+								<option id="gnu.cpp.compiler.option.other.other.847808382" name="Other flags" superClass="gnu.cpp.compiler.option.other.other" value="-c -nostdlib -fno-short-enums" valueType="string"/>
 								<option id="gnu.cpp.compiler.option.include.paths.964296104" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${NDK_ROOT}/build/platforms/${NDK_PLATFORM}/arch-arm/usr/include/&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/app}&quot;"/>
@@ -2807,7 +2807,7 @@
 							</tool>
 							<tool command="arm-eabi-g++" id="cdt.managedbuild.tool.gnu.cpp.linker.exe.debug.157946171" name="GCC C++ Linker" superClass="cdt.managedbuild.tool.gnu.cpp.linker.exe.debug">
 								<option id="gnu.cpp.link.option.shared.1823722357" name="Shared (-shared)" superClass="gnu.cpp.link.option.shared"/>
-								<option id="gnu.cpp.link.option.flags.1764132865" name="Linker flags" superClass="gnu.cpp.link.option.flags" value="-Wl,-rpath-link=${NDK_ROOT}/build/platforms/${NDK_PLATFORM}/arch-arm/usr/lib/ -fno-rtti -entry=main" valueType="string"/>
+								<option id="gnu.cpp.link.option.flags.1764132865" name="Linker flags" superClass="gnu.cpp.link.option.flags" value="-Wl,-rpath-link=${NDK_ROOT}/build/platforms/${NDK_PLATFORM}/arch-arm/usr/lib/ -s" valueType="string"/>
 								<option id="gnu.cpp.link.option.libs.215325869" name="Libraries (-l)" superClass="gnu.cpp.link.option.libs" valueType="libs">
 									<listOptionValue builtIn="false" value="addons"/>
 									<listOptionValue builtIn="false" value="oscpack"/>
