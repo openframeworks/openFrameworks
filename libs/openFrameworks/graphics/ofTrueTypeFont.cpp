@@ -296,11 +296,31 @@ static ofTTFCharacter makeContoursForCharacter(FT_Face &face){
 	return charOutlines;
 }
 
+#ifdef TARGET_ANDROID
+	#include <set>
+	set<ofTrueTypeFont*> all_fonts;
+	void ofUnloadAllFontTextures(){
+		set<ofTrueTypeFont*>::iterator it;
+		for(it=all_fonts.begin();it!=all_fonts.end();it++){
+			(*it)->unloadTextures();
+		}
+	}
+	void ofReloadAllFontTextures(){
+		set<ofTrueTypeFont*>::iterator it;
+		for(it=all_fonts.begin();it!=all_fonts.end();it++){
+			(*it)->reloadTextures();
+		}
+	}
+
+#endif
 
 //------------------------------------------------------------------
 ofTrueTypeFont::ofTrueTypeFont(){
 	bLoadedOk		= false;
 	bMakeContours	= false;
+	#ifdef TARGET_ANDROID
+		all_fonts.insert(this);
+	#endif
 }
 
 //------------------------------------------------------------------
@@ -313,18 +333,32 @@ ofTrueTypeFont::~ofTrueTypeFont(){
 		}
 
 		if (texNames != NULL){
-			for (int i = 0; i < nCharacters; i++){
-				glDeleteTextures(1, &texNames[i]);
-			}
-			delete[] texNames;
+			unloadTextures();
 		}
 	}
+
+	#ifdef TARGET_ANDROID
+		all_fonts.erase(this);
+	#endif
 }
 
 //------------------------------------------------------------------
 void ofTrueTypeFont::loadFont(string filename, int fontsize){
 	// load anti-aliased, non-full character set:
 	loadFont(filename, fontsize, true, false, false);
+}
+
+void ofTrueTypeFont::unloadTextures(){
+	if(!bLoadedOk) return;
+	for (int i = 0; i < nCharacters; i++){
+		glDeleteTextures(1, &texNames[i]);
+	}
+	delete[] texNames;
+	bLoadedOk = false;
+}
+
+void ofTrueTypeFont::reloadTextures(){
+	loadFont(filename,fontSize,bAntiAlised,bFullCharacterSet,false);
 }
 
 //------------------------------------------------------------------
@@ -341,12 +375,8 @@ void ofTrueTypeFont::loadFont(string filename, int fontsize, bool _bAntiAliased,
 			delete[] cps;
 		}
 		if (texNames != NULL){
-			for (int i = 0; i < nCharacters; i++){
-				glDeleteTextures(1, &texNames[i]);
-			}
-			delete[] texNames;
+			unloadTextures();
 		}
-		bLoadedOk = false;
 	}
 	//------------------------------------------------
 
@@ -901,5 +931,6 @@ void ofTrueTypeFont::drawStringAsShapes(string c, float x, float y) {
 	glPopMatrix();
 
 }
+
 
 
