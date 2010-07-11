@@ -68,6 +68,10 @@ void ofRunApp( ofxAndroidApp * app){
 	ofRunApp((ofBaseApp*)app);
 }
 
+void ofxRegisterMultitouch(ofxAndroidApp * app){
+	ofRegisterTouchEvents(app);
+}
+
 ofAppAndroidWindow::ofAppAndroidWindow() {
 	// TODO Auto-generated constructor stub
 

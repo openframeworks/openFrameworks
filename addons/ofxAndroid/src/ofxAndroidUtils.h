@@ -16,6 +16,9 @@ JNIEnv * ofGetJNIEnv();
 
 void ofRunApp( ofxAndroidApp * app);
 
+
+void ofxRegisterMultitouch(ofxAndroidApp * app);
+
 //-------------------------------------
 // this functions are only for internal use
 void ofPauseVideoGrabbers();

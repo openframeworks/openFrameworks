@@ -18,10 +18,6 @@ public:
 	virtual void resume(){};
 	virtual void reloadTextures(){}
 
-	void registerTouchEvents(){
-		ofRegisterTouchEvents((ofxAndroidApp*)this);
-	}
-
 	virtual void touchDown(int x, int y, int id) {};
 	virtual void touchMoved(int x, int y, int id) {};
 	virtual void touchUp(int x, int y, int id) {};
