@@ -15,7 +15,7 @@ void testApp::update(){
 //--------------------------------------------------------------
 void testApp::draw(){
 
-	font.drawString("hola!!",20,20);
+	font.drawString("hello world!!",20,20);
 	//ofDrawBitmapString(ofToString(ofGetFrameRate()),20,30);
 }
 

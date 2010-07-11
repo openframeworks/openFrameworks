@@ -103,4 +103,11 @@
 		<nature>org.eclipse.cdt.managedbuilder.core.managedBuildNature</nature>
 		<nature>org.eclipse.cdt.managedbuilder.core.ScannerConfigNature</nature>
 	</natures>
+	<linkedResources>
+		<link>
+			<name>ofAndroidLib</name>
+			<type>2</type>
+			<locationURI>_android_ofAndroidLib/src</locationURI>
+		</link>
+	</linkedResources>
 </projectDescription>
