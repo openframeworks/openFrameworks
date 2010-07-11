@@ -29,15 +29,15 @@
 
 //--------------------------
 // audio
-#ifndef TARGET_ANDROID
 #include "ofSoundStream.h"
+#ifndef TARGET_ANDROID
 #include "ofSoundPlayer.h"
 #endif
 
 //--------------------------
 // video
+#include "ofVideoGrabber.h"
 #if !defined( TARGET_OF_IPHONE ) & !defined(TARGET_ANDROID)		//(temp for now, until this is ported)
-	#include "ofVideoGrabber.h"
 	#include "ofVideoPlayer.h"
 #endif
 
