@@ -1,11 +1,11 @@
 #include "ofMain.h"
 #include "testApp.h"
 #include <jni.h>
-#include "ofAppAndroidWindow.h"
+#include "ofxAndroid.h"
 
 //========================================================================
 extern "C"{
-void Java_cc_openframeworks_OFAndroidWindow_init( JNIEnv*  env, jobject  thiz ){
+void Java_cc_openframeworks_OFAndroid_init( JNIEnv*  env, jobject  thiz ){
 
     ofAppAndroidWindow *window = new ofAppAndroidWindow;
 	ofSetupOpenGL(window, 1024,768, OF_WINDOW);			// <-------- setup the GL context

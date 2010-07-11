@@ -3,15 +3,16 @@
 
 
 #include "ofMain.h"
+#include "ofxAndroid.h"
 
-class testApp : public ofBaseApp{
+class testApp : public ofxAndroidApp{
 	
 	public:
 		
 		void setup();
 		void update();
 		void draw();
-		
+
 		void keyPressed(int key);
 		void keyReleased(int key);
 		void mouseMoved(int x, int y );
