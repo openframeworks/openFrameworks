@@ -3,6 +3,8 @@
 	<name>addons</name>
 	<comment></comment>
 	<projects>
+		<project>libs</project>
+		<project>openFrameworks</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

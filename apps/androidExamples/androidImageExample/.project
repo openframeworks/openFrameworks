@@ -3,7 +3,8 @@
 	<name>androidImageExample</name>
 	<comment></comment>
 	<projects>
-		<project>ofLibs</project>
+		<project>addons</project>
+		<project>libs</project>
 		<project>openFrameworks</project>
 	</projects>
 	<buildSpec>
