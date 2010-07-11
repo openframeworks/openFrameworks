@@ -3,8 +3,8 @@
 	<name>androidAudioExample</name>
 	<comment></comment>
 	<projects>
-		<project>ofAddons</project>
-		<project>ofLibs</project>
+		<project>addons</project>
+		<project>libs</project>
 		<project>openFrameworks</project>
 	</projects>
 	<buildSpec>
