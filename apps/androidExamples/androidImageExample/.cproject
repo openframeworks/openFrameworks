@@ -76,7 +76,7 @@
 							</tool>
 							<tool command="arm-eabi-g++" id="cdt.managedbuild.tool.gnu.cpp.linker.exe.debug.1058127291" name="GCC C++ Linker" superClass="cdt.managedbuild.tool.gnu.cpp.linker.exe.debug">
 								<option defaultValue="true" id="gnu.cpp.link.option.shared.99542771" name="Shared (-shared)" superClass="gnu.cpp.link.option.shared" valueType="boolean"/>
-								<option id="gnu.cpp.link.option.flags.229932810" name="Linker flags" superClass="gnu.cpp.link.option.flags" value="-Wl,-rpath-link=${NDK_ROOT}/build/platforms/${NDK_PLATFORM}/arch-arm/usr/lib/ -fno-rtti -s" valueType="string"/>
+								<option id="gnu.cpp.link.option.flags.229932810" name="Linker flags" superClass="gnu.cpp.link.option.flags" value="-Wl,-rpath-link=${NDK_ROOT}/build/platforms/${NDK_PLATFORM}/arch-arm/usr/lib/ -s" valueType="string"/>
 								<option id="gnu.cpp.link.option.libs.1018087712" name="Libraries (-l)" superClass="gnu.cpp.link.option.libs" valueType="libs">
 									<listOptionValue builtIn="false" value="addons"/>
 									<listOptionValue builtIn="false" value="oscpack"/>
@@ -1446,7 +1446,7 @@
 							</tool>
 							<tool command="arm-eabi-g++" id="cdt.managedbuild.tool.gnu.cpp.linker.exe.debug.1546636980" name="GCC C++ Linker" superClass="cdt.managedbuild.tool.gnu.cpp.linker.exe.debug">
 								<option defaultValue="true" id="gnu.cpp.link.option.shared.1163868896" name="Shared (-shared)" superClass="gnu.cpp.link.option.shared" valueType="boolean"/>
-								<option id="gnu.cpp.link.option.flags.737643132" name="Linker flags" superClass="gnu.cpp.link.option.flags" value="-Wl,-rpath-link=${NDK_ROOT}/build/platforms/${NDK_PLATFORM}/arch-arm/usr/lib/ -fno-rtti " valueType="string"/>
+								<option id="gnu.cpp.link.option.flags.737643132" name="Linker flags" superClass="gnu.cpp.link.option.flags" value="-Wl,-rpath-link=${NDK_ROOT}/build/platforms/${NDK_PLATFORM}/arch-arm/usr/lib/ -s" valueType="string"/>
 								<option id="gnu.cpp.link.option.libs.633412171" name="Libraries (-l)" superClass="gnu.cpp.link.option.libs" valueType="libs">
 									<listOptionValue builtIn="false" value="addons"/>
 									<listOptionValue builtIn="false" value="oscpack"/>
@@ -2809,7 +2809,7 @@
 							</tool>
 							<tool command="arm-eabi-g++" id="cdt.managedbuild.tool.gnu.cpp.linker.exe.debug.807089349" name="GCC C++ Linker" superClass="cdt.managedbuild.tool.gnu.cpp.linker.exe.debug">
 								<option id="gnu.cpp.link.option.shared.168556849" name="Shared (-shared)" superClass="gnu.cpp.link.option.shared"/>
-								<option id="gnu.cpp.link.option.flags.1226742704" name="Linker flags" superClass="gnu.cpp.link.option.flags" value="-Wl,-rpath-link=${NDK_ROOT}/build/platforms/${NDK_PLATFORM}/arch-arm/usr/lib/ -fno-rtti -entry=main" valueType="string"/>
+								<option id="gnu.cpp.link.option.flags.1226742704" name="Linker flags" superClass="gnu.cpp.link.option.flags" value="-Wl,-rpath-link=${NDK_ROOT}/build/platforms/${NDK_PLATFORM}/arch-arm/usr/lib/ -s" valueType="string"/>
 								<option id="gnu.cpp.link.option.libs.1278816758" name="Libraries (-l)" superClass="gnu.cpp.link.option.libs" valueType="libs">
 									<listOptionValue builtIn="false" value="addons"/>
 									<listOptionValue builtIn="false" value="oscpack"/>
