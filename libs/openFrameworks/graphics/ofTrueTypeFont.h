@@ -52,6 +52,8 @@ public:
 	// 			-- default, non-full char set, anti aliased:
 	void 		loadFont(string filename, int fontsize);
 	void 		loadFont(string filename, int fontsize, bool _bAntiAliased, bool _bFullCharacterSet, bool makeContours = false);
+	void		unloadTextures();
+	void		reloadTextures();
 
 	bool		bLoadedOk;
 	bool 		bAntiAlised;
@@ -85,10 +87,9 @@ protected:
 	
 	int 			ofNextPow2(int a);
 	int				border, visibleBorder;
-
+	string			filename;
 
 };
-
 
 #endif
 

@@ -6,6 +6,21 @@
 static bool		bFreeImageInited = false;
 //----------------------------------------------------------
 
+#ifdef TARGET_ANDROID
+	// android destroys the opengl context on screen orientation change
+	// or when the application runs in the background so we need to reload
+	// all the textures when the context is created again.
+	// keeping a pointer to all the images we can tell them to reload from a static method
+	#include <set>
+	set<ofImage*> all_images;
+
+	void ofReloadAllImageTextures(){
+		set<ofImage*>::iterator it;
+		for(it=all_images.begin(); it!=all_images.end(); it++){
+			(*it)->reloadTexture();
+		}
+	}
+#endif
 
 
 //----------------------------------------------------------
@@ -30,6 +45,10 @@ ofImage::ofImage(){
 		FreeImage_Initialise();
 		bFreeImageInited = true;
 	}
+
+#ifdef TARGET_ANDROID
+	all_images.insert(this);
+#endif
 }
 
 //----------------------------------------------------------
@@ -56,6 +75,10 @@ ofImage::ofImage(const ofImage& mom) {
 //----------------------------------------------------------
 ofImage::~ofImage(){
 	clear();
+
+#ifdef TARGET_ANDROID
+	all_images.erase(this);
+#endif
 }
 
 //----------------------------------------------------------
@@ -64,13 +87,21 @@ bool ofImage::loadImage(string fileName){
 	bLoadedOk = loadImageIntoPixels(fileName, myPixels);
 
 	if (bLoadedOk == true){
+		if (myPixels.bAllocated == true && bUseTexture == true){
+			tex.allocate(myPixels.width, myPixels.height, myPixels.glDataType);
+		}
+		update();
+	}
+
+	return bLoadedOk;
+}
+
+//----------------------------------------------------------
+void ofImage::reloadTexture(){
 	if (myPixels.bAllocated == true && bUseTexture == true){
 		tex.allocate(myPixels.width, myPixels.height, myPixels.glDataType);
 	}
 	update();
-}
-
-	return bLoadedOk;
 }
 
 //----------------------------------------------------------
