@@ -48,6 +48,7 @@
 	NSLock				*glLock;
 }
 
+- (BOOL)application:(UIApplication *)application handleOpenURL:(NSURL *)url;
 -(void) receivedRotate:(NSNotification*)notification;
 -(void) setFrameRate:(float)frameRate;
 -(EAGLView*) getGLView;
