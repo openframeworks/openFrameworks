@@ -49,6 +49,7 @@
 #import "ofxiPhoneCoreLocation.h"
 #import "ofxiPhoneImagePicker.h"
 #import "ofxiPhoneMapKit.h"
+#include <sys/sysctl.h>
 
 
 enum ofxiPhoneDeviceType {
