@@ -79,6 +79,15 @@ public:
 		}
 	}
 	
+	//alerts engine will call this when the program is launched with a url
+	void launchedWithURL(string url)
+	{
+		for(std::list<ofxiPhoneAlertsListener*>::iterator it=listeners.begin(); it!=listeners.end(); ++it) {
+			ofxiPhoneAlertsListener* o = *it;
+			o->launchedWithURL(url);
+		}
+	}
+	
 	
 protected:
 	std::list<ofxiPhoneAlertsListener*> listeners;
