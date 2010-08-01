@@ -55,5 +55,12 @@ addons/Debug Android
 addons/Release Android
 libs/openFrameworks/Debug Android
 libs/openFrameworks/Release Android
+libs/openFrameworks/Release
+libs/openFrameworks/Debug
+libs/openFrameworks/Release_arm7
 apps/*/*/Debug Android
 apps/*/*/Release Android
+apps/*/*/Debug
+apps/*/*/Release
+apps/*/*/Release_arm7
+apps/*/*/test link
