@@ -86,6 +86,11 @@ Java_cc_openframeworks_OFAndroidSoundStream_initAudioOutput(JNIEnv*  env, jobjec
 	javaEnv = env;
 }*/
 
+static int time_one_frame = 0;
+static int acc_time = 0;
+static int num_frames = 0;
+static int time_prev_out = 0;
+
 jint
 Java_cc_openframeworks_OFAndroidSoundStream_audioRequested(JNIEnv*  env, jobject  thiz, jshortArray array, jint numChannels, jint bufferSize){
 	if(!out_float_buffer || numChannels!=outChannels || bufferSize!=outBufferSize){
@@ -99,11 +104,17 @@ Java_cc_openframeworks_OFAndroidSoundStream_audioRequested(JNIEnv*  env, jobject
 		if(!out_buffer) return 1;
 		OFApp->audioRequested(out_float_buffer,bufferSize,numChannels);
 
+		//time_one_frame = ofGetSystemTime();
 		for(int i=0;i<bufferSize*numChannels;i++){
 			short tempf = (out_float_buffer[i] * 32767.5f) - 0.5;
 			out_buffer[i]=tempf;//lrintf( tempf - 0.5 );
 		}
-
+		/*acc_time += ofGetSystemTime() - time_one_frame;
+		num_frames ++;
+		if(ofGetSystemTime() - time_prev_out > 5000){
+			time_prev_out = ofGetSystemTime();
+			ofLog(OF_LOG_NOTICE,"avg time: %f" , float(acc_time)/float(num_frames));
+		}*/
 		env->ReleasePrimitiveArrayCritical(array,out_buffer,0);
 		return 0;
 	}

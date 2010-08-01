@@ -332,15 +332,31 @@ float ofVideoGrabber::getWidth(){
 
 }
 
+
+ static int time_one_frame = 0;
+ static int acc_time = 0;
+ static int num_frames = 0;
+ static int time_prev_out = 0;
+
 extern "C"{
 jint
 Java_cc_openframeworks_OFAndroidVideoGrabber_newFrame(JNIEnv*  env, jobject  thiz, jbyteArray array, jint width, jint height){
 	if(ofGetAppPtr()!=NULL){
 		buffer = (unsigned char*)env->GetPrimitiveArrayCritical(array, NULL);
 		if(!buffer) return 1;
+
+		//time_one_frame = ofGetSystemTime();
 		ConvertYUV2RGB(buffer, 																 // y component
 					   buffer+(instances[cameraId]->width*instances[cameraId]->height),		 // uv components
 				       instances[cameraId]->getPixels(),instances[cameraId]->width,instances[cameraId]->height);
+
+		/*acc_time += ofGetSystemTime() - time_one_frame;
+		num_frames ++;
+		if(ofGetSystemTime() - time_prev_out > 5000){
+			time_prev_out = ofGetSystemTime();
+			ofLog(OF_LOG_NOTICE,"avg time: %f" , float(acc_time)/float(num_frames));
+		}*/
+
 		//dc1394_YUV411_to_RGB8(buffer, rgb_buffer, width, height);
 		/*android_color rgb24;
 		for(int i=0;i<width*height;i++){
