@@ -25,7 +25,7 @@ public class OFAndroid {
         	
 			// try to find if R.raw class exists will throw
         	// an exception if not
-        	Class<?> raw = Class.forName(packageName+".R.raw");
+        	Class<?> raw = Class.forName(packageName+".R$raw");
 			
         	// if it exists copy all the raw resources
         	// to a folder in the sdcard
