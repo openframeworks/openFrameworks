@@ -127,6 +127,7 @@
 #ifdef TARGET_ANDROID
 	#include <unistd.h>
 	#include <GLES/gl.h>
+	#include <GLES/glext.h>
 	#include "glu.h"
 #endif
 
