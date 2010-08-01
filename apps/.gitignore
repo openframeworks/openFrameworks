@@ -10,5 +10,7 @@
 androidExamples/.metadata
 androidExamples/*/Debug
 androidExamples/*/Release
+androidExamples/*/Release_arm7
+androidExamples/*/test link
 androidExamples/*/bin
 libOFAndroidApp.so
