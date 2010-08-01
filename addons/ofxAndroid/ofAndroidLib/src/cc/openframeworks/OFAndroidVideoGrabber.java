@@ -1,5 +1,7 @@
 package cc.openframeworks;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -16,6 +18,7 @@ public class OFAndroidVideoGrabber extends OFAndroidObject implements Runnable, 
 	private static int nextId=0;
 	public static Map<Integer,OFAndroidVideoGrabber> camera_instances = new HashMap<Integer,OFAndroidVideoGrabber>();
 	private boolean initialized = false;
+	private Method addBufferMethod;
 	
 	public OFAndroidVideoGrabber(){
 		id=nextId++;
@@ -97,10 +100,40 @@ public class OFAndroidVideoGrabber extends OFAndroidObject implements Runnable, 
 		//Log.i("OF", "format " + camera.getParameters().getPreviewFormat());
 		newFrame(data, width, height);
 		
+		if(addBufferMethod!=null){
+			try {
+				addBufferMethod.invoke(camera, buffer);
+			} catch (Exception e) {
+				Log.e("OF","error adding buffer",e);
+			} 
+		}
+		//camera.addCallbackBuffer(data);
+		
 	}
 
 	public void run() {
-		camera.setPreviewCallback(this);
+		try {
+			addBufferMethod = Camera.class.getMethod("addCallbackBuffer", byte[].class);
+			addBufferMethod.invoke(camera, buffer);
+			Camera.class.getMethod("setPreviewCallbackWithBuffer", Camera.PreviewCallback.class).invoke(camera, this);
+			Log.i("OF","setting camera callback with buffer");
+		} catch (SecurityException e) {
+			Log.e("OF","security exception, check permissions to acces to the camera",e);
+		} catch (NoSuchMethodException e) {
+			try {
+				Camera.class.getMethod("setPreviewCallback", Camera.PreviewCallback.class).invoke(camera, this);
+				Log.i("OF","setting camera callback without buffer");
+			} catch (SecurityException e1) {
+				Log.e("OF","security exception, check permissions to acces to the camera",e1);
+			} catch (Exception e1) {
+				Log.e("OF","cannot create callback, the camera can only be used from api v7",e1);
+			} 
+		} catch (Exception e) {
+			Log.e("OF","error adding callback",e);
+		}
+		
+		//camera.addCallbackBuffer(buffer);
+		//camera.setPreviewCallbackWithBuffer(this);
 		camera.startPreview();
 	}
 	
