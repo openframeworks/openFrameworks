@@ -12,11 +12,12 @@
 		288765FD0DF74451002DB57D /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 288765FC0DF74451002DB57D /* CoreGraphics.framework */; };
 		5326AEA810A23A0500278DE6 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5326AEA710A23A0500278DE6 /* CoreLocation.framework */; };
 		53F323EB10A20EDB00E0DAE4 /* OpenAL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53F323EA10A20EDB00E0DAE4 /* OpenAL.framework */; };
-		5E25689710ED26CC00A9501C /* CppUnit.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E25687010ED26CC00A9501C /* CppUnit.a */; };
-		5E25689810ED26CC00A9501C /* PocoFoundation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E25687110ED26CC00A9501C /* PocoFoundation.a */; };
-		5E25689910ED26CC00A9501C /* PocoNet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E25687210ED26CC00A9501C /* PocoNet.a */; };
-		5E25689A10ED26CC00A9501C /* PocoUtil.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E25687310ED26CC00A9501C /* PocoUtil.a */; };
-		5E25689B10ED26CC00A9501C /* PocoXML.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E25687410ED26CC00A9501C /* PocoXML.a */; };
+		5E1366E512138F3100C15E5A /* CppUnit.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E1366E012138F3100C15E5A /* CppUnit.a */; };
+		5E1366E612138F3100C15E5A /* PocoFoundation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E1366E112138F3100C15E5A /* PocoFoundation.a */; };
+		5E1366E712138F3100C15E5A /* PocoNet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E1366E212138F3100C15E5A /* PocoNet.a */; };
+		5E1366E812138F3100C15E5A /* PocoUtil.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E1366E312138F3100C15E5A /* PocoUtil.a */; };
+		5E1366E912138F3100C15E5A /* PocoXML.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E1366E412138F3100C15E5A /* PocoXML.a */; };
+		5E1367A11213940200C15E5A /* freeimage.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E1367A01213940200C15E5A /* freeimage.a */; };
 		5E2568A410ED26CD00A9501C /* CppUnit.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E25688010ED26CC00A9501C /* CppUnit.a */; };
 		5E2568A510ED26CD00A9501C /* PocoFoundation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E25688110ED26CC00A9501C /* PocoFoundation.a */; };
 		5E2568A610ED26CD00A9501C /* PocoNet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E25688210ED26CC00A9501C /* PocoNet.a */; };
@@ -27,7 +28,6 @@
 		BB24DD8F10DA77E000E9C588 /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = BB24DD8C10DA77E000E9C588 /* Default.png */; };
 		BB24DD9010DA77E000E9C588 /* Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = BB24DD8D10DA77E000E9C588 /* Icon.png */; };
 		BB24DDCA10DA781C00E9C588 /* ofxiphone-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = BB24DDC910DA781C00E9C588 /* ofxiphone-Info.plist */; };
-		BB24DE2F10DA785000E9C588 /* libFreeImage_iphone_universal.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BB24DDD210DA784F00E9C588 /* libFreeImage_iphone_universal.a */; };
 		BB24DE3510DA785000E9C588 /* libFreeType_iphone_universal.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BB24DE1310DA785000E9C588 /* libFreeType_iphone_universal.a */; };
 		BB24DE3C10DA785000E9C588 /* libGLU.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BB24DE2710DA785000E9C588 /* libGLU.a */; };
 		BB24DE3D10DA785000E9C588 /* libGLU_arm.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BB24DE2810DA785000E9C588 /* libGLU_arm.a */; };
@@ -62,11 +62,12 @@
 		32CA4F630368D1EE00C91783 /* iPhone_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iPhone_Prefix.pch; sourceTree = "<group>"; };
 		5326AEA710A23A0500278DE6 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		53F323EA10A20EDB00E0DAE4 /* OpenAL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenAL.framework; path = System/Library/Frameworks/OpenAL.framework; sourceTree = SDKROOT; };
-		5E25687010ED26CC00A9501C /* CppUnit.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = CppUnit.a; path = ../../../libs/poco/lib/iphone/CppUnit.a; sourceTree = SOURCE_ROOT; };
-		5E25687110ED26CC00A9501C /* PocoFoundation.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = PocoFoundation.a; path = ../../../libs/poco/lib/iphone/PocoFoundation.a; sourceTree = SOURCE_ROOT; };
-		5E25687210ED26CC00A9501C /* PocoNet.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = PocoNet.a; path = ../../../libs/poco/lib/iphone/PocoNet.a; sourceTree = SOURCE_ROOT; };
-		5E25687310ED26CC00A9501C /* PocoUtil.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = PocoUtil.a; path = ../../../libs/poco/lib/iphone/PocoUtil.a; sourceTree = SOURCE_ROOT; };
-		5E25687410ED26CC00A9501C /* PocoXML.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = PocoXML.a; path = ../../../libs/poco/lib/iphone/PocoXML.a; sourceTree = SOURCE_ROOT; };
+		5E1366E012138F3100C15E5A /* CppUnit.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = CppUnit.a; path = openFrameworks/libs/poco/lib/armv6/CppUnit.a; sourceTree = DEVELOPER_DIR; };
+		5E1366E112138F3100C15E5A /* PocoFoundation.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = PocoFoundation.a; path = openFrameworks/libs/poco/lib/armv6/PocoFoundation.a; sourceTree = DEVELOPER_DIR; };
+		5E1366E212138F3100C15E5A /* PocoNet.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = PocoNet.a; path = openFrameworks/libs/poco/lib/armv6/PocoNet.a; sourceTree = DEVELOPER_DIR; };
+		5E1366E312138F3100C15E5A /* PocoUtil.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = PocoUtil.a; path = openFrameworks/libs/poco/lib/armv6/PocoUtil.a; sourceTree = DEVELOPER_DIR; };
+		5E1366E412138F3100C15E5A /* PocoXML.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = PocoXML.a; path = openFrameworks/libs/poco/lib/armv6/PocoXML.a; sourceTree = DEVELOPER_DIR; };
+		5E1367A01213940200C15E5A /* freeimage.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = freeimage.a; path = ../../../libs/FreeImage/lib/iphone/freeimage.a; sourceTree = SOURCE_ROOT; };
 		5E25688010ED26CC00A9501C /* CppUnit.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = CppUnit.a; path = ../../../libs/poco/lib/osx/CppUnit.a; sourceTree = SOURCE_ROOT; };
 		5E25688110ED26CC00A9501C /* PocoFoundation.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = PocoFoundation.a; path = ../../../libs/poco/lib/osx/PocoFoundation.a; sourceTree = SOURCE_ROOT; };
 		5E25688210ED26CC00A9501C /* PocoNet.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = PocoNet.a; path = ../../../libs/poco/lib/osx/PocoNet.a; sourceTree = SOURCE_ROOT; };
@@ -78,7 +79,6 @@
 		BB24DD8D10DA77E000E9C588 /* Icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Icon.png; sourceTree = "<group>"; };
 		BB24DDC910DA781C00E9C588 /* ofxiphone-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "ofxiphone-Info.plist"; sourceTree = "<group>"; };
 		BB24DDCF10DA784F00E9C588 /* FreeImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FreeImage.h; sourceTree = "<group>"; };
-		BB24DDD210DA784F00E9C588 /* libFreeImage_iphone_universal.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libFreeImage_iphone_universal.a; sourceTree = "<group>"; };
 		BB24DDE210DA785000E9C588 /* ftconfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ftconfig.h; sourceTree = "<group>"; };
 		BB24DDE310DA785000E9C588 /* ftheader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ftheader.h; sourceTree = "<group>"; };
 		BB24DDE410DA785000E9C588 /* ftmodule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ftmodule.h; sourceTree = "<group>"; };
@@ -149,21 +149,21 @@
 				BBE5EAB80F49AD8400F28951 /* AudioToolbox.framework in Frameworks */,
 				53F323EB10A20EDB00E0DAE4 /* OpenAL.framework in Frameworks */,
 				5326AEA810A23A0500278DE6 /* CoreLocation.framework in Frameworks */,
-				BB24DE2F10DA785000E9C588 /* libFreeImage_iphone_universal.a in Frameworks */,
 				BB24DE3510DA785000E9C588 /* libFreeType_iphone_universal.a in Frameworks */,
 				BB24DE3C10DA785000E9C588 /* libGLU.a in Frameworks */,
 				BB24DE3D10DA785000E9C588 /* libGLU_arm.a in Frameworks */,
 				BB24E23510DAA8AD00E9C588 /* libofxiPhoneOFLib_iphoneos _Debug.a in Frameworks */,
-				5E25689710ED26CC00A9501C /* CppUnit.a in Frameworks */,
-				5E25689810ED26CC00A9501C /* PocoFoundation.a in Frameworks */,
-				5E25689910ED26CC00A9501C /* PocoNet.a in Frameworks */,
-				5E25689A10ED26CC00A9501C /* PocoUtil.a in Frameworks */,
-				5E25689B10ED26CC00A9501C /* PocoXML.a in Frameworks */,
 				5E2568A410ED26CD00A9501C /* CppUnit.a in Frameworks */,
 				5E2568A510ED26CD00A9501C /* PocoFoundation.a in Frameworks */,
 				5E2568A610ED26CD00A9501C /* PocoNet.a in Frameworks */,
 				5E2568A710ED26CD00A9501C /* PocoUtil.a in Frameworks */,
 				5E2568A810ED26CD00A9501C /* PocoXML.a in Frameworks */,
+				5E1366E512138F3100C15E5A /* CppUnit.a in Frameworks */,
+				5E1366E612138F3100C15E5A /* PocoFoundation.a in Frameworks */,
+				5E1366E712138F3100C15E5A /* PocoNet.a in Frameworks */,
+				5E1366E812138F3100C15E5A /* PocoUtil.a in Frameworks */,
+				5E1366E912138F3100C15E5A /* PocoXML.a in Frameworks */,
+				5E1367A11213940200C15E5A /* freeimage.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -216,6 +216,19 @@
 			name = "core frameworks";
 			sourceTree = "<group>";
 		};
+		5E1366DF12138F3100C15E5A /* armv6 */ = {
+			isa = PBXGroup;
+			children = (
+				5E1366E012138F3100C15E5A /* CppUnit.a */,
+				5E1366E112138F3100C15E5A /* PocoFoundation.a */,
+				5E1366E212138F3100C15E5A /* PocoNet.a */,
+				5E1366E312138F3100C15E5A /* PocoUtil.a */,
+				5E1366E412138F3100C15E5A /* PocoXML.a */,
+			);
+			name = armv6;
+			path = openFrameworks/libs/poco/lib/armv6;
+			sourceTree = DEVELOPER_DIR;
+		};
 		5E25686A10ED26BE00A9501C /* poco */ = {
 			isa = PBXGroup;
 			children = (
@@ -227,24 +240,11 @@
 		5E25686E10ED26CC00A9501C /* lib */ = {
 			isa = PBXGroup;
 			children = (
-				5E25686F10ED26CC00A9501C /* iphone */,
+				5E1366DF12138F3100C15E5A /* armv6 */,
 				5E25687F10ED26CC00A9501C /* osx */,
 			);
 			name = lib;
 			path = ../../../libs/poco/lib;
-			sourceTree = SOURCE_ROOT;
-		};
-		5E25686F10ED26CC00A9501C /* iphone */ = {
-			isa = PBXGroup;
-			children = (
-				5E25687010ED26CC00A9501C /* CppUnit.a */,
-				5E25687110ED26CC00A9501C /* PocoFoundation.a */,
-				5E25687210ED26CC00A9501C /* PocoNet.a */,
-				5E25687310ED26CC00A9501C /* PocoUtil.a */,
-				5E25687410ED26CC00A9501C /* PocoXML.a */,
-			);
-			name = iphone;
-			path = ../../../libs/poco/lib/iphone;
 			sourceTree = SOURCE_ROOT;
 		};
 		5E25687F10ED26CC00A9501C /* osx */ = {
@@ -314,7 +314,7 @@
 		BB24DDD110DA784F00E9C588 /* iphone */ = {
 			isa = PBXGroup;
 			children = (
-				BB24DDD210DA784F00E9C588 /* libFreeImage_iphone_universal.a */,
+				5E1367A01213940200C15E5A /* freeimage.a */,
 			);
 			path = iphone;
 			sourceTree = "<group>";
@@ -661,6 +661,7 @@
 					"\"$(DEVELOPER_DIR)/openFrameworks/libs/poco/lib/osx\"",
 					"\"$(DEVELOPER_DIR)/openFrameworks/libs/poco/lib/vs2008\"",
 					"\"$(DEVELOPER_DIR)/openFrameworks/libs/poco/lib/win_cb\"",
+					"\"$(DEVELOPER_DIR)/openFrameworks/libs/poco/lib/armv6\"",
 				);
 				OTHER_LDFLAGS = (
 					"-ObjC",
@@ -713,6 +714,7 @@
 					"\"$(DEVELOPER_DIR)/openFrameworks/libs/poco/lib/osx\"",
 					"\"$(DEVELOPER_DIR)/openFrameworks/libs/poco/lib/vs2008\"",
 					"\"$(DEVELOPER_DIR)/openFrameworks/libs/poco/lib/win_cb\"",
+					"\"$(DEVELOPER_DIR)/openFrameworks/libs/poco/lib/armv6\"",
 				);
 				OTHER_LDFLAGS = (
 					"-ObjC",
@@ -784,6 +786,7 @@
 					"\"$(DEVELOPER_DIR)/openFrameworks/libs/poco/lib/osx\"",
 					"\"$(DEVELOPER_DIR)/openFrameworks/libs/poco/lib/vs2008\"",
 					"\"$(DEVELOPER_DIR)/openFrameworks/libs/poco/lib/win_cb\"",
+					"\"$(DEVELOPER_DIR)/openFrameworks/libs/poco/lib/armv6\"",
 				);
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "${TARGET_NAME}";
