@@ -563,7 +563,7 @@ bool ofImage::loadImageIntoPixels(string fileName, ofPixels &pix){
 		// anyone game?
 		//
 
-		#ifdef TARGET_LITTLE_ENDIAN
+		#if ( TARGET_LITTLE_ENDIAN ) || ( TARGET_OS_IPHONE )
 			if (byteCount != 1) swapRgb(pix);
 		#endif
 		//------------------------------------------
@@ -588,13 +588,13 @@ void  ofImage::saveImageFromPixels(string fileName, ofPixels &pix){
 		return;
 	}
 
-	#ifdef TARGET_LITTLE_ENDIAN
+	#if ( TARGET_LITTLE_ENDIAN ) || ( TARGET_OS_IPHONE )
 		if (pix.bytesPerPixel != 1) swapRgb(pix);
 	#endif
-
+	
 	FIBITMAP * bmp	= getBmpFromPixels(pix);
 
-	#ifdef TARGET_LITTLE_ENDIAN
+	#if ( TARGET_LITTLE_ENDIAN ) || ( TARGET_OS_IPHONE )
 		if (pix.bytesPerPixel != 1) swapRgb(pix);
 	#endif
 
