@@ -45,6 +45,16 @@ void ofxiPhoneKeyboard::setVisible(bool visible)
 	}
 	
 }
+//--------------------------------------------------------------
+void ofxiPhoneKeyboard::makeSecure()
+{
+	[keyboard makeSecure];
+}
+//--------------------------------------------------------------
+void ofxiPhoneKeyboard::setMaxChars(int max)
+{
+	[keyboard setFieldLength:max];
+}
 
 //--------------------------------------------------------------
 void ofxiPhoneKeyboard::setPosition(int _x, int _y)
@@ -123,6 +133,11 @@ bool ofxiPhoneKeyboard::isKeyboardShowing()
 	return [keyboard isKeyboardShowing];
 }
 
+void ofxiPhoneKeyboard::updateOrientation()
+{
+	[keyboard updateOrientation];
+}
+
 
 
 // CLASS IMPLEMENTATIONS--------------objc------------------------
@@ -133,6 +148,11 @@ bool ofxiPhoneKeyboard::isKeyboardShowing()
 - (void)textFieldDidBeginEditing:(UITextField *)textField
 {
 	open = true;
+}
+
+- (void)makeSecure
+{
+	[_textField setSecureTextEntry:YES];
 }
 
 //--------------------------------------------------------------
@@ -172,9 +192,9 @@ bool ofxiPhoneKeyboard::isKeyboardShowing()
 				_textField.transform = CGAffineTransformMakeRotation(M_PI_2);
 				break;
 				
-			/*case OFXIPHONE_ORIENTATION_UPSIDEDOWN:
-				_textField.transform = CGAffineTransformMakeRotation(M_PI / 2.0);
-				break;*/
+				/*case OFXIPHONE_ORIENTATION_UPSIDEDOWN:
+				 _textField.transform = CGAffineTransformMakeRotation(M_PI / 2.0);
+				 break;*/
 				
 			default:
 				break;
@@ -187,8 +207,47 @@ bool ofxiPhoneKeyboard::isKeyboardShowing()
 		[_textField setTextColor:[UIColor whiteColor]];
 		[_textField setFont:[UIFont fontWithName:@"Helvetica" size:16]];
 		[_textField setPlaceholder:@""];	
+		
+		_x=x;
+		_y=y;
+		_w=w;
+		_h=h;
+		fieldLength = -1;
 	}
 	return self;
+}
+
+- (void) updateOrientation
+{
+	_textField.transform = CGAffineTransformMakeRotation(0.0f);
+	[self setFrame:CGRectMake(0,0,_w,_h)];
+	
+	switch (ofxiPhoneGetOrientation()) 
+	{
+		case OFXIPHONE_ORIENTATION_LANDSCAPE_LEFT:
+			_textField.transform = CGAffineTransformMakeRotation(-M_PI_2);
+			break;
+			
+		case OFXIPHONE_ORIENTATION_LANDSCAPE_RIGHT:
+			
+			_textField.transform = CGAffineTransformMakeRotation(M_PI_2);
+			break;
+			
+		case OFXIPHONE_ORIENTATION_PORTRAIT:
+		case OFXIPHONE_ORIENTATION_UPSIDEDOWN:
+			_textField.transform = CGAffineTransformMakeRotation(0.0f);
+			break;
+			
+		default:
+			break;
+	}
+	[self setFrame:CGRectMake(_x,_y,_w,_h)];
+	
+	if(open)
+	{
+		[_textField resignFirstResponder];
+		[self openKeyboard];
+	}
 }
 
 //--------------------------------------------------------------
@@ -266,9 +325,9 @@ bool ofxiPhoneKeyboard::isKeyboardShowing()
 //--------------------------------------------------------------
 - (void) setFrame: (CGRect) rect
 {
-
+	
 	CGSize s = [[[UIApplication sharedApplication] keyWindow] bounds].size;		
-
+	
 	switch (ofxiPhoneGetOrientation()) 
 	{
 		case OFXIPHONE_ORIENTATION_LANDSCAPE_LEFT:
@@ -279,15 +338,39 @@ bool ofxiPhoneKeyboard::isKeyboardShowing()
 			[_textField setFrame: CGRectMake(s.width-rect.origin.y , rect.origin.x, rect.size.height, rect.size.width)];
 			break;
 			
-		/*case OFXIPHONE_ORIENTATION_UPSIDEDOWN:
-			_textField = [[UITextField alloc] initWithFrame:CGRectMake(x+320, y, w, h)];
-			_textField.transform = CGAffineTransformMakeRotation(M_PI / 2.0);
-			break;*/
+			/*case OFXIPHONE_ORIENTATION_UPSIDEDOWN:
+			 _textField = [[UITextField alloc] initWithFrame:CGRectMake(x+320, y, w, h)];
+			 _textField.transform = CGAffineTransformMakeRotation(M_PI / 2.0);
+			 break;*/
 			
 		default:
 			[_textField setFrame: CGRectMake(rect.origin.x , rect.origin.y-rect.size.height, rect.size.width, rect.size.height)];
 			break;
 	}
+}
+
+- (void) setFieldLength: (int)len
+{
+	fieldLength = len;
+}
+
+//--------------------------------------------------------------
+- (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
+{
+    NSMutableString *newValue = [[textField.text mutableCopy] autorelease];
+    [newValue replaceCharactersInRange:range withString:string];
+	
+	cout<<[newValue length]<<" "<<fieldLength;
+	
+	if(fieldLength != -1)
+	{
+		if ([newValue length] > fieldLength)
+		{
+			return NO;
+		}
+	}
+	
+    return YES;
 }
 
 //--------------------------------------------------------------

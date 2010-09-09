@@ -40,9 +40,15 @@ ofxiPhoneDeviceType ofxiPhoneGetDeviceType() {
 
 //--------------------------------------------------------------
 string ofxiPhoneGetDeviceRevision() {
-	// ZACH TODO
-	ofLog(OF_LOG_WARNING, "ofxiPhoneGetDeviceRevision() not implemented yet");
-	return "";
+	size_t size;
+    sysctlbyname("hw.machine", NULL, &size, NULL, 0);
+    char * machine;
+	machine = new char[size];
+	sysctlbyname("hw.machine", machine, &size, NULL, 0);
+	
+	string device(machine);
+	
+	return device;
 }
 
 //--------------------------------------------------------------
