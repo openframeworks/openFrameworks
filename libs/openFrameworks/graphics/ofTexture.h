@@ -30,7 +30,6 @@ typedef struct{
 
 	//Sosolimited: texture compression
 	ofTexCompression compressionType;
-	bool useCompression;
 		
 }ofTextureData;
 

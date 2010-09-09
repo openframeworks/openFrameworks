@@ -57,6 +57,10 @@ void ofLog(int logLevel, const char* format, ...);
 void ofSetConsoleColor(int color);
 void ofRestoreConsoleColor();
 
+//--------------------------------------------------
+class ofBuffer;
+bool ofReadFile(const string & path, ofBuffer & file);
+
 #endif
 
 
