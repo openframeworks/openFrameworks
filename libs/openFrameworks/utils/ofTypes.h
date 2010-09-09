@@ -229,7 +229,7 @@ class ofRectangle {
 	}
 
 	bool inside(float px, float py){
-		if( px < x && py < y && px > x + width && py > y + height ){
+		if( px > x && py > y && px < x + width && py < y + height ){
 		    return false;
 		}
 		return true;
@@ -309,17 +309,14 @@ class ofStyle{
 //----------------------------------------------------------
 
 class ofBuffer{
-public:
+
 	long 	size;
 	char * 	buffer;
+public:
 
 	ofBuffer(){
 		size 	= 0;
 		buffer 	= NULL;
-	}
-
-	ofBuffer(const string & path){
-		readFile(path);
 	}
 
 	ofBuffer(int _size, char * _buffer){
@@ -327,31 +324,28 @@ public:
 		buffer 	= _buffer;
 	}
 
-	bool readFile(const string & path){
-		ifstream * file = new ifstream(ofToDataPath(path,true).c_str());
-
-		if(!file || !file->is_open()){
-			size   = 0;
-			buffer = NULL;
-			ofLog(OF_LOG_ERROR, "couldn't open " + path);
-			return false;
-		}
-
-		filebuf *pbuf=file->rdbuf();
-
-		// get file size using buffer's members
-		size = (long)pbuf->pubseekoff (0,ios::end,ios::in);
-		pbuf->pubseekpos (0,ios::in);
-
-		// get file data
-		buffer = new char[size];
-		pbuf->sgetn (buffer,size);
-		return true;
+	ofBuffer(const ofBuffer & mom){
+		size = mom.size;
+		memcpy(buffer,mom.buffer,size);
 	}
 
 	~ofBuffer(){
 		if(buffer) delete[] buffer;
 	}
+
+	void allocate(long size){
+		if(buffer) delete[] buffer;
+		buffer = new char[size];
+	}
+
+	char * getBuffer(){
+		return buffer;
+	}
+
+	long getSize(){
+		return size;
+	}
+
 };
 
 
