@@ -230,9 +230,9 @@ class ofRectangle {
 
 	bool inside(float px, float py){
 		if( px > x && py > y && px < x + width && py < y + height ){
-		    return false;
+		    return true;
 		}
-		return true;
+		return false;
 	}
 
    float x;
