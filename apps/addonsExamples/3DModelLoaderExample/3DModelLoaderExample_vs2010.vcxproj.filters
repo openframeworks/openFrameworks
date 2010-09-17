@@ -1,0 +1,45 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="src\testApp.cpp" />
+    <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="..\..\..\addons\ofx3DModelLoader\src\3DS\model3DS.cpp">
+      <Filter>addons\ofx3dModelLoader\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\addons\ofx3DModelLoader\src\ofx3dModelLoader.cpp">
+      <Filter>addons\ofx3dModelLoader\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\addons\ofx3DModelLoader\src\3DS\texture3DS.cpp">
+      <Filter>addons\ofx3dModelLoader\src</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\testApp.h" />
+    <ClInclude Include="..\..\..\addons\ofx3DModelLoader\src\3DS\Vector3DS.h">
+      <Filter>addons\ofx3dModelLoader\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofx3DModelLoader\src\3DS\model3DS.h">
+      <Filter>addons\ofx3dModelLoader\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofx3DModelLoader\src\ofx3DBaseLoader.h">
+      <Filter>addons\ofx3dModelLoader\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofx3DModelLoader\src\ofx3DModelLoader.h">
+      <Filter>addons\ofx3dModelLoader\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofx3DModelLoader\src\3DS\texture3DS.h">
+      <Filter>addons\ofx3dModelLoader\src</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="addons">
+      <UniqueIdentifier>{d79abca0-5b91-4000-9e03-3b535f96d5b9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofx3dModelLoader">
+      <UniqueIdentifier>{ada8fb27-85cb-4972-bf41-4763b23a30d2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofx3dModelLoader\src">
+      <UniqueIdentifier>{6da16e37-f1fb-485b-bbc8-5020596fb209}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
