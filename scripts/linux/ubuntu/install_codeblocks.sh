@@ -10,26 +10,42 @@ ret=$?
 if [ $ret -eq 0 ]; then
 WX_DEB=$(cat /tmp/oFtemp)
 fi
-CB_DEB="deb http://lgp203.free.fr/ubuntu/ $DISTRIB_CODENAME universe"
-if [ "$DISTRIB_CODENAME" = "maverick" ]; then
-    CB_DEB=""
-elif [ "$DISTRIB_CODENAME" = "lucid" ]; then
-    CB_DEB="deb http://ppa.launchpad.net/ubuntu-backports-testers/ppa/ubuntu lucid main"
+
+CB_DEB=""
+
+wget "http://openframeworks.cc/cb-dist.php?dist=${DISTRIB_CODENAME}&arch=${ARCH}" -q -O /tmp/oFtemp
+ret=$?
+
+if [ $ret -eq 0 ]; then
+CB_DEB=$(cat /tmp/oFtemp)
 fi
 
+echo "installing codeblocks from"
+echo $CB_DEB
+echo with wxwidgets from
+echo $WX_DEB
+if [ -f /etc/apt/sources.list.d/wxwidgets.list ]; then
+    rm /etc/apt/sources.list.d/wxwidgets.list
+fi
+
+if [ -f /etc/apt/sources.list.d/cb-nightly.list ]; then
+    rm /etc/apt/sources.list.d/cb-nightly.list
+fi
 if [ ! "$CB_DEB" = "" ]; then
-    echo $CB_DEB /etc/apt/sources.list.d/cb-nightly.list
+    echo $CB_DEB > /etc/apt/sources.list.d/cb-nightly.list
 fi
 
-#wget -q http://lgp203.free.fr/public.key -O- | apt-key add -
+if [ ! "$WX_DEB" = "" ]; then
+    echo $WX_DEB > /etc/apt/sources.list.d/wxwidgets.list
+fi
+
 
 apt-get update
 
 apt-get install libcodeblocks0 codeblocks libwxsmithlib0 codeblocks-contrib libwxgtk2.8-0
 
-
-if [ -f /etc/apt/sources.list.d/wx.list ]; then
-    rm /etc/apt/sources.list.d/wx.list
+if [ -f /etc/apt/sources.list.d/wxwidgets.list ]; then
+    rm /etc/apt/sources.list.d/wxwidgets.list
 fi
 
 if [ -f /etc/apt/sources.list.d/cb-nightly.list ]; then
