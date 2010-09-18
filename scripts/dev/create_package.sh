@@ -180,13 +180,14 @@ function deleteProjectFiles {
 		#delete vs2010 files
 		rm *vs2010.vcxproj
 		rm *vs2010.vcxproj.user
+		rm *vs2010.vcxproj.filter
 		rm *vs2010.sln
 
 		#delete eclipse project
 		rm $(find . -name .*project)
         
         #delete OFLib project files
-		rm -Rf ${oflib_root}/*/vs2010
+	rm -Rf ${oflib_root}/*/vs2010
         rm -Rf ${oflib_root}/*/osx
         rm -Rf ${oflib_root}/*/linux
         rm -Rf ${oflib_root}/*/linux64
@@ -215,7 +216,8 @@ function deleteProjectFiles {
 		#delete vs2008 files
 		rm *.vcproj
 		rm *.vcproj.user
-		# [zach - don't know how to delete non _v2010.sln here... requires some logic] rm *.sln
+		# [zach - don't know how to delete non _v2010.sln here... requires some logic] 
+		rm *2008.sln
 
 		#delete eclipse project
 		rm $(find . -name .*project)
@@ -228,10 +230,12 @@ function deleteProjectFiles {
         rm -Rf ${oflib_root}/*/win_cb
         rm -Rf ${oflib_root}/*/iphone
         rm -Rf ${oflib_root}/*/android
+	rm -Rf ${oflib_root}/*/armv6			
+	#[zach - this armv6 seems like a problem?]
     fi
 
     #android
-    if [ "$platform" = "vs2010" ]; then
+    if [ "$platform" = "android" ]; then
 
         #delete codeblock files
         rm *.cbp
@@ -251,13 +255,14 @@ function deleteProjectFiles {
 		rm *.vcproj.user
 		rm *.vxproj
 		rm *.vxproj.user
-		rm *.sln
-		# [zach - don't know how to delete non _v2010.sln here... requires some logic] rm *.sln
+		rm *.vxproj.filter
+		rm *2008.sln
+		rm *2010.sln
 
         #delete OFLib project files
         rm -Rf ${oflib_root}/*/vs2008
-		rm -Rf ${oflib_root}/*/vs2010
-        rm -Rf ${oflib_root}/*/osx
+	rm -Rf ${oflib_root}/*/vs210
+	rm -Rf ${oflib_root}/*/osx
         rm -Rf ${oflib_root}/*/linux
         rm -Rf ${oflib_root}/*/linux64
         rm -Rf ${oflib_root}/*/win_cb
@@ -341,7 +346,7 @@ function createPackage {
         otherplatforms="linux linux64 osx win_cb vs2010 iphone android"
     fi
 
-	if [ "$pkg_platform" = "vs2010" ]; then
+    if [ "$pkg_platform" = "vs2010" ]; then
         otherplatforms="linux linux64 osx win_cb vs2008 iphone android"
     fi
 
@@ -520,7 +525,7 @@ function createPackage {
 
 
 if [ "$platform" = "all" ]; then
-    for eachplatform in win_cb linux linux64 vs2008 osx 
+    for eachplatform in win_cb linux linux64 vs2008 vs2010 osx 
     do
         cd $packageroot
         mkdir of_preRelease_v${version}_${eachplatform}
