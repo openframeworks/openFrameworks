@@ -1,25 +1,24 @@
 #!/bin/bash
 DISTRIB_CODENAME=`cat /etc/lsb-release | grep DISTRIB_CODENAME | sed 's/DISTRIB_CODENAME\=\(\.*\)/\1/g'`
 
-if [ -f /etc/apt/sources.list.d/wx.list ]; then
-    rm /etc/apt/sources.list.d/wx.list
-fi
+WX_DEB=""
+ARCH=$(uname -m)
 
-if [ -f /etc/apt/sources.list.d/cb-nightly.list ]; then
-    rm /etc/apt/sources.list.d/cb-nightly.list
-fi
+wget "http://openframeworks.cc/wx-dist.php?dist=${DISTRIB_CODENAME}&arch=${ARCH}" -q -O /tmp/oFtemp
+ret=$?
 
+if [ $ret -eq 0 ]; then
+WX_DEB=$(cat /tmp/oFtemp)
+fi
 CB_DEB="deb http://lgp203.free.fr/ubuntu/ $DISTRIB_CODENAME universe"
 if [ "$DISTRIB_CODENAME" = "maverick" ]; then
     CB_DEB=""
-elif [ "$DISTRIB_CODENAME" = "karmic" ]; then
+elif [ "$DISTRIB_CODENAME" = "lucid" ]; then
     CB_DEB="deb http://ppa.launchpad.net/ubuntu-backports-testers/ppa/ubuntu lucid main"
-elif [ "$DISTRIB_CODENAME" = "lucid" ] || [ $DISTRIB_CODENAME = "jaunty" ]; then
-    CB_DEB="ppa:ubuntu-backports-testers/ppa"
 fi
 
 if [ ! "$CB_DEB" = "" ]; then
-    add-apt-repository $CB_DEB
+    echo $CB_DEB /etc/apt/sources.list.d/cb-nightly.list
 fi
 
 #wget -q http://lgp203.free.fr/public.key -O- | apt-key add -
@@ -28,8 +27,13 @@ apt-get update
 
 apt-get install libcodeblocks0 codeblocks libwxsmithlib0 codeblocks-contrib libwxgtk2.8-0
 
-if [ ! "$CB_DEB" = "" ]; then
-    add-apt-repository -r $CB_DEB
+
+if [ -f /etc/apt/sources.list.d/wx.list ]; then
+    rm /etc/apt/sources.list.d/wx.list
+fi
+
+if [ -f /etc/apt/sources.list.d/cb-nightly.list ]; then
+    rm /etc/apt/sources.list.d/cb-nightly.list
 fi
 
 ## fix pkg-config by installing missing dependencies
