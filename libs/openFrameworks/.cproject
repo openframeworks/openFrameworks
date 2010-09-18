@@ -143,7 +143,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="app/ofAppQtWindow.h|app/ofAppQtWindow.cpp|sound/ofSoundPlayer.h|sound/ofSoundPlayer.cpp|app/ofAppGlutGlue.h|sound/ofSoundStream4.cpp|sound/ofSoundStream3.cpp|events/ofMouseEvents.h|events/ofMouseEvents.cpp|events/ofKeyEvents.h|events/ofKeyEvents.cpp|events/ofAudioEvents.h|events/ofAudioEvents.cpp|events/ofAppEvents.cpp|events/ofAppEvents.h" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="app/ofAppQtWindow.h|app/ofAppQtWindow.cpp|app/ofAppGlutGlue.h|sound/ofSoundStream4.cpp|sound/ofSoundStream3.cpp|events/ofMouseEvents.h|events/ofMouseEvents.cpp|events/ofKeyEvents.h|events/ofKeyEvents.cpp|events/ofAudioEvents.h|events/ofAudioEvents.cpp|events/ofAppEvents.cpp|events/ofAppEvents.h" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -2823,7 +2823,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="app/ofAppQtWindow.h|app/ofAppQtWindow.cpp|sound/ofSoundStream.cpp|sound/ofSoundPlayer.h|sound/ofSoundPlayer.cpp|app/ofAppGlutGlue.h|sound/ofSoundStream4.cpp|sound/ofSoundStream3.cpp|events/ofMouseEvents.h|events/ofMouseEvents.cpp|events/ofKeyEvents.h|events/ofKeyEvents.cpp|events/ofAudioEvents.h|events/ofAudioEvents.cpp|events/ofAppEvents.cpp|events/ofAppEvents.h" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="app/ofAppQtWindow.h|app/ofAppQtWindow.cpp|app/ofAppGlutGlue.h|sound/ofSoundStream4.cpp|sound/ofSoundStream3.cpp|events/ofMouseEvents.h|events/ofMouseEvents.cpp|events/ofKeyEvents.h|events/ofKeyEvents.cpp|events/ofAudioEvents.h|events/ofAudioEvents.cpp|events/ofAppEvents.cpp|events/ofAppEvents.h" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
