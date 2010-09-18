@@ -10,15 +10,15 @@ if [ -f /etc/apt/sources.list.d/cb-nightly.list ]; then
 fi
 
 CB_DEB="deb http://lgp203.free.fr/ubuntu/ $DISTRIB_CODENAME universe"
-if [ $DISTRIB_CODENAME = "maverick" ]; then
+if [ "$DISTRIB_CODENAME" = "maverick" ]; then
     CB_DEB=""
-elif [ $DISTRIB_CODENAME = "karmic" ]; then
+elif [ "$DISTRIB_CODENAME" = "karmic" ]; then
     CB_DEB="deb http://ppa.launchpad.net/ubuntu-backports-testers/ppa/ubuntu lucid main"
-elif [ $DISTRIB_CODENAME = "lucid" ] || [ $DISTRIB_CODENAME = "jaunty" ]; then
+elif [ "$DISTRIB_CODENAME" = "lucid" ] || [ $DISTRIB_CODENAME = "jaunty" ]; then
     CB_DEB="ppa:ubuntu-backports-testers/ppa"
 fi
 
-if [ ! $CB_DEB = "" ]; then
+if [ ! "$CB_DEB" = "" ]; then
     add-apt-repository $CB_DEB
 fi
 
@@ -28,7 +28,7 @@ apt-get update
 
 apt-get install libcodeblocks0 codeblocks libwxsmithlib0 codeblocks-contrib libwxgtk2.8-0
 
-if [ ! $CB_DEB = "" ]; then
+if [ ! "$CB_DEB" = "" ]; then
     add-apt-repository -r $CB_DEB
 fi
 
