@@ -1,6 +1,13 @@
 #!/bin/bash
 DISTRIB_CODENAME=`cat /etc/lsb-release | grep DISTRIB_CODENAME | sed 's/DISTRIB_CODENAME\=\(\.*\)/\1/g'`
 
+if [ -f /etc/apt/sources.list.d/wx.list ]; then
+    rm /etc/apt/sources.list.d/wx.list
+fi
+
+if [ -f /etc/apt/sources.list.d/cb-nightly.list ]; then
+    rm /etc/apt/sources.list.d/cb-nightly.list
+fi
 
 CB_DEB="deb http://lgp203.free.fr/ubuntu/ $DISTRIB_CODENAME universe"
 if [ $DISTRIB_CODENAME = "maverick" ]; then
