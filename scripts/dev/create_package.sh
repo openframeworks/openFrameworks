@@ -61,6 +61,46 @@ git pull $REPO $BRANCH
 
 packageroot=$PWD
 
+function deleteCodeblocks {
+    #delete codeblock files
+    rm *.cbp
+    rm *.sh
+    rm *.workspace
+}
+
+function deleteMakefiles {
+    #delete makefiles
+    rm makefile
+    rm *.make
+    rm cb_build_runner.sh
+}
+
+function deleteVS2008 {
+    #delete vs2008 files
+    rm *.vcproj
+    rm *.vcproj.user
+    rm *_vs2008.sln
+}
+
+function deleteVS2010 {
+    #delete vs2010 files
+    rm *.vcxproj
+    rm *.vcxproj.user
+    rm *.vcxproj.filters
+    rm *_vs2010.sln
+}
+
+function deleteXcode {
+    #delete osx files
+    rm -Rf *.xcodeproj
+    rm openFrameworks-Info.plist
+}
+
+function deleteEclipse {
+    #delete eclipse project
+    rm $(find . -name .*project)
+}
+
 function deleteProjectFiles {
     platform=$1
     ofroot=$2
@@ -77,6 +117,7 @@ function deleteProjectFiles {
     
     #codeblocks
     if [ "$platform" = "linux" ] || [ "$platform" = "linux64" ] || [ "$platform" = "win_cb" ]; then 
+        #delete codeblocks for other platforms and rename
         cp ${current_example}_$platform.cbp $current_example.newcbp
         cp ${current_example}_$platform.workspace $current_example.newworkspace
         rm *.cbp *.workspace
@@ -84,189 +125,69 @@ function deleteProjectFiles {
         mv $current_example.newworkspace $current_example.workspace
         sed -i s/${example_name}_${platform}/${example_name}/g $current_example.workspace
 
-        #delete makefiles on windows
+        #delete other platform's project files
         if [ "$platform" = "win_cb" ]; then
-            rm makefile cb_build_runner.sh *.make
+            deleteMakefiles
         fi
-
-        #delete osx files
-        rm -Rf *.xcodeproj
-        rm openFrameworks-Info.plist
-
-        #delete vs files
-        rm *.sln
-        rm *.vcproj
-        rm *.vcproj.user
-		rm *.vcxproj
-	    rm *.vcxproj.user
-
-		#delete eclipse project
-		rm $(find . -name .*project)
-
-        #delete OFLib project files
-        if [ "$platform" = "win_cb" ]; then
-            rm -Rf ${oflib_root}/*/linux
-            rm -Rf ${oflib_root}/*/linux64
-        else
-            rm -Rf ${oflib_root}/*/win_cb
-        fi
-        
-        if [ "$platform" = "linux" ]; then
-            rm -Rf ${oflib_root}/*/linux64
-        elif [ "$plaform" = "linux64" ]; then
-            rm -Rf ${oflib_root}/*/linux
-        fi
-        rm -Rf ${oflib_root}/*/osx
-        rm -Rf ${oflib_root}/*/vs2008
-		rm -Rf ${oflib_root}/*/vs2010
-        rm -Rf ${oflib_root}/*/iphone
-        rm -Rf ${oflib_root}/*/android
+        deleteXcode
+        deleteVS2008
+        deleteVS2010
+	    deleteAndroid
         
     fi
-
-
 
     #osx
     if [ "$platform" = "osx" ]; then
-
-        #delete codeblock files
-        rm *.cbp
-        rm *.sh
-        rm *.workspace
-
-        #delete makefiles
-        rm makefile
-        rm *.make
-
-        #delete vs files
-        rm *.sln
-        rm *.vcproj
-        rm *.vcproj.user
-        rm *.vcxproj
-        rm *.vcxproj.user
-
-		#delete eclipse project
-		rm $(find . -name .*project)
-		
-        #delete OFLib project files
-        rm -Rf ${oflib_root}/*/vs2008
-		rm -Rf ${oflib_root}/*/vs2010
-        rm -Rf ${oflib_root}/*/linux
-        rm -Rf ${oflib_root}/*/linux64
-        rm -Rf ${oflib_root}/*/win_cb
-        rm -Rf ${oflib_root}/*/iphone
-        rm -Rf ${oflib_root}/*/android
-
+        #delete other platform's project files
+        deleteCodeblocks
+        deleteMakefiles
+        deleteVS2008
+        deleteVS2010
+	    deleteAndroid
     fi
 
-
-
-    #visual studio
-    if [ "$platform" = "vs2008" ]; then
-
-        #delete codeblock files
-        rm *.cbp
-        rm *.sh
-        rm *.workspace
-
-        #delete makefiles
-        rm makefile
-        rm *.make
-
-        #delete osx files
-        rm -Rf *.xcodeproj
-        rm openFrameworks-Info.plist
-
-		#delete vs2010 files
-		rm *vs2010.vcxproj
-		rm *vs2010.vcxproj.user
-		rm *vs2010.vcxproj.filter
-		rm *vs2010.sln
-
-		#delete eclipse project
-		rm $(find . -name .*project)
-        
-        #delete OFLib project files
-	rm -Rf ${oflib_root}/*/vs2010
-        rm -Rf ${oflib_root}/*/osx
-        rm -Rf ${oflib_root}/*/linux
-        rm -Rf ${oflib_root}/*/linux64
-        rm -Rf ${oflib_root}/*/win_cb
-        rm -Rf ${oflib_root}/*/iphone
-        rm -Rf ${oflib_root}/*/android
-    fi
-
-
-	#visual studio
+    #visual studio 2010
     if [ "$platform" = "vs2010" ]; then
+	    #delete non needed vs files and rename
+        mv ${current_example}_$platform.vcxproj $current_example.vcxproj
+        mv ${current_example}_$platform.vcxproj.user $current_example.vcxproj.user
+        mv ${current_example}_$platform.vcxproj.filters $current_example.vcxproj.filters
+        mv ${current_example}_$platform.sln $current_example.sln
+        sed -i s/${example_name}_${platform}/${example_name}/g $current_example.sln
 
-        #delete codeblock files
-        rm *.cbp
-        rm *.sh
-        rm *.workspace
+        #delete other platform's project files
+	    deleteVS2008
+        deleteCodeblocks
+        deleteMakefiles
+        deleteXcode
+	    deleteAndroid
+    fi
 
-        #delete makefiles
-        rm makefile
-        rm *.make
 
-        #delete osx files
-        rm -Rf *.xcodeproj
-        rm openFrameworks-Info.plist
+    #visual studio 2008
+    if [ "$platform" = "vs2008" ]; then
+	    #delete non needed vs files and rename
+        mv ${current_example}_$platform.vcproj $current_example.vcproj
+        mv ${current_example}_$platform.vcproj.user $current_example.vcproj.user
+        mv ${current_example}_$platform.sln $current_example.sln
+        sed -i s/${example_name}_${platform}/${example_name}/g $current_example.sln
 
-		#delete vs2008 files
-		rm *.vcproj
-		rm *.vcproj.user
-		# [zach - don't know how to delete non _v2010.sln here... requires some logic] 
-		rm *2008.sln
-
-		#delete eclipse project
-		rm $(find . -name .*project)
-
-        #delete OFLib project files
-        rm -Rf ${oflib_root}/*/vs2008
-        rm -Rf ${oflib_root}/*/osx
-        rm -Rf ${oflib_root}/*/linux
-        rm -Rf ${oflib_root}/*/linux64
-        rm -Rf ${oflib_root}/*/win_cb
-        rm -Rf ${oflib_root}/*/iphone
-        rm -Rf ${oflib_root}/*/android
-	rm -Rf ${oflib_root}/*/armv6			
-	#[zach - this armv6 seems like a problem?]
+        #delete other platform's project files
+	    deleteVS2010
+        deleteCodeblocks
+        deleteMakefiles
+        deleteXcode
+	    deleteAndroid	
     fi
 
     #android
     if [ "$platform" = "android" ]; then
-
-        #delete codeblock files
-        rm *.cbp
-        rm *.sh
-        rm *.workspace
-
-        #delete makefiles
-        rm makefile
-        rm *.make
-
-        #delete osx files
-        rm -Rf *.xcodeproj
-        rm openFrameworks-Info.plist
-
-		#delete vs files
-		rm *.vcproj
-		rm *.vcproj.user
-		rm *.vxproj
-		rm *.vxproj.user
-		rm *.vxproj.filter
-		rm *2008.sln
-		rm *2010.sln
-
-        #delete OFLib project files
-        rm -Rf ${oflib_root}/*/vs2008
-	rm -Rf ${oflib_root}/*/vs210
-	rm -Rf ${oflib_root}/*/osx
-        rm -Rf ${oflib_root}/*/linux
-        rm -Rf ${oflib_root}/*/linux64
-        rm -Rf ${oflib_root}/*/win_cb
-        rm -Rf ${oflib_root}/*/iphone
+        #delete other platform's project files
+        deleteCodeblocks
+        deleteMakefiles
+        deleteXcode
+	    deleteVS2008
+        deleteVS2010
     fi
 }
 
@@ -390,6 +311,12 @@ function createPackage {
         cd $pkg_ofroot/addons
     done
 
+    #delete other platforms OF project files
+    cd ${pkg_ofroot}/libs/openFrameworksCompiled/lib
+    rm -Rf $otherplatforms
+    cd ${pkg_ofroot}/libs/openFrameworksCompiled/project
+    rm -Rf $otherplatforms
+
 	cd ${pkg_ofroot}/libs
 	#delete specific include folders non-android
 	if [ "$pkg_platform" != "android" ]; then
@@ -448,25 +375,9 @@ function createPackage {
 
 	#download and copy OF compiled
 	cd $pkg_ofroot/libs/openFrameworksCompiled/lib/${pkg_platform}
-	if [ "$pkg_platform" = "linux" ] || [ "$pkg_platform" = "linux64" ]; then
-		wget http://openframeworks.cc/git_pkgs/OF_compiled/${pkg_platform}/libopenFrameworks.a
-		wget http://openframeworks.cc/git_pkgs/OF_compiled/${pkg_platform}/libopenFrameworksDebug.a
-	elif [ "$pkg_platform" = "win_cb" ]; then
+    if [ "$pkg_platform" = "win_cb" ]; then
 		wget http://openframeworks.cc/git_pkgs/OF_compiled/${pkg_platform}/openFrameworks.lib
 		wget http://openframeworks.cc/git_pkgs/OF_compiled/${pkg_platform}/openFrameworksDebug.lib
-	elif [ "$pkg_platform" = "vs2008" ]; then
-		wget http://www.openframeworks.cc/git_pkgs/OF_compiled/${pkg_platform}/openframeworksLib.lib
-		wget http://www.openframeworks.cc/git_pkgs/OF_compiled/${pkg_platform}/openframeworksLibDebug.lib
-	elif [ "$pkg_platform" = "osx" ]; then
-		if [ $runOSXSLScript = 1 ]; then
-			wget http://openframeworks.cc/git_pkgs/OF_compiled/osxSL/openFrameworks.a
-			wget http://openframeworks.cc/git_pkgs/OF_compiled/osxSL/openFrameworksDebug.a
-			wget http://openframeworks.cc/git_pkgs/OF_compiled/osxSL/openFrameworksUniversal.a
-		else
-			wget http://openframeworks.cc/git_pkgs/OF_compiled/osx/openFrameworks.a
-			wget http://openframeworks.cc/git_pkgs/OF_compiled/osx/openFrameworksDebug.a
-			wget http://openframeworks.cc/git_pkgs/OF_compiled/osx/openFrameworksUniversal.a
-		fi
 	fi
 
     #if snow leopard change 10.4u to 10.5
