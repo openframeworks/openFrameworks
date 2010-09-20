@@ -25,16 +25,19 @@ ofxiPhoneImagePicker::ofxiPhoneImagePicker()
 }
 
 //--------------------------------------------------------------
+ofxiPhoneImagePicker::~ofxiPhoneImagePicker(){
+	[imagePicker release];
+	if( pixels != NULL ){
+		delete[] pixels;
+		pixels = NULL;
+	}
+}
+
+//--------------------------------------------------------------
 void ofxiPhoneImagePicker::setMaxDimension(int _maxDimension)
 {
 	maxDimension = _maxDimension;
 	[imagePicker setMaxDimension: maxDimension];
-}
-
-//--------------------------------------------------------------
-ofxiPhoneImagePicker::~ofxiPhoneImagePicker()
-{
-	[imagePicker release];
 }
 
 //----------------------------------------------------------------

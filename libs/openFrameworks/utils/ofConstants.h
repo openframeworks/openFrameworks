@@ -119,6 +119,8 @@
 #ifdef TARGET_OF_IPHONE
 	#import <OpenGLES/ES1/gl.h>
 	#import <OpenGLES/ES1/glext.h>
+	
+	#define TARGET_LITTLE_ENDIAN		// arm cpu	
 #endif
 
 
