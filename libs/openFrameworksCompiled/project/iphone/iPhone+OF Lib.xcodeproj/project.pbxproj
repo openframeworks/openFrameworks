@@ -142,7 +142,7 @@
 		92BFCD061128AC3E0081DD61 /* ofBitmapFont.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofBitmapFont.cpp; sourceTree = "<group>"; };
 		BB16EBD10F2B2A9500518274 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
 		BB16EBD80F2B2AB500518274 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
-		BB24DED610DA7A3F00E9C588 /* libofxiPhoneOFLib_iphoneos _Release.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libofxiPhoneOFLib_iphoneos _Release.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		BB24DED610DA7A3F00E9C588 /* libofxiPhoneOFLib_macosx_Release.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libofxiPhoneOFLib_macosx_Release.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		BB24DEF710DA7BEF00E9C588 /* ofAppBaseWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofAppBaseWindow.h; sourceTree = "<group>"; };
 		BB24DEFA10DA7BEF00E9C588 /* ofAppRunner.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofAppRunner.cpp; sourceTree = "<group>"; };
 		BB24DEFB10DA7BEF00E9C588 /* ofAppRunner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofAppRunner.h; sourceTree = "<group>"; };
@@ -288,7 +288,7 @@
 		19C28FACFE9D520D11CA2CBB /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				BB24DED610DA7A3F00E9C588 /* libofxiPhoneOFLib_iphoneos _Release.a */,
+				BB24DED610DA7A3F00E9C588 /* libofxiPhoneOFLib_macosx_Release.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -776,7 +776,7 @@
 			);
 			name = "iPhone+OF Static Library";
 			productName = "Static Library";
-			productReference = BB24DED610DA7A3F00E9C588 /* libofxiPhoneOFLib_iphoneos _Release.a */;
+			productReference = BB24DED610DA7A3F00E9C588 /* libofxiPhoneOFLib_macosx_Release.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 /* End PBXNativeTarget section */
@@ -786,7 +786,14 @@
 			isa = PBXProject;
 			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "iPhone+OF Lib" */;
 			compatibilityVersion = "Xcode 3.1";
+			developmentRegion = English;
 			hasScannedForEncodings = 1;
+			knownRegions = (
+				English,
+				Japanese,
+				French,
+				German,
+			);
 			mainGroup = 29B97314FDCFA39411CA2CEA /* CustomTemplate */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -836,32 +843,14 @@
 		BB24DED310DA7A3F00E9C588 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = YES;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/../../lib/iphone/";
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				HEADER_SEARCH_PATHS = (
-					../../../poco/include,
-					../../../../libs/freetype/include/,
-					../../../../libs/freetype/include/freetype2,
-				);
 				IPHONEOS_DEPLOYMENT_TARGET = 3.1;
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\\\"$(SRCROOT)/../../../libs/glu/lib/iphone\\\"",
-					"\"$(DEVELOPER_DIR)/openFrameworks/libs/poco/lib/linux\"",
-					"\"$(DEVELOPER_DIR)/openFrameworks/libs/poco/lib/linux64\"",
-					"\"$(DEVELOPER_DIR)/openFrameworks/libs/poco/lib/osx\"",
-					"\"$(DEVELOPER_DIR)/openFrameworks/libs/poco/lib/vs2008\"",
-					"\"$(DEVELOPER_DIR)/openFrameworks/libs/poco/lib/win_cb\"",
-					"\"$(DEVELOPER_DIR)/openFrameworks/libs/poco/lib/armv6\"",
-				);
 				PREBINDING = NO;
-				PRODUCT_NAME = "ofxiPhoneOFLib_${PLATFORM_NAME} _Debug";
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
-				SYMROOT = build;
+				PRODUCT_NAME = "ofxiPhoneOFLib_${PLATFORM_NAME}_Debug";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -869,32 +858,14 @@
 		BB24DED410DA7A3F00E9C588 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = YES;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/../../lib/iphone/";
 				COPY_PHASE_STRIP = YES;
+				DEAD_CODE_STRIPPING = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
-				HEADER_SEARCH_PATHS = (
-					../../../poco/include,
-					../../../../libs/freetype/include/,
-					../../../../libs/freetype/include/freetype2,
-				);
 				IPHONEOS_DEPLOYMENT_TARGET = 3.1;
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\\\"$(SRCROOT)/../../../libs/glu/lib/iphone\\\"",
-					"\"$(DEVELOPER_DIR)/openFrameworks/libs/poco/lib/linux\"",
-					"\"$(DEVELOPER_DIR)/openFrameworks/libs/poco/lib/linux64\"",
-					"\"$(DEVELOPER_DIR)/openFrameworks/libs/poco/lib/osx\"",
-					"\"$(DEVELOPER_DIR)/openFrameworks/libs/poco/lib/vs2008\"",
-					"\"$(DEVELOPER_DIR)/openFrameworks/libs/poco/lib/win_cb\"",
-					"\"$(DEVELOPER_DIR)/openFrameworks/libs/poco/lib/armv6\"",
-				);
 				PREBINDING = NO;
-				PRODUCT_NAME = "ofxiPhoneOFLib_${PLATFORM_NAME} _Release";
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
-				SYMROOT = build;
+				PRODUCT_NAME = "ofxiPhoneOFLib_${PLATFORM_NAME}_Release";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				ZERO_LINK = NO;
 			};
@@ -903,29 +874,11 @@
 		BB24DED510DA7A3F00E9C588 /* Distribution */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = YES;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/../../lib/iphone/";
-				HEADER_SEARCH_PATHS = (
-					../../../poco/include,
-					../../../../libs/freetype/include/,
-					../../../../libs/freetype/include/freetype2,
-				);
+				DEAD_CODE_STRIPPING = NO;
 				IPHONEOS_DEPLOYMENT_TARGET = 3.1;
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\\\"$(SRCROOT)/../../../libs/glu/lib/iphone\\\"",
-					"\"$(DEVELOPER_DIR)/openFrameworks/libs/poco/lib/linux\"",
-					"\"$(DEVELOPER_DIR)/openFrameworks/libs/poco/lib/linux64\"",
-					"\"$(DEVELOPER_DIR)/openFrameworks/libs/poco/lib/osx\"",
-					"\"$(DEVELOPER_DIR)/openFrameworks/libs/poco/lib/vs2008\"",
-					"\"$(DEVELOPER_DIR)/openFrameworks/libs/poco/lib/win_cb\"",
-					"\"$(DEVELOPER_DIR)/openFrameworks/libs/poco/lib/armv6\"",
-				);
 				PREBINDING = NO;
-				PRODUCT_NAME = "ofxiPhoneOFLib_${PLATFORM_NAME} _Distribution";
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
-				SYMROOT = build;
+				PRODUCT_NAME = "ofxiPhoneOFLib_${PLATFORM_NAME}_Distribution";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Distribution;
@@ -933,33 +886,35 @@
 		BBD1C20A0F391092007FCFB3 /* Distribution */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_UNIVERSAL_IPHONE_OS)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: MSA Visuals Ltd";
+				DEAD_CODE_STRIPPING = NO;
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				HEADER_SEARCH_PATHS = ../../../poco/include;
-				ONLY_ACTIVE_ARCH = NO;
+				HEADER_SEARCH_PATHS = (
+					../../../poco/include,
+					../../../../libs/freetype/include/,
+					../../../../libs/freetype/include/freetype2,
+				);
+				ONLY_ACTIVE_ARCH = YES;
 				PREBINDING = NO;
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "CBB7D4DA-CBD7-4672-8C35-CB67CB1FEC3A";
-				SDKROOT = iphoneos3.2;
 			};
 			name = Distribution;
 		};
 		C01FCF4F08A954540054247B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_UNIVERSAL_IPHONE_OS)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Mehmet Akten";
+				DEAD_CODE_STRIPPING = NO;
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				HEADER_SEARCH_PATHS = ../../../poco/include;
-				ONLY_ACTIVE_ARCH = NO;
+				HEADER_SEARCH_PATHS = (
+					../../../poco/include,
+					../../../../libs/freetype/include/,
+					../../../../libs/freetype/include/freetype2,
+				);
+				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = "";
 				PREBINDING = NO;
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "B2B6A4F8-E7E4-4A49-84A2-821B26E52F18";
-				SDKROOT = iphoneos3.2;
 				WARNING_LDFLAGS = "-w";
 			};
 			name = Debug;
@@ -967,16 +922,17 @@
 		C01FCF5008A954540054247B /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_UNIVERSAL_IPHONE_OS)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Mehmet Akten";
+				DEAD_CODE_STRIPPING = NO;
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				HEADER_SEARCH_PATHS = ../../../poco/include;
-				ONLY_ACTIVE_ARCH = NO;
+				HEADER_SEARCH_PATHS = (
+					../../../poco/include,
+					../../../../libs/freetype/include/,
+					../../../../libs/freetype/include/freetype2,
+				);
+				ONLY_ACTIVE_ARCH = YES;
 				PREBINDING = NO;
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "B2B6A4F8-E7E4-4A49-84A2-821B26E52F18";
-				SDKROOT = iphoneos3.2;
 			};
 			name = Release;
 		};
