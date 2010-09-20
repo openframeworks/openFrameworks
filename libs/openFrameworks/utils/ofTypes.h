@@ -352,6 +352,7 @@ public:
 	}
 
 	string getNextLine(){
+		if( size <= 0 ) return "";
 		long currentLinePos = nextLinePos;
 		while(nextLinePos<size && buffer[nextLinePos]!='\n') nextLinePos++;
 		string line(buffer + currentLinePos,nextLinePos-currentLinePos);
