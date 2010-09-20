@@ -312,20 +312,24 @@ class ofBuffer{
 
 	long 	size;
 	char * 	buffer;
+	long 	nextLinePos;
 public:
 
 	ofBuffer(){
 		size 	= 0;
 		buffer 	= NULL;
+		nextLinePos = 0;
 	}
 
 	ofBuffer(int _size, char * _buffer){
 		size 	= _size;
 		buffer 	= _buffer;
+		nextLinePos = 0;
 	}
 
 	ofBuffer(const ofBuffer & mom){
 		size = mom.size;
+		nextLinePos = mom.nextLinePos;
 		memcpy(buffer,mom.buffer,size);
 	}
 
@@ -333,9 +337,10 @@ public:
 		if(buffer) delete[] buffer;
 	}
 
-	void allocate(long size){
+	void allocate(long _size){
 		if(buffer) delete[] buffer;
-		buffer = new char[size];
+		buffer = new char[_size];
+		size = _size;
 	}
 
 	char * getBuffer(){
@@ -346,6 +351,13 @@ public:
 		return size;
 	}
 
+	string getNextLine(){
+		long currentLinePos = nextLinePos;
+		while(nextLinePos<size && buffer[nextLinePos]!='\n') nextLinePos++;
+		string line(buffer + currentLinePos,nextLinePos-currentLinePos);
+		if(nextLinePos<size-1) nextLinePos++;
+		return line;
+	}
 };
 
 
