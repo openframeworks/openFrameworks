@@ -1,7 +1,7 @@
 #include "ofVideoPlayer.h"
 #include "ofUtils.h"
 
-#ifdef TARGET_LINUX
+#ifdef OF_VIDEO_PLAYER_GSTREAMER
 	#include <gst/video/video.h>
 #endif
 
@@ -132,8 +132,8 @@ ofVideoPlayer::ofVideoPlayer (){
 	bStarted					= false;
 	pixels						= NULL;
 	nFrames						= 0;
-	bPaused						= false;
-
+	bPaused						= true;
+	currentLoopState			= OF_LOOP_NORMAL;
 
 
 	//--------------------------------------------------------------
@@ -192,7 +192,7 @@ void ofVideoPlayer::idleMovie(){
 	if (bLoaded == true){
 
 		//--------------------------------------------------------------
-		#ifndef TARGET_LINUX  // !linux = quicktime...
+		#ifdef OF_VIDEO_PLAYER_QUICKTIME
 		//--------------------------------------------------------------
 
 			#if defined(TARGET_WIN32) || defined(QT_USE_MOVIETASK)
@@ -200,7 +200,7 @@ void ofVideoPlayer::idleMovie(){
 			#endif
 
 		//--------------------------------------------------------------
-		#else // linux.
+		#else // gstreamer.
 		//--------------------------------------------------------------
 
 			gstUtils.update();
@@ -260,6 +260,13 @@ void ofVideoPlayer::closeMovie(){
 	#endif
     //--------------------------------------
 
+	if(bLoaded){
+		tex.clear();
+		if(pixels){
+			delete[] pixels;
+			pixels = NULL;
+		}
+	}
     bLoaded = false;
 
 }
@@ -441,6 +448,8 @@ bool ofVideoPlayer::loadMovie(string name){
 				tex.allocate(gstUtils.getWidth(),gstUtils.getHeight(),GL_RGB,false);
 				tex.loadData(gstUtils.getPixels(), gstUtils.getWidth(), gstUtils.getHeight(), GL_RGB);
 			}
+			height=gstUtils.getHeight();
+			width=gstUtils.getWidth();
 			bLoaded = true;
 			allocated = true;
 			ofLog(OF_LOG_VERBOSE,"ofVideoPlayer: movie loaded");
@@ -479,7 +488,7 @@ void ofVideoPlayer::start(){
 
 		PrerollMovie(moviePtr, timeNow, X2Fix(speed));
 		SetMovieRate(moviePtr,  X2Fix(speed));
-		setLoopState(OF_LOOP_NORMAL);
+		setLoopState(currentLoopState);
 
 		// get some pixels in there right away:
 		MoviesTask(moviePtr,0);
@@ -502,7 +511,13 @@ void ofVideoPlayer::start(){
 
 //--------------------------------------------------------
 void ofVideoPlayer::play(){
+	if( !isLoaded() ){
+		ofLog(OF_LOG_ERROR, "ofVideoPlayer::play - movie not loaded!");
+		return;
+	}
 
+	bPlaying = true;
+	bPaused = false;
 	//--------------------------------------
 	#ifdef OF_VIDEO_PLAYER_QUICKTIME
 	//--------------------------------------
@@ -512,14 +527,13 @@ void ofVideoPlayer::play(){
 	}else {
 		// ------------ lower level "startMovie"
 		// ------------ use desired speed & time (-1,1,etc) to Preroll...
-		bPlaying = true;
 		TimeValue timeNow;
 	   	timeNow = GetMovieTime(moviePtr, nil);
 		PrerollMovie(moviePtr, timeNow, X2Fix(speed));
 		SetMovieRate(moviePtr,  X2Fix(speed));
 		MoviesTask(moviePtr, 0);
 	}
-
+	
 	//--------------------------------------
 	#else
 	//--------------------------------------
@@ -528,13 +542,18 @@ void ofVideoPlayer::play(){
 	#endif
 	//--------------------------------------
 
-
+	//this is if we set the speed first but it only can be set when we are playing.
+	setSpeed(speed);
 
 }
 
 //--------------------------------------------------------
 void ofVideoPlayer::stop(){
-
+	if( !isLoaded() ){
+		ofLog(OF_LOG_ERROR, "ofVideoPlayer: movie not loaded!");
+		return;
+	}
+	
 	//--------------------------------------
 	#ifdef OF_VIDEO_PLAYER_QUICKTIME
 	//--------------------------------------
@@ -542,7 +561,6 @@ void ofVideoPlayer::stop(){
 	StopMovie (moviePtr);
 	SetMovieActive (moviePtr, false);
 	bStarted = false;
-
 	//--------------------------------------
 	#else
 	//--------------------------------------
@@ -552,11 +570,18 @@ void ofVideoPlayer::stop(){
 	//--------------------------------------
 	#endif
 	//--------------------------------------
+
+
+	bPlaying = false;
 }
 
 //--------------------------------------------------------
 void ofVideoPlayer::setVolume(int volume){
-
+	if( !isLoaded() ){
+		ofLog(OF_LOG_ERROR, "ofVideoPlayer: movie not loaded!");
+		return;
+	}
+	
 	//--------------------------------------
 	#ifdef OF_VIDEO_PLAYER_QUICKTIME
 	//--------------------------------------
@@ -577,37 +602,41 @@ void ofVideoPlayer::setVolume(int volume){
 
 //--------------------------------------------------------
 void ofVideoPlayer::setLoopState(int state){
-
+	
 	//--------------------------------------
 	#ifdef OF_VIDEO_PLAYER_QUICKTIME
 	//--------------------------------------
+		
+		if( isLoaded() ){
 
-		TimeBase myTimeBase;
-		long myFlags = 0L;
-		myTimeBase = GetMovieTimeBase(moviePtr);
-		myFlags = GetTimeBaseFlags(myTimeBase);
-		switch (state) {
-			case OF_LOOP_NORMAL:
-				myFlags |= loopTimeBase;
-				myFlags &= ~palindromeLoopTimeBase;
-				SetMoviePlayHints(moviePtr, hintsLoop, hintsLoop);
-				SetMoviePlayHints(moviePtr, 0L, hintsPalindrome);
-				break;
-			case OF_LOOP_PALINDROME:
-				myFlags |= loopTimeBase;
-				myFlags |= palindromeLoopTimeBase;
-				SetMoviePlayHints(moviePtr, hintsLoop, hintsLoop);
-				SetMoviePlayHints(moviePtr, hintsPalindrome, hintsPalindrome);
-				break;
-			case OF_LOOP_NONE:
-				default:
-				myFlags &= ~loopTimeBase;
-				myFlags &= ~palindromeLoopTimeBase;
-				SetMoviePlayHints(moviePtr, 0L, hintsLoop |
-				hintsPalindrome);
-				break;
+			TimeBase myTimeBase;
+			long myFlags = 0L;
+			myTimeBase = GetMovieTimeBase(moviePtr);
+			myFlags = GetTimeBaseFlags(myTimeBase);
+			switch (state) {
+				case OF_LOOP_NORMAL:
+					myFlags |= loopTimeBase;
+					myFlags &= ~palindromeLoopTimeBase;
+					SetMoviePlayHints(moviePtr, hintsLoop, hintsLoop);
+					SetMoviePlayHints(moviePtr, 0L, hintsPalindrome);
+					break;
+				case OF_LOOP_PALINDROME:
+					myFlags |= loopTimeBase;
+					myFlags |= palindromeLoopTimeBase;
+					SetMoviePlayHints(moviePtr, hintsLoop, hintsLoop);
+					SetMoviePlayHints(moviePtr, hintsPalindrome, hintsPalindrome);
+					break;
+				case OF_LOOP_NONE:
+					default:
+					myFlags &= ~loopTimeBase;
+					myFlags &= ~palindromeLoopTimeBase;
+					SetMoviePlayHints(moviePtr, 0L, hintsLoop |
+					hintsPalindrome);
+					break;
+			}
+			SetTimeBaseFlags(myTimeBase, myFlags);
+			
 		}
-		SetTimeBaseFlags(myTimeBase, myFlags);
 
 	//--------------------------------------
 	#else
@@ -619,12 +648,18 @@ void ofVideoPlayer::setLoopState(int state){
 	#endif
 	//--------------------------------------
 
+	//store the current loop state;
+	currentLoopState = state;
+
 }
 
 
 //---------------------------------------------------------------------------
 void ofVideoPlayer::setPosition(float pct){
-
+	if( !isLoaded() ){
+		ofLog(OF_LOG_ERROR, "ofVideoPlayer: movie not loaded!");
+		return;
+	}
 
  	//--------------------------------------
 	#ifdef OF_VIDEO_PLAYER_QUICKTIME
@@ -652,7 +687,11 @@ void ofVideoPlayer::setPosition(float pct){
 
 //---------------------------------------------------------------------------
 void ofVideoPlayer::setFrame(int frame){
-
+	if( !isLoaded() ){
+		ofLog(OF_LOG_ERROR, "ofVideoPlayer: movie not loaded!");
+		return;
+	}
+	
 	//--------------------------------------
 	#ifdef OF_VIDEO_PLAYER_QUICKTIME
 	//--------------------------------------
@@ -698,7 +737,11 @@ void ofVideoPlayer::setFrame(int frame){
 
 //---------------------------------------------------------------------------
 float ofVideoPlayer::getDuration(){
-
+	if( !isLoaded() ){
+		ofLog(OF_LOG_ERROR, "ofVideoPlayer: movie not loaded!");
+		return 0.0;
+	}
+	
 	//--------------------------------------
 	#ifdef OF_VIDEO_PLAYER_QUICKTIME
 	//--------------------------------------
@@ -719,7 +762,11 @@ float ofVideoPlayer::getDuration(){
 
 //---------------------------------------------------------------------------
 float ofVideoPlayer::getPosition(){
-
+	if( !isLoaded() ){
+		ofLog(OF_LOG_ERROR, "ofVideoPlayer: movie not loaded!");
+		return 0.0;
+	}
+	
 	//--------------------------------------
 	#ifdef OF_VIDEO_PLAYER_QUICKTIME
 	//--------------------------------------
@@ -744,6 +791,11 @@ float ofVideoPlayer::getPosition(){
 
 //---------------------------------------------------------------------------
 int ofVideoPlayer::getCurrentFrame(){
+	if( !isLoaded() ){
+		ofLog(OF_LOG_ERROR, "ofVideoPlayer: movie not loaded!");
+		return 0;
+	}
+	
 	//--------------------------------------
 	#ifdef OF_VIDEO_PLAYER_QUICKTIME
 	//--------------------------------------
@@ -751,7 +803,6 @@ int ofVideoPlayer::getCurrentFrame(){
 
 	// zach I think this may fail on variable length frames...
 	float pos = getPosition();
-
 
 	float  framePosInFloat = ((float)getTotalNumFrames() * pos);
 	int    framePosInInt = (int)framePosInFloat;
@@ -776,7 +827,11 @@ int ofVideoPlayer::getCurrentFrame(){
 
 //---------------------------------------------------------------------------
 bool ofVideoPlayer::getIsMovieDone(){
-
+	if( !isLoaded() ){
+		ofLog(OF_LOG_ERROR, "ofVideoPlayer: movie not loaded!");
+		return false;
+	}
+	
 	//--------------------------------------
 	#ifdef OF_VIDEO_PLAYER_QUICKTIME
 	//--------------------------------------
@@ -794,6 +849,11 @@ bool ofVideoPlayer::getIsMovieDone(){
 
 //---------------------------------------------------------------------------
 void ofVideoPlayer::firstFrame(){
+	if( !isLoaded() ){
+		ofLog(OF_LOG_ERROR, "ofVideoPlayer: movie not loaded!");
+		return;
+	}
+	
 	//--------------------------------------
 	#ifdef OF_VIDEO_PLAYER_QUICKTIME
 	//--------------------------------------
@@ -810,6 +870,11 @@ void ofVideoPlayer::firstFrame(){
 
 //---------------------------------------------------------------------------
 void ofVideoPlayer::nextFrame(){
+	if( !isLoaded() ){
+		ofLog(OF_LOG_ERROR, "ofVideoPlayer: movie not loaded!");
+		return;
+	}
+	
 	//--------------------------------------
 	#ifdef OF_VIDEO_PLAYER_QUICKTIME
 	//--------------------------------------
@@ -825,6 +890,11 @@ void ofVideoPlayer::nextFrame(){
 
 //---------------------------------------------------------------------------
 void ofVideoPlayer::previousFrame(){
+	if( !isLoaded() ){
+		ofLog(OF_LOG_ERROR, "ofVideoPlayer: movie not loaded!");
+		return;
+	}
+	
 	//--------------------------------------
 	#ifdef OF_VIDEO_PLAYER_QUICKTIME
 	//--------------------------------------
@@ -979,4 +1049,16 @@ float ofVideoPlayer::getWidth(){
 	#endif
 	//--------------------------------------
 
+}
+
+bool ofVideoPlayer::isPaused(){
+	return bPaused;
+}
+
+bool ofVideoPlayer::isLoaded(){
+	return bLoaded;
+}
+
+bool ofVideoPlayer::isPlaying(){
+	return bPlaying;
 }

@@ -180,8 +180,8 @@
 				<lib name="libudev" />
 				<lib name="gstreamer-app-0.10" />
 				<lib name="libavcodec"/>
-				<lib name="libformat"/>
-				<lib name="libutil"/>
+				<lib name="libavformat"/>
+				<lib name="libavutil"/>
 			</lib_finder>
 			<code_completion />
 			<envvars />

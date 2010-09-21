@@ -320,6 +320,9 @@ static const unsigned char* bmpChar_8x13_Map[] = {	bmpChar_8x13_000,bmpChar_8x13
 													bmpChar_8x13_240,bmpChar_8x13_241,bmpChar_8x13_242,bmpChar_8x13_243,bmpChar_8x13_244,bmpChar_8x13_245,bmpChar_8x13_246,bmpChar_8x13_247,bmpChar_8x13_248,bmpChar_8x13_249,bmpChar_8x13_250,bmpChar_8x13_251,bmpChar_8x13_252,bmpChar_8x13_253,bmpChar_8x13_254,bmpChar_8x13_255,NULL};
 
 
+
+
+#ifndef TARGET_OPENGLES	
 //---------------------------------------------------------------------
 void  ofDrawBitmapCharacter(int character ){
 
@@ -334,4 +337,100 @@ void  ofDrawBitmapCharacter(int character ){
     
 }
 //---------------------------------------------------------------------
+
+#else
+
+static bool		bBitmapTexturePrepared = false;
+ofTexture		glesBitmappedFontTexture;
+unsigned char	myLetterPixels[16*16 * 16*16 * 2];			// letter size:8x14pixels, texture size:16x8letters, gl_luminance_alpha: 2bytes/1pixel
+
+//---------------------------------------------------------------------
+void  ofDrawBitmapCharacter(int character , int x , int y){
+
+   
+	if (!bBitmapTexturePrepared){
+		
+		glesBitmappedFontTexture.allocate(16*16, 16*16, GL_LUMINANCE_ALPHA, false);
+		bBitmapTexturePrepared = true;
+		
+		for (int i = 0; i < 256; i++) {
+			
+			const unsigned char * face = bmpChar_8x13_Map[i];
+			
+			for (int j = 1; j < 15; j++){
+				for (int k = 0; k < 8; k++){
+					if ( ((face[15-j] << k) & (128)) > 0 ){
+						myLetterPixels[(((int)(i/16))*16*16*16+(i%16)*16 + (j-1)*16*16 + k)*2] = 255;
+						myLetterPixels[(((int)(i/16))*16*16*16+(i%16)*16 + (j-1)*16*16 + k)*2+1] = 255;
+					}else{
+						myLetterPixels[(((int)(i/16))*16*16*16+(i%16)*16 + (j-1)*16*16 + k)*2] = 0;
+						myLetterPixels[(((int)(i/16))*16*16*16+(i%16)*16 + (j-1)*16*16 + k)*2+1] = 0;
+					}
+				}
+			}
+		}
+		
+		glesBitmappedFontTexture.loadData(myLetterPixels, 16*16, 16*16, GL_LUMINANCE_ALPHA);
+		
+	}
+	
+	// can I upload data into the texture....
+	
+	if (character < 128) {
+		
+		glesBitmappedFontTexture.bind();
+		
+		float widthTex = 8.0f/256.0f;
+		float heightTex = 14.0f/256.0f;
+		float posTexW = (float)(character % 16)/16.0f;
+		float posTexH = ((int)(character / 16.0f))/16.0f;
+		
+		GLfloat tex_coords[] = {
+			posTexW,posTexH,
+			posTexW,posTexH+heightTex,
+			posTexW+widthTex,posTexH+heightTex,
+			posTexW+widthTex,posTexH
+		};
+		GLfloat verts[] = {
+			x,y,
+			x,y+14,
+			x+8,y+14,
+			x+8,y
+		};
+		
+		glEnableClientState( GL_TEXTURE_COORD_ARRAY );
+		glTexCoordPointer(2, GL_FLOAT, 0, tex_coords );
+		glEnableClientState(GL_VERTEX_ARRAY);		
+		glVertexPointer(2, GL_FLOAT, 0, verts );
+		glDrawArrays( GL_TRIANGLE_FAN, 0, 4 );
+		glDisableClientState( GL_TEXTURE_COORD_ARRAY );
+		
+		
+		glesBitmappedFontTexture.unbind();
+		/*
+		 if( !blend_enabled )
+		 glDisable(GL_BLEND);
+		 if( !texture_2d_enabled )
+		 glDisable(GL_TEXTURE_2D);
+		 glBlendFunc( blend_src, blend_dst );
+		 
+		 
+		 GLboolean blend_enabled = glIsEnabled(GL_BLEND);
+		 GLboolean texture_2d_enabled = glIsEnabled(GL_TEXTURE_2D);
+		 GLint blend_src, blend_dst;
+		 glGetIntegerv( GL_BLEND_SRC, &blend_src );
+		 glGetIntegerv( GL_BLEND_DST, &blend_dst );
+		 
+		 */
+		
+		/*
+		// for debugging
+		if (character == 'c'){
+			glesBitmappedFontTexture.draw(50,200);
+		}*/
+	}	
+    
+}
+
+#endif
 

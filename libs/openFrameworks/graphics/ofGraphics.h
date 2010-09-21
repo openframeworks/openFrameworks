@@ -19,6 +19,24 @@ bool ofGetUsingArbTex();
 void ofEnableArbTex();
 void ofDisableArbTex();
 
+
+bool ofGetUsingNormalizedTexCoords();
+void ofEnableNormalizedTexCoords();
+void ofDisableNormalizedTexCoords();
+
+
+//***** add global functions to override texture settings
+void ofSetTextureWrap(GLfloat wrapS = GL_CLAMP_TO_EDGE, GLfloat wrapT = GL_CLAMP_TO_EDGE);
+bool ofGetUsingCustomTextureWrap();
+void ofRestoreTextureWrap();
+
+void ofSetMinMagFilters(GLfloat minFilter = GL_LINEAR, GLfloat maxFilter = GL_LINEAR);
+bool ofGetUsingCustomMinMagFilters();
+void ofRestoreMinMagFilters();
+//*****
+
+
+
 // OF's access to settings (bgAuto, origin, corner mode):
 bool 	ofbClearBg();
 int 	ofGetRectMode();				// default is OF_RECTMODE_CORNER

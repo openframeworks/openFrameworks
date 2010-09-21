@@ -1,0 +1,27 @@
+<install>
+
+	<version>0.4</version>
+	<author>Mehmet Akten</author>
+	<url>code.google.com/p/ofxmsaof/</url>
+
+	<requires>
+	</requires>
+
+	<add>	
+		<src>
+			<folder name="addons/ofxAccelerometer/src">			
+				<file>../../../addons/ofxAccelerometer/src/ofxAccelerometer.h</file>
+				<file>../../../addons/ofxAccelerometer/src/ofxAccelerometer.cpp</file>
+			</folder>
+		</src>
+
+		<include>
+			<path>../../../addons/ofxAccelerometer/src</path>
+		</include>
+		
+		<link>
+		</link>
+
+	</add>
+	
+</install>

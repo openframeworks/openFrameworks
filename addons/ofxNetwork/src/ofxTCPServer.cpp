@@ -5,11 +5,9 @@
 ofxTCPServer::ofxTCPServer(){
 	verbose		= true;
 	connected	= false;
-	count		= 0;
+	idCount		= 0;
 	port		= 0;
 	str			= "";
-
-	TCPConnections = new ofxTCPClient[TCP_MAX_CLIENTS];
 }
 
 //--------------------------
@@ -46,9 +44,11 @@ bool ofxTCPServer::close(){
 
 	if(!connected) return true;
 
-	for(int i = 0; i < count; i++){
-		TCPConnections[i].close();
+	map<int,ofxTCPClient>::iterator it;
+	for(it=TCPConnections.begin(); it!=TCPConnections.end(); it++){
+		it->second.close();
 	}
+	TCPConnections.clear();
 
 	stopThread(); //stop the thread
 
@@ -68,6 +68,7 @@ bool ofxTCPServer::disconnectClient(int clientID){
 		return false;
 	}
 	else if(TCPConnections[clientID].close()){
+		TCPConnections.erase(clientID);
 		return true;
 	}
 	return false;
@@ -87,10 +88,11 @@ bool ofxTCPServer::send(int clientID, string message){
 
 //--------------------------
 bool ofxTCPServer::sendToAll(string message){
-	if(count == 0) return false;
+	if(TCPConnections.size() == 0) return false;
 
-	for(int i = 0; i < count; i++){
-		if(TCPConnections[i].isConnected())TCPConnections[i].send(message);
+	map<int,ofxTCPClient>::iterator it;
+	for(it=TCPConnections.begin(); it!=TCPConnections.end(); it++){
+		if(it->second.isConnected())it->second.send(message);
 	}
 	return true;
 }
@@ -118,10 +120,11 @@ bool ofxTCPServer::sendRawBytes(int clientID, const char * rawBytes, const int n
 
 //--------------------------
 bool ofxTCPServer::sendRawBytesToAll(const char * rawBytes, const int numBytes){
-	if(count == 0 || numBytes <= 0) return false;
+	if(TCPConnections.size() == 0 || numBytes <= 0) return false;
 
-	for(int i = 0; i < count; i++){
-		if(TCPConnections[i].isConnected())TCPConnections[i].sendRawBytes(rawBytes, numBytes);
+	map<int,ofxTCPClient>::iterator it;
+	for(it=TCPConnections.begin(); it!=TCPConnections.end(); it++){
+		if(it->second.isConnected())it->second.sendRawBytes(rawBytes, numBytes);
 	}
 	return true;
 }
@@ -166,7 +169,7 @@ string ofxTCPServer::getClientIP(int clientID){
 
 //--------------------------
 int ofxTCPServer::getNumClients(){
-	return count;
+	return TCPConnections.size();
 }
 
 //--------------------------
@@ -181,7 +184,7 @@ bool ofxTCPServer::isConnected(){
 
 //--------------------------
 bool ofxTCPServer::isClientSetup(int clientID){
-	return (clientID < count && clientID < TCP_MAX_CLIENTS);
+	return TCPConnections.find(clientID)!=TCPConnections.end();
 }
 
 //--------------------------
@@ -195,7 +198,7 @@ void ofxTCPServer::threadedFunction(){
 
 	while( isThreadRunning() ){
 
-		if(count == TCP_MAX_CLIENTS){
+		if(TCPConnections.size() == TCP_MAX_CLIENTS){
 			if(verbose)printf("ofxTCPServer: reached max connected clients! \nofxTCPServer: no more connections accepted\n");
 			break;
 		}
@@ -204,13 +207,14 @@ void ofxTCPServer::threadedFunction(){
 			if(verbose)printf("ofxTCPServer: Listen() failed\n");
 		}
 
-		if( !TCPServer.Accept(TCPConnections[count].TCPClient) ){
+
+		if( !TCPServer.Accept(TCPConnections[idCount].TCPClient) ){
 			if(verbose)printf("ofxTCPServer: Accept() failed\n");
 			continue;
 		}else{
-			TCPConnections[count].setup(count, bClientBlocking);
-			count++;
-			if(verbose)printf("ofxTCPServer: client %i connected on port %i\n", count, TCPConnections[count].getPort());
+			TCPConnections[idCount].setup(idCount, bClientBlocking);
+			if(verbose)printf("ofxTCPServer: client %i connected on port %i\n", idCount, TCPConnections[idCount].getPort());
+			idCount++;
 		}
 	}
 	if(verbose)printf("ofxTCPServer: listen thread ended\n");

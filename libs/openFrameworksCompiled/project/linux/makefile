@@ -46,7 +46,7 @@ endif
 NODEPS = clean
 SOURCE_DIRS = $(shell find ../../../openFrameworks -maxdepth 1 -mindepth 1 -type d )
 SOURCES = $(shell find $(SOURCE_DIRS) -name "*.cpp")
-OBJFILES = $(patsubst %.cpp,%.o,$(SOURCES))
+OBJFILES = $(patsubst ../../../%.cpp,%.o,$(SOURCES))
 APPNAME = $(shell basename `pwd`)
 CORE_INCLUDES = $(shell find ../../../openFrameworks/ -type d)
 CORE_INCLUDE_FLAGS = $(addprefix -I,$(CORE_INCLUDES))
@@ -77,6 +77,15 @@ ifeq ($(findstring Release,$(MAKECMDGOALS)),Release)
 	CLEANTARGET = CleanRelease
 endif
 
+ifeq ($(findstring all,$(MAKECMDGOALS)),all)
+        TARGET_CFLAGS = $(COMPILER_OPTIMIZATION)
+        OBJ_OUTPUT = obj/Release/
+        SED_OUTPUT = obj\\/Release\\/
+        TARGET_NAME = Release
+        TARGET = ../../lib/$(LIBSPATH)/libopenFrameworks.a
+        CLEANTARGET = CleanRelease
+endif
+
 ifeq ($(MAKECMDGOALS),)
 	TARGET_CFLAGS = $(COMPILER_OPTIMIZATION)
 	OBJ_OUTPUT = obj/Release/
@@ -89,14 +98,16 @@ ifeq ($(MAKECMDGOALS),clean)
 	TARGET = ../../lib/$(LIBSPATH)/libopenFrameworks.a ../../lib/$(LIBSPATH)/libopenFrameworksDebug.a
 endif
 
-DEPFILES = $(addprefix $(OBJ_OUTPUT),$(patsubst %.cpp,%.d,$(SOURCES)))
+DEPFILES = $(addprefix $(OBJ_OUTPUT),$(patsubst ../../../%.cpp,%.d,$(SOURCES)))
 OBJS = $(addprefix $(OBJ_OUTPUT), $(OBJFILES))
 
-.PHONY: Debug Release after
+.PHONY: Debug Release all after
 	
 Release: $(TARGET) 
 
 Debug: $(TARGET) 
+
+all: $(TARGET)
 
 
 
@@ -108,15 +119,14 @@ Debug: $(TARGET)
 $(DEPFILES): $(SOURCES)
 	echo "creating dependencies"
 	mkdir -p $(@D)
-	$(CXX) $(TARGET_CFLAGS) $(CFLAGS) $(USER_CFLAGS) -MM -MT $@ `echo $@ | sed "s/$(SED_OUTPUT)//" | sed "s/\.d/\.cpp/"` > $@
+	$(CXX) $(TARGET_CFLAGS) $(CFLAGS) $(USER_CFLAGS) -MM -MT $@ $(patsubst $(OBJ_OUTPUT)%.d,../../../%.cpp,$@) > $@
 	
 
 #This rule does the compilation
 $(OBJS): $(SOURCES) $(DEPFILES)
 	echo "compiling objects"
-	echo $@ | sed "s/$(SED_OUTPUT)//" | sed "s/\.o/\.cpp/"
 	mkdir -p $(@D)
-	$(CXX) $(TARGET_CFLAGS) $(CFLAGS) $(USER_CFLAGS) -MMD -MP -MF `echo $@ | sed "s/$(SED_OUTPUT)//" | sed "s/\.o/\.d/"` -o $@ -c `echo $@ | sed "s/$(SED_OUTPUT)//" | sed "s/\.o/\.cpp/"`
+	$(CXX) $(TARGET_CFLAGS) $(CFLAGS) $(USER_CFLAGS) -MMD -MP -MF $(patsubst %.o,%.d,$@) -o $@ -c $(patsubst $(OBJ_OUTPUT)%.o,../../../%.cpp,$@)
 
 $(TARGET) : $(OBJS) 
 	echo "creating " $(TARGET)
