@@ -132,7 +132,7 @@ function deleteProjectFiles {
         deleteXcode
         deleteVS2008
         deleteVS2010
-	    deleteAndroid
+	    deleteEclipse
         
     fi
 
@@ -143,7 +143,7 @@ function deleteProjectFiles {
         deleteMakefiles
         deleteVS2008
         deleteVS2010
-	    deleteAndroid
+	    deleteEclipse
     fi
 
     #visual studio 2010
@@ -160,7 +160,7 @@ function deleteProjectFiles {
         deleteCodeblocks
         deleteMakefiles
         deleteXcode
-	    deleteAndroid
+	    deleteEclipse
     fi
 
 
@@ -177,7 +177,7 @@ function deleteProjectFiles {
         deleteCodeblocks
         deleteMakefiles
         deleteXcode
-	    deleteAndroid	
+	    deleteEclipse	
     fi
 
     #android
