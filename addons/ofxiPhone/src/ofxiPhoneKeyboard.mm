@@ -128,6 +128,20 @@ void ofxiPhoneKeyboard::openKeyboard()
 	[keyboard openKeyboard];
 }
 
+void ofxiPhoneKeyboard::closeKeyboard()
+{
+	[keyboard closeKeyboard];
+}
+
+void ofxiPhoneKeyboard::toggleKeyboard()
+{
+	if (isKeyboardShowing()) {
+        closeKeyboard();
+    } else{
+        openKeyboard();
+    }
+}
+
 bool ofxiPhoneKeyboard::isKeyboardShowing()
 {
 	return [keyboard isKeyboardShowing];
@@ -377,6 +391,12 @@ void ofxiPhoneKeyboard::updateOrientation()
 - (void) openKeyboard
 {
 	[_textField becomeFirstResponder];
+}
+
+//--------------------------------------------------------------
+- (void) closeKeyboard
+{
+	[_textField resignFirstResponder];
 }
 //--------------------------------------------------------------
 @end
