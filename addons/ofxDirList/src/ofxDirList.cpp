@@ -130,7 +130,6 @@ int ofxDirList::listDir(string directory){
                 }
 			}
 		}
-
 		if(skip) continue;
 
 		//finally we store the result
@@ -139,6 +138,7 @@ int ofxDirList::listDir(string directory){
 
 		ofLog(OF_LOG_VERBOSE, "ofxDirList - listing %s ", nameArray.back().c_str());
 	}
+	if(dir != NULL) closedir(dir);
 
 	ofLog(OF_LOG_VERBOSE, "ofxDirList - listed %i files in %s", nameArray.size(), directory.c_str());
 	return nameArray.size();
