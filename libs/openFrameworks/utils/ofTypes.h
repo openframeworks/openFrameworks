@@ -359,6 +359,11 @@ public:
 		if(nextLinePos<size-1) nextLinePos++;
 		return line;
 	}
+
+	string getFirstLine(){
+		nextLinePos = 0;
+		return getNextLine();
+	}
 };
 
 
