@@ -314,21 +314,26 @@ void ofxCvImage::draw( float x, float y ) {
 }
 
 //--------------------------------------------------------------------------------
+void ofxCvImage::updateTexture(){
+	if( bUseTexture ) {
+		if( bTextureDirty ) {
+			if(tex.getWidth() != width || tex.getHeight() != height) {
+				//ROI was changed
+				// reallocating texture - this could be faster with ROI support
+				tex.clear();
+				tex.allocate( width, height, glchannels );
+			}
+			tex.loadData( getPixels(), width, height, glchannels );
+			bTextureDirty = false;
+		}
+	}
+}
+
+//--------------------------------------------------------------------------------
 void ofxCvImage::draw( float x, float y, float w, float h ) {
     if( bUseTexture ) {
-        if( bTextureDirty ) {
-            if(tex.getWidth() != width || tex.getHeight() != height) {
-                //ROI was changed
-                // reallocating texture - this could be faster with ROI support
-                tex.clear();
-                tex.allocate( width, height, glchannels );
-            }
-            tex.loadData( getPixels(), width, height, glchannels );
-            bTextureDirty = false;
-        }
-
+    	updateTexture();
         tex.draw(x,y, w,h);
-
     } else {
         #ifdef TARGET_OPENGLES
             ofLog(OF_LOG_ERROR, "texture-less drawing not supported in OpenGL ES");
