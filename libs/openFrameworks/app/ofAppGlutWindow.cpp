@@ -376,6 +376,7 @@ void ofAppGlutWindow::disableSetupScreen(){
 
 //------------------------------------------------------------
 bool ofAppGlutWindow::isMousePressed(int button){
+	if(button==-1) return pressedMouseButtons.size();
 	return pressedMouseButtons.find(button)!=pressedMouseButtons.end();
 }
 
