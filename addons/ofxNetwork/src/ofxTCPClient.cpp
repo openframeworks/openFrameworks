@@ -206,7 +206,11 @@ string ofxTCPClient::receiveRaw(){
 	messageSize = TCPClient.Receive(tmpBuff, TCP_MAX_MSG_SIZE);
 	if(messageSize==0){
 		close();
-	}
+	}else if(messageSize<TCP_MAX_MSG_SIZE) {
+        // null terminate!!
+        tmpBuff[messageSize] = 0;
+    }
+
 	return tmpBuff;
 }
 
