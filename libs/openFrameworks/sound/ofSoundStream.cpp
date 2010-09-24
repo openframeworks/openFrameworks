@@ -2,8 +2,8 @@
 #include "RtAudio.h"
 
 //----------------------------------- static variables:
-static ofBaseApp 	* 		OFSAptr;
-RtAudio				*		audio;
+static ofBaseApp 	* 		OFSAptr = NULL;
+RtAudio				*		audio = NULL;
 int 						nInputChannels;
 int 						nOutputChannels;
 ofAudioEventArgs 			audioEventArgs;
@@ -138,6 +138,7 @@ void ofSoundStreamStart(){
 
 //---------------------------------------------------------
 void ofSoundStreamClose(){
+	if(!audio) return;
 	try {
     	audio->stopStream();
     	audio->closeStream();
