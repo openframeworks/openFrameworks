@@ -302,7 +302,7 @@ function createPackage {
     fi
     
     cd ${pkg_ofroot}/addons
-    for lib in $( ls */libs/*/lib/  -d )
+    for lib in $( ls -d */libs/*/lib/ )
     do
         cd ${lib}
         echo $PWD
@@ -320,12 +320,12 @@ function createPackage {
 	cd ${pkg_ofroot}/libs
 	#delete specific include folders non-android
 	if [ "$pkg_platform" != "android" ]; then
-		rm -Rf $( ls */include_android  -d )
+		rm -Rf $( ls -d */include_android )
 	fi
 
 	#delete specific include folders for non-iphone
 	if [ "$pkg_platform" != "iphone" ]; then
-		rm -Rf $( ls */include_iphone  -d )
+		rm -Rf $( ls -d */include_iphone )
 	fi
 
 	#delete generic includes for libs that has specific ones in android
