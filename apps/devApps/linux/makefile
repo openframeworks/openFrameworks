@@ -176,24 +176,20 @@ clean:
 	rm -Rf obj
 	rm -f -v $(TARGET)
 	rm -Rf -v bin/libs
-	rm -f -v bin/clickToLaunchApp*
 	
 $(CLEANTARGET):
 	rm -Rf -v $(OBJ_OUTPUT)
 	rm -f -v $(TARGET)
-	rm -f -v bin/clickToLaunchApp_$(TARGET_NAME).sh
 
 
 after:
 	cp -r ../../../export/$(LIBSPATH)/libs bin/
-	cp ../../../export/$(LIBSPATH)/clickToLaunchApp.sh bin/clickToLaunchApp_$(TARGET_NAME).sh
-	sed -i s/applicationName/$(APPNAME)/g  bin/clickToLaunchApp_$(TARGET_NAME).sh
 	@echo
 	@echo "     compiling done"
 	@echo "     to launch the application"	
 	@echo
 	@echo "     cd bin"
-	@echo "     ./clickToLaunchApp_$(TARGET_NAME).sh"
+	@echo "     ./$(TARGET_NAME)"
 	@echo
     
 
