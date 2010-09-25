@@ -30,6 +30,9 @@ ofTexture::ofTexture(){
 	texData.tex_t			= 0;
 	texData.tex_u			= 0;
 
+	//Sosolimited
+	texData.compressionType = OF_COMPRESS_NONE;
+
 	resetAnchor();
 }
 
@@ -68,8 +71,8 @@ void ofTexture::clear(){
 	// http://www.opengl.org/documentation/specs/man_pages/hardcopy/GL/html/gl/deletetextures.html
 	if (texData.textureID != 0){
 		glDeleteTextures(1, (GLuint *)&texData.textureID);
+		texData.textureID  = 0;
 	}
-
 	texData.bAllocated = false;
 }
 
@@ -176,6 +179,8 @@ void ofTexture::loadData(float * data, int w, int h, int glDataType){
 //----------------------------------------------------------
 void ofTexture::loadData(void * data, int w, int h, int glDataType){
 
+	//SOSOLIMITED: image load step 5 - sets tex.glType to match 
+
 	//	can we allow for uploads bigger then texture and
 	//	just take as much as the texture can?
 	//
@@ -196,7 +201,7 @@ void ofTexture::loadData(void * data, int w, int h, int glDataType){
 	texData.glType  = glDataType;
 
 	//compute new tex co-ords based on the ratio of data's w, h to texture w,h;
-	#ifndef TARGET_OF_IPHONE	
+	#ifndef TARGET_OPENGLES	
 		if (texData.textureTarget == GL_TEXTURE_RECTANGLE_ARB){
 			texData.tex_t = w;
 			texData.tex_u = h;
@@ -206,7 +211,7 @@ void ofTexture::loadData(void * data, int w, int h, int glDataType){
 		texData.tex_t = (float)(w) / (float)texData.tex_w;
 		texData.tex_u = (float)(h) / (float)texData.tex_h;
 	}
-
+	
 
 	// 	ok this is an ultra annoying bug :
 	// 	opengl texels and linear filtering -
@@ -234,11 +239,91 @@ void ofTexture::loadData(void * data, int w, int h, int glDataType){
 	glGetIntegerv(GL_UNPACK_ALIGNMENT, &prevAlignment);
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
-	// update the texture image:
-	glEnable(texData.textureTarget);
+	
+	//Sosolimited: texture compression
+	if (texData.compressionType == OF_COMPRESS_NONE)
+	{
+		//STANDARD openFrameworks: no compression
+
+		//update the texture image: 
+		glEnable(texData.textureTarget);
 		glBindTexture(texData.textureTarget, (GLuint)texData.textureID);
  		glTexSubImage2D(texData.textureTarget, 0, 0, 0, w, h, texData.glType, texData.pixelType, data); // MEMO: important to use pixelType here
-	glDisable(texData.textureTarget);
+		glDisable(texData.textureTarget);
+	}
+	else
+	{
+		//SOSOLIMITED: setup mipmaps and use compression
+
+		//need proper tex_u and tex_t positions, with mipmaps they are the nearest power of 2
+#ifndef TARGET_OPENGLES		
+		if (texData.textureTarget == GL_TEXTURE_RECTANGLE_ARB){
+			
+			//need to find closest powers of two
+			int last_h = ofNextPow2(texData.height)>>1;
+			int next_h = ofNextPow2(texData.height);
+			if ((texData.height - last_h) < (next_h - texData.height)) texData.tex_u = last_h;
+			else texData.tex_u = next_h;
+
+			int last_w = ofNextPow2(texData.width)>>1;
+			int next_w = ofNextPow2(texData.width);
+			if ((texData.width - last_w) < (next_w - texData.width)) texData.tex_t = last_w;
+			else texData.tex_t = next_w;
+
+			//printf("ofTexture::loadData w:%.1f, h:%.1f, tex_t:%.1f, tex_u:%.1f \n", texData.width,texData.height,texData.tex_t,texData.tex_u);
+		}
+#endif
+		glEnable(texData.textureTarget);
+		glBindTexture(texData.textureTarget, (GLuint)texData.textureID);
+
+		glHint(GL_GENERATE_MIPMAP_HINT, GL_NICEST);
+		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+#ifndef TARGET_OPENGLES		
+		glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP_SGIS, true);
+#endif
+		glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+		glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+		
+#ifndef TARGET_OPENGLES		
+		//using sRGB compression
+		if (texData.compressionType == OF_COMPRESS_SRGB)
+		{
+			if(texData.glType == GL_RGBA)
+				gluBuild2DMipmaps(texData.textureTarget, GL_COMPRESSED_SRGB_ALPHA, w, h, texData.glType, GL_UNSIGNED_BYTE, data);
+
+			else if(texData.glType == GL_RGB)
+				gluBuild2DMipmaps(texData.textureTarget, GL_COMPRESSED_SRGB_ALPHA, w, h, texData.glType, GL_UNSIGNED_BYTE, data);
+
+			else if(texData.glType == GL_LUMINANCE_ALPHA)
+				gluBuild2DMipmaps(texData.textureTarget, GL_COMPRESSED_SRGB_ALPHA, w, h, texData.glType, GL_UNSIGNED_BYTE, data);
+
+			else if(texData.glType == GL_LUMINANCE)
+				gluBuild2DMipmaps(texData.textureTarget, GL_COMPRESSED_SRGB_ALPHA, w, h, texData.glType, GL_UNSIGNED_BYTE, data);
+		}
+
+		//using ARB compression: default
+		else
+		{
+			if(texData.glType == GL_RGBA)
+				gluBuild2DMipmaps(texData.textureTarget, GL_COMPRESSED_RGBA_ARB, w, h, texData.glType, GL_UNSIGNED_BYTE, data);
+
+			else if(texData.glType == GL_RGB)
+				gluBuild2DMipmaps(texData.textureTarget, GL_COMPRESSED_RGB_ARB, w, h, texData.glType, GL_UNSIGNED_BYTE, data);
+
+			else if(texData.glType == GL_LUMINANCE_ALPHA)
+				gluBuild2DMipmaps(texData.textureTarget, GL_COMPRESSED_LUMINANCE_ALPHA_ARB, w, h, texData.glType, GL_UNSIGNED_BYTE, data);
+
+			else if(texData.glType == GL_LUMINANCE)
+				gluBuild2DMipmaps(texData.textureTarget, GL_COMPRESSED_LUMINANCE_ARB, w, h, texData.glType, GL_UNSIGNED_BYTE, data);
+		}
+#endif
+		
+
+		glDisable(texData.textureTarget);
+
+	}
 
 	//------------------------ back to normal.
 	glPixelStorei(GL_UNPACK_ALIGNMENT, prevAlignment);
@@ -267,7 +352,7 @@ void ofTexture::loadScreenData(int x, int y, int w, int h){
 	texData.glType  = GL_RGB;
 
 	//compute new tex co-ords based on the ratio of data's w, h to texture w,h;
-	#ifndef TARGET_OF_IPHONE // DAMIAN
+	#ifndef TARGET_OPENGLES // DAMIAN
 		if (texData.textureTarget == GL_TEXTURE_RECTANGLE_ARB){
 			texData.tex_t = (float)(w);
 			texData.tex_u = (float)(h);
@@ -316,11 +401,32 @@ void ofTexture::bind(){
 	//we could check if it has been allocated - but we don't do that in draw() 
 	glEnable(texData.textureTarget);
 	glBindTexture( texData.textureTarget, (GLuint)texData.textureID);
+	
+	if(ofGetUsingNormalizedTexCoords()) {
+		glMatrixMode(GL_TEXTURE);
+		glPushMatrix();
+		glLoadIdentity();
+		
+#ifndef TARGET_OPENGLES	
+		if(texData.textureTarget == GL_TEXTURE_RECTANGLE_ARB)
+			glScalef(texData.width, texData.height, 1.0f);
+		else 
+#endif			
+			glScalef(texData.width / texData.tex_w, texData.height / texData.tex_h, 1.0f);
+		
+		glMatrixMode(GL_MODELVIEW);  		
+	}
 }
 
 //----------------------------------------------------------
 void ofTexture::unbind(){
 	glDisable(texData.textureTarget);
+	
+	if(ofGetUsingNormalizedTexCoords()) {
+		glMatrixMode(GL_TEXTURE);
+		glPopMatrix();
+		glMatrixMode(GL_MODELVIEW); 
+	}
 }
 
 
@@ -400,6 +506,9 @@ void ofTexture::setTextureMinMagFilter(GLint minFilter, GLint maxFilter){
 	unbind();
 }
 
+void ofTexture::setCompression(ofTexCompression compression){
+	texData.compressionType = compression;
+}
 
 
 //----------------------------------------------------------

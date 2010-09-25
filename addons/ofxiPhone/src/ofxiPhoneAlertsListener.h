@@ -29,6 +29,7 @@
  * ***********************************************************************/ 
 
 #pragma once
+#include "ofMain.h"
 
 
 /****** protocol, delegate, interface, whatever you want to call it ******/
@@ -40,4 +41,5 @@ public:
 	virtual void gotFocus(){};
 	virtual void gotMemoryWarning(){};
     virtual void deviceOrientationChanged(int newOrientation){};
+	virtual void launchedWithURL(string url){};
 };

@@ -185,7 +185,9 @@ void  ofImage::setFromPixels(unsigned char * newPixels, int w, int h, int newTyp
 	}
 
 	if (!((width == w) && (height == h) && (type == newType))){
+		bool bCacheBUseTexture = bUseTexture;
 		clear();
+		bUseTexture = bCacheBUseTexture;
 		allocate(w,h, newType);
 	}
 
@@ -493,7 +495,6 @@ void ofCloseFreeImage(){
 //----------------------------------------------------
 bool ofImage::loadImageIntoPixels(string fileName, ofPixels &pix){
 
-
 	int					width, height, bpp;
 	fileName			= ofToDataPath(fileName);
 	bool bLoaded		= false;
@@ -626,10 +627,14 @@ float ofImage::getHeight(){
 float ofImage::getWidth(){
 	return width;
 }
-//----------------------------------------------------------------------------------------------------
-//----------------------------------------------------------------------------------------------------
-//----------------------------------------------------------------------------------------------------
 
+//----------------------------------------------------------
+// Sosolimited: texture compression
+// call this function before you call loadImage()
+void ofImage::setCompression(ofTexCompression compression)
+{
+	tex.setCompression( compression );
+}
 
 
 

@@ -2,6 +2,7 @@
 #define _OF_TYPES
 
 #include "ofConstants.h"
+#include "ofUtils.h"
 
 //----------------------------------------------------------
 // ofPoint
@@ -130,7 +131,6 @@ class ofPoint {
         return *this;
     }
 
-
 	// Divide
     ofPoint operator/( const ofPoint& pnt ) const {
         return ofPoint( pnt.x!=0 ? x/pnt.x : x , pnt.y!=0 ? y/pnt.y : y, pnt.z!=0 ? z/pnt.z : z );
@@ -172,6 +172,9 @@ class ofPoint {
         float v[3];
     };
 
+	float& operator[]( int n ){
+		return v[n];
+	}
 };
 
 //----------------------------------------------------------
@@ -188,6 +191,49 @@ class ofRectangle {
 		height = _h;
 	}
 	virtual ~ofRectangle(){}
+
+	void set(float px, float py, float w, float h){
+		x		= px;
+		y		= py;
+		width	= w;
+		height	= h;
+	}
+
+	void set(ofPoint pos, float w, float h){
+		x		= pos.x;
+		y		= pos.y;
+		width	= w;
+		height	= h;
+	}
+
+	void setFromCenter(float px, float py, float w, float h){
+		x		= px - w*0.5f;
+		y		= py - h*0.5f;
+		width	= w;
+		height	= h;
+	}
+
+	void setFromCenter(ofPoint pos, float w, float h){
+		x		= pos.x - w*0.5f;
+		y		= pos.y - h*0.5f;
+		width	= w;
+		height	= h;
+	}
+	
+	ofPoint getCenter(){
+		return ofPoint(x + width * 0.5f, y + height * 0.5f, 0);
+	}
+
+	bool inside (ofPoint p){
+		return inside(p.x, p.y);
+	}
+
+	bool inside(float px, float py){
+		if( px > x && py > y && px < x + width && py < y + height ){
+		    return true;
+		}
+		return false;
+	}
 
    float x;
    float y;
@@ -212,6 +258,22 @@ class ofColor{
 		}
 		virtual ~ofColor(){}
 		float r, g, b, a;
+	
+		float & operator[]( int n ){
+			switch( n ){
+				case 0:
+					return r;
+				case 1:
+					return g;
+				case 2:
+					return b;
+				case 3: 
+					return a;
+				default:
+					return r;
+				break;
+			}
+		}
 };
 
 //----------------------------------------------------------
@@ -242,7 +304,67 @@ class ofStyle{
 		float lineWidth;
 };
 
+//----------------------------------------------------------
+// ofBuffer
+//----------------------------------------------------------
 
+class ofBuffer{
+
+	long 	size;
+	char * 	buffer;
+	long 	nextLinePos;
+public:
+
+	ofBuffer(){
+		size 	= 0;
+		buffer 	= NULL;
+		nextLinePos = 0;
+	}
+
+	ofBuffer(int _size, char * _buffer){
+		size 	= _size;
+		buffer 	= _buffer;
+		nextLinePos = 0;
+	}
+
+	ofBuffer(const ofBuffer & mom){
+		size = mom.size;
+		nextLinePos = mom.nextLinePos;
+		memcpy(buffer,mom.buffer,size);
+	}
+
+	~ofBuffer(){
+		if(buffer) delete[] buffer;
+	}
+
+	void allocate(long _size){
+		if(buffer) delete[] buffer;
+		buffer = new char[_size];
+		size = _size;
+	}
+
+	char * getBuffer(){
+		return buffer;
+	}
+
+	long getSize(){
+		return size;
+	}
+
+	string getNextLine(){
+		if( size <= 0 ) return "";
+		long currentLinePos = nextLinePos;
+		while(nextLinePos<size && buffer[nextLinePos]!='\n') nextLinePos++;
+		string line(buffer + currentLinePos,nextLinePos-currentLinePos);
+		if(nextLinePos<size-1) nextLinePos++;
+		return line;
+	}
+
+	string getFirstLine(){
+		nextLinePos = 0;
+		return getNextLine();
+	}
+};
 
 
 //----------------------------------------------------------
@@ -309,7 +431,6 @@ public:
 class ofBaseVideo: public ofBaseImage, public ofBaseUpdates{
 public:
 	virtual ~ofBaseVideo(){}
-	virtual unsigned char * getPixels()=0;
 	virtual bool isFrameNew()=0;
 	virtual void close()=0;
 };
