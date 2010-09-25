@@ -69,7 +69,7 @@ CFLAGS += $(INCLUDES_FLAGS)
 CFLAGS += $(CORE_INCLUDE_FLAGS)
 CFLAGS +=`pkg-config  gstreamer-0.10 gstreamer-video-0.10 gstreamer-base-0.10 libudev --cflags`
 
-LDFLAGS = $(LIB_PATHS_FLAGS) -Wl,-rpath=./libs
+LDFLAGS = $(LIB_PATHS_FLAGS) -s -Wl,-rpath=./libs
 
 LIBS = $(LIB_SHARED)
 LIBS += $(LIB_STATIC)
@@ -176,24 +176,20 @@ clean:
 	rm -Rf obj
 	rm -f -v $(TARGET)
 	rm -Rf -v bin/libs
-	rm -f -v bin/clickToLaunchApp*
 	
 $(CLEANTARGET):
 	rm -Rf -v $(OBJ_OUTPUT)
 	rm -f -v $(TARGET)
-	rm -f -v bin/clickToLaunchApp_$(TARGET_NAME).sh
 
 
 after:
 	cp -r ../../../export/$(LIBSPATH)/libs bin/
-	cp ../../../export/$(LIBSPATH)/clickToLaunchApp.sh bin/clickToLaunchApp_$(TARGET_NAME).sh
-	sed -i s/applicationName/$(APPNAME)/g  bin/clickToLaunchApp_$(TARGET_NAME).sh
 	@echo
 	@echo "     compiling done"
 	@echo "     to launch the application"	
 	@echo
 	@echo "     cd bin"
-	@echo "     ./clickToLaunchApp_$(TARGET_NAME).sh"
+	@echo "     ./$(TARGET_NAME)"
 	@echo
     
 
