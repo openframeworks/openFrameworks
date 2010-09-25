@@ -3,10 +3,32 @@ cmake_minimum_required(VERSION 2.6)
 project(openFrameworks)
 set(OPENFRAMEWORKS_VERSION "0.6")
 
-set(OPENFRAMEWORKS_SEARCH_PREFIX /usr/ /usr/local/ /opt/local CACHE FILEPATH "Openframeworks prefix search")
+set(OPENFRAMEWORKS_BUILD_STATIC_LIBRARY TRUE CACHE BOOL "Build OpenFrameworks static library")
+set(OPENFRAMEWORKS_BUILD_SHARED_LIBRARY TRUE CACHE BOOL "Build OpenFrameworks shared library")
+
+set(OPENFRAMEWORKS_TRY_USE_LOCAL_LIBRARIES TRUE)
+
+set(OPENFRAMEWORKS_LOCAL_SEARCH_PREFIX ../fmodex
+                                 ../FreeImage
+                                 ../freetype
+                                 ../glee
+                                 ../glu
+                                 ../glut
+                                 ../gstappsink
+                                 ../poco
+                                 ../quicktime
+                                 ../rtAudio
+                                 ../unicap
+                                 ../videoInput CACHE FILEPATH "OpenFrameworks local library search prefixes")
+
+set(OPENFRAMEWORKS_SEARCH_PREFIX /usr/
+                                 /usr/local/
+                                 /opt/local CACHE FILEPATH "Openframeworks prefix search")
+
 
 set(OPENFRAMEWORKS_INSTALL_PREFIX "/usr/local" CACHE FILEPATH "Openframeworks install prefix")
 set(OPENFRAMEWORKS_PREFIX ${OPENFRAMEWORKS_INSTALL_PREFIX} CACHE FILEPATH "Openframeworks additional prefix to check for dependencies (rtaudio, fmodex ...)")
+
 if ( APPLE ) 
     set ( CMAKE_OSX_ARCHITECTURES "i386" CACHE STRING "Architecture" )
     set ( OPENFRAMEWORKS_BUILD_FRAMEWORK ON CACHE BOOL "Compile openFrameworks as a standard mac os x framework")
@@ -71,8 +93,7 @@ set (OFX_SOURCE_FILES
             app/ofAppRunner.cpp
             app/ofAppGlutWindow.cpp
             video/ofVideoPlayer.cpp
-            #video/ofGstUtils.cpp
-            video/ofUCUtils.cpp
+            video/ofGstUtils.cpp
             video/ofVideoGrabber.cpp
             video/ofQtUtils.cpp
             utils/ofNoise.h
@@ -97,15 +118,21 @@ set (OFX_SOURCE_FILES
             app/ofAppGlutWindow.h
             app/ofBaseApp.h
             video/ofVideoPlayer.h
-            video/ofUCUtils.h
             video/ofQtUtils.h
-            #video/ofGstUtils.h
+            video/ofGstUtils.h
             video/ofVideoGrabber.h
 )
 if ( LINUX ) 
-set (OFX_SOURCE_FILES ${OFX_SOURCE_FILES}
-    video/ofGstUtils.cpp
-    video/ofGstUtils.h )
+  if(OPENFRAMEWORKS_USE_GSTREAMER_VIDCAP)
+    set (OFX_SOURCE_FILES ${OFX_SOURCE_FILES}
+      video/ofGstUtils.cpp
+      video/ofGstUtils.h )
+  endif()
+  if(OPENFRAMEWORKS_USE_UNICAP_VIDCAP)
+    set (OFX_SOURCE_FILES ${OFX_SOURCE_FILES}
+      video/ofUCUtils.cpp
+      video/ofUCUtils.h )
+  endif()
 
 endif ( LINUX )
 
@@ -154,15 +181,20 @@ include_directories(${OPENFRAMEWORKS_INCLUDES})
 
 ##################################################################
 ## Configure library generation
-add_library( openFrameworksShared SHARED ${OFX_SOURCE_FILES})
-#add_library( openFrameworksStatic ${OFX_SOURCE_FILES})
-#set_target_properties (openFrameworksStatic 
-#                        PROPERTIES OUTPUT_NAME openFrameworks )
+if (OPENFRAMEWORKS_BUILD_STATIC_LIBRARY )
+  add_library( openFrameworksStatic ${OFX_SOURCE_FILES})
+  set_target_properties (openFrameworksStatic 
+                          PROPERTIES OUTPUT_NAME openFrameworks )
+  target_link_libraries(openFrameworksStatic ${OPENFRAMEWORKS_LIBRARIES})
+endif()
 
-set_target_properties (openFrameworksShared 
-                        PROPERTIES OUTPUT_NAME openFrameworks )
+if(OPENFRAMEWORKS_BUILD_SHARED_LIBRARY )
+  add_library( openFrameworksShared SHARED ${OFX_SOURCE_FILES})
+  set_target_properties (openFrameworksShared 
+                         PROPERTIES OUTPUT_NAME openFrameworks )
+  target_link_libraries(openFrameworksShared ${OPENFRAMEWORKS_LIBRARIES})
+endif()
 
-target_link_libraries(openFrameworksShared ${OPENFRAMEWORKS_LIBRARIES})
 ##################################################################
 ## Setup pkg-config file (openFrameworks.pc 
 ##################################################################
@@ -193,36 +225,32 @@ configure_file("openFrameworks.pc.in" "openFrameworks.pc")
 
 # install library
 #target_link_libraries(openFrameworksStatic ${OPENFRAMEWORKS_LIBRARIES})
-if ( APPLE )
-    if (OPENFRAMEWORKS_BUILD_FRAMEWORK)
-        set_target_properties(openFrameworksShared
-                PROPERTIES FRAMEWORK TRUE
-                 OUTPUT_NAME openFrameworks 
-                 PUBLIC_HEADER "${ofincludes_files}"
-                 INSTALL_NAME_DIR "${OPENFRAMEWORKS_FRAMEWORKS_DIR}"#LIBRARY             DESTINATION  "./lib"
-                )
-        
-        install(TARGETS openFrameworksShared FRAMEWORK DESTINATION ${OPENFRAMEWORKS_FRAMEWORKS_DIR})
-    endif()
+#if ( APPLE )
+#    if (OPENFRAMEWORKS_BUILD_FRAMEWORK)
+#        set_target_properties(openFrameworksShared
+#                PROPERTIES FRAMEWORK TRUE
+#                 OUTPUT_NAME openFrameworks 
+#                PUBLIC_HEADER "${ofincludes_files}"
+#                INSTALL_NAME_DIR "${OPENFRAMEWORKS_FRAMEWORKS_DIR}"#LIBRARY             DESTINATION  "./lib"
+#               )
+#       
+#       install(TARGETS openFrameworksShared FRAMEWORK DESTINATION ${OPENFRAMEWORKS_FRAMEWORKS_DIR})
+#   endif()
+#ndif()
+
+#if(NOT OPENFRAMEWORKS_BUILD_FRAMEWORK )
+install(FILES ${ofincludes_files}
+    DESTINATION "${OPENFRAMEWORKS_INCLUDE_DIR}/openFrameworks")
+install(FILES openFrameworks.pc
+    DESTINATION ${OPENFRAMEWORKS_PKGCONFIG_DIR})
+if (OPENFRAMEWORKS_BUILD_SHARED_LIBRARY )
+  install(TARGETS openFrameworksShared 
+      DESTINATION ${OPENFRAMEWORKS_LIB_DIR})
 endif()
-
-if(NOT OPENFRAMEWORKS_BUILD_FRAMEWORK )
-    install(FILES ${ofincludes_files}
-        DESTINATION "${OPENFRAMEWORKS_INCLUDE_DIR}/openFrameworks")
-    install(FILES openFrameworks.pc
-        DESTINATION ${OPENFRAMEWORKS_PKGCONFIG_DIR})
-    install(TARGETS openFrameworksShared 
-        DESTINATION ${OPENFRAMEWORKS_LIB_DIR})
-else()
-    #install(TARGETS openFrameworksShared 
-    #    DESTINATION ${OPENFRAMEWORKS_FRAMEWORKS_DIR})
+if ( OPENFRAMEWORKS_BUILD_STATIC_LIBRARY )
+  install(TARGETS openFrameworksStatic 
+          DESTINATION ${OPENFRAMEWORKS_LIB_DIR})
 endif()
-
-
-
-
-
-
 
 ###################################################################
 message(STATUS "====================== Configuration for OpenFrameworks ====================================")
@@ -233,7 +261,7 @@ message(STATUS "    Compiler:                  ${CMAKE_COMPILER}")
 message(STATUS "    C++ flags (Release):       ${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_RELEASE}")
 message(STATUS "    C++ flags (Debug):         ${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_DEBUG}")
 if(WIN32)
-message(STATUS "    Linker flags (Release):    ${CMAKE_EXE_LINKER_FLAGS} ${CMAKE_EXE_LINKER_FLAGS_RELEASE}")
+#message(STATUS "    Linker flags (Release):    ${CMAKE_EXE_LINKER_FLAGS} ${CMAKE_EXE_LINKER_FLAGS_RELEASE}")
 message(STATUS "    Linker flags (Debug):      ${CMAKE_EXE_LINKER_FLAGS} ${CMAKE_EXE_LINKER_FLAGS_DEBUG}")
 else()
 message(STATUS "    Linker flags (Release):    ${CMAKE_SHARED_LINKER_FLAGS} ${CMAKE_SHARED_LINKER_FLAGS_RELEASE}")
@@ -256,6 +284,13 @@ message(STATUS " Configuration used for video capture : ${VIDCAP_DEFINE}")
 message(STATUS "")
 endif()
 message(STATUS "")
+message(STATUS " Building libraries:")
+if (OPENFRAMEWORKS_BUILD_STATIC_LIBRARY)
+message(STATUS "   - OpenFrameworks static library")
+endif()
+if (OPENFRAMEWORKS_BUILD_SHARED_LIBRARY)
+message(STATUS "   - OpenFrameowkrs shared library")
+endif()
 message(STATUS "============================================================================================ Enjoy !")
 message(STATUS "")
 message(STATUS "")
