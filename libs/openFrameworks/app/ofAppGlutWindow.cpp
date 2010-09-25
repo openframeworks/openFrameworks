@@ -529,6 +529,23 @@ void ofAppGlutWindow::mouse_cb(int button, int state, int x, int y) {
 			#endif
 
 			pressedMouseButtons.insert(button);
+
+			int mod = glutGetModifiers();
+			if(mod & GLUT_ACTIVE_SHIFT){
+				pressedKeys.insert(OF_KEY_SHIFT);
+			}else{
+				pressedKeys.erase(OF_KEY_SHIFT);
+			}
+			if(mod & GLUT_ACTIVE_CTRL){
+				pressedKeys.insert(OF_KEY_CTRL);
+			}else{
+				pressedKeys.erase(OF_KEY_CTRL);
+			}
+			if(mod & GLUT_ACTIVE_ALT){
+				pressedKeys.insert(OF_KEY_ALT);
+			}else{
+				pressedKeys.erase(OF_KEY_ALT);
+			}
 		} else if (state == GLUT_UP) {
 			if(ofAppPtr){
 				ofAppPtr->mouseReleased(x,y,button);
@@ -543,7 +560,19 @@ void ofAppGlutWindow::mouse_cb(int button, int state, int x, int y) {
 			#endif
 
 			pressedMouseButtons.erase(button);
+
+			int mod = glutGetModifiers();
+			if(!(mod & GLUT_ACTIVE_SHIFT)){
+				pressedKeys.erase(OF_KEY_SHIFT);
+			}
+			if(!(mod & GLUT_ACTIVE_CTRL)){
+				pressedKeys.erase(OF_KEY_CTRL);
+			}
+			if(!(mod & GLUT_ACTIVE_ALT)){
+				pressedKeys.erase(OF_KEY_ALT);
+			}
 		}
+
 		buttonInUse = button;
 	}
 }
@@ -565,6 +594,23 @@ void ofAppGlutWindow::motion_cb(int x, int y) {
 			mouseEventArgs.button = buttonInUse;
 			ofNotifyEvent( ofEvents.mouseDragged, mouseEventArgs );
 		#endif
+
+		int mod = glutGetModifiers();
+		if(mod & GLUT_ACTIVE_SHIFT){
+			pressedKeys.insert(OF_KEY_SHIFT);
+		}else{
+			pressedKeys.erase(OF_KEY_SHIFT);
+		}
+		if(mod & GLUT_ACTIVE_CTRL){
+			pressedKeys.insert(OF_KEY_CTRL);
+		}else{
+			pressedKeys.erase(OF_KEY_CTRL);
+		}
+		if(mod & GLUT_ACTIVE_ALT){
+			pressedKeys.insert(OF_KEY_ALT);
+		}else{
+			pressedKeys.erase(OF_KEY_ALT);
+		}
 	}
 
 }
@@ -585,6 +631,18 @@ void ofAppGlutWindow::passive_motion_cb(int x, int y) {
 			mouseEventArgs.y = y;
 			ofNotifyEvent( ofEvents.mouseMoved, mouseEventArgs );
 		#endif
+
+		int mod = glutGetModifiers();
+		if(!(mod & GLUT_ACTIVE_SHIFT)){
+			pressedKeys.erase(OF_KEY_SHIFT);
+		}
+		if(!(mod & GLUT_ACTIVE_CTRL)){
+			pressedKeys.erase(OF_KEY_CTRL);
+		}
+		if(!(mod & GLUT_ACTIVE_ALT)){
+			pressedKeys.erase(OF_KEY_ALT);
+		}
+
 	}
 }
 
