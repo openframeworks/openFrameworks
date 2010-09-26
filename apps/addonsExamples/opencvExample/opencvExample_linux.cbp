@@ -85,14 +85,12 @@
         </Compiler>
         <Linker>
             <Add library="fmodex" />
-            <Add library="raw1394" />
             <Add library="glut" />
             <Add library="GL" />
             <Add library="GLU" />
             <Add library="Xxf86vm" />
             <Add library="asound" />
             <Add library="PocoFoundation" />
-            <Add library="unicap" />
             <Add library="freetype" />
             <Add library="freeimage" />
             <Add library="RtAudio" />
@@ -107,7 +105,6 @@
             <Add directory="../../../libs/glee/lib/linux" />
             <Add directory="../../../libs/gstappsink/lib/linux" />
             <Add directory="../../../libs/fmodex/lib/linux" />
-            <Add directory="../../../libs/unicap/lib/linux" />
             <Add directory="../../../libs/poco/lib/linux" />
             <Add directory="../../../libs/openFrameworksCompiled/lib/linux" />
             <Add library="../../../addons/ofxOpenCv/libs/opencv/lib/linux/libcvaux.a"></Add>

@@ -63,7 +63,6 @@
             <Add directory="../../../libs/FreeImage/include" />
             <Add directory="../../../libs/freetype/include" />
             <Add directory="../../../libs/freetype/include/freetype2" />
-            <Add directory="../../../libs/unicap/include" />
             <Add directory="../../../libs/gstappsink/include" />
             <Add directory="../../../addons" />
             <Add directory="../../../libs/poco/include" />
@@ -85,14 +84,12 @@
         </Compiler>
         <Linker>
             <Add library="fmodex" />
-            <Add library="raw1394" />
             <Add library="glut" />
             <Add library="GL" />
             <Add library="GLU" />
             <Add library="Xxf86vm" />
             <Add library="asound" />
             <Add library="PocoFoundation" />
-            <Add library="unicap" />
             <Add library="freetype" />
             <Add library="freeimage" />
             <Add library="RtAudio" />
@@ -137,6 +134,9 @@
             <envvars />
             <debugger />
         </Extensions>
+        <Unit filename="../../../addons/ofxNetwork/src/ofxNetworkUtils.h">
+            <Option virtualFolder="addons/ofxNetwork/src"></Option>
+        </Unit>
         <Unit filename="../../../addons/ofxNetwork/src/ofxTCPServer.cpp">
             <Option virtualFolder="addons/ofxNetwork/src"></Option>
         </Unit>
