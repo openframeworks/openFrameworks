@@ -130,6 +130,7 @@ OBJS = $(addprefix $(OBJ_OUTPUT), $(OBJFILES))
 DEPFILES = $(patsubst %.o,%.d,$(OBJS))
 ifeq ($(findstring addons.make,$(wildcard *.make)),addons.make)
 	ADDONS_OBJS = $(addprefix $(OBJ_OUTPUT), $(ADDONS_OBJFILES))
+    DEPFILES += $(patsubst %.o,%.d,$(ADDONS_OBJS))
 endif
 
 .PHONY: Debug Release all after
@@ -189,7 +190,7 @@ after:
 	@echo "     to launch the application"	
 	@echo
 	@echo "     cd bin"
-	@echo "     ./$(TARGET_NAME)"
+	@echo "     ./$(TARGET)"
 	@echo
     
 
