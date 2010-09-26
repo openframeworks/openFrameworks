@@ -189,7 +189,7 @@ after:
 	@echo "     to launch the application"	
 	@echo
 	@echo "     cd bin"
-	@echo "     ./$(TARGET_NAME)"
+	@echo "     ./$(TARGET)"
 	@echo
     
 
