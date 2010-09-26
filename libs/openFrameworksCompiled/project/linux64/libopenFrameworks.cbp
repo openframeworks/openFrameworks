@@ -50,7 +50,6 @@
 			<Add directory="../../../FreeImage/include" />
 			<Add directory="../../../freetype/include" />
 			<Add directory="../../../freetype/include/freetype2" />
-			<Add directory="../../../unicap/include" />
 			<Add directory="../../../gstappsink/include" />
 			<Add directory="../../../addons" />
 			<Add directory="../../../poco/include" />
@@ -179,9 +178,6 @@
 				<lib name="gstreamer-base-0.10" />
 				<lib name="libudev" />
 				<lib name="gstreamer-app-0.10" />
-				<lib name="libavcodec"/>
-				<lib name="libavformat"/>
-				<lib name="libavutil"/>
 			</lib_finder>
 			<code_completion />
 			<envvars />
