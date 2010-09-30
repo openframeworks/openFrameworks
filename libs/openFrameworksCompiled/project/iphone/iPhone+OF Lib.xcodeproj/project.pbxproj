@@ -142,7 +142,7 @@
 		92BFCD061128AC3E0081DD61 /* ofBitmapFont.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofBitmapFont.cpp; sourceTree = "<group>"; };
 		BB16EBD10F2B2A9500518274 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
 		BB16EBD80F2B2AB500518274 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
-		BB24DED610DA7A3F00E9C588 /* libofxiPhoneOFLib_macosx_Release.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libofxiPhoneOFLib_macosx_Release.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		BB24DED610DA7A3F00E9C588 /* libofxiPhone_iphoneos_ReleaseArmv7.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libofxiPhone_iphoneos_ReleaseArmv7.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		BB24DEF710DA7BEF00E9C588 /* ofAppBaseWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofAppBaseWindow.h; sourceTree = "<group>"; };
 		BB24DEFA10DA7BEF00E9C588 /* ofAppRunner.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofAppRunner.cpp; sourceTree = "<group>"; };
 		BB24DEFB10DA7BEF00E9C588 /* ofAppRunner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofAppRunner.h; sourceTree = "<group>"; };
@@ -288,7 +288,7 @@
 		19C28FACFE9D520D11CA2CBB /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				BB24DED610DA7A3F00E9C588 /* libofxiPhoneOFLib_macosx_Release.a */,
+				BB24DED610DA7A3F00E9C588 /* libofxiPhone_iphoneos_ReleaseArmv7.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -776,7 +776,7 @@
 			);
 			name = "iPhone+OF Static Library";
 			productName = "Static Library";
-			productReference = BB24DED610DA7A3F00E9C588 /* libofxiPhoneOFLib_macosx_Release.a */;
+			productReference = BB24DED610DA7A3F00E9C588 /* libofxiPhone_iphoneos_ReleaseArmv7.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 /* End PBXNativeTarget section */
@@ -846,11 +846,12 @@
 				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/../../lib/iphone/";
 				COPY_PHASE_STRIP = NO;
 				DEAD_CODE_STRIPPING = NO;
+				EXECUTABLE_PREFIX = lib;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				IPHONEOS_DEPLOYMENT_TARGET = 3.1;
 				PREBINDING = NO;
-				PRODUCT_NAME = "ofxiPhoneOFLib_${PLATFORM_NAME}_Debug";
+				PRODUCT_NAME = "ofxiPhone_${PLATFORM_NAME}_Debug";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -862,47 +863,20 @@
 				COPY_PHASE_STRIP = YES;
 				DEAD_CODE_STRIPPING = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				EXECUTABLE_PREFIX = lib;
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				IPHONEOS_DEPLOYMENT_TARGET = 3.1;
 				PREBINDING = NO;
-				PRODUCT_NAME = "ofxiPhoneOFLib_${PLATFORM_NAME}_Release";
+				PRODUCT_NAME = "ofxiPhone_${PLATFORM_NAME}_Release";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				ZERO_LINK = NO;
 			};
 			name = Release;
 		};
-		BB24DED510DA7A3F00E9C588 /* Distribution */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/../../lib/iphone/";
-				DEAD_CODE_STRIPPING = NO;
-				IPHONEOS_DEPLOYMENT_TARGET = 3.1;
-				PREBINDING = NO;
-				PRODUCT_NAME = "ofxiPhoneOFLib_${PLATFORM_NAME}_Distribution";
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Distribution;
-		};
-		BBD1C20A0F391092007FCFB3 /* Distribution */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				DEAD_CODE_STRIPPING = NO;
-				GCC_C_LANGUAGE_STANDARD = c99;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				HEADER_SEARCH_PATHS = (
-					../../../poco/include,
-					../../../../libs/freetype/include/,
-					../../../../libs/freetype/include/freetype2,
-				);
-				ONLY_ACTIVE_ARCH = YES;
-				PREBINDING = NO;
-			};
-			name = Distribution;
-		};
 		C01FCF4F08A954540054247B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				DEAD_CODE_STRIPPING = NO;
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
@@ -912,9 +886,9 @@
 					../../../../libs/freetype/include/,
 					../../../../libs/freetype/include/freetype2,
 				);
-				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = "";
 				PREBINDING = NO;
+				SDKROOT = iphoneos4.1;
 				WARNING_LDFLAGS = "-w";
 			};
 			name = Debug;
@@ -922,6 +896,7 @@
 		C01FCF5008A954540054247B /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				DEAD_CODE_STRIPPING = NO;
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
@@ -931,10 +906,45 @@
 					../../../../libs/freetype/include/,
 					../../../../libs/freetype/include/freetype2,
 				);
-				ONLY_ACTIVE_ARCH = YES;
 				PREBINDING = NO;
+				SDKROOT = iphoneos4.1;
 			};
 			name = Release;
+		};
+		E49BCC2A125548B0009F19D0 /* ReleaseArmv7 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_UNIVERSAL_IPHONE_OS)";
+				DEAD_CODE_STRIPPING = NO;
+				GCC_C_LANGUAGE_STANDARD = c99;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = (
+					../../../poco/include,
+					../../../../libs/freetype/include/,
+					../../../../libs/freetype/include/freetype2,
+				);
+				PREBINDING = NO;
+				SDKROOT = iphoneos4.1;
+			};
+			name = "ReleaseArmv7";
+		};
+		E49BCC2B125548B0009F19D0 /* ReleaseArmv7 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/../../lib/iphone/";
+				COPY_PHASE_STRIP = YES;
+				DEAD_CODE_STRIPPING = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				EXECUTABLE_PREFIX = lib;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				IPHONEOS_DEPLOYMENT_TARGET = 3.1;
+				PREBINDING = NO;
+				PRODUCT_NAME = "ofxiPhone_${PLATFORM_NAME}_ReleaseArmv7";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				ZERO_LINK = NO;
+			};
+			name = "ReleaseArmv7";
 		};
 /* End XCBuildConfiguration section */
 
@@ -944,20 +954,20 @@
 			buildConfigurations = (
 				BB24DED310DA7A3F00E9C588 /* Debug */,
 				BB24DED410DA7A3F00E9C588 /* Release */,
-				BB24DED510DA7A3F00E9C588 /* Distribution */,
+				E49BCC2B125548B0009F19D0 /* ReleaseArmv7 */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		C01FCF4E08A954540054247B /* Build configuration list for PBXProject "iPhone+OF Lib" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C01FCF4F08A954540054247B /* Debug */,
 				C01FCF5008A954540054247B /* Release */,
-				BBD1C20A0F391092007FCFB3 /* Distribution */,
+				E49BCC2A125548B0009F19D0 /* ReleaseArmv7 */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 /* End XCConfigurationList section */
 	};
