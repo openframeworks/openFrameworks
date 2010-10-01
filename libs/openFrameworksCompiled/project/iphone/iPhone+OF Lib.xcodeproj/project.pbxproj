@@ -129,6 +129,8 @@
 		BB3140C611BB098A0019348E /* ESRenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = BB3140C511BB098A0019348E /* ESRenderer.h */; };
 		DA78520C1105C1BF007EFC90 /* glu.h in Headers */ = {isa = PBXBuildFile; fileRef = DA78520A1105C1BF007EFC90 /* glu.h */; };
 		DA78520D1105C1BF007EFC90 /* gluos.h in Headers */ = {isa = PBXBuildFile; fileRef = DA78520B1105C1BF007EFC90 /* gluos.h */; };
+		E4A8262A12565FF6002F86A2 /* ofxiPhoneVideoGrabber.h in Headers */ = {isa = PBXBuildFile; fileRef = E4A8262812565FF6002F86A2 /* ofxiPhoneVideoGrabber.h */; };
+		E4A8262B12565FF6002F86A2 /* ofxiPhoneVideoGrabber.mm in Sources */ = {isa = PBXBuildFile; fileRef = E4A8262912565FF6002F86A2 /* ofxiPhoneVideoGrabber.mm */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -263,6 +265,8 @@
 		BBE5EAB70F49AD8400F28951 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		DA78520A1105C1BF007EFC90 /* glu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = glu.h; sourceTree = "<group>"; };
 		DA78520B1105C1BF007EFC90 /* gluos.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gluos.h; sourceTree = "<group>"; };
+		E4A8262812565FF6002F86A2 /* ofxiPhoneVideoGrabber.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxiPhoneVideoGrabber.h; path = ../../../../addons/ofxiPhone/src/ofxiPhoneVideoGrabber.h; sourceTree = SOURCE_ROOT; };
+		E4A8262912565FF6002F86A2 /* ofxiPhoneVideoGrabber.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ofxiPhoneVideoGrabber.mm; path = ../../../../addons/ofxiPhone/src/ofxiPhoneVideoGrabber.mm; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -608,6 +612,8 @@
 				BB24E04110DA7C6100E9C588 /* ofxiPhoneMapKitListener.h */,
 				BB24E04210DA7C6100E9C588 /* ofxiPhoneSoundPlayer.mm */,
 				BB24E04310DA7C6100E9C588 /* ofxiPhoneSoundStream.mm */,
+				E4A8262812565FF6002F86A2 /* ofxiPhoneVideoGrabber.h */,
+				E4A8262912565FF6002F86A2 /* ofxiPhoneVideoGrabber.mm */,
 			);
 			path = src;
 			sourceTree = "<group>";
@@ -756,6 +762,7 @@
 				BB3140C011BB09220019348E /* ES1Renderer.h in Headers */,
 				BB3140C211BB09220019348E /* ES2Renderer.h in Headers */,
 				BB3140C611BB098A0019348E /* ESRenderer.h in Headers */,
+				E4A8262A12565FF6002F86A2 /* ofxiPhoneVideoGrabber.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -834,6 +841,7 @@
 				92BFCD081128AC3E0081DD61 /* ofBitmapFont.cpp in Sources */,
 				BB3140C111BB09220019348E /* ES1Renderer.mm in Sources */,
 				BB3140C311BB09220019348E /* ES2Renderer.mm in Sources */,
+				E4A8262B12565FF6002F86A2 /* ofxiPhoneVideoGrabber.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -927,7 +935,7 @@
 				PREBINDING = NO;
 				SDKROOT = iphoneos4.1;
 			};
-			name = "ReleaseArmv7";
+			name = ReleaseArmv7;
 		};
 		E49BCC2B125548B0009F19D0 /* ReleaseArmv7 */ = {
 			isa = XCBuildConfiguration;
@@ -944,7 +952,7 @@
 				TARGETED_DEVICE_FAMILY = "1,2";
 				ZERO_LINK = NO;
 			};
-			name = "ReleaseArmv7";
+			name = ReleaseArmv7;
 		};
 /* End XCBuildConfiguration section */
 
