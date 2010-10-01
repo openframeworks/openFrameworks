@@ -590,10 +590,10 @@ void  ofImage::saveImageFromPixels(string fileName, ofPixels &pix){
 		return;
 	}
 
-	#ifdef TARGET_LITTLE_ENDIAN
+	#ifdef TARGET_LITTLE_ENDIAN 
 		if (pix.bytesPerPixel != 1) swapRgb(pix);
 	#endif
-
+	
 	FIBITMAP * bmp	= getBmpFromPixels(pix);
 
 	#ifdef TARGET_LITTLE_ENDIAN
