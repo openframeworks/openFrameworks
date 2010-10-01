@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		5E2E99DD10ED147800587639 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E2E99DC10ED147800587639 /* MapKit.framework */; };
-		5ED6D93C124E5D630065CADC /* FreeImage.h in Headers */ = {isa = PBXBuildFile; fileRef = 5ED6D93B124E5D630065CADC /* FreeImage.h */; };
 		92BFCD071128AC3E0081DD61 /* ofBitmapFont.h in Headers */ = {isa = PBXBuildFile; fileRef = 92BFCD051128AC3E0081DD61 /* ofBitmapFont.h */; };
 		92BFCD081128AC3E0081DD61 /* ofBitmapFont.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 92BFCD061128AC3E0081DD61 /* ofBitmapFont.cpp */; };
 		BB24DECA10DA7A3F00E9C588 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BBE5EAB70F49AD8400F28951 /* AudioToolbox.framework */; };
@@ -91,6 +90,7 @@
 		BB24E10710DA9F7900E9C588 /* ftoutln.h in Headers */ = {isa = PBXBuildFile; fileRef = BB24DFA810DA7C1B00E9C588 /* ftoutln.h */; };
 		BB24E10810DA9F7900E9C588 /* ftlcdfil.h in Headers */ = {isa = PBXBuildFile; fileRef = BB24DFA010DA7C1B00E9C588 /* ftlcdfil.h */; };
 		BB24E10910DA9F7900E9C588 /* ftbitmap.h in Headers */ = {isa = PBXBuildFile; fileRef = BB24DF9510DA7C1B00E9C588 /* ftbitmap.h */; };
+		BB24E10A10DA9F7A00E9C588 /* FreeImage.h in Headers */ = {isa = PBXBuildFile; fileRef = BB24DF7A10DA7C1B00E9C588 /* FreeImage.h */; };
 		BB24E10B10DA9F7A00E9C588 /* ftsizes.h in Headers */ = {isa = PBXBuildFile; fileRef = BB24DFAB10DA7C1B00E9C588 /* ftsizes.h */; };
 		BB24E10C10DA9F7A00E9C588 /* ftpfr.h in Headers */ = {isa = PBXBuildFile; fileRef = BB24DFA910DA7C1B00E9C588 /* ftpfr.h */; };
 		BB24E10D10DA9F7A00E9C588 /* fttypes.h in Headers */ = {isa = PBXBuildFile; fileRef = BB24DFB110DA7C1B00E9C588 /* fttypes.h */; };
@@ -138,16 +138,11 @@
 		5326AEA710A23A0500278DE6 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		53F323EA10A20EDB00E0DAE4 /* OpenAL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenAL.framework; path = System/Library/Frameworks/OpenAL.framework; sourceTree = SDKROOT; };
 		5E2E99DC10ED147800587639 /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
-		5ED6D93B124E5D630065CADC /* FreeImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FreeImage.h; path = ../../../FreeImage/include/FreeImage.h; sourceTree = SOURCE_ROOT; };
 		92BFCD051128AC3E0081DD61 /* ofBitmapFont.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofBitmapFont.h; sourceTree = "<group>"; };
 		92BFCD061128AC3E0081DD61 /* ofBitmapFont.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofBitmapFont.cpp; sourceTree = "<group>"; };
 		BB16EBD10F2B2A9500518274 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
 		BB16EBD80F2B2AB500518274 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
-<<<<<<< HEAD:libs/openFrameworksCompiled/project/iphone/iPhone+OF Lib.xcodeproj/project.pbxproj
-		BB24DED610DA7A3F00E9C588 /* libofxiPhoneOFLib_iphonesimulator _Debug.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libofxiPhoneOFLib_iphonesimulator _Debug.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-=======
 		BB24DED610DA7A3F00E9C588 /* libofxiPhone_iphoneos_ReleaseArmv7.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libofxiPhone_iphoneos_ReleaseArmv7.a; sourceTree = BUILT_PRODUCTS_DIR; };
->>>>>>> b3fd9144b8d45108fca86c96364655f9a0d68f7a:libs/openFrameworksCompiled/project/iphone/iPhone+OF Lib.xcodeproj/project.pbxproj
 		BB24DEF710DA7BEF00E9C588 /* ofAppBaseWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofAppBaseWindow.h; sourceTree = "<group>"; };
 		BB24DEFA10DA7BEF00E9C588 /* ofAppRunner.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofAppRunner.cpp; sourceTree = "<group>"; };
 		BB24DEFB10DA7BEF00E9C588 /* ofAppRunner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofAppRunner.h; sourceTree = "<group>"; };
@@ -172,6 +167,7 @@
 		BB24DF1B10DA7BEF00E9C588 /* ofTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofTypes.h; sourceTree = "<group>"; };
 		BB24DF1C10DA7BEF00E9C588 /* ofUtils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofUtils.cpp; sourceTree = "<group>"; };
 		BB24DF1D10DA7BEF00E9C588 /* ofUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofUtils.h; sourceTree = "<group>"; };
+		BB24DF7A10DA7C1B00E9C588 /* FreeImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FreeImage.h; sourceTree = "<group>"; };
 		BB24DF8D10DA7C1B00E9C588 /* ftconfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ftconfig.h; sourceTree = "<group>"; };
 		BB24DF8E10DA7C1B00E9C588 /* ftheader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ftheader.h; sourceTree = "<group>"; };
 		BB24DF8F10DA7C1B00E9C588 /* ftmodule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ftmodule.h; sourceTree = "<group>"; };
@@ -292,11 +288,7 @@
 		19C28FACFE9D520D11CA2CBB /* Products */ = {
 			isa = PBXGroup;
 			children = (
-<<<<<<< HEAD:libs/openFrameworksCompiled/project/iphone/iPhone+OF Lib.xcodeproj/project.pbxproj
-				BB24DED610DA7A3F00E9C588 /* libofxiPhoneOFLib_iphonesimulator _Debug.a */,
-=======
 				BB24DED610DA7A3F00E9C588 /* libofxiPhone_iphoneos_ReleaseArmv7.a */,
->>>>>>> b3fd9144b8d45108fca86c96364655f9a0d68f7a:libs/openFrameworksCompiled/project/iphone/iPhone+OF Lib.xcodeproj/project.pbxproj
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -448,7 +440,7 @@
 		BB24DF7910DA7C1B00E9C588 /* include */ = {
 			isa = PBXGroup;
 			children = (
-				5ED6D93B124E5D630065CADC /* FreeImage.h */,
+				BB24DF7A10DA7C1B00E9C588 /* FreeImage.h */,
 			);
 			path = include;
 			sourceTree = "<group>";
@@ -726,6 +718,7 @@
 				BB24E10710DA9F7900E9C588 /* ftoutln.h in Headers */,
 				BB24E10810DA9F7900E9C588 /* ftlcdfil.h in Headers */,
 				BB24E10910DA9F7900E9C588 /* ftbitmap.h in Headers */,
+				BB24E10A10DA9F7A00E9C588 /* FreeImage.h in Headers */,
 				BB24E10B10DA9F7A00E9C588 /* ftsizes.h in Headers */,
 				BB24E10C10DA9F7A00E9C588 /* ftpfr.h in Headers */,
 				BB24E10D10DA9F7A00E9C588 /* fttypes.h in Headers */,
@@ -763,7 +756,6 @@
 				BB3140C011BB09220019348E /* ES1Renderer.h in Headers */,
 				BB3140C211BB09220019348E /* ES2Renderer.h in Headers */,
 				BB3140C611BB098A0019348E /* ESRenderer.h in Headers */,
-				5ED6D93C124E5D630065CADC /* FreeImage.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -784,11 +776,7 @@
 			);
 			name = "iPhone+OF Static Library";
 			productName = "Static Library";
-<<<<<<< HEAD:libs/openFrameworksCompiled/project/iphone/iPhone+OF Lib.xcodeproj/project.pbxproj
-			productReference = BB24DED610DA7A3F00E9C588 /* libofxiPhoneOFLib_iphonesimulator _Debug.a */;
-=======
 			productReference = BB24DED610DA7A3F00E9C588 /* libofxiPhone_iphoneos_ReleaseArmv7.a */;
->>>>>>> b3fd9144b8d45108fca86c96364655f9a0d68f7a:libs/openFrameworksCompiled/project/iphone/iPhone+OF Lib.xcodeproj/project.pbxproj
 			productType = "com.apple.product-type.library.static";
 		};
 /* End PBXNativeTarget section */
@@ -913,17 +901,11 @@
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-<<<<<<< HEAD:libs/openFrameworksCompiled/project/iphone/iPhone+OF Lib.xcodeproj/project.pbxproj
-				HEADER_SEARCH_PATHS = ../../../poco/include;
-				IPHONEOS_DEPLOYMENT_TARGET = 3.1;
-				ONLY_ACTIVE_ARCH = NO;
-=======
 				HEADER_SEARCH_PATHS = (
 					../../../poco/include,
 					../../../../libs/freetype/include/,
 					../../../../libs/freetype/include/freetype2,
 				);
->>>>>>> b3fd9144b8d45108fca86c96364655f9a0d68f7a:libs/openFrameworksCompiled/project/iphone/iPhone+OF Lib.xcodeproj/project.pbxproj
 				PREBINDING = NO;
 				SDKROOT = iphoneos4.1;
 			};
@@ -937,18 +919,11 @@
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-<<<<<<< HEAD:libs/openFrameworksCompiled/project/iphone/iPhone+OF Lib.xcodeproj/project.pbxproj
-				HEADER_SEARCH_PATHS = ../../../poco/include;
-				IPHONEOS_DEPLOYMENT_TARGET = 3.1;
-				ONLY_ACTIVE_ARCH = NO;
-				OTHER_LDFLAGS = "";
-=======
 				HEADER_SEARCH_PATHS = (
 					../../../poco/include,
 					../../../../libs/freetype/include/,
 					../../../../libs/freetype/include/freetype2,
 				);
->>>>>>> b3fd9144b8d45108fca86c96364655f9a0d68f7a:libs/openFrameworksCompiled/project/iphone/iPhone+OF Lib.xcodeproj/project.pbxproj
 				PREBINDING = NO;
 				SDKROOT = iphoneos4.1;
 			};
@@ -957,16 +932,6 @@
 		E49BCC2B125548B0009F19D0 /* ReleaseArmv7 */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-<<<<<<< HEAD:libs/openFrameworksCompiled/project/iphone/iPhone+OF Lib.xcodeproj/project.pbxproj
-				ARCHS = "$(ARCHS_UNIVERSAL_IPHONE_OS)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Mehmet Akten";
-				GCC_C_LANGUAGE_STANDARD = c99;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				HEADER_SEARCH_PATHS = ../../../poco/include;
-				IPHONEOS_DEPLOYMENT_TARGET = 3.1;
-				ONLY_ACTIVE_ARCH = NO;
-=======
 				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/../../lib/iphone/";
 				COPY_PHASE_STRIP = YES;
 				DEAD_CODE_STRIPPING = NO;
@@ -974,7 +939,6 @@
 				EXECUTABLE_PREFIX = lib;
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				IPHONEOS_DEPLOYMENT_TARGET = 3.1;
->>>>>>> b3fd9144b8d45108fca86c96364655f9a0d68f7a:libs/openFrameworksCompiled/project/iphone/iPhone+OF Lib.xcodeproj/project.pbxproj
 				PREBINDING = NO;
 				PRODUCT_NAME = "ofxiPhone_${PLATFORM_NAME}_ReleaseArmv7";
 				TARGETED_DEVICE_FAMILY = "1,2";
