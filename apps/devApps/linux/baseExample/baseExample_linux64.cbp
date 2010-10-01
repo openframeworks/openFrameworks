@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6"/>
+	<Project>
+		<Option title="baseExample"/>
+		<Option pch_mode="2"/>
+		<Option compiler="gcc"/>
+		<Option virtualFolders="addons/;src/;"/>
+		<Build>
+			<Target title="Debug">
+				<Option output="bin/$(PROJECT_NAME)_debug" extension_auto="1" prefix_auto="1"/>
+				<Option working_dir="bin"/>
+				<Option object_output="obj/Debug/"/>
+				<Option external_deps="../../../libs/openFrameworksCompiled/lib/linux64/libopenFrameworksDebug.a;"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Option projectLinkerOptionsRelation="2"/>
+				<Compiler>
+					<Add option="-g"/>
+					<Add option="-MMD"/>
+				</Compiler>
+				<Linker>
+					<Add option="-Wl,-rpath=./libs"/>
+					<Add library="openFrameworksDebug"/>
+				</Linker>
+			</Target>
+			<Target title="Release">
+				<Option output="bin/$(PROJECT_NAME)" extension_auto="1" prefix_auto="1"/>
+				<Option working_dir="bin"/>
+				<Option object_output="obj/Release/"/>
+				<Option external_deps="../../../libs/openFrameworksCompiled/lib/linux64/libopenFrameworks.a;"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Option projectLinkerOptionsRelation="2"/>
+				<Compiler>
+					<Add option="-march=native"/>
+					<Add option="-O3"/>
+					<Add option="-MMD"/>
+				</Compiler>
+				<Linker>
+					<Add option="-Wl,-rpath=./libs"/>
+					<Add option="-s"/>
+					<Add library="openFrameworks"/>
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-Wall"/>
+			<Add option="-fexceptions"/>
+			<Add directory="../../../addons/"/>
+			<Add directory="../../../libs/openFrameworks/"/>
+			<Add directory="../../../libs/openFrameworks/events"/>
+			<Add directory="../../../libs/openFrameworks/app"/>
+			<Add directory="../../../libs/openFrameworks/communication"/>
+			<Add directory="../../../libs/openFrameworks/graphics"/>
+			<Add directory="../../../libs/openFrameworks/video"/>
+			<Add directory="../../../libs/openFrameworks/utils"/>
+			<Add directory="../../../libs/openFrameworks/sound"/>
+			<Add directory="../../../libs/rtAudio/include"/>
+			<Add directory="../../../libs/fmodex/include"/>
+			<Add directory="../../../libs/glee/include"/>
+			<Add directory="../../../libs/glee/"/>
+			<Add directory="../../../libs/FreeImage/include"/>
+			<Add directory="../../../libs/freetype/include"/>
+			<Add directory="../../../libs/freetype/include/freetype2"/>
+			<Add directory="../../../libs/gstappsink/include"/>
+			<Add directory="../../../addons"/>
+			<Add directory="../../../libs/poco/include"/>
+		</Compiler>
+		<Linker>
+			<Add library="fmodex"/>
+			<Add library="glut"/>
+			<Add library="GL"/>
+			<Add library="GLU"/>
+			<Add library="Xxf86vm"/>
+			<Add library="asound"/>
+			<Add library="PocoFoundation"/>
+			<Add library="unicap"/>
+			<Add library="freetype"/>
+			<Add library="freeimage"/>
+			<Add library="RtAudio"/>
+			<Add library="GLee"/>
+			<Add library="oFappsink"/>
+			<Add directory="../../../libs/freetype/lib/linux64"/>
+			<Add directory="../../../libs/FreeImage/lib/linux64"/>
+			<Add directory="../../../libs/rtAudio/lib/linux64"/>
+			<Add directory="../../../libs/glee/lib/linux64"/>
+			<Add directory="../../../libs/gstappsink/lib/linux64"/>
+			<Add directory="../../../libs/fmodex/lib/linux64"/>
+			<Add directory="../../../libs/poco/lib/linux64"/>
+			<Add directory="../../../libs/openFrameworksCompiled/lib/linux64"/>
+		</Linker>
+		<ExtraCommands>
+			<Add after="#"/>
+			<Add after="#      copy libs and shell script to bin directory:"/>
+			<Add after="#"/>
+			<Add after="cp -r ../../../export/linux64/libs $(PROJECT_DIR)bin/"/>
+		</ExtraCommands>
+		<Unit filename="src/main.cpp">
+			<Option virtualFolder="src/"/>
+		</Unit>
+		<Unit filename="src/testApp.cpp">
+			<Option virtualFolder="src/"/>
+		</Unit>
+		<Unit filename="src/testApp.h">
+			<Option virtualFolder="src/"/>
+		</Unit>
+		<Extensions>
+			<lib_finder>
+				<lib name="gstreamer-0.10"/>
+				<lib name="gstreamer-video-0.10"/>
+				<lib name="gstreamer-base-0.10"/>
+				<lib name="libudev" />
+			</lib_finder>
+			<code_completion/>
+			<envvars/>
+			<debugger/>
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

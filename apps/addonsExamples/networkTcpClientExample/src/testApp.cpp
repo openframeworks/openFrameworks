@@ -41,12 +41,15 @@ void testApp::update(){
 
 	//we are connected - lets send our text and check what we get back
 	if(weConnected){
-		tcpClient.send(msgTx);
+		if(tcpClient.send(msgTx)){
 
-		//if data has been sent lets update our text
-		string str = tcpClient.receive();
-		if( str.length() > 0 ){
-			msgRx = str;
+			//if data has been sent lets update our text
+			string str = tcpClient.receive();
+			if( str.length() > 0 ){
+				msgRx = str;
+			}
+		}else if(!tcpClient.isConnected()){
+			weConnected = false;
 		}
 	}else{
 		//if we are not connected lets try and reconnect every 5 seconds
