@@ -122,7 +122,9 @@
 	
 	#define TARGET_LITTLE_ENDIAN		// arm cpu	
 #endif
-
+#if TARGET_IPHONE_SIMULATOR
+	#define TARGET_LITTLE_ENDIAN		// arm cpu	
+#endif
 
 #ifndef __MWERKS__
 #include <cstdlib>
