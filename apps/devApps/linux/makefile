@@ -50,8 +50,8 @@ endif
 NODEPS = clean
 SED_EXCLUDE_FROM_SRC = $(shell echo  $(EXCLUDE_FROM_SOURCE) | sed s/\,/\\\\\|/g)
 SOURCE_DIRS = $(shell find . -maxdepth 1 -mindepth 1 -type d | grep -v $(SED_EXCLUDE_FROM_SRC) | sed s/.\\///)
-SOURCES = $(shell find $(SOURCE_DIRS) -name "*.cpp")
-OBJFILES = $(patsubst %.cpp,%.o,$(SOURCES))
+SOURCES = $(shell find $(SOURCE_DIRS) -name "*.cpp" -or -name "*.c")
+OBJFILES = $(patsubst %.c,%.o,$(patsubst %.cpp,%.o,$(SOURCES)))
 APPNAME = $(shell basename `pwd`)
 CORE_INCLUDES = $(shell find ../../../libs/openFrameworks/ -type d)
 CORE_INCLUDE_FLAGS = $(addprefix -I,$(CORE_INCLUDES))
@@ -69,7 +69,7 @@ CFLAGS += $(INCLUDES_FLAGS)
 CFLAGS += $(CORE_INCLUDE_FLAGS)
 CFLAGS +=`pkg-config  gstreamer-0.10 gstreamer-video-0.10 gstreamer-base-0.10 libudev --cflags`
 
-LDFLAGS = $(LIB_PATHS_FLAGS) -s
+LDFLAGS = $(LIB_PATHS_FLAGS) -s -Wl,-rpath=./libs
 
 LIBS = $(LIB_SHARED)
 LIBS += $(LIB_STATIC)
@@ -92,9 +92,9 @@ ifeq ($(findstring addons.make,$(wildcard *.make)),addons.make)
 	ADDONS_LIBS_REL_DIRS = $(addsuffix /libs, $(ADDONS))
 	ADDONS_DIRS = $(addprefix ../../../addons/, $(ADDONS_REL_DIRS) )
 	ADDONS_LIBS_DIRS = $(addprefix ../../../addons/, $(ADDONS_LIBS_REL_DIRS) )
-	ADDONS_SOURCES = $(shell find $(ADDONS_DIRS) -name "*.cpp")
-	ADDONS_SOURCES += $(shell find $(ADDONS_LIBS_DIRS) -name "*.cpp" 2>/dev/null)
-	ADDONS_OBJFILES = $(subst ../../../, ,$(patsubst %.cpp,%.o,$(ADDONS_SOURCES)))
+	ADDONS_SOURCES = $(shell find $(ADDONS_DIRS) -name "*.cpp" -or -name "*.c")
+	ADDONS_SOURCES += $(shell find $(ADDONS_LIBS_DIRS) -name "*.cpp" -or -name "*.c" 2>/dev/null)
+	ADDONS_OBJFILES = $(subst ../../../, ,$(patsubst %.c,%.o,$(patsubst %.cpp,%.o,$(ADDONS_SOURCES))))
 endif
 
 
@@ -130,6 +130,7 @@ OBJS = $(addprefix $(OBJ_OUTPUT), $(OBJFILES))
 DEPFILES = $(patsubst %.o,%.d,$(OBJS))
 ifeq ($(findstring addons.make,$(wildcard *.make)),addons.make)
 	ADDONS_OBJS = $(addprefix $(OBJ_OUTPUT), $(ADDONS_OBJFILES))
+    DEPFILES += $(patsubst %.o,%.d,$(ADDONS_OBJS))
 endif
 
 .PHONY: Debug Release all after
@@ -149,11 +150,21 @@ $(OBJ_OUTPUT)%.o: %.cpp
 	mkdir -p $(@D)
 	$(CXX) -c $(TARGET_CFLAGS) $(CFLAGS) $(ADDONSCFLAGS) $(USER_CFLAGS) -MMD -MP -MF$(OBJ_OUTPUT)$*.d -MT$(OBJ_OUTPUT)$*.d -o$@ -c $<  
 
+$(OBJ_OUTPUT)%.o: %.c
+	@echo "compiling object for: " $<
+	mkdir -p $(@D)
+	$(CC) -c $(TARGET_CFLAGS) $(CFLAGS) $(ADDONSCFLAGS) $(USER_CFLAGS) -MMD -MP -MF$(OBJ_OUTPUT)$*.d -MT$(OBJ_OUTPUT)$*.d -o$@ -c $< 
+
 
 $(OBJ_OUTPUT)%.o: ../../../%.cpp
 	@echo "compiling addon object for" $<
 	mkdir -p $(@D)
 	$(CXX) $(TARGET_CFLAGS) $(CFLAGS) $(ADDONSCFLAGS) $(USER_CFLAGS) -MMD -MP -MF$(OBJ_OUTPUT)$*.d -MT$(OBJ_OUTPUT)$*.d -o $@ -c $<
+
+$(OBJ_OUTPUT)%.o: ../../../%.c
+	@echo "compiling addon object for" $<
+	mkdir -p $(@D)
+	$(CC) $(TARGET_CFLAGS) $(CFLAGS) $(ADDONSCFLAGS) $(USER_CFLAGS) -MMD -MP -MF$(OBJ_OUTPUT)$*.d -MT$(OBJ_OUTPUT)$*.d -o $@ -c $<
 	
 $(TARGET): $(OBJS) $(ADDONS_OBJS)
 	@echo "linking" $(TARGET)
@@ -166,24 +177,20 @@ clean:
 	rm -Rf obj
 	rm -f -v $(TARGET)
 	rm -Rf -v bin/libs
-	rm -f -v bin/clickToLaunchApp*
 	
 $(CLEANTARGET):
 	rm -Rf -v $(OBJ_OUTPUT)
 	rm -f -v $(TARGET)
-	rm -f -v bin/clickToLaunchApp_$(TARGET_NAME).sh
 
 
 after:
 	cp -r ../../../export/$(LIBSPATH)/libs bin/
-	cp ../../../export/$(LIBSPATH)/clickToLaunchApp.sh bin/clickToLaunchApp_$(TARGET_NAME).sh
-	sed -i s/applicationName/$(APPNAME)/g  bin/clickToLaunchApp_$(TARGET_NAME).sh
 	@echo
 	@echo "     compiling done"
 	@echo "     to launch the application"	
 	@echo
 	@echo "     cd bin"
-	@echo "     ./clickToLaunchApp_$(TARGET_NAME).sh"
+	@echo "     ./$(TARGET)"
 	@echo
     
 

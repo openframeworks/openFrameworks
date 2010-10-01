@@ -71,8 +71,8 @@ void ofTexture::clear(){
 	// http://www.opengl.org/documentation/specs/man_pages/hardcopy/GL/html/gl/deletetextures.html
 	if (texData.textureID != 0){
 		glDeleteTextures(1, (GLuint *)&texData.textureID);
+		texData.textureID  = 0;
 	}
-
 	texData.bAllocated = false;
 }
 

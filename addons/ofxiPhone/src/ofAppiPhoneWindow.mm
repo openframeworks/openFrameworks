@@ -281,9 +281,22 @@ void ofAppiPhoneWindow::timerLoop() {
 	if(bEnableSetupScreen) {
 		int w, h;
 		
-		CGSize s = [[[UIApplication sharedApplication] keyWindow] bounds].size;
-		w = s.width;
-		h = s.height;
+		switch(orientation) {
+			case OFXIPHONE_ORIENTATION_LANDSCAPE_RIGHT:
+					h = ofGetWidth();
+					w = ofGetHeight();
+				break;
+				
+			case OFXIPHONE_ORIENTATION_LANDSCAPE_LEFT:
+					h = ofGetWidth();
+					w = ofGetHeight();
+				break;
+	
+			default:
+				w = ofGetWidth();
+				h = ofGetHeight();
+			break;
+		}
 		
 		float halfFov, theTan, screenFov, aspect;
 		screenFov 		= 60.0f;
