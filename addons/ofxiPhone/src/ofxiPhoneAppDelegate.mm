@@ -266,6 +266,13 @@
 	
 }
 
+- (void)applicationDidEnterBackground:(UIApplication *)application {
+	static ofEventArgs voidEventArgs;
+	ofGetAppPtr()->exit();
+#ifdef OF_USING_POCO
+	ofNotifyEvent( ofEvents.exit, voidEventArgs );
+#endif	
+}
 
 -(void) applicationDidReceiveMemoryWarning:(UIApplication *)application {
 	ofxiPhoneAlerts.gotMemoryWarning();
