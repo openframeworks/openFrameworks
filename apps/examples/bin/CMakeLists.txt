@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8)
-set(PROJECT "textureExample")
+set(PROJECT "bin")
 project(${PROJECT})
 
 include(../../../cmake/OpenFrameworksConfig.cmake)
