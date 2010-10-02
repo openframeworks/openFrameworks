@@ -114,11 +114,11 @@ set_target_properties (openFrameworksStatic
 target_link_libraries(openFrameworksStatic ${OPENFRAMEWORKS_LIBRARIES})
 
 
-install(FILES *.h */*.h
+install(FILES ${ofincludes_files}
     DESTINATION "${OPENFRAMEWORKS_LIBRARY_INSTALL_PREFIX}/include/openFrameworks")
 
 install(TARGETS openFrameworksStatic 
-    DESTINATION ${OPENFRAMEWORKS_LIBRARY_INSTALL_PREFIX}/lib/)
+    DESTINATION "${OPENFRAMEWORKS_LIBRARY_INSTALL_PREFIX}/lib/")
 
 
 
