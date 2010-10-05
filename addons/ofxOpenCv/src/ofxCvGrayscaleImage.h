@@ -92,7 +92,7 @@ class ofxCvGrayscaleImage : public ofxCvImage {
     virtual void  adaptiveThreshold( int blockSize, int offset=0,
                                      bool invert=false, bool gauss=false);
 	
-	virtual void  brightnessContrast(float brightness, float contrast);		   // (uses values between -100 and 100)
+	virtual void  brightnessContrast(float brightness, float contrast);		   // (uses values between -1 and 1)
 	
     // virtual void  erode( );                                                 //in base class
     // virtual void  dilate( );                                                //in base class
@@ -149,7 +149,6 @@ class ofxCvGrayscaleImage : public ofxCvImage {
 	// for brightness contrast:
 	//
 	
-	uchar		briConLut[256];
 	CvMat*		briConLutMatrix;
 	
     void init();

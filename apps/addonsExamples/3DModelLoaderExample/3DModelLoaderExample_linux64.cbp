@@ -63,7 +63,6 @@
             <Add directory="../../../libs/FreeImage/include" />
             <Add directory="../../../libs/freetype/include" />
             <Add directory="../../../libs/freetype/include/freetype2" />
-            <Add directory="../../../libs/unicap/include" />
             <Add directory="../../../libs/gstappsink/include" />
             <Add directory="../../../addons" />
             <Add directory="../../../libs/poco/include" />
@@ -87,14 +86,12 @@
         </Compiler>
         <Linker>
             <Add library="fmodex" />
-            <Add library="raw1394" />
             <Add library="glut" />
             <Add library="GL" />
             <Add library="GLU" />
             <Add library="Xxf86vm" />
             <Add library="asound" />
             <Add library="PocoFoundation" />
-            <Add library="unicap" />
             <Add library="freetype" />
             <Add library="freeimage" />
             <Add library="RtAudio" />
@@ -109,7 +106,6 @@
             <Add directory="../../../libs/glee/lib/linux64" />
             <Add directory="../../../libs/gstappsink/lib/linux64" />
             <Add directory="../../../libs/fmodex/lib/linux64" />
-            <Add directory="../../../libs/unicap/lib/linux64" />
             <Add directory="../../../libs/poco/lib/linux64" />
             <Add directory="../../../libs/openFrameworksCompiled/lib/linux64" />
         </Linker>

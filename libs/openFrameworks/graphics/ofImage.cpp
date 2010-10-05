@@ -185,7 +185,9 @@ void  ofImage::setFromPixels(unsigned char * newPixels, int w, int h, int newTyp
 	}
 
 	if (!((width == w) && (height == h) && (type == newType))){
+		bool bCacheBUseTexture = bUseTexture;
 		clear();
+		bUseTexture = bCacheBUseTexture;
 		allocate(w,h, newType);
 	}
 

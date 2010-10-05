@@ -103,21 +103,24 @@ ifeq ($(findstring Debug,$(MAKECMDGOALS)),Debug)
 	TARGET_CFLAGS = -g
 	TARGET_LIBS = -lopenFrameworksDebug
 	TARGET_NAME = Debug
-	TARGET = bin/$(APPNAME)_debug
+    BIN_NAME = $(APPNAME)_debug
+	TARGET = bin/$(BIN_NAME)
 endif
 
 ifeq ($(findstring Release,$(MAKECMDGOALS)),Release)
 	TARGET_CFLAGS = $(COMPILER_OPTIMIZATION)
 	TARGET_LIBS = -lopenFrameworks
 	TARGET_NAME = Release
-	TARGET = bin/$(APPNAME)
+    BIN_NAME = $(APPNAME)
+	TARGET = bin/$(BIN_NAME)
 endif
 
 ifeq ($(MAKECMDGOALS),)
 	TARGET_CFLAGS = $(COMPILER_OPTIMIZATION)
 	TARGET_LIBS = -lopenFrameworks
 	TARGET_NAME = Release
-	TARGET = bin/$(APPNAME)
+    BIN_NAME = $(APPNAME)
+	TARGET = bin/$(BIN_NAME)
 endif
 
 ifeq ($(MAKECMDGOALS),clean)
@@ -130,6 +133,7 @@ OBJS = $(addprefix $(OBJ_OUTPUT), $(OBJFILES))
 DEPFILES = $(patsubst %.o,%.d,$(OBJS))
 ifeq ($(findstring addons.make,$(wildcard *.make)),addons.make)
 	ADDONS_OBJS = $(addprefix $(OBJ_OUTPUT), $(ADDONS_OBJFILES))
+    DEPFILES += $(patsubst %.o,%.d,$(ADDONS_OBJS))
 endif
 
 .PHONY: Debug Release all after
@@ -176,24 +180,20 @@ clean:
 	rm -Rf obj
 	rm -f -v $(TARGET)
 	rm -Rf -v bin/libs
-	rm -f -v bin/clickToLaunchApp*
 	
 $(CLEANTARGET):
 	rm -Rf -v $(OBJ_OUTPUT)
 	rm -f -v $(TARGET)
-	rm -f -v bin/clickToLaunchApp_$(TARGET_NAME).sh
 
 
 after:
 	cp -r ../../../export/$(LIBSPATH)/libs bin/
-	cp ../../../export/$(LIBSPATH)/clickToLaunchApp.sh bin/clickToLaunchApp_$(TARGET_NAME).sh
-	sed -i s/applicationName/$(APPNAME)/g  bin/clickToLaunchApp_$(TARGET_NAME).sh
 	@echo
 	@echo "     compiling done"
 	@echo "     to launch the application"	
 	@echo
 	@echo "     cd bin"
-	@echo "     ./clickToLaunchApp_$(TARGET_NAME).sh"
+	@echo "     ./$(BIN_NAME)"
 	@echo
     
 
