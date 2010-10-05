@@ -156,6 +156,7 @@ void ofxCvContourFinder::draw( float x, float y, float w, float h ) {
         y -= anchor.y;
     }
 
+    ofPushStyle();
 	// ---------------------------- draw the bounding rectangle
 	ofSetColor(0xDD00CC);
     glPushMatrix();
@@ -181,6 +182,7 @@ void ofxCvContourFinder::draw( float x, float y, float w, float h ) {
 
 	}
 	glPopMatrix();
+	ofPopStyle();
 }
 
 //--------------------------------------------------------------------------------

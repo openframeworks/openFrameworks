@@ -359,6 +359,11 @@ public:
 		if(nextLinePos<size-1) nextLinePos++;
 		return line;
 	}
+
+	string getFirstLine(){
+		nextLinePos = 0;
+		return getNextLine();
+	}
 };
 
 
@@ -426,7 +431,6 @@ public:
 class ofBaseVideo: public ofBaseImage, public ofBaseUpdates{
 public:
 	virtual ~ofBaseVideo(){}
-	virtual unsigned char * getPixels()=0;
 	virtual bool isFrameNew()=0;
 	virtual void close()=0;
 };

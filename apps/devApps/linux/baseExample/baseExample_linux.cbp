@@ -2,14 +2,14 @@
 <CodeBlocks_project_file>
 	<FileVersion major="1" minor="6"/>
 	<Project>
-		<Option title="emptyExample"/>
+		<Option title="baseExample"/>
 		<Option pch_mode="2"/>
 		<Option compiler="gcc"/>
 		<Option virtualFolders="addons/;src/;"/>
 		<Build>
 			
 			<Target title="Debug">
-				<Option output="bin/advancedEventsExample_debug" prefix_auto="1" extension_auto="1"/>
+				<Option output="bin/$(PROJECT_NAME)_debug" prefix_auto="1" extension_auto="1"/>
 				<Option working_dir="bin"/>
 				<Option object_output="obj/Debug/"/>
 				<Option external_deps="../../../libs/openFrameworksCompiled/lib/linux/libopenFrameworksDebug.a;"/>
@@ -21,11 +21,12 @@
 					<Add option="-MMD"/>
 				</Compiler>
 				<Linker>
+                    <Add option="-Wl,-rpath=./libs" />
 					<Add library="openFrameworksDebug"/>
 				</Linker>
 			</Target>
 			<Target title="Release">
-				<Option output="bin/advancedEventsExample" prefix_auto="1" extension_auto="1"/>
+				<Option output="bin/$(PROJECT_NAME)" prefix_auto="1" extension_auto="1"/>
 				<Option working_dir="bin"/>
 				<Option object_output="obj/Release/"/>
 				<Option external_deps="../../../libs/openFrameworksCompiled/lib/linux/libopenFrameworks.a;"/>
@@ -38,15 +39,11 @@
 					<Add option="-MMD"/>
 				</Compiler>
 				<Linker>
+                    <Add option="-Wl,-rpath=./libs" />
 					<Add option="-s"/>
 					<Add library="openFrameworks"/>
 				</Linker>
 			</Target>
-			<Environment>
-				<Variable name="target" value="emptyExample"/>
-				<Variable name="nautilusOnBuild" value="false"/>
-				<Variable name="runOnBuild" value="false"/>
-			</Environment>
 		</Build>
 		<Compiler>
 			<Add option="-Wall"/>
@@ -66,7 +63,6 @@
 			<Add directory="../../../libs/FreeImage/include"/>
 			<Add directory="../../../libs/freetype/include"/>
 			<Add directory="../../../libs/freetype/include/freetype2"/>
-			<Add directory="../../../libs/unicap/include"/>
 			<Add directory="../../../libs/gstappsink/include"/>
 			<Add directory="../../../addons"/>
 			<Add directory="../../../libs/poco/include"/>
@@ -74,7 +70,6 @@
 		<Linker>
 			<Add library="openFrameworks"/>
 			<Add library="fmodex"/>
-			<Add library="raw1394"/>
 			<Add library="glut"/>
 			<Add library="GL"/>
 			<Add library="GLU"/>
@@ -94,7 +89,6 @@
 			<Add directory="../../../libs/glee/lib/linux"/>
 			<Add directory="../../../libs/gstappsink/lib/linux"/>
 			<Add directory="../../../libs/fmodex/lib/linux"/>
-			<Add directory="../../../libs/unicap/lib/linux"/>
 			<Add directory="../../../libs/poco/lib/linux"/>
 		</Linker>
 		<ExtraCommands>
@@ -102,18 +96,6 @@
 			<Add after="#      copy libs and shell script to bin directory:"/>
 			<Add after="#"/>
 			<Add after="cp -r ../../../export/linux/libs $(PROJECT_DIR)bin/"/>
-			<Add after="cp ../../../export/linux/clickToLaunchApp.sh $(PROJECT_DIR)bin/clickToLaunchApp_$(TARGET_NAME).sh"/>
-			<Add after="sed -i s/applicationName/$(TARGET_OUTPUT_BASENAME)/g  $(PROJECT_DIR)bin/clickToLaunchApp_$(TARGET_NAME).sh"/>
-			<Add after="#"/>
-			<Add after="#    this is a shell script that can either (a) run the app or (b) launch nautilus to a good directory for you to run the app"/>
-			<Add after="#"/>
-			<Add after="./cb_build_runner.sh $(TARGET_OUTPUT_BASENAME) $runOnBuild $nautilusOnBuild"/>
-			<Add after="#"/>
-			<Add after="#     to enable either, change the custom variables in project->build options->custom variables"/>
-			<Add after="#     to true / false."/>
-			<Add after="#"/>
-			<Add after="#     currently this is disabled, but allows you to run the app from w/in CB."/>
-			<Add after="#"/>
 			<Mode after="always"/>
 		</ExtraCommands>
 		<Unit filename="src/main.cpp">

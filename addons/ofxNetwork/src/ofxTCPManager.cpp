@@ -1,5 +1,6 @@
 #include "ofxTCPManager.h"
 #include <stdio.h>
+#include "ofxNetworkUtils.h"
 
 //--------------------------------------------------------------------------------
 bool ofxTCPManager::m_bWinsockInit= false;
@@ -36,7 +37,7 @@ ofxTCPManager::ofxTCPManager()
 /// NOTE: A closed socket cannot be reused again without a call to "Create()".
 bool ofxTCPManager::Close()
 {
-  if (m_hSocket == INVALID_SOCKET) return(false);
+    if (m_hSocket == INVALID_SOCKET) return(true);
 
 	#ifdef TARGET_WIN32
 		if(closesocket(m_hSocket) == SOCKET_ERROR)
@@ -44,6 +45,7 @@ bool ofxTCPManager::Close()
 		if(close(m_hSocket) == SOCKET_ERROR)
 	#endif
 	{
+		ofxNetworkCheckError();
 		return(false);
 	}
 
@@ -70,7 +72,11 @@ bool ofxTCPManager::Create()
 
   m_hSocket = socket( AF_INET, SOCK_STREAM, IPPROTO_IP);
 
-  return(m_hSocket != INVALID_SOCKET);
+  bool ret = (m_hSocket != INVALID_SOCKET);
+
+  if(!ret) ofxNetworkCheckError();
+
+  return ret;
 }
 
 
@@ -79,7 +85,9 @@ bool ofxTCPManager::Listen(int iMaxConnections)
 {
   if (m_hSocket == INVALID_SOCKET) return(false);
   m_iMaxConnections = iMaxConnections;
-	return(listen(m_hSocket, iMaxConnections) != SOCKET_ERROR);
+  bool ret = (listen(m_hSocket, iMaxConnections)!= SOCKET_ERROR);
+  if(!ret) ofxNetworkCheckError();
+  return ret;
 }
 
 bool ofxTCPManager::Bind(unsigned short usPort)
@@ -92,8 +100,10 @@ bool ofxTCPManager::Bind(unsigned short usPort)
 	//Port MUST be in Network Byte Order
 	local.sin_port = htons(usPort);
 
-	if (bind(m_hSocket,(struct sockaddr*)&local,sizeof(local)))
+	if (bind(m_hSocket,(struct sockaddr*)&local,sizeof(local))){
+		ofxNetworkCheckError();
 		return false;
+	}
 	return true;
 }
 
@@ -114,13 +124,16 @@ bool ofxTCPManager::Accept(ofxTCPManager& sConnect)
     fd_set fd= {1, m_hSocket};
 	  timeval tv= {m_dwTimeoutAccept, 0};
 	  if(select(0, &fd, NULL, NULL, &tv) == 0) {
+		  ofxNetworkCheckError();
 		  return(false);
 	  }
   }
 
   iSize= sizeof(sockaddr_in);
   sConnect.m_hSocket= accept(m_hSocket, (sockaddr*)&addr, &iSize);
-  return(sConnect.m_hSocket != INVALID_SOCKET);
+  bool ret = (sConnect.m_hSocket != INVALID_SOCKET);
+  if(!ret) ofxNetworkCheckError();
+  return ret;
 }
 
 //--------------------------------------------------------------------------------
@@ -129,7 +142,9 @@ bool ofxTCPManager::Connect(char *pAddrStr, unsigned short usPort)
   sockaddr_in addr_in= {0};
   struct hostent *he;
 
-  if (m_hSocket == INVALID_SOCKET) return(false);
+  if (m_hSocket == INVALID_SOCKET){
+	  return(false);
+  }
 
   if ((he = gethostbyname(pAddrStr)) == NULL)
     return(false);
@@ -138,7 +153,9 @@ bool ofxTCPManager::Connect(char *pAddrStr, unsigned short usPort)
 	addr_in.sin_port  = htons(usPort); // short, network byte order
 	addr_in.sin_addr  = *((struct in_addr *)he->h_addr);
 
-	return(connect(m_hSocket, (sockaddr *)&addr_in, sizeof(sockaddr)) != SOCKET_ERROR);
+	bool ret = (connect(m_hSocket, (sockaddr *)&addr_in, sizeof(sockaddr)) != SOCKET_ERROR);
+	if(!ret) ofxNetworkCheckError();
+	return ret;
 }
 
 //--------------------------------------------------------------------------------
@@ -155,7 +172,10 @@ bool ofxTCPManager::SetNonBlocking(bool useNonBlocking)
 		int retVal = ioctl(m_hSocket,FIONBIO,&arg);
 	#endif
 
-	return (retVal >= 0);
+	bool ret = (retVal >= 0);
+	if(!ret) ofxNetworkCheckError();
+
+	return ret;
 }
 
 //--------------------------------------------------------------------------------
@@ -212,7 +232,9 @@ int ofxTCPManager::Send(const char* pBuff, const int iSize)
 			return(SOCKET_TIMEOUT);
 		}
 	}
-	return(send(m_hSocket, pBuff, iSize, 0));
+    int ret = send(m_hSocket, pBuff, iSize, 0);
+    if(ret==-1) ofxNetworkCheckError();
+	return ret;
 }
 
 //--------------------------------------------------------------------------------
@@ -242,13 +264,17 @@ int ofxTCPManager::SendAll(const char* pBuff, const int iSize)
 	int bytesleft = iSize;
 	int ret=-1;
 
+	int err = 0;
+
 	while (total < iSize) {
 		ret = send(m_hSocket, pBuff + total, bytesleft, 0);
-		if (ret == -1) { break; }
+		if (ret == -1) { err = ofxNetworkCheckError(); break; }
 		total += ret;
 		bytesleft -=ret;
 		if (GetTickCount() - timestamp > m_dwTimeoutSend * 1000) return SOCKET_TIMEOUT;
 	}
+
+	if(err == EPIPE || err == ECONNRESET){ Close(); return 0; }
 
 	return ret==-1 && bytesleft == iSize?SOCKET_ERROR:total;
 }
@@ -274,7 +300,9 @@ int ofxTCPManager::Receive(char* pBuff, const int iSize)
   			return(SOCKET_TIMEOUT);
   		}
   	}
-	return(recv(m_hSocket, pBuff, iSize, 0));
+  	int ret = recv(m_hSocket, pBuff, iSize, 0);
+  	if(ret==-1)  ofxNetworkCheckError();
+	return ret;
 }
 
 
@@ -306,7 +334,10 @@ int ofxTCPManager::ReceiveAll(char* pBuff, const int iSize)
 	do {
 		int ret= recv(m_hSocket, pBuff+totalBytes, iSize-totalBytes, 0);
 		if (ret==0 && totalBytes != iSize) return SOCKET_ERROR;
-		if (ret < 0) return SOCKET_ERROR;
+		if (ret < 0){
+			ofxNetworkCheckError();
+			return SOCKET_ERROR;
+		}
 		if (GetTickCount() - timestamp > m_dwTimeoutReceive * 1000) return SOCKET_TIMEOUT;
 		totalBytes += ret;
 		#ifndef TARGET_WIN32
@@ -345,7 +376,9 @@ bool ofxTCPManager::GetRemoteAddr(LPINETADDR pInetAddr)
 	#endif
 
 	iSize= sizeof(sockaddr);
-	return(getpeername(m_hSocket, (sockaddr *)pInetAddr, &iSize) != SOCKET_ERROR);
+	bool ret = (getpeername(m_hSocket, (sockaddr *)pInetAddr, &iSize) != SOCKET_ERROR);
+	if(!ret) ofxNetworkCheckError();
+	return ret;
 }
 
 //--------------------------------------------------------------------------------
@@ -360,7 +393,9 @@ bool ofxTCPManager::GetInetAddr(LPINETADDR pInetAddr)
 	#endif
 
 	iSize= sizeof(sockaddr);
-	return(getsockname(m_hSocket, (sockaddr *)pInetAddr, &iSize) != SOCKET_ERROR);
+	bool ret = (getsockname(m_hSocket, (sockaddr *)pInetAddr, &iSize) != SOCKET_ERROR);
+	if(!ret) ofxNetworkCheckError();
+	return ret;
 }
 
 void ofxTCPManager::SetTimeoutSend(int timeoutInSeconds) {
@@ -393,18 +428,20 @@ int ofxTCPManager::GetReceiveBufferSize() {
 
 	int sizeBuffer=0;
 	size = sizeof(int);
-	getsockopt(m_hSocket, SOL_SOCKET, SO_RCVBUF, (char*)&sizeBuffer, &size);
-
+	int ret = getsockopt(m_hSocket, SOL_SOCKET, SO_RCVBUF, (char*)&sizeBuffer, &size);
+	if(ret==-1) ofxNetworkCheckError();
 	return sizeBuffer;
 }
 
 bool ofxTCPManager::SetReceiveBufferSize(int sizeInByte) {
 	if (m_hSocket == INVALID_SOCKET) return(false);
 
-	if ( setsockopt(m_hSocket, SOL_SOCKET, SO_RCVBUF, (char*)&sizeInByte, sizeof(sizeInByte)) == 0)
+	if ( setsockopt(m_hSocket, SOL_SOCKET, SO_RCVBUF, (char*)&sizeInByte, sizeof(sizeInByte)) == 0){
 		return true;
-	else
+	}else{
+		 ofxNetworkCheckError();
 		return false;
+	}
 }
 
 int ofxTCPManager::GetSendBufferSize() {
@@ -418,18 +455,20 @@ int ofxTCPManager::GetSendBufferSize() {
 
 	int sizeBuffer=0;
 	size = sizeof(int);
-	getsockopt(m_hSocket, SOL_SOCKET, SO_SNDBUF, (char*)&sizeBuffer, &size);
-
+	int ret = getsockopt(m_hSocket, SOL_SOCKET, SO_SNDBUF, (char*)&sizeBuffer, &size);
+	if(ret==-1) ofxNetworkCheckError();
 	return sizeBuffer;
 }
 
 bool ofxTCPManager::SetSendBufferSize(int sizeInByte) {
 	if (m_hSocket == INVALID_SOCKET) return(false);
 
-	if ( setsockopt(m_hSocket, SOL_SOCKET, SO_SNDBUF, (char*)&sizeInByte, sizeof(sizeInByte)) == 0)
+	if ( setsockopt(m_hSocket, SOL_SOCKET, SO_SNDBUF, (char*)&sizeInByte, sizeof(sizeInByte)) == 0){
 		return true;
-	else
+	}else{
+		ofxNetworkCheckError();
 		return false;
+	}
 }
 
 int ofxTCPManager::GetMaxConnections() {
