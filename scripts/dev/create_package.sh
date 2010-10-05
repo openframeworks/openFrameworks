@@ -272,7 +272,7 @@ function createPackage {
     fi
 
     if [ "$pkg_platform" = "iphone" ]; then
-        otherplatforms="linux linux64 osx win_cb vs2008 vs2010 android"
+        otherplatforms="linux linux64 win_cb vs2008 vs2010 android"
     fi
 
     if [ "$pkg_platform" = "android" ]; then
