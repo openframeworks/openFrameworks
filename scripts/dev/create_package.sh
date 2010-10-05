@@ -369,6 +369,16 @@ function createPackage {
 	if [ "$pkg_platform" != "osx" ] && [ "$pkg_platform" != "iphone" ]; then
 		rm -Rf "xcode templates"
 	fi
+	
+	cd ${pkg_ofroot}/addons
+	#delete ofxAndroid in non android
+	if [ "$pkg_platform" != "android" ]; then
+		rm -Rf ofxAndroid
+	fi
+	#delete ofxIphone in non iphone
+	if [ "$pkg_platform" != "iphone" ]; then
+		rm -Rf ofxiPhone
+	fi
 
 	#delete eclipse project
 	rm $(find . -name .*project)
