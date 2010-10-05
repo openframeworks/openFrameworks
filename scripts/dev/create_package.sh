@@ -123,7 +123,7 @@ function deleteProjectFiles {
         rm *.cbp *.workspace
         mv $current_example.newcbp $current_example.cbp
         mv $current_example.newworkspace $current_example.workspace
-        sed -i s/${example_name}_${platform}/${example_name}/g $current_example.workspace
+        perl -pi -e s/${example_name}_${platform}/${example_name}/g $current_example.workspace
 
         #delete other platform's project files
         if [ "$platform" = "win_cb" ]; then
@@ -153,7 +153,7 @@ function deleteProjectFiles {
         mv ${current_example}_$platform.vcxproj.user $current_example.vcxproj.user
         mv ${current_example}_$platform.vcxproj.filters $current_example.vcxproj.filters
         mv ${current_example}_$platform.sln $current_example.sln
-        sed -i s/${example_name}_${platform}/${example_name}/g $current_example.sln
+        perl -pi -e s/${example_name}_${platform}/${example_name}/g $current_example.sln
 
         #delete other platform's project files
 	    deleteVS2008
@@ -170,7 +170,7 @@ function deleteProjectFiles {
         mv ${current_example}_$platform.vcproj $current_example.vcproj
         mv ${current_example}_$platform.vcproj.user $current_example.vcproj.user
         mv ${current_example}_$platform.sln $current_example.sln
-        sed -i s/${example_name}_${platform}/${example_name}/g $current_example.sln
+        perl -pi -e s/${example_name}_${platform}/${example_name}/g $current_example.sln
 
         #delete other platform's project files
 	    deleteVS2010
