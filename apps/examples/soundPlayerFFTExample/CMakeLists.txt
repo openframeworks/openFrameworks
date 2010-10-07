@@ -2,23 +2,13 @@ cmake_minimum_required(VERSION 2.8)
 set(PROJECT "soundPlayerFFTExample")
 project(${PROJECT})
 
-include(../../../cmake/OpenFrameworksConfig.cmake)
-include(../../../cmake/OpenFrameworks.cmake)
+include(FindPkgConfig)
+pkg_check_modules(OF REQUIRED openFrameworks)
 
-include_directories( src
-                     ${OPENFRAMEWORKS_ROOT}/libs/openFrameworks/
-                     ${OPENFRAMEWORKS_ROOT}/libs/openFrameworks/app
-                     ${OPENFRAMEWORKS_ROOT}/libs/openFrameworks/communication
-                     ${OPENFRAMEWORKS_ROOT}/libs/openFrameworks/events
-                     ${OPENFRAMEWORKS_ROOT}/libs/openFrameworks/graphics
-                     ${OPENFRAMEWORKS_ROOT}/libs/openFrameworks/sound
-                     ${OPENFRAMEWORKS_ROOT}/libs/openFrameworks/utils
-                     ${OPENFRAMEWORKS_ROOT}/libs/openFrameworks/video
-                     ${OPENFRAMEWORKS_INCLUDES}
-                     )
+include_directories(${OF_INCLUDE_DIRS})
 
+include_directories( src ${OF_INCLUDE_DIRS})
 
-find_library(OF_LIB openFrameworks PATHS ${OPENFRAMEWORKS_ROOT}/libs/openFrameworks)
 add_executable(${PROJECT} src/testApp.cpp src/main.cpp )
 
-target_link_libraries(${PROJECT} ${OF_LIB} ${OPENFRAMEWORKS_LIBRARIES})
+target_link_libraries(${PROJECT} ${OF_LIBRARIES})
