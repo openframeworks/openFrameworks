@@ -114,13 +114,53 @@ set_target_properties (openFrameworksStatic
 target_link_libraries(openFrameworksStatic ${OPENFRAMEWORKS_LIBRARIES})
 
 
+add_library( openFrameworksShared SHARED ${OFX_SOURCE_FILES})
+set_target_properties (openFrameworksShared 
+                        PROPERTIES OUTPUT_NAME openFrameworks )
+target_link_libraries(openFrameworksShared ${OPENFRAMEWORKS_LIBRARIES})
+
+
+
+
+##################################################################### Packages and install 
+## Package related 
+#PKConfig
+foreach (dir ${OPENFRAMEWORKS_INCLUDES})
+    set(inccmd "${inccmd} -I${dir}")    
+endforeach()
+
+set ( prefix ${CMAKE_INSTALL_PREFIX})
+set ( libdir ${CMAKE_INSTALL_PREFIX}/lib)
+set ( includedir ${CMAKE_INSTALL_PREFIX}/include/openFrameworks )
+set ( inccmd "${inccmd} -I${includedir}")
+#set ( libs "${OPENFRAMEWORKS_LIBRARIES}")
+foreach (lib ${OPENFRAMEWORKS_LIBRARIES})
+  if ( ${lib} MATCHES "-.+")
+    set (libs "${libs} ${lib}" )
+  else()
+    set (libs "${libs} -l${lib}")
+  endif()
+endforeach()
+
+# set 
+set(flags "${inccmd}")
+if ( APPLE ) 
+    set(libs  "-framework OpenGL")
+endif ()
+
+configure_file("openFrameworks.pc.in" "openFrameworks.pc")
+
+
 install(FILES ${ofincludes_files}
-    DESTINATION "${OPENFRAMEWORKS_LIBRARY_INSTALL_PREFIX}/include/openFrameworks")
+    DESTINATION include/openFrameworks)
+
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/openFrameworks.pc DESTINATION lib/pkgconfig)
+
+install(TARGETS openFrameworksShared 
+    DESTINATION lib)
 
 install(TARGETS openFrameworksStatic 
-    DESTINATION "${OPENFRAMEWORKS_LIBRARY_INSTALL_PREFIX}/lib/")
+    DESTINATION lib)
 
-
-
-message(STATUS "OF INCLUDE ${OPENFRAMEWORKS_INCLUDES}")
-message(STATUS "OF LIBRARIES ${OPENFRAMEWORKS_LIBRARIES}")
+#message(STATUS "OF INCLUDE ${OPENFRAMEWORKS_INCLUDES}")
+#message(STATUS " ${libs}  ${CMAKE_C_COMPILER} OF LIBRARIES ${OPENFRAMEWORKS_LIBRARIES}")
