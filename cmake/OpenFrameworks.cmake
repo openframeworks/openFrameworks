@@ -40,7 +40,7 @@ else()
 # if ( CMAKE_SYSTEM_NAME MATCHES "Linux" ) 
     message(STATUS "RUNNING LINUX")
     set (CMAKE_FIND_LIBRARY_PREFIXES "lib" "")
-    set (CMAKE_FIND_LIBRARY_SUFFIXES ".a" ".so")
+    set (CMAKE_FIND_LIBRARY_SUFFIXES ".so" ".a")
 endif ()
 
 set (CMAKE_LIBRARY_PATH ${OPENFRAMEWORKS_LIBRARIES_SEARCH_PATHS} /usr/lib /usr/local/lib )
