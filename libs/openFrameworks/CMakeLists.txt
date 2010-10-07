@@ -6,9 +6,9 @@ set(OPENFRAMEWORKS_VERSION "0.6")
 #### FIND DEPENDENCIES 
 include(./../../cmake/OpenFrameworksConfig.cmake)
 include(./../../cmake/OpenFrameworks.cmake)
-##########################################################################
 
-set(OPENFRAMEWORKS_LIBRARY_INSTALL_PREFIX "/usr/local/" CACHE STRING "OpenFrameworks library install prefix")
+
+##########################################################################
 
 set (OFX_SOURCE_FILES 
             utils/ofUtils.cpp
