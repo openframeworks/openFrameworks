@@ -2,7 +2,7 @@
 prefix=@prefix@
 exec_prefix=@exec_prefix@
 libdir=@libdir@
-includedir=@includedir@/openFrameworks
+includedir=@includedir@
 
 Name: openFrameworks
 Description: OpenFrameworks 
