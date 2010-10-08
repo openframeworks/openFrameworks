@@ -40,10 +40,9 @@ Or you can directly genrate Makefile, codeblocks project, Eclipse project, XCode
 ::
   cmake -G<GeneratorName> .
 
+By default under linux Makefile is generated
 
-
-
-By default under linux Makefile is generated::
+::
   cmake .
   make 
 
