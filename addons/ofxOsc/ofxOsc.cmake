@@ -24,7 +24,7 @@ if (APPLE)
   find_library(OSCPACK oscpack PATHS ${ADDON_ROOT}/libs/oscpack/lib/osx)
 endif(APPLE)
 
-if (LINUX)
+if ("${CMAKE_SYSTEM_NAME}" MATCHES "Linux")
   execute_process(COMMAND uname -m OUTPUT_VARIABLE ARCH)
   if ( ${ARCH} MATCHES "x86_64" )
     set (SUBLIBDIRSUFFIX "linux64")

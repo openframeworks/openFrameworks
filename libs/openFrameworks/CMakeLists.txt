@@ -53,7 +53,7 @@ set (OFX_SOURCE_FILES
             video/ofQtUtils.h
             video/ofVideoGrabber.h
 )
-if ( LINUX ) 
+if ( "${CMAKE_SYSTEM_NAME}" MATCHES "Linux")
   if(OPENFRAMEWORKS_VIDCAP_METHOD MATCHES "gstreamer")
     set (OFX_SOURCE_FILES ${OFX_SOURCE_FILES}
       video/ofGstUtils.cpp
@@ -65,7 +65,7 @@ if ( LINUX )
 #        video/ofUCUtils.h )
   endif()
 
-endif ( LINUX )
+endif ( )
 
 
 include_directories( . 

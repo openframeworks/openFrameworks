@@ -35,7 +35,7 @@ if(APPLE)
                                      ${OPENFRAMEWORKS_ROOT}/libs/videoInput/lib/osx
                                      
                                      CACHE STRING "OpenFrameworks library search paths")
-elseif(LINUX)
+elseif( "${CMAKE_SYSTEM_NAME}" MATCHES "Linux")
   execute_process(COMMAND uname -m OUTPUT_VARIABLE ARCH)
   if ( ${ARCH} MATCHES "x86_64" )
     set (SUBLIBDIRSUFFIX "linux64")
