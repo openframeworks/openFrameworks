@@ -61,18 +61,15 @@ By default under linux Makefile is generated
   make 
 
 
-Install openFrameworks library
-
-::
+Install openFrameworks library::
 
   make install
+
 
 Building examples
 -----------------
 
-For example, to build advancedGraphicExample
-
-::
+For example, to build advancedGraphicExample::
 
   cd apps/example/advancedGraphicExample
   mkdir build
@@ -137,7 +134,7 @@ Then your addon may set the following cmake variables:
  - ADDONS_LIBRARIES: addon external libraries (for example opencv for ofxOpenCvAddon)
  - ADDONS_INCLUDE_DIRS: all required include directories to build your addon an application (for example opencv include dirs)
 
-For more detailed instruction check provided addon cmake files and addonsExample CMakeLists.txt files.
+For more detailed instructions check provided addons cmake files and addonsExample CMakeLists.txt files.
 
 
 
@@ -205,4 +202,29 @@ Example::
 This generates a kdevelop project file ready to use with kdevelop using the following procedure
  - Project -> Open/Import Project
  - select libs/openFrameworks directory and click next
+
+
+Todo
+~~~~
+
+The following features should be implemented:
+ - Generating OSX Framework
+ - Generating packages for OSX and Linux using CPack features included in CMake
+ - Package RtAudio library or directly include it in OpenFrameworks code base (witch is done by many applications using RtAudio library)
+ - Create a continuous integration site instance somewere to perdiodicaly build and generate openFrameworks packages
+
+
+Resources
+~~~~~~~~~
+
+ - OpenFrameworks website: http://www.openframeworks.cc/
+ - OpenFrameworks forum: http://www.openframeworks.cc/forum/
+ - CMake documentation: http://www.cmake.org/cmake/help/documentation.html
+
+
+Contacts
+~~~~~~~~
+  - See github project page for email contact
+
+
 
