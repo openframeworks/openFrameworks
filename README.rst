@@ -24,6 +24,9 @@ Works under linux, Mac OSX.
 
 .. contents::
 
+Building
+~~~~~~~~
+
 Building and installing OpenFrameworks library
 ----------------------------------------------
 
@@ -97,7 +100,7 @@ in your project CMakeLists.txt.
 
 
 Extending
----------
+~~~~~~~~~
 
 All addons should include a <addonname>.cmake witch can be included in application 
 CMakeLists.txt.
@@ -138,7 +141,68 @@ For more detailed instruction check provided addon cmake files and addonsExample
 
 
 
+Develop
+~~~~~~~
+
+CMake provide the capability to generate project file for various IDE.
+When developing projects it can be usefull to generate project file and build/run your
+project inside such an IDE.
+
+Generating XCode project
+------------------------
+
+Example::
+
+  cd libs/openFrameworks
+  mkdir project
+  cd project 
+  cmake -G"Xcode" ../
 
 
+This commands generate and xcode project file named *OpenFrameworks.xcodeproj* witch can be opened with Xcode
 
+::
+ 
+ open openFrameworks.xcodeproj
+
+Xcode open the generated project and you're ready to develop. Just click build to build openFrameworks
+
+The procedure to generate project for examples, addons is exactly the same.
+
+Generating Eclipse project
+--------------------------
+
+Example::
+  
+  cd libs/openFrameworks
+  cmake -G"Eclipse CDT4 - Unix Makefiles" .
+
+
+Then open eclipse:
+  - File->Import->"Existing Project into Workspace"
+  - Select 'libs/openFrameworks' directory and click "Finish"
+
+You're now ready to develop. To build, just click "Project"->"Build All". 
+
+Generating Code::Block project
+------------------------------
+
+Example::
+  
+  cd libs/openFrameworks
+  cmake -G"CodeBlocks - Unix Makefiles" .
+
+This generates a openFrameworks.cbp codeblock project file.
+
+Generating KDevelop project
+---------------------------
+
+Example::
+ 
+  cd libs/openFrameworks
+  cmake -G"Kdevelop3" .
+
+This generates a kdevelop project file ready to use with kdevelop using the following procedure
+ - Project -> Open/Import Project
+ - select libs/openFrameworks directory and click next
 
