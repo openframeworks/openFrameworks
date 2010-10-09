@@ -22,6 +22,7 @@ Note: PKG_CONFIG_PATH may be updated to the path you choose to install openFrame
 
 Works under linux, Mac OSX.
 
+.. contents::
 
 Building and installing OpenFrameworks library
 ----------------------------------------------
