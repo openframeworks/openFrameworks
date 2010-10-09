@@ -63,7 +63,6 @@
 			<Add directory="../../../libs/FreeImage/include"/>
 			<Add directory="../../../libs/freetype/include"/>
 			<Add directory="../../../libs/freetype/include/freetype2"/>
-			<Add directory="../../../libs/unicap/include"/>
 			<Add directory="../../../libs/gstappsink/include"/>
 			<Add directory="../../../addons"/>
 			<Add directory="../../../libs/poco/include"/>
@@ -71,7 +70,6 @@
 		<Linker>
 			<Add library="openFrameworks"/>
 			<Add library="fmodex"/>
-			<Add library="raw1394"/>
 			<Add library="glut"/>
 			<Add library="GL"/>
 			<Add library="GLU"/>
@@ -91,7 +89,6 @@
 			<Add directory="../../../libs/glee/lib/linux"/>
 			<Add directory="../../../libs/gstappsink/lib/linux"/>
 			<Add directory="../../../libs/fmodex/lib/linux"/>
-			<Add directory="../../../libs/unicap/lib/linux"/>
 			<Add directory="../../../libs/poco/lib/linux"/>
 		</Linker>
 		<ExtraCommands>

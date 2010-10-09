@@ -120,8 +120,8 @@ void ofVideoGrabber::listDevices(){
 
 		SGDeviceList deviceList;
 		SGGetChannelDeviceList (gVideoChannel, sgDeviceListIncludeInputs, &deviceList);
-		unsigned char pascalName[256];
-		unsigned char pascalNameInput[256];
+		unsigned char pascalName[64];
+		unsigned char pascalNameInput[64];
 
 		//this is our new way of enumerating devices
 		//quicktime can have multiple capture 'inputs' on the same capture 'device'
@@ -145,7 +145,7 @@ void ofVideoGrabber::listDevices(){
 			int numInputs = 0;
 			if( deviceInputList ) numInputs = ((*deviceInputList)->count);
 
-			memcpy(pascalName, (*deviceList)->entry[i].name, sizeof(char) * 256);
+			memcpy(pascalName, (*deviceList)->entry[i].name, sizeof(char) * 64);
 
 			//this means we can use the capture method
 			if(nameRec.flags != sgDeviceNameFlagDeviceUnavailable){
@@ -158,7 +158,7 @@ void ofVideoGrabber::listDevices(){
 					//if our 'device' has inputs we get their names here
 					if( deviceInputList ){
 						SGDeviceInputName inputNameRec  = (*deviceInputList)->entry[j];
-						memcpy(pascalNameInput, inputNameRec.name, sizeof(char) * 256);
+						memcpy(pascalNameInput, inputNameRec.name, sizeof(char) * 64);
 					}
 
 					printf( "device[%i] %s - %s\n",  deviceCount, p2cstr(pascalName), p2cstr(pascalNameInput) );
@@ -758,8 +758,8 @@ bool ofVideoGrabber::qtSelectDevice(int deviceNumber, bool didWeChooseADevice){
 	SGDeviceList deviceList;
 	SGGetChannelDeviceList(gVideoChannel, sgDeviceListIncludeInputs, &deviceList);
 
-	unsigned char pascalName[256];
-	unsigned char pascalNameInput[256];
+	unsigned char pascalName[64];
+	unsigned char pascalNameInput[64];
 
 	int numDevices = (*deviceList)->count;
 	if(numDevices == 0){
@@ -777,8 +777,8 @@ bool ofVideoGrabber::qtSelectDevice(int deviceNumber, bool didWeChooseADevice){
 		int numInputs = 0;
 		if( deviceInputList ) numInputs = ((*deviceInputList)->count);
 
-		memcpy(pascalName, (*deviceList)->entry[i].name, sizeof(char) * 256);
-		memset(pascalNameInput, 0, sizeof(char)*256);
+		memcpy(pascalName, (*deviceList)->entry[i].name, sizeof(char) * 64);
+		memset(pascalNameInput, 0, sizeof(char)*64);
 
 		//this means we can use the capture method
 		if(nameRec.flags != sgDeviceNameFlagDeviceUnavailable){
@@ -790,7 +790,7 @@ bool ofVideoGrabber::qtSelectDevice(int deviceNumber, bool didWeChooseADevice){
 				//if our 'device' has inputs we get their names here
 				if( deviceInputList ){
 					SGDeviceInputName inputNameRec  = (*deviceInputList)->entry[j];
-					memcpy(pascalNameInput, inputNameRec.name, sizeof(char) * 256);
+					memcpy(pascalNameInput, inputNameRec.name, sizeof(char) * 64);
 				}
 
 				//if the device number matches we try and setup the device
