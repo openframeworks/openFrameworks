@@ -19,22 +19,41 @@ set(OPENFRAMEWORKS_INCLUDES_SEARCH_PATHS
                                  /usr/include/*
                                  
                                  CACHE STRING "OpenFrameworks includes search path")
+if(APPLE)
+    set(OPENFRAMEWORKS_LIBRARIES_SEARCH_PATHS 
+                                     ${OPENFRAMEWORKS_ROOT}/libs/fmodex/lib/osx
+                                     ${OPENFRAMEWORKS_ROOT}/libs/FreeImage/lib/osx
+                                     ${OPENFRAMEWORKS_ROOT}/libs/freetype/lib/osx
+                                     ${OPENFRAMEWORKS_ROOT}/libs/glee/lib/osx
+                                     ${OPENFRAMEWORKS_ROOT}/libs/glu/lib/osx
+                                     ${OPENFRAMEWORKS_ROOT}/libs/glut/lib/osx
+                                     ${OPENFRAMEWORKS_ROOT}/libs/gstappsink/lib/osx
+                                     ${OPENFRAMEWORKS_ROOT}/libs/poco/lib/osx
+                                     ${OPENFRAMEWORKS_ROOT}/libs/quicktime/lib/osx
+                                     ${OPENFRAMEWORKS_ROOT}/libs/rtAudio/lib/osx
+                                     ${OPENFRAMEWORKS_ROOT}/libs/unicap/lib/osx
+                                     ${OPENFRAMEWORKS_ROOT}/libs/videoInput/lib/osx
+                                     
+                                     CACHE STRING "OpenFrameworks library search paths")
+elseif(LINUX)
+  execute_process(COMMAND uname -m OUTPUT_VARIABLE ARCH)
+  if ( ${ARCH} MATCHES "x86_64" )
+    set (SUBLIBDIRSUFFIX "linux64")
+  else()
+    set(SUBLIBDIRSUFFIX "linux")
+  endif()
 
-set(OPENFRAMEWORKS_LIBRARIES_SEARCH_PATHS 
-                                 ${OPENFRAMEWORKS_ROOT}/libs/fmodex/lib/linux64
-                                 ${OPENFRAMEWORKS_ROOT}/libs/FreeImage/lib/linux64
-                                 ${OPENFRAMEWORKS_ROOT}/libs/freetype/lib/linux64
-                                 ${OPENFRAMEWORKS_ROOT}/libs/glee/lib/linux64
-                                 ${OPENFRAMEWORKS_ROOT}/libs/glu/lib/linux64
-                                 ${OPENFRAMEWORKS_ROOT}/libs/glut/lib/linux64
-                                 ${OPENFRAMEWORKS_ROOT}/libs/gstappsink/lib/linux64
-                                 ${OPENFRAMEWORKS_ROOT}/libs/poco/lib/linux64
-                                 ${OPENFRAMEWORKS_ROOT}/libs/quicktime/lib/linux64
-                                 ${OPENFRAMEWORKS_ROOT}/libs/rtAudio/lib/linux64
-                                 ${OPENFRAMEWORKS_ROOT}/libs/unicap/lib/linux64
-                                 ${OPENFRAMEWORKS_ROOT}/libs/videoInput/lib/linux64
-                                 
-                                 CACHE STRING "OpenFrameworks library search paths")
-
+     set(OPENFRAMEWORKS_LIBRARIES_SEARCH_PATHS 
+                                     ${OPENFRAMEWORKS_ROOT}/libs/fmodex/lib/${SUBLIBDIRSUFFIX}
+                                     ${OPENFRAMEWORKS_ROOT}/libs/FreeImage/lib/${SUBLIBDIRSUFFIX}
+                                     ${OPENFRAMEWORKS_ROOT}/libs/freetype/lib/${SUBLIBDIRSUFFIX}
+                                     ${OPENFRAMEWORKS_ROOT}/libs/glee/lib/${SUBLIBDIRSUFFIX}
+                                     ${OPENFRAMEWORKS_ROOT}/libs/glu/lib/${SUBLIBDIRSUFFIX}
+                                     ${OPENFRAMEWORKS_ROOT}/libs/glut/lib/${SUBLIBDIRSUFFIX}
+                                     ${OPENFRAMEWORKS_ROOT}/libs/gstappsink/lib/${SUBLIBDIRSUFFIX}
+                                     ${OPENFRAMEWORKS_ROOT}/libs/poco/lib/${SUBLIBDIRSUFFIX}
+                                     ${OPENFRAMEWORKS_ROOT}/libs/rtAudio/lib/${SUBLIBDIRSUFFIX}
+                                     CACHE STRING "OpenFrameworks library search paths")
+endif() 
 
 

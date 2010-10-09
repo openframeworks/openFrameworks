@@ -25,7 +25,7 @@ set (OFX_SOURCE_FILES
             app/ofAppRunner.cpp
             app/ofAppGlutWindow.cpp
             video/ofVideoPlayer.cpp
-            video/ofGstUtils.cpp
+#            video/ofGstUtils.cpp
             video/ofVideoGrabber.cpp
             video/ofQtUtils.cpp
             utils/ofNoise.h
@@ -133,20 +133,15 @@ set ( prefix ${CMAKE_INSTALL_PREFIX})
 set ( libdir ${CMAKE_INSTALL_PREFIX}/lib)
 set ( includedir ${CMAKE_INSTALL_PREFIX}/include/openFrameworks )
 set ( inccmd "${inccmd} -I${includedir}")
-#set ( libs "${OPENFRAMEWORKS_LIBRARIES}")
 foreach (lib ${OPENFRAMEWORKS_LIBRARIES})
-  if ( ${lib} MATCHES "-.+")
-    set (libs "${libs} ${lib}" )
-  else()
-    set (libs "${libs} -l${lib}")
-  endif()
+    if ( ${lib} MATCHES "-.+")
+      set (libs "${libs} ${lib}" )
+    else()
+      set (libs "${libs} -l${lib}")
+    endif()
 endforeach()
 
-# set 
 set(flags "${inccmd}")
-if ( APPLE ) 
-    set(libs  "-framework OpenGL")
-endif ()
 
 configure_file("openFrameworks.pc.in" "openFrameworks.pc")
 
@@ -162,5 +157,3 @@ install(TARGETS openFrameworksShared
 install(TARGETS openFrameworksStatic 
     DESTINATION lib)
 
-#message(STATUS "OF INCLUDE ${OPENFRAMEWORKS_INCLUDES}")
-#message(STATUS " ${libs}  ${CMAKE_C_COMPILER} OF LIBRARIES ${OPENFRAMEWORKS_LIBRARIES}")
