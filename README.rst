@@ -13,12 +13,10 @@ prefix.
 A pkconfig file will be installed to ease further openFrameworks developments 
 (pkgconfig openFrameworks --libs --cflags)
 
-Note: PKG_CONFIG_PATH may be updated to the path you choose to install openFrameworks.pc file.
-      By default openFrameworks will be installed in '/usr/local' prefix and openFrameworks.pc 
-      will be installed in '/usr/local/lib/pkgconfig/' directory. Then you may add the following
-      line in your '~/.profile' or '~/.bashrc'
+Note: PKG_CONFIG_PATH may be updated to the path you choose to install openFrameworks.pc file. By default openFrameworks will be installed in '/usr/local' prefix and openFrameworks.pc will be installed in '/usr/local/lib/pkgconfig/' directory. Then you may add the following line in your '~/.profile' or '~/.bashrc'
 
 ::
+ 
     export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig:$PKG_CONFIG_PATH
 
 
@@ -31,6 +29,7 @@ Building and installing OpenFrameworks library
 Edit cmake/OpenFrameworksConfig.cmake to adjust search path for includes and libraries
 
 ::
+
   cd libs/openFrameworks
 
 
@@ -38,6 +37,7 @@ If you want to change options, use cmake-gui or define options directly with -D 
 with cmake command.
 
 ::
+
   cmake-gui . 
   # check options, modify
 
@@ -46,11 +46,13 @@ with cmake command.
 Or you can directly genrate Makefile, codeblocks project, Eclipse project, XCode Project:
 
 ::
+
   cmake -G<GeneratorName> .
 
 By default under linux Makefile is generated
 
 ::
+
   cmake .
   make 
 
@@ -58,6 +60,7 @@ By default under linux Makefile is generated
 Install openFrameworks library
 
 ::
+
   make install
 
 Building examples
@@ -66,6 +69,7 @@ Building examples
 For example, to build advancedGraphicExample
 
 ::
+
   cd apps/example/advancedGraphicExample
   mkdir build
   cd build
@@ -82,6 +86,7 @@ for example ofxOpenCv addon includes a 'ofxOpenCv.cmake' witch may be included
 in your project CMakeLists.txt.
 
 ::
+
     cd apps/addonsExamples/opencvExample
     mkdir build
     cd build
@@ -100,6 +105,7 @@ For example, if you develop an addon named 'MyCustomAddon', you may follow the f
 directory architecture:
 
 ::
+
   - MyCustomAddon
   - src/
   - MyCustomAddon.cmake
@@ -108,6 +114,7 @@ To test your addon you develop a 'MyCustomAddonApplication' with the following d
 
 
 ::
+
  - MyCustomAddonApplication
  - src/testApp.cpp
  - src/main.cpp
@@ -117,6 +124,7 @@ To test your addon you develop a 'MyCustomAddonApplication' with the following d
 And your CMakeLists.txt includes the 'MyCustomAddon.cmake' file like this
 
 ::
+
  ...
  include(<path>/<to>/<addon>/<directory>/MyCustomAddon.cmake
 
