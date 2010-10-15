@@ -49,6 +49,7 @@
 #import "ofxiPhoneCoreLocation.h"
 #import "ofxiPhoneImagePicker.h"
 #import "ofxiPhoneMapKit.h"
+#import "ofxiPhoneVideoGrabber.h"
 #include <sys/sysctl.h>
 
 
@@ -167,6 +168,7 @@ bool ofxiPhoneUIImageToGLTexture(UIImage *uiImage, GLuint *spriteTexture);
 // TODO: take into consideration UI image orentation
 bool ofxiPhoneUIImageToOFImage(UIImage *uiImage, ofImage &outImage, int targetWidth = 0, int targetHeight = 0);
 
+bool ofxiPhoneUIImageToPixels(UIImage *uiImage, unsigned char * pix, int targetWidth = 0, int targetHeight = 0);
 
 // save current opengl screen to photos app
 // based on code from http://www.bit-101.com/blog/?p=1861

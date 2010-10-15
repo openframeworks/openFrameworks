@@ -663,7 +663,9 @@ bool ofGstUtils::initGrabber(int w, int h, int framerate){
 
 
 	const char * decodebin = "";
-	if(format.mimetype != "video/x-raw-yuv" && format.mimetype != "video/x-raw-rgb")
+	if(format.mimetype == "video/x-raw-bayer")
+		decodebin = "bayer2rgb !";
+	else if(format.mimetype != "video/x-raw-yuv" && format.mimetype != "video/x-raw-rgb")
 		decodebin = "decodebin !";
 
 	const char * scale = "ffmpegcolorspace !";
