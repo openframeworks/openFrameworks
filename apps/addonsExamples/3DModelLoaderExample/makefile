@@ -69,7 +69,7 @@ CFLAGS += $(INCLUDES_FLAGS)
 CFLAGS += $(CORE_INCLUDE_FLAGS)
 CFLAGS +=`pkg-config  gstreamer-0.10 gstreamer-video-0.10 gstreamer-base-0.10 libudev --cflags`
 
-LDFLAGS = $(LIB_PATHS_FLAGS) -s -Wl,-rpath=./libs
+LDFLAGS = $(LIB_PATHS_FLAGS) -Wl,-rpath=./libs
 
 LIBS = $(LIB_SHARED)
 LIBS += $(LIB_STATIC)
