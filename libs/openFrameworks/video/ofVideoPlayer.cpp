@@ -445,7 +445,7 @@ bool ofVideoPlayer::loadMovie(string name){
 
 		if(gstUtils.loadMovie(name)){
 			if(bUseTexture){
-				tex.allocate(gstUtils.getWidth(),gstUtils.getHeight(),GL_RGB,false);
+				tex.allocate(gstUtils.getWidth(),gstUtils.getHeight(),GL_RGB);
 				tex.loadData(gstUtils.getPixels(), gstUtils.getWidth(), gstUtils.getHeight(), GL_RGB);
 			}
 			height=gstUtils.getHeight();
