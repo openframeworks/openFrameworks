@@ -296,6 +296,7 @@ void ofxiPhoneKeyboard::updateOrientation()
 - (void) setText: (NSString *)text
 {
 	[_textField setText:text];
+    [self textFieldDidEndEditing:_textField];
 }
 
 //--------------------------------------------------------------
