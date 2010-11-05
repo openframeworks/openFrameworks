@@ -451,6 +451,7 @@
 				INSTALL_PATH = /usr/local/lib;
 				PREBINDING = NO;
 				PRODUCT_NAME = openFrameworksDebug;
+				SDKROOT = "";
 			};
 			name = Debug;
 		};
@@ -461,9 +462,11 @@
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				EXECUTABLE_PREFIX = "";
+				GCC_FAST_MATH = YES;
 				INSTALL_PATH = /usr/local/lib;
 				PREBINDING = NO;
 				PRODUCT_NAME = openFrameworks;
+				SDKROOT = "";
 				ZERO_LINK = NO;
 			};
 			name = Release;
@@ -516,6 +519,7 @@
 				INSTALL_PATH = /usr/local/lib;
 				PREBINDING = NO;
 				PRODUCT_NAME = openFrameworksUniversal;
+				SDKROOT = "";
 				ZERO_LINK = NO;
 			};
 			name = ReleaseUniversal;
