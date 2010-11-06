@@ -55,8 +55,8 @@ class ofTexture : public ofBaseDraws{
 	ofTexture& operator=(const ofTexture& mom);
 	// -----------------------------------------------------------------------
 
-	void allocate(int w, int h, int internalGlDataType); //uses the currently set OF texture type - default ARB texture
-	void allocate(int w, int h, int internalGlDataType, bool bUseARBExtention); //lets you overide the default OF texture type
+	virtual void allocate(int w, int h, int internalGlDataType); //uses the currently set OF texture type - default ARB texture
+	virtual void allocate(int w, int h, int internalGlDataType, bool bUseARBExtention); //lets you overide the default OF texture type
 	void clear();
 
 	void loadData(float * data, int w, int h, int glDataType);
@@ -70,8 +70,14 @@ class ofTexture : public ofBaseDraws{
 	void setAnchorPoint(float x, float y); //set the anchor point in pixels
 	void resetAnchor(); //resets the anchor to (0, 0)
 
+	void draw(ofRectangle r);
+	void draw(ofPoint p, float w, float h);
 	void draw(float x, float y, float w, float h);
+	void draw(float x, float y, float z, float w, float h);
+	void draw(ofPoint p);
 	void draw(float x, float y);
+	void draw(float x, float y, float z);
+	void draw(ofPoint p1, ofPoint p2, ofPoint p3, ofPoint p4);
 
 	//for the advanced user who wants to draw textures in their own way
 	void bind();

@@ -53,6 +53,10 @@ class ofImage : public ofBaseImage{
 		//for getting a reference to the texture
 		ofTexture & getTextureReference();
 
+		// quick texture binding shortcut
+		void bind();
+		void unbind();
+
 		// file loading / saving
 		bool 				loadImage(string fileName);
 		void 				saveImage(string fileName);
@@ -80,11 +84,17 @@ class ofImage : public ofBaseImage{
         void				resetAnchor();								//resets the anchor to (0, 0)
 
 		// draw:
+		void 				draw(ofRectangle r);
+		void 				draw(ofPoint p, float w, float h);
 		void 				draw(float x, float y, float w, float h);
+		void 				draw(float x, float y, float z, float w, float h);
+		void 				draw(ofPoint p);
 		void 				draw(float x, float y);
+		void 				draw(float x, float y, float z);
 
 		float 				getHeight();
 		float 				getWidth();
+		bool 				bAllocated() {return myPixels.bAllocated;};
 
 		int 				width, height, bpp;		// w,h, bits per pixel
 		int					type;					// OF_IMAGE_GRAYSCALE, OF_IMAGE_COLOR, OF_IMAGE_COLOR_ALPHA
