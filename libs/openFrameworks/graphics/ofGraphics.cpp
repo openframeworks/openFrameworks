@@ -63,6 +63,99 @@ int ofGetRectMode(){
 	return 	cornerMode;
 }
 
+
+
+//----------------------------------------------------------
+void ofPushView() {
+	glPushAttrib(GL_VIEWPORT);		// push viewport settings
+	
+	//	glPushAttrib(GL_MATRIX_MODE);	// push active matrix mode
+	glMatrixMode(GL_PROJECTION);
+	glPushMatrix();
+	glMatrixMode(GL_MODELVIEW);
+	glPushMatrix();
+	//	glPopAttrib();					// pop active matrix mode
+}
+
+
+//----------------------------------------------------------
+void ofPopView() {
+	glPopAttrib();					// pop viewport settings
+	
+	//	glPushAttrib(GL_MATRIX_MODE);	// push active matrix mode
+	glMatrixMode(GL_PROJECTION);
+	glPopMatrix();
+	glMatrixMode(GL_MODELVIEW);
+	glPopMatrix();
+	//	glPopAttrib();					// pop active matrix mode
+}
+
+
+//----------------------------------------------------------
+void ofViewport(float x, float y, float width, float height) {
+	if(width == 0) width = ofGetWidth();
+	if(height == 0) height = ofGetHeight();
+
+	glViewport(0, 0, width, height);
+}
+
+
+//----------------------------------------------------------
+void ofSetupScreenPerspective(float width, float height, bool vFlip, float fov, float nearDist, float farDist) {
+	if(width == 0) width = ofGetWidth();
+	if(height == 0) height = ofGetHeight();
+
+	float eyeX = width / 2;
+	float eyeY = height / 2;
+	float halfFov = PI * fov / 360;
+	float theTan = tanf(halfFov);
+	float dist = eyeY / theTan;
+	float aspect = (float) width / height;
+	
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	gluPerspective(fov, aspect, nearDist, farDist);
+	
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+	gluLookAt(eyeX, eyeY, dist, eyeX, eyeY, 0, 0, 1, 0);
+	
+	if(vFlip) {
+		glScalef(1, -1, 1);           // invert Y axis so increasing Y goes down.
+		glTranslatef(0, -height, 0);       // shift origin up to upper-left corner.
+	}
+}
+
+//----------------------------------------------------------
+void ofSetupScreenOrtho(float width, float height, bool vFlip, float nearDist, float farDist) {
+	if(width == 0) width = ofGetWidth();
+	if(height == 0) height = ofGetHeight();
+
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	if(vFlip) glOrtho(0, width, height, 0, nearDist, farDist);
+	else glOrtho(0, width, 0, height, nearDist, farDist);
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+}
+
+//----------------------------------------------------------
+void ofClear(float r, float g, float b, float a) {
+	glClearColor(r, g, b, a);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+}
+
+//----------------------------------------------------------
+void ofClearAlpha() {
+	glColorMask(0, 0, 0, 1);
+	glClearColor(0, 0, 0, 1);
+	glClear(GL_COLOR_BUFFER_BIT);
+	glColorMask(1, 1, 1, 1);
+}	
+
+
+
+
 //----------------------------------------------------------
 bool ofGetUsingArbTex(){
 	return bUsingArbTex;
@@ -200,7 +293,7 @@ void ofFill(){
 
 // Returns OF_FILLED or OF_OUTLINE
 //----------------------------------------------------------
-float ofGetFill(){
+int ofGetFill(){
 	return drawMode;
 }
 
@@ -828,33 +921,7 @@ void ofSetupGraphicDefaults(){
 
 //----------------------------------------------------------
 void ofSetupScreen(){
-	int w, h;
-
-	w = ofGetWidth();
-	h = ofGetHeight();
-
-	float halfFov, theTan, screenFov, aspect;
-	screenFov 		= 60.0f;
-
-	float eyeX 		= (float)w / 2.0;
-	float eyeY 		= (float)h / 2.0;
-	halfFov 		= PI * screenFov / 360.0;
-	theTan 			= tanf(halfFov);
-	float dist 		= eyeY / theTan;
-	float nearDist 	= dist / 10.0;	// near / far clip plane
-	float farDist 	= dist * 10.0;
-	aspect 			= (float)w/(float)h;
-
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	gluPerspective(screenFov, aspect, nearDist, farDist);
-
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
-	gluLookAt(eyeX, eyeY, dist, eyeX, eyeY, 0.0, 0.0, 1.0, 0.0);
-
-	glScalef(1, -1, 1);           // invert Y axis so increasing Y goes down.
-  	glTranslatef(0, -h, 0);       // shift origin up to upper-left corner.
+	ofSetupScreenPerspective(ofGetWidth(), ofGetHeight(), true, 60, 1, 1000);
 }
 
 

@@ -16,6 +16,21 @@ void ofBackground(int r, int g, int b, int a=255);
 void 	ofSetBackgroundAuto(bool bManual);		// default is true
 void 	ofSetRectMode(int mode);		// set the mode, either to OF_RECTMODE_CORNER or OF_RECTMODE_CENTER
 
+
+// push and pop all matrices and viewport
+void ofPushView();
+void ofPopView();
+
+// setup matrices and viewport (upto you to push and pop view before and after)
+// if width or height are 0, assume windows dimensions (ofGetWidth(), ofGetHeight())
+void ofViewport(float x = 0, float y = 0, float width = 0, float height = 0);
+void ofSetupScreenPerspective(float width = 0, float height = 0, bool vFlip = true, float fov = 60, float nearDist = 1, float farDist = 1000);
+void ofSetupScreenOrtho(float width = 0, float height = 0, bool vFlip = true, float nearDist = -1, float farDist = 1);
+
+void ofClear(float r=0, float g=0, float b=0, float a=0);
+void ofClearAlpha();
+
+
 //set whether OF uses ARB rectangular texture or the more traditonal GL_TEXTURE_2D
 bool ofGetUsingArbTex();
 void ofEnableArbTex();
@@ -75,7 +90,7 @@ void ofBezier(float x0, float y0, float x1, float y1, float x2, float y2, float 
 // drawing options
 void ofNoFill();
 void ofFill();
-float ofGetFill();
+int ofGetFill();
 
 void ofSetLineWidth(float lineWidth);
 
