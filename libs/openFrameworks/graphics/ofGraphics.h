@@ -8,7 +8,9 @@
 
 // bg color
 float * ofBgColorPtr();
-void ofBackground(int r, int g, int b);
+void ofBackground(const ofColor & c);
+void ofBackground(int hexColor, float _a=255.0f);
+void ofBackground(int r, int g, int b, int a=255);
 
 // user's access to settings (bgAuto, corner mode):
 void 	ofSetBackgroundAuto(bool bManual);		// default is true
@@ -41,15 +43,30 @@ void ofRestoreMinMagFilters();
 bool 	ofbClearBg();
 int 	ofGetRectMode();				// default is OF_RECTMODE_CORNER
 
+void ofSetCircleResolution(int res);  		// if there 22 is a problem, you can change it here
 void ofSetCurveResolution(int res);
 
 // geometry 
 void ofTriangle(float x1,float y1,float x2,float y2,float x3, float y3);
-void ofCircle(float x,float y, float radius);
+void ofTriangle(float x1,float y1,float z1,float x2,float y2,float z2,float x3, float y3,float z3);
+void ofTriangle(const ofPoint & p1, const ofPoint & p2, const ofPoint & p3);
+
+void ofCircle(float x, float y, float radius);
+void ofCircle(float x, float y, float z, float radius);
+void ofCircle(const ofPoint & p, float radius);
+
 void ofEllipse(float x, float y, float width, float height);
+void ofEllipse(float x, float y, float z, float width, float height);
+void ofEllipse(const ofPoint & p, float width, float height);
+
 void ofLine(float x1,float y1,float x2,float y2);
-void ofRect(float x1,float y1,float w, float h);
-void ofSetCircleResolution(int res);  		// if there 22 is a problem, you can change it here
+void ofLine(float x1,float y1,float z1,float x2,float y2,float z2);
+void ofLine(const ofPoint & p1, const ofPoint & p2);
+
+void ofRect(float x1,float y1,float w,float h);
+void ofRect(const ofRectangle & r);
+void ofRect(const ofPoint & p,float w,float h);
+void ofRect(float x,float y,float z,float w,float h);
 
 void ofCurve(float x0, float y0, float x1, float y1, float x2, float y2, float x3, float y3);
 void ofBezier(float x0, float y0, float x1, float y1, float x2, float y2, float x3, float y3);
@@ -58,12 +75,15 @@ void ofBezier(float x0, float y0, float x1, float y1, float x2, float y2, float 
 // drawing options
 void ofNoFill();
 void ofFill();
+float ofGetFill();
 
 void ofSetLineWidth(float lineWidth);
 
 // color options
 void ofSetColor(int r, int g, int b); // 0-255
 void ofSetColor(int r, int g, int b, int a); // 0-255
+void ofSetColor(const ofColor & color);
+void ofSetColor(const ofColor & color, int _a);
 void ofSetColor(int hexColor); // hex, like web 0xFF0033;
 
 // transparency
@@ -84,6 +104,7 @@ void ofPopStyle();
 void ofPushMatrix();
 void ofPopMatrix();
 void ofTranslate(float x, float y, float z = 0);
+void ofTranslate(const ofPoint & p);
 void ofScale(float xAmnt, float yAmnt, float zAmnt = 1);
 void ofRotate(float degrees, float vecX, float vecY, float vecZ);
 void ofRotateX(float degrees);
@@ -93,7 +114,9 @@ void ofRotate(float degrees);
 
 // bitmapped type
 // ** note, this uses glDrawPixels and may be S L 0 W on some graphics cards
+void ofDrawBitmapString(string textString, const ofPoint & p);
 void ofDrawBitmapString(string textString, float x, float y);
+void ofDrawBitmapString(string textString, float x, float y, float z);
 
 // screen coordinate things / default gl values
 void ofSetupGraphicDefaults();
