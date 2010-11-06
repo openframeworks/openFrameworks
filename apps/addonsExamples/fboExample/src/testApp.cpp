@@ -4,7 +4,6 @@
 #include "demo3.h"
 #include "demo4.h"
 
-
 //--------------------------------------------------------------
 void testApp::setup(){
 	ofSetLogLevel(OF_LOG_VERBOSE);
@@ -20,6 +19,7 @@ void testApp::setup(){
 	vidGrabber.initGrabber(320, 240);
 }
 
+//--------------------------------------------------------------
 void testApp::setupDemo(int i) {
 	demoMode = i;
 	switch(demoMode) {
@@ -30,10 +30,12 @@ void testApp::setupDemo(int i) {
 	}
 }
 
+//--------------------------------------------------------------
 void testApp::update(){
 	vidGrabber.update();
 }
 
+//--------------------------------------------------------------
 void testApp::drawScene(float x, float y, float w, float h) {
 	glColor3f(1, 1, 1);
 	vidGrabber.draw(x, y, w, h);
@@ -85,7 +87,7 @@ void testApp::drawScene(float x, float y, float w, float h) {
 	
 }
 
-
+//--------------------------------------------------------------
 //--------------------------------------------------------------
 void testApp::draw(){
 	// draw original to screen to compare
