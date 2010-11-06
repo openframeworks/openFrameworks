@@ -112,6 +112,9 @@ void ofSetupScreenPerspective(float width, float height, bool vFlip, float fov, 
 	float dist = eyeY / theTan;
 	float aspect = (float) width / height;
 	
+	if(nearDist == 0) nearDist = dist / 10.0f;
+	if(farDist == 0) farDist = dist * 10.0f;
+	
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	gluPerspective(fov, aspect, nearDist, farDist);
@@ -921,7 +924,7 @@ void ofSetupGraphicDefaults(){
 
 //----------------------------------------------------------
 void ofSetupScreen(){
-	ofSetupScreenPerspective(ofGetWidth(), ofGetHeight(), true, 60, 1, 1000);
+	ofSetupScreenPerspective();	// assume defaults
 }
 
 
