@@ -59,7 +59,7 @@ void ofRestoreConsoleColor();
 
 //--------------------------------------------------
 class ofBuffer;
-bool ofReadFile(const string & path, ofBuffer & file);
+bool ofReadFile(const string & path, ofBuffer & file, bool binary=false);
 
 #endif
 
