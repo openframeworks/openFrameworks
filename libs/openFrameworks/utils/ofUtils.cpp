@@ -421,7 +421,7 @@ void ofRestoreConsoleColor(){
 
 
 //--------------------------------------------------
-bool ofReadFile(const string & path, ofBuffer & buffer){
+bool ofReadFile(const string & path, ofBuffer & buffer, bool binary){
 	ifstream * file = new ifstream(ofToDataPath(path,true).c_str());
 
 	if(!file || !file->is_open()){
@@ -436,7 +436,12 @@ bool ofReadFile(const string & path, ofBuffer & buffer){
 	pbuf->pubseekpos (0,ios::in);
 
 	// get file data
-	buffer.allocate(size);// = new char[size];
+	if(!binary){
+		buffer.allocate(size+1);// = new char[size];
+		buffer.getBuffer()[size]='\0';
+	}else{
+		buffer.allocate(size);
+	}
 	pbuf->sgetn (buffer.getBuffer(),size);
 	return true;
 }
