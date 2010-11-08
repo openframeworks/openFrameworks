@@ -129,10 +129,19 @@ void ofxShader::checkProgramInfoLog(GLuint program) {
 	}
 }
 
-void ofxShader::checkAndCreateProgram() {
-	if(GLEE_ARB_shader_objects) {
-		if(program == 0) {
-			ofLog(OF_LOG_VERBOSE, "Creating GLSL Program");
+void ofxShader::setupInline(string vertexShaderSource, string fragmentShaderSource) {
+	unload();
+	if (GL_ARB_shader_objects) {
+		vertexShader = glCreateShader(GL_VERTEX_SHADER);
+		fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+		
+		compileShader(vertexShader, vertexShaderSource, "Vertex");
+		bool vertexCompiled = checkShaderCompileStatus(vertexShader, "Vertex");
+		
+		compileShader(fragmentShader, fragmentShaderSource, "Fragment");
+		bool fragmentCompiled = checkShaderCompileStatus(fragmentShader, "Fragment");
+		
+		if(vertexCompiled && fragmentCompiled) {
 			program = glCreateProgram();
 		}
 	} else {

@@ -197,7 +197,7 @@ void ofSetTextureWrap(GLfloat wrapS, GLfloat wrapT) {
 	bUseCustomTextureWrap = true;
 	GLenum textureTarget = GL_TEXTURE_2D;
 #ifndef TARGET_OPENGLES
-	if (ofGetUsingArbTex() && GLEE_ARB_texture_rectangle){
+	if (ofGetUsingArbTex() && GL_ARB_texture_rectangle){
 		textureTarget = GL_TEXTURE_RECTANGLE_ARB;
 	};
 #endif
@@ -223,7 +223,7 @@ void ofSetMinMagFilters(GLfloat minFilter, GLfloat maxFilter) {
 	bUseCustomMinMagFilters = true;
 	GLenum textureTarget = GL_TEXTURE_2D;
 #ifndef TARGET_OPENGLES
-	if (ofGetUsingArbTex() && GLEE_ARB_texture_rectangle){
+	if (ofGetUsingArbTex() && GL_ARB_texture_rectangle){
 		textureTarget = GL_TEXTURE_RECTANGLE_ARB;
 	};
 #endif
