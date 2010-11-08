@@ -330,7 +330,7 @@
 										<key>_historyCapacity</key>
 										<integer>40</integer>
 										<key>bookmark</key>
-										<string>BBB3722B12888E5C00793231</string>
+										<string>BBB372AB1288AE4E00793231</string>
 										<key>history</key>
 										<array>
 											<string>BB288673128849FD007ADBF3</string>
@@ -539,13 +539,12 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
-		<string>BBB3723312888E5C00793231</string>
 		<string>BBB3723412888E5C00793231</string>
 		<string>BBB3723512888E5C00793231</string>
+		<string>1C78EAAD065D492600B07095</string>
 		<string>1CD10A99069EF8BA00B06720</string>
 		<string>BBB36AC91285AC3C00793231</string>
 		<string>/Users/Memo/___LAB___/openFrameworks/git/apps/addonsExamples/geometryShaderExample/geometryShaderExample.xcodeproj</string>
-		<string>1C78EAAD065D492600B07095</string>
 	</array>
 	<key>WindowString</key>
 	<string>0 127 1920 1051 0 0 1920 1178 </string>
@@ -927,7 +926,7 @@
 			<key>WindowToolGUID</key>
 			<string>1C78EAAD065D492600B07095</string>
 			<key>WindowToolIsVisible</key>
-			<true/>
+			<false/>
 		</dict>
 		<dict>
 			<key>Identifier</key>
