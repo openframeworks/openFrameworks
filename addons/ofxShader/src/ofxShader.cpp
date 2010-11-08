@@ -1,64 +1,118 @@
 #include "ofxShader.h"
 
 ofxShader::ofxShader() :
-bLoaded(false) {
+bLoaded(false),
+program(0)
+{
 }
 
 ofxShader::~ofxShader() {
 	unload();
 }
 
-void ofxShader::setup(string shaderName) {
-	setup(shaderName + ".vert", shaderName + ".frag");
+bool ofxShader::setup(string shaderName) {
+	return setup(shaderName + ".vert", shaderName + ".frag");
 }
 
-void ofxShader::setup(string vertexName, string fragmentName) {
-	ofBuffer vertShaderBuffer, fragShaderBuffer;
-	ofReadFile(vertexName, vertShaderBuffer);
-	ofReadFile(fragmentName, fragShaderBuffer);
-	setupInline(vertShaderBuffer.getBuffer(), fragShaderBuffer.getBuffer());
+bool ofxShader::setup(string vertName, string fragName, string geomName) {
+	unload();
+
+	if(vertName.empty() == false) setupShaderFromFile(GL_VERTEX_SHADER, vertName);
+	if(fragName.empty() == false) setupShaderFromFile(GL_FRAGMENT_SHADER, fragName);
+	if(geomName.empty() == false) setupShaderFromFile(GL_GEOMETRY_SHADER_EXT, geomName);
+	
+	return linkProgram();
 }
 
-void ofxShader::compileShader(GLuint shader, string source, string type) {
+
+bool ofxShader::setupShaderFromFile(GLenum type, string filename) {
+	ofBuffer buffer;
+	if(ofReadFile(filename, buffer)) {
+		return setupShaderFromSource(type, buffer.getBuffer());
+	} else {
+		ofLog(OF_LOG_ERROR, "Could not load shader of type " + nameForType(type) + " from file " + filename);
+		return false;
+	}
+}
+
+bool ofxShader::setupShaderFromSource(GLenum type, string source) {
+	// create program if it doesn't exist already
+	checkAndCreateProgram();
+
+	
+	// create shader
+	GLuint shader = glCreateShader(type);
+	if(shader == 0) {
+		ofLog(OF_LOG_ERROR, "Failed creating shader of type " + nameForType(type));
+		return false;
+	}
+	
+	// compile shader
 	const char* sptr = source.c_str();
 	int ssize = source.size();
 	glShaderSource(shader, 1, &sptr, &ssize);
 	glCompileShader(shader);
-}
-
-bool ofxShader::checkShaderCompileStatus(GLuint shader, string type) {
+	
+	// check compile status
 	GLint status = GL_FALSE;
 	glGetShaderiv(shader, GL_COMPILE_STATUS, &status);
 	if(status == GL_TRUE)
-		ofLog(OF_LOG_VERBOSE, type + " shader compiled.");
+		ofLog(OF_LOG_VERBOSE, nameForType(type) + " shader compiled.");
+	
 	else if (status == GL_FALSE) {
-		ofLog(OF_LOG_ERROR, type + " shader failed to compile.");
+		ofLog(OF_LOG_ERROR, nameForType(type) + " shader failed to compile");
 		checkShaderInfoLog(shader, type);
 		return false;
 	}
+	
+	shaders[type] = shader;
+	
 	return true;
 }
 
-bool ofxShader::checkShaderLinkStatus(GLuint shader, string type) {
+
+void ofxShader::setGeometryInputType(GLenum type) {
+	checkAndCreateProgram();
+	glProgramParameteriEXT(program, GL_GEOMETRY_INPUT_TYPE_EXT, type);
+}
+
+void ofxShader::setGeometryOutputType(GLenum type) {
+	checkAndCreateProgram();
+	glProgramParameteriEXT(program, GL_GEOMETRY_OUTPUT_TYPE_EXT, type);
+}
+
+void ofxShader::setGeometryOutputCount(int count) {
+	checkAndCreateProgram();
+	glProgramParameteriEXT(program, GL_GEOMETRY_VERTICES_OUT_EXT, count);
+}
+
+int ofxShader::getGeometryMaxOutputCount() {
+	int temp;
+	glGetIntegerv(GL_MAX_GEOMETRY_OUTPUT_VERTICES_EXT, &temp);
+	return temp;
+}
+
+
+bool ofxShader::checkShaderLinkStatus(GLuint shader, GLenum type) {
 	GLint status;
 	glGetProgramiv(shader, GL_LINK_STATUS, &status);
 	if(status == GL_TRUE)
-		ofLog(OF_LOG_VERBOSE, type + " shader linked.");
+		ofLog(OF_LOG_VERBOSE, nameForType(type) + " shader linked.");
 	else if (status == GL_FALSE) {
-		ofLog(OF_LOG_ERROR, type + " shader failed to link.");
+		ofLog(OF_LOG_ERROR, nameForType(type) + " shader failed to link.");
 		checkShaderInfoLog(shader, type);
 		return false;
 	}
 	return true;
 }
 
-void ofxShader::checkShaderInfoLog(GLuint shader, string type) {
+void ofxShader::checkShaderInfoLog(GLuint shader, GLenum type) {
 	GLsizei infoLength;
 	glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &infoLength);
 	if (infoLength > 1) {
 		GLchar* infoBuffer = new GLchar[infoLength];
 		glGetShaderInfoLog(shader, infoLength, &infoLength, infoBuffer);
-		ofLog(OF_LOG_ERROR, type + " shader reports:\n" + infoBuffer);
+		ofLog(OF_LOG_ERROR, nameForType(type) + " shader reports:\n" + infoBuffer);
 		delete [] infoBuffer;
 	}
 }
@@ -75,53 +129,65 @@ void ofxShader::checkProgramInfoLog(GLuint program) {
 	}
 }
 
-void ofxShader::setupInline(string vertexShaderSource, string fragmentShaderSource) {
-	unload();
-	if (GLEE_ARB_shader_objects) {
-		vertexShader = glCreateShader(GL_VERTEX_SHADER);
-		fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-		
-		compileShader(vertexShader, vertexShaderSource, "Vertex");
-		bool vertexCompiled = checkShaderCompileStatus(vertexShader, "Vertex");
-		
-		compileShader(fragmentShader, fragmentShaderSource, "Fragment");
-		bool fragmentCompiled = checkShaderCompileStatus(fragmentShader, "Fragment");
-		
-		if(vertexCompiled && fragmentCompiled) {
+void ofxShader::checkAndCreateProgram() {
+	if(GLEE_ARB_shader_objects) {
+		if(program == 0) {
+			ofLog(OF_LOG_VERBOSE, "Creating GLSL Program");
 			program = glCreateProgram();
-			glAttachShader(program, vertexShader);
-			glAttachShader(program, fragmentShader);
-			glLinkProgram(program);
+		}
+	} else {
+		ofLog(OF_LOG_ERROR, "Sorry, it looks like you can't run 'ARB_shader_objects'.\nPlease check the capabilites of your graphics card.\nhttp://www.ozone3d.net/gpu_caps_viewer/");
+	}
+}
+
+bool ofxShader::linkProgram() {
+		if(shaders.empty()) {
+			ofLog(OF_LOG_ERROR, "Trying to link GLSL program, but no shaders created yet");
+		} else {
+			checkAndCreateProgram();
 			
-			checkShaderLinkStatus(vertexShader, "Vertex");
-			checkShaderLinkStatus(fragmentShader, "Fragment");
+			for(map<GLenum, GLuint>::const_iterator it = shaders.begin(); it != shaders.end(); ++it){
+				GLuint shader = it->second;
+				if(shader) {
+					ofLog(OF_LOG_VERBOSE, "Attaching shader of type " + nameForType(it->first));
+					glAttachShader(program, shader);
+				}
+			}
+			
+			glLinkProgram(program);
+
+			for(map<GLenum, GLuint>::const_iterator it = shaders.begin(); it != shaders.end(); ++it){
+				GLuint shader = it->second;
+				if(shader) {
+					checkShaderLinkStatus(shader, it->first);
+				}
+			}
+			
 			checkProgramInfoLog(program);
 			
 			bLoaded = true;
 		}
-	} else {
-		cout << "Sorry, it looks like you can't run 'ARB_shader_objects'." << endl;
-		cout << "Please check the capabilites of your graphics card." << endl;
-		cout << "http://www.ozone3d.net/gpu_caps_viewer/" << endl;
-	}
 }
+
+
 
 void ofxShader::unload() {
 	if(bLoaded) {
-		if (vertexShader) {
-			glDetachShader(program, vertexShader);
-			glDeleteShader(vertexShader);
-			vertexShader = 0;
+		for(map<GLenum, GLuint>::const_iterator it = shaders.begin(); it != shaders.end(); ++it) {
+			GLuint shader = it->second;
+			if(shader) {
+				ofLog(OF_LOG_VERBOSE, "Detaching and deleting shader of type " + nameForType(it->first));
+				glDetachShader(program, shader);
+				glDeleteShader(shader);
+			}
 		}
-		if (fragmentShader) {
-			glDetachShader(program, fragmentShader);
-			glDeleteShader(fragmentShader);
-			fragmentShader = 0;
-		}
+
 		if (program) {
 			glDeleteProgram(program);
 			program = 0;
 		}
+		
+		shaders.clear();
 	}
 	bLoaded = false;
 }
@@ -343,3 +409,23 @@ void ofxShader::printActiveAttributes() {
 	}
 	delete [] attributeName;
 }
+
+GLuint& ofxShader::getProgram() {
+	return program;
+}
+
+GLuint& ofxShader::getShader(GLenum type) {
+	return shaders[type];
+}
+
+
+
+string ofxShader::nameForType(GLenum type) {
+	switch(type) {
+		case GL_VERTEX_SHADER: return "GL_VERTEX_SHADER";
+		case GL_FRAGMENT_SHADER: return "GL_FRAGMENT_SHADER";
+		case GL_GEOMETRY_SHADER_EXT: return "GL_GEOMETRY_SHADER_EXT";
+		default: return "UNKNOWN SHADER TYPE";
+	}
+}
+

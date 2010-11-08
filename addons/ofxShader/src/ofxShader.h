@@ -14,9 +14,19 @@ public:
 	ofxShader();
 	~ofxShader();
 	
-	void setup(string shaderName);
-	void setup(string vertexName, string fragmentName);
-	void setupInline(string vertexShaderSource, string fragmentShaderSource);
+	bool setup(string shaderName);
+	bool setup(string vertName, string fragName = "", string geomName = "");
+	
+	
+	
+	// these are essential to call before linking the program with geometry shaders
+	void setGeometryInputType(GLenum type); // type: GL_POINTS, GL_LINES, GL_LINES_ADJACENCY_EXT, GL_TRIANGLES, GL_TRIANGLES_ADJACENCY_EXT
+	void setGeometryOutputType(GLenum type); // type: GL_POINTS, GL_LINE_STRIP or GL_TRIANGLE_STRIP
+	void setGeometryOutputCount(int count);	// set number of output vertices
+	
+	int getGeometryMaxOutputCount();		// returns maximum number of supported vertices
+
+
 	void unload();
 	
 	void begin();
@@ -69,18 +79,34 @@ public:
 	void printActiveUniforms();
 	void printActiveAttributes();
 	
-	GLuint vertexShader;
-	GLuint fragmentShader;
-	GLuint program;
+
+	// advanced use
+	
+	// these methods create and compile a shader from source or file
+	// type: GL_VERTEX_SHADER, GL_FRAGMENT_SHADER, GL_GEOMETRY_SHADER_EXT etc.
+	bool setupShaderFromSource(GLenum type, string source);
+	bool setupShaderFromFile(GLenum type, string filename);
+	
+	// links program with all compiled shaders
+	bool linkProgram();
+
+	GLuint& getProgram();
+	GLuint& getShader(GLenum type);
 	
 protected:
+	GLuint program;
+	map<GLenum, GLuint> shaders;
+	
+	
 	GLint getUniformLocation(const char* name);
 	
-	void compileShader(GLuint shader, string source, string type);
 	void checkProgramInfoLog(GLuint program);
-	bool checkShaderLinkStatus(GLuint shader, string type);
-	bool checkShaderCompileStatus(GLuint shader, string type);
-	void checkShaderInfoLog(GLuint shader, string type);
+	bool checkShaderLinkStatus(GLuint shader, GLenum type);
+	void checkShaderInfoLog(GLuint shader, GLenum type);
+	
+	static string nameForType(GLenum type);
+	
+	void checkAndCreateProgram();
 	
 	bool bLoaded;
 };
