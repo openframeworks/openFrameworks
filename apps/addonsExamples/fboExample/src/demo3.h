@@ -17,7 +17,7 @@ void testApp::demo3_setup() {
 	s.numSamples		= useMSAA ? ofxFbo::maxSamples() : 0;
 	fbo.setup(s);
 	
-	shader.setup("shaders/passThru_vert.glsl", "shaders/mrt_frag.glsl");
+	shader.setup("", "shaders/mrt_frag.glsl");	// omit vertex shader
 }
 
 
