@@ -86,7 +86,7 @@ void ofTexture::allocate(int w, int h, int internalGlDataType, bool bUseARBExten
 
 	//our graphics card might not support arb so we have to see if it is supported.
 	#ifndef TARGET_OPENGLES
-		if (bUseARBExtention && GLEE_ARB_texture_rectangle){
+		if (bUseARBExtention && GL_ARB_texture_rectangle){
 			texData.tex_w = w;
 			texData.tex_h = h;
 			texData.tex_t = w;

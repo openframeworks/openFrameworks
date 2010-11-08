@@ -86,7 +86,8 @@
 		#define __MACOSX_CORE__
 	#endif
 	#include <unistd.h>
-	#include "GLee.h"
+	#include <OpenGL/gl.h>
+	#include <OpenGL/glext.h>
 	#include <OpenGL/glu.h>
 	#include <ApplicationServices/ApplicationServices.h>
 
@@ -96,8 +97,11 @@
 #endif
 
 #ifdef TARGET_LINUX
+		#define GL_GLEXT_PROTOTYPES
         #include <unistd.h>
-        #include "GLee.h"
+		#include <GL/gl.h>
+		#include <GL/glx.h>
+        #include <GL/glext.h>
         #include <GL/glu.h>
 
     // for some reason, this isn't defined at compile time,
