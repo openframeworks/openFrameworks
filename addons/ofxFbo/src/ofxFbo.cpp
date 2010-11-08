@@ -20,9 +20,6 @@
 #endif
 
 
-#ifndef GL_FRAMEBUFFER_INCOMPLETE_FORMATS  GL_FRAMEBUFFER_INCOMPLETE_FORMATS  ADD_GL_SUFFIX(GL_FRAMEBUFFER_INCOMPLETE_FORMATS_) 
-#endif
-
 #ifndef TARGET_OPENGLES
 	#define glGenFramebuffers								glGenFramebuffersEXT
 	#define glGenRenderbuffers								glGenRenderbuffersEXT
