@@ -10,6 +10,7 @@
 						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/ofAddons"/>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/ofAddons/Debug"/>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/ofAddons/Debug Mac OS X"/>
+						<entry flags="RESOLVED" kind="libraryFile" name="ofAddons"/>
 					</externalSetting>
 				</externalSettings>
 				<extensions>
@@ -127,7 +128,7 @@
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="ofxOsc/src"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="ofxDirList/src"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="ofxVectorMath/src"/>
-						<entry excluding="ofxMultiTouch|ofx3DModelLoader/example|ofxDirList/example|ofxNetwork/examples|ofxOpenCv/example|ofxOsc/examples|ofxThread/example|ofxVectorGraphics/example|ofxVectorMath/example|ofxXmlSettings/example|ofxXmlSettings/src|ofxVectorMath/src|ofxVectorGraphics/src|ofxThread/src|ofxOsc/src|ofxOpenCv/src|ofxNetwork/src|ofxDirList/src|ofx3DModelLoader/src" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="ofx3DUtils/example|ofxMultiTouch|ofx3DModelLoader/example|ofxDirList/example|ofxNetwork/examples|ofxOpenCv/example|ofxOsc/examples|ofxThread/example|ofxVectorGraphics/example|ofxVectorMath/example|ofxXmlSettings/example|ofxXmlSettings/src|ofxVectorMath/src|ofxVectorGraphics/src|ofxThread/src|ofxOsc/src|ofxOpenCv/src|ofxNetwork/src|ofxDirList/src|ofx3DModelLoader/src" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -558,6 +559,7 @@
 						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/ofAddons/Debug"/>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/ofAddons/Release Mac OS X"/>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/ofAddons/Debug Mac OS X"/>
+						<entry flags="RESOLVED" kind="libraryFile" name="ofAddons"/>
 					</externalSetting>
 				</externalSettings>
 				<extensions>
@@ -675,7 +677,7 @@
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="ofxOsc/src"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="ofxDirList/src"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="ofxVectorMath/src"/>
-						<entry excluding="ofxMultiTouch|ofx3DModelLoader/example|ofxDirList/example|ofxNetwork/examples|ofxOpenCv/example|ofxOsc/examples|ofxThread/example|ofxVectorGraphics/example|ofxVectorMath/example|ofxXmlSettings/example|ofxXmlSettings/src|ofxVectorMath/src|ofxVectorGraphics/src|ofxThread/src|ofxOsc/src|ofxOpenCv/src|ofxNetwork/src|ofxDirList/src|ofx3DModelLoader/src" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="ofx3DUtils/example|ofxMultiTouch|ofx3DModelLoader/example|ofxDirList/example|ofxNetwork/examples|ofxOpenCv/example|ofxOsc/examples|ofxThread/example|ofxVectorGraphics/example|ofxVectorMath/example|ofxXmlSettings/example|ofxXmlSettings/src|ofxVectorMath/src|ofxVectorGraphics/src|ofxThread/src|ofxOsc/src|ofxOpenCv/src|ofxNetwork/src|ofxDirList/src|ofx3DModelLoader/src" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -1106,6 +1108,7 @@
 						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/ofAddons/Debug"/>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/ofAddons/Debug Linux"/>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/ofAddons/Debug Mac OS X"/>
+						<entry flags="RESOLVED" kind="libraryFile" name="ofAddons"/>
 					</externalSetting>
 				</externalSettings>
 				<extensions>
@@ -1147,6 +1150,9 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofAddons/ofxVectorGraphics/libs}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofAddons/ofxXmlSettings/libs}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofAddons/ofxThread/src}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofAddons/ofxXmlSettings/src}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/ofxDirList/src}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/ofxVectorMath/src}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/fmodex/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/FreeImage/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ofLibs/freetype/include/freetype2}&quot;"/>
@@ -1222,7 +1228,7 @@
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="ofxOsc/src"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="ofxDirList/src"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="ofxVectorMath/src"/>
-						<entry excluding="ofxMultiTouch|ofx3DModelLoader/example|ofxDirList/example|ofxNetwork/examples|ofxOpenCv/example|ofxOsc/examples|ofxThread/example|ofxVectorGraphics/example|ofxVectorMath/example|ofxXmlSettings/example|ofxXmlSettings/src|ofxVectorMath/src|ofxVectorGraphics/src|ofxThread/src|ofxOsc/src|ofxOpenCv/src|ofxNetwork/src|ofxDirList/src|ofx3DModelLoader/src" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="ofx3DUtils/example|ofxMultiTouch|ofx3DModelLoader/example|ofxDirList/example|ofxNetwork/examples|ofxOpenCv/example|ofxOsc/examples|ofxThread/example|ofxVectorGraphics/example|ofxVectorMath/example|ofxXmlSettings/example|ofxXmlSettings/src|ofxVectorMath/src|ofxVectorGraphics/src|ofxThread/src|ofxOsc/src|ofxOpenCv/src|ofxNetwork/src|ofxDirList/src|ofx3DModelLoader/src" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -1654,6 +1660,7 @@
 						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/ofAddons/Debug Linux"/>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/ofAddons/Debug Mac OS X"/>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/ofAddons/Release Linux"/>
+						<entry flags="RESOLVED" kind="libraryFile" name="ofAddons"/>
 					</externalSetting>
 				</externalSettings>
 				<extensions>
@@ -1771,7 +1778,7 @@
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="ofxOsc/src"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="ofxDirList/src"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="ofxVectorMath/src"/>
-						<entry excluding="ofxMultiTouch|ofx3DModelLoader/example|ofxDirList/example|ofxNetwork/examples|ofxOpenCv/example|ofxOsc/examples|ofxThread/example|ofxVectorGraphics/example|ofxVectorMath/example|ofxXmlSettings/example|ofxXmlSettings/src|ofxVectorMath/src|ofxVectorGraphics/src|ofxThread/src|ofxOsc/src|ofxOpenCv/src|ofxNetwork/src|ofxDirList/src|ofx3DModelLoader/src" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="ofx3DUtils/example|ofxMultiTouch|ofx3DModelLoader/example|ofxDirList/example|ofxNetwork/examples|ofxOpenCv/example|ofxOsc/examples|ofxThread/example|ofxVectorGraphics/example|ofxVectorMath/example|ofxXmlSettings/example|ofxXmlSettings/src|ofxVectorMath/src|ofxVectorGraphics/src|ofxThread/src|ofxOsc/src|ofxOpenCv/src|ofxNetwork/src|ofxDirList/src|ofx3DModelLoader/src" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>

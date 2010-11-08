@@ -14,7 +14,7 @@
 // mapping to allow simple opengl EXT and opengl ES OES
 // commented out ones are already defined
 #ifndef TARGET_OPENGLES
-	#define glGenFramebuffers								glGenFramebuffersEXT
+	/*#define glGenFramebuffers								glGenFramebuffersEXT
 	#define glGenRenderbuffers								glGenRenderbuffersEXT
 	#define	glDeleteFramebuffers							glDeleteFramebuffersEXT
 	#define	glBindFramebuffer								glBindFramebufferEXT
@@ -41,7 +41,9 @@
 	//#define GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER			GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER_EXT
 	//#define GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER			GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER_EXT
 	//#define GL_FRAMEBUFFER_UNSUPPORTED						GL_FRAMEBUFFER_UNSUPPORTED_EXT
-	//#define GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE			GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE_EXT
+	//#define GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE			GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE_EXT*/
+	#define GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS			GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS_EXT
+	#define GL_FRAMEBUFFER_INCOMPLETE_FORMATS				GL_FRAMEBUFFER_INCOMPLETE_FORMATS_EXT
 #else
 	#define glGenFramebuffers								glGenFramebuffersOES
 	#define glGenRenderbuffers								glGenRenderbuffersOES
@@ -304,7 +306,7 @@ void ofxFbo::updateTexture(int attachmentPoint) {
 		glDrawBuffer(GL_COLOR_ATTACHMENT0 + attachmentPoint);
 		glReadBuffer(GL_COLOR_ATTACHMENT0 + attachmentPoint);
 #ifndef TARGET_OPENGLES
-		glBlitFramebufferEXT(0, 0, settings.width, settings.height, 0, 0, settings.width, settings.height, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+		glBlitFramebuffer(0, 0, settings.width, settings.height, 0, 0, settings.width, settings.height, GL_COLOR_BUFFER_BIT, GL_NEAREST);
 #else
 		glRenderbufferStorageMultisampleAPPLE();	// untested
 #endif

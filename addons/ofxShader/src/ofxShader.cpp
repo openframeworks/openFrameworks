@@ -77,7 +77,7 @@ void ofxShader::checkProgramInfoLog(GLuint program) {
 
 void ofxShader::setupInline(string vertexShaderSource, string fragmentShaderSource) {
 	unload();
-	if (GLEE_ARB_shader_objects) {
+	if (GL_ARB_shader_objects) {
 		vertexShader = glCreateShader(GL_VERTEX_SHADER);
 		fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
 		
