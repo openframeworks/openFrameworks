@@ -51,14 +51,14 @@ void testApp::draw(){
 	//
 
 	//a - draw a triangle
-	ofSetColor(0xCC0000);
+	ofSetHexColor(0xCC0000);
 	ofDrawBitmapString("a) triangle();", 65, 140);
 
 	output.setColor(0x000000);
 	output.triangle(80, 110, 110, 50, 140, 110);
 
 	//b - rectangle from the top left corner
-	ofSetColor(0xCC0000);
+	ofSetHexColor(0xCC0000);
 	ofDrawBitmapString("b & c) rect();\n", 220, 140);
 	output.setColor(0x4d4d4d);
 	output.disableCenterRect();
@@ -70,20 +70,20 @@ void testApp::draw(){
 	output.rect(270, 80, 20, 20);
 
 	//d - circle
-	ofSetColor(0xCC0000);
+	ofSetHexColor(0xCC0000);
 	ofDrawBitmapString("d) circle(); \n", 380, 140);
 	output.setColor(0x828282);
 	output.circle(425, 80, 30);
 
 	//e - ellipse
-	ofSetColor(0xCC0000);
+	ofSetHexColor(0xCC0000);
 	ofDrawBitmapString("e) ellipse(); \n", 520, 140);
 
 	output.setColor(0x363636);
 	output.ellipse(570, 80, 40, 30);
 
 	//f - bezier curve - we define the start, the first control point, the second control point and the end
-	ofSetColor(0xCC0000);
+	ofSetHexColor(0xCC0000);
 	ofDrawBitmapString("f) bezier(); \n", 70, 300);
 
 	output.setColor(0x5c5c5c);
@@ -100,7 +100,7 @@ void testApp::draw(){
 
 
 	//g - catmull curve - we give four points - the first and last are not drawn, but used to calculate the curve.
-	ofSetColor(0xCC0000);
+	ofSetHexColor(0xCC0000);
 	ofDrawBitmapString("g) curve(); \n", 240, 300);
 
 	output.setColor(0x7e7e7e);
@@ -108,7 +108,7 @@ void testApp::draw(){
 
 
 	//h - an arc
-	ofSetColor(0xCC0000);
+	ofSetHexColor(0xCC0000);
 	ofDrawBitmapString("h) arc(); \n", 390, 300);
 
 	output.setColor(0x5c5c5c);
@@ -116,7 +116,7 @@ void testApp::draw(){
 
 
 	//i - just a line
-	ofSetColor(0xCC0000);
+	ofSetHexColor(0xCC0000);
 	ofDrawBitmapString("i) line(); \n", 530, 300);
 
 	output.setColor(0x5c5c5c);
@@ -137,7 +137,7 @@ void testApp::draw(){
 	// -----------------------------------
 	// j - polygon shape based on mouse position
 	// -----------------------------------
-	ofSetColor(0xCC0000);
+	ofSetHexColor(0xCC0000);
 	ofDrawBitmapString("j) shape w/ \npolyVertex \n", 70, 520);
 
 	output.setColor(0x6b6b6b);
@@ -172,7 +172,7 @@ void testApp::draw(){
 	// -----------------------------------
 	// k - curve shape based on mouse position
 	// -----------------------------------
-	ofSetColor(0xCC0000);
+	ofSetHexColor(0xCC0000);
 	ofDrawBitmapString("k) shape w/ \ncurveVertex \n", 290, 520);
 
 	output.setColor(0xb8b8b8);
@@ -206,7 +206,7 @@ void testApp::draw(){
 	// -----------------------------------
 	// l - bezier shape based on mouse position
 	// -----------------------------------
-	ofSetColor(0xCC0000);
+	ofSetHexColor(0xCC0000);
 	ofDrawBitmapString("l) shape w/ \nbezierVertex \n", 510, 520);
 
 	// we specify control points that shape each part of the shape
@@ -310,11 +310,11 @@ void testApp::draw(){
 
 	ofFill();
 	ofSetRectMode(OF_RECTMODE_CORNER);
-	ofSetColor(0x000000);
+	ofSetHexColor(0x000000);
 	ofRect(60, 630, 200,60);
 
 	//some text to explain whats what
-	ofSetColor(0xDDDDDD);
+	ofSetHexColor(0xDDDDDD);
 	ofDrawBitmapString("spacebar to capture\n'f' key toggles fill\nmouse to doodle", 75, 650);
 
 }

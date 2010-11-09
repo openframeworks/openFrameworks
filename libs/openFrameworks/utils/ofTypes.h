@@ -320,10 +320,8 @@ class ofColor{
         a = _a;
     }
 	
-	ofColor( int hexColor, float _a=255.0f){
-		r = (hexColor >> 16) & 0xff;
-		g = (hexColor >> 8) & 0xff;
-		b = (hexColor >> 0) & 0xff;
+	ofColor( float gray, float _a=255.0f){
+		r = g = b = gray;
         a = _a;
     }
 	
@@ -334,7 +332,7 @@ class ofColor{
         a = _a;
     }
 	
-    void setBrightness(float _gray, float _a = 255.0f){
+    void set(float _gray, float _a = 255.0f){
         r = g = b = _gray;
         a = _a;
     }
@@ -346,7 +344,7 @@ class ofColor{
         a = color.a;
     }
 	
-    void set(int hexColor, float _a=255.0f){
+    void setHex(int hexColor, float _a=255.0f){
 		r = (hexColor >> 16) & 0xff;
 		g = (hexColor >> 8) & 0xff;
 		b = (hexColor >> 0) & 0xff;

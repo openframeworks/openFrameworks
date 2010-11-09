@@ -59,7 +59,7 @@ void testApp::drawScene(float x, float y, float w, float h) {
 	
 	// now just an outline
 	ofNoFill();
-	ofSetColor(0xCCCCCC);
+	ofSetHexColor(0xCCCCCC);
 	ofCircle(100,400,80);
 	
 	//--------------------------- rectangles
@@ -70,7 +70,7 @@ void testApp::drawScene(float x, float y, float w, float h) {
 	}
 	
 	//---------------------------  transparency
-	ofSetColor(0x00FF33);
+	ofSetHexColor(0x00FF33);
 	ofRect(400,350,100,100);
 	ofSetColor(255,0,0,127);   // red, 50% transparent
 	ofRect(450,430,100,33);
@@ -78,7 +78,7 @@ void testApp::drawScene(float x, float y, float w, float h) {
 	ofRect(450,370,100,33);
 	
 	//---------------------------  lines
-	ofSetColor(0xFF0000);
+	ofSetHexColor(0xFF0000);
 	for (int i = 0; i < 20; i++){
 		ofLine(600,300 + (i*5),800, 250 + (i*10));
 	}
