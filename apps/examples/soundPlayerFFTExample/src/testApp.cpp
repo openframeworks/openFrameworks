@@ -113,7 +113,7 @@ void testApp::draw(){
 		ofCircle(px, py,50);	
 	ofDisableAlphaBlending();
 	
-	ofSetColor(0xffffff);
+	ofSetHexColor(0xffffff);
 	ofCircle(px, py,8);
 }
 

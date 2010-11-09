@@ -30,40 +30,40 @@ void testApp::draw(){
 	
 	// draw the background colors:
 	float widthDiv = ofGetWidth() / 3.0f;
-	ofSetColor(0xeeeeee);
+	ofSetHexColor(0xeeeeee);
 	ofRect(0,0,widthDiv,ofGetHeight()); 
-	ofSetColor(0xffffff);
+	ofSetHexColor(0xffffff);
 	ofRect(widthDiv,0,widthDiv,ofGetHeight()); 
-	ofSetColor(0xdddddd);
+	ofSetHexColor(0xdddddd);
 	ofRect(widthDiv*2,0,widthDiv,ofGetHeight()); 
 	
 
 	//---------------------------------- synth:
-	if (synth.getIsPlaying()) ofSetColor(0xFF0000);
-	else ofSetColor(0x000000);
+	if (synth.getIsPlaying()) ofSetHexColor(0xFF0000);
+	else ofSetHexColor(0x000000);
 	font.drawString("synth !!", 50,50);
 	
-	ofSetColor(0x000000);
+	ofSetHexColor(0x000000);
 	sprintf(tempStr, "click to play\npct done: %f\nspeed: %f\npan: %f", synth.getPosition(),  synth.getSpeed(), synth.getPan());
 	ofDrawBitmapString(tempStr, 50,ofGetHeight()-50);
 
 
 
 	//---------------------------------- beats:
-	if (beats.getIsPlaying()) ofSetColor(0xFF0000);
-	else ofSetColor(0x000000);
+	if (beats.getIsPlaying()) ofSetHexColor(0xFF0000);
+	else ofSetHexColor(0x000000);
 	font.drawString("beats !!", widthDiv+50,50);
 
-	ofSetColor(0x000000);
+	ofSetHexColor(0x000000);
 	sprintf(tempStr, "click and drag\npct done: %f\nspeed: %f", beats.getPosition(),  beats.getSpeed());
 	ofDrawBitmapString(tempStr, widthDiv+50,ofGetHeight()-50);
 
 	//---------------------------------- vocals:
-	if (vocals.getIsPlaying()) ofSetColor(0xFF0000);
-	else ofSetColor(0x000000);
+	if (vocals.getIsPlaying()) ofSetHexColor(0xFF0000);
+	else ofSetHexColor(0x000000);
 	font.drawString("vocals !!", widthDiv*2+50,50);
 
-	ofSetColor(0x000000);
+	ofSetHexColor(0x000000);
 	sprintf(tempStr, "click to play (multiplay)\npct done: %f\nspeed: %f", vocals.getPosition(),  vocals.getSpeed());
 	ofDrawBitmapString(tempStr, widthDiv*2+50,ofGetHeight()-50);
 

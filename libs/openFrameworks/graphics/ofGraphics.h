@@ -100,7 +100,8 @@ void ofSetColor(int r, int g, int b); // 0-255
 void ofSetColor(int r, int g, int b, int a); // 0-255
 void ofSetColor(const ofColor & color);
 void ofSetColor(const ofColor & color, int _a);
-void ofSetColor(int hexColor); // hex, like web 0xFF0033;
+void ofSetColor(int gray); // new set a color as grayscale with one argument
+void ofSetHexColor( int hexColor ); // hex, like web 0xFF0033;
 
 // transparency
 void ofEnableAlphaBlending();  // this just turns on and off opengl blending, the common mode

@@ -39,7 +39,7 @@ void testApp::update(){
 
 //--------------------------------------------------------------
 void testApp::draw(){
-	ofSetColor(0xffffff);
+	ofSetHexColor(0xffffff);
 	vidGrabber.draw(20,20);
 	videoTexture.draw(20+camWidth,20,camWidth,camHeight);
 }

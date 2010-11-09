@@ -65,7 +65,7 @@ void testApp::update(){
 void testApp::draw(){
 
 	// draw the incoming, the grayscale, the bg and the thresholded difference
-	ofSetColor(0xffffff);
+	ofSetHexColor(0xffffff);
 	colorImg.draw(20,20);
 	grayImage.draw(360,20);
 	grayBg.draw(20,280);
@@ -74,9 +74,9 @@ void testApp::draw(){
 	// then draw the contours:
 
 	ofFill();
-	ofSetColor(0x333333);
+	ofSetHexColor(0x333333);
 	ofRect(360,540,320,240);
-	ofSetColor(0xffffff);
+	ofSetHexColor(0xffffff);
 
 	// we could draw the whole contour finder
 	//contourFinder.draw(360,540);
@@ -89,7 +89,7 @@ void testApp::draw(){
 
 	// finally, a report:
 
-	ofSetColor(0xffffff);
+	ofSetHexColor(0xffffff);
 	char reportStr[1024];
 	sprintf(reportStr, "bg subtraction and blob detection\npress ' ' to capture bg\nthreshold %i (press: +/-)\nnum blobs found %i, fps: %f", threshold, contourFinder.nBlobs, ofGetFrameRate());
 	ofDrawBitmapString(reportStr, 20, 600);

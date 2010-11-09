@@ -663,7 +663,15 @@ void ofSetColor(int _r, int _g, int _b, int _a){
 }
 
 //----------------------------------------------------------
-void ofSetColor(int hexColor){
+void ofSetColor(int gray){
+	if( gray > 255 ){
+		ofLog(OF_LOG_WARNING, "ofSetColor(int hexColor) - has changed to ofSetColor(int gray) - perhaps you want ofSetHexColor instead?\n" );
+	}
+	ofSetColor(gray, gray, gray);
+}
+
+//----------------------------------------------------------
+void ofSetHexColor(int hexColor){
 	int r = (hexColor >> 16) & 0xff;
 	int g = (hexColor >> 8) & 0xff;
 	int b = (hexColor >> 0) & 0xff;
