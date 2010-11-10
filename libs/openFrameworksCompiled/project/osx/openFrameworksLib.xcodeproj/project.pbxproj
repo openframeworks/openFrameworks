@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		E4998A26128A39480094AC3F /* ofEvents.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4998A25128A39480094AC3F /* ofEvents.cpp */; };
 		E4B27C1810CBEB9D00536013 /* ofAppGlutWindow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4B27AAD10CBE92A00536013 /* ofAppGlutWindow.cpp */; };
 		E4B27C1910CBEB9D00536013 /* ofAppRunner.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4B27AAF10CBE92A00536013 /* ofAppRunner.cpp */; };
 		E4B27C1A10CBEB9D00536013 /* ofArduino.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4B27AB310CBE92A00536013 /* ofArduino.cpp */; };
@@ -46,6 +47,7 @@
 		E45BE9780E8CC7DD009D7055 /* GLUT.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLUT.framework; path = /System/Library/Frameworks/GLUT.framework; sourceTree = "<absolute>"; };
 		E45BE9790E8CC7DD009D7055 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = /System/Library/Frameworks/OpenGL.framework; sourceTree = "<absolute>"; };
 		E45BE97A0E8CC7DD009D7055 /* QuickTime.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuickTime.framework; path = /System/Library/Frameworks/QuickTime.framework; sourceTree = "<absolute>"; };
+		E4998A25128A39480094AC3F /* ofEvents.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofEvents.cpp; sourceTree = "<group>"; };
 		E4B27AAC10CBE92A00536013 /* ofAppBaseWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofAppBaseWindow.h; path = ../../../openFrameworks/app/ofAppBaseWindow.h; sourceTree = SOURCE_ROOT; };
 		E4B27AAD10CBE92A00536013 /* ofAppGlutWindow.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofAppGlutWindow.cpp; path = ../../../openFrameworks/app/ofAppGlutWindow.cpp; sourceTree = SOURCE_ROOT; };
 		E4B27AAE10CBE92A00536013 /* ofAppGlutWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofAppGlutWindow.h; path = ../../../openFrameworks/app/ofAppGlutWindow.h; sourceTree = SOURCE_ROOT; };
@@ -212,6 +214,7 @@
 		E4B27AB910CBE92A00536013 /* events */ = {
 			isa = PBXGroup;
 			children = (
+				E4998A25128A39480094AC3F /* ofEvents.cpp */,
 				E4B27ABA10CBE92A00536013 /* ofEvents.h */,
 				E4B27ABB10CBE92A00536013 /* ofEventUtils.h */,
 			);
@@ -443,6 +446,7 @@
 				E4B27C2510CBEB9D00536013 /* ofQtUtils.cpp in Sources */,
 				E4B27C2610CBEB9D00536013 /* ofVideoGrabber.cpp in Sources */,
 				E4B27C2710CBEB9D00536013 /* ofVideoPlayer.cpp in Sources */,
+				E4998A26128A39480094AC3F /* ofEvents.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -77,11 +77,7 @@ void ofExitCallback(){
 		timeEndPeriod(1);
 	#endif
 
-	if(OFSAptr)OFSAptr->exit();
-
-	#ifdef OF_USING_POCO
-		ofNotifyEvent( ofEvents.exit, voidEventArgs );
-	#endif
+	ofNotifyExit();
 
 	if(OFSAptr)delete OFSAptr;
 }
