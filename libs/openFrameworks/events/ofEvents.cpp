@@ -80,6 +80,8 @@ void ofNotifyMousePressed(int x, int y, int button){
 	
 	if(ofAppPtr){
 		ofAppPtr->mousePressed(x,y,button);
+		ofAppPtr->mouseX = x;
+		ofAppPtr->mouseY = y;
 	}
 
 	#ifdef OF_USING_POCO
@@ -97,6 +99,8 @@ void ofNotifyMouseReleased(int x, int y, int button){
 	
 	if(ofAppPtr){
 		ofAppPtr->mouseReleased(x,y,button);
+		ofAppPtr->mouseX = x;
+		ofAppPtr->mouseY = y;
 	}
 
 	#ifdef OF_USING_POCO
@@ -114,6 +118,8 @@ void ofNotifyMouseDragged(int x, int y, int button){
 	
 	if(ofAppPtr){
 		ofAppPtr->mouseDragged(x,y,button);
+		ofAppPtr->mouseX = x;
+		ofAppPtr->mouseY = y;
 	}
 
 	#ifdef OF_USING_POCO
@@ -131,6 +137,8 @@ void ofNotifyMouseMoved(int x, int y){
 	
 	if(ofAppPtr){
 		ofAppPtr->mouseMoved(x,y);
+		ofAppPtr->mouseX = x;
+		ofAppPtr->mouseY = y;
 	}
 
 	#ifdef OF_USING_POCO
