@@ -28,17 +28,36 @@ void testApp::update(){
 void testApp::draw(){
 
 	if(hasCompass){
+		float rad = 100;
+		float ringRad = rad + 10;
+	
 		//compass 3GS only:
-		float cx = cos(ofDegToRad(coreLocation->getTrueHeading()) ) * 100;
-		float cy = sin(ofDegToRad(coreLocation->getTrueHeading()) ) * 100;
+		float cx = cos(ofDegToRad(-90 + coreLocation->getTrueHeading()) ) * rad;
+		float cy = sin(ofDegToRad(-90 + coreLocation->getTrueHeading()) ) * rad;
 		float x = ofGetWidth()/2;
 		float y = ofGetHeight()/2;
 		ofSetColor(255,255,255);
 		ofLine(x,y,x+cx,y+cy);
+		
+		ofPushStyle();
+			ofSetCircleResolution(64);
+			ofNoFill();
+			ofCircle(x, y, ringRad);
+		ofPopStyle();
+		
+		ofDrawBitmapString("N", x, y - ringRad-10);
+		ofDrawBitmapString("S", x, y + ringRad+10);
+		ofDrawBitmapString("E", x + ringRad+10, y);
+		ofDrawBitmapString("W", x - ringRad-10, y);
+		
 		cout<<coreLocation->getTrueHeading()<<" | ";
+
+		ofDrawBitmapString("heading:" + ofToString(coreLocation->getTrueHeading(), 2), 10, 20 );
+		
 	}
 	if(hasGPS){
 		cout<<coreLocation->getLatitude()<<" | "<<coreLocation->getLongitude()<<endl;
+		ofDrawBitmapString("lat:" + ofToString(coreLocation->getLatitude(), 4) + " long: " + ofToString(coreLocation->getLongitude(), 4), 10, 40);
 	}
 }
 
