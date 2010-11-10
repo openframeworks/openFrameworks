@@ -99,6 +99,7 @@ void ofNotifyMouseReleased(int x, int y, int button){
 	
 	if(ofAppPtr){
 		ofAppPtr->mouseReleased(x,y,button);
+		ofAppPtr->mouseReleased();
 		ofAppPtr->mouseX = x;
 		ofAppPtr->mouseY = y;
 	}
