@@ -9,7 +9,7 @@
 #import <AVFoundation/AVFoundation.h>
 #import <CoreGraphics/CoreGraphics.h>
 
-#if __IPHONE_OS_VERSION_MIN_REQUIRED > __IPHONE_3_2
+#ifdef __IPHONE_4_0
 
 #import <CoreVideo/CoreVideo.h>
 #import <CoreMedia/CoreMedia.h>

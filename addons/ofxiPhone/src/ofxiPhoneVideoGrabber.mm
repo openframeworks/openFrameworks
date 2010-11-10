@@ -9,7 +9,7 @@
 #import <CoreGraphics/CoreGraphics.h>
 
 
-#if __IPHONE_OS_VERSION_MIN_REQUIRED > __IPHONE_3_2
+#ifdef __IPHONE_4_0
 
 #import <CoreVideo/CoreVideo.h>
 #import <CoreMedia/CoreMedia.h>
@@ -286,7 +286,7 @@ bool ofxiPhoneVideoGrabber::convertCGImageToPixels(CGImageRef & ref, unsigned ch
 
 #endif	// (__arm__) compile only for ARM
 
-#else   // (> 3.2 SDK) compile for 4.0+
+#else   // compile for 4.0+
 
 #warning "skipping ofxIphoneVideoGrabber compilation because you need > 3.2 iOS SDK"
 
