@@ -491,7 +491,7 @@ void ofAppGlutWindow::motion_cb(int x, int y) {
 			ofAppPtr->mouseY = y;
 		}
 
-		ofNotifyMouseReleased(x, y, buttonInUse);
+		ofNotifyMouseDragged(x, y, buttonInUse);
 	}
 
 }
