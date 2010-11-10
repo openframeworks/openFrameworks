@@ -3,10 +3,9 @@
 
 // core events instance & arguments
 #ifdef OF_USING_POCO
-	ofCoreEvents 				ofEventsTmp;
-	ofEventArgs					voidEventArgsTmp;
+	ofCoreEvents ofEvents;
+	ofEventArgs voidEventArgs;
 #endif
-
 //------------------------------------------
 void ofNotifySetup(){
 	ofBaseApp * ofAppPtr = ofGetAppPtr();
@@ -15,7 +14,7 @@ void ofNotifySetup(){
 		ofAppPtr->setup();
 	}
 	#ifdef OF_USING_POCO
-		ofNotifyEvent( ofEventsTmp.setup, voidEventArgsTmp );
+		ofNotifyEvent( ofEvents.setup, voidEventArgs );
 	#endif
 }
 
@@ -27,7 +26,7 @@ void ofNotifyUpdate(){
 		ofAppPtr->update();
 	}
 	#ifdef OF_USING_POCO
-		ofNotifyEvent( ofEventsTmp.update, voidEventArgsTmp );
+		ofNotifyEvent( ofEvents.update, voidEventArgs );
 	#endif
 }
 
@@ -39,7 +38,7 @@ void ofNotifyDraw(){
 		ofAppPtr->draw();
 	}
 	#ifdef OF_USING_POCO
-		ofNotifyEvent( ofEventsTmp.draw, voidEventArgsTmp );
+		ofNotifyEvent( ofEvents.draw, voidEventArgs );
 	#endif
 }
 
@@ -54,7 +53,7 @@ void ofNotifyKeyPressed(int key){
 	
 	#ifdef OF_USING_POCO
 		keyEventArgs.key = key;
-		ofNotifyEvent( ofEventsTmp.keyPressed, keyEventArgs );
+		ofNotifyEvent( ofEvents.keyPressed, keyEventArgs );
 	#endif
 }
 
@@ -69,7 +68,7 @@ void ofNotifyKeyReleased(int key){
 	
 	#ifdef OF_USING_POCO
 		keyEventArgs.key = key;
-		ofNotifyEvent( ofEventsTmp.keyReleased, keyEventArgs );
+		ofNotifyEvent( ofEvents.keyReleased, keyEventArgs );
 	#endif
 }
 
@@ -88,7 +87,7 @@ void ofNotifyMousePressed(int x, int y, int button){
 		mouseEventArgs.x = x;
 		mouseEventArgs.y = y;
 		mouseEventArgs.button = button;
-		ofNotifyEvent( ofEventsTmp.mousePressed, mouseEventArgs );
+		ofNotifyEvent( ofEvents.mousePressed, mouseEventArgs );
 	#endif
 }
 
@@ -108,7 +107,7 @@ void ofNotifyMouseReleased(int x, int y, int button){
 		mouseEventArgs.x = x;
 		mouseEventArgs.y = y;
 		mouseEventArgs.button = button;
-		ofNotifyEvent( ofEventsTmp.mouseReleased, mouseEventArgs );
+		ofNotifyEvent( ofEvents.mouseReleased, mouseEventArgs );
 	#endif
 }
 
@@ -127,7 +126,7 @@ void ofNotifyMouseDragged(int x, int y, int button){
 		mouseEventArgs.x = x;
 		mouseEventArgs.y = y;
 		mouseEventArgs.button = button;
-		ofNotifyEvent( ofEventsTmp.mouseDragged, mouseEventArgs );
+		ofNotifyEvent( ofEvents.mouseDragged, mouseEventArgs );
 	#endif
 }
 
@@ -145,7 +144,7 @@ void ofNotifyMouseMoved(int x, int y){
 	#ifdef OF_USING_POCO
 		mouseEventArgs.x = x;
 		mouseEventArgs.y = y;
-		ofNotifyEvent( ofEventsTmp.mouseMoved, mouseEventArgs );
+		ofNotifyEvent( ofEvents.mouseMoved, mouseEventArgs );
 	#endif
 }
 
@@ -156,7 +155,7 @@ void ofNotifyExit(){
 		ofAppPtr->exit();
 	}
 	#ifdef OF_USING_POCO
-		ofNotifyEvent( ofEventsTmp.exit, voidEventArgsTmp );
+		ofNotifyEvent( ofEvents.exit, voidEventArgs );
 	#endif
 }
 
