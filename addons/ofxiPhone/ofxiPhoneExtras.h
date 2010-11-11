@@ -49,7 +49,6 @@
 #import "ofxiPhoneCoreLocation.h"
 #import "ofxiPhoneImagePicker.h"
 #import "ofxiPhoneMapKit.h"
-#import "ofxiPhoneVideoGrabber.h"
 #include <sys/sysctl.h>
 
 

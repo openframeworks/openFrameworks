@@ -4,6 +4,8 @@
 #include "ofxiPhone.h"
 #include "ofxiPhoneExtras.h"
 
+#include "ofxiPhoneVideoGrabber.h"
+
 class testApp : public ofxiPhoneApp{
 	
 	public:

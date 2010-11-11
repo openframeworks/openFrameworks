@@ -31,20 +31,17 @@
 		E434BF6512477ED500452519 /* freeimage-iphone.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E434BF6412477ED500452519 /* freeimage-iphone.a */; };
 		E434BF6812477EDE00452519 /* freeimage.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E434BF6712477EDE00452519 /* freeimage.a */; };
 		E434BF7312477FBA00452519 /* freetype-iphone.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E434BF7212477FBA00452519 /* freetype-iphone.a */; };
+		E439D12A128C8B04002B245D /* tinyxml.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E439D122128C8B04002B245D /* tinyxml.cpp */; };
+		E439D12B128C8B04002B245D /* tinyxmlerror.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E439D124128C8B04002B245D /* tinyxmlerror.cpp */; };
+		E439D12C128C8B04002B245D /* tinyxmlparser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E439D125128C8B04002B245D /* tinyxmlparser.cpp */; };
+		E439D12D128C8B04002B245D /* ofxXmlSettings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E439D127128C8B04002B245D /* ofxXmlSettings.cpp */; };
 		E496D5B11252C8210098A2B3 /* glu-iphone.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E496D5AF1252C8210098A2B3 /* glu-iphone.a */; };
 		E496D5B21252C8210098A2B3 /* glu.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E496D5B01252C8210098A2B3 /* glu.a */; };
 		E49BCC7A12554CD6009F19D0 /* libofxiPhone_iphoneos_Release.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E49BCC5012554B6A009F19D0 /* libofxiPhone_iphoneos_Release.a */; };
 		E4A8229F12560AFE002F86A2 /* freetype.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E4A8229E12560AFE002F86A2 /* freetype.a */; };
-		E4A8235E12561BC4002F86A2 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E4A8235B12561BC4002F86A2 /* AVFoundation.framework */; };
-		E4A8235F12561BC4002F86A2 /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E4A8235C12561BC4002F86A2 /* CoreMedia.framework */; };
-		E4A8236012561BC4002F86A2 /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E4A8235D12561BC4002F86A2 /* CoreVideo.framework */; };
 		E4A823A412561BE3002F86A2 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E4A823A312561BE3002F86A2 /* CoreGraphics.framework */; };
 		E4D8936E11527B74007E1F53 /* main.mm in Sources */ = {isa = PBXBuildFile; fileRef = E4D8936B11527B74007E1F53 /* main.mm */; };
 		E4D8936F11527B74007E1F53 /* testApp.mm in Sources */ = {isa = PBXBuildFile; fileRef = E4D8936D11527B74007E1F53 /* testApp.mm */; };
-		E4ECB288128AFD0500F24F8E /* tinyxml.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4ECB280128AFD0500F24F8E /* tinyxml.cpp */; };
-		E4ECB289128AFD0500F24F8E /* tinyxmlerror.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4ECB282128AFD0500F24F8E /* tinyxmlerror.cpp */; };
-		E4ECB28A128AFD0500F24F8E /* tinyxmlparser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4ECB283128AFD0500F24F8E /* tinyxmlparser.cpp */; };
-		E4ECB28B128AFD0500F24F8E /* ofxXmlSettings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4ECB285128AFD0500F24F8E /* ofxXmlSettings.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -66,7 +63,7 @@
 
 /* Begin PBXFileReference section */
 		1D30AB110D05D00D00671497 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
-		1D6058910D05DD3D006BFB54 /* xmlSettingsExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = xmlSettingsExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		1D6058910D05DD3D006BFB54 /* emptyExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = emptyExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1DF5F4DF0D08C38300B7A737 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		288765FC0DF74451002DB57D /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		32CA4F630368D1EE00C91783 /* iPhone_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iPhone_Prefix.pch; sourceTree = "<group>"; };
@@ -139,23 +136,20 @@
 		E434BF6412477ED500452519 /* freeimage-iphone.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "freeimage-iphone.a"; path = "../../../libs/FreeImage/lib/iphone/freeimage-iphone.a"; sourceTree = SOURCE_ROOT; };
 		E434BF6712477EDE00452519 /* freeimage.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = freeimage.a; path = ../../../libs/FreeImage/lib/osx/freeimage.a; sourceTree = SOURCE_ROOT; };
 		E434BF7212477FBA00452519 /* freetype-iphone.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "freetype-iphone.a"; path = "../../../libs/freetype/lib/iphone/freetype-iphone.a"; sourceTree = SOURCE_ROOT; };
+		E439D122128C8B04002B245D /* tinyxml.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = tinyxml.cpp; path = ../../../addons/ofxXmlSettings/libs/tinyxml.cpp; sourceTree = SOURCE_ROOT; };
+		E439D123128C8B04002B245D /* tinyxml.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = tinyxml.h; path = ../../../addons/ofxXmlSettings/libs/tinyxml.h; sourceTree = SOURCE_ROOT; };
+		E439D124128C8B04002B245D /* tinyxmlerror.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = tinyxmlerror.cpp; path = ../../../addons/ofxXmlSettings/libs/tinyxmlerror.cpp; sourceTree = SOURCE_ROOT; };
+		E439D125128C8B04002B245D /* tinyxmlparser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = tinyxmlparser.cpp; path = ../../../addons/ofxXmlSettings/libs/tinyxmlparser.cpp; sourceTree = SOURCE_ROOT; };
+		E439D127128C8B04002B245D /* ofxXmlSettings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofxXmlSettings.cpp; path = ../../../addons/ofxXmlSettings/src/ofxXmlSettings.cpp; sourceTree = SOURCE_ROOT; };
+		E439D128128C8B04002B245D /* ofxXmlSettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxXmlSettings.h; path = ../../../addons/ofxXmlSettings/src/ofxXmlSettings.h; sourceTree = SOURCE_ROOT; };
 		E496D5AF1252C8210098A2B3 /* glu-iphone.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "glu-iphone.a"; path = "../../../libs/glu/lib/iphone/glu-iphone.a"; sourceTree = SOURCE_ROOT; };
 		E496D5B01252C8210098A2B3 /* glu.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = glu.a; path = ../../../libs/glu/lib/iphone/glu.a; sourceTree = SOURCE_ROOT; };
 		E49BCC4812554B69009F19D0 /* iPhone+OF Lib.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = "iPhone+OF Lib.xcodeproj"; path = "../../../libs/openFrameworksCompiled/project/iphone/iPhone+OF Lib.xcodeproj"; sourceTree = SOURCE_ROOT; };
 		E4A8229E12560AFE002F86A2 /* freetype.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = freetype.a; path = ../../../libs/freetype/lib/osx/freetype.a; sourceTree = SOURCE_ROOT; };
-		E4A8235B12561BC4002F86A2 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
-		E4A8235C12561BC4002F86A2 /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = System/Library/Frameworks/CoreMedia.framework; sourceTree = SDKROOT; };
-		E4A8235D12561BC4002F86A2 /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = System/Library/Frameworks/CoreVideo.framework; sourceTree = SDKROOT; };
 		E4A823A312561BE3002F86A2 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		E4D8936B11527B74007E1F53 /* main.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = main.mm; path = src/main.mm; sourceTree = SOURCE_ROOT; };
 		E4D8936C11527B74007E1F53 /* testApp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = testApp.h; path = src/testApp.h; sourceTree = SOURCE_ROOT; };
 		E4D8936D11527B74007E1F53 /* testApp.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = testApp.mm; path = src/testApp.mm; sourceTree = SOURCE_ROOT; };
-		E4ECB280128AFD0500F24F8E /* tinyxml.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = tinyxml.cpp; path = ../../../addons/ofxXmlSettings/libs/tinyxml.cpp; sourceTree = SOURCE_ROOT; };
-		E4ECB281128AFD0500F24F8E /* tinyxml.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = tinyxml.h; path = ../../../addons/ofxXmlSettings/libs/tinyxml.h; sourceTree = SOURCE_ROOT; };
-		E4ECB282128AFD0500F24F8E /* tinyxmlerror.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = tinyxmlerror.cpp; path = ../../../addons/ofxXmlSettings/libs/tinyxmlerror.cpp; sourceTree = SOURCE_ROOT; };
-		E4ECB283128AFD0500F24F8E /* tinyxmlparser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = tinyxmlparser.cpp; path = ../../../addons/ofxXmlSettings/libs/tinyxmlparser.cpp; sourceTree = SOURCE_ROOT; };
-		E4ECB285128AFD0500F24F8E /* ofxXmlSettings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofxXmlSettings.cpp; path = ../../../addons/ofxXmlSettings/src/ofxXmlSettings.cpp; sourceTree = SOURCE_ROOT; };
-		E4ECB286128AFD0500F24F8E /* ofxXmlSettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxXmlSettings.h; path = ../../../addons/ofxXmlSettings/src/ofxXmlSettings.h; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -188,9 +182,6 @@
 				E496D5B11252C8210098A2B3 /* glu-iphone.a in Frameworks */,
 				E496D5B21252C8210098A2B3 /* glu.a in Frameworks */,
 				E4A8229F12560AFE002F86A2 /* freetype.a in Frameworks */,
-				E4A8235E12561BC4002F86A2 /* AVFoundation.framework in Frameworks */,
-				E4A8235F12561BC4002F86A2 /* CoreMedia.framework in Frameworks */,
-				E4A8236012561BC4002F86A2 /* CoreVideo.framework in Frameworks */,
 				E4A823A412561BE3002F86A2 /* CoreGraphics.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -201,7 +192,7 @@
 		19C28FACFE9D520D11CA2CBB /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				1D6058910D05DD3D006BFB54 /* xmlSettingsExample.app */,
+				1D6058910D05DD3D006BFB54 /* emptyExample.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -232,10 +223,7 @@
 			isa = PBXGroup;
 			children = (
 				53F323EA10A20EDB00E0DAE4 /* OpenAL.framework */,
-				E4A8235B12561BC4002F86A2 /* AVFoundation.framework */,
 				E4A823A312561BE3002F86A2 /* CoreGraphics.framework */,
-				E4A8235C12561BC4002F86A2 /* CoreMedia.framework */,
-				E4A8235D12561BC4002F86A2 /* CoreVideo.framework */,
 				BBE5EAB70F49AD8400F28951 /* AudioToolbox.framework */,
 				BB16EBD80F2B2AB500518274 /* QuartzCore.framework */,
 				BB16EBD10F2B2A9500518274 /* OpenGLES.framework */,
@@ -302,7 +290,7 @@
 		BB16F26B0F2B646B00518274 /* addons */ = {
 			isa = PBXGroup;
 			children = (
-				E4ECB27D128AFD0500F24F8E /* ofxXmlSettings */,
+				E439D11F128C8B04002B245D /* ofxXmlSettings */,
 			);
 			name = addons;
 			sourceTree = "<group>";
@@ -529,6 +517,38 @@
 			path = ../../../libs/FreeImage/lib/osx;
 			sourceTree = SOURCE_ROOT;
 		};
+		E439D11F128C8B04002B245D /* ofxXmlSettings */ = {
+			isa = PBXGroup;
+			children = (
+				E439D121128C8B04002B245D /* libs */,
+				E439D126128C8B04002B245D /* src */,
+			);
+			name = ofxXmlSettings;
+			path = ../../../addons/ofxXmlSettings;
+			sourceTree = SOURCE_ROOT;
+		};
+		E439D121128C8B04002B245D /* libs */ = {
+			isa = PBXGroup;
+			children = (
+				E439D122128C8B04002B245D /* tinyxml.cpp */,
+				E439D123128C8B04002B245D /* tinyxml.h */,
+				E439D124128C8B04002B245D /* tinyxmlerror.cpp */,
+				E439D125128C8B04002B245D /* tinyxmlparser.cpp */,
+			);
+			name = libs;
+			path = ../../../addons/ofxXmlSettings/libs;
+			sourceTree = SOURCE_ROOT;
+		};
+		E439D126128C8B04002B245D /* src */ = {
+			isa = PBXGroup;
+			children = (
+				E439D127128C8B04002B245D /* ofxXmlSettings.cpp */,
+				E439D128128C8B04002B245D /* ofxXmlSettings.h */,
+			);
+			name = src;
+			path = ../../../addons/ofxXmlSettings/src;
+			sourceTree = SOURCE_ROOT;
+		};
 		E49BCC4912554B69009F19D0 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -556,44 +576,12 @@
 			path = src;
 			sourceTree = SOURCE_ROOT;
 		};
-		E4ECB27D128AFD0500F24F8E /* ofxXmlSettings */ = {
-			isa = PBXGroup;
-			children = (
-				E4ECB27F128AFD0500F24F8E /* libs */,
-				E4ECB284128AFD0500F24F8E /* src */,
-			);
-			name = ofxXmlSettings;
-			path = ../../../addons/ofxXmlSettings;
-			sourceTree = SOURCE_ROOT;
-		};
-		E4ECB27F128AFD0500F24F8E /* libs */ = {
-			isa = PBXGroup;
-			children = (
-				E4ECB280128AFD0500F24F8E /* tinyxml.cpp */,
-				E4ECB281128AFD0500F24F8E /* tinyxml.h */,
-				E4ECB282128AFD0500F24F8E /* tinyxmlerror.cpp */,
-				E4ECB283128AFD0500F24F8E /* tinyxmlparser.cpp */,
-			);
-			name = libs;
-			path = ../../../addons/ofxXmlSettings/libs;
-			sourceTree = SOURCE_ROOT;
-		};
-		E4ECB284128AFD0500F24F8E /* src */ = {
-			isa = PBXGroup;
-			children = (
-				E4ECB285128AFD0500F24F8E /* ofxXmlSettings.cpp */,
-				E4ECB286128AFD0500F24F8E /* ofxXmlSettings.h */,
-			);
-			name = src;
-			path = ../../../addons/ofxXmlSettings/src;
-			sourceTree = SOURCE_ROOT;
-		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		1D6058900D05DD3D006BFB54 /* xmlSettingsExample */ = {
+		1D6058900D05DD3D006BFB54 /* emptyExample */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 1D6058960D05DD3E006BFB54 /* Build configuration list for PBXNativeTarget "xmlSettingsExample" */;
+			buildConfigurationList = 1D6058960D05DD3E006BFB54 /* Build configuration list for PBXNativeTarget "emptyExample" */;
 			buildPhases = (
 				1D60588D0D05DD3D006BFB54 /* Resources */,
 				1D60588E0D05DD3D006BFB54 /* Sources */,
@@ -605,9 +593,9 @@
 			dependencies = (
 				E49BCC6E12554C6C009F19D0 /* PBXTargetDependency */,
 			);
-			name = xmlSettingsExample;
+			name = emptyExample;
 			productName = iPhone;
-			productReference = 1D6058910D05DD3D006BFB54 /* xmlSettingsExample.app */;
+			productReference = 1D6058910D05DD3D006BFB54 /* emptyExample.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -635,7 +623,7 @@
 			);
 			projectRoot = "";
 			targets = (
-				1D6058900D05DD3D006BFB54 /* xmlSettingsExample */,
+				1D6058900D05DD3D006BFB54 /* emptyExample */,
 			);
 		};
 /* End PBXProject section */
@@ -686,10 +674,10 @@
 			files = (
 				E4D8936E11527B74007E1F53 /* main.mm in Sources */,
 				E4D8936F11527B74007E1F53 /* testApp.mm in Sources */,
-				E4ECB288128AFD0500F24F8E /* tinyxml.cpp in Sources */,
-				E4ECB289128AFD0500F24F8E /* tinyxmlerror.cpp in Sources */,
-				E4ECB28A128AFD0500F24F8E /* tinyxmlparser.cpp in Sources */,
-				E4ECB28B128AFD0500F24F8E /* ofxXmlSettings.cpp in Sources */,
+				E439D12A128C8B04002B245D /* tinyxml.cpp in Sources */,
+				E439D12B128C8B04002B245D /* tinyxmlerror.cpp in Sources */,
+				E439D12C128C8B04002B245D /* tinyxmlparser.cpp in Sources */,
+				E439D12D128C8B04002B245D /* ofxXmlSettings.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -896,7 +884,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		1D6058960D05DD3E006BFB54 /* Build configuration list for PBXNativeTarget "xmlSettingsExample" */ = {
+		1D6058960D05DD3E006BFB54 /* Build configuration list for PBXNativeTarget "emptyExample" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				1D6058940D05DD3E006BFB54 /* Debug */,

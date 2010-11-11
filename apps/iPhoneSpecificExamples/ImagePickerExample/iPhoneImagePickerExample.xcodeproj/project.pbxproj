@@ -35,9 +35,6 @@
 		E496D5B21252C8210098A2B3 /* glu.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E496D5B01252C8210098A2B3 /* glu.a */; };
 		E49BCC7A12554CD6009F19D0 /* libofxiPhone_iphoneos_Release.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E49BCC5012554B6A009F19D0 /* libofxiPhone_iphoneos_Release.a */; };
 		E4A8229F12560AFE002F86A2 /* freetype.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E4A8229E12560AFE002F86A2 /* freetype.a */; };
-		E4A8235E12561BC4002F86A2 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E4A8235B12561BC4002F86A2 /* AVFoundation.framework */; };
-		E4A8235F12561BC4002F86A2 /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E4A8235C12561BC4002F86A2 /* CoreMedia.framework */; };
-		E4A8236012561BC4002F86A2 /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E4A8235D12561BC4002F86A2 /* CoreVideo.framework */; };
 		E4A823A412561BE3002F86A2 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E4A823A312561BE3002F86A2 /* CoreGraphics.framework */; };
 		E4D8936E11527B74007E1F53 /* main.mm in Sources */ = {isa = PBXBuildFile; fileRef = E4D8936B11527B74007E1F53 /* main.mm */; };
 		E4D8936F11527B74007E1F53 /* testApp.mm in Sources */ = {isa = PBXBuildFile; fileRef = E4D8936D11527B74007E1F53 /* testApp.mm */; };
@@ -62,7 +59,7 @@
 
 /* Begin PBXFileReference section */
 		1D30AB110D05D00D00671497 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
-		1D6058910D05DD3D006BFB54 /* ImagePickerExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ImagePickerExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		1D6058910D05DD3D006BFB54 /* emptyExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = emptyExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1DF5F4DF0D08C38300B7A737 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		288765FC0DF74451002DB57D /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		32CA4F630368D1EE00C91783 /* iPhone_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iPhone_Prefix.pch; sourceTree = "<group>"; };
@@ -139,9 +136,6 @@
 		E496D5B01252C8210098A2B3 /* glu.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = glu.a; path = ../../../libs/glu/lib/iphone/glu.a; sourceTree = SOURCE_ROOT; };
 		E49BCC4812554B69009F19D0 /* iPhone+OF Lib.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = "iPhone+OF Lib.xcodeproj"; path = "../../../libs/openFrameworksCompiled/project/iphone/iPhone+OF Lib.xcodeproj"; sourceTree = SOURCE_ROOT; };
 		E4A8229E12560AFE002F86A2 /* freetype.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = freetype.a; path = ../../../libs/freetype/lib/osx/freetype.a; sourceTree = SOURCE_ROOT; };
-		E4A8235B12561BC4002F86A2 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
-		E4A8235C12561BC4002F86A2 /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = System/Library/Frameworks/CoreMedia.framework; sourceTree = SDKROOT; };
-		E4A8235D12561BC4002F86A2 /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = System/Library/Frameworks/CoreVideo.framework; sourceTree = SDKROOT; };
 		E4A823A312561BE3002F86A2 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		E4D8936B11527B74007E1F53 /* main.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = main.mm; path = src/main.mm; sourceTree = SOURCE_ROOT; };
 		E4D8936C11527B74007E1F53 /* testApp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = testApp.h; path = src/testApp.h; sourceTree = SOURCE_ROOT; };
@@ -178,9 +172,6 @@
 				E496D5B11252C8210098A2B3 /* glu-iphone.a in Frameworks */,
 				E496D5B21252C8210098A2B3 /* glu.a in Frameworks */,
 				E4A8229F12560AFE002F86A2 /* freetype.a in Frameworks */,
-				E4A8235E12561BC4002F86A2 /* AVFoundation.framework in Frameworks */,
-				E4A8235F12561BC4002F86A2 /* CoreMedia.framework in Frameworks */,
-				E4A8236012561BC4002F86A2 /* CoreVideo.framework in Frameworks */,
 				E4A823A412561BE3002F86A2 /* CoreGraphics.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -191,7 +182,7 @@
 		19C28FACFE9D520D11CA2CBB /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				1D6058910D05DD3D006BFB54 /* ImagePickerExample.app */,
+				1D6058910D05DD3D006BFB54 /* emptyExample.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -222,10 +213,7 @@
 			isa = PBXGroup;
 			children = (
 				53F323EA10A20EDB00E0DAE4 /* OpenAL.framework */,
-				E4A8235B12561BC4002F86A2 /* AVFoundation.framework */,
 				E4A823A312561BE3002F86A2 /* CoreGraphics.framework */,
-				E4A8235C12561BC4002F86A2 /* CoreMedia.framework */,
-				E4A8235D12561BC4002F86A2 /* CoreVideo.framework */,
 				BBE5EAB70F49AD8400F28951 /* AudioToolbox.framework */,
 				BB16EBD80F2B2AB500518274 /* QuartzCore.framework */,
 				BB16EBD10F2B2A9500518274 /* OpenGLES.framework */,
@@ -548,9 +536,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		1D6058900D05DD3D006BFB54 /* ImagePickerExample */ = {
+		1D6058900D05DD3D006BFB54 /* emptyExample */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 1D6058960D05DD3E006BFB54 /* Build configuration list for PBXNativeTarget "ImagePickerExample" */;
+			buildConfigurationList = 1D6058960D05DD3E006BFB54 /* Build configuration list for PBXNativeTarget "emptyExample" */;
 			buildPhases = (
 				1D60588D0D05DD3D006BFB54 /* Resources */,
 				1D60588E0D05DD3D006BFB54 /* Sources */,
@@ -562,9 +550,9 @@
 			dependencies = (
 				E49BCC6E12554C6C009F19D0 /* PBXTargetDependency */,
 			);
-			name = ImagePickerExample;
+			name = emptyExample;
 			productName = iPhone;
-			productReference = 1D6058910D05DD3D006BFB54 /* ImagePickerExample.app */;
+			productReference = 1D6058910D05DD3D006BFB54 /* emptyExample.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -572,7 +560,7 @@
 /* Begin PBXProject section */
 		29B97313FDCFA39411CA2CEA /* Project object */ = {
 			isa = PBXProject;
-			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "VideoGrabberExample" */;
+			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "iPhoneEmptyExample" */;
 			compatibilityVersion = "Xcode 3.1";
 			developmentRegion = English;
 			hasScannedForEncodings = 1;
@@ -592,7 +580,7 @@
 			);
 			projectRoot = "";
 			targets = (
-				1D6058900D05DD3D006BFB54 /* ImagePickerExample */,
+				1D6058900D05DD3D006BFB54 /* emptyExample */,
 			);
 		};
 /* End PBXProject section */
@@ -849,7 +837,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		1D6058960D05DD3E006BFB54 /* Build configuration list for PBXNativeTarget "ImagePickerExample" */ = {
+		1D6058960D05DD3E006BFB54 /* Build configuration list for PBXNativeTarget "emptyExample" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				1D6058940D05DD3E006BFB54 /* Debug */,
@@ -859,7 +847,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		C01FCF4E08A954540054247B /* Build configuration list for PBXProject "VideoGrabberExample" */ = {
+		C01FCF4E08A954540054247B /* Build configuration list for PBXProject "iPhoneEmptyExample" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C01FCF4F08A954540054247B /* Debug */,

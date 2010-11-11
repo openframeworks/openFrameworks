@@ -31,6 +31,7 @@
 		E434BF6512477ED500452519 /* freeimage-iphone.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E434BF6412477ED500452519 /* freeimage-iphone.a */; };
 		E434BF6812477EDE00452519 /* freeimage.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E434BF6712477EDE00452519 /* freeimage.a */; };
 		E434BF7312477FBA00452519 /* freetype-iphone.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E434BF7212477FBA00452519 /* freetype-iphone.a */; };
+		E439CF8C128C8851002B245D /* ofxiPhoneVideoGrabber.mm in Sources */ = {isa = PBXBuildFile; fileRef = E439CF8B128C8851002B245D /* ofxiPhoneVideoGrabber.mm */; };
 		E496D5B11252C8210098A2B3 /* glu-iphone.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E496D5AF1252C8210098A2B3 /* glu-iphone.a */; };
 		E496D5B21252C8210098A2B3 /* glu.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E496D5B01252C8210098A2B3 /* glu.a */; };
 		E49BCC7A12554CD6009F19D0 /* libofxiPhone_iphoneos_Release.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E49BCC5012554B6A009F19D0 /* libofxiPhone_iphoneos_Release.a */; };
@@ -135,6 +136,8 @@
 		E434BF6412477ED500452519 /* freeimage-iphone.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "freeimage-iphone.a"; path = "../../../libs/FreeImage/lib/iphone/freeimage-iphone.a"; sourceTree = SOURCE_ROOT; };
 		E434BF6712477EDE00452519 /* freeimage.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = freeimage.a; path = ../../../libs/FreeImage/lib/osx/freeimage.a; sourceTree = SOURCE_ROOT; };
 		E434BF7212477FBA00452519 /* freetype-iphone.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "freetype-iphone.a"; path = "../../../libs/freetype/lib/iphone/freetype-iphone.a"; sourceTree = SOURCE_ROOT; };
+		E439CF8A128C8851002B245D /* ofxiPhoneVideoGrabber.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxiPhoneVideoGrabber.h; path = src/ofxiPhoneVideoGrabber/ofxiPhoneVideoGrabber.h; sourceTree = SOURCE_ROOT; };
+		E439CF8B128C8851002B245D /* ofxiPhoneVideoGrabber.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ofxiPhoneVideoGrabber.mm; path = src/ofxiPhoneVideoGrabber/ofxiPhoneVideoGrabber.mm; sourceTree = SOURCE_ROOT; };
 		E496D5AF1252C8210098A2B3 /* glu-iphone.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "glu-iphone.a"; path = "../../../libs/glu/lib/iphone/glu-iphone.a"; sourceTree = SOURCE_ROOT; };
 		E496D5B01252C8210098A2B3 /* glu.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = glu.a; path = ../../../libs/glu/lib/iphone/glu.a; sourceTree = SOURCE_ROOT; };
 		E49BCC4812554B69009F19D0 /* iPhone+OF Lib.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = "iPhone+OF Lib.xcodeproj"; path = "../../../libs/openFrameworksCompiled/project/iphone/iPhone+OF Lib.xcodeproj"; sourceTree = SOURCE_ROOT; };
@@ -518,6 +521,16 @@
 			path = ../../../libs/FreeImage/lib/osx;
 			sourceTree = SOURCE_ROOT;
 		};
+		E439CF89128C8851002B245D /* ofxiPhoneVideoGrabber */ = {
+			isa = PBXGroup;
+			children = (
+				E439CF8B128C8851002B245D /* ofxiPhoneVideoGrabber.mm */,
+				E439CF8A128C8851002B245D /* ofxiPhoneVideoGrabber.h */,
+			);
+			name = ofxiPhoneVideoGrabber;
+			path = src/ofxiPhoneVideoGrabber;
+			sourceTree = SOURCE_ROOT;
+		};
 		E49BCC4912554B69009F19D0 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -538,6 +551,7 @@
 		E4D8936A11527B74007E1F53 /* src */ = {
 			isa = PBXGroup;
 			children = (
+				E439CF89128C8851002B245D /* ofxiPhoneVideoGrabber */,
 				E4D8936B11527B74007E1F53 /* main.mm */,
 				E4D8936D11527B74007E1F53 /* testApp.mm */,
 				E4D8936C11527B74007E1F53 /* testApp.h */,
@@ -643,6 +657,7 @@
 			files = (
 				E4D8936E11527B74007E1F53 /* main.mm in Sources */,
 				E4D8936F11527B74007E1F53 /* testApp.mm in Sources */,
+				E439CF8C128C8851002B245D /* ofxiPhoneVideoGrabber.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -717,7 +732,7 @@
 					"../../../libs/openFrameworks/**",
 					"../../../libs/freetype/**",
 				);
-				IPHONEOS_DEPLOYMENT_TARGET = 3.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../../../libs/freetype/lib\"",
@@ -762,7 +777,7 @@
 					"../../../libs/openFrameworks/**",
 					"../../../libs/freetype/**",
 				);
-				IPHONEOS_DEPLOYMENT_TARGET = 3.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../../../libs/freetype/lib\"",
@@ -806,7 +821,7 @@
 					"../../../libs/openFrameworks/**",
 					"../../../libs/freetype/**",
 				);
-				IPHONEOS_DEPLOYMENT_TARGET = 3.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../../../libs/freetype/lib\"",
