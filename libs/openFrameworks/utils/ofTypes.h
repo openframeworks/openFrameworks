@@ -373,7 +373,7 @@ class ofColor{
 	// Return hex color
 	// ROGER: TESTAR ISSO AQUI!!!!
     int getHex(){
-		return ( ((int)r) << 16 + ((int)g) << 8 + ((int)b) );
+		return ( ((int)r) << (16 + ((int)g)) << (8 + ((int)b)) );
     }
 	
 	
