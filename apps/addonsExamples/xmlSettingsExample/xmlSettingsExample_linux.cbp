@@ -134,6 +134,18 @@
             <envvars />
             <debugger />
         </Extensions>
+		<Unit filename="../../../addons/ofxXmlSettings/libs/tinyxml.cpp">
+			<Option virtualFolder="addons/ofxXmlSettings/libs" />
+        </Unit>
+		<Unit filename="../../../addons/ofxXmlSettings/libs/tinyxml.h" >
+			<Option virtualFolder="addons/ofxXmlSettings/libs" />
+        </Unit>
+		<Unit filename="../../../addons/ofxXmlSettings/libs/tinyxmlerror.cpp" >
+			<Option virtualFolder="addons/ofxXmlSettings/libs" />
+        </Unit>
+		<Unit filename="../../../addons/ofxXmlSettings/libs/tinyxmlparser.cpp" >
+			<Option virtualFolder="addons/ofxXmlSettings/libs" />
+        </Unit>
         <Unit filename="../../../addons/ofxXmlSettings/src/ofxXmlSettings.h">
             <Option virtualFolder="addons/ofxXmlSettings/src"></Option>
         </Unit>

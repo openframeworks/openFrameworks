@@ -282,6 +282,15 @@
         <Unit filename="../../../addons/ofxThread/src/ofxThread.cpp">
             <Option virtualFolder="addons/ofxThread/src"></Option>
         </Unit>
+		<Unit filename="../../../addons/ofxVectorGraphics/libs/CreEPS.cpp" >
+			<Option virtualFolder="addons/ofxVectorGraphics/libs" />
+		</Unit>
+		<Unit filename="../../../addons/ofxVectorGraphics/libs/CreEPS.hpp" >
+			<Option virtualFolder="addons/ofxVectorGraphics/libs" />
+		</Unit>
+		<Unit filename="../../../addons/ofxVectorGraphics/libs/CreEPS_Types.hpp" >
+			<Option virtualFolder="addons/ofxVectorGraphics/libs" />
+		</Unit>
         <Unit filename="../../../addons/ofxVectorGraphics/src/ofxVectorGraphics.cpp">
             <Option virtualFolder="addons/ofxVectorGraphics/src"></Option>
         </Unit>
@@ -326,6 +335,18 @@
         </Unit>
         <Unit filename="../../../addons/ofxVectorMath/src/ofxPoint2f.h">
             <Option virtualFolder="addons/ofxVectorMath/src"></Option>
+        </Unit>
+		<Unit filename="../../../addons/ofxXmlSettings/libs/tinyxml.cpp">
+			<Option virtualFolder="addons/ofxXmlSettings/libs" />
+        </Unit>
+		<Unit filename="../../../addons/ofxXmlSettings/libs/tinyxml.h" >
+			<Option virtualFolder="addons/ofxXmlSettings/libs" />
+        </Unit>
+		<Unit filename="../../../addons/ofxXmlSettings/libs/tinyxmlerror.cpp" >
+			<Option virtualFolder="addons/ofxXmlSettings/libs" />
+        </Unit>
+		<Unit filename="../../../addons/ofxXmlSettings/libs/tinyxmlparser.cpp" >
+			<Option virtualFolder="addons/ofxXmlSettings/libs" />
         </Unit>
         <Unit filename="../../../addons/ofxXmlSettings/src/ofxXmlSettings.h">
             <Option virtualFolder="addons/ofxXmlSettings/src"></Option>

@@ -134,6 +134,15 @@
             <envvars />
             <debugger />
         </Extensions>
+		<Unit filename="../../../addons/ofxVectorGraphics/libs/CreEPS.cpp" >
+			<Option virtualFolder="addons/ofxVectorGraphics/libs" />
+		</Unit>
+		<Unit filename="../../../addons/ofxVectorGraphics/libs/CreEPS.hpp" >
+			<Option virtualFolder="addons/ofxVectorGraphics/libs" />
+		</Unit>
+		<Unit filename="../../../addons/ofxVectorGraphics/libs/CreEPS_Types.hpp" >
+			<Option virtualFolder="addons/ofxVectorGraphics/libs" />
+		</Unit>
         <Unit filename="../../../addons/ofxVectorGraphics/src/ofxVectorGraphics.cpp">
             <Option virtualFolder="addons/ofxVectorGraphics/src"></Option>
         </Unit>
