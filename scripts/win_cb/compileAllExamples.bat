@@ -15,8 +15,12 @@ echo compiling all folders in: %%X
 		cd %%Y
 
 		for %%Z in (*.cbp) do (
-		
+			echo "compiling %%Z"
 			"C:\Program Files\CodeBlocks\codeblocks.exe" /na /nd --target= "release" --build %%Z	
+			IF %ERRORLEVEL% NEQ 0 (
+				echo "error compiling %%Z"
+				exit 1
+			)
 			
 		)
 		cd ../
@@ -26,3 +30,4 @@ echo compiling all folders in: %%X
 )
 
 chdir /d %OLDDIR%
+
