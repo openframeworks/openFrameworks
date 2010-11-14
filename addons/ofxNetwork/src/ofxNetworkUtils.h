@@ -10,6 +10,29 @@
 
 #include <cerrno>
 #include <ofMain.h>
+#ifdef TARGET_WIN32
+    #include <winsock.h>
+    #include <winsock2.h>
+    #define ENOTCONN        WSAENOTCONN
+    #define EWOULDBLOCK     WSAEWOULDBLOCK
+    #define ENOBUFS         WSAENOBUFS
+    #define ECONNRESET      WSAECONNRESET
+    #define ESHUTDOWN       WSAESHUTDOWN
+    #define EAFNOSUPPORT    WSAEAFNOSUPPORT
+    #define EPROTONOSUPPORT WSAEPROTONOSUPPORT
+    #define EINPROGRESS     WSAEINPROGRESS
+    #define EISCONN         WSAEISCONN
+    #define ENOTSOCK        WSAENOTSOCK
+    #define ETIMEDOUT       WSAETIMEDOUT
+    #define EOPNOTSUPP      WSAEOPNOTSUPP
+    #define EADDRNOTAVAIL   WSAEADDRNOTAVAIL
+    #define ECONNREFUSED    WSAECONNREFUSED
+    #define ENETUNREACH     WSAENETUNREACH
+    #define EADDRINUSE      WSAEADDRINUSE
+    #define EALREADY        WSAEALREADY
+    #define ENOPROTOOPT     WSAENOPROTOOPT
+    #define EMSGSIZE        WSAEMSGSIZE
+#endif
 
 #define ofxNetworkCheckError() ofxNetworkCheckErrno(__FILE__,ofToString(__LINE__))
 
