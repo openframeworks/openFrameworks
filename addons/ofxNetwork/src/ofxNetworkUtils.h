@@ -10,7 +10,7 @@
 
 #include <cerrno>
 #include <ofMain.h>
-#ifdef TARGET_WIN32
+#if defined (TARGET_WIN32) && !(_MSC_VER) 
     #include <winsock.h>
     #include <winsock2.h>
     #define ENOTCONN        WSAENOTCONN
