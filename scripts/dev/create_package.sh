@@ -380,6 +380,7 @@ function createPackage {
 		rm -Rf ofxiPhone
 	fi
 
+    cd $pkg_root
 	#delete eclipse project
 	rm $(find . -name .*project)
 
