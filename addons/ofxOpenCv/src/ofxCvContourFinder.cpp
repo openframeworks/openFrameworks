@@ -62,10 +62,12 @@ int ofxCvContourFinder::findContours( ofxCvGrayscaleImage&  input,
     // one, because you will get penalized less.
 
 	if( inputCopy.getWidth() == 0 ) {
+		inputCopy.setUseTexture(false);
 		inputCopy.allocate( _width, _height );
 	} else if( inputCopy.getWidth() != _width || inputCopy.getHeight() != _height ) {
         // reallocate to new size
         inputCopy.clear();
+        inputCopy.setUseTexture(false);
         inputCopy.allocate( _width, _height );
 	}
 
