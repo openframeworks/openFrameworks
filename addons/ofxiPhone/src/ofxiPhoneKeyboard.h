@@ -35,6 +35,7 @@
 - (void) setFrame: (CGRect) rect;
 - (void) setPlaceholder: (NSString *)text;
 - (void) openKeyboard;
+- (void) closeKeyboard;
 - (void) updateOrientation;
 - (void) makeSecure;
 - (void) setFieldLength: (int)len;
@@ -60,6 +61,8 @@ public:
 	void setText(string _text);
 	void setPlaceholder(string _text);
 	void openKeyboard();
+    void closeKeyboard();
+    void toggleKeyboard();
 	void updateOrientation();
 	void makeSecure();
 	void setMaxChars(int max);

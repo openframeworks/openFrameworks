@@ -208,7 +208,9 @@ void ofVideoPlayer::idleMovie(){
 				bHavePixelsChanged = true;
 				width = gstUtils.getWidth();
 				height = gstUtils.getHeight();
-				tex.loadData(gstUtils.getPixels(), width, height, GL_RGB);
+				if( bUseTexture ){
+					tex.loadData(gstUtils.getPixels(), width, height, GL_RGB);
+				}
 			}
 
 		//--------------------------------------------------------------
