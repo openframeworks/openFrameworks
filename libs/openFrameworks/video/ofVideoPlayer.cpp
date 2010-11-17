@@ -208,7 +208,9 @@ void ofVideoPlayer::idleMovie(){
 				bHavePixelsChanged = true;
 				width = gstUtils.getWidth();
 				height = gstUtils.getHeight();
-				tex.loadData(gstUtils.getPixels(), width, height, GL_RGB);
+				if (bUseTexture){
+				    tex.loadData(gstUtils.getPixels(), width, height, GL_RGB);
+				}
 			}
 
 		//--------------------------------------------------------------
@@ -224,7 +226,7 @@ void ofVideoPlayer::idleMovie(){
 	// 		and it was badly named so now, newness happens
 	// 		per-idle not per isNew call
 	// ---------------------------------------------------
-	
+
 	if (bLoaded == true){
 
 		bIsFrameNew = bHavePixelsChanged;
@@ -318,7 +320,7 @@ void ofVideoPlayer::createImgMemAndGWorld(){
 	pixels					= new unsigned char[width*height*3];
 
 	#if defined(TARGET_OSX) && defined(__BIG_ENDIAN__)
-		QTNewGWorldFromPtr (&(offscreenGWorld), k32ARGBPixelFormat, &(movieRect), NULL, NULL, 0, (offscreenGWorldPixels), 4 * width);		
+		QTNewGWorldFromPtr (&(offscreenGWorld), k32ARGBPixelFormat, &(movieRect), NULL, NULL, 0, (offscreenGWorldPixels), 4 * width);
 	#else
 		QTNewGWorldFromPtr (&(offscreenGWorld), k24RGBPixelFormat, &(movieRect), NULL, NULL, 0, (pixels), 3 * width);
 	#endif
@@ -533,7 +535,7 @@ void ofVideoPlayer::play(){
 		SetMovieRate(moviePtr,  X2Fix(speed));
 		MoviesTask(moviePtr, 0);
 	}
-	
+
 	//--------------------------------------
 	#else
 	//--------------------------------------
@@ -553,7 +555,7 @@ void ofVideoPlayer::stop(){
 		ofLog(OF_LOG_ERROR, "ofVideoPlayer: movie not loaded!");
 		return;
 	}
-	
+
 	//--------------------------------------
 	#ifdef OF_VIDEO_PLAYER_QUICKTIME
 	//--------------------------------------
@@ -581,7 +583,7 @@ void ofVideoPlayer::setVolume(int volume){
 		ofLog(OF_LOG_ERROR, "ofVideoPlayer: movie not loaded!");
 		return;
 	}
-	
+
 	//--------------------------------------
 	#ifdef OF_VIDEO_PLAYER_QUICKTIME
 	//--------------------------------------
@@ -602,11 +604,11 @@ void ofVideoPlayer::setVolume(int volume){
 
 //--------------------------------------------------------
 void ofVideoPlayer::setLoopState(int state){
-	
+
 	//--------------------------------------
 	#ifdef OF_VIDEO_PLAYER_QUICKTIME
 	//--------------------------------------
-		
+
 		if( isLoaded() ){
 
 			TimeBase myTimeBase;
@@ -635,7 +637,7 @@ void ofVideoPlayer::setLoopState(int state){
 					break;
 			}
 			SetTimeBaseFlags(myTimeBase, myFlags);
-			
+
 		}
 
 	//--------------------------------------
@@ -691,7 +693,7 @@ void ofVideoPlayer::setFrame(int frame){
 		ofLog(OF_LOG_ERROR, "ofVideoPlayer: movie not loaded!");
 		return;
 	}
-	
+
 	//--------------------------------------
 	#ifdef OF_VIDEO_PLAYER_QUICKTIME
 	//--------------------------------------
@@ -741,7 +743,7 @@ float ofVideoPlayer::getDuration(){
 		ofLog(OF_LOG_ERROR, "ofVideoPlayer: movie not loaded!");
 		return 0.0;
 	}
-	
+
 	//--------------------------------------
 	#ifdef OF_VIDEO_PLAYER_QUICKTIME
 	//--------------------------------------
@@ -766,7 +768,7 @@ float ofVideoPlayer::getPosition(){
 		ofLog(OF_LOG_ERROR, "ofVideoPlayer: movie not loaded!");
 		return 0.0;
 	}
-	
+
 	//--------------------------------------
 	#ifdef OF_VIDEO_PLAYER_QUICKTIME
 	//--------------------------------------
@@ -795,7 +797,7 @@ int ofVideoPlayer::getCurrentFrame(){
 		ofLog(OF_LOG_ERROR, "ofVideoPlayer: movie not loaded!");
 		return 0;
 	}
-	
+
 	//--------------------------------------
 	#ifdef OF_VIDEO_PLAYER_QUICKTIME
 	//--------------------------------------
@@ -831,7 +833,7 @@ bool ofVideoPlayer::getIsMovieDone(){
 		ofLog(OF_LOG_ERROR, "ofVideoPlayer: movie not loaded!");
 		return false;
 	}
-	
+
 	//--------------------------------------
 	#ifdef OF_VIDEO_PLAYER_QUICKTIME
 	//--------------------------------------
@@ -853,7 +855,7 @@ void ofVideoPlayer::firstFrame(){
 		ofLog(OF_LOG_ERROR, "ofVideoPlayer: movie not loaded!");
 		return;
 	}
-	
+
 	//--------------------------------------
 	#ifdef OF_VIDEO_PLAYER_QUICKTIME
 	//--------------------------------------
@@ -874,7 +876,7 @@ void ofVideoPlayer::nextFrame(){
 		ofLog(OF_LOG_ERROR, "ofVideoPlayer: movie not loaded!");
 		return;
 	}
-	
+
 	//--------------------------------------
 	#ifdef OF_VIDEO_PLAYER_QUICKTIME
 	//--------------------------------------
@@ -894,7 +896,7 @@ void ofVideoPlayer::previousFrame(){
 		ofLog(OF_LOG_ERROR, "ofVideoPlayer: movie not loaded!");
 		return;
 	}
-	
+
 	//--------------------------------------
 	#ifdef OF_VIDEO_PLAYER_QUICKTIME
 	//--------------------------------------
