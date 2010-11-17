@@ -67,7 +67,6 @@
             <Add directory="../../../libs/poco/include" />
         </Compiler>
         <Linker>
-            <Add library="openFrameworks" />
             <Add library="fmodex" />
             <Add library="glut" />
             <Add library="GL" />
