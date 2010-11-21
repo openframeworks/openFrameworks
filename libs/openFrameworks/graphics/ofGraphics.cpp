@@ -1196,6 +1196,10 @@ void ofVertex(float x, float y){
 
 }
 
+//---------------------------------------------------
+void ofVertex(ofPoint & p) {
+	ofVertex(p.x, p.y);
+}
 
 //---------------------------------------------------
 void ofCurveVertex(float x, float y){
