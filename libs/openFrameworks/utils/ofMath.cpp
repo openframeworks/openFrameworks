@@ -99,14 +99,14 @@ float ofMap(float value, float inputMin, float inputMax, float outputMin, float 
 }
 
 //--------------------------------------------------
-inline float ofDist(float x1, float y1, float x2, float y2) {
+float ofDist(float x1, float y1, float x2, float y2) {
 	float xd = x1 - x2;
 	float yd = y1 - y2;
 	return sqrtf(xd * xd + yd * yd);
 }
 
 //--------------------------------------------------
-inline float ofDistSquared(float x1, float y1, float x2, float y2) {
+float ofDistSquared(float x1, float y1, float x2, float y2) {
 	float xd = x1 - x2;
 	float yd = y1 - y2;
 	return xd * xd + yd * yd;
