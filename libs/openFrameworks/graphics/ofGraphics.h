@@ -140,12 +140,15 @@ void ofSetupGraphicDefaults();
 void ofSetupScreen();
 
 void ofCurveVertex(float x, float y);
+void ofCurveVertex(ofPoint & p);
+
 void ofBezierVertex(float x1, float y1, float x2, float y2, float x3, float y3);
 
 // for polygons
 void ofSetPolyMode(int mode);	
 void ofBeginShape();
 void ofVertex(float x, float y);
+void ofVertex(ofPoint & p);
 void ofEndShape(bool bClose = false);
 void ofNextContour(bool bClose = false);  // for multi contour shapes!
 
