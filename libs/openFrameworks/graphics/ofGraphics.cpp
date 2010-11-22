@@ -1196,6 +1196,10 @@ void ofVertex(float x, float y){
 
 }
 
+//---------------------------------------------------
+void ofVertex(ofPoint & p) {
+	ofVertex(p.x, p.y);
+}
 
 //---------------------------------------------------
 void ofCurveVertex(float x, float y){
@@ -1250,6 +1254,12 @@ void ofCurveVertex(float x, float y){
 
 }
 
+//---------------------------------------------------
+void ofCurveVertex(ofPoint & p) {
+	ofVertex(p.x, p.y);
+}
+
+//---------------------------------------------------
 void ofBezierVertex(float x1, float y1, float x2, float y2, float x3, float y3){
 
 
