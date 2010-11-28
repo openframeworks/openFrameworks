@@ -105,7 +105,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="video/ofVideoPlayer.h|video/ofVideoPlayer.cpp|video/ofVideoGrabber.cpp|video/ofUCUtils.h|video/ofUCUtils.cpp|video/ofQtUtils.h|video/ofQtUtils.cpp|video/ofGstUtils.h|video/ofGstUtils.cpp|sound/ofSoundStream.cpp|sound/ofSoundPlayer.h|sound/ofSoundPlayer.cpp|app/ofAppGlutWindow.h|app/ofAppGlutWindow.cpp|communication|bin" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="video/ofVideoPlayer.cpp|video/ofVideoGrabber.cpp|video/ofUCUtils.h|video/ofUCUtils.cpp|video/ofQtUtils.h|video/ofQtUtils.cpp|video/ofGstUtils.h|video/ofGstUtils.cpp|sound/ofSoundStream.cpp|sound/ofSoundPlayer.h|sound/ofSoundPlayer.cpp|app/ofAppGlutWindow.h|app/ofAppGlutWindow.cpp|communication|bin" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -1547,7 +1547,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="video/ofVideoPlayer.h|video/ofVideoPlayer.cpp|video/ofVideoGrabber.cpp|video/ofUCUtils.h|video/ofUCUtils.cpp|video/ofQtUtils.h|video/ofQtUtils.cpp|video/ofGstUtils.h|video/ofGstUtils.cpp|sound/ofSoundStream.cpp|sound/ofSoundPlayer.h|sound/ofSoundPlayer.cpp|app/ofAppGlutWindow.h|app/ofAppGlutWindow.cpp|communication|bin" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="video/ofVideoPlayer.cpp|video/ofVideoGrabber.cpp|video/ofUCUtils.h|video/ofUCUtils.cpp|video/ofQtUtils.h|video/ofQtUtils.cpp|video/ofGstUtils.h|video/ofGstUtils.cpp|sound/ofSoundStream.cpp|sound/ofSoundPlayer.h|sound/ofSoundPlayer.cpp|app/ofAppGlutWindow.h|app/ofAppGlutWindow.cpp|communication|bin" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -2892,6 +2892,7 @@
 						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/openFrameworks/Debug Android"/>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/openFrameworks/Release"/>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/openFrameworks/Release arm7"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/openFrameworks/Release_arm7"/>
 						<entry flags="RESOLVED" kind="libraryFile" name="openFrameworks"/>
 					</externalSetting>
 				</externalSettings>
@@ -2991,7 +2992,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="video/ofVideoPlayer.h|video/ofVideoPlayer.cpp|video/ofVideoGrabber.cpp|video/ofUCUtils.h|video/ofUCUtils.cpp|video/ofQtUtils.h|video/ofQtUtils.cpp|video/ofGstUtils.h|video/ofGstUtils.cpp|sound/ofSoundStream.cpp|sound/ofSoundPlayer.h|sound/ofSoundPlayer.cpp|app/ofAppGlutWindow.h|app/ofAppGlutWindow.cpp|communication|bin" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="video/ofVideoPlayer.cpp|video/ofVideoGrabber.cpp|video/ofUCUtils.h|video/ofUCUtils.cpp|video/ofQtUtils.h|video/ofQtUtils.cpp|video/ofGstUtils.h|video/ofGstUtils.cpp|sound/ofSoundStream.cpp|sound/ofSoundPlayer.h|sound/ofSoundPlayer.cpp|app/ofAppGlutWindow.h|app/ofAppGlutWindow.cpp|communication|bin" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
