@@ -12,6 +12,7 @@ import javax.microedition.khronos.opengles.GL10;
 
 import android.app.Activity;
 import android.content.Context;
+import android.hardware.SensorManager;
 import android.opengl.GLSurfaceView;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -75,6 +76,8 @@ public class OFAndroid {
         
         mGLView = new OFGLSurfaceView(ofActivity, appName);
         ofActivity.setContentView(mGLView);
+        
+        accelerometer = new OFAndroidAccelerometer((SensorManager)ofActivity.getSystemService(Context.SENSOR_SERVICE));
     }
 
 	public void start(){
@@ -125,6 +128,7 @@ public class OFAndroid {
 	}
     
     private GLSurfaceView mGLView;
+    private OFAndroidAccelerometer accelerometer;
 	 
     static {
     	System.loadLibrary("OFAndroidApp"); 

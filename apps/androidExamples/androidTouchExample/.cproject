@@ -61,6 +61,7 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/addons/ofxOsc/libs/oscpack/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/addons/ofxOsc/libs/oscpack/include/osc}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/addons/ofxOsc/libs/oscpack/include/ip}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/addons/ofxAccelerometer/src}&quot;"/>
 								</option>
 								<option id="gnu.cpp.compiler.option.preprocessor.def.1268065335" name="Defined symbols (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="ANDROID"/>
@@ -1101,6 +1102,7 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/addons/ofxOsc/libs/oscpack/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/addons/ofxOsc/libs/oscpack/include/osc}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/addons/ofxOsc/libs/oscpack/include/ip}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/addons/ofxAccelerometer/src}&quot;"/>
 								</option>
 								<option id="gnu.cpp.compiler.option.preprocessor.def.473434276" name="Defined symbols (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="ANDROID"/>
@@ -2144,6 +2146,7 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/addons/ofxOsc/libs/oscpack/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/addons/ofxOsc/libs/oscpack/include/osc}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/addons/ofxOsc/libs/oscpack/include/ip}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/addons/ofxAccelerometer/src}&quot;"/>
 								</option>
 								<option id="gnu.cpp.compiler.option.preprocessor.def.307080749" name="Defined symbols (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="ANDROID"/>
@@ -4094,6 +4097,7 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/addons/ofxOsc/libs/oscpack/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/addons/ofxOsc/libs/oscpack/include/osc}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/addons/ofxOsc/libs/oscpack/include/ip}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/addons/ofxAccelerometer/src}&quot;"/>
 								</option>
 								<option id="gnu.cpp.compiler.option.preprocessor.def.1321746084" name="Defined symbols (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="ANDROID"/>
@@ -4166,6 +4170,8 @@
 				</configuration>
 			</storageModule>
 			<storageModule moduleId="org.eclipse.cdt.core.externalSettings"/>
+			<storageModule moduleId="org.eclipse.cdt.core.language.mapping"/>
+			<storageModule moduleId="org.eclipse.cdt.internal.ui.text.commentOwnerProjectMappings"/>
 		</cconfiguration>
 	</storageModule>
 	<storageModule moduleId="cdtBuildSystem" version="4.0.0">
