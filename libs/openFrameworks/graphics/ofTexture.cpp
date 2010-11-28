@@ -31,7 +31,6 @@ ofTexture::ofTexture(){
 	texData.tex_u			= 0;
 
 	//Sosolimited
-	texData.useCompression	= false;
 	texData.compressionType = OF_COMPRESS_NONE;
 
 	resetAnchor();
@@ -72,8 +71,8 @@ void ofTexture::clear(){
 	// http://www.opengl.org/documentation/specs/man_pages/hardcopy/GL/html/gl/deletetextures.html
 	if (texData.textureID != 0){
 		glDeleteTextures(1, (GLuint *)&texData.textureID);
+		texData.textureID  = 0;
 	}
-
 	texData.bAllocated = false;
 }
 
@@ -87,7 +86,7 @@ void ofTexture::allocate(int w, int h, int internalGlDataType, bool bUseARBExten
 
 	//our graphics card might not support arb so we have to see if it is supported.
 	#ifndef TARGET_OPENGLES
-		if (bUseARBExtention && GLEE_ARB_texture_rectangle){
+		if (bUseARBExtention && GL_ARB_texture_rectangle){
 			texData.tex_w = w;
 			texData.tex_h = h;
 			texData.tex_t = w;
@@ -242,10 +241,8 @@ void ofTexture::loadData(void * data, int w, int h, int glDataType){
 
 	
 	//Sosolimited: texture compression
-#ifndef TARGET_OPENGLES
-	if ((!texData.useCompression) || (texData.compressionType == OF_COMPRESS_NONE))
+	if (texData.compressionType == OF_COMPRESS_NONE)
 	{
-#endif
 		//STANDARD openFrameworks: no compression
 
 		//update the texture image: 
@@ -253,13 +250,13 @@ void ofTexture::loadData(void * data, int w, int h, int glDataType){
 		glBindTexture(texData.textureTarget, (GLuint)texData.textureID);
  		glTexSubImage2D(texData.textureTarget, 0, 0, 0, w, h, texData.glType, texData.pixelType, data); // MEMO: important to use pixelType here
 		glDisable(texData.textureTarget);
-#ifndef TARGET_OPENGLES
 	}
 	else
 	{
 		//SOSOLIMITED: setup mipmaps and use compression
-
+		//TODO: activate at least mimaps for OPENGL_ES
 		//need proper tex_u and tex_t positions, with mipmaps they are the nearest power of 2
+#ifndef TARGET_OPENGLES		
 		if (texData.textureTarget == GL_TEXTURE_RECTANGLE_ARB){
 			
 			//need to find closest powers of two
@@ -275,19 +272,21 @@ void ofTexture::loadData(void * data, int w, int h, int glDataType){
 
 			//printf("ofTexture::loadData w:%.1f, h:%.1f, tex_t:%.1f, tex_u:%.1f \n", texData.width,texData.height,texData.tex_t,texData.tex_u);
 		}
-
+#endif
 		glEnable(texData.textureTarget);
 		glBindTexture(texData.textureTarget, (GLuint)texData.textureID);
 
 		glHint(GL_GENERATE_MIPMAP_HINT, GL_NICEST);
 		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+#ifndef TARGET_OPENGLES		
 		glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP_SGIS, true);
-
+#endif
 		glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 		glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 		glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 		glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 		
+#ifndef TARGET_OPENGLES		
 		//using sRGB compression
 		if (texData.compressionType == OF_COMPRESS_SRGB)
 		{
@@ -319,13 +318,12 @@ void ofTexture::loadData(void * data, int w, int h, int glDataType){
 			else if(texData.glType == GL_LUMINANCE)
 				gluBuild2DMipmaps(texData.textureTarget, GL_COMPRESSED_LUMINANCE_ARB, w, h, texData.glType, GL_UNSIGNED_BYTE, data);
 		}
-
+#endif
 		
 
 		glDisable(texData.textureTarget);
 
 	}
-#endif
 	//------------------------ back to normal.
 	glPixelStorei(GL_UNPACK_ALIGNMENT, prevAlignment);
 
@@ -509,20 +507,39 @@ void ofTexture::setTextureMinMagFilter(GLint minFilter, GLint maxFilter){
 
 void ofTexture::setCompression(ofTexCompression compression){
 	texData.compressionType = compression;
-	if(compression!=OF_COMPRESS_NONE) texData.useCompression = true;
 }
 
+//----------------------------------------------------------
+void ofTexture::draw(ofRectangle r){
+	draw(r.x, r.y, 0.0f, r.width, r.height);
+}
+
+//----------------------------------------------------------
+void ofTexture::draw(ofPoint p, float w, float h){
+	draw(p.x, p.y, p.z, w, h);
+}
 
 //----------------------------------------------------------
 void ofTexture::draw(float x, float y, float w, float h){
+	draw(x, y, 0.0f, w, h);
+}
 
+//----------------------------------------------------------
+void ofTexture::draw(float x, float y, float z, float w, float h){
+	
+	// make sure we are on unit 0 - we may change this when setting shader samplers
+	// before glEnable or else the shader gets confused
+	/// ps: maybe if bUsingArbTex is enabled we should use glActiveTextureARB?
+	glActiveTexture(GL_TEXTURE0);
+
+	// Enable texturing
 	glEnable(texData.textureTarget);
 
 	// bind the texture
 	glBindTexture( texData.textureTarget, (GLuint)texData.textureID );
 
-		GLfloat px0 = 0;		// up to you to get the aspect ratio right
-		GLfloat py0 = 0;
+		GLfloat px0 = 0.0f;		// up to you to get the aspect ratio right
+		GLfloat py0 = 0.0f;
 		GLfloat px1 = w;
 		GLfloat py1 = h;
 
@@ -568,8 +585,8 @@ void ofTexture::draw(float x, float y, float w, float h){
 		// to constantly add a 2 pixel border on all uploaded images
 		// is insane..
 
-		GLfloat offsetw = 0;
-		GLfloat offseth = 0;
+		GLfloat offsetw = 0.0f;
+		GLfloat offseth = 0.0f;
 
 		if (texData.textureTarget == GL_TEXTURE_2D && bTexHackEnabled) {
 			offsetw = 1.0f / (texData.tex_w);
@@ -584,7 +601,7 @@ void ofTexture::draw(float x, float y, float w, float h){
 
 	glPushMatrix(); 
 	
-		glTranslatef(x,y,0.0f);
+		glTranslatef(x,y,z);
 		
 		GLfloat tex_coords[] = {
 			tx0,ty0,
@@ -608,12 +625,96 @@ void ofTexture::draw(float x, float y, float w, float h){
 
 	glPopMatrix();
 	glDisable(texData.textureTarget);
+
+}
+
+
+// ROGER
+//----------------------------------------------------------
+void ofTexture::draw(ofPoint p1, ofPoint p2, ofPoint p3, ofPoint p4){
+	
+	// Enable alpha channel if has one
+	bool blending = ofGetStyle().blending;
+	if (texData.glType == GL_RGBA && blending == false)
+		ofEnableAlphaBlending();
+	
+	// make sure we are on unit 0 - we may change this when setting shader samplers
+	// before glEnable or else the shader gets confused
+	/// ps: maybe if bUsingArbTex is enabled we should use glActiveTextureARB?
+	glActiveTexture(GL_TEXTURE0);
+	
+	// Enable texturing
+	glEnable(texData.textureTarget);
+	
+	// bind the texture
+	glBindTexture( texData.textureTarget, (GLuint)texData.textureID );
+	
+	// -------------------------------------------------
+	// complete hack to remove border artifacts.
+	// slightly, slightly alters an image, scaling...
+	// to remove the border.
+	// we need a better solution for this, but
+	// to constantly add a 2 pixel border on all uploaded images
+	// is insane..
+	
+	GLfloat offsetw = 0.0f;
+	GLfloat offseth = 0.0f;
+	
+	if (texData.textureTarget == GL_TEXTURE_2D && bTexHackEnabled) {
+		offsetw = 1.0f / (texData.tex_w);
+		offseth = 1.0f / (texData.tex_h);
+	}
+	// -------------------------------------------------
+	
+	GLfloat tx0 = 0+offsetw;
+	GLfloat ty0 = 0+offseth;
+	GLfloat tx1 = texData.tex_t - offsetw;
+	GLfloat ty1 = texData.tex_u - offseth;
+	
+	glPushMatrix(); 
+	
+	GLfloat tex_coords[] = {
+		tx0,ty0,
+		tx1,ty0,
+		tx1,ty1,
+		tx0,ty1
+	};
+	GLfloat verts[] = {
+		p1.x, p1.y,
+		p2.x, p2.y,
+		p3.x, p3.y,
+		p4.x, p4.x
+	};
+	
+	glEnableClientState( GL_TEXTURE_COORD_ARRAY );
+	glTexCoordPointer(2, GL_FLOAT, 0, tex_coords );
+	glEnableClientState(GL_VERTEX_ARRAY);		
+	glVertexPointer(2, GL_FLOAT, 0, verts );
+	glDrawArrays( GL_TRIANGLE_STRIP, 0, 4 );
+	glDisableClientState( GL_TEXTURE_COORD_ARRAY );
+	
+	glPopMatrix();
+	glDisable(texData.textureTarget);
+	
+	// Disable alpha channel if it was disabled
+	if (texData.glType == GL_RGBA && blending == false)
+		ofDisableAlphaBlending();
 }
 
 
 //----------------------------------------------------------
+void ofTexture::draw(ofPoint p){
+	draw(p.x, p.y, p.z, texData.width, texData.height);
+}
+
+//----------------------------------------------------------
 void ofTexture::draw(float x, float y){
-	draw(x,y,texData.width, texData.height);
+	draw(x, y, 0.0f, texData.width, texData.height);
+}
+
+//----------------------------------------------------------
+void ofTexture::draw(float x, float y, float z){
+	draw(x, y, z, texData.width, texData.height);
 }
 
 //----------------------------------------------------------

@@ -30,6 +30,7 @@ void ofxCvGrayscaleImage::init() {
     iplchannels = 1;
     gldepth = GL_UNSIGNED_BYTE;
     glchannels = GL_LUMINANCE;
+    briConLutMatrix = cvCreateMat(1,256,CV_8UC1);
 }
 
 
@@ -302,41 +303,35 @@ void ofxCvGrayscaleImage::brightnessContrast(float brightness, float contrast){
 	/*
 	 * The algorithm is by Werner D. Streidt
 	 * (http://visca.com/ffactory/archives/5-99/msg00021.html)
-	 * (note: uses values between -100 and 100)
+	 * (note: uses values between -1 and 1)
 	 */
-	
+
+	double delta;
+	double a;
+	double b;
 	if( contrast > 0 )
 	{
-		double delta = 127.*contrast;
-		double a = 255./(255. - delta*2);
-		double b = a*(brightness*100 - delta);
-		for( i = 0; i < 256; i++ )
-		{
-			int v = cvRound(a*i + b);
-			if( v < 0 )
-				v = 0;
-				if( v > 255 )
-					v = 255;
-					briConLut[i] = (uchar)v;
-					}
-	}
-	else
-	{
-		double delta = -128.*contrast;
-		double a = (256.-delta*2)/255.;
-		double b = a*brightness*100. + delta;
-		for( i = 0; i < 256; i++ )
-		{
-			int v = cvRound(a*i + b);
-			if( v < 0 )
-				v = 0;
-				if( v > 255 )
-					v = 255;
-					briConLut[i] = (uchar)v;
-					}
+		delta = 127.*contrast;
+		a = 255./(255. - delta*2);
+		b = a*(brightness*100 - delta);
+	}else{
+		delta = -128.*contrast;
+		a = (256.-delta*2)/255.;
+		b = a*brightness*100. + delta;
 	}
 
-	cvSetData( briConLutMatrix, briConLut, 0 );
+	for( i = 0; i < 256; i++ )
+	{
+		int v = cvRound(a*i + b);
+		if( v < 0 )
+			v = 0;
+		if( v > 255 )
+			v = 255;
+		briConLutMatrix->data.ptr[i] = (uchar)v;
+		//briConLut[i] = (uchar)v;
+	}
+
+	//cvSetData( briConLutMatrix, briConLut, 0 );
 
 	cvLUT( cvImage, cvImageTemp, briConLutMatrix); 
 	swapTemp();

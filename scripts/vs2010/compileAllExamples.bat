@@ -19,7 +19,8 @@ cd %%X
 		
 			echo trying comipilation
 			
-			msbuild /nologo /noautoresponse %%Z
+			msbuild /nologo /noautoresponse %%Z /p:Configuration=Debug
+			msbuild /nologo /noautoresponse %%Z /p:Configuration=Release
 		)
 		cd ../
 	)

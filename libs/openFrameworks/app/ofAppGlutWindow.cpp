@@ -215,35 +215,15 @@ void ofAppGlutWindow::runAppViaInfiniteLoop(ofBaseApp * appPtr){
 
 	ofAppPtr = appPtr;
 
-	if(ofAppPtr){
-		ofAppPtr->setup();
-		ofAppPtr->update();
-	}
-
-	#ifdef OF_USING_POCO
-		ofNotifyEvent( ofEvents.setup, voidEventArgs );
-		ofNotifyEvent( ofEvents.update, voidEventArgs );
-	#endif
-
-
+	ofNotifySetup();
+	ofNotifyUpdate();
+	
 	glutMainLoop();
 }
 
 //------------------------------------------------------------
 void ofAppGlutWindow::exitApp(){
-
-//  -- This already exists in ofExitCallback
-
-//	static ofEventArgs voidEventArgs;
-//
-//	if(ofAppPtr)ofAppPtr->exit();
-//
-//	#ifdef OF_USING_POCO
-//		ofNotifyEvent( ofEvents.exit, voidEventArgs );
-//	#endif
-
 	ofLog(OF_LOG_VERBOSE,"GLUT OF app is being terminated!");
-
 	OF_EXIT_APP(0);
 }
 
@@ -445,14 +425,7 @@ void ofAppGlutWindow::display(void){
 
 	if( bEnableSetupScreen )ofSetupScreen();
 
-
-	if(ofAppPtr)
-		ofAppPtr->draw();
-
-	#ifdef OF_USING_POCO
-		ofNotifyEvent( ofEvents.draw, voidEventArgs );
-	#endif
-
+	ofNotifyDraw();
 
     #ifdef TARGET_WIN32
     if (bClearAuto == false){
@@ -481,21 +454,9 @@ void ofAppGlutWindow::display(void){
 
     nFramesSinceWindowResized++;
 
-    // -------------- fps calculation:
-	// theo - please don't mess with this without letting me know.
-	// there was some very strange issues with doing ( timeNow-timeThen ) producing different values to: double diff = timeNow-timeThen;
-	// http://www.openframeworks.cc/forum/viewtopic.php?f=7&t=1892&p=11166#p11166
-
-	timeNow = ofGetElapsedTimef();
-	double diff = timeNow-timeThen;
-	if( diff  > 0.00001 ){
-		fps			= 1.0 / diff;
-		frameRate	*= 0.9f;
-		frameRate	+= 0.1f*fps;
-	 }
-	 lastFrameTime	= diff;
-	 timeThen		= timeNow;
-  	// --------------
+	//fps calculation moved to idle_cb as we were having fps speedups when heavy drawing was occuring
+	//wasn't reflecting on the actual app fps which was in reality slower. 
+	//could be caused by some sort of deferred drawing? 
 
 	nFrameCount++;		// increase the overall frame count
 
@@ -505,36 +466,17 @@ void ofAppGlutWindow::display(void){
 
 //------------------------------------------------------------
 void ofAppGlutWindow::mouse_cb(int button, int state, int x, int y) {
-	static ofMouseEventArgs mouseEventArgs;
 
 	if (nFrameCount > 0){
 		if(ofAppPtr){
-		ofAppPtr->mouseX = x;
-		ofAppPtr->mouseY = y;
+			ofAppPtr->mouseX = x;
+			ofAppPtr->mouseY = y;
 		}
 
 		if (state == GLUT_DOWN) {
-			if(ofAppPtr)
-				ofAppPtr->mousePressed(x,y,button);
-
-			#ifdef OF_USING_POCO
-				mouseEventArgs.x = x;
-				mouseEventArgs.y = y;
-				mouseEventArgs.button = button;
-				ofNotifyEvent( ofEvents.mousePressed, mouseEventArgs );
-			#endif
+			ofNotifyMousePressed(x, y, button);
 		} else if (state == GLUT_UP) {
-			if(ofAppPtr){
-				ofAppPtr->mouseReleased(x,y,button);
-				ofAppPtr->mouseReleased();
-			}
-
-			#ifdef OF_USING_POCO
-				mouseEventArgs.x = x;
-				mouseEventArgs.y = y;
-				mouseEventArgs.button = button;
-				ofNotifyEvent( ofEvents.mouseReleased, mouseEventArgs );
-			#endif
+			ofNotifyMouseReleased(x, y, button);
 		}
 		buttonInUse = button;
 	}
@@ -542,41 +484,28 @@ void ofAppGlutWindow::mouse_cb(int button, int state, int x, int y) {
 
 //------------------------------------------------------------
 void ofAppGlutWindow::motion_cb(int x, int y) {
-	static ofMouseEventArgs mouseEventArgs;
 
 	if (nFrameCount > 0){
 		if(ofAppPtr){
-		ofAppPtr->mouseX = x;
-		ofAppPtr->mouseY = y;
-			ofAppPtr->mouseDragged(x,y,buttonInUse);
+			ofAppPtr->mouseX = x;
+			ofAppPtr->mouseY = y;
 		}
 
-		#ifdef OF_USING_POCO
-			mouseEventArgs.x = x;
-			mouseEventArgs.y = y;
-			mouseEventArgs.button = buttonInUse;
-			ofNotifyEvent( ofEvents.mouseDragged, mouseEventArgs );
-		#endif
+		ofNotifyMouseDragged(x, y, buttonInUse);
 	}
 
 }
 
 //------------------------------------------------------------
 void ofAppGlutWindow::passive_motion_cb(int x, int y) {
-	static ofMouseEventArgs mouseEventArgs;
 
 	if (nFrameCount > 0){
 		if(ofAppPtr){
-		ofAppPtr->mouseX = x;
-		ofAppPtr->mouseY = y;
-			ofAppPtr->mouseMoved(x,y);
+			ofAppPtr->mouseX = x;
+			ofAppPtr->mouseY = y;
 		}
 
-		#ifdef OF_USING_POCO
-			mouseEventArgs.x = x;
-			mouseEventArgs.y = y;
-			ofNotifyEvent( ofEvents.mouseMoved, mouseEventArgs );
-		#endif
+		ofNotifyMouseMoved(x, y);
 	}
 }
 
@@ -602,13 +531,28 @@ void ofAppGlutWindow::idle_cb(void) {
 		}
 	}
 	prevMillis = ofGetElapsedTimeMillis(); // you have to measure here
+	
+    // -------------- fps calculation:
+	// theo - now moved from display to idle_cb
+	// discuss here: http://github.com/openframeworks/openFrameworks/issues/labels/0062#issue/187
+	// 
+	//
+	// theo - please don't mess with this without letting me know.
+	// there was some very strange issues with doing ( timeNow-timeThen ) producing different values to: double diff = timeNow-timeThen;
+	// http://www.openframeworks.cc/forum/viewtopic.php?f=7&t=1892&p=11166#p11166
 
-	if(ofAppPtr)
-		ofAppPtr->update();
+	timeNow = ofGetElapsedTimef();
+	double diff = timeNow-timeThen;
+	if( diff  > 0.00001 ){
+		fps			= 1.0 / diff;
+		frameRate	*= 0.9f;
+		frameRate	+= 0.1f*fps;
+	 }
+	 lastFrameTime	= diff;
+	 timeThen		= timeNow;
+  	// --------------	
 
-		#ifdef OF_USING_POCO
-		ofNotifyEvent( ofEvents.update, voidEventArgs);
-		#endif
+	ofNotifyUpdate();
 
 	glutPostRedisplay();
 }
@@ -616,15 +560,8 @@ void ofAppGlutWindow::idle_cb(void) {
 
 //------------------------------------------------------------
 void ofAppGlutWindow::keyboard_cb(unsigned char key, int x, int y) {
-	static ofKeyEventArgs keyEventArgs;
 
-	if(ofAppPtr)
-		ofAppPtr->keyPressed(key);
-
-	#ifdef OF_USING_POCO
-		keyEventArgs.key = key;
-		ofNotifyEvent( ofEvents.keyPressed, keyEventArgs );
-	#endif
+	ofNotifyKeyPressed(key);
 
 	if (key == OF_KEY_ESC){				// "escape"
 		exitApp();
@@ -633,58 +570,27 @@ void ofAppGlutWindow::keyboard_cb(unsigned char key, int x, int y) {
 
 //------------------------------------------------------------
 void ofAppGlutWindow::keyboard_up_cb(unsigned char key, int x, int y) {
-	static ofKeyEventArgs keyEventArgs;
 
-	if(ofAppPtr)
-		ofAppPtr->keyReleased(key);
+	ofNotifyKeyReleased(key);
 
-	#ifdef OF_USING_POCO
-		keyEventArgs.key = key;
-		ofNotifyEvent( ofEvents.keyReleased, keyEventArgs );
-	#endif
 }
 
 //------------------------------------------------------
 void ofAppGlutWindow::special_key_cb(int key, int x, int y) {
-	static ofKeyEventArgs keyEventArgs;
-
-	if(ofAppPtr)
-		ofAppPtr->keyPressed(key | OF_KEY_MODIFIER);
-
-	#ifdef OF_USING_POCO
-		keyEventArgs.key = (key | OF_KEY_MODIFIER);
-		ofNotifyEvent( ofEvents.keyPressed, keyEventArgs );
-	#endif
+	ofNotifyKeyPressed(key | OF_KEY_MODIFIER);
 }
 
 //------------------------------------------------------------
 void ofAppGlutWindow::special_key_up_cb(int key, int x, int y) {
-	static ofKeyEventArgs keyEventArgs;
-
-	if(ofAppPtr)
-		ofAppPtr->keyReleased(key | OF_KEY_MODIFIER);
-
-	#ifdef OF_USING_POCO
-		keyEventArgs.key = (key | OF_KEY_MODIFIER);
-		ofNotifyEvent( ofEvents.keyReleased, keyEventArgs );
-	#endif
+	ofNotifyKeyReleased(key | OF_KEY_MODIFIER);
 }
 
 //------------------------------------------------------------
 void ofAppGlutWindow::resize_cb(int w, int h) {
-	static ofResizeEventArgs resizeEventArgs;
-
 	windowW = w;
 	windowH = h;
 
-	if(ofAppPtr)
-		ofAppPtr->windowResized(w,h);
-
-	#ifdef OF_USING_POCO
-		resizeEventArgs.width = w;
-		resizeEventArgs.height = h;
-		ofNotifyEvent( ofEvents.windowResized, resizeEventArgs );
-	#endif
+	ofNotifyWindowResized(w, h);
 
 	nFramesSinceWindowResized = 0;
 }

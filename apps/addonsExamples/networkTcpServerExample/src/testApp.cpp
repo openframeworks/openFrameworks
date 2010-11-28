@@ -28,13 +28,13 @@ void testApp::update(){
 //--------------------------------------------------------------
 void testApp::draw(){
 
-	ofSetColor(0xDDDDDD);
+	ofSetHexColor(0xDDDDDD);
 	mono.drawString("TCP SERVER Example \n\nconnect on port: "+ofToString(TCP.getPort()), 10, 20);
 
-	ofSetColor(0x000000);
+	ofSetHexColor(0x000000);
 	ofRect(10, 60, ofGetWidth()-24, ofGetHeight() - 65 - 15);
 
-	ofSetColor(0xDDDDDD);
+	ofSetHexColor(0xDDDDDD);
 
 	//for each connected client lets get the data being sent and lets print it to the screen
 	for(int i = 0; i < TCP.getNumClients(); i++){

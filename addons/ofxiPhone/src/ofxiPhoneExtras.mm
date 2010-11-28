@@ -40,7 +40,22 @@ ofxiPhoneDeviceType ofxiPhoneGetDeviceType() {
 
 //--------------------------------------------------------------
 string ofxiPhoneGetDeviceRevision() {
-	// ZACH TODO
+	size_t size;
+    sysctlbyname("hw.machine", NULL, &size, NULL, 0);
+	
+	if( size > 0 ){
+    	char * machine;
+	machine = new char[size];
+	sysctlbyname("hw.machine", machine, &size, NULL, 0);
+	
+	string device(machine);
+	
+		delete[] machine;
+			
+	return device;
+	}else{
+		return "";
+	}
 }
 
 //--------------------------------------------------------------
@@ -118,7 +133,8 @@ void ofxiPhoneUnlockGLContext() {
 
 //--------------------------------------------------------------
 void ofxiPhoneEnableLoopInThread() {
-	[ofxiPhoneGetAppDelegate() enableLoopInThread];
+//	[ofxiPhoneGetAppDelegate() enableLoopInThread];
+	ofLog(OF_LOG_WARNING, "ofxiPhoneEnableLoopInThread is not used anymore. CADisplayLink provides better animation loop");
 }
 
 
@@ -247,14 +263,64 @@ bool ofxiPhoneUIImageToOFImage(UIImage *uiImage, ofImage &outImage, int targetWi
 }
 
 //--------------------------------------------------------------
+bool ofxiPhoneUIImageToOFTexture(UIImage *uiImage, ofTexture &outTexture, int targetWidth, int targetHeight) {
+	if(!uiImage) return false;
+	
+	CGContextRef spriteContext;
+	CGImageRef	cgImage = uiImage.CGImage;
 
-string ofxNSStringToString(NSString * s)
-{
-	char newChars[ [s length]+1 ];
+	int bytesPerPixel	= CGImageGetBitsPerPixel(cgImage)/8;
+	if(bytesPerPixel == 3) bytesPerPixel = 4;
 	
-	[s getCString:newChars];
+	int width			= targetWidth > 0 ? targetWidth : CGImageGetWidth(cgImage);
+	int height			= targetHeight > 0 ? targetHeight : CGImageGetHeight(cgImage);
 	
-	return string(newChars);
+	// Allocated memory needed for the bitmap context
+	GLubyte *pixels		= (GLubyte *) malloc(width * height * bytesPerPixel);
+	
+	// Uses the bitmatp creation function provided by the Core Graphics framework. 
+	spriteContext = CGBitmapContextCreate(pixels, width, height, CGImageGetBitsPerComponent(cgImage), width * bytesPerPixel, CGImageGetColorSpace(cgImage), bytesPerPixel == 4 ? kCGImageAlphaPremultipliedLast : kCGImageAlphaNone);
+	
+	if(spriteContext == NULL) {
+		ofLog(OF_LOG_ERROR, "iPhoneUIImageToOFImage - CGBitmapContextCreate returned NULL");
+		free(pixels);
+		return false;
+	}
+
+	// After you create the context, you can draw the sprite image to the context.
+	ofLog(OF_LOG_VERBOSE, "about to CGContextDrawImage");
+	CGContextDrawImage(spriteContext, CGRectMake(0.0, 0.0, (CGFloat)width, (CGFloat)height), cgImage);
+	
+	// You don't need the context at this point, so you need to release it to avoid memory leaks.
+	ofLog(OF_LOG_VERBOSE, "about to CGContextRelease");
+	CGContextRelease(spriteContext);
+		
+	int glMode;
+	
+	switch(bytesPerPixel) {
+		case 1:
+			glMode = GL_LUMINANCE;
+			break;
+		case 3: 
+			glMode = GL_RGB;
+			break;
+		case 4: 
+		default:
+			glMode = GL_RGBA; break;
+	}
+			
+	outTexture.allocate(width, height, glMode);
+	outTexture.loadData(pixels, width, height, glMode);
+
+	free(pixels);
+	
+	return true;
+}
+
+//--------------------------------------------------------------
+
+string ofxNSStringToString(NSString * s) {
+	return string([s UTF8String]);
 }
 
 //--------------------------------------------------------------

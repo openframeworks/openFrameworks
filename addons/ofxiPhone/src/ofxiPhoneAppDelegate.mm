@@ -29,7 +29,7 @@
  *
  * ***********************************************************************/ 
 
-#import <mach/mach_time.h>
+//#import <mach/mach_time.h>
 
 #import "ofxiPhoneAppDelegate.h"
 #import "ofMain.h"
@@ -45,12 +45,12 @@
 //	NSLog(@"ofxiPhoneAppDelegate::timerLoop");
 	
 	// create autorelease pool in case anything needs it
-	NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
+//	NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
 	
 	iPhoneGetOFWindow()->timerLoop();
 		
 	// release pool
-	[pool release];
+//	[pool release];
 }
 
 -(EAGLView*) getGLView {
@@ -66,64 +66,6 @@
 }
 
 
-// based on Robert Carlsen's code from:		// THREAD MOD
-// http://www.openframeworks.cc/forum/viewtopic.php?f=25&t=2288&p=13128
-// also discussion at http://www.memo.tv/looping_via_nsthread_vs_nstimer
--(void) timerLoopThreaded:(id*)sender {
-	
-	// create autorelease pool in case anything needs it
-	NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
-	
-	// SET CURRENT GL CONTEXT FOR THREAD
-	[EAGLContext setCurrentContext:glView.context];
-	
-	
-	// <MEMO>: trying out mach timing
-	mach_timebase_info_data_t info;
-	mach_timebase_info(&info); 
-	while(!killThread) {
-//		NSLog(@"ofxiPhoneAppDelegate::timerLoopThreaded");
-
-		uint64_t startTime = mach_absolute_time() * info.numer / info.denom;
-		iPhoneGetOFWindow()->timerLoop();
-		
-		uint64_t endTime = mach_absolute_time() * info.numer / info.denom;
-//		uint64_t diffTime = endTime - startTime;
-		
-		uint64_t targetStart = startTime + frameLength;
-		
-		if(targetStart > endTime) [NSThread sleepForTimeInterval:(targetStart - endTime) * 1e-9];
-	}
-	
-	// / <MEMO>
-	
-	
-	/*	
-	 double begin_time; // RC: testing alternative loop method
-	 while(!killThread)
-	 {
-	 iPhoneGetOFWindow()->timerLoop();
-	 
-	 // throttle the loop for desired targetFrameRate
-	 double sleep = (1.0/targetFrameRate) - (((double)CFAbsoluteTimeGetCurrent()) - begin_time);
-	 if(sleep>0.0) [ NSThread sleepForTimeInterval:sleep];
-	 double end_time = (double)CFAbsoluteTimeGetCurrent();     
-	 //float fps = (1.0 / (end_time-begin_time));     
-	 begin_time = end_time;
-	 }
-	 */
-	
-	// release pool
-	[pool release];
-}
-
-
-
--(void) enableLoopInThread {
-	ofLog(OF_LOG_VERBOSE, "ofxiPhoneAppDelegate::enableLoopInThread");
-	loopInThreadIsEnabled = YES;
-}
-
 
 -(void) applicationDidFinishLaunching:(UIApplication *)application {    
 	static ofEventArgs voidEventArgs;
@@ -132,11 +74,14 @@
 	// create an NSLock for GL Context locking
 	glLock = [[NSLock alloc] init];
 	
+	// get screen bounds
+	CGRect screenBounds = [[UIScreen mainScreen] bounds];
+	
 	// create fullscreen window
-	UIWindow *window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
+	UIWindow *window = [[UIWindow alloc] initWithFrame:screenBounds];
 	
 	// create the OpenGL view and add it to the window
-	glView = [[EAGLView alloc] initWithFrame:[[UIScreen mainScreen] bounds] pixelFormat:GL_RGB565_OES depthFormat:GL_DEPTH_COMPONENT16_OES preserveBackbuffer:NO];
+	glView = [[EAGLView alloc] initWithFrame:screenBounds];// pixelFormat:GL_RGB565_OES depthFormat:GL_DEPTH_COMPONENT16_OES preserveBackbuffer:NO];
 	[window addSubview:glView];
 	//	[glView release];	// do not release, incase app wants to removeFromSuper and add later
 	
@@ -158,21 +103,32 @@
 	//-----
 	
 
-	// zero targetFrameRate (to see if user setes it in setup()
-	targetFrameRate = -1;
+	animating = FALSE;
+	displayLinkSupported = FALSE;
+	animationFrameInterval = 1;
+	displayLink = nil;
+	animationTimer = nil;
+	
+	// A system version of 3.1 or greater is required to use CADisplayLink. The NSTimer
+	// class is used as fallback when it isn't available.
+	NSString *reqSysVer = @"3.1";
+	NSString *currSysVer = [[UIDevice currentDevice] systemVersion];
+//	if ([currSysVer compare:reqSysVer options:NSNumericSearch] != NSOrderedAscending) displayLinkSupported = TRUE;
+
+	
+	
 	
 	iPhoneSetOrientation(OFXIPHONE_ORIENTATION_PORTRAIT);
 	
+
 	// call testApp::setup()
 	ofGetAppPtr()->setup();
+
 	#ifdef OF_USING_POCO
 		ofNotifyEvent( ofEvents.setup, voidEventArgs );
 		ofNotifyEvent( ofEvents.update, voidEventArgs );
 	#endif
 	
-	// if user didn't set framerate in setup(), default to 60
-	if(targetFrameRate == -1) [self setFrameRate:60];
-
 	
 	// show or hide status bar depending on OF_WINDOW or OF_FULLSCREEN
 	[[UIApplication sharedApplication] setStatusBarHidden:(iPhoneGetOFWindow()->windowMode == OF_FULLSCREEN) animated:YES];
@@ -181,11 +137,6 @@
 	glClearColor(ofBgColorPtr()[0], ofBgColorPtr()[1], ofBgColorPtr()[2], ofBgColorPtr()[3]);
 	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	
-	// From Robert Carlsen		// THREAD MOD
-	if(loopInThreadIsEnabled) {
-		[NSThread detachNewThreadSelector:@selector(timerLoopThreaded:) toTarget:self withObject:nil];
-	}
-    
     // Listen to did rotate event
     [[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
     [[NSNotificationCenter defaultCenter] addObserver: self 
@@ -193,6 +144,7 @@
                                                  name: UIDeviceOrientationDidChangeNotification 
                                                object: nil];  
 }
+
 
 -(void) receivedRotate:(NSNotification*)notification {
 	UIDeviceOrientation interfaceOrientation = [[UIDevice currentDevice] orientation];
@@ -203,28 +155,81 @@
 }
 
 
--(void) setFrameRate:(float)rate {
-	// THREAD MOD
-	targetFrameRate = rate;
-	frameLength = targetFrameRate ? 1e9/targetFrameRate : 0;
+- (void)startAnimation
+{
+    if (!animating)
+    {
+        if (displayLinkSupported)
+        {
+            // CADisplayLink is API new to iPhone SDK 3.1. Compiling against earlier versions will result in a warning, but can be dismissed
+            // if the system version runtime check for CADisplayLink exists in -initWithCoder:. The runtime check ensures this code will
+            // not be called in system versions earlier than 3.1.
 	
-	if(!loopInThreadIsEnabled) {
-		ofLog(OF_LOG_VERBOSE, "setFrameRate %.3f using NSTimer", rate);
+            displayLink = [NSClassFromString(@"CADisplayLink") displayLinkWithTarget:self selector:@selector(timerLoop)];
+            [displayLink setFrameInterval:animationFrameInterval];
+            [displayLink addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
+			ofLog(OF_LOG_VERBOSE, "CADisplayLink supported, running with interval: %i", animationFrameInterval);
+        }
+        else
+			ofLog(OF_LOG_VERBOSE, "CADisplayLink not supported, running with interval: %i", animationFrameInterval);
 		
-		[timer invalidate];
-		if(rate) timer = [[NSTimer scheduledTimerWithTimeInterval:(1.0f / rate) target:self selector:@selector(timerLoop) userInfo:nil repeats:YES] retain];
-	} else {
-		ofLog(OF_LOG_VERBOSE, "setFrameRate %.3f using NSThread", rate);
+            animationTimer = [NSTimer scheduledTimerWithTimeInterval:(NSTimeInterval)((1.0 / 60.0) * animationFrameInterval) target:self selector:@selector(timerLoop) userInfo:nil repeats:TRUE];
 		
-	}
-	
+        animating = TRUE;
+    }
 }
 
--(void) dealloc {
-	// THREAD MOD	
-	if(!loopInThreadIsEnabled) {
-		[timer release];		// THREAD MOD
+- (void)stopAnimation
+{
+    if (animating)
+    {
+        if (displayLinkSupported)
+        {
+            [displayLink invalidate];
+            displayLink = nil;
+        }
+        else
+        {
+            [animationTimer invalidate];
+            animationTimer = nil;
 	}
+	
+        animating = FALSE;
+    }
+}
+
+
+- (void)setAnimationFrameInterval:(NSInteger)frameInterval
+{
+    // Frame interval defines how many display frames must pass between each time the
+    // display link fires. The display link will only fire 30 times a second when the
+    // frame internal is two on a display that refreshes 60 times a second. The default
+    // frame interval setting of one will fire 60 times a second when the display refreshes
+    // at 60 times a second. A frame interval setting of less than one results in undefined
+    // behavior.
+    if (frameInterval >= 1)
+    {
+        animationFrameInterval = frameInterval;
+		
+        if (animating)
+        {
+            [self stopAnimation];
+            [self startAnimation];
+        }
+    }
+}
+
+
+-(void) setFrameRate:(float)rate {
+	ofLog(OF_LOG_VERBOSE, "setFrameRate %.3f using NSTimer", rate);
+
+	if(rate>0) [self setAnimationFrameInterval:60.0/rate];
+	else [self stopAnimation];
+	}
+
+
+
+-(void) dealloc {
     [ofxiPhoneGetUIWindow() release];
 	[glLock release];
     [super dealloc];
@@ -234,6 +239,8 @@
 
 
 -(void) applicationWillResignActive:(UIApplication *)application {
+	[self stopAnimation];
+
 	ofxiPhoneAlerts.lostFocus();
 	
 	//just extend ofxiPhoneAlertsListener with testApp and implement these methods to use them,
@@ -242,17 +249,14 @@
 
 
 -(void) applicationDidBecomeActive:(UIApplication *)application {
+	[self startAnimation];
+	
 	ofxiPhoneAlerts.gotFocus();
 }
 
 
 -(void) applicationWillTerminate:(UIApplication *)application {
-	// THREAD MOD
-	if(!loopInThreadIsEnabled) {
-		killThread = true;
-	} else {
-		[timer invalidate];
-	}
+	[self stopAnimation];
 	
     // stop listening for orientation change notifications
     [[NSNotificationCenter defaultCenter] removeObserver: self];
@@ -267,5 +271,19 @@
 	ofxiPhoneAlerts.gotMemoryWarning();
 }
 
+
+- (BOOL)application:(UIApplication *)application handleOpenURL:(NSURL *)url {
+	
+	
+	cout<<"uhh"<<endl;
+	
+	NSString *urlData = [url absoluteString];
+	
+	char response[ [urlData length]+1 ];
+	[urlData getCString:response];
+	
+	
+	ofxiPhoneAlerts.launchedWithURL(response);
+}
 
 @end

@@ -30,24 +30,24 @@ void testApp::draw(){
 	
 	
 	// draw the left:
-	ofSetColor(0x333333);
+	ofSetHexColor(0x333333);
 	ofRect(100,100,256,200);
-	ofSetColor(0xFFFFFF);
+	ofSetHexColor(0xFFFFFF);
 	for (int i = 0; i < 256; i++){
 		ofLine(100+i,200,100+i,200+left[i]*100.0f);
 	}
 	
 	// draw the right:
-	ofSetColor(0x333333);
+	ofSetHexColor(0x333333);
 	ofRect(600,100,256,200);
-	ofSetColor(0xFFFFFF);
+	ofSetHexColor(0xFFFFFF);
 	for (int i = 0; i < 256; i++){
 		ofLine(600+i,200,600+i,200+right[i]*100.0f);
 	}
 	
     
 
-	ofSetColor(0x333333);
+	ofSetHexColor(0x333333);
 	drawCounter++;
 	char reportString[255];
 	sprintf(reportString, "buffers received: %i\ndraw routines called: %i\n", bufferCounter,drawCounter);

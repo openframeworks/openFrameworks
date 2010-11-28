@@ -651,12 +651,14 @@ int ofxXmlSettings::writeAttribute(const string& tag, const string& attribute, c
 }
 
 //---------------------------------------------------------
-void ofxXmlSettings::loadFromBuffer( string buffer )
+bool ofxXmlSettings::loadFromBuffer( string buffer )
 {
 	
     int size = buffer.size();
 	
     bool loadOkay = doc.ReadFromMemory( buffer.c_str(), size);//, TiXmlEncoding encoding = TIXML_DEFAULT_ENCODING);
+    
+    return loadOkay;
 	
 }
 //---------------------------------------------------------
