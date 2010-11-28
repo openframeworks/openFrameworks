@@ -88,7 +88,6 @@
 									<listOptionValue builtIn="false" value="cv"/>
 									<listOptionValue builtIn="false" value="cvaux"/>
 									<listOptionValue builtIn="false" value="cxcore"/>
-									<listOptionValue builtIn="false" value="cvml"/>
 									<listOptionValue builtIn="false" value="oscpack"/>
 									<listOptionValue builtIn="false" value="openFrameworks"/>
 									<listOptionValue builtIn="false" value="PocoUtil"/>
@@ -4198,6 +4197,7 @@
 				</configuration>
 			</storageModule>
 			<storageModule moduleId="org.eclipse.cdt.core.externalSettings"/>
+			<storageModule moduleId="org.eclipse.cdt.core.language.mapping"/>
 		</cconfiguration>
 	</storageModule>
 	<storageModule moduleId="cdtBuildSystem" version="4.0.0">

@@ -106,7 +106,7 @@
 	</natures>
 	<linkedResources>
 		<link>
-			<name>ofAndroidLib</name>
+			<name>ofAndroidLib_src</name>
 			<type>2</type>
 			<locationURI>_android_ofAndroidLib/src</locationURI>
 		</link>
