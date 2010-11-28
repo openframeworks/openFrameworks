@@ -301,6 +301,31 @@ public:
 	void setTranslation( const ofxVec3f& v );
 
 	//---------------------------------------------
+	// all these apply the transformations over the
+	// current one, it's actually postMult... and behaves
+	// the opposite to the equivalent gl functions
+	// glTranslate + glRotate == rotate + translate
+	void rotate(float angle, float x, float y, float z);
+	void rotateRad(float angle, float x, float y, float z);
+	void rotate(const ofxQuaternion& q);
+	void translate( float tx, float ty, float tz );
+	void translate( const ofxVec3f& v );
+	void scale(float x, float y, float z);
+	void scale( const ofxVec3f& v );
+
+	//---------------------------------------------
+	// all these apply the transformations over the
+	// current one, it's actually preMult... and behaves
+	// the the same the equivalent gl functions
+	void glRotate(float angle, float x, float y, float z);
+	void glRotateRad(float angle, float x, float y, float z);
+	void glRotate(const ofxQuaternion& q);
+	void glTranslate( float tx, float ty, float tz );
+	void glTranslate( const ofxVec3f& v );
+	void glScale(float x, float y, float z);
+	void glScale( const ofxVec3f& v );
+
+	//---------------------------------------------
 	// get methods: return matrix components
 	// rotation and scale can only be used if the matrix
 	// only has rotation or scale.
@@ -660,6 +685,62 @@ inline void ofxMatrix4x4::postMultScale( const ofxVec3f& v ) {
 	_mat[3][2] *= v.v[2];
 }
 
+inline void ofxMatrix4x4::rotate(const ofxQuaternion& q){
+	postMultRotate(q);
+}
+
+inline void ofxMatrix4x4::rotate(float angle, float x, float y, float z){
+	postMultRotate(angle*DEG_TO_RAD,x,y,z);
+}
+
+inline void ofxMatrix4x4::rotateRad(float angle, float x, float y, float z){
+	postMultRotate(angle,x,y,z);
+}
+
+inline void ofxMatrix4x4::translate( float tx, float ty, float tz ){
+	postMultTranslate(tx,ty,tz);
+}
+
+inline void ofxMatrix4x4::translate( const ofxVec3f& v ){
+	postMultTranslate(v);
+}
+
+inline void ofxMatrix4x4::scale(float x, float y, float z){
+	postMultScale(x,y,z);
+}
+
+inline void ofxMatrix4x4::scale( const ofxVec3f& v ){
+	postMultScale(v);
+}
+
+inline void ofxMatrix4x4::glRotate(float angle, float x, float y, float z){
+	preMultRotate(ofxQuaternion(angle*DEG_TO_RAD,ofxVec3f(x,y,z)));
+}
+
+inline void ofxMatrix4x4::glRotateRad(float angle, float x, float y, float z){
+	preMultRotate(ofxQuaternion(angle,ofxVec3f(x,y,z)));
+}
+
+inline void ofxMatrix4x4::glRotate(const ofxQuaternion& q){
+	preMultRotate(q);
+}
+
+inline void ofxMatrix4x4::glTranslate( float tx, float ty, float tz ){
+	preMultTranslate(ofxVec3f(tx,ty,tz));
+}
+
+inline void ofxMatrix4x4::glTranslate( const ofxVec3f& v ){
+	preMultTranslate(v);
+}
+
+inline void ofxMatrix4x4::glScale(float x, float y, float z){
+	preMultScale(ofxVec3f(x,y,z));
+}
+
+inline void ofxMatrix4x4::glScale( const ofxVec3f& v ){
+	preMultScale(v);
+}
+
 // AARON METHOD
 inline void ofxMatrix4x4::postMultScale( float x, float y, float z ) {
 	_mat[0][0] *= x;
@@ -699,6 +780,8 @@ inline void ofxMatrix4x4::postMultRotate(float angle, float x, float y, float z)
 	r.makeRotationMatrix(angle, x, y, z);
 	postMult(r);
 }
+
+
 
 inline ofxVec3f operator* (const ofxVec3f& v, const ofxMatrix4x4& m ) {
 	return m.preMult(v);

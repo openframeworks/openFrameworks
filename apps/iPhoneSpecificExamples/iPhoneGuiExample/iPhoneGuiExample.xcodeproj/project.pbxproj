@@ -64,11 +64,11 @@
 		32CA4F630368D1EE00C91783 /* iPhone_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iPhone_Prefix.pch; sourceTree = "<group>"; };
 		5326AEA710A23A0500278DE6 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		53F323EA10A20EDB00E0DAE4 /* OpenAL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenAL.framework; path = System/Library/Frameworks/OpenAL.framework; sourceTree = SDKROOT; };
-		5E25687010ED26CC00A9501C /* CppUnit.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = CppUnit.a; path = ../../../libs/poco/lib/armv6/CppUnit.a; sourceTree = SOURCE_ROOT; };
-		5E25687110ED26CC00A9501C /* PocoFoundation.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = PocoFoundation.a; path = ../../../libs/poco/lib/armv6/PocoFoundation.a; sourceTree = SOURCE_ROOT; };
-		5E25687210ED26CC00A9501C /* PocoNet.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = PocoNet.a; path = ../../../libs/poco/lib/armv6/PocoNet.a; sourceTree = SOURCE_ROOT; };
-		5E25687310ED26CC00A9501C /* PocoUtil.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = PocoUtil.a; path = ../../../libs/poco/lib/armv6/PocoUtil.a; sourceTree = SOURCE_ROOT; };
-		5E25687410ED26CC00A9501C /* PocoXML.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = PocoXML.a; path = ../../../libs/poco/lib/armv6/PocoXML.a; sourceTree = SOURCE_ROOT; };
+		5E25687010ED26CC00A9501C /* CppUnit.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = CppUnit.a; path = ../../../libs/poco/lib/iphone/CppUnit.a; sourceTree = SOURCE_ROOT; };
+		5E25687110ED26CC00A9501C /* PocoFoundation.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = PocoFoundation.a; path = ../../../libs/poco/lib/iphone/PocoFoundation.a; sourceTree = SOURCE_ROOT; };
+		5E25687210ED26CC00A9501C /* PocoNet.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = PocoNet.a; path = ../../../libs/poco/lib/iphone/PocoNet.a; sourceTree = SOURCE_ROOT; };
+		5E25687310ED26CC00A9501C /* PocoUtil.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = PocoUtil.a; path = ../../../libs/poco/lib/iphone/PocoUtil.a; sourceTree = SOURCE_ROOT; };
+		5E25687410ED26CC00A9501C /* PocoXML.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = PocoXML.a; path = ../../../libs/poco/lib/iphone/PocoXML.a; sourceTree = SOURCE_ROOT; };
 		5E25688010ED26CC00A9501C /* CppUnit.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = CppUnit.a; path = ../../../libs/poco/lib/osx/CppUnit.a; sourceTree = SOURCE_ROOT; };
 		5E25688110ED26CC00A9501C /* PocoFoundation.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = PocoFoundation.a; path = ../../../libs/poco/lib/osx/PocoFoundation.a; sourceTree = SOURCE_ROOT; };
 		5E25688210ED26CC00A9501C /* PocoNet.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = PocoNet.a; path = ../../../libs/poco/lib/osx/PocoNet.a; sourceTree = SOURCE_ROOT; };
@@ -231,14 +231,14 @@
 		5E25686E10ED26CC00A9501C /* lib */ = {
 			isa = PBXGroup;
 			children = (
-				5E25686F10ED26CC00A9501C /* armv6 */,
+				5E25686F10ED26CC00A9501C /* iphone */,
 				5E25687F10ED26CC00A9501C /* osx */,
 			);
 			name = lib;
 			path = ../../../libs/poco/lib;
 			sourceTree = SOURCE_ROOT;
 		};
-		5E25686F10ED26CC00A9501C /* armv6 */ = {
+		5E25686F10ED26CC00A9501C /* iphone */ = {
 			isa = PBXGroup;
 			children = (
 				5E25687010ED26CC00A9501C /* CppUnit.a */,
@@ -247,8 +247,8 @@
 				5E25687310ED26CC00A9501C /* PocoUtil.a */,
 				5E25687410ED26CC00A9501C /* PocoXML.a */,
 			);
-			name = armv6;
-			path = ../../../libs/poco/lib/armv6;
+			name = iphone;
+			path = ../../../libs/poco/lib/iphone;
 			sourceTree = SOURCE_ROOT;
 		};
 		5E25687F10ED26CC00A9501C /* osx */ = {
@@ -667,7 +667,7 @@
 					"\"$(SRCROOT)/../../../libs/glu/lib/iphone\"",
 					"\"$(SRCROOT)/../../../libs/glu/lib/vs2008\"",
 					"\"$(SRCROOT)/../../../libs/glu/lib/win_cb\"",
-					"\"$(DEVELOPER_DIR)/openFrameworks/libs/poco/lib/armv6\"",
+					"\"$(DEVELOPER_DIR)/openFrameworks/libs/poco/lib/iphone\"",
 					"\"$(DEVELOPER_DIR)/openFrameworks/libs/poco/lib/linux\"",
 					"\"$(DEVELOPER_DIR)/openFrameworks/libs/poco/lib/linux64\"",
 					"\"$(DEVELOPER_DIR)/openFrameworks/libs/poco/lib/osx\"",
@@ -723,7 +723,7 @@
 					"\"$(SRCROOT)/../../../libs/glu/lib/iphone\"",
 					"\"$(SRCROOT)/../../../libs/glu/lib/vs2008\"",
 					"\"$(SRCROOT)/../../../libs/glu/lib/win_cb\"",
-					"\"$(DEVELOPER_DIR)/openFrameworks/libs/poco/lib/armv6\"",
+					"\"$(DEVELOPER_DIR)/openFrameworks/libs/poco/lib/iphone\"",
 					"\"$(DEVELOPER_DIR)/openFrameworks/libs/poco/lib/linux\"",
 					"\"$(DEVELOPER_DIR)/openFrameworks/libs/poco/lib/linux64\"",
 					"\"$(DEVELOPER_DIR)/openFrameworks/libs/poco/lib/osx\"",
@@ -793,7 +793,7 @@
 					"\"$(SRCROOT)/../../../libs/glu/lib/iphone\"",
 					"\"$(SRCROOT)/../../../libs/glu/lib/vs2008\"",
 					"\"$(SRCROOT)/../../../libs/glu/lib/win_cb\"",
-					"\"$(DEVELOPER_DIR)/openFrameworks/libs/poco/lib/armv6\"",
+					"\"$(DEVELOPER_DIR)/openFrameworks/libs/poco/lib/iphone\"",
 					"\"$(DEVELOPER_DIR)/openFrameworks/libs/poco/lib/linux\"",
 					"\"$(DEVELOPER_DIR)/openFrameworks/libs/poco/lib/linux64\"",
 					"\"$(DEVELOPER_DIR)/openFrameworks/libs/poco/lib/osx\"",

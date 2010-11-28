@@ -46,5 +46,3 @@
 #import "ofxMultiTouch.h"
 #import "ofxiPhoneApp.h"
 
-
-#define	OF_MAX_TOUCHES			5		// iphone has max 5 finger support

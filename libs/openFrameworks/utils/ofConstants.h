@@ -89,7 +89,8 @@
 		#define __MACOSX_CORE__
 	#endif
 	#include <unistd.h>
-	#include "GLee.h"
+	#include <OpenGL/gl.h>
+	#include <OpenGL/glext.h>
 	#include <OpenGL/glu.h>
 	#include <ApplicationServices/ApplicationServices.h>
 
@@ -99,8 +100,11 @@
 #endif
 
 #ifdef TARGET_LINUX
+		#define GL_GLEXT_PROTOTYPES
         #include <unistd.h>
-        #include "GLee.h"
+		#include <GL/gl.h>
+		#include <GL/glx.h>
+        #include <GL/glext.h>
         #include <GL/glu.h>
 
     // for some reason, this isn't defined at compile time,
@@ -122,6 +126,8 @@
 #ifdef TARGET_OF_IPHONE
 	#import <OpenGLES/ES1/gl.h>
 	#import <OpenGLES/ES1/glext.h>
+	
+	#define TARGET_LITTLE_ENDIAN		// arm cpu	
 #endif
 
 #ifdef TARGET_ANDROID
@@ -218,15 +224,15 @@ enum ofLogLevel{
 #define OF_SERIAL_ERROR		-1
 
 // core: ---------------------------
-#include <stdio.h>
-#include <stdarg.h>
-#include <math.h>
-#include <time.h>
-#include <stdlib.h>
-#include <string.h>
+#include <cstdio>
+#include <cstdarg>
+#include <cmath>
+#include <ctime>
+#include <cstdlib>
+#include <string>
 #include <iostream>
 #include <vector>
-#include <string>
+#include <cstring>
 #include <sstream>  //for ostringsream
 #include <iomanip>  //for setprecision
 #include <fstream>

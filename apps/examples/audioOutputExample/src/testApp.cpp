@@ -38,22 +38,22 @@ void testApp::draw(){
 
 
 	// draw the left:
-	ofSetColor(0x333333);
+	ofSetHexColor(0x333333);
 	ofRect(100,100,256,200);
-	ofSetColor(0xFFFFFF);
+	ofSetHexColor(0xFFFFFF);
 	for (int i = 0; i < 256; i++){
 		ofLine(100+i,200,100+i,200+lAudio[i]*100.0f);
 	}
 
 	// draw the right:
-	ofSetColor(0x333333);
+	ofSetHexColor(0x333333);
 	ofRect(600,100,256,200);
-	ofSetColor(0xFFFFFF);
+	ofSetHexColor(0xFFFFFF);
 	for (int i = 0; i < 256; i++){
 		ofLine(600+i,200,600+i,200+rAudio[i]*100.0f);
 	}
 
-	ofSetColor(0x333333);
+	ofSetHexColor(0x333333);
 	char reportString[255];
 	sprintf(reportString, "volume: (%f) modify with -/+ keys\npan: (%f)\nsynthesis: %s", volume, pan, bNoise ? "noise" : "sine wave");
 	if (!bNoise) sprintf(reportString, "%s (%fhz)", reportString, targetFrequency);
