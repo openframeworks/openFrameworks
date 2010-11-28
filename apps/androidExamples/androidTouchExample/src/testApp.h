@@ -2,6 +2,7 @@
 
 #include "ofMain.h"
 #include "ofxAndroid.h"
+#include "ofxAccelerometer.h"
 #include "Ball.h"
 
 #define NUM_POINTS				10

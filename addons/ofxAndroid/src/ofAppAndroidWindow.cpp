@@ -13,6 +13,7 @@
 #include "ofUtils.h"
 #include "ofxAndroidApp.h"
 #include "ofxAndroidUtils.h"
+#include "ofxAccelerometer.h"
 #include <android/log.h>
 
 static bool paused=true;
@@ -296,6 +297,7 @@ Java_cc_openframeworks_OFAndroid_onTouchMoved(JNIEnv*  env, jobject  thiz, jint 
 	touch.pressure = pressure;
 	ofNotifyEvent(ofEvents.touchMoved,touch);
 }
+
 }
 
 

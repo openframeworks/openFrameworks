@@ -21,9 +21,10 @@ public:
 		col.a = ofRandom(0, 255);
 	}
 	
+
     void update() {
-        vel.x += 0 * ofRandomuf();
-        vel.y += 1 * ofRandomuf();        // this one is subtracted cos world Y is opposite to opengl Y
+        vel.x += ACCELEROMETER_FORCE * ofxAccelerometer.getForce().x * ofRandomuf();
+        vel.y += -ACCELEROMETER_FORCE * ofxAccelerometer.getForce().y * ofRandomuf();        // this one is subtracted cos world Y is opposite to opengl Y
 		
         // add vel to pos
         pos += vel;

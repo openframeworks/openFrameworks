@@ -5,6 +5,9 @@ void testApp::setup(){
 	// register touch events
 	ofxRegisterMultitouch(this);
 	
+	// initialize the accelerometer
+	ofxAccelerometer.setup();
+
 	// initialize all of the Ball particles
 	for(int i=0; i<NUM_POINTS; i++) balls[i].init();
 }
