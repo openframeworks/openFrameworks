@@ -26,6 +26,10 @@ class ofxVec4f : public ofPoint {
     float &operator[]( const int& i );
 
 
+	// Copy.
+	//
+	void 	  operator=( const ofxVec4f& vec );
+    void 	  operator=( const float f);
 
     // Check similarity/equality.
     //
@@ -195,8 +199,22 @@ inline float& ofxVec4f::operator[]( const int& i ) {
 	}
 }
 
+// Copy.
+//
+//
+inline void ofxVec4f::operator=( const ofxVec4f& vec ){
+	x = vec.x;
+	y = vec.y;
+	z = vec.z;
+	w = vec.w;
+}
 
-
+inline void ofxVec4f::operator=( const float f ){
+	x = f;
+	y = f;
+	z = f;
+	w = f;
+}
 // Check similarity/equality.
 //
 //
