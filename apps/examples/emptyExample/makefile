@@ -30,8 +30,7 @@ EXCLUDE_FROM_SOURCE="bin,.xcodeproj,obj"
 USER_CFLAGS = 
 USER_LD_FLAGS = 
 USER_LIBS = 
-
-
+OF_ROOT = '../../..'
 
 
 # you shouldn't modify anything below this line
@@ -53,15 +52,15 @@ SOURCE_DIRS = $(shell find . -maxdepth 1 -mindepth 1 -type d | grep -v $(SED_EXC
 SOURCES = $(shell find $(SOURCE_DIRS) -name "*.cpp" -or -name "*.c")
 OBJFILES = $(patsubst %.c,%.o,$(patsubst %.cpp,%.o,$(SOURCES)))
 APPNAME = $(shell basename `pwd`)
-CORE_INCLUDES = $(shell find ../../../libs/openFrameworks/ -type d)
+CORE_INCLUDES = $(shell find $(OF_ROOT)/libs/openFrameworks/ -type d)
 CORE_INCLUDE_FLAGS = $(addprefix -I,$(CORE_INCLUDES))
-INCLUDES = $(shell find ../../../libs/*/include -type d)
+INCLUDES = $(shell find $(OF_ROOT)/libs/*/include -type d)
 INCLUDES_FLAGS = $(addprefix -I,$(INCLUDES))
-LIB_STATIC = $(shell ls ../../../libs/*/lib/$(LIBSPATH)/*.a | grep -v openFrameworksCompiled | sed "s/.*\\/lib\([^/]*\)\.a/-l\1/")
-LIB_SHARED = $(shell ls ../../../libs/*/lib/$(LIBSPATH)/*.so | grep -v openFrameworksCompiled| sed "s/.*\\/lib\([^/]*\)\.so/-l\1/")
+LIB_STATIC = $(shell ls $(OF_ROOT)/libs/*/lib/$(LIBSPATH)/*.a | grep -v openFrameworksCompiled | sed "s/.*\\/lib\([^/]*\)\.a/-l\1/")
+LIB_SHARED = $(shell ls $(OF_ROOT)/libs/*/lib/$(LIBSPATH)/*.so | grep -v openFrameworksCompiled| sed "s/.*\\/lib\([^/]*\)\.so/-l\1/")
 
-#LIB_PATHS_FLAGS = -L../../../libs/openFrameworksCompiled/lib/$(LIBSPATH)
-LIB_PATHS_FLAGS = $(shell ls -d ../../../libs/*/lib/$(LIBSPATH) | sed "s/\(\.*\)/-L\1/")
+#LIB_PATHS_FLAGS = -L$(OF_ROOT)/libs/openFrameworksCompiled/lib/$(LIBSPATH)
+LIB_PATHS_FLAGS = $(shell ls -d $(OF_ROOT)/libs/*/lib/$(LIBSPATH) | sed "s/\(\.*\)/-L\1/")
 
 CFLAGS = -Wall -fexceptions
 CFLAGS += -I. 
@@ -77,12 +76,12 @@ LIBS +=`pkg-config  gstreamer-0.10 gstreamer-video-0.10 gstreamer-base-0.10 libu
 LIBS += -lglut -lGL -lGLU -lasound
 
 ifeq ($(findstring addons.make,$(wildcard *.make)),addons.make)
-	ADDONS_INCLUDES = $(shell find ../../../addons/*/src/ -type d)
-	ADDONS_INCLUDES += $(shell find ../../../addons/*/libs/ -type d)
+	ADDONS_INCLUDES = $(shell find $(OF_ROOT)/addons/*/src/ -type d)
+	ADDONS_INCLUDES += $(shell find $(OF_ROOT)/addons/*/libs/ -type d)
 	ADDONSCFLAGS = $(addprefix -I,$(ADDONS_INCLUDES))
 	
-	ADDONS_LIBS_STATICS = $(shell ls ../../../addons/*/libs/*/lib/$(LIBSPATH)/*.a)
-	ADDONS_LIBS_SHARED = $(shell ls ../../../addons/*/libs/*/lib/$(LIBSPATH)/*.so)
+	ADDONS_LIBS_STATICS = $(shell ls $(OF_ROOT)/addons/*/libs/*/lib/$(LIBSPATH)/*.a)
+	ADDONS_LIBS_SHARED = $(shell ls $(OF_ROOT)/addons/*/libs/*/lib/$(LIBSPATH)/*.so)
 
 	ADDONSLIBS = $(ADDONS_LIBS_STATICS)
 	ADDONSLIBS += $(ADDONS_LIBS_SHARED)
@@ -90,11 +89,11 @@ ifeq ($(findstring addons.make,$(wildcard *.make)),addons.make)
 	ADDONS = $(shell cat addons.make)
 	ADDONS_REL_DIRS = $(addsuffix /src, $(ADDONS))
 	ADDONS_LIBS_REL_DIRS = $(addsuffix /libs, $(ADDONS))
-	ADDONS_DIRS = $(addprefix ../../../addons/, $(ADDONS_REL_DIRS) )
-	ADDONS_LIBS_DIRS = $(addprefix ../../../addons/, $(ADDONS_LIBS_REL_DIRS) )
+	ADDONS_DIRS = $(addprefix $(OF_ROOT)/addons/, $(ADDONS_REL_DIRS) )
+	ADDONS_LIBS_DIRS = $(addprefix $(OF_ROOT)/addons/, $(ADDONS_LIBS_REL_DIRS) )
 	ADDONS_SOURCES = $(shell find $(ADDONS_DIRS) -name "*.cpp" -or -name "*.c")
 	ADDONS_SOURCES += $(shell find $(ADDONS_LIBS_DIRS) -name "*.cpp" -or -name "*.c" 2>/dev/null)
-	ADDONS_OBJFILES = $(subst ../../../, ,$(patsubst %.c,%.o,$(patsubst %.cpp,%.o,$(ADDONS_SOURCES))))
+	ADDONS_OBJFILES = $(subst $(OF_ROOT)/, ,$(patsubst %.c,%.o,$(patsubst %.cpp,%.o,$(ADDONS_SOURCES))))
 endif
 
 
@@ -159,17 +158,18 @@ $(OBJ_OUTPUT)%.o: %.c
 	$(CC) -c $(TARGET_CFLAGS) $(CFLAGS) $(ADDONSCFLAGS) $(USER_CFLAGS) -MMD -MP -MF$(OBJ_OUTPUT)$*.d -MT$(OBJ_OUTPUT)$*.d -o$@ -c $< 
 
 
-$(OBJ_OUTPUT)%.o: ../../../%.cpp
+$(OBJ_OUTPUT)%.o: $(OF_ROOT)/%.cpp
 	@echo "compiling addon object for" $<
 	mkdir -p $(@D)
 	$(CXX) $(TARGET_CFLAGS) $(CFLAGS) $(ADDONSCFLAGS) $(USER_CFLAGS) -MMD -MP -MF$(OBJ_OUTPUT)$*.d -MT$(OBJ_OUTPUT)$*.d -o $@ -c $<
 
-$(OBJ_OUTPUT)%.o: ../../../%.c
+$(OBJ_OUTPUT)%.o: $(OF_ROOT)/%.c
 	@echo "compiling addon object for" $<
 	mkdir -p $(@D)
 	$(CC) $(TARGET_CFLAGS) $(CFLAGS) $(ADDONSCFLAGS) $(USER_CFLAGS) -MMD -MP -MF$(OBJ_OUTPUT)$*.d -MT$(OBJ_OUTPUT)$*.d -o $@ -c $<
 	
 $(TARGET): $(OBJS) $(ADDONS_OBJS)
+	mkdir -p bin/data
 	@echo "linking" $(TARGET)
 	$(CXX) -o $@ $(OBJS) $(ADDONS_OBJS) $(TARGET_CFLAGS) $(CFLAGS) $(ADDONSCFLAGS) $(USER_CFLAGS) $(LDFLAGS) $(USER_LDFLAGS) $(TARGET_LIBS) $(LIBS) $(ADDONSLIBS) $(USER_LIBS)
 
@@ -187,7 +187,7 @@ $(CLEANTARGET):
 
 
 after:
-	cp -r ../../../export/$(LIBSPATH)/libs bin/
+	cp -r $(OF_ROOT)/export/$(LIBSPATH)/libs bin/
 	@echo
 	@echo "     compiling done"
 	@echo "     to launch the application"	
