@@ -1,3 +1,4 @@
+#include "GLee.h"
 #include "ofxShader.h"
 
 ofxShader::ofxShader() :
