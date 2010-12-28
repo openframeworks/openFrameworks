@@ -231,7 +231,7 @@ GLuint ofxFbo::createAndAttachRenderbuffer(GLenum internalFormat, GLenum attachm
 	glBindRenderbuffer(GL_RENDERBUFFER, buffer);
 	if(settings.numSamples==0) glRenderbufferStorage(GL_RENDERBUFFER, internalFormat, settings.width, settings.height);
 	else glRenderbufferStorageMultisample(GL_RENDERBUFFER, settings.numSamples, internalFormat, settings.width, settings.height);
-	glFramebufferRenderbuffer(GL_RENDERBUFFER, attachmentPoint, GL_RENDERBUFFER, buffer);
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, attachmentPoint, GL_RENDERBUFFER, buffer);
 	return buffer;
 }
 
