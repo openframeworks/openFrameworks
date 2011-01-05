@@ -48,6 +48,8 @@ class ofVideoGrabber : public ofBaseVideo{
 		void 			setUseTexture(bool bUse);
 		void 			draw(float x, float y, float w, float h);
 		void 			draw(float x, float y);
+		void 			draw(const ofPoint & point);
+		void 			draw(const ofRectangle & rect);
 		void			update();
 
 
