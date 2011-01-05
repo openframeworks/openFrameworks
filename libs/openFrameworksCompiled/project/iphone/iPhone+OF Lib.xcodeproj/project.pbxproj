@@ -129,6 +129,7 @@
 		BB3140C611BB098A0019348E /* ESRenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = BB3140C511BB098A0019348E /* ESRenderer.h */; };
 		DA78520C1105C1BF007EFC90 /* glu.h in Headers */ = {isa = PBXBuildFile; fileRef = DA78520A1105C1BF007EFC90 /* glu.h */; };
 		DA78520D1105C1BF007EFC90 /* gluos.h in Headers */ = {isa = PBXBuildFile; fileRef = DA78520B1105C1BF007EFC90 /* gluos.h */; };
+		E47B2AB812CE2A0200B3928C /* ofEvents.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E47B2AB712CE2A0200B3928C /* ofEvents.cpp */; };
 		E4A8262A12565FF6002F86A2 /* ofxiPhoneVideoGrabber.h in Headers */ = {isa = PBXBuildFile; fileRef = E4A8262812565FF6002F86A2 /* ofxiPhoneVideoGrabber.h */; };
 		E4A8262B12565FF6002F86A2 /* ofxiPhoneVideoGrabber.mm in Sources */ = {isa = PBXBuildFile; fileRef = E4A8262912565FF6002F86A2 /* ofxiPhoneVideoGrabber.mm */; };
 /* End PBXBuildFile section */
@@ -144,7 +145,7 @@
 		92BFCD061128AC3E0081DD61 /* ofBitmapFont.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofBitmapFont.cpp; sourceTree = "<group>"; };
 		BB16EBD10F2B2A9500518274 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
 		BB16EBD80F2B2AB500518274 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
-		BB24DED610DA7A3F00E9C588 /* libofxiPhone_iphoneos_ReleaseArmv7.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libofxiPhone_iphoneos_ReleaseArmv7.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		BB24DED610DA7A3F00E9C588 /* libofxiPhone_iphonesimulator_Release.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libofxiPhone_iphonesimulator_Release.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		BB24DEF710DA7BEF00E9C588 /* ofAppBaseWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofAppBaseWindow.h; sourceTree = "<group>"; };
 		BB24DEFA10DA7BEF00E9C588 /* ofAppRunner.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofAppRunner.cpp; sourceTree = "<group>"; };
 		BB24DEFB10DA7BEF00E9C588 /* ofAppRunner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofAppRunner.h; sourceTree = "<group>"; };
@@ -265,6 +266,7 @@
 		BBE5EAB70F49AD8400F28951 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		DA78520A1105C1BF007EFC90 /* glu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = glu.h; sourceTree = "<group>"; };
 		DA78520B1105C1BF007EFC90 /* gluos.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gluos.h; sourceTree = "<group>"; };
+		E47B2AB712CE2A0200B3928C /* ofEvents.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofEvents.cpp; path = ../../../openFrameworks/events/ofEvents.cpp; sourceTree = SOURCE_ROOT; };
 		E4A8262812565FF6002F86A2 /* ofxiPhoneVideoGrabber.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxiPhoneVideoGrabber.h; path = ../../../../addons/ofxiPhone/src/ofxiPhoneVideoGrabber.h; sourceTree = SOURCE_ROOT; };
 		E4A8262912565FF6002F86A2 /* ofxiPhoneVideoGrabber.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ofxiPhoneVideoGrabber.mm; path = ../../../../addons/ofxiPhone/src/ofxiPhoneVideoGrabber.mm; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
@@ -292,7 +294,7 @@
 		19C28FACFE9D520D11CA2CBB /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				BB24DED610DA7A3F00E9C588 /* libofxiPhone_iphoneos_ReleaseArmv7.a */,
+				BB24DED610DA7A3F00E9C588 /* libofxiPhone_iphonesimulator_Release.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -379,6 +381,7 @@
 		BB24DF0210DA7BEF00E9C588 /* events */ = {
 			isa = PBXGroup;
 			children = (
+				E47B2AB712CE2A0200B3928C /* ofEvents.cpp */,
 				BB24DF0310DA7BEF00E9C588 /* ofEvents.h */,
 				BB24DF0410DA7BEF00E9C588 /* ofEventUtils.h */,
 			);
@@ -783,7 +786,7 @@
 			);
 			name = "iPhone+OF Static Library";
 			productName = "Static Library";
-			productReference = BB24DED610DA7A3F00E9C588 /* libofxiPhone_iphoneos_ReleaseArmv7.a */;
+			productReference = BB24DED610DA7A3F00E9C588 /* libofxiPhone_iphonesimulator_Release.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 /* End PBXNativeTarget section */
@@ -842,6 +845,7 @@
 				BB3140C111BB09220019348E /* ES1Renderer.mm in Sources */,
 				BB3140C311BB09220019348E /* ES2Renderer.mm in Sources */,
 				E4A8262B12565FF6002F86A2 /* ofxiPhoneVideoGrabber.mm in Sources */,
+				E47B2AB812CE2A0200B3928C /* ofEvents.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
