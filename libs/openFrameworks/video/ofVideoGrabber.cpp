@@ -1159,6 +1159,15 @@ void ofVideoGrabber::draw(float _x, float _y){
 	draw(_x, _y, (float)width, (float)height);
 }
 
+//------------------------------------
+void ofVideoGrabber::draw(const ofPoint & point){
+	draw(point.x, point.y);
+}
+
+//------------------------------------
+void ofVideoGrabber::draw(const ofRectangle & rect){
+	draw(rect.x, rect.y, rect.width, rect.height);
+}
 
 //----------------------------------------------------------
 float ofVideoGrabber::getHeight(){

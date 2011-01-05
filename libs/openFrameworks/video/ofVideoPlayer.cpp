@@ -1005,6 +1005,16 @@ void ofVideoPlayer::draw(float _x, float _y){
 }
 
 //------------------------------------
+void ofVideoPlayer::draw(const ofPoint & point){
+	draw(point.x, point.y);
+}
+
+//------------------------------------
+void ofVideoPlayer::draw(const ofRectangle & rect){
+	draw(rect.x, rect.y, rect.width, rect.height);
+}
+
+//------------------------------------
 int ofVideoPlayer::getTotalNumFrames(){
 	//--------------------------------------
 	#ifdef OF_VIDEO_PLAYER_QUICKTIME

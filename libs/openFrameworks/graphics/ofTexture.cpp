@@ -191,7 +191,7 @@ void ofTexture::loadData(void * data, int w, int h, int glDataType){
 	// 	check "glTexSubImage2D"
 
 	if ( w > texData.tex_w || h > texData.tex_h) {
-		ofLog(OF_LOG_ERROR,"image data too big for allocated texture. not uploading...");
+		ofLog(OF_LOG_ERROR,"image data too big for allocated texture. %i > %f || %i > %f not uploading...",w , texData.tex_w , h , texData.tex_h);
 		return;
 	}
 
@@ -511,12 +511,12 @@ void ofTexture::setCompression(ofTexCompression compression){
 }
 
 //----------------------------------------------------------
-void ofTexture::draw(ofRectangle r){
+void ofTexture::draw(const ofRectangle & r){
 	draw(r.x, r.y, 0.0f, r.width, r.height);
 }
 
 //----------------------------------------------------------
-void ofTexture::draw(ofPoint p, float w, float h){
+void ofTexture::draw(const ofPoint & p, float w, float h){
 	draw(p.x, p.y, p.z, w, h);
 }
 
@@ -704,7 +704,7 @@ void ofTexture::draw(ofPoint p1, ofPoint p2, ofPoint p3, ofPoint p4){
 
 
 //----------------------------------------------------------
-void ofTexture::draw(ofPoint p){
+void ofTexture::draw(const ofPoint & p){
 	draw(p.x, p.y, p.z, texData.width, texData.height);
 }
 

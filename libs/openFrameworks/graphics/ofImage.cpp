@@ -97,14 +97,14 @@ void ofImage::resetAnchor(){
 }
 
 //------------------------------------
-void ofImage::draw(ofRectangle _r){
+void ofImage::draw(const ofRectangle & _r){
 	if (bUseTexture){
 		tex.draw(_r);
 	}
 }
 
 //------------------------------------
-void ofImage::draw(ofPoint _p, float _w, float _h){
+void ofImage::draw(const ofPoint & _p, float _w, float _h){
 	if (bUseTexture){
 		tex.draw(_p, _w, _h);
 	}
@@ -125,7 +125,7 @@ void ofImage::draw(float _x, float _y, float _z, float _w, float _h){
 }
 
 //------------------------------------
-void ofImage::draw(ofPoint p){
+void ofImage::draw(const ofPoint & p){
 	draw(p.x,p.y,p.z,myPixels.width,myPixels.height);
 }
 
@@ -654,7 +654,10 @@ void  ofImage::saveImageFromPixels(string fileName, ofPixels &pix){
 			fif = FreeImage_GetFIFFromFilename(fileName.c_str());
 		}
 		if((fif != FIF_UNKNOWN) && FreeImage_FIFSupportsReading(fif)) {
-			FreeImage_Save(fif, bmp, fileName.c_str(), 0);
+			if((FREE_IMAGE_FORMAT)fif != FIF_JPEG)
+			   FreeImage_Save(fif, bmp, fileName.c_str());
+			else
+			   FreeImage_Save(fif, bmp, fileName.c_str(),JPEG_QUALITYSUPERB);
 		}
 	}
 
