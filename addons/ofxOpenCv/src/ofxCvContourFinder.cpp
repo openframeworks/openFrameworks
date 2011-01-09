@@ -185,6 +185,17 @@ void ofxCvContourFinder::draw( float x, float y, float w, float h ) {
 	ofPopStyle();
 }
 
+
+//----------------------------------------------------------
+void ofxCvContourFinder::draw(const ofPoint & point){
+	draw(point.x, point.y);
+}
+
+//----------------------------------------------------------
+void ofxCvContourFinder::draw(const ofRectangle & rect){
+	draw(rect.x, rect.y, rect.width, rect.height);
+}
+
 //--------------------------------------------------------------------------------
 void ofxCvContourFinder::setAnchorPercent( float xPct, float yPct ){
     anchor.x = xPct;

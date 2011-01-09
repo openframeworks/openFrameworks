@@ -37,6 +37,7 @@ bool			bUsingNormalizedTexCoords = false;
 bool 			bBakgroundAuto		= true;
 int 			cornerMode			= OF_RECTMODE_CORNER;
 int 			polyMode			= OF_POLY_WINDING_ODD;
+static ofRectangle viewportRect;	//note we leave this 0,0,0,0 because ofViewport is smart
 
 int				curveResolution = 20;
 
@@ -63,31 +64,27 @@ int ofGetRectMode(){
 	return 	cornerMode;
 }
 
-
-
 //----------------------------------------------------------
 void ofPushView() {
-	glPushAttrib(GL_VIEWPORT);		// push viewport settings
-	
-	//	glPushAttrib(GL_MATRIX_MODE);	// push active matrix mode
+	GLint viewport[4];
+	glGetIntegerv(GL_VIEWPORT, viewport);
+	viewportRect.set(viewport[0], viewport[1], viewport[2], viewport[3]);
+		
 	glMatrixMode(GL_PROJECTION);
 	glPushMatrix();
 	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();
-	//	glPopAttrib();					// pop active matrix mode
 }
 
 
 //----------------------------------------------------------
 void ofPopView() {
-	glPopAttrib();					// pop viewport settings
+	ofViewport(viewportRect.x, viewportRect.y, viewportRect.width, viewportRect.height);
 	
-	//	glPushAttrib(GL_MATRIX_MODE);	// push active matrix mode
 	glMatrixMode(GL_PROJECTION);
 	glPopMatrix();
 	glMatrixMode(GL_MODELVIEW);
 	glPopMatrix();
-	//	glPopAttrib();					// pop active matrix mode
 }
 
 
@@ -96,7 +93,7 @@ void ofViewport(float x, float y, float width, float height) {
 	if(width == 0) width = ofGetWidth();
 	if(height == 0) height = ofGetHeight();
 
-	glViewport(0, 0, width, height);
+	glViewport(x, y, width, height);
 }
 
 
@@ -134,12 +131,19 @@ void ofSetupScreenOrtho(float width, float height, bool vFlip, float nearDist, f
 	if(width == 0) width = ofGetWidth();
 	if(height == 0) height = ofGetHeight();
 
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	if(vFlip) glOrtho(0, width, height, 0, nearDist, farDist);
-	else glOrtho(0, width, 0, height, nearDist, farDist);
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
+	#ifndef TARGET_OPENGLES
+
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
+		if(vFlip) glOrtho(0, width, height, 0, nearDist, farDist);
+		else glOrtho(0, width, 0, height, nearDist, farDist);
+		glMatrixMode(GL_MODELVIEW);
+		glLoadIdentity();
+	
+	#else
+		//FIX: is here http://stackoverflow.com/questions/2847574/opengl-es-2-0-equivalent-of-glortho
+		ofLog(OF_LOG_ERROR, "ofSetupScreenOrtho - you can't use glOrtho with iphone / ES at the moment");
+	#endif 
 }
 
 //----------------------------------------------------------

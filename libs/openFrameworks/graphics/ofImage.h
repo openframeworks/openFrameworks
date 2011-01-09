@@ -84,11 +84,11 @@ class ofImage : public ofBaseImage{
         void				resetAnchor();								//resets the anchor to (0, 0)
 
 		// draw:
-		void 				draw(ofRectangle r);
-		void 				draw(ofPoint p, float w, float h);
+		void 				draw(const ofRectangle & r);
+		void 				draw(const ofPoint & p, float w, float h);
 		void 				draw(float x, float y, float w, float h);
 		void 				draw(float x, float y, float z, float w, float h);
-		void 				draw(ofPoint p);
+		void 				draw(const ofPoint & p);
 		void 				draw(float x, float y);
 		void 				draw(float x, float y, float z);
 

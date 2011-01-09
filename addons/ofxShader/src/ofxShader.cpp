@@ -1,8 +1,8 @@
 #include "ofxShader.h"
 
 ofxShader::ofxShader() :
-bLoaded(false),
-program(0)
+program(0),
+bLoaded(false)
 {
 }
 
@@ -73,17 +73,23 @@ bool ofxShader::setupShaderFromSource(GLenum type, string source) {
 
 void ofxShader::setGeometryInputType(GLenum type) {
 	checkAndCreateProgram();
+#ifndef TARGET_LINUX
 	glProgramParameteriEXT(program, GL_GEOMETRY_INPUT_TYPE_EXT, type);
+#endif
 }
 
 void ofxShader::setGeometryOutputType(GLenum type) {
 	checkAndCreateProgram();
+#ifndef TARGET_LINUX
 	glProgramParameteriEXT(program, GL_GEOMETRY_OUTPUT_TYPE_EXT, type);
+#endif
 }
 
 void ofxShader::setGeometryOutputCount(int count) {
 	checkAndCreateProgram();
+#ifndef TARGET_LINUX
 	glProgramParameteriEXT(program, GL_GEOMETRY_VERTICES_OUT_EXT, count);
+#endif
 }
 
 int ofxShader::getGeometryMaxOutputCount() {
@@ -167,6 +173,7 @@ bool ofxShader::linkProgram() {
 			
 			bLoaded = true;
 		}
+		return bLoaded;
 }
 
 
