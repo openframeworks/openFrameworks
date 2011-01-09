@@ -176,15 +176,14 @@ string ofFileSaveDialog(string defaultName, string messageName){
 	NavDialogRef dialog;
 	
 	err = NavCreatePutFileDialog(&options, '.mov', 'Moov', NULL, NULL, &dialog);
-	
-	printf("NavCreatePutFileDialog returned %i\n", err );
+	ofLog(OF_LOG_VERBOSE, "ofFileSaveDialog() NavCreatePutFileDialog returned " + ofToString((int) err));
 	
 	err = NavDialogRun(dialog);
-	printf("NavDialogRun returned %i\n", err );
+	ofLog(OF_LOG_VERBOSE, "ofFileSaveDialog() NavDialogRun returned " + ofToString((int) err));
 	
 	NavUserAction action;
 	action = NavDialogGetUserAction( dialog );
-	printf("got action %i\n", action);
+	ofLog(OF_LOG_VERBOSE, "ofFileSaveDialog(): got action" + ofToString((int) action));
 	if (action == kNavUserActionNone || action == kNavUserActionCancel) {
 		
 		return "";
