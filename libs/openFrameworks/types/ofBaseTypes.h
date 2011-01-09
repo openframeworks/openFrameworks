@@ -91,3 +91,33 @@ public:
 	virtual bool isFrameNew()=0;
 	virtual void close()=0;
 };
+
+//----------------------------------------------------------
+// ofBaseHasDevices
+//----------------------------------------------------------
+class ofBaseHasDevices {
+	
+public: 
+	
+	virtual void buildDeviceList() = 0; 
+	virtual void listDevices(){
+		if (!bHaveEnumeratedDevices){
+			buildDeviceList();
+		}
+		if (bHaveEnumeratedDevices){
+			printf("-------------------------------------------- \n");
+			printf("listing devices for %s \n", deviceType.c_str());
+			printf("\n");
+			for (int i = 0; i < deviceNames.size(); i++){
+				printf("device [%i] - %s\n", i, deviceNames[i].c_str());
+			}
+			printf("-------------------------------------------- \n");
+		}
+	}
+	
+	string				deviceType;
+	vector < string >	deviceNames;
+	bool bHaveEnumeratedDevices;
+	
+};
+
