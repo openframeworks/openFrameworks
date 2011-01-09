@@ -20,6 +20,7 @@
 int 		ofNextPow2 ( int a );
 void 		ofSeedRandom();
 void 		ofSeedRandom(int val);
+float ofRandom(float max); // random (0 - max)
 float 		ofRandom(float val0, float val1);		// random (x - y)
 float 		ofRandomf();							// random (-1 - 1)
 float 		ofRandomuf();							// random (0 - 1) 
