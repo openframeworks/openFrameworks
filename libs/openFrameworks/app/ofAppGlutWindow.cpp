@@ -198,6 +198,8 @@ void ofAppGlutWindow::initializeWindow(){
     glutSpecialUpFunc(special_key_up_cb);
 
     glutReshapeFunc(resize_cb);
+	glutDragEventFunc( dragEvent);
+	
 
     nFramesSinceWindowResized = 0;
 
@@ -507,6 +509,20 @@ void ofAppGlutWindow::passive_motion_cb(int x, int y) {
 
 		ofNotifyMouseMoved(x, y);
 	}
+}
+
+void ofAppGlutWindow::dragEvent(char ** names, int howManyFiles){
+	
+	//cout << "got a drag event " << names[0] << endl;
+	vector < string > files;
+	
+	for (int i = 0; i < howManyFiles; i++){
+		string temp = string(names[i]);
+		files.push_back(temp);
+	}
+	
+	ofAppPtr->dragEvent(files);
+	
 }
 
 

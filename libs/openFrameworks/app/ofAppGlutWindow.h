@@ -9,7 +9,8 @@
 	#include "glut.h"
 #endif
 #ifdef TARGET_OSX
-	#include <GLUT/glut.h>
+	#include "../../../libs/glut/lib/osx/GLUT.framework/Versions/A/Headers/glut.h"
+	//#include <GLUT/glut.h>
 #endif
 #ifdef TARGET_LINUX
 	#include <GL/glut.h>
@@ -69,6 +70,8 @@ public:
 	static void special_key_up_cb(int key, int x, int y) ;
 	static void resize_cb(int w, int h);
 
+	static void dragEvent(char ** fileNames, int howManyFiles);
+	
 
 	string displayString;
 	 
