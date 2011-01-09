@@ -100,6 +100,11 @@ class ofBaseHasDevices {
 public: 
 	
 	virtual void buildDeviceList() = 0; 
+	
+	virtual vector < string > getDeviceList(){
+		return deviceNames;
+	}
+	
 	virtual void listDevices(){
 		if (!bHaveEnumeratedDevices){
 			buildDeviceList();
