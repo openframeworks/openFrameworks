@@ -74,7 +74,7 @@ ofColor ofColor::clamp (){
 }
 
 float ofColor::getBrightness (){
-	return (((r+g+b)/3.0f)/255.0f);
+	return (r + g + b) / 3.0f;
 }
 
 ofColor ofColor::getInverted (){
