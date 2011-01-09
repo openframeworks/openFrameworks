@@ -39,6 +39,11 @@ void ofSeedRandom(int val) {
 }
 
 //--------------------------------------------------
+float ofRandom(float max) {
+	return max * rand() / (RAND_MAX + 1.0f);
+}
+
+//--------------------------------------------------
 float ofRandom(float x, float y) {
 
 	float high = 0;
