@@ -2,6 +2,8 @@
 #define OF_SERIAL_H
 
 #include "ofConstants.h"
+#include "ofBaseTypes.h"
+
 
 #if defined( TARGET_OSX ) || defined( TARGET_LINUX )
 	#include <termios.h>
@@ -34,13 +36,15 @@
 // notes below
 
 //----------------------------------------------------------------------
-class ofSerial{
+class ofSerial : public ofBaseHasDevices {
 
 	public:
 			ofSerial();
 			virtual ~ofSerial();
-
+			
 			void 			enumerateDevices();
+			void			buildDeviceList();
+	
 
 			void 			close();
 			bool			setup();	// use default port, baud (0,9600)
@@ -58,7 +62,7 @@ class ofSerial{
 			bool 			bVerbose;
 			void 			setVerbose(bool bLoudmouth) { bVerbose = bLoudmouth; };
 
-
+			
 
 	protected:
 
