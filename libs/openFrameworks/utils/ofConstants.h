@@ -192,6 +192,10 @@
 // comment out this line to disable all poco related code
 #define OF_USING_POCO
 
+#ifndef SKIP_FMODEX
+# define OF_USING_FMODEX
+#endif
+
 //we don't want to break old code that uses ofSimpleApp
 //so we forward declare ofBaseApp and make ofSimpleApp mean the same thing
 class ofBaseApp;

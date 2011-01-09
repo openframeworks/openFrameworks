@@ -45,10 +45,12 @@ void ofSetupOpenGL(int w, int h, int screenMode){
 void ofExitCallback();
 void ofExitCallback(){
 
+#if defined(OS_USING_FMODEX)
 	//------------------------
 	// try to close FMOD:
 	ofSoundPlayer::closeFmod();
 	//------------------------
+#endif
 
 	//------------------------
 	// try to close rtAudio:
