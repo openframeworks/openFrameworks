@@ -55,7 +55,8 @@
 
 enum ofxiPhoneDeviceType {
 	OFXIPHONE_DEVICE_IPHONE,
-	OFXIPHONE_DEVICE_IPODTOUCH
+	OFXIPHONE_DEVICE_IPODTOUCH,
+	OFXIPHONE_DEVICE_IPAD
 };
 
 
@@ -63,9 +64,14 @@ enum ofxiPhoneDeviceType {
 #define OFXIPHONE_DEVICE_IPHONE_2G		"iPhone1,1"
 #define OFXIPHONE_DEVICE_IPHONE_3G		"iPhone1,2"
 #define OFXIPHONE_DEVICE_IPHONE_3GS		"iPhone2,1"
+#define OFXIPHONE_DEVICE_IPHONE_4		"iPhone3,1"
+
 #define OFXIPHONE_DEVICE_IPOD_1STGEN	"iPod1,1"
 #define OFXIPHONE_DEVICE_IPOD_2NDGEN	"iPod2,1"
 #define OFXIPHONE_DEVICE_IPOD_3RDGEN	"iPod3,1"
+#define OFXIPHONE_DEVICE_IPOD_4THGEN	"iPod4,1"
+
+#define OFXIPHONE_DEVICE_IPAD_1STGEN	"iPad1,1"
 
 
 // possible values for iPhoneSetOrientation or iPhoneGetOrientation

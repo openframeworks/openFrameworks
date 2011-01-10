@@ -1,6 +1,7 @@
 
 
 #import "ESRenderer.h"
+#include "ofMain.h"
 
 #import <OpenGLES/ES1/gl.h>
 #import <OpenGLES/ES1/glext.h>
@@ -20,6 +21,7 @@
 	
 	//settings
 	bool fsaaEnabled;
+	int fsaaSamples;
 	bool depthEnabled;
 	bool retinaEnabled;
 }
@@ -27,7 +29,7 @@
 - (void) startRender;
 - (void) finishRender;
 - (BOOL)resizeFromLayer:(CAEAGLLayer *)layer;
-- (id)initWithDepth:(bool)depth andAA:(bool)fsaa andRetina:(bool)retina;
+- (id)initWithDepth:(bool)depth andAA:(bool)fsaa andFSAASamples:(int)samples andRetina:(bool)retina;
 - (EAGLContext*) context;
 
 @end

@@ -271,8 +271,8 @@ void ofAppiPhoneWindow::enableDepthBuffer()
 
 void ofAppiPhoneWindow::enableAntiAliasing(int samples)
 {
-	//ignore samples
 	antiAliasingEnabled = true;
+	antiAliasingSamples = samples;
 }
 
 bool ofAppiPhoneWindow::isDepthEnabled()
@@ -283,6 +283,11 @@ bool ofAppiPhoneWindow::isDepthEnabled()
 bool ofAppiPhoneWindow::isAntiAliasingEnabled()
 {
 	return antiAliasingEnabled;
+}
+
+int ofAppiPhoneWindow::getAntiAliasingSampleCount()
+{
+	return antiAliasingSamples;
 }
 
 bool ofAppiPhoneWindow::isRetinaSupported()

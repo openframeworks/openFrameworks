@@ -23,7 +23,9 @@ public:
 	int		prevMY;
 	bool 	bFirstMouseMove;
 	
-	bool jitter;
+	bool retina;
+	
+
 };
 
 

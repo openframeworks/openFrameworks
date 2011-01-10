@@ -48,10 +48,10 @@
 
 - (id) initWithFrame:(CGRect)frame
 {
-	return [self initWithFrame:frame andDepth:false andAA:false andRetina:false];
+	return [self initWithFrame:frame andDepth:false andAA:false andNumSamples:0 andRetina:false];
 }
 
-- (id) initWithFrame:(CGRect)frame andDepth:(bool)depth andAA:(bool)fsaaEnabled andRetina:(bool)retinaEnabled
+- (id) initWithFrame:(CGRect)frame andDepth:(bool)depth andAA:(bool)fsaaEnabled andNumSamples:(int)samples andRetina:(bool)retinaEnabled
 {
 	if((self = [super initWithFrame:frame])) {
         // Get the layer
@@ -74,10 +74,10 @@
 		}
 		
 		// TODO: add initSettings to override ES2Renderer even if available
-        renderer = [[ES2Renderer alloc] initWithDepth:depth andAA:fsaaEnabled andRetina:retinaEnabled];
+        renderer = [[ES2Renderer alloc] initWithDepth:depth andAA:fsaaEnabled andFSAASamples:samples andRetina:retinaEnabled];
 		
         if (!renderer) {
-            renderer = [[ES1Renderer alloc] initWithDepth:depth andAA:fsaaEnabled andRetina:retinaEnabled];
+            renderer = [[ES1Renderer alloc] initWithDepth:depth andAA:fsaaEnabled andFSAASamples:samples andRetina:retinaEnabled];
 			
             if (!renderer) {
 				[self release];
