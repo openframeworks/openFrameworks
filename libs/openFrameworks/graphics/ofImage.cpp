@@ -6,7 +6,9 @@
 static bool		bFreeImageInited = false;
 //----------------------------------------------------------
 
-
+void ofLoadImage(ofPixels & pix, string path){
+	ofImage::loadImageIntoPixels(path, pix);
+}
 
 //----------------------------------------------------------
 ofImage::ofImage(){

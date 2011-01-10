@@ -7,26 +7,17 @@
 #include "ofAppRunner.h"		// for height()
 #include "FreeImage.h"
 #include "ofUtils.h"
-
-typedef struct {
-
-	unsigned char * pixels;
-	int width;
-	int height;
-
-	int		bitsPerPixel;		// 8 = gray, 24 = rgb, 32 = rgba
-	int		bytesPerPixel;		// 1, 3, 4 bytes per pixels
-	GLint	glDataType;			// GL_LUMINANCE, GL_RGB, GL_RGBA
-	int		ofImageType;		// OF_IMAGE_GRAYSCALE, OF_IMAGE_COLOR, OF_IMAGE_COLOR_ALPHA
-	bool	bAllocated;
-
-} ofPixels;
-
+#include "ofPixels.h"
 
 //----------------------------------------------------
 // freeImage based stuff:
-void 	ofCloseFreeImage();		// when we exit, we shut down ofImage
+void	ofLoadImage(ofPixels & pix, string path);
 
+//TODO: add load from buffer
+//void	ofLoadImage(ofPixels & pix, ofBuffer buf); 
+
+
+void 	ofCloseFreeImage();		// when we exit, we shut down ofImage
 
 //----------------------------------------------------
 class ofImage : public ofBaseImage{
@@ -99,16 +90,18 @@ class ofImage : public ofBaseImage{
 		int 				width, height, bpp;		// w,h, bits per pixel
 		int					type;					// OF_IMAGE_GRAYSCALE, OF_IMAGE_COLOR, OF_IMAGE_COLOR_ALPHA
 
-	protected:
 
 		// freeImage related functionality:
 
-		bool				loadImageIntoPixels(string fileName, ofPixels &pix);
-		void				saveImageFromPixels(string fileName, ofPixels &pix);
+		static bool			loadImageIntoPixels(string fileName, ofPixels &pix);
+		static void			saveImageFromPixels(string fileName, ofPixels &pix);
+
+	protected:
+	
 		void				changeTypeOfPixels(ofPixels &pix, int newType);
 		void				resizePixels(ofPixels &pix, int newWidth, int newHeight);
-		FIBITMAP *			getBmpFromPixels(ofPixels &pix);
-		void				putBmpIntoPixels(FIBITMAP * bmp, ofPixels &pix);
+		static FIBITMAP *	getBmpFromPixels(ofPixels &pix);
+		static void			putBmpIntoPixels(FIBITMAP * bmp, ofPixels &pix);
 
 		// utils:
 		static void			allocatePixels(ofPixels &pix, int width, int height, int bpp);
