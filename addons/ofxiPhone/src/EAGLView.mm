@@ -48,7 +48,7 @@
 
 - (id) initWithFrame:(CGRect)frame
 {
-	return [self initWithFrame:frame andDepth:false andAA:false];
+	return [self initWithFrame:frame andDepth:false andAA:false andRetina:false];
 }
 
 - (id) initWithFrame:(CGRect)frame andDepth:(bool)depth andAA:(bool)fsaaEnabled andRetina:(bool)retinaEnabled
@@ -61,6 +61,18 @@
 		eaglLayer.drawableProperties = [NSDictionary dictionaryWithObjectsAndKeys:
 										[NSNumber numberWithBool:YES], kEAGLDrawablePropertyRetainedBacking, kEAGLColorFormatRGBA8, kEAGLDrawablePropertyColorFormat, nil];
 		
+		touchScaleFactor=1;
+		if(retinaEnabled)
+		{
+			if ([[UIScreen mainScreen] respondsToSelector:@selector(scale)]) {
+				if ([[UIScreen mainScreen] scale] > 1)
+				{
+					[self setContentScaleFactor:[[UIScreen mainScreen] scale]];
+					touchScaleFactor=[[UIScreen mainScreen] scale];
+				}
+			}
+		}
+		
 		// TODO: add initSettings to override ES2Renderer even if available
         renderer = [[ES2Renderer alloc] initWithDepth:depth andAA:fsaaEnabled andRetina:retinaEnabled];
 		
@@ -72,8 +84,6 @@
 				return nil;
 			}
         }
-		
-		
 		
 		[[self context] renderbufferStorage:GL_RENDERBUFFER_OES fromDrawable:eaglLayer];
 		
@@ -132,6 +142,10 @@
 		[activeTouches setObject:[NSNumber numberWithInt:touchIndex] forKey:[NSValue valueWithPointer:touch]];
 		
 		CGPoint touchPoint = [touch locationInView:self];
+		
+		touchPoint.x*=touchScaleFactor; // this has to be done because retina still returns points in 320x240 but with high percision
+		touchPoint.y*=touchScaleFactor;
+		
 		iPhoneGetOFWindow()->rotateXY(touchPoint.x, touchPoint.y);
 		
 		if( touchIndex==0 ){
@@ -159,6 +173,10 @@
 		//		[activeTouches setObject:[NSNumber numberWithInt:touchIndex] forKey:[NSValue valueWithPointer:touch]];
 		
 		CGPoint touchPoint = [touch locationInView:self];
+		
+		touchPoint.x*=touchScaleFactor; // this has to be done because retina still returns points in 320x240 but with high percision
+		touchPoint.y*=touchScaleFactor;
+		
 		iPhoneGetOFWindow()->rotateXY(touchPoint.x, touchPoint.y);
 		
 		if( touchIndex==0 ){
@@ -186,6 +204,10 @@
 		[activeTouches removeObjectForKey:[NSValue valueWithPointer:touch]];
 		
 		CGPoint touchPoint = [touch locationInView:self];
+		
+		touchPoint.x*=touchScaleFactor; // this has to be done because retina still returns points in 320x240 but with high percision
+		touchPoint.y*=touchScaleFactor;
+		
 		iPhoneGetOFWindow()->rotateXY(touchPoint.x, touchPoint.y);
 		
 		if( touchIndex==0 ){

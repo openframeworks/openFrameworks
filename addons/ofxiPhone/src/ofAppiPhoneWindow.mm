@@ -133,7 +133,12 @@ ofPoint	ofAppiPhoneWindow::getWindowSize() {
 		{
 			windowSize.set(s.height, s.width, 0);
 		}
+		
+		if(retinaEnabled)
+			if ([[UIScreen mainScreen] respondsToSelector:@selector(scale)])
+				windowSize*=[[UIScreen mainScreen] scale];
 	}
+
 	return windowSize;
 }
 
