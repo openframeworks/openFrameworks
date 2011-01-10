@@ -1,7 +1,7 @@
 //
 // Thread_WIN32.h
 //
-// $Id: //poco/1.3/Foundation/include/Poco/Thread_WIN32.h#7 $
+// $Id: //poco/1.4/Foundation/include/Poco/Thread_WIN32.h#1 $
 //
 // Library: Foundation
 // Package: Threading
@@ -9,7 +9,7 @@
 //
 // Definition of the ThreadImpl class for WIN32.
 //
-// Copyright (c) 2004-2006, Applied Informatics Software Engineering GmbH.
+// Copyright (c) 2004-2009, Applied Informatics Software Engineering GmbH.
 // and Contributors.
 //
 // Permission is hereby granted, free of charge, to any person or organization
@@ -51,6 +51,7 @@ namespace Poco {
 class Foundation_API ThreadImpl
 {
 public:	
+    typedef DWORD TIDImpl;
 	typedef void (*Callable)(void*);
 
 #if defined(_DLL)
@@ -81,6 +82,7 @@ public:
 	ThreadImpl();				
 	~ThreadImpl();
 
+	TIDImpl tidImpl() const;
 	void setPriorityImpl(int prio);
 	int getPriorityImpl() const;
 	void setOSPriorityImpl(int prio);
@@ -98,7 +100,8 @@ public:
 	static void sleepImpl(long milliseconds);
 	static void yieldImpl();
 	static ThreadImpl* currentImpl();
-
+	static TIDImpl currentTidImpl();
+    
 protected:
 #if defined(_DLL)
 	static DWORD WINAPI runnableEntry(LPVOID pThread);
@@ -116,13 +119,39 @@ protected:
 	void threadCleanup();
 
 private:
+	class CurrentThreadHolder
+	{
+	public:
+		CurrentThreadHolder(): _slot(TlsAlloc())
+		{
+			if (_slot == TLS_OUT_OF_INDEXES)
+				throw SystemException("cannot allocate thread context key");
+		}
+		~CurrentThreadHolder()
+		{
+			TlsFree(_slot);
+		}
+		ThreadImpl* get() const
+		{
+			return reinterpret_cast<ThreadImpl*>(TlsGetValue(_slot));
+		}
+		void set(ThreadImpl* pThread)
+		{
+			TlsSetValue(_slot, pThread);
+		}
+	
+	private:
+		DWORD _slot;
+	};
+
 	Runnable*    _pRunnableTarget;
 	CallbackData _callbackTarget;
 	HANDLE       _thread;
+	DWORD        _threadId;
 	int          _prio;
 	int          _stackSize;
 
-	static DWORD _currentKey;
+	static CurrentThreadHolder _currentThreadHolder;
 };
 
 
@@ -174,6 +203,12 @@ inline void ThreadImpl::setStackSizeImpl(int size)
 inline int ThreadImpl::getStackSizeImpl() const
 {
 	return _stackSize;
+}
+
+
+inline ThreadImpl::TIDImpl ThreadImpl::tidImpl() const
+{
+	return _threadId;
 }
 
 
