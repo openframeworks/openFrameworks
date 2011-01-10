@@ -30,7 +30,7 @@
 #include "ofxOscSender.h"
 
 
-#include "UdpSocket.h"
+#include <oscpack/ip/UdpSocket.h>
 
 #include <assert.h>
 
