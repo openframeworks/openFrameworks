@@ -22,22 +22,24 @@ class ofColor{
 		void set (float _r, float _g, float _b, float _a = 255.0f);
 		void set (float _gray, float _a = 255.0f);
 		void set (ofColor const & color);
-		
+
 		void setHex (int hexColor, float _a = 255.0f);
+		int getHex ();
 		
-		ofColor clamp ();
+		ofColor& clamp ();
+		ofColor& invert ();
+		ofColor& normalize ();
 		
 		float getHue ();
 		float getSaturation ();
 		float getBrightness (); // brightest component
 		float getLightness (); // average of the components
 		void getHsb(float& hue, float& saturation, float& brightness);
-		ofColor getInverted ();
-		int getHex ();
 		
-		static int hueMagic (int n1, int n2, int hue);
-		static ofColor colorFromHLS (int hue, int lum, int sat);
-		static ofColor colorFromHue (int hue);
+		void setHue (float hue);
+		void setSaturation (float saturation);
+		void setBrightness (float brightness);
+		void setHsb(float hue, float saturation, float brightness);
 		
 		ofColor & operator = (ofColor const & color);
 		ofColor & operator = (float const & val);
