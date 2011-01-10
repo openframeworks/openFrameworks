@@ -15,13 +15,17 @@ nobase_include_HEADERS= \
 			openFrameworks/ofMain.h \
 			openFrameworks/sound/ofSoundPlayer.h \
 			openFrameworks/sound/ofSoundStream.h \
+			openFrameworks/types/ofBaseTypes.h \
+			openFrameworks/types/ofColor.h \
+			openFrameworks/types/ofPoint.h \
+			openFrameworks/types/ofRectangle.h \
+			openFrameworks/types/ofTypes.h \
 			openFrameworks/utils/ofConstants.h \
+			openFrameworks/utils/ofFileUtils.h \
 			openFrameworks/utils/ofMath.h \
 			openFrameworks/utils/ofNoise.h \
-			openFrameworks/utils/ofTypes.h \
+			openFrameworks/utils/ofSystemUtils.h \
 			openFrameworks/utils/ofUtils.h \
-			openFrameworks/video/ofBaseVideoGrabber.h \
-			openFrameworks/video/ofBaseVideoPlayer.h \
 			openFrameworks/video/ofDirectShowGrabber.h \
 			openFrameworks/video/ofGStreamerGrabber.h \
 			openFrameworks/video/ofGStreamerPlayer.h \
@@ -29,9 +33,7 @@ nobase_include_HEADERS= \
 			openFrameworks/video/ofQtUtils.h \
 			openFrameworks/video/ofQuickTimeGrabber.h \
 			openFrameworks/video/ofQuickTimePlayer.h \
-			openFrameworks/video/ofUnicapGrabber.h \
-			openFrameworks/video/ofVideoGrabber.h \
-			openFrameworks/video/ofVideoPlayer.h
+			openFrameworks/video/ofUnicapGrabber.h 
 
 lib_LTLIBRARIES=libopenFrameworks.la
 libopenFrameworks_la_CXXFLAGS= \
@@ -53,10 +55,13 @@ libopenFrameworks_la_SOURCES= \
 			      openFrameworks/graphics/ofTexture.cpp \
 			      openFrameworks/graphics/ofTrueTypeFont.cpp \
 			      openFrameworks/sound/ofSoundStream.cpp \
+			      openFrameworks/types/ofColor.cpp \
+			      openFrameworks/types/ofPoint.cpp \
+			      openFrameworks/types/ofRectangle.cpp \
+			      openFrameworks/utils/ofFileUtils.cpp \
 			      openFrameworks/utils/ofMath.cpp \
+			      openFrameworks/utils/ofSystemUtils.cpp \
 			      openFrameworks/utils/ofUtils.cpp \
-			      openFrameworks/video/ofBaseVideoGrabber.cpp \
-			      openFrameworks/video/ofBaseVideoPlayer.cpp \
 			      openFrameworks/video/ofDirectShowGrabber.cpp \
 			      openFrameworks/video/ofGStreamerGrabber.cpp \
 			      openFrameworks/video/ofGStreamerPlayer.cpp \

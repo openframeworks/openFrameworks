@@ -15,13 +15,14 @@ PKG_CHECK_MODULES([freetype],[freetype2])
 PKG_CHECK_MODULES([opencv],[opencv])
 
 AM_CPPFLAGS="${AM_CPPFLAGS} -I\${top_srcdir}/libs/openFrameworks "
-AM_CPPFLAGS="${AM_CPPFLAGS} -I\${top_srcdir}/libs/openFrameworks/utils "
+AM_CPPFLAGS="${AM_CPPFLAGS} -I\${top_srcdir}/libs/openFrameworks/app "
+AM_CPPFLAGS="${AM_CPPFLAGS} -I\${top_srcdir}/libs/openFrameworks/communication "
 AM_CPPFLAGS="${AM_CPPFLAGS} -I\${top_srcdir}/libs/openFrameworks/events "
 AM_CPPFLAGS="${AM_CPPFLAGS} -I\${top_srcdir}/libs/openFrameworks/graphics "
-AM_CPPFLAGS="${AM_CPPFLAGS} -I\${top_srcdir}/libs/openFrameworks/app "
-AM_CPPFLAGS="${AM_CPPFLAGS} -I\${top_srcdir}/libs/openFrameworks/video "
-AM_CPPFLAGS="${AM_CPPFLAGS} -I\${top_srcdir}/libs/openFrameworks/communication "
 AM_CPPFLAGS="${AM_CPPFLAGS} -I\${top_srcdir}/libs/openFrameworks/sound "
+AM_CPPFLAGS="${AM_CPPFLAGS} -I\${top_srcdir}/libs/openFrameworks/types "
+AM_CPPFLAGS="${AM_CPPFLAGS} -I\${top_srcdir}/libs/openFrameworks/utils "
+AM_CPPFLAGS="${AM_CPPFLAGS} -I\${top_srcdir}/libs/openFrameworks/video "
 AM_CPPFLAGS="${AM_CPPFLAGS} ${gstreamer_CFLAGS} ${freetype_CFLAGS}"
 
 
