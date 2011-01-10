@@ -42,6 +42,18 @@ void testApp::update(){
 
 //--------------------------------------------------------------
 void testApp::draw(){
+	
+	glEnable(GL_DEPTH_TEST);
+	
+	glPushMatrix();
+	glTranslatef(0, 0, 1.0);
+	
+	ofSetColor(255, 255, 255);
+	ofRect(0, 0, 200, 200);
+	
+	glPopMatrix();
+	
+	
 
 	//---------------------------------
 	//PIXEL OCEAN

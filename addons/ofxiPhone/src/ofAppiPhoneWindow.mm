@@ -62,7 +62,7 @@ ofAppiPhoneWindow::ofAppiPhoneWindow() {
 	
 	depthEnabled=false;
 	antiAliasingEnabled=false;
-	useRetina=false;
+	retinaEnabled=false;
 }
 
 /******** Initialization methods ************/
@@ -252,6 +252,37 @@ void ofAppiPhoneWindow::rotateXY(float &x, float &y) {
 			break;
 			
 	}
+}
+
+void ofAppiPhoneWindow::enableRetinaSupport()
+{
+	retinaEnabled = true;
+}
+
+void ofAppiPhoneWindow::enableDepthBuffer()
+{
+	depthEnabled = true;
+}
+
+void ofAppiPhoneWindow::enableAntiAliasing(int samples)
+{
+	//ignore samples
+	antiAliasingEnabled = true;
+}
+
+bool ofAppiPhoneWindow::isDepthEnabled()
+{
+	return depthEnabled;
+}
+
+bool ofAppiPhoneWindow::isAntiAliasingEnabled()
+{
+	return antiAliasingEnabled;
+}
+
+bool ofAppiPhoneWindow::isRetinaSupported()
+{
+	return retinaEnabled;
 }
 
 
