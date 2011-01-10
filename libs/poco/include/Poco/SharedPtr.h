@@ -1,7 +1,7 @@
 //
 // SharedPtr.h
 //
-// $Id: //poco/1.3/Foundation/include/Poco/SharedPtr.h#6 $
+// $Id: //poco/1.4/Foundation/include/Poco/SharedPtr.h#1 $
 //
 // Library: Foundation
 // Package: Core
@@ -42,7 +42,7 @@
 
 #include "Poco/Foundation.h"
 #include "Poco/Exception.h"
-#include "Poco/Mutex.h"
+#include "Poco/AtomicCounter.h"
 #include <algorithm>
 
 
@@ -59,24 +59,21 @@ public:
 
 	void duplicate()
 	{
-		FastMutex::ScopedLock lock(_mutex);
 		++_cnt;
 	}
 
 	int release()
 	{
-		FastMutex::ScopedLock lock(_mutex);
 		return --_cnt;
 	}
 	
 	int referenceCount() const
 	{
-		return _cnt;
+		return _cnt.value();
 	}
 
 private:
-	FastMutex _mutex;
-	int _cnt;
+	AtomicCounter _cnt;
 };
 
 
@@ -91,6 +88,20 @@ public:
 		/// Note that pObj can be 0.
 	{
 		delete pObj;
+	}
+};
+
+
+template <class C>
+class ReleaseArrayPolicy
+	/// The release policy for SharedPtr holding arrays.
+{
+public:
+	static void release(C* pObj)
+		/// Delete the object.
+		/// Note that pObj can be 0.
+	{
+		delete [] pObj;
 	}
 };
 

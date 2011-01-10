@@ -3,12 +3,12 @@
 #include "ofMain.h"
 
 
-class ofxFbo {
+class ofFbo {
 public:
 	struct Settings;
 	
-	ofxFbo();
-	~ofxFbo();
+	ofFbo();
+	~ofFbo();
 
 	void setup(int width, int height, int internalformat = GL_RGBA, int numSamples = 0);
 	void setup(Settings settings = Settings());

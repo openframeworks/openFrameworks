@@ -1,7 +1,7 @@
 //
 // NotificationQueue.h
 //
-// $Id: //poco/1.3/Foundation/include/Poco/NotificationQueue.h#1 $
+// $Id: //poco/1.4/Foundation/include/Poco/NotificationQueue.h#1 $
 //
 // Library: Foundation
 // Package: Notifications
@@ -41,6 +41,7 @@
 
 
 #include "Poco/Foundation.h"
+#include "Poco/Notification.h"
 #include "Poco/Mutex.h"
 #include "Poco/Event.h"
 #include <deque>
@@ -49,7 +50,6 @@
 namespace Poco {
 
 
-class Notification;
 class NotificationCenter;
 
 
@@ -77,7 +77,7 @@ public:
 	~NotificationQueue();
 		/// Destroys the NotificationQueue.
 
-	void enqueueNotification(Notification* pNotification);
+	void enqueueNotification(Notification::Ptr pNotification);
 		/// Enqueues the given notification by adding it to
 		/// the end of the queue (FIFO).
 		/// The queue takes ownership of the notification, thus
@@ -85,7 +85,7 @@ public:
 		///     notificationQueue.enqueueNotification(new MyNotification);
 		/// does not result in a memory leak.
 		
-	void enqueueUrgentNotification(Notification* pNotification);
+	void enqueueUrgentNotification(Notification::Ptr pNotification);
 		/// Enqueues the given notification by adding it to
 		/// the front of the queue (LIFO). The event therefore gets processed
 		/// before all other events already in the queue.
@@ -99,6 +99,10 @@ public:
 		/// Returns 0 (null) if no notification is available.
 		/// The caller gains ownership of the notification and
 		/// is expected to release it when done with it.
+		///
+		/// It is highly recommended that the result is immediately
+		/// assigned to a Notification::Ptr, to avoid potential
+		/// memory management issues.
 
 	Notification* waitDequeueNotification();
 		/// Dequeues the next pending notification.
@@ -108,6 +112,10 @@ public:
 		/// is expected to release it when done with it.
 		/// This method returns 0 (null) if wakeUpWaitingThreads()
 		/// has been called by another thread.
+		///
+		/// It is highly recommended that the result is immediately
+		/// assigned to a Notification::Ptr, to avoid potential
+		/// memory management issues.
 
 	Notification* waitDequeueNotification(long milliseconds);
 		/// Dequeues the next pending notification.
@@ -116,6 +124,10 @@ public:
 		/// Returns 0 (null) if no notification is available.
 		/// The caller gains ownership of the notification and
 		/// is expected to release it when done with it.
+		///
+		/// It is highly recommended that the result is immediately
+		/// assigned to a Notification::Ptr, to avoid potential
+		/// memory management issues.
 
 	void dispatch(NotificationCenter& notificationCenter);
 		/// Dispatches all queued notifications to the given
@@ -142,14 +154,14 @@ public:
 		/// NotificationQueue.
 
 protected:
-	Notification* dequeueOne();
+	Notification::Ptr dequeueOne();
 	
 private:
-	typedef std::deque<Notification*> NfQueue;
+	typedef std::deque<Notification::Ptr> NfQueue;
 	struct WaitInfo
 	{
-		Notification* pNf;
-		Event         nfAvailable;
+		Notification::Ptr pNf;
+		Event             nfAvailable;
 	};
 	typedef std::deque<WaitInfo*> WaitQueue;
 

@@ -1,7 +1,7 @@
 //
 // Element.h
 //
-// $Id: //poco/1.3/XML/include/Poco/DOM/Element.h#2 $
+// $Id: //poco/1.4/XML/include/Poco/DOM/Element.h#1 $
 //
 // Library: XML
 // Package: DOM
@@ -43,6 +43,7 @@
 #include "Poco/XML/XML.h"
 #include "Poco/DOM/AbstractContainerNode.h"
 #include "Poco/XML/Name.h"
+#include "Poco/SAX/NamespaceSupport.h"
 
 
 namespace Poco {
@@ -177,6 +178,8 @@ public:
 	bool hasAttributes() const;
 
 	// Non-standard extensions
+	typedef Poco::XML::NamespaceSupport NSMap;
+	
 	XMLString innerText() const;
 
 	Element* getChildElement(const XMLString& name) const;
@@ -202,7 +205,49 @@ public:
 		/// has the given elementId. If no such element exists, returns null. 
 		///
 		/// This method is an extension to the W3C Document Object Model.
-	
+
+	Node* getNodeByPath(const XMLString& path);
+		/// Searches a node (element or attribute) based on a simplified XPath 
+		/// expression.
+		///
+		/// Only simple XPath expressions are supported. These are the slash
+		/// notation for specifying paths to elements, and the square bracket
+		/// expression for finding elements by their index, by attribute value, 
+		/// or finding attributes by names.
+		///
+		/// The slash at the beginning is optional, the evaluation always starts
+		/// at this element.
+		///
+		/// Examples:
+		///     /elem1/elem2/elem3
+		///     /elem1/elem2[1]
+		///     /elem1/elem2[@attr1]
+		///     /elem1/elem2[@attr1='value']
+		///
+		/// This method is an extension to the W3C Document Object Model.
+
+	Node* getNodeByPathNS(const XMLString& path, const NSMap& nsMap);
+		/// Searches a node (element or attribute) based on a simplified XPath 
+		/// expression. The given NSMap must contain mappings from namespace
+		/// prefixes to namespace URIs for all namespace prefixes used in 
+		/// the path expression.
+		///
+		/// Only simple XPath expressions are supported. These are the slash
+		/// notation for specifying paths to elements, and the square bracket
+		/// expression for finding elements by their index, by attribute value, 
+		/// or finding attributes by names.
+		///
+		/// The slash at the beginning is optional, the evaluation always starts
+		/// at this element.
+		///
+		/// Examples:
+		///     /ns1:elem1/ns2:elem2/ns2:elem3
+		///     /ns1:elem1/ns2:elem2[1]
+		///     /ns1:elem1/ns2:elem2[@attr1]
+		///     /ns1:elem1/ns2:elem2[@attr1='value']
+		///
+		/// This method is an extension to the W3C Document Object Model.
+		
 	// Node
 	const XMLString& nodeName() const;
 	NamedNodeMap* attributes() const;
@@ -217,6 +262,15 @@ protected:
 
 	void dispatchNodeRemovedFromDocument();
 	void dispatchNodeInsertedIntoDocument();
+	
+	static Node* findNode(XMLString::const_iterator& it, const XMLString::const_iterator& end, Node* pNode, const NSMap* pNSMap);
+	static Node* findElement(const XMLString& name, Node* pNode, const NSMap* pNSMap);
+	static Node* findElement(int index, Node* pNode, const NSMap* pNSMap);
+	static Node* findElement(const XMLString& attr, const XMLString& value, Node* pNode, const NSMap* pNSMap);
+	static Attr* findAttribute(const XMLString& name, Node* pNode, const NSMap* pNSMap);
+	bool hasAttributeValue(const XMLString& name, const XMLString& value, const NSMap* pNSMap);
+	static bool namesAreEqual(Node* pNode1, Node* pNode2, const NSMap* pNSMap);
+	static bool namesAreEqual(Node* pNode, const XMLString& name, const NSMap* pNSMap);
 
 private:
 	const Name& _name;

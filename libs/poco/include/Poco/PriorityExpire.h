@@ -1,7 +1,7 @@
 //
 // PriorityExpire.h
 //
-// $Id: //poco/1.3/Foundation/include/Poco/PriorityExpire.h#2 $
+// $Id: //poco/1.4/Foundation/include/Poco/PriorityExpire.h#1 $
 //
 // Library: Foundation
 // Package: Events
@@ -36,8 +36,8 @@
 //
 
 
-#ifndef  Foundation_PriorityExpire_INCLUDED
-#define  Foundation_PriorityExpire_INCLUDED
+#ifndef Foundation_PriorityExpire_INCLUDED
+#define Foundation_PriorityExpire_INCLUDED
 
 
 #include "Poco/Foundation.h"
@@ -129,4 +129,4 @@ private:
 } // namespace Poco
 
 
-#endif
+#endif // Foundation_PriorityExpire_INCLUDED

@@ -1,7 +1,7 @@
 //
 // FileStream.h
 //
-// $Id: //poco/1.3/Foundation/include/Poco/FileStream.h#1 $
+// $Id: //poco/1.4/Foundation/include/Poco/FileStream.h#1 $
 //
 // Library: Foundation
 // Package: Streams
@@ -85,6 +85,10 @@ public:
 
 	void close();
 		/// Closes the file stream.
+		///
+		/// If, for an output stream, the close operation fails (because
+		/// the contents of the stream buffer cannot synced back to
+		/// the filesystem), the bad bit is set in the stream state.
 
 	FileStreamBuf* rdbuf();
 		/// Returns a pointer to the underlying streambuf.
