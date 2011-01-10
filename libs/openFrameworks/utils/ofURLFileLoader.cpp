@@ -9,8 +9,8 @@ static bool factoryLoaded = false;
 
 ofURLFileLoader::ofURLFileLoader() {
 	
-	
-	status = OF_URL_FILE_LOADER_RESTING;
+	args.buffer = NULL;
+	status		= OF_URL_FILE_LOADER_RESTING;
 	
 }
 
