@@ -1,7 +1,7 @@
 //
 // HTTPRequestHandlerFactory.h
 //
-// $Id: //poco/1.3/Net/include/Poco/Net/HTTPRequestHandlerFactory.h#2 $
+// $Id: //poco/1.4/Net/include/Poco/Net/HTTPRequestHandlerFactory.h#1 $
 //
 // Library: Net
 // Package: HTTPServer
@@ -41,6 +41,7 @@
 
 
 #include "Poco/Net/Net.h"
+#include "Poco/SharedPtr.h"
 
 
 namespace Poco {
@@ -58,6 +59,8 @@ class Net_API HTTPRequestHandlerFactory
 	/// method.
 {
 public:
+	typedef Poco::SharedPtr<HTTPRequestHandlerFactory> Ptr;
+	
 	HTTPRequestHandlerFactory();
 		/// Creates the HTTPRequestHandlerFactory.
 

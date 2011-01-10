@@ -1,7 +1,7 @@
 //
 // SocketStream.h
 //
-// $Id: //poco/1.3/Net/include/Poco/Net/SocketStream.h#1 $
+// $Id: //poco/1.4/Net/include/Poco/Net/SocketStream.h#1 $
 //
 // Library: Net
 // Package: Sockets
@@ -121,7 +121,7 @@ class Net_API SocketOutputStream: public SocketIOS, public std::ostream
 	/// An output stream for writing to a socket.
 {
 public:
-	SocketOutputStream(const Socket& socket);
+	explicit SocketOutputStream(const Socket& socket);
 		/// Creates the SocketOutputStream with the given socket.
 		///
 		/// The socket's SocketImpl must be a StreamSocketImpl,
@@ -147,7 +147,7 @@ class Net_API SocketInputStream: public SocketIOS, public std::istream
 	/// istream with formatted reads.
 {
 public:
-	SocketInputStream(const Socket& socket);
+	explicit SocketInputStream(const Socket& socket);
 		/// Creates the SocketInputStream with the given socket.
 		///
 		/// The socket's SocketImpl must be a StreamSocketImpl,
@@ -171,7 +171,7 @@ class Net_API SocketStream: public SocketIOS, public std::iostream
 	/// istream with formatted reads.
 {
 public:
-	SocketStream(const Socket& socket);
+	explicit SocketStream(const Socket& socket);
 		/// Creates the SocketStream with the given socket.
 		///
 		/// The socket's SocketImpl must be a StreamSocketImpl,

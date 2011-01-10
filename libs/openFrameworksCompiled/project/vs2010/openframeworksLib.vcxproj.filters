@@ -28,6 +28,9 @@
     <Filter Include="libs\openFrameworks\events">
       <UniqueIdentifier>{a041d3e4-3b1a-4e1f-ab95-064102e6ddc2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="libs\openFrameworks\types">
+      <UniqueIdentifier>{1206a90e-650f-4ec5-829b-880c8b40927a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\openFrameworks\ofMain.h">
@@ -69,9 +72,6 @@
     <ClInclude Include="..\..\..\openFrameworks\utils\ofMath.h">
       <Filter>libs\openFrameworks\util</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\openFrameworks\utils\ofTypes.h">
-      <Filter>libs\openFrameworks\util</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\openFrameworks\utils\ofUtils.h">
       <Filter>libs\openFrameworks\util</Filter>
     </ClInclude>
@@ -95,6 +95,36 @@
     </ClInclude>
     <ClInclude Include="..\..\..\openFrameworks\events\ofEventUtils.h">
       <Filter>libs\openFrameworks\events</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\openFrameworks\types\ofTypes.h">
+      <Filter>libs\openFrameworks\types</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\openFrameworks\types\ofBaseTypes.h">
+      <Filter>libs\openFrameworks\types</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\openFrameworks\types\ofColor.h">
+      <Filter>libs\openFrameworks\types</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\openFrameworks\types\ofPoint.h">
+      <Filter>libs\openFrameworks\types</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\openFrameworks\types\ofRectangle.h">
+      <Filter>libs\openFrameworks\types</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\openFrameworks\utils\ofNoise.h">
+      <Filter>libs\openFrameworks\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\openFrameworks\utils\ofSystemUtils.h">
+      <Filter>libs\openFrameworks\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\openFrameworks\utils\ofFileUtils.h">
+      <Filter>libs\openFrameworks\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\openFrameworks\video\ofDirectShowGrabber.h">
+      <Filter>libs\openFrameworks\video</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\openFrameworks\app\ofAppBaseWindow.h">
+      <Filter>libs\openFrameworks\app</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -145,6 +175,30 @@
     </ClCompile>
     <ClCompile Include="..\..\..\openFrameworks\communication\ofSerial.cpp">
       <Filter>libs\openFrameworks\communication</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\openFrameworks\types\ofBaseTypes.cpp">
+      <Filter>libs\openFrameworks\types</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\openFrameworks\types\ofColor.cpp">
+      <Filter>libs\openFrameworks\types</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\openFrameworks\types\ofPoint.cpp">
+      <Filter>libs\openFrameworks\types</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\openFrameworks\types\ofRectangle.cpp">
+      <Filter>libs\openFrameworks\types</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\openFrameworks\utils\ofSystemUtils.cpp">
+      <Filter>libs\openFrameworks\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\openFrameworks\utils\ofFileUtils.cpp">
+      <Filter>libs\openFrameworks\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\openFrameworks\video\ofDirectShowGrabber.cpp">
+      <Filter>libs\openFrameworks\video</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\openFrameworks\events\ofEvents.cpp">
+      <Filter>libs\openFrameworks\events</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
