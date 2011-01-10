@@ -39,6 +39,12 @@ ofColor::ofColor (float gray, float _a){
 	a = _a;
 }
 
+ofColor ofColor::fromHsb (float hue, float saturation, float brightness) {
+	ofColor cur;
+	cur.setHsb(hue, saturation, brightness);
+	return cur;
+}
+
 void ofColor::set (float _r, float _g, float _b, float _a){
 	r = _r;
 	g = _g;
