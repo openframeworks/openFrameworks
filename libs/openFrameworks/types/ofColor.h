@@ -18,6 +18,7 @@ class ofColor{
 		ofColor (ofColor const & color);
 		ofColor (ofColor const & color, float _a);
 		ofColor (float gray, float _a = 255.0f);
+		static ofColor fromHsb (float hue, float saturation, float brightness);
 		
 		void set (float _r, float _g, float _b, float _a = 255.0f);
 		void set (float _gray, float _a = 255.0f);
