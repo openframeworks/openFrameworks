@@ -75,15 +75,6 @@ bool ofDirectShowGrabber::initGrabber(int w, int h){
 
 
 			pixels	= new unsigned char[width * height * 3];
-
-			if (bUseTexture){
-				// create the texture, set the pixels to black and
-				// upload them to the texture (so at least we see nothing black the callback)
-				tex.allocate(width,height,GL_RGB);
-				memset(pixels, 0, width*height*3);
-				tex.loadData(pixels, width, height, GL_RGB);
-			}
-
 			return true;
 		} else {
 			ofLog(OF_LOG_ERROR, "error allocating a video device");
@@ -186,9 +177,7 @@ void ofDirectShowGrabber::grabFrame(){
 
 				}
 
-				if (bUseTexture){
-					tex.loadData(pixels, width, height, GL_RGB);
-				}
+				
 			}
 		}
 
