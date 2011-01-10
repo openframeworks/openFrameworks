@@ -10,7 +10,7 @@ void testApp::demo1_setup() {
 	ofLog(OF_LOG_NOTICE, "demo1_setup | useMSAA: " + useMSAA);
 	demoMode = 1;
 	
-	fbo.setup(kFBOWidth, kFBOHeight, GL_RGBA, useMSAA ? ofxFbo::maxSamples() : 0);
+	fbo.setup(kFBOWidth, kFBOHeight, GL_RGBA, useMSAA ? ofFbo::maxSamples() : 0);
 	shader.setup("", "shaders/blur_frag.glsl");	// omit vertex shader
 }
 
