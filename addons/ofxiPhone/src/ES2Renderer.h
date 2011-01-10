@@ -21,11 +21,12 @@
 	
 	//settings
 	bool fsaaEnabled;
+	int fsaaSamples;
 	bool depthEnabled;
 	bool retinaEnabled;
 }
 
-- (id)initWithDepth:(bool)depth andAA:(bool)fsaa andRetina:(bool)retina;
+- (id)initWithDepth:(bool)depth andAA:(bool)fsaa andFSAASamples:(int)samples andRetina:(bool)retina;
 - (void) startRender;
 - (void) finishRender;
 - (BOOL)resizeFromLayer:(CAEAGLLayer *)layer;

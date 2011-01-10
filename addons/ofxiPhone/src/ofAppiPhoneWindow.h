@@ -79,6 +79,7 @@ public:
 	
 	bool				isDepthEnabled();
 	bool				isAntiAliasingEnabled();
+	int					getAntiAliasingSampleCount();
 	bool				isRetinaSupported();
 	
 	void timerLoop();
@@ -102,6 +103,7 @@ protected:
 	bool depthEnabled;
 	bool antiAliasingEnabled;
 	bool retinaEnabled;
+	int antiAliasingSamples;
 };
 
 

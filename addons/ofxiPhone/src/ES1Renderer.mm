@@ -7,16 +7,17 @@
 // Create an OpenGL ES 1.1 context
 - (id)init
 {
-	return [self initWithDepth:false andAA:false andRetina:false];
+	return [self initWithDepth:false andFSAASamples:0 andAA:false andRetina:false];
 }
 
-- (id)initWithDepth:(bool)depth andAA:(bool)fsaa andRetina:(bool)retina
+- (id)initWithDepth:(bool)depth andAA:(bool)fsaa andFSAASamples:(int)samples andRetina:(bool)retina
 {
     if ((self = [super init]))
     {
 		
 		depthEnabled = depth;
-		fsaaEnabled = fsaa;
+		fsaaEnabled = false;
+		fsaaSamples = samples;
 		retinaEnabled = retina;
 				
         context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES1];
@@ -38,22 +39,17 @@
 
         glFramebufferRenderbufferOES(GL_FRAMEBUFFER_OES, GL_COLOR_ATTACHMENT0_OES, GL_RENDERBUFFER_OES, colorRenderbuffer);
 		
+		const GLubyte * extensions = glGetString(GL_EXTENSIONS);
+		if(extensions != NULL && fsaa)
+			if(strstr((const char*)extensions, "GL_APPLE_framebuffer_multisample"))
+				fsaaEnabled=true;
+		
 		if(fsaaEnabled)
 		{
 			glGenFramebuffersOES(1, &fsaaFrameBuffer);
 			glGenRenderbuffersOES(1, &fsaaColorRenderBuffer);
 		}
 		
-		
-//		//DEPTH - hmm why doesn't this work. does it need something to be set at the appDelegate or EAGLView level
-//		glGetRenderbufferParameterivOES(GL_RENDERBUFFER_OES, GL_RENDERBUFFER_WIDTH_OES, &backingWidth);
-//		glGetRenderbufferParameterivOES(GL_RENDERBUFFER_OES, GL_RENDERBUFFER_HEIGHT_OES, &backingHeight);
-//		
-//		glGenRenderbuffersOES(1, &depthRenderbuffer);
-//		glBindRenderbufferOES(GL_RENDERBUFFER_OES, depthRenderbuffer);
-//		glRenderbufferStorageOES(GL_RENDERBUFFER_OES, GL_DEPTH_COMPONENT24_OES, backingWidth, backingHeight);
-//		glFramebufferRenderbufferOES(GL_FRAMEBUFFER_OES, GL_DEPTH_ATTACHMENT_OES, GL_RENDERBUFFER_OES, depthRenderbuffer);
-
 	}
 
     return self;
@@ -106,7 +102,6 @@
 
 - (BOOL)resizeFromLayer:(CAEAGLLayer *)layer
 {	
-	NSLog(@"resized!");
 	layer.opaque = YES;
     // Allocate color buffer backing based on the current layer size
     //[context renderbufferStorage:GL_RENDERBUFFER_OES fromDrawable:layer];
@@ -117,9 +112,8 @@
 	if(fsaaEnabled)
 	{
 		glBindFramebufferOES(GL_FRAMEBUFFER_OES, fsaaFrameBuffer);
-		glGenRenderbuffersOES(1, &fsaaColorRenderBuffer);
 		glBindRenderbufferOES(GL_RENDERBUFFER_OES, fsaaColorRenderBuffer);
-		glRenderbufferStorageMultisampleAPPLE(GL_RENDERBUFFER_OES, 4, GL_RGB5_A1_OES, backingWidth, backingHeight);
+		glRenderbufferStorageMultisampleAPPLE(GL_RENDERBUFFER_OES, fsaaSamples, GL_RGB5_A1_OES, backingWidth, backingHeight);
 		glFramebufferRenderbufferOES(GL_FRAMEBUFFER_OES, GL_COLOR_ATTACHMENT0_OES, GL_RENDERBUFFER_OES, fsaaColorRenderBuffer);
 	}
 	
@@ -132,7 +126,7 @@
 		
 		if(fsaaEnabled)
 		{
-			glRenderbufferStorageMultisampleAPPLE(GL_RENDERBUFFER_OES, 4, GL_DEPTH_COMPONENT16_OES, backingWidth, backingHeight);
+			glRenderbufferStorageMultisampleAPPLE(GL_RENDERBUFFER_OES, fsaaSamples, GL_DEPTH_COMPONENT16_OES, backingWidth, backingHeight);
 			glFramebufferRenderbufferOES(GL_FRAMEBUFFER_OES, GL_DEPTH_ATTACHMENT_OES, GL_RENDERBUFFER_OES, depthRenderbuffer);
 		}
 		else

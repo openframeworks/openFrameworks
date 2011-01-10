@@ -84,7 +84,7 @@
 	
 	//glView = [[EAGLView alloc] initWithFrame:screenBounds];// pixelFormat:GL_RGB565_OES depthFormat:GL_DEPTH_COMPONENT16_OES preserveBackbuffer:NO];
 	
-	glView = [[EAGLView alloc] initWithFrame:screenBounds andDepth:iPhoneGetOFWindow()->isDepthEnabled() andAA:iPhoneGetOFWindow()->isAntiAliasingEnabled() andRetina:iPhoneGetOFWindow()->isRetinaSupported()];
+	glView = [[EAGLView alloc] initWithFrame:screenBounds andDepth:iPhoneGetOFWindow()->isDepthEnabled() andAA:iPhoneGetOFWindow()->isAntiAliasingEnabled() andNumSamples:iPhoneGetOFWindow()->getAntiAliasingSampleCount() andRetina:iPhoneGetOFWindow()->isRetinaSupported()];
 	
 	[window addSubview:glView];
 	//	[glView release];	// do not release, incase app wants to removeFromSuper and add later
