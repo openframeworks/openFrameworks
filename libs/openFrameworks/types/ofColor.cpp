@@ -65,7 +65,7 @@ void ofColor::setHex (int hexColor, float _a){
 	a = _a;
 }
 
-ofColor ofColor::clamp (){
+ofColor& ofColor::clamp (){
 	r = CLAMP(r, 0.0f, 255.f);
 	g = CLAMP(g, 0.0f, 255.f);
 	b = CLAMP(b, 0.0f, 255.f);
@@ -73,18 +73,67 @@ ofColor ofColor::clamp (){
 	return *this;
 }
 
-void ofColor::getHsb(float& hue, float& saturation, float& brightness) {	
+ofColor& ofColor::invert() {
+	r = 255.f - r;
+	g = 255.f - g;
+	b = 255.f - b;
+	return *this;
+}
+
+ofColor& ofColor::normalize() {
+	float brightness = getBrightness();
+	r = 255.f * (r / brightness);
+	g = 255.f * (g / brightness);
+	b = 255.f * (b / brightness);
+}
+
+float ofColor::getHue() {
+	float hue, saturation, brightness;
+	getHsb(hue, saturation, brightness);
+	return hue;
+}
+
+float ofColor::getSaturation() {
+	float hue, saturation, brightness;
+	getHsb(hue, saturation, brightness);
+	return saturation;
+}
+
+/*
+	Brightness is simply the maximum of the three color components.
+	This is used by Photoshop (HSB) and Processing (HSB).
+	Brightness is also called "value".
+*/
+float ofColor::getBrightness() {
 	float max = r;
-	if(g > max)
+	if(g > max) {
 		max = g;
-	if(b > max)
+	}
+	if(b > max) {
 		max = b;
+	}
+	return max;
+}
+
+/*
+	Lightness is the average of the three color components.
+	This is used by the Lab and HSL color spaces.
+*/
+float ofColor::getLightness() {
+	return (r + g + b) / 3.f;
+}
+
+
+void ofColor::getHsb(float& hue, float& saturation, float& brightness) {	
+	float max = getBrightness();
 	
 	float min = r;
-	if(g < min)
+	if(g < min) {
 		min = g;
-	if(b < min)
+	}
+	if(b < min) {
 		min = b;
+	}
 	
 	if(max == min) { // grays
 		hue = 0.f;
@@ -108,87 +157,77 @@ void ofColor::getHsb(float& hue, float& saturation, float& brightness) {
 	brightness = max;
 }
 
-float ofColor::getHue() {
-	float hue, saturation, brightness;
-	getHsb(hue, saturation, brightness);
-	return hue;
+void ofColor::setHue (float hue) {
+	float oldHue, saturation, brightness;
+	getHsb(oldHue, saturation, brightness);
+	setHsb(hue, saturation, brightness);
 }
 
-float ofColor::getSaturation() {
-	float hue, saturation, brightness;
-	getHsb(hue, saturation, brightness);
-	return saturation;
+void ofColor::setSaturation (float saturation) {
+	float hue, oldSaturation, brightness;
+	getHsb(hue, oldSaturation, brightness);
+	setHsb(hue, saturation, brightness);
 }
 
-/*
-	Brightness is simply the maximum of the three color components.
-	This is used by Photoshop (HSB) and Processing (HSB).
-	Brightness is also called "value".
-*/
-float ofColor::getBrightness() {
-	float hue, saturation, brightness;
-	getHsb(hue, saturation, brightness);
-	return brightness;
+void ofColor::setBrightness (float brightness) {
+	float hue, saturation, oldBrightness;
+	getHsb(hue, saturation, oldBrightness);
+	setHsb(hue, saturation, brightness);
 }
 
-/*
-	Lightness is the average of the three color components.
-	This is used by the Lab and HSL color spaces.
-*/
-float ofColor::getLightness() {
-	return (r + g + b) / 3.f;
-}
-
-ofColor ofColor::getInverted (){
-	return ofColor(255.0f-r, 255.0f-g, 255.0f-b);
+void ofColor::setHsb(float hue, float saturation, float brightness) {
+	if(brightness == 0) { // black
+		set(0);
+	} else if(saturation == 0) { // grays
+		set(brightness);
+	} else {
+		float hueSix = hue * 6. / 255.;
+		float saturationNorm = saturation / 255.;
+		int hueSixCategory = (int) floorf(hueSix);
+		float hueSixRemainder = hueSix - hueSixCategory;
+		unsigned char pv = (unsigned char) ((1.f - saturationNorm) * brightness);
+		unsigned char qv = (unsigned char) ((1.f - saturationNorm * hueSixRemainder) * brightness);
+		unsigned char tv = (unsigned char) ((1.f - saturationNorm * (1.f - hueSixRemainder)) * brightness);
+		switch(hueSixCategory) {
+			case 0: // r
+				r = brightness;
+				g = tv;
+				b = pv;
+				break;
+			case 1: // g
+				r = qv;
+				g = brightness;
+				b = pv;
+				break;
+			case 2:
+				r = pv;
+				g = brightness;
+				b = tv;
+				break;
+			case 3: // b
+				r = pv;
+				g = qv;
+				b = brightness;
+				break;
+			case 4:
+				r = tv;
+				g = pv;
+				b = brightness;
+				break;
+			case 5: // back to r
+				r = brightness;
+				g = pv;
+				b = qv;
+				break;
+		}
+	}
 }
 
 int ofColor::getHex (){
-	return ( ((int)r) << (16 + ((int)g)) << (8 + ((int)b)) );
-}
-
-int ofColor::hueMagic (int n1, int n2, int hue){
-	/* range check: note values passed add/subtract thirds of range */ 
-	if (hue < 0)
-		hue += HLSMAX;
-	if (hue > HLSMAX)
-		hue -= HLSMAX;
-	/* return r,g, or b value from this tridrant */ 
-	if (hue < (HLSMAX/6))
-		return ( n1 + (((n2-n1)*hue+(HLSMAX/12))/(HLSMAX/6)) );
-	if (hue < (HLSMAX/2))
-		return ( n2 );
-	if (hue < ((HLSMAX*2)/3))
-		return ( n1 + (((n2-n1)*(((HLSMAX*2)/3)-hue)+(HLSMAX/12))/(HLSMAX/6)));
-	else
-		return ( n1 );
-}
-
-ofColor ofColor::colorFromHLS (int hue, int lum, int sat){
-	int rr,gg,bb;
-	int magic1, magic2;
-	// achromatic case
-	if (sat == 0)
-		rr  = gg = bb = (lum*RGBMAX)/HLSMAX;
-	// chromatic
-	else
-	{
-		/* set up magic numbers */ 
-		if (lum <= (HLSMAX/2))
-			magic2 = (lum*(HLSMAX + sat) + (HLSMAX/2))/HLSMAX;
-		else
-			magic2 = lum + sat - ((lum*sat) + (HLSMAX/2))/HLSMAX;
-		magic1 = 2*lum-magic2;
-		/* get RGB, change units from HLSMAX to RGBMAX */ 
-		rr = (hueMagic(magic1,magic2,hue+(HLSMAX/3))*RGBMAX + (HLSMAX/2))/HLSMAX;
-		gg = (hueMagic(magic1,magic2,hue)*RGBMAX + (HLSMAX/2)) / HLSMAX;
-		bb = (hueMagic(magic1,magic2,hue-(HLSMAX/3))*RGBMAX + (HLSMAX/2))/HLSMAX;
-	}
-	return ofColor(rr, gg, bb);
-}
-
-ofColor ofColor::colorFromHue (int hue){
-	return colorFromHLS(hue,128,255);
+	return
+		((0xff & (unsigned char) r) << 16) |
+		((0xff & (unsigned char) g) << 8) |
+		((0xff & (unsigned char) b));
 }
 
 ofColor & ofColor::operator = (ofColor const & color){
