@@ -109,13 +109,13 @@ ofColor& ofColor::lerp(const ofColor& target, float amount) {
 	return *this;
 }
 
-float ofColor::getHue() {
+float ofColor::getHue() const {
 	float hue, saturation, brightness;
 	getHsb(hue, saturation, brightness);
 	return hue;
 }
 
-float ofColor::getSaturation() {
+float ofColor::getSaturation() const {
 	float hue, saturation, brightness;
 	getHsb(hue, saturation, brightness);
 	return saturation;
@@ -126,7 +126,7 @@ float ofColor::getSaturation() {
 	This is used by Photoshop (HSB) and Processing (HSB).
 	Brightness is also called "value".
 */
-float ofColor::getBrightness() {
+float ofColor::getBrightness() const {
 	float max = r;
 	if(g > max) {
 		max = g;
@@ -141,12 +141,12 @@ float ofColor::getBrightness() {
 	Lightness is the average of the three color components.
 	This is used by the Lab and HSL color spaces.
 */
-float ofColor::getLightness() {
+float ofColor::getLightness() const {
 	return (r + g + b) / 3.f;
 }
 
 
-void ofColor::getHsb(float& hue, float& saturation, float& brightness) {	
+void ofColor::getHsb(float& hue, float& saturation, float& brightness) const {	
 	float max = getBrightness();
 	
 	float min = r;
@@ -254,7 +254,7 @@ void ofColor::setHsb(float hue, float saturation, float brightness) {
 	}
 }
 
-int ofColor::getHex (){
+int ofColor::getHex () const {
 	return
 		((0xff & (unsigned char) r) << 16) |
 		((0xff & (unsigned char) g) << 8) |
