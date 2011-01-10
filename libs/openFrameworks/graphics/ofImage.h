@@ -12,6 +12,7 @@
 //----------------------------------------------------
 // freeImage based stuff:
 void	ofLoadImage(ofPixels & pix, string path);
+void	ofLoadImageFromMemory(ofPixels & pix, unsigned char * bytes, int numBytes);
 
 //TODO: add load from buffer
 //void	ofLoadImage(ofPixels & pix, ofBuffer buf); 
@@ -96,12 +97,15 @@ class ofImage : public ofBaseImage{
 		static bool			loadImageIntoPixels(string fileName, ofPixels &pix);
 		static void			saveImageFromPixels(string fileName, ofPixels &pix);
 
+		static bool			loadImageFromMemory(unsigned char * buffer, unsigned int bytes, ofPixels &pix);
+
 	protected:
 	
 		void				changeTypeOfPixels(ofPixels &pix, int newType);
 		void				resizePixels(ofPixels &pix, int newWidth, int newHeight);
 		static FIBITMAP *	getBmpFromPixels(ofPixels &pix);
 		static void			putBmpIntoPixels(FIBITMAP * bmp, ofPixels &pix);
+
 
 		// utils:
 		static void			allocatePixels(ofPixels &pix, int width, int height, int bpp);

@@ -23,8 +23,8 @@ class testApp : public ofBaseApp{
 	
 	
 		ofURLFileLoader loader;
-	
-
+		ofPixels pix;
+		ofImage img;
 };
 
 #endif
