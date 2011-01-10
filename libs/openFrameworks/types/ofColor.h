@@ -1,6 +1,3 @@
-
-
-
 #pragma once
 #include "ofConstants.h"
 
@@ -18,18 +15,21 @@ class ofColor{
 		ofColor (ofColor const & color);
 		ofColor (ofColor const & color, float _a);
 		ofColor (float gray, float _a = 255.0f);
-		static ofColor fromHsb (float hue, float saturation, float brightness);
+		
+		static ofColor fromHsb (float hue, float saturation, float brightness, float alpha = 255.f);
+		static ofColor fromHex (int hexColor, float alpha = 255.f);
 		
 		void set (float _r, float _g, float _b, float _a = 255.0f);
 		void set (float _gray, float _a = 255.0f);
 		void set (ofColor const & color);
 
-		void setHex (int hexColor, float _a = 255.0f);
+		void setHex (int hexColor, float alpha = 255.0f);
 		int getHex ();
 		
 		ofColor& clamp ();
 		ofColor& invert ();
 		ofColor& normalize ();
+		ofColor& lerp(const ofColor& target, float amount);
 		
 		float getHue ();
 		float getSaturation ();
@@ -40,6 +40,7 @@ class ofColor{
 		void setHue (float hue);
 		void setSaturation (float saturation);
 		void setBrightness (float brightness);
+		void setHsb(float hue, float saturation, float brightness, float alpha);
 		void setHsb(float hue, float saturation, float brightness);
 		
 		ofColor & operator = (ofColor const & color);

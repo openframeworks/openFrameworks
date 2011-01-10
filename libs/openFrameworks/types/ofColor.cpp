@@ -39,9 +39,15 @@ ofColor::ofColor (float gray, float _a){
 	a = _a;
 }
 
-ofColor ofColor::fromHsb (float hue, float saturation, float brightness) {
+ofColor ofColor::fromHsb (float hue, float saturation, float brightness, float alpha) {
 	ofColor cur;
-	cur.setHsb(hue, saturation, brightness);
+	cur.setHsb(hue, saturation, brightness, alpha);
+	return cur;
+}
+
+ofColor ofColor::fromHex(int hexColor, float alpha) {
+	ofColor cur;
+	cur.setHex(hexColor, alpha);
 	return cur;
 }
 
@@ -64,11 +70,11 @@ void ofColor::set (ofColor const & color){
 	a = color.a;
 }
 
-void ofColor::setHex (int hexColor, float _a){
+void ofColor::setHex (int hexColor, float alpha){
 	r = (hexColor >> 16) & 0xff;
 	g = (hexColor >> 8) & 0xff;
 	b = (hexColor >> 0) & 0xff;
-	a = _a;
+	a = alpha;
 }
 
 ofColor& ofColor::clamp (){
@@ -91,6 +97,16 @@ ofColor& ofColor::normalize() {
 	r = 255.f * (r / brightness);
 	g = 255.f * (g / brightness);
 	b = 255.f * (b / brightness);
+	return *this;
+}
+
+ofColor& ofColor::lerp(const ofColor& target, float amount) {
+	float invAmount = 1.f - amount;
+	r = invAmount * r + amount * target.r;
+	g = invAmount * g + amount * target.g;
+	b = invAmount * b + amount * target.b;
+	a = invAmount * a + amount * target.a;
+	return *this;
 }
 
 float ofColor::getHue() {
@@ -181,6 +197,15 @@ void ofColor::setBrightness (float brightness) {
 	setHsb(hue, saturation, brightness);
 }
 
+void ofColor::setHsb(float hue, float saturation, float brightness, float alpha) {
+	a = alpha;
+	setHsb(hue, saturation, brightness);
+}
+
+/*
+	setHsb() breaks the "always override alpha" model because it's needed by setHue(),
+	setSaturation(), and setBrightness() -- which shouldn't modify the alpha.
+*/
 void ofColor::setHsb(float hue, float saturation, float brightness) {
 	if(brightness == 0) { // black
 		set(0);
