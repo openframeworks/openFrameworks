@@ -8,6 +8,6 @@ SUBDIRS = libs \
 	  addons/ofxOsc/src \
 	  addons/ofxShader/src \
 	  addons/ofxThread/src \
-	  addons/ofxVectorGraphics/src \
+	  addons/ofxVectorGraphics \
 	  addons/ofxVectorMath/src \
-	  addons/ofxXmlSettings/src
+	  addons/ofxXmlSettings
