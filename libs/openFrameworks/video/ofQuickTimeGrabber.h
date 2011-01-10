@@ -4,7 +4,7 @@
 #include "ofTexture.h"
 #include "ofGraphics.h"
 #include "ofTypes.h"
-#include "ofBaseVideoGrabber.h"
+#include "ofBaseTypes.h"
 
 #ifdef OF_VIDEO_CAPTURE_QUICKTIME
 	#include "ofQtUtils.h"

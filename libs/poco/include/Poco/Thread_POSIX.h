@@ -1,7 +1,7 @@
 //
 // Thread_POSIX.h
 //
-// $Id: //poco/1.3/Foundation/include/Poco/Thread_POSIX.h#5 $
+// $Id: //poco/1.4/Foundation/include/Poco/Thread_POSIX.h#1 $
 //
 // Library: Foundation
 // Package: Threading
@@ -47,6 +47,8 @@
 #include "Poco/RefCountedObject.h"
 #include "Poco/AutoPtr.h"
 #include <pthread.h>
+// must be limits.h (not <climits>) for PTHREAD_STACK_MIN on Solaris
+#include <limits.h>
 #if !defined(POCO_NO_SYS_SELECT_H)
 #include <sys/select.h>
 #endif
@@ -59,6 +61,7 @@ namespace Poco {
 class Foundation_API ThreadImpl
 {
 public:	
+    typedef pthread_t TIDImpl;
 	typedef void (*Callable)(void*);
 
 	enum Priority
@@ -82,7 +85,8 @@ public:
 
 	ThreadImpl();				
 	~ThreadImpl();
-
+    
+	TIDImpl tidImpl() const;
 	void setPriorityImpl(int prio);
 	int getPriorityImpl() const;
 	void setOSPriorityImpl(int prio);
@@ -100,6 +104,7 @@ public:
 	static void sleepImpl(long milliseconds);
 	static void yieldImpl();
 	static ThreadImpl* currentImpl();
+	static TIDImpl currentTidImpl();
 
 protected:
 	static void* runnableEntry(void* pThread);
@@ -108,6 +113,31 @@ protected:
 	static int reverseMapPrio(int osPrio);
 
 private:
+	class CurrentThreadHolder
+	{
+	public:
+		CurrentThreadHolder()
+		{
+			if (pthread_key_create(&_key, NULL))
+				throw SystemException("cannot allocate thread context key");
+		}
+		~CurrentThreadHolder()
+		{
+			pthread_key_delete(_key);
+		}
+		ThreadImpl* get() const
+		{
+			return reinterpret_cast<ThreadImpl*>(pthread_getspecific(_key));
+		}
+		void set(ThreadImpl* pThread)
+		{
+			pthread_setspecific(_key, pThread);
+		}
+	
+	private:
+		pthread_key_t _key;
+	};
+
 	struct ThreadData: public RefCountedObject
 	{
 		ThreadData():
@@ -115,6 +145,7 @@ private:
 			pCallbackTarget(0),
 			thread(0),
 			prio(PRIO_NORMAL_IMPL),
+			osPrio(0),
 			done(false),
 			stackSize(POCO_THREAD_STACK_SIZE)
 		{
@@ -131,8 +162,7 @@ private:
 
 	AutoPtr<ThreadData> _pData;
 
-	static pthread_key_t _currentKey;
-	static bool          _haveCurrentKey;
+	static CurrentThreadHolder _currentThreadHolder;
 	
 #if defined(POCO_OS_FAMILY_UNIX)
 	SignalHandler::JumpBufferVec _jumpBufferVec;
@@ -156,23 +186,6 @@ inline int ThreadImpl::getOSPriorityImpl() const
 }
 
 
-inline void ThreadImpl::sleepImpl(long milliseconds)
-{
-#if defined(__VMS) || defined(__digital__)
-		// This is specific to DECThreads
-		struct timespec interval;
-		interval.tv_sec  = milliseconds / 1000;
-		interval.tv_nsec = (milliseconds % 1000)*1000000; 
-		pthread_delay_np(&interval);
-#else 
-		struct timeval tv;
-		tv.tv_sec  = milliseconds / 1000;
-		tv.tv_usec = (milliseconds % 1000) * 1000;
-		select(0, NULL, NULL, NULL, &tv); 	
-#endif
-}
-
-
 inline bool ThreadImpl::isRunningImpl() const
 {
 	return _pData->pRunnableTarget != 0 ||
@@ -189,6 +202,12 @@ inline void ThreadImpl::yieldImpl()
 inline int ThreadImpl::getStackSizeImpl() const
 {
 	return _pData->stackSize;
+}
+
+
+inline ThreadImpl::TIDImpl ThreadImpl::tidImpl() const
+{
+	return _pData->thread;
 }
 
 
