@@ -82,6 +82,7 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\openFrameworks\app\ofAppBaseWindow.h" />
     <ClInclude Include="..\..\..\openFrameworks\ofMain.h" />
     <ClInclude Include="..\..\..\openFrameworks\app\ofAppGlutWindow.h" />
     <ClInclude Include="..\..\..\openFrameworks\app\ofAppRunner.h" />
@@ -116,6 +117,7 @@
   <ItemGroup>
     <ClCompile Include="..\..\..\openFrameworks\app\ofAppGlutWindow.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\app\ofAppRunner.cpp" />
+    <ClCompile Include="..\..\..\openFrameworks\events\ofEvents.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\graphics\ofBitmapFont.cpp">
       <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Level1</WarningLevel>
     </ClCompile>
