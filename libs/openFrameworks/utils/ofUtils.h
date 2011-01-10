@@ -1,5 +1,4 @@
-#ifndef _OF_UTIL
-#define _OF_UTIL
+#pragma once
 
 #include "ofConstants.h"
 
@@ -60,7 +59,3 @@ void ofRestoreConsoleColor();
 //--------------------------------------------------
 class ofBuffer;
 bool ofReadFile(const string & path, ofBuffer & file, bool binary=false);
-
-#endif
-
-
