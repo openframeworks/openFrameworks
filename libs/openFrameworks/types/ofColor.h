@@ -31,6 +31,11 @@ class ofColor{
 		ofColor& normalize ();
 		ofColor& lerp(const ofColor& target, float amount);
 		
+		ofColor getClamped () const;
+		ofColor getInverted () const;
+		ofColor getNormalized () const;
+		ofColor getLerped(const ofColor& target, float amount) const;
+		
 		float getHue () const;
 		float getSaturation () const;
 		float getBrightness () const; // brightest component

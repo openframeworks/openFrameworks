@@ -109,6 +109,31 @@ ofColor& ofColor::lerp(const ofColor& target, float amount) {
 	return *this;
 }
 
+ofColor ofColor::getClamped () const {
+	ofColor cur(*this);
+	cur.clamp();
+	return cur;
+}
+
+ofColor ofColor::getInverted () const {
+	ofColor cur(*this);
+	cur.invert();
+	return cur;
+}
+
+ofColor ofColor::getNormalized () const {
+	ofColor cur(*this);
+	cur.normalize();
+	return cur;
+}
+
+ofColor ofColor::getLerped(const ofColor& target, float amount) const {
+	ofColor cur(*this);
+	cur.lerp(target, amount);
+	return cur;
+}
+
+
 float ofColor::getHue() const {
 	float hue, saturation, brightness;
 	getHsb(hue, saturation, brightness);
