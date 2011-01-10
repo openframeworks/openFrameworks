@@ -9,6 +9,7 @@
 #include "ofTypes.h"
 #include "ofSystemUtils.h"
 #include "ofFileUtils.h"
+#include "ofVectorMath.h"
 
 //--------------------------
 // communication
