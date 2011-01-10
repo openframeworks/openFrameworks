@@ -1,7 +1,7 @@
 //
 // Stopwatch.h
 //
-// $Id: //poco/1.3/Foundation/include/Poco/Stopwatch.h#2 $
+// $Id: //poco/1.4/Foundation/include/Poco/Stopwatch.h#1 $
 //
 // Library: Foundation
 // Package: DateTime
@@ -50,6 +50,11 @@ namespace Poco {
 class Foundation_API Stopwatch
 	/// A simple facility to measure time intervals
 	/// with microsecond resolution.
+	///
+	/// Note that Stopwatch is based on the Timestamp
+	/// class. Therefore, if during a Stopwatch run,
+	/// the system time is changed, the measured time
+	/// will not be correct.
 {
 public:
 	Stopwatch();

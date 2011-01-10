@@ -1,7 +1,7 @@
 //
 // Environment.h
 //
-// $Id: //poco/1.3/Foundation/include/Poco/Environment.h#2 $
+// $Id: //poco/1.4/Foundation/include/Poco/Environment.h#1 $
 //
 // Library: Foundation
 // Package: Core
@@ -94,6 +94,24 @@ public:
 		/// of the first Ethernet adapter found on the system.
 		///
 		/// Throws a SystemException if no Ethernet adapter is available.
+		
+	static unsigned processorCount();
+		/// Returns the number of processors installed in the system.
+		///
+		/// If the number of processors cannot be determined, returns 1.
+		
+	static Poco::UInt32 libraryVersion();
+		/// Returns the POCO C++ Libraries version as a hexadecimal
+		/// number in format 0xAABBCCDD, where
+		///    - AA is the major version number,
+		///    - BB is the minor version number,
+		///    - CC is the revision number, and
+		///    - DD is the patch level number.
+		///
+		/// Some patch level ranges have special meanings:
+		///    - Dx mark development releases,
+		///    - Ax mark alpha releases, and
+		///    - Bx mark beta releases.
 };
 
 

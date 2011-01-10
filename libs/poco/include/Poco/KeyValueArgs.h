@@ -1,7 +1,7 @@
 //
 // KeyValueArgs.h
 //
-// $Id: //poco/1.3/Foundation/include/Poco/KeyValueArgs.h#1 $
+// $Id: //poco/1.4/Foundation/include/Poco/KeyValueArgs.h#1 $
 //
 // Library: Foundation
 // Package: Cache
@@ -36,8 +36,8 @@
 //
 
 
-#ifndef  Foundation_KeyValueArgs_INCLUDED
-#define  Foundation_KeyValueArgs_INCLUDED
+#ifndef Foundation_KeyValueArgs_INCLUDED
+#define Foundation_KeyValueArgs_INCLUDED
 
 
 #include "Poco/Foundation.h"
@@ -92,4 +92,4 @@ private:
 } // namespace Poco
 
 
-#endif
+#endif // Foundation_KeyValueArgs_INCLUDED

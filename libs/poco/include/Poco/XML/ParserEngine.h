@@ -1,7 +1,7 @@
 //
 // ParserEngine.h
 //
-// $Id: //poco/1.3/XML/include/Poco/XML/ParserEngine.h#2 $
+// $Id: //poco/1.4/XML/include/Poco/XML/ParserEngine.h#1 $
 //
 // Library: XML
 // Package: XML
@@ -40,7 +40,11 @@
 
 
 #include "Poco/XML/XML.h"
+#if defined(POCO_UNBUNDLED)
+#include <expat.h>
+#else
 #include "Poco/XML/expat.h"
+#endif
 #include "Poco/XML/XMLString.h"
 #include "Poco/XML/XMLStream.h"
 #include "Poco/SAX/Locator.h"
@@ -160,6 +164,26 @@ public:
 
 	ErrorHandler* getErrorHandler() const;
 		/// Return the current error handler.
+		
+	void setEnablePartialReads(bool flag = true);
+		/// Enable or disable partial reads from the input source.
+		///
+		/// This is useful for parsing XML from a socket stream for
+		/// a protocol like XMPP, where basically single elements 
+		/// are read one at a time from the input source's stream, and
+		/// following elements depend upon responses sent back to
+		/// the peer.
+		///
+		/// Normally, the parser always reads blocks of PARSE_BUFFER_SIZE
+		/// at a time, and blocks until a complete block has been read (or
+		/// the end of the stream has been reached).
+		/// This allows for efficient parsing of "complete" XML documents,
+		/// but fails in a case such as XMPP, where only XML fragments
+		/// are sent at a time.
+		
+	bool getEnablePartialReads() const;
+		/// Returns true if partial reads are enabled (see
+		/// setEnablePartialReads()), false otherwise.
 	
 	void parse(InputSource* pInputSource);
 		/// Parse an XML document from the given InputSource.
@@ -189,6 +213,12 @@ protected:
 
 	void parseCharInputStream(XMLCharInputStream& istr);
 		/// Parses an entity from the given stream.
+		
+	std::streamsize readBytes(XMLByteInputStream& istr, char* pBuffer, std::streamsize bufferSize);
+		/// Reads at most bufferSize bytes from the given stream into the given buffer.
+
+	std::streamsize readChars(XMLCharInputStream& istr, XMLChar* pBuffer, std::streamsize bufferSize);
+		/// Reads at most bufferSize chars from the given stream into the given buffer.
 
 	void handleError(int errorNo);
 		/// Throws an XMLException with a message corresponding
@@ -252,6 +282,7 @@ private:
 	bool       _expandInternalEntities;
 	bool       _externalGeneralEntities;
 	bool       _externalParameterEntities;
+	bool       _enablePartialReads;
 	NamespaceStrategy* _pNamespaceStrategy;
 	EncodingMap        _encodings;
 	ContextStack       _context;
@@ -334,6 +365,12 @@ inline LexicalHandler* ParserEngine::getLexicalHandler() const
 inline ErrorHandler* ParserEngine::getErrorHandler() const
 {
 	return _pErrorHandler;
+}
+
+
+inline bool ParserEngine::getEnablePartialReads() const
+{
+	return _enablePartialReads;
 }
 
 

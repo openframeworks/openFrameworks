@@ -1,7 +1,7 @@
 //
 // MessageHeader.h
 //
-// $Id: //poco/1.3/Net/include/Poco/Net/MessageHeader.h#1 $
+// $Id: //poco/1.4/Net/include/Poco/Net/MessageHeader.h#1 $
 //
 // Library: Net
 // Package: Messages
@@ -139,7 +139,7 @@ public:
 	static void quote(const std::string& value, std::string& result, bool allowSpace = false);
 		/// Checks if the value must be quoted. If so, the value is
 		/// appended to result, enclosed in double-quotes.
-		/// Otherwise. the value is appended to result as-is.
+		/// Otherwise, the value is appended to result as-is.
 		
 private:
 	enum Limits
