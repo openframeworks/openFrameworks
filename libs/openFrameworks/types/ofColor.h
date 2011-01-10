@@ -24,18 +24,18 @@ class ofColor{
 		void set (ofColor const & color);
 
 		void setHex (int hexColor, float alpha = 255.0f);
-		int getHex ();
+		int getHex () const;
 		
 		ofColor& clamp ();
 		ofColor& invert ();
 		ofColor& normalize ();
 		ofColor& lerp(const ofColor& target, float amount);
 		
-		float getHue ();
-		float getSaturation ();
-		float getBrightness (); // brightest component
-		float getLightness (); // average of the components
-		void getHsb(float& hue, float& saturation, float& brightness);
+		float getHue () const;
+		float getSaturation () const;
+		float getBrightness () const; // brightest component
+		float getLightness () const; // average of the components
+		void getHsb(float& hue, float& saturation, float& brightness) const;
 		
 		void setHue (float hue);
 		void setSaturation (float saturation);
