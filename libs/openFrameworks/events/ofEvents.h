@@ -4,6 +4,21 @@
 #include "ofConstants.h"
 #include "ofUtils.h"
 
+void ofNotifySetup();
+void ofNotifyUpdate();
+void ofNotifyDraw();
+
+void ofNotifyKeyPressed(int key);
+void ofNotifyKeyReleased(int key);
+
+void ofNotifyMousePressed(int x, int y, int button);
+void ofNotifyMouseReleased(int x, int y, int button);
+void ofNotifyMouseDragged(int x, int y, int button);
+void ofNotifyMouseMoved(int x, int y);
+
+void ofNotifyExit();
+void ofNotifyWindowResized(int width, int height);
+
 #ifdef OF_USING_POCO
 
 	#ifndef OF_EVENTS_ADDON

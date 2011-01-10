@@ -97,6 +97,20 @@ void ofImage::resetAnchor(){
 }
 
 //------------------------------------
+void ofImage::draw(const ofRectangle & _r){
+	if (bUseTexture){
+		tex.draw(_r);
+	}
+}
+
+//------------------------------------
+void ofImage::draw(const ofPoint & _p, float _w, float _h){
+	if (bUseTexture){
+		tex.draw(_p, _w, _h);
+	}
+}
+
+//------------------------------------
 void ofImage::draw(float _x, float _y, float _w, float _h){
 	if (bUseTexture){
 		tex.draw(_x, _y, _w, _h);
@@ -104,8 +118,25 @@ void ofImage::draw(float _x, float _y, float _w, float _h){
 }
 
 //------------------------------------
+void ofImage::draw(float _x, float _y, float _z, float _w, float _h){
+	if (bUseTexture){
+		tex.draw(_x, _y, _z, _w, _h);
+	}
+}
+
+//------------------------------------
+void ofImage::draw(const ofPoint & p){
+	draw(p.x,p.y,p.z,myPixels.width,myPixels.height);
+}
+
+//------------------------------------
 void ofImage::draw(float x, float y){
-	draw(x,y,myPixels.width,myPixels.height);
+	draw(x,y,0.0f,myPixels.width,myPixels.height);
+}
+
+//------------------------------------
+void ofImage::draw(float x, float y, float z){
+	draw(x,y,z,myPixels.width,myPixels.height);
 }
 
 //------------------------------------
@@ -177,6 +208,20 @@ ofTexture & ofImage::getTextureReference(){
 	return tex;
 }
 
+//----------------------------------------------------------
+void ofImage::bind(){
+	if (bUseTexture && tex.bAllocated())
+		tex.bind();
+}
+
+//----------------------------------------------------------
+void ofImage::unbind(){
+	if (bUseTexture && tex.bAllocated())
+		tex.unbind();
+}
+
+
+
 //------------------------------------
 void  ofImage::setFromPixels(unsigned char * newPixels, int w, int h, int newType, bool bOrderIsRGB){
 
@@ -185,7 +230,9 @@ void  ofImage::setFromPixels(unsigned char * newPixels, int w, int h, int newTyp
 	}
 
 	if (!((width == w) && (height == h) && (type == newType))){
+		bool bCacheBUseTexture = bUseTexture;
 		clear();
+		bUseTexture = bCacheBUseTexture;
 		allocate(w,h, newType);
 	}
 
@@ -607,7 +654,10 @@ void  ofImage::saveImageFromPixels(string fileName, ofPixels &pix){
 			fif = FreeImage_GetFIFFromFilename(fileName.c_str());
 		}
 		if((fif != FIF_UNKNOWN) && FreeImage_FIFSupportsReading(fif)) {
-			FreeImage_Save(fif, bmp, fileName.c_str(), 0);
+			if((FREE_IMAGE_FORMAT)fif != FIF_JPEG)
+			   FreeImage_Save(fif, bmp, fileName.c_str());
+			else
+			   FreeImage_Save(fif, bmp, fileName.c_str(),JPEG_QUALITYSUPERB);
 		}
 	}
 

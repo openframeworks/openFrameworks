@@ -89,7 +89,7 @@ void testApp::update(){
 //--------------------------------------------------------------
 void testApp::draw(){
 
-     ofSetColor(0x000000);
+     ofSetHexColor(0x000000);
      ofNoFill();
      ofBeginShape();
      for (int i = 0; i < nPts; i++){
@@ -103,9 +103,9 @@ void testApp::draw(){
                   "rotateAmount in z (f/v): " + ofToString(rotateAmount.z,3);
 
      ofFill();
-     ofSetColor(0xE5A93F);
+     ofSetHexColor(0xE5A93F);
      ofRect(10,10,300,70);
-     ofSetColor(0x000000);
+     ofSetHexColor(0x000000);
      ofDrawBitmapString(info,30,30);
 
 

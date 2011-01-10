@@ -84,6 +84,9 @@
 		<Unit filename="..\..\..\openFrameworks\events\ofEventUtils.h">
 			<Option virtualFolder="openframeworks\events\" />
 		</Unit>
+		<Unit filename="..\..\..\openFrameworks\events\ofEvents.cpp">
+			<Option virtualFolder="openframeworks\events\" />
+		</Unit>
 		<Unit filename="..\..\..\openFrameworks\events\ofEvents.h">
 			<Option virtualFolder="openframeworks\events\" />
 		</Unit>

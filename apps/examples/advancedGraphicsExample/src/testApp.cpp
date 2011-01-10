@@ -177,7 +177,7 @@ void testApp::draw(){
 	// because it is using glDrawPixels which varies in
 	// speed from system to system.  try using ofTrueTypeFont
 	// if this bitMap type slows you down.
-	ofSetColor(0xFFFFFF);
+	ofSetHexColor(0xFFFFFF);
 	ofDrawBitmapString("this is a Lissajous curve", 190, 500);
 	ofDrawBitmapString("move mouse to spin me", 670, 500);
 

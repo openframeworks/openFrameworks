@@ -16,7 +16,7 @@ void testApp::update(){
 
 //--------------------------------------------------------------
 void testApp::draw(){
-	ofSetColor(0xffffff);
+	ofSetHexColor(0xffffff);
 	TO.draw();
 
 
@@ -25,7 +25,7 @@ void testApp::draw(){
     ofDrawBitmapString(str, 350, 56);
 
 
-    ofSetColor(0xff0033);
+    ofSetHexColor(0xff0033);
 
     ofDrawBitmapString("press 's' to stop the thread and 'a' to start it", 50, 160);
 }

@@ -313,22 +313,39 @@ void ofxCvImage::draw( float x, float y ) {
     draw( x,y, width, height );
 }
 
+//----------------------------------------------------------
+void ofxCvImage::draw(const ofPoint & point){
+	draw(point.x, point.y);
+}
+
+
+//----------------------------------------------------------
+void ofxCvImage::draw(const ofRectangle & rect){
+	draw(rect.x, rect.y, rect.width, rect.height);
+}
+
+
+//--------------------------------------------------------------------------------
+void ofxCvImage::updateTexture(){
+	if( bUseTexture ) {
+		if( bTextureDirty ) {
+			if(tex.getWidth() != width || tex.getHeight() != height) {
+				//ROI was changed
+				// reallocating texture - this could be faster with ROI support
+				tex.clear();
+				tex.allocate( width, height, glchannels );
+			}
+			tex.loadData( getPixels(), width, height, glchannels );
+			bTextureDirty = false;
+		}
+	}
+}
+
 //--------------------------------------------------------------------------------
 void ofxCvImage::draw( float x, float y, float w, float h ) {
     if( bUseTexture ) {
-        if( bTextureDirty ) {
-            if(tex.getWidth() != width || tex.getHeight() != height) {
-                //ROI was changed
-                // reallocating texture - this could be faster with ROI support
-                tex.clear();
-                tex.allocate( width, height, glchannels );
-            }
-            tex.loadData( getPixels(), width, height, glchannels );
-            bTextureDirty = false;
-        }
-
+    	updateTexture();
         tex.draw(x,y, w,h);
-
     } else {
         #ifdef TARGET_OPENGLES
             ofLog(OF_LOG_ERROR, "texture-less drawing not supported in OpenGL ES");
