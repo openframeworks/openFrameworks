@@ -18,8 +18,14 @@
     GLuint defaultFramebuffer, colorRenderbuffer;
 
     GLuint program;
+	
+	//settings
+	bool fsaaEnabled;
+	bool depthEnabled;
+	bool retinaEnabled;
 }
 
+- (id)initWithDepth:(bool)depth andAA:(bool)fsaa andRetina:(bool)retina;
 - (void) startRender;
 - (void) finishRender;
 - (BOOL)resizeFromLayer:(CAEAGLLayer *)layer;

@@ -78,6 +78,10 @@ public:
 	
 	static ofAppiPhoneWindow* getInstance();
 	
+	bool depthEnabled;
+	bool antiAliasingEnabled;
+	bool useRetina;
+	
 protected:
 	// cache these, they're not gonne change during duration of app
 	ofPoint				screenSize;

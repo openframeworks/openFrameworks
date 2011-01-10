@@ -46,8 +46,12 @@
 	return [CAEAGLLayer class];
 }
 
-
 - (id) initWithFrame:(CGRect)frame
+{
+	return [self initWithFrame:frame andDepth:false andAA:false];
+}
+
+- (id) initWithFrame:(CGRect)frame andDepth:(bool)depth andAA:(bool)fsaaEnabled andRetina:(bool)retinaEnabled
 {
 	if((self = [super initWithFrame:frame])) {
         // Get the layer
@@ -58,16 +62,18 @@
 										[NSNumber numberWithBool:YES], kEAGLDrawablePropertyRetainedBacking, kEAGLColorFormatRGBA8, kEAGLDrawablePropertyColorFormat, nil];
 		
 		// TODO: add initSettings to override ES2Renderer even if available
-        renderer = [[ES2Renderer alloc] init];
+        renderer = [[ES2Renderer alloc] initWithDepth:depth andAA:fsaaEnabled andRetina:retinaEnabled];
 		
         if (!renderer) {
-            renderer = [[ES1Renderer alloc] init];
-		
+            renderer = [[ES1Renderer alloc] initWithDepth:depth andAA:fsaaEnabled andRetina:retinaEnabled];
+			
             if (!renderer) {
-			[self release];
-			return nil;
-		}
+				[self release];
+				return nil;
+			}
         }
+		
+		
 		
 		[[self context] renderbufferStorage:GL_RENDERBUFFER_OES fromDrawable:eaglLayer];
 		
