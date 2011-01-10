@@ -1,4 +1,4 @@
-#include "ofxFbo.h"
+#include "ofFbo.h"
 
 
 /*
@@ -86,7 +86,7 @@
 
 
 //-------------------------------------------------------------------------------------
-ofxFbo::Settings::Settings() {
+ofFbo::Settings::Settings() {
 	width					= 0;
 	height					= 0;
 	numColorbuffers			= 1;
@@ -105,12 +105,12 @@ ofxFbo::Settings::Settings() {
 
 //-------------------------------------------------------------------------------------
 
-int	ofxFbo::_maxColorAttachments = -1;
-int	ofxFbo::_maxDrawBuffers = -1;
-int	ofxFbo::_maxSamples = -1;
+int	ofFbo::_maxColorAttachments = -1;
+int	ofFbo::_maxDrawBuffers = -1;
+int	ofFbo::_maxSamples = -1;
 
 
-ofxFbo::ofxFbo():
+ofFbo::ofFbo():
 isBound(0),
 fbo(0),
 fboTextures(0),
@@ -120,28 +120,28 @@ savedFramebuffer(0)
 {
 }
 
-ofxFbo::~ofxFbo() {
+ofFbo::~ofFbo() {
 	destroy();
 }
 
 
-int	ofxFbo::maxColorAttachments() {
+int	ofFbo::maxColorAttachments() {
 	if(_maxColorAttachments<0) checkGLSupport();
 	return _maxColorAttachments;
 }
 
-int	ofxFbo::maxDrawBuffers() {
+int	ofFbo::maxDrawBuffers() {
 	if(_maxDrawBuffers<0) checkGLSupport();
 	return _maxDrawBuffers;
 }
 
-int	ofxFbo::maxSamples() {
+int	ofFbo::maxSamples() {
 	if(_maxSamples<0) checkGLSupport();
 	return _maxSamples;
 }
 
 
-void ofxFbo::destroy() {
+void ofFbo::destroy() {
 	unbind();
 
 	if(fbo) glDeleteFramebuffers(1, &fbo);
@@ -161,12 +161,12 @@ void ofxFbo::destroy() {
 }
 
 
-void ofxFbo::checkGLSupport() {
+void ofFbo::checkGLSupport() {
 	glGetIntegerv(GL_MAX_COLOR_ATTACHMENTS, &_maxColorAttachments);
 	glGetIntegerv(GL_MAX_DRAW_BUFFERS, &_maxDrawBuffers);
 	glGetIntegerv(GL_MAX_SAMPLES, &_maxSamples);
 
-	ofLog(OF_LOG_NOTICE, string("ofxFbo::checkGLSupport()\n") +
+	ofLog(OF_LOG_NOTICE, string("ofFbo::checkGLSupport()\n") +
 		  "maxColorAttachments: " + ofToString(_maxColorAttachments) + "\n" +
 		  "maxDrawBuffers: " + ofToString(_maxDrawBuffers) + "\n" +
 		  "maxSamples: " + ofToString(_maxSamples)
@@ -174,7 +174,7 @@ void ofxFbo::checkGLSupport() {
 }
 
 
-void ofxFbo::setup(int width, int height, int internalformat, int numSamples) {
+void ofFbo::setup(int width, int height, int internalformat, int numSamples) {
 	settings.width			= width;
 	settings.height			= height;
 	settings.internalformat	= internalformat;
@@ -183,7 +183,7 @@ void ofxFbo::setup(int width, int height, int internalformat, int numSamples) {
 }
 
 
-void ofxFbo::setup(Settings settings) {
+void ofFbo::setup(Settings settings) {
 	checkGLSupport();
 
 	destroy();
@@ -225,7 +225,7 @@ void ofxFbo::setup(Settings settings) {
 }
 
 
-GLuint ofxFbo::createAndAttachRenderbuffer(GLenum internalFormat, GLenum attachmentPoint) {
+GLuint ofFbo::createAndAttachRenderbuffer(GLenum internalFormat, GLenum attachmentPoint) {
 	GLuint buffer;
 	glGenRenderbuffers(1, &buffer);
 	glBindRenderbuffer(GL_RENDERBUFFER, buffer);
@@ -236,7 +236,7 @@ GLuint ofxFbo::createAndAttachRenderbuffer(GLenum internalFormat, GLenum attachm
 }
 
 
-void ofxFbo::createAndAttachTexture(GLenum attachmentPoint) {
+void ofFbo::createAndAttachTexture(GLenum attachmentPoint) {
 	// bind fbo for textures (if using MSAA this is the newly created fbo, otherwise its the same fbo as before)
 	glBindFramebuffer(GL_FRAMEBUFFER, fboTextures);
 
@@ -258,7 +258,7 @@ void ofxFbo::createAndAttachTexture(GLenum attachmentPoint) {
 }
 
 
-void ofxFbo::begin() {
+void ofFbo::begin() {
 	bind();
 	ofPushView();
 	ofSetupScreenPerspective(getWidth(), getHeight(), false);
@@ -266,12 +266,12 @@ void ofxFbo::begin() {
 }
 
 
-void ofxFbo::end() {
+void ofFbo::end() {
 	unbind();
 	ofPopView();
 }
 
-void ofxFbo::bind() {
+void ofFbo::bind() {
 	if(isBound == 0) {
 		glGetIntegerv(GL_FRAMEBUFFER_BINDING, &savedFramebuffer);
 		glBindFramebuffer(GL_FRAMEBUFFER, fbo);
@@ -280,7 +280,7 @@ void ofxFbo::bind() {
 }
 
 
-void ofxFbo::unbind() {
+void ofFbo::unbind() {
 	if(isBound) {
 		glBindFramebuffer(GL_FRAMEBUFFER, savedFramebuffer);
 		isBound = 0;
@@ -288,16 +288,16 @@ void ofxFbo::unbind() {
 }
 
 
-int ofxFbo::getNumTextures() {
+int ofFbo::getNumTextures() {
 	return textures.size();
 }
 
-ofTexture& ofxFbo::getTexture(int attachmentPoint) {
+ofTexture& ofFbo::getTexture(int attachmentPoint) {
 	updateTexture(attachmentPoint);
 	return *textures.at(attachmentPoint);
 }
 
-void ofxFbo::updateTexture(int attachmentPoint) {
+void ofFbo::updateTexture(int attachmentPoint) {
 	// TODO: flag to see if this is dirty or not
 	if(fbo != fboTextures) {
 		glGetIntegerv( GL_FRAMEBUFFER_BINDING, &savedFramebuffer );
@@ -333,31 +333,31 @@ void ofxFbo::updateTexture(int attachmentPoint) {
 
 
 
-void ofxFbo::draw(float x, float y) {
+void ofFbo::draw(float x, float y) {
 	draw(x, y, settings.width, settings.height);
 }
 
 
-void ofxFbo::draw(float x, float y, float width, float height) {
+void ofFbo::draw(float x, float y, float width, float height) {
 	getTexture(0).draw(x, y, width, height);
 }
 
 
-GLuint ofxFbo::getFbo() {
+GLuint ofFbo::getFbo() {
 	return fbo;
 }
 
-int ofxFbo::getWidth() {
+int ofFbo::getWidth() {
 	return settings.width;
 }
 
 
-int ofxFbo::getHeight() {
+int ofFbo::getHeight() {
 	return settings.height;
 }
 
 
-bool ofxFbo::checkStatus() {
+bool ofFbo::checkStatus() {
 	GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
 	switch(status) {
 		case GL_FRAMEBUFFER_COMPLETE:
