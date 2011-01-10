@@ -99,10 +99,10 @@
 	
 - (void)layoutSubviews
 {
-	//	NSLog(@"layoutSubviews");
-	//    [renderer resizeFromLayer:(CAEAGLLayer*)self.layer];
-	//    [renderer startRender];
-	//    [renderer finishRender];
+		NSLog(@"layoutSubviews");
+	    [renderer resizeFromLayer:(CAEAGLLayer*)self.layer];
+	    [renderer startRender];
+	    [renderer finishRender];
 }
 
 
