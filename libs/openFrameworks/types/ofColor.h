@@ -26,7 +26,12 @@ class ofColor{
 		void setHex (int hexColor, float _a = 255.0f);
 		
 		ofColor clamp ();
-		float getBrightness ();
+		
+		float getHue ();
+		float getSaturation ();
+		float getBrightness (); // brightest component
+		float getLightness (); // average of the components
+		void getHsb(float& hue, float& saturation, float& brightness);
 		ofColor getInverted ();
 		int getHex ();
 		

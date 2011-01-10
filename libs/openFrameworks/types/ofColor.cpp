@@ -73,8 +73,70 @@ ofColor ofColor::clamp (){
 	return *this;
 }
 
-float ofColor::getBrightness (){
-	return (r + g + b) / 3.0f;
+void ofColor::getHsb(float& hue, float& saturation, float& brightness) {	
+	float max = r;
+	if(g > max)
+		max = g;
+	if(b > max)
+		max = b;
+	
+	float min = r;
+	if(g < min)
+		min = g;
+	if(b < min)
+		min = b;
+	
+	if(max == min) { // grays
+		hue = 0.f;
+		saturation = 0.f;
+		brightness = 255.f * max;
+		return;
+	}
+	
+	float hueSixth;
+	if(r == max) {
+		hueSixth = (g - b) / (max - min);
+		if(hueSixth < 0.f)
+			hueSixth += 6.f;
+	} else if (g == max) {
+		hueSixth = 2.f + (b - r) / (max - min);
+	} else {
+		hueSixth = 4.f + (r - g) / (max - min);
+	}
+	hue = 255.f * hueSixth / 6.f;
+	saturation = 255.f * (max - min) / max;
+	brightness = max;
+}
+
+float ofColor::getHue() {
+	float hue, saturation, brightness;
+	getHsb(hue, saturation, brightness);
+	return hue;
+}
+
+float ofColor::getSaturation() {
+	float hue, saturation, brightness;
+	getHsb(hue, saturation, brightness);
+	return saturation;
+}
+
+/*
+	Brightness is simply the maximum of the three color components.
+	This is used by Photoshop (HSB) and Processing (HSB).
+	Brightness is also called "value".
+*/
+float ofColor::getBrightness() {
+	float hue, saturation, brightness;
+	getHsb(hue, saturation, brightness);
+	return brightness;
+}
+
+/*
+	Lightness is the average of the three color components.
+	This is used by the Lab and HSL color spaces.
+*/
+float ofColor::getLightness() {
+	return (r + g + b) / 3.f;
 }
 
 ofColor ofColor::getInverted (){
