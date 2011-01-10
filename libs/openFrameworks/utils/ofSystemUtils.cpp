@@ -7,9 +7,6 @@ void ofCreateAlertDialog(string errorMessage){
 	
 	
 	#ifdef TARGET_WIN32
-	
-	
-	
 		MessageBox(NULL, errorMessage.c_str(), "Critical Error", MB_OK | MB_ICONERROR);
 	#endif
 	
