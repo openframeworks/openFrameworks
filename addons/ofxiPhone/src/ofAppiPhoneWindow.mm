@@ -59,6 +59,10 @@ ofAppiPhoneWindow::ofAppiPhoneWindow() {
 	windowPos.set(NOT_INITIALIZED, NOT_INITIALIZED);
 	windowSize.set(NOT_INITIALIZED, NOT_INITIALIZED);
 	screenSize.set(NOT_INITIALIZED, NOT_INITIALIZED);
+	
+	depthEnabled=false;
+	antiAliasingEnabled=false;
+	useRetina=false;
 }
 
 /******** Initialization methods ************/

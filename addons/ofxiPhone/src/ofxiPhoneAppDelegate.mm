@@ -81,7 +81,11 @@
 	UIWindow *window = [[UIWindow alloc] initWithFrame:screenBounds];
 	
 	// create the OpenGL view and add it to the window
-	glView = [[EAGLView alloc] initWithFrame:screenBounds];// pixelFormat:GL_RGB565_OES depthFormat:GL_DEPTH_COMPONENT16_OES preserveBackbuffer:NO];
+	
+	//glView = [[EAGLView alloc] initWithFrame:screenBounds];// pixelFormat:GL_RGB565_OES depthFormat:GL_DEPTH_COMPONENT16_OES preserveBackbuffer:NO];
+	
+	glView = [[EAGLView alloc] initWithFrame:screenBounds andDepth:iPhoneGetOFWindow()->depthEnabled andAA:iPhoneGetOFWindow()->antiAliasingEnabled andRetina:iPhoneGetOFWindow()->useRetina];
+	
 	[window addSubview:glView];
 	//	[glView release];	// do not release, incase app wants to removeFromSuper and add later
 	

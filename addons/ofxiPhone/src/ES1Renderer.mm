@@ -7,8 +7,18 @@
 // Create an OpenGL ES 1.1 context
 - (id)init
 {
+	return [self initWithDepth:false andAA:false andRetina:false];
+}
+
+- (id)initWithDepth:(bool)depth andAA:(bool)fsaa andRetina:(bool)retina
+{
     if ((self = [super init]))
     {
+		
+		depthEnabled = depth;
+		fsaaEnabled = fsaa;
+		retinaEnabled = retina;
+				
         context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES1];
 		NSLog(@"Creating OpenGL ES1 Renderer");
 

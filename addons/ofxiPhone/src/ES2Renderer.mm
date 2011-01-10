@@ -28,8 +28,17 @@ enum {
 // Create an OpenGL ES 2.0 context
 - (id)init
 {
+	return [self initWithDepth:false andAA:false andRetina:false];
+}
+
+- (id)initWithDepth:(bool)depth andAA:(bool)fsaa andRetina:(bool)retina
+{
     if ((self = [super init]))
     {
+		depthEnabled = depth;
+		fsaaEnabled = fsaa;
+		retinaEnabled = retina;
+		
         context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2];
 		NSLog(@"Creating OpenGL ES2 Renderer");
 

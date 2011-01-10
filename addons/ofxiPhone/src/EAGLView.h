@@ -49,7 +49,7 @@
 - (void) startRender;
 - (void) finishRender;
 - (EAGLContext*) context;
-
+- (id) initWithFrame:(CGRect)frame andDepth:(bool)depth andAA:(bool)fsaaEnabled andRetina:(bool)retinaEnabled;
 
 
 @end

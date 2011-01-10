@@ -16,11 +16,17 @@
 
     // The OpenGL ES names for the framebuffer and renderbuffer used to render to this view
     GLuint defaultFramebuffer, colorRenderbuffer;
+	
+	//settings
+	bool fsaaEnabled;
+	bool depthEnabled;
+	bool retinaEnabled;
 }
 
 - (void) startRender;
 - (void) finishRender;
 - (BOOL)resizeFromLayer:(CAEAGLLayer *)layer;
+- (id)initWithDepth:(bool)depth andAA:(bool)fsaa andRetina:(bool)retina;
 - (EAGLContext*) context;
 
 @end
