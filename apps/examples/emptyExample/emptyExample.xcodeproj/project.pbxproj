@@ -573,7 +573,6 @@
 					"-lpthread",
 				);
 				OTHER_LDFLAGS = "";
-				 
 			};
 			name = ReleaseUniversal;
 		};
@@ -657,7 +656,6 @@
 					"-lpthread",
 				);
 				OTHER_LDFLAGS = "";
-				 
 			};
 			name = Debug;
 		};
@@ -694,7 +692,6 @@
 					"-lpthread",
 				);
 				OTHER_LDFLAGS = "";
-				 
 			};
 			name = Release;
 		};
