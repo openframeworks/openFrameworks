@@ -1,7 +1,7 @@
 //
 // Event_WIN32.h
 //
-// $Id: //poco/1.3/Foundation/include/Poco/Event_WIN32.h#2 $
+// $Id: //poco/1.4/Foundation/include/Poco/Event_WIN32.h#1 $
 //
 // Library: Foundation
 // Package: Threading
@@ -51,7 +51,7 @@ namespace Poco {
 class Foundation_API EventImpl
 {
 protected:
-	EventImpl(bool autoReset = false);		
+	EventImpl(bool autoReset);		
 	~EventImpl();
 	void setImpl();
 	void waitImpl();

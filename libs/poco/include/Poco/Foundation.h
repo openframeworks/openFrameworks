@@ -1,7 +1,7 @@
 //
 // Foundation.h
 //
-// $Id: //poco/1.3/Foundation/include/Poco/Foundation.h#3 $
+// $Id: //poco/1.4/Foundation/include/Poco/Foundation.h#1 $
 //
 // Library: Foundation
 // Package: Core
@@ -11,7 +11,7 @@
 // This file must be the first file included by every other Foundation
 // header file.
 //
-// Copyright (c) 2004-2006, Applied Informatics Software Engineering GmbH.
+// Copyright (c) 2004-2010, Applied Informatics Software Engineering GmbH.
 // and Contributors.
 //
 // Permission is hereby granted, free of charge, to any person or organization
@@ -66,7 +66,7 @@
 // Foundation_API functions as being imported from a DLL, wheras this DLL sees symbols
 // defined with this macro as being exported.
 //
-#if defined(_WIN32) && defined(POCO_DLL)
+#if (defined(_WIN32) || defined(_WIN32_WCE)) && defined(POCO_DLL)
 	#if defined(Foundation_EXPORTS)
 		#define Foundation_API __declspec(dllexport)
 	#else
@@ -84,20 +84,28 @@
 // Automatically link Foundation library.
 //
 #if defined(_MSC_VER)
-	#if !defined(POCO_NO_AUTOMATIC_LIBS) && !defined(Foundation_EXPORTS)
-		#if defined(POCO_DLL)
-			#if defined(_DEBUG)
-				#pragma comment(lib, "PocoFoundationd.lib")
-			#else
-				#pragma comment(lib, "PocoFoundation.lib")
-			#endif
+	#if defined(POCO_DLL)
+		#if defined(_DEBUG)
+			#define POCO_LIB_SUFFIX "d.lib"
 		#else
-			#if defined(_DEBUG)
-				#pragma comment(lib, "PocoFoundationmtd.lib")
-			#else
-				#pragma comment(lib, "PocoFoundationmt.lib")
-			#endif
+			#define POCO_LIB_SUFFIX ".lib"
 		#endif
+	#elif defined(_DLL)
+		#if defined(_DEBUG)
+			#define POCO_LIB_SUFFIX "mdd.lib"
+		#else
+			#define POCO_LIB_SUFFIX "md.lib"
+		#endif
+	#else
+		#if defined(_DEBUG)
+			#define POCO_LIB_SUFFIX "mtd.lib"
+		#else
+			#define POCO_LIB_SUFFIX "mt.lib"
+		#endif
+	#endif
+
+	#if !defined(POCO_NO_AUTOMATIC_LIBS) && !defined(Foundation_EXPORTS)
+		#pragma comment(lib, "PocoFoundation" POCO_LIB_SUFFIX)
 	#endif
 #endif
 

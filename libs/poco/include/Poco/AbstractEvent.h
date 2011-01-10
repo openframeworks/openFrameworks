@@ -1,7 +1,7 @@
 //
 // AbstractEvent.h
 //
-// $Id: //poco/1.3/Foundation/include/Poco/AbstractEvent.h#2 $
+// $Id: //poco/1.4/Foundation/include/Poco/AbstractEvent.h#1 $
 //
 // Library: Foundation
 // Package: Events
@@ -36,8 +36,8 @@
 //
 
 
-#ifndef  Foundation_AbstractFoundation_INCLUDED
-#define  Foundation_AbstractFoundation_INCLUDED
+#ifndef Foundation_AbstractFoundation_INCLUDED
+#define Foundation_AbstractFoundation_INCLUDED
 
 
 #include "Poco/Foundation.h"
@@ -51,7 +51,7 @@
 namespace Poco {
 
 
-template <class TArgs, class TStrategy, class TDelegate> 
+template <class TArgs, class TStrategy, class TDelegate, class TMutex = FastMutex> 
 class AbstractEvent
 	/// An AbstractEvent is the super-class of all events. 
 	/// It works similar to the way C# handles notifications (aka events in C#).
@@ -183,7 +183,7 @@ public:
 		/// (DefaultStrategy, FIFOStrategy) follow that guideline but future ones
 		/// can deviate.
 	{
-		FastMutex::ScopedLock lock(_mutex);
+		typename TMutex::ScopedLock lock(_mutex);
 		_strategy.add(aDelegate);
 	}
 	
@@ -192,7 +192,7 @@ public:
 		/// already existing one is determined by the < operator.
 		/// If the observer is not found, the unregister will be ignored
 	{
-		FastMutex::ScopedLock lock(_mutex);
+		typename TMutex::ScopedLock lock(_mutex);
 		_strategy.remove(aDelegate);
 	}
 	
@@ -213,7 +213,7 @@ public:
 		bool enabled = false;
 		
 		{
-			FastMutex::ScopedLock lock(_mutex);
+			typename TMutex::ScopedLock lock(_mutex);
 			enabled = _enabled;
 			if (_enabled)
 			{
@@ -243,7 +243,7 @@ public:
 		NotifyAsyncParams params(pSender, args);
 
 		{
-			FastMutex::ScopedLock lock(_mutex);
+			typename TMutex::ScopedLock lock(_mutex);
 
 			// thread-safeness: 
 			// copy should be faster and safer than blocking until
@@ -260,9 +260,9 @@ public:
 	}
 	
 	void enable()
-		/// Enables the event
+		/// Enables the event.
 	{
-		FastMutex::ScopedLock lock(_mutex);
+		typename TMutex::ScopedLock lock(_mutex);
 		_enabled = true;
 	}
 
@@ -270,21 +270,28 @@ public:
 		/// Disables the event. notify and notifyAsnyc will be ignored,
 		/// but adding/removing delegates is still allowed.
 	{
-		FastMutex::ScopedLock lock(_mutex);
+		typename TMutex::ScopedLock lock(_mutex);
 		_enabled = false;
 	}
 
 	bool isEnabled() const
 	{
-		FastMutex::ScopedLock lock(_mutex);
+		typename TMutex::ScopedLock lock(_mutex);
 		return _enabled;
 	}
 
 	void clear()
 		/// Removes all delegates.
 	{
-		FastMutex::ScopedLock lock(_mutex);
+		typename TMutex::ScopedLock lock(_mutex);
 		_strategy.clear();
+	}
+	
+	bool empty() const
+		/// Checks if any delegates are registered at the delegate.
+	{
+		typename TMutex::ScopedLock lock(_mutex);
+		return _strategy.empty();
 	}
 
 protected:
@@ -319,7 +326,7 @@ protected:
 	TStrategy _strategy; /// The strategy used to notify observers.
 	bool      _enabled;  /// Stores if an event is enabled. Notfies on disabled events have no effect
 	                     /// but it is possible to change the observers.
-	mutable FastMutex _mutex;
+	mutable TMutex _mutex;
 
 private:
 	AbstractEvent(const AbstractEvent& other);
@@ -330,4 +337,4 @@ private:
 } // namespace Poco
 
 
-#endif
+#endif // Foundation_AbstractFoundation_INCLUDED
