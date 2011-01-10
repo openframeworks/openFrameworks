@@ -1,7 +1,7 @@
 //
 // Expire.h
 //
-// $Id: //poco/1.3/Foundation/include/Poco/Expire.h#2 $
+// $Id: //poco/1.4/Foundation/include/Poco/Expire.h#1 $
 //
 // Library: Foundation
 // Package: Events
@@ -36,8 +36,8 @@
 //
 
 
-#ifndef  Foundation_Expire_INCLUDED
-#define  Foundation_Expire_INCLUDED
+#ifndef Foundation_Expire_INCLUDED
+#define Foundation_Expire_INCLUDED
 
 
 #include "Poco/Foundation.h"
@@ -129,4 +129,4 @@ private:
 } // namespace Poco
 
 
-#endif
+#endif // Foundation_Expire_INCLUDED

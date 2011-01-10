@@ -1,7 +1,7 @@
 //
 // TCPServerParams.h
 //
-// $Id: //poco/1.3/Net/include/Poco/Net/TCPServerParams.h#2 $
+// $Id: //poco/1.4/Net/include/Poco/Net/TCPServerParams.h#1 $
 //
 // Library: Net
 // Package: TCPServer
@@ -44,6 +44,7 @@
 #include "Poco/RefCountedObject.h"
 #include "Poco/Timespan.h"
 #include "Poco/Thread.h"
+#include "Poco/AutoPtr.h"
 
 
 namespace Poco {
@@ -57,6 +58,8 @@ class Net_API TCPServerParams: public Poco::RefCountedObject
 	/// Subclasses may add new parameters to the class.
 {
 public:
+	typedef Poco::AutoPtr<TCPServerParams> Ptr;
+	
 	TCPServerParams();
 		/// Creates the TCPServerParams.
 		///

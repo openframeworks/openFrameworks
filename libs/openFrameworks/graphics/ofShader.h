@@ -9,10 +9,10 @@
 #include "ofMain.h"
 #include <fstream>
 
-class ofxShader {
+class ofShader {
 public:
-	ofxShader();
-	~ofxShader();
+	ofShader();
+	~ofShader();
 	
 	bool setup(string shaderName);
 	bool setup(string vertName, string fragName = "", string geomName = "");

@@ -2,8 +2,26 @@
 #include "ofMain.h"	
 #include "ofSystemUtils.h"
 
+#ifdef TARGET_WIN32
+#include <winuser.h>
+#include <commdlg.h>
+#endif
 
-void ofCreateAlertDialog(string alert){	
+void ofCreateAlertDialog(string errorMessage){	
+	
+	
+	#ifdef TARGET_WIN32
+		MessageBox(NULL, errorMessage.c_str(), "Critical Error", MB_OK | MB_ICONERROR);
+	#endif
+	
+	
+	#ifdef TARGET_OSX
+		CFStringRef msgStrRef = CFStringCreateWithCString(NULL, errorMessage.c_str(), kCFStringEncodingASCII);
+		DialogRef theItem;
+		DialogItemIndex itemIndex;
+		CreateStandardAlert(kAlertNoteAlert, msgStrRef, NULL, NULL, &theItem);
+		RunStandardAlert(theItem, NULL, &itemIndex);
+	#endif
 	
 }
 
@@ -128,8 +146,8 @@ string ofFileLoadDialog(){
 	ofn.lStructSize = sizeof(ofn);
 	HWND hwnd = WindowFromDC(wglGetCurrentDC());
 	ofn.hwndOwner = hwnd;
-	ofn.lpstrFilter = "All Files (*.*)\0*.*\0";
-	ofn.lpstrFile = szFileName;
+	ofn.lpstrFilter = _T("All Files (*.*)\0*.*\0");
+	ofn.lpstrFile = LPWSTR(szFileName);
 	ofn.nMaxFile = MAX_PATH;
 	ofn.Flags = OFN_EXPLORER | OFN_FILEMUSTEXIST | OFN_HIDEREADONLY;
 	ofn.lpstrDefExt = 0;
@@ -269,15 +287,15 @@ string ofFileSaveDialog(string defaultName, string messageName){
 	ofn.hwndOwner = hwnd;
 	ofn.hInstance = GetModuleHandle(0);
 	ofn.nMaxFileTitle = 31;
-	ofn.lpstrFile = (LPSTR)fileName;
+	ofn.lpstrFile = LPWSTR(fileName);
 	ofn.nMaxFile = _MAX_PATH;
-	ofn.lpstrFilter = "All Files (*.*)\0*.*\0";
-	ofn.lpstrDefExt = "";	// we could do .rxml here?
+	ofn.lpstrFilter = _T("All Files (*.*)\0*.*\0");
+	ofn.lpstrDefExt = _T("");	// we could do .rxml here?
 	ofn.Flags = OFN_EXPLORER | OFN_PATHMUSTEXIST | OFN_OVERWRITEPROMPT | OFN_HIDEREADONLY;
-	ofn.lpstrTitle = "Select Output File";
+	ofn.lpstrTitle = _T("Select Output File");
 	//
 	
-	if (GetSaveFileNameA(&ofn))
+	if (GetSaveFileName(&ofn))
 	{
 	    fileNameOutput = string(info_fn) + "/" + string(fileName);
 		if (fileNameOutput.length() > 1) fileNameOutput.erase(0,1);

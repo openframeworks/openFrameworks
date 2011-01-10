@@ -3,28 +3,10 @@
 //
 // Design and implementation by
 // - Floris van den Berg (flvdberg@wxs.nl)
-// - HervÈ Drolon (drolon@infonie.fr)
+// - Herv� Drolon (drolon@infonie.fr)
 //
 // Contributors:
-// - Adam Gates (radad@xoasis.com)
-// - Alex Kwak
-// - Alexander Dymerets (sashad@te.net.ua)
-// - Detlev Vendt (detlev.vendt@brillit.de)
-// - Jan L. Nauta (jln@magentammt.com)
-// - Jani Kajala (janik@remedy.fi)
-// - Juergen Riecker (j.riecker@gmx.de)
-// - Karl-Heinz Bussian (khbussian@moss.de)
-// - Laurent Rocher (rocherl@club-internet.fr)
-// - Luca Piergentili (l.pierge@terra.es)
-// - Machiel ten Brinke (brinkem@uni-one.nl)
-// - Markus Loibl (markus.loibl@epost.de)
-// - Martin Weber (martweb@gmx.net)
-// - Matthias Wandel (mwandel@rim.net)
-// - Michal Novotny (michal@etc.cz)
-// - Petr Pytelka (pyta@lightcomp.com)
-// - Riley McNiff (rmcniff@marexgroup.com)
-// - Ryan Rubley (ryan@lostreality.org)
-// - Volker G‰rtner (volkerg@gmx.at)
+// - see changes log named 'Whatsnew.txt', see header of each .h and .cpp file
 //
 // This file is part of FreeImage 3
 //
@@ -47,8 +29,8 @@
 // Version information ------------------------------------------------------
 
 #define FREEIMAGE_MAJOR_VERSION   3
-#define FREEIMAGE_MINOR_VERSION   13
-#define FREEIMAGE_RELEASE_SERIAL  0
+#define FREEIMAGE_MINOR_VERSION   14
+#define FREEIMAGE_RELEASE_SERIAL  1
 
 // Compiler options ---------------------------------------------------------
 
@@ -60,10 +42,10 @@
 #else
 	#if defined(_WIN32) || defined(__WIN32__)
 		#define DLL_CALLCONV __stdcall
-		// The following ifdef block is the standard way of creating macros which make exporting
+		// The following ifdef block is the standard way of creating macros which make exporting 
 		// from a DLL simpler. All files within this DLL are compiled with the FREEIMAGE_EXPORTS
 		// symbol defined on the command line. this symbol should not be defined on any project
-		// that uses this DLL. This way any other project whose source files include this file see
+		// that uses this DLL. This way any other project whose source files include this file see 
 		// DLL_API functions as being imported from a DLL, wheras this DLL sees symbols
 		// defined with this macro as being exported.
 		#ifdef FREEIMAGE_EXPORTS
@@ -71,7 +53,7 @@
 		#else
 			#define DLL_API __declspec(dllimport)
 		#endif // FREEIMAGE_EXPORTS
-	#else
+	#else 
 		// try the gcc visibility support (see http://gcc.gnu.org/wiki/Visibility)
 		#if defined(__GNUC__) && ((__GNUC__ >= 4) || (__GNUC__ == 3 && __GNUC_MINOR__ >= 4))
 			#ifndef GCC_HASCLASSVISIBILITY
@@ -83,7 +65,7 @@
 			#define DLL_API __attribute__ ((visibility("default")))
 		#else
 			#define DLL_API
-		#endif
+		#endif		
 	#endif // WIN32 / !WIN32
 #endif // FREEIMAGE_LIB
 
@@ -207,20 +189,20 @@ typedef struct tagRGBTRIPLE {
 
 typedef struct tagBITMAPINFOHEADER{
   DWORD biSize;
-  LONG  biWidth;
-  LONG  biHeight;
-  WORD  biPlanes;
+  LONG  biWidth; 
+  LONG  biHeight; 
+  WORD  biPlanes; 
   WORD  biBitCount;
-  DWORD biCompression;
-  DWORD biSizeImage;
-  LONG  biXPelsPerMeter;
-  LONG  biYPelsPerMeter;
-  DWORD biClrUsed;
+  DWORD biCompression; 
+  DWORD biSizeImage; 
+  LONG  biXPelsPerMeter; 
+  LONG  biYPelsPerMeter; 
+  DWORD biClrUsed; 
   DWORD biClrImportant;
-} BITMAPINFOHEADER, *PBITMAPINFOHEADER;
+} BITMAPINFOHEADER, *PBITMAPINFOHEADER; 
 
-typedef struct tagBITMAPINFO {
-  BITMAPINFOHEADER bmiHeader;
+typedef struct tagBITMAPINFO { 
+  BITMAPINFOHEADER bmiHeader; 
   RGBQUAD          bmiColors[1];
 } BITMAPINFO, *PBITMAPINFO;
 
@@ -234,7 +216,7 @@ typedef struct tagBITMAPINFO {
 #pragma pack(1)
 #endif // WIN32
 
-/** 48-bit RGB
+/** 48-bit RGB 
 */
 typedef struct tagFIRGB16 {
 	WORD red;
@@ -370,7 +352,7 @@ typedef struct tagFICOMPLEX {
 #define FIICC_DEFAULT			0x00
 #define FIICC_COLOR_IS_CMYK		0x01
 
-FI_STRUCT (FIICCPROFILE) {
+FI_STRUCT (FIICCPROFILE) { 
 	WORD    flags;	// info flag
 	DWORD	size;	// profile's size measured in bytes
 	void   *data;	// points to a block of contiguous memory containing the profile
@@ -493,7 +475,7 @@ FI_ENUM(FREE_IMAGE_TMO) {
 	FITMO_FATTAL02	 = 2	// Gradient domain high dynamic range compression (R. Fattal, 2002)
 };
 
-/** Upsampling / downsampling filters.
+/** Upsampling / downsampling filters. 
 Constants used in FreeImage_Rescale.
 */
 FI_ENUM(FREE_IMAGE_FILTER) {
@@ -529,21 +511,21 @@ FI_ENUM(FREE_IMAGE_COLOR_CHANNEL) {
   Note: RATIONALs are the ratio of two 32-bit integer values.
 */
 FI_ENUM(FREE_IMAGE_MDTYPE) {
-	FIDT_NOTYPE		= 0,	// placeholder
-	FIDT_BYTE		= 1,	// 8-bit unsigned integer
-	FIDT_ASCII		= 2,	// 8-bit bytes w/ last byte null
-	FIDT_SHORT		= 3,	// 16-bit unsigned integer
-	FIDT_LONG		= 4,	// 32-bit unsigned integer
-	FIDT_RATIONAL	= 5,	// 64-bit unsigned fraction
-	FIDT_SBYTE		= 6,	// 8-bit signed integer
-	FIDT_UNDEFINED	= 7,	// 8-bit untyped data
-	FIDT_SSHORT		= 8,	// 16-bit signed integer
-	FIDT_SLONG		= 9,	// 32-bit signed integer
-	FIDT_SRATIONAL	= 10,	// 64-bit signed fraction
-	FIDT_FLOAT		= 11,	// 32-bit IEEE floating point
-	FIDT_DOUBLE		= 12,	// 64-bit IEEE floating point
-	FIDT_IFD		= 13,	// 32-bit unsigned integer (offset)
-	FIDT_PALETTE	= 14	// 32-bit RGBQUAD
+	FIDT_NOTYPE		= 0,	// placeholder 
+	FIDT_BYTE		= 1,	// 8-bit unsigned integer 
+	FIDT_ASCII		= 2,	// 8-bit bytes w/ last byte null 
+	FIDT_SHORT		= 3,	// 16-bit unsigned integer 
+	FIDT_LONG		= 4,	// 32-bit unsigned integer 
+	FIDT_RATIONAL	= 5,	// 64-bit unsigned fraction 
+	FIDT_SBYTE		= 6,	// 8-bit signed integer 
+	FIDT_UNDEFINED	= 7,	// 8-bit untyped data 
+	FIDT_SSHORT		= 8,	// 16-bit signed integer 
+	FIDT_SLONG		= 9,	// 32-bit signed integer 
+	FIDT_SRATIONAL	= 10,	// 64-bit signed fraction 
+	FIDT_FLOAT		= 11,	// 32-bit IEEE floating point 
+	FIDT_DOUBLE		= 12,	// 64-bit IEEE floating point 
+	FIDT_IFD		= 13,	// 32-bit unsigned integer (offset) 
+	FIDT_PALETTE	= 14	// 32-bit RGBQUAD 
 };
 
 /**
@@ -561,7 +543,8 @@ FI_ENUM(FREE_IMAGE_MDMODEL) {
 	FIMD_XMP			= 7,	// Abobe XMP metadata
 	FIMD_GEOTIFF		= 8,	// GeoTIFF metadata
 	FIMD_ANIMATION		= 9,	// Animation metadata
-	FIMD_CUSTOM			= 10	// Used to attach other metadata types to a dib
+	FIMD_CUSTOM			= 10,	// Used to attach other metadata types to a dib
+	FIMD_EXIF_RAW		= 11	// Exif metadata as a raw buffer
 };
 
 /**
@@ -631,6 +614,7 @@ typedef const char *(DLL_CALLCONV *FI_MimeProc)(void);
 typedef BOOL (DLL_CALLCONV *FI_SupportsExportBPPProc)(int bpp);
 typedef BOOL (DLL_CALLCONV *FI_SupportsExportTypeProc)(FREE_IMAGE_TYPE type);
 typedef BOOL (DLL_CALLCONV *FI_SupportsICCProfilesProc)(void);
+typedef BOOL (DLL_CALLCONV *FI_SupportsNoPixelsProc)(void);
 
 FI_STRUCT (Plugin) {
 	FI_FormatProc format_proc;
@@ -648,6 +632,7 @@ FI_STRUCT (Plugin) {
 	FI_SupportsExportBPPProc supports_export_bpp_proc;
 	FI_SupportsExportTypeProc supports_export_type_proc;
 	FI_SupportsICCProfilesProc supports_icc_profiles_proc;
+	FI_SupportsNoPixelsProc supports_no_pixels_proc;
 };
 
 typedef void (DLL_CALLCONV *FI_InitProc)(Plugin *plugin, int format_id);
@@ -656,6 +641,8 @@ typedef void (DLL_CALLCONV *FI_InitProc)(Plugin *plugin, int format_id);
 
 
 // Load / Save flag constants -----------------------------------------------
+
+#define FIF_LOAD_NOPIXELS 0x8000 // loading: load the image header only (not supported by all plugins)
 
 #define BMP_DEFAULT         0
 #define BMP_SAVE_RLE        1
@@ -690,10 +677,11 @@ typedef void (DLL_CALLCONV *FI_InitProc)(Plugin *plugin, int format_id);
 #define JPEG_QUALITYAVERAGE 0x0400	// save with average quality (25:1)
 #define JPEG_QUALITYBAD     0x0800	// save with bad quality (10:1)
 #define JPEG_PROGRESSIVE	0x2000	// save as a progressive-JPEG (use | to combine with other save flags)
-#define JPEG_SUBSAMPLING_411 0x1000		// save with high 4x1 chroma subsampling (4:1:1)
+#define JPEG_SUBSAMPLING_411 0x1000		// save with high 4x1 chroma subsampling (4:1:1) 
 #define JPEG_SUBSAMPLING_420 0x4000		// save with medium 2x2 medium chroma subsampling (4:2:0) - default value
-#define JPEG_SUBSAMPLING_422 0x8000		// save with low 2x1 chroma subsampling (4:2:2)
+#define JPEG_SUBSAMPLING_422 0x8000		// save with low 2x1 chroma subsampling (4:2:2) 
 #define JPEG_SUBSAMPLING_444 0x10000	// save with no chroma subsampling (4:4:4)
+#define JPEG_OPTIMIZE		0x20000		// on saving, compute optimal Huffman coding tables (can reduce a few percent of file size)
 #define KOALA_DEFAULT       0
 #define LBM_DEFAULT         0
 #define MNG_DEFAULT         0
@@ -715,6 +703,8 @@ typedef void (DLL_CALLCONV *FI_InitProc)(Plugin *plugin, int format_id);
 #define PNM_SAVE_RAW        0       // If set the writer saves in RAW format (i.e. P4, P5 or P6)
 #define PNM_SAVE_ASCII      1       // If set the writer saves in ASCII format (i.e. P1, P2 or P3)
 #define PSD_DEFAULT         0
+#define PSD_CMYK			1		// reads tags for separated CMYK (default is conversion to RGB)
+#define PSD_LAB				2		// reads tags for CIELab (default is conversion to RGB)
 #define RAS_DEFAULT         0
 #define RAW_DEFAULT         0		// load the file as linear RGB 48-bit
 #define RAW_PREVIEW			1		// try to load the embedded JPEG preview with included Exif Data or default to RGB 24-bit
@@ -722,6 +712,7 @@ typedef void (DLL_CALLCONV *FI_InitProc)(Plugin *plugin, int format_id);
 #define SGI_DEFAULT			0
 #define TARGA_DEFAULT       0
 #define TARGA_LOAD_RGB888   1       // If set the loader converts RGB555 and ARGB8888 -> RGB888.
+#define TARGA_SAVE_RLE		2		// If set, the writer saves with RLE compression
 #define TIFF_DEFAULT        0
 #define TIFF_CMYK			0x0001	// reads/stores tags for separated CMYK (use | to combine with compression flags)
 #define TIFF_PACKBITS       0x0100  // save using PACKBITS compression
@@ -732,6 +723,7 @@ typedef void (DLL_CALLCONV *FI_InitProc)(Plugin *plugin, int format_id);
 #define TIFF_CCITTFAX4		0x2000  // save using CCITT Group 4 fax encoding
 #define TIFF_LZW			0x4000	// save using LZW compression
 #define TIFF_JPEG			0x8000	// save using JPEG compression
+#define TIFF_LOGLUV			0x10000	// save using LogLuv compression
 #define WBMP_DEFAULT        0
 #define XBM_DEFAULT			0
 #define XPM_DEFAULT			0
@@ -763,9 +755,9 @@ DLL_API const char *DLL_CALLCONV FreeImage_GetCopyrightMessage(void);
 // Message output functions -------------------------------------------------
 
 typedef void (*FreeImage_OutputMessageFunction)(FREE_IMAGE_FORMAT fif, const char *msg);
-typedef void (DLL_CALLCONV *FreeImage_OutputMessageFunctionStdCall)(FREE_IMAGE_FORMAT fif, const char *msg);
+typedef void (DLL_CALLCONV *FreeImage_OutputMessageFunctionStdCall)(FREE_IMAGE_FORMAT fif, const char *msg); 
 
-DLL_API void DLL_CALLCONV FreeImage_SetOutputMessageStdCall(FreeImage_OutputMessageFunctionStdCall omf);
+DLL_API void DLL_CALLCONV FreeImage_SetOutputMessageStdCall(FreeImage_OutputMessageFunctionStdCall omf); 
 DLL_API void DLL_CALLCONV FreeImage_SetOutputMessage(FreeImage_OutputMessageFunction omf);
 DLL_API void DLL_CALLCONV FreeImage_OutputMessageProc(int fif, const char *fmt, ...);
 
@@ -775,6 +767,9 @@ DLL_API FIBITMAP *DLL_CALLCONV FreeImage_Allocate(int width, int height, int bpp
 DLL_API FIBITMAP *DLL_CALLCONV FreeImage_AllocateT(FREE_IMAGE_TYPE type, int width, int height, int bpp FI_DEFAULT(8), unsigned red_mask FI_DEFAULT(0), unsigned green_mask FI_DEFAULT(0), unsigned blue_mask FI_DEFAULT(0));
 DLL_API FIBITMAP * DLL_CALLCONV FreeImage_Clone(FIBITMAP *dib);
 DLL_API void DLL_CALLCONV FreeImage_Unload(FIBITMAP *dib);
+
+// Header loading routines
+DLL_API BOOL DLL_CALLCONV FreeImage_HasPixels(FIBITMAP *dib);
 
 // Load / Save routines -----------------------------------------------------
 
@@ -796,7 +791,9 @@ DLL_API BOOL DLL_CALLCONV FreeImage_SeekMemory(FIMEMORY *stream, long offset, in
 DLL_API BOOL DLL_CALLCONV FreeImage_AcquireMemory(FIMEMORY *stream, BYTE **data, DWORD *size_in_bytes);
 DLL_API unsigned DLL_CALLCONV FreeImage_ReadMemory(void *buffer, unsigned size, unsigned count, FIMEMORY *stream);
 DLL_API unsigned DLL_CALLCONV FreeImage_WriteMemory(const void *buffer, unsigned size, unsigned count, FIMEMORY *stream);
+
 DLL_API FIMULTIBITMAP *DLL_CALLCONV FreeImage_LoadMultiBitmapFromMemory(FREE_IMAGE_FORMAT fif, FIMEMORY *stream, int flags FI_DEFAULT(0));
+DLL_API BOOL DLL_CALLCONV FreeImage_SaveMultiBitmapToMemory(FREE_IMAGE_FORMAT fif, FIMULTIBITMAP *bitmap, FIMEMORY *stream, int flags);
 
 // Plugin Interface ---------------------------------------------------------
 
@@ -819,11 +816,13 @@ DLL_API BOOL DLL_CALLCONV FreeImage_FIFSupportsWriting(FREE_IMAGE_FORMAT fif);
 DLL_API BOOL DLL_CALLCONV FreeImage_FIFSupportsExportBPP(FREE_IMAGE_FORMAT fif, int bpp);
 DLL_API BOOL DLL_CALLCONV FreeImage_FIFSupportsExportType(FREE_IMAGE_FORMAT fif, FREE_IMAGE_TYPE type);
 DLL_API BOOL DLL_CALLCONV FreeImage_FIFSupportsICCProfiles(FREE_IMAGE_FORMAT fif);
+DLL_API BOOL DLL_CALLCONV FreeImage_FIFSupportsNoPixels(FREE_IMAGE_FORMAT fif);
 
 // Multipaging interface ----------------------------------------------------
 
 DLL_API FIMULTIBITMAP * DLL_CALLCONV FreeImage_OpenMultiBitmap(FREE_IMAGE_FORMAT fif, const char *filename, BOOL create_new, BOOL read_only, BOOL keep_cache_in_memory FI_DEFAULT(FALSE), int flags FI_DEFAULT(0));
 DLL_API FIMULTIBITMAP * DLL_CALLCONV FreeImage_OpenMultiBitmapFromHandle(FREE_IMAGE_FORMAT fif, FreeImageIO *io, fi_handle handle, int flags FI_DEFAULT(0));
+DLL_API BOOL DLL_CALLCONV FreeImage_SaveMultiBitmapToHandle(FREE_IMAGE_FORMAT fif, FIMULTIBITMAP *bitmap, FreeImageIO *io, fi_handle handle, int flags FI_DEFAULT(0));
 DLL_API BOOL DLL_CALLCONV FreeImage_CloseMultiBitmap(FIMULTIBITMAP *bitmap, int flags FI_DEFAULT(0));
 DLL_API int DLL_CALLCONV FreeImage_GetPageCount(FIMULTIBITMAP *bitmap);
 DLL_API void DLL_CALLCONV FreeImage_AppendPage(FIMULTIBITMAP *bitmap, FIBITMAP *data);
@@ -960,6 +959,7 @@ DLL_API FIBITMAP *DLL_CALLCONV FreeImage_Dither(FIBITMAP *dib, FREE_IMAGE_DITHER
 DLL_API FIBITMAP *DLL_CALLCONV FreeImage_ConvertFromRawBits(BYTE *bits, int width, int height, int pitch, unsigned bpp, unsigned red_mask, unsigned green_mask, unsigned blue_mask, BOOL topdown FI_DEFAULT(FALSE));
 DLL_API void DLL_CALLCONV FreeImage_ConvertToRawBits(BYTE *bits, FIBITMAP *dib, int pitch, unsigned bpp, unsigned red_mask, unsigned green_mask, unsigned blue_mask, BOOL topdown FI_DEFAULT(FALSE));
 
+DLL_API FIBITMAP *DLL_CALLCONV FreeImage_ConvertToFloat(FIBITMAP *dib);
 DLL_API FIBITMAP *DLL_CALLCONV FreeImage_ConvertToRGBF(FIBITMAP *dib);
 
 DLL_API FIBITMAP *DLL_CALLCONV FreeImage_ConvertToStandardType(FIBITMAP *src, BOOL scale_linear FI_DEFAULT(TRUE));
@@ -1057,7 +1057,7 @@ DLL_API unsigned DLL_CALLCONV FreeImage_SwapPaletteIndices(FIBITMAP *dib, BYTE *
 
 // channel processing routines
 DLL_API FIBITMAP *DLL_CALLCONV FreeImage_GetChannel(FIBITMAP *dib, FREE_IMAGE_COLOR_CHANNEL channel);
-DLL_API BOOL DLL_CALLCONV FreeImage_SetChannel(FIBITMAP *dib, FIBITMAP *dib8, FREE_IMAGE_COLOR_CHANNEL channel);
+DLL_API BOOL DLL_CALLCONV FreeImage_SetChannel(FIBITMAP *dst, FIBITMAP *src, FREE_IMAGE_COLOR_CHANNEL channel);
 DLL_API FIBITMAP *DLL_CALLCONV FreeImage_GetComplexChannel(FIBITMAP *src, FREE_IMAGE_COLOR_CHANNEL channel);
 DLL_API BOOL DLL_CALLCONV FreeImage_SetComplexChannel(FIBITMAP *dst, FIBITMAP *src, FREE_IMAGE_COLOR_CHANNEL channel);
 
