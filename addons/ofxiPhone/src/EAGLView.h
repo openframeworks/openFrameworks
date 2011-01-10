@@ -44,6 +44,7 @@
 @private
     id <ESRenderer> renderer;
 	NSMutableDictionary		*activeTouches;
+	bool touchScaleFactor;
 }
 
 - (void) startRender;

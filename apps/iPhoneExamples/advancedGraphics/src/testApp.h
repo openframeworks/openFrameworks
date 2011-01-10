@@ -22,6 +22,8 @@ public:
 	int		prevMX;
 	int		prevMY;
 	bool 	bFirstMouseMove;
+	
+	bool jitter;
 };
 
 

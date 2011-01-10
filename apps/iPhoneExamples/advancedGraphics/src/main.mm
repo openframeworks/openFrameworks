@@ -7,7 +7,7 @@ int main(){
 	ofAppiPhoneWindow * iOSWindow = new ofAppiPhoneWindow();
 	
 	iOSWindow->enableDepthBuffer();
-	iOSWindow->enableAntiAliasing(4); // samples are meaningless on the iphone
+	//iOSWindow->enableAntiAliasing(4); // samples are meaningless on the iphone
 	iOSWindow->enableRetinaSupport();
 	
 	ofSetupOpenGL(iOSWindow, 480, 320, OF_FULLSCREEN);
