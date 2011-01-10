@@ -10,11 +10,11 @@ void testApp::demo2_setup() {
 	ofLog(OF_LOG_NOTICE, "demo2_setup | useMSAA: " + useMSAA);
 	demoMode = 2;
 	
-	ofxFbo::Settings s;
+	ofFbo::Settings s;
 	s.width				= kFBOWidth;
 	s.height			= kFBOHeight;
 	s.numColorbuffers	= 4;
-	s.numSamples		= useMSAA ? ofxFbo::maxSamples() : 0;
+	s.numSamples		= useMSAA ? ofFbo::maxSamples() : 0;
 	fbo.setup(s);
 	
 	
