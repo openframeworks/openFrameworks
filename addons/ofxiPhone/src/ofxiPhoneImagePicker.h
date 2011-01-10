@@ -34,6 +34,7 @@ public:
 
 @interface ofxiPhoneImagePickerDelegate : NSObject <UINavigationControllerDelegate, UIImagePickerControllerDelegate>
 {
+
 	UIImagePickerController*			_imagePicker;
 	OverlayView *						overlay;
 	UIImage*							_image;

@@ -135,7 +135,7 @@ class ofxXmlSettings{
 		int		setAttribute(const string& tag, const string& attribute, double value);
 		int		setAttribute(const string& tag, const string& attribute, const string& value);
 
-		void	loadFromBuffer( string buffer );
+		bool	loadFromBuffer( string buffer );
 		void	copyXmlToString(string & str);
 	
 		TiXmlDocument 	doc;

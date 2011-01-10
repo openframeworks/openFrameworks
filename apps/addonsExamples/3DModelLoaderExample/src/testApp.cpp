@@ -82,7 +82,7 @@ void testApp::draw(){
 
     glPopMatrix();
 
-    ofSetColor(0x000000);
+    ofSetHexColor(0x000000);
     ofDrawBitmapString("fps: "+ofToString(ofGetFrameRate(), 2), 10, 15);
 
 }

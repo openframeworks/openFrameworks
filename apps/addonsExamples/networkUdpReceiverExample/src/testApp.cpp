@@ -43,9 +43,9 @@ void testApp::update(){
 //--------------------------------------------------------------
 void testApp::draw(){
     ofFill();
-    ofSetColor(0xFFFFFF);
+    ofSetHexColor(0xFFFFFF);
     ofRect(0,0,200,30);
-	ofSetColor(0x101010);
+	ofSetHexColor(0x101010);
 	mono.drawString("UDP Receiver Example ", 10, 20);
 
 	for(int i=1;i<stroke.size();i++){

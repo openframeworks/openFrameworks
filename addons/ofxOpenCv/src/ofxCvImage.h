@@ -84,10 +84,13 @@ class ofxCvImage : public ofBaseImage {
 
     // Draw Image
     //
-    virtual void  draw( float x, float y );
-    virtual void  draw( float x, float y, float w, float h );
-    virtual void  drawROI( float x, float y );
-    virtual void  drawROI( float x, float y, float w, float h );
+    virtual void updateTexture();
+    virtual void draw( float x, float y );
+    virtual void draw( float x, float y, float w, float h );
+	virtual void draw(const ofPoint & point);
+	virtual void draw(const ofRectangle & rect);
+    virtual void drawROI( float x, float y );
+    virtual void drawROI( float x, float y, float w, float h );
     virtual void setAnchorPercent( float xPct, float yPct );
     virtual void setAnchorPoint( float x, float y );
     virtual void resetAnchor();

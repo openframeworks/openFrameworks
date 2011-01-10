@@ -1,5 +1,6 @@
 #include "ofUtils.h"
 #include "ofImage.h"
+#include "ofTypes.h"
 
 #if defined(TARGET_OF_IPHONE) || defined(TARGET_OSX ) || defined(TARGET_LINUX)
 	#include "sys/time.h"
@@ -419,7 +420,31 @@ void ofRestoreConsoleColor(){
 }
 
 
+//--------------------------------------------------
+bool ofReadFile(const string & path, ofBuffer & buffer, bool binary){
+	ifstream * file = new ifstream(ofToDataPath(path,true).c_str());
 
+	if(!file || !file->is_open()){
+		ofLog(OF_LOG_ERROR, "couldn't open " + path);
+		return false;
+	}
+
+	filebuf *pbuf=file->rdbuf();
+
+	// get file size using buffer's members
+	long size = (long)pbuf->pubseekoff (0,ios::end,ios::in);
+	pbuf->pubseekpos (0,ios::in);
+
+	// get file data
+	if(!binary){
+		buffer.allocate(size+1);// = new char[size];
+		buffer.getBuffer()[size]='\0';
+	}else{
+		buffer.allocate(size);
+	}
+	pbuf->sgetn (buffer.getBuffer(),size);
+	return true;
+}
 
 
 

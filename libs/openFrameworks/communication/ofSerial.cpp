@@ -134,83 +134,96 @@ ofSerial::~ofSerial(){
 
 
 //----------------------------------------------------------------
+void ofSerial::buildDeviceList(){
+
+	
+	deviceType = "serial";
+	deviceNames.clear();
+	
+	
+	//---------------------------------------------
+#if defined( TARGET_OSX )
+	//---------------------------------------------
+	
+	//----------------------------------------------------
+	//We will find serial devices by listing the directory
+	
+	DIR *dir;
+	struct dirent *entry;
+	dir = opendir("/dev");
+	string str			= "";
+	string device		= "";
+	
+	if (dir == NULL){
+		ofLog(OF_LOG_ERROR,"ofSerial: error listing devices in /dev");
+	} else {
+		while ((entry = readdir(dir)) != NULL){
+			str = (char *)entry->d_name;
+			if( str.substr(0,3) == "cu." || str.substr(0,4) == "tty." ){
+				
+				deviceNames.push_back(str);
+				//printf("device %i - %s\n", deviceCount, str.c_str());
+			}
+		}
+	}
+	
+	//---------------------------------------------
+#endif
+    //---------------------------------------------
+	
+	//---------------------------------------------
+#if defined( TARGET_LINUX )
+	//---------------------------------------------
+	
+	//----------------------------------------------------
+	//We will find serial devices by listing the directory
+	
+	DIR *dir;
+	struct dirent *entry;
+	dir = opendir("/dev");
+	string str			= "";
+	string device		= "";
+	
+	if (dir == NULL){
+		ofLog(OF_LOG_ERROR,"ofSerial: error listing devices in /dev");
+	} else {
+		printf("ofSerial: listing devices\n");
+		while ((entry = readdir(dir)) != NULL){
+			str = (char *)entry->d_name;
+			if( str.substr(0,4) == "ttyS" || str.substr(0,6) == "ttyUSB" || str.substr(0,3) == "rfc" ){
+				deviceNames.push_back(str);
+			}
+		}
+	}
+	
+	//---------------------------------------------
+#endif
+	//---------------------------------------------
+	
+	//---------------------------------------------
+#ifdef TARGET_WIN32
+	//---------------------------------------------
+	
+	enumerateWin32Ports();
+	printf("ofSerial: listing devices (%i total)\n", nPorts);
+	for (int i = 0; i < nPorts; i++){
+		deviceNames.push_back(string(portNamesFriendly[i]));
+		//printf("device %i -- %s", i, portNamesFriendly[i]);
+	}
+	
+	//---------------------------------------------
+#endif
+    //---------------------------------------------
+	
+	
+	bHaveEnumeratedDevices = true;
+}
+
+
+//----------------------------------------------------------------
 void ofSerial::enumerateDevices(){
 
-	//---------------------------------------------
-	#if defined( TARGET_OSX )
-	//---------------------------------------------
-
-		//----------------------------------------------------
-		//We will find serial devices by listing the directory
-
-		DIR *dir;
-		struct dirent *entry;
-		dir = opendir("/dev");
-		string str			= "";
-		string device		= "";
-		int deviceCount		= 0;
-
-		if (dir == NULL){
-			ofLog(OF_LOG_ERROR,"ofSerial: error listing devices in /dev");
-		} else {
-			printf("ofSerial: listing devices\n");
-			while ((entry = readdir(dir)) != NULL){
-				str = (char *)entry->d_name;
-				if( str.substr(0,3) == "cu." || str.substr(0,4) == "tty." ){
-					printf("device %i - %s\n", deviceCount, str.c_str());
-					deviceCount++;
-				}
-			}
-		}
-
-	//---------------------------------------------
-    #endif
-    //---------------------------------------------
-
-	//---------------------------------------------
-	#if defined( TARGET_LINUX )
-	//---------------------------------------------
-
-		//----------------------------------------------------
-		//We will find serial devices by listing the directory
-
-		DIR *dir;
-		struct dirent *entry;
-		dir = opendir("/dev");
-		string str			= "";
-		string device		= "";
-		int deviceCount		= 0;
-
-		if (dir == NULL){
-			ofLog(OF_LOG_ERROR,"ofSerial: error listing devices in /dev");
-		} else {
-			printf("ofSerial: listing devices\n");
-			while ((entry = readdir(dir)) != NULL){
-				str = (char *)entry->d_name;
-				if( str.substr(0,4) == "ttyS" || str.substr(0,6) == "ttyUSB" || str.substr(0,3) == "rfc" ){
-					printf("device %i - %s\n", deviceCount, str.c_str());
-					deviceCount++;
-				}
-			}
-		}
-
-	//---------------------------------------------
-	#endif
-	//---------------------------------------------
-
-	//---------------------------------------------
-	#ifdef TARGET_WIN32
-	//---------------------------------------------
-
-		enumerateWin32Ports();
-		printf("ofSerial: listing devices (%i total)\n", nPorts);
-		for (int i = 0; i < nPorts; i++){
-			printf("device %i -- %s", i, portNamesFriendly[i]);
-		}
-
-	//---------------------------------------------
-    #endif
-    //---------------------------------------------
+	listDevices();	
 
 }
 

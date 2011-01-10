@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?fileVersion 5.0.0?>
+
+<cproject storage_type_id="org.eclipse.cdt.core.XmlProjectDescriptionStorage2">
+	<storageModule moduleId="org.eclipse.cdt.core.settings">
+		<cconfiguration id="0.1919955709">
+			<storageModule externalCElementFile="0.1919955709_org.eclipse.cdt.core.settings" id="0.1919955709" name="Default"/>
+			<storageModule externalCElementFile="0.1919955709_cdtBuildSystem" version="4.0.0"/>
+			<storageModule externalCElementFile="0.1919955709_scannerConfiguration"/>
+			<storageModule externalCElementFile="0.1919955709_org.eclipse.cdt.core.externalSettings"/>
+			<storageModule externalCElementFile="0.1919955709_org.eclipse.cdt.core.language.mapping"/>
+			<storageModule externalCElementFile="0.1919955709_org.eclipse.cdt.internal.ui.text.commentOwnerProjectMappings"/>
+		</cconfiguration>
+	</storageModule>
+	<storageModule moduleId="cdtBuildSystem" version="4.0.0">
+		<project id="openFrameworks.null.1468333884" name="openFrameworks"/>
+	</storageModule>
+</cproject>
