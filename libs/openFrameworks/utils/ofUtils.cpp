@@ -220,6 +220,14 @@ int ofToInt(const string& intString) {
 }
 
 //----------------------------------------
+int ofHexToInt(const string& intHexString) {
+	int x = 0;
+	istringstream cur(intHexString);
+	cur >> hex >> x;
+	return x;
+}
+
+//----------------------------------------
 float ofToFloat(const string& floatString) {
 	float x = 0;
 	istringstream cur(floatString);

@@ -49,6 +49,7 @@ template <class T> string ofToString(T value, int precision){
 }
 
 int ofToInt(const string& intString);
+int ofHexToInt(const string& intHexString);
 float ofToFloat(const string& floatString);
 bool ofToBool(const string& boolString);
 char ofToChar(const string& charString);
