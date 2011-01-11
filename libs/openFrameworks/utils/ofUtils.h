@@ -36,8 +36,8 @@ string 	ofToDataPath(string path, bool absolute=false);
 //the path must have a trailing slash (/) !!!!
 void	ofSetDataPathRoot( string root );
 
-string  ofToString(double value, int precision = 7);
-string  ofToString(int  value);
+template <class T> string ofToString(T value);
+string ofToString(double value, int precision = 7);
 
 int ofToInt(const string& intString);
 float ofToFloat(const string& floatString);

@@ -211,16 +211,16 @@ string ofToDataPath(string path, bool makeAbsolute){
 }
 
 //--------------------------------------------------
-string ofToString(double value, int precision){
-	stringstream sstr;
-	sstr << fixed << setprecision(precision) << value;
-	return sstr.str();
+template <class T> string ofToString(T value){
+	stringstream out;
+	out << value;
+	return out.str();
 }
 
 //--------------------------------------------------
-string ofToString(int value){
+string ofToString(double value, int precision){
 	stringstream sstr;
-	sstr << value;
+	sstr << fixed << setprecision(precision) << value;
 	return sstr.str();
 }
 
