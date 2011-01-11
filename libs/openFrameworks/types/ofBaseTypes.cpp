@@ -110,6 +110,7 @@ void ofBaseVideoPlayer::setFrame(int frame){
 //---------------------------------------------------------------------------
 int	ofBaseVideoPlayer::getCurrentFrame(){
 	ofLog(OF_LOG_WARNING, "ofBaseVideoPlayer::nextFrame not implemented");
+	return 0;
 }
 
 //---------------------------------------------------------------------------
