@@ -36,11 +36,22 @@ string 	ofToDataPath(string path, bool absolute=false);
 //the path must have a trailing slash (/) !!!!
 void	ofSetDataPathRoot( string root );
 
-template <class T> string ofToString(T value);
-string ofToString(double value, int precision = 7);
+template <class T> string ofToString(T value){
+	ostringstream out;
+	out << value;
+	return out.str();
+}
+
+template <class T> string ofToString(T value, int precision){
+	ostringstream out;
+	out << fixed << setprecision(precision) << value;
+	return out.str();
+}
 
 int ofToInt(const string& intString);
 float ofToFloat(const string& floatString);
+bool ofToBool(const string& boolString);
+char ofToChar(const string& charString);
 
 string 	ofGetVersionInfo();
 
