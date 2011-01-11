@@ -213,7 +213,7 @@ string ofToDataPath(string path, bool makeAbsolute){
 
 //----------------------------------------
 int ofToInt(const string& intString) {
-	int x;
+	int x = 0;
 	istringstream cur(intString);
 	cur >> x;
 	return x;
@@ -221,7 +221,7 @@ int ofToInt(const string& intString) {
 
 //----------------------------------------
 float ofToFloat(const string& floatString) {
-	float x;
+	float x = 0;
 	istringstream cur(floatString);
 	cur >> x;
 	return x;
@@ -238,7 +238,7 @@ bool ofToBool(const string& boolString) {
 	if(lower == falseString) {
 		return false;
 	}
-	bool x;
+	bool x = false;
 	istringstream cur(lower);
 	cur >> x;
 	return x;
@@ -246,7 +246,7 @@ bool ofToBool(const string& boolString) {
 
 //----------------------------------------
 char ofToChar(const string& charString) {
-	char x;
+	char x = '\0';
 	istringstream cur(charString);
 	cur >> x;
 	return x;
