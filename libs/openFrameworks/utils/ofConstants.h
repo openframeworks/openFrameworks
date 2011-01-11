@@ -86,8 +86,10 @@
 		#define __MACOSX_CORE__
 	#endif
 	#include <unistd.h>
+#include "glew.h"
 	#include <OpenGL/gl.h>
-	#include <OpenGL/glext.h>
+//	#include "../../../../libs/glext/include/ofGlext.h"
+//	#include <OpenGL/glext.h>
 	#include <OpenGL/glu.h>
 	#include <ApplicationServices/ApplicationServices.h>
 
@@ -101,7 +103,8 @@
         #include <unistd.h>
 		#include <GL/gl.h>
 		#include <GL/glx.h>
-        #include <GL/glext.h>
+//        #include <GL/glext.h>
+		#include "../../../../libs/glext/include/ofGlext.h"
         #include <GL/glu.h>
 
     // for some reason, this isn't defined at compile time,

@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		BB4BDF631281AF2C006300EE /* ofxShader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BB4BDF601281AF2C006300EE /* ofxShader.cpp */; };
 		E45BE0AA0E8CC67C009D7055 /* GLee.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E45BE0A90E8CC67C009D7055 /* GLee.a */; };
 		E45BE2E40E8CC69C009D7055 /* rtAudio.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E45BE2E30E8CC69C009D7055 /* rtAudio.a */; };
 		E45BE97B0E8CC7DD009D7055 /* AGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E45BE9710E8CC7DD009D7055 /* AGL.framework */; };
@@ -81,8 +80,6 @@
 		BB28899312888C64007ADBF3 /* frag.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = frag.glsl; sourceTree = "<group>"; };
 		BB28899412888C64007ADBF3 /* geom.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = geom.glsl; sourceTree = "<group>"; };
 		BB28899512888C64007ADBF3 /* vert.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = vert.glsl; sourceTree = "<group>"; };
-		BB4BDF601281AF2C006300EE /* ofxShader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxShader.cpp; sourceTree = "<group>"; };
-		BB4BDF611281AF2C006300EE /* ofxShader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxShader.h; sourceTree = "<group>"; };
 		E45BE0390E8CC647009D7055 /* FreeImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FreeImage.h; path = ../../../libs/freeimage/include/FreeImage.h; sourceTree = SOURCE_ROOT; };
 		E45BE03F0E8CC650009D7055 /* fmod.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = fmod.h; path = ../../../libs/fmodex/include/fmod.h; sourceTree = SOURCE_ROOT; };
 		E45BE0400E8CC650009D7055 /* fmod.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = fmod.hpp; path = ../../../libs/fmodex/include/fmod.hpp; sourceTree = SOURCE_ROOT; };
@@ -171,27 +168,8 @@
 		BB4B014C10F69532006C3DED /* addons */ = {
 			isa = PBXGroup;
 			children = (
-				BB4BDF5E1281AF2C006300EE /* ofxShader */,
 			);
 			name = addons;
-			sourceTree = "<group>";
-		};
-		BB4BDF5E1281AF2C006300EE /* ofxShader */ = {
-			isa = PBXGroup;
-			children = (
-				BB4BDF5F1281AF2C006300EE /* src */,
-			);
-			name = ofxShader;
-			path = ../../../addons/ofxShader;
-			sourceTree = SOURCE_ROOT;
-		};
-		BB4BDF5F1281AF2C006300EE /* src */ = {
-			isa = PBXGroup;
-			children = (
-				BB4BDF601281AF2C006300EE /* ofxShader.cpp */,
-				BB4BDF611281AF2C006300EE /* ofxShader.h */,
-			);
-			path = src;
 			sourceTree = "<group>";
 		};
 		E45BE0360E8CC5DE009D7055 /* libs */ = {
@@ -563,7 +541,6 @@
 			files = (
 				E4B69E200A3A1BDC003C02F2 /* main.cpp in Sources */,
 				E4B69E210A3A1BDC003C02F2 /* testApp.cpp in Sources */,
-				BB4BDF631281AF2C006300EE /* ofxShader.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

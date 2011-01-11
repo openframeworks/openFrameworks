@@ -1,10 +1,10 @@
 #include "testApp.h"
-#include "ofxShader.h"
+#include "ofShader.h"
 
 // this examples uses a geometry shader to convert lines into triangle strips
 
 
-ofxShader shader;
+ofShader shader;
 bool doShader = false;
 
 vector<ofPoint> points;

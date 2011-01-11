@@ -34,6 +34,12 @@
 		BB4A410712DBCA60007FFA68 /* ofVec3f.h in Headers */ = {isa = PBXBuildFile; fileRef = BB4A40FD12DBCA60007FFA68 /* ofVec3f.h */; };
 		BB4A410812DBCA60007FFA68 /* ofVec4f.h in Headers */ = {isa = PBXBuildFile; fileRef = BB4A40FE12DBCA60007FFA68 /* ofVec4f.h */; };
 		BB4A410912DBCA60007FFA68 /* ofVectorMath.h in Headers */ = {isa = PBXBuildFile; fileRef = BB4A40FF12DBCA60007FFA68 /* ofVectorMath.h */; };
+		BB4A414212DBD813007FFA68 /* ofTransformation3D.h in Headers */ = {isa = PBXBuildFile; fileRef = BB4A414012DBD813007FFA68 /* ofTransformation3D.h */; };
+		BB4A414312DBD813007FFA68 /* ofTransformation3D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BB4A414112DBD813007FFA68 /* ofTransformation3D.cpp */; };
+		BB8C876612DCC76100F7AD63 /* glew.h in Headers */ = {isa = PBXBuildFile; fileRef = BB8C876012DCC76100F7AD63 /* glew.h */; };
+		BB8C876712DCC76100F7AD63 /* glxew.h in Headers */ = {isa = PBXBuildFile; fileRef = BB8C876112DCC76100F7AD63 /* glxew.h */; };
+		BB8C876812DCC76100F7AD63 /* wglew.h in Headers */ = {isa = PBXBuildFile; fileRef = BB8C876212DCC76100F7AD63 /* wglew.h */; };
+		BB8C876912DCC76100F7AD63 /* libGLEW.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BB8C876512DCC76100F7AD63 /* libGLEW.a */; };
 		E455490A12DA54BE00652B63 /* ofFileUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = E455490812DA54BE00652B63 /* ofFileUtils.h */; };
 		E455490B12DA54BE00652B63 /* ofFileUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E455490912DA54BE00652B63 /* ofFileUtils.cpp */; };
 		E4998A26128A39480094AC3F /* ofEvents.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4998A25128A39480094AC3F /* ofEvents.cpp */; };
@@ -99,6 +105,12 @@
 		BB4A40FD12DBCA60007FFA68 /* ofVec3f.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofVec3f.h; sourceTree = "<group>"; };
 		BB4A40FE12DBCA60007FFA68 /* ofVec4f.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofVec4f.h; sourceTree = "<group>"; };
 		BB4A40FF12DBCA60007FFA68 /* ofVectorMath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofVectorMath.h; sourceTree = "<group>"; };
+		BB4A414012DBD813007FFA68 /* ofTransformation3D.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofTransformation3D.h; sourceTree = "<group>"; };
+		BB4A414112DBD813007FFA68 /* ofTransformation3D.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofTransformation3D.cpp; sourceTree = "<group>"; };
+		BB8C876012DCC76100F7AD63 /* glew.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = glew.h; sourceTree = "<group>"; };
+		BB8C876112DCC76100F7AD63 /* glxew.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = glxew.h; sourceTree = "<group>"; };
+		BB8C876212DCC76100F7AD63 /* wglew.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = wglew.h; sourceTree = "<group>"; };
+		BB8C876512DCC76100F7AD63 /* libGLEW.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libGLEW.a; sourceTree = "<group>"; };
 		E455490812DA54BE00652B63 /* ofFileUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofFileUtils.h; sourceTree = "<group>"; };
 		E455490912DA54BE00652B63 /* ofFileUtils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofFileUtils.cpp; sourceTree = "<group>"; };
 		E45BE9710E8CC7DD009D7055 /* AGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AGL.framework; path = /System/Library/Frameworks/AGL.framework; sourceTree = "<absolute>"; };
@@ -160,10 +172,9 @@
 		E4B27AF910CBE9B900536013 /* fmod_output.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = fmod_output.h; path = ../../../fmodex/include/fmod_output.h; sourceTree = SOURCE_ROOT; };
 		E4B27AFA10CBE9B900536013 /* fmodlinux.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = fmodlinux.h; path = ../../../fmodex/include/fmodlinux.h; sourceTree = SOURCE_ROOT; };
 		E4B27B1210CBE9B900536013 /* FreeImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FreeImage.h; path = ../../../FreeImage/include/FreeImage.h; sourceTree = SOURCE_ROOT; };
-		E4B27BBD10CBE9B900536013 /* GLee.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GLee.h; path = ../../../glee/include/GLee.h; sourceTree = SOURCE_ROOT; };
 		E4B27BCE10CBE9B900536013 /* RtAudio.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RtAudio.h; path = ../../../rtAudio/include/RtAudio.h; sourceTree = SOURCE_ROOT; };
 		E4B27BCF10CBE9B900536013 /* RtError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RtError.h; path = ../../../rtAudio/include/RtError.h; sourceTree = SOURCE_ROOT; };
-		E4B27C1510CBEB8E00536013 /* openFrameworksDebug.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = openFrameworksDebug.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		E4B27C1510CBEB8E00536013 /* openFrameworks.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = openFrameworks.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		E4B5AE1412D94F9B00BA355D /* ofQtUtils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofQtUtils.cpp; path = ../../../openFrameworks/video/ofQtUtils.cpp; sourceTree = SOURCE_ROOT; };
 		E4B5AE1512D94F9B00BA355D /* ofQtUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofQtUtils.h; path = ../../../openFrameworks/video/ofQtUtils.h; sourceTree = SOURCE_ROOT; };
 		E4B5AE1612D94F9B00BA355D /* ofQuickTimeGrabber.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofQuickTimeGrabber.cpp; path = ../../../openFrameworks/video/ofQuickTimeGrabber.cpp; sourceTree = SOURCE_ROOT; };
@@ -187,6 +198,7 @@
 				E4B27C2F10CBEBAB00536013 /* GLUT.framework in Frameworks */,
 				E4B27C3010CBEBAB00536013 /* OpenGL.framework in Frameworks */,
 				E4B27C3110CBEBAB00536013 /* QuickTime.framework in Frameworks */,
+				BB8C876912DCC76100F7AD63 /* libGLEW.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -226,6 +238,50 @@
 			path = vectormath;
 			sourceTree = "<group>";
 		};
+		BB8C875D12DCC76100F7AD63 /* glew */ = {
+			isa = PBXGroup;
+			children = (
+				BB8C875E12DCC76100F7AD63 /* include */,
+				BB8C876312DCC76100F7AD63 /* lib */,
+			);
+			name = glew;
+			path = ../../../glew;
+			sourceTree = SOURCE_ROOT;
+		};
+		BB8C875E12DCC76100F7AD63 /* include */ = {
+			isa = PBXGroup;
+			children = (
+				BB8C875F12DCC76100F7AD63 /* GL */,
+			);
+			path = include;
+			sourceTree = "<group>";
+		};
+		BB8C875F12DCC76100F7AD63 /* GL */ = {
+			isa = PBXGroup;
+			children = (
+				BB8C876012DCC76100F7AD63 /* glew.h */,
+				BB8C876112DCC76100F7AD63 /* glxew.h */,
+				BB8C876212DCC76100F7AD63 /* wglew.h */,
+			);
+			path = GL;
+			sourceTree = "<group>";
+		};
+		BB8C876312DCC76100F7AD63 /* lib */ = {
+			isa = PBXGroup;
+			children = (
+				BB8C876412DCC76100F7AD63 /* osx */,
+			);
+			path = lib;
+			sourceTree = "<group>";
+		};
+		BB8C876412DCC76100F7AD63 /* osx */ = {
+			isa = PBXGroup;
+			children = (
+				BB8C876512DCC76100F7AD63 /* libGLEW.a */,
+			);
+			path = osx;
+			sourceTree = "<group>";
+		};
 		E45BE0360E8CC5DE009D7055 /* libs */ = {
 			isa = PBXGroup;
 			children = (
@@ -237,9 +293,9 @@
 		E45BE0480E8CC657009D7055 /* core libraries */ = {
 			isa = PBXGroup;
 			children = (
+				BB8C875D12DCC76100F7AD63 /* glew */,
 				E4B27AF110CBE9B900536013 /* fmodex */,
 				E4B27B1010CBE9B900536013 /* FreeImage */,
-				E4B27BBB10CBE9B900536013 /* glee */,
 				E4B27BCC10CBE9B900536013 /* rtAudio */,
 			);
 			name = "core libraries";
@@ -345,6 +401,8 @@
 				E4B27AC610CBE92A00536013 /* ofTrueTypeFont.h */,
 				BB4A40F112DBC6E2007FFA68 /* ofCamera.h */,
 				BB4A40F212DBC6E2007FFA68 /* ofCamera.cpp */,
+				BB4A414012DBD813007FFA68 /* ofTransformation3D.h */,
+				BB4A414112DBD813007FFA68 /* ofTransformation3D.cpp */,
 			);
 			name = graphics;
 			path = ../../../openFrameworks/graphics;
@@ -443,24 +501,6 @@
 			path = ../../../FreeImage/include;
 			sourceTree = SOURCE_ROOT;
 		};
-		E4B27BBB10CBE9B900536013 /* glee */ = {
-			isa = PBXGroup;
-			children = (
-				E4B27BBC10CBE9B900536013 /* include */,
-			);
-			name = glee;
-			path = ../../../glee;
-			sourceTree = SOURCE_ROOT;
-		};
-		E4B27BBC10CBE9B900536013 /* include */ = {
-			isa = PBXGroup;
-			children = (
-				E4B27BBD10CBE9B900536013 /* GLee.h */,
-			);
-			name = include;
-			path = ../../../glee/include;
-			sourceTree = SOURCE_ROOT;
-		};
 		E4B27BCC10CBE9B900536013 /* rtAudio */ = {
 			isa = PBXGroup;
 			children = (
@@ -485,7 +525,7 @@
 			children = (
 				E4B27AAA10CBE92A00536013 /* openFrameworks */,
 				E45BE0360E8CC5DE009D7055 /* libs */,
-				E4B27C1510CBEB8E00536013 /* openFrameworksDebug.a */,
+				E4B27C1510CBEB8E00536013 /* openFrameworks.a */,
 			);
 			sourceTree = "<group>";
 		};
@@ -516,6 +556,10 @@
 				BB4A410712DBCA60007FFA68 /* ofVec3f.h in Headers */,
 				BB4A410812DBCA60007FFA68 /* ofVec4f.h in Headers */,
 				BB4A410912DBCA60007FFA68 /* ofVectorMath.h in Headers */,
+				BB4A414212DBD813007FFA68 /* ofTransformation3D.h in Headers */,
+				BB8C876612DCC76100F7AD63 /* glew.h in Headers */,
+				BB8C876712DCC76100F7AD63 /* glxew.h in Headers */,
+				BB8C876812DCC76100F7AD63 /* wglew.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -536,7 +580,7 @@
 			);
 			name = openFrameworks;
 			productName = openFrameworksLib;
-			productReference = E4B27C1510CBEB8E00536013 /* openFrameworksDebug.a */;
+			productReference = E4B27C1510CBEB8E00536013 /* openFrameworks.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 /* End PBXNativeTarget section */
@@ -601,6 +645,7 @@
 				BB4A410012DBCA60007FFA68 /* ofMatrix3x3.cpp in Sources */,
 				BB4A410212DBCA60007FFA68 /* ofMatrix4x4.cpp in Sources */,
 				BB4A410412DBCA60007FFA68 /* ofQuaternion.cpp in Sources */,
+				BB4A414312DBD813007FFA68 /* ofTransformation3D.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -614,6 +659,11 @@
 				COPY_PHASE_STRIP = NO;
 				EXECUTABLE_PREFIX = "";
 				INSTALL_PATH = /usr/local/lib;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
+				);
+				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)/../../../glew/lib/osx\"";
 				PREBINDING = NO;
 				PRODUCT_NAME = openFrameworksDebug;
 				SDKROOT = "";
@@ -629,6 +679,11 @@
 				EXECUTABLE_PREFIX = "";
 				GCC_FAST_MATH = YES;
 				INSTALL_PATH = /usr/local/lib;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
+				);
+				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)/../../../glew/lib/osx\"";
 				PREBINDING = NO;
 				PRODUCT_NAME = openFrameworks;
 				SDKROOT = "";
