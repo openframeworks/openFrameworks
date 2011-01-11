@@ -10,11 +10,11 @@ void testApp::demo3_setup() {
 	ofLog(OF_LOG_NOTICE, "demo3_setup | useMSAA: " + useMSAA);
 	demoMode = 3;
 	
-	ofxFbo::Settings s;
+	ofFbo::Settings s;
 	s.width				= kFBOWidth;
 	s.height			= kFBOHeight;
 	s.numColorbuffers	= 4;
-	s.numSamples		= useMSAA ? ofxFbo::maxSamples() : 0;
+	s.numSamples		= useMSAA ? ofFbo::maxSamples() : 0;
 	fbo.setup(s);
 	
 	shader.setup("", "shaders/mrt_frag.glsl");	// omit vertex shader
