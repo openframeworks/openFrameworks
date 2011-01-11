@@ -1,26 +1,24 @@
+#include "ofQuaternion.h"
+#include "ofMatrix4x4.h"
 
-#include <stdio.h>
-#include "ofxQuaternion.h"
-#include "ofxMatrix4x4.h"
-
-void ofxQuaternion::set(const ofxMatrix4x4& matrix) {
+void ofQuaternion::set(const ofMatrix4x4& matrix) {
 	*this = matrix.getRotate();
 }
 
-void ofxQuaternion::get(ofxMatrix4x4& matrix) const {
+void ofQuaternion::get(ofMatrix4x4& matrix) const {
 	matrix.makeRotationMatrix(*this);
 }
 
 
 /// Set the elements of the Quat to represent a rotation of angle
 /// (radians) around the axis (x,y,z)
-void ofxQuaternion::makeRotate( float angle, float x, float y, float z ) {
+void ofQuaternion::makeRotate( float angle, float x, float y, float z ) {
 	const float epsilon = 0.0000001f;
 
 	float length = sqrtf( x * x + y * y + z * z );
 	if (length < epsilon) {
 		// ~zero length axis, so reset rotation to zero.
-		*this = ofxQuaternion();
+		*this = ofQuaternion();
 		return;
 	}
 
@@ -35,17 +33,17 @@ void ofxQuaternion::makeRotate( float angle, float x, float y, float z ) {
 }
 
 
-void ofxQuaternion::makeRotate( float angle, const ofxVec3f& vec ) {
+void ofQuaternion::makeRotate( float angle, const ofVec3f& vec ) {
 	makeRotate( angle, vec.x, vec.y, vec.z );
 }
 
 
-void ofxQuaternion::makeRotate ( float angle1, const ofxVec3f& axis1,
-                          float angle2, const ofxVec3f& axis2,
-                          float angle3, const ofxVec3f& axis3) {
-       ofxQuaternion q1; q1.makeRotate(angle1,axis1);
-       ofxQuaternion q2; q2.makeRotate(angle2,axis2);
-       ofxQuaternion q3; q3.makeRotate(angle3,axis3);
+void ofQuaternion::makeRotate ( float angle1, const ofVec3f& axis1,
+                          float angle2, const ofVec3f& axis2,
+                          float angle3, const ofVec3f& axis3) {
+       ofQuaternion q1; q1.makeRotate(angle1,axis1);
+       ofQuaternion q2; q2.makeRotate(angle2,axis2);
+       ofQuaternion q3; q3.makeRotate(angle3,axis3);
 
        *this = q1*q2*q3;
 }
@@ -64,7 +62,7 @@ void ofxQuaternion::makeRotate ( float angle1, const ofxVec3f& axis1,
 
  @author Nicolas Brodu
  */
-void ofxQuaternion::makeRotate( const ofxVec3f& from, const ofxVec3f& to ) {
+void ofQuaternion::makeRotate( const ofVec3f& from, const ofVec3f& to ) {
 
 	// This routine takes any vector as argument but normalized
 	// vectors are necessary, if only for computing the dot product.
@@ -73,8 +71,8 @@ void ofxQuaternion::makeRotate( const ofxVec3f& from, const ofxVec3f& to ) {
 	// the sqrt could be shared, but we have no way to know beforehand
 	// at this point, while the caller may know.
 	// So, we have to test... in the hope of saving at least a sqrt
-	ofxVec3f sourceVector = from;
-	ofxVec3f targetVector = to;
+	ofVec3f sourceVector = from;
+	ofVec3f targetVector = to;
 
 	float fromLen2 = from.lengthSquared();
 	float fromLen;
@@ -132,7 +130,7 @@ void ofxQuaternion::makeRotate( const ofxVec3f& from, const ofxVec3f& to ) {
 		// Find the shortest angle quaternion that transforms normalized vectors
 		// into one other. Formula is still valid when vectors are colinear
 		const double s = sqrt(0.5 * dotProdPlus1);
-		const ofxVec3f tmp = sourceVector.getCrossed(targetVector) / (2.0 * s);
+		const ofVec3f tmp = sourceVector.getCrossed(targetVector) / (2.0 * s);
 		_v[0] = tmp.x;
 		_v[1] = tmp.y;
 		_v[2] = tmp.z;
@@ -146,7 +144,7 @@ void ofxQuaternion::makeRotate( const ofxVec3f& from, const ofxVec3f& to ) {
 // and then use a cross product to get the rotation axis
 // Watch out for the two special cases of when the vectors
 // are co-incident or opposite in direction.
-void ofxQuaternion::makeRotate_original( const ofxVec3f& from, const ofxVec3f& to ) {
+void ofQuaternion::makeRotate_original( const ofVec3f& from, const ofVec3f& to ) {
 	const float epsilon = 0.0000001f;
 
 	float length1  = from.length();
@@ -166,17 +164,17 @@ void ofxQuaternion::makeRotate_original( const ofxVec3f& from, const ofxVec3f& t
 		if ( fabs(cosangle + 1.0) < epsilon ) {
 			// vectors are close to being opposite, so will need to find a
 			// vector orthongonal to from to rotate about.
-			ofxVec3f tmp;
+			ofVec3f tmp;
 			if (fabs(from.x) < fabs(from.y))
 				if (fabs(from.x) < fabs(from.z)) tmp.set(1.0, 0.0, 0.0); // use x axis.
 				else tmp.set(0.0, 0.0, 1.0);
 			else if (fabs(from.y) < fabs(from.z)) tmp.set(0.0, 1.0, 0.0);
 			else tmp.set(0.0, 0.0, 1.0);
 
-			ofxVec3f fromd(from.x, from.y, from.z);
+			ofVec3f fromd(from.x, from.y, from.z);
 
 			// find orthogonal axis.
-			ofxVec3f axis(fromd.getCrossed(tmp));
+			ofVec3f axis(fromd.getCrossed(tmp));
 			axis.normalize();
 
 			_v[0] = axis[0]; // sin of half angle of PI is 1.0.
@@ -187,13 +185,13 @@ void ofxQuaternion::makeRotate_original( const ofxVec3f& from, const ofxVec3f& t
 		} else {
 			// This is the usual situation - take a cross-product of vec1 and vec2
 			// and that is the axis around which to rotate.
-			ofxVec3f axis(from.getCrossed(to));
+			ofVec3f axis(from.getCrossed(to));
 			float angle = acos( cosangle );
 			makeRotate( angle, axis );
 		}
 }
 
-void ofxQuaternion::getRotate( float& angle, ofxVec3f& vec ) const {
+void ofQuaternion::getRotate( float& angle, ofVec3f& vec ) const {
 	float x, y, z;
 	getRotate(angle, x, y, z);
 	vec[0] = x;
@@ -203,7 +201,7 @@ void ofxQuaternion::getRotate( float& angle, ofxVec3f& vec ) const {
 // Get the angle of rotation and axis of this Quat object.
 // Won't give very meaningful results if the Quat is not associated
 // with a rotation!
-void ofxQuaternion::getRotate( float& angle, float& x, float& y, float& z ) const {
+void ofQuaternion::getRotate( float& angle, float& x, float& y, float& z ) const {
 	float sinhalfangle = sqrt( _v[0] * _v[0] + _v[1] * _v[1] + _v[2] * _v[2] );
 
 	angle = 2.0 * atan2( sinhalfangle, _v[3] );
@@ -225,11 +223,11 @@ void ofxQuaternion::getRotate( float& angle, float& x, float& y, float& z ) cons
 /// Reference: Shoemake at SIGGRAPH 89
 /// See also
 /// http://www.gamasutra.com/features/programming/19980703/quaternions_01.htm
-void ofxQuaternion::slerp( float t, const ofxQuaternion& from, const ofxQuaternion& to ) {
+void ofQuaternion::slerp( float t, const ofQuaternion& from, const ofQuaternion& to ) {
 	const double epsilon = 0.00001;
 	double omega, cosomega, sinomega, scale_from, scale_to ;
 
-	ofxQuaternion quatTo(to);
+	ofQuaternion quatTo(to);
 	// this is a dot product
 
 	cosomega = from.asVec4().dot(to.asVec4());
