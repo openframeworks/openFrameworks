@@ -34,7 +34,12 @@
 
 //--------------------------------------------------------------
 ofxiPhoneDeviceType ofxiPhoneGetDeviceType() {
-	return [[[UIDevice currentDevice] model] caseInsensitiveCompare:@"iPhone"] == NSOrderedSame ? OFXIPHONE_DEVICE_IPHONE : OFXIPHONE_DEVICE_IPODTOUCH;
+	if([[[UIDevice currentDevice] model] caseInsensitiveCompare:@"iPhone"])
+		return OFXIPHONE_DEVICE_IPHONE;
+	else if([[[UIDevice currentDevice] model] caseInsensitiveCompare:@"iPod"])
+		return OFXIPHONE_DEVICE_IPODTOUCH;
+	else
+		return OFXIPHONE_DEVICE_IPAD;
 }
 
 
