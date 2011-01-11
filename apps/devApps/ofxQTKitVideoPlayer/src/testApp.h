@@ -68,7 +68,9 @@ class testApp : public ofBaseApp{
 		void mouseReleased(int x, int y, int button);
 		void windowResized(int w, int h);
 
+	
 		ofxQTKitVideoPlayer testMovie;
+		ofVideoPlayer player;
 		ofTexture ourOwnTexture;
 		int mode; //define a mode to interact with the movie
 

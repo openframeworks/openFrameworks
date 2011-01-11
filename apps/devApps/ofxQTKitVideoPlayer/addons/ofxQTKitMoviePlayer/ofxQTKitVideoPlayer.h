@@ -63,7 +63,7 @@
 //performance out of this class it needs to be used on it's own.  Is there a better way to structure this
 //so that ofVideoPlayer can use our texture instead?
 
-class ofxQTKitVideoPlayer : ofBaseVideoPlayer
+class ofxQTKitVideoPlayer : public ofBaseVideoPlayer
 {
   public:	
 	ofxQTKitVideoPlayer();
@@ -101,7 +101,7 @@ class ofxQTKitVideoPlayer : ofBaseVideoPlayer
 	void 				setPosition(float pct);
 	void 				setVolume(int volume);
 	void 				setLoops(bool bLoops); //JG: update to of standard loop state
-	void 				setLoopState(int state); //JG: doesn't support ping-pong yet
+	void 				setLoopState(int state);
 	void   				setSpeed(float speed);
 	void				setFrame(int frame);  // frame 0 = first frame...
 	
@@ -114,7 +114,8 @@ class ofxQTKitVideoPlayer : ofBaseVideoPlayer
 	bool				isPaused();
 	bool				isLoaded();
 	bool				isPlaying();
-		
+	
+	void				setType(int imageType); //default is OF_IMAGE_COLOR, supports OF_IMAGE_COLOR_ALPHA
 
 	
   protected:
@@ -124,6 +125,7 @@ class ofxQTKitVideoPlayer : ofBaseVideoPlayer
 	float				currentSpeed;
 	bool				bPaused;
 	bool				bPlaying;
+	int					type;
 	
 	//do lazy allocation and copy on these so it's faster if they aren't used
 	unsigned char*	moviePixels;
