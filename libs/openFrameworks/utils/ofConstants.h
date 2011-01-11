@@ -288,6 +288,14 @@ using namespace std;
 #define		OF_MAX_STYLE_HISTORY	32
 #define		OF_MAX_CIRCLE_PTS 1024
 
+// Blend Modes
+#define OF_BLENDMODE_ALPHA    1
+#define OF_BLENDMODE_ADD      2
+#define OF_BLENDMODE_SUBTRACT 3
+#define OF_BLENDMODE_MULTIPLY 4
+#define OF_BLENDMODE_SCREEN   5
+
+
 // these are straight out of glu, but renamed and included here
 // for convenience
 //

@@ -17,7 +17,10 @@ class ofStyle{
 	public:
 		ofStyle(){
 			bFill				= true;
-			blending			= false;
+            blending            = false;
+			blendEquation		= 0;
+            blendSrc            = GL_SRC_ALPHA;
+            blendDst            = GL_ONE_MINUS_SRC_ALPHA;
 			smoothing			= false;
 			circleResolution	= 20;
 			lineWidth			= 1.0;
@@ -31,7 +34,13 @@ class ofStyle{
 		int polyMode;
 		int rectMode;
 		bool bFill;
-		bool blending;
+    
+        // one of the following GL_ZERO, GL_ONE, GL_DST_COLOR, GL_ONE_MINUS_DST_COLOR, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_DST_ALPHA, GL_ONE_MINUS_DST_ALPHA, GL_SRC_ALPHA_SATURATE
+        int blendSrc;
+        int blendDst;
+        bool blending;  // blending enabled?
+		int blendEquation; // GL_FUNC_ADD, GL_FUNC_SUBTRACT, GL_FUNC_REVERSE_SUBTRACT, GL_MIN, GL_MAX
+    
 		bool smoothing;
 		int circleResolution;
 		float lineWidth;
