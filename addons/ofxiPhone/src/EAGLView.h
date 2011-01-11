@@ -44,12 +44,13 @@
 @private
     id <ESRenderer> renderer;
 	NSMutableDictionary		*activeTouches;
+	int touchScaleFactor;
 }
 
 - (void) startRender;
 - (void) finishRender;
 - (EAGLContext*) context;
-
+- (id) initWithFrame:(CGRect)frame andDepth:(bool)depth andAA:(bool)fsaaEnabled andNumSamples:(int)samples andRetina:(bool)retinaEnabled;
 
 
 @end
