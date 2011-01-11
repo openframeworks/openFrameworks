@@ -130,12 +130,16 @@ private:
 	bool	bAllocated;
 
 };
-
-
 //----------------------------------------------------
 // freeImage based stuff:
-void 	ofCloseFreeImage();		// when we exit, we shut down ofImage
+void	ofLoadImage(ofPixels & pix, string path);
+void	ofLoadImageFromMemory(ofPixels & pix, unsigned char * bytes, int numBytes);
 
+//TODO: add load from buffer
+//void	ofLoadImage(ofPixels & pix, ofBuffer buf); 
+
+
+void 	ofCloseFreeImage();		// when we exit, we shut down ofImage
 
 //----------------------------------------------------
 class ofImage : public ofBaseImage{
@@ -210,16 +214,21 @@ class ofImage : public ofBaseImage{
 		int 				width, height, bpp;		// w,h, bits per pixel
 		int					type;					// OF_IMAGE_GRAYSCALE, OF_IMAGE_COLOR, OF_IMAGE_COLOR_ALPHA
 
-	protected:
 
 		// freeImage related functionality:
 
-		bool				loadImageIntoPixels(string fileName, ofPixels &pix);
-		void				saveImageFromPixels(string fileName, ofPixels &pix);
+		static bool			loadImageIntoPixels(string fileName, ofPixels &pix);
+		static void			saveImageFromPixels(string fileName, ofPixels &pix);
+
+		static bool			loadImageFromMemory(unsigned char * buffer, unsigned int bytes, ofPixels &pix);
+
+	protected:
+	
 		void				changeTypeOfPixels(ofPixels &pix, int newType);
 		void				resizePixels(ofPixels &pix, int newWidth, int newHeight);
-		FIBITMAP *			getBmpFromPixels(ofPixels &pix);
-		void				putBmpIntoPixels(FIBITMAP * bmp, ofPixels &pix);
+		static FIBITMAP *	getBmpFromPixels(ofPixels &pix);
+		static void			putBmpIntoPixels(FIBITMAP * bmp, ofPixels &pix);
+
 
 		ofPixels			myPixels;
 		bool				bUseTexture;

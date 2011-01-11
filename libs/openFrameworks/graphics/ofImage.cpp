@@ -6,6 +6,13 @@
 static bool		bFreeImageInited = false;
 //----------------------------------------------------------
 
+void ofLoadImage(ofPixels & pix, string path){
+	ofImage::loadImageIntoPixels(path, pix);
+}
+
+void ofLoadImageFromMemory(ofPixels & pix, unsigned char * bytes, int numBytes){
+	ofImage::loadImageFromMemory(bytes, numBytes, pix);
+}
 
 
 //----------------------------------------------------------
@@ -503,6 +510,112 @@ bool ofImage::loadImageIntoPixels(string fileName, ofPixels &pix){
 
 	return bLoaded;
 }
+
+//----------------------------------------------------
+bool ofImage::loadImageFromMemory(unsigned char * buffer, unsigned int numBytes, ofPixels &pix){
+
+	int					width, height, bpp;
+	bool bLoaded		= false;
+	FIBITMAP * bmp		= NULL;
+	FIMEMORY *hmem		= NULL;
+	
+	printf("loadImageFromMemory\n");
+
+	hmem = FreeImage_OpenMemory(buffer, numBytes);
+	if (hmem == NULL){
+		printf("couldn't create memory handle! \n");
+		return false;
+	}
+
+	//get the file type!
+	FREE_IMAGE_FORMAT fif = FreeImage_GetFileTypeFromMemory(hmem);
+	if( fif == -1 ){
+		printf("unable to guess format", fif);
+		return false;
+		FreeImage_CloseMemory(hmem);
+	}
+
+
+	//make the image!!
+	bmp = FreeImage_LoadFromMemory(fif, hmem, 0);
+	
+	if( bmp != NULL ){
+		bLoaded = true;
+		printf("FreeImage_LoadFromMemory worked!\n");
+	}
+	
+	//-----------------------------
+
+	if (bLoaded){
+
+		width 		= FreeImage_GetWidth(bmp);
+		height 		= FreeImage_GetHeight(bmp);
+		bpp 		= FreeImage_GetBPP(bmp);
+
+		bool bPallette = (FreeImage_GetColorType(bmp) == FIC_PALETTE);
+
+		switch (bpp){
+			case 8:
+				if (bPallette) {
+					FIBITMAP 	* bmpTemp =		FreeImage_ConvertTo24Bits(bmp);
+					if (bmp != NULL)			FreeImage_Unload(bmp);
+					bmp							= bmpTemp;
+					bpp							= FreeImage_GetBPP(bmp);
+				} else {
+					// do nothing we are grayscale
+				}
+				break;
+			case 24:
+				// do nothing we are color
+				break;
+			case 32:
+				// do nothing we are colorAlpha
+				break;
+			default:
+				FIBITMAP 	* bmpTemp =		FreeImage_ConvertTo24Bits(bmp);
+				if (bmp != NULL)			FreeImage_Unload(bmp);
+				bmp							= bmpTemp;
+				bpp							= FreeImage_GetBPP(bmp);
+		}
+
+
+		int byteCount = bpp / 8;
+
+		//------------------------------------------
+		// call the allocation routine (which checks if really need to allocate) here:
+		allocatePixels(pix, width, height, bpp);
+		printf("pix is %i %i %i %i\n", pix.width, pix.height, pix.bytesPerPixel, pix.ofImageType);
+
+
+		FreeImage_ConvertToRawBits(pix.pixels, bmp, width*byteCount, bpp, FI_RGBA_RED_MASK, FI_RGBA_GREEN_MASK, FI_RGBA_BLUE_MASK, true);  // get bits
+
+		//------------------------------------------
+		// RGB or RGBA swap
+		// this can be done with some ill pointer math.
+		// anyone game?
+		//
+
+		#ifdef TARGET_LITTLE_ENDIAN
+			if (byteCount != 1) swapRgb(pix);
+		#endif
+		//------------------------------------------
+
+
+	} else {
+		width = height = bpp = 0;
+	}
+
+	if (bmp != NULL){
+		FreeImage_Unload(bmp);
+	}
+	
+	if( hmem != NULL ){
+		FreeImage_CloseMemory(hmem);
+	}
+
+	return bLoaded;
+}
+
 
 //----------------------------------------------------------------
 void  ofImage::saveImageFromPixels(string fileName, ofPixels &pix){
