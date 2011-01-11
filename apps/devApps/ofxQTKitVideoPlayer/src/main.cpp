@@ -1,9 +1,5 @@
 /*
- *  ofxQTKitMoviePlayer.h
- *
- * Created by James George, http://www.jamesgeorge.org
- * in collaboration with FlightPhase http://www.flightphase.com
- * and the rockwell group lab http://lab.rockwellgroup.com
+ *  ofxQTKitMoviePlayer
  *
  **********************************************************
  *
@@ -35,6 +31,9 @@
  * 
  * This class replaces almost all of the functionality of ofVideoPlayer on OS X
  * and uses the modern QTKit and CoreVideo libraries for playback
+ *
+ * adapted by James George
+ * http://www.jamesgeorge.org
  *
  * Special Thanks to Marek Bereza for his initial QTKitVideoTexture
  * http://www.mrkbrz.com/
