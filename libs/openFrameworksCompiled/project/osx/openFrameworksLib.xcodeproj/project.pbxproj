@@ -374,8 +374,6 @@
 		E4B27ACD10CBE92A00536013 /* utils */ = {
 			isa = PBXGroup;
 			children = (
-				E4554F8812DBC54B00652B63 /* ofThread.cpp */,
-				E4554F8712DBC54B00652B63 /* ofThread.h */,
 				E4554F7812DBC51A00652B63 /* ofURLFileLoader.cpp */,
 				E4554F7712DBC51A00652B63 /* ofURLFileLoader.h */,
 				92BFAC2C12DA5FDA001F2778 /* ofSystemUtils.cpp */,

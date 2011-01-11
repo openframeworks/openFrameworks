@@ -1,6 +1,10 @@
 #include "ofURLFileLoader.h"
-#include <auto_ptr.h>
+#include "ofConstants.h"
 
+//TODO: is this needed for linux?
+#ifdef TARGET_LINUX
+	#include <auto_ptr.h>
+#endif
 
 
 static bool factoryLoaded = false;
