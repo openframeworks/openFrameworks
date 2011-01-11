@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ofConstants.h"
+#include <bitset> // for ofToBinary
 
 #ifdef TARGET_WIN32	 // for ofLaunchBrowser
 	#include <shellapi.h>
@@ -61,15 +62,22 @@ template <class T> string ofToHex(const T& value) {
 	}
 	return out.str();
 }
-
 template <> string ofToHex(const string& value);
 string ofToHex(const char* value);
+
 int ofToInt(const string& intString);
 int ofHexToInt(const string& intHexString);
 float ofToFloat(const string& floatString);
 bool ofToBool(const string& boolString);
 char ofToChar(const string& charString);
 
+template <class T> string ofToBinary(const T& value) {
+	const int numBits = 8 * sizeof(value);
+	bitset<numBits> bitBuffer(value);
+	return bitBuffer.to_string();
+}
+template <> string ofToBinary(const string& value);
+string ofToBinary(const char* value);
 
 string 	ofGetVersionInfo();
 

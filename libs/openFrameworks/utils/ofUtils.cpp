@@ -280,6 +280,24 @@ char ofToChar(const string& charString) {
 	return x;
 }
 
+//----------------------------------------
+template <> string ofToBinary(const string& value) {
+	stringstream out;
+	int numBytes = value.size();
+	for(int i = 0; i < numBytes; i++) {
+		bitset<8> bitBuffer(value[i]);
+		out << bitBuffer;
+	}
+	return out.str();
+}
+
+//----------------------------------------
+string ofToBinary(const char* value) {
+	// this function is necessary if you want to print a string
+	// using a syntax like ofToBinary("test")
+	return ofToBinary((string) value);
+}
+
 //--------------------------------------------------
 vector<string> ofSplitString(const string& str, const string& delimiter = " "){
     vector<string> elements;
