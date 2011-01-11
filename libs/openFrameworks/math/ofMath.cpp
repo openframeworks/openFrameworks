@@ -215,6 +215,21 @@ float ofSignedNoise(float x, float y, float z, float w){
 }
 
 //--------------------------------------------------
+bool ofInsideRect(const ofPoint & p, const ofRectangle & rect) {
+	return ofInsideRect(p.x, p.y, rect.x, rect.y, rect.width, rect.height); 	
+}
+
+//--------------------------------------------------
+bool ofInsideRect(float x, float y, const ofRectangle & rect) {
+	return ofInsideRect(x, y, rect.x, rect.y, rect.width, rect.height); 
+}
+
+//--------------------------------------------------
+bool ofInsideRect(float x, float y, float rx, float ry, float rw, float rh) {
+	return ( x >= rx && x <= rx + rw && y >= ry && y <= ry + rh );
+}
+
+//--------------------------------------------------
 bool ofInsidePoly(const ofPoint & p, const vector<ofPoint> & poly){
 	return ofInsidePoly(p.x,p.y,poly);
 }

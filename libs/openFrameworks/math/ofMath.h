@@ -56,6 +56,9 @@ float		ofSignedNoise(float x, float y);
 float		ofSignedNoise(float x, float y, float z);
 float		ofSignedNoise(float x, float y, float z, float w);
 
+bool		ofInsideRect(const ofPoint & p, const ofRectangle & rect);
+bool		ofInsideRect(float x, float y, const ofRectangle & rect);
+bool		ofInsideRect(float x, float y, float rx, float ry, float rw, float rh);
 
 bool 		ofInsidePoly(float x, float y, const vector<ofPoint> & poly);
 bool 		ofInsidePoly(const ofPoint & p, const vector<ofPoint> & poly);
