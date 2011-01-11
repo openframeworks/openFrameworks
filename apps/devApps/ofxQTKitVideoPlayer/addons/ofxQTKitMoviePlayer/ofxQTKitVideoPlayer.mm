@@ -46,14 +46,16 @@
 
 #include "ofxQTKitVideoPlayer.h"
 
-ofxQTKitVideoPlayer::ofxQTKitVideoPlayer()
-{
+ofxQTKitVideoPlayer::ofxQTKitVideoPlayer(){
 	moviePlayer = NULL;
 	moviePixels = NULL;
 	
 	bPlaying = false;
 	bPaused = false;
+		
+	type = OF_IMAGE_COLOR;
 	
+	bHavePixelsChanged = false;
 	bNewFrame = false;
 	duration = 0;
 	nFrames = 0;
@@ -61,18 +63,15 @@ ofxQTKitVideoPlayer::ofxQTKitVideoPlayer()
 }
 
 
-ofxQTKitVideoPlayer::~ofxQTKitVideoPlayer()
-{
+ofxQTKitVideoPlayer::~ofxQTKitVideoPlayer(){
 	clearMemory();	
 }
 
-bool ofxQTKitVideoPlayer::loadMovie(string path)
-{
+bool ofxQTKitVideoPlayer::loadMovie(string path){
 	loadMovie(path, OFXQTVIDEOPLAYER_MODE_PIXELS_ONLY);
 }
 
-bool ofxQTKitVideoPlayer::loadMovie(string movieFilePath, int mode)
-{
+bool ofxQTKitVideoPlayer::loadMovie(string movieFilePath, int mode){
 	if(mode < 0 || mode > 2){
 		ofLog(OF_LOG_ERROR, "ofxQTKitVideoPlayer -- Error, invalid mode specified for");
 		return false;
@@ -82,6 +81,8 @@ bool ofxQTKitVideoPlayer::loadMovie(string movieFilePath, int mode)
 		clearMemory();
 	}
 	
+	setType(OF_IMAGE_COLOR);
+
 	NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
 	
 	bool useTexture = (mode == OFXQTVIDEOPLAYER_MODE_TEXTURE_ONLY || OFXQTVIDEOPLAYER_MODE_PIXELS_AND_TEXTURE);
@@ -106,23 +107,23 @@ bool ofxQTKitVideoPlayer::loadMovie(string movieFilePath, int mode)
 		moviePlayer = NULL;
 	}
 	
+	//allows opt into rgba format
+	moviePlayer.useRGBAFormat = (type == OF_IMAGE_COLOR_ALPHA);
+	
 	[pool release];
 	
 	return success;
 }
 
-void ofxQTKitVideoPlayer::closeMovie()
-{
+void ofxQTKitVideoPlayer::closeMovie(){
 	clearMemory();
 }
 
-bool ofxQTKitVideoPlayer::isLoaded()
-{
+bool ofxQTKitVideoPlayer::isLoaded(){
 	return moviePlayer != NULL;
 }
 
-void ofxQTKitVideoPlayer::clearMemory()
-{
+void ofxQTKitVideoPlayer::clearMemory(){
 	NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
 	
 	if(moviePlayer != NULL){
@@ -252,13 +253,36 @@ void ofxQTKitVideoPlayer::draw(float x, float y, float w, float h){
 	[moviePlayer draw:NSMakeRect(x, y, w, h)];
 }
 
+
+void ofxQTKitVideoPlayer::setType(int imageType){
+	if(type != OF_IMAGE_COLOR || type != OF_IMAGE_COLOR_ALPHA){
+		ofLog(OF_LOG_ERROR, "ofxQTKitVideoPlayer - does not support given type, use OF_IMAGE_COLOR or OF_IMAGE_COLOR_ALPHA"); 
+		return;
+	}
+	
+	if(type != imageType && moviePixels != NULL){
+		delete moviePixels;
+	}
+	type = imageType;
+	
+	if(moviePlayer != NULL){
+		moviePlayer.useRGBAFormat = (type == OF_IMAGE_COLOR_ALPHA);
+	}
+	
+}
+
 unsigned char* ofxQTKitVideoPlayer::getPixels(){
 	if(moviePlayer == NULL || !moviePlayer.usePixels) {
 		return NULL;
 	}
 		
 	if(moviePixels == NULL){
-		moviePixels = new unsigned char[int(moviePlayer.movieSize.width) * int(moviePlayer.movieSize.height) * 4];
+		if(type == OF_IMAGE_COLOR){
+			moviePixels = new unsigned char[int(moviePlayer.movieSize.width) * int(moviePlayer.movieSize.height) * 3];		
+		}
+		else if(type == OF_IMAGE_COLOR_ALPHA){
+			moviePixels = new unsigned char[int(moviePlayer.movieSize.width) * int(moviePlayer.movieSize.height) * 4];
+		}
 	}
 		
 	//don't get the pixels every frame if it hasn't updated
@@ -335,13 +359,20 @@ void ofxQTKitVideoPlayer::setLoopState(int state){
 		setLoopState(true);
 	}
 	else if(state == OF_LOOP_PALINDROME){
-		//TODO support OF_LOOP_PALINDROME with QTMovieLoopsBackAndForthAttribute
+		if(moviePlayer == NULL) return;
+		
+		NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
+		
+		[moviePlayer loopsBackAndForth];
+		
+		[pool release];
 	}
 	
 }
 
 bool ofxQTKitVideoPlayer::getMovieLoops(){
-	if(moviePlayer == NULL) return NO;
+	
+	if(moviePlayer == NULL) return false;
 	
 	NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
 	

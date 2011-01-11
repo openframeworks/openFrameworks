@@ -67,7 +67,7 @@
 	BOOL frameUpdated;
 	BOOL useTexture;
 	BOOL usePixels;
-	
+	BOOL useRGBAFormat; //default is off
 }
 
 @property(nonatomic, readonly) NSSize movieSize;
@@ -82,11 +82,13 @@
 @property(nonatomic, readwrite) CGFloat position;  //set and get frame position by percent
 @property(nonatomic, readwrite) NSInteger frame;  //set and get frame position by percent
 @property(nonatomic, readwrite) BOOL loops;  //set and get loopstate
+@property(nonatomic, readwrite) BOOL useRGBAFormat;
 
 - (void) draw:(NSRect)drawRect;
 - (BOOL) loadMovie:(NSString*)moviePath allowTexture:(BOOL)useTexture allowPixels:(BOOL)usePixels;
 - (BOOL) update;
 - (void) stop;
+- (void) loopsBackAndForth;
 
 - (void) bindTexture;
 - (void) unbindTexture;

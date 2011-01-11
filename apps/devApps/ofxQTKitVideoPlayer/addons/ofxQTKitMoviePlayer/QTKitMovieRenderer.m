@@ -66,6 +66,7 @@ typedef struct OpenGLTextureCoordinates OpenGLTextureCoordinates;
 @synthesize useTexture;
 @synthesize usePixels;
 @synthesize frameCount;
+@synthesize useRGBAFormat;
 
 - (BOOL) loadMovie:(NSString*)moviePath allowTexture:(BOOL)doUseTexture allowPixels:(BOOL)doUsePixels
 {
@@ -304,27 +305,36 @@ typedef struct OpenGLTextureCoordinates OpenGLTextureCoordinates;
 	CVPixelBufferLockBaseAddress(_latestPixelFrame, 0);
 	unsigned char* pix = CVPixelBufferGetBaseAddress(_latestPixelFrame);
 	
-	//NOTE:
 	//CoreVideo works on ARGB, and openFrameworks is RGBA so we need to swizzle the buffer 
 	//before we return it to an openFrameworks app.
 	//this is a bit tricky since CV pixel buffer's bytes per row are not always the same as movieWidth*4.  
 	//We have to use the BPR given by CV for the input buffer, and the movie size for the output buffer
 	
 	//could use a second pair of eyes for someone more familiar with the CoreVideo stuff
-	
 	int x,y, bpr, width, height;
 	bpr = CVPixelBufferGetBytesPerRow(_latestPixelFrame);
 	width = movieSize.width;
 	height = movieSize.height;
-	for(y = 0; y < movieSize.height; y++){
-		for(x = 0; x < movieSize.width*4; x+=4){
-			//copy out the rgb
-			memcpy(outbuf+(y*width*4 + x), pix + (y*bpr+x+1), 3);
-			//swizzle in the alpha.
-			outbuf[(y*width*4 + x)+3] = pix[y*bpr+x];
+	if(self.useRGBAFormat){
+		for(y = 0; y < movieSize.height; y++){
+			for(x = 0; x < movieSize.width*4; x+=4){
+				//copy out the rgb
+				memcpy(outbuf+(y*width*4 + x), pix + (y*bpr+x+1), 3);
+				//swizzle in the alpha.
+				outbuf[(y*width*4 + x)+3] = pix[y*bpr+x];
+			}
 		}
 	}
-
+	else {
+		for(y = 0; y < movieSize.height; y++){
+			for(x = 0; x < movieSize.width; x++){
+				//copy out the rgb
+				memcpy(outbuf+(y*width*3 + (x*3)), pix + (y*bpr+(x*4)+1), 3);
+			}
+		}
+		
+	}
+		
 	CVPixelBufferUnlockBaseAddress(_latestPixelFrame, 0);	
 }
 
@@ -405,8 +415,19 @@ typedef struct OpenGLTextureCoordinates OpenGLTextureCoordinates;
 
 - (void) setLoops:(BOOL)loops
 {
+	[_movie setAttribute:[NSNumber numberWithBool:NO] 
+				  forKey:QTMovieLoopsBackAndForthAttribute];
+	
 	[_movie setAttribute:[NSNumber numberWithBool:loops] 
 				  forKey:QTMovieLoopsAttribute];
+}
+
+- (void) loopsBackAndForth
+{
+	self.loops = NO;
+	[_movie setAttribute:[NSNumber numberWithBool:YES] 
+				  forKey:QTMovieLoopsBackAndForthAttribute];
+
 }
 
 - (BOOL) loops
