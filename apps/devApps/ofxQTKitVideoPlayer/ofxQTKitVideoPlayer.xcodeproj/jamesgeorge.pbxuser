@@ -185,7 +185,7 @@
 		fRef = E781B7EA12B58F7600973230 /* QTKitMovieRenderer.h */;
 		name = "QTKitMovieRenderer.h: 5";
 		rLen = 0;
-		rLoc = 168;
+		rLoc = 26;
 		rType = 0;
 		vrLen = 1611;
 		vrLoc = 1811;
@@ -227,7 +227,7 @@
 		fRef = E4B69E1F0A3A1BDC003C02F2 /* testApp.h */;
 		name = "testApp.h: 71";
 		rLen = 57;
-		rLoc = 2361;
+		rLoc = 2172;
 		rType = 0;
 		vrLen = 1544;
 		vrLoc = 935;
@@ -237,7 +237,7 @@
 		fRef = E77151211246903200359C16 /* ofxQTKitVideoPlayer.mm */;
 		name = "ofxQTKitVideoPlayer.mm: 363";
 		rLen = 13;
-		rLoc = 8732;
+		rLoc = 8543;
 		rType = 0;
 		vrLen = 973;
 		vrLoc = 7359;
@@ -247,7 +247,7 @@
 		fRef = E4B69E1E0A3A1BDC003C02F2 /* testApp.cpp */;
 		name = "testApp.cpp: 106";
 		rLen = 0;
-		rLoc = 3027;
+		rLoc = 2838;
 		rType = 0;
 		vrLen = 1659;
 		vrLoc = 2437;
@@ -257,7 +257,7 @@
 		fRef = E77151201246903200359C16 /* ofxQTKitVideoPlayer.h */;
 		name = "ofxQTKitVideoPlayer.h: 104";
 		rLen = 0;
-		rLoc = 3748;
+		rLoc = 3740;
 		rType = 0;
 		vrLen = 1783;
 		vrLoc = 1404;
@@ -267,7 +267,7 @@
 		fRef = E77151211246903200359C16 /* ofxQTKitVideoPlayer.mm */;
 		name = "ofxQTKitVideoPlayer.mm: 85";
 		rLen = 0;
-		rLoc = 2677;
+		rLoc = 2488;
 		rType = 0;
 		vrLen = 1368;
 		vrLoc = 2488;
@@ -319,7 +319,7 @@
 		fRef = E4B69E1F0A3A1BDC003C02F2 /* testApp.h */;
 		name = "testApp.h: 73";
 		rLen = 0;
-		rLoc = 2396;
+		rLoc = 2207;
 		rType = 0;
 		vrLen = 1117;
 		vrLoc = 1388;
@@ -329,7 +329,7 @@
 		fRef = E4B69E1E0A3A1BDC003C02F2 /* testApp.cpp */;
 		name = "testApp.cpp: 87";
 		rLen = 0;
-		rLoc = 2576;
+		rLoc = 2387;
 		rType = 0;
 		vrLen = 1307;
 		vrLoc = 1986;
@@ -339,7 +339,7 @@
 		fRef = E781B7EA12B58F7600973230 /* QTKitMovieRenderer.h */;
 		name = "QTKitMovieRenderer.h: 67";
 		rLen = 0;
-		rLoc = 2344;
+		rLoc = 2155;
 		rType = 0;
 		vrLen = 1727;
 		vrLoc = 1811;
@@ -349,7 +349,7 @@
 		fRef = E77151201246903200359C16 /* ofxQTKitVideoPlayer.h */;
 		name = "ofxQTKitVideoPlayer.h: 128";
 		rLen = 4;
-		rLoc = 4270;
+		rLoc = 4262;
 		rType = 0;
 		vrLen = 1534;
 		vrLoc = 3109;
@@ -359,7 +359,7 @@
 		fRef = E77151211246903200359C16 /* ofxQTKitVideoPlayer.mm */;
 		name = "ofxQTKitVideoPlayer.mm: 258";
 		rLen = 0;
-		rLoc = 6398;
+		rLoc = 6209;
 		rType = 0;
 		vrLen = 1534;
 		vrLoc = 5484;
@@ -449,7 +449,7 @@
 		isa = PBXTextBookmark;
 		fRef = E77151211246903200359C16 /* ofxQTKitVideoPlayer.mm */;
 		rLen = 0;
-		rLoc = 289;
+		rLoc = 287;
 		rType = 1;
 	};
 	A676479F12DC9E98003CFD85 /* PBXTextBookmark */ = {
@@ -457,7 +457,7 @@
 		fRef = E77151211246903200359C16 /* ofxQTKitVideoPlayer.mm */;
 		name = "ofxQTKitVideoPlayer.mm: 275";
 		rLen = 0;
-		rLoc = 6715;
+		rLoc = 6526;
 		rType = 0;
 		vrLen = 513;
 		vrLoc = 6565;
@@ -476,7 +476,7 @@
 		isa = PBXTextBookmark;
 		fRef = E77151211246903200359C16 /* ofxQTKitVideoPlayer.mm */;
 		rLen = 1;
-		rLoc = 256;
+		rLoc = 254;
 		rType = 1;
 	};
 	A67647A212DC9EA1003CFD85 /* PBXTextBookmark */ = {
@@ -484,7 +484,7 @@
 		fRef = E77151211246903200359C16 /* ofxQTKitVideoPlayer.mm */;
 		name = "ofxQTKitVideoPlayer.mm: 255";
 		rLen = 50;
-		rLoc = 6157;
+		rLoc = 5968;
 		rType = 0;
 		vrLen = 1512;
 		vrLoc = 5503;
@@ -494,7 +494,7 @@
 		fRef = E77151211246903200359C16 /* ofxQTKitVideoPlayer.mm */;
 		name = "ofxQTKitVideoPlayer.mm: 255";
 		rLen = 50;
-		rLoc = 6157;
+		rLoc = 5968;
 		rType = 0;
 		vrLen = 453;
 		vrLoc = 6562;
@@ -504,7 +504,7 @@
 		fRef = E77151211246903200359C16 /* ofxQTKitVideoPlayer.mm */;
 		name = "ofxQTKitVideoPlayer.mm: 265";
 		rLen = 0;
-		rLoc = 6495;
+		rLoc = 6306;
 		rType = 0;
 		vrLen = 1366;
 		vrLoc = 6081;
@@ -530,7 +530,7 @@
 		fRef = E77151211246903200359C16 /* ofxQTKitVideoPlayer.mm */;
 		name = "ofxQTKitVideoPlayer.mm: 256";
 		rLen = 14;
-		rLoc = 6219;
+		rLoc = 6030;
 		rType = 0;
 		vrLen = 1366;
 		vrLoc = 6081;
@@ -540,7 +540,7 @@
 		fRef = E77151211246903200359C16 /* ofxQTKitVideoPlayer.mm */;
 		name = "ofxQTKitVideoPlayer.mm: 256";
 		rLen = 14;
-		rLoc = 6219;
+		rLoc = 6030;
 		rType = 0;
 		vrLen = 1317;
 		vrLoc = 6081;
@@ -574,7 +574,7 @@
 		isa = PBXTextBookmark;
 		fRef = E77151211246903200359C16 /* ofxQTKitVideoPlayer.mm */;
 		rLen = 0;
-		rLoc = 289;
+		rLoc = 287;
 		rType = 1;
 	};
 	A67647B212DC9ED9003CFD85 /* PBXTextBookmark */ = {
@@ -582,7 +582,7 @@
 		fRef = E77151211246903200359C16 /* ofxQTKitVideoPlayer.mm */;
 		name = "ofxQTKitVideoPlayer.mm: 288";
 		rLen = 0;
-		rLoc = 7131;
+		rLoc = 6942;
 		rType = 0;
 		vrLen = 380;
 		vrLoc = 6903;
@@ -592,7 +592,7 @@
 		fRef = E77151211246903200359C16 /* ofxQTKitVideoPlayer.mm */;
 		name = "ofxQTKitVideoPlayer.mm: 83";
 		rLen = 0;
-		rLoc = 2616;
+		rLoc = 2427;
 		rType = 0;
 		vrLen = 1444;
 		vrLoc = 1899;
@@ -602,7 +602,7 @@
 		fRef = E77151211246903200359C16 /* ofxQTKitVideoPlayer.mm */;
 		name = "ofxQTKitVideoPlayer.mm: 83";
 		rLen = 0;
-		rLoc = 2616;
+		rLoc = 2427;
 		rType = 0;
 		vrLen = 1444;
 		vrLoc = 1899;
@@ -627,7 +627,7 @@
 		fRef = E77151211246903200359C16 /* ofxQTKitVideoPlayer.mm */;
 		name = "ofxQTKitVideoPlayer.mm: 83";
 		rLen = 0;
-		rLoc = 2616;
+		rLoc = 2427;
 		rType = 0;
 		vrLen = 271;
 		vrLoc = 7013;
@@ -637,7 +637,7 @@
 		fRef = E77151211246903200359C16 /* ofxQTKitVideoPlayer.mm */;
 		name = "ofxQTKitVideoPlayer.mm: 57";
 		rLen = 0;
-		rLoc = 2086;
+		rLoc = 1897;
 		rType = 0;
 		vrLen = 1389;
 		vrLoc = 1561;
@@ -647,7 +647,7 @@
 		fRef = E77151211246903200359C16 /* ofxQTKitVideoPlayer.mm */;
 		name = "ofxQTKitVideoPlayer.mm: 57";
 		rLen = 0;
-		rLoc = 2086;
+		rLoc = 1897;
 		rType = 0;
 		vrLen = 1189;
 		vrLoc = 6884;
@@ -657,7 +657,7 @@
 		fRef = E4B69E1E0A3A1BDC003C02F2 /* testApp.cpp */;
 		name = "testApp.cpp: 87";
 		rLen = 0;
-		rLoc = 2576;
+		rLoc = 2387;
 		rType = 0;
 		vrLen = 1460;
 		vrLoc = 1898;
@@ -667,10 +667,90 @@
 		fRef = E4B69E1E0A3A1BDC003C02F2 /* testApp.cpp */;
 		name = "testApp.cpp: 79";
 		rLen = 0;
-		rLoc = 2606;
+		rLoc = 2417;
 		rType = 0;
 		vrLen = 1501;
 		vrLoc = 1898;
+	};
+	A67647C712DCA1AD003CFD85 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = E77151201246903200359C16 /* ofxQTKitVideoPlayer.h */;
+		name = "ofxQTKitVideoPlayer.h: 28";
+		rLen = 0;
+		rLoc = 1206;
+		rType = 0;
+		vrLen = 2116;
+		vrLoc = 0;
+	};
+	A67647C812DCA1AD003CFD85 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = E781B7EA12B58F7600973230 /* QTKitMovieRenderer.h */;
+		name = "QTKitMovieRenderer.h: 44";
+		rLen = 0;
+		rLoc = 1709;
+		rType = 0;
+		vrLen = 2007;
+		vrLoc = 0;
+	};
+	A67647C912DCA1AD003CFD85 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = E781B7EB12B58F7600973230 /* QTKitMovieRenderer.m */;
+		name = "QTKitMovieRenderer.m: 332";
+		rLen = 0;
+		rLoc = 10028;
+		rType = 0;
+		vrLen = 2006;
+		vrLoc = 0;
+	};
+	A67647CA12DCA1AD003CFD85 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = E77151211246903200359C16 /* ofxQTKitVideoPlayer.mm */;
+		name = "ofxQTKitVideoPlayer.mm: 23";
+		rLen = 0;
+		rLoc = 1073;
+		rType = 0;
+		vrLen = 1947;
+		vrLoc = 0;
+	};
+	A67647CB12DCA1AD003CFD85 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = E4B69E1D0A3A1BDC003C02F2 /* main.cpp */;
+		name = "main.cpp: 44";
+		rLen = 0;
+		rLoc = 1709;
+		rType = 0;
+		vrLen = 2094;
+		vrLoc = 0;
+	};
+	A67647CC12DCA1AD003CFD85 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = E4B69E1F0A3A1BDC003C02F2 /* testApp.h */;
+		name = "testApp.h: 44";
+		rLen = 0;
+		rLoc = 1709;
+		rType = 0;
+		vrLen = 1865;
+		vrLoc = 0;
+	};
+	A67647CD12DCA1AD003CFD85 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = E4B69E1E0A3A1BDC003C02F2 /* testApp.cpp */;
+		name = "testApp.cpp: 5";
+		rLen = 0;
+		rLoc = 26;
+		rType = 0;
+		vrLen = 2182;
+		vrLoc = 0;
+	};
+	A67647CE12DCA1AD003CFD85 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = E4B69E1E0A3A1BDC003C02F2 /* testApp.cpp */;
+		name = "testApp.cpp: 44";
+		rLen = 0;
+		rLoc = 1709;
+		rType = 0;
+		vrLen = 2047;
+		vrLoc = 0;
 	};
 	A6B2D8E812B71F5D00EBCE81 /* ImageCompression.h */ = {
 		isa = PBXFileReference;
@@ -813,7 +893,7 @@
 		fRef = E4B69E1D0A3A1BDC003C02F2 /* main.cpp */;
 		name = "main.cpp: 12";
 		rLen = 0;
-		rLoc = 463;
+		rLoc = 26;
 		rType = 0;
 		vrLen = 2183;
 		vrLoc = 0;
@@ -931,6 +1011,14 @@
 			A67647C412DC9F38003CFD85 /* PBXTextBookmark */ = A67647C412DC9F38003CFD85 /* PBXTextBookmark */;
 			A67647C512DC9F38003CFD85 /* PBXTextBookmark */ = A67647C512DC9F38003CFD85 /* PBXTextBookmark */;
 			A67647C612DC9F38003CFD85 /* PBXTextBookmark */ = A67647C612DC9F38003CFD85 /* PBXTextBookmark */;
+			A67647C712DCA1AD003CFD85 /* PBXTextBookmark */ = A67647C712DCA1AD003CFD85 /* PBXTextBookmark */;
+			A67647C812DCA1AD003CFD85 /* PBXTextBookmark */ = A67647C812DCA1AD003CFD85 /* PBXTextBookmark */;
+			A67647C912DCA1AD003CFD85 /* PBXTextBookmark */ = A67647C912DCA1AD003CFD85 /* PBXTextBookmark */;
+			A67647CA12DCA1AD003CFD85 /* PBXTextBookmark */ = A67647CA12DCA1AD003CFD85 /* PBXTextBookmark */;
+			A67647CB12DCA1AD003CFD85 /* PBXTextBookmark */ = A67647CB12DCA1AD003CFD85 /* PBXTextBookmark */;
+			A67647CC12DCA1AD003CFD85 /* PBXTextBookmark */ = A67647CC12DCA1AD003CFD85 /* PBXTextBookmark */;
+			A67647CD12DCA1AD003CFD85 /* PBXTextBookmark */ = A67647CD12DCA1AD003CFD85 /* PBXTextBookmark */;
+			A67647CE12DCA1AD003CFD85 /* PBXTextBookmark */ = A67647CE12DCA1AD003CFD85 /* PBXTextBookmark */;
 			A6B2DAD412B72FB400EBCE81 = A6B2DAD412B72FB400EBCE81 /* PBXTextBookmark */;
 			A6B2DB3412B7321500EBCE81 = A6B2DB3412B7321500EBCE81 /* PBXTextBookmark */;
 			A6B2DCD612B7468600EBCE81 = A6B2DCD612B7468600EBCE81 /* PBXTextBookmark */;
@@ -953,53 +1041,53 @@
 	};
 	E4B69E1D0A3A1BDC003C02F2 /* main.cpp */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1542, 854}}";
-			sepNavSelRange = "{463, 0}";
-			sepNavVisRange = "{0, 2183}";
+			sepNavIntBoundsRect = "{{0, 0}, {1652, 854}}";
+			sepNavSelRange = "{1709, 0}";
+			sepNavVisRange = "{0, 2094}";
 		};
 	};
 	E4B69E1E0A3A1BDC003C02F2 /* testApp.cpp */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1652, 1946}}";
-			sepNavSelRange = "{2606, 0}";
-			sepNavVisRange = "{1898, 1501}";
+			sepNavIntBoundsRect = "{{0, 0}, {1652, 1848}}";
+			sepNavSelRange = "{1709, 0}";
+			sepNavVisRange = "{0, 2047}";
 		};
 	};
 	E4B69E1F0A3A1BDC003C02F2 /* testApp.h */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1652, 1120}}";
-			sepNavSelRange = "{2396, 0}";
-			sepNavVisRange = "{1388, 1117}";
+			sepNavIntBoundsRect = "{{0, 0}, {1652, 1036}}";
+			sepNavSelRange = "{1709, 0}";
+			sepNavVisRange = "{0, 1865}";
 		};
 	};
 	E77151201246903200359C16 /* ofxQTKitVideoPlayer.h */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1652, 2044}}";
-			sepNavSelRange = "{4270, 4}";
-			sepNavVisRange = "{3109, 1534}";
+			sepNavIntBoundsRect = "{{0, 0}, {1652, 1862}}";
+			sepNavSelRange = "{1206, 0}";
+			sepNavVisRange = "{0, 2116}";
 			sepNavWindowFrame = "{{-1665, 17}, {776, 1028}}";
 		};
 	};
 	E77151211246903200359C16 /* ofxQTKitVideoPlayer.mm */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1652, 5852}}";
-			sepNavSelRange = "{2086, 0}";
-			sepNavVisRange = "{6884, 1189}";
+			sepNavIntBoundsRect = "{{0, 0}, {1652, 5768}}";
+			sepNavSelRange = "{1073, 0}";
+			sepNavVisRange = "{0, 1947}";
 		};
 	};
 	E781B7EA12B58F7600973230 /* QTKitMovieRenderer.h */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1652, 1400}}";
-			sepNavSelRange = "{2344, 0}";
-			sepNavVisRange = "{1811, 1727}";
+			sepNavIntBoundsRect = "{{0, 0}, {1652, 1372}}";
+			sepNavSelRange = "{1709, 0}";
+			sepNavVisRange = "{0, 2007}";
 			sepNavWindowFrame = "{{-1665, 17}, {776, 1028}}";
 		};
 	};
 	E781B7EB12B58F7600973230 /* QTKitMovieRenderer.m */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1859, 6132}}";
-			sepNavSelRange = "{10000, 0}";
-			sepNavVisRange = "{9887, 278}";
+			sepNavIntBoundsRect = "{{0, 0}, {1652, 5964}}";
+			sepNavSelRange = "{10028, 0}";
+			sepNavVisRange = "{0, 2006}";
 			sepNavWindowFrame = "{{-1665, 17}, {776, 1028}}";
 		};
 	};

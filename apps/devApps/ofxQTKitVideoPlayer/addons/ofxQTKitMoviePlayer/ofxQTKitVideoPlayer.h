@@ -1,5 +1,5 @@
 /*
- *  ofxQTKitMoviePlayer example
+ *  ofxQTKitMoviePlayer
  *
  **********************************************************
  *
