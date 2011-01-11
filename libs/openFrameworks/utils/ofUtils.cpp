@@ -1,6 +1,7 @@
 #include "ofUtils.h"
 #include "ofImage.h"
 #include "ofTypes.h"
+#include "Poco/String.h"
 
 #if defined(TARGET_OF_IPHONE) || defined(TARGET_OSX ) || defined(TARGET_LINUX)
 	#include "sys/time.h"
@@ -210,32 +211,47 @@ string ofToDataPath(string path, bool makeAbsolute){
 	return path;
 }
 
-//--------------------------------------------------
-template <class T> string ofToString(T value){
-	stringstream out;
-	out << value;
-	return out.str();
-}
-
-//--------------------------------------------------
-string ofToString(double value, int precision){
-	stringstream sstr;
-	sstr << fixed << setprecision(precision) << value;
-	return sstr.str();
-}
-
-//--------------------------------------------------
+//----------------------------------------
 int ofToInt(const string& intString) {
-   int x;
-   sscanf(intString.c_str(), "%d", &x);
-   return x;
+	int x;
+	istringstream cur(intString);
+	cur >> x;
+	return x;
 }
 
+//----------------------------------------
 float ofToFloat(const string& floatString) {
-   float x;
-   sscanf(floatString.c_str(), "%f", &x);
-   return x;
+	float x;
+	istringstream cur(floatString);
+	cur >> x;
+	return x;
 }
+
+//----------------------------------------
+bool ofToBool(const string& boolString) {
+	static const string trueString = "true";
+	static const string falseString = "false";
+	string lower = Poco::toLower(boolString);
+	if(lower == trueString) {
+		return true;
+	}
+	if(lower == falseString) {
+		return false;
+	}
+	bool x;
+	istringstream cur(lower);
+	cur >> x;
+	return x;
+}
+
+//----------------------------------------
+char ofToChar(const string& charString) {
+	char x;
+	istringstream cur(charString);
+	cur >> x;
+	return x;
+}
+
 //--------------------------------------------------
 vector<string> ofSplitString(const string& str, const string& delimiter = " "){
     vector<string> elements;
