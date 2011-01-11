@@ -10,11 +10,11 @@ void testApp::demo4_setup() {
 	ofLog(OF_LOG_NOTICE, "demo4_setup | useMSAA: " + useMSAA);
 	demoMode = 4;
 	
-	ofxFbo::Settings s;
+	ofFbo::Settings s;
 	s.width				= kFBOWidth;
 	s.height			= kFBOHeight;
 	s.numColorbuffers	= 2;
-	s.numSamples		= useMSAA ? ofxFbo::maxSamples() : 0;
+	s.numSamples		= useMSAA ? ofFbo::maxSamples() : 0;
 	fbo.setup(s);
 	
 	shader.setup("", "shaders/blur_frag.glsl");	// omit vertex shader

@@ -89,6 +89,8 @@ void testApp::draw(){
 	//Lets stop the blending!
 	ofDisableAlphaBlending();
 
+	if(ofGetWidth()>480) // then we are running retina
+		glScalef(2, 2, 0);
 
 	//---------------------------
 	// a bunch of lines

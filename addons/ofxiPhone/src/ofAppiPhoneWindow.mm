@@ -59,6 +59,10 @@ ofAppiPhoneWindow::ofAppiPhoneWindow() {
 	windowPos.set(NOT_INITIALIZED, NOT_INITIALIZED);
 	windowSize.set(NOT_INITIALIZED, NOT_INITIALIZED);
 	screenSize.set(NOT_INITIALIZED, NOT_INITIALIZED);
+	
+	depthEnabled=false;
+	antiAliasingEnabled=false;
+	retinaEnabled=false;
 }
 
 /******** Initialization methods ************/
@@ -129,7 +133,12 @@ ofPoint	ofAppiPhoneWindow::getWindowSize() {
 		{
 			windowSize.set(s.height, s.width, 0);
 		}
+		
+		if(retinaEnabled)
+			if ([[UIScreen mainScreen] respondsToSelector:@selector(scale)])
+				windowSize*=[[UIScreen mainScreen] scale];
 	}
+
 	return windowSize;
 }
 
@@ -248,6 +257,42 @@ void ofAppiPhoneWindow::rotateXY(float &x, float &y) {
 			break;
 			
 	}
+}
+
+void ofAppiPhoneWindow::enableRetinaSupport()
+{
+	retinaEnabled = true;
+}
+
+void ofAppiPhoneWindow::enableDepthBuffer()
+{
+	depthEnabled = true;
+}
+
+void ofAppiPhoneWindow::enableAntiAliasing(int samples)
+{
+	antiAliasingEnabled = true;
+	antiAliasingSamples = samples;
+}
+
+bool ofAppiPhoneWindow::isDepthEnabled()
+{
+	return depthEnabled;
+}
+
+bool ofAppiPhoneWindow::isAntiAliasingEnabled()
+{
+	return antiAliasingEnabled;
+}
+
+int ofAppiPhoneWindow::getAntiAliasingSampleCount()
+{
+	return antiAliasingSamples;
+}
+
+bool ofAppiPhoneWindow::isRetinaSupported()
+{
+	return retinaEnabled;
 }
 
 

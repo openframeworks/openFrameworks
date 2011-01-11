@@ -1,20 +1,20 @@
-#include "ofxShader.h"
+#include "ofShader.h"
 
-ofxShader::ofxShader() :
+ofShader::ofShader() :
 program(0),
 bLoaded(false)
 {
 }
 
-ofxShader::~ofxShader() {
+ofShader::~ofShader() {
 	unload();
 }
 
-bool ofxShader::setup(string shaderName) {
+bool ofShader::setup(string shaderName) {
 	return setup(shaderName + ".vert", shaderName + ".frag");
 }
 
-bool ofxShader::setup(string vertName, string fragName, string geomName) {
+bool ofShader::setup(string vertName, string fragName, string geomName) {
 	unload();
 
 	if(vertName.empty() == false) setupShaderFromFile(GL_VERTEX_SHADER, vertName);
@@ -25,7 +25,7 @@ bool ofxShader::setup(string vertName, string fragName, string geomName) {
 }
 
 
-bool ofxShader::setupShaderFromFile(GLenum type, string filename) {
+bool ofShader::setupShaderFromFile(GLenum type, string filename) {
 	ofBuffer buffer;
 	if(ofReadFile(filename, buffer)) {
 		return setupShaderFromSource(type, buffer.getBuffer());
@@ -35,7 +35,7 @@ bool ofxShader::setupShaderFromFile(GLenum type, string filename) {
 	}
 }
 
-bool ofxShader::setupShaderFromSource(GLenum type, string source) {
+bool ofShader::setupShaderFromSource(GLenum type, string source) {
 	// create program if it doesn't exist already
 	checkAndCreateProgram();
 
@@ -71,35 +71,35 @@ bool ofxShader::setupShaderFromSource(GLenum type, string source) {
 }
 
 
-void ofxShader::setGeometryInputType(GLenum type) {
+void ofShader::setGeometryInputType(GLenum type) {
 	checkAndCreateProgram();
 #ifndef TARGET_LINUX
 	glProgramParameteriEXT(program, GL_GEOMETRY_INPUT_TYPE_EXT, type);
 #endif
 }
 
-void ofxShader::setGeometryOutputType(GLenum type) {
+void ofShader::setGeometryOutputType(GLenum type) {
 	checkAndCreateProgram();
 #ifndef TARGET_LINUX
 	glProgramParameteriEXT(program, GL_GEOMETRY_OUTPUT_TYPE_EXT, type);
 #endif
 }
 
-void ofxShader::setGeometryOutputCount(int count) {
+void ofShader::setGeometryOutputCount(int count) {
 	checkAndCreateProgram();
 #ifndef TARGET_LINUX
 	glProgramParameteriEXT(program, GL_GEOMETRY_VERTICES_OUT_EXT, count);
 #endif
 }
 
-int ofxShader::getGeometryMaxOutputCount() {
+int ofShader::getGeometryMaxOutputCount() {
 	int temp;
 	glGetIntegerv(GL_MAX_GEOMETRY_OUTPUT_VERTICES_EXT, &temp);
 	return temp;
 }
 
 
-bool ofxShader::checkShaderLinkStatus(GLuint shader, GLenum type) {
+bool ofShader::checkShaderLinkStatus(GLuint shader, GLenum type) {
 	GLint status;
 	glGetProgramiv(shader, GL_LINK_STATUS, &status);
 	if(status == GL_TRUE)
@@ -112,7 +112,7 @@ bool ofxShader::checkShaderLinkStatus(GLuint shader, GLenum type) {
 	return true;
 }
 
-void ofxShader::checkShaderInfoLog(GLuint shader, GLenum type) {
+void ofShader::checkShaderInfoLog(GLuint shader, GLenum type) {
 	GLsizei infoLength;
 	glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &infoLength);
 	if (infoLength > 1) {
@@ -123,7 +123,7 @@ void ofxShader::checkShaderInfoLog(GLuint shader, GLenum type) {
 	}
 }
 
-void ofxShader::checkProgramInfoLog(GLuint program) {
+void ofShader::checkProgramInfoLog(GLuint program) {
 	GLsizei infoLength;
 	glGetProgramiv(program, GL_INFO_LOG_LENGTH, &infoLength);
 	if (infoLength > 1) {
@@ -135,7 +135,7 @@ void ofxShader::checkProgramInfoLog(GLuint program) {
 	}
 }
 
-void ofxShader::checkAndCreateProgram() {
+void ofShader::checkAndCreateProgram() {
 	if(GL_ARB_shader_objects) {
 		if(program == 0) {
 			ofLog(OF_LOG_VERBOSE, "Creating GLSL Program");
@@ -146,7 +146,7 @@ void ofxShader::checkAndCreateProgram() {
 	}
 }
 
-bool ofxShader::linkProgram() {
+bool ofShader::linkProgram() {
 		if(shaders.empty()) {
 			ofLog(OF_LOG_ERROR, "Trying to link GLSL program, but no shaders created yet");
 		} else {
@@ -178,7 +178,7 @@ bool ofxShader::linkProgram() {
 
 
 
-void ofxShader::unload() {
+void ofShader::unload() {
 	if(bLoaded) {
 		for(map<GLenum, GLuint>::const_iterator it = shaders.begin(); it != shaders.end(); ++it) {
 			GLuint shader = it->second;
@@ -199,21 +199,21 @@ void ofxShader::unload() {
 	bLoaded = false;
 }
 
-void ofxShader::begin() {
+void ofShader::begin() {
 	if (bLoaded == true)
 		glUseProgram(program);
 }
 
-void ofxShader::end() {
+void ofShader::end() {
 	if (bLoaded == true)
 		glUseProgram(0);
 }
 
-void ofxShader::setUniformTexture(const char* name, ofBaseHasTexture& img, int textureLocation) {
+void ofShader::setUniformTexture(const char* name, ofBaseHasTexture& img, int textureLocation) {
 	setUniformTexture(name, img.getTextureReference(), textureLocation);
 }
 
-void ofxShader::setUniformTexture(const char* name, ofTexture& tex, int textureLocation) {
+void ofShader::setUniformTexture(const char* name, ofTexture& tex, int textureLocation) {
 	if(bLoaded) {
 		ofTextureData texData = tex.getTextureData();
 		glActiveTexture(GL_TEXTURE0 + textureLocation);
@@ -225,155 +225,155 @@ void ofxShader::setUniformTexture(const char* name, ofTexture& tex, int textureL
 	}
 }
 
-void ofxShader::setUniform1i(const char* name, int v1) {
+void ofShader::setUniform1i(const char* name, int v1) {
 	if(bLoaded)
 		glUniform1i(getUniformLocation(name), v1);
 }
 
-void ofxShader::setUniform2i(const char* name, int v1, int v2) {
+void ofShader::setUniform2i(const char* name, int v1, int v2) {
 	if(bLoaded)
 		glUniform2i(getUniformLocation(name), v1, v2);
 }
 
-void ofxShader::setUniform3i(const char* name, int v1, int v2, int v3) {
+void ofShader::setUniform3i(const char* name, int v1, int v2, int v3) {
 	if(bLoaded)
 		glUniform3i(getUniformLocation(name), v1, v2, v3);
 }
 
-void ofxShader::setUniform4i(const char* name, int v1, int v2, int v3, int v4) {
+void ofShader::setUniform4i(const char* name, int v1, int v2, int v3, int v4) {
 	if(bLoaded)
 		glUniform4i(getUniformLocation(name), v1, v2, v3, v4);
 }
 
-void ofxShader::setUniform1f(const char* name, float v1) {
+void ofShader::setUniform1f(const char* name, float v1) {
 	if(bLoaded)
 		glUniform1f(getUniformLocation(name), v1);
 }
 
-void ofxShader::setUniform2f(const char* name, float v1, float v2) {
+void ofShader::setUniform2f(const char* name, float v1, float v2) {
 	if(bLoaded)
 		glUniform2f(getUniformLocation(name), v1, v2);
 }
 
-void ofxShader::setUniform3f(const char* name, float v1, float v2, float v3) {
+void ofShader::setUniform3f(const char* name, float v1, float v2, float v3) {
 	if(bLoaded)
 		glUniform3f(getUniformLocation(name), v1, v2, v3);
 }
 
-void ofxShader::setUniform4f(const char* name, float v1, float v2, float v3, float v4) {
+void ofShader::setUniform4f(const char* name, float v1, float v2, float v3, float v4) {
 	if(bLoaded)
 		glUniform4f(getUniformLocation(name), v1, v2, v3, v4);
 }
 
-void ofxShader::setUniform1iv(const char* name, int* v, int count) {
+void ofShader::setUniform1iv(const char* name, int* v, int count) {
 	if(bLoaded)
 		glUniform1iv(getUniformLocation(name), count, v);
 }
 
-void ofxShader::setUniform2iv(const char* name, int* v, int count) {
+void ofShader::setUniform2iv(const char* name, int* v, int count) {
 	if(bLoaded)
 		glUniform2iv(getUniformLocation(name), count, v);
 }
 
-void ofxShader::setUniform3iv(const char* name, int* v, int count) {
+void ofShader::setUniform3iv(const char* name, int* v, int count) {
 	if(bLoaded)
 		glUniform3iv(getUniformLocation(name), count, v);
 }
 
-void ofxShader::setUniform4iv(const char* name, int* v, int count) {
+void ofShader::setUniform4iv(const char* name, int* v, int count) {
 	if(bLoaded)
 		glUniform4iv(getUniformLocation(name), count, v);
 }
 
-void ofxShader::setUniform1fv(const char* name, float* v, int count) {
+void ofShader::setUniform1fv(const char* name, float* v, int count) {
 	if(bLoaded)
 		glUniform1fv(getUniformLocation(name), count, v);
 }
 
-void ofxShader::setUniform2fv(const char* name, float* v, int count) {
+void ofShader::setUniform2fv(const char* name, float* v, int count) {
 	if(bLoaded)
 		glUniform2fv(getUniformLocation(name), count, v);
 }
 
-void ofxShader::setUniform3fv(const char* name, float* v, int count) {
+void ofShader::setUniform3fv(const char* name, float* v, int count) {
 	if(bLoaded)
 		glUniform3fv(getUniformLocation(name), count, v);
 }
 
-void ofxShader::setUniform4fv(const char* name, float* v, int count) {
+void ofShader::setUniform4fv(const char* name, float* v, int count) {
 	if(bLoaded)
 		glUniform4fv(getUniformLocation(name), count, v);
 }
 
-void ofxShader::setAttribute1s(GLint location, short v1) {
+void ofShader::setAttribute1s(GLint location, short v1) {
 	if(bLoaded)
 		glVertexAttrib1s(location, v1);
 }
 
-void ofxShader::setAttribute2s(GLint location, short v1, short v2) {
+void ofShader::setAttribute2s(GLint location, short v1, short v2) {
 	if(bLoaded)
 		glVertexAttrib2s(location, v1, v2);
 }
 
-void ofxShader::setAttribute3s(GLint location, short v1, short v2, short v3) {
+void ofShader::setAttribute3s(GLint location, short v1, short v2, short v3) {
 	if(bLoaded)
 		glVertexAttrib3s(location, v1, v2, v3);
 }
 
-void ofxShader::setAttribute4s(GLint location, short v1, short v2, short v3, short v4) {
+void ofShader::setAttribute4s(GLint location, short v1, short v2, short v3, short v4) {
 	if(bLoaded)
 		glVertexAttrib4s(location, v1, v2, v3, v4);
 }
 
-void ofxShader::setAttribute1f(GLint location, float v1) {
+void ofShader::setAttribute1f(GLint location, float v1) {
 	if(bLoaded)
 		glVertexAttrib1f(location, v1);
 }
 
-void ofxShader::setAttribute2f(GLint location, float v1, float v2) {
+void ofShader::setAttribute2f(GLint location, float v1, float v2) {
 	if(bLoaded)
 		glVertexAttrib2f(location, v1, v2);
 }
 
-void ofxShader::setAttribute3f(GLint location, float v1, float v2, float v3) {
+void ofShader::setAttribute3f(GLint location, float v1, float v2, float v3) {
 	if(bLoaded)
 		glVertexAttrib3f(location, v1, v2, v3);
 }
 
-void ofxShader::setAttribute4f(GLint location, float v1, float v2, float v3, float v4) {
+void ofShader::setAttribute4f(GLint location, float v1, float v2, float v3, float v4) {
 	if(bLoaded)
 		glVertexAttrib4f(location, v1, v2, v3, v4);
 }
 
-void ofxShader::setAttribute1d(GLint location, double v1) {
+void ofShader::setAttribute1d(GLint location, double v1) {
 	if(bLoaded)
 		glVertexAttrib1d(location, v1);
 }
 
-void ofxShader::setAttribute2d(GLint location, double v1, double v2) {
+void ofShader::setAttribute2d(GLint location, double v1, double v2) {
 	if(bLoaded)
 		glVertexAttrib2d(location, v1, v2);
 }
 
-void ofxShader::setAttribute3d(GLint location, double v1, double v2, double v3) {
+void ofShader::setAttribute3d(GLint location, double v1, double v2, double v3) {
 	if(bLoaded)
 		glVertexAttrib3d(location, v1, v2, v3);
 }
 
-void ofxShader::setAttribute4d(GLint location, double v1, double v2, double v3, double v4) {
+void ofShader::setAttribute4d(GLint location, double v1, double v2, double v3, double v4) {
 	if(bLoaded)
 		glVertexAttrib4d(location, v1, v2, v3, v4);
 }
 
-GLint ofxShader::getAttributeLocation(const char* name) {
+GLint ofShader::getAttributeLocation(const char* name) {
 	return glGetAttribLocation(program, name);
 }
 
-GLint ofxShader::getUniformLocation(const char* name) {
+GLint ofShader::getUniformLocation(const char* name) {
 	return glGetUniformLocation(program, name);
 }
 
-void ofxShader::printActiveUniforms() {
+void ofShader::printActiveUniforms() {
 	GLint numUniforms = 0;
 	glGetProgramiv(program, GL_ACTIVE_UNIFORMS, &numUniforms);
 	cout << numUniforms << " uniforms:" << endl;
@@ -395,7 +395,7 @@ void ofxShader::printActiveUniforms() {
 	delete [] uniformName;
 }
 
-void ofxShader::printActiveAttributes() {
+void ofShader::printActiveAttributes() {
 	GLint numAttributes = 0;
 	glGetProgramiv(program, GL_ACTIVE_ATTRIBUTES, &numAttributes);
 	cout << numAttributes << " attributes:" << endl;
@@ -417,17 +417,17 @@ void ofxShader::printActiveAttributes() {
 	delete [] attributeName;
 }
 
-GLuint& ofxShader::getProgram() {
+GLuint& ofShader::getProgram() {
 	return program;
 }
 
-GLuint& ofxShader::getShader(GLenum type) {
+GLuint& ofShader::getShader(GLenum type) {
 	return shaders[type];
 }
 
 
 
-string ofxShader::nameForType(GLenum type) {
+string ofShader::nameForType(GLenum type) {
 	switch(type) {
 		case GL_VERTEX_SHADER: return "GL_VERTEX_SHADER";
 		case GL_FRAGMENT_SHADER: return "GL_FRAGMENT_SHADER";

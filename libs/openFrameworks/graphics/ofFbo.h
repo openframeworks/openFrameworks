@@ -3,14 +3,15 @@
 #include "ofMain.h"
 
 
-class ofxFbo {
+class ofFbo {
 public:
 	struct Settings;
 	
-	ofxFbo();
-	~ofxFbo();
+	ofFbo();
+	~ofFbo();
 
 	void setup(int width, int height, int internalformat = GL_RGBA, int numSamples = 0);
+	void setupShadow( int width, int height );
 	void setup(Settings settings = Settings());
 	
 	void draw(float x, float y);
@@ -22,7 +23,7 @@ public:
 	void begin();
 	void end();
 	
-	ofTexture& getTexture(int attachmentPoint);		// get texture at attachment position
+	ofTexture& getTexture(int attachmentPoint = 0);		// get texture at attachment position
 	
 
 	// advanced functions
@@ -33,10 +34,14 @@ public:
 
 	GLuint getFbo();	// returns GLuint of Fbo for advanced actions
 	
+	
 	static void	checkGLSupport();
 	static int maxColorAttachments();	// return max color attachments
 	static int maxDrawBuffers();		// return max simultaneous draw buffers
 	static int maxSamples();			// return max MSAA samples
+
+	GLuint getDepthBuffer(){ return depthBuffer; }
+	GLuint getStencilBuffer(){ return stencilBuffer; }
 
 protected:
 	struct Settings {
