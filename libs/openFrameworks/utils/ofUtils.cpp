@@ -212,6 +212,28 @@ string ofToDataPath(string path, bool makeAbsolute){
 }
 
 //----------------------------------------
+template <>
+string ofToHex(const string& value) {
+	ostringstream out;
+	// get a pointer to the string content
+	const char* valuePtr = value.c_str();
+	// how many bytes are in the string
+	int numBytes = value.size();
+	for(int i = 0; i < numBytes; i++) {
+		// print each byte as a 2-character wide hex value
+		out << setfill('0') << setw(2) << hex << (unsigned int) valuePtr[i];
+	}
+	return out.str();
+}
+
+//----------------------------------------
+string ofToHex(const char* value) {
+	// this function is necessary if you want to print a string
+	// using a syntax like ofToHex("test")
+	return ofToHex((string) value);
+}
+
+//----------------------------------------
 int ofToInt(const string& intString) {
 	int x = 0;
 	istringstream cur(intString);
