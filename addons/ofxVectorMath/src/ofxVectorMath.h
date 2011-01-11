@@ -11,4 +11,3 @@
 #include "ofxMatrix3x3.h"
 #include "ofxMatrix4x4.h"
 #include "ofxQuaternion.h"
-
