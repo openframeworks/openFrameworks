@@ -2,7 +2,6 @@
 #define _THREADED_OBJECT
 
 #include "ofMain.h"
-#include "ofxThread.h"
 
 // this is not a very exciting example yet
 // but ofThread provides the basis for ofNetwork and other
@@ -12,7 +11,7 @@
 // to debug and working with threads can be quite difficult
 
 
-class threadedObject : public ofxThread{
+class threadedObject : public ofThread{
 
 	public:
 
