@@ -2,7 +2,7 @@
 
 
 
-#include "ofxMatrix4x4.h"
+#include "ofMatrix4x4.h"
 #include <limits>
 #include <stdlib.h>
 
@@ -28,7 +28,7 @@ _mat[(row)][3] = (v4);
 +((a)._mat[r][2] * (b)._mat[2][c]) \
 +((a)._mat[r][3] * (b)._mat[3][c])
 
-ofxMatrix4x4::ofxMatrix4x4( float a00, float a01, float a02, float a03,
+ofMatrix4x4::ofMatrix4x4( float a00, float a01, float a02, float a03,
 											 float a10, float a11, float a12, float a13,
 											 float a20, float a21, float a22, float a23,
 											 float a30, float a31, float a32, float a33)
@@ -39,7 +39,7 @@ ofxMatrix4x4::ofxMatrix4x4( float a00, float a01, float a02, float a03,
     SET_ROW(3, a30, a31, a32, a33 )
 }
 
-void ofxMatrix4x4::set( float a00, float a01, float a02, float a03,
+void ofMatrix4x4::set( float a00, float a01, float a02, float a03,
 								float a10, float a11, float a12, float a13,
 								float a20, float a21, float a22, float a23,
 								float a30, float a31, float a32, float a33)
@@ -55,7 +55,7 @@ void ofxMatrix4x4::set( float a00, float a01, float a02, float a03,
 #define QZ  q._v[2]
 #define QW  q._v[3]
 
-void ofxMatrix4x4::setRotate(const ofxQuaternion& q)
+void ofMatrix4x4::setRotate(const ofQuaternion& q)
 {
     double length2 = q.length2();
     if (fabs(length2) <= std::numeric_limits<double>::min())
@@ -140,9 +140,9 @@ void ofxMatrix4x4::setRotate(const ofxQuaternion& q)
 
 #ifdef COMPILE_getRotate_David_Spillings_Mk1
 // David Spillings implementation Mk 1
-ofxQuaternion ofxMatrix4x4::getRotate() const
+ofQuaternion ofMatrix4x4::getRotate() const
 {
-	ofxQuaternion q;
+	ofQuaternion q;
 
     float s;
     float tq[4];
@@ -203,9 +203,9 @@ ofxQuaternion ofxMatrix4x4::getRotate() const
 
 #ifdef COMPILE_getRotate_David_Spillings_Mk2
 // David Spillings implementation Mk 2
-ofxQuat ofxMatrix4x4::getRotate() const
+ofQuat ofMatrix4x4::getRotate() const
 {
-    ofxQuat q;
+    ofQuat q;
 
     // From http://www.euclideanspace.com/maths/geometry/rotations/conversions/matrixToQuaternion/index.htm
     QW = 0.5 * sqrt( osg::maximum( 0.0, 1.0 + _mat[0][0] + _mat[1][1] + _mat[2][2] ) );
@@ -230,9 +230,9 @@ ofxQuat ofxMatrix4x4::getRotate() const
 
 #ifdef COMPILE_getRotate_Original
 // Original implementation
-ofxQuat ofxMatrix4x4::getRotate() const
+ofQuat ofMatrix4x4::getRotate() const
 {
-    ofxQuat q;
+    ofQuat q;
 
     // Source: Gamasutra, Rotating Objects Using Quaternions
     //
@@ -289,11 +289,11 @@ ofxQuat ofxMatrix4x4::getRotate() const
 #endif
 
 
-//int ofxMatrix4x4::compare(const ofxMatrix4x4& m) const
+//int ofMatrix4x4::compare(const ofMatrix4x4& m) const
 //{
-//    const ofxMatrix4x4::float* lhs = reinterpret_cast<const ofxMatrix4x4::float*>(_mat);
-//    const ofxMatrix4x4::float* end_lhs = lhs+16;
-//    const ofxMatrix4x4::float* rhs = reinterpret_cast<const ofxMatrix4x4::float*>(m._mat);
+//    const ofMatrix4x4::float* lhs = reinterpret_cast<const ofMatrix4x4::float*>(_mat);
+//    const ofMatrix4x4::float* end_lhs = lhs+16;
+//    const ofMatrix4x4::float* rhs = reinterpret_cast<const ofMatrix4x4::float*>(m._mat);
 //    for(;lhs!=end_lhs;++lhs,++rhs)
 //    {
 //        if (*lhs < *rhs) return -1;
@@ -302,7 +302,7 @@ ofxQuat ofxMatrix4x4::getRotate() const
 //    return 0;
 //}
 
-void ofxMatrix4x4::setTranslation( float tx, float ty, float tz )
+void ofMatrix4x4::setTranslation( float tx, float ty, float tz )
 {
     _mat[3][0] = tx;
     _mat[3][1] = ty;
@@ -310,14 +310,14 @@ void ofxMatrix4x4::setTranslation( float tx, float ty, float tz )
 }
 
 
-void ofxMatrix4x4::setTranslation( const ofxVec3f& v )
+void ofMatrix4x4::setTranslation( const ofVec3f& v )
 {
     _mat[3][0] = v.v[0];
     _mat[3][1] = v.v[1];
     _mat[3][2] = v.v[2];
 }
 
-void ofxMatrix4x4::makeIdentityMatrix()
+void ofMatrix4x4::makeIdentityMatrix()
 {
     SET_ROW(0,    1, 0, 0, 0 )
     SET_ROW(1,    0, 1, 0, 0 )
@@ -325,12 +325,12 @@ void ofxMatrix4x4::makeIdentityMatrix()
     SET_ROW(3,    0, 0, 0, 1 )
 }
 
-void ofxMatrix4x4::makeScaleMatrix( const ofxVec3f& v )
+void ofMatrix4x4::makeScaleMatrix( const ofVec3f& v )
 {
     makeScaleMatrix(v.v[0], v.v[1], v.v[2] );
 }
 
-void ofxMatrix4x4::makeScaleMatrix( float x, float y, float z )
+void ofMatrix4x4::makeScaleMatrix( float x, float y, float z )
 {
     SET_ROW(0,    x, 0, 0, 0 )
     SET_ROW(1,    0, y, 0, 0 )
@@ -338,11 +338,11 @@ void ofxMatrix4x4::makeScaleMatrix( float x, float y, float z )
     SET_ROW(3,    0, 0, 0, 1 )
 }
 
-void ofxMatrix4x4::makeTranslationMatrix( const ofxVec3f& v )
+void ofMatrix4x4::makeTranslationMatrix( const ofVec3f& v )
 {
     makeTranslationMatrix( v.v[0], v.v[1], v.v[2] );
 }
-void ofxMatrix4x4::makeTranslationMatrix( float x, float y, float z )
+void ofMatrix4x4::makeTranslationMatrix( float x, float y, float z )
 {
     SET_ROW(0,    1, 0, 0, 0 )
     SET_ROW(1,    0, 1, 0, 0 )
@@ -350,53 +350,53 @@ void ofxMatrix4x4::makeTranslationMatrix( float x, float y, float z )
     SET_ROW(3,    x, y, z, 1 )
 }
 
-void ofxMatrix4x4::makeRotationMatrix( const ofxVec3f& from, const ofxVec3f& to )
+void ofMatrix4x4::makeRotationMatrix( const ofVec3f& from, const ofVec3f& to )
 {
     makeIdentityMatrix();
 
-    ofxQuaternion quat;
+    ofQuaternion quat;
     quat.makeRotate(from,to);
     setRotate(quat);
 }
-void ofxMatrix4x4::makeRotationMatrix( float angle, const ofxVec3f& axis )
+void ofMatrix4x4::makeRotationMatrix( float angle, const ofVec3f& axis )
 {
     makeIdentityMatrix();
 
-    ofxQuaternion quat;
+    ofQuaternion quat;
     quat.makeRotate( angle, axis);
     setRotate(quat);
 }
 
-void ofxMatrix4x4::makeRotationMatrix( float angle, float x, float y, float z )
+void ofMatrix4x4::makeRotationMatrix( float angle, float x, float y, float z )
 {
     makeIdentityMatrix();
 
-    ofxQuaternion quat;
+    ofQuaternion quat;
     quat.makeRotate( angle, x, y, z);
     setRotate(quat);
 }
 
-void ofxMatrix4x4::makeRotationMatrix( const ofxQuaternion& quat )
+void ofMatrix4x4::makeRotationMatrix( const ofQuaternion& quat )
 {
     makeIdentityMatrix();
 
     setRotate(quat);
 }
 
-void ofxMatrix4x4::makeRotationMatrix( float angle1, const ofxVec3f& axis1,
-									   float angle2, const ofxVec3f& axis2,
-									   float angle3, const ofxVec3f& axis3)
+void ofMatrix4x4::makeRotationMatrix( float angle1, const ofVec3f& axis1,
+									   float angle2, const ofVec3f& axis2,
+									   float angle3, const ofVec3f& axis3)
 {
     makeIdentityMatrix();
 
-    ofxQuaternion quat;
+    ofQuaternion quat;
     quat.makeRotate(angle1, axis1,
                     angle2, axis2,
                     angle3, axis3);
     setRotate(quat);
 }
 
-void ofxMatrix4x4::makeFromMultiplicationOf( const ofxMatrix4x4& lhs, const ofxMatrix4x4& rhs )
+void ofMatrix4x4::makeFromMultiplicationOf( const ofMatrix4x4& lhs, const ofMatrix4x4& rhs )
 {
     if (&lhs==this)
     {
@@ -429,10 +429,10 @@ void ofxMatrix4x4::makeFromMultiplicationOf( const ofxMatrix4x4& lhs, const ofxM
     _mat[3][3] = INNER_PRODUCT(lhs, rhs, 3, 3);
 }
 
-void ofxMatrix4x4::preMult( const ofxMatrix4x4& other )
+void ofMatrix4x4::preMult( const ofMatrix4x4& other )
 {
     // brute force method requiring a copy
-    //ofxMatrix4x4 tmp(other* *this);
+    //ofMatrix4x4 tmp(other* *this);
     // *this = tmp;
 
     // more efficient method just use a float[4] for temporary storage.
@@ -450,10 +450,10 @@ void ofxMatrix4x4::preMult( const ofxMatrix4x4& other )
 
 }
 
-void ofxMatrix4x4::postMult( const ofxMatrix4x4& other )
+void ofMatrix4x4::postMult( const ofMatrix4x4& other )
 {
     // brute force method requiring a copy
-    //ofxMatrix4x4 tmp(*this * other);
+    //ofMatrix4x4 tmp(*this * other);
     // *this = tmp;
 
     // more efficient method just use a float[4] for temporary storage.
@@ -471,7 +471,7 @@ void ofxMatrix4x4::postMult( const ofxMatrix4x4& other )
 #undef INNER_PRODUCT
 
 // orthoNormalize the 3x3 rotation matrix
-void ofxMatrix4x4::makeOrthoNormalOf(const ofxMatrix4x4& rhs)
+void ofMatrix4x4::makeOrthoNormalOf(const ofMatrix4x4& rhs)
 {
     float x_colMag = (rhs._mat[0][0] * rhs._mat[0][0]) + (rhs._mat[1][0] * rhs._mat[1][0]) + (rhs._mat[2][0] * rhs._mat[2][0]);
     float y_colMag = (rhs._mat[0][1] * rhs._mat[0][1]) + (rhs._mat[1][1] * rhs._mat[1][1]) + (rhs._mat[2][1] * rhs._mat[2][1]);
@@ -532,12 +532,12 @@ void ofxMatrix4x4::makeOrthoNormalOf(const ofxMatrix4x4& rhs)
 
 
 /** 4x3 matrix invert, not right hand column is assumed to be 0,0,0,1. */
-bool invert_4x3( const ofxMatrix4x4& src, ofxMatrix4x4 & dst);
+bool invert_4x3( const ofMatrix4x4& src, ofMatrix4x4 & dst);
 
 /** full 4x4 matrix invert. */
-bool invert_4x4( const ofxMatrix4x4& rhs, ofxMatrix4x4 & dst);
+bool invert_4x4( const ofMatrix4x4& rhs, ofMatrix4x4 & dst);
 
-bool ofxMatrix4x4::makeInvertOf(const ofxMatrix4x4 & rhs){
+bool ofMatrix4x4::makeInvertOf(const ofMatrix4x4 & rhs){
 	bool is_4x3 = (rhs._mat[0][3] == 0.0f && rhs._mat[1][3] == 0.0f &&  rhs._mat[2][3] == 0.0f && rhs._mat[3][3] == 1.0f);
 	return is_4x3 ? invert_4x3(rhs,*this) :  invert_4x4(rhs,*this);
 }
@@ -570,11 +570,11 @@ bool ofxMatrix4x4::makeInvertOf(const ofxMatrix4x4 & rhs){
  This problem is simplified if [px py pz s] = [0 0 0 1], which will happen if mat was composed only of rotations, scales, and translations (which is common).  In this case, we can ignore corr entirely which saves on a lot of computations.
  ******************************************/
 
-bool invert_4x3( const ofxMatrix4x4& src, ofxMatrix4x4 & dst )
+bool invert_4x3( const ofMatrix4x4& src, ofMatrix4x4 & dst )
 {
     if (&src==&dst)
     {
-		ofxMatrix4x4 tm(src);
+		ofMatrix4x4 tm(src);
 		return invert_4x3(tm,dst);
     }
 
@@ -618,7 +618,7 @@ bool invert_4x3( const ofxMatrix4x4& src, ofxMatrix4x4 & dst )
     if( square(d-1.0) > 1.0e-6 )  // Involves perspective, so we must
     {                       // compute the full inverse
 
-        ofxMatrix4x4 TPinv;
+        ofMatrix4x4 TPinv;
         dst._mat[3][0] = dst._mat[3][1] = dst._mat[3][2] = 0.0;
 
 #define px r00
@@ -700,10 +700,10 @@ inline T SGL_ABS(T a)
 #define SGL_SWAP(a,b,temp) ((temp)=(a),(a)=(b),(b)=(temp))
 #endif
 
-bool invert_4x4( const ofxMatrix4x4& src, ofxMatrix4x4&dst )
+bool invert_4x4( const ofMatrix4x4& src, ofMatrix4x4&dst )
 {
     if (&src==&dst) {
-		ofxMatrix4x4 tm(src);
+		ofMatrix4x4 tm(src);
 		return invert_4x4(tm,dst);
     }
 
@@ -769,11 +769,11 @@ bool invert_4x4( const ofxMatrix4x4& src, ofxMatrix4x4&dst )
     return true;
 }
 
-void ofxMatrix4x4::makeOrthoMatrix(double left, double right,
+void ofMatrix4x4::makeOrthoMatrix(double left, double right,
 									  double bottom, double top,
 									  double zNear, double zFar)
 {
-    // note transpose of ofxMatrix4x4 wr.t OpenGL documentation, since the OSG use post multiplication rather than pre.
+    // note transpose of ofMatrix4x4 wr.t OpenGL documentation, since the OSG use post multiplication rather than pre.
     double tx = -(right+left)/(right-left);
     double ty = -(top+bottom)/(top-bottom);
     double tz = -(zFar+zNear)/(zFar-zNear);
@@ -783,7 +783,7 @@ void ofxMatrix4x4::makeOrthoMatrix(double left, double right,
     SET_ROW(3,               tx,                ty,                 tz, 1.0 )
 }
 
-bool ofxMatrix4x4::getOrtho(double& left, double& right,
+bool ofMatrix4x4::getOrtho(double& left, double& right,
 									 double& bottom, double& top,
 									 double& zNear, double& zFar) const
 {
@@ -802,11 +802,11 @@ bool ofxMatrix4x4::getOrtho(double& left, double& right,
 }
 
 
-void ofxMatrix4x4::makeFrustumMatrix(double left, double right,
+void ofMatrix4x4::makeFrustumMatrix(double left, double right,
 										double bottom, double top,
 										double zNear, double zFar)
 {
-    // note transpose of ofxMatrix4x4 wr.t OpenGL documentation, since the OSG use post multiplication rather than pre.
+    // note transpose of ofMatrix4x4 wr.t OpenGL documentation, since the OSG use post multiplication rather than pre.
     double A = (right+left)/(right-left);
     double B = (top+bottom)/(top-bottom);
     double C = -(zFar+zNear)/(zFar-zNear);
@@ -817,7 +817,7 @@ void ofxMatrix4x4::makeFrustumMatrix(double left, double right,
     SET_ROW(3,                    0.0,                    0.0,   D,  0.0 )
 }
 
-bool ofxMatrix4x4::getFrustum(double& left, double& right,
+bool ofMatrix4x4::getFrustum(double& left, double& right,
                                        double& bottom, double& top,
                                        double& zNear, double& zFar) const
 {
@@ -837,7 +837,7 @@ bool ofxMatrix4x4::getFrustum(double& left, double& right,
 }
 
 
-void ofxMatrix4x4::makePerspectiveMatrix(double fovy,double aspectRatio,
+void ofMatrix4x4::makePerspectiveMatrix(double fovy,double aspectRatio,
                                             double zNear, double zFar)
 {
     // calculate the appropriate left, right etc.
@@ -849,7 +849,7 @@ void ofxMatrix4x4::makePerspectiveMatrix(double fovy,double aspectRatio,
     makeFrustumMatrix(left,right,bottom,top,zNear,zFar);
 }
 
-bool ofxMatrix4x4::getPerspective(double& fovy,double& aspectRatio,
+bool ofMatrix4x4::getPerspective(double& fovy,double& aspectRatio,
                                            double& zNear, double& zFar) const
 {
     double right  =  0.0;
@@ -865,13 +865,13 @@ bool ofxMatrix4x4::getPerspective(double& fovy,double& aspectRatio,
     return false;
 }
 
-void ofxMatrix4x4::makeLookAtMatrix(const ofxVec3f& eye,const ofxVec3f& center,const ofxVec3f& up)
+void ofMatrix4x4::makeLookAtMatrix(const ofVec3f& eye,const ofVec3f& center,const ofVec3f& up)
 {
-    ofxVec3f f(center-eye);
+    ofVec3f f(center-eye);
     f.normalize();
-    ofxVec3f s(f.getCrossed(up));
+    ofVec3f s(f.getCrossed(up));
     s.normalize();
-    ofxVec3f u(s.getCrossed(f));
+    ofVec3f u(s.getCrossed(f));
     u.normalize();
 
     set(
@@ -884,26 +884,26 @@ void ofxMatrix4x4::makeLookAtMatrix(const ofxVec3f& eye,const ofxVec3f& center,c
 }
 
 
-void ofxMatrix4x4::getLookAt(ofxVec3f& eye,ofxVec3f& center,ofxVec3f& up,float lookDistance) const
+void ofMatrix4x4::getLookAt(ofVec3f& eye,ofVec3f& center,ofVec3f& up,float lookDistance) const
 {
-    ofxMatrix4x4 inv;
+    ofMatrix4x4 inv;
     inv.makeInvertOf(*this);
-    eye = ofxVec3f(0.0,0.0,0.0)*inv;
-    up = transform3x3(*this,ofxVec3f(0.0,1.0,0.0));
-    center = transform3x3(*this,ofxVec3f(0.0,0.0,-1));
+    eye = ofVec3f(0.0,0.0,0.0)*inv;
+    up = transform3x3(*this,ofVec3f(0.0,1.0,0.0));
+    center = transform3x3(*this,ofVec3f(0.0,0.0,-1));
     center.normalize();
     center = eye + center*lookDistance;
 }
 
 
 
-typedef ofxQuaternion HVect;
+typedef ofQuaternion HVect;
 typedef double _HMatrix[4][4];
 typedef struct
 {
-	ofxVec4f t;     // Translation Component;
-	ofxQuaternion q;           // Essential Rotation
-	ofxQuaternion u;          //Stretch rotation
+	ofVec4f t;     // Translation Component;
+	ofQuaternion q;           // Essential Rotation
+	ofQuaternion u;          //Stretch rotation
 	HVect k;          //Sign of determinant
 	double f;          // Sign of determinant
 } _affineParts;
@@ -912,14 +912,14 @@ typedef struct
 enum QuatPart {X, Y, Z, W};
 
 #define SQRTHALF (0.7071067811865475244)
-static ofxQuaternion qxtoz(0,SQRTHALF,0,SQRTHALF);
-static ofxQuaternion qytoz(SQRTHALF,0,0,SQRTHALF);
-static ofxQuaternion qppmm( 0.5, 0.5,-0.5,-0.5);
-static ofxQuaternion qpppp( 0.5, 0.5, 0.5, 0.5);
-static ofxQuaternion qmpmm(-0.5, 0.5,-0.5,-0.5);
-static ofxQuaternion qpppm( 0.5, 0.5, 0.5,-0.5);
-static ofxQuaternion q0001( 0.0, 0.0, 0.0, 1.0);
-static ofxQuaternion q1000( 1.0, 0.0, 0.0, 0.0);
+static ofQuaternion qxtoz(0,SQRTHALF,0,SQRTHALF);
+static ofQuaternion qytoz(SQRTHALF,0,0,SQRTHALF);
+static ofQuaternion qppmm( 0.5, 0.5,-0.5,-0.5);
+static ofQuaternion qpppp( 0.5, 0.5, 0.5, 0.5);
+static ofQuaternion qmpmm(-0.5, 0.5,-0.5,-0.5);
+static ofQuaternion qpppm( 0.5, 0.5, 0.5,-0.5);
+static ofQuaternion q0001( 0.0, 0.0, 0.0, 1.0);
+static ofQuaternion q1000( 1.0, 0.0, 0.0, 0.0);
 
 /** Copy nxn matrix A to C using "gets" for assignment **/
 #define matrixCopy(C, gets, A, n) {int i, j; for (i=0;i<n;i++) for (j=0;j<n;j++)\
@@ -1076,9 +1076,9 @@ void do_rank2(_HMatrix M, _HMatrix MadjT, _HMatrix Q)
 }
 
 /* Return product of quaternion q by scalar w. */
-ofxQuaternion Qt_Scale(ofxQuaternion q, double w)
+ofQuaternion Qt_Scale(ofQuaternion q, double w)
 {
-	ofxQuaternion qq;
+	ofQuaternion qq;
 	qq.w() = q.w()*w;
 	qq.x() = q.x()*w;
 	qq.y() = q.y()*w;
@@ -1091,14 +1091,14 @@ ofxQuaternion Qt_Scale(ofxQuaternion q, double w)
 * correctly for right-handed coordinate system and right-handed rotations.
 * Translation and perspective components ignored. */
 
-ofxQuaternion quatFromMatrix(_HMatrix mat)
+ofQuaternion quatFromMatrix(_HMatrix mat)
 {
    /* This algorithm avoids near-zero divides by looking for a large component
 	* - first w, then x, y, or z.  When the trace is greater than zero,
 	* |w| is greater than 1/2, which is as small as a largest component can be.
 	* Otherwise, the largest diagonal entry corresponds to the largest of |x|,
 	* |y|, or |z|, one of which must be larger than |w|, and at least 1/2. */
-   ofxQuaternion qu = q0001;
+   ofQuaternion qu = q0001;
    double tr, s;
 
    tr = mat[X][X] + mat[Y][Y]+ mat[Z][Z];
@@ -1242,9 +1242,9 @@ HVect spectDecomp(_HMatrix S, _HMatrix U)
 }
 
 /* Return conjugate of quaternion. */
-ofxQuaternion Qt_Conj(ofxQuaternion q)
+ofQuaternion Qt_Conj(ofQuaternion q)
 {
-	ofxQuaternion qq;
+	ofQuaternion qq;
     qq.x() = -q.x(); qq.y() = -q.y(); qq.z() = -q.z(); qq.w() = q.w();
     return (qq);
 }
@@ -1252,9 +1252,9 @@ ofxQuaternion Qt_Conj(ofxQuaternion q)
 /* Return quaternion product qL * qR.  Note: order is important!
  * To combine rotations, use the product Mul(qSecond, qFirst),
  * which gives the effect of rotating by qFirst then qSecond. */
-ofxQuaternion Qt_Mul(ofxQuaternion qL, ofxQuaternion qR)
+ofQuaternion Qt_Mul(ofQuaternion qL, ofQuaternion qR)
 {
-	ofxQuaternion qq;
+	ofQuaternion qq;
     qq.w() = qL.w()*qR.w() - qL.x()*qR.x() - qL.y()*qR.y() - qL.z()*qR.z();
     qq.x() = qL.w()*qR.x() + qL.x()*qR.w() + qL.y()*qR.z() - qL.z()*qR.y();
     qq.y() = qL.w()*qR.y() + qL.y()*qR.w() + qL.z()*qR.x() - qL.x()*qR.z();
@@ -1263,9 +1263,9 @@ ofxQuaternion Qt_Mul(ofxQuaternion qL, ofxQuaternion qR)
 }
 
 /* Construct a (possibly non-unit) quaternion from real components. */
-ofxQuaternion Qt_(double x, double y, double z, double w)
+ofQuaternion Qt_(double x, double y, double z, double w)
 {
-	ofxQuaternion qq;
+	ofQuaternion qq;
     qq.x() = x; qq.y() = y; qq.z() = z; qq.w() = w;
     return (qq);
 }
@@ -1279,14 +1279,14 @@ ofxQuaternion Qt_(double x, double y, double z, double w)
  * See Ken Shoemake and Tom Duff. Matrix Animation and Polar Decomposition.
  * Proceedings of Graphics Interface 1992. Details on p. 262-263.
  */
-ofxQuaternion snuggle(ofxQuaternion q, HVect *k)
+ofQuaternion snuggle(ofQuaternion q, HVect *k)
 {
 #define sgn(n,v)    ((n)?-(v):(v))
 #define swap(a,i,j) {a[3]=a[i]; a[i]=a[j]; a[j]=a[3];}
 #define cycle(a,p)  if (p) {a[3]=a[0]; a[0]=a[1]; a[1]=a[2]; a[2]=a[3];}\
 	else   {a[3]=a[2]; a[2]=a[1]; a[1]=a[0]; a[0]=a[3];}
 
-	ofxQuaternion p = q0001;
+	ofQuaternion p = q0001;
 	double ka[4];
 	int i, turn = -1;
 	ka[X] = k->x(); ka[Y] = k->y(); ka[Z] = k->z();
@@ -1303,7 +1303,7 @@ ofxQuaternion snuggle(ofxQuaternion q, HVect *k)
 			turn = X;
 	}
 	if (turn>=0) {
-		ofxQuaternion qtoz, qp;
+		ofQuaternion qtoz, qp;
 		unsigned int  win;
 		double mag[3], t;
 		switch (turn) {
@@ -1422,10 +1422,10 @@ ofxQuaternion snuggle(ofxQuaternion q, HVect *k)
 void decompAffine(_HMatrix A, _affineParts * parts)
 {
 	_HMatrix Q, S, U;
-	ofxQuaternion p;
+	ofQuaternion p;
 
 	//Translation component.
-	parts->t = ofxVec4f(A[X][W], A[Y][W], A[Z][W], 0);
+	parts->t = ofVec4f(A[X][W], A[Y][W], A[Z][W], 0);
 	double det = polarDecomp(A, Q, S);
 	if (det<0.0)
 	{
@@ -1442,10 +1442,10 @@ void decompAffine(_HMatrix A, _affineParts * parts)
 	parts->u = Qt_Mul(parts->u, p);
 }
 
-void ofxMatrix4x4::decompose( ofxVec3f& t,
-		   ofxQuaternion& r,
-		   ofxVec3f& s,
-		   ofxQuaternion& so ) const{
+void ofMatrix4x4::decompose( ofVec3f& t,
+		   ofQuaternion& r,
+		   ofVec3f& s,
+		   ofQuaternion& so ) const{
 
 	_affineParts parts;
     _HMatrix hmatrix;
