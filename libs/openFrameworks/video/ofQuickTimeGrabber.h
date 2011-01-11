@@ -6,9 +6,8 @@
 #include "ofTypes.h"
 #include "ofBaseTypes.h"
 
-#ifdef OF_VIDEO_CAPTURE_QUICKTIME
+#ifndef TARGET_LINUX
 	#include "ofQtUtils.h"
-#endif
 
 // todo:
 // 		QT - callback, via SGSetDataProc - couldn't get this to work yet
@@ -24,7 +23,7 @@ class ofQuickTimeGrabber : public ofBaseVideoGrabber{
 
 		void					listDevices();
 		bool					initGrabber(int w, int h);
-		void					grabFrame();
+		void					update();
 		bool					isFrameNew();
 
 		unsigned char			* getPixels();
@@ -74,3 +73,5 @@ class ofQuickTimeGrabber : public ofBaseVideoGrabber{
 
 };
 
+
+#endif
