@@ -7,14 +7,15 @@ void testApp::setup(){
 		
 	// this load font loads the non-full character set
 	// (ie ASCII 33-128), at size "32"
-	franklinBook.loadFont("frabk.ttf", 32);
+	franklinBook.loadFont("frabk.ttf", 64);
 	
 	// now load another font, but with extended parameters:
 	// font name, size, anti-aliased, full character set
-	verdana.loadFont("verdana.ttf",8, false, true);
+	verdana.loadFont("verdana.ttf",16, true, true);
 	verdana.setLineHeight(20.0f);
 	
 	counter = 0;
+	ofBackground(255, 255, 255);
 }
 
 
