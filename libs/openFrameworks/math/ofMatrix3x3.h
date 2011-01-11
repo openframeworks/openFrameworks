@@ -3,13 +3,10 @@
 * Code adopted from Lode Vandevenne http://student.kuleuven.be/~m0216922/CG/
 */
 
-#ifndef _OFX_MATRIX_3X3
-#define _OFX_MATRIX_3X3
+#pragma once
 
 
-
-
-class ofxMatrix3x3 {
+class ofMatrix3x3 {
 
 
   public:
@@ -31,7 +28,7 @@ class ofxMatrix3x3 {
 
 
 
-    ofxMatrix3x3( double _a=0.0, double _b=0.0, double _c=0.0,
+    ofMatrix3x3( double _a=0.0, double _b=0.0, double _c=0.0,
                   double _d=0.0, double _e=0.0, double _f=0.0,
                   double _g=0.0, double _h=0.0, double _i=0.0 );
 
@@ -62,7 +59,7 @@ class ofxMatrix3x3 {
     * @return transposed matrix.
     */
 
-	ofxMatrix3x3 transpose(const ofxMatrix3x3& A);
+	ofMatrix3x3 transpose(const ofMatrix3x3& A);
 
 
 
@@ -72,7 +69,7 @@ class ofxMatrix3x3 {
 
     double determinant() const;
 
-    double determinant(const ofxMatrix3x3& A);
+    double determinant(const ofMatrix3x3& A);
 
 
 
@@ -87,52 +84,49 @@ class ofxMatrix3x3 {
 
     void invert();
 
-    ofxMatrix3x3 inverse(const ofxMatrix3x3& A);
+    ofMatrix3x3 inverse(const ofMatrix3x3& A);
 
 
 
     /**
     * Add two matrices
     */
-    ofxMatrix3x3 operator+(const ofxMatrix3x3& B);
+    ofMatrix3x3 operator+(const ofMatrix3x3& B);
 
-    void operator+=(const ofxMatrix3x3& B);
+    void operator+=(const ofMatrix3x3& B);
 
     /**
     * Subtract two matrices
     */
-    ofxMatrix3x3 operator-(const ofxMatrix3x3& B);
+    ofMatrix3x3 operator-(const ofMatrix3x3& B);
 
-	void operator-=(const ofxMatrix3x3& B);
+	void operator-=(const ofMatrix3x3& B);
 
 
     /**
     * Multiply a matrix with a scalar
     */
-    ofxMatrix3x3 operator*(double scalar);
+    ofMatrix3x3 operator*(double scalar);
 
 
-	void operator*=(const ofxMatrix3x3& B);
+	void operator*=(const ofMatrix3x3& B);
 
     void operator*=(double scalar);
 
      /**
      * Multiply a 3x3 matrix with a 3x3 matrix
      */
-    ofxMatrix3x3 operator*(const ofxMatrix3x3& B);
+    ofMatrix3x3 operator*(const ofMatrix3x3& B);
 
     /**
     * Divide a matrix through a scalar
     */
-    ofxMatrix3x3 operator/(double scalar);
+    ofMatrix3x3 operator/(double scalar);
 
 
-	void operator/=(const ofxMatrix3x3& B);
+	void operator/=(const ofMatrix3x3& B);
 
     void operator/=(double scalar);
 
 };
-
-
-#endif
 

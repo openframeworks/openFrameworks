@@ -1,5 +1,5 @@
 /*
- *  ofxQuaternion.h
+ *  ofQuaternion.h
  *  
  *  Created by Aaron Meyers on 6/22/09 -- modified by Arturo Castro and Zach Lieberman
  *  based on code from OSG - 
@@ -8,11 +8,10 @@
  * 
  */
 
-#ifndef _OFX_QUATERNION
-#define _OFX_QUATERNION
+#pragma once
 
-#include "ofxVec3f.h"
-#include "ofxVec4f.h"
+#include "ofVec3f.h"
+#include "ofVec4f.h"
 #include <cmath>
 
 #if (_MSC_VER)       
@@ -21,43 +20,43 @@
 #endif
 
 
-class ofxMatrix4x4;
+class ofMatrix4x4;
 
-class ofxQuaternion {
+class ofQuaternion {
 public:
 	float _v[4];
 
-	inline ofxQuaternion() {
+	inline ofQuaternion() {
 		_v[0] = 0.0f;
 		_v[1] = 0.0f;
 		_v[2] = 0.0f;
 		_v[3] = 1.0f;
 	}
-	inline ofxQuaternion( float x, float y, float z, float w ) {
+	inline ofQuaternion( float x, float y, float z, float w ) {
 		_v[0] = x;
 		_v[1] = y;
 		_v[2] = z;
 		_v[3] = w;
 	}
 
-	inline ofxQuaternion( const ofxVec4f& v ) {
+	inline ofQuaternion( const ofVec4f& v ) {
 		_v[0] = v.x;
 		_v[1] = v.y;
 		_v[2] = v.z;
 		_v[3] = v.w;
 	}
 
-	inline ofxQuaternion( float angle, const ofxVec3f& axis) {
+	inline ofQuaternion( float angle, const ofVec3f& axis) {
 		makeRotate(angle, axis);
 	}
 
-	inline ofxQuaternion( float angle1, const ofxVec3f& axis1,
-	                float angle2, const ofxVec3f& axis2,
-	                float angle3, const ofxVec3f& axis3) {
+	inline ofQuaternion( float angle1, const ofVec3f& axis1,
+	                float angle2, const ofVec3f& axis2,
+	                float angle3, const ofVec3f& axis3) {
 		makeRotate(angle1, axis1, angle2, axis2, angle3, axis3);
 	}
 
-	inline ofxQuaternion& operator = (const ofxQuaternion& v) {
+	inline ofQuaternion& operator = (const ofQuaternion& v) {
 		_v[0] = v._v[0];
 		_v[1] = v._v[1];
 		_v[2] = v._v[2];
@@ -65,15 +64,15 @@ public:
 		return *this;
 	}
 
-	inline bool operator == (const ofxQuaternion& v) const {
+	inline bool operator == (const ofQuaternion& v) const {
 		return _v[0] == v._v[0] && _v[1] == v._v[1] && _v[2] == v._v[2] && _v[3] == v._v[3];
 	}
 
-	inline bool operator != (const ofxQuaternion& v) const {
+	inline bool operator != (const ofQuaternion& v) const {
 		return _v[0] != v._v[0] || _v[1] != v._v[1] || _v[2] != v._v[2] || _v[3] != v._v[3];
 	}
 
-	inline bool operator <  (const ofxQuaternion& v) const {
+	inline bool operator <  (const ofQuaternion& v) const {
 		if (_v[0] < v._v[0]) return true;
 		else if (_v[0] > v._v[0]) return false;
 		else if (_v[1] < v._v[1]) return true;
@@ -88,12 +87,12 @@ public:
 	 Methods to access data members
 	 ---------------------------------- */
 
-	inline ofxVec4f asVec4() const {
-		return ofxVec4f(_v[0], _v[1], _v[2], _v[3]);
+	inline ofVec4f asVec4() const {
+		return ofVec4f(_v[0], _v[1], _v[2], _v[3]);
 	}
 
-	inline ofxVec3f asVec3() const {
-		return ofxVec3f(_v[0], _v[1], _v[2]);
+	inline ofVec3f asVec3() const {
+		return ofVec3f(_v[0], _v[1], _v[2]);
 	}
 
 	inline void set(float x, float y, float z, float w) {
@@ -103,16 +102,16 @@ public:
 		_v[3] = w;
 	}
 
-	inline void set(const ofxVec4f& v) {
+	inline void set(const ofVec4f& v) {
 		_v[0] = v.x;
 		_v[1] = v.y;
 		_v[2] = v.z;
 		_v[3] = v.w;
 	}
 
-	void set(const ofxMatrix4x4& matrix);
+	void set(const ofMatrix4x4& matrix);
 
-	void get(ofxMatrix4x4& matrix) const;
+	void get(ofMatrix4x4& matrix) const;
 
 
 	inline float & operator [] (int i) {
@@ -163,12 +162,12 @@ public:
 	 Also define methods for conjugate and the multiplicative inverse.
 	 ------------------------------------------------------------- */
 	/// Multiply by scalar
-	inline const ofxQuaternion operator * (float rhs) const {
-		return ofxQuaternion(_v[0]*rhs, _v[1]*rhs, _v[2]*rhs, _v[3]*rhs);
+	inline const ofQuaternion operator * (float rhs) const {
+		return ofQuaternion(_v[0]*rhs, _v[1]*rhs, _v[2]*rhs, _v[3]*rhs);
 	}
 
 	/// Unary multiply by scalar
-	inline ofxQuaternion& operator *= (float rhs) {
+	inline ofQuaternion& operator *= (float rhs) {
 		_v[0] *= rhs;
 		_v[1] *= rhs;
 		_v[2] *= rhs;
@@ -177,15 +176,15 @@ public:
 	}
 
 	/// Binary multiply
-	inline const ofxQuaternion operator*(const ofxQuaternion& rhs) const {
-		return ofxQuaternion( rhs._v[3]*_v[0] + rhs._v[0]*_v[3] + rhs._v[1]*_v[2] - rhs._v[2]*_v[1],
+	inline const ofQuaternion operator*(const ofQuaternion& rhs) const {
+		return ofQuaternion( rhs._v[3]*_v[0] + rhs._v[0]*_v[3] + rhs._v[1]*_v[2] - rhs._v[2]*_v[1],
 		                rhs._v[3]*_v[1] - rhs._v[0]*_v[2] + rhs._v[1]*_v[3] + rhs._v[2]*_v[0],
 		                rhs._v[3]*_v[2] + rhs._v[0]*_v[1] - rhs._v[1]*_v[0] + rhs._v[2]*_v[3],
 		                rhs._v[3]*_v[3] - rhs._v[0]*_v[0] - rhs._v[1]*_v[1] - rhs._v[2]*_v[2] );
 	}
 
 	/// Unary multiply
-	inline ofxQuaternion& operator*=(const ofxQuaternion& rhs) {
+	inline ofQuaternion& operator*=(const ofQuaternion& rhs) {
 		float x = rhs._v[3] * _v[0] + rhs._v[0] * _v[3] + rhs._v[1] * _v[2] - rhs._v[2] * _v[1];
 		float y = rhs._v[3] * _v[1] - rhs._v[0] * _v[2] + rhs._v[1] * _v[3] + rhs._v[2] * _v[0];
 		float z = rhs._v[3] * _v[2] + rhs._v[0] * _v[1] - rhs._v[1] * _v[0] + rhs._v[2] * _v[3];
@@ -199,13 +198,13 @@ public:
 	}
 
 	/// Divide by scalar
-	inline ofxQuaternion operator / (float rhs) const {
+	inline ofQuaternion operator / (float rhs) const {
 		float div = 1.0 / rhs;
-		return ofxQuaternion(_v[0]*div, _v[1]*div, _v[2]*div, _v[3]*div);
+		return ofQuaternion(_v[0]*div, _v[1]*div, _v[2]*div, _v[3]*div);
 	}
 
 	/// Unary divide by scalar
-	inline ofxQuaternion& operator /= (float rhs) {
+	inline ofQuaternion& operator /= (float rhs) {
 		float div = 1.0 / rhs;
 		_v[0] *= div;
 		_v[1] *= div;
@@ -215,24 +214,24 @@ public:
 	}
 
 	/// Binary divide
-	inline const ofxQuaternion operator/(const ofxQuaternion& denom) const {
+	inline const ofQuaternion operator/(const ofQuaternion& denom) const {
 		return ( (*this) * denom.inverse() );
 	}
 
 	/// Unary divide
-	inline ofxQuaternion& operator/=(const ofxQuaternion& denom) {
+	inline ofQuaternion& operator/=(const ofQuaternion& denom) {
 		(*this) = (*this) * denom.inverse();
 		return (*this);            // enable nesting
 	}
 
 	/// Binary addition
-	inline const ofxQuaternion operator + (const ofxQuaternion& rhs) const {
-		return ofxQuaternion(_v[0] + rhs._v[0], _v[1] + rhs._v[1],
+	inline const ofQuaternion operator + (const ofQuaternion& rhs) const {
+		return ofQuaternion(_v[0] + rhs._v[0], _v[1] + rhs._v[1],
 		               _v[2] + rhs._v[2], _v[3] + rhs._v[3]);
 	}
 
 	/// Unary addition
-	inline ofxQuaternion& operator += (const ofxQuaternion& rhs) {
+	inline ofQuaternion& operator += (const ofQuaternion& rhs) {
 		_v[0] += rhs._v[0];
 		_v[1] += rhs._v[1];
 		_v[2] += rhs._v[2];
@@ -241,13 +240,13 @@ public:
 	}
 
 	/// Binary subtraction
-	inline const ofxQuaternion operator - (const ofxQuaternion& rhs) const {
-		return ofxQuaternion(_v[0] - rhs._v[0], _v[1] - rhs._v[1],
+	inline const ofQuaternion operator - (const ofQuaternion& rhs) const {
+		return ofQuaternion(_v[0] - rhs._v[0], _v[1] - rhs._v[1],
 		               _v[2] - rhs._v[2], _v[3] - rhs._v[3] );
 	}
 
 	/// Unary subtraction
-	inline ofxQuaternion& operator -= (const ofxQuaternion& rhs) {
+	inline ofQuaternion& operator -= (const ofQuaternion& rhs) {
 		_v[0] -= rhs._v[0];
 		_v[1] -= rhs._v[1];
 		_v[2] -= rhs._v[2];
@@ -257,8 +256,8 @@ public:
 
 	/** Negation operator - returns the negative of the quaternion.
 	 Basically just calls operator - () on the Vec4 */
-	inline const ofxQuaternion operator - () const {
-		return ofxQuaternion (-_v[0], -_v[1], -_v[2], -_v[3]);
+	inline const ofQuaternion operator - () const {
+		return ofQuaternion (-_v[0], -_v[1], -_v[2], -_v[3]);
 	}
 
 	/// Length of the quaternion = sqrt( vec . vec )
@@ -272,12 +271,12 @@ public:
 	}
 
 	/// Conjugate
-	inline ofxQuaternion conj () const {
-		return ofxQuaternion( -_v[0], -_v[1], -_v[2], _v[3] );
+	inline ofQuaternion conj () const {
+		return ofQuaternion( -_v[0], -_v[1], -_v[2], _v[3] );
 	}
 
 	/// Multiplicative inverse method: q^(-1) = q^*/(q.q^*)
-	inline const ofxQuaternion inverse () const {
+	inline const ofQuaternion inverse () const {
 		return conj() / length2();
 	}
 
@@ -292,36 +291,36 @@ public:
 	 Not inlined - see the Quat.cpp file for implementation
 	 -------------------------------------------------------- */
 	void makeRotate( float  angle, float  x, float  y, float  z );
-	void makeRotate( float  angle, const ofxVec3f& vec );
+	void makeRotate( float  angle, const ofVec3f& vec );
 
-	void makeRotate( float  angle1, const ofxVec3f& axis1,
-	                 float  angle2, const ofxVec3f& axis2,
-	                 float  angle3, const ofxVec3f& axis3);
+	void makeRotate( float  angle1, const ofVec3f& axis1,
+	                 float  angle2, const ofVec3f& axis2,
+	                 float  angle3, const ofVec3f& axis3);
 
 	/** Make a rotation Quat which will rotate vec1 to vec2.
 	 Generally take a dot product to get the angle between these
 	 and then use a cross product to get the rotation axis
 	 Watch out for the two special cases when the vectors
 	 are co-incident or opposite in direction.*/
-	void makeRotate( const ofxVec3f& vec1, const ofxVec3f& vec2 );
+	void makeRotate( const ofVec3f& vec1, const ofVec3f& vec2 );
 
-	void makeRotate_original( const ofxVec3f& vec1, const ofxVec3f& vec2 );
+	void makeRotate_original( const ofVec3f& vec1, const ofVec3f& vec2 );
 
 	/** Return the angle and vector components represented by the quaternion.*/
 	void getRotate ( float & angle, float & x, float & y, float & z ) const;
 
 	/** Return the angle and vector represented by the quaternion.*/
-	void getRotate ( float & angle, ofxVec3f& vec ) const;
+	void getRotate ( float & angle, ofVec3f& vec ) const;
 
 	/** Spherical Linear Interpolation.
 	 As t goes from 0 to 1, the Quat object goes from "from" to "to". */
-	void slerp   ( float  t, const ofxQuaternion& from, const ofxQuaternion& to);
+	void slerp   ( float  t, const ofQuaternion& from, const ofQuaternion& to);
 
 	/** Rotate a vector by this quaternion.*/
-	ofxVec3f operator* (const ofxVec3f& v) const {
+	ofVec3f operator* (const ofVec3f& v) const {
 		// nVidia SDK implementation
-		ofxVec3f uv, uuv;
-		ofxVec3f qvec(_v[0], _v[1], _v[2]);
+		ofVec3f uv, uuv;
+		ofVec3f qvec(_v[0], _v[1], _v[2]);
 		uv = qvec.getCrossed(v);	//uv = qvec ^ v;
 		uuv = qvec.getCrossed(uv);	//uuv = qvec ^ uv;
 		uv *= ( 2.0f * _v[3] );
@@ -329,5 +328,3 @@ public:
 		return v + uv + uuv;
 	}
 };
-
-#endif
