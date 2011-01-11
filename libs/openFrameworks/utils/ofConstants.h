@@ -280,10 +280,12 @@ using namespace std;
 #define 	OF_RECTMODE_CORNER				0
 #define 	OF_RECTMODE_CENTER				1
 
-#define 	OF_IMAGE_GRAYSCALE		0x00
-#define 	OF_IMAGE_COLOR			0x01
-#define 	OF_IMAGE_COLOR_ALPHA	0x02
-#define 	OF_IMAGE_UNDEFINED		0x03
+enum ofImageType{
+	OF_IMAGE_GRAYSCALE		= 0x00,
+ 	OF_IMAGE_COLOR			= 0x01,
+ 	OF_IMAGE_COLOR_ALPHA	= 0x02,
+ 	OF_IMAGE_UNDEFINED		= 0x03
+};
 
 #define		OF_MAX_STYLE_HISTORY	32
 #define		OF_MAX_CIRCLE_PTS 1024

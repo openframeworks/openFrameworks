@@ -7,129 +7,8 @@
 #include "ofAppRunner.h"		// for height()
 #include "FreeImage.h"
 #include "ofUtils.h"
+#include "ofPixels.h"
 
-class ofPixels {
-public:
-
-	ofPixels(){
-		pixels = NULL;
-		clear();
-	}
-
-	ofPixels(const ofPixels & mom){
-		if(mom.isAllocated()){
-			allocate(mom.getWidth(),mom.getHeight(),mom.getImageType());
-			memcpy(pixels,mom.getPixels(),mom.getWidth()*mom.getHeight()*mom.getBytesPerPixel());
-		}
-	}
-
-	void allocate(int w, int h, int _ofImageType){
-		if(bAllocated){
-			if(w==width && h==height && _ofImageType==ofImageType)
-				return;
-			else
-				clear();
-		}
-		ofImageType = _ofImageType;
-		width= w;
-		height = h;
-		switch(ofImageType){
-		case OF_IMAGE_GRAYSCALE:
-			bytesPerPixel = 1;
-			glDataType = GL_LUMINANCE;
-			break;
-		case OF_IMAGE_COLOR:
-			bytesPerPixel = 3;
-			glDataType = GL_RGB;
-			break;
-		case OF_IMAGE_COLOR_ALPHA:
-			bytesPerPixel = 4;
-			glDataType = GL_RGBA;
-			break;
-		}
-		bitsPerPixel = bytesPerPixel * 8;
-		pixels = new unsigned char[w*h*bytesPerPixel];
-		bAllocated = true;
-
-	}
-
-	void setFromPixels(unsigned char * newPixels,int w, int h, int newType){
-		allocate(w,h,newType);
-		memcpy(pixels,newPixels,w*h*bytesPerPixel);
-	}
-
-	void swapRgb(){
-		if (bitsPerPixel != 8){
-			int sizePixels		= width*height;
-			int cnt				= 0;
-			unsigned char * pixels_ptr = pixels;
-
-			while (cnt < sizePixels){
-				std::swap(pixels_ptr[0],pixels_ptr[2]);
-				cnt++;
-				pixels_ptr+=3;
-			}
-		}
-	}
-
-	void clear(){
-		if(pixels) delete[] pixels;
-
-		bytesPerPixel = 0;
-		bitsPerPixel = 0;
-		bAllocated = false;
-		glDataType = GL_LUMINANCE;
-		ofImageType = OF_IMAGE_UNDEFINED;
-	}
-
-	unsigned char * getPixels(){
-		return pixels;
-	}
-
-	unsigned char * const getPixels() const{
-		return pixels;
-	}
-
-	bool isAllocated() const{
-		return bAllocated;
-	}
-
-	int getWidth() const{
-		return width;
-	}
-
-	int getHeight() const{
-		return height;
-	}
-
-	int getBytesPerPixel() const{
-		return bytesPerPixel;
-	}
-
-	int getBitsPerPixel() const{
-		return bitsPerPixel;
-	}
-
-	int getImageType() const{
-		return ofImageType;
-	}
-
-	int getGlDataType() const{
-		return glDataType;
-	}
-
-private:
-	unsigned char * pixels;
-	int width;
-	int height;
-
-	int		bitsPerPixel;		// 8 = gray, 24 = rgb, 32 = rgba
-	int		bytesPerPixel;		// 1, 3, 4 bytes per pixels
-	GLint	glDataType;			// GL_LUMINANCE, GL_RGB, GL_RGBA
-	int		ofImageType;		// OF_IMAGE_GRAYSCALE, OF_IMAGE_COLOR, OF_IMAGE_COLOR_ALPHA
-	bool	bAllocated;
-
-};
 //----------------------------------------------------
 // freeImage based stuff:
 void	ofLoadImage(ofPixels & pix, string path);
@@ -150,7 +29,7 @@ class ofImage : public ofBaseImage{
 		virtual ~ofImage();
 
 		// alloation / deallocation routines
-		void 				allocate(int w, int h, int type);
+		void 				allocate(int w, int h, ofImageType type);
 		void 				clear();
 
 		// default copy overwriting (for = or std::vector)
@@ -183,8 +62,8 @@ class ofImage : public ofBaseImage{
 		ofPixels		 	getOFPixels() const;
 
 		// alter the image
-		void 				setFromPixels(unsigned char * pixels, int w, int h, int newType, bool bOrderIsRGB = true);
-		void 				setImageType(int type);
+		void 				setFromPixels(unsigned char * pixels, int w, int h, ofImageType type, bool bOrderIsRGB = true);
+		void 				setImageType(ofImageType type);
 		void 				resize(int newWidth, int newHeight);
 		void 				grabScreen(int x, int y, int w, int h);		// grab pixels from opengl, using glreadpixels
 
@@ -224,7 +103,7 @@ class ofImage : public ofBaseImage{
 
 	protected:
 	
-		void				changeTypeOfPixels(ofPixels &pix, int newType);
+		void				changeTypeOfPixels(ofPixels &pix, ofImageType type);
 		void				resizePixels(ofPixels &pix, int newWidth, int newHeight);
 		static FIBITMAP *	getBmpFromPixels(ofPixels &pix);
 		static void			putBmpIntoPixels(FIBITMAP * bmp, ofPixels &pix);
