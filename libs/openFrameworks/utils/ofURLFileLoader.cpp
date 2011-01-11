@@ -1,5 +1,5 @@
 #include "ofURLFileLoader.h"
-
+#include <auto_ptr.h>
 
 
 

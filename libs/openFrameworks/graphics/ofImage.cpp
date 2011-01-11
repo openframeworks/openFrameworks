@@ -138,7 +138,7 @@ void ofImage::draw(float x, float y, float z){
 }
 
 //------------------------------------
-void ofImage::allocate(int w, int h, int type){
+void ofImage::allocate(int w, int h, ofImageType type){
 
 	myPixels.allocate(w, h, type);
 
@@ -201,7 +201,7 @@ void ofImage::unbind(){
 
 
 //------------------------------------
-void  ofImage::setFromPixels(unsigned char * newPixels, int w, int h, int newType, bool bOrderIsRGB){
+void  ofImage::setFromPixels(unsigned char * newPixels, int w, int h, ofImageType newType, bool bOrderIsRGB){
 
 	allocate(w, h, newType);
 	myPixels.setFromPixels(newPixels,w,h,newType);
@@ -285,7 +285,7 @@ void ofImage::clone(const ofImage &mom){
 }
 
 //------------------------------------
-void ofImage::setImageType(int newType){
+void ofImage::setImageType(ofImageType newType){
 	changeTypeOfPixels(myPixels, newType);
 	update();
 }
@@ -345,6 +345,10 @@ void ofImage::putBmpIntoPixels(FIBITMAP * bmp, ofPixels &pix){
 	// call the allocation routine (which checks if really need to allocate) here:
 	pix.allocate(width, height, bpp);
 	FreeImage_ConvertToRawBits(pix.getPixels(), bmp, width*bytesPerPixel, bpp, FI_RGBA_RED_MASK, FI_RGBA_GREEN_MASK, FI_RGBA_BLUE_MASK, true);  // get bits
+
+#ifdef TARGET_LITTLE_ENDIAN
+	pix.swapRgb();
+#endif
 }
 
 //----------------------------------------------------
@@ -362,7 +366,7 @@ void ofImage::resizePixels(ofPixels &pix, int newWidth, int newHeight){
 }
 
 //----------------------------------------------------
-void ofImage::changeTypeOfPixels(ofPixels &pix, int newType){
+void ofImage::changeTypeOfPixels(ofPixels &pix, ofImageType newType){
 
 	
 		
@@ -425,6 +429,7 @@ void ofCloseFreeImage(){
 bool ofImage::loadImageIntoPixels(string fileName, ofPixels &pix){
 
 	int					width, height, bpp;
+	ofImageType			type;
 	fileName			= ofToDataPath(fileName);
 	bool bLoaded		= false;
 	FIBITMAP 			* bmp = NULL;
@@ -447,57 +452,7 @@ bool ofImage::loadImageIntoPixels(string fileName, ofPixels &pix){
 
 	if (bLoaded ){
 
-		width 		= FreeImage_GetWidth(bmp);
-		height 		= FreeImage_GetHeight(bmp);
-		bpp 		= FreeImage_GetBPP(bmp);
-
-		bool bPallette = (FreeImage_GetColorType(bmp) == FIC_PALETTE);
-
-		switch (bpp){
-			case 8:
-				if (bPallette) {
-					FIBITMAP 	* bmpTemp =		FreeImage_ConvertTo24Bits(bmp);
-					if (bmp != NULL)			FreeImage_Unload(bmp);
-					bmp							= bmpTemp;
-					bpp							= FreeImage_GetBPP(bmp);
-				} else {
-					// do nothing we are grayscale
-				}
-				break;
-			case 24:
-				// do nothing we are color
-				break;
-			case 32:
-				// do nothing we are colorAlpha
-				break;
-			default:
-				FIBITMAP 	* bmpTemp =		FreeImage_ConvertTo24Bits(bmp);
-				if (bmp != NULL)			FreeImage_Unload(bmp);
-				bmp							= bmpTemp;
-				bpp							= FreeImage_GetBPP(bmp);
-		}
-
-
-		int byteCount = bpp / 8;
-
-		//------------------------------------------
-		// call the allocation routine (which checks if really need to allocate) here:
-		pix.allocate(width, height, bpp);
-
-
-
-		FreeImage_ConvertToRawBits(pix.getPixels(), bmp, width*byteCount, bpp, FI_RGBA_RED_MASK, FI_RGBA_GREEN_MASK, FI_RGBA_BLUE_MASK, true);  // get bits
-
-		//------------------------------------------
-		// RGB or RGBA swap
-		// this can be done with some ill pointer math.
-		// anyone game?
-		//
-
-		#ifdef TARGET_LITTLE_ENDIAN
-			pix.swapRgb();
-		#endif
-		//------------------------------------------
+		putBmpIntoPixels(bmp,pix);
 
 
 	} else {
@@ -547,60 +502,7 @@ bool ofImage::loadImageFromMemory(unsigned char * buffer, unsigned int numBytes,
 	//-----------------------------
 
 	if (bLoaded){
-
-		width 		= FreeImage_GetWidth(bmp);
-		height 		= FreeImage_GetHeight(bmp);
-		bpp 		= FreeImage_GetBPP(bmp);
-
-		bool bPallette = (FreeImage_GetColorType(bmp) == FIC_PALETTE);
-
-		switch (bpp){
-			case 8:
-				if (bPallette) {
-					FIBITMAP 	* bmpTemp =		FreeImage_ConvertTo24Bits(bmp);
-					if (bmp != NULL)			FreeImage_Unload(bmp);
-					bmp							= bmpTemp;
-					bpp							= FreeImage_GetBPP(bmp);
-				} else {
-					// do nothing we are grayscale
-				}
-				break;
-			case 24:
-				// do nothing we are color
-				break;
-			case 32:
-				// do nothing we are colorAlpha
-				break;
-			default:
-				FIBITMAP 	* bmpTemp =		FreeImage_ConvertTo24Bits(bmp);
-				if (bmp != NULL)			FreeImage_Unload(bmp);
-				bmp							= bmpTemp;
-				bpp							= FreeImage_GetBPP(bmp);
-		}
-
-
-		int byteCount = bpp / 8;
-
-		//------------------------------------------
-		// call the allocation routine (which checks if really need to allocate) here:
-		allocatePixels(pix, width, height, bpp);
-		printf("pix is %i %i %i %i\n", pix.width, pix.height, pix.bytesPerPixel, pix.ofImageType);
-
-
-		FreeImage_ConvertToRawBits(pix.pixels, bmp, width*byteCount, bpp, FI_RGBA_RED_MASK, FI_RGBA_GREEN_MASK, FI_RGBA_BLUE_MASK, true);  // get bits
-
-		//------------------------------------------
-		// RGB or RGBA swap
-		// this can be done with some ill pointer math.
-		// anyone game?
-		//
-
-		#ifdef TARGET_LITTLE_ENDIAN
-			if (byteCount != 1) swapRgb(pix);
-		#endif
-		//------------------------------------------
-
-
+		putBmpIntoPixels(bmp,pix);
 	} else {
 		width = height = bpp = 0;
 	}
