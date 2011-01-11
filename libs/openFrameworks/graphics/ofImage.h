@@ -8,8 +8,117 @@
 #include "FreeImage.h"
 #include "ofUtils.h"
 
-typedef struct {
+class ofPixels {
+public:
 
+	ofPixels(){
+		pixels = NULL;
+		clear();
+	}
+
+	ofPixels(const ofPixels & mom){
+		if(mom.isAllocated()){
+			allocate(mom.getWidth(),mom.getHeight(),mom.getImageType());
+			memcpy(pixels,mom.getPixels(),mom.getWidth()*mom.getHeight()*mom.getBytesPerPixel());
+		}
+	}
+
+	void allocate(int w, int h, int _ofImageType){
+		if(bAllocated){
+			if(w==width && h==height && _ofImageType==ofImageType)
+				return;
+			else
+				clear();
+		}
+		ofImageType = _ofImageType;
+		width= w;
+		height = h;
+		switch(ofImageType){
+		case OF_IMAGE_GRAYSCALE:
+			bytesPerPixel = 1;
+			glDataType = GL_LUMINANCE;
+			break;
+		case OF_IMAGE_COLOR:
+			bytesPerPixel = 3;
+			glDataType = GL_RGB;
+			break;
+		case OF_IMAGE_COLOR_ALPHA:
+			bytesPerPixel = 4;
+			glDataType = GL_RGBA;
+			break;
+		}
+		bitsPerPixel = bytesPerPixel * 8;
+		pixels = new unsigned char[w*h*bytesPerPixel];
+		bAllocated = true;
+
+	}
+
+	void setFromPixels(unsigned char * newPixels,int w, int h, int newType){
+		allocate(w,h,newType);
+		memcpy(pixels,newPixels,w*h*bytesPerPixel);
+	}
+
+	void swapRgb(){
+		if (bitsPerPixel != 8){
+			int sizePixels		= width*height;
+			int cnt				= 0;
+			unsigned char * pixels_ptr = pixels;
+
+			while (cnt < sizePixels){
+				std::swap(pixels_ptr[0],pixels_ptr[2]);
+				cnt++;
+				pixels_ptr+=3;
+			}
+		}
+	}
+
+	void clear(){
+		if(pixels) delete[] pixels;
+
+		bytesPerPixel = 0;
+		bitsPerPixel = 0;
+		bAllocated = false;
+		glDataType = GL_LUMINANCE;
+		ofImageType = OF_IMAGE_UNDEFINED;
+	}
+
+	unsigned char * getPixels(){
+		return pixels;
+	}
+
+	unsigned char * const getPixels() const{
+		return pixels;
+	}
+
+	bool isAllocated() const{
+		return bAllocated;
+	}
+
+	int getWidth() const{
+		return width;
+	}
+
+	int getHeight() const{
+		return height;
+	}
+
+	int getBytesPerPixel() const{
+		return bytesPerPixel;
+	}
+
+	int getBitsPerPixel() const{
+		return bitsPerPixel;
+	}
+
+	int getImageType() const{
+		return ofImageType;
+	}
+
+	int getGlDataType() const{
+		return glDataType;
+	}
+
+private:
 	unsigned char * pixels;
 	int width;
 	int height;
@@ -20,7 +129,7 @@ typedef struct {
 	int		ofImageType;		// OF_IMAGE_GRAYSCALE, OF_IMAGE_COLOR, OF_IMAGE_COLOR_ALPHA
 	bool	bAllocated;
 
-} ofPixels;
+};
 
 
 //----------------------------------------------------
@@ -66,6 +175,8 @@ class ofImage : public ofBaseImage{
 
 		// getting the data
 		unsigned char * 	getPixels();			// up to you to get this right
+		ofPixels		 	getOFPixels();
+		ofPixels		 	getOFPixels() const;
 
 		// alter the image
 		void 				setFromPixels(unsigned char * pixels, int w, int h, int newType, bool bOrderIsRGB = true);
@@ -94,7 +205,7 @@ class ofImage : public ofBaseImage{
 
 		float 				getHeight();
 		float 				getWidth();
-		bool 				bAllocated() {return myPixels.bAllocated;};
+		bool 				bAllocated() {return myPixels.isAllocated();};
 
 		int 				width, height, bpp;		// w,h, bits per pixel
 		int					type;					// OF_IMAGE_GRAYSCALE, OF_IMAGE_COLOR, OF_IMAGE_COLOR_ALPHA
@@ -109,10 +220,6 @@ class ofImage : public ofBaseImage{
 		void				resizePixels(ofPixels &pix, int newWidth, int newHeight);
 		FIBITMAP *			getBmpFromPixels(ofPixels &pix);
 		void				putBmpIntoPixels(FIBITMAP * bmp, ofPixels &pix);
-
-		// utils:
-		static void			allocatePixels(ofPixels &pix, int width, int height, int bpp);
-		static void			swapRgb(ofPixels &pix);
 
 		ofPixels			myPixels;
 		bool				bUseTexture;
