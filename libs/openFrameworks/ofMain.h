@@ -9,6 +9,7 @@
 #include "ofTypes.h"
 #include "ofSystemUtils.h"
 #include "ofFileUtils.h"
+#include "ofThread.h"
 
 //--------------------------
 // communication
