@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ofConstants.h"
+#include "ofTypes.h"
 
 #ifdef TARGET_WIN32
 	#include <process.h>
@@ -53,11 +54,10 @@ class ofThread{
 
 	#ifdef TARGET_WIN32
 			HANDLE            myThread;
-			CRITICAL_SECTION  critSec;  	//same as a mutex
 	#else
 			pthread_t        myThread;
-			pthread_mutex_t  myMutex;
 	#endif
+	ofMutex mutex;
 
 	bool threadRunning;
 	bool blocking;
