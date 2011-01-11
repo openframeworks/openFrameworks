@@ -526,6 +526,7 @@ ofGstUtils::ofGstUtils() {
 	deviceID = 0;
 
 	gstSink						= NULL;
+	attemptFramerate			= -1;
 
 	pthread_mutex_init(&(gstData.buffer_mutex),NULL);
 	pthread_mutex_init(&seek_mutex,NULL);
@@ -640,7 +641,7 @@ ofGstVideoFormat & ofGstUtils::selectFormat(int w, int h, int desired_framerate)
 	return camData.webcam_devices[deviceID].video_formats[mostSimilarFormat];
 }
 
-bool ofGstUtils::initGrabber(int w, int h, int framerate){
+bool ofGstUtils::initGrabber(int w, int h){
 	bpp = 24;
 	if(!camData.bInited) get_video_devices(camData);
 
@@ -649,7 +650,7 @@ bool ofGstUtils::initGrabber(int w, int h, int framerate){
 		return false;
 	}
 
-	ofGstVideoFormat & format = selectFormat(w, h, framerate);
+	ofGstVideoFormat & format = selectFormat(w, h, attemptFramerate);
 
 	ofLog(OF_LOG_NOTICE,"ofGstUtils: selected format: " + ofToString(format.width) + "x" + ofToString(format.height) + " " + format.mimetype + " framerate: " + ofToString(format.choosen_framerate.numerator) + "/" + ofToString(format.choosen_framerate.denominator));
 
@@ -707,6 +708,9 @@ bool ofGstUtils::initGrabber(int w, int h, int framerate){
 	}
 }
 
+void ofGstUtils::setDesiredFrameRate(int framerate){
+	attemptFramerate = framerate;
+}
 
 bool ofGstUtils::setPipeline(string pipeline, int bpp, bool isStream, int w, int h){
 	this->bpp = bpp;
@@ -943,6 +947,8 @@ void ofGstUtils::update(){
 void ofGstUtils::play(){
 	bPlaying = true;
 	setPaused(false);
+	//this is if we set the speed first but it only can be set when we are playing.
+	setSpeed(speed);
 }
 
 void ofGstUtils::setPaused(bool _bPause){
@@ -992,11 +998,11 @@ void ofGstUtils::previousFrame(){
 	if(currentFrame!=-1) setFrame(currentFrame - 1);
 }
 
-int ofGstUtils::getHeight(){
+float ofGstUtils::getHeight(){
 	return height;
 }
 
-int ofGstUtils::getWidth(){
+float ofGstUtils::getWidth(){
 	return width;
 }
 
