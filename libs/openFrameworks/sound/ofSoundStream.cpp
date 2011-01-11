@@ -140,7 +140,7 @@ void ofSoundStreamStart(){
 void ofSoundStreamClose(){
 	if(!audio) return;
 	try {
-    	audio->stopStream();
+    	//audio->stopStream();
     	audio->closeStream();
   	} catch (RtError &error) {
    		error.printMessage();
