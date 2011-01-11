@@ -312,9 +312,9 @@ void ofMatrix4x4::setTranslation( float tx, float ty, float tz )
 
 void ofMatrix4x4::setTranslation( const ofVec3f& v )
 {
-    _mat[3][0] = v.v[0];
-    _mat[3][1] = v.v[1];
-    _mat[3][2] = v.v[2];
+    _mat[3][0] = v.getPtr()[0];
+    _mat[3][1] = v.getPtr()[1];
+    _mat[3][2] = v.getPtr()[2];
 }
 
 void ofMatrix4x4::makeIdentityMatrix()
@@ -327,7 +327,7 @@ void ofMatrix4x4::makeIdentityMatrix()
 
 void ofMatrix4x4::makeScaleMatrix( const ofVec3f& v )
 {
-    makeScaleMatrix(v.v[0], v.v[1], v.v[2] );
+    makeScaleMatrix(v.getPtr()[0], v.getPtr()[1], v.getPtr()[2] );
 }
 
 void ofMatrix4x4::makeScaleMatrix( float x, float y, float z )
@@ -340,7 +340,7 @@ void ofMatrix4x4::makeScaleMatrix( float x, float y, float z )
 
 void ofMatrix4x4::makeTranslationMatrix( const ofVec3f& v )
 {
-    makeTranslationMatrix( v.v[0], v.v[1], v.v[2] );
+    makeTranslationMatrix( v.getPtr()[0], v.getPtr()[1], v.getPtr()[2] );
 }
 void ofMatrix4x4::makeTranslationMatrix( float x, float y, float z )
 {
