@@ -3,8 +3,6 @@
 
 
 #include "ofMain.h"
-#include "ofxFbo.h"
-#include "ofxShader.h"
 
 
 #define kFBOWidth			320
@@ -44,8 +42,8 @@ public:
 	
 	int				demoMode;
 	bool			useMSAA;
-	ofxFbo			fbo;
-	ofxShader		shader;
+	ofFbo			fbo;
+	ofShader		shader;
 	ofVideoGrabber	vidGrabber;
 	
 
