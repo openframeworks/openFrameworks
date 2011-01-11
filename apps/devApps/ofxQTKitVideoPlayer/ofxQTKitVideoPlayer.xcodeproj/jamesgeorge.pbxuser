@@ -1,0 +1,556 @@
+// !$*UTF8*$!
+{
+	A64773ED12B5DC9D00493A7E /* ofQTKitVideoPlayerExample */ = {
+		isa = PBXExecutable;
+		activeArgIndices = (
+		);
+		argumentStrings = (
+		);
+		autoAttachOnCrash = 1;
+		breakpointsEnabled = 0;
+		configStateDict = {
+		};
+		customDataFormattersEnabled = 1;
+		dataTipCustomDataFormattersEnabled = 1;
+		dataTipShowTypeColumn = 1;
+		dataTipSortType = 0;
+		debuggerPlugin = GDBDebugging;
+		disassemblyDisplayState = 0;
+		dylibVariantSuffix = "";
+		enableDebugStr = 1;
+		environmentEntries = (
+		);
+		executableSystemSymbolLevel = 0;
+		executableUserSymbolLevel = 0;
+		libgmallocEnabled = 0;
+		name = ofQTKitVideoPlayerExample;
+		savedGlobals = {
+		};
+		showTypeColumn = 0;
+		sourceDirectories = (
+		);
+		variableFormatDictionary = {
+		};
+	};
+	A647741B12B5DCAD00493A7E /* Source Control */ = {
+		isa = PBXSourceControlManager;
+		fallbackIsa = XCSourceControlManager;
+		isSCMEnabled = 0;
+		scmConfiguration = {
+			repositoryNamesForRoots = {
+				"" = "";
+			};
+		};
+	};
+	A647741C12B5DCAD00493A7E /* Code sense */ = {
+		isa = PBXCodeSenseManager;
+		indexTemplatePath = "";
+	};
+	A676466A12DC30A8003CFD85 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = A676466B12DC30A8003CFD85 /* ofSystemUtils.cpp */;
+		name = "ofSystemUtils.cpp: 198";
+		rLen = 55;
+		rLoc = 6553;
+		rType = 0;
+		vrLen = 1718;
+		vrLoc = 5309;
+	};
+	A676466B12DC30A8003CFD85 /* ofSystemUtils.cpp */ = {
+		isa = PBXFileReference;
+		name = ofSystemUtils.cpp;
+		path = "/Users/jamesgeorge/Documents/XCode Projects/openFrameworksSketches/openframeworks-obviousjim-fork/openFrameworks/libs/openFrameworksCompiled/project/osx/../../../openFrameworks/utils/ofSystemUtils.cpp";
+		sourceTree = "<absolute>";
+	};
+	A676466C12DC30A8003CFD85 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = A676466D12DC30A8003CFD85 /* ofQuickTimeGrabber.cpp */;
+		name = "ofQuickTimeGrabber.cpp: 12";
+		rLen = 0;
+		rLoc = 449;
+		rType = 0;
+		vrLen = 1651;
+		vrLoc = 3568;
+	};
+	A676466D12DC30A8003CFD85 /* ofQuickTimeGrabber.cpp */ = {
+		isa = PBXFileReference;
+		name = ofQuickTimeGrabber.cpp;
+		path = "/Users/jamesgeorge/Documents/XCode Projects/openFrameworksSketches/openframeworks-obviousjim-fork/openFrameworks/libs/openFrameworks/video/ofQuickTimeGrabber.cpp";
+		sourceTree = "<absolute>";
+	};
+	A676466E12DC30A8003CFD85 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = A676466F12DC30A8003CFD85 /* ofQuickTimeGrabber.h */;
+		name = "ofQuickTimeGrabber.h: 30";
+		rLen = 0;
+		rLoc = 592;
+		rType = 0;
+		vrLen = 1211;
+		vrLoc = 86;
+	};
+	A676466F12DC30A8003CFD85 /* ofQuickTimeGrabber.h */ = {
+		isa = PBXFileReference;
+		name = ofQuickTimeGrabber.h;
+		path = "/Users/jamesgeorge/Documents/XCode Projects/openFrameworksSketches/openframeworks-obviousjim-fork/openFrameworks/libs/openFrameworks/video/ofQuickTimeGrabber.h";
+		sourceTree = "<absolute>";
+	};
+	A676467012DC30A8003CFD85 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = A676467112DC30A8003CFD85 /* ofQuickTimePlayer.h */;
+		name = "ofQuickTimePlayer.h: 75";
+		rLen = 7;
+		rLoc = 1551;
+		rType = 0;
+		vrLen = 1374;
+		vrLoc = 745;
+	};
+	A676467112DC30A8003CFD85 /* ofQuickTimePlayer.h */ = {
+		isa = PBXFileReference;
+		name = ofQuickTimePlayer.h;
+		path = "/Users/jamesgeorge/Documents/XCode Projects/openFrameworksSketches/openframeworks-obviousjim-fork/openFrameworks/libs/openFrameworks/video/ofQuickTimePlayer.h";
+		sourceTree = "<absolute>";
+	};
+	A676467212DC30A8003CFD85 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = A676467312DC30A8003CFD85 /* ofQuickTimePlayer.cpp */;
+		name = "ofQuickTimePlayer.cpp: 824";
+		rLen = 8;
+		rLoc = 21703;
+		rType = 0;
+		vrLen = 1361;
+		vrLoc = 8669;
+	};
+	A676467312DC30A8003CFD85 /* ofQuickTimePlayer.cpp */ = {
+		isa = PBXFileReference;
+		name = ofQuickTimePlayer.cpp;
+		path = "/Users/jamesgeorge/Documents/XCode Projects/openFrameworksSketches/openframeworks-obviousjim-fork/openFrameworks/libs/openFrameworks/video/ofQuickTimePlayer.cpp";
+		sourceTree = "<absolute>";
+	};
+	A676467412DC30A8003CFD85 /* XCBuildMessageTextBookmark */ = {
+		isa = PBXTextBookmark;
+		comments = "Virtual void ofBaseVideoPlayer::stop()";
+		fRef = A676467512DC30A8003CFD85 /* ofBaseTypes.h */;
+		fallbackIsa = XCBuildMessageTextBookmark;
+		rLen = 1;
+		rLoc = 144;
+		rType = 1;
+	};
+	A676467512DC30A8003CFD85 /* ofBaseTypes.h */ = {
+		isa = PBXFileReference;
+		name = ofBaseTypes.h;
+		path = ../../../libs/openFrameworks/types/ofBaseTypes.h;
+		sourceTree = "<group>";
+	};
+	A676467612DC30A8003CFD85 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = A676467712DC30A8003CFD85 /* ofBaseTypes.h */;
+		name = "ofBaseTypes.h: 132";
+		rLen = 25;
+		rLoc = 3160;
+		rType = 0;
+		vrLen = 1467;
+		vrLoc = 3526;
+	};
+	A676467712DC30A8003CFD85 /* ofBaseTypes.h */ = {
+		isa = PBXFileReference;
+		name = ofBaseTypes.h;
+		path = "/Users/jamesgeorge/Documents/XCode Projects/openFrameworksSketches/openframeworks-obviousjim-fork/openFrameworks/libs/openFrameworks/types/ofBaseTypes.h";
+		sourceTree = "<absolute>";
+	};
+	A676469E12DC311E003CFD85 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = A676469F12DC311E003CFD85 /* ofEvents.cpp */;
+		name = "ofEvents.cpp: 41";
+		rLen = 0;
+		rLoc = 794;
+		rType = 0;
+		vrLen = 345;
+		vrLoc = 627;
+	};
+	A676469F12DC311E003CFD85 /* ofEvents.cpp */ = {
+		isa = PBXFileReference;
+		name = ofEvents.cpp;
+		path = "/Users/jamesgeorge/Documents/XCode Projects/openFrameworksSketches/openframeworks-obviousjim-fork/openFrameworks/libs/openFrameworks/events/ofEvents.cpp";
+		sourceTree = "<absolute>";
+	};
+	A67646E212DC35A1003CFD85 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = E781B7EA12B58F7600973230 /* QTKitMovieRenderer.h */;
+		name = "QTKitMovieRenderer.h: 5";
+		rLen = 0;
+		rLoc = 168;
+		rType = 0;
+		vrLen = 1611;
+		vrLoc = 1811;
+	};
+	A67646E312DC35A1003CFD85 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = E781B7EB12B58F7600973230 /* QTKitMovieRenderer.m */;
+		name = "QTKitMovieRenderer.m: 409";
+		rLen = 21;
+		rLoc = 11289;
+		rType = 0;
+		vrLen = 957;
+		vrLoc = 10557;
+	};
+	A67646E412DC35A1003CFD85 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = A67646E512DC35A1003CFD85 /* QTMovie.h */;
+		name = "QTMovie.h: 388";
+		rLen = 33;
+		rLoc = 26785;
+		rType = 0;
+		vrLen = 3446;
+		vrLoc = 24432;
+	};
+	A67646E512DC35A1003CFD85 /* QTMovie.h */ = {
+		isa = PBXFileReference;
+		name = QTMovie.h;
+		path = /Developer/SDKs/MacOSX10.6.sdk/System/Library/Frameworks/QTKit.framework/Versions/A/Headers/QTMovie.h;
+		sourceTree = "<absolute>";
+	};
+	A67646F112DC363D003CFD85 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = E4B69E1F0A3A1BDC003C02F2 /* testApp.h */;
+		name = "testApp.h: 71";
+		rLen = 33;
+		rLoc = 2359;
+		rType = 0;
+		vrLen = 1544;
+		vrLoc = 935;
+	};
+	A676471212DC36CD003CFD85 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = E77151211246903200359C16 /* ofxQTKitVideoPlayer.mm */;
+		name = "ofxQTKitVideoPlayer.mm: 363";
+		rLen = 13;
+		rLoc = 7850;
+		rType = 0;
+		vrLen = 973;
+		vrLoc = 7359;
+	};
+	A676471912DC3778003CFD85 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = E4B69E1E0A3A1BDC003C02F2 /* testApp.cpp */;
+		name = "testApp.cpp: 106";
+		rLen = 0;
+		rLoc = 3763;
+		rType = 0;
+		vrLen = 1659;
+		vrLoc = 2437;
+	};
+	A676471A12DC3778003CFD85 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = E77151201246903200359C16 /* ofxQTKitVideoPlayer.h */;
+		name = "ofxQTKitVideoPlayer.h: 104";
+		rLen = 0;
+		rLoc = 3777;
+		rType = 0;
+		vrLen = 1783;
+		vrLoc = 1404;
+	};
+	A676472F12DC3A3A003CFD85 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = E77151211246903200359C16 /* ofxQTKitVideoPlayer.mm */;
+		name = "ofxQTKitVideoPlayer.mm: 85";
+		rLen = 0;
+		rLoc = 2598;
+		rType = 0;
+		vrLen = 1368;
+		vrLoc = 2488;
+	};
+	A6B2D8E812B71F5D00EBCE81 /* ImageCompression.h */ = {
+		isa = PBXFileReference;
+		lastKnownFileType = sourcecode.c.h;
+		name = ImageCompression.h;
+		path = /Developer/SDKs/MacOSX10.5.sdk/System/Library/Frameworks/QuickTime.framework/Versions/A/Headers/ImageCompression.h;
+		sourceTree = "<absolute>";
+	};
+	A6B2DAD412B72FB400EBCE81 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = A6B2D8E812B71F5D00EBCE81 /* ImageCompression.h */;
+		name = "ImageCompression.h: 12220";
+		rLen = 112;
+		rLoc = 429110;
+		rType = 0;
+		vrLen = 2135;
+		vrLoc = 428148;
+	};
+	A6B2DB1F12B7319900EBCE81 /* QTMovie.h */ = {
+		isa = PBXFileReference;
+		lastKnownFileType = sourcecode.c.h;
+		name = QTMovie.h;
+		path = /Developer/SDKs/MacOSX10.5.sdk/System/Library/Frameworks/QTKit.framework/Versions/A/Headers/QTMovie.h;
+		sourceTree = "<absolute>";
+	};
+	A6B2DB3412B7321500EBCE81 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = A6B2DB1F12B7319900EBCE81 /* QTMovie.h */;
+		name = "QTMovie.h: 271";
+		rLen = 3;
+		rLoc = 18219;
+		rType = 0;
+		vrLen = 4216;
+		vrLoc = 0;
+	};
+	A6B2DCD612B7468600EBCE81 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = A6B2DCD712B7468600EBCE81 /* _string.h */;
+		name = "_string.h: 58";
+		rLen = 0;
+		rLoc = 1813;
+		rType = 0;
+		vrLen = 514;
+		vrLoc = 1606;
+	};
+	A6B2DCD712B7468600EBCE81 /* _string.h */ = {
+		isa = PBXFileReference;
+		lastKnownFileType = sourcecode.c.h;
+		name = _string.h;
+		path = /Developer/SDKs/MacOSX10.6.sdk/usr/include/secure/_string.h;
+		sourceTree = "<absolute>";
+	};
+	A6B2DD4612BD335500EBCE81 /* ofVideoPlayer.h */ = {
+		isa = PBXFileReference;
+		lastKnownFileType = sourcecode.c.h;
+		name = ofVideoPlayer.h;
+		path = "/Users/jamesgeorge/Documents/XCode Projects/openFrameworksSketches/openframeworks-gitclone/openFrameworks/libs/openFrameworks/video/ofVideoPlayer.h";
+		sourceTree = "<absolute>";
+	};
+	A6B2DD4812BD335500EBCE81 /* ofVideoPlayer.cpp */ = {
+		isa = PBXFileReference;
+		lastKnownFileType = sourcecode.cpp.cpp;
+		name = ofVideoPlayer.cpp;
+		path = "/Users/jamesgeorge/Documents/XCode Projects/openFrameworksSketches/openframeworks-gitclone/openFrameworks/libs/openFrameworks/video/ofVideoPlayer.cpp";
+		sourceTree = "<absolute>";
+	};
+	A6B2DD6C12BD3A7200EBCE81 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = A6B2DD4812BD335500EBCE81 /* ofVideoPlayer.cpp */;
+		name = "ofVideoPlayer.cpp: 136";
+		rLen = 14;
+		rLoc = 3408;
+		rType = 0;
+		vrLen = 1688;
+		vrLoc = 2588;
+	};
+	A6B2DD6D12BD3A7200EBCE81 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = A6B2DD6E12BD3A7200EBCE81 /* ofConstants.h */;
+		name = "ofConstants.h: 11";
+		rLen = 32;
+		rLoc = 199;
+		rType = 0;
+		vrLen = 1958;
+		vrLoc = 0;
+	};
+	A6B2DD6E12BD3A7200EBCE81 /* ofConstants.h */ = {
+		isa = PBXFileReference;
+		lastKnownFileType = sourcecode.c.h;
+		name = ofConstants.h;
+		path = "/Users/jamesgeorge/Documents/XCode Projects/openFrameworksSketches/openframeworks-gitclone/openFrameworks/libs/openFrameworks/utils/ofConstants.h";
+		sourceTree = "<absolute>";
+	};
+	A6B2DDFC12BD489300EBCE81 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = A6B2DDFD12BD489300EBCE81 /* unistd.h */;
+		name = "unistd.h: 469";
+		rLen = 42;
+		rLoc = 16236;
+		rType = 0;
+		vrLen = 2128;
+		vrLoc = 15158;
+	};
+	A6B2DDFD12BD489300EBCE81 /* unistd.h */ = {
+		isa = PBXFileReference;
+		lastKnownFileType = sourcecode.c.h;
+		name = unistd.h;
+		path = /Developer/SDKs/MacOSX10.5.sdk/usr/include/unistd.h;
+		sourceTree = "<absolute>";
+	};
+	A6B2DE5412BD531E00EBCE81 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = A6B2DD4612BD335500EBCE81 /* ofVideoPlayer.h */;
+		name = "ofVideoPlayer.h: 45";
+		rLen = 27;
+		rLoc = 740;
+		rType = 0;
+		vrLen = 1633;
+		vrLoc = 527;
+	};
+	A6B2DEC112BD5C5D00EBCE81 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = A6B2DEC212BD5C5D00EBCE81 /* CVPixelBuffer.h */;
+		name = "CVPixelBuffer.h: 288";
+		rLen = 118;
+		rLoc = 16921;
+		rType = 0;
+		vrLen = 2724;
+		vrLoc = 15518;
+	};
+	A6B2DEC212BD5C5D00EBCE81 /* CVPixelBuffer.h */ = {
+		isa = PBXFileReference;
+		lastKnownFileType = sourcecode.c.h;
+		name = CVPixelBuffer.h;
+		path = /Developer/SDKs/MacOSX10.5.sdk/System/Library/Frameworks/CoreVideo.framework/Versions/A/Headers/CVPixelBuffer.h;
+		sourceTree = "<absolute>";
+	};
+	A6B2DF8C12BD646200EBCE81 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = E4B69E1D0A3A1BDC003C02F2 /* main.cpp */;
+		name = "main.cpp: 12";
+		rLen = 0;
+		rLoc = 463;
+		rType = 0;
+		vrLen = 2183;
+		vrLoc = 0;
+	};
+	E4B69B4C0A3A1720003C02F2 /* Project object */ = {
+		activeBuildConfigurationName = Debug;
+		activeExecutable = A64773ED12B5DC9D00493A7E /* ofQTKitVideoPlayerExample */;
+		activeTarget = E4B69B5A0A3A1756003C02F2 /* ofQTKitVideoPlayerExample */;
+		addToTargets = (
+			E4B69B5A0A3A1756003C02F2 /* ofQTKitVideoPlayerExample */,
+		);
+		codeSenseManager = A647741C12B5DCAD00493A7E /* Code sense */;
+		executables = (
+			A64773ED12B5DC9D00493A7E /* ofQTKitVideoPlayerExample */,
+		);
+		perUserDictionary = {
+			PBXConfiguration.PBXFileTableDataSource3.PBXFileTableDataSource = {
+				PBXFileTableDataSourceColumnSortingDirectionKey = "-1";
+				PBXFileTableDataSourceColumnSortingKey = PBXFileDataSource_Filename_ColumnID;
+				PBXFileTableDataSourceColumnWidthsKey = (
+					20,
+					1364,
+					20,
+					48,
+					43,
+					43,
+					20,
+				);
+				PBXFileTableDataSourceColumnsKey = (
+					PBXFileDataSource_FiletypeID,
+					PBXFileDataSource_Filename_ColumnID,
+					PBXFileDataSource_Built_ColumnID,
+					PBXFileDataSource_ObjectSize_ColumnID,
+					PBXFileDataSource_Errors_ColumnID,
+					PBXFileDataSource_Warnings_ColumnID,
+					PBXFileDataSource_Target_ColumnID,
+				);
+			};
+			PBXConfiguration.PBXTargetDataSource.PBXTargetDataSource = {
+				PBXFileTableDataSourceColumnSortingDirectionKey = "-1";
+				PBXFileTableDataSourceColumnSortingKey = PBXFileDataSource_Filename_ColumnID;
+				PBXFileTableDataSourceColumnWidthsKey = (
+					20,
+					1324,
+					60,
+					20,
+					48,
+					43,
+					43,
+				);
+				PBXFileTableDataSourceColumnsKey = (
+					PBXFileDataSource_FiletypeID,
+					PBXFileDataSource_Filename_ColumnID,
+					PBXTargetDataSource_PrimaryAttribute,
+					PBXFileDataSource_Built_ColumnID,
+					PBXFileDataSource_ObjectSize_ColumnID,
+					PBXFileDataSource_Errors_ColumnID,
+					PBXFileDataSource_Warnings_ColumnID,
+				);
+			};
+			PBXPerProjectTemplateStateSaveDate = 316416834;
+			PBXWorkspaceStateSaveDate = 316416834;
+		};
+		perUserProjectItems = {
+			A676466A12DC30A8003CFD85 /* PBXTextBookmark */ = A676466A12DC30A8003CFD85 /* PBXTextBookmark */;
+			A676466C12DC30A8003CFD85 /* PBXTextBookmark */ = A676466C12DC30A8003CFD85 /* PBXTextBookmark */;
+			A676466E12DC30A8003CFD85 /* PBXTextBookmark */ = A676466E12DC30A8003CFD85 /* PBXTextBookmark */;
+			A676467012DC30A8003CFD85 /* PBXTextBookmark */ = A676467012DC30A8003CFD85 /* PBXTextBookmark */;
+			A676467212DC30A8003CFD85 /* PBXTextBookmark */ = A676467212DC30A8003CFD85 /* PBXTextBookmark */;
+			A676467412DC30A8003CFD85 /* XCBuildMessageTextBookmark */ = A676467412DC30A8003CFD85 /* XCBuildMessageTextBookmark */;
+			A676467612DC30A8003CFD85 /* PBXTextBookmark */ = A676467612DC30A8003CFD85 /* PBXTextBookmark */;
+			A676469E12DC311E003CFD85 /* PBXTextBookmark */ = A676469E12DC311E003CFD85 /* PBXTextBookmark */;
+			A67646E212DC35A1003CFD85 /* PBXTextBookmark */ = A67646E212DC35A1003CFD85 /* PBXTextBookmark */;
+			A67646E312DC35A1003CFD85 /* PBXTextBookmark */ = A67646E312DC35A1003CFD85 /* PBXTextBookmark */;
+			A67646E412DC35A1003CFD85 /* PBXTextBookmark */ = A67646E412DC35A1003CFD85 /* PBXTextBookmark */;
+			A67646F112DC363D003CFD85 /* PBXTextBookmark */ = A67646F112DC363D003CFD85 /* PBXTextBookmark */;
+			A676471212DC36CD003CFD85 /* PBXTextBookmark */ = A676471212DC36CD003CFD85 /* PBXTextBookmark */;
+			A676471912DC3778003CFD85 /* PBXTextBookmark */ = A676471912DC3778003CFD85 /* PBXTextBookmark */;
+			A676471A12DC3778003CFD85 /* PBXTextBookmark */ = A676471A12DC3778003CFD85 /* PBXTextBookmark */;
+			A676472F12DC3A3A003CFD85 /* PBXTextBookmark */ = A676472F12DC3A3A003CFD85 /* PBXTextBookmark */;
+			A6B2DAD412B72FB400EBCE81 /* PBXTextBookmark */ = A6B2DAD412B72FB400EBCE81 /* PBXTextBookmark */;
+			A6B2DB3412B7321500EBCE81 /* PBXTextBookmark */ = A6B2DB3412B7321500EBCE81 /* PBXTextBookmark */;
+			A6B2DCD612B7468600EBCE81 /* PBXTextBookmark */ = A6B2DCD612B7468600EBCE81 /* PBXTextBookmark */;
+			A6B2DD6C12BD3A7200EBCE81 /* PBXTextBookmark */ = A6B2DD6C12BD3A7200EBCE81 /* PBXTextBookmark */;
+			A6B2DD6D12BD3A7200EBCE81 /* PBXTextBookmark */ = A6B2DD6D12BD3A7200EBCE81 /* PBXTextBookmark */;
+			A6B2DDFC12BD489300EBCE81 /* PBXTextBookmark */ = A6B2DDFC12BD489300EBCE81 /* PBXTextBookmark */;
+			A6B2DE5412BD531E00EBCE81 /* PBXTextBookmark */ = A6B2DE5412BD531E00EBCE81 /* PBXTextBookmark */;
+			A6B2DEC112BD5C5D00EBCE81 /* PBXTextBookmark */ = A6B2DEC112BD5C5D00EBCE81 /* PBXTextBookmark */;
+			A6B2DF8C12BD646200EBCE81 /* PBXTextBookmark */ = A6B2DF8C12BD646200EBCE81 /* PBXTextBookmark */;
+		};
+		sourceControlManager = A647741B12B5DCAD00493A7E /* Source Control */;
+		userBuildSettings = {
+		};
+	};
+	E4B69B5A0A3A1756003C02F2 /* ofQTKitVideoPlayerExample */ = {
+		activeExec = 0;
+		executables = (
+			A64773ED12B5DC9D00493A7E /* ofQTKitVideoPlayerExample */,
+		);
+	};
+	E4B69E1D0A3A1BDC003C02F2 /* main.cpp */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1542, 854}}";
+			sepNavSelRange = "{463, 0}";
+			sepNavVisRange = "{0, 2183}";
+		};
+	};
+	E4B69E1E0A3A1BDC003C02F2 /* testApp.cpp */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1542, 2394}}";
+			sepNavSelRange = "{3763, 0}";
+			sepNavVisRange = "{2437, 1659}";
+		};
+	};
+	E4B69E1F0A3A1BDC003C02F2 /* testApp.h */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1542, 1092}}";
+			sepNavSelRange = "{2359, 33}";
+			sepNavVisRange = "{935, 1544}";
+		};
+	};
+	E77151201246903200359C16 /* ofxQTKitVideoPlayer.h */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1542, 2016}}";
+			sepNavSelRange = "{3777, 0}";
+			sepNavVisRange = "{1404, 1783}";
+			sepNavWindowFrame = "{{-1665, 17}, {776, 1028}}";
+		};
+	};
+	E77151211246903200359C16 /* ofxQTKitVideoPlayer.mm */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1859, 6118}}";
+			sepNavSelRange = "{4395, 0}";
+			sepNavVisRange = "{4788, 294}";
+		};
+	};
+	E781B7EA12B58F7600973230 /* QTKitMovieRenderer.h */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1542, 1372}}";
+			sepNavSelRange = "{168, 0}";
+			sepNavVisRange = "{1811, 1611}";
+			sepNavWindowFrame = "{{-1665, 17}, {776, 1028}}";
+		};
+	};
+	E781B7EB12B58F7600973230 /* QTKitMovieRenderer.m */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1542, 6034}}";
+			sepNavSelRange = "{11289, 21}";
+			sepNavVisRange = "{10557, 957}";
+			sepNavWindowFrame = "{{-1665, 17}, {776, 1028}}";
+		};
+	};
+}
