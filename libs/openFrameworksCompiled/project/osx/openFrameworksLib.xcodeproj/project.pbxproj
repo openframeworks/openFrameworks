@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2DBB130412DD6D57000401BE /* ofSoundUnit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DBB130212DD6D57000401BE /* ofSoundUnit.cpp */; };
+		2DBB130512DD6D57000401BE /* ofSoundUnit.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DBB130312DD6D57000401BE /* ofSoundUnit.h */; };
+		2DBB131D12DD6EEA000401BE /* ofSoundEffect.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DBB131B12DD6EEA000401BE /* ofSoundEffect.h */; };
+		2DBB131E12DD6EEA000401BE /* ofSoundEffect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DBB131C12DD6EEA000401BE /* ofSoundEffect.cpp */; };
 		92B3A68112DA30B3001B8BE8 /* ofBaseTypes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 92B3A67812DA30B3001B8BE8 /* ofBaseTypes.cpp */; };
 		92B3A68212DA30B3001B8BE8 /* ofBaseTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 92B3A67912DA30B3001B8BE8 /* ofBaseTypes.h */; };
 		92B3A68312DA30B3001B8BE8 /* ofColor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 92B3A67A12DA30B3001B8BE8 /* ofColor.cpp */; };
@@ -76,6 +80,10 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		2DBB130212DD6D57000401BE /* ofSoundUnit.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofSoundUnit.cpp; sourceTree = "<group>"; };
+		2DBB130312DD6D57000401BE /* ofSoundUnit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofSoundUnit.h; sourceTree = "<group>"; };
+		2DBB131B12DD6EEA000401BE /* ofSoundEffect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofSoundEffect.h; sourceTree = "<group>"; };
+		2DBB131C12DD6EEA000401BE /* ofSoundEffect.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofSoundEffect.cpp; sourceTree = "<group>"; };
 		92B3A67812DA30B3001B8BE8 /* ofBaseTypes.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofBaseTypes.cpp; sourceTree = "<group>"; };
 		92B3A67912DA30B3001B8BE8 /* ofBaseTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofBaseTypes.h; sourceTree = "<group>"; };
 		92B3A67A12DA30B3001B8BE8 /* ofColor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofColor.cpp; sourceTree = "<group>"; };
@@ -339,8 +347,6 @@
 		E4B27ABC10CBE92A00536013 /* graphics */ = {
 			isa = PBXGroup;
 			children = (
-				E4554FAF12DBC7E000652B63 /* ofPixels.h */,
-				BB4A407312DBBDDE007FFA68 /* ofFbo.cpp */,
 				BB4A407412DBBDDE007FFA68 /* ofFbo.h */,
 				BB4A407512DBBDDE007FFA68 /* ofShader.cpp */,
 				BB4A407612DBBDDE007FFA68 /* ofShader.h */,
@@ -366,6 +372,10 @@
 				E4B27ACA10CBE92A00536013 /* ofSoundPlayer.h */,
 				E4B27ACB10CBE92A00536013 /* ofSoundStream.cpp */,
 				E4B27ACC10CBE92A00536013 /* ofSoundStream.h */,
+				2DBB130212DD6D57000401BE /* ofSoundUnit.cpp */,
+				2DBB130312DD6D57000401BE /* ofSoundUnit.h */,
+				2DBB131B12DD6EEA000401BE /* ofSoundEffect.h */,
+				2DBB131C12DD6EEA000401BE /* ofSoundEffect.cpp */,
 			);
 			name = sound;
 			path = ../../../openFrameworks/sound;
@@ -530,6 +540,8 @@
 				E455519912DCCD0000652B63 /* ofVec3f.h in Headers */,
 				E455519A12DCCD0000652B63 /* ofVec4f.h in Headers */,
 				E455519B12DCCD0000652B63 /* ofVectorMath.h in Headers */,
+				2DBB130512DD6D57000401BE /* ofSoundUnit.h in Headers */,
+				2DBB131D12DD6EEA000401BE /* ofSoundEffect.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -616,6 +628,8 @@
 				E455519212DCCD0000652B63 /* ofMatrix3x3.cpp in Sources */,
 				E455519412DCCD0000652B63 /* ofMatrix4x4.cpp in Sources */,
 				E455519612DCCD0000652B63 /* ofQuaternion.cpp in Sources */,
+				2DBB130412DD6D57000401BE /* ofSoundUnit.cpp in Sources */,
+				2DBB131E12DD6EEA000401BE /* ofSoundEffect.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
