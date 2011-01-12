@@ -1,4 +1,28 @@
 #include "ofURLFileLoader.h"
+
+
+#include "Poco/Net/HTTPClientSession.h"
+#include "Poco/Net/HTTPRequest.h"
+#include "Poco/Net/HTTPResponse.h"
+#include "Poco/StreamCopier.h"
+#include "Poco/Path.h"
+#include "Poco/URI.h"
+#include "Poco/Exception.h"
+#include "Poco/URIStreamOpener.h"
+#include "Poco/Net/HTTPStreamFactory.h"
+
+using Poco::Net::HTTPClientSession;
+using Poco::Net::HTTPRequest;
+using Poco::Net::HTTPResponse;
+using Poco::Net::HTTPMessage;
+using Poco::Net::HTTPStreamFactory;
+
+using Poco::StreamCopier;
+using Poco::Path;
+using Poco::URI;
+using Poco::URIStreamOpener;
+using Poco::Exception;
+
 #include <auto_ptr.h>
 
 
@@ -9,7 +33,6 @@ static bool factoryLoaded = false;
 
 ofURLFileLoader::ofURLFileLoader() {
 	
-	args.buffer = NULL;
 	status		= OF_URL_FILE_LOADER_RESTING;
 	
 }
@@ -61,13 +84,8 @@ void ofURLFileLoader::getText(string url_, bool bAsync) {
 //}
 
 void ofURLFileLoader::getBytes(string url_, bool bAsync) {
+	args.clear();
 	
-	if (args.buffer != NULL){
-		delete [] args.buffer;
-	}
-	
-	args.buffer			= NULL;		// free this?
-	args.numBytes		= 0;
     url					= url_;
 	requestType			= OF_URL_FILE_LOADER_BYTES_REQUEST;
 	status = OF_URL_FILE_LOADER_LOADING;
@@ -144,8 +162,6 @@ void ofURLFileLoader::handleTextRequest(string url_) {
 
 void ofURLFileLoader::handleStreamRequest(string url_) {
 	
-	// TODO this memory handling seems dodgy?
-	
 	string str;
 	
 	try {
@@ -153,29 +169,21 @@ void ofURLFileLoader::handleStreamRequest(string url_) {
 		URI uri(url_);      
 		std::auto_ptr<std::istream> pStr(URIStreamOpener::defaultOpener().open(uri));
 		//copy to our string
-		StreamCopier::copyToString(*pStr.get(), str);
+		//StreamCopier::copyToString(*pStr.get(), str);
 		
-		status = OF_URL_FILE_LOADER_LOADING_SUCCEEDED;
+		if(pStr->good() && args.set(*pStr.get())){
+			status = OF_URL_FILE_LOADER_LOADING_SUCCEEDED;
+		}else{
+			status = OF_URL_FILE_LOADER_LOADING_FAILED;
+		}
 		
 	} catch (Exception& exc) {
 		
 		status = OF_URL_FILE_LOADER_LOADING_FAILED;
-        cerr << exc.displayText() << std::endl;
+        ofLog(OF_LOG_ERROR, exc.displayText());
 
     }	
 	
-	//figure out how many bytes the image is and allocate
-	int bytesToRead = str.size();
-	unsigned char * buff = new unsigned char [bytesToRead];
-
-	memset(buff, 0, bytesToRead);
-	
-	for(int i = 0; i < bytesToRead; i++){
-		buff[i] = str[i];
-	}
-	
-	args.buffer	= buff;
-	args.numBytes = bytesToRead;
 }	
 
 

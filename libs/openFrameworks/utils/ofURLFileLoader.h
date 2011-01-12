@@ -2,28 +2,6 @@
 
 #include "ofThread.h"
 
-#include "Poco/Net/HTTPClientSession.h"
-#include "Poco/Net/HTTPRequest.h"
-#include "Poco/Net/HTTPResponse.h"
-#include "Poco/StreamCopier.h"
-#include "Poco/Path.h"
-#include "Poco/URI.h"
-#include "Poco/Exception.h"
-#include "Poco/URIStreamOpener.h"
-#include "Poco/Net/HTTPStreamFactory.h"
-
-using Poco::Net::HTTPClientSession;
-using Poco::Net::HTTPRequest;
-using Poco::Net::HTTPResponse;
-using Poco::Net::HTTPMessage;
-using Poco::Net::HTTPStreamFactory;
-
-using Poco::StreamCopier;
-using Poco::Path;
-using Poco::URI;
-using Poco::URIStreamOpener;
-using Poco::Exception;
-
 
 enum requestType {
 	OF_URL_FILE_LOADER_TEXT_REQUEST,
@@ -35,15 +13,6 @@ enum resuestStatus {
 	OF_URL_FILE_LOADER_LOADING,
 	OF_URL_FILE_LOADER_LOADING_FAILED,
 	OF_URL_FILE_LOADER_LOADING_SUCCEEDED
-};
-
-
-class binaryData {
-	
-public:
-	unsigned char * buffer;
-	int	numBytes;
-	
 };
 
 class ofURLFileLoader : public ofThread  {
@@ -69,8 +38,8 @@ class ofURLFileLoader : public ofThread  {
 			return status;
 		}
 		
-		binaryData * getData(){
-			return &args;
+		ofBuffer & getData(){
+			return args;
 		}
 
     private:
@@ -83,7 +52,7 @@ class ofURLFileLoader : public ofThread  {
         string			response;        
 		bool			bResponseReady;		
 		int				requestType;		
-		binaryData		args;
+		ofBuffer		args;
 		int				status;
 	
 
