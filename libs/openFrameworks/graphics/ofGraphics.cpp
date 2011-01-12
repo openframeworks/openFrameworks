@@ -670,30 +670,30 @@ inline void ofSphere(float radius) {
 }
 
 //----------------------------------------
-void ofCube(float x, float y, float z, float radius) {
-	ofCube(ofVec3f(x, y, z), radius);
+void ofBox(float x, float y, float z, float size) {
+	ofBox(ofVec3f(x, y, z), size);
 }
 
 //----------------------------------------
-void ofCube(float x, float y, float radius) {
-	ofCube(x, y, 0, radius);
+void ofBox(float x, float y, float size) {
+	ofBox(x, y, 0, size);
 }
 
 //----------------------------------------
-void ofCube(const ofVec3f& position, float radius) {
+void ofBox(const ofVec3f& position, float size) {
 	ofPushMatrix();
 	ofTranslate(position);
-	ofCube(radius);
+	ofBox(size);
 	ofPopMatrix();
 }
 
 //----------------------------------------
-inline void ofCube(float radius) {
+inline void ofBox(float size) {
 	// this needs to be swapped out with non-glut code
 	if(ofGetStyle().bFill) {
-		glutSolidCube(radius);
+		glutSolidCube(size);
 	} else {
-		glutWireCube(radius);
+		glutWireCube(size);
 	}
 }
 
