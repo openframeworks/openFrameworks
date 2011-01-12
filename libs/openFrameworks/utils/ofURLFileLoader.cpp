@@ -26,12 +26,9 @@ using Poco::Exception;
 
 #include "ofConstants.h"
 
-#ifdef TARGET_LINUX
-	#include <auto_ptr.h>
-#endif
-
 static bool factoryLoaded = false;
-ofEvent<ofHttpRequest> ofURLResponseEvent;
+int	ofHttpRequest::nextID = 0;
+ofEvent<ofHttpResponse> ofURLResponseEvent;
 
 ofURLFileLoader::ofURLFileLoader() {
 	if(!factoryLoaded){
@@ -40,32 +37,31 @@ ofURLFileLoader::ofURLFileLoader() {
 	}
 }
 
-bool ofURLFileLoader::get(string url, ofBuffer & buffer, bool bAsync, string name) {
-	if(name=="") name=url;
-    ofHttpRequest request(url,name,buffer);
-    if(bAsync){
-    	lock();
-    	requests.push(request);
-    	unlock();
-    	start();
-    	return true;
-    }else{
-    	return handleRequest(request);
-    }
+ofHttpResponse ofURLFileLoader::get(string url) {
+    ofHttpRequest request(url,url);
+    return handleRequest(request);
 }
 
-/*void ofURLFileLoader::remove(ofHttpRequest & httpRequest){
+
+void ofURLFileLoader::getAsync(string url, string name){
+	if(name=="") name=url;
+	ofHttpRequest request(url,name);
+	lock();
+	requests.push_back(request);
+	unlock();
+	start();
+}
+
+void ofURLFileLoader::remove(ofHttpRequest & httpRequest){
 	lock();
 	for(int i=0;i<requests.size();i++){
-		if(&requests[i]==&httpRequest){
+		if(requests[i].getID()==httpRequest.getID()){
 			requests.erase(requests.begin()+i);
 			return;
 		}
 	}
 	unlock();
-}*/
-
-
+}
 
 void ofURLFileLoader::start() {
      if (isThreadRunning() == false){
@@ -84,10 +80,11 @@ void ofURLFileLoader::threadedFunction() {
 		if(requests.size()>0){
 			ofHttpRequest request(requests.front());
 			unlock();
-			if(handleRequest(request) || request.status!=-1){
+			ofHttpResponse response(handleRequest(request));
+			if(response.status!=-1){
 				lock();
-				attendedRequests.push(request);
-				requests.pop();
+				responses.push(response);
+				requests.pop_front();
 				unlock();
 			}
 		}else{
@@ -98,7 +95,7 @@ void ofURLFileLoader::threadedFunction() {
 	}
 }
 
-bool ofURLFileLoader::handleRequest(ofHttpRequest & request) {
+ofHttpResponse ofURLFileLoader::handleRequest(ofHttpRequest & request) {
 	try {
 		URI uri(request.url);
 		std::string path(uri.getPathAndQuery());
@@ -110,26 +107,21 @@ bool ofURLFileLoader::handleRequest(ofHttpRequest & request) {
 		session.sendRequest(req);
 		HTTPResponse res;
 		istream& rs = session.receiveResponse(res);
-		request.status = res.getStatus();
-		request.error = res.getReason();
-		if(request.response.set(rs)){
-			return true;
-		}else{
-			return false;
-		}
+		return ofHttpResponse(request,rs,res.getStatus(),res.getReason());
 	} catch (Exception& exc) {
         ofLog(OF_LOG_ERROR, "ofURLFileLoader " + exc.displayText());
-        request.error = exc.displayText();
-        return false;
+
+        return ofHttpResponse(request,-1,exc.displayText());
     }	
 	
 }	
 
 void ofURLFileLoader::update(ofEventArgs & args){
-	if(attendedRequests.size()){
-		ofNotifyEvent(ofURLResponseEvent,attendedRequests.front());
-		attendedRequests.pop();
-		if(!isThreadRunning() && !attendedRequests.size())
+	if(responses.size()){
+		ofHttpResponse response(responses.front());
+		ofNotifyEvent(ofURLResponseEvent,response);
+		responses.pop();
+		if(!isThreadRunning() && !responses.size())
 			ofRemoveListener(ofEvents.update,this,&ofURLFileLoader::update);
 	}
 
@@ -137,11 +129,14 @@ void ofURLFileLoader::update(ofEventArgs & args){
 
 static ofURLFileLoader fileLoader;
 
-bool ofLoadURL(string url, ofBuffer & buffer, bool bAsync, string name){
-	return fileLoader.get(url,buffer,bAsync,name);
+ofHttpResponse ofLoadURL(string url){
+	return fileLoader.get(url);
 }
 
-/*
+void ofLoadURLAsync(string url, string name){
+	fileLoader.getAsync(url,name);
+}
+
 void ofRemoveRequest(ofHttpRequest & request){
 	fileLoader.remove(request);
-}*/
+}

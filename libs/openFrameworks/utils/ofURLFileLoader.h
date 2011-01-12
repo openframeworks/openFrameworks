@@ -2,29 +2,49 @@
 
 #include "ofThread.h"
 #include "ofEvents.h"
+#include <deque>
 #include <queue>
-
-
-bool ofLoadURL(string url, ofBuffer & buffer, bool bAsync = true, string name="");
-
 
 class ofHttpRequest{
 public:
-	ofHttpRequest(string url,string name, ofBuffer & buffer)
+	ofHttpRequest(string url,string name,int id=0)
 	:url(url)
 	,name(name)
-	,response(buffer)
-	,status(-1){}
+	,id(nextID++){}
 
 	string				url;
 	string				name;
-	ofBuffer		&   response;
-	string				error;
-	int					status;
+
+	int getID(){return id;}
+private:
+	int					id;
+	static int			nextID;
 };
 
+class ofHttpResponse{
+public:
+	ofHttpResponse(ofHttpRequest request,const ofBuffer & data,int status, string error)
+	:request(request)
+	,data(data)
+	,status(status)
+	,error(error){}
 
-extern ofEvent<ofHttpRequest> ofURLResponseEvent;
+	ofHttpResponse(ofHttpRequest request,int status,string error)
+	:request(request)
+	,status(status)
+	,error(error){}
+
+	ofHttpRequest	    request;
+	ofBuffer		    data;
+	int					status;
+	string				error;
+};
+
+ofHttpResponse ofLoadURL(string url);
+void ofLoadURLAsync(string url, string name="");
+void ofRemoveRequest(ofHttpRequest & request);
+
+extern ofEvent<ofHttpResponse> ofURLResponseEvent;
 
 template<class T>
 void ofRegisterURLNotification(T * obj){
@@ -42,7 +62,9 @@ class ofURLFileLoader : public ofThread  {
     public:
 
         ofURLFileLoader();
-		bool get(string url, ofBuffer & buffer, bool bAsync = true, string name="");
+        ofHttpResponse get(string url);
+		void getAsync(string url, string name="");
+		void remove(ofHttpRequest & httpRequest);
 
     protected:
 
@@ -55,9 +77,9 @@ class ofURLFileLoader : public ofThread  {
     private:
 
 		// perform the requests on the thread
-		bool handleRequest(ofHttpRequest & request);
+        ofHttpResponse handleRequest(ofHttpRequest & request);
 
-		queue<ofHttpRequest> requests;
-		queue<ofHttpRequest> attendedRequests;
+		deque<ofHttpRequest> requests;
+		queue<ofHttpResponse> responses;
 
 };

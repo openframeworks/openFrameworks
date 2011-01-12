@@ -66,6 +66,7 @@ public:
 
 	ofBuffer();
 	ofBuffer(int size, char * buffer);
+	ofBuffer(istream & stream);
 	ofBuffer(const ofBuffer & mom);
 
 	~ofBuffer();
