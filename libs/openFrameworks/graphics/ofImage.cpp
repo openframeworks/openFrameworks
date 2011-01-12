@@ -10,8 +10,8 @@ void ofLoadImage(ofPixels & pix, string path){
 	ofImage::loadImageIntoPixels(path, pix);
 }
 
-void ofLoadImageFromMemory(ofPixels & pix, unsigned char * bytes, int numBytes){
-	ofImage::loadImageFromMemory(bytes, numBytes, pix);
+void ofLoadImageFromMemory(ofBuffer & buffer, ofPixels & pix){
+	ofImage::loadImageFromMemory(buffer, pix);
 }
 
 
@@ -60,14 +60,20 @@ ofImage::~ofImage(){
 bool ofImage::loadImage(string fileName){
 	bool bLoadedOk = false;
 	bLoadedOk = loadImageIntoPixels(fileName, myPixels);
-
-	if (bLoadedOk == true){
-	if (myPixels.isAllocated() && bUseTexture){
+	if (bLoadedOk && myPixels.isAllocated() && bUseTexture){
 		tex.allocate(myPixels.getWidth(), myPixels.getHeight(), myPixels.getGlDataType());
 	}
 	update();
+	return bLoadedOk;
 }
 
+bool ofImage::loadImage(ofBuffer & buffer){
+	bool bLoadedOk = false;
+	bLoadedOk = ofImage::loadImageFromMemory(buffer,myPixels);
+	if (bLoadedOk && myPixels.isAllocated() && bUseTexture){
+		tex.allocate(myPixels.getWidth(), myPixels.getHeight(), myPixels.getGlDataType());
+	}
+	update();
 	return bLoadedOk;
 }
 
@@ -467,7 +473,7 @@ bool ofImage::loadImageIntoPixels(string fileName, ofPixels &pix){
 }
 
 //----------------------------------------------------
-bool ofImage::loadImageFromMemory(unsigned char * buffer, unsigned int numBytes, ofPixels &pix){
+bool ofImage::loadImageFromMemory(ofBuffer & buffer, ofPixels &pix){
 
 	int					width, height, bpp;
 	bool bLoaded		= false;
@@ -476,16 +482,16 @@ bool ofImage::loadImageFromMemory(unsigned char * buffer, unsigned int numBytes,
 	
 	printf("loadImageFromMemory\n");
 
-	hmem = FreeImage_OpenMemory(buffer, numBytes);
+	hmem = FreeImage_OpenMemory((uint8_t*)buffer.getBuffer(), buffer.getSize());
 	if (hmem == NULL){
-		printf("couldn't create memory handle! \n");
+		ofLog(OF_LOG_ERROR,"couldn't create memory handle! \n");
 		return false;
 	}
 
 	//get the file type!
 	FREE_IMAGE_FORMAT fif = FreeImage_GetFileTypeFromMemory(hmem);
 	if( fif == -1 ){
-		printf("unable to guess format", fif);
+		ofLog(OF_LOG_ERROR,"unable to guess format", fif);
 		return false;
 		FreeImage_CloseMemory(hmem);
 	}
@@ -496,7 +502,7 @@ bool ofImage::loadImageFromMemory(unsigned char * buffer, unsigned int numBytes,
 	
 	if( bmp != NULL ){
 		bLoaded = true;
-		printf("FreeImage_LoadFromMemory worked!\n");
+		ofLog(OF_LOG_VERBOSE,"FreeImage_LoadFromMemory worked!\n");
 	}
 	
 	//-----------------------------
