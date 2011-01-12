@@ -268,10 +268,18 @@ void ofSetVerticalSync(bool bSync){
 }
 
 //--------------------------------------
-bool ofMousePressed(int button){ //by default any button
+bool ofGetMousePressed(int button){ //by default any button
 	return window->isMousePressed(button);
 }
 //--------------------------------------
-bool ofKeyPressed(int key){
+bool ofGetKeyPressed(int key){
 	return window->isKeyPressed(key);
+}
+//--------------------------------------
+int ofGetMouseX(){
+	return window->getMouseX();
+}
+//--------------------------------------
+int ofGetMouseY(){
+	return window->getMouseY();
 }
