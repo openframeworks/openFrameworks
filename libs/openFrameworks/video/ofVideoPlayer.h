@@ -6,8 +6,8 @@
 #include "ofBaseTypes.h"
 
 #ifdef OF_VIDEO_PLAYER_GSTREAMER
-	#include "ofGStreamerPlayer.h"
-	#define OF_VID_PLAYER_TYPE ofGStreamerPlayer()
+	#include "ofGstUtils.h"
+	#define OF_VID_PLAYER_TYPE ofGstUtils()
 #endif
 
 #ifdef OF_VIDEO_PLAYER_QUICKTIME
@@ -16,7 +16,7 @@
 #endif
 
 //---------------------------------------------
-class ofVideoPlayer : public ofBaseVideo{
+class ofVideoPlayer : public ofBaseVideoPlayer, public ofBaseDraws, public ofBaseHasTexture{
 
 	public:
 
