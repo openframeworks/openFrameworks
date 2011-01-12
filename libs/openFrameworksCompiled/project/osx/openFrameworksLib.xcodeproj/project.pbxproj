@@ -22,8 +22,6 @@
 		BB4A407812DBBDDE007FFA68 /* ofFbo.h in Headers */ = {isa = PBXBuildFile; fileRef = BB4A407412DBBDDE007FFA68 /* ofFbo.h */; };
 		BB4A407912DBBDDE007FFA68 /* ofShader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BB4A407512DBBDDE007FFA68 /* ofShader.cpp */; };
 		BB4A407A12DBBDDE007FFA68 /* ofShader.h in Headers */ = {isa = PBXBuildFile; fileRef = BB4A407612DBBDDE007FFA68 /* ofShader.h */; };
-		BB4A40F312DBC6E2007FFA68 /* ofCamera.h in Headers */ = {isa = PBXBuildFile; fileRef = BB4A40F112DBC6E2007FFA68 /* ofCamera.h */; };
-		BB4A40F412DBC6E2007FFA68 /* ofCamera.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BB4A40F212DBC6E2007FFA68 /* ofCamera.cpp */; };
 		BB4A410012DBCA60007FFA68 /* ofMatrix3x3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BB4A40F612DBCA60007FFA68 /* ofMatrix3x3.cpp */; };
 		BB4A410112DBCA60007FFA68 /* ofMatrix3x3.h in Headers */ = {isa = PBXBuildFile; fileRef = BB4A40F712DBCA60007FFA68 /* ofMatrix3x3.h */; };
 		BB4A410212DBCA60007FFA68 /* ofMatrix4x4.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BB4A40F812DBCA60007FFA68 /* ofMatrix4x4.cpp */; };
@@ -34,8 +32,6 @@
 		BB4A410712DBCA60007FFA68 /* ofVec3f.h in Headers */ = {isa = PBXBuildFile; fileRef = BB4A40FD12DBCA60007FFA68 /* ofVec3f.h */; };
 		BB4A410812DBCA60007FFA68 /* ofVec4f.h in Headers */ = {isa = PBXBuildFile; fileRef = BB4A40FE12DBCA60007FFA68 /* ofVec4f.h */; };
 		BB4A410912DBCA60007FFA68 /* ofVectorMath.h in Headers */ = {isa = PBXBuildFile; fileRef = BB4A40FF12DBCA60007FFA68 /* ofVectorMath.h */; };
-		BB4A414212DBD813007FFA68 /* ofTransformation3D.h in Headers */ = {isa = PBXBuildFile; fileRef = BB4A414012DBD813007FFA68 /* ofTransformation3D.h */; };
-		BB4A414312DBD813007FFA68 /* ofTransformation3D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BB4A414112DBD813007FFA68 /* ofTransformation3D.cpp */; };
 		BB8C876612DCC76100F7AD63 /* glew.h in Headers */ = {isa = PBXBuildFile; fileRef = BB8C876012DCC76100F7AD63 /* glew.h */; };
 		BB8C876712DCC76100F7AD63 /* glxew.h in Headers */ = {isa = PBXBuildFile; fileRef = BB8C876112DCC76100F7AD63 /* glxew.h */; };
 		BB8C876812DCC76100F7AD63 /* wglew.h in Headers */ = {isa = PBXBuildFile; fileRef = BB8C876212DCC76100F7AD63 /* wglew.h */; };
@@ -93,8 +89,6 @@
 		BB4A407412DBBDDE007FFA68 /* ofFbo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofFbo.h; sourceTree = "<group>"; };
 		BB4A407512DBBDDE007FFA68 /* ofShader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofShader.cpp; sourceTree = "<group>"; };
 		BB4A407612DBBDDE007FFA68 /* ofShader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofShader.h; sourceTree = "<group>"; };
-		BB4A40F112DBC6E2007FFA68 /* ofCamera.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofCamera.h; sourceTree = "<group>"; };
-		BB4A40F212DBC6E2007FFA68 /* ofCamera.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofCamera.cpp; sourceTree = "<group>"; };
 		BB4A40F612DBCA60007FFA68 /* ofMatrix3x3.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofMatrix3x3.cpp; sourceTree = "<group>"; };
 		BB4A40F712DBCA60007FFA68 /* ofMatrix3x3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofMatrix3x3.h; sourceTree = "<group>"; };
 		BB4A40F812DBCA60007FFA68 /* ofMatrix4x4.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofMatrix4x4.cpp; sourceTree = "<group>"; };
@@ -105,8 +99,6 @@
 		BB4A40FD12DBCA60007FFA68 /* ofVec3f.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofVec3f.h; sourceTree = "<group>"; };
 		BB4A40FE12DBCA60007FFA68 /* ofVec4f.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofVec4f.h; sourceTree = "<group>"; };
 		BB4A40FF12DBCA60007FFA68 /* ofVectorMath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofVectorMath.h; sourceTree = "<group>"; };
-		BB4A414012DBD813007FFA68 /* ofTransformation3D.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofTransformation3D.h; sourceTree = "<group>"; };
-		BB4A414112DBD813007FFA68 /* ofTransformation3D.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofTransformation3D.cpp; sourceTree = "<group>"; };
 		BB8C876012DCC76100F7AD63 /* glew.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = glew.h; sourceTree = "<group>"; };
 		BB8C876112DCC76100F7AD63 /* glxew.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = glxew.h; sourceTree = "<group>"; };
 		BB8C876212DCC76100F7AD63 /* wglew.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = wglew.h; sourceTree = "<group>"; };
@@ -399,10 +391,6 @@
 				E4B27AC410CBE92A00536013 /* ofTexture.h */,
 				E4B27AC510CBE92A00536013 /* ofTrueTypeFont.cpp */,
 				E4B27AC610CBE92A00536013 /* ofTrueTypeFont.h */,
-				BB4A40F112DBC6E2007FFA68 /* ofCamera.h */,
-				BB4A40F212DBC6E2007FFA68 /* ofCamera.cpp */,
-				BB4A414012DBD813007FFA68 /* ofTransformation3D.h */,
-				BB4A414112DBD813007FFA68 /* ofTransformation3D.cpp */,
 			);
 			name = graphics;
 			path = ../../../openFrameworks/graphics;
@@ -548,7 +536,6 @@
 				92BFAC2F12DA5FDA001F2778 /* ofSystemUtils.h in Headers */,
 				BB4A407812DBBDDE007FFA68 /* ofFbo.h in Headers */,
 				BB4A407A12DBBDDE007FFA68 /* ofShader.h in Headers */,
-				BB4A40F312DBC6E2007FFA68 /* ofCamera.h in Headers */,
 				BB4A410112DBCA60007FFA68 /* ofMatrix3x3.h in Headers */,
 				BB4A410312DBCA60007FFA68 /* ofMatrix4x4.h in Headers */,
 				BB4A410512DBCA60007FFA68 /* ofQuaternion.h in Headers */,
@@ -556,7 +543,6 @@
 				BB4A410712DBCA60007FFA68 /* ofVec3f.h in Headers */,
 				BB4A410812DBCA60007FFA68 /* ofVec4f.h in Headers */,
 				BB4A410912DBCA60007FFA68 /* ofVectorMath.h in Headers */,
-				BB4A414212DBD813007FFA68 /* ofTransformation3D.h in Headers */,
 				BB8C876612DCC76100F7AD63 /* glew.h in Headers */,
 				BB8C876712DCC76100F7AD63 /* glxew.h in Headers */,
 				BB8C876812DCC76100F7AD63 /* wglew.h in Headers */,
@@ -641,11 +627,9 @@
 				92BFAC2E12DA5FDA001F2778 /* ofSystemUtils.cpp in Sources */,
 				BB4A407712DBBDDE007FFA68 /* ofFbo.cpp in Sources */,
 				BB4A407912DBBDDE007FFA68 /* ofShader.cpp in Sources */,
-				BB4A40F412DBC6E2007FFA68 /* ofCamera.cpp in Sources */,
 				BB4A410012DBCA60007FFA68 /* ofMatrix3x3.cpp in Sources */,
 				BB4A410212DBCA60007FFA68 /* ofMatrix4x4.cpp in Sources */,
 				BB4A410412DBCA60007FFA68 /* ofQuaternion.cpp in Sources */,
-				BB4A414312DBD813007FFA68 /* ofTransformation3D.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
