@@ -15,6 +15,7 @@ void testApp::setup(){
 	
 	mixBuffer=(float *)malloc(initialBufferSize*sizeof(float));
 	mixBuffer2=(float *)malloc(initialBufferSize*sizeof(float));
+	mixBuffer3=(float *)malloc(initialBufferSize*sizeof(float));
 
 	syn.setADRVol(0.1, 1, 1);
 	syn.ampMode = OFXSYNTHADR;
@@ -37,6 +38,7 @@ void testApp::setup(){
 //--------------------------------------------------------------
 void testApp::audioRequested 	(float * output, int bufferSize, int nChannels){
 	syn.audioRequested(mixBuffer, bufferSize);
+	sampler.audioRequested(mixBuffer3, bufferSize);
 	dl.audioRequested(mixBuffer, mixBuffer2, bufferSize);
 	for (int i = 0; i < bufferSize; i++){
 		framecounter++;
@@ -45,7 +47,7 @@ void testApp::audioRequested 	(float * output, int bufferSize, int nChannels){
 			// do my triggering
 			// syn.trigger();
 		}
-		mymix.stereo(mixBuffer[i]+mixBuffer2[i], outputs, 0.5);
+		mymix.stereo(mixBuffer[i]+mixBuffer2[i]+mixBuffer3[i], outputs, 0.33);
 		output[i*nChannels    ] = ofClamp(outputs[1],-1,1); /* You may end up with lots of outputs. add them here */
 		output[i*nChannels + 1] = ofClamp(outputs[1],-1,1);
 	}
