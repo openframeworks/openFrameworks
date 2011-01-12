@@ -1,5 +1,6 @@
 #pragma once
 #include "ofxMaxim.h"
+#include "ofMain.h"
 
 #define OFXSYNTHONESHOT 1
 #define OFXSYNTHADR 2
@@ -35,22 +36,27 @@ class ofxSynthFilter{
 		void calc();
 		void processSample(float *sample);
 };
-class ofxSynthDelayline {
+
+class ofxSynthDelayline : public ofSoundEffect{
 private:
 	double frequency;
 	int phase;
 	double startphase;
 	double endphase;
 	double output;
-	double memory[88200];
+	double memory[88200]; //TODO: make this change with a constructor 
 	int size;
 	float feedback;
 	float mix;
 public:
-	void audioRequested(float * input, float * output, int bufferSize);
+	ofxSynthDelayline(){setSize(1.1);setFeedback(0.5);}
+	string getName() { return "ofxSynthDelayLine"; }
+	virtual void process( float* input, float *output, int numFrames, int numInChannels, int numOutChannels );
 	void setSize(float _size);
 	void setFeedback(float _feedback);
 };
+
+
 class ofxSynth{
 	public:
 		ofxSynth();
