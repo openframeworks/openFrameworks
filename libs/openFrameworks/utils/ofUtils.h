@@ -1,5 +1,4 @@
-#ifndef _OF_UTIL
-#define _OF_UTIL
+#pragma once
 
 #include "ofConstants.h"
 
@@ -37,11 +36,22 @@ string 	ofToDataPath(string path, bool absolute=false);
 //the path must have a trailing slash (/) !!!!
 void	ofSetDataPathRoot( string root );
 
-string  ofToString(double value, int precision = 7);
-string  ofToString(int  value);
+template <class T> string ofToString(T value){
+	ostringstream out;
+	out << value;
+	return out.str();
+}
+
+template <class T> string ofToString(T value, int precision){
+	ostringstream out;
+	out << fixed << setprecision(precision) << value;
+	return out.str();
+}
 
 int ofToInt(const string& intString);
 float ofToFloat(const string& floatString);
+bool ofToBool(const string& boolString);
+char ofToChar(const string& charString);
 
 string 	ofGetVersionInfo();
 
@@ -59,8 +69,4 @@ void ofRestoreConsoleColor();
 
 //--------------------------------------------------
 class ofBuffer;
-bool ofReadFile(const string & path, ofBuffer & file);
-
-#endif
-
-
+bool ofReadFile(const string & path, ofBuffer & file, bool binary=false);

@@ -86,7 +86,8 @@
 		#define __MACOSX_CORE__
 	#endif
 	#include <unistd.h>
-	#include "GLee.h"
+	#include <OpenGL/gl.h>
+	#include <OpenGL/glext.h>
 	#include <OpenGL/glu.h>
 	#include <ApplicationServices/ApplicationServices.h>
 
@@ -96,8 +97,11 @@
 #endif
 
 #ifdef TARGET_LINUX
+		#define GL_GLEXT_PROTOTYPES
         #include <unistd.h>
-        #include "GLee.h"
+		#include <GL/gl.h>
+		#include <GL/glx.h>
+        #include <GL/glext.h>
         #include <GL/glu.h>
 
     // for some reason, this isn't defined at compile time,
@@ -278,13 +282,23 @@ using namespace std;
 #define 	OF_RECTMODE_CORNER				0
 #define 	OF_RECTMODE_CENTER				1
 
-#define 	OF_IMAGE_GRAYSCALE		0x00
-#define 	OF_IMAGE_COLOR			0x01
-#define 	OF_IMAGE_COLOR_ALPHA	0x02
-#define 	OF_IMAGE_UNDEFINED		0x03
+enum ofImageType{
+	OF_IMAGE_GRAYSCALE		= 0x00,
+ 	OF_IMAGE_COLOR			= 0x01,
+ 	OF_IMAGE_COLOR_ALPHA	= 0x02,
+ 	OF_IMAGE_UNDEFINED		= 0x03
+};
 
 #define		OF_MAX_STYLE_HISTORY	32
 #define		OF_MAX_CIRCLE_PTS 1024
+
+// Blend Modes
+#define OF_BLENDMODE_ALPHA    1
+#define OF_BLENDMODE_ADD      2
+#define OF_BLENDMODE_SUBTRACT 3
+#define OF_BLENDMODE_MULTIPLY 4
+#define OF_BLENDMODE_SCREEN   5
+
 
 // these are straight out of glu, but renamed and included here
 // for convenience

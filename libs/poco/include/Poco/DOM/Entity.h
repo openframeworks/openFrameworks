@@ -1,7 +1,7 @@
 //
 // Entity.h
 //
-// $Id: //poco/1.3/XML/include/Poco/DOM/Entity.h#1 $
+// $Id: //poco/1.4/XML/include/Poco/DOM/Entity.h#1 $
 //
 // Library: XML
 // Package: DOM

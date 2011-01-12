@@ -1,6 +1,7 @@
 #include "ofUtils.h"
 #include "ofImage.h"
 #include "ofTypes.h"
+#include "Poco/String.h"
 
 #if defined(TARGET_OF_IPHONE) || defined(TARGET_OSX ) || defined(TARGET_LINUX)
 	#include "sys/time.h"
@@ -210,32 +211,47 @@ string ofToDataPath(string path, bool makeAbsolute){
 	return path;
 }
 
-//--------------------------------------------------
-string ofToString(double value, int precision){
-	stringstream sstr;
-	sstr << fixed << setprecision(precision) << value;
-	return sstr.str();
-}
-
-//--------------------------------------------------
-string ofToString(int value){
-	stringstream sstr;
-	sstr << value;
-	return sstr.str();
-}
-
-//--------------------------------------------------
+//----------------------------------------
 int ofToInt(const string& intString) {
-   int x;
-   sscanf(intString.c_str(), "%d", &x);
-   return x;
+	int x = 0;
+	istringstream cur(intString);
+	cur >> x;
+	return x;
 }
 
+//----------------------------------------
 float ofToFloat(const string& floatString) {
-   float x;
-   sscanf(floatString.c_str(), "%f", &x);
-   return x;
+	float x = 0;
+	istringstream cur(floatString);
+	cur >> x;
+	return x;
 }
+
+//----------------------------------------
+bool ofToBool(const string& boolString) {
+	static const string trueString = "true";
+	static const string falseString = "false";
+	string lower = Poco::toLower(boolString);
+	if(lower == trueString) {
+		return true;
+	}
+	if(lower == falseString) {
+		return false;
+	}
+	bool x = false;
+	istringstream cur(lower);
+	cur >> x;
+	return x;
+}
+
+//----------------------------------------
+char ofToChar(const string& charString) {
+	char x = '\0';
+	istringstream cur(charString);
+	cur >> x;
+	return x;
+}
+
 //--------------------------------------------------
 vector<string> ofSplitString(const string& str, const string& delimiter = " "){
     vector<string> elements;
@@ -421,7 +437,7 @@ void ofRestoreConsoleColor(){
 
 
 //--------------------------------------------------
-bool ofReadFile(const string & path, ofBuffer & buffer){
+bool ofReadFile(const string & path, ofBuffer & buffer, bool binary){
 	ifstream * file = new ifstream(ofToDataPath(path,true).c_str());
 
 	if(!file || !file->is_open()){
@@ -436,7 +452,12 @@ bool ofReadFile(const string & path, ofBuffer & buffer){
 	pbuf->pubseekpos (0,ios::in);
 
 	// get file data
-	buffer.allocate(size);// = new char[size];
+	if(!binary){
+		buffer.allocate(size+1);// = new char[size];
+		buffer.getBuffer()[size]='\0';
+	}else{
+		buffer.allocate(size);
+	}
 	pbuf->sgetn (buffer.getBuffer(),size);
 	return true;
 }

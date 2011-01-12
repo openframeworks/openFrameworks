@@ -77,9 +77,9 @@ void testApp::draw(){
 	sprintf(tempStr, "click to test serial:\nnBytes read %i\nnTimes read %i\nread: %s\n(at time %0.3f)", nBytesRead, nTimesRead, bytesReadString, readTime);
 	
 	if (nBytesRead > 0 && ((ofGetElapsedTimef() - readTime) < 0.5f)){
-		ofSetColor(0x000000);
+		ofSetHexColor(0x000000);
 	} else {
-		ofSetColor(0xdddddd);
+		ofSetHexColor(0xdddddd);
 	}
 	font.drawString(tempStr, 50,100);
 

@@ -23,7 +23,7 @@ void testApp::draw(){
 	
 	phase += 0.35f;
 
-	ofSetColor(0xDDDDFF);
+	ofSetHexColor(0xDDDDFF);
 	ofRect(200,200,300,180);
 	
 	
@@ -47,7 +47,7 @@ void testApp::draw(){
 	
 	ofDisableAlphaBlending();
 	
-	ofSetColor(0x000000);
+	ofSetHexColor(0x000000);
 	ofDrawBitmapString("press 'x' to capture screen \n", 200,460);
 	
 	if (bSnapshot == true){
@@ -64,7 +64,7 @@ void testApp::draw(){
 	ofDrawBitmapString(snapString, 600,460);
 
 	
-	ofSetColor(0xFFFFFF);
+	ofSetHexColor(0xFFFFFF);
 	img.draw(600,200,300,180);
 	
 	

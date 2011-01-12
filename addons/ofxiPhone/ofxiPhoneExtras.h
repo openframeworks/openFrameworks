@@ -49,12 +49,14 @@
 #import "ofxiPhoneCoreLocation.h"
 #import "ofxiPhoneImagePicker.h"
 #import "ofxiPhoneMapKit.h"
+#import "ofxiPhoneVideoGrabber.h"
 #include <sys/sysctl.h>
 
 
 enum ofxiPhoneDeviceType {
 	OFXIPHONE_DEVICE_IPHONE,
-	OFXIPHONE_DEVICE_IPODTOUCH
+	OFXIPHONE_DEVICE_IPODTOUCH,
+	OFXIPHONE_DEVICE_IPAD
 };
 
 
@@ -62,9 +64,14 @@ enum ofxiPhoneDeviceType {
 #define OFXIPHONE_DEVICE_IPHONE_2G		"iPhone1,1"
 #define OFXIPHONE_DEVICE_IPHONE_3G		"iPhone1,2"
 #define OFXIPHONE_DEVICE_IPHONE_3GS		"iPhone2,1"
+#define OFXIPHONE_DEVICE_IPHONE_4		"iPhone3,1"
+
 #define OFXIPHONE_DEVICE_IPOD_1STGEN	"iPod1,1"
 #define OFXIPHONE_DEVICE_IPOD_2NDGEN	"iPod2,1"
 #define OFXIPHONE_DEVICE_IPOD_3RDGEN	"iPod3,1"
+#define OFXIPHONE_DEVICE_IPOD_4THGEN	"iPod4,1"
+
+#define OFXIPHONE_DEVICE_IPAD_1STGEN	"iPad1,1"
 
 
 // possible values for iPhoneSetOrientation or iPhoneGetOrientation
@@ -167,6 +174,7 @@ bool ofxiPhoneUIImageToGLTexture(UIImage *uiImage, GLuint *spriteTexture);
 // TODO: take into consideration UI image orentation
 bool ofxiPhoneUIImageToOFImage(UIImage *uiImage, ofImage &outImage, int targetWidth = 0, int targetHeight = 0);
 
+bool ofxiPhoneUIImageToPixels(UIImage *uiImage, unsigned char * pix, int targetWidth = 0, int targetHeight = 0);
 
 // save current opengl screen to photos app
 // based on code from http://www.bit-101.com/blog/?p=1861

@@ -69,7 +69,7 @@ CFLAGS += $(INCLUDES_FLAGS)
 CFLAGS += $(CORE_INCLUDE_FLAGS)
 CFLAGS +=`pkg-config  gstreamer-0.10 gstreamer-video-0.10 gstreamer-base-0.10 libudev --cflags`
 
-LDFLAGS = $(LIB_PATHS_FLAGS) -s -Wl,-rpath=./libs
+LDFLAGS = $(LIB_PATHS_FLAGS) -Wl,-rpath=./libs
 
 LIBS = $(LIB_SHARED)
 LIBS += $(LIB_STATIC)
@@ -103,21 +103,24 @@ ifeq ($(findstring Debug,$(MAKECMDGOALS)),Debug)
 	TARGET_CFLAGS = -g
 	TARGET_LIBS = -lopenFrameworksDebug
 	TARGET_NAME = Debug
-	TARGET = bin/$(APPNAME)_debug
+    BIN_NAME = $(APPNAME)_debug
+	TARGET = bin/$(BIN_NAME)
 endif
 
 ifeq ($(findstring Release,$(MAKECMDGOALS)),Release)
 	TARGET_CFLAGS = $(COMPILER_OPTIMIZATION)
 	TARGET_LIBS = -lopenFrameworks
 	TARGET_NAME = Release
-	TARGET = bin/$(APPNAME)
+    BIN_NAME = $(APPNAME)
+	TARGET = bin/$(BIN_NAME)
 endif
 
 ifeq ($(MAKECMDGOALS),)
 	TARGET_CFLAGS = $(COMPILER_OPTIMIZATION)
 	TARGET_LIBS = -lopenFrameworks
 	TARGET_NAME = Release
-	TARGET = bin/$(APPNAME)
+    BIN_NAME = $(APPNAME)
+	TARGET = bin/$(BIN_NAME)
 endif
 
 ifeq ($(MAKECMDGOALS),clean)
@@ -190,7 +193,7 @@ after:
 	@echo "     to launch the application"	
 	@echo
 	@echo "     cd bin"
-	@echo "     ./$(TARGET)"
+	@echo "     ./$(BIN_NAME)"
 	@echo
     
 
