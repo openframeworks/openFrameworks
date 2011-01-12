@@ -28,9 +28,8 @@ int 			nonFullScreenX;
 int 			nonFullScreenY;
 int				windowW;
 int				windowH;
-int				mouseX, mouseY;
 ofBaseApp *		ofAppPtr;
-
+int				currentMouseX, currentMouseY;
 int             nFramesSinceWindowResized;
 
 static set<int> pressedMouseButtons;
@@ -109,8 +108,8 @@ ofAppGlutWindow::ofAppGlutWindow(){
 	requestedHeight		= 0;
 	nonFullScreenX		= -1;
 	nonFullScreenY		= -1;
-	mouseX				= 0;
-	mouseY				= 0;
+	currentMouseX		= 0;
+	currentMouseY		= 0;
 	lastFrameTime		= 0.0;
 	displayString		= "";
 
@@ -367,6 +366,16 @@ bool ofAppGlutWindow::isKeyPressed(int key){
 }
 
 //------------------------------------------------------------
+int ofAppGlutWindow::getMouseX(){
+	return currentMouseX;
+}
+
+//------------------------------------------------------------
+int ofAppGlutWindow::getMouseY(){
+	return currentMouseY;
+}
+
+//------------------------------------------------------------
 void ofAppGlutWindow::display(void){
 	static ofEventArgs voidEventArgs;
 
@@ -484,6 +493,10 @@ void ofAppGlutWindow::display(void){
 void ofAppGlutWindow::mouse_cb(int button, int state, int x, int y) {
 
 	if (nFrameCount > 0){
+
+		currentMouseX = x;
+		currentMouseY = y;
+		
 		if(ofAppPtr){
 			ofAppPtr->mouseX = x;
 			ofAppPtr->mouseY = y;
@@ -491,40 +504,10 @@ void ofAppGlutWindow::mouse_cb(int button, int state, int x, int y) {
 
 		if (state == GLUT_DOWN) {
 			ofNotifyMousePressed(x, y, button);
-
 			pressedMouseButtons.insert(button);
-
-			int mod = glutGetModifiers();
-			if(mod & GLUT_ACTIVE_SHIFT){
-				pressedKeys.insert(OF_KEY_SHIFT);
-			}else{
-				pressedKeys.erase(OF_KEY_SHIFT);
-			}
-			if(mod & GLUT_ACTIVE_CTRL){
-				pressedKeys.insert(OF_KEY_CTRL);
-			}else{
-				pressedKeys.erase(OF_KEY_CTRL);
-			}
-			if(mod & GLUT_ACTIVE_ALT){
-				pressedKeys.insert(OF_KEY_ALT);
-			}else{
-				pressedKeys.erase(OF_KEY_ALT);
-			}
 		} else if (state == GLUT_UP) {
 			ofNotifyMouseReleased(x, y, button);
-		
 			pressedMouseButtons.erase(button);
-
-			int mod = glutGetModifiers();
-			if(!(mod & GLUT_ACTIVE_SHIFT)){
-				pressedKeys.erase(OF_KEY_SHIFT);
-			}
-			if(!(mod & GLUT_ACTIVE_CTRL)){
-				pressedKeys.erase(OF_KEY_CTRL);
-			}
-			if(!(mod & GLUT_ACTIVE_ALT)){
-				pressedKeys.erase(OF_KEY_ALT);
-			}
 		}
 
 		buttonInUse = button;
@@ -535,29 +518,16 @@ void ofAppGlutWindow::mouse_cb(int button, int state, int x, int y) {
 void ofAppGlutWindow::motion_cb(int x, int y) {
 
 	if (nFrameCount > 0){
+	
+		currentMouseX = x;
+		currentMouseY = y;
+	
 		if(ofAppPtr){
 			ofAppPtr->mouseX = x;
 			ofAppPtr->mouseY = y;
 		}
 
 		ofNotifyMouseDragged(x, y, buttonInUse);
-
-		int mod = glutGetModifiers();
-		if(mod & GLUT_ACTIVE_SHIFT){
-			pressedKeys.insert(OF_KEY_SHIFT);
-		}else{
-			pressedKeys.erase(OF_KEY_SHIFT);
-		}
-		if(mod & GLUT_ACTIVE_CTRL){
-			pressedKeys.insert(OF_KEY_CTRL);
-		}else{
-			pressedKeys.erase(OF_KEY_CTRL);
-		}
-		if(mod & GLUT_ACTIVE_ALT){
-			pressedKeys.insert(OF_KEY_ALT);
-		}else{
-			pressedKeys.erase(OF_KEY_ALT);
-		}
 	}
 
 }
@@ -566,24 +536,15 @@ void ofAppGlutWindow::motion_cb(int x, int y) {
 void ofAppGlutWindow::passive_motion_cb(int x, int y) {
 
 	if (nFrameCount > 0){
+		currentMouseX = x;
+		currentMouseY = y;	
+	
 		if(ofAppPtr){
 			ofAppPtr->mouseX = x;
 			ofAppPtr->mouseY = y;
 		}
 
 		ofNotifyMouseMoved(x, y);
-
-		int mod = glutGetModifiers();
-		if(!(mod & GLUT_ACTIVE_SHIFT)){
-			pressedKeys.erase(OF_KEY_SHIFT);
-		}
-		if(!(mod & GLUT_ACTIVE_CTRL)){
-			pressedKeys.erase(OF_KEY_CTRL);
-		}
-		if(!(mod & GLUT_ACTIVE_ALT)){
-			pressedKeys.erase(OF_KEY_ALT);
-		}
-
 	}
 }
 
@@ -639,21 +600,6 @@ void ofAppGlutWindow::idle_cb(void) {
 //------------------------------------------------------------
 void ofAppGlutWindow::keyboard_cb(unsigned char key, int x, int y) {
 	ofNotifyKeyPressed(key);
-
-	int mod = glutGetModifiers();
-	//if(mod & GLUT_ACTIVE_SHIFT) pressedKeys.insert(OF_KEY_SHIFT);
-	if(mod & GLUT_ACTIVE_CTRL){
-		pressedKeys.insert(OF_KEY_CTRL);
-		key ^= 96;
-	}else{
-		pressedKeys.erase(OF_KEY_CTRL);
-	}
-	if(mod & GLUT_ACTIVE_ALT){
-		pressedKeys.insert(OF_KEY_ALT);
-		key ^= 256;
-	}else{
-		pressedKeys.erase(OF_KEY_ALT);
-	}
 	pressedKeys.insert(key);
 
 	if (key == OF_KEY_ESC){				// "escape"
@@ -665,67 +611,19 @@ void ofAppGlutWindow::keyboard_cb(unsigned char key, int x, int y) {
 //------------------------------------------------------------
 void ofAppGlutWindow::keyboard_up_cb(unsigned char key, int x, int y){
 	ofNotifyKeyReleased(key);
-
-	int mod = glutGetModifiers();
-	if(!(mod & GLUT_ACTIVE_CTRL)){
-		pressedKeys.erase(OF_KEY_CTRL);
-	}else{
-		key ^= 96;
-	}
-	if(!(mod & GLUT_ACTIVE_ALT)){
-		pressedKeys.erase(OF_KEY_ALT);
-	}else{
-		key ^= 256;
-	}
-
 	pressedKeys.erase(key);
 }
 
 //------------------------------------------------------
 void ofAppGlutWindow::special_key_cb(int key, int x, int y) {
 	ofNotifyKeyPressed(key | OF_KEY_MODIFIER);
-
-	int mod = glutGetModifiers();
-
-	if(mod & GLUT_ACTIVE_CTRL){
-		pressedKeys.insert(OF_KEY_CTRL);
-	}else{
-		pressedKeys.erase(OF_KEY_CTRL);
-	}
-	if(mod & GLUT_ACTIVE_ALT){
-		pressedKeys.insert(OF_KEY_ALT);
-	}else{
-		pressedKeys.erase(OF_KEY_ALT);
-	}
-	if(mod & GLUT_ACTIVE_SHIFT){
-		pressedKeys.insert(OF_KEY_SHIFT);
-	}else{
-		pressedKeys.erase(OF_KEY_SHIFT);
-	}
 	pressedKeys.insert(key | OF_KEY_MODIFIER);
 }
 
 //------------------------------------------------------------
 void ofAppGlutWindow::special_key_up_cb(int key, int x, int y) {
-
 	ofNotifyKeyReleased(key | OF_KEY_MODIFIER);
-
-	static ofKeyEventArgs keyEventArgs;
-
-	int mod = glutGetModifiers();
-	if(!(mod & GLUT_ACTIVE_CTRL)){
-		pressedKeys.erase(OF_KEY_CTRL);
-	}
-	if(!(mod & GLUT_ACTIVE_ALT)){
-		pressedKeys.erase(OF_KEY_ALT);
-	}else{
-		key ^= 256;
-	}
-	if(!(mod & GLUT_ACTIVE_SHIFT)){
-		pressedKeys.erase(OF_KEY_SHIFT);
-	}
 	pressedKeys.erase(key | OF_KEY_MODIFIER);
-
 }
 
 //------------------------------------------------------------
