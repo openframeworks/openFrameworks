@@ -1,16 +1,51 @@
 #include "ofSoundStream.h"
 #include "RtAudio.h"
+#include <vector>
+using namespace std;
 
 //----------------------------------- static variables:
 static ofBaseApp 	* 		OFSAptr = NULL;
 RtAudio				*		audio = NULL;
 int 						nInputChannels;
 int 						nOutputChannels;
+int							sampleRate;
 ofAudioEventArgs 			audioEventArgs;
 
+static vector< ofSoundSource* > soundSources;
+static vector< ofSoundSink* > soundSinks;
 
 int receiveAudioBufferAndCallSimpleApp(void *outputBuffer, void *inputBuffer, unsigned int bufferSize,
            double streamTime, RtAudioStreamStatus status, void *data);
+
+
+/// Add the given ofSoundSource as an input source for the ofSoundStream system.
+void ofSoundStreamAddSoundSource( ofSoundSource* source )
+{
+	source->setSampleRate( sampleRate );
+	soundSources.push_back( source );
+}
+/// Add the given ofSoundSink as a sink for incoming audio data (eg from a microphone)
+void ofSoundStreamAddSoundSink( ofSoundSink* sink )
+{
+	soundSinks.push_back( sink );
+}
+
+
+/// Remove the given ofSoundSource
+void ofSoundStreamRemoveSoundSource( ofSoundSource* source )
+{
+	vector<ofSoundSource*>::iterator it = find( soundSources.begin(), soundSources.end(), source );
+	if ( it != soundSources.end() )
+		soundSources.erase( it );
+}
+/// Remove the given ofSoundSink
+void ofSoundStreamRemoveSoundSink( ofSoundSink* sink )
+{
+	vector<ofSoundSink*>::iterator it = find( soundSinks.begin(), soundSinks.end(), sink );
+	if ( it != soundSinks.end() )
+		soundSinks.erase( it );
+}
+
 
 
 //------------------------------------------------------------------------------
@@ -34,7 +69,12 @@ int receiveAudioBufferAndCallSimpleApp(void *outputBuffer, void *inputBuffer, un
 
 	if (nInputChannels > 0){
 		if(OFSAptr) OFSAptr->audioReceived(fPtrIn, bufferSize, nInputChannels);
-		#ifdef OF_USING_POCO
+		// send incoming data to all the sinks
+		for ( int i=0; i<soundSinks.size(); i++ )
+		{
+			soundSinks[i]->audioReceived( fPtrIn, bufferSize, nInputChannels );
+		}
+#ifdef OF_USING_POCO
 			audioEventArgs.buffer = fPtrIn;
 			audioEventArgs.bufferSize = bufferSize;
 			audioEventArgs.nChannels = nInputChannels;
@@ -45,8 +85,18 @@ int receiveAudioBufferAndCallSimpleApp(void *outputBuffer, void *inputBuffer, un
 
 
 	if (nOutputChannels > 0) {
+		// sum together all the inputs
+		memset( fPtrOut, 0, sizeof(float)*bufferSize*nOutputChannels );
 		if(OFSAptr) OFSAptr->audioRequested(fPtrOut, bufferSize, nOutputChannels);
-		#ifdef OF_USING_POCO
+		float working[bufferSize*nOutputChannels];
+		for ( int i=0; i<soundSources.size(); i++ )
+		{
+			soundSources[i]->audioRequested( working, bufferSize, nOutputChannels );
+			// sum
+			for ( int j=0; j<bufferSize*nOutputChannels; j++ )
+				fPtrOut[j] += working[j];
+		}
+#ifdef OF_USING_POCO
 			audioEventArgs.buffer = fPtrOut;
 			audioEventArgs.bufferSize = bufferSize;
 			audioEventArgs.nChannels = nOutputChannels;
@@ -62,13 +112,14 @@ void ofSoundStreamSetup(int nOutputs, int nInputs, ofBaseApp * OFSA){
 }
 
 //---------------------------------------------------------
-void ofSoundStreamSetup(int nOutputs, int nInputs, int sampleRate, int bufferSize, int nBuffers){
-	ofSoundStreamSetup(nOutputs, nInputs, NULL, sampleRate, bufferSize, nBuffers);
+void ofSoundStreamSetup(int nOutputs, int nInputs, int _sampleRate, int bufferSize, int nBuffers){
+	ofSoundStreamSetup(nOutputs, nInputs, NULL, _sampleRate, bufferSize, nBuffers);
 }
 
 //---------------------------------------------------------
-void ofSoundStreamSetup(int nOutputs, int nInputs, ofBaseApp * OFSA, int sampleRate, int bufferSize, int nBuffers){
+void ofSoundStreamSetup(int nOutputs, int nInputs, ofBaseApp * OFSA, int _sampleRate, int bufferSize, int nBuffers){
 
+	sampleRate			=  _sampleRate;
 	nInputChannels 		=  nInputs;
 	nOutputChannels 	=  nOutputs;
 	OFSAptr 			=  OFSA;
@@ -105,7 +156,6 @@ void ofSoundStreamSetup(int nOutputs, int nInputs, ofBaseApp * OFSA, int sampleR
 	options.priority = 1;
 
 	try {
-
 		audio ->openStream( outputParameters, inputParameters, RTAUDIO_FLOAT32,
 							sampleRate, &bufferFrames, &receiveAudioBufferAndCallSimpleApp, &options);
 		audio->startStream();
