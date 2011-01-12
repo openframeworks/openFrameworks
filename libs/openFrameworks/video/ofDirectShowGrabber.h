@@ -20,7 +20,7 @@ class ofDirectShowGrabber : public ofBaseVideoGrabber{
 
 		void					listDevices();
 		bool					initGrabber(int w, int h);
-		void					grabFrame();
+		void					update();
 		bool					isFrameNew();
 
 		unsigned char			* getPixels();

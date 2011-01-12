@@ -10,6 +10,7 @@
 #include "ofSystemUtils.h"
 #include "ofFileUtils.h"
 #include "ofVectorMath.h"
+#include "ofThread.h"
 
 //--------------------------
 // communication
