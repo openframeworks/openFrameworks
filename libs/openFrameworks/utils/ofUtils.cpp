@@ -17,6 +17,7 @@
 
 #ifdef TARGET_OSX
 	#include <mach-o/dyld.h>
+	#include <sys/param.h> // for MAXPATHLEN
 #endif 
 
 
@@ -148,7 +149,7 @@ void ofSetDataPathRoot(string newRoot){
 	
 	#ifdef TARGET_OSX
 		#ifndef TARGET_OF_IPHONE 
-			char path[1024];
+			char path[MAXPATHLEN];
 			uint32_t size = sizeof(path);
 			if (_NSGetExecutablePath(path, &size) == 0){
 				//printf("executable path is %s\n", path);
