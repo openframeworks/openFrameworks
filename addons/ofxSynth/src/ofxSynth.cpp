@@ -166,17 +166,24 @@ void ofxSynthFilter::processSample(float *inputSample)
 		*inputSample = *inputSample-b4;
 	}
 }
+
 /* ----------- */
-void ofxSynthDelayline::audioRequested(float * input, float * output, int bufferSize){
-	for (int i = 0; i < bufferSize; i++){
-		if ( phase >=size ) phase = 0;
-		memory[phase]=(memory[phase]*feedback)+(input[i]*feedback)*0.5;
+void ofxSynthDelayline::process( float* input, float *output, int numFrames, int numInChannels, int numOutChannels )
+{
+	for (int i = 0; i < numFrames; i++){
+		if (phase>=size) {
+			phase=0;
+		}
+		memory[phase]=(memory[phase]*feedback)+(input[i*numInChannels]*feedback)*0.5;
 		phase+=1;
-		output[i]=memory[phase+1];
+		for (int j=0; j<numOutChannels; j++) {
+			// puts the sound in memory on to all the output channels
+			output[i*numOutChannels+j]=memory[phase+1];
+		}
 	}
 }
 void ofxSynthDelayline::setSize(float _size){
-	size = (int)_size*44100;
+	size = (int)_size*(int)sampleRate;
 }
 void ofxSynthDelayline::setFeedback(float _feedback){
 	feedback = _feedback;
