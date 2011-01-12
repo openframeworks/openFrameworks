@@ -1,95 +1,76 @@
 #include "ofURLFileLoader.h"
+#include "ofAppRunner.h"
+
+#include "Poco/Net/HTTPClientSession.h"
+#include "Poco/Net/HTTPRequest.h"
+#include "Poco/Net/HTTPResponse.h"
+#include "Poco/StreamCopier.h"
+#include "Poco/Path.h"
+#include "Poco/URI.h"
+#include "Poco/Exception.h"
+#include "Poco/URIStreamOpener.h"
+#include "Poco/Net/HTTPStreamFactory.h"
+#include <queue>
+
+using Poco::Net::HTTPClientSession;
+using Poco::Net::HTTPRequest;
+using Poco::Net::HTTPResponse;
+using Poco::Net::HTTPMessage;
+using Poco::Net::HTTPStreamFactory;
+
+using Poco::StreamCopier;
+using Poco::Path;
+using Poco::URI;
+using Poco::URIStreamOpener;
+using Poco::Exception;
+
 #include "ofConstants.h"
 
-//TODO: is this needed for linux?
 #ifdef TARGET_LINUX
 	#include <auto_ptr.h>
 #endif
 
-
 static bool factoryLoaded = false;
-
-
+ofEvent<ofHttpRequest> ofURLResponseEvent;
 
 ofURLFileLoader::ofURLFileLoader() {
-	
-	args.buffer = NULL;
-	status		= OF_URL_FILE_LOADER_RESTING;
-	
-}
-
-void ofURLFileLoader::getText(string url_, bool bAsync) {
-    url = url_;
-	requestType = OF_URL_FILE_LOADER_TEXT_REQUEST;
-	status = OF_URL_FILE_LOADER_LOADING;
-	start();
-}
-
-//void ofURLFileLoader::getStreamUnthreaded(string url_, bool bAsync) {
-//    
-//	url	= url_;
-//
-//	if(!factoryLoaded){
-//		HTTPStreamFactory::registerFactory();
-//		factoryLoaded = true;
-//	}
-//	
-//	string str;
-//	
-//	try {
-//		//specify out url and open stream
-//		URI uri(url_);      
-//		std::auto_ptr<std::istream> pStr(URIStreamOpener::defaultOpener().open(uri));
-//		//copy to our string
-//		StreamCopier::copyToString(*pStr.get(), str);
-//	} catch (Exception& exc) {
-//        cerr << exc.displayText() << std::endl;
-//
-//    }	
-//	
-//	//figure out how many bytes the image is and allocate
-//	int bytesToRead = str.size();
-//	unsigned char buff[bytesToRead];
-//
-//	memset(buff, 0, bytesToRead);
-//
-//	for(int i = 0; i < bytesToRead; i++){
-//		buff[i] = str[i];
-//	}
-//	
-//	args.buff = buff;
-//	args.bytesToRead = bytesToRead;
-//	
-//	notifyUnthreadedStreamReceived(args);
-//	
-//}
-
-void ofURLFileLoader::getBytes(string url_, bool bAsync) {
-	
-	if (args.buffer != NULL){
-		delete [] args.buffer;
-	}
-	
-	args.buffer			= NULL;		// free this?
-	args.numBytes		= 0;
-    url					= url_;
-	requestType			= OF_URL_FILE_LOADER_BYTES_REQUEST;
-	status = OF_URL_FILE_LOADER_LOADING;
-	
 	if(!factoryLoaded){
 		HTTPStreamFactory::registerFactory();
 		factoryLoaded = true;
 	}
-	
-    start();
 }
+
+bool ofURLFileLoader::get(string url, ofBuffer & buffer, bool bAsync, string name) {
+	if(name=="") name=url;
+    ofHttpRequest request(url,name,buffer);
+    if(bAsync){
+    	lock();
+    	requests.push(request);
+    	unlock();
+    	start();
+    	return true;
+    }else{
+    	return handleRequest(request);
+    }
+}
+
+/*void ofURLFileLoader::remove(ofHttpRequest & httpRequest){
+	lock();
+	for(int i=0;i<requests.size();i++){
+		if(&requests[i]==&httpRequest){
+			requests.erase(requests.begin()+i);
+			return;
+		}
+	}
+	unlock();
+}*/
 
 
 
 void ofURLFileLoader::start() {
      if (isThreadRunning() == false){
-        bResponseReady = false;
-        startThread(false, false);   // blocking, verbose
+    	 ofAddListener(ofEvents.update,this,&ofURLFileLoader::update);
+         startThread(false, false);   // blocking, verbose
     }
 }
 
@@ -98,102 +79,69 @@ void ofURLFileLoader::stop() {
 }
 
 void ofURLFileLoader::threadedFunction() {
-
-    switch (requestType) {
-		
-		case OF_URL_FILE_LOADER_TEXT_REQUEST: 
-			handleTextRequest(url);
-			//notifyTextReceived(response);
-			break;
-		
-		case OF_URL_FILE_LOADER_BYTES_REQUEST: 
-			handleStreamRequest(url); 
-			//notifyThreadedStreamReceived(args);
-			break;
+	while( isThreadRunning() == true ){
+		lock();
+		if(requests.size()>0){
+			ofHttpRequest request(requests.front());
+			unlock();
+			if(handleRequest(request) || request.status!=-1){
+				lock();
+				attendedRequests.push(request);
+				requests.pop();
+				unlock();
+			}
+		}else{
+			unlock();
+			stop();
+		}
+		ofSleepMillis(10);
 	}
-	
-    stop();
-    response.clear();
-    bResponseReady = true;
-
 }
 
-void ofURLFileLoader::handleTextRequest(string url_) {
-	
+bool ofURLFileLoader::handleRequest(ofHttpRequest & request) {
 	try {
-		URI uri(url_);
-        string path(uri.getPathAndQuery());
-        if (path.empty()) path = "/";
+		URI uri(request.url);
+		std::string path(uri.getPathAndQuery());
+		if (path.empty()) path = "/";
 
-        HTTPClientSession session(uri.getHost(), uri.getPort());
-        HTTPRequest req(HTTPRequest::HTTP_GET, path, HTTPMessage::HTTP_1_1);
-        session.sendRequest(req);
-
-        HTTPResponse res; 
-        std::istream& rs = session.receiveResponse(res);
-        std::cout << res.getStatus() << " " << res.getReason() << std::endl;
-        
-		StreamCopier::copyToString(rs, response);
-		
-		status = OF_URL_FILE_LOADER_LOADING_SUCCEEDED;		// ? is this right?
-		
+		HTTPClientSession session(uri.getHost(), uri.getPort());
+		HTTPRequest req(HTTPRequest::HTTP_GET, path, HTTPMessage::HTTP_1_1);
+		session.setTimeout(Poco::Timespan(20,0));
+		session.sendRequest(req);
+		HTTPResponse res;
+		istream& rs = session.receiveResponse(res);
+		request.status = res.getStatus();
+		request.error = res.getReason();
+		if(request.response.set(rs)){
+			return true;
+		}else{
+			return false;
+		}
 	} catch (Exception& exc) {
-		
-		
-		status = OF_URL_FILE_LOADER_LOADING_FAILED;
-        cerr << exc.displayText() << std::endl;
-    }		
-	
-}
-
-void ofURLFileLoader::handleStreamRequest(string url_) {
-	
-	// TODO this memory handling seems dodgy?
-	
-	string str;
-	
-	try {
-		//specify out url and open stream
-		URI uri(url_);      
-		std::auto_ptr<std::istream> pStr(URIStreamOpener::defaultOpener().open(uri));
-		//copy to our string
-		StreamCopier::copyToString(*pStr.get(), str);
-		
-		status = OF_URL_FILE_LOADER_LOADING_SUCCEEDED;
-		
-	} catch (Exception& exc) {
-		
-		status = OF_URL_FILE_LOADER_LOADING_FAILED;
-        cerr << exc.displayText() << std::endl;
-
+        ofLog(OF_LOG_ERROR, "ofURLFileLoader " + exc.displayText());
+        request.error = exc.displayText();
+        return false;
     }	
 	
-	//figure out how many bytes the image is and allocate
-	int bytesToRead = str.size();
-	unsigned char * buff = new unsigned char [bytesToRead];
-
-	memset(buff, 0, bytesToRead);
-	
-	for(int i = 0; i < bytesToRead; i++){
-		buff[i] = str[i];
-	}
-	
-	args.buffer	= buff;
-	args.numBytes = bytesToRead;
 }	
 
+void ofURLFileLoader::update(ofEventArgs & args){
+	if(attendedRequests.size()){
+		ofNotifyEvent(ofURLResponseEvent,attendedRequests.front());
+		attendedRequests.pop();
+		if(!isThreadRunning() && !attendedRequests.size())
+			ofRemoveListener(ofEvents.update,this,&ofURLFileLoader::update);
+	}
 
-//
-//void ofURLFileLoader::notifyTextReceived (string response) {
-//	textReady.notify(this, response);
-//}
-//void ofURLFileLoader::notifyUnthreadedStreamReceived (StreamEventArgs args) {
-//	unthreadedStreamReady.notify(this, args);
-//}
-//
-//void ofURLFileLoader::notifyThreadedStreamReceived (StreamEventArgs args) {
-//	threadedStreamReady.notify(this, args);
-//}
-//       
+}
 
+static ofURLFileLoader fileLoader;
 
+bool ofLoadURL(string url, ofBuffer & buffer, bool bAsync, string name){
+	return fileLoader.get(url,buffer,bAsync,name);
+}
+
+/*
+void ofRemoveRequest(ofHttpRequest & request){
+	fileLoader.remove(request);
+}*/
