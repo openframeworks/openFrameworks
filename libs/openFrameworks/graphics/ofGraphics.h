@@ -1,5 +1,4 @@
-#ifndef OF_GEOM
-#define OF_GEOM
+#pragma once
 
 #include "ofConstants.h"
 #include "ofTypes.h"
@@ -156,5 +155,3 @@ void ofVertex(float x, float y);
 void ofVertex(ofPoint & p);
 void ofEndShape(bool bClose = false);
 void ofNextContour(bool bClose = false);  // for multi contour shapes!
-
-#endif
