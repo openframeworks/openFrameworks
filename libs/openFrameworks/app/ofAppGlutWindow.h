@@ -58,6 +58,12 @@ public:
 	void		enableSetupScreen();
 	void		disableSetupScreen();
 
+	bool		isMousePressed(int button);
+	bool		isKeyPressed(int key);
+	
+	int			getMouseX();
+	int			getMouseY();
+
 	static void display(void);
 	static void mouse_cb(int button, int state, int x, int y);
 	static void motion_cb(int x, int y);
@@ -68,7 +74,6 @@ public:
 	static void special_key_cb(int key, int x, int y) ;
 	static void special_key_up_cb(int key, int x, int y) ;
 	static void resize_cb(int w, int h);
-
 
 	string displayString;
 	 

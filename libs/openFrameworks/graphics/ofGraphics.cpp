@@ -310,8 +310,14 @@ void ofSetLineWidth(float lineWidth){
 	currentStyle.lineWidth = lineWidth;
 }
 
+//----------------------------------------
 void ofSetCurveResolution(int res){
 	curveResolution = res;
+}
+
+//----------------------------------------
+void ofSetSphereResolution(int res) {
+	currentStyle.sphereResolution = res;
 }
 
 //----------------------------------------------------------
@@ -626,6 +632,71 @@ void ofBezier(float x0, float y0, float x1, float y1, float x2, float y2, float 
     ofEndShape();
 }
 
+//----------------------------------------
+void ofSphere(float x, float y, float z, float radius) {
+	ofSphere(ofVec3f(x, y, z), radius);
+}
+
+//----------------------------------------
+void ofSphere(float x, float y, float radius) {
+	ofSphere(x, y, 0, radius);
+}
+
+//----------------------------------------
+void ofSphere(const ofVec3f& position, float radius) {
+	ofPushMatrix();
+	ofTranslate(position);
+	ofSphere(radius);
+	ofPopMatrix();
+}
+
+//----------------------------------------
+inline void ofSphere(float radius) {
+	// this needs to be swapped out with non-glut code
+	// for good references see cinder's implementation from paul bourke:
+	// https://github.com/cinder/Cinder/blob/master/src/cinder/gl/gl.cpp
+	// void drawSphere( const Vec3f &center, float radius, int segments )
+	// and processing's implementation of icospheres:
+	// https://code.google.com/p/processing/source/browse/trunk/processing/core/src/processing/core/PGraphics.java?r=7543
+	// public void sphere(float r)
+	ofPushMatrix();
+	ofRotateX(90);
+	if(ofGetStyle().bFill) {
+		glutSolidSphere(radius, 2 * currentStyle.sphereResolution, currentStyle.sphereResolution);
+	} else {
+		glutWireSphere(radius, 2 * currentStyle.sphereResolution, currentStyle.sphereResolution);
+	}
+	ofPopMatrix();
+}
+
+//----------------------------------------
+void ofBox(float x, float y, float z, float size) {
+	ofBox(ofVec3f(x, y, z), size);
+}
+
+//----------------------------------------
+void ofBox(float x, float y, float size) {
+	ofBox(x, y, 0, size);
+}
+
+//----------------------------------------
+void ofBox(const ofVec3f& position, float size) {
+	ofPushMatrix();
+	ofTranslate(position);
+	ofBox(size);
+	ofPopMatrix();
+}
+
+//----------------------------------------
+inline void ofBox(float size) {
+	// this needs to be swapped out with non-glut code
+	if(ofGetStyle().bFill) {
+		glutSolidCube(size);
+	} else {
+		glutWireCube(size);
+	}
+}
+
 //----------------------------------------------------------
 void ofSetColor(const ofColor & color){
 	ofSetColor(color.r,color.g,color.b,color.a);
@@ -787,6 +858,8 @@ void ofSetStyle(ofStyle style){
 
 	//circle resolution - don't worry it only recalculates the display list if the res has changed
 	ofSetCircleResolution(style.circleResolution);
+	
+	ofSetSphereResolution(style.sphereResolution);
 
 	//line width - finally!
 	ofSetLineWidth(style.lineWidth);
