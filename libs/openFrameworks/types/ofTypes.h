@@ -30,6 +30,7 @@ class ofStyle{
             blendDst            = GL_ONE_MINUS_SRC_ALPHA;
 			smoothing			= false;
 			circleResolution	= 20;
+			sphereResolution = 20;
 			lineWidth			= 1.0;
 			polyMode			= OF_POLY_WINDING_ODD;
 			rectMode			= OF_RECTMODE_CORNER;
@@ -50,6 +51,7 @@ class ofStyle{
     
 		bool smoothing;
 		int circleResolution;
+		int sphereResolution;
 		float lineWidth;
 };
 
@@ -58,61 +60,29 @@ class ofStyle{
 //----------------------------------------------------------
 
 class ofBuffer{
-
-	long 	size;
-	char * 	buffer;
-	long 	nextLinePos;
+	vector<char> 	buffer;
+	long 			nextLinePos;
 public:
 
-	ofBuffer(){
-		size 	= 0;
-		buffer 	= NULL;
-		nextLinePos = 0;
-	}
+	ofBuffer();
+	ofBuffer(int size, char * buffer);
+	ofBuffer(istream & stream);
 
-	ofBuffer(int _size, char * _buffer){
-		size 	= _size;
-		buffer 	= _buffer;
-		nextLinePos = 0;
-	}
+	~ofBuffer();
 
-	ofBuffer(const ofBuffer & mom){
-		size = mom.size;
-		nextLinePos = mom.nextLinePos;
-		memcpy(buffer,mom.buffer,size);
-	}
+	bool set(istream & stream);
+	void set(int _size, char * _buffer);
 
-	~ofBuffer(){
-		if(buffer) delete[] buffer;
-	}
+	void clear();
 
-	void allocate(long _size){
-		if(buffer) delete[] buffer;
-		buffer = new char[_size];
-		size = _size;
-	}
+	void allocate(long _size);
 
-	char * getBuffer(){
-		return buffer;
-	}
+	char * getBuffer();
 
-	long getSize(){
-		return size;
-	}
+	long getSize() const;
 
-	string getNextLine(){
-		if( size <= 0 ) return "";
-		long currentLinePos = nextLinePos;
-		while(nextLinePos<size && buffer[nextLinePos]!='\n') nextLinePos++;
-		string line(buffer + currentLinePos,nextLinePos-currentLinePos);
-		if(nextLinePos<size-1) nextLinePos++;
-		return line;
-	}
-
-	string getFirstLine(){
-		nextLinePos = 0;
-		return getNextLine();
-	}
+	string getNextLine();
+	string getFirstLine();
 };
 
 

@@ -339,6 +339,9 @@ enum ofImageType{
 	#define OF_KEY_MODIFIER 	0x0100
 	#define OF_KEY_RETURN		13
 	#define OF_KEY_ESC			27
+	#define OF_KEY_CTRL			0x0200
+	#define OF_KEY_ALT			0x0300
+	#define OF_KEY_SHIFT		0x0400
 
 	// http://www.openframeworks.cc/forum/viewtopic.php?t=494
 	// some issues with keys across platforms:
