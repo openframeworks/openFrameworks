@@ -267,4 +267,11 @@ void ofSetVerticalSync(bool bSync){
 
 }
 
-
+//--------------------------------------
+bool ofMousePressed(int button){ //by default any button
+	return window->isMousePressed(button);
+}
+//--------------------------------------
+bool ofKeyPressed(int key){
+	return window->isKeyPressed(key);
+}

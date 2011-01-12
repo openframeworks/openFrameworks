@@ -41,6 +41,9 @@ void		ofToggleFullscreen();
 //-------------------------- sync
 void 		ofSetVerticalSync(bool bSync);
 
+//-------------------------- mouse/key query
+bool ofMousePressed(int button=-1); //by default any button
+bool ofKeyPressed(int key=-1);
 
 
 #endif
