@@ -86,13 +86,16 @@ public:
 	}
 
 	void clear(){
-		if(pixels) delete[] pixels;
-
-		bytesPerPixel = 0;
-		bitsPerPixel = 0;
-		bAllocated = false;
-		glDataType = GL_LUMINANCE;
-		imageType = OF_IMAGE_UNDEFINED;
+		if(pixels){
+			delete[] pixels;
+		}
+		width			= 0;
+		height			= 0;
+		bytesPerPixel	= 0;
+		bitsPerPixel	= 0;
+		bAllocated		= false;
+		glDataType		= GL_LUMINANCE;
+		imageType		= OF_IMAGE_UNDEFINED;
 	}
 
 	unsigned char * getPixels(){
