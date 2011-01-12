@@ -72,12 +72,23 @@ bool ofToBool(const string& boolString);
 char ofToChar(const string& charString);
 
 template <class T> string ofToBinary(const T& value) {
-	const int numBits = 8 * sizeof(value);
-	bitset<numBits> bitBuffer(value);
-	return bitBuffer.to_string();
+	ostringstream out;
+	const char* data = (const char*) &value;
+	// the number of bytes is determined by the datatype
+	int numBytes = sizeof(T);
+	// the bytes are stored backwards (least significant first)
+	for(int i = numBytes - 1; i >= 0; i--) {
+		bitset<8> cur(data[i]);
+		out << cur;
+	}
+	return out.str();
 }
 template <> string ofToBinary(const string& value);
 string ofToBinary(const char* value);
+
+int ofBinaryToInt(const string& value);
+char ofBinaryToChar(const string& value);
+float ofBinaryToFloat(const string& value);
 
 string 	ofGetVersionInfo();
 

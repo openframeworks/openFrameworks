@@ -298,6 +298,33 @@ string ofToBinary(const char* value) {
 	return ofToBinary((string) value);
 }
 
+//----------------------------------------
+int ofBinaryToInt(const string& value) {
+	const int intSize = sizeof(int) * 8;
+	bitset<intSize> binaryString(value);
+	return (int) binaryString.to_ulong();
+}
+
+//----------------------------------------
+char ofBinaryToChar(const string& value) {
+	const int charSize = sizeof(char) * 8;
+	bitset<charSize> binaryString(value);
+	return (char) binaryString.to_ulong();
+}
+
+//----------------------------------------
+float ofBinaryToFloat(const string& value) {
+	const int floatSize = sizeof(float) * 8;
+	bitset<floatSize> binaryString(value);
+	unsigned long result = binaryString.to_ulong();
+	// this line means:
+	// 1 take the address of the unsigned long
+	// 2 pretend it is the address of a float
+	// 3 then use it as a float
+	// this is a bit-for-bit 'typecast'
+	return *((float*) &result);
+}
+
 //--------------------------------------------------
 vector<string> ofSplitString(const string& str, const string& delimiter = " "){
     vector<string> elements;
