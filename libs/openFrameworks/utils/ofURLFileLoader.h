@@ -1,60 +1,63 @@
 #pragma once
 
 #include "ofThread.h"
+#include "ofEvents.h"
+#include <queue>
 
 
-enum requestType {
-	OF_URL_FILE_LOADER_TEXT_REQUEST,
-	OF_URL_FILE_LOADER_BYTES_REQUEST
+bool ofLoadURL(string url, ofBuffer & buffer, bool bAsync = true, string name="");
+
+
+class ofHttpRequest{
+public:
+	ofHttpRequest(string url,string name, ofBuffer & buffer)
+	:url(url)
+	,name(name)
+	,response(buffer)
+	,status(-1){}
+
+	string				url;
+	string				name;
+	ofBuffer		&   response;
+	string				error;
+	int					status;
 };
 
-enum resuestStatus {
-	OF_URL_FILE_LOADER_RESTING,
-	OF_URL_FILE_LOADER_LOADING,
-	OF_URL_FILE_LOADER_LOADING_FAILED,
-	OF_URL_FILE_LOADER_LOADING_SUCCEEDED
-};
+
+extern ofEvent<ofHttpRequest> ofURLResponseEvent;
+
+template<class T>
+void ofRegisterURLNotification(T * obj){
+	ofAddListener(ofURLResponseEvent,obj,&T::urlResponse);
+}
+
+template<class T>
+void ofUnregisterURLNotification(T * obj){
+	ofRemoveListener(ofURLResponseEvent,obj,&T::urlResponse);
+}
+
 
 class ofURLFileLoader : public ofThread  {
 
     public:
 
         ofURLFileLoader();
+		bool get(string url, ofBuffer & buffer, bool bAsync = true, string name="");
 
-        void getText(string url_, bool bAsync = true);
-		void getBytes(string url_, bool bAsync = true);
-		
-		
-		void resetStatus(){
-			status = OF_URL_FILE_LOADER_RESTING;
-		}
-	
+    protected:
+
 		// threading -----------------------------------------------
 		void threadedFunction();
         void start();
         void stop();
-	
-		int	getStatus(){
-			return status;
-		}
-		
-		ofBuffer & getData(){
-			return args;
-		}
+        void update(ofEventArgs & args);  // notify in update so the notification is thread safe
 
     private:
-		
-		// perform the requests on the thread
-		void handleTextRequest(string url_);
-		void handleStreamRequest(string url_);
-        
-		string			url;
-        string			response;        
-		bool			bResponseReady;		
-		int				requestType;		
-		ofBuffer		args;
-		int				status;
-	
 
+		// perform the requests on the thread
+		bool handleRequest(ofHttpRequest & request);
+
+		queue<ofHttpRequest> requests;
+		queue<ofHttpRequest> attendedRequests;
 
 };
