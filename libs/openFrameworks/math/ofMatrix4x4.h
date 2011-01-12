@@ -29,6 +29,11 @@ class ofMatrix4x4 {
 public:
 	float _mat[4][4];
 
+	
+	ofVec4f & getRow(int i) {
+//		return (ofVec4f)_mat
+	}
+
 	//---------------------------------------------
 	// constructors
 	ofMatrix4x4() {
@@ -608,7 +613,7 @@ inline ofVec3f ofMatrix4x4::transform3x3(const ofMatrix4x4& m, const ofVec3f& v)
 
 inline void ofMatrix4x4::preMultTranslate( const ofVec3f& v ) {
 	for (unsigned i = 0; i < 3; ++i) {
-		float tmp = v.v[i];
+		float tmp = v.getPtr()[i];
 		if (tmp == 0)
 			continue;
 		_mat[3][0] += tmp * _mat[i][0];
@@ -620,7 +625,7 @@ inline void ofMatrix4x4::preMultTranslate( const ofVec3f& v ) {
 
 inline void ofMatrix4x4::postMultTranslate( const ofVec3f& v ) {
 	for (unsigned i = 0; i < 3; ++i) {
-		float tmp = v.v[i];
+		float tmp = v.getPtr()[i];
 		if (tmp == 0)
 			continue;
 		_mat[0][i] += tmp * _mat[0][3];
@@ -653,33 +658,33 @@ inline void ofMatrix4x4::postMultTranslate( float x, float y, float z) {
 }
 
 inline void ofMatrix4x4::preMultScale( const ofVec3f& v ) {
-	_mat[0][0] *= v.v[0];
-	_mat[0][1] *= v.v[0];
-	_mat[0][2] *= v.v[0];
-	_mat[0][3] *= v.v[0];
-	_mat[1][0] *= v.v[1];
-	_mat[1][1] *= v.v[1];
-	_mat[1][2] *= v.v[1];
-	_mat[1][3] *= v.v[1];
-	_mat[2][0] *= v.v[2];
-	_mat[2][1] *= v.v[2];
-	_mat[2][2] *= v.v[2];
-	_mat[2][3] *= v.v[2];
+	_mat[0][0] *= v.getPtr()[0];
+	_mat[0][1] *= v.getPtr()[0];
+	_mat[0][2] *= v.getPtr()[0];
+	_mat[0][3] *= v.getPtr()[0];
+	_mat[1][0] *= v.getPtr()[1];
+	_mat[1][1] *= v.getPtr()[1];
+	_mat[1][2] *= v.getPtr()[1];
+	_mat[1][3] *= v.getPtr()[1];
+	_mat[2][0] *= v.getPtr()[2];
+	_mat[2][1] *= v.getPtr()[2];
+	_mat[2][2] *= v.getPtr()[2];
+	_mat[2][3] *= v.getPtr()[2];
 }
 
 inline void ofMatrix4x4::postMultScale( const ofVec3f& v ) {
-	_mat[0][0] *= v.v[0];
-	_mat[1][0] *= v.v[0];
-	_mat[2][0] *= v.v[0];
-	_mat[3][0] *= v.v[0];
-	_mat[0][1] *= v.v[1];
-	_mat[1][1] *= v.v[1];
-	_mat[2][1] *= v.v[1];
-	_mat[3][1] *= v.v[1];
-	_mat[0][2] *= v.v[2];
-	_mat[1][2] *= v.v[2];
-	_mat[2][2] *= v.v[2];
-	_mat[3][2] *= v.v[2];
+	_mat[0][0] *= v.getPtr()[0];
+	_mat[1][0] *= v.getPtr()[0];
+	_mat[2][0] *= v.getPtr()[0];
+	_mat[3][0] *= v.getPtr()[0];
+	_mat[0][1] *= v.getPtr()[1];
+	_mat[1][1] *= v.getPtr()[1];
+	_mat[2][1] *= v.getPtr()[1];
+	_mat[3][1] *= v.getPtr()[1];
+	_mat[0][2] *= v.getPtr()[2];
+	_mat[1][2] *= v.getPtr()[2];
+	_mat[2][2] *= v.getPtr()[2];
+	_mat[3][2] *= v.getPtr()[2];
 }
 
 inline void ofMatrix4x4::rotate(const ofQuaternion& q){

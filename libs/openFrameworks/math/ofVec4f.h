@@ -4,12 +4,24 @@
 #include "ofTypes.h"
 
 
-class ofVec4f : public ofPoint {
+class ofVec4f {
 
 
   public:
 
-    float w;
+	float x,y,z,w;
+	
+	float * getPtr() {
+		return (float*)&x;
+	}
+	const float * getPtr() const {
+		return (const float *)&x;
+	}
+	
+	
+	float& operator[]( int n ){
+		return getPtr()[n];
+	}
 
 
     ofVec4f( float _x=0.0f,
@@ -22,8 +34,6 @@ class ofVec4f : public ofPoint {
     //
     void set( float _x, float _y, float _z, float _w );
     void set( const ofVec4f& vec );
-    float &operator[]( const int& i );
-
 
 
     // Check similarity/equality.
@@ -183,17 +193,6 @@ inline void ofVec4f::set( const ofVec4f& vec ) {
 	z = vec.z;
 	w = vec.w;
 }
-
-inline float& ofVec4f::operator[]( const int& i ) {
-	switch(i) {
-		case 0:  return x;
-		case 1:  return y;
-		case 2:  return z;
-		case 3:  return w;
-		default: return x;
-	}
-}
-
 
 
 // Check similarity/equality.
