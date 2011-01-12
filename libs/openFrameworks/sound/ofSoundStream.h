@@ -5,10 +5,10 @@
 #include "ofBaseApp.h"
 #include "ofEvents.h"
 #include "ofMath.h"
-#include "ofSoundUnit.h"
 
-class ofSoundSink;
+// defined in ofSoundUnit.h
 class ofSoundSource;
+class ofSoundSink;
 
 void ofSoundStreamSetup(int nOutputChannels, int nInputChannels, ofBaseApp * OFSA = NULL);
 void ofSoundStreamSetup(int nOutputChannels, int nInputChannels, int sampleRate, int bufferSize, int nBuffers);
@@ -22,34 +22,16 @@ void ofSoundStreamRemoveSoundSource( ofSoundSource* source );
 void ofSoundStreamAddSoundSink( ofSoundSink* sink );
 /// Remove the given ofSoundSink
 void ofSoundStreamRemoveSoundSink( ofSoundSink* sink );
-
+/// Get a list off all sound sources
+vector<ofSoundSource*> ofSoundStreamGetAllSoundSources();
+/// Return the current tick count
+long unsigned long ofSoundStreamGetCurrentTick();
 
 void ofSoundStreamStop();
 void ofSoundStreamStart();
 void ofSoundStreamClose();
 void ofSoundStreamListDevices();
 
-
-
-/*
-class ofSoundSink
-{
-public:
-	virtual ~ofSoundSink() { ofSoundStreamRemoveSoundSink( this ); }
-	/// receive audio when available
-	virtual void audioReceived( float* inputBuffer, int bufferSize, int nInputChannels ) = 0;
-};
-
-class ofSoundSource
-{
-public:
-	virtual ~ofSoundSource() { ofSoundStreamRemoveSoundSource( this ); }
-	/// set the sample rate to the given
-	virtual void setSampleRate( int rate ) {};
-	/// generate audio on request
-	virtual void audioRequested( float* outputBuffer, int bufferSize, int nOutputChannels ) = 0;
-};
-*/
 
 
 #endif
