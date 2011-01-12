@@ -152,7 +152,7 @@ unsigned char * ofQuickTimePlayer::getPixels(){
 }
 
 //---------------------------------------------------------------------------
-void ofQuickTimePlayer::idleMovie(){
+void ofQuickTimePlayer::update(){
 
 	if (bLoaded == true){
 
@@ -191,6 +191,10 @@ void ofQuickTimePlayer::idleMovie(){
 //---------------------------------------------------------------------------
 bool ofQuickTimePlayer::isFrameNew(){
 	return bIsFrameNew;
+}
+//---------------------------------------------------------------------------
+void ofQuickTimePlayer::close(){
+	closeMovie();
 }
 
 //---------------------------------------------------------------------------

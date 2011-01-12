@@ -119,7 +119,7 @@ bool  ofVideoGrabber::isFrameNew(){
 //--------------------------------------------------------------------
 void ofVideoGrabber::update(){
 	if(	grabber != NULL ){
-		grabber->grabFrame();
+		grabber->update();
 		if( bUseTexture && grabber->isFrameNew() ){
 			//note we should look at ways to do other pixel formats. 
 			tex.loadData(grabber->getPixels(), tex.getWidth(), tex.getHeight(), GL_RGB);
