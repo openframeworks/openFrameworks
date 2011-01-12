@@ -2,6 +2,7 @@
 
 #include "ofConstants.h"
 #include "ofTypes.h"
+#include "ofVectorMath.h"
 
 #define  	CIRC_RESOLUTION		    22				// 22 pts for a circle...
 
@@ -60,6 +61,7 @@ int 	ofGetRectMode();				// default is OF_RECTMODE_CORNER
 
 void ofSetCircleResolution(int res);  		// if there 22 is a problem, you can change it here
 void ofSetCurveResolution(int res);
+void ofSetSphereResolution(int res);
 
 // geometry 
 void ofTriangle(float x1,float y1,float x2,float y2,float x3, float y3);
@@ -86,6 +88,15 @@ void ofRect(float x,float y,float z,float w,float h);
 void ofCurve(float x0, float y0, float x1, float y1, float x2, float y2, float x3, float y3);
 void ofBezier(float x0, float y0, float x1, float y1, float x2, float y2, float x3, float y3);
 
+void ofSphere(float x, float y, float z, float radius);
+void ofSphere(float x, float y, float radius);
+void ofSphere(const ofVec3f& position, float radius);
+void ofSphere(float radius);
+
+void ofCube(float x, float y, float z, float radius);
+void ofCube(float x, float y, float radius);
+void ofCube(const ofVec3f& position, float radius);
+void ofCube(float radius);
 
 // drawing options
 void ofNoFill();
