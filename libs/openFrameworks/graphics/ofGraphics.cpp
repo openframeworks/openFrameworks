@@ -682,19 +682,89 @@ void ofSetHexColor(int hexColor){
 	ofSetColor(r,g,b);
 }
 
+
+//----------------------------------------------------------
+void ofEnableBlendMode(int blendMode){
+    switch (blendMode){
+            
+        case OF_BLENDMODE_ALPHA:{
+            glEnable(GL_BLEND);
+            glBlendEquation(GL_FUNC_ADD);
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+            currentStyle.blending = 1;
+            currentStyle.blendSrc = GL_SRC_ALPHA;
+            currentStyle.blendDst = GL_ONE_MINUS_SRC_ALPHA;
+            currentStyle.blendEquation = GL_FUNC_ADD;
+            break;
+        }
+      
+        case OF_BLENDMODE_ADD:{
+            glEnable(GL_BLEND);
+            glBlendEquation(GL_FUNC_ADD);
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+            currentStyle.blending = 1;
+            currentStyle.blendSrc = GL_SRC_ALPHA;
+            currentStyle.blendDst = GL_ONE;
+            currentStyle.blendEquation = GL_FUNC_ADD;
+            break;
+        }
+                   
+        case OF_BLENDMODE_MULTIPLY:{
+            glEnable(GL_BLEND);
+            glBlendEquation(GL_FUNC_ADD);
+            glBlendFunc(GL_DST_COLOR, GL_ONE_MINUS_SRC_ALPHA /* GL_ZERO or GL_ONE_MINUS_SRC_ALPHA */);
+            currentStyle.blending = 1;
+            currentStyle.blendSrc = GL_DST_COLOR;
+            currentStyle.blendDst = GL_ONE_MINUS_SRC_ALPHA;
+            currentStyle.blendEquation = GL_FUNC_ADD;
+            break;
+        }
+       
+        case OF_BLENDMODE_SCREEN:{
+            glEnable(GL_BLEND);
+            glBlendEquation(GL_FUNC_ADD);
+            glBlendFunc(GL_ONE_MINUS_DST_COLOR, GL_ONE);
+            currentStyle.blending = 1;
+            currentStyle.blendSrc = GL_ONE_MINUS_DST_COLOR;
+            currentStyle.blendDst = GL_ONE;
+            currentStyle.blendEquation = GL_FUNC_ADD;
+            break;
+        }
+         
+        case OF_BLENDMODE_SUBTRACT:{
+            glEnable(GL_BLEND);
+            glBlendEquation(GL_FUNC_REVERSE_SUBTRACT);
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+            currentStyle.blending = 1;
+            currentStyle.blendSrc = GL_SRC_ALPHA;
+            currentStyle.blendDst = GL_ONE;
+            currentStyle.blendEquation = GL_FUNC_SUBTRACT;
+            break;
+        }
+            
+            
+        default:
+            break;
+    }
+    
+}
+
+//----------------------------------------------------------
+void ofDisableBlendMode()
+{
+    glDisable(GL_BLEND);
+	currentStyle.blending = 0;
+}
+
 //----------------------------------------------------------
 void ofEnableAlphaBlending(){
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	currentStyle.blending = 1;
+	ofEnableBlendMode(OF_BLENDMODE_ALPHA);
 }
 
 //----------------------------------------------------------
 void ofDisableAlphaBlending(){
-	glDisable(GL_BLEND);
-	currentStyle.blending = 0;
+    ofDisableBlendMode();
 }
-
 
 //----------------------------------------------------------
 void ofEnableSmoothing(){

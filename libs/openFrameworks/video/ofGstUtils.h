@@ -4,6 +4,7 @@
 #include <gst/gst.h>
 #include <pthread.h>
 #include "ofConstants.h"
+#include "ofBaseTypes.h"
 
 typedef struct{
 	GMainLoop 		*	loop;
@@ -52,7 +53,7 @@ typedef struct
   bool bInited;
 } ofGstCamData;
 
-class ofGstUtils {
+class ofGstUtils: public ofBaseVideoPlayer, public ofBaseVideoGrabber {
 public:
 	ofGstUtils();
 	virtual ~ofGstUtils();
@@ -61,7 +62,8 @@ public:
 
 	void listDevices();
 	void setDeviceID(unsigned id);
-	bool initGrabber(int w, int h, int framerate=-1);
+	void setDesiredFrameRate(int framerate);
+	bool initGrabber(int w, int h);
 
 	bool setPipeline(string pipeline, int bpp=24, bool isStream=false, int w=-1, int h=-1);
 	bool setPipelineWithSink(string pipeline);
@@ -71,7 +73,11 @@ public:
 	void update();
 
 	void play();
+	void stop(){setPaused(true);}
 	void setPaused(bool bPause);
+	bool isPaused(){return bPaused;}
+	bool isLoaded(){return bLoaded;}
+	bool isPlaying(){return bPlaying;}
 
 	int	getCurrentFrame();
 	int	getTotalNumFrames();
@@ -80,8 +86,8 @@ public:
 	void nextFrame();
 	void previousFrame();
 
-	int getHeight();
-	int getWidth();
+	float getHeight();
+	float getWidth();
 
 	float getPosition();
 	float getSpeed();
@@ -127,6 +133,7 @@ protected:
 	bool				posChangingPaused;
 
 	int 				width, height,bpp;
+	int					attemptFramerate;
 	bool 				bLoaded;
 	//bool				allocated;				// so we know to free pixels or not
 

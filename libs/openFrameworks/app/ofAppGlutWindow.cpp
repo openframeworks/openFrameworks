@@ -1,6 +1,7 @@
 #include "ofAppGlutWindow.h"
 #include "ofBaseApp.h"
 #include "ofMain.h"
+#include <set>
 
 // glut works with static callbacks UGH, so we need static variables here:
 
@@ -27,10 +28,12 @@ int 			nonFullScreenX;
 int 			nonFullScreenY;
 int				windowW;
 int				windowH;
-int				mouseX, mouseY;
 ofBaseApp *		ofAppPtr;
-
+int				currentMouseX, currentMouseY;
 int             nFramesSinceWindowResized;
+
+static set<int> pressedMouseButtons;
+static set<int> pressedKeys;
 
 #ifdef TARGET_WIN32
 
@@ -105,8 +108,8 @@ ofAppGlutWindow::ofAppGlutWindow(){
 	requestedHeight		= 0;
 	nonFullScreenX		= -1;
 	nonFullScreenY		= -1;
-	mouseX				= 0;
-	mouseY				= 0;
+	currentMouseX		= 0;
+	currentMouseY		= 0;
 	lastFrameTime		= 0.0;
 	displayString		= "";
 
@@ -351,6 +354,28 @@ void ofAppGlutWindow::disableSetupScreen(){
 }
 
 //------------------------------------------------------------
+bool ofAppGlutWindow::isMousePressed(int button){
+	if(button==-1) return pressedMouseButtons.size();
+	return pressedMouseButtons.find(button)!=pressedMouseButtons.end();
+}
+
+//------------------------------------------------------------
+bool ofAppGlutWindow::isKeyPressed(int key){
+	if(key==-1) return pressedKeys.size();
+	return pressedKeys.find(key)!=pressedKeys.end();
+}
+
+//------------------------------------------------------------
+int ofAppGlutWindow::getMouseX(){
+	return currentMouseX;
+}
+
+//------------------------------------------------------------
+int ofAppGlutWindow::getMouseY(){
+	return currentMouseY;
+}
+
+//------------------------------------------------------------
 void ofAppGlutWindow::display(void){
 	static ofEventArgs voidEventArgs;
 
@@ -468,6 +493,10 @@ void ofAppGlutWindow::display(void){
 void ofAppGlutWindow::mouse_cb(int button, int state, int x, int y) {
 
 	if (nFrameCount > 0){
+
+		currentMouseX = x;
+		currentMouseY = y;
+		
 		if(ofAppPtr){
 			ofAppPtr->mouseX = x;
 			ofAppPtr->mouseY = y;
@@ -475,9 +504,12 @@ void ofAppGlutWindow::mouse_cb(int button, int state, int x, int y) {
 
 		if (state == GLUT_DOWN) {
 			ofNotifyMousePressed(x, y, button);
+			pressedMouseButtons.insert(button);
 		} else if (state == GLUT_UP) {
 			ofNotifyMouseReleased(x, y, button);
+			pressedMouseButtons.erase(button);
 		}
+
 		buttonInUse = button;
 	}
 }
@@ -486,6 +518,10 @@ void ofAppGlutWindow::mouse_cb(int button, int state, int x, int y) {
 void ofAppGlutWindow::motion_cb(int x, int y) {
 
 	if (nFrameCount > 0){
+	
+		currentMouseX = x;
+		currentMouseY = y;
+	
 		if(ofAppPtr){
 			ofAppPtr->mouseX = x;
 			ofAppPtr->mouseY = y;
@@ -500,6 +536,9 @@ void ofAppGlutWindow::motion_cb(int x, int y) {
 void ofAppGlutWindow::passive_motion_cb(int x, int y) {
 
 	if (nFrameCount > 0){
+		currentMouseX = x;
+		currentMouseY = y;	
+	
 		if(ofAppPtr){
 			ofAppPtr->mouseX = x;
 			ofAppPtr->mouseY = y;
@@ -560,29 +599,31 @@ void ofAppGlutWindow::idle_cb(void) {
 
 //------------------------------------------------------------
 void ofAppGlutWindow::keyboard_cb(unsigned char key, int x, int y) {
-
 	ofNotifyKeyPressed(key);
+	pressedKeys.insert(key);
 
 	if (key == OF_KEY_ESC){				// "escape"
 		exitApp();
 	}
+
 }
 
 //------------------------------------------------------------
-void ofAppGlutWindow::keyboard_up_cb(unsigned char key, int x, int y) {
-
+void ofAppGlutWindow::keyboard_up_cb(unsigned char key, int x, int y){
 	ofNotifyKeyReleased(key);
-
+	pressedKeys.erase(key);
 }
 
 //------------------------------------------------------
 void ofAppGlutWindow::special_key_cb(int key, int x, int y) {
 	ofNotifyKeyPressed(key | OF_KEY_MODIFIER);
+	pressedKeys.insert(key | OF_KEY_MODIFIER);
 }
 
 //------------------------------------------------------------
 void ofAppGlutWindow::special_key_up_cb(int key, int x, int y) {
 	ofNotifyKeyReleased(key | OF_KEY_MODIFIER);
+	pressedKeys.erase(key | OF_KEY_MODIFIER);
 }
 
 //------------------------------------------------------------
