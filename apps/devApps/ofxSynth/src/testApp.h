@@ -31,7 +31,7 @@ class testApp : public ofBaseApp{
 		ofxSynthDelayline dl;
 		
 		ofxMaxiMix mymix;
-		float * mixBuffer, * mixBuffer2;
+		float * mixBuffer, * mixBuffer2, * mixBuffer3;
 		double outputs[2];
 		int beatLength, framecounter;
 
