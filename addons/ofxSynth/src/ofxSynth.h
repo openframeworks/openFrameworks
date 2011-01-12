@@ -57,18 +57,19 @@ public:
 };
 
 
-class ofxSynth{
+class ofxSynth : public ofSoundSource{
 	public:
 		ofxSynth();
+		string getName() { return "ofxSynth"; }
 		void setup();
 		
-		void audioRequested(float * input, int bufferSize);
+		void audioRequested( float* buffer, int numFrames, int numChannels );
 		
 		void trigger();
 		void setFrequency(float freq);
 		void setFilter(float _cutoff, float _res);
 		void setFilterMode(int mode);
-		void setNote(float note);
+		void setFrequencyMidiNote(float note);
 		void setWave(int _wavType);
 		void setADRVol(float atk, float dec, float rel);
 		void setADRMod(float atk, float dec, float rel);
@@ -84,6 +85,7 @@ class ofxSynth{
 		int filterMode, waveMode;
 		double ampEnv[8];
 };
+
 class ofxSynthSampler : public ofxSynth{
 	public:
 		void audioRequested(float * input, int bufferSize);
@@ -92,3 +94,8 @@ class ofxSynthSampler : public ofxSynth{
 	private:
 		ofxMaxiSample sample;
 };
+
+class ofxSynthWaveWriter : public ofSoundEffect {
+	public:
+		void writeSamples(int numFrames, string filename);
+}

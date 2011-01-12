@@ -10,17 +10,16 @@ ofxSynth::ofxSynth(){
 	ampMode = OFXSYNTHONESHOT;
 	gain = 0.1;
 	sustain = 0.5;
-	
-	env.gateOpen();
-	
+		
 	filter.setup();
 	filter.setRes(0.0);
 	filter.setCutoff(1.0);
 	setFilterMode(1);
 	waveMode = 0;
 }
-void ofxSynth::audioRequested(float * output, int bufferSize){
-	for (int i = 0; i < bufferSize; i++){
+
+void ofxSynth::audioRequested( float* buffer, int numFrames, int numChannels ){
+	for (int i = 0; i<numFrames; i++) {
 		if (ampMode == OFXSYNTHONESHOT) {
 			currentAmp = 1;
 		}else if(ampMode == OFXSYNTHADR){
@@ -31,24 +30,28 @@ void ofxSynth::audioRequested(float * output, int bufferSize){
 		}
 		switch (waveMode) {
 			case 0:
-				output[i] = wave.square(currentFrequency);
+				buffer[i*numChannels] = wave.square(currentFrequency);
 				break;
 			case 1:
-				output[i] = wave.triangle(currentFrequency, 0);
+				buffer[i*numChannels] = wave.triangle(currentFrequency, 0);
 				break;
 			case 2:
-				output[i] = wave.saw(currentFrequency);
+				buffer[i*numChannels] = wave.saw(currentFrequency);
 				break;
 			default:
-				output[i] = 0;
+				buffer[i*numChannels] = 0;
 				break;
 		}
 		if (filterMode != 0) {
-			filter.processSample(&output[i]);
+			filter.processSample(&buffer[i*numChannels]);
 		}
-		output[i] *= currentAmp;
+		buffer[i*numChannels] *= currentAmp;
+		for (int j=1; j<numChannels; j++) {
+			buffer[i*numChannels+j]=buffer[i*numChannels];
+		}
 	}
 }
+
 void ofxSynth::trigger(){
 	if (ampMode == OFXSYNTHONESHOT) {
 		currentAmp = 1;
@@ -75,7 +78,7 @@ void ofxSynth::setFilter(float _cutoff, float _res){
 void ofxSynth::setFrequency(float freq){
 	currentFrequency = freq;
 }
-void ofxSynth::setNote(float note){
+void ofxSynth::setFrequencyMidiNote(float note){
 	setFrequency(440.0*pow(2.0, (note-60.0)/12.0));
 }
 void ofxSynth::setFilterMode(int mode){
