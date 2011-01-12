@@ -98,4 +98,4 @@ class ofxSynthSampler : public ofxSynth{
 class ofxSynthWaveWriter : public ofSoundEffect {
 	public:
 		void writeSamples(int numFrames, string filename);
-}
+};
