@@ -1,7 +1,7 @@
 //
 // FileStream_POSIX.h
 //
-// $Id: //poco/1.3/Foundation/include/Poco/FileStream_POSIX.h#1 $
+// $Id: //poco/1.4/Foundation/include/Poco/FileStream_POSIX.h#1 $
 //
 // Library: Foundation
 // Package: Streams
@@ -62,8 +62,9 @@ public:
 	void open(const std::string& path, std::ios::openmode mode);
 		/// Opens the given file in the given mode.
 
-	void close();
-		/// Closes the File stream buffer.
+	bool close();
+		/// Closes the File stream buffer. Returns true if successful,
+		/// false otherwise.
 
 	std::streampos seekoff(std::streamoff off, std::ios::seekdir dir, std::ios::openmode mode = std::ios::in | std::ios::out);
 		/// Change position by offset, according to way and mode.

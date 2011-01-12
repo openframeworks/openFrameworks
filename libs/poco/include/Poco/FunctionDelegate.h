@@ -1,7 +1,7 @@
 //
 // FunctionDelegate.h
 //
-// $Id: //poco/1.3/Foundation/include/Poco/FunctionDelegate.h#1 $
+// $Id: //poco/1.4/Foundation/include/Poco/FunctionDelegate.h#1 $
 //
 // Library: Foundation
 // Package: Events
@@ -36,8 +36,8 @@
 //
 
 
-#ifndef  Foundation_FunctionDelegate_INCLUDED
-#define  Foundation_FunctionDelegate_INCLUDED
+#ifndef Foundation_FunctionDelegate_INCLUDED
+#define Foundation_FunctionDelegate_INCLUDED
 
 
 #include "Poco/Foundation.h"
@@ -49,7 +49,7 @@ namespace Poco {
 
 template <class TArgs, bool hasSender = true, bool senderIsConst = true> 
 class FunctionDelegate: public AbstractDelegate<TArgs>
-	/// Wraps a C style function (or a C++ static fucntion) to be used as
+	/// Wraps a C style function (or a C++ static function) to be used as
 	/// a delegate
 {
 public:

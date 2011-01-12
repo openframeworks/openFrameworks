@@ -24,22 +24,22 @@ void testApp::update(){
 
 //--------------------------------------------------------------
 void testApp::draw(){	
-	ofSetColor(0xFFFFFF);
+	ofSetHexColor(0xFFFFFF);
 
 	bikers.draw(0,0);
 	gears.draw(600,0);
 	tdf.draw(600,300);
 	
-	ofSetColor(0xDD3333);
+	ofSetHexColor(0xDD3333);
 	tdfSmall.draw(200,300);
 	
-	ofSetColor(0xFFFFFF);
+	ofSetHexColor(0xFFFFFF);
 	ofEnableAlphaBlending();
 	transparency.draw(sin(ofGetElapsedTimeMillis()/1000.0f) * 100 + 500,20);
 	ofDisableAlphaBlending();
 	
 	
-	ofSetColor(0x000000);
+	ofSetHexColor(0x000000);
 	
 	// getting the pixels out of an image, 
 	// and then use the values to draw circles
@@ -54,7 +54,7 @@ void testApp::draw(){
 		}
 	}
 	
-	ofSetColor(0xFFFFFF);
+	ofSetHexColor(0xFFFFFF);
 	bikeIcon.draw(300,500, 20,20);
 }
 

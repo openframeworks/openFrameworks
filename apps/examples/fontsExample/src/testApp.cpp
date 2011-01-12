@@ -27,19 +27,19 @@ void testApp::update(){
 //--------------------------------------------------------------
 void testApp::draw(){
 
-	ofSetColor(0x00FF00);
+	ofSetHexColor(0x00FF00);
 	franklinBook.drawString("hello, this is franklin book calling\nanyone home?", 100,100);
 	
-	ofSetColor(0x000000);
+	ofSetHexColor(0x000000);
 	verdana.drawString("hello, I am aliased verdana -- full character set, see: � ! ", 100,210);
 	
-	ofSetColor(0x00FF00);
+	ofSetHexColor(0x00FF00);
 	franklinBook.drawString("I can't make an (�) like you", 100,310);
 	
-	ofSetColor(0x000000);
+	ofSetHexColor(0x000000);
 	verdana.drawString("yeah, but I'm not exactly pretty\nthe problem is with freeType library...\napple has a patent on TTF font hints\nso our aliased type via freeType isn't super looking", 100,380);
 	
-	ofSetColor(0x00FF00);
+	ofSetHexColor(0x00FF00);
 	franklinBook.drawString("you look ok ! don't worry", 100,520);
 	
 	//------------------- bounding rectangle : 
@@ -55,9 +55,9 @@ void testApp::draw(){
 		ofTranslate(100,650,0);
 		ofRotate(counter, 0,0,1);
 		// draw type & rect centered around 0,0 (subtract midpt from both):
-		ofSetColor(0xcccccc);
+		ofSetHexColor(0xcccccc);
 		ofRect(rect.x - centerx, rect.y - centery, rect.width, rect.height);
-		ofSetColor(0xff3399);
+		ofSetHexColor(0xff3399);
 		franklinBook.drawString(tempString, -centerx,-centery);
 	ofPopMatrix();
 
@@ -66,7 +66,7 @@ void testApp::draw(){
 	ofPushMatrix();
 		ofTranslate(225,675,0);
 		ofScale(5,5,1);
-		ofSetColor(0x333333);
+		ofSetHexColor(0x333333);
 		verdana.drawString("scale 5x!",0, 0);
 	ofPopMatrix();
 	
@@ -74,7 +74,7 @@ void testApp::draw(){
 	ofPushMatrix();
 		ofTranslate(520,675,0);
 		ofScale(size,size,1);
-		ofSetColor(0x00FF00);
+		ofSetHexColor(0x00FF00);
 		franklinBook.drawString("$k@!%",0, 0);
 	ofPopMatrix();
 	

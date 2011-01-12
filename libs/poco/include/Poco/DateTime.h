@@ -1,7 +1,7 @@
 //
 // DateTime.h
 //
-// $Id: //poco/1.3/Foundation/include/Poco/DateTime.h#2 $
+// $Id: //poco/1.4/Foundation/include/Poco/DateTime.h#1 $
 //
 // Library: Foundation
 // Package: DateTime
@@ -54,6 +54,10 @@ class Foundation_API DateTime
 	/// and milliseconds based on the Gregorian calendar.
 	/// The class is mainly useful for conversions between
 	/// UTC, Julian day and Gregorian calendar dates.
+	///
+	/// The date and time stored in a DateTime is always in UTC
+	/// (Coordinated Universal Time) and thus independent of the 
+	/// timezone in effect on the system.
 	///
 	/// Conversion calculations are based on algorithms
 	/// collected and described by Peter Baum at

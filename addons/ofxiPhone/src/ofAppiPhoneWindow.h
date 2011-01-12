@@ -73,6 +73,15 @@ public:
 	int					getOrientation();
 	void				rotateXY(float &x, float &y);		// updates
 	
+	void				enableRetinaSupport();
+	void				enableDepthBuffer();
+	void				enableAntiAliasing(int samples); // samples doesnt work on iphone but is setup to provide support for this function being in the core
+	
+	bool				isDepthEnabled();
+	bool				isAntiAliasingEnabled();
+	int					getAntiAliasingSampleCount();
+	bool				isRetinaSupported();
+	
 	void timerLoop();
 	int					windowMode;
 	
@@ -90,6 +99,11 @@ protected:
 	bool				bEnableSetupScreen;
 	float				frameRate;
 	int					orientation;
+	
+	bool depthEnabled;
+	bool antiAliasingEnabled;
+	bool retinaEnabled;
+	int antiAliasingSamples;
 };
 
 

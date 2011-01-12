@@ -313,6 +313,18 @@ void ofxCvImage::draw( float x, float y ) {
     draw( x,y, width, height );
 }
 
+//----------------------------------------------------------
+void ofxCvImage::draw(const ofPoint & point){
+	draw(point.x, point.y);
+}
+
+
+//----------------------------------------------------------
+void ofxCvImage::draw(const ofRectangle & rect){
+	draw(rect.x, rect.y, rect.width, rect.height);
+}
+
+
 //--------------------------------------------------------------------------------
 void ofxCvImage::updateTexture(){
 	if( bUseTexture ) {

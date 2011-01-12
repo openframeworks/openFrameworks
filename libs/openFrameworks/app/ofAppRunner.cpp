@@ -10,12 +10,6 @@ int							width, height;
 
 ofAppBaseWindow *			window = NULL;
 
-//========================================================================
-// core events instance & arguments
-#ifdef OF_USING_POCO
-ofCoreEvents 				ofEvents;
-ofEventArgs					voidEventArgs;
-#endif
 
 //========================================================================
 // default windowing
@@ -77,11 +71,7 @@ void ofExitCallback(){
 		timeEndPeriod(1);
 	#endif
 
-	if(OFSAptr)OFSAptr->exit();
-
-	#ifdef OF_USING_POCO
-		ofNotifyEvent( ofEvents.exit, voidEventArgs );
-	#endif
+	ofNotifyExit();
 
 	if(OFSAptr)delete OFSAptr;
 }
@@ -263,7 +253,14 @@ void ofSetVerticalSync(bool bSync){
 	//--------------------------------------
 	#ifdef TARGET_LINUX
 	//--------------------------------------
-		if (GLEE_GLX_SGI_swap_control) glXSwapIntervalSGI(bSync ? 1 : 0);
+		//if (GLEW_GLX_SGI_swap_control)
+		void (*swapInterval)(int)  = (void (*)(int)) glXGetProcAddress((const GLubyte*) "glXSwapIntervalSGI");
+		if(!swapInterval)
+			swapInterval = (void (*)(int)) glXGetProcAddress((const GLubyte*) "glXSwapIntervalMESA");
+
+		if(swapInterval)
+			swapInterval(bSync ? 1 : 0);
+		//glXSwapIntervalSGI(bSync ? 1 : 0);
 	//--------------------------------------
 	#endif
 	//--------------------------------------

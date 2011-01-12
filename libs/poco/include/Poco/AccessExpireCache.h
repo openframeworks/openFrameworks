@@ -1,7 +1,7 @@
 //
 // AccessExpireCache.h
 //
-// $Id: //poco/1.3/Foundation/include/Poco/AccessExpireCache.h#1 $
+// $Id: //poco/1.4/Foundation/include/Poco/AccessExpireCache.h#1 $
 //
 // Library: Foundation
 // Package: Cache
@@ -36,8 +36,8 @@
 //
 
 
-#ifndef  Foundation_AccessExpireCache_INCLUDED
-#define  Foundation_AccessExpireCache_INCLUDED
+#ifndef Foundation_AccessExpireCache_INCLUDED
+#define Foundation_AccessExpireCache_INCLUDED
 
 
 #include "Poco/AbstractCache.h"
@@ -47,8 +47,13 @@
 namespace Poco {
 
 
-template <class TKey, class TValue> 
-class AccessExpireCache: public AbstractCache<TKey, TValue, AccessExpireStrategy<TKey, TValue> >
+template <
+	class TKey, 
+	class TValue, 
+	class TMutex = FastMutex, 
+	class TEventMutex = FastMutex
+> 
+class AccessExpireCache: public AbstractCache<TKey, TValue, AccessExpireStrategy<TKey, TValue>, TMutex, TEventMutex>
 	/// An AccessExpireCache caches entries for a fixed time period (per default 10 minutes).
 	/// Entries expire when they are not accessed with get() during this time period. Each access resets
 	/// the start time for expiration.
@@ -60,7 +65,7 @@ class AccessExpireCache: public AbstractCache<TKey, TValue, AccessExpireStrategy
 {
 public:
 	AccessExpireCache(Timestamp::TimeDiff expire = 600000): 
-		AbstractCache<TKey, TValue, AccessExpireStrategy<TKey, TValue> >(AccessExpireStrategy<TKey, TValue>(expire))
+		AbstractCache<TKey, TValue, AccessExpireStrategy<TKey, TValue>, TMutex, TEventMutex>(AccessExpireStrategy<TKey, TValue>(expire))
 	{
 	}
 

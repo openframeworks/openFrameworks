@@ -28,6 +28,8 @@
 	<string>????</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>UIApplicationExitsOnSuspend</key>
+	<true/>
 	<key>UIInterfaceOrientation</key>
 	<string>UIInterfaceOrientationPortrait</string>
 </dict>

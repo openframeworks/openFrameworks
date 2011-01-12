@@ -18,13 +18,13 @@ void testApp::update(){
 //--------------------------------------------------------------
 void testApp::draw(){
 
-	ofSetColor(0xFFFFFF);
+	ofSetHexColor(0xFFFFFF);
 
 
 
 
     fingerMovie.draw(20,20);
-    ofSetColor(0x000000);
+    ofSetHexColor(0x000000);
     unsigned char * pixels = fingerMovie.getPixels();
     // let's move through the "RGB" char array
     // using the red pixel to control the size of a circle.
@@ -37,20 +37,20 @@ void testApp::draw(){
     }
 
 
-    ofSetColor(0x000000);
+    ofSetHexColor(0x000000);
 	ofDrawBitmapString("press f to change",20,320);
-    if(frameByframe) ofSetColor(0xCCCCCC);
+    if(frameByframe) ofSetHexColor(0xCCCCCC);
     ofDrawBitmapString("mouse speed position",20,340);
-    if(!frameByframe) ofSetColor(0xCCCCCC); else ofSetColor(0x000000);
+    if(!frameByframe) ofSetHexColor(0xCCCCCC); else ofSetHexColor(0x000000);
     ofDrawBitmapString("keys <- -> frame by frame " ,190,340);
-    ofSetColor(0x000000);
+    ofSetHexColor(0x000000);
 
     ofDrawBitmapString("frame: " + ofToString(fingerMovie.getCurrentFrame()) + "/"+ofToString(fingerMovie.getTotalNumFrames()),20,380);
     ofDrawBitmapString("duration: " + ofToString(fingerMovie.getPosition()*fingerMovie.getDuration(),2) + "/"+ofToString(fingerMovie.getDuration(),2),20,400);
     ofDrawBitmapString("speed: " + ofToString(fingerMovie.getSpeed(),2),20,420);
 
     if(fingerMovie.getIsMovieDone()){
-        ofSetColor(0xFF0000);
+        ofSetHexColor(0xFF0000);
         ofDrawBitmapString("end of movie",20,440);
     }
 }

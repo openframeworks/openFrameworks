@@ -74,7 +74,7 @@ void testApp::update(){
 void testApp::draw(){
 	ofSetupScreen();
 	
-	ofSetColor(0x999999);
+	ofSetHexColor(0x999999);
 	
 	//lets show our window pos in pixels
 	//macs actually start the Y pos from 40
@@ -89,7 +89,7 @@ void testApp::draw(){
 	}
 	
 
-	ofSetColor(0xFFFFFF);
+	ofSetHexColor(0xFFFFFF);
 	ofCircle(ballPositionX, ballPositionY, 15);
 }
 

@@ -1,7 +1,7 @@
 //
 // Glob.h
 //
-// $Id: //poco/1.3/Foundation/include/Poco/Glob.h#2 $
+// $Id: //poco/1.4/Foundation/include/Poco/Glob.h#1 $
 //
 // Library: Foundation
 // Package: Filesystem
@@ -9,7 +9,7 @@
 //
 // Definition of the Glob class.
 //
-// Copyright (c) 2004-2006, Applied Informatics Software Engineering GmbH.
+// Copyright (c) 2004-2009, Applied Informatics Software Engineering GmbH.
 // and Contributors.
 //
 // Permission is hereby granted, free of charge, to any person or organization
@@ -41,6 +41,7 @@
 
 
 #include "Poco/Foundation.h"
+#include "Poco/TextIterator.h"
 #include <set>
 
 
@@ -67,7 +68,7 @@ class Foundation_API Glob
 	/// To suppress the special syntactic significance of any of '[]*?!-\',
 	/// and match the character exactly, precede it with a backslash.
 	///
-	/// UTF-8 encoded strings are not supported.
+	/// All strings are assumed to be UTF-8 encoded.
 {
 public:
 	enum Options
@@ -76,6 +77,7 @@ public:
 		GLOB_DEFAULT         = 0x00, /// default behavior
 		GLOB_DOT_SPECIAL     = 0x01, /// '*' and '?' do not match '.' at beginning of subject
 		GLOB_FOLLOW_SYMLINKS = 0x02, /// follow symbolic links
+		GLOB_CASELESS        = 0x04, /// ignore case when comparing characters
 		GLOB_DIRS_ONLY       = 0x80  /// only glob for directories (for internal use only)
 	};
 	
@@ -138,9 +140,9 @@ public:
 		/// ignored.
 
 protected:
-	bool match(std::string::const_iterator& itp, const std::string::const_iterator& endp, std::string::const_iterator& its, const std::string::const_iterator& ends);
-	bool matchAfterAsterisk(std::string::const_iterator itp, const std::string::const_iterator& endp, std::string::const_iterator its, const std::string::const_iterator& ends);
-	bool matchSet(std::string::const_iterator& itp, const std::string::const_iterator& endp, char c);
+	bool match(TextIterator& itp, const TextIterator& endp, TextIterator& its, const TextIterator& ends);
+	bool matchAfterAsterisk(TextIterator itp, const TextIterator& endp, TextIterator its, const TextIterator& ends);
+	bool matchSet(TextIterator& itp, const TextIterator& endp, int c);
 	static void collect(const Path& pathPattern, const Path& base, const Path& current, const std::string& pattern, std::set<std::string>& files, int options);
 	static bool isDirectory(const Path& path, bool followSymlink);
 	
