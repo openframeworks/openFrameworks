@@ -17,6 +17,7 @@
 
 #ifdef TARGET_OSX
 	#include <mach-o/dyld.h>
+	#include <sys/param.h> // for MAXPATHLEN
 #endif 
 
 
@@ -148,7 +149,7 @@ void ofSetDataPathRoot(string newRoot){
 	
 	#ifdef TARGET_OSX
 		#ifndef TARGET_OF_IPHONE 
-			char path[1024];
+			char path[MAXPATHLEN];
 			uint32_t size = sizeof(path);
 			if (_NSGetExecutablePath(path, &size) == 0){
 				//printf("executable path is %s\n", path);
@@ -212,11 +213,76 @@ string ofToDataPath(string path, bool makeAbsolute){
 }
 
 //----------------------------------------
+template <>
+string ofToHex(const string& value) {
+	ostringstream out;
+	// how many bytes are in the string
+	int numBytes = value.size();
+	for(int i = 0; i < numBytes; i++) {
+		// print each byte as a 2-character wide hex value
+		out << setfill('0') << setw(2) << hex << (unsigned int) value[i];
+	}
+	return out.str();
+}
+
+//----------------------------------------
+string ofToHex(const char* value) {
+	// this function is necessary if you want to print a string
+	// using a syntax like ofToHex("test")
+	return ofToHex((string) value);
+}
+
+//----------------------------------------
 int ofToInt(const string& intString) {
 	int x = 0;
 	istringstream cur(intString);
 	cur >> x;
 	return x;
+}
+
+//----------------------------------------
+int ofHexToInt(const string& intHexString) {
+	int x = 0;
+	istringstream cur(intHexString);
+	cur >> hex >> x;
+	return x;
+}
+
+//----------------------------------------
+char ofHexToChar(const string& charHexString) {
+	int x = 0;
+	istringstream cur(charHexString);
+	cur >> hex >> x;
+	return (char) x;
+}
+
+//----------------------------------------
+float ofHexToFloat(const string& floatHexString) {
+	int x = 0;
+	istringstream cur(floatHexString);
+	cur >> hex >> x;
+	return *((float*) &x);
+}
+
+//----------------------------------------
+string ofHexToString(const string& stringHexString) {
+	stringstream out;
+	stringstream stream(stringHexString);
+	// a hex string has two characters per byte
+	int numBytes = stringHexString.size() / 2;
+	for(int i = 0; i < numBytes; i++) {
+		string curByte;
+		// grab two characters from the hex string
+		stream >> setw(2) >> curByte;
+		// prepare to parse the two characters
+		stringstream curByteStream(curByte);
+		int cur = 0;
+		// parse the two characters as a hex-encoded int
+		curByteStream >> hex >> cur;
+		// add the int as a char to our output stream
+		out << (char) cur;
+	}
+	return out.str();
 }
 
 //----------------------------------------
@@ -250,6 +316,64 @@ char ofToChar(const string& charString) {
 	istringstream cur(charString);
 	cur >> x;
 	return x;
+}
+
+//----------------------------------------
+template <> string ofToBinary(const string& value) {
+	stringstream out;
+	int numBytes = value.size();
+	for(int i = 0; i < numBytes; i++) {
+		bitset<8> bitBuffer(value[i]);
+		out << bitBuffer;
+	}
+	return out.str();
+}
+
+//----------------------------------------
+string ofToBinary(const char* value) {
+	// this function is necessary if you want to print a string
+	// using a syntax like ofToBinary("test")
+	return ofToBinary((string) value);
+}
+
+//----------------------------------------
+int ofBinaryToInt(const string& value) {
+	const int intSize = sizeof(int) * 8;
+	bitset<intSize> binaryString(value);
+	return (int) binaryString.to_ulong();
+}
+
+//----------------------------------------
+char ofBinaryToChar(const string& value) {
+	const int charSize = sizeof(char) * 8;
+	bitset<charSize> binaryString(value);
+	return (char) binaryString.to_ulong();
+}
+
+//----------------------------------------
+float ofBinaryToFloat(const string& value) {
+	const int floatSize = sizeof(float) * 8;
+	bitset<floatSize> binaryString(value);
+	unsigned long result = binaryString.to_ulong();
+	// this line means:
+	// 1 take the address of the unsigned long
+	// 2 pretend it is the address of a float
+	// 3 then use it as a float
+	// this is a bit-for-bit 'typecast'
+	return *((float*) &result);
+}
+
+//----------------------------------------
+string ofBinaryToString(const string& value) {
+	ostringstream out;
+	stringstream stream(value);
+	bitset<8> byteString;
+	int numBytes = value.size() / 8;
+	for(int i = 0; i < numBytes; i++) {
+		stream >> byteString;
+		out << (char) byteString.to_ulong();
+	}
+	return out.str();
 }
 
 //--------------------------------------------------
