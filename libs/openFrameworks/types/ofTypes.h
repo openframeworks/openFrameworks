@@ -30,6 +30,7 @@ class ofStyle{
             blendDst            = GL_ONE_MINUS_SRC_ALPHA;
 			smoothing			= false;
 			circleResolution	= 20;
+			sphereResolution = 20;
 			lineWidth			= 1.0;
 			polyMode			= OF_POLY_WINDING_ODD;
 			rectMode			= OF_RECTMODE_CORNER;
@@ -50,6 +51,7 @@ class ofStyle{
     
 		bool smoothing;
 		int circleResolution;
+		int sphereResolution;
 		float lineWidth;
 };
 
