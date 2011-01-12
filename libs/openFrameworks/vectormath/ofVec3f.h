@@ -42,7 +42,7 @@ class ofVec3f {
     //
     bool operator==( const ofVec3f& vec );
     bool operator!=( const ofVec3f& vec );
-    bool match( const ofVec3f& vec, float tollerance=0.0001 );
+    bool match( const ofVec3f& vec, float tollerance=0.0001 ) const;
     /**
     * Checks if vectors look in the same direction.
     */
@@ -291,7 +291,7 @@ inline bool ofVec3f::operator!=( const ofVec3f& vec ) {
 	return (x != vec.x) || (y != vec.y) || (z != vec.z);
 }
 
-inline bool ofVec3f::match( const ofVec3f& vec, float tollerance ) {
+inline bool ofVec3f::match( const ofVec3f& vec, float tollerance ) const{
 	return (fabs(x - vec.x) < tollerance)
 		&& (fabs(y - vec.y) < tollerance)
 		&& (fabs(z - vec.z) < tollerance);
