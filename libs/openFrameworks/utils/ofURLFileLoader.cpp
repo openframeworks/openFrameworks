@@ -52,7 +52,7 @@ void ofURLFileLoader::getAsync(string url, string name){
 	start();
 }
 
-void ofURLFileLoader::remove(ofHttpRequest & httpRequest){
+void ofURLFileLoader::remove(ofHttpRequest httpRequest){
 	lock();
 	for(int i=0;i<requests.size();i++){
 		if(requests[i].getID()==httpRequest.getID()){
@@ -95,7 +95,7 @@ void ofURLFileLoader::threadedFunction() {
 	}
 }
 
-ofHttpResponse ofURLFileLoader::handleRequest(ofHttpRequest & request) {
+ofHttpResponse ofURLFileLoader::handleRequest(ofHttpRequest request) {
 	try {
 		URI uri(request.url);
 		std::string path(uri.getPathAndQuery());
@@ -137,6 +137,6 @@ void ofLoadURLAsync(string url, string name){
 	fileLoader.getAsync(url,name);
 }
 
-void ofRemoveRequest(ofHttpRequest & request){
+void ofRemoveURLRequest(ofHttpRequest request){
 	fileLoader.remove(request);
 }
