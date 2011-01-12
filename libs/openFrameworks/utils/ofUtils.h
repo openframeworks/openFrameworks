@@ -65,11 +65,15 @@ template <class T> string ofToHex(const T& value) {
 template <> string ofToHex(const string& value);
 string ofToHex(const char* value);
 
-int ofToInt(const string& intString);
 int ofHexToInt(const string& intHexString);
+char ofHexToChar(const string& charHexString);
+float ofHexToFloat(const string& floatHexString);
+string ofHexToString(const string& stringHexString);
+
+int ofToInt(const string& intString);
+char ofToChar(const string& charString);
 float ofToFloat(const string& floatString);
 bool ofToBool(const string& boolString);
-char ofToChar(const string& charString);
 
 template <class T> string ofToBinary(const T& value) {
 	ostringstream out;
@@ -89,6 +93,7 @@ string ofToBinary(const char* value);
 int ofBinaryToInt(const string& value);
 char ofBinaryToChar(const string& value);
 float ofBinaryToFloat(const string& value);
+string ofBinaryToString(const string& value);
 
 string 	ofGetVersionInfo();
 

@@ -248,6 +248,43 @@ int ofHexToInt(const string& intHexString) {
 }
 
 //----------------------------------------
+char ofHexToChar(const string& charHexString) {
+	int x = 0;
+	istringstream cur(charHexString);
+	cur >> hex >> x;
+	return (char) x;
+}
+
+//----------------------------------------
+float ofHexToFloat(const string& floatHexString) {
+	int x = 0;
+	istringstream cur(floatHexString);
+	cur >> hex >> x;
+	return *((float*) &x);
+}
+
+//----------------------------------------
+string ofHexToString(const string& stringHexString) {
+	stringstream out;
+	stringstream stream(stringHexString);
+	// a hex string has two characters per byte
+	int numBytes = stringHexString.size() / 2;
+	for(int i = 0; i < numBytes; i++) {
+		string curByte;
+		// grab two characters from the hex string
+		stream >> setw(2) >> curByte;
+		// prepare to parse the two characters
+		stringstream curByteStream(curByte);
+		int cur = 0;
+		// parse the two characters as a hex-encoded int
+		curByteStream >> hex >> cur;
+		// add the int as a char to our output stream
+		out << (char) cur;
+	}
+	return out.str();
+}
+
+//----------------------------------------
 float ofToFloat(const string& floatString) {
 	float x = 0;
 	istringstream cur(floatString);
@@ -323,6 +360,19 @@ float ofBinaryToFloat(const string& value) {
 	// 3 then use it as a float
 	// this is a bit-for-bit 'typecast'
 	return *((float*) &result);
+}
+
+//----------------------------------------
+string ofBinaryToString(const string& value) {
+	ostringstream out;
+	stringstream stream(value);
+	bitset<8> byteString;
+	int numBytes = value.size() / 8;
+	for(int i = 0; i < numBytes; i++) {
+		stream >> byteString;
+		out << (char) byteString.to_ulong();
+	}
+	return out.str();
 }
 
 //--------------------------------------------------
