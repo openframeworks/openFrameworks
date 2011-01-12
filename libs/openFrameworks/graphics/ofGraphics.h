@@ -93,10 +93,10 @@ void ofSphere(float x, float y, float radius);
 void ofSphere(const ofVec3f& position, float radius);
 void ofSphere(float radius);
 
-void ofCube(float x, float y, float z, float radius);
-void ofCube(float x, float y, float radius);
-void ofCube(const ofVec3f& position, float radius);
-void ofCube(float radius);
+void ofBox(float x, float y, float z, float size);
+void ofBox(float x, float y, float size);
+void ofBox(const ofVec3f& position, float size);
+void ofBox(float size);
 
 // drawing options
 void ofNoFill();
