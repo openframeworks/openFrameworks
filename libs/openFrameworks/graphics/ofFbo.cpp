@@ -179,6 +179,9 @@ void ofFbo::setup(int width, int height, int internalformat, int numSamples) {
 	settings.height			= height;
 	settings.internalformat	= internalformat;
 	settings.numSamples		= numSamples;
+	settings.useDepth		= true;
+	settings.useStencil		= true;
+	
 	setup(settings);
 }
 
@@ -198,18 +201,24 @@ void ofFbo::setup(Settings settings) {
 	glGenFramebuffers(1, &fbo);
 	bind();
 
+		
+	// If we want both a depth AND a stencil buffer tehn combine them into a single buffer
+	if( settings.useDepth && settings.useStencil )
+	{
+		stencilBuffer = depthBuffer = createAndAttachRenderbuffer(GL_DEPTH_STENCIL, GL_DEPTH_STENCIL_ATTACHMENT);
+	}
+	else
+	{
 	// if we want a depth buffer, create it, and attach to our main fbo
 	if(settings.useDepth) depthBuffer = createAndAttachRenderbuffer(GL_DEPTH_COMPONENT, GL_DEPTH_ATTACHMENT);
 
 	// if we want a stencil buffer, create it, and attach to our main fbo
 	if(settings.useStencil) stencilBuffer = createAndAttachRenderbuffer(GL_STENCIL_INDEX, GL_STENCIL_ATTACHMENT);
+	}
 
 	// if we want MSAA, create a new fbo for textures
 	if(settings.numSamples) glGenFramebuffers(1, &fboTextures);
 	else fboTextures = fbo;
-
-	// check everything is ok with this fbo
-	checkStatus();
 
 	// now create all textures and color buffers
 	for(int i=0; i<settings.numColorbuffers; i++) createAndAttachTexture(i);
@@ -217,13 +226,46 @@ void ofFbo::setup(Settings settings) {
 	// if textures are attached to a different fbo (e.g. if using MSAA) check it's status
 	if(fbo != fboTextures) {
 		glBindFramebuffer(GL_FRAMEBUFFER, fboTextures);
-		checkStatus();
 	}
 
+	// check everything is ok with this fbo
+	checkStatus();
+	
 	// unbind it
 	unbind();
 }
 
+void ofFbo::setupShadow( int width, int height )
+{
+	int old;
+	glGetIntegerv( GL_FRAMEBUFFER_BINDING, &old );
+	
+	settings.width = width;
+	settings.height = height;
+	
+	glGenTextures(1, &depthBuffer);
+	glBindTexture(GL_TEXTURE_2D, depthBuffer);
+	
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP );
+	glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP );
+		
+	glTexImage2D( GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, settings.width, settings.height, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_BYTE, 0 );
+	glBindTexture( GL_TEXTURE_2D, 0 );
+	
+	glGenFramebuffersEXT( 1, &fbo );
+	glBindFramebufferEXT( GL_FRAMEBUFFER_EXT, fbo );
+	
+	glDrawBuffer( GL_NONE );
+	glReadBuffer( GL_NONE );
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,GL_TEXTURE_2D, depthBuffer, 0);
+	
+	if( glCheckFramebufferStatus( GL_FRAMEBUFFER ) != GL_FRAMEBUFFER_COMPLETE )
+		printf("Can't use FBOs !\n");
+	
+	glBindFramebuffer( GL_FRAMEBUFFER, old );
+}
 
 GLuint ofFbo::createAndAttachRenderbuffer(GLenum internalFormat, GLenum attachmentPoint) {
 	GLuint buffer;
