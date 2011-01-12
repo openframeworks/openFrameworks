@@ -2,8 +2,7 @@
 
 //--------------------------------------------------------------
 void testApp::setup(){
-	
-
+	mouseX = 100;
 }
 
 //--------------------------------------------------------------
@@ -13,7 +12,7 @@ void testApp::update(){
 		printf("got an image -- %i bytes \n", loader.getData()->numBytes);
 		
 		ofLoadImageFromMemory(pix, loader.getData()->buffer, loader.getData()->numBytes);
-		img.setFromPixels(pix.getPixels(), pix.getWidth(), pix.getHeight(), pix.ofImageType);
+		img.setFromPixels(pix.getPixels(), pix.getWidth(), pix.getHeight(), pix.getImageType());
 		
 		loader.resetStatus();
 	}
@@ -37,13 +36,13 @@ void testApp::draw(){
 	}
 	
 	ofSetColor(255, 255, 255);
-	img.draw(0, img.getHeight());	
+	img.draw(img.getWidth(), 0);	
 }
 
 //--------------------------------------------------------------
 void testApp::keyPressed(int key){
 
-	loader.getBytes("http://i.cdn.turner.com/cnn/2011/OPINION/01/10/carter.sudan.future/tzleft.jimmy.carter.sudan.pres.talk.afpgi.jpg");
+	loader.getBytes("http://images.wildmadagascar.org/pictures/bemaraha/tsingy_forest.JPG");
 
 }
 

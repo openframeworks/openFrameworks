@@ -23,8 +23,17 @@ using Poco::URI;
 using Poco::URIStreamOpener;
 using Poco::Exception;
 
-#include <auto_ptr.h>
+#ifdef TARGET_LINUX
+	#include <auto_ptr.h>
+#endif
 
+#include "ofConstants.h"
+
+
+//TODO: is this needed for linux?
+#ifdef TARGET_LINUX
+	#include <auto_ptr.h>
+#endif
 
 
 static bool factoryLoaded = false;
