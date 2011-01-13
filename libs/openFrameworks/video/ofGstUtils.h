@@ -98,7 +98,7 @@ public:
 
 	void setPosition(float pct);
 	void setVolume(int volume);
-	void setLoopState(int state);
+	void setLoopState(ofLoopType state);
 	void setSpeed(float speed);
 	void setFrame(int frame);  // frame 0 = first frame...
 

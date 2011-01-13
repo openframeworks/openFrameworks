@@ -475,7 +475,7 @@ void ofQuickTimePlayer::setVolume(int volume){
 
 
 //--------------------------------------------------------
-void ofQuickTimePlayer::setLoopState(int state){
+void ofQuickTimePlayer::setLoopState(ofLoopType state){
 	
 	//--------------------------------------
 	#ifdef OF_VIDEO_PLAYER_QUICKTIME

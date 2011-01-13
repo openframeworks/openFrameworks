@@ -145,7 +145,7 @@ void ofVideoPlayer::setVolume(int volume){
 
 
 //--------------------------------------------------------
-void ofVideoPlayer::setLoopState(int state){
+void ofVideoPlayer::setLoopState(ofLoopType state){
 	if( player != NULL ){
 		player->setLoopState(state);
 	}
