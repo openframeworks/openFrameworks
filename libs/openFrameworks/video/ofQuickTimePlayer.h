@@ -27,6 +27,8 @@ class ofQuickTimePlayer : public ofBaseVideoPlayer{
 	
 		 bool 			isFrameNew();
 		 unsigned char * 	getPixels();
+		 ofPixels 			getOFPixels();
+		 ofPixels 			getOFPixels() const;
 		
 		 float 			getWidth();
 		 float 			getHeight();
@@ -66,7 +68,7 @@ class ofQuickTimePlayer : public ofBaseVideoPlayer{
 
 		//these are public because the ofQuickTimePlayer implementation has some callback functions that need access
 		//todo - fix this
-		unsigned char * 	pixels;				
+		ofPixels		 	pixels;
 
 		int					nFrames;				// number of frames
 		bool				allocated;				// so we know to free pixels or not
