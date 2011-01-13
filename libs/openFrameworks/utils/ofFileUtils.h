@@ -2,6 +2,11 @@
 
 #include "ofMain.h"
 
+//--------------------------------------------------
+bool ofReadFile(const string & path, ofBuffer & file, bool binary=false);
+
+
+
 class ofFileUtils{
 	public:
 
@@ -18,6 +23,13 @@ class ofFileUtils{
 	static string addLeadingSlash(string path);
 	static string addTrailingSlash(string path);
 	static string removeTrailingSlash(string path);
+
+	//------------------------------------------------------------------------------------------------------------	
+	static string getFilenameFromPath(string filePath, bool bRelativeToData = true);
+	static string getEnclosingDirectoryFromPath(string filePath, bool bRelativeToData = true);
+
+	//------------------------------------------------------------------------------------------------------------
+	static string getCurrentWorkingDirectory();
 	
 	//------------------------------------------------------------------------------------------------------------
 	static bool doesDirectoryExist(string dirPath, bool bRelativeToData = true);
@@ -25,7 +37,6 @@ class ofFileUtils{
 
 	//------------------------------------------------------------------------------------------------------------
 	static bool doesFileExist(string fPath,  bool bRelativeToData = true);
-
 
 	//------------------------------------------------------------------------------------------------------------
 	static bool makeDirectory(string dirPath, bool bRelativeToData = true);
