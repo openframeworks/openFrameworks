@@ -32,12 +32,12 @@ class testApp : public ofBaseApp{
 		ofSoundSourceTestTone tone;
 		
 		ofxSynthDelayline delay;
-		ofxSynth synth;
+		ofxSynth synth[15];
 		
 		ofSoundEffectPassthrough passthrough;
 		ofxSynthWaveWriter writer;
 		ofSoundMixer mixer;
-	
+		int keyChange;
 };
 
 #endif

@@ -42,6 +42,7 @@ void ofxSynth::audioRequested( float* buffer, int numFrames, int numChannels ){
 				buffer[i*numChannels] = 0;
 				break;
 		}
+		// TODO, MOVE THIS INTO A VOLUME GRABBER
 		buffer[i*numChannels] *= currentAmp;
 		for (int j=1; j<numChannels; j++) {
 			buffer[i*numChannels+j]=buffer[i*numChannels];
@@ -50,7 +51,6 @@ void ofxSynth::audioRequested( float* buffer, int numFrames, int numChannels ){
 	if (filterMode != 0) {
 		filter.process(buffer, buffer, numFrames, numChannels, numChannels);
 	}
-
 }
 
 void ofxSynth::trigger(){
@@ -103,6 +103,35 @@ void ofxSynthSampler::loadFile(string file){
 	printf("Summary:\n%s", sample.getSummary());
 }
 
+/* ----------- */
+void ofxSynthADSR::trigger(){
+	offset = 0;
+	noteOn = true;
+}
+void ofxSynthADSR::release(){
+	noteOn = false;
+}
+void ofxSynthADSR::audioRequested( float* buffer, int numFrames, int numChannels ){
+//	for (int i = 0; i < numFrames; i++){
+//		offset++;
+//		if(offset<a){ // attack
+//			buffer[i*numChannels] = ((float)offset)/inTime;
+//		}
+//		if (offset>inTime&&offset<inTime+holdTime) { // decay
+//			buffer[i*numChannels] = 1.0;
+//		}
+//		if(offset>inTime+holdTime){ // sustain
+//			buffer[i*numChannels] = 1.0-((float)offset-inTime-holdTime)/outTime;
+//		}
+//		if(offset>inTime+holdTime+outTime){ // release
+//			buffer[i*numChannels] = 0;
+//		}
+//		// copy to the other channels that are being requested
+//		for (int j = 1; j<numChannels; j++) {
+//			buffer[i*numChannels+j] = buffer[i*numChannels];
+//		}
+//	}
+}
 
 /* ----------- */
 void ofxSynthEnvAHD::gateOpen(){
