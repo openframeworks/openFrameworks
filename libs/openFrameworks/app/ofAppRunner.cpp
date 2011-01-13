@@ -9,6 +9,11 @@
 #include "ofEvents.h"
 #include "ofMath.h"
 
+// TODO: closing seems wonky. 
+// adding this for vc2010 compile: error C3861: 'closeQuicktime': identifier not found
+#include "ofQtUtils.h"
+
+
 
 //========================================================================
 // static variables:
