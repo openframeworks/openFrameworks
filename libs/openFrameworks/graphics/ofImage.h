@@ -51,7 +51,7 @@ class ofImage : public ofBaseImage{
 
 		// file loading / saving
 		bool 				loadImage(string fileName);
-		bool				loadImage(ofBuffer & buffer);
+		bool				loadImage(const ofBuffer & buffer);
 		void 				saveImage(string fileName);
 
 		//Sosolimited: texture compression and mipmaps
@@ -100,7 +100,7 @@ class ofImage : public ofBaseImage{
 		static bool			loadImageIntoPixels(string fileName, ofPixels &pix);
 		static void			saveImageFromPixels(string fileName, ofPixels &pix);
 
-		static bool			loadImageFromMemory(ofBuffer & buffer, ofPixels &pix);
+		static bool			loadImageFromMemory(const ofBuffer & buffer, ofPixels &pix);
 
 	protected:
 	
