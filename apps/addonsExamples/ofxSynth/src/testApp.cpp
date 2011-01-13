@@ -1,6 +1,6 @@
 #include "testApp.h"
 
-
+static const float PENTATONIC[7] = { 0, 2, 5, 7, 10, 12, 17 };
 
 //--------------------------------------------------------------
 void testApp::setup(){
@@ -22,29 +22,37 @@ void testApp::setup(){
 	ofSoundStreamSetup(2,0, sampleRate,1024, 4);
 
 	ofSetFrameRate(60);
-	
-	synth.setFrequencyMidiNote(60);	
-	synth.setADRVol(0.51, 2, 1.0);
-	synth.ampMode = OFXSYNTHADR;
-	synth.setFilterMode(1);
-	synth.setFilter(0.5, 0.1);
-	
-	delay.addInputFrom(&synth);
-	
-	mixer.addInputFrom(&delay);
-	
-	mixer.setVolume(&delay, 0.5);
+	for (int i=0; i<15; i++) {
+		synth[i].setFrequencyMidiNote(60+ofRandom(-0.01, 0.01));	
+		synth[i].setADRVol(0.51, 0.1, 0.3);
+		synth[i].ampMode = OFXSYNTHADR;
+		synth[i].setFilterMode(1);
+		synth[i].setFilter(0.5, 0.1);
+		mixer.addInputFrom(&synth[i]);
+		mixer.setVolume(&synth[i], 1.0f/30.0f);
+		
+	}
 	
 	passthrough.addInputFrom( &mixer );
-	writer.addInputFrom( &passthrough );
+	writer.addInputFrom(&passthrough);
 	ofSoundStreamAddSoundSource( &writer );
 	delay.setSize(1.1);
+	keyChange = 0;
 }
 
 
 //--------------------------------------------------------------
 void testApp::update(){
-
+	if (ofGetFrameNum() % 5 == 0 ) {
+		int synthToChange = (int)ofRandom(15);
+		int whichPentatonic = ofRandom( 0, 6.99999f );
+		float midiNote = 36 + PENTATONIC[whichPentatonic];
+		synth[synthToChange].setFrequencyMidiNote(midiNote+ofRandom(-0.01, 0.01)+keyChange);
+		synth[synthToChange].trigger();
+	}
+	if (ofGetFrameNum() % 50 == 0 ) {
+		keyChange += (int)ofRandom(-2, 2)*3;
+	}
 	const ofSoundBuffer& output = passthrough.getBuffer();
 	output.copyChannel( 0, lAudio );
 	output.copyChannel( 1, rAudio );
@@ -83,8 +91,8 @@ void testApp::draw(){
 
 //--------------------------------------------------------------
 void testApp::keyPressed  (int key){
-	synth.setFrequencyMidiNote(key/2);
-	synth.trigger();
+//	synth.setFrequencyMidiNote(key/2);
+//	synth.trigger();
 }
 
 //--------------------------------------------------------------

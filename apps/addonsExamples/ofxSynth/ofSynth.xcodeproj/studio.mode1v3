@@ -274,7 +274,6 @@
 							<key>PBXSmartGroupTreeModuleOutlineStateSelectionKey</key>
 							<array>
 								<array>
-									<integer>3</integer>
 									<integer>0</integer>
 								</array>
 							</array>
@@ -316,7 +315,7 @@
 								<key>PBXProjectModuleGUID</key>
 								<string>1CE0B20306471E060097A5F4</string>
 								<key>PBXProjectModuleLabel</key>
-								<string>ofxSynth.cpp</string>
+								<string>testApp.cpp</string>
 								<key>PBXSplitModuleInNavigatorKey</key>
 								<dict>
 									<key>Split0</key>
@@ -324,14 +323,13 @@
 										<key>PBXProjectModuleGUID</key>
 										<string>1CE0B20406471E060097A5F4</string>
 										<key>PBXProjectModuleLabel</key>
-										<string>ofxSynth.cpp</string>
+										<string>testApp.cpp</string>
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>3DFC76EC12DEB7D600BCD217</string>
+										<string>3DFC77C512DED58B00BCD217</string>
 										<key>history</key>
 										<array>
-											<string>3D603EDA12DE44DE0020F438</string>
 											<string>3DFC742512DE50F600BCD217</string>
 											<string>3DFC742612DE50F600BCD217</string>
 											<string>3DFC742812DE50F600BCD217</string>
@@ -348,10 +346,11 @@
 											<string>3DFC76A412DEAD6B00BCD217</string>
 											<string>3DFC76A612DEAD6B00BCD217</string>
 											<string>3DFC76A812DEAD6B00BCD217</string>
-											<string>3DFC76AA12DEAD6B00BCD217</string>
-											<string>3DFC76AB12DEAD6B00BCD217</string>
-											<string>3DFC76CC12DEB3C400BCD217</string>
-											<string>3DFC76C112DEB1BE00BCD217</string>
+											<string>3DFC774212DECFC200BCD217</string>
+											<string>3DFC776512DED09400BCD217</string>
+											<string>3DFC776612DED09400BCD217</string>
+											<string>3DFC77C312DED58B00BCD217</string>
+											<string>3DFC77C412DED58B00BCD217</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>
@@ -363,14 +362,14 @@
 							<key>GeometryConfiguration</key>
 							<dict>
 								<key>Frame</key>
-								<string>{{0, 0}, {1072, 418}}</string>
+								<string>{{0, 0}, {1072, 668}}</string>
 								<key>RubberWindowFrame</key>
 								<string>0 59 1280 719 0 0 1280 778 </string>
 							</dict>
 							<key>Module</key>
 							<string>PBXNavigatorGroup</string>
 							<key>Proportion</key>
-							<string>418pt</string>
+							<string>668pt</string>
 						</dict>
 						<dict>
 							<key>ContentConfiguration</key>
@@ -390,7 +389,7 @@
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>3DFC76ED12DEB7D600BCD217</string>
+										<string>3DFC77C612DED58B00BCD217</string>
 										<key>history</key>
 										<array>
 											<string>3D603EDA12DE44DE0020F438</string>
@@ -425,14 +424,14 @@
 							<key>GeometryConfiguration</key>
 							<dict>
 								<key>Frame</key>
-								<string>{{0, 423}, {1072, 250}}</string>
+								<string>{{0, 673}, {1072, 0}}</string>
 								<key>RubberWindowFrame</key>
 								<string>0 59 1280 719 0 0 1280 778 </string>
 							</dict>
 							<key>Module</key>
 							<string>PBXNavigatorGroup</string>
 							<key>Proportion</key>
-							<string>250pt</string>
+							<string>0pt</string>
 						</dict>
 						<dict>
 							<key>ContentConfiguration</key>
@@ -613,12 +612,12 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
-		<string>3DFC76EE12DEB7D600BCD217</string>
+		<string>3DFC77C712DED58B00BCD217</string>
 		<string>3DFC752D12DE89C400BCD217</string>
 		<string>3DFC752E12DE89C400BCD217</string>
-		<string>3D643E3612DE2B7D0091E252</string>
 		<string>1C78EAAD065D492600B07095</string>
 		<string>1CD10A99069EF8BA00B06720</string>
+		<string>3D643E3612DE2B7D0091E252</string>
 		<string>/Users/studio/Desktop/jonbro_working_files/jonbroOF/apps/addonsExamples/ofxSynth/ofSynth.xcodeproj</string>
 	</array>
 	<key>WindowString</key>
@@ -643,7 +642,7 @@
 								<key>PBXProjectModuleGUID</key>
 								<string>1CD0528F0623707200166675</string>
 								<key>PBXProjectModuleLabel</key>
-								<string>ofxSynth.cpp</string>
+								<string>testApp.cpp</string>
 								<key>StatusBarVisibility</key>
 								<true/>
 							</dict>
@@ -838,7 +837,7 @@
 			<key>WindowToolGUID</key>
 			<string>1CD10A99069EF8BA00B06720</string>
 			<key>WindowToolIsVisible</key>
-			<true/>
+			<false/>
 		</dict>
 		<dict>
 			<key>FirstTimeWindowDisplayed</key>
@@ -995,7 +994,7 @@
 			<key>WindowToolGUID</key>
 			<string>1C78EAAD065D492600B07095</string>
 			<key>WindowToolIsVisible</key>
-			<true/>
+			<false/>
 		</dict>
 		<dict>
 			<key>Identifier</key>
