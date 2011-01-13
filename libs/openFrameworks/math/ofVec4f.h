@@ -10,19 +10,6 @@ class ofVec4f {
   public:
 
 	float x,y,z,w;
-	
-	float * getPtr() {
-		return (float*)&x;
-	}
-	const float * getPtr() const {
-		return (const float *)&x;
-	}
-	
-	
-	float& operator[]( int n ){
-		return getPtr()[n];
-	}
-
 
     ofVec4f( float _x=0.0f,
               float _y=0.0f,
@@ -35,7 +22,22 @@ class ofVec4f {
     void set( float _x, float _y, float _z, float _w );
     void set( const ofVec4f& vec );
 
-
+	float * getPtr() {
+		return (float*)&x;
+	}
+	const float * getPtr() const {
+		return (const float *)&x;
+	}
+	
+	float& operator[]( int n ){
+		return getPtr()[n];
+	}
+	
+	float operator[]( int n ) const {
+		return getPtr()[n];
+	}
+	
+	
     // Check similarity/equality.
     //
     bool operator==( const ofVec4f& vec );

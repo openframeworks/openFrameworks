@@ -1,7 +1,7 @@
 /*
  *  ofMatrix4x4.h
  *  
- *  Created by Aaron Meyers on 6/22/09 -- modified by Arturo Castro and Zach Lieberman
+ *  Created by Aaron Meyers on 6/22/09 -- modified by Arturo Castro, Zach Lieberman, Memo Akten
  *  based on code from OSG - 
  *  see OSG license for more details: 
  *  http://www.openscenegraph.org/projects/osg/wiki/Legal
@@ -25,8 +25,8 @@
 
 class ofMatrix4x4 {
 public:
-	float _mat[4][4];
-
+//	float _mat[4][4];
+	ofVec4f _mat[4];
 	
 	//---------------------------------------------
 	// constructors
@@ -42,6 +42,7 @@ public:
 	ofMatrix4x4( const ofQuaternion& quat ) {
 		makeRotationMatrix(quat);
 	}
+
 	ofMatrix4x4(	float a00, float a01, float a02, float a03,
 	              float a10, float a11, float a12, float a13,
 	              float a20, float a21, float a22, float a23,
@@ -76,7 +77,7 @@ public:
 	
 	//----------------------------------------
 	ofVec4f getRowAsVec4f(int i) const {
-		return ofVec4f(_mat[i][0], _mat[i][1], _mat[i][2], _mat[i][3]);
+		return _mat[i];
 	}
 	
 	

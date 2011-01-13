@@ -11,6 +11,10 @@ class ofVec2f {
 
 	float x,y;
 
+    ofVec2f( float _x=0.0f, float _y=0.0f );
+    ofVec2f( const ofVec2f& pnt );
+
+
 	float * getPtr() {
 		return (float*)&x;
 	}
@@ -18,15 +22,14 @@ class ofVec2f {
 		return (const float *)&x;
 	}
 	
-	
 	float& operator[]( int n ){
 		return getPtr()[n];
 	}
 	
-
-    ofVec2f( float _x=0.0f, float _y=0.0f );
-    ofVec2f( const ofVec2f& pnt );
-
+	float operator[]( int n ) const {
+		return getPtr()[n];
+	}
+	
 
     // Getters and Setters.
     //
