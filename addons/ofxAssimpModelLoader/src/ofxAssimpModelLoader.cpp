@@ -35,7 +35,7 @@ static void Color4f(CGLContextObj cgl_ctx, const struct aiColor4D *color)
 ofxAssimpModelLoader::ofxAssimpModelLoader(){
 
     currentAnimation = 0;
-    normalizedAnimationTime = 0;
+    animationTime = 0;
     numRotations = 0;
     rotAngle.clear();
     rotAxis.clear();
@@ -459,16 +459,22 @@ void ofxAssimpModelLoader::setAnimation(int anim){
 }
 
 //-------------------------------------------
+float ofxAssimpModelLoader::getDuration(int animation){
+    const aiAnimation* anim = scene->mAnimations[animation];
+    return anim->mDuration;
+}
+
+
+//-------------------------------------------
 void ofxAssimpModelLoader::setNormalizedTime(float t){ // 0 - 1
     
     if(getAnimationCount())
     {
-        normalizedAnimationTime = t;
 
         const aiAnimation* anim = scene->mAnimations[currentAnimation];
-        float currentTime = ofMap(normalizedAnimationTime, 0.0, 1.0, 0.0, (float)anim->mDuration, false);
+        animationTime = ofMap(t, 0.0, 1.0, 0.0, (float)anim->mDuration, false);
 
-        updateAnimation(currentAnimation, currentTime);
+        updateAnimation(currentAnimation, animationTime);
     }
 }
 
