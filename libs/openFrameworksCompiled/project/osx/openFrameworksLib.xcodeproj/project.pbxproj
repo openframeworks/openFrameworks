@@ -26,6 +26,9 @@
 		BB4A407812DBBDDE007FFA68 /* ofFbo.h in Headers */ = {isa = PBXBuildFile; fileRef = BB4A407412DBBDDE007FFA68 /* ofFbo.h */; };
 		BB4A407912DBBDDE007FFA68 /* ofShader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BB4A407512DBBDDE007FFA68 /* ofShader.cpp */; };
 		BB4A407A12DBBDDE007FFA68 /* ofShader.h in Headers */ = {isa = PBXBuildFile; fileRef = BB4A407612DBBDDE007FFA68 /* ofShader.h */; };
+		DA2E399D12DF6E9000EC4A5B /* glew.h in Headers */ = {isa = PBXBuildFile; fileRef = DA2E399712DF6E9000EC4A5B /* glew.h */; };
+		DA2E399E12DF6E9000EC4A5B /* glxew.h in Headers */ = {isa = PBXBuildFile; fileRef = DA2E399812DF6E9000EC4A5B /* glxew.h */; };
+		DA2E399F12DF6E9000EC4A5B /* wglew.h in Headers */ = {isa = PBXBuildFile; fileRef = DA2E399912DF6E9000EC4A5B /* wglew.h */; };
 		E455490A12DA54BE00652B63 /* ofFileUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = E455490812DA54BE00652B63 /* ofFileUtils.h */; };
 		E455490B12DA54BE00652B63 /* ofFileUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E455490912DA54BE00652B63 /* ofFileUtils.cpp */; };
 		E4554F7912DBC51A00652B63 /* ofURLFileLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = E4554F7712DBC51A00652B63 /* ofURLFileLoader.h */; };
@@ -99,6 +102,9 @@
 		BB4A407412DBBDDE007FFA68 /* ofFbo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofFbo.h; sourceTree = "<group>"; };
 		BB4A407512DBBDDE007FFA68 /* ofShader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofShader.cpp; sourceTree = "<group>"; };
 		BB4A407612DBBDDE007FFA68 /* ofShader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofShader.h; sourceTree = "<group>"; };
+		DA2E399712DF6E9000EC4A5B /* glew.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = glew.h; sourceTree = "<group>"; };
+		DA2E399812DF6E9000EC4A5B /* glxew.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = glxew.h; sourceTree = "<group>"; };
+		DA2E399912DF6E9000EC4A5B /* wglew.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = wglew.h; sourceTree = "<group>"; };
 		E455490812DA54BE00652B63 /* ofFileUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofFileUtils.h; sourceTree = "<group>"; };
 		E455490912DA54BE00652B63 /* ofFileUtils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofFileUtils.cpp; sourceTree = "<group>"; };
 		E4554F7712DBC51A00652B63 /* ofURLFileLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofURLFileLoader.h; path = ../../../openFrameworks/utils/ofURLFileLoader.h; sourceTree = SOURCE_ROOT; };
@@ -175,10 +181,9 @@
 		E4B27AF910CBE9B900536013 /* fmod_output.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = fmod_output.h; path = ../../../fmodex/include/fmod_output.h; sourceTree = SOURCE_ROOT; };
 		E4B27AFA10CBE9B900536013 /* fmodlinux.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = fmodlinux.h; path = ../../../fmodex/include/fmodlinux.h; sourceTree = SOURCE_ROOT; };
 		E4B27B1210CBE9B900536013 /* FreeImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FreeImage.h; path = ../../../FreeImage/include/FreeImage.h; sourceTree = SOURCE_ROOT; };
-		E4B27BBD10CBE9B900536013 /* GLee.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GLee.h; path = ../../../glee/include/GLee.h; sourceTree = SOURCE_ROOT; };
 		E4B27BCE10CBE9B900536013 /* RtAudio.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RtAudio.h; path = ../../../rtAudio/include/RtAudio.h; sourceTree = SOURCE_ROOT; };
 		E4B27BCF10CBE9B900536013 /* RtError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RtError.h; path = ../../../rtAudio/include/RtError.h; sourceTree = SOURCE_ROOT; };
-		E4B27C1510CBEB8E00536013 /* openFrameworks.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = openFrameworks.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		E4B27C1510CBEB8E00536013 /* openFrameworksDebug.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = openFrameworksDebug.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		E4B5AE1412D94F9B00BA355D /* ofQtUtils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofQtUtils.cpp; path = ../../../openFrameworks/video/ofQtUtils.cpp; sourceTree = SOURCE_ROOT; };
 		E4B5AE1512D94F9B00BA355D /* ofQtUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofQtUtils.h; path = ../../../openFrameworks/video/ofQtUtils.h; sourceTree = SOURCE_ROOT; };
 		E4B5AE1612D94F9B00BA355D /* ofQuickTimeGrabber.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofQuickTimeGrabber.cpp; path = ../../../openFrameworks/video/ofQuickTimeGrabber.cpp; sourceTree = SOURCE_ROOT; };
@@ -224,6 +229,33 @@
 			path = types;
 			sourceTree = "<group>";
 		};
+		DA2E399412DF6E9000EC4A5B /* glew */ = {
+			isa = PBXGroup;
+			children = (
+				DA2E399512DF6E9000EC4A5B /* include */,
+			);
+			name = glew;
+			path = ../../../glew;
+			sourceTree = SOURCE_ROOT;
+		};
+		DA2E399512DF6E9000EC4A5B /* include */ = {
+			isa = PBXGroup;
+			children = (
+				DA2E399612DF6E9000EC4A5B /* GL */,
+			);
+			path = include;
+			sourceTree = "<group>";
+		};
+		DA2E399612DF6E9000EC4A5B /* GL */ = {
+			isa = PBXGroup;
+			children = (
+				DA2E399712DF6E9000EC4A5B /* glew.h */,
+				DA2E399812DF6E9000EC4A5B /* glxew.h */,
+				DA2E399912DF6E9000EC4A5B /* wglew.h */,
+			);
+			path = GL;
+			sourceTree = "<group>";
+		};
 		E455518312DCCD0000652B63 /* math */ = {
 			isa = PBXGroup;
 			children = (
@@ -255,9 +287,9 @@
 		E45BE0480E8CC657009D7055 /* core libraries */ = {
 			isa = PBXGroup;
 			children = (
+				DA2E399412DF6E9000EC4A5B /* glew */,
 				E4B27AF110CBE9B900536013 /* fmodex */,
 				E4B27B1010CBE9B900536013 /* FreeImage */,
-				E4B27BBB10CBE9B900536013 /* glee */,
 				E4B27BCC10CBE9B900536013 /* rtAudio */,
 			);
 			name = "core libraries";
@@ -466,24 +498,6 @@
 			path = ../../../FreeImage/include;
 			sourceTree = SOURCE_ROOT;
 		};
-		E4B27BBB10CBE9B900536013 /* glee */ = {
-			isa = PBXGroup;
-			children = (
-				E4B27BBC10CBE9B900536013 /* include */,
-			);
-			name = glee;
-			path = ../../../glee;
-			sourceTree = SOURCE_ROOT;
-		};
-		E4B27BBC10CBE9B900536013 /* include */ = {
-			isa = PBXGroup;
-			children = (
-				E4B27BBD10CBE9B900536013 /* GLee.h */,
-			);
-			name = include;
-			path = ../../../glee/include;
-			sourceTree = SOURCE_ROOT;
-		};
 		E4B27BCC10CBE9B900536013 /* rtAudio */ = {
 			isa = PBXGroup;
 			children = (
@@ -508,7 +522,7 @@
 			children = (
 				E4B27AAA10CBE92A00536013 /* openFrameworks */,
 				E45BE0360E8CC5DE009D7055 /* libs */,
-				E4B27C1510CBEB8E00536013 /* openFrameworks.a */,
+				E4B27C1510CBEB8E00536013 /* openFrameworksDebug.a */,
 			);
 			sourceTree = "<group>";
 		};
@@ -544,6 +558,9 @@
 				E455519B12DCCD0000652B63 /* ofVectorMath.h in Headers */,
 				2D4FB15C12DE7271000A51F9 /* ofSoundEffect.h in Headers */,
 				2D4FB15E12DE7271000A51F9 /* ofSoundUnit.h in Headers */,
+				DA2E399D12DF6E9000EC4A5B /* glew.h in Headers */,
+				DA2E399E12DF6E9000EC4A5B /* glxew.h in Headers */,
+				DA2E399F12DF6E9000EC4A5B /* wglew.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -564,7 +581,7 @@
 			);
 			name = openFrameworks;
 			productName = openFrameworksLib;
-			productReference = E4B27C1510CBEB8E00536013 /* openFrameworks.a */;
+			productReference = E4B27C1510CBEB8E00536013 /* openFrameworksDebug.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 /* End PBXNativeTarget section */
@@ -574,7 +591,6 @@
 			isa = PBXProject;
 			buildConfigurationList = E4B69B4D0A3A1720003C02F2 /* Build configuration list for PBXProject "openFrameworksLib" */;
 			compatibilityVersion = "Xcode 2.4";
-			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				English,
@@ -645,6 +661,11 @@
 				COPY_PHASE_STRIP = NO;
 				EXECUTABLE_PREFIX = "";
 				INSTALL_PATH = /usr/local/lib;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
+				);
+				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)/../../../glew/libs/osx\"";
 				PREBINDING = NO;
 				PRODUCT_NAME = openFrameworksDebug;
 				SDKROOT = "";
@@ -660,6 +681,11 @@
 				EXECUTABLE_PREFIX = "";
 				GCC_FAST_MATH = YES;
 				INSTALL_PATH = /usr/local/lib;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
+				);
+				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)/../../../glew/libs/osx\"";
 				PREBINDING = NO;
 				PRODUCT_NAME = openFrameworks;
 				SDKROOT = "";
