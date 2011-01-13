@@ -14,7 +14,7 @@ void ofBackground(int r, int g, int b, int a=255);
 
 // user's access to settings (bgAuto, corner mode):
 void 	ofSetBackgroundAuto(bool bManual);		// default is true
-void 	ofSetRectMode(int mode);		// set the mode, either to OF_RECTMODE_CORNER or OF_RECTMODE_CENTER
+void 	ofSetRectMode(ofRectMode mode);		// set the mode, either to OF_RECTMODE_CORNER or OF_RECTMODE_CENTER
 
 
 // push and pop all matrices and viewport
@@ -57,7 +57,7 @@ void ofRestoreMinMagFilters();
 
 // OF's access to settings (bgAuto, origin, corner mode):
 bool 	ofbClearBg();
-int 	ofGetRectMode();				// default is OF_RECTMODE_CORNER
+ofRectMode 	ofGetRectMode();				// default is OF_RECTMODE_CORNER
 
 void ofSetCircleResolution(int res);  		// if there 22 is a problem, you can change it here
 void ofSetCurveResolution(int res);
@@ -114,7 +114,7 @@ void ofSetColor(int gray); // new set a color as grayscale with one argument
 void ofSetHexColor( int hexColor ); // hex, like web 0xFF0033;
 
 // Blending
-void ofEnableBlendMode(int blendMode);
+void ofEnableBlendMode(ofBlendMode blendMode);
 void ofDisableBlendMode();
 
 
@@ -160,7 +160,7 @@ void ofCurveVertex(ofPoint & p);
 void ofBezierVertex(float x1, float y1, float x2, float y2, float x3, float y3);
 
 // for polygons
-void ofSetPolyMode(int mode);	
+void ofSetPolyMode(ofPolyWindingMode mode);
 void ofBeginShape();
 void ofVertex(float x, float y);
 void ofVertex(ofPoint & p);

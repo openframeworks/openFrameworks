@@ -67,7 +67,7 @@ bool ofImage::loadImage(string fileName){
 	return bLoadedOk;
 }
 
-bool ofImage::loadImage(ofBuffer & buffer){
+bool ofImage::loadImage(const ofBuffer & buffer){
 	bool bLoadedOk = false;
 	bLoadedOk = ofImage::loadImageFromMemory(buffer,myPixels);
 	if (bLoadedOk && myPixels.isAllocated() && bUseTexture){
@@ -230,6 +230,14 @@ void ofImage::update(){
 	height	= myPixels.getHeight();
 	bpp		= myPixels.getBitsPerPixel();
 	type	= myPixels.getImageType();
+}
+
+//----------------------------------------
+void ofImage::updatePixels() {
+	tex.bind();
+	ofTextureData& data = tex.texData;
+	glGetTexImage(data.textureTarget, 0, data.glType, data.pixelType, myPixels.getPixels());
+	tex.unbind();
 }
 
 //------------------------------------
@@ -473,7 +481,7 @@ bool ofImage::loadImageIntoPixels(string fileName, ofPixels &pix){
 }
 
 //----------------------------------------------------
-bool ofImage::loadImageFromMemory(ofBuffer & buffer, ofPixels &pix){
+bool ofImage::loadImageFromMemory(const ofBuffer & buffer, ofPixels &pix){
 
 	int					width, height, bpp;
 	bool bLoaded		= false;
@@ -482,7 +490,7 @@ bool ofImage::loadImageFromMemory(ofBuffer & buffer, ofPixels &pix){
 	
 	printf("loadImageFromMemory\n");
 
-	hmem = FreeImage_OpenMemory((uint8_t*)buffer.getBuffer(), buffer.getSize());
+	hmem = FreeImage_OpenMemory((unsigned char*)buffer.getBuffer(), buffer.getSize());
 	if (hmem == NULL){
 		ofLog(OF_LOG_ERROR,"couldn't create memory handle! \n");
 		return false;

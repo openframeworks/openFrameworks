@@ -1,6 +1,8 @@
 #pragma once
 
 #include "ofBaseTypes.h"
+#include "ofTypes.h"
+#include "ofUtils.h"
 
 class ofPixels {
 public:
@@ -66,10 +68,15 @@ public:
 
 	}
 
+	void set(unsigned char val){
+		memset(pixels,val,width*height*bytesPerPixel);
+	}
+
 	void setFromPixels(unsigned char * newPixels,int w, int h, ofImageType newType){
 		allocate(w,h,newType);
 		memcpy(pixels,newPixels,w*h*bytesPerPixel);
 	}
+
 
 	void swapRgb(){
 		if (bitsPerPixel != 8){
@@ -127,6 +134,10 @@ public:
 		}
 		
 		return c;
+	}
+
+	unsigned char operator[](int pos){
+		return pixels[pos];
 	}
 
 	bool isAllocated() const{
