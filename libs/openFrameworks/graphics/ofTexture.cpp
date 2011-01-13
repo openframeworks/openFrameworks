@@ -15,25 +15,26 @@ void ofDisableTextureEdgeHack(){
 }
 
 //----------------------------------------------------------
-ofTexture::ofTexture(){
-	texData.bAllocated		= false;
-	texData.textureID		= 0;
-	texData.bFlipTexture	= false;
-	texData.textureTarget	= GL_TEXTURE_2D;
-	texData.glTypeInternal  = 0;
-	texData.glType			= 0;
-	texData.pixelType		= GL_UNSIGNED_BYTE;
-	texData.width			= 0;
-	texData.height			= 0;
-	texData.tex_w			= 0;
-	texData.tex_h			= 0;
-	texData.tex_t			= 0;
-	texData.tex_u			= 0;
-
-	//Sosolimited
-	texData.compressionType = OF_COMPRESS_NONE;
-
+ofTexture::ofTexture()
+:texDataPtr(new ofTextureData)
+,texData(*texDataPtr)
+{
 	resetAnchor();
+}
+
+ofTexture::ofTexture(const ofTexture & mom)
+:texDataPtr(mom.texDataPtr)
+,texData(*texDataPtr)
+{
+	anchor = mom.anchor;
+	bAnchorIsPct = mom.bAnchorIsPct;
+}
+
+void ofTexture::operator=(const ofTexture & mom){
+	texDataPtr = mom.texDataPtr;
+	texData = *texDataPtr;
+	anchor = mom.anchor;
+	bAnchorIsPct = mom.bAnchorIsPct;
 }
 
 //----------------------------------------------------------
@@ -42,38 +43,22 @@ bool ofTexture::bAllocated(){
 }
 
 //----------------------------------------------------------
-ofTexture::ofTexture(const ofTexture& mom){
-	ofLog(OF_LOG_WARNING, "overloaded ofTexture copy constructor to do nothing. please use FBO or other means to copy textures");
-}
-
-//----------------------------------------------------------
-ofTexture& ofTexture::operator=(const ofTexture& mom){
-	ofLog(OF_LOG_WARNING, "overloaded ofTexture = operator to do nothing. please use FBO or other means to copy textures");
-	return *this;
-}
-
-//----------------------------------------------------------
 ofTextureData ofTexture::getTextureData(){
 	if(!texData.bAllocated){
 		ofLog(OF_LOG_ERROR, "getTextureData() - texture has not been allocated");
 	}
+
 	return texData;
 }
 
 //----------------------------------------------------------
 ofTexture::~ofTexture(){
-	clear();
+
 }
 
 //----------------------------------------------------------
 void ofTexture::clear(){
-	// try to free up the texture memory so we don't reallocate
-	// http://www.opengl.org/documentation/specs/man_pages/hardcopy/GL/html/gl/deletetextures.html
-	if (texData.textureID != 0){
-		glDeleteTextures(1, (GLuint *)&texData.textureID);
-		texData.textureID  = 0;
-	}
-	texData.bAllocated = false;
+	texData.clear();
 }
 
 //----------------------------------------------------------
