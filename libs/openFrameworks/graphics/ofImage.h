@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ofConstants.h"
+#include "ofFileUtils.h"
 #include "ofTexture.h"
 #include "ofGraphics.h"
 #include "ofAppRunner.h"		// for height()

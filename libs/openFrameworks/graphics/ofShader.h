@@ -1,5 +1,7 @@
 #pragma once
 
+#ifndef TARGET_OPENGLES
+
 /*
  todo: add support for attachment of multiple shaders
  if a uniform or attribute isn't available, this will cause an error
@@ -8,6 +10,7 @@
 
 #include "ofMain.h"
 #include <fstream>
+#include <map>
 
 class ofShader {
 public:
@@ -110,3 +113,5 @@ protected:
 	
 	bool bLoaded;
 };
+
+#endif

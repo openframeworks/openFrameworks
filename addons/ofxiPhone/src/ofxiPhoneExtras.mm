@@ -245,7 +245,7 @@ bool ofxiPhoneUIImageToOFImage(UIImage *uiImage, ofImage &outImage, int targetWi
 //	outImage.setFromPixels(pixelsFlipped, width, height, OF_IMAGE_COLOR_ALPHA, true);
 //	free(pixelsFlipped);
 	
-	int ofImageMode;
+	ofImageType ofImageMode;
 	
 	switch(bytesPerPixel) {
 		case 1:
