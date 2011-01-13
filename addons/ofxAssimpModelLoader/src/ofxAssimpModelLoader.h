@@ -1,12 +1,12 @@
 
-// assimp include files. These three are usually needed.
-#import "assimp.h"
-#import "aiPostProcess.h"
-#import "aiScene.h"
 
 #pragma once
 
 #include "ofMain.h"
+// assimp include files. These three are usually needed.
+#include "assimp.h"
+#include "aiPostProcess.h"
+#include "aiScene.h"
 
 // ofDevCon 
 // Written by Anton Marini (http://vade.info)
