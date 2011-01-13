@@ -22,7 +22,7 @@
     #define CALLBACK
 #endif
 
-#include <vector>
+#include <deque>
 
 //----------------------------------------------------------
 // static
@@ -35,15 +35,15 @@ bool 			bSmoothHinted		= false;
 bool			bUsingArbTex		= true;
 bool			bUsingNormalizedTexCoords = false;
 bool 			bBakgroundAuto		= true;
-int 			cornerMode			= OF_RECTMODE_CORNER;
-int 			polyMode			= OF_POLY_WINDING_ODD;
+ofRectMode		cornerMode			= OF_RECTMODE_CORNER;
+ofPolyWindingMode		polyMode	= OF_POLY_WINDING_ODD;
 static ofRectangle viewportRect;	//note we leave this 0,0,0,0 because ofViewport is smart
 
 int				curveResolution = 20;
 
 //style stuff - new in 006
 ofStyle			currentStyle;
-vector <ofStyle> styleHistory;
+deque <ofStyle> styleHistory;
 
 static float circlePts[OF_MAX_CIRCLE_PTS][3];			// [points][axis]
 static float circlePtsScaled[OF_MAX_CIRCLE_PTS][3];		// [points][axis]
@@ -52,7 +52,7 @@ static float linePoints[2][3];							// [points][axis]
 static float rectPoints[4][3];							// [points][axis]
 
 //----------------------------------------------------------
-void  ofSetRectMode(int mode){
+void  ofSetRectMode(ofRectMode mode){
 	if (mode == OF_RECTMODE_CORNER) 		cornerMode = OF_RECTMODE_CORNER;
 	else if (mode == OF_RECTMODE_CENTER) 	cornerMode = OF_RECTMODE_CENTER;
 
@@ -60,7 +60,7 @@ void  ofSetRectMode(int mode){
 }
 
 //----------------------------------------------------------
-int ofGetRectMode(){
+ofRectMode ofGetRectMode(){
 	return 	cornerMode;
 }
 
@@ -310,8 +310,14 @@ void ofSetLineWidth(float lineWidth){
 	currentStyle.lineWidth = lineWidth;
 }
 
+//----------------------------------------
 void ofSetCurveResolution(int res){
 	curveResolution = res;
+}
+
+//----------------------------------------
+void ofSetSphereResolution(int res) {
+	currentStyle.sphereResolution = res;
 }
 
 //----------------------------------------------------------
@@ -626,6 +632,77 @@ void ofBezier(float x0, float y0, float x1, float y1, float x2, float y2, float 
     ofEndShape();
 }
 
+//----------------------------------------
+void ofSphere(float x, float y, float z, float radius) {
+	ofSphere(ofVec3f(x, y, z), radius);
+}
+
+//----------------------------------------
+void ofSphere(float x, float y, float radius) {
+	ofSphere(x, y, 0, radius);
+}
+
+//----------------------------------------
+void ofSphere(const ofVec3f& position, float radius) {
+	ofPushMatrix();
+	ofTranslate(position);
+	ofSphere(radius);
+	ofPopMatrix();
+}
+
+//----------------------------------------
+void ofSphere(float radius) {
+	// TODO: add an implementation using ofMesh
+#ifndef TARGET_OPENGLES
+	// this needs to be swapped out with non-glut code
+	// for good references see cinder's implementation from paul bourke:
+	// https://github.com/cinder/Cinder/blob/master/src/cinder/gl/gl.cpp
+	// void drawSphere( const Vec3f &center, float radius, int segments )
+	// and processing's implementation of icospheres:
+	// https://code.google.com/p/processing/source/browse/trunk/processing/core/src/processing/core/PGraphics.java?r=7543
+	// public void sphere(float r)
+	ofPushMatrix();
+	ofRotateX(90);
+	if(ofGetStyle().bFill) {
+		glutSolidSphere(radius, 2 * currentStyle.sphereResolution, currentStyle.sphereResolution);
+	} else {
+		glutWireSphere(radius, 2 * currentStyle.sphereResolution, currentStyle.sphereResolution);
+	}
+	ofPopMatrix();
+#endif
+}
+
+//----------------------------------------
+void ofBox(float x, float y, float z, float size) {
+	ofBox(ofVec3f(x, y, z), size);
+}
+
+//----------------------------------------
+void ofBox(float x, float y, float size) {
+	ofBox(x, y, 0, size);
+}
+
+//----------------------------------------
+void ofBox(const ofVec3f& position, float size) {
+	ofPushMatrix();
+	ofTranslate(position);
+	ofBox(size);
+	ofPopMatrix();
+}
+
+//----------------------------------------
+void ofBox(float size) {
+	// TODO: add an implementation using ofMesh
+#ifndef TARGET_OPENGLES
+	// this needs to be swapped out with non-glut code
+	if(ofGetStyle().bFill) {
+		glutSolidCube(size);
+	} else {
+		glutWireCube(size);
+	}
+#endif
+}
+
 //----------------------------------------------------------
 void ofSetColor(const ofColor & color){
 	ofSetColor(color.r,color.g,color.b,color.a);
@@ -684,7 +761,7 @@ void ofSetHexColor(int hexColor){
 
 
 //----------------------------------------------------------
-void ofEnableBlendMode(int blendMode){
+void ofEnableBlendMode(ofBlendMode blendMode){
     switch (blendMode){
             
         case OF_BLENDMODE_ALPHA:{
@@ -787,6 +864,8 @@ void ofSetStyle(ofStyle style){
 
 	//circle resolution - don't worry it only recalculates the display list if the res has changed
 	ofSetCircleResolution(style.circleResolution);
+	
+	ofSetSphereResolution(style.sphereResolution);
 
 	//line width - finally!
 	ofSetLineWidth(style.lineWidth);
@@ -826,11 +905,11 @@ ofStyle ofGetStyle(){
 
 //----------------------------------------------------------
 void ofPushStyle(){
-	styleHistory.insert(styleHistory.begin(), currentStyle);
+	styleHistory.push_front(currentStyle);
 
 	//if we are over the max number of styles we have set, then delete the oldest styles.
 	if( styleHistory.size() > OF_MAX_STYLE_HISTORY ){
-		styleHistory.erase(styleHistory.begin() + OF_MAX_STYLE_HISTORY, styleHistory.end());
+		styleHistory.pop_back();
 		//should we warn here?
 		//ofLog(OF_LOG_WARNING, "ofPushStyle - warning: you have used ofPushStyle more than %i times without calling ofPopStyle - check your code!", OF_MAX_STYLE_HISTORY);
 	}
@@ -839,8 +918,8 @@ void ofPushStyle(){
 //----------------------------------------------------------
 void ofPopStyle(){
 	if( styleHistory.size() ){
-		ofSetStyle(styleHistory[0]);
-		styleHistory.erase(styleHistory.begin(), styleHistory.begin()+1);
+		ofSetStyle(styleHistory.front());
+		styleHistory.pop_front();
 	}
 }
 
@@ -1148,7 +1227,7 @@ void clearCurveVertices(){
 }
 
 //----------------------------------------------------------
-void ofSetPolyMode(int mode){
+void ofSetPolyMode(ofPolyWindingMode mode){
 	switch (mode){
 		case OF_POLY_WINDING_ODD:
 			polyMode = OF_POLY_WINDING_ODD;
