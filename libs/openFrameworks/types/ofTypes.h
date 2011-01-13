@@ -1,5 +1,4 @@
-#ifndef _OF_TYPES
-#define _OF_TYPES
+#pragma once
 
 #include "ofConstants.h"
 #include "ofUtils.h"
@@ -86,5 +85,3 @@ public:
 	string getFirstLine();
 };
 
-
-#endif
