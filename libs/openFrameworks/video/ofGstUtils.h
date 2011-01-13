@@ -5,12 +5,12 @@
 #include <pthread.h>
 #include "ofConstants.h"
 #include "ofBaseTypes.h"
+#include "ofPixels.h"
 
 typedef struct{
 	GMainLoop 		*	loop;
 	GstElement 		*	pipeline;
-	unsigned char 	*	pixels;				// 24 bit: rgb
-	unsigned			width, height;
+	ofPixels			pixels;				// 24 bit: rgb
 	unsigned			totalsize;
 	pthread_mutex_t 	buffer_mutex;
 	bool				bHavePixelsChanged;
@@ -70,6 +70,8 @@ public:
 
 	bool isFrameNew();
 	unsigned char * getPixels();
+	ofPixels getOFPixels();
+	ofPixels getOFPixels() const;
 	void update();
 
 	void play();
@@ -108,8 +110,8 @@ protected:
 	void                seek_lock();
 	void                seek_unlock();
 	void 				gstHandleMessage();
-	bool 				allocate();
-	bool				startPipeline();
+	bool 				allocate(int width=0, int height=0, int bpp=24);
+	bool				startPipeline(int width=0, int height=0, int bpp=24);
 	ofGstVideoFormat&	selectFormat(int w, int h, int desired_framerate);
 
 	bool 				bStarted;
@@ -132,7 +134,6 @@ protected:
 
 	bool				posChangingPaused;
 
-	int 				width, height,bpp;
 	int					attemptFramerate;
 	bool 				bLoaded;
 	//bool				allocated;				// so we know to free pixels or not
@@ -141,7 +142,7 @@ protected:
 
 
 	// common with gstdata
-	unsigned char 	*	pixels;				// 24 bit: rgb
+	ofPixels			pixels;				// 24 bit: rgb
 	bool				bHavePixelsChanged;
 
 	gint64				durationNanos;
