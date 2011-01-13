@@ -81,7 +81,7 @@ string ofBuffer::getFirstLine(){
 	return getNextLine();
 }
 
-
+//--------------------------------------------------
 //--------------------------------------------------
 bool ofReadFile(const string & path, ofBuffer & buffer, bool binary){
 	ifstream * file = new ifstream(ofToDataPath(path,true).c_str());

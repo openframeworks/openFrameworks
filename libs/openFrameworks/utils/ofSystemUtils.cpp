@@ -13,19 +13,19 @@
 
 
 //------------------------------------------------------------------------------
-ofFileDialogResults::ofFileDialogResults(){
+ofFileDialogResult::ofFileDialogResult(){
 	filePath = "";
 	fileName = "";
 	bSuccess = false;
 }
 
 //------------------------------------------------------------------------------
-string ofFileDialogResults::getName(){
+string ofFileDialogResult::getName(){
 	return fileName;
 }
 
 //------------------------------------------------------------------------------
-string ofFileDialogResults::getPath(){
+string ofFileDialogResult::getPath(){
 	return filePath;
 }
 
@@ -121,9 +121,9 @@ CantGetNavOptions:
 
 
 // OS specific results here.  "" = cancel or something bad like can't load, can't save, etc...
-ofFileDialogResults ofFileLoadDialog(bool bFolderSelection){
+ofFileDialogResult ofFileLoadDialog(bool bFolderSelection){
 	
-	ofFileDialogResults results;
+	ofFileDialogResult results;
 	
 	//----------------------------------------------------------------------------------------
 	//------------------------------------------------------------------------------       OSX
@@ -193,9 +193,9 @@ ofFileDialogResults ofFileLoadDialog(bool bFolderSelection){
 
 
 
-ofFileDialogResults ofFileSaveDialog(string defaultName, string messageName){
+ofFileDialogResult ofFileSaveDialog(string defaultName, string messageName){
 	
-	ofFileDialogResults results;
+	ofFileDialogResult results;
 	
 	//----------------------------------------------------------------------------------------
 	//------------------------------------------------------------------------------       OSX
