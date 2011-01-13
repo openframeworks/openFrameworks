@@ -41,6 +41,10 @@ vector<T>& ofRemove(vector<T>& values, BoolFunction shouldErase) {
 	values.erase(remove_if(values.begin(), values.end(), shouldErase), values.end());
 }
 
+template<class T> vector<T>& ofSort(vector<T>& values) {
+	sort(values.begin(), values.end());
+}
+
 //set the root path that ofToDataPath will use to search for files relative to the app
 //the path must have a trailing slash (/) !!!!
 void	ofSetDataPathRoot( string root );
