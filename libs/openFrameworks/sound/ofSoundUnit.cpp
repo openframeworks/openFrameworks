@@ -12,11 +12,13 @@
 #include <deque>
 using namespace std;
 
+/*
 vector<ofSoundSource*> ofSoundUnit::getInputs()
 {
+	ofLog(OF_LOG_WARNING, "ofSoundUnit::getInputs() called");
 	// no inputs
 	return vector<ofSoundSource*>();
-}
+}*/
 
 
 
@@ -76,9 +78,30 @@ void ofSoundSink::audioReceived( float* buffer, int numFrames, int numChannels )
 }
 
 
+void ofSoundSink::fillInputBufferFromUpstream( int numFrames, int numChannels )
+{
+	// fetch data from input, and render via process() function
+	// create/recreate input buffer if necessary
+	if ( inputBuffer.numFrames != numFrames || inputBuffer.numChannels != numChannels )
+	{
+		inputBuffer.allocate( numFrames, numChannels );
+	}
+	
+	// call input's generate
+	if ( !input )
+	{
+		inputBuffer.clear();
+	}
+	else
+	{
+		input->audioRequested( inputBuffer.buffer, inputBuffer.numFrames, inputBuffer.numChannels );
+	}
+	
+}
+
 
 // Return true if adding this edge to the graph would create a cycle
-bool ofSoundSink::addingInputWouldCreateCycle( ofSoundSource* test_input )
+bool ofSoundSink::addingInputWouldCreateCycle( ofSoundSource* test )
 {
 	// assuming the graph has no cycles from the start, can we already trace a path 
 	// from test_input to ourselves? if we can, then adding test_input will create 
@@ -86,14 +109,13 @@ bool ofSoundSink::addingInputWouldCreateCycle( ofSoundSource* test_input )
 	
 	// do a depth-first traversal
 	deque<ofSoundUnit*> stack;
-	stack.push_back( this );
+	stack.push_back( test );
 	while ( !stack.empty() )
 	{
 		ofSoundUnit* u = stack.back();
 		stack.pop_back();
-		// if u is test_edge.from, then we have looped round to the beginning
-		if ( u == test_input )
-		{
+		// if u is this, then we have looped round to the beginning
+		if ( u == this ) {
 			return true;
 		}
 		
@@ -134,8 +156,6 @@ void ofSoundMixer::audioRequested( float* output, int numFrames, int numChannels
 		ofLog( OF_LOG_ERROR, "only 1 or 2 channels supported");
 		return;
 	}
-	bool isMono = ( numChannels == 1 );
-	
 	// write to output
 	// clear output array
 	memset( output, 0, numFrames*numChannels*sizeof(float) );
@@ -181,7 +201,7 @@ bool ofSoundMixer::addInputFrom( ofSoundSource* source )
 	// check for branches/cycles
 	if ( addingInputWouldCreateCycle( source ) )
 	{
-		ofLog( OF_LOG_ERROR, "ofSoundUnit: can't connect '%s' (%x) to '%s' (%x): this would create a cycle in the DSP graph",
+		ofLog( OF_LOG_ERROR, "ofSoundMixer: can't connect '%s' (%x) to '%s' (%x): this would create a cycle in the DSP graph",
 			  source->getName().c_str(), source, this->getName().c_str(), this );
 		return false;
 	}
@@ -224,6 +244,7 @@ void ofSoundMixer::setSampleRate( int rate )
 
 void ofSoundSourceTestTone::setSampleRate( int rate )
 {
+//	ofLog( OF_LOG_NOTICE, "ofSoundSourceTestTone got sample rate: %i", rate );
 	sampleRate = rate;
 	setFrequency( frequency );
 }
@@ -235,22 +256,74 @@ void ofSoundSourceTestTone::setFrequency( float freq )
 	// basically, every OFSYNTH_SAMPLE_RATE frames (1s of audio), we want
 	// to advance phase by frequency*TWO_PI.
 	phaseAdvancePerFrame = (1.0f/sampleRate)*frequency*TWO_PI;
+	// for the sawtooth, we want to go from -1..1
+	sawAdvancePerFrame = (1.0f/sampleRate)*frequency;
+	
+//	ofLog( OF_LOG_NOTICE, "ofSoundSourceTestTone(%x) setFrequency, freq %f, sampleRate %i, advance %f", this, frequency, sampleRate, phaseAdvancePerFrame );
 }
 
 void ofSoundSourceTestTone::audioRequested( float* output, int numFrames, int numChannels )
 {
+//	ofLog( OF_LOG_NOTICE, "ofSoundSourceTestTone(%x) audioRequested, freq %f, sampleRate %i", this, frequency, sampleRate );
 	// loop through all the frames
-	for ( int i=0; i<numFrames; i++ ) 
-	{
-		float value = sinf( phase );
-		// write value to all the channels
-		for ( int j=0; j<numChannels; j++ )
-		{
-			output[i*numChannels+j] = value;
+	if ( waveform == TESTTONE_SINE ) {
+		for ( int i=0; i<numFrames; i++ ) {
+			float value = sinf( phase );
+			// write value to all the channels
+			for ( int j=0; j<numChannels; j++ ) {
+				output[i*numChannels+j] = value;
+			}
+			// advance phase
+			phase += phaseAdvancePerFrame;
 		}
-		// advance phase
-		phase += phaseAdvancePerFrame;
+		// wrap phase to 0..TWO_PI
+		phase = remainderf( phase, TWO_PI );
 	}
-	// wrap phase to 0..TWO_PI
-	phase = remainderf( phase, TWO_PI );
+	else if ( waveform == TESTTONE_SAWTOOTH ) {
+		for ( int i=0; i<numFrames; i++ ) {
+			float value = sawPhase;
+			// write value to all the channels
+			// write value to all the channels
+			for ( int j=0; j<numChannels; j++ ) {
+				output[i*numChannels+j] = value;
+			}
+			// advance phase
+			sawPhase += sawAdvancePerFrame;
+			// wrap phase to -1..1
+			sawPhase = remainderf( sawPhase, 2.0f );
+		}
+	}
+}
+
+
+
+
+
+void ofSoundSinkMicrophone::audioRequested( float* output, int numFrames, int numChannels )
+{
+	// copy from inputBuffer to output; upmix from microphone  
+	if ( numFrames != inputBuffer.numFrames ) {
+		ofLog( OF_LOG_WARNING, "ofSoundSinkMicrophone: microphone frame count seems different to output frame count; this is probably bad" );
+	}
+	inputBuffer.copyTo( output, numFrames, numChannels );
+}
+
+
+void ofSoundSourceMultiplexor::audioRequested( float* output, int numFrames, int numChannels ) {
+	long unsigned long tick = ofSoundStreamGetCurrentTick();
+	
+	// new tick: render upstream into input buffer
+	if ( tick != lastRenderedTick ) {
+		fillInputBufferFromUpstream( numFrames, numChannels );
+		lastRenderedTick = tick;
+	}
+	
+	// copy to output
+	inputBuffer.copyTo( output, numFrames, numChannels );	
+}
+
+
+void ofSoundSourceMultiplexor::setSampleRate( int rate )
+{
+	ofSoundSink::setSampleRate( rate );
 }

@@ -22,6 +22,7 @@ using namespace std;
  
  Subclasses implement the process() method to perform processing.
  
+ @author damian
  */
 
 class ofSoundEffect: public ofSoundSource, public ofSoundSink
@@ -37,6 +38,7 @@ public:
 	
 	/// implementation of the generate function from ofSoundSource
 	void audioRequested( float* buffer, int numFrames, int numChannels );
+	
 };
 
 
@@ -47,6 +49,7 @@ public:
  An ofSoundEffect that simply passes audio through, allowing access to the ofSoundBuffer of audio 
  passing through it. 
  
+ @author damian
  */
 
 class ofSoundEffectPassthrough: public ofSoundEffect
@@ -64,6 +67,7 @@ public:
  
  An ofSoundEffect that applies a volume (gain) to audio samples passing through it.
  
+ @author damian
  */
 
 class ofSoundEffectVolume : public ofSoundEffect
@@ -73,8 +77,6 @@ public:
 	
 	/// Return our name
 	string getName() { return "ofSoundEffectVolume"; }
-	/// We are stereo
-	bool isMono() { return false; }
 	
 	/// Set our volume to vol
 	void setVolume( float vol ) { volume = vol; }
