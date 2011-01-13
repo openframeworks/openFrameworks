@@ -1,5 +1,7 @@
 #include "ofFbo.h"
 
+#ifndef TARGET_OPENGLES
+
 
 /*
 
@@ -439,3 +441,4 @@ bool ofFbo::checkStatus() {
 	return false;
 }
 
+#endif

@@ -1,5 +1,7 @@
 #include "ofShader.h"
 
+#ifndef TARGET_OPENGLES
+
 ofShader::ofShader() :
 program(0),
 bLoaded(false)
@@ -436,3 +438,4 @@ string ofShader::nameForType(GLenum type) {
 	}
 }
 
+#endif
