@@ -232,14 +232,6 @@ void ofImage::update(){
 	type	= myPixels.getImageType();
 }
 
-//----------------------------------------
-void ofImage::updatePixels() {
-	tex.bind();
-	ofTextureData& data = tex.texData;
-	glGetTexImage(data.textureTarget, 0, data.glType, data.pixelType, myPixels.getPixels());
-	tex.unbind();
-}
-
 //------------------------------------
 void ofImage::setUseTexture(bool bUse){
 	bUseTexture = bUse;
