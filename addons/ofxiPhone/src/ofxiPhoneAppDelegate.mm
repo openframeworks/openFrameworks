@@ -205,7 +205,7 @@
 }
 
 
-- (void)setAnimationFrameInterval:(NSInteger)frameInterval
+- (void)setAnimationFrameInterval:(float)frameInterval
 {
     // Frame interval defines how many display frames must pass between each time the
     // display link fires. The display link will only fire 30 times a second when the

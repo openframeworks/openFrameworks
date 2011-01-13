@@ -1,5 +1,4 @@
-#ifndef _OF_TYPES
-#define _OF_TYPES
+#pragma once
 
 #include "ofConstants.h"
 #include "ofUtils.h"
@@ -39,7 +38,7 @@ class ofStyle{
 		virtual ~ofStyle(){}
 
 		ofColor color;
-		ofPolyWindingType polyMode;
+		ofPolyWindingMode polyMode;
 		ofRectMode rectMode;
 		bool bFill;
     
@@ -54,37 +53,3 @@ class ofStyle{
 		int sphereResolution;
 		float lineWidth;
 };
-
-//----------------------------------------------------------
-// ofBuffer
-//----------------------------------------------------------
-
-class ofBuffer{
-	vector<char> 	buffer;
-	long 			nextLinePos;
-public:
-
-	ofBuffer();
-	ofBuffer(int size, char * buffer);
-	ofBuffer(istream & stream);
-
-	~ofBuffer();
-
-	bool set(istream & stream);
-	void set(int _size, char * _buffer);
-
-	void clear();
-
-	void allocate(long _size);
-
-	char * getBuffer();
-	const char * getBuffer() const;
-
-	long getSize() const;
-
-	string getNextLine();
-	string getFirstLine();
-};
-
-
-#endif
