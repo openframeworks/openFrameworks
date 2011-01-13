@@ -13,22 +13,7 @@
 
 void ofSoundEffect::audioRequested( float* buffer, int numFrames, int numChannels )
 {
-	// fetch data from input, and render via process() function
-	// create/recreate input buffer if necessary
-	if ( inputBuffer.numFrames != numFrames || inputBuffer.numChannels != numChannels )
-	{
-		inputBuffer.allocate( numFrames, numChannels );
-	}
-	
-	// call input's generate
-	if ( !input )
-	{
-		inputBuffer.clear();
-	}
-	else
-	{
-		input->audioRequested( inputBuffer.buffer, inputBuffer.numFrames, inputBuffer.numChannels );
-	}
+	fillInputBufferFromUpstream( numFrames, numChannels );
 	
 	// call process
 	process( inputBuffer.buffer, buffer, numFrames, inputBuffer.numChannels, numChannels );

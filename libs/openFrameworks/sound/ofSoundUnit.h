@@ -20,6 +20,7 @@ class ofSoundSource;
  
  Base class for sound units that can be strung together into a DSP-style chain.
  
+ @author damian
  */
 
 class ofSoundUnit
@@ -30,7 +31,7 @@ public:
 	virtual string getName() = 0;
 
 	/// Return our inputs in a vector (but at ofSoundUnit level we have no inputs).
-	virtual vector<ofSoundSource*> getInputs();
+	virtual vector<ofSoundSource*> getInputs()  { return vector<ofSoundSource*>(); }
 	
 protected:
 	
@@ -44,14 +45,15 @@ protected:
  
  Base class for ofSoundUnits that generate some kind of sound output.
  
+ @author damian
  */
 
 
-class ofSoundSource: public ofSoundUnit
+class ofSoundSource: public virtual ofSoundUnit
 {
 public:
 
-	/// Set our sample rate for
+	/// Set the sample rate. If you need to know about sample rate changes, override this function.
 	virtual void setSampleRate( int rate ) {};
 	
 	/// Fill buffer with (numFrames*numChannels) floats of data, interleaved
@@ -69,6 +71,7 @@ protected:
  Wrapper for an interleaved floating point buffer holding a fixed number of frames
  of a fixed number of channels of audio.
  
+ @author damian
  */
 
 class ofSoundBuffer
@@ -80,31 +83,54 @@ public:
 	int numChannels;
 	
 	ofSoundBuffer() { numFrames = 0; numChannels = 0; buffer = NULL; }
+	ofSoundBuffer( const ofSoundBuffer& other ) { copyFrom( other ); }
 	ofSoundBuffer( int nFrames, int nChannels ) { numFrames = nFrames; numChannels = nChannels; buffer = new float[nFrames*nChannels]; }
-	~ofSoundBuffer() { if ( buffer ) delete[] buffer; }
+	ofSoundBuffer& operator=( const ofSoundBuffer& other ) { copyFrom( other ); return *this; }
 	
+	~ofSoundBuffer() { if ( buffer ) delete[] buffer; }
+
+	void copyFrom( const ofSoundBuffer& other ) { 
+		numFrames = 0; numChannels = 0;
+		if ( other.buffer ) {
+			allocate( other.numFrames, other.numChannels );
+			memcpy( buffer, other.buffer, numFrames*numChannels*sizeof(float) );
+		} 
+		else {
+			buffer = NULL;
+		}
+	}
+	
+	/// Set audio data to 0.
 	void clear() { if ( buffer ) memset( buffer, 0, sizeof(float)*numFrames*numChannels); }
-	void allocate( int nFrames, int nChannels ) 
-	{ 
-		if ( !buffer || numFrames != nFrames || numChannels != nChannels )
-		{
+	
+	/// Allocate the buffer to the given size if necessary.
+	void allocate( int nFrames, int nChannels ) { 
+		if ( !buffer || numFrames != nFrames || numChannels != nChannels ) {
 			numFrames = nFrames; numChannels = nChannels; 
-			if ( buffer )
-			{
+			if ( buffer ) {
 				delete[] buffer;
 			}
 			buffer = new float[numFrames*numChannels];
 		}
 	}
-	void copyChannel( int channel, float* output ) const
-	{
-		if ( buffer && channel < numChannels )
-		{
-			for ( int i=0; i<numFrames; i++ )
-			{
+	
+	/// Copy just a single channel to output. output should have space for numFrames floats.
+	void copyChannel( int channel, float* output ) const {
+		if ( buffer && channel < numChannels ) {
+			for ( int i=0; i<numFrames; i++ ) {
 				output[i] = buffer[numChannels*i + channel];
 			}
 		}
+	}
+	
+	/// Copy safely to out. Copy as many frames as possible, repeat channels as necessary.
+	void copyTo( float* outBuffer, int outNumFrames, int outNumChannels ) {
+		for ( int i=0; i<min(numFrames,outNumFrames); i++ ) {
+			for ( int j=0; j<outNumChannels; j++ ) {
+				// copy input to output; in cases where input has fewer channels than output, loop through input frames repeatedly
+				outBuffer[i*outNumChannels+j] = buffer[i*numChannels+(j%numChannels)];
+			}
+		}		
 	}
 };
 
@@ -118,12 +144,13 @@ public:
  inputs, or from the audioReceived function which is called from outside in special 
  cases (eg when used as microphone/line input).
  
+ @author damian
  */
 
-class ofSoundSink: public ofSoundUnit
+class ofSoundSink: public virtual ofSoundUnit
 {
 public:
-	ofSoundSink() { input = NULL; }
+	ofSoundSink() { input = NULL; sampleRate = 44100; }
 	
 	/// Set the sample rate of this synth unit. If you overload this remember to call the base class.
 	virtual void setSampleRate( int rate );
@@ -138,7 +165,10 @@ public:
 	virtual void audioReceived( float* buffer, int numFrames, int numChannels );
 	
 protected:
-	// walk the DSP graph and see if adding test_input as an input to ourselves; return true if it would
+	// fill our input buffer from the upstream source (input)
+	void fillInputBufferFromUpstream( int numFrames, int numChannels );
+	
+	// walk the DSP graph and see if adding test_input as an input to ourselves; return true if it would.
 	bool addingInputWouldCreateCycle( ofSoundSource* test_input );
 
 	
@@ -151,7 +181,7 @@ protected:
 	ofSoundSource* input;
 	ofSoundBuffer inputBuffer;
 
-	float sampleRate;
+	int sampleRate;
 };
 
 
@@ -161,6 +191,7 @@ protected:
  
  Mixes together inputs from multiple ofSoundSources.
  
+ @author damian
  */
 
 class ofSoundMixer : public ofSoundSink, public ofSoundSource
@@ -216,6 +247,7 @@ private:
  
  Also, you must call frameTick() for every audio frame (sample) to advance the ramp.
  
+ @author damian
  */
 
 class ofSoundDeclickedFloat
@@ -258,17 +290,19 @@ private:
  
  An ofSoundSource that generates a test tone with a given frequency.
  
+ @author damian
  */
 
 class ofSoundSourceTestTone: public ofSoundSource
 {
 public:	
-	ofSoundSourceTestTone() { phase = 0; setFrequency( 440.0f ); }
+	static const int TESTTONE_SINE = 0;
+	static const int TESTTONE_SAWTOOTH = 1;
+	
+	ofSoundSourceTestTone() { sampleRate = 44100; phase = 0; sawPhase = 0; setFrequency( 440.0f ); waveform = TESTTONE_SINE; }
 	
 	/// Return our name
 	string getName() { return "ofSoundUnitTestTone"; }
-	/// We are stereo
-	bool isMono() { return false; }
 	
 	/// Set our frequency
 	void setFrequency( float freq );
@@ -276,6 +310,9 @@ public:
 	void setFrequencyMidiNote( float midiNote ) { setFrequency(440.0f*powf(2.0f,(midiNote-60.0f)/12.0f)); };
 	/// Update generation for the new sample rate
 	void setSampleRate( int rate );
+	/// Set waveform
+	void setSineWaveform() { waveform = TESTTONE_SINE; }
+	void setSawtoothWaveform() { waveform = TESTTONE_SAWTOOTH; }
 	
 	void audioRequested( float* output, int numFrames, int numChannels );
 	
@@ -286,7 +323,67 @@ private:
 	int sampleRate;
 	float phaseAdvancePerFrame;
 	
+	int waveform;
+	
+	float sawPhase;
+	float sawAdvancePerFrame;
+	
 };
 
 
+/** ofSoundSinkMicrophone
+ 
+ An ofSoundSink object that catches microphone input + passes it downstream, taking care of upmixing to higher
+ output channel counts by repeating input channels as necessary.
+ 
+ Automatically registers itself with the ofSoundStream system using ofSoundStreamAddSoundSink( this ).
+ 
+ @author damian
+ */
 
+class ofSoundSinkMicrophone: public ofSoundSink, public ofSoundSource
+{
+public:
+	ofSoundSinkMicrophone() { ofSoundStreamAddSoundSink( this ); }
+	virtual ~ofSoundSinkMicrophone() { ofSoundStreamRemoveSoundSink( this ); }
+	
+	string getName() { return "ofSoundSinkMicrophone"; }
+	
+	/// return last received microphone input
+	void audioRequested( float* output, int numFrames, int numChannels );
+	
+	
+	
+private:
+	
+	
+};
+
+
+/** ofSoundSourceMultiplexor
+ 
+ An ofSoundSource that allows an input ofSoundSource to be used an input to multiple downstream units.
+
+ @author damian
+ */
+
+static const string OF_SOUND_SOURCE_MULTIPLEXOR_NAME = "ofSoundSourceMultiplexor";
+
+class ofSoundSourceMultiplexor: public ofSoundSink, public ofSoundSource
+{
+public:
+	ofSoundSourceMultiplexor() { lastRenderedTick=0; }
+	
+	string getName() { return OF_SOUND_SOURCE_MULTIPLEXOR_NAME; }
+	
+	/// cache input and share to downstream
+	void audioRequested( float* output, int numFrames, int numChannels );
+	
+	/// pass through sample rate to upstream
+	void setSampleRate( int rate );
+	
+private:
+	
+	long unsigned long lastRenderedTick;
+	
+};
