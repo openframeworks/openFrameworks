@@ -72,10 +72,6 @@ class ofImage : public ofBaseImage{
 		// call update() to see a change (move the pixels to the texture)
 		void update();
 
-		// if you've altered the texture (e.g., using a shader)
-		// call updatePixels() to get the pixels (move the texture to the pixels)
-		void updatePixels();
-
 		//the anchor is the point the image is drawn around.
 		//this can be useful if you want to rotate an image around a particular point.
         void				setAnchorPercent(float xPct, float yPct);	//set the anchor as a percentage of the image width/height ( 0.0-1.0 range )
