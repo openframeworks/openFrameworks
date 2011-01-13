@@ -19,15 +19,21 @@ ofxSynth::ofxSynth(){
 }
 
 void ofxSynth::audioRequested( float* buffer, int numFrames, int numChannels ){
+	// fill the required inputs
+	float envBuffer[numFrames];
+	env.audioRequested(envBuffer, numFrames, 1);
+
 	for (int i = 0; i<numFrames; i++) {
 		if (ampMode == OFXSYNTHONESHOT) {
 			currentAmp = 1;
 		}else if(ampMode == OFXSYNTHADR){
-			currentAmp = env.getLevel();
+			currentAmp = envBuffer[i];
 		}
 		if (currentAmp > 1) {
 			currentAmp = 1;
 		}
+		
+		// load the proper waveform
 		switch (waveMode) {
 			case 0:
 				buffer[i*numChannels] = wave.square(currentFrequency);
@@ -42,7 +48,6 @@ void ofxSynth::audioRequested( float* buffer, int numFrames, int numChannels ){
 				buffer[i*numChannels] = 0;
 				break;
 		}
-		// TODO, MOVE THIS INTO A VOLUME GRABBER
 		buffer[i*numChannels] *= currentAmp;
 		for (int j=1; j<numChannels; j++) {
 			buffer[i*numChannels+j]=buffer[i*numChannels];
@@ -57,14 +62,9 @@ void ofxSynth::trigger(){
 	if (ampMode == OFXSYNTHONESHOT) {
 		currentAmp = 1;
 	}else if(ampMode == OFXSYNTHADR){
-		env.gateOpen();
+		env.trigger();
+		env.release();
 	}
-}
-void ofxSynth::setADRVol(float atk, float dec, float rel){
-	// scale to sample rate
-	env.inTime = atk*SAMPLE_RATE;
-	env.holdTime = dec*SAMPLE_RATE;
-	env.outTime = rel*SAMPLE_RATE;
 }
 void ofxSynth::setADRMod(float atk, float dec, float rel){
 	// scale to sample rate
@@ -112,25 +112,28 @@ void ofxSynthADSR::release(){
 	noteOn = false;
 }
 void ofxSynthADSR::audioRequested( float* buffer, int numFrames, int numChannels ){
-//	for (int i = 0; i < numFrames; i++){
-//		offset++;
-//		if(offset<a){ // attack
-//			buffer[i*numChannels] = ((float)offset)/inTime;
-//		}
-//		if (offset>inTime&&offset<inTime+holdTime) { // decay
-//			buffer[i*numChannels] = 1.0;
-//		}
-//		if(offset>inTime+holdTime){ // sustain
-//			buffer[i*numChannels] = 1.0-((float)offset-inTime-holdTime)/outTime;
-//		}
-//		if(offset>inTime+holdTime+outTime){ // release
-//			buffer[i*numChannels] = 0;
-//		}
-//		// copy to the other channels that are being requested
-//		for (int j = 1; j<numChannels; j++) {
-//			buffer[i*numChannels+j] = buffer[i*numChannels];
-//		}
-//	}
+	for (int i = 0; i < numFrames; i++){
+		
+		if(offset<a){ // attack
+			buffer[i*numChannels] = ((float)offset)/a;
+			offset++;
+		}else if (offset>a&&offset<a+d) { // decay
+			buffer[i*numChannels] = ofLerp(1.0, s, ((float)offset-a)/d);
+			offset++;
+		}else if(noteOn){ // sustain
+			buffer[i*numChannels] = s;
+		}else if(offset<a+d+r){ // release
+			buffer[i*numChannels] = ofLerp(s, 0.0, (float)(offset-a-d)/(float)r);
+			offset++;
+		}else {
+			buffer[i*numChannels] = 0;
+		}
+
+		// copy to the other channels that are being requested
+		for (int j = 1; j<numChannels; j++) {
+			buffer[i*numChannels+j] = buffer[i*numChannels];
+		}
+	}
 }
 
 /* ----------- */

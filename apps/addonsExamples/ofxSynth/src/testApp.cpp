@@ -24,13 +24,12 @@ void testApp::setup(){
 	ofSetFrameRate(60);
 	for (int i=0; i<15; i++) {
 		synth[i].setFrequencyMidiNote(60+ofRandom(-0.01, 0.01));	
-		synth[i].setADRVol(0.51, 0.1, 0.3);
+		synth[i].env.setADSR(0.51*sampleRate, 0.2*sampleRate, 0.9, 2.3*sampleRate);
 		synth[i].ampMode = OFXSYNTHADR;
 		synth[i].setFilterMode(1);
 		synth[i].setFilter(0.5, 0.1);
 		mixer.addInputFrom(&synth[i]);
-		mixer.setVolume(&synth[i], 1.0f/30.0f);
-		
+		mixer.setVolume(&synth[i], 1.0f/15.0f);
 	}
 	
 	passthrough.addInputFrom( &mixer );
@@ -43,16 +42,6 @@ void testApp::setup(){
 
 //--------------------------------------------------------------
 void testApp::update(){
-	if (ofGetFrameNum() % 5 == 0 ) {
-		int synthToChange = (int)ofRandom(15);
-		int whichPentatonic = ofRandom( 0, 6.99999f );
-		float midiNote = 36 + PENTATONIC[whichPentatonic];
-		synth[synthToChange].setFrequencyMidiNote(midiNote+ofRandom(-0.01, 0.01)+keyChange);
-		synth[synthToChange].trigger();
-	}
-	if (ofGetFrameNum() % 50 == 0 ) {
-		keyChange += (int)ofRandom(-2, 2)*3;
-	}
 	const ofSoundBuffer& output = passthrough.getBuffer();
 	output.copyChannel( 0, lAudio );
 	output.copyChannel( 1, rAudio );
@@ -91,8 +80,9 @@ void testApp::draw(){
 
 //--------------------------------------------------------------
 void testApp::keyPressed  (int key){
-//	synth.setFrequencyMidiNote(key/2);
-//	synth.trigger();
+	int synthToChange = (int)ofRandom(15);
+	synth[synthToChange].setFrequencyMidiNote(key/2);
+	synth[synthToChange].trigger();
 }
 
 //--------------------------------------------------------------
