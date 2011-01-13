@@ -1,7 +1,7 @@
 //
 // LRUStrategy.h
 //
-// $Id: //poco/1.3/Foundation/include/Poco/LRUStrategy.h#3 $
+// $Id: //poco/1.4/Foundation/include/Poco/LRUStrategy.h#1 $
 //
 // Library: Foundation
 // Package: Cache
@@ -36,8 +36,8 @@
 //
 
 
-#ifndef  Foundation_LRUStrategy_INCLUDED
-#define  Foundation_LRUStrategy_INCLUDED
+#ifndef Foundation_LRUStrategy_INCLUDED
+#define Foundation_LRUStrategy_INCLUDED
 
 
 #include "Poco/KeyValueArgs.h"
@@ -159,4 +159,4 @@ protected:
 } // namespace Poco
 
 
-#endif
+#endif // Foundation_LRUStrategy_INCLUDED

@@ -1,7 +1,7 @@
 //
 // Message.h
 //
-// $Id: //poco/1.3/Foundation/include/Poco/Message.h#3 $
+// $Id: //poco/1.4/Foundation/include/Poco/Message.h#1 $
 //
 // Library: Foundation
 // Package: Logging
@@ -57,6 +57,9 @@ class Foundation_API Message
 	/// its meaning, the time of its creation, and an identifier of
 	/// the process and thread that created the message.
 	///
+	/// Optionally a Message can also contain the source file path
+	/// and line number of the statement generating the message.
+	///
 	/// A Message can also contain any number of named parameters
 	/// that contain additional information about the event that
 	/// caused the message.
@@ -80,6 +83,18 @@ public:
 		
 	Message(const std::string& source, const std::string& text, Priority prio);
 		/// Creates a Message with the given source, text and priority.
+		/// The thread and process ids are set.
+
+	Message(const std::string& source, const std::string& text, Priority prio, const char* file, int line);
+		/// Creates a Message with the given source, text, priority,
+		/// source file path and line. 
+		///
+		/// The source file path must be a 
+		/// static string with a lifetime that's at least the lifetime
+		/// of the message object (the string is not copied internally).
+		/// Usually, this will be the path string obtained from the 
+		/// __FILE__ macro.
+		///
 		/// The thread and process ids are set.
 		
 	Message(const Message& msg);
@@ -139,6 +154,30 @@ public:
 	long getPid() const;
 		/// Returns the process identifier for the message.
 		
+	void setSourceFile(const char* file);
+		/// Sets the source file path of the statement
+		/// generating the log message.
+		///
+		/// File must be a static string, such as the value of
+		/// the __FILE__ macro. The string is not copied
+		/// internally for performance reasons.	
+		
+	const char* getSourceFile() const;
+		/// Returns the source file path of the code creating
+		/// the message. May be 0 if not set.
+		
+	void setSourceLine(int line);
+		/// Sets the source file line of the statement
+		/// generating the log message.
+		///
+		/// This is usually the result of the __LINE__
+		/// macro.
+		
+	int getSourceLine() const;
+		/// Returns the source file line of the statement
+		/// generating the log message. May be 0
+		/// if not set.
+		
 	const std::string& operator [] (const std::string& param) const;
 		/// Returns a const reference to the value of the parameter
 		/// with the given name. Throws a NotFoundException if the
@@ -162,6 +201,8 @@ private:
 	int         _tid;
 	std::string _thread;
 	long        _pid;
+	const char* _file;
+	int         _line;
 	StringMap*  _pMap;
 };
 
@@ -208,6 +249,18 @@ inline long Message::getTid() const
 inline long Message::getPid() const
 {
 	return _pid;
+}
+
+
+inline const char* Message::getSourceFile() const
+{
+	return _file;
+}
+
+
+inline int Message::getSourceLine() const
+{
+	return _line;
 }
 
 

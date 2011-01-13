@@ -41,6 +41,12 @@ public:
 	virtual void	enableSetupScreen(){}
 	virtual void	disableSetupScreen(){}
 
+	virtual bool	isMousePressed(int button){return false;}
+	virtual bool	isKeyPressed(int key){return false;}
+
+	virtual int		getMouseX(){return 0;}
+	virtual int		getMouseY(){return 0;}
+
 };
 
 #endif

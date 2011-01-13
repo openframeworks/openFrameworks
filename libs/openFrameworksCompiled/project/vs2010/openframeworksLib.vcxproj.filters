@@ -123,6 +123,9 @@
     <ClInclude Include="..\..\..\openFrameworks\video\ofDirectShowGrabber.h">
       <Filter>libs\openFrameworks\video</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\openFrameworks\app\ofAppBaseWindow.h">
+      <Filter>libs\openFrameworks\app</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\openFrameworks\app\ofAppGlutWindow.cpp">
@@ -193,6 +196,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\openFrameworks\video\ofDirectShowGrabber.cpp">
       <Filter>libs\openFrameworks\video</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\openFrameworks\events\ofEvents.cpp">
+      <Filter>libs\openFrameworks\events</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

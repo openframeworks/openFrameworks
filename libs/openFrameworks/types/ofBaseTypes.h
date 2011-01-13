@@ -85,7 +85,7 @@ public:
 //----------------------------------------------------------
 // ofBaseVideo
 //----------------------------------------------------------
-class ofBaseVideo: public ofBaseImage, public ofBaseUpdates{
+class ofBaseVideo: public ofBaseHasPixels, public ofBaseUpdates{
 public:
 	virtual ~ofBaseVideo(){}
 	virtual bool isFrameNew()=0;
@@ -96,7 +96,7 @@ public:
 //----------------------------------------------------------
 // ofBaseVideoGrabber
 //----------------------------------------------------------
-class ofBaseVideoGrabber{
+class ofBaseVideoGrabber: public ofBaseVideo{
 	
 	public :
 	
@@ -105,14 +105,13 @@ class ofBaseVideoGrabber{
 	
 	//needs implementing
 	virtual void	listDevices() = 0;		
-	virtual bool	initGrabber(int w, int h) = 0;		
-	virtual void	grabFrame() = 0;
+	virtual bool	initGrabber(int w, int h) = 0;
+	//virtual void	grabFrame() = 0;
 	virtual bool	isFrameNew() = 0;
 	
 	virtual unsigned char 	* getPixels() = 0;
 	
 	virtual void	close() = 0;	
-	virtual void	clearMemory() = 0;
 	
 	virtual float	getHeight() = 0;
 	virtual float	getWidth() = 0;
@@ -129,7 +128,7 @@ class ofBaseVideoGrabber{
 //----------------------------------------------------------
 // ofBaseVideoPlayer
 //----------------------------------------------------------
-class ofBaseVideoPlayer{
+class ofBaseVideoPlayer: public ofBaseVideo{
 	
 public:
 	
@@ -138,13 +137,11 @@ public:
 	
 	//needs implementing
 	virtual bool				loadMovie(string name) = 0;
-	virtual void				closeMovie() = 0;
-	virtual void				idleMovie() = 0;
+	virtual void				close() = 0;
+	//virtual void				idleMovie() = 0;
 	
 	virtual void				play() = 0;
 	virtual void				stop() = 0;		
-	
-	virtual void				clearMemory() = 0;
 	
 	virtual bool 				isFrameNew() = 0;
 	virtual unsigned char * 	getPixels() = 0;

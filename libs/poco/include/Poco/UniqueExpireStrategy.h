@@ -1,7 +1,7 @@
 //
 // UniqueExpireStrategy.h
 //
-// $Id: //poco/1.3/Foundation/include/Poco/UniqueExpireStrategy.h#2 $
+// $Id: //poco/1.4/Foundation/include/Poco/UniqueExpireStrategy.h#1 $
 //
 // Library: Foundation
 // Package: Cache
@@ -36,8 +36,8 @@
 //
 
 
-#ifndef  Foundation_UniqueExpireStrategy_INCLUDED
-#define  Foundation_UniqueExpireStrategy_INCLUDED
+#ifndef Foundation_UniqueExpireStrategy_INCLUDED
+#define Foundation_UniqueExpireStrategy_INCLUDED
 
 
 #include "Poco/KeyValueArgs.h"
@@ -157,4 +157,4 @@ protected:
 } // namespace Poco
 
 
-#endif
+#endif // Foundation_UniqueExpireStrategy_INCLUDED

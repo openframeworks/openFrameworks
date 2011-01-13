@@ -106,7 +106,7 @@ void ofDirectShowGrabber::listDevices(){
 }
 
 //--------------------------------------------------------------------
-void ofDirectShowGrabber::grabFrame(){
+void ofDirectShowGrabber::update(){
 
 	//---------------------------------
 	#ifdef OF_VIDEO_CAPTURE_DIRECTSHOW
