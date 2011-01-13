@@ -36,6 +36,10 @@
 // audio
 #include "ofSoundStream.h"
 #include "ofSoundPlayer.h"
+#ifndef TARGET_OF_IPHONE			//(temp for now, until this is ported)
+	#include "ofSoundUnit.h"
+	#include "ofSoundEffect.h"
+#endif
 
 //--------------------------
 // video
