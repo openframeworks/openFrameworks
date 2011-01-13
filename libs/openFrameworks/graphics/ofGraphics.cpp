@@ -662,7 +662,6 @@ void ofSphere(float radius) {
 	// https://code.google.com/p/processing/source/browse/trunk/processing/core/src/processing/core/PGraphics.java?r=7543
 	// public void sphere(float r)
 	
-#ifndef TARGET_OPENGLES
 	ofPushMatrix();
 	ofRotateX(90);
 	if(ofGetStyle().bFill) {
@@ -695,7 +694,6 @@ void ofBox(const ofVec3f& position, float size) {
 //----------------------------------------
 void ofBox(float size) {
 	// TODO: add an implementation using ofMesh
-#ifndef TARGET_OPENGLES
 	// this needs to be swapped out with non-glut code
 #ifndef TARGET_OPENGLES
 	if(ofGetStyle().bFill) {
