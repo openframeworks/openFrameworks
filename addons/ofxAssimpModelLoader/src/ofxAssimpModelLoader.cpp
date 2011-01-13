@@ -142,7 +142,7 @@ void ofxAssimpModelLoader::loadGLResources(){
         int texIndex = 0;
         aiString texPath;
         
-        meshHelper.texture = NULL;
+        //meshHelper.texture = NULL;
         
         // TODO: handle other aiTextureTypes
         if(AI_SUCCESS == mtl->GetTexture(aiTextureType_DIFFUSE, texIndex, &texPath)){
@@ -159,7 +159,8 @@ void ofxAssimpModelLoader::loadGLResources(){
             
             ofLog(OF_LOG_VERBOSE, "texture width: %f height %f", image.getWidth(), image.getHeight());
             
-            meshHelper.texture = &(image.getTextureReference()); 
+            //meshHelper.texture = &(image.getTextureReference()); 
+            meshHelper.textureIndex = textures.size()-1;
         }
         
         if(AI_SUCCESS == aiGetMaterialColor(mtl, AI_MATKEY_COLOR_DIFFUSE, &dcolor))
@@ -380,6 +381,8 @@ void ofxAssimpModelLoader::deleteGLResources(){
         meshHelper.normalBuffer = 0;
         meshHelper.vao = 0; 
         meshHelper.mesh = NULL;
+        
+        meshHelper.textureIndex = -1;
     }
     
     // clear out our meshes array.
@@ -524,7 +527,6 @@ void ofxAssimpModelLoader::updateAnimation(unsigned int animationIndex, float cu
     
     const aiAnimation* anim = scene->mAnimations[animationIndex];
     
-        
     for( size_t a = 0; a < anim->mNumChannels; ++a)
     {
         const aiNodeAnim* channel = anim->mChannels[a];
@@ -746,8 +748,8 @@ void ofxAssimpModelLoader::draw()
                 ofxAssimpMeshHelper meshHelper = modelMeshes.at(i);
                 
                 // Texture Binding
-                if(meshHelper.texture){
-                    meshHelper.texture->bind();
+                if(meshHelper.textureIndex!=-1){
+                    textures[meshHelper.textureIndex].getTextureReference().bind();
                 }
                 // Set up meterial state.
 
@@ -781,9 +783,9 @@ void ofxAssimpModelLoader::draw()
                 glDrawElements(GL_TRIANGLES, meshHelper.numIndices, GL_UNSIGNED_INT, 0);
                 
                 // Texture Binding
-                if(meshHelper.texture){
-                    meshHelper.texture->unbind();
-                }        
+                if(meshHelper.textureIndex!=-1){
+                    textures[meshHelper.textureIndex].getTextureReference().unbind();
+                }
             }
         }        
             
