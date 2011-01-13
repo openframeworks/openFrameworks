@@ -1,12 +1,7 @@
-#ifndef _OF_TYPES
-#define _OF_TYPES
+#pragma once
 
 #include "ofConstants.h"
-#include "ofUtils.h"
-#include "ofRectangle.h"
-#include "ofPoint.h"
 #include "ofColor.h"
-#include "ofBaseTypes.h"
 
 
 //----------------------------------------------------------
@@ -86,5 +81,3 @@ public:
 	string getFirstLine();
 };
 
-
-#endif

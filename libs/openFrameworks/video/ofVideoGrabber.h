@@ -1,10 +1,7 @@
-#ifndef _OF_VIDEO_GRABBER
-#define _OF_VIDEO_GRABBER
+#pragma once
 
 #include "ofConstants.h"
 #include "ofTexture.h"
-#include "ofGraphics.h"
-#include "ofTypes.h"
 #include "ofBaseTypes.h"
 #include "ofPixels.h"
 
@@ -76,7 +73,4 @@ class ofVideoGrabber : public ofBaseVideoGrabber,public ofBaseDraws, public ofBa
 };
 
 
-
-
-#endif
 

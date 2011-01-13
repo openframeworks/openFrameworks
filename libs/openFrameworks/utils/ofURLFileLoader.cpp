@@ -1,5 +1,6 @@
 #include "ofURLFileLoader.h"
 #include "ofAppRunner.h"
+#include "ofUtils.h"
 
 #include "Poco/Net/HTTPClientSession.h"
 #include "Poco/Net/HTTPRequest.h"
@@ -10,7 +11,6 @@
 #include "Poco/Exception.h"
 #include "Poco/URIStreamOpener.h"
 #include "Poco/Net/HTTPStreamFactory.h"
-#include <queue>
 
 using Poco::Net::HTTPClientSession;
 using Poco::Net::HTTPRequest;

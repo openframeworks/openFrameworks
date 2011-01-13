@@ -1,5 +1,15 @@
 #include "ofAppRunner.h"
 
+#include "ofBaseApp.h"
+#include "ofAppBaseWindow.h"
+#include "ofSoundPlayer.h"
+#include "ofSoundStream.h"
+#include "ofImage.h"
+#include "ofUtils.h"
+#include "ofEvents.h"
+#include "ofMath.h"
+
+
 //========================================================================
 // static variables:
 

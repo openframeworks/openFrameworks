@@ -1,15 +1,26 @@
-#ifndef OF_MAIN
-#define OF_MAIN
+#pragma once
 
 //--------------------------
 // utils
 #include "ofConstants.h"
-#include "ofMath.h"
-#include "ofUtils.h"
-#include "ofTypes.h"
-#include "ofSystemUtils.h"
 #include "ofFileUtils.h"
+#include "ofSystemUtils.h"
 #include "ofThread.h"
+#include "ofURLFileLoader.h"
+#include "ofUtils.h"
+
+//--------------------------
+// types
+#include "ofBaseTypes.h"
+#include "ofTypes.h"
+#include "ofColor.h"
+#include "ofPoint.h"
+#include "ofRectangle.h"
+
+//--------------------------
+// math
+#include "ofMath.h"
+#include "ofVectorMath.h"
 
 //--------------------------
 // communication
@@ -26,6 +37,7 @@
 #include "ofImage.h"
 #include "ofFbo.h"
 #include "ofShader.h"
+#include "ofPixels.h"
 
 //--------------------------
 // app
@@ -48,4 +60,3 @@
 // events
 #include "ofEvents.h"
 
-#endif

@@ -1,4 +1,5 @@
 #include "ofFileUtils.h"
+#include "ofUtils.h"
 
 #include "Poco/Util/FilesystemConfiguration.h"
 #include "Poco/File.h"

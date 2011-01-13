@@ -1,4 +1,6 @@
 #include "ofShader.h"
+#include "ofUtils.h"
+#include "ofTypes.h"
 
 ofShader::ofShader() :
 program(0),
