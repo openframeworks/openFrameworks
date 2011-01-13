@@ -763,7 +763,7 @@ void ofSetHexColor(int hexColor){
 
 //----------------------------------------------------------
 
-void ofEnableBlendMode(int blendMode){
+void ofEnableBlendMode(ofBlendMode blendMode){
 #ifndef TARGET_OPENGLES
     switch (blendMode){
             
