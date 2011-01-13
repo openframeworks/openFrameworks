@@ -314,7 +314,7 @@ enum ofBlendMode{
 // also: http://glprogramming.com/red/chapter11.html
 // (CSG ideas)
 
-enum ofPolyWindingType{
+enum ofPolyWindingMode{
 	OF_POLY_WINDING_ODD 	        = 100130,
 	OF_POLY_WINDING_NONZERO         = 100131,
 	OF_POLY_WINDING_POSITIVE        = 100132,

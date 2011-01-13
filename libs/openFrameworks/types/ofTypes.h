@@ -39,7 +39,7 @@ class ofStyle{
 		virtual ~ofStyle(){}
 
 		ofColor color;
-		ofPolyWindingType polyMode;
+		ofPolyWindingMode polyMode;
 		ofRectMode rectMode;
 		bool bFill;
     
