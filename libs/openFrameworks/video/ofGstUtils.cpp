@@ -54,8 +54,8 @@ static GstFlowReturn on_new_buffer_from_source (GstAppSink * elt, void * data)
   size = GST_BUFFER_SIZE (buffer);
 
   ofGstDataLock(gstData);
-	  if(gstData->pixels){
-		  memcpy (gstData->pixels, GST_BUFFER_DATA (buffer), size);
+	  if(gstData->pixels.isAllocated()){
+		  memcpy (gstData->pixels.getPixels(), GST_BUFFER_DATA (buffer), size);
 		  gstData->bHavePixelsChanged=true;
 	  }
   ofGstDataUnlock(gstData);
@@ -83,11 +83,9 @@ static GstFlowReturn on_new_preroll_from_source (GstAppSink * elt, void * data)
 	  return;
   }*/
   ofGstDataLock(gstData);
-	  if(gstData->pixels){
-		  memcpy (gstData->pixels, GST_BUFFER_DATA (buffer), size);
-
-			  gstData->bHavePixelsChanged=true;
-
+	  if(gstData->pixels.isAllocated()){
+		  memcpy (gstData->pixels.getPixels(), GST_BUFFER_DATA (buffer), size);
+		  gstData->bHavePixelsChanged=true;
 	  }
   ofGstDataUnlock(gstData);
 
@@ -494,11 +492,8 @@ static void get_device_data (ofGstDevice &webcam_device, int desired_framerate)
 
 ofGstUtils::ofGstUtils() {
 	bLoaded 					= false;
-	width 						= 0;
-	height						= 0;
 	speed 						= 1;
 	bStarted					= false;
-	pixels						= NULL;
 	nFrames						= 0;
 	bPaused						= false;
 
@@ -551,14 +546,10 @@ ofGstUtils::ofGstUtils() {
 
 ofGstUtils::~ofGstUtils() {
 	close();
-
-	if (pixels != NULL){
-		delete[] pixels;
-	}
+	pixels.clear();
 }
 
 bool ofGstUtils::loadMovie(string name){
-	bpp 				= 24;
 	bLoaded      		= false;
 	bPaused 			= true;
 	speed 				= 1.0f;
@@ -642,7 +633,6 @@ ofGstVideoFormat & ofGstUtils::selectFormat(int w, int h, int desired_framerate)
 }
 
 bool ofGstUtils::initGrabber(int w, int h){
-	bpp = 24;
 	if(!camData.bInited) get_video_devices(camData);
 
 	if(camData.webcam_devices.size()==0){
@@ -657,8 +647,6 @@ bool ofGstUtils::initGrabber(int w, int h){
 	bIsCamera = true;
 	bHavePixelsChanged 	= false;
 
-	width = w;
-	height = h;
 
 	gstData.loop		= g_main_loop_new (NULL, FALSE);
 
@@ -700,7 +688,7 @@ bool ofGstUtils::initGrabber(int w, int h){
 	gst_base_sink_set_sync(GST_BASE_SINK(gstSink), true);
 
 
-	if(startPipeline()){
+	if(startPipeline(w,h)){
 		play();
 		return true;
 	}else{
@@ -713,16 +701,11 @@ void ofGstUtils::setDesiredFrameRate(int framerate){
 }
 
 bool ofGstUtils::setPipeline(string pipeline, int bpp, bool isStream, int w, int h){
-	this->bpp = bpp;
+
 	bHavePixelsChanged 	= false;
 	bIsStream = isStream;
 
 	gstData.loop		= g_main_loop_new (NULL, FALSE);
-
-	if(w!=-1 && h!=-1){
-		width=w;
-		height=h;
-	}
 
 	string caps;
 	if(bpp==8)
@@ -750,7 +733,7 @@ bool ofGstUtils::setPipeline(string pipeline, int bpp, bool isStream, int w, int
 	gst_base_sink_set_sync(GST_BASE_SINK(gstSink), true);
 
 
-	return startPipeline();
+	return startPipeline(w,h,bpp);
 }
 
 bool ofGstUtils::setPipelineWithSink(string pipeline){
@@ -787,7 +770,7 @@ void ofGstUtils::setFrameByFrame(bool _bFrameByFrame){
 
 }
 
-bool ofGstUtils::startPipeline(){
+bool ofGstUtils::startPipeline(int width, int height, int bpp){
 	gstData.pipeline=gstPipeline;
 
 	// pause the pipeline
@@ -802,7 +785,7 @@ bool ofGstUtils::startPipeline(){
 
 	if(!bIsStream){
 		ofGstDataLock(&gstData);
-		ret = allocate();
+		ret = allocate(width,height,bpp);
 		ofGstDataUnlock(&gstData);
 
 	}else{
@@ -832,7 +815,7 @@ bool ofGstUtils::startPipeline(){
 	return ret;
 }
 
-bool ofGstUtils::allocate(){
+bool ofGstUtils::allocate(int width, int height, int bpp){
 	// wait for paused state to query the duration
 	if(!bIsStream){
 		GstState state = GST_STATE_PAUSED;
@@ -849,23 +832,21 @@ bool ofGstUtils::allocate(){
 
 	// query width, height, fps and do data allocation
 	if (bIsCamera || (width!=0 && height!=0)) {
-		pixels=new unsigned char[width*height*bpp/8];
-		gstData.pixels=new unsigned char[width*height*bpp/8];
-		memset(pixels,0,width*height*bpp/8);
-		memset(gstData.pixels,0,width*height*bpp/8);
-		gstData.width = width;
-		gstData.height = height;
+		cout << "allocating " << width << ", "<< height << "@" << bpp << endl;
+		pixels.allocate(width,height,bpp);
+		gstData.pixels.allocate(width,height,bpp);
+		pixels.set(0);
+		pixels.set(0);
 		gstData.totalsize = 0;
 		gstData.lastFrame = 0;
 	}else if(gstSink!=NULL && !bIsCustomWithSink){
 		if(GstPad* pad = gst_element_get_static_pad(gstSink, "sink")){
 			if(gst_video_get_size(GST_PAD(pad), &width, &height)){
-				pixels=new unsigned char[width*height*bpp/8];
-				gstData.pixels=new unsigned char[width*height*bpp/8];
-				memset(pixels,0,width*height*bpp/8);
-				memset(gstData.pixels,0,width*height*bpp/8);
-				gstData.width = width;
-				gstData.height = height;
+				cout << "allocating " << width << ", "<< height << "@" << bpp << endl;
+				pixels.allocate(width,height,bpp);
+				gstData.pixels.allocate(width,height,bpp);
+				pixels.set(0);
+				pixels.set(0);
 				gstData.totalsize = 0;
 				gstData.lastFrame = 0;
 			}else{
@@ -904,6 +885,14 @@ bool ofGstUtils::isFrameNew(){
 }
 
 unsigned char * ofGstUtils::getPixels(){
+	return pixels.getPixels();
+}
+
+ofPixels ofGstUtils::getOFPixels(){
+	return pixels;
+}
+
+ofPixels ofGstUtils::getOFPixels() const{
 	return pixels;
 }
 
@@ -917,7 +906,7 @@ void ofGstUtils::update(){
 				if (bHavePixelsChanged){
 					gstData.bHavePixelsChanged=false;
 					bIsMovieDone = false;
-					memcpy(pixels,gstData.pixels,width*height*bpp/8);
+					pixels = gstData.pixels;
 				}
 
 			ofGstDataUnlock(&gstData);
@@ -931,8 +920,8 @@ void ofGstUtils::update(){
 
 			if(buffer){
 				guint size = GST_BUFFER_SIZE (buffer);
-				if(pixels){
-					memcpy (pixels, GST_BUFFER_DATA (buffer), size);
+				if(pixels.isAllocated()){
+					memcpy (pixels.getPixels(), GST_BUFFER_DATA (buffer), size);
 					bHavePixelsChanged=true;
 				}
 				/// we don't need the appsink buffer anymore
@@ -999,11 +988,11 @@ void ofGstUtils::previousFrame(){
 }
 
 float ofGstUtils::getHeight(){
-	return height;
+	return pixels.getHeight();
 }
 
 float ofGstUtils::getWidth(){
-	return width;
+	return pixels.getWidth();
 }
 
 float ofGstUtils::getPosition(){
@@ -1070,7 +1059,7 @@ void ofGstUtils::setVolume(int volume){
 	g_object_set(G_OBJECT(gstPipeline), "volume", gvolume, (void*)NULL);
 }
 
-void ofGstUtils::setLoopState(int state){
+void ofGstUtils::setLoopState(ofLoopType state){
 	loopMode = state;
 }
 
@@ -1130,15 +1119,8 @@ void ofGstUtils::close(){
 		gst_element_set_state(GST_ELEMENT(gstPipeline), GST_STATE_NULL);
 		//gst_object_unref(gstSink);
 		gst_object_unref(gstPipeline);
-		if(pixels){
-			delete[] pixels;
-			pixels = NULL;
-		}
-		if(gstData.pixels){
-			delete[] gstData.pixels;
-			gstData.pixels = NULL;
-		}
-
+		pixels.clear();
+		gstData.pixels.clear();
 	}
 
 	bLoaded = false;
