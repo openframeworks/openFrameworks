@@ -52,7 +52,8 @@ class ofxAssimpModelLoader{
             
         // Our array of textures we load from the models path.
         vector <ofImage> textures;
-        
+        //list <ofImage> textures;
+    
         // TODO: convert to ofMesh or ofVBOMesh
         vector <ofxAssimpMeshHelper> modelMeshes;  
          

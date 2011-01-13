@@ -35,7 +35,8 @@ struct ofxAssimpMeshHelper{
     GLuint numIndices;
     
     // texture
-    ofTexture* texture;
+    //ofTexture* texture;
+    int textureIndex;
     
     // Material 
     // TODO: use ofColor
