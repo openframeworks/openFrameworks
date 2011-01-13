@@ -1,6 +1,44 @@
 #pragma once
 
-#include "ofMain.h"
+#include "ofConstants.h"
+#include "ofUtils.h"
+
+//----------------------------------------------------------
+// ofBuffer
+//----------------------------------------------------------
+class ofBuffer{
+	public:
+
+		ofBuffer();
+		ofBuffer(int size, char * buffer);
+		ofBuffer(istream & stream);
+		ofBuffer(const ofBuffer & mom);
+
+		~ofBuffer();
+
+		bool set(istream & stream);
+		void set(int _size, char * _buffer);
+
+		void clear();
+
+		void allocate(long _size);
+
+		char * getBuffer();
+		const char * getBuffer() const;
+
+		long getSize() const;
+
+		string getNextLine();
+		string getFirstLine();
+		
+	protected:
+		vector<char> 	buffer;
+		long 			nextLinePos;
+};
+
+//--------------------------------------------------
+bool ofReadFile(const string & path, ofBuffer & file, bool binary=false);
+
 
 class ofFileUtils{
 	public:
@@ -18,6 +56,13 @@ class ofFileUtils{
 	static string addLeadingSlash(string path);
 	static string addTrailingSlash(string path);
 	static string removeTrailingSlash(string path);
+
+	//------------------------------------------------------------------------------------------------------------	
+	static string getFilenameFromPath(string filePath, bool bRelativeToData = true);
+	static string getEnclosingDirectoryFromPath(string filePath, bool bRelativeToData = true);
+
+	//------------------------------------------------------------------------------------------------------------
+	static string getCurrentWorkingDirectory();
 	
 	//------------------------------------------------------------------------------------------------------------
 	static bool doesDirectoryExist(string dirPath, bool bRelativeToData = true);
@@ -25,7 +70,6 @@ class ofFileUtils{
 
 	//------------------------------------------------------------------------------------------------------------
 	static bool doesFileExist(string fPath,  bool bRelativeToData = true);
-
 
 	//------------------------------------------------------------------------------------------------------------
 	static bool makeDirectory(string dirPath, bool bRelativeToData = true);

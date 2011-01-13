@@ -7,6 +7,30 @@
 #include <commdlg.h>
 #endif
 
+#ifdef TARGET_OSX
+	#include <sys/param.h> // for MAXPATHLEN
+#endif 
+
+
+//------------------------------------------------------------------------------
+ofFileDialogResult::ofFileDialogResult(){
+	filePath = "";
+	fileName = "";
+	bSuccess = false;
+}
+
+//------------------------------------------------------------------------------
+string ofFileDialogResult::getName(){
+	return fileName;
+}
+
+//------------------------------------------------------------------------------
+string ofFileDialogResult::getPath(){
+	return filePath;
+}
+
+
+//------------------------------------------------------------------------------
 void ofCreateAlertDialog(string errorMessage){	
 	
 	
@@ -32,7 +56,7 @@ void ofCreateAlertDialog(string errorMessage){
 #ifdef TARGET_OSX
 //---------------------------------------------------------------------
 // Gets a file to open from the user. Caller must release the CFURLRef.
-CFURLRef GetOpenFileFromUser(void)
+CFURLRef GetOpenFileFromUser(bool bFolder)
 {
 	NavDialogCreationOptions dialogOptions;
 	NavDialogRef dialog;
@@ -43,13 +67,20 @@ CFURLRef GetOpenFileFromUser(void)
 	
 	// Get the standard set of defaults
 	status = NavGetDefaultDialogCreationOptions(&dialogOptions);
+
 	require_noerr( status, CantGetNavOptions );
 	
 	// Make the window app-wide modal
 	dialogOptions.modality = kWindowModalityAppModal;
+	dialogOptions.optionFlags != kNavAllowOpenPackages;
 	
 	// Create the dialog
-	status = NavCreateGetFileDialog(&dialogOptions, NULL, NULL, NULL, NULL, NULL, &dialog);
+	if( bFolder ){
+		status = NavCreateChooseFolderDialog(&dialogOptions, NULL, NULL, NULL, &dialog);
+	}else{
+		status = NavCreateGetFileDialog(&dialogOptions, NULL, NULL, NULL, NULL, NULL, &dialog);
+	}
+	
 	require_noerr( status, CantCreateDialog );
 	
 	// Show it
@@ -64,6 +95,7 @@ CFURLRef GetOpenFileFromUser(void)
 	if ( status == userCanceledErr ) goto UserCanceled;
 	
 	// Get the file
+	//TODO: for multiple files - 1 specifies index	
 	status = AEGetNthPtr(&(replyRecord.selection), 1, typeFSRef, NULL, NULL, &fileAsFSRef, sizeof(FSRef), NULL);
 	require_noerr( status, CantExtractFSRef );
 	
@@ -89,46 +121,36 @@ CantGetNavOptions:
 
 
 // OS specific results here.  "" = cancel or something bad like can't load, can't save, etc...
-string ofFileLoadDialog(){
+ofFileDialogResult ofFileLoadDialog(bool bFolderSelection){
 	
-	
-	string fileNameToLoad = "";
-	
+	ofFileDialogResult results;
 	
 	//----------------------------------------------------------------------------------------
 	//------------------------------------------------------------------------------       OSX
 	//----------------------------------------------------------------------------------------
 #ifdef TARGET_OSX
-	CFURLRef cfUrl = GetOpenFileFromUser();
+	CFURLRef cfUrl = GetOpenFileFromUser(bFolderSelection);
 	
 	CFStringRef cfString = NULL;
-	
-	
-	if ( cfUrl != NULL )
-	{
+		
+	if ( cfUrl != NULL ){
 		cfString = CFURLCopyFileSystemPath( cfUrl, kCFURLPOSIXPathStyle );
 		CFRelease( cfUrl );
 		
 		// copy from a CFString into a local c string (http://www.carbondev.com/site/?page=CStrings+)
-		const int kBufferSize = 255;
+		const int kBufferSize = MAXPATHLEN;
 		
-		char folderURL[kBufferSize];
-		Boolean bool1 = CFStringGetCString(cfString,folderURL,kBufferSize,kCFStringEncodingMacRoman);
+		char fileUrl[kBufferSize];
+		Boolean bool1 = CFStringGetCString(cfString,fileUrl,kBufferSize,kCFStringEncodingMacRoman);
 		
 		//char fileName[kBufferSize];
 		//Boolean bool2 = CFStringGetCString(reply.saveFileName,fileName,kBufferSize,kCFStringEncodingMacRoman);
 		
 		// append strings together
 		
-		string url1 = folderURL;
-		string url2 = "";
-		string finalURL = url1 + "/" + url2;
-		fileNameToLoad = finalURL;
+		results.filePath = fileUrl;
 	}
-	
-	
-	if (fileNameToLoad.length () < 1) return"";
-	fileNameToLoad.erase(fileNameToLoad.length()-1);	// has a / at the end, ie /user/me/desktop/blah.txt/.... let's kill that :)
+		
 #endif
 	//----------------------------------------------------------------------------------------
 	//----------------------------------------------------------------------------------------
@@ -153,25 +175,27 @@ string ofFileLoadDialog(){
 	ofn.lpstrDefExt = 0;
 	
 	if(GetOpenFileName(&ofn)) {
-		printf("GetOpenFileName worked, got %s \n", szFileName);
-		
-		fileNameToLoad = string(szFileName);
+		//printf("GetOpenFileName worked, got %s \n", szFileName);
+		results.filePath = string(szFileName);
 	}
 	//----------------------------------------------------------------------------------------
 	//------------------------------------------------------------------------------   windoze
 	//----------------------------------------------------------------------------------------
 #endif
 	
+	if( results.filePath.length() > 0 ){
+		results.bSuccess = true;
+		results.fileName = ofFileUtils::getFilenameFromPath(results.filePath);		
+	}
 	
-	return fileNameToLoad;
-	
+	return results;
 }
 
 
 
-string ofFileSaveDialog(string defaultName, string messageName){
+ofFileDialogResult ofFileSaveDialog(string defaultName, string messageName){
 	
-	string fileNameOutput;
+	ofFileDialogResult results;
 	
 	//----------------------------------------------------------------------------------------
 	//------------------------------------------------------------------------------       OSX
@@ -205,14 +229,14 @@ string ofFileSaveDialog(string defaultName, string messageName){
 	//printf("got action %i\n", action);
 	if (action == kNavUserActionNone || action == kNavUserActionCancel) {
 		
-		return "";
+		return results;
 	}
 	
 	// get dialog reply
 	NavReplyRecord reply;
 	err = NavDialogGetReply(dialog, &reply);
 	if ( err != noErr )
-		return "";
+		return results;
 	
 	if ( reply.replacing )
 	{
@@ -252,7 +276,7 @@ string ofFileSaveDialog(string defaultName, string messageName){
 	string url2 = fileName;
 	string finalURL = url1 + "/" + url2;
 	
-	fileNameOutput =  finalURL.c_str();
+	results.filePath = finalURL.c_str();
 	
 	//printf("url %s\n", finalURL.c_str());
 	
@@ -298,17 +322,20 @@ string ofFileSaveDialog(string defaultName, string messageName){
 	
 	if (GetSaveFileName(&ofn))
 	{
-	    fileNameOutput = string(info_fn) + "/" + string(fileName);
-		if (fileNameOutput.length() > 1) fileNameOutput.erase(0,1);
-        cout << "GetSaveFileName worked, got " << fileNameOutput << endl;
-		
-		
+		#error this needs checking on windows - what is the filePath.erase(0,1)
+	    results.filePath = string(info_fn) + "/" + string(fileName);
+		if (results.filePath.length() > 1) results.filePath.erase(0,1);
+        cout << "GetSaveFileName worked, got " << results.filePath << endl;
 	}
 #endif
 	//----------------------------------------------------------------------------------------
 	//----------------------------------------------------------------------------------------
 	//----------------------------------------------------------------------------------------
+
+	if( results.filePath.length() > 0 ){
+		results.bSuccess = true;
+		results.fileName = ofFileUtils::getFilenameFromPath(results.filePath);		
+	}
 	
-	return fileNameOutput;
-	
+	return results;	
 }

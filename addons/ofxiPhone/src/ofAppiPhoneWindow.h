@@ -75,7 +75,7 @@ public:
 	
 	void				enableRetinaSupport();
 	void				enableDepthBuffer();
-	void				enableAntiAliasing(int samples); // samples doesnt work on iphone but is setup to provide support for this function being in the core
+	void				enableAntiAliasing(int samples);
 	
 	bool				isDepthEnabled();
 	bool				isAntiAliasingEnabled();
