@@ -652,6 +652,8 @@ void ofSphere(const ofVec3f& position, float radius) {
 
 //----------------------------------------
 void ofSphere(float radius) {
+	// TODO: add an implementation using ofMesh
+#ifndef TARGET_OPENGLES
 	// this needs to be swapped out with non-glut code
 	// for good references see cinder's implementation from paul bourke:
 	// https://github.com/cinder/Cinder/blob/master/src/cinder/gl/gl.cpp
@@ -667,6 +669,7 @@ void ofSphere(float radius) {
 		glutWireSphere(radius, 2 * currentStyle.sphereResolution, currentStyle.sphereResolution);
 	}
 	ofPopMatrix();
+#endif
 }
 
 //----------------------------------------
@@ -689,12 +692,15 @@ void ofBox(const ofVec3f& position, float size) {
 
 //----------------------------------------
 void ofBox(float size) {
+	// TODO: add an implementation using ofMesh
+#ifndef TARGET_OPENGLES
 	// this needs to be swapped out with non-glut code
 	if(ofGetStyle().bFill) {
 		glutSolidCube(size);
 	} else {
 		glutWireCube(size);
 	}
+#endif
 }
 
 //----------------------------------------------------------
