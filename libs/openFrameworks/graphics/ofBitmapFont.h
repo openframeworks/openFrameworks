@@ -1,8 +1,6 @@
-#ifndef OF_BMP_TYPE
-#define OF_BMP_TYPE
+#pragma once
 
 #include "ofConstants.h"
-#include "ofTexture.h"
 
 
 /*
@@ -18,9 +16,6 @@
 void  ofDrawBitmapCharacter(int character );
 #else
 void  ofDrawBitmapCharacter(int character, int x , int y );
-#endif
-
-
 #endif
 
 

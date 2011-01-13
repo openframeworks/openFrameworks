@@ -1,13 +1,10 @@
 #pragma once
 
-#include "ofConstants.h"
 #include "ofFileUtils.h"
 #include "ofTexture.h"
-#include "ofGraphics.h"
-#include "ofAppRunner.h"		// for height()
 #include "FreeImage.h"
-#include "ofUtils.h"
 #include "ofPixels.h"
+#include "ofBaseTypes.h"
 
 //----------------------------------------------------
 // freeImage based stuff:
@@ -71,10 +68,6 @@ class ofImage : public ofBaseImage{
 		// if you've altered the pixels (e.g., from getPixels())
 		// call update() to see a change (move the pixels to the texture)
 		void update();
-
-		// if you've altered the texture (e.g., using a shader)
-		// call updatePixels() to get the pixels (move the texture to the pixels)
-		void updatePixels();
 
 		//the anchor is the point the image is drawn around.
 		//this can be useful if you want to rotate an image around a particular point.

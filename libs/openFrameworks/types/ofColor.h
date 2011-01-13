@@ -1,5 +1,4 @@
 #pragma once
-#include "ofConstants.h"
 
 //----------------------------------------------------------
 // ofColor

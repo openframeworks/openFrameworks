@@ -1,4 +1,9 @@
 #include "ofFbo.h"
+#include "ofAppRunner.h"
+#include "ofUtils.h"
+#include "ofGraphics.h"
+
+#ifndef TARGET_OPENGLES
 
 
 /*
@@ -439,3 +444,4 @@ bool ofFbo::checkStatus() {
 	return false;
 }
 
+#endif
