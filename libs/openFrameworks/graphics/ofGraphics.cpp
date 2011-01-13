@@ -35,7 +35,7 @@ bool 			bSmoothHinted		= false;
 bool			bUsingArbTex		= true;
 bool			bUsingNormalizedTexCoords = false;
 bool 			bBakgroundAuto		= true;
-int 			cornerMode			= OF_RECTMODE_CORNER;
+ofRectMode		cornerMode			= OF_RECTMODE_CORNER;
 int 			polyMode			= OF_POLY_WINDING_ODD;
 static ofRectangle viewportRect;	//note we leave this 0,0,0,0 because ofViewport is smart
 
@@ -52,7 +52,7 @@ static float linePoints[2][3];							// [points][axis]
 static float rectPoints[4][3];							// [points][axis]
 
 //----------------------------------------------------------
-void  ofSetRectMode(int mode){
+void  ofSetRectMode(ofRectMode mode){
 	if (mode == OF_RECTMODE_CORNER) 		cornerMode = OF_RECTMODE_CORNER;
 	else if (mode == OF_RECTMODE_CENTER) 	cornerMode = OF_RECTMODE_CENTER;
 
@@ -60,7 +60,7 @@ void  ofSetRectMode(int mode){
 }
 
 //----------------------------------------------------------
-int ofGetRectMode(){
+ofRectMode ofGetRectMode(){
 	return 	cornerMode;
 }
 
@@ -761,7 +761,7 @@ void ofSetHexColor(int hexColor){
 
 
 //----------------------------------------------------------
-void ofEnableBlendMode(int blendMode){
+void ofEnableBlendMode(ofBlendMode blendMode){
     switch (blendMode){
             
         case OF_BLENDMODE_ALPHA:{
@@ -1227,7 +1227,7 @@ void clearCurveVertices(){
 }
 
 //----------------------------------------------------------
-void ofSetPolyMode(int mode){
+void ofSetPolyMode(ofPolyWindingType mode){
 	switch (mode){
 		case OF_POLY_WINDING_ODD:
 			polyMode = OF_POLY_WINDING_ODD;
