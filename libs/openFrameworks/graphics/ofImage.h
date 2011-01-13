@@ -1,5 +1,4 @@
-#ifndef _OF_IMAGE_H_
-#define _OF_IMAGE_H_
+#pragma once
 
 #include "ofConstants.h"
 #include "ofTexture.h"
@@ -113,11 +112,4 @@ class ofImage : public ofBaseImage{
 		ofPixels			myPixels;
 		bool				bUseTexture;
 		ofTexture			tex;
-
-
-
 };
-
-
-
-#endif
