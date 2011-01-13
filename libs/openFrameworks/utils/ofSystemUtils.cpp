@@ -16,6 +16,7 @@
 #endif
 
 #ifdef TARGET_OSX
+	#include <Carbon/Carbon.h>
 	#include <sys/param.h> // for MAXPATHLEN
 #endif 
 
