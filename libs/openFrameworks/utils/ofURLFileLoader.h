@@ -44,7 +44,7 @@ public:
 
 ofHttpResponse ofLoadURL(string url);
 void ofLoadURLAsync(string url, string name="");
-void ofRemoveRequest(ofHttpRequest & request);
+void ofRemoveURLRequest(ofHttpRequest request);
 
 extern ofEvent<ofHttpResponse> ofURLResponseEvent;
 
@@ -66,7 +66,7 @@ class ofURLFileLoader : public ofThread  {
         ofURLFileLoader();
         ofHttpResponse get(string url);
 		void getAsync(string url, string name="");
-		void remove(ofHttpRequest & httpRequest);
+		void remove(ofHttpRequest httpRequest);
 
     protected:
 
@@ -79,7 +79,7 @@ class ofURLFileLoader : public ofThread  {
     private:
 
 		// perform the requests on the thread
-        ofHttpResponse handleRequest(ofHttpRequest & request);
+        ofHttpResponse handleRequest(ofHttpRequest request);
 
 		deque<ofHttpRequest> requests;
 		queue<ofHttpResponse> responses;
