@@ -151,6 +151,8 @@ class ofTexture : public ofBaseDraws{
 
 	ofTextureData getTextureData();
 
+	// reference to the actual textureData inside the smart pointer
+	// for backwards compatibility
 	ofTextureData & texData;
 
 	float getHeight();
