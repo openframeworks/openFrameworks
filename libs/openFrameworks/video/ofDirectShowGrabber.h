@@ -5,6 +5,7 @@
 #include "ofGraphics.h"
 #include "ofTypes.h"
 #include "ofBaseTypes.h"
+#include "ofPixels.h"
 
 #ifdef OF_VIDEO_CAPTURE_DIRECTSHOW
 	#include "videoInput.h"
