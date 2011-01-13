@@ -1,5 +1,5 @@
 
-#include "ofMain.h"	
+#include "ofConstants.h"
 #include "ofSystemUtils.h"
 
 #ifdef TARGET_WIN32

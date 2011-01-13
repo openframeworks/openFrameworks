@@ -1,12 +1,9 @@
 #pragma once
 
-#include "ofConstants.h"
 #include "ofTexture.h"
-#include "ofGraphics.h"
-#include "ofAppRunner.h"		// for height()
 #include "FreeImage.h"
-#include "ofUtils.h"
 #include "ofPixels.h"
+#include "ofBaseTypes.h"
 
 //----------------------------------------------------
 // freeImage based stuff:

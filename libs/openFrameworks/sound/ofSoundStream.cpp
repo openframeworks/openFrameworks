@@ -1,6 +1,10 @@
 #include "ofSoundStream.h"
 #include "RtAudio.h"
 
+#include "ofBaseApp.h"
+#include "ofEvents.h"
+#include "ofMath.h"
+
 //----------------------------------- static variables:
 static ofBaseApp 	* 		OFSAptr = NULL;
 RtAudio				*		audio = NULL;

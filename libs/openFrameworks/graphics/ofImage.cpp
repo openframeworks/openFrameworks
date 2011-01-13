@@ -1,5 +1,6 @@
 #include "ofImage.h"
-
+#include "ofAppRunner.h"
+#include "ofTypes.h"
 
 //----------------------------------------------------------
 // static variable for freeImage initialization:

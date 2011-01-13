@@ -6,8 +6,11 @@
  make sure to catch and report that error.
  */
 
-#include "ofMain.h"
-#include <fstream>
+#include "ofConstants.h"
+#include "ofBaseTypes.h"
+#include "ofTexture.h"
+#include <map>
+
 
 class ofShader {
 public:

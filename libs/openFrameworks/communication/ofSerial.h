@@ -1,15 +1,10 @@
-#ifndef OF_SERIAL_H
-#define OF_SERIAL_H
+#pragma once
 
 #include "ofConstants.h"
 #include "ofBaseTypes.h"
 
-
 #if defined( TARGET_OSX ) || defined( TARGET_LINUX )
 	#include <termios.h>
-	#include <sys/ioctl.h>
-	#include <getopt.h>
-	#include <dirent.h>
 #else
 	#include <winbase.h>
 	#include <tchar.h>
@@ -25,12 +20,6 @@
     #endif
 #endif
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <fcntl.h>
-#include <errno.h>
-#include <ctype.h>
 
 
 // notes below
@@ -130,4 +119,3 @@ class ofSerial : public ofBaseHasDevices {
 // ----------------------------
 
 
-#endif

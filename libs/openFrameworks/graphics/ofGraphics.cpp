@@ -1,6 +1,7 @@
 #include "ofGraphics.h"
 #include "ofAppRunner.h"
 #include "ofBitmapFont.h"
+#include "ofUtils.h"
 
 #ifdef TARGET_OSX
 	#include <OpenGL/glu.h>
@@ -21,6 +22,18 @@
 #ifndef TARGET_WIN32
     #define CALLBACK
 #endif
+
+#ifdef TARGET_WIN32
+	#define GLUT_BUILDING_LIB
+	#include "glut.h"
+#endif
+#ifdef TARGET_OSX
+	#include <GLUT/glut.h>
+#endif
+#ifdef TARGET_LINUX
+	#include <GL/glut.h>
+#endif
+
 
 #include <deque>
 

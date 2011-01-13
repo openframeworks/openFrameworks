@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ofMain.h"
+#include "ofTexture.h"
 
 
 class ofFbo {

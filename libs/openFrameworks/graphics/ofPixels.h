@@ -1,8 +1,8 @@
 #pragma once
 
-#include "ofBaseTypes.h"
-#include "ofTypes.h"
+#include "ofConstants.h"
 #include "ofUtils.h"
+#include "ofColor.h"
 
 class ofPixels {
 public:
