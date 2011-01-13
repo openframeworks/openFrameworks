@@ -104,7 +104,7 @@ class ofImage : public ofBaseImage{
 		void				changeTypeOfPixels(ofPixels &pix, ofImageType type);
 		void				resizePixels(ofPixels &pix, int newWidth, int newHeight);
 		static FIBITMAP *	getBmpFromPixels(ofPixels &pix);
-		static void			putBmpIntoPixels(FIBITMAP * bmp, ofPixels &pix);
+		static void			putBmpIntoPixels(FIBITMAP * bmp, ofPixels &pix, bool swapForLittleEndian=true);
 
 
 		ofPixels			myPixels;
