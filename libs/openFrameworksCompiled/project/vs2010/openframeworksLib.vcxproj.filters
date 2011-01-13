@@ -233,8 +233,5 @@
     <ClCompile Include="..\..\..\openFrameworks\math\ofQuaternion.cpp">
       <Filter>libs\openFrameworks\math</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\openFrameworks\types\ofTypes.cpp">
-      <Filter>libs\openFrameworks\types</Filter>
-    </ClCompile>
   </ItemGroup>
 </Project>
