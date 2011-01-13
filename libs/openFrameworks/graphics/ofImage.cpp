@@ -67,7 +67,7 @@ bool ofImage::loadImage(string fileName){
 	return bLoadedOk;
 }
 
-bool ofImage::loadImage(ofBuffer & buffer){
+bool ofImage::loadImage(const ofBuffer & buffer){
 	bool bLoadedOk = false;
 	bLoadedOk = ofImage::loadImageFromMemory(buffer,myPixels);
 	if (bLoadedOk && myPixels.isAllocated() && bUseTexture){
@@ -473,7 +473,7 @@ bool ofImage::loadImageIntoPixels(string fileName, ofPixels &pix){
 }
 
 //----------------------------------------------------
-bool ofImage::loadImageFromMemory(ofBuffer & buffer, ofPixels &pix){
+bool ofImage::loadImageFromMemory(const ofBuffer & buffer, ofPixels &pix){
 
 	int					width, height, bpp;
 	bool bLoaded		= false;
