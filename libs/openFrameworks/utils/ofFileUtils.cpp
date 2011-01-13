@@ -63,6 +63,10 @@ char * ofBuffer::getBuffer(){
 	return &buffer[0];
 }
 
+const char * ofBuffer::getBuffer() const{
+	return &buffer[0];
+}
+
 long ofBuffer::getSize() const{
 	return buffer.size();
 }
