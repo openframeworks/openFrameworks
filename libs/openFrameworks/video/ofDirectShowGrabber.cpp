@@ -209,8 +209,7 @@ void ofDirectShowGrabber::close(){
 
 //--------------------------------------------------------------------
 void ofDirectShowGrabber::clearMemory(){
-	pixels.clear()
-
+	pixels.clear();
 }
 
 //---------------------------------------------------------------------------
