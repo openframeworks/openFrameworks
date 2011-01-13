@@ -80,7 +80,7 @@ bool ofVideoPlayer::isFrameNew(){
 //--------------------------------------------------------------------
 void ofVideoPlayer::update(){
 	if(	player != NULL ){
-		player->idleMovie();
+		player->update();
 		if( bUseTexture && player->isFrameNew() ){
 			//note we should look at ways to do other pixel formats. 
 			tex.loadData(player->getPixels(), tex.getWidth(), tex.getHeight(), GL_RGB);
@@ -101,7 +101,7 @@ void ofVideoPlayer::closeMovie(){
 //---------------------------------------------------------------------------
 void ofVideoPlayer::close(){
 	if( player != NULL ){
-		player->closeMovie();
+		player->close();
 	}
 	tex.clear();
 }

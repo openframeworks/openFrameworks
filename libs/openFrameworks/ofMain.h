@@ -7,6 +7,9 @@
 #include "ofMath.h"
 #include "ofUtils.h"
 #include "ofTypes.h"
+#include "ofSystemUtils.h"
+#include "ofFileUtils.h"
+#include "ofThread.h"
 
 //--------------------------
 // communication
@@ -21,6 +24,8 @@
 #include "ofTrueTypeFont.h"
 #include "ofGraphics.h"
 #include "ofImage.h"
+#include "ofFbo.h"
+#include "ofShader.h"
 
 //--------------------------
 // app

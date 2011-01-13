@@ -7,7 +7,21 @@
 #include <commdlg.h>
 #endif
 
-void ofCreateAlertDialog(string alert){	
+void ofCreateAlertDialog(string errorMessage){	
+	
+	
+	#ifdef TARGET_WIN32
+		MessageBox(NULL, LPWSTR(errorMessage.c_str()), L"Critical Error", MB_OK | MB_ICONERROR);
+	#endif
+	
+	
+	#ifdef TARGET_OSX
+		CFStringRef msgStrRef = CFStringCreateWithCString(NULL, errorMessage.c_str(), kCFStringEncodingASCII);
+		DialogRef theItem;
+		DialogItemIndex itemIndex;
+		CreateStandardAlert(kAlertNoteAlert, msgStrRef, NULL, NULL, &theItem);
+		RunStandardAlert(theItem, NULL, &itemIndex);
+	#endif
 	
 }
 

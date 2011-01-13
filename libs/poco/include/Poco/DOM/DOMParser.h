@@ -1,7 +1,7 @@
 //
 // DOMParser.h
 //
-// $Id: //poco/1.3/XML/include/Poco/DOM/DOMParser.h#2 $
+// $Id: //poco/1.4/XML/include/Poco/DOM/DOMParser.h#1 $
 //
 // Library: XML
 // Package: DOM
@@ -114,12 +114,12 @@ public:
 	void setEntityResolver(EntityResolver* pEntityResolver);
 		/// Sets the entity resolver on the underlying SAXParser.
 
-	static const XMLString FEATURE_WHITESPACE;
+	static const XMLString FEATURE_FILTER_WHITESPACE;
 	
 private:
 	SAXParser _saxParser;
 	NamePool* _pNamePool;
-	bool      _whitespace;
+	bool      _filterWhitespace;
 };
 
 

@@ -1,7 +1,7 @@
 //
 // HTTPClientSession.h
 //
-// $Id: //poco/1.3/Net/include/Poco/Net/HTTPClientSession.h#4 $
+// $Id: //poco/1.4/Net/include/Poco/Net/HTTPClientSession.h#1 $
 //
 // Library: Net
 // Package: HTTPClient
@@ -77,6 +77,10 @@ class Net_API HTTPClientSession: public HTTPSession
 	///
 	/// See RFC 2616 <http://www.faqs.org/rfcs/rfc2616.html> for more
 	/// information about the HTTP protocol.
+	///
+	/// Proxies and proxy authorization (only HTTP Basic Authorization)
+	/// is supported. Use setProxy() and setProxyCredentials() to
+	/// set up a session through a proxy.
 {
 public:
 	HTTPClientSession();
@@ -129,6 +133,24 @@ public:
 		
 	Poco::UInt16 getProxyPort() const;
 		/// Returns the proxy port number.
+		
+	void setProxyCredentials(const std::string& username, const std::string& password);
+		/// Sets the username and password for proxy authentication.
+		/// Only Basic authentication is supported.
+		
+	void setProxyUsername(const std::string& username);
+		/// Sets the username for proxy authentication.
+		/// Only Basic authentication is supported.
+
+	const std::string& getProxyUsername() const;
+		/// Returns the username for proxy authentication.
+		
+	void setProxyPassword(const std::string& password);
+		/// Sets the password for proxy authentication.	
+		/// Only Basic authentication is supported.
+
+	const std::string& getProxyPassword() const;
+		/// Returns the password for proxy authentication.
 
 	void setKeepAliveTimeout(const Poco::Timespan& timeout);
 		/// Sets the connection timeout for HTTP connections.
@@ -156,6 +178,16 @@ public:
 		/// the response body. The stream is valid until
 		/// sendRequest() is called or the session is
 		/// destroyed.
+		
+	void reset();
+		/// Resets the session and closes the socket.
+		///
+		/// The next request will initiate a new connection,
+		/// even if persistent connections are enabled.
+		
+	virtual bool secure() const;
+		/// Return true iff the session uses SSL or TLS,
+		/// or false otherwise.
 	
 protected:
 	enum
@@ -169,8 +201,9 @@ protected:
 	int write(const char* buffer, std::streamsize length);
 		/// Tries to re-connect if keep-alive is on.
 	
-	virtual std::string getHostInfo() const;
-		/// Returns the target host and port number for proxy requests.
+	virtual std::string proxyRequestPrefix() const;
+		/// Returns the prefix prepended to the URI for proxy requests
+		/// (e.g., "http://myhost.com").
 
 	void deleteResponseStream();
 		/// Deletes the response stream and sets it to 0.
@@ -199,14 +232,24 @@ protected:
 	bool getExpectResponseBody() const;
 		/// Returns _expectResponseBody.
 
-	bool mustReconnect() const;
+	virtual bool mustReconnect() const;
 		/// Checks if we can reuse a persistent connection.
+		
+	virtual void proxyAuthenticate(HTTPRequest& request);
+		/// Sets the proxy credentials (Proxy-Authorization header), if
+		/// proxy username and password have been set.
+
+	void proxyAuthenticateImpl(HTTPRequest& request);
+		/// Sets the proxy credentials (Proxy-Authorization header), if
+		/// proxy username and password have been set.
 
 private:
 	std::string     _host;
 	Poco::UInt16    _port;
 	std::string     _proxyHost;
 	Poco::UInt16    _proxyPort;
+	std::string     _proxyUsername;
+	std::string     _proxyPassword;
 	Poco::Timespan  _keepAliveTimeout;
 	Poco::Timestamp _lastRequest;
 	bool            _reconnect;
@@ -244,6 +287,18 @@ inline const std::string& HTTPClientSession::getProxyHost() const
 inline Poco::UInt16 HTTPClientSession::getProxyPort() const
 {
 	return _proxyPort;
+}
+
+
+inline const std::string& HTTPClientSession::getProxyUsername() const
+{
+	return _proxyUsername;
+}
+
+
+inline const std::string& HTTPClientSession::getProxyPassword() const
+{
+	return _proxyPassword;
 }
 
 

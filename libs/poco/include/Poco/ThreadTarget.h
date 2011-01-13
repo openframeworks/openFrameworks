@@ -1,7 +1,7 @@
 //
 // ThreadTarget.h
 //
-// $Id: //poco/1.3/Foundation/include/Poco/ThreadTarget.h#1 $
+// $Id: //poco/1.4/Foundation/include/Poco/ThreadTarget.h#1 $
 //
 // Library: Foundation
 // Package: Threading
@@ -62,7 +62,7 @@ class Foundation_API ThreadTarget: public Runnable
 	///    {
 	///        static void doSomething() {}
 	///    };
-	///    ThreadTarget ra(&MyObject::doSomething));
+	///    ThreadTarget ra(&MyObject::doSomething);
 	///    Thread thr;
 	///    thr.start(ra);
 	///
@@ -70,7 +70,7 @@ class Foundation_API ThreadTarget: public Runnable
 	/// 
 	///    void doSomething() {}
 	/// 
-	///    ThreadTarget ra(doSomething));
+	///    ThreadTarget ra(doSomething);
 	///    Thread thr;
 	///    thr.start(ra);
 {

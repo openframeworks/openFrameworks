@@ -1,6 +1,3 @@
-
-
-
 #pragma once
 #include "ofConstants.h"
 
@@ -19,20 +16,37 @@ class ofColor{
 		ofColor (ofColor const & color, float _a);
 		ofColor (float gray, float _a = 255.0f);
 		
+		static ofColor fromHsb (float hue, float saturation, float brightness, float alpha = 255.f);
+		static ofColor fromHex (int hexColor, float alpha = 255.f);
+		
 		void set (float _r, float _g, float _b, float _a = 255.0f);
 		void set (float _gray, float _a = 255.0f);
 		void set (ofColor const & color);
+
+		void setHex (int hexColor, float alpha = 255.0f);
+		int getHex () const;
 		
-		void setHex (int hexColor, float _a = 255.0f);
+		ofColor& clamp ();
+		ofColor& invert ();
+		ofColor& normalize ();
+		ofColor& lerp(const ofColor& target, float amount);
 		
-		ofColor clamp ();
-		float getBrightness ();
-		ofColor getInverted ();
-		int getHex ();
+		ofColor getClamped () const;
+		ofColor getInverted () const;
+		ofColor getNormalized () const;
+		ofColor getLerped(const ofColor& target, float amount) const;
 		
-		static int hueMagic (int n1, int n2, int hue);
-		static ofColor colorFromHLS (int hue, int lum, int sat);
-		static ofColor colorFromHue (int hue);
+		float getHue () const;
+		float getSaturation () const;
+		float getBrightness () const; // brightest component
+		float getLightness () const; // average of the components
+		void getHsb(float& hue, float& saturation, float& brightness) const;
+		
+		void setHue (float hue);
+		void setSaturation (float saturation);
+		void setBrightness (float brightness);
+		void setHsb(float hue, float saturation, float brightness, float alpha);
+		void setHsb(float hue, float saturation, float brightness);
 		
 		ofColor & operator = (ofColor const & color);
 		ofColor & operator = (float const & val);
