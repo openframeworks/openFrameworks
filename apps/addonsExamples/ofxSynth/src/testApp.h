@@ -35,7 +35,7 @@ class testApp : public ofBaseApp{
 		ofxSynth synth;
 		
 		ofSoundEffectPassthrough passthrough;
-		
+		ofxSynthWaveWriter writer;
 		ofSoundMixer mixer;
 	
 };
