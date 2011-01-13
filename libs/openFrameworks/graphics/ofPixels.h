@@ -136,6 +136,10 @@ public:
 		return c;
 	}
 
+	unsigned char operator[](int pos){
+		return pixels[pos];
+	}
+
 	bool isAllocated() const{
 		return bAllocated;
 	}
