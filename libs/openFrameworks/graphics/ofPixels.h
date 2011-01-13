@@ -8,11 +8,21 @@ class ofPixels {
 public:
 
 	ofPixels(){
+		bAllocated = false;
 		pixels = NULL;
 		clear();
 	}
 
 	ofPixels(const ofPixels & mom){
+		bAllocated = false;
+		pixels = NULL;
+		if(mom.isAllocated()){
+			allocate(mom.getWidth(),mom.getHeight(),mom.getImageType());
+			memcpy(pixels,mom.getPixels(),mom.getWidth()*mom.getHeight()*mom.getBytesPerPixel());
+		}
+	}
+
+	void operator=(const ofPixels & mom){
 		if(mom.isAllocated()){
 			allocate(mom.getWidth(),mom.getHeight(),mom.getImageType());
 			memcpy(pixels,mom.getPixels(),mom.getWidth()*mom.getHeight()*mom.getBytesPerPixel());
@@ -95,6 +105,7 @@ public:
 	void clear(){
 		if(pixels){
 			delete[] pixels;
+			pixels = NULL;
 		}
 		width			= 0;
 		height			= 0;

@@ -28,3 +28,10 @@ void ofSoundStreamStop();
 void ofSoundStreamStart();
 void ofSoundStreamClose();
 void ofSoundStreamListDevices();
+<<<<<<< HEAD
+=======
+
+
+
+#endif
+>>>>>>> c12508561e78ce5b9f087bb30f16ec80c11472b7

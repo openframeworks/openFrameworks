@@ -1,7 +1,6 @@
 
 #include "ofConstants.h"
 #include "ofSystemUtils.h"
-#include "ofFileUtils.h"
 
 #ifdef TARGET_WIN32
 #include <winuser.h>
@@ -338,6 +337,11 @@ ofFileDialogResult ofFileSaveDialog(string defaultName, string messageName){
 		results.fileName = ofFileUtils::getFilenameFromPath(results.filePath);		
 	}
 	
+<<<<<<< HEAD
+	return fileNameOutput;
+	
+}
+=======
 	return results;	
 }
-
+>>>>>>> c12508561e78ce5b9f087bb30f16ec80c11472b7
