@@ -296,7 +296,10 @@ private:
 class ofSoundSourceTestTone: public ofSoundSource
 {
 public:	
-	ofSoundSourceTestTone() { sampleRate = 44100; phase = 0; setFrequency( 440.0f ); }
+	static const int TESTTONE_SINE = 0;
+	static const int TESTTONE_SAWTOOTH = 1;
+	
+	ofSoundSourceTestTone() { sampleRate = 44100; phase = 0; sawPhase = 0; setFrequency( 440.0f ); waveform = TESTTONE_SINE; }
 	
 	/// Return our name
 	string getName() { return "ofSoundUnitTestTone"; }
@@ -307,6 +310,9 @@ public:
 	void setFrequencyMidiNote( float midiNote ) { setFrequency(440.0f*powf(2.0f,(midiNote-60.0f)/12.0f)); };
 	/// Update generation for the new sample rate
 	void setSampleRate( int rate );
+	/// Set waveform
+	void setSineWaveform() { waveform = TESTTONE_SINE; }
+	void setSawtoothWaveform() { waveform = TESTTONE_SAWTOOTH; }
 	
 	void audioRequested( float* output, int numFrames, int numChannels );
 	
@@ -316,6 +322,11 @@ private:
 	float frequency;
 	int sampleRate;
 	float phaseAdvancePerFrame;
+	
+	int waveform;
+	
+	float sawPhase;
+	float sawAdvancePerFrame;
 	
 };
 

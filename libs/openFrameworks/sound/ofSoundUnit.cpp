@@ -244,6 +244,7 @@ void ofSoundMixer::setSampleRate( int rate )
 
 void ofSoundSourceTestTone::setSampleRate( int rate )
 {
+//	ofLog( OF_LOG_NOTICE, "ofSoundSourceTestTone got sample rate: %i", rate );
 	sampleRate = rate;
 	setFrequency( frequency );
 }
@@ -255,22 +256,43 @@ void ofSoundSourceTestTone::setFrequency( float freq )
 	// basically, every OFSYNTH_SAMPLE_RATE frames (1s of audio), we want
 	// to advance phase by frequency*TWO_PI.
 	phaseAdvancePerFrame = (1.0f/sampleRate)*frequency*TWO_PI;
+	// for the sawtooth, we want to go from -1..1
+	sawAdvancePerFrame = (1.0f/sampleRate)*frequency;
+	
+//	ofLog( OF_LOG_NOTICE, "ofSoundSourceTestTone(%x) setFrequency, freq %f, sampleRate %i, advance %f", this, frequency, sampleRate, phaseAdvancePerFrame );
 }
 
 void ofSoundSourceTestTone::audioRequested( float* output, int numFrames, int numChannels )
 {
+//	ofLog( OF_LOG_NOTICE, "ofSoundSourceTestTone(%x) audioRequested, freq %f, sampleRate %i", this, frequency, sampleRate );
 	// loop through all the frames
-	for ( int i=0; i<numFrames; i++ ) {
-		float value = sinf( phase );
-		// write value to all the channels
-		for ( int j=0; j<numChannels; j++ ) {
-			output[i*numChannels+j] = value;
+	if ( waveform == TESTTONE_SINE ) {
+		for ( int i=0; i<numFrames; i++ ) {
+			float value = sinf( phase );
+			// write value to all the channels
+			for ( int j=0; j<numChannels; j++ ) {
+				output[i*numChannels+j] = value;
+			}
+			// advance phase
+			phase += phaseAdvancePerFrame;
 		}
-		// advance phase
-		phase += phaseAdvancePerFrame;
+		// wrap phase to 0..TWO_PI
+		phase = remainderf( phase, TWO_PI );
 	}
-	// wrap phase to 0..TWO_PI
-	phase = remainderf( phase, TWO_PI );
+	else if ( waveform == TESTTONE_SAWTOOTH ) {
+		for ( int i=0; i<numFrames; i++ ) {
+			float value = sawPhase;
+			// write value to all the channels
+			// write value to all the channels
+			for ( int j=0; j<numChannels; j++ ) {
+				output[i*numChannels+j] = value;
+			}
+			// advance phase
+			sawPhase += sawAdvancePerFrame;
+			// wrap phase to -1..1
+			sawPhase = remainderf( sawPhase, 2.0f );
+		}
+	}
 }
 
 
