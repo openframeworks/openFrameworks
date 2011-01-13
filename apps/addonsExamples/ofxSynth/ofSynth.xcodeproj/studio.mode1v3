@@ -329,31 +329,35 @@
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>3D6F71ED12DF5F80000A52D8</string>
+										<string>3D6F74F712DF9861000A52D8</string>
 										<key>history</key>
 										<array>
 											<string>3DFC742512DE50F600BCD217</string>
 											<string>3DFC742612DE50F600BCD217</string>
 											<string>3DFC742812DE50F600BCD217</string>
-											<string>3DFC749D12DE73B200BCD217</string>
-											<string>3DFC749E12DE73B200BCD217</string>
 											<string>3DFC74BD12DE7FC400BCD217</string>
-											<string>3DFC759F12DE90A600BCD217</string>
-											<string>3DFC75AE12DE925600BCD217</string>
-											<string>3DFC766E12DEA41900BCD217</string>
-											<string>3DFC766F12DEA41900BCD217</string>
 											<string>3DFC76A412DEAD6B00BCD217</string>
 											<string>3DFC76A612DEAD6B00BCD217</string>
 											<string>3DFC76A812DEAD6B00BCD217</string>
 											<string>3DFC76C512DEB1BE00BCD217</string>
 											<string>3DFC780D12DF5ADA00BCD217</string>
-											<string>3DFC781812DF5B7600BCD217</string>
-											<string>3DFC781912DF5B7600BCD217</string>
-											<string>3DFC783312DF5BF300BCD217</string>
-											<string>3DFC784F12DF5CB300BCD217</string>
 											<string>3D6F71D712DF5ED2000A52D8</string>
-											<string>3D6F71EB12DF5F80000A52D8</string>
-											<string>3D6F71EC12DF5F80000A52D8</string>
+											<string>3D6F72B312DF6C16000A52D8</string>
+											<string>3D6F72B412DF6C16000A52D8</string>
+											<string>3D6F731A12DF71BA000A52D8</string>
+											<string>3D6F734A12DF74BD000A52D8</string>
+											<string>3D6F735712DF7559000A52D8</string>
+											<string>3D6F735812DF7559000A52D8</string>
+											<string>3D6F736C12DF75DA000A52D8</string>
+											<string>3D6F739812DF76F4000A52D8</string>
+											<string>3D6F747E12DF91BE000A52D8</string>
+											<string>3D6F748C12DF937D000A52D8</string>
+											<string>3D6F74A012DF942A000A52D8</string>
+											<string>3D6F74AD12DF94B3000A52D8</string>
+											<string>3D6F74AE12DF94B3000A52D8</string>
+											<string>3D6F74C312DF957A000A52D8</string>
+											<string>3D6F74C912DF95D1000A52D8</string>
+											<string>3D6F74CA12DF95D1000A52D8</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>
@@ -551,7 +555,7 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
-		<string>3D6F71EE12DF5F80000A52D8</string>
+		<string>3D6F74F812DF9861000A52D8</string>
 		<string>3D6F71B612DF5DA4000A52D8</string>
 		<string>3D6F71B712DF5DA4000A52D8</string>
 		<string>1C78EAAD065D492600B07095</string>
@@ -576,12 +580,14 @@
 					<key>Dock</key>
 					<array>
 						<dict>
+							<key>BecomeActive</key>
+							<true/>
 							<key>ContentConfiguration</key>
 							<dict>
 								<key>PBXProjectModuleGUID</key>
 								<string>1CD0528F0623707200166675</string>
 								<key>PBXProjectModuleLabel</key>
-								<string></string>
+								<string>testApp.cpp</string>
 								<key>StatusBarVisibility</key>
 								<true/>
 							</dict>

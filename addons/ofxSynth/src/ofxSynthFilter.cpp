@@ -22,6 +22,13 @@ void ofxSynthFilter::setCutoff(float _cutoff)
 	cutoff = fmin(fmax(cutoff, 0.0), 1.0);
 	calc();
 }
+void ofxSynthFilter::setLowPass(){
+	lowPass = true;
+}
+void ofxSynthFilter::setHighPass(){
+	lowPass = false;
+}
+
 void ofxSynthFilter::calc()
 {
 	q = 1.0 - cutoff;

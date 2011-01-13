@@ -10,6 +10,8 @@ class ofxSynthFilter : public ofSoundEffect{
 		void setCutoff(float _cutoff);
 		void processSample(float *inputSample);
 		void setRes(float _res);
+		void setLowPass();
+		void setHighPass();
 		bool lowPass;
 	private:
 		float f, p, q, cutoff, resonance;
