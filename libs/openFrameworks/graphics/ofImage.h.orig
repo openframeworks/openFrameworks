@@ -1,6 +1,10 @@
 #pragma once
 
+<<<<<<< HEAD
+=======
+#include "ofConstants.h"
 #include "ofFileUtils.h"
+>>>>>>> c12508561e78ce5b9f087bb30f16ec80c11472b7
 #include "ofTexture.h"
 #include "FreeImage.h"
 #include "ofPixels.h"

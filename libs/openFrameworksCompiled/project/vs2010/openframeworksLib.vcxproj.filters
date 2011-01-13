@@ -31,6 +31,9 @@
     <Filter Include="libs\openFrameworks\types">
       <UniqueIdentifier>{1206a90e-650f-4ec5-829b-880c8b40927a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="libs\openFrameworks\math">
+      <UniqueIdentifier>{74e22eb5-45e7-4cf4-ae99-5146982593d9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\openFrameworks\ofMain.h">
@@ -67,9 +70,6 @@
       <Filter>libs\openFrameworks\sound</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\openFrameworks\utils\ofConstants.h">
-      <Filter>libs\openFrameworks\util</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\openFrameworks\utils\ofMath.h">
       <Filter>libs\openFrameworks\util</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\openFrameworks\utils\ofUtils.h">
@@ -126,6 +126,30 @@
     <ClInclude Include="..\..\..\openFrameworks\app\ofAppBaseWindow.h">
       <Filter>libs\openFrameworks\app</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\openFrameworks\math\ofVectorMath.h">
+      <Filter>libs\openFrameworks\math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\openFrameworks\math\ofMath.h">
+      <Filter>libs\openFrameworks\math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\openFrameworks\math\ofMatrix3x3.h">
+      <Filter>libs\openFrameworks\math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\openFrameworks\math\ofMatrix4x4.h">
+      <Filter>libs\openFrameworks\math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\openFrameworks\math\ofQuaternion.h">
+      <Filter>libs\openFrameworks\math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\openFrameworks\math\ofVec2f.h">
+      <Filter>libs\openFrameworks\math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\openFrameworks\math\ofVec3f.h">
+      <Filter>libs\openFrameworks\math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\openFrameworks\math\ofVec4f.h">
+      <Filter>libs\openFrameworks\math</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\openFrameworks\app\ofAppGlutWindow.cpp">
@@ -154,9 +178,6 @@
     </ClCompile>
     <ClCompile Include="..\..\..\openFrameworks\sound\ofSoundStream.cpp">
       <Filter>libs\openFrameworks\sound</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\openFrameworks\utils\ofMath.cpp">
-      <Filter>libs\openFrameworks\util</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\openFrameworks\utils\ofUtils.cpp">
       <Filter>libs\openFrameworks\util</Filter>
@@ -199,6 +220,21 @@
     </ClCompile>
     <ClCompile Include="..\..\..\openFrameworks\events\ofEvents.cpp">
       <Filter>libs\openFrameworks\events</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\openFrameworks\math\ofMath.cpp">
+      <Filter>libs\openFrameworks\math</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\openFrameworks\math\ofMatrix3x3.cpp">
+      <Filter>libs\openFrameworks\math</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\openFrameworks\math\ofMatrix4x4.cpp">
+      <Filter>libs\openFrameworks\math</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\openFrameworks\math\ofQuaternion.cpp">
+      <Filter>libs\openFrameworks\math</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\openFrameworks\types\ofTypes.cpp">
+      <Filter>libs\openFrameworks\types</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

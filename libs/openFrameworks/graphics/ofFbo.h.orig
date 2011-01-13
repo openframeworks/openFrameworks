@@ -1,9 +1,12 @@
 #pragma once
 
+<<<<<<< HEAD
 #include "ofTexture.h"
-
+=======
 #ifndef TARGET_OPENGLES
 
+#include "ofMain.h"
+>>>>>>> c12508561e78ce5b9f087bb30f16ec80c11472b7
 
 
 class ofFbo {
@@ -89,5 +92,8 @@ protected:
 	// call this to blit from the colorbuffer into the texture so we can use the results for rendering, or input to a shader etc.
 	void updateTexture(int attachmentPoint);
 };
+<<<<<<< HEAD
+=======
 
 #endif
+>>>>>>> c12508561e78ce5b9f087bb30f16ec80c11472b7

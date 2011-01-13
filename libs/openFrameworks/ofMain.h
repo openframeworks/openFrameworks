@@ -48,6 +48,8 @@
 // audio
 #include "ofSoundStream.h"
 #include "ofSoundPlayer.h"
+#include "ofSoundUnit.h"
+#include "ofSoundEffect.h"
 
 //--------------------------
 // video

@@ -8,11 +8,17 @@
  make sure to catch and report that error.
  */
 
+<<<<<<< HEAD
 #include "ofConstants.h"
 #include "ofBaseTypes.h"
 #include "ofTexture.h"
 #include <map>
 
+=======
+#include "ofMain.h"
+#include <fstream>
+#include <map>
+>>>>>>> c12508561e78ce5b9f087bb30f16ec80c11472b7
 
 class ofShader {
 public:
@@ -115,5 +121,8 @@ protected:
 	
 	bool bLoaded;
 };
+<<<<<<< HEAD
+=======
 
 #endif
+>>>>>>> c12508561e78ce5b9f087bb30f16ec80c11472b7
