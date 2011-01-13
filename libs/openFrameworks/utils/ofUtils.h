@@ -2,6 +2,8 @@
 
 #include "ofConstants.h"
 
+#include "ofLog.h"
+
 #ifdef TARGET_WIN32	 // for ofLaunchBrowser
 	#include <shellapi.h>
 #endif
@@ -61,9 +63,6 @@ void	ofSaveFrame();
 vector<string>	ofSplitString(const string & text, const string & delimiter);
 
 //--------------------------------------------------
-void ofSetLogLevel(int logLevel);
-void ofLog(int logLevel, string message);
-void ofLog(int logLevel, const char* format, ...);
 void ofSetConsoleColor(int color);
 void ofRestoreConsoleColor();
 
