@@ -8,6 +8,7 @@
  */
 
 #include "ofSoundUnit.h"
+#include "ofUtils.h"
 
 #include <deque>
 using namespace std;

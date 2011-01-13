@@ -10,9 +10,9 @@
 
 
 #pragma once
-#include "ofConstants.h"
 #include "ofPoint.h"
 #include "ofRectangle.h"
+#include "ofConstants.h"
 class ofPixels;
 
 

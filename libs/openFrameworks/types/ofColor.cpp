@@ -1,4 +1,5 @@
 #include "ofColor.h"
+#include "ofConstants.h"
 
 
 #define RGBMAX	255

@@ -142,7 +142,6 @@
     <ClCompile Include="..\..\..\openFrameworks\types\ofColor.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\types\ofPoint.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\types\ofRectangle.cpp" />
-    <ClCompile Include="..\..\..\openFrameworks\types\ofTypes.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\utils\ofFileUtils.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\utils\ofSystemUtils.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\utils\ofUtils.cpp" />

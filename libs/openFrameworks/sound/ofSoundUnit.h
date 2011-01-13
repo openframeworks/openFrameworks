@@ -10,6 +10,7 @@
 #pragma once
 
 #include "ofSoundStream.h"
+#include "ofTypes.h"
 #include <vector>
 using namespace std;
 

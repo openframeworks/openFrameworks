@@ -1,4 +1,6 @@
 #include "ofShader.h"
+#include "ofUtils.h"
+#include "ofFileUtils.h"
 
 #ifndef TARGET_OPENGLES
 

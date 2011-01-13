@@ -1,11 +1,7 @@
 #pragma once
 
 #include "ofConstants.h"
-#include "ofUtils.h"
-#include "ofRectangle.h"
-#include "ofPoint.h"
 #include "ofColor.h"
-#include "ofBaseTypes.h"
 
 
 //----------------------------------------------------------
