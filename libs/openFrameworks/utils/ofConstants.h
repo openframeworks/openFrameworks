@@ -277,8 +277,10 @@ using namespace std;
 #define 	OF_FULLSCREEN 			1
 #define 	OF_GAME_MODE			2
 
-#define 	OF_RECTMODE_CORNER				0
-#define 	OF_RECTMODE_CENTER				1
+enum ofRectMode{
+	OF_RECTMODE_CORNER=0,
+ 	OF_RECTMODE_CENTER=1
+};
 
 enum ofImageType{
 	OF_IMAGE_GRAYSCALE		= 0x00,
@@ -291,11 +293,13 @@ enum ofImageType{
 #define		OF_MAX_CIRCLE_PTS 1024
 
 // Blend Modes
-#define OF_BLENDMODE_ALPHA    1
-#define OF_BLENDMODE_ADD      2
-#define OF_BLENDMODE_SUBTRACT 3
-#define OF_BLENDMODE_MULTIPLY 4
-#define OF_BLENDMODE_SCREEN   5
+enum ofBlendMode{
+	OF_BLENDMODE_ALPHA 	  = 1,
+	OF_BLENDMODE_ADD 	  = 2,
+	OF_BLENDMODE_SUBTRACT = 3,
+	OF_BLENDMODE_MULTIPLY = 4,
+	OF_BLENDMODE_SCREEN   = 5
+};
 
 
 // these are straight out of glu, but renamed and included here
@@ -310,11 +314,13 @@ enum ofImageType{
 // also: http://glprogramming.com/red/chapter11.html
 // (CSG ideas)
 
-#define 	OF_POLY_WINDING_ODD 	          100130
-#define 	OF_POLY_WINDING_NONZERO           100131
-#define 	OF_POLY_WINDING_POSITIVE          100132
-#define 	OF_POLY_WINDING_NEGATIVE          100133
-#define		OF_POLY_WINDING_ABS_GEQ_TWO       100134
+enum ofPolyWindingMode{
+	OF_POLY_WINDING_ODD 	        = 100130,
+	OF_POLY_WINDING_NONZERO         = 100131,
+	OF_POLY_WINDING_POSITIVE        = 100132,
+	OF_POLY_WINDING_NEGATIVE        = 100133,
+	OF_POLY_WINDING_ABS_GEQ_TWO     = 100134
+};
 
 #define 	OF_CLOSE						  (true)
 
