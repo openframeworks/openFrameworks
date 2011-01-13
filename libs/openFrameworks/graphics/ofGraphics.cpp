@@ -661,6 +661,8 @@ void ofSphere(float radius) {
 	// and processing's implementation of icospheres:
 	// https://code.google.com/p/processing/source/browse/trunk/processing/core/src/processing/core/PGraphics.java?r=7543
 	// public void sphere(float r)
+	
+#ifndef TARGET_OPENGLES
 	ofPushMatrix();
 	ofRotateX(90);
 	if(ofGetStyle().bFill) {
@@ -695,6 +697,7 @@ void ofBox(float size) {
 	// TODO: add an implementation using ofMesh
 #ifndef TARGET_OPENGLES
 	// this needs to be swapped out with non-glut code
+#ifndef TARGET_OPENGLES
 	if(ofGetStyle().bFill) {
 		glutSolidCube(size);
 	} else {
@@ -761,7 +764,9 @@ void ofSetHexColor(int hexColor){
 
 
 //----------------------------------------------------------
-void ofEnableBlendMode(ofBlendMode blendMode){
+
+void ofEnableBlendMode(int blendMode){
+#ifndef TARGET_OPENGLES
     switch (blendMode){
             
         case OF_BLENDMODE_ALPHA:{
@@ -823,7 +828,7 @@ void ofEnableBlendMode(ofBlendMode blendMode){
         default:
             break;
     }
-    
+#endif  
 }
 
 //----------------------------------------------------------
