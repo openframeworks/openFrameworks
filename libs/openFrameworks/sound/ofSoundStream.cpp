@@ -4,6 +4,7 @@
 #include <vector>
 #include <deque>
 #include <set>
+#include <iterator>
 using namespace std;
 
 #include "ofBaseApp.h"
@@ -20,6 +21,8 @@ int							sampleRate;
 ofAudioEventArgs 			audioEventArgs;
 long unsigned long			tickCount;
 
+// TODO: can we label this better?
+float * working = NULL;
 
 static vector< ofSoundSource* > soundSources;
 static vector< ofSoundSink* > soundSinks;
@@ -172,7 +175,9 @@ int receiveAudioBufferAndCallSimpleApp(void *outputBuffer, void *inputBuffer, un
 
 	if (nOutputChannels > 0) {
 		// sum together all the inputs
-		float working[bufferSize*nOutputChannels];
+		if (working == NULL){
+			working = new float[bufferSize*nOutputChannels];
+		}
 		memset( fPtrOut, 0, sizeof(float)*bufferSize*nOutputChannels );
 		// fetch and add from OFSAptr
 		if(OFSAptr) {
