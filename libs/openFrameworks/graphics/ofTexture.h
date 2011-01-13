@@ -16,7 +16,7 @@ enum ofTexCompression
 class ofTextureData{
 public:
 	ofTextureData(){
-		isWeakCopy = false;
+		isCopy = false;
 
 		bAllocated		= false;
 		textureID		= 0;
@@ -35,12 +35,12 @@ public:
 	}
 
 	~ofTextureData(){
-		if(!isWeakCopy) clear();
+		if(!isCopy) clear();
 	}
 
 	ofTextureData(const ofTextureData & mom){
 
-		isWeakCopy = true;
+		isCopy = true;
 
 		bAllocated		= mom.bAllocated;
 		textureID		= mom.textureID;
@@ -87,7 +87,7 @@ public:
 
 private:
 
-	bool isWeakCopy;
+	bool isCopy;
 };
 
 //enable / disable the slight offset we add to ofTexture's texture coords to compensate for bad edge artifiacts
