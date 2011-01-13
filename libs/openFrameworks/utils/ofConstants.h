@@ -5,11 +5,11 @@
 #define OF_VERSION	6
 //-------------------------------
 
-
-#define OF_LOOP_NONE					0x01
-#define OF_LOOP_PALINDROME				0x02
-#define OF_LOOP_NORMAL					0x03
-
+enum ofLoopType{
+	OF_LOOP_NONE=0x01,
+	OF_LOOP_PALINDROME=0x02,
+	OF_LOOP_NORMAL=0x03
+};
 //-------------------------------
 //  find the system type --------
 //-------------------------------

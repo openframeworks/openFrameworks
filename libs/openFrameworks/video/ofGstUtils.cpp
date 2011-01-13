@@ -1059,7 +1059,7 @@ void ofGstUtils::setVolume(int volume){
 	g_object_set(G_OBJECT(gstPipeline), "volume", gvolume, (void*)NULL);
 }
 
-void ofGstUtils::setLoopState(int state){
+void ofGstUtils::setLoopState(ofLoopType state){
 	loopMode = state;
 }
 
