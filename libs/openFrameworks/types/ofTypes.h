@@ -55,36 +55,4 @@ class ofStyle{
 		float lineWidth;
 };
 
-//----------------------------------------------------------
-// ofBuffer
-//----------------------------------------------------------
-
-class ofBuffer{
-	vector<char> 	buffer;
-	long 			nextLinePos;
-public:
-
-	ofBuffer();
-	ofBuffer(int size, char * buffer);
-	ofBuffer(istream & stream);
-	ofBuffer(const ofBuffer & mom);
-
-	~ofBuffer();
-
-	bool set(istream & stream);
-	void set(int _size, char * _buffer);
-
-	void clear();
-
-	void allocate(long _size);
-
-	char * getBuffer();
-
-	long getSize() const;
-
-	string getNextLine();
-	string getFirstLine();
-};
-
-
 #endif

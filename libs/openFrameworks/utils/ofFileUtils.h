@@ -1,10 +1,42 @@
 #pragma once
 
-#include "ofMain.h"
+#include "ofConstants.h"
+#include "ofUtils.h"
+
+//----------------------------------------------------------
+// ofBuffer
+//----------------------------------------------------------
+class ofBuffer{
+	public:
+
+		ofBuffer();
+		ofBuffer(int size, char * buffer);
+		ofBuffer(istream & stream);
+		ofBuffer(const ofBuffer & mom);
+
+		~ofBuffer();
+
+		bool set(istream & stream);
+		void set(int _size, char * _buffer);
+
+		void clear();
+
+		void allocate(long _size);
+
+		char * getBuffer();
+
+		long getSize() const;
+
+		string getNextLine();
+		string getFirstLine();
+		
+	protected:
+		vector<char> 	buffer;
+		long 			nextLinePos;
+};
 
 //--------------------------------------------------
 bool ofReadFile(const string & path, ofBuffer & file, bool binary=false);
-
 
 
 class ofFileUtils{

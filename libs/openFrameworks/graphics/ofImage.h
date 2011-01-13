@@ -2,6 +2,7 @@
 #define _OF_IMAGE_H_
 
 #include "ofConstants.h"
+#include "ofFileUtils.h"
 #include "ofTexture.h"
 #include "ofGraphics.h"
 #include "ofAppRunner.h"		// for height()

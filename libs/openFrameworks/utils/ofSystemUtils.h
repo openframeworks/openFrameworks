@@ -1,9 +1,9 @@
 #pragma once
 
 
-class ofFileDialogResults{
+class ofFileDialogResult{
 	public:
-		ofFileDialogResults();
+		ofFileDialogResult();
 		
 		//TODO: only 1 file for now
 		string getName();
@@ -15,5 +15,5 @@ class ofFileDialogResults{
 };
 
 void ofCreateAlertDialog(string errorMessage);
-ofFileDialogResults ofFileLoadDialog(bool bFolderSelection = false);
-ofFileDialogResults ofFileSaveDialog(string defaultName, string messageName);
+ofFileDialogResult ofFileLoadDialog(bool bFolderSelection = false);
+ofFileDialogResult ofFileSaveDialog(string defaultName, string messageName);
