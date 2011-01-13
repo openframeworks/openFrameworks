@@ -158,9 +158,6 @@ void ofAppGlutWindow::setupOpenGL(int w, int h, int screenMode){
 		glutInitWindowSize(w, h);
 		glutCreateWindow("");
 
-		//Default colors etc are now in ofGraphics - ofSetupGraphicDefaults
-		ofSetupGraphicDefaults();
-
 		/*
 		ofBackground(200,200,200);		// default bg color
 		ofSetColor(0xFFFFFF); 			// default draw color
