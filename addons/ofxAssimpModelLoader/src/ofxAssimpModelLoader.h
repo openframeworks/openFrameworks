@@ -10,14 +10,14 @@
 
 // ofDevCon 
 // Written by Anton Marini (http://vade.info)
-// With massive help from Memo Akten (http://www.memo.tv/) 
+// With massive help from Memo Akten for GL optimizing and pushing this faster than I expected
+// Kyle McDonald and Arturo Castro for C++ nuances
 
 // TODO:
 // 1) Keyframe interpolation for animations. This is currently done in the AssimpView Direct X project.
 // 2) Path issues (?)
 // 3) convert to ofMesh (?) in OF 007 ?
 // 4) Ability to ease *between* two animations. Maybe later folks.
-// 5) write deconstructor, bwahaha.
 
 #import "ofxAssimpMeshHelper.h"
 
@@ -28,10 +28,6 @@ class ofxAssimpModelLoader{
         ofxAssimpModelLoader();
 
         void loadModel(string modelName);
-    
-        // Call this to update the animation. This is a no-op if there is no animation
-        // get rid of this and make lazy only when you update the animation time.
-        //void update();  
     
         void setScale(float x, float y, float z);
         void setPosition(float x, float y, float z);
@@ -52,7 +48,6 @@ class ofxAssimpModelLoader{
             
         // Our array of textures we load from the models path.
         vector <ofImage> textures;
-        //list <ofImage> textures;
     
         // TODO: convert to ofMesh or ofVBOMesh
         vector <ofxAssimpMeshHelper> modelMeshes;  
@@ -75,9 +70,13 @@ class ofxAssimpModelLoader{
         void getBoundingBoxForNode(const struct aiNode* nd,  struct aiVector3D* min, struct aiVector3D* max, struct aiMatrix4x4* trafo);
         
         bool hasAnimations;
-        float normalizedAnimationTime;
         int currentAnimation;
         
+        float animationTime;
+        
+        // for interpolating between keyframes.
+        float lastAnimationTime;
+    
         bool normalizeScale;
     
         // TODO: make this return an of
