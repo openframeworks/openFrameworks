@@ -1,9 +1,13 @@
 #pragma once
 #include "ofxMaxim.h"
 #include "ofMain.h"
+#include "ofxSynthDelayLine.h"
+#include "ofxSynthFilter.h"
 
 #define OFXSYNTHONESHOT 1
 #define OFXSYNTHADR 2
+
+const int wav_header_size = 0x2C;
 
 class ofxSynthEnv{
 	public:
@@ -23,39 +27,6 @@ class ofxSynthEnvAHD : public ofxSynthEnv{
 		float getLevel();
 		float inTime, holdTime, outTime;
 };
-
-class ofxSynthFilter{
-	public:
-		float f, p, q, cutoff, resonance;
-		float b0, b1, b2, b3, b4;
-		float t1, t2;
-		bool lowPass;
-		void setup();
-		void setCutoff(float _cutoff);
-		void setRes(float _res);
-		void calc();
-		void processSample(float *sample);
-};
-
-class ofxSynthDelayline : public ofSoundEffect{
-private:
-	double frequency;
-	int phase;
-	double startphase;
-	double endphase;
-	double output;
-	double memory[88200]; //TODO: make this change with a constructor 
-	int size;
-	float feedback;
-	float mix;
-public:
-	ofxSynthDelayline(){setSize(1.1);setFeedback(0.5);}
-	string getName() { return "ofxSynthDelayLine"; }
-	virtual void process( float* input, float *output, int numFrames, int numInChannels, int numOutChannels );
-	void setSize(float _size);
-	void setFeedback(float _feedback);
-};
-
 
 class ofxSynth : public ofSoundSource{
 	public:
@@ -95,7 +66,32 @@ class ofxSynthSampler : public ofxSynth{
 		ofxMaxiSample sample;
 };
 
-class ofxSynthWaveWriter : public ofSoundEffect {
+/** ofxSynthWaveWriter
+ 
+ Class to write sample streams to the file system.
+ Automatically writes to the system when the buffers are filled.
+ 
+ */
+ 
+class ofxSynthWaveWriter : public ofSoundEffectPassthrough {
 	public:
-		void writeSamples(int numFrames, string filename);
+		string getName() { return "ofxSynthWaveWriter"; }
+		bool startWriting(string filename = "out.wav");
+		void stopWriting();
+		virtual void process( float* input, float *output, int numFrames, int numInChannels, int numOutChannels );
+	private:
+		void flush();
+
+		bool writing;
+		int offset, numChannels, numFrames;
+		
+		// the copied stuff from this example: https://github.com/nevyn/game-music-emu
+		enum { buf_size = 32768 * 2 };
+		unsigned char* buf;
+		FILE*   file;
+		long    sample_count_;
+		long    rate;
+		long    buf_pos;
+		int     chan_count;
+
 };

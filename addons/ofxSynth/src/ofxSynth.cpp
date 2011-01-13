@@ -42,14 +42,15 @@ void ofxSynth::audioRequested( float* buffer, int numFrames, int numChannels ){
 				buffer[i*numChannels] = 0;
 				break;
 		}
-		if (filterMode != 0) {
-			filter.processSample(&buffer[i*numChannels]);
-		}
 		buffer[i*numChannels] *= currentAmp;
 		for (int j=1; j<numChannels; j++) {
 			buffer[i*numChannels+j]=buffer[i*numChannels];
 		}
 	}
+	if (filterMode != 0) {
+		filter.process(buffer, buffer, numFrames, numChannels, numChannels);
+	}
+
 }
 
 void ofxSynth::trigger(){
@@ -125,69 +126,95 @@ float ofxSynthEnvAHD::getLevel(){
 }
 
 /* ----------- */
-void ofxSynthFilter::setup()
-{
-	b0 = b1 = b2 = b3 = b4 = 0.0;  //filter buffers (beware denormals!)
-	t1 = t2 = 0.0;              //temporary buffers
-	lowPass = true;
-}	
-void ofxSynthFilter::setRes(float _res)
-{
-	resonance = _res;
-	calc();
-}
-void ofxSynthFilter::setCutoff(float _cutoff)
-{
-	if(lowPass){
-		cutoff = _cutoff;
-	}else{
-		cutoff = _cutoff-1.0;
+bool ofxSynthWaveWriter::startWriting(string filename){
+	sample_count_ = 0;
+	rate = sampleRate;
+	buf_pos = wav_header_size;
+	writing = true;
+	numChannels = 2;
+	buf = (unsigned char*) malloc( buf_size * sizeof *buf );
+	if ( !buf ){
+		writing = false;
+		//TODO: throw an out of memory error
+		cout << "cannot write file, out of memory" << endl;
+		return false;
 	}
-	cutoff = fmin(fmax(cutoff, 0.0), 1.0);
-	calc();
-}
-void ofxSynthFilter::calc()
-{
-	q = 1.0 - cutoff;
-	p = cutoff + 0.8 * cutoff * q;
-	f = p + p - 1.0;
-	q = resonance * (1.0 + 0.5 * q * (1.0f - q + 5.6 * q * q));
-}
-
-void ofxSynthFilter::processSample(float *inputSample)
-{
-	*inputSample -= q * b4;                          //feedback
-	t1 = b1;  b1 = (*inputSample + b0) * p - b1 * f;
-	t2 = b2;  b2 = (b1 + t1) * p - b2 * f;
-	t1 = b3;  b3 = (b2 + t2) * p - b3 * f;
-	b4 = (b3 + t1) * p - b4 * f;
-	b4 -= b4 * b4 * b4 * 0.166667;    //clipping
-	b0 = *inputSample;
-	if(lowPass){
-		*inputSample = b4;
-	}else{
-		*inputSample = *inputSample-b4;
+	
+	file = fopen( ofToDataPath(filename).c_str(), "wb" );
+	if ( !file ){
+		writing = false;
+		//TODO: throw a unable to open file error
+		cout << "cannot open file" << endl;
+		return false;
 	}
+	cout << buf_size;
+	setvbuf( file, 0, _IOFBF, 32 * 1024L );
 }
-
-/* ----------- */
-void ofxSynthDelayline::process( float* input, float *output, int numFrames, int numInChannels, int numOutChannels )
-{
-	for (int i = 0; i < numFrames; i++){
-		if (phase>=size) {
-			phase=0;
-		}
-		memory[phase]=(memory[phase]*feedback)+(input[i*numInChannels]*feedback)*0.5;
-		phase+=1;
-		for (int j=0; j<numOutChannels; j++) {
-			// puts the sound in memory on to all the output channels
-			output[i*numOutChannels+j]=memory[phase+1];
+void ofxSynthWaveWriter::process( float* input, float *output, int numFrames, int numInChannels, int numOutChannels ){
+	if (writing) {
+		for (int i=0; i<numFrames; i++) {
+			for (int j = 0; j<numChannels; j++) {
+				if ( buf_pos >= buf_size )
+					flush();
+				sample_count_ ++;
+				long s = (long) (input[i*numInChannels+j] * 0x7FFF); // convert to a integer representation
+				if ( (short) s != s )
+					s = 0x7FFF - (s >> 24); // clamp to 16 bits
+				buf[buf_pos++] = (unsigned char) s;
+				buf[buf_pos++] = (unsigned char) (s>>8);
+			}
 		}
 	}
+	// this sample writer operates like a passthrough, even when it is writing samples to disk
+	ofSoundEffectPassthrough::process(input, output, numFrames, numInChannels, numOutChannels);
 }
-void ofxSynthDelayline::setSize(float _size){
-	size = (int)_size*(int)sampleRate;
+void ofxSynthWaveWriter::flush(){
+	if ( buf_pos && !fwrite( buf, buf_pos, 1, file ) ){
+		writing = false;
+		//TODO: throw a unable to open file error
+		cout << "cannot write to file" << endl;
+	}
+	buf_pos = 0;
 }
-void ofxSynthDelayline::setFeedback(float _feedback){
-	feedback = _feedback;
+void ofxSynthWaveWriter::stopWriting(){
+	if ( file )
+	{
+		flush();
+		// generate header
+		long ds = sample_count_ * sizeof (char*);
+		long rs = wav_header_size - 8 + ds;
+		int frame_size = numChannels * sizeof (char*);
+		long bps = rate * frame_size;
+		cout << rs << endl;
+		cout << buf_pos << endl;
+		writing = false;
+		unsigned char header [wav_header_size] =
+		{
+			'R','I','F','F',
+			rs,rs>>8,           // length of rest of file
+			rs>>16,rs>>24,
+			'W','A','V','E',
+			'f','m','t',' ',
+			0x10,0,0,0,         // size of fmt chunk
+			1,0,                // uncompressed format
+			numChannels,0,       // channel count
+			rate,rate >> 8,     // sample rate
+			rate>>16,rate>>24,
+			bps,bps>>8,         // bytes per second
+			bps>>16,bps>>24,
+			frame_size,0,       // bytes per sample frame
+			16,0,               // bits per sample
+			'd','a','t','a',
+			ds,ds>>8,ds>>16,ds>>24// size of sample data
+			// ...              // sample data
+		};
+		
+		// write header
+		fseek( file, 0, SEEK_SET );
+		fwrite( header, sizeof header, 1, file );
+		
+		fclose( file );
+		file = 0;
+		free( buf );
+	}
 }
