@@ -24,6 +24,7 @@ class ofBuffer{
 		void allocate(long _size);
 
 		char * getBuffer();
+		const char * getBuffer() const;
 
 		long getSize() const;
 
