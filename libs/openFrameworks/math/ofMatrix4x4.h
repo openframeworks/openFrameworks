@@ -23,8 +23,6 @@
 #endif
 
 
-class ofMatrix4x4;
-
 class ofMatrix4x4 {
 public:
 	float _mat[4][4];
