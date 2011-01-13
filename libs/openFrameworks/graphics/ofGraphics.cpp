@@ -651,7 +651,7 @@ void ofSphere(const ofVec3f& position, float radius) {
 }
 
 //----------------------------------------
-inline void ofSphere(float radius) {
+void ofSphere(float radius) {
 	// this needs to be swapped out with non-glut code
 	// for good references see cinder's implementation from paul bourke:
 	// https://github.com/cinder/Cinder/blob/master/src/cinder/gl/gl.cpp
@@ -688,7 +688,7 @@ void ofBox(const ofVec3f& position, float size) {
 }
 
 //----------------------------------------
-inline void ofBox(float size) {
+void ofBox(float size) {
 	// this needs to be swapped out with non-glut code
 	if(ofGetStyle().bFill) {
 		glutSolidCube(size);
