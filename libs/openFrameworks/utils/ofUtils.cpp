@@ -2,6 +2,7 @@
 #include "ofImage.h"
 #include "ofTypes.h"
 #include "Poco/String.h"
+#include "ofAppRunner.h"
 
 #if defined(TARGET_OF_IPHONE) || defined(TARGET_OSX ) || defined(TARGET_LINUX)
 	#include "sys/time.h"

@@ -1,5 +1,4 @@
-#ifndef OF_CONSTANTS
-#define OF_CONSTANTS
+#pragma once
 
 //-------------------------------
 #define OF_VERSION	6
@@ -416,6 +415,3 @@ enum ofPolyWindingMode{
 
 #endif
 
-//--------------------------------------------
-
-#endif

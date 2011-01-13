@@ -1,5 +1,6 @@
 #include "ofImage.h"
-
+#include "ofAppRunner.h"
+#include "ofTypes.h"
 
 //----------------------------------------------------------
 // static variable for freeImage initialization:
@@ -230,14 +231,6 @@ void ofImage::update(){
 	height	= myPixels.getHeight();
 	bpp		= myPixels.getBitsPerPixel();
 	type	= myPixels.getImageType();
-}
-
-//----------------------------------------
-void ofImage::updatePixels() {
-	tex.bind();
-	ofTextureData& data = tex.texData;
-	glGetTexImage(data.textureTarget, 0, data.glType, data.pixelType, myPixels.getPixels());
-	tex.unbind();
 }
 
 //------------------------------------

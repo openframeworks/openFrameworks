@@ -2,7 +2,6 @@
 
 
 #pragma once
-#include "ofConstants.h"
 
 //----------------------------------------------------------
 // ofPoint

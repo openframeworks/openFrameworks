@@ -1,6 +1,7 @@
 #include "ofTexture.h"
 #include "ofUtils.h"		// for nextPow2()
 #include "ofAppRunner.h"	// for getWidth()
+#include "ofGraphics.h"
 
 static bool bTexHackEnabled = true;
 

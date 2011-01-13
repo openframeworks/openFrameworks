@@ -1,5 +1,6 @@
 #include "ofEvents.h"
 #include "ofAppRunner.h"
+#include "ofBaseApp.h"
 
 // core events instance & arguments
 #ifdef OF_USING_POCO

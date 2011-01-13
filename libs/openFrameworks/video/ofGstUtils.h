@@ -1,5 +1,4 @@
-#ifndef OFGSTUTILS_H_
-#define OFGSTUTILS_H_
+#pragma once
 
 #include <gst/gst.h>
 #include <pthread.h>
@@ -160,4 +159,3 @@ protected:
 
 };
 
-#endif /* OFGSTUTILS_H_ */
