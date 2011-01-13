@@ -5,6 +5,13 @@
 #ifdef TARGET_WIN32
 #include <winuser.h>
 #include <commdlg.h>
+#define _WIN32_DCOM
+
+#include <windows.h>
+#include <shlobj.h>
+#include <tchar.h>
+#include <stdio.h>
+
 #endif
 
 void ofCreateAlertDialog(string errorMessage){	
@@ -139,6 +146,8 @@ string ofFileLoadDialog(){
 	//----------------------------------------------------------------------------------------
 #ifdef TARGET_WIN32
 	
+	// TODO pc file choose dialog is now mega broken, please fix!
+
 	char szFileName[MAX_PATH] = "";
 	
 	OPENFILENAME ofn;
@@ -157,6 +166,43 @@ string ofFileLoadDialog(){
 		
 		fileNameToLoad = string(szFileName);
 	}
+
+
+	BROWSEINFO      bi;
+	char            pszBuffer[MAX_PATH]; 
+	LPITEMIDLIST    pidl; 
+	LPMALLOC		lpMalloc;
+
+	
+
+	// Get a pointer to the shell memory allocator
+	if(SHGetMalloc(&lpMalloc) != S_OK)
+	{
+		MessageBox(NULL,_T("Error opening browse window"),_T("ERROR"),MB_OK);
+		//CoUninitialize();
+		//return 0;
+	}
+
+	bi.hwndOwner        =   NULL; 
+	bi.pidlRoot         =   NULL;
+	bi.pszDisplayName   =   LPWSTR(pszBuffer); 
+	bi.lpszTitle        =   _T("Select a install Directory"); 
+	bi.ulFlags          =   BIF_RETURNFSANCESTORS | BIF_RETURNONLYFSDIRS; 
+	bi.lpfn             =   NULL; 
+	bi.lParam           =   0;
+	
+	if(pidl = SHBrowseForFolder(&bi))
+	{
+		// Copy the path directory to the buffer
+		if(SHGetPathFromIDList(pidl,LPWSTR(pszBuffer)))
+		{
+			// pszBuffer now holds the directory path
+			printf("You selected the directory: %s\n",pszBuffer);
+		}
+
+		lpMalloc->Free(pidl);
+	}
+	lpMalloc->Release();
 	//----------------------------------------------------------------------------------------
 	//------------------------------------------------------------------------------   windoze
 	//----------------------------------------------------------------------------------------
