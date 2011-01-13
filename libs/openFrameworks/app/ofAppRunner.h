@@ -30,6 +30,8 @@ int 		ofGetScreenHeight();
 int			ofGetWindowMode();
 int 		ofGetWidth();			// <-- should we call this ofGetWindowWidth?
 int 		ofGetHeight();
+ofVec2f		ofGetWindowSize();
+ofRectangle	ofGetWindowRect();
 
 void 		ofSetWindowPosition(int x, int y);
 void 		ofSetWindowShape(int width, int height);

@@ -30,10 +30,6 @@ public:
 	float _mat[4][4];
 
 	
-	ofVec4f & getRow(int i) {
-//		return (ofVec4f)_mat
-	}
-
 	//---------------------------------------------
 	// constructors
 	ofMatrix4x4() {
@@ -75,6 +71,17 @@ public:
 		return _mat[row][col];
 	}
 
+	//----------------------------------------
+	ofVec3f getRowAsVec3f(int i) const {
+		return ofVec3f(_mat[i][0], _mat[i][1], _mat[i][2]);
+	}
+	
+	//----------------------------------------
+	ofVec4f getRowAsVec4f(int i) const {
+		return ofVec4f(_mat[i][0], _mat[i][1], _mat[i][2], _mat[i][3]);
+	}
+	
+	
 	//---------------------------------------------
 	// check if the matrix is valid
 	bool isValid() const {
