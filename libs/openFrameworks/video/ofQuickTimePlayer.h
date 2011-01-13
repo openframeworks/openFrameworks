@@ -73,6 +73,7 @@ class ofQuickTimePlayer : public ofBaseVideoPlayer{
 
 		int					nFrames;				// number of frames
 		bool				allocated;				// so we know to free pixels or not
+
 		ofLoopType					currentLoopState;
 		bool 				bStarted;
 		bool 				bPlaying;
