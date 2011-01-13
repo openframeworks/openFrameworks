@@ -68,7 +68,8 @@ class ofxSynth : public ofSoundSource{
 		void setADRMod(float atk, float dec, float rel);
 		
 		ofxMaxiOsc wave;
-		ofxSynthEnvAHD env, modEnv;
+		ofxSynthADSR env;
+		ofxSynthEnvAHD modEnv;
 		ofxSynthFilter filter;
 		int ampMode;
 		bool usesEnv, hasTrigger;
