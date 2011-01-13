@@ -1,8 +1,9 @@
 #pragma once
 
+#include "ofTexture.h"
+
 #ifndef TARGET_OPENGLES
 
-#include "ofMain.h"
 
 
 class ofFbo {

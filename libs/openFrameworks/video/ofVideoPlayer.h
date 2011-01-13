@@ -1,5 +1,4 @@
-#ifndef _OF_VIDEO_PLAYER
-#define _OF_VIDEO_PLAYER
+#pragma once
 
 #include "ofConstants.h"
 #include "ofTexture.h"
@@ -88,8 +87,6 @@ class ofVideoPlayer : public ofBaseVideoPlayer, public ofBaseDraws, public ofBas
 		bool bUseTexture;
 
 };
-#endif
-
 
 
 

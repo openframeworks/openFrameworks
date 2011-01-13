@@ -1,4 +1,7 @@
 #include "ofFbo.h"
+#include "ofAppRunner.h"
+#include "ofUtils.h"
+#include "ofGraphics.h"
 
 #ifndef TARGET_OPENGLES
 

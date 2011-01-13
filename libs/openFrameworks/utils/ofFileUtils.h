@@ -1,41 +1,37 @@
 #pragma once
 
 #include "ofConstants.h"
-#include "ofUtils.h"
 
 //----------------------------------------------------------
 // ofBuffer
 //----------------------------------------------------------
+
 class ofBuffer{
-	public:
+	vector<char> 	buffer;
+	long 			nextLinePos;
+public:
 
-		ofBuffer();
-		ofBuffer(int size, char * buffer);
-		ofBuffer(istream & stream);
-		ofBuffer(const ofBuffer & mom);
+	ofBuffer();
+	ofBuffer(int size, char * buffer);
+	ofBuffer(istream & stream);
 
-		~ofBuffer();
+	~ofBuffer();
 
-		bool set(istream & stream);
-		void set(int _size, char * _buffer);
+	bool set(istream & stream);
+	void set(int _size, char * _buffer);
 
-		void clear();
+	void clear();
 
-		void allocate(long _size);
+	void allocate(long _size);
 
-		char * getBuffer();
-		const char * getBuffer() const;
+	char * getBuffer();
+	const char * getBuffer() const;
 
-		long getSize() const;
+	long getSize() const;
 
-		string getNextLine();
-		string getFirstLine();
-		
-	protected:
-		vector<char> 	buffer;
-		long 			nextLinePos;
+	string getNextLine();
+	string getFirstLine();
 };
-
 //--------------------------------------------------
 bool ofReadFile(const string & path, ofBuffer & file, bool binary=false);
 

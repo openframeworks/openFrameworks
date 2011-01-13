@@ -1,8 +1,8 @@
-#ifndef _IMAGE_TEXTURE_H_
-#define _IMAGE_TEXTURE_H_
+#pragma once
 
-#include "ofConstants.h"
-#include "ofGraphics.h"
+#include "ofPoint.h"
+#include "ofRectangle.h"
+#include "ofBaseTypes.h"
 #include "Poco/SharedPtr.h"
 
 //Sosolimited: texture compression
@@ -167,4 +167,3 @@ protected:
 
 };
 
-#endif
