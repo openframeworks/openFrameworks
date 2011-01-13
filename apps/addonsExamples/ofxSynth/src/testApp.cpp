@@ -19,12 +19,15 @@ void testApp::setup(){
 	rAudio = new float[1024];
 	
 	
-	ofSoundStreamSetup(2,0, sampleRate,1024, 4);
+	ofSoundStreamSetup(2,0,this, sampleRate,1024, 4);
+
+	int bpm = 140;
+	beatLength = ((sampleRate*60)/bpm);
 
 	ofSetFrameRate(60);
 	for (int i=0; i<15; i++) {
-		synth[i].setFrequencyMidiNote(60+ofRandom(-0.01, 0.01));	
-		synth[i].env.setADSR(0.51*sampleRate, 0.2*sampleRate, 0.9, 2.3*sampleRate);
+		synth[i].setFrequencyMidiNote(20+ofRandom(-0.01, 0.01));	
+		synth[i].env.setADSR(0.1*sampleRate, 0.2*sampleRate, 0.9, 0.03*sampleRate);
 		synth[i].ampMode = OFXSYNTHADR;
 		synth[i].setFilterMode(1);
 		synth[i].setFilter(0.5, 0.1);
@@ -32,14 +35,48 @@ void testApp::setup(){
 		mixer.setVolume(&synth[i], 1.0f/15.0f);
 	}
 	
+	sampler.loadFile("amen_brother.wav");
+	sampler.setFrequencySyncToLength(beatLength*4.0*4.0); // the length of a beat is in quarter notes * 4 measures
+	
+	filter.setup();
+	filter.addInputFrom( &sampler );
+	
+	// allows us to send the filter to multiple places
+	multiplex.addInputFrom( &filter );
+	
+	delay.addInputFrom( &multiplex);
+	
+	mixer.addInputFrom( &delay );
+	mixer.setVolume(&delay, 1.0);
+
+	mixer.addInputFrom( &multiplex );
+	mixer.setVolume(&multiplex, 1.0);
+	
 	passthrough.addInputFrom( &mixer );
 	writer.addInputFrom(&passthrough);
 	ofSoundStreamAddSoundSource( &writer );
-	delay.setSize(1.1);
-	keyChange = 0;
+	
+	delay.setSize(0.1);
+	delay.setFeedback(0.7);
+	
+	beatPos = 0;
 }
 
-
+void testApp::audioRequested(float * output, int bufferSize, int nChannels){
+	for (int i = 0; i < bufferSize; i++){
+		frameCounter++;
+		int remainder = frameCounter%(beatLength); // trigger on 16ths
+		if(remainder == 0){
+			beatPos++;
+			if(effectIndex<=0||effectIndex==3||effectIndex==4||effectIndex==5){
+				cutStart = beatPos%8/8.0;
+				cutEnd = cutStart + 1/8.0;
+			}
+			sampler.setLoopPoints(cutStart, cutEnd);
+			sampler.trigger();
+		}
+	}
+}
 //--------------------------------------------------------------
 void testApp::update(){
 	const ofSoundBuffer& output = passthrough.getBuffer();
@@ -51,30 +88,26 @@ void testApp::update(){
 //--------------------------------------------------------------
 void testApp::draw(){
 
-
+	// background
+	ofSetHexColor(0xCCCCCC);
+	ofRect(0, effectIndex*ofGetHeight()/8.0, ofGetWidth(), ofGetHeight()/8);
+	ofSetHexColor(0xFF3333);
+	ofRect(0, effectIndex*ofGetHeight()/8.0, mouseX, ofGetHeight()/8);
+	
+	
 	// draw the left:
-	ofSetHexColor(0x333333);
-	ofRect(100,100,256,200);
 	ofSetHexColor(0xFFFFFF);
 	for (int i = 0; i < 256; i++){
-		ofLine(100+i,200,100+i,200+lAudio[i]*100.0f);
-	}
-
-	// draw the right:
-	ofSetHexColor(0x333333);
-	ofRect(600,100,256,200);
-	ofSetHexColor(0xFFFFFF);
-	for (int i = 0; i < 256; i++){
-		ofLine(600+i,200,600+i,200+rAudio[i]*100.0f);
+		ofLine(cutStart*ofGetWidth()+i,(effectIndex+1)*ofGetHeight()/8.0,cutStart*ofGetWidth()+i,effectIndex*(ofGetHeight()/8.0)+lAudio[i]*200.0f);
 	}
 
 	ofSetHexColor(0x333333);
-	char reportString[255];
-	//sprintf(reportString, "volume: (%6.3f) modify with -/+ keys\nvolume: (%6.3f) modify with up/down keys", volume, testVolume.getVolume() );
-	//if (!bNoise) sprintf(reportString, "%s (%fhz)", reportString, targetFrequency);
-
-	ofDrawBitmapString(reportString,80,380);
-
+	ofDrawBitmapString("NORMAL",80,ofGetHeight()/8.0-ofGetHeight()/16.0);
+	ofDrawBitmapString("CHANGE LOOP",80,(ofGetHeight()/8.0)*2-ofGetHeight()/16.0);
+	ofDrawBitmapString("SHORT LOOP",80,(ofGetHeight()/8.0)*3-ofGetHeight()/16.0);
+	ofDrawBitmapString("FILTER LOW",80,(ofGetHeight()/8.0)*4-ofGetHeight()/16.0);
+	ofDrawBitmapString("FILTER HIGH",80,(ofGetHeight()/8.0)*5-ofGetHeight()/16.0);
+	ofDrawBitmapString("DELAY",80,(ofGetHeight()/8.0)*6-ofGetHeight()/16.0);
 }
 
 
@@ -91,6 +124,41 @@ void testApp::keyReleased  (int key){
 
 //--------------------------------------------------------------
 void testApp::mouseMoved(int x, int y ){
+	x = fmax(x, 0);
+	effectIndex = floor(((float)y/(float)ofGetHeight())*8.0);
+	
+	filter.setCutoff(1.0);
+	filter.setRes(0.0);
+	filter.setLowPass();
+	
+	mixer.setVolume(&delay, 0.0);
+	
+	switch (effectIndex) {
+		case 1:
+			cutStart = floor(((float)x/(float)ofGetWidth())*8.0)/8.0;
+			cutEnd = cutStart+1/8.0f;
+			break;
+		case 2:
+			cutStart = floor(((float)x/(float)ofGetWidth())*8.0)/8.0;
+			cutEnd = (float)x/(float)ofGetWidth();
+			break;
+		case 3:
+			filter.setCutoff((float)x/(float)ofGetWidth());
+			filter.setRes(0.3);
+			filter.setLowPass();
+			break;
+		case 4:
+			filter.setCutoff((float)x/(float)ofGetWidth());
+			filter.setRes(0.3);
+			filter.setHighPass();
+			break;
+		case 5:
+			delay.setSize((float)x/(float)ofGetWidth());
+			mixer.setVolume(&delay, 1.0);
+			break;
+		default:
+			break;
+	}
 }
 
 //--------------------------------------------------------------

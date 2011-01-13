@@ -11,6 +11,7 @@ class testApp : public ofBaseApp{
 
 
 		void setup();
+		void audioRequested(float * output, int bufferSize, int nChannels);
 		void update();
 		void draw();
 
@@ -33,11 +34,18 @@ class testApp : public ofBaseApp{
 		
 		ofxSynthDelayline delay;
 		ofxSynth synth[15];
-		
+		ofxSynthSampler sampler;
+		ofxSynthFilter filter;
+		ofSoundSourceMultiplexor multiplex;
 		ofSoundEffectPassthrough passthrough;
-		ofxSynthWaveWriter writer;
 		ofSoundMixer mixer;
-		int keyChange;
+		ofxSynthWaveWriter writer;
+
+		int beatLength, frameCounter;
+		
+		
+		int effectIndex, beatPos;
+		float cutStart, cutEnd;
 };
 
 #endif
