@@ -165,7 +165,8 @@
 		#define __MACOSX_CORE__
 	#endif
 	#include <unistd.h>
-	#include "glew.h"
+#define GLEW_STATIC
+//	#include "glew.h"
 	#include <OpenGL/gl.h>
 //	#include <OpenGL/glext.h>
 	#include <OpenGL/glu.h>
