@@ -368,7 +368,7 @@ ofFileDialogResult ofFileSaveDialog(string defaultName, string messageName){
 	
 	if (GetSaveFileName(&ofn))
 	{
-		#error this needs checking on windows - what is the filePath.erase(0,1)
+		//#error this needs checking on windows - what is the filePath.erase(0,1)
 	    results.filePath = string(info_fn) + "/" + string(fileName);
 		if (results.filePath.length() > 1) results.filePath.erase(0,1);
         cout << "GetSaveFileName worked, got " << results.filePath << endl;
