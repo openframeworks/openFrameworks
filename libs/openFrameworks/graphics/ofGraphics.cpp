@@ -659,6 +659,8 @@ inline void ofSphere(float radius) {
 	// and processing's implementation of icospheres:
 	// https://code.google.com/p/processing/source/browse/trunk/processing/core/src/processing/core/PGraphics.java?r=7543
 	// public void sphere(float r)
+	
+#ifndef TARGET_OPENGLES
 	ofPushMatrix();
 	ofRotateX(90);
 	if(ofGetStyle().bFill) {
@@ -667,6 +669,7 @@ inline void ofSphere(float radius) {
 		glutWireSphere(radius, 2 * currentStyle.sphereResolution, currentStyle.sphereResolution);
 	}
 	ofPopMatrix();
+#endif
 }
 
 //----------------------------------------
@@ -690,11 +693,13 @@ void ofBox(const ofVec3f& position, float size) {
 //----------------------------------------
 inline void ofBox(float size) {
 	// this needs to be swapped out with non-glut code
+#ifndef TARGET_OPENGLES
 	if(ofGetStyle().bFill) {
 		glutSolidCube(size);
 	} else {
 		glutWireCube(size);
 	}
+#endif
 }
 
 //----------------------------------------------------------
@@ -756,6 +761,7 @@ void ofSetHexColor(int hexColor){
 
 //----------------------------------------------------------
 void ofEnableBlendMode(int blendMode){
+#ifndef TARGET_OPENGLES
     switch (blendMode){
             
         case OF_BLENDMODE_ALPHA:{
@@ -817,7 +823,7 @@ void ofEnableBlendMode(int blendMode){
         default:
             break;
     }
-    
+#endif  
 }
 
 //----------------------------------------------------------

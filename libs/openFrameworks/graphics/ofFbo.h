@@ -1,5 +1,7 @@
 #pragma once
 
+#ifndef TARGET_OPENGLES
+
 #include "ofMain.h"
 
 
@@ -86,3 +88,5 @@ protected:
 	// call this to blit from the colorbuffer into the texture so we can use the results for rendering, or input to a shader etc.
 	void updateTexture(int attachmentPoint);
 };
+
+#endif
