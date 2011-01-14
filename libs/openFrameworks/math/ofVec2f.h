@@ -1,17 +1,17 @@
 #pragma once
 
-#include "ofPoint.h"
+class ofVec3f;
+class ofVec4f;
 #include "ofConstants.h"
 
 class ofVec2f {
-
   public:
+		float x, y;
 
-	float x,y;
-
-    ofVec2f( float _x=0.0f, float _y=0.0f );
-    ofVec2f( const ofVec2f& pnt );
-
+	ofVec2f( float _x=0.f, float _y=0.f );
+		
+    ofVec2f( const ofVec3f& vec );
+    ofVec2f( const ofVec4f& vec );
 
 	float * getPtr() {
 		return (float*)&x;
@@ -73,6 +73,8 @@ class ofVec2f {
     ofVec2f  operator/( const float f ) const;
     ofVec2f& operator/=( const float f );
 
+	friend ostream& operator<<(ostream& os, const ofVec2f& vec);
+	friend istream& operator>>(istream& is, const ofVec2f& vec);
 
     // Scaling
     //
@@ -231,12 +233,6 @@ inline ofVec2f::ofVec2f( float _x, float _y ) {
 	y = _y;
 }
 
-inline ofVec2f::ofVec2f( const ofVec2f& pnt ) {
-	x = pnt.x;
-	y = pnt.y;
-}
-
-
 
 // Getters and Setters.
 //
@@ -329,6 +325,17 @@ inline ofVec2f& ofVec2f::operator/=( const ofVec2f& vec ) {
 	return *this;
 }
 
+inline ostream& operator<<(ostream& os, const ofVec2f& vec) {
+	os << vec.x << ", " << vec.y;
+	return os;
+}
+
+inline istream& operator>>(istream& is, ofVec2f& vec) {
+	is >> vec.x;
+	is.ignore(2);
+	is >> vec.y;
+	return is;
+}
 
 //operator overloading for float
 //

@@ -7,9 +7,11 @@
  *
  */
 
-
 // TODO: 
 // add off-axis projection options (eventually tile render support)
+
+#pragma once
+
 
 #include "ofNode3d.h"
 #include "ofMain.h"

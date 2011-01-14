@@ -82,6 +82,8 @@ public:
 		return _mat[i];
 	}
 	
+	friend ostream& operator<<(ostream& os, const ofMatrix4x4& M);
+	friend istream& operator>>(istream& is, ofMatrix4x4& M);
 	
 	//---------------------------------------------
 	// check if the matrix is valid
@@ -368,6 +370,8 @@ public:
 		r.makeFromMultiplicationOf(*this, m);
 		return  r;
 	}
+	
+	
 
 	void preMult( const ofMatrix4x4& );
 
@@ -396,9 +400,6 @@ public:
 	inline void preMultTranslate( const ofVec3f& v );
 	// equivalent to preMult(newRotationMatrix(q));
 	inline void preMultRotate( const ofQuaternion& q );
-
-
-
 };
 
 
@@ -426,6 +427,60 @@ return std::isnan(_mat[0][0]) || std::isnan(_mat[0][1]) || std::isnan(_mat[0][2]
 #endif
 	
 }
+
+
+
+inline ostream& operator<<(ostream& os, const ofMatrix4x4& M) {
+	int w = 8;
+	os	<< setw(w)
+		<< M._mat[0][0] << ", " << setw(w)
+		<< M._mat[0][1] << ", " << setw(w)
+		<< M._mat[0][2] << ", " << setw(w) 
+		<< M._mat[0][3] << std::endl;
+		
+	os	<< setw(w)
+		<< M._mat[1][0] << ", " << setw(w) 
+		<< M._mat[1][1] << ", " << setw(w)
+		<< M._mat[1][2] << ", " << setw(w) 
+		<< M._mat[1][3] << std::endl;
+	
+	os	<< setw(w)
+		<< M._mat[2][0] << ", " << setw(w) 
+		<< M._mat[2][1] << ", " << setw(w)
+		<< M._mat[2][2] << ", " << setw(w) 
+		<< M._mat[2][3] << std::endl;
+	
+	os	<< setw(w)
+		<< M._mat[3][0] << ", " << setw(w) 
+		<< M._mat[3][1] << ", " << setw(w)
+		<< M._mat[3][2] << ", " << setw(w) 
+		<< M._mat[3][3];
+	
+	return os;
+}
+
+inline istream& operator>>(istream& is, ofMatrix4x4& M) {
+	is >> M._mat[0][0]; is.ignore(2); 
+	is >> M._mat[0][1]; is.ignore(2);
+	is >> M._mat[0][2]; is.ignore(2);
+	is >> M._mat[0][3]; is.ignore(1);
+	
+	is >> M._mat[1][0]; is.ignore(2); 
+	is >> M._mat[1][1]; is.ignore(2);
+	is >> M._mat[1][2]; is.ignore(2);
+	is >> M._mat[1][3]; is.ignore(1);
+	
+	is >> M._mat[1][0]; is.ignore(2); 
+	is >> M._mat[1][1]; is.ignore(2);
+	is >> M._mat[1][2]; is.ignore(2);
+	is >> M._mat[1][3]; is.ignore(1);
+	
+	is >> M._mat[1][0]; is.ignore(2); 
+	is >> M._mat[1][1]; is.ignore(2);
+	is >> M._mat[1][2]; is.ignore(2);
+	is >> M._mat[1][3];
+}
+
 
 inline ofMatrix4x4& ofMatrix4x4::operator = (const ofMatrix4x4& rhs) {
 	if ( &rhs == this ) return *this;

@@ -2,7 +2,7 @@
 
 #include "ofConstants.h"
 #include "ofAppBaseWindow.h"
-class ofPoint;
+#include "ofPoint.h"
 class ofBaseApp;
 
 class ofAppGlutWindow : public ofAppBaseWindow {
