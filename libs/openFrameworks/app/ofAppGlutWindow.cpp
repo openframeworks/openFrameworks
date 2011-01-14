@@ -3,9 +3,12 @@
 #include "ofMain.h"
 #include "ofEvents.h"
 
+
+
 #ifdef TARGET_WIN32
 	#define GLUT_BUILDING_LIB
 	#include "glut.h"
+	#include "Poco/UnicodeConverter.h"
 #endif
 #ifdef TARGET_OSX
 	#include <GLUT/glut.h>
@@ -65,6 +68,55 @@ static set<int> pressedKeys;
 static WNDPROC currentWndProc;
 static HWND handle  = NULL;
 
+// This function takes in a wParam from the WM_DROPFILES message and 
+// prints all the files to a message box.
+
+void HandleFiles(WPARAM wParam)
+{
+    // DragQueryFile() takes a LPWSTR for the name so we need a TCHAR string
+    TCHAR szName[MAX_PATH];
+
+    // Here we cast the wParam as a HDROP handle to pass into the next functions
+    HDROP hDrop = (HDROP)wParam;
+
+    // This functions has a couple functionalities.  If you pass in 0xFFFFFFFF in
+    // the second parameter then it returns the count of how many filers were drag
+    // and dropped.  Otherwise, the function fills in the szName string array with
+    // the current file being queried.
+    int count = DragQueryFile(hDrop, 0xFFFFFFFF, szName, MAX_PATH);
+
+	vector < string > files; 
+    // Here we go through all the files that were drag and dropped then display them
+    for(int i = 0; i < count; i++)
+    {
+        // Grab the name of the file associated with index "i" in the list of files dropped.
+        // Be sure you know that the name is attached to the FULL path of the file.
+        DragQueryFile(hDrop, i, szName, MAX_PATH);
+		
+		wchar_t * s = szName;
+		char dfault = '?';
+        const std::locale& loc = std::locale();
+		std::ostringstream stm;
+		while( *s != L'\0' ) {
+			stm << std::use_facet< std::ctype<wchar_t> >( loc ).narrow( *s++, dfault );
+		}
+		files.push_back(string(stm.str()));
+		
+			//toUTF8(udispName, dispName);
+
+        // Bring up a message box that displays the current file being processed
+        //MessageBox(GetForegroundWindow(), szName, L"Current file received", MB_OK);
+    }
+
+    // Finally, we destroy the HDROP handle so the extra memory
+    // allocated by the application is released.
+    DragFinish(hDrop);
+
+	ofAppPtr->dragEvent(files);
+
+}
+
+
 static LRESULT CALLBACK winProc(HWND hwnd, UINT Msg, WPARAM wParam, LPARAM lParam){
 
    //we catch close and destroy messages
@@ -78,6 +130,12 @@ static LRESULT CALLBACK winProc(HWND hwnd, UINT Msg, WPARAM wParam, LPARAM lPara
       case WM_DESTROY:
          OF_EXIT_APP(0);
          break;
+	  case WM_DROPFILES:
+            
+            // Call our function we created to display all the files.
+            // We pass the wParam because it's the HDROP handle.
+            HandleFiles(wParam);
+            break;
       default:
          return CallWindowProc(currentWndProc, handle, Msg, wParam, lParam);
       break;
@@ -91,6 +149,9 @@ static void fixCloseWindowOnWin32(){
 
 	//get the HWND
 	handle = WindowFromDC(wglGetCurrentDC());
+	
+	// enable drag and drop of files. 
+	DragAcceptFiles (handle, TRUE);
 
 	//store the current message event handler for the window
 	currentWndProc = (WNDPROC)GetWindowLongPtr(handle, GWL_WNDPROC);
@@ -609,7 +670,6 @@ void ofAppGlutWindow::passive_motion_cb(int x, int y) {
 
 void ofAppGlutWindow::dragEvent(char ** names, int howManyFiles){
 	
-	//cout << "got a drag event " << names[0] << endl;
 	vector < string > files;
 	
 	for (int i = 0; i < howManyFiles; i++){
