@@ -18,7 +18,7 @@
 
 class ofCamera : public ofNode3d {
 public:
-	ofCamera():fov(60), nearClip(0), farClip(0), isOrtho(false) {}
+	ofCamera():fov(60), nearClip(0), farClip(0), isOrtho(false),isActive(false) {}
 	
 	// projection properties:
 	void setFov(float f);
@@ -44,5 +44,6 @@ protected:
 	float fov;
 	float nearClip;
 	float farClip;
+	bool isActive;
 };
 

@@ -1,5 +1,12 @@
 #pragma once
 
+#include "ofPoint.h"
+
+class ofDragInfo{
+	public:
+		vector <string> files;
+		ofPoint position;
+};
 
 class ofBaseApp{
 
@@ -30,7 +37,9 @@ class ofBaseApp{
 		virtual void audioReceived( float * input, int bufferSize, int nChannels ){}
 		virtual void audioRequested( float * output, int bufferSize, int nChannels ){}
 
-
+		virtual void dragEvent(ofDragInfo dragInfo) { }
+	
+	
 		int mouseX, mouseY;			// for processing heads
 };
 
