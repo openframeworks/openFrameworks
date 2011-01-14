@@ -46,25 +46,230 @@
 		isa = PBXCodeSenseManager;
 		indexTemplatePath = "";
 	};
-	BBCF991412E025F600695088 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = E4B69E1E0A3A1BDC003C02F2 /* testApp.cpp */;
-		name = "testApp.cpp: 187";
-		rLen = 0;
-		rLoc = 4339;
-		rType = 0;
-		vrLen = 1921;
-		vrLoc = 3329;
-	};
 	BBCF991512E025F600695088 /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
 		fRef = E4B69E1E0A3A1BDC003C02F2 /* testApp.cpp */;
 		name = "testApp.cpp: 38";
 		rLen = 0;
-		rLoc = 663;
+		rLoc = 786;
 		rType = 0;
 		vrLen = 1643;
 		vrLoc = 0;
+	};
+	BBCF99B512E02CC000695088 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = E4B69E1E0A3A1BDC003C02F2 /* testApp.cpp */;
+		name = "testApp.cpp: 20";
+		rLen = 0;
+		rLoc = 386;
+		rType = 0;
+		vrLen = 1643;
+		vrLoc = 0;
+	};
+	BBCF99D012E02ECC00695088 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = E4B69E1E0A3A1BDC003C02F2 /* testApp.cpp */;
+		name = "testApp.cpp: 20";
+		rLen = 0;
+		rLoc = 386;
+		rType = 0;
+		vrLen = 1643;
+		vrLoc = 0;
+	};
+	BBCF99E612E0322A00695088 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = E4B69E1F0A3A1BDC003C02F2 /* testApp.h */;
+		name = "testApp.h: 20";
+		rLen = 0;
+		rLoc = 422;
+		rType = 0;
+		vrLen = 435;
+		vrLoc = 0;
+	};
+	BBCF99E712E0322A00695088 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = E4B69E1E0A3A1BDC003C02F2 /* testApp.cpp */;
+		name = "testApp.cpp: 2";
+		rLen = 45;
+		rLoc = 21;
+		rType = 0;
+		vrLen = 1643;
+		vrLoc = 0;
+	};
+	BBCF99E812E0322A00695088 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = E4B69E1E0A3A1BDC003C02F2 /* testApp.cpp */;
+		name = "testApp.cpp: 43";
+		rLen = 0;
+		rLoc = 931;
+		rType = 0;
+		vrLen = 1729;
+		vrLoc = 69;
+	};
+	BBCF99EF12E033AB00695088 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = E4B69E1E0A3A1BDC003C02F2 /* testApp.cpp */;
+		name = "testApp.cpp: 51";
+		rLen = 0;
+		rLoc = 961;
+		rType = 0;
+		vrLen = 1743;
+		vrLoc = 134;
+	};
+	BBCF9A2312E035E900695088 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = BBCF9A2412E035E900695088 /* CarbonEventsCore.h */;
+		name = "CarbonEventsCore.h: 180";
+		rLen = 0;
+		rLoc = 5981;
+		rType = 0;
+		vrLen = 836;
+		vrLoc = 5974;
+	};
+	BBCF9A2412E035E900695088 /* CarbonEventsCore.h */ = {
+		isa = PBXFileReference;
+		lastKnownFileType = sourcecode.c.h;
+		name = CarbonEventsCore.h;
+		path = /System/Library/Frameworks/Carbon.framework/Frameworks/HIToolbox.framework/Headers/CarbonEventsCore.h;
+		sourceTree = "<absolute>";
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1484, 39650}}";
+			sepNavSelRange = "{5981, 0}";
+			sepNavVisRange = "{4747, 2859}";
+		};
+	};
+	BBCF9A2512E035E900695088 /* XCBuildMessageTextBookmark */ = {
+		isa = PBXTextBookmark;
+		comments = "No newline at end of file";
+		fRef = BBCF9A2612E035E900695088 /* ofMeshNode.h */;
+		fallbackIsa = XCBuildMessageTextBookmark;
+		rLen = 1;
+		rLoc = 49;
+		rType = 1;
+	};
+	BBCF9A2612E035E900695088 /* ofMeshNode.h */ = {
+		isa = PBXFileReference;
+		name = ofMeshNode.h;
+		path = ../../../libs/openFrameworks/3d/ofMeshNode.h;
+		sourceTree = "<group>";
+	};
+	BBCF9A2712E035E900695088 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = BBCF9A2812E035E900695088 /* ofMeshNode.h */;
+		name = "ofMeshNode.h: 40";
+		rLen = 0;
+		rLoc = 720;
+		rType = 0;
+		vrLen = 421;
+		vrLoc = 480;
+	};
+	BBCF9A2812E035E900695088 /* ofMeshNode.h */ = {
+		isa = PBXFileReference;
+		name = ofMeshNode.h;
+		path = "/Users/Memo/___LAB___/openFrameworks/ofdevcon2011/libs/openFrameworks/3d/ofMeshNode.h";
+		sourceTree = "<absolute>";
+	};
+	BBCF9A2912E035E900695088 /* XCBuildMessageTextBookmark */ = {
+		isa = PBXTextBookmark;
+		comments = "'ofScene3d::nodes' should be initialized in the member initialization list";
+		fRef = BBCF9A2A12E035E900695088 /* ofScene3d.h */;
+		fallbackIsa = XCBuildMessageTextBookmark;
+		rLen = 1;
+		rLoc = 19;
+		rType = 1;
+	};
+	BBCF9A2A12E035E900695088 /* ofScene3d.h */ = {
+		isa = PBXFileReference;
+		name = ofScene3d.h;
+		path = ../../../libs/openFrameworks/3d/ofScene3d.h;
+		sourceTree = "<group>";
+	};
+	BBCF9A2B12E035E900695088 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = BBCF9A2C12E035E900695088 /* ofScene3d.h */;
+		name = "ofScene3d.h: 20";
+		rLen = 18;
+		rLoc = 364;
+		rType = 0;
+		vrLen = 390;
+		vrLoc = 0;
+	};
+	BBCF9A2C12E035E900695088 /* ofScene3d.h */ = {
+		isa = PBXFileReference;
+		name = ofScene3d.h;
+		path = "/Users/Memo/___LAB___/openFrameworks/ofdevcon2011/libs/openFrameworks/3d/ofScene3d.h";
+		sourceTree = "<absolute>";
+	};
+	BBCF9A2D12E035E900695088 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = BBCF9A2E12E035E900695088 /* FinderRegistry.h */;
+		name = "FinderRegistry.h: 665";
+		rLen = 0;
+		rLoc = 28273;
+		rType = 0;
+		vrLen = 762;
+		vrLoc = 27295;
+	};
+	BBCF9A2E12E035E900695088 /* FinderRegistry.h */ = {
+		isa = PBXFileReference;
+		name = FinderRegistry.h;
+		path = /System/Library/Frameworks/Carbon.framework/Frameworks/OpenScripting.framework/Headers/FinderRegistry.h;
+		sourceTree = "<absolute>";
+	};
+	BBCF9A2F12E035E900695088 /* XCBuildMessageTextBookmark */ = {
+		isa = PBXTextBookmark;
+		comments = "Unused parameter 'key'";
+		fRef = E4B69E1E0A3A1BDC003C02F2 /* testApp.cpp */;
+		fallbackIsa = XCBuildMessageTextBookmark;
+		rLen = 1;
+		rLoc = 195;
+		rType = 1;
+	};
+	BBCF9A3012E035E900695088 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = E4B69E1E0A3A1BDC003C02F2 /* testApp.cpp */;
+		name = "testApp.cpp: 196";
+		rLen = 0;
+		rLoc = 4814;
+		rType = 0;
+		vrLen = 668;
+		vrLoc = 4498;
+	};
+	BBCF9A3112E035EA00695088 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = E4B69E1E0A3A1BDC003C02F2 /* testApp.cpp */;
+		name = "testApp.cpp: 82";
+		rLen = 0;
+		rLoc = 1935;
+		rType = 0;
+		vrLen = 1914;
+		vrLoc = 385;
+	};
+	BBCF9A3212E035EA00695088 /* XCBuildMessageTextBookmark */ = {
+		isa = PBXTextBookmark;
+		comments = "Multi-character character constant";
+		fRef = BBCF9A3312E035EA00695088 /* CarbonEventsCore.h */;
+		fallbackIsa = XCBuildMessageTextBookmark;
+		rLen = 1;
+		rLoc = 179;
+		rType = 1;
+	};
+	BBCF9A3312E035EA00695088 /* CarbonEventsCore.h */ = {
+		isa = PBXFileReference;
+		lastKnownFileType = sourcecode.c.h;
+		name = CarbonEventsCore.h;
+		path = /System/Library/Frameworks/Carbon.framework/Frameworks/HIToolbox.framework/Headers/CarbonEventsCore.h;
+		sourceTree = "<absolute>";
+	};
+	BBCF9A3412E035EA00695088 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = BBCF9A2412E035E900695088 /* CarbonEventsCore.h */;
+		name = "CarbonEventsCore.h: 180";
+		rLen = 0;
+		rLoc = 5981;
+		rType = 0;
+		vrLen = 2859;
+		vrLoc = 4747;
 	};
 	BBE7F06D12DF98050039489F /* PlistBookmark */ = {
 		isa = PlistBookmark;
@@ -148,12 +353,28 @@
 					PBXFileDataSource_Target_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 316680548;
-			PBXWorkspaceStateSaveDate = 316680548;
+			PBXPerProjectTemplateStateSaveDate = 316681924;
+			PBXWorkspaceStateSaveDate = 316681924;
 		};
 		perUserProjectItems = {
-			BBCF991412E025F600695088 = BBCF991412E025F600695088 /* PBXTextBookmark */;
 			BBCF991512E025F600695088 = BBCF991512E025F600695088 /* PBXTextBookmark */;
+			BBCF99B512E02CC000695088 = BBCF99B512E02CC000695088 /* PBXTextBookmark */;
+			BBCF99D012E02ECC00695088 /* PBXTextBookmark */ = BBCF99D012E02ECC00695088 /* PBXTextBookmark */;
+			BBCF99E612E0322A00695088 /* PBXTextBookmark */ = BBCF99E612E0322A00695088 /* PBXTextBookmark */;
+			BBCF99E712E0322A00695088 /* PBXTextBookmark */ = BBCF99E712E0322A00695088 /* PBXTextBookmark */;
+			BBCF99E812E0322A00695088 /* PBXTextBookmark */ = BBCF99E812E0322A00695088 /* PBXTextBookmark */;
+			BBCF99EF12E033AB00695088 /* PBXTextBookmark */ = BBCF99EF12E033AB00695088 /* PBXTextBookmark */;
+			BBCF9A2312E035E900695088 /* PBXTextBookmark */ = BBCF9A2312E035E900695088 /* PBXTextBookmark */;
+			BBCF9A2512E035E900695088 /* XCBuildMessageTextBookmark */ = BBCF9A2512E035E900695088 /* XCBuildMessageTextBookmark */;
+			BBCF9A2712E035E900695088 /* PBXTextBookmark */ = BBCF9A2712E035E900695088 /* PBXTextBookmark */;
+			BBCF9A2912E035E900695088 /* XCBuildMessageTextBookmark */ = BBCF9A2912E035E900695088 /* XCBuildMessageTextBookmark */;
+			BBCF9A2B12E035E900695088 /* PBXTextBookmark */ = BBCF9A2B12E035E900695088 /* PBXTextBookmark */;
+			BBCF9A2D12E035E900695088 /* PBXTextBookmark */ = BBCF9A2D12E035E900695088 /* PBXTextBookmark */;
+			BBCF9A2F12E035E900695088 /* XCBuildMessageTextBookmark */ = BBCF9A2F12E035E900695088 /* XCBuildMessageTextBookmark */;
+			BBCF9A3012E035E900695088 /* PBXTextBookmark */ = BBCF9A3012E035E900695088 /* PBXTextBookmark */;
+			BBCF9A3112E035EA00695088 /* PBXTextBookmark */ = BBCF9A3112E035EA00695088 /* PBXTextBookmark */;
+			BBCF9A3212E035EA00695088 /* XCBuildMessageTextBookmark */ = BBCF9A3212E035EA00695088 /* XCBuildMessageTextBookmark */;
+			BBCF9A3412E035EA00695088 /* PBXTextBookmark */ = BBCF9A3412E035EA00695088 /* PBXTextBookmark */;
 			BBE7F06D12DF98050039489F = BBE7F06D12DF98050039489F /* PlistBookmark */;
 			BBE7F06E12DF98050039489F = BBE7F06E12DF98050039489F /* PBXTextBookmark */;
 			BBE7F20912DFD4240039489F = BBE7F20912DFD4240039489F /* PBXTextBookmark */;
@@ -178,15 +399,15 @@
 	};
 	E4B69E1E0A3A1BDC003C02F2 /* testApp.cpp */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1484, 3094}}";
-			sepNavSelRange = "{663, 0}";
-			sepNavVisRange = "{0, 1643}";
+			sepNavIntBoundsRect = "{{0, 0}, {1859, 2938}}";
+			sepNavSelRange = "{4814, 0}";
+			sepNavVisRange = "{4498, 668}";
 		};
 	};
 	E4B69E1F0A3A1BDC003C02F2 /* testApp.h */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1492, 924}}";
-			sepNavSelRange = "{0, 0}";
+			sepNavIntBoundsRect = "{{0, 0}, {1484, 972}}";
+			sepNavSelRange = "{422, 0}";
 			sepNavVisRange = "{0, 435}";
 		};
 	};

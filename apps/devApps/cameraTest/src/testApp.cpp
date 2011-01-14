@@ -2,30 +2,31 @@
 #include "ofCamera.h"
 #include "ofMeshNode.h"
 
-#define kMoveAmount	10
-#define kRotAmount	1
+
+#define kNumTestNodes	4
+#define kMoveInc		10
+#define kRotInc			2
 
 
-#define kNumTestNodes	3
-ofMeshNode testNodes[kNumTestNodes];
+ofScene3d	scene;
+ofMeshNode	testNodes[kNumTestNodes];
+ofCamera	cam[2];
+int			targetIndex[2] = {-1, -1};	// which test node to target (one for each camera)
 
-ofCamera cam[2];
-int targetIndex[2] = {-1, -1};	// which test node to target (one for each camera)
+int			camToShow = 0;
+int			camToMove = 1;
 
-int camToShow = 0;
-int camToMove = 1;
+bool		doOrbit = false;
+float		orbitRadius = 100;
 
-bool doOrbit = false;
-float orbitRadius = 100;
 
 
 void reset() {
 	cam[0].resetTransform();
-	cam[1].resetTransform();
-	
 	cam[0].setFov(60);
 	cam[0].setPosition(60, 40, 190);
 	
+	cam[1].resetTransform();
 	cam[1].setFov(60);
 }
 
@@ -34,20 +35,20 @@ void reset() {
 void testApp::setup(){
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
-	
-	reset();
-	
-	for(int i=1; i<kNumTestNodes; i++) {
-		testNodes[i].setParent(&testNodes[i-1]);
-	}
-	
-	//	cam[1].setScale(1, 1, 5);
-	
-	
 	glEnable(GL_LIGHTING);
 	glEnable(GL_LIGHT0);
 	glEnable(GL_COLOR_MATERIAL);
 	
+	reset();
+	
+	scene.addNode(cam[0]);
+	scene.addNode(cam[1]);
+	for(int i=0; i<kNumTestNodes; i++) {
+		scene.addNode(testNodes[i]);
+		if(i>0) testNodes[i].setParent(&testNodes[i-1]);
+	}
+	
+	scene.enableDebugDraw();
 }
 
 //--------------------------------------------------------------
@@ -63,8 +64,8 @@ void testApp::update(){
 		testNodes[i].setScale(scale);
 		
 		freqMult *= 3;
-		amp *= 0.7;
-		scale *= 0.7;
+		amp *= 0.8;
+		scale *= 0.8;
 	}
 }
 
@@ -115,14 +116,7 @@ void testApp::draw(){
 	ofBox(0, 0, 0, 1);
 	glPopMatrix();
 	
-	
-	// draw tests nodes
-	for(int i=0; i<kNumTestNodes; i++) testNodes[i].draw();
-	
-	// draw cameras (for debug)
-	cam[0].debugDraw();
-	cam[1].debugDraw();
-	
+	scene.draw();
 	
 	// draw line from cam2 to its target
 	if(targetIndex[1] >= 0) {
@@ -152,23 +146,23 @@ void testApp::keyPressed(int key){
 			break;
 			
 			
-		case OF_KEY_LEFT: n->pan(kRotAmount); break;
-		case OF_KEY_RIGHT: n->pan(-kRotAmount); break;
+		case OF_KEY_LEFT: n->pan(kRotInc); break;
+		case OF_KEY_RIGHT: n->pan(-kRotInc); break;
 			
-		case OF_KEY_UP: n->tilt(-kRotAmount); break;
-		case OF_KEY_DOWN: n->tilt(kRotAmount); break;
+		case OF_KEY_UP: n->tilt(-kRotInc); break;
+		case OF_KEY_DOWN: n->tilt(kRotInc); break;
 			
-		case ',': n->roll(kRotAmount); break;
-		case '.': n->roll(-kRotAmount); break;
+		case ',': n->roll(kRotInc); break;
+		case '.': n->roll(-kRotInc); break;
 			
-		case 'a': n->truck(-kMoveAmount); break;
-		case 'd': n->truck(kMoveAmount); break;
+		case 'a': n->truck(-kMoveInc); break;
+		case 'd': n->truck(kMoveInc); break;
 			
-		case 'w': n->dolly(-kMoveAmount); break;
-		case 's': n->dolly(kMoveAmount); break;
+		case 'w': n->dolly(-kMoveInc); break;
+		case 's': n->dolly(kMoveInc); break;
 			
-		case 'r': n->boom(kMoveAmount); break;
-		case 'f': n->boom(-kMoveAmount); break;
+		case 'r': n->boom(kMoveInc); break;
+		case 'f': n->boom(-kMoveInc); break;
 			
 		case 'o': doOrbit ^= true; break;
 			
