@@ -176,10 +176,11 @@ public:
 	//----------------------------------------
 	
 	vector<ofVec3f> vertices;
-	vector<ofFace> faces;
 	vector<ofVec3f> normals;
 	vector<ofVec2f> texCoords;
 	vector<ofColor> colors;
+	
+	vector<ofFace> faces;
 	
 	vector<ofVec3f>::iterator it;
 	

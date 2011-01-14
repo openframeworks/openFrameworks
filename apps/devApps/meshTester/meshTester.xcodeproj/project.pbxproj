@@ -7,10 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		53D8DD5512DFFB9E00B670C9 /* ofAssimpMeshLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53D8DD4F12DFFB9E00B670C9 /* ofAssimpMeshLoader.cpp */; };
-		53D8DD5612DFFB9E00B670C9 /* ofVbo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53D8DD5212DFFB9E00B670C9 /* ofVbo.cpp */; };
 		53D8DDD712DFFE5000B670C9 /* libassimp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 53D8DDCC12DFFE5000B670C9 /* libassimp.a */; };
-		53ECD24E12E0B3D90035AA81 /* ofVao.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53ECD24D12E0B3D90035AA81 /* ofVao.cpp */; };
+		53ECD3ED12E0EF390035AA81 /* ofAssimpMeshLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53ECD3EB12E0EF390035AA81 /* ofAssimpMeshLoader.cpp */; };
 		E45BE97B0E8CC7DD009D7055 /* AGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E45BE9710E8CC7DD009D7055 /* AGL.framework */; };
 		E45BE97C0E8CC7DD009D7055 /* ApplicationServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E45BE9720E8CC7DD009D7055 /* ApplicationServices.framework */; };
 		E45BE97D0E8CC7DD009D7055 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E45BE9730E8CC7DD009D7055 /* AudioToolbox.framework */; };
@@ -61,12 +59,6 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		53D8DD4F12DFFB9E00B670C9 /* ofAssimpMeshLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofAssimpMeshLoader.cpp; path = src/3d/ofAssimpMeshLoader.cpp; sourceTree = SOURCE_ROOT; };
-		53D8DD5012DFFB9E00B670C9 /* ofAssimpMeshLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofAssimpMeshLoader.h; path = src/3d/ofAssimpMeshLoader.h; sourceTree = SOURCE_ROOT; };
-		53D8DD5112DFFB9E00B670C9 /* ofMesh.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofMesh.h; path = src/3d/ofMesh.h; sourceTree = SOURCE_ROOT; };
-		53D8DD5212DFFB9E00B670C9 /* ofVbo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofVbo.cpp; path = src/3d/ofVbo.cpp; sourceTree = SOURCE_ROOT; };
-		53D8DD5312DFFB9E00B670C9 /* ofVbo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofVbo.h; path = src/3d/ofVbo.h; sourceTree = SOURCE_ROOT; };
-		53D8DD5412DFFB9E00B670C9 /* ofVboMesh.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofVboMesh.h; path = src/3d/ofVboMesh.h; sourceTree = SOURCE_ROOT; };
 		53D8DDA512DFFE5000B670C9 /* aiAnim.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = aiAnim.h; path = ../../../addons/ofxAssimpModelLoader/libs/assimp/include/aiAnim.h; sourceTree = SOURCE_ROOT; };
 		53D8DDA612DFFE5000B670C9 /* aiAssert.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = aiAssert.h; path = ../../../addons/ofxAssimpModelLoader/libs/assimp/include/aiAssert.h; sourceTree = SOURCE_ROOT; };
 		53D8DDA712DFFE5000B670C9 /* aiCamera.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = aiCamera.h; path = ../../../addons/ofxAssimpModelLoader/libs/assimp/include/aiCamera.h; sourceTree = SOURCE_ROOT; };
@@ -104,8 +96,8 @@
 		53D8DDC812DFFE5000B670C9 /* NullLogger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NullLogger.h; path = ../../../addons/ofxAssimpModelLoader/libs/assimp/include/NullLogger.h; sourceTree = SOURCE_ROOT; };
 		53D8DDC912DFFE5000B670C9 /* ProgressHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ProgressHandler.h; path = ../../../addons/ofxAssimpModelLoader/libs/assimp/include/ProgressHandler.h; sourceTree = SOURCE_ROOT; };
 		53D8DDCC12DFFE5000B670C9 /* libassimp.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libassimp.a; path = ../../../addons/ofxAssimpModelLoader/libs/assimp/lib/osx/libassimp.a; sourceTree = SOURCE_ROOT; };
-		53ECD24C12E0B3D90035AA81 /* ofVao.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofVao.h; sourceTree = "<group>"; };
-		53ECD24D12E0B3D90035AA81 /* ofVao.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofVao.cpp; sourceTree = "<group>"; };
+		53ECD3EB12E0EF390035AA81 /* ofAssimpMeshLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofAssimpMeshLoader.cpp; path = src/ofAssimpMeshLoader.cpp; sourceTree = SOURCE_ROOT; };
+		53ECD3EC12E0EF390035AA81 /* ofAssimpMeshLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofAssimpMeshLoader.h; path = src/ofAssimpMeshLoader.h; sourceTree = SOURCE_ROOT; };
 		E45BE9710E8CC7DD009D7055 /* AGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AGL.framework; path = /System/Library/Frameworks/AGL.framework; sourceTree = "<absolute>"; };
 		E45BE9720E8CC7DD009D7055 /* ApplicationServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ApplicationServices.framework; path = /System/Library/Frameworks/ApplicationServices.framework; sourceTree = "<absolute>"; };
 		E45BE9730E8CC7DD009D7055 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = /System/Library/Frameworks/AudioToolbox.framework; sourceTree = "<absolute>"; };
@@ -153,22 +145,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		53D8DD4D12DFFB9E00B670C9 /* 3d */ = {
-			isa = PBXGroup;
-			children = (
-				53D8DD4F12DFFB9E00B670C9 /* ofAssimpMeshLoader.cpp */,
-				53D8DD5012DFFB9E00B670C9 /* ofAssimpMeshLoader.h */,
-				53D8DD5412DFFB9E00B670C9 /* ofVboMesh.h */,
-				53D8DD5312DFFB9E00B670C9 /* ofVbo.h */,
-				53D8DD5212DFFB9E00B670C9 /* ofVbo.cpp */,
-				53ECD24C12E0B3D90035AA81 /* ofVao.h */,
-				53ECD24D12E0B3D90035AA81 /* ofVao.cpp */,
-				53D8DD5112DFFB9E00B670C9 /* ofMesh.h */,
-			);
-			name = 3d;
-			path = src/3d;
-			sourceTree = SOURCE_ROOT;
-		};
 		53D8DDA112DFFE5000B670C9 /* ofxAssimpModelLoader */ = {
 			isa = PBXGroup;
 			children = (
@@ -311,7 +287,8 @@
 		E4B69E1C0A3A1BDC003C02F2 /* src */ = {
 			isa = PBXGroup;
 			children = (
-				53D8DD4D12DFFB9E00B670C9 /* 3d */,
+				53ECD3EB12E0EF390035AA81 /* ofAssimpMeshLoader.cpp */,
+				53ECD3EC12E0EF390035AA81 /* ofAssimpMeshLoader.h */,
 				E4B69E1D0A3A1BDC003C02F2 /* main.cpp */,
 				E4B69E1E0A3A1BDC003C02F2 /* testApp.cpp */,
 				E4B69E1F0A3A1BDC003C02F2 /* testApp.h */,
@@ -421,9 +398,7 @@
 			files = (
 				E4B69E200A3A1BDC003C02F2 /* main.cpp in Sources */,
 				E4B69E210A3A1BDC003C02F2 /* testApp.cpp in Sources */,
-				53D8DD5512DFFB9E00B670C9 /* ofAssimpMeshLoader.cpp in Sources */,
-				53D8DD5612DFFB9E00B670C9 /* ofVbo.cpp in Sources */,
-				53ECD24E12E0B3D90035AA81 /* ofVao.cpp in Sources */,
+				53ECD3ED12E0EF390035AA81 /* ofAssimpMeshLoader.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

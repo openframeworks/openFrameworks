@@ -30,6 +30,12 @@ public:
 			mesh->bUsingColors = true; 
 		}
 	}
+
+	void setupIndices(){
+		if(vbo!=NULL){
+			vbo->setIndexData(&mesh->colors[0], mesh->faces.size());
+		}
+	}
 	
 	/*
 	 void setupNormals(int usage){
@@ -48,6 +54,22 @@ public:
 	}
 	void drawFaces(){
 		vbo->draw(GL_POLYGON,0,mesh->vertices.size());
+	}
+	
+	void addTriangles(const vector<ofVec3f>& verts){
+		if(verts.size()%3==0){
+		}else {
+			//ofLog
+			return;
+		}
+	}
+	
+	void addTriangleFan(const vector<ofVec3f>& verts){
+		//>3
+	}
+	
+	void addTriangleStr(const vector<ofVec3f>& verts){
+		//>3
 	}
 	
     ofMesh* mesh;
