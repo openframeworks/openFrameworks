@@ -25,7 +25,7 @@ class ofColor{
 		static ofColor blue;
 		static ofColor black;
 	
-	void set (float _r, float _g, float _b, float _a = 255.0f);
+		void set (float _r, float _g, float _b, float _a = 255.0f);
 		void set (float _gray, float _a = 255.0f);
 		void set (ofColor const & color);
 
