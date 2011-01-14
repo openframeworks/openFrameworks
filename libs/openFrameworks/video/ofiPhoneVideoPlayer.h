@@ -1,12 +1,3 @@
-/*
- *  ofxofiPhoneVideoPlayer.h
- *  ofMoviePlayeriPhoneExample
- *
- *  Created by Zach Gage on 1/13/11.
- *  Copyright 2011 stfj. All rights reserved.
- *
- */
-
 #ifndef _OF_IPHONE_VIDEO_PLAYER
 #define _OF_IPHONE_VIDEO_PLAYER
 
@@ -64,15 +55,14 @@ protected:
 	void initWithPath(string path);
 	void updateCurrentFrameRef();
 	
-
+	void * videoPlayer; // super hack to forward declare an objective c class inside a header file that can only handle c classes.
+	
 	string videoPath;	
 	bool videoWasStopped;
 	int width;
 	int height;
 	float playbackSpeed;
-	
-	long myID;
-	
+		
 	unsigned char * pixels;
 	ofTexture videoTexture;
 	

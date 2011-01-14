@@ -1,12 +1,6 @@
-#import "AVFoundationVideoGrabber.h"
 #import "ofiPhoneVideoPlayer.h"
 #import "ofxiPhoneExtras.h"
-
-
-AVFoundationVideoGrabber * videoPlayer;
-CGImageRef currentFrameRef;
-
-long nextMovieID = 0;
+#import "AVFoundationVideoGrabber.h"
 
 ofiPhoneVideoPlayer::ofiPhoneVideoPlayer() {
 	videoPlayer=NULL;
@@ -15,9 +9,6 @@ ofiPhoneVideoPlayer::ofiPhoneVideoPlayer() {
 	width = 0;
 	height = 0;
 	playbackSpeed=1;
-	
-	myID = nextMovieID;
-	nextMovieID++;
 }
 
 //----------------------------------------
@@ -37,7 +28,7 @@ bool ofiPhoneVideoPlayer::loadMovie(string name) {
 	initWithPath(videoPath);
 	
 	if(videoPlayer != NULL)
-		if(! [videoPlayer isInErrorState])
+		if(! [(AVFoundationVideoGrabber *)videoPlayer isInErrorState])
 			return true;
 	return false;
 }
@@ -46,7 +37,7 @@ bool ofiPhoneVideoPlayer::loadMovie(string name) {
 
 void ofiPhoneVideoPlayer::close() {
 	if(videoPlayer != NULL)
-		[videoPlayer release];
+		[(AVFoundationVideoGrabber *)videoPlayer release];
 	videoPlayer = NULL;
 }
 
@@ -57,9 +48,9 @@ void ofiPhoneVideoPlayer::play() {
 	lastUpdateTime=ofGetElapsedTimef();
 	
 	if(videoPlayer != NULL)
-		[videoPlayer play];
+		[(AVFoundationVideoGrabber *)videoPlayer play];
 	else if(videoWasStopped || getIsMovieDone()) {
-		[videoPlayer release];
+		[(AVFoundationVideoGrabber *)videoPlayer release];
 		initWithPath(videoPath);
 		play();
 	}
@@ -71,7 +62,7 @@ void ofiPhoneVideoPlayer::play() {
 
 void ofiPhoneVideoPlayer::stop() {
 	if(videoPlayer != NULL) {
-		[videoPlayer pause];
+		[(AVFoundationVideoGrabber *)videoPlayer pause];
 		close();
 		videoWasStopped=true;
 	}
@@ -83,7 +74,7 @@ void ofiPhoneVideoPlayer::stop() {
 
 bool ofiPhoneVideoPlayer::isFrameNew() {
 	if(videoPlayer != NULL) {
-		return [videoPlayer hasNewFrame];
+		return [(AVFoundationVideoGrabber *)videoPlayer hasNewFrame];
 	}	
 	return false;
 }
@@ -93,8 +84,48 @@ bool ofiPhoneVideoPlayer::isFrameNew() {
 unsigned char * ofiPhoneVideoPlayer::getPixels() {
 	if(videoPlayer != NULL)
 	{
-		updateCurrentFrameRef();
+		CGImageRef currentFrameRef;
+		
+		NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
+		
+		CVImageBufferRef imageBuffer = [(AVFoundationVideoGrabber *)videoPlayer getCurrentFrame]; 
+		/*Lock the image buffer*/
+		CVPixelBufferLockBaseAddress(imageBuffer,0); 
+		
+		/*Get information about the image*/
+		uint8_t *baseAddress	= (uint8_t *)CVPixelBufferGetBaseAddress(imageBuffer); 
+		size_t bytesPerRow		= CVPixelBufferGetBytesPerRow(imageBuffer); 
+		size_t widthIn			= CVPixelBufferGetWidth(imageBuffer); 
+		size_t heightIn			= CVPixelBufferGetHeight(imageBuffer);  
+		
+		/*Create a CGImageRef from the CVImageBufferRef*/
+		CGColorSpaceRef colorSpace	= CGColorSpaceCreateDeviceRGB(); 
+		CGContextRef newContext		= CGBitmapContextCreate(baseAddress, widthIn, heightIn, 8, bytesPerRow, colorSpace, kCGBitmapByteOrder32Little | kCGImageAlphaPremultipliedFirst);
+		CGImageRef newImage			= CGBitmapContextCreateImage(newContext); 
+		
+		currentFrameRef = CGImageCreateCopy(newImage);		
+		
+		/*We release some components*/
+		CGContextRelease(newContext); 
+		CGColorSpaceRelease(colorSpace);
+		
+		/*We relase the CGImageRef*/
+		CGImageRelease(newImage);
+		
+		/*We unlock the  image buffer*/
+		CVPixelBufferUnlockBaseAddress(imageBuffer,0);
+		
+		if(width==0 && widthIn != 0)
+			pixels = new unsigned char[widthIn*heightIn*(bytesPerRow/widthIn)];
+		
+		width = widthIn;
+		height = heightIn;
+		[pool drain];
+		
 		ofxiPhoneCGImageToPixels(currentFrameRef, pixels);
+		
+		CGImageRelease(currentFrameRef);
+		
 		return pixels;
 	}
 	
@@ -105,7 +136,7 @@ ofTexture * ofiPhoneVideoPlayer::getTexture()
 {
 	if(videoPlayer != NULL)
 	{
-		CVImageBufferRef imageBuffer = [videoPlayer getCurrentFrame]; 
+		CVImageBufferRef imageBuffer = [(AVFoundationVideoGrabber *)videoPlayer getCurrentFrame]; 
 
 		CVPixelBufferLockBaseAddress(imageBuffer,0); 
 
@@ -156,7 +187,7 @@ float ofiPhoneVideoPlayer::getHeight() {
 
 bool ofiPhoneVideoPlayer::isPaused() {
 	if(videoPlayer != NULL)
-		return [videoPlayer isPaused];
+		return [(AVFoundationVideoGrabber *)videoPlayer isPaused];
 	
 	cerr<<"video is not loaded - isPaused"<<endl;
 	return false;
@@ -165,7 +196,7 @@ bool ofiPhoneVideoPlayer::isPaused() {
 //----------------------------------------
 
 bool ofiPhoneVideoPlayer::isLoaded() {
-	if(videoPlayer != NULL && ! [videoPlayer isInErrorState])
+	if(videoPlayer != NULL && ! [(AVFoundationVideoGrabber *)videoPlayer isInErrorState])
 		return true;
 	else
 		return false;
@@ -175,7 +206,7 @@ bool ofiPhoneVideoPlayer::isLoaded() {
 
 bool ofiPhoneVideoPlayer::isPlaying() {
 	if(videoPlayer != NULL) {
-		if([videoPlayer isFinished] || [videoPlayer isPaused] || [videoPlayer isInErrorState])
+		if([(AVFoundationVideoGrabber *)videoPlayer isFinished] || [(AVFoundationVideoGrabber *)videoPlayer isPaused] || [(AVFoundationVideoGrabber *)videoPlayer isInErrorState])
 			return false;
 		else
 			return true;
@@ -187,21 +218,21 @@ bool ofiPhoneVideoPlayer::isPlaying() {
 void ofiPhoneVideoPlayer::update() {
 	if(videoPlayer != NULL) {
 		float t = ofGetElapsedTimef();
-		[videoPlayer updateWithElapsedTime:(t-lastUpdateTime)*playbackSpeed];
+		[(AVFoundationVideoGrabber *)videoPlayer updateWithElapsedTime:(t-lastUpdateTime)*playbackSpeed];
 		lastUpdateTime=t;
 	}
 }
 
 float ofiPhoneVideoPlayer::getPosition() {
 	if(videoPlayer != NULL)
-		return [videoPlayer getVideoPosition];
+		return [(AVFoundationVideoGrabber *)videoPlayer getVideoPosition];
 	else
 	return 0;
 }
 
 float ofiPhoneVideoPlayer::getDuration() {
 	if(videoPlayer != NULL)
-		return [videoPlayer getDuration];
+		return [(AVFoundationVideoGrabber *)videoPlayer getDuration];
 	else
 		return 0;
 
@@ -209,59 +240,18 @@ float ofiPhoneVideoPlayer::getDuration() {
 
 bool ofiPhoneVideoPlayer::getIsMovieDone() {
 	if(videoPlayer != NULL)
-		return [videoPlayer isFinished];
+		return [(AVFoundationVideoGrabber *)videoPlayer isFinished];
 	else
 		return true;
 }
 
 void ofiPhoneVideoPlayer::setPaused(bool bPause) {
 	if(bPause)
-		[videoPlayer pause];
+		[(AVFoundationVideoGrabber *)videoPlayer pause];
 	else {
-		if([videoPlayer isPaused])
-			[videoPlayer play];
+		if([(AVFoundationVideoGrabber *)videoPlayer isPaused])
+			[(AVFoundationVideoGrabber *)videoPlayer play];
 	}
-}
-
-//protected ------------------------------
-
-void ofiPhoneVideoPlayer::updateCurrentFrameRef() {
-	NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
-	
-    CVImageBufferRef imageBuffer = [videoPlayer getCurrentFrame]; 
-    /*Lock the image buffer*/
-    CVPixelBufferLockBaseAddress(imageBuffer,0); 
-	
-    /*Get information about the image*/
-    uint8_t *baseAddress	= (uint8_t *)CVPixelBufferGetBaseAddress(imageBuffer); 
-    size_t bytesPerRow		= CVPixelBufferGetBytesPerRow(imageBuffer); 
-    size_t widthIn			= CVPixelBufferGetWidth(imageBuffer); 
-    size_t heightIn			= CVPixelBufferGetHeight(imageBuffer);  
-	
-    /*Create a CGImageRef from the CVImageBufferRef*/
-    CGColorSpaceRef colorSpace	= CGColorSpaceCreateDeviceRGB(); 
-    CGContextRef newContext		= CGBitmapContextCreate(baseAddress, widthIn, heightIn, 8, bytesPerRow, colorSpace, kCGBitmapByteOrder32Little | kCGImageAlphaPremultipliedFirst);
-    CGImageRef newImage			= CGBitmapContextCreateImage(newContext); 
-	
-	CGImageRelease(currentFrameRef);	
-	currentFrameRef = CGImageCreateCopy(newImage);		
-	
-    /*We release some components*/
-    CGContextRelease(newContext); 
-    CGColorSpaceRelease(colorSpace);
-	
-	/*We relase the CGImageRef*/
-	CGImageRelease(newImage);
-	
-	/*We unlock the  image buffer*/
-	CVPixelBufferUnlockBaseAddress(imageBuffer,0);
-	
-	if(width==0 && widthIn != 0)
-		pixels = new unsigned char[widthIn*heightIn*(bytesPerRow/widthIn)];
-		
-	width = widthIn;
-	height = heightIn;
-	[pool drain];
 }
 
 //----------------------------------------
