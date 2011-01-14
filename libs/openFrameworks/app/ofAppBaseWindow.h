@@ -46,5 +46,7 @@ public:
 	virtual int		getMouseX(){return 0;}
 	virtual int		getMouseY(){return 0;}
 
+	virtual int		getPreviousMouseX(){return 0;}
+	virtual int		getPreviousMouseY(){return 0;}
 };
 
