@@ -84,6 +84,7 @@ using namespace std;
 /// return the current video time (on-screen time)
 - (float)getVideoTime;
 - (float)getVideoPosition;
+- (Float64)getDuration;
 
 - (void)continueInit;
 

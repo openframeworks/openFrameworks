@@ -19,7 +19,6 @@ public:
 	ofiPhoneVideoPlayer();
 	~ofiPhoneVideoPlayer();
 	
-	//needs implementing
 	bool loadMovie(string name);
 	void close();
 	
@@ -28,6 +27,7 @@ public:
 	
 	bool isFrameNew();
 	unsigned char * getPixels();
+	ofTexture * getTexture();
 	
 	float getWidth();
 	float getHeight();
@@ -38,14 +38,13 @@ public:
 	
 	void update();
 	
-	//should implement!
 	float getPosition();
-	/*float getSpeed();
 	float getDuration();
-	 */
 	bool getIsMovieDone();
-	/*
 	void setPaused(bool bPause);
+	
+	/*should implement! (but cannot on iphone)
+	float getSpeed();
 	void setPosition(float pct);
 	void setVolume(int volume);
 	void setLoopState(int state);
@@ -70,8 +69,12 @@ protected:
 	bool videoWasStopped;
 	int width;
 	int height;
+	float playbackSpeed;
+	
+	long myID;
 	
 	unsigned char * pixels;
+	ofTexture videoTexture;
 	
 	float lastUpdateTime;
 };
