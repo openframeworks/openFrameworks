@@ -1,6 +1,43 @@
 #include "ofxSynth.h"
 
-#define SAMPLE_RATE 44100.0
+ofxSynthOsc::ofxSynthOsc(){
+	phase = 0.0;
+//	memset(phases,0,500);
+//	memset(freqs,0,500);
+	sampleRate = 44100;
+}
+double ofxSynthOsc::square(double frequency) {
+	if (phase<0.5) output=-1;
+	if (phase>0.5) output=1;
+	if ( phase >= 1.0 ) phase -= 1.0;
+	phase += (1./(sampleRate/(frequency)));
+	return(output);
+}
+
+double ofxSynthOsc::saw(double frequency) {
+	
+	output=phase;
+	if ( phase >= 1.0 ) phase -= 2.0;
+	phase += (1./(sampleRate/(frequency)));
+	return(output);
+	
+} 
+
+double ofxSynthOsc::triangle(double frequency, double phase) {
+	output=tri*2;
+	if ( phase >= 1.0 ) phase -= 1.0;
+	phase += (1./(sampleRate/(frequency)));
+	if (phase <= 0.5 ) {
+		tri = phase;
+	} else {	
+		tri =(1-phase);
+	}
+	return(output);
+	
+} 
+void ofxSynthOsc::setSampleRate(int rate){
+	sampleRate = rate;
+}
 
 ofxSynth::ofxSynth(){
 	
@@ -10,20 +47,25 @@ ofxSynth::ofxSynth(){
 	ampMode = OFXSYNTHONESHOT;
 	gain = 0.1;
 	sustain = 0.5;
-		
+	modEnv.setADSR(44100*0.01, 44100*0.2, 0.0, 44100.0*0.1);
 	filter.setup();
-	filter.setRes(0.0);
-	filter.setCutoff(1.0);
-	setFilterMode(1);
+	setFilter(1.0, 0.0);
+	setFilterLowPass();
 	waveMode = 0;
+	
 }
 
 void ofxSynth::audioRequested( float* buffer, int numFrames, int numChannels ){
 	// fill the required inputs
 	float envBuffer[numFrames];
+	float modEnvBuffer[numFrames];
+	//wave.setSampleRate(sampleRate);
+	
 	env.audioRequested(envBuffer, numFrames, 1);
-
+	modEnv.audioRequested(modEnvBuffer, numFrames, 1); // we are only going to update once per buffer
 	for (int i = 0; i<numFrames; i++) {
+		currentFrequency = ofLerp(startFrequency, targetFrequency, fmin((float)noteTime, portamento+1)/(float)(portamento+20));
+		noteTime++;
 		if (ampMode == OFXSYNTHONESHOT) {
 			currentAmp = 1;
 		}else if(ampMode == OFXSYNTHADR){
@@ -54,6 +96,7 @@ void ofxSynth::audioRequested( float* buffer, int numFrames, int numChannels ){
 		}
 	}
 	if (filterMode != 0) {
+		//filter.setCutoff(modEnvBuffer[0]*cutoff);
 		filter.process(buffer, buffer, numFrames, numChannels, numChannels);
 	}
 }
@@ -64,23 +107,27 @@ void ofxSynth::trigger(){
 	}else if(ampMode == OFXSYNTHADR){
 		env.trigger();
 		env.release();
+		modEnv.trigger();
+		modEnv.release();
 	}
 }
 void ofxSynth::setFilter(float _cutoff, float _res){
+	cutoff = _cutoff;
+	res = _res;
 	filter.setCutoff(_cutoff);
 	filter.setRes(_res);
 }
 void ofxSynth::setFrequency(float freq){
-	currentFrequency = freq;
+	startFrequency = currentFrequency;
+	targetFrequency = freq;
+	noteTime = 0;
 }
 void ofxSynth::setFrequencyMidiNote(float note){
 	setFrequency(440.0*pow(2.0, (note-60.0)/12.0));
 }
-void ofxSynth::setFilterMode(int mode){
-	filterMode = mode;
-	if (filterMode < 0) {
-		filter.lowPass = filterMode == 1 ? true : false;
-	}
+void ofxSynth::setSampleRate( int rate )
+{
+	sampleRate = rate;
 }
 
 /* ----------- */
@@ -93,7 +140,6 @@ void ofxSynthADSR::release(){
 }
 void ofxSynthADSR::audioRequested( float* buffer, int numFrames, int numChannels ){
 	for (int i = 0; i < numFrames; i++){
-		
 		if(offset<a){ // attack
 			buffer[i*numChannels] = ((float)offset)/a;
 			offset++;

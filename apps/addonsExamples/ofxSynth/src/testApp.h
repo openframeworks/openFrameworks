@@ -33,7 +33,8 @@ class testApp : public ofBaseApp{
 		ofSoundSourceTestTone tone;
 		
 		ofxSynthDelayline delay;
-		ofxSynth synth[15];
+		
+		ofxSynth synth;
 		ofxSynthSampler sampler;
 		ofxSynthFilter filter;
 		ofSoundSourceMultiplexor multiplex;

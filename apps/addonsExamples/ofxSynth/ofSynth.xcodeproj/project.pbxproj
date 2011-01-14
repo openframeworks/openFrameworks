@@ -7,11 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3D2359C812DFE3BF0023F4EF /* glew.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D2359C712DFE3BF0023F4EF /* glew.a */; };
 		3D643E9A12DE36580091E252 /* maximilian.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3D643E9212DE36580091E252 /* maximilian.cpp */; };
 		3D643E9B12DE36580091E252 /* ofxSynth.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3D643E9512DE36580091E252 /* ofxSynth.cpp */; };
 		3DFC746D12DE58BB00BCD217 /* ofxSynthDelayLine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3DFC746C12DE58BB00BCD217 /* ofxSynthDelayLine.cpp */; };
 		3DFC75D612DE95E100BCD217 /* ofxSynthFilter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3DFC75D512DE95E100BCD217 /* ofxSynthFilter.cpp */; };
-		E45BE0AA0E8CC67C009D7055 /* GLee.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E45BE0A90E8CC67C009D7055 /* GLee.a */; };
 		E45BE2E40E8CC69C009D7055 /* rtAudio.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E45BE2E30E8CC69C009D7055 /* rtAudio.a */; };
 		E45BE97B0E8CC7DD009D7055 /* AGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E45BE9710E8CC7DD009D7055 /* AGL.framework */; };
 		E45BE97C0E8CC7DD009D7055 /* ApplicationServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E45BE9720E8CC7DD009D7055 /* ApplicationServices.framework */; };
@@ -81,6 +81,10 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		3D2359C212DFE3BF0023F4EF /* glew.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = glew.h; sourceTree = "<group>"; };
+		3D2359C312DFE3BF0023F4EF /* glxew.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = glxew.h; sourceTree = "<group>"; };
+		3D2359C412DFE3BF0023F4EF /* wglew.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = wglew.h; sourceTree = "<group>"; };
+		3D2359C712DFE3BF0023F4EF /* glew.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = glew.a; sourceTree = "<group>"; };
 		3D643E9212DE36580091E252 /* maximilian.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = maximilian.cpp; path = ../../../addons/ofxSynth/src/maximilian.cpp; sourceTree = SOURCE_ROOT; };
 		3D643E9312DE36580091E252 /* maximilian.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = maximilian.h; path = ../../../addons/ofxSynth/src/maximilian.h; sourceTree = SOURCE_ROOT; };
 		3D643E9412DE36580091E252 /* ofxMaxim.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxMaxim.h; path = ../../../addons/ofxSynth/src/ofxMaxim.h; sourceTree = SOURCE_ROOT; };
@@ -97,8 +101,6 @@
 		E45BE0420E8CC650009D7055 /* fmod_dsp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = fmod_dsp.h; path = ../../../libs/fmodex/include/fmod_dsp.h; sourceTree = SOURCE_ROOT; };
 		E45BE0430E8CC650009D7055 /* fmod_errors.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = fmod_errors.h; path = ../../../libs/fmodex/include/fmod_errors.h; sourceTree = SOURCE_ROOT; };
 		E45BE0440E8CC650009D7055 /* fmod_output.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = fmod_output.h; path = ../../../libs/fmodex/include/fmod_output.h; sourceTree = SOURCE_ROOT; };
-		E45BE0A70E8CC67C009D7055 /* GLee.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GLee.h; path = ../../../libs/GLee/include/GLee.h; sourceTree = SOURCE_ROOT; };
-		E45BE0A90E8CC67C009D7055 /* GLee.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = GLee.a; path = ../../../libs/GLee/lib/osx/GLee.a; sourceTree = SOURCE_ROOT; };
 		E45BE2E00E8CC69C009D7055 /* RtAudio.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RtAudio.h; path = ../../../libs/rtAudio/include/RtAudio.h; sourceTree = SOURCE_ROOT; };
 		E45BE2E10E8CC69C009D7055 /* RtError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RtError.h; path = ../../../libs/rtAudio/include/RtError.h; sourceTree = SOURCE_ROOT; };
 		E45BE2E30E8CC69C009D7055 /* rtAudio.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = rtAudio.a; path = ../../../libs/rtAudio/lib/osx/rtAudio.a; sourceTree = SOURCE_ROOT; };
@@ -136,7 +138,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				E4C2422B10CC554B004149E2 /* openFrameworksDebug.a in Frameworks */,
-				E45BE0AA0E8CC67C009D7055 /* GLee.a in Frameworks */,
 				E45BE2E40E8CC69C009D7055 /* rtAudio.a in Frameworks */,
 				E45BE97B0E8CC7DD009D7055 /* AGL.framework in Frameworks */,
 				E45BE97C0E8CC7DD009D7055 /* ApplicationServices.framework in Frameworks */,
@@ -158,12 +159,57 @@
 				E4C2429410CC5C38004149E2 /* freetype.a in Frameworks */,
 				E4C242CD10CC650E004149E2 /* libfmodex.dylib in Frameworks */,
 				E4C246DA10CCAE22004149E2 /* freeimage.a in Frameworks */,
+				3D2359C812DFE3BF0023F4EF /* glew.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		3D2359BF12DFE3BF0023F4EF /* glew */ = {
+			isa = PBXGroup;
+			children = (
+				3D2359C012DFE3BF0023F4EF /* include */,
+				3D2359C512DFE3BF0023F4EF /* libs */,
+			);
+			name = glew;
+			path = ../../../libs/glew;
+			sourceTree = SOURCE_ROOT;
+		};
+		3D2359C012DFE3BF0023F4EF /* include */ = {
+			isa = PBXGroup;
+			children = (
+				3D2359C112DFE3BF0023F4EF /* GL */,
+			);
+			path = include;
+			sourceTree = "<group>";
+		};
+		3D2359C112DFE3BF0023F4EF /* GL */ = {
+			isa = PBXGroup;
+			children = (
+				3D2359C212DFE3BF0023F4EF /* glew.h */,
+				3D2359C312DFE3BF0023F4EF /* glxew.h */,
+				3D2359C412DFE3BF0023F4EF /* wglew.h */,
+			);
+			path = GL;
+			sourceTree = "<group>";
+		};
+		3D2359C512DFE3BF0023F4EF /* libs */ = {
+			isa = PBXGroup;
+			children = (
+				3D2359C612DFE3BF0023F4EF /* osx */,
+			);
+			path = libs;
+			sourceTree = "<group>";
+		};
+		3D2359C612DFE3BF0023F4EF /* osx */ = {
+			isa = PBXGroup;
+			children = (
+				3D2359C712DFE3BF0023F4EF /* glew.a */,
+			);
+			path = osx;
+			sourceTree = "<group>";
+		};
 		3D643E7512DE36350091E252 /* addons */ = {
 			isa = PBXGroup;
 			children = (
@@ -252,10 +298,10 @@
 		E45BE0480E8CC657009D7055 /* core libraries */ = {
 			isa = PBXGroup;
 			children = (
+				3D2359BF12DFE3BF0023F4EF /* glew */,
 				E4C2425B10CC5A78004149E2 /* glut */,
 				E45BEC7B0E8CC911009D7055 /* poco */,
 				E45BE2D50E8CC69C009D7055 /* rtAudio */,
-				E45BE0A50E8CC67C009D7055 /* GLee */,
 				E45BE0490E8CC676009D7055 /* freetype */,
 				E45BE03D0E8CC650009D7055 /* fmodex */,
 				E45BE0370E8CC647009D7055 /* freeimage */,
@@ -270,34 +316,6 @@
 			);
 			name = freetype;
 			path = ../../../libs/freetype;
-			sourceTree = SOURCE_ROOT;
-		};
-		E45BE0A50E8CC67C009D7055 /* GLee */ = {
-			isa = PBXGroup;
-			children = (
-				E45BE0A60E8CC67C009D7055 /* include */,
-				E45BE0A80E8CC67C009D7055 /* lib */,
-			);
-			name = GLee;
-			path = ../../../libs/GLee;
-			sourceTree = SOURCE_ROOT;
-		};
-		E45BE0A60E8CC67C009D7055 /* include */ = {
-			isa = PBXGroup;
-			children = (
-				E45BE0A70E8CC67C009D7055 /* GLee.h */,
-			);
-			name = include;
-			path = ../../../libs/GLee/include;
-			sourceTree = SOURCE_ROOT;
-		};
-		E45BE0A80E8CC67C009D7055 /* lib */ = {
-			isa = PBXGroup;
-			children = (
-				E45BE0A90E8CC67C009D7055 /* GLee.a */,
-			);
-			name = lib;
-			path = ../../../libs/GLee/lib/osx;
 			sourceTree = SOURCE_ROOT;
 		};
 		E45BE2D50E8CC69C009D7055 /* rtAudio */ = {
@@ -658,7 +676,9 @@
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_14)",
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_15)",
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_2)",
+					"$(LIBRARY_SEARCH_PATHS_QUOTED_1)",
 				);
+				LIBRARY_SEARCH_PATHS_QUOTED_1 = "\"$(SRCROOT)/../../../libs/glew/libs/osx\"";
 				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)/../../../libs/freeimage/lib/osx\"";
 				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_14 = "\"$(SRCROOT)/../../../libs/fmodex/lib/osx\"";
 				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_15 = "\"$(SRCROOT)/../../../libs/freetype/lib/osx\"";
@@ -694,6 +714,7 @@
 				GCC_WARN_UNUSED_VARIABLE = NO;
 				HEADER_SEARCH_PATHS = (
 					"../../../libs/openFrameworks/**",
+					"../../../libs/glew/**",
 					../../../libs/freetype/include/,
 					../../../libs/freetype/include/freetype2,
 					../../../libs/poco/include,
@@ -781,11 +802,13 @@
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_14)",
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_15)",
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_2)",
+					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_3)",
 				);
 				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)/../../../libs/freeimage/lib/osx\"";
 				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_14 = "\"$(SRCROOT)/../../../libs/fmodex/lib/osx\"";
 				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_15 = "\"$(SRCROOT)/../../../libs/freetype/lib/osx\"";
 				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_2 = "\"$(SRCROOT)/../../../libs/FreeImage/lib/osx\"";
+				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_3 = "\"$(SRCROOT)/../../../libs/glew/libs/osx\"";
 				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_4 = "\"$(SRCROOT)/../../../libs/GLee/lib/osx\"";
 				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_5 = "\"$(SRCROOT)/../../../libs/poco/lib/osx\"";
 				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_6 = "\"$(SRCROOT)/../../../libs/rtAudio/lib/osx\"";
@@ -830,7 +853,9 @@
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_14)",
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_15)",
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_2)",
+					"$(LIBRARY_SEARCH_PATHS_QUOTED_1)",
 				);
+				LIBRARY_SEARCH_PATHS_QUOTED_1 = "\"$(SRCROOT)/../../../libs/glew/libs/osx\"";
 				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)/../../../libs/freeimage/lib/osx\"";
 				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_14 = "\"$(SRCROOT)/../../../libs/fmodex/lib/osx\"";
 				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_15 = "\"$(SRCROOT)/../../../libs/freetype/lib/osx\"";
