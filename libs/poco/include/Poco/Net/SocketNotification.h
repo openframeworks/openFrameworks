@@ -1,7 +1,7 @@
 //
 // SocketNotification.h
 //
-// $Id: //poco/1.3/Net/include/Poco/Net/SocketNotification.h#2 $
+// $Id: //poco/1.4/Net/include/Poco/Net/SocketNotification.h#1 $
 //
 // Library: Net
 // Package: Reactor
@@ -57,7 +57,7 @@ class Net_API SocketNotification: public Poco::Notification
 	/// the SocketReactor.
 {
 public:
-	SocketNotification(SocketReactor* pReactor);
+	explicit SocketNotification(SocketReactor* pReactor);
 		/// Creates the SocketNotification for the given SocketReactor.
 
 	virtual ~SocketNotification();

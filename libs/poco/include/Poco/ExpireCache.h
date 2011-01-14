@@ -1,7 +1,7 @@
 //
 // ExpireCache.h
 //
-// $Id: //poco/1.3/Foundation/include/Poco/ExpireCache.h#2 $
+// $Id: //poco/1.4/Foundation/include/Poco/ExpireCache.h#1 $
 //
 // Library: Foundation
 // Package: Cache
@@ -36,8 +36,8 @@
 //
 
 
-#ifndef  Foundation_ExpireCache_INCLUDED
-#define  Foundation_ExpireCache_INCLUDED
+#ifndef Foundation_ExpireCache_INCLUDED
+#define Foundation_ExpireCache_INCLUDED
 
 
 #include "Poco/AbstractCache.h"
@@ -47,8 +47,13 @@
 namespace Poco {
 
 
-template <class TKey, class TValue> 
-class ExpireCache: public AbstractCache<TKey, TValue, ExpireStrategy<TKey, TValue> >
+template <
+	class TKey, 
+	class TValue, 
+	class TMutex = FastMutex, 
+	class TEventMutex = FastMutex
+> 
+class ExpireCache: public AbstractCache<TKey, TValue, ExpireStrategy<TKey, TValue>, TMutex, TEventMutex>
 	/// An ExpireCache caches entries for a fixed time period (per default 10 minutes).
 	/// Entries expire independently of the access pattern, i.e. after a constant time.
 	/// If you require your objects to expire after they were not accessed for a given time
@@ -62,7 +67,7 @@ class ExpireCache: public AbstractCache<TKey, TValue, ExpireStrategy<TKey, TValu
 {
 public:
 	ExpireCache(Timestamp::TimeDiff expire = 600000): 
-		AbstractCache<TKey, TValue, ExpireStrategy<TKey, TValue> >(ExpireStrategy<TKey, TValue>(expire))
+		AbstractCache<TKey, TValue, ExpireStrategy<TKey, TValue>, TMutex, TEventMutex>(ExpireStrategy<TKey, TValue>(expire))
 	{
 	}
 
@@ -79,4 +84,4 @@ private:
 } // namespace Poco
 
 
-#endif
+#endif // Foundation_ExpireCache_INCLUDED

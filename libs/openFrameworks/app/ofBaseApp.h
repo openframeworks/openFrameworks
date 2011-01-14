@@ -1,7 +1,5 @@
-#ifndef _OF_BASE_APP
-#define _OF_BASE_APP
+#pragma once
 
-#include "ofTypes.h"
 
 class ofBaseApp{
 
@@ -38,6 +36,5 @@ class ofBaseApp{
 		int mouseX, mouseY;			// for processing heads
 };
 
-#endif
 
 

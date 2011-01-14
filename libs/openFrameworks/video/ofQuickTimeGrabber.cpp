@@ -2,6 +2,8 @@
 #include "ofUtils.h"
 
 
+#ifndef TARGET_LINUX
+
 //---------------------------------
 #ifdef OF_VIDEO_CAPTURE_QUICKTIME
 //---------------------------------
@@ -317,7 +319,7 @@ void ofQuickTimeGrabber::listDevices(){
 }
 
 //--------------------------------------------------------------------
-void ofQuickTimeGrabber::grabFrame(){
+void ofQuickTimeGrabber::update(){
 
 	//---------------------------------
 	#ifdef OF_VIDEO_CAPTURE_QUICKTIME
@@ -731,4 +733,4 @@ bool ofQuickTimeGrabber::qtSelectDevice(int deviceNumber, bool didWeChooseADevic
 #endif
 //---------------------------------
 
-
+#endif

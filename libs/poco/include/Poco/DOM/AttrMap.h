@@ -1,7 +1,7 @@
 //
 // AttrMap.h
 //
-// $Id: //poco/1.3/XML/include/Poco/DOM/AttrMap.h#1 $
+// $Id: //poco/1.4/XML/include/Poco/DOM/AttrMap.h#1 $
 //
 // Library: XML
 // Package: DOM

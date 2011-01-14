@@ -1,7 +1,7 @@
 //
 // String.h
 //
-// $Id: //poco/1.3/Foundation/include/Poco/String.h#4 $
+// $Id: //poco/1.4/Foundation/include/Poco/String.h#1 $
 //
 // Library: Foundation
 // Package: Core
@@ -41,8 +41,8 @@
 
 
 #include "Poco/Foundation.h"
+#include "Poco/Ascii.h"
 #include <cstring>
-#include <cctype>
 
 
 namespace Poco {
@@ -56,7 +56,7 @@ S trimLeft(const S& str)
 	typename S::const_iterator it  = str.begin();
 	typename S::const_iterator end = str.end();
 	
-	while (it != end && std::isspace(*it)) ++it;
+	while (it != end && Ascii::isSpace(*it)) ++it;
 	return S(it, end);
 }
 
@@ -68,7 +68,7 @@ S& trimLeftInPlace(S& str)
 	typename S::iterator it  = str.begin();
 	typename S::iterator end = str.end();
 	
-	while (it != end && std::isspace(*it)) ++it;
+	while (it != end && Ascii::isSpace(*it)) ++it;
 	str.erase(str.begin(), it);
 	return str;
 }
@@ -81,7 +81,7 @@ S trimRight(const S& str)
 {
 	int pos = int(str.size()) - 1;
 		
-	while (pos >= 0 && std::isspace(str[pos])) --pos;
+	while (pos >= 0 && Ascii::isSpace(str[pos])) --pos;
 	return S(str, 0, pos + 1);
 }
 
@@ -92,7 +92,7 @@ S& trimRightInPlace(S& str)
 {
 	int pos = int(str.size()) - 1;
 		
-	while (pos >= 0 && std::isspace(str[pos])) --pos;
+	while (pos >= 0 && Ascii::isSpace(str[pos])) --pos;
 	str.resize(pos + 1);
 
 	return str;
@@ -107,8 +107,8 @@ S trim(const S& str)
 	int first = 0;
 	int last  = int(str.size()) - 1;
 	
-	while (first <= last && std::isspace(str[first])) ++first;
-	while (last >= first && std::isspace(str[last])) --last;
+	while (first <= last && Ascii::isSpace(str[first])) ++first;
+	while (last >= first && Ascii::isSpace(str[last])) --last;
 
 	return S(str, first, last - first + 1);
 }
@@ -121,8 +121,8 @@ S& trimInPlace(S& str)
 	int first = 0;
 	int last  = int(str.size()) - 1;
 	
-	while (first <= last && std::isspace(str[first])) ++first;
-	while (last >= first && std::isspace(str[last])) --last;
+	while (first <= last && Ascii::isSpace(str[first])) ++first;
+	while (last >= first && Ascii::isSpace(str[last])) --last;
 
 	str.resize(last + 1);
 	str.erase(0, first);
@@ -140,7 +140,7 @@ S toUpper(const S& str)
 
 	S result;
 	result.reserve(str.size());
-	while (it != end) result += std::toupper(*it++);
+	while (it != end) result += Ascii::toUpper(*it++);
 	return result;
 }
 
@@ -152,7 +152,7 @@ S& toUpperInPlace(S& str)
 	typename S::iterator it  = str.begin();
 	typename S::iterator end = str.end();
 
-	while (it != end) { *it = std::toupper(*it); ++it; }
+	while (it != end) { *it = Ascii::toUpper(*it); ++it; }
 	return str;
 }
 
@@ -166,7 +166,7 @@ S toLower(const S& str)
 
 	S result;
 	result.reserve(str.size());
-	while (it != end) result += std::tolower(*it++);
+	while (it != end) result += Ascii::toLower(*it++);
 	return result;
 }
 
@@ -178,7 +178,7 @@ S& toLowerInPlace(S& str)
 	typename S::iterator it  = str.begin();
 	typename S::iterator end = str.end();
 
-	while (it != end) { *it = std::tolower(*it); ++it; }
+	while (it != end) { *it = Ascii::toLower(*it); ++it; }
 	return str;
 }
 
@@ -202,8 +202,8 @@ int icompare(
 	It end1 = str.begin() + pos + n;
 	while (it1 != end1 && it2 != end2)
 	{
-        typename S::value_type c1(std::tolower(*it1));
-        typename S::value_type c2(std::tolower(*it2));
+        typename S::value_type c1(Ascii::toLower(*it1));
+        typename S::value_type c2(Ascii::toLower(*it2));
         if (c1 < c2)
             return -1;
         else if (c1 > c2)
@@ -220,8 +220,27 @@ int icompare(
 
 template <class S>
 int icompare(const S& str1, const S& str2)
+	// A special optimization for an often used case.
 {
-	return icompare(str1, 0, str1.size(), str2.begin(), str2.end());
+	typename S::const_iterator it1(str1.begin());
+	typename S::const_iterator end1(str1.end());
+	typename S::const_iterator it2(str2.begin());
+	typename S::const_iterator end2(str2.end());
+	while (it1 != end1 && it2 != end2)
+	{
+        typename S::value_type c1(Ascii::toLower(*it1));
+        typename S::value_type c2(Ascii::toLower(*it2));
+        if (c1 < c2)
+            return -1;
+        else if (c1 > c2)
+            return 1;
+        ++it1; ++it2;
+	}
+    
+    if (it1 == end1)
+		return it2 == end2 ? 0 : -1;
+    else
+        return 1;
 }
 
 
@@ -294,8 +313,8 @@ int icompare(
 	typename S::const_iterator end = str.begin() + pos + n;
 	while (it != end && *ptr)
 	{
-        typename S::value_type c1(std::tolower(*it));
-        typename S::value_type c2(std::tolower(*ptr));
+        typename S::value_type c1(Ascii::toLower(*it));
+        typename S::value_type c2(Ascii::toLower(*ptr));
         if (c1 < c2)
             return -1;
         else if (c1 > c2)
@@ -412,26 +431,6 @@ S translateInPlace(S& str, const typename S::value_type* from, const typename S:
 
 
 template <class S>
-S replace(const S& str, const S& from, const S& to, typename S::size_type start = 0)
-	/// Replace all occurences of from (which must not be the empty string)
-	/// in str with to, starting at position start.
-{
-	S result(str);
-	replaceInPlace(result, from, to, start);
-	return result;
-}
-
-
-template <class S>
-S replace(const S& str, const typename S::value_type* from, const typename S::value_type* to, typename S::size_type start = 0)
-{
-	S result(str);
-	replaceInPlace(result, from, to, start);
-	return result;
-}
-
-
-template <class S>
 S& replaceInPlace(S& str, const S& from, const S& to, typename S::size_type start = 0)
 {
 	poco_assert (from.size() > 0);
@@ -479,6 +478,26 @@ S& replaceInPlace(S& str, const typename S::value_type* from, const typename S::
 	while (pos != S::npos);
 	str.swap(result);
 	return str;
+}
+
+
+template <class S>
+S replace(const S& str, const S& from, const S& to, typename S::size_type start = 0)
+	/// Replace all occurences of from (which must not be the empty string)
+	/// in str with to, starting at position start.
+{
+	S result(str);
+	replaceInPlace(result, from, to, start);
+	return result;
+}
+
+
+template <class S>
+S replace(const S& str, const typename S::value_type* from, const typename S::value_type* to, typename S::size_type start = 0)
+{
+	S result(str);
+	replaceInPlace(result, from, to, start);
+	return result;
 }
 
 

@@ -1,7 +1,10 @@
-#ifndef OF_GEOM
-#define OF_GEOM
+#pragma once
 
 #include "ofConstants.h"
+#include "ofColor.h"
+#include "ofPoint.h"
+#include "ofRectangle.h"
+#include "ofVec3f.h"
 #include "ofTypes.h"
 
 #define  	CIRC_RESOLUTION		    22				// 22 pts for a circle...
@@ -14,7 +17,7 @@ void ofBackground(int r, int g, int b, int a=255);
 
 // user's access to settings (bgAuto, corner mode):
 void 	ofSetBackgroundAuto(bool bManual);		// default is true
-void 	ofSetRectMode(int mode);		// set the mode, either to OF_RECTMODE_CORNER or OF_RECTMODE_CENTER
+void 	ofSetRectMode(ofRectMode mode);		// set the mode, either to OF_RECTMODE_CORNER or OF_RECTMODE_CENTER
 
 
 // push and pop all matrices and viewport
@@ -57,10 +60,11 @@ void ofRestoreMinMagFilters();
 
 // OF's access to settings (bgAuto, origin, corner mode):
 bool 	ofbClearBg();
-int 	ofGetRectMode();				// default is OF_RECTMODE_CORNER
+ofRectMode 	ofGetRectMode();				// default is OF_RECTMODE_CORNER
 
 void ofSetCircleResolution(int res);  		// if there 22 is a problem, you can change it here
 void ofSetCurveResolution(int res);
+void ofSetSphereResolution(int res);
 
 // geometry 
 void ofTriangle(float x1,float y1,float x2,float y2,float x3, float y3);
@@ -87,6 +91,15 @@ void ofRect(float x,float y,float z,float w,float h);
 void ofCurve(float x0, float y0, float x1, float y1, float x2, float y2, float x3, float y3);
 void ofBezier(float x0, float y0, float x1, float y1, float x2, float y2, float x3, float y3);
 
+void ofSphere(float x, float y, float z, float radius);
+void ofSphere(float x, float y, float radius);
+void ofSphere(const ofVec3f& position, float radius);
+void ofSphere(float radius);
+
+void ofBox(float x, float y, float z, float size);
+void ofBox(float x, float y, float size);
+void ofBox(const ofVec3f& position, float size);
+void ofBox(float size);
 
 // drawing options
 void ofNoFill();
@@ -102,6 +115,11 @@ void ofSetColor(const ofColor & color);
 void ofSetColor(const ofColor & color, int _a);
 void ofSetColor(int gray); // new set a color as grayscale with one argument
 void ofSetHexColor( int hexColor ); // hex, like web 0xFF0033;
+
+// Blending
+void ofEnableBlendMode(ofBlendMode blendMode);
+void ofDisableBlendMode();
+
 
 // transparency
 void ofEnableAlphaBlending();  // this just turns on and off opengl blending, the common mode
@@ -145,11 +163,9 @@ void ofCurveVertex(ofPoint & p);
 void ofBezierVertex(float x1, float y1, float x2, float y2, float x3, float y3);
 
 // for polygons
-void ofSetPolyMode(int mode);	
+void ofSetPolyMode(ofPolyWindingMode mode);
 void ofBeginShape();
 void ofVertex(float x, float y);
 void ofVertex(ofPoint & p);
 void ofEndShape(bool bClose = false);
 void ofNextContour(bool bClose = false);  // for multi contour shapes!
-
-#endif

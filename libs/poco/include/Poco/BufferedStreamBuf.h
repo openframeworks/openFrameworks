@@ -1,7 +1,7 @@
 //
 // BufferedStreamBuf.h
 //
-// $Id: //poco/1.3/Foundation/include/Poco/BufferedStreamBuf.h#3 $
+// $Id: //poco/1.4/Foundation/include/Poco/BufferedStreamBuf.h#1 $
 //
 // Library: Foundation
 // Package: Streams
@@ -114,7 +114,7 @@ public:
 		int putback = int(this->gptr() - this->eback());
 		if (putback > 4) putback = 4;
 
-		char_traits::copy(_pBuffer + (4 - putback), this->gptr() - putback, putback);
+		char_traits::move(_pBuffer + (4 - putback), this->gptr() - putback, putback);
 
 		int n = readFromDevice(_pBuffer + 4, _bufsize - 4);
 		if (n <= 0) return char_traits::eof();

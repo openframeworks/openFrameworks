@@ -1,14 +1,14 @@
 //
 // UnWindows.h
 //
-// $Id: //poco/1.3/Foundation/include/Poco/UnWindows.h#1 $
+// $Id: //poco/1.4/Foundation/include/Poco/UnWindows.h#1 $
 //
 // Library: Foundation
 // Package: Core
 // Module:  UnWindows
 //
-// A wrapper around the "Poco/UnWindows.h" header file that #undef's some
-// of the macros for function names defined by "Poco/UnWindows.h" that
+// A wrapper around the <windows.h> header file that #undef's some
+// of the macros for function names defined by <windows.h> that
 // are a frequent source of conflicts (e.g., GetUserName).
 //
 // Remember, that most of the WIN32 API functions come in two variants,

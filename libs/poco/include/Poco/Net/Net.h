@@ -1,11 +1,11 @@
 //
 // Net.h
 //
-// $Id: //poco/1.3/Net/include/Poco/Net/Net.h#2 $
+// $Id: //poco/1.4/Net/include/Poco/Net/Net.h#1 $
 //
 // Library: Net
 // Package: NetCore
-// Module:  IPAddress
+// Module:  Net
 //
 // Basic definitions for the Poco Net library.
 // This file must be the first file included by every other Net
@@ -72,21 +72,28 @@
 //
 #if defined(_MSC_VER)
 	#if !defined(POCO_NO_AUTOMATIC_LIBS) && !defined(Net_EXPORTS)
-		#if defined(POCO_DLL)
-			#if defined(_DEBUG)
-				#pragma comment(lib, "PocoNetd.lib")
-			#else
-				#pragma comment(lib, "PocoNet.lib")
-			#endif
-		#else
-			#if defined(_DEBUG)
-				#pragma comment(lib, "PocoNetmtd.lib")
-			#else
-				#pragma comment(lib, "PocoNetmt.lib")
-			#endif
-		#endif
+		#pragma comment(lib, "PocoNet" POCO_LIB_SUFFIX)
 	#endif
 #endif
+
+
+namespace Poco {
+namespace Net {
+
+
+void Net_API initializeNetwork();
+	/// Initialize the network subsystem.
+	/// Calls WSAStartup() on Windows, does nothing
+	/// on other platforms.
+
+
+void Net_API uninitializeNetwork();
+	/// Uninitialize the network subsystem.
+	/// Calls WSACleanup() on Windows, does nothing
+	/// on other platforms.
+
+
+} } // namespace Poco::Net
 
 
 #endif // Net_Net_INCLUDED

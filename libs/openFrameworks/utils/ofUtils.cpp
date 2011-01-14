@@ -1,6 +1,8 @@
 #include "ofUtils.h"
 #include "ofImage.h"
 #include "ofTypes.h"
+#include "Poco/String.h"
+#include "ofAppRunner.h"
 
 #if defined(TARGET_OF_IPHONE) || defined(TARGET_OSX ) || defined(TARGET_LINUX)
 	#include "sys/time.h"
@@ -13,11 +15,6 @@
 	#endif
 
 #endif
-
-#ifdef TARGET_OSX
-	#include <mach-o/dyld.h>
-#endif 
-
 
 static bool enableDataPath = true;
 static unsigned long startTime = ofGetSystemTime();   //  better at the first frame ?? (currently, there is some delay from static init, to running.
@@ -147,26 +144,7 @@ void ofSetDataPathRoot(string newRoot){
 	
 	#ifdef TARGET_OSX
 		#ifndef TARGET_OF_IPHONE 
-			char path[1024];
-			uint32_t size = sizeof(path);
-			if (_NSGetExecutablePath(path, &size) == 0){
-				//printf("executable path is %s\n", path);
-				string pathStr = string(path);
-				//theo: check this with having '/' as a character in a folder name - OSX treats the '/' as a ':'
-				//checked with spaces too!
-				vector < string> pathBrokenUp = ofSplitString( pathStr, "/");
-				newPath = "/";
-				for(int i = 0; i < pathBrokenUp.size()-1; i++){
-					newPath += pathBrokenUp[i];
-					newPath += "/";
-				}
-				//cout << newPath << endl;   // some sanity checks here
-				//system( "pwd" );
-				chdir ( newPath.c_str() );
-				//system("pwd");				
-			}else{
-				ofLog(OF_LOG_FATAL_ERROR, "buffer too small; need size %u\n", size);
-			}
+			newPath = ofFileUtils::getCurrentWorkingDirectory();
 		#endif 
 	#endif
 		
@@ -210,32 +188,170 @@ string ofToDataPath(string path, bool makeAbsolute){
 	return path;
 }
 
-//--------------------------------------------------
-string ofToString(double value, int precision){
-	stringstream sstr;
-	sstr << fixed << setprecision(precision) << value;
-	return sstr.str();
+//----------------------------------------
+template <>
+string ofToHex(const string& value) {
+	ostringstream out;
+	// how many bytes are in the string
+	int numBytes = value.size();
+	for(int i = 0; i < numBytes; i++) {
+		// print each byte as a 2-character wide hex value
+		out << setfill('0') << setw(2) << hex << (unsigned int) value[i];
+	}
+	return out.str();
 }
 
-//--------------------------------------------------
-string ofToString(int value){
-	stringstream sstr;
-	sstr << value;
-	return sstr.str();
+//----------------------------------------
+string ofToHex(const char* value) {
+	// this function is necessary if you want to print a string
+	// using a syntax like ofToHex("test")
+	return ofToHex((string) value);
 }
 
-//--------------------------------------------------
+//----------------------------------------
 int ofToInt(const string& intString) {
-   int x;
-   sscanf(intString.c_str(), "%d", &x);
-   return x;
+	int x = 0;
+	istringstream cur(intString);
+	cur >> x;
+	return x;
 }
 
-float ofToFloat(const string& floatString) {
-   float x;
-   sscanf(floatString.c_str(), "%f", &x);
-   return x;
+//----------------------------------------
+int ofHexToInt(const string& intHexString) {
+	int x = 0;
+	istringstream cur(intHexString);
+	cur >> hex >> x;
+	return x;
 }
+
+//----------------------------------------
+char ofHexToChar(const string& charHexString) {
+	int x = 0;
+	istringstream cur(charHexString);
+	cur >> hex >> x;
+	return (char) x;
+}
+
+//----------------------------------------
+float ofHexToFloat(const string& floatHexString) {
+	int x = 0;
+	istringstream cur(floatHexString);
+	cur >> hex >> x;
+	return *((float*) &x);
+}
+
+//----------------------------------------
+string ofHexToString(const string& stringHexString) {
+	stringstream out;
+	stringstream stream(stringHexString);
+	// a hex string has two characters per byte
+	int numBytes = stringHexString.size() / 2;
+	for(int i = 0; i < numBytes; i++) {
+		string curByte;
+		// grab two characters from the hex string
+		stream >> setw(2) >> curByte;
+		// prepare to parse the two characters
+		stringstream curByteStream(curByte);
+		int cur = 0;
+		// parse the two characters as a hex-encoded int
+		curByteStream >> hex >> cur;
+		// add the int as a char to our output stream
+		out << (char) cur;
+	}
+	return out.str();
+}
+
+//----------------------------------------
+float ofToFloat(const string& floatString) {
+	float x = 0;
+	istringstream cur(floatString);
+	cur >> x;
+	return x;
+}
+
+//----------------------------------------
+bool ofToBool(const string& boolString) {
+	static const string trueString = "true";
+	static const string falseString = "false";
+	string lower = Poco::toLower(boolString);
+	if(lower == trueString) {
+		return true;
+	}
+	if(lower == falseString) {
+		return false;
+	}
+	bool x = false;
+	istringstream cur(lower);
+	cur >> x;
+	return x;
+}
+
+//----------------------------------------
+char ofToChar(const string& charString) {
+	char x = '\0';
+	istringstream cur(charString);
+	cur >> x;
+	return x;
+}
+
+//----------------------------------------
+template <> string ofToBinary(const string& value) {
+	stringstream out;
+	int numBytes = value.size();
+	for(int i = 0; i < numBytes; i++) {
+		bitset<8> bitBuffer(value[i]);
+		out << bitBuffer;
+	}
+	return out.str();
+}
+
+//----------------------------------------
+string ofToBinary(const char* value) {
+	// this function is necessary if you want to print a string
+	// using a syntax like ofToBinary("test")
+	return ofToBinary((string) value);
+}
+
+//----------------------------------------
+int ofBinaryToInt(const string& value) {
+	const int intSize = sizeof(int) * 8;
+	bitset<intSize> binaryString(value);
+	return (int) binaryString.to_ulong();
+}
+
+//----------------------------------------
+char ofBinaryToChar(const string& value) {
+	const int charSize = sizeof(char) * 8;
+	bitset<charSize> binaryString(value);
+	return (char) binaryString.to_ulong();
+}
+
+//----------------------------------------
+float ofBinaryToFloat(const string& value) {
+	const int floatSize = sizeof(float) * 8;
+	bitset<floatSize> binaryString(value);
+	unsigned long result = binaryString.to_ulong();
+	// this line means:
+	// 1 take the address of the unsigned long
+	// 2 pretend it is the address of a float
+	// 3 then use it as a float
+	// this is a bit-for-bit 'typecast'
+	return *((float*) &result);
+}
+
+//----------------------------------------
+string ofBinaryToString(const string& value) {
+	ostringstream out;
+	stringstream stream(value);
+	bitset<8> byteString;
+	int numBytes = value.size() / 8;
+	for(int i = 0; i < numBytes; i++) {
+		stream >> byteString;
+		out << (char) byteString.to_ulong();
+	}
+	return out.str();
+}
+
 //--------------------------------------------------
 vector<string> ofSplitString(const string& str, const string& delimiter = " "){
     vector<string> elements;
@@ -418,33 +534,5 @@ void ofRestoreConsoleColor(){
 		printf("\033[%im",  OF_CONSOLE_COLOR_RESTORE);
 	#endif
 }
-
-
-//--------------------------------------------------
-bool ofReadFile(const string & path, ofBuffer & buffer, bool binary){
-	ifstream * file = new ifstream(ofToDataPath(path,true).c_str());
-
-	if(!file || !file->is_open()){
-		ofLog(OF_LOG_ERROR, "couldn't open " + path);
-		return false;
-	}
-
-	filebuf *pbuf=file->rdbuf();
-
-	// get file size using buffer's members
-	long size = (long)pbuf->pubseekoff (0,ios::end,ios::in);
-	pbuf->pubseekpos (0,ios::in);
-
-	// get file data
-	if(!binary){
-		buffer.allocate(size+1);// = new char[size];
-		buffer.getBuffer()[size]='\0';
-	}else{
-		buffer.allocate(size);
-	}
-	pbuf->sgetn (buffer.getBuffer(),size);
-	return true;
-}
-
 
 
