@@ -2,10 +2,32 @@
 #include "ofUtils.h"
 
 
+
+// look at: 
+// http://www.meandmark.com/quicktimepart3.html
+// http://developer.apple.com/library/mac/#qa/qa2004/qa1371.html
+// http://www.cocoadev.com/index.pl?QuickTimeAudioExtractionExample
+
+// FFT: 
+// http://developer.apple.com/library/mac/#qa/qa2005/qa1459.html
+// http://new.math.uiuc.edu/ivanhoe/public_html/stolarsky/MyController.m.html
+// http://developer.apple.com/library/mac/#samplecode/SillyFrequencyLevels/Introduction/Intro.html
+
+// http://eqx.su/distfiles/svn-src/phonon/4.2/qt7/quicktimevideoplayer.cpp
+
+
+// checking for quicktime 7: 
+// http://developer.apple.com/library/mac/#samplecode/QTSetMovieAudioDevice/Listings/QTCode_cpp.html
+
+
+// need to look at 
+// http://developer.apple.com/library/mac/#qa/qa2004/qa1371.html
+
+
+
+
+
 bool bQuicktimeInitialized = false;
-
-
-
 
 void ofQuicktimeSoundPlayer::enableSpectrumCalculation(int nBands){
 	
@@ -190,7 +212,9 @@ ofQuicktimeSoundPlayer::ofQuicktimeSoundPlayer(){
 }
 
 ofQuicktimeSoundPlayer::~ofQuicktimeSoundPlayer(){
-	unloadSound();
+	if (bLoadedOk){
+		unloadSound();
+	}
 }
 
 
@@ -214,6 +238,7 @@ void ofQuicktimeSoundPlayer::closeQuicktime(){
 //------------------------------------------------------------
 void ofQuicktimeSoundPlayer::loadSound(string fileName, bool stream){
 
+	
 	fileName = ofToDataPath(fileName);
 	
 	// TODO: hmm?
@@ -227,11 +252,11 @@ void ofQuicktimeSoundPlayer::loadSound(string fileName, bool stream){
 	// & prevent user-created memory leaks
 	// if they call "loadSound" repeatedly, for example
 
-	unloadSound();
-
+	if (bLoadedOk == true){
+		unloadSound();
+	}
 	// [3] load sound
 
-	
 	OSErr error;
     
     //CFBundleRef gameBundle = CFBundleGetMainBundle();
