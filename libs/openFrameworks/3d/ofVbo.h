@@ -7,8 +7,14 @@
  *
  */
 
+// modified by Keith Pasko
+
 #pragma once
 #include "ofMain.h"
+
+#define OF_VBO_POINTS 0
+#define OF_VBO_LINES 1
+#define OF_VBO_TRIANGLES 4
 
 enum {
 	OF_VBO_VERTEX,
@@ -22,15 +28,16 @@ enum {
 	OF_VBO_STREAM = GL_STREAM_DRAW
 };
 
-
 class ofVbo {
 	
 private:
-	
+	GLuint indexId;
 	GLuint vertId;
 	GLuint colorId;
 	GLuint normalId;
 	GLuint texCoordId;
+	
+	int drawMode;
 	
 	GLuint handle;
 	
@@ -63,6 +70,7 @@ public:
 	// if you want to move to verts around you use OF_VBO_STREAM
 	void setVertexData(const ofVec3f * verts, int total, int usage);
 	void setColorData(const ofColor * colors, int total, int usage);	
+	void setIndexData(const int * indices, int total, int mode);
 	
 	void updateColorData(const ofColor * colors, int total);
 	void updateVertexData(const ofVec3f * verts, int total);	
@@ -82,9 +90,9 @@ public:
 	GLuint getNormalId();
 	GLuint getTexCoordId();
 	
-	
-	
 	void draw(int mode, int first, int total);
+	void draw(int first, int total);
 	void bind();
 	void unbind();
+	void clear();
 };

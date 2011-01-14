@@ -28,6 +28,8 @@ void testApp::setup(){
     glEnable(GL_LIGHTING);
     glEnable(GL_LIGHT0);
 	 */
+	
+	cout << GL_POINTS << " " << GL_LINES << " " << GL_TRIANGLES << endl;
 }
 
 //--------------------------------------------------------------
