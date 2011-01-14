@@ -168,12 +168,7 @@ ofVec4f operator/( float f, const ofVec4f& vec );
 inline ofVec4f::ofVec4f( float _x,
 						float _y,
 						float _z,
-						float _w ) {
-	x = _x;
-	y = _y;
-	z = _z;
-	w = _w;
-}
+						float _w ):x(_x), y(_y), z(_z), w(_w) {}
 
 // Getters and Setters.
 //
