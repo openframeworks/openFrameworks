@@ -1,7 +1,7 @@
 #pragma once
 
 #include "ofConstants.h"
-#include "ofBaseTypes.h"
+#include "ofTypes.h"
 
 #if defined( TARGET_OSX ) || defined( TARGET_LINUX )
 	#include <termios.h>
@@ -21,19 +21,20 @@
 #endif
 
 
-
 // notes below
 
 //----------------------------------------------------------------------
-class ofSerial : public ofBaseHasDevices {
+class ofSerial {
 
 	public:
 			ofSerial();
 			virtual ~ofSerial();
-			
+
+			void			listDevices();
 			void 			enumerateDevices();
 			void			buildDeviceList();
-	
+			
+			vector <ofSerialDeviceInfo> getDeviceList();
 
 			void 			close();
 			bool			setup();	// use default port, baud (0,9600)
@@ -54,6 +55,11 @@ class ofSerial : public ofBaseHasDevices {
 			
 
 	protected:
+			
+			string				deviceType;
+			vector <ofSerialDeviceInfo> devices;
+
+			bool bHaveEnumeratedDevices;
 
 			bool 	bInited;
 
