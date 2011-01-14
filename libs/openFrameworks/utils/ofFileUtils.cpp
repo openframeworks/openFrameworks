@@ -5,28 +5,23 @@
 //--------------------------------------------------
 ofBuffer::ofBuffer(){
 	nextLinePos = 0;
-	cout << "ofBuffer()" << endl;
 }
 
 ofBuffer::ofBuffer(const char * buffer,int size){
 	set(buffer,size);
-	cout << "ofBuffer(size,buffer)" << endl;
 }
 
 ofBuffer::ofBuffer(istream & stream){
 	set(stream);
-	cout << "ofBuffer(istream)" << endl;
 }
 
 ofBuffer::ofBuffer(const ofBuffer & buffer_){
 	buffer = buffer_.buffer;
 	nextLinePos = buffer_.nextLinePos;
-	cout << "ofBuffer(ofBuffer&)" << endl;
 }
 
 ofBuffer::~ofBuffer(){
 	clear();
-	cout << "~ofBuffer()" << endl;
 }
 
 bool ofBuffer::set(istream & stream){
@@ -84,7 +79,7 @@ const char * ofBuffer::getBuffer() const{
 	return &buffer[0];
 }
 
-long ofBuffer::getSize() const{
+long ofBuffer::size() const{
 	return buffer.size();
 }
 
@@ -103,21 +98,21 @@ string ofBuffer::getFirstLine(){
 }
 
 //--------------------------------------------------
-bool ofReadFile(const string & path, ofBuffer & buffer, bool binary){
-	ifstream file(ofToDataPath(path,true).c_str());
-	return buffer.set(file);
-}
-
-//--------------------------------------------------
 ofBuffer ofBufferFromFile(const string & path, bool binary){
-	ifstream istr(ofToDataPath(path,true).c_str(), binary?ifstream::binary:ios_base::in);
-	return ofBuffer(istr);
+	ios_base::openmode mode = binary? ifstream::binary : ios_base::in;
+	ifstream istr(ofToDataPath(path,true).c_str(), mode);
+	ofBuffer buffer(istr);
+	istr.close();
+	return buffer;
 }
 
 //--------------------------------------------------
 bool ofBufferToFile(const string & path, ofBuffer & file, bool binary){
-	ofstream ostr(ofToDataPath(path,true).c_str(),binary?ofstream::binary:ios_base::out);
-	return file.writeTo(ostr);
+	ios_base::openmode mode = binary? ofstream::binary : ios_base::out;
+	ofstream ostr(ofToDataPath(path,true).c_str(), mode);
+	bool ret = file.writeTo(ostr);
+	ostr.close();
+	return ret;
 }
 
 
