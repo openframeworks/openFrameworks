@@ -107,6 +107,7 @@ void ofViewport(float x, float y, float width, float height) {
 	if(height == 0) height = ofGetHeight();
 
 	glViewport(x, y, width, height);
+	viewportRect.set(x, y, width, height);
 }
 
 
@@ -999,9 +1000,10 @@ void ofPopMatrix(){
 }
 
 //----------------------------------------------------------
-void ofTranslate(const ofPoint & p){
+void ofTranslate(const ofPoint& p){
 	glTranslatef(p.x, p.y, p.z);
 }
+
 
 //----------------------------------------------------------
 void ofTranslate(float x, float y, float z){
