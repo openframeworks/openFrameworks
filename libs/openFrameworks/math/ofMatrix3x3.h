@@ -5,6 +5,8 @@
 
 #pragma once
 
+#include "ofConstants.h"
+
 
 class ofMatrix3x3 {
 
@@ -112,7 +114,9 @@ class ofMatrix3x3 {
 	void operator*=(const ofMatrix3x3& B);
 
     void operator*=(double scalar);
-
+	
+	friend ostream& operator<<(ostream& os, const ofMatrix3x3& M);
+	friend istream& operator>>(istream& is, ofMatrix3x3& M);
      /**
      * Multiply a 3x3 matrix with a 3x3 matrix
      */
