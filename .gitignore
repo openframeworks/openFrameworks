@@ -50,4 +50,25 @@ apps/*/*/Release Linux
 apps/*/*/Debug Linux64
 apps/*/*/Release Linux64
 
+#Automake artifacts
+*.lo
+*.la
+.deps/
+.dirstamp
+.libs/
+Makefile.in
+aclocal.m4
+autom4te.cache/
+config.guess
+config.log
+config.status
+config.sub
+configure
+depcomp
+install-sh
+.libs/
+Makefile.in
+libtool
+ltmain.sh
+missing
 
