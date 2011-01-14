@@ -73,8 +73,8 @@ class ofBaseHasPixels{
 public:
 	virtual ~ofBaseHasPixels(){}
 	virtual unsigned char * getPixels()=0;
-	virtual ofPixels getOFPixels()=0;
-	virtual ofPixels getOFPixels() const=0;
+//	virtual ofPixels getOFPixels()=0;
+//	virtual ofPixels getOFPixels() const=0;
 };
 
 //----------------------------------------------------------
