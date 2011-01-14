@@ -158,6 +158,7 @@ void ofSetupScreen();
 
 void ofCurveVertex(float x, float y);
 void ofCurveVertex(ofPoint & p);
+void ofCurveVertexes(const vector <ofPoint> & curvePoints);
 
 void ofBezierVertex(float x1, float y1, float x2, float y2, float x3, float y3);
 
@@ -166,5 +167,7 @@ void ofSetPolyMode(ofPolyWindingMode mode);
 void ofBeginShape();
 void ofVertex(float x, float y);
 void ofVertex(ofPoint & p);
+void ofVertexes(const vector <ofPoint> & polyPoints);
+
 void ofEndShape(bool bClose = false);
 void ofNextContour(bool bClose = false);  // for multi contour shapes!
