@@ -12,7 +12,11 @@ void testApp::update(){
 
 //--------------------------------------------------------------
 void testApp::draw(){
-	temp.draw(0,0);
+	ofSetColor(255);
+	temp.draw(dragPt.x, dragPt.y);
+	
+	ofSetColor(0);
+	ofDrawBitmapString("drag images into this window", 10, 20);
 }
 
 //--------------------------------------------------------------
@@ -50,20 +54,22 @@ void testApp::windowResized(int w, int h){
 
 }
 
-void testApp::dragEvent(vector < string > fileNames){
+//--------------------------------------------------------------
+void testApp::dragEvent(ofDragInfo info){
 	
-	if (fileNames.size() > 0){
+	if( info.files.size() > 0 ){
+	
+		dragPt = info.position;
 		
 		// try to load the first image. 
-		temp.loadImage( fileNames[0]);
+		temp.loadImage(info.files[0]);
 		
-		for (int i = 0; i < fileNames.size(); i++){
-			cout << fileNames[i] << endl;
+		for (int i = 0; i < info.files.size(); i++){
+			cout << info.files[i] << endl;
 		}
 		
 		//printf("%s \n", fileNames[0].c_str());
 	}
-	
-	
+
 }
 
