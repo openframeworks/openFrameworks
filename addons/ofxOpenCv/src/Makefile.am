@@ -19,6 +19,6 @@ libofxOpenCv_la_SOURCES=\
 			ofxCvContourFinder.cpp \
 			ofxCvFloatImage.cpp \
 			ofxCvGrayscaleImage.cpp \
-			src/ofxCvHaarFinder.cpp \
+			ofxCvHaarFinder.cpp \
 			ofxCvImage.cpp \
 			ofxCvShortImage.cpp 
