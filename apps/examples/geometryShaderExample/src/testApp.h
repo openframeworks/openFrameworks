@@ -3,7 +3,7 @@
 
 
 #include "ofMain.h"
-#include "ofxShader.h"
+#include "ofShader.h"
 
 class testApp : public ofBaseApp{
 	

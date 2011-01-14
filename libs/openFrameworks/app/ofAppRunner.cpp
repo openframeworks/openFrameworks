@@ -224,6 +224,18 @@ int ofGetHeight(){
 	return (int)window->getWindowSize().y;
 }
 
+//--------------------------------------------------
+ofPoint	ofGetWindowSize() {
+	return ofPoint(ofGetWidth(), ofGetHeight());
+}
+
+
+//--------------------------------------------------
+ofRectangle	ofGetWindowRect() {
+	return ofRectangle(0, 0, ofGetWidth(), ofGetHeight());
+}
+
+
 //--------------------------------------
 void ofSetWindowTitle(string title){
 	window->setWindowTitle(title);

@@ -61,9 +61,9 @@ void ofMatrix4x4::setRotate(const ofQuaternion& q)
     double length2 = q.length2();
     if (fabs(length2) <= std::numeric_limits<double>::min())
     {
-        _mat[0][0] = 0.0; _mat[1][0] = 0.0; _mat[2][0] = 0.0;
-        _mat[0][1] = 0.0; _mat[1][1] = 0.0; _mat[2][1] = 0.0;
-        _mat[0][2] = 0.0; _mat[1][2] = 0.0; _mat[2][2] = 0.0;
+        _mat[0][0] = 1.0; _mat[1][0] = 0.0; _mat[2][0] = 0.0;
+        _mat[0][1] = 0.0; _mat[1][1] = 1.0; _mat[2][1] = 0.0;
+        _mat[0][2] = 0.0; _mat[1][2] = 0.0; _mat[2][2] = 1.0;
     }
     else
     {
@@ -133,11 +133,43 @@ void ofMatrix4x4::setRotate(const ofQuaternion& q)
     _mat[3][3] = 1.0;
 #endif
 }
+//
+//ofQuaternion ofMatrix4x4::getRotate() const {
+//	ofVec4f q;
+//	float trace = _mat[0][0] + _mat[1][1] + _mat[2][2]; // I removed + 1.0f; see discussion with Ethan
+//	if( trace > 0 ) {// I changed M_EPSILON to 0
+//		float s = 0.5f / sqrtf(trace+ 1.0f);
+//		q.w = 0.25f / s;
+//		q.x = ( _mat[2][1] - _mat[1][2] ) * s;
+//		q.y = ( _mat[0][2] - _mat[2][0] ) * s;
+//		q.z = ( _mat[1][0] - _mat[0][1] ) * s;
+//	} else {
+//		if ( _mat[0][0] > _mat[1][1] && _mat[0][0] > _mat[2][2] ) {
+//			float s = 2.0f * sqrtf( 1.0f + _mat[0][0] - _mat[1][1] - _mat[2][2]);
+//			q.w = (_mat[2][1] - _mat[1][2] ) / s;
+//			q.x = 0.25f * s;
+//			q.y = (_mat[0][1] + _mat[1][0] ) / s;
+//			q.z = (_mat[0][2] + _mat[2][0] ) / s;
+//		} else if (_mat[1][1] > _mat[2][2]) {
+//			float s = 2.0f * sqrtf( 1.0f + _mat[1][1] - _mat[0][0] - _mat[2][2]);
+//			q.w = (_mat[0][2] - _mat[2][0] ) / s;
+//			q.x = (_mat[0][1] + _mat[1][0] ) / s;
+//			q.y = 0.25f * s;
+//			q.z = (_mat[1][2] + _mat[2][1] ) / s;
+//		} else {
+//			float s = 2.0f * sqrtf( 1.0f + _mat[2][2] - _mat[0][0] - _mat[1][1] );
+//			q.w = (_mat[1][0] - _mat[0][1] ) / s;
+//			q.x = (_mat[0][2] + _mat[2][0] ) / s;
+//			q.y = (_mat[1][2] + _mat[2][1] ) / s;
+//			q.z = 0.25f * s;
+//		}
+//	}
+//	return ofQuaternion(q.x, q.y, q.z, q.w);
+//}
 
-
-#define COMPILE_getRotate_David_Spillings_Mk1
+//#define COMPILE_getRotate_David_Spillings_Mk1
 //#define COMPILE_getRotate_David_Spillings_Mk2
-//#define COMPILE_getRotate_Original
+#define COMPILE_getRotate_Original
 
 #ifdef COMPILE_getRotate_David_Spillings_Mk1
 // David Spillings implementation Mk 1
@@ -204,9 +236,9 @@ ofQuaternion ofMatrix4x4::getRotate() const
 
 #ifdef COMPILE_getRotate_David_Spillings_Mk2
 // David Spillings implementation Mk 2
-ofQuat ofMatrix4x4::getRotate() const
+ofQuaternion ofMatrix4x4::getRotate() const
 {
-    ofQuat q;
+    ofQuaternion q;
 
     // From http://www.euclideanspace.com/maths/geometry/rotations/conversions/matrixToQuaternion/index.htm
     QW = 0.5 * sqrt( osg::maximum( 0.0, 1.0 + _mat[0][0] + _mat[1][1] + _mat[2][2] ) );
@@ -231,9 +263,9 @@ ofQuat ofMatrix4x4::getRotate() const
 
 #ifdef COMPILE_getRotate_Original
 // Original implementation
-ofQuat ofMatrix4x4::getRotate() const
+ofQuaternion ofMatrix4x4::getRotate() const
 {
-    ofQuat q;
+    ofQuaternion q;
 
     // Source: Gamasutra, Rotating Objects Using Quaternions
     //
@@ -313,9 +345,9 @@ void ofMatrix4x4::setTranslation( float tx, float ty, float tz )
 
 void ofMatrix4x4::setTranslation( const ofVec3f& v )
 {
-    _mat[3][0] = v.v[0];
-    _mat[3][1] = v.v[1];
-    _mat[3][2] = v.v[2];
+    _mat[3][0] = v.getPtr()[0];
+    _mat[3][1] = v.getPtr()[1];
+    _mat[3][2] = v.getPtr()[2];
 }
 
 void ofMatrix4x4::makeIdentityMatrix()
@@ -328,7 +360,7 @@ void ofMatrix4x4::makeIdentityMatrix()
 
 void ofMatrix4x4::makeScaleMatrix( const ofVec3f& v )
 {
-    makeScaleMatrix(v.v[0], v.v[1], v.v[2] );
+    makeScaleMatrix(v.getPtr()[0], v.getPtr()[1], v.getPtr()[2] );
 }
 
 void ofMatrix4x4::makeScaleMatrix( float x, float y, float z )
@@ -341,7 +373,7 @@ void ofMatrix4x4::makeScaleMatrix( float x, float y, float z )
 
 void ofMatrix4x4::makeTranslationMatrix( const ofVec3f& v )
 {
-    makeTranslationMatrix( v.v[0], v.v[1], v.v[2] );
+    makeTranslationMatrix( v.getPtr()[0], v.getPtr()[1], v.getPtr()[2] );
 }
 void ofMatrix4x4::makeTranslationMatrix( float x, float y, float z )
 {
@@ -870,20 +902,40 @@ bool ofMatrix4x4::getPerspective(double& fovy,double& aspectRatio,
 
 void ofMatrix4x4::makeLookAtMatrix(const ofVec3f& eye,const ofVec3f& center,const ofVec3f& up)
 {
-    ofVec3f f(center-eye);
-    f.normalize();
-    ofVec3f s(f.getCrossed(up));
-    s.normalize();
-    ofVec3f u(s.getCrossed(f));
-    u.normalize();
-
-    set(
-        s[0],     u[0],     -f[0],     0.0,
-        s[1],     u[1],     -f[1],     0.0,
-        s[2],     u[2],     -f[2],     0.0,
-        0.0,     0.0,     0.0,      1.0);
-
-    preMultTranslate(-eye);
+	ofVec3f zaxis = (eye - center).normalized();
+	ofVec3f xaxis = up.getCrossed(zaxis).normalized();
+	ofVec3f yaxis = zaxis.getCrossed(xaxis);
+	
+	_mat[0].set(xaxis.x, xaxis.y, xaxis.z, 0);
+	_mat[1].set(yaxis.x, yaxis.y, yaxis.z, 0);
+	_mat[2].set(zaxis.x, zaxis.y, zaxis.z, 0);
+//	_mat[3].set(-xaxis.dot(eye), -yaxis.dot(eye), -zaxis.dot(eye), 1);
+	_mat[3].set(eye.x, eye.y, eye.z, 1);
+//	_mat[3].set(0, 0, 0, 1);
+	
+//	zaxis = normal(At - Eye)
+//	xaxis = normal(getCrossed(Up, zaxis))
+//	yaxis = cross(zaxis, xaxis)
+//	
+//	xaxis.x           yaxis.x           zaxis.x          0
+//	xaxis.y           yaxis.y           zaxis.y          0
+//	xaxis.z           yaxis.z           zaxis.z          0
+//	-dot(xaxis, eye)  -dot(yaxis, eye)  -dot(zaxis, eye)  l
+//    
+//	ofVec3f f(center-eye);
+//    f.normalize();
+//    ofVec3f s(f.getCrossed(up));
+//    s.normalize();
+//    ofVec3f u(s.getCrossed(f));
+//    u.normalize();
+//	
+//    set(
+//        s[0],     u[0],     -f[0],     0.0,
+//        s[1],     u[1],     -f[1],     0.0,
+//        s[2],     u[2],     -f[2],     0.0,
+//        0.0,     0.0,     0.0,      1.0);
+//	
+//    preMultTranslate(-eye);
 }
 
 
@@ -1468,9 +1520,9 @@ void ofMatrix4x4::decompose( ofVec3f& t,
     if (parts.t[W] != 0.0)
         mul = 1.0 / parts.t[W];
 
-    t[0] = parts.t[X] * mul;
-    t[1] = parts.t[Y] * mul;
-    t[2] = parts.t[Z] * mul;
+    t.x = parts.t[X] * mul;
+    t.y = parts.t[Y] * mul;
+    t.z = parts.t[Z] * mul;
 
     r.set(parts.q.x(), parts.q.y(), parts.q.z(), parts.q.w());
 
@@ -1480,9 +1532,9 @@ void ofMatrix4x4::decompose( ofVec3f& t,
 
     // mul be sign of determinant to support negative scales.
     mul *= parts.f;
-    s[0] = parts.k.x() * mul;
-    s[1] = parts.k.y() * mul;
-    s[2] = parts.k.z() * mul;
+    s.x= parts.k.x() * mul;
+    s.y = parts.k.y() * mul;
+    s.z = parts.k.z() * mul;
 
     so.set(parts.u.x(), parts.u.y(), parts.u.z(), parts.u.w());
 }

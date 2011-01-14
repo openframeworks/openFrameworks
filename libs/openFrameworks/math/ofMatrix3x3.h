@@ -18,31 +18,31 @@ class ofMatrix3x3 {
     * [ d e f ]
     * [ g h i ]
     */
-    double a;
-    double b;
-    double c;
-    double d;
-    double e;
-    double f;
-    double g;
-    double h;
-    double i;
+    float a;
+    float b;
+    float c;
+    float d;
+    float e;
+    float f;
+    float g;
+    float h;
+    float i;
 
 
 
-    ofMatrix3x3( double _a=0.0, double _b=0.0, double _c=0.0,
-                  double _d=0.0, double _e=0.0, double _f=0.0,
-                  double _g=0.0, double _h=0.0, double _i=0.0 );
+    ofMatrix3x3( float _a=0.0, float _b=0.0, float _c=0.0,
+                  float _d=0.0, float _e=0.0, float _f=0.0,
+                  float _g=0.0, float _h=0.0, float _i=0.0 );
 
 
 
 
-    void set( double _a, double _b, double _c,
-              double _d, double _e, double _f,
-              double _g, double _h, double _i );
+    void set( float _a, float _b, float _c,
+              float _d, float _e, float _f,
+              float _g, float _h, float _i );
 
 
-    double& operator[]( const int& index );
+    float& operator[]( const int& index );
 
 
 	/**
@@ -69,9 +69,9 @@ class ofMatrix3x3 {
     * Determinant: http://mathworld.wolfram.com/Determinant.html
     */
 
-    double determinant() const;
+    float determinant() const;
 
-    double determinant(const ofMatrix3x3& A);
+    float determinant(const ofMatrix3x3& A);
 
 
 
@@ -108,16 +108,17 @@ class ofMatrix3x3 {
     /**
     * Multiply a matrix with a scalar
     */
-    ofMatrix3x3 operator*(double scalar);
+    ofMatrix3x3 operator*(float scalar);
 
 
 	void operator*=(const ofMatrix3x3& B);
 
-    void operator*=(double scalar);
+    void operator*=(float scalar);
 	
 	friend ostream& operator<<(ostream& os, const ofMatrix3x3& M);
 	friend istream& operator>>(istream& is, ofMatrix3x3& M);
-     /**
+
+	/**
      * Multiply a 3x3 matrix with a 3x3 matrix
      */
     ofMatrix3x3 operator*(const ofMatrix3x3& B);
@@ -125,12 +126,12 @@ class ofMatrix3x3 {
     /**
     * Divide a matrix through a scalar
     */
-    ofMatrix3x3 operator/(double scalar);
+    ofMatrix3x3 operator/(float scalar);
 
 
 	void operator/=(const ofMatrix3x3& B);
 
-    void operator/=(double scalar);
+    void operator/=(float scalar);
 
 };
 
