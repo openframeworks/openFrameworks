@@ -1,16 +1,26 @@
-#ifndef OF_MAIN
-#define OF_MAIN
+#pragma once
 
 //--------------------------
 // utils
 #include "ofConstants.h"
-#include "ofMath.h"
-#include "ofUtils.h"
-#include "ofTypes.h"
-#include "ofSystemUtils.h"
 #include "ofFileUtils.h"
-#include "ofVectorMath.h"
+#include "ofSystemUtils.h"
 #include "ofThread.h"
+#include "ofURLFileLoader.h"
+#include "ofUtils.h"
+
+//--------------------------
+// types
+#include "ofBaseTypes.h"
+#include "ofTypes.h"
+#include "ofColor.h"
+#include "ofPoint.h"
+#include "ofRectangle.h"
+
+//--------------------------
+// math
+#include "ofMath.h"
+#include "ofVectorMath.h"
 
 //--------------------------
 // communication
@@ -27,6 +37,7 @@
 #include "ofImage.h"
 #include "ofFbo.h"
 #include "ofShader.h"
+#include "ofPixels.h"
 
 //--------------------------
 // app
@@ -37,6 +48,10 @@
 // audio
 #include "ofSoundStream.h"
 #include "ofSoundPlayer.h"
+#ifndef TARGET_OF_IPHONE			//(temp for now, until this is ported)
+	#include "ofSoundUnit.h"
+	#include "ofSoundEffect.h"
+#endif
 
 //--------------------------
 // video
@@ -49,4 +64,3 @@
 // events
 #include "ofEvents.h"
 
-#endif

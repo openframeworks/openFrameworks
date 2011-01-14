@@ -2,8 +2,6 @@
 
 #include "ofConstants.h"
 #include "ofTexture.h"
-#include "ofGraphics.h"
-#include "ofTypes.h"
 #include "ofBaseTypes.h"
 
 #ifndef TARGET_LINUX
@@ -27,6 +25,8 @@ class ofQuickTimeGrabber : public ofBaseVideoGrabber{
 		bool					isFrameNew();
 
 		unsigned char			* getPixels();
+		ofPixels 				getOFPixels();
+		ofPixels 				getOFPixels() const;
 		
 		void					close();
 		void					clearMemory();

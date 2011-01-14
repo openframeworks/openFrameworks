@@ -13,7 +13,9 @@
 #include "ofVec3f.h"
 #include "ofVec4f.h"
 #include "ofQuaternion.h"
+#include "ofConstants.h"
 #include <cmath>
+
 
 #if (_MSC_VER)       
 		// make microsoft visual studio complain less about double / float conversion and

@@ -1,11 +1,9 @@
-#ifndef _OF_VIDEO_GRABBER
-#define _OF_VIDEO_GRABBER
+#pragma once
 
 #include "ofConstants.h"
 #include "ofTexture.h"
-#include "ofGraphics.h"
-#include "ofTypes.h"
 #include "ofBaseTypes.h"
+#include "ofPixels.h"
 
 #ifdef OF_VIDEO_CAPTURE_QUICKTIME
 	#include "ofQuickTimeGrabber.h"
@@ -20,11 +18,6 @@
 #ifdef OF_VIDEO_CAPTURE_GSTREAMER
 	#include "ofGstUtils.h"
 	#define OF_VID_GRABBER_TYPE ofGstUtils()
-#endif
-
-#ifdef OF_VIDEO_CAPTURE_UNICAP
-	#include "ofUnicapGrabber.h"
-	#define OF_VID_GRABBER_TYPE ofUnicapGrabber()		
 #endif
 
 class ofVideoGrabber : public ofBaseVideoGrabber,public ofBaseDraws, public ofBaseHasTexture{
@@ -47,6 +40,8 @@ class ofVideoGrabber : public ofBaseVideoGrabber,public ofBaseDraws, public ofBa
 		
 		void				videoSettings();
 		unsigned char 	*	getPixels();
+		ofPixels 			getOFPixels();
+		ofPixels 			getOFPixels() const;
 		ofTexture &			getTextureReference();
 		void				setVerbose(bool bTalkToMe);
 		void				setDeviceID(int _deviceID);
@@ -78,7 +73,4 @@ class ofVideoGrabber : public ofBaseVideoGrabber,public ofBaseDraws, public ofBa
 };
 
 
-
-
-#endif
 

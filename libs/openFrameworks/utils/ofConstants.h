@@ -1,15 +1,14 @@
-#ifndef OF_CONSTANTS
-#define OF_CONSTANTS
+#pragma once
 
 //-------------------------------
 #define OF_VERSION	6
 //-------------------------------
 
-
-#define OF_LOOP_NONE					0x01
-#define OF_LOOP_PALINDROME				0x02
-#define OF_LOOP_NORMAL					0x03
-
+enum ofLoopType{
+	OF_LOOP_NONE=0x01,
+	OF_LOOP_PALINDROME=0x02,
+	OF_LOOP_NORMAL=0x03
+};
 //-------------------------------
 //  find the system type --------
 //-------------------------------
@@ -32,85 +31,6 @@
 	#define TARGET_LINUX
 #endif
 //-------------------------------
-
-// mapping to allow simple opengl EXT and opengl ES OES
-// commented out ones are already defined
-// glew defines most of them
-// TODO: check iphone status
-// TODO: compile glew for linux and windows
-	#define GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS			GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS_EXT
-	#define GL_FRAMEBUFFER_INCOMPLETE_FORMATS				GL_FRAMEBUFFER_INCOMPLETE_FORMATS_EXT
-//#ifndef TARGET_OPENGLES
-//	#define glGenFramebuffers								glGenFramebuffersEXT
-//	#define glGenRenderbuffers								glGenRenderbuffersEXT
-//	#define	glDeleteFramebuffers							glDeleteFramebuffersEXT
-//	#define	glBindFramebuffer								glBindFramebufferEXT
-//	#define	glBindRenderbuffer								glBindRenderbufferEXT
-//	#define glRenderbufferStorage							glRenderbufferStorageEXT
-//	#define glFramebufferRenderbuffer						glFramebufferRenderbufferEXT
-//	#define glRenderbufferStorageMultisample				glRenderbufferStorageMultisampleEXT
-//	#define glFramebufferTexture2D							glFramebufferTexture2DEXT
-//	#define glCheckFramebufferStatus						glCheckFramebufferStatusEXT
-//	#define GL_WRITE_FRAMEBUFFER							GL_WRITE_FRAMEBUFFER_EXT
-//	#define GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS			GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS_EXT
-//	#define GL_FRAMEBUFFER_INCOMPLETE_FORMATS				GL_FRAMEBUFFER_INCOMPLETE_FORMATS_EXT
-//
-////	#ifdef TARGET_WIN32
-//	#define glBlitFramebuffer									glBlitFramebufferEXT
-//	#define GL_COLOR_ATTACHMENT0 GL_COLOR_ATTACHMENT0_EXT
-//	#define GL_DEPTH_ATTACHMENT								GL_DEPTH_ATTACHMENT_EXT
-//	#define GL_DRAW_FRAMEBUFFER								GL_DRAW_FRAMEBUFFER_EXT
-//	#define GL_FRAMEBUFFER									GL_FRAMEBUFFER_EXT
-//	#define GL_FRAMEBUFFER_BINDING							GL_FRAMEBUFFER_BINDING_EXT
-//	#define GL_FRAMEBUFFER_COMPLETE							GL_FRAMEBUFFER_COMPLETE_EXT
-//	#define GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT			GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT_EXT
-//	#define GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT	GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT_EXT
-//	#define GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER			GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER_EXT
-//	#define GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER			GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER_EXT
-//	#define GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE			GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE_EXT
-//	#define GL_FRAMEBUFFER_UNSUPPORTED						GL_FRAMEBUFFER_UNSUPPORTED_EXT
-//	#define GL_MAX_COLOR_ATTACHMENTS						GL_MAX_COLOR_ATTACHMENTS_EXT
-//	#define GL_MAX_SAMPLES									GL_MAX_SAMPLES_EXT
-//	#define GL_STENCIL_ATTACHMENT							GL_STENCIL_ATTACHMENT_EXT
-//	#define GL_READ_FRAMEBUFFER								GL_READ_FRAMEBUFFER_EXT
-//	#define GL_RENDERBUFFER									GL_RENDERBUFFER_EXT
-////	#endif //TARGET_WIN32
-//
-//#else
-//	#define glGenFramebuffers								glGenFramebuffersOES
-//	#define glGenRenderbuffers								glGenRenderbuffersOES
-//	#define	glDeleteFramebuffers							glDeleteFramebuffersOES
-//	#define	glBindFramebuffer								glBindFramebufferOES
-//	#define	glBindRenderbuffer								glBindRenderbufferOES
-//	#define glRenderbufferStorage							glRenderbufferStorageOES
-//	#define glFramebufferRenderbuffer						glFramebufferRenderbufferOES
-//	#define glRenderbufferStorageMultisample				glRenderbufferStorageMultisampleOES
-//	#define glFramebufferTexture2D							glFramebufferTexture2DOES
-//	#define glCheckFramebufferStatus						glCheckFramebufferStatusOES
-//	#define GL_FRAMEBUFFER									GL_FRAMEBUFFER_OES
-//	#define GL_RENDERBUFFER									GL_RENDERBUFFER_OES
-//	#define GL_DEPTH_ATTACHMENT								GL_DEPTH_ATTACHMENT_OES
-//	#define GL_STENCIL_ATTACHMENT							GL_STENCIL_ATTACHMENT_OES
-//	#define GL_FRAMEBUFFER_BINDING							GL_FRAMEBUFFER_BINDING_OES
-//	#define GL_MAX_COLOR_ATTACHMENTS						GL_MAX_COLOR_ATTACHMENTS_OES
-//	#define GL_MAX_SAMPLES									GL_MAX_SAMPLES_OES
-//	#define GL_READ_FRAMEBUFFER								GL_READ_FRAMEBUFFER_OES
-//	#define GL_DRAW_FRAMEBUFFER								GL_DRAW_FRAMEBUFFER_OES
-//	#define GL_WRITE_FRAMEBUFFER							GL_WRITE_FRAMEBUFFER_OES
-//	#define GL_FRAMEBUFFER_COMPLETE							GL_FRAMEBUFFER_COMPLETE_OES
-//	#define GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT			GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT_OES
-//	#define GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT	GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT_OES
-//	#define GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS			GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS_OES
-//	#define GL_FRAMEBUFFER_INCOMPLETE_FORMATS				GL_FRAMEBUFFER_INCOMPLETE_FORMATS_OES
-//	#define GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER			GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER_OES
-//	#define GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER			GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER_OES
-//	#define GL_FRAMEBUFFER_UNSUPPORTED						GL_FRAMEBUFFER_UNSUPPORTED_OES
-//	#define GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE			GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE_OES
-//	#define GL_COLOR_ATTACHMENT0							GL_COLOR_ATTACHMENT0_OES
-//
-//#endif
-//
-
 
 
 // then the the platform specific includes:
@@ -164,12 +84,9 @@
 	#ifndef __MACOSX_CORE__
 		#define __MACOSX_CORE__
 	#endif
-	#include <unistd.h>
-#define GLEW_STATIC
-//	#include "glew.h"
+#include <unistd.h>
+	#include "glew.h"
 	#include <OpenGL/gl.h>
-//	#include <OpenGL/glext.h>
-	#include <OpenGL/glu.h>
 	#include <ApplicationServices/ApplicationServices.h>
 
 	#if defined(__LITTLE_ENDIAN__)
@@ -180,9 +97,9 @@
 #ifdef TARGET_LINUX
 		#define GL_GLEXT_PROTOTYPES
         #include <unistd.h>
+		#include <GL/glew.h>
 		#include <GL/gl.h>
 		#include <GL/glx.h>
-        #include <GL/glu.h>
 
     // for some reason, this isn't defined at compile time,
     // so this hack let's us work
@@ -357,8 +274,10 @@ using namespace std;
 #define 	OF_FULLSCREEN 			1
 #define 	OF_GAME_MODE			2
 
-#define 	OF_RECTMODE_CORNER				0
-#define 	OF_RECTMODE_CENTER				1
+enum ofRectMode{
+	OF_RECTMODE_CORNER=0,
+ 	OF_RECTMODE_CENTER=1
+};
 
 enum ofImageType{
 	OF_IMAGE_GRAYSCALE		= 0x00,
@@ -371,11 +290,13 @@ enum ofImageType{
 #define		OF_MAX_CIRCLE_PTS 1024
 
 // Blend Modes
-#define OF_BLENDMODE_ALPHA    1
-#define OF_BLENDMODE_ADD      2
-#define OF_BLENDMODE_SUBTRACT 3
-#define OF_BLENDMODE_MULTIPLY 4
-#define OF_BLENDMODE_SCREEN   5
+enum ofBlendMode{
+	OF_BLENDMODE_ALPHA 	  = 1,
+	OF_BLENDMODE_ADD 	  = 2,
+	OF_BLENDMODE_SUBTRACT = 3,
+	OF_BLENDMODE_MULTIPLY = 4,
+	OF_BLENDMODE_SCREEN   = 5
+};
 
 
 // these are straight out of glu, but renamed and included here
@@ -390,11 +311,13 @@ enum ofImageType{
 // also: http://glprogramming.com/red/chapter11.html
 // (CSG ideas)
 
-#define 	OF_POLY_WINDING_ODD 	          100130
-#define 	OF_POLY_WINDING_NONZERO           100131
-#define 	OF_POLY_WINDING_POSITIVE          100132
-#define 	OF_POLY_WINDING_NEGATIVE          100133
-#define		OF_POLY_WINDING_ABS_GEQ_TWO       100134
+enum ofPolyWindingMode{
+	OF_POLY_WINDING_ODD 	        = 100130,
+	OF_POLY_WINDING_NONZERO         = 100131,
+	OF_POLY_WINDING_POSITIVE        = 100132,
+	OF_POLY_WINDING_NEGATIVE        = 100133,
+	OF_POLY_WINDING_ABS_GEQ_TWO     = 100134
+};
 
 #define 	OF_CLOSE						  (true)
 
@@ -490,6 +413,3 @@ enum ofImageType{
 
 #endif
 
-//--------------------------------------------
-
-#endif

@@ -1,7 +1,6 @@
-#ifndef _OF_BASE_WINDOW
-#define _OF_BASE_WINDOW
+#pragma once
 
-#include "ofTypes.h"
+#include "ofPoint.h"
 
 class ofBaseApp;
 
@@ -47,6 +46,7 @@ public:
 	virtual int		getMouseX(){return 0;}
 	virtual int		getMouseY(){return 0;}
 
+	virtual int		getPreviousMouseX(){return 0;}
+	virtual int		getPreviousMouseY(){return 0;}
 };
 
-#endif

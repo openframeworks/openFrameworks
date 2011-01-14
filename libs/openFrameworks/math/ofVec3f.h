@@ -1,7 +1,8 @@
 #pragma once
 
+#include "ofPoint.h"
 #include "ofConstants.h"
-#include "ofTypes.h"
+#include <cmath>
 
 
 

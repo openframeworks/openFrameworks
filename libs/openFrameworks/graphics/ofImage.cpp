@@ -1,5 +1,6 @@
 #include "ofImage.h"
-
+#include "ofAppRunner.h"
+#include "ofTypes.h"
 
 //----------------------------------------------------------
 // static variable for freeImage initialization:
@@ -298,6 +299,7 @@ void ofImage::setImageType(ofImageType newType){
 
 //------------------------------------
 void ofImage::resize(int newWidth, int newHeight){
+
 	resizePixels(myPixels, newWidth, newHeight);
 
 	if (bUseTexture == true){
@@ -342,19 +344,46 @@ FIBITMAP *  ofImage::getBmpFromPixels(ofPixels &pix){
 }
 
 //----------------------------------------------------
-void ofImage::putBmpIntoPixels(FIBITMAP * bmp, ofPixels &pix){
+void ofImage::putBmpIntoPixels(FIBITMAP * bmp, ofPixels &pix, bool swapForLittleEndian){
 	int width			= FreeImage_GetWidth(bmp);
 	int height			= FreeImage_GetHeight(bmp);
 	int bpp				= FreeImage_GetBPP(bmp);
+
+	FIBITMAP * bmpTemp = NULL;
+
+	switch (bpp){
+		case 8:
+			if (FreeImage_GetColorType(bmp) == FIC_PALETTE) {
+				bmpTemp = FreeImage_ConvertTo24Bits(bmp);
+				bmp = bmpTemp;
+				bpp = FreeImage_GetBPP(bmp);
+			} else {
+			// do nothing we are grayscale
+			}
+		break;
+		case 24:
+			// do nothing we are color
+		break;
+		case 32:
+			// do nothing we are colorAlpha
+		break;
+		default:
+			bmpTemp = FreeImage_ConvertTo24Bits(bmp);
+			bmp = bmpTemp;
+			bpp = FreeImage_GetBPP(bmp);
+		break;
+	}
+
 	int bytesPerPixel	= bpp / 8;
-	//------------------------------------------
-	// call the allocation routine (which checks if really need to allocate) here:
 	pix.allocate(width, height, bpp);
 	FreeImage_ConvertToRawBits(pix.getPixels(), bmp, width*bytesPerPixel, bpp, FI_RGBA_RED_MASK, FI_RGBA_GREEN_MASK, FI_RGBA_BLUE_MASK, true);  // get bits
 
-#ifdef TARGET_LITTLE_ENDIAN
-	pix.swapRgb();
-#endif
+	if (bmpTemp != NULL) FreeImage_Unload(bmpTemp);
+
+	#ifdef TARGET_LITTLE_ENDIAN
+		if(swapForLittleEndian)
+			pix.swapRgb();
+	#endif
 }
 
 //----------------------------------------------------
@@ -364,7 +393,7 @@ void ofImage::resizePixels(ofPixels &pix, int newWidth, int newHeight){
 	FIBITMAP * convertedBmp			= NULL;
 
 	convertedBmp = FreeImage_Rescale(bmp, newWidth, newHeight, FILTER_BICUBIC);
-	putBmpIntoPixels(convertedBmp, pix);
+	putBmpIntoPixels(convertedBmp, pix, false);
 
 	if (bmp != NULL)				FreeImage_Unload(bmp);
 	if (convertedBmp != NULL)		FreeImage_Unload(convertedBmp);
@@ -449,18 +478,15 @@ bool ofImage::loadImageIntoPixels(string fileName, ofPixels &pix){
 	}
 	if((fif != FIF_UNKNOWN) && FreeImage_FIFSupportsReading(fif)) {
 		bmp					= FreeImage_Load(fif, fileName.c_str(), 0);
-		bLoaded = true;
-		if (bmp == NULL){
-			bLoaded = false;
+
+		if (bmp){
+			bLoaded = true;
 		}
 	}
 	//-----------------------------
 
-	if (bLoaded ){
-
+	if ( bLoaded ){
 		putBmpIntoPixels(bmp,pix);
-
-
 	} else {
 		width = height = bpp = 0;
 	}
@@ -482,7 +508,7 @@ bool ofImage::loadImageFromMemory(const ofBuffer & buffer, ofPixels &pix){
 	
 	printf("loadImageFromMemory\n");
 
-	hmem = FreeImage_OpenMemory((uint8_t*)buffer.getBuffer(), buffer.getSize());
+	hmem = FreeImage_OpenMemory((unsigned char*)buffer.getBuffer(), buffer.size());
 	if (hmem == NULL){
 		ofLog(OF_LOG_ERROR,"couldn't create memory handle! \n");
 		return false;

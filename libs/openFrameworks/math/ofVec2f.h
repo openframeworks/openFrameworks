@@ -1,9 +1,7 @@
 #pragma once
 
+#include "ofPoint.h"
 #include "ofConstants.h"
-#include "ofTypes.h"
-
-
 
 class ofVec2f {
 
