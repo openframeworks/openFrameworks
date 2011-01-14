@@ -1000,12 +1000,7 @@ void ofPopMatrix(){
 }
 
 //----------------------------------------------------------
-void ofTranslate(const ofVec2f& p){
-	glTranslatef(p.x, p.y, 0);
-}
-
-//----------------------------------------------------------
-void ofTranslate(const ofVec3f& p){
+void ofTranslate(const ofPoint& p){
 	glTranslatef(p.x, p.y, p.z);
 }
 
