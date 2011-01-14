@@ -10,6 +10,7 @@
 		9201136A12DFA3B10078BA54 /* ofQuicktimeSoundPlayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9201136812DFA3B10078BA54 /* ofQuicktimeSoundPlayer.cpp */; };
 		920113A912DFA5170078BA54 /* ofBaseSoundPlayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 920113A812DFA5170078BA54 /* ofBaseSoundPlayer.cpp */; };
 		920113F212DFA9660078BA54 /* ofSoundPlayer_.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 920113F112DFA9660078BA54 /* ofSoundPlayer_.cpp */; };
+		920114D812DFE1230078BA54 /* ofFmodSoundPlayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 920114D612DFE1230078BA54 /* ofFmodSoundPlayer.cpp */; };
 		E45BE97B0E8CC7DD009D7055 /* AGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E45BE9710E8CC7DD009D7055 /* AGL.framework */; };
 		E45BE97C0E8CC7DD009D7055 /* ApplicationServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E45BE9720E8CC7DD009D7055 /* ApplicationServices.framework */; };
 		E45BE97D0E8CC7DD009D7055 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E45BE9730E8CC7DD009D7055 /* AudioToolbox.framework */; };
@@ -77,6 +78,8 @@
 		920113A812DFA5170078BA54 /* ofBaseSoundPlayer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofBaseSoundPlayer.cpp; sourceTree = "<group>"; };
 		920113F012DFA9660078BA54 /* ofSoundPlayer_.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofSoundPlayer_.h; sourceTree = "<group>"; };
 		920113F112DFA9660078BA54 /* ofSoundPlayer_.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofSoundPlayer_.cpp; sourceTree = "<group>"; };
+		920114D612DFE1230078BA54 /* ofFmodSoundPlayer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofFmodSoundPlayer.cpp; sourceTree = "<group>"; };
+		920114D712DFE1230078BA54 /* ofFmodSoundPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofFmodSoundPlayer.h; sourceTree = "<group>"; };
 		E45BE9710E8CC7DD009D7055 /* AGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AGL.framework; path = /System/Library/Frameworks/AGL.framework; sourceTree = "<absolute>"; };
 		E45BE9720E8CC7DD009D7055 /* ApplicationServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ApplicationServices.framework; path = /System/Library/Frameworks/ApplicationServices.framework; sourceTree = "<absolute>"; };
 		E45BE9730E8CC7DD009D7055 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = /System/Library/Frameworks/AudioToolbox.framework; sourceTree = "<absolute>"; };
@@ -165,6 +168,8 @@
 		E4B69E1C0A3A1BDC003C02F2 /* src */ = {
 			isa = PBXGroup;
 			children = (
+				920114D612DFE1230078BA54 /* ofFmodSoundPlayer.cpp */,
+				920114D712DFE1230078BA54 /* ofFmodSoundPlayer.h */,
 				920113F012DFA9660078BA54 /* ofSoundPlayer_.h */,
 				920113F112DFA9660078BA54 /* ofSoundPlayer_.cpp */,
 				9201136812DFA3B10078BA54 /* ofQuicktimeSoundPlayer.cpp */,
@@ -284,6 +289,7 @@
 				9201136A12DFA3B10078BA54 /* ofQuicktimeSoundPlayer.cpp in Sources */,
 				920113A912DFA5170078BA54 /* ofBaseSoundPlayer.cpp in Sources */,
 				920113F212DFA9660078BA54 /* ofSoundPlayer_.cpp in Sources */,
+				920114D812DFE1230078BA54 /* ofFmodSoundPlayer.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
