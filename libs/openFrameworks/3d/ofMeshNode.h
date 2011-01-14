@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include "ofNode3d.h"
+#include "ofNode3D.h"
 #include "ofMain.h"
 
 class ofMesh;

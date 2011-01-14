@@ -15,7 +15,7 @@
 
 #pragma once
 
-#include "ofNode3d.h"
+#include "ofNode3D.h"
 
 class ofScene3d {
 public:

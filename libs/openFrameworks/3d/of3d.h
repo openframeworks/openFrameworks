@@ -11,7 +11,7 @@
 
 #pragma once
 
-#include "ofNode3d.h"
+#include "ofNode3D.h"
 #include "ofCamera.h"
 #include "ofMeshNode.h"
 #include "ofScene3d.h"
