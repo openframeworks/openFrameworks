@@ -1,22 +1,18 @@
 #pragma once
 
-#include "ofPoint.h"
+class ofVec2f;
+class ofVec3f;
+#include "ofConstants.h"
 
-
-class ofVec4f : public ofPoint {
-
-
+class ofVec4f {
   public:
-
-    float w;
-
-
-    ofVec4f( float _x=0.0f,
-              float _y=0.0f,
-              float _z=0.0f,
-              float _w=0.0f );
-
-
+		float x, y, z, w;
+	
+		ofVec4f( float _x=0.f, float _y=0.f, float _z=0.f, float _w=0.f );
+	
+		ofVec4f( const ofVec2f& vec);
+		ofVec4f( const ofVec3f& vec);
+	
     // Getters and Setters.
     //
     void set( float _x, float _y, float _z, float _w );
@@ -151,20 +147,15 @@ ofVec4f operator/( float f, const ofVec4f& vec );
 // Implementation
 /////////////////
 
-
 inline ofVec4f::ofVec4f( float _x,
 		  float _y,
 		  float _z,
-		  float _w )
-{
+		  float _w ) {
 	x = _x;
 	y = _y;
 	z = _z;
 	w = _w;
 }
-
-
-
 
 // Getters and Setters.
 //
