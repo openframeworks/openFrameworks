@@ -182,8 +182,13 @@ void ofSetupScreenOrtho(float width, float height, bool vFlip, float nearDist, f
 
 //----------------------------------------------------------
 void ofClear(float r, float g, float b, float a) {
-	glClearColor(r, g, b, a);
+	glClearColor(r / 255, g / 255, b / 255, a / 255);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+}
+
+//----------------------------------------------------------
+void ofClear(float brightness, float a) {
+	ofColor(brightness, brightness, brightness, a);
 }
 
 //----------------------------------------------------------
@@ -300,6 +305,11 @@ float * ofBgColorPtr(){
 //----------------------------------------------------------
 void ofBackground(const ofColor & c){
 	ofBackground ( c.r, c.g, c.b);
+}
+
+//----------------------------------------------------------
+void ofBackground(float brightness) {
+	ofBackground(brightness);
 }
 
 //----------------------------------------------------------
@@ -731,74 +741,75 @@ void ofBox(float size) {
 	if(ofGetCoordHandedness() == OF_LEFT_HANDED) {
 		ofScale(1, 1, -1);
 	}
-	
+
 	// http://www.songho.ca/opengl/gl_vertexarray.html
-	static const float h = .5;
+	float h = size * .5;
+	
+	GLfloat vertices[] = {
+		+h,-h,+h, +h,-h,-h, +h,+h,-h, +h,+h,+h,
+		+h,+h,+h, +h,+h,-h, -h,+h,-h, -h,+h,+h,
+		+h,+h,+h, -h,+h,+h, -h,-h,+h, +h,-h,+h,
+		-h,-h,+h, -h,+h,+h, -h,+h,-h, -h,-h,-h,
+		-h,-h,+h, -h,-h,-h, +h,-h,-h, +h,-h,+h,
+		-h,-h,-h, -h,+h,-h, +h,+h,-h, +h,-h,-h
+	};
+	
 	static const float f = 1;
-	
-	static GLfloat vertices[] = {
-		+h,+h,+h,  -h,+h,+h,  -h,-h,+h,  +h,-h,+h,
-		+h,+h,+h,  +h,-h,+h,  +h,-h,-h,  +h,+h,-h,
-		+h,+h,+h,  +h,+h,-h,  -h,+h,-h,  -h,+h,+h,
-		-h,+h,+h,  -h,+h,-h,  -h,-h,-h,  -h,-h,+h,
-		-h,-h,-h,  +h,-h,-h,  +h,-h,+h,  -h,-h,+h,
-		+h,-h,-h,  -h,-h,-h,  -h,+h,-h,  +h,+h,-h};
-	
 	static GLfloat normals[] = {
-		0, 0,+f,   0, 0,+f,   0, 0,+f,   0, 0,+f,
-		+f, 0, 0,  +f, 0, 0,  +f, 0, 0,  +f, 0, 0,
-		0,+f, 0,   0,+f, 0,   0,+f, 0,   0,+f, 0,
-		-f, 0, 0,  -f, 0, 0,  -f, 0, 0,  -f, 0, 0,
-		0,-f, 0,   0,-f, 0,   0,-f, 0,   0,-f, 0,
-		0, 0,-f,   0, 0,-f,   0, 0,-f,   0, 0,-f};
+		+f,0,0, +f,0,0, +f,0,0, +f,0,0,
+		0,+f,0, 0,+f,0, 0,+f,0, 0,+f,0,
+		0,0,+f, 0,0,+f, 0,0,+f, 0,0,+f,
+		-f,0,0, -f,0,0, -f,0,0, -f,0,0,
+		0,-f,0, 0,-f,0, 0,-f,0, 0,-f,0,
+		0,0,-f, 0,0,-f, 0,0,-f, 0,0,-f
+	};
 	
 	static GLfloat tex[] = {
-		1, 1,   0, 1,   0, 0,  1, 0,
-		1, 1,   0, 1,   0, 0,  1, 0,
-		1, 1,   0, 1,   0, 0,  1, 0,
-		1, 1,   0, 1,   0, 0,  1, 0,
-		1, 1,   0, 1,   0, 0,  1, 0,
-		1, 1,   0, 1,   0, 0,  1, 0};
+		1,0, 0,0, 0,1, 1,1,
+		1,1, 1,0, 0,0, 0,1,
+		0,1, 1,1, 1,0, 0,0,
+		0,0, 0,1, 1,1, 1,0,
+		0,0, 0,1, 1,1, 1,0,
+		0,0, 0,1, 1,1, 1,0
+	};
 		
 	GLubyte wireIndices[] = {
-		0,1,2,3,
-		4,5,6,7,
-		8,9,10,11,
-		12,13,14,15,
-		16,17,18,19};
+		0,1, 1,2, 2,3, 3,0,
+		12,13, 13,14, 14,15, 15,12,
+		0,12, 1,15, 2,14, 3,13
+	};
 	
 	GLubyte solidIndices[] = {
-		3,1,0, 2,1,3,
-		7,5,4, 6,5,7,
-		11,9,8, 10,9,11,
-		15,13,12, 14,13,15,
-		19,17,16, 18,17,19,
-		23,21,20, 22,21,23
+		0,1,2, // right top left
+		0,2,3, // right bottom right
+		4,5,6, // bottom top right
+		4,6,7, // bottom bottom left	
+		8,9,10, // back bottom right
+		8,10,11, // back top left
+		12,13,14, // left bottom right
+		12,14,15, // left top left
+		16,17,18, // ... etc
+		16,18,19,
+		20,21,22,
+		20,22,23
 	};
 	
 	glEnableClientState(GL_NORMAL_ARRAY);
-	glEnableClientState(GL_VERTEX_ARRAY);
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-	
-	glPushMatrix();
-	glScalef(size, size, size);
+	glEnableClientState(GL_VERTEX_ARRAY);
 	
 	glNormalPointer(GL_FLOAT, 0, normals);
-	glVertexPointer(3, GL_FLOAT, 0, vertices);
 	glTexCoordPointer(2, GL_FLOAT, 0, tex);
+	glVertexPointer(3, GL_FLOAT, 0, vertices);
 	
 	if(ofGetStyle().bFill) {
-		// the quads use all 24 of the vertices
-		glDrawElements(GL_TRIANGLES, 3 * 2 * 6, GL_UNSIGNED_BYTE, solidIndices);
+		glDrawElements(GL_TRIANGLES, 3 * 6 * 2, GL_UNSIGNED_BYTE, solidIndices);
 	} else {
-		// the line strip only needs 20 of the vertices
-		glDrawElements(GL_LINE_STRIP, 4 * 5, GL_UNSIGNED_BYTE, wireIndices);
+		glDrawElements(GL_LINES, 4 * 2 * 3, GL_UNSIGNED_BYTE, wireIndices);
 	}
-
-	glPopMatrix();
 	
-	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 	glDisableClientState(GL_VERTEX_ARRAY);
+	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 	glDisableClientState(GL_NORMAL_ARRAY);
 
 	ofPopMatrix();
