@@ -3,6 +3,39 @@
 #include "ofConstants.h"
 #include "ofColor.h"
 
+//----------------------------------------------------------
+// ofDeviceInfo
+//----------------------------------------------------------
+class ofSerial;
+class ofSerialDeviceInfo{
+	friend class ofSerial;
+	
+	public: 
+		ofSerialDeviceInfo(string deviceNameIn, int deviceIDIn){
+			deviceName = deviceNameIn;
+			deviceID   = deviceIDIn;
+		}
+
+		ofSerialDeviceInfo(){
+			deviceName = "device undefined";
+			deviceID   = -1;
+		}
+		
+		string getDeviceName(){
+			return deviceName;
+		}
+		
+		int getDeviceID(){
+			return deviceID;
+		}
+
+	protected:
+		string deviceName;
+		int deviceID;
+		
+		//TODO: other stuff for serial ?
+};
+
 
 //----------------------------------------------------------
 // ofMutex
