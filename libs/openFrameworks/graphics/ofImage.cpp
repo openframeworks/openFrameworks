@@ -508,7 +508,7 @@ bool ofImage::loadImageFromMemory(const ofBuffer & buffer, ofPixels &pix){
 	
 	printf("loadImageFromMemory\n");
 
-	hmem = FreeImage_OpenMemory((unsigned char*)buffer.getBuffer(), buffer.getSize());
+	hmem = FreeImage_OpenMemory((unsigned char*)buffer.getBuffer(), buffer.size());
 	if (hmem == NULL){
 		ofLog(OF_LOG_ERROR,"couldn't create memory handle! \n");
 		return false;
