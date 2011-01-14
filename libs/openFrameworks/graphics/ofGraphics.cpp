@@ -742,74 +742,95 @@ void ofBox(float size) {
 		ofScale(1, 1, -1);
 	}
 
-	// http://www.songho.ca/opengl/gl_vertexarray.html
 	float h = size * .5;
 	
-	GLfloat vertices[] = {
-		+h,-h,+h, +h,-h,-h, +h,+h,-h, +h,+h,+h,
-		+h,+h,+h, +h,+h,-h, -h,+h,-h, -h,+h,+h,
-		+h,+h,+h, -h,+h,+h, -h,-h,+h, +h,-h,+h,
-		-h,-h,+h, -h,+h,+h, -h,+h,-h, -h,-h,-h,
-		-h,-h,+h, -h,-h,-h, +h,-h,-h, +h,-h,+h,
-		-h,-h,-h, -h,+h,-h, +h,+h,-h, +h,-h,-h
-	};
-	
-	static const float f = 1;
-	static GLfloat normals[] = {
-		+f,0,0, +f,0,0, +f,0,0, +f,0,0,
-		0,+f,0, 0,+f,0, 0,+f,0, 0,+f,0,
-		0,0,+f, 0,0,+f, 0,0,+f, 0,0,+f,
-		-f,0,0, -f,0,0, -f,0,0, -f,0,0,
-		0,-f,0, 0,-f,0, 0,-f,0, 0,-f,0,
-		0,0,-f, 0,0,-f, 0,0,-f, 0,0,-f
-	};
-	
-	static GLfloat tex[] = {
-		1,0, 0,0, 0,1, 1,1,
-		1,1, 1,0, 0,0, 0,1,
-		0,1, 1,1, 1,0, 0,0,
-		0,0, 0,1, 1,1, 1,0,
-		0,0, 0,1, 1,1, 1,0,
-		0,0, 0,1, 1,1, 1,0
-	};
-		
-	GLubyte wireIndices[] = {
-		0,1, 1,2, 2,3, 3,0,
-		12,13, 13,14, 14,15, 15,12,
-		0,12, 1,15, 2,14, 3,13
-	};
-	
-	GLubyte solidIndices[] = {
-		0,1,2, // right top left
-		0,2,3, // right bottom right
-		4,5,6, // bottom top right
-		4,6,7, // bottom bottom left	
-		8,9,10, // back bottom right
-		8,10,11, // back top left
-		12,13,14, // left bottom right
-		12,14,15, // left top left
-		16,17,18, // ... etc
-		16,18,19,
-		20,21,22,
-		20,22,23
-	};
-	
 	glEnableClientState(GL_NORMAL_ARRAY);
-	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 	glEnableClientState(GL_VERTEX_ARRAY);
 	
-	glNormalPointer(GL_FLOAT, 0, normals);
-	glTexCoordPointer(2, GL_FLOAT, 0, tex);
-	glVertexPointer(3, GL_FLOAT, 0, vertices);
-	
 	if(ofGetStyle().bFill) {
-		glDrawElements(GL_TRIANGLES, 3 * 6 * 2, GL_UNSIGNED_BYTE, solidIndices);
+		GLfloat vertices[] = {
+			+h,-h,+h, +h,-h,-h, +h,+h,-h, +h,+h,+h,
+			+h,+h,+h, +h,+h,-h, -h,+h,-h, -h,+h,+h,
+			+h,+h,+h, -h,+h,+h, -h,-h,+h, +h,-h,+h,
+			-h,-h,+h, -h,+h,+h, -h,+h,-h, -h,-h,-h,
+			-h,-h,+h, -h,-h,-h, +h,-h,-h, +h,-h,+h,
+			-h,-h,-h, -h,+h,-h, +h,+h,-h, +h,-h,-h
+		};
+		glVertexPointer(3, GL_FLOAT, 0, vertices);
+		
+		static GLfloat normals[] = {
+			+1,0,0, +1,0,0, +1,0,0, +1,0,0,
+			0,+1,0, 0,+1,0, 0,+1,0, 0,+1,0,
+			0,0,+1, 0,0,+1, 0,0,+1, 0,0,+1,
+			-1,0,0, -1,0,0, -1,0,0, -1,0,0,
+			0,-1,0, 0,-1,0, 0,-1,0, 0,-1,0,
+			0,0,-1, 0,0,-1, 0,0,-1, 0,0,-1
+		};
+		glNormalPointer(GL_FLOAT, 0, normals);
+
+		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+		static GLfloat tex[] = {
+			1,0, 0,0, 0,1, 1,1,
+			1,1, 1,0, 0,0, 0,1,
+			0,1, 1,1, 1,0, 0,0,
+			0,0, 0,1, 1,1, 1,0,
+			0,0, 0,1, 1,1, 1,0,
+			0,0, 0,1, 1,1, 1,0
+		};
+		glTexCoordPointer(2, GL_FLOAT, 0, tex);
+	
+		GLubyte indices[] = {
+			0,1,2, // right top left
+			0,2,3, // right bottom right
+			4,5,6, // bottom top right
+			4,6,7, // bottom bottom left	
+			8,9,10, // back bottom right
+			8,10,11, // back top left
+			12,13,14, // left bottom right
+			12,14,15, // left top left
+			16,17,18, // ... etc
+			16,18,19,
+			20,21,22,
+			20,22,23
+		};
+		glDrawElements(GL_TRIANGLES, 3 * 6 * 2, GL_UNSIGNED_BYTE, indices);
+		
+		glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 	} else {
-		glDrawElements(GL_LINES, 4 * 2 * 3, GL_UNSIGNED_BYTE, wireIndices);
+		GLfloat vertices[] = {
+			+h,+h,+h,
+			+h,+h,-h,
+			+h,-h,+h,
+			+h,-h,-h,
+			-h,+h,+h,
+			-h,+h,-h,
+			-h,-h,+h,
+			-h,-h,-h
+		};
+		glVertexPointer(3, GL_FLOAT, 0, vertices);
+		
+		static float n = sqrtf(3);
+		static GLfloat normals[] = {
+			+n,+n,+n,
+			+n,+n,-n,
+			+n,-n,+n,
+			+n,-n,-n,
+			-n,+n,+n,
+			-n,+n,-n,
+			-n,-n,+n,
+			-n,-n,-n
+		};
+		glNormalPointer(GL_FLOAT, 0, normals);
+
+		static GLubyte indices[] = {
+			0,1, 1,3, 3,2, 2,0,
+			4,5, 5,7, 7,6, 6,4,
+			0,4, 5,1, 7,3, 6,2
+		};
+		glDrawElements(GL_LINES, 4 * 2 * 3, GL_UNSIGNED_BYTE, indices);
 	}
 	
 	glDisableClientState(GL_VERTEX_ARRAY);
-	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 	glDisableClientState(GL_NORMAL_ARRAY);
 
 	ofPopMatrix();
