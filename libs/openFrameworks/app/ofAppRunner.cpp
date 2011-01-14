@@ -225,8 +225,8 @@ int ofGetHeight(){
 }
 
 //--------------------------------------------------
-ofVec2f	ofGetWindowSize() {
-	return ofVec2f(ofGetWidth(), ofGetHeight());
+ofPoint	ofGetWindowSize() {
+	return ofPoint(ofGetWidth(), ofGetHeight());
 }
 
 

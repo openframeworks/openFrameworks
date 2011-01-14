@@ -1,6 +1,8 @@
 #pragma once
 
 #include "ofConstants.h"
+#include "ofPoint.h"
+#include "ofRectangle.h"
 
 class ofAppBaseWindow;
 class ofBaseApp;
@@ -28,7 +30,7 @@ int 		ofGetScreenHeight();
 int			ofGetWindowMode();
 int 		ofGetWidth();			// <-- should we call this ofGetWindowWidth?
 int 		ofGetHeight();
-ofVec2f		ofGetWindowSize();
+ofPoint		ofGetWindowSize();
 ofRectangle	ofGetWindowRect();
 
 void 		ofSetWindowPosition(int x, int y);
