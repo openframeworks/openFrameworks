@@ -1,9 +1,9 @@
 #pragma once
 
-#include "ofPoint.h"
+#include "ofVec3f.h"
+#include "ofVec2f.h"
 
-
-class ofVec4f : public ofPoint {
+class ofVec4f {
 
 
   public:
@@ -15,6 +15,9 @@ class ofVec4f : public ofPoint {
               float _y=0.0f,
               float _z=0.0f,
               float _w=0.0f );
+		
+		ofVec4f( const ofVec3f& vec);
+		ofVec4f( const ofVec2f& vec);
 
 
     // Getters and Setters.
@@ -163,7 +166,19 @@ inline ofVec4f::ofVec4f( float _x,
 	w = _w;
 }
 
+inline ofVec4f::ofVec4f(const ofVec3f& vec) {
+	x = vec.x;
+	y = vec.y;
+	z = vec.z;
+	w = 0;
+}
 
+inline ofVec4f::ofVec4f(const ofVec2f& vec) {
+	x = vec.x;
+	y = vec.y;
+	z = 0;
+	w = 0;
+}
 
 
 // Getters and Setters.
