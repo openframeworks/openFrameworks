@@ -1,6 +1,6 @@
 #import "ofiPhoneVideoPlayer.h"
 #import "ofxiPhoneExtras.h"
-#import "AVFoundationVideoGrabber.h"
+#import "AVFoundationVideoPlayer.h"
 
 ofiPhoneVideoPlayer::ofiPhoneVideoPlayer() {
 	videoPlayer=NULL;
@@ -28,7 +28,7 @@ bool ofiPhoneVideoPlayer::loadMovie(string name) {
 	initWithPath(videoPath);
 	
 	if(videoPlayer != NULL)
-		if(! [(AVFoundationVideoGrabber *)videoPlayer isInErrorState])
+		if(! [(AVFoundationVideoPlayer *)videoPlayer isInErrorState])
 			return true;
 	return false;
 }
@@ -37,7 +37,7 @@ bool ofiPhoneVideoPlayer::loadMovie(string name) {
 
 void ofiPhoneVideoPlayer::close() {
 	if(videoPlayer != NULL)
-		[(AVFoundationVideoGrabber *)videoPlayer release];
+		[(AVFoundationVideoPlayer *)videoPlayer release];
 	videoPlayer = NULL;
 }
 
@@ -48,9 +48,9 @@ void ofiPhoneVideoPlayer::play() {
 	lastUpdateTime=ofGetElapsedTimef();
 	
 	if(videoPlayer != NULL)
-		[(AVFoundationVideoGrabber *)videoPlayer play];
+		[(AVFoundationVideoPlayer *)videoPlayer play];
 	else if(videoWasStopped || getIsMovieDone()) {
-		[(AVFoundationVideoGrabber *)videoPlayer release];
+		[(AVFoundationVideoPlayer *)videoPlayer release];
 		initWithPath(videoPath);
 		play();
 	}
@@ -62,7 +62,7 @@ void ofiPhoneVideoPlayer::play() {
 
 void ofiPhoneVideoPlayer::stop() {
 	if(videoPlayer != NULL) {
-		[(AVFoundationVideoGrabber *)videoPlayer pause];
+		[(AVFoundationVideoPlayer *)videoPlayer pause];
 		close();
 		videoWasStopped=true;
 	}
@@ -74,7 +74,7 @@ void ofiPhoneVideoPlayer::stop() {
 
 bool ofiPhoneVideoPlayer::isFrameNew() {
 	if(videoPlayer != NULL) {
-		return [(AVFoundationVideoGrabber *)videoPlayer hasNewFrame];
+		return [(AVFoundationVideoPlayer *)videoPlayer hasNewFrame];
 	}	
 	return false;
 }
@@ -88,7 +88,7 @@ unsigned char * ofiPhoneVideoPlayer::getPixels() {
 		
 		NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
 		
-		CVImageBufferRef imageBuffer = [(AVFoundationVideoGrabber *)videoPlayer getCurrentFrame]; 
+		CVImageBufferRef imageBuffer = [(AVFoundationVideoPlayer *)videoPlayer getCurrentFrame]; 
 		/*Lock the image buffer*/
 		CVPixelBufferLockBaseAddress(imageBuffer,0); 
 		
@@ -136,7 +136,7 @@ ofTexture * ofiPhoneVideoPlayer::getTexture()
 {
 	if(videoPlayer != NULL)
 	{
-		CVImageBufferRef imageBuffer = [(AVFoundationVideoGrabber *)videoPlayer getCurrentFrame]; 
+		CVImageBufferRef imageBuffer = [(AVFoundationVideoPlayer *)videoPlayer getCurrentFrame]; 
 
 		CVPixelBufferLockBaseAddress(imageBuffer,0); 
 
@@ -187,7 +187,7 @@ float ofiPhoneVideoPlayer::getHeight() {
 
 bool ofiPhoneVideoPlayer::isPaused() {
 	if(videoPlayer != NULL)
-		return [(AVFoundationVideoGrabber *)videoPlayer isPaused];
+		return [(AVFoundationVideoPlayer *)videoPlayer isPaused];
 	
 	cerr<<"video is not loaded - isPaused"<<endl;
 	return false;
@@ -196,7 +196,7 @@ bool ofiPhoneVideoPlayer::isPaused() {
 //----------------------------------------
 
 bool ofiPhoneVideoPlayer::isLoaded() {
-	if(videoPlayer != NULL && ! [(AVFoundationVideoGrabber *)videoPlayer isInErrorState])
+	if(videoPlayer != NULL && ! [(AVFoundationVideoPlayer *)videoPlayer isInErrorState])
 		return true;
 	else
 		return false;
@@ -206,7 +206,7 @@ bool ofiPhoneVideoPlayer::isLoaded() {
 
 bool ofiPhoneVideoPlayer::isPlaying() {
 	if(videoPlayer != NULL) {
-		if([(AVFoundationVideoGrabber *)videoPlayer isFinished] || [(AVFoundationVideoGrabber *)videoPlayer isPaused] || [(AVFoundationVideoGrabber *)videoPlayer isInErrorState])
+		if([(AVFoundationVideoPlayer *)videoPlayer isFinished] || [(AVFoundationVideoPlayer *)videoPlayer isPaused] || [(AVFoundationVideoPlayer *)videoPlayer isInErrorState])
 			return false;
 		else
 			return true;
@@ -218,21 +218,21 @@ bool ofiPhoneVideoPlayer::isPlaying() {
 void ofiPhoneVideoPlayer::update() {
 	if(videoPlayer != NULL) {
 		float t = ofGetElapsedTimef();
-		[(AVFoundationVideoGrabber *)videoPlayer updateWithElapsedTime:(t-lastUpdateTime)*playbackSpeed];
+		[(AVFoundationVideoPlayer *)videoPlayer updateWithElapsedTime:(t-lastUpdateTime)*playbackSpeed];
 		lastUpdateTime=t;
 	}
 }
 
 float ofiPhoneVideoPlayer::getPosition() {
 	if(videoPlayer != NULL)
-		return [(AVFoundationVideoGrabber *)videoPlayer getVideoPosition];
+		return [(AVFoundationVideoPlayer *)videoPlayer getVideoPosition];
 	else
 	return 0;
 }
 
 float ofiPhoneVideoPlayer::getDuration() {
 	if(videoPlayer != NULL)
-		return [(AVFoundationVideoGrabber *)videoPlayer getDuration];
+		return [(AVFoundationVideoPlayer *)videoPlayer getDuration];
 	else
 		return 0;
 
@@ -240,23 +240,23 @@ float ofiPhoneVideoPlayer::getDuration() {
 
 bool ofiPhoneVideoPlayer::getIsMovieDone() {
 	if(videoPlayer != NULL)
-		return [(AVFoundationVideoGrabber *)videoPlayer isFinished];
+		return [(AVFoundationVideoPlayer *)videoPlayer isFinished];
 	else
 		return true;
 }
 
 void ofiPhoneVideoPlayer::setPaused(bool bPause) {
 	if(bPause)
-		[(AVFoundationVideoGrabber *)videoPlayer pause];
+		[(AVFoundationVideoPlayer *)videoPlayer pause];
 	else {
-		if([(AVFoundationVideoGrabber *)videoPlayer isPaused])
-			[(AVFoundationVideoGrabber *)videoPlayer play];
+		if([(AVFoundationVideoPlayer *)videoPlayer isPaused])
+			[(AVFoundationVideoPlayer *)videoPlayer play];
 	}
 }
 
 //----------------------------------------
 
 void ofiPhoneVideoPlayer::initWithPath(string path) {
-	videoPlayer = [[AVFoundationVideoGrabber alloc] initWithPath:ofxStringToNSString(ofToDataPath(path))];
+	videoPlayer = [[AVFoundationVideoPlayer alloc] initWithPath:ofxStringToNSString(ofToDataPath(path))];
 	videoWasStopped=false;
 }

@@ -12,9 +12,9 @@ static NSString* const VIDEO_FRAME_EXTRACTOR_PROGRESS = @"progress";
 static NSString* const VIDEO_FRAME_EXTRACTOR_MIDPOINT = @"midpoint";
 
 
-@protocol AVFoundationVideoGrabberStatusListener
+@protocol AVFoundationVideoPlayerStatusListener
 
-- (void)AVFoundationVideoGrabberStatusChanged:(NSString*)message withArgument:(float)argument;
+- (void)AVFoundationVideoPlayerStatusChanged:(NSString*)message withArgument:(float)argument;
 
 @end
 
@@ -23,7 +23,7 @@ using namespace std;
 
 #define NUM_AUDIO_BUFFERS 6
 
-@interface AVFoundationVideoGrabber: NSObject {
+@interface AVFoundationVideoPlayer: NSObject {
 
 	AVURLAsset* asset;
 	AVAssetReader* asset_reader;
@@ -54,7 +54,7 @@ using namespace std;
 	
 	float current_video_time;
 	
-	vector<UIViewController<AVFoundationVideoGrabberStatusListener>*> status_listeners;
+	vector<UIViewController<AVFoundationVideoPlayerStatusListener>*> status_listeners;
 	
 }
 
@@ -63,7 +63,7 @@ using namespace std;
 - (id)initWithURL:(NSURL*)url;
 - (void)dealloc;
 
-- (void)addStatusListener:(UIViewController<AVFoundationVideoGrabberStatusListener>*) listener;
+- (void)addStatusListener:(UIViewController<AVFoundationVideoPlayerStatusListener>*) listener;
 
 - (void)play;
 - (void)pause;

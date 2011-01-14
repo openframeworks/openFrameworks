@@ -7,6 +7,11 @@
 #include "ofTypes.h"
 #include "ofBaseTypes.h"
 
+#ifdef OF_VIDEO_CAPTURE_IPHONE
+	#include "ofiPhoneVideoGrabber.h"
+	#define OF_VID_GRABBER_TYPE ofiPhoneVideoGrabber()
+#endif
+
 #ifdef OF_VIDEO_CAPTURE_QUICKTIME
 	#include "ofQuickTimeGrabber.h"
 	#define OF_VID_GRABBER_TYPE ofQuickTimeGrabber()

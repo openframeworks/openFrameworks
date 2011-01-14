@@ -174,11 +174,18 @@
         #ifdef TARGET_OSX
             #define OF_VIDEO_CAPTURE_QUICKTIME
         #else
-            #define OF_VIDEO_CAPTURE_DIRECTSHOW
+			#ifdef TARGET_OF_IPHONE
+				#define OF_VIDEO_CAPTURE_IPHONE
+			#else
+				#define OF_VIDEO_CAPTURE_DIRECTSHOW
+			#endif
         #endif
     #else
-        // all quicktime, all the time
-        #define OF_VIDEO_CAPTURE_QUICKTIME
+		#ifdef TARGET_OF_IPHONE
+			#define OF_VIDEO_CAPTURE_IPHONE
+		#else
+			#define OF_VIDEO_CAPTURE_QUICKTIME
+		#endif
     #endif
 #endif
 

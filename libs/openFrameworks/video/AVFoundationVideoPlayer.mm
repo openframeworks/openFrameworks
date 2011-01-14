@@ -1,5 +1,5 @@
 
-#import "AVFoundationVideoGrabber.h"
+#import "AVFoundationVideoPlayer.h"
 
 #import <AVFoundation/AVVideoSettings.h>
 #import <AVFoundation/AVAudioSettings.h>
@@ -8,7 +8,7 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 
-@implementation AVFoundationVideoGrabber
+@implementation AVFoundationVideoPlayer
 
 static const int BUFFER_BYTE_SIZE = 8192;
 
@@ -254,7 +254,7 @@ void audioCallback( void* aqData, AudioQueueRef queue, AudioQueueBufferRef buffe
 }
 
 
-- (void)addStatusListener:(UIViewController <AVFoundationVideoGrabberStatusListener>*)listener
+- (void)addStatusListener:(UIViewController <AVFoundationVideoPlayerStatusListener>*)listener
 {
 	status_listeners.push_back( listener );
 }
@@ -263,7 +263,7 @@ void audioCallback( void* aqData, AudioQueueRef queue, AudioQueueBufferRef buffe
 {
 	for ( int i=0; i<status_listeners.size(); i++ )
 	{
-		[status_listeners[i] AVFoundationVideoGrabberStatusChanged:message withArgument:arg];
+		[status_listeners[i] AVFoundationVideoPlayerStatusChanged:message withArgument:arg];
 	}
 }
 
@@ -271,7 +271,7 @@ void audioCallback( void* aqData, AudioQueueRef queue, AudioQueueBufferRef buffe
 
 - (void)updateWithElapsedTime:(float)elapsed
 {
-	//NSLog(@"AVFoundationVideoGrabber: updateWithElapsedTime");
+	//NSLog(@"AVFoundationVideoPlayer: updateWithElapsedTime");
 
 	if(! finished)
 	{
@@ -324,7 +324,7 @@ void audioCallback( void* aqData, AudioQueueRef queue, AudioQueueBufferRef buffe
 
 void audioCallback( void* aqData, AudioQueueRef queue, AudioQueueBufferRef output_buffer)
 {
-	AVFoundationVideoGrabber* extractor = (AVFoundationVideoGrabber*)aqData;
+	AVFoundationVideoPlayer* extractor = (AVFoundationVideoPlayer*)aqData;
 	[extractor audioCallbackWithQueue:queue output:output_buffer];
 
 }
@@ -591,7 +591,7 @@ void audioCallback( void* aqData, AudioQueueRef queue, AudioQueueBufferRef outpu
 
 - (void)dealloc
 {
-	NSLog(@"in AVFoundationVideoGrabber dealloc");
+	NSLog(@"in AVFoundationVideoPlayer dealloc");
 	if ( audio_queue )
 	{
 		NSLog(@"about to AudioQueueStop");
