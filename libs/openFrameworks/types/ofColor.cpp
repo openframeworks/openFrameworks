@@ -5,6 +5,15 @@
 #define RGBMAX	255
 #define HLSMAX	255 
 
+
+ofColor ofColor::gray	= ofColor( 128,128,128 );
+ofColor ofColor::white	= ofColor( 255,255,255 );
+ofColor ofColor::red	= ofColor( 255,0,0 );
+ofColor ofColor::green	= ofColor( 0,255,0 );
+ofColor ofColor::blue	= ofColor( 0,0,255 );
+ofColor ofColor::black	= ofColor( 0,0,0 );
+
+
 ofColor::ofColor (){
 	r = 255.0f;
 	g = 255.0f;
