@@ -1,32 +1,30 @@
 #pragma once
 
-#include "ofVec3f.h"
-#include "ofVec4f.h"
+class ofVec3f;
+class ofVec4f;
 #include "ofConstants.h"
 
 class ofVec2f {
-
-
   public:
+		float x, y;
 
-    ofVec2f( float _x=0.0f, float _y=0.0f );
+		ofVec2f( float _x=0.f, float _y=0.f );
 		
     ofVec2f( const ofVec3f& vec );
     ofVec2f( const ofVec4f& vec );
 
-
     // Getters and Setters.
     //
     void set( float _x, float _y );
-    void set( const ofVec3f& vec );
+    void set( const ofVec2f& vec );
     float &operator[]( const int& i );
 
 
     // Check similarity/equality.
     //
-    bool operator==( const ofVec3f& vec );
-    bool operator!=( const ofVec3f& vec );
-    bool match( const ofVec3f& vec, float tollerance=0.0001 );
+    bool operator==( const ofVec2f& vec );
+    bool operator!=( const ofVec2f& vec );
+    bool match( const ofVec2f& vec, float tollerance=0.0001 );
     /**
     * Checks if vectors look in the same direction.
     * Tollerance is specified in degree.
@@ -37,15 +35,15 @@ class ofVec2f {
 
     // Overloading for any type to any type
     //
-    void 	  operator=( const ofVec3f& vec );
-    ofVec2f  operator+( const ofVec3f& vec ) const;
-    ofVec2f& operator+=( const ofVec3f& vec );
-    ofVec2f  operator-( const ofVec3f& vec ) const;
-    ofVec2f& operator-=( const ofVec3f& vec );
-    ofVec2f  operator*( const ofVec3f& vec ) const;
-    ofVec2f& operator*=( const ofVec3f& vec );
-    ofVec2f  operator/( const ofVec3f& vec ) const;
-    ofVec2f& operator/=( const ofVec3f& vec );
+    void 	  operator=( const ofVec2f& vec );
+    ofVec2f  operator+( const ofVec2f& vec ) const;
+    ofVec2f& operator+=( const ofVec2f& vec );
+    ofVec2f  operator-( const ofVec2f& vec ) const;
+    ofVec2f& operator-=( const ofVec2f& vec );
+    ofVec2f  operator*( const ofVec2f& vec ) const;
+    ofVec2f& operator*=( const ofVec2f& vec );
+    ofVec2f  operator/( const ofVec2f& vec ) const;
+    ofVec2f& operator/=( const ofVec2f& vec );
 
 
     //operator overloading for float
@@ -78,25 +76,25 @@ class ofVec2f {
     
     // Rotation - point around pivot
     //
-    ofVec2f  getRotated( float angle, const ofVec3f& pivot ) const;
-    ofVec2f& rotate( float angle, const ofVec3f& pivot );
-    ofVec2f  getRotatedRad( float angle, const ofVec3f& pivot ) const;
-    ofVec2f& rotateRad( float angle, const ofVec3f& pivot );
+    ofVec2f  getRotated( float angle, const ofVec2f& pivot ) const;
+    ofVec2f& rotate( float angle, const ofVec2f& pivot );
+    ofVec2f  getRotatedRad( float angle, const ofVec2f& pivot ) const;
+    ofVec2f& rotateRad( float angle, const ofVec2f& pivot );
         
 
     // Map point to coordinate system defined by origin, vx, and vy.
     //
-    ofVec2f getMapped( const ofVec3f& origin,
+    ofVec2f getMapped( const ofVec2f& origin,
                         const ofVec2f& vx,
                         const ofVec2f& vy ) const;
-    ofVec2f& map( const ofVec3f& origin,
+    ofVec2f& map( const ofVec2f& origin,
                    const ofVec2f& vx, const ofVec2f& vy );
 
 
     // Distance between two points.
     //
-    float distance( const ofVec3f& pnt) const;
-    float squareDistance( const ofVec3f& pnt ) const;
+    float distance( const ofVec2f& pnt) const;
+    float squareDistance( const ofVec2f& pnt ) const;
 
 
     // Linear interpolation.
@@ -106,11 +104,11 @@ class ofVec2f {
     * p==0.0 results in this point, p==0.5 results in the
     * midpoint, and p==1.0 results in pnt being returned.
     */
-    ofVec2f   getInterpolated( const ofVec3f& pnt, float p ) const;
-    ofVec2f&  interpolate( const ofVec3f& pnt, float p );
-    ofVec2f   getMiddle( const ofVec3f& pnt ) const;
-    ofVec2f&  middle( const ofVec3f& pnt );
-    ofVec2f&  average( const ofVec3f* points, int num );
+    ofVec2f   getInterpolated( const ofVec2f& pnt, float p ) const;
+    ofVec2f&  interpolate( const ofVec2f& pnt, float p );
+    ofVec2f   getMiddle( const ofVec2f& pnt ) const;
+    ofVec2f&  middle( const ofVec2f& pnt );
+    ofVec2f&  average( const ofVec2f* points, int num );
     
     
     // Normalization
@@ -177,19 +175,19 @@ class ofVec2f {
     float lengthSquared() const;
 
     // getInterpolated
-    ofVec2f interpolated( const ofVec3f& pnt, float p ) const;
+    ofVec2f interpolated( const ofVec2f& pnt, float p ) const;
     
     // getMiddled
-    ofVec2f middled( const ofVec3f& pnt ) const;
+    ofVec2f middled( const ofVec2f& pnt ) const;
     
     // getMapped 
-    ofVec2f mapped( const ofVec3f& origin, const ofVec2f& vx, const ofVec2f& vy ) const;
+    ofVec2f mapped( const ofVec2f& origin, const ofVec2f& vx, const ofVec2f& vy ) const;
     
     // squareDistance
-    float distanceSquared( const ofVec3f& pnt ) const;
+    float distanceSquared( const ofVec2f& pnt ) const;
     
     // use getRotated
-    ofVec2f rotated( float angle, const ofVec3f& pivot ) const;    
+    ofVec2f rotated( float angle, const ofVec2f& pivot ) const;    
 };
 
 
@@ -219,17 +217,6 @@ inline ofVec2f::ofVec2f( float _x, float _y ) {
 	y = _y;
 }
 
-inline ofVec2f::ofVec2f( const ofVec3f& vec ) {
-	x = vec.x;
-	y = vec.y;
-}
-
-inline ofVec2f::ofVec2f( const ofVec4f& vec ) {
-	x = vec.x;
-	y = vec.y;
-}
-
-
 // Getters and Setters.
 //
 //
@@ -238,7 +225,7 @@ inline void ofVec2f::set( float _x, float _y ) {
 	y = _y;
 }
 
-inline void ofVec2f::set( const ofVec3f& vec ) {
+inline void ofVec2f::set( const ofVec2f& vec ) {
 	x = vec.x;
 	y = vec.y;
 }
@@ -256,15 +243,15 @@ inline float& ofVec2f::operator[]( const int& i ) {
 // Check similarity/equality.
 //
 //
-inline bool ofVec2f::operator==( const ofVec3f& vec ) {
+inline bool ofVec2f::operator==( const ofVec2f& vec ) {
 	return (x == vec.x) && (y == vec.y);
 }
 
-inline bool ofVec2f::operator!=( const ofVec3f& vec ) {
+inline bool ofVec2f::operator!=( const ofVec2f& vec ) {
 	return (x != vec.x) || (y != vec.y);
 }
 
-inline bool ofVec2f::match( const ofVec3f& vec, float tollerance ) {
+inline bool ofVec2f::match( const ofVec2f& vec, float tollerance ) {
 	return (fabs(x - vec.x) < tollerance)
 		&& (fabs(y - vec.y) < tollerance);
 }
@@ -285,46 +272,46 @@ inline bool ofVec2f::alignRad( const ofVec2f& vec, float tollerance ) const {
 // Overloading for any type to any type
 //
 //
-inline void ofVec2f::operator=( const ofVec3f& vec ){
+inline void ofVec2f::operator=( const ofVec2f& vec ){
 	x = vec.x;
 	y = vec.y;
 }
 
-inline ofVec2f ofVec2f::operator+( const ofVec3f& vec ) const {
+inline ofVec2f ofVec2f::operator+( const ofVec2f& vec ) const {
 	return ofVec2f( x+vec.x, y+vec.y);
 }
 
-inline ofVec2f& ofVec2f::operator+=( const ofVec3f& vec ) {
+inline ofVec2f& ofVec2f::operator+=( const ofVec2f& vec ) {
 	x += vec.x;
 	y += vec.y;
 	return *this;
 }
 
-inline ofVec2f ofVec2f::operator-( const ofVec3f& vec ) const {
+inline ofVec2f ofVec2f::operator-( const ofVec2f& vec ) const {
 	return ofVec2f(x-vec.x, y-vec.y);
 }
 
-inline ofVec2f& ofVec2f::operator-=( const ofVec3f& vec ) {
+inline ofVec2f& ofVec2f::operator-=( const ofVec2f& vec ) {
 	x -= vec.x;
 	y -= vec.y;
 	return *this;
 }
 
-inline ofVec2f ofVec2f::operator*( const ofVec3f& vec ) const {
+inline ofVec2f ofVec2f::operator*( const ofVec2f& vec ) const {
 	return ofVec2f(x*vec.x, y*vec.y);
 }
 
-inline ofVec2f& ofVec2f::operator*=( const ofVec3f& vec ) {
+inline ofVec2f& ofVec2f::operator*=( const ofVec2f& vec ) {
 	x*=vec.x;
 	y*=vec.y;
 	return *this;
 }
 
-inline ofVec2f ofVec2f::operator/( const ofVec3f& vec ) const {
+inline ofVec2f ofVec2f::operator/( const ofVec2f& vec ) const {
 	return ofVec2f( vec.x!=0 ? x/vec.x : x , vec.y!=0 ? y/vec.y : y);
 }
 
-inline ofVec2f& ofVec2f::operator/=( const ofVec3f& vec ) {
+inline ofVec2f& ofVec2f::operator/=( const ofVec2f& vec ) {
 	vec.x!=0 ? x/=vec.x : x;
 	vec.y!=0 ? y/=vec.y : y;
 	return *this;
@@ -456,17 +443,17 @@ inline ofVec2f& ofVec2f::rotateRad( float angle ) {
 //
 
 // This method is deprecated in 006 please use getRotated instead
-inline ofVec2f ofVec2f::rotated( float angle, const ofVec3f& pivot ) const {
+inline ofVec2f ofVec2f::rotated( float angle, const ofVec2f& pivot ) const {
 	return getRotated(angle, pivot);
 }
 
-inline ofVec2f ofVec2f::getRotated( float angle, const ofVec3f& pivot ) const {
+inline ofVec2f ofVec2f::getRotated( float angle, const ofVec2f& pivot ) const {
 	float a = (float)(angle * DEG_TO_RAD);
 	return ofVec2f( ((x-pivot.x)*cos(a) - (y-pivot.y)*sin(a)) + pivot.x,
                      ((x-pivot.x)*sin(a) + (y-pivot.y)*cos(a)) + pivot.y );
 }
 
-inline ofVec2f& ofVec2f::rotate( float angle, const ofVec3f& pivot ) {
+inline ofVec2f& ofVec2f::rotate( float angle, const ofVec2f& pivot ) {
 	float a = (float)(angle * DEG_TO_RAD);
 	float xrot = ((x-pivot.x)*cos(a) - (y-pivot.y)*sin(a)) + pivot.x;
 	y = ((x-pivot.x)*sin(a) + (y-pivot.y)*cos(a)) + pivot.y;
@@ -474,13 +461,13 @@ inline ofVec2f& ofVec2f::rotate( float angle, const ofVec3f& pivot ) {
 	return *this;
 }
 
-inline ofVec2f ofVec2f::getRotatedRad( float angle, const ofVec3f& pivot ) const {
+inline ofVec2f ofVec2f::getRotatedRad( float angle, const ofVec2f& pivot ) const {
 	float a = angle;
 	return ofVec2f( ((x-pivot.x)*cos(a) - (y-pivot.y)*sin(a)) + pivot.x,
                      ((x-pivot.x)*sin(a) + (y-pivot.y)*cos(a)) + pivot.y );
 }
 
-inline ofVec2f& ofVec2f::rotateRad( float angle, const ofVec3f& pivot ) {
+inline ofVec2f& ofVec2f::rotateRad( float angle, const ofVec2f& pivot ) {
 	float a = angle;
 	float xrot = ((x-pivot.x)*cos(a) - (y-pivot.y)*sin(a)) + pivot.x;
 	y = ((x-pivot.x)*sin(a) + (y-pivot.y)*cos(a)) + pivot.y;
@@ -495,13 +482,13 @@ inline ofVec2f& ofVec2f::rotateRad( float angle, const ofVec3f& pivot ) {
 //
 
 // This method is deprecated in 006 please use getMapped instead
-inline ofVec2f ofVec2f::mapped( const ofVec3f& origin,
+inline ofVec2f ofVec2f::mapped( const ofVec2f& origin,
 					              const ofVec2f& vx,
 					              const ofVec2f& vy ) const{
 	return getMapped(origin, vx, vy);
 }
 
-inline ofVec2f ofVec2f::getMapped( const ofVec3f& origin,
+inline ofVec2f ofVec2f::getMapped( const ofVec2f& origin,
 				                     const ofVec2f& vx,
 				                     const ofVec2f& vy ) const
 {
@@ -509,7 +496,7 @@ inline ofVec2f ofVec2f::getMapped( const ofVec3f& origin,
                      origin.y + x*vx.y + y*vy.y );
 }
 
-inline ofVec2f& ofVec2f::map( const ofVec3f& origin,
+inline ofVec2f& ofVec2f::map( const ofVec2f& origin,
 				                const ofVec2f& vx, const ofVec2f& vy )
 {
 	float xmap = origin.x + x*vx.x + y*vy.x;
@@ -522,18 +509,18 @@ inline ofVec2f& ofVec2f::map( const ofVec3f& origin,
 // Distance between two points.
 //
 //
-inline float ofVec2f::distance( const ofVec3f& pnt) const {
+inline float ofVec2f::distance( const ofVec2f& pnt) const {
 	float vx = x-pnt.x;
 	float vy = y-pnt.y;
 	return (float)sqrt(vx*vx + vy*vy);
 }
 
 //this method is deprecated in 006 please use squareDistance
-inline float ofVec2f::distanceSquared( const ofVec3f& pnt ) const {
+inline float ofVec2f::distanceSquared( const ofVec2f& pnt ) const {
 	return squareDistance(pnt);
 }
 
-inline float ofVec2f::squareDistance( const ofVec3f& pnt ) const {
+inline float ofVec2f::squareDistance( const ofVec2f& pnt ) const {
 	float vx = x-pnt.x;
 	float vy = y-pnt.y;
 	return vx*vx + vy*vy;
@@ -550,30 +537,30 @@ inline float ofVec2f::squareDistance( const ofVec3f& pnt ) const {
 */
 
 // this method is deprecated in 006 please use getInterpolated
-inline ofVec2f ofVec2f::interpolated( const ofVec3f& pnt, float p ) const{
+inline ofVec2f ofVec2f::interpolated( const ofVec2f& pnt, float p ) const{
 	return getInterpolated(pnt, p);
 }
 
-inline ofVec2f ofVec2f::getInterpolated( const ofVec3f& pnt, float p ) const {
+inline ofVec2f ofVec2f::getInterpolated( const ofVec2f& pnt, float p ) const {
 	return ofVec2f( x*(1-p) + pnt.x*p, y*(1-p) + pnt.y*p );
 }
 
-inline ofVec2f& ofVec2f::interpolate( const ofVec3f& pnt, float p ) {
+inline ofVec2f& ofVec2f::interpolate( const ofVec2f& pnt, float p ) {
 	x = x*(1-p) + pnt.x*p;
 	y = y*(1-p) + pnt.y*p;
 	return *this;
 }
 
 // this method is deprecated in 006 please use getMiddle
-inline ofVec2f ofVec2f::middled( const ofVec3f& pnt ) const{
+inline ofVec2f ofVec2f::middled( const ofVec2f& pnt ) const{
 	return getMiddle(pnt);
 }
 
-inline ofVec2f ofVec2f::getMiddle( const ofVec3f& pnt ) const {
+inline ofVec2f ofVec2f::getMiddle( const ofVec2f& pnt ) const {
 	return ofVec2f( (x+pnt.x)/2.0f, (y+pnt.y)/2.0f );
 }
 
-inline ofVec2f& ofVec2f::middle( const ofVec3f& pnt ) {
+inline ofVec2f& ofVec2f::middle( const ofVec2f& pnt ) {
 	x = (x+pnt.x)/2.0f;
 	y = (y+pnt.y)/2.0f;
 	return *this;
@@ -585,7 +572,7 @@ inline ofVec2f& ofVec2f::middle( const ofVec3f& pnt ) {
 // Addition is sometimes useful for calculating averages too.
 //
 //
-inline ofVec2f& ofVec2f::average( const ofVec3f* points, int num ) {
+inline ofVec2f& ofVec2f::average( const ofVec2f* points, int num ) {
 	x = 0.f;
 	y = 0.f;
 	for( int i=0; i<num; i++) {
