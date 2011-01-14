@@ -8,7 +8,6 @@
 #ifdef TARGET_WIN32
 	#define GLUT_BUILDING_LIB
 	#include "glut.h"
-	#include "Poco/UnicodeConverter.h"
 #endif
 #ifdef TARGET_OSX
 	#include <GLUT/glut.h>
@@ -79,13 +78,22 @@ void HandleFiles(WPARAM wParam)
     // Here we cast the wParam as a HDROP handle to pass into the next functions
     HDROP hDrop = (HDROP)wParam;
 
+	POINT pt;
+	DragQueryPoint(hDrop, &pt);
+	//printf("%i %i \n", pt.x, pt.y);
+	
+	dragInfo info;
+	info.position.x = pt.x;
+	info.position.y = pt.y;
+
+
     // This functions has a couple functionalities.  If you pass in 0xFFFFFFFF in
     // the second parameter then it returns the count of how many filers were drag
     // and dropped.  Otherwise, the function fills in the szName string array with
     // the current file being queried.
     int count = DragQueryFile(hDrop, 0xFFFFFFFF, szName, MAX_PATH);
 
-	vector < string > files; 
+	
     // Here we go through all the files that were drag and dropped then display them
     for(int i = 0; i < count; i++)
     {
@@ -100,7 +108,7 @@ void HandleFiles(WPARAM wParam)
 		while( *s != L'\0' ) {
 			stm << std::use_facet< std::ctype<wchar_t> >( loc ).narrow( *s++, dfault );
 		}
-		files.push_back(string(stm.str()));
+		info.files.push_back(string(stm.str()));
 		
 			//toUTF8(udispName, dispName);
 
@@ -112,7 +120,7 @@ void HandleFiles(WPARAM wParam)
     // allocated by the application is released.
     DragFinish(hDrop);
 
-	ofAppPtr->dragEvent(files);
+	ofAppPtr->dragEvent(info);
 
 }
 
@@ -670,14 +678,17 @@ void ofAppGlutWindow::passive_motion_cb(int x, int y) {
 
 void ofAppGlutWindow::dragEvent(char ** names, int howManyFiles){
 	
-	vector < string > files;
-	
+	// TODO: we need position info on mac passed through
+	dragInfo info;
+	info.position.x = 0;
+	info.position.y = 0;
+
 	for (int i = 0; i < howManyFiles; i++){
 		string temp = string(names[i]);
-		files.push_back(temp);
+		info.files.push_back(temp);
 	}
 	
-	ofAppPtr->dragEvent(files);
+	ofAppPtr->dragEvent(info);
 	
 }
 
