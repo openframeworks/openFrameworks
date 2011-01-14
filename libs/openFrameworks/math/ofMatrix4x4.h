@@ -1,7 +1,7 @@
 /*
  *  ofMatrix4x4.h
  *  
- *  Created by Aaron Meyers on 6/22/09 -- modified by Arturo Castro and Zach Lieberman
+ *  Created by Aaron Meyers on 6/22/09 -- modified by Arturo Castro, Zach Lieberman, Memo Akten
  *  based on code from OSG - 
  *  see OSG license for more details: 
  *  http://www.openscenegraph.org/projects/osg/wiki/Legal
@@ -25,12 +25,11 @@
 #endif
 
 
-class ofMatrix4x4;
-
 class ofMatrix4x4 {
 public:
-	float _mat[4][4];
-
+//	float _mat[4][4];
+	ofVec4f _mat[4];
+	
 	//---------------------------------------------
 	// constructors
 	ofMatrix4x4() {
@@ -45,6 +44,7 @@ public:
 	ofMatrix4x4( const ofQuaternion& quat ) {
 		makeRotationMatrix(quat);
 	}
+
 	ofMatrix4x4(	float a00, float a01, float a02, float a03,
 	              float a10, float a11, float a12, float a13,
 	              float a20, float a21, float a22, float a23,
@@ -72,6 +72,19 @@ public:
 		return _mat[row][col];
 	}
 
+	//----------------------------------------
+	ofVec3f getRowAsVec3f(int i) const {
+		return ofVec3f(_mat[i][0], _mat[i][1], _mat[i][2]);
+	}
+	
+	//----------------------------------------
+	ofVec4f getRowAsVec4f(int i) const {
+		return _mat[i];
+	}
+	
+	friend ostream& operator<<(ostream& os, const ofMatrix4x4& M);
+	friend istream& operator>>(istream& is, ofMatrix4x4& M);
+	
 	//---------------------------------------------
 	// check if the matrix is valid
 	bool isValid() const {
@@ -357,6 +370,8 @@ public:
 		r.makeFromMultiplicationOf(*this, m);
 		return  r;
 	}
+	
+	
 
 	void preMult( const ofMatrix4x4& );
 
@@ -385,9 +400,6 @@ public:
 	inline void preMultTranslate( const ofVec3f& v );
 	// equivalent to preMult(newRotationMatrix(q));
 	inline void preMultRotate( const ofQuaternion& q );
-
-
-
 };
 
 
@@ -415,6 +427,60 @@ return std::isnan(_mat[0][0]) || std::isnan(_mat[0][1]) || std::isnan(_mat[0][2]
 #endif
 	
 }
+
+
+
+inline ostream& operator<<(ostream& os, const ofMatrix4x4& M) {
+	int w = 8;
+	os	<< setw(w)
+		<< M._mat[0][0] << ", " << setw(w)
+		<< M._mat[0][1] << ", " << setw(w)
+		<< M._mat[0][2] << ", " << setw(w) 
+		<< M._mat[0][3] << std::endl;
+		
+	os	<< setw(w)
+		<< M._mat[1][0] << ", " << setw(w) 
+		<< M._mat[1][1] << ", " << setw(w)
+		<< M._mat[1][2] << ", " << setw(w) 
+		<< M._mat[1][3] << std::endl;
+	
+	os	<< setw(w)
+		<< M._mat[2][0] << ", " << setw(w) 
+		<< M._mat[2][1] << ", " << setw(w)
+		<< M._mat[2][2] << ", " << setw(w) 
+		<< M._mat[2][3] << std::endl;
+	
+	os	<< setw(w)
+		<< M._mat[3][0] << ", " << setw(w) 
+		<< M._mat[3][1] << ", " << setw(w)
+		<< M._mat[3][2] << ", " << setw(w) 
+		<< M._mat[3][3];
+	
+	return os;
+}
+
+inline istream& operator>>(istream& is, ofMatrix4x4& M) {
+	is >> M._mat[0][0]; is.ignore(2); 
+	is >> M._mat[0][1]; is.ignore(2);
+	is >> M._mat[0][2]; is.ignore(2);
+	is >> M._mat[0][3]; is.ignore(1);
+	
+	is >> M._mat[1][0]; is.ignore(2); 
+	is >> M._mat[1][1]; is.ignore(2);
+	is >> M._mat[1][2]; is.ignore(2);
+	is >> M._mat[1][3]; is.ignore(1);
+	
+	is >> M._mat[1][0]; is.ignore(2); 
+	is >> M._mat[1][1]; is.ignore(2);
+	is >> M._mat[1][2]; is.ignore(2);
+	is >> M._mat[1][3]; is.ignore(1);
+	
+	is >> M._mat[1][0]; is.ignore(2); 
+	is >> M._mat[1][1]; is.ignore(2);
+	is >> M._mat[1][2]; is.ignore(2);
+	is >> M._mat[1][3];
+}
+
 
 inline ofMatrix4x4& ofMatrix4x4::operator = (const ofMatrix4x4& rhs) {
 	if ( &rhs == this ) return *this;
@@ -610,7 +676,7 @@ inline ofVec3f ofMatrix4x4::transform3x3(const ofMatrix4x4& m, const ofVec3f& v)
 
 inline void ofMatrix4x4::preMultTranslate( const ofVec3f& v ) {
 	for (unsigned i = 0; i < 3; ++i) {
-		float tmp = v.v[i];
+		float tmp = v.getPtr()[i];
 		if (tmp == 0)
 			continue;
 		_mat[3][0] += tmp * _mat[i][0];
@@ -622,7 +688,7 @@ inline void ofMatrix4x4::preMultTranslate( const ofVec3f& v ) {
 
 inline void ofMatrix4x4::postMultTranslate( const ofVec3f& v ) {
 	for (unsigned i = 0; i < 3; ++i) {
-		float tmp = v.v[i];
+		float tmp = v.getPtr()[i];
 		if (tmp == 0)
 			continue;
 		_mat[0][i] += tmp * _mat[0][3];
@@ -655,33 +721,33 @@ inline void ofMatrix4x4::postMultTranslate( float x, float y, float z) {
 }
 
 inline void ofMatrix4x4::preMultScale( const ofVec3f& v ) {
-	_mat[0][0] *= v.v[0];
-	_mat[0][1] *= v.v[0];
-	_mat[0][2] *= v.v[0];
-	_mat[0][3] *= v.v[0];
-	_mat[1][0] *= v.v[1];
-	_mat[1][1] *= v.v[1];
-	_mat[1][2] *= v.v[1];
-	_mat[1][3] *= v.v[1];
-	_mat[2][0] *= v.v[2];
-	_mat[2][1] *= v.v[2];
-	_mat[2][2] *= v.v[2];
-	_mat[2][3] *= v.v[2];
+	_mat[0][0] *= v.getPtr()[0];
+	_mat[0][1] *= v.getPtr()[0];
+	_mat[0][2] *= v.getPtr()[0];
+	_mat[0][3] *= v.getPtr()[0];
+	_mat[1][0] *= v.getPtr()[1];
+	_mat[1][1] *= v.getPtr()[1];
+	_mat[1][2] *= v.getPtr()[1];
+	_mat[1][3] *= v.getPtr()[1];
+	_mat[2][0] *= v.getPtr()[2];
+	_mat[2][1] *= v.getPtr()[2];
+	_mat[2][2] *= v.getPtr()[2];
+	_mat[2][3] *= v.getPtr()[2];
 }
 
 inline void ofMatrix4x4::postMultScale( const ofVec3f& v ) {
-	_mat[0][0] *= v.v[0];
-	_mat[1][0] *= v.v[0];
-	_mat[2][0] *= v.v[0];
-	_mat[3][0] *= v.v[0];
-	_mat[0][1] *= v.v[1];
-	_mat[1][1] *= v.v[1];
-	_mat[2][1] *= v.v[1];
-	_mat[3][1] *= v.v[1];
-	_mat[0][2] *= v.v[2];
-	_mat[1][2] *= v.v[2];
-	_mat[2][2] *= v.v[2];
-	_mat[3][2] *= v.v[2];
+	_mat[0][0] *= v.getPtr()[0];
+	_mat[1][0] *= v.getPtr()[0];
+	_mat[2][0] *= v.getPtr()[0];
+	_mat[3][0] *= v.getPtr()[0];
+	_mat[0][1] *= v.getPtr()[1];
+	_mat[1][1] *= v.getPtr()[1];
+	_mat[2][1] *= v.getPtr()[1];
+	_mat[3][1] *= v.getPtr()[1];
+	_mat[0][2] *= v.getPtr()[2];
+	_mat[1][2] *= v.getPtr()[2];
+	_mat[2][2] *= v.getPtr()[2];
+	_mat[3][2] *= v.getPtr()[2];
 }
 
 inline void ofMatrix4x4::rotate(const ofQuaternion& q){
