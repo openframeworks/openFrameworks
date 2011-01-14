@@ -1,17 +1,17 @@
 #pragma once
 
 #include <gst/gst.h>
-#include <pthread.h>
 #include "ofConstants.h"
 #include "ofBaseTypes.h"
 #include "ofPixels.h"
+#include "ofTypes.h"
 
-typedef struct{
+struct ofGstVideoData{
 	GMainLoop 		*	loop;
 	GstElement 		*	pipeline;
 	ofPixels			pixels;				// 24 bit: rgb
 	unsigned			totalsize;
-	pthread_mutex_t 	buffer_mutex;
+	ofMutex			 	buffer_mutex;
 	bool				bHavePixelsChanged;
 
 	guint64				durationNanos;
@@ -20,37 +20,33 @@ typedef struct{
 	float				speed;
 
 	guint64				lastFrame;
-}ofGstVideoData;
+};
 
-typedef struct
-{
+struct ofGstFramerate{
   int numerator;
   int denominator;
-} ofGstFramerate;
+};
 
-typedef struct
-{
+struct ofGstVideoFormat{
   string mimetype;
   int    width;
   int    height;
   vector<ofGstFramerate> framerates;
   ofGstFramerate choosen_framerate;
-} ofGstVideoFormat;
+};
 
-typedef struct
-{
+struct ofGstDevice{
   string video_device;
   string gstreamer_src;
   string product_name;
   vector<ofGstVideoFormat> video_formats;
   int current_format;
-} ofGstDevice;
+};
 
-typedef struct
-{
+struct ofGstCamData{
   vector<ofGstDevice> webcam_devices;
   bool bInited;
-} ofGstCamData;
+};
 
 class ofGstUtils: public ofBaseVideoPlayer, public ofBaseVideoGrabber {
 public:
@@ -106,8 +102,6 @@ public:
 	void close();
 
 protected:
-	void                seek_lock();
-	void                seek_unlock();
 	void 				gstHandleMessage();
 	bool 				allocate(int width=0, int height=0, int bpp=24);
 	bool				startPipeline(int width=0, int height=0, int bpp=24);
@@ -135,9 +129,6 @@ protected:
 
 	int					attemptFramerate;
 	bool 				bLoaded;
-	//bool				allocated;				// so we know to free pixels or not
-
-	pthread_mutex_t 	seek_mutex;
 
 
 	// common with gstdata
