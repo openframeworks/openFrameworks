@@ -8,6 +8,13 @@
 	#include "sys/time.h"
 #endif
 
+#ifdef TARGET_OSX 	
+	#ifndef TARGET_OF_IPHONE
+		#include <mach-o/dyld.h>
+		#include <sys/param.h> // for MAXPATHLEN	 	
+	#endif
+#endif 
+
 #ifdef TARGET_WIN32
     #include <mmsystem.h>
 	#ifdef _MSC_VER
@@ -144,7 +151,33 @@ void ofSetDataPathRoot(string newRoot){
 	
 	#ifdef TARGET_OSX
 		#ifndef TARGET_OF_IPHONE 
-			newPath = ofFileUtils::getCurrentWorkingDirectory();
+			char path[MAXPATHLEN];
+			uint32_t size = sizeof(path);				
+
+			if (_NSGetExecutablePath(path, &size) == 0){
+				//printf("executable path is %s\n", path);
+				string pathStr = string(path);
+
+				//theo: check this with having '/' as a character in a folder name - OSX treats the '/' as a ':'
+				//checked with spaces too!
+
+				vector < string> pathBrokenUp = ofSplitString( pathStr, "/");
+
+				newPath = "/";
+
+				for(int i = 0; i < pathBrokenUp.size()-1; i++){				
+					newPath += pathBrokenUp[i];
+					newPath += "/";
+				}
+
+				//cout << newPath << endl;   // some sanity checks here				
+				//system( "pwd" );
+
+				chdir ( newPath.c_str() );				
+				//system("pwd");        
+			}else{				
+				ofLog(OF_LOG_FATAL_ERROR, "buffer too small; need size %u\n", size);
+			}
 		#endif 
 	#endif
 		
