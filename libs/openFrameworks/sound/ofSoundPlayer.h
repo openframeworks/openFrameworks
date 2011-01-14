@@ -1,5 +1,4 @@
-#ifndef _OF_SAMPLE_SOUND
-#define _OF_SAMPLE_SOUND
+#pragma once
 
 #include "ofConstants.h"
 
@@ -77,4 +76,3 @@ class ofSoundPlayer {
 		#endif
 };
 
-#endif // _OF_SAMPLE_SOUND

@@ -1,7 +1,7 @@
 #include "testApp.h"
-#include "ofQuicktimeSoundPlayer.h"
+#include "ofSoundPlayer_.h"
 
-ofQuicktimeSoundPlayer  blah;
+ofSoundPlayer_  blah;
 
 //--------------------------------------------------------------
 void testApp::setup(){
@@ -11,9 +11,10 @@ void testApp::setup(){
 	
 	
 	blah.loadSound("beat.wav");
-	blah.enableSpectrumCalculation(10);
 	
+	//blah.enableSpectrumCalculation(10);
 	//blah.setSpeed(0);
+
 }
 
 //--------------------------------------------------------------
@@ -27,21 +28,21 @@ void testApp::draw(){
 	ofFill();
 	ofSetColor(0);
 	
+	/*
 	FFTResults results = blah.getSpectrum();
-	
 	int divAmount = results.numberOfBands;
-	
 	for (int i = 0; i < divAmount; i++){
 		ofRect(ofGetWidth()/divAmount * i, 0, ofGetWidth()/divAmount, ofGetHeight()/2.0 *(1 - results.fftValuesL[i]));
 		ofRect(ofGetWidth()/divAmount * i, ofGetHeight()/2.0, ofGetWidth()/divAmount, ofGetHeight()/2.0 *(1 - results.fftValuesR[i]));
 	}
+	*/
 }
 
 //--------------------------------------------------------------
 void testApp::keyPressed(int key){
 	
 	//blah.setSpeed(0);
-	blah.tryMultiPlay();
+	//blah.tryMultiPlay();
 }
 
 //--------------------------------------------------------------

@@ -1,6 +1,20 @@
 #include "ofAppGlutWindow.h"
 #include "ofBaseApp.h"
 #include "ofMain.h"
+#include "ofEvents.h"
+
+#ifdef TARGET_WIN32
+	#define GLUT_BUILDING_LIB
+	#include "glut.h"
+#endif
+#ifdef TARGET_OSX
+	#include <GLUT/glut.h>
+#endif
+#ifdef TARGET_LINUX
+	#include <GL/glut.h>
+#endif
+
+
 #include <set>
 
 // glut works with static callbacks UGH, so we need static variables here:
@@ -12,6 +26,8 @@ int				nFramesForFPS;
 int				nFrameCount;
 int				buttonInUse;
 bool			bEnableSetupScreen;
+
+bool			bPreMouseNotSet;
 
 bool			bFrameRateSet;
 int 			millisForFrame;
@@ -30,6 +46,7 @@ int				windowW;
 int				windowH;
 ofBaseApp *		ofAppPtr;
 int				currentMouseX, currentMouseY;
+int				previousMouseX, previousMouseY;
 int             nFramesSinceWindowResized;
 
 static set<int> pressedMouseButtons;
@@ -110,6 +127,9 @@ ofAppGlutWindow::ofAppGlutWindow(){
 	nonFullScreenY		= -1;
 	currentMouseX		= 0;
 	currentMouseY		= 0;
+	previousMouseX		= 0;
+	previousMouseY		= 0;
+	bPreMouseNotSet		= true;
 	lastFrameTime		= 0.0;
 	displayString		= "";
 
@@ -143,9 +163,6 @@ void ofAppGlutWindow::setupOpenGL(int w, int h, int screenMode){
 	if (windowMode != OF_GAME_MODE){
 		glutInitWindowSize(w, h);
 		glutCreateWindow("");
-
-		//Default colors etc are now in ofGraphics - ofSetupGraphicDefaults
-		ofSetupGraphicDefaults();
 
 		/*
 		ofBackground(200,200,200);		// default bg color
@@ -376,6 +393,16 @@ int ofAppGlutWindow::getMouseY(){
 }
 
 //------------------------------------------------------------
+int ofAppGlutWindow::getPreviousMouseX(){
+	return previousMouseX;
+}
+
+//------------------------------------------------------------
+int ofAppGlutWindow::getPreviousMouseY(){
+	return previousMouseY;
+}
+
+//------------------------------------------------------------
 void ofAppGlutWindow::display(void){
 	static ofEventArgs voidEventArgs;
 
@@ -493,7 +520,16 @@ void ofAppGlutWindow::display(void){
 void ofAppGlutWindow::mouse_cb(int button, int state, int x, int y) {
 
 	if (nFrameCount > 0){
-
+	
+		if( bPreMouseNotSet ){
+			previousMouseX	= x;
+			previousMouseY	= y;
+			bPreMouseNotSet	= false;
+		}else{
+			previousMouseX = currentMouseX;
+			previousMouseY = currentMouseY;		
+		}
+				
 		currentMouseX = x;
 		currentMouseY = y;
 		
@@ -519,6 +555,15 @@ void ofAppGlutWindow::motion_cb(int x, int y) {
 
 	if (nFrameCount > 0){
 	
+		if( bPreMouseNotSet ){
+			previousMouseX	= x;
+			previousMouseY	= y;
+			bPreMouseNotSet	= false;
+		}else{
+			previousMouseX = currentMouseX;
+			previousMouseY = currentMouseY;		
+		}
+			
 		currentMouseX = x;
 		currentMouseY = y;
 	
@@ -536,6 +581,16 @@ void ofAppGlutWindow::motion_cb(int x, int y) {
 void ofAppGlutWindow::passive_motion_cb(int x, int y) {
 
 	if (nFrameCount > 0){
+	
+		if( bPreMouseNotSet ){
+			previousMouseX	= x;
+			previousMouseY	= y;
+			bPreMouseNotSet	= false;
+		}else{
+			previousMouseX = currentMouseX;
+			previousMouseY = currentMouseY;		
+		}	
+	
 		currentMouseX = x;
 		currentMouseY = y;	
 	

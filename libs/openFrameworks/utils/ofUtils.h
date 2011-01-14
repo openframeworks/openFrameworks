@@ -32,6 +32,18 @@ void	ofEnableDataPath();
 void	ofDisableDataPath();
 string 	ofToDataPath(string path, bool absolute=false);
 
+template<class T> vector<T>& ofRandomize(vector<T>& values) {
+	random_shuffle(values.begin(), values.end());
+}
+
+template<class T, class BoolFunction>
+vector<T>& ofRemove(vector<T>& values, BoolFunction shouldErase) {
+	values.erase(remove_if(values.begin(), values.end(), shouldErase), values.end());
+}
+
+template<class T> vector<T>& ofSort(vector<T>& values) {
+	sort(values.begin(), values.end());
+}
 
 //set the root path that ofToDataPath will use to search for files relative to the app
 //the path must have a trailing slash (/) !!!!
@@ -46,6 +58,17 @@ template <class T> string ofToString(const T& value){
 template <class T> string ofToString(const T& value, int precision){
 	ostringstream out;
 	out << fixed << setprecision(precision) << value;
+	return out.str();
+}
+
+template<class T> string ofToString(const vector<T>& values) {
+	stringstream out;
+	int n = values.size();
+	out << "{";
+	for(int i = 0; i < n - 1; i++) {
+		out << values[i] << ", ";
+	}
+	out << values[n - 1] << "}";
 	return out.str();
 }
 
@@ -108,7 +131,3 @@ void ofLog(int logLevel, string message);
 void ofLog(int logLevel, const char* format, ...);
 void ofSetConsoleColor(int color);
 void ofRestoreConsoleColor();
-
-//--------------------------------------------------
-class ofBuffer;
-bool ofReadFile(const string & path, ofBuffer & file, bool binary=false);

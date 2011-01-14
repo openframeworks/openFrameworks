@@ -1,13 +1,10 @@
-#ifndef _OF_IMAGE_H_
-#define _OF_IMAGE_H_
+#pragma once
 
-#include "ofConstants.h"
+#include "ofFileUtils.h"
 #include "ofTexture.h"
-#include "ofGraphics.h"
-#include "ofAppRunner.h"		// for height()
 #include "FreeImage.h"
-#include "ofUtils.h"
 #include "ofPixels.h"
+#include "ofBaseTypes.h"
 
 //----------------------------------------------------
 // freeImage based stuff:
@@ -68,9 +65,9 @@ class ofImage : public ofBaseImage{
 		void 				resize(int newWidth, int newHeight);
 		void 				grabScreen(int x, int y, int w, int h);		// grab pixels from opengl, using glreadpixels
 
-		// if you've altered the pixels (from getPixels()) call update() to see a change:
-		void				update();
-
+		// if you've altered the pixels (e.g., from getPixels())
+		// call update() to see a change (move the pixels to the texture)
+		void update();
 
 		//the anchor is the point the image is drawn around.
 		//this can be useful if you want to rotate an image around a particular point.
@@ -107,17 +104,10 @@ class ofImage : public ofBaseImage{
 		void				changeTypeOfPixels(ofPixels &pix, ofImageType type);
 		void				resizePixels(ofPixels &pix, int newWidth, int newHeight);
 		static FIBITMAP *	getBmpFromPixels(ofPixels &pix);
-		static void			putBmpIntoPixels(FIBITMAP * bmp, ofPixels &pix);
+		static void			putBmpIntoPixels(FIBITMAP * bmp, ofPixels &pix, bool swapForLittleEndian=true);
 
 
 		ofPixels			myPixels;
 		bool				bUseTexture;
 		ofTexture			tex;
-
-
-
 };
-
-
-
-#endif

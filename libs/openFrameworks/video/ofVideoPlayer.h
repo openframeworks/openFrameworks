@@ -1,5 +1,4 @@
-#ifndef _OF_VIDEO_PLAYER
-#define _OF_VIDEO_PLAYER
+#pragma once
 
 #include "ofConstants.h"
 #include "ofTexture.h"
@@ -37,6 +36,8 @@ class ofVideoPlayer : public ofBaseVideoPlayer, public ofBaseDraws, public ofBas
 
 		bool 				isFrameNew();
 		unsigned char * 	getPixels();
+		ofPixels 			getOFPixels();
+		ofPixels 			getOFPixels() const;
 		float 				getPosition();
 		float 				getSpeed();
 		float 				getDuration();
@@ -44,7 +45,7 @@ class ofVideoPlayer : public ofBaseVideoPlayer, public ofBaseDraws, public ofBas
 
 		void 				setPosition(float pct);
 		void 				setVolume(int volume);
-		void 				setLoopState(int state);
+		void 				setLoopState(ofLoopType state);
 		void   				setSpeed(float speed);
 		void				setFrame(int frame);  // frame 0 = first frame...
 
@@ -86,8 +87,6 @@ class ofVideoPlayer : public ofBaseVideoPlayer, public ofBaseDraws, public ofBas
 		bool bUseTexture;
 
 };
-#endif
-
 
 
 

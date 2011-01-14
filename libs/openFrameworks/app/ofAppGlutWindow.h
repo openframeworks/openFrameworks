@@ -2,19 +2,6 @@
 
 #include "ofConstants.h"
 #include "ofAppBaseWindow.h"
-#include "ofEvents.h"
-
-#ifdef TARGET_WIN32
-	#define GLUT_BUILDING_LIB
-	#include "glut.h"
-#endif
-#ifdef TARGET_OSX
-	#include <GLUT/glut.h>
-#endif
-#ifdef TARGET_LINUX
-	#include <GL/glut.h>
-#endif
-
 class ofPoint;
 class ofBaseApp;
 
@@ -63,6 +50,9 @@ public:
 	
 	int			getMouseX();
 	int			getMouseY();
+
+	int			getPreviousMouseX();
+	int			getPreviousMouseY();
 
 	static void display(void);
 	static void mouse_cb(int button, int state, int x, int y);

@@ -10,9 +10,10 @@
 
 
 #pragma once
-#include "ofConstants.h"
 #include "ofPoint.h"
 #include "ofRectangle.h"
+#include "ofConstants.h"
+class ofPixels;
 
 
 //----------------------------------------------------------
@@ -72,6 +73,8 @@ class ofBaseHasPixels{
 public:
 	virtual ~ofBaseHasPixels(){}
 	virtual unsigned char * getPixels()=0;
+	virtual ofPixels getOFPixels()=0;
+	virtual ofPixels getOFPixels() const=0;
 };
 
 //----------------------------------------------------------
@@ -162,7 +165,7 @@ public:
 	virtual void 				setPaused(bool bPause);
 	virtual void 				setPosition(float pct);
 	virtual void 				setVolume(int volume);
-	virtual void 				setLoopState(int state);
+	virtual void 				setLoopState(ofLoopType state);
 	virtual void   				setSpeed(float speed);
 	virtual void				setFrame(int frame);  // frame 0 = first frame...
 	

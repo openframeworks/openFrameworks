@@ -1,6 +1,7 @@
 #include "ofGraphics.h"
 #include "ofAppRunner.h"
 #include "ofBitmapFont.h"
+#include "ofUtils.h"
 
 #ifdef TARGET_OSX
 	#include <OpenGL/glu.h>
@@ -22,7 +23,19 @@
     #define CALLBACK
 #endif
 
-#include <vector>
+#ifdef TARGET_WIN32
+	#define GLUT_BUILDING_LIB
+	#include "glut.h"
+#endif
+#ifdef TARGET_OSX
+	#include <GLUT/glut.h>
+#endif
+#ifdef TARGET_LINUX
+	#include <GL/glut.h>
+#endif
+
+
+#include <deque>
 
 //----------------------------------------------------------
 // static
@@ -35,15 +48,15 @@ bool 			bSmoothHinted		= false;
 bool			bUsingArbTex		= true;
 bool			bUsingNormalizedTexCoords = false;
 bool 			bBakgroundAuto		= true;
-int 			cornerMode			= OF_RECTMODE_CORNER;
-int 			polyMode			= OF_POLY_WINDING_ODD;
+ofRectMode		cornerMode			= OF_RECTMODE_CORNER;
+ofPolyWindingMode		polyMode	= OF_POLY_WINDING_ODD;
 static ofRectangle viewportRect;	//note we leave this 0,0,0,0 because ofViewport is smart
 
 int				curveResolution = 20;
 
 //style stuff - new in 006
 ofStyle			currentStyle;
-vector <ofStyle> styleHistory;
+deque <ofStyle> styleHistory;
 
 static float circlePts[OF_MAX_CIRCLE_PTS][3];			// [points][axis]
 static float circlePtsScaled[OF_MAX_CIRCLE_PTS][3];		// [points][axis]
@@ -52,7 +65,7 @@ static float linePoints[2][3];							// [points][axis]
 static float rectPoints[4][3];							// [points][axis]
 
 //----------------------------------------------------------
-void  ofSetRectMode(int mode){
+void  ofSetRectMode(ofRectMode mode){
 	if (mode == OF_RECTMODE_CORNER) 		cornerMode = OF_RECTMODE_CORNER;
 	else if (mode == OF_RECTMODE_CENTER) 	cornerMode = OF_RECTMODE_CENTER;
 
@@ -60,7 +73,7 @@ void  ofSetRectMode(int mode){
 }
 
 //----------------------------------------------------------
-int ofGetRectMode(){
+ofRectMode ofGetRectMode(){
 	return 	cornerMode;
 }
 
@@ -635,7 +648,7 @@ void ofBezier(float x0, float y0, float x1, float y1, float x2, float y2, float 
 
 //----------------------------------------
 void ofSphere(float x, float y, float z, float radius) {
-	ofSphere(ofVec3f(x, y, z), radius);
+	ofSphere(ofPoint(x, y, z), radius);
 }
 
 //----------------------------------------
@@ -644,7 +657,7 @@ void ofSphere(float x, float y, float radius) {
 }
 
 //----------------------------------------
-void ofSphere(const ofVec3f& position, float radius) {
+void ofSphere(const ofPoint& position, float radius) {
 	ofPushMatrix();
 	ofTranslate(position);
 	ofSphere(radius);
@@ -652,7 +665,9 @@ void ofSphere(const ofVec3f& position, float radius) {
 }
 
 //----------------------------------------
-inline void ofSphere(float radius) {
+void ofSphere(float radius) {
+	// TODO: add an implementation using ofMesh
+#ifndef TARGET_OPENGLES
 	// this needs to be swapped out with non-glut code
 	// for good references see cinder's implementation from paul bourke:
 	// https://github.com/cinder/Cinder/blob/master/src/cinder/gl/gl.cpp
@@ -660,6 +675,7 @@ inline void ofSphere(float radius) {
 	// and processing's implementation of icospheres:
 	// https://code.google.com/p/processing/source/browse/trunk/processing/core/src/processing/core/PGraphics.java?r=7543
 	// public void sphere(float r)
+	
 	ofPushMatrix();
 	ofRotateX(90);
 	if(ofGetStyle().bFill) {
@@ -668,11 +684,12 @@ inline void ofSphere(float radius) {
 		glutWireSphere(radius, 2 * currentStyle.sphereResolution, currentStyle.sphereResolution);
 	}
 	ofPopMatrix();
+#endif
 }
 
 //----------------------------------------
 void ofBox(float x, float y, float z, float size) {
-	ofBox(ofVec3f(x, y, z), size);
+	ofBox(ofPoint(x, y, z), size);
 }
 
 //----------------------------------------
@@ -681,7 +698,7 @@ void ofBox(float x, float y, float size) {
 }
 
 //----------------------------------------
-void ofBox(const ofVec3f& position, float size) {
+void ofBox(const ofPoint& position, float size) {
 	ofPushMatrix();
 	ofTranslate(position);
 	ofBox(size);
@@ -689,13 +706,63 @@ void ofBox(const ofVec3f& position, float size) {
 }
 
 //----------------------------------------
-inline void ofBox(float size) {
-	// this needs to be swapped out with non-glut code
+void ofBox(float size) {
+	// http://www.songho.ca/opengl/gl_vertexarray.html
+	static const float h = .5;
+	
+	static GLfloat vertices[] = {
+		+h,+h,+h,  -h,+h,+h,  -h,-h,+h,  +h,-h,+h,
+		+h,+h,+h,  +h,-h,+h,  +h,-h,-h,  +h,+h,-h,
+		+h,+h,+h,  +h,+h,-h,  -h,+h,-h,  -h,+h,+h,
+		-h,+h,+h,  -h,+h,-h,  -h,-h,-h,  -h,-h,+h,
+		-h,-h,-h,  +h,-h,-h,  +h,-h,+h,  -h,-h,+h,
+		+h,-h,-h,  -h,-h,-h,  -h,+h,-h,  +h,+h,-h};
+	
+	static GLfloat normals[] = {
+		0, 0,+h,   0, 0,+h,   0, 0,+h,   0, 0,+h,
+		+h, 0, 0,  +h, 0, 0,  +h, 0, 0,  +h, 0, 0,
+		0,+h, 0,   0,+h, 0,   0,+h, 0,   0,+h, 0,
+		-h, 0, 0,  -h, 0, 0,  -h, 0, 0,  -h, 0, 0,
+		0,-h, 0,   0,-h, 0,   0,-h, 0,   0,-h, 0,
+		0, 0,-h,   0, 0,-h,   0, 0,-h,   0, 0,-h,};
+		
+	GLubyte wireIndices[] = {
+		0,1,2,3,
+		4,5,6,7,
+		8,9,10,11,
+		12,13,14,15,
+		16,17,18,19};
+	
+	GLubyte solidIndices[] = {
+		0,1,3, 2,1,3,
+		4,5,7, 6,5,7,
+		8,9,11, 10,9,11,
+		12,13,15, 14,13,15,
+		16,17,19, 18,17,19,
+		20,21,23, 22,21,23
+	};
+	
+	glEnableClientState(GL_NORMAL_ARRAY);
+	glEnableClientState(GL_VERTEX_ARRAY);
+	
+	glPushMatrix();
+	glScalef(size, size, size);
+	
+	glNormalPointer(GL_FLOAT, 0, normals);
+	glVertexPointer(3, GL_FLOAT, 0, vertices);
+	
 	if(ofGetStyle().bFill) {
-		glutSolidCube(size);
+		// the quads use all 24 of the vertices
+		glDrawElements(GL_TRIANGLES, 3 * 2 * 6, GL_UNSIGNED_BYTE, solidIndices);
 	} else {
-		glutWireCube(size);
+		// the line strip only needs 20 of the vertices
+		glDrawElements(GL_LINE_STRIP, 4 * 5, GL_UNSIGNED_BYTE, wireIndices);
 	}
+
+	glPopMatrix();
+	
+	glDisableClientState(GL_VERTEX_ARRAY);
+	glDisableClientState(GL_NORMAL_ARRAY);
 }
 
 //----------------------------------------------------------
@@ -756,7 +823,9 @@ void ofSetHexColor(int hexColor){
 
 
 //----------------------------------------------------------
-void ofEnableBlendMode(int blendMode){
+
+void ofEnableBlendMode(ofBlendMode blendMode){
+#ifndef TARGET_OPENGLES
     switch (blendMode){
             
         case OF_BLENDMODE_ALPHA:{
@@ -818,7 +887,7 @@ void ofEnableBlendMode(int blendMode){
         default:
             break;
     }
-    
+#endif  
 }
 
 //----------------------------------------------------------
@@ -900,11 +969,11 @@ ofStyle ofGetStyle(){
 
 //----------------------------------------------------------
 void ofPushStyle(){
-	styleHistory.insert(styleHistory.begin(), currentStyle);
+	styleHistory.push_front(currentStyle);
 
 	//if we are over the max number of styles we have set, then delete the oldest styles.
 	if( styleHistory.size() > OF_MAX_STYLE_HISTORY ){
-		styleHistory.erase(styleHistory.begin() + OF_MAX_STYLE_HISTORY, styleHistory.end());
+		styleHistory.pop_back();
 		//should we warn here?
 		//ofLog(OF_LOG_WARNING, "ofPushStyle - warning: you have used ofPushStyle more than %i times without calling ofPopStyle - check your code!", OF_MAX_STYLE_HISTORY);
 	}
@@ -913,8 +982,8 @@ void ofPushStyle(){
 //----------------------------------------------------------
 void ofPopStyle(){
 	if( styleHistory.size() ){
-		ofSetStyle(styleHistory[0]);
-		styleHistory.erase(styleHistory.begin(), styleHistory.begin()+1);
+		ofSetStyle(styleHistory.front());
+		styleHistory.pop_front();
 	}
 }
 
@@ -1228,7 +1297,7 @@ void clearCurveVertices(){
 }
 
 //----------------------------------------------------------
-void ofSetPolyMode(int mode){
+void ofSetPolyMode(ofPolyWindingMode mode){
 	switch (mode){
 		case OF_POLY_WINDING_ODD:
 			polyMode = OF_POLY_WINDING_ODD;
