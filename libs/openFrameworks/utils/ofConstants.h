@@ -185,8 +185,12 @@
 
 #ifdef TARGET_LINUX
 	#define OF_VIDEO_PLAYER_GSTREAMER
-#else
-	#define OF_VIDEO_PLAYER_QUICKTIME
+#else 
+	#ifdef TARGET_OF_IPHONE
+		#define OF_VIDEO_PLAYER_IPHONE
+	#else
+		#define OF_VIDEO_PLAYER_QUICKTIME
+	#endif
 #endif
 
 // comment out this line to disable all poco related code

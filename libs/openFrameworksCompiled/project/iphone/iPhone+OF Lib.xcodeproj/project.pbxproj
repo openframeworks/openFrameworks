@@ -59,6 +59,16 @@
 		53AD29D012DE9A4600746BB1 /* ofThread.h in Headers */ = {isa = PBXBuildFile; fileRef = 53AD29C412DE9A4600746BB1 /* ofThread.h */; };
 		53AD29D112DE9A4600746BB1 /* ofUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53AD29C512DE9A4600746BB1 /* ofUtils.cpp */; };
 		53AD29D212DE9A4600746BB1 /* ofUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 53AD29C612DE9A4600746BB1 /* ofUtils.h */; };
+		53DA32E312DF7B2400C622CE /* ofVideoPlayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53DA32DF12DF7B2400C622CE /* ofVideoPlayer.cpp */; };
+		53DA32E412DF7B2400C622CE /* ofVideoPlayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 53DA32E012DF7B2400C622CE /* ofVideoPlayer.h */; };
+		53DA338012DF8EFD00C622CE /* ofiPhoneVideoPlayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 53DA337C12DF8EFD00C622CE /* ofiPhoneVideoPlayer.h */; };
+		53DA338112DF8EFD00C622CE /* ofiPhoneVideoPlayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 53DA337D12DF8EFD00C622CE /* ofiPhoneVideoPlayer.mm */; };
+		53DA338212DF8EFD00C622CE /* AVFoundationVideoGrabber.h in Headers */ = {isa = PBXBuildFile; fileRef = 53DA337E12DF8EFD00C622CE /* AVFoundationVideoGrabber.h */; };
+		53DA338312DF8EFD00C622CE /* AVFoundationVideoGrabber.mm in Sources */ = {isa = PBXBuildFile; fileRef = 53DA337F12DF8EFD00C622CE /* AVFoundationVideoGrabber.mm */; };
+		53DA338A12DF8F4500C622CE /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53DA338912DF8F4500C622CE /* AVFoundation.framework */; };
+		53DA338E12DF8F5000C622CE /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53DA338D12DF8F5000C622CE /* CoreAudio.framework */; };
+		53DA339012DF8F5000C622CE /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53DA338F12DF8F5000C622CE /* CoreMedia.framework */; };
+		53DA339212DF8F5000C622CE /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53DA339112DF8F5000C622CE /* CoreVideo.framework */; };
 		5E2E99DD10ED147800587639 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E2E99DC10ED147800587639 /* MapKit.framework */; };
 		BB24DECA10DA7A3F00E9C588 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BBE5EAB70F49AD8400F28951 /* AudioToolbox.framework */; };
 		BB24DECB10DA7A3F00E9C588 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB16EBD10F2B2A9500518274 /* OpenGLES.framework */; };
@@ -222,6 +232,16 @@
 		53AD29C412DE9A4600746BB1 /* ofThread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofThread.h; sourceTree = "<group>"; };
 		53AD29C512DE9A4600746BB1 /* ofUtils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofUtils.cpp; sourceTree = "<group>"; };
 		53AD29C612DE9A4600746BB1 /* ofUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofUtils.h; sourceTree = "<group>"; };
+		53DA32DF12DF7B2400C622CE /* ofVideoPlayer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofVideoPlayer.cpp; sourceTree = "<group>"; };
+		53DA32E012DF7B2400C622CE /* ofVideoPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofVideoPlayer.h; sourceTree = "<group>"; };
+		53DA337C12DF8EFD00C622CE /* ofiPhoneVideoPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofiPhoneVideoPlayer.h; sourceTree = "<group>"; };
+		53DA337D12DF8EFD00C622CE /* ofiPhoneVideoPlayer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ofiPhoneVideoPlayer.mm; sourceTree = "<group>"; };
+		53DA337E12DF8EFD00C622CE /* AVFoundationVideoGrabber.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AVFoundationVideoGrabber.h; sourceTree = "<group>"; };
+		53DA337F12DF8EFD00C622CE /* AVFoundationVideoGrabber.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AVFoundationVideoGrabber.mm; sourceTree = "<group>"; };
+		53DA338912DF8F4500C622CE /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
+		53DA338D12DF8F5000C622CE /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = System/Library/Frameworks/CoreAudio.framework; sourceTree = SDKROOT; };
+		53DA338F12DF8F5000C622CE /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = System/Library/Frameworks/CoreMedia.framework; sourceTree = SDKROOT; };
+		53DA339112DF8F5000C622CE /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = System/Library/Frameworks/CoreVideo.framework; sourceTree = SDKROOT; };
 		53F323EA10A20EDB00E0DAE4 /* OpenAL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenAL.framework; path = System/Library/Frameworks/OpenAL.framework; sourceTree = SDKROOT; };
 		5E2E99DC10ED147800587639 /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
 		BB16EBD10F2B2A9500518274 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
@@ -347,6 +367,10 @@
 				BB24DED010DA7A3F00E9C588 /* CoreLocation.framework in Frameworks */,
 				BB24DED110DA7A3F00E9C588 /* QuartzCore.framework in Frameworks */,
 				5E2E99DD10ED147800587639 /* MapKit.framework in Frameworks */,
+				53DA338A12DF8F4500C622CE /* AVFoundation.framework in Frameworks */,
+				53DA338E12DF8F5000C622CE /* CoreAudio.framework in Frameworks */,
+				53DA339012DF8F5000C622CE /* CoreMedia.framework in Frameworks */,
+				53DA339212DF8F5000C622CE /* CoreVideo.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -384,6 +408,10 @@
 				288765FC0DF74451002DB57D /* CoreGraphics.framework */,
 				53F323EA10A20EDB00E0DAE4 /* OpenAL.framework */,
 				5326AEA710A23A0500278DE6 /* CoreLocation.framework */,
+				53DA338912DF8F4500C622CE /* AVFoundation.framework */,
+				53DA338D12DF8F5000C622CE /* CoreAudio.framework */,
+				53DA338F12DF8F5000C622CE /* CoreMedia.framework */,
+				53DA339112DF8F5000C622CE /* CoreVideo.framework */,
 			);
 			name = "core frameworks";
 			sourceTree = "<group>";
@@ -540,6 +568,12 @@
 		BB24DF1E10DA7BEF00E9C588 /* video */ = {
 			isa = PBXGroup;
 			children = (
+				53DA32DF12DF7B2400C622CE /* ofVideoPlayer.cpp */,
+				53DA32E012DF7B2400C622CE /* ofVideoPlayer.h */,
+				53DA337C12DF8EFD00C622CE /* ofiPhoneVideoPlayer.h */,
+				53DA337D12DF8EFD00C622CE /* ofiPhoneVideoPlayer.mm */,
+				53DA337E12DF8EFD00C622CE /* AVFoundationVideoGrabber.h */,
+				53DA337F12DF8EFD00C622CE /* AVFoundationVideoGrabber.mm */,
 			);
 			path = video;
 			sourceTree = "<group>";
@@ -893,6 +927,9 @@
 				53AD29CE12DE9A4600746BB1 /* ofFileUtils.h in Headers */,
 				53AD29D012DE9A4600746BB1 /* ofThread.h in Headers */,
 				53AD29D212DE9A4600746BB1 /* ofUtils.h in Headers */,
+				53DA32E412DF7B2400C622CE /* ofVideoPlayer.h in Headers */,
+				53DA338012DF8EFD00C622CE /* ofiPhoneVideoPlayer.h in Headers */,
+				53DA338212DF8EFD00C622CE /* AVFoundationVideoGrabber.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -986,6 +1023,9 @@
 				53AD29CD12DE9A4600746BB1 /* ofFileUtils.cpp in Sources */,
 				53AD29CF12DE9A4600746BB1 /* ofThread.cpp in Sources */,
 				53AD29D112DE9A4600746BB1 /* ofUtils.cpp in Sources */,
+				53DA32E312DF7B2400C622CE /* ofVideoPlayer.cpp in Sources */,
+				53DA338112DF8EFD00C622CE /* ofiPhoneVideoPlayer.mm in Sources */,
+				53DA338312DF8EFD00C622CE /* AVFoundationVideoGrabber.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

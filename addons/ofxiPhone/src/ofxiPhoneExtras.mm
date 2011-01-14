@@ -324,6 +324,46 @@ bool ofxiPhoneUIImageToOFTexture(UIImage *uiImage, ofTexture &outTexture, int ta
 
 //--------------------------------------------------------------
 
+bool ofxiPhoneCGImageToPixels(CGImageRef & ref, unsigned char * pixels){
+	CGContextRef spriteContext;
+	
+	int bytesPerPixel	= CGImageGetBitsPerPixel(ref)/8;
+	if(bytesPerPixel == 3) bytesPerPixel = 4;
+	
+	int w			= CGImageGetWidth(ref);
+	int h			= CGImageGetHeight(ref);
+	
+	// Allocated memory needed for the bitmap context
+	GLubyte *pixelsTmp	= (GLubyte *) malloc(w * h * bytesPerPixel);
+	
+	// Uses the bitmatp creation function provided by the Core Graphics framework. 
+	spriteContext = CGBitmapContextCreate(pixelsTmp, w, h, CGImageGetBitsPerComponent(ref), w * bytesPerPixel, CGImageGetColorSpace(ref), bytesPerPixel == 4 ? kCGImageAlphaPremultipliedLast : kCGImageAlphaNone);
+	
+	if(spriteContext == NULL) {
+		ofLog(OF_LOG_ERROR, "convertCGImageToPixels - CGBitmapContextCreate returned NULL");
+		free(pixelsTmp);
+		return false;
+	}
+	
+	CGContextDrawImage(spriteContext, CGRectMake(0.0, 0.0, (CGFloat)w, (CGFloat)h), ref);
+	CGContextRelease(spriteContext);
+	
+	int totalSrcBytes = w*h*bytesPerPixel;  
+	int j = 0;
+	for(int k = 0; k < totalSrcBytes; k+= bytesPerPixel ){
+		pixels[j  ] = pixelsTmp[k  ];
+		pixels[j+1] = pixelsTmp[k+1];
+		pixels[j+2] = pixelsTmp[k+2];
+		
+		j+=3;
+	}
+	
+	free(pixelsTmp);
+	return true;
+}
+
+//--------------------------------------------------------------
+
 string ofxNSStringToString(NSString * s) {
 	return string([s UTF8String]);
 }

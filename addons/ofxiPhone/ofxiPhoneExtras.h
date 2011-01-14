@@ -176,6 +176,8 @@ bool ofxiPhoneUIImageToOFImage(UIImage *uiImage, ofImage &outImage, int targetWi
 
 bool ofxiPhoneUIImageToPixels(UIImage *uiImage, unsigned char * pix, int targetWidth = 0, int targetHeight = 0);
 
+bool ofxiPhoneCGImageToPixels(CGImageRef & ref, unsigned char * pixels);
+
 // save current opengl screen to photos app
 // based on code from http://www.bit-101.com/blog/?p=1861
 void ofxiPhoneScreenGrab(id delegate);

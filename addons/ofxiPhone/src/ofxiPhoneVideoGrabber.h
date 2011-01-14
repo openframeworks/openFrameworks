@@ -14,6 +14,7 @@
 #import <CoreVideo/CoreVideo.h>
 #import <CoreMedia/CoreMedia.h>
 #include "ofxiPhone.h"
+#include "ofxiPhoneExtras.h"
 
 #if defined  __arm__
 
@@ -73,7 +74,6 @@ class ofxiPhoneVideoGrabber : public ofBaseHasPixels, ofBaseDraws{
 	
 	protected:
 		
-		bool convertCGImageToPixels(CGImageRef & ref, unsigned char * pixels);
 		int width, height;
 	
 		bool bUpdateTex;
