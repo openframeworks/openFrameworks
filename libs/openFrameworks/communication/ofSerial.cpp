@@ -1,5 +1,17 @@
 #include "ofSerial.h"
-#include "ofMain.h"
+
+#include "ofUtils.h"
+
+#if defined( TARGET_OSX ) || defined( TARGET_LINUX )
+	#include <sys/ioctl.h>
+	#include <getopt.h>
+	#include <dirent.h>
+#endif
+
+
+#include <fcntl.h>
+#include <errno.h>
+#include <ctype.h>
 
 
 //---------------------------------------------

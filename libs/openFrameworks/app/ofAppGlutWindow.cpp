@@ -1,6 +1,20 @@
 #include "ofAppGlutWindow.h"
 #include "ofBaseApp.h"
 #include "ofMain.h"
+#include "ofEvents.h"
+
+#ifdef TARGET_WIN32
+	#define GLUT_BUILDING_LIB
+	#include "glut.h"
+#endif
+#ifdef TARGET_OSX
+	#include <GLUT/glut.h>
+#endif
+#ifdef TARGET_LINUX
+	#include <GL/glut.h>
+#endif
+
+
 #include <set>
 
 // glut works with static callbacks UGH, so we need static variables here:
@@ -143,9 +157,6 @@ void ofAppGlutWindow::setupOpenGL(int w, int h, int screenMode){
 	if (windowMode != OF_GAME_MODE){
 		glutInitWindowSize(w, h);
 		glutCreateWindow("");
-
-		//Default colors etc are now in ofGraphics - ofSetupGraphicDefaults
-		ofSetupGraphicDefaults();
 
 		/*
 		ofBackground(200,200,200);		// default bg color

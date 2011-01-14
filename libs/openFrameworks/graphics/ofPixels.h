@@ -1,27 +1,41 @@
 #pragma once
 
-#include "ofBaseTypes.h"
-#include "ofTypes.h"
+#include "ofConstants.h"
 #include "ofUtils.h"
+#include "ofColor.h"
 
 class ofPixels {
 public:
 
 	ofPixels(){
+		bAllocated = false;
 		pixels = NULL;
+		clear();
+	}
+	
+	~ofPixels(){
 		clear();
 	}
 
 	ofPixels(const ofPixels & mom){
+		bAllocated = false;
+		pixels = NULL;
 		if(mom.isAllocated()){
 			allocate(mom.getWidth(),mom.getHeight(),mom.getImageType());
 			memcpy(pixels,mom.getPixels(),mom.getWidth()*mom.getHeight()*mom.getBytesPerPixel());
 		}
 	}
 
-	void allocate(int w, int h, int bytesPerPixel){
+	void operator=(const ofPixels & mom){
+		if(mom.isAllocated()){
+			allocate(mom.getWidth(),mom.getHeight(),mom.getImageType());
+			memcpy(pixels,mom.getPixels(),mom.getWidth()*mom.getHeight()*mom.getBytesPerPixel());
+		}
+	}
+
+	void allocate(int w, int h, int bitsPerPixel){
 		ofImageType type;
-		switch(bytesPerPixel){
+		switch(bitsPerPixel){
 		case 8:
 			type=OF_IMAGE_GRAYSCALE;
 			break;
@@ -32,19 +46,22 @@ public:
 			type=OF_IMAGE_COLOR_ALPHA;
 			break;
 		default:
-			ofLog(OF_LOG_ERROR,"%i bytes per pixel is not a supported image type",bytesPerPixel);
+			ofLog(OF_LOG_ERROR,"%i bits per pixel is not a supported image type", bitsPerPixel);
 			return;
 		}
 		allocate(w,h,type);
 	}
 
 	void allocate(int w, int h, ofImageType type){
-		if(bAllocated){
-			if(w==width && h==height && type==imageType)
-				return;
-			else
-				clear();
-		}
+		
+		//we check if we are already allocated at the right size
+		if(bAllocated && w==width && h==height && type==imageType){
+			return; //we don't need to allocate
+		}		
+
+		//we do need to allocate, clear the data
+		clear();
+		
 		imageType = type;
 		width= w;
 		height = h;
@@ -62,6 +79,7 @@ public:
 			glDataType = GL_RGBA;
 			break;
 		}
+		
 		bitsPerPixel = bytesPerPixel * 8;
 		pixels = new unsigned char[w*h*bytesPerPixel];
 		bAllocated = true;
@@ -95,6 +113,7 @@ public:
 	void clear(){
 		if(pixels){
 			delete[] pixels;
+			pixels = NULL;
 		}
 		width			= 0;
 		height			= 0;

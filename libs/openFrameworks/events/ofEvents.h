@@ -1,8 +1,6 @@
-#ifndef _OF_EVENTS
-#define _OF_EVENTS
+#pragma once
 
 #include "ofConstants.h"
-#include "ofUtils.h"
 
 void ofNotifySetup();
 void ofNotifyUpdate();
@@ -20,7 +18,7 @@ void ofNotifyExit();
 void ofNotifyWindowResized(int width, int height);
 
 #ifdef OF_USING_POCO
-
+	#define _OF_EVENTS
 	#ifndef OF_EVENTS_ADDON
 		#include "ofEventUtils.h"
 
@@ -183,7 +181,6 @@ void ofNotifyWindowResized(int width, int height);
 		ofRemoveListener(ofEvents.touchUp, listener, &ListenerClass::touchUp);
 	}
 
-	#endif
-
 #endif
+
 
