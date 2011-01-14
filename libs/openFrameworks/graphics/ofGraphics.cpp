@@ -647,7 +647,7 @@ void ofBezier(float x0, float y0, float x1, float y1, float x2, float y2, float 
 
 //----------------------------------------
 void ofSphere(float x, float y, float z, float radius) {
-	ofSphere(ofVec3f(x, y, z), radius);
+	ofSphere(ofPoint(x, y, z), radius);
 }
 
 //----------------------------------------
@@ -656,7 +656,7 @@ void ofSphere(float x, float y, float radius) {
 }
 
 //----------------------------------------
-void ofSphere(const ofVec3f& position, float radius) {
+void ofSphere(const ofPoint& position, float radius) {
 	ofPushMatrix();
 	ofTranslate(position);
 	ofSphere(radius);
@@ -688,7 +688,7 @@ void ofSphere(float radius) {
 
 //----------------------------------------
 void ofBox(float x, float y, float z, float size) {
-	ofBox(ofVec3f(x, y, z), size);
+	ofBox(ofPoint(x, y, z), size);
 }
 
 //----------------------------------------
@@ -697,7 +697,7 @@ void ofBox(float x, float y, float size) {
 }
 
 //----------------------------------------
-void ofBox(const ofVec3f& position, float size) {
+void ofBox(const ofPoint& position, float size) {
 	ofPushMatrix();
 	ofTranslate(position);
 	ofBox(size);

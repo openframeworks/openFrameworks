@@ -4,7 +4,6 @@
 #include "ofColor.h"
 #include "ofPoint.h"
 #include "ofRectangle.h"
-#include "ofVec3f.h"
 #include "ofTypes.h"
 
 #define  	CIRC_RESOLUTION		    22				// 22 pts for a circle...
@@ -93,12 +92,12 @@ void ofBezier(float x0, float y0, float x1, float y1, float x2, float y2, float 
 
 void ofSphere(float x, float y, float z, float radius);
 void ofSphere(float x, float y, float radius);
-void ofSphere(const ofVec3f& position, float radius);
+void ofSphere(const ofPoint& position, float radius);
 void ofSphere(float radius);
 
 void ofBox(float x, float y, float z, float size);
 void ofBox(float x, float y, float size);
-void ofBox(const ofVec3f& position, float size);
+void ofBox(const ofPoint& position, float size);
 void ofBox(float size);
 
 // drawing options
