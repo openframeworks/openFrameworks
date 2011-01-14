@@ -272,9 +272,9 @@ void ofSetVerticalSync(bool bSync){
 	#ifdef TARGET_WIN32
 	//----------------------------
 		if (bSync) {
-			if (GLEE_WGL_EXT_swap_control) wglSwapIntervalEXT (1);
+			if (WGL_EXT_swap_control) wglSwapIntervalEXT (1);
 		} else {
-			if (GLEE_WGL_EXT_swap_control) wglSwapIntervalEXT (0);
+			if (WGL_EXT_swap_control) wglSwapIntervalEXT (0);
 		}
 	//----------------------------
 	#endif
