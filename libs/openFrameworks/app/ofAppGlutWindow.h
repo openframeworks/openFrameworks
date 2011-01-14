@@ -2,20 +2,7 @@
 
 #include "ofConstants.h"
 #include "ofAppBaseWindow.h"
-#include "ofEvents.h"
-
-#ifdef TARGET_WIN32
-	#define GLUT_BUILDING_LIB
-	#include "glut.h"
-#endif
-#ifdef TARGET_OSX
-	#include <GLUT/glut.h>
-#endif
-#ifdef TARGET_LINUX
-	#include <GL/glut.h>
-#endif
-
-class ofPoint;
+#include "ofPoint.h"
 class ofBaseApp;
 
 class ofAppGlutWindow : public ofAppBaseWindow {
@@ -58,6 +45,15 @@ public:
 	void		enableSetupScreen();
 	void		disableSetupScreen();
 
+	bool		isMousePressed(int button);
+	bool		isKeyPressed(int key);
+	
+	int			getMouseX();
+	int			getMouseY();
+
+	int			getPreviousMouseX();
+	int			getPreviousMouseY();
+
 	static void display(void);
 	static void mouse_cb(int button, int state, int x, int y);
 	static void motion_cb(int x, int y);
@@ -68,7 +64,6 @@ public:
 	static void special_key_cb(int key, int x, int y) ;
 	static void special_key_up_cb(int key, int x, int y) ;
 	static void resize_cb(int w, int h);
-
 
 	string displayString;
 	 

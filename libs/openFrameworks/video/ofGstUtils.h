@@ -1,17 +1,17 @@
-#ifndef OFGSTUTILS_H_
-#define OFGSTUTILS_H_
+#pragma once
 
 #include <gst/gst.h>
-#include <pthread.h>
 #include "ofConstants.h"
+#include "ofBaseTypes.h"
+#include "ofPixels.h"
+#include "ofTypes.h"
 
-typedef struct{
+struct ofGstVideoData{
 	GMainLoop 		*	loop;
 	GstElement 		*	pipeline;
-	unsigned char 	*	pixels;				// 24 bit: rgb
-	unsigned			width, height;
+	ofPixels			pixels;				// 24 bit: rgb
 	unsigned			totalsize;
-	pthread_mutex_t 	buffer_mutex;
+	ofMutex			 	buffer_mutex;
 	bool				bHavePixelsChanged;
 
 	guint64				durationNanos;
@@ -20,39 +20,35 @@ typedef struct{
 	float				speed;
 
 	guint64				lastFrame;
-}ofGstVideoData;
+};
 
-typedef struct
-{
+struct ofGstFramerate{
   int numerator;
   int denominator;
-} ofGstFramerate;
+};
 
-typedef struct
-{
+struct ofGstVideoFormat{
   string mimetype;
   int    width;
   int    height;
   vector<ofGstFramerate> framerates;
   ofGstFramerate choosen_framerate;
-} ofGstVideoFormat;
+};
 
-typedef struct
-{
+struct ofGstDevice{
   string video_device;
   string gstreamer_src;
   string product_name;
   vector<ofGstVideoFormat> video_formats;
   int current_format;
-} ofGstDevice;
+};
 
-typedef struct
-{
+struct ofGstCamData{
   vector<ofGstDevice> webcam_devices;
   bool bInited;
-} ofGstCamData;
+};
 
-class ofGstUtils {
+class ofGstUtils: public ofBaseVideoPlayer, public ofBaseVideoGrabber {
 public:
 	ofGstUtils();
 	virtual ~ofGstUtils();
@@ -61,17 +57,24 @@ public:
 
 	void listDevices();
 	void setDeviceID(unsigned id);
-	bool initGrabber(int w, int h, int framerate=-1);
+	void setDesiredFrameRate(int framerate);
+	bool initGrabber(int w, int h);
 
 	bool setPipeline(string pipeline, int bpp=24, bool isStream=false, int w=-1, int h=-1);
 	bool setPipelineWithSink(string pipeline);
 
 	bool isFrameNew();
 	unsigned char * getPixels();
+	ofPixels getOFPixels();
+	ofPixels getOFPixels() const;
 	void update();
 
 	void play();
+	void stop(){setPaused(true);}
 	void setPaused(bool bPause);
+	bool isPaused(){return bPaused;}
+	bool isLoaded(){return bLoaded;}
+	bool isPlaying(){return bPlaying;}
 
 	int	getCurrentFrame();
 	int	getTotalNumFrames();
@@ -80,8 +83,8 @@ public:
 	void nextFrame();
 	void previousFrame();
 
-	int getHeight();
-	int getWidth();
+	float getHeight();
+	float getWidth();
 
 	float getPosition();
 	float getSpeed();
@@ -90,7 +93,7 @@ public:
 
 	void setPosition(float pct);
 	void setVolume(int volume);
-	void setLoopState(int state);
+	void setLoopState(ofLoopType state);
 	void setSpeed(float speed);
 	void setFrame(int frame);  // frame 0 = first frame...
 
@@ -99,11 +102,9 @@ public:
 	void close();
 
 protected:
-	void                seek_lock();
-	void                seek_unlock();
 	void 				gstHandleMessage();
-	bool 				allocate();
-	bool				startPipeline();
+	bool 				allocate(int width=0, int height=0, int bpp=24);
+	bool				startPipeline(int width=0, int height=0, int bpp=24);
 	ofGstVideoFormat&	selectFormat(int w, int h, int desired_framerate);
 
 	bool 				bStarted;
@@ -126,15 +127,12 @@ protected:
 
 	bool				posChangingPaused;
 
-	int 				width, height,bpp;
+	int					attemptFramerate;
 	bool 				bLoaded;
-	//bool				allocated;				// so we know to free pixels or not
-
-	pthread_mutex_t 	seek_mutex;
 
 
 	// common with gstdata
-	unsigned char 	*	pixels;				// 24 bit: rgb
+	ofPixels			pixels;				// 24 bit: rgb
 	bool				bHavePixelsChanged;
 
 	gint64				durationNanos;
@@ -152,4 +150,3 @@ protected:
 
 };
 
-#endif /* OFGSTUTILS_H_ */

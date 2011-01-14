@@ -1,4 +1,5 @@
 SUBDIRS = libs \
+addons/ofxAssimpModelLoader \
 	  addons/ofx3DModelLoader/src \
 	  addons/ofxAccelerometer/src \
 	  addons/ofxDirList/src \
