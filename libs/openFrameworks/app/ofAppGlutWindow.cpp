@@ -10,12 +10,11 @@
 	#include "glut.h"
 #endif
 #ifdef TARGET_OSX
-	#include <GLUT/glut.h>
+	#include "../../../libs/glut/lib/osx/GLUT.framework/Versions/A/Headers/glut.h"
 #endif
 #ifdef TARGET_LINUX
 	#include <GL/glut.h>
 #endif
-
 
 #include <set>
 
@@ -82,7 +81,7 @@ void HandleFiles(WPARAM wParam)
 	DragQueryPoint(hDrop, &pt);
 	//printf("%i %i \n", pt.x, pt.y);
 	
-	dragInfo info;
+	ofDragInfo info;
 	info.position.x = pt.x;
 	info.position.y = pt.y;
 
@@ -289,7 +288,7 @@ void ofAppGlutWindow::initializeWindow(){
     glutReshapeFunc(resize_cb);
 	
 #ifdef TARGET_OSX
-	glutDragEventFunc( dragEvent);
+	glutDragEventFunc(dragEvent);
 #endif 
 
     nFramesSinceWindowResized = 0;
@@ -676,12 +675,12 @@ void ofAppGlutWindow::passive_motion_cb(int x, int y) {
 	}
 }
 
-void ofAppGlutWindow::dragEvent(char ** names, int howManyFiles){
+void ofAppGlutWindow::dragEvent(char ** names, int howManyFiles, int dragX, int dragY){
 	
 	// TODO: we need position info on mac passed through
-	dragInfo info;
-	info.position.x = 0;
-	info.position.y = 0;
+	ofDragInfo info;
+	info.position.x = dragX;
+	info.position.y = ofGetHeight()-dragY;
 
 	for (int i = 0; i < howManyFiles; i++){
 		string temp = string(names[i]);
