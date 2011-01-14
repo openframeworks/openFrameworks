@@ -647,7 +647,7 @@ void ofBezier(float x0, float y0, float x1, float y1, float x2, float y2, float 
 
 //----------------------------------------
 void ofSphere(float x, float y, float z, float radius) {
-	ofSphere(ofVec3f(x, y, z), radius);
+	ofSphere(ofPoint(x, y, z), radius);
 }
 
 //----------------------------------------
@@ -656,7 +656,7 @@ void ofSphere(float x, float y, float radius) {
 }
 
 //----------------------------------------
-void ofSphere(const ofVec3f& position, float radius) {
+void ofSphere(const ofPoint& position, float radius) {
 	ofPushMatrix();
 	ofTranslate(position);
 	ofSphere(radius);
@@ -688,7 +688,7 @@ void ofSphere(float radius) {
 
 //----------------------------------------
 void ofBox(float x, float y, float z, float size) {
-	ofBox(ofVec3f(x, y, z), size);
+	ofBox(ofPoint(x, y, z), size);
 }
 
 //----------------------------------------
@@ -697,7 +697,7 @@ void ofBox(float x, float y, float size) {
 }
 
 //----------------------------------------
-void ofBox(const ofVec3f& position, float size) {
+void ofBox(const ofPoint& position, float size) {
 	ofPushMatrix();
 	ofTranslate(position);
 	ofBox(size);
@@ -706,15 +706,62 @@ void ofBox(const ofVec3f& position, float size) {
 
 //----------------------------------------
 void ofBox(float size) {
-	// TODO: add an implementation using ofMesh
-	// this needs to be swapped out with non-glut code
-#ifndef TARGET_OPENGLES
+	// http://www.songho.ca/opengl/gl_vertexarray.html
+	static const float h = .5;
+	
+	static GLfloat vertices[] = {
+		+h,+h,+h,  -h,+h,+h,  -h,-h,+h,  +h,-h,+h,
+		+h,+h,+h,  +h,-h,+h,  +h,-h,-h,  +h,+h,-h,
+		+h,+h,+h,  +h,+h,-h,  -h,+h,-h,  -h,+h,+h,
+		-h,+h,+h,  -h,+h,-h,  -h,-h,-h,  -h,-h,+h,
+		-h,-h,-h,  +h,-h,-h,  +h,-h,+h,  -h,-h,+h,
+		+h,-h,-h,  -h,-h,-h,  -h,+h,-h,  +h,+h,-h};
+	
+	static GLfloat normals[] = {
+		0, 0,+h,   0, 0,+h,   0, 0,+h,   0, 0,+h,
+		+h, 0, 0,  +h, 0, 0,  +h, 0, 0,  +h, 0, 0,
+		0,+h, 0,   0,+h, 0,   0,+h, 0,   0,+h, 0,
+		-h, 0, 0,  -h, 0, 0,  -h, 0, 0,  -h, 0, 0,
+		0,-h, 0,   0,-h, 0,   0,-h, 0,   0,-h, 0,
+		0, 0,-h,   0, 0,-h,   0, 0,-h,   0, 0,-h,};
+		
+	GLubyte wireIndices[] = {
+		0,1,2,3,
+		4,5,6,7,
+		8,9,10,11,
+		12,13,14,15,
+		16,17,18,19};
+	
+	GLubyte solidIndices[] = {
+		0,1,3, 2,1,3,
+		4,5,7, 6,5,7,
+		8,9,11, 10,9,11,
+		12,13,15, 14,13,15,
+		16,17,19, 18,17,19,
+		20,21,23, 22,21,23
+	};
+	
+	glEnableClientState(GL_NORMAL_ARRAY);
+	glEnableClientState(GL_VERTEX_ARRAY);
+	
+	glPushMatrix();
+	glScalef(size, size, size);
+	
+	glNormalPointer(GL_FLOAT, 0, normals);
+	glVertexPointer(3, GL_FLOAT, 0, vertices);
+	
 	if(ofGetStyle().bFill) {
-		glutSolidCube(size);
+		// the quads use all 24 of the vertices
+		glDrawElements(GL_TRIANGLES, 3 * 2 * 6, GL_UNSIGNED_BYTE, solidIndices);
 	} else {
-		glutWireCube(size);
+		// the line strip only needs 20 of the vertices
+		glDrawElements(GL_LINE_STRIP, 4 * 5, GL_UNSIGNED_BYTE, wireIndices);
 	}
-#endif
+
+	glPopMatrix();
+	
+	glDisableClientState(GL_VERTEX_ARRAY);
+	glDisableClientState(GL_NORMAL_ARRAY);
 }
 
 //----------------------------------------------------------

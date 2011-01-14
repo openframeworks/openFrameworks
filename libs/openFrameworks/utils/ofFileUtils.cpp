@@ -110,9 +110,8 @@ bool ofReadFile(const string & path, ofBuffer & buffer, bool binary){
 
 //--------------------------------------------------
 ofBuffer ofBufferFromFile(const string & path, bool binary){
-	ofBuffer buffer;
-	ifstream istr(ofToDataPath(path,true).c_str(),binary?ifstream::binary:ios_base::in);
-	return buffer;
+	ifstream istr(ofToDataPath(path,true).c_str(), binary?ifstream::binary:ios_base::in);
+	return ofBuffer(istr);
 }
 
 //--------------------------------------------------
