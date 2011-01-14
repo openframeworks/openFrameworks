@@ -46,3 +46,5 @@ bool		ofGetKeyPressed(int key=-1); //by default any key
 int			ofGetMouseX();
 int			ofGetMouseY();
 
+int			ofGetPreviousMouseX();
+int			ofGetPreviousMouseY();
