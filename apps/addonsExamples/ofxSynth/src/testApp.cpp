@@ -7,12 +7,6 @@ void testApp::setup(){
 
 	ofBackground(255,255,255);
 
-	// 2 output channels,
-	// 0 input channels
-	// 22050 samples per second
-	// 256 samples per buffer
-	// 4 num buffers (latency)
-
 	sampleRate 			= 44100;
 	volume				= 0.1f;
 	lAudio = new float[1024];
@@ -21,19 +15,19 @@ void testApp::setup(){
 	
 	ofSoundStreamSetup(2,0,this, sampleRate,1024, 4);
 
-	int bpm = 140;
+	int bpm = 120;
 	beatLength = ((sampleRate*60)/bpm);
-
-	ofSetFrameRate(60);
-	for (int i=0; i<15; i++) {
-		synth[i].setFrequencyMidiNote(20+ofRandom(-0.01, 0.01));	
-		synth[i].env.setADSR(0.1*sampleRate, 0.2*sampleRate, 0.9, 0.03*sampleRate);
-		synth[i].ampMode = OFXSYNTHADR;
-		synth[i].setFilterMode(1);
-		synth[i].setFilter(0.5, 0.1);
-		mixer.addInputFrom(&synth[i]);
-		mixer.setVolume(&synth[i], 1.0f/15.0f);
-	}
+	
+	// setup synthesizer
+	synth.setFrequencyMidiNote(20+ofRandom(-0.01, 0.01));	
+	synth.env.setADSR(0.01*sampleRate, 0.1*sampleRate, 0.5, 0.03*sampleRate);
+	synth.ampMode = OFXSYNTHADR;
+	synth.setFilterLowPass();
+	synth.setWaveSquare();
+	synth.setFilter(0.7, 0.5);
+	
+	mixer.addInputFrom(&synth);
+	mixer.setVolume(&synth, 0.3);
 	
 	sampler.loadFile("amen_brother.wav");
 	sampler.setFrequencySyncToLength(beatLength*4.0*4.0); // the length of a beat is in quarter notes * 4 measures
@@ -65,15 +59,34 @@ void testApp::setup(){
 void testApp::audioRequested(float * output, int bufferSize, int nChannels){
 	for (int i = 0; i < bufferSize; i++){
 		frameCounter++;
-		int remainder = frameCounter%(beatLength); // trigger on 16ths
+		int remainder = frameCounter%(beatLength); // trigger drum on 8ths
 		if(remainder == 0){
-			beatPos++;
-			if(effectIndex<=0||effectIndex==3||effectIndex==4||effectIndex==5){
-				cutStart = beatPos%8/8.0;
+			if(effectIndex<=0||effectIndex>=3){
+				cutStart = beatPos/2%8/8.0;
 				cutEnd = cutStart + 1/8.0;
 			}
 			sampler.setLoopPoints(cutStart, cutEnd);
 			sampler.trigger();
+		}
+		remainder = frameCounter%(beatLength/4); // trigger synth on 16ths
+		if (remainder+ofRandom(-2, 1) <= 0) {
+			int noteOffset = 40;
+			synth.setPortamento(0.0);
+			synth.setFrequencyMidiNote(noteOffset+PENTATONIC[beatPos%3]);
+			if (remainder-ofRandom(-1, 1)<0) {
+				cout << "pitch down" << endl;
+				noteOffset -= 12;
+			}
+			if (remainder-ofRandom(0, 10)<0) {
+				synth.setPortamento(0.1*sampleRate);
+				cout << "slide" << endl;
+				synth.env.setADSR(0.01*sampleRate, 0.1*sampleRate, 0.5, 0.93*sampleRate);
+				synth.setFrequencyMidiNote(noteOffset+PENTATONIC[(int)(beatPos+ofRandom(5))%5]);
+			}
+			synth.trigger();
+		}
+		if (frameCounter%(beatLength/2) == 0) {
+			beatPos++;
 		}
 	}
 }
@@ -108,14 +121,15 @@ void testApp::draw(){
 	ofDrawBitmapString("FILTER LOW",80,(ofGetHeight()/8.0)*4-ofGetHeight()/16.0);
 	ofDrawBitmapString("FILTER HIGH",80,(ofGetHeight()/8.0)*5-ofGetHeight()/16.0);
 	ofDrawBitmapString("DELAY",80,(ofGetHeight()/8.0)*6-ofGetHeight()/16.0);
+	ofDrawBitmapString("SYNTH CUTOFF",80,(ofGetHeight()/8.0)*7-ofGetHeight()/16.0);
+	ofDrawBitmapString("SYNTH RES",80,(ofGetHeight()/8.0)*8-ofGetHeight()/16.0);
 }
 
 
 //--------------------------------------------------------------
 void testApp::keyPressed  (int key){
-	int synthToChange = (int)ofRandom(15);
-	synth[synthToChange].setFrequencyMidiNote(key/2);
-	synth[synthToChange].trigger();
+	synth.setFrequencyMidiNote(key/2);
+	synth.trigger();
 }
 
 //--------------------------------------------------------------
@@ -126,7 +140,6 @@ void testApp::keyReleased  (int key){
 void testApp::mouseMoved(int x, int y ){
 	x = fmax(x, 0);
 	effectIndex = floor(((float)y/(float)ofGetHeight())*8.0);
-	
 	filter.setCutoff(1.0);
 	filter.setRes(0.0);
 	filter.setLowPass();
@@ -155,6 +168,12 @@ void testApp::mouseMoved(int x, int y ){
 		case 5:
 			delay.setSize((float)x/(float)ofGetWidth());
 			mixer.setVolume(&delay, 1.0);
+			break;
+		case 6:
+			synth.setFilter(powf((float)x/(float)ofGetWidth(), 3), synth.getRes());
+			break;
+		case 7:
+			synth.setFilter(synth.getCutoff(), (float)x/(float)ofGetWidth());
 			break;
 		default:
 			break;

@@ -1,9 +1,7 @@
 #pragma once
 
-#include "ofxMaxim.h"
-
 #include "ofMain.h"
-
+#include "ofxMaxim.h"
 #include "ofxSynthDelayLine.h"
 #include "ofxSynthFilter.h"
 #include "ofxSynthFilter.h"
@@ -36,31 +34,59 @@ class ofxSynthADSR : public ofSoundSource {
 		int offset;
 		bool noteOn;
 };
-
+class ofxSynthOsc {
+	public:
+		ofxSynthOsc();
+		double	saw(double frequency);
+		double	triangle(double frequency,double phase);
+		double	square(double frequency);
+		void	setSampleRate(int rate);
+	private:
+		int		sampleRate;
+		double	frequency;
+		double	phase;
+		double	startphase;
+		double	endphase;
+		double	output;
+		double	tri;
+};
 class ofxSynth : public ofSoundSource{
 	public:
 		ofxSynth();
 		string getName() { return "ofxSynth"; }
 		void setup();
 		
-		virtual void audioRequested( float* buffer, int numFrames, int numChannels );
-		
 		void trigger();
+
 		void setFrequency(float freq);
-		void setFilter(float _cutoff, float _res);
-		void setFilterMode(int mode);
 		void setFrequencyMidiNote(float note);
-		void setWave(int _wavType);
+		void setPortamento(float p){portamento = p;};
+		
+		void setFilter(float _cutoff, float _res);
+		float getCutoff(){return cutoff;};
+		float getRes(){return res;};
+		void setFilterLowPass(){filter.setLowPass();filterMode = 1;};
+		void setFilterHighPass(){filter.setHighPass();filterMode = 2;};
 				
+		void setWaveSquare(){waveMode = 0;};
+		void setWaveTri(){waveMode = 1;};
+		void setWaveSaw(){waveMode = 2;};
+		void setWaveSin(){};
+		
+		virtual void audioRequested( float* buffer, int numFrames, int numChannels );
+		void				setSampleRate(int rate);
+
 		ofxMaxiOsc wave;
-		ofxSynthADSR env;
+		//ofxSynthOsc wave;
+		ofxSynthADSR env, modEnv;
 		ofxSynthFilter filter;
 		int ampMode;
 		bool usesEnv, hasTrigger;
 		
 	protected:
-		float currentFrequency, currentAmp, sustain, gain, cutoff, res, filterMod, pitchMod;
-		int filterMode, waveMode;
+		float currentFrequency,startFrequency, targetFrequency, currentAmp, noteTime;
+		float sustain, gain, cutoff, res, filterMod, portamento;
+		int filterMode, waveMode, sampleRate;
 		double ampEnv[8];
 };
 
