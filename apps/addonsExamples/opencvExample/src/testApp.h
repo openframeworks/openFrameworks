@@ -30,7 +30,7 @@ class testApp : public ofBaseApp{
 		  ofVideoPlayer 		vidPlayer;
 		#endif
 
-        ofxCvColorImage		colorImg;
+        ofxCvColorImage			colorImg;
 
         ofxCvGrayscaleImage 	grayImage;
 		ofxCvGrayscaleImage 	grayBg;
