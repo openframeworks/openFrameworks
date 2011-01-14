@@ -26,16 +26,6 @@ extern "C" {
 
 static bool plugin_registered = false;
 static bool gst_inited = false;
-//------------------------------------
-void ofGstDataLock(ofGstVideoData * data){
-	pthread_mutex_lock( &(data->buffer_mutex) );
-}
-
-//------------------------------------
-void ofGstDataUnlock(ofGstVideoData * data){
-	pthread_mutex_unlock( &(data->buffer_mutex) );
-}
-
 
 
 // called when the appsink notifies us that there is a new buffer ready for
@@ -53,12 +43,12 @@ static GstFlowReturn on_new_buffer_from_source (GstAppSink * elt, void * data)
 
   size = GST_BUFFER_SIZE (buffer);
 
-  ofGstDataLock(gstData);
+  gstData->buffer_mutex.lock();
 	  if(gstData->pixels.isAllocated()){
 		  memcpy (gstData->pixels.getPixels(), GST_BUFFER_DATA (buffer), size);
 		  gstData->bHavePixelsChanged=true;
 	  }
-  ofGstDataUnlock(gstData);
+  gstData->buffer_mutex.unlock();
 
 
   /// we don't need the appsink buffer anymore
@@ -82,12 +72,12 @@ static GstFlowReturn on_new_preroll_from_source (GstAppSink * elt, void * data)
 	  gst_buffer_unref (buffer);
 	  return;
   }*/
-  ofGstDataLock(gstData);
+  gstData->buffer_mutex.lock();
 	  if(gstData->pixels.isAllocated()){
 		  memcpy (gstData->pixels.getPixels(), GST_BUFFER_DATA (buffer), size);
 		  gstData->bHavePixelsChanged=true;
 	  }
-  ofGstDataUnlock(gstData);
+  gstData->buffer_mutex.unlock();
 
 
   /// we don't need the appsink buffer anymore
@@ -523,9 +513,6 @@ ofGstUtils::ofGstUtils() {
 	gstSink						= NULL;
 	attemptFramerate			= -1;
 
-	pthread_mutex_init(&(gstData.buffer_mutex),NULL);
-	pthread_mutex_init(&seek_mutex,NULL);
-
 	if(!g_thread_supported()){
 		g_thread_init(NULL);
 	}
@@ -784,9 +771,9 @@ bool ofGstUtils::startPipeline(int width, int height, int bpp){
 	bool ret = false;
 
 	if(!bIsStream){
-		ofGstDataLock(&gstData);
+		gstData.buffer_mutex.lock();
 		ret = allocate(width,height,bpp);
-		ofGstDataUnlock(&gstData);
+		gstData.buffer_mutex.unlock();
 
 	}else{
 		ret = true;
@@ -900,7 +887,7 @@ void ofGstUtils::update(){
 	gstHandleMessage();
 	if (bLoaded == true){
 		if(!bFrameByFrame){
-			ofGstDataLock(&gstData);
+			gstData.buffer_mutex.lock();
 
 				bHavePixelsChanged = gstData.bHavePixelsChanged;
 				if (bHavePixelsChanged){
@@ -909,7 +896,7 @@ void ofGstUtils::update(){
 					pixels = gstData.pixels;
 				}
 
-			ofGstDataUnlock(&gstData);
+			gstData.buffer_mutex.unlock();
 		}else{
 			GstBuffer *buffer;
 
@@ -1126,14 +1113,6 @@ void ofGstUtils::close(){
 	bLoaded = false;
 }
 
-void ofGstUtils::seek_lock(){
-	 pthread_mutex_lock( &seek_mutex );
-}
-
-void ofGstUtils::seek_unlock(){
-	pthread_mutex_unlock( &seek_mutex );
-}
-
 string getName(GstState state){
 	switch(state){
 	case   GST_STATE_VOID_PENDING:
@@ -1166,9 +1145,9 @@ void ofGstUtils::gstHandleMessage(){
 				gst_message_parse_buffering(msg,&pctBuffered);
 				ofLog(OF_LOG_VERBOSE,"GStreamer: buffering %i\%", pctBuffered);
 				if(bIsStream && !bLoaded){
-					ofGstDataLock(&gstData);
+					gstData.buffer_mutex.lock();
 					allocate();
-					ofGstDataUnlock(&gstData);
+					gstData.buffer_mutex.unlock();
 				}
 				if(pctBuffered<100){
 					gst_element_set_state (gstPipeline, GST_STATE_PAUSED);
@@ -1189,9 +1168,9 @@ void ofGstUtils::gstHandleMessage(){
 				GstState oldstate, newstate, pendstate;
 				gst_message_parse_state_changed(msg, &oldstate, &newstate, &pendstate);
 				if(!bLoaded){
-					ofGstDataLock(&gstData);
+					gstData.buffer_mutex.lock();
 					allocate();
-					ofGstDataUnlock(&gstData);
+					gstData.buffer_mutex.unlock();
 				}
 				gstData.pipelineState=newstate;
 				/*seek_lock();
