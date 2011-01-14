@@ -55,6 +55,11 @@ class ofVec4f : public ofPoint {
     ofVec4f& operator/=( const ofVec4f& vec );
     ofVec4f  operator/( const float f ) const;
     ofVec4f& operator/=( const float f );
+	
+	friend ostream& operator<<(ostream& os, const ofVec4f& vec);
+	friend istream& operator>>(istream& is, const ofVec4f& vec);
+	
+	
     ofVec4f  getScaled( const float length ) const;
     ofVec4f& scale( const float length );
 
@@ -326,6 +331,24 @@ inline ofVec4f& ofVec4f::operator/=( const float f ) {
 	w /= f;
 	return *this;
 }
+
+
+inline ostream& operator<<(ostream& os, const ofVec4f& vec) {
+	os << vec.x << ", " << vec.y << ", " << vec.z << ", " << vec.w;
+	return os;
+}
+
+inline istream& operator>>(istream& is, ofVec4f& vec) {
+	is >> vec.x;
+	is.ignore(2);
+	is >> vec.y;
+	is.ignore(2);
+	is >> vec.z;
+	is.ignore(2);
+	is >> vec.w;
+	return is;
+}
+
 
 inline ofVec4f ofVec4f::rescaled( const float length ) const {
 	return getScaled(length);

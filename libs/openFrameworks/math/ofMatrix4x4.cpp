@@ -545,6 +545,8 @@ bool ofMatrix4x4::makeInvertOf(const ofMatrix4x4 & rhs){
 
 
 
+
+
 /******************************************
  Matrix inversion technique:
  Given a matrix mat, we want to invert it.

@@ -58,6 +58,8 @@ class ofVec2f : public ofPoint {
     ofVec2f  operator/( const float f ) const;
     ofVec2f& operator/=( const float f );
 
+	friend ostream& operator<<(ostream& os, const ofVec2f& vec);
+	friend istream& operator>>(istream& is, const ofVec2f& vec);
 
     // Scaling
     //
@@ -323,6 +325,17 @@ inline ofVec2f& ofVec2f::operator/=( const ofPoint& vec ) {
 	return *this;
 }
 
+inline ostream& operator<<(ostream& os, const ofVec2f& vec) {
+	os << vec.x << ", " << vec.y;
+	return os;
+}
+
+inline istream& operator>>(istream& is, ofVec2f& vec) {
+	is >> vec.x;
+	is.ignore(2);
+	is >> vec.y;
+	return is;
+}
 
 //operator overloading for float
 //
