@@ -1,20 +1,39 @@
 nobase_include_HEADERS= \
+			openFrameworks/3d/of3d.h \
+			openFrameworks/3d/ofCamera.h \
+			openFrameworks/3d/ofMeshNode.h \
+			openFrameworks/3d/ofNode3D.h \
+			openFrameworks/3d/ofScene3d.h \
 			openFrameworks/app/ofAppBaseWindow.h \
 			openFrameworks/app/ofAppGlutWindow.h \
 			openFrameworks/app/ofAppRunner.h \
 			openFrameworks/app/ofBaseApp.h \
 			openFrameworks/communication/ofArduino.h \
 			openFrameworks/communication/ofSerial.h \
-			openFrameworks/events/ofEventUtils.h \
+			openFrameworks/events/ofEventMessage.h \
 			openFrameworks/events/ofEvents.h \
+			openFrameworks/events/ofEventUtils.h \
 			openFrameworks/graphics/ofBitmapFont.h \
+			openFrameworks/graphics/ofFbo.h \
 			openFrameworks/graphics/ofGraphics.h \
 			openFrameworks/graphics/ofImage.h \
+			openFrameworks/graphics/ofPixels.h \
+			openFrameworks/graphics/ofShader.h \
 			openFrameworks/graphics/ofTexture.h \
 			openFrameworks/graphics/ofTrueTypeFont.h \
+			openFrameworks/math/ofMath.h \
+			openFrameworks/math/ofMatrix3x3.h \
+			openFrameworks/math/ofMatrix4x4.h \
+			openFrameworks/math/ofQuaternion.h \
+			openFrameworks/math/ofVec2f.h \
+			openFrameworks/math/ofVec3f.h \
+			openFrameworks/math/ofVec4f.h \
+			openFrameworks/math/ofVectorMath.h \
 			openFrameworks/ofMain.h \
+			openFrameworks/sound/ofSoundEffect.h \
 			openFrameworks/sound/ofSoundPlayer.h \
 			openFrameworks/sound/ofSoundStream.h \
+			openFrameworks/sound/ofSoundUnit.h \
 			openFrameworks/types/ofBaseTypes.h \
 			openFrameworks/types/ofColor.h \
 			openFrameworks/types/ofPoint.h \
@@ -22,18 +41,18 @@ nobase_include_HEADERS= \
 			openFrameworks/types/ofTypes.h \
 			openFrameworks/utils/ofConstants.h \
 			openFrameworks/utils/ofFileUtils.h \
-			openFrameworks/utils/ofMath.h \
 			openFrameworks/utils/ofNoise.h \
 			openFrameworks/utils/ofSystemUtils.h \
+			openFrameworks/utils/ofThread.h \
+			openFrameworks/utils/ofURLFileLoader.h \
 			openFrameworks/utils/ofUtils.h \
 			openFrameworks/video/ofDirectShowGrabber.h \
-			openFrameworks/video/ofGStreamerGrabber.h \
-			openFrameworks/video/ofGStreamerPlayer.h \
 			openFrameworks/video/ofGstUtils.h \
 			openFrameworks/video/ofQtUtils.h \
 			openFrameworks/video/ofQuickTimeGrabber.h \
 			openFrameworks/video/ofQuickTimePlayer.h \
-			openFrameworks/video/ofUnicapGrabber.h 
+			openFrameworks/video/ofVideoGrabber.h \
+			openFrameworks/video/ofVideoPlayer.h
 
 lib_LTLIBRARIES=libopenFrameworks.la
 libopenFrameworks_la_CXXFLAGS= \
@@ -44,29 +63,46 @@ libopenFrameworks_la_LDFLAGS= \
 			      ${gstreamer_LDFLAGS} \
 			      ${freetype_LDFLAGS}
 libopenFrameworks_la_SOURCES= \
+			      openFrameworks/3d/ofCamera.cpp \
+			      openFrameworks/3d/ofMeshNode.cpp \
+			      openFrameworks/3d/ofNode3D.cpp \
+			      openFrameworks/3d/ofScene3d.cpp \
 			      openFrameworks/app/ofAppGlutWindow.cpp \
 			      openFrameworks/app/ofAppRunner.cpp \
 			      openFrameworks/communication/ofArduino.cpp \
 			      openFrameworks/communication/ofSerial.cpp \
+			      openFrameworks/events/ofEventMessage.cpp \
 			      openFrameworks/events/ofEvents.cpp \
 			      openFrameworks/graphics/ofBitmapFont.cpp \
+			      openFrameworks/graphics/ofFbo.cpp \
 			      openFrameworks/graphics/ofGraphics.cpp \
 			      openFrameworks/graphics/ofImage.cpp \
+			      openFrameworks/graphics/ofPixels.cpp \
+			      openFrameworks/graphics/ofShader.cpp \
 			      openFrameworks/graphics/ofTexture.cpp \
 			      openFrameworks/graphics/ofTrueTypeFont.cpp \
+			      openFrameworks/math/ofMath.cpp \
+			      openFrameworks/math/ofMatrix3x3.cpp \
+			      openFrameworks/math/ofMatrix4x4.cpp \
+			      openFrameworks/math/ofQuaternion.cpp \
+			      openFrameworks/math/ofVec2f.cpp \
+			      openFrameworks/math/ofVec4f.cpp \
+			      openFrameworks/sound/ofSoundEffect.cpp \
 			      openFrameworks/sound/ofSoundStream.cpp \
+			      openFrameworks/sound/ofSoundUnit.cpp \
+			      openFrameworks/types/ofBaseTypes.cpp \
 			      openFrameworks/types/ofColor.cpp \
 			      openFrameworks/types/ofPoint.cpp \
 			      openFrameworks/types/ofRectangle.cpp \
 			      openFrameworks/utils/ofFileUtils.cpp \
-			      openFrameworks/utils/ofMath.cpp \
 			      openFrameworks/utils/ofSystemUtils.cpp \
+			      openFrameworks/utils/ofThread.cpp \
+			      openFrameworks/utils/ofURLFileLoader.cpp \
 			      openFrameworks/utils/ofUtils.cpp \
 			      openFrameworks/video/ofDirectShowGrabber.cpp \
-			      openFrameworks/video/ofGStreamerGrabber.cpp \
-			      openFrameworks/video/ofGStreamerPlayer.cpp \
 			      openFrameworks/video/ofGstUtils.cpp \
 			      openFrameworks/video/ofQtUtils.cpp \
-			      openFrameworks/video/ofUnicapGrabber.cpp \
+			      openFrameworks/video/ofQuickTimeGrabber.cpp \
+			      openFrameworks/video/ofQuickTimePlayer.cpp \
 			      openFrameworks/video/ofVideoGrabber.cpp \
 			      openFrameworks/video/ofVideoPlayer.cpp

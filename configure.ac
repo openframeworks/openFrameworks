@@ -15,10 +15,12 @@ PKG_CHECK_MODULES([freetype],[freetype2])
 PKG_CHECK_MODULES([opencv],[opencv])
 
 AM_CPPFLAGS="${AM_CPPFLAGS} -I\${top_srcdir}/libs/openFrameworks "
+AM_CPPFLAGS="${AM_CPPFLAGS} -I\${top_srcdir}/libs/openFrameworks/3d "
 AM_CPPFLAGS="${AM_CPPFLAGS} -I\${top_srcdir}/libs/openFrameworks/app "
 AM_CPPFLAGS="${AM_CPPFLAGS} -I\${top_srcdir}/libs/openFrameworks/communication "
 AM_CPPFLAGS="${AM_CPPFLAGS} -I\${top_srcdir}/libs/openFrameworks/events "
 AM_CPPFLAGS="${AM_CPPFLAGS} -I\${top_srcdir}/libs/openFrameworks/graphics "
+AM_CPPFLAGS="${AM_CPPFLAGS} -I\${top_srcdir}/libs/openFrameworks/math "
 AM_CPPFLAGS="${AM_CPPFLAGS} -I\${top_srcdir}/libs/openFrameworks/sound "
 AM_CPPFLAGS="${AM_CPPFLAGS} -I\${top_srcdir}/libs/openFrameworks/types "
 AM_CPPFLAGS="${AM_CPPFLAGS} -I\${top_srcdir}/libs/openFrameworks/utils "
@@ -35,14 +37,10 @@ AC_CONFIG_FILES([Makefile libs/Makefile
   addons/ofx3DModelLoader/src/Makefile
   addons/ofxAccelerometer/src/Makefile
   addons/ofxDirList/src/Makefile
-  addons/ofxFbo/src/Makefile
   addons/ofxNetwork/src/Makefile
   addons/ofxOpenCv/src/Makefile
   addons/ofxOsc/src/Makefile
-  addons/ofxShader/src/Makefile
-  addons/ofxThread/src/Makefile
   addons/ofxVectorGraphics/Makefile
-  addons/ofxVectorMath/src/Makefile
   addons/ofxXmlSettings/Makefile
 ])
 AC_OUTPUT
