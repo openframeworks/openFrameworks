@@ -3,7 +3,7 @@
 #include "ofConstants.h"
 #include "ofTypes.h"
 
-
+#include <iostream>
 
 class ofVec3f : public ofPoint {
 
@@ -49,7 +49,6 @@ class ofVec3f : public ofPoint {
     ofVec3f& operator/=( const ofPoint& vec );
     ofVec3f  operator-() const;
 
-
     //operator overloading for float
     //
     void 	  operator=( const float f);
@@ -62,7 +61,9 @@ class ofVec3f : public ofPoint {
     ofVec3f  operator/( const float f ) const;
     ofVec3f& operator/=( const float f );
 
-
+	friend ostream& operator<<(ostream& os, const ofVec3f& vec);
+	friend istream& operator>>(istream& is, const ofVec3f& vec);
+	
     //Scale
     //
     ofVec3f  getScaled( const float length ) const;
@@ -310,6 +311,21 @@ inline bool ofVec3f::alignRad( const ofVec3f& vec, float tollerance ) const {
 // Operator overloading for ofPoint
 //
 //
+
+
+inline ostream& operator<<(ostream& os, const ofVec3f& vec) {
+	os << vec.x << ", " << vec.y << ", " << vec.z;
+	return os;
+}
+
+inline istream& operator>>(istream& is, ofVec3f& vec) {
+	is >> vec.x;
+	is.ignore(2);
+	is >> vec.y;
+	is.ignore(2);
+	is >> vec.z;
+	return is;
+}
 
 inline void ofVec3f::operator=( const ofPoint& vec ){
 	x = vec.x;
