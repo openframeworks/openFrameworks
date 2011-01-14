@@ -59,7 +59,9 @@ class ofQuickTimePlayer : public ofBaseVideoPlayer{
 		 
 		bool 				bHavePixelsChanged;
 		 
-				
+		 
+		ofPixels		 	pixels;
+		
 	protected:
 		void createImgMemAndGWorld();
 		void start();
@@ -69,7 +71,6 @@ class ofQuickTimePlayer : public ofBaseVideoPlayer{
 
 		//these are public because the ofQuickTimePlayer implementation has some callback functions that need access
 		//todo - fix this
-		ofPixels		 	pixels;
 
 		int					nFrames;				// number of frames
 		bool				allocated;				// so we know to free pixels or not
