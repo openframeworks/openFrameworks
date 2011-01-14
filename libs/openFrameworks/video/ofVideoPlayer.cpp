@@ -47,9 +47,9 @@ bool ofVideoPlayer::loadMovie(string name){
 	width	 = player->getWidth();
 	height	 = player->getHeight();
 	
-	if( bOk && bUseTexture ){
-		tex.allocate(width, height, GL_RGB);
-	}
+	if( bOk && bUseTexture )
+		if(width!=0 && height!=0)
+			tex.allocate(width, height, GL_RGB);
 	
 	return bOk;
 }
@@ -80,10 +80,26 @@ bool ofVideoPlayer::isFrameNew(){
 //--------------------------------------------------------------------
 void ofVideoPlayer::update(){
 	if(	player != NULL ){
+
 		player->update();
-		if( bUseTexture && player->isFrameNew() ){
-			//note we should look at ways to do other pixel formats. 
-			tex.loadData(player->getPixels(), tex.getWidth(), tex.getHeight(), GL_RGB);
+		
+		if( bUseTexture && player->isFrameNew() ) {
+			unsigned char *pxls = player->getPixels();
+			if(width==0 || height==0) {
+				if(player->getWidth() != 0 && player->getHeight() != 0) {
+					
+					width = player->getWidth();
+					height = player->getHeight();
+				
+					if(tex.bAllocated())
+						tex.clear();
+				
+					tex.allocate(width, height, GL_RGB);
+					tex.loadData(pxls, tex.getWidth(), tex.getHeight(), GL_RGB);
+				}
+			}
+			else
+				tex.loadData(pxls, tex.getWidth(), tex.getHeight(), GL_RGB);
 		}
 	}
 }
