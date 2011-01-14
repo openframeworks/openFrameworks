@@ -15,12 +15,19 @@
 #include "ofBaseSoundPlayer.h"
 
 
-#define OF_SOUND_PLAYER_QUICKTIME
+#define OF_SOUND_PLAYER_FMOD
 
 #ifdef OF_SOUND_PLAYER_QUICKTIME
 #include "ofQuicktimeSoundPlayer.h"
 #define OF_SOUND_PLAYER_TYPE ofQuicktimeSoundPlayer()
 #endif
+
+#ifdef OF_SOUND_PLAYER_FMOD
+#include "ofFmodSoundPlayer.h"
+#define OF_SOUND_PLAYER_TYPE ofFmodSoundPlayer()
+#endif
+
+
 
 //---------------------------------------------
 class ofSoundPlayer_ : public ofBaseSoundPlayer {

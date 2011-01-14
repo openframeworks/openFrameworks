@@ -7,8 +7,6 @@ ofSoundPlayer_::ofSoundPlayer_ (){
 
 //---------------------------------------------------------------------------
 ofSoundPlayer_::~ofSoundPlayer_(){
-
-	
 	if( player != NULL ){
 		delete player;
 		player = NULL;
@@ -32,8 +30,7 @@ ofBaseSoundPlayer * ofSoundPlayer_::getPlayer(){
 	return player;
 }
 
-
-
+//--------------------------------------------------------------------
 void ofSoundPlayer_::loadSound(string fileName, bool stream){
 	
 	if( player == NULL ){
@@ -45,59 +42,77 @@ void ofSoundPlayer_::loadSound(string fileName, bool stream){
 	}
 }
 
-
+//--------------------------------------------------------------------
 void ofSoundPlayer_::unloadSound(){
 	if( player != NULL ){
 		player->unloadSound();
 	}
 }
+
+//--------------------------------------------------------------------
 void ofSoundPlayer_::play(){
 	if( player != NULL ){
 		player->play();
 	}
 }
+
+//--------------------------------------------------------------------
 void ofSoundPlayer_::stop(){
 	if( player != NULL ){
 		player->stop();
 	}
 }
 
+//--------------------------------------------------------------------
 void ofSoundPlayer_::setVolume(float vol){
 	if( player != NULL ){
 		player->setVolume(vol);
 	}
 }
+
+//--------------------------------------------------------------------
 void ofSoundPlayer_::setPan(float pan){
 	if( player != NULL ){
 		player->setPan(pan);
 	}
 }
+
+//--------------------------------------------------------------------
 void ofSoundPlayer_::setSpeed(float spd){
 	if( player != NULL ){
 		player->setSpeed(spd);
 	}
 }
+
+//--------------------------------------------------------------------
 void ofSoundPlayer_::setPaused(bool bP){
 	if( player != NULL ){
 		player->setPaused(bP);
 	}
 }
+
+//--------------------------------------------------------------------
 void ofSoundPlayer_::setLoop(bool bLp){
 	if( player != NULL ){
 		player->setLoop(bLp);
 	}
 }
+
+//--------------------------------------------------------------------
 void ofSoundPlayer_::setMultiPlay(bool bMp){
 	if( player != NULL ){
 		player->setMultiPlay(bMp);
 	}
 }
+
+//--------------------------------------------------------------------
 void ofSoundPlayer_::setPosition(float pct){
 	if( player != NULL ){
 		player->setPosition(pct);
 	}
 } 
 
+//--------------------------------------------------------------------
 float ofSoundPlayer_::getPosition(){
 	if( player != NULL ){
 		return player->getPosition();
@@ -105,6 +120,8 @@ float ofSoundPlayer_::getPosition(){
 		return 0; 
 	}
 }
+
+//--------------------------------------------------------------------
 bool ofSoundPlayer_::getIsPlaying(){
 	if( player != NULL ){
 		return player->getIsPlaying();
@@ -112,6 +129,8 @@ bool ofSoundPlayer_::getIsPlaying(){
 		return false; 
 	}
 }
+
+//--------------------------------------------------------------------
 float ofSoundPlayer_::getSpeed(){
 	if( player != NULL ){
 		return player->getSpeed();
@@ -119,6 +138,8 @@ float ofSoundPlayer_::getSpeed(){
 		return 0; 
 	}
 }
+
+//--------------------------------------------------------------------
 float ofSoundPlayer_::getPan(){
 	if( player != NULL ){
 		return player->getPan();

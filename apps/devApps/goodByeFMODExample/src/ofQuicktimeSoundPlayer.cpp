@@ -3,8 +3,6 @@
 
 
 
-
-
 // look at: 
 // http://www.meandmark.com/quicktimepart3.html
 // http://developer.apple.com/library/mac/#qa/qa2004/qa1371.html
