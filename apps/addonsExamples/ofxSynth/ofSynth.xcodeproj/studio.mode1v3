@@ -273,7 +273,7 @@
 							<key>PBXSmartGroupTreeModuleOutlineStateSelectionKey</key>
 							<array>
 								<array>
-									<integer>16</integer>
+									<integer>13</integer>
 									<integer>11</integer>
 									<integer>10</integer>
 									<integer>9</integer>
@@ -318,7 +318,7 @@
 								<key>PBXProjectModuleGUID</key>
 								<string>1CE0B20306471E060097A5F4</string>
 								<key>PBXProjectModuleLabel</key>
-								<string>ofxSynth.cpp</string>
+								<string>ofxSynth.h</string>
 								<key>PBXSplitModuleInNavigatorKey</key>
 								<dict>
 									<key>Split0</key>
@@ -326,11 +326,11 @@
 										<key>PBXProjectModuleGUID</key>
 										<string>1CE0B20406471E060097A5F4</string>
 										<key>PBXProjectModuleLabel</key>
-										<string>ofxSynth.cpp</string>
+										<string>ofxSynth.h</string>
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>3D235BA112DFF3A30023F4EF</string>
+										<string>3D235BD512DFF7620023F4EF</string>
 										<key>history</key>
 										<array>
 											<string>3DFC742512DE50F600BCD217</string>
@@ -342,20 +342,17 @@
 											<string>3DFC76A812DEAD6B00BCD217</string>
 											<string>3DFC76C512DEB1BE00BCD217</string>
 											<string>3DFC780D12DF5ADA00BCD217</string>
-											<string>3D6F731A12DF71BA000A52D8</string>
 											<string>3D6F734A12DF74BD000A52D8</string>
 											<string>3D6F76AB12DFD643000A52D8</string>
 											<string>3D2359B912DFE3B10023F4EF</string>
 											<string>3D235A6912DFE8CA0023F4EF</string>
 											<string>3D235A8612DFEA170023F4EF</string>
 											<string>3D235B0012DFED370023F4EF</string>
-											<string>3D235B6B12DFF1F40023F4EF</string>
-											<string>3D235B7E12DFF2D70023F4EF</string>
 											<string>3D235B7F12DFF2D70023F4EF</string>
 											<string>3D235B9D12DFF3A30023F4EF</string>
 											<string>3D235B9E12DFF3A30023F4EF</string>
-											<string>3D235B9F12DFF3A30023F4EF</string>
-											<string>3D235BA012DFF3A30023F4EF</string>
+											<string>3D235BC812DFF6FD0023F4EF</string>
+											<string>3D235BD412DFF7620023F4EF</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>
@@ -553,13 +550,13 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
-		<string>3D235BA212DFF3A30023F4EF</string>
+		<string>3D235BD612DFF7620023F4EF</string>
 		<string>3D235B7A12DFF1F40023F4EF</string>
 		<string>3D235B7B12DFF1F40023F4EF</string>
 		<string>1C78EAAD065D492600B07095</string>
 		<string>1CD10A99069EF8BA00B06720</string>
-		<string>/Users/studio/Desktop/jonbro_working_files/jonbroOF/apps/addonsExamples/ofxSynth/ofSynth.xcodeproj</string>
 		<string>3D643E3612DE2B7D0091E252</string>
+		<string>/Users/studio/Desktop/jonbro_working_files/jonbroOF/apps/addonsExamples/ofxSynth/ofSynth.xcodeproj</string>
 	</array>
 	<key>WindowString</key>
 	<string>0 87 1280 691 0 0 1280 778 </string>
@@ -578,14 +575,12 @@
 					<key>Dock</key>
 					<array>
 						<dict>
-							<key>BecomeActive</key>
-							<true/>
 							<key>ContentConfiguration</key>
 							<dict>
 								<key>PBXProjectModuleGUID</key>
 								<string>1CD0528F0623707200166675</string>
 								<key>PBXProjectModuleLabel</key>
-								<string>ofxSynth.cpp</string>
+								<string>ofxSynth.h</string>
 								<key>StatusBarVisibility</key>
 								<true/>
 							</dict>
@@ -602,6 +597,8 @@
 							<string>326pt</string>
 						</dict>
 						<dict>
+							<key>BecomeActive</key>
+							<true/>
 							<key>ContentConfiguration</key>
 							<dict>
 								<key>PBXProjectModuleGUID</key>
@@ -654,7 +651,7 @@
 			<key>WindowToolGUID</key>
 			<string>3D643E3612DE2B7D0091E252</string>
 			<key>WindowToolIsVisible</key>
-			<true/>
+			<false/>
 		</dict>
 		<dict>
 			<key>FirstTimeWindowDisplayed</key>

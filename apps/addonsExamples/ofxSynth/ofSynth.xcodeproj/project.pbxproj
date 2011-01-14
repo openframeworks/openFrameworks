@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		3D2359C812DFE3BF0023F4EF /* glew.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D2359C712DFE3BF0023F4EF /* glew.a */; };
-		3D643E9A12DE36580091E252 /* maximilian.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3D643E9212DE36580091E252 /* maximilian.cpp */; };
 		3D643E9B12DE36580091E252 /* ofxSynth.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3D643E9512DE36580091E252 /* ofxSynth.cpp */; };
 		3DFC746D12DE58BB00BCD217 /* ofxSynthDelayLine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3DFC746C12DE58BB00BCD217 /* ofxSynthDelayLine.cpp */; };
 		3DFC75D612DE95E100BCD217 /* ofxSynthFilter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3DFC75D512DE95E100BCD217 /* ofxSynthFilter.cpp */; };
@@ -85,9 +84,6 @@
 		3D2359C312DFE3BF0023F4EF /* glxew.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = glxew.h; sourceTree = "<group>"; };
 		3D2359C412DFE3BF0023F4EF /* wglew.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = wglew.h; sourceTree = "<group>"; };
 		3D2359C712DFE3BF0023F4EF /* glew.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = glew.a; sourceTree = "<group>"; };
-		3D643E9212DE36580091E252 /* maximilian.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = maximilian.cpp; path = ../../../addons/ofxSynth/src/maximilian.cpp; sourceTree = SOURCE_ROOT; };
-		3D643E9312DE36580091E252 /* maximilian.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = maximilian.h; path = ../../../addons/ofxSynth/src/maximilian.h; sourceTree = SOURCE_ROOT; };
-		3D643E9412DE36580091E252 /* ofxMaxim.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxMaxim.h; path = ../../../addons/ofxSynth/src/ofxMaxim.h; sourceTree = SOURCE_ROOT; };
 		3D643E9512DE36580091E252 /* ofxSynth.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofxSynth.cpp; path = ../../../addons/ofxSynth/src/ofxSynth.cpp; sourceTree = SOURCE_ROOT; };
 		3D643E9612DE36580091E252 /* ofxSynth.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxSynth.h; path = ../../../addons/ofxSynth/src/ofxSynth.h; sourceTree = SOURCE_ROOT; };
 		3DFC746B12DE58BB00BCD217 /* ofxSynthDelayLine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxSynthDelayLine.h; sourceTree = "<group>"; };
@@ -230,9 +226,6 @@
 		3D643E8C12DE36580091E252 /* src */ = {
 			isa = PBXGroup;
 			children = (
-				3D643E9212DE36580091E252 /* maximilian.cpp */,
-				3D643E9312DE36580091E252 /* maximilian.h */,
-				3D643E9412DE36580091E252 /* ofxMaxim.h */,
 				3D643E9512DE36580091E252 /* ofxSynth.cpp */,
 				3D643E9612DE36580091E252 /* ofxSynth.h */,
 				3DFC746B12DE58BB00BCD217 /* ofxSynthDelayLine.h */,
@@ -584,7 +577,6 @@
 			files = (
 				E4B69E200A3A1BDC003C02F2 /* main.cpp in Sources */,
 				E4B69E210A3A1BDC003C02F2 /* testApp.cpp in Sources */,
-				3D643E9A12DE36580091E252 /* maximilian.cpp in Sources */,
 				3D643E9B12DE36580091E252 /* ofxSynth.cpp in Sources */,
 				3DFC746D12DE58BB00BCD217 /* ofxSynthDelayLine.cpp in Sources */,
 				3DFC75D612DE95E100BCD217 /* ofxSynthFilter.cpp in Sources */,
