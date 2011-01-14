@@ -577,6 +577,8 @@ bool ofMatrix4x4::makeInvertOf(const ofMatrix4x4 & rhs){
 
 
 
+
+
 /******************************************
  Matrix inversion technique:
  Given a matrix mat, we want to invert it.
@@ -1518,9 +1520,9 @@ void ofMatrix4x4::decompose( ofVec3f& t,
     if (parts.t[W] != 0.0)
         mul = 1.0 / parts.t[W];
 
-    t[0] = parts.t[X] * mul;
-    t[1] = parts.t[Y] * mul;
-    t[2] = parts.t[Z] * mul;
+    t.x = parts.t[X] * mul;
+    t.y = parts.t[Y] * mul;
+    t.z = parts.t[Z] * mul;
 
     r.set(parts.q.x(), parts.q.y(), parts.q.z(), parts.q.w());
 
@@ -1530,9 +1532,9 @@ void ofMatrix4x4::decompose( ofVec3f& t,
 
     // mul be sign of determinant to support negative scales.
     mul *= parts.f;
-    s[0] = parts.k.x() * mul;
-    s[1] = parts.k.y() * mul;
-    s[2] = parts.k.z() * mul;
+    s.x= parts.k.x() * mul;
+    s.y = parts.k.y() * mul;
+    s.z = parts.k.z() * mul;
 
     so.set(parts.u.x(), parts.u.y(), parts.u.z(), parts.u.w());
 }

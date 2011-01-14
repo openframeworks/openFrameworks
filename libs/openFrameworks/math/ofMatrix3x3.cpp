@@ -293,3 +293,34 @@ void ofMatrix3x3::operator/=(float scalar) {
 	i /= scalar;
 }
 
+
+ostream& operator<<(ostream& os, const ofMatrix3x3& M) {
+	int w = 8;
+	os	<< setw(w)
+		<< M.a << ", " << setw(w)
+		<< M.b << ", " << setw(w) 
+		<< M.c << std::endl;
+	
+	os	<< setw(w)
+		<< M.d << ", " << setw(w)
+		<< M.e << ", " << setw(w) 
+		<< M.f << std::endl;
+	
+	os	<< setw(w)
+		<< M.g << ", " << setw(w) 
+		<< M.h << ", " << setw(w) 
+		<< M.i;
+	return os;
+}
+
+istream& operator>>(istream& is, ofMatrix3x3& M) {
+	is >> M.a; is.ignore(2);
+	is >> M.b; is.ignore(2);	
+	is >> M.c; is.ignore(1);
+	is >> M.d; is.ignore(2);
+	is >> M.e; is.ignore(2);
+	is >> M.f; is.ignore(1);
+	is >> M.h;
+}
+
+

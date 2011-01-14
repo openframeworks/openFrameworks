@@ -197,9 +197,9 @@ void ofQuaternion::makeRotate_original( const ofVec3f& from, const ofVec3f& to )
 void ofQuaternion::getRotate( float& angle, ofVec3f& vec ) const {
 	float x, y, z;
 	getRotate(angle, x, y, z);
-	vec[0] = x;
-	vec[1] = y;
-	vec[2] = z;
+	vec.x = x;
+	vec.y = y;
+	vec.z = z;
 }
 // Get the angle of rotation and axis of this Quat object.
 // Won't give very meaningful results if the Quat is not associated
