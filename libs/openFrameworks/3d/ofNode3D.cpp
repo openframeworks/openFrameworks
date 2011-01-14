@@ -1,5 +1,5 @@
 
-#include "ofNode3d.h"
+#include "ofNode3D.h"
 #include "ofMain.h"
 
 
