@@ -13,7 +13,7 @@ class ofThread{
 
 	public:
 		ofThread();
-		~ofThread();
+		virtual ~ofThread();
 		//virtual ofThread();
 	
 		bool isThreadRunning();

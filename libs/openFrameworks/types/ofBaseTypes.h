@@ -187,6 +187,7 @@ public:
 class ofBaseHasDevices {
 	
 public: 
+	virtual ~ofBaseHasDevices() {}
 	
 	virtual void buildDeviceList() = 0; 
 	
