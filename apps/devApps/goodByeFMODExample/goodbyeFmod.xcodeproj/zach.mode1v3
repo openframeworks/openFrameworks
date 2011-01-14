@@ -275,7 +275,7 @@
 							<key>PBXSmartGroupTreeModuleOutlineStateSelectionKey</key>
 							<array>
 								<array>
-									<integer>5</integer>
+									<integer>6</integer>
 									<integer>3</integer>
 									<integer>0</integer>
 								</array>
@@ -300,7 +300,7 @@
 							<real>345</real>
 						</array>
 						<key>RubberWindowFrame</key>
-						<string>657 97 1559 873 0 0 1680 1028 </string>
+						<string>36 119 1559 873 0 0 1680 1028 </string>
 					</dict>
 					<key>Module</key>
 					<string>PBXSmartGroupTreeModule</string>
@@ -318,7 +318,7 @@
 								<key>PBXProjectModuleGUID</key>
 								<string>1CE0B20306471E060097A5F4</string>
 								<key>PBXProjectModuleLabel</key>
-								<string>ofSoundPlayer_.cpp</string>
+								<string>ofSoundPlayer_.h</string>
 								<key>PBXSplitModuleInNavigatorKey</key>
 								<dict>
 									<key>Split0</key>
@@ -326,24 +326,26 @@
 										<key>PBXProjectModuleGUID</key>
 										<string>1CE0B20406471E060097A5F4</string>
 										<key>PBXProjectModuleLabel</key>
-										<string>ofSoundPlayer_.cpp</string>
+										<string>ofSoundPlayer_.h</string>
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>9201147312DFCB9F0078BA54</string>
+										<string>920114F112DFE1AF0078BA54</string>
 										<key>history</key>
 										<array>
-											<string>9201142D12DFC8BA0078BA54</string>
 											<string>9201142E12DFC8BA0078BA54</string>
 											<string>9201143612DFC8BA0078BA54</string>
 											<string>9201146412DFCB830078BA54</string>
-											<string>9201146512DFCB830078BA54</string>
-											<string>9201146612DFCB830078BA54</string>
-											<string>9201146712DFCB830078BA54</string>
 											<string>9201146812DFCB830078BA54</string>
-											<string>9201146912DFCB830078BA54</string>
-											<string>9201147112DFCB9F0078BA54</string>
-											<string>9201147212DFCB9F0078BA54</string>
+											<string>920114E812DFE1AF0078BA54</string>
+											<string>920114E912DFE1AF0078BA54</string>
+											<string>920114EA12DFE1AF0078BA54</string>
+											<string>920114EB12DFE1AF0078BA54</string>
+											<string>920114EC12DFE1AF0078BA54</string>
+											<string>920114ED12DFE1AF0078BA54</string>
+											<string>920114EE12DFE1AF0078BA54</string>
+											<string>920114EF12DFE1AF0078BA54</string>
+											<string>920114F012DFE1AF0078BA54</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>
@@ -357,7 +359,7 @@
 								<key>Frame</key>
 								<string>{{0, 0}, {1192, 827}}</string>
 								<key>RubberWindowFrame</key>
-								<string>657 97 1559 873 0 0 1680 1028 </string>
+								<string>36 119 1559 873 0 0 1680 1028 </string>
 							</dict>
 							<key>Module</key>
 							<string>PBXNavigatorGroup</string>
@@ -377,7 +379,7 @@
 								<key>Frame</key>
 								<string>{{0, 832}, {1192, 0}}</string>
 								<key>RubberWindowFrame</key>
-								<string>657 97 1559 873 0 0 1680 1028 </string>
+								<string>36 119 1559 873 0 0 1680 1028 </string>
 							</dict>
 							<key>Module</key>
 							<string>XCDetailModule</string>
@@ -541,6 +543,7 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
+		<string>920114F212DFE1AF0078BA54</string>
 		<string>9201143912DFC8BA0078BA54</string>
 		<string>9201143A12DFC8BA0078BA54</string>
 		<string>1C78EAAD065D492600B07095</string>
@@ -549,7 +552,7 @@
 		<string>/Users/zach/Desktop/OF_GIT/openFrameworks/apps/devApps/goodByeFMODExample/goodbyeFmod.xcodeproj</string>
 	</array>
 	<key>WindowString</key>
-	<string>657 97 1559 873 0 0 1680 1028 </string>
+	<string>36 119 1559 873 0 0 1680 1028 </string>
 	<key>WindowToolsV3</key>
 	<array>
 		<dict>
@@ -565,8 +568,6 @@
 					<key>Dock</key>
 					<array>
 						<dict>
-							<key>BecomeActive</key>
-							<true/>
 							<key>ContentConfiguration</key>
 							<dict>
 								<key>PBXProjectModuleGUID</key>
@@ -589,6 +590,8 @@
 							<string>237pt</string>
 						</dict>
 						<dict>
+							<key>BecomeActive</key>
+							<true/>
 							<key>ContentConfiguration</key>
 							<dict>
 								<key>PBXProjectModuleGUID</key>

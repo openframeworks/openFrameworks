@@ -2,21 +2,21 @@
 {
 	9201136812DFA3B10078BA54 /* ofQuicktimeSoundPlayer.cpp */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1131, 6448}}";
-			sepNavSelRange = "{7693, 0}";
-			sepNavVisRange = "{6935, 1490}";
+			sepNavIntBoundsRect = "{{0, 0}, {1131, 6136}}";
+			sepNavSelRange = "{6450, 0}";
+			sepNavVisRange = "{5913, 1697}";
 		};
 	};
 	9201136912DFA3B10078BA54 /* ofQuicktimeSoundPlayer.h */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1131, 1443}}";
-			sepNavSelRange = "{1887, 9}";
-			sepNavVisRange = "{690, 1576}";
+			sepNavIntBoundsRect = "{{0, 0}, {1131, 1456}}";
+			sepNavSelRange = "{504, 0}";
+			sepNavVisRange = "{0, 1566}";
 		};
 	};
 	920113A712DFA5170078BA54 /* ofBaseSoundPlayer.h */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1131, 770}}";
+			sepNavIntBoundsRect = "{{0, 0}, {1131, 747}}";
 			sepNavSelRange = "{691, 0}";
 			sepNavVisRange = "{0, 870}";
 			sepNavWindowFrame = "{{164, 101}, {1483, 927}}";
@@ -70,16 +70,16 @@
 	};
 	920113F012DFA9660078BA54 /* ofSoundPlayer_.h */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1131, 832}}";
-			sepNavSelRange = "{275, 0}";
-			sepNavVisRange = "{0, 1133}";
+			sepNavIntBoundsRect = "{{0, 0}, {1131, 871}}";
+			sepNavSelRange = "{304, 0}";
+			sepNavVisRange = "{44, 1153}";
 		};
 	};
 	920113F112DFA9660078BA54 /* ofSoundPlayer_.cpp */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1131, 1560}}";
-			sepNavSelRange = "{1090, 0}";
-			sepNavVisRange = "{0, 1312}";
+			sepNavIntBoundsRect = "{{0, 0}, {877, 2301}}";
+			sepNavSelRange = "{189, 0}";
+			sepNavVisRange = "{0, 449}";
 		};
 	};
 	9201141912DFB0680078BA54 /* PBXTextBookmark */ = {
@@ -98,7 +98,7 @@
 		fRef = 920113F012DFA9660078BA54 /* ofSoundPlayer_.h */;
 		fallbackIsa = XCBuildMessageTextBookmark;
 		rLen = 1;
-		rLoc = 30;
+		rLoc = 37;
 		rType = 1;
 	};
 	9201141B12DFB0680078BA54 /* PBXTextBookmark */ = {
@@ -106,7 +106,7 @@
 		fRef = 920113F012DFA9660078BA54 /* ofSoundPlayer_.h */;
 		name = "ofSoundPlayer_.h: 31";
 		rLen = 0;
-		rLoc = 572;
+		rLoc = 685;
 		rType = 0;
 		vrLen = 301;
 		vrLoc = 490;
@@ -116,7 +116,7 @@
 		fRef = 920113F012DFA9660078BA54 /* ofSoundPlayer_.h */;
 		name = "ofSoundPlayer_.h: 31";
 		rLen = 0;
-		rLoc = 573;
+		rLoc = 686;
 		rType = 0;
 		vrLen = 296;
 		vrLoc = 490;
@@ -182,7 +182,7 @@
 		fRef = 920113F012DFA9660078BA54 /* ofSoundPlayer_.h */;
 		name = "ofSoundPlayer_.h: 26";
 		rLen = 0;
-		rLoc = 533;
+		rLoc = 646;
 		rType = 0;
 		vrLen = 1101;
 		vrLoc = 0;
@@ -192,7 +192,7 @@
 		fRef = 9201136812DFA3B10078BA54 /* ofQuicktimeSoundPlayer.cpp */;
 		name = "ofQuicktimeSoundPlayer.cpp: 5";
 		rLen = 0;
-		rLoc = 59;
+		rLoc = 58;
 		rType = 0;
 		vrLen = 1773;
 		vrLoc = 0;
@@ -272,7 +272,7 @@
 		fRef = 920113F112DFA9660078BA54 /* ofSoundPlayer_.cpp */;
 		name = "ofSoundPlayer_.cpp: 41";
 		rLen = 20;
-		rLoc = 997;
+		rLoc = 1063;
 		rType = 0;
 		vrLen = 1272;
 		vrLoc = 0;
@@ -282,7 +282,7 @@
 		fRef = 920113F112DFA9660078BA54 /* ofSoundPlayer_.cpp */;
 		name = "ofSoundPlayer_.cpp: 49";
 		rLen = 0;
-		rLoc = 1090;
+		rLoc = 1156;
 		rType = 0;
 		vrLen = 1259;
 		vrLoc = 28;
@@ -292,7 +292,7 @@
 		fRef = 920113F012DFA9660078BA54 /* ofSoundPlayer_.h */;
 		name = "ofSoundPlayer_.h: 31";
 		rLen = 0;
-		rLoc = 573;
+		rLoc = 686;
 		rType = 0;
 		vrLen = 296;
 		vrLoc = 490;
@@ -302,7 +302,7 @@
 		fRef = 920113F112DFA9660078BA54 /* ofSoundPlayer_.cpp */;
 		name = "ofSoundPlayer_.cpp: 22";
 		rLen = 0;
-		rLoc = 546;
+		rLoc = 543;
 		rType = 0;
 		vrLen = 1311;
 		vrLoc = 28;
@@ -312,7 +312,7 @@
 		fRef = 9201136812DFA3B10078BA54 /* ofQuicktimeSoundPlayer.cpp */;
 		name = "ofQuicktimeSoundPlayer.cpp: 5";
 		rLen = 0;
-		rLoc = 59;
+		rLoc = 58;
 		rType = 0;
 		vrLen = 1773;
 		vrLoc = 0;
@@ -322,7 +322,7 @@
 		fRef = 9201136812DFA3B10078BA54 /* ofQuicktimeSoundPlayer.cpp */;
 		name = "ofQuicktimeSoundPlayer.cpp: 5";
 		rLen = 0;
-		rLoc = 59;
+		rLoc = 58;
 		rType = 0;
 		vrLen = 1773;
 		vrLoc = 0;
@@ -332,7 +332,7 @@
 		fRef = 9201136812DFA3B10078BA54 /* ofQuicktimeSoundPlayer.cpp */;
 		name = "ofQuicktimeSoundPlayer.cpp: 287";
 		rLen = 0;
-		rLoc = 7355;
+		rLoc = 7353;
 		rType = 0;
 		vrLen = 1604;
 		vrLoc = 6141;
@@ -355,7 +355,7 @@
 		fRef = 920113F012DFA9660078BA54 /* ofSoundPlayer_.h */;
 		name = "ofSoundPlayer_.h: 31";
 		rLen = 0;
-		rLoc = 573;
+		rLoc = 686;
 		rType = 0;
 		vrLen = 296;
 		vrLoc = 490;
@@ -375,7 +375,7 @@
 		fRef = 9201136812DFA3B10078BA54 /* ofQuicktimeSoundPlayer.cpp */;
 		name = "ofQuicktimeSoundPlayer.cpp: 28";
 		rLen = 0;
-		rLoc = 805;
+		rLoc = 803;
 		rType = 0;
 		vrLen = 392;
 		vrLoc = 616;
@@ -386,7 +386,7 @@
 		fRef = 920113F112DFA9660078BA54 /* ofSoundPlayer_.cpp */;
 		fallbackIsa = XCBuildMessageTextBookmark;
 		rLen = 0;
-		rLoc = 10;
+		rLoc = 8;
 		rType = 1;
 	};
 	9201145F12DFCB5A0078BA54 /* PBXTextBookmark */ = {
@@ -464,7 +464,7 @@
 		fRef = 920113F112DFA9660078BA54 /* ofSoundPlayer_.cpp */;
 		name = "ofSoundPlayer_.cpp: 9";
 		rLen = 0;
-		rLoc = 309;
+		rLoc = 307;
 		rType = 0;
 		vrLen = 1346;
 		vrLoc = 0;
@@ -474,7 +474,7 @@
 		fRef = 9201136812DFA3B10078BA54 /* ofQuicktimeSoundPlayer.cpp */;
 		name = "ofQuicktimeSoundPlayer.cpp: 259";
 		rLen = 0;
-		rLoc = 6452;
+		rLoc = 6450;
 		rType = 0;
 		vrLen = 1576;
 		vrLoc = 5748;
@@ -484,7 +484,7 @@
 		fRef = 9201136812DFA3B10078BA54 /* ofQuicktimeSoundPlayer.cpp */;
 		name = "ofQuicktimeSoundPlayer.cpp: 309";
 		rLen = 0;
-		rLoc = 7842;
+		rLoc = 7840;
 		rType = 0;
 		vrLen = 1427;
 		vrLoc = 6935;
@@ -504,7 +504,7 @@
 		fRef = 9201136812DFA3B10078BA54 /* ofQuicktimeSoundPlayer.cpp */;
 		name = "ofQuicktimeSoundPlayer.cpp: 302";
 		rLen = 0;
-		rLoc = 7693;
+		rLoc = 7691;
 		rType = 0;
 		vrLen = 1490;
 		vrLoc = 6935;
@@ -514,7 +514,7 @@
 		fRef = 920113F112DFA9660078BA54 /* ofSoundPlayer_.cpp */;
 		name = "ofSoundPlayer_.cpp: 9";
 		rLen = 0;
-		rLoc = 309;
+		rLoc = 307;
 		rType = 0;
 		vrLen = 1346;
 		vrLoc = 0;
@@ -524,10 +524,254 @@
 		fRef = 920113F112DFA9660078BA54 /* ofSoundPlayer_.cpp */;
 		name = "ofSoundPlayer_.cpp: 45";
 		rLen = 0;
-		rLoc = 1090;
+		rLoc = 1156;
 		rType = 0;
 		vrLen = 1312;
 		vrLoc = 0;
+	};
+	9201147612DFCF1A0078BA54 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 920113A712DFA5170078BA54 /* ofBaseSoundPlayer.h */;
+		name = "ofBaseSoundPlayer.h: 29";
+		rLen = 0;
+		rLoc = 691;
+		rType = 0;
+		vrLen = 870;
+		vrLoc = 0;
+	};
+	9201147712DFCF1A0078BA54 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 920113A812DFA5170078BA54 /* ofBaseSoundPlayer.cpp */;
+		name = "ofBaseSoundPlayer.cpp: 4";
+		rLen = 0;
+		rLoc = 33;
+		rType = 0;
+		vrLen = 33;
+		vrLoc = 0;
+	};
+	9201147812DFCF1A0078BA54 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 9201136912DFA3B10078BA54 /* ofQuicktimeSoundPlayer.h */;
+		name = "ofQuicktimeSoundPlayer.h: 23";
+		rLen = 0;
+		rLoc = 553;
+		rType = 0;
+		vrLen = 1566;
+		vrLoc = 0;
+	};
+	9201147912DFCF1A0078BA54 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 9201136812DFA3B10078BA54 /* ofQuicktimeSoundPlayer.cpp */;
+		name = "ofQuicktimeSoundPlayer.cpp: 6";
+		rLen = 0;
+		rLoc = 58;
+		rType = 0;
+		vrLen = 1821;
+		vrLoc = 0;
+	};
+	9201147A12DFCF1A0078BA54 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 920113F112DFA9660078BA54 /* ofSoundPlayer_.cpp */;
+		name = "ofSoundPlayer_.cpp: 19";
+		rLen = 0;
+		rLoc = 490;
+		rType = 0;
+		vrLen = 1312;
+		vrLoc = 0;
+	};
+	9201147B12DFCF1A0078BA54 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 920113F012DFA9660078BA54 /* ofSoundPlayer_.h */;
+		name = "ofSoundPlayer_.h: 17";
+		rLen = 0;
+		rLoc = 275;
+		rType = 0;
+		vrLen = 1133;
+		vrLoc = 0;
+	};
+	9201147C12DFCF1A0078BA54 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 920113F012DFA9660078BA54 /* ofSoundPlayer_.h */;
+		name = "ofSoundPlayer_.h: 17";
+		rLen = 0;
+		rLoc = 275;
+		rType = 0;
+		vrLen = 1133;
+		vrLoc = 0;
+	};
+	9201147F12DFD00E0078BA54 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 920113F012DFA9660078BA54 /* ofSoundPlayer_.h */;
+		name = "ofSoundPlayer_.h: 57";
+		rLen = 0;
+		rLoc = 1211;
+		rType = 0;
+		vrLen = 1095;
+		vrLoc = 44;
+	};
+	9201148012DFD00E0078BA54 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 9201136912DFA3B10078BA54 /* ofQuicktimeSoundPlayer.h */;
+		name = "ofQuicktimeSoundPlayer.h: 21";
+		rLen = 0;
+		rLoc = 504;
+		rType = 0;
+		vrLen = 1566;
+		vrLoc = 0;
+	};
+	9201148112DFD00E0078BA54 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 920113F112DFA9660078BA54 /* ofSoundPlayer_.cpp */;
+		name = "ofSoundPlayer_.cpp: 23";
+		rLen = 0;
+		rLoc = 691;
+		rType = 0;
+		vrLen = 1569;
+		vrLoc = 0;
+	};
+	9201148212DFD00E0078BA54 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 9201136812DFA3B10078BA54 /* ofQuicktimeSoundPlayer.cpp */;
+		name = "ofQuicktimeSoundPlayer.cpp: 6";
+		rLen = 0;
+		rLoc = 58;
+		rType = 0;
+		vrLen = 1821;
+		vrLoc = 0;
+	};
+	9201148312DFD1080078BA54 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 9201136812DFA3B10078BA54 /* ofQuicktimeSoundPlayer.cpp */;
+		name = "ofQuicktimeSoundPlayer.cpp: 5";
+		rLen = 0;
+		rLoc = 58;
+		rType = 0;
+		vrLen = 1831;
+		vrLoc = 0;
+	};
+	920114D612DFE1230078BA54 /* ofFmodSoundPlayer.cpp */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1131, 4498}}";
+			sepNavSelRange = "{1742, 0}";
+			sepNavVisRange = "{1533, 1762}";
+		};
+	};
+	920114D712DFE1230078BA54 /* ofFmodSoundPlayer.h */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1131, 1027}}";
+			sepNavSelRange = "{792, 17}";
+			sepNavVisRange = "{0, 1322}";
+		};
+	};
+	920114DB12DFE1320078BA54 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 920113F112DFA9660078BA54 /* ofSoundPlayer_.cpp */;
+		name = "ofSoundPlayer_.cpp: 5";
+		rLen = 0;
+		rLoc = 189;
+		rType = 0;
+		vrLen = 449;
+		vrLoc = 0;
+	};
+	920114E812DFE1AF0078BA54 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 9201136812DFA3B10078BA54 /* ofQuicktimeSoundPlayer.cpp */;
+		name = "ofQuicktimeSoundPlayer.cpp: 259";
+		rLen = 0;
+		rLoc = 6450;
+		rType = 0;
+		vrLen = 1697;
+		vrLoc = 5913;
+	};
+	920114E912DFE1AF0078BA54 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 9201136912DFA3B10078BA54 /* ofQuicktimeSoundPlayer.h */;
+		name = "ofQuicktimeSoundPlayer.h: 21";
+		rLen = 0;
+		rLoc = 504;
+		rType = 0;
+		vrLen = 1566;
+		vrLoc = 0;
+	};
+	920114EA12DFE1AF0078BA54 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = E4B69E1D0A3A1BDC003C02F2 /* main.cpp */;
+		name = "main.cpp: 1";
+		rLen = 0;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 414;
+		vrLoc = 0;
+	};
+	920114EB12DFE1AF0078BA54 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 920113A812DFA5170078BA54 /* ofBaseSoundPlayer.cpp */;
+		name = "ofBaseSoundPlayer.cpp: 4";
+		rLen = 0;
+		rLoc = 33;
+		rType = 0;
+		vrLen = 33;
+		vrLoc = 0;
+	};
+	920114EC12DFE1AF0078BA54 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 920113F112DFA9660078BA54 /* ofSoundPlayer_.cpp */;
+		name = "ofSoundPlayer_.cpp: 23";
+		rLen = 0;
+		rLoc = 691;
+		rType = 0;
+		vrLen = 1569;
+		vrLoc = 0;
+	};
+	920114ED12DFE1AF0078BA54 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 920114D612DFE1230078BA54 /* ofFmodSoundPlayer.cpp */;
+		name = "ofFmodSoundPlayer.cpp: 64";
+		rLen = 0;
+		rLoc = 1742;
+		rType = 0;
+		vrLen = 1762;
+		vrLoc = 1533;
+	};
+	920114EE12DFE1AF0078BA54 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 920114D712DFE1230078BA54 /* ofFmodSoundPlayer.h */;
+		name = "ofFmodSoundPlayer.h: 34";
+		rLen = 17;
+		rLoc = 792;
+		rType = 0;
+		vrLen = 1322;
+		vrLoc = 0;
+	};
+	920114EF12DFE1AF0078BA54 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 920113A712DFA5170078BA54 /* ofBaseSoundPlayer.h */;
+		name = "ofBaseSoundPlayer.h: 29";
+		rLen = 0;
+		rLoc = 691;
+		rType = 0;
+		vrLen = 870;
+		vrLoc = 0;
+	};
+	920114F012DFE1AF0078BA54 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 920113F012DFA9660078BA54 /* ofSoundPlayer_.h */;
+		name = "ofSoundPlayer_.h: 57";
+		rLen = 0;
+		rLoc = 1211;
+		rType = 0;
+		vrLen = 1098;
+		vrLoc = 41;
+	};
+	920114F112DFE1AF0078BA54 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 920113F012DFA9660078BA54 /* ofSoundPlayer_.h */;
+		name = "ofSoundPlayer_.h: 18";
+		rLen = 0;
+		rLoc = 304;
+		rType = 0;
+		vrLen = 1153;
+		vrLoc = 44;
 	};
 	92B3A5D712DA1C3C001B8BE8 /* emptyExample */ = {
 		isa = PBXExecutable;
@@ -682,6 +926,29 @@
 			9201147112DFCB9F0078BA54 /* PBXTextBookmark */ = 9201147112DFCB9F0078BA54 /* PBXTextBookmark */;
 			9201147212DFCB9F0078BA54 /* PBXTextBookmark */ = 9201147212DFCB9F0078BA54 /* PBXTextBookmark */;
 			9201147312DFCB9F0078BA54 /* PBXTextBookmark */ = 9201147312DFCB9F0078BA54 /* PBXTextBookmark */;
+			9201147612DFCF1A0078BA54 /* PBXTextBookmark */ = 9201147612DFCF1A0078BA54 /* PBXTextBookmark */;
+			9201147712DFCF1A0078BA54 /* PBXTextBookmark */ = 9201147712DFCF1A0078BA54 /* PBXTextBookmark */;
+			9201147812DFCF1A0078BA54 /* PBXTextBookmark */ = 9201147812DFCF1A0078BA54 /* PBXTextBookmark */;
+			9201147912DFCF1A0078BA54 /* PBXTextBookmark */ = 9201147912DFCF1A0078BA54 /* PBXTextBookmark */;
+			9201147A12DFCF1A0078BA54 /* PBXTextBookmark */ = 9201147A12DFCF1A0078BA54 /* PBXTextBookmark */;
+			9201147B12DFCF1A0078BA54 /* PBXTextBookmark */ = 9201147B12DFCF1A0078BA54 /* PBXTextBookmark */;
+			9201147C12DFCF1A0078BA54 /* PBXTextBookmark */ = 9201147C12DFCF1A0078BA54 /* PBXTextBookmark */;
+			9201147F12DFD00E0078BA54 /* PBXTextBookmark */ = 9201147F12DFD00E0078BA54 /* PBXTextBookmark */;
+			9201148012DFD00E0078BA54 /* PBXTextBookmark */ = 9201148012DFD00E0078BA54 /* PBXTextBookmark */;
+			9201148112DFD00E0078BA54 /* PBXTextBookmark */ = 9201148112DFD00E0078BA54 /* PBXTextBookmark */;
+			9201148212DFD00E0078BA54 /* PBXTextBookmark */ = 9201148212DFD00E0078BA54 /* PBXTextBookmark */;
+			9201148312DFD1080078BA54 /* PBXTextBookmark */ = 9201148312DFD1080078BA54 /* PBXTextBookmark */;
+			920114DB12DFE1320078BA54 /* PBXTextBookmark */ = 920114DB12DFE1320078BA54 /* PBXTextBookmark */;
+			920114E812DFE1AF0078BA54 /* PBXTextBookmark */ = 920114E812DFE1AF0078BA54 /* PBXTextBookmark */;
+			920114E912DFE1AF0078BA54 /* PBXTextBookmark */ = 920114E912DFE1AF0078BA54 /* PBXTextBookmark */;
+			920114EA12DFE1AF0078BA54 /* PBXTextBookmark */ = 920114EA12DFE1AF0078BA54 /* PBXTextBookmark */;
+			920114EB12DFE1AF0078BA54 /* PBXTextBookmark */ = 920114EB12DFE1AF0078BA54 /* PBXTextBookmark */;
+			920114EC12DFE1AF0078BA54 /* PBXTextBookmark */ = 920114EC12DFE1AF0078BA54 /* PBXTextBookmark */;
+			920114ED12DFE1AF0078BA54 /* PBXTextBookmark */ = 920114ED12DFE1AF0078BA54 /* PBXTextBookmark */;
+			920114EE12DFE1AF0078BA54 /* PBXTextBookmark */ = 920114EE12DFE1AF0078BA54 /* PBXTextBookmark */;
+			920114EF12DFE1AF0078BA54 /* PBXTextBookmark */ = 920114EF12DFE1AF0078BA54 /* PBXTextBookmark */;
+			920114F012DFE1AF0078BA54 /* PBXTextBookmark */ = 920114F012DFE1AF0078BA54 /* PBXTextBookmark */;
+			920114F112DFE1AF0078BA54 /* PBXTextBookmark */ = 920114F112DFE1AF0078BA54 /* PBXTextBookmark */;
 		};
 		sourceControlManager = 92B3A5EE12DA1C56001B8BE8 /* Source Control */;
 		userBuildSettings = {
@@ -695,7 +962,7 @@
 	};
 	E4B69E1D0A3A1BDC003C02F2 /* main.cpp */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {772, 400}}";
+			sepNavIntBoundsRect = "{{0, 0}, {1131, 770}}";
 			sepNavSelRange = "{0, 0}";
 			sepNavVisRange = "{0, 414}";
 		};
