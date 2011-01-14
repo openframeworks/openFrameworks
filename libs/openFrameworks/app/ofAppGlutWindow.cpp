@@ -27,6 +27,8 @@ int				nFrameCount;
 int				buttonInUse;
 bool			bEnableSetupScreen;
 
+bool			bPreMouseNotSet;
+
 bool			bFrameRateSet;
 int 			millisForFrame;
 int 			prevMillis;
@@ -44,6 +46,7 @@ int				windowW;
 int				windowH;
 ofBaseApp *		ofAppPtr;
 int				currentMouseX, currentMouseY;
+int				previousMouseX, previousMouseY;
 int             nFramesSinceWindowResized;
 
 static set<int> pressedMouseButtons;
@@ -124,6 +127,9 @@ ofAppGlutWindow::ofAppGlutWindow(){
 	nonFullScreenY		= -1;
 	currentMouseX		= 0;
 	currentMouseY		= 0;
+	previousMouseX		= 0;
+	previousMouseY		= 0;
+	bPreMouseNotSet		= true;
 	lastFrameTime		= 0.0;
 	displayString		= "";
 
@@ -387,6 +393,16 @@ int ofAppGlutWindow::getMouseY(){
 }
 
 //------------------------------------------------------------
+int ofAppGlutWindow::getPreviousMouseX(){
+	return previousMouseX;
+}
+
+//------------------------------------------------------------
+int ofAppGlutWindow::getPreviousMouseY(){
+	return previousMouseY;
+}
+
+//------------------------------------------------------------
 void ofAppGlutWindow::display(void){
 	static ofEventArgs voidEventArgs;
 
@@ -504,7 +520,16 @@ void ofAppGlutWindow::display(void){
 void ofAppGlutWindow::mouse_cb(int button, int state, int x, int y) {
 
 	if (nFrameCount > 0){
-
+	
+		if( bPreMouseNotSet ){
+			previousMouseX	= x;
+			previousMouseY	= y;
+			bPreMouseNotSet	= false;
+		}else{
+			previousMouseX = currentMouseX;
+			previousMouseY = currentMouseY;		
+		}
+				
 		currentMouseX = x;
 		currentMouseY = y;
 		
@@ -530,6 +555,15 @@ void ofAppGlutWindow::motion_cb(int x, int y) {
 
 	if (nFrameCount > 0){
 	
+		if( bPreMouseNotSet ){
+			previousMouseX	= x;
+			previousMouseY	= y;
+			bPreMouseNotSet	= false;
+		}else{
+			previousMouseX = currentMouseX;
+			previousMouseY = currentMouseY;		
+		}
+			
 		currentMouseX = x;
 		currentMouseY = y;
 	
@@ -547,6 +581,16 @@ void ofAppGlutWindow::motion_cb(int x, int y) {
 void ofAppGlutWindow::passive_motion_cb(int x, int y) {
 
 	if (nFrameCount > 0){
+	
+		if( bPreMouseNotSet ){
+			previousMouseX	= x;
+			previousMouseY	= y;
+			bPreMouseNotSet	= false;
+		}else{
+			previousMouseX = currentMouseX;
+			previousMouseY = currentMouseY;		
+		}	
+	
 		currentMouseX = x;
 		currentMouseY = y;	
 	
