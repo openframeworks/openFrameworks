@@ -54,6 +54,8 @@ static ofRectangle viewportRect;	//note we leave this 0,0,0,0 because ofViewport
 
 int				curveResolution = 20;
 
+ofHandednessType coordHandedness;
+
 //style stuff - new in 006
 ofStyle			currentStyle;
 deque <ofStyle> styleHistory;
@@ -110,6 +112,15 @@ void ofViewport(float x, float y, float width, float height) {
 	viewportRect.set(x, y, width, height);
 }
 
+//----------------------------------------------------------
+void ofSetCoordHandedness(ofHandednessType handedness) {
+	coordHandedness = handedness;
+}
+
+//----------------------------------------------------------
+ofHandednessType ofGetCoordHandedness() {
+	return coordHandedness;
+}
 
 //----------------------------------------------------------
 void ofSetupScreenPerspective(float width, float height, bool vFlip, float fov, float nearDist, float farDist) {
@@ -134,9 +145,12 @@ void ofSetupScreenPerspective(float width, float height, bool vFlip, float fov, 
 	glLoadIdentity();
 	gluLookAt(eyeX, eyeY, dist, eyeX, eyeY, 0, 0, 1, 0);
 	
+	ofSetCoordHandedness(OF_RIGHT_HANDED);
+	
 	if(vFlip) {
 		glScalef(1, -1, 1);           // invert Y axis so increasing Y goes down.
 		glTranslatef(0, -height, 0);       // shift origin up to upper-left corner.
+		ofSetCoordHandedness(OF_LEFT_HANDED);
 	}
 }
 
@@ -149,7 +163,13 @@ void ofSetupScreenOrtho(float width, float height, bool vFlip, float nearDist, f
 
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
-		if(vFlip) glOrtho(0, width, height, 0, nearDist, farDist);
+
+		ofSetCoordHandedness(OF_RIGHT_HANDED);
+
+		if(vFlip) {
+			glOrtho(0, width, height, 0, nearDist, farDist);
+			ofSetCoordHandedness(OF_LEFT_HANDED);
+		}
 		else glOrtho(0, width, 0, height, nearDist, farDist);
 		glMatrixMode(GL_MODELVIEW);
 		glLoadIdentity();
@@ -707,8 +727,14 @@ void ofBox(const ofPoint& position, float size) {
 
 //----------------------------------------
 void ofBox(float size) {
+	ofPushMatrix();
+	if(ofGetCoordHandedness() == OF_LEFT_HANDED) {
+		ofScale(1, 1, -1);
+	}
+	
 	// http://www.songho.ca/opengl/gl_vertexarray.html
 	static const float h = .5;
+	static const float f = 1;
 	
 	static GLfloat vertices[] = {
 		+h,+h,+h,  -h,+h,+h,  -h,-h,+h,  +h,-h,+h,
@@ -719,12 +745,20 @@ void ofBox(float size) {
 		+h,-h,-h,  -h,-h,-h,  -h,+h,-h,  +h,+h,-h};
 	
 	static GLfloat normals[] = {
-		0, 0,+h,   0, 0,+h,   0, 0,+h,   0, 0,+h,
-		+h, 0, 0,  +h, 0, 0,  +h, 0, 0,  +h, 0, 0,
-		0,+h, 0,   0,+h, 0,   0,+h, 0,   0,+h, 0,
-		-h, 0, 0,  -h, 0, 0,  -h, 0, 0,  -h, 0, 0,
-		0,-h, 0,   0,-h, 0,   0,-h, 0,   0,-h, 0,
-		0, 0,-h,   0, 0,-h,   0, 0,-h,   0, 0,-h};
+		0, 0,+f,   0, 0,+f,   0, 0,+f,   0, 0,+f,
+		+f, 0, 0,  +f, 0, 0,  +f, 0, 0,  +f, 0, 0,
+		0,+f, 0,   0,+f, 0,   0,+f, 0,   0,+f, 0,
+		-f, 0, 0,  -f, 0, 0,  -f, 0, 0,  -f, 0, 0,
+		0,-f, 0,   0,-f, 0,   0,-f, 0,   0,-f, 0,
+		0, 0,-f,   0, 0,-f,   0, 0,-f,   0, 0,-f};
+	
+	static GLfloat tex[] = {
+		1, 1,   0, 1,   0, 0,  1, 0,
+		1, 1,   0, 1,   0, 0,  1, 0,
+		1, 1,   0, 1,   0, 0,  1, 0,
+		1, 1,   0, 1,   0, 0,  1, 0,
+		1, 1,   0, 1,   0, 0,  1, 0,
+		1, 1,   0, 1,   0, 0,  1, 0};
 		
 	GLubyte wireIndices[] = {
 		0,1,2,3,
@@ -734,22 +768,24 @@ void ofBox(float size) {
 		16,17,18,19};
 	
 	GLubyte solidIndices[] = {
-		0,1,3, 3,1,2,
-		4,5,7, 7,5,6,
-		8,9,11, 11,9,10,
-		12,13,15, 15,13,14,
-		16,17,19, 19,17,18,
-		20,21,23, 23,21,22
+		3,1,0, 2,1,3,
+		7,5,4, 6,5,7,
+		11,9,8, 10,9,11,
+		15,13,12, 14,13,15,
+		19,17,16, 18,17,19,
+		23,21,20, 22,21,23
 	};
 	
 	glEnableClientState(GL_NORMAL_ARRAY);
 	glEnableClientState(GL_VERTEX_ARRAY);
+	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 	
 	glPushMatrix();
 	glScalef(size, size, size);
 	
 	glNormalPointer(GL_FLOAT, 0, normals);
 	glVertexPointer(3, GL_FLOAT, 0, vertices);
+	glTexCoordPointer(2, GL_FLOAT, 0, tex);
 	
 	if(ofGetStyle().bFill) {
 		// the quads use all 24 of the vertices
@@ -761,8 +797,11 @@ void ofBox(float size) {
 
 	glPopMatrix();
 	
+	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 	glDisableClientState(GL_VERTEX_ARRAY);
 	glDisableClientState(GL_NORMAL_ARRAY);
+
+	ofPopMatrix();
 }
 
 //----------------------------------------------------------
