@@ -12,13 +12,16 @@ class ofBuffer{
 public:
 
 	ofBuffer();
-	ofBuffer(int size, char * buffer);
+	ofBuffer(const char * buffer, int size);
 	ofBuffer(istream & stream);
+	ofBuffer(const ofBuffer & buffer_);
 
 	~ofBuffer();
 
+	void set(const char * _buffer, int _size);
 	bool set(istream & stream);
-	void set(int _size, char * _buffer);
+
+	bool writeTo(ostream & stream);
 
 	void clear();
 
@@ -27,13 +30,17 @@ public:
 	char * getBuffer();
 	const char * getBuffer() const;
 
-	long getSize() const;
+	long size() const;
 
 	string getNextLine();
 	string getFirstLine();
 };
+
 //--------------------------------------------------
-bool ofReadFile(const string & path, ofBuffer & file, bool binary=false);
+ofBuffer ofBufferFromFile(const string & path, bool binary=false);
+
+//--------------------------------------------------
+bool ofBufferToFile(const string & path, ofBuffer & file, bool binary=false);
 
 
 class ofFileUtils{
