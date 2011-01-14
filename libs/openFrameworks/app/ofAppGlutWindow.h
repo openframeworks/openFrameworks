@@ -65,6 +65,9 @@ public:
 	int			getMouseX();
 	int			getMouseY();
 
+	int			getPreviousMouseX();
+	int			getPreviousMouseY();
+
 	static void display(void);
 	static void mouse_cb(int button, int state, int x, int y);
 	static void motion_cb(int x, int y);

@@ -310,3 +310,12 @@ int ofGetMouseX(){
 int ofGetMouseY(){
 	return window->getMouseY();
 }
+
+//--------------------------------------
+int ofGetPreviousMouseX(){
+	return window->getPreviousMouseX();
+}
+//--------------------------------------
+int ofGetPreviousMouseY(){
+	return window->getPreviousMouseY();
+}
