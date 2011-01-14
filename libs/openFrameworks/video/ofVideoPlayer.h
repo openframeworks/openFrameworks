@@ -88,6 +88,7 @@ class ofVideoPlayer : public ofBaseVideoPlayer, public ofBaseDraws, public ofBas
 		ofBaseVideoPlayer		* player;
 		
 		ofTexture tex;
+		ofTexture * playerTex; // a seperate texture that may be optionally implemented by the player to avoid excessive pixel copying.
 		bool bUseTexture;
 
 };

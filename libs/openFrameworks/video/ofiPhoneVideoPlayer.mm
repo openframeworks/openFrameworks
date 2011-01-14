@@ -1,17 +1,12 @@
-/*
- *  ofxofiPhoneVideoPlayer.cpp
- *  ofMoviePlayeriPhoneExample
- *
- *  Created by Zach Gage on 1/13/11.
- *  Copyright 2011 stfj. All rights reserved.
- *
- */
 #import "AVFoundationVideoGrabber.h"
 #import "ofiPhoneVideoPlayer.h"
 #import "ofxiPhoneExtras.h"
 
+
 AVFoundationVideoGrabber * videoPlayer;
 CGImageRef currentFrameRef;
+
+long nextMovieID = 0;
 
 ofiPhoneVideoPlayer::ofiPhoneVideoPlayer() {
 	videoPlayer=NULL;
@@ -19,6 +14,10 @@ ofiPhoneVideoPlayer::ofiPhoneVideoPlayer() {
 	
 	width = 0;
 	height = 0;
+	playbackSpeed=1;
+	
+	myID = nextMovieID;
+	nextMovieID++;
 }
 
 //----------------------------------------
@@ -65,7 +64,7 @@ void ofiPhoneVideoPlayer::play() {
 		play();
 	}
 	else
-		cerr<<"video is not loaded - play"<<endl;
+		ofLog(OF_LOG_WARNING, "ofiPhoneVideoPlayer: video is not loaded, cannot be played");
 }
 
 //----------------------------------------
@@ -76,7 +75,8 @@ void ofiPhoneVideoPlayer::stop() {
 		close();
 		videoWasStopped=true;
 	}
-	cerr<<"video is not loaded - stop"<<endl;
+	
+	ofLog(OF_LOG_WARNING, "ofiPhoneVideoPlayer: video is not loaded, cannot be stopped");
 }		
 
 //----------------------------------------
@@ -101,13 +101,44 @@ unsigned char * ofiPhoneVideoPlayer::getPixels() {
 	return NULL;
 }
 
+ofTexture * ofiPhoneVideoPlayer::getTexture()
+{
+	if(videoPlayer != NULL)
+	{
+		CVImageBufferRef imageBuffer = [videoPlayer getCurrentFrame]; 
+
+		CVPixelBufferLockBaseAddress(imageBuffer,0); 
+
+		uint8_t *bufferPixels = (uint8_t *)CVPixelBufferGetBaseAddress(imageBuffer); 
+		
+		if(width != min(size_t(1024),CVPixelBufferGetWidth(imageBuffer))) {
+			if(videoTexture.bAllocated())
+				videoTexture.clear();
+			
+			width = min(size_t(1024),CVPixelBufferGetWidth(imageBuffer)); 
+			height = min(size_t(1024),CVPixelBufferGetHeight(imageBuffer));
+
+			videoTexture.allocate(width, height, GL_RGBA);
+		}
+		
+		videoTexture.loadData(bufferPixels, width, height, GL_BGRA);
+		
+		// unlock the image buffer
+		CVPixelBufferUnlockBaseAddress(imageBuffer,0);
+		
+		return &videoTexture;
+	}
+	
+	return NULL;
+}
+
 //----------------------------------------
 
 float ofiPhoneVideoPlayer::getWidth() {
 	if(videoPlayer != NULL)
 		return width;
 	
-	cerr<<"video is not loaded - getWidth"<<endl;
+	ofLog(OF_LOG_WARNING, "ofiPhoneVideoPlayer: video is not loaded, cannot getWidth");
 	return 0;
 }
 
@@ -117,7 +148,7 @@ float ofiPhoneVideoPlayer::getHeight() {
 	if(videoPlayer != NULL)
 		return height;
 	
-	cerr<<"video is not loaded - getHeight"<<endl;
+	ofLog(OF_LOG_WARNING, "ofiPhoneVideoPlayer: video is not loaded, cannot getHeigt");
 	return 0;
 }
 
@@ -156,7 +187,7 @@ bool ofiPhoneVideoPlayer::isPlaying() {
 void ofiPhoneVideoPlayer::update() {
 	if(videoPlayer != NULL) {
 		float t = ofGetElapsedTimef();
-		[videoPlayer updateWithElapsedTime:t-lastUpdateTime];
+		[videoPlayer updateWithElapsedTime:(t-lastUpdateTime)*playbackSpeed];
 		lastUpdateTime=t;
 	}
 }
@@ -168,11 +199,28 @@ float ofiPhoneVideoPlayer::getPosition() {
 	return 0;
 }
 
+float ofiPhoneVideoPlayer::getDuration() {
+	if(videoPlayer != NULL)
+		return [videoPlayer getDuration];
+	else
+		return 0;
+
+}
+
 bool ofiPhoneVideoPlayer::getIsMovieDone() {
 	if(videoPlayer != NULL)
 		return [videoPlayer isFinished];
 	else
-	return true;
+		return true;
+}
+
+void ofiPhoneVideoPlayer::setPaused(bool bPause) {
+	if(bPause)
+		[videoPlayer pause];
+	else {
+		if([videoPlayer isPaused])
+			[videoPlayer play];
+	}
 }
 
 //protected ------------------------------

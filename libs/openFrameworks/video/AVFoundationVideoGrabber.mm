@@ -39,7 +39,7 @@ void audioCallback( void* aqData, AudioQueueRef queue, AudioQueueBufferRef buffe
 {
 	//--------
 	AudioSessionInitialize ( NULL, NULL,NULL,NULL);
-	UInt32 category = kAudioSessionCategory_MediaPlayback;
+	UInt32 category = kAudioSessionCategory_AmbientSound;
 	OSStatus result = AudioSessionSetProperty(kAudioSessionProperty_AudioCategory, sizeof(category), &category);
 	if ( result != noErr ) 
 		NSLog(@"!!couldn't AudioSessionSetProperty( category ): OSStatus %i", result);
@@ -624,6 +624,11 @@ void audioCallback( void* aqData, AudioQueueRef queue, AudioQueueBufferRef outpu
 - (float)getVideoPosition
 {
 	return current_video_time/video_duration;
+}
+
+- (Float64)getDuration
+{
+	return video_duration;
 }
 
 @end

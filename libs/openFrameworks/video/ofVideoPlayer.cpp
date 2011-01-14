@@ -5,6 +5,7 @@
 ofVideoPlayer::ofVideoPlayer (){
 	player						= NULL;
 	bUseTexture					= true;
+	playerTex					= NULL;
 }
 
 //---------------------------------------------------------------------------
@@ -84,22 +85,29 @@ void ofVideoPlayer::update(){
 		player->update();
 		
 		if( bUseTexture && player->isFrameNew() ) {
-			unsigned char *pxls = player->getPixels();
-			if(width==0 || height==0) {
-				if(player->getWidth() != 0 && player->getHeight() != 0) {
+			
+			playerTex = player->getTexture();
+			
+			if(playerTex == NULL)
+			{
+				unsigned char *pxls = player->getPixels();
+			
+				if(width==0 || height==0) {
+					if(player->getWidth() != 0 && player->getHeight() != 0) {
+						
+						width = player->getWidth();
+						height = player->getHeight();
 					
-					width = player->getWidth();
-					height = player->getHeight();
-				
-					if(tex.bAllocated())
-						tex.clear();
-				
-					tex.allocate(width, height, GL_RGB);
-					tex.loadData(pxls, tex.getWidth(), tex.getHeight(), GL_RGB);
+						if(tex.bAllocated())
+							tex.clear();
+					
+						tex.allocate(width, height, GL_RGB);
+						tex.loadData(pxls, tex.getWidth(), tex.getHeight(), GL_RGB);
+					}
 				}
+				else
+					tex.loadData(pxls, tex.getWidth(), tex.getHeight(), GL_RGB);
 			}
-			else
-				tex.loadData(pxls, tex.getWidth(), tex.getHeight(), GL_RGB);
 		}
 	}
 }
@@ -266,12 +274,20 @@ void ofVideoPlayer::resetAnchor(){
 
 //------------------------------------
 void ofVideoPlayer::draw(float _x, float _y, float _w, float _h){
-	tex.draw(_x, _y, _w, _h);
+	if(playerTex == NULL)
+		tex.draw(_x, _y, _w, _h);
+	else
+		playerTex->draw(_x, _y, _w, _h);
 }
 
 //------------------------------------
 void ofVideoPlayer::draw(float _x, float _y){
-	tex.draw(_x, _y);
+	if(playerTex == NULL)
+		tex.draw(_x, _y);
+	else
+	{
+		playerTex->draw(_x,_y);
+	}
 }
 
 //------------------------------------
