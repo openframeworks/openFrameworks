@@ -1,7 +1,7 @@
 //
 // HashFunction.h
 //
-// $Id: //poco/1.3/Foundation/include/Poco/HashFunction.h#2 $
+// $Id: //poco/1.4/Foundation/include/Poco/HashFunction.h#1 $
 //
 // Library: Foundation
 // Package: Hashing
@@ -55,7 +55,7 @@ struct HashFunction
 	UInt32 operator () (T key, UInt32 maxValue) const
 		/// Returns the hash value for the given key.
 	{
-		return ((UInt32) hash(key)) % maxValue;
+		return static_cast<UInt32>(Poco::hash(key)) % maxValue;
 	}
 };
 
@@ -68,7 +68,7 @@ struct HashFunction<std::string>
 	UInt32 operator () (const std::string& key, UInt32 maxValue) const
 		/// Returns the hash value for the given key.
 	{
-		return ((UInt32) hash(key)) % maxValue;
+		return static_cast<UInt32>(Poco::hash(key)) % maxValue;
 	}
 };
 

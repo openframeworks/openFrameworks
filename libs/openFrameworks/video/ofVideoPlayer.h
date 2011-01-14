@@ -1,13 +1,12 @@
-#ifndef _OF_VIDEO_PLAYER
-#define _OF_VIDEO_PLAYER
+#pragma once
 
 #include "ofConstants.h"
 #include "ofTexture.h"
-#include "ofBaseVideoPlayer.h"
+#include "ofBaseTypes.h"
 
 #ifdef OF_VIDEO_PLAYER_GSTREAMER
-	#include "ofGStreamerPlayer.h"
-	#define OF_VID_PLAYER_TYPE ofGStreamerPlayer()
+	#include "ofGstUtils.h"
+	#define OF_VID_PLAYER_TYPE ofGstUtils()
 #endif
 
 #ifdef OF_VIDEO_PLAYER_QUICKTIME
@@ -16,7 +15,7 @@
 #endif
 
 //---------------------------------------------
-class ofVideoPlayer : public ofBaseVideo{
+class ofVideoPlayer : public ofBaseVideoPlayer, public ofBaseDraws, public ofBaseHasTexture{
 
 	public:
 
@@ -37,6 +36,8 @@ class ofVideoPlayer : public ofBaseVideo{
 
 		bool 				isFrameNew();
 		unsigned char * 	getPixels();
+		ofPixels 			getOFPixels();
+		ofPixels 			getOFPixels() const;
 		float 				getPosition();
 		float 				getSpeed();
 		float 				getDuration();
@@ -44,7 +45,7 @@ class ofVideoPlayer : public ofBaseVideo{
 
 		void 				setPosition(float pct);
 		void 				setVolume(int volume);
-		void 				setLoopState(int state);
+		void 				setLoopState(ofLoopType state);
 		void   				setSpeed(float speed);
 		void				setFrame(int frame);  // frame 0 = first frame...
 
@@ -86,8 +87,6 @@ class ofVideoPlayer : public ofBaseVideo{
 		bool bUseTexture;
 
 };
-#endif
-
 
 
 

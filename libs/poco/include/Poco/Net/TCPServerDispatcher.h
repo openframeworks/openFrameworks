@@ -1,7 +1,7 @@
 //
 // TCPServerDispatcher.h
 //
-// $Id: //poco/1.3/Net/include/Poco/Net/TCPServerDispatcher.h#1 $
+// $Id: //poco/1.4/Net/include/Poco/Net/TCPServerDispatcher.h#1 $
 //
 // Library: Net
 // Package: TCPServer
@@ -42,6 +42,8 @@
 
 #include "Poco/Net/Net.h"
 #include "Poco/Net/StreamSocket.h"
+#include "Poco/Net/TCPServerConnectionFactory.h"
+#include "Poco/Net/TCPServerParams.h"
 #include "Poco/Runnable.h"
 #include "Poco/NotificationQueue.h"
 #include "Poco/ThreadPool.h"
@@ -52,21 +54,13 @@ namespace Poco {
 namespace Net {
 
 
-class TCPServerParams;
-class TCPServerConnectionFactory;
-
-
 class Net_API TCPServerDispatcher: public Poco::Runnable
 	/// A helper class for TCPServer that dispatches
 	/// connections to server connection threads.
 {
 public:
-	TCPServerDispatcher(TCPServerConnectionFactory* pFactory, Poco::ThreadPool& threadPool, TCPServerParams* pParams);
+	TCPServerDispatcher(TCPServerConnectionFactory::Ptr pFactory, Poco::ThreadPool& threadPool, TCPServerParams::Ptr pParams);
 		/// Creates the TCPServerDispatcher.
-		///
-		/// The dispatcher takes ownership of the TCPServerParams object.
-		/// If no TCPServerParams object is supplied, the TCPServerDispatcher
-		/// creates one.
 
 	void duplicate();
 		/// Increments the object's reference count.
@@ -122,17 +116,17 @@ private:
 	TCPServerDispatcher& operator = (const TCPServerDispatcher&);
 
 	int _rc;
-	TCPServerParams* _pParams;
+	TCPServerParams::Ptr _pParams;
 	int  _currentThreads;
 	int  _totalConnections;
 	int  _currentConnections;
 	int  _maxConcurrentConnections;
 	int  _refusedConnections;
 	bool _stopped;
-	Poco::NotificationQueue     _queue;
-	TCPServerConnectionFactory* _pConnectionFactory;
-	Poco::ThreadPool&           _threadPool;
-	mutable Poco::FastMutex     _mutex;
+	Poco::NotificationQueue         _queue;
+	TCPServerConnectionFactory::Ptr _pConnectionFactory;
+	Poco::ThreadPool&               _threadPool;
+	mutable Poco::FastMutex         _mutex;
 };
 
 

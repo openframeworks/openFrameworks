@@ -1,7 +1,7 @@
 //
 // Latin9Encoding.h
 //
-// $Id: //poco/1.3/Foundation/include/Poco/Latin9Encoding.h#2 $
+// $Id: //poco/1.4/Foundation/include/Poco/Latin9Encoding.h#1 $
 //
 // Library: Foundation
 // Package: Text
@@ -61,6 +61,8 @@ public:
 	const CharacterMap& characterMap() const;
 	int convert(const unsigned char* bytes) const;
 	int convert(int ch, unsigned char* bytes, int length) const;
+	int queryConvert(const unsigned char* bytes, int length) const;
+	int sequenceLength(const unsigned char* bytes, int length) const;
 	
 private:
 	static const char* _names[];

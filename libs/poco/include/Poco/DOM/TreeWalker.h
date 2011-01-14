@@ -1,7 +1,7 @@
 //
 // TreeWalker.h
 //
-// $Id: //poco/1.3/XML/include/Poco/DOM/TreeWalker.h#1 $
+// $Id: //poco/1.4/XML/include/Poco/DOM/TreeWalker.h#1 $
 //
 // Library: XML
 // Package: DOM
@@ -80,7 +80,7 @@ public:
 		/// Creates a TreeWalker over the subtree rooted at the specified node.
 		
 	TreeWalker(const TreeWalker& walker);
-		/// Creates a TreeWalker by copying another NodeIterator.
+		/// Creates a TreeWalker by copying another TreeWalker.
 		
 	TreeWalker& operator = (const TreeWalker& walker);
 		/// Assignment operator.

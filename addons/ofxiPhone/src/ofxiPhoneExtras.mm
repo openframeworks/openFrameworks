@@ -34,7 +34,12 @@
 
 //--------------------------------------------------------------
 ofxiPhoneDeviceType ofxiPhoneGetDeviceType() {
-	return [[[UIDevice currentDevice] model] caseInsensitiveCompare:@"iPhone"] == NSOrderedSame ? OFXIPHONE_DEVICE_IPHONE : OFXIPHONE_DEVICE_IPODTOUCH;
+	if([[[UIDevice currentDevice] model] caseInsensitiveCompare:@"iPhone"])
+		return OFXIPHONE_DEVICE_IPHONE;
+	else if([[[UIDevice currentDevice] model] caseInsensitiveCompare:@"iPod"])
+		return OFXIPHONE_DEVICE_IPODTOUCH;
+	else
+		return OFXIPHONE_DEVICE_IPAD;
 }
 
 
@@ -240,7 +245,7 @@ bool ofxiPhoneUIImageToOFImage(UIImage *uiImage, ofImage &outImage, int targetWi
 //	outImage.setFromPixels(pixelsFlipped, width, height, OF_IMAGE_COLOR_ALPHA, true);
 //	free(pixelsFlipped);
 	
-	int ofImageMode;
+	ofImageType ofImageMode;
 	
 	switch(bytesPerPixel) {
 		case 1:

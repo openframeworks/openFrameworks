@@ -2,9 +2,8 @@
 
 #include "ofConstants.h"
 #include "ofTexture.h"
-#include "ofGraphics.h"
-#include "ofTypes.h"
-#include "ofBaseVideoGrabber.h"
+#include "ofBaseTypes.h"
+#include "ofPixels.h"
 
 #ifdef OF_VIDEO_CAPTURE_DIRECTSHOW
 	#include "videoInput.h"
@@ -20,10 +19,12 @@ class ofDirectShowGrabber : public ofBaseVideoGrabber{
 
 		void					listDevices();
 		bool					initGrabber(int w, int h);
-		void					grabFrame();
+		void					update();
 		bool					isFrameNew();
 
-		unsigned char			* getPixels();
+		unsigned char		* 	getPixels();
+		ofPixels 				getOFPixels();
+		ofPixels 				getOFPixels() const;
 		
 		void					close();
 		void					clearMemory();
@@ -36,6 +37,8 @@ class ofDirectShowGrabber : public ofBaseVideoGrabber{
 		void					setVerbose(bool bTalkToMe);
 		void					setDeviceID(int _deviceID);
 		void					setDesiredFrameRate(int framerate);
+
+
 		
 
 	protected:
@@ -44,7 +47,7 @@ class ofDirectShowGrabber : public ofBaseVideoGrabber{
 		int						deviceID;
 		bool 					bVerbose;
 		bool 					bGrabberInited;
-	    unsigned char * 		pixels;
+	    ofPixels		 		pixels;
 		int						attemptFramerate;
 		bool 					bIsFrameNew;	
 		

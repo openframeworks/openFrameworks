@@ -7,6 +7,9 @@
 #include <freetype/ftoutln.h>
 #include <freetype/fttrigon.h>
 
+#include "ofUtils.h"
+#include "ofGraphics.h"
+
 static bool printVectorInfo = false;
 
 //This is for polygon/contour simplification - we use it to reduce the number of points needed in

@@ -1,7 +1,7 @@
 //
 // SocketConnector.h
 //
-// $Id: //poco/1.3/Net/include/Poco/Net/SocketConnector.h#1 $
+// $Id: //poco/1.4/Net/include/Poco/Net/SocketConnector.h#1 $
 //
 // Library: Net
 // Package: Reactor
@@ -93,7 +93,7 @@ class SocketConnector
 	/// if special steps are necessary to create a ServiceHandler object.
 {
 public:		
-	SocketConnector(SocketAddress& address):
+	explicit SocketConnector(SocketAddress& address):
 		_pReactor(0)
 		/// Creates a SocketConnector, using the given Socket.
 	{
