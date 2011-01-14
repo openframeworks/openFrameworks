@@ -1,28 +1,26 @@
 #pragma once
 
-#include "ofVec4f.h"
 #include "ofVec2f.h"
+#include "ofVec4f.h"
 #include "ofConstants.h"
-#include <cmath>
-
-
 
 class ofVec3f {
-
-
   public:
+		union {
+			struct {
+				float x, y, z;
+			};
+			float v[3];
+		};
 
-    ofVec3f( float _x=0.0f,
-              float _y=0.0f,
-              float _z=0.0f );
-              
-    ofVec3f( const ofVec4f& vec );
+		ofVec3f( float _x=0.f, float _y=0.f, float _z=0.f );
+		
     ofVec3f( const ofVec2f& vec );
-
+    ofVec3f( const ofVec4f& vec );
 
     // Getters and Setters.
     //
-    void set( float _x, float _y, float _z );
+    void set( float _x, float _y, float _z = 0 );
     void set( const ofVec3f& vec );
     float &operator[]( const int& i );
 
@@ -228,8 +226,17 @@ ofVec3f operator*( float f, const ofVec3f& vec );
 ofVec3f operator/( float f, const ofVec3f& vec );
 
 
+inline ofVec3f::ofVec3f( const ofVec2f& vec ) {
+	x = vec.x;
+	y = vec.y;
+	z = 0;
+}
 
-
+inline ofVec3f::ofVec3f( const ofVec4f& vec ) {
+	x = vec.x;
+	y = vec.y;
+	z = vec.z;
+}
 
 /////////////////
 // Implementation
@@ -244,19 +251,6 @@ inline ofVec3f::ofVec3f( float _x,
 	y = _y;
 	z = _z;
 }
-
-inline ofVec3f::ofVec3f( const ofVec2f& vec ) {
-	x = vec.x;
-	y = vec.y;
-	z = 0;
-}
-
-inline ofVec3f::ofVec3f( const ofVec4f& vec ) {
-	x = vec.x;
-	y = vec.y;
-	z = vec.z;
-}
-
 
 // Getters and Setters.
 //
