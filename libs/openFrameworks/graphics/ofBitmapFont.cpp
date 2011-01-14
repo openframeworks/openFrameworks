@@ -340,6 +340,8 @@ void  ofDrawBitmapCharacter(int character ){
 
 #else
 
+#include "ofTexture.h"
+
 static bool		bBitmapTexturePrepared = false;
 ofTexture		glesBitmappedFontTexture;
 unsigned char	myLetterPixels[16*16 * 16*16 * 2];			// letter size:8x14pixels, texture size:16x8letters, gl_luminance_alpha: 2bytes/1pixel

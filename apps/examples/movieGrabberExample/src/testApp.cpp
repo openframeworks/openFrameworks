@@ -5,7 +5,7 @@
 
 
 //--------------------------------------------------------------
-void testApp::setup(){	 
+void testApp::setup(){
 	
 	camWidth 		= 320;	// try to grab at this size. 
 	camHeight 		= 240;

@@ -1,10 +1,7 @@
-#ifndef _OF_SOUND_STREAM
-#define _OF_SOUND_STREAM
+#pragma once
 
 #include "ofConstants.h"
-#include "ofBaseApp.h"
-#include "ofEvents.h"
-#include "ofMath.h"
+class ofBaseApp;
 
 // defined in ofSoundUnit.h
 class ofSoundSource;
@@ -31,7 +28,3 @@ void ofSoundStreamStop();
 void ofSoundStreamStart();
 void ofSoundStreamClose();
 void ofSoundStreamListDevices();
-
-
-
-#endif

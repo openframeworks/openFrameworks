@@ -1,13 +1,10 @@
 #pragma once
 
-#include "ofConstants.h"
 #include "ofFileUtils.h"
 #include "ofTexture.h"
-#include "ofGraphics.h"
-#include "ofAppRunner.h"		// for height()
 #include "FreeImage.h"
-#include "ofUtils.h"
 #include "ofPixels.h"
+#include "ofBaseTypes.h"
 
 //----------------------------------------------------
 // freeImage based stuff:
@@ -107,7 +104,7 @@ class ofImage : public ofBaseImage{
 		void				changeTypeOfPixels(ofPixels &pix, ofImageType type);
 		void				resizePixels(ofPixels &pix, int newWidth, int newHeight);
 		static FIBITMAP *	getBmpFromPixels(ofPixels &pix);
-		static void			putBmpIntoPixels(FIBITMAP * bmp, ofPixels &pix);
+		static void			putBmpIntoPixels(FIBITMAP * bmp, ofPixels &pix, bool swapForLittleEndian=true);
 
 
 		ofPixels			myPixels;

@@ -1,15 +1,43 @@
 
-#include "ofMain.h"	
+#include "ofConstants.h"
 #include "ofSystemUtils.h"
+#include "ofFileUtils.h"
 
 #ifdef TARGET_WIN32
 #include <winuser.h>
 #include <commdlg.h>
+#define _WIN32_DCOM
+
+#include <windows.h>
+#include <shlobj.h>
+#include <tchar.h>
+#include <stdio.h>
+
 #endif
 
 #ifdef TARGET_OSX
+	#include <Carbon/Carbon.h>
 	#include <sys/param.h> // for MAXPATHLEN
 #endif 
+
+#ifdef TARGET_WIN32
+#include <locale>
+#include <sstream>
+#include <string>
+
+std::string convertWideToNarrow( const wchar_t *s, char dfault = '?', 
+                      const std::locale& loc = std::locale() )
+{
+  std::ostringstream stm;
+
+  while( *s != L'\0' ) {
+    stm << std::use_facet< std::ctype<wchar_t> >( loc ).narrow( *s++, dfault );
+  }
+  return stm.str();
+}
+#endif
+
+
 
 
 //------------------------------------------------------------------------------
@@ -35,7 +63,18 @@ void ofCreateAlertDialog(string errorMessage){
 	
 	
 	#ifdef TARGET_WIN32
-		MessageBox(NULL, LPWSTR(errorMessage.c_str()), L"Critical Error", MB_OK | MB_ICONERROR);
+		// we need to convert error message to a wide char message. 
+		// first, figure out the length and allocate a wchar_t at that length + 1 (the +1 is for a terminating character)
+		int length = strlen(errorMessage.c_str());
+		wchar_t * widearray = new wchar_t[length+1];
+		memset(widearray, 0, sizeof(wchar_t)*(length+1));
+		// then, call mbstowcs: 
+		// http://www.cplusplus.com/reference/clibrary/cstdlib/mbstowcs/
+		mbstowcs(widearray, errorMessage.c_str(), length);
+		// launch the alert: 
+		MessageBox(NULL, widearray, L"alert", MB_OK);
+		// clear the allocated memory:
+		delete widearray;
 	#endif
 	
 	
@@ -161,23 +200,59 @@ ofFileDialogResult ofFileLoadDialog(bool bFolderSelection){
 	//----------------------------------------------------------------------------------------
 #ifdef TARGET_WIN32
 	
-	char szFileName[MAX_PATH] = "";
+	// TODO pc file choose dialog is now mega broken, please fix!
+
+	if (bFolderSelection == false){
+		
+		wchar_t szFileName[MAX_PATH] = L"";
+		OPENFILENAME ofn;
+		ZeroMemory(&ofn, sizeof(ofn));
+		ofn.lStructSize = sizeof(ofn);
+		HWND hwnd = WindowFromDC(wglGetCurrentDC());
+		ofn.hwndOwner = hwnd;
+		ofn.lpstrFilter = _T("All Files (*.*)\0*.*\0");
+		ofn.lpstrFile = szFileName;
+		ofn.nMaxFile = MAX_PATH;
+		ofn.Flags = OFN_EXPLORER | OFN_FILEMUSTEXIST | OFN_HIDEREADONLY;
+		ofn.lpstrDefExt = 0;
 	
-	OPENFILENAME ofn;
-	ZeroMemory(&ofn, sizeof(ofn));
-	ofn.lStructSize = sizeof(ofn);
-	HWND hwnd = WindowFromDC(wglGetCurrentDC());
-	ofn.hwndOwner = hwnd;
-	ofn.lpstrFilter = _T("All Files (*.*)\0*.*\0");
-	ofn.lpstrFile = LPWSTR(szFileName);
-	ofn.nMaxFile = MAX_PATH;
-	ofn.Flags = OFN_EXPLORER | OFN_FILEMUSTEXIST | OFN_HIDEREADONLY;
-	ofn.lpstrDefExt = 0;
+		if(GetOpenFileName(&ofn)) {
+			results.filePath = convertWideToNarrow(szFileName);
+			// TODO: name conversion, please!! 
+		}
+
+
+		
+
+	} else {
+
+		BROWSEINFO      bi;
+		wchar_t         wideCharacterBuffer[MAX_PATH]; 
+		LPITEMIDLIST    pidl; 
+		LPMALLOC		lpMalloc;
+
+		// Get a pointer to the shell memory allocator
+		if(SHGetMalloc(&lpMalloc) != S_OK){
+			//TODO: deal with some sort of error here?
+		}
+		bi.hwndOwner        =   NULL; 
+		bi.pidlRoot         =   NULL;
+		bi.pszDisplayName   =   wideCharacterBuffer; 
+		bi.lpszTitle        =   _T("Select Directory"); 
+		bi.ulFlags          =   BIF_RETURNFSANCESTORS | BIF_RETURNONLYFSDIRS; 
+		bi.lpfn             =   NULL; 
+		bi.lParam           =   0;
 	
-	if(GetOpenFileName(&ofn)) {
-		//printf("GetOpenFileName worked, got %s \n", szFileName);
-		results.filePath = string(szFileName);
+		if(pidl = SHBrowseForFolder(&bi)){
+			// Copy the path directory to the buffer
+			if(SHGetPathFromIDList(pidl,wideCharacterBuffer)){
+				results.filePath = convertWideToNarrow(wideCharacterBuffer);
+			}
+			lpMalloc->Free(pidl);
+		}
+		lpMalloc->Release();
 	}
+
 	//----------------------------------------------------------------------------------------
 	//------------------------------------------------------------------------------   windoze
 	//----------------------------------------------------------------------------------------
@@ -294,39 +369,26 @@ ofFileDialogResult ofFileSaveDialog(string defaultName, string messageName){
 #ifdef TARGET_WIN32
 	
 	
-	char fileName[260] = {0};
-	fileName[0] = 0;
-	static char info_fn[_MAX_PATH];		// hmmm what is this for?
-	char *extension;
+	wchar_t fileName[MAX_PATH] = L"";
+	char * extension;
 	OPENFILENAME ofn;
-	
-	
-	
-	//lstrcpy(fileName, info_fn);
-	//extension = strrchr(fileName, '.');
-	//lstrcpy(extension, ".mp4");
-	//
     memset(&ofn, 0, sizeof(OPENFILENAME));
 	ofn.lStructSize = sizeof(OPENFILENAME);
 	HWND hwnd = WindowFromDC(wglGetCurrentDC());
 	ofn.hwndOwner = hwnd;
 	ofn.hInstance = GetModuleHandle(0);
 	ofn.nMaxFileTitle = 31;
-	ofn.lpstrFile = LPWSTR(fileName);
-	ofn.nMaxFile = _MAX_PATH;
+	ofn.lpstrFile = fileName;
+	ofn.nMaxFile = MAX_PATH;
 	ofn.lpstrFilter = _T("All Files (*.*)\0*.*\0");
 	ofn.lpstrDefExt = _T("");	// we could do .rxml here?
 	ofn.Flags = OFN_EXPLORER | OFN_PATHMUSTEXIST | OFN_OVERWRITEPROMPT | OFN_HIDEREADONLY;
 	ofn.lpstrTitle = _T("Select Output File");
-	//
-	
-	if (GetSaveFileName(&ofn))
-	{
-		#error this needs checking on windows - what is the filePath.erase(0,1)
-	    results.filePath = string(info_fn) + "/" + string(fileName);
-		if (results.filePath.length() > 1) results.filePath.erase(0,1);
-        cout << "GetSaveFileName worked, got " << results.filePath << endl;
+
+	if (GetSaveFileName(&ofn)){
+		results.filePath = convertWideToNarrow(fileName);
 	}
+
 #endif
 	//----------------------------------------------------------------------------------------
 	//----------------------------------------------------------------------------------------
@@ -339,3 +401,4 @@ ofFileDialogResult ofFileSaveDialog(string defaultName, string messageName){
 	
 	return results;	
 }
+
