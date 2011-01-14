@@ -42,7 +42,10 @@ bool ofCamera::getOrtho() const {
 
 //----------------------------------------
 void ofCamera::begin(ofRectangle rect) {
-	//		ofPushView();
+	if(!isActive) ofPushView();
+	isActive = true;
+	
+	ofSetCoordHandedness(OF_RIGHT_HANDED);
 	
 	// autocalculate near/far clip planes if not set by user
 	float nc, fc;
@@ -70,5 +73,6 @@ void ofCamera::begin(ofRectangle rect) {
 // if begin(); pushes first, then we need an end to pop
 //----------------------------------------
 void ofCamera::end() {
-	//		ofEndView
+	ofPopView();
+	isActive = false;
 }
