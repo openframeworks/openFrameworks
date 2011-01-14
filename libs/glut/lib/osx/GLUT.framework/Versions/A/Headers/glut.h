@@ -529,7 +529,7 @@ extern void APIENTRY glutKeyboardUpFunc(void (*func)(unsigned char key, int x, i
 extern void APIENTRY glutSpecialUpFunc(void (*func)(int key, int x, int y));
 extern void APIENTRY glutJoystickFunc(void (*func)(unsigned int buttonMask, int x, int y, int z), int pollInterval);
 //#ifdef GLUT_OF_007_HACK
-extern void APIENTRY glutDragEventFunc(void (*func)(char ** fileNames, int nFiles));
+extern void APIENTRY glutDragEventFunc(void (*func)(char ** fileNames, int nFiles, int dragX, int dragY));
 //#endif	
 #endif
 #endif
