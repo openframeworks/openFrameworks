@@ -35,6 +35,8 @@
 		BBCF993F12E028A900695088 /* ofNode3d.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BBCF993912E028A900695088 /* ofNode3d.cpp */; };
 		BBCF994012E028A900695088 /* ofNode3d.h in Headers */ = {isa = PBXBuildFile; fileRef = BBCF993A12E028A900695088 /* ofNode3d.h */; };
 		BBCF994212E028BD00695088 /* of3d.h in Headers */ = {isa = PBXBuildFile; fileRef = BBCF994112E028BD00695088 /* of3d.h */; };
+		BBCF99D612E02EE300695088 /* ofScene3d.h in Headers */ = {isa = PBXBuildFile; fileRef = BBCF99D412E02EE300695088 /* ofScene3d.h */; };
+		BBCF99D712E02EE300695088 /* ofScene3d.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BBCF99D512E02EE300695088 /* ofScene3d.cpp */; };
 		DA2E399D12DF6E9000EC4A5B /* glew.h in Headers */ = {isa = PBXBuildFile; fileRef = DA2E399712DF6E9000EC4A5B /* glew.h */; };
 		DA2E399E12DF6E9000EC4A5B /* glxew.h in Headers */ = {isa = PBXBuildFile; fileRef = DA2E399812DF6E9000EC4A5B /* glxew.h */; };
 		DA2E399F12DF6E9000EC4A5B /* wglew.h in Headers */ = {isa = PBXBuildFile; fileRef = DA2E399912DF6E9000EC4A5B /* wglew.h */; };
@@ -121,6 +123,8 @@
 		BBCF993912E028A900695088 /* ofNode3d.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofNode3d.cpp; sourceTree = "<group>"; };
 		BBCF993A12E028A900695088 /* ofNode3d.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofNode3d.h; sourceTree = "<group>"; };
 		BBCF994112E028BD00695088 /* of3d.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = of3d.h; sourceTree = "<group>"; };
+		BBCF99D412E02EE300695088 /* ofScene3d.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofScene3d.h; sourceTree = "<group>"; };
+		BBCF99D512E02EE300695088 /* ofScene3d.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofScene3d.cpp; sourceTree = "<group>"; };
 		DA2E399712DF6E9000EC4A5B /* glew.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = glew.h; sourceTree = "<group>"; };
 		DA2E399812DF6E9000EC4A5B /* glxew.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = glxew.h; sourceTree = "<group>"; };
 		DA2E399912DF6E9000EC4A5B /* wglew.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = wglew.h; sourceTree = "<group>"; };
@@ -259,6 +263,8 @@
 				BBCF993912E028A900695088 /* ofNode3d.cpp */,
 				BBCF993A12E028A900695088 /* ofNode3d.h */,
 				BBCF994112E028BD00695088 /* of3d.h */,
+				BBCF99D412E02EE300695088 /* ofScene3d.h */,
+				BBCF99D512E02EE300695088 /* ofScene3d.cpp */,
 			);
 			path = 3d;
 			sourceTree = "<group>";
@@ -603,6 +609,7 @@
 				BBCF993E12E028A900695088 /* ofMeshNode.h in Headers */,
 				BBCF994012E028A900695088 /* ofNode3d.h in Headers */,
 				BBCF994212E028BD00695088 /* of3d.h in Headers */,
+				BBCF99D612E02EE300695088 /* ofScene3d.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -697,6 +704,7 @@
 				BBCF993B12E028A900695088 /* ofCamera.cpp in Sources */,
 				BBCF993D12E028A900695088 /* ofMeshNode.cpp in Sources */,
 				BBCF993F12E028A900695088 /* ofNode3d.cpp in Sources */,
+				BBCF99D712E02EE300695088 /* ofScene3d.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

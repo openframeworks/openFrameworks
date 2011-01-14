@@ -14,3 +14,4 @@
 #include "ofNode3d.h"
 #include "ofCamera.h"
 #include "ofMeshNode.h"
+#include "ofScene3d.h"
