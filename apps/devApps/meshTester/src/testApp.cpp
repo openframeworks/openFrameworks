@@ -48,7 +48,7 @@ void testApp::draw(){
 	glTranslatef(17,0,0);
 //	glBegin(GL_POINTS);
 	for (int i =0; i < meshes.size();i++){
-		meshes[i].drawWireframe();
+		meshes[i].drawFaces();
 		//meshes[0].drawVertices();
 
 	/*
