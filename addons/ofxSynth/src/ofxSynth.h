@@ -94,22 +94,7 @@ class ofxSynthADSR : public ofSoundSource {
 		int offset;
 		bool noteOn;
 };
-class ofxSynthOsc {
-	public:
-		ofxSynthOsc();
-		double	saw(double frequency);
-		double	triangle(double frequency,double phase);
-		double	square(double frequency);
-		void	setSampleRate(int rate);
-	private:
-		int		sampleRate;
-		double	frequency;
-		double	phase;
-		double	startphase;
-		double	endphase;
-		double	output;
-		double	tri;
-};
+
 /** ofxSynth
  
  A classic subtractive synth
@@ -142,7 +127,6 @@ class ofxSynth : public ofSoundSource{
 		void				setSampleRate(int rate);
 
 		ofxMaxiOsc wave;
-		//ofxSynthOsc wave;
 		ofxSynthADSR env, modEnv;
 		ofxSynthFilter filter;
 		int ampMode;
