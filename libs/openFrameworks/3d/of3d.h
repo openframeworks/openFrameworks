@@ -16,3 +16,4 @@
 #include "ofMeshNode.h"
 #include "ofScene3d.h"
 #include "ofEasyCam.h"
+#include "ofLight.h"

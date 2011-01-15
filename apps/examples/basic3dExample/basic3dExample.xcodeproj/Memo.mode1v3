@@ -337,7 +337,7 @@
 												<key>_historyCapacity</key>
 												<integer>40</integer>
 												<key>bookmark</key>
-												<string>BB401F2E12E1687E0002A877</string>
+												<string>BB401F3112E16A4F0002A877</string>
 												<key>history</key>
 												<array>
 													<string>BBE7F06D12DF98050039489F</string>
@@ -357,14 +357,14 @@
 									<key>GeometryConfiguration</key>
 									<dict>
 										<key>Frame</key>
-										<string>{{0, 0}, {776, 1004}}</string>
+										<string>{{0, 0}, {725, 1004}}</string>
 										<key>RubberWindowFrame</key>
 										<string>0 128 1920 1050 0 0 1920 1178 </string>
 									</dict>
 									<key>Module</key>
 									<string>PBXNavigatorGroup</string>
 									<key>Proportion</key>
-									<string>776pt</string>
+									<string>725pt</string>
 								</dict>
 								<dict>
 									<key>ContentConfiguration</key>
@@ -384,7 +384,7 @@
 												<key>_historyCapacity</key>
 												<integer>40</integer>
 												<key>bookmark</key>
-												<string>BB401F2F12E1687E0002A877</string>
+												<string>BB401F3212E16A4F0002A877</string>
 												<key>history</key>
 												<array>
 													<string>BBE7F06D12DF98050039489F</string>
@@ -404,14 +404,14 @@
 									<key>GeometryConfiguration</key>
 									<dict>
 										<key>Frame</key>
-										<string>{{781, 0}, {810, 1004}}</string>
+										<string>{{730, 0}, {861, 1004}}</string>
 										<key>RubberWindowFrame</key>
 										<string>0 128 1920 1050 0 0 1920 1178 </string>
 									</dict>
 									<key>Module</key>
 									<string>PBXNavigatorGroup</string>
 									<key>Proportion</key>
-									<string>810pt</string>
+									<string>861pt</string>
 								</dict>
 							</array>
 							<key>Proportion</key>
@@ -598,13 +598,12 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
-		<string>BB401F3012E1687E0002A877</string>
 		<string>BB401EBC12E165D40002A877</string>
 		<string>BB401EBD12E165D40002A877</string>
+		<string>1C78EAAD065D492600B07095</string>
 		<string>1CD10A99069EF8BA00B06720</string>
 		<string>BBAEB25612DE2F7B007FD423</string>
 		<string>/Users/Memo/___LAB___/openFrameworks/ofdevcon2011/apps/examples/basic3dExample/basic3dExample.xcodeproj</string>
-		<string>1C78EAAD065D492600B07095</string>
 	</array>
 	<key>WindowString</key>
 	<string>0 128 1920 1050 0 0 1920 1178 </string>
@@ -976,7 +975,7 @@
 			<key>WindowToolGUID</key>
 			<string>1C78EAAD065D492600B07095</string>
 			<key>WindowToolIsVisible</key>
-			<true/>
+			<false/>
 		</dict>
 		<dict>
 			<key>Identifier</key>
