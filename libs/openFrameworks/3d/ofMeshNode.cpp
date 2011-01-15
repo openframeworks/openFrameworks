@@ -8,4 +8,7 @@
  */
 
 #include "ofMeshNode.h"
+#include "of3dUtils.h"
 
+//void ofMeshNode::customDraw() {
+//}

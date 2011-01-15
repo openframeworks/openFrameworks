@@ -65,6 +65,11 @@
 #include "ofEvents.h"
 
 //--------------------------
-// events
-#include "of3d.h"
+// 3d
+#include "of3dUtils.h"
+#include "ofNode.h"
+#include "ofCamera.h"
+#include "ofMeshNode.h"
+#include "ofEasyCam.h"
+#include "ofLight.h"
 
