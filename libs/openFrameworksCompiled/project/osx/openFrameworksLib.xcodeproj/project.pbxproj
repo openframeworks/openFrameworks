@@ -12,11 +12,10 @@
 		2D4FB15D12DE7271000A51F9 /* ofSoundUnit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D4FB15912DE7271000A51F9 /* ofSoundUnit.cpp */; };
 		2D4FB15E12DE7271000A51F9 /* ofSoundUnit.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D4FB15A12DE7271000A51F9 /* ofSoundUnit.h */; };
 		53ECD3DE12E0EEB60035AA81 /* ofMesh.h in Headers */ = {isa = PBXBuildFile; fileRef = 53ECD3D612E0EEB60035AA81 /* ofMesh.h */; };
-		53ECD3DF12E0EEB60035AA81 /* ofVao.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53ECD3D712E0EEB60035AA81 /* ofVao.cpp */; };
-		53ECD3E012E0EEB60035AA81 /* ofVao.h in Headers */ = {isa = PBXBuildFile; fileRef = 53ECD3D812E0EEB60035AA81 /* ofVao.h */; };
 		53ECD3E112E0EEB60035AA81 /* ofVbo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53ECD3D912E0EEB60035AA81 /* ofVbo.cpp */; };
 		53ECD3E212E0EEB60035AA81 /* ofVbo.h in Headers */ = {isa = PBXBuildFile; fileRef = 53ECD3DA12E0EEB60035AA81 /* ofVbo.h */; };
 		53ECD3E312E0EEB60035AA81 /* ofVboMesh.h in Headers */ = {isa = PBXBuildFile; fileRef = 53ECD3DB12E0EEB60035AA81 /* ofVboMesh.h */; };
+		53ECD43A12E121C60035AA81 /* ofVboMesh.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53ECD43912E121C60035AA81 /* ofVboMesh.cpp */; };
 		92B3A68112DA30B3001B8BE8 /* ofBaseTypes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 92B3A67812DA30B3001B8BE8 /* ofBaseTypes.cpp */; };
 		92B3A68212DA30B3001B8BE8 /* ofBaseTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 92B3A67912DA30B3001B8BE8 /* ofBaseTypes.h */; };
 		92B3A68312DA30B3001B8BE8 /* ofColor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 92B3A67A12DA30B3001B8BE8 /* ofColor.cpp */; };
@@ -94,11 +93,10 @@
 		2D4FB15912DE7271000A51F9 /* ofSoundUnit.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofSoundUnit.cpp; sourceTree = "<group>"; };
 		2D4FB15A12DE7271000A51F9 /* ofSoundUnit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofSoundUnit.h; sourceTree = "<group>"; };
 		53ECD3D612E0EEB60035AA81 /* ofMesh.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofMesh.h; path = ../../../openFrameworks/3d/ofMesh.h; sourceTree = SOURCE_ROOT; };
-		53ECD3D712E0EEB60035AA81 /* ofVao.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofVao.cpp; path = ../../../openFrameworks/3d/ofVao.cpp; sourceTree = SOURCE_ROOT; };
-		53ECD3D812E0EEB60035AA81 /* ofVao.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofVao.h; path = ../../../openFrameworks/3d/ofVao.h; sourceTree = SOURCE_ROOT; };
 		53ECD3D912E0EEB60035AA81 /* ofVbo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofVbo.cpp; path = ../../../openFrameworks/3d/ofVbo.cpp; sourceTree = SOURCE_ROOT; };
 		53ECD3DA12E0EEB60035AA81 /* ofVbo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofVbo.h; path = ../../../openFrameworks/3d/ofVbo.h; sourceTree = SOURCE_ROOT; };
 		53ECD3DB12E0EEB60035AA81 /* ofVboMesh.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofVboMesh.h; path = ../../../openFrameworks/3d/ofVboMesh.h; sourceTree = SOURCE_ROOT; };
+		53ECD43912E121C60035AA81 /* ofVboMesh.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofVboMesh.cpp; sourceTree = "<group>"; };
 		92B3A67812DA30B3001B8BE8 /* ofBaseTypes.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofBaseTypes.cpp; sourceTree = "<group>"; };
 		92B3A67912DA30B3001B8BE8 /* ofBaseTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofBaseTypes.h; sourceTree = "<group>"; };
 		92B3A67A12DA30B3001B8BE8 /* ofColor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofColor.cpp; sourceTree = "<group>"; };
@@ -229,11 +227,10 @@
 			isa = PBXGroup;
 			children = (
 				53ECD3D612E0EEB60035AA81 /* ofMesh.h */,
-				53ECD3D712E0EEB60035AA81 /* ofVao.cpp */,
-				53ECD3D812E0EEB60035AA81 /* ofVao.h */,
-				53ECD3D912E0EEB60035AA81 /* ofVbo.cpp */,
 				53ECD3DA12E0EEB60035AA81 /* ofVbo.h */,
+				53ECD3D912E0EEB60035AA81 /* ofVbo.cpp */,
 				53ECD3DB12E0EEB60035AA81 /* ofVboMesh.h */,
+				53ECD43912E121C60035AA81 /* ofVboMesh.cpp */,
 			);
 			name = 3d;
 			path = ../../../openFrameworks/3d;
@@ -589,7 +586,6 @@
 				DA2E399E12DF6E9000EC4A5B /* glxew.h in Headers */,
 				DA2E399F12DF6E9000EC4A5B /* wglew.h in Headers */,
 				53ECD3DE12E0EEB60035AA81 /* ofMesh.h in Headers */,
-				53ECD3E012E0EEB60035AA81 /* ofVao.h in Headers */,
 				53ECD3E212E0EEB60035AA81 /* ofVbo.h in Headers */,
 				53ECD3E312E0EEB60035AA81 /* ofVboMesh.h in Headers */,
 			);
@@ -680,8 +676,8 @@
 				E455519612DCCD0000652B63 /* ofQuaternion.cpp in Sources */,
 				2D4FB15B12DE7271000A51F9 /* ofSoundEffect.cpp in Sources */,
 				2D4FB15D12DE7271000A51F9 /* ofSoundUnit.cpp in Sources */,
-				53ECD3DF12E0EEB60035AA81 /* ofVao.cpp in Sources */,
 				53ECD3E112E0EEB60035AA81 /* ofVbo.cpp in Sources */,
+				53ECD43A12E121C60035AA81 /* ofVboMesh.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
