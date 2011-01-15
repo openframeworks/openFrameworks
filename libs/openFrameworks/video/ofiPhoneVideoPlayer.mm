@@ -12,6 +12,8 @@ ofiPhoneVideoPlayer::ofiPhoneVideoPlayer() {
 	width = 0;
 	height = 0;
 	playbackSpeed=1;
+	
+	vol = 100;
 }
 
 //----------------------------------------
@@ -245,7 +247,6 @@ bool ofiPhoneVideoPlayer::isPaused() {
 	if(videoPlayer != NULL)
 		return [(AVFoundationVideoPlayer *)videoPlayer isPaused];
 	
-	cerr<<"video is not loaded - isPaused"<<endl;
 	return false;
 }
 
@@ -310,9 +311,16 @@ void ofiPhoneVideoPlayer::setPaused(bool bPause) {
 	}
 }
 
+void ofiPhoneVideoPlayer::setVolume(int volume) {
+	vol = volume;
+	if(videoPlayer != NULL)
+		[(AVFoundationVideoPlayer *)videoPlayer setVolume:(float)volume/100];
+}
+
 //----------------------------------------
 
 void ofiPhoneVideoPlayer::initWithPath(string path) {
 	videoPlayer = [[AVFoundationVideoPlayer alloc] initWithPath:ofxStringToNSString(ofToDataPath(path))];
 	videoWasStopped=false;
+	setVolume(vol);
 }
