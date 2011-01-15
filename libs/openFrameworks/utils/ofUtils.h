@@ -3,6 +3,8 @@
 #include "ofConstants.h"
 #include <bitset> // for ofToBinary
 
+#include "ofLog.h"
+
 #ifdef TARGET_WIN32	 // for ofLaunchBrowser
 	#include <shellapi.h>
 #endif
@@ -133,8 +135,6 @@ bool ofIsStringInString(string haystack, string needle);
 
 
 //--------------------------------------------------
-void ofSetLogLevel(int logLevel);
-void ofLog(int logLevel, string message);
-void ofLog(int logLevel, const char* format, ...);
-void ofSetConsoleColor(int color);
-void ofRestoreConsoleColor();
+class ofBuffer;
+bool ofReadFile(const string & path, ofBuffer & file, bool binary=false);
+
