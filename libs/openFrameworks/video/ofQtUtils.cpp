@@ -1,7 +1,8 @@
 #include "ofQtUtils.h"
-#include "ofUtils.h"
 
 #ifndef TARGET_LINUX
+#include "ofUtils.h"
+#include "ofGraphics.h"
 static bool bQuicktimeInitialized = false;
 
 //----------------------------------------

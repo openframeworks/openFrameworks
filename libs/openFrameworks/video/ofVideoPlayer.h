@@ -1,5 +1,4 @@
-#ifndef _OF_VIDEO_PLAYER
-#define _OF_VIDEO_PLAYER
+#pragma once
 
 #include "ofConstants.h"
 #include "ofTexture.h"
@@ -13,6 +12,11 @@
 #ifdef OF_VIDEO_PLAYER_QUICKTIME
 	#include "ofQuickTimePlayer.h"
 	#define OF_VID_PLAYER_TYPE ofQuickTimePlayer()	
+#endif
+
+#ifdef OF_VIDEO_PLAYER_IPHONE
+	#include "ofiPhoneVideoPlayer.h"
+	#define OF_VID_PLAYER_TYPE ofiPhoneVideoPlayer()	
 #endif
 
 //---------------------------------------------
@@ -37,6 +41,8 @@ class ofVideoPlayer : public ofBaseVideoPlayer, public ofBaseDraws, public ofBas
 
 		bool 				isFrameNew();
 		unsigned char * 	getPixels();
+//		ofPixels 			getOFPixels();
+//		ofPixels 			getOFPixels() const;
 		float 				getPosition();
 		float 				getSpeed();
 		float 				getDuration();
@@ -44,7 +50,7 @@ class ofVideoPlayer : public ofBaseVideoPlayer, public ofBaseDraws, public ofBas
 
 		void 				setPosition(float pct);
 		void 				setVolume(int volume);
-		void 				setLoopState(int state);
+		void 				setLoopState(ofLoopType state);
 		void   				setSpeed(float speed);
 		void				setFrame(int frame);  // frame 0 = first frame...
 
@@ -83,11 +89,10 @@ class ofVideoPlayer : public ofBaseVideoPlayer, public ofBaseDraws, public ofBas
 		ofBaseVideoPlayer		* player;
 		
 		ofTexture tex;
+		ofTexture * playerTex; // a seperate texture that may be optionally implemented by the player to avoid excessive pixel copying.
 		bool bUseTexture;
 
 };
-#endif
-
 
 
 

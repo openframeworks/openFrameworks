@@ -1,5 +1,22 @@
 #include "ofAppRunner.h"
 
+#include "ofBaseApp.h"
+#include "ofAppBaseWindow.h"
+#include "ofSoundPlayer.h"
+#include "ofSoundStream.h"
+#include "ofImage.h"
+#include "ofUtils.h"
+#include "ofEvents.h"
+#include "ofMath.h"
+#include "ofGraphics.h"
+
+// TODO: closing seems wonky. 
+// adding this for vc2010 compile: error C3861: 'closeQuicktime': identifier not found
+#ifndef TARGET_OF_IPHONE
+	#include "ofQtUtils.h"
+#endif
+
+
 //========================================================================
 // static variables:
 
@@ -24,6 +41,17 @@ ofAppBaseWindow *			window = NULL;
 void ofSetupOpenGL(ofAppBaseWindow * windowPtr, int w, int h, int screenMode){
 	window = windowPtr;
 	window->setupOpenGL(w, h, screenMode);
+	
+#ifndef TARGET_OF_IPHONE
+	GLenum err = glewInit();
+	if (GLEW_OK != err)
+	{
+		/* Problem: glewInit failed, something is seriously wrong. */
+		ofLog(OF_LOG_ERROR, "Error: %s\n", glewGetErrorString(err));
+	}
+	//Default colors etc are now in ofGraphics - ofSetupGraphicDefaults
+	ofSetupGraphicDefaults();
+#endif
 }
 
 
@@ -35,7 +63,7 @@ void ofSetupOpenGL(int w, int h, int screenMode){
 		window = new ofAppGlutWindow();
 	#endif
 
-	window->setupOpenGL(w, h, screenMode);
+	ofSetupOpenGL(window,w,h,screenMode);
 }
 
 //----------------------- 	gets called when the app exits
@@ -119,6 +147,11 @@ ofBaseApp * ofGetAppPtr(){
 }
 
 //--------------------------------------
+void ofSetAppPtr(ofBaseApp *appPtr) {
+	OFSAptr = appPtr;
+}
+
+//--------------------------------------
 int ofGetFrameNum(){
 	return window->getFrameNum();
 }
@@ -197,6 +230,18 @@ int ofGetHeight(){
 	return (int)window->getWindowSize().y;
 }
 
+//--------------------------------------------------
+ofPoint	ofGetWindowSize() {
+	return ofPoint(ofGetWidth(), ofGetHeight());
+}
+
+
+//--------------------------------------------------
+ofRectangle	ofGetWindowRect() {
+	return ofRectangle(0, 0, ofGetWidth(), ofGetHeight());
+}
+
+
 //--------------------------------------
 void ofSetWindowTitle(string title){
 	window->setWindowTitle(title);
@@ -233,9 +278,9 @@ void ofSetVerticalSync(bool bSync){
 	#ifdef TARGET_WIN32
 	//----------------------------
 		if (bSync) {
-			if (GLEE_WGL_EXT_swap_control) wglSwapIntervalEXT (1);
+			if (WGL_EXT_swap_control) wglSwapIntervalEXT (1);
 		} else {
-			if (GLEE_WGL_EXT_swap_control) wglSwapIntervalEXT (0);
+			if (WGL_EXT_swap_control) wglSwapIntervalEXT (0);
 		}
 	//----------------------------
 	#endif
@@ -266,5 +311,3 @@ void ofSetVerticalSync(bool bSync){
 	//--------------------------------------
 
 }
-
-

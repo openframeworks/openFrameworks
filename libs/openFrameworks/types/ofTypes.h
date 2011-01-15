@@ -1,13 +1,55 @@
-#ifndef _OF_TYPES
-#define _OF_TYPES
+#pragma once
 
 #include "ofConstants.h"
-#include "ofUtils.h"
-#include "ofRectangle.h"
-#include "ofPoint.h"
 #include "ofColor.h"
-#include "ofBaseTypes.h"
 
+//----------------------------------------------------------
+// ofDeviceInfo
+//----------------------------------------------------------
+class ofSerial;
+class ofSerialDeviceInfo{
+	friend class ofSerial;
+	
+	public: 
+	
+		ofSerialDeviceInfo(string devicePathIn, string deviceNameIn, int deviceIDIn){
+			devicePath			= devicePathIn;
+			deviceName			= deviceNameIn;
+			deviceID			= deviceIDIn;
+		}
+
+		ofSerialDeviceInfo(){
+			deviceName = "device undefined";
+			deviceID   = -1;
+		}
+
+		string getDevicePath(){
+			return devicePath;
+		}
+		
+		string getDeviceName(){
+			return deviceName;
+		}
+		
+		int getDeviceID(){
+			return deviceID;
+		}
+
+	protected:
+		string devicePath;			//eg: /dev/tty.cu/usbdevice-a440
+		string deviceName;			//eg: usbdevice-a440 / COM4
+		int deviceID;				//eg: 0,1,2,3 etc 
+		
+		//TODO: other stuff for serial ?
+};
+
+
+//----------------------------------------------------------
+// ofMutex
+//----------------------------------------------------------
+
+#include "Poco/Mutex.h"
+typedef Poco::FastMutex ofMutex;
 
 //----------------------------------------------------------
 // ofStyle
@@ -23,6 +65,7 @@ class ofStyle{
             blendDst            = GL_ONE_MINUS_SRC_ALPHA;
 			smoothing			= false;
 			circleResolution	= 20;
+			sphereResolution = 20;
 			lineWidth			= 1.0;
 			polyMode			= OF_POLY_WINDING_ODD;
 			rectMode			= OF_RECTMODE_CORNER;
@@ -31,8 +74,8 @@ class ofStyle{
 		virtual ~ofStyle(){}
 
 		ofColor color;
-		int polyMode;
-		int rectMode;
+		ofPolyWindingMode polyMode;
+		ofRectMode rectMode;
 		bool bFill;
     
         // one of the following GL_ZERO, GL_ONE, GL_DST_COLOR, GL_ONE_MINUS_DST_COLOR, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_DST_ALPHA, GL_ONE_MINUS_DST_ALPHA, GL_SRC_ALPHA_SATURATE
@@ -43,70 +86,6 @@ class ofStyle{
     
 		bool smoothing;
 		int circleResolution;
+		int sphereResolution;
 		float lineWidth;
 };
-
-//----------------------------------------------------------
-// ofBuffer
-//----------------------------------------------------------
-
-class ofBuffer{
-
-	long 	size;
-	char * 	buffer;
-	long 	nextLinePos;
-public:
-
-	ofBuffer(){
-		size 	= 0;
-		buffer 	= NULL;
-		nextLinePos = 0;
-	}
-
-	ofBuffer(int _size, char * _buffer){
-		size 	= _size;
-		buffer 	= _buffer;
-		nextLinePos = 0;
-	}
-
-	ofBuffer(const ofBuffer & mom){
-		size = mom.size;
-		nextLinePos = mom.nextLinePos;
-		memcpy(buffer,mom.buffer,size);
-	}
-
-	~ofBuffer(){
-		if(buffer) delete[] buffer;
-	}
-
-	void allocate(long _size){
-		if(buffer) delete[] buffer;
-		buffer = new char[_size];
-		size = _size;
-	}
-
-	char * getBuffer(){
-		return buffer;
-	}
-
-	long getSize(){
-		return size;
-	}
-
-	string getNextLine(){
-		if( size <= 0 ) return "";
-		long currentLinePos = nextLinePos;
-		while(nextLinePos<size && buffer[nextLinePos]!='\n') nextLinePos++;
-		string line(buffer + currentLinePos,nextLinePos-currentLinePos);
-		if(nextLinePos<size-1) nextLinePos++;
-		return line;
-	}
-
-	string getFirstLine(){
-		nextLinePos = 0;
-		return getNextLine();
-	}
-};
-
-
-#endif

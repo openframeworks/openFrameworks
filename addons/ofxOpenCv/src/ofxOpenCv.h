@@ -1,6 +1,4 @@
-#ifndef OFX_CV_H
-#define OFX_CV_H
-
+#pragma once
 
 //--------------------------
 // constants
@@ -18,5 +16,4 @@
 // contours and blobs
 #include "ofxCvContourFinder.h"
 
-
-#endif
+#include "ofxCvHaarFinder.h"

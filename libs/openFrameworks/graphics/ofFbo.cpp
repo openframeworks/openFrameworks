@@ -1,4 +1,9 @@
 #include "ofFbo.h"
+#include "ofAppRunner.h"
+#include "ofUtils.h"
+#include "ofGraphics.h"
+
+#ifndef TARGET_OPENGLES
 
 
 /*
@@ -13,8 +18,12 @@
 
 // mapping to allow simple opengl EXT and opengl ES OES
 // commented out ones are already defined
+
 #ifndef TARGET_OPENGLES
-	#define glGenFramebuffers								glGenFramebuffersEXT
+	#define GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS			GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS_EXT
+	#define GL_FRAMEBUFFER_INCOMPLETE_FORMATS				GL_FRAMEBUFFER_INCOMPLETE_FORMATS_EXT
+
+	/*#define glGenFramebuffers								glGenFramebuffersEXT
 	#define glGenRenderbuffers								glGenRenderbuffersEXT
 	#define	glDeleteFramebuffers							glDeleteFramebuffersEXT
 	#define	glBindFramebuffer								glBindFramebufferEXT
@@ -48,7 +57,7 @@
 	#define GL_READ_FRAMEBUFFER								GL_READ_FRAMEBUFFER_EXT
 	#define GL_RENDERBUFFER									GL_RENDERBUFFER_EXT
 	#endif //TARGET_WIN32
-
+*/
 #else
 	#define glGenFramebuffers								glGenFramebuffersOES
 	#define glGenRenderbuffers								glGenRenderbuffersOES
@@ -303,8 +312,8 @@ void ofFbo::createAndAttachTexture(GLenum attachmentPoint) {
 void ofFbo::begin() {
 	bind();
 	ofPushView();
-	ofSetupScreenPerspective(getWidth(), getHeight(), false);
 	ofViewport(0, 0, getWidth(), getHeight());
+	ofSetupScreenPerspective(getWidth(), getHeight(), false);
 }
 
 
@@ -439,3 +448,4 @@ bool ofFbo::checkStatus() {
 	return false;
 }
 
+#endif
