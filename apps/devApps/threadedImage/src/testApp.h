@@ -22,6 +22,8 @@ class testApp : public ofBaseApp{
 		ofThreadedImageLoader loader;
 		vector<ofImage*> images;
 		int total;
+	
+	
 };
 
 #endif
