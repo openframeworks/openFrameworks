@@ -289,6 +289,7 @@ enum ofImageType{
 };
 
 #define		OF_MAX_STYLE_HISTORY	32
+#define		OF_MAX_VIEWPORT_HISTORY	32
 #define		OF_MAX_CIRCLE_PTS 1024
 
 // Blend Modes

@@ -529,7 +529,7 @@ void ofAppGlutWindow::display(void){
 
 	height = height > 0 ? height : 1;
 	// set viewport, clear the screen
-	glViewport( 0, 0, width, height );
+	ofViewport(0, 0, width, height );		// used to be glViewport( 0, 0, width, height );
 	float * bgPtr = ofBgColorPtr();
 	bool bClearAuto = ofbClearBg();
 
