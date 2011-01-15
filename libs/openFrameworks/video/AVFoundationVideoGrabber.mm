@@ -308,7 +308,7 @@ bool AVFoundationVideoGrabber::initGrabber(int w, int h){
 
 void AVFoundationVideoGrabber::updatePixelsCB( CGImageRef & ref ){
 	
-	if(ofxiPhoneGetOrientation() == UIDeviceOrientationPortrait || ofxiPhoneGetOrientation() == UIDeviceOrientationPortraitUpsideDown)
+	//if(ofxiPhoneGetOrientation() == UIDeviceOrientationPortrait || ofxiPhoneGetOrientation() == UIDeviceOrientationPortraitUpsideDown)
 		//transform
 	CGContextRef spriteContext;
 		
