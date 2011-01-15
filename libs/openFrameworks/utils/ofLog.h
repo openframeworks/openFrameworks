@@ -23,7 +23,7 @@ enum ofLogLevel{
 
 //------------------------------------------------------------------------------
 /// \class ofLogger
-/// \brief a protected singleton log class, this is where the magic happens ...
+/// \brief a singleton log class, this is where the magic happens ...
 ///
 /// ofLogger is an interface to a global Poco logger. The logger prints lines
 /// to the text console and/or a file with an optional header showing the date,
@@ -33,78 +33,14 @@ enum ofLogLevel{
 ///
 ///	HEADER LOGLEVEL: LOG TOPIC: your message
 ///
-/// Note: this class is not user accessible by design. Use the stream log classes
+/// Note: This class dosen't need to be access directy. Use the stream log classes
 /// or the global functions.
 ///
 /// See the singleton pattern for more info: http://en.wikipedia.org/wiki/Singleton_pattern
 ///
 class ofLogger{
 
-	protected:
-	
-		// only these class have access
-		friend class ofLogNotice;
-		friend class ofLogDebug;
-		friend class ofLogVerbose;
-		friend class ofLogWarning;
-		friend class ofLogError;
-		friend class ofLogFatalError;
-		
-		// only these functions have access
-		friend void ofLog(ofLogLevel level, const string& message);
-		friend void ofLog(ofLogLevel logLevel, const char* format, ...);
-		
-		friend void ofLogSetLevel(ofLogLevel logLevel);
-		friend ofLogLevel ofLogGetLevel();
-		
-		friend void ofLogEnableConsole();
-		friend void ofLogDisableConsole();
-		friend bool ofLogUsingConsole();
-
-		friend void ofLogEnableFile();
-		friend void ofLogDisableFile();
-		friend bool ofLogUsingFile();
-		
-		friend void ofLogSetFilePath(const string& file);
-		friend string ofLogGetFilePath();
-		
-		friend void ofLogEnableFileRotationMins(unsigned int minutes);
-		friend void ofLogEnableFileRotationHours(unsigned int hours);
-		friend void ofLogEnableFileRotationDays(unsigned int days);
-		friend void ofLogEnableFileRotationMonths(unsigned int months);
-		friend void ofLogEnableFileRotationSize(unsigned int sizeKB);
-		friend void ofLogDisableFileRotation();
-
-		friend void ofLogSetFileRotationMaxNum(unsigned int num);
-
-		friend void ofLogSetFileRotationNumber();
-		friend void ofLogSetFileRotationTimestamp();
-
-		friend void ofLogAddTopic(const string& logTopic, ofLogLevel logLevel);
-		friend void ofLogRemoveTopic(const string& logTopic);
-		friend bool ofLogTopicExists(const string& logTopic);
-		friend void ofLogSetTopicLogLevel(const string& logTopic, ofLogLevel logLevel);
-		friend void ofLogResetTopicLogLevel(const string& logTopic);
-
-		friend void ofLogEnableHeader();
-		friend void ofLogDisableHeader();
-		friend bool ofLogUsingHeader();
-		
-		friend void ofLogEnableHeaderDate();
-		friend void ofLogDisableHeaderDate();
-		friend bool ofLogUsingHeaderDate();
-
-		friend void ofLogEnableHeaderTime();
-		friend void ofLogDisableHeaderTime();
-		friend bool ofLogUsingHeaderTime();
-		
-		friend void ofLogEnableHeaderFrameNum();
-		friend void ofLogDisableHeaderFrameNum();
-		friend bool ofLogUsingHeaderFrameNum();
-	
-		friend void ofLogEnableHeaderMillis();
-		friend void ofLogDisableHeaderMillis();
-		friend bool ofLogUsingHeaderMillis();
+	public:
 	
 		/// singleton object access, creates a new object on the first call
 		static ofLogger& instance();
