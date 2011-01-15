@@ -23,7 +23,6 @@ ofDirectShowGrabber::ofDirectShowGrabber(){
 	deviceID				= 0;
 	width 					= 320;	// default setting
 	height 					= 240;	// default setting
-	pixels					= NULL;
 	attemptFramerate		= -1;
 }
 
@@ -74,7 +73,7 @@ bool ofDirectShowGrabber::initGrabber(int w, int h){
 			}
 
 
-			pixels	= new unsigned char[width * height * 3];
+			pixels.allocate(width, height, 24);
 			return true;
 		} else {
 			ofLog(OF_LOG_ERROR, "error allocating a video device");
@@ -164,16 +163,16 @@ void ofDirectShowGrabber::update(){
 
 							int posPix = (((int)posy * inputW * 3) + ((int)posx * 3));
 
-							pixels[(j*width*3) + i*3    ] = viPixels[posPix  ];
-							pixels[(j*width*3) + i*3 + 1] = viPixels[posPix+1];
-							pixels[(j*width*3) + i*3 + 2] = viPixels[posPix+2];
+							pixels.getPixels()[(j*width*3) + i*3    ] = viPixels[posPix  ];
+							pixels.getPixels()[(j*width*3) + i*3 + 1] = viPixels[posPix+1];
+							pixels.getPixels()[(j*width*3) + i*3 + 2] = viPixels[posPix+2];
 
 						}
 					}
 
 				} else {
 
-					memcpy(pixels, viPixels, width*height*3);
+					pixels.setFromPixels(viPixels,width,height,OF_IMAGE_COLOR);
 
 				}
 
@@ -210,15 +209,20 @@ void ofDirectShowGrabber::close(){
 
 //--------------------------------------------------------------------
 void ofDirectShowGrabber::clearMemory(){
-	if (pixels != NULL){
-		delete[] pixels;
-		pixels = NULL;
-	}
-
+	pixels.clear();
 }
 
 //---------------------------------------------------------------------------
 unsigned char * ofDirectShowGrabber::getPixels(){
+	return pixels.getPixels();
+}
+//--------------------------------------------------------------------
+ofPixels ofDirectShowGrabber::getOFPixels(){
+	return pixels;
+}
+
+//--------------------------------------------------------------------
+ofPixels ofDirectShowGrabber::getOFPixels() const{
 	return pixels;
 }
 

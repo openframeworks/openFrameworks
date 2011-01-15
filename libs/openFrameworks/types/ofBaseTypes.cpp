@@ -40,6 +40,10 @@ void ofBaseVideoGrabber::videoSettings(){
 	ofLog(OF_LOG_WARNING, "ofBaseVideoGrabber::videoSettings not implemented");
 }
 
+//---------------------------------------------------------------------------
+void ofBaseVideoGrabber::setPixelFormat(ofPixelFormat pixelFormat){
+	ofLog(OF_LOG_WARNING, "ofBaseVideoGrabber::setPixelFormat not implemented");
+}
 
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
@@ -93,7 +97,7 @@ void ofBaseVideoPlayer::setVolume(int volume){
 }
 
 //---------------------------------------------------------------------------
-void ofBaseVideoPlayer::setLoopState(int state){
+void ofBaseVideoPlayer::setLoopState(ofLoopType state){
 	ofLog(OF_LOG_WARNING, "ofBaseVideoPlayer::setLoopState not implemented");
 }
 

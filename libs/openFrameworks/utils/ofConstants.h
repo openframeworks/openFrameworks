@@ -1,15 +1,14 @@
-#ifndef OF_CONSTANTS
-#define OF_CONSTANTS
+#pragma once
 
 //-------------------------------
 #define OF_VERSION	6
 //-------------------------------
 
-
-#define OF_LOOP_NONE					0x01
-#define OF_LOOP_PALINDROME				0x02
-#define OF_LOOP_NORMAL					0x03
-
+enum ofLoopType{
+	OF_LOOP_NONE=0x01,
+	OF_LOOP_PALINDROME=0x02,
+	OF_LOOP_NORMAL=0x03
+};
 //-------------------------------
 //  find the system type --------
 //-------------------------------
@@ -43,7 +42,9 @@
 	#endif
 	#define WIN32_LEAN_AND_MEAN
 	#include <windows.h>
-	#include "GLee.h"
+	#define GLEW_STATIC
+	#include "GL\glew.h"
+	#include "GL\wglew.h"
    	#include "glu.h"
 	#define __WINDOWS_DS__
 	#define __WINDOWS_MM__
@@ -85,10 +86,9 @@
 	#ifndef __MACOSX_CORE__
 		#define __MACOSX_CORE__
 	#endif
-	#include <unistd.h>
+#include <unistd.h>
+	#include "glew.h"
 	#include <OpenGL/gl.h>
-	#include <OpenGL/glext.h>
-	#include <OpenGL/glu.h>
 	#include <ApplicationServices/ApplicationServices.h>
 
 	#if defined(__LITTLE_ENDIAN__)
@@ -99,10 +99,9 @@
 #ifdef TARGET_LINUX
 		#define GL_GLEXT_PROTOTYPES
         #include <unistd.h>
+		#include <GL/glew.h>
 		#include <GL/gl.h>
 		#include <GL/glx.h>
-        #include <GL/glext.h>
-        #include <GL/glu.h>
 
     // for some reason, this isn't defined at compile time,
     // so this hack let's us work
@@ -174,19 +173,30 @@
         #ifdef TARGET_OSX
             #define OF_VIDEO_CAPTURE_QUICKTIME
         #else
-            #define OF_VIDEO_CAPTURE_DIRECTSHOW
+			#ifdef TARGET_OF_IPHONE
+				#define OF_VIDEO_CAPTURE_IPHONE
+			#else
+				#define OF_VIDEO_CAPTURE_DIRECTSHOW
+			#endif
         #endif
     #else
-        // all quicktime, all the time
-        #define OF_VIDEO_CAPTURE_QUICKTIME
+		#ifdef TARGET_OF_IPHONE
+			#define OF_VIDEO_CAPTURE_IPHONE
+		#else
+			#define OF_VIDEO_CAPTURE_QUICKTIME
+		#endif
     #endif
 #endif
 
 
 #ifdef TARGET_LINUX
 	#define OF_VIDEO_PLAYER_GSTREAMER
-#else
-	#define OF_VIDEO_PLAYER_QUICKTIME
+#else 
+	#ifdef TARGET_OF_IPHONE
+		#define OF_VIDEO_PLAYER_IPHONE
+	#else
+		#define OF_VIDEO_PLAYER_QUICKTIME
+	#endif
 #endif
 
 // comment out this line to disable all poco related code
@@ -266,23 +276,37 @@ using namespace std;
 #define 	OF_FULLSCREEN 			1
 #define 	OF_GAME_MODE			2
 
-#define 	OF_RECTMODE_CORNER				0
-#define 	OF_RECTMODE_CENTER				1
+enum ofRectMode{
+	OF_RECTMODE_CORNER=0,
+ 	OF_RECTMODE_CENTER=1
+};
 
-#define 	OF_IMAGE_GRAYSCALE		0x00
-#define 	OF_IMAGE_COLOR			0x01
-#define 	OF_IMAGE_COLOR_ALPHA	0x02
-#define 	OF_IMAGE_UNDEFINED		0x03
+enum ofImageType{
+	OF_IMAGE_GRAYSCALE		= 0x00,
+ 	OF_IMAGE_COLOR			= 0x01,
+ 	OF_IMAGE_COLOR_ALPHA	= 0x02,
+ 	OF_IMAGE_UNDEFINED		= 0x03
+};
+
+enum ofPixelFormat{
+	OF_PIXELS_MONO = 0, 
+	OF_PIXELS_RGB,
+	OF_PIXELS_RGBA,
+	OF_PIXELS_BGRA
+};
 
 #define		OF_MAX_STYLE_HISTORY	32
+#define		OF_MAX_VIEWPORT_HISTORY	32
 #define		OF_MAX_CIRCLE_PTS 1024
 
 // Blend Modes
-#define OF_BLENDMODE_ALPHA    1
-#define OF_BLENDMODE_ADD      2
-#define OF_BLENDMODE_SUBTRACT 3
-#define OF_BLENDMODE_MULTIPLY 4
-#define OF_BLENDMODE_SCREEN   5
+enum ofBlendMode{
+	OF_BLENDMODE_ALPHA 	  = 1,
+	OF_BLENDMODE_ADD 	  = 2,
+	OF_BLENDMODE_SUBTRACT = 3,
+	OF_BLENDMODE_MULTIPLY = 4,
+	OF_BLENDMODE_SCREEN   = 5
+};
 
 
 // these are straight out of glu, but renamed and included here
@@ -297,11 +321,13 @@ using namespace std;
 // also: http://glprogramming.com/red/chapter11.html
 // (CSG ideas)
 
-#define 	OF_POLY_WINDING_ODD 	          100130
-#define 	OF_POLY_WINDING_NONZERO           100131
-#define 	OF_POLY_WINDING_POSITIVE          100132
-#define 	OF_POLY_WINDING_NEGATIVE          100133
-#define		OF_POLY_WINDING_ABS_GEQ_TWO       100134
+enum ofPolyWindingMode{
+	OF_POLY_WINDING_ODD 	        = 100130,
+	OF_POLY_WINDING_NONZERO         = 100131,
+	OF_POLY_WINDING_POSITIVE        = 100132,
+	OF_POLY_WINDING_NEGATIVE        = 100133,
+	OF_POLY_WINDING_ABS_GEQ_TWO     = 100134
+};
 
 #define 	OF_CLOSE						  (true)
 
@@ -324,6 +350,9 @@ using namespace std;
 	#define OF_KEY_MODIFIER 	0x0100
 	#define OF_KEY_RETURN		13
 	#define OF_KEY_ESC			27
+	#define OF_KEY_CTRL			0x0200
+	#define OF_KEY_ALT			0x0300
+	#define OF_KEY_SHIFT		0x0400
 
 	// http://www.openframeworks.cc/forum/viewtopic.php?t=494
 	// some issues with keys across platforms:
@@ -391,9 +420,5 @@ using namespace std;
 	#define OF_CONSOLE_COLOR_PURPLE (35)
 	#define OF_CONSOLE_COLOR_CYAN (36)
 	#define OF_CONSOLE_COLOR_WHITE (37)
-
-#endif
-
-//--------------------------------------------
 
 #endif

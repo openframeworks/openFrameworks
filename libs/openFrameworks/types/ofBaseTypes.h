@@ -10,9 +10,10 @@
 
 
 #pragma once
-#include "ofConstants.h"
 #include "ofPoint.h"
 #include "ofRectangle.h"
+#include "ofConstants.h"
+class ofPixels;
 
 
 //----------------------------------------------------------
@@ -72,6 +73,8 @@ class ofBaseHasPixels{
 public:
 	virtual ~ofBaseHasPixels(){}
 	virtual unsigned char * getPixels()=0;
+//	virtual ofPixels getOFPixels()=0;
+//	virtual ofPixels getOFPixels() const=0;
 };
 
 //----------------------------------------------------------
@@ -121,6 +124,7 @@ class ofBaseVideoGrabber: public ofBaseVideo{
 	virtual void setDeviceID(int _deviceID);
 	virtual void setDesiredFrameRate(int framerate);
 	virtual void videoSettings();
+	virtual void setPixelFormat(ofPixelFormat pixelFormat);
 	
 };
 
@@ -145,6 +149,7 @@ public:
 	
 	virtual bool 				isFrameNew() = 0;
 	virtual unsigned char * 	getPixels() = 0;
+	virtual ofTexture *			getTexture(){return NULL;}; // if your videoplayer needs to implement seperate texture and pixel returns for performance, implement this function to return a texture instead of a pixel array. see iPhoneVideoGrabber for reference
 	
 	virtual float 				getWidth() = 0;
 	virtual float 				getHeight() = 0;
@@ -162,7 +167,7 @@ public:
 	virtual void 				setPaused(bool bPause);
 	virtual void 				setPosition(float pct);
 	virtual void 				setVolume(int volume);
-	virtual void 				setLoopState(int state);
+	virtual void 				setLoopState(ofLoopType state);
 	virtual void   				setSpeed(float speed);
 	virtual void				setFrame(int frame);  // frame 0 = first frame...
 	
@@ -176,42 +181,6 @@ public:
 	
 	
 };
-
-
-//----------------------------------------------------------
-// ofBaseHasDevices
-//----------------------------------------------------------
-class ofBaseHasDevices {
-	
-public: 
-	
-	virtual void buildDeviceList() = 0; 
-	
-	virtual vector < string > getDeviceList(){
-		return deviceNames;
-	}
-	
-	virtual void listDevices(){
-		if (!bHaveEnumeratedDevices){
-			buildDeviceList();
-		}
-		if (bHaveEnumeratedDevices){
-			printf("-------------------------------------------- \n");
-			printf("listing devices for %s \n", deviceType.c_str());
-			printf("\n");
-			for (int i = 0; i < deviceNames.size(); i++){
-				printf("device [%i] - %s\n", i, deviceNames[i].c_str());
-			}
-			printf("-------------------------------------------- \n");
-		}
-	}
-	
-	string				deviceType;
-	vector < string >	deviceNames;
-	bool bHaveEnumeratedDevices;
-	
-};
-
 
 
 

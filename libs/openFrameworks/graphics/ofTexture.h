@@ -1,8 +1,9 @@
-#ifndef _IMAGE_TEXTURE_H_
-#define _IMAGE_TEXTURE_H_
+#pragma once
 
-#include "ofConstants.h"
-#include "ofGraphics.h"
+#include "ofPoint.h"
+#include "ofRectangle.h"
+#include "ofBaseTypes.h"
+#include "Poco/SharedPtr.h"
 
 //Sosolimited: texture compression
 enum ofTexCompression
@@ -12,9 +13,52 @@ enum ofTexCompression
 	OF_COMPRESS_ARB
 };
 
-typedef struct{
+class ofTextureData{
+public:
+	ofTextureData(){
+		isCopy = false;
 
-	bool bAllocated;
+		bAllocated		= false;
+		textureID		= 0;
+		bFlipTexture	= false;
+		textureTarget	= GL_TEXTURE_2D;
+		glTypeInternal  = 0;
+		glType			= 0;
+		pixelType		= GL_UNSIGNED_BYTE;
+		width			= 0;
+		height			= 0;
+		tex_w			= 0;
+		tex_h			= 0;
+		tex_t			= 0;
+		tex_u			= 0;
+		compressionType = OF_COMPRESS_NONE;
+	}
+
+	~ofTextureData(){
+		if(!isCopy) clear();
+	}
+
+	ofTextureData(const ofTextureData & mom){
+
+		isCopy = true;
+
+		bAllocated		= mom.bAllocated;
+		textureID		= mom.textureID;
+		bFlipTexture	= mom.bFlipTexture;
+		textureTarget	= mom.textureTarget;
+		glTypeInternal  = mom.glTypeInternal;
+		glType			= mom.glType;
+		pixelType		= mom.pixelType;
+		width			= mom.width;
+		height			= mom.height;
+		tex_w			= mom.tex_w;
+		tex_h			= mom.tex_h;
+		tex_t			= mom.tex_t;
+		tex_u			= mom.tex_u;
+		compressionType = mom.compressionType;
+	}
+
+
 	int glType;
 	int glTypeInternal;
 	int textureTarget;
@@ -27,11 +71,24 @@ typedef struct{
 	float height;
 	bool bFlipTexture;
 	unsigned int textureID;
-
-	//Sosolimited: texture compression
+	bool bAllocated;
 	ofTexCompression compressionType;
-		
-}ofTextureData;
+
+
+	void clear(){
+		// try to free up the texture memory so we don't reallocate
+		// http://www.opengl.org/documentation/specs/man_pages/hardcopy/GL/html/gl/deletetextures.html
+		if (textureID != 0){
+			glDeleteTextures(1, (GLuint *)&textureID);
+			textureID  = 0;
+		}
+		bAllocated = false;
+	}
+
+private:
+
+	bool isCopy;
+};
 
 //enable / disable the slight offset we add to ofTexture's texture coords to compensate for bad edge artifiacts
 //enabled by default
@@ -40,19 +97,15 @@ void ofDisableTextureEdgeHack();
 
 class ofTexture : public ofBaseDraws{
 
+	Poco::SharedPtr<ofTextureData> texDataPtr;
+
 	public :
 
 	ofTexture();
 	virtual ~ofTexture();
+	ofTexture(const ofTexture & mom);
+	void operator=(const ofTexture & mom);
 
-	// -----------------------------------------------------------------------
-	// we allow pass by copy and assignment operator
-	// it does a straight copy but you are getting the textureID of mom's texture
-	// so this means that your texture and mom's texture are the same thing
-	// so in other words be careful! calling clear on your texture will trash mom's
-	// texture and vice versa.
-	ofTexture(const ofTexture& mom);
-	ofTexture& operator=(const ofTexture& mom);
 	// -----------------------------------------------------------------------
 
 	virtual void allocate(int w, int h, int internalGlDataType); //uses the currently set OF texture type - default ARB texture
@@ -61,7 +114,8 @@ class ofTexture : public ofBaseDraws{
 
 	void loadData(float * data, int w, int h, int glDataType);
 	void loadData(unsigned char * data, int w, int h, int glDataType);
-
+	void loadData(ofPixels & pix);		
+	
 	void loadScreenData(int x, int y, int w, int h);
 
 	//the anchor is the point the image is drawn around.
@@ -98,10 +152,13 @@ class ofTexture : public ofBaseDraws{
 
 	ofTextureData getTextureData();
 
+	// reference to the actual textureData inside the smart pointer
+	// for backwards compatibility
+	ofTextureData & texData;
+
 	float getHeight();
 	float getWidth();
 
-	ofTextureData texData;
 protected:
 	void loadData(void * data, int w, int h, int glDataType);
 
@@ -111,4 +168,3 @@ protected:
 
 };
 
-#endif
