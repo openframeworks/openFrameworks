@@ -11,6 +11,7 @@ void 		ofSetupOpenGL(ofAppBaseWindow * windowPtr, int w, int h, int screenMode);
 void 		ofSetupOpenGL(int w, int h, int screenMode);	// sets up the opengl context!
 void 		ofRunApp(ofBaseApp * OFSA = NULL);
 ofBaseApp * ofGetAppPtr();
+void ofSetAppPtr(ofBaseApp *appPtr);
 
 //-------------------------- time
 float 		ofGetFrameRate();

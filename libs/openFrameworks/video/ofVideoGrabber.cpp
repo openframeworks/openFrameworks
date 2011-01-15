@@ -10,7 +10,13 @@
 ofVideoGrabber::ofVideoGrabber(){
 	grabber				= NULL;
 	bUseTexture			= false;
+	bInitialized		= false;
 	RequestedDeviceID	= -1;
+	internalPixelFormat = OF_PIXELS_RGB;
+	
+	if( grabber == NULL ){
+		setGrabber( new OF_VID_GRABBER_TYPE );
+	}
 }
 
 //--------------------------------------------------------------------
@@ -44,25 +50,34 @@ ofBaseVideoGrabber * ofVideoGrabber::getGrabber(){
 
 //--------------------------------------------------------------------
 bool ofVideoGrabber::initGrabber(int w, int h, bool setUseTexture){
+	bInitialized = true;
 	bUseTexture = setUseTexture;
-	
-	if( grabber == NULL ){
-		setGrabber( new OF_VID_GRABBER_TYPE );
-	}
 
 	if( RequestedDeviceID >= 0 ){
 		grabber->setDeviceID(RequestedDeviceID);
 	}
 
+	grabber->setPixelFormat(internalPixelFormat);
+	
 	bool bOk = grabber->initGrabber(w, h);
 	width	 = grabber->getWidth();
 	height	 = grabber->getHeight();	
 	
 	if( bOk && bUseTexture ){
-		tex.allocate(width, height, GL_RGB);
+		if(internalPixelFormat == OF_PIXELS_RGB)
+			tex.allocate(width, height, GL_RGB);
+		else if(internalPixelFormat == OF_PIXELS_RGBA)
+			tex.allocate(width, height, GL_RGBA);
+		else if(internalPixelFormat == OF_PIXELS_BGRA)
+			tex.allocate(width, height, GL_RGBA); // for some reason if we allcoate as GL_BGRA we get a white texture
 	}
 	
 	return bOk;	
+}
+
+//--------------------------------------------------------------------
+void ofVideoGrabber::setPixelFormat(ofPixelFormat pixelFormat) {
+	internalPixelFormat = pixelFormat;
 }
 
 //--------------------------------------------------------------------
@@ -82,7 +97,7 @@ void ofVideoGrabber::setVerbose(bool bTalkToMe){
 //--------------------------------------------------------------------
 void ofVideoGrabber::setDeviceID(int _deviceID){
 	RequestedDeviceID = _deviceID;
-	if( grabber != NULL ){
+	if( bInitialized ){
 		ofLog(OF_LOG_WARNING, "call setDeviceID before grabber is started!");
 	}
 }
@@ -122,7 +137,13 @@ void ofVideoGrabber::update(){
 		grabber->update();
 		if( bUseTexture && grabber->isFrameNew() ){
 			//note we should look at ways to do other pixel formats. 
-			tex.loadData(grabber->getPixels(), tex.getWidth(), tex.getHeight(), GL_RGB);
+			if(internalPixelFormat == OF_PIXELS_RGB)
+				tex.loadData(grabber->getPixels(), tex.getWidth(), tex.getHeight(), GL_RGB);
+			else if(internalPixelFormat == OF_PIXELS_RGBA)
+				tex.loadData(grabber->getPixels(), tex.getWidth(), tex.getHeight(), GL_RGBA);
+			else if(internalPixelFormat == OF_PIXELS_BGRA)
+				tex.loadData(grabber->getPixels(), tex.getWidth(), tex.getHeight(), GL_BGRA);
+			
 		}
 	}
 }
@@ -136,6 +157,7 @@ void ofVideoGrabber::grabFrame(){
 void ofVideoGrabber::close(){
 	if(	grabber != NULL ){
 		grabber->close();
+		bInitialized=false;
 	}
 	tex.clear();
 }
