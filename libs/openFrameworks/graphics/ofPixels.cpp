@@ -126,6 +126,7 @@ void ofPixels::swapRgb(){
 	}
 }
 
+
 void ofPixels::clear(){
 	if(pixels){
 		delete[] pixels;
