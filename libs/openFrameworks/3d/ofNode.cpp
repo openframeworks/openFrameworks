@@ -231,20 +231,35 @@ void ofNode::lookAt(ofNode& lookAtNode, const ofVec3f& upVector) {
 }
 
 //----------------------------------------
-ofVec3f ofNode::getXAxis() {
+ofVec3f ofNode::getXAxis() const {
 	return axis[0];
 }
 
 
 //----------------------------------------
-ofVec3f ofNode::getYAxis() {
+ofVec3f ofNode::getYAxis() const {
 	return axis[1];
 }
 
 
 //----------------------------------------
-ofVec3f ofNode::getZAxis() {
+ofVec3f ofNode::getZAxis() const {
 	return axis[2];
+}
+
+//----------------------------------------
+ofVec3f ofNode::getSideDir() const {
+	return getXAxis();
+}
+
+//----------------------------------------
+ofVec3f ofNode::getLookAtDir() const {
+	return -getZAxis();
+}
+
+//----------------------------------------
+ofVec3f ofNode::getUpDir() const {
+	return getYAxis();
 }
 
 
