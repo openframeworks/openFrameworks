@@ -9,12 +9,12 @@
 #include <Poco/SplitterChannel.h>
 
 enum ofLogLevel{
-	OF_LOG_VERBOSE 		= Poco::Message::PRIO_TRACE,
+	OF_LOG_VERBOSE 		= Poco::Message::PRIO_TRACE,	///< lowest log level
 	OF_LOG_DEBUG 		= Poco::Message::PRIO_DEBUG,
-	OF_LOG_NOTICE 		= Poco::Message::PRIO_NOTICE,
+	OF_LOG_NOTICE 		= Poco::Message::PRIO_NOTICE,	///< default log level
 	OF_LOG_WARNING 		= Poco::Message::PRIO_WARNING,
 	OF_LOG_ERROR 		= Poco::Message::PRIO_ERROR,
-	OF_LOG_FATAL_ERROR 	= Poco::Message::PRIO_FATAL,
+	OF_LOG_FATAL_ERROR 	= Poco::Message::PRIO_FATAL,	///< highest log level
 	OF_LOG_SILENT	// this one is special and should always be last,
 					// set ofSetLogLevel to OF_SILENT to not recieve any messages
 };
@@ -29,14 +29,17 @@ enum ofLogLevel{
 /// to the text console and/or a file with an optional header showing the date,
 /// time, frameNum, and elapsed millis.
 ///
-/// Each log line is prefixed by an optionaly header and log level:
+/// Each log line is prefixed by an optionally header and log level:
 ///
 ///	HEADER LOGLEVEL: LOG TOPIC: your message
 ///
 /// Note: this class is not user accessible by design. Use the stream log classes
 /// or the global functions.
 ///
+/// See the singleton pattern for more info: http://en.wikipedia.org/wiki/Singleton_pattern
+///
 class ofLogger{
+
 	protected:
 	
 		// only these class have access
@@ -50,8 +53,59 @@ class ofLogger{
 		// only these functions have access
 		friend void ofLog(ofLogLevel level, const string& message);
 		friend void ofLog(ofLogLevel logLevel, const char* format, ...);
+		
+		friend void ofLogSetLevel(ofLogLevel logLevel);
+		friend ofLogLevel ofLogGetLevel();
+		
+		friend void ofLogEnableConsole();
+		friend void ofLogDisableConsole();
+		friend bool ofLogUsingConsole();
+
+		friend void ofLogEnableFile();
+		friend void ofLogDisableFile();
+		friend bool ofLogUsingFile();
+		
+		friend void ofLogSetFilePath(const string& file);
+		friend string ofLogGetFilePath();
+		
+		friend void ofLogEnableFileRotationMins(unsigned int minutes);
+		friend void ofLogEnableFileRotationHours(unsigned int hours);
+		friend void ofLogEnableFileRotationDays(unsigned int days);
+		friend void ofLogEnableFileRotationMonths(unsigned int months);
+		friend void ofLogEnableFileRotationSize(unsigned int sizeKB);
+		friend void ofLogDisableFileRotation();
+
+		friend void ofLogSetFileRotationMaxNum(unsigned int num);
+
+		friend void ofLogSetFileRotationNumber();
+		friend void ofLogSetFileRotationTimestamp();
+
+		friend void ofLogAddTopic(const string& logTopic, ofLogLevel logLevel);
+		friend void ofLogRemoveTopic(const string& logTopic);
+		friend bool ofLogTopicExists(const string& logTopic);
+		friend void ofLogSetTopicLogLevel(const string& logTopic, ofLogLevel logLevel);
+		friend void ofLogResetTopicLogLevel(const string& logTopic);
+
+		friend void ofLogEnableHeader();
+		friend void ofLogDisableHeader();
+		friend bool ofLogUsingHeader();
+		
+		friend void ofLogEnableHeaderDate();
+		friend void ofLogDisableHeaderDate();
+		friend bool ofLogUsingHeaderDate();
+
+		friend void ofLogEnableHeaderTime();
+		friend void ofLogDisableHeaderTime();
+		friend bool ofLogUsingHeaderTime();
+		
+		friend void ofLogEnableHeaderFrameNum();
+		friend void ofLogDisableHeaderFrameNum();
+		friend bool ofLogUsingHeaderFrameNum();
 	
-	public:
+		friend void ofLogEnableHeaderMillis();
+		friend void ofLogDisableHeaderMillis();
+		friend bool ofLogUsingHeaderMillis();
+	
 		/// singleton object access, creates a new object on the first call
 		static ofLogger& instance();
 		
@@ -62,7 +116,11 @@ class ofLogger{
 		void log(const string& logTopic, ofLogLevel logLevel, const string& message);
 		
 		/// \section Log Level
-		
+		/// Set the current log level. Messages with a log level below this level 
+		/// are not printed.
+		///	For example, if the log level is OF_LOG_WARNING:
+		///  - OF_LOG_ERROR, OF_LOG_FATAL_ERROR messages are printed
+		///  - OF_LOG_NOTICE, OF_LOG_DEBUG, & OF_LOG_VERBOSE message are not printed
 		void setLevel(ofLogLevel logLevel);
 		ofLogLevel getLevel();
 		
@@ -83,7 +141,7 @@ class ofLogger{
 		/// Set the path to the log file. The default filename is "openframeworks.log"
 		/// and is saved to the data folder. When setting your own file use
 		/// ofToDataPath()+"/filename" to build the full path.
-		bool setFilePath(const string& file);
+		void setFilePath(const string& file);
 		string getFilePath();
 		
 		/// Set the automatic rotation of the log file. The log file will grow until
@@ -148,27 +206,27 @@ class ofLogger{
 		
 		/// Show the date in the header: YYYY-MM-DD
 		/// Enabled by default.
-		void enableDate();
-		void disableDate();
-		bool usingDate();
+		void enableHeaderDate();
+		void disableHeaderDate();
+		bool usingHeaderDate();
 		
 		/// Show the time in the header: HH:MM:SS.ms
 		/// Enabled by default.
-		void enableTime();
-		void disableTime();
-		bool usingTime();
+		void enableHeaderTime();
+		void disableHeaderTime();
+		bool usingHeaderTime();
 		
 		/// Show the current frame num in the header.
 		/// Disabled by default.
-		void enableFrameNum();
-		void disableFrameNum();
-		bool usingFrameNum();
+		void enableHeaderFrameNum();
+		void disableHeaderFrameNum();
+		bool usingHeaderFrameNum();
 		
 		/// Show the current elapsed millis in the header.
 		/// Disabled by default.
-		void enableMillis();
-		void disableMillis();
-		bool usingMillis();
+		void enableHeaderMillis();
+		void disableHeaderMillis();
+		bool usingHeaderMillis();
 		
 	protected:
 
@@ -222,6 +280,10 @@ class ofLogger{
 /// how to catch std::endl (which is actually a func pointer):
 /// 	http://yvan.seth.id.au/Entries/Technology/Code/std__endl.html
 ///
+///
+///	I would be nice if the golab functions ofLog(...) could be removed, then this
+/// class could be renamed to ofLog ...
+///
 class ofLogNotice{
 
     public:
@@ -239,7 +301,8 @@ class ofLogNotice{
 // ofLogNotice(OF_LOG_WARNING) << "a string;
 //
 // This is commented for now as setting the level directly seems redundant when
-// the derived log level classes are available.
+// the derived log level classes are available. It would be nice if this class
+// was named ofLog ...
 //
 //        ofLogNotice(ofLogLevel logLevel){
 //			level = logLevel;
@@ -261,17 +324,84 @@ class ofLogNotice{
             return *this;
         }
 		
-		/// \Section Console Color
+		/// \section Console Color
 		
 		/// Set the console text color 
 		/// doesn't work in the xcode console - do we need this?
 		/// works fine on the terminal though - not much use
-		void setConsoleColor(int color);
-		void restoreConsoleColor();
+		static void setConsoleColor(int color);
+		static void restoreConsoleColor();
 
-		/// global function wrappers
+		/// \section Global Log Function Wrappers
+		///
+		/// Ok Ok, I know this looks scary ... but it's just a long list
+		/// of static public wrappers to access the protected ofLogger class.
+		/// 
+		/// I know I probably should put the function implementation in the .cpp
+		/// file, but it's late and I want to finish this. Some one else can do
+		/// that. :P
 		static void setLevel(ofLogLevel logLevel);
 		static ofLogLevel getLevel();
+		
+		static void enableConsole()	{ofLogger::instance().enableConsole();}
+		static void disableConsole()	{ofLogger::instance().disableConsole();}
+		static bool usingConsole()		{return ofLogger::instance().usingConsole();}
+		
+		static void enableFile()		{ofLogger::instance().enableFile();}
+		static void disableFile()		{ofLogger::instance().disableFile();}
+		static bool usingFile()		{return ofLogger::instance().usingFile();}
+		
+		static bool setFilePath(const string& file)
+			{ofLogger::instance().setFilePath(file);}
+		static string getFilePath()	{return ofLogger::instance().getFilePath();}
+		
+		static void enableFileRotationMins(unsigned int minutes)
+			{ofLogger::instance().enableFileRotationMins(minutes);}
+		static void enableFileRotationHours(unsigned int hours)
+			{ofLogger::instance().enableFileRotationHours(hours);}
+		static void enableFileRotationDays(unsigned int days)
+			{ofLogger::instance().enableFileRotationDays(days);}
+		static void enableFileRotationMonths(unsigned int months)
+			{ofLogger::instance().enableFileRotationMonths(months);}
+		static void enableFileRotationSize(unsigned int sizeKB)
+			{ofLogger::instance().enableFileRotationSize(sizeKB);}
+		static void disableFileRotation()	{ofLogger::instance().disableFileRotation();}
+
+		static void setFileRotationMaxNum(unsigned int num)
+			{ofLogger::instance().setFileRotationMaxNum(num);}
+		
+		static void setFileRotationNumber()		{ofLogger::instance().setFileRotationNumber();}
+		static void setFileRotationTimestamp()	{ofLogger::instance().setFileRotationTimestamp();}
+	
+		static void addTopic(const string& logTopic, ofLogLevel logLevel=OF_DEFAULT_LOG_LEVEL)
+			{ofLogger::instance().addTopic(logTopic, logLevel);}
+		static void removeTopic(const string& logTopic)	{ofLogger::instance().removeTopic(logTopic);}
+		static bool topicExists(const string& logTopic)
+			{return ofLogger::instance().topicExists(logTopic);}
+		static void setTopicLogLevel(const string& logTopic, ofLogLevel logLevel)
+			{ofLogger::instance().setTopicLogLevel(logTopic, logLevel);}
+		static void resetTopicLogLevel(const string& logTopic)
+			{ofLogger::instance().resetTopicLogLevel(logTopic);}
+		
+		static void enableHeader()		{ofLogger::instance().enableHeader();}
+		static void disableHeader()		{ofLogger::instance().disableHeader();}
+		static bool usingHeader()		{return ofLogger::instance().usingHeader();}
+		
+		static void enableHeaderDate()		{ofLogger::instance().enableHeaderDate();}
+		static void disableHeaderDate()		{ofLogger::instance().disableHeaderDate();}
+		static bool usingHeaderDate()		{return ofLogger::instance().usingHeaderDate();}
+		
+		static void enableHeaderTime()		{ofLogger::instance().enableHeaderTime();}
+		static void disableHeaderTime()		{ofLogger::instance().disableHeaderTime();}
+		static bool usingHeaderTime()		{return ofLogger::instance().usingHeaderTime();}
+
+		static void enableHeaderFrameNum()	{ofLogger::instance().enableHeaderFrameNum();}
+		static void disableHeaderFrameNum()	{ofLogger::instance().disableHeaderFrameNum();}
+		static bool usingHeaderFrameNum()	{return ofLogger::instance().usingHeaderFrameNum();}
+		
+		static void enableHeaderMillis()	{ofLogger::instance().enableHeaderMillis();}
+		static void disableHeaderMillis()	{ofLogger::instance().disableHeaderMillis();}
+		static bool usingHeaderMillis()		{return ofLogger::instance().usingHeaderMillis();}
 		
 	protected:
 	
@@ -297,28 +427,24 @@ class ofLogVerbose : public ofLogNotice{
 		ofLogVerbose(string logTopic) : ofLogNotice(logTopic) {}
 };
 
-//------------------------------------------------------------
 class ofLogDebug : public ofLogNotice{
 	public:
 		ofLogDebug() {level = OF_LOG_DEBUG;}
 		ofLogDebug(string logTopic) : ofLogNotice(logTopic) {}
 };
 
-//---------------------------------------------------------------
 class ofLogWarning : public ofLogNotice{
 	public:
 		ofLogWarning() {level = OF_LOG_WARNING;}
 		ofLogWarning(string logTopic) : ofLogNotice(logTopic) {}
 };
 
-//------------------------------------------------------------
 class ofLogError : public ofLogNotice{
 	public:
 		ofLogError() {level = OF_LOG_ERROR;}
 		ofLogError(string logTopic) : ofLogNotice(logTopic) {}
 };
 
-//-----------------------------------------------------------------
 class ofLogFatalError : public ofLogNotice{
 	public:
 		ofLogFatalError() {level = OF_LOG_FATAL_ERROR;}
@@ -332,3 +458,70 @@ class ofLogFatalError : public ofLogNotice{
 ///	log a message at a specific log level
 void ofLog(ofLogLevel logLevel, const string& message);
 void ofLog(ofLogLevel logLevel, const char* format, ...);
+
+//--------------------------------------------------------------
+///
+///	\section Legacy Log Functions
+///
+/// These are implemented as wrappers around the ofLogger class.
+///
+void ofLogSetLevel(ofLogLevel logLevel);
+ofLogLevel ofLogGetLevel();
+
+//----------------------------------------------------------------------------
+///
+///	\section Global Log Function Wrappers
+///
+/// I know this looks long and scary, but they are just public wrappers around
+/// the ofLogger protected class.
+///
+/// Hopefully these could be removed in the near future ...
+///
+void ofLogEnableConsole();
+void ofLogDisableConsole();
+bool ofLogUsingConsole();
+
+void ofLogEnableFile();
+void ofLogDisableFile();
+bool ofLogUsingFile();
+
+void ofLogSetFilePath(const string& file);
+string ofLogGetFilePath();
+
+void ofLogEnableFileRotationMins(unsigned int minutes);
+void ofLogEnableFileRotationHours(unsigned int hours);
+void ofLogEnableFileRotationDays(unsigned int days);
+void ofLogEnableFileRotationMonths(unsigned int months);
+void ofLogEnableFileRotationSize(unsigned int sizeKB);
+void ofLogDisableFileRotation();
+
+void ofLogSetFileRotationMaxNum(unsigned int num);
+
+void ofLogSetFileRotationNumber();
+void ofLogSetFileRotationTimestamp();
+
+void ofLogAddTopic(const string& logTopic, ofLogLevel logLevel=OF_DEFAULT_LOG_LEVEL);
+void ofLogRemoveTopic(const string& logTopic);
+bool ofLogTopicExists(const string& logTopic);
+void ofLogSetTopicLogLevel(const string& logTopic, ofLogLevel logLevel);
+void ofLogResetTopicLogLevel(const string& logTopic);
+
+void ofLogEnableHeader();
+void ofLogDisableHeader();
+bool ofLogUsingHeader();
+
+void ofLogEnableHeaderDate();
+void ofLogDisableHeaderDate();
+bool ofLogUsingHeaderDate();
+
+void ofLogEnableHeaderTime();
+void ofLogDisableHeaderTime();
+bool ofLogUsingHeaderTime();
+
+void ofLogEnableHeaderFrameNum();
+void ofLogDisableHeaderFrameNum();
+bool ofLogUsingHeaderFrameNum();
+
+void ofLogEnableHeaderMillis();
+void ofLogDisableHeaderMillis();
+bool ofLogUsingHeaderMillis();

@@ -103,7 +103,7 @@ bool ofLogger::usingConsole(){
 }
 
 //----------------------------------------------
-bool ofLogger::setFilePath(const string& file){
+void ofLogger::setFilePath(const string& file){
 	fileChannel->setProperty("path", file);
 }
 
@@ -211,52 +211,52 @@ bool ofLogger::usingHeader(){
 }
 
 //----------------------------
-void ofLogger::enableDate(){
+void ofLogger::enableHeaderDate(){
 	bDate = true;
 }
-void ofLogger::disableDate(){
+void ofLogger::disableHeaderDate(){
 	bDate = false;
 }
 
-bool ofLogger::usingDate(){
+bool ofLogger::usingHeaderDate(){
 	return bDate;
 }
 //----------------------------
-void ofLogger::enableTime(){
+void ofLogger::enableHeaderTime(){
 	bTime = true;
 }
 
-void ofLogger::disableTime(){
+void ofLogger::disableHeaderTime(){
 	bTime = false;
 }
 
-bool ofLogger::usingTime(){
+bool ofLogger::usingHeaderTime(){
 	return bTime;
 }
 
 //-----------------------------
-void ofLogger::enableFrameNum(){
+void ofLogger::enableHeaderFrameNum(){
 	bFrameNum = true;
 }
 
-void ofLogger::disableFrameNum(){
+void ofLogger::disableHeaderFrameNum(){
 	bFrameNum = false;
 }
 
-bool ofLogger::usingFrameNum(){
+bool ofLogger::usingHeaderFrameNum(){
 	return bFrameNum;
 }
 
 //-----------------------------
-void ofLogger::enableMillis(){
+void ofLogger::enableHeaderMillis(){
 	bMillis = true;
 }
 
-void ofLogger::disableMillis(){
+void ofLogger::disableHeaderMillis(){
 	bMillis = false;
 }
 
-bool ofLogger::usingMillis(){
+bool ofLogger::usingHeaderMillis(){
 	return bMillis;
 }
 
@@ -371,4 +371,64 @@ void ofLog(ofLogLevel logLevel, const char* format, ...){
 	ofLogger::instance().log(logLevel, (string) line);
 }
 
-		
+//---------------------------------------------------------------------------
+void ofLogEnableConsole()	{ofLogger::instance().enableConsole();}
+void ofLogDisableConsole()	{ofLogger::instance().disableConsole();}
+bool ofLogUsingConsole()	{return ofLogger::instance().usingConsole();}
+
+void ofLogEnableFile()		{ofLogger::instance().enableFile();}
+void ofLogDisableFile()		{ofLogger::instance().disableFile();}
+bool ofLogUsingFile()		{return ofLogger::instance().usingFile();}
+
+void ofLogSetFilePath(const string& file)
+	{ofLogger::instance().setFilePath(file);}
+string ofLogGetFilePath()	{return ofLogger::instance().getFilePath();}
+
+void ofLogEnableFileRotationMins(unsigned int minutes)
+	{ofLogger::instance().enableFileRotationMins(minutes);}
+void ofLogEnableFileRotationHours(unsigned int hours)
+	{ofLogger::instance().enableFileRotationHours(hours);}
+void ofLogEnableFileRotationDays(unsigned int days)
+	{ofLogger::instance().enableFileRotationDays(days);}
+void ofLogEnableFileRotationMonths(unsigned int months)
+	{ofLogger::instance().enableFileRotationMonths(months);}
+void ofLogEnableFileRotationSize(unsigned int sizeKB)
+	{ofLogger::instance().enableFileRotationSize(sizeKB);}
+void ofLogDisableFileRotation()	{ofLogger::instance().disableFileRotation();}
+
+void ofLogSetFileRotationMaxNum(unsigned int num)
+	{ofLogger::instance().setFileRotationMaxNum(num);}
+
+void ofLogSetFileRotationNumber()		{ofLogger::instance().setFileRotationNumber();}
+void ofLogSetFileRotationTimestamp()	{ofLogger::instance().setFileRotationTimestamp();}
+
+void ofLogAddTopic(const string& logTopic, ofLogLevel logLevel)
+	{ofLogger::instance().addTopic(logTopic, logLevel);}
+void ofLogRemoveTopic(const string& logTopic)	{ofLogger::instance().removeTopic(logTopic);}
+bool ofLogTopicExists(const string& logTopic)
+	{return ofLogger::instance().topicExists(logTopic);}
+void ofLogSetTopicLogLevel(const string& logTopic, ofLogLevel logLevel)
+	{ofLogger::instance().setTopicLogLevel(logTopic, logLevel);}
+void ofLogResetTopicLogLevel(const string& logTopic)
+	{ofLogger::instance().resetTopicLogLevel(logTopic);}
+
+void ofLogEnableHeader()	{ofLogger::instance().enableHeader();}
+void ofLogDisableHeader()	{ofLogger::instance().disableHeader();}
+bool ofLogUsingHeader()		{return ofLogger::instance().usingHeader();}
+
+void ofLogEnableHeaderDate()	{ofLogger::instance().enableHeaderDate();}
+void ofLogDisableHeaderDate()	{ofLogger::instance().disableHeaderDate();}
+bool ofLogUsingHeaderDate()		{return ofLogger::instance().usingHeaderDate();}
+
+void ofLogEnableHeaderTime()	{ofLogger::instance().enableHeaderTime();}
+void ofLogDisableHeaderTime()	{ofLogger::instance().disableHeaderTime();}
+bool ofLogUsingHeaderTime()		{return ofLogger::instance().usingHeaderTime();}
+
+void ofLogEnableHeaderFrameNum()	{ofLogger::instance().enableHeaderFrameNum();}
+void ofLogDisableHeaderFrameNum()	{ofLogger::instance().disableHeaderFrameNum();}
+bool ofLogUsingHeaderFrameNum()		{return ofLogger::instance().usingHeaderFrameNum();}
+
+void ofLogEnableHeaderMillis()	{ofLogger::instance().enableHeaderMillis();}
+void ofLogDisableHeaderMillis()	{ofLogger::instance().disableHeaderMillis();}
+bool ofLogUsingHeaderMillis()	{return true;}//ofLogger::instance().usingHeaderMillis();}
+	
