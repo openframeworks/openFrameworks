@@ -312,8 +312,8 @@ void ofFbo::createAndAttachTexture(GLenum attachmentPoint) {
 void ofFbo::begin() {
 	bind();
 	ofPushView();
-	ofSetupScreenPerspective(getWidth(), getHeight(), false);
 	ofViewport(0, 0, getWidth(), getHeight());
+	ofSetupScreenPerspective(getWidth(), getHeight(), false);
 }
 
 
