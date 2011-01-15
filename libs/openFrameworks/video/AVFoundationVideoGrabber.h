@@ -38,7 +38,7 @@ class AVFoundationVideoGrabber;
 	int device;
 }
 
--(void)initCapture:(int)framerate capWidth:(int)w capHeight:(int)h;
+-(bool)initCapture:(int)framerate capWidth:(int)w capHeight:(int)h;
 -(void)startCapture;
 -(void)stopCapture;
 -(void)lockExposureAndFocus;
@@ -61,7 +61,7 @@ class AVFoundationVideoGrabber{
 		void clear();
 		void setCaptureRate(int capRate);
 	
-		void initGrabber(int w, int h);
+		bool initGrabber(int w, int h);
 		void updatePixelsCB( CGImageRef & ref );
 	
 		bool isFrameNew();
