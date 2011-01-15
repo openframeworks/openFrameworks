@@ -31,9 +31,10 @@ class ofSerial {
 			virtual ~ofSerial();
 
 			void			listDevices();
+							
+			//old method - deprecated
 			void 			enumerateDevices();
-			void			buildDeviceList();
-			
+
 			vector <ofSerialDeviceInfo> getDeviceList();
 
 			void 			close();
@@ -55,7 +56,8 @@ class ofSerial {
 			
 
 	protected:
-			
+			void			buildDeviceList();
+						
 			string				deviceType;
 			vector <ofSerialDeviceInfo> devices;
 
