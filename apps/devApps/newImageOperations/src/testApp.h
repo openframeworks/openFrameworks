@@ -24,6 +24,9 @@ class testApp : public ofBaseApp{
 	ofPixels tempPix;
 	ofTexture tex;
 	
+	ofPixels rotatePix;
+	ofTexture rotateTex;
+	
 };
 
 

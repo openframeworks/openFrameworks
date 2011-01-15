@@ -31,6 +31,8 @@ void testApp::draw(){
 	temp.draw(0,0);
 	
 	tex.draw(400,50);
+	
+	rotateTex.draw(600,0);
 }
 
 //--------------------------------------------------------------
@@ -57,6 +59,11 @@ void testApp::mouseDragged(int x, int y, int button){
 //--------------------------------------------------------------
 void testApp::mousePressed(int x, int y, int button){
 
+	rotatePix =  temp.getOFPixels();
+	ofPixelUtils::rotate90(rotatePix, x / 100);
+	rotateTex.allocate(rotatePix.getWidth(), rotatePix.getHeight(), rotatePix.getGlDataType());
+	rotateTex.loadData(rotatePix);
+	
 }
 
 //--------------------------------------------------------------
