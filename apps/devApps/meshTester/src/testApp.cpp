@@ -28,6 +28,8 @@ void testApp::setup(){
     glEnable(GL_LIGHTING);
     glEnable(GL_LIGHT0);
 	 */
+	
+	//std::exit(0);
 }
 
 //--------------------------------------------------------------
@@ -44,19 +46,23 @@ void testApp::draw(){
 
 	glScalef(30,30,30);
 	glTranslatef(17,0,0);
-
+//	glBegin(GL_POINTS);
 	for (int i =0; i < meshes.size();i++){
 		meshes[i].drawWireframe();
-		/*
+		//meshes[0].drawVertices();
+
+	/*
 		for (int j=0; j<meshes[i].mesh->vertices.size(); j++){
 			glVertex3f(meshes[i].mesh->vertices[j].x,meshes[i].mesh->vertices[j].y,meshes[i].mesh->vertices[j].z);
 		}
-		 */
+	 */
 	}
+//	glEnd();
 
     glPopMatrix();
     
-    ofDrawBitmapString("fps: "+ofToString(ofGetFrameRate(), 2), 10, 15);}
+    ofDrawBitmapString("fps: "+ofToString(ofGetFrameRate(), 2), 10, 15);
+}
 
 //--------------------------------------------------------------
 void testApp::keyPressed(int key){

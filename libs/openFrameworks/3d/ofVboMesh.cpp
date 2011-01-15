@@ -1,4 +1,5 @@
 #include "ofVboMesh.h"
+
 //--------------------------------------------------------------
 ofVboMesh::ofVboMesh(){
 	mesh = new ofMesh();
@@ -38,12 +39,12 @@ void ofVboMesh::setupColors(int usage){
 //--------------------------------------------------------------
 void ofVboMesh::setupIndices(){
 	for (int i = 0; i < mesh->faces.size();i++){
-		for (int j=0; j< mesh->faceType; j++){
-			indices.push_back(mesh->faces[i].indices[j]);
+		for (int j=0; j< mesh->faces[i].indices.size(); j++){
+			indices.push_back((GLuint)mesh->faces[i].indices[j]);
 		}
 	}
-	vbo.setIndexData(&indices[0], indices.size(),mesh->faceType );
- }
+	vbo.setIndexData(&indices[0],indices.size() );
+}
 
 /*
  void setupNormals(int usage){
@@ -60,7 +61,8 @@ void ofVboMesh::drawVertices(){
 
 //--------------------------------------------------------------
 void ofVboMesh::drawWireframe(){
-	vbo.draw(GL_TRIANGLES,0,mesh->vertices.size());
+	vbo.draw(indices.size(),GL_TRIANGLES);
+//	vbo.draw(GL_POINTS,0,mesh->vertices.size());
 }
 
 //--------------------------------------------------------------
