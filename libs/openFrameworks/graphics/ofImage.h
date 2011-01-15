@@ -18,9 +18,8 @@ enum ofImageQualityType {
 // FreeImage based stuff:
 void ofLoadImage(ofPixels & pix, string path);
 void ofLoadImage(ofPixels & pix, const ofBuffer & buffer);
-// these functions cannot be const because they might swap the pixels
-void ofSaveImage(ofPixels & pix, string path);
-void ofSaveImage(ofPixels & pix, ofBuffer & buffer);
+void ofSaveImage(ofPixels & pix, string path, ofImageQualityType qualityLevel = OF_IMAGE_QUALITY_BEST);
+void ofSaveImage(ofPixels & pix, ofBuffer & buffer, ofImageQualityType qualityLevel = OF_IMAGE_QUALITY_BEST);
 
 void 	ofCloseFreeImage();		// when we exit, we shut down ofImage
 
@@ -103,9 +102,8 @@ class ofImage : public ofBaseImage{
 
 		static bool loadImageIntoPixels(ofPixels & pix, string fileName);
 		static bool loadImageIntoPixels(ofPixels & pix, const ofBuffer & buffer);
-		// these functions cannot be const because they might swap the pixels
-		static void saveImageFromPixels(ofPixels & pix, string fileName, ofImageQualityType compressionLevel = OF_IMAGE_QUALITY_BEST);
-		static void saveImageFromPixels(ofPixels & pix, ofBuffer & buffer, ofImageQualityType compressionLevel = OF_IMAGE_QUALITY_BEST); // TODO
+		static void saveImageFromPixels(ofPixels & pix, string fileName, ofImageQualityType qualityLevel = OF_IMAGE_QUALITY_BEST);
+		static void saveImageFromPixels(ofPixels & pix, ofBuffer & buffer, ofImageQualityType qualityLevel = OF_IMAGE_QUALITY_BEST); // TODO
 
 
 	protected:
