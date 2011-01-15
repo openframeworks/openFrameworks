@@ -119,6 +119,11 @@ ofBaseApp * ofGetAppPtr(){
 }
 
 //--------------------------------------
+void ofSetAppPtr(ofBaseApp *appPtr) {
+	OFSAptr = appPtr;
+}
+
+//--------------------------------------
 int ofGetFrameNum(){
 	return window->getFrameNum();
 }
