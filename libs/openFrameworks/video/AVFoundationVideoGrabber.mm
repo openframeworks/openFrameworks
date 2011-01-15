@@ -76,21 +76,33 @@
 	
 	[self.captureSession beginConfiguration]; 
 	
+	
+	
 	NSString * preset = AVCaptureSessionPresetMedium;
 	width	= 480;
 	height	= 360;	
-		
-	if( w == 640 && h == 480 ){
-		preset = AVCaptureSessionPreset640x480;
-		width	= w;
-		height	= h;
+	
+	if(ofxiPhoneGetDeviceRevision() == OFXIPHONE_DEVICE_IPHONE_3G) {
+		width = 400;
+		height = 304;
 	}
-	else if( w == 1280 && h == 720 ){
-		preset = AVCaptureSessionPreset1280x720;
-		width	= w;
-		height	= h;		
+	else {
+		if( w == 640 && h == 480 ){
+			preset = AVCaptureSessionPreset640x480;
+			width	= w;
+			height	= h;
+		}
+		else if( w == 1280 && h == 720 ){
+			preset = AVCaptureSessionPreset1280x720;
+			width	= w;
+			height	= h;		
+		}
+		else if( w == 192 && h == 144 ){
+			preset = AVCaptureSessionPresetLow;
+			width	= w;
+			height	= h;		
+		}
 	}
-
 	[self.captureSession setSessionPreset:preset]; 
 	
 	/*We add input and output*/
@@ -107,7 +119,7 @@
 -(void) startCapture{
 
 	if( !bInitCalled ){
-		[self initCapture:30 capWidth:480 capHeight:320];
+		[self initCapture:60 capWidth:480 capHeight:320];
 	}
 
 	[self.captureSession startRunning];
@@ -162,29 +174,20 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
 		/*Lock the image buffer*/
 		CVPixelBufferLockBaseAddress(imageBuffer,0); 
 
-		/*if(grabberPtr->internalGlDataType == GL_BGRA) {	
+		if(grabberPtr->internalGlDataType == GL_BGRA) {	
 			
-			uint8_t *bufferPixels = (uint8_t *)CVPixelBufferGetBaseAddress(imageBuffer); 
-			int ww = min(size_t(1024),CVPixelBufferGetWidth(imageBuffer)); 
-			int hh = min(size_t(1024),CVPixelBufferGetHeight(imageBuffer));
-			cout<<(int)bufferPixels[0]<<"\t"<<(int)bufferPixels[1]<<"\t"<<(int)bufferPixels[2]<<endl;
-			for(int k = 0; k < ww*hh*4; k+= 4 ){
-				grabberPtr->pixels[k  ] = bufferPixels[k  ];
-				grabberPtr->pixels[k+1] = bufferPixels[k+1];
-				grabberPtr->pixels[k+2] = bufferPixels[k+2];
-				grabberPtr->pixels[k+3] = bufferPixels[k+3];
-			}
-			/*unsigned int *isrc4 = (unsigned int *)CVPixelBufferGetBaseAddress(imageBuffer); 
+			unsigned int *isrc4 = (unsigned int *)CVPixelBufferGetBaseAddress(imageBuffer); 
 			
 			unsigned int *idst4 = (unsigned int *)grabberPtr->pixels;
 			unsigned int *ilast4 = &isrc4[width*height-1];
 			while (isrc4 < ilast4){
 				*(idst4++) = *(isrc4++);
-			}*/
-			//CVPixelBufferUnlockBaseAddress(imageBuffer,0);
+			}
+			grabberPtr->newFrame=true;
+			CVPixelBufferUnlockBaseAddress(imageBuffer,0);
 			
-		//}
-		//else {
+		}
+		else {
 			/*Get information about the image*/
 			uint8_t *baseAddress	= (uint8_t *)CVPixelBufferGetBaseAddress(imageBuffer); 
 			size_t bytesPerRow		= CVPixelBufferGetBytesPerRow(imageBuffer); 
@@ -212,7 +215,7 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
 			CVPixelBufferUnlockBaseAddress(imageBuffer,0);
 			
 			grabberPtr->updatePixelsCB(currentFrame); // this is an issue if the class is deleted before the object is removed on quit etc.
-		//}
+		}
 		[pool drain];
 	}
 } 
@@ -232,7 +235,7 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
 
 
 AVFoundationVideoGrabber::AVFoundationVideoGrabber(){
-	fps		= 30;
+	fps		= 60;
 	grabber = [iPhoneVideoGrabber alloc];
 	pixels	= NULL;
 	
