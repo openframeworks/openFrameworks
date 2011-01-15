@@ -26,29 +26,32 @@ void testApp::setup(){
 	synth.setWaveSquare();
 	synth.setFilter(0.7, 0.5);
 	
-	mixer.addInputFrom(&synth);
-	mixer.setVolume(&synth, 0.3);
+//	mixer.addInputFrom(&synth);
+//	mixer.setVolume(&synth, 0.3);
+//	
+//	sampler.loadFile("amen_brother.wav");
+//	sampler.setFrequencySyncToLength(beatLength*4.0*4.0); // the length of a beat is in quarter notes * 4 measures
+//	
+//	filter.setup();
+//	//filter.addInputFrom( &sampler );
+//	
+//	// allows us to send the filter to multiple places
+//	multiplex.addInputFrom( &filter );
+//	
+//	delay.addInputFrom( &multiplex);
+//	
+//	mixer.addInputFrom( &delay );
+//	mixer.setVolume(&delay, 1.0);
+//
+//	mixer.addInputFrom( &multiplex );
+//	mixer.setVolume(&multiplex, 1.0);
+//	
+//	passthrough.addInputFrom( &mixer );
+//	writer.addInputFrom(&passthrough);
+	synth.setPortamento(1.4*sampleRate);
+	synth.env.setADSR(0.01*sampleRate, 0.1*sampleRate, 0.5, 0.93*sampleRate);
 	
-	sampler.loadFile("amen_brother.wav");
-	sampler.setFrequencySyncToLength(beatLength*4.0*4.0); // the length of a beat is in quarter notes * 4 measures
-	
-	filter.setup();
-	filter.addInputFrom( &sampler );
-	
-	// allows us to send the filter to multiple places
-	multiplex.addInputFrom( &filter );
-	
-	delay.addInputFrom( &multiplex);
-	
-	mixer.addInputFrom( &delay );
-	mixer.setVolume(&delay, 1.0);
-
-	mixer.addInputFrom( &multiplex );
-	mixer.setVolume(&multiplex, 1.0);
-	
-	passthrough.addInputFrom( &mixer );
-	writer.addInputFrom(&passthrough);
-	ofSoundStreamAddSoundSource( &writer );
+	ofSoundStreamAddSoundSource( &synth );
 	
 	delay.setSize(0.1);
 	delay.setFeedback(0.7);
@@ -57,38 +60,37 @@ void testApp::setup(){
 }
 
 void testApp::audioRequested(float * output, int bufferSize, int nChannels){
-	for (int i = 0; i < bufferSize; i++){
-		frameCounter++;
-		int remainder = frameCounter%(beatLength); // trigger drum on 8ths
-		if(remainder == 0){
-			if(effectIndex<=0||effectIndex>=3){
-				cutStart = beatPos/2%8/8.0;
-				cutEnd = cutStart + 1/8.0;
-			}
-			sampler.setLoopPoints(cutStart, cutEnd);
-			sampler.trigger();
-		}
-		remainder = frameCounter%(beatLength/4); // trigger synth on 16ths
-		if (remainder+ofRandom(-2, 1) <= 0) {
-			int noteOffset = 40;
-			synth.setPortamento(0.0);
-			synth.setFrequencyMidiNote(noteOffset+PENTATONIC[beatPos%3]);
-			if (remainder-ofRandom(-1, 1)<0) {
-				cout << "pitch down" << endl;
-				noteOffset -= 12;
-			}
-			if (remainder-ofRandom(0, 10)<0) {
-				synth.setPortamento(0.1*sampleRate);
-				cout << "slide" << endl;
-				synth.env.setADSR(0.01*sampleRate, 0.1*sampleRate, 0.5, 0.93*sampleRate);
-				synth.setFrequencyMidiNote(noteOffset+PENTATONIC[(int)(beatPos+ofRandom(5))%5]);
-			}
-			synth.trigger();
-		}
-		if (frameCounter%(beatLength/2) == 0) {
-			beatPos++;
-		}
-	}
+	memset(output, 0, bufferSize*nChannels*sizeof(float));
+//	for (int i = 0; i < bufferSize; i++){
+//		frameCounter++;
+//		int remainder = frameCounter%(beatLength); // trigger drum on 8ths
+//		if(remainder == 0){
+//			if(effectIndex<=0||effectIndex>=3){
+//				cutStart = beatPos/2%8/8.0;
+//				cutEnd = cutStart + 1/8.0;
+//			}
+//			sampler.setLoopPoints(cutStart, cutEnd);
+//			sampler.trigger();
+//		}
+//		remainder = frameCounter%(beatLength/4); // trigger synth on 16ths
+//		if (remainder+ofRandom(-2, 1) <= 0) {
+//			int noteOffset = 40;
+//			synth.setPortamento(0.0);
+//			synth.setFrequencyMidiNote(noteOffset+PENTATONIC[beatPos%3]);
+//			if (remainder-ofRandom(-1, 1)<0) {
+//				noteOffset -= 12;
+//			}
+//			if (remainder-ofRandom(0, 10)<0) {
+//				synth.setPortamento(0.1*sampleRate);
+//				synth.env.setADSR(0.01*sampleRate, 0.1*sampleRate, 0.5, 0.93*sampleRate);
+//				synth.setFrequencyMidiNote(noteOffset+PENTATONIC[(int)(beatPos+ofRandom(5))%5]);
+//			}
+//			synth.trigger();
+//		}
+//		if (frameCounter%(beatLength/2) == 0) {
+//			beatPos++;
+//		}
+//	}
 }
 //--------------------------------------------------------------
 void testApp::update(){
