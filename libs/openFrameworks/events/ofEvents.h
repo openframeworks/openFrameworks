@@ -102,6 +102,7 @@ void ofNotifyWindowResized(int width, int height);
 		ofEvent<ofTouchEventArgs>	touchUp;
 		ofEvent<ofTouchEventArgs>	touchMoved;
 		ofEvent<ofTouchEventArgs>	touchDoubleTap;
+		ofEvent<ofTouchEventArgs>	touchCancelled;
 
 		ofEvent<ofMessage> messageEvent;
 
@@ -122,6 +123,7 @@ void ofNotifyWindowResized(int width, int height);
 			touchUp.disable();
 			touchMoved.disable();
 			touchDoubleTap.disable();
+			touchCancelled.disable();
 			messageEvent.disable();
 		}
 
@@ -142,6 +144,7 @@ void ofNotifyWindowResized(int width, int height);
 			touchUp.enable();
 			touchMoved.enable();
 			touchDoubleTap.enable();
+			touchCancelled.enable();
 			messageEvent.enable();
 		}
 	};
@@ -170,6 +173,7 @@ void ofNotifyWindowResized(int width, int height);
 		ofAddListener(ofEvents.touchDown, listener, &ListenerClass::touchDown);
 		ofAddListener(ofEvents.touchMoved, listener, &ListenerClass::touchMoved);
 		ofAddListener(ofEvents.touchUp, listener, &ListenerClass::touchUp);
+		ofAddListener(ofEvents.touchCancelled, listener, &ListenerClass::touchCancelled);
 	}
 
 	template<class ListenerClass>
@@ -197,6 +201,7 @@ void ofNotifyWindowResized(int width, int height);
 		ofRemoveListener(ofEvents.touchDown, listener, &ListenerClass::touchDown);
 		ofRemoveListener(ofEvents.touchMoved, listener, &ListenerClass::touchMoved);
 		ofRemoveListener(ofEvents.touchUp, listener, &ListenerClass::touchUp);
+		ofRemoveListener(ofEvents.touchCancelled, listener, &ListenerClass::touchCancelled);
 	}
 
 	template<class ListenerClass>
