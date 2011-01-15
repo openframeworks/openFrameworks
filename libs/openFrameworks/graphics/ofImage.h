@@ -15,13 +15,12 @@ enum ofImageQualityType {
 };
 
 //----------------------------------------------------
-// freeImage based stuff:
-void	ofLoadImage(ofPixels & pix, string path);
-void	ofLoadImageFromMemory(ofPixels & pix, unsigned char * bytes, int numBytes);
-
-//TODO: add load from buffer
-//void	ofLoadImage(ofPixels & pix, ofBuffer buf); 
-
+// FreeImage based stuff:
+void ofLoadImage(ofPixels & pix, string path);
+void ofLoadImage(ofPixels & pix, const ofBuffer & buffer);
+// these functions cannot be const because they might swap the pixels
+void ofSaveImage(ofPixels & pix, string path);
+void ofSaveImage(ofPixels & pix, ofBuffer & buffer);
 
 void 	ofCloseFreeImage();		// when we exit, we shut down ofImage
 
@@ -100,12 +99,14 @@ class ofImage : public ofBaseImage{
 		int					type;					// OF_IMAGE_GRAYSCALE, OF_IMAGE_COLOR, OF_IMAGE_COLOR_ALPHA
 
 
-		// freeImage related functionality:
+		// FreeImage related functionality:
 
-		static bool			loadImageIntoPixels(string fileName, ofPixels &pix);
-		static void			saveImageFromPixels(string fileName, ofPixels &pixm, ofImageQualityType compressionLevel = OF_IMAGE_QUALITY_BEST);
+		static bool loadImageIntoPixels(ofPixels & pix, string fileName);
+		static bool loadImageIntoPixels(ofPixels & pix, const ofBuffer & buffer);
+		// these functions cannot be const because they might swap the pixels
+		static void saveImageFromPixels(ofPixels & pix, string fileName, ofImageQualityType compressionLevel = OF_IMAGE_QUALITY_BEST);
+		static void saveImageFromPixels(ofPixels & pix, ofBuffer & buffer, ofImageQualityType compressionLevel = OF_IMAGE_QUALITY_BEST); // TODO
 
-		static bool			loadImageFromMemory(const ofBuffer & buffer, ofPixels &pix);
 
 	protected:
 	
