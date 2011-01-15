@@ -12,8 +12,9 @@
 
 // TODO: closing seems wonky. 
 // adding this for vc2010 compile: error C3861: 'closeQuicktime': identifier not found
-#include "ofQtUtils.h"
-
+#ifndef TARGET_OF_IPHONE
+	#include "ofQtUtils.h"
+#endif
 
 
 //========================================================================

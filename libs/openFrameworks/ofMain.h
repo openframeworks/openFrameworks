@@ -64,5 +64,6 @@
 
 //--------------------------
 // events
-#include "of3d.h"
-
+#ifndef TARGET_OF_IPHONE	
+	#include "of3d.h"
+#endif
