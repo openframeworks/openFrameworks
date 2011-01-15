@@ -1424,7 +1424,7 @@ void ofVertexes( const vector <ofPoint> & polyPoints ){
 	if( polyPoints.size() ){
 		clearCurveVertices();
 		
-		for( int k = 0; k < polyPoints.size(); k++){
+		for( size_t k = 0; k < polyPoints.size(); k++){
 			double* point = new double[3];
 			point[0] = polyPoints[k].x;
 			point[1] = polyPoints[k].y;
@@ -1625,7 +1625,6 @@ void ofEndShape(bool bClose){
  		}
 	}
 	//------------------------------------------------
-
 
 
 	if ((polyMode == OF_POLY_WINDING_ODD) && (drawMode == OF_OUTLINE)){
