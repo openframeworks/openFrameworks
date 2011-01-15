@@ -293,7 +293,7 @@
 							<key>PBXSmartGroupTreeModuleOutlineStateSelectionKey</key>
 							<array>
 								<array>
-									<integer>5</integer>
+									<integer>7</integer>
 									<integer>3</integer>
 									<integer>0</integer>
 								</array>
@@ -336,7 +336,7 @@
 								<key>PBXProjectModuleGUID</key>
 								<string>1CE0B20306471E060097A5F4</string>
 								<key>PBXProjectModuleLabel</key>
-								<string>testApp.cpp</string>
+								<string>ofThreadedImageLoader.h</string>
 								<key>PBXSplitModuleInNavigatorKey</key>
 								<dict>
 									<key>Split0</key>
@@ -344,11 +344,11 @@
 										<key>PBXProjectModuleGUID</key>
 										<string>1CE0B20406471E060097A5F4</string>
 										<key>PBXProjectModuleLabel</key>
-										<string>testApp.cpp</string>
+										<string>ofThreadedImageLoader.h</string>
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>E93D0AD712E25D64003F1AA8</string>
+										<string>E93D0B2512E26906003F1AA8</string>
 										<key>history</key>
 										<array>
 											<string>E9391EB712E0FAC900CA4E53</string>
@@ -361,10 +361,10 @@
 											<string>E940784612E22E4F004CA4ED</string>
 											<string>E9407A1712E2590D004CA4ED</string>
 											<string>E9407A2D12E25A93004CA4ED</string>
-											<string>E9407A4412E25B10004CA4ED</string>
-											<string>E93D0ABE12E25D11003F1AA8</string>
 											<string>E93D0ABF12E25D11003F1AA8</string>
-											<string>E93D0AC112E25D11003F1AA8</string>
+											<string>E93D0AE112E25E9D003F1AA8</string>
+											<string>E93D0AE212E25E9D003F1AA8</string>
+											<string>E93D0AE312E25E9D003F1AA8</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>
@@ -545,7 +545,7 @@
 	<key>StatusbarIsVisible</key>
 	<true/>
 	<key>TimeStamp</key>
-	<real>316824932.11478102</real>
+	<real>316827910.96197301</real>
 	<key>ToolbarConfigUserDefaultsMinorVersion</key>
 	<string>2</string>
 	<key>ToolbarDisplayMode</key>
@@ -562,12 +562,13 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
+		<string>E93D0B2612E26906003F1AA8</string>
 		<string>E93D0AC412E25D11003F1AA8</string>
 		<string>E93D0AC512E25D11003F1AA8</string>
 		<string>E9391E7912E0EC6100CA4E53</string>
 		<string>1CD10A99069EF8BA00B06720</string>
-		<string>1C78EAAD065D492600B07095</string>
 		<string>/Users/diederick/Documents/programming/c++/of62git/apps/devApps/threadedImage/threaded_image.xcodeproj</string>
+		<string>1C78EAAD065D492600B07095</string>
 	</array>
 	<key>WindowString</key>
 	<string>465 109 1061 871 0 0 1680 1028 </string>

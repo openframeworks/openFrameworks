@@ -66,20 +66,37 @@ inline ostream& operator<<(ostream& os,  const ofThreadedImageLoader& loader) {
 	
 	deque<ofImageLoaderEntry>::const_iterator it = loader.images_async_loading.begin();
 	if(it != loader.images_async_loading.end()) {
-		os << "Loading from url\n-------------\n" << std::endl;
+		os << "Loading from url\n-----------------------\n" << std::endl;
 		while(it != loader.images_async_loading.end()) {
 			os << "Loading: " << (*it).url << std::endl;
 			++it;
 		}
+		os << std::endl;
 	}
 
+	os << "To be loaded from disk\n-----------------------\n";
 	it = loader.images_to_load.begin();
 	if(it != loader.images_to_load.end()) {
-		os << "Queue\n---------\n";
+		
 		while(it != loader.images_to_load.end()) {
-			os << (*it).filename << std::endl;
+			if ((*it).type == OF_LOAD_FROM_DISK) {
+				os << (*it).filename << std::endl;
+			}
 			++it;
 		}
+		os << std::endl;
+	}
+	
+	it = loader.images_to_load.begin();
+	if(it != loader.images_to_load.end()) {
+		os << "To be loaded from url\n-----------------------\n";
+		while(it != loader.images_to_load.end()) {
+			if((*it).type == OF_LOAD_FROM_URL) {
+				os << (*it).url << std::endl;
+			}
+			++it;
+		}
+		os << std::endl;
 	}
 	return os;
 }
