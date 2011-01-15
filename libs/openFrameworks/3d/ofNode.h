@@ -36,9 +36,13 @@ public:
 	float getY() const;
 	float getZ() const;
 	
-	ofVec3f getXAxis();
-	ofVec3f getYAxis();
-	ofVec3f getZAxis();
+	ofVec3f getXAxis() const;
+	ofVec3f getYAxis() const;
+	ofVec3f getZAxis() const;
+	
+	ofVec3f getSideDir() const;		// x axis
+	ofVec3f getLookAtDir()const;	// -z axis
+	ofVec3f getUpDir() const;		// y axis
 	
 	float getPitch() const;
 	float getHeading() const;
