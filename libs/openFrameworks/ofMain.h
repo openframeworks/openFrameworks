@@ -39,9 +39,7 @@
 
 //--------------------------
 // video
-#ifndef TARGET_OF_IPHONE			//(temp for now, until this is ported)
-	#include "ofVideoGrabber.h"
-#endif
+#include "ofVideoGrabber.h"
 #include "ofVideoPlayer.h"
 
 //--------------------------
