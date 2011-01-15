@@ -214,7 +214,7 @@ void clear(){
 	bool bUsingColors;
 	bool bUsingTexCoords;
 	int faceType;
-	int windingType;
+//	int windingType;
 	
 	/* to be included?
 	vector<ofVec3f> tangents;

@@ -9,6 +9,8 @@
 
 // modified by Keith Pasko
 
+//TODO: LOADS AND LOADS of GL error checking...
+
 #pragma once
 #include "ofMain.h"
 
@@ -37,8 +39,6 @@ private:
 	GLuint normalId;
 	GLuint texCoordId;
 	
-	int drawMode;
-	
 	GLuint handle;
 	
 	bool bAllocated;
@@ -56,10 +56,12 @@ private:
 	float* normalData;
 	float* texCoordData;
 	float* colorData;
+	GLuint* indexData;
 	
 public:
 	
 	ofVbo();
+	~ofVbo();
 	
 	//extern void glBufferData (GLenum target, GLsizeiptr size, const GLvoid *data, GLenum usage);
 	//glBufferData(GL_ARRAY_BUFFER_ARB, NUM_PARTICLES*4*sizeof(float), color, GL_STREAM_DRAW_ARB);
@@ -70,7 +72,7 @@ public:
 	// if you want to move to verts around you use OF_VBO_STREAM
 	void setVertexData(const ofVec3f * verts, int total, int usage);
 	void setColorData(const ofColor * colors, int total, int usage);	
-	void setIndexData(const int * indices, int total, int mode);
+	void setIndexData(const GLuint * indices, int total);
 	
 	void updateColorData(const ofColor * colors, int total);
 	void updateVertexData(const ofVec3f * verts, int total);	
@@ -91,7 +93,7 @@ public:
 	GLuint getTexCoordId();
 	
 	void draw(int mode, int first, int total);
-	void draw(int first, int total);
+	void draw(int amt, int drawMode);
 	void bind();
 	void unbind();
 	void clear();

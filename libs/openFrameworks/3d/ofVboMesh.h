@@ -3,6 +3,8 @@
 #include "ofMesh.h"
 #include "ofVbo.h"
 
+//TODO: SHORTS as storage (iphone will refuse > 256x256)
+
 class ofVboMesh{
 public:
 	ofVboMesh();
@@ -30,7 +32,7 @@ public:
 	void addTriangleStrip(const vector<ofVec3f>& verts);
 	
 	// build index array from faces as int* 
-	vector<int> indices;
+	vector<GLuint> indices;
 	
 	//TODO: wrapper classes for ofMesh, so we don't have to use ->
 	//TODO: update methods, generic update
