@@ -42,7 +42,9 @@ enum ofLoopType{
 	#endif
 	#define WIN32_LEAN_AND_MEAN
 	#include <windows.h>
-	#include "GLee.h"
+	#define GLEW_STATIC
+	#include "GL\glew.h"
+	#include "GL\wglew.h"
    	#include "glu.h"
 	#define __WINDOWS_DS__
 	#define __WINDOWS_MM__
@@ -171,19 +173,30 @@ enum ofLoopType{
         #ifdef TARGET_OSX
             #define OF_VIDEO_CAPTURE_QUICKTIME
         #else
-            #define OF_VIDEO_CAPTURE_DIRECTSHOW
+			#ifdef TARGET_OF_IPHONE
+				#define OF_VIDEO_CAPTURE_IPHONE
+			#else
+				#define OF_VIDEO_CAPTURE_DIRECTSHOW
+			#endif
         #endif
     #else
-        // all quicktime, all the time
-        #define OF_VIDEO_CAPTURE_QUICKTIME
+		#ifdef TARGET_OF_IPHONE
+			#define OF_VIDEO_CAPTURE_IPHONE
+		#else
+			#define OF_VIDEO_CAPTURE_QUICKTIME
+		#endif
     #endif
 #endif
 
 
 #ifdef TARGET_LINUX
 	#define OF_VIDEO_PLAYER_GSTREAMER
-#else
-	#define OF_VIDEO_PLAYER_QUICKTIME
+#else 
+	#ifdef TARGET_OF_IPHONE
+		#define OF_VIDEO_PLAYER_IPHONE
+	#else
+		#define OF_VIDEO_PLAYER_QUICKTIME
+	#endif
 #endif
 
 // comment out this line to disable all poco related code
@@ -286,7 +299,15 @@ enum ofImageType{
  	OF_IMAGE_UNDEFINED		= 0x03
 };
 
+enum ofPixelFormat{
+	OF_PIXELS_MONO = 0, 
+	OF_PIXELS_RGB,
+	OF_PIXELS_RGBA,
+	OF_PIXELS_BGRA
+};
+
 #define		OF_MAX_STYLE_HISTORY	32
+#define		OF_MAX_VIEWPORT_HISTORY	32
 #define		OF_MAX_CIRCLE_PTS 1024
 
 // Blend Modes
@@ -412,4 +433,3 @@ enum ofPolyWindingMode{
 	#define OF_CONSOLE_COLOR_WHITE (37)
 
 #endif
-

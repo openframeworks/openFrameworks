@@ -1,6 +1,7 @@
 #include "ofUtils.h"
 #include "ofImage.h"
 #include "ofTypes.h"
+#include "ofGraphics.h"
 #include "Poco/String.h"
 #include "ofAppRunner.h"
 
@@ -386,7 +387,7 @@ string ofBinaryToString(const string& value) {
 }
 
 //--------------------------------------------------
-vector<string> ofSplitString(const string& str, const string& delimiter = " "){
+vector <string> ofSplitString(const string& str, const string& delimiter = " "){
     vector<string> elements;
 	// Skip delimiters at beginning.
     string::size_type lastPos = str.find_first_not_of(delimiter, 0);
@@ -403,6 +404,25 @@ vector<string> ofSplitString(const string& str, const string& delimiter = " "){
         pos = str.find_first_of(delimiter, lastPos);
     }
     return elements;
+}
+
+//--------------------------------------------------
+string ofJoinString(vector <string> stringElements, const string & delimiter){
+	string resultString = "";
+	int numElements = stringElements.size();
+	
+	for(int k = 0; k < numElements; k++){
+		if( k < numElements-1 ){
+			resultString += stringElements[k] + delimiter;
+		}
+	}
+	
+	return resultString;
+}
+
+//--------------------------------------------------
+bool ofIsStringInString(string haystack, string needle){
+	return ( strstr(haystack.c_str(), needle.c_str() ) != NULL );
 }
 
 //--------------------------------------------------
@@ -475,12 +495,29 @@ void ofSaveScreen(string filename) {
 }
 
 //--------------------------------------------------
-int saveImageCounter = 0;
-void ofSaveFrame(){
-   string fileName = ofToString(saveImageCounter) + ".png";
-   ofSaveScreen(fileName);
-   saveImageCounter++;
+void ofSaveViewport(string filename) {
+	// because ofSaveScreen doesn't related to viewports
+	ofImage screen;
+	ofRectangle view = ofGetCurrentViewport();
+	screen.allocate(view.width, view.height, OF_IMAGE_COLOR);
+	screen.grabScreen(0, 0, view.height, view.width);
+	screen.saveImage(filename);
 }
+
+
+//--------------------------------------------------
+int saveImageCounter = 0;
+void ofSaveFrame(bool bUseViewport){
+   string fileName = ofToString(saveImageCounter) + ".png";
+	if (bUseViewport){
+		ofSaveViewport(fileName);
+	} else {
+		ofSaveScreen(fileName);
+	}
+	saveImageCounter++;
+}
+
+
 
 //levels are currently:
 // see ofConstants.h
