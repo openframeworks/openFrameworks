@@ -14,6 +14,7 @@
 #import <CoreVideo/CoreVideo.h>
 #import <CoreMedia/CoreMedia.h>
 #include "ofxiPhone.h"
+#include "ofxiPhoneExtras.h"
 
 #if defined  __arm__
 
@@ -81,13 +82,16 @@ class AVFoundationVideoGrabber{
 	
 		GLint internalGlDataType;
 		unsigned char * pixels;
+		bool newFrame;
+	
+		int width, height;
 	
 	protected:
 		
-		int width, height;
+		
 		int device;
 	
-		bool newFrame;
+		
 		int fps;
 		ofTexture tex;
 		iPhoneVideoGrabber * grabber;
