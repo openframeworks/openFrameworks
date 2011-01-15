@@ -7,6 +7,9 @@
 #include <freetype/ftoutln.h>
 #include <freetype/fttrigon.h>
 
+#include "ofUtils.h"
+#include "ofGraphics.h"
+
 static bool printVectorInfo = false;
 
 //This is for polygon/contour simplification - we use it to reduce the number of points needed in
@@ -301,6 +304,7 @@ static ofTTFCharacter makeContoursForCharacter(FT_Face &face){
 ofTrueTypeFont::ofTrueTypeFont(){
 	bLoadedOk		= false;
 	bMakeContours	= false;
+	cps				= NULL;
 }
 
 //------------------------------------------------------------------
@@ -310,6 +314,7 @@ ofTrueTypeFont::~ofTrueTypeFont(){
 
 		if (cps != NULL){
 			delete[] cps;
+			cps = NULL;
 		}
 
 		if (texNames != NULL){
@@ -317,6 +322,7 @@ ofTrueTypeFont::~ofTrueTypeFont(){
 				glDeleteTextures(1, &texNames[i]);
 			}
 			delete[] texNames;
+			texNames = NULL;
 		}
 	}
 }
@@ -339,12 +345,14 @@ void ofTrueTypeFont::loadFont(string filename, int fontsize, bool _bAntiAliased,
 
 		if (cps != NULL){
 			delete[] cps;
+			cps = NULL;
 		}
 		if (texNames != NULL){
 			for (int i = 0; i < nCharacters; i++){
 				glDeleteTextures(1, &texNames[i]);
 			}
 			delete[] texNames;
+			texNames = NULL;
 		}
 		bLoadedOk = false;
 	}
@@ -539,7 +547,6 @@ void ofTrueTypeFont::loadFont(string filename, int fontsize, bool _bAntiAliased,
     	delete [] expanded_data;
 
    }
-
 	// ------------- close the library and typeface
 	FT_Done_Face(face);
 	FT_Done_FreeType(library);
@@ -699,6 +706,11 @@ ofRectangle ofTrueTypeFont::getStringBoundingBox(string c, float x, float y){
 
     ofRectangle myRect;
 
+    if (!bLoadedOk){
+    	ofLog(OF_LOG_ERROR,"ofTrueTypeFont::getStringBoundingBox - font not allocated");
+    	return myRect;
+    }
+
 	GLint		index	= 0;
 	GLfloat		xoffset	= 0;
 	GLfloat		yoffset	= 0;
@@ -708,7 +720,7 @@ ofRectangle ofTrueTypeFont::getStringBoundingBox(string c, float x, float y){
     float       maxx    = -1;
     float       maxy    = -1;
 
-    if (len < 1){
+    if ( len < 1 || cps == NULL ){
         myRect.x        = 0;
         myRect.y        = 0;
         myRect.width    = 0;

@@ -1,5 +1,6 @@
 #include "ofEvents.h"
 #include "ofAppRunner.h"
+#include "ofBaseApp.h"
 
 // core events instance & arguments
 #ifdef OF_USING_POCO
@@ -172,5 +173,17 @@ void ofNotifyWindowResized(int width, int height){
 		resizeEventArgs.width	= width;
 		resizeEventArgs.height	= height;
 		ofNotifyEvent( ofEvents.windowResized, resizeEventArgs );
+	#endif
+}
+
+//------------------------------------------
+void ofSendMessage(ofMessage msg){
+	ofBaseApp * ofAppPtr = ofGetAppPtr();
+	if(ofAppPtr){
+		ofAppPtr->gotMessage(msg);
+	}
+	
+	#ifdef OF_USING_POCO
+		ofNotifyEvent(ofEvents.messageEvent, msg);
 	#endif
 }

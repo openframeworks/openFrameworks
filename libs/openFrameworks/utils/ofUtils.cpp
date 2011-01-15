@@ -2,10 +2,18 @@
 #include "ofImage.h"
 #include "ofTypes.h"
 #include "Poco/String.h"
+#include "ofAppRunner.h"
 
 #if defined(TARGET_OF_IPHONE) || defined(TARGET_OSX ) || defined(TARGET_LINUX)
 	#include "sys/time.h"
 #endif
+
+#ifdef TARGET_OSX 	
+	#ifndef TARGET_OF_IPHONE
+		#include <mach-o/dyld.h>
+		#include <sys/param.h> // for MAXPATHLEN	 	
+	#endif
+#endif 
 
 #ifdef TARGET_WIN32
     #include <mmsystem.h>
@@ -14,12 +22,6 @@
 	#endif
 
 #endif
-
-#ifdef TARGET_OSX
-	#include <mach-o/dyld.h>
-	#include <sys/param.h> // for MAXPATHLEN
-#endif 
-
 
 static bool enableDataPath = true;
 static unsigned long startTime = ofGetSystemTime();   //  better at the first frame ?? (currently, there is some delay from static init, to running.
@@ -150,23 +152,30 @@ void ofSetDataPathRoot(string newRoot){
 	#ifdef TARGET_OSX
 		#ifndef TARGET_OF_IPHONE 
 			char path[MAXPATHLEN];
-			uint32_t size = sizeof(path);
+			uint32_t size = sizeof(path);				
+
 			if (_NSGetExecutablePath(path, &size) == 0){
 				//printf("executable path is %s\n", path);
 				string pathStr = string(path);
+
 				//theo: check this with having '/' as a character in a folder name - OSX treats the '/' as a ':'
 				//checked with spaces too!
+
 				vector < string> pathBrokenUp = ofSplitString( pathStr, "/");
+
 				newPath = "/";
-				for(int i = 0; i < pathBrokenUp.size()-1; i++){
+
+				for(int i = 0; i < pathBrokenUp.size()-1; i++){				
 					newPath += pathBrokenUp[i];
 					newPath += "/";
 				}
-				//cout << newPath << endl;   // some sanity checks here
+
+				//cout << newPath << endl;   // some sanity checks here				
 				//system( "pwd" );
-				chdir ( newPath.c_str() );
-				//system("pwd");				
-			}else{
+
+				chdir ( newPath.c_str() );				
+				//system("pwd");        
+			}else{				
 				ofLog(OF_LOG_FATAL_ERROR, "buffer too small; need size %u\n", size);
 			}
 		#endif 
@@ -377,7 +386,7 @@ string ofBinaryToString(const string& value) {
 }
 
 //--------------------------------------------------
-vector<string> ofSplitString(const string& str, const string& delimiter = " "){
+vector <string> ofSplitString(const string& str, const string& delimiter = " "){
     vector<string> elements;
 	// Skip delimiters at beginning.
     string::size_type lastPos = str.find_first_not_of(delimiter, 0);
@@ -394,6 +403,25 @@ vector<string> ofSplitString(const string& str, const string& delimiter = " "){
         pos = str.find_first_of(delimiter, lastPos);
     }
     return elements;
+}
+
+//--------------------------------------------------
+string ofJoinString(vector <string> stringElements, const string & delimiter){
+	string resultString = "";
+	int numElements = stringElements.size();
+	
+	for(int k = 0; k < numElements; k++){
+		if( k < numElements-1 ){
+			resultString += stringElements[k] + delimiter;
+		}
+	}
+	
+	return resultString;
+}
+
+//--------------------------------------------------
+bool ofIsStringInString(string haystack, string needle){
+	return ( strstr(haystack.c_str(), needle.c_str() ) != NULL );
 }
 
 //--------------------------------------------------
@@ -558,33 +586,5 @@ void ofRestoreConsoleColor(){
 		printf("\033[%im",  OF_CONSOLE_COLOR_RESTORE);
 	#endif
 }
-
-
-//--------------------------------------------------
-bool ofReadFile(const string & path, ofBuffer & buffer, bool binary){
-	ifstream * file = new ifstream(ofToDataPath(path,true).c_str());
-
-	if(!file || !file->is_open()){
-		ofLog(OF_LOG_ERROR, "couldn't open " + path);
-		return false;
-	}
-
-	filebuf *pbuf=file->rdbuf();
-
-	// get file size using buffer's members
-	long size = (long)pbuf->pubseekoff (0,ios::end,ios::in);
-	pbuf->pubseekpos (0,ios::in);
-
-	// get file data
-	if(!binary){
-		buffer.allocate(size+1);// = new char[size];
-		buffer.getBuffer()[size]='\0';
-	}else{
-		buffer.allocate(size);
-	}
-	pbuf->sgetn (buffer.getBuffer(),size);
-	return true;
-}
-
 
 

@@ -1,6 +1,21 @@
 #include "ofAppGlutWindow.h"
 #include "ofBaseApp.h"
 #include "ofMain.h"
+#include "ofEvents.h"
+
+
+
+#ifdef TARGET_WIN32
+	#define GLUT_BUILDING_LIB
+	#include "glut.h"
+#endif
+#ifdef TARGET_OSX
+	#include "../../../libs/glut/lib/osx/GLUT.framework/Versions/A/Headers/glut.h"
+#endif
+#ifdef TARGET_LINUX
+	#include <GL/glut.h>
+#endif
+
 #include <set>
 
 // glut works with static callbacks UGH, so we need static variables here:
@@ -12,6 +27,8 @@ int				nFramesForFPS;
 int				nFrameCount;
 int				buttonInUse;
 bool			bEnableSetupScreen;
+
+bool			bPreMouseNotSet;
 
 bool			bFrameRateSet;
 int 			millisForFrame;
@@ -30,6 +47,7 @@ int				windowW;
 int				windowH;
 ofBaseApp *		ofAppPtr;
 int				currentMouseX, currentMouseY;
+int				previousMouseX, previousMouseY;
 int             nFramesSinceWindowResized;
 
 static set<int> pressedMouseButtons;
@@ -48,6 +66,64 @@ static set<int> pressedKeys;
 static WNDPROC currentWndProc;
 static HWND handle  = NULL;
 
+// This function takes in a wParam from the WM_DROPFILES message and 
+// prints all the files to a message box.
+
+void HandleFiles(WPARAM wParam)
+{
+    // DragQueryFile() takes a LPWSTR for the name so we need a TCHAR string
+    TCHAR szName[MAX_PATH];
+
+    // Here we cast the wParam as a HDROP handle to pass into the next functions
+    HDROP hDrop = (HDROP)wParam;
+
+	POINT pt;
+	DragQueryPoint(hDrop, &pt);
+	//printf("%i %i \n", pt.x, pt.y);
+	
+	ofDragInfo info;
+	info.position.x = pt.x;
+	info.position.y = pt.y;
+
+
+    // This functions has a couple functionalities.  If you pass in 0xFFFFFFFF in
+    // the second parameter then it returns the count of how many filers were drag
+    // and dropped.  Otherwise, the function fills in the szName string array with
+    // the current file being queried.
+    int count = DragQueryFile(hDrop, 0xFFFFFFFF, szName, MAX_PATH);
+
+	
+    // Here we go through all the files that were drag and dropped then display them
+    for(int i = 0; i < count; i++)
+    {
+        // Grab the name of the file associated with index "i" in the list of files dropped.
+        // Be sure you know that the name is attached to the FULL path of the file.
+        DragQueryFile(hDrop, i, szName, MAX_PATH);
+		
+		wchar_t * s = szName;
+		char dfault = '?';
+        const std::locale& loc = std::locale();
+		std::ostringstream stm;
+		while( *s != L'\0' ) {
+			stm << std::use_facet< std::ctype<wchar_t> >( loc ).narrow( *s++, dfault );
+		}
+		info.files.push_back(string(stm.str()));
+		
+			//toUTF8(udispName, dispName);
+
+        // Bring up a message box that displays the current file being processed
+        //MessageBox(GetForegroundWindow(), szName, L"Current file received", MB_OK);
+    }
+
+    // Finally, we destroy the HDROP handle so the extra memory
+    // allocated by the application is released.
+    DragFinish(hDrop);
+
+	ofAppPtr->dragEvent(info);
+
+}
+
+
 static LRESULT CALLBACK winProc(HWND hwnd, UINT Msg, WPARAM wParam, LPARAM lParam){
 
    //we catch close and destroy messages
@@ -61,6 +137,12 @@ static LRESULT CALLBACK winProc(HWND hwnd, UINT Msg, WPARAM wParam, LPARAM lPara
       case WM_DESTROY:
          OF_EXIT_APP(0);
          break;
+	  case WM_DROPFILES:
+            
+            // Call our function we created to display all the files.
+            // We pass the wParam because it's the HDROP handle.
+            HandleFiles(wParam);
+            break;
       default:
          return CallWindowProc(currentWndProc, handle, Msg, wParam, lParam);
       break;
@@ -74,6 +156,9 @@ static void fixCloseWindowOnWin32(){
 
 	//get the HWND
 	handle = WindowFromDC(wglGetCurrentDC());
+	
+	// enable drag and drop of files. 
+	DragAcceptFiles (handle, TRUE);
 
 	//store the current message event handler for the window
 	currentWndProc = (WNDPROC)GetWindowLongPtr(handle, GWL_WNDPROC);
@@ -110,6 +195,9 @@ ofAppGlutWindow::ofAppGlutWindow(){
 	nonFullScreenY		= -1;
 	currentMouseX		= 0;
 	currentMouseY		= 0;
+	previousMouseX		= 0;
+	previousMouseY		= 0;
+	bPreMouseNotSet		= true;
 	lastFrameTime		= 0.0;
 	displayString		= "";
 
@@ -143,9 +231,6 @@ void ofAppGlutWindow::setupOpenGL(int w, int h, int screenMode){
 	if (windowMode != OF_GAME_MODE){
 		glutInitWindowSize(w, h);
 		glutCreateWindow("");
-
-		//Default colors etc are now in ofGraphics - ofSetupGraphicDefaults
-		ofSetupGraphicDefaults();
 
 		/*
 		ofBackground(200,200,200);		// default bg color
@@ -201,6 +286,10 @@ void ofAppGlutWindow::initializeWindow(){
     glutSpecialUpFunc(special_key_up_cb);
 
     glutReshapeFunc(resize_cb);
+	
+#ifdef TARGET_OSX
+	glutDragEventFunc(dragEvent);
+#endif 
 
     nFramesSinceWindowResized = 0;
 
@@ -376,6 +465,16 @@ int ofAppGlutWindow::getMouseY(){
 }
 
 //------------------------------------------------------------
+int ofAppGlutWindow::getPreviousMouseX(){
+	return previousMouseX;
+}
+
+//------------------------------------------------------------
+int ofAppGlutWindow::getPreviousMouseY(){
+	return previousMouseY;
+}
+
+//------------------------------------------------------------
 void ofAppGlutWindow::display(void){
 	static ofEventArgs voidEventArgs;
 
@@ -493,7 +592,16 @@ void ofAppGlutWindow::display(void){
 void ofAppGlutWindow::mouse_cb(int button, int state, int x, int y) {
 
 	if (nFrameCount > 0){
-
+	
+		if( bPreMouseNotSet ){
+			previousMouseX	= x;
+			previousMouseY	= y;
+			bPreMouseNotSet	= false;
+		}else{
+			previousMouseX = currentMouseX;
+			previousMouseY = currentMouseY;		
+		}
+				
 		currentMouseX = x;
 		currentMouseY = y;
 		
@@ -519,6 +627,15 @@ void ofAppGlutWindow::motion_cb(int x, int y) {
 
 	if (nFrameCount > 0){
 	
+		if( bPreMouseNotSet ){
+			previousMouseX	= x;
+			previousMouseY	= y;
+			bPreMouseNotSet	= false;
+		}else{
+			previousMouseX = currentMouseX;
+			previousMouseY = currentMouseY;		
+		}
+			
 		currentMouseX = x;
 		currentMouseY = y;
 	
@@ -536,6 +653,16 @@ void ofAppGlutWindow::motion_cb(int x, int y) {
 void ofAppGlutWindow::passive_motion_cb(int x, int y) {
 
 	if (nFrameCount > 0){
+	
+		if( bPreMouseNotSet ){
+			previousMouseX	= x;
+			previousMouseY	= y;
+			bPreMouseNotSet	= false;
+		}else{
+			previousMouseX = currentMouseX;
+			previousMouseY = currentMouseY;		
+		}	
+	
 		currentMouseX = x;
 		currentMouseY = y;	
 	
@@ -546,6 +673,22 @@ void ofAppGlutWindow::passive_motion_cb(int x, int y) {
 
 		ofNotifyMouseMoved(x, y);
 	}
+}
+
+void ofAppGlutWindow::dragEvent(char ** names, int howManyFiles, int dragX, int dragY){
+	
+	// TODO: we need position info on mac passed through
+	ofDragInfo info;
+	info.position.x = dragX;
+	info.position.y = ofGetHeight()-dragY;
+
+	for (int i = 0; i < howManyFiles; i++){
+		string temp = string(names[i]);
+		info.files.push_back(temp);
+	}
+	
+	ofAppPtr->dragEvent(info);
+	
 }
 
 

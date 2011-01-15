@@ -9,13 +9,11 @@
 // we should correct this -- 
 // -----------------------------------------------------------
 
-
-#ifndef _OF_MATH_H
-#define _OF_MATH_H
+#pragma once
 
 
+#include "ofPoint.h"
 #include "ofConstants.h"
-#include "ofTypes.h"
 
 int 		ofNextPow2 ( int a );
 void 		ofSeedRandom();
@@ -67,5 +65,3 @@ ofPoint 	ofCurvePoint( ofPoint a, ofPoint b, ofPoint c, ofPoint d, float t);
 ofPoint 	ofBezierTangent( ofPoint a, ofPoint b, ofPoint c, ofPoint d, float t);
 ofPoint 	ofCurveTangent( ofPoint a, ofPoint b, ofPoint c, ofPoint d, float t);
 
-
-#endif

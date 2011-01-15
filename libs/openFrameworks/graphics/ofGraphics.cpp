@@ -1,6 +1,7 @@
 #include "ofGraphics.h"
 #include "ofAppRunner.h"
 #include "ofBitmapFont.h"
+#include "ofUtils.h"
 
 #ifdef TARGET_OSX
 	#include <OpenGL/glu.h>
@@ -22,7 +23,19 @@
     #define CALLBACK
 #endif
 
-#include <vector>
+#ifdef TARGET_WIN32
+	#define GLUT_BUILDING_LIB
+	#include "glut.h"
+#endif
+#ifdef TARGET_OSX
+	#include <GLUT/glut.h>
+#endif
+#ifdef TARGET_LINUX
+	#include <GL/glut.h>
+#endif
+
+
+#include <deque>
 
 //----------------------------------------------------------
 // static
@@ -35,15 +48,17 @@ bool 			bSmoothHinted		= false;
 bool			bUsingArbTex		= true;
 bool			bUsingNormalizedTexCoords = false;
 bool 			bBakgroundAuto		= true;
-int 			cornerMode			= OF_RECTMODE_CORNER;
-int 			polyMode			= OF_POLY_WINDING_ODD;
+ofRectMode		cornerMode			= OF_RECTMODE_CORNER;
+ofPolyWindingMode		polyMode	= OF_POLY_WINDING_ODD;
 static ofRectangle viewportRect;	//note we leave this 0,0,0,0 because ofViewport is smart
 
 int				curveResolution = 20;
 
+ofHandednessType coordHandedness;
+
 //style stuff - new in 006
 ofStyle			currentStyle;
-vector <ofStyle> styleHistory;
+deque <ofStyle> styleHistory;
 
 static float circlePts[OF_MAX_CIRCLE_PTS][3];			// [points][axis]
 static float circlePtsScaled[OF_MAX_CIRCLE_PTS][3];		// [points][axis]
@@ -52,7 +67,7 @@ static float linePoints[2][3];							// [points][axis]
 static float rectPoints[4][3];							// [points][axis]
 
 //----------------------------------------------------------
-void  ofSetRectMode(int mode){
+void  ofSetRectMode(ofRectMode mode){
 	if (mode == OF_RECTMODE_CORNER) 		cornerMode = OF_RECTMODE_CORNER;
 	else if (mode == OF_RECTMODE_CENTER) 	cornerMode = OF_RECTMODE_CENTER;
 
@@ -60,7 +75,7 @@ void  ofSetRectMode(int mode){
 }
 
 //----------------------------------------------------------
-int ofGetRectMode(){
+ofRectMode ofGetRectMode(){
 	return 	cornerMode;
 }
 
@@ -94,8 +109,18 @@ void ofViewport(float x, float y, float width, float height) {
 	if(height == 0) height = ofGetHeight();
 
 	glViewport(x, y, width, height);
+	viewportRect.set(x, y, width, height);
 }
 
+//----------------------------------------------------------
+void ofSetCoordHandedness(ofHandednessType handedness) {
+	coordHandedness = handedness;
+}
+
+//----------------------------------------------------------
+ofHandednessType ofGetCoordHandedness() {
+	return coordHandedness;
+}
 
 //----------------------------------------------------------
 void ofSetupScreenPerspective(float width, float height, bool vFlip, float fov, float nearDist, float farDist) {
@@ -120,9 +145,12 @@ void ofSetupScreenPerspective(float width, float height, bool vFlip, float fov, 
 	glLoadIdentity();
 	gluLookAt(eyeX, eyeY, dist, eyeX, eyeY, 0, 0, 1, 0);
 	
+	ofSetCoordHandedness(OF_RIGHT_HANDED);
+	
 	if(vFlip) {
 		glScalef(1, -1, 1);           // invert Y axis so increasing Y goes down.
 		glTranslatef(0, -height, 0);       // shift origin up to upper-left corner.
+		ofSetCoordHandedness(OF_LEFT_HANDED);
 	}
 }
 
@@ -135,7 +163,13 @@ void ofSetupScreenOrtho(float width, float height, bool vFlip, float nearDist, f
 
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
-		if(vFlip) glOrtho(0, width, height, 0, nearDist, farDist);
+
+		ofSetCoordHandedness(OF_RIGHT_HANDED);
+
+		if(vFlip) {
+			glOrtho(0, width, height, 0, nearDist, farDist);
+			ofSetCoordHandedness(OF_LEFT_HANDED);
+		}
 		else glOrtho(0, width, 0, height, nearDist, farDist);
 		glMatrixMode(GL_MODELVIEW);
 		glLoadIdentity();
@@ -148,8 +182,13 @@ void ofSetupScreenOrtho(float width, float height, bool vFlip, float nearDist, f
 
 //----------------------------------------------------------
 void ofClear(float r, float g, float b, float a) {
-	glClearColor(r, g, b, a);
+	glClearColor(r / 255, g / 255, b / 255, a / 255);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+}
+
+//----------------------------------------------------------
+void ofClear(float brightness, float a) {
+	ofColor(brightness, brightness, brightness, a);
 }
 
 //----------------------------------------------------------
@@ -266,6 +305,11 @@ float * ofBgColorPtr(){
 //----------------------------------------------------------
 void ofBackground(const ofColor & c){
 	ofBackground ( c.r, c.g, c.b);
+}
+
+//----------------------------------------------------------
+void ofBackground(float brightness) {
+	ofBackground(brightness);
 }
 
 //----------------------------------------------------------
@@ -634,7 +678,7 @@ void ofBezier(float x0, float y0, float x1, float y1, float x2, float y2, float 
 
 //----------------------------------------
 void ofSphere(float x, float y, float z, float radius) {
-	ofSphere(ofVec3f(x, y, z), radius);
+	ofSphere(ofPoint(x, y, z), radius);
 }
 
 //----------------------------------------
@@ -643,7 +687,7 @@ void ofSphere(float x, float y, float radius) {
 }
 
 //----------------------------------------
-void ofSphere(const ofVec3f& position, float radius) {
+void ofSphere(const ofPoint& position, float radius) {
 	ofPushMatrix();
 	ofTranslate(position);
 	ofSphere(radius);
@@ -651,7 +695,9 @@ void ofSphere(const ofVec3f& position, float radius) {
 }
 
 //----------------------------------------
-inline void ofSphere(float radius) {
+void ofSphere(float radius) {
+	// TODO: add an implementation using ofMesh
+#ifndef TARGET_OPENGLES
 	// this needs to be swapped out with non-glut code
 	// for good references see cinder's implementation from paul bourke:
 	// https://github.com/cinder/Cinder/blob/master/src/cinder/gl/gl.cpp
@@ -660,7 +706,6 @@ inline void ofSphere(float radius) {
 	// https://code.google.com/p/processing/source/browse/trunk/processing/core/src/processing/core/PGraphics.java?r=7543
 	// public void sphere(float r)
 	
-#ifndef TARGET_OPENGLES
 	ofPushMatrix();
 	ofRotateX(90);
 	if(ofGetStyle().bFill) {
@@ -674,7 +719,7 @@ inline void ofSphere(float radius) {
 
 //----------------------------------------
 void ofBox(float x, float y, float z, float size) {
-	ofBox(ofVec3f(x, y, z), size);
+	ofBox(ofPoint(x, y, z), size);
 }
 
 //----------------------------------------
@@ -683,7 +728,7 @@ void ofBox(float x, float y, float size) {
 }
 
 //----------------------------------------
-void ofBox(const ofVec3f& position, float size) {
+void ofBox(const ofPoint& position, float size) {
 	ofPushMatrix();
 	ofTranslate(position);
 	ofBox(size);
@@ -691,15 +736,104 @@ void ofBox(const ofVec3f& position, float size) {
 }
 
 //----------------------------------------
-inline void ofBox(float size) {
-	// this needs to be swapped out with non-glut code
-#ifndef TARGET_OPENGLES
-	if(ofGetStyle().bFill) {
-		glutSolidCube(size);
-	} else {
-		glutWireCube(size);
+void ofBox(float size) {
+	ofPushMatrix();
+	if(ofGetCoordHandedness() == OF_LEFT_HANDED) {
+		ofScale(1, 1, -1);
 	}
-#endif
+
+	float h = size * .5;
+	
+	glEnableClientState(GL_NORMAL_ARRAY);
+	glEnableClientState(GL_VERTEX_ARRAY);
+	
+	if(ofGetStyle().bFill) {
+		GLfloat vertices[] = {
+			+h,-h,+h, +h,-h,-h, +h,+h,-h, +h,+h,+h,
+			+h,+h,+h, +h,+h,-h, -h,+h,-h, -h,+h,+h,
+			+h,+h,+h, -h,+h,+h, -h,-h,+h, +h,-h,+h,
+			-h,-h,+h, -h,+h,+h, -h,+h,-h, -h,-h,-h,
+			-h,-h,+h, -h,-h,-h, +h,-h,-h, +h,-h,+h,
+			-h,-h,-h, -h,+h,-h, +h,+h,-h, +h,-h,-h
+		};
+		glVertexPointer(3, GL_FLOAT, 0, vertices);
+		
+		static GLfloat normals[] = {
+			+1,0,0, +1,0,0, +1,0,0, +1,0,0,
+			0,+1,0, 0,+1,0, 0,+1,0, 0,+1,0,
+			0,0,+1, 0,0,+1, 0,0,+1, 0,0,+1,
+			-1,0,0, -1,0,0, -1,0,0, -1,0,0,
+			0,-1,0, 0,-1,0, 0,-1,0, 0,-1,0,
+			0,0,-1, 0,0,-1, 0,0,-1, 0,0,-1
+		};
+		glNormalPointer(GL_FLOAT, 0, normals);
+
+		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+		static GLfloat tex[] = {
+			1,0, 0,0, 0,1, 1,1,
+			1,1, 1,0, 0,0, 0,1,
+			0,1, 1,1, 1,0, 0,0,
+			0,0, 0,1, 1,1, 1,0,
+			0,0, 0,1, 1,1, 1,0,
+			0,0, 0,1, 1,1, 1,0
+		};
+		glTexCoordPointer(2, GL_FLOAT, 0, tex);
+	
+		GLubyte indices[] = {
+			0,1,2, // right top left
+			0,2,3, // right bottom right
+			4,5,6, // bottom top right
+			4,6,7, // bottom bottom left	
+			8,9,10, // back bottom right
+			8,10,11, // back top left
+			12,13,14, // left bottom right
+			12,14,15, // left top left
+			16,17,18, // ... etc
+			16,18,19,
+			20,21,22,
+			20,22,23
+		};
+		glDrawElements(GL_TRIANGLES, 3 * 6 * 2, GL_UNSIGNED_BYTE, indices);
+		
+		glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+	} else {
+		GLfloat vertices[] = {
+			+h,+h,+h,
+			+h,+h,-h,
+			+h,-h,+h,
+			+h,-h,-h,
+			-h,+h,+h,
+			-h,+h,-h,
+			-h,-h,+h,
+			-h,-h,-h
+		};
+		glVertexPointer(3, GL_FLOAT, 0, vertices);
+		
+		static float n = sqrtf(3);
+		static GLfloat normals[] = {
+			+n,+n,+n,
+			+n,+n,-n,
+			+n,-n,+n,
+			+n,-n,-n,
+			-n,+n,+n,
+			-n,+n,-n,
+			-n,-n,+n,
+			-n,-n,-n
+		};
+		glNormalPointer(GL_FLOAT, 0, normals);
+
+		static GLubyte indices[] = {
+			0,1, 1,3, 3,2, 2,0,
+			4,5, 5,7, 7,6, 6,4,
+			0,4, 5,1, 7,3, 6,2
+		};
+		glDrawElements(GL_LINES, 4 * 2 * 3, GL_UNSIGNED_BYTE, indices);
+	}
+	
+	glDisableClientState(GL_VERTEX_ARRAY);
+	glDisableClientState(GL_NORMAL_ARRAY);
+
+	ofPopMatrix();
 }
 
 //----------------------------------------------------------
@@ -760,7 +894,8 @@ void ofSetHexColor(int hexColor){
 
 
 //----------------------------------------------------------
-void ofEnableBlendMode(int blendMode){
+
+void ofEnableBlendMode(ofBlendMode blendMode){
 #ifndef TARGET_OPENGLES
     switch (blendMode){
             
@@ -905,11 +1040,11 @@ ofStyle ofGetStyle(){
 
 //----------------------------------------------------------
 void ofPushStyle(){
-	styleHistory.insert(styleHistory.begin(), currentStyle);
+	styleHistory.push_front(currentStyle);
 
 	//if we are over the max number of styles we have set, then delete the oldest styles.
 	if( styleHistory.size() > OF_MAX_STYLE_HISTORY ){
-		styleHistory.erase(styleHistory.begin() + OF_MAX_STYLE_HISTORY, styleHistory.end());
+		styleHistory.pop_back();
 		//should we warn here?
 		//ofLog(OF_LOG_WARNING, "ofPushStyle - warning: you have used ofPushStyle more than %i times without calling ofPopStyle - check your code!", OF_MAX_STYLE_HISTORY);
 	}
@@ -918,8 +1053,8 @@ void ofPushStyle(){
 //----------------------------------------------------------
 void ofPopStyle(){
 	if( styleHistory.size() ){
-		ofSetStyle(styleHistory[0]);
-		styleHistory.erase(styleHistory.begin(), styleHistory.begin()+1);
+		ofSetStyle(styleHistory.front());
+		styleHistory.pop_front();
 	}
 }
 
@@ -936,9 +1071,10 @@ void ofPopMatrix(){
 }
 
 //----------------------------------------------------------
-void ofTranslate(const ofPoint & p){
+void ofTranslate(const ofPoint& p){
 	glTranslatef(p.x, p.y, p.z);
 }
+
 
 //----------------------------------------------------------
 void ofTranslate(float x, float y, float z){
@@ -1227,7 +1363,7 @@ void clearCurveVertices(){
 }
 
 //----------------------------------------------------------
-void ofSetPolyMode(int mode){
+void ofSetPolyMode(ofPolyWindingMode mode){
 	switch (mode){
 		case OF_POLY_WINDING_ODD:
 			polyMode = OF_POLY_WINDING_ODD;
@@ -1354,6 +1490,21 @@ void ofVertex(ofPoint & p) {
 	ofVertex(p.x, p.y);
 }
 
+//----------------------------------------------------------
+void ofVertexes( const vector <ofPoint> & polyPoints ){
+	if( polyPoints.size() ){
+		clearCurveVertices();
+		
+		for( int k = 0; k < polyPoints.size(); k++){
+			double* point = new double[3];
+			point[0] = polyPoints[k].x;
+			point[1] = polyPoints[k].y;
+			point[2] = 0;
+			polyVertices.push_back(point);		
+		}
+	}
+}
+
 //---------------------------------------------------
 void ofCurveVertex(float x, float y){
 
@@ -1407,9 +1558,18 @@ void ofCurveVertex(float x, float y){
 
 }
 
+//----------------------------------------------------------
+void ofCurveVertexes( const vector <ofPoint> & curvePoints){
+	if( curvePoints.size() ){
+		for( int k = 0; k < curvePoints.size(); k++){
+			ofCurveVertex(curvePoints[k].x, curvePoints[k].y);		
+		}
+	}
+}
+
 //---------------------------------------------------
 void ofCurveVertex(ofPoint & p) {
-	ofVertex(p.x, p.y);
+	ofCurveVertex(p.x, p.y);
 }
 
 //---------------------------------------------------
