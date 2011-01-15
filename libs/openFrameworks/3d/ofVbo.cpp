@@ -166,8 +166,6 @@ void ofVbo::bind(){
 		glColorPointer(4, GL_FLOAT, sizeof(ofColor), 0);
 		 */
 	}
-	//gluErrorString(glGetError());
-
 }
 
 //--------------------------------------------------------------
@@ -175,6 +173,10 @@ void ofVbo::unbind() {
 	//if(bUsingVerts)	 glDisableClientState(GL_VERTEX_ARRAY);
 	if(bUsingColors) glDisableClientState(GL_COLOR_ARRAY);
 	glDisableClientState(GL_INDEX_ARRAY);
+	glDisableClientState(GL_COLOR_ARRAY);
+	glDisableClientState(GL_NORMAL_ARRAY);
+	glDisableClientState(GL_EDGE_FLAG_ARRAY);
+	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 	
 	glPopClientAttrib();
 	glPopAttrib();	
