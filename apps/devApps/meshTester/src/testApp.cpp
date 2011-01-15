@@ -8,7 +8,9 @@ void testApp::setup(){
 	
 	for(int i =0; i < meshes.size();i++){
 		vboMeshes.push_back(ofVboMesh());
+		vboMeshes2.push_back(ofVboMesh());
 		vboMeshes.back().mesh = &meshes[i];
+		vboMeshes2.back().mesh = &meshes[i];
 	}
 	
     ofEnableBlendMode(OF_BLENDMODE_ALPHA);
@@ -47,11 +49,11 @@ void testApp::draw(){
 	
 //	vboMeshes[0].drawFaces();
 	ofSetColor(255,0,255);
-//	vboMeshes[whichMesh].drawFaces();
+	vboMeshes[whichMesh].drawFaces();
 	ofSetColor(255,255,255);
 	vboMeshes[whichMesh].drawVertices();
 	ofSetColor(0,255,0);
-	vboMeshes[whichMesh].drawWireframe();
+	vboMeshes2[whichMesh].drawWireframe();
 
     glPopMatrix();
     
