@@ -152,87 +152,76 @@ static bool isDeviceArduino( ofSerialDeviceInfo & A ){
 
 //----------------------------------------------------------------
 void ofSerial::buildDeviceList(){
-
 	
 	deviceType = "serial";
 	devices.clear();
 	
+	vector <string> prefixMatch;
+
+	#ifdef TARGET_OSX
+		prefixMatch.push_back("cu.");
+		prefixMatch.push_back("tty.");
+	#endif
+	#ifdef TARGET_LINUX
+		prefixMatch.push_back("ttyS");
+		prefixMatch.push_back("ttyUSB");
+		prefixMatch.push_back("rfc");
+	#endif	
 	
-	//---------------------------------------------
-#if defined( TARGET_OSX )
-	//---------------------------------------------
-		
-		DIR *dir;
-		struct dirent *entry;
-		dir = opendir("/dev");
-		string str			= "";
-		string device		= "";
-		int deviceCount		= 0;
-		
-		if (dir == NULL){
-			ofLog(OF_LOG_ERROR,"ofSerial: error listing devices in /dev");
-		} else {
-			while ((entry = readdir(dir)) != NULL){
-				str = (char *)entry->d_name;
-				if( str.substr(0,3) == "cu." || str.substr(0,4) == "tty." ){
-					devices.push_back(ofSerialDeviceInfo(str, deviceCount));
-					deviceCount++;
-				}
-			}
-		}	
-			
-	//---------------------------------------------
-#endif
-    //---------------------------------------------
 	
-	//---------------------------------------------
-#if defined( TARGET_LINUX )
-	//---------------------------------------------
-	
-	//----------------------------------------------------
-	//We will find serial devices by listing the directory
-	
+	#if defined( TARGET_OSX ) || defined( TARGET_LINUX )
+
 	DIR *dir;
 	struct dirent *entry;
 	dir = opendir("/dev");
-	string str			= "";
-	string device		= "";
+	
+	string deviceName	= "";
 	int deviceCount		= 0;
 	
 	if (dir == NULL){
 		ofLog(OF_LOG_ERROR,"ofSerial: error listing devices in /dev");
-	} else {
-		printf("ofSerial: listing devices\n");
-		while ((entry = readdir(dir)) != NULL){
-			str = (char *)entry->d_name;
-			if( str.substr(0,4) == "ttyS" || str.substr(0,6) == "ttyUSB" || str.substr(0,3) == "rfc" ){
-				devices.push_back(ofSerialDeviceInfo(str, deviceCount));
-				deviceCount++;
+	} else {		
+		//for each device
+		while((entry = readdir(dir)) != NULL){
+			deviceName = (char *)entry->d_name;
+			
+			//we go through the prefixes 
+			for(int k = 0; k < prefixMatch.size(); k++){
+				//if the device name is longer than the prefix
+				if( deviceName.size() > prefixMatch[k].size() ){
+					//do they match ?
+					if( deviceName.substr(0, prefixMatch[k].size()) == prefixMatch[k].c_str() ){
+						devices.push_back(ofSerialDeviceInfo("/dev/"+deviceName, deviceName, deviceCount));
+						deviceCount++;
+						break;
+					}
+				}
 			}
 		}
+		closedir(dir);		
 	}
 	
+	#endif	
+
 	//---------------------------------------------
-#endif
+	#ifdef TARGET_WIN32
 	//---------------------------------------------
-	
-	//---------------------------------------------
-#ifdef TARGET_WIN32
-	//---------------------------------------------
-	
 	enumerateWin32Ports();
 	printf("ofSerial: listing devices (%i total)\n", nPorts);
 	for (int i = 0; i < nPorts; i++){
-		devices.push_back(ofSerialDeviceInfo(string(portNamesFriendly[i]), i));
-		//printf("device %i -- %s", i, portNamesFriendly[i]);
+		//NOTE: we give the short port name for both as that is what the user should pass and the short name is more friendly
+		devices.push_back(ofSerialDeviceInfo(string(portNamesShort[i]), string(portNamesShort[i]), i));
 	}
-	
 	//---------------------------------------------
-#endif
+	#endif
     //---------------------------------------------
 	
 	//here we sort the device to have the aruino ones first. 
 	partition(devices.begin(), devices.end(), isDeviceArduino);
+	//we are reordering the device ids. too!
+	for(int k = 0; k < devices.size(); k++){
+		devices[k].deviceID = k;
+	}
 	
 	bHaveEnumeratedDevices = true;
 }
@@ -242,8 +231,14 @@ void ofSerial::buildDeviceList(){
 void ofSerial::listDevices(){
 	buildDeviceList();
 	for(int k = 0; k < devices.size(); k++){
-		printf("[%i] = %s \n", k, devices[k].getDeviceName().c_str() );
+		printf("[%i] = %s \n", devices[k].getDeviceID(), devices[k].getDeviceName().c_str() );
 	}
+}
+
+//----------------------------------------------------------------
+vector <ofSerialDeviceInfo> ofSerial::getDeviceList(){
+	buildDeviceList();
+	return devices;
 }
 
 //----------------------------------------------------------------
@@ -285,75 +280,13 @@ bool ofSerial::setup(){
 //----------------------------------------------------------------
 bool ofSerial::setup(int deviceNumber, int baud){
 
-	int deviceCount = 0;
-
-	string str			= "";
-	string device		= "";
-	bool deviceFound	= false;
-
-	//---------------------------------------------
-	#if defined( TARGET_OSX ) || defined( TARGET_LINUX )
-	//---------------------------------------------
-
-		//----------------------------------------------------
-		//We will find serial devices by listing the directory
-
-		DIR *dir;
-		struct dirent *entry;
-		dir = opendir("/dev");
-
-		if (dir == NULL){
-			ofLog(OF_LOG_ERROR,"ofSerial: error listing devices in /dev");
-		}
-
-//		while ((entry = readdir(dir)) != NULL){
-//			str = (char *)entry->d_name;
-//			#ifdef TARGET_OSX
-//			if( str.substr(0,3) == "cu." || str.substr(0,4) == "tty." ){
-//			#else
-//			if( str.substr(0,4) == "ttyS" || str.substr(0,6) == "ttyUSB" || str.substr(0,3) == "rfc" ){
-//			#endif
-//				if(deviceCount == deviceNumber){
-//					device = "/dev/"+str;
-//					deviceFound = true;
-//					ofLog(OF_LOG_NOTICE,"ofSerial device %i - /dev/%s  <--selected", deviceCount, str.c_str());
-//				}else ofLog(OF_LOG_NOTICE,"ofSerial device %i - /dev/%s", deviceCount, str.c_str());
-//				deviceCount++;
-//			}
-//		}
-
-        if(deviceFound){
-            return setup(device, baud);
-        }else{
-            ofLog(OF_LOG_ERROR,"ofSerial: could not find device %i - only %i devices found", deviceNumber, deviceCount);
-            return false;
-        }
-
-	//---------------------------------------------
-    #endif
-    //---------------------------------------------
-
-	//---------------------------------------------
-	#ifdef TARGET_WIN32
-	//---------------------------------------------
-
-		enumerateWin32Ports();
-		if (deviceNumber < nPorts){
-			device = portNamesShort[deviceNumber];
-			deviceFound = true;
-		}
-
-        if(deviceFound){
-            return setup(device, baud);
-        }else{
-            ofLog(OF_LOG_ERROR,"ofSerial: could not find device %i - only %i devices found", deviceNumber, nPorts);
-            return false;
-        }
-
-	//---------------------------------------------
-    #endif
-    //---------------------------------------------
-
+	buildDeviceList();
+	if( deviceNumber < devices.size() ){
+		return setup(devices[deviceNumber].devicePath, baud);
+	}else{
+		ofLog(OF_LOG_ERROR,"ofSerial: could not find device %i - only %i devices found", deviceNumber, devices.size());
+		return false;
+	}
 
 }
 
@@ -365,11 +298,16 @@ bool ofSerial::setup(string portName, int baud){
 	//---------------------------------------------
 	#if defined( TARGET_OSX ) || defined( TARGET_LINUX )
 	//---------------------------------------------
+	
+		//lets account for the name being passed in instead of the device path
+		if( portName.size() > 5 && portName.substr(0, 5) != "/dev/" ){
+			portName = "/dev/" + portName;
+		}
 
 	    ofLog(OF_LOG_NOTICE,"ofSerialInit: opening port %s @ %d bps", portName.c_str(), baud);
 		fd = open(portName.c_str(), O_RDWR | O_NOCTTY | O_NONBLOCK);
 		if(fd == -1){
-			ofLog(OF_LOG_ERROR,"ofSerial: unable to open port");
+			ofLog(OF_LOG_ERROR,"ofSerial: unable to open port %s", portName.c_str());
 			return false;
 		}
 
@@ -569,8 +507,6 @@ int ofSerial::readBytes(unsigned char * buffer, int length){
 	#endif
 	//---------------------------------------------
 }
-
-
 
 //----------------------------------------------------------------
 bool ofSerial::writeByte(unsigned char singleByte){

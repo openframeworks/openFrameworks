@@ -386,7 +386,7 @@ string ofBinaryToString(const string& value) {
 }
 
 //--------------------------------------------------
-vector<string> ofSplitString(const string& str, const string& delimiter = " "){
+vector <string> ofSplitString(const string& str, const string& delimiter = " "){
     vector<string> elements;
 	// Skip delimiters at beginning.
     string::size_type lastPos = str.find_first_not_of(delimiter, 0);
@@ -403,6 +403,25 @@ vector<string> ofSplitString(const string& str, const string& delimiter = " "){
         pos = str.find_first_of(delimiter, lastPos);
     }
     return elements;
+}
+
+//--------------------------------------------------
+string ofJoinString(vector <string> stringElements, const string & delimiter){
+	string resultString = "";
+	int numElements = stringElements.size();
+	
+	for(int k = 0; k < numElements; k++){
+		if( k < numElements-1 ){
+			resultString += stringElements[k] + delimiter;
+		}
+	}
+	
+	return resultString;
+}
+
+//--------------------------------------------------
+bool ofIsStringInString(string haystack, string needle){
+	return ( strstr(haystack.c_str(), needle.c_str() ) != NULL );
 }
 
 //--------------------------------------------------

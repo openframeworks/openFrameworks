@@ -11,14 +11,20 @@ class ofSerialDeviceInfo{
 	friend class ofSerial;
 	
 	public: 
-		ofSerialDeviceInfo(string deviceNameIn, int deviceIDIn){
-			deviceName = deviceNameIn;
-			deviceID   = deviceIDIn;
+	
+		ofSerialDeviceInfo(string devicePathIn, string deviceNameIn, int deviceIDIn){
+			devicePath			= devicePathIn;
+			deviceName			= deviceNameIn;
+			deviceID			= deviceIDIn;
 		}
 
 		ofSerialDeviceInfo(){
 			deviceName = "device undefined";
 			deviceID   = -1;
+		}
+
+		string getDevicePath(){
+			return devicePath;
 		}
 		
 		string getDeviceName(){
@@ -30,8 +36,9 @@ class ofSerialDeviceInfo{
 		}
 
 	protected:
-		string deviceName;
-		int deviceID;
+		string devicePath;			//eg: /dev/tty.cu/usbdevice-a440
+		string deviceName;			//eg: usbdevice-a440 / COM4
+		int deviceID;				//eg: 0,1,2,3 etc 
 		
 		//TODO: other stuff for serial ?
 };

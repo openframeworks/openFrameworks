@@ -123,7 +123,13 @@ string 	ofGetVersionInfo();
 void	ofSaveScreen(string filename);
 void	ofSaveFrame();
 
-vector<string>	ofSplitString(const string & text, const string & delimiter);
+//--------------------------------------------------
+vector <string>	ofSplitString(const string & text, const string & delimiter);
+
+string ofJoinString(vector <string> stringElements, const string & delimiter);
+
+bool ofIsStringInString(string haystack, string needle);
+
 
 //--------------------------------------------------
 void ofSetLogLevel(int logLevel);
