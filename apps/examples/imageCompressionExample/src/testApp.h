@@ -15,6 +15,7 @@ public:
 	int generation;
 	ofImageQualityType quality;
 	int addX, addY, subX, subY;
+	float glitchStart;
 	
 	void mousePressed(int x, int y, int button);
 };
