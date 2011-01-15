@@ -3,6 +3,46 @@
 #include "ofConstants.h"
 #include "ofColor.h"
 
+//----------------------------------------------------------
+// ofDeviceInfo
+//----------------------------------------------------------
+class ofSerial;
+class ofSerialDeviceInfo{
+	friend class ofSerial;
+	
+	public: 
+	
+		ofSerialDeviceInfo(string devicePathIn, string deviceNameIn, int deviceIDIn){
+			devicePath			= devicePathIn;
+			deviceName			= deviceNameIn;
+			deviceID			= deviceIDIn;
+		}
+
+		ofSerialDeviceInfo(){
+			deviceName = "device undefined";
+			deviceID   = -1;
+		}
+
+		string getDevicePath(){
+			return devicePath;
+		}
+		
+		string getDeviceName(){
+			return deviceName;
+		}
+		
+		int getDeviceID(){
+			return deviceID;
+		}
+
+	protected:
+		string devicePath;			//eg: /dev/tty.cu/usbdevice-a440
+		string deviceName;			//eg: usbdevice-a440 / COM4
+		int deviceID;				//eg: 0,1,2,3 etc 
+		
+		//TODO: other stuff for serial ?
+};
+
 
 //----------------------------------------------------------
 // ofMutex
