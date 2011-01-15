@@ -8,6 +8,7 @@
  */
 
 #include "ofCamera.h"
+#include "ofMain.h"
 
 //----------------------------------------
 void ofCamera::setFov(float f) {

@@ -9,14 +9,19 @@
 
 // TODO: 
 // add off-axis projection options (eventually tile render support)
+// fix ortho projection
+// add toWorld, toScreen methods
+// add get/set projection matrix
+// support for left handed or right handed?
 
 #pragma once
 
 
-#include "ofNode3d.h"
-#include "ofMain.h"
+#include "ofNode.h"
+#include "ofRectangle.h"
+#include "ofAppRunner.h"
 
-class ofCamera : public ofNode3d {
+class ofCamera : public ofNode {
 public:
 	ofCamera():fov(60), nearClip(0), farClip(0), isOrtho(false),isActive(false) {}
 	
@@ -30,11 +35,8 @@ public:
 	bool getOrtho() const;
 	
 	// set the matrices
-	// not sure if this should push first, or if that should be the users responsibility
-	void begin(ofRectangle rect = ofGetWindowRect());
-	
-	// if begin(); pushes first, then we need an end to pop
-	void end();
+	virtual void begin(ofRectangle rect = ofGetWindowRect());
+	virtual void end();
 	
 	// for hardcore peeps, access to the generated matrix()
 	//	ofMatrix4x4 &getProjectionMatrix();	
