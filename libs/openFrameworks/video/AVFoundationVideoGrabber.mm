@@ -155,42 +155,66 @@
 didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer 
 	   fromConnection:(AVCaptureConnection *)connection 
 { 
-	NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
-	
-	CVImageBufferRef imageBuffer = CMSampleBufferGetImageBuffer(sampleBuffer); 
-	/*Lock the image buffer*/
-	CVPixelBufferLockBaseAddress(imageBuffer,0); 
-
-	/*Get information about the image*/
-	uint8_t *baseAddress	= (uint8_t *)CVPixelBufferGetBaseAddress(imageBuffer); 
-	size_t bytesPerRow		= CVPixelBufferGetBytesPerRow(imageBuffer); 
-	size_t widthIn			= CVPixelBufferGetWidth(imageBuffer); 
-	size_t heightIn			= CVPixelBufferGetHeight(imageBuffer);  
+	if(grabberPtr != NULL) {
+		NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
 		
-	/*Create a CGImageRef from the CVImageBufferRef*/
-	
-	CGColorSpaceRef colorSpace	= CGColorSpaceCreateDeviceRGB(); 
-	
-	CGContextRef newContext		= CGBitmapContextCreate(baseAddress, widthIn, heightIn, 8, bytesPerRow, colorSpace, kCGBitmapByteOrder32Little | kCGImageAlphaPremultipliedFirst);
-	CGImageRef newImage			= CGBitmapContextCreateImage(newContext); 
+		CVImageBufferRef imageBuffer = CMSampleBufferGetImageBuffer(sampleBuffer); 
+		/*Lock the image buffer*/
+		CVPixelBufferLockBaseAddress(imageBuffer,0); 
 
-	CGImageRelease(currentFrame);	
-	currentFrame = CGImageCreateCopy(newImage);		
-		
-	/*We release some components*/
-	CGContextRelease(newContext); 
-	CGColorSpaceRelease(colorSpace);
+		/*if(grabberPtr->internalGlDataType == GL_BGRA) {	
+			
+			uint8_t *bufferPixels = (uint8_t *)CVPixelBufferGetBaseAddress(imageBuffer); 
+			int ww = min(size_t(1024),CVPixelBufferGetWidth(imageBuffer)); 
+			int hh = min(size_t(1024),CVPixelBufferGetHeight(imageBuffer));
+			cout<<(int)bufferPixels[0]<<"\t"<<(int)bufferPixels[1]<<"\t"<<(int)bufferPixels[2]<<endl;
+			for(int k = 0; k < ww*hh*4; k+= 4 ){
+				grabberPtr->pixels[k  ] = bufferPixels[k  ];
+				grabberPtr->pixels[k+1] = bufferPixels[k+1];
+				grabberPtr->pixels[k+2] = bufferPixels[k+2];
+				grabberPtr->pixels[k+3] = bufferPixels[k+3];
+			}
+			/*unsigned int *isrc4 = (unsigned int *)CVPixelBufferGetBaseAddress(imageBuffer); 
+			
+			unsigned int *idst4 = (unsigned int *)grabberPtr->pixels;
+			unsigned int *ilast4 = &isrc4[width*height-1];
+			while (isrc4 < ilast4){
+				*(idst4++) = *(isrc4++);
+			}*/
+			//CVPixelBufferUnlockBaseAddress(imageBuffer,0);
+			
+		//}
+		//else {
+			/*Get information about the image*/
+			uint8_t *baseAddress	= (uint8_t *)CVPixelBufferGetBaseAddress(imageBuffer); 
+			size_t bytesPerRow		= CVPixelBufferGetBytesPerRow(imageBuffer); 
+			size_t widthIn			= CVPixelBufferGetWidth(imageBuffer); 
+			size_t heightIn			= CVPixelBufferGetHeight(imageBuffer);  
+				
+			/*Create a CGImageRef from the CVImageBufferRef*/
+			
+			CGColorSpaceRef colorSpace	= CGColorSpaceCreateDeviceRGB(); 
+			
+			CGContextRef newContext		= CGBitmapContextCreate(baseAddress, widthIn, heightIn, 8, bytesPerRow, colorSpace, kCGBitmapByteOrder32Little | kCGImageAlphaPremultipliedFirst);
+			CGImageRef newImage			= CGBitmapContextCreateImage(newContext); 
 
-	/*We relase the CGImageRef*/
-	CGImageRelease(newImage);
-		
-	/*We unlock the  image buffer*/
-	CVPixelBufferUnlockBaseAddress(imageBuffer,0);
-	
-	if(grabberPtr != NULL)
-		grabberPtr->updatePixelsCB(currentFrame); // this is an issue if the class is deleted before the object is removed on quit etc.
-	
-	[pool drain];
+			CGImageRelease(currentFrame);	
+			currentFrame = CGImageCreateCopy(newImage);		
+				
+			/*We release some components*/
+			CGContextRelease(newContext); 
+			CGColorSpaceRelease(colorSpace);
+
+			/*We relase the CGImageRef*/
+			CGImageRelease(newImage);
+				
+			/*We unlock the  image buffer*/
+			CVPixelBufferUnlockBaseAddress(imageBuffer,0);
+			
+			grabberPtr->updatePixelsCB(currentFrame); // this is an issue if the class is deleted before the object is removed on quit etc.
+		//}
+		[pool drain];
+	}
 } 
 
 #pragma mark -
@@ -247,27 +271,19 @@ void AVFoundationVideoGrabber::initGrabber(int w, int h){
 	
 	pixelsTmp	= (GLubyte *) malloc(width * height * 4);
 
-	if(internalGlDataType == GL_RGB) {
-		//tex.allocate(width, height, GL_RGB);
+	if(internalGlDataType == GL_RGB)
 		pixels = (GLubyte *) malloc(width * height * 3);//new unsigned char[width * width * 3];//memset(pixels, 0, width*height*3);
-	}
-	else if(internalGlDataType == GL_RGBA) {
-		//tex.allocate(width, height, GL_RGBA);
+	else if(internalGlDataType == GL_RGBA)
 		pixels = (GLubyte *) malloc(width * height * 4);
-	}
-	else if(internalGlDataType == GL_BGRA) {
-		//tex.allocate(width, height, GL_BGRA);
+	else if(internalGlDataType == GL_BGRA)
 		pixels = (GLubyte *) malloc(width * height * 4);
-	}
 		
 	[grabber startCapture];
 	
-	bUpdateTex = true;
 	newFrame=false;
 }
 
 void AVFoundationVideoGrabber::updatePixelsCB( CGImageRef & ref ){
-	bUpdateTex = true;//ofxiPhoneCGImageToPixels(ref, pixels);
 	
 	CGContextRef spriteContext;
 		
@@ -330,18 +346,6 @@ bool AVFoundationVideoGrabber::isFrameNew()
 	}
 	else
 		return false;
-}
-		
-void AVFoundationVideoGrabber::draw(float x, float y){
-	draw(x, y, width, height);
-}
-
-void AVFoundationVideoGrabber::draw(float x, float y, float w, float h){
-	if( bUpdateTex ){
-		//tex.loadData(pixels, w, h, internalGlDataType);
-		bUpdateTex = false;
-	}
-	//tex.draw(x, y, w, h);
 }
 
 void AVFoundationVideoGrabber::listDevices() {

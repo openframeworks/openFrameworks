@@ -51,7 +51,7 @@ class AVFoundationVideoGrabber;
 
 @end
 
-class AVFoundationVideoGrabber : public ofBaseHasPixels, ofBaseDraws{
+class AVFoundationVideoGrabber{
 
 	public:		
 		AVFoundationVideoGrabber();
@@ -61,9 +61,7 @@ class AVFoundationVideoGrabber : public ofBaseHasPixels, ofBaseDraws{
 		void setCaptureRate(int capRate);
 	
 		void initGrabber(int w, int h);
-		void updatePixelsCB( CGImageRef & ref );		
-		void draw(float x, float y);
-		void draw(float x, float y, float w, float h);
+		void updatePixelsCB( CGImageRef & ref );
 	
 		bool isFrameNew();
 		
@@ -81,17 +79,17 @@ class AVFoundationVideoGrabber : public ofBaseHasPixels, ofBaseDraws{
 			return height;
 		}
 	
+		GLint internalGlDataType;
+		unsigned char * pixels;
+	
 	protected:
 		
 		int width, height;
 		int device;
 	
-		bool bUpdateTex;
 		bool newFrame;
 		int fps;
 		ofTexture tex;
-		GLint internalGlDataType;
-		unsigned char * pixels;
 		iPhoneVideoGrabber * grabber;
 		GLubyte *pixelsTmp;
 };
