@@ -46,7 +46,12 @@ public:
 	virtual void threadedFunction();
 	void urlResponse(ofHttpResponse & response);
 	entry_iterator getEntryFromAsyncQueue(string name);
+	friend ostream& operator<<(ostream& os, const ofThreadedImageLoader& loader);
 
+	deque<ofImageLoaderEntry> images_async_loading; // keeps track of images which are loading async
+	deque<ofImageLoaderEntry> images_to_load;
+	deque<ofImageLoaderEntry> images_to_update;
+	
 private:
 	bool shouldLoadImages();
 	ofImageLoaderEntry getNextImageToLoad();
@@ -54,7 +59,27 @@ private:
 	
 	int num_loading;
 
-	deque<ofImageLoaderEntry> images_async_loading; // keeps track of images which are loading async
-	deque<ofImageLoaderEntry> images_to_load;
-	deque<ofImageLoaderEntry> images_to_update;;
+	
 };
+
+inline ostream& operator<<(ostream& os,  const ofThreadedImageLoader& loader) {
+	
+	deque<ofImageLoaderEntry>::const_iterator it = loader.images_async_loading.begin();
+	if(it != loader.images_async_loading.end()) {
+		os << "Loading from url\n-------------\n" << std::endl;
+		while(it != loader.images_async_loading.end()) {
+			os << "Loading: " << (*it).url << std::endl;
+			++it;
+		}
+	}
+
+	it = loader.images_to_load.begin();
+	if(it != loader.images_to_load.end()) {
+		os << "Queue\n---------\n";
+		while(it != loader.images_to_load.end()) {
+			os << (*it).filename << std::endl;
+			++it;
+		}
+	}
+	return os;
+}

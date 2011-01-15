@@ -18,6 +18,7 @@ void testApp::setup(){
 		images.push_back(url_img);
 		loader.loadFromURL(images.back(), "http://www.roxlu.com/assets/images/of_inverted.png");
 	}
+	std::cout << loader << std::endl;
 	loader.startThread(false, false);
 }
 
@@ -39,9 +40,9 @@ void testApp::draw(){
 	
 	// draw the FPS
 	glColor3f(1,1,1);
-	ofRect(0,ofGetHeight()-20,100,20);
+	ofRect(0,ofGetHeight()-20,30,20);
 	glColor3f(0,0,0);
-	ofDrawBitmapString(ofToString(ofGetFrameRate()),10,ofGetHeight()-5);
+	ofDrawBitmapString(ofToString(ofGetFrameRate(),0),5,ofGetHeight()-5);
 }
 
 //--------------------------------------------------------------

@@ -152,14 +152,11 @@ void ofThreadedImageLoader::update(ofEventArgs & a){
 //--------------------------------------------------------------
 ofImageLoaderEntry ofThreadedImageLoader::getNextImageToUpdate() {
 	lock();
-	//is_found = false;
 	ofImageLoaderEntry entry;
 	if(images_to_update.size() > 0) {
 		entry = images_to_update.front();
 		images_to_update.pop_front();
-		//is_found = true;
-	}
-	
+	}	
 	unlock();
 	return entry;
 }
