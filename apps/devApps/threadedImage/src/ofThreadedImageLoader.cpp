@@ -13,11 +13,14 @@ ofThreadedImageLoader::ofThreadedImageLoader()
 //--------------------------------------------------------------
 void ofThreadedImageLoader::loadFromDisk(ofImage* image, string filename) {
 	lock();	
+	
 	num_loading++;
 	ofImageLoaderEntry entry(image, OF_LOAD_FROM_DISK);
 	entry.filename = filename;
 	entry.id = num_loading;
+	entry.image->setUseTexture(false);
 	images_to_load.push_back(entry);
+	
 	unlock();
 }
 
@@ -26,15 +29,18 @@ void ofThreadedImageLoader::loadFromDisk(ofImage* image, string filename) {
 //--------------------------------------------------------------
 void ofThreadedImageLoader::loadFromURL(ofImage* image, string url) {
 	lock();
+	
 	num_loading++;
 	ofImageLoaderEntry entry(image, OF_LOAD_FROM_URL);
 	entry.url = url;
 	entry.id = num_loading;
+	entry.image->setUseTexture(false);	
 	
 	stringstream ss;
 	ss << "image" << entry.id;
 	entry.name = ss.str();
 	images_to_load.push_back(entry);
+	
 	unlock();
 }
 
@@ -48,8 +54,9 @@ void ofThreadedImageLoader::threadedFunction() {
 			if(entry.image == NULL) {
 				continue;
 			}
-			entry.image->setUseTexture(false);
 			
+
+		//	entry.image->setUseTexture(false);
 			if(entry.type == OF_LOAD_FROM_DISK) {
 				entry.image->loadImage(entry.filename);
 				lock();
@@ -126,6 +133,7 @@ entry_iterator ofThreadedImageLoader::getEntryFromAsyncQueue(string name) {
 void ofThreadedImageLoader::update(ofEventArgs & a){
 	ofImageLoaderEntry entry = getNextImageToUpdate();
 	if (entry.image != NULL) {
+
 		const ofPixels pix = entry.image->getOFPixels();
 		entry.image->getTextureReference().allocate(
 				 pix.getWidth()
@@ -144,11 +152,12 @@ void ofThreadedImageLoader::update(ofEventArgs & a){
 //--------------------------------------------------------------
 ofImageLoaderEntry ofThreadedImageLoader::getNextImageToUpdate() {
 	lock();
-	
+	//is_found = false;
 	ofImageLoaderEntry entry;
 	if(images_to_update.size() > 0) {
 		entry = images_to_update.front();
 		images_to_update.pop_front();
+		//is_found = true;
 	}
 	
 	unlock();
@@ -159,13 +168,11 @@ ofImageLoaderEntry ofThreadedImageLoader::getNextImageToUpdate() {
 //--------------------------------------------------------------
 ofImageLoaderEntry ofThreadedImageLoader::getNextImageToLoad() {
 	lock();
-
 	ofImageLoaderEntry entry;
 	if(images_to_load.size() > 0) {
 		entry = images_to_load.front();
 		images_to_load.pop_front();
 	}
-	
 	unlock();
 	return entry;
 }
