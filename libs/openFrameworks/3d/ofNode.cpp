@@ -1,10 +1,9 @@
 
-#include "ofNode3d.h"
+#include "ofNode.h"
 #include "ofMain.h"
 
 
-ofNode3d::ofNode3d() : parent(NULL)//, /*targetNode(NULL), */ isMatrixDirty(false) {
-{
+ofNode::ofNode() : parent(NULL) {
 	setPosition(ofVec3f(0, 0, 0));
 	setOrientation(ofVec3f(0, 0, 0));
 	setScale(1);
@@ -12,97 +11,85 @@ ofNode3d::ofNode3d() : parent(NULL)//, /*targetNode(NULL), */ isMatrixDirty(fals
 
 
 //----------------------------------------
-void ofNode3d::setParent(ofNode3d* parent) {
+void ofNode::setParent(ofNode* parent) {
 	this->parent = parent;
 }
 
 
 //----------------------------------------
-ofNode3d* ofNode3d::getParent() const {
+ofNode* ofNode::getParent() const {
 	return parent;
 }
 
 
 //----------------------------------------
-//void ofNode3d::setTargetNode(ofNode3d* targetNode) {
-//	this->targetNode = targetNode;
-//}
-//
-//
-////----------------------------------------
-//ofNode3d* ofNode3d::getTargetNode() const {
-//	return targetNode;
-//}
-//
-
-//----------------------------------------
-void ofNode3d::setPosition(float px, float py, float pz) {
+void ofNode::setPosition(float px, float py, float pz) {
 	setPosition(ofVec3f(px, py, pz));
 }
 
 
 //----------------------------------------
-void ofNode3d::setPosition(const ofVec3f& p) {
+void ofNode::setPosition(const ofVec3f& p) {
 	position = p;
 	//	isMatrixDirty = true;
 	updateMatrix();
-	//	transformMatrix.setTranslation(position);
+	//	transformationMatrix.setTranslation(position);
 }
 
 
 //----------------------------------------
-ofVec3f ofNode3d::getPosition() const {
+ofVec3f ofNode::getPosition() const {
 	return position;
 }
 
 
 //----------------------------------------
-float ofNode3d::getX() const {
+float ofNode::getX() const {
 	return position.x;
 }
 
 
 //----------------------------------------
-float ofNode3d::getY() const {
+float ofNode::getY() const {
 	return position.y;
 }
 
 
 //----------------------------------------
-float ofNode3d::getZ() const {
+float ofNode::getZ() const {
 	return position.z;
 }
 
 
 //----------------------------------------
-void ofNode3d::setOrientation(const ofQuaternion& q) {
+void ofNode::setOrientation(const ofQuaternion& q) {
 	orientation = q;
 	//	isMatrixDirty = true;
 	updateMatrix();
-	//	transformMatrix.setRotate(orientation);
+	//	transformationMatrix.setRotate(orientation);
 }
 
 
 //----------------------------------------
-void ofNode3d::setOrientation(const ofVec3f& eulerAngles) {
+void ofNode::setOrientation(const ofVec3f& eulerAngles) {
 	setOrientation(ofQuaternion(eulerAngles.y, ofVec3f(0, 1, 0), eulerAngles.x, ofVec3f(1, 0, 0), eulerAngles.z, ofVec3f(0, 0, 1)));
 }
 
 
 //----------------------------------------
-//void ofNode3d::setOrientation(const ofMatrix3x3& orientation) {
+//void ofNode::setOrientation(const ofMatrix3x3& orientation) {
 //}
 
 
 //----------------------------------------
-ofQuaternion ofNode3d::getOrientationQuat() const {
+ofQuaternion ofNode::getOrientationQuat() const {
 	return orientation;
 }
 
 
 //----------------------------------------
 // ref at http://www.euclideanspace.com/maths/geometry/rotations/conversions/quaternionToEuler/index.htm
-ofVec3f ofNode3d::getOrientationEuler() const {
+ofVec3f ofNode::getOrientationEuler() const {
 	ofQuaternion q1 = orientation;
 	float test = q1.x()*q1.y() + q1.z()*q1.w();
 	float heading;
@@ -130,24 +117,24 @@ ofVec3f ofNode3d::getOrientationEuler() const {
 
 
 //----------------------------------------
-//ofMatrix3x3 ofNode3d::getOrientationMatrix() const {
+//ofMatrix3x3 ofNode::getOrientationMatrix() const {
 //}
 
 
 //----------------------------------------
-void ofNode3d::setScale(float s) {
+void ofNode::setScale(float s) {
 	setScale(s, s, s);
 }
 
 
 //----------------------------------------
-void ofNode3d::setScale(float sx, float sy, float sz) {
+void ofNode::setScale(float sx, float sy, float sz) {
 	setScale(ofVec3f(sx, sy, sz));
 }
 
 
 //----------------------------------------
-void ofNode3d::setScale(const ofVec3f& s) {
+void ofNode::setScale(const ofVec3f& s) {
 	this->scale = s;
 	//	isMatrixDirty = true;
 	updateMatrix();
@@ -155,154 +142,183 @@ void ofNode3d::setScale(const ofVec3f& s) {
 
 
 //----------------------------------------
-ofVec3f ofNode3d::getScale() const {
+ofVec3f ofNode::getScale() const {
 	return scale;
 }
 
 //----------------------------------------
-void ofNode3d::move(float x, float y, float z) {
+void ofNode::move(float x, float y, float z) {
 	move(ofVec3f(x, y, z));
 }
 
 
 //----------------------------------------
-void ofNode3d::move(const ofVec3f& offset) {
+void ofNode::move(const ofVec3f& offset) {
 	position += offset;
 	//	isMatrixDirty = true;
 	updateMatrix();
-	//	transformMatrix.translate(offset);
+	//	transformationMatrix.translate(offset);
 }
 
 
 //----------------------------------------
-void ofNode3d::truck(float amount) {
+void ofNode::truck(float amount) {
 	move(getXAxis() * amount);
 }
 
 
 //----------------------------------------
-void ofNode3d::boom(float amount) {
+void ofNode::boom(float amount) {
 	move(getYAxis() * amount);
 }
 
 
 //----------------------------------------
-void ofNode3d::dolly(float amount) {
+void ofNode::dolly(float amount) {
 	move(getZAxis() * amount);
 }
 
 
 //----------------------------------------
-void ofNode3d::tilt(float degrees) {
+void ofNode::tilt(float degrees) {
 	rotate(degrees, getXAxis());
 }
 
 
 //----------------------------------------
-void ofNode3d::pan(float degrees) {
+void ofNode::pan(float degrees) {
 	rotate(degrees, getYAxis());
 }
 
 
 //----------------------------------------
-void ofNode3d::roll(float degrees) {
+void ofNode::roll(float degrees) {
 	rotate(degrees, getZAxis());
 }
 
 
 //----------------------------------------
-void ofNode3d::rotate(const ofQuaternion& q) {
+void ofNode::rotate(const ofQuaternion& q) {
 	orientation *= q;
 	//	isMatrixDirty = true;
 	updateMatrix();
-	//	transformMatrix.rotate(q);
+	//	transformationMatrix.rotate(q);
 }
 
 //----------------------------------------
-void ofNode3d::rotate(float degrees, const ofVec3f& v) {
+void ofNode::rotate(float degrees, const ofVec3f& v) {
 	rotate(ofQuaternion(degrees, v));
 }
 
 
 //----------------------------------------
-void ofNode3d::rotate(float degrees, float vx, float vy, float vz) {
+void ofNode::rotate(float degrees, float vx, float vy, float vz) {
 	rotate(ofQuaternion(degrees, ofVec3f(vx, vy, vz)));
 }
 
+//----------------------------------------
+void ofNode::rotateAround(const ofQuaternion& q, const ofVec3f& point) {
+//	ofMatrix4x4 m = transformationMatrix;
+//	m.setPosition(point);
+//	m.rotate(q);
+}
+
 
 //----------------------------------------
-void ofNode3d::lookAt(const ofVec3f& lookAtPosition, const ofVec3f& upVector) {
+void ofNode::rotateAround(float degrees, const ofVec3f& axis, const ofVec3f& point) {
+	
+}
+
+
+
+//----------------------------------------
+void ofNode::lookAt(const ofVec3f& lookAtPosition, const ofVec3f& upVector) {
 	ofMatrix4x4 m;
-	transformMatrix.makeLookAtMatrix(position, lookAtPosition, upVector);
-	//	transformMatrix.scale(scale);
-	orientation = transformMatrix.getRotate();
+	transformationMatrix.makeLookAtMatrix(position, lookAtPosition, upVector);
+	//	transformationMatrix.scale(scale);
+	orientation = transformationMatrix.getRotate();
 	updateMatrix();
 }
 
-void ofNode3d::lookAt(ofNode3d& lookAtNode, const ofVec3f& upVector) {
-	lookAt(lookAtNode.getGlobalPosition());
+void ofNode::lookAt(ofNode& lookAtNode, const ofVec3f& upVector) {
+	lookAt(lookAtNode.getGlobalPosition(), upVector);
 }
 
 //----------------------------------------
-ofVec3f ofNode3d::getXAxis() {
+ofVec3f ofNode::getXAxis() const {
 	return axis[0];
 }
 
 
 //----------------------------------------
-ofVec3f ofNode3d::getYAxis() {
+ofVec3f ofNode::getYAxis() const {
 	return axis[1];
 }
 
 
 //----------------------------------------
-ofVec3f ofNode3d::getZAxis() {
+ofVec3f ofNode::getZAxis() const {
 	return axis[2];
+}
+
+//----------------------------------------
+ofVec3f ofNode::getSideDir() const {
+	return getXAxis();
+}
+
+//----------------------------------------
+ofVec3f ofNode::getLookAtDir() const {
+	return -getZAxis();
+}
+
+//----------------------------------------
+ofVec3f ofNode::getUpDir() const {
+	return getYAxis();
 }
 
 
 //----------------------------------------
-float ofNode3d::getPitch() const {
+float ofNode::getPitch() const {
 	return getOrientationEuler().x;
 }
 
 
 //----------------------------------------
-float ofNode3d::getHeading() const {
+float ofNode::getHeading() const {
 	return getOrientationEuler().y;
 }
 
 
 //----------------------------------------
-float ofNode3d::getRoll() const {
+float ofNode::getRoll() const {
 	return getOrientationEuler().z;
 }
 
 
 //----------------------------------------
-//void ofNode3d::setMatrix(const ofMatrix4x4& matrix) {
-//	this->transformMatrix = matrix;
+//void ofNode::setMatrix(const ofMatrix4x4& matrix) {
+//	this->transformationMatrix = matrix;
 //}
 
 //----------------------------------------
-const ofMatrix4x4& ofNode3d::getMatrix() {
+const ofMatrix4x4& ofNode::getMatrix() {
 	//	updateMatrix();
-	return transformMatrix;
+	return transformationMatrix;
 }
 
 //----------------------------------------
-ofMatrix4x4 ofNode3d::getGlobalMatrix() {
+ofMatrix4x4 ofNode::getGlobalMatrix() {
 	if(parent) return getMatrix() * parent->getGlobalMatrix();
 	else return getMatrix();
 }
 
 //----------------------------------------
-ofVec3f ofNode3d::getGlobalPosition() {
+ofVec3f ofNode::getGlobalPosition() {
 	return getGlobalMatrix().getTranslation();
 }
 
 //----------------------------------------
-ofQuaternion ofNode3d::getGlobalOrientation() {
+ofQuaternion ofNode::getGlobalOrientation() {
 	return getGlobalMatrix().getRotate();
 }
 
@@ -313,7 +329,7 @@ ofQuaternion ofNode3d::getGlobalOrientation() {
 
 
 //----------------------------------------
-void ofNode3d::orbit(float longitude, float latitude, float radius, const ofVec3f& centerPoint) {
+void ofNode::orbit(float longitude, float latitude, float radius, const ofVec3f& centerPoint) {
 	ofMatrix4x4 m;
 	
 	// find position
@@ -336,38 +352,48 @@ void ofNode3d::orbit(float longitude, float latitude, float radius, const ofVec3
 	lookAt(centerPoint);//, v - centerPoint);
 }
 
-void ofNode3d::orbit(float longitude, float latitude, float radius, ofNode3d& centerNode) {
+//----------------------------------------
+void ofNode::orbit(float longitude, float latitude, float radius, ofNode& centerNode) {
 	orbit(longitude, latitude, radius, centerNode.getGlobalPosition());
 }
 
 
-void ofNode3d::resetTransform() {
+//----------------------------------------
+void ofNode::resetTransform() {
 	setPosition(ofVec3f());
 	setOrientation(ofVec3f());
 }
 
 //----------------------------------------
-void ofNode3d::draw() {
-	glPushMatrix();
-	glMultMatrixf(getGlobalMatrix().getPtr());
+void ofNode::draw() {
+	transform();
 	customDraw();
-	glPopMatrix();
+	restoreTransform();
 }
 
 
 
 //----------------------------------------
-void ofNode3d::debugDraw() {
+void ofNode::debugDraw() {
+	transform();
+	customDebugDraw();
+	restoreTransform();
+}
+
+
+//----------------------------------------
+void ofNode::transform() {
 	glPushMatrix();
 	glMultMatrixf(getGlobalMatrix().getPtr());
-	customDebugDraw();
+}
+
+//----------------------------------------
+void ofNode::restoreTransform() {
 	glPopMatrix();
 }
 
-
 //----------------------------------------
-void ofNode3d::customDebugDraw() {
-	ofSetColor(255, 255, 0);
+void ofNode::customDebugDraw() {
 	ofBox(0, 0, 0, 10);
 	
 	float axisLength = 15;
@@ -398,14 +424,12 @@ void ofNode3d::customDebugDraw() {
 
 
 //----------------------------------------
-void ofNode3d::updateMatrix() {
-	//	if(targetNode) lookAt(targetNode->getGlobalMatrix().getTranslation());
-	
+void ofNode::updateMatrix() {
 	//if(isMatrixDirty) {
 	//	isMatrixDirty = false;
-	transformMatrix.makeScaleMatrix(scale);
-	transformMatrix.rotate(orientation);
-	transformMatrix.setTranslation(position);
+	transformationMatrix.makeScaleMatrix(scale);
+	transformationMatrix.rotate(orientation);
+	transformationMatrix.setTranslation(position);
 	
 	if(scale[0]>0) axis[0] = getMatrix().getRowAsVec3f(0)/scale[0];
 	if(scale[1]>0) axis[1] = getMatrix().getRowAsVec3f(1)/scale[1];
