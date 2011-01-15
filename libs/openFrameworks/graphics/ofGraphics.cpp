@@ -109,7 +109,6 @@ void ofViewport(float x, float y, float width, float height) {
 	if(height == 0) height = ofGetHeight();
 
 	glViewport(x, y, width, height);
-	viewportRect.set(x, y, width, height);
 }
 
 //----------------------------------------------------------
