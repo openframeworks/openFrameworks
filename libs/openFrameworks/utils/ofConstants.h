@@ -173,19 +173,30 @@ enum ofLoopType{
         #ifdef TARGET_OSX
             #define OF_VIDEO_CAPTURE_QUICKTIME
         #else
-            #define OF_VIDEO_CAPTURE_DIRECTSHOW
+			#ifdef TARGET_OF_IPHONE
+				#define OF_VIDEO_CAPTURE_IPHONE
+			#else
+				#define OF_VIDEO_CAPTURE_DIRECTSHOW
+			#endif
         #endif
     #else
-        // all quicktime, all the time
-        #define OF_VIDEO_CAPTURE_QUICKTIME
+		#ifdef TARGET_OF_IPHONE
+			#define OF_VIDEO_CAPTURE_IPHONE
+		#else
+			#define OF_VIDEO_CAPTURE_QUICKTIME
+		#endif
     #endif
 #endif
 
 
 #ifdef TARGET_LINUX
 	#define OF_VIDEO_PLAYER_GSTREAMER
-#else
-	#define OF_VIDEO_PLAYER_QUICKTIME
+#else 
+	#ifdef TARGET_OF_IPHONE
+		#define OF_VIDEO_PLAYER_IPHONE
+	#else
+		#define OF_VIDEO_PLAYER_QUICKTIME
+	#endif
 #endif
 
 // comment out this line to disable all poco related code
@@ -286,6 +297,13 @@ enum ofImageType{
  	OF_IMAGE_COLOR			= 0x01,
  	OF_IMAGE_COLOR_ALPHA	= 0x02,
  	OF_IMAGE_UNDEFINED		= 0x03
+};
+
+enum ofPixelFormat{
+	OF_PIXELS_MONO = 0, 
+	OF_PIXELS_RGB,
+	OF_PIXELS_RGBA,
+	OF_PIXELS_BGRA
 };
 
 #define		OF_MAX_STYLE_HISTORY	32
