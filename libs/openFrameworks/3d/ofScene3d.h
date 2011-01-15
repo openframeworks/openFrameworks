@@ -15,7 +15,7 @@
 
 #pragma once
 
-#include "ofNode3d.h"
+#include "ofNode.h"
 
 class ofScene3d {
 public:
@@ -24,16 +24,16 @@ public:
 	void disableDebugDraw();
 	bool getDebugDraw() const;
 	
-	void addNode(ofNode3d& n);
-	void removeNode(ofNode3d &n);
+	void addNode(ofNode& n);
+	void removeNode(ofNode &n);
 	
-	ofNode3d& getNode(int i);
+	ofNode& getNode(int i);
 	int getNumNodes() const;
-	vector<ofNode3d*>& getNodes();
+	vector<ofNode*>& getNodes();
 	
 	void draw();
 	
 protected:
-	vector<ofNode3d*>nodes;
+	vector<ofNode*>nodes;
 	bool bDrawDebug;
 };
