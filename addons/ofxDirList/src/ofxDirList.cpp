@@ -59,7 +59,6 @@ string ofxDirList::getPath(int pos){
 
 //----------------------------------------------------------
 int ofxDirList::listDir(string directory){
-	relDir = directory;
 	
     directory = ofToDataPath(directory);
 
