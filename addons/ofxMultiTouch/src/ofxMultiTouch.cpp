@@ -40,6 +40,7 @@ void ofxRegisterMultitouch(ofxiPhoneApp * app){
 	ofAddListener(ofEvents.touchUp, app, &ofxiPhoneApp::touchUp);
 	ofAddListener(ofEvents.touchMoved, app, &ofxiPhoneApp::touchMoved);
 	ofAddListener(ofEvents.touchDoubleTap, app, &ofxiPhoneApp::touchDoubleTap);
+	ofAddListener(ofEvents.touchCancelled, app, &ofxiPhoneApp::touchCancelled);
 }
 
 void ofxUnregisterMultitouch(ofxiPhoneApp * app){
@@ -47,4 +48,5 @@ void ofxUnregisterMultitouch(ofxiPhoneApp * app){
 	ofRemoveListener(ofEvents.touchUp, app, &ofxiPhoneApp::touchUp);
 	ofRemoveListener(ofEvents.touchMoved, app, &ofxiPhoneApp::touchMoved);
 	ofRemoveListener(ofEvents.touchDoubleTap, app, &ofxiPhoneApp::touchDoubleTap);
+	ofRemoveListener(ofEvents.touchCancelled, app, &ofxiPhoneApp::touchCancelled);
 }

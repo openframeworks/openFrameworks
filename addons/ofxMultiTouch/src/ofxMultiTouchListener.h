@@ -49,7 +49,7 @@ public:
 	virtual void touchMoved(float x, float y, int touchId, ofxMultiTouchCustomData *data = NULL) {}
 	virtual void touchUp(float x, float y, int touchId, ofxMultiTouchCustomData *data = NULL) {}
 	virtual void touchDoubleTap(float x, float y, int touchId, ofxMultiTouchCustomData *data = NULL) {}
-
+	virtual void touchCancelled(float x, float y, int touchId, ofxMultiTouchCustomData *data = NULL) {}
 
 	virtual void _touchDown(ofTouchEventArgs & touch){
 		touchDown(touch.x,touch.y,touch.id, &touch);
@@ -62,5 +62,8 @@ public:
 	}
 	virtual void _touchDoubleTap(ofTouchEventArgs & touch){
 		touchDoubleTap(touch.x,touch.y,touch.id, &touch);
+	}
+	virtual void _touchCancelled(ofTouchEventArgs & touch){
+		touchCancelled(touch.x,touch.y,touch.id, &touch);
 	}
 };
