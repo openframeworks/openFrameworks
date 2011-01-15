@@ -10,7 +10,10 @@ void testApp::setup(){
 	ofBackground(255,255,255);	
 	
 	
-	serial.enumerateDevices();
+	serial.listDevices();
+
+	//----------------------------------- 
+	font.loadFont("DIN.otf", 64);
 			
 	
 	//----------------------------------- note:
@@ -21,12 +24,12 @@ void testApp::setup(){
 	// (ie, COM4 on a pc, /dev/tty.... on linux, /dev/tty... on a mac)
 	// arduino users check in arduino app....
 
+	//ofCreateAlertDialog("please fill in the serial device in testApp::setup");
+
 	//serial.setup("COM4");  						  // windows example
 	serial.setup("/dev/tty.usbserial-A4001JEC",9600); // mac osx example
 	//serial.setup("/dev/ttyUSB0", 9600);			  //linux example
 
-	//----------------------------------- 
-	font.loadFont("DIN.otf",64);
 	nTimesRead = 0;
 	nBytesRead = 0;
 	readTime = 0;

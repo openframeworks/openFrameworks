@@ -224,6 +224,18 @@ int ofGetHeight(){
 	return (int)window->getWindowSize().y;
 }
 
+//--------------------------------------------------
+ofPoint	ofGetWindowSize() {
+	return ofPoint(ofGetWidth(), ofGetHeight());
+}
+
+
+//--------------------------------------------------
+ofRectangle	ofGetWindowRect() {
+	return ofRectangle(0, 0, ofGetWidth(), ofGetHeight());
+}
+
+
 //--------------------------------------
 void ofSetWindowTitle(string title){
 	window->setWindowTitle(title);
@@ -260,9 +272,9 @@ void ofSetVerticalSync(bool bSync){
 	#ifdef TARGET_WIN32
 	//----------------------------
 		if (bSync) {
-			if (GLEE_WGL_EXT_swap_control) wglSwapIntervalEXT (1);
+			if (WGL_EXT_swap_control) wglSwapIntervalEXT (1);
 		} else {
-			if (GLEE_WGL_EXT_swap_control) wglSwapIntervalEXT (0);
+			if (WGL_EXT_swap_control) wglSwapIntervalEXT (0);
 		}
 	//----------------------------
 	#endif

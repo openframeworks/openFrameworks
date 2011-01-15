@@ -1,8 +1,8 @@
 #include "ofMatrix3x3.h"
 
-ofMatrix3x3::ofMatrix3x3( double _a, double _b, double _c,
-			  double _d, double _e, double _f,
-			  double _g, double _h, double _i )
+ofMatrix3x3::ofMatrix3x3( float _a, float _b, float _c,
+			  float _d, float _e, float _f,
+			  float _g, float _h, float _i )
 {
 	a = _a;
 	b = _b;
@@ -18,9 +18,9 @@ ofMatrix3x3::ofMatrix3x3( double _a, double _b, double _c,
 
 
 
-void ofMatrix3x3::set( double _a, double _b, double _c,
-		  double _d, double _e, double _f,
-		  double _g, double _h, double _i )
+void ofMatrix3x3::set( float _a, float _b, float _c,
+		  float _d, float _e, float _f,
+		  float _g, float _h, float _i )
 {
 	a = _a;
 	b = _b;
@@ -34,7 +34,7 @@ void ofMatrix3x3::set( double _a, double _b, double _c,
 }
 
 
-double& ofMatrix3x3::operator[]( const int& index ) {
+float& ofMatrix3x3::operator[]( const int& index ) {
 	switch(index) {
 		case 0:  return a;
 		case 1:  return b;
@@ -82,8 +82,8 @@ ofMatrix3x3 ofMatrix3x3::transpose(const ofMatrix3x3& A) {
 * Determinant: http://mathworld.wolfram.com/Determinant.html
 */
 
-double ofMatrix3x3::determinant() const {
-	double det = a * e * i
+float ofMatrix3x3::determinant() const {
+	float det = a * e * i
 			   + b * f * g
 			   + d * h * c
 			   - g * e * c
@@ -92,7 +92,7 @@ double ofMatrix3x3::determinant() const {
 	return det;
 }
 
-double ofMatrix3x3::determinant(const ofMatrix3x3& A) {
+float ofMatrix3x3::determinant(const ofMatrix3x3& A) {
 	return A.determinant();
 }
 
@@ -108,7 +108,7 @@ double ofMatrix3x3::determinant(const ofMatrix3x3& A) {
 */
 
 void ofMatrix3x3::invert() {
-	 double det = determinant();
+	 float det = determinant();
 	 ofMatrix3x3 B;
 
 	 //included in these calculations: minor, cofactor (changed signs), transpose (by the order of "="), division through determinant
@@ -195,7 +195,7 @@ void ofMatrix3x3::operator-=(const ofMatrix3x3& B) {
 /**
 * Multiply a matrix with a scalar
 */
-ofMatrix3x3 ofMatrix3x3::operator*(double scalar) {
+ofMatrix3x3 ofMatrix3x3::operator*(float scalar) {
 	ofMatrix3x3 result;
 	result.a = a * scalar;
 	result.b = b * scalar;
@@ -222,7 +222,7 @@ void ofMatrix3x3::operator*=(const ofMatrix3x3& B) {
 	i *= B.i;
 }
 
-void ofMatrix3x3::operator*=(double scalar) {
+void ofMatrix3x3::operator*=(float scalar) {
 	a *= scalar;
 	b *= scalar;
 	c *= scalar;
@@ -254,7 +254,7 @@ ofMatrix3x3 ofMatrix3x3::operator*(const ofMatrix3x3& B) {
 /**
 * Divide a matrix through a scalar
 */
-ofMatrix3x3 ofMatrix3x3::operator/(double scalar) {
+ofMatrix3x3 ofMatrix3x3::operator/(float scalar) {
 	ofMatrix3x3 result;
 	result.a = a / scalar;
 	result.b = b / scalar;
@@ -281,7 +281,7 @@ void ofMatrix3x3::operator/=(const ofMatrix3x3& B) {
 	i /= B.i;
 }
 
-void ofMatrix3x3::operator/=(double scalar) {
+void ofMatrix3x3::operator/=(float scalar) {
 	a /= scalar;
 	b /= scalar;
 	c /= scalar;
@@ -292,4 +292,36 @@ void ofMatrix3x3::operator/=(double scalar) {
 	h /= scalar;
 	i /= scalar;
 }
+
+
+ostream& operator<<(ostream& os, const ofMatrix3x3& M) {
+	int w = 8;
+	os	<< setw(w)
+		<< M.a << ", " << setw(w)
+		<< M.b << ", " << setw(w) 
+		<< M.c << std::endl;
+	
+	os	<< setw(w)
+		<< M.d << ", " << setw(w)
+		<< M.e << ", " << setw(w) 
+		<< M.f << std::endl;
+	
+	os	<< setw(w)
+		<< M.g << ", " << setw(w) 
+		<< M.h << ", " << setw(w) 
+		<< M.i;
+	return os;
+}
+
+istream& operator>>(istream& is, ofMatrix3x3& M) {
+	is >> M.a; is.ignore(2);
+	is >> M.b; is.ignore(2);	
+	is >> M.c; is.ignore(1);
+	is >> M.d; is.ignore(2);
+	is >> M.e; is.ignore(2);
+	is >> M.f; is.ignore(1);
+	is >> M.h;
+	return is;
+}
+
 
