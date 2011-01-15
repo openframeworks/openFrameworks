@@ -73,34 +73,34 @@ void ofVboMesh::setupColors(int usage){
 
 //--------------------------------------------------------------
 void ofVboMesh::setupIndices(int indexMode){
-	indices.clear();
 	switch(indexMode){
 		case(OF_MESH_POINTS):
 		case(OF_MESH_FILL):
+			indices.clear();
 			for (int i = 0; i < mesh->faces.size();i++){
 				for (int j=0; j< mesh->faces.at(i).indices.size(); j++){
 					indices.push_back((GLuint)mesh->faces.at(i).indices.at(j));
 				}
 			}
+			vbo.setIndexData(&indices[0], indices.size() );
 			break;
 		case(OF_MESH_WIREFRAME):
+			wfIndices.clear();
 			for (int i=0;i<mesh->faces.size();i++){
 				
 				int maxIndex = mesh->faces.at(i).indices.size()-1;
 				
 				for (int j=0;j<maxIndex;j++){
-					indices.push_back( (GLuint) mesh->faces.at(i).indices.at(j) );
-					indices.push_back( (GLuint) mesh->faces.at(i).indices.at(j+1) );
+					wfIndices.push_back( (GLuint) mesh->faces.at(i).indices.at(j) );
+					wfIndices.push_back( (GLuint) mesh->faces.at(i).indices.at(j+1) );
 				}
 				
-				indices.push_back((GLuint)mesh->faces.at(i).indices.at(maxIndex));
-				indices.push_back((GLuint)mesh->faces.at(i).indices.at(0));
+				wfIndices.push_back((GLuint)mesh->faces.at(i).indices.at(maxIndex));
+				wfIndices.push_back((GLuint)mesh->faces.at(i).indices.at(0));
 			}
 			break;
 		default:break;
 	}
-	mode = indexMode;
-	vbo.setIndexData(&indices[0], indices.size() );
 }
 
 /*
@@ -179,37 +179,63 @@ void ofVboMesh::addMeshVertices(const vector<ofVec3f>& verts){
 
 //--------------------------------------------------------------
 void ofVboMesh::drawVertices(){
+	//make sure we have vertices
 	if(!bIsInited){
 		setupVertices(OF_VBO_STATIC);
 	}
 	
-	if(mode == OF_MESH_WIREFRAME || mode == -1){
+	//make sure we have indices
+	if(!indices.size()){
 		setupIndices(OF_MESH_POINTS);
 	}
+	
+	//feed vbo the correct index data
+	if(mode == OF_MESH_WIREFRAME){
+		vbo.setIndexData(&indices[0], indices.size() );
+	}
+
 	vbo.draw(GL_POINTS,0,mesh->vertices.size());
+	mode = OF_MESH_POINTS;
 }
 
 //--------------------------------------------------------------
 void ofVboMesh::drawWireframe(){
+	//make sure we have vertices
 	if(!bIsInited){
 		setupVertices(OF_VBO_STATIC);
 	}
 	
-	if(mode!=OF_MESH_WIREFRAME || mode == -1){
-		setupIndices(OF_MESH_WIREFRAME);
+	//make sure we have indices
+	if(!wfIndices.size()){
+		setupIndices( OF_MESH_WIREFRAME );
 	}
 	
-	vbo.draw(indices.size(),GL_LINES);
+	//tell vbo the correct indexing data
+	if(mode != OF_MESH_WIREFRAME ){
+		vbo.setIndexData(&wfIndices[0], wfIndices.size() );
+	}
+	
+	vbo.draw(wfIndices.size(),GL_LINES);
+	mode = OF_MESH_WIREFRAME;
 }
 
 //--------------------------------------------------------------
 void ofVboMesh::drawFaces(){
+	//make sure we have vertices
 	if(!bIsInited){
 		setupVertices(OF_VBO_STATIC);
 	}
 	
-	if(mode == OF_MESH_WIREFRAME || mode == -1){
+	//make sure we have indices
+	if(!indices.size()){
 		setupIndices(OF_MESH_FILL);
-	}		
+	}
+	
+	//tell vbo the correct indexing data
+	if (mode == OF_MESH_WIREFRAME){
+		vbo.setIndexData(&indices[0], indices.size() );
+	}
+	
 	vbo.draw(indices.size(),GL_TRIANGLES);
+	mode = OF_MESH_FILL;
 }

@@ -49,12 +49,13 @@ public:
 	
 	// build index array from faces as int* 
 	vector<GLuint> indices;
+	vector<GLuint> wfIndices;
 	
 	//TODO: wrapper classes for ofMesh, so we don't have to use ->
 	//TODO: update methods, generic update
 	
     ofMesh* mesh;
 	ofVbo vbo;
-	int mode;
 	bool bIsInited;
+	int mode;
 };

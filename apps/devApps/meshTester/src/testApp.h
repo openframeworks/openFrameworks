@@ -23,7 +23,8 @@ class testApp : public ofBaseApp{
 	
 		ofAssimpModelLoader model;
 		vector<ofMesh> meshes;
-		vector<ofVboMesh> vboMeshes;
+	vector<ofVboMesh> vboMeshes;
+	vector<ofVboMesh> vboMeshes2;
 	
 		int whichMesh;
 	
