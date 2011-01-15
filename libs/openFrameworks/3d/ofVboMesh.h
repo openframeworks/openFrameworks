@@ -1,79 +1,38 @@
+#pragma once
+
 #include "ofMesh.h"
 #include "ofVbo.h"
 
 class ofVboMesh{
 public:
-	ofVboMesh(){
-	};
-	~ofVboMesh(){
-	};
+	ofVboMesh();
+	~ofVboMesh();
 	
-	ofVbo* createVbo(){
-		vbo = new ofVbo();
-		return vbo; 
-	}
+	void setMesh(ofMesh* m);
 	
-	ofMesh* createMesh(){
-		mesh = new ofMesh();
-		return mesh; 
-	}
+	ofMesh* getMesh();
 	
-	void setupVertices(int usage){
-		if(vbo!=NULL){
-			vbo->setVertexData(&mesh->vertices[0], mesh->vertices.size(), usage);
-		}
-	}
-
-	void setupColors(int usage){
-		if(vbo!=NULL){
-			vbo->setColorData(&mesh->colors[0], mesh->numColors(), usage);
-			mesh->bUsingColors = true; 
-		}
-	}
-
-	void setupIndices(){
-		if(vbo!=NULL){
-			vbo->setIndexData(&mesh->colors[0], mesh->faces.size());
-		}
-	}
+	void setupVertices(int usage);
+	void setupColors(int usage);
+	void setupIndices();
 	
-	/*
-	 void setupNormals(int usage){
-		vbo->setNormalData(&mesh->normals[0], mesh->numNormals(), usage);
-	 }
-	 void setupTextures(int usage){
-		vbo->setTexCoordData(&mesh->texCoords[0], mesh->numTexCoords(), usage);
-	 }
-	 */
+//	void setupNormals(int usage);
+//	void setupTextures(int usage);
 	 
-	void drawVertices(){
-		vbo->draw(GL_POINTS,0,mesh->vertices.size());
-	}
-	void drawWireframe(){
-		vbo->draw(GL_TRIANGLES,0,mesh->vertices.size());
-	}
-	void drawFaces(){
-		vbo->draw(GL_POLYGON,0,mesh->vertices.size());
-	}
+	void drawVertices();
+	void drawWireframe();
+	void drawFaces();
 	
-	void addTriangles(const vector<ofVec3f>& verts){
-		if(verts.size()%3==0){
-		}else {
-			//ofLog
-			return;
-		}
-	}
+	void addTriangles(const vector<ofVec3f>& verts);
+	void addTriangleFan(const vector<ofVec3f>& verts);
+	void addTriangleStrip(const vector<ofVec3f>& verts);
 	
-	void addTriangleFan(const vector<ofVec3f>& verts){
-		//>3
-	}
+	// build index array from faces as int* 
+	vector<int> indices;
 	
-	void addTriangleStr(const vector<ofVec3f>& verts){
-		//>3
-	}
+	//TODO: wrapper classes for ofMesh, so we don't have to use ->
+	//TODO: update methods, generic update
 	
     ofMesh* mesh;
-	ofVbo* vbo;
-	
-	
+	ofVbo vbo;
 };
