@@ -5,11 +5,6 @@ ofFace::ofFace(){
 }
 
 //--------------------------------------------------------------
-ofFace::ofFace(const ofFace& f){
-	indices = f.indices;
-}
-
-//--------------------------------------------------------------
 ofFace::ofFace(int vi0, int vi1, int vi2){
 	indices.push_back(vi0);
 	indices.push_back(vi1);
@@ -18,26 +13,6 @@ ofFace::ofFace(int vi0, int vi1, int vi2){
 
 //--------------------------------------------------------------
 ofFace::~ofFace(){}
-
-/* unchecked operators
- inline bool operator==(const ofFace& f){
- if (f.indices.size()!=indices.size()){
- return false;
- }else{
- return equal(f.indices.begin(),f.indices.end(),indices.begin());
- }
- }
- 
- inline bool operator!= (const ofFace& f){
- return !((*this)==f);
- }
- */
-
-//--------------------------------------------------------------	
-bool ofFace::operator=(const ofFace& f){
-	//indices.assign(f.indices.begin(), f.indices.end());
-	indices = f.indices;
-}
 
 //--------------------------------------------------------------
 ofMesh::ofMesh(){
@@ -58,6 +33,12 @@ void ofMesh::clear(){
 	texCoords.clear();
 	faces.clear();
 	colors.clear();
+	
+	name = "";
+	bUsingNormals = false;
+	bUsingColors = false;
+	bUsingTexCoords = false;
+	faceType = -1;
 }
 
 //--------------------------------------------------------------
@@ -91,26 +72,10 @@ int ofMesh::addFace(int vi1, int vi2, int vi3){
 }
 
 //--------------------------------------------------------------
-/*
- int addFace(){
- int indexMax = vertices.size()-1;
- if(indexMax>=2){
- faces.push_back(ofFace(indexMax,indexMax-1,indexMax-2));
- return faces.size()-1;
- }else{
- ofLog(OF_LOG_WARNING,"addFace() requires at least three existing vertices");
- return -1;
- }
- }
- */
-
-//--------------------------------------------------------------
 
 void ofMesh::flipNormals(){
-	it = normals.begin();
-	while(it!=normals.end()){
-		(*it) *= -1;
-		++it;
+	for (int i =0; i < normals.size();i++){
+		normals[i] *= -1;	
 	}
 }
 

@@ -78,6 +78,7 @@ void ofVbo::setIndexData(const GLuint * indices, int total){
 	glBufferDataARB(GL_ELEMENT_ARRAY_BUFFER_ARB, sizeof(GLuint) * total, indexData, GL_STATIC_DRAW); 
 }
 
+/*
 //--------------------------------------------------------------
 void ofVbo::updateColorData(const ofColor * colors, int total) {
 	if(bUsingColors && colorUsage == GL_STREAM_DRAW) {
@@ -93,6 +94,7 @@ void ofVbo::updateVertexData(const ofVec3f * verts, int total) {
 		glBufferSubDataARB(GL_ARRAY_BUFFER_ARB, 0, total*sizeof(ofVec3f), &verts[0].x);
 	}
 }
+ */
 
 //--------------------------------------------------------------
 float* ofVbo::getVertPointer(){
@@ -102,6 +104,11 @@ float* ofVbo::getVertPointer(){
 //--------------------------------------------------------------
 float* ofVbo::getColorPointer(){
 	return colorData;
+}
+
+//--------------------------------------------------------------
+GLuint* ofVbo::getIndexPointer(){
+	return indexData;
 }
 
 /*
@@ -187,9 +194,6 @@ void ofVbo::draw(int mode, int first, int total) {
 void ofVbo::draw(int amt, int drawMode) {
 	if(bAllocated){
 		bind();
-//		GLuint vao;
-//		glGenVertexArraysAPPLE(1,&vao);
-//		glBindVertexArrayAPPLE(vao);
 		glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, indexId);
 		glDrawElements(drawMode, amt, GL_UNSIGNED_INT, NULL);
 		unbind();
@@ -198,6 +202,7 @@ void ofVbo::draw(int amt, int drawMode) {
 
 //--------------------------------------------------------------
 void ofVbo::clear(){
+	/*
 	glDeleteBuffers(1, &vertId);
 	glDeleteBuffers(1, &indexId);
 	glDeleteBuffers(1, &normalId);
@@ -209,10 +214,5 @@ void ofVbo::clear(){
 	normalId = 0;
 	texCoordId = 0;
 	colorId = 0;
+	 */
 }
-
-
-
-
-
-

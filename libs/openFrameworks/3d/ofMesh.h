@@ -5,6 +5,7 @@
 #include "ofColor.h"
 #include "ofUtils.h"
 
+//TODO: implement via this
 #define OF_MESH_MAX_VERTS_PER_FACE 3
 #define OF_MAX_TEX_MAPPINGS 1
 #define OF_MAX_COLOR_MAPPINGS 1
@@ -12,19 +13,12 @@
 class ofFace{
 public:
 	ofFace();
-	ofFace(const ofFace& f);
 	ofFace(int vi0, int vi1, int vi2);
 	~ofFace();
-	
-	/* unchecked operators
-	inline bool operator==(const ofFace& f);
-	inline bool operator!= (const ofFace& f);
-	*/
-	bool operator=(const ofFace& f);
-	
 	//TODO: hard-lock this to three?
 	vector<int> indices;
 };
+
 
 class ofMesh{
 public:
@@ -70,8 +64,6 @@ public:
 	vector<ofColor> colors;
 
 	vector<ofFace> faces;
-
-	vector<ofVec3f>::iterator it;
 
 	string name;
 	bool bUsingNormals;

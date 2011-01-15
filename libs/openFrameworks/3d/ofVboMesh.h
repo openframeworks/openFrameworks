@@ -3,24 +3,34 @@
 #include "ofMesh.h"
 #include "ofVbo.h"
 
+
+//enum for drawing mode status
 enum{
-	
+	OF_MESH_POINTS,
+	OF_MESH_WIREFRAME,
+	OF_MESH_FILL
 };
+
 
 class ofVboMesh{
 public:
 	ofVboMesh();
 	~ofVboMesh();
 	
+	ofVboMesh(const ofVboMesh& v);
+	ofVboMesh& operator=(const ofVboMesh& v);
+	void clone(const ofVboMesh& v);
+	
 	void setMesh(ofMesh* m);
 	
 	ofMesh* getMesh();
+	ofMesh* getMesh() const;
 	
 	void clear();
 	
 	void setupVertices(int usage);
 	void setupColors(int usage);
-	void setupIndices();
+	void setupIndices(int indexMode);
 	
 //	void setupNormals(int usage);
 //	void setupTextures(int usage);
@@ -43,4 +53,5 @@ public:
 	
     ofMesh* mesh;
 	ofVbo vbo;
+	int mode;
 };

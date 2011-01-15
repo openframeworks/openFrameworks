@@ -3,10 +3,27 @@
 //--------------------------------------------------------------
 ofVboMesh::ofVboMesh(){
 	mesh = new ofMesh();
+	mode = -1;
 }
 
 //--------------------------------------------------------------
 ofVboMesh::~ofVboMesh(){
+	if (mesh!=NULL) delete mesh;
+}
+
+ofVboMesh::ofVboMesh(const ofVboMesh& v){
+	clone(v);
+}
+
+ofVboMesh& ofVboMesh::operator=(const ofVboMesh& v){
+	clone(v);
+	return *this;
+}
+
+void ofVboMesh::clone(const ofVboMesh& v){
+	mesh = v.getMesh();
+	vbo = v.vbo;
+	mode = v.mode;
 }
 
 //--------------------------------------------------------------
@@ -17,6 +34,11 @@ void ofVboMesh::setMesh(ofMesh* m){
 
 //--------------------------------------------------------------
 ofMesh* ofVboMesh::getMesh(){
+	return mesh;
+}
+
+//--------------------------------------------------------------
+ofMesh* ofVboMesh::getMesh() const{
 	return mesh;
 }
 
@@ -37,13 +59,37 @@ void ofVboMesh::setupColors(int usage){
 }
 
 //--------------------------------------------------------------
-void ofVboMesh::setupIndices(){
-	for (int i = 0; i < mesh->faces.size();i++){
-		for (int j=0; j< mesh->faces[i].indices.size(); j++){
-			indices.push_back((GLuint)mesh->faces[i].indices[j]);
+void ofVboMesh::setupIndices(int indexMode){
+	if(mesh->faces.size()){
+//		indices.clear();
+		switch(indexMode){
+			case(OF_MESH_POINTS):
+			case(OF_MESH_FILL):
+				for (int i = 0; i < mesh->faces.size();i++){
+					for (int j=0; j< mesh->faces.at(i).indices.size(); j++){
+						indices.push_back((GLuint)mesh->faces.at(i).indices.at(j));
+					}
+				}
+				break;
+			case(OF_MESH_WIREFRAME):
+				for (int i=0;i<mesh->faces.size();i++){
+					
+					int maxIndex = mesh->faces.at(i).indices.size()-1;
+					
+					for (int j=0;j<maxIndex;j++){
+						indices.push_back( (GLuint) mesh->faces.at(i).indices.at(j) );
+						indices.push_back( (GLuint) mesh->faces.at(i).indices.at(j+1) );
+					}
+					
+					indices.push_back((GLuint)mesh->faces.at(i).indices.at(maxIndex));
+					indices.push_back((GLuint)mesh->faces.at(i).indices.at(0));
+				}
+				break;
+			default:break;
 		}
 	}
-	vbo.setIndexData(&indices[0],indices.size() );
+	mode = indexMode;
+	vbo.setIndexData(&indices[0], indices.size() );
 }
 
 /*
@@ -54,21 +100,6 @@ void ofVboMesh::setupIndices(){
  vbo->setTexCoordData(&mesh->texCoords[0], mesh->numTexCoords(), usage);
  }
  */
-//--------------------------------------------------------------
-void ofVboMesh::drawVertices(){
-	vbo.draw(GL_POINTS,0,mesh->vertices.size());
-}
-
-//--------------------------------------------------------------
-void ofVboMesh::drawWireframe(){
-	ofLog(OF_LOG_ERROR,"ofVboMesh: wireframes not ready yet, sorry");
-//	vbo.draw(GL_POINTS,0,mesh->vertices.size());
-}
-
-//--------------------------------------------------------------
-void ofVboMesh::drawFaces(){
-	vbo.draw(indices.size(),GL_TRIANGLES);
-}
 
 //--------------------------------------------------------------
 void ofVboMesh::addTriangles(const vector<ofVec3f>& verts){
@@ -133,4 +164,29 @@ void ofVboMesh::addMeshVertices(const vector<ofVec3f>& verts){
 		if(mesh->bUsingTexCoords) mesh->texCoords.push_back(ofVec2f(0,0));
 		if(mesh->bUsingColors) mesh->colors.push_back(ofColor(255,255,255,255));
 	}
+}
+
+//--------------------------------------------------------------
+void ofVboMesh::drawVertices(){
+	if(mode == OF_MESH_WIREFRAME || mode == -1){
+		setupIndices(OF_MESH_POINTS);
+	}
+	vbo.draw(GL_POINTS,0,mesh->vertices.size());
+}
+
+//--------------------------------------------------------------
+void ofVboMesh::drawWireframe(){
+	if(mode!=OF_MESH_WIREFRAME || mode == -1){
+		setupIndices(OF_MESH_WIREFRAME);
+	}
+	
+	vbo.draw(indices.size(),GL_LINES);
+}
+
+//--------------------------------------------------------------
+void ofVboMesh::drawFaces(){
+	if(mode == OF_MESH_WIREFRAME || mode == -1){
+		setupIndices(OF_MESH_FILL);
+	}		
+	vbo.draw(indices.size(),GL_TRIANGLES);
 }

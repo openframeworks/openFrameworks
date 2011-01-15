@@ -20,8 +20,11 @@ class testApp : public ofBaseApp{
 		void mouseReleased(int x, int y, int button);
 		void windowResized(int w, int h);
 	
-		ofxAssimpModelLoader model;
-		vector<ofVboMesh> meshes;
+		ofAssimpModelLoader model;
+		vector<ofMesh> meshes;
+		vector<ofVboMesh> vboMeshes;
+	
+		int whichMesh;
 	
 		ofImage tex;
 	
