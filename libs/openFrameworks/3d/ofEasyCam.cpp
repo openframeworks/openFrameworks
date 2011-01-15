@@ -21,6 +21,35 @@ speed(0.01),
 drag(0.01),
 oldMousePress(false)
 {
+//	
+//	ab_quat[16] = {1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1};
+//	ab_last[16] = {1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1};
+//	ab_next[16] = {1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1};
+//	
+//	// the distance from the origin to the eye
+//	ab_zoom = 1.0;
+//	ab_zoom2 = 1.0;
+//	// the radius of the arcball
+//	ab_sphere = 1.0;
+//	ab_sphere2 = 1.0;
+//	// the distance from the origin of the plane that intersects
+//	// the edge of the visible sphere (tangent to a ray from the eye)
+//	ab_edge = 1.0;
+//	// whether we are using a sphere or plane
+//	ab_planar = false;
+//	 ab_planedist = 0.5;
+//	
+//	vec ab_start = vec(0,0,1);
+//	vec ab_curr = vec(0,0,1);
+//	vec ab_eye = vec(0,0,1);
+//	vec ab_eyedir = vec(0,0,1);
+//	vec ab_up = vec(0,1,0);
+//	vec ab_out = vec(1,0,0);
+//	
+//	GLdouble ab_glp[16] = {1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1};
+//	GLdouble ab_glm[16] = {1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1};
+//	int ab_glv[4] = {0,0,640,480};
+	
 }
 
 

@@ -21,9 +21,11 @@
 #include "ofRectangle.h"
 #include "ofAppRunner.h"
 
+
+// Use the public API of ofNode for all transformations
 class ofCamera : public ofNode {
 public:
-	ofCamera():fov(60), nearClip(0), farClip(0), isOrtho(false),isActive(false) {}
+	ofCamera();
 	
 	// projection properties:
 	void setFov(float f);
@@ -38,7 +40,7 @@ public:
 	virtual void begin(ofRectangle rect = ofGetWindowRect());
 	virtual void end();
 	
-	// for hardcore peeps, access to the generated matrix()
+	// for hardcore peeps, access to the projection matrix()
 	//	ofMatrix4x4 &getProjectionMatrix();	
 	
 protected:
