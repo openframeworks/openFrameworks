@@ -12,6 +12,8 @@ public:
 	
 	ofMesh* getMesh();
 	
+	void clear();
+	
 	void setupVertices(int usage);
 	void setupColors(int usage);
 	void setupIndices();

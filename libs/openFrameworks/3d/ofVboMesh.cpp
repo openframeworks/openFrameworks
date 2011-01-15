@@ -19,6 +19,11 @@ ofMesh* ofVboMesh::getMesh(){
 	return mesh;
 }
 
+void ofVboMesh::clear(){
+	indices.clear();
+	mesh->clear();
+}
+
 //--------------------------------------------------------------
 void ofVboMesh::setupVertices(int usage){
 	vbo.setVertexData(&mesh->vertices[0], mesh->vertices.size(), usage);
