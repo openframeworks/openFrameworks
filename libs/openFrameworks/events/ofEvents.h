@@ -2,20 +2,18 @@
 
 #include "ofConstants.h"
 
-void ofNotifySetup();
-void ofNotifyUpdate();
-void ofNotifyDraw();
+//-------------------------- mouse/key query
+bool		ofGetMousePressed(int button=-1); //by default any button
+bool		ofGetKeyPressed(int key=-1); //by default any key
 
-void ofNotifyKeyPressed(int key);
-void ofNotifyKeyReleased(int key);
+int			ofGetMouseX();
+int			ofGetMouseY();
 
-void ofNotifyMousePressed(int x, int y, int button);
-void ofNotifyMouseReleased(int x, int y, int button);
-void ofNotifyMouseDragged(int x, int y, int button);
-void ofNotifyMouseMoved(int x, int y);
+int			ofGetPreviousMouseX();
+int			ofGetPreviousMouseY();
 
-void ofNotifyExit();
-void ofNotifyWindowResized(int width, int height);
+
+//-----------------------------------------------
 
 #ifdef OF_USING_POCO
 	#define _OF_EVENTS
@@ -211,4 +209,19 @@ void ofNotifyWindowResized(int width, int height);
 
 #endif
 
+//  event notification only for internal OF use
+void ofNotifySetup();
+void ofNotifyUpdate();
+void ofNotifyDraw();
+
+void ofNotifyKeyPressed(int key);
+void ofNotifyKeyReleased(int key);
+
+void ofNotifyMousePressed(int x, int y, int button);
+void ofNotifyMouseReleased(int x, int y, int button);
+void ofNotifyMouseDragged(int x, int y, int button);
+void ofNotifyMouseMoved(int x, int y);
+
+void ofNotifyExit();
+void ofNotifyWindowResized(int width, int height);
 

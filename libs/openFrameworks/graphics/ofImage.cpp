@@ -1,6 +1,7 @@
 #include "ofImage.h"
 #include "ofAppRunner.h"
 #include "ofTypes.h"
+#include "ofGraphics.h"
 
 //----------------------------------------------------------
 // static variable for freeImage initialization:
@@ -246,7 +247,7 @@ void ofImage::grabScreen(int _x, int _y, int _w, int _h){
 
 	allocate(_w, _h, OF_IMAGE_COLOR);
 
-	int screenHeight = ofGetHeight();
+	int screenHeight =	ofGetViewportHeight(); // if we are in a FBO or other viewport, this fails: ofGetHeight();
 	_y = screenHeight - _y;
 	_y -= _h; // top, bottom issues
 
@@ -446,7 +447,7 @@ void ofImage::changeTypeOfPixels(ofPixels &pix, ofImageType newType){
 			break;
 	}
 
-	putBmpIntoPixels(convertedBmp, pix);
+	putBmpIntoPixels(convertedBmp, pix, false);
 
 	if (bmp != NULL)				FreeImage_Unload(bmp);
 	if (convertedBmp != NULL)		FreeImage_Unload(convertedBmp);

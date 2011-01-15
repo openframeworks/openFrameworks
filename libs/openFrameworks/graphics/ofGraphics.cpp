@@ -50,7 +50,6 @@ bool			bUsingNormalizedTexCoords = false;
 bool 			bBakgroundAuto		= true;
 ofRectMode		cornerMode			= OF_RECTMODE_CORNER;
 ofPolyWindingMode		polyMode	= OF_POLY_WINDING_ODD;
-static ofRectangle viewportRect;	//note we leave this 0,0,0,0 because ofViewport is smart
 
 int				curveResolution = 20;
 
@@ -59,6 +58,7 @@ ofHandednessType coordHandedness;
 //style stuff - new in 006
 ofStyle			currentStyle;
 deque <ofStyle> styleHistory;
+deque <ofRectangle> viewportHistory;
 
 static float circlePts[OF_MAX_CIRCLE_PTS][3];			// [points][axis]
 static float circlePtsScaled[OF_MAX_CIRCLE_PTS][3];		// [points][axis]
@@ -81,10 +81,20 @@ ofRectMode ofGetRectMode(){
 
 //----------------------------------------------------------
 void ofPushView() {
+	
 	GLint viewport[4];
 	glGetIntegerv(GL_VIEWPORT, viewport);
-	viewportRect.set(viewport[0], viewport[1], viewport[2], viewport[3]);
-		
+	
+	ofRectangle currentViewport;
+	currentViewport.set(viewport[0], viewport[1], viewport[2], viewport[3]);
+	viewportHistory.push_front(currentViewport);
+	
+	if( viewportHistory.size() > OF_MAX_VIEWPORT_HISTORY ){
+		viewportHistory.pop_back();
+		//should we warn here?
+		//ofLog(OF_LOG_WARNING, "ofPushView - warning: you have used ofPushView more than %i times without calling ofPopView - check your code!", OF_MAX_VIEWPORT_HISTORY);
+	}
+	
 	glMatrixMode(GL_PROJECTION);
 	glPushMatrix();
 	glMatrixMode(GL_MODELVIEW);
@@ -94,7 +104,13 @@ void ofPushView() {
 
 //----------------------------------------------------------
 void ofPopView() {
-	ofViewport(viewportRect.x, viewportRect.y, viewportRect.width, viewportRect.height);
+	
+	
+	if( viewportHistory.size() ){
+		ofRectangle viewRect = viewportHistory.front();
+		ofViewport(viewRect.x, viewRect.y, viewRect.width, viewRect.height);
+		viewportHistory.pop_front();
+	}
 	
 	glMatrixMode(GL_PROJECTION);
 	glPopMatrix();
@@ -107,10 +123,42 @@ void ofPopView() {
 void ofViewport(float x, float y, float width, float height) {
 	if(width == 0) width = ofGetWidth();
 	if(height == 0) height = ofGetHeight();
-
 	glViewport(x, y, width, height);
-	viewportRect.set(x, y, width, height);
 }
+
+//----------------------------------------------------------
+ofRectangle ofGetCurrentViewport(){
+	
+	// I am using opengl calls here instead of returning viewportRect
+	// since someone might use glViewport instead of ofViewport...
+	
+	GLint viewport[4];					// Where The Viewport Values Will Be Stored
+	glGetIntegerv(GL_VIEWPORT, viewport);
+	ofRectangle view;
+	view.x = viewport[0];
+	view.y = viewport[1];
+	view.width = viewport[2];
+	view.height = viewport[3];
+	return view;
+	
+}
+
+//----------------------------------------------------------
+int ofGetViewportWidth(){
+	GLint viewport[4];					// Where The Viewport Values Will Be Stored
+	glGetIntegerv(GL_VIEWPORT, viewport);
+	return viewport[2];
+}
+
+//----------------------------------------------------------
+int ofGetViewportHeight(){
+	GLint viewport[4];					// Where The Viewport Values Will Be Stored
+	glGetIntegerv(GL_VIEWPORT, viewport);
+	return viewport[3];
+}
+
+
+
 
 //----------------------------------------------------------
 void ofSetCoordHandedness(ofHandednessType handedness) {
@@ -124,8 +172,8 @@ ofHandednessType ofGetCoordHandedness() {
 
 //----------------------------------------------------------
 void ofSetupScreenPerspective(float width, float height, bool vFlip, float fov, float nearDist, float farDist) {
-	if(width == 0) width = ofGetWidth();
-	if(height == 0) height = ofGetHeight();
+	if(width == 0) width = ofGetViewportWidth();
+	if(height == 0) height = ofGetViewportHeight();
 
 	float eyeX = width / 2;
 	float eyeY = height / 2;
@@ -156,9 +204,9 @@ void ofSetupScreenPerspective(float width, float height, bool vFlip, float fov, 
 
 //----------------------------------------------------------
 void ofSetupScreenOrtho(float width, float height, bool vFlip, float nearDist, float farDist) {
-	if(width == 0) width = ofGetWidth();
-	if(height == 0) height = ofGetHeight();
-
+	if(width == 0) width = ofGetViewportWidth();
+	if(height == 0) height = ofGetViewportHeight();
+	
 	#ifndef TARGET_OPENGLES
 
 		glMatrixMode(GL_PROJECTION);
