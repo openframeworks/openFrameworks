@@ -56,6 +56,7 @@ class ofImage : public ofBaseImage{
 		bool 				loadImage(string fileName);
 		bool				loadImage(const ofBuffer & buffer);
 		void 				saveImage(string fileName, ofImageQualityType compressionLevel = OF_IMAGE_QUALITY_BEST);
+		void 				saveImage(ofBuffer & buffer, ofImageQualityType compressionLevel = OF_IMAGE_QUALITY_BEST);
 
 		//Sosolimited: texture compression and mipmaps
 		void				setCompression(ofTexCompression compression);

@@ -1,6 +1,7 @@
 #include "ofImage.h"
 #include "ofAppRunner.h"
 #include "ofTypes.h"
+#include "ofURLFileLoader.h"
 
 //----------------------------------------------------------
 // static variable for freeImage initialization:
@@ -91,6 +92,11 @@ bool ofImage::loadImage(const ofBuffer & buffer){
 //----------------------------------------------------------
 void ofImage::saveImage(string fileName, ofImageQualityType qualityLevel){
 	saveImageFromPixels(myPixels, fileName, qualityLevel);
+}
+
+//----------------------------------------------------------
+void ofImage::saveImage(ofBuffer & buffer, ofImageQualityType qualityLevel){
+	saveImageFromPixels(myPixels, buffer, qualityLevel);
 }
 
 //we could cap these values - but it might be more useful
@@ -472,9 +478,11 @@ void ofCloseFreeImage(){
 
 //----------------------------------------------------
 bool ofImage::loadImageIntoPixels(ofPixels & pix, string fileName) {
-
+	if(fileName.substr(0, 7) == "http://") {
+		return loadImageIntoPixels(pix, ofLoadURL(fileName).data);
+	}
+	
 	int					width, height, bpp;
-	ofImageType			type;
 	fileName			= ofToDataPath(fileName);
 	bool bLoaded		= false;
 	FIBITMAP 			* bmp = NULL;
