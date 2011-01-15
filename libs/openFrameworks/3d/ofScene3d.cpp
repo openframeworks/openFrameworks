@@ -25,18 +25,18 @@ bool ofScene3d::getDebugDraw() const {
 }
 
 //----------------------------------------
-void ofScene3d::addNode(ofNode3d& n) {
+void ofScene3d::addNode(ofNode& n) {
 	nodes.push_back(&n);
 }
 
 //----------------------------------------
-void ofScene3d::removeNode(ofNode3d& n) {
+void ofScene3d::removeNode(ofNode& n) {
 //	nodes.erase(&n);
 }
 
 
 //----------------------------------------
-ofNode3d& ofScene3d::getNode(int i) {
+ofNode& ofScene3d::getNode(int i) {
 	return *nodes.at(i);
 }
 
@@ -48,7 +48,7 @@ int ofScene3d::getNumNodes() const {
 
 
 //----------------------------------------
-vector<ofNode3d*>& ofScene3d::getNodes() {
+vector<ofNode*>& ofScene3d::getNodes() {
 	return nodes;
 }
 
