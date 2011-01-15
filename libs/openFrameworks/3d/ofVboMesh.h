@@ -3,6 +3,8 @@
 #include "ofMesh.h"
 #include "ofVbo.h"
 
+//TODO: implement multiple index arrays to eliminate the need to calculate
+
 
 //enum for drawing mode status
 enum{
@@ -54,4 +56,5 @@ public:
     ofMesh* mesh;
 	ofVbo vbo;
 	int mode;
+	bool bIsInited;
 };
