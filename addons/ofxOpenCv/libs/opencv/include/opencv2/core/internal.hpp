@@ -573,11 +573,11 @@ void func_name( T *array, size_t total, user_data_type aux )                    
                     goto insert_sort;                                               \
                 }                                                                   \
                                                                                     \
-                n = MIN( (int)(left1 - left0), (int)(left - left1) );               \
+                n = CV_MIN( (int)(left1 - left0), (int)(left - left1) );               \
                 for( i = 0; i < n; i++ )                                            \
                     CV_SWAP( left0[i], left[i-n], t );                              \
                                                                                     \
-                n = MIN( (int)(right0 - right1), (int)(right1 - right) );           \
+                n = CV_MIN( (int)(right0 - right1), (int)(right1 - right) );           \
                 for( i = 0; i < n; i++ )                                            \
                     CV_SWAP( left[i], right0[i-n+1], t );                           \
                 n = (int)(left - left1);                                            \

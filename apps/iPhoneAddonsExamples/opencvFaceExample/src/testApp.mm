@@ -4,15 +4,18 @@
 void testApp::setup(){	
 	ofxiPhoneSetOrientation(OFXIPHONE_ORIENTATION_LANDSCAPE_RIGHT);
 
-	ofSetFrameRate(30);
+	ofSetFrameRate(20);
+	grabber.setDesiredFrameRate(20);
+	grabber.initGrabber(480, 360);
+	
+	colorCv.allocate(grabber.getWidth(), grabber.getHeight());
+	colorCvSmall.allocate(grabber.getWidth()/4, grabber.getHeight()/4);
+	grayCv.allocate(grabber.getWidth()/4, grabber.getHeight()/4);
 
-	// register touch events
-	ofRegisterTouchEvents(this);
+	finder.setup("haarcascade_frontalface_default.xml");
+	finder.setNeighbors(1);
+	finder.setScaleHaar(1.5);
 	
-	grabber.initGrabber(480, 360, OF_PIXELS_BGRA);
-	tex.allocate(grabber.getWidth(), grabber.getHeight(), GL_RGB);
-	
-	pix = new unsigned char[ (int)( grabber.getWidth() * grabber.getHeight() * 3.0) ];
 }
 
 //--------------------------------------------------------------
@@ -20,26 +23,29 @@ void testApp::update(){
 	ofBackground(255,255,255);	
 	
 	grabber.update();
+	colorCv = grabber.getPixels();
 	
-	unsigned char * src = grabber.getPixels();
-	int totalPix = grabber.getWidth() * grabber.getHeight() * 3;
-	
-	for(int k = 0; k < totalPix; k+= 3){
-		pix[k  ] = 255 - src[k];
-		pix[k+1] = 255 - src[k+1];
-		pix[k+2] = 255 - src[k+2];		
-	}
-	
-	tex.loadData(pix, grabber.getWidth(), grabber.getHeight(), GL_RGB);
+	colorCvSmall.scaleIntoMe(colorCv, CV_INTER_NN);
+	grayCv = colorCvSmall;
+
+	finder.findHaarObjects(grayCv);	
+	faces = finder.blobs;
 }
 
 //--------------------------------------------------------------
 void testApp::draw(){	
 	
 	ofSetColor(255);
-	grabber.draw(0, 0);
+	grabber.draw(0, 0, ofGetWidth(), ofGetHeight());
 	
-	tex.draw(0, 0, tex.getWidth() / 4, tex.getHeight() / 4);
+	ofPushStyle();
+		ofNoFill();
+		ofSetColor(255, 0, 255);
+		for(int k = 0; k < faces.size(); k++){
+			ofRectangle rect(faces[k].boundingRect.x*4.0, faces[k].boundingRect.y*4.0, faces[k].boundingRect.width*4, faces[k].boundingRect.width*4.0 );
+			ofRect(rect);
+		}
+	ofPopStyle();
 }
 
 //--------------------------------------------------------------
