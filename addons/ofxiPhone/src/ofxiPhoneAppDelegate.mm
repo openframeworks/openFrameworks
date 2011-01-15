@@ -67,9 +67,7 @@
 
 
 
--(void) applicationDidFinishLaunching:(UIApplication *)application {  
-	printf("applicationDidFinishLaunching\n");
-
+-(void) applicationDidFinishLaunching:(UIApplication *)application {    
 	static ofEventArgs voidEventArgs;
 	ofLog(OF_LOG_VERBOSE, "applicationDidFinishLaunching() start");
 	
@@ -262,15 +260,7 @@
 
 
 -(void) applicationWillTerminate:(UIApplication *)application {
-	static ofEventArgs voidEventArgs;
-	
 	[self stopAnimation];
-	printf("applicationWillTerminate");
-	ofGetAppPtr()->exit();
-	
-#ifdef OF_USING_POCO
-	ofNotifyEvent( ofEvents.exit, voidEventArgs );
-#endif
 	
     // stop listening for orientation change notifications
     [[NSNotificationCenter defaultCenter] removeObserver: self];
@@ -280,13 +270,6 @@
 	
 }
 
-- (void)applicationDidEnterBackground:(UIApplication *)application {
-	static ofEventArgs voidEventArgs;
-	ofGetAppPtr()->exit();
-#ifdef OF_USING_POCO
-	ofNotifyEvent( ofEvents.exit, voidEventArgs );
-#endif	
-}
 
 -(void) applicationDidReceiveMemoryWarning:(UIApplication *)application {
 	ofxiPhoneAlerts.gotMemoryWarning();

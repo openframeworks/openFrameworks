@@ -66,6 +66,15 @@ void ofNotifyWindowResized(int width, int height);
 			int width;
 			int height;
 		};
+		
+		class ofMessage : public ofEventArgs{
+			public:
+				ofMessage( string msg ){
+					message = msg;
+				}
+				string message;
+		};
+		
 	#else
 		#include "ofxEventUtils.h"
 	#endif
@@ -94,6 +103,8 @@ void ofNotifyWindowResized(int width, int height);
 		ofEvent<ofTouchEventArgs>	touchMoved;
 		ofEvent<ofTouchEventArgs>	touchDoubleTap;
 
+		ofEvent<ofMessage> messageEvent;
+
 		void disable(){
 			setup.disable();
 			draw.disable();
@@ -111,6 +122,7 @@ void ofNotifyWindowResized(int width, int height);
 			touchUp.disable();
 			touchMoved.disable();
 			touchDoubleTap.disable();
+			messageEvent.disable();
 		}
 
 		void enable(){
@@ -130,10 +142,11 @@ void ofNotifyWindowResized(int width, int height);
 			touchUp.enable();
 			touchMoved.enable();
 			touchDoubleTap.enable();
+			messageEvent.enable();
 		}
 	};
 
-
+	void ofSendMessage(ofMessage msg);
 
 	extern ofCoreEvents ofEvents;
 
@@ -160,6 +173,11 @@ void ofNotifyWindowResized(int width, int height);
 	}
 
 	template<class ListenerClass>
+	void ofRegisterGetMessages(ListenerClass * listener){
+		ofAddListener(ofEvents.messageEvent, listener, &ListenerClass::gotMessage);
+	}
+
+	template<class ListenerClass>
 	void ofUnregisterMouseEvents(ListenerClass * listener){
 		ofRemoveListener(ofEvents.mouseDragged,listener,&ListenerClass::mouseDragged);
 		ofRemoveListener(ofEvents.mouseMoved,listener,&ListenerClass::mouseMoved);
@@ -179,6 +197,11 @@ void ofNotifyWindowResized(int width, int height);
 		ofRemoveListener(ofEvents.touchDown, listener, &ListenerClass::touchDown);
 		ofRemoveListener(ofEvents.touchMoved, listener, &ListenerClass::touchMoved);
 		ofRemoveListener(ofEvents.touchUp, listener, &ListenerClass::touchUp);
+	}
+
+	template<class ListenerClass>
+	void ofUnregisterGetMessages(ListenerClass * listener){
+		ofRemoveListener(ofEvents.messageEvent, listener, &ListenerClass::gotMessage);
 	}
 
 #endif
