@@ -15,12 +15,12 @@ void	ofLoadImage(ofPixels & pix, const ofBuffer & buffer) {
 	ofImage::loadImageIntoPixels(pix, buffer);
 }
 
-void ofSaveImage(ofPixels & pix, string path) {
-	ofImage::saveImageFromPixels(pix, path);
+void ofSaveImage(ofPixels & pix, string path, ofImageQualityType qualityLevel) {
+	ofImage::saveImageFromPixels(pix, path, qualityLevel);
 }
 
-void ofSaveImage(ofPixels & pix, ofBuffer & buffer) {
-	ofImage::saveImageFromPixels(pix, buffer);
+void ofSaveImage(ofPixels & pix, ofBuffer & buffer, ofImageQualityType qualityLevel) {
+	ofImage::saveImageFromPixels(pix, buffer, qualityLevel);
 }
 
 
@@ -58,7 +58,7 @@ ofImage::ofImage(const ofImage& mom) {
 	clear();
 	clone(mom);
 	update();
-};
+}
 
 //----------------------------------------------------------
 ofImage::~ofImage(){
@@ -561,7 +561,7 @@ bool ofImage::loadImageIntoPixels(ofPixels & pix, const ofBuffer & buffer) {
 }
 
 //----------------------------------------------------------------
-void ofImage::saveImageFromPixels(ofPixels & pix, string fileName, ofImageQualityType qualityLevel = OF_IMAGE_QUALITY_BEST) {
+void ofImage::saveImageFromPixels(ofPixels & pix, string fileName, ofImageQualityType qualityLevel) {
 
 	if (pix.isAllocated() == false){
 		ofLog(OF_LOG_ERROR,"error saving image - pixels aren't allocated");
@@ -611,7 +611,7 @@ void ofImage::saveImageFromPixels(ofPixels & pix, string fileName, ofImageQualit
 	}
 }
 
-void ofImage::saveImageFromPixels(ofPixels & pix, ofBuffer & buffer, ofImageQualityType compressionLevel = OF_IMAGE_QUALITY_BEST) {
+void ofImage::saveImageFromPixels(ofPixels & pix, ofBuffer & buffer, ofImageQualityType qualityLevel) {
 	ofLog(OF_LOG_VERBOSE, "saveImageFromPixels(ofPixels, ofBuffer) is not yet implemented."); // TODO
 }
 
