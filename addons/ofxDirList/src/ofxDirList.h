@@ -37,24 +37,23 @@ public:
 	void reset();												// resets extension list
 	bool allowExt(string ext);									// returns true if ext is accepted
 	int listDir(string directory);								// returns number of files found
-	
+
 	int numFiles() {
 		return nameArray.size();
 	}
-	
+
 	void reload() {
 		listDir(relDir);
 	}
-	
+
 	string getDir() {
 		return relDir;
 	}
 	
-//private:
-	string relDir;
-	vector <string> allowedFileExt;
-	vector <string> nameArray;
-	vector <string> pathArray;
+	private:
+		vector <string> allowedFileExt;
+		vector <string> nameArray;
+		vector <string> pathArray;
 	
 };
 
