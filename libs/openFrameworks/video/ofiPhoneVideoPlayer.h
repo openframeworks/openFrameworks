@@ -11,6 +11,7 @@ public:
 	~ofiPhoneVideoPlayer();
 	
 	bool loadMovie(string name);
+	void setPixelFormat(ofPixelFormat PixelFormat);
 	void close();
 	
 	void play();
@@ -63,10 +64,12 @@ protected:
 	int height;
 	float playbackSpeed;
 		
-	unsigned char * pixels;
+	GLubyte * pixels;
 	ofTexture videoTexture;
 	
 	float lastUpdateTime;
+	GLint internalGLFormat;
+	GLubyte *pixelsTmp;
 };
 
 #endif

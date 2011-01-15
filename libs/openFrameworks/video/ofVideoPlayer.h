@@ -31,6 +31,7 @@ class ofVideoPlayer : public ofBaseVideoPlayer, public ofBaseDraws, public ofBas
 		ofBaseVideoPlayer *	getPlayer();
 
 		bool 				loadMovie(string name);
+		void				setPixelFormat(ofPixelFormat pixelFormat);
 		void 				closeMovie();
 		void 				close();
 
@@ -91,7 +92,7 @@ class ofVideoPlayer : public ofBaseVideoPlayer, public ofBaseDraws, public ofBas
 		ofTexture tex;
 		ofTexture * playerTex; // a seperate texture that may be optionally implemented by the player to avoid excessive pixel copying.
 		bool bUseTexture;
-
+		ofPixelFormat internalPixelFormat;
 };
 
 

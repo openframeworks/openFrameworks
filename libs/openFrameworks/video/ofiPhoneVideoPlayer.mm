@@ -4,6 +4,9 @@
 
 ofiPhoneVideoPlayer::ofiPhoneVideoPlayer() {
 	videoPlayer=NULL;
+	pixels = NULL;
+	pixelsTmp = NULL;
+	
 	videoWasStopped=false;
 	
 	width = 0;
@@ -35,9 +38,33 @@ bool ofiPhoneVideoPlayer::loadMovie(string name) {
 
 //----------------------------------------
 
+void ofiPhoneVideoPlayer::setPixelFormat(ofPixelFormat _internalPixelFormat) {
+	if(_internalPixelFormat == OF_PIXELS_RGB)
+		internalGLFormat = GL_RGB;
+	else if(_internalPixelFormat == OF_PIXELS_RGBA)
+		internalGLFormat = GL_RGBA;
+	else if(_internalPixelFormat == OF_PIXELS_BGRA)
+		internalGLFormat = GL_BGRA;
+}
+
+//----------------------------------------
+
 void ofiPhoneVideoPlayer::close() {
-	if(videoPlayer != NULL)
+	if(videoPlayer != NULL) {
+		
+		if(pixelsTmp != NULL) {
+			free(pixelsTmp);
+			pixelsTmp = NULL;
+		}
+		if(pixels != NULL) {
+			free(pixels);
+			pixels = NULL;
+		}
+		
+		width = height = 0;
+		
 		[(AVFoundationVideoPlayer *)videoPlayer release];
+	}
 	videoPlayer = NULL;
 }
 
@@ -115,16 +142,45 @@ unsigned char * ofiPhoneVideoPlayer::getPixels() {
 		/*We unlock the  image buffer*/
 		CVPixelBufferUnlockBaseAddress(imageBuffer,0);
 		
-		if(width==0 && widthIn != 0)
-			pixels = new unsigned char[widthIn*heightIn*(bytesPerRow/widthIn)];
+		if(width==0 && widthIn != 0) {
+			if(internalGLFormat == GL_RGB)
+				pixels = (GLubyte *) malloc(widthIn * heightIn * 3);
+			else
+				pixels = (GLubyte *) malloc(widthIn * heightIn * 4);
+			
+			pixelsTmp	= (GLubyte *) malloc(widthIn * heightIn * 4);
+		}
 		
 		width = widthIn;
 		height = heightIn;
 		[pool drain];
 		
-		ofxiPhoneCGImageToPixels(currentFrameRef, pixels);
-		
-		CGImageRelease(currentFrameRef);
+		if(width != 0) {
+			//ofxiPhoneCGImageToPixels(currentFrameRef, pixels);
+			
+			CGContextRef spriteContext;
+			
+			spriteContext = CGBitmapContextCreate(pixelsTmp, width, height, CGImageGetBitsPerComponent(currentFrameRef), width * 4, CGImageGetColorSpace(currentFrameRef), kCGImageAlphaPremultipliedLast);
+			
+			CGContextDrawImage(spriteContext, CGRectMake(0.0, 0.0, (CGFloat)width, (CGFloat)height), currentFrameRef);
+			
+			CGContextRelease(spriteContext);
+			
+			if(internalGLFormat == GL_RGB)
+			{
+				unsigned int *isrc4 = (unsigned int *)pixelsTmp;
+				unsigned int *idst3 = (unsigned int *)pixels;
+				unsigned int *ilast4 = &isrc4[width*height-1];
+				while (isrc4 < ilast4){
+					*(idst3++) = *(isrc4++);
+					idst3 = (unsigned int *) (((unsigned char *) idst3) - 1);
+				}
+			}
+			else if(internalGLFormat == GL_RGBA || internalGLFormat == GL_BGRA)
+				memcpy(pixels, pixelsTmp, width*height*4);
+			
+			CGImageRelease(currentFrameRef);
+		}
 		
 		return pixels;
 	}
@@ -133,7 +189,7 @@ unsigned char * ofiPhoneVideoPlayer::getPixels() {
 }
 
 ofTexture * ofiPhoneVideoPlayer::getTexture()
-{
+{/*
 	if(videoPlayer != NULL)
 	{
 		CVImageBufferRef imageBuffer = [(AVFoundationVideoPlayer *)videoPlayer getCurrentFrame]; 
@@ -159,7 +215,7 @@ ofTexture * ofiPhoneVideoPlayer::getTexture()
 		
 		return &videoTexture;
 	}
-	
+	*/
 	return NULL;
 }
 
