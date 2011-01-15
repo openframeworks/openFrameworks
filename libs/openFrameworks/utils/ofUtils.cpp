@@ -517,92 +517,29 @@ void ofSaveFrame(bool bUseViewport){
 	saveImageCounter++;
 }
 
-
-
-//levels are currently:
-// see ofConstants.h
-// OF_LOG_NOTICE
-// OF_LOG_WARNING
-// OF_LOG_ERROR
-// OF_LOG_FATAL_ERROR
-
-int currentLogLevel =  OF_DEFAULT_LOG_LEVEL;
 //--------------------------------------------------
-void ofSetLogLevel(int logLevel){
-	currentLogLevel = logLevel;
-}
+bool ofReadFile(const string & path, ofBuffer & buffer, bool binary){
+	ifstream * file = new ifstream(ofToDataPath(path,true).c_str());
 
-//--------------------------------------------------
-void ofLog(int logLevel, string message){
-	if(logLevel >= currentLogLevel){
-		if(logLevel == OF_LOG_VERBOSE){
-			printf("OF_VERBOSE: ");
-		}
-		else if(logLevel == OF_LOG_NOTICE){
-			printf("OF_NOTICE: ");
-		}
-		else if(logLevel == OF_LOG_WARNING){
-			printf("OF_WARNING: ");
-		}
-		else if(logLevel == OF_LOG_ERROR){
-			printf("OF_ERROR: ");
-		}
-		else if(logLevel == OF_LOG_FATAL_ERROR){
-			printf("OF_FATAL_ERROR: ");
-		}
-		printf("%s\n",message.c_str());
+	if(!file || !file->is_open()){
+		ofLog(OF_LOG_ERROR, "couldn't open " + path);
+		return false;
 	}
-}
 
-//--------------------------------------------------
-void ofLog(int logLevel, const char* format, ...){
-	//thanks stefan!
-	//http://www.ozzu.com/cpp-tutorials/tutorial-writing-custom-printf-wrapper-function-t89166.html
+	filebuf *pbuf=file->rdbuf();
 
-	if(logLevel >= currentLogLevel){
-		va_list args;
-		va_start( args, format );
-		if(logLevel == OF_LOG_VERBOSE){
-			printf("OF_VERBOSE: ");
-		}
-		else if(logLevel == OF_LOG_NOTICE){
-			printf("OF_NOTICE: ");
-		}
-		else if(logLevel == OF_LOG_WARNING){
-			printf("OF_WARNING: ");
-		}
-		else if(logLevel == OF_LOG_ERROR){
-			printf("OF_ERROR: ");
-		}
-		else if(logLevel == OF_LOG_FATAL_ERROR){
-			printf("OF_FATAL_ERROR: ");
-		}
-		vprintf( format, args );
-		printf("\n");
-		va_end( args );
+	// get file size using buffer's members
+	long size = (long)pbuf->pubseekoff (0,ios::end,ios::in);
+	pbuf->pubseekpos (0,ios::in);
+
+	// get file data
+	if(!binary){
+		buffer.allocate(size+1);// = new char[size];
+		buffer.getBuffer()[size]='\0';
+	}else{
+		buffer.allocate(size);
 	}
+	pbuf->sgetn (buffer.getBuffer(),size);
+	return true;
 }
-
-//for setting console color
-//doesn't work in the xcode console - do we need this?
-//works fine on the terminal though - not much use
-
-//--------------------------------------------------
-void ofSetConsoleColor(int color){
-	#ifdef TARGET_WIN32
-		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), color);
-	#else
-		printf("\033[%im",  color);
-	#endif
-}
-
-//--------------------------------------------------
-void ofRestoreConsoleColor(){
-	#ifdef TARGET_WIN32
-		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), OF_CONSOLE_COLOR_RESTORE);
-	#else
-		printf("\033[%im",  OF_CONSOLE_COLOR_RESTORE);
-	#endif
-}
-
 
