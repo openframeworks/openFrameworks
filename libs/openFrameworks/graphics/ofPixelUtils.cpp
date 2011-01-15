@@ -8,6 +8,10 @@
 void ofPixelUtils::crop(ofPixels & pix, int x, int y, int _width, int _height){
 	
 	
+	if (_width < 0 || _height < 0){
+		return;
+	}
+	
 	if (pix.bAllocated == true){
 		
 		int width = pix.width;
@@ -45,22 +49,78 @@ void ofPixelUtils::crop(ofPixels & pix, int x, int y, int _width, int _height){
 	}
 }
 
+static void ofPixelUtils::cropFromTo(ofPixels &frompix, ofPixels &topix, int x, int y, int _width, int _height){
+	
+	if (_width < 0 || _height < 0){
+		return;
+	}
+	
+	if (frompix.bAllocated == true){
+		
+		int width = frompix.width;
+		int height = frompix.height;
+		int bytesPerPixel = frompix.bytesPerPixel;
+		
+		
+		if ((topix.width != _width) || (topix.height != _height) || (topix.imageType != frompix.imageType)){
+			topix.allocate(_width, _height, frompix.imageType);
+		} 
+		
+		int newWidth = _width;
+		int newHeight = _height;
+		unsigned char * newPixels = topix.pixels;
+		
+		// this prevents having to do a check for bounds in the for loop;
+		int minX = MAX(x, 0);
+		int maxX = MIN(x+_width, width);
+		int minY = MAX(y, 0);
+		int maxY = MIN(y+_height, height);
+		
+		// TODO: point math can help speed this up:
+		for (int i = minX; i < maxX; i++){
+			for (int j = minY; j < maxY; j++){
+				
+				int newPixel = (j-y) * newWidth + (i-x);
+				int oldPixel = (j) * width + (i);
+				
+				for (int k = 0; k < bytesPerPixel; k++){
+					newPixels[newPixel*bytesPerPixel + k] = frompix.pixels[oldPixel*bytesPerPixel + k];
+				}
+			}
+		}
+		
+		
+	}
+	
+}
+
+
+
+
 void ofPixelUtils::rotate90(ofPixels & pix, int nClockwiseRotations){
 
 	
+	if (pix.bAllocated == false){
+		return;
+	}
+	
+	// first, figure out which type of rotation we have
 	int rotation = nClockwiseRotations;
 	while (rotation < 0){
 		rotation+=4;
 	}
 	rotation %= 4;
 	
+	// if it's 0, do nothing.  if it's 2, do it by a mirror operation.
 	if (rotation == 0) {
-		return; // do nothing! 
+		return; 
+		// do nothing! 
 	} else if (rotation == 2) {
 		mirror(pix, true, true);
 		return;
 	}
 	
+	// otherwise, we will need to do some new allocaiton. 
 	int width = pix.width;
 	int height = pix.height;
 	int bytesPerPixel = pix.bytesPerPixel;

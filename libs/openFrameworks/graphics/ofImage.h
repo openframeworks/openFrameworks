@@ -42,6 +42,10 @@ class ofImage : public ofBaseImage{
 		// copying:
 		void 				clone(const ofImage &mom);
 
+	
+		
+	
+		
 		// enable or disable using the texture of this image
 		void 				setUseTexture(bool bUse);
 
@@ -71,7 +75,19 @@ class ofImage : public ofBaseImage{
 		void 				setImageType(ofImageType type);
 		void 				resize(int newWidth, int newHeight);
 		void 				grabScreen(int x, int y, int w, int h);		// grab pixels from opengl, using glreadpixels
-
+		// this does an inplace crop. 
+		// NOTE: this reallocates memory.
+		void				crop(int x, int y, int w, int h); 
+		// this does a crop from another image.
+		// NOTE: this will reallocate memory if the image types are different, or if the w & h do not
+		// equal this images w & h
+		void				cropFrom(ofImage & otherImage, int x, int y, int w, int h);
+		// perform rotation of 90 degress clockwise rotation amont times. 
+		void				rotate90(int rotation);
+		void				mirror(bool vertical, bool horizontal); 
+	
+	
+	
 		// if you've altered the pixels (e.g., from getPixels())
 		// call update() to see a change (move the pixels to the texture)
 		void update();
