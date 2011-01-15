@@ -9,12 +9,12 @@
 
 #pragma once
 
-#include "ofNode3d.h"
+#include "ofNode.h"
 #include "ofMain.h"
 
 class ofMesh;
 
-class ofMeshNode : public ofNode3d {
+class ofMeshNode : public ofNode {
 public:
 	ofMesh *mesh;
 	

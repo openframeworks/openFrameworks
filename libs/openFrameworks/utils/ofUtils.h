@@ -121,7 +121,8 @@ string ofBinaryToString(const string& value);
 string 	ofGetVersionInfo();
 
 void	ofSaveScreen(string filename);
-void	ofSaveFrame();
+void	ofSaveFrame(bool bUseViewport = false);
+void	ofSaveViewport(string filename);
 
 //--------------------------------------------------
 vector <string>	ofSplitString(const string & text, const string & delimiter);

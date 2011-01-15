@@ -15,10 +15,37 @@ void testApp::demo2_setup() {
 	s.height			= kFBOHeight;
 	s.numColorbuffers	= 4;
 	s.numSamples		= useMSAA ? ofFbo::maxSamples() : 0;
+	s.
 	fbo.setup(s);
 	
 	
 }
+
+
+
+// option 1
+testApp::initSettings(ofInitSettings &settings) {
+	ofiPHoneInitSettings &iphoneSettings = (ofiPHoneInitSettings &)settings;
+	
+	settins.width = 640;
+	settings.height = 480;
+	
+	settings.setSize(640, 480);
+	settings.enableRetina();
+}
+
+
+// option 2
+testApp::initSettings(stl::map<string, float> &settings) {
+	ofiPHoneInitSettings &iphoneSettings = (ofiPHoneInitSettings &)settings;
+	
+	settins.width = 640;
+	settings.height = 480;
+	
+	settings.setSize(640, 480);
+	settings.enableRetina();
+}
+
 
 
 void testApp::demo2_draw() {
