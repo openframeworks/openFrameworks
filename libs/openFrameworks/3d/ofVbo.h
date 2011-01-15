@@ -74,14 +74,17 @@ public:
 	void setColorData(const ofColor * colors, int total, int usage);	
 	void setIndexData(const GLuint * indices, int total);
 	
+	/*
 	void updateColorData(const ofColor * colors, int total);
 	void updateVertexData(const ofVec3f * verts, int total);	
+	*/
 	
 	//void setNormalData() {}
 	//void setTexCoordData() {}
 	
 	float* getVertPointer();
 	float* getColorPointer();
+	GLuint* getIndexPointer();
 		/*
 	float* getNormalPointer();
 	float* getTexCoordPointer();
