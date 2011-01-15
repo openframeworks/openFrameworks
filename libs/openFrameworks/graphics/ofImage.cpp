@@ -79,8 +79,8 @@ bool ofImage::loadImage(const ofBuffer & buffer){
 }
 
 //----------------------------------------------------------
-void ofImage::saveImage(string fileName){
-	saveImageFromPixels(fileName, myPixels);
+void ofImage::saveImage(string fileName, ofImageCompressionType compressionLevel){
+	saveImageFromPixels(fileName, myPixels, compressionLevel);
 }
 
 //we could cap these values - but it might be more useful
@@ -552,7 +552,7 @@ bool ofImage::loadImageFromMemory(const ofBuffer & buffer, ofPixels &pix){
 
 
 //----------------------------------------------------------------
-void  ofImage::saveImageFromPixels(string fileName, ofPixels &pix){
+void  ofImage::saveImageFromPixels(string fileName, ofPixels &pix, ofImageCompressionType compressionLevel) {
 
 	if (pix.isAllocated() == false){
 		ofLog(OF_LOG_ERROR,"error saving image - pixels aren't allocated");
@@ -568,7 +568,7 @@ void  ofImage::saveImageFromPixels(string fileName, ofPixels &pix){
 	#ifdef TARGET_LITTLE_ENDIAN
 		pix.swapRgb();
 	#endif
-
+	
 	fileName = ofToDataPath(fileName);
 	if (pix.isAllocated()){
 		FREE_IMAGE_FORMAT fif = FIF_UNKNOWN;
@@ -578,10 +578,22 @@ void  ofImage::saveImageFromPixels(string fileName, ofPixels &pix){
 			fif = FreeImage_GetFIFFromFilename(fileName.c_str());
 		}
 		if((fif != FIF_UNKNOWN) && FreeImage_FIFSupportsReading(fif)) {
-			if((FREE_IMAGE_FORMAT)fif != FIF_JPEG)
-			   FreeImage_Save(fif, bmp, fileName.c_str());
-			else
-			   FreeImage_Save(fif, bmp, fileName.c_str(),JPEG_QUALITYSUPERB);
+			if((FREE_IMAGE_FORMAT) fif == FIF_JPEG) {
+				int quality = JPEG_QUALITYSUPERB;
+				switch(compressionLevel) {
+					case OF_IMAGE_COMPRESSION_WORST: quality = JPEG_QUALITYBAD; break;
+					case OF_IMAGE_COMPRESSION_LOW: quality = JPEG_QUALITYAVERAGE; break;
+					case OF_IMAGE_COMPRESSION_MEDIUM: quality = JPEG_QUALITYNORMAL; break;
+					case OF_IMAGE_COMPRESSION_HIGH: quality = JPEG_QUALITYGOOD; break;
+					case OF_IMAGE_COMPRESSION_BEST: quality = JPEG_QUALITYSUPERB; break;
+				}
+				FreeImage_Save(fif, bmp, fileName.c_str(), quality);
+			} else {
+				if(compressionLevel != OF_IMAGE_COMPRESSION_BEST) {
+					ofLog(OF_LOG_WARNING, "ofImageCompressionType only applies to JPEG images, ignoring value.");
+				}
+				FreeImage_Save(fif, bmp, fileName.c_str());
+			}
 		}
 	}
 
