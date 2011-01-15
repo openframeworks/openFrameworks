@@ -13,6 +13,8 @@
 		2D4FB15C12DE7271000A51F9 /* ofSoundEffect.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D4FB15812DE7271000A51F9 /* ofSoundEffect.h */; };
 		2D4FB15D12DE7271000A51F9 /* ofSoundUnit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D4FB15912DE7271000A51F9 /* ofSoundUnit.cpp */; };
 		2D4FB15E12DE7271000A51F9 /* ofSoundUnit.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D4FB15A12DE7271000A51F9 /* ofSoundUnit.h */; };
+		92750B4512E2319500D47C7A /* ofPixelUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 92750B4312E2319500D47C7A /* ofPixelUtils.h */; };
+		92750B4612E2319500D47C7A /* ofPixelUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 92750B4412E2319500D47C7A /* ofPixelUtils.cpp */; };
 		92B3A68112DA30B3001B8BE8 /* ofBaseTypes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 92B3A67812DA30B3001B8BE8 /* ofBaseTypes.cpp */; };
 		92B3A68212DA30B3001B8BE8 /* ofBaseTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 92B3A67912DA30B3001B8BE8 /* ofBaseTypes.h */; };
 		92B3A68312DA30B3001B8BE8 /* ofColor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 92B3A67A12DA30B3001B8BE8 /* ofColor.cpp */; };
@@ -101,6 +103,8 @@
 		2D4FB15812DE7271000A51F9 /* ofSoundEffect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofSoundEffect.h; sourceTree = "<group>"; };
 		2D4FB15912DE7271000A51F9 /* ofSoundUnit.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofSoundUnit.cpp; sourceTree = "<group>"; };
 		2D4FB15A12DE7271000A51F9 /* ofSoundUnit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofSoundUnit.h; sourceTree = "<group>"; };
+		92750B4312E2319500D47C7A /* ofPixelUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofPixelUtils.h; sourceTree = "<group>"; };
+		92750B4412E2319500D47C7A /* ofPixelUtils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofPixelUtils.cpp; sourceTree = "<group>"; };
 		92B3A67812DA30B3001B8BE8 /* ofBaseTypes.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofBaseTypes.cpp; sourceTree = "<group>"; };
 		92B3A67912DA30B3001B8BE8 /* ofBaseTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofBaseTypes.h; sourceTree = "<group>"; };
 		92B3A67A12DA30B3001B8BE8 /* ofColor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofColor.cpp; sourceTree = "<group>"; };
@@ -207,7 +211,7 @@
 		E4B27B1210CBE9B900536013 /* FreeImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FreeImage.h; path = ../../../FreeImage/include/FreeImage.h; sourceTree = SOURCE_ROOT; };
 		E4B27BCE10CBE9B900536013 /* RtAudio.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RtAudio.h; path = ../../../rtAudio/include/RtAudio.h; sourceTree = SOURCE_ROOT; };
 		E4B27BCF10CBE9B900536013 /* RtError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RtError.h; path = ../../../rtAudio/include/RtError.h; sourceTree = SOURCE_ROOT; };
-		E4B27C1510CBEB8E00536013 /* openFrameworks.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = openFrameworks.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		E4B27C1510CBEB8E00536013 /* openFrameworksDebug.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = openFrameworksDebug.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		E4B5AE1412D94F9B00BA355D /* ofQtUtils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofQtUtils.cpp; path = ../../../openFrameworks/video/ofQtUtils.cpp; sourceTree = SOURCE_ROOT; };
 		E4B5AE1512D94F9B00BA355D /* ofQtUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofQtUtils.h; path = ../../../openFrameworks/video/ofQtUtils.h; sourceTree = SOURCE_ROOT; };
 		E4B5AE1612D94F9B00BA355D /* ofQuickTimeGrabber.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofQuickTimeGrabber.cpp; path = ../../../openFrameworks/video/ofQuickTimeGrabber.cpp; sourceTree = SOURCE_ROOT; };
@@ -438,6 +442,8 @@
 				E4B27AC410CBE92A00536013 /* ofTexture.h */,
 				E4B27AC510CBE92A00536013 /* ofTrueTypeFont.cpp */,
 				E4B27AC610CBE92A00536013 /* ofTrueTypeFont.h */,
+				92750B4312E2319500D47C7A /* ofPixelUtils.h */,
+				92750B4412E2319500D47C7A /* ofPixelUtils.cpp */,
 			);
 			name = graphics;
 			path = ../../../openFrameworks/graphics;
@@ -566,7 +572,7 @@
 			children = (
 				E4B27AAA10CBE92A00536013 /* openFrameworks */,
 				E45BE0360E8CC5DE009D7055 /* libs */,
-				E4B27C1510CBEB8E00536013 /* openFrameworks.a */,
+				E4B27C1510CBEB8E00536013 /* openFrameworksDebug.a */,
 			);
 			sourceTree = "<group>";
 		};
@@ -610,6 +616,7 @@
 				BBCF994012E028A900695088 /* ofNode3d.h in Headers */,
 				BBCF994212E028BD00695088 /* of3d.h in Headers */,
 				BBCF99D612E02EE300695088 /* ofScene3d.h in Headers */,
+				92750B4512E2319500D47C7A /* ofPixelUtils.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -630,7 +637,7 @@
 			);
 			name = openFrameworks;
 			productName = openFrameworksLib;
-			productReference = E4B27C1510CBEB8E00536013 /* openFrameworks.a */;
+			productReference = E4B27C1510CBEB8E00536013 /* openFrameworksDebug.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 /* End PBXNativeTarget section */
@@ -705,6 +712,7 @@
 				BBCF993D12E028A900695088 /* ofMeshNode.cpp in Sources */,
 				BBCF993F12E028A900695088 /* ofNode3d.cpp in Sources */,
 				BBCF99D712E02EE300695088 /* ofScene3d.cpp in Sources */,
+				92750B4612E2319500D47C7A /* ofPixelUtils.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
