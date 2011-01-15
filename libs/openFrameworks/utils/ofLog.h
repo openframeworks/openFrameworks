@@ -2,7 +2,11 @@
 
 #include <ofConstants.h>
 
+#include <Poco/AutoPtr.h>
 #include <Poco/Logger.h>
+#include <Poco/FileChannel.h>
+#include <Poco/ConsoleChannel.h>
+#include <Poco/SplitterChannel.h>
 
 enum ofLogLevel{
 	OF_LOG_VERBOSE 		= Poco::Message::PRIO_TRACE,
@@ -12,7 +16,9 @@ enum ofLogLevel{
 	OF_LOG_ERROR 		= Poco::Message::PRIO_ERROR,
 	OF_LOG_FATAL_ERROR 	= Poco::Message::PRIO_FATAL,
 	OF_LOG_SILENT	//this one is special and should always be last - set ofSetLogLevel to OF_SILENT to not recieve any messages
-};		
+};
+
+#define OF_DEFAULT_LOG_LEVEL  OF_LOG_NOTICE
 
 //-----------------------------------------------------------
 /// singleton Log data class
@@ -27,9 +33,10 @@ class ofLogger{
 		friend class ofLogError;
 		friend class ofLogFatalError;
 		
-		friend void ofLog(ofLogLevel level, string message);
-		friend void ofLog(ofLogLevel logLevel, const char *format, ...);
+		friend void ofLog(ofLogLevel level, const string& message);
+		friend void ofLog(ofLogLevel logLevel, const char* format, ...);
 	
+	public:
 		/**
 			\brief singleton data access
 			\return a reference to itself
@@ -38,32 +45,90 @@ class ofLogger{
 		**/
 		static ofLogger& instance();
 		
-		void log(ofLogLevel logLevel, string message);
+		void log(ofLogLevel logLevel, const string& message);
+		void log(const string& logTopic, ofLogLevel logLevel, const string& message);
 		
-//		void addVerboseName(const string name, const ofLogLevel logLevel)
-//		{
-//			verboseNames.insert(pair<string,ofLogLevel>(name, logLevel));
-//		}
-//		
-//		void removeVerboseName(const string name)
-//		{
-//			verboseNames.erase(verboseNames.find(name));
-//		}
-//		
-//		void clearVerboseName()
-//		{
-//			verboseNames.clear();
-//		}
+		/// log to the console (on by default)
+		void enableConsole();
+		void disableConsole();
+		bool usingConsole();
+		
+		/// log to a file (off by default)
+		bool setFilePath(const string& file);
+		string getFilePath();
+		void enableFile();
+		void disableFile();
+		bool usingFile();
+		
+		/// set the automatic rotation of the log file
+		void enableFileRotationMins(unsigned int minutes);
+		void enableFileRotationHours(unsigned int hours);
+		void enableFileRotationDays(unsigned int days);
+		void enableFileRotationMonths(unsigned int months);
+		void enableFileRotationSize(unsigned int sizeKB);
+		void disableFileRotation();
+	
+		/// log topics
+		void addTopic(const string& logTopic, ofLogLevel logLevel=OF_LOG_NOTICE);
+		void removeTopic(const string& logTopic);
+		void clearTopics();
+		bool topicExists(const string& logTopic);
+		void setTopicLogLevel(const string& logTopic, ofLogLevel logLevel);
+		void resetTopicLogLevel(const string& logTopic);
+		
+		/// header control
+		void enableHeader();
+		void disableHeader();
+		bool usingHeader();
+		
+		/// datestamp controls
+		void enableDate();
+		void disableDate();
+		bool usingDate();
+		
+		/// timestamp controls
+		void enableTime();
+		void disableTime();
+		bool usingTime();
+		
+		/// framestamp controls
+		void enableFrameNum();
+		void disableFrameNum();
+		bool usingFrameNum();
+		
+		/// millisstamp controls
+		void enableMillis();
+		void disableMillis();
+		bool usingMillis();
+		
+	protected:
 
-		Poco::Logger* logger;
+		Poco::AutoPtr<Poco::Logger> 			logger;				///< the logger
+		Poco::AutoPtr<Poco::Channel> 			formattingChannel;	///< formatter
+		Poco::AutoPtr<Poco::SplitterChannel>	splitterChannel;	///< channel source mixer
+		Poco::AutoPtr<Poco::ConsoleChannel> 	consoleChannel;		///< the console io channel
+		Poco::AutoPtr<Poco::FileChannel> 		fileChannel;		///< the file io channel
 		
-		static bool bTimestamp;
+		bool bConsole;	///< are we printing to the console?
+		bool bFile;		///< are we printing to a file?
+		
+		bool bHeader;	///< are we printing the header?
+		bool bDate;		///< print the date?
+		bool bTime;		///< print the time?
+		bool bFrameNum;	///< print the frame num?
+		bool bMillis;	///< print the elapsed millis?
 		
 	private:
 		
-		static const string s_timestampFormat;
+		// logs the message to the specified logger
+		void _log(ofLogLevel logLevel, const string& message, Poco::Logger* theLogger);
 		
-		//std::map<string, ofLogLevel> verboseNames;
+		// date formats for the header
+		static const string s_dateFormat;
+		static const string s_timeFormat;
+		static const string s_dateAndTimeFormat;
+		
+		std::map<string, ofLogLevel> topics;
 	
 		// hide all the constructors, copy functions here
 		ofLogger(ofLogger const&);    			// not defined, not copyable
@@ -80,18 +145,23 @@ class ofLogger{
     how to catch std::endl (which is actually a func pointer):
         http://yvan.seth.id.au/Entries/Technology/Code/std__endl.html
 **/
-class ofLogNotice{
+class ofLogNotice {
+
     public:
 
         //
         //    \brief  select log type
         //    \param  type    log type to log to
         //
-		ofLogNotice(){
-			logLevel = OF_LOG_WARNING;
+		ofLogNotice() {
+			level = OF_LOG_NOTICE;
 		}
-        ofLogNotice(ofLogLevel logLevel){
-			this->logLevel = logLevel;
+        ofLogNotice(ofLogLevel logLevel) {
+			level = logLevel;
+		}
+		ofLogNotice(string logTopic) {
+			level = OF_LOG_NOTICE;
+			topic = logTopic;
 		}
 
         /// does the actual printing on exit
@@ -99,30 +169,45 @@ class ofLogNotice{
 
         /// catch << with a template class to read any type of data
         template <class T> 
-		ofLogNotice& operator<<(const T& value){
-            line << value;
+		ofLogNotice& operator<<(const T& value) {
+            message << value;
             return *this;
         }
 
         /// catch << ostream function pointers such as std::endl and std::hex
-        ofLogNotice& operator<<(std::ostream& (*func)(std::ostream&)){
-			func(line);
+        ofLogNotice& operator<<(std::ostream& (*func)(std::ostream&)) {
+			func(message);
             return *this;
         }
-		
-		/// timestamp controls
-		static void enableTimestamp();
-		static void disableTimestamp();
-		static bool usingTimestamp();
 
-		static void setLevel(ofLogLevel logLevel){
-			ofLogger::instance().logger->setLevel(logLevel);
-		}
+//		/// datestamp constrols
+//		static void enableDate();
+//		static void disableDate();
+//		static bool usingDate();
+//		
+//		/// timestamp controls
+//		static void enableTime();
+//		static void disableTime();
+//		static bool usingTime();
+//		
+//		/// timestamp controls
+//		static void enableFrame();
+//		static void disableFrame();
+//		static bool usingFrame();
+
+		/// global log level controls
+		static void setLevel(ofLogLevel logLevel);
+		static ofLogLevel getLevel();
 		
+	protected:
+	
+		ofLogLevel level;	///< log level
+			
 	private:
 	
-        ofLogLevel logLevel;			///< log level
-        std::ostringstream line;	///< temp buffer
+		string topic;		///< log topic
+
+        std::ostringstream message;	///< temp buffer
 		
 		ofLogNotice(ofLogNotice const&) {}        		// not defined, not copyable
         ofLogNotice& operator = (ofLogNotice const&) {}	// not defined, not assignable
@@ -131,35 +216,40 @@ class ofLogNotice{
 // derived log classes for nice names
 
 //--------------------------------------------------
-class ofLogVerbose : public ofLogNotice{
+class ofLogVerbose : public ofLogNotice {
 	public:
 		ofLogVerbose() : ofLogNotice(OF_LOG_VERBOSE) {}
+		ofLogVerbose(string logTopic) : ofLogNotice(logTopic) {}
 };
 
 //--------------------------------------------------
-class ofLogDebug : public ofLogNotice{
+class ofLogDebug : public ofLogNotice {
 	public:
 		ofLogDebug() : ofLogNotice(OF_LOG_DEBUG) {}
+		ofLogDebug(string logTopic) : ofLogNotice(logTopic) {}
 };
 
 //--------------------------------------------------
-class ofLogWarning : public ofLogNotice{
+class ofLogWarning : public ofLogNotice {
 	public:
 		ofLogWarning() : ofLogNotice(OF_LOG_WARNING) {}
+		ofLogWarning(string logTopic) : ofLogNotice(logTopic) {}
 };
 
 //--------------------------------------------------
-class ofLogError : public ofLogNotice{
+class ofLogError : public ofLogNotice {
 	public:
 		ofLogError() : ofLogNotice(OF_LOG_ERROR) {}
+		ofLogError(string logTopic) : ofLogNotice(logTopic) {}
 };
 
 //--------------------------------------------------
-class ofLogFatalError : public ofLogNotice{
+class ofLogFatalError : public ofLogNotice {
 	public:
 		ofLogFatalError() : ofLogNotice(OF_LOG_FATAL_ERROR) {}
+		ofLogFatalError(string logTopic) : ofLogNotice(logTopic) {}
 };
 
 //----------------------------------------------
-void ofLog(ofLogLevel logLevel, string message);
+void ofLog(ofLogLevel logLevel, const string& message);
 void ofLog(ofLogLevel logLevel, const char* format, ...);
