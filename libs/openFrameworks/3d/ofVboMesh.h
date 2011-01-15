@@ -3,7 +3,9 @@
 #include "ofMesh.h"
 #include "ofVbo.h"
 
-//TODO: SHORTS as storage (iphone will refuse > 256x256)
+enum{
+	
+};
 
 class ofVboMesh{
 public:
@@ -30,6 +32,8 @@ public:
 	void addTriangles(const vector<ofVec3f>& verts);
 	void addTriangleFan(const vector<ofVec3f>& verts);
 	void addTriangleStrip(const vector<ofVec3f>& verts);
+	
+	void addMeshVertices(const vector<ofVec3f>& verts);
 	
 	// build index array from faces as int* 
 	vector<GLuint> indices;

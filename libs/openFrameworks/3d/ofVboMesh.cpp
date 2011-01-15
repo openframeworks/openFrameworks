@@ -72,21 +72,65 @@ void ofVboMesh::drawFaces(){
 
 //--------------------------------------------------------------
 void ofVboMesh::addTriangles(const vector<ofVec3f>& verts){
-	/*
 	if(verts.size()%3==0){
+		//store current size of the mesh vertices
+		int curSize = mesh->vertices.size();
+		addMeshVertices(verts);
+		for (int i = 0; i < verts.size()-2;i++){
+			int index = i+curSize;
+			mesh->addFace(index, index+1, index+2);
+			indices.push_back(index);
+			indices.push_back(index+1);
+			indices.push_back(index+2);
+		}
 	}else {
-		//ofLog
+		ofLog(OF_LOG_ERROR,"ofVboMesh::addTriangles: trying to create triangles from non-divisble-by-three array");
 		return;
 	}
-	 */
 }
 
 //--------------------------------------------------------------
 void ofVboMesh::addTriangleFan(const vector<ofVec3f>& verts){
-	//>3
+	if(verts.size()>=3){
+		//store current size of the mesh vertices
+		int curSize = mesh->vertices.size();
+		addMeshVertices(verts);
+		for (int i = 1; i < verts.size()-1;i++){
+			int index = i+curSize;
+			mesh->addFace(0, index, index+1);
+			indices.push_back(0);
+			indices.push_back(index);
+			indices.push_back(index+1);
+		}
+	}else {
+		ofLog(OF_LOG_ERROR,"ofVboMesh::addTriangleFan: must supply at least 3 vertices");
+		return;
+	}
 }
 
 //--------------------------------------------------------------
 void ofVboMesh::addTriangleStrip(const vector<ofVec3f>& verts){
-	//>3
+	if(verts.size()>=3){
+		//store current size of the mesh vertices
+		int curSize = mesh->vertices.size();
+		addMeshVertices(verts);
+		for (int i = 0; i < verts.size()-1;i++){
+			int index = i+curSize;
+			mesh->addFace(index, index+1, index+2);
+		}
+	}else {
+		ofLog(OF_LOG_ERROR,"ofVboMesh::addTriangleFan: must supply at least 3 vertices");
+		return;
+	}
+}
+
+//--------------------------------------------------------------
+void ofVboMesh::addMeshVertices(const vector<ofVec3f>& verts){
+	for (int i =0; i < verts.size(); i++){
+		//copy vec3 info
+		mesh->vertices.push_back(verts[i]);
+		//if we want to use this info, we need to match the vert size
+		if(mesh->bUsingTexCoords) mesh->texCoords.push_back(ofVec2f(0,0));
+		if(mesh->bUsingColors) mesh->colors.push_back(ofColor(255,255,255,255));
+	}
 }
