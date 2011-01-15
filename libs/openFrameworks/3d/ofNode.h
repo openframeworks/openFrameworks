@@ -9,19 +9,16 @@
 // Nodes 'look' along -ve z axis
 
 
-// a 3d transformation
+// a generic 3d object in space with transformation (position, rotation, scale)
+// with API to move around in global or local space
+// and virtual draw methods
+
 class ofNode {
 public:
 	ofNode();
 	virtual ~ofNode() {}
 
-	
-	// draw functions. do NOT override these
-	// transforms the node to its position and calls the virtual 'customDraw' methods which you CAN override
-	void draw();
-	void debugDraw();
-	
-
+	// set parent to link nodes
 	// transformations are inherited from parent node
 	// set to NULL if not needed (default)
 	void setParent(ofNode* parent);
@@ -103,6 +100,8 @@ public:
 	void rotate(float degrees, const ofVec3f& v);	// rotate around arbitrary axis by angle
 	void rotate(float degrees, float vx, float vy, float vz);
 	
+	void rotateAround(const ofQuaternion& q, const ofVec3f& point);	// rotate by quaternion around point
+	void rotateAround(float degrees, const ofVec3f& axis, const ofVec3f& point);	// rotate around arbitrary axis by angle around point
 	
 	// orient node to look at position (-ve z axis pointing to node)
 	void lookAt(const ofVec3f& lookAtPosition, const ofVec3f& upVector = ofVec3f(0, 1, 0));
@@ -113,7 +112,29 @@ public:
 	void orbit(float longitude, float latitude, float radius, const ofVec3f& centerPoint = ofVec3f(0, 0, 0));
 	void orbit(float longitude, float latitude, float radius, ofNode& centerNode);
 	
+	
+	// set opengl's modelview matrix to this nodes transform
+	// if you want to draw something at the position+orientation+scale of this node...
+	// ...call ofNode::transform(); write your draw code, and ofNode::restoreTransform();
+	// OR A simpler way is to extend ofNode and override ofNode::customDraw();
+	void transform();
+	void restoreTransform();
+	
+	
+	// resets this node's transformation
 	void resetTransform();
+	
+
+	// if you extend ofNode and wish to change the way it draws, extend these
+	virtual void customDraw() {}
+	virtual void customDebugDraw();
+	
+	
+	// draw functions. do NOT override these
+	// transforms the node to its position+orientation+scale
+	// and calls the virtual 'customDraw' method which you CAN override
+	void draw();
+	void debugDraw();
 	
 protected:
 	ofNode *parent;
@@ -124,11 +145,9 @@ protected:
 	
 	ofVec3f axis[3];
 	
-	void updateMatrix();
-
-	virtual void customDraw() {};	// override this one
-	virtual void customDebugDraw();
+	virtual void updateMatrix();
 	
+
 private:
 //	bool		isMatrixDirty;
 	ofMatrix4x4 transformMatrix;

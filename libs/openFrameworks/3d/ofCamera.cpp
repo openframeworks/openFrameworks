@@ -10,6 +10,16 @@
 #include "ofCamera.h"
 #include "ofMain.h"
 
+
+ofCamera::ofCamera()
+:fov(60),
+nearClip(0),
+farClip(0),
+isOrtho(false),
+isActive(false)
+{
+}
+
 //----------------------------------------
 void ofCamera::setFov(float f) {
 	fov = f;

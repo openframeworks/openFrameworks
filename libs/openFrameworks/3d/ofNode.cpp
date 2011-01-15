@@ -216,6 +216,18 @@ void ofNode::rotate(float degrees, float vx, float vy, float vz) {
 	rotate(ofQuaternion(degrees, ofVec3f(vx, vy, vz)));
 }
 
+//----------------------------------------
+void ofNode::rotateAround(const ofQuaternion& q, const ofVec3f& point) {
+	
+}
+
+
+//----------------------------------------
+void ofNode::rotateAround(float degrees, const ofVec3f& axis, const ofVec3f& point) {
+	
+}
+
+
 
 //----------------------------------------
 void ofNode::lookAt(const ofVec3f& lookAtPosition, const ofVec3f& upVector) {
@@ -338,11 +350,13 @@ void ofNode::orbit(float longitude, float latitude, float radius, const ofVec3f&
 	lookAt(centerPoint);//, v - centerPoint);
 }
 
+//----------------------------------------
 void ofNode::orbit(float longitude, float latitude, float radius, ofNode& centerNode) {
 	orbit(longitude, latitude, radius, centerNode.getGlobalPosition());
 }
 
 
+//----------------------------------------
 void ofNode::resetTransform() {
 	setPosition(ofVec3f());
 	setOrientation(ofVec3f());
@@ -350,26 +364,34 @@ void ofNode::resetTransform() {
 
 //----------------------------------------
 void ofNode::draw() {
-	glPushMatrix();
-	glMultMatrixf(getGlobalMatrix().getPtr());
+	transform();
 	customDraw();
-	glPopMatrix();
+	restoreTransform();
 }
 
 
 
 //----------------------------------------
 void ofNode::debugDraw() {
-	glPushMatrix();
-	glMultMatrixf(getGlobalMatrix().getPtr());
+	transform();
 	customDebugDraw();
-	glPopMatrix();
+	restoreTransform();
 }
 
 
 //----------------------------------------
+void ofNode::transform() {
+	glPushMatrix();
+	glMultMatrixf(getGlobalMatrix().getPtr());
+}
+
+//----------------------------------------
+void ofNode::restoreTransform() {
+	glPopMatrix();
+}
+
+//----------------------------------------
 void ofNode::customDebugDraw() {
-	ofSetColor(255, 255, 0);
 	ofBox(0, 0, 0, 10);
 	
 	float axisLength = 15;

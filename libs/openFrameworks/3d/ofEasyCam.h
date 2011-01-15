@@ -48,4 +48,31 @@ protected:
 
 	float speed;
 	float drag;
+	
+	// arcball stuff
+	// TODO: cleanup
+//	GLfloat ab_quat[16];
+//	GLfloat ab_last[16];
+//	GLfloat ab_next[16];
+//	
+//	GLfloat ab_zoom;
+//	GLfloat ab_zoom2;
+//	GLfloat ab_sphere;
+//	GLfloat ab_sphere2;
+//	GLfloat ab_edge;
+//	bool ab_planar;
+//	GLfloat ab_planedist;
+//	
+//	vec ab_start;
+//	vec ab_curr;
+//	vec ab_eye;
+//	vec ab_eyedir;
+//	vec ab_up;
+//	vec ab_out;
+//	
+//	GLdouble ab_glp[16];
+//	GLdouble ab_glm[16];
+//	int ab_glv[4];
+//	
+//	
 };

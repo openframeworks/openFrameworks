@@ -15,8 +15,10 @@ int			targetIndex[2];		// which test node to target (one for each camera)
 int			camToView = 0;
 int			camToConfigure = 1;
 
-bool		doOrbit = false;
+bool		doMouseOrbit = false;
 float		orbitRadius = 100;
+
+bool		doAutoOrbit = false;
 
 
 void reset() {
@@ -73,12 +75,21 @@ void testApp::draw(){
 	if(targetIndex[0] >= 0) cam[0].lookAt(testNodes[targetIndex[0]]);
 	if(targetIndex[1] >= 0) cam[1].lookAt(testNodes[targetIndex[1]]);
 	
-	// orbit camera
-	if(doOrbit) {
+	// mouse orbit camera
+	if(doMouseOrbit) {
 		if(targetIndex[1] < 0) {
 			cam[1].orbit(ofMap(mouseX, 0, ofGetWidth(), 180, -180), ofMap(mouseY, 0, ofGetHeight(), 90, -90), orbitRadius);
 		} else {
 			cam[1].orbit(ofMap(mouseX, 0, ofGetWidth(), 180, -180), ofMap(mouseY, 0, ofGetHeight(), 90, -90), orbitRadius, testNodes[targetIndex[1]]);
+		}
+	}
+	
+	// auto orbit camera
+	if(doAutoOrbit) {
+		if(targetIndex[1] < 0) {
+			cam[1].orbit(ofGetElapsedTimef(), 50, orbitRadius);
+		} else {
+			cam[1].orbit(ofGetElapsedTimef(), 50, orbitRadius,  testNodes[targetIndex[1]]);
 		}
 	}
 	
@@ -118,6 +129,8 @@ void testApp::draw(){
 		testNodes[i].draw();
 	}
 	
+	
+	ofSetColor(255, 255, 0);
 	cam[0].debugDraw();
 	cam[1].debugDraw();
 	
@@ -146,8 +159,12 @@ void testApp::draw(){
 	"\n" + 
 	"v      switch camera to view: " + ofToString(camToView) + "\n" +
 	"\n" + 
+	
+	"o      toggle mouse orbit for cam1\n" + 
+	"O      toggle auto orbit for cam1\n" + 
+
+	"\n" + 
 	"c      switch camera to configure: " + ofToString(camToConfigure) + "\n" +
-	" o      toggle orbit (use mouse to orbit)\n" + 
 	" t      cycle target\n" + 
 	" LEFT   pan left\n" + 
 	" RIGHT  pan right\n" + 
@@ -200,14 +217,21 @@ void testApp::keyPressed(int key){
 		case 'r': n->boom(kMoveInc); break;
 		case 'f': n->boom(-kMoveInc); break;
 			
-		case 'o': doOrbit ^= true; break;
+		case 'o':
+			doMouseOrbit ^= true;
+			doAutoOrbit = false;
+			break;
 			
 		case 'O':
-			if(cam[camToView].getOrtho()) {
-				cam[camToView].disableOrtho();
-			} else {
-				cam[camToView].enableOrtho();
-			}
+			doMouseOrbit = false;
+			doAutoOrbit ^= true;
+			break;
+			
+//			if(cam[camToView].getOrtho()) {
+//				cam[camToView].disableOrtho();
+//			} else {
+//				cam[camToView].enableOrtho();
+//			}
 			break;
 			
 		case 'z':
@@ -240,7 +264,7 @@ void testApp::mouseMoved(int x, int y ){
 //--------------------------------------------------------------
 void testApp::mouseDragged(int x, int y, int button){
 	static float px = -1;
-	if(doOrbit) {
+	if(doMouseOrbit) {
 		if(px>=0) orbitRadius += x - px;
 		px = x;
 	}

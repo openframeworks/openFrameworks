@@ -7,18 +7,24 @@
  *
  */
 
+// TODO:
+// attenuation
+// spotlight stuff
+
+
 #pragma once
 
 #include "ofNode.h"
 #include "ofColor.h"
 
-#define OF_MAX_LIGHTS		8		// max number of lights allowed by opengl
+#define OF_MAX_LIGHTS		8		// max number of lights allowed by default opengl
 
 void ofEnableLighting();
 void ofDisableLighting();
 bool ofGetLightingEnabled();
 
 //----------------------------------------
+// Use the public API of ofNode for all transformations
 class ofLight : public ofNode {
 public:
 	ofLight();
@@ -26,7 +32,10 @@ public:
 	
 	void enable();
 	void disable();
-	void getIsEnabled();
+	bool getIsEnabled() const;
+	
+	void setDirectional(bool b);
+	bool getIsDirectional() const;
 	
 	void setAmbientColor(const ofColor& c);
 	void setDiffuseColor(const ofColor& c);
@@ -36,12 +45,16 @@ public:
 	ofColor getDiffuseColor() const;
 	ofColor getSpecularColor() const;
 	
+	
+	// this method overrides ofNode to catch the changes and update glLightv(GL_POSITION)
+	virtual void updateMatrix();
+	
 protected:
 	ofColor ambientColor;
 	ofColor diffuseColor;
 	ofColor specularColor;
 	
-	int index;
+	int glIndex;
 	int isEnabled;
-	
+	bool isDirectional;
 };

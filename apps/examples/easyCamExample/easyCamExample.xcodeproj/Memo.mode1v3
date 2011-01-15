@@ -334,7 +334,7 @@
 										<key>_historyCapacity</key>
 										<integer>40</integer>
 										<key>bookmark</key>
-										<string>BBFDBA9612E162E900FB94F8</string>
+										<string>BB40210412E229770002A877</string>
 										<key>history</key>
 										<array>
 											<string>BBE7F06D12DF98050039489F</string>
@@ -342,8 +342,9 @@
 											<string>BB2FA66B12E0EDDF00CB8632</string>
 											<string>BBFDB95B12E147F400FB94F8</string>
 											<string>BBFDB95D12E147F400FB94F8</string>
-											<string>BBFDB9AA12E14A7D00FB94F8</string>
-											<string>BBFDBA1612E1522200FB94F8</string>
+											<string>BB40210112E229770002A877</string>
+											<string>BB40210212E229770002A877</string>
+											<string>BB40210312E229770002A877</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>
@@ -401,9 +402,9 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>BBFDB96112E147F400FB94F8</string>
+				<string>BB401FD112E179EB0002A877</string>
 				<string>1CE0B1FE06471DED0097A5F4</string>
-				<string>BBFDB96212E147F400FB94F8</string>
+				<string>BB401FD212E179EB0002A877</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20506471E060097A5F4</string>
 			</array>
@@ -541,8 +542,8 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
-		<string>BBFDB9B412E14A7D00FB94F8</string>
-		<string>BBFDB9B512E14A7D00FB94F8</string>
+		<string>BB401FDC12E179EB0002A877</string>
+		<string>BB401FDD12E179EB0002A877</string>
 		<string>1C78EAAD065D492600B07095</string>
 		<string>1CD10A99069EF8BA00B06720</string>
 		<string>BBAEB25612DE2F7B007FD423</string>
@@ -565,14 +566,12 @@
 					<key>Dock</key>
 					<array>
 						<dict>
-							<key>BecomeActive</key>
-							<true/>
 							<key>ContentConfiguration</key>
 							<dict>
 								<key>PBXProjectModuleGUID</key>
 								<string>1CD0528F0623707200166675</string>
 								<key>PBXProjectModuleLabel</key>
-								<string>glut.h</string>
+								<string></string>
 								<key>StatusBarVisibility</key>
 								<true/>
 							</dict>
@@ -628,7 +627,7 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>BBAEB25612DE2F7B007FD423</string>
-				<string>BBFDB8EF12E1386B00FB94F8</string>
+				<string>BB401FD312E179EB0002A877</string>
 				<string>1CD0528F0623707200166675</string>
 				<string>XCMainBuildResultsModuleGUID</string>
 			</array>
@@ -750,13 +749,13 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>1CD10A99069EF8BA00B06720</string>
-				<string>BBFDB9AC12E14A7D00FB94F8</string>
+				<string>BB401FD412E179EB0002A877</string>
 				<string>1C162984064C10D400B95A72</string>
-				<string>BBFDB9AD12E14A7D00FB94F8</string>
-				<string>BBFDB9AE12E14A7D00FB94F8</string>
-				<string>BBFDB9AF12E14A7D00FB94F8</string>
-				<string>BBFDB9B012E14A7D00FB94F8</string>
-				<string>BBFDB9B112E14A7D00FB94F8</string>
+				<string>BB401FD512E179EB0002A877</string>
+				<string>BB401FD612E179EB0002A877</string>
+				<string>BB401FD712E179EB0002A877</string>
+				<string>BB401FD812E179EB0002A877</string>
+				<string>BB401FD912E179EB0002A877</string>
 			</array>
 			<key>ToolbarConfiguration</key>
 			<string>xcode.toolbar.config.debugV3</string>
@@ -910,7 +909,7 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>1C78EAAD065D492600B07095</string>
-				<string>BBFDB9B212E14A7D00FB94F8</string>
+				<string>BB401FDA12E179EB0002A877</string>
 				<string>1C78EAAC065D492600B07095</string>
 			</array>
 			<key>ToolbarConfiguration</key>
