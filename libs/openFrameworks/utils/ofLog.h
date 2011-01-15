@@ -271,7 +271,7 @@ class ofLogNotice{
 		/// \section Global Log Function Wrappers
 		///
 		/// Ok Ok, I know this looks scary ... but it's just a long list
-		/// of static public wrappers to access the protected ofLogger class.
+		/// of static public wrappers to access the ofLogger class.
 		/// 
 		/// I know I probably should put the function implementation in the .cpp
 		/// file, but it's late and I want to finish this. Some one else can do
@@ -409,7 +409,7 @@ ofLogLevel ofLogGetLevel();
 ///	\section Global Log Function Wrappers
 ///
 /// I know this looks long and scary, but they are just public wrappers around
-/// the ofLogger protected class.
+/// the ofLogger class.
 ///
 /// Hopefully these could be removed in the near future ...
 ///
