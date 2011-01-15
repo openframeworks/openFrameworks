@@ -321,6 +321,7 @@ istream& operator>>(istream& is, ofMatrix3x3& M) {
 	is >> M.e; is.ignore(2);
 	is >> M.f; is.ignore(1);
 	is >> M.h;
+	return is;
 }
 
 
