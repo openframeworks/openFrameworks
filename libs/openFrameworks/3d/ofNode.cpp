@@ -33,7 +33,7 @@ void ofNode::setPosition(const ofVec3f& p) {
 	position = p;
 	//	isMatrixDirty = true;
 	updateMatrix();
-	//	transformMatrix.setTranslation(position);
+	//	transformationMatrix.setTranslation(position);
 }
 
 
@@ -66,7 +66,7 @@ void ofNode::setOrientation(const ofQuaternion& q) {
 	orientation = q;
 	//	isMatrixDirty = true;
 	updateMatrix();
-	//	transformMatrix.setRotate(orientation);
+	//	transformationMatrix.setRotate(orientation);
 }
 
 
@@ -157,7 +157,7 @@ void ofNode::move(const ofVec3f& offset) {
 	position += offset;
 	//	isMatrixDirty = true;
 	updateMatrix();
-	//	transformMatrix.translate(offset);
+	//	transformationMatrix.translate(offset);
 }
 
 
@@ -202,7 +202,7 @@ void ofNode::rotate(const ofQuaternion& q) {
 	orientation *= q;
 	//	isMatrixDirty = true;
 	updateMatrix();
-	//	transformMatrix.rotate(q);
+	//	transformationMatrix.rotate(q);
 }
 
 //----------------------------------------
@@ -218,7 +218,9 @@ void ofNode::rotate(float degrees, float vx, float vy, float vz) {
 
 //----------------------------------------
 void ofNode::rotateAround(const ofQuaternion& q, const ofVec3f& point) {
-	
+//	ofMatrix4x4 m = transformationMatrix;
+//	m.setPosition(point);
+//	m.rotate(q);
 }
 
 
@@ -232,9 +234,9 @@ void ofNode::rotateAround(float degrees, const ofVec3f& axis, const ofVec3f& poi
 //----------------------------------------
 void ofNode::lookAt(const ofVec3f& lookAtPosition, const ofVec3f& upVector) {
 	ofMatrix4x4 m;
-	transformMatrix.makeLookAtMatrix(position, lookAtPosition, upVector);
-	//	transformMatrix.scale(scale);
-	orientation = transformMatrix.getRotate();
+	transformationMatrix.makeLookAtMatrix(position, lookAtPosition, upVector);
+	//	transformationMatrix.scale(scale);
+	orientation = transformationMatrix.getRotate();
 	updateMatrix();
 }
 
@@ -295,13 +297,13 @@ float ofNode::getRoll() const {
 
 //----------------------------------------
 //void ofNode::setMatrix(const ofMatrix4x4& matrix) {
-//	this->transformMatrix = matrix;
+//	this->transformationMatrix = matrix;
 //}
 
 //----------------------------------------
 const ofMatrix4x4& ofNode::getMatrix() {
 	//	updateMatrix();
-	return transformMatrix;
+	return transformationMatrix;
 }
 
 //----------------------------------------
@@ -425,9 +427,9 @@ void ofNode::customDebugDraw() {
 void ofNode::updateMatrix() {
 	//if(isMatrixDirty) {
 	//	isMatrixDirty = false;
-	transformMatrix.makeScaleMatrix(scale);
-	transformMatrix.rotate(orientation);
-	transformMatrix.setTranslation(position);
+	transformationMatrix.makeScaleMatrix(scale);
+	transformationMatrix.rotate(orientation);
+	transformationMatrix.setTranslation(position);
 	
 	if(scale[0]>0) axis[0] = getMatrix().getRowAsVec3f(0)/scale[0];
 	if(scale[1]>0) axis[1] = getMatrix().getRowAsVec3f(1)/scale[1];

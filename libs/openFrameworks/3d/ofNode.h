@@ -150,5 +150,5 @@ protected:
 
 private:
 //	bool		isMatrixDirty;
-	ofMatrix4x4 transformMatrix;
+	ofMatrix4x4 transformationMatrix;
 };
