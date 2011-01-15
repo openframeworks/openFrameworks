@@ -389,20 +389,16 @@ class ofLogFatalError : public ofLogNotice{
 
 //-------------------------------------------------------
 ///
-///	\section Global Log Functions
+///	\section Legacy Log Functions
 ///	
+/// These are implemented as wrappers around the ofLogger class.
+///
 ///	log a message at a specific log level
 void ofLog(ofLogLevel logLevel, const string& message);
 void ofLog(ofLogLevel logLevel, const char* format, ...);
 
-//--------------------------------------------------------------
-///
-///	\section Legacy Log Functions
-///
-/// These are implemented as wrappers around the ofLogger class.
-///
-void ofLogSetLevel(ofLogLevel logLevel);
-ofLogLevel ofLogGetLevel();
+void ofSetLogLevel(ofLogLevel logLevel);
+ofLogLevel ofGetLogLevel();
 
 //----------------------------------------------------------------------------
 ///

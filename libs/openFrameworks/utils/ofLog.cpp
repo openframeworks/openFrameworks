@@ -371,6 +371,14 @@ void ofLog(ofLogLevel logLevel, const char* format, ...){
 	ofLogger::instance().log(logLevel, (string) line);
 }
 
+void ofSetLogLevel(ofLogLevel logLevel){
+	ofLogger::instance().setLevel(logLevel);
+}
+
+ofLogLevel ofGetLogLevel(){
+	return ofLogger::instance().getLevel();
+}
+
 //---------------------------------------------------------------------------
 void ofLogEnableConsole()	{ofLogger::instance().enableConsole();}
 void ofLogDisableConsole()	{ofLogger::instance().disableConsole();}
