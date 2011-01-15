@@ -5,6 +5,10 @@
 #include "Poco/String.h"
 #include "ofAppRunner.h"
 
+#include <Poco/LocalDateTime.h>
+#include <Poco/DateTimeFormatter.h>
+
+
 #if defined(TARGET_OF_IPHONE) || defined(TARGET_OSX ) || defined(TARGET_LINUX)
 	#include "sys/time.h"
 #endif
@@ -61,6 +65,26 @@ unsigned long ofGetSystemTime( ) {
 			return timeGetTime();
 		#endif
 	#endif
+}
+
+//--------------------------------------------------
+unsigned int ofGetUnixTime(){
+	return (unsigned int)time;
+}
+
+//default ofGetTimestampString returns in this format: 2011-01-15-18-29-35-299
+//--------------------------------------------------
+string ofGetTimestampString(){
+	string timeFormat = "%Y-%m-%d-%H-%M-%S-%i";
+	Poco::LocalDateTime now;
+	return Poco::DateTimeFormatter::format(now, timeFormat);
+}
+
+//specify the string format - eg: %Y-%m-%d-%H-%M-%S-%i ( 2011-01-15-18-29-35-299 ) 
+//--------------------------------------------------
+string ofGetTimestampString(string timestampFormat){
+	Poco::LocalDateTime now;
+	return Poco::DateTimeFormatter::format(now, timestampFormat);
 }
 
 //--------------------------------------------------
@@ -220,6 +244,10 @@ string ofToDataPath(string path, bool makeAbsolute){
 
 	}
 	return path;
+}
+
+ofGetDataPath(){
+
 }
 
 //----------------------------------------

@@ -21,7 +21,15 @@ int 	ofGetSeconds();
 int 	ofGetMinutes();
 int 	ofGetHours();
 
+//number of seconds since 1970
+unsigned int ofGetUnixTime();
+
 unsigned long ofGetSystemTime( );			// system time in milliseconds;
+
+		//returns 
+string ofGetTimestampString();
+string ofGetTimestampString(string timestampFormat);
+
 
 int     ofGetYear();
 int     ofGetMonth();

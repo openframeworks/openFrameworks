@@ -12,6 +12,8 @@ const string ofLogger::s_dateFormat = "%Y-%m-%d %H:%M:%S.%i";
 const string ofLogger::s_timeFormat = "%H:%M:%S.%i";
 const string ofLogger::s_dateAndTimeFormat = "%Y-%m-%d %H:%M:%S.%i";
 
+//TODO: logfile currently overwrites the file - make it append
+
 //
 // Useful references:
 //  - http://pocoproject.org/docs/Poco.Logger.html
