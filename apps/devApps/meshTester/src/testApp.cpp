@@ -28,8 +28,6 @@ void testApp::setup(){
     glEnable(GL_LIGHTING);
     glEnable(GL_LIGHT0);
 	 */
-	
-	cout << GL_POINTS << " " << GL_LINES << " " << GL_TRIANGLES << endl;
 }
 
 //--------------------------------------------------------------
@@ -48,7 +46,7 @@ void testApp::draw(){
 	glTranslatef(17,0,0);
 
 	for (int i =0; i < meshes.size();i++){
-		meshes[i].drawVertices();
+		meshes[i].drawWireframe();
 		/*
 		for (int j=0; j<meshes[i].mesh->vertices.size(); j++){
 			glVertex3f(meshes[i].mesh->vertices[j].x,meshes[i].mesh->vertices[j].y,meshes[i].mesh->vertices[j].z);

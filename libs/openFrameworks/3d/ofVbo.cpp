@@ -59,6 +59,7 @@ void ofVbo::setColorData(const ofColor * colors, int total, int usage) {
 	glBufferData(GL_ARRAY_BUFFER_ARB, total * sizeof(ofColor), &colors[0].r, usage);	
 }
 
+//--------------------------------------------------------------
 void ofVbo::setIndexData(const int * indices, int total, int type){
 	if(indices == NULL){
 		ofLog(OF_LOG_WARNING,"ofVbo: bad index data!\n");
@@ -69,7 +70,6 @@ void ofVbo::setIndexData(const int * indices, int total, int type){
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexId);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * total * type, &indices[0], GL_STATIC_DRAW);
 }
-
 
 //--------------------------------------------------------------
 void ofVbo::updateColorData(const ofColor * colors, int total) {
@@ -87,9 +87,12 @@ void ofVbo::updateVertexData(const ofVec3f * verts, int total) {
 	}
 }
 
+//--------------------------------------------------------------
 float* ofVbo::getVertPointer(){
 	return vertData;
 }
+
+//--------------------------------------------------------------
 float* ofVbo::getColorPointer(){
 	return colorData;
 }
@@ -103,16 +106,22 @@ float* ofVbo::getTexCoordPointer(){
 }
  */
 
+//--------------------------------------------------------------
 GLuint ofVbo::getVertId(){
 	return vertId;
 }
+
+//--------------------------------------------------------------
 GLuint ofVbo::getColorId(){
 	return colorId;
 }
 
+//--------------------------------------------------------------
 GLuint ofVbo::getNormalId(){
 	return normalId;
 }
+
+//--------------------------------------------------------------
 GLuint ofVbo::getTexCoordId(){
 	return texCoordId;
 }
@@ -169,6 +178,7 @@ void ofVbo::draw(int first, int total) {
 	}
 }
 
+//--------------------------------------------------------------
 void ofVbo::clear(){
 	glDeleteBuffers(1, &vertId);
 	glDeleteBuffers(1, &indexId);
