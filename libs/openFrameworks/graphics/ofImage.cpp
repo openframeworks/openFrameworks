@@ -63,6 +63,8 @@ bool ofImage::loadImage(string fileName){
 	bLoadedOk = loadImageIntoPixels(fileName, myPixels);
 	if (bLoadedOk && myPixels.isAllocated() && bUseTexture){
 		tex.allocate(myPixels.getWidth(), myPixels.getHeight(), myPixels.getGlDataType());
+	} else {
+		ofLog(OF_LOG_ERROR, "Couldn't load image from " + fileName);
 	}
 	update();
 	return bLoadedOk;
@@ -581,15 +583,15 @@ void  ofImage::saveImageFromPixels(string fileName, ofPixels &pix, ofImageCompre
 			if((FREE_IMAGE_FORMAT) fif == FIF_JPEG) {
 				int quality = JPEG_QUALITYSUPERB;
 				switch(compressionLevel) {
-					case OF_IMAGE_COMPRESSION_WORST: quality = JPEG_QUALITYBAD; break;
-					case OF_IMAGE_COMPRESSION_LOW: quality = JPEG_QUALITYAVERAGE; break;
-					case OF_IMAGE_COMPRESSION_MEDIUM: quality = JPEG_QUALITYNORMAL; break;
-					case OF_IMAGE_COMPRESSION_HIGH: quality = JPEG_QUALITYGOOD; break;
-					case OF_IMAGE_COMPRESSION_BEST: quality = JPEG_QUALITYSUPERB; break;
+					case OF_IMAGE_QUALITY_WORST: quality = JPEG_QUALITYBAD; break;
+					case OF_IMAGE_QUALITY_LOW: quality = JPEG_QUALITYAVERAGE; break;
+					case OF_IMAGE_QUALITY_MEDIUM: quality = JPEG_QUALITYNORMAL; break;
+					case OF_IMAGE_QUALITY_HIGH: quality = JPEG_QUALITYGOOD; break;
+					case OF_IMAGE_QUALITY_BEST: quality = JPEG_QUALITYSUPERB; break;
 				}
 				FreeImage_Save(fif, bmp, fileName.c_str(), quality);
 			} else {
-				if(compressionLevel != OF_IMAGE_COMPRESSION_BEST) {
+				if(compressionLevel != OF_IMAGE_QUALITY_BEST) {
 					ofLog(OF_LOG_WARNING, "ofImageCompressionType only applies to JPEG images, ignoring value.");
 				}
 				FreeImage_Save(fif, bmp, fileName.c_str());
