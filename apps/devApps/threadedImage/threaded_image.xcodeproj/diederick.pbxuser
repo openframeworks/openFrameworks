@@ -94,6 +94,35 @@
 			E93D0AD512E25D4E003F1AA8 /* PBXTextBookmark */ = E93D0AD512E25D4E003F1AA8 /* PBXTextBookmark */;
 			E93D0AD612E25D51003F1AA8 /* PBXTextBookmark */ = E93D0AD612E25D51003F1AA8 /* PBXTextBookmark */;
 			E93D0AD712E25D64003F1AA8 /* PBXTextBookmark */ = E93D0AD712E25D64003F1AA8 /* PBXTextBookmark */;
+			E93D0ADA12E25E4A003F1AA8 /* PBXTextBookmark */ = E93D0ADA12E25E4A003F1AA8 /* PBXTextBookmark */;
+			E93D0ADB12E25E4F003F1AA8 /* PBXTextBookmark */ = E93D0ADB12E25E4F003F1AA8 /* PBXTextBookmark */;
+			E93D0ADC12E25E4F003F1AA8 /* PBXTextBookmark */ = E93D0ADC12E25E4F003F1AA8 /* PBXTextBookmark */;
+			E93D0ADD12E25E4F003F1AA8 /* PBXTextBookmark */ = E93D0ADD12E25E4F003F1AA8 /* PBXTextBookmark */;
+			E93D0AE112E25E9D003F1AA8 /* PBXTextBookmark */ = E93D0AE112E25E9D003F1AA8 /* PBXTextBookmark */;
+			E93D0AE212E25E9D003F1AA8 /* PBXTextBookmark */ = E93D0AE212E25E9D003F1AA8 /* PBXTextBookmark */;
+			E93D0AE312E25E9D003F1AA8 /* PBXTextBookmark */ = E93D0AE312E25E9D003F1AA8 /* PBXTextBookmark */;
+			E93D0AE412E25E9D003F1AA8 /* PBXTextBookmark */ = E93D0AE412E25E9D003F1AA8 /* PBXTextBookmark */;
+			E93D0AE512E25EAC003F1AA8 /* PBXTextBookmark */ = E93D0AE512E25EAC003F1AA8 /* PBXTextBookmark */;
+			E93D0AE812E25F30003F1AA8 /* PBXTextBookmark */ = E93D0AE812E25F30003F1AA8 /* PBXTextBookmark */;
+			E93D0AE912E25F37003F1AA8 /* PBXTextBookmark */ = E93D0AE912E25F37003F1AA8 /* PBXTextBookmark */;
+			E93D0AEA12E25F6D003F1AA8 /* PBXTextBookmark */ = E93D0AEA12E25F6D003F1AA8 /* PBXTextBookmark */;
+			E93D0AED12E2606D003F1AA8 /* PBXTextBookmark */ = E93D0AED12E2606D003F1AA8 /* PBXTextBookmark */;
+			E93D0AEE12E26090003F1AA8 /* PBXTextBookmark */ = E93D0AEE12E26090003F1AA8 /* PBXTextBookmark */;
+			E93D0AF112E260E1003F1AA8 /* PBXTextBookmark */ = E93D0AF112E260E1003F1AA8 /* PBXTextBookmark */;
+			E93D0AF212E260F1003F1AA8 /* PBXTextBookmark */ = E93D0AF212E260F1003F1AA8 /* PBXTextBookmark */;
+			E93D0AF312E2610C003F1AA8 /* PBXTextBookmark */ = E93D0AF312E2610C003F1AA8 /* PBXTextBookmark */;
+			E93D0AF612E26147003F1AA8 /* PBXTextBookmark */ = E93D0AF612E26147003F1AA8 /* PBXTextBookmark */;
+			E93D0AF712E2614C003F1AA8 /* PBXTextBookmark */ = E93D0AF712E2614C003F1AA8 /* PBXTextBookmark */;
+			E93D0AF812E26150003F1AA8 /* PBXTextBookmark */ = E93D0AF812E26150003F1AA8 /* PBXTextBookmark */;
+			E93D0AFA12E2616C003F1AA8 /* PBXTextBookmark */ = E93D0AFA12E2616C003F1AA8 /* PBXTextBookmark */;
+			E93D0AFD12E26194003F1AA8 /* PBXTextBookmark */ = E93D0AFD12E26194003F1AA8 /* PBXTextBookmark */;
+			E93D0AFE12E26196003F1AA8 /* PBXTextBookmark */ = E93D0AFE12E26196003F1AA8 /* PBXTextBookmark */;
+			E93D0B0212E261DA003F1AA8 /* PBXTextBookmark */ = E93D0B0212E261DA003F1AA8 /* PBXTextBookmark */;
+			E93D0B0312E261E4003F1AA8 /* PBXTextBookmark */ = E93D0B0312E261E4003F1AA8 /* PBXTextBookmark */;
+			E93D0B2012E2673F003F1AA8 /* PBXTextBookmark */ = E93D0B2012E2673F003F1AA8 /* PBXTextBookmark */;
+			E93D0B2112E2674D003F1AA8 /* PBXTextBookmark */ = E93D0B2112E2674D003F1AA8 /* PBXTextBookmark */;
+			E93D0B2412E268F2003F1AA8 /* PBXTextBookmark */ = E93D0B2412E268F2003F1AA8 /* PBXTextBookmark */;
+			E93D0B2512E26906003F1AA8 /* PBXTextBookmark */ = E93D0B2512E26906003F1AA8 /* PBXTextBookmark */;
 			E940782A12E22BE3004CA4ED = E940782A12E22BE3004CA4ED /* PBXTextBookmark */;
 			E940782B12E22BE3004CA4ED = E940782B12E22BE3004CA4ED /* PBXTextBookmark */;
 			E940782E12E22BF4004CA4ED = E940782E12E22BF4004CA4ED /* PBXTextBookmark */;
@@ -407,7 +436,7 @@
 	E4B69E1E0A3A1BDC003C02F2 /* testApp.cpp */ = {
 		uiCtxt = {
 			sepNavIntBoundsRect = "{{0, 0}, {725, 1053}}";
-			sepNavSelRange = "{1117, 0}";
+			sepNavSelRange = "{587, 0}";
 			sepNavVisRange = "{0, 1457}";
 		};
 	};
@@ -547,7 +576,7 @@
 		fRef = E9391E8C12E0ED6100CA4E53 /* ofThreadedImageLoader.cpp */;
 		name = "ofThreadedImageLoader.cpp: 100";
 		rLen = 0;
-		rLoc = 2767;
+		rLoc = 2725;
 		rType = 0;
 		vrLen = 1637;
 		vrLoc = 2524;
@@ -610,16 +639,16 @@
 	};
 	E9391E8B12E0ED6100CA4E53 /* ofThreadedImageLoader.h */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {725, 1105}}";
-			sepNavSelRange = "{1203, 0}";
-			sepNavVisRange = "{385, 1574}";
+			sepNavIntBoundsRect = "{{0, 0}, {725, 1326}}";
+			sepNavSelRange = "{1238, 0}";
+			sepNavVisRange = "{661, 1726}";
 		};
 	};
 	E9391E8C12E0ED6100CA4E53 /* ofThreadedImageLoader.cpp */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {725, 2379}}";
-			sepNavSelRange = "{4230, 0}";
-			sepNavVisRange = "{2316, 1552}";
+			sepNavIntBoundsRect = "{{0, 0}, {725, 2353}}";
+			sepNavSelRange = "{1397, 0}";
+			sepNavVisRange = "{3247, 1512}";
 			sepNavWindowFrame = "{{19, 308}, {1127, 715}}";
 		};
 	};
@@ -838,6 +867,296 @@
 		vrLen = 1457;
 		vrLoc = 0;
 	};
+	E93D0ADA12E25E4A003F1AA8 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = E93D0ABC12E25D10003F1AA8 /* ofQuaternion.h */;
+		name = "ofQuaternion.h: 350";
+		rLen = 2;
+		rLoc = 9621;
+		rType = 0;
+		vrLen = 332;
+		vrLoc = 9291;
+	};
+	E93D0ADB12E25E4F003F1AA8 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = E9391E8C12E0ED6100CA4E53 /* ofThreadedImageLoader.cpp */;
+		name = "ofThreadedImageLoader.cpp: 57";
+		rLen = 0;
+		rLoc = 1397;
+		rType = 0;
+		vrLen = 1903;
+		vrLoc = 1822;
+	};
+	E93D0ADC12E25E4F003F1AA8 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = E4B69E1E0A3A1BDC003C02F2 /* testApp.cpp */;
+		name = "testApp.cpp: 45";
+		rLen = 0;
+		rLoc = 1117;
+		rType = 0;
+		vrLen = 1457;
+		vrLoc = 0;
+	};
+	E93D0ADD12E25E4F003F1AA8 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = E4B69E1E0A3A1BDC003C02F2 /* testApp.cpp */;
+		name = "testApp.cpp: 45";
+		rLen = 0;
+		rLoc = 1117;
+		rType = 0;
+		vrLen = 1455;
+		vrLoc = 0;
+	};
+	E93D0AE112E25E9D003F1AA8 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = E4B69E1E0A3A1BDC003C02F2 /* testApp.cpp */;
+		name = "testApp.cpp: 21";
+		rLen = 0;
+		rLoc = 587;
+		rType = 0;
+		vrLen = 1457;
+		vrLoc = 0;
+	};
+	E93D0AE212E25E9D003F1AA8 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = E9391E8C12E0ED6100CA4E53 /* ofThreadedImageLoader.cpp */;
+		name = "ofThreadedImageLoader.cpp: 57";
+		rLen = 0;
+		rLoc = 1397;
+		rType = 0;
+		vrLen = 1512;
+		vrLoc = 3247;
+	};
+	E93D0AE312E25E9D003F1AA8 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = E9391E8B12E0ED6100CA4E53 /* ofThreadedImageLoader.h */;
+		name = "ofThreadedImageLoader.h: 54";
+		rLen = 0;
+		rLoc = 1203;
+		rType = 0;
+		vrLen = 1634;
+		vrLoc = 326;
+	};
+	E93D0AE412E25E9D003F1AA8 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = E9391E8B12E0ED6100CA4E53 /* ofThreadedImageLoader.h */;
+		name = "ofThreadedImageLoader.h: 80";
+		rLen = 0;
+		rLoc = 2040;
+		rType = 0;
+		vrLen = 1590;
+		vrLoc = 385;
+	};
+	E93D0AE512E25EAC003F1AA8 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = E93D0ABC12E25D10003F1AA8 /* ofQuaternion.h */;
+		name = "ofQuaternion.h: 350";
+		rLen = 2;
+		rLoc = 9621;
+		rType = 0;
+		vrLen = 332;
+		vrLoc = 9291;
+	};
+	E93D0AE812E25F30003F1AA8 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = E9391E8B12E0ED6100CA4E53 /* ofThreadedImageLoader.h */;
+		name = "ofThreadedImageLoader.h: 84";
+		rLen = 0;
+		rLoc = 2022;
+		rType = 0;
+		vrLen = 1662;
+		vrLoc = 419;
+	};
+	E93D0AE912E25F37003F1AA8 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = E93D0ABC12E25D10003F1AA8 /* ofQuaternion.h */;
+		name = "ofQuaternion.h: 350";
+		rLen = 2;
+		rLoc = 9621;
+		rType = 0;
+		vrLen = 332;
+		vrLoc = 9291;
+	};
+	E93D0AEA12E25F6D003F1AA8 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = E9391E8B12E0ED6100CA4E53 /* ofThreadedImageLoader.h */;
+		name = "ofThreadedImageLoader.h: 83";
+		rLen = 0;
+		rLoc = 1968;
+		rType = 0;
+		vrLen = 1656;
+		vrLoc = 439;
+	};
+	E93D0AED12E2606D003F1AA8 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = E9391E8B12E0ED6100CA4E53 /* ofThreadedImageLoader.h */;
+		name = "ofThreadedImageLoader.h: 83";
+		rLen = 0;
+		rLoc = 1986;
+		rType = 0;
+		vrLen = 1619;
+		vrLoc = 477;
+	};
+	E93D0AEE12E26090003F1AA8 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = E93D0ABC12E25D10003F1AA8 /* ofQuaternion.h */;
+		name = "ofQuaternion.h: 350";
+		rLen = 2;
+		rLoc = 9621;
+		rType = 0;
+		vrLen = 332;
+		vrLoc = 9291;
+	};
+	E93D0AF112E260E1003F1AA8 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = E9391E8B12E0ED6100CA4E53 /* ofThreadedImageLoader.h */;
+		name = "ofThreadedImageLoader.h: 81";
+		rLen = 0;
+		rLoc = 1958;
+		rType = 0;
+		vrLen = 1685;
+		vrLoc = 627;
+	};
+	E93D0AF212E260F1003F1AA8 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = E93D0ABC12E25D10003F1AA8 /* ofQuaternion.h */;
+		name = "ofQuaternion.h: 350";
+		rLen = 2;
+		rLoc = 9621;
+		rType = 0;
+		vrLen = 332;
+		vrLoc = 9291;
+	};
+	E93D0AF312E2610C003F1AA8 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = E9391E8B12E0ED6100CA4E53 /* ofThreadedImageLoader.h */;
+		name = "ofThreadedImageLoader.h: 81";
+		rLen = 0;
+		rLoc = 1958;
+		rType = 0;
+		vrLen = 1685;
+		vrLoc = 627;
+	};
+	E93D0AF612E26147003F1AA8 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = E9391E8B12E0ED6100CA4E53 /* ofThreadedImageLoader.h */;
+		name = "ofThreadedImageLoader.h: 77";
+		rLen = 0;
+		rLoc = 1814;
+		rType = 0;
+		vrLen = 1723;
+		vrLoc = 326;
+	};
+	E93D0AF712E2614C003F1AA8 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = E93D0ABC12E25D10003F1AA8 /* ofQuaternion.h */;
+		name = "ofQuaternion.h: 350";
+		rLen = 2;
+		rLoc = 9621;
+		rType = 0;
+		vrLen = 332;
+		vrLoc = 9291;
+	};
+	E93D0AF812E26150003F1AA8 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = E9391E8B12E0ED6100CA4E53 /* ofThreadedImageLoader.h */;
+		name = "ofThreadedImageLoader.h: 77";
+		rLen = 0;
+		rLoc = 1814;
+		rType = 0;
+		vrLen = 1709;
+		vrLoc = 326;
+	};
+	E93D0AFA12E2616C003F1AA8 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = E9391E8B12E0ED6100CA4E53 /* ofThreadedImageLoader.h */;
+		name = "ofThreadedImageLoader.h: 77";
+		rLen = 0;
+		rLoc = 1807;
+		rType = 0;
+		vrLen = 1709;
+		vrLoc = 326;
+	};
+	E93D0AFD12E26194003F1AA8 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = E93D0ABC12E25D10003F1AA8 /* ofQuaternion.h */;
+		name = "ofQuaternion.h: 350";
+		rLen = 2;
+		rLoc = 9621;
+		rType = 0;
+		vrLen = 332;
+		vrLoc = 9291;
+	};
+	E93D0AFE12E26196003F1AA8 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = E9391E8B12E0ED6100CA4E53 /* ofThreadedImageLoader.h */;
+		name = "ofThreadedImageLoader.h: 69";
+		rLen = 0;
+		rLoc = 1596;
+		rType = 0;
+		vrLen = 1709;
+		vrLoc = 326;
+	};
+	E93D0B0212E261DA003F1AA8 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = E9391E8B12E0ED6100CA4E53 /* ofThreadedImageLoader.h */;
+		name = "ofThreadedImageLoader.h: 92";
+		rLen = 0;
+		rLoc = 2211;
+		rType = 0;
+		vrLen = 1727;
+		vrLoc = 661;
+	};
+	E93D0B0312E261E4003F1AA8 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = E93D0ABC12E25D10003F1AA8 /* ofQuaternion.h */;
+		name = "ofQuaternion.h: 350";
+		rLen = 2;
+		rLoc = 9621;
+		rType = 0;
+		vrLen = 332;
+		vrLoc = 9291;
+	};
+	E93D0B2012E2673F003F1AA8 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = E93D0ABC12E25D10003F1AA8 /* ofQuaternion.h */;
+		name = "ofQuaternion.h: 350";
+		rLen = 2;
+		rLoc = 9621;
+		rType = 0;
+		vrLen = 332;
+		vrLoc = 9291;
+	};
+	E93D0B2112E2674D003F1AA8 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = E9391E8B12E0ED6100CA4E53 /* ofThreadedImageLoader.h */;
+		name = "ofThreadedImageLoader.h: 56";
+		rLen = 0;
+		rLoc = 1238;
+		rType = 0;
+		vrLen = 1727;
+		vrLoc = 661;
+	};
+	E93D0B2412E268F2003F1AA8 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = E93D0ABC12E25D10003F1AA8 /* ofQuaternion.h */;
+		name = "ofQuaternion.h: 350";
+		rLen = 2;
+		rLoc = 9621;
+		rType = 0;
+		vrLen = 332;
+		vrLoc = 9291;
+	};
+	E93D0B2512E26906003F1AA8 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = E9391E8B12E0ED6100CA4E53 /* ofThreadedImageLoader.h */;
+		name = "ofThreadedImageLoader.h: 56";
+		rLen = 0;
+		rLoc = 1238;
+		rType = 0;
+		vrLen = 1726;
+		vrLoc = 661;
+	};
 	E940782A12E22BE3004CA4ED /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
 		comments = "No matching function for call to 'std::vector<ofImage*, std::allocator<ofImage*> >::push_back(ofImage&)'";
@@ -881,7 +1200,7 @@
 		fRef = E9391E8C12E0ED6100CA4E53 /* ofThreadedImageLoader.cpp */;
 		name = "ofThreadedImageLoader.cpp: 145";
 		rLen = 0;
-		rLoc = 4021;
+		rLoc = 3979;
 		rType = 0;
 		vrLen = 1600;
 		vrLoc = 2968;
@@ -961,7 +1280,7 @@
 		fRef = E9391E8C12E0ED6100CA4E53 /* ofThreadedImageLoader.cpp */;
 		name = "ofThreadedImageLoader.cpp: 135";
 		rLen = 0;
-		rLoc = 3799;
+		rLoc = 3757;
 		rType = 0;
 		vrLen = 1601;
 		vrLoc = 2750;
@@ -1011,7 +1330,7 @@
 		fRef = E9391E8C12E0ED6100CA4E53 /* ofThreadedImageLoader.cpp */;
 		name = "ofThreadedImageLoader.cpp: 138";
 		rLen = 0;
-		rLoc = 3851;
+		rLoc = 3809;
 		rType = 0;
 		vrLen = 1462;
 		vrLoc = 3312;
@@ -1219,7 +1538,7 @@
 		fRef = E9391E8C12E0ED6100CA4E53 /* ofThreadedImageLoader.cpp */;
 		name = "ofThreadedImageLoader.cpp: 84";
 		rLen = 0;
-		rLoc = 2342;
+		rLoc = 2300;
 		rType = 0;
 		vrLen = 1643;
 		vrLoc = 879;
@@ -1679,7 +1998,7 @@
 		fRef = E9391E8C12E0ED6100CA4E53 /* ofThreadedImageLoader.cpp */;
 		name = "ofThreadedImageLoader.cpp: 153";
 		rLen = 0;
-		rLoc = 4114;
+		rLoc = 4072;
 		rType = 0;
 		vrLen = 1662;
 		vrLoc = 271;
@@ -1699,7 +2018,7 @@
 		fRef = E9391E8C12E0ED6100CA4E53 /* ofThreadedImageLoader.cpp */;
 		name = "ofThreadedImageLoader.cpp: 153";
 		rLen = 0;
-		rLoc = 4114;
+		rLoc = 4072;
 		rType = 0;
 		vrLen = 1662;
 		vrLoc = 271;
@@ -1801,7 +2120,7 @@
 		comments = "Request for member 'getOFPixels' in 'entry.ofImageLoaderEntry::image', which is of non-class type 'ofImage*'";
 		fRef = E9391E8C12E0ED6100CA4E53 /* ofThreadedImageLoader.cpp */;
 		rLen = 1;
-		rLoc = 136;
+		rLoc = 134;
 		rType = 1;
 	};
 	E94078D512E241BA004CA4ED /* PBXTextBookmark */ = {
@@ -1809,7 +2128,7 @@
 		fRef = E9391E8C12E0ED6100CA4E53 /* ofThreadedImageLoader.cpp */;
 		name = "ofThreadedImageLoader.cpp: 134";
 		rLen = 0;
-		rLoc = 3664;
+		rLoc = 3622;
 		rType = 0;
 		vrLen = 621;
 		vrLoc = 3573;
@@ -1839,9 +2158,9 @@
 		fRef = E9391E8C12E0ED6100CA4E53 /* ofThreadedImageLoader.cpp */;
 		name = "ofThreadedImageLoader.cpp: 134";
 		rLen = 0;
-		rLoc = 3664;
+		rLoc = 3622;
 		rType = 0;
-		vrLen = 1569;
+		vrLen = 1342;
 		vrLoc = 3459;
 	};
 	E94078D912E241C3004CA4ED /* PBXTextBookmark */ = {
@@ -1869,7 +2188,7 @@
 		fRef = E9391E8C12E0ED6100CA4E53 /* ofThreadedImageLoader.cpp */;
 		name = "ofThreadedImageLoader.cpp: 134";
 		rLen = 0;
-		rLoc = 3664;
+		rLoc = 3622;
 		rType = 0;
 		vrLen = 621;
 		vrLoc = 3573;
@@ -1899,9 +2218,9 @@
 		fRef = E9391E8C12E0ED6100CA4E53 /* ofThreadedImageLoader.cpp */;
 		name = "ofThreadedImageLoader.cpp: 134";
 		rLen = 0;
-		rLoc = 3664;
+		rLoc = 3622;
 		rType = 0;
-		vrLen = 1570;
+		vrLen = 1343;
 		vrLoc = 3458;
 	};
 	E94078E512E24251004CA4ED /* PBXTextBookmark */ = {
@@ -1909,9 +2228,9 @@
 		fRef = E9391E8C12E0ED6100CA4E53 /* ofThreadedImageLoader.cpp */;
 		name = "ofThreadedImageLoader.cpp: 135";
 		rLen = 0;
-		rLoc = 3623;
+		rLoc = 3581;
 		rType = 0;
-		vrLen = 1742;
+		vrLen = 1281;
 		vrLoc = 3520;
 	};
 	E94078E612E24269004CA4ED /* PBXTextBookmark */ = {
@@ -1919,7 +2238,7 @@
 		fRef = E9391E8C12E0ED6100CA4E53 /* ofThreadedImageLoader.cpp */;
 		name = "ofThreadedImageLoader.cpp: 136";
 		rLen = 0;
-		rLoc = 3664;
+		rLoc = 3622;
 		rType = 0;
 		vrLen = 607;
 		vrLoc = 3571;
@@ -1929,7 +2248,7 @@
 		fRef = E9391E8C12E0ED6100CA4E53 /* ofThreadedImageLoader.cpp */;
 		name = "ofThreadedImageLoader.cpp: 136";
 		rLen = 0;
-		rLoc = 3664;
+		rLoc = 3622;
 		rType = 0;
 		vrLen = 607;
 		vrLoc = 3571;
@@ -1939,9 +2258,9 @@
 		fRef = E9391E8C12E0ED6100CA4E53 /* ofThreadedImageLoader.cpp */;
 		name = "ofThreadedImageLoader.cpp: 171";
 		rLen = 0;
-		rLoc = 4441;
+		rLoc = 4399;
 		rType = 0;
-		vrLen = 1740;
+		vrLen = 1279;
 		vrLoc = 3522;
 	};
 	E94078EE12E242CD004CA4ED /* PBXTextBookmark */ = {
@@ -1949,7 +2268,7 @@
 		fRef = E9391E8C12E0ED6100CA4E53 /* ofThreadedImageLoader.cpp */;
 		name = "ofThreadedImageLoader.cpp: 136";
 		rLen = 0;
-		rLoc = 3664;
+		rLoc = 3622;
 		rType = 0;
 		vrLen = 607;
 		vrLoc = 3571;
@@ -1959,9 +2278,9 @@
 		fRef = E9391E8C12E0ED6100CA4E53 /* ofThreadedImageLoader.cpp */;
 		name = "ofThreadedImageLoader.cpp: 171";
 		rLen = 0;
-		rLoc = 4441;
+		rLoc = 4399;
 		rType = 0;
-		vrLen = 1740;
+		vrLen = 1279;
 		vrLoc = 3522;
 	};
 	E94078F012E242D1004CA4ED /* PBXTextBookmark */ = {
@@ -1989,7 +2308,7 @@
 		fRef = E9391E8C12E0ED6100CA4E53 /* ofThreadedImageLoader.cpp */;
 		name = "ofThreadedImageLoader.cpp: 136";
 		rLen = 0;
-		rLoc = 3664;
+		rLoc = 3622;
 		rType = 0;
 		vrLen = 607;
 		vrLoc = 3571;
@@ -2019,7 +2338,7 @@
 		fRef = E9391E8C12E0ED6100CA4E53 /* ofThreadedImageLoader.cpp */;
 		name = "ofThreadedImageLoader.cpp: 144";
 		rLen = 0;
-		rLoc = 3860;
+		rLoc = 3818;
 		rType = 0;
 		vrLen = 1693;
 		vrLoc = 2897;
@@ -2029,7 +2348,7 @@
 		fRef = E9391E8C12E0ED6100CA4E53 /* ofThreadedImageLoader.cpp */;
 		name = "ofThreadedImageLoader.cpp: 144";
 		rLen = 0;
-		rLoc = 3860;
+		rLoc = 3818;
 		rType = 0;
 		vrLen = 1614;
 		vrLoc = 2976;
@@ -2039,7 +2358,7 @@
 		fRef = E9391E8C12E0ED6100CA4E53 /* ofThreadedImageLoader.cpp */;
 		name = "ofThreadedImageLoader.cpp: 144";
 		rLen = 0;
-		rLoc = 3860;
+		rLoc = 3818;
 		rType = 0;
 		vrLen = 1614;
 		vrLoc = 2976;
@@ -2049,7 +2368,7 @@
 		fRef = E9391E8C12E0ED6100CA4E53 /* ofThreadedImageLoader.cpp */;
 		name = "ofThreadedImageLoader.cpp: 144";
 		rLen = 0;
-		rLoc = 3860;
+		rLoc = 3818;
 		rType = 0;
 		vrLen = 1614;
 		vrLoc = 2976;
@@ -2059,7 +2378,7 @@
 		fRef = E9391E8C12E0ED6100CA4E53 /* ofThreadedImageLoader.cpp */;
 		name = "ofThreadedImageLoader.cpp: 136";
 		rLen = 0;
-		rLoc = 3664;
+		rLoc = 3622;
 		rType = 0;
 		vrLen = 607;
 		vrLoc = 3571;
@@ -2069,9 +2388,9 @@
 		fRef = E9391E8C12E0ED6100CA4E53 /* ofThreadedImageLoader.cpp */;
 		name = "ofThreadedImageLoader.cpp: 144";
 		rLen = 0;
-		rLoc = 3860;
+		rLoc = 3818;
 		rType = 0;
-		vrLen = 1695;
+		vrLen = 1283;
 		vrLoc = 3518;
 	};
 	E940790B12E24362004CA4ED /* PBXTextBookmark */ = {
@@ -2079,9 +2398,9 @@
 		fRef = E9391E8C12E0ED6100CA4E53 /* ofThreadedImageLoader.cpp */;
 		name = "ofThreadedImageLoader.cpp: 144";
 		rLen = 0;
-		rLoc = 3860;
+		rLoc = 3818;
 		rType = 0;
-		vrLen = 1692;
+		vrLen = 1280;
 		vrLoc = 3521;
 	};
 	E940791012E2439E004CA4ED /* PBXTextBookmark */ = {
@@ -2089,7 +2408,7 @@
 		fRef = E9391E8C12E0ED6100CA4E53 /* ofThreadedImageLoader.cpp */;
 		name = "ofThreadedImageLoader.cpp: 136";
 		rLen = 0;
-		rLoc = 3664;
+		rLoc = 3622;
 		rType = 0;
 		vrLen = 607;
 		vrLoc = 3622;
@@ -2099,7 +2418,7 @@
 		fRef = E9391E8C12E0ED6100CA4E53 /* ofThreadedImageLoader.cpp */;
 		name = "ofThreadedImageLoader.cpp: 57";
 		rLen = 0;
-		rLoc = 1439;
+		rLoc = 1397;
 		rType = 0;
 		vrLen = 1695;
 		vrLoc = 691;
@@ -2109,7 +2428,7 @@
 		fRef = E9391E8C12E0ED6100CA4E53 /* ofThreadedImageLoader.cpp */;
 		name = "ofThreadedImageLoader.cpp: 57";
 		rLen = 0;
-		rLoc = 1439;
+		rLoc = 1397;
 		rType = 0;
 		vrLen = 1695;
 		vrLoc = 691;
@@ -2119,7 +2438,7 @@
 		fRef = E9391E8C12E0ED6100CA4E53 /* ofThreadedImageLoader.cpp */;
 		name = "ofThreadedImageLoader.cpp: 57";
 		rLen = 0;
-		rLoc = 1439;
+		rLoc = 1397;
 		rType = 0;
 		vrLen = 1730;
 		vrLoc = 0;
@@ -2169,7 +2488,7 @@
 		fRef = E9391E8C12E0ED6100CA4E53 /* ofThreadedImageLoader.cpp */;
 		name = "ofThreadedImageLoader.cpp: 136";
 		rLen = 0;
-		rLoc = 3664;
+		rLoc = 3622;
 		rType = 0;
 		vrLen = 607;
 		vrLoc = 3622;
@@ -2209,7 +2528,7 @@
 		fRef = E9391E8C12E0ED6100CA4E53 /* ofThreadedImageLoader.cpp */;
 		name = "ofThreadedImageLoader.cpp: 57";
 		rLen = 0;
-		rLoc = 1439;
+		rLoc = 1397;
 		rType = 0;
 		vrLen = 1730;
 		vrLoc = 0;
@@ -2259,7 +2578,7 @@
 		fRef = E9391E8C12E0ED6100CA4E53 /* ofThreadedImageLoader.cpp */;
 		name = "ofThreadedImageLoader.cpp: 136";
 		rLen = 0;
-		rLoc = 3664;
+		rLoc = 3622;
 		rType = 0;
 		vrLen = 607;
 		vrLoc = 3622;
@@ -2279,7 +2598,7 @@
 		fRef = E9391E8C12E0ED6100CA4E53 /* ofThreadedImageLoader.cpp */;
 		name = "ofThreadedImageLoader.cpp: 136";
 		rLen = 0;
-		rLoc = 3664;
+		rLoc = 3622;
 		rType = 0;
 		vrLen = 607;
 		vrLoc = 3622;
@@ -2309,7 +2628,7 @@
 		fRef = E9391E8C12E0ED6100CA4E53 /* ofThreadedImageLoader.cpp */;
 		name = "ofThreadedImageLoader.cpp: 57";
 		rLen = 0;
-		rLoc = 1439;
+		rLoc = 1397;
 		rType = 0;
 		vrLen = 1676;
 		vrLoc = 54;
@@ -2329,7 +2648,7 @@
 		fRef = E9391E8C12E0ED6100CA4E53 /* ofThreadedImageLoader.cpp */;
 		name = "ofThreadedImageLoader.cpp: 136";
 		rLen = 0;
-		rLoc = 3664;
+		rLoc = 3622;
 		rType = 0;
 		vrLen = 633;
 		vrLoc = 3586;
@@ -2349,7 +2668,7 @@
 		fRef = E9391E8C12E0ED6100CA4E53 /* ofThreadedImageLoader.cpp */;
 		name = "ofThreadedImageLoader.cpp: 136";
 		rLen = 0;
-		rLoc = 3627;
+		rLoc = 3585;
 		rType = 0;
 		vrLen = 1587;
 		vrLoc = 2669;
@@ -2359,7 +2678,7 @@
 		fRef = E9391E8C12E0ED6100CA4E53 /* ofThreadedImageLoader.cpp */;
 		name = "ofThreadedImageLoader.cpp: 137";
 		rLen = 0;
-		rLoc = 3664;
+		rLoc = 3622;
 		rType = 0;
 		vrLen = 604;
 		vrLoc = 3586;
@@ -2369,7 +2688,7 @@
 		fRef = E9391E8C12E0ED6100CA4E53 /* ofThreadedImageLoader.cpp */;
 		name = "ofThreadedImageLoader.cpp: 136";
 		rLen = 0;
-		rLoc = 3627;
+		rLoc = 3585;
 		rType = 0;
 		vrLen = 1507;
 		vrLoc = 2749;
@@ -2399,7 +2718,7 @@
 		fRef = E9391E8C12E0ED6100CA4E53 /* ofThreadedImageLoader.cpp */;
 		name = "ofThreadedImageLoader.cpp: 137";
 		rLen = 0;
-		rLoc = 3664;
+		rLoc = 3622;
 		rType = 0;
 		vrLen = 568;
 		vrLoc = 3584;
@@ -2419,7 +2738,7 @@
 		fRef = E9391E8C12E0ED6100CA4E53 /* ofThreadedImageLoader.cpp */;
 		name = "ofThreadedImageLoader.cpp: 137";
 		rLen = 0;
-		rLoc = 3664;
+		rLoc = 3622;
 		rType = 0;
 		vrLen = 568;
 		vrLoc = 3584;
@@ -2459,7 +2778,7 @@
 		fRef = E9391E8C12E0ED6100CA4E53 /* ofThreadedImageLoader.cpp */;
 		name = "ofThreadedImageLoader.cpp: 137";
 		rLen = 0;
-		rLoc = 3664;
+		rLoc = 3622;
 		rType = 0;
 		vrLen = 585;
 		vrLoc = 3599;
@@ -2479,7 +2798,7 @@
 		fRef = E9391E8C12E0ED6100CA4E53 /* ofThreadedImageLoader.cpp */;
 		name = "ofThreadedImageLoader.cpp: 56";
 		rLen = 0;
-		rLoc = 1398;
+		rLoc = 1397;
 		rType = 0;
 		vrLen = 1701;
 		vrLoc = 705;
@@ -2489,7 +2808,7 @@
 		fRef = E9391E8C12E0ED6100CA4E53 /* ofThreadedImageLoader.cpp */;
 		name = "ofThreadedImageLoader.cpp: 56";
 		rLen = 0;
-		rLoc = 1398;
+		rLoc = 1397;
 		rType = 0;
 		vrLen = 1621;
 		vrLoc = 1928;
@@ -2509,7 +2828,7 @@
 		fRef = E9391E8C12E0ED6100CA4E53 /* ofThreadedImageLoader.cpp */;
 		name = "ofThreadedImageLoader.cpp: 137";
 		rLen = 0;
-		rLoc = 3664;
+		rLoc = 3622;
 		rType = 0;
 		vrLen = 568;
 		vrLoc = 3564;
@@ -2519,7 +2838,7 @@
 		fRef = E9391E8C12E0ED6100CA4E53 /* ofThreadedImageLoader.cpp */;
 		name = "ofThreadedImageLoader.cpp: 58";
 		rLen = 0;
-		rLoc = 1411;
+		rLoc = 1397;
 		rType = 0;
 		vrLen = 1665;
 		vrLoc = 412;
@@ -2529,7 +2848,7 @@
 		fRef = E9391E8C12E0ED6100CA4E53 /* ofThreadedImageLoader.cpp */;
 		name = "ofThreadedImageLoader.cpp: 138";
 		rLen = 0;
-		rLoc = 3664;
+		rLoc = 3622;
 		rType = 0;
 		vrLen = 568;
 		vrLoc = 3598;
@@ -2539,7 +2858,7 @@
 		fRef = E9391E8C12E0ED6100CA4E53 /* ofThreadedImageLoader.cpp */;
 		name = "ofThreadedImageLoader.cpp: 58";
 		rLen = 0;
-		rLoc = 1411;
+		rLoc = 1397;
 		rType = 0;
 		vrLen = 1581;
 		vrLoc = 496;
@@ -2549,7 +2868,7 @@
 		fRef = E9391E8C12E0ED6100CA4E53 /* ofThreadedImageLoader.cpp */;
 		name = "ofThreadedImageLoader.cpp: 58";
 		rLen = 0;
-		rLoc = 1411;
+		rLoc = 1397;
 		rType = 0;
 		vrLen = 1588;
 		vrLoc = 496;
@@ -2559,7 +2878,7 @@
 		fRef = E9391E8C12E0ED6100CA4E53 /* ofThreadedImageLoader.cpp */;
 		name = "ofThreadedImageLoader.cpp: 138";
 		rLen = 0;
-		rLoc = 3664;
+		rLoc = 3622;
 		rType = 0;
 		vrLen = 568;
 		vrLoc = 3598;
@@ -2569,7 +2888,7 @@
 		fRef = E9391E8C12E0ED6100CA4E53 /* ofThreadedImageLoader.cpp */;
 		name = "ofThreadedImageLoader.cpp: 58";
 		rLen = 0;
-		rLoc = 1411;
+		rLoc = 1397;
 		rType = 0;
 		vrLen = 1562;
 		vrLoc = 522;
@@ -2579,7 +2898,7 @@
 		fRef = E9391E8C12E0ED6100CA4E53 /* ofThreadedImageLoader.cpp */;
 		name = "ofThreadedImageLoader.cpp: 138";
 		rLen = 0;
-		rLoc = 3664;
+		rLoc = 3622;
 		rType = 0;
 		vrLen = 568;
 		vrLoc = 3598;
@@ -2589,7 +2908,7 @@
 		fRef = E9391E8C12E0ED6100CA4E53 /* ofThreadedImageLoader.cpp */;
 		name = "ofThreadedImageLoader.cpp: 138";
 		rLen = 0;
-		rLoc = 3664;
+		rLoc = 3622;
 		rType = 0;
 		vrLen = 568;
 		vrLoc = 3598;
@@ -2599,7 +2918,7 @@
 		fRef = E9391E8C12E0ED6100CA4E53 /* ofThreadedImageLoader.cpp */;
 		name = "ofThreadedImageLoader.cpp: 58";
 		rLen = 0;
-		rLoc = 1411;
+		rLoc = 1397;
 		rType = 0;
 		vrLen = 1662;
 		vrLoc = 0;
@@ -2659,9 +2978,9 @@
 		fRef = E9391E8C12E0ED6100CA4E53 /* ofThreadedImageLoader.cpp */;
 		name = "ofThreadedImageLoader.cpp: 58";
 		rLen = 0;
-		rLoc = 1411;
+		rLoc = 1397;
 		rType = 0;
-		vrLen = 1738;
+		vrLen = 1567;
 		vrLoc = 3234;
 	};
 	E940799312E24FAD004CA4ED /* PBXTextBookmark */ = {
@@ -2699,7 +3018,7 @@
 		fRef = E9391E8C12E0ED6100CA4E53 /* ofThreadedImageLoader.cpp */;
 		name = "ofThreadedImageLoader.cpp: 138";
 		rLen = 0;
-		rLoc = 3664;
+		rLoc = 3622;
 		rType = 0;
 		vrLen = 568;
 		vrLoc = 3598;
@@ -2709,7 +3028,7 @@
 		fRef = E9391E8C12E0ED6100CA4E53 /* ofThreadedImageLoader.cpp */;
 		name = "ofThreadedImageLoader.cpp: 138";
 		rLen = 0;
-		rLoc = 3664;
+		rLoc = 3622;
 		rType = 0;
 		vrLen = 568;
 		vrLoc = 3598;
@@ -2719,7 +3038,7 @@
 		fRef = E9391E8C12E0ED6100CA4E53 /* ofThreadedImageLoader.cpp */;
 		name = "ofThreadedImageLoader.cpp: 138";
 		rLen = 0;
-		rLoc = 3664;
+		rLoc = 3622;
 		rType = 0;
 		vrLen = 568;
 		vrLoc = 3598;
@@ -2739,7 +3058,7 @@
 		fRef = E9391E8C12E0ED6100CA4E53 /* ofThreadedImageLoader.cpp */;
 		name = "ofThreadedImageLoader.cpp: 138";
 		rLen = 0;
-		rLoc = 3664;
+		rLoc = 3622;
 		rType = 0;
 		vrLen = 568;
 		vrLoc = 3598;
@@ -2749,7 +3068,7 @@
 		fRef = E9391E8C12E0ED6100CA4E53 /* ofThreadedImageLoader.cpp */;
 		name = "ofThreadedImageLoader.cpp: 138";
 		rLen = 0;
-		rLoc = 3664;
+		rLoc = 3622;
 		rType = 0;
 		vrLen = 568;
 		vrLoc = 3598;
@@ -2779,9 +3098,9 @@
 		fRef = E9391E8C12E0ED6100CA4E53 /* ofThreadedImageLoader.cpp */;
 		name = "ofThreadedImageLoader.cpp: 58";
 		rLen = 0;
-		rLoc = 1411;
+		rLoc = 1397;
 		rType = 0;
-		vrLen = 1738;
+		vrLen = 1567;
 		vrLoc = 3234;
 	};
 	E94079A712E25014004CA4ED /* PBXTextBookmark */ = {
@@ -2799,7 +3118,7 @@
 		fRef = E9391E8C12E0ED6100CA4E53 /* ofThreadedImageLoader.cpp */;
 		name = "ofThreadedImageLoader.cpp: 138";
 		rLen = 0;
-		rLoc = 3664;
+		rLoc = 3622;
 		rType = 0;
 		vrLen = 568;
 		vrLoc = 3598;
@@ -2821,7 +3140,7 @@
 		rLen = 0;
 		rLoc = 789;
 		rType = 0;
-		vrLen = 1596;
+		vrLen = 1014;
 		vrLoc = 3787;
 	};
 	E94079B212E25063004CA4ED /* PBXTextBookmark */ = {
@@ -2849,7 +3168,7 @@
 		fRef = E9391E8C12E0ED6100CA4E53 /* ofThreadedImageLoader.cpp */;
 		name = "ofThreadedImageLoader.cpp: 138";
 		rLen = 0;
-		rLoc = 3664;
+		rLoc = 3622;
 		rType = 0;
 		vrLen = 568;
 		vrLoc = 3598;
@@ -2869,7 +3188,7 @@
 		fRef = E9391E8C12E0ED6100CA4E53 /* ofThreadedImageLoader.cpp */;
 		name = "ofThreadedImageLoader.cpp: 137";
 		rLen = 0;
-		rLoc = 3664;
+		rLoc = 3622;
 		rType = 0;
 		vrLen = 593;
 		vrLoc = 3429;
@@ -2949,9 +3268,9 @@
 		fRef = E9391E8C12E0ED6100CA4E53 /* ofThreadedImageLoader.cpp */;
 		name = "ofThreadedImageLoader.cpp: 157";
 		rLen = 0;
-		rLoc = 4159;
+		rLoc = 4117;
 		rType = 0;
-		vrLen = 1504;
+		vrLen = 1461;
 		vrLoc = 3340;
 	};
 	E94079C512E25121004CA4ED /* PBXTextBookmark */ = {
@@ -2959,7 +3278,7 @@
 		fRef = E9391E8C12E0ED6100CA4E53 /* ofThreadedImageLoader.cpp */;
 		name = "ofThreadedImageLoader.cpp: 137";
 		rLen = 0;
-		rLoc = 3664;
+		rLoc = 3622;
 		rType = 0;
 		vrLen = 593;
 		vrLoc = 3429;
@@ -2969,9 +3288,9 @@
 		fRef = E9391E8C12E0ED6100CA4E53 /* ofThreadedImageLoader.cpp */;
 		name = "ofThreadedImageLoader.cpp: 157";
 		rLen = 0;
-		rLoc = 4159;
+		rLoc = 4117;
 		rType = 0;
-		vrLen = 1504;
+		vrLen = 1461;
 		vrLoc = 3340;
 	};
 	E94079C912E251D6004CA4ED /* PBXTextBookmark */ = {
@@ -2997,7 +3316,7 @@
 		fRef = E9391E8C12E0ED6100CA4E53 /* ofThreadedImageLoader.cpp */;
 		name = "ofThreadedImageLoader.cpp: 137";
 		rLen = 0;
-		rLoc = 3664;
+		rLoc = 3622;
 		rType = 0;
 		vrLen = 593;
 		vrLoc = 3429;
@@ -3261,7 +3580,7 @@
 		fRef = E9391E8C12E0ED6100CA4E53 /* ofThreadedImageLoader.cpp */;
 		name = "ofThreadedImageLoader.cpp: 159";
 		rLen = 0;
-		rLoc = 4230;
+		rLoc = 4188;
 		rType = 0;
 		vrLen = 1485;
 		vrLoc = 3316;
@@ -3290,7 +3609,7 @@
 		isa = PBXTextBookmark;
 		fRef = E9391E8B12E0ED6100CA4E53 /* ofThreadedImageLoader.h */;
 		name = "ofThreadedImageLoader.h: 1";
-		rLen = 1960;
+		rLen = 2388;
 		rLoc = 0;
 		rType = 0;
 		vrLen = 1631;
@@ -3338,7 +3657,7 @@
 		isa = PBXTextBookmark;
 		fRef = E9391E8B12E0ED6100CA4E53 /* ofThreadedImageLoader.h */;
 		name = "ofThreadedImageLoader.h: 1";
-		rLen = 1960;
+		rLen = 2388;
 		rLoc = 0;
 		rType = 0;
 		vrLen = 1621;
@@ -3387,7 +3706,7 @@
 		fRef = E9391E8C12E0ED6100CA4E53 /* ofThreadedImageLoader.cpp */;
 		name = "ofThreadedImageLoader.cpp: 159";
 		rLen = 0;
-		rLoc = 4230;
+		rLoc = 4188;
 		rType = 0;
 		vrLen = 1481;
 		vrLoc = 0;
@@ -3407,7 +3726,7 @@
 		fRef = E9391E8B12E0ED6100CA4E53 /* ofThreadedImageLoader.h */;
 		name = "ofThreadedImageLoader.h: 82";
 		rLen = 1;
-		rLoc = 1959;
+		rLoc = 2387;
 		rType = 0;
 		vrLen = 1621;
 		vrLoc = 324;
@@ -3549,7 +3868,7 @@
 		fRef = E9391E8C12E0ED6100CA4E53 /* ofThreadedImageLoader.cpp */;
 		name = "ofThreadedImageLoader.cpp: 159";
 		rLen = 0;
-		rLoc = 4230;
+		rLoc = 4188;
 		rType = 0;
 		vrLen = 1512;
 		vrLoc = 3289;
@@ -3569,7 +3888,7 @@
 		fRef = E9391E8B12E0ED6100CA4E53 /* ofThreadedImageLoader.h */;
 		name = "ofThreadedImageLoader.h: 75";
 		rLen = 0;
-		rLoc = 1743;
+		rLoc = 1832;
 		rType = 0;
 		vrLen = 1628;
 		vrLoc = 324;
@@ -3629,7 +3948,7 @@
 		fRef = E9391E8B12E0ED6100CA4E53 /* ofThreadedImageLoader.h */;
 		name = "ofThreadedImageLoader.h: 72";
 		rLen = 0;
-		rLoc = 1731;
+		rLoc = 1741;
 		rType = 0;
 		vrLen = 1556;
 		vrLoc = 403;
@@ -3639,7 +3958,7 @@
 		fRef = E9391E8C12E0ED6100CA4E53 /* ofThreadedImageLoader.cpp */;
 		name = "ofThreadedImageLoader.cpp: 159";
 		rLen = 0;
-		rLoc = 4230;
+		rLoc = 4188;
 		rType = 0;
 		vrLen = 1481;
 		vrLoc = 0;
@@ -3659,7 +3978,7 @@
 		fRef = E9391E8C12E0ED6100CA4E53 /* ofThreadedImageLoader.cpp */;
 		name = "ofThreadedImageLoader.cpp: 159";
 		rLen = 0;
-		rLoc = 4230;
+		rLoc = 4188;
 		rType = 0;
 		vrLen = 1552;
 		vrLoc = 2316;

@@ -54,9 +54,7 @@ void ofThreadedImageLoader::threadedFunction() {
 			if(entry.image == NULL) {
 				continue;
 			}
-			
-
-		//	entry.image->setUseTexture(false);
+		
 			if(entry.type == OF_LOAD_FROM_DISK) {
 				entry.image->loadImage(entry.filename);
 				lock();
