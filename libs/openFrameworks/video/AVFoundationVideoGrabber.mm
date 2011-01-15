@@ -276,8 +276,14 @@ bool AVFoundationVideoGrabber::initGrabber(int w, int h){
 	if( [grabber initCapture:fps capWidth:w capHeight:h] ) {
 		grabber->grabberPtr = this;
 		
-		width	= grabber->width;
-		height	= grabber->height;
+		if(ofxiPhoneGetOrientation() == UIDeviceOrientationPortrait || ofxiPhoneGetOrientation() == UIDeviceOrientationPortraitUpsideDown) {
+			width = grabber->height;
+			height = grabber->width;
+		}
+		else {
+			width	= grabber->width;
+			height	= grabber->height;
+		}
 		
 		clear();
 		
@@ -302,6 +308,8 @@ bool AVFoundationVideoGrabber::initGrabber(int w, int h){
 
 void AVFoundationVideoGrabber::updatePixelsCB( CGImageRef & ref ){
 	
+	if(ofxiPhoneGetOrientation() == UIDeviceOrientationPortrait || ofxiPhoneGetOrientation() == UIDeviceOrientationPortraitUpsideDown)
+		//transform
 	CGContextRef spriteContext;
 		
 	// Uses the bitmap creation function provided by the Core Graphics framework. 
