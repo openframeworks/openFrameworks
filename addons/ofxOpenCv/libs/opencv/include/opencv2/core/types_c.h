@@ -259,8 +259,8 @@ enum {
 
 #define CV_SWAP(a,b,t) ((t) = (a), (a) = (b), (b) = (t))
 
-#ifndef MIN
-#define MIN(a,b)  ((a) > (b) ? (b) : (a))
+#ifndef CV_MIN
+#define CV_MIN(a,b)  ((a) > (b) ? (b) : (a))
 #endif
 
 #ifndef MAX

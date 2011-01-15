@@ -3,6 +3,7 @@
 #include "ofConstants.h"
 #include "ofUtils.h"
 #include "ofColor.h"
+#include "ofPixelUtils.h"
 
 class ofPixels {
 public:
@@ -22,7 +23,7 @@ public:
 	void swapRgb();
 
 	void clear();
-
+	
 	unsigned char * getPixels();
 	unsigned char * const getPixels() const;
 
@@ -43,6 +44,9 @@ public:
 	int getGlDataType() const;
 
 private:
+	
+	friend class ofPixelUtils;
+	
 	unsigned char * pixels;
 	int width;
 	int height;
