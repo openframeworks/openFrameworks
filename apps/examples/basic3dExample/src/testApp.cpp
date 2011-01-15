@@ -12,8 +12,8 @@ ofMeshNode	testNodes[kNumTestNodes];
 ofCamera	cam[2];
 int			targetIndex[2];		// which test node to target (one for each camera)
 
-int			camToShow = 0;
-int			camToMove = 1;
+int			camToView = 0;
+int			camToConfigure = 1;
 
 bool		doOrbit = false;
 float		orbitRadius = 100;
@@ -82,8 +82,10 @@ void testApp::draw(){
 		}
 	}
 	
+	glEnable(GL_LIGHTING);
+
 	// activate camera
-	cam[camToShow].begin(ofGetWindowRect());
+	cam[camToView].begin(ofGetWindowRect());
 	
 	
 	// draw world axis
@@ -129,21 +131,54 @@ void testApp::draw(){
 		glVertex3f(v2.x, v2.y, v2.z);
 		glEnd();
 	}
+	
+	cam[camToView].end();
+	
+	ofSetColor(0, 0, 0);
+	string s = string("") + 
+	"\n" + 
+	"Purple boxes (4 of them) are generic nodes with simple circular motion, linked in a hierarchy (with ofNode::setParent).\n" + 
+	"Yellow boxes (2 of them) are cameras. You are looking through one of them so can only see one box on screen.\n" + 
+	"\n" + 
+	"KEYS:\n" + 
+	"\n" + 
+	"z      reset transforms\n" + 
+	"\n" + 
+	"v      switch camera to view: " + ofToString(camToView) + "\n" +
+	"\n" + 
+	"c      switch camera to configure: " + ofToString(camToConfigure) + "\n" +
+	" o      toggle orbit (use mouse to orbit)\n" + 
+	" t      cycle target\n" + 
+	" LEFT   pan left\n" + 
+	" RIGHT  pan right\n" + 
+	" UP     tilt up\n" + 
+	" DOWN   tilt down\n" + 
+	" ,      roll left\n" + 
+	" .      roll right\n" + 
+	" a      truck left\n" + 
+	" d      truck right\n" + 
+	" w      dolly forward\n" + 
+	" s      dolly backward\n" + 
+	" r      boom up\n" + 
+	" f      boom down\n";
+	
+	glDisable(GL_LIGHTING);
+	ofDrawBitmapString(s, ofPoint(20, 20));
 }
 
 //--------------------------------------------------------------
 void testApp::keyPressed(int key){
-	ofNode *n = &cam[camToMove];
+	ofNode *n = &cam[camToConfigure];
 	
 	switch(key) {
-		case '`':
-			camToMove = 1 - camToMove;
-			printf("\n\n** MOVING CAMERA %i **\n", camToMove);
+		case 'c':
+			camToConfigure = 1 - camToConfigure;
+			printf("\n\n** MOVING CAMERA %i **\n", camToConfigure);
 			break;
 			
-		case 'c':
-			camToShow = 1 - camToShow;
-			printf("\n\n** SHOWING CAMERA %i **\n", camToShow);
+		case 'v':
+			camToView = 1 - camToView;
+			printf("\n\n** SHOWING CAMERA %i **\n", camToView);
 			break;
 			
 			
@@ -168,10 +203,10 @@ void testApp::keyPressed(int key){
 		case 'o': doOrbit ^= true; break;
 			
 		case 'O':
-			if(cam[camToShow].getOrtho()) {
-				cam[camToShow].disableOrtho();
+			if(cam[camToView].getOrtho()) {
+				cam[camToView].disableOrtho();
 			} else {
-				cam[camToShow].enableOrtho();
+				cam[camToView].enableOrtho();
 			}
 			break;
 			
@@ -180,12 +215,12 @@ void testApp::keyPressed(int key){
 			break;
 			
 		case 't':
-			targetIndex[camToMove]++ ; 
-			if(targetIndex[camToMove]>=kNumTestNodes) targetIndex[camToMove] = -1;
+			targetIndex[camToConfigure]++ ; 
+			if(targetIndex[camToConfigure]>=kNumTestNodes) targetIndex[camToConfigure] = -1;
 			break;
 	}
 	
-	printf("\n** MOVING CAMERA %i **\n", camToMove);
+	printf("\n** MOVING CAMERA %i **\n", camToConfigure);
 	printf("POSITION: %f %f %f\n", n->getX(), n->getY(), n->getZ());
 	printf("X-AXIS: %f %f %f\n", n->getXAxis().x, n->getXAxis().y, n->getXAxis().z);
 	printf("Y-AXIS: %f %f %f\n", n->getYAxis().x, n->getYAxis().y, n->getYAxis().z);
