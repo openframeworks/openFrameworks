@@ -337,20 +337,15 @@
 												<key>_historyCapacity</key>
 												<integer>40</integer>
 												<key>bookmark</key>
-												<string>BB40231B12E258BC0002A877</string>
+												<string>BB604B6A12E25B0000BD9826</string>
 												<key>history</key>
 												<array>
 													<string>BBE7F06D12DF98050039489F</string>
 													<string>BBE7F20912DFD4240039489F</string>
 													<string>BBE7F35012DFF3130039489F</string>
 													<string>BB2FA66B12E0EDDF00CB8632</string>
-													<string>BB40204912E208480002A877</string>
-													<string>BB4020E412E226530002A877</string>
-													<string>BB4020E512E226530002A877</string>
-													<string>BB4021E112E23D6A0002A877</string>
-													<string>BB40226612E247030002A877</string>
 													<string>BB4022D312E2531E0002A877</string>
-													<string>BB4022D412E2531E0002A877</string>
+													<string>BB40233112E25ADB0002A877</string>
 												</array>
 											</dict>
 											<key>SplitCount</key>
@@ -389,7 +384,7 @@
 												<key>_historyCapacity</key>
 												<integer>40</integer>
 												<key>bookmark</key>
-												<string>BB40231C12E258BC0002A877</string>
+												<string>BB604B6B12E25B0000BD9826</string>
 												<key>history</key>
 												<array>
 													<string>BBE7F06D12DF98050039489F</string>
@@ -397,7 +392,7 @@
 													<string>BBE7F35012DFF3130039489F</string>
 													<string>BBCF99E612E0322A00695088</string>
 													<string>BB2FA66B12E0EDDF00CB8632</string>
-													<string>BB401FAE12E174670002A877</string>
+													<string>BB40233212E25ADB0002A877</string>
 												</array>
 											</dict>
 											<key>SplitCount</key>
@@ -461,10 +456,10 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>BB40204312E207120002A877</string>
+				<string>BB604B6C12E25B0000BD9826</string>
 				<string>1CE0B1FE06471DED0097A5F4</string>
-				<string>BB40204412E207120002A877</string>
-				<string>BB40204512E207120002A877</string>
+				<string>BB604B6D12E25B0000BD9826</string>
+				<string>BB604B6E12E25B0000BD9826</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20506471E060097A5F4</string>
@@ -603,10 +598,6 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
-		<string>BB4020EC12E226530002A877</string>
-		<string>BB4020ED12E226530002A877</string>
-		<string>1C78EAAD065D492600B07095</string>
-		<string>1CD10A99069EF8BA00B06720</string>
 		<string>BBAEB25612DE2F7B007FD423</string>
 		<string>/Users/Memo/___LAB___/openFrameworks/ofdevcon2011/apps/examples/basic3dExample/basic3dExample.xcodeproj</string>
 	</array>
@@ -627,14 +618,12 @@
 					<key>Dock</key>
 					<array>
 						<dict>
-							<key>BecomeActive</key>
-							<true/>
 							<key>ContentConfiguration</key>
 							<dict>
 								<key>PBXProjectModuleGUID</key>
 								<string>1CD0528F0623707200166675</string>
 								<key>PBXProjectModuleLabel</key>
-								<string>ofNode.cpp</string>
+								<string></string>
 								<key>StatusBarVisibility</key>
 								<true/>
 							</dict>
@@ -690,7 +679,7 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>BBAEB25612DE2F7B007FD423</string>
-				<string>BB40203D12E207060002A877</string>
+				<string>BB604B6F12E25B0000BD9826</string>
 				<string>1CD0528F0623707200166675</string>
 				<string>XCMainBuildResultsModuleGUID</string>
 			</array>

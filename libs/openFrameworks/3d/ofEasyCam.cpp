@@ -8,6 +8,7 @@
  */
 
 #include "ofEasyCam.h"
+#include "ofEvents.h"
 
 
 //----------------------------------------

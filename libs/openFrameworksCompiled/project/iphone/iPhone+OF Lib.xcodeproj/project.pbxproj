@@ -7,6 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5342C7D512E20D0000DD2646 /* AVFoundationVideoPlayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 5342C7D312E20CFF00DD2646 /* AVFoundationVideoPlayer.h */; };
+		5342C7D612E20D0000DD2646 /* AVFoundationVideoPlayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5342C7D412E20D0000DD2646 /* AVFoundationVideoPlayer.mm */; };
+		5342C7DB12E20D1000DD2646 /* ofiPhoneVideoGrabber.h in Headers */ = {isa = PBXBuildFile; fileRef = 5342C7D912E20D1000DD2646 /* ofiPhoneVideoGrabber.h */; };
+		5342C7DC12E20D1000DD2646 /* ofiPhoneVideoGrabber.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5342C7DA12E20D1000DD2646 /* ofiPhoneVideoGrabber.mm */; };
+		5342C7DF12E20D1500DD2646 /* ofVideoGrabber.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5342C7DD12E20D1500DD2646 /* ofVideoGrabber.cpp */; };
+		5342C7E012E20D1500DD2646 /* ofVideoGrabber.h in Headers */ = {isa = PBXBuildFile; fileRef = 5342C7DE12E20D1500DD2646 /* ofVideoGrabber.h */; };
 		53AD296C12DE99CA00746BB1 /* ofAppBaseWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = 53AD296612DE99CA00746BB1 /* ofAppBaseWindow.h */; };
 		53AD296F12DE99CA00746BB1 /* ofAppRunner.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53AD296912DE99CA00746BB1 /* ofAppRunner.cpp */; };
 		53AD297012DE99CA00746BB1 /* ofAppRunner.h in Headers */ = {isa = PBXBuildFile; fileRef = 53AD296A12DE99CA00746BB1 /* ofAppRunner.h */; };
@@ -59,6 +65,16 @@
 		53AD29D012DE9A4600746BB1 /* ofThread.h in Headers */ = {isa = PBXBuildFile; fileRef = 53AD29C412DE9A4600746BB1 /* ofThread.h */; };
 		53AD29D112DE9A4600746BB1 /* ofUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53AD29C512DE9A4600746BB1 /* ofUtils.cpp */; };
 		53AD29D212DE9A4600746BB1 /* ofUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 53AD29C612DE9A4600746BB1 /* ofUtils.h */; };
+		53DA32E312DF7B2400C622CE /* ofVideoPlayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53DA32DF12DF7B2400C622CE /* ofVideoPlayer.cpp */; };
+		53DA32E412DF7B2400C622CE /* ofVideoPlayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 53DA32E012DF7B2400C622CE /* ofVideoPlayer.h */; };
+		53DA338012DF8EFD00C622CE /* ofiPhoneVideoPlayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 53DA337C12DF8EFD00C622CE /* ofiPhoneVideoPlayer.h */; };
+		53DA338112DF8EFD00C622CE /* ofiPhoneVideoPlayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 53DA337D12DF8EFD00C622CE /* ofiPhoneVideoPlayer.mm */; };
+		53DA338212DF8EFD00C622CE /* AVFoundationVideoGrabber.h in Headers */ = {isa = PBXBuildFile; fileRef = 53DA337E12DF8EFD00C622CE /* AVFoundationVideoGrabber.h */; };
+		53DA338312DF8EFD00C622CE /* AVFoundationVideoGrabber.mm in Sources */ = {isa = PBXBuildFile; fileRef = 53DA337F12DF8EFD00C622CE /* AVFoundationVideoGrabber.mm */; };
+		53DA338A12DF8F4500C622CE /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53DA338912DF8F4500C622CE /* AVFoundation.framework */; };
+		53DA338E12DF8F5000C622CE /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53DA338D12DF8F5000C622CE /* CoreAudio.framework */; };
+		53DA339012DF8F5000C622CE /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53DA338F12DF8F5000C622CE /* CoreMedia.framework */; };
+		53DA339212DF8F5000C622CE /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53DA339112DF8F5000C622CE /* CoreVideo.framework */; };
 		5E2E99DD10ED147800587639 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E2E99DC10ED147800587639 /* MapKit.framework */; };
 		BB24DECA10DA7A3F00E9C588 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BBE5EAB70F49AD8400F28951 /* AudioToolbox.framework */; };
 		BB24DECB10DA7A3F00E9C588 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB16EBD10F2B2A9500518274 /* OpenGLES.framework */; };
@@ -161,8 +177,7 @@
 		DA78520C1105C1BF007EFC90 /* glu.h in Headers */ = {isa = PBXBuildFile; fileRef = DA78520A1105C1BF007EFC90 /* glu.h */; };
 		DA78520D1105C1BF007EFC90 /* gluos.h in Headers */ = {isa = PBXBuildFile; fileRef = DA78520B1105C1BF007EFC90 /* gluos.h */; };
 		E47B2AB812CE2A0200B3928C /* ofEvents.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E47B2AB712CE2A0200B3928C /* ofEvents.cpp */; };
-		E4A8262A12565FF6002F86A2 /* ofxiPhoneVideoGrabber.h in Headers */ = {isa = PBXBuildFile; fileRef = E4A8262812565FF6002F86A2 /* ofxiPhoneVideoGrabber.h */; };
-		E4A8262B12565FF6002F86A2 /* ofxiPhoneVideoGrabber.mm in Sources */ = {isa = PBXBuildFile; fileRef = E4A8262912565FF6002F86A2 /* ofxiPhoneVideoGrabber.mm */; };
+		E47DB8B512E224BC0019AE15 /* ofPixels.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E47DB8B412E224BC0019AE15 /* ofPixels.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -170,6 +185,12 @@
 		1DF5F4DF0D08C38300B7A737 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		288765FC0DF74451002DB57D /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		5326AEA710A23A0500278DE6 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
+		5342C7D312E20CFF00DD2646 /* AVFoundationVideoPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AVFoundationVideoPlayer.h; sourceTree = "<group>"; };
+		5342C7D412E20D0000DD2646 /* AVFoundationVideoPlayer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AVFoundationVideoPlayer.mm; sourceTree = "<group>"; };
+		5342C7D912E20D1000DD2646 /* ofiPhoneVideoGrabber.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofiPhoneVideoGrabber.h; sourceTree = "<group>"; };
+		5342C7DA12E20D1000DD2646 /* ofiPhoneVideoGrabber.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ofiPhoneVideoGrabber.mm; sourceTree = "<group>"; };
+		5342C7DD12E20D1500DD2646 /* ofVideoGrabber.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofVideoGrabber.cpp; sourceTree = "<group>"; };
+		5342C7DE12E20D1500DD2646 /* ofVideoGrabber.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofVideoGrabber.h; sourceTree = "<group>"; };
 		53AD296612DE99CA00746BB1 /* ofAppBaseWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofAppBaseWindow.h; sourceTree = "<group>"; };
 		53AD296912DE99CA00746BB1 /* ofAppRunner.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofAppRunner.cpp; sourceTree = "<group>"; };
 		53AD296A12DE99CA00746BB1 /* ofAppRunner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofAppRunner.h; sourceTree = "<group>"; };
@@ -222,6 +243,16 @@
 		53AD29C412DE9A4600746BB1 /* ofThread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofThread.h; sourceTree = "<group>"; };
 		53AD29C512DE9A4600746BB1 /* ofUtils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofUtils.cpp; sourceTree = "<group>"; };
 		53AD29C612DE9A4600746BB1 /* ofUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofUtils.h; sourceTree = "<group>"; };
+		53DA32DF12DF7B2400C622CE /* ofVideoPlayer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofVideoPlayer.cpp; sourceTree = "<group>"; };
+		53DA32E012DF7B2400C622CE /* ofVideoPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofVideoPlayer.h; sourceTree = "<group>"; };
+		53DA337C12DF8EFD00C622CE /* ofiPhoneVideoPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofiPhoneVideoPlayer.h; sourceTree = "<group>"; };
+		53DA337D12DF8EFD00C622CE /* ofiPhoneVideoPlayer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ofiPhoneVideoPlayer.mm; sourceTree = "<group>"; };
+		53DA337E12DF8EFD00C622CE /* AVFoundationVideoGrabber.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AVFoundationVideoGrabber.h; sourceTree = "<group>"; };
+		53DA337F12DF8EFD00C622CE /* AVFoundationVideoGrabber.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AVFoundationVideoGrabber.mm; sourceTree = "<group>"; };
+		53DA338912DF8F4500C622CE /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
+		53DA338D12DF8F5000C622CE /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = System/Library/Frameworks/CoreAudio.framework; sourceTree = SDKROOT; };
+		53DA338F12DF8F5000C622CE /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = System/Library/Frameworks/CoreMedia.framework; sourceTree = SDKROOT; };
+		53DA339112DF8F5000C622CE /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = System/Library/Frameworks/CoreVideo.framework; sourceTree = SDKROOT; };
 		53F323EA10A20EDB00E0DAE4 /* OpenAL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenAL.framework; path = System/Library/Frameworks/OpenAL.framework; sourceTree = SDKROOT; };
 		5E2E99DC10ED147800587639 /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
 		BB16EBD10F2B2A9500518274 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
@@ -329,8 +360,7 @@
 		DA78520A1105C1BF007EFC90 /* glu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = glu.h; sourceTree = "<group>"; };
 		DA78520B1105C1BF007EFC90 /* gluos.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gluos.h; sourceTree = "<group>"; };
 		E47B2AB712CE2A0200B3928C /* ofEvents.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofEvents.cpp; path = ../../../openFrameworks/events/ofEvents.cpp; sourceTree = SOURCE_ROOT; };
-		E4A8262812565FF6002F86A2 /* ofxiPhoneVideoGrabber.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxiPhoneVideoGrabber.h; path = ../../../../addons/ofxiPhone/src/ofxiPhoneVideoGrabber.h; sourceTree = SOURCE_ROOT; };
-		E4A8262912565FF6002F86A2 /* ofxiPhoneVideoGrabber.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ofxiPhoneVideoGrabber.mm; path = ../../../../addons/ofxiPhone/src/ofxiPhoneVideoGrabber.mm; sourceTree = SOURCE_ROOT; };
+		E47DB8B412E224BC0019AE15 /* ofPixels.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofPixels.cpp; path = ../../../openFrameworks/graphics/ofPixels.cpp; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -347,6 +377,10 @@
 				BB24DED010DA7A3F00E9C588 /* CoreLocation.framework in Frameworks */,
 				BB24DED110DA7A3F00E9C588 /* QuartzCore.framework in Frameworks */,
 				5E2E99DD10ED147800587639 /* MapKit.framework in Frameworks */,
+				53DA338A12DF8F4500C622CE /* AVFoundation.framework in Frameworks */,
+				53DA338E12DF8F5000C622CE /* CoreAudio.framework in Frameworks */,
+				53DA339012DF8F5000C622CE /* CoreMedia.framework in Frameworks */,
+				53DA339212DF8F5000C622CE /* CoreVideo.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -384,6 +418,10 @@
 				288765FC0DF74451002DB57D /* CoreGraphics.framework */,
 				53F323EA10A20EDB00E0DAE4 /* OpenAL.framework */,
 				5326AEA710A23A0500278DE6 /* CoreLocation.framework */,
+				53DA338912DF8F4500C622CE /* AVFoundation.framework */,
+				53DA338D12DF8F5000C622CE /* CoreAudio.framework */,
+				53DA338F12DF8F5000C622CE /* CoreMedia.framework */,
+				53DA339112DF8F5000C622CE /* CoreVideo.framework */,
 			);
 			name = "core frameworks";
 			sourceTree = "<group>";
@@ -490,6 +528,7 @@
 		BB24DF0510DA7BEF00E9C588 /* graphics */ = {
 			isa = PBXGroup;
 			children = (
+				E47DB8B412E224BC0019AE15 /* ofPixels.cpp */,
 				53AD297212DE99EB00746BB1 /* ofPixels.h */,
 				53AD297312DE99EB00746BB1 /* ofFbo.cpp */,
 				53AD297412DE99EB00746BB1 /* ofFbo.h */,
@@ -540,6 +579,18 @@
 		BB24DF1E10DA7BEF00E9C588 /* video */ = {
 			isa = PBXGroup;
 			children = (
+				5342C7DE12E20D1500DD2646 /* ofVideoGrabber.h */,
+				5342C7DD12E20D1500DD2646 /* ofVideoGrabber.cpp */,
+				5342C7D912E20D1000DD2646 /* ofiPhoneVideoGrabber.h */,
+				5342C7DA12E20D1000DD2646 /* ofiPhoneVideoGrabber.mm */,
+				53DA337E12DF8EFD00C622CE /* AVFoundationVideoGrabber.h */,
+				53DA337F12DF8EFD00C622CE /* AVFoundationVideoGrabber.mm */,
+				53DA32E012DF7B2400C622CE /* ofVideoPlayer.h */,
+				53DA32DF12DF7B2400C622CE /* ofVideoPlayer.cpp */,
+				53DA337C12DF8EFD00C622CE /* ofiPhoneVideoPlayer.h */,
+				53DA337D12DF8EFD00C622CE /* ofiPhoneVideoPlayer.mm */,
+				5342C7D312E20CFF00DD2646 /* AVFoundationVideoPlayer.h */,
+				5342C7D412E20D0000DD2646 /* AVFoundationVideoPlayer.mm */,
 			);
 			path = video;
 			sourceTree = "<group>";
@@ -724,8 +775,6 @@
 				BB24E04110DA7C6100E9C588 /* ofxiPhoneMapKitListener.h */,
 				BB24E04210DA7C6100E9C588 /* ofxiPhoneSoundPlayer.mm */,
 				BB24E04310DA7C6100E9C588 /* ofxiPhoneSoundStream.mm */,
-				E4A8262812565FF6002F86A2 /* ofxiPhoneVideoGrabber.h */,
-				E4A8262912565FF6002F86A2 /* ofxiPhoneVideoGrabber.mm */,
 			);
 			path = src;
 			sourceTree = "<group>";
@@ -861,7 +910,6 @@
 				BB3140C011BB09220019348E /* ES1Renderer.h in Headers */,
 				BB3140C211BB09220019348E /* ES2Renderer.h in Headers */,
 				BB3140C611BB098A0019348E /* ESRenderer.h in Headers */,
-				E4A8262A12565FF6002F86A2 /* ofxiPhoneVideoGrabber.h in Headers */,
 				53AD296C12DE99CA00746BB1 /* ofAppBaseWindow.h in Headers */,
 				53AD297012DE99CA00746BB1 /* ofAppRunner.h in Headers */,
 				53AD297112DE99CA00746BB1 /* ofBaseApp.h in Headers */,
@@ -893,6 +941,12 @@
 				53AD29CE12DE9A4600746BB1 /* ofFileUtils.h in Headers */,
 				53AD29D012DE9A4600746BB1 /* ofThread.h in Headers */,
 				53AD29D212DE9A4600746BB1 /* ofUtils.h in Headers */,
+				53DA32E412DF7B2400C622CE /* ofVideoPlayer.h in Headers */,
+				53DA338012DF8EFD00C622CE /* ofiPhoneVideoPlayer.h in Headers */,
+				53DA338212DF8EFD00C622CE /* AVFoundationVideoGrabber.h in Headers */,
+				5342C7D512E20D0000DD2646 /* AVFoundationVideoPlayer.h in Headers */,
+				5342C7DB12E20D1000DD2646 /* ofiPhoneVideoGrabber.h in Headers */,
+				5342C7E012E20D1500DD2646 /* ofVideoGrabber.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -963,7 +1017,6 @@
 				BB24E0E310DA9F5D00E9C588 /* ofxiPhoneAlerts.mm in Sources */,
 				BB3140C111BB09220019348E /* ES1Renderer.mm in Sources */,
 				BB3140C311BB09220019348E /* ES2Renderer.mm in Sources */,
-				E4A8262B12565FF6002F86A2 /* ofxiPhoneVideoGrabber.mm in Sources */,
 				E47B2AB812CE2A0200B3928C /* ofEvents.cpp in Sources */,
 				53AD296F12DE99CA00746BB1 /* ofAppRunner.cpp in Sources */,
 				53AD298212DE99EB00746BB1 /* ofFbo.cpp in Sources */,
@@ -986,6 +1039,13 @@
 				53AD29CD12DE9A4600746BB1 /* ofFileUtils.cpp in Sources */,
 				53AD29CF12DE9A4600746BB1 /* ofThread.cpp in Sources */,
 				53AD29D112DE9A4600746BB1 /* ofUtils.cpp in Sources */,
+				53DA32E312DF7B2400C622CE /* ofVideoPlayer.cpp in Sources */,
+				53DA338112DF8EFD00C622CE /* ofiPhoneVideoPlayer.mm in Sources */,
+				53DA338312DF8EFD00C622CE /* AVFoundationVideoGrabber.mm in Sources */,
+				5342C7D612E20D0000DD2646 /* AVFoundationVideoPlayer.mm in Sources */,
+				5342C7DC12E20D1000DD2646 /* ofiPhoneVideoGrabber.mm in Sources */,
+				5342C7DF12E20D1500DD2646 /* ofVideoGrabber.cpp in Sources */,
+				E47DB8B512E224BC0019AE15 /* ofPixels.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -50,7 +50,6 @@ bool			bUsingNormalizedTexCoords = false;
 bool 			bBakgroundAuto		= true;
 ofRectMode		cornerMode			= OF_RECTMODE_CORNER;
 ofPolyWindingMode		polyMode	= OF_POLY_WINDING_ODD;
-static ofRectangle viewportRect;	//note we leave this 0,0,0,0 because ofViewport is smart
 
 int				curveResolution = 20;
 
@@ -59,6 +58,7 @@ ofHandednessType coordHandedness;
 //style stuff - new in 006
 ofStyle			currentStyle;
 deque <ofStyle> styleHistory;
+deque <ofRectangle> viewportHistory;
 
 static float circlePts[OF_MAX_CIRCLE_PTS][3];			// [points][axis]
 static float circlePtsScaled[OF_MAX_CIRCLE_PTS][3];		// [points][axis]
@@ -81,10 +81,20 @@ ofRectMode ofGetRectMode(){
 
 //----------------------------------------------------------
 void ofPushView() {
+	
 	GLint viewport[4];
 	glGetIntegerv(GL_VIEWPORT, viewport);
-	viewportRect.set(viewport[0], viewport[1], viewport[2], viewport[3]);
-		
+	
+	ofRectangle currentViewport;
+	currentViewport.set(viewport[0], viewport[1], viewport[2], viewport[3]);
+	viewportHistory.push_front(currentViewport);
+	
+	if( viewportHistory.size() > OF_MAX_VIEWPORT_HISTORY ){
+		viewportHistory.pop_back();
+		//should we warn here?
+		//ofLog(OF_LOG_WARNING, "ofPushView - warning: you have used ofPushView more than %i times without calling ofPopView - check your code!", OF_MAX_VIEWPORT_HISTORY);
+	}
+	
 	glMatrixMode(GL_PROJECTION);
 	glPushMatrix();
 	glMatrixMode(GL_MODELVIEW);
@@ -94,7 +104,13 @@ void ofPushView() {
 
 //----------------------------------------------------------
 void ofPopView() {
-	ofViewport(viewportRect.x, viewportRect.y, viewportRect.width, viewportRect.height);
+	
+	
+	if( viewportHistory.size() ){
+		ofRectangle viewRect = viewportHistory.front();
+		ofViewport(viewRect.x, viewRect.y, viewRect.width, viewRect.height);
+		viewportHistory.pop_front();
+	}
 	
 	glMatrixMode(GL_PROJECTION);
 	glPopMatrix();
@@ -107,10 +123,42 @@ void ofPopView() {
 void ofViewport(float x, float y, float width, float height) {
 	if(width == 0) width = ofGetWidth();
 	if(height == 0) height = ofGetHeight();
-
 	glViewport(x, y, width, height);
-	viewportRect.set(x, y, width, height);
 }
+
+//----------------------------------------------------------
+ofRectangle ofGetCurrentViewport(){
+	
+	// I am using opengl calls here instead of returning viewportRect
+	// since someone might use glViewport instead of ofViewport...
+	
+	GLint viewport[4];					// Where The Viewport Values Will Be Stored
+	glGetIntegerv(GL_VIEWPORT, viewport);
+	ofRectangle view;
+	view.x = viewport[0];
+	view.y = viewport[1];
+	view.width = viewport[2];
+	view.height = viewport[3];
+	return view;
+	
+}
+
+//----------------------------------------------------------
+int ofGetViewportWidth(){
+	GLint viewport[4];					// Where The Viewport Values Will Be Stored
+	glGetIntegerv(GL_VIEWPORT, viewport);
+	return viewport[2];
+}
+
+//----------------------------------------------------------
+int ofGetViewportHeight(){
+	GLint viewport[4];					// Where The Viewport Values Will Be Stored
+	glGetIntegerv(GL_VIEWPORT, viewport);
+	return viewport[3];
+}
+
+
+
 
 //----------------------------------------------------------
 void ofSetCoordHandedness(ofHandednessType handedness) {
@@ -124,8 +172,8 @@ ofHandednessType ofGetCoordHandedness() {
 
 //----------------------------------------------------------
 void ofSetupScreenPerspective(float width, float height, bool vFlip, float fov, float nearDist, float farDist) {
-	if(width == 0) width = ofGetWidth();
-	if(height == 0) height = ofGetHeight();
+	if(width == 0) width = ofGetViewportWidth();
+	if(height == 0) height = ofGetViewportHeight();
 
 	float eyeX = width / 2;
 	float eyeY = height / 2;
@@ -156,9 +204,9 @@ void ofSetupScreenPerspective(float width, float height, bool vFlip, float fov, 
 
 //----------------------------------------------------------
 void ofSetupScreenOrtho(float width, float height, bool vFlip, float nearDist, float farDist) {
-	if(width == 0) width = ofGetWidth();
-	if(height == 0) height = ofGetHeight();
-
+	if(width == 0) width = ofGetViewportWidth();
+	if(height == 0) height = ofGetViewportHeight();
+	
 	#ifndef TARGET_OPENGLES
 
 		glMatrixMode(GL_PROJECTION);
@@ -742,74 +790,95 @@ void ofBox(float size) {
 		ofScale(1, 1, -1);
 	}
 
-	// http://www.songho.ca/opengl/gl_vertexarray.html
 	float h = size * .5;
 	
-	GLfloat vertices[] = {
-		+h,-h,+h, +h,-h,-h, +h,+h,-h, +h,+h,+h,
-		+h,+h,+h, +h,+h,-h, -h,+h,-h, -h,+h,+h,
-		+h,+h,+h, -h,+h,+h, -h,-h,+h, +h,-h,+h,
-		-h,-h,+h, -h,+h,+h, -h,+h,-h, -h,-h,-h,
-		-h,-h,+h, -h,-h,-h, +h,-h,-h, +h,-h,+h,
-		-h,-h,-h, -h,+h,-h, +h,+h,-h, +h,-h,-h
-	};
-	
-	static const float f = 1;
-	static GLfloat normals[] = {
-		+f,0,0, +f,0,0, +f,0,0, +f,0,0,
-		0,+f,0, 0,+f,0, 0,+f,0, 0,+f,0,
-		0,0,+f, 0,0,+f, 0,0,+f, 0,0,+f,
-		-f,0,0, -f,0,0, -f,0,0, -f,0,0,
-		0,-f,0, 0,-f,0, 0,-f,0, 0,-f,0,
-		0,0,-f, 0,0,-f, 0,0,-f, 0,0,-f
-	};
-	
-	static GLfloat tex[] = {
-		1,0, 0,0, 0,1, 1,1,
-		1,1, 1,0, 0,0, 0,1,
-		0,1, 1,1, 1,0, 0,0,
-		0,0, 0,1, 1,1, 1,0,
-		0,0, 0,1, 1,1, 1,0,
-		0,0, 0,1, 1,1, 1,0
-	};
-		
-	GLubyte wireIndices[] = {
-		0,1, 1,2, 2,3, 3,0,
-		12,13, 13,14, 14,15, 15,12,
-		0,12, 1,15, 2,14, 3,13
-	};
-	
-	GLubyte solidIndices[] = {
-		0,1,2, // right top left
-		0,2,3, // right bottom right
-		4,5,6, // bottom top right
-		4,6,7, // bottom bottom left	
-		8,9,10, // back bottom right
-		8,10,11, // back top left
-		12,13,14, // left bottom right
-		12,14,15, // left top left
-		16,17,18, // ... etc
-		16,18,19,
-		20,21,22,
-		20,22,23
-	};
-	
 	glEnableClientState(GL_NORMAL_ARRAY);
-	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 	glEnableClientState(GL_VERTEX_ARRAY);
 	
-	glNormalPointer(GL_FLOAT, 0, normals);
-	glTexCoordPointer(2, GL_FLOAT, 0, tex);
-	glVertexPointer(3, GL_FLOAT, 0, vertices);
-	
 	if(ofGetStyle().bFill) {
-		glDrawElements(GL_TRIANGLES, 3 * 6 * 2, GL_UNSIGNED_BYTE, solidIndices);
+		GLfloat vertices[] = {
+			+h,-h,+h, +h,-h,-h, +h,+h,-h, +h,+h,+h,
+			+h,+h,+h, +h,+h,-h, -h,+h,-h, -h,+h,+h,
+			+h,+h,+h, -h,+h,+h, -h,-h,+h, +h,-h,+h,
+			-h,-h,+h, -h,+h,+h, -h,+h,-h, -h,-h,-h,
+			-h,-h,+h, -h,-h,-h, +h,-h,-h, +h,-h,+h,
+			-h,-h,-h, -h,+h,-h, +h,+h,-h, +h,-h,-h
+		};
+		glVertexPointer(3, GL_FLOAT, 0, vertices);
+		
+		static GLfloat normals[] = {
+			+1,0,0, +1,0,0, +1,0,0, +1,0,0,
+			0,+1,0, 0,+1,0, 0,+1,0, 0,+1,0,
+			0,0,+1, 0,0,+1, 0,0,+1, 0,0,+1,
+			-1,0,0, -1,0,0, -1,0,0, -1,0,0,
+			0,-1,0, 0,-1,0, 0,-1,0, 0,-1,0,
+			0,0,-1, 0,0,-1, 0,0,-1, 0,0,-1
+		};
+		glNormalPointer(GL_FLOAT, 0, normals);
+
+		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+		static GLfloat tex[] = {
+			1,0, 0,0, 0,1, 1,1,
+			1,1, 1,0, 0,0, 0,1,
+			0,1, 1,1, 1,0, 0,0,
+			0,0, 0,1, 1,1, 1,0,
+			0,0, 0,1, 1,1, 1,0,
+			0,0, 0,1, 1,1, 1,0
+		};
+		glTexCoordPointer(2, GL_FLOAT, 0, tex);
+	
+		GLubyte indices[] = {
+			0,1,2, // right top left
+			0,2,3, // right bottom right
+			4,5,6, // bottom top right
+			4,6,7, // bottom bottom left	
+			8,9,10, // back bottom right
+			8,10,11, // back top left
+			12,13,14, // left bottom right
+			12,14,15, // left top left
+			16,17,18, // ... etc
+			16,18,19,
+			20,21,22,
+			20,22,23
+		};
+		glDrawElements(GL_TRIANGLES, 3 * 6 * 2, GL_UNSIGNED_BYTE, indices);
+		
+		glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 	} else {
-		glDrawElements(GL_LINES, 4 * 2 * 3, GL_UNSIGNED_BYTE, wireIndices);
+		GLfloat vertices[] = {
+			+h,+h,+h,
+			+h,+h,-h,
+			+h,-h,+h,
+			+h,-h,-h,
+			-h,+h,+h,
+			-h,+h,-h,
+			-h,-h,+h,
+			-h,-h,-h
+		};
+		glVertexPointer(3, GL_FLOAT, 0, vertices);
+		
+		static float n = sqrtf(3);
+		static GLfloat normals[] = {
+			+n,+n,+n,
+			+n,+n,-n,
+			+n,-n,+n,
+			+n,-n,-n,
+			-n,+n,+n,
+			-n,+n,-n,
+			-n,-n,+n,
+			-n,-n,-n
+		};
+		glNormalPointer(GL_FLOAT, 0, normals);
+
+		static GLubyte indices[] = {
+			0,1, 1,3, 3,2, 2,0,
+			4,5, 5,7, 7,6, 6,4,
+			0,4, 5,1, 7,3, 6,2
+		};
+		glDrawElements(GL_LINES, 4 * 2 * 3, GL_UNSIGNED_BYTE, indices);
 	}
 	
 	glDisableClientState(GL_VERTEX_ARRAY);
-	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 	glDisableClientState(GL_NORMAL_ARRAY);
 
 	ofPopMatrix();

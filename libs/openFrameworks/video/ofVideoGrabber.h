@@ -5,6 +5,11 @@
 #include "ofBaseTypes.h"
 #include "ofPixels.h"
 
+#ifdef OF_VIDEO_CAPTURE_IPHONE
+	#include "ofiPhoneVideoGrabber.h"
+	#define OF_VID_GRABBER_TYPE ofiPhoneVideoGrabber()
+#endif
+
 #ifdef OF_VIDEO_CAPTURE_QUICKTIME
 	#include "ofQuickTimeGrabber.h"
 	#define OF_VID_GRABBER_TYPE ofQuickTimeGrabber()
@@ -34,9 +39,10 @@ class ofVideoGrabber : public ofBaseVideoGrabber,public ofBaseDraws, public ofBa
 		bool				isFrameNew();
 		void				update();
 		void				grabFrame();
-		void				close();
+		void				close();	
 		bool				initGrabber(int w, int h){return initGrabber(w,h,true);}
 		bool				initGrabber(int w, int h, bool bTexture);
+		void				setPixelFormat(ofPixelFormat pixelFormat);
 		
 		void				videoSettings();
 		unsigned char 	*	getPixels();
@@ -67,9 +73,11 @@ class ofVideoGrabber : public ofBaseVideoGrabber,public ofBaseDraws, public ofBa
 		
 		ofTexture tex;
 		bool bUseTexture;
+		bool bInitialized;
 		ofBaseVideoGrabber		* grabber;
 		int RequestedDeviceID;
-
+		
+		ofPixelFormat internalPixelFormat;
 };
 
 

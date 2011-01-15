@@ -1,18 +1,28 @@
 #include "ofImage.h"
 #include "ofAppRunner.h"
 #include "ofTypes.h"
+#include "ofURLFileLoader.h"
+#include "ofGraphics.h"
 
 //----------------------------------------------------------
 // static variable for freeImage initialization:
 static bool		bFreeImageInited = false;
 //----------------------------------------------------------
 
-void ofLoadImage(ofPixels & pix, string path){
-	ofImage::loadImageIntoPixels(path, pix);
+void	ofLoadImage(ofPixels & pix, string path) {
+	ofImage::loadImageIntoPixels(pix, path);
 }
 
-void ofLoadImageFromMemory(ofBuffer & buffer, ofPixels & pix){
-	ofImage::loadImageFromMemory(buffer, pix);
+void	ofLoadImage(ofPixels & pix, const ofBuffer & buffer) {
+	ofImage::loadImageIntoPixels(pix, buffer);
+}
+
+void ofSaveImage(ofPixels & pix, string path, ofImageQualityType qualityLevel) {
+	ofImage::saveImageFromPixels(pix, path, qualityLevel);
+}
+
+void ofSaveImage(ofPixels & pix, ofBuffer & buffer, ofImageQualityType qualityLevel) {
+	ofImage::saveImageFromPixels(pix, buffer, qualityLevel);
 }
 
 
@@ -50,7 +60,7 @@ ofImage::ofImage(const ofImage& mom) {
 	clear();
 	clone(mom);
 	update();
-};
+}
 
 //----------------------------------------------------------
 ofImage::~ofImage(){
@@ -60,9 +70,11 @@ ofImage::~ofImage(){
 //----------------------------------------------------------
 bool ofImage::loadImage(string fileName){
 	bool bLoadedOk = false;
-	bLoadedOk = loadImageIntoPixels(fileName, myPixels);
+	bLoadedOk = loadImageIntoPixels(myPixels, fileName);
 	if (bLoadedOk && myPixels.isAllocated() && bUseTexture){
 		tex.allocate(myPixels.getWidth(), myPixels.getHeight(), myPixels.getGlDataType());
+	} else {
+		ofLog(OF_LOG_ERROR, "Couldn't load image from " + fileName);
 	}
 	update();
 	return bLoadedOk;
@@ -70,7 +82,7 @@ bool ofImage::loadImage(string fileName){
 
 bool ofImage::loadImage(const ofBuffer & buffer){
 	bool bLoadedOk = false;
-	bLoadedOk = ofImage::loadImageFromMemory(buffer,myPixels);
+	bLoadedOk = ofImage::loadImageIntoPixels(myPixels, buffer);
 	if (bLoadedOk && myPixels.isAllocated() && bUseTexture){
 		tex.allocate(myPixels.getWidth(), myPixels.getHeight(), myPixels.getGlDataType());
 	}
@@ -79,8 +91,13 @@ bool ofImage::loadImage(const ofBuffer & buffer){
 }
 
 //----------------------------------------------------------
-void ofImage::saveImage(string fileName){
-	saveImageFromPixels(fileName, myPixels);
+void ofImage::saveImage(string fileName, ofImageQualityType qualityLevel){
+	saveImageFromPixels(myPixels, fileName, qualityLevel);
+}
+
+//----------------------------------------------------------
+void ofImage::saveImage(ofBuffer & buffer, ofImageQualityType qualityLevel){
+	saveImageFromPixels(myPixels, buffer, qualityLevel);
 }
 
 //we could cap these values - but it might be more useful
@@ -244,7 +261,7 @@ void ofImage::grabScreen(int _x, int _y, int _w, int _h){
 
 	allocate(_w, _h, OF_IMAGE_COLOR);
 
-	int screenHeight = ofGetHeight();
+	int screenHeight =	ofGetViewportHeight(); // if we are in a FBO or other viewport, this fails: ofGetHeight();
 	_y = screenHeight - _y;
 	_y -= _h; // top, bottom issues
 
@@ -444,7 +461,7 @@ void ofImage::changeTypeOfPixels(ofPixels &pix, ofImageType newType){
 			break;
 	}
 
-	putBmpIntoPixels(convertedBmp, pix);
+	putBmpIntoPixels(convertedBmp, pix, false);
 
 	if (bmp != NULL)				FreeImage_Unload(bmp);
 	if (convertedBmp != NULL)		FreeImage_Unload(convertedBmp);
@@ -461,10 +478,12 @@ void ofCloseFreeImage(){
 }
 
 //----------------------------------------------------
-bool ofImage::loadImageIntoPixels(string fileName, ofPixels &pix){
-
+bool ofImage::loadImageIntoPixels(ofPixels & pix, string fileName) {
+	if(fileName.substr(0, 7) == "http://") {
+		return loadImageIntoPixels(pix, ofLoadURL(fileName).data);
+	}
+	
 	int					width, height, bpp;
-	ofImageType			type;
 	fileName			= ofToDataPath(fileName);
 	bool bLoaded		= false;
 	FIBITMAP 			* bmp = NULL;
@@ -499,7 +518,7 @@ bool ofImage::loadImageIntoPixels(string fileName, ofPixels &pix){
 }
 
 //----------------------------------------------------
-bool ofImage::loadImageFromMemory(const ofBuffer & buffer, ofPixels &pix){
+bool ofImage::loadImageIntoPixels(ofPixels & pix, const ofBuffer & buffer) {
 
 	int					width, height, bpp;
 	bool bLoaded		= false;
@@ -550,9 +569,8 @@ bool ofImage::loadImageFromMemory(const ofBuffer & buffer, ofPixels &pix){
 	return bLoaded;
 }
 
-
 //----------------------------------------------------------------
-void  ofImage::saveImageFromPixels(string fileName, ofPixels &pix){
+void ofImage::saveImageFromPixels(ofPixels & pix, string fileName, ofImageQualityType qualityLevel) {
 
 	if (pix.isAllocated() == false){
 		ofLog(OF_LOG_ERROR,"error saving image - pixels aren't allocated");
@@ -568,7 +586,7 @@ void  ofImage::saveImageFromPixels(string fileName, ofPixels &pix){
 	#ifdef TARGET_LITTLE_ENDIAN
 		pix.swapRgb();
 	#endif
-
+	
 	fileName = ofToDataPath(fileName);
 	if (pix.isAllocated()){
 		FREE_IMAGE_FORMAT fif = FIF_UNKNOWN;
@@ -578,16 +596,32 @@ void  ofImage::saveImageFromPixels(string fileName, ofPixels &pix){
 			fif = FreeImage_GetFIFFromFilename(fileName.c_str());
 		}
 		if((fif != FIF_UNKNOWN) && FreeImage_FIFSupportsReading(fif)) {
-			if((FREE_IMAGE_FORMAT)fif != FIF_JPEG)
-			   FreeImage_Save(fif, bmp, fileName.c_str());
-			else
-			   FreeImage_Save(fif, bmp, fileName.c_str(),JPEG_QUALITYSUPERB);
+			if((FREE_IMAGE_FORMAT) fif == FIF_JPEG) {
+				int quality = JPEG_QUALITYSUPERB;
+				switch(qualityLevel) {
+					case OF_IMAGE_QUALITY_WORST: quality = JPEG_QUALITYBAD; break;
+					case OF_IMAGE_QUALITY_LOW: quality = JPEG_QUALITYAVERAGE; break;
+					case OF_IMAGE_QUALITY_MEDIUM: quality = JPEG_QUALITYNORMAL; break;
+					case OF_IMAGE_QUALITY_HIGH: quality = JPEG_QUALITYGOOD; break;
+					case OF_IMAGE_QUALITY_BEST: quality = JPEG_QUALITYSUPERB; break;
+				}
+				FreeImage_Save(fif, bmp, fileName.c_str(), quality);
+			} else {
+				if(qualityLevel != OF_IMAGE_QUALITY_BEST) {
+					ofLog(OF_LOG_WARNING, "ofImageCompressionType only applies to JPEG images, ignoring value.");
+				}
+				FreeImage_Save(fif, bmp, fileName.c_str());
+			}
 		}
 	}
 
 	if (bmp != NULL){
 		FreeImage_Unload(bmp);
 	}
+}
+
+void ofImage::saveImageFromPixels(ofPixels & pix, ofBuffer & buffer, ofImageQualityType qualityLevel) {
+	ofLog(OF_LOG_VERBOSE, "saveImageFromPixels(ofPixels, ofBuffer) is not yet implemented."); // TODO
 }
 
 //----------------------------------------------------------
