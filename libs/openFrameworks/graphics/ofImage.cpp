@@ -447,7 +447,7 @@ void ofImage::changeTypeOfPixels(ofPixels &pix, ofImageType newType){
 			break;
 	}
 
-	putBmpIntoPixels(convertedBmp, pix);
+	putBmpIntoPixels(convertedBmp, pix, false);
 
 	if (bmp != NULL)				FreeImage_Unload(bmp);
 	if (convertedBmp != NULL)		FreeImage_Unload(convertedBmp);
