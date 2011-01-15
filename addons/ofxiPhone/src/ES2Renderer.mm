@@ -28,7 +28,7 @@ enum {
 // Create an OpenGL ES 2.0 context
 - (id)init
 {
-	return [self initWithDepth:false andAA:false andFsaaSamples:0 andRetina:false];
+	return [self initWithDepth:false andAA:false andFSAASamples:0 andRetina:false];
 }
 
 - (id)initWithDepth:(bool)depth andAA:(bool)fsaa andFSAASamples:(int)samples andRetina:(bool)retina

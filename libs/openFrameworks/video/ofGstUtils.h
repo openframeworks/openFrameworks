@@ -101,6 +101,8 @@ public:
 
 	void close();
 
+	GstElement 	* getPipeline();
+
 protected:
 	void 				gstHandleMessage();
 	bool 				allocate(int width=0, int height=0, int bpp=24);

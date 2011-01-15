@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ofPoint.h"
+#include "ofEvents.h"
 
 class ofDragInfo{
 	public:
@@ -39,7 +40,8 @@ class ofBaseApp{
 
 		virtual void dragEvent(ofDragInfo dragInfo) { }
 	
-	
+		virtual void gotMessage(ofMessage msg){ }
+		
 		int mouseX, mouseY;			// for processing heads
 };
 
