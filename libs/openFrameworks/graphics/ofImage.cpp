@@ -81,8 +81,8 @@ bool ofImage::loadImage(const ofBuffer & buffer){
 }
 
 //----------------------------------------------------------
-void ofImage::saveImage(string fileName, ofImageCompressionType compressionLevel){
-	saveImageFromPixels(fileName, myPixels, compressionLevel);
+void ofImage::saveImage(string fileName, ofImageQualityType qualityLevel){
+	saveImageFromPixels(fileName, myPixels, qualityLevel);
 }
 
 //we could cap these values - but it might be more useful
@@ -554,7 +554,7 @@ bool ofImage::loadImageFromMemory(const ofBuffer & buffer, ofPixels &pix){
 
 
 //----------------------------------------------------------------
-void  ofImage::saveImageFromPixels(string fileName, ofPixels &pix, ofImageCompressionType compressionLevel) {
+void  ofImage::saveImageFromPixels(string fileName, ofPixels &pix, ofImageQualityType qualityLevel) {
 
 	if (pix.isAllocated() == false){
 		ofLog(OF_LOG_ERROR,"error saving image - pixels aren't allocated");
@@ -582,7 +582,7 @@ void  ofImage::saveImageFromPixels(string fileName, ofPixels &pix, ofImageCompre
 		if((fif != FIF_UNKNOWN) && FreeImage_FIFSupportsReading(fif)) {
 			if((FREE_IMAGE_FORMAT) fif == FIF_JPEG) {
 				int quality = JPEG_QUALITYSUPERB;
-				switch(compressionLevel) {
+				switch(qualityLevel) {
 					case OF_IMAGE_QUALITY_WORST: quality = JPEG_QUALITYBAD; break;
 					case OF_IMAGE_QUALITY_LOW: quality = JPEG_QUALITYAVERAGE; break;
 					case OF_IMAGE_QUALITY_MEDIUM: quality = JPEG_QUALITYNORMAL; break;
@@ -591,7 +591,7 @@ void  ofImage::saveImageFromPixels(string fileName, ofPixels &pix, ofImageCompre
 				}
 				FreeImage_Save(fif, bmp, fileName.c_str(), quality);
 			} else {
-				if(compressionLevel != OF_IMAGE_QUALITY_BEST) {
+				if(qualityLevel != OF_IMAGE_QUALITY_BEST) {
 					ofLog(OF_LOG_WARNING, "ofImageCompressionType only applies to JPEG images, ignoring value.");
 				}
 				FreeImage_Save(fif, bmp, fileName.c_str());
