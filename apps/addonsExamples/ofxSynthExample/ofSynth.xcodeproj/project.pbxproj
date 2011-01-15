@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		3D2359C812DFE3BF0023F4EF /* glew.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D2359C712DFE3BF0023F4EF /* glew.a */; };
+		3D235EB412E11FA10023F4EF /* glew.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D235EB312E11FA10023F4EF /* glew.a */; };
 		3D643E9B12DE36580091E252 /* ofxSynth.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3D643E9512DE36580091E252 /* ofxSynth.cpp */; };
 		3DFC746D12DE58BB00BCD217 /* ofxSynthDelayLine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3DFC746C12DE58BB00BCD217 /* ofxSynthDelayLine.cpp */; };
 		3DFC75D612DE95E100BCD217 /* ofxSynthFilter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3DFC75D512DE95E100BCD217 /* ofxSynthFilter.cpp */; };
@@ -83,7 +83,7 @@
 		3D2359C212DFE3BF0023F4EF /* glew.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = glew.h; sourceTree = "<group>"; };
 		3D2359C312DFE3BF0023F4EF /* glxew.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = glxew.h; sourceTree = "<group>"; };
 		3D2359C412DFE3BF0023F4EF /* wglew.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = wglew.h; sourceTree = "<group>"; };
-		3D2359C712DFE3BF0023F4EF /* glew.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = glew.a; sourceTree = "<group>"; };
+		3D235EB312E11FA10023F4EF /* glew.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = glew.a; sourceTree = "<group>"; };
 		3D643E9512DE36580091E252 /* ofxSynth.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofxSynth.cpp; path = ../../../addons/ofxSynth/src/ofxSynth.cpp; sourceTree = SOURCE_ROOT; };
 		3D643E9612DE36580091E252 /* ofxSynth.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxSynth.h; path = ../../../addons/ofxSynth/src/ofxSynth.h; sourceTree = SOURCE_ROOT; };
 		3DFC746B12DE58BB00BCD217 /* ofxSynthDelayLine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxSynthDelayLine.h; sourceTree = "<group>"; };
@@ -155,7 +155,7 @@
 				E4C2429410CC5C38004149E2 /* freetype.a in Frameworks */,
 				E4C242CD10CC650E004149E2 /* libfmodex.dylib in Frameworks */,
 				E4C246DA10CCAE22004149E2 /* freeimage.a in Frameworks */,
-				3D2359C812DFE3BF0023F4EF /* glew.a in Frameworks */,
+				3D235EB412E11FA10023F4EF /* glew.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -165,8 +165,8 @@
 		3D2359BF12DFE3BF0023F4EF /* glew */ = {
 			isa = PBXGroup;
 			children = (
+				3D235EB112E11FA10023F4EF /* lib */,
 				3D2359C012DFE3BF0023F4EF /* include */,
-				3D2359C512DFE3BF0023F4EF /* libs */,
 			);
 			name = glew;
 			path = ../../../libs/glew;
@@ -190,18 +190,18 @@
 			path = GL;
 			sourceTree = "<group>";
 		};
-		3D2359C512DFE3BF0023F4EF /* libs */ = {
+		3D235EB112E11FA10023F4EF /* lib */ = {
 			isa = PBXGroup;
 			children = (
-				3D2359C612DFE3BF0023F4EF /* osx */,
+				3D235EB212E11FA10023F4EF /* osx */,
 			);
-			path = libs;
+			path = lib;
 			sourceTree = "<group>";
 		};
-		3D2359C612DFE3BF0023F4EF /* osx */ = {
+		3D235EB212E11FA10023F4EF /* osx */ = {
 			isa = PBXGroup;
 			children = (
-				3D2359C712DFE3BF0023F4EF /* glew.a */,
+				3D235EB312E11FA10023F4EF /* glew.a */,
 			);
 			path = osx;
 			sourceTree = "<group>";
@@ -669,8 +669,10 @@
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_15)",
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_2)",
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_1)",
+					"$(LIBRARY_SEARCH_PATHS_QUOTED_2)",
 				);
 				LIBRARY_SEARCH_PATHS_QUOTED_1 = "\"$(SRCROOT)/../../../libs/glew/libs/osx\"";
+				LIBRARY_SEARCH_PATHS_QUOTED_2 = "\"$(SRCROOT)/../../../libs/glew/lib/osx\"";
 				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)/../../../libs/freeimage/lib/osx\"";
 				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_14 = "\"$(SRCROOT)/../../../libs/fmodex/lib/osx\"";
 				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_15 = "\"$(SRCROOT)/../../../libs/freetype/lib/osx\"";
@@ -795,6 +797,7 @@
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_15)",
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_2)",
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_3)",
+					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_7)",
 				);
 				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)/../../../libs/freeimage/lib/osx\"";
 				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_14 = "\"$(SRCROOT)/../../../libs/fmodex/lib/osx\"";
@@ -804,6 +807,7 @@
 				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_4 = "\"$(SRCROOT)/../../../libs/GLee/lib/osx\"";
 				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_5 = "\"$(SRCROOT)/../../../libs/poco/lib/osx\"";
 				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_6 = "\"$(SRCROOT)/../../../libs/rtAudio/lib/osx\"";
+				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_7 = "\"$(SRCROOT)/../../../libs/glew/lib/osx\"";
 				PREBINDING = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)Debug";
 				WRAPPER_EXTENSION = app;
@@ -846,8 +850,10 @@
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_15)",
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_2)",
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_1)",
+					"$(LIBRARY_SEARCH_PATHS_QUOTED_2)",
 				);
 				LIBRARY_SEARCH_PATHS_QUOTED_1 = "\"$(SRCROOT)/../../../libs/glew/libs/osx\"";
+				LIBRARY_SEARCH_PATHS_QUOTED_2 = "\"$(SRCROOT)/../../../libs/glew/lib/osx\"";
 				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)/../../../libs/freeimage/lib/osx\"";
 				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_14 = "\"$(SRCROOT)/../../../libs/fmodex/lib/osx\"";
 				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_15 = "\"$(SRCROOT)/../../../libs/freetype/lib/osx\"";
