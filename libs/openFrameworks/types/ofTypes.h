@@ -1,12 +1,47 @@
-#ifndef _OF_TYPES
-#define _OF_TYPES
+#pragma once
 
 #include "ofConstants.h"
-#include "ofUtils.h"
-#include "ofRectangle.h"
-#include "ofPoint.h"
 #include "ofColor.h"
-#include "ofBaseTypes.h"
+
+//----------------------------------------------------------
+// ofDeviceInfo
+//----------------------------------------------------------
+class ofSerial;
+class ofSerialDeviceInfo{
+	friend class ofSerial;
+	
+	public: 
+	
+		ofSerialDeviceInfo(string devicePathIn, string deviceNameIn, int deviceIDIn){
+			devicePath			= devicePathIn;
+			deviceName			= deviceNameIn;
+			deviceID			= deviceIDIn;
+		}
+
+		ofSerialDeviceInfo(){
+			deviceName = "device undefined";
+			deviceID   = -1;
+		}
+
+		string getDevicePath(){
+			return devicePath;
+		}
+		
+		string getDeviceName(){
+			return deviceName;
+		}
+		
+		int getDeviceID(){
+			return deviceID;
+		}
+
+	protected:
+		string devicePath;			//eg: /dev/tty.cu/usbdevice-a440
+		string deviceName;			//eg: usbdevice-a440 / COM4
+		int deviceID;				//eg: 0,1,2,3 etc 
+		
+		//TODO: other stuff for serial ?
+};
 
 
 //----------------------------------------------------------
@@ -39,8 +74,8 @@ class ofStyle{
 		virtual ~ofStyle(){}
 
 		ofColor color;
-		int polyMode;
-		int rectMode;
+		ofPolyWindingMode polyMode;
+		ofRectMode rectMode;
 		bool bFill;
     
         // one of the following GL_ZERO, GL_ONE, GL_DST_COLOR, GL_ONE_MINUS_DST_COLOR, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_DST_ALPHA, GL_ONE_MINUS_DST_ALPHA, GL_SRC_ALPHA_SATURATE
@@ -54,37 +89,3 @@ class ofStyle{
 		int sphereResolution;
 		float lineWidth;
 };
-
-//----------------------------------------------------------
-// ofBuffer
-//----------------------------------------------------------
-
-class ofBuffer{
-	vector<char> 	buffer;
-	long 			nextLinePos;
-public:
-
-	ofBuffer();
-	ofBuffer(int size, char * buffer);
-	ofBuffer(istream & stream);
-
-	~ofBuffer();
-
-	bool set(istream & stream);
-	void set(int _size, char * _buffer);
-
-	void clear();
-
-	void allocate(long _size);
-
-	char * getBuffer();
-	const char * getBuffer() const;
-
-	long getSize() const;
-
-	string getNextLine();
-	string getFirstLine();
-};
-
-
-#endif

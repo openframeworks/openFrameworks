@@ -1,11 +1,11 @@
-#ifndef _OF_APP_RUNNER
-#define _OF_APP_RUNNER
+#pragma once
 
+#include "ofConstants.h"
+#include "ofPoint.h"
+#include "ofRectangle.h"
 
-#include "ofMain.h"
-#include "ofBaseApp.h"
-#include "ofAppBaseWindow.h"
-#include "ofAppGlutWindow.h"
+class ofAppBaseWindow;
+class ofBaseApp;
 
 void 		ofSetupOpenGL(ofAppBaseWindow * windowPtr, int w, int h, int screenMode);	// sets up the opengl context!
 void 		ofSetupOpenGL(int w, int h, int screenMode);	// sets up the opengl context!
@@ -31,6 +31,8 @@ int 		ofGetScreenHeight();
 int			ofGetWindowMode();
 int 		ofGetWidth();			// <-- should we call this ofGetWindowWidth?
 int 		ofGetHeight();
+ofPoint		ofGetWindowSize();
+ofRectangle	ofGetWindowRect();
 
 void 		ofSetWindowPosition(int x, int y);
 void 		ofSetWindowShape(int width, int height);
@@ -49,4 +51,5 @@ bool		ofGetKeyPressed(int key=-1); //by default any key
 int			ofGetMouseX();
 int			ofGetMouseY();
 
-#endif
+int			ofGetPreviousMouseX();
+int			ofGetPreviousMouseY();

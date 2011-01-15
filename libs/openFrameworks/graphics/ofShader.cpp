@@ -1,4 +1,6 @@
 #include "ofShader.h"
+#include "ofUtils.h"
+#include "ofFileUtils.h"
 
 #ifndef TARGET_OPENGLES
 
@@ -28,8 +30,8 @@ bool ofShader::setup(string vertName, string fragName, string geomName) {
 
 
 bool ofShader::setupShaderFromFile(GLenum type, string filename) {
-	ofBuffer buffer;
-	if(ofReadFile(filename, buffer)) {
+	ofBuffer buffer = ofBufferFromFile(filename);
+	if(buffer.size()) {
 		return setupShaderFromSource(type, buffer.getBuffer());
 	} else {
 		ofLog(OF_LOG_ERROR, "Could not load shader of type " + nameForType(type) + " from file " + filename);

@@ -9,7 +9,7 @@
  */
 
 #pragma once
-
+#include "ofConstants.h"
 #include "ofVec3f.h"
 #include "ofVec4f.h"
 #include <cmath>
@@ -82,6 +82,9 @@ public:
 		else return (_v[3] < v._v[3]);
 	}
 
+	friend ostream& operator<<(ostream& os, const ofQuaternion& v);
+	friend istream& operator>>(istream& is, ofQuaternion& v);
+	
 
 	/* ----------------------------------
 	 Methods to access data members
@@ -328,3 +331,20 @@ public:
 		return v + uv + uuv;
 	}
 };
+
+
+
+inline ostream& operator<<(ostream& os, const ofQuaternion& v) {
+	os << v._v[0] << ", " << v._v[1] << ", " << v._v[2] << ", " << v._v[3];
+	return os;
+}
+
+inline istream& operator>>(istream& is, ofQuaternion& v) {
+	is >> v._v[0];
+	is.ignore(2);
+	is >> v._v[1];
+	is.ignore(2);
+	is >> v._v[2];
+	is.ignore(2);
+	is >> v._v[3];
+}

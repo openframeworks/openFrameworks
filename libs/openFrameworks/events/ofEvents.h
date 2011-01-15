@@ -1,8 +1,6 @@
-#ifndef _OF_EVENTS
-#define _OF_EVENTS
+#pragma once
 
 #include "ofConstants.h"
-#include "ofUtils.h"
 
 void ofNotifySetup();
 void ofNotifyUpdate();
@@ -20,7 +18,7 @@ void ofNotifyExit();
 void ofNotifyWindowResized(int width, int height);
 
 #ifdef OF_USING_POCO
-
+	#define _OF_EVENTS
 	#ifndef OF_EVENTS_ADDON
 		#include "ofEventUtils.h"
 
@@ -68,6 +66,15 @@ void ofNotifyWindowResized(int width, int height);
 			int width;
 			int height;
 		};
+		
+		class ofMessage : public ofEventArgs{
+			public:
+				ofMessage( string msg ){
+					message = msg;
+				}
+				string message;
+		};
+		
 	#else
 		#include "ofxEventUtils.h"
 	#endif
@@ -97,6 +104,8 @@ void ofNotifyWindowResized(int width, int height);
 		ofEvent<ofTouchEventArgs>	touchDoubleTap;
 		ofEvent<ofTouchEventArgs>	touchCancelled;
 
+		ofEvent<ofMessage> messageEvent;
+
 		void disable(){
 			setup.disable();
 			draw.disable();
@@ -115,6 +124,7 @@ void ofNotifyWindowResized(int width, int height);
 			touchMoved.disable();
 			touchDoubleTap.disable();
 			touchCancelled.disable();
+			messageEvent.disable();
 		}
 
 		void enable(){
@@ -135,10 +145,11 @@ void ofNotifyWindowResized(int width, int height);
 			touchMoved.enable();
 			touchDoubleTap.enable();
 			touchCancelled.enable();
+			messageEvent.enable();
 		}
 	};
 
-
+	void ofSendMessage(ofMessage msg);
 
 	extern ofCoreEvents ofEvents;
 
@@ -166,6 +177,11 @@ void ofNotifyWindowResized(int width, int height);
 	}
 
 	template<class ListenerClass>
+	void ofRegisterGetMessages(ListenerClass * listener){
+		ofAddListener(ofEvents.messageEvent, listener, &ListenerClass::gotMessage);
+	}
+
+	template<class ListenerClass>
 	void ofUnregisterMouseEvents(ListenerClass * listener){
 		ofRemoveListener(ofEvents.mouseDragged,listener,&ListenerClass::mouseDragged);
 		ofRemoveListener(ofEvents.mouseMoved,listener,&ListenerClass::mouseMoved);
@@ -188,7 +204,11 @@ void ofNotifyWindowResized(int width, int height);
 		ofRemoveListener(ofEvents.touchCancelled, listener, &ListenerClass::touchCancelled);
 	}
 
-	#endif
+	template<class ListenerClass>
+	void ofUnregisterGetMessages(ListenerClass * listener){
+		ofRemoveListener(ofEvents.messageEvent, listener, &ListenerClass::gotMessage);
+	}
 
 #endif
+
 

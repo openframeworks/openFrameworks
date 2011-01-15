@@ -2,6 +2,8 @@
 
 #include "ofThread.h"
 #include "ofEvents.h"
+#include "ofFileUtils.h"
+
 #include <deque>
 #include <queue>
 

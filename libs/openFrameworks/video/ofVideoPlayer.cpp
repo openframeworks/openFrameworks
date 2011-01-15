@@ -63,6 +63,23 @@ unsigned char * ofVideoPlayer::getPixels(){
 	return NULL;	
 }
 
+//
+//---------------------------------------------------------------------------
+//ofPixels ofVideoPlayer::getOFPixels(){
+//	if( player != NULL ){
+//		return player->getOFPixels();
+//	}
+//	return ofPixels();
+//}
+//
+//---------------------------------------------------------------------------
+//ofPixels ofVideoPlayer::getOFPixels() const{
+//	if( player != NULL ){
+//		return player->getOFPixels();
+//	}
+//	return ofPixels();
+//}
+
 //---------------------------------------------------------------------------
 //for getting a reference to the texture
 ofTexture & ofVideoPlayer::getTextureReference(){
@@ -153,7 +170,7 @@ void ofVideoPlayer::setVolume(int volume){
 
 
 //--------------------------------------------------------
-void ofVideoPlayer::setLoopState(int state){
+void ofVideoPlayer::setLoopState(ofLoopType state){
 	if( player != NULL ){
 		player->setLoopState(state);
 	}

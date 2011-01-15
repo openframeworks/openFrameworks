@@ -1,11 +1,10 @@
-#ifndef _OF_TTF_FONT_H_
-#define _OF_TTF_FONT_H_
+#pragma once
 
 
+#include <vector>
+#include "ofPoint.h"
+#include "ofRectangle.h"
 #include "ofConstants.h"
-#include "ofGraphics.h"
-#include "ofUtils.h"
-#include "ofTypes.h"
 
 //--------------------------------------------------
 typedef struct {
@@ -89,6 +88,4 @@ protected:
 
 };
 
-
-#endif
 

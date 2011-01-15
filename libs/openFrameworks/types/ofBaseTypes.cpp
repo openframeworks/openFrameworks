@@ -97,7 +97,7 @@ void ofBaseVideoPlayer::setVolume(int volume){
 }
 
 //---------------------------------------------------------------------------
-void ofBaseVideoPlayer::setLoopState(int state){
+void ofBaseVideoPlayer::setLoopState(ofLoopType state){
 	ofLog(OF_LOG_WARNING, "ofBaseVideoPlayer::setLoopState not implemented");
 }
 
