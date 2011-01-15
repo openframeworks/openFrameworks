@@ -159,7 +159,6 @@ void ofVbo::bind(){
 		glColorPointer(4, GL_FLOAT, sizeof(ofColor), 0);
 		 */
 	}
-	glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, indexId);
 	//gluErrorString(glGetError());
 
 }
@@ -191,6 +190,7 @@ void ofVbo::draw(int amt, int drawMode) {
 //		GLuint vao;
 //		glGenVertexArraysAPPLE(1,&vao);
 //		glBindVertexArrayAPPLE(vao);
+		glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, indexId);
 		glDrawElements(drawMode, amt, GL_UNSIGNED_INT, NULL);
 		unbind();
 	}

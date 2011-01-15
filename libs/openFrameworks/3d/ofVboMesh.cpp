@@ -61,13 +61,13 @@ void ofVboMesh::drawVertices(){
 
 //--------------------------------------------------------------
 void ofVboMesh::drawWireframe(){
-	vbo.draw(indices.size(),GL_TRIANGLES);
+	ofLog(OF_LOG_ERROR,"ofVboMesh: wireframes not ready yet, sorry");
 //	vbo.draw(GL_POINTS,0,mesh->vertices.size());
 }
 
 //--------------------------------------------------------------
 void ofVboMesh::drawFaces(){
-	vbo.draw(GL_POLYGON,0,mesh->vertices.size());
+	vbo.draw(indices.size(),GL_TRIANGLES);
 }
 
 //--------------------------------------------------------------
@@ -119,7 +119,7 @@ void ofVboMesh::addTriangleStrip(const vector<ofVec3f>& verts){
 			mesh->addFace(index, index+1, index+2);
 		}
 	}else {
-		ofLog(OF_LOG_ERROR,"ofVboMesh::addTriangleFan: must supply at least 3 vertices");
+		ofLog(OF_LOG_ERROR,"ofVboMesh::addTriangleStrip: must supply at least 3 vertices");
 		return;
 	}
 }
