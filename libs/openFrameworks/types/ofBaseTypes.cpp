@@ -40,6 +40,10 @@ void ofBaseVideoGrabber::videoSettings(){
 	ofLog(OF_LOG_WARNING, "ofBaseVideoGrabber::videoSettings not implemented");
 }
 
+//---------------------------------------------------------------------------
+void ofBaseVideoGrabber::setPixelFormat(ofPixelFormat pixelFormat){
+	ofLog(OF_LOG_WARNING, "ofBaseVideoGrabber::setPixelFormat not implemented");
+}
 
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------

@@ -298,6 +298,13 @@ enum ofImageType{
  	OF_IMAGE_UNDEFINED		= 0x03
 };
 
+enum ofPixelFormat{
+	OF_PIXELS_MONO = 0, 
+	OF_PIXELS_RGB,
+	OF_PIXELS_RGBA,
+	OF_PIXELS_BGRA
+};
+
 #define		OF_MAX_STYLE_HISTORY	32
 #define		OF_MAX_CIRCLE_PTS 1024
 

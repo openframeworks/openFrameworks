@@ -1,5 +1,5 @@
 /*
- *  ofxiPhoneVideoGrabber.h
+ *  AVFoundationVideoGrabber.h
 *
  */
 
@@ -14,11 +14,10 @@
 #import <CoreVideo/CoreVideo.h>
 #import <CoreMedia/CoreMedia.h>
 #include "ofxiPhone.h"
-#include "ofxiPhoneExtras.h"
 
 #if defined  __arm__
 
-class ofxiPhoneVideoGrabber;
+class AVFoundationVideoGrabber;
 
 
 @interface iPhoneVideoGrabber : UIViewController <AVCaptureVideoDataOutputSampleBufferDelegate> {
@@ -32,15 +31,19 @@ class ofxiPhoneVideoGrabber;
 	int width;
 	int height;
 	
-	ofxiPhoneVideoGrabber * grabberPtr;
+	AVFoundationVideoGrabber * grabberPtr;
 	
 	bool bInitCalled;
+	int device;
 }
 
 -(void)initCapture:(int)framerate capWidth:(int)w capHeight:(int)h;
 -(void)startCapture;
 -(void)stopCapture;
 -(void)lockExposureAndFocus;
+-(void)listDevices;
+-(void)setDevice:(int)_device;
+-(void)eraseGrabberPtr;
 
 -(CGImageRef)getCurrentFrame;
 
@@ -48,11 +51,11 @@ class ofxiPhoneVideoGrabber;
 
 @end
 
-class ofxiPhoneVideoGrabber : public ofBaseHasPixels, ofBaseDraws{
+class AVFoundationVideoGrabber : public ofBaseHasPixels, ofBaseDraws{
 
 	public:		
-		ofxiPhoneVideoGrabber();
-		~ofxiPhoneVideoGrabber();
+		AVFoundationVideoGrabber();
+		~AVFoundationVideoGrabber();
 		
 		void clear();
 		void setCaptureRate(int capRate);
@@ -61,6 +64,12 @@ class ofxiPhoneVideoGrabber : public ofBaseHasPixels, ofBaseDraws{
 		void updatePixelsCB( CGImageRef & ref );		
 		void draw(float x, float y);
 		void draw(float x, float y, float w, float h);
+	
+		bool isFrameNew();
+		
+		void listDevices();
+		void setDevice(int deviceID);
+		void setPixelFormat(ofPixelFormat PixelFormat);
 	
 		unsigned char * getPixels(){
 			return pixels;
@@ -75,19 +84,23 @@ class ofxiPhoneVideoGrabber : public ofBaseHasPixels, ofBaseDraws{
 	protected:
 		
 		int width, height;
+		int device;
 	
 		bool bUpdateTex;
+		bool newFrame;
 		int fps;
 		ofTexture tex;
+		GLint internalGlDataType;
 		unsigned char * pixels;
 		iPhoneVideoGrabber * grabber;
+		GLubyte *pixelsTmp;
 };
 
 
 #endif	// (__arm__) compile only for ARM
 
 //#else   // (> 3.2 SDK) compile for 4.0+
-
-//#warning "skipping ofxIphoneVideoGrabber compilation because you need > 3.2 iOS SDK"
-
+//
+//#warning "skipping AVFoundationVideoGrabber compilation because you need > 3.2 iOS SDK"
+//
 //#endif
