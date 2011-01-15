@@ -47,39 +47,95 @@ void ofPixelUtils::crop(ofPixels & pix, int x, int y, int _width, int _height){
 
 void ofPixelUtils::rotate90(ofPixels & pix, int nClockwiseRotations){
 
-		
+	
+	int rotation = nClockwiseRotations;
+	while (rotation < 0){
+		rotation+=4;
+	}
+	rotation %= 4;
+	
+	if (rotation == 0) {
+		return; // do nothing! 
+	} else if (rotation == 2) {
+		mirror(pix, true, true);
+		return;
+	}
+	
+	int width = pix.width;
+	int height = pix.height;
+	int bytesPerPixel = pix.bytesPerPixel;
+	unsigned char * oldPixels = pix.pixels;
+	int newWidth = height;
+	int newHeight = width;
+	unsigned char * newPixels = new unsigned char [newWidth*newHeight*bytesPerPixel];
+	
+	if(rotation == 1){
+		for (int i = 0; i < width; i++){
+			for (int j = 0; j < height; j++){
+					
+				int pixela = (j*width + i);
+				int pixelb = ((i) * newWidth + (height - j - 1));
+				for (int k = 0; k < bytesPerPixel; k++){
+					newPixels[pixelb*bytesPerPixel + k] = oldPixels[pixela*bytesPerPixel + k];
+				}
+				
+			}
+		}
+	} else if(rotation == 3){
+		for (int i = 0; i < width; i++){
+			for (int j = 0; j < height; j++){
+				
+				int pixela = (j*width + i);
+				int pixelb = ((width-i-1) * newWidth + j);
+				for (int k = 0; k < bytesPerPixel; k++){
+					newPixels[pixelb*bytesPerPixel + k] = oldPixels[pixela*bytesPerPixel + k];
+				}			
+			}		
+		}
+	}
+	
+	delete [] pix.pixels;
+	pix.pixels = newPixels;
+	pix.width = newWidth;
+	pix.height = newHeight;
+
 }
 
 void ofPixelUtils::mirror(ofPixels & pix, bool vertically, bool horizontal){
 	
+	if (!vertically && !horizontal){
+		return; 
+	}
+	
+	int width = pix.width;
+	int height = pix.height;
+	int bytesPerPixel = pix.bytesPerPixel;
+	unsigned char * oldPixels = pix.pixels;
+	unsigned char tempVal;
+	
+	if (! (vertically && horizontal)){
+		int wToDo = horizontal ? width/2 : width;
+		int hToDo = vertically ? height/2 : height;
+		
+		for (int i = 0; i < wToDo; i++){
+			for (int j = 0; j < hToDo; j++){
+			
+				int pixelb = (vertically ? (height - j - 1) : j) * width + (horizontal ? (width - i - 1) : i);
+				int pixela = j*width + i;
+				for (int k = 0; k < bytesPerPixel; k++){
+					
+					tempVal = oldPixels[pixela*bytesPerPixel + k];
+					oldPixels[pixela*bytesPerPixel + k] = oldPixels[pixelb*bytesPerPixel + k];
+					oldPixels[pixelb*bytesPerPixel + k] = tempVal;
+					
+				}			
+			}		
+		}
+	} else {
+		// I couldn't think of a good way to do this in place.  I'm sure there is. 
+		mirror(pix, true, false);
+		mirror(pix, false, true);
+	}
 	
 }
 
-//
-////--------------------------------------------------------------
-//void setFromSubImage(ofImage &src, ofImage &dst, ofRectangle subRect) {
-//	int oldw = src.width;
-//	int oldh = src.height;
-//	int w = subRect.width;
-//	int h = subRect.height;
-//	int x = (int)subRect.x;
-//	int y = (int)subRect.y;
-//	if (w > oldw) return;
-//	if (h > oldh) return; 
-//	int nPix = w * h * 3;
-//	unsigned char * tempPixels = new unsigned char[ nPix ];
-//	memset(tempPixels, 0, nPix);
-//	//if (dst.width != subRect.width || dst.height != subRect.height){
-//	//		dst.clear();	// clean up if necessary?
-//	//		dst.allocate(subRect.width, subRect.height, OF_IMAGE_COLOR);
-//	//	}
-//	unsigned char * srcPixel = src.getPixels() + (y * oldw + x) * 3;
-//	for (int i = 0; i < h; i++){
-//		memcpy(tempPixels + i*w*3, srcPixel + i*oldw*3, w*3);
-//		//memset(tempPixels + i*w*3, 0, w*3);
-//	}
-//	
-//	dst.setFromPixels(tempPixels, w, h, OF_IMAGE_COLOR);
-//	dst.update();
-//	delete tempPixels;
-//}
