@@ -63,9 +63,5 @@ void	ofSaveFrame();
 vector<string>	ofSplitString(const string & text, const string & delimiter);
 
 //--------------------------------------------------
-void ofSetConsoleColor(int color);
-void ofRestoreConsoleColor();
-
-//--------------------------------------------------
 class ofBuffer;
 bool ofReadFile(const string & path, ofBuffer & file, bool binary=false);

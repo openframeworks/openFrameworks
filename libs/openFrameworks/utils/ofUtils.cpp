@@ -349,29 +349,6 @@ void ofSaveFrame(){
    saveImageCounter++;
 }
 
-//for setting console color
-//doesn't work in the xcode console - do we need this?
-//works fine on the terminal though - not much use
-
-//--------------------------------------------------
-void ofSetConsoleColor(int color){
-	#ifdef TARGET_WIN32
-		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), color);
-	#else
-		printf("\033[%im",  color);
-	#endif
-}
-
-//--------------------------------------------------
-void ofRestoreConsoleColor(){
-	#ifdef TARGET_WIN32
-		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), OF_CONSOLE_COLOR_RESTORE);
-	#else
-		printf("\033[%im",  OF_CONSOLE_COLOR_RESTORE);
-	#endif
-}
-
-
 //--------------------------------------------------
 bool ofReadFile(const string & path, ofBuffer & buffer, bool binary){
 	ifstream * file = new ifstream(ofToDataPath(path,true).c_str());
