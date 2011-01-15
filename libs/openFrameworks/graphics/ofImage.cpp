@@ -7,12 +7,20 @@
 static bool		bFreeImageInited = false;
 //----------------------------------------------------------
 
-void ofLoadImage(ofPixels & pix, string path){
-	ofImage::loadImageIntoPixels(path, pix);
+void	ofLoadImage(ofPixels & pix, string path) {
+	ofImage::loadImageIntoPixels(pix, path);
 }
 
-void ofLoadImageFromMemory(ofBuffer & buffer, ofPixels & pix){
-	ofImage::loadImageFromMemory(buffer, pix);
+void	ofLoadImage(ofPixels & pix, const ofBuffer & buffer) {
+	ofImage::loadImageIntoPixels(pix, buffer);
+}
+
+void ofSaveImage(ofPixels & pix, string path) {
+	ofImage::saveImageFromPixels(pix, path);
+}
+
+void ofSaveImage(ofPixels & pix, ofBuffer & buffer) {
+	ofImage::saveImageFromPixels(pix, buffer);
 }
 
 
@@ -60,7 +68,7 @@ ofImage::~ofImage(){
 //----------------------------------------------------------
 bool ofImage::loadImage(string fileName){
 	bool bLoadedOk = false;
-	bLoadedOk = loadImageIntoPixels(fileName, myPixels);
+	bLoadedOk = loadImageIntoPixels(myPixels, fileName);
 	if (bLoadedOk && myPixels.isAllocated() && bUseTexture){
 		tex.allocate(myPixels.getWidth(), myPixels.getHeight(), myPixels.getGlDataType());
 	} else {
@@ -72,7 +80,7 @@ bool ofImage::loadImage(string fileName){
 
 bool ofImage::loadImage(const ofBuffer & buffer){
 	bool bLoadedOk = false;
-	bLoadedOk = ofImage::loadImageFromMemory(buffer,myPixels);
+	bLoadedOk = ofImage::loadImageIntoPixels(myPixels, buffer);
 	if (bLoadedOk && myPixels.isAllocated() && bUseTexture){
 		tex.allocate(myPixels.getWidth(), myPixels.getHeight(), myPixels.getGlDataType());
 	}
@@ -82,7 +90,7 @@ bool ofImage::loadImage(const ofBuffer & buffer){
 
 //----------------------------------------------------------
 void ofImage::saveImage(string fileName, ofImageQualityType qualityLevel){
-	saveImageFromPixels(fileName, myPixels, qualityLevel);
+	saveImageFromPixels(myPixels, fileName, qualityLevel);
 }
 
 //we could cap these values - but it might be more useful
@@ -463,7 +471,7 @@ void ofCloseFreeImage(){
 }
 
 //----------------------------------------------------
-bool ofImage::loadImageIntoPixels(string fileName, ofPixels &pix){
+bool ofImage::loadImageIntoPixels(ofPixels & pix, string fileName) {
 
 	int					width, height, bpp;
 	ofImageType			type;
@@ -501,7 +509,7 @@ bool ofImage::loadImageIntoPixels(string fileName, ofPixels &pix){
 }
 
 //----------------------------------------------------
-bool ofImage::loadImageFromMemory(const ofBuffer & buffer, ofPixels &pix){
+bool ofImage::loadImageIntoPixels(ofPixels & pix, const ofBuffer & buffer) {
 
 	int					width, height, bpp;
 	bool bLoaded		= false;
@@ -552,9 +560,8 @@ bool ofImage::loadImageFromMemory(const ofBuffer & buffer, ofPixels &pix){
 	return bLoaded;
 }
 
-
 //----------------------------------------------------------------
-void  ofImage::saveImageFromPixels(string fileName, ofPixels &pix, ofImageQualityType qualityLevel) {
+void ofImage::saveImageFromPixels(ofPixels & pix, string fileName, ofImageQualityType qualityLevel = OF_IMAGE_QUALITY_BEST) {
 
 	if (pix.isAllocated() == false){
 		ofLog(OF_LOG_ERROR,"error saving image - pixels aren't allocated");
@@ -602,6 +609,10 @@ void  ofImage::saveImageFromPixels(string fileName, ofPixels &pix, ofImageQualit
 	if (bmp != NULL){
 		FreeImage_Unload(bmp);
 	}
+}
+
+void ofImage::saveImageFromPixels(ofPixels & pix, ofBuffer & buffer, ofImageQualityType compressionLevel = OF_IMAGE_QUALITY_BEST) {
+	ofLog(OF_LOG_VERBOSE, "saveImageFromPixels(ofPixels, ofBuffer) is not yet implemented."); // TODO
 }
 
 //----------------------------------------------------------
