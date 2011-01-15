@@ -189,7 +189,7 @@ unsigned char * ofiPhoneVideoPlayer::getPixels() {
 }
 
 ofTexture * ofiPhoneVideoPlayer::getTexture()
-{/*
+{
 	if(videoPlayer != NULL)
 	{
 		CVImageBufferRef imageBuffer = [(AVFoundationVideoPlayer *)videoPlayer getCurrentFrame]; 
@@ -215,7 +215,7 @@ ofTexture * ofiPhoneVideoPlayer::getTexture()
 		
 		return &videoTexture;
 	}
-	*/
+	
 	return NULL;
 }
 
