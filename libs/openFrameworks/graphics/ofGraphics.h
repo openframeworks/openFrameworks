@@ -8,9 +8,12 @@
 
 #define  	CIRC_RESOLUTION		    22				// 22 pts for a circle...
 
+enum ofHandednessType {OF_LEFT_HANDED, OF_RIGHT_HANDED};
+
 // bg color
 float * ofBgColorPtr();
 void ofBackground(const ofColor & c);
+void ofBackground(float brightness);
 void ofBackground(int hexColor, float _a=255.0f);
 void ofBackground(int r, int g, int b, int a=255);
 
@@ -30,7 +33,11 @@ void ofViewport(float x = 0, float y = 0, float width = 0, float height = 0);
 void ofSetupScreenPerspective(float width = 0, float height = 0, bool vFlip = true, float fov = 60, float nearDist = 0, float farDist = 0);
 void ofSetupScreenOrtho(float width = 0, float height = 0, bool vFlip = true, float nearDist = -1, float farDist = 1);
 
-void ofClear(float r=0, float g=0, float b=0, float a=0);
+void ofSetCoordHandedness(ofHandednessType handedness);
+ofHandednessType ofGetCoordHandedness();
+
+void ofClear(float r, float g, float b, float a=0);
+void ofClear(float brightness, float a=0);
 void ofClearAlpha();
 
 
