@@ -12,8 +12,9 @@
 
 // TODO: closing seems wonky. 
 // adding this for vc2010 compile: error C3861: 'closeQuicktime': identifier not found
-#include "ofQtUtils.h"
-
+#ifndef TARGET_OF_IPHONE
+	#include "ofQtUtils.h"
+#endif
 
 
 //========================================================================
@@ -143,6 +144,11 @@ void ofRunApp(ofBaseApp * OFSA){
 //--------------------------------------
 ofBaseApp * ofGetAppPtr(){
 	return OFSAptr;
+}
+
+//--------------------------------------
+void ofSetAppPtr(ofBaseApp *appPtr) {
+	OFSAptr = appPtr;
 }
 
 //--------------------------------------
@@ -304,30 +310,4 @@ void ofSetVerticalSync(bool bSync){
 	#endif
 	//--------------------------------------
 
-}
-
-//--------------------------------------
-bool ofGetMousePressed(int button){ //by default any button
-	return window->isMousePressed(button);
-}
-//--------------------------------------
-bool ofGetKeyPressed(int key){
-	return window->isKeyPressed(key);
-}
-//--------------------------------------
-int ofGetMouseX(){
-	return window->getMouseX();
-}
-//--------------------------------------
-int ofGetMouseY(){
-	return window->getMouseY();
-}
-
-//--------------------------------------
-int ofGetPreviousMouseX(){
-	return window->getPreviousMouseX();
-}
-//--------------------------------------
-int ofGetPreviousMouseY(){
-	return window->getPreviousMouseY();
 }

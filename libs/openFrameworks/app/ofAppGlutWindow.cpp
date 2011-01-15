@@ -3,8 +3,6 @@
 #include "ofMain.h"
 #include "ofEvents.h"
 
-
-
 #ifdef TARGET_WIN32
 	#define GLUT_BUILDING_LIB
 	#include "glut.h"
@@ -16,42 +14,35 @@
 	#include <GL/glut.h>
 #endif
 
-#include <set>
 
 // glut works with static callbacks UGH, so we need static variables here:
 
-int				windowMode;
-bool			bNewScreenMode;
-float			timeNow, timeThen, fps;
-int				nFramesForFPS;
-int				nFrameCount;
-int				buttonInUse;
-bool			bEnableSetupScreen;
+static int			windowMode;
+static bool			bNewScreenMode;
+static float		timeNow, timeThen, fps;
+static int			nFramesForFPS;
+static int			nFrameCount;
+static int			buttonInUse;
+static bool			bEnableSetupScreen;
 
-bool			bPreMouseNotSet;
 
-bool			bFrameRateSet;
-int 			millisForFrame;
-int 			prevMillis;
-int 			diffMillis;
+static bool			bFrameRateSet;
+static int 			millisForFrame;
+static int 			prevMillis;
+static int 			diffMillis;
 
-float 			frameRate;
+static float 		frameRate;
 
-double			lastFrameTime;
+static double		lastFrameTime;
 
-int				requestedWidth;
-int				requestedHeight;
-int 			nonFullScreenX;
-int 			nonFullScreenY;
-int				windowW;
-int				windowH;
-ofBaseApp *		ofAppPtr;
-int				currentMouseX, currentMouseY;
-int				previousMouseX, previousMouseY;
-int             nFramesSinceWindowResized;
-
-static set<int> pressedMouseButtons;
-static set<int> pressedKeys;
+static int			requestedWidth;
+static int			requestedHeight;
+static int 			nonFullScreenX;
+static int 			nonFullScreenY;
+static int			windowW;
+static int			windowH;
+static ofBaseApp *	ofAppPtr;
+static int          nFramesSinceWindowResized;
 
 #ifdef TARGET_WIN32
 
@@ -193,11 +184,6 @@ ofAppGlutWindow::ofAppGlutWindow(){
 	requestedHeight		= 0;
 	nonFullScreenX		= -1;
 	nonFullScreenY		= -1;
-	currentMouseX		= 0;
-	currentMouseY		= 0;
-	previousMouseX		= 0;
-	previousMouseY		= 0;
-	bPreMouseNotSet		= true;
 	lastFrameTime		= 0.0;
 	displayString		= "";
 
@@ -442,37 +428,6 @@ void ofAppGlutWindow::disableSetupScreen(){
 	bEnableSetupScreen = false;
 }
 
-//------------------------------------------------------------
-bool ofAppGlutWindow::isMousePressed(int button){
-	if(button==-1) return pressedMouseButtons.size();
-	return pressedMouseButtons.find(button)!=pressedMouseButtons.end();
-}
-
-//------------------------------------------------------------
-bool ofAppGlutWindow::isKeyPressed(int key){
-	if(key==-1) return pressedKeys.size();
-	return pressedKeys.find(key)!=pressedKeys.end();
-}
-
-//------------------------------------------------------------
-int ofAppGlutWindow::getMouseX(){
-	return currentMouseX;
-}
-
-//------------------------------------------------------------
-int ofAppGlutWindow::getMouseY(){
-	return currentMouseY;
-}
-
-//------------------------------------------------------------
-int ofAppGlutWindow::getPreviousMouseX(){
-	return previousMouseX;
-}
-
-//------------------------------------------------------------
-int ofAppGlutWindow::getPreviousMouseY(){
-	return previousMouseY;
-}
 
 //------------------------------------------------------------
 void ofAppGlutWindow::display(void){
@@ -529,7 +484,7 @@ void ofAppGlutWindow::display(void){
 
 	height = height > 0 ? height : 1;
 	// set viewport, clear the screen
-	glViewport( 0, 0, width, height );
+	ofViewport(0, 0, width, height );		// used to be glViewport( 0, 0, width, height );
 	float * bgPtr = ofBgColorPtr();
 	bool bClearAuto = ofbClearBg();
 
@@ -592,30 +547,10 @@ void ofAppGlutWindow::display(void){
 void ofAppGlutWindow::mouse_cb(int button, int state, int x, int y) {
 
 	if (nFrameCount > 0){
-	
-		if( bPreMouseNotSet ){
-			previousMouseX	= x;
-			previousMouseY	= y;
-			bPreMouseNotSet	= false;
-		}else{
-			previousMouseX = currentMouseX;
-			previousMouseY = currentMouseY;		
-		}
-				
-		currentMouseX = x;
-		currentMouseY = y;
-		
-		if(ofAppPtr){
-			ofAppPtr->mouseX = x;
-			ofAppPtr->mouseY = y;
-		}
-
 		if (state == GLUT_DOWN) {
 			ofNotifyMousePressed(x, y, button);
-			pressedMouseButtons.insert(button);
 		} else if (state == GLUT_UP) {
 			ofNotifyMouseReleased(x, y, button);
-			pressedMouseButtons.erase(button);
 		}
 
 		buttonInUse = button;
@@ -626,24 +561,6 @@ void ofAppGlutWindow::mouse_cb(int button, int state, int x, int y) {
 void ofAppGlutWindow::motion_cb(int x, int y) {
 
 	if (nFrameCount > 0){
-	
-		if( bPreMouseNotSet ){
-			previousMouseX	= x;
-			previousMouseY	= y;
-			bPreMouseNotSet	= false;
-		}else{
-			previousMouseX = currentMouseX;
-			previousMouseY = currentMouseY;		
-		}
-			
-		currentMouseX = x;
-		currentMouseY = y;
-	
-		if(ofAppPtr){
-			ofAppPtr->mouseX = x;
-			ofAppPtr->mouseY = y;
-		}
-
 		ofNotifyMouseDragged(x, y, buttonInUse);
 	}
 
@@ -653,24 +570,6 @@ void ofAppGlutWindow::motion_cb(int x, int y) {
 void ofAppGlutWindow::passive_motion_cb(int x, int y) {
 
 	if (nFrameCount > 0){
-	
-		if( bPreMouseNotSet ){
-			previousMouseX	= x;
-			previousMouseY	= y;
-			bPreMouseNotSet	= false;
-		}else{
-			previousMouseX = currentMouseX;
-			previousMouseY = currentMouseY;		
-		}	
-	
-		currentMouseX = x;
-		currentMouseY = y;	
-	
-		if(ofAppPtr){
-			ofAppPtr->mouseX = x;
-			ofAppPtr->mouseY = y;
-		}
-
 		ofNotifyMouseMoved(x, y);
 	}
 }
@@ -743,30 +642,25 @@ void ofAppGlutWindow::idle_cb(void) {
 //------------------------------------------------------------
 void ofAppGlutWindow::keyboard_cb(unsigned char key, int x, int y) {
 	ofNotifyKeyPressed(key);
-	pressedKeys.insert(key);
 
 	if (key == OF_KEY_ESC){				// "escape"
 		exitApp();
 	}
-
 }
 
 //------------------------------------------------------------
 void ofAppGlutWindow::keyboard_up_cb(unsigned char key, int x, int y){
 	ofNotifyKeyReleased(key);
-	pressedKeys.erase(key);
 }
 
 //------------------------------------------------------
 void ofAppGlutWindow::special_key_cb(int key, int x, int y) {
 	ofNotifyKeyPressed(key | OF_KEY_MODIFIER);
-	pressedKeys.insert(key | OF_KEY_MODIFIER);
 }
 
 //------------------------------------------------------------
 void ofAppGlutWindow::special_key_up_cb(int key, int x, int y) {
 	ofNotifyKeyReleased(key | OF_KEY_MODIFIER);
-	pressedKeys.erase(key | OF_KEY_MODIFIER);
 }
 
 //------------------------------------------------------------

@@ -1,6 +1,7 @@
 #include "ofUtils.h"
 #include "ofImage.h"
 #include "ofTypes.h"
+#include "ofGraphics.h"
 #include "Poco/String.h"
 #include "ofAppRunner.h"
 
@@ -494,12 +495,29 @@ void ofSaveScreen(string filename) {
 }
 
 //--------------------------------------------------
-int saveImageCounter = 0;
-void ofSaveFrame(){
-   string fileName = ofToString(saveImageCounter) + ".png";
-   ofSaveScreen(fileName);
-   saveImageCounter++;
+void ofSaveViewport(string filename) {
+	// because ofSaveScreen doesn't related to viewports
+	ofImage screen;
+	ofRectangle view = ofGetCurrentViewport();
+	screen.allocate(view.width, view.height, OF_IMAGE_COLOR);
+	screen.grabScreen(0, 0, view.height, view.width);
+	screen.saveImage(filename);
 }
+
+
+//--------------------------------------------------
+int saveImageCounter = 0;
+void ofSaveFrame(bool bUseViewport){
+   string fileName = ofToString(saveImageCounter) + ".png";
+	if (bUseViewport){
+		ofSaveViewport(fileName);
+	} else {
+		ofSaveScreen(fileName);
+	}
+	saveImageCounter++;
+}
+
+
 
 //levels are currently:
 // see ofConstants.h
