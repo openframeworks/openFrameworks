@@ -429,7 +429,7 @@ template<typename _Tp, int m, int n> class CV_EXPORTS Matx
 {
 public:
     typedef _Tp value_type;
-    typedef Matx<_Tp, MIN(m, n), 1> diag_type;
+    typedef Matx<_Tp, CV_MIN(m, n), 1> diag_type;
     typedef Matx<_Tp, m, n> mat_type;
     enum { depth = DataDepth<_Tp>::value, rows = m, cols = n, channels = rows*cols,
            type = CV_MAKETYPE(depth, channels) };
@@ -486,7 +486,7 @@ public:
     Matx<_Tp, m, 1> col(int i) const;
     
     //! extract the matrix diagonal
-    Matx<_Tp, MIN(m,n), 1> diag() const;
+    Matx<_Tp, CV_MIN(m,n), 1> diag() const;
     
     //! transpose the matrix
     Matx<_Tp, n, m> t() const;

@@ -1266,3 +1266,7 @@ void ofGstUtils::gstHandleMessage(){
 
 	gst_object_unref(GST_OBJECT(bus));
 }
+
+GstElement 	* ofGstUtils::getPipeline(){
+	return gstPipeline;
+}
