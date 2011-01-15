@@ -322,7 +322,7 @@ void ofTexture::loadData(void * data, int w, int h, int glDataType){
 //----------------------------------------------------------
 void ofTexture::loadScreenData(int x, int y, int w, int h){
 
-	int screenHeight = ofGetHeight();
+	int screenHeight = ofGetViewportHeight(); // this call fails if we are in a different viewport or FBO: ofGetHeight();
 	y = screenHeight - y;
 	y -= h; // top, bottom issues
 	texData.bFlipTexture = true;

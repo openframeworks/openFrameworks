@@ -6,6 +6,7 @@
 /* This program is freely distributable without licensing fees  and is
    provided without guarantee or warrantee expressed or  implied. This
    program is -not- in the public domain. */
+//#define GLUT_OF_007_HACK
 
 #if defined(_WIN32)
 
@@ -527,6 +528,9 @@ extern void APIENTRY glutWindowStatusFunc(void (*func)(int state));
 extern void APIENTRY glutKeyboardUpFunc(void (*func)(unsigned char key, int x, int y));
 extern void APIENTRY glutSpecialUpFunc(void (*func)(int key, int x, int y));
 extern void APIENTRY glutJoystickFunc(void (*func)(unsigned int buttonMask, int x, int y, int z), int pollInterval);
+//#ifdef GLUT_OF_007_HACK
+extern void APIENTRY glutDragEventFunc(void (*func)(char ** fileNames, int nFiles, int dragX, int dragY));
+//#endif	
 #endif
 #endif
 #endif

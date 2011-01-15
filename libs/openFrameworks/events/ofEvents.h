@@ -64,6 +64,15 @@ int			ofGetPreviousMouseY();
 			int width;
 			int height;
 		};
+		
+		class ofMessage : public ofEventArgs{
+			public:
+				ofMessage( string msg ){
+					message = msg;
+				}
+				string message;
+		};
+		
 	#else
 		#include "ofxEventUtils.h"
 	#endif
@@ -91,6 +100,9 @@ int			ofGetPreviousMouseY();
 		ofEvent<ofTouchEventArgs>	touchUp;
 		ofEvent<ofTouchEventArgs>	touchMoved;
 		ofEvent<ofTouchEventArgs>	touchDoubleTap;
+		ofEvent<ofTouchEventArgs>	touchCancelled;
+
+		ofEvent<ofMessage> messageEvent;
 
 		void disable(){
 			setup.disable();
@@ -109,6 +121,8 @@ int			ofGetPreviousMouseY();
 			touchUp.disable();
 			touchMoved.disable();
 			touchDoubleTap.disable();
+			touchCancelled.disable();
+			messageEvent.disable();
 		}
 
 		void enable(){
@@ -128,10 +142,12 @@ int			ofGetPreviousMouseY();
 			touchUp.enable();
 			touchMoved.enable();
 			touchDoubleTap.enable();
+			touchCancelled.enable();
+			messageEvent.enable();
 		}
 	};
 
-
+	void ofSendMessage(ofMessage msg);
 
 	extern ofCoreEvents ofEvents;
 
@@ -155,6 +171,12 @@ int			ofGetPreviousMouseY();
 		ofAddListener(ofEvents.touchDown, listener, &ListenerClass::touchDown);
 		ofAddListener(ofEvents.touchMoved, listener, &ListenerClass::touchMoved);
 		ofAddListener(ofEvents.touchUp, listener, &ListenerClass::touchUp);
+		ofAddListener(ofEvents.touchCancelled, listener, &ListenerClass::touchCancelled);
+	}
+
+	template<class ListenerClass>
+	void ofRegisterGetMessages(ListenerClass * listener){
+		ofAddListener(ofEvents.messageEvent, listener, &ListenerClass::gotMessage);
 	}
 
 	template<class ListenerClass>
@@ -177,6 +199,12 @@ int			ofGetPreviousMouseY();
 		ofRemoveListener(ofEvents.touchDown, listener, &ListenerClass::touchDown);
 		ofRemoveListener(ofEvents.touchMoved, listener, &ListenerClass::touchMoved);
 		ofRemoveListener(ofEvents.touchUp, listener, &ListenerClass::touchUp);
+		ofRemoveListener(ofEvents.touchCancelled, listener, &ListenerClass::touchCancelled);
+	}
+
+	template<class ListenerClass>
+	void ofUnregisterGetMessages(ListenerClass * listener){
+		ofRemoveListener(ofEvents.messageEvent, listener, &ListenerClass::gotMessage);
 	}
 
 #endif

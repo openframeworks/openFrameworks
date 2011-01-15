@@ -124,6 +124,7 @@ class ofBaseVideoGrabber: public ofBaseVideo{
 	virtual void setDeviceID(int _deviceID);
 	virtual void setDesiredFrameRate(int framerate);
 	virtual void videoSettings();
+	virtual void setPixelFormat(ofPixelFormat pixelFormat);
 	
 };
 
@@ -148,6 +149,7 @@ public:
 	
 	virtual bool 				isFrameNew() = 0;
 	virtual unsigned char * 	getPixels() = 0;
+	virtual ofTexture *			getTexture(){return NULL;}; // if your videoplayer needs to implement seperate texture and pixel returns for performance, implement this function to return a texture instead of a pixel array. see iPhoneVideoGrabber for reference
 	
 	virtual float 				getWidth() = 0;
 	virtual float 				getHeight() = 0;
@@ -179,42 +181,6 @@ public:
 	
 	
 };
-
-
-//----------------------------------------------------------
-// ofBaseHasDevices
-//----------------------------------------------------------
-class ofBaseHasDevices {
-	
-public: 
-	
-	virtual void buildDeviceList() = 0; 
-	
-	virtual vector < string > getDeviceList(){
-		return deviceNames;
-	}
-	
-	virtual void listDevices(){
-		if (!bHaveEnumeratedDevices){
-			buildDeviceList();
-		}
-		if (bHaveEnumeratedDevices){
-			printf("-------------------------------------------- \n");
-			printf("listing devices for %s \n", deviceType.c_str());
-			printf("\n");
-			for (int i = 0; i < deviceNames.size(); i++){
-				printf("device [%i] - %s\n", i, deviceNames[i].c_str());
-			}
-			printf("-------------------------------------------- \n");
-		}
-	}
-	
-	string				deviceType;
-	vector < string >	deviceNames;
-	bool bHaveEnumeratedDevices;
-	
-};
-
 
 
 

@@ -12,8 +12,9 @@
 
 // TODO: closing seems wonky. 
 // adding this for vc2010 compile: error C3861: 'closeQuicktime': identifier not found
-#include "ofQtUtils.h"
-
+#ifndef TARGET_OF_IPHONE
+	#include "ofQtUtils.h"
+#endif
 
 
 //========================================================================
@@ -146,6 +147,11 @@ ofBaseApp * ofGetAppPtr(){
 }
 
 //--------------------------------------
+void ofSetAppPtr(ofBaseApp *appPtr) {
+	OFSAptr = appPtr;
+}
+
+//--------------------------------------
 int ofGetFrameNum(){
 	return window->getFrameNum();
 }
@@ -224,6 +230,18 @@ int ofGetHeight(){
 	return (int)window->getWindowSize().y;
 }
 
+//--------------------------------------------------
+ofPoint	ofGetWindowSize() {
+	return ofPoint(ofGetWidth(), ofGetHeight());
+}
+
+
+//--------------------------------------------------
+ofRectangle	ofGetWindowRect() {
+	return ofRectangle(0, 0, ofGetWidth(), ofGetHeight());
+}
+
+
 //--------------------------------------
 void ofSetWindowTitle(string title){
 	window->setWindowTitle(title);
@@ -260,9 +278,9 @@ void ofSetVerticalSync(bool bSync){
 	#ifdef TARGET_WIN32
 	//----------------------------
 		if (bSync) {
-			if (GLEE_WGL_EXT_swap_control) wglSwapIntervalEXT (1);
+			if (WGL_EXT_swap_control) wglSwapIntervalEXT (1);
 		} else {
-			if (GLEE_WGL_EXT_swap_control) wglSwapIntervalEXT (0);
+			if (WGL_EXT_swap_control) wglSwapIntervalEXT (0);
 		}
 	//----------------------------
 	#endif
