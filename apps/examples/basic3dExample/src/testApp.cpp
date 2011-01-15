@@ -36,9 +36,9 @@ void reset() {
 void testApp::setup(){
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
-	glEnable(GL_LIGHTING);
 	glEnable(GL_LIGHT0);
-	glEnable(GL_COLOR_MATERIAL);
+	
+	ofEnableLighting();
 	
 	reset();
 	
@@ -82,8 +82,8 @@ void testApp::draw(){
 		}
 	}
 	
-	glEnable(GL_LIGHTING);
-
+	ofEnableLighting();
+	
 	// activate camera
 	cam[camToView].begin(ofGetWindowRect());
 	
@@ -162,7 +162,7 @@ void testApp::draw(){
 	" r      boom up\n" + 
 	" f      boom down\n";
 	
-	glDisable(GL_LIGHTING);
+	ofDisableLighting();
 	ofDrawBitmapString(s, ofPoint(20, 20));
 }
 

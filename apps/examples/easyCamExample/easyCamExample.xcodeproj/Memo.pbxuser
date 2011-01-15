@@ -97,11 +97,6 @@
 		name = glut.h;
 		path = "/Users/Memo/___LAB___/openFrameworks/ofdevcon2011/libs/openFrameworksCompiled/project/osx/../../../openFrameworks/app/../../../libs/glut/lib/osx/GLUT.framework/Versions/A/Headers/glut.h";
 		sourceTree = "<absolute>";
-		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1859, 8606}}";
-			sepNavSelRange = "{2050, 0}";
-			sepNavVisRange = "{0, 632}";
-		};
 	};
 	BBFDB95B12E147F400FB94F8 /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
@@ -187,18 +182,18 @@
 					PBXFileDataSource_Target_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 316749721;
-			PBXWorkspaceStateSaveDate = 316749721;
+			PBXPerProjectTemplateStateSaveDate = 316762708;
+			PBXWorkspaceStateSaveDate = 316762708;
 		};
 		perUserProjectItems = {
-			BB2FA66B12E0EDDF00CB8632 /* PBXTextBookmark */ = BB2FA66B12E0EDDF00CB8632 /* PBXTextBookmark */;
-			BBE7F06D12DF98050039489F /* PlistBookmark */ = BBE7F06D12DF98050039489F /* PlistBookmark */;
-			BBE7F35012DFF3130039489F /* PBXTextBookmark */ = BBE7F35012DFF3130039489F /* PBXTextBookmark */;
-			BBFDB95B12E147F400FB94F8 /* PBXTextBookmark */ = BBFDB95B12E147F400FB94F8 /* PBXTextBookmark */;
-			BBFDB95D12E147F400FB94F8 /* PBXTextBookmark */ = BBFDB95D12E147F400FB94F8 /* PBXTextBookmark */;
-			BBFDB9AA12E14A7D00FB94F8 /* PBXTextBookmark */ = BBFDB9AA12E14A7D00FB94F8 /* PBXTextBookmark */;
-			BBFDBA1612E1522200FB94F8 /* PBXTextBookmark */ = BBFDBA1612E1522200FB94F8 /* PBXTextBookmark */;
-			BBFDBA9612E162E900FB94F8 /* PBXTextBookmark */ = BBFDBA9612E162E900FB94F8 /* PBXTextBookmark */;
+			BB2FA66B12E0EDDF00CB8632 = BB2FA66B12E0EDDF00CB8632 /* PBXTextBookmark */;
+			BBE7F06D12DF98050039489F = BBE7F06D12DF98050039489F /* PlistBookmark */;
+			BBE7F35012DFF3130039489F = BBE7F35012DFF3130039489F /* PBXTextBookmark */;
+			BBFDB95B12E147F400FB94F8 = BBFDB95B12E147F400FB94F8 /* PBXTextBookmark */;
+			BBFDB95D12E147F400FB94F8 = BBFDB95D12E147F400FB94F8 /* PBXTextBookmark */;
+			BBFDB9AA12E14A7D00FB94F8 = BBFDB9AA12E14A7D00FB94F8 /* PBXTextBookmark */;
+			BBFDBA1612E1522200FB94F8 = BBFDBA1612E1522200FB94F8 /* PBXTextBookmark */;
+			BBFDBA9612E162E900FB94F8 = BBFDBA9612E162E900FB94F8 /* PBXTextBookmark */;
 		};
 		sourceControlManager = BBAEB25812DE2F7B007FD423 /* Source Control */;
 		userBuildSettings = {

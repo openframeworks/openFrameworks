@@ -52,9 +52,9 @@ void testApp::draw(){
 	ofSetColor(255, 255, 0);
 	ofBox(20);
 	
-	
 	cam.end();
 	
+	ofDisableLighting();
 	ofSetColor(255, 255, 255);
 	ofDrawBitmapString("This text is not affected by camera because it is after cam.end()", 10, 30);
 }
