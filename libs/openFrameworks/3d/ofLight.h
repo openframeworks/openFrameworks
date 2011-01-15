@@ -47,8 +47,6 @@ public:
 	
 	
 	// this method overrides ofNode to catch the changes and update glLightv(GL_POSITION)
-	virtual void updateMatrix();
-	
 protected:
 	ofColor ambientColor;
 	ofColor diffuseColor;
@@ -57,4 +55,9 @@ protected:
 	int glIndex;
 	int isEnabled;
 	bool isDirectional;
+	
+	
+	// update opengl light 
+	virtual void onPositionChanged();
+	virtual void onOrientationChanged();
 };
