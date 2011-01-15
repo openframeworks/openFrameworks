@@ -6,6 +6,14 @@
 #include "ofPixels.h"
 #include "ofBaseTypes.h"
 
+enum ofImageCompressionType {
+	OF_IMAGE_COMPRESSION_BEST,
+	OF_IMAGE_COMPRESSION_HIGH,
+	OF_IMAGE_COMPRESSION_MEDIUM,
+	OF_IMAGE_COMPRESSION_LOW,
+	OF_IMAGE_COMPRESSION_WORST
+};
+
 //----------------------------------------------------
 // freeImage based stuff:
 void	ofLoadImage(ofPixels & pix, string path);
@@ -49,7 +57,7 @@ class ofImage : public ofBaseImage{
 		// file loading / saving
 		bool 				loadImage(string fileName);
 		bool				loadImage(const ofBuffer & buffer);
-		void 				saveImage(string fileName);
+		void 				saveImage(string fileName, ofImageCompressionType compressionLevel = OF_IMAGE_COMPRESSION_BEST);
 
 		//Sosolimited: texture compression and mipmaps
 		void				setCompression(ofTexCompression compression);
@@ -95,7 +103,7 @@ class ofImage : public ofBaseImage{
 		// freeImage related functionality:
 
 		static bool			loadImageIntoPixels(string fileName, ofPixels &pix);
-		static void			saveImageFromPixels(string fileName, ofPixels &pix);
+		static void			saveImageFromPixels(string fileName, ofPixels &pixm, ofImageCompressionType compressionLevel = OF_IMAGE_COMPRESSION_BEST);
 
 		static bool			loadImageFromMemory(const ofBuffer & buffer, ofPixels &pix);
 
