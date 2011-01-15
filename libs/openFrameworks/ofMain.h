@@ -64,3 +64,7 @@
 // events
 #include "ofEvents.h"
 
+//--------------------------
+// events
+#include "of3d.h"
+

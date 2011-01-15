@@ -1,6 +1,6 @@
 #include "ofSerial.h"
-
 #include "ofUtils.h"
+#include "ofTypes.h"
 
 #if defined( TARGET_OSX ) || defined( TARGET_LINUX )
 	#include <sys/ioctl.h>
@@ -12,6 +12,7 @@
 #include <fcntl.h>
 #include <errno.h>
 #include <ctype.h>
+#include <algorithm>
 
 
 //---------------------------------------------
@@ -144,41 +145,43 @@ ofSerial::~ofSerial(){
 	bInited = false;
 }
 
+//----------------------------------------------------------------
+static bool isDeviceArduino( ofSerialDeviceInfo & A ){
+	//TODO - this should be ofStringInString
+	return ( strstr(A.getDeviceName().c_str(), "usbserial") != NULL );
+}
 
 //----------------------------------------------------------------
 void ofSerial::buildDeviceList(){
 
 	
 	deviceType = "serial";
-	deviceNames.clear();
+	devices.clear();
 	
 	
 	//---------------------------------------------
 #if defined( TARGET_OSX )
 	//---------------------------------------------
-	
-	//----------------------------------------------------
-	//We will find serial devices by listing the directory
-	
-	DIR *dir;
-	struct dirent *entry;
-	dir = opendir("/dev");
-	string str			= "";
-	string device		= "";
-	
-	if (dir == NULL){
-		ofLog(OF_LOG_ERROR,"ofSerial: error listing devices in /dev");
-	} else {
-		while ((entry = readdir(dir)) != NULL){
-			str = (char *)entry->d_name;
-			if( str.substr(0,3) == "cu." || str.substr(0,4) == "tty." ){
-				
-				deviceNames.push_back(str);
-				//printf("device %i - %s\n", deviceCount, str.c_str());
+		
+		DIR *dir;
+		struct dirent *entry;
+		dir = opendir("/dev");
+		string str			= "";
+		string device		= "";
+		int deviceCount		= 0;
+		
+		if (dir == NULL){
+			ofLog(OF_LOG_ERROR,"ofSerial: error listing devices in /dev");
+		} else {
+			while ((entry = readdir(dir)) != NULL){
+				str = (char *)entry->d_name;
+				if( str.substr(0,3) == "cu." || str.substr(0,4) == "tty." ){
+					devices.push_back(ofSerialDeviceInfo(str, deviceCount));
+					deviceCount++;
+				}
 			}
-		}
-	}
-	
+		}	
+			
 	//---------------------------------------------
 #endif
     //---------------------------------------------
@@ -195,6 +198,7 @@ void ofSerial::buildDeviceList(){
 	dir = opendir("/dev");
 	string str			= "";
 	string device		= "";
+	int deviceCount		= 0;
 	
 	if (dir == NULL){
 		ofLog(OF_LOG_ERROR,"ofSerial: error listing devices in /dev");
@@ -203,7 +207,8 @@ void ofSerial::buildDeviceList(){
 		while ((entry = readdir(dir)) != NULL){
 			str = (char *)entry->d_name;
 			if( str.substr(0,4) == "ttyS" || str.substr(0,6) == "ttyUSB" || str.substr(0,3) == "rfc" ){
-				deviceNames.push_back(str);
+				devices.push_back(ofSerialDeviceInfo(str, deviceCount));
+				deviceCount++;
 			}
 		}
 	}
@@ -219,7 +224,7 @@ void ofSerial::buildDeviceList(){
 	enumerateWin32Ports();
 	printf("ofSerial: listing devices (%i total)\n", nPorts);
 	for (int i = 0; i < nPorts; i++){
-		deviceNames.push_back(string(portNamesFriendly[i]));
+		devices.push_back(ofSerialDeviceInfo(string(portNamesFriendly[i]), i));
 		//printf("device %i -- %s", i, portNamesFriendly[i]);
 	}
 	
@@ -227,16 +232,24 @@ void ofSerial::buildDeviceList(){
 #endif
     //---------------------------------------------
 	
+	//here we sort the device to have the aruino ones first. 
+	partition(devices.begin(), devices.end(), isDeviceArduino);
 	
 	bHaveEnumeratedDevices = true;
 }
 
 
 //----------------------------------------------------------------
-void ofSerial::enumerateDevices(){
+void ofSerial::listDevices(){
+	buildDeviceList();
+	for(int k = 0; k < devices.size(); k++){
+		printf("[%i] = %s \n", k, devices[k].getDeviceName().c_str() );
+	}
+}
 
-	listDevices();	
-
+//----------------------------------------------------------------
+void ofSerial::enumerateDevices(){	
+	listDevices();
 }
 
 //----------------------------------------------------------------
@@ -294,21 +307,21 @@ bool ofSerial::setup(int deviceNumber, int baud){
 			ofLog(OF_LOG_ERROR,"ofSerial: error listing devices in /dev");
 		}
 
-		while ((entry = readdir(dir)) != NULL){
-			str = (char *)entry->d_name;
-			#ifdef TARGET_OSX
-			if( str.substr(0,3) == "cu." || str.substr(0,4) == "tty." ){
-			#else
-			if( str.substr(0,4) == "ttyS" || str.substr(0,6) == "ttyUSB" || str.substr(0,3) == "rfc" ){
-			#endif
-				if(deviceCount == deviceNumber){
-					device = "/dev/"+str;
-					deviceFound = true;
-					ofLog(OF_LOG_NOTICE,"ofSerial device %i - /dev/%s  <--selected", deviceCount, str.c_str());
-				}else ofLog(OF_LOG_NOTICE,"ofSerial device %i - /dev/%s", deviceCount, str.c_str());
-				deviceCount++;
-			}
-		}
+//		while ((entry = readdir(dir)) != NULL){
+//			str = (char *)entry->d_name;
+//			#ifdef TARGET_OSX
+//			if( str.substr(0,3) == "cu." || str.substr(0,4) == "tty." ){
+//			#else
+//			if( str.substr(0,4) == "ttyS" || str.substr(0,6) == "ttyUSB" || str.substr(0,3) == "rfc" ){
+//			#endif
+//				if(deviceCount == deviceNumber){
+//					device = "/dev/"+str;
+//					deviceFound = true;
+//					ofLog(OF_LOG_NOTICE,"ofSerial device %i - /dev/%s  <--selected", deviceCount, str.c_str());
+//				}else ofLog(OF_LOG_NOTICE,"ofSerial device %i - /dev/%s", deviceCount, str.c_str());
+//				deviceCount++;
+//			}
+//		}
 
         if(deviceFound){
             return setup(device, baud);

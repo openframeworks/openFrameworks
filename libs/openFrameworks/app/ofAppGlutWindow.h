@@ -2,7 +2,9 @@
 
 #include "ofConstants.h"
 #include "ofAppBaseWindow.h"
-class ofPoint;
+#include "ofEvents.h"
+
+//class ofPoint;
 class ofBaseApp;
 
 class ofAppGlutWindow : public ofAppBaseWindow {
@@ -64,7 +66,7 @@ public:
 	static void special_key_cb(int key, int x, int y) ;
 	static void special_key_up_cb(int key, int x, int y) ;
 	static void resize_cb(int w, int h);
-
+	static void dragEvent(char ** fileNames, int howManyFiles, int dragX, int dragY);
 	string displayString;
 	 
 };

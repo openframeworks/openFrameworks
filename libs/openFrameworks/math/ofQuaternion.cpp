@@ -1,5 +1,6 @@
 #include "ofQuaternion.h"
 #include "ofMatrix4x4.h"
+#include "ofMain.h"
 
 void ofQuaternion::set(const ofMatrix4x4& matrix) {
 	*this = matrix.getRotate();
@@ -13,6 +14,8 @@ void ofQuaternion::get(ofMatrix4x4& matrix) const {
 /// Set the elements of the Quat to represent a rotation of angle
 /// (radians) around the axis (x,y,z)
 void ofQuaternion::makeRotate( float angle, float x, float y, float z ) {
+	angle = ofDegToRad(angle);
+	
 	const float epsilon = 0.0000001f;
 
 	float length = sqrtf( x * x + y * y + z * z );
@@ -194,9 +197,9 @@ void ofQuaternion::makeRotate_original( const ofVec3f& from, const ofVec3f& to )
 void ofQuaternion::getRotate( float& angle, ofVec3f& vec ) const {
 	float x, y, z;
 	getRotate(angle, x, y, z);
-	vec[0] = x;
-	vec[1] = y;
-	vec[2] = z;
+	vec.x = x;
+	vec.y = y;
+	vec.z = z;
 }
 // Get the angle of rotation and axis of this Quat object.
 // Won't give very meaningful results if the Quat is not associated
@@ -214,7 +217,8 @@ void ofQuaternion::getRotate( float& angle, float& x, float& y, float& z ) const
 		y = 0.0;
 		z = 1.0;
 	}
-
+	
+	angle = ofRadToDeg(angle);
 }
 
 
