@@ -18,8 +18,7 @@ void ofiPhoneVideoGrabber::listDevices() {
 }
 
 bool ofiPhoneVideoGrabber::initGrabber(int w, int h) {
-	grabber->initGrabber(w, h);
-	return true;
+	return grabber->initGrabber(w, h);
 }
 
 bool ofiPhoneVideoGrabber::isFrameNew() {
