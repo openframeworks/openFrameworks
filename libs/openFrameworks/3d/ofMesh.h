@@ -68,6 +68,15 @@ public:
 	
 //--------------------------------------------------------------	
 	~ofMesh(){};
+	
+//--------------------------------------------------------------	
+void clear(){
+		vertices.clear();
+		normals.clear();
+		texCoords.clear();
+		faces.clear();
+		colors.clear();
+	}
 
 //--------------------------------------------------------------
 	int addVertex(ofVec3f pos, ofVec3f normal, ofColor color, ofVec2f texCoord) {
