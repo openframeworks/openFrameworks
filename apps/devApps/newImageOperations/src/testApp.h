@@ -20,9 +20,9 @@ class testApp : public ofBaseApp{
 		void windowResized(int w, int h);
 
 	ofImage temp;
+	ofImage temp2;
+	ofPoint mousePressedPt;
 	
-	ofPixels tempPix;
-	ofTexture tex;
 	
 };
 

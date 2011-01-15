@@ -2,7 +2,7 @@
 
 ofxCvHaarFinder::ofxCvHaarFinder() {
 	cascade = NULL;
-	scaleHaar = 1.2;
+	scaleHaar = 1.08;
 	neighbors = 2;
 }
 
@@ -18,10 +18,14 @@ ofxCvHaarFinder::~ofxCvHaarFinder() {
 		cvReleaseHaarClassifierCascade(&cascade);
 }
 
+// low values	- more accurate - eg: 1.01 
+// high values	- faster - eg: 1.06 or 1.09 
 void ofxCvHaarFinder::setScaleHaar(float scaleHaar) {
 	this->scaleHaar = scaleHaar;
 }
 
+//low values	= more false postives
+//high values	= less faces,  but more reliable
 void ofxCvHaarFinder::setNeighbors(unsigned neighbors) {
 	this->neighbors = neighbors;
 }
@@ -36,13 +40,13 @@ void ofxCvHaarFinder::setup(string haarFile) {
 	cascade = (CvHaarClassifierCascade*) cvLoad(haarFile.c_str(), 0, 0, 0);
 
 	#ifdef HAAR_HACK
-	// http://thread.gmane.org/gmane.comp.lib.opencv/16540/focus=17400
-	// http://www.openframeworks.cc/forum/viewtopic.php?f=10&t=1853&hilit=haar
-	ofxCvGrayscaleImage hack;
-	hack.allocate(8, 8);
-	CvMemStorage* storage = cvCreateMemStorage();
-	cvHaarDetectObjects(hack.getCvImage(), cascade, storage, scaleHaar, 2, CV_HAAR_DO_CANNY_PRUNING);
-	cvReleaseMemStorage(&storage);
+		// http://thread.gmane.org/gmane.comp.lib.opencv/16540/focus=17400
+		// http://www.openframeworks.cc/forum/viewtopic.php?f=10&t=1853&hilit=haar
+		ofxCvGrayscaleImage hack;
+		hack.allocate(8, 8);
+		CvMemStorage* storage = cvCreateMemStorage();
+		cvHaarDetectObjects(hack.getCvImage(), cascade, storage, scaleHaar, 2, CV_HAAR_DO_CANNY_PRUNING);
+		cvReleaseMemStorage(&storage);
 	#endif
 
 	if (!cascade)
@@ -58,15 +62,25 @@ float ofxCvHaarFinder::getHeight() {
 	return img.height;
 }
 
-int ofxCvHaarFinder::findHaarObjects(ofImage& input,
-	int minWidth, int minHeight) {
-	ofxCvColorImage color;
+int ofxCvHaarFinder::findHaarObjects(ofImage& input, int minWidth, int minHeight) {
+	
 	ofxCvGrayscaleImage gray;
-	color.allocate(input.width, input.height);
 	gray.allocate(input.width, input.height);
-	color = input.getPixels();
-	gray = color;
-	findHaarObjects(gray, minWidth, minHeight);
+
+	if( input.type == OF_IMAGE_COLOR ){
+		ofxCvColorImage color;
+		color.allocate(input.width, input.height);
+		color = input.getPixels();
+		gray = color;
+	}else if( input.type == OF_IMAGE_GRAYSCALE ){
+		gray = input.getPixels();
+	}else{
+		ofLog(OF_LOG_ERROR, "ofxCvHaarFinder::findHaarObjects doesn't support OF_IMAGE_RGBA ofImage");
+		return 0;
+	}
+	
+	return findHaarObjects(gray, minWidth, minHeight);
+	
 }
 
 int ofxCvHaarFinder::findHaarObjects(const ofxCvGrayscaleImage&  input,
@@ -135,6 +149,8 @@ int ofxCvHaarFinder::findHaarObjects(const ofxCvGrayscaleImage& input,
 		nHaarResults = haarResults->total;
 
 		for (int i = 0; i < nHaarResults; i++ ) {
+			printf("%i objects\n", i);
+			
 			ofxCvBlob blob;
 
 			CvRect* r = (CvRect*) cvGetSeqElem(haarResults, i);
