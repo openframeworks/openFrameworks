@@ -334,7 +334,7 @@
 										<key>_historyCapacity</key>
 										<integer>40</integer>
 										<key>bookmark</key>
-										<string>BB604EFD12E2C86500BD9826</string>
+										<string>BBE06F8C12E2CA2E008C7F2F</string>
 										<key>history</key>
 										<array>
 											<string>BBE7F06D12DF98050039489F</string>
@@ -346,7 +346,7 @@
 											<string>BB604EEB12E2C84200BD9826</string>
 											<string>BB604EEC12E2C84200BD9826</string>
 											<string>BB604EED12E2C84200BD9826</string>
-											<string>BB604EE312E2C7F700BD9826</string>
+											<string>BB604EFD12E2C86500BD9826</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>
@@ -404,9 +404,9 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>BB604EDB12E2C6B000BD9826</string>
+				<string>BBE06F7C12E2CA16008C7F2F</string>
 				<string>1CE0B1FE06471DED0097A5F4</string>
-				<string>BB604EDC12E2C6B000BD9826</string>
+				<string>BBE06F7D12E2CA16008C7F2F</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20506471E060097A5F4</string>
 			</array>
@@ -544,12 +544,13 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
-		<string>BB604EDE12E2C6B000BD9826</string>
-		<string>BB604EDF12E2C6B000BD9826</string>
+		<string>BBE06F8D12E2CA2E008C7F2F</string>
+		<string>BBE06F8712E2CA16008C7F2F</string>
+		<string>BBE06F8812E2CA16008C7F2F</string>
 		<string>1CD10A99069EF8BA00B06720</string>
 		<string>BBAEB25612DE2F7B007FD423</string>
-		<string>1C78EAAD065D492600B07095</string>
 		<string>/Users/Memo/___LAB___/openFrameworks/ofdevcon2011/apps/examples/easyCamExample/easyCamExample.xcodeproj</string>
+		<string>1C78EAAD065D492600B07095</string>
 	</array>
 	<key>WindowString</key>
 	<string>0 128 1920 1050 0 0 1920 1178 </string>
@@ -568,14 +569,12 @@
 					<key>Dock</key>
 					<array>
 						<dict>
-							<key>BecomeActive</key>
-							<true/>
 							<key>ContentConfiguration</key>
 							<dict>
 								<key>PBXProjectModuleGUID</key>
 								<string>1CD0528F0623707200166675</string>
 								<key>PBXProjectModuleLabel</key>
-								<string>ofEasyCam.cpp</string>
+								<string></string>
 								<key>StatusBarVisibility</key>
 								<true/>
 							</dict>
@@ -631,7 +630,7 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>BBAEB25612DE2F7B007FD423</string>
-				<string>BB604EBD12E2C5AF00BD9826</string>
+				<string>BBE06F7E12E2CA16008C7F2F</string>
 				<string>1CD0528F0623707200166675</string>
 				<string>XCMainBuildResultsModuleGUID</string>
 			</array>
@@ -753,13 +752,13 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>1CD10A99069EF8BA00B06720</string>
-				<string>BB604EBE12E2C5AF00BD9826</string>
+				<string>BBE06F7F12E2CA16008C7F2F</string>
 				<string>1C162984064C10D400B95A72</string>
-				<string>BB604EBF12E2C5AF00BD9826</string>
-				<string>BB604EC012E2C5AF00BD9826</string>
-				<string>BB604EC112E2C5AF00BD9826</string>
-				<string>BB604EC212E2C5AF00BD9826</string>
-				<string>BB604EC312E2C5AF00BD9826</string>
+				<string>BBE06F8012E2CA16008C7F2F</string>
+				<string>BBE06F8112E2CA16008C7F2F</string>
+				<string>BBE06F8212E2CA16008C7F2F</string>
+				<string>BBE06F8312E2CA16008C7F2F</string>
+				<string>BBE06F8412E2CA16008C7F2F</string>
 			</array>
 			<key>ToolbarConfiguration</key>
 			<string>xcode.toolbar.config.debugV3</string>
@@ -913,7 +912,7 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>1C78EAAD065D492600B07095</string>
-				<string>BB604EC412E2C5AF00BD9826</string>
+				<string>BBE06F8512E2CA16008C7F2F</string>
 				<string>1C78EAAC065D492600B07095</string>
 			</array>
 			<key>ToolbarConfiguration</key>
