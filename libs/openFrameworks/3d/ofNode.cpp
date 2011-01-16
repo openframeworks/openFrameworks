@@ -368,7 +368,7 @@ void ofNode::orbit(float longitude, float latitude, float radius, const ofVec3f&
 	
 	// find position
 	ofVec3f p(0, 0, radius);
-	p.rotate(latitude, ofVec3f(1, 0, 0));
+	p.rotate(ofClamp(latitude, -89, 89), ofVec3f(1, 0, 0));
 	p.rotate(longitude, ofVec3f(0, 1, 0));
 	p += centerPoint;
 	setPosition(p);

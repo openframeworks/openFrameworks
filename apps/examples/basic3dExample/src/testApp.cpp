@@ -151,7 +151,7 @@ void testApp::draw(){
 	"\n" + 
 	
 	"o      toggle mouse orbit for cam\n" + 
-	"O      toggle auto orbit for cam\n" + 
+//	"O      toggle auto orbit for cam\n" + 
 	
 	"\n" + 
 	"c      switch camera to configure: " + ofToString(camToConfigure) + "\n" +
