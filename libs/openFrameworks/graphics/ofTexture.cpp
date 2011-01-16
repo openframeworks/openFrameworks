@@ -2,6 +2,7 @@
 #include "ofUtils.h"		// for nextPow2()
 #include "ofAppRunner.h"	// for getWidth()
 #include "ofGraphics.h"
+#include "ofPixels.h"
 
 static bool bTexHackEnabled = true;
 
@@ -42,6 +43,7 @@ void ofTexture::operator=(const ofTexture & mom){
 bool ofTexture::bAllocated(){
 	return texData.bAllocated;
 }
+
 
 //----------------------------------------------------------
 ofTextureData ofTexture::getTextureData(){
@@ -161,6 +163,14 @@ void ofTexture::loadData(unsigned char * data, int w, int h, int glDataType){
 void ofTexture::loadData(float * data, int w, int h, int glDataType){
 	loadData( (void *)data, w, h, glDataType);
 }
+
+//----------------------------------------------------------
+void ofTexture::loadData(ofPixels & pix){
+	loadData(pix.getPixels(), pix.getWidth(), pix.getHeight(), pix.getGlDataType());
+}
+
+
+
 
 //----------------------------------------------------------
 void ofTexture::loadData(void * data, int w, int h, int glDataType){

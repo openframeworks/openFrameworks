@@ -1,4 +1,4 @@
-*.mode1v3
+*.mode*
 *.pbxuser
 build/
 obj/

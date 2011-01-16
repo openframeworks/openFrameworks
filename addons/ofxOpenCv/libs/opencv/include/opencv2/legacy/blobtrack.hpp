@@ -358,8 +358,8 @@ CV_INLINE CvRect cvRectIntersection( const CvRect r1, const CvRect r2 )
 {
     CvRect r = cvRect( MAX(r1.x, r2.x), MAX(r1.y, r2.y), 0, 0 );
 
-    r.width  = MIN(r1.x + r1.width, r2.x + r2.width) - r.x;
-    r.height = MIN(r1.y + r1.height, r2.y + r2.height) - r.y;
+    r.width  = CV_MIN(r1.x + r1.width, r2.x + r2.width) - r.x;
+    r.height = CV_MIN(r1.y + r1.height, r2.y + r2.height) - r.y;
 
     return r;
 }
