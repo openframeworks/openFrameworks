@@ -41,6 +41,7 @@ float ofiPhoneVideoGrabber::getWidth() {
 }
 
 void ofiPhoneVideoGrabber::update() {
+	grabber->update();
 }
 
 void ofiPhoneVideoGrabber::setDeviceID(int _deviceID) {

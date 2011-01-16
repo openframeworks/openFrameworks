@@ -51,8 +51,10 @@ using namespace std;
 	bool initialised;
 
 	bool playOnLoad;
+	bool bDoAudio;
 	
 	float current_video_time;
+	float vol;
 	
 	vector<UIViewController<AVFoundationVideoPlayerStatusListener>*> status_listeners;
 	
@@ -71,6 +73,7 @@ using namespace std;
 - (bool)isPaused;
 - (bool)isInErrorState;
 - (bool)canPlay;
+- (void)setVolume:(float)volume;
 
 - (void)updateWithElapsedTime:(float)elapsed;
 - (bool)hasNewFrame;

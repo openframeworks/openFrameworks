@@ -9,8 +9,6 @@ void testApp::setup(){
 	glEnable(GL_COLOR_MATERIAL);
 	
 	ofSetVerticalSync(true);
-	
-	// start camera, with radius of 100
 }
 
 //--------------------------------------------------------------

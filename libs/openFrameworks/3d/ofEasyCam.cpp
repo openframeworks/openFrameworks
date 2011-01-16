@@ -18,9 +18,9 @@ distance(100),
 pos(0, 0),
 vel(0, 0),
 pmouse(0, 0), 
+oldMousePress(false),
 speed(0.1),
-drag(0.1),
-oldMousePress(false)
+drag(0.1)
 {
 //	
 //	ab_quat[16] = {1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1};

@@ -6,6 +6,7 @@ ofVideoPlayer::ofVideoPlayer (){
 	player						= NULL;
 	bUseTexture					= true;
 	playerTex					= NULL;
+	internalPixelFormat = OF_PIXELS_RGB;
 }
 
 //---------------------------------------------------------------------------
@@ -34,14 +35,15 @@ bool ofVideoPlayer::setPlayer(ofBaseVideoPlayer * newPlayer){
 }
 
 //--------------------------------------------------------------------
-ofBaseVideoPlayer * ofVideoPlayer::getPlayer(){
-	return player;
+void ofVideoPlayer::setPixelFormat(ofPixelFormat pixelFormat) {
+	internalPixelFormat = pixelFormat;
 }
 
 //---------------------------------------------------------------------------
 bool ofVideoPlayer::loadMovie(string name){
 	if( player == NULL ){
 		setPlayer( new OF_VID_PLAYER_TYPE );
+		player->setPixelFormat(internalPixelFormat);
 	}
 	
 	bool bOk = player->loadMovie(name);

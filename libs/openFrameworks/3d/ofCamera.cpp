@@ -12,10 +12,10 @@
 
 
 ofCamera::ofCamera()
-:fov(60),
+:isOrtho(false),
+fov(60),
 nearClip(0),
 farClip(0),
-isOrtho(false),
 isActive(false)
 {
 }

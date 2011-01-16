@@ -1,6 +1,7 @@
 #include "ofQuickTimePlayer.h"
 #include "ofUtils.h"
 
+#ifndef TARGET_LINUX
 //--------------------------------------------------------------
 #ifdef  OF_VIDEO_PLAYER_QUICKTIME
 //--------------------------------------------------------------
@@ -834,6 +835,6 @@ bool ofQuickTimePlayer::isPlaying(){
 	return bPlaying;
 }
 
-	
+#endif
 
 
