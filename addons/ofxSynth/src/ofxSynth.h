@@ -72,8 +72,8 @@ class ofxSynth : public ofSoundSource{
 		
 		void	trigger();
 
-		void	setFrequency(float freq);
-		void	setFrequencyMidiNote(float note);
+		virtual void	setFrequency(float freq);
+		virtual void	setFrequencyMidiNote(float note);
 		void	setPortamento(float p){portamento = p;};
 		
 		void	setFilter(float _cutoff, float _res);
@@ -95,7 +95,7 @@ class ofxSynth : public ofSoundSource{
 		ofxSynthFilter filter;
 		
 	protected:
-		float currentFrequency,startFrequency, targetFrequency, currentAmp, noteTime;
+		float currentFrequency, startFrequency, targetFrequency, currentAmp, noteTime;
 		float sustain, gain, cutoff, res, filterMod, portamento;
 		int filterMode, waveMode, sampleRate, phase;
 		bool usesEnv, hasTrigger;
