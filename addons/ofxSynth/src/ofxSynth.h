@@ -36,12 +36,7 @@
 #include "ofxSynthDelayLine.h"
 #include "ofxSynthFilter.h"
 #include "ofxSynthEnvelope.h"
-
-#define OFXSYNTHONESHOT 1
-#define OFXSYNTHADR 2
-
-
-const int wav_header_size = 0x2C;
+#include "ofxSynthWaveWriter.h"
 
 class maxiOsc {
 	
@@ -55,17 +50,9 @@ class maxiOsc {
 	
 public:
 	maxiOsc();
-	double sinewave(double frequency);
-	double coswave(double frequency);
-	double phasor(double frequency);
-	double phasor(double frequency, double startphase, double endphase);
 	double saw(double frequency);
 	double triangle(double frequency,double phase);
 	double square(double frequency);
-	double pulse(double frequency, double duty);
-	double noise();
-	double sinebuf(double frequency);
-	double sinebuf4(double frequency);
 	void setSampleRate(int rate);
 };
 
@@ -80,36 +67,36 @@ typedef maxiOsc ofxMaxiOsc;
 class ofxSynth : public ofSoundSource{
 	public:
 		ofxSynth();
-		string getName() { return "ofxSynth"; }
-		void setup();
+		virtual string	getName() { return "ofxSynth"; }
+		void	setup();
 		
-		void trigger();
+		void	trigger();
 
-		void setFrequency(float freq);
-		void setFrequencyMidiNote(float note);
-		void setPortamento(float p){portamento = p;};
+		void	setFrequency(float freq);
+		void	setFrequencyMidiNote(float note);
+		void	setPortamento(float p){portamento = p;};
 		
-		void setFilter(float _cutoff, float _res);
-		float getCutoff(){return cutoff;};
-		float getRes(){return res;};
-		void setFilterLowPass(){filter.setLowPass();filterMode = 1;};
-		void setFilterHighPass(){filter.setHighPass();filterMode = 2;};
+		void	setFilter(float _cutoff, float _res);
+		void	setFilterLowPass(){filter.setLowPass();filterMode = 1;};
+		void	setFilterHighPass(){filter.setHighPass();filterMode = 2;};
+
+		float	getCutoff(){return cutoff;};
+		float	getRes(){return res;};
 				
-		void setWaveSquare(){waveMode = 0;};
-		void setWaveTri(){waveMode = 1;};
-		void setWaveSaw(){waveMode = 2;};
+		void	setWaveSquare(){waveMode = 0;};
+		void	setWaveTri(){waveMode = 1;};
+		void	setWaveSaw(){waveMode = 2;};
 		
-		virtual void		audioRequested( float* buffer, int numFrames, int numChannels );
+		void		audioRequested( float* buffer, int numFrames, int numChannels );
 		void				setSampleRate(int rate);
 
 		ofxMaxiOsc wave;
 		ofxSynthADSR env, modEnv;
 		ofxSynthFilter filter;
-		int ampMode;
-		bool usesEnv, hasTrigger;
 		
 	protected:
 		float currentFrequency,startFrequency, targetFrequency, currentAmp, noteTime;
 		float sustain, gain, cutoff, res, filterMod, portamento;
 		int filterMode, waveMode, sampleRate, phase;
+		bool usesEnv, hasTrigger;
 };

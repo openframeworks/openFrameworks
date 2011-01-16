@@ -1,6 +1,10 @@
 
 #include "ofxSynthEnvelope.h"
 
+ofxSynthADSR::ofxSynthADSR(){
+	noteOn = false;
+	a = d = s = r = 0;
+}
 void ofxSynthADSR::trigger(){
 	offset = 0;
 	noteOn = true;
