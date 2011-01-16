@@ -122,7 +122,7 @@ void CALLBACK ofTessellator::end(){
 		}
 	}
 	else{
-		ofLog( OF_LOG_WARNING, "ofTessellate: unrecognized type '%i' (expected GL_TRIANGLES, GL_TRIANGLE_FAN or GL_TRIANGLE_STRIP)", currentTriType );
+		//ofLog( OF_LOG_WARNING, "ofTessellate: unrecognized type '%i' (expected GL_TRIANGLES, GL_TRIANGLE_FAN or GL_TRIANGLE_STRIP)", currentTriType );
 	}
 	
 }
