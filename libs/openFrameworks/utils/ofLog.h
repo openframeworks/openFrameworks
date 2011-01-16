@@ -199,7 +199,7 @@ class ofLogger{
 		ofLogger(ofLogger const&);    			// not defined, not copyable
 		ofLogger& operator = (ofLogger const&);	// not defined, not assignable
 		ofLogger();								// singleton constructor
-		~ofLogger() {printf("ofLogger Destructed");}
+		~ofLogger(){}							// singleton destructor
 };
 
 //------------------------------------------------------------------------------

@@ -288,7 +288,12 @@ void ofLogger::_log(ofLogLevel logLevel, const string& message, Poco::Logger* th
 		}
 	}
 	
-	// log
+	// log the message
+	//
+	// Each log call is wrapped in a try / catch in case the logger is called
+	// when it has already been destroyed. This can happen if it is used in
+	// another destructor as the destruction order is not predictabale.
+	//
 	switch(logLevel){
 		case OF_LOG_SILENT:
 			break;
