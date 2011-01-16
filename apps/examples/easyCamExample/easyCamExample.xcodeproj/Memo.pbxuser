@@ -16,11 +16,6 @@
 		name = arcball.cpp;
 		path = /Users/Memo/Desktop/arcball/arcball.cpp;
 		sourceTree = "<absolute>";
-		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1484, 3029}}";
-			sepNavSelRange = "{780, 0}";
-			sepNavVisRange = "{0, 2182}";
-		};
 	};
 	BB40210112E229770002A877 /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
@@ -47,7 +42,7 @@
 		fRef = E4B69E1E0A3A1BDC003C02F2 /* testApp.cpp */;
 		name = "testApp.cpp: 36";
 		rLen = 0;
-		rLoc = 727;
+		rLoc = 499;
 		rType = 0;
 		vrLen = 1660;
 		vrLoc = 0;
@@ -57,9 +52,108 @@
 		fRef = E4B69E1E0A3A1BDC003C02F2 /* testApp.cpp */;
 		name = "testApp.cpp: 36";
 		rLen = 0;
-		rLoc = 733;
+		rLoc = 499;
 		rType = 0;
 		vrLen = 1660;
+		vrLoc = 0;
+	};
+	BB604BA612E297BE00BD9826 /* XCBuildMessageTextBookmark */ = {
+		isa = PBXTextBookmark;
+		comments = "Expected class-name before '{' token";
+		fRef = BB604BA712E297BE00BD9826 /* ofCamera.h */;
+		fallbackIsa = XCBuildMessageTextBookmark;
+		rLen = 1;
+		rLoc = 26;
+		rType = 1;
+	};
+	BB604BA712E297BE00BD9826 /* ofCamera.h */ = {
+		isa = PBXFileReference;
+		lastKnownFileType = sourcecode.c.h;
+		name = ofCamera.h;
+		path = "/Users/Memo/___LAB___/openFrameworks/ofdevcon2011/libs/openFrameworksCompiled/project/osx/../../../openFrameworks/3d/ofCamera.h";
+		sourceTree = "<absolute>";
+	};
+	BB604BA812E297BE00BD9826 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = BB604BA912E297BE00BD9826 /* ofCamera.h */;
+		name = "ofCamera.h: 26";
+		rLen = 0;
+		rLoc = 536;
+		rType = 0;
+		vrLen = 382;
+		vrLoc = 317;
+	};
+	BB604BA912E297BE00BD9826 /* ofCamera.h */ = {
+		isa = PBXFileReference;
+		lastKnownFileType = sourcecode.c.h;
+		name = ofCamera.h;
+		path = "/Users/Memo/___LAB___/openFrameworks/ofdevcon2011/libs/openFrameworks/3d/ofCamera.h";
+		sourceTree = "<absolute>";
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1484, 972}}";
+			sepNavSelRange = "{158, 0}";
+			sepNavVisRange = "{0, 1051}";
+		};
+	};
+	BB604BC612E2991D00BD9826 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = BB604BA912E297BE00BD9826 /* ofCamera.h */;
+		name = "ofCamera.h: 25";
+		rLen = 0;
+		rLoc = 536;
+		rType = 0;
+		vrLen = 413;
+		vrLoc = 317;
+	};
+	BB604BD012E2992300BD9826 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = E4B69E1E0A3A1BDC003C02F2 /* testApp.cpp */;
+		name = "testApp.cpp: 28";
+		rLen = 0;
+		rLoc = 536;
+		rType = 0;
+		vrLen = 1518;
+		vrLoc = 0;
+	};
+	BB604BD112E2992300BD9826 /* XCBuildMessageTextBookmark */ = {
+		isa = PBXTextBookmark;
+		comments = "Expected class-name before '{' token";
+		fRef = BB604BD212E2992300BD9826 /* ofCamera.h */;
+		fallbackIsa = XCBuildMessageTextBookmark;
+		rLen = 1;
+		rLoc = 26;
+		rType = 1;
+	};
+	BB604BD212E2992300BD9826 /* ofCamera.h */ = {
+		isa = PBXFileReference;
+		lastKnownFileType = sourcecode.c.h;
+		name = ofCamera.h;
+		path = "/Users/Memo/___LAB___/openFrameworks/ofdevcon2011/libs/openFrameworksCompiled/project/osx/../../../openFrameworks/3d/ofCamera.h";
+		sourceTree = "<absolute>";
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1484, 972}}";
+			sepNavSelRange = "{158, 0}";
+			sepNavVisRange = "{0, 1031}";
+		};
+	};
+	BB604BD312E2992300BD9826 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = BB604BA912E297BE00BD9826 /* ofCamera.h */;
+		name = "ofCamera.h: 10";
+		rLen = 0;
+		rLoc = 158;
+		rType = 0;
+		vrLen = 1051;
+		vrLoc = 0;
+	};
+	BB604C3E12E2A1F500BD9826 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = BB604BD212E2992300BD9826 /* ofCamera.h */;
+		name = "ofCamera.h: 10";
+		rLen = 0;
+		rLoc = 158;
+		rType = 0;
+		vrLen = 1031;
 		vrLoc = 0;
 	};
 	BBAEB23212DE2F79007FD423 /* emptyExample */ = {
@@ -204,19 +298,26 @@
 					PBXFileDataSource_Target_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 316766693;
-			PBXWorkspaceStateSaveDate = 316766693;
+			PBXPerProjectTemplateStateSaveDate = 316839789;
+			PBXWorkspaceStateSaveDate = 316839789;
 		};
 		perUserProjectItems = {
-			BB2FA66B12E0EDDF00CB8632 /* PBXTextBookmark */ = BB2FA66B12E0EDDF00CB8632 /* PBXTextBookmark */;
-			BB40210112E229770002A877 /* PBXTextBookmark */ = BB40210112E229770002A877 /* PBXTextBookmark */;
-			BB40210212E229770002A877 /* PBXTextBookmark */ = BB40210212E229770002A877 /* PBXTextBookmark */;
-			BB40210312E229770002A877 /* PBXTextBookmark */ = BB40210312E229770002A877 /* PBXTextBookmark */;
-			BB40210412E229770002A877 /* PBXTextBookmark */ = BB40210412E229770002A877 /* PBXTextBookmark */;
-			BBE7F06D12DF98050039489F /* PlistBookmark */ = BBE7F06D12DF98050039489F /* PlistBookmark */;
-			BBE7F35012DFF3130039489F /* PBXTextBookmark */ = BBE7F35012DFF3130039489F /* PBXTextBookmark */;
-			BBFDB95B12E147F400FB94F8 /* PBXTextBookmark */ = BBFDB95B12E147F400FB94F8 /* PBXTextBookmark */;
-			BBFDB95D12E147F400FB94F8 /* PBXTextBookmark */ = BBFDB95D12E147F400FB94F8 /* PBXTextBookmark */;
+			BB2FA66B12E0EDDF00CB8632 = BB2FA66B12E0EDDF00CB8632 /* PBXTextBookmark */;
+			BB40210112E229770002A877 = BB40210112E229770002A877 /* PBXTextBookmark */;
+			BB40210212E229770002A877 = BB40210212E229770002A877 /* PBXTextBookmark */;
+			BB40210312E229770002A877 = BB40210312E229770002A877 /* PBXTextBookmark */;
+			BB40210412E229770002A877 = BB40210412E229770002A877 /* PBXTextBookmark */;
+			BB604BA612E297BE00BD9826 /* XCBuildMessageTextBookmark */ = BB604BA612E297BE00BD9826 /* XCBuildMessageTextBookmark */;
+			BB604BA812E297BE00BD9826 /* PBXTextBookmark */ = BB604BA812E297BE00BD9826 /* PBXTextBookmark */;
+			BB604BC612E2991D00BD9826 /* PBXTextBookmark */ = BB604BC612E2991D00BD9826 /* PBXTextBookmark */;
+			BB604BD012E2992300BD9826 /* PBXTextBookmark */ = BB604BD012E2992300BD9826 /* PBXTextBookmark */;
+			BB604BD112E2992300BD9826 /* XCBuildMessageTextBookmark */ = BB604BD112E2992300BD9826 /* XCBuildMessageTextBookmark */;
+			BB604BD312E2992300BD9826 /* PBXTextBookmark */ = BB604BD312E2992300BD9826 /* PBXTextBookmark */;
+			BB604C3E12E2A1F500BD9826 /* PBXTextBookmark */ = BB604C3E12E2A1F500BD9826 /* PBXTextBookmark */;
+			BBE7F06D12DF98050039489F = BBE7F06D12DF98050039489F /* PlistBookmark */;
+			BBE7F35012DFF3130039489F = BBE7F35012DFF3130039489F /* PBXTextBookmark */;
+			BBFDB95B12E147F400FB94F8 = BBFDB95B12E147F400FB94F8 /* PBXTextBookmark */;
+			BBFDB95D12E147F400FB94F8 = BBFDB95D12E147F400FB94F8 /* PBXTextBookmark */;
 		};
 		sourceControlManager = BBAEB25812DE2F7B007FD423 /* Source Control */;
 		userBuildSettings = {
@@ -237,9 +338,9 @@
 	};
 	E4B69E1E0A3A1BDC003C02F2 /* testApp.cpp */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1484, 1209}}";
-			sepNavSelRange = "{733, 0}";
-			sepNavVisRange = "{0, 1660}";
+			sepNavIntBoundsRect = "{{0, 0}, {1484, 972}}";
+			sepNavSelRange = "{536, 0}";
+			sepNavVisRange = "{0, 1518}";
 			sepNavWindowFrame = "{{979, 73}, {849, 1105}}";
 		};
 	};

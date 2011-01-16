@@ -23,31 +23,7 @@ void testApp::draw(){
 	cam.begin();
 	
 	// draw world axis
-	float axisLength = 100;
-	// draw world x axis
-	ofSetColor(255, 0, 0);
-	glPushMatrix();
-	glTranslatef(axisLength/2, 0, 0);
-	glScalef(axisLength, 2, 2);
-	ofBox(0, 0, 0, 1);
-	glPopMatrix();
-	
-	// draw world y axis
-	ofSetColor(0, 255, 0);
-	glPushMatrix();
-	glTranslatef(0, axisLength/2, 0);
-	glScalef(2, axisLength, 2);
-	ofBox(0, 0, 0, 1);
-	glPopMatrix();
-	
-	// draw world z axis
-	ofSetColor(0, 0, 255);
-	glPushMatrix();
-	glTranslatef(0, 0, axisLength/2);
-	glScalef(2, 2, axisLength);
-	ofBox(0, 0, 0, 1);
-	glPopMatrix();
-	
+	ofDrawAxis(200);	
 	
 	ofSetColor(255, 255, 0);
 	ofBox(20);

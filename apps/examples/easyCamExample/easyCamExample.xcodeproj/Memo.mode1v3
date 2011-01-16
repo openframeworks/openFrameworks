@@ -322,7 +322,7 @@
 								<key>PBXProjectModuleGUID</key>
 								<string>1CE0B20306471E060097A5F4</string>
 								<key>PBXProjectModuleLabel</key>
-								<string>testApp.cpp</string>
+								<string>ofCamera.h</string>
 								<key>PBXSplitModuleInNavigatorKey</key>
 								<dict>
 									<key>Split0</key>
@@ -330,11 +330,11 @@
 										<key>PBXProjectModuleGUID</key>
 										<string>1CE0B20406471E060097A5F4</string>
 										<key>PBXProjectModuleLabel</key>
-										<string>testApp.cpp</string>
+										<string>ofCamera.h</string>
 										<key>_historyCapacity</key>
 										<integer>40</integer>
 										<key>bookmark</key>
-										<string>BB40210412E229770002A877</string>
+										<string>BB604C3E12E2A1F500BD9826</string>
 										<key>history</key>
 										<array>
 											<string>BBE7F06D12DF98050039489F</string>
@@ -344,7 +344,8 @@
 											<string>BBFDB95D12E147F400FB94F8</string>
 											<string>BB40210112E229770002A877</string>
 											<string>BB40210212E229770002A877</string>
-											<string>BB40210312E229770002A877</string>
+											<string>BB604BD012E2992300BD9826</string>
+											<string>BB604BD112E2992300BD9826</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>
@@ -402,9 +403,9 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>BB401FD112E179EB0002A877</string>
+				<string>BB604BD412E2992300BD9826</string>
 				<string>1CE0B1FE06471DED0097A5F4</string>
-				<string>BB401FD212E179EB0002A877</string>
+				<string>BB604BD512E2992300BD9826</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20506471E060097A5F4</string>
 			</array>
@@ -542,8 +543,8 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
-		<string>BB401FDC12E179EB0002A877</string>
-		<string>BB401FDD12E179EB0002A877</string>
+		<string>BB604BD612E2992300BD9826</string>
+		<string>BB604BD712E2992300BD9826</string>
 		<string>1C78EAAD065D492600B07095</string>
 		<string>1CD10A99069EF8BA00B06720</string>
 		<string>BBAEB25612DE2F7B007FD423</string>
@@ -571,7 +572,7 @@
 								<key>PBXProjectModuleGUID</key>
 								<string>1CD0528F0623707200166675</string>
 								<key>PBXProjectModuleLabel</key>
-								<string></string>
+								<string>ofCamera.h</string>
 								<key>StatusBarVisibility</key>
 								<true/>
 							</dict>
@@ -588,6 +589,8 @@
 							<string>301pt</string>
 						</dict>
 						<dict>
+							<key>BecomeActive</key>
+							<true/>
 							<key>ContentConfiguration</key>
 							<dict>
 								<key>PBXProjectModuleGUID</key>
@@ -627,7 +630,7 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>BBAEB25612DE2F7B007FD423</string>
-				<string>BB401FD312E179EB0002A877</string>
+				<string>BB604BAA12E297BE00BD9826</string>
 				<string>1CD0528F0623707200166675</string>
 				<string>XCMainBuildResultsModuleGUID</string>
 			</array>
@@ -749,13 +752,13 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>1CD10A99069EF8BA00B06720</string>
-				<string>BB401FD412E179EB0002A877</string>
+				<string>BB604BC712E2991D00BD9826</string>
 				<string>1C162984064C10D400B95A72</string>
-				<string>BB401FD512E179EB0002A877</string>
-				<string>BB401FD612E179EB0002A877</string>
-				<string>BB401FD712E179EB0002A877</string>
-				<string>BB401FD812E179EB0002A877</string>
-				<string>BB401FD912E179EB0002A877</string>
+				<string>BB604BC812E2991D00BD9826</string>
+				<string>BB604BC912E2991D00BD9826</string>
+				<string>BB604BCA12E2991D00BD9826</string>
+				<string>BB604BCB12E2991D00BD9826</string>
+				<string>BB604BCC12E2991D00BD9826</string>
 			</array>
 			<key>ToolbarConfiguration</key>
 			<string>xcode.toolbar.config.debugV3</string>
@@ -909,7 +912,7 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>1C78EAAD065D492600B07095</string>
-				<string>BB401FDA12E179EB0002A877</string>
+				<string>BB604BCD12E2991D00BD9826</string>
 				<string>1C78EAAC065D492600B07095</string>
 			</array>
 			<key>ToolbarConfiguration</key>
