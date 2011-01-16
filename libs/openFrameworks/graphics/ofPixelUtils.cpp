@@ -49,7 +49,7 @@ void ofPixelUtils::crop(ofPixels & pix, int x, int y, int _width, int _height){
 	}
 }
 
-static void ofPixelUtils::cropFromTo(ofPixels &frompix, ofPixels &topix, int x, int y, int _width, int _height){
+void ofPixelUtils::cropFromTo(ofPixels &frompix, ofPixels &topix, int x, int y, int _width, int _height){
 	
 	if (_width < 0 || _height < 0){
 		return;
