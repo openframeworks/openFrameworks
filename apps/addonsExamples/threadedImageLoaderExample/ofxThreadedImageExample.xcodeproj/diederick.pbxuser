@@ -1,0 +1,213 @@
+// !$*UTF8*$!
+{
+	E4B69B4C0A3A1720003C02F2 /* Project object */ = {
+		activeBuildConfigurationName = Debug;
+		activeExecutable = E93D0B2B12E26F71003F1AA8 /* ofxThreadedImageExample */;
+		activeTarget = E4B69B5A0A3A1756003C02F2 /* ofxThreadedImageExample */;
+		addToTargets = (
+			E4B69B5A0A3A1756003C02F2 /* ofxThreadedImageExample */,
+		);
+		codeSenseManager = E93D0B4F12E26F7B003F1AA8 /* Code sense */;
+		executables = (
+			E93D0B2B12E26F71003F1AA8 /* ofxThreadedImageExample */,
+		);
+		perUserDictionary = {
+			PBXConfiguration.PBXFileTableDataSource3.PBXFileTableDataSource = {
+				PBXFileTableDataSourceColumnSortingDirectionKey = "-1";
+				PBXFileTableDataSourceColumnSortingKey = PBXFileDataSource_Filename_ColumnID;
+				PBXFileTableDataSourceColumnWidthsKey = (
+					20,
+					341,
+					20,
+					48,
+					43,
+					43,
+					20,
+				);
+				PBXFileTableDataSourceColumnsKey = (
+					PBXFileDataSource_FiletypeID,
+					PBXFileDataSource_Filename_ColumnID,
+					PBXFileDataSource_Built_ColumnID,
+					PBXFileDataSource_ObjectSize_ColumnID,
+					PBXFileDataSource_Errors_ColumnID,
+					PBXFileDataSource_Warnings_ColumnID,
+					PBXFileDataSource_Target_ColumnID,
+				);
+			};
+			PBXPerProjectTemplateStateSaveDate = 316844202;
+			PBXWorkspaceStateSaveDate = 316844202;
+		};
+		perUserProjectItems = {
+			E932A2AD12E273B500AF0EFF = E932A2AD12E273B500AF0EFF /* PBXTextBookmark */;
+			E932A2AE12E273B500AF0EFF = E932A2AE12E273B500AF0EFF /* PBXTextBookmark */;
+			E93D0B5B12E27007003F1AA8 = E93D0B5B12E27007003F1AA8 /* PlistBookmark */;
+			E93D0B7A12E27193003F1AA8 = E93D0B7A12E27193003F1AA8 /* PBXTextBookmark */;
+			E93D0B7B12E27193003F1AA8 = E93D0B7B12E27193003F1AA8 /* PBXTextBookmark */;
+			E93D0B7C12E27193003F1AA8 = E93D0B7C12E27193003F1AA8 /* PBXTextBookmark */;
+			E95F36B212E2A8B1000AE4DB /* PBXTextBookmark */ = E95F36B212E2A8B1000AE4DB /* PBXTextBookmark */;
+			E95F36C412E2AA20000AE4DB /* PBXTextBookmark */ = E95F36C412E2AA20000AE4DB /* PBXTextBookmark */;
+		};
+		sourceControlManager = E93D0B4E12E26F7B003F1AA8 /* Source Control */;
+		userBuildSettings = {
+		};
+	};
+	E4B69B5A0A3A1756003C02F2 /* ofxThreadedImageExample */ = {
+		activeExec = 0;
+		executables = (
+			E93D0B2B12E26F71003F1AA8 /* ofxThreadedImageExample */,
+		);
+	};
+	E4B69E1E0A3A1BDC003C02F2 /* testApp.cpp */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {684, 1066}}";
+			sepNavSelRange = "{198, 0}";
+			sepNavVisRange = "{0, 830}";
+		};
+	};
+	E4B69E1F0A3A1BDC003C02F2 /* testApp.h */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {439, 390}}";
+			sepNavSelRange = "{71, 0}";
+			sepNavVisRange = "{0, 218}";
+		};
+	};
+	E932A2AD12E273B500AF0EFF /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = E93D0B5812E26FB5003F1AA8 /* ofxThreadedImageLoader.cpp */;
+		name = "ofxThreadedImageLoader.cpp: 4";
+		rLen = 0;
+		rLoc = 116;
+		rType = 0;
+		vrLen = 844;
+		vrLoc = 0;
+	};
+	E932A2AE12E273B500AF0EFF /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = E4B69E1E0A3A1BDC003C02F2 /* testApp.cpp */;
+		name = "testApp.cpp: 7";
+		rLen = 0;
+		rLoc = 198;
+		rType = 0;
+		vrLen = 830;
+		vrLoc = 0;
+	};
+	E93D0B2B12E26F71003F1AA8 /* ofxThreadedImageExample */ = {
+		isa = PBXExecutable;
+		activeArgIndices = (
+		);
+		argumentStrings = (
+		);
+		autoAttachOnCrash = 1;
+		breakpointsEnabled = 0;
+		configStateDict = {
+		};
+		customDataFormattersEnabled = 1;
+		dataTipCustomDataFormattersEnabled = 1;
+		dataTipShowTypeColumn = 1;
+		dataTipSortType = 0;
+		debuggerPlugin = GDBDebugging;
+		disassemblyDisplayState = 0;
+		dylibVariantSuffix = "";
+		enableDebugStr = 1;
+		environmentEntries = (
+		);
+		executableSystemSymbolLevel = 0;
+		executableUserSymbolLevel = 0;
+		libgmallocEnabled = 0;
+		name = ofxThreadedImageExample;
+		savedGlobals = {
+		};
+		showTypeColumn = 0;
+		sourceDirectories = (
+		);
+	};
+	E93D0B4E12E26F7B003F1AA8 /* Source Control */ = {
+		isa = PBXSourceControlManager;
+		fallbackIsa = XCSourceControlManager;
+		isSCMEnabled = 0;
+		scmConfiguration = {
+			repositoryNamesForRoots = {
+				"" = "";
+			};
+		};
+	};
+	E93D0B4F12E26F7B003F1AA8 /* Code sense */ = {
+		isa = PBXCodeSenseManager;
+		indexTemplatePath = "";
+	};
+	E93D0B5812E26FB5003F1AA8 /* ofxThreadedImageLoader.cpp */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {607, 2353}}";
+			sepNavSelRange = "{116, 0}";
+			sepNavVisRange = "{0, 844}";
+		};
+	};
+	E93D0B5A12E26FE8003F1AA8 /* ofxThreadedImageLoader.h */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {712, 1391}}";
+			sepNavSelRange = "{546, 0}";
+			sepNavVisRange = "{0, 513}";
+		};
+	};
+	E93D0B5B12E27007003F1AA8 /* PlistBookmark */ = {
+		isa = PlistBookmark;
+		fRef = E4B6FCAD0C3E899E008CF71C /* openFrameworks-Info.plist */;
+		fallbackIsa = PBXBookmark;
+		isK = 0;
+		kPath = (
+		);
+		name = "/Users/diederick/Documents/programming/c++/of62git/apps/examples/threadedImageLoaderExample/openFrameworks-Info.plist";
+		rLen = 0;
+		rLoc = 9223372036854775808;
+	};
+	E93D0B7A12E27193003F1AA8 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = E4B69E1F0A3A1BDC003C02F2 /* testApp.h */;
+		name = "testApp.h: 22";
+		rLen = 0;
+		rLoc = 464;
+		rType = 0;
+		vrLen = 547;
+		vrLoc = 0;
+	};
+	E93D0B7B12E27193003F1AA8 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = E4B69E1E0A3A1BDC003C02F2 /* testApp.cpp */;
+		name = "testApp.cpp: 1";
+		rLen = 0;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 830;
+		vrLoc = 0;
+	};
+	E93D0B7C12E27193003F1AA8 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = E93D0B5A12E26FE8003F1AA8 /* ofxThreadedImageLoader.h */;
+		name = "ofxThreadedImageLoader.h: 36";
+		rLen = 0;
+		rLoc = 546;
+		rType = 0;
+		vrLen = 513;
+		vrLoc = 0;
+	};
+	E95F36B212E2A8B1000AE4DB /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = E4B69E1E0A3A1BDC003C02F2 /* testApp.cpp */;
+		name = "testApp.cpp: 7";
+		rLen = 0;
+		rLoc = 198;
+		rType = 0;
+		vrLen = 830;
+		vrLoc = 0;
+	};
+	E95F36C412E2AA20000AE4DB /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = E4B69E1E0A3A1BDC003C02F2 /* testApp.cpp */;
+		name = "testApp.cpp: 7";
+		rLen = 0;
+		rLoc = 198;
+		rType = 0;
+		vrLen = 830;
+		vrLoc = 0;
+	};
+}
