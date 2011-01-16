@@ -3,6 +3,8 @@
 #include "ofConstants.h"
 #include <bitset> // for ofToBinary
 
+#include "ofLog.h"
+
 #ifdef TARGET_WIN32	 // for ofLaunchBrowser
 	#include <shellapi.h>
 #endif
@@ -19,7 +21,15 @@ int 	ofGetSeconds();
 int 	ofGetMinutes();
 int 	ofGetHours();
 
+//number of seconds since 1970
+unsigned int ofGetUnixTime();
+
 unsigned long ofGetSystemTime( );			// system time in milliseconds;
+
+		//returns 
+string ofGetTimestampString();
+string ofGetTimestampString(string timestampFormat);
+
 
 int     ofGetYear();
 int     ofGetMonth();
@@ -121,13 +131,18 @@ string ofBinaryToString(const string& value);
 string 	ofGetVersionInfo();
 
 void	ofSaveScreen(string filename);
-void	ofSaveFrame();
-
-vector<string>	ofSplitString(const string & text, const string & delimiter);
+void	ofSaveFrame(bool bUseViewport = false);
+void	ofSaveViewport(string filename);
 
 //--------------------------------------------------
-void ofSetLogLevel(int logLevel);
-void ofLog(int logLevel, string message);
-void ofLog(int logLevel, const char* format, ...);
-void ofSetConsoleColor(int color);
-void ofRestoreConsoleColor();
+vector <string>	ofSplitString(const string & text, const string & delimiter);
+
+string ofJoinString(vector <string> stringElements, const string & delimiter);
+
+bool ofIsStringInString(string haystack, string needle);
+
+
+//--------------------------------------------------
+class ofBuffer;
+bool ofReadFile(const string & path, ofBuffer & file, bool binary=false);
+
