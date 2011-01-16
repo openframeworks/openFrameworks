@@ -21,7 +21,7 @@
 
 
 void ofPolyline::draw() const {
-	for ( int i=1; i<points.size(); i++ ) {
+	for ( int i=1; i<(int)points.size(); i++ ) {
 		ofLine( points[i-1], points[i] );
 	}
 }
@@ -92,7 +92,7 @@ void ofShape::bezierSegmentToPolyline( const ofShapeSegment & seg, ofPolyline& p
 	
 	const vector<ofPoint>& points = seg.getPoints();
 	if ( points.size()>= 4 ) {
-		for ( int k=3; k<points.size(); k+=3 ) {
+		for ( int k=3; k<(int)points.size(); k+=3 ) {
 			int k0 = k-3;
 			int k1 = k-2;
 			int k2 = k-1;
@@ -135,7 +135,7 @@ void ofShape::curveSegmentToPolyline( const ofShapeSegment & seg, ofPolyline& po
 	const vector<ofPoint>& p = seg.getPoints();
 	
 	if ( p.size() >= 4 ){	
-		for(int k = 3; k < p.size(); k++ ){
+		for(int k = 3; k < (int)p.size(); k++ ){
 			float t,t2,t3;
 			ofPoint p0 = p[k-3];
 			ofPoint p1 = p[k-2];
@@ -162,13 +162,13 @@ void ofShape::tessellate(){
 	if( segmentVectors.size()>0 ){
 		cachedPolylines.resize( segmentVectors.size() );
 		/// loop through all the subpaths
-		for ( int h = 0; h < segmentVectors.size(); h++ ) {
+		for ( int h = 0; h < (int)segmentVectors.size(); h++ ) {
 			/// loop through all the segments of this subpath
 			const vector<ofShapeSegment>& segments = segmentVectors[h];
 			ofPolyline& polyline = cachedPolylines[h];
-			for(int i = 0; i < segments.size(); i++){
+			for(int i = 0; i < (int)segments.size(); i++){
 				if( segments[i].getType() == OFSHAPE_SEG_LINE ){
-					for(int j = 0; j < segments[i].getPoints().size(); j++){
+					for(int j = 0; j < (int)segments[i].getPoints().size(); j++){
 						polyline.addVertex( segments[i].getPoint(j) );
 					}
 				}else if( segments[i].getType() == OFSHAPE_SEG_BEZIER ){
@@ -204,10 +204,10 @@ void ofShape::draw(){
 	}
 	if ( bFilled ) {
 #ifdef DRAW_WITH_MESHIES
-		for ( int i=0; i<cachedMeshies.size(); i++ ) {
+		for ( int i=0; i<(int)cachedMeshies.size(); i++ ) {
 			ofSetColor( fillColor );
 			glBegin( cachedMeshies[i].mode );
-			for ( int j=0; j<cachedMeshies[i].vertices.size(); j++ ) {
+			for ( int j=0; j<(int)cachedMeshies[i].vertices.size(); j++ ) {
 				glVertex3f( cachedMeshies[i].vertices[j].x, cachedMeshies[i].vertices[j].y, cachedMeshies[i].vertices[j].z );
 			}
 			glEnd();
@@ -223,9 +223,9 @@ void ofShape::draw(){
 			cachedOutline.draw();
 		}
 		else {
-			for ( int i=0; i<segmentVectors.size(); i++ ) {
-				for ( int j=0; j<segmentVectors[i].size(); j++ ) {
-					for ( int k=1; k<segmentVectors[i][j].getNumPoints(); k++ ) {
+			for ( int i=0; i<(int)segmentVectors.size(); i++ ) {
+				for ( int j=0; j<(int)segmentVectors[i].size(); j++ ) {
+					for ( int k=1; k<(int)segmentVectors[i][j].getNumPoints(); k++ ) {
 						ofLine( segmentVectors[i][j].getPoint(k-1), segmentVectors[i][j].getPoint(k) );
 					}
 					if ( bShouldClose[j] ) {

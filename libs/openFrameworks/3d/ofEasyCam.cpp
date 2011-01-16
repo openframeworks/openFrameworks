@@ -9,7 +9,7 @@
 
 #include "ofEasyCam.h"
 #include "ofEvents.h"
-
+#include "ofMain.h"
 
 //----------------------------------------
 ofEasyCam::ofEasyCam():
@@ -18,9 +18,9 @@ distance(100),
 pos(0, 0),
 vel(0, 0),
 pmouse(0, 0), 
-speed(0.01),
-drag(0.01),
-oldMousePress(false)
+oldMousePress(false),
+speed(0.1),
+drag(0.1)
 {
 //	
 //	ab_quat[16] = {1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1};
@@ -68,6 +68,8 @@ void ofEasyCam::begin(ofRectangle rect) {
 	
 	pos += vel;
 	vel *= (1-drag);
+	
+	pos.y = ofClamp(pos.y, -89, 89);
 
 	orbit(pos.x, pos.y, distance, (targetNode ? targetNode->getGlobalPosition() : targetPoint));
 	

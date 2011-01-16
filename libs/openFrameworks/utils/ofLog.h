@@ -186,6 +186,10 @@ class ofLogger{
 		/// logs the message to the specified logger
 		void _log(ofLogLevel logLevel, const string& message, Poco::Logger* theLogger);
 		
+		/// logs using a printf and prints a warning
+		/// this is used if the logger has been destroyed
+		void _logDestroyed(const string& message);
+		
 		/// static date format strings for the header
 		static const string s_dateFormat;
 		static const string s_timeFormat;
@@ -195,6 +199,7 @@ class ofLogger{
 		ofLogger(ofLogger const&);    			// not defined, not copyable
 		ofLogger& operator = (ofLogger const&);	// not defined, not assignable
 		ofLogger();								// singleton constructor
+		~ofLogger() {printf("ofLogger Destructed");}
 };
 
 //------------------------------------------------------------------------------
@@ -287,8 +292,7 @@ class ofLogNotice{
 		static void disableFile()		{ofLogger::instance().disableFile();}
 		static bool usingFile()		{return ofLogger::instance().usingFile();}
 		
-		static bool setFilePath(const string& file)
-			{ofLogger::instance().setFilePath(file);}
+		static void setFilePath(const string& file) {ofLogger::instance().setFilePath(file);}
 		static string getFilePath()	{return ofLogger::instance().getFilePath();}
 		
 		static void enableFileRotationMins(unsigned int minutes)
@@ -349,7 +353,7 @@ class ofLogNotice{
         std::ostringstream message;	///< temp buffer
 		
 		ofLogNotice(ofLogNotice const&) {}        		// not defined, not copyable
-        ofLogNotice& operator = (ofLogNotice const&) {}	// not defined, not assignable
+        ofLogNotice& operator=(ofLogNotice& from) {return *this;}	// not defined, not assignable
 };
 
 //--------------------------------------------------------------
