@@ -287,8 +287,7 @@ class ofLogNotice{
 		static void disableFile()		{ofLogger::instance().disableFile();}
 		static bool usingFile()		{return ofLogger::instance().usingFile();}
 		
-		static bool setFilePath(const string& file)
-			{ofLogger::instance().setFilePath(file);}
+		static void setFilePath(const string& file) {ofLogger::instance().setFilePath(file);}
 		static string getFilePath()	{return ofLogger::instance().getFilePath();}
 		
 		static void enableFileRotationMins(unsigned int minutes)
@@ -349,7 +348,7 @@ class ofLogNotice{
         std::ostringstream message;	///< temp buffer
 		
 		ofLogNotice(ofLogNotice const&) {}        		// not defined, not copyable
-        ofLogNotice& operator = (ofLogNotice const&) {}	// not defined, not assignable
+        ofLogNotice& operator=(ofLogNotice& from) {return *this;}	// not defined, not assignable
 };
 
 //--------------------------------------------------------------
