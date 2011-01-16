@@ -2,7 +2,6 @@
 
 #include "ofFileUtils.h"
 #include "ofTexture.h"
-#include "FreeImage.h"
 #include "ofPixels.h"
 #include "ofBaseTypes.h"
 
@@ -16,8 +15,8 @@ enum ofImageQualityType {
 
 //----------------------------------------------------
 // FreeImage based stuff:
-void ofLoadImage(ofPixels & pix, string path);
-void ofLoadImage(ofPixels & pix, const ofBuffer & buffer);
+bool ofLoadImage(ofPixels & pix, string path);
+bool ofLoadImage(ofPixels & pix, const ofBuffer & buffer);
 void ofSaveImage(ofPixels & pix, string path, ofImageQualityType qualityLevel = OF_IMAGE_QUALITY_BEST);
 void ofSaveImage(ofPixels & pix, ofBuffer & buffer, ofImageQualityType qualityLevel = OF_IMAGE_QUALITY_BEST);
 
@@ -114,22 +113,10 @@ class ofImage : public ofBaseImage{
 		int 				width, height, bpp;		// w,h, bits per pixel
 		int					type;					// OF_IMAGE_GRAYSCALE, OF_IMAGE_COLOR, OF_IMAGE_COLOR_ALPHA
 
-
-		// FreeImage related functionality:
-
-		static bool loadImageIntoPixels(ofPixels & pix, string fileName);
-		static bool loadImageIntoPixels(ofPixels & pix, const ofBuffer & buffer);
-		static void saveImageFromPixels(ofPixels & pix, string fileName, ofImageQualityType qualityLevel = OF_IMAGE_QUALITY_BEST);
-		static void saveImageFromPixels(ofPixels & pix, ofBuffer & buffer, ofImageQualityType qualityLevel = OF_IMAGE_QUALITY_BEST); // TODO
-
-
 	protected:
 	
 		void				changeTypeOfPixels(ofPixels &pix, ofImageType type);
 		void				resizePixels(ofPixels &pix, int newWidth, int newHeight);
-		static FIBITMAP *	getBmpFromPixels(ofPixels &pix);
-		static void			putBmpIntoPixels(FIBITMAP * bmp, ofPixels &pix, bool swapForLittleEndian=true);
-
 
 		ofPixels			myPixels;
 		bool				bUseTexture;
