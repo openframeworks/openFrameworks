@@ -347,4 +347,5 @@ inline istream& operator>>(istream& is, ofQuaternion& v) {
 	is >> v._v[2];
 	is.ignore(2);
 	is >> v._v[3];
+	return is;
 }

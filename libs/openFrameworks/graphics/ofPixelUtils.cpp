@@ -67,7 +67,6 @@ void ofPixelUtils::cropFromTo(ofPixels &frompix, ofPixels &topix, int x, int y, 
 		} 
 		
 		int newWidth = _width;
-		int newHeight = _height;
 		unsigned char * newPixels = topix.pixels;
 		
 		// this prevents having to do a check for bounds in the for loop;

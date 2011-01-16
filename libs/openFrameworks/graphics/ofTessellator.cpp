@@ -283,9 +283,9 @@ void ofTessellator::performTessellation(const vector<ofPolyline>& polylines, int
 
 	int currentStartVertex = 0;
 	
-	for ( int j=0; j<polylines.size(); j++ ) {
+	for ( int j=0; j<(int)polylines.size(); j++ ) {
 		const ofPolyline& polyline = polylines[j];
-		for ( int i=0; i<polyline.size(); i++ ) {
+		for ( int i=0; i<(int)polyline.size(); i++ ) {
 			double* point = new double[3];
 			point[0] = polyline[i].x;
 			point[1] = polyline[i].y;

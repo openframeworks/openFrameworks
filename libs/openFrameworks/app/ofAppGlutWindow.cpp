@@ -289,7 +289,6 @@ void ofAppGlutWindow::initializeWindow(){
 
 //------------------------------------------------------------
 void ofAppGlutWindow::runAppViaInfiniteLoop(ofBaseApp * appPtr){
-	static ofEventArgs voidEventArgs;
 
 	ofAppPtr = appPtr;
 
@@ -427,7 +426,6 @@ void ofAppGlutWindow::disableSetupScreen(){
 
 //------------------------------------------------------------
 void ofAppGlutWindow::display(void){
-	static ofEventArgs voidEventArgs;
 
 	//--------------------------------
 	// when I had "glutFullScreen()"
@@ -589,7 +587,6 @@ void ofAppGlutWindow::dragEvent(char ** names, int howManyFiles, int dragX, int 
 
 //------------------------------------------------------------
 void ofAppGlutWindow::idle_cb(void) {
-	static ofEventArgs voidEventArgs;
 
 	//	thanks to jorge for the fix:
 	//	http://www.openframeworks.cc/forum/viewtopic.php?t=515&highlight=frame+rate

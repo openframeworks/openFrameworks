@@ -12,10 +12,10 @@
 
 
 ofCamera::ofCamera()
-:fov(60),
+:isOrtho(false),
+fov(60),
 nearClip(0),
 farClip(0),
-isOrtho(false),
 isActive(false)
 {
 }
@@ -59,7 +59,7 @@ void ofCamera::begin(ofRectangle rect) {
 	ofSetCoordHandedness(OF_RIGHT_HANDED);
 	
 	// autocalculate near/far clip planes if not set by user
-	float nc, fc;
+	float nc=nearClip, fc=farClip;
 	if(nearClip == 0 || farClip == 0) {
 		float dist = rect.height * 0.5f / tanf(PI * fov / 360.0f);
 		nc = (nearClip == 0) ? dist / 100.0f : nearClip;
