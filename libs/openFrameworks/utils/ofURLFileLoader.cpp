@@ -32,8 +32,13 @@ ofEvent<ofHttpResponse> ofURLResponseEvent;
 
 ofURLFileLoader::ofURLFileLoader() {
 	if(!factoryLoaded){
-		HTTPStreamFactory::registerFactory();
-		factoryLoaded = true;
+		try {
+			HTTPStreamFactory::registerFactory();
+			factoryLoaded = true;
+		}
+		catch (Poco::SystemException PS) {
+			ofLog(OF_LOG_ERROR, "Got exception in url ofURLFileloader");
+		}
 	}
 }
 
@@ -54,7 +59,7 @@ void ofURLFileLoader::getAsync(string url, string name){
 
 void ofURLFileLoader::remove(ofHttpRequest httpRequest){
 	lock();
-	for(int i=0;i<requests.size();i++){
+	for(int i=0;i<(int)requests.size();i++){
 		if(requests[i].getID()==httpRequest.getID()){
 			requests.erase(requests.begin()+i);
 			return;

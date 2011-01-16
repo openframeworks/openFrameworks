@@ -70,6 +70,8 @@ void ofPixels::allocate(int w, int h, int bitsPerPixel){
 
 void ofPixels::allocate(int w, int h, ofImageType type){
 
+	if (w < 0 || h < 0) return; 
+	
 	//we check if we are already allocated at the right size
 	if(bAllocated && w==width && h==height && type==imageType){
 		return; //we don't need to allocate
@@ -94,10 +96,14 @@ void ofPixels::allocate(int w, int h, ofImageType type){
 		bytesPerPixel = 4;
 		glDataType = GL_RGBA;
 		break;
+	default:
+		ofLogError("of.Pixels") << "format not supported";
+		break;
 	}
 
 	bitsPerPixel = bytesPerPixel * 8;
 	pixels = new unsigned char[w*h*bytesPerPixel];
+	memset(pixels, 0, w*h*bytesPerPixel);
 	bAllocated = true;
 
 }
@@ -128,6 +134,7 @@ void ofPixels::swapRgb(){
 
 
 void ofPixels::clear(){
+	
 	if(pixels){
 		delete[] pixels;
 		pixels = NULL;

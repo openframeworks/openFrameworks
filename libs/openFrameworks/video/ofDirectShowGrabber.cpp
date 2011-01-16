@@ -1,6 +1,6 @@
 #include "ofDirectShowGrabber.h"
 #include "ofUtils.h"
-
+#ifdef TARGET_WIN32
 //--------------------------------------------------------------------
 ofDirectShowGrabber::ofDirectShowGrabber(){
 
@@ -271,3 +271,4 @@ void ofDirectShowGrabber::videoSettings(void){
 	#endif
 	//---------------------------------
 }
+#endif

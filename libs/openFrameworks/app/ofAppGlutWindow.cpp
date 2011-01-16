@@ -289,7 +289,6 @@ void ofAppGlutWindow::initializeWindow(){
 
 //------------------------------------------------------------
 void ofAppGlutWindow::runAppViaInfiniteLoop(ofBaseApp * appPtr){
-	static ofEventArgs voidEventArgs;
 
 	ofAppPtr = appPtr;
 
@@ -299,11 +298,7 @@ void ofAppGlutWindow::runAppViaInfiniteLoop(ofBaseApp * appPtr){
 	glutMainLoop();
 }
 
-//------------------------------------------------------------
-void ofAppGlutWindow::exitApp(){
-	ofLog(OF_LOG_VERBOSE,"GLUT OF app is being terminated!");
-	OF_EXIT_APP(0);
-}
+
 
 //------------------------------------------------------------
 float ofAppGlutWindow::getFrameRate(){
@@ -431,7 +426,6 @@ void ofAppGlutWindow::disableSetupScreen(){
 
 //------------------------------------------------------------
 void ofAppGlutWindow::display(void){
-	static ofEventArgs voidEventArgs;
 
 	//--------------------------------
 	// when I had "glutFullScreen()"
@@ -593,7 +587,6 @@ void ofAppGlutWindow::dragEvent(char ** names, int howManyFiles, int dragX, int 
 
 //------------------------------------------------------------
 void ofAppGlutWindow::idle_cb(void) {
-	static ofEventArgs voidEventArgs;
 
 	//	thanks to jorge for the fix:
 	//	http://www.openframeworks.cc/forum/viewtopic.php?t=515&highlight=frame+rate
@@ -642,10 +635,6 @@ void ofAppGlutWindow::idle_cb(void) {
 //------------------------------------------------------------
 void ofAppGlutWindow::keyboard_cb(unsigned char key, int x, int y) {
 	ofNotifyKeyPressed(key);
-
-	if (key == OF_KEY_ESC){				// "escape"
-		exitApp();
-	}
 }
 
 //------------------------------------------------------------

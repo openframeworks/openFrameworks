@@ -12,9 +12,7 @@
 
 static const int BUFFER_BYTE_SIZE = 8192;
 
-#define DECODE_AUDIO
 //#define DECODE_AUDIO_REMOTEIO
-#define DECODE_AUDIO_AUDIOQUEUE
 
 void audioCallback( void* aqData, AudioQueueRef queue, AudioQueueBufferRef buffer);
 
@@ -27,6 +25,9 @@ void audioCallback( void* aqData, AudioQueueRef queue, AudioQueueBufferRef buffe
 	audio_queue = nil;
 	audio_finished = false;
 	told_midpoint = false;
+	bDoAudio	  = false;
+	
+	vol = 1;
 	
 	current_video_time = 0;
 	presentation_timestamp_s = current_video_time-1.0f;
@@ -135,10 +136,10 @@ void audioCallback( void* aqData, AudioQueueRef queue, AudioQueueBufferRef buffe
 		}
 		
 		
-		#ifdef DECODE_AUDIO
 		if ( [audio_tracks count] == 0 )
 		{
 			NSLog(@"asset has no audio tracks");
+			bDoAudio = false;
 		}
 		else
 		{
@@ -160,6 +161,8 @@ void audioCallback( void* aqData, AudioQueueRef queue, AudioQueueBufferRef buffe
 			}
 			else
 			{
+				bDoAudio = true;
+			
 				[asset_reader addOutput:asset_reader_audio_output];
 
 				// get track data formats
@@ -171,7 +174,6 @@ void audioCallback( void* aqData, AudioQueueRef queue, AudioQueueBufferRef buffe
 				//NSLog(@"number of channels: %i", audio_n_channels );
 				
 				
-				#ifdef DECODE_AUDIO_AUDIOQUEUE
 				AudioStreamBasicDescription input_format;
 				input_format.mFormatID = kAudioFormatLinearPCM;
 				input_format.mSampleRate = 44100;
@@ -191,8 +193,10 @@ void audioCallback( void* aqData, AudioQueueRef queue, AudioQueueBufferRef buffe
 										0,
 										&audio_queue
 									);
-				if ( error != noErr )
+				if ( error != noErr ){
 					NSLog(@"error opening audio queue: OSStatus %lu\n", error );
+					bDoAudio = false;
+				}
 				
 				for ( int i=0; i<NUM_AUDIO_BUFFERS; i++ )
 				{
@@ -201,11 +205,9 @@ void audioCallback( void* aqData, AudioQueueRef queue, AudioQueueBufferRef buffe
 					if ( error != noErr )
 						NSLog(@"error allocating audio buffer %i: OSStatus %lu\n", i, error );
 				}
-				#endif
 				
 			}
 		}
-		#endif
 		 
 		
 		buffer = nil;
@@ -223,26 +225,26 @@ void audioCallback( void* aqData, AudioQueueRef queue, AudioQueueBufferRef buffe
 		presentation_timestamp_s = current_video_time-1.0f;
 
 
-		#ifdef DECODE_AUDIO_AUDIOQUEUE
-		// start audio queue
-		//NSLog(@"priming audio queue");
-		// prime buffers with first bit of data
-		for ( int i=0; i<NUM_AUDIO_BUFFERS; i++ )
-		{
-			audioCallback( (void*)self, audio_queue, audio_buffer[i] );
+		if( bDoAudio ){
+			// start audio queue
+			//NSLog(@"priming audio queue");
+			// prime buffers with first bit of data
+			for ( int i=0; i<NUM_AUDIO_BUFFERS; i++ )
+			{
+				audioCallback( (void*)self, audio_queue, audio_buffer[i] );
+			}
+			UInt32 num_prepared;
+			OSStatus status = AudioQueuePrime( audio_queue, 0, &num_prepared );
+			if ( status != noErr )
+				NSLog(@"error calling AudioQueuePrime: %lu", status );
+			//NSLog(@"AudioQueuePrime prepared %lu samples", num_prepared );
 		}
-		UInt32 num_prepared;
-		OSStatus status = AudioQueuePrime( audio_queue, 0, &num_prepared );
-		if ( status != noErr )
-			NSLog(@"error calling AudioQueuePrime: %lu", status );
-		//NSLog(@"AudioQueuePrime prepared %lu samples", num_prepared );
-		#endif
 		
 		#ifdef DECODE_AUDIO_REMOTEIO
 		NSLog(@"starting remote io");
 		[self setupAudio];
 		#endif
-
+		
 		current_video_time = 0;
 		initialised = true;
 	}					   
@@ -333,6 +335,8 @@ void audioCallback( void* aqData, AudioQueueRef queue, AudioQueueBufferRef outpu
 - (void)audioCallbackWithQueue:(AudioQueueRef)queue output:(AudioQueueBufferRef)output_buffer
 {
 	audio_mutex.lock();
+	
+	AudioQueueSetParameter(audio_queue, kAudioQueueParam_Volume, vol);
 	
 	assert( queue == audio_queue );
 	
@@ -474,14 +478,20 @@ void audioCallback( void* aqData, AudioQueueRef queue, AudioQueueBufferRef outpu
 	return paused && !finished && initialised;
 }
 
+- (void)setVolume:(float)volume
+{
+	vol = volume;
+}
 
 - (void)play
 {
+	
 	if([self canPlay]) {
 		#ifdef DECODE_AUDIO_REMOTEIO
 			[self playAudio];
-		#elif defined DECODE_AUDIO_AUDIOQUEUE
-			
+		#else
+		
+		if( bDoAudio ){
 		//	NSLog(@"playing, paused %c, audio_queue %x", paused?'y':'n', audio_queue );
 			
 			if ( initialised && paused && audio_queue != NULL )
@@ -497,6 +507,8 @@ void audioCallback( void* aqData, AudioQueueRef queue, AudioQueueBufferRef outpu
 				}
 				
 			}
+		}
+		
 		#endif
 			[self tellListenersStatusChanged:VIDEO_FRAME_EXTRACTOR_PAUSED withArgument:0.0f];
 			paused = false;
@@ -509,14 +521,17 @@ void audioCallback( void* aqData, AudioQueueRef queue, AudioQueueBufferRef outpu
 {
 #ifdef DECODE_AUDIO_REMOTEIO
 	[self pauseAudio];
-#elif defined DECODE_AUDIO_AUDIOQUEUE
-//	NSLog(@"pausing, paused %c, audio_queue %x", paused?'y':'n', audio_queue );
-	if ( !paused && audio_queue != nil )
-	{
-		OSStatus status = AudioQueuePause( audio_queue );
-		if ( status != noErr )
+#else
+	
+	if( bDoAudio ){
+	//	NSLog(@"pausing, paused %c, audio_queue %x", paused?'y':'n', audio_queue );
+		if ( !paused && audio_queue != nil )
 		{
-			NSLog(@"error calling AudioQueuePause: %i", status );
+			OSStatus status = AudioQueuePause( audio_queue );
+			if ( status != noErr )
+			{
+				NSLog(@"error calling AudioQueuePause: %i", status );
+			}
 		}
 	}
 #endif

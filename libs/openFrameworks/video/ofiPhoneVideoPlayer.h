@@ -11,6 +11,7 @@ public:
 	~ofiPhoneVideoPlayer();
 	
 	bool loadMovie(string name);
+	void setPixelFormat(ofPixelFormat PixelFormat);
 	void close();
 	
 	void play();
@@ -34,10 +35,11 @@ public:
 	bool getIsMovieDone();
 	void setPaused(bool bPause);
 	
+	void setVolume(int volume);
+	
 	/*should implement! (but cannot on iphone)
 	float getSpeed();
 	void setPosition(float pct);
-	void setVolume(int volume);
 	void setLoopState(int state);
 	void setSpeed(float speed);
 	void setFrame(int frame);  // frame 0 = first frame...
@@ -62,11 +64,15 @@ protected:
 	int width;
 	int height;
 	float playbackSpeed;
+	
+	int vol;
 		
-	unsigned char * pixels;
+	GLubyte * pixels;
 	ofTexture videoTexture;
 	
 	float lastUpdateTime;
+	GLint internalGLFormat;
+	GLubyte *pixelsTmp;
 };
 
 #endif

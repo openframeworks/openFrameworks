@@ -26,8 +26,6 @@ public:
 	
 	void setFullscreen(bool fullScreen);
 	void toggleFullscreen();
-	
-	static void exitApp();
 
 	void setWindowTitle(string title);
 	void setWindowPosition(int x, int y);

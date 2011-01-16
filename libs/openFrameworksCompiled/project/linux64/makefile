@@ -44,7 +44,13 @@ INCLUDES_FLAGS = $(addprefix -I,$(INCLUDES))
 CFLAGS = -Wall -fexceptions
 CFLAGS += $(INCLUDES_FLAGS)
 CFLAGS += $(CORE_INCLUDE_FLAGS)
-CFLAGS +=`pkg-config  gstreamer-0.10 gstreamer-video-0.10 gstreamer-base-0.10 libudev libavcodec libavformat libavutil --cflags`
+CFLAGS += $(shell pkg-config  gstreamer-0.10 gstreamer-video-0.10 gstreamer-base-0.10 libudev --cflags)
+
+#check if gtk exists and add it
+GTK = $(shell pkg-config gtk+-2.0 --exists; echo $$?)
+ifeq ($(GTK),0)
+	CFLAGS += $(shell pkg-config gtk+-2.0 --cflags) -DOF_USING_GTK
+endif
 
 ifeq ($(findstring Debug,$(MAKECMDGOALS)),Debug)
 	TARGET_CFLAGS = -g3
