@@ -63,7 +63,10 @@
 #include "ofEvents.h"
 
 //--------------------------
-// events
-#ifndef TARGET_OF_IPHONE	
-	#include "of3d.h"
-#endif
+// 3d
+#include "of3dUtils.h"
+#include "ofNode.h"
+#include "ofCamera.h"
+#include "ofMeshNode.h"
+#include "ofEasyCam.h"
+#include "ofLight.h"

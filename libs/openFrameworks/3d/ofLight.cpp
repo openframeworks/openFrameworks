@@ -134,14 +134,19 @@ ofColor ofLight::getSpecularColor() const {
 
 
 //----------------------------------------
-void ofLight::updateMatrix() {
-	ofNode::updateMatrix();
-	
-	if(isDirectional) {
-		GLfloat cc[] = {getLookAtDir().x, getLookAtDir().y, getLookAtDir().z, 0};
-		glLightfv(GL_LIGHT0 + glIndex, GL_POSITION, cc);
-	} else {
+void ofLight::onPositionChanged() {
+	// if we are a positional light and not directional, update light position
+	if(isDirectional == false) {
 		GLfloat cc[] = {getPosition().x, getPosition().y, getPosition().z, 1};
+		glLightfv(GL_LIGHT0 + glIndex, GL_POSITION, cc);
+	}
+}
+
+//----------------------------------------
+void ofLight::onOrientationChanged() {
+	// if we are a directional light and not positional, update light position (direction)
+	if(isDirectional == true) {
+		GLfloat cc[] = {getLookAtDir().x, getLookAtDir().y, getLookAtDir().z, 0};
 		glLightfv(GL_LIGHT0 + glIndex, GL_POSITION, cc);
 	}
 }

@@ -20,10 +20,6 @@
 class ofScene3d {
 public:
 	
-	void enableDebugDraw();
-	void disableDebugDraw();
-	bool getDebugDraw() const;
-	
 	void addNode(ofNode& n);
 	void removeNode(ofNode &n);
 	
@@ -35,5 +31,4 @@ public:
 	
 protected:
 	vector<ofNode*>nodes;
-	bool bDrawDebug;
 };
