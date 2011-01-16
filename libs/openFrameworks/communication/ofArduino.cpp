@@ -127,7 +127,10 @@ void ofArduino::update(){
 		int byte = _port.readByte();
 
 		// process data....
-		if (byte!=-1) {
+		//-1 = error
+		//-2 = no data
+		// to do: handle error
+		if (byte >= 0) {
 			processData((char)(byte));
 			dataRead++;
 		}
@@ -221,7 +224,8 @@ void ofArduino::sendSysEx(int command, vector<unsigned char> data){
 	sendByte(command);
 	vector<unsigned char>::iterator it = data.begin();
 	while( it != data.end() ) {
-		sendByte(*it);
+		//sendByte(*it);	// need to split data into 2 bytes before sending
+		sendValueAsTwo7bitBytes(*it);
 		it++;
 	}
 	sendByte(FIRMATA_END_SYSEX);
