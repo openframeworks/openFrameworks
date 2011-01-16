@@ -3,10 +3,10 @@
 
 
 #include "ofMain.h"
-
+#include "ofShape.h"
 
 typedef struct {
-
+	
 	float 	x;
 	float 	y;
 	bool 	bBeingDragged;
@@ -17,26 +17,35 @@ typedef struct {
 
 
 class testApp : public ofBaseApp{
-	
+
 	public:
-		
 		void setup();
 		void update();
 		void draw();
-		
-		void keyPressed(int key);
+
+		void keyPressed  (int key);
 		void keyReleased(int key);
 		void mouseMoved(int x, int y );
 		void mouseDragged(int x, int y, int button);
 		void mousePressed(int x, int y, int button);
 		void mouseReleased(int x, int y, int button);
 		void windowResized(int w, int h);
-		
-		
-		int nCurveVertexes;
-		draggableVertex curveVertices[7];
-		draggableVertex bezierVertices[4];
+
+	
+	
+	
+	
+	int nCurveVertexes;
+	draggableVertex curveVertices[7];
+	draggableVertex bezierVertices[4];
+	
+	
+	
+	ofShape shapeA,shapeB,shapeC,shapeD,shapeE;
+	ofShape shapeF,shapeFNonCurve;
+	ofShape shapeG,shapeH;
+	ofShape shapeIa,shapeIb,shapeIc;
+	
 };
 
 #endif
-	
