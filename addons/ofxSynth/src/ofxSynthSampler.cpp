@@ -13,7 +13,6 @@ void ofxSynthSampler::trigger(){
 }
 void ofxSynthSampler::audioRequested( float* buffer, int numFrames, int numChannels ){
 	sample.setSampleRate(sampleRate);
-	cout << "sample freq" << currentFrequency << endl;
 	for (int i = 0; i < numFrames; i++){
 		buffer[i*numChannels] = sample.play4(currentFrequency, inPoint*sample.length, outPoint*sample.length);
 	}
@@ -23,7 +22,6 @@ void ofxSynthSampler::setFrequencyMidiNote(float note){
 	
 }
 void ofxSynthSampler::setFrequencySyncToLength(int length){
-	cout << "set freq" << sample.length/(float)length << endl;
 	currentFrequency = sample.length/(float)length;
 }
 void ofxSynthSampler::loadFile(string file){
