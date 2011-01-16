@@ -3,34 +3,32 @@
 #include "ofMeshNode.h"
 
 
-#define kNumTestNodes	4
 #define kMoveInc		10
-#define kRotInc			2
+#define kRotInc			5
 
 
-ofMeshNode	testNodes[kNumTestNodes];
-ofCamera	cam[2];
-int			targetIndex[2];		// which test node to target (one for each camera)
-
-int			camToView = 0;
-int			camToConfigure = 1;
-
-bool		doMouseOrbit = false;
-float		orbitRadius = 100;
-
-bool		doAutoOrbit = false;
-
-
-void reset() {
-	cam[0].resetTransform();
-	cam[0].setFov(60);
-	cam[0].setPosition(60, 40, 190);
-	targetIndex[0]	= -1;	// don't look at any target
+// reset all transformations and options to defaults
+void testApp::reset() {
+	camToView = 0;
+	camToConfigure = 1;
 	
-	cam[1].resetTransform();
-	cam[1].setFov(60);
-	cam[1].setPosition(130, 70, -30);
-	targetIndex[1]	= kNumTestNodes-1;	// look at smallest target
+	orbitRadius = 200;
+	
+	for(int i=0; i<kNumCameras; i++) {
+		cam[i].resetTransform();
+		cam[i].setFov(60);
+		cam[i].clearParent();
+		lookatIndex[i] = -1;	// don't lookat at any node
+		parentIndex[i] = -1;	// don't parent to any node
+		doMouseOrbit[i] = false;
+	}
+		
+	
+	cam[0].setPosition(40, 40, 190);
+//	doMouseOrbit[0] = true;
+	
+	cam[1].setPosition(80, 40, 30);
+	lookatIndex[1]	= kNumTestNodes-1;	// look at smallest node
 }
 
 
@@ -39,13 +37,14 @@ void testApp::setup(){
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
 	glEnable(GL_LIGHT0);
-	
+	ofSetVerticalSync(true);
 	ofEnableLighting();
 	
 	reset();
 	
+	// link all testNodes (parent to each other)
 	for(int i=0; i<kNumTestNodes; i++) {
-		if(i>0) testNodes[i].setParent(&testNodes[i-1]);
+		if(i>0) testNodes[i].setParent(testNodes[i-1]);
 	}
 }
 
@@ -55,6 +54,8 @@ void testApp::update(){
 	float amp = 30;
 	float scale = 1;
 	
+	// all testNodes move in simple circles
+	// but because they are parented to each other, complex paths emerge
 	for(int i=0; i<kNumTestNodes; i++) {
 		testNodes[i].setPosition(ofVec3f(sin(ofGetElapsedTimef() * freqMult) * amp, cos(ofGetElapsedTimef() * freqMult) * amp, sin(ofGetElapsedTimef() * freqMult * 0.7) * amp));
 		
@@ -71,81 +72,70 @@ void testApp::update(){
 //--------------------------------------------------------------
 void testApp::draw(){
 	
-	// look at target if has target
-	if(targetIndex[0] >= 0) cam[0].lookAt(testNodes[targetIndex[0]]);
-	if(targetIndex[1] >= 0) cam[1].lookAt(testNodes[targetIndex[1]]);
-	
-	// mouse orbit camera
-	if(doMouseOrbit) {
-		if(targetIndex[1] < 0) {
-			cam[1].orbit(ofMap(mouseX, 0, ofGetWidth(), 180, -180), ofMap(mouseY, 0, ofGetHeight(), 90, -90), orbitRadius);
-		} else {
-			cam[1].orbit(ofMap(mouseX, 0, ofGetWidth(), 180, -180), ofMap(mouseY, 0, ofGetHeight(), 90, -90), orbitRadius, testNodes[targetIndex[1]]);
+	// update camera transforms
+	for(int i=0; i<kNumCameras; i++) {
+		
+		// lookat node if it has one
+		if(lookatIndex[i] >= 0) cam[i].lookAt(testNodes[lookatIndex[i]]);
+		
+		// mouse orbit camera
+		if(doMouseOrbit[i]) {
+			if(lookatIndex[i] < 0) {
+				cam[i].orbit(ofMap(mouseX, 0, ofGetWidth(), 180, -180), ofMap(mouseY, 0, ofGetHeight(), 90, -90), orbitRadius);
+			} else {
+				cam[i].orbit(ofMap(mouseX, 0, ofGetWidth(), 180, -180), ofMap(mouseY, 0, ofGetHeight(), 90, -90), orbitRadius, testNodes[lookatIndex[1]]);
+			}
 		}
-	}
-	
-	// auto orbit camera
-	if(doAutoOrbit) {
-		if(targetIndex[1] < 0) {
-			cam[1].orbit(ofGetElapsedTimef(), 50, orbitRadius);
-		} else {
-			cam[1].orbit(ofGetElapsedTimef(), 50, orbitRadius,  testNodes[targetIndex[1]]);
-		}
+		
 	}
 	
 	ofEnableLighting();
 	
+	
 	// activate camera
-	cam[camToView].begin(ofGetWindowRect());
+	cam[camToView].begin();
 	
 	
 	// draw world axis
-	float axisLength = 100;
-	// draw world x axis
-	ofSetColor(255, 0, 0);
-	glPushMatrix();
-	glTranslatef(axisLength/2, 0, 0);
-	glScalef(axisLength, 2, 2);
-	ofBox(0, 0, 0, 1);
-	glPopMatrix();
+	ofDrawAxis(100);
 	
-	// draw world y axis
-	ofSetColor(0, 255, 0);
-	glPushMatrix();
-	glTranslatef(0, axisLength/2, 0);
-	glScalef(2, axisLength, 2);
-	ofBox(0, 0, 0, 1);
-	glPopMatrix();
-	
-	// draw world z axis
-	ofSetColor(0, 0, 2550);
-	glPushMatrix();
-	glTranslatef(0, 0, axisLength/2);
-	glScalef(2, 2, axisLength);
-	ofBox(0, 0, 0, 1);
-	glPopMatrix();
-	
+	// draw testNodes
 	for(int i=0; i<kNumTestNodes; i++) {
+		ofSetColor(255, 128, 255);
 		testNodes[i].draw();
 	}
 	
-	
-	ofSetColor(255, 255, 0);
-	cam[0].debugDraw();
-	cam[1].debugDraw();
-	
-	// draw line from cam2 to its target
-	if(targetIndex[1] >= 0) {
-		ofSetColor(255, 255, 255);
-		glBegin(GL_LINES);
-		ofVec3f v1 = cam[1].getGlobalPosition();
-		ofVec3f v2 = testNodes[targetIndex[1]].getGlobalPosition();
-		glVertex3f(v1.x, v1.y, v1.z);
-		glVertex3f(v2.x, v2.y, v2.z);
-		glEnd();
+	// draw cameras
+	for(int i=0; i<kNumCameras; i++) {
+		ofSetColor(255, 255, 0);
+		cam[i].draw();
+		
+		// draw line from cam to its lookat
+		if(lookatIndex[i] >= 0) {
+			ofSetColor(0, 255, 255);
+			glBegin(GL_LINES);
+			ofVec3f v1 = cam[i].getGlobalPosition();
+			ofVec3f v2 = testNodes[lookatIndex[i]].getGlobalPosition();
+			glVertex3f(v1.x, v1.y, v1.z);
+			glVertex3f(v2.x, v2.y, v2.z);
+			glEnd();
+		}
+		
+		// draw line from cam to its parent
+		if(parentIndex[i] >= 0) {
+			ofSetColor(255, 255, 0);
+			glBegin(GL_LINES);
+			ofVec3f v1 = cam[i].getGlobalPosition();
+			ofVec3f v2 = testNodes[parentIndex[i]].getGlobalPosition();
+			glVertex3f(v1.x, v1.y, v1.z);
+			glVertex3f(v2.x, v2.y, v2.z);
+			glEnd();
+		}
 	}
 	
+	// restore view to previous state (default openFrameworks view)
 	cam[camToView].end();
+	
 	
 	ofSetColor(0, 0, 0);
 	string s = string("") + 
@@ -160,12 +150,13 @@ void testApp::draw(){
 	"v      switch camera to view: " + ofToString(camToView) + "\n" +
 	"\n" + 
 	
-	"o      toggle mouse orbit for cam1\n" + 
-	"O      toggle auto orbit for cam1\n" + 
-
+	"o      toggle mouse orbit for cam\n" + 
+//	"O      toggle auto orbit for cam\n" + 
+	
 	"\n" + 
 	"c      switch camera to configure: " + ofToString(camToConfigure) + "\n" +
-	" t      cycle target\n" + 
+	" t      cycle lookat\n" + 
+	" p      cycle parent\n" +
 	" LEFT   pan left\n" + 
 	" RIGHT  pan right\n" + 
 	" UP     tilt up\n" + 
@@ -218,30 +209,50 @@ void testApp::keyPressed(int key){
 		case 'f': n->boom(-kMoveInc); break;
 			
 		case 'o':
-			doMouseOrbit ^= true;
-			doAutoOrbit = false;
+			doMouseOrbit[camToConfigure] ^= true;
 			break;
 			
-		case 'O':
-			doMouseOrbit = false;
-			doAutoOrbit ^= true;
-			break;
-			
-//			if(cam[camToView].getOrtho()) {
-//				cam[camToView].disableOrtho();
-//			} else {
-//				cam[camToView].enableOrtho();
-//			}
-			break;
-			
+//		case 'O':
+//			doMouseOrbit = false;
+//			doAutoOrbit ^= true;
+//			break;
+//			
+//			//			if(cam[camToView].getOrtho()) {
+//			//				cam[camToView].disableOrtho();
+//			//			} else {
+//			//				cam[camToView].enableOrtho();
+//			//			}
+//			break;
+//			
 		case 'z':
 			reset();
 			break;
 			
 		case 't':
-			targetIndex[camToConfigure]++ ; 
-			if(targetIndex[camToConfigure]>=kNumTestNodes) targetIndex[camToConfigure] = -1;
+			lookatIndex[camToConfigure]++ ; 
+			if(lookatIndex[camToConfigure]>=kNumTestNodes) {
+				lookatIndex[camToConfigure] = -1;
+//				cam[camToConfigure].disableTarget();
+//			} else {
+//				cam[camToConfigure].setTarget(testNodes[parentIndex[camToConfigure]]);
+			}
 			break;
+			
+		case 'p':
+			parentIndex[camToConfigure]++ ; 
+			ofVec3f oldP		= cam[camToConfigure].getGlobalPosition();
+			ofQuaternion oldQ	= cam[camToConfigure].getGlobalOrientation();
+			if(parentIndex[camToConfigure]>=kNumTestNodes) {
+				parentIndex[camToConfigure] = -1;
+				cam[camToConfigure].clearParent();
+			} else {
+				cam[camToConfigure].setParent(testNodes[parentIndex[camToConfigure]]);
+			}
+			cam[camToConfigure].setGlobalPosition(oldP);
+			cam[camToConfigure].setGlobalOrientation(oldQ);
+			
+			break;
+			
 	}
 	
 	printf("\n** MOVING CAMERA %i **\n", camToConfigure);
@@ -264,10 +275,10 @@ void testApp::mouseMoved(int x, int y ){
 //--------------------------------------------------------------
 void testApp::mouseDragged(int x, int y, int button){
 	static float px = -1;
-	if(doMouseOrbit) {
+//	if(doMouseOrbit) {
 		if(px>=0) orbitRadius += x - px;
 		px = x;
-	}
+//	}
 }
 
 //--------------------------------------------------------------

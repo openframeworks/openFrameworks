@@ -27,7 +27,7 @@ void ofSoundSink::setSampleRate( int rate )
 {
 
 	vector<ofSoundSource*> inputs = getInputs();
-	for ( int i=0; i<inputs.size(); i++ ) 
+	for ( int i=0; i<(int)inputs.size(); i++ )
 	{ 
 		inputs[i]->setSampleRate( rate ); 
 	}
@@ -137,7 +137,7 @@ bool ofSoundSink::addingInputWouldCreateCycle( ofSoundSource* test )
 
 void ofSoundMixer::setVolume( ofSoundSource* input, float vol )
 {
-	for ( int i=0; i<inputs.size(); i++ )
+	for ( int i=0; i<(int)inputs.size(); i++ )
 	{
 		if ( inputs[i].input == input )
 		{
@@ -165,7 +165,7 @@ void ofSoundMixer::audioRequested( float* output, int numFrames, int numChannels
 	
 	// allocate working space
 	float working[numFrames*numChannels];
-	for ( int i=0; i<inputs.size(); i++ )
+	for ( int i=0; i<(int)inputs.size(); i++ )
 	{
 		// clear working
 		memset( working, 0, numFrames*numChannels*sizeof(float) );
@@ -211,7 +211,7 @@ bool ofSoundMixer::addInputFrom( ofSoundSource* source )
 	inputs.push_back( MixerInput( source, 1.0f, 0.5f ) );
 	source->setSampleRate( sampleRate );
 	mutex.unlock();
-	
+	return true;
 }
 
 
@@ -219,7 +219,7 @@ vector<ofSoundSource*> ofSoundMixer::getInputs()
 {
 	vector<ofSoundSource*> result;
 	mutex.lock();
-	for ( int i =0; i<inputs.size(); i++ )
+	for ( int i =0; i<(int)inputs.size(); i++ )
 	{
 		result.push_back( inputs[i].input );
 	}
@@ -231,7 +231,7 @@ vector<ofSoundSource*> ofSoundMixer::getInputs()
 void ofSoundMixer::setSampleRate( int rate )
 {
 	mutex.lock();
-	for ( int i =0; i<inputs.size(); i++ )
+	for ( int i =0; i<(int)inputs.size(); i++ )
 	{
 		inputs[i].input->setSampleRate( rate );
 	}
