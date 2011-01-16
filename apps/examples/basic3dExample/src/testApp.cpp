@@ -17,7 +17,7 @@ void testApp::reset() {
 	for(int i=0; i<kNumCameras; i++) {
 		cam[i].resetTransform();
 		cam[i].setFov(60);
-		cam[i].setParent(NULL);
+		cam[i].clearParent();
 		lookatIndex[i] = -1;	// don't lookat at any node
 		parentIndex[i] = -1;	// don't parent to any node
 		doMouseOrbit[i] = false;
@@ -25,7 +25,7 @@ void testApp::reset() {
 		
 	
 	cam[0].setPosition(40, 40, 190);
-	doMouseOrbit[0] = true;
+//	doMouseOrbit[0] = true;
 	
 	cam[1].setPosition(80, 40, 30);
 	lookatIndex[1]	= kNumTestNodes-1;	// look at smallest node
@@ -44,7 +44,7 @@ void testApp::setup(){
 	
 	// link all testNodes (parent to each other)
 	for(int i=0; i<kNumTestNodes; i++) {
-		if(i>0) testNodes[i].setParent(&testNodes[i-1]);
+		if(i>0) testNodes[i].setParent(testNodes[i-1]);
 	}
 }
 
@@ -151,7 +151,7 @@ void testApp::draw(){
 	"\n" + 
 	
 	"o      toggle mouse orbit for cam\n" + 
-	"O      toggle auto orbit for cam\n" + 
+//	"O      toggle auto orbit for cam\n" + 
 	
 	"\n" + 
 	"c      switch camera to configure: " + ofToString(camToConfigure) + "\n" +
@@ -230,7 +230,12 @@ void testApp::keyPressed(int key){
 			
 		case 't':
 			lookatIndex[camToConfigure]++ ; 
-			if(lookatIndex[camToConfigure]>=kNumTestNodes) lookatIndex[camToConfigure] = -1;
+			if(lookatIndex[camToConfigure]>=kNumTestNodes) {
+				lookatIndex[camToConfigure] = -1;
+//				cam[camToConfigure].disableTarget();
+//			} else {
+//				cam[camToConfigure].setTarget(testNodes[parentIndex[camToConfigure]]);
+			}
 			break;
 			
 		case 'p':
@@ -239,9 +244,9 @@ void testApp::keyPressed(int key){
 			ofQuaternion oldQ	= cam[camToConfigure].getGlobalOrientation();
 			if(parentIndex[camToConfigure]>=kNumTestNodes) {
 				parentIndex[camToConfigure] = -1;
-				cam[camToConfigure].setParent(NULL);
+				cam[camToConfigure].clearParent();
 			} else {
-				cam[camToConfigure].setParent(&testNodes[parentIndex[camToConfigure]]);
+				cam[camToConfigure].setParent(testNodes[parentIndex[camToConfigure]]);
 			}
 			cam[camToConfigure].setGlobalPosition(oldP);
 			cam[camToConfigure].setGlobalOrientation(oldQ);
