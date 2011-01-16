@@ -328,6 +328,55 @@ void ofImage::resize(int newWidth, int newHeight){
 }
 
 
+//------------------------------------
+void ofImage::crop(int x, int y, int w, int h){
+	ofPixelUtils::crop(myPixels, x,y,w,h);
+	update();
+}
+
+//------------------------------------
+void ofImage::cropFrom(ofImage & otherImage, int x, int y, int w, int h){
+	
+	int myOldWidth = myPixels.getWidth();
+	int myOldHeight = myPixels.getHeight();
+	
+	ofPixelUtils::cropFromTo(otherImage.myPixels,myPixels, x,y,w,h);
+	
+	if (myOldWidth != myPixels.getWidth() || myOldHeight != myPixels.getHeight()){
+		if (bUseTexture == true){
+			tex.clear();
+			tex.allocate(myPixels.getWidth(), myPixels.getHeight(), myPixels.getGlDataType());
+		}
+	} 
+	
+	update();
+}
+
+//------------------------------------
+void ofImage::rotate90(int nRotations){
+	int myOldWidth = myPixels.getWidth();
+	int myOldHeight = myPixels.getHeight();
+	ofPixelUtils::rotate90(myPixels, nRotations);
+	if (myOldWidth != myPixels.getWidth() || myOldHeight != myPixels.getHeight()){
+		if (bUseTexture == true){
+			tex.clear();
+			tex.allocate(myPixels.getWidth(), myPixels.getHeight(), myPixels.getGlDataType());
+		}
+	}
+	update();
+}
+
+//------------------------------------
+void ofImage::mirror(bool vertical, bool horizontal){
+	ofPixelUtils::mirror(myPixels, vertical, horizontal);
+	update();
+}
+
+
+
+
+
+
 //----------------------------------------------------------------------------------------------------
 //----------------------------------------------------------------------------------------------------
 //----------------------------------------------------------------------------------------------------

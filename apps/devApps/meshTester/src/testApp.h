@@ -3,6 +3,7 @@
 
 
 #include "ofMain.h"
+#include "ofAssimpMeshLoader.h"
 
 class testApp : public ofBaseApp{
 
@@ -18,13 +19,12 @@ class testApp : public ofBaseApp{
 		void mousePressed(int x, int y, int button);
 		void mouseReleased(int x, int y, int button);
 		void windowResized(int w, int h);
-
-	ofImage temp;
-	ofImage temp2;
-	ofPoint mousePressedPt;
 	
+		ofxAssimpModelLoader model;
+		vector<ofVboMesh> meshes;
+	
+		ofImage tex;
 	
 };
-
 
 #endif
