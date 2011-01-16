@@ -66,14 +66,22 @@ CFLAGS = -Wall -fexceptions
 CFLAGS += -I. 
 CFLAGS += $(INCLUDES_FLAGS)
 CFLAGS += $(CORE_INCLUDE_FLAGS)
-CFLAGS +=`pkg-config  glew gstreamer-0.10 gstreamer-video-0.10 gstreamer-base-0.10 libudev --cflags`
+CFLAGS += $(shell pkg-config  glew gstreamer-0.10 gstreamer-video-0.10 gstreamer-base-0.10 libudev --cflags)
+ 
 
 LDFLAGS = $(LIB_PATHS_FLAGS) -Wl,-rpath=./libs
 
 LIBS = $(LIB_SHARED)
 LIBS += $(LIB_STATIC)
-LIBS +=`pkg-config  glew gstreamer-0.10 gstreamer-video-0.10 gstreamer-base-0.10 libudev --libs`
+LIBS += $(shell pkg-config  glew gstreamer-0.10 gstreamer-video-0.10 gstreamer-base-0.10 libudev --libs)
 LIBS += -lglut -lGL -lGLU -lasound
+
+#check if gtk exists and add it
+GTK = $(shell pkg-config gtk+-2.0 --exists; echo $$?)
+ifeq ($(GTK),0)
+	CFLAGS += $(shell pkg-config gtk+-2.0 --cflags) -DOF_USING_GTK
+	LIBS += $(shell pkg-config gtk+-2.0 --libs)
+endif
 
 ifeq ($(findstring addons.make,$(wildcard *.make)),addons.make)
 	ADDONS_INCLUDES = $(shell find ../../../addons/*/src/ -type d)
@@ -169,7 +177,7 @@ $(OBJ_OUTPUT)%.o: ../../../%.c
 	$(CC) $(TARGET_CFLAGS) $(CFLAGS) $(ADDONSCFLAGS) $(USER_CFLAGS) -MMD -MP -MF$(OBJ_OUTPUT)$*.d -MT$(OBJ_OUTPUT)$*.d -o $@ -c $<
 	
 $(TARGET): $(OBJS) $(ADDONS_OBJS)
-	@echo "linking" $(TARGET)
+	@echo "linking" $(TARGET) $(GTK)
 	$(CXX) -o $@ $(OBJS) $(ADDONS_OBJS) $(TARGET_CFLAGS) $(CFLAGS) $(ADDONSCFLAGS) $(USER_CFLAGS) $(LDFLAGS) $(USER_LDFLAGS) $(TARGET_LIBS) $(LIBS) $(ADDONSLIBS) $(USER_LIBS)
 
 -include $(DEPFILES)

@@ -12,10 +12,9 @@
 
 // TODO: closing seems wonky. 
 // adding this for vc2010 compile: error C3861: 'closeQuicktime': identifier not found
-#ifndef TARGET_OF_IPHONE
+#if defined (TARGET_WIN32) || defined(TARGET_OSX)
 	#include "ofQtUtils.h"
 #endif
-
 
 //========================================================================
 // static variables:
@@ -74,8 +73,8 @@ void ofExitCallback();
 void ofExitCallback(){
 
 	//------------------------
-	// try to close FMOD:
-	ofSoundPlayer::closeFmod();
+	// try to close engine if needed:
+	ofSoundShutdown();
 	//------------------------
 
 	//------------------------
@@ -112,7 +111,7 @@ void ofRunApp(ofBaseApp * OFSA){
 		OFSAptr->mouseX = 0;
 		OFSAptr->mouseY = 0;
 	}
-	
+
 	#ifdef TARGET_OSX 
 		//this internally checks the executable path for osx
 		ofSetDataPathRoot("../../../data/");
