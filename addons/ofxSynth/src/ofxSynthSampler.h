@@ -36,7 +36,7 @@ class ofxSynthSample  {
 		// read a wav file into this class
 		bool read();
 		
-		double play4(double frequency, double start, double end, int sampleRate);
+		double play4(double frequency, double start, double end);
 		double play(double frequency, double start, double end);
 		
 		// return a printable summary of the wav file

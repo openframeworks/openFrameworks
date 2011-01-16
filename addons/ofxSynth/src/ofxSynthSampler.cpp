@@ -3,7 +3,6 @@
 void ofxSynthSampler::setSampleRate( int rate )
 {
 	sampleRate = rate;
-	currentFrequency = 1;
 }
 void ofxSynthSampler::setLoopPoints(float i, float o){
 	inPoint=fmax(0, i);
@@ -14,15 +13,17 @@ void ofxSynthSampler::trigger(){
 }
 void ofxSynthSampler::audioRequested( float* buffer, int numFrames, int numChannels ){
 	sample.setSampleRate(sampleRate);
+	cout << "sample freq" << currentFrequency << endl;
 	for (int i = 0; i < numFrames; i++){
-		short s = (short)sample.myData[i*numChannels];
-		buffer[i*numChannels] = sample.play(1, inPoint*sample.length, outPoint*sample.length);
+		buffer[i*numChannels] = sample.play4(currentFrequency, inPoint*sample.length, outPoint*sample.length);
 	}
 }
 void ofxSynthSampler::setFrequencyMidiNote(float note){
 	currentFrequency = pow(2.0, (note-60.0)/12.0f);
+	
 }
 void ofxSynthSampler::setFrequencySyncToLength(int length){
+	cout << "set freq" << sample.length/(float)length << endl;
 	currentFrequency = sample.length/(float)length;
 }
 void ofxSynthSampler::loadFile(string file){
@@ -74,16 +75,17 @@ bool ofxSynthSample::read(){
 		int filePos = 36;
 		bool found = false;
 		while(!found && !inFile.eof()) {
+			cout << "count" << endl;
 			inFile.seekg(filePos, ios::beg);
 			inFile.read((char*) &chunkID, sizeof(char) * 4);
 			inFile.seekg(filePos + 4, ios::beg);
 			inFile.read( (char*) &myDataSize, sizeof(int) ); // read the size of the data
 			filePos += 8;
-			if (strcmp(chunkID,"data") == 0) {
+			if (chunkID[0] == 'd' && chunkID[1] == 'a' && chunkID[2] == 't' && chunkID[3] == 'a') {
 				printf("found at: %i\n", filePos);
 				found = true;
 			}else{
-				printf("chunkid: %c\n", chunkID);
+				printf("chunkid: %s\n", chunkID);
 				filePos += myDataSize;
 			}
 		}
@@ -109,11 +111,6 @@ bool ofxSynthSample::read(){
 
 		length=myDataSize*(0.5/myChannels);
 		
-		for (int i=0; i<myDataSize; i++) {
-			// printf("%f", (float)myData[i]/32767.0);
-			// myData[i] = (char)(ofRandom(-1, 1)*32767);
-		}
-		
 		inFile.close(); // close the input file
 	}
 
@@ -131,7 +128,8 @@ void ofxSynthSample::getLength() {
 	length=myDataSize*0.5;	
 }
 //better cubic inerpolation. Cobbled together from various (pd externals, yehar, other places).
-double ofxSynthSample::play4(double frequency, double start, double end, int sampleRate) {
+//better cubic inerpolation. Cobbled together from various (pd externals, yehar, other places).
+double ofxSynthSample::play4(double frequency, double start, double end) {
 	double remainder;
 	double a,b,c,d,a1,a2,a3;
 	short* buffer = (short*)myData;
@@ -147,9 +145,9 @@ double ofxSynthSample::play4(double frequency, double start, double end, int sam
 
 		} else {
 			a=buffer[0];
-			
+
 		}
-		
+
 		b=buffer[(long) position];
 		if (position<end-2) {
 			c=buffer[(long) position+1];
@@ -167,8 +165,8 @@ double ofxSynthSample::play4(double frequency, double start, double end, int sam
 		a1 = 0.5f * (c - a);
 		a2 = a - 2.5 * b + 2.f * c - 0.5f * d;
 		a3 = 0.5f * (d - a) + 1.5f * (b - c);
-		output = (double) (((a3 * remainder + a2) * remainder + a1) * remainder + b) / 32767.0;
-		
+		output = (double) (((a3 * remainder + a2) * remainder + a1) * remainder + b) / 32767;
+
 	} else {
 		frequency=frequency-(frequency+frequency);
 		if ( position <= start ) position = end;
@@ -176,33 +174,33 @@ double ofxSynthSample::play4(double frequency, double start, double end, int sam
 		remainder = position - floor(position);
 		if (position>start && position < end-1) {
 			a=buffer[(long) position+1];
-			
+
 		} else {
 			a=buffer[0];
-			
+
 		}
-		
+
 		b=buffer[(long) position];
 		if (position>start) {
 			c=buffer[(long) position-1];
-			
+
 		} else {
 			c=buffer[0];
-			
+
 		}
 		if (position>start+1) {
 			d=buffer[(long) position-2];
-			
+
 		} else {
 			d=buffer[0];
 		}
 		a1 = 0.5f * (c - a);
 		a2 = a - 2.5 * b + 2.f * c - 0.5f * d;
 		a3 = 0.5f * (d - a) + 1.5f * (b - c);
-		output = (double) (((a3 * remainder + a2) * -remainder + a1) * -remainder + b) / 32767.0;
-		
+		output = (double) (((a3 * remainder + a2) * -remainder + a1) * -remainder + b) / 32767;
+
 	}
-	
+
 	return(output);
 }
 double ofxSynthSample::play(double frequency, double start, double end) {
