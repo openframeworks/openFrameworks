@@ -22,7 +22,7 @@ class ofThread{
 		bool unlock();
 		void stopThread(bool close = true);
 		void waitForThread(bool stop = true);
-
+		friend ostream& operator<<(ostream& os, const ofThread& thread);
 	protected:
 
 		//-------------------------------------------------
@@ -62,4 +62,13 @@ class ofThread{
 	bool threadRunning;
 	bool blocking;
 	bool verbose;
+	
+
 };
+
+inline ostream& operator<<(ostream& os, const ofThread& thread) {
+	os	<< "running:" << thread.threadRunning
+		<< ", blocking: " << thread.blocking
+		<< ", verbose: " << thread.verbose;
+	return os;
+}

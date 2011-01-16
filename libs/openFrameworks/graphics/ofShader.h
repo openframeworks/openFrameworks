@@ -98,6 +98,7 @@ public:
 	GLuint& getProgram();
 	GLuint& getShader(GLenum type);
 	
+	friend ostream& operator<<(ostream& os, const ofShader& shader);
 protected:
 	GLuint program;
 	map<GLenum, GLuint> shaders;
@@ -115,5 +116,11 @@ protected:
 	
 	bool bLoaded;
 };
+
+inline ostream& operator<<(ostream& os, const ofShader& shader) {
+	os	<< "name: " << shader.program 
+		<< ", is loaded: " << shader.bLoaded;
+	return os;
+}
 
 #endif

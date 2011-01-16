@@ -112,7 +112,7 @@ class ofImage : public ofBaseImage{
 
 		int 				width, height, bpp;		// w,h, bits per pixel
 		int					type;					// OF_IMAGE_GRAYSCALE, OF_IMAGE_COLOR, OF_IMAGE_COLOR_ALPHA
-
+		friend ostream& operator<<(ostream& os, const ofImage& image);
 	protected:
 	
 		void				changeTypeOfPixels(ofPixels &pix, ofImageType type);
@@ -122,3 +122,14 @@ class ofImage : public ofBaseImage{
 		bool				bUseTexture;
 		ofTexture			tex;
 };
+
+
+inline ostream& operator<<(ostream& os, const ofImage& image) {
+	os	<< "width: " << image.width
+		<< ", height: " << image.height
+		<< ", bpp: " << image.bpp
+		<< ", use texture: " << image.bUseTexture
+		<< ", pixels allocated: " << image.myPixels.isAllocated();
+	return os;
+
+}

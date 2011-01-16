@@ -4,6 +4,9 @@
 // ofColor
 //----------------------------------------------------------
 
+#include <ostream>
+using namespace std;
+
 class ofColor{
 	public:
 	
@@ -75,14 +78,20 @@ class ofColor{
 		ofColor & operator /= (ofColor const & color);
 		ofColor & operator /= (float const & val);
 		float & operator [] (int n);
-		
+	
+		friend ostream& operator<<(ostream& os, const ofColor& color);
+	
 		union  {
 			struct {
 				float r, g, b, a;
 			};
 			float v[4];
 		};
-
-
 };
+
+
+inline ostream& operator<<(ostream& os, const ofColor& color) {
+	os << color.r << ", " << color.g << ", " << color.b << ", " << color.a;
+	return os;
+}
 

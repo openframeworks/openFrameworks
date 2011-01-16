@@ -69,7 +69,8 @@ public:
 	int 		nCharacters;
 	
 	ofTTFCharacter getCharacterAsPoints(int character);
-
+	
+	friend ostream& operator<<(ostream& os, const ofTrueTypeFont& font);
 protected:
 	vector <ofTTFCharacter> charOutlines;
 
@@ -88,4 +89,9 @@ protected:
 
 };
 
+inline ostream& operator<<(ostream& os, const ofTrueTypeFont& font) {
+	os	<< "font size: " << font.fontSize
+		<< "line height: " << font.lineHeight;
+	return os;
+}
 

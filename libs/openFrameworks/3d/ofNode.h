@@ -149,6 +149,10 @@ public:
 	// and calls the virtual 'customDraw' method above which you CAN override
 	void draw();
 	
+	// stream operators
+	friend ostream& operator<<(ostream& os, const ofNode& rNode);
+	
+	
 protected:
 	ofNode *parent;
 	
@@ -170,3 +174,10 @@ private:
 	ofMatrix4x4 localTransformMatrix;
 //	ofMatrix4x4 globalTransformMatrix;
 };
+
+inline ostream& operator<<(ostream& os, const ofNode& node) {
+	os	<< "position: " << node.position 
+		<< ", orientation: " << node.orientation 
+		<< ", scale: " << node.scale;
+	return os;
+}

@@ -42,6 +42,8 @@ public:
 
 	ofImageType getImageType() const;
 	int getGlDataType() const;
+	
+	friend ostream& operator<<(ostream&os, const ofPixels& pixels);
 
 private:
 	
@@ -58,3 +60,10 @@ private:
 	bool	bAllocated;
 
 };
+
+inline ostream& operator<<(ostream&os, const ofPixels& pixels) {
+	os	<< "width: "	<< pixels.getWidth() 
+		<< ", height: " << pixels.getHeight() 
+		<< ", bpp: "	<< pixels.getBytesPerPixel();
+	return os;
+}

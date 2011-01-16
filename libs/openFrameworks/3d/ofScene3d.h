@@ -29,6 +29,17 @@ public:
 	
 	void draw();
 	
+	friend ostream& operator<<(ostream& os, const ofScene3d& scene);
+	
 protected:
 	vector<ofNode*>nodes;
 };
+
+inline ostream& operator<<(ostream& os, const ofScene3d& scene) {
+	vector<ofNode*>::const_iterator it = scene.nodes.begin();
+	while(it != scene.nodes.end()) {
+		os << *(*it) << std::endl;
+		++it;
+	}
+	return os;
+}

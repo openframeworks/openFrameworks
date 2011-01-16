@@ -46,6 +46,7 @@ public:
 	GLuint getDepthBuffer(){ return depthBuffer; }
 	GLuint getStencilBuffer(){ return stencilBuffer; }
 
+	friend ostream& operator<<(ostream& os, const ofFbo& fbo);
 protected:
 	struct Settings {
 		int		width;					// width of images attached to fbo
@@ -90,4 +91,11 @@ protected:
 	void updateTexture(int attachmentPoint);
 };
 
+inline ostream& operator<<(ostream& os, const ofFbo& fbo) {
+	os	<< "width: " << fbo.settings.width
+		<< ", height: " << fbo.settings.height
+		<< ", name: " << fbo.fbo
+		 << ", is bound:" << fbo.isBound;
+	return os;
+}
 #endif
