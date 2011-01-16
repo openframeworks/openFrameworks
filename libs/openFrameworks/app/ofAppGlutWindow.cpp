@@ -299,11 +299,7 @@ void ofAppGlutWindow::runAppViaInfiniteLoop(ofBaseApp * appPtr){
 	glutMainLoop();
 }
 
-//------------------------------------------------------------
-void ofAppGlutWindow::exitApp(){
-	ofLog(OF_LOG_VERBOSE,"GLUT OF app is being terminated!");
-	OF_EXIT_APP(0);
-}
+
 
 //------------------------------------------------------------
 float ofAppGlutWindow::getFrameRate(){
@@ -642,10 +638,6 @@ void ofAppGlutWindow::idle_cb(void) {
 //------------------------------------------------------------
 void ofAppGlutWindow::keyboard_cb(unsigned char key, int x, int y) {
 	ofNotifyKeyPressed(key);
-
-	if (key == OF_KEY_ESC){				// "escape"
-		exitApp();
-	}
 }
 
 //------------------------------------------------------------

@@ -1,7 +1,7 @@
 #include "ofEvents.h"
 #include "ofAppRunner.h"
 #include "ofBaseApp.h"
-
+#include "ofMain.h"
 #include <set>
 
 // core events instance & arguments
@@ -16,6 +16,9 @@ static int	previousMouseX=0, previousMouseY=0;
 static bool		bPreMouseNotSet;
 static set<int> pressedMouseButtons;
 static set<int> pressedKeys;
+
+static bool bEscQuits = true;
+
 
 //--------------------------------------
 bool ofGetMousePressed(int button){ //by default any button
@@ -48,6 +51,17 @@ int ofGetPreviousMouseX(){
 int ofGetPreviousMouseY(){
 	return previousMouseY;
 }
+
+//--------------------------------------
+void ofSetEscapeQuitsApp(bool bQuitOnEsc){
+	bEscQuits = bQuitOnEsc;
+}
+
+void exitApp(){
+	ofLog(OF_LOG_VERBOSE,"OF app is being terminated!");
+	OF_EXIT_APP(0);
+}
+
 
 
 //------------------------------------------
@@ -101,6 +115,13 @@ void ofNotifyKeyPressed(int key){
 		keyEventArgs.key = key;
 		ofNotifyEvent( ofEvents.keyPressed, keyEventArgs );
 	#endif
+	
+	
+	if (key == OF_KEY_ESC && bEscQuits == true){				// "escape"
+		exitApp();
+	}
+	
+	
 }
 
 //------------------------------------------

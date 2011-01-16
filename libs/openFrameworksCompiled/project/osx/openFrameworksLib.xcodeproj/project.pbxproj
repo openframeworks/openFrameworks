@@ -13,6 +13,8 @@
 		2D4FB15C12DE7271000A51F9 /* ofSoundEffect.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D4FB15812DE7271000A51F9 /* ofSoundEffect.h */; };
 		2D4FB15D12DE7271000A51F9 /* ofSoundUnit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D4FB15912DE7271000A51F9 /* ofSoundUnit.cpp */; };
 		2D4FB15E12DE7271000A51F9 /* ofSoundUnit.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D4FB15A12DE7271000A51F9 /* ofSoundUnit.h */; };
+		3021415712DEBC4D00A2885A /* ofLog.h in Headers */ = {isa = PBXBuildFile; fileRef = 3021415512DEBC4D00A2885A /* ofLog.h */; };
+		3021415812DEBC4D00A2885A /* ofLog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3021415612DEBC4D00A2885A /* ofLog.cpp */; };
 		92750B4512E2319500D47C7A /* ofPixelUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 92750B4312E2319500D47C7A /* ofPixelUtils.h */; };
 		92750B4612E2319500D47C7A /* ofPixelUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 92750B4412E2319500D47C7A /* ofPixelUtils.cpp */; };
 		92B3A68112DA30B3001B8BE8 /* ofBaseTypes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 92B3A67812DA30B3001B8BE8 /* ofBaseTypes.cpp */; };
@@ -107,6 +109,8 @@
 		2D4FB15812DE7271000A51F9 /* ofSoundEffect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofSoundEffect.h; sourceTree = "<group>"; };
 		2D4FB15912DE7271000A51F9 /* ofSoundUnit.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofSoundUnit.cpp; sourceTree = "<group>"; };
 		2D4FB15A12DE7271000A51F9 /* ofSoundUnit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofSoundUnit.h; sourceTree = "<group>"; };
+		3021415512DEBC4D00A2885A /* ofLog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofLog.h; sourceTree = "<group>"; };
+		3021415612DEBC4D00A2885A /* ofLog.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofLog.cpp; sourceTree = "<group>"; };
 		92750B4312E2319500D47C7A /* ofPixelUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofPixelUtils.h; sourceTree = "<group>"; };
 		92750B4412E2319500D47C7A /* ofPixelUtils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofPixelUtils.cpp; sourceTree = "<group>"; };
 		92B3A67812DA30B3001B8BE8 /* ofBaseTypes.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofBaseTypes.cpp; sourceTree = "<group>"; };
@@ -485,6 +489,8 @@
 				92BFAC2C12DA5FDA001F2778 /* ofSystemUtils.cpp */,
 				92BFAC2D12DA5FDA001F2778 /* ofSystemUtils.h */,
 				E4B27ACE10CBE92A00536013 /* ofConstants.h */,
+				3021415512DEBC4D00A2885A /* ofLog.h */,
+				3021415612DEBC4D00A2885A /* ofLog.cpp */,
 				E4B27AD110CBE92A00536013 /* ofNoise.h */,
 				E455490912DA54BE00652B63 /* ofFileUtils.cpp */,
 				E455490812DA54BE00652B63 /* ofFileUtils.h */,
@@ -618,6 +624,7 @@
 				E455519912DCCD0000652B63 /* ofVec3f.h in Headers */,
 				E455519A12DCCD0000652B63 /* ofVec4f.h in Headers */,
 				E455519B12DCCD0000652B63 /* ofVectorMath.h in Headers */,
+				3021415712DEBC4D00A2885A /* ofLog.h in Headers */,
 				2D4FB15C12DE7271000A51F9 /* ofSoundEffect.h in Headers */,
 				2D4FB15E12DE7271000A51F9 /* ofSoundUnit.h in Headers */,
 				DA2E399D12DF6E9000EC4A5B /* glew.h in Headers */,
@@ -717,6 +724,7 @@
 				E455519212DCCD0000652B63 /* ofMatrix3x3.cpp in Sources */,
 				E455519412DCCD0000652B63 /* ofMatrix4x4.cpp in Sources */,
 				E455519612DCCD0000652B63 /* ofQuaternion.cpp in Sources */,
+				3021415812DEBC4D00A2885A /* ofLog.cpp in Sources */,
 				2D4FB15B12DE7271000A51F9 /* ofSoundEffect.cpp in Sources */,
 				2D4FB15D12DE7271000A51F9 /* ofSoundUnit.cpp in Sources */,
 				E42E914612DFFDB8000A7674 /* ofPixels.cpp in Sources */,
