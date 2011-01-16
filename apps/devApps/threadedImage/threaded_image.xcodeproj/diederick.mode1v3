@@ -248,6 +248,8 @@
 			<key>Layout</key>
 			<array>
 				<dict>
+					<key>BecomeActive</key>
+					<true/>
 					<key>ContentConfiguration</key>
 					<dict>
 						<key>PBXBottomSmartGroupGIDs</key>
@@ -297,6 +299,11 @@
 									<integer>3</integer>
 									<integer>0</integer>
 								</array>
+								<array>
+									<integer>8</integer>
+									<integer>3</integer>
+									<integer>0</integer>
+								</array>
 							</array>
 							<key>PBXSmartGroupTreeModuleOutlineStateVisibleRectKey</key>
 							<string>{{0, 0}, {253, 812}}</string>
@@ -318,7 +325,7 @@
 							<real>253</real>
 						</array>
 						<key>RubberWindowFrame</key>
-						<string>465 109 1061 871 0 0 1680 1028 </string>
+						<string>469 110 1061 871 0 0 1680 1028 </string>
 					</dict>
 					<key>Module</key>
 					<string>PBXSmartGroupTreeModule</string>
@@ -329,8 +336,6 @@
 					<key>Dock</key>
 					<array>
 						<dict>
-							<key>BecomeActive</key>
-							<true/>
 							<key>ContentConfiguration</key>
 							<dict>
 								<key>PBXProjectModuleGUID</key>
@@ -348,7 +353,7 @@
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>E93D0B2512E26906003F1AA8</string>
+										<string>E93D0B7912E27193003F1AA8</string>
 										<key>history</key>
 										<array>
 											<string>E9391EB712E0FAC900CA4E53</string>
@@ -364,7 +369,7 @@
 											<string>E93D0ABF12E25D11003F1AA8</string>
 											<string>E93D0AE112E25E9D003F1AA8</string>
 											<string>E93D0AE212E25E9D003F1AA8</string>
-											<string>E93D0AE312E25E9D003F1AA8</string>
+											<string>E93D0B7812E27193003F1AA8</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>
@@ -378,7 +383,7 @@
 								<key>Frame</key>
 								<string>{{0, 0}, {786, 825}}</string>
 								<key>RubberWindowFrame</key>
-								<string>465 109 1061 871 0 0 1680 1028 </string>
+								<string>469 110 1061 871 0 0 1680 1028 </string>
 							</dict>
 							<key>Module</key>
 							<string>PBXNavigatorGroup</string>
@@ -398,7 +403,7 @@
 								<key>Frame</key>
 								<string>{{0, 830}, {786, 0}}</string>
 								<key>RubberWindowFrame</key>
-								<string>465 109 1061 871 0 0 1680 1028 </string>
+								<string>469 110 1061 871 0 0 1680 1028 </string>
 							</dict>
 							<key>Module</key>
 							<string>XCDetailModule</string>
@@ -545,7 +550,7 @@
 	<key>StatusbarIsVisible</key>
 	<true/>
 	<key>TimeStamp</key>
-	<real>316827910.96197301</real>
+	<real>316830099.33878499</real>
 	<key>ToolbarConfigUserDefaultsMinorVersion</key>
 	<string>2</string>
 	<key>ToolbarDisplayMode</key>
@@ -562,16 +567,14 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
-		<string>E93D0B2612E26906003F1AA8</string>
 		<string>E93D0AC412E25D11003F1AA8</string>
 		<string>E93D0AC512E25D11003F1AA8</string>
 		<string>E9391E7912E0EC6100CA4E53</string>
 		<string>1CD10A99069EF8BA00B06720</string>
-		<string>/Users/diederick/Documents/programming/c++/of62git/apps/devApps/threadedImage/threaded_image.xcodeproj</string>
 		<string>1C78EAAD065D492600B07095</string>
 	</array>
 	<key>WindowString</key>
-	<string>465 109 1061 871 0 0 1680 1028 </string>
+	<string>469 110 1061 871 0 0 1680 1028 </string>
 	<key>WindowToolsV3</key>
 	<array>
 		<dict>
