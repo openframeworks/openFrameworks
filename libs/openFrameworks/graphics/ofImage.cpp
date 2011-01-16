@@ -640,6 +640,8 @@ void ofImage::changeTypeOfPixels(ofPixels &pix, ofImageType newType){
 				tex.allocate(myPixels.getWidth(), myPixels.getHeight(), GL_RGBA);
 			}
 			break;
+		default:
+			ofLogError("of.Image") << "format not supported";
 	}
 
 	putBmpIntoPixels(convertedBmp, pix, false);
