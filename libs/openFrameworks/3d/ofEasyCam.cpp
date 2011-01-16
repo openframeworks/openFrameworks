@@ -22,7 +22,7 @@ drag(0.1)
 {
 	target.setPosition(0, 0, 0);
 	setPosition(0, 0, distance);
-	setParent(target);
+//	setParent(target);
 }
 
 
