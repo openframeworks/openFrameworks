@@ -13,7 +13,7 @@ void testApp::setup(){
 	rAudio = new float[1024];
 	
 	
-	ofSoundStreamSetup(2,0,this, sampleRate,1024, 4);
+	ofSoundStreamSetup(2,0, this, sampleRate,1024, 4);
 
 	int bpm = 120;
 	beatLength = ((sampleRate*60)/bpm);
@@ -47,8 +47,8 @@ void testApp::setup(){
 	mixer.setVolume(&multiplex, 1.0);
 	
 	passthrough.addInputFrom( &mixer );
-	writer.addInputFrom(&passthrough);
-	ofSoundStreamAddSoundSource( &writer );
+//	writer.addInputFrom(&passthrough);
+	ofSoundStreamAddSoundSource( &passthrough );
 	
 	delay.setSize(0.1);
 	delay.setFeedback(0.7);
