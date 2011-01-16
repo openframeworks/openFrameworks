@@ -1,5 +1,10 @@
 #include "testApp.h"
 
+ofNode target;
+ofRectangle rect;
+bool oldMousePress = false;
+ofVec3f mousePrev;
+
 //--------------------------------------------------------------
 void testApp::setup(){
 	glEnable(GL_DEPTH_TEST);
@@ -13,6 +18,13 @@ void testApp::setup(){
 
 //--------------------------------------------------------------
 void testApp::update(){
+	rect.width = ofGetWidth();
+	rect.height = ofGetHeight();
+	
+	
+//	oldMousePress = ofGetMousePressed(0);
+//	mousePrev = mousePos;
+	
 }
 
 
@@ -21,11 +33,13 @@ void testApp::draw(){
 
 	cam.begin();
 	
-	// draw world axis
 	ofDrawAxis(200);	
-	
 	ofSetColor(255, 255, 0);
 	ofBox(20);
+//	target.draw();
+	
+//	cam.getTarget().draw();
+	
 	
 	cam.end();
 	
