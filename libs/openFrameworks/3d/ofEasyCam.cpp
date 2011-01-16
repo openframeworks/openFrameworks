@@ -19,7 +19,7 @@ pos(0, 0),
 vel(0, 0),
 pmouse(0, 0), 
 speed(0.1),
-drag(0.01),
+drag(0.1),
 oldMousePress(false)
 {
 //	
