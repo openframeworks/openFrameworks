@@ -39,7 +39,6 @@ ofLogger::ofLogger(){
 
 	// console open, file not opened (added) by default
 	splitterChannel->addChannel(consoleChannel);
-	splitterChannel->addChannel(fileChannel);
 
 	Poco::AutoPtr<Poco::Formatter> formatter(new Poco::PatternFormatter("%t"));
 	formattingChannel = new Poco::FormattingChannel(formatter, splitterChannel);

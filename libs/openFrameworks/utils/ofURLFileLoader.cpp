@@ -32,8 +32,13 @@ ofEvent<ofHttpResponse> ofURLResponseEvent;
 
 ofURLFileLoader::ofURLFileLoader() {
 	if(!factoryLoaded){
-		HTTPStreamFactory::registerFactory();
-		factoryLoaded = true;
+		try {
+			HTTPStreamFactory::registerFactory();
+			factoryLoaded = true;
+		}
+		catch (Poco::SystemException PS) {
+			ofLog(OF_LOG_ERROR, "Got exception in url ofURLFileloader");
+		}
 	}
 }
 
