@@ -2,6 +2,8 @@
 
 #include "ofSoundEffect.h"
 
+const int wav_header_size = 0x2C;
+
 /** ofxSynthWaveWriter
  
  Class to write sample streams to the file system.

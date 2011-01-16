@@ -10,13 +10,13 @@
 */
 class ofxSynthADSR : public ofSoundSource {
 	public:
-		void trigger();
-		void release();
+		ofxSynthADSR();
+		void trigger(); // start the note, go to the sustain stage
+		void release(); // continue past the sustain stage
 		void setADSR(float _a, float _d, float _s, float _r){
-			// TODO: make sure that we don't overrun if we set this too short all of a sudden
-			// might be as simple as making the output level a smoothed float
 			a=_a; d=_d; s=_s; r=_r;
 		};
+		void goToEnd(); // jump to the end of the envelope
 		string getName() { return "ofxSynthADSR"; }
 		void audioRequested( float* buffer, int numFrames, int numChannels );
 	protected:
