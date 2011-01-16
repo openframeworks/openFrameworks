@@ -39,6 +39,6 @@ public:
 
 	virtual void	enableSetupScreen(){}
 	virtual void	disableSetupScreen(){}
-
+	
 };
 
