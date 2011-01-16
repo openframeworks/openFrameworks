@@ -294,29 +294,66 @@ void ofLogger::_log(ofLogLevel logLevel, const string& message, Poco::Logger* th
 			break;
 			
 		case OF_LOG_VERBOSE:
-			theLogger->trace(timestamp+"OF_VERBOSE: "+message);
+			try{
+				theLogger->trace(timestamp+"OF_VERBOSE: "+message);
+			}
+			catch(...){
+				_logDestroyed("OF_VERBOSE: "+message);
+			}
 			break;
 			
 		case OF_LOG_DEBUG:
-			theLogger->debug(timestamp+"OF_DEBUG: "+message);
+			try{
+				theLogger->debug(timestamp+"OF_DEBUG: "+message);
+			}
+			catch(...){
+				_logDestroyed("OF_DEBUG: "+message);
+			}
 			break;
 			
 		case OF_LOG_NOTICE:
-			theLogger->notice(timestamp+message);
+			try{
+				theLogger->notice(timestamp+message);
+			}
+			catch(...){
+				_logDestroyed(message);
+			}
 			break;
 
 		case OF_LOG_WARNING:
-			theLogger->warning(timestamp+"OF_WARNING: "+message);
+			try{
+				theLogger->warning(timestamp+"OF_WARNING: "+message);
+			}
+			catch(...){
+				_logDestroyed("OF_WARNING: "+message);
+			}
 			break;
 
 		case OF_LOG_ERROR:
-			theLogger->error(timestamp+"OF_ERROR: "+message);
+			try{
+				theLogger->error(timestamp+"OF_ERROR: "+message);
+			}
+			catch(...){
+				_logDestroyed("OF_ERROR: "+message);
+			}
 			break;
 			
 		case OF_LOG_FATAL_ERROR:
-			theLogger->fatal(timestamp+"OF_FATAL_ERROR: "+message);
+			try{
+				theLogger->fatal(timestamp+"OF_FATAL_ERROR: "+message);
+			}
+			catch(...){
+				_logDestroyed("OF_FATAL_ERROR: "+message);
+			}
 			break;
 	}
+}
+
+void ofLogger::_logDestroyed(const string& message){
+	printf("----------\n");
+	printf("\tHey ... don't call ofLog in a destructor!\n");
+	printf("\t%s\n", message.c_str());
+	printf("----------\n");
 }
 
 //-------------------------------------------------------
