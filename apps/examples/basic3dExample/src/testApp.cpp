@@ -22,10 +22,9 @@ void testApp::reset() {
 		parentIndex[i] = -1;	// don't parent to any node
 		doMouseOrbit[i] = false;
 	}
-		
 	
 	cam[0].setPosition(40, 40, 190);
-//	doMouseOrbit[0] = true;
+	doMouseOrbit[0] = true;
 	
 	cam[1].setPosition(80, 40, 30);
 	lookatIndex[1]	= kNumTestNodes-1;	// look at smallest node
@@ -71,6 +70,7 @@ void testApp::update(){
 
 //--------------------------------------------------------------
 void testApp::draw(){
+//	printf("%i %i\n", mouseX, mouseY);
 	
 	// update camera transforms
 	for(int i=0; i<kNumCameras; i++) {
@@ -79,11 +79,17 @@ void testApp::draw(){
 		if(lookatIndex[i] >= 0) cam[i].lookAt(testNodes[lookatIndex[i]]);
 		
 		// mouse orbit camera
-		if(doMouseOrbit[i]) {
+		if(doMouseOrbit[i] && ofGetMousePressed(0)) {
+			static float lon = 0;
+			static float lat = 0;
+			
+			lon = ofClamp(lon + mouseX - ofGetPreviousMouseX(), -180, 180);
+			lat = ofClamp(lat + mouseY - ofGetPreviousMouseY(), -90, 90);
+			
 			if(lookatIndex[i] < 0) {
-				cam[i].orbit(ofMap(mouseX, 0, ofGetWidth(), 180, -180), ofMap(mouseY, 0, ofGetHeight(), 90, -90), orbitRadius);
+				cam[i].orbit(lon, lat, orbitRadius);
 			} else {
-				cam[i].orbit(ofMap(mouseX, 0, ofGetWidth(), 180, -180), ofMap(mouseY, 0, ofGetHeight(), 90, -90), orbitRadius, testNodes[lookatIndex[1]]);
+				cam[i].orbit(lon, lat, orbitRadius, testNodes[lookatIndex[1]]);
 			}
 		}
 		
@@ -276,8 +282,8 @@ void testApp::mouseMoved(int x, int y ){
 void testApp::mouseDragged(int x, int y, int button){
 	static float px = -1;
 //	if(doMouseOrbit) {
-		if(px>=0) orbitRadius += x - px;
-		px = x;
+//		if(px>=0) orbitRadius += x - px;
+//		px = x;
 //	}
 }
 
