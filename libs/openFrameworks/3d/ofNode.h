@@ -27,7 +27,8 @@ public:
 	// set parent to link nodes
 	// transformations are inherited from parent node
 	// set to NULL if not needed (default)
-	void setParent(ofNode* parent);
+	void setParent(ofNode& parent);
+	void clearParent();
 	ofNode* getParent() const;
 
 	

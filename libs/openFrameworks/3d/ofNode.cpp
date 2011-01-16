@@ -11,10 +11,14 @@ ofNode::ofNode() : parent(NULL) {
 
 
 //----------------------------------------
-void ofNode::setParent(ofNode* parent) {
-	this->parent = parent;
+void ofNode::setParent(ofNode& parent) {
+	this->parent = &parent;
 }
 
+//----------------------------------------
+void ofNode::clearParent() {
+	this->parent = NULL;
+}
 
 //----------------------------------------
 ofNode* ofNode::getParent() const {
