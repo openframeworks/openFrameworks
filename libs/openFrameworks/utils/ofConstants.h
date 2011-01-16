@@ -126,6 +126,11 @@ enum ofLoopType{
 	#define TARGET_LITTLE_ENDIAN		// arm cpu	
 #endif
 
+#ifdef TARGET_OPENGLES
+	#include "glu.h"
+#endif
+
+
 
 #ifndef __MWERKS__
 #include <cstdlib>
