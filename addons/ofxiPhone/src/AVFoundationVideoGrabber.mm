@@ -308,37 +308,34 @@ bool AVFoundationVideoGrabber::initGrabber(int w, int h){
 
 void AVFoundationVideoGrabber::updatePixelsCB( CGImageRef & ref ){
 	
-	//if(ofxiPhoneGetOrientation() == UIDeviceOrientationPortrait || ofxiPhoneGetOrientation() == UIDeviceOrientationPortraitUpsideDown)
-		//transform
+	CGAffineTransform transform = CGAffineTransformIdentity;
+	
 	CGContextRef spriteContext;
 		
 	// Uses the bitmap creation function provided by the Core Graphics framework. 
 	spriteContext = CGBitmapContextCreate(pixelsTmp, width, height, CGImageGetBitsPerComponent(ref), width * 4, CGImageGetColorSpace(ref), kCGImageAlphaPremultipliedLast);
 	
-	CGContextDrawImage(spriteContext, CGRectMake(0.0, 0.0, (CGFloat)width, (CGFloat)height), ref);
+	if(ofxiPhoneGetOrientation() == UIDeviceOrientationPortrait) {
+			transform = CGAffineTransformMakeTranslation(0.0, height);
+			transform = CGAffineTransformRotate(transform, 3.0 * M_PI / 2.0);
+			
+			CGContextConcatCTM(spriteContext, transform);
+			CGContextDrawImage(spriteContext, CGRectMake(0.0, 0.0, (CGFloat)height, (CGFloat)width), ref);
+	}
+	else if(ofxiPhoneGetOrientation() == UIDeviceOrientationPortraitUpsideDown) {
+		ofLog(OF_LOG_WARNING, "upsidedown orientation not supported at this time"); // TODO support this
+	}
+	else if(ofxiPhoneGetOrientation() == UIDeviceOrientationLandscapeLeft) {
+		transform = CGAffineTransformMakeTranslation(width, height);
+		transform = CGAffineTransformScale(transform, -1.0, -1.0);
+		
+		CGContextConcatCTM(spriteContext, transform);
+		CGContextDrawImage(spriteContext, CGRectMake(0.0, 0.0, (CGFloat)width, (CGFloat)height), ref);
+	}
+	else // landscape RIGHT
+		CGContextDrawImage(spriteContext, CGRectMake(0.0, 0.0, (CGFloat)width, (CGFloat)height), ref);
+	
 	CGContextRelease(spriteContext);
-	
-	/*
-	 // averaging around 3300ms per 100reps
-	 long then = ofGetElapsedTimeMillis();
-	 for (int N=0; N<100; N++){
-	 int j = 0;
-	 for(int k = 0; k < totalSrcBytes; k+= bytesPerPixel ){
-	 pixels[j  ] = pixelsTmp[k  ];
-	 pixels[j+1] = pixelsTmp[k+1];
-	 pixels[j+2] = pixelsTmp[k+2];
-	 j+=3;
-	 }
-	 
-	 }
-	 long now = ofGetElapsedTimeMillis();
-	 printf("elapsed = %d\n", (now-then));
-	 */
-	
-	// Step through both source and destination 4 bytes at a time.
-	// But reset the destination pointer by shifting it backwards 1 byte each time. 
-	// Effectively: 4 steps forward, 1 step back each time through the loop. 
-	// on average, around 1750ms for 100 reps // GOOD
 	
 	if(internalGlDataType == GL_RGB)
 	{
@@ -351,14 +348,7 @@ void AVFoundationVideoGrabber::updatePixelsCB( CGImageRef & ref ){
 		}
 	}
 	else if(internalGlDataType == GL_RGBA || internalGlDataType == GL_BGRA)
-	{
-		unsigned int *isrc4 = (unsigned int *)pixelsTmp;
-		unsigned int *idst4 = (unsigned int *)pixels;
-		unsigned int *ilast4 = &isrc4[width*height-1];
-		while (isrc4 < ilast4){
-			*(idst4++) = *(isrc4++);
-		}
-	}
+		memcpy(pixels, pixelsTmp, width*height*4);
 	
 	newFrame=true;
 }
@@ -379,6 +369,7 @@ void AVFoundationVideoGrabber::listDevices() {
 
 void AVFoundationVideoGrabber::setDevice(int deviceID) {
 	[grabber setDevice:deviceID];
+	device = deviceID;
 }
 
 void AVFoundationVideoGrabber::setPixelFormat(ofPixelFormat PixelFormat) {

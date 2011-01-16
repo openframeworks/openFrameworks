@@ -28,6 +28,8 @@ void audioCallback( void* aqData, AudioQueueRef queue, AudioQueueBufferRef buffe
 	audio_finished = false;
 	told_midpoint = false;
 	
+	vol = 1;
+	
 	current_video_time = 0;
 	presentation_timestamp_s = current_video_time-1.0f;
 	last_returned_frame_presentation_timestamp_s = presentation_timestamp_s;
@@ -334,6 +336,8 @@ void audioCallback( void* aqData, AudioQueueRef queue, AudioQueueBufferRef outpu
 {
 	audio_mutex.lock();
 	
+	AudioQueueSetParameter(audio_queue, kAudioQueueParam_Volume, vol);
+	
 	assert( queue == audio_queue );
 	
 	output_buffer->mAudioDataByteSize = BUFFER_BYTE_SIZE;
@@ -474,9 +478,14 @@ void audioCallback( void* aqData, AudioQueueRef queue, AudioQueueBufferRef outpu
 	return paused && !finished && initialised;
 }
 
+- (void)setVolume:(float)volume
+{
+	vol = volume;
+}
 
 - (void)play
 {
+	
 	if([self canPlay]) {
 		#ifdef DECODE_AUDIO_REMOTEIO
 			[self playAudio];

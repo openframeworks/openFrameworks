@@ -77,7 +77,7 @@ void ofCamera::begin(ofRectangle rect) {
 	}
 	
 	glMatrixMode(GL_MODELVIEW);
-	glLoadMatrixf(ofMatrix4x4::getInverseOf(getGlobalMatrix()).getPtr());
+	glLoadMatrixf(ofMatrix4x4::getInverseOf(getGlobalTransformMatrix()).getPtr());
 	ofViewport(rect.x, rect.y, rect.width, rect.height);
 }
 

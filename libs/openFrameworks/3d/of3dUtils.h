@@ -11,9 +11,5 @@
 
 #pragma once
 
-#include "ofNode.h"
-#include "ofCamera.h"
-#include "ofMeshNode.h"
-#include "ofScene3d.h"
-#include "ofEasyCam.h"
-#include "ofLight.h"
+
+void ofDrawAxis(float size);

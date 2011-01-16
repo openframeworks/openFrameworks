@@ -10,21 +10,6 @@
 #include "ofScene3d.h"
 
 //----------------------------------------
-void ofScene3d::enableDebugDraw() {
-	bDrawDebug = true;
-}
-
-//----------------------------------------
-void ofScene3d::disableDebugDraw() {
-	bDrawDebug = false;
-}
-
-//----------------------------------------
-bool ofScene3d::getDebugDraw() const {
-	return bDrawDebug;
-}
-
-//----------------------------------------
 void ofScene3d::addNode(ofNode& n) {
 	nodes.push_back(&n);
 }
@@ -57,11 +42,4 @@ void ofScene3d::draw() {
 	for(int i=0; i<nodes.size(); i++) {
 		nodes[i]->draw();
 	}
-	
-	if(bDrawDebug) {
-		for(int i=0; i<nodes.size(); i++) {
-			nodes[i]->debugDraw();
-		}
-	}
-
 }
