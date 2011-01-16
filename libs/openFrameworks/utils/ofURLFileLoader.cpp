@@ -59,7 +59,7 @@ void ofURLFileLoader::getAsync(string url, string name){
 
 void ofURLFileLoader::remove(ofHttpRequest httpRequest){
 	lock();
-	for(int i=0;i<requests.size();i++){
+	for(int i=0;i<(int)requests.size();i++){
 		if(requests[i].getID()==httpRequest.getID()){
 			requests.erase(requests.begin()+i);
 			return;

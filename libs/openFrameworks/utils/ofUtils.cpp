@@ -70,7 +70,7 @@ unsigned long ofGetSystemTime( ) {
 
 //--------------------------------------------------
 unsigned int ofGetUnixTime(){
-	return (unsigned int)time;
+	return (unsigned int)time(NULL);
 }
 
 //default ofGetTimestampString returns in this format: 2011-01-15-18-29-35-299
