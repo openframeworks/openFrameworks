@@ -74,8 +74,8 @@ void ofExitCallback();
 void ofExitCallback(){
 
 	//------------------------
-	// try to close FMOD:
-	ofSoundPlayer::closeFmod();
+	// try to close engine if needed:
+	ofSoundShutdown();
 	//------------------------
 
 	//------------------------
