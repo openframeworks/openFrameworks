@@ -15,5 +15,5 @@ class ofFileDialogResult{
 };
 
 void ofCreateAlertDialog(string errorMessage);
-ofFileDialogResult ofFileLoadDialog(bool bFolderSelection = false);
+ofFileDialogResult ofFileLoadDialog(string windowTitle="", bool bFolderSelection = false);
 ofFileDialogResult ofFileSaveDialog(string defaultName, string messageName);

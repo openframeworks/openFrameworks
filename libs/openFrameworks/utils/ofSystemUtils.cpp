@@ -37,7 +37,62 @@ std::string convertWideToNarrow( const wchar_t *s, char dfault = '?',
 }
 #endif
 
+#if defined( TARGET_LINUX ) && defined (OF_USING_GTK)
+#include <gtk/gtk.h>
+static gboolean closeGTK(GtkWidget *widget){
+	//gtk_widget_destroy(widget);
+    gtk_main_quit();
+    return (FALSE);
+}
+static void initGTK(){
+	int argc=0; char **argv = NULL;
+	gtk_init (&argc, &argv);
 
+}
+static void startGTK(GtkWidget *dialog){
+	gtk_init_add( (GSourceFunc) closeGTK, NULL );
+	gtk_quit_add_destroy(1,GTK_OBJECT(dialog));
+	//g_timeout_add(10, (GSourceFunc) destroyWidgetGTK, (gpointer) dialog);
+	gtk_main();
+}
+
+static string gtkFileDialog(GtkFileChooserAction action,string windowTitle,string defaultName=""){
+	initGTK();
+	string results;
+
+	const gchar* button_name = "";
+	switch(action){
+	case GTK_FILE_CHOOSER_ACTION_OPEN:
+		button_name = GTK_STOCK_OPEN;
+		break;
+	case GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER:
+		button_name = GTK_STOCK_SELECT_ALL;
+		break;
+	case GTK_FILE_CHOOSER_ACTION_SAVE:
+		button_name = GTK_STOCK_SAVE;
+		break;
+	default:
+		return "";
+		break;
+	}
+
+	GtkWidget *dialog = gtk_file_chooser_dialog_new (windowTitle.c_str(),
+						  NULL,
+						  action,
+						  button_name, GTK_RESPONSE_ACCEPT,
+						  GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+						  NULL);
+
+	gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(dialog),defaultName.c_str());
+
+	if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT) {
+		results = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dialog));
+	}
+	startGTK(dialog);
+	return results;
+}
+
+#endif
 
 
 //------------------------------------------------------------------------------
@@ -86,6 +141,12 @@ void ofCreateAlertDialog(string errorMessage){
 		RunStandardAlert(theItem, NULL, &itemIndex);
 	#endif
 	
+	#if defined( TARGET_LINUX ) && defined (OF_USING_GTK)
+		initGTK();
+		GtkWidget* dialog = gtk_message_dialog_new (NULL, (GtkDialogFlags) 0, GTK_MESSAGE_INFO, GTK_BUTTONS_OK, errorMessage.c_str());
+		gtk_dialog_run (GTK_DIALOG (dialog));
+		startGTK(dialog);
+	#endif
 }
 
 
@@ -152,7 +213,7 @@ CantCreateDialog:
 CantGetNavOptions:
     return fileAsCFURLRef;
 }
-#endif TARGET_OSX
+#endif
 //----------------------------------------------------------------------------------------
 //----------------------------------------------------------------------------------------
 //----------------------------------------------------------------------------------------
@@ -160,7 +221,7 @@ CantGetNavOptions:
 
 
 // OS specific results here.  "" = cancel or something bad like can't load, can't save, etc...
-ofFileDialogResult ofFileLoadDialog(bool bFolderSelection){
+ofFileDialogResult ofFileLoadDialog(string windowTitle, bool bFolderSelection){
 	
 	ofFileDialogResult results;
 	
@@ -258,6 +319,22 @@ ofFileDialogResult ofFileLoadDialog(bool bFolderSelection){
 	//----------------------------------------------------------------------------------------
 #endif
 	
+
+
+
+	//----------------------------------------------------------------------------------------
+	//------------------------------------------------------------------------------   linux
+	//----------------------------------------------------------------------------------------
+#if defined( TARGET_LINUX ) && defined (OF_USING_GTK)
+		if(bFolderSelection) results.filePath = gtkFileDialog(GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER,windowTitle);
+		else results.filePath = gtkFileDialog(GTK_FILE_CHOOSER_ACTION_OPEN,windowTitle);
+#endif
+	//----------------------------------------------------------------------------------------
+	//----------------------------------------------------------------------------------------
+	//----------------------------------------------------------------------------------------
+
+
+
 	if( results.filePath.length() > 0 ){
 		results.bSuccess = true;
 		results.fileName = ofFileUtils::getFilenameFromPath(results.filePath);		
@@ -388,6 +465,19 @@ ofFileDialogResult ofFileSaveDialog(string defaultName, string messageName){
 	if (GetSaveFileName(&ofn)){
 		results.filePath = convertWideToNarrow(fileName);
 	}
+
+#endif
+	//----------------------------------------------------------------------------------------
+	//----------------------------------------------------------------------------------------
+	//----------------------------------------------------------------------------------------
+
+
+	//----------------------------------------------------------------------------------------
+	//------------------------------------------------------------------------------   linux
+	//----------------------------------------------------------------------------------------
+#if defined( TARGET_LINUX ) && defined (OF_USING_GTK)
+
+	gtkFileDialog(GTK_FILE_CHOOSER_ACTION_SAVE, messageName,defaultName);
 
 #endif
 	//----------------------------------------------------------------------------------------

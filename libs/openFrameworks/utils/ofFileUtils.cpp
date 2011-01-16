@@ -86,9 +86,9 @@ long ofBuffer::size() const{
 string ofBuffer::getNextLine(){
 	if( buffer.empty() ) return "";
 	long currentLinePos = nextLinePos;
-	while(nextLinePos<buffer.size() && buffer[nextLinePos]!='\n') nextLinePos++;
+	while(nextLinePos<(int)buffer.size() && buffer[nextLinePos]!='\n') nextLinePos++;
 	string line(getBuffer() + currentLinePos,nextLinePos-currentLinePos);
-	if(nextLinePos<buffer.size()-1) nextLinePos++;
+	if(nextLinePos<(int)buffer.size()-1) nextLinePos++;
 	return line;
 }
 

@@ -3,7 +3,12 @@
 #include "ofTypes.h"
 #include "ofGraphics.h"
 #include "Poco/String.h"
+#include "Poco/StringTokenizer.h"
 #include "ofAppRunner.h"
+
+#include <Poco/LocalDateTime.h>
+#include <Poco/DateTimeFormatter.h>
+
 
 #if defined(TARGET_OF_IPHONE) || defined(TARGET_OSX ) || defined(TARGET_LINUX)
 	#include "sys/time.h"
@@ -61,6 +66,26 @@ unsigned long ofGetSystemTime( ) {
 			return timeGetTime();
 		#endif
 	#endif
+}
+
+//--------------------------------------------------
+unsigned int ofGetUnixTime(){
+	return (unsigned int)time(NULL);
+}
+
+//default ofGetTimestampString returns in this format: 2011-01-15-18-29-35-299
+//--------------------------------------------------
+string ofGetTimestampString(){
+	string timeFormat = "%Y-%m-%d-%H-%M-%S-%i";
+	Poco::LocalDateTime now;
+	return Poco::DateTimeFormatter::format(now, timeFormat);
+}
+
+//specify the string format - eg: %Y-%m-%d-%H-%M-%S-%i ( 2011-01-15-18-29-35-299 ) 
+//--------------------------------------------------
+string ofGetTimestampString(string timestampFormat){
+	Poco::LocalDateTime now;
+	return Poco::DateTimeFormatter::format(now, timestampFormat);
 }
 
 //--------------------------------------------------
@@ -387,23 +412,30 @@ string ofBinaryToString(const string& value) {
 }
 
 //--------------------------------------------------
-vector <string> ofSplitString(const string& str, const string& delimiter = " "){
-    vector<string> elements;
-	// Skip delimiters at beginning.
-    string::size_type lastPos = str.find_first_not_of(delimiter, 0);
-    // Find first "non-delimiter".
-    string::size_type pos     = str.find_first_of(delimiter, lastPos);
-
-    while (string::npos != pos || string::npos != lastPos)
-    {
-        // Found a token, add it to the vector.
-    	elements.push_back(str.substr(lastPos, pos - lastPos));
-        // Skip delimiters.  Note the "not_of"
-        lastPos = str.find_first_not_of(delimiter, pos);
-        // Find next "non-delimiter"
-        pos = str.find_first_of(delimiter, lastPos);
-    }
-    return elements;
+vector <string> ofSplitString(const string & source, const string & delimiters, bool ignoreEmpty, bool trim) {
+	using namespace Poco;
+	
+	int flags = 0;
+	if(ignoreEmpty) {
+		flags |= StringTokenizer::TOK_IGNORE_EMPTY;
+	}
+	if(trim) {
+		flags |= StringTokenizer::TOK_TRIM;
+	}
+	
+	// tokenize the sring using poco
+	StringTokenizer tokens(source, delimiters, flags);
+	vector<string> result;
+	result.assign(tokens.begin(), tokens.end());
+	
+	// poco ignores trailing delimiters, which is inconsistent with everything else
+	string lastCharacter;
+	lastCharacter += source[source.size() - 1];
+	if(ofIsStringInString(delimiters, lastCharacter)) {
+		result.push_back("");
+	}
+	
+	return result;
 }
 
 //--------------------------------------------------
@@ -414,6 +446,8 @@ string ofJoinString(vector <string> stringElements, const string & delimiter){
 	for(int k = 0; k < numElements; k++){
 		if( k < numElements-1 ){
 			resultString += stringElements[k] + delimiter;
+		} else {
+			resultString += stringElements[k];
 		}
 	}
 	
@@ -517,92 +551,29 @@ void ofSaveFrame(bool bUseViewport){
 	saveImageCounter++;
 }
 
-
-
-//levels are currently:
-// see ofConstants.h
-// OF_LOG_NOTICE
-// OF_LOG_WARNING
-// OF_LOG_ERROR
-// OF_LOG_FATAL_ERROR
-
-int currentLogLevel =  OF_DEFAULT_LOG_LEVEL;
 //--------------------------------------------------
-void ofSetLogLevel(int logLevel){
-	currentLogLevel = logLevel;
-}
+bool ofReadFile(const string & path, ofBuffer & buffer, bool binary){
+	ifstream * file = new ifstream(ofToDataPath(path,true).c_str());
 
-//--------------------------------------------------
-void ofLog(int logLevel, string message){
-	if(logLevel >= currentLogLevel){
-		if(logLevel == OF_LOG_VERBOSE){
-			printf("OF_VERBOSE: ");
-		}
-		else if(logLevel == OF_LOG_NOTICE){
-			printf("OF_NOTICE: ");
-		}
-		else if(logLevel == OF_LOG_WARNING){
-			printf("OF_WARNING: ");
-		}
-		else if(logLevel == OF_LOG_ERROR){
-			printf("OF_ERROR: ");
-		}
-		else if(logLevel == OF_LOG_FATAL_ERROR){
-			printf("OF_FATAL_ERROR: ");
-		}
-		printf("%s\n",message.c_str());
+	if(!file || !file->is_open()){
+		ofLog(OF_LOG_ERROR, "couldn't open " + path);
+		return false;
 	}
-}
 
-//--------------------------------------------------
-void ofLog(int logLevel, const char* format, ...){
-	//thanks stefan!
-	//http://www.ozzu.com/cpp-tutorials/tutorial-writing-custom-printf-wrapper-function-t89166.html
+	filebuf *pbuf=file->rdbuf();
 
-	if(logLevel >= currentLogLevel){
-		va_list args;
-		va_start( args, format );
-		if(logLevel == OF_LOG_VERBOSE){
-			printf("OF_VERBOSE: ");
-		}
-		else if(logLevel == OF_LOG_NOTICE){
-			printf("OF_NOTICE: ");
-		}
-		else if(logLevel == OF_LOG_WARNING){
-			printf("OF_WARNING: ");
-		}
-		else if(logLevel == OF_LOG_ERROR){
-			printf("OF_ERROR: ");
-		}
-		else if(logLevel == OF_LOG_FATAL_ERROR){
-			printf("OF_FATAL_ERROR: ");
-		}
-		vprintf( format, args );
-		printf("\n");
-		va_end( args );
+	// get file size using buffer's members
+	long size = (long)pbuf->pubseekoff (0,ios::end,ios::in);
+	pbuf->pubseekpos (0,ios::in);
+
+	// get file data
+	if(!binary){
+		buffer.allocate(size+1);// = new char[size];
+		buffer.getBuffer()[size]='\0';
+	}else{
+		buffer.allocate(size);
 	}
+	pbuf->sgetn (buffer.getBuffer(),size);
+	return true;
 }
-
-//for setting console color
-//doesn't work in the xcode console - do we need this?
-//works fine on the terminal though - not much use
-
-//--------------------------------------------------
-void ofSetConsoleColor(int color){
-	#ifdef TARGET_WIN32
-		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), color);
-	#else
-		printf("\033[%im",  color);
-	#endif
-}
-
-//--------------------------------------------------
-void ofRestoreConsoleColor(){
-	#ifdef TARGET_WIN32
-		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), OF_CONSOLE_COLOR_RESTORE);
-	#else
-		printf("\033[%im",  OF_CONSOLE_COLOR_RESTORE);
-	#endif
-}
-
 

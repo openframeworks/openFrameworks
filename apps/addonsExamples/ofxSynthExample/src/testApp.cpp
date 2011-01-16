@@ -29,6 +29,7 @@ void testApp::setup(){
 	// attach the filter passthough, will allow us to look at our buffers
 	passthrough.addInputFrom( &filter );
 	
+	passthrough.addInputFrom( &mixer );
 	ofSoundStreamAddSoundSource( &passthrough );
 	
 	

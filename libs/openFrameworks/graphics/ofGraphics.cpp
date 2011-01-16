@@ -7,10 +7,10 @@
 	#include <OpenGL/glu.h>
 #endif
 
-#ifdef TARGET_OPENGLES
-	#include "glu.h"
-#endif
-
+//#ifdef TARGET_OPENGLES
+//	#include "glu.h"
+//#endif
+//
 #ifdef TARGET_LINUX
 	#include "GL/glu.h"
 #endif
@@ -1543,7 +1543,7 @@ void ofVertexes( const vector <ofPoint> & polyPoints ){
 	if( polyPoints.size() ){
 		clearCurveVertices();
 		
-		for( int k = 0; k < polyPoints.size(); k++){
+		for( int k = 0; k < (int)polyPoints.size(); k++){
 			double* point = new double[3];
 			point[0] = polyPoints[k].x;
 			point[1] = polyPoints[k].y;
@@ -1609,7 +1609,7 @@ void ofCurveVertex(float x, float y){
 //----------------------------------------------------------
 void ofCurveVertexes( const vector <ofPoint> & curvePoints){
 	if( curvePoints.size() ){
-		for( int k = 0; k < curvePoints.size(); k++){
+		for( int k = 0; k < (int)curvePoints.size(); k++){
 			ofCurveVertex(curvePoints[k].x, curvePoints[k].y);		
 		}
 	}
