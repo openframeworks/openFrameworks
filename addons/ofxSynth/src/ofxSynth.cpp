@@ -137,8 +137,8 @@ double maxiOsc::triangle(double frequency, double phase) {
 } 
 
 ofxSynth::ofxSynth(){
-	
 	currentFrequency = 440;
+	setFrequency(440);
 	currentAmp = 0;
 	usesEnv = false;
 	ampMode = OFXSYNTHONESHOT;
@@ -161,8 +161,8 @@ void ofxSynth::audioRequested( float* buffer, int numFrames, int numChannels ){
 	env.audioRequested(envBuffer, numFrames, 1);
 	modEnv.audioRequested(modEnvBuffer, numFrames, 1); // we are only going to update once per buffer
 	for (int i = 0; i<numFrames; i++) {
-		currentFrequency = ofLerp(startFrequency, targetFrequency, fmin((float)noteTime, portamento+1)/(float)(portamento+20));
 		noteTime++;
+		currentFrequency = ofLerp(startFrequency, targetFrequency, fmin((float)noteTime, portamento+1)/(float)(portamento+2));
 		if (ampMode == OFXSYNTHONESHOT) {
 			currentAmp = 1;
 		}else if(ampMode == OFXSYNTHADR){

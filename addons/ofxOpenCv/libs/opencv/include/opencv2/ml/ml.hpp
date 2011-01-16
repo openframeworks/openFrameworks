@@ -156,7 +156,7 @@ CV_INLINE CvParamLattice cvParamLattice( double min_val, double max_val,
                                          double log_step )
 {
     CvParamLattice pl;
-    pl.min_val = MIN( min_val, max_val );
+    pl.min_val = CV_MIN( min_val, max_val );
     pl.max_val = MAX( min_val, max_val );
     pl.step = MAX( log_step, 1. );
     return pl;

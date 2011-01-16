@@ -32,6 +32,11 @@ void ofPopView();
 void ofViewport(float x = 0, float y = 0, float width = 0, float height = 0);
 void ofSetupScreenPerspective(float width = 0, float height = 0, bool vFlip = true, float fov = 60, float nearDist = 0, float farDist = 0);
 void ofSetupScreenOrtho(float width = 0, float height = 0, bool vFlip = true, float nearDist = -1, float farDist = 1);
+ofRectangle ofGetCurrentViewport();
+int ofGetViewportWidth();
+int ofGetViewportHeight();
+
+
 
 void ofSetCoordHandedness(ofHandednessType handedness);
 ofHandednessType ofGetCoordHandedness();
