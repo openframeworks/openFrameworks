@@ -110,7 +110,7 @@ void CALLBACK ofTessellator::end(){
 	}
 	else if ( currentTriType == GL_TRIANGLE_STRIP ) {
 		resultMesh.addTriangleStrip( vertices );
-	}
+	} else
 #endif
 	
 	// deal with line loop (outline only)
