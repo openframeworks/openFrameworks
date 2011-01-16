@@ -16,11 +16,6 @@
 		name = arcball.cpp;
 		path = /Users/Memo/Desktop/arcball/arcball.cpp;
 		sourceTree = "<absolute>";
-		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1484, 3029}}";
-			sepNavSelRange = "{780, 0}";
-			sepNavVisRange = "{0, 2182}";
-		};
 	};
 	BB40210112E229770002A877 /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
@@ -32,35 +27,85 @@
 		vrLen = 2182;
 		vrLoc = 0;
 	};
-	BB40210212E229770002A877 /* PBXTextBookmark */ = {
+	BB604ED712E2C6B000BD9826 /* ofEasyCam.h */ = {
+		isa = PBXFileReference;
+		lastKnownFileType = sourcecode.c.h;
+		name = ofEasyCam.h;
+		path = "/Users/Memo/___LAB___/openFrameworks/ofdevcon2011/libs/openFrameworks/3d/ofEasyCam.h";
+		sourceTree = "<absolute>";
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1484, 1014}}";
+			sepNavSelRange = "{265, 0}";
+			sepNavVisRange = "{41, 1285}";
+		};
+	};
+	BB604ED912E2C6B000BD9826 /* ofEasyCam.cpp */ = {
+		isa = PBXFileReference;
+		lastKnownFileType = sourcecode.cpp.cpp;
+		name = ofEasyCam.cpp;
+		path = "/Users/Memo/___LAB___/openFrameworks/ofdevcon2011/libs/openFrameworksCompiled/project/osx/../../../openFrameworks/3d/ofEasyCam.cpp";
+		sourceTree = "<absolute>";
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1484, 1651}}";
+			sepNavSelRange = "{571, 0}";
+			sepNavVisRange = "{152, 1910}";
+		};
+	};
+	BB604EE312E2C7F700BD9826 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = BB604ED912E2C6B000BD9826 /* ofEasyCam.cpp */;
+		name = "ofEasyCam.cpp: 35";
+		rLen = 0;
+		rLoc = 731;
+		rType = 0;
+		vrLen = 1866;
+		vrLoc = 217;
+	};
+	BB604EEB12E2C84200BD9826 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = E4B69E1E0A3A1BDC003C02F2 /* testApp.cpp */;
+		name = "testApp.cpp: 24";
+		rLen = 0;
+		rLoc = 501;
+		rType = 0;
+		vrLen = 1544;
+		vrLoc = 0;
+	};
+	BB604EEC12E2C84200BD9826 /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
 		fRef = E4B69E1F0A3A1BDC003C02F2 /* testApp.h */;
-		name = "testApp.h: 23";
-		rLen = 0;
-		rLoc = 422;
+		name = "testApp.h: 20";
+		rLen = 9;
+		rLoc = 403;
 		rType = 0;
 		vrLen = 422;
 		vrLoc = 0;
 	};
-	BB40210312E229770002A877 /* PBXTextBookmark */ = {
+	BB604EED12E2C84200BD9826 /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
-		fRef = E4B69E1E0A3A1BDC003C02F2 /* testApp.cpp */;
-		name = "testApp.cpp: 36";
+		fRef = BB604ED712E2C6B000BD9826 /* ofEasyCam.h */;
+		name = "ofEasyCam.h: 18";
 		rLen = 0;
-		rLoc = 727;
+		rLoc = 265;
 		rType = 0;
-		vrLen = 1660;
-		vrLoc = 0;
+		vrLen = 1285;
+		vrLoc = 41;
 	};
-	BB40210412E229770002A877 /* PBXTextBookmark */ = {
+	BB604EFD12E2C86500BD9826 /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
-		fRef = E4B69E1E0A3A1BDC003C02F2 /* testApp.cpp */;
-		name = "testApp.cpp: 36";
+		fRef = BB604EFE12E2C86500BD9826 /* ofEasyCam.cpp */;
+		name = "ofEasyCam.cpp: 28";
 		rLen = 0;
-		rLoc = 733;
+		rLoc = 571;
 		rType = 0;
-		vrLen = 1660;
-		vrLoc = 0;
+		vrLen = 1910;
+		vrLoc = 152;
+	};
+	BB604EFE12E2C86500BD9826 /* ofEasyCam.cpp */ = {
+		isa = PBXFileReference;
+		name = ofEasyCam.cpp;
+		path = "/Users/Memo/___LAB___/openFrameworks/ofdevcon2011/libs/openFrameworks/3d/ofEasyCam.cpp";
+		sourceTree = "<absolute>";
 	};
 	BBAEB23212DE2F79007FD423 /* emptyExample */ = {
 		isa = PBXExecutable;
@@ -204,15 +249,17 @@
 					PBXFileDataSource_Target_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 316766693;
-			PBXWorkspaceStateSaveDate = 316766693;
+			PBXPerProjectTemplateStateSaveDate = 316851555;
+			PBXWorkspaceStateSaveDate = 316851555;
 		};
 		perUserProjectItems = {
 			BB2FA66B12E0EDDF00CB8632 /* PBXTextBookmark */ = BB2FA66B12E0EDDF00CB8632 /* PBXTextBookmark */;
 			BB40210112E229770002A877 /* PBXTextBookmark */ = BB40210112E229770002A877 /* PBXTextBookmark */;
-			BB40210212E229770002A877 /* PBXTextBookmark */ = BB40210212E229770002A877 /* PBXTextBookmark */;
-			BB40210312E229770002A877 /* PBXTextBookmark */ = BB40210312E229770002A877 /* PBXTextBookmark */;
-			BB40210412E229770002A877 /* PBXTextBookmark */ = BB40210412E229770002A877 /* PBXTextBookmark */;
+			BB604EE312E2C7F700BD9826 /* PBXTextBookmark */ = BB604EE312E2C7F700BD9826 /* PBXTextBookmark */;
+			BB604EEB12E2C84200BD9826 /* PBXTextBookmark */ = BB604EEB12E2C84200BD9826 /* PBXTextBookmark */;
+			BB604EEC12E2C84200BD9826 /* PBXTextBookmark */ = BB604EEC12E2C84200BD9826 /* PBXTextBookmark */;
+			BB604EED12E2C84200BD9826 /* PBXTextBookmark */ = BB604EED12E2C84200BD9826 /* PBXTextBookmark */;
+			BB604EFD12E2C86500BD9826 /* PBXTextBookmark */ = BB604EFD12E2C86500BD9826 /* PBXTextBookmark */;
 			BBE7F06D12DF98050039489F /* PlistBookmark */ = BBE7F06D12DF98050039489F /* PlistBookmark */;
 			BBE7F35012DFF3130039489F /* PBXTextBookmark */ = BBE7F35012DFF3130039489F /* PBXTextBookmark */;
 			BBFDB95B12E147F400FB94F8 /* PBXTextBookmark */ = BBFDB95B12E147F400FB94F8 /* PBXTextBookmark */;
@@ -237,16 +284,16 @@
 	};
 	E4B69E1E0A3A1BDC003C02F2 /* testApp.cpp */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1484, 1209}}";
-			sepNavSelRange = "{733, 0}";
-			sepNavVisRange = "{0, 1660}";
+			sepNavIntBoundsRect = "{{0, 0}, {1484, 972}}";
+			sepNavSelRange = "{501, 0}";
+			sepNavVisRange = "{0, 1544}";
 			sepNavWindowFrame = "{{979, 73}, {849, 1105}}";
 		};
 	};
 	E4B69E1F0A3A1BDC003C02F2 /* testApp.h */ = {
 		uiCtxt = {
 			sepNavIntBoundsRect = "{{0, 0}, {1484, 972}}";
-			sepNavSelRange = "{422, 0}";
+			sepNavSelRange = "{403, 9}";
 			sepNavVisRange = "{0, 422}";
 		};
 	};

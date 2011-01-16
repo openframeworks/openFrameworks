@@ -59,7 +59,7 @@ void ofCamera::begin(ofRectangle rect) {
 	ofSetCoordHandedness(OF_RIGHT_HANDED);
 	
 	// autocalculate near/far clip planes if not set by user
-	float nc=nearClip, fc=farClip;
+	float nc = nearClip, fc = farClip;
 	if(nearClip == 0 || farClip == 0) {
 		float dist = rect.height * 0.5f / tanf(PI * fov / 360.0f);
 		nc = (nearClip == 0) ? dist / 100.0f : nearClip;
@@ -71,7 +71,9 @@ void ofCamera::begin(ofRectangle rect) {
 	if(isOrtho) {
 		//			if(vFlip) glOrtho(0, width, height, 0, nearDist, farDist);
 		//			else 
+#ifndef TARGET_OPENGLES
 		glOrtho(0, rect.width, 0, rect.height, nc, fc);
+#endif		
 	} else {
 		gluPerspective(fov, rect.width/rect.height, nc, fc);
 	}
