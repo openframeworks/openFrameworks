@@ -177,11 +177,12 @@ int receiveAudioBufferAndCallSimpleApp(void *outputBuffer, void *inputBuffer, un
 		// sum together all the inputs
 		if (working == NULL){
 			working = new float[bufferSize*nOutputChannels];
+			memset( working, 0, sizeof(float)*bufferSize*nOutputChannels );
 		}
 		memset( fPtrOut, 0, sizeof(float)*bufferSize*nOutputChannels );
 		// fetch and add from OFSAptr
 		if(OFSAptr) {
-			OFSAptr->audioRequested(working, bufferSize, nOutputChannels);
+			OFSAptr->audioRequested( working, bufferSize, nOutputChannels );
 			for ( int j=0; j<bufferSize*nOutputChannels; j++ ) {
 				fPtrOut[j] += working[j];
 			}

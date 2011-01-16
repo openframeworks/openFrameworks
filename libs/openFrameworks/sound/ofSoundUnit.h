@@ -11,6 +11,7 @@
 
 #include "ofSoundStream.h"
 #include "ofTypes.h"
+#include "ofUtils.h"
 #include <vector>
 using namespace std;
 
@@ -126,6 +127,12 @@ public:
 	
 	/// Copy safely to out. Copy as many frames as possible, repeat channels as necessary.
 	void copyTo( float* outBuffer, int outNumFrames, int outNumChannels ) {
+		if ( outNumFrames>numFrames ) {
+			ofLog( OF_LOG_WARNING, "ofSoundBuffer::copyTo: %i frames requested but only %i are available", outNumFrames, numFrames );
+		}
+		if ( outNumChannels>numChannels ) {
+			ofLog( OF_LOG_WARNING, "ofSoundBuffer::copyTo: %i channels requested but only %i are available, looping to make up the difference", outNumChannels, numChannels );
+		}
 		for ( int i=0; i<min(numFrames,outNumFrames); i++ ) {
 			for ( int j=0; j<outNumChannels; j++ ) {
 				// copy input to output; in cases where input has fewer channels than output, loop through input frames repeatedly
