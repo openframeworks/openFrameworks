@@ -135,10 +135,8 @@ void	ofSaveFrame(bool bUseViewport = false);
 void	ofSaveViewport(string filename);
 
 //--------------------------------------------------
-vector <string>	ofSplitString(const string & text, const string & delimiter);
-
+vector <string> ofSplitString(const string & source, const string & delimiters, bool ignoreEmpty = false, bool trim = false);
 string ofJoinString(vector <string> stringElements, const string & delimiter);
-
 bool ofIsStringInString(string haystack, string needle);
 
 
