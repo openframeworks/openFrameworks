@@ -219,7 +219,7 @@ void ofSaveImage(ofPixels & pix, string fileName, ofImageQualityType qualityLeve
 }
 
 void ofSaveImage(ofPixels & pix, ofBuffer & buffer, ofImageQualityType qualityLevel) {
-	// TODO
+	ofLog(OF_LOG_ERROR, "ofSaveImage(pix, buffer) is not yet implemented");
 }
 
 
