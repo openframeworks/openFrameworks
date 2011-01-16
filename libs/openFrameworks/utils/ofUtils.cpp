@@ -246,10 +246,6 @@ string ofToDataPath(string path, bool makeAbsolute){
 	return path;
 }
 
-ofGetDataPath(){
-
-}
-
 //----------------------------------------
 template <>
 string ofToHex(const string& value) {
