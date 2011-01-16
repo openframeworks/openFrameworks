@@ -64,6 +64,8 @@ class AVFoundationVideoGrabber{
 		bool initGrabber(int w, int h);
 		void updatePixelsCB( CGImageRef & ref );
 	
+		void update();
+	
 		bool isFrameNew();
 		
 		void listDevices();
@@ -91,6 +93,7 @@ class AVFoundationVideoGrabber{
 		
 		int device;
 	
+		bool bHavePixelsChanged;
 		
 		int fps;
 		ofTexture tex;
