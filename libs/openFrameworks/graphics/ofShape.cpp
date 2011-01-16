@@ -24,6 +24,9 @@ void ofPolyline::draw() const {
 	for ( int i=1; i<points.size(); i++ ) {
 		ofLine( points[i-1], points[i] );
 	}
+	if(bClosed) {
+		ofLine( points[points.size()-1], points[0] );
+	}
 }
 
 
