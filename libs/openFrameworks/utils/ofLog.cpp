@@ -37,7 +37,6 @@ ofLogger::ofLogger(){
 
 	// console open, file not opened (added) by default
 	splitterChannel->addChannel(consoleChannel);
-	splitterChannel->addChannel(fileChannel);
 
 	Poco::AutoPtr<Poco::Formatter> formatter(new Poco::PatternFormatter("%t"));
 	formattingChannel = new Poco::FormattingChannel(formatter, splitterChannel);
@@ -169,7 +168,7 @@ void ofLogger::setFileRotationTimestamp(){
 //--------------------------------------------------------------------------------
 void ofLogger::addTopic(const string& logTopic, ofLogLevel logLevel){
 	try{
-		Poco::Logger::create(logTopic, formattingChannel, (int) OF_DEFAULT_LOG_LEVEL);
+		Poco::Logger::create(logTopic, formattingChannel, (int) logLevel);
 	}
 	catch (Poco::ExistsException& e){
 		log(OF_LOG_WARNING, "log topic \""+logTopic+"\" does not exist");
@@ -438,5 +437,5 @@ bool ofLogUsingHeaderFrameNum()		{return ofLogger::instance().usingHeaderFrameNu
 
 void ofLogEnableHeaderMillis()	{ofLogger::instance().enableHeaderMillis();}
 void ofLogDisableHeaderMillis()	{ofLogger::instance().disableHeaderMillis();}
-bool ofLogUsingHeaderMillis()	{return true;}//ofLogger::instance().usingHeaderMillis();}
+bool ofLogUsingHeaderMillis()	{return ofLogger::instance().usingHeaderMillis();}
 	
