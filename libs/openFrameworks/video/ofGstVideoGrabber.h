@@ -28,7 +28,7 @@ struct ofGstCamData{
   bool bInited;
 };
 
-class ofGstVideoGrabber: public ofGstVideoUtils, public ofBaseVideoGrabber{
+class ofGstVideoGrabber: public ofBaseVideoGrabber{
 public:
 	ofGstVideoGrabber();
 	~ofGstVideoGrabber();
@@ -42,20 +42,17 @@ public:
 	void setDesiredFrameRate(int framerate);
 	bool initGrabber(int w, int h);
 
-	void 	update(){ ofGstVideoUtils::update(); }
-
-	virtual bool isStream(){return false;}
-
-	bool 			isFrameNew(){ return ofGstVideoUtils::isFrameNew();}
-	unsigned char * getPixels(){ return ofGstVideoUtils::getPixels();}
-	float 			getHeight(){ return ofGstVideoUtils::getHeight();}
-	float 			getWidth(){ return ofGstVideoUtils::getWidth();}
-
-	void 			close(){ ofGstUtils::close();}
+	void 			update();
+	bool 			isFrameNew();
+	unsigned char * getPixels();
+	float 			getHeight();
+	float 			getWidth();
+	void 			close();
 
 	void			setVerbose(bool bVerbose);
+
+	ofGstVideoUtils *	getGstVideoUtils();
 private:
-	bool				allocate(){return true;}
 	ofGstVideoFormat&	selectFormat(int w, int h, int desired_framerate);
 
 	ofGstCamData		camData;
@@ -63,4 +60,5 @@ private:
 	int					attemptFramerate;
 	int					deviceID;
 	ofPixelFormat		internalPixelFormat;
+	ofGstVideoUtils		videoUtils;
 };

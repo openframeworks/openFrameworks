@@ -9,6 +9,7 @@
 #include "ofEvents.h"
 
 
+class ofGstAppSink;
 
 //-------------------------------------------------
 //----------------------------------------- ofGstUtils
@@ -19,8 +20,8 @@ public:
 	ofGstUtils();
 	virtual ~ofGstUtils();
 
-	bool 	setPipelineWithSink(string pipeline, string sinkname="sink");
-	bool 	setPipelineWithSink(GstElement * pipeline, GstElement * sink);
+	bool 	setPipelineWithSink(string pipeline, string sinkname="sink", bool isStream=false);
+	bool 	setPipelineWithSink(GstElement * pipeline, GstElement * sink, bool isStream=false);
 
 	void 	play();
 	void 	stop(){setPaused(true);}
@@ -47,21 +48,15 @@ public:
 	GstElement 	* getPipeline();
 	GstElement 	* getSink();
 
-	/// every inheriting class needs to implement this in order to signal
-	/// if is a stream or not
-	virtual bool isStream()=0;
-	virtual void update()=0;
 	virtual void close();
 
-protected:
-	/// implement this to get gstreamer callbacks and bus messages
-	virtual bool allocate(bool gotData)=0;
-	virtual GstFlowReturn on_preroll(GstBuffer * buffer){return GST_FLOW_OK;};
-	virtual GstFlowReturn on_buffer(GstBuffer * buffer){return GST_FLOW_OK;};
-	virtual void on_eos(){};
+	void setSinkListener(ofGstAppSink * appsink);
 
-	// return true to set the message as attended so upstream doesn't try to process it
-	virtual bool on_message(GstMessage* msg){return false;};
+protected:
+	// callbacks to get called from gstreamer
+	virtual GstFlowReturn preroll_cb(GstBuffer * buffer);
+	virtual GstFlowReturn buffer_cb(GstBuffer * buffer);
+	virtual void 		  eos_cb();
 
 private:
 	void 				gstHandleMessage();
@@ -77,26 +72,21 @@ private:
 
 	GstElement  *		gstSink;
 	GstElement 	*		gstPipeline;
+	ofGstAppSink * 		appsink;
 
 	bool				posChangingPaused;
 	int					pipelineState;
 	float				speed;
 	gint64				durationNanos;
 	bool				isAppSink;
+	bool				isStream;
 
-
-	// callbacks to get called from gstreamer
+	// the gst callbacks need to be friended to be able to call us
 	friend GstFlowReturn on_new_buffer_from_source (GstAppSink * elt, void * data);
 	friend GstFlowReturn on_new_preroll_from_source (GstAppSink * elt, void * data);
 	friend void on_eos_from_source (GstAppSink * elt, void * data);
 
-	GstFlowReturn preroll_cb(GstBuffer * buffer);
-	GstFlowReturn buffer_cb(GstBuffer * buffer);
-	void eos_cb();
-
 };
-
-
 
 
 
@@ -114,6 +104,8 @@ public:
 
 	bool 			setPipeline(string pipeline, int bpp=24, bool isStream=false, int w=-1, int h=-1);
 
+	bool 			allocate(int w, int h, int bpp);
+
 	bool 			isFrameNew();
 	unsigned char * getPixels();
 	ofPixels 		getOFPixels();
@@ -123,15 +115,19 @@ public:
 	float 			getHeight();
 	float 			getWidth();
 
-	virtual void 	close();
+	void 			close();
+
+	// this events happen in a different thread
+	// do not use them for opengl stuff
+	ofEvent<const ofPixels> prerollEvent;
+	ofEvent<const ofPixels> bufferEvent;
+	ofEvent<const ofEventArgs> eosEvent;
 
 protected:
-	virtual GstFlowReturn	on_preroll(GstBuffer * buffer);
-	virtual GstFlowReturn	on_buffer(GstBuffer * buffer);
-	virtual void			on_eos();
-	virtual bool 	allocate()=0;
+	GstFlowReturn 	preroll_cb(GstBuffer * buffer);
+	GstFlowReturn 	buffer_cb(GstBuffer * buffer);
+	void			eos_cb();
 
-	bool			allocate(bool gotData);
 
 	ofPixels		pixels;				// 24 bit: rgb
 	ofPixels		backPixels;
@@ -142,3 +138,24 @@ private:
 	ofMutex			mutex;
 };
 
+
+//-------------------------------------------------
+//----------------------------------------- appsink listener
+//-------------------------------------------------
+
+class ofGstAppSink{
+public:
+	virtual GstFlowReturn	on_preroll(GstBuffer * buffer){
+		return GST_FLOW_OK;
+	}
+	virtual GstFlowReturn	on_buffer(GstBuffer * buffer){
+		return GST_FLOW_OK;
+	}
+	virtual void			on_eos(){}
+
+	// return true to set the message as attended so upstream doesn't try to process it
+	virtual bool on_message(GstMessage* msg){return false;};
+
+	// pings when enough data has arrived to be able to get sink properties
+	virtual void on_stream_prepared(){};
+};
