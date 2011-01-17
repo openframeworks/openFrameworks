@@ -24,9 +24,10 @@ public:
 	~ofMeshElement();
 	
 	void setMode(int mode);
-	
-	void setupIndicesSolid();
-	void setupIndicesWire();
+
+	void setupIndices();
+//	void setupIndicesSolid();
+//	void setupIndicesWire();
 	
 	void addVertex(const ofVec3f& v);
 	void removeVertex(int index);
@@ -52,15 +53,17 @@ public:
 	int getNumColors();
 	int getNumNormals();
 	int getNumTexCoords();
-	int getNumIndicesSolid();
-	int getNumIndicesWire();
+	int getNumIndices();
+//	int getNumIndicesSolid();
+//	int getNumIndicesWire();
 	
 	ofVec3f* getVerticesPointer();
 	ofColor* getColorsPointer();
 	ofVec3f* getNormalsPointer();
 	ofVec2f* getTexCoordsPointer();
-	GLuint* getSolidIndexPointer();
-	GLuint* getWireIndexPointer();
+	GLuint* getIndexPointer();
+//	GLuint* getSolidIndexPointer();
+//	GLuint* getWireIndexPointer();
 	
 	vector<int>& getFace(int faceId);
 	
@@ -69,8 +72,9 @@ protected:
 	vector<ofColor> colors;
 	vector<ofVec3f> normals;
 	vector<ofVec2f> texCoords;
-	vector<GLuint> indicesSolid;
-	vector<GLuint> indicesWire;
+	vector<GLuint> indices;
+//	vector<GLuint> indicesSolid;
+//	vector<GLuint> indicesWire;
 	int mode;
 	//ofMaterial *mat;
 };

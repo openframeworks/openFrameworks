@@ -37,7 +37,7 @@ void ofMeshElement::addTexCoord(const ofVec2f& t){
 
 //--------------------------------------------------------------
 void ofMeshElement::addIndex(int i){
-	indicesSolid.push_back(i);
+	indices.push_back(i);
 }
 
 //GETTERS
@@ -63,6 +63,12 @@ int ofMeshElement::getNumTexCoords(){
 }
 
 //--------------------------------------------------------------
+int ofMeshElement::getNumIndices(){
+	return indices.size();
+}
+
+/*
+//--------------------------------------------------------------
 int ofMeshElement::getNumIndicesSolid(){
 	return indicesSolid.size();
 }
@@ -71,6 +77,7 @@ int ofMeshElement::getNumIndicesSolid(){
 int ofMeshElement::getNumIndicesWire(){
 	return indicesWire.size();
 }
+ */
 
 //--------------------------------------------------------------
 ofVec3f* ofMeshElement::getVerticesPointer(){
@@ -93,6 +100,12 @@ ofVec2f* ofMeshElement::getTexCoordsPointer(){
 }
 
 //--------------------------------------------------------------
+GLuint* ofMeshElement::getIndexPointer(){
+	return &indices[0];
+}
+
+/*
+//--------------------------------------------------------------
 GLuint* ofMeshElement::getSolidIndexPointer(){
 	return &indicesSolid[0];
 }
@@ -101,36 +114,38 @@ GLuint* ofMeshElement::getSolidIndexPointer(){
 GLuint* ofMeshElement::getWireIndexPointer(){
 	return &indicesWire[0];
 }
+ */
 
-
+/*
 //--------------------------------------------------------------
 vector<int>& ofMeshElement::getFace(int faceNum){
-//	switch(mode){
+	switch(mode){
 		//GL_QUADS
-		indicesSolid[faceNum*4+0];
-		indicesSolid[faceNum*4+1];
-		indicesSolid[faceNum*4+2];
-		indicesSolid[faceNum*4+3];
+		indices[faceNum*4+0];
+		indices[faceNum*4+1];
+		indices[faceNum*4+2];
+		indices[faceNum*4+3];
 
 		//GL_TRIANGLES
-		indicesSolid[faceNum*3+0];
-		indicesSolid[faceNum*3+1];
-		indicesSolid[faceNum*3+2];
+		indices[faceNum*3+0];
+		indices[faceNum*3+1];
+		indices[faceNum*3+2];
 
 		//GL_TRIANGLE_FAN
 		// 1 element per fan
-		indicesSolid[0];
-		indicesSolid[faceNum+1];
-		indicesSolid[faceNum+2];
+		indices[0];
+		indices[faceNum+1];
+		indices[faceNum+2];
 
 		//GL_TRIANGLE_STRIP
 		// 1 element per strip
-		indicesSolid[faceNum+0];
-		indicesSolid[faceNum+1];
-		indicesSolid[faceNum+2];
-//		default:break;
-//	}
+		indices[faceNum+0];
+		indices[faceNum+1];
+		indices[faceNum+2];
+		default:break;
+	}
 }
+ */
 
 //SETTERS
 
@@ -139,26 +154,27 @@ void ofMeshElement::setMode(int m){
 	mode = m;
 }
 
+
 //--------------------------------------------------------------
-void ofMeshElement::setupIndicesSolid(){
-	indicesSolid.clear();
+void ofMeshElement::setupIndices(){
+	indices.clear();
 	switch(mode){
 		case(OF_TRIANGLES_ELEMENT):
 			for(int i = 0; i < vertices.size();i++){
-				indicesSolid.push_back((GLuint)i);
-				indicesSolid.push_back((GLuint)i+1);
-				indicesSolid.push_back((GLuint)i+2);
+				indices.push_back((GLuint)i);
+				indices.push_back((GLuint)i+1);
+				indices.push_back((GLuint)i+2);
 			}
 		break;
 		case(OF_TRIANGLE_STRIP_ELEMENT):
 			for(int i = 0; i < vertices.size();i++){
-				indicesSolid.push_back((GLuint)i);
+				indices.push_back((GLuint)i);
 			}
 		break;
 		case(OF_TRIANGLE_FAN_ELEMENT):
-			indicesSolid.push_back((GLuint)0);
+			indices.push_back((GLuint)0);
 			for(int i = 1; i < vertices.size();i++){
-				indicesSolid.push_back((GLuint)i);
+				indices.push_back((GLuint)i);
 			}
 		break;
 		default:break;
