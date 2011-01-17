@@ -290,8 +290,9 @@ ofImage::~ofImage(){
 
 //----------------------------------------------------------
 void ofImage::reloadTexture(){
-	if (myPixels.bAllocated == true && bUseTexture == true){
-		tex.allocate(myPixels.width, myPixels.height, myPixels.glDataType);
+	if (myPixels.isAllocated() == true && bUseTexture == true){
+		tex.allocate(myPixels.getWidth(), myPixels.getHeight(), myPixels.getGlDataType());
+	}
 }
 
 //----------------------------------------------------------

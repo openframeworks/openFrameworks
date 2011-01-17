@@ -1,9 +1,11 @@
 #include "testApp.h"
+#include "ofxAndroidVideoGrabber.h"
 
 //--------------------------------------------------------------
 void testApp::setup(){
 	ofBackground(255,255,255);
 	ofSetLogLevel(OF_LOG_NOTICE);
+	grabber.setGrabber(new ofxAndroidVideoGrabber);
 	grabber.initGrabber(640,480);
 	one_second_time = ofGetSystemTime();
 	camera_fps = 0;

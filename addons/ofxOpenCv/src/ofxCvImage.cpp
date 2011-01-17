@@ -177,8 +177,8 @@ ofRectangle ofxCvImage::getIntersectionROI( const ofRectangle& r1, const ofRecta
         r3x1 = MAX( r1x1, r2x1 );
         r3y1 = MAX( r1y1, r2y1 );
 
-        r3x2 = CV_MIN( r1x2, r2x2 );
-        r3y2 = CV_MIN( r1y2, r2y2 );
+        r3x2 = MIN( r1x2, r2x2 );
+        r3y2 = MIN( r1y2, r2y2 );
 
         return ofRectangle( r3x1,r3y1, r3x2-r3x1,r3y2-r3y1 );
 

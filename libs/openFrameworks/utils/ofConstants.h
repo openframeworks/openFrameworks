@@ -208,7 +208,7 @@ enum ofLoopType{
 #else 
 	#ifdef TARGET_OF_IPHONE
 		#define OF_VIDEO_PLAYER_IPHONE
-	#else
+	#elif !defined(TARGET_ANDROID)
 		#define OF_VIDEO_PLAYER_QUICKTIME
 	#endif
 #endif

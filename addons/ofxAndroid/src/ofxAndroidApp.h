@@ -22,6 +22,7 @@ public:
 	virtual void touchMoved(int x, int y, int id) {};
 	virtual void touchUp(int x, int y, int id) {};
 	virtual void touchDoubleTap(int x, int y, int id) {};
+	virtual void touchCancelled(int x, int y, int id) {};
 
 	virtual void touchDown(ofTouchEventArgs & touch) {
 		touchDown(touch.x, touch.y, touch.id);
@@ -35,6 +36,9 @@ public:
 	virtual void touchDoubleTap(ofTouchEventArgs & touch) {
 		touchDoubleTap(touch.x, touch.y, touch.id);
 	};
+	virtual void touchCancelled(ofTouchEventArgs & touch){
+		touchCancelled(touch.x, touch.y, touch.id);
+	}
 };
 
 

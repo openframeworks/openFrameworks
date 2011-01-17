@@ -260,6 +260,7 @@ string ofToString(double value, int precision){
 	sstr << fixed << setprecision(precision) << value;
 	return sstr.str();
 #endif
+}
 
 //----------------------------------------
 template <>
@@ -568,6 +569,7 @@ void ofSaveViewport(string filename) {
 #define  vLOGFATAL(...)  __android_log_vprint(ANDROID_LOG_FATAL,LOG_TAG,__VA_ARGS__)
 #define  vLOGVERBOSE(...)  __android_log_vprint(ANDROID_LOG_VERBOSE,LOG_TAG,__VA_ARGS__)
 
+static ofLogLevel currentLogLevel = OF_LOG_NOTICE;
 
 //--------------------------------------------------
 void ofLog(int logLevel, string message){
@@ -613,8 +615,9 @@ void ofLog(int logLevel, string message){
 	}
 }
 
+
 //--------------------------------------------------
-void ofLog(int logLevel, const char* format, ...){
+void ofLog(ofLogLevel logLevel, const char* format, ...){
 	//thanks stefan!
 	//http://www.ozzu.com/cpp-tutorials/tutorial-writing-custom-printf-wrapper-function-t89166.html
 
@@ -661,6 +664,7 @@ void ofLog(int logLevel, const char* format, ...){
 			printf("\n");
 		#endif
 		va_end( args );
+	}
 }
 #endif
 

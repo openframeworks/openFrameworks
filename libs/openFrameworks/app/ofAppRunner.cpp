@@ -43,7 +43,7 @@ void ofSetupOpenGL(ofAppBaseWindow * windowPtr, int w, int h, int screenMode){
 	window = windowPtr;
 	window->setupOpenGL(w, h, screenMode);
 	
-#ifndef TARGET_OF_IPHONE
+#ifndef TARGET_OPENGLES
 	GLenum err = glewInit();
 	if (GLEW_OK != err)
 	{
@@ -84,7 +84,6 @@ void ofExitCallback(){
 	//------------------------
 	// try to close rtAudio:
 	ofSoundStreamClose();
-	#endif
 	//------------------------
 
 

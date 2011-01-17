@@ -14,7 +14,9 @@
 //----------------------------------------
 void ofEnableLighting() {
 	glEnable(GL_LIGHTING);
+#ifndef TARGET_OPENGLES  //TODO: fix this
 	glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
+#endif
 	glEnable(GL_COLOR_MATERIAL);
 }
 

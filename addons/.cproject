@@ -28,7 +28,7 @@
 						<toolChain id="cdt.managedbuild.toolchain.gnu.exe.debug.1444836557" name="Linux GCC" superClass="cdt.managedbuild.toolchain.gnu.exe.debug">
 							<targetPlatform id="cdt.managedbuild.target.gnu.platform.exe.debug.2135966989" name="Debug Platform" superClass="cdt.managedbuild.target.gnu.platform.exe.debug"/>
 							<builder buildPath="${workspace_loc:/androidGraphicsExample/Debug}" id="cdt.managedbuild.target.gnu.builder.exe.debug.2052492123" keepEnvironmentInBuildfile="false" managedBuildOn="true" name="Gnu Make Builder" superClass="cdt.managedbuild.target.gnu.builder.exe.debug"/>
-							<tool command="${TOOLCHAIN_PATH}${ANDROID_PREFIX}ar" id="cdt.managedbuild.tool.gnu.archiver.base.87773861" name="GCC Archiver" superClass="cdt.managedbuild.tool.gnu.archiver.base">
+							<tool command="${TOOLCHAIN_PATH}${ANDROID_PREFIX}ar" commandLinePattern="${COMMAND} ${FLAGS} ${OUTPUT_FLAG}${OUTPUT_PREFIX}${OUTPUT} ${INPUTS}" id="cdt.managedbuild.tool.gnu.archiver.base.87773861" name="GCC Archiver" superClass="cdt.managedbuild.tool.gnu.archiver.base">
 								<option id="gnu.both.lib.option.flags.907345875" name="Archiver flags" superClass="gnu.both.lib.option.flags" value="-r" valueType="string"/>
 							</tool>
 							<tool command="${TOOLCHAIN_PATH}${ANDROID_PREFIX}g++" id="cdt.managedbuild.tool.gnu.cpp.compiler.exe.debug.1914022941" name="GCC C++ Compiler" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.exe.debug">
@@ -39,10 +39,13 @@
 									<listOptionValue builtIn="false" value="&quot;${NDK_ROOT}/platforms/${NDK_PLATFORM}/arch-arm/usr/include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${NDK_ROOT}/sources/cxx-stl/gnu-libstdc++/include/&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${NDK_ROOT}/sources/cxx-stl/gnu-libstdc++/libs/armeabi/include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/3d}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/app}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/events}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/graphics}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/math}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/sound}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/types}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/video}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/utils}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks}&quot;"/>
@@ -119,7 +122,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="ofxFbo|ofxShader|ofxOpenCv/opencv2|ofxOpenCv/libs/opencv/include|ofxMultiTouch|ofxVectorGraphics|ofxiPhone|ofx3DModelLoader|app/ofAppGlutWindow.h|app/ofAppGlutWindow.cpp|communication|video|sound|events|bin" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="ofxAssimpModelLoader|ofxFbo|ofxShader|ofxOpenCv/opencv2|ofxOpenCv/libs/opencv/include|ofxMultiTouch|ofxVectorGraphics|ofxiPhone|ofx3DModelLoader|app/ofAppGlutWindow.h|app/ofAppGlutWindow.cpp|communication|video|sound|events|bin" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -1240,10 +1243,13 @@
 									<listOptionValue builtIn="false" value="&quot;${NDK_ROOT}/platforms/${NDK_PLATFORM}/arch-arm/usr/include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${NDK_ROOT}/sources/cxx-stl/gnu-libstdc++/include/&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${NDK_ROOT}/sources/cxx-stl/gnu-libstdc++/libs/armeabi/include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/3d}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/app}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/events}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/graphics}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/math}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/sound}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/types}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/video}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/utils}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks}&quot;"/>
@@ -1320,7 +1326,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="ofxFbo|ofxShader|ofxOpenCv/opencv2|ofxOpenCv/libs/opencv/include|ofxMultiTouch|ofxVectorGraphics|ofxiPhone|ofx3DModelLoader|app/ofAppGlutWindow.h|app/ofAppGlutWindow.cpp|communication|video|sound|events|bin" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="ofxAssimpModelLoader|ofxFbo|ofxShader|ofxOpenCv/opencv2|ofxOpenCv/libs/opencv/include|ofxMultiTouch|ofxVectorGraphics|ofxiPhone|ofx3DModelLoader|app/ofAppGlutWindow.h|app/ofAppGlutWindow.cpp|communication|video|sound|events|bin" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -2442,11 +2448,14 @@
 								<option id="gnu.cpp.compiler.option.include.paths.2092202471" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${NDK_ROOT}/platforms/${NDK_PLATFORM}/arch-arm/usr/include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${NDK_ROOT}/sources/cxx-stl/gnu-libstdc++/include/&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${NDK_ROOT}/sources/cxx-stl/gnu-libstdc++/libs/armeabi-v7a/include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${NDK_ROOT}/sources/cxx-stl/gnu-libstdc++/libs/armeabi/include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/3d}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/app}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/events}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/graphics}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/math}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/sound}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/types}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/video}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/utils}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks}&quot;"/>
@@ -2528,7 +2537,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="ofxFbo|ofxShader|ofxOpenCv/opencv2|ofxOpenCv/libs/opencv/include|ofxMultiTouch|ofxVectorGraphics|ofxiPhone|ofx3DModelLoader|app/ofAppGlutWindow.h|app/ofAppGlutWindow.cpp|communication|video|sound|events|bin" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="ofxAssimpModelLoader|ofxFbo|ofxShader|ofxOpenCv/opencv2|ofxOpenCv/libs/opencv/include|ofxMultiTouch|ofxVectorGraphics|ofxiPhone|ofx3DModelLoader|app/ofAppGlutWindow.h|app/ofAppGlutWindow.cpp|communication|video|sound|events|bin" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>

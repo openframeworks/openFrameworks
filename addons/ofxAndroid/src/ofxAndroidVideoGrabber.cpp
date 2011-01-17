@@ -5,12 +5,13 @@
  *      Author: arturo
  */
 
-#include "ofVideoGrabber.h"
+#include "ofxAndroidVideoGrabber.h"
 #include "ofxAndroidUtils.h"
 #include <map>
 #include "ofAppRunner.h"
+#include "ofUtils.h"
 
-static map<int,ofVideoGrabber*> instances;
+static map<int,ofxAndroidVideoGrabber*> instances;
 static int cameraId;
 static bool newPixels;
 static unsigned char * buffer = 0;
@@ -52,7 +53,7 @@ static void releaseJavaObject(){
 	}
 }
 
-void ofPauseVideoGrabbers(){
+/*void ofPauseVideoGrabbers(){
 	paused = true;
 	ofLog(OF_LOG_NOTICE,"ofVideoGrabber: releasing textures");
 	map<int,ofVideoGrabber*>::iterator it;
@@ -69,10 +70,10 @@ void ofResumeVideoGrabbers(){
 	}
 	ofLog(OF_LOG_NOTICE,"ofVideoGrabber: textures allocated");
 	paused = false;
-}
+}*/
 
 
-ofVideoGrabber::ofVideoGrabber(){
+ofxAndroidVideoGrabber::ofxAndroidVideoGrabber(){
 	if(instances.size()>0){
 		ofLog(OF_LOG_ERROR,"ofVideoGrabber: This version is limited to 1 camera at the same time");
 		return;
@@ -104,20 +105,20 @@ ofVideoGrabber::ofVideoGrabber(){
 	bGrabberInited = false;
 }
 
-ofVideoGrabber::~ofVideoGrabber(){
+ofxAndroidVideoGrabber::~ofxAndroidVideoGrabber(){
 	instances.erase(cameraId);
 	releaseJavaObject();
 }
 
-void ofVideoGrabber::listDevices(){
+void ofxAndroidVideoGrabber::listDevices(){
 
 }
 
-bool ofVideoGrabber::isFrameNew(){
+bool ofxAndroidVideoGrabber::isFrameNew(){
 	return bIsFrameNew;
 }
 
-void ofVideoGrabber::grabFrame(){
+void ofxAndroidVideoGrabber::update(){
 	if(paused){
 		//ofLog(OF_LOG_WARNING,"ofVideoGrabber paused cannot grab frame");
 		return;
@@ -126,18 +127,17 @@ void ofVideoGrabber::grabFrame(){
 	if(bGrabberInited && newPixels){
 		//ofLog(OF_LOG_NOTICE,"new pixels");
 		newPixels = false;
-		if(bUseTexture) tex.loadData(pixels,width,height,GL_RGB);
 		bIsFrameNew = true;
 	}else{
 		bIsFrameNew = false;
 	}
 }
 
-void ofVideoGrabber::close(){
+void ofxAndroidVideoGrabber::close(){
 
 }
 
-bool ofVideoGrabber::initGrabber(int w, int h, bool bTexture){
+bool ofxAndroidVideoGrabber::initGrabber(int w, int h){
 	if(instances[cameraId]!=this){
 		ofLog(OF_LOG_ERROR,"ofVideoGrabber: Cannot initialize more than one instance in this version");
 		return false;
@@ -162,84 +162,40 @@ bool ofVideoGrabber::initGrabber(int w, int h, bool bTexture){
 	}
 
 	//ofLog(OF_LOG_NOTICE,"new frame callback size: " + ofToString((int)width) + "," + ofToString((int)height));
-	width = w;
-	height = h;
-	pixels = new unsigned char[width*height*3];
-	memset(pixels,0,width*height*3);
-	bUseTexture = bTexture;
-	if(bTexture){
-		tex.allocate(w,h,GL_RGB);
-		tex.loadData(pixels,w,h,GL_RGB);
-	}
+	pixels.allocate(w,h,OF_IMAGE_COLOR);
+	pixels.set(0);
 	bGrabberInited = true;
 
 	ofLog(OF_LOG_NOTICE,"ofVideoGrabber: Camera initialized correctly");
 	return true;
 }
 
-void ofVideoGrabber::videoSettings(){
+void ofxAndroidVideoGrabber::videoSettings(){
 
 }
 
-unsigned char * ofVideoGrabber::getPixels(){
-	return pixels;
+unsigned char * ofxAndroidVideoGrabber::getPixels(){
+	return pixels.getPixels();
 }
 
-ofTexture &	ofVideoGrabber::getTextureReference(){
-	return tex;
-}
-
-void ofVideoGrabber::setVerbose(bool bTalkToMe){
+void ofxAndroidVideoGrabber::setVerbose(bool bTalkToMe){
 
 }
 
-void ofVideoGrabber::setDeviceID(int _deviceID){
+void ofxAndroidVideoGrabber::setDeviceID(int _deviceID){
 
 }
 
-void ofVideoGrabber::setDesiredFrameRate(int framerate){
+void ofxAndroidVideoGrabber::setDesiredFrameRate(int framerate){
 	attemptFramerate = framerate;
 }
 
-void ofVideoGrabber::setUseTexture(bool bUse){
-	bUseTexture = bUse;
+float ofxAndroidVideoGrabber::getHeight(){
+	return pixels.getHeight();
 }
 
-void ofVideoGrabber::draw(float x, float y, float w, float h){
-	if(!paused)
-		tex.draw(x,y,w,h);
-}
-
-void ofVideoGrabber::draw(float x, float y){
-	if(!paused)
-		tex.draw(x,y,width,height);
-}
-
-void ofVideoGrabber::update(){
-	grabFrame();
-}
-
-void ofVideoGrabber::setAnchorPercent(float xPct, float yPct){
-	if(!paused)
-		tex.setAnchorPercent(xPct,yPct);
-}
-
-void ofVideoGrabber::setAnchorPoint(int x, int y){
-	if(!paused)
-		tex.setAnchorPoint(x,y);
-}
-
-void ofVideoGrabber::resetAnchor(){
-	if(!paused)
-		tex.resetAnchor();
-}
-
-float ofVideoGrabber::getHeight(){
-	return height;
-}
-
-float ofVideoGrabber::getWidth(){
-	return width;
+float ofxAndroidVideoGrabber::getWidth(){
+	return pixels.getWidth();
 }
 
 
@@ -357,8 +313,8 @@ Java_cc_openframeworks_OFAndroidVideoGrabber_newFrame(JNIEnv*  env, jobject  thi
 
 		//time_one_frame = ofGetSystemTime();
 		ConvertYUV2RGB(buffer, 																 // y component
-					   buffer+(instances[cameraId]->width*instances[cameraId]->height),		 // uv components
-				       instances[cameraId]->getPixels(),instances[cameraId]->width,instances[cameraId]->height);
+					   buffer+int(instances[cameraId]->getWidth()*instances[cameraId]->getHeight()),		 // uv components
+				       instances[cameraId]->getPixels(),instances[cameraId]->getWidth(),instances[cameraId]->getHeight());
 
 		/*acc_time += ofGetSystemTime() - time_one_frame;
 		num_frames ++;

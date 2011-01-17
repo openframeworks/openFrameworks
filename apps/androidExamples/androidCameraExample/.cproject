@@ -40,10 +40,13 @@
 									<listOptionValue builtIn="false" value="&quot;${NDK_ROOT}/platforms/${NDK_PLATFORM}/arch-arm/usr/include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${NDK_ROOT}/sources/cxx-stl/gnu-libstdc++/include/&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${NDK_ROOT}/sources/cxx-stl/gnu-libstdc++/libs/armeabi/include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/3d}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/app}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/events}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/graphics}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/math}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/sound}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/types}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/video}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/utils}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks}&quot;"/>
@@ -1082,10 +1085,13 @@
 									<listOptionValue builtIn="false" value="&quot;${NDK_ROOT}/platforms/${NDK_PLATFORM}/arch-arm/usr/include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${NDK_ROOT}/sources/cxx-stl/gnu-libstdc++/include/&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${NDK_ROOT}/sources/cxx-stl/gnu-libstdc++/libs/armeabi/include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/3d}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/app}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/events}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/graphics}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/math}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/sound}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/types}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/video}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/utils}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks}&quot;"/>
@@ -2127,10 +2133,13 @@
 									<listOptionValue builtIn="false" value="&quot;${NDK_ROOT}/platforms/${NDK_PLATFORM}/arch-arm/usr/include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${NDK_ROOT}/sources/cxx-stl/gnu-libstdc++/include/&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${NDK_ROOT}/sources/cxx-stl/gnu-libstdc++/libs/armeabi/include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/3d}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/app}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/events}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/graphics}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/math}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/sound}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/types}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/video}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/utils}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks}&quot;"/>
@@ -4083,10 +4092,13 @@
 									<listOptionValue builtIn="false" value="&quot;${NDK_ROOT}/platforms/${NDK_PLATFORM}/arch-arm/usr/include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${NDK_ROOT}/sources/cxx-stl/gnu-libstdc++/include/&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${NDK_ROOT}/sources/cxx-stl/gnu-libstdc++/libs/armeabi/include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/3d}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/app}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/events}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/graphics}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/math}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/sound}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/types}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/video}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/utils}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks}&quot;"/>

@@ -40,10 +40,13 @@
 									<listOptionValue builtIn="false" value="&quot;${NDK_ROOT}/platforms/${NDK_PLATFORM}/arch-arm/usr/include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${NDK_ROOT}/sources/cxx-stl/gnu-libstdc++/include/&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${NDK_ROOT}/sources/cxx-stl/gnu-libstdc++/libs/armeabi/include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/3d}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/app}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/events}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/graphics}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/math}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/sound}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/types}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/video}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/utils}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks}&quot;"/>
@@ -1249,10 +1252,13 @@
 									<listOptionValue builtIn="false" value="&quot;${NDK_ROOT}/platforms/${NDK_PLATFORM}/arch-arm/usr/include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${NDK_ROOT}/sources/cxx-stl/gnu-libstdc++/include/&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${NDK_ROOT}/sources/cxx-stl/gnu-libstdc++/libs/armeabi/include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/3d}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/app}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/events}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/graphics}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/math}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/sound}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/types}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/video}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/utils}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks}&quot;"/>
@@ -1262,6 +1268,7 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/FreeImage/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/poco/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/addons/ofxAndroid/src}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/addons/ofxAccelerometer/src}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/addons/ofxDirList/src}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/addons/ofxNetwork/src}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/addons/ofxThread/src}&quot;"/>
@@ -2460,10 +2467,13 @@
 									<listOptionValue builtIn="false" value="&quot;${NDK_ROOT}/platforms/${NDK_PLATFORM}/arch-arm/usr/include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${NDK_ROOT}/sources/cxx-stl/gnu-libstdc++/include/&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${NDK_ROOT}/sources/cxx-stl/gnu-libstdc++/libs/armeabi/include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/3d}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/app}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/events}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/graphics}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/math}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/sound}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/types}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/video}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/utils}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks}&quot;"/>
@@ -2473,6 +2483,7 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/FreeImage/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/poco/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/addons/ofxAndroid/src}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/addons/ofxAccelerometer/src}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/addons/ofxDirList/src}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/addons/ofxNetwork/src}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/addons/ofxThread/src}&quot;"/>
@@ -2487,7 +2498,7 @@
 								<option id="gnu.cpp.compiler.option.preprocessor.def.307080749" name="Defined symbols (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="ANDROID"/>
 								</option>
-								<option id="gnu.cpp.compiler.option.optimization.flags.717470859" name="Other optimization flags" superClass="gnu.cpp.compiler.option.optimization.flags" value="-s" valueType="string"/>
+								<option id="gnu.cpp.compiler.option.optimization.flags.717470859" name="Other optimization flags" superClass="gnu.cpp.compiler.option.optimization.flags" value="" valueType="string"/>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.638447196" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
 							</tool>
 							<tool command="${TOOLCHAIN_PATH}${ANDROID_PREFIX}gcc " id="cdt.managedbuild.tool.gnu.c.compiler.exe.debug.1626167363" name="GCC C Compiler" superClass="cdt.managedbuild.tool.gnu.c.compiler.exe.debug">
@@ -3664,11 +3675,14 @@
 								<option id="gnu.cpp.compiler.option.include.paths.1547065613" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${NDK_ROOT}/platforms/${NDK_PLATFORM}/arch-arm/usr/include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${NDK_ROOT}/sources/cxx-stl/gnu-libstdc++/include/&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${NDK_ROOT}/sources/cxx-stl/gnu-libstdc++/libs/armeabi-v7a/include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${NDK_ROOT}/sources/cxx-stl/gnu-libstdc++/libs/armeabi/include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/3d}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/app}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/events}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/graphics}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/math}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/sound}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/types}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/video}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/utils}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks}&quot;"/>
@@ -3678,6 +3692,7 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/FreeImage/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/poco/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/addons/ofxAndroid/src}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/addons/ofxAccelerometer/src}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/addons/ofxDirList/src}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/addons/ofxNetwork/src}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/addons/ofxThread/src}&quot;"/>
@@ -3696,7 +3711,7 @@
 									<listOptionValue builtIn="false" value="__ARM_ARCH_5E__"/>
 									<listOptionValue builtIn="false" value="__ARM_ARCH_5TE__"/>
 								</option>
-								<option id="gnu.cpp.compiler.option.optimization.flags.319987527" name="Other optimization flags" superClass="gnu.cpp.compiler.option.optimization.flags" value="-s -march=armv7-a -mfloat-abi=softfp -mfpu=vfp" valueType="string"/>
+								<option id="gnu.cpp.compiler.option.optimization.flags.319987527" name="Other optimization flags" superClass="gnu.cpp.compiler.option.optimization.flags" value="" valueType="string"/>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.445747053" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
 							</tool>
 							<tool command="${TOOLCHAIN_PATH}${ANDROID_PREFIX}gcc " id="cdt.managedbuild.tool.gnu.c.compiler.exe.debug.1297478696" name="GCC C Compiler" superClass="cdt.managedbuild.tool.gnu.c.compiler.exe.debug">

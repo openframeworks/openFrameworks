@@ -30,7 +30,7 @@
 						<toolChain id="cdt.managedbuild.toolchain.gnu.exe.debug.83808544" name="Linux GCC" superClass="cdt.managedbuild.toolchain.gnu.exe.debug">
 							<targetPlatform id="cdt.managedbuild.target.gnu.platform.exe.debug.78236723" name="Debug Platform" superClass="cdt.managedbuild.target.gnu.platform.exe.debug"/>
 							<builder buildPath="${workspace_loc:/androidGraphicsExample/Debug}" id="cdt.managedbuild.target.gnu.builder.exe.debug.989127697" keepEnvironmentInBuildfile="false" managedBuildOn="true" name="Gnu Make Builder" superClass="cdt.managedbuild.target.gnu.builder.exe.debug"/>
-							<tool command="${TOOLCHAIN_PATH}${ANDROID_PREFIX}ar" id="cdt.managedbuild.tool.gnu.archiver.base.1958396067" name="GCC Archiver" superClass="cdt.managedbuild.tool.gnu.archiver.base"/>
+							<tool command="${TOOLCHAIN_PATH}${ANDROID_PREFIX}ar" commandLinePattern="${COMMAND} ${FLAGS} ${OUTPUT_FLAG}${OUTPUT_PREFIX}${OUTPUT} ${INPUTS}" id="cdt.managedbuild.tool.gnu.archiver.base.1958396067" name="GCC Archiver" superClass="cdt.managedbuild.tool.gnu.archiver.base"/>
 							<tool command="${TOOLCHAIN_PATH}${ANDROID_PREFIX}g++" id="cdt.managedbuild.tool.gnu.cpp.compiler.exe.debug.481113060" name="GCC C++ Compiler" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.exe.debug">
 								<option id="gnu.cpp.compiler.exe.debug.option.optimization.level.24037632" name="Optimization Level" superClass="gnu.cpp.compiler.exe.debug.option.optimization.level" value="gnu.cpp.compiler.optimization.level.none" valueType="enumerated"/>
 								<option id="gnu.cpp.compiler.exe.debug.option.debugging.level.302028950" name="Debug Level" superClass="gnu.cpp.compiler.exe.debug.option.debugging.level" value="gnu.cpp.compiler.debugging.level.default" valueType="enumerated"/>
@@ -39,10 +39,13 @@
 									<listOptionValue builtIn="false" value="&quot;${NDK_ROOT}/platforms/${NDK_PLATFORM}/arch-arm/usr/include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${NDK_ROOT}/sources/cxx-stl/gnu-libstdc++/include/&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${NDK_ROOT}/sources/cxx-stl/gnu-libstdc++/libs/armeabi/include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/3d}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/app}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/events}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/graphics}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/math}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/sound}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/types}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/video}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/utils}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks}&quot;"/>
@@ -107,7 +110,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="video/ofVideoPlayer.cpp|video/ofVideoGrabber.cpp|video/ofUCUtils.h|video/ofUCUtils.cpp|video/ofQtUtils.h|video/ofQtUtils.cpp|video/ofGstUtils.h|video/ofGstUtils.cpp|sound/ofSoundStream.cpp|sound/ofSoundPlayer.h|sound/ofSoundPlayer.cpp|app/ofAppGlutWindow.h|app/ofAppGlutWindow.cpp|communication|bin" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="utils/ofLog.cpp|sound/ofFmodSoundPlayer.h|sound/ofFmodSoundPlayer.cpp|video/ofQuickTimePlayer.h|video/ofQuickTimePlayer.cpp|video/ofQuickTimeGrabber.h|video/ofQuickTimeGrabber.cpp|video/ofGstVideoPlayer.h|video/ofGstVideoPlayer.cpp|video/ofGstVideoGrabber.h|video/ofGstVideoGrabber.cpp|video/ofDirectShowGrabber.h|video/ofDirectShowGrabber.cpp|video/ofVideoPlayer.cpp|video/ofVideoGrabber.cpp|video/ofUCUtils.h|video/ofUCUtils.cpp|video/ofQtUtils.h|video/ofQtUtils.cpp|video/ofGstUtils.h|video/ofGstUtils.cpp|sound/ofSoundStream.cpp|sound/ofSoundPlayer.h|sound/ofSoundPlayer.cpp|app/ofAppGlutWindow.h|app/ofAppGlutWindow.cpp|communication|bin" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -1479,10 +1482,13 @@
 									<listOptionValue builtIn="false" value="&quot;${NDK_ROOT}/platforms/${NDK_PLATFORM}/arch-arm/usr/include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${NDK_ROOT}/sources/cxx-stl/gnu-libstdc++/include/&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${NDK_ROOT}/sources/cxx-stl/gnu-libstdc++/libs/armeabi/include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/3d}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/app}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/events}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/graphics}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/math}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/sound}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/types}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/video}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/utils}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks}&quot;"/>
@@ -1551,7 +1557,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="video/ofVideoPlayer.cpp|video/ofVideoGrabber.cpp|video/ofUCUtils.h|video/ofUCUtils.cpp|video/ofQtUtils.h|video/ofQtUtils.cpp|video/ofGstUtils.h|video/ofGstUtils.cpp|sound/ofSoundStream.cpp|sound/ofSoundPlayer.h|sound/ofSoundPlayer.cpp|app/ofAppGlutWindow.h|app/ofAppGlutWindow.cpp|communication|bin" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="utils/ofLog.cpp|sound/ofFmodSoundPlayer.h|sound/ofFmodSoundPlayer.cpp|video/ofQuickTimePlayer.h|video/ofQuickTimePlayer.cpp|video/ofQuickTimeGrabber.h|video/ofQuickTimeGrabber.cpp|video/ofGstVideoPlayer.h|video/ofGstVideoPlayer.cpp|video/ofGstVideoGrabber.h|video/ofGstVideoGrabber.cpp|video/ofDirectShowGrabber.h|video/ofDirectShowGrabber.cpp|video/ofVideoPlayer.cpp|video/ofVideoGrabber.cpp|video/ofUCUtils.h|video/ofUCUtils.cpp|video/ofQtUtils.h|video/ofQtUtils.cpp|video/ofGstUtils.h|video/ofGstUtils.cpp|sound/ofSoundStream.cpp|sound/ofSoundPlayer.h|sound/ofSoundPlayer.cpp|app/ofAppGlutWindow.h|app/ofAppGlutWindow.cpp|communication|bin" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -2924,11 +2930,14 @@
 								<option id="gnu.cpp.compiler.option.include.paths.773858970" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${NDK_ROOT}/platforms/${NDK_PLATFORM}/arch-arm/usr/include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${NDK_ROOT}/sources/cxx-stl/gnu-libstdc++/include/&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${NDK_ROOT}/sources/cxx-stl/gnu-libstdc++/libs/armeabi-v7a/include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${NDK_ROOT}/sources/cxx-stl/gnu-libstdc++/libs/armeabi/include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/3d}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/app}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/events}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/graphics}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/math}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/sound}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/types}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/video}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks/utils}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/openFrameworks}&quot;"/>
@@ -2946,7 +2955,7 @@
 									<listOptionValue builtIn="false" value="__ARM_ARCH_5E__"/>
 									<listOptionValue builtIn="false" value="__ARM_ARCH_5TE__"/>
 								</option>
-								<option id="gnu.cpp.compiler.option.optimization.flags.630748482" name="Other optimization flags" superClass="gnu.cpp.compiler.option.optimization.flags" value="-march=armv7-a -mfloat-abi=softfp -mfpu=vfp" valueType="string"/>
+								<option id="gnu.cpp.compiler.option.optimization.flags.630748482" name="Other optimization flags" superClass="gnu.cpp.compiler.option.optimization.flags" value="" valueType="string"/>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.2044138109" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
 							</tool>
 							<tool command="${TOOLCHAIN_PATH}${ANDROID_PREFIX}gcc " id="cdt.managedbuild.tool.gnu.c.compiler.exe.debug.115349378" name="GCC C Compiler" superClass="cdt.managedbuild.tool.gnu.c.compiler.exe.debug">
@@ -2998,7 +3007,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="video/ofVideoPlayer.cpp|video/ofVideoGrabber.cpp|video/ofUCUtils.h|video/ofUCUtils.cpp|video/ofQtUtils.h|video/ofQtUtils.cpp|video/ofGstUtils.h|video/ofGstUtils.cpp|sound/ofSoundStream.cpp|sound/ofSoundPlayer.h|sound/ofSoundPlayer.cpp|app/ofAppGlutWindow.h|app/ofAppGlutWindow.cpp|communication|bin" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="utils/ofLog.cpp|sound/ofFmodSoundPlayer.h|sound/ofFmodSoundPlayer.cpp|video/ofQuickTimePlayer.h|video/ofQuickTimePlayer.cpp|video/ofQuickTimeGrabber.h|video/ofQuickTimeGrabber.cpp|video/ofGstVideoPlayer.h|video/ofGstVideoPlayer.cpp|video/ofGstVideoGrabber.h|video/ofGstVideoGrabber.cpp|video/ofDirectShowGrabber.h|video/ofDirectShowGrabber.cpp|video/ofVideoPlayer.cpp|video/ofVideoGrabber.cpp|video/ofUCUtils.h|video/ofUCUtils.cpp|video/ofQtUtils.h|video/ofQtUtils.cpp|video/ofGstUtils.h|video/ofGstUtils.cpp|sound/ofSoundStream.cpp|sound/ofSoundPlayer.h|sound/ofSoundPlayer.cpp|app/ofAppGlutWindow.h|app/ofAppGlutWindow.cpp|communication|bin" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>

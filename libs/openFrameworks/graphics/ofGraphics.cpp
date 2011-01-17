@@ -77,15 +77,7 @@ ofRectMode ofGetRectMode(){
 
 //----------------------------------------------------------
 void ofPushView() {
-<<<<<<< HEAD
-#ifndef TARGET_OPENGLES
-	glPushAttrib(GL_VIEWPORT);		// push viewport settings
-#else
-	//TODO: save width & height on ofSetViewport?
-#endif
-	//	glPushAttrib(GL_MATRIX_MODE);	// push active matrix mode
-=======
-	
+
 	GLint viewport[4];
 	glGetIntegerv(GL_VIEWPORT, viewport);
 	
@@ -99,7 +91,6 @@ void ofPushView() {
 		//ofLog(OF_LOG_WARNING, "ofPushView - warning: you have used ofPushView more than %i times without calling ofPopView - check your code!", OF_MAX_VIEWPORT_HISTORY);
 	}
 	
->>>>>>> e47005fb0402f94550624cce66ec33ee82c6450c
 	glMatrixMode(GL_PROJECTION);
 	glPushMatrix();
 	glMatrixMode(GL_MODELVIEW);
@@ -109,23 +100,14 @@ void ofPushView() {
 
 //----------------------------------------------------------
 void ofPopView() {
-<<<<<<< HEAD
-#ifndef TARGET_OPENGLES
-	glPopAttrib();					// pop viewport settings
-#else
-	//TODO: save width & height on ofSetViewport?
-#endif
-	//	glPushAttrib(GL_MATRIX_MODE);	// push active matrix mode
-=======
-	
-	
+
+
 	if( viewportHistory.size() ){
 		ofRectangle viewRect = viewportHistory.front();
 		ofViewport(viewRect.x, viewRect.y, viewRect.width, viewRect.height);
 		viewportHistory.pop_front();
 	}
 	
->>>>>>> e47005fb0402f94550624cce66ec33ee82c6450c
 	glMatrixMode(GL_PROJECTION);
 	glPopMatrix();
 	glMatrixMode(GL_MODELVIEW);
@@ -220,45 +202,43 @@ void ofSetupScreenPerspective(float width, float height, bool vFlip, float fov, 
 void ofSetupScreenOrtho(float width, float height, bool vFlip, float nearDist, float farDist) {
 	if(width == 0) width = ofGetViewportWidth();
 	if(height == 0) height = ofGetViewportHeight();
-	
-	#ifndef TARGET_OPENGLES
 
-<<<<<<< HEAD
+#ifndef TARGET_OPENGLES
+
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-#ifndef TARGET_OPENGLES
-	if(vFlip) glOrtho(0, width, height, 0, nearDist, farDist);
+
+	ofSetCoordHandedness(OF_RIGHT_HANDED);
+
+	if(vFlip) {
+		glOrtho(0, width, height, 0, nearDist, farDist);
+		ofSetCoordHandedness(OF_LEFT_HANDED);
+	}
 	else glOrtho(0, width, 0, height, nearDist, farDist);
-#else
-	float projectionMatrix[] = { 2.0/height, 0.0, 0.0, -1.0,
-	                              0.0, 2.0/width, 0.0, -1.0,
-	                              0.0, 0.0, -1.0, 0.0,
-	                              0.0, 0.0, 0.0, 1.0 };
-	glMultMatrixf(projectionMatrix);
-	//TODO: check that it works ok
-	//http://stackoverflow.com/questions/2847574/opengl-es-2-0-equivalent-of-glortho
-#endif
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-=======
-		glMatrixMode(GL_PROJECTION);
-		glLoadIdentity();
+#else
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
 
-		ofSetCoordHandedness(OF_RIGHT_HANDED);
-
-		if(vFlip) {
-			glOrtho(0, width, height, 0, nearDist, farDist);
-			ofSetCoordHandedness(OF_LEFT_HANDED);
-		}
-		else glOrtho(0, width, 0, height, nearDist, farDist);
-		glMatrixMode(GL_MODELVIEW);
-		glLoadIdentity();
-	
-	#else
-		//FIX: is here http://stackoverflow.com/questions/2847574/opengl-es-2-0-equivalent-of-glortho
-		ofLog(OF_LOG_ERROR, "ofSetupScreenOrtho - you can't use glOrtho with iphone / ES at the moment");
-	#endif 
->>>>>>> e47005fb0402f94550624cce66ec33ee82c6450c
+	ofSetCoordHandedness(OF_RIGHT_HANDED);
+	if(vFlip) {
+		float projectionMatrix[] = { 2.0/height, 0.0, 0.0, -1.0,
+		                              0.0, 2.0/width, 0.0, -1.0,
+		                              0.0, 0.0, -1.0, 0.0,
+		                              0.0, 0.0, 0.0, 1.0 };
+		glMultMatrixf(projectionMatrix);
+	}else{
+		float projectionMatrix[] = {  0.0, 2.0/height, 0.0, -1.0,
+		                              2.0/width, 0.0, 0.0, -1.0,
+		                              0.0, 0.0, -1.0, 0.0,
+		                              0.0, 0.0, 0.0, 1.0 };
+		glMultMatrixf(projectionMatrix);
+		ofSetCoordHandedness(OF_LEFT_HANDED);
+	}
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+#endif
 }
 
 //----------------------------------------------------------

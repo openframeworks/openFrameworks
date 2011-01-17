@@ -54,6 +54,7 @@ public:
 		vector <string> allowedFileExt;
 		vector <string> nameArray;
 		vector <string> pathArray;
+		string relDir;
 	
 };
 
