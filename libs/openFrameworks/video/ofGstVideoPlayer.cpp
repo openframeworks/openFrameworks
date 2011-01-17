@@ -13,7 +13,7 @@ ofGstVideoPlayer::ofGstVideoPlayer(){
 	nFrames						= 0;
 	internalPixelFormat			= OF_PIXELS_RGB;
 	bIsStream					= false;
-
+	videoUtils.setSinkListener(this);
 }
 
 ofGstVideoPlayer::~ofGstVideoPlayer(){
@@ -83,22 +83,21 @@ bool ofGstVideoPlayer::loadMovie(string name){
 	GstElement *audioSink = gst_element_factory_make("gconfaudiosink", NULL);
 	g_object_set (G_OBJECT(gstPipeline),"audio-sink",audioSink,(void*)NULL);
 
-	return setPipelineWithSink(gstPipeline,gstSink);
+	videoUtils.setPipelineWithSink(gstPipeline,gstSink,bIsStream);
+	if(!bIsStream) return allocate();
+	else return true;
 }
 
 
 bool ofGstVideoPlayer::allocate(){
-	guint64 durationNanos = getDurationNanos();
+	guint64 durationNanos = videoUtils.getDurationNanos();
 
 	nFrames		  = 0;
-	if(GstPad* pad = gst_element_get_static_pad(getSink(), "sink")){
+	if(GstPad* pad = gst_element_get_static_pad(videoUtils.getSink(), "sink")){
 		int width,height,bpp=24;
 		if(gst_video_get_size(GST_PAD(pad), &width, &height)){
 			cout << "allocating " << width << ", "<< height << "@" << bpp << endl;
-			pixels.allocate(width,height,bpp);
-			backPixels.allocate(width,height,bpp);
-			pixels.set(0);
-			pixels.set(0);
+			videoUtils.allocate(width,height,bpp);
 		}else{
 			ofLog(OF_LOG_ERROR,"GStreamer: cannot query width and height");
 			return false;
@@ -121,6 +120,10 @@ bool ofGstVideoPlayer::allocate(){
 		ofLog(OF_LOG_ERROR,"GStreamer: cannot get sink pad");
 		return false;
 	}
+}
+
+void ofGstVideoPlayer::on_stream_prepared(){
+	allocate();
 }
 
 int	ofGstVideoPlayer::getCurrentFrame(){
@@ -168,3 +171,90 @@ bool ofGstVideoPlayer::isStream(){
 	return bIsStream;
 }
 
+void ofGstVideoPlayer::update(){
+	videoUtils.update();
+}
+
+void ofGstVideoPlayer::play(){
+	videoUtils.play();
+}
+
+void ofGstVideoPlayer::stop(){
+	videoUtils.stop();
+}
+
+void ofGstVideoPlayer::setPaused(bool bPause){
+	videoUtils.setPaused(bPause);
+}
+
+bool ofGstVideoPlayer::isPaused(){
+	return videoUtils.isPaused();
+}
+
+bool ofGstVideoPlayer::isLoaded(){
+	return videoUtils.isLoaded();
+}
+
+bool ofGstVideoPlayer::isPlaying(){
+	return videoUtils.isPlaying();
+}
+
+float ofGstVideoPlayer::getPosition(){
+	return videoUtils.getPosition();
+}
+
+float ofGstVideoPlayer::getSpeed(){
+	return videoUtils.getSpeed();
+}
+
+float ofGstVideoPlayer::getDuration(){
+	return videoUtils.getDuration();
+}
+
+bool ofGstVideoPlayer::getIsMovieDone(){
+	return videoUtils.getIsMovieDone();
+}
+
+void ofGstVideoPlayer::setPosition(float pct){
+	videoUtils.setPosition(pct);
+}
+
+void ofGstVideoPlayer::setVolume(int volume){
+	videoUtils.setVolume(volume);
+}
+
+void ofGstVideoPlayer::setLoopState(ofLoopType state){
+	videoUtils.setLoopState(state);
+}
+
+int	ofGstVideoPlayer::getLoopState(){
+	return videoUtils.getLoopState();
+}
+
+void ofGstVideoPlayer::setSpeed(float speed){
+	videoUtils.setSpeed(speed);
+}
+
+void ofGstVideoPlayer::close(){
+	videoUtils.close();
+}
+
+bool ofGstVideoPlayer::isFrameNew(){
+	return videoUtils.isFrameNew();
+}
+
+unsigned char * ofGstVideoPlayer::getPixels(){
+	return videoUtils.getPixels();
+}
+
+float ofGstVideoPlayer::getHeight(){
+	return videoUtils.getHeight();
+}
+
+float ofGstVideoPlayer::getWidth(){
+	return videoUtils.getWidth();
+}
+
+ofGstVideoUtils * ofGstVideoPlayer::getGstVideoUtils(){
+	return &videoUtils;
+}

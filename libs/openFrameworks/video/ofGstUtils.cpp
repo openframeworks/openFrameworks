@@ -60,6 +60,8 @@ ofGstUtils::ofGstUtils() {
 
 	isAppSink					= false;
 
+	appsink						= NULL;
+
 	if(!g_thread_supported()){
 		g_thread_init(NULL);
 	}
@@ -84,20 +86,22 @@ ofGstUtils::~ofGstUtils() {
 
 GstFlowReturn ofGstUtils::preroll_cb(GstBuffer * buffer){
 	bIsMovieDone = false;
-	on_preroll(buffer);
+	if(appsink) return appsink->on_preroll(buffer);
+	else return GST_FLOW_OK;
 }
 
 GstFlowReturn ofGstUtils::buffer_cb(GstBuffer * buffer){
 	bIsMovieDone = false;
-	on_buffer(buffer);
+	if(appsink) return appsink->on_buffer(buffer);
+	else return GST_FLOW_OK;
 }
 
 void ofGstUtils::eos_cb(){
 	bIsMovieDone = true;
-	on_eos();
+	if(appsink) appsink->on_eos();
 }
 
-bool ofGstUtils::setPipelineWithSink(string pipeline, string sinkname){
+bool ofGstUtils::setPipelineWithSink(string pipeline, string sinkname, bool isStream){
 	GMainLoop* loop		= g_main_loop_new (NULL, FALSE);
 
 	gchar* pipeline_string =
@@ -114,12 +118,13 @@ bool ofGstUtils::setPipelineWithSink(string pipeline, string sinkname){
 
 	gstSink = gst_bin_get_by_name(GST_BIN(gstPipeline),sinkname.c_str());
 
-	return setPipelineWithSink(gstPipeline,gstSink);
+	return setPipelineWithSink(gstPipeline,gstSink,isStream);
 }
 
-bool ofGstUtils::setPipelineWithSink(GstElement * pipeline, GstElement * sink){
+bool ofGstUtils::setPipelineWithSink(GstElement * pipeline, GstElement * sink, bool isStream_){
 	gstPipeline = pipeline;
 	gstSink = sink;
+	isStream = isStream_;
 
 	if(gstSink){
 		gst_base_sink_set_sync(GST_BASE_SINK(gstSink), true);
@@ -158,15 +163,15 @@ bool ofGstUtils::startPipeline(){
 	}
 
 	// wait for paused state to query the duration
-	if(!isStream()){
+	if(!isStream){
 		GstState state = GST_STATE_PAUSED;
-		gst_element_get_state(gstPipeline,&state,NULL,2*GST_SECOND);
+		if(gst_element_get_state(gstPipeline,&state,NULL,2*GST_SECOND)==GST_STATE_CHANGE_FAILURE){
+			return false;
+		}
 	}
-	bool ret = allocate(false);
 
-	bLoaded = isStream()?true:ret;
+	bLoaded = true;
 
-	if(!ret) return false;
 
 	if(isAppSink){
 		// set the appsink to not emit signals, we are using callbacks instead
@@ -371,7 +376,7 @@ void ofGstUtils::gstHandleMessage(){
 	GstBus *bus = gst_pipeline_get_bus(GST_PIPELINE(gstPipeline));
 	while(gst_bus_have_pending(bus)) {
 		GstMessage* msg = gst_bus_pop(bus);
-		if(on_message(msg)) continue;
+		if(appsink && appsink->on_message(msg)) continue;
 
 		ofLog(OF_LOG_VERBOSE,"GStreamer: Got %s message", GST_MESSAGE_TYPE_NAME(msg));
 
@@ -381,8 +386,8 @@ void ofGstUtils::gstHandleMessage(){
 				gint pctBuffered;
 				gst_message_parse_buffering(msg,&pctBuffered);
 				ofLog(OF_LOG_VERBOSE,"GStreamer: buffering %i\%", pctBuffered);
-				if(isStream() && !bLoaded){
-					allocate(true);
+				if(isStream && !bLoaded && appsink){
+					appsink->on_stream_prepared();
 				}
 				if(pctBuffered<100){
 					gst_element_set_state (gstPipeline, GST_STATE_PAUSED);
@@ -399,8 +404,8 @@ void ofGstUtils::gstHandleMessage(){
 			case GST_MESSAGE_STATE_CHANGED:{
 				GstState oldstate, newstate, pendstate;
 				gst_message_parse_state_changed(msg, &oldstate, &newstate, &pendstate);
-				if(isStream() && !bLoaded){
-					allocate(true);
+				if(isStream && !bLoaded && appsink){
+					appsink->on_stream_prepared();
 				}
 				/*seek_lock();
 				if(posChangingPaused && newstate==GST_STATE_PLAYING){
@@ -504,7 +509,9 @@ GstElement 	* ofGstUtils::getSink(){
 }
 
 
-
+void ofGstUtils::setSinkListener(ofGstAppSink * appsink_){
+	appsink = appsink_;
+}
 
 
 
@@ -591,12 +598,6 @@ float ofGstVideoUtils::getWidth(){
 }
 
 bool ofGstVideoUtils::setPipeline(string pipeline, int bpp, bool isStream, int w, int h){
-	pixels.allocate(w,h,bpp);
-	backPixels.allocate(w,h,bpp);
-
-	pixels.set(0);
-	pixels.set(0);
-
 	string caps;
 	if(bpp==8)
 		caps="video/x-raw-gray, width=%d, height=%d, depth=8, bpp=8";
@@ -608,35 +609,39 @@ bool ofGstVideoUtils::setPipeline(string pipeline, int bpp, bool isStream, int w
 	gchar* pipeline_string =
 		g_strdup_printf((pipeline + " ! appsink name=sink caps=\"" + caps + "\"").c_str(),w,h); // caps=video/x-raw-rgb
 
-
-	return setPipelineWithSink(pipeline_string);
+	if(allocate(w,h,bpp)){
+		return setPipelineWithSink(pipeline_string);
+	}else{
+		return false;
+	}
 }
 
-bool ofGstVideoUtils::allocate(bool gotData){
+bool ofGstVideoUtils::allocate(int w, int h, int bpp){
+	pixels.allocate(w,h,bpp);
+	backPixels.allocate(w,h,bpp);
 
-	if(!pixels.isAllocated() && (!isStream() || !gotData)){
-		mutex.lock();
-		allocate();
-		mutex.unlock();
-	}
+	pixels.set(0);
+	pixels.set(0);
 
-	bHavePixelsChanged = isStream()?false:true;
+	bHavePixelsChanged = pixels.isAllocated();
 	return pixels.isAllocated();
 }
 
-GstFlowReturn ofGstVideoUtils::on_preroll(GstBuffer * buffer){
+
+GstFlowReturn ofGstVideoUtils::preroll_cb(GstBuffer * buffer){
 	guint size;
 
 	size = GST_BUFFER_SIZE (buffer);
 	if(backPixels.isAllocated() && backPixels.getWidth()*backPixels.getHeight()*backPixels.getBytesPerPixel()!=size){
 		ofLogError() << "on_preproll: error preroll buffer size: " << size << "!= init size: " << backPixels.getWidth()*backPixels.getHeight()*backPixels.getBytesPerPixel();
 		gst_buffer_unref (buffer);
-		return GST_FLOW_OK;
+		return GST_FLOW_ERROR;
 	}
 	//mutex.lock();
 	  if(backPixels.isAllocated()){
 		  backPixels.setFromPixels(GST_BUFFER_DATA (buffer),backPixels.getWidth(),backPixels.getHeight(),backPixels.getImageType());
 		  bBackPixelsChanged=true;
+		  ofNotifyEvent(prerollEvent,backPixels);
 	  }else{
 		  ofLogWarning()<< "received a preroll without allocation";
 	  }
@@ -646,10 +651,10 @@ GstFlowReturn ofGstVideoUtils::on_preroll(GstBuffer * buffer){
 	/// we don't need the appsink buffer anymore
 	gst_buffer_unref (buffer);
 
-	return GST_FLOW_OK;
+	return ofGstUtils::preroll_cb(buffer);
 }
 
-GstFlowReturn ofGstVideoUtils::on_buffer(GstBuffer * buffer){
+GstFlowReturn ofGstVideoUtils::buffer_cb(GstBuffer * buffer){
 	guint size;
 
 	size = GST_BUFFER_SIZE (buffer);
@@ -664,6 +669,7 @@ GstFlowReturn ofGstVideoUtils::on_buffer(GstBuffer * buffer){
 	  if(backPixels.isAllocated()){
 		  backPixels.setFromPixels(GST_BUFFER_DATA (buffer),backPixels.getWidth(),backPixels.getHeight(),backPixels.getImageType());
 		  bBackPixelsChanged=true;
+		  ofNotifyEvent(bufferEvent,backPixels);
 	  }else{
 		  ofLogWarning()<< "received a preroll without allocation";
 	  }
@@ -673,9 +679,11 @@ GstFlowReturn ofGstVideoUtils::on_buffer(GstBuffer * buffer){
 	/// we don't need the appsink buffer anymore
 	gst_buffer_unref (buffer);
 
-	return GST_FLOW_OK;
+	return ofGstUtils::buffer_cb(buffer);
 }
 
-void ofGstVideoUtils::on_eos(){
-
+void ofGstVideoUtils::eos_cb(){
+	ofGstUtils::eos_cb();
+	ofEventArgs args;
+	ofNotifyEvent(eosEvent,args);
 }

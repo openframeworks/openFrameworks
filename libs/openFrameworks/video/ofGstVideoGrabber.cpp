@@ -529,8 +529,8 @@ bool ofGstVideoGrabber::initGrabber(int w, int h){
 	}
 
 
-	if(	setPipeline(pipeline_string,bpp,false,w,h) ){
-		play();
+	if(	videoUtils.setPipeline(pipeline_string,bpp,false,w,h) ){
+		videoUtils.play();
 		return true;
 	}else{
 		return false;
@@ -541,3 +541,31 @@ void ofGstVideoGrabber::setDesiredFrameRate(int framerate){
 	attemptFramerate = framerate;
 }
 
+ofGstVideoUtils * ofGstVideoGrabber::getGstVideoUtils(){
+	return &videoUtils;
+}
+
+
+void ofGstVideoGrabber::update(){
+	videoUtils.update();
+}
+
+bool ofGstVideoGrabber::isFrameNew(){
+	return videoUtils.isFrameNew();
+}
+
+unsigned char * ofGstVideoGrabber::getPixels(){
+	return videoUtils.getPixels();
+}
+
+float ofGstVideoGrabber::getHeight(){
+	return videoUtils.getHeight();
+}
+
+float ofGstVideoGrabber::getWidth(){
+	return videoUtils.getWidth();
+}
+
+void ofGstVideoGrabber::close(){
+	videoUtils.close();
+}
