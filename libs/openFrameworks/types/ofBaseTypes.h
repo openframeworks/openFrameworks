@@ -109,7 +109,7 @@ class ofBaseVideoGrabber: public ofBaseVideo{
 	//needs implementing
 	virtual void	listDevices() = 0;		
 	virtual bool	initGrabber(int w, int h) = 0;
-	//virtual void	grabFrame() = 0;
+	virtual void	update() = 0;
 	virtual bool	isFrameNew() = 0;
 	
 	virtual unsigned char 	* getPixels() = 0;
@@ -142,7 +142,7 @@ public:
 	//needs implementing
 	virtual bool				loadMovie(string name) = 0;
 	virtual void				close() = 0;
-	//virtual void				idleMovie() = 0;
+	virtual void				update() = 0;
 	
 	virtual void				play() = 0;
 	virtual void				stop() = 0;		

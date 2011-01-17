@@ -204,13 +204,17 @@ void ofShape::draw(){
 	}
 	if ( bFilled ) {
 #ifdef DRAW_WITH_MESHIES
+		glEnableClientState(GL_VERTEX_ARRAY);
 		for ( int i=0; i<(int)cachedMeshies.size(); i++ ) {
 			ofSetColor( fillColor );
-			glBegin( cachedMeshies[i].mode );
+			glVertexPointer(3, GL_FLOAT, sizeof(ofPoint), &cachedMeshies[i].vertices[0].x);
+			glDrawArrays(cachedMeshies[i].mode, 0, cachedMeshies[i].vertices.size());
+
+			/*glBegin( cachedMeshies[i].mode );
 			for ( int j=0; j<(int)cachedMeshies[i].vertices.size(); j++ ) {
 				glVertex3f( cachedMeshies[i].vertices[j].x, cachedMeshies[i].vertices[j].y, cachedMeshies[i].vertices[j].z );
 			}
-			glEnd();
+			glEnd();*/
 		}
 #else
 		cachedTessellation.drawVertices();

@@ -175,11 +175,7 @@ void ofCurveVertexes(const vector <ofPoint> & curvePoints);
 void ofBezierVertex(float x1, float y1, float x2, float y2, float x3, float y3);
 
 // for polygons
-<<<<<<< HEAD
-void ofSetPolyMode(int mode);
-=======
 void ofSetPolyMode(ofPolyWindingMode mode);
->>>>>>> e47005fb0402f94550624cce66ec33ee82c6450c
 void ofBeginShape();
 void ofVertex(float x, float y);
 void ofVertex(ofPoint & p);
@@ -187,9 +183,3 @@ void ofVertexes(const vector <ofPoint> & polyPoints);
 
 void ofEndShape(bool bClose = false);
 void ofNextContour(bool bClose = false);  // for multi contour shapes!
-<<<<<<< HEAD
-
-
-#endif
-=======
->>>>>>> e47005fb0402f94550624cce66ec33ee82c6450c
