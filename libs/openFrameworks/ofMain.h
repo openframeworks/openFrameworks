@@ -1,12 +1,26 @@
-#ifndef OF_MAIN
-#define OF_MAIN
+#pragma once
 
 //--------------------------
 // utils
 #include "ofConstants.h"
-#include "ofMath.h"
+#include "ofFileUtils.h"
+#include "ofSystemUtils.h"
+#include "ofThread.h"
+#include "ofURLFileLoader.h"
 #include "ofUtils.h"
+
+//--------------------------
+// types
+#include "ofBaseTypes.h"
 #include "ofTypes.h"
+#include "ofColor.h"
+#include "ofPoint.h"
+#include "ofRectangle.h"
+
+//--------------------------
+// math
+#include "ofMath.h"
+#include "ofVectorMath.h"
 
 //--------------------------
 // communication
@@ -21,6 +35,9 @@
 #include "ofTrueTypeFont.h"
 #include "ofGraphics.h"
 #include "ofImage.h"
+#include "ofFbo.h"
+#include "ofShader.h"
+#include "ofPixels.h"
 
 //--------------------------
 // app
@@ -32,6 +49,10 @@
 #include "ofSoundStream.h"
 #ifndef TARGET_ANDROID
 #include "ofSoundPlayer.h"
+#endif
+#ifndef TARGET_OF_IPHONE			//(temp for now, until this is ported)
+	#include "ofSoundUnit.h"
+	#include "ofSoundEffect.h"
 #endif
 
 //--------------------------
@@ -45,4 +66,11 @@
 // events
 #include "ofEvents.h"
 
-#endif
+//--------------------------
+// 3d
+#include "of3dUtils.h"
+#include "ofNode.h"
+#include "ofCamera.h"
+#include "ofMeshNode.h"
+#include "ofEasyCam.h"
+#include "ofLight.h"

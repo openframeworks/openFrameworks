@@ -1,7 +1,7 @@
 //
 // InflatingStream.h
 //
-// $Id: //poco/1.3/Foundation/include/Poco/InflatingStream.h#4 $
+// $Id: //poco/1.4/Foundation/include/Poco/InflatingStream.h#1 $
 //
 // Library: Foundation
 // Package: Streams
@@ -56,7 +56,7 @@ namespace Poco {
 
 class Foundation_API InflatingStreamBuf: public BufferedStreamBuf
 	/// This is the streambuf class used by InflatingInputStream and InflatingOutputStream.
-	/// The actual work is delegated to zlib 1.2.1 (see http://www.gzip.org).
+	/// The actual work is delegated to zlib (see http://zlib.net).
 	/// Both zlib (deflate) streams and gzip streams are supported.
 	/// Output streams should always call close() to ensure
 	/// proper completion of decompression.
@@ -64,17 +64,44 @@ class Foundation_API InflatingStreamBuf: public BufferedStreamBuf
 public:
 	enum StreamType
 	{
-		STREAM_ZLIB,
-		STREAM_GZIP,
-		STREAM_ZIP // ZIP is handled as STREAM_ZLIB, except that we do not check the ADLER32 value (must be checked by an outside class!)
+		STREAM_ZLIB, /// Expect a zlib header, use Adler-32 checksum.
+		STREAM_GZIP, /// Expect a gzip header, use CRC-32 checksum.
+		STREAM_ZIP   /// STREAM_ZIP is handled as STREAM_ZLIB, except that we do not check the ADLER32 value (must be checked by caller)
 	};
 
 	InflatingStreamBuf(std::istream& istr, StreamType type);
-	InflatingStreamBuf(std::ostream& ostr, StreamType type);
-	~InflatingStreamBuf();
-	int close();
-	void reset();
+		/// Creates an InflatingStreamBuf for expanding the compressed data read from
+		/// the give input stream.
 
+	InflatingStreamBuf(std::istream& istr, int windowBits);
+		/// Creates an InflatingStreamBuf for expanding the compressed data read from
+		/// the given input stream.
+		///
+		/// Please refer to the zlib documentation of inflateInit2() for a description
+		/// of the windowBits parameter.
+
+	InflatingStreamBuf(std::ostream& ostr, StreamType type);
+		/// Creates an InflatingStreamBuf for expanding the compressed data passed through
+		/// and forwarding it to the given output stream.
+
+	InflatingStreamBuf(std::ostream& ostr, int windowBits);
+		/// Creates an InflatingStreamBuf for expanding the compressed data passed through
+		/// and forwarding it to the given output stream.
+		///
+		/// Please refer to the zlib documentation of inflateInit2() for a description
+		/// of the windowBits parameter.
+
+	~InflatingStreamBuf();
+		/// Destroys the InflatingStreamBuf.
+		
+	int close();
+		/// Finishes up the stream. 
+		///
+		/// Must be called when inflating to an output stream.
+		
+	void reset();
+		/// Resets the stream buffer.
+		
 protected:
 	int readFromDevice(char* buffer, std::streamsize length);
 	int writeToDevice(const char* buffer, std::streamsize length);
@@ -103,10 +130,33 @@ class Foundation_API InflatingIOS: public virtual std::ios
 {
 public:
 	InflatingIOS(std::ostream& ostr, InflatingStreamBuf::StreamType type = InflatingStreamBuf::STREAM_ZLIB);
-	InflatingIOS(std::istream& istr, InflatingStreamBuf::StreamType type = InflatingStreamBuf::STREAM_ZLIB);
-	~InflatingIOS();
-	InflatingStreamBuf* rdbuf();
+		/// Creates an InflatingIOS for expanding the compressed data passed through
+		/// and forwarding it to the given output stream.
+		
+	InflatingIOS(std::ostream& ostr, int windowBits);
+		/// Creates an InflatingIOS for expanding the compressed data passed through
+		/// and forwarding it to the given output stream.
+		///
+		/// Please refer to the zlib documentation of inflateInit2() for a description
+		/// of the windowBits parameter.
 
+	InflatingIOS(std::istream& istr, InflatingStreamBuf::StreamType type = InflatingStreamBuf::STREAM_ZLIB);
+		/// Creates an InflatingIOS for expanding the compressed data read from 
+		/// the given input stream.
+
+	InflatingIOS(std::istream& istr, int windowBits);
+		/// Creates an InflatingIOS for expanding the compressed data read from 
+		/// the given input stream.
+		///
+		/// Please refer to the zlib documentation of inflateInit2() for a description
+		/// of the windowBits parameter.
+
+	~InflatingIOS();
+		/// Destroys the InflatingIOS.
+		
+	InflatingStreamBuf* rdbuf();
+		/// Returns a pointer to the underlying stream buffer.
+		
 protected:
 	InflatingStreamBuf _buf;
 };
@@ -121,8 +171,24 @@ class Foundation_API InflatingOutputStream: public InflatingIOS, public std::ost
 {
 public:
 	InflatingOutputStream(std::ostream& ostr, InflatingStreamBuf::StreamType type = InflatingStreamBuf::STREAM_ZLIB);
+		/// Creates an InflatingOutputStream for expanding the compressed data passed through
+		/// and forwarding it to the given output stream.
+		
+	InflatingOutputStream(std::ostream& ostr, int windowBits);
+		/// Creates an InflatingOutputStream for expanding the compressed data passed through
+		/// and forwarding it to the given output stream.
+		///
+		/// Please refer to the zlib documentation of inflateInit2() for a description
+		/// of the windowBits parameter.
+
 	~InflatingOutputStream();
+		/// Destroys the InflatingOutputStream.
+		
 	int close();
+		/// Finishes up the stream. 
+		///
+		/// Must be called to ensure all data is properly written to
+		/// the target output stream.
 };
 
 
@@ -141,8 +207,22 @@ class Foundation_API InflatingInputStream: public InflatingIOS, public std::istr
 {
 public:
 	InflatingInputStream(std::istream& istr, InflatingStreamBuf::StreamType type = InflatingStreamBuf::STREAM_ZLIB);
+		/// Creates an InflatingInputStream for expanding the compressed data read from 
+		/// the given input stream.
+
+	InflatingInputStream(std::istream& istr, int windowBits);
+		/// Creates an InflatingInputStream for expanding the compressed data read from 
+		/// the given input stream.
+		///
+		/// Please refer to the zlib documentation of inflateInit2() for a description
+		/// of the windowBits parameter.
+
 	~InflatingInputStream();
+		/// Destroys the InflatingInputStream.
+		
 	void reset();
+		/// Resets the zlib machinery so that another zlib stream can be read from
+		/// the same underlying input stream.
 };
 
 

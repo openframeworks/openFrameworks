@@ -1,7 +1,7 @@
 //
 // PatternFormatter.h
 //
-// $Id: //poco/1.3/Foundation/include/Poco/PatternFormatter.h#3 $
+// $Id: //poco/1.4/Foundation/include/Poco/PatternFormatter.h#1 $
 //
 // Library: Foundation
 // Package: Logging
@@ -60,11 +60,13 @@ class Foundation_API PatternFormatter: public Formatter
 	///   * %t - message text
 	///   * %l - message priority level (1 .. 7)
 	///   * %p - message priority (Fatal, Critical, Error, Warning, Notice, Information, Debug, Trace)
-	///   * %q - abbreviated message priority (F, C, E, W,N, I, D, T)
+	///   * %q - abbreviated message priority (F, C, E, W, N, I, D, T)
 	///   * %P - message process identifier
 	///   * %T - message thread name
 	///   * %I - message thread identifier (numeric)
 	///   * %N - node or host name
+	///   * %U - message source file path (empty string if not set)
+	///   * %u - message source line number (0 if not set)
 	///   * %w - message date/time abbreviated weekday (Mon, Tue, ...)
 	///   * %W - message date/time full weekday (Monday, Tuesday, ...)
 	///   * %b - message date/time abbreviated month (Jan, Feb, ...)
@@ -133,10 +135,6 @@ public:
 protected:
 	static const std::string& getPriorityName(int);
 		/// Returns a string for the given priority value.
-	
-	static void fmt(std::string& str, int value);
-	static void fmt(std::string& str, int value, int width);
-	static void fmt0(std::string& str, int value, int width);
 	
 private:
 	bool        _localTime;

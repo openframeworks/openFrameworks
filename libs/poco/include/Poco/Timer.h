@@ -1,7 +1,7 @@
 //
 // Timer.h
 //
-// $Id: //poco/1.3/Foundation/include/Poco/Timer.h#6 $
+// $Id: //poco/1.4/Foundation/include/Poco/Timer.h#1 $
 //
 // Library: Foundation
 // Package: Threading
@@ -77,8 +77,10 @@ class Foundation_API Timer: protected Runnable
 	/// is 500 milliseconds, and the callback needs 400 milliseconds to
 	/// execute, the callback function is nevertheless called every 500
 	/// milliseconds. If the callback takes longer to execute than the
-	/// interval, the callback function will be immediately called again
-	/// once it returns.
+	/// interval, the callback function will not be called until the next
+	/// proper interval. The number of skipped invocations since the last
+	/// invocation will be recorded and can be obtained by the callback
+	/// by calling skipped().
 	///
 	/// The timer thread is taken from a thread pool, so
 	/// there is a limit to the number of available concurrent timers.
@@ -151,6 +153,11 @@ public:
 		/// Sets the periodic interval. If the timer is already running
 		/// the new interval will be effective when the current interval
 		/// expires.
+		
+	long skipped() const;
+		/// Returns the number of skipped invocations since the last invocation.
+		/// Skipped invocations happen if the timer callback function takes
+		/// longer to execute than the timer interval.
 
 protected:
 	void run();
@@ -160,6 +167,7 @@ private:
 	volatile long _periodicInterval;
 	Event         _wakeUp;
 	Event         _done;
+	long          _skipped;
 	AbstractTimerCallback* _pCallback;
 	Timestamp              _nextInvocation;
 	mutable FastMutex      _mutex;

@@ -1,7 +1,7 @@
 //
 // Delegate.h
 //
-// $Id: //poco/1.3/Foundation/include/Poco/Delegate.h#2 $
+// $Id: //poco/1.4/Foundation/include/Poco/Delegate.h#1 $
 //
 // Library: Foundation
 // Package: Events
@@ -36,8 +36,8 @@
 //
 
 
-#ifndef  Foundation_Delegate_INCLUDED
-#define  Foundation_Delegate_INCLUDED
+#ifndef Foundation_Delegate_INCLUDED
+#define Foundation_Delegate_INCLUDED
 
 
 #include "Poco/Foundation.h"
@@ -233,4 +233,4 @@ static FunctionDelegate<TArgs, false> delegate(void (*NotifyMethod)(TArgs&))
 } // namespace Poco
 
 
-#endif
+#endif // Foundation_Delegate_INCLUDED

@@ -1,7 +1,7 @@
 //
 // ICMPSocketImpl.h
 //
-// $Id: //poco/1.3/Net/include/Poco/Net/ICMPSocketImpl.h#1 $
+// $Id: //poco/1.4/Net/include/Poco/Net/ICMPSocketImpl.h#1 $
 //
 // Library: Net
 // Package: ICMP
@@ -75,6 +75,7 @@ protected:
 
 private:
 	ICMPPacket _icmpPacket;
+	int _timeout;
 };
 
 

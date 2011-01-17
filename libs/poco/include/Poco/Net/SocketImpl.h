@@ -1,7 +1,7 @@
 //
 // SocketImpl.h
 //
-// $Id: //poco/1.3/Net/include/Poco/Net/SocketImpl.h#4 $
+// $Id: //poco/1.4/Net/include/Poco/Net/SocketImpl.h#1 $
 //
 // Library: Net
 // Package: Sockets
@@ -135,12 +135,18 @@ public:
 		///
 		/// Returns the number of bytes sent, which may be
 		/// less than the number of bytes specified.
+		///
+		/// Certain socket implementations may also return a negative
+		/// value denoting a certain condition.
 	
 	virtual int receiveBytes(void* buffer, int length, int flags = 0);
 		/// Receives data from the socket and stores it
 		/// in buffer. Up to length bytes are received.
 		///
 		/// Returns the number of bytes received.
+		///
+		/// Certain socket implementations may also return a negative
+		/// value denoting a certain condition.
 	
 	virtual int sendTo(const void* buffer, int length, const SocketAddress& address, int flags = 0);
 		/// Sends the contents of the given buffer through
@@ -331,11 +337,15 @@ public:
 		/// Returns the blocking mode of the socket.
 		/// This method will only work if the blocking modes of 
 		/// the socket are changed via the setBlocking method!
+		
+	virtual bool secure() const;
+		/// Returns true iff the socket's connection is secure
+		/// (using SSL or TLS).
 
 	int socketError();
 		/// Returns the value of the SO_ERROR socket option.
 	
-	poco_socket_t sockfd();
+	poco_socket_t sockfd() const;
 		/// Returns the socket descriptor for the 
 		/// underlying native socket.
 	
@@ -383,13 +393,9 @@ protected:
 		/// The third argument, proto, is normally set to 0,
 		/// except for raw sockets.
 
-	void setSockfd(poco_socket_t aSocket);
+	void reset(poco_socket_t fd = POCO_INVALID_SOCKET);
 		/// Allows subclasses to set the socket manually, iff no valid socket is set yet!
 	
-	void invalidate();
-	/// Sets a socket to POCO_INVALID_SOCKET. It is assumed that the socket was closed 
-	/// via a prior operation.
-
 	static int lastError();
 		/// Returns the last error code.
 
@@ -424,7 +430,7 @@ private:
 //
 // inlines
 //
-inline poco_socket_t SocketImpl::sockfd()
+inline poco_socket_t SocketImpl::sockfd() const
 {
 	return _sockfd;
 }
@@ -443,12 +449,6 @@ inline int SocketImpl::lastError()
 #else
 	return errno;
 #endif
-}
-
-
-inline void SocketImpl::invalidate()
-{
-	_sockfd = POCO_INVALID_SOCKET;
 }
 
 

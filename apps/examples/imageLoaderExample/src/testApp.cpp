@@ -3,13 +3,16 @@
 
 
 //--------------------------------------------------------------
-void testApp::setup(){	 
+void testApp::setup(){
 	bikers.loadImage("images/bikers.jpg");
 	gears.loadImage("images/gears.gif");
 	tdf.loadImage("images/tdf_1972_poster.jpg");
+	tdf.resize(200,200);
 	tdfSmall.loadImage("images/tdf_1972_poster.jpg");
-	tdfSmall.resize(tdf.width / 4, tdf.height / 4);
+	tdfSmall.resize(tdfSmall.width / 4, tdfSmall.height / 4);
 	tdfSmall.setImageType(OF_IMAGE_GRAYSCALE);
+	tdf.loadImage("images/tdf_1972_poster.jpg");
+	tdf.resize(200,200);
 	transparency.loadImage("images/transparency.png");
 	bikeIcon.loadImage("images/bike_icon.png");
 	bikeIcon.setImageType(OF_IMAGE_GRAYSCALE);
