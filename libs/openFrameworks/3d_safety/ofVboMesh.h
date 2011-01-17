@@ -1,12 +1,10 @@
-//Keith Pasko, Memo Akten
-
 #pragma once
 
-#include "ofMeshElement.h"
+#include "ofMesh.h"
 #include "ofVbo.h"
 
-//TODO:
-// vector of VBOs, 2 per element
+//TODO: implement multiple index arrays to eliminate the need to calculate
+
 
 //enum for drawing mode status
 enum{
@@ -25,16 +23,16 @@ public:
 	ofVboMesh& operator=(const ofVboMesh& v);
 	void clone(const ofVboMesh& v);
 	
-	void setMeshElement(ofMeshElement* m);
+	void setMesh(ofMesh* m);
 	
-	ofMeshElement* getMeshElement();
-	ofMeshElement* getMeshElement() const;
+	ofMesh* getMesh();
+	ofMesh* getMesh() const;
 	
-	bool setupVertices(int usage);
-	bool setupColors(int usage);
-	bool setupNormals(int usage);
-	bool setupTexCoords(int usage);
-	bool setupIndices(int indexMode);
+	void clear();
+	
+	void setupVertices(int usage);
+	void setupColors(int usage);
+	void setupIndices(int indexMode);
 	
 //	void setupNormals(int usage);
 //	void setupTextures(int usage);
@@ -49,8 +47,15 @@ public:
 	
 	void addMeshVertices(const vector<ofVec3f>& verts);
 	
+	// build index array from faces as int* 
+	vector<GLuint> indices;
+	vector<GLuint> wfIndices;
+	
+	//TODO: wrapper classes for ofMesh, so we don't have to use ->
 	//TODO: update methods, generic update
 	
-    ofMeshElement* meshElement;
+    ofMesh* mesh;
 	ofVbo vbo;
+	bool bIsInited;
+	int mode;
 };

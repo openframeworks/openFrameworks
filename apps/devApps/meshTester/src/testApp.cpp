@@ -5,17 +5,18 @@ void testApp::setup(){
 	
 	ofSetLogLevel(OF_LOG_VERBOSE);
     model.loadMeshes("astroBoy_walk.dae",meshes);
-	
+
 	for(int i =0; i < meshes.size();i++){
 		vboMeshes.push_back(ofVboMesh());
-		vboMeshes2.push_back(ofVboMesh());
-		vboMeshes.back().mesh = &meshes[i];
-		vboMeshes2.back().mesh = &meshes[i];
+		vboMeshes.back().meshElement = &meshes[i];
+		
+//		vboMeshes2.push_back(ofVboMesh());
+//		vboMeshes2.back().mesh = &meshes[i];
 	}
 	
     ofEnableBlendMode(OF_BLENDMODE_ALPHA);
     
-    //glEnable(GL_DEPTH_TEST);
+    glEnable(GL_DEPTH_TEST);
 	
 	whichMesh = 0;
 }
@@ -40,20 +41,26 @@ void testApp::draw(){
 
 	/*
 	glBegin(GL_POINTS);
-	for (int i =0; i < vboMeshes[whichMesh].mesh->vertices.size();i++){
+	for (int i =0; i < vboMeshes[whichMesh].mesh->getNumVertices();i++){
 		ofVec3f& curVert = vboMeshes[whichMesh].mesh->vertices.at(i);
 		glVertex3f(curVert.x,curVert.y,curVert.z);
 	}
 	glEnd();
 	 */
-	
+
+		
 //	vboMeshes[0].drawFaces();
+	//
+	
 	ofSetColor(255,0,255);
-	vboMeshes[whichMesh].drawFaces();
-	ofSetColor(255,255,255);
-	vboMeshes[whichMesh].drawVertices();
-	ofSetColor(0,255,0);
-	vboMeshes2[whichMesh].drawWireframe();
+	for (int i =0; i < vboMeshes.size(); i++){
+		ofSetColor(i*255.0/(vboMeshes.size()-1),0,255 - i*255.0/(vboMeshes.size()-1));
+		vboMeshes[i].drawFaces();
+	}
+//	ofSetColor(255,255,255);
+//`	vboMeshes[whichMesh].drawVertices();
+//	ofSetColor(0,255,0);
+//	vboMeshes2[whichMesh].drawWireframe();
 
     glPopMatrix();
     

@@ -9,7 +9,7 @@
 
 //adapted by Keith Pasko from Anton Marini's ofxAssimpModelLoader addon
 
-#import "ofMesh.h"
+#include "ofMeshElement.h"
 
 class ofAssimpMeshLoader{
 	
@@ -17,7 +17,7 @@ public:
 	~ofAssimpMeshLoader();
 	ofAssimpMeshLoader();
 	
-	void loadMeshes(string modelName, vector<ofMesh>& m);
+	void loadMeshes(string modelName, vector<ofMeshElement>& m);
     
 	void draw();
 	
@@ -27,6 +27,6 @@ public:
 	private:
 	// the main Asset Import scene that does the magic.
 	aiScene* scene;
-	void aiMeshToOfMesh(const aiMesh* aim, ofMesh& ofm);
+	void aiMeshToOfMesh(const aiMesh* aim, ofMeshElement& ofm);
 	ofColor aiColorToOfColor(const aiColor4D& c);
 };

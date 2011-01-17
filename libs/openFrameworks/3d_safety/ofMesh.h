@@ -1,0 +1,119 @@
+#pragma once
+
+#include "ofVec3f.h"
+#include "ofVec2f.h"
+#include "ofColor.h"
+#include "ofUtils.h"
+
+//TODO: implement via this
+#define OF_MESH_MAX_VERTS_PER_FACE 3
+#define OF_MAX_TEX_MAPPINGS 1
+#define OF_MAX_COLOR_MAPPINGS 1
+
+class ofFace{
+public:
+	ofFace();
+	ofFace(int vi0, int vi1, int vi2);
+	~ofFace();
+	//TODO: hard-lock this to three?
+	vector<int> indices;
+};
+
+
+class ofMesh{
+public:
+	ofMesh();
+	~ofMesh();
+
+	void clear();
+	int addVertex(ofVec3f pos, ofVec3f normal, ofColor color, ofVec2f texCoord);
+	int addVertex(const ofVec3f& pos);
+	int addFace(int vi1, int vi2, int vi3);
+	void flipNormals();
+	int getFaceVertexId(const ofFace& f, int index);
+	//would like to be reference, but what if there is none?
+	ofVec3f* getFaceVertex(const ofFace& f, int index);
+
+	int numVertices();
+	int numFaces();
+	int numNormals();
+	int numTexCoords();
+	int numColors();
+
+	/*
+	int numTangents(){
+	return tangents.size();
+	}
+
+	int numBiTangents(){
+	return biTangents.size();
+	}
+
+	int getNumColorMaps(){
+	return colors.size();
+	}
+
+	int numTexMaps(){
+	return texCoords.size();
+	}
+	*/
+
+	vector<ofVec3f> vertices;
+	vector<ofVec3f> normals;
+	vector<ofVec2f> texCoords;
+	vector<ofColor> colors;
+	vector<ofFace> faces;
+	
+	vector<
+	struct {
+		vector<int> indices;
+		int mode;	// GL_TRIANGLES;
+		//ofMaterial *mat;
+	}
+	> elements;
+	
+	
+	getFace(int faceNum){
+		
+		//GL_QUADS
+		indices[faceNum*4+0];
+		indices[faceNum*4+1];
+		indices[faceNum*4+2];
+		indices[faceNum*4+3];
+		
+		//GL_TRIANGLES
+		indices[faceNum*3+0];
+		indices[faceNum*3+1];
+		indices[faceNum*3+2];
+		
+		//GL_TRIANGLE_FAN
+		// 1 element per fan
+		indices[0];
+		indices[faceNum+1];
+		indices[faceNum+2];
+		
+		
+		//GL_TRIANGLE_STRIP
+		// 1 element per strip
+		indices[faceNum+0];
+		indices[faceNum+1];
+		indices[faceNum+2];
+	}
+
+	string name;
+	bool bUsingNormals;
+	bool bUsingColors;
+	bool bUsingTexCoords;
+	int faceType;
+	//	int windingType;
+
+	
+	/* to be included?
+	vector<ofVec3f> tangents;
+	vector<ofVec3f> biTangents;
+
+	// TODO: multiple color/texCoord maps?
+	vector <vector <ofColor> > colors;
+	vector <vector <ofVec2f> > texCoords;
+	*/
+};
