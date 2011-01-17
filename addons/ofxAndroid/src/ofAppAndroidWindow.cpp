@@ -21,10 +21,10 @@ static bool paused=true;
 
 static int  sWindowWidth  = 320;
 static int  sWindowHeight = 480;
-static int  sDemoStopped  = 0;
+/*static int  sDemoStopped  = 0;
 static long sTimeOffset   = 0;
 static int  sTimeOffsetInit = 0;
-static long sTimeStopped  = 0;
+static long sTimeStopped  = 0;*/
 
 static bool bSetupScreen = true;
 float			timeNow, timeThen, fps;
@@ -134,12 +134,12 @@ jint JNI_OnLoad(JavaVM* vm, void* reserved)
 }
 
 void
-Java_cc_openframeworks_OFAndroid_setAppName( JNIEnv*  env, jobject  thiz, jstring app_name )
+Java_cc_openframeworks_OFAndroid_setAppDataDir( JNIEnv*  env, jobject  thiz, jstring data_dir )
 {
 	jboolean iscopy;
-	const char *mfile = env->GetStringUTFChars(app_name, &iscopy);
+	const char *mfile = env->GetStringUTFChars(data_dir, &iscopy);
 
-    ofSetDataPathRoot(string("/sdcard/")+mfile+"/");
+    ofSetDataPathRoot(string(mfile)+"/");
 }
 
 void

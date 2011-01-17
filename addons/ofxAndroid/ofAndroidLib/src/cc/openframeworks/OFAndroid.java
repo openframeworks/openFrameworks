@@ -4,8 +4,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.ObjectInputStream.GetField;
 import java.lang.reflect.Field;
-import java.util.Iterator;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
@@ -14,6 +14,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.hardware.SensorManager;
 import android.opengl.GLSurfaceView;
+import android.os.Environment;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
@@ -33,14 +34,23 @@ public class OFAndroid {
 	        Field[] files = raw.getDeclaredFields();
 
     		try{
-    			new File("/sdcard/" + appName).mkdir();
-    		}catch(Exception e){
+    			//File root = Environment.getExternalStorageDirectory();
     			
+    			Log.i("OF","external files dir: "+ ofActivity.getApplicationContext().getExternalFilesDir(null).getAbsolutePath());
+
+    	    	OFAndroid.setAppDataDir(ofActivity.getApplicationContext().getExternalFilesDir(null).getAbsolutePath());
+    			/*Log.i("OF","creating app directory: " + root + "/" +appName);
+    			if(!new File(root + appName).mkdir()){
+    				throw new Exception("couldn't create app directory");
+    			}*/
+    		}catch(Exception e){
+    			Log.e("OF","couldn't create app directory " + appName);
+    			e.printStackTrace();
     		}
     		
 	        for(int i=0; i<files.length; i++){
 	        	int fileId;
-	        	String fileName;
+	        	String fileName="";
 				
 				InputStream from=null;
 				File toFile=null;
@@ -51,7 +61,8 @@ public class OFAndroid {
 					fileName = resName.substring(resName.lastIndexOf("/"));
 					
 					from = ofActivity.getResources().openRawResource(fileId);
-					toFile = new File("/sdcard/" + appName + "/" +fileName);
+					//toFile = new File(Environment.getExternalStorageDirectory() + "/" + appName + "/" +fileName);
+					toFile = new File(ofActivity.getApplicationContext().getExternalFilesDir(null) + fileName);
 					to = new FileOutputStream(toFile);
 					byte[] buffer = new byte[4096];
 					int bytesRead;
@@ -74,10 +85,10 @@ public class OFAndroid {
 	        }
         } catch (ClassNotFoundException e1) { }
         
+        OFAndroid.ofActivity = ofActivity;
+        
         mGLView = new OFGLSurfaceView(ofActivity, appName);
         ofActivity.setContentView(mGLView);
-        
-        accelerometer = new OFAndroidAccelerometer((SensorManager)ofActivity.getSystemService(Context.SENSOR_SERVICE));
     }
 
 	public void start(){
@@ -126,16 +137,21 @@ public class OFAndroid {
 		Log.i("OF","onDestroy");
 		onDestroy();
 	}
+	
+	public static void setupAccelerometer(){
+		 accelerometer = new OFAndroidAccelerometer((SensorManager)ofActivity.getSystemService(Context.SENSOR_SERVICE));
+	}
     
     private GLSurfaceView mGLView;
-    private OFAndroidAccelerometer accelerometer;
+    private static OFAndroidAccelerometer accelerometer;
+    private static Activity ofActivity;
 	 
     static {
     	System.loadLibrary("OFAndroidApp"); 
     }
 
 
-    public static native void setAppName(String app_name);
+    public static native void setAppDataDir(String data_dir);
     public static native void init();
     public static native void onRestart();
     public static native void onPause();
@@ -227,7 +243,6 @@ class OFAndroidWindow implements GLSurfaceView.Renderer {
     	OFAndroid.onSurfaceCreated();
     	if(initialized) return;
     	Log.i("OF","initializing app");
-    	OFAndroid.setAppName(app_name);
     	OFAndroid.init();
     	OFAndroid.setup();
     	initialized = true;

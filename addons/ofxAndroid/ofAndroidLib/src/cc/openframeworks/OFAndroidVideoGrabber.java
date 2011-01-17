@@ -1,6 +1,5 @@
 package cc.openframeworks;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
@@ -112,6 +111,7 @@ public class OFAndroidVideoGrabber extends OFAndroidObject implements Runnable, 
 	}
 
 	public void run() {
+		thread.setPriority(Thread.MAX_PRIORITY);
 		try {
 			addBufferMethod = Camera.class.getMethod("addCallbackBuffer", byte[].class);
 			addBufferMethod.invoke(camera, buffer);
