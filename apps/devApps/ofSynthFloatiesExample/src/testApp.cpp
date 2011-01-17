@@ -62,7 +62,8 @@ void testApp::update(){
 	for ( int i=0; i<floating.size(); i++ ) {
 		floating[i]->update();
 		// unfortunately the filter is mono, so this will do nothing
-		//mixer.setPan( floating[i]->getSoundOutputNodePtr(), (floating[i]->getPosition().x)/ofGetWidth() );
+		mixer.setPan( floating[i]->getSoundOutputNodePtr(), (floating[i]->getPosition().x)/ofGetWidth() );
+		//mixer.setPan( floating[i]->getSoundOutputNodePtr(), 0.0f );
 	}
 
 	// fetch audio data, for visualisation
@@ -94,10 +95,10 @@ void testApp::draw(){
 	}
 	
 	ofSetHexColor(0x333333);
-	char reportString[255];
-	sprintf(reportString, "volume: %6.3f (modify with -/+ keys)\n"
-			"scale: %s (change with s key)   base midi note: %i (change with up/down keys)\n"
-			"  press w to swap the waveform of one unit, v to set all to sawtooth, o to set all to sine" ,
+	char reportString[1024];
+	sprintf(reportString, "click to scatter\n\n\nvolume: %6.3f (modify with -/+ keys)\n"
+			"scale: %s (change with 's' key)   base midi note: %i (change with up/down keys, 'r' for random) \n"
+			"  press 'w' to swap the waveform of one unit, 'v' to set all to sawtooth, 'o' to set all to sine" ,
 			volume, scale==0?"pentatonic":"lydian", baseNote );
 
 	ofDrawBitmapString(reportString,80,380);
@@ -147,7 +148,12 @@ void testApp::keyPressed  (int key){
 		for ( int i=0; i<floating.size(); i++ ) {
 			floating[i]->setBaseMidiNote( baseNote );
 		}
-	}
+	} else if ( key == 'r' ) {
+		baseNote = ofRandom( -30, 400 );
+		for ( int i=0; i<floating.size(); i++ ) {
+			floating[i]->setBaseMidiNote( baseNote );
+		}
+	}		
 	 
 }
 

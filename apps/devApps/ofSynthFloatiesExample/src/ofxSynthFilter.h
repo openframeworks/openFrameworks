@@ -11,9 +11,14 @@ class ofxSynthFilter : public ofSoundEffect{
 		void processSample(float *inputSample);
 		void setRes(float _res);
 	private:
-		float f, p, q, cutoff, resonance;
+	
+	float f, p, q, cutoff, resonance;
+	struct filterState {
 		float b0, b1, b2, b3, b4;
 		float t1, t2;
+	};
+	vector<filterState> filterStates;
+	
 		bool lowPass;
 		void calc();
 };

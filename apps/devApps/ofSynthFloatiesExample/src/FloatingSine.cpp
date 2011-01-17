@@ -50,7 +50,7 @@ void FloatingSine::setup( ofSoundMixer* mixer, vector<FloatingSine*> * n, ofImag
 	tone.setFrequency( frequency );
 	
 	volume.addInputFrom( &tone );
-	volume.setVolume( 4.0f/(n->size()+1) );
+	volume.setVolume( 1.0f/(n->size()) );
 	
 	mixer->addInputFrom( &volume );
 	
@@ -169,7 +169,7 @@ void FloatingSine::update( )
 	
 	// volume
 	float vol = 1.0f-min(1.0f,(distance/ofGetWidth()));
-	volume.setVolume( 4.0f*vol/(neighbours->size()+1) );
+	volume.setVolume( 1.0f*vol/(neighbours->size()) );
 	
 	
 	static const float BUDDY_FORCE_MUL = 1000.0f;
