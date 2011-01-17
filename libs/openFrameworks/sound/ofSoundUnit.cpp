@@ -256,10 +256,16 @@ void ofSoundMixer::setPan( ofSoundSource* input, float pan ) {
 		return;
 	}
 	pan = min(1.0f,max(0.0f,pan));
+	bool found = false;
 	for ( int i=0; i<(int)inputs.size(); i++ ) {
 		if ( inputs[i]->input == input ) {
+			found = true;
 			inputs[i]->pan = pan;
 		}
+	}
+	if ( !found ) { 
+		ofLog( OF_LOG_WARNING, "ofSoundMixer: setPan couldn't find input for '%s' (%x), not setting pan", input->getName(), input );
+		
 	}
 }
 
@@ -301,9 +307,10 @@ void ofSoundMixer::audioRequested( float* output, int numFrames, int numChannels
 			volumePerChannel[j] = (j==0?vol_l:vol_r) * masterVolume;
 		}
 		// mix working into output, respecting pan and volume and preserving interleaving
-		for ( int j=0; j<numFrames*numChannels; j++ )
-		{
-			output[j] += working[j]*volumePerChannel[i%numChannels];
+		for ( int j=0; j<numFrames; j++ ) {
+			for ( int k=0; k<numChannels; k++ ) {
+				output[j*numChannels+k] += working[j*numChannels+k] * volumePerChannel[k];
+			}
 		}
 	}
 	

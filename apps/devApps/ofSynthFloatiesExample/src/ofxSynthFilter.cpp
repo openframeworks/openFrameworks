@@ -2,10 +2,17 @@
 void ofxSynthFilter::setup(){
 	cutoff = 1.0;
 	resonance = 0.0;
-	b0 = b1 = b2 = b3 = b4 = 0.0;  //filter buffers (beware denormals!)
-	t1 = t2 = 0.0;					//temporary buffers
+	
+	filterStates.resize(8);
+	for ( int i=0; i<filterStates.size(); i++ ) { 
+		filterState& fs = filterStates[i];
+		fs.b0 = fs.b1 = fs.b2 = fs.b3 = fs.b4 = 0.0;  //filter buffers (beware denormals!)
+		fs.t1 = fs.t2 = 0.0;					//temporary buffers
+	}
 	lowPass = true;
 	calc();
+	
+
 }
 void ofxSynthFilter::setRes(float _res) {
 	if ( !isnan(_res) && isfinite(_res ) ) {
@@ -35,24 +42,28 @@ void ofxSynthFilter::calc()
 
 void ofxSynthFilter::process( float* input, float *output, int numFrames, int numInChannels, int numOutChannels ){
 	for (int i = 0; i<numFrames; i++) {
-		// clamp input
-		output[i*numOutChannels] = min(1.0f,max(-1.0f,input[i*numInChannels]));
-		output[i*numOutChannels] -= q * b4;				//feedback
-		t1 = b1;  b1 = (output[i*numOutChannels] + b0) * p - b1 * f;
-		t2 = b2;  b2 = (b1 + t1) * p - b2 * f;
-		t1 = b3;  b3 = (b2 + t2) * p - b3 * f;
-		b4 = (b3 + t1) * p - b4 * f;
-		b4 -= b4 * b4 * b4 * 0.166667;		//clipping
-		b0 = output[i*numOutChannels];
-		if(lowPass){
-			output[i*numOutChannels] = b4;
-		}else{
-			output[i*numOutChannels] = output[i*numOutChannels]-b4;
-		}
-		if (numOutChannels > 1) {
-			for (int j=1; j<numOutChannels; j++) {
-				output[i*numOutChannels+j] = output[i*numOutChannels];
+		for ( int j=0; j<numOutChannels; j++ ) {
+			filterState& fs = filterStates[j];
+			
+			// clamp input
+			output[i*numOutChannels+j] = min(1.0f,max(-1.0f,input[i*numInChannels+(j%numInChannels)]));
+			output[i*numOutChannels+j] -= q * fs.b4;				//feedback
+			fs.t1 = fs.b1;  fs.b1 = (output[i*numOutChannels+j] + fs.b0) * p - fs.b1 * f;
+			fs.t2 = fs.b2;  fs.b2 = (fs.b1 + fs.t1) * p - fs.b2 * f;
+			fs.t1 = fs.b3;  fs.b3 = (fs.b2 + fs.t2) * p - fs.b3 * f;
+			fs.b4 = (fs.b3 + fs.t1) * p - fs.b4 * f;
+			fs.b4 -= fs.b4 * fs.b4 * fs.b4 * 0.166667;		//clipping
+			fs.b0 = output[i*numOutChannels+j];
+			if(lowPass){
+				output[i*numOutChannels+j] = fs.b4;
+			}else{
+				output[i*numOutChannels+j] = output[i*numOutChannels+j]-fs.b4;
 			}
+/*			if (numOutChannels > 1) {
+				for (int j=1; j<numOutChannels; j++) {
+					output[i*numOutChannels+j] = output[i*numOutChannels];
+				}
+			}*/
 		}
 	}
 }
