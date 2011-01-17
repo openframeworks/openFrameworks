@@ -86,10 +86,10 @@ Java_cc_openframeworks_OFAndroidSoundStream_initAudioOutput(JNIEnv*  env, jobjec
 	javaEnv = env;
 }*/
 
-static int time_one_frame = 0;
+/*static int time_one_frame = 0;
 static int acc_time = 0;
 static int num_frames = 0;
-static int time_prev_out = 0;
+static int time_prev_out = 0;*/
 
 jint
 Java_cc_openframeworks_OFAndroidSoundStream_audioRequested(JNIEnv*  env, jobject  thiz, jshortArray array, jint numChannels, jint bufferSize){

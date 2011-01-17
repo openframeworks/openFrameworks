@@ -101,6 +101,7 @@ ofVideoGrabber::ofVideoGrabber(){
 	attemptFramerate = 30;
 	newPixels = false;
 	InitConvertTable();
+	bGrabberInited = false;
 }
 
 ofVideoGrabber::~ofVideoGrabber(){
@@ -117,8 +118,13 @@ bool ofVideoGrabber::isFrameNew(){
 }
 
 void ofVideoGrabber::grabFrame(){
-	if(paused) return;
+	if(paused){
+		//ofLog(OF_LOG_WARNING,"ofVideoGrabber paused cannot grab frame");
+		return;
+	}
+	//ofLog(OF_LOG_NOTICE,"updating camera");
 	if(bGrabberInited && newPixels){
+		//ofLog(OF_LOG_NOTICE,"new pixels");
 		newPixels = false;
 		if(bUseTexture) tex.loadData(pixels,width,height,GL_RGB);
 		bIsFrameNew = true;
@@ -166,6 +172,8 @@ bool ofVideoGrabber::initGrabber(int w, int h, bool bTexture){
 		tex.loadData(pixels,w,h,GL_RGB);
 	}
 	bGrabberInited = true;
+
+	ofLog(OF_LOG_NOTICE,"ofVideoGrabber: Camera initialized correctly");
 	return true;
 }
 
@@ -333,15 +341,17 @@ float ofVideoGrabber::getWidth(){
 }
 
 
- static int time_one_frame = 0;
+ /*static int time_one_frame = 0;
  static int acc_time = 0;
  static int num_frames = 0;
- static int time_prev_out = 0;
+ static int time_prev_out = 0;*/
 
 extern "C"{
 jint
 Java_cc_openframeworks_OFAndroidVideoGrabber_newFrame(JNIEnv*  env, jobject  thiz, jbyteArray array, jint width, jint height){
+	//ofLog(OF_LOG_NOTICE,"new pixels callback");
 	if(ofGetAppPtr()!=NULL){
+		//ofLog(OF_LOG_NOTICE,"gettings pixels app not null");
 		buffer = (unsigned char*)env->GetPrimitiveArrayCritical(array, NULL);
 		if(!buffer) return 1;
 
