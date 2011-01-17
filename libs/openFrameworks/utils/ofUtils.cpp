@@ -214,9 +214,15 @@ string ofToDataPath(string path, bool makeAbsolute){
 
 //--------------------------------------------------
 string ofToString(double value, int precision){
+#ifdef TARGET_ANDROID
+	char str_val[1024];
+	sprintf(str_val,("%.0"+ofToString(precision)+"f").c_str(),value);
+	return str_val;
+#else
 	stringstream sstr;
 	sstr << fixed << setprecision(precision) << value;
 	return sstr.str();
+#endif
 }
 
 //--------------------------------------------------
