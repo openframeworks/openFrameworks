@@ -1,8 +1,26 @@
 #include "ofMesh.h"
 
+//--------------------------------------------------------------	
+ofFace::ofFace(){
+}
+
+//--------------------------------------------------------------
+ofFace::ofFace(int vi0, int vi1, int vi2){
+	indices.push_back(vi0);
+	indices.push_back(vi1);
+	indices.push_back(vi2);
+}
+
+//--------------------------------------------------------------
+ofFace::~ofFace(){}
+
 //--------------------------------------------------------------
 ofMesh::ofMesh(){
-
+	name = "";
+	bUsingNormals = false;
+	bUsingColors = false;
+	bUsingTexCoords = false;
+	faceType = 3;
 }
 
 //--------------------------------------------------------------	
@@ -10,10 +28,19 @@ ofMesh::~ofMesh(){}
 
 //--------------------------------------------------------------	
 void ofMesh::clear(){
-
+	vertices.clear();
+	normals.clear();
+	texCoords.clear();
+	faces.clear();
+	colors.clear();
+	
+	name = "";
+	bUsingNormals = false;
+	bUsingColors = false;
+	bUsingTexCoords = false;
+	faceType = -1;
 }
-/*
- 
+
 //--------------------------------------------------------------
 int ofMesh::addVertex(ofVec3f pos, ofVec3f normal, ofColor color, ofVec2f texCoord) {
 	vertices.push_back(ofVec3f(pos));
@@ -41,6 +68,14 @@ int ofMesh::addFace(int vi1, int vi2, int vi3){
 	}else{
 		faces.push_back(ofFace(vi1,vi2,vi3));
 		return faces.size()-1;
+	}
+}
+
+//--------------------------------------------------------------
+
+void ofMesh::flipNormals(){
+	for (int i =0; i < normals.size();i++){
+		normals[i] *= -1;	
 	}
 }
 
@@ -91,4 +126,21 @@ int ofMesh::numTexCoords(){
 int ofMesh::numColors(){
 	return colors.size();			
 }
-*/
+
+/*
+ int numTangents(){
+ return tangents.size();
+ }
+ 
+ int numBiTangents(){
+ return biTangents.size();
+ }
+ 
+ int getNumColorMaps(){
+ return colors.size();
+ }
+ 
+ int numTexMaps(){
+ return texCoords.size();
+ }
+ */

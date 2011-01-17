@@ -17,63 +17,59 @@ ofColor ofAssimpMeshLoader::aiColorToOfColor(const aiColor4D& c){
 	return ofColor(255*c.r,255*c.g,255*c.b,255*c.a);
 }
 
-void ofAssimpMeshLoader::aiMeshToOfMesh(const aiMesh* aim, ofMesh& ofm){
+void ofAssimpMeshLoader::aiMeshToOfMesh(const aiMesh* aim, ofMeshElement& ofm){
+	
+	// default to triangle mode
+	ofm.setMode(OF_TRIANGLES_ELEMENT);
+	
 	// copy vertices
 	for (int i=0; i < aim->mNumVertices;i++){
-		ofm.vertices.push_back(ofVec3f(aim->mVertices[i].x,aim->mVertices[i].y,aim->mVertices[i].z));
+		ofm.addVertex(ofVec3f(aim->mVertices[i].x,aim->mVertices[i].y,aim->mVertices[i].z));
 	}
 	
-	//copy faces
 	for (int i=0; i < aim->mNumFaces;i++){	
-		ofm.faces.push_back(ofFace());
-		for (int j=0; j<aim->mFaces[i].mNumIndices; j++){
-			
-			ofm.faces.back().indices.push_back(aim->mFaces[i].mIndices[j]);
+		if(aim->mFaces[i].mNumIndices>3){
+			ofLog(OF_LOG_WARNING,"non-triangular face found: model face # " + ofToString(i));
 		}
-		if(ofm.faces.back().indices.size()>3){
-			ofLog(OF_LOG_WARNING,"non-triangular face found: face # " + ofToString(ofm.faces.size()-1));
+		for (int j=0; j<aim->mFaces[i].mNumIndices; j++){
+			ofm.addIndex(aim->mFaces[i].mIndices[j]);
 		}
 	}	
-	
+
 	if(aim->HasNormals()){
 		for (int i=0; i < aim->mNumVertices;i++){
-			ofm.normals.push_back(ofVec3f(aim->mNormals[i].x,aim->mNormals[i].y,aim->mNormals[i].z));
+			ofm.addNormal(ofVec3f(aim->mNormals[i].x,aim->mNormals[i].y,aim->mNormals[i].z));
 		}
-	}else{
-		ofm.bUsingNormals = false;
 	}
 	
 	// aiVector3D * 	mTextureCoords [AI_MAX_NUMBER_OF_TEXTURECOORDS]
 	// just one for now
 	if(aim->GetNumUVChannels()>0){
 		for (int i=0; i < aim->mNumVertices;i++){
-			ofm.texCoords.push_back(ofVec2f(aim->mTextureCoords[0][i].x,aim->mTextureCoords[0][i].y));
+			ofm.addTexCoord(ofVec2f(aim->mTextureCoords[0][i].x,aim->mTextureCoords[0][i].y));
 		}
-	}else{
-		ofm.bUsingTexCoords = false;
 	}
 	
-	//aiColor4D * 	mColors [AI_MAX_NUMBER_OF_COLOR_SETS]
-	
+	//aiColor4D * 	mColors [AI_MAX_NUMBER_OF_COLOR_SETS]	
 	// just one for now		
 	if(aim->GetNumColorChannels()>0){
 		for (int i=0; i < aim->mNumVertices;i++){
-			ofm.colors.push_back(aiColorToOfColor(aim->mColors[0][i]));
+			ofm.addColor(aiColorToOfColor(aim->mColors[0][i]));
 		}
-	}else{
-		ofm.bUsingColors = false;
-	}	
+	}
+	
 	// copy name
-	ofm.name = string(aim->mName.data);
+	//ofm.name = string(aim->mName.data);
+	
 	// copy face type
 	//TODO: we are only grabbing the index of the first face, should probably do something smarter
-	ofm.faceType = aim->mFaces[0].mNumIndices;
+	//ofm.faceType = aim->mFaces[0].mNumIndices;
 	
 	//	ofm.materialId = aim->mMaterialIndex;	
 }
 
 //--------------------------------------------------------------
-void ofAssimpMeshLoader::loadMeshes(string modelName,vector<ofMesh>& m){
+void ofAssimpMeshLoader::loadMeshes(string modelName,vector<ofMeshElement>& m){
 	
     // if we have a model loaded, unload the fucker. (pardon anton's french)
     if(scene != NULL){
@@ -103,7 +99,7 @@ void ofAssimpMeshLoader::loadMeshes(string modelName,vector<ofMesh>& m){
 			// current mesh we are introspecting
 			aiMesh* aMesh = scene->mMeshes[i];
 				
-			m[i] = ofMesh();
+			m[i] = ofMeshElement();
 			aiMeshToOfMesh(aMesh,m[i]);
 		}
     }
