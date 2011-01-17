@@ -27,10 +27,10 @@ void testApp::update(){
 void testApp::draw(){
 	// draw the left:
 	ofFill();
-	ofSetColor(0x333333);
+	ofSetHexColor(0x333333);
 	ofRect(20,100,256,100);
 	ofRect(20,250,256,100);
-	ofSetColor(0xFFFFFF);
+	ofSetHexColor(0xFFFFFF);
 	ofNoFill();
 	ofBeginShape();
 	for (int i = 0; i < 256; i++){
@@ -44,7 +44,7 @@ void testApp::draw(){
 	}
 	ofEndShape(false);
 
-	ofSetColor(0x000000);
+	ofSetHexColor(0x000000);
 
 	ofDrawBitmapString("fps: " + ofToString(ofGetFrameRate()),20,20);
 
