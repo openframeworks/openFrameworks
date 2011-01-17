@@ -4,7 +4,7 @@
 void testApp::setup(){
 	ofBackground(255,255,255);
 	ofSetLogLevel(OF_LOG_NOTICE);
-	grabber.initGrabber(320,240);
+	grabber.initGrabber(640,480);
 	one_second_time = ofGetSystemTime();
 	camera_fps = 0;
 	frames_one_sec = 0;
@@ -25,9 +25,9 @@ void testApp::update(){
 
 //--------------------------------------------------------------
 void testApp::draw(){
-	ofSetColor(0xFFFFFF);
+	ofSetHexColor(0xFFFFFF);
 	grabber.draw(5,5);
-	ofSetColor(0x000000);
+	ofSetHexColor(0x000000);
 	ofDrawBitmapString("fps: " + ofToString(ofGetFrameRate()),330,10);
 	ofDrawBitmapString("camera fps: " + ofToString(camera_fps),330,30);
 }
