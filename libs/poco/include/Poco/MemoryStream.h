@@ -1,7 +1,7 @@
 //
 // MemoryStream.h
 //
-// $Id: //poco/1.3/Foundation/include/Poco/MemoryStream.h#3 $
+// $Id: //poco/1.4/Foundation/include/Poco/MemoryStream.h#1 $
 //
 // Library: Foundation
 // Package: Streams
@@ -104,6 +104,14 @@ public:
 		return static_cast<std::streamsize>(this->pptr() - this->pbase());
 	}
 
+	void reset()
+		/// Resets the buffer so that current read and write positions
+		/// will be set to the beginning of the buffer.
+	{
+		this->setg(_pBuffer, _pBuffer, _pBuffer + _bufferSize);
+		this->setp(_pBuffer, _pBuffer + _bufferSize);
+	}
+		
 private:
 	char_type*      _pBuffer;
 	std::streamsize _bufferSize;
@@ -173,6 +181,12 @@ public:
 //
 // inlines
 //
+inline MemoryStreamBuf* MemoryIOS::rdbuf()
+{
+	return &_buf;
+}
+
+
 inline std::streamsize MemoryOutputStream::charsWritten() const
 {
 	return _buf.charsWritten();

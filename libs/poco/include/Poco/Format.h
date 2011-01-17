@@ -1,7 +1,7 @@
 //
 // Format.h
 //
-// $Id: //poco/1.3/Foundation/include/Poco/Format.h#6 $
+// $Id: //poco/1.4/Foundation/include/Poco/Format.h#1 $
 //
 // Library: Foundation
 // Package: Core
@@ -62,10 +62,13 @@ std::string Foundation_API format(const std::string& fmt, const Any& value);
 	/// are copied verbatim to the result. A percent sign (%) marks the beginning
 	/// of a format specification. Format specifications have the following syntax:
 	///
-	///   %[<flags>][<width>][.<precision>][<modifier>]<type>
+	///   %[<index>][<flags>][<width>][.<precision>][<modifier>]<type>
 	///
-	/// Flags, width, precision and prefix are optional. The only required part of
+	/// Index, flags, width, precision and prefix are optional. The only required part of
 	/// the format specification, apart from the percent sign, is the type.
+	///
+	/// The optional index argument has the format "[<n>]" and allows to
+	/// address an argument by its zero-based position (see the example below).
 	///
 	/// Following are valid type specifications and their meaning:
 	///
@@ -86,7 +89,7 @@ std::string Foundation_API format(const std::string& fmt, const Any& value);
 	/// The following flags are supported:
 	///
 	///   * - left align the result within the given field width
-	///   * + prefix the output value with a sign (+ or –) if the output value is of a signed type
+	///   * + prefix the output value with a sign (+ or -) if the output value is of a signed type
 	///   * 0 if width is prefixed with 0, zeros are added until the minimum width is reached
 	///   * # For o, x, X, the # flag prefixes any nonzero output value with 0, 0x, or 0X, respectively; 
 	///     for e, E, f, the # flag forces the output value to contain a decimal point in all cases.
@@ -107,14 +110,16 @@ std::string Foundation_API format(const std::string& fmt, const Any& value);
 	/// to be printed, the number of decimal places, or the number of significant digits.
 	///
 	/// Throws a BadCastException if an argument does not correspond to the type of its format specification.
+	/// Throws an InvalidArgumentException if an argument index is out of range.
 	/// 
 	/// If there are more format specifiers than values, the format specifiers without a corresponding value
 	/// are copied verbatim to output.
 	///
 	/// If there are more values than format specifiers, the superfluous values are ignored.
 	///
-	/// Usage Example:
-	///     std::string s = format("The answer to life, the universe, and everything is %d", 42);
+	/// Usage Examples:
+	///     std::string s1 = format("The answer to life, the universe, and everything is %d", 42);
+	///     std::string s2 = format("second: %[1]d, first: %[0]d", 1, 2);
 
 std::string Foundation_API format(const std::string& fmt, const Any& value1, const Any& value2);
 std::string Foundation_API format(const std::string& fmt, const Any& value1, const Any& value2, const Any& value3);

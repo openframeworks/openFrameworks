@@ -1,7 +1,7 @@
 //
 // Config.h
 //
-// $Id: //poco/1.3/Foundation/include/Poco/Config.h#9 $
+// $Id: //poco/1.4/Foundation/include/Poco/Config.h#1 $
 //
 // Library: Foundation
 // Package: Core
@@ -9,7 +9,7 @@
 //
 // Feature configuration for the POCO libraries.
 //
-// Copyright (c) 2006-2009, Applied Informatics Software Engineering GmbH.
+// Copyright (c) 2006-2010, Applied Informatics Software Engineering GmbH.
 // and Contributors.
 //
 // Permission is hereby granted, free of charge, to any person or organization
@@ -63,6 +63,18 @@
 // Define to desired default thread stack size
 // Zero means OS default
 #define POCO_THREAD_STACK_SIZE 0
+
+
+// Define to override system-provided
+// minimum thread priority value on POSIX
+// platforms (returned by Poco::Thread::getMinOSPriority()).
+// #define POCO_THREAD_PRIORITY_MIN 0
+
+
+// Define to override system-provided
+// maximum thread priority value on POSIX
+// platforms (returned by Poco::Thread::getMaxOSPriority()).
+// #define POCO_THREAD_PRIORITY_MAX 31
 
 
 // Following are options to remove certain features

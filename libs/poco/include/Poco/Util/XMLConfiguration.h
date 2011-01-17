@@ -1,7 +1,7 @@
 //
 // XMLConfiguration.h
 //
-// $Id: //poco/1.3/Util/include/Poco/Util/XMLConfiguration.h#3 $
+// $Id: //poco/1.4/Util/include/Poco/Util/XMLConfiguration.h#1 $
 //
 // Library: Util
 // Package: Configuration
@@ -160,10 +160,12 @@ protected:
 	bool getRaw(const std::string& key, std::string& value) const;
 	void setRaw(const std::string& key, const std::string& value);
 	void enumerate(const std::string& key, Keys& range) const;
+	void removeRaw(const std::string& key);
 	~XMLConfiguration();
 
 private:
 	const Poco::XML::Node* findNode(const std::string& key) const;
+	Poco::XML::Node* findNode(const std::string& key);
 	static Poco::XML::Node* findNode(std::string::const_iterator& it, const std::string::const_iterator& end, Poco::XML::Node* pNode, bool create = false);
 	static Poco::XML::Node* findElement(const std::string& name, Poco::XML::Node* pNode, bool create);
 	static Poco::XML::Node* findElement(int index, Poco::XML::Node* pNode, bool create);

@@ -1,7 +1,7 @@
 //
 // HTTPSession.h
 //
-// $Id: //poco/1.3/Net/include/Poco/Net/HTTPSession.h#4 $
+// $Id: //poco/1.4/Net/include/Poco/Net/HTTPSession.h#1 $
 //
 // Library: Net
 // Package: HTTP
@@ -44,6 +44,7 @@
 #include "Poco/Net/StreamSocket.h"
 #include "Poco/Timespan.h"
 #include "Poco/Exception.h"
+#include "Poco/Any.h"
 #include <ios>
 
 
@@ -92,10 +93,33 @@ public:
 		/// 
 		/// Otherwise, NULL is returned.
 
+	void attachSessionData(const Poco::Any& data);
+		/// Allows to attach an application-specific data 
+		/// item to the session.
+		///
+		/// On the server side, this can be used to manage
+		/// data that must be maintained over the entire
+		/// lifetime of a persistent connection (that is,
+		/// multiple requests sent over the same connection).
+	
+	const Poco::Any& sessionData() const;
+		/// Returns the data attached with attachSessionData(),
+		/// or an empty Poco::Any if no user data has been
+		/// attached.
+
 	enum
 	{
 		HTTP_PORT = 80
 	};
+	
+	StreamSocket detachSocket();
+		/// Detaches the socket from the session.
+		///
+		/// The socket is returned, and a new, uninitialized socket is
+		/// attached to the session.
+
+	StreamSocket& socket();
+		/// Returns a reference to the underlying socket.
 
 protected:
 	HTTPSession();
@@ -144,9 +168,6 @@ protected:
 	int buffered() const;
 		/// Returns the number of bytes in the buffer.
 
-	StreamSocket& socket();
-		/// Returns a reference to the underlying socket.
-		
 	void refill();
 		/// Refills the internal buffer.
 		
@@ -154,12 +175,16 @@ protected:
 		/// Connects the underlying socket to the given address
 		/// and sets the socket's receive timeout.	
 		
+	void attachSocket(const StreamSocket& socket);
+		/// Attaches a socket to the session, replacing the
+		/// previously attached socket.
+
 	void close();
 		/// Closes the underlying socket.
 		
 	void setException(const Poco::Exception& exc);
 		/// Stores a clone of the exception.
-		
+	
 private:
 	enum
 	{
@@ -176,6 +201,7 @@ private:
 	bool             _keepAlive;
 	Poco::Timespan   _timeout;
 	Poco::Exception* _pException;
+	Poco::Any        _data;
 	
 	friend class HTTPStreamBuf;
 	friend class HTTPHeaderStreamBuf;
@@ -214,6 +240,12 @@ inline const Poco::Exception* HTTPSession::networkException() const
 inline int HTTPSession::buffered() const
 {
 	return static_cast<int>(_pEnd - _pCurrent);
+}
+
+
+inline const Poco::Any& HTTPSession::sessionData() const
+{
+	return _data;
 }
 
 

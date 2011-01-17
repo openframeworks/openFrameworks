@@ -1,7 +1,7 @@
 //
 // Timer.h
 //
-// $Id: //poco/1.3/Util/include/Poco/Util/Timer.h#2 $
+// $Id: //poco/1.4/Util/include/Poco/Util/Timer.h#1 $
 //
 // Library: Util
 // Package: Timer
@@ -77,10 +77,16 @@ public:
 	~Timer();
 		/// Destroys the Timer, cancelling all pending tasks.
 		
-	void cancel();
+	void cancel(bool wait = false);
 		/// Cancels all pending tasks.
 		///
 		/// If a task is currently running, it is allowed to finish.
+		///
+		/// Task cancellation is done asynchronously. If wait
+		/// is false, cancel() returns immediately and the
+		/// task queue will be purged as soon as the currently
+		/// running task finishes. If wait is true, waits
+		/// until the queue has been purged.
 	
 	void schedule(TimerTask::Ptr pTask, Poco::Timestamp time);
 		/// Schedules a task for execution at the specified time.

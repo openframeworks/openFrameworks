@@ -1,7 +1,7 @@
 //
 // Exception.h
 //
-// $Id: //poco/1.3/Foundation/include/Poco/Exception.h#4 $
+// $Id: //poco/1.4/Foundation/include/Poco/Exception.h#1 $
 //
 // Library: Foundation
 // Package: Core
@@ -225,6 +225,7 @@ inline int Exception::code() const
 POCO_DECLARE_EXCEPTION(Foundation_API, LogicException, Exception)
 POCO_DECLARE_EXCEPTION(Foundation_API, AssertionViolationException, LogicException)
 POCO_DECLARE_EXCEPTION(Foundation_API, NullPointerException, LogicException)
+POCO_DECLARE_EXCEPTION(Foundation_API, NullValueException, LogicException)
 POCO_DECLARE_EXCEPTION(Foundation_API, BugcheckException, LogicException)
 POCO_DECLARE_EXCEPTION(Foundation_API, InvalidArgumentException, LogicException)
 POCO_DECLARE_EXCEPTION(Foundation_API, NotImplementedException, LogicException)

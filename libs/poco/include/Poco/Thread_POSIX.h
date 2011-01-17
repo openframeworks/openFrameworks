@@ -1,7 +1,7 @@
 //
 // Thread_POSIX.h
 //
-// $Id: //poco/1.3/Foundation/include/Poco/Thread_POSIX.h#10 $
+// $Id: //poco/1.4/Foundation/include/Poco/Thread_POSIX.h#1 $
 //
 // Library: Foundation
 // Package: Threading
@@ -54,9 +54,6 @@
 #endif
 #include <errno.h>
 
-#ifdef ANDROID
-#	include <asm/page.h>
-#endif
 
 namespace Poco {
 
@@ -148,6 +145,7 @@ private:
 			pCallbackTarget(0),
 			thread(0),
 			prio(PRIO_NORMAL_IMPL),
+			osPrio(0),
 			done(false),
 			stackSize(POCO_THREAD_STACK_SIZE)
 		{

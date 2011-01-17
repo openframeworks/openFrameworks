@@ -1,7 +1,7 @@
 //
 // AbstractDelegate.h
 //
-// $Id: //poco/1.3/Foundation/include/Poco/AbstractDelegate.h#2 $
+// $Id: //poco/1.4/Foundation/include/Poco/AbstractDelegate.h#1 $
 //
 // Library: Foundation
 // Package: Events
@@ -36,8 +36,8 @@
 //
 
 
-#ifndef  Foundation_AbstractDelegate_INCLUDED
-#define  Foundation_AbstractDelegate_INCLUDED
+#ifndef Foundation_AbstractDelegate_INCLUDED
+#define Foundation_AbstractDelegate_INCLUDED
 
 
 #include "Poco/Foundation.h"
@@ -69,7 +69,7 @@ public:
 	}
 
 	virtual bool notify(const void* sender, TArgs& arguments) = 0;
-		/// Returns false, if the Delegate is no longer valid, thus indicating an expire
+		/// Returns false, if the Delegate is no longer valid, thus indicating an expire.
 
 	virtual AbstractDelegate* clone() const = 0;
 		/// Returns a deep-copy of the AbstractDelegate
@@ -93,4 +93,4 @@ protected:
 } // namespace Poco
 
 
-#endif
+#endif // Foundation_AbstractDelegate_INCLUDED

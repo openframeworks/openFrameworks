@@ -177,8 +177,8 @@ ofRectangle ofxCvImage::getIntersectionROI( const ofRectangle& r1, const ofRecta
         r3x1 = MAX( r1x1, r2x1 );
         r3y1 = MAX( r1y1, r2y1 );
 
-        r3x2 = MIN( r1x2, r2x2 );
-        r3y2 = MIN( r1y2, r2y2 );
+        r3x2 = CV_MIN( r1x2, r2x2 );
+        r3y2 = CV_MIN( r1y2, r2y2 );
 
         return ofRectangle( r3x1,r3y1, r3x2-r3x1,r3y2-r3y1 );
 
@@ -312,6 +312,18 @@ void  ofxCvImage::drawBlobIntoMe( ofxCvBlob& blob, int color ) {
 void ofxCvImage::draw( float x, float y ) {
     draw( x,y, width, height );
 }
+
+//----------------------------------------------------------
+void ofxCvImage::draw(const ofPoint & point){
+	draw(point.x, point.y);
+}
+
+
+//----------------------------------------------------------
+void ofxCvImage::draw(const ofRectangle & rect){
+	draw(rect.x, rect.y, rect.width, rect.height);
+}
+
 
 //--------------------------------------------------------------------------------
 void ofxCvImage::updateTexture(){

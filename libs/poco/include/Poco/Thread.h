@@ -1,7 +1,7 @@
 //
 // Thread.h
 //
-// $Id: //poco/1.3/Foundation/include/Poco/Thread.h#6 $
+// $Id: //poco/1.4/Foundation/include/Poco/Thread.h#1 $
 //
 // Library: Foundation
 // Package: Threading
@@ -45,7 +45,11 @@
 
 
 #if defined(POCO_OS_FAMILY_WINDOWS)
+#if defined(_WIN32_WCE)
+#include "Poco/Thread_WINCE.h"
+#else
 #include "Poco/Thread_WIN32.h"
+#endif
 #else
 #include "Poco/Thread_POSIX.h"
 #endif
@@ -123,6 +127,8 @@ public:
 	int getOSPriority() const;
 		/// Returns the thread's priority, expressed as an operating system
 		/// specific priority value.
+		///
+		/// May return 0 if the priority has not been explicitly set.
 		
 	static int getMinOSPriority();
 		/// Returns the mininum operating system-specific priority value,

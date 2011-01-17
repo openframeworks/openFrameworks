@@ -1,7 +1,7 @@
 //
 // DefaultStrategy.h
 //
-// $Id: //poco/1.3/Foundation/include/Poco/DefaultStrategy.h#3 $
+// $Id: //poco/1.4/Foundation/include/Poco/DefaultStrategy.h#1 $
 //
 // Library: Foundation
 // Package: Events
@@ -36,8 +36,8 @@
 //
 
 
-#ifndef  Foundation_DefaultStrategy_INCLUDED
-#define  Foundation_DefaultStrategy_INCLUDED
+#ifndef Foundation_DefaultStrategy_INCLUDED
+#define Foundation_DefaultStrategy_INCLUDED
 
 
 #include "Poco/NotificationStrategy.h"
@@ -156,4 +156,4 @@ protected:
 } // namespace Poco
 
 
-#endif
+#endif // Foundation_DefaultStrategy_INCLUDED

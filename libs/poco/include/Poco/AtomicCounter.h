@@ -1,7 +1,7 @@
 //
 // AtomicCounter.h
 //
-// $Id: //poco/1.3/Foundation/include/Poco/AtomicCounter.h#6 $
+// $Id: //poco/1.4/Foundation/include/Poco/AtomicCounter.h#1 $
 //
 // Library: Foundation
 // Package: Core

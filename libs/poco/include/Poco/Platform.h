@@ -1,7 +1,7 @@
 //
 // Platform.h
 //
-// $Id: //poco/1.3/Foundation/include/Poco/Platform.h#5 $
+// $Id: //poco/1.4/Foundation/include/Poco/Platform.h#1 $
 //
 // Library: Foundation
 // Package: Core
@@ -79,9 +79,6 @@
 	#define POCO_OS_FAMILY_UNIX 1
 	#define POCO_OS POCO_OS_TRU64
 #elif defined(linux) || defined(__linux) || defined(__linux__) || defined(__TOS_LINUX__)
-	#define POCO_OS_FAMILY_UNIX 1
-	#define POCO_OS POCO_OS_LINUX
-#elif defined(ANDROID)
 	#define POCO_OS_FAMILY_UNIX 1
 	#define POCO_OS POCO_OS_LINUX
 #elif defined(__APPLE__) || defined(__TOS_MACOS__)

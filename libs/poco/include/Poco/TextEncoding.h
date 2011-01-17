@@ -1,7 +1,7 @@
 //
 // TextEncoding.h
 //
-// $Id: //poco/1.3/Foundation/include/Poco/TextEncoding.h#4 $
+// $Id: //poco/1.4/Foundation/include/Poco/TextEncoding.h#1 $
 //
 // Library: Foundation
 // Package: Text

@@ -1,7 +1,7 @@
 //
 // Environment.h
 //
-// $Id: //poco/1.3/Foundation/include/Poco/Environment.h#4 $
+// $Id: //poco/1.4/Foundation/include/Poco/Environment.h#1 $
 //
 // Library: Foundation
 // Package: Core
@@ -107,6 +107,11 @@ public:
 		///    - BB is the minor version number,
 		///    - CC is the revision number, and
 		///    - DD is the patch level number.
+		///
+		/// Some patch level ranges have special meanings:
+		///    - Dx mark development releases,
+		///    - Ax mark alpha releases, and
+		///    - Bx mark beta releases.
 };
 
 
