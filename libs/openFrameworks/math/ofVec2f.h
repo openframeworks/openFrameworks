@@ -45,6 +45,7 @@ public:
     bool align( const ofVec2f& vec, float tollerance=0.0001 ) const;
     bool alignRad( const ofVec2f& vec, float tollerance=0.0001 ) const;
 	
+	void draw(float len = 20);
 	
     // Overloading for any type to any type
     //
@@ -752,3 +753,51 @@ inline ofVec2f operator/( float f, const ofVec2f& vec ) {
 }
 
 
+inline void ofVec2f::draw(float len) {
+	if(len == 0) 
+		len = length();
+	if(len == 0)
+		return;
+		
+	float dist = length();
+	float xn = x/dist;
+	float yn = y/dist;
+	float cr_x = -yn;
+	float cr_y = xn;
+	
+	float scale = len;
+	float as = 3;
+	float arrow_x = x + ((xn* (scale -6))) ;
+	float arrow_y = y + ((yn* (scale -6)) );
+	float perp_x = cr_x * as;
+	float perp_y = cr_y * as;		
+	float arrow_xa = arrow_x -(perp_x);
+	float arrow_ya = arrow_y -(perp_y);
+	
+	float arrow_xb = arrow_x +(perp_x);
+	float arrow_yb = arrow_y +(perp_y);
+
+	float x_end = x + (xn*scale);
+	float y_end = y + (yn*scale);
+
+	glBegin(GL_LINES);
+		glColor3f(1,0,0);
+		glVertex2f(x,y);
+		glVertex2f(x_end, y_end);
+	glEnd();
+
+	glBegin(GL_LINES);
+		glColor3f(1,0,0.6);
+		glVertex2f(x,y);
+		glColor3f(0,1,1);	
+		glVertex2f(x_end, y_end);
+
+	glEnd();
+	glBegin(GL_TRIANGLES);
+		glColor3f(0,1,1);				
+		glVertex2f(x_end, y_end);
+		glVertex2f(arrow_xa, arrow_ya);
+		glVertex2f(arrow_xb, arrow_yb);
+	glEnd();
+
+}
