@@ -14,7 +14,6 @@
 //----------------------------------------
 ofEasyCam::ofEasyCam():
 distance(100),
-//vel(0, 0),
 mousePrev(0, 0), 
 oldMousePress(false),
 speed(0.1),
@@ -40,16 +39,13 @@ void ofEasyCam::begin(ofRectangle rect) {
 			mousePos.z = sqrtf(diffSquared);
 		}
 		mousePos.z += targetPos.z;
-		mousePos = ofMatrix4x4::getInverseOf(target.getGlobalTransformMatrix()) * mousePos;
+//		mousePos = ofMatrix4x4::getInverseOf(target.getGlobalTransformMatrix()) * mousePos;
 		
 		if(oldMousePress) {
 			ofQuaternion rotAmount;
 			rotAmount.makeRotate(mousePrev, mousePos);
-			target.rotate(rotAmount.conj());
-			//			ofMatrix4x4	m;
-			//			m.makeRotationMatrix(mousePrev, mousePos);
-			//			target.rotate(m.getRotate());
-			//			target.rotate(ofMatrix4x4::getInverseOf(m).getRotate());
+//			target.rotate(rotAmount.conj());
+			target.rotate(rotAmount);
 		}
 		
 		
@@ -61,12 +57,6 @@ void ofEasyCam::begin(ofRectangle rect) {
 		mousePrev = mousePos;
 	}
 	
-	//	pos += vel;
-	//	vel *= (1-drag);
-	//	pos.y = ofClamp(pos.y, -89, 89);
-	//	orbit(pos.x, pos.y, distance, (targetNode ? targetNode->getGlobalPosition() : targetOffset));
-	
-	
 	oldMousePress = ofGetMousePressed(0);
 	
 	ofCamera::begin(rect);
@@ -74,9 +64,7 @@ void ofEasyCam::begin(ofRectangle rect) {
 
 //----------------------------------------
 void ofEasyCam::reset() {
-	//	pos.set(0, 0);
 	target.resetTransform();
-//	vel.set(0, 0);
 	distance = 100;
 }
 
