@@ -14,14 +14,14 @@
 //----------------------------------------
 ofEasyCam::ofEasyCam():
 distance(100),
-mousePrev(0, 0), 
+mousePosViewPrev(0, 0), 
 oldMousePress(false),
 speed(0.1),
 drag(0.1)
 {
 	target.setPosition(0, 0, 0);
 	setPosition(0, 0, distance);
-//	setParent(target);
+	setParent(target);
 }
 
 
@@ -30,6 +30,7 @@ void ofEasyCam::begin(ofRectangle rect) {
 	if(ofGetMousePressed(0)) {
 		ofVec3f targetPos =  target.getGlobalPosition();
 		ofVec3f mousePos(ofGetMouseX() - rect.width/2, rect.height/2 - ofGetMouseY(), targetPos.z);
+		ofVec3f mousePosView;
 		
 		float sphereRadius = min(rect.width, rect.height)/2;
 		float diffSquared = sphereRadius * sphereRadius - (targetPos - mousePos).lengthSquared();
@@ -39,22 +40,17 @@ void ofEasyCam::begin(ofRectangle rect) {
 			mousePos.z = sqrtf(diffSquared);
 		}
 		mousePos.z += targetPos.z;
-//		mousePos = ofMatrix4x4::getInverseOf(target.getGlobalTransformMatrix()) * mousePos;
+		mousePosView = ofMatrix4x4::getInverseOf(target.getGlobalTransformMatrix()) * mousePos;
 		
 		if(oldMousePress) {
 			ofQuaternion rotAmount;
-			rotAmount.makeRotate(mousePrev, mousePos);
-//			target.rotate(rotAmount.conj());
-			target.rotate(rotAmount);
+			rotAmount.makeRotate(mousePosViewPrev, mousePosView);
+			target.rotate(rotAmount.conj());
 		}
 		
+//		printf("mousePos: %f %f %f\n", mousePos.x, mousePos.y, mousePos.z);
 		
-		printf("mousePos: %f %f %f\n", mousePos.x, mousePos.y, mousePos.z);
-		
-		if(oldMousePress) {
-//			vel -= (mousePos - mousePrev) * speed;
-		}
-		mousePrev = mousePos;
+		mousePosViewPrev = ofMatrix4x4::getInverseOf(target.getGlobalTransformMatrix()) * mousePos;
 	}
 	
 	oldMousePress = ofGetMousePressed(0);

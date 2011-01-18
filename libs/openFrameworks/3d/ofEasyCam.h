@@ -39,12 +39,9 @@ protected:
 	ofNode target;
 	float distance;
 
-	ofVec3f mousePrev;
+	ofVec3f mousePosViewPrev;
 	bool oldMousePress;
 
 	float speed;
 	float drag;
-
-	ofVec3f rotAxis;
-	float angle;
 };

@@ -28,12 +28,12 @@ void testApp::draw(){
 
 	cam.begin();
 	
-//	ofDrawAxis(200);	
-//	ofSetColor(255, 255, 0);
-//	ofBox(20);
-//	target.draw();
+	ofDrawAxis(200);	
+	ofSetColor(255, 255, 0);
+	ofBox(20);
+	target.draw();
 	
-	cam.getTarget().draw();
+//	cam.getTarget().draw();
 	
 	cam.end();
 	
