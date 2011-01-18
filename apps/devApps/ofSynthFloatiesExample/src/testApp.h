@@ -29,6 +29,7 @@ public:
 	float   * rAudio;
 	float volume;
 	int baseNote;
+	bool bBackgroundAuto;
 
 	ofSoundEffectPassthrough passthrough;
 	ofxSynthFilter filter;	

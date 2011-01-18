@@ -32,6 +32,8 @@ public:
 	void setBaseMidiNote( float base ) { baseMidiNote = base; }
 	/// 0 = pentatonic, 1 = lydian
 	void setScale( int which );
+	
+	void setBackgroundAuto( bool bAuto );
 
 private:
 	
@@ -50,6 +52,8 @@ private:
 	float distanceUnits;
 	
 	bool sawtooth;
+	
+	bool bBackgroundAuto;
 	
 	const float* scale;
 	int scaleSteps;

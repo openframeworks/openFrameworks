@@ -11,7 +11,7 @@
 #include "FloatingSine.h"
 
 
-static const float RADIUS = 10.0f;
+static const float RADIUS = 30.0f;
 
 
 // pentatonic
@@ -37,30 +37,32 @@ void FloatingSine::setup( ofSoundMixer* mixer, vector<FloatingSine*> * n, ofImag
 
 	setScale( 0 );
 	setBaseMidiNote( BASE_MIDI_NOTE );
-	
+
+	// setup the sound
+	//
+	// we have a chain like this:
+	// [tone generator]---->[volume control]------>[mixer]
+	//
+	// the mixer is shared amongst all objects
+	//
 	int whichScaleNote = ofRandom( 0, 0.99999f*scaleSteps );
 	float midiNote = baseMidiNote + scale[whichScaleNote];
-	float baseFrequency = midiToFrequency( midiNote );
-	//	ofLog(OF_LOG_NOTICE, "tone %x: freq %f", &tone, baseFrequency );
-	
-
-	shellDistance = ofRandom( 100.0f, 200.0f );
-	
-	frequency = baseFrequency;
+	frequency = midiToFrequency( midiNote );
+	octaveOffset = ofRandom( -2.99f, 0.99f );
 	tone.setFrequency( frequency );
-	
+	// tone goes through volume control
 	volume.addInputFrom( &tone );
 	volume.setVolume( 1.0f/(n->size()) );
-	
+	// we add the volume control to the mixer
 	mixer->addInputFrom( &volume );
 	
+	
+	
 	sawtooth = false;
-	
+	bBackgroundAuto = false;
 	velocity = 0;
-	
-	position.set( ofRandom( 3.0f*ofGetWidth()/8, 5.0f*ofGetWidth()/8 ), ofRandom( 3.0f*ofGetHeight()/8, 5.0f*ofGetHeight()/8 ) );
-	
-	
+
+	// colours for sine and sawtooth waveforms
 	sineColour.setHsb( 255.0f*(ofRandom( -10, 10 ) + 221.0f)/360.0f, 
 					   255.0f*(ofRandom( -0.1f, 0.1f ) + 0.79), 
 					   255.0f*(ofRandom( -0.1f, 0.1f ) + 0.66f), 200.0f );
@@ -68,6 +70,11 @@ void FloatingSine::setup( ofSoundMixer* mixer, vector<FloatingSine*> * n, ofImag
 					   255.0f*(ofRandom( -0.1f, 0.1f ) + 0.79), 
 					   255.0f*(ofRandom( -0.1f, 0.1f ) + 0.66f), 200.0f );
 	
+	// setup motion behaviour
+	// each dot has a 'buddy' that it tries to maintain a fixed multiple of shellDistance away from
+	// each dot also has an 'enemy' that it tries to run away from
+	shellDistance = ofRandom( 100.0f, 200.0f );
+	position.set( ofRandom( 3.0f*ofGetWidth()/8, 5.0f*ofGetWidth()/8 ), ofRandom( 3.0f*ofGetHeight()/8, 5.0f*ofGetHeight()/8 ) );
 	if ( neighbours->size() >= 3 )
 	{
 		buddy = ofRandomuf()*0.99999f*neighbours->size();
@@ -89,7 +96,6 @@ void FloatingSine::setup( ofSoundMixer* mixer, vector<FloatingSine*> * n, ofImag
 		enemy = 0;
 	}
 	
-	octaveOffset = ofRandom( -2.99f, 0.99f );
 }
 
 
@@ -130,18 +136,17 @@ void FloatingSine::update( )
 	// damp the velocity
 	velocity *= powf(0.99f,ofGetLastFrameTime());
 
-
 	ofVec2f delta = neighbours->at( buddy )->position - position;
 	float distance = delta.length();
 	ofVec2f deltaNorm = delta/distance;
 	
 	distanceUnits = distance/shellDistance;
 	
-	// calculate distance in terms of shells
+	// calculate distance in terms of shellDistance
 	int whichScaleNote = distanceUnits;
 	float remainder = distanceUnits - whichScaleNote;
-	if ( remainder > 0.5f )
-	{
+	if ( remainder > 0.5f ) {
+		// round
 		distanceUnits += 1.0f;
 		whichScaleNote += 1.0f;
 		remainder = 1.0f-remainder;
@@ -149,64 +154,37 @@ void FloatingSine::update( )
 
 	// update frequency
 	float midiNote = baseMidiNote;
-	while ( whichScaleNote>=scaleSteps )
-	{
+	while ( whichScaleNote>=scaleSteps ) {
 		midiNote += 12; 
 		whichScaleNote -= scaleSteps;
 	}
-	
+
+	// convert scale steps to actual scale notes
 	float scaleNote = scale[whichScaleNote%scaleSteps];
 	float nextScaleNote = scale[(whichScaleNote+1)%scaleSteps];
 	float prevScaleNote = scale[(whichScaleNote+4)%scaleSteps];
-	if ( prevScaleNote>nextScaleNote) 
-	{
+	if ( prevScaleNote>nextScaleNote) {
+		// wrap
 		nextScaleNote += 12.0f;
 	} 
-	
-/*	midiNote += (nextScaleNote-prevScaleNote)*sinf(remainder*2.0f*TWO_PI);
-	tone.setFrequency( midiToFrequency( midiNote ) );*/
+
+	// set the actual frequency, adding on a detune calculated from remainder
 	tone.setFrequency( midiToFrequency( float(octaveOffset*12) + midiNote + scaleNote + remainder*0.1f /* (remainder>0.0f?1.0f:-1.0f)*remainder*remainder*/ ) ); 
 	
-	// volume
+	// set volume
 	float vol = 1.0f-min(1.0f,(distance/ofGetWidth()));
 	volume.setVolume( 1.0f*vol/(neighbours->size()) );
 	
-	
+	// calculate forces
 	static const float BUDDY_FORCE_MUL = 1000.0f;
 	static const float ENEMY_FORCE_MUL = 100.0f;
 	static const float CENTRE_FORCE_MUL = 0.3f;
-	
 
-	// push towards shell
+	// move towards the nearest shell out from our buddy
 	ofVec2f dv = ((remainder>0.0f)&&(distanceUnits>1.0f)>0.0f?-1.0f:1.0f)*
 		remainder*remainder*deltaNorm*ofGetLastFrameTime()*BUDDY_FORCE_MUL;
 	velocity += dv*0.5f;
 	neighbours->at(buddy)->velocity -= dv*0.5f;
-	
-	
-	/*
-	for ( int j=0; j<neighbours->size(); j++ )
-	{
-		ofVec2f neighbourPos = neighbours->at(j)->position;
-		if ( (neighbourPos-position).lengthSquared() < 4.0f*RADIUS*RADIUS )
-		{
-			// reflect
-			ofVec2f delta = neighbourPos-position;
-			ofVec2f deltaNorm = delta.normalized();
-
-			// move out
-			ofVec2f shouldBeAt = neighbourPos - deltaNorm*RADIUS*2;
-			ofVec2f move = shouldBeAt-position;
-			position += move;
-			neighbours->at(i)->position -= move;
-			
-			ofVec2f velocityParallel = velocity.dot( deltaNorm );
-			ofVec2f velocityAdj = velocity - velocityParallel;
-			velocity *= 0.5f;
-			//velocity = velocityAdj - velocityParallel*0.5f;
-			//neighbours->at(i)->velocity = 0.5f*(deltaAdj-deltaParallel);
-		}
-	}*/
 	
 	
 	// run away from enemy
@@ -217,29 +195,39 @@ void FloatingSine::update( )
 	velocity -= dv*0.5f;
 	neighbours->at( enemy )->velocity += dv*0.5f;
 	
-	// centre tug
+	
+	// don't get too far away from the centre of the screen
 	ofVec2f centreDelta = ofVec2f(ofGetWidth()/2,ofGetHeight()/2)-position;
 	velocity += centreDelta*ofGetLastFrameTime()*CENTRE_FORCE_MUL;
 }
 
 
-void FloatingSine::draw()
-{
+void FloatingSine::draw(){
 	float vol = volume.getVolume();
 	float volSq = vol*vol;
 	float alpha = fabsf(2.0f*(distanceUnits-int(distanceUnits)-0.5f));
+	// select colour based on waveform
 	ofColor colour = sawtooth?sawColour:sineColour;
-	ofSetColor( colour.r, colour.g, colour.b, 128+128.0f*alpha );
+	
+	// draw the particle
+	float particleAlpha = (bBackgroundAuto?1.0f:0.2f)*(128+128.0f*alpha);
+	ofSetColor( colour.r, colour.g, colour.b, particleAlpha );
 	ofFill();
 	particle->setAnchorPercent(0.5,0.5);
-//	particle->draw( position.x, position.y, RADIUS*2, RADIUS*2 );
-	ofCircle( position.x, position.y, RADIUS );
+	ofCircle( position.x, position.y, RADIUS*(0.4f+0.6f*alpha*volume.getVolume()*neighbours->size()) );
 	
-	ofSetColor( colour.r, colour.g, colour.b, 255.0f*alpha );
+	// draw the connecting lines and shell lines
+	float lineAlpha = (bBackgroundAuto?1.0f:0.2f)*(255.0f*alpha);
+	ofSetColor( colour.r, colour.g, colour.b, lineAlpha );
 	ofNoFill();
 	ofVec2f buddyPosition = neighbours->at(buddy)->position;
 	ofLine( position.x, position.y, buddyPosition.x, buddyPosition.y );
-
 	ofCircle( buddyPosition.x, buddyPosition.y, distanceUnits*shellDistance );
+}
+
+
+void FloatingSine::setBackgroundAuto( bool bAuto )
+{
+	bBackgroundAuto = bAuto;
 }
 
