@@ -20,11 +20,6 @@ void testApp::setup(){
 void testApp::update(){
 	rect.width = ofGetWidth();
 	rect.height = ofGetHeight();
-	
-	
-//	oldMousePress = ofGetMousePressed(0);
-//	mousePrev = mousePos;
-	
 }
 
 
@@ -33,13 +28,12 @@ void testApp::draw(){
 
 	cam.begin();
 	
-	ofDrawAxis(200);	
-	ofSetColor(255, 255, 0);
-	ofBox(20);
+//	ofDrawAxis(200);	
+//	ofSetColor(255, 255, 0);
+//	ofBox(20);
 //	target.draw();
 	
-//	cam.getTarget().draw();
-	
+	cam.getTarget().draw();
 	
 	cam.end();
 	
