@@ -19,20 +19,20 @@ void testApp::setup(){
 	rAudio = new float[1024];
 	
 	baseNote = 61;
+	scale = 0;
 	
-	ofSetLogLevel( OF_LOG_NOTICE );
-	
+	ofSetLogLevel( OF_LOG_NOTICE );	
 	ofSetCircleResolution( 60 );
 	ofEnableSmoothing();
 	ofEnableBlendMode( OF_BLENDMODE_ADD );
+	ofSetFrameRate(60);
 	
-	filter.setup();
-	filter.setCutoff(1.0f);
-	filter.setRes(0.5f);
+	bBackgroundAuto = false;
+	ofSetBackgroundAuto( bBackgroundAuto );
+	
 	ofSoundStreamSetup(2,0, sampleRate,1024, 4);
 
-	ofSetFrameRate(60);
-
+	// construct FloatingSine objects, passing in the shared sound mixer
 	int num_floating = 32;
 	for ( int i=0; i<num_floating; i++ ) {
 		FloatingSine* f = new FloatingSine();
@@ -42,15 +42,19 @@ void testApp::setup(){
 		floating[i]->setup( &mixer, &floating, &particle );
 	}
 
-	// pass the mixer through a filter
+	// setup the lowpass filter
+	filter.setup();
+	filter.setCutoff(1.0f);
+	filter.setRes(0.5f);
+	// the filter takes input from the mixer
 	filter.addInputFrom( &mixer );
-	
-	// connect mixer to passthrough (for visualisation)
+	// the passthrough takes input from the filter (for visualisation)
 	passthrough.addInputFrom( &filter );
-	//passthrough.addInputFrom( &mixer );
+	
 	// pass the completed graph to ofSoundStream interface
 	ofSoundStreamAddSoundSource( &passthrough );
 	
+	// set the audio scale to pentatonic
 	setScale( 0 );
 
 }
@@ -61,9 +65,7 @@ void testApp::update(){
 
 	for ( int i=0; i<floating.size(); i++ ) {
 		floating[i]->update();
-		// unfortunately the filter is mono, so this will do nothing
 		mixer.setPan( floating[i]->getSoundOutputNodePtr(), (floating[i]->getPosition().x)/ofGetWidth() );
-		//mixer.setPan( floating[i]->getSoundOutputNodePtr(), 0.0f );
 	}
 
 	// fetch audio data, for visualisation
@@ -76,32 +78,39 @@ void testApp::update(){
 //--------------------------------------------------------------
 void testApp::draw(){
 
-	// draw the left:
+	// draw the left audio:
 	ofFill();
 	ofSetColor( 0xff, 0xff, 0xff, 0x80 );
 	for (int i = 0; i < 512; i++){
 		ofLine(i,200,i,200+lAudio[i]*100.0f);
 	}
 
-	// draw the right:
+	// draw the right audio:
 	ofSetColor( 0xff, 0xff, 0xff, 0x80 );
 	for (int i = 0; i < 512; i++){
 		ofLine(512+i,200,512+i,200+rAudio[i]*100.0f);
 	}
 
+	// draw all the particles
 	ofSetHexColor( 0x112255 );
 	for ( int i=0; i<floating.size(); i++ )	{
 		floating[i]->draw();
 	}
 	
+	// draw text box
+	ofFill();
+	ofEnableBlendMode( OF_BLENDMODE_ALPHA );
+	ofSetColor( 0, 0, 0, 3 );
+	ofRect( 20, ofGetHeight()-160, ofGetWidth()-40, 140 );
+	ofEnableBlendMode( OF_BLENDMODE_ADD );
 	ofSetHexColor(0x333333);
 	char reportString[1024];
 	sprintf(reportString, "click to scatter\n\n\nvolume: %6.3f (modify with -/+ keys)\n"
-			"scale: %s (change with 's' key)   base midi note: %i (change with up/down keys, 'r' for random) \n"
-			"  press 'w' to swap the waveform of one unit, 'v' to set all to sawtooth, 'o' to set all to sine" ,
+			"scale: %s (change with 's' key)\nbase midi note: %i (change with up/down keys, 'r' for random) \n\n"
+			"press 'w' to swap the waveform of one unit, 'v' to set all to sawtooth, 'o' to set all to sine,\n 'b' to toggle background clear" ,
 			volume, scale==0?"pentatonic":"lydian", baseNote );
 
-	ofDrawBitmapString(reportString,80,380);
+	ofDrawBitmapString(reportString,30,ofGetHeight()-140);
 
 	
 }
@@ -153,7 +162,13 @@ void testApp::keyPressed  (int key){
 		for ( int i=0; i<floating.size(); i++ ) {
 			floating[i]->setBaseMidiNote( baseNote );
 		}
-	}		
+	} else if ( key == 'b' ) {
+		bBackgroundAuto = !bBackgroundAuto;
+		ofSetBackgroundAuto( bBackgroundAuto );
+		for ( int i=0; i<floating.size(); i++ ) {
+			floating[i]->setBackgroundAuto( bBackgroundAuto );
+		}
+	}
 	 
 }
 
