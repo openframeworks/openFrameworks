@@ -72,8 +72,8 @@ public:
 
 	// directly set transformation matrix
 	// TODO:
-	void setTransformMatrix(ofMatrix4x4 &m44) {}
-	void setTransformMatrix(float *m44) {}
+	void setTransformMatrix(const ofMatrix4x4 &m44);
+	void setTransformMatrix(float *m44);
 	
 	// position
 	void setPosition(float px, float py, float pz);
