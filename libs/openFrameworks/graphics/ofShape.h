@@ -48,6 +48,8 @@ public:
 	void setClosed( bool tf ) { bClosed = tf; }
 	bool getClosed() const { return bClosed; }
 	
+	float getPerimeter() const;
+	
 private:
 	vector<ofPoint> points;
 	bool bClosed;

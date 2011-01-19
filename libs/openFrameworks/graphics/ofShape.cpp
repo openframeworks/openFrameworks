@@ -29,6 +29,16 @@ void ofPolyline::draw() const {
 	}
 }
 
+float ofPolyline::getPerimeter() const {
+	float perimeter = 0;
+	for(int i = 1; i < points.size(); i++) {
+		perimeter += points[i - 1].distance(points[i]);
+	}
+	if(bClosed) {
+		perimeter += points[points.size() - 1].distance(points[0]);
+	}
+	return perimeter;
+}
 
 ofShape::ofShape(){
 	bFilled = ofGetStyle().bFill;
