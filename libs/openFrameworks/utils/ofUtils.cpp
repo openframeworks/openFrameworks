@@ -551,29 +551,4 @@ void ofSaveFrame(bool bUseViewport){
 	saveImageCounter++;
 }
 
-//--------------------------------------------------
-bool ofReadFile(const string & path, ofBuffer & buffer, bool binary){
-	ifstream * file = new ifstream(ofToDataPath(path,true).c_str());
-
-	if(!file || !file->is_open()){
-		ofLog(OF_LOG_ERROR, "couldn't open " + path);
-		return false;
-	}
-
-	filebuf *pbuf=file->rdbuf();
-
-	// get file size using buffer's members
-	long size = (long)pbuf->pubseekoff (0,ios::end,ios::in);
-	pbuf->pubseekpos (0,ios::in);
-
-	// get file data
-	if(!binary){
-		buffer.allocate(size+1);// = new char[size];
-		buffer.getBuffer()[size]='\0';
-	}else{
-		buffer.allocate(size);
-	}
-	pbuf->sgetn (buffer.getBuffer(),size);
-	return true;
-}
 

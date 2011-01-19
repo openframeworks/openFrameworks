@@ -33,7 +33,8 @@ bool ofBuffer::set(istream & stream){
 	stream.read(aux_buffer, 1024);
 	std::streamsize n = stream.gcount();
 	while (n > 0){
-		buffer.resize(size+n);
+		// we resize to size+1 initialized to 0 to have a 0 at the end for strings
+		buffer.resize(size+n+1,0);
 		memcpy(&(buffer[0])+size,aux_buffer,n);
 		size += n;
 		if (stream){
@@ -41,16 +42,6 @@ bool ofBuffer::set(istream & stream){
 			n = stream.gcount();
 		}
 		else n = 0;
-	}
-	if(size){
-		//TODO: is the most effecient way to do this?
-		//TODO: should this be only set if we are in string mode?
-		//TODO: how does this affect saving a file in binary - would that last nullbyte cause issues?
-		buffer.resize(size+1);
-		buffer.back() = '\0';
-		return true;
-	}else{
-		return false;
 	}
 }
 
@@ -62,8 +53,9 @@ bool ofBuffer::writeTo(ostream & stream){
 
 void ofBuffer::set(const char * _buffer, int _size){
 	clear();
-	buffer.resize(_size);
-	memcpy(getBuffer(), _buffer, _size);
+	buffer.resize(_size+1);
+	memcpy(getBinaryBuffer(), _buffer, _size);
+	buffer[_size]=0;
 }
 
 void ofBuffer::clear(){
@@ -76,23 +68,30 @@ void ofBuffer::allocate(long _size){
 	buffer.resize(_size);
 }
 
-char * ofBuffer::getBuffer(){
+char * ofBuffer::getBinaryBuffer(){
 	return &buffer[0];
 }
 
-const char * ofBuffer::getBuffer() const{
+const char * ofBuffer::getBinaryBuffer() const{
+	return &buffer[0];
+}
+
+string ofBuffer::getText() const{
 	return &buffer[0];
 }
 
 long ofBuffer::size() const{
-	return buffer.size();
+	//we always add a 0 at the end to avoid problems with strings
+	return buffer.size()-1;
 }
 
 string ofBuffer::getNextLine(){
 	if( buffer.empty() ) return "";
 	long currentLinePos = nextLinePos;
 	while(nextLinePos<(int)buffer.size() && buffer[nextLinePos]!='\n') nextLinePos++;
-	string line(getBuffer() + currentLinePos,nextLinePos-currentLinePos);
+	string line(getBinaryBuffer() + currentLinePos,nextLinePos-currentLinePos);
+	line.resize(line.size()+1);
+	line[line.size()-1]=0;
 	if(nextLinePos<(int)buffer.size()-1) nextLinePos++;
 	return line;
 }
