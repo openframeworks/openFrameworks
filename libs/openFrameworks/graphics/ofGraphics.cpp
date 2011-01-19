@@ -123,7 +123,7 @@ void ofPopView() {
 void ofViewport(float x, float y, float width, float height) {
 	if(width == 0) width = ofGetWidth();
 	if(height == 0) height = ofGetHeight();
-	glViewport(x, y, width, height);
+	glViewport(x, ofGetHeight() - y - height, width, height);
 }
 
 //----------------------------------------------------------
