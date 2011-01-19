@@ -77,23 +77,17 @@ bool ofShader::setupShaderFromSource(GLenum type, string source) {
 
 void ofShader::setGeometryInputType(GLenum type) {
 	checkAndCreateProgram();
-#ifndef TARGET_LINUX
 	glProgramParameteriEXT(program, GL_GEOMETRY_INPUT_TYPE_EXT, type);
-#endif
 }
 
 void ofShader::setGeometryOutputType(GLenum type) {
 	checkAndCreateProgram();
-#ifndef TARGET_LINUX
 	glProgramParameteriEXT(program, GL_GEOMETRY_OUTPUT_TYPE_EXT, type);
-#endif
 }
 
 void ofShader::setGeometryOutputCount(int count) {
 	checkAndCreateProgram();
-#ifndef TARGET_LINUX
 	glProgramParameteriEXT(program, GL_GEOMETRY_VERTICES_OUT_EXT, count);
-#endif
 }
 
 int ofShader::getGeometryMaxOutputCount() {
