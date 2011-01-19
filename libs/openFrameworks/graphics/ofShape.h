@@ -41,6 +41,7 @@ public:
 
 	/// points vector access
 	size_t size() const { return points.size(); }
+	ofPoint& operator[] (int index) { return points[index]; }
 	const ofPoint& operator[] (int index) const { return points[index]; }
 	
 	/// closed
