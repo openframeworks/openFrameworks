@@ -249,19 +249,6 @@ string ofToDataPath(string path, bool makeAbsolute){
 	return path;
 }
 
-//--------------------------------------------------
-string ofToString(double value, int precision){
-#ifdef TARGET_ANDROID
-	char str_val[1024];
-	sprintf(str_val,("%.0"+ofToString(precision)+"f").c_str(),value);
-	return str_val;
-#else
-	stringstream sstr;
-	sstr << fixed << setprecision(precision) << value;
-	return sstr.str();
-#endif
-}
-
 //----------------------------------------
 template <>
 string ofToHex(const string& value) {
@@ -555,6 +542,12 @@ void ofSaveViewport(string filename) {
 
 #ifdef TARGET_ANDROID
 
+namespace Poco{
+const int Ascii::CHARACTER_PROPERTIES[128]={0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+
+};
+
+
 #include <android/log.h>
 
 #define  LOG_TAG    "OF"
@@ -569,10 +562,17 @@ void ofSaveViewport(string filename) {
 #define  vLOGFATAL(...)  __android_log_vprint(ANDROID_LOG_FATAL,LOG_TAG,__VA_ARGS__)
 #define  vLOGVERBOSE(...)  __android_log_vprint(ANDROID_LOG_VERBOSE,LOG_TAG,__VA_ARGS__)
 
-static ofLogLevel currentLogLevel = OF_LOG_NOTICE;
+static ofLogLevel currentLogLevel = OF_DEFAULT_LOG_LEVEL;
+
+void ofSetLogLevel(ofLogLevel logLevel){
+	currentLogLevel = logLevel;
+}
+ofLogLevel ofGetLogLevel(){
+	return currentLogLevel;
+}
 
 //--------------------------------------------------
-void ofLog(int logLevel, string message){
+void ofLog(ofLogLevel logLevel, const string &message){
 	if(logLevel >= currentLogLevel){
 		if(logLevel == OF_LOG_VERBOSE){
 			#ifdef TARGET_ANDROID
@@ -679,30 +679,3 @@ void ofSaveFrame(bool bUseViewport){
 	}
 	saveImageCounter++;
 }
-
-//--------------------------------------------------
-bool ofReadFile(const string & path, ofBuffer & buffer, bool binary){
-	ifstream * file = new ifstream(ofToDataPath(path,true).c_str());
-
-	if(!file || !file->is_open()){
-		ofLog(OF_LOG_ERROR, "couldn't open " + path);
-		return false;
-	}
-
-	filebuf *pbuf=file->rdbuf();
-
-	// get file size using buffer's members
-	long size = (long)pbuf->pubseekoff (0,ios::end,ios::in);
-	pbuf->pubseekpos (0,ios::in);
-
-	// get file data
-	if(!binary){
-		buffer.allocate(size+1);// = new char[size];
-		buffer.getBuffer()[size]='\0';
-	}else{
-		buffer.allocate(size);
-	}
-	pbuf->sgetn (buffer.getBuffer(),size);
-	return true;
-}
-

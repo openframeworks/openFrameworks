@@ -65,9 +65,6 @@ void ofSoundStreamStart(){
 
 }
 
-void ofSoundStreamClose(){
-
-}
 
 void ofSoundStreamListDevices(){
 

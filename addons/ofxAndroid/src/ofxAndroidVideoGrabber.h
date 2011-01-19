@@ -35,10 +35,11 @@ public:
 	void setDesiredFrameRate(int framerate);
 	void videoSettings();
 	void setPixelFormat(ofPixelFormat pixelFormat);
-
+	ofPixelFormat getPixelFormat();
 private:
 	int attemptFramerate;
 	bool bIsFrameNew;
 	bool bGrabberInited;
+	ofPixelFormat internalPixelFormat;
 	ofPixels pixels;
 };

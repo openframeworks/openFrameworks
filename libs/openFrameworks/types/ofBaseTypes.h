@@ -125,6 +125,7 @@ class ofBaseVideoGrabber: public ofBaseVideo{
 	virtual void setDesiredFrameRate(int framerate);
 	virtual void videoSettings();
 	virtual void setPixelFormat(ofPixelFormat pixelFormat);
+	virtual ofPixelFormat getPixelFormat();
 	
 };
 

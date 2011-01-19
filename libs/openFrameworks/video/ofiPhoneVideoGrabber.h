@@ -33,6 +33,7 @@ class ofiPhoneVideoGrabber : public ofBaseVideoGrabber {
 	void setDesiredFrameRate(int framerate);
 	
 	void setPixelFormat(ofPixelFormat internalPixelFormat);
+	ofPixelFormat getPixelFormat();
 	//should implement!
 	/*void setVerbose(bool bTalkToMe);
 	

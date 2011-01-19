@@ -54,6 +54,7 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/freetype/include/freetype2}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/FreeImage/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/poco/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/addons/ofxAndroid/src}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/addons/ofxDirList/src}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/addons/ofxNetwork/src}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/addons/ofxThread/src}&quot;"/>
@@ -1258,6 +1259,7 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/freetype/include/freetype2}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/FreeImage/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/poco/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/addons/ofxAndroid/src}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/addons/ofxDirList/src}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/addons/ofxNetwork/src}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/addons/ofxThread/src}&quot;"/>
@@ -2464,6 +2466,7 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/freetype/include/freetype2}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/FreeImage/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs/poco/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/addons/ofxAndroid/src}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/addons/ofxDirList/src}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/addons/ofxNetwork/src}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/addons/ofxThread/src}&quot;"/>

@@ -88,6 +88,7 @@
 									<listOptionValue builtIn="false" value="addons"/>
 									<listOptionValue builtIn="false" value="oscpack"/>
 									<listOptionValue builtIn="false" value="openFrameworks"/>
+									<listOptionValue builtIn="false" value="PocoNet"/>
 									<listOptionValue builtIn="false" value="PocoUtil"/>
 									<listOptionValue builtIn="false" value="PocoFoundation"/>
 									<listOptionValue builtIn="false" value="freetype"/>
@@ -1133,6 +1134,7 @@
 									<listOptionValue builtIn="false" value="addons"/>
 									<listOptionValue builtIn="false" value="oscpack"/>
 									<listOptionValue builtIn="false" value="openFrameworks"/>
+									<listOptionValue builtIn="false" value="PocoNet"/>
 									<listOptionValue builtIn="false" value="PocoUtil"/>
 									<listOptionValue builtIn="false" value="PocoFoundation"/>
 									<listOptionValue builtIn="false" value="freetype"/>
@@ -2186,6 +2188,7 @@
 									<listOptionValue builtIn="false" value="addons"/>
 									<listOptionValue builtIn="false" value="oscpack"/>
 									<listOptionValue builtIn="false" value="openFrameworks"/>
+									<listOptionValue builtIn="false" value="PocoNet"/>
 									<listOptionValue builtIn="false" value="PocoUtil"/>
 									<listOptionValue builtIn="false" value="PocoFoundation"/>
 									<listOptionValue builtIn="false" value="freetype"/>
@@ -4145,6 +4148,7 @@
 									<listOptionValue builtIn="false" value="addons"/>
 									<listOptionValue builtIn="false" value="oscpack"/>
 									<listOptionValue builtIn="false" value="openFrameworks"/>
+									<listOptionValue builtIn="false" value="PocoNet"/>
 									<listOptionValue builtIn="false" value="PocoUtil"/>
 									<listOptionValue builtIn="false" value="PocoFoundation"/>
 									<listOptionValue builtIn="false" value="freetype"/>
@@ -4190,6 +4194,8 @@
 				</configuration>
 			</storageModule>
 			<storageModule moduleId="org.eclipse.cdt.core.externalSettings"/>
+			<storageModule moduleId="org.eclipse.cdt.core.language.mapping"/>
+			<storageModule moduleId="org.eclipse.cdt.internal.ui.text.commentOwnerProjectMappings"/>
 		</cconfiguration>
 	</storageModule>
 	<storageModule moduleId="cdtBuildSystem" version="4.0.0">

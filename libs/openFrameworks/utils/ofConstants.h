@@ -200,6 +200,9 @@ enum ofLoopType{
 			#define OF_VIDEO_CAPTURE_QUICKTIME
 		#endif
     #endif
+
+#elif defined(TARGET_ANDROID)
+	#define OF_VIDEO_CAPTURE_ANDROID
 #endif
 
 
@@ -307,7 +310,8 @@ enum ofPixelFormat{
 	OF_PIXELS_MONO = 0, 
 	OF_PIXELS_RGB,
 	OF_PIXELS_RGBA,
-	OF_PIXELS_BGRA
+	OF_PIXELS_BGRA,
+	OF_PIXELS_RGB565
 };
 
 #define		OF_MAX_STYLE_HISTORY	32

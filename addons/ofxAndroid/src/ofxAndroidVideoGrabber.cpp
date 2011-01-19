@@ -10,16 +10,17 @@
 #include <map>
 #include "ofAppRunner.h"
 #include "ofUtils.h"
+#include "ofVideoGrabber.h"
 
-static map<int,ofxAndroidVideoGrabber*> instances;
 static int cameraId;
 static bool newPixels;
 static unsigned char * buffer = 0;
 
+
+static map<int,ofVideoGrabber*> instances;
 static bool paused=true;
 
 
-static void InitConvertTable();
 
 static jclass getJavaClass(){
 	JNIEnv *env = ofGetJNIEnv();
@@ -32,6 +33,60 @@ static jclass getJavaClass(){
 
 	return javaClass;
 }
+
+bool ofxAndroidInitGrabber(ofVideoGrabber * grabber){
+	if(instances.size()>0){
+		ofLog(OF_LOG_ERROR,"ofVideoGrabber: This version is limited to 1 camera at the same time");
+		return false;
+	}
+
+	JNIEnv *env = ofGetJNIEnv();
+
+	jclass javaClass = getJavaClass();
+	if(!javaClass) return false;
+
+	jmethodID videoGrabberConstructor = env->GetMethodID(javaClass,"<init>","()V");
+	if(!videoGrabberConstructor){
+		ofLog(OF_LOG_ERROR,"cannot find OFAndroidVideoGrabber constructor");
+		return false;
+	}
+
+	jobject javaObject = env->NewObject(javaClass,videoGrabberConstructor);
+	jmethodID javaCameraId = env->GetMethodID(javaClass,"getId","()I");
+	if(javaObject && javaCameraId){
+		cameraId = env->CallIntMethod(javaObject,javaCameraId);
+		instances[cameraId]=grabber;
+	}else{
+		ofLog(OF_LOG_ERROR, "cannot get OFAndroidVideoGrabber camera id");
+		return false;
+	}
+	return true;
+}
+
+bool ofxAndroidCloseGrabber(ofVideoGrabber * grabber){
+	instances.erase(cameraId);
+}
+
+void ofPauseVideoGrabbers(){
+	paused = true;
+	ofLog(OF_LOG_NOTICE,"ofVideoGrabber: releasing textures");
+	map<int,ofVideoGrabber*>::iterator it;
+	for(it=instances.begin(); it!=instances.end(); it++){
+		it->second->getTextureReference().texData.textureID=0;
+	}
+}
+
+void ofResumeVideoGrabbers(){
+	ofLog(OF_LOG_NOTICE,"ofVideoGrabber: trying to allocate textures");
+	map<int,ofVideoGrabber*>::iterator it;
+	for(it=instances.begin(); it!=instances.end(); it++){
+		it->second->getTextureReference().allocate(it->second->getWidth(),it->second->getHeight(),GL_RGB);
+	}
+	ofLog(OF_LOG_NOTICE,"ofVideoGrabber: textures allocated");
+	paused = false;
+}
+
+static void InitConvertTable();
 
 jobject getCamera(JNIEnv *env, jclass javaClass, jint id){
 	jmethodID getInstanceMethod = env->GetStaticMethodID(javaClass,"getInstance","(I)Lcc/openframeworks/OFAndroidVideoGrabber;");
@@ -53,60 +108,16 @@ static void releaseJavaObject(){
 	}
 }
 
-/*void ofPauseVideoGrabbers(){
-	paused = true;
-	ofLog(OF_LOG_NOTICE,"ofVideoGrabber: releasing textures");
-	map<int,ofVideoGrabber*>::iterator it;
-	for(it=instances.begin(); it!=instances.end(); it++){
-		it->second->getTextureReference().texData.textureID=0;
-	}
-}
-
-void ofResumeVideoGrabbers(){
-	ofLog(OF_LOG_NOTICE,"ofVideoGrabber: trying to allocate textures");
-	map<int,ofVideoGrabber*>::iterator it;
-	for(it=instances.begin(); it!=instances.end(); it++){
-		it->second->getTextureReference().allocate(it->second->getWidth(),it->second->getHeight(),GL_RGB);
-	}
-	ofLog(OF_LOG_NOTICE,"ofVideoGrabber: textures allocated");
-	paused = false;
-}*/
-
-
 ofxAndroidVideoGrabber::ofxAndroidVideoGrabber(){
-	if(instances.size()>0){
-		ofLog(OF_LOG_ERROR,"ofVideoGrabber: This version is limited to 1 camera at the same time");
-		return;
-	}
 
-	JNIEnv *env = ofGetJNIEnv();
-
-	jclass javaClass = getJavaClass();
-	if(!javaClass) return;
-
-	jmethodID videoGrabberConstructor = env->GetMethodID(javaClass,"<init>","()V");
-	if(!videoGrabberConstructor){
-		ofLog(OF_LOG_ERROR,"cannot find OFAndroidVideoGrabber constructor");
-		return;
-	}
-
-	jobject javaObject = env->NewObject(javaClass,videoGrabberConstructor);
-	jmethodID javaCameraId = env->GetMethodID(javaClass,"getId","()I");
-	if(javaObject && javaCameraId){
-		cameraId = env->CallIntMethod(javaObject,javaCameraId);
-		instances[cameraId]=this;
-	}else{
-		ofLog(OF_LOG_ERROR, "cannot get OFAndroidVideoGrabber camera id");
-		return;
-	}
 	attemptFramerate = 30;
 	newPixels = false;
 	InitConvertTable();
 	bGrabberInited = false;
+	internalPixelFormat = OF_PIXELS_RGB;
 }
 
 ofxAndroidVideoGrabber::~ofxAndroidVideoGrabber(){
-	instances.erase(cameraId);
 	releaseJavaObject();
 }
 
@@ -138,7 +149,7 @@ void ofxAndroidVideoGrabber::close(){
 }
 
 bool ofxAndroidVideoGrabber::initGrabber(int w, int h){
-	if(instances[cameraId]!=this){
+	if(instances.find(cameraId)==instances.end()){
 		ofLog(OF_LOG_ERROR,"ofVideoGrabber: Cannot initialize more than one instance in this version");
 		return false;
 	}
@@ -198,8 +209,13 @@ float ofxAndroidVideoGrabber::getWidth(){
 	return pixels.getWidth();
 }
 
+void ofxAndroidVideoGrabber::setPixelFormat(ofPixelFormat pixelFormat){
+	internalPixelFormat = pixelFormat;
+}
 
-
+ofPixelFormat ofxAndroidVideoGrabber::getPixelFormat(){
+	return internalPixelFormat;
+}
 
 // Conversion from yuv nv21 to rgb24 adapted from
 // videonet conversion from YUV420 to RGB24
@@ -295,7 +311,138 @@ float ofxAndroidVideoGrabber::getWidth(){
 
 
 }
+/**
+ * Converts semi-planar YUV420 as generated for camera preview into RGB565
+ * format for use as an OpenGL ES texture. It assumes that both the input
+ * and output data are contiguous and start at zero.
+ *
+ * @param yuvs the array of YUV420 semi-planar data
+ * @param rgbs an array into which the RGB565 data will be written
+ * @param width the number of pixels horizontally
+ * @param height the number of pixels vertically
+ */
 
+//we tackle the conversion two pixels at a time for greater speed
+void ConvertYUV2toRGB565(unsigned char* yuvs, unsigned char* rgbs, int width, int height) {
+    //the end of the luminance data
+    int lumEnd = width * height;
+    //points to the next luminance value pair
+    int lumPtr = 0;
+    //points to the next chromiance value pair
+    int chrPtr = lumEnd;
+    //points to the next byte output pair of RGB565 value
+    int outPtr = 0;
+    //the end of the current luminance scanline
+    int lineEnd = width;
+    register int R, G, B;
+    register int Y1;
+    register int Y2;
+    register int Cr;
+    register int Cb;
+
+    while (true) {
+
+        //skip back to the start of the chromiance values when necessary
+        if (lumPtr == lineEnd) {
+            if (lumPtr == lumEnd) break; //we've reached the end
+            //division here is a bit expensive, but's only done once per scanline
+            chrPtr = lumEnd + ((lumPtr  >> 1) / width) * width;
+            lineEnd += width;
+        }
+
+        //read the luminance and chromiance values
+        Y1 = yuvs[lumPtr++] & 0xff;
+        Y2 = yuvs[lumPtr++] & 0xff;
+        Cr = (yuvs[chrPtr++] & 0xff) - 128;
+        Cb = (yuvs[chrPtr++] & 0xff) - 128;
+
+        //generate first RGB components
+        B = Y1 + ((454 * Cb) >> 8);
+        if(B < 0) B = 0; else if(B > 255) B = 255;
+        G = Y1 - ((88 * Cb + 183 * Cr) >> 8);
+        if(G < 0) G = 0; else if(G > 255) G = 255;
+        R = Y1 + ((359 * Cr) >> 8);
+        if(R < 0) R = 0; else if(R > 255) R = 255;
+        //NOTE: this assume little-endian encoding
+        rgbs[outPtr++]  = (unsigned char) (((G & 0x3c) << 3) | (B >> 3));
+        rgbs[outPtr++]  = (unsigned char) ((R & 0xf8) | (G >> 5));
+
+        //generate second RGB components
+        B = Y2 + ((454 * Cb) >> 8);
+        if(B < 0) B = 0; else if(B > 255) B = 255;
+        G = Y2 - ((88 * Cb + 183 * Cr) >> 8);
+        if(G < 0) G = 0; else if(G > 255) G = 255;
+        R = Y2 + ((359 * Cr) >> 8);
+        if(R < 0) R = 0; else if(R > 255) R = 255;
+        //NOTE: this assume little-endian encoding
+        rgbs[outPtr++]  = (unsigned char) (((G & 0x3c) << 3) | (B >> 3));
+        rgbs[outPtr++]  = (unsigned char) ((R & 0xf8) | (G >> 5));
+    }
+}
+void ConvertYUV2toRGB565_2(unsigned char *src0,unsigned char *src1,unsigned char *dst_ori,
+                                 int width,int height)
+{
+    register int y1,y2,u,v;
+    register unsigned char *py1,*py2;
+    register int i,j, c1, c2, c3, c4;
+    register unsigned char *d1, *d2;
+    register int R,G,B;
+    int width2 = 2*width;
+    py1=src0;
+    py2=py1+width;
+    d1=dst_ori;
+    d2=d1+width2;
+    for (j = 0; j < height; j += 2) {
+        for (i = 0; i < width; i += 2) {
+
+            v = *src1++;
+            u = *src1++;
+
+            c1 = crv_tab[v];
+            c2 = cgu_tab[u];
+            c3 = cgv_tab[v];
+            c4 = cbu_tab[u];
+
+            //up-left
+            y1 = tab_76309[*py1++];
+            R = clp[384+((y1 + c1)>>16)];
+            G = clp[384+((y1 - c2 - c3)>>16)];
+            B = clp[384+((y1 + c4)>>16)];
+            *d1++ = (unsigned char) (((G & 0x3c) << 3) | (B >> 3));
+            *d1++ = (unsigned char) ((R & 0xf8) | (G >> 5));
+
+            //down-left
+            y2 = tab_76309[*py2++];
+            B = clp[384+((y2 + c1)>>16)];
+            G = clp[384+((y2 - c2 - c3)>>16)];
+            R = clp[384+((y2 + c4)>>16)];
+            *d2++ = (unsigned char) (((G & 0x3c) << 3) | (B >> 3));
+            *d2++ = (unsigned char) ((R & 0xf8) | (G >> 5));
+
+            //up-right
+            y1 = tab_76309[*py1++];
+            R = clp[384+((y1 + c1)>>16)];
+            G = clp[384+((y1 - c2 - c3)>>16)];
+            B = clp[384+((y1 + c4)>>16)];
+            *d1++ = (unsigned char) (((G & 0x3c) << 3) | (B >> 3));
+            *d1++ = (unsigned char) ((R & 0xf8) | (G >> 5));
+
+            //down-right
+            y2 = tab_76309[*py2++];
+            B = clp[384+((y2 + c1)>>16)];
+            G = clp[384+((y2 - c2 - c3)>>16)];
+            R = clp[384+((y2 + c4)>>16)];
+            *d2++ = (unsigned char) (((G & 0x3c) << 3) | (B >> 3));
+            *d2++ = (unsigned char) ((R & 0xf8) | (G >> 5));
+        }
+        d1 += width2;
+        d2 += width2;
+        py1+=   width;
+        py2+=   width;
+    }
+
+
+}
 
  /*static int time_one_frame = 0;
  static int acc_time = 0;
@@ -312,9 +459,18 @@ Java_cc_openframeworks_OFAndroidVideoGrabber_newFrame(JNIEnv*  env, jobject  thi
 		if(!buffer) return 1;
 
 		//time_one_frame = ofGetSystemTime();
-		ConvertYUV2RGB(buffer, 																 // y component
+		if(instances[cameraId]->getPixelFormat()==OF_PIXELS_RGB){
+			ConvertYUV2RGB(buffer, 																 // y component
 					   buffer+int(instances[cameraId]->getWidth()*instances[cameraId]->getHeight()),		 // uv components
 				       instances[cameraId]->getPixels(),instances[cameraId]->getWidth(),instances[cameraId]->getHeight());
+		}else if(instances[cameraId]->getPixelFormat()==OF_PIXELS_RGB565){
+			ConvertYUV2toRGB565(buffer,instances[cameraId]->getPixels(),instances[cameraId]->getWidth(),instances[cameraId]->getHeight());
+			/*ConvertYUV2toRGB565_2(buffer, 																 // y component
+								   buffer+int(instances[cameraId]->getWidth()*instances[cameraId]->getHeight()),		 // uv components
+							       instances[cameraId]->getPixels(),instances[cameraId]->getWidth(),instances[cameraId]->getHeight());*/
+		}else if(instances[cameraId]->getPixelFormat()==OF_PIXELS_MONO){
+			memcpy(instances[cameraId]->getPixels(),buffer,int(instances[cameraId]->getWidth()*instances[cameraId]->getHeight()));
+		}
 
 		/*acc_time += ofGetSystemTime() - time_one_frame;
 		num_frames ++;
@@ -323,16 +479,6 @@ Java_cc_openframeworks_OFAndroidVideoGrabber_newFrame(JNIEnv*  env, jobject  thi
 			ofLog(OF_LOG_NOTICE,"avg time: %f" , float(acc_time)/float(num_frames));
 		}*/
 
-		//dc1394_YUV411_to_RGB8(buffer, rgb_buffer, width, height);
-		/*android_color rgb24;
-		for(int i=0;i<width*height;i++){
-			//ofLog(OF_LOG_NOTICE,"reading pixel: " + ofToString(i));
-			rgb16_to_rgb24(((short*)buffer)[i],rgb24);
-			rgb_buffer[i*3]   = rgb24.r;
-			rgb_buffer[i*3+1] = rgb24.g;
-			rgb_buffer[i*3+2] = rgb24.b;
-		}*/
-		//memcpy(rgb_buffer,buffer,width*height*3);
 		env->ReleasePrimitiveArrayCritical(array,buffer,0);
 		newPixels = true;
 		//((ofxAndroidApp*)ofGetAppPtr())->imageReceived(pixels,width,height);
