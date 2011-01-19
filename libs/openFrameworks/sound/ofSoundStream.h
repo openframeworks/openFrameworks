@@ -27,5 +27,5 @@ long unsigned long ofSoundStreamGetCurrentTick();
 
 void ofSoundStreamStop();
 void ofSoundStreamStart();
-void ofSoundStreamClose();
+inline void ofSoundStreamClose(){};
 void ofSoundStreamListDevices();

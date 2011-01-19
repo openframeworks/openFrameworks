@@ -38,6 +38,8 @@ void ofSoundShutdown();
 	#define OF_SOUND_PLAYER_IPHONE
 #elif !defined(TARGET_ANDROID)
 	#define OF_SOUND_PLAYER_FMOD
+#else
+	void ofSoundShutdown(){}
 #endif
 
 #ifdef OF_SOUND_PLAYER_QUICKTIME

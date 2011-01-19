@@ -110,7 +110,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="utils/ofLog.cpp|sound/ofFmodSoundPlayer.h|sound/ofFmodSoundPlayer.cpp|video/ofQuickTimePlayer.h|video/ofQuickTimePlayer.cpp|video/ofQuickTimeGrabber.h|video/ofQuickTimeGrabber.cpp|video/ofGstVideoPlayer.h|video/ofGstVideoPlayer.cpp|video/ofGstVideoGrabber.h|video/ofGstVideoGrabber.cpp|video/ofDirectShowGrabber.h|video/ofDirectShowGrabber.cpp|video/ofVideoPlayer.cpp|video/ofVideoGrabber.cpp|video/ofUCUtils.h|video/ofUCUtils.cpp|video/ofQtUtils.h|video/ofQtUtils.cpp|video/ofGstUtils.h|video/ofGstUtils.cpp|sound/ofSoundStream.cpp|sound/ofSoundPlayer.h|sound/ofSoundPlayer.cpp|app/ofAppGlutWindow.h|app/ofAppGlutWindow.cpp|communication|bin" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="utils/ofLog.cpp|sound/ofFmodSoundPlayer.h|sound/ofFmodSoundPlayer.cpp|video/ofQuickTimePlayer.h|video/ofQuickTimePlayer.cpp|video/ofQuickTimeGrabber.h|video/ofQuickTimeGrabber.cpp|video/ofGstVideoPlayer.h|video/ofGstVideoPlayer.cpp|video/ofGstVideoGrabber.h|video/ofGstVideoGrabber.cpp|video/ofDirectShowGrabber.h|video/ofDirectShowGrabber.cpp|video/ofVideoPlayer.cpp|video/ofUCUtils.h|video/ofUCUtils.cpp|video/ofQtUtils.h|video/ofQtUtils.cpp|video/ofGstUtils.h|video/ofGstUtils.cpp|sound/ofSoundStream.cpp|sound/ofSoundPlayer.h|sound/ofSoundPlayer.cpp|app/ofAppGlutWindow.h|app/ofAppGlutWindow.cpp|communication|bin" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -1557,7 +1557,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="utils/ofLog.cpp|sound/ofFmodSoundPlayer.h|sound/ofFmodSoundPlayer.cpp|video/ofQuickTimePlayer.h|video/ofQuickTimePlayer.cpp|video/ofQuickTimeGrabber.h|video/ofQuickTimeGrabber.cpp|video/ofGstVideoPlayer.h|video/ofGstVideoPlayer.cpp|video/ofGstVideoGrabber.h|video/ofGstVideoGrabber.cpp|video/ofDirectShowGrabber.h|video/ofDirectShowGrabber.cpp|video/ofVideoPlayer.cpp|video/ofVideoGrabber.cpp|video/ofUCUtils.h|video/ofUCUtils.cpp|video/ofQtUtils.h|video/ofQtUtils.cpp|video/ofGstUtils.h|video/ofGstUtils.cpp|sound/ofSoundStream.cpp|sound/ofSoundPlayer.h|sound/ofSoundPlayer.cpp|app/ofAppGlutWindow.h|app/ofAppGlutWindow.cpp|communication|bin" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="utils/ofLog.cpp|sound/ofFmodSoundPlayer.h|sound/ofFmodSoundPlayer.cpp|video/ofQuickTimePlayer.h|video/ofQuickTimePlayer.cpp|video/ofQuickTimeGrabber.h|video/ofQuickTimeGrabber.cpp|video/ofGstVideoPlayer.h|video/ofGstVideoPlayer.cpp|video/ofGstVideoGrabber.h|video/ofGstVideoGrabber.cpp|video/ofDirectShowGrabber.h|video/ofDirectShowGrabber.cpp|video/ofVideoPlayer.cpp|video/ofUCUtils.h|video/ofUCUtils.cpp|video/ofQtUtils.h|video/ofQtUtils.cpp|video/ofGstUtils.h|video/ofGstUtils.cpp|sound/ofSoundStream.cpp|sound/ofSoundPlayer.h|sound/ofSoundPlayer.cpp|app/ofAppGlutWindow.h|app/ofAppGlutWindow.cpp|communication|bin" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -3007,7 +3007,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="utils/ofLog.cpp|sound/ofFmodSoundPlayer.h|sound/ofFmodSoundPlayer.cpp|video/ofQuickTimePlayer.h|video/ofQuickTimePlayer.cpp|video/ofQuickTimeGrabber.h|video/ofQuickTimeGrabber.cpp|video/ofGstVideoPlayer.h|video/ofGstVideoPlayer.cpp|video/ofGstVideoGrabber.h|video/ofGstVideoGrabber.cpp|video/ofDirectShowGrabber.h|video/ofDirectShowGrabber.cpp|video/ofVideoPlayer.cpp|video/ofVideoGrabber.cpp|video/ofUCUtils.h|video/ofUCUtils.cpp|video/ofQtUtils.h|video/ofQtUtils.cpp|video/ofGstUtils.h|video/ofGstUtils.cpp|sound/ofSoundStream.cpp|sound/ofSoundPlayer.h|sound/ofSoundPlayer.cpp|app/ofAppGlutWindow.h|app/ofAppGlutWindow.cpp|communication|bin" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="utils/ofLog.cpp|sound/ofFmodSoundPlayer.h|sound/ofFmodSoundPlayer.cpp|video/ofQuickTimePlayer.h|video/ofQuickTimePlayer.cpp|video/ofQuickTimeGrabber.h|video/ofQuickTimeGrabber.cpp|video/ofGstVideoPlayer.h|video/ofGstVideoPlayer.cpp|video/ofGstVideoGrabber.h|video/ofGstVideoGrabber.cpp|video/ofDirectShowGrabber.h|video/ofDirectShowGrabber.cpp|video/ofVideoPlayer.cpp|video/ofUCUtils.h|video/ofUCUtils.cpp|video/ofQtUtils.h|video/ofQtUtils.cpp|video/ofGstUtils.h|video/ofGstUtils.cpp|sound/ofSoundStream.cpp|sound/ofSoundPlayer.h|sound/ofSoundPlayer.cpp|app/ofAppGlutWindow.h|app/ofAppGlutWindow.cpp|communication|bin" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>

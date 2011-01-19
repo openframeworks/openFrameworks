@@ -2,6 +2,7 @@
 
 #include <ofConstants.h>
 
+
 #include <Poco/AutoPtr.h>
 #include <Poco/Logger.h>
 #include <Poco/FileChannel.h>
@@ -21,6 +22,7 @@ enum ofLogLevel{
 
 #define OF_DEFAULT_LOG_LEVEL  OF_LOG_NOTICE
 
+#ifndef TARGET_ANDROID
 //------------------------------------------------------------------------------
 /// \class ofLogger
 /// \brief a singleton log class, this is where the magic happens ...
@@ -391,18 +393,6 @@ class ofLogFatalError : public ofLogNotice{
 		ofLogFatalError(string logTopic) : ofLogNotice(logTopic) {}
 };
 
-//-------------------------------------------------------
-///
-///	\section Legacy Log Functions
-///	
-/// These are implemented as wrappers around the ofLogger class.
-///
-///	log a message at a specific log level
-void ofLog(ofLogLevel logLevel, const string& message);
-void ofLog(ofLogLevel logLevel, const char* format, ...);
-
-void ofSetLogLevel(ofLogLevel logLevel);
-ofLogLevel ofGetLogLevel();
 
 //----------------------------------------------------------------------------
 ///
@@ -461,3 +451,18 @@ bool ofLogUsingHeaderFrameNum();
 void ofLogEnableHeaderMillis();
 void ofLogDisableHeaderMillis();
 bool ofLogUsingHeaderMillis();
+
+#endif
+
+//-------------------------------------------------------
+///
+///	\section Legacy Log Functions
+///
+/// These are implemented as wrappers around the ofLogger class.
+///
+///	log a message at a specific log level
+void ofLog(ofLogLevel logLevel, const string& message);
+void ofLog(ofLogLevel logLevel, const char* format, ...);
+
+void ofSetLogLevel(ofLogLevel logLevel);
+ofLogLevel ofGetLogLevel();

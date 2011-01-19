@@ -71,6 +71,33 @@ template <class T> string ofToString(const T& value, int precision){
 	return out.str();
 }
 
+#ifdef TARGET_ANDROID
+template <>
+inline string ofToString(const double& value, int precision){
+	char str_val[1024];
+	sprintf(str_val,("%.0"+ofToString(precision)+"f").c_str(),value);
+	return str_val;
+}
+template <>
+inline string ofToString(const float& value, int precision){
+	char str_val[1024];
+	sprintf(str_val,("%.0"+ofToString(precision)+"f").c_str(),value);
+	return str_val;
+}
+template <>
+inline string ofToString(const double& value){
+	char str_val[1024];
+	sprintf(str_val,"%.08f",value);
+	return str_val;
+}
+template <>
+inline string ofToString(const float& value){
+	char str_val[1024];
+	sprintf(str_val,"%.08f",value);
+	return str_val;
+}
+#endif
+
 template<class T> string ofToString(const vector<T>& values) {
 	stringstream out;
 	int n = values.size();
