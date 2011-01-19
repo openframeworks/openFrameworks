@@ -120,10 +120,14 @@ void ofPopView() {
 
 
 //----------------------------------------------------------
-void ofViewport(float x, float y, float width, float height) {
+void ofViewport(float x, float y, float width, float height, bool invertY = true) {
 	if(width == 0) width = ofGetWidth();
 	if(height == 0) height = ofGetHeight();
-	glViewport(x, ofGetHeight() - y - height, width, height);
+	
+	if (invertY)
+		y = ofGetHeight() - (y + height);
+	
+	glViewport(x, y, width, height);
 }
 
 //----------------------------------------------------------
