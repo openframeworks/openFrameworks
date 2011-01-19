@@ -236,7 +236,7 @@ void ofClear(float r, float g, float b, float a) {
 
 //----------------------------------------------------------
 void ofClear(float brightness, float a) {
-	ofColor(brightness, brightness, brightness, a);
+	ofClear(brightness, brightness, brightness, a);
 }
 
 //----------------------------------------------------------
