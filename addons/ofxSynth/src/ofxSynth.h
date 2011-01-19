@@ -183,12 +183,13 @@ public:
 	// read a wav file into this class
 	bool read()
 	{
+		ofLog(OF_LOG_NOTICE,"trying to read wav file..."+myPath);
 		bool result;
 		ifstream inFile( myPath.c_str(), ios::in | ios::binary);
 		result = inFile;
 		
 		if (inFile) {
-			//printf("Reading wav file...\n"); // for debugging only
+			ofLog(OF_LOG_NOTICE,"Reading wav file..."+myPath); // for debugging only
 			
 			inFile.seekg(4, ios::beg);
 			inFile.read( (char*) &myChunkSize, 4 ); // read the ChunkSize
@@ -224,12 +225,14 @@ public:
 				inFile.seekg(filePos + 4, ios::beg);
 				inFile.read( (char*) &myDataSize, sizeof(int) ); // read the size of the data
 				filePos += 8;
-				if (strcmp(chunkID,"data") == 0) {
+				if (memcmp(chunkID,"data",4) == 0) {
+					ofLog(OF_LOG_NOTICE,"ofxSample: beginning of data found");
 					found = true;
 				}else{
 					filePos += myDataSize;
 				}
 			}
+			if(!found) ofLog(OF_LOG_ERROR,"ofxSample: beginning of data not found");
 			
 			
 			
@@ -240,6 +243,8 @@ public:
 			length=myDataSize*(0.5/myChannels);
 			
 			inFile.close(); // close the input file
+		}else{
+			ofLog(OF_LOG_ERROR,"couldn't open " + myPath);
 		}
 		
 		

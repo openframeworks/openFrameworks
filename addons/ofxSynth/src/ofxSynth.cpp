@@ -273,9 +273,9 @@ void ofxSynthSampler::trigger(){
 }
 void ofxSynthSampler::audioRequested( float* buffer, int numFrames, int numChannels ){
 	for (int i = 0; i < numFrames; i++){
-		buffer[i*numChannels] = sample.play4(currentFrequency, inPoint*sample.length, outPoint*sample.length, sampleRate);
-		for (int j = 1; j<numChannels; j++) {
-			buffer[i*numChannels+j] = buffer[i*numChannels];
+		float val = sample.play4(currentFrequency, inPoint*sample.length, outPoint*sample.length, sampleRate);
+		for (int j = 0; j<numChannels; j++) {
+			*buffer++ = val;
 		}
 	}
 }
@@ -286,8 +286,9 @@ void ofxSynthSampler::setFrequencySyncToLength(int length){
 	currentFrequency = sample.length/(float)length;
 }
 void ofxSynthSampler::loadFile(string file){
+	ofLog(OF_LOG_NOTICE,"ofxSample: loading "+file);
 	sample.load(ofToDataPath(file));
-	printf("Summary:\n%s", sample.getSummary());
+	ofLog(OF_LOG_NOTICE,"Summary:\n%s", sample.getSummary());
 }
 bool ofxSynthSample::load(string fileName) {
 	myPath = fileName;
@@ -396,7 +397,9 @@ bool ofxSynthWaveWriter::startWriting(string filename){
 	}
 	cout << buf_size;
 	setvbuf( file, 0, _IOFBF, 32 * 1024L );
+	return true;
 }
+
 void ofxSynthWaveWriter::process( float* input, float *output, int numFrames, int numInChannels, int numOutChannels ){
 	if (writing) {
 		for (int i=0; i<numFrames; i++) {
@@ -415,6 +418,7 @@ void ofxSynthWaveWriter::process( float* input, float *output, int numFrames, in
 	// this sample writer operates like a passthrough, even when it is writing samples to disk
 	ofSoundEffectPassthrough::process(input, output, numFrames, numInChannels, numOutChannels);
 }
+
 void ofxSynthWaveWriter::flush(){
 	if ( buf_pos && !fwrite( buf, buf_pos, 1, file ) ){
 		writing = false;
@@ -423,6 +427,7 @@ void ofxSynthWaveWriter::flush(){
 	}
 	buf_pos = 0;
 }
+
 void ofxSynthWaveWriter::stopWriting(){
 	if ( file )
 	{
