@@ -11,8 +11,8 @@ inline T& loopGet(vector<T>& vec, int i) {
 	return vec[loopMod(i, vec.size())];
 }
 
-void ofSmoothPolyline(ofPolyline& polyline, int smoothingSize, float smoothingAmount) {
-	ofPolyline original = polyline;
+ofPolyline ofSmooth(const ofPolyline& polyline, int smoothingSize, float smoothingAmount) {
+	ofPolyline result = polyline;
 	
 	// precompute weights and normalization
 	vector<float> weights;
@@ -29,28 +29,27 @@ void ofSmoothPolyline(ofPolyline& polyline, int smoothingSize, float smoothingAm
 	// use weights to make weighted averages of neighbors
 	int n = polyline.size();
 	for(int i = 0; i < n; i++) {
-		polyline[i].set(0, 0);
 		for(int j = 1; j <= smoothingSize; j++) {
 			int leftPosition = (n + i - j) % n;
 			int rightPosition = (i + j) % n;
-			const ofPoint& left = original[leftPosition];
-			const ofPoint& right = original[rightPosition];
-			polyline[i] += (left + right) * weights[j];
+			const ofPoint& left = polyline[leftPosition];
+			const ofPoint& right = polyline[rightPosition];
+			result[i] += (left + right) * weights[j];
 		}
-		polyline[i] += original[i];
-		polyline[i] *= weightNormalization;
+		result[i] *= weightNormalization;
 	}
+	
+	return result;
 }
 
-void ofResamplePolyline(ofPolyline& polyline, float spacing) {
-	ofPolyline original = polyline;
-	polyline.clear();
+ofPolyline ofResampleSpacing(const ofPolyline& polyline, float spacing) {
+	ofPolyline result;
 	
 	float totalLength = 0;
 	int curStep = 0;
-	for(int i = 0; i < (int) original.size() - 1; i++) {
-		const ofPoint& cur = original[i];
-		const ofPoint& next = original[i + 1];
+	for(int i = 0; i < (int) polyline.size() - 1; i++) {
+		const ofPoint& cur = polyline[i];
+		const ofPoint& next = polyline[i + 1];
 		ofPoint diff = next - cur;
 		
 		float curSegmentLength = diff.length();
@@ -60,10 +59,17 @@ void ofResamplePolyline(ofPolyline& polyline, float spacing) {
 			float curSample = curStep * spacing;
 			float curLength = curSample - (totalLength - curSegmentLength);
 			float relativeSample = curLength / curSegmentLength;
-			polyline.addVertex(cur.getInterpolated(next, relativeSample));
+			result.addVertex(cur.getInterpolated(next, relativeSample));
 			curStep++;
 		}
 	}
+	
+	return result;
+}
+
+ofPolyline ofResampleCount(const ofPolyline& polyline, int count) {
+	float perimeter = polyline.getPerimeter();
+	return ofResampleSpacing(polyline, perimeter / count);
 }
 
 /*
