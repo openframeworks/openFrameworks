@@ -32,7 +32,7 @@ bool ofShader::setup(string vertName, string fragName, string geomName) {
 bool ofShader::setupShaderFromFile(GLenum type, string filename) {
 	ofBuffer buffer = ofBufferFromFile(filename);
 	if(buffer.size()) {
-		return setupShaderFromSource(type, buffer.getBuffer());
+		return setupShaderFromSource(type, buffer.getText());
 	} else {
 		ofLog(OF_LOG_ERROR, "Could not load shader of type " + nameForType(type) + " from file " + filename);
 		return false;
