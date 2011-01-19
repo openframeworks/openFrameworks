@@ -4,6 +4,7 @@
 
 #include "ofMain.h"
 #include "ofxSynth.h"
+#include "ofxSynthSampler.h"
 
 class testApp : public ofBaseApp{
 
@@ -11,6 +12,7 @@ class testApp : public ofBaseApp{
 
 
 		void setup();
+		void audioRequested(float * output, int bufferSize, int nChannels);
 		void update();
 		void draw();
 
@@ -27,12 +29,25 @@ class testApp : public ofBaseApp{
 		float 	* lAudio;
 		float   * rAudio;
 
-		float volume;		
+		float volume;
 		
-		ofxSynth					synth;
-		ofxSynthDelayline			delay;
-		ofxSynthFilter				filter;
-		ofSoundEffectPassthrough	passthrough;
+		ofSoundSourceTestTone tone;
+		
+		ofxSynthDelayline delay;
+		
+		ofxSynth synth;
+		ofxSynthSampler sampler;
+		ofxSynthFilter filter;
+		ofSoundSourceMultiplexor multiplex;
+		ofSoundEffectPassthrough passthrough;
+		ofSoundMixer mixer;
+		ofxSynthWaveWriter writer;
+
+		int beatLength, frameCounter;
+		
+		
+		int effectIndex, beatPos;
+		float cutStart, cutEnd;
 };
 
 #endif
