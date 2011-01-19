@@ -120,7 +120,7 @@ void ofPopView() {
 
 
 //----------------------------------------------------------
-void ofViewport(float x, float y, float width, float height, bool invertY = true) {
+void ofViewport(float x, float y, float width, float height, bool invertY) {
 	if(width == 0) width = ofGetWidth();
 	if(height == 0) height = ofGetHeight();
 	
