@@ -43,6 +43,7 @@ bool ofBuffer::set(istream & stream){
 		}
 		else n = 0;
 	}
+	return true;
 }
 
 bool ofBuffer::writeTo(ostream & stream){
