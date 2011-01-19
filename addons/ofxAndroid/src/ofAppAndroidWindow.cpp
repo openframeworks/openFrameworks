@@ -138,7 +138,7 @@ Java_cc_openframeworks_OFAndroid_setAppDataDir( JNIEnv*  env, jobject  thiz, jst
 {
 	jboolean iscopy;
 	const char *mfile = env->GetStringUTFChars(data_dir, &iscopy);
-
+	ofLog(OF_LOG_NOTICE,"Setting app dir name to: " + string(mfile));
     ofSetDataPathRoot(string(mfile)+"/");
 }
 
@@ -267,7 +267,7 @@ Java_cc_openframeworks_OFAndroid_render( JNIEnv*  env )
 
 void
 Java_cc_openframeworks_OFAndroid_onTouchDown(JNIEnv*  env, jobject  thiz, jint id,jfloat x,jfloat y,jfloat pressure){
-	if(OFApp)OFApp->mousePressed(x,y,0);
+	ofNotifyMousePressed(x,y,0);
 	ofTouchEventArgs touch;
 	touch.id = id;
 	touch.x = x;
@@ -278,7 +278,7 @@ Java_cc_openframeworks_OFAndroid_onTouchDown(JNIEnv*  env, jobject  thiz, jint i
 
 void
 Java_cc_openframeworks_OFAndroid_onTouchUp(JNIEnv*  env, jobject  thiz, jint id,jfloat x,jfloat y,jfloat pressure){
-	if(OFApp)OFApp->mouseReleased(x,y,0);
+	ofNotifyMouseReleased(x,y,0);
 	ofTouchEventArgs touch;
 	touch.id = id;
 	touch.x = x;
@@ -289,7 +289,8 @@ Java_cc_openframeworks_OFAndroid_onTouchUp(JNIEnv*  env, jobject  thiz, jint id,
 
 void
 Java_cc_openframeworks_OFAndroid_onTouchMoved(JNIEnv*  env, jobject  thiz, jint id,jfloat x,jfloat y,jfloat pressure){
-	if(OFApp)OFApp->mouseMoved(x,y);
+	ofNotifyMouseMoved(x,y);
+	ofNotifyMouseDragged(x,y,0);
 	ofTouchEventArgs touch;
 	touch.id = id;
 	touch.x = x;

@@ -21,8 +21,8 @@ import android.view.SurfaceHolder;
 
 public class OFAndroid {
 	
-	public OFAndroid(String appName, String packageName, Activity ofActivity){
-
+	public OFAndroid(String packageName, Activity ofActivity){
+		Log.i("OF","external files dir: "+ ofActivity.getApplicationContext().getExternalFilesDir(null).getAbsolutePath());
         try {
         	
 			// try to find if R.raw class exists will throw
@@ -32,6 +32,7 @@ public class OFAndroid {
         	// if it exists copy all the raw resources
         	// to a folder in the sdcard
 	        Field[] files = raw.getDeclaredFields();
+	        
 
     		try{
     			//File root = Environment.getExternalStorageDirectory();
@@ -44,7 +45,7 @@ public class OFAndroid {
     				throw new Exception("couldn't create app directory");
     			}*/
     		}catch(Exception e){
-    			Log.e("OF","couldn't create app directory " + appName);
+    			Log.e("OF","couldn't create app directory " + packageName);
     			e.printStackTrace();
     		}
     		
@@ -87,7 +88,7 @@ public class OFAndroid {
         
         OFAndroid.ofActivity = ofActivity;
         
-        mGLView = new OFGLSurfaceView(ofActivity, appName);
+        mGLView = new OFGLSurfaceView(ofActivity, packageName);
         ofActivity.setContentView(mGLView);
     }
 
