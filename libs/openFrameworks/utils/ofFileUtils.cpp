@@ -43,6 +43,11 @@ bool ofBuffer::set(istream & stream){
 		else n = 0;
 	}
 	if(size){
+		//TODO: is the most effecient way to do this?
+		//TODO: should this be only set if we are in string mode?
+		//TODO: how does this affect saving a file in binary - would that last nullbyte cause issues?
+		buffer.resize(size+1);
+		buffer.back() = '\0';
 		return true;
 	}else{
 		return false;
