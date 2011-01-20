@@ -10,6 +10,15 @@
 #include <Poco/DateTimeFormatter.h>
 
 
+#ifdef TARGET_ANDROID
+// this is needed to be able to use poco 1.3,
+// will go away as soon as i compile poco 1.4
+namespace Poco{
+const int Ascii::CHARACTER_PROPERTIES[128]={0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+};
+#endif
+
+
 #if defined(TARGET_OF_IPHONE) || defined(TARGET_OSX ) || defined(TARGET_LINUX)
 	#include "sys/time.h"
 #endif
@@ -539,134 +548,6 @@ void ofSaveViewport(string filename) {
 	screen.grabScreen(0, 0, view.height, view.width);
 	screen.saveImage(filename);
 }
-
-#ifdef TARGET_ANDROID
-
-namespace Poco{
-const int Ascii::CHARACTER_PROPERTIES[128]={0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
-
-};
-
-
-#include <android/log.h>
-
-#define  LOG_TAG    "OF"
-#define  LOGNOTICE(...)  __android_log_print(ANDROID_LOG_INFO,LOG_TAG,__VA_ARGS__)
-#define  LOGWARNING(...)  __android_log_print(ANDROID_LOG_WARN,LOG_TAG,__VA_ARGS__)
-#define  LOGERROR(...)  __android_log_print(ANDROID_LOG_ERROR,LOG_TAG,__VA_ARGS__)
-#define  LOGFATAL(...)  __android_log_print(ANDROID_LOG_FATAL,LOG_TAG,__VA_ARGS__)
-#define  LOGVERBOSE(...)  __android_log_print(ANDROID_LOG_VERBOSE,LOG_TAG,__VA_ARGS__)
-#define  vLOGNOTICE(...)  __android_log_vprint(ANDROID_LOG_INFO,LOG_TAG,__VA_ARGS__)
-#define  vLOGWARNING(...)  __android_log_vprint(ANDROID_LOG_WARN,LOG_TAG,__VA_ARGS__)
-#define  vLOGERROR(...)  __android_log_vprint(ANDROID_LOG_ERROR,LOG_TAG,__VA_ARGS__)
-#define  vLOGFATAL(...)  __android_log_vprint(ANDROID_LOG_FATAL,LOG_TAG,__VA_ARGS__)
-#define  vLOGVERBOSE(...)  __android_log_vprint(ANDROID_LOG_VERBOSE,LOG_TAG,__VA_ARGS__)
-
-static ofLogLevel currentLogLevel = OF_DEFAULT_LOG_LEVEL;
-
-void ofSetLogLevel(ofLogLevel logLevel){
-	currentLogLevel = logLevel;
-}
-ofLogLevel ofGetLogLevel(){
-	return currentLogLevel;
-}
-
-//--------------------------------------------------
-void ofLog(ofLogLevel logLevel, const string &message){
-	if(logLevel >= currentLogLevel){
-		if(logLevel == OF_LOG_VERBOSE){
-			#ifdef TARGET_ANDROID
-				LOGVERBOSE(message.c_str());
-			#else
-				printf("OF_VERBOSE: ");
-			#endif
-		}
-		else if(logLevel == OF_LOG_NOTICE){
-			#ifdef TARGET_ANDROID
-				LOGNOTICE(message.c_str());
-			#else
-						printf("OF_NOTICE: ");
-			#endif
-		}
-		else if(logLevel == OF_LOG_WARNING){
-			#ifdef TARGET_ANDROID
-				LOGWARNING(message.c_str());
-			#else
-				printf("OF_WARNING: ");
-			#endif
-		}
-		else if(logLevel == OF_LOG_ERROR){
-			#ifdef TARGET_ANDROID
-				LOGERROR(message.c_str());
-			#else
-				printf("OF_ERROR: ");
-			#endif
-		}
-		else if(logLevel == OF_LOG_FATAL_ERROR){
-			#ifdef TARGET_ANDROID
-				LOGFATAL(message.c_str());
-			#else
-				printf("OF_FATAL_ERROR: ");
-			#endif
-		}
-		#ifndef TARGET_ANDROID
-			printf("%s\n",message.c_str());
-		#endif
-	}
-}
-
-
-//--------------------------------------------------
-void ofLog(ofLogLevel logLevel, const char* format, ...){
-	//thanks stefan!
-	//http://www.ozzu.com/cpp-tutorials/tutorial-writing-custom-printf-wrapper-function-t89166.html
-
-	if(logLevel >= currentLogLevel){
-		va_list args;
-		va_start( args, format );
-		if(logLevel == OF_LOG_VERBOSE){
-			#ifdef TARGET_ANDROID
-				vLOGVERBOSE( format, args );
-			#else
-				printf("OF_VERBOSE: ");
-			#endif
-		}
-		else if(logLevel == OF_LOG_NOTICE){
-			#ifdef TARGET_ANDROID
-				vLOGNOTICE( format, args );
-			#else
-						printf("OF_NOTICE: ");
-			#endif
-		}
-		else if(logLevel == OF_LOG_WARNING){
-			#ifdef TARGET_ANDROID
-				vLOGWARNING( format, args );
-			#else
-				printf("OF_WARNING: ");
-			#endif
-		}
-		else if(logLevel == OF_LOG_ERROR){
-			#ifdef TARGET_ANDROID
-				vLOGERROR( format, args );
-			#else
-				printf("OF_ERROR: ");
-			#endif
-		}
-		else if(logLevel == OF_LOG_FATAL_ERROR){
-			#ifdef TARGET_ANDROID
-				vLOGFATAL( format, args );
-			#else
-				printf("OF_FATAL_ERROR: ");
-			#endif
-		}
-		#ifndef TARGET_ANDROID
-			vprintf( format, args );
-			printf("\n");
-		#endif
-		va_end( args );
-	}
-}
-#endif
 
 //--------------------------------------------------
 int saveImageCounter = 0;

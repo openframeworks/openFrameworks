@@ -9,6 +9,10 @@
 #include <Poco/ConsoleChannel.h>
 #include <Poco/SplitterChannel.h>
 
+#ifdef TARGET_ANDROID
+#include <ofxAndroidLogChannel.h>
+#endif
+
 enum ofLogLevel{
 	OF_LOG_VERBOSE 		= Poco::Message::PRIO_TRACE,	///< lowest log level
 	OF_LOG_DEBUG 		= Poco::Message::PRIO_DEBUG,
@@ -22,7 +26,6 @@ enum ofLogLevel{
 
 #define OF_DEFAULT_LOG_LEVEL  OF_LOG_NOTICE
 
-#ifndef TARGET_ANDROID
 //------------------------------------------------------------------------------
 /// \class ofLogger
 /// \brief a singleton log class, this is where the magic happens ...
@@ -123,9 +126,6 @@ class ofLogger{
 		///
 		/// Resetting the level of the log topic sets it to the level of the global
 		/// logger.
-		void addTopic(const string& logTopic, ofLogLevel logLevel=OF_DEFAULT_LOG_LEVEL);
-		void removeTopic(const string& logTopic);
-		bool topicExists(const string& logTopic);
 		void setTopicLogLevel(const string& logTopic, ofLogLevel logLevel);
 		void resetTopicLogLevel(const string& logTopic);
 		
@@ -172,6 +172,7 @@ class ofLogger{
 		Poco::AutoPtr<Poco::Channel> 			formattingChannel;	///< formatter (needed for creating topics)
 		Poco::AutoPtr<Poco::SplitterChannel>	splitterChannel;	///< channel source mixer
 		Poco::AutoPtr<Poco::ConsoleChannel> 	consoleChannel;		///< the console io channel
+		Poco::AutoPtr<Poco::AndroidChannel> 	androidChannel;		///< the console io channel
 		Poco::AutoPtr<Poco::FileChannel> 		fileChannel;		///< the file io channel
 		
 		bool bConsole;	///< are we printing to the console?
@@ -315,11 +316,6 @@ class ofLogNotice{
 		static void setFileRotationNumber()		{ofLogger::instance().setFileRotationNumber();}
 		static void setFileRotationTimestamp()	{ofLogger::instance().setFileRotationTimestamp();}
 	
-		static void addTopic(const string& logTopic, ofLogLevel logLevel=OF_DEFAULT_LOG_LEVEL)
-			{ofLogger::instance().addTopic(logTopic, logLevel);}
-		static void removeTopic(const string& logTopic)	{ofLogger::instance().removeTopic(logTopic);}
-		static bool topicExists(const string& logTopic)
-			{return ofLogger::instance().topicExists(logTopic);}
 		static void setTopicLogLevel(const string& logTopic, ofLogLevel logLevel)
 			{ofLogger::instance().setTopicLogLevel(logTopic, logLevel);}
 		static void resetTopicLogLevel(const string& logTopic)
@@ -452,7 +448,6 @@ void ofLogEnableHeaderMillis();
 void ofLogDisableHeaderMillis();
 bool ofLogUsingHeaderMillis();
 
-#endif
 
 //-------------------------------------------------------
 ///
