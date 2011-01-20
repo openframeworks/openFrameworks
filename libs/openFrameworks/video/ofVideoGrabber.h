@@ -21,8 +21,8 @@
 #endif
 
 #ifdef OF_VIDEO_CAPTURE_GSTREAMER
-	#include "ofGstUtils.h"
-	#define OF_VID_GRABBER_TYPE ofGstUtils()
+	#include "ofGstVideoGrabber.h"
+	#define OF_VID_GRABBER_TYPE ofGstVideoGrabber()
 #endif
 
 class ofVideoGrabber : public ofBaseVideoGrabber,public ofBaseDraws, public ofBaseHasTexture{

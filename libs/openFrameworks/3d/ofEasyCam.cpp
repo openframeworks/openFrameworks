@@ -9,92 +9,90 @@
 
 #include "ofEasyCam.h"
 #include "ofEvents.h"
-
+#include "ofMain.h"
 
 //----------------------------------------
 ofEasyCam::ofEasyCam():
-targetNode(NULL), 
 distance(100),
-pos(0, 0),
-vel(0, 0),
-pmouse(0, 0), 
-speed(0.01),
-drag(0.01),
-oldMousePress(false)
+mousePosViewPrev(0, 0), 
+oldMousePress(false),
+lastMouseActionFrame(0),
+speed(0.1),
+drag(0.1)
 {
-//	
-//	ab_quat[16] = {1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1};
-//	ab_last[16] = {1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1};
-//	ab_next[16] = {1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1};
-//	
-//	// the distance from the origin to the eye
-//	ab_zoom = 1.0;
-//	ab_zoom2 = 1.0;
-//	// the radius of the arcball
-//	ab_sphere = 1.0;
-//	ab_sphere2 = 1.0;
-//	// the distance from the origin of the plane that intersects
-//	// the edge of the visible sphere (tangent to a ray from the eye)
-//	ab_edge = 1.0;
-//	// whether we are using a sphere or plane
-//	ab_planar = false;
-//	 ab_planedist = 0.5;
-//	
-//	vec ab_start = vec(0,0,1);
-//	vec ab_curr = vec(0,0,1);
-//	vec ab_eye = vec(0,0,1);
-//	vec ab_eyedir = vec(0,0,1);
-//	vec ab_up = vec(0,1,0);
-//	vec ab_out = vec(1,0,0);
-//	
-//	GLdouble ab_glp[16] = {1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1};
-//	GLdouble ab_glm[16] = {1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1};
-//	int ab_glv[4] = {0,0,640,480};
-	
+	target.setPosition(0, 0, 0);
+	setPosition(0, 0, distance);
+	setParent(target);
 }
 
 
 //----------------------------------------
 void ofEasyCam::begin(ofRectangle rect) {
-	//	orbit(ofMap(ofGetMouseX(), 0, ofGetWidth(), 180, -180), ofMap(ofGetMouseY(), 0, ofGetHeight(), 90, -90), orbitRadius, testNodes[targetIndex[1]]);
 	
-	if(ofGetMousePressed(0)) {
-		ofVec2f mousePos(ofGetMouseX(), ofGetMouseY());
-		if(oldMousePress) {
-			vel -= (mousePos - pmouse) * speed;
+	if (lastMouseActionFrame != ofGetFrameNum())
+	{
+		lastMouseActionFrame = ofGetFrameNum();
+		
+		if(ofGetMousePressed(0)) {
+			ofVec3f targetPos =  target.getGlobalPosition();
+			ofVec3f mousePos(ofGetMouseX() - rect.width/2, rect.height/2 - ofGetMouseY(), targetPos.z);
+			ofVec3f mousePosView;
+			
+			float sphereRadius = min(rect.width, rect.height)/2;
+			float diffSquared = sphereRadius * sphereRadius - (targetPos - mousePos).lengthSquared();
+			if(diffSquared <= 0) {
+				mousePos.z = 0;
+			} else {
+				mousePos.z = sqrtf(diffSquared);
+			}
+			mousePos.z += targetPos.z;
+			mousePosView = ofMatrix4x4::getInverseOf(target.getGlobalTransformMatrix()) * mousePos;
+			
+			if(oldMousePress) {
+				ofQuaternion rotAmount;
+				rotAmount.makeRotate(mousePosViewPrev, mousePosView);
+				target.rotate(rotAmount.conj());
+				//target.rotate(rotAmount);
+			}
+			
+			
+			printf("mousePos: %f %f %f\n", mousePos.x, mousePos.y, mousePos.z);
+			
+			if(oldMousePress) {
+				//			vel -= (mousePos - mousePrev) * speed;
+			}
+			mousePosViewPrev = ofMatrix4x4::getInverseOf(target.getGlobalTransformMatrix()) * mousePos;
 		}
-		pmouse = mousePos;
+		
+		oldMousePress = ofGetMousePressed(0);
 	}
-	
-	pos += vel;
-	vel *= (1-drag);
-
-	orbit(pos.x, pos.y, distance, (targetNode ? targetNode->getGlobalPosition() : targetPoint));
-	
-	
-	oldMousePress = ofGetMousePressed(0);
 	
 	ofCamera::begin(rect);
 }
 
 //----------------------------------------
 void ofEasyCam::reset() {
-	pos.set(0, 0);
-	vel.set(0, 0);
+	target.resetTransform();
 	distance = 100;
 }
 
 
 //----------------------------------------
-void ofEasyCam::setTarget(const ofVec3f& target) {
-	targetPoint = target;
-	targetNode = NULL;
+void ofEasyCam::setTarget(const ofVec3f& targetPoint) {
+	target.setPosition(targetPoint);
 }
 
 //----------------------------------------
-void ofEasyCam::setTarget(ofNode& target) {
-	targetNode = &target;
+void ofEasyCam::setTarget(ofNode& targetNode) {
+	target.setPosition(ofVec3f(0, 0, 0));
+	target.setParent(targetNode);
 }
+
+//----------------------------------------
+ofNode& ofEasyCam::getTarget() {
+	return target;
+}
+
 
 //----------------------------------------
 void ofEasyCam::setDistance(float f) {
