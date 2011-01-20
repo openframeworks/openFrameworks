@@ -2,6 +2,7 @@
 #include "ofAppRunner.h"
 #include "ofBitmapFont.h"
 #include "ofUtils.h"
+#include "ofMatrix4x4.h"
 
 #ifdef TARGET_OSX
 	#include <OpenGL/glu.h>
@@ -203,42 +204,29 @@ void ofSetupScreenOrtho(float width, float height, bool vFlip, float nearDist, f
 	if(width == 0) width = ofGetViewportWidth();
 	if(height == 0) height = ofGetViewportHeight();
 
-#ifndef TARGET_OPENGLES
 
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 
 	ofSetCoordHandedness(OF_RIGHT_HANDED);
 
+#ifndef TARGET_OPENGLES
 	if(vFlip) {
 		glOrtho(0, width, height, 0, nearDist, farDist);
 		ofSetCoordHandedness(OF_LEFT_HANDED);
 	}
 	else glOrtho(0, width, 0, height, nearDist, farDist);
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
 #else
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-
-	ofSetCoordHandedness(OF_RIGHT_HANDED);
 	if(vFlip) {
-		float projectionMatrix[] = { 2.0/height, 0.0, 0.0, -1.0,
-		                              0.0, 2.0/width, 0.0, -1.0,
-		                              0.0, 0.0, -1.0, 0.0,
-		                              0.0, 0.0, 0.0, 1.0 };
-		glMultMatrixf(projectionMatrix);
-	}else{
-		float projectionMatrix[] = {  0.0, 2.0/height, 0.0, -1.0,
-		                              2.0/width, 0.0, 0.0, -1.0,
-		                              0.0, 0.0, -1.0, 0.0,
-		                              0.0, 0.0, 0.0, 1.0 };
-		glMultMatrixf(projectionMatrix);
+		glMultMatrixf(ofMatrix4x4::newOrthoMatrix(0,width,height,0,nearDist,farDist).getPtr());
 		ofSetCoordHandedness(OF_LEFT_HANDED);
+	}else{
+		glMultMatrixf(ofMatrix4x4::newOrthoMatrix(0,width,0,height,nearDist,farDist).getPtr());
 	}
+#endif
+
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-#endif
 }
 
 //----------------------------------------------------------
