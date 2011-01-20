@@ -12,6 +12,7 @@ const string ofLogger::s_dateFormat = "%Y-%m-%d %H:%M:%S.%i";
 const string ofLogger::s_timeFormat = "%H:%M:%S.%i";
 const string ofLogger::s_dateAndTimeFormat = "%Y-%m-%d %H:%M:%S.%i";
 
+
 //TODO: logfile currently overwrites the file - make it append
 
 //
@@ -34,11 +35,17 @@ ofLogger::ofLogger(){
 	
 	splitterChannel = new Poco::SplitterChannel();
 	
-	consoleChannel = new Poco::ConsoleChannel();
 	fileChannel = new Poco::FileChannel(ofToDataPath("openframeworks.log"));
 
+#ifdef TARGET_ANDROID
+	androidChannel = new Poco::AndroidChannel();
+	// console open, file not opened (added) by default
+	splitterChannel->addChannel(androidChannel);
+#else
+	consoleChannel = new Poco::ConsoleChannel();
 	// console open, file not opened (added) by default
 	splitterChannel->addChannel(consoleChannel);
+#endif
 
 	Poco::AutoPtr<Poco::Formatter> formatter(new Poco::PatternFormatter("%t"));
 	formattingChannel = new Poco::FormattingChannel(formatter, splitterChannel);
@@ -46,14 +53,16 @@ ofLogger::ofLogger(){
 	// the root logger has an empty name
 	logger = &Poco::Logger::create("", formattingChannel, (int) OF_DEFAULT_LOG_LEVEL);
 	
+
 	// setup file logger
 	fileChannel->setProperty("times", "local");		// use local system time
 	fileChannel->setProperty("archive", "number");	// use number suffixs
 	fileChannel->setProperty("compress", "false"); 	// don't compress
 	fileChannel->setProperty("purgeCount", "10");	// max number of log files
 	
-	// add default of topic
-	addTopic("of");
+	// add default of topic every other topic is created
+	// on the go if it doesn't exist yet
+	Poco::Logger::create("of",formattingChannel);
 }
 
 //-----------------------------------------------------------------
@@ -68,13 +77,12 @@ void ofLogger::log(ofLogLevel logLevel, const string& message){
 }
 
 void ofLogger::log(const string& logTopic, ofLogLevel logLevel, const string& message){
-	Poco::Logger* topicLogger = Poco::Logger::has(logTopic);
-	if(!topicLogger){
-		_log(OF_LOG_WARNING, "log topic \""+logTopic+"\" not found", logger);
-	}
-	else{
-		_log(logLevel, logTopic+": "+message, topicLogger);
-	}
+	Poco::Logger& topicLogger = Poco::Logger::get(logTopic);
+#ifdef TARGET_ANDROID
+		_log(logLevel, message, &topicLogger);
+#else
+		_log(logLevel, logTopic+": "+message, &topicLogger);
+#endif
 }
 
 //--------------------------------------------------------------
@@ -167,33 +175,11 @@ void ofLogger::setFileRotationTimestamp(){
 	fileChannel->setProperty("archive", "timestamp");
 }
 
-//--------------------------------------------------------------------------------
-void ofLogger::addTopic(const string& logTopic, ofLogLevel logLevel){
-	try{
-		Poco::Logger::create(logTopic, formattingChannel, (int) logLevel);
-	}
-	catch (Poco::ExistsException& e){
-		log(OF_LOG_WARNING, "log topic \""+logTopic+"\" does not exist");
-	}
-}
-
-void ofLogger::removeTopic(const string& logTopic){
-	Poco::Logger::destroy(logTopic);
-}
-
-bool ofLogger::topicExists(const string& logTopic){
-	return (bool) Poco::Logger::has(logTopic); // has returns NULL if topic not found
-}
-
 void ofLogger::setTopicLogLevel(const string& logTopic, ofLogLevel logLevel){
-	Poco::Logger* topicLogger = Poco::Logger::has(logTopic);
-	if(topicLogger){
-		topicLogger->setLevel(logLevel);
-	}
-	else{
-		log(OF_LOG_WARNING, "log topic \""+logTopic+"\" not found");
-	}
+	Poco::Logger& topicLogger = Poco::Logger::get(logTopic);
+	topicLogger.setLevel(logLevel);
 }
+
 void ofLogger::resetTopicLogLevel(const string& logTopic){
 	setTopicLogLevel(logTopic, (ofLogLevel) logger->getLevel());
 }
@@ -406,7 +392,7 @@ void ofLog(ofLogLevel logLevel, const char* format, ...){
 	va_start(args, format);
 		vsprintf(line, format, args);
 	va_end(args);
-	ofLogger::instance().log(logLevel, (string) line);
+	ofLogger::instance().log("of",logLevel, (string) line);
 }
 
 void ofSetLogLevel(ofLogLevel logLevel){
@@ -448,11 +434,6 @@ void ofLogSetFileRotationMaxNum(unsigned int num)
 void ofLogSetFileRotationNumber()		{ofLogger::instance().setFileRotationNumber();}
 void ofLogSetFileRotationTimestamp()	{ofLogger::instance().setFileRotationTimestamp();}
 
-void ofLogAddTopic(const string& logTopic, ofLogLevel logLevel)
-	{ofLogger::instance().addTopic(logTopic, logLevel);}
-void ofLogRemoveTopic(const string& logTopic)	{ofLogger::instance().removeTopic(logTopic);}
-bool ofLogTopicExists(const string& logTopic)
-	{return ofLogger::instance().topicExists(logTopic);}
 void ofLogSetTopicLogLevel(const string& logTopic, ofLogLevel logLevel)
 	{ofLogger::instance().setTopicLogLevel(logTopic, logLevel);}
 void ofLogResetTopicLogLevel(const string& logTopic)

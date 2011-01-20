@@ -109,8 +109,11 @@
 							</tool>
 						</toolChain>
 					</folderInfo>
+					<fileInfo id="cdt.managedbuild.config.gnu.exe.debug.870248745.1398944811.334448089.512367540" name="ofLog.cpp" rcbsApplicability="disable" resourcePath="utils/ofLog.cpp" toolsToInvoke="cdt.managedbuild.tool.gnu.cpp.compiler.exe.debug.481113060.1751554047">
+						<tool id="cdt.managedbuild.tool.gnu.cpp.compiler.exe.debug.481113060.1751554047" name="GCC C++ Compiler" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.exe.debug.481113060"/>
+					</fileInfo>
 					<sourceEntries>
-						<entry excluding="utils/ofLog.cpp|sound/ofFmodSoundPlayer.h|sound/ofFmodSoundPlayer.cpp|video/ofQuickTimePlayer.h|video/ofQuickTimePlayer.cpp|video/ofQuickTimeGrabber.h|video/ofQuickTimeGrabber.cpp|video/ofGstVideoPlayer.h|video/ofGstVideoPlayer.cpp|video/ofGstVideoGrabber.h|video/ofGstVideoGrabber.cpp|video/ofDirectShowGrabber.h|video/ofDirectShowGrabber.cpp|video/ofVideoPlayer.cpp|video/ofUCUtils.h|video/ofUCUtils.cpp|video/ofQtUtils.h|video/ofQtUtils.cpp|video/ofGstUtils.h|video/ofGstUtils.cpp|sound/ofSoundStream.cpp|sound/ofSoundPlayer.h|sound/ofSoundPlayer.cpp|app/ofAppGlutWindow.h|app/ofAppGlutWindow.cpp|communication|bin" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="sound/ofFmodSoundPlayer.h|sound/ofFmodSoundPlayer.cpp|video/ofQuickTimePlayer.h|video/ofQuickTimePlayer.cpp|video/ofQuickTimeGrabber.h|video/ofQuickTimeGrabber.cpp|video/ofGstVideoPlayer.h|video/ofGstVideoPlayer.cpp|video/ofGstVideoGrabber.h|video/ofGstVideoGrabber.cpp|video/ofDirectShowGrabber.h|video/ofDirectShowGrabber.cpp|video/ofVideoPlayer.cpp|video/ofUCUtils.h|video/ofUCUtils.cpp|video/ofQtUtils.h|video/ofQtUtils.cpp|video/ofGstUtils.h|video/ofGstUtils.cpp|sound/ofSoundStream.cpp|sound/ofSoundPlayer.h|sound/ofSoundPlayer.cpp|app/ofAppGlutWindow.h|app/ofAppGlutWindow.cpp|communication|bin" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -1556,8 +1559,11 @@
 							</tool>
 						</toolChain>
 					</folderInfo>
+					<fileInfo id="cdt.managedbuild.config.gnu.exe.debug.870248745.1398944811.334448089.180068000.1609548577" name="ofLog.cpp" rcbsApplicability="disable" resourcePath="utils/ofLog.cpp" toolsToInvoke="cdt.managedbuild.tool.gnu.cpp.compiler.exe.debug.748308643.1942590911">
+						<tool id="cdt.managedbuild.tool.gnu.cpp.compiler.exe.debug.748308643.1942590911" name="GCC C++ Compiler" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.exe.debug.748308643"/>
+					</fileInfo>
 					<sourceEntries>
-						<entry excluding="utils/ofLog.cpp|sound/ofFmodSoundPlayer.h|sound/ofFmodSoundPlayer.cpp|video/ofQuickTimePlayer.h|video/ofQuickTimePlayer.cpp|video/ofQuickTimeGrabber.h|video/ofQuickTimeGrabber.cpp|video/ofGstVideoPlayer.h|video/ofGstVideoPlayer.cpp|video/ofGstVideoGrabber.h|video/ofGstVideoGrabber.cpp|video/ofDirectShowGrabber.h|video/ofDirectShowGrabber.cpp|video/ofVideoPlayer.cpp|video/ofUCUtils.h|video/ofUCUtils.cpp|video/ofQtUtils.h|video/ofQtUtils.cpp|video/ofGstUtils.h|video/ofGstUtils.cpp|sound/ofSoundStream.cpp|sound/ofSoundPlayer.h|sound/ofSoundPlayer.cpp|app/ofAppGlutWindow.h|app/ofAppGlutWindow.cpp|communication|bin" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="sound/ofFmodSoundPlayer.h|sound/ofFmodSoundPlayer.cpp|video/ofQuickTimePlayer.h|video/ofQuickTimePlayer.cpp|video/ofQuickTimeGrabber.h|video/ofQuickTimeGrabber.cpp|video/ofGstVideoPlayer.h|video/ofGstVideoPlayer.cpp|video/ofGstVideoGrabber.h|video/ofGstVideoGrabber.cpp|video/ofDirectShowGrabber.h|video/ofDirectShowGrabber.cpp|video/ofVideoPlayer.cpp|video/ofUCUtils.h|video/ofUCUtils.cpp|video/ofQtUtils.h|video/ofQtUtils.cpp|video/ofGstUtils.h|video/ofGstUtils.cpp|sound/ofSoundStream.cpp|sound/ofSoundPlayer.h|sound/ofSoundPlayer.cpp|app/ofAppGlutWindow.h|app/ofAppGlutWindow.cpp|communication|bin" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -3006,8 +3012,11 @@
 							</tool>
 						</toolChain>
 					</folderInfo>
+					<fileInfo id="cdt.managedbuild.config.gnu.exe.debug.870248745.1398944811.334448089.180068000.1811496492.587943192" name="ofLog.cpp" rcbsApplicability="disable" resourcePath="utils/ofLog.cpp" toolsToInvoke="cdt.managedbuild.tool.gnu.cpp.compiler.exe.debug.1192822223.1684927147">
+						<tool id="cdt.managedbuild.tool.gnu.cpp.compiler.exe.debug.1192822223.1684927147" name="GCC C++ Compiler" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.exe.debug.1192822223"/>
+					</fileInfo>
 					<sourceEntries>
-						<entry excluding="utils/ofLog.cpp|sound/ofFmodSoundPlayer.h|sound/ofFmodSoundPlayer.cpp|video/ofQuickTimePlayer.h|video/ofQuickTimePlayer.cpp|video/ofQuickTimeGrabber.h|video/ofQuickTimeGrabber.cpp|video/ofGstVideoPlayer.h|video/ofGstVideoPlayer.cpp|video/ofGstVideoGrabber.h|video/ofGstVideoGrabber.cpp|video/ofDirectShowGrabber.h|video/ofDirectShowGrabber.cpp|video/ofVideoPlayer.cpp|video/ofUCUtils.h|video/ofUCUtils.cpp|video/ofQtUtils.h|video/ofQtUtils.cpp|video/ofGstUtils.h|video/ofGstUtils.cpp|sound/ofSoundStream.cpp|sound/ofSoundPlayer.h|sound/ofSoundPlayer.cpp|app/ofAppGlutWindow.h|app/ofAppGlutWindow.cpp|communication|bin" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="sound/ofFmodSoundPlayer.h|sound/ofFmodSoundPlayer.cpp|video/ofQuickTimePlayer.h|video/ofQuickTimePlayer.cpp|video/ofQuickTimeGrabber.h|video/ofQuickTimeGrabber.cpp|video/ofGstVideoPlayer.h|video/ofGstVideoPlayer.cpp|video/ofGstVideoGrabber.h|video/ofGstVideoGrabber.cpp|video/ofDirectShowGrabber.h|video/ofDirectShowGrabber.cpp|video/ofVideoPlayer.cpp|video/ofUCUtils.h|video/ofUCUtils.cpp|video/ofQtUtils.h|video/ofQtUtils.cpp|video/ofGstUtils.h|video/ofGstUtils.cpp|sound/ofSoundStream.cpp|sound/ofSoundPlayer.h|sound/ofSoundPlayer.cpp|app/ofAppGlutWindow.h|app/ofAppGlutWindow.cpp|communication|bin" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
