@@ -948,69 +948,89 @@ void ofSetHexColor(int hexColor){
 //----------------------------------------------------------
 
 void ofEnableBlendMode(ofBlendMode blendMode){
-#ifndef TARGET_OPENGLES
     switch (blendMode){
             
         case OF_BLENDMODE_ALPHA:{
             glEnable(GL_BLEND);
-            glBlendEquation(GL_FUNC_ADD);
-            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+			#ifndef TARGET_OPENGLES			
+				glBlendEquation(GL_FUNC_ADD);
+			#endif  			
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
             currentStyle.blending = 1;
             currentStyle.blendSrc = GL_SRC_ALPHA;
             currentStyle.blendDst = GL_ONE_MINUS_SRC_ALPHA;
-            currentStyle.blendEquation = GL_FUNC_ADD;
+			#ifndef TARGET_OPENGLES						
+				currentStyle.blendEquation = GL_FUNC_ADD;
+			#endif  						
             break;
         }
       
         case OF_BLENDMODE_ADD:{
             glEnable(GL_BLEND);
-            glBlendEquation(GL_FUNC_ADD);
-            glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+			#ifndef TARGET_OPENGLES			
+				glBlendEquation(GL_FUNC_ADD);
+			#endif  			
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE);
             currentStyle.blending = 1;
             currentStyle.blendSrc = GL_SRC_ALPHA;
             currentStyle.blendDst = GL_ONE;
-            currentStyle.blendEquation = GL_FUNC_ADD;
-            break;
+			#ifndef TARGET_OPENGLES						
+				currentStyle.blendEquation = GL_FUNC_ADD;
+			#endif  
+			break;
         }
                    
         case OF_BLENDMODE_MULTIPLY:{
             glEnable(GL_BLEND);
-            glBlendEquation(GL_FUNC_ADD);
-            glBlendFunc(GL_DST_COLOR, GL_ONE_MINUS_SRC_ALPHA /* GL_ZERO or GL_ONE_MINUS_SRC_ALPHA */);
+			#ifndef TARGET_OPENGLES			
+				glBlendEquation(GL_FUNC_ADD);
+			#endif  			
+			glBlendFunc(GL_DST_COLOR, GL_ONE_MINUS_SRC_ALPHA /* GL_ZERO or GL_ONE_MINUS_SRC_ALPHA */);
             currentStyle.blending = 1;
             currentStyle.blendSrc = GL_DST_COLOR;
             currentStyle.blendDst = GL_ONE_MINUS_SRC_ALPHA;
-            currentStyle.blendEquation = GL_FUNC_ADD;
-            break;
+			#ifndef TARGET_OPENGLES						
+				currentStyle.blendEquation = GL_FUNC_ADD;
+			#endif  
+			break;
         }
        
         case OF_BLENDMODE_SCREEN:{
             glEnable(GL_BLEND);
-            glBlendEquation(GL_FUNC_ADD);
+			#ifndef TARGET_OPENGLES			
+				glBlendEquation(GL_FUNC_ADD);
+			#endif  			
             glBlendFunc(GL_ONE_MINUS_DST_COLOR, GL_ONE);
             currentStyle.blending = 1;
             currentStyle.blendSrc = GL_ONE_MINUS_DST_COLOR;
             currentStyle.blendDst = GL_ONE;
-            currentStyle.blendEquation = GL_FUNC_ADD;
-            break;
+			#ifndef TARGET_OPENGLES						
+				currentStyle.blendEquation = GL_FUNC_ADD;
+			#endif  
+			break;
         }
-         
+         		 
         case OF_BLENDMODE_SUBTRACT:{
             glEnable(GL_BLEND);
+		#ifndef TARGET_OPENGLES
             glBlendEquation(GL_FUNC_REVERSE_SUBTRACT);
+		#else 
+			ofLog(OF_LOG_WARNING, "OF_BLENDMODE_SUBTRACT not currently supported on iPhone");
+		#endif  
             glBlendFunc(GL_SRC_ALPHA, GL_ONE);
             currentStyle.blending = 1;
             currentStyle.blendSrc = GL_SRC_ALPHA;
             currentStyle.blendDst = GL_ONE;
-            currentStyle.blendEquation = GL_FUNC_SUBTRACT;
-            break;
+			#ifndef TARGET_OPENGLES						
+				currentStyle.blendEquation = GL_FUNC_ADD;
+			#endif  
+			break;
         }
-            
+		
             
         default:
             break;
     }
-#endif  
 }
 
 //----------------------------------------------------------
