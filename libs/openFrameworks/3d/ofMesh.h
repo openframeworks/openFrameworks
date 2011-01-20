@@ -1,24 +1,12 @@
+//Keith Pasko, Memo Akten
+
 #pragma once
 
-#include "ofVec3f.h"
-#include "ofVec2f.h"
-#include "ofColor.h"
+#include "ofMeshElement.h"
 #include "ofUtils.h"
 
 //TODO: implement via this
-#define OF_MESH_MAX_VERTS_PER_FACE 3
-#define OF_MAX_TEX_MAPPINGS 1
-#define OF_MAX_COLOR_MAPPINGS 1
-
-class ofFace{
-public:
-	ofFace();
-	ofFace(int vi0, int vi1, int vi2);
-	~ofFace();
-	//TODO: hard-lock this to three?
-	vector<int> indices;
-};
-
+// add/edit/remove elements
 
 class ofMesh{
 public:
@@ -26,44 +14,29 @@ public:
 	~ofMesh();
 
 	void clear();
-	int addVertex(ofVec3f pos, ofVec3f normal, ofColor color, ofVec2f texCoord);
-	int addVertex(const ofVec3f& pos);
-	int addFace(int vi1, int vi2, int vi3);
+//	int addVertex(ofVec3f pos, ofVec3f normal, ofColor color, ofVec2f texCoord);
+//	int addVertex(const ofVec3f& pos);
+//	int addFace(int vi1, int vi2, int vi3);
 	void flipNormals();
-	int getFaceVertexId(const ofFace& f, int index);
+//	int getFaceVertexId(const ofFace& f, int index);
 	//would like to be reference, but what if there is none?
-	ofVec3f* getFaceVertex(const ofFace& f, int index);
+//	ofVec3f* getFaceVertex(const ofFace& f, int index);
 
 	int numVertices();
 	int numFaces();
 	int numNormals();
 	int numTexCoords();
 	int numColors();
-
+	
+	void addElement(int mode, const vector<ofVec3f>& verts);
+	
 	/*
-	int numTangents(){
-	return tangents.size();
+	void addTriangleFan(const vector<ofVec3f>& verts) {
+		addElement(OF_MESH_FAN, verts);
 	}
+	 */
 
-	int numBiTangents(){
-	return biTangents.size();
-	}
-
-	int getNumColorMaps(){
-	return colors.size();
-	}
-
-	int numTexMaps(){
-	return texCoords.size();
-	}
-	*/
-
-	vector<ofVec3f> vertices;
-	vector<ofVec3f> normals;
-	vector<ofVec2f> texCoords;
-	vector<ofColor> colors;
-
-	vector<ofFace> faces;
+	vector<ofMeshElement> elements;
 
 	string name;
 	bool bUsingNormals;

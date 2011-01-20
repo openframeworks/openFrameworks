@@ -12,10 +12,10 @@
 
 
 ofCamera::ofCamera()
-:fov(60),
+:isOrtho(false),
+fov(60),
 nearClip(0),
 farClip(0),
-isOrtho(false),
 isActive(false)
 {
 }
@@ -59,7 +59,7 @@ void ofCamera::begin(ofRectangle rect) {
 	ofSetCoordHandedness(OF_RIGHT_HANDED);
 	
 	// autocalculate near/far clip planes if not set by user
-	float nc, fc;
+	float nc = nearClip, fc = farClip;
 	if(nearClip == 0 || farClip == 0) {
 		float dist = rect.height * 0.5f / tanf(PI * fov / 360.0f);
 		nc = (nearClip == 0) ? dist / 100.0f : nearClip;
@@ -71,13 +71,15 @@ void ofCamera::begin(ofRectangle rect) {
 	if(isOrtho) {
 		//			if(vFlip) glOrtho(0, width, height, 0, nearDist, farDist);
 		//			else 
+#ifndef TARGET_OPENGLES
 		glOrtho(0, rect.width, 0, rect.height, nc, fc);
+#endif		
 	} else {
 		gluPerspective(fov, rect.width/rect.height, nc, fc);
 	}
 	
 	glMatrixMode(GL_MODELVIEW);
-	glLoadMatrixf(ofMatrix4x4::getInverseOf(getGlobalMatrix()).getPtr());
+	glLoadMatrixf(ofMatrix4x4::getInverseOf(getGlobalTransformMatrix()).getPtr());
 	ofViewport(rect.x, rect.y, rect.width, rect.height);
 }
 

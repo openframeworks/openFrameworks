@@ -159,10 +159,10 @@ void ofFbo::destroy() {
 
 	if(settings.numSamples && fboTextures) glDeleteFramebuffers(1, &fboTextures);
 
-	for(int i=0; i<textures.size(); i++) delete textures[i];
+	for(int i=0; i<(int)textures.size(); i++) delete textures[i];
 	textures.clear();
 
-	for(int i=0; i<colorBuffers.size(); i++) glDeleteFramebuffers(1, &colorBuffers[i]);
+	for(int i=0; i<(int)colorBuffers.size(); i++) glDeleteFramebuffers(1, &colorBuffers[i]);
 	colorBuffers.clear();
 
 

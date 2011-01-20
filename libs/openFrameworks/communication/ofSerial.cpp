@@ -187,7 +187,7 @@ void ofSerial::buildDeviceList(){
 			deviceName = (char *)entry->d_name;
 			
 			//we go through the prefixes 
-			for(int k = 0; k < prefixMatch.size(); k++){
+			for(int k = 0; k < (int)prefixMatch.size(); k++){
 				//if the device name is longer than the prefix
 				if( deviceName.size() > prefixMatch[k].size() ){
 					//do they match ?
@@ -220,7 +220,7 @@ void ofSerial::buildDeviceList(){
 	//here we sort the device to have the aruino ones first. 
 	partition(devices.begin(), devices.end(), isDeviceArduino);
 	//we are reordering the device ids. too!
-	for(int k = 0; k < devices.size(); k++){
+	for(int k = 0; k < (int)devices.size(); k++){
 		devices[k].deviceID = k;
 	}
 	
@@ -231,7 +231,7 @@ void ofSerial::buildDeviceList(){
 //----------------------------------------------------------------
 void ofSerial::listDevices(){
 	buildDeviceList();
-	for(int k = 0; k < devices.size(); k++){
+	for(int k = 0; k < (int)devices.size(); k++){
 		printf("[%i] = %s \n", devices[k].getDeviceID(), devices[k].getDeviceName().c_str() );
 	}
 }
@@ -282,7 +282,7 @@ bool ofSerial::setup(){
 bool ofSerial::setup(int deviceNumber, int baud){
 
 	buildDeviceList();
-	if( deviceNumber < devices.size() ){
+	if( deviceNumber < (int)devices.size() ){
 		return setup(devices[deviceNumber].devicePath, baud);
 	}else{
 		ofLog(OF_LOG_ERROR,"ofSerial: could not find device %i - only %i devices found", deviceNumber, devices.size());

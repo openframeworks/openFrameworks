@@ -21,6 +21,7 @@ void ofSoundStreamAddSoundSink( ofSoundSink* sink );
 void ofSoundStreamRemoveSoundSink( ofSoundSink* sink );
 /// Get a list off all sound sources
 vector<ofSoundSource*> ofSoundStreamGetAllSoundSources();
+
 /// Return the current tick count
 long unsigned long ofSoundStreamGetCurrentTick();
 
