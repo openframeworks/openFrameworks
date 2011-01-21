@@ -41,6 +41,7 @@ protected:
 
 	ofVec3f mousePosViewPrev;
 	bool oldMousePress;
+	int lastMouseActionFrame;
 
 	float speed;
 	float drag;
