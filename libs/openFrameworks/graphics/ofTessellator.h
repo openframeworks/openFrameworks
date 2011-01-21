@@ -12,6 +12,7 @@
 #include "ofConstants.h"
 #include "ofMain.h"
 #include "ofShape.h"
+#include "ofMeshElement.h"
 
 #ifndef DRAW_WITH_MESHIES
 #include "ofMesh.h"
@@ -41,7 +42,7 @@ public:
 	static vector<meshy> tessellateToMesh( const ofPolyline& polyline, int polyWindingMode, bool bIs2D=false );
 #else
 	static ofMesh tessellateToMesh( const vector<ofPolyline>& polylines, int polyWindingMode, bool bIs2D=false );
-	static ofMesh tessellateToMesh( const ofPolyline& polyline, bool bFilled, bool bIs2D=false );
+	static ofMesh tessellateToMesh( const ofPolyline& polyline,  int polyWindingMode, bool bIs2D=false );
 #endif
 
 	/// tessellate polyline and return an outline.
@@ -70,7 +71,7 @@ private:
 
 	
 	// filled during tessellation
-	static GLint currentTriType; // GL_TRIANGLES, GL_TRIANGLE_FAN or GL_TRIANGLE_STRIP
+	static ofTriangleType currentTriType; // GL_TRIANGLES, GL_TRIANGLE_FAN or GL_TRIANGLE_STRIP
 	static vector<ofPoint> vertices;
 	
 	//---------------------------- for combine callback:

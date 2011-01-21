@@ -17,6 +17,10 @@ void ofMeshElement::addVertex(const ofVec3f& v){
 	vertices.push_back(v);
 }
 
+void ofMeshElement::addVertices(const vector<ofVec3f> & vertices_){
+	vertices.insert(vertices.end(),vertices_.begin(),vertices_.end());
+}
+
 //--------------------------------------------------------------
 void ofMeshElement::addColor(const ofColor& c){
 	//TODO: figure out if we add to all other arrays to match
@@ -43,27 +47,27 @@ void ofMeshElement::addIndex(int i){
 //GETTERS
 
 //--------------------------------------------------------------
-int ofMeshElement::getNumVertices(){
+int ofMeshElement::getNumVertices() const{
 	return vertices.size();
 }
 
 //--------------------------------------------------------------
-int ofMeshElement::getNumColors(){
+int ofMeshElement::getNumColors() const{
 	return colors.size();
 }
 
 //--------------------------------------------------------------
-int ofMeshElement::getNumNormals(){
+int ofMeshElement::getNumNormals() const{
 	return normals.size();
 }
 
 //--------------------------------------------------------------
-int ofMeshElement::getNumTexCoords(){
+int ofMeshElement::getNumTexCoords() const{
 	return texCoords.size();
 }
 
 //--------------------------------------------------------------
-int ofMeshElement::getNumIndices(){
+int ofMeshElement::getNumIndices() const{
 	return indices.size();
 }
 
@@ -150,8 +154,12 @@ vector<int>& ofMeshElement::getFace(int faceNum){
 //SETTERS
 
 //--------------------------------------------------------------
-void ofMeshElement::setMode(int m){
+void ofMeshElement::setMode(ofTriangleType m){
 	mode = m;
+}
+
+ofTriangleType ofMeshElement::getMode(){
+	return mode;
 }
 
 
@@ -181,3 +189,10 @@ void ofMeshElement::setupIndices(){
 	}
 }
 
+void ofMeshElement::clear(){
+	vertices.clear();
+	colors.clear();
+	normals.clear();
+	texCoords.clear();
+	indices.clear();
+}

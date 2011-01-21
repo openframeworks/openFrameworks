@@ -11,23 +11,6 @@ ofVboMesh::~ofVboMesh(){
 }
 
 //--------------------------------------------------------------
-ofVboMesh::ofVboMesh(const ofVboMesh& v){
-	clone(v);
-}
-
-//--------------------------------------------------------------
-ofVboMesh& ofVboMesh::operator=(const ofVboMesh& v){
-	clone(v);
-	return *this;
-}
-
-//--------------------------------------------------------------
-void ofVboMesh::clone(const ofVboMesh& v){
-	meshElement = v.getMeshElement();
-	vbo = v.vbo;
-}
-
-//--------------------------------------------------------------
 void ofVboMesh::setMeshElement(ofMeshElement* m){
 	meshElement = m;
 }
@@ -38,7 +21,7 @@ ofMeshElement* ofVboMesh::getMeshElement(){
 }
 
 //--------------------------------------------------------------
-ofMeshElement* ofVboMesh::getMeshElement() const{
+const ofMeshElement* ofVboMesh::getMeshElement() const{
 	return meshElement;
 }
 

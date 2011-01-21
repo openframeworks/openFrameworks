@@ -10,7 +10,13 @@ ofMesh::~ofMesh(){}
 
 //--------------------------------------------------------------	
 void ofMesh::clear(){
+	elements.clear();
+}
 
+void ofMesh::addElement(ofTriangleType mode, const vector<ofVec3f>& verts){
+	elements.push_back(ofMeshElement());
+	elements.back().setMode(mode);
+	elements.back().addVertices(verts);
 }
 /*
  
