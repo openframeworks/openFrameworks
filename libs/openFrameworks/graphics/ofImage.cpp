@@ -127,7 +127,7 @@ bool ofLoadImage(ofPixels & pix, const ofBuffer & buffer) {
 	FIBITMAP * bmp		= NULL;
 	FIMEMORY *hmem		= NULL;
 	
-	hmem = FreeImage_OpenMemory((unsigned char*)buffer.getBuffer(), buffer.size());
+	hmem = FreeImage_OpenMemory((unsigned char*)buffer.getBinaryBuffer(), buffer.size());
 	if (hmem == NULL){
 		ofLog(OF_LOG_ERROR, "couldn't create memory handle!");
 		return false;

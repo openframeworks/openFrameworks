@@ -1,154 +1,161 @@
 #pragma once
 
 #include <gst/gst.h>
+#include <gst/app/gstappsink.h>
 #include "ofConstants.h"
 #include "ofBaseTypes.h"
 #include "ofPixels.h"
 #include "ofTypes.h"
+#include "ofEvents.h"
 
-struct ofGstVideoData{
-	GMainLoop 		*	loop;
-	GstElement 		*	pipeline;
-	ofPixels			pixels;				// 24 bit: rgb
-	unsigned			totalsize;
-	ofMutex			 	buffer_mutex;
-	bool				bHavePixelsChanged;
 
-	guint64				durationNanos;
-	guint64				nFrames;
-	int					pipelineState;
-	float				speed;
+class ofGstAppSink;
 
-	guint64				lastFrame;
-};
+//-------------------------------------------------
+//----------------------------------------- ofGstUtils
+//-------------------------------------------------
 
-struct ofGstFramerate{
-  int numerator;
-  int denominator;
-};
-
-struct ofGstVideoFormat{
-  string mimetype;
-  int    width;
-  int    height;
-  vector<ofGstFramerate> framerates;
-  ofGstFramerate choosen_framerate;
-};
-
-struct ofGstDevice{
-  string video_device;
-  string gstreamer_src;
-  string product_name;
-  vector<ofGstVideoFormat> video_formats;
-  int current_format;
-};
-
-struct ofGstCamData{
-  vector<ofGstDevice> webcam_devices;
-  bool bInited;
-};
-
-class ofGstUtils: public ofBaseVideoPlayer, public ofBaseVideoGrabber {
+class ofGstUtils{
 public:
 	ofGstUtils();
 	virtual ~ofGstUtils();
 
-	bool loadMovie(string uri);
+	bool 	setPipelineWithSink(string pipeline, string sinkname="sink", bool isStream=false);
+	bool 	setPipelineWithSink(GstElement * pipeline, GstElement * sink, bool isStream=false);
 
-	void listDevices();
-	void setDeviceID(unsigned id);
-	void setDesiredFrameRate(int framerate);
-	bool initGrabber(int w, int h);
+	void 	play();
+	void 	stop(){setPaused(true);}
+	void 	setPaused(bool bPause);
+	bool 	isPaused(){return bPaused;}
+	bool 	isLoaded(){return bLoaded;}
+	bool 	isPlaying(){return bPlaying;}
 
-	bool setPipeline(string pipeline, int bpp=24, bool isStream=false, int w=-1, int h=-1);
-	bool setPipelineWithSink(string pipeline);
+	float	getPosition();
+	float 	getSpeed();
+	float 	getDuration();
+	guint64 getDurationNanos();
+	bool  	getIsMovieDone();
 
-	bool isFrameNew();
-	unsigned char * getPixels();
-	ofPixels getOFPixels();
-	ofPixels getOFPixels() const;
-	void update();
+	void 	setPosition(float pct);
+	void 	setVolume(int volume);
+	void 	setLoopState(ofLoopType state);
+	int		getLoopState(){return loopMode;}
+	void 	setSpeed(float speed);
 
-	void play();
-	void stop(){setPaused(true);}
-	void setPaused(bool bPause);
-	bool isPaused(){return bPaused;}
-	bool isLoaded(){return bLoaded;}
-	bool isPlaying(){return bPlaying;}
-
-	int	getCurrentFrame();
-	int	getTotalNumFrames();
-
-	void firstFrame();
-	void nextFrame();
-	void previousFrame();
-
-	float getHeight();
-	float getWidth();
-
-	float getPosition();
-	float getSpeed();
-	float getDuration();
-	bool  getIsMovieDone();
-
-	void setPosition(float pct);
-	void setVolume(int volume);
-	void setLoopState(ofLoopType state);
-	void setSpeed(float speed);
-	void setFrame(int frame);  // frame 0 = first frame...
-
-	void setFrameByFrame(bool bFrameByFrame);
-
-	void close();
+	void 	setFrameByFrame(bool bFrameByFrame);
+	bool	isFrameByFrame();
 
 	GstElement 	* getPipeline();
+	GstElement 	* getSink();
+
+	virtual void close();
+
+	void setSinkListener(ofGstAppSink * appsink);
 
 protected:
-	void 				gstHandleMessage();
-	bool 				allocate(int width=0, int height=0, int bpp=24);
-	bool				startPipeline(int width=0, int height=0, int bpp=24);
-	ofGstVideoFormat&	selectFormat(int w, int h, int desired_framerate);
+	// callbacks to get called from gstreamer
+	virtual GstFlowReturn preroll_cb(GstBuffer * buffer);
+	virtual GstFlowReturn buffer_cb(GstBuffer * buffer);
+	virtual void 		  eos_cb();
 
-	bool 				bStarted;
+private:
+	void 				gstHandleMessage();
+	void				update(ofEventArgs & args);
+	bool				startPipeline();
+
 	bool 				bPlaying;
 	bool 				bPaused;
-	bool 				bIsFrameNew;			// if we are new
 	bool				bIsMovieDone;
-	int					loopMode;
-
-	ofGstVideoData 		gstData;
-	ofGstCamData		camData;
-
-	bool				bIsStream;
-	bool				bIsCamera;
-	bool				bIsCustomWithSink;
+	bool 				bLoaded;
+	bool 				bFrameByFrame;
+	ofLoopType			loopMode;
 
 	GstElement  *		gstSink;
 	GstElement 	*		gstPipeline;
-
+	ofGstAppSink * 		appsink;
 
 	bool				posChangingPaused;
-
-	int					attemptFramerate;
-	bool 				bLoaded;
-
-
-	// common with gstdata
-	ofPixels			pixels;				// 24 bit: rgb
-	bool				bHavePixelsChanged;
-
-	gint64				durationNanos;
-	guint64				nFrames;
 	int					pipelineState;
 	float				speed;
+	gint64				durationNanos;
+	bool				isAppSink;
+	bool				isStream;
 
-	bool 				bFrameByFrame;
-
-	int fps_n;
-	int fps_d;
-
-	//camera only
-	int					deviceID;
+	// the gst callbacks need to be friended to be able to call us
+	friend GstFlowReturn on_new_buffer_from_source (GstAppSink * elt, void * data);
+	friend GstFlowReturn on_new_preroll_from_source (GstAppSink * elt, void * data);
+	friend void on_eos_from_source (GstAppSink * elt, void * data);
 
 };
 
+
+
+
+
+//-------------------------------------------------
+//----------------------------------------- videoUtils
+//-------------------------------------------------
+
+class ofGstVideoUtils: public ofBaseVideo, public ofGstUtils{
+public:
+
+	ofGstVideoUtils();
+	virtual ~ofGstVideoUtils();
+
+	bool 			setPipeline(string pipeline, int bpp=24, bool isStream=false, int w=-1, int h=-1);
+
+	bool 			allocate(int w, int h, int bpp);
+
+	bool 			isFrameNew();
+	unsigned char * getPixels();
+	ofPixels 		getOFPixels();
+	ofPixels 		getOFPixels() const;
+	void 			update();
+
+	float 			getHeight();
+	float 			getWidth();
+
+	void 			close();
+
+	// this events happen in a different thread
+	// do not use them for opengl stuff
+	ofEvent<const ofPixels> prerollEvent;
+	ofEvent<const ofPixels> bufferEvent;
+	ofEvent<const ofEventArgs> eosEvent;
+
+protected:
+	GstFlowReturn 	preroll_cb(GstBuffer * buffer);
+	GstFlowReturn 	buffer_cb(GstBuffer * buffer);
+	void			eos_cb();
+
+
+	ofPixels		pixels;				// 24 bit: rgb
+	ofPixels		backPixels;
+private:
+	bool			bIsFrameNew;			// if we are new
+	bool			bHavePixelsChanged;
+	bool			bBackPixelsChanged;
+	ofMutex			mutex;
+};
+
+
+//-------------------------------------------------
+//----------------------------------------- appsink listener
+//-------------------------------------------------
+
+class ofGstAppSink{
+public:
+	virtual GstFlowReturn	on_preroll(GstBuffer * buffer){
+		return GST_FLOW_OK;
+	}
+	virtual GstFlowReturn	on_buffer(GstBuffer * buffer){
+		return GST_FLOW_OK;
+	}
+	virtual void			on_eos(){}
+
+	// return true to set the message as attended so upstream doesn't try to process it
+	virtual bool on_message(GstMessage* msg){return false;};
+
+	// pings when enough data has arrived to be able to get sink properties
+	virtual void on_stream_prepared(){};
+};

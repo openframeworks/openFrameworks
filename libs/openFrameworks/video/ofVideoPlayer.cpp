@@ -178,6 +178,13 @@ void ofVideoPlayer::setLoopState(ofLoopType state){
 	}
 }
 
+int	ofVideoPlayer::getLoopState(){
+	if( player != NULL ){
+		return player->getLoopState();
+	}else{
+		return OF_LOOP_NONE;
+	}
+}
 
 //---------------------------------------------------------------------------
 void ofVideoPlayer::setPosition(float pct){

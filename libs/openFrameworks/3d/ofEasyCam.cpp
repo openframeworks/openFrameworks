@@ -16,6 +16,7 @@ ofEasyCam::ofEasyCam():
 distance(100),
 mousePosViewPrev(0, 0), 
 oldMousePress(false),
+lastMouseActionFrame(0),
 speed(0.1),
 drag(0.1)
 {
@@ -27,33 +28,44 @@ drag(0.1)
 
 //----------------------------------------
 void ofEasyCam::begin(ofRectangle rect) {
-	if(ofGetMousePressed(0)) {
-		ofVec3f targetPos =  target.getGlobalPosition();
-		ofVec3f mousePos(ofGetMouseX() - rect.width/2, rect.height/2 - ofGetMouseY(), targetPos.z);
-		ofVec3f mousePosView;
-		
-		float sphereRadius = min(rect.width, rect.height)/2;
-		float diffSquared = sphereRadius * sphereRadius - (targetPos - mousePos).lengthSquared();
-		if(diffSquared <= 0) {
-			mousePos.z = 0;
-		} else {
-			mousePos.z = sqrtf(diffSquared);
-		}
-		mousePos.z += targetPos.z;
-		mousePosView = ofMatrix4x4::getInverseOf(target.getGlobalTransformMatrix()) * mousePos;
-		
-		if(oldMousePress) {
-			ofQuaternion rotAmount;
-			rotAmount.makeRotate(mousePosViewPrev, mousePosView);
-			target.rotate(rotAmount.conj());
-		}
-		
-//		printf("mousePos: %f %f %f\n", mousePos.x, mousePos.y, mousePos.z);
-		
-		mousePosViewPrev = ofMatrix4x4::getInverseOf(target.getGlobalTransformMatrix()) * mousePos;
-	}
 	
-	oldMousePress = ofGetMousePressed(0);
+	if (lastMouseActionFrame != ofGetFrameNum())
+	{
+		lastMouseActionFrame = ofGetFrameNum();
+		
+		if(ofGetMousePressed(0)) {
+			ofVec3f targetPos =  target.getGlobalPosition();
+			ofVec3f mousePos(ofGetMouseX() - rect.width/2, rect.height/2 - ofGetMouseY(), targetPos.z);
+			ofVec3f mousePosView;
+			
+			float sphereRadius = min(rect.width, rect.height)/2;
+			float diffSquared = sphereRadius * sphereRadius - (targetPos - mousePos).lengthSquared();
+			if(diffSquared <= 0) {
+				mousePos.z = 0;
+			} else {
+				mousePos.z = sqrtf(diffSquared);
+			}
+			mousePos.z += targetPos.z;
+			mousePosView = ofMatrix4x4::getInverseOf(target.getGlobalTransformMatrix()) * mousePos;
+			
+			if(oldMousePress) {
+				ofQuaternion rotAmount;
+				rotAmount.makeRotate(mousePosViewPrev, mousePosView);
+				target.rotate(rotAmount.conj());
+				//target.rotate(rotAmount);
+			}
+			
+			
+			printf("mousePos: %f %f %f\n", mousePos.x, mousePos.y, mousePos.z);
+			
+			if(oldMousePress) {
+				//			vel -= (mousePos - mousePrev) * speed;
+			}
+			mousePosViewPrev = ofMatrix4x4::getInverseOf(target.getGlobalTransformMatrix()) * mousePos;
+		}
+		
+		oldMousePress = ofGetMousePressed(0);
+	}
 	
 	ofCamera::begin(rect);
 }
