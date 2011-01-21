@@ -1,9 +1,9 @@
 #pragma once
 
 // assimp include files. These three are usually needed.
-#import "assimp.h"
-#import "aiPostProcess.h"
-#import "aiScene.h"
+#include "assimp.h"
+#include "aiPostProcess.h"
+#include "aiScene.h"
 
 #include "ofMain.h"
 

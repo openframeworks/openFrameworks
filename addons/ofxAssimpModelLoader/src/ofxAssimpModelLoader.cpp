@@ -1,6 +1,6 @@
 #include "ofxAssimpModelLoader.h"
 
-#import "aiConfig.h"
+#include "aiConfig.h"
 
 #define BUFFER_OFFSET(i) ((char *)NULL + (i))
 
