@@ -11,7 +11,7 @@
 #include "ofVec2f.h"
 #include "ofColor.h"
 
-enum{
+enum ofTriangleType{
 	OF_TRIANGLES_ELEMENT,
 	OF_TRIANGLE_STRIP_ELEMENT,
 	OF_TRIANGLE_FAN_ELEMENT,
@@ -23,13 +23,15 @@ public:
 	ofMeshElement();
 	~ofMeshElement();
 	
-	void setMode(int mode);
+	void setMode(ofTriangleType mode);
+	ofTriangleType getMode();
 
 	void setupIndices();
 //	void setupIndicesSolid();
 //	void setupIndicesWire();
 	
 	void addVertex(const ofVec3f& v);
+	void addVertices(const vector<ofVec3f> & vertices);
 	void removeVertex(int index);
 	void setVertex(int index, const ofVec3f& v);
 	
@@ -49,11 +51,11 @@ public:
 	void removeIndex(int i);
 	void setIndex(int i, int val);
 	
-	int getNumVertices();
-	int getNumColors();
-	int getNumNormals();
-	int getNumTexCoords();
-	int getNumIndices();
+	int getNumVertices() const;
+	int getNumColors() const;
+	int getNumNormals() const;
+	int getNumTexCoords() const;
+	int getNumIndices() const;
 //	int getNumIndicesSolid();
 //	int getNumIndicesWire();
 	
@@ -65,6 +67,8 @@ public:
 //	GLuint* getSolidIndexPointer();
 //	GLuint* getWireIndexPointer();
 	
+	void clear();
+
 	vector<int>& getFace(int faceId);
 	
 protected:
@@ -75,6 +79,6 @@ protected:
 	vector<GLuint> indices;
 //	vector<GLuint> indicesSolid;
 //	vector<GLuint> indicesWire;
-	int mode;
+	ofTriangleType mode;
 	//ofMaterial *mat;
 };

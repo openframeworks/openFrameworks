@@ -9,6 +9,7 @@
 
 #include "ofShape.h"
 #include "ofTessellator.h"
+#include "ofShapeGLRenderers.h"
 
 
 
@@ -34,7 +35,12 @@ ofShape::ofShape(){
 	polyWindingMode = ofGetStyle().polyMode;
 	lineColor = ofGetStyle().color;
 	fillColor = ofGetStyle().color;
+	renderer = 0;
 	clear();
+}
+
+ofShape::~ofShape(){
+	if(renderer)delete renderer;
 }
 
 
@@ -199,7 +205,7 @@ void ofShape::tessellate(){
 }
 
 void ofShape::draw(){
-	if ( bNeedsTessellation ){
+	/*if ( bNeedsTessellation ){
 		tessellate();
 	}
 	if ( bFilled ) {
@@ -239,7 +245,17 @@ void ofShape::draw(){
 			}
 		}
 		
+	}*/
+
+
+
+	ofSetColor( fillColor );
+	if(!renderer){
+		renderer=new OF_DEFAULT_SHAPE_RENDERER;
 	}
+	renderer->setShape(*this);
+	renderer->draw();
+
 }
 
 
@@ -310,4 +326,13 @@ void ofShape::addCurveVertex(ofPoint p){
 	bNeedsTessellation = true;
 	bNeedsOutlineDraw = true;
 }
+
+#ifndef DRAW_WITH_MESHIES
+ofMesh & ofShape::getMesh(){
+	if ( bNeedsTessellation ){
+		tessellate();
+	}
+	return cachedTessellation;
+}
+#endif
 

@@ -59,7 +59,7 @@ std::vector <double*> ofTessellator::newVertices;
 //---------------------------- store all the polygon vertices:
 std::vector <double*> ofTessellator::ofShapePolyVertexs;
 
-GLint ofTessellator::currentTriType; // GL_TRIANGLES, GL_TRIANGLE_FAN or GL_TRIANGLE_STRIP
+ofTriangleType ofTessellator::currentTriType; // GL_TRIANGLES, GL_TRIANGLE_FAN or GL_TRIANGLE_STRIP
 vector<ofPoint> ofTessellator::vertices;
 
 
@@ -85,8 +85,20 @@ void CALLBACK ofTessellator::begin(GLint type){
 	// type can be GL_TRIANGLE_FAN, GL_TRIANGLE_STRIP, or GL_TRIANGLES
 	// or GL_LINE_LOOP if GLU_TESS_BOUNDARY_ONLY was set to TRUE
 		
+	switch(type){
+	case GL_TRIANGLES:
+		currentTriType=OF_TRIANGLES_ELEMENT;
+		break;
+	case GL_TRIANGLE_STRIP:
+		currentTriType=OF_TRIANGLE_STRIP_ELEMENT;
+		break;
+	case GL_TRIANGLE_FAN:
+		currentTriType=OF_TRIANGLE_FAN_ELEMENT;
+		break;
+	}
+	//TODO: GL_LINE_LOOP ??
+#warning "what with GL_LINELOOP"
 	
-	currentTriType = type;
 	vertices.clear();
 	
 }
@@ -97,20 +109,23 @@ void CALLBACK ofTessellator::end(){
 
 #ifdef DRAW_WITH_MESHIES
 	meshy m;
-	m.mode = currentTriType;
+	switch(currentTriType){
+	case OF_TRIANGLES_ELEMENT:
+		m.mode=GL_TRIANGLES;
+		break;
+	case OF_TRIANGLE_STRIP_ELEMENT:
+		m.mode=GL_TRIANGLE_STRIP;
+		break;
+	case OF_TRIANGLE_FAN_ELEMENT:
+		m.mode=GL_TRIANGLE_FAN;
+		break;
+	}
 	m.vertices = vertices;
 	resultMeshies.push_back( m );
 #else
 	// deal with mesh elements (triangles, triangle fan, triangle strip)
-	if ( currentTriType == GL_TRIANGLES ) {
-		resultMesh.addTriangles( vertices );
-	}
-	else if ( currentTriType == GL_TRIANGLE_FAN ) {
-		resultMesh.addTriangleFan( vertices );
-	}
-	else if ( currentTriType == GL_TRIANGLE_STRIP ) {
-		resultMesh.addTriangleStrip( vertices );
-	} else
+	resultMesh.addElement(currentTriType, vertices );
+
 #endif
 	
 	// deal with line loop (outline only)
@@ -202,7 +217,7 @@ ofMesh ofTessellator::tessellateToMesh( const ofPolyline& polyline, int polyWind
 #ifdef DRAW_WITH_MESHIES
 vector<meshy> ofTessellator::tessellateToMesh( const vector<ofPolyline>& polylines, int polyWindingMode, bool bIs2D ) {
 #else
-static ofMesh ofTessellator::tessellateToMesh( const vector<ofPolyline>& polylines, int polyWindingMode, bool bIs2D ) {
+ofMesh ofTessellator::tessellateToMesh( const vector<ofPolyline>& polylines, int polyWindingMode, bool bIs2D ) {
 #endif
 
 	mutex.lock();
@@ -211,7 +226,7 @@ static ofMesh ofTessellator::tessellateToMesh( const vector<ofPolyline>& polylin
 #ifdef DRAW_WITH_MESHIES
 	resultMeshies.clear();
 #else
-	resultMesh = ofMesh();
+	resultMesh.clear();
 #endif
 
 	performTessellation( polylines, polyWindingMode, true /* filled */, bIs2D );

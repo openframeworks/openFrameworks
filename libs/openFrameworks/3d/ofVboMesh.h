@@ -4,6 +4,8 @@
 
 #include "ofMeshElement.h"
 #include "ofVbo.h"
+#include "ofShape.h"
+#include "ofBaseTypes.h"
 
 //TODO:
 // vector of VBOs, 2 per element
@@ -21,15 +23,11 @@ public:
 	ofVboMesh();
 	~ofVboMesh();
 	
-	ofVboMesh(const ofVboMesh& v);
-	ofVboMesh& operator=(const ofVboMesh& v);
-	void clone(const ofVboMesh& v);
-	
 	void setMeshElement(ofMeshElement* m);
 	
 	ofMeshElement* getMeshElement();
-	ofMeshElement* getMeshElement() const;
-	
+	const ofMeshElement* getMeshElement() const;
+
 	bool setupVertices(int usage);
 	bool setupColors(int usage);
 	bool setupNormals(int usage);
@@ -49,6 +47,7 @@ public:
 	
 	void addMeshVertices(const vector<ofVec3f>& verts);
 	
+
 	//TODO: update methods, generic update
 	
     ofMeshElement* meshElement;
