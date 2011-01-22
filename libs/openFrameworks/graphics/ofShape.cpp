@@ -51,11 +51,7 @@ void ofShape::clear() {
 	bShouldClose.resize(1);
 	bNeedsTessellation = true;
 	cachedPolylines.clear(); 
-#ifdef DRAW_WITH_MESHIES
-	cachedMeshies.clear();
-#else
 	cachedTessellation.clear();
-#endif
 	bNeedsOutlineDraw = false;
 }
 
@@ -190,11 +186,7 @@ void ofShape::tessellate(){
 		}
 		
 		bool bIs2D = false;
-#ifdef DRAW_WITH_MESHIES
-		cachedMeshies = ofTessellator::tessellateToMesh( cachedPolylines, polyWindingMode, bIs2D );
-#else
 		cachedTessellation = ofTessellator::tessellateToMesh( cachedPolylines, polyWindingMode, bIs2D );
-#endif
 		if ( bNeedsOutlineDraw ) {
 			cachedOutline = ofTessellator::tessellateToOutline( cachedPolylines, polyWindingMode, bIs2D );
 		}
@@ -327,12 +319,10 @@ void ofShape::addCurveVertex(ofPoint p){
 	bNeedsOutlineDraw = true;
 }
 
-#ifndef DRAW_WITH_MESHIES
 ofMesh & ofShape::getMesh(){
 	if ( bNeedsTessellation ){
 		tessellate();
 	}
 	return cachedTessellation;
 }
-#endif
 

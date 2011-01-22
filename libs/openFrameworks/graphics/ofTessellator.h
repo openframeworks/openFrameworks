@@ -10,13 +10,9 @@
 #pragma once
 
 #include "ofConstants.h"
-#include "ofMain.h"
 #include "ofShape.h"
-#include "ofMeshElement.h"
-
-#ifndef DRAW_WITH_MESHIES
 #include "ofMesh.h"
-#endif
+#include "ofTypes.h"
 
 #ifndef CALLBACK
 #define CALLBACK
@@ -37,13 +33,8 @@ class ofTessellator
 public:	
 	
 	/// tessellate polyline and return a mesh. if bIs2D==true, do a 10% more efficient normal calculation.
-#ifdef DRAW_WITH_MESHIES
-	static vector<meshy> tessellateToMesh( const vector<ofPolyline>& polylines, int polyWindingMode, bool bIs2D=false );
-	static vector<meshy> tessellateToMesh( const ofPolyline& polyline, int polyWindingMode, bool bIs2D=false );
-#else
 	static ofMesh tessellateToMesh( const vector<ofPolyline>& polylines, int polyWindingMode, bool bIs2D=false );
 	static ofMesh tessellateToMesh( const ofPolyline& polyline,  int polyWindingMode, bool bIs2D=false );
-#endif
 
 	/// tessellate polyline and return an outline.
 	static ofPolyline tessellateToOutline( const vector<ofPolyline>& polylines, int polyWindingMode, bool bIs2D=false );
@@ -80,11 +71,7 @@ private:
 	static std::vector <double*> ofShapePolyVertexs;
 	
 
-#ifdef DRAW_WITH_MESHIES
-	static vector<meshy> resultMeshies;
-#else	
 	static ofMesh resultMesh;
-#endif
 	
 	
 	static ofPolyline resultOutline;

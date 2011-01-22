@@ -8,18 +8,12 @@
  */
 
 #pragma once
-#include "ofMain.h"
-
-//#define DRAW_WITH_MESHIES
-
-#ifdef DRAW_WITH_MESHIES
-/// hack until ofMesh is available
-typedef struct _meshy { GLint mode; vector<ofPoint>vertices; } meshy;
-#else
 #include "ofMesh.h"
-#endif
+#include "ofBaseTypes.h"
+#include "ofPoint.h"
 
 #define OF_DEFAULT_SHAPE_RENDERER ofVboShapeRenderer()
+
 /** ofPolyline
  
  A line composed of straight line segments.
@@ -96,10 +90,9 @@ public:
 	void close();
 	/// next contour
 	void nextContour( bool bClosePrev=true );
-#ifndef DRAW_WITH_MESHIES
+
 	ofMesh & getMesh();
 	const ofMesh & getMesh() const;
-#endif
 
 	/// must call tessellate before calling draw, if the shape has changed
 	void tessellate();
@@ -177,11 +170,7 @@ private:
 	bool bNeedsOutlineDraw;
 	ofPolyline cachedOutline;
 	
-#ifdef DRAW_WITH_MESHIES
-	vector<meshy> cachedMeshies;
-#else
 	ofMesh cachedTessellation;
-#endif
 	
 	ofBaseShapeRenderer * renderer;
 
