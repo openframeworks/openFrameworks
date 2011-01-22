@@ -4,10 +4,16 @@
 ofVboMesh::ofVboMesh(){
 	vbo = ofVbo();
 	meshElement = NULL;
+	drawType = GL_STATIC_DRAW_ARB;
 }
 
 //--------------------------------------------------------------
 ofVboMesh::~ofVboMesh(){
+}
+
+//--------------------------------------------------------------
+void ofVboMesh::setUseIndices(bool useIndices){
+	bUseIndices = useIndices;
 }
 
 //--------------------------------------------------------------
@@ -23,6 +29,11 @@ ofMeshElement* ofVboMesh::getMeshElement(){
 //--------------------------------------------------------------
 const ofMeshElement* ofVboMesh::getMeshElement() const{
 	return meshElement;
+}
+
+//--------------------------------------------------------------
+void ofVboMesh::setDrawType(int drawType_){
+	drawType = drawType_;
 }
 
 //--------------------------------------------------------------
@@ -184,72 +195,85 @@ void ofVboMesh::addMeshVertices(const vector<ofVec3f>& verts){
 //--------------------------------------------------------------
 void ofVboMesh::drawVertices(){
 	//make sure we have vertices setup in the VBO
-	if(!vbo.getIsAllocated()){
-		setupVertices(OF_VBO_STATIC);
-	}else{
-
-		//make sure we have indices
-		if(!meshElement->getNumIndices()){
-			meshElement->setupIndices();
-		}
-		
-		//make sure they're sent to the vbo
-		if(!vbo.getUsingIndices()){
-			vbo.setIndexData(meshElement->getIndexPointer(), meshElement->getNumIndices() );
-		}
-		
-		/* mesh element should now know what mode its in, so we won't need this
-		//feed vbo the correct index data
-		if(mode == OF_MESH_WIREFRAME){
-			vbo.setIndexData(&indices[0], indices.size() );
-		}
-		 */
-		
-		glPolygonMode(GL_FRONT_AND_BACK, GL_POINT);
-
-		vbo.draw(GL_POINTS,0,meshElement->getNumVertices());
+	bool hasChanged=  meshElement->hasChanged();
+	if(!vbo.getIsAllocated() || hasChanged){
+		setupVertices(drawType);
 	}
+
+	//make sure we have indices
+	if(bUseIndices &&  (!meshElement->getNumIndices() || hasChanged)){
+		meshElement->setupIndices();
+	}
+
+	//make sure they're sent to the vbo
+	if(bUseIndices && (!vbo.getUsingIndices() || hasChanged)){
+		vbo.setIndexData(meshElement->getIndexPointer(), meshElement->getNumIndices() );
+	}
+
+	/* mesh element should now know what mode its in, so we won't need this
+	//feed vbo the correct index data
+	if(mode == OF_MESH_WIREFRAME){
+		vbo.setIndexData(&indices[0], indices.size() );
+	}
+	 */
+
+	glPolygonMode(GL_FRONT_AND_BACK, GL_POINT);
+
+	vbo.draw(GL_POINTS,0,meshElement->getNumVertices());
+
 }
 
 //--------------------------------------------------------------
 void ofVboMesh::drawWireframe(){
 	//make sure we have vertices
-	if(!vbo.getIsAllocated()){
-		setupVertices(OF_VBO_STATIC);
-	}else{
-		//make sure we have indices
-		if(!meshElement->getNumIndices()){
-			meshElement->setupIndices();
-		}
-		
-		//make sure they're sent to the vbo
-		if(!vbo.getUsingIndices()){
-			vbo.setIndexData(meshElement->getIndexPointer(), meshElement->getNumIndices() );
-		}
-		
-		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-		
-		vbo.drawElements(GL_TRIANGLES,meshElement->getNumIndices());
+	bool hasChanged=  meshElement->hasChanged();
+	if(!vbo.getIsAllocated() || hasChanged){
+		setupVertices(drawType);
 	}
+	//make sure we have indices
+	if(bUseIndices && (!meshElement->getNumIndices() || hasChanged)){
+		meshElement->setupIndices();
+	}
+
+	//make sure they're sent to the vbo
+	if(bUseIndices && (!vbo.getUsingIndices() || hasChanged)){
+		vbo.setIndexData(meshElement->getIndexPointer(), meshElement->getNumIndices() );
+	}
+
+	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
+	if(bUseIndices){
+		vbo.drawElements(GL_TRIANGLES,meshElement->getNumIndices());
+	}else{
+		GLuint mode = ofGetGLTriangleMode(meshElement->getMode());
+		vbo.draw(mode,0,meshElement->getNumVertices());
+	}
+
 }
 
 //--------------------------------------------------------------
 void ofVboMesh::drawFaces(){
 	//make sure we have vertices
-	if(!vbo.getIsAllocated()){
-		setupVertices(OF_VBO_STATIC);
-	}else{
-		//make sure we have indices
-		if(!meshElement->getNumIndices()){
-			meshElement->setupIndices();
-		}
-		
-		//make sure they're sent to the vbo
-		if(!vbo.getUsingIndices()){
-			vbo.setIndexData(meshElement->getIndexPointer(), meshElement->getNumIndices() );
-		}
-		
-		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-		vbo.drawElements(GL_TRIANGLES,meshElement->getNumIndices());
+	bool hasChanged=  meshElement->hasChanged();
+	if(!vbo.getIsAllocated() || hasChanged){
+		setupVertices(drawType);
 	}
+
+	//make sure we have indices
+	if(bUseIndices && (!meshElement->getNumIndices() || hasChanged)){
+		meshElement->setupIndices();
+	}
+
+	//make sure they're sent to the vbo
+	if(bUseIndices && (!vbo.getUsingIndices() || hasChanged)){
+		vbo.setIndexData(meshElement->getIndexPointer(), meshElement->getNumIndices() );
+	}
+
+	if(bUseIndices){
+		vbo.drawElements(GL_TRIANGLES,meshElement->getNumIndices());
+	}else{
+		GLuint mode = ofGetGLTriangleMode(meshElement->getMode());
+		vbo.draw(mode,0,meshElement->getNumVertices());
+	}
+
 }

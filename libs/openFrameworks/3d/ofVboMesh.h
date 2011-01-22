@@ -24,9 +24,12 @@ public:
 	~ofVboMesh();
 	
 	void setMeshElement(ofMeshElement* m);
+	void setUseIndices(bool useIndices=true);
 	
 	ofMeshElement* getMeshElement();
 	const ofMeshElement* getMeshElement() const;
+
+	void setDrawType(int drawType);
 
 	bool setupVertices(int usage);
 	bool setupColors(int usage);
@@ -51,5 +54,7 @@ public:
 	//TODO: update methods, generic update
 	
     ofMeshElement* meshElement;
+	bool bUseIndices;
 	ofVbo vbo;
+	int drawType;
 };

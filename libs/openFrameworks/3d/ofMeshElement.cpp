@@ -3,6 +3,7 @@
 //--------------------------------------------------------------
 ofMeshElement::ofMeshElement(){
 	mode = OF_TRIANGLES_ELEMENT;
+	bHasChanged = true;
 }
 
 //--------------------------------------------------------------
@@ -15,33 +16,39 @@ ofMeshElement::~ofMeshElement(){
 void ofMeshElement::addVertex(const ofVec3f& v){
 	//TODO: figure out if we add to all other arrays to match
 	vertices.push_back(v);
+	bHasChanged = true;
 }
 
 void ofMeshElement::addVertices(const vector<ofVec3f> & vertices_){
 	vertices.insert(vertices.end(),vertices_.begin(),vertices_.end());
+	bHasChanged = true;
 }
 
 //--------------------------------------------------------------
 void ofMeshElement::addColor(const ofColor& c){
 	//TODO: figure out if we add to all other arrays to match
 	colors.push_back(c);
+	bHasChanged = true;
 }
 
 //--------------------------------------------------------------
 void ofMeshElement::addNormal(const ofVec3f& n){
 	//TODO: figure out if we add to all other arrays to match
 	normals.push_back(n);
+	bHasChanged = true;
 }
 
 //--------------------------------------------------------------
 void ofMeshElement::addTexCoord(const ofVec2f& t){
 	//TODO: figure out if we add to all other arrays to match
 	texCoords.push_back(t);
+	bHasChanged = true;
 }
 
 //--------------------------------------------------------------
 void ofMeshElement::addIndex(int i){
 	indices.push_back(i);
+	bHasChanged = true;
 }
 
 //GETTERS
@@ -154,35 +161,55 @@ vector<int>& ofMeshElement::getFace(int faceNum){
 //SETTERS
 
 //--------------------------------------------------------------
-void ofMeshElement::setMode(ofTriangleType m){
+void ofMeshElement::setMode(ofTriangleMode m){
+	bHasChanged = true;
 	mode = m;
 }
 
-ofTriangleType ofMeshElement::getMode(){
+ofTriangleMode ofMeshElement::getMode(){
 	return mode;
 }
 
 
 //--------------------------------------------------------------
 void ofMeshElement::setupIndices(){
+	bHasChanged = true;
 	indices.clear();
+
+	/*for(int i = 0; i < vertices.size();i++){
+		indices.push_back((GLuint)i);
+	}*/
 	switch(mode){
 		case(OF_TRIANGLES_ELEMENT):
 			for(int i = 0; i < vertices.size();i++){
 				indices.push_back((GLuint)i);
-				indices.push_back((GLuint)i+1);
-				indices.push_back((GLuint)i+2);
 			}
 		break;
 		case(OF_TRIANGLE_STRIP_ELEMENT):
-			for(int i = 0; i < vertices.size();i++){
-				indices.push_back((GLuint)i);
+			indices.push_back((GLuint)0);
+			indices.push_back((GLuint)1);
+			indices.push_back((GLuint)2);
+			for(int i = 3; i < vertices.size();i++){
+				if(i%2==0){
+					indices.push_back((GLuint)i-2);
+					indices.push_back((GLuint)i-1);
+					indices.push_back((GLuint)i);
+				}else{
+					indices.push_back((GLuint)i-2);
+					indices.push_back((GLuint)i);
+					indices.push_back((GLuint)i-1);
+
+				}
 			}
 		break;
 		case(OF_TRIANGLE_FAN_ELEMENT):
 			indices.push_back((GLuint)0);
-			for(int i = 1; i < vertices.size();i++){
+			indices.push_back((GLuint)1);
+			indices.push_back((GLuint)2);
+			for(int i = 2; i < vertices.size()-1;i++){
+				indices.push_back((GLuint)0);
 				indices.push_back((GLuint)i);
+				indices.push_back((GLuint)i+1);
 			}
 		break;
 		default:break;
@@ -190,9 +217,19 @@ void ofMeshElement::setupIndices(){
 }
 
 void ofMeshElement::clear(){
+	bHasChanged = true;
 	vertices.clear();
 	colors.clear();
 	normals.clear();
 	texCoords.clear();
 	indices.clear();
+}
+
+bool ofMeshElement::hasChanged(){
+	if(bHasChanged){
+		bHasChanged=false;
+		return true;
+	}else{
+		return false;
+	}
 }
