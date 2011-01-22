@@ -59,7 +59,7 @@ std::vector <double*> ofTessellator::newVertices;
 //---------------------------- store all the polygon vertices:
 std::vector <double*> ofTessellator::ofShapePolyVertexs;
 
-ofTriangleType ofTessellator::currentTriType; // GL_TRIANGLES, GL_TRIANGLE_FAN or GL_TRIANGLE_STRIP
+ofTriangleMode ofTessellator::currentTriType; // GL_TRIANGLES, GL_TRIANGLE_FAN or GL_TRIANGLE_STRIP
 vector<ofPoint> ofTessellator::vertices;
 
 
@@ -85,19 +85,7 @@ void CALLBACK ofTessellator::begin(GLint type){
 	// type can be GL_TRIANGLE_FAN, GL_TRIANGLE_STRIP, or GL_TRIANGLES
 	// or GL_LINE_LOOP if GLU_TESS_BOUNDARY_ONLY was set to TRUE
 		
-	switch(type){
-	case GL_TRIANGLES:
-		currentTriType=OF_TRIANGLES_ELEMENT;
-		break;
-	case GL_TRIANGLE_STRIP:
-		currentTriType=OF_TRIANGLE_STRIP_ELEMENT;
-		break;
-	case GL_TRIANGLE_FAN:
-		currentTriType=OF_TRIANGLE_FAN_ELEMENT;
-		break;
-	}
-	//TODO: GL_LINE_LOOP ??
-#warning "what with GL_LINELOOP"
+	currentTriType=ofGetOFTriangleMode(type);
 	
 	vertices.clear();
 	
@@ -109,17 +97,8 @@ void CALLBACK ofTessellator::end(){
 
 #ifdef DRAW_WITH_MESHIES
 	meshy m;
-	switch(currentTriType){
-	case OF_TRIANGLES_ELEMENT:
-		m.mode=GL_TRIANGLES;
-		break;
-	case OF_TRIANGLE_STRIP_ELEMENT:
-		m.mode=GL_TRIANGLE_STRIP;
-		break;
-	case OF_TRIANGLE_FAN_ELEMENT:
-		m.mode=GL_TRIANGLE_FAN;
-		break;
-	}
+
+	m.mode = ofGetGLTriangleMode(meshElement->getMode());
 	m.vertices = vertices;
 	resultMeshies.push_back( m );
 #else

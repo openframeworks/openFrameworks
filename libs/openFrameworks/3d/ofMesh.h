@@ -28,7 +28,7 @@ public:
 	int numTexCoords();
 	int numColors();
 	
-	void addElement(ofTriangleType mode, const vector<ofVec3f>& verts);
+	void addElement(ofTriangleMode mode, const vector<ofVec3f>& verts);
 	
 	/*
 	void addTriangleFan(const vector<ofVec3f>& verts) {

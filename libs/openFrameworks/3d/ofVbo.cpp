@@ -107,7 +107,7 @@ void ofVbo::setIndexData(const GLuint * indices, int total){
 	
 	glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, indexId);
 	indexData = (GLuint*)indices;
-	glBufferDataARB(GL_ELEMENT_ARRAY_BUFFER_ARB, sizeof(GLuint) * total, indexData, GL_STATIC_DRAW); 
+	glBufferDataARB(GL_ELEMENT_ARRAY_BUFFER_ARB, sizeof(GLuint) * total, indexData, GL_STATIC_DRAW);
 }
 
 //TODO: updpate methods

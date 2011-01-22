@@ -7,7 +7,7 @@
 #pragma once
 #include "ofMain.h"
 
-enum {
+/*enum {
 	OF_VBO_VERTEX,
 	OF_VBO_NORMAL,
 	OF_VBO_COLOR,
@@ -17,7 +17,7 @@ enum {
 enum {
 	OF_VBO_STATIC = GL_STATIC_DRAW,	
 	OF_VBO_STREAM = GL_STREAM_DRAW
-};
+};*/
 
 class ofVbo {
 	

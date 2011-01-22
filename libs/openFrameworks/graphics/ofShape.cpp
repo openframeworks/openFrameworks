@@ -161,7 +161,7 @@ void ofShape::curveSegmentToPolyline( const ofShapeSegment & seg, ofPolyline& po
 }
 
 void ofShape::tessellate(){
-	
+
 //	ofLog(OF_LOG_NOTICE, "tessellate, %i segments", segments.size() );
 	cachedPolylines.clear();
 	

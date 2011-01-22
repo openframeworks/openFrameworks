@@ -10,12 +10,51 @@
 #include "ofVec3f.h"
 #include "ofVec2f.h"
 #include "ofColor.h"
+#include "ofUtils.h"
 
-enum ofTriangleType{
+enum ofTriangleMode{
 	OF_TRIANGLES_ELEMENT,
 	OF_TRIANGLE_STRIP_ELEMENT,
 	OF_TRIANGLE_FAN_ELEMENT,
+	OF_LINE_LOOP_ELEMENT
 };	
+
+inline GLuint ofGetGLTriangleMode(ofTriangleMode mode){
+	switch(mode){
+	case OF_TRIANGLES_ELEMENT:
+		return GL_TRIANGLES;
+		break;
+	case OF_TRIANGLE_STRIP_ELEMENT:
+		return GL_TRIANGLE_STRIP;
+		break;
+	case OF_TRIANGLE_FAN_ELEMENT:
+		return GL_TRIANGLE_FAN;
+		break;
+	case OF_LINE_LOOP_ELEMENT:
+		return GL_LINE_LOOP;
+	default:
+		return GL_TRIANGLES;
+	}
+}
+
+inline ofTriangleMode ofGetOFTriangleMode(GLuint mode){
+	switch(mode){
+	case GL_TRIANGLES:
+		return OF_TRIANGLES_ELEMENT;
+		break;
+	case GL_TRIANGLE_STRIP:
+		return OF_TRIANGLE_STRIP_ELEMENT;
+		break;
+	case GL_TRIANGLE_FAN:
+		return OF_TRIANGLE_FAN_ELEMENT;
+		break;
+	case GL_LINE_LOOP:
+		return OF_LINE_LOOP_ELEMENT;
+	default:
+		ofLogError("of") << "asked for non existant triangle mode " << mode << " returning GL_TRIANGLES";
+		return OF_TRIANGLES_ELEMENT;
+	}
+}
 
 class ofMeshElement{
 public:
@@ -23,8 +62,8 @@ public:
 	ofMeshElement();
 	~ofMeshElement();
 	
-	void setMode(ofTriangleType mode);
-	ofTriangleType getMode();
+	void setMode(ofTriangleMode mode);
+	ofTriangleMode getMode();
 
 	void setupIndices();
 //	void setupIndicesSolid();
@@ -71,6 +110,8 @@ public:
 
 	vector<int>& getFace(int faceId);
 	
+	bool hasChanged();
+
 protected:
 	vector<ofVec3f> vertices;
 	vector<ofColor> colors;
@@ -79,6 +120,7 @@ protected:
 	vector<GLuint> indices;
 //	vector<GLuint> indicesSolid;
 //	vector<GLuint> indicesWire;
-	ofTriangleType mode;
+	ofTriangleMode mode;
+	bool bHasChanged;
 	//ofMaterial *mat;
 };

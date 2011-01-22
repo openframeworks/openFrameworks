@@ -13,6 +13,7 @@
 #include "ofPoint.h"
 #include "ofRectangle.h"
 #include "ofConstants.h"
+class ofShape;
 class ofPixels;
 
 
@@ -182,5 +183,13 @@ public:
 	
 };
 
+
+class ofBaseShapeRenderer{
+public:
+	virtual ~ofBaseShapeRenderer(){};
+	virtual void setShape(ofShape & shape)=0;
+	virtual void draw()=0;
+
+};
 
 
