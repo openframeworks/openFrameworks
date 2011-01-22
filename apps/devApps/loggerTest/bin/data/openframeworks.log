@@ -1,0 +1,43 @@
+# Log file created/rotated Saturday, 22 Jan 11 13:01:17 GMT
+2011-01-22 08:01:17.535 0 1 of: a log
+2011-01-22 08:01:17.536 0 2 of.topic1: an error
+2011-01-22 08:01:17.536 0 2 OF_ERROR: of.topic2: an error
+2011-01-22 08:01:17.536 0 2 OF_ERROR: of.topic1: an error
+2011-01-22 08:01:17.536 0 2 log file: /Users/dano/src/openFrameworks/apps/myApps/loggerTest/bin/loggerTestDebug.app/Contents/MacOS/../../../data/openframeworks.log
+0 3 OF_WARNING: lalala
+1 200 OF_WARNING: lalala
+2 400 OF_WARNING: lalala
+3 600 OF_WARNING: lalala
+4 800 OF_WARNING: lalala
+5 1000 OF_WARNING: lalala
+6 1200 OF_WARNING: lalala
+7 1400 OF_WARNING: lalala
+8 1600 OF_WARNING: lalala
+9 1800 OF_WARNING: lalala
+10 2000 OF_WARNING: lalala
+11 2200 OF_WARNING: lalala
+12 2400 OF_WARNING: lalala
+13 2600 OF_WARNING: lalala
+14 2801 OF_WARNING: lalala
+15 3001 OF_WARNING: lalala
+2011-01-22 08:01:32.747 0 2 of: a log
+2011-01-22 08:01:32.747 0 2 of.topic1: an error
+2011-01-22 08:01:32.747 0 2 OF_ERROR: of.topic2: an error
+2011-01-22 08:01:32.747 0 2 OF_ERROR: of.topic1: an error
+2011-01-22 08:01:32.747 0 2 log file: /Users/dano/src/openFrameworks/apps/myApps/loggerTest/bin/loggerTestDebug.app/Contents/MacOS/../../../data/openframeworks.log
+0 2 OF_WARNING: lalala
+1 200 OF_WARNING: lalala
+2 400 OF_WARNING: lalala
+3 601 OF_WARNING: lalala
+4 802 OF_WARNING: lalala
+5 1002 OF_WARNING: lalala
+6 1202 OF_WARNING: lalala
+7 1402 OF_WARNING: lalala
+8 1602 OF_WARNING: lalala
+9 1802 OF_WARNING: lalala
+10 2002 OF_WARNING: lalala
+11 2202 OF_WARNING: lalala
+12 2403 OF_WARNING: lalala
+13 2602 OF_WARNING: lalala
+14 2802 OF_WARNING: lalala
+15 3002 OF_WARNING: lalala
