@@ -48,8 +48,8 @@ class ofLogger{
 		/// \section Log
 		/// Log the a message as a full line at a specifed log level. Prints a
 		/// newline automatically.
-		void log(ofLogLevel logLevel, const string& message);
-		void log(const string& logTopic, ofLogLevel logLevel, const string& message);
+		void log(ofLogLevel logLevel, const std::string& message);
+		void log(const std::string& logTopic, ofLogLevel logLevel, const std::string& message);
 		
 		/// \section Log Level
 		/// Set the current log level. Messages with a log level below this level 
@@ -77,8 +77,8 @@ class ofLogger{
 		/// Set the path to the log file. The default filename is "openframeworks.log"
 		/// and is saved to the data folder. When setting your own file use
 		/// ofToDataPath()+"/filename" to build the full path.
-		void setFilePath(const string& file);
-		string getFilePath();
+		void setFilePath(const std::string& file);
+		std::string getFilePath();
 		
 		/// Set the automatic rotation of the log file. The log file will grow until
 		/// it reaches a specified limit (time or size). It will then have a number or
@@ -121,11 +121,11 @@ class ofLogger{
 		///
 		/// Resetting the level of the log topic sets it to the level of the global
 		/// logger.
-		void addTopic(const string& logTopic, ofLogLevel logLevel=OF_DEFAULT_LOG_LEVEL);
-		void removeTopic(const string& logTopic);
-		bool topicExists(const string& logTopic);
-		void setTopicLogLevel(const string& logTopic, ofLogLevel logLevel);
-		void resetTopicLogLevel(const string& logTopic);
+		void addTopic(const std::string& logTopic, ofLogLevel logLevel=OF_DEFAULT_LOG_LEVEL);
+		void removeTopic(const std::string& logTopic);
+		bool topicExists(const std::string& logTopic);
+		void setTopicLogLevel(const std::string& logTopic, ofLogLevel logLevel);
+		void resetTopicLogLevel(const std::string& logTopic);
 		
 		/// \section Header
 
@@ -184,16 +184,16 @@ class ofLogger{
 	private:
 		
 		/// logs the message to the specified logger
-		void _log(ofLogLevel logLevel, const string& message, Poco::Logger* theLogger);
+		void _log(ofLogLevel logLevel, const std::string& message, Poco::Logger* theLogger);
 		
 		/// logs using a printf and prints a warning
 		/// this is used if the logger has been destroyed
 		void _logDestroyed(const string& message);
 		
 		/// static date format strings for the header
-		static const string s_dateFormat;
-		static const string s_timeFormat;
-		static const string s_dateAndTimeFormat;
+		static const std::string s_dateFormat;
+		static const std::string s_timeFormat;
+		static const std::string s_dateAndTimeFormat;
 	
 		// hide all the constructors, copy functions here
 		ofLogger(ofLogger const&);    			// not defined, not copyable
@@ -346,10 +346,10 @@ class ofLogNotice{
 	protected:
 	
 		ofLogLevel level;			///< log level
-			
+		std::string topic;			///< log topic
+					
 	private:
 	
-		std::string topic;			///< log topic
         std::ostringstream message;	///< temp buffer
 		
 		ofLogNotice(ofLogNotice const&) {}        		// not defined, not copyable
@@ -363,32 +363,37 @@ class ofLogNotice{
 ///
 class ofLogVerbose : public ofLogNotice{
 	public:
-		ofLogVerbose() {level = OF_LOG_VERBOSE;}
-		ofLogVerbose(string logTopic) : ofLogNotice(logTopic) {}
+		ofLogVerbose()	{level = OF_LOG_VERBOSE;}
+		ofLogVerbose(std::string logTopic)
+			{level = OF_LOG_VERBOSE; topic = logTopic;}
 };
 
 class ofLogDebug : public ofLogNotice{
 	public:
 		ofLogDebug() {level = OF_LOG_DEBUG;}
-		ofLogDebug(string logTopic) : ofLogNotice(logTopic) {}
+		ofLogDebug(std::string logTopic)
+			{level = OF_LOG_DEBUG; topic = logTopic;}
 };
 
 class ofLogWarning : public ofLogNotice{
 	public:
 		ofLogWarning() {level = OF_LOG_WARNING;}
-		ofLogWarning(string logTopic) : ofLogNotice(logTopic) {}
+		ofLogWarning(std::string logTopic)
+			{level = OF_LOG_WARNING; topic = logTopic;}
 };
 
 class ofLogError : public ofLogNotice{
 	public:
 		ofLogError() {level = OF_LOG_ERROR;}
-		ofLogError(string logTopic) : ofLogNotice(logTopic) {}
+		ofLogError(std::string logTopic)
+			{level = OF_LOG_ERROR; topic = logTopic;}
 };
 
 class ofLogFatalError : public ofLogNotice{
 	public:
 		ofLogFatalError() {level = OF_LOG_FATAL_ERROR;}
-		ofLogFatalError(string logTopic) : ofLogNotice(logTopic) {}
+		ofLogFatalError(std::string logTopic)
+			{level = OF_LOG_FATAL_ERROR; topic = logTopic;}
 };
 
 //-------------------------------------------------------
@@ -421,8 +426,8 @@ void ofLogEnableFile();
 void ofLogDisableFile();
 bool ofLogUsingFile();
 
-void ofLogSetFilePath(const string& file);
-string ofLogGetFilePath();
+void ofLogSetFilePath(const std::string& file);
+std::string ofLogGetFilePath();
 
 void ofLogEnableFileRotationMins(unsigned int minutes);
 void ofLogEnableFileRotationHours(unsigned int hours);
@@ -436,11 +441,11 @@ void ofLogSetFileRotationMaxNum(unsigned int num);
 void ofLogSetFileRotationNumber();
 void ofLogSetFileRotationTimestamp();
 
-void ofLogAddTopic(const string& logTopic, ofLogLevel logLevel=OF_DEFAULT_LOG_LEVEL);
-void ofLogRemoveTopic(const string& logTopic);
-bool ofLogTopicExists(const string& logTopic);
-void ofLogSetTopicLogLevel(const string& logTopic, ofLogLevel logLevel);
-void ofLogResetTopicLogLevel(const string& logTopic);
+void ofLogAddTopic(const std::string& logTopic, ofLogLevel logLevel=OF_DEFAULT_LOG_LEVEL);
+void ofLogRemoveTopic(const std::string& logTopic);
+bool ofLogTopicExists(const std::string& logTopic);
+void ofLogSetTopicLogLevel(const std::string& logTopic, ofLogLevel logLevel);
+void ofLogResetTopicLogLevel(const std::string& logTopic);
 
 void ofLogEnableHeader();
 void ofLogDisableHeader();
