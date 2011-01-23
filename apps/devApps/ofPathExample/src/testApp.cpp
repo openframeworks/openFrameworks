@@ -1,6 +1,7 @@
 #include "testApp.h"
 
 #include "ofShape.h"
+#include "ofCairoRenderer.h"
 
 //--------------------------------------------------------------
 void testApp::setup(){
@@ -10,6 +11,7 @@ void testApp::setup(){
 	//ofSetFrameRate( 24 );
 	//ofSetVerticalSync(true);
 
+	ofCairoRenderer cairo(OF_CAIRO_SVG);
 	
 	
 	nCurveVertexes = 7;
@@ -57,6 +59,7 @@ void testApp::setup(){
 	shapeA = pathA.getShape();
 	
 	
+
 	//------(b)--------------------------------------
 	// 
 	// 		draw a star
@@ -86,8 +89,8 @@ void testApp::setup(){
 	// 		use the mouse position as a pct
 	//		to calc nPoints and internal point radius
 	//
-	float xPct = (float)(mouseX) / (float)(ofGetWidth());
-	float yPct = (float)(mouseY) / (float)(ofGetHeight());
+	float xPct = (float)(200) / (float)(ofGetWidth());
+	float yPct = (float)(400) / (float)(ofGetHeight());
 	int nTips = 5 + xPct * 60;
 	int nStarPts = nTips * 2;
 	float angleChangePerPt = TWO_PI / (float)nStarPts;
@@ -138,13 +141,13 @@ void testApp::setup(){
 	pathE.setHexColor(0xff2220);
 	pathE.setFilled( true );
 	pathE.setPolyWindingMode(OF_POLY_WINDING_ODD);
-	float angleStep 	= TWO_PI/(100.0f + sin(ofGetElapsedTimef()/5.0f) * 60); 
+	float angleStep 	= TWO_PI/(100.0f + sin(35/5.0f) * 60);
 	float radiusAdder 	= 0.5f;
 	float radius 		= 0;
 	for (int i = 0; i < 200; i++){
 		float anglef = (i) * angleStep;
-		float x = radius * cos(anglef);
-		float y = radius * sin(anglef); 
+		float x = radius * cos(anglef) + 100;
+		float y = radius * sin(anglef) + 300;
 		pathE.lineTo(x,y);
 		radius 	+= radiusAdder; 
 	}
@@ -161,6 +164,7 @@ void testApp::setup(){
 	//
 	
 	pathF.setHexColor(0x2bdbe6);
+	pathF.setFilled(true);
 	
 	for (int i = 0; i < nCurveVertexes; i++){
 		
@@ -184,8 +188,8 @@ void testApp::setup(){
 			pathF.curveTo(curveVertices[i].x, curveVertices[i].y);
 		}
 	}
+	pathF.close();
 	shapeF = pathF.getShape();
-	
 	
 	// show a faint the non-curve version of the same polygon:
 	pathFNonCurve.setFilled( false );
@@ -195,7 +199,7 @@ void testApp::setup(){
 	}
 	pathFNonCurve.close();
 	shapeFNonCurve = pathFNonCurve.getShape();
-	
+
 	
 	ofSetColor(0,0,0,80);
 	for (int i = 0; i < nCurveVertexes; i++){
@@ -217,10 +221,10 @@ void testApp::setup(){
 	
 	float x0 = 500;
 	float y0 = 300;
-	float x1 = 550+50*cos(ofGetElapsedTimef()*1.0f);
-	float y1 = 300+100*sin(ofGetElapsedTimef()/3.5f);
-	float x2 = 600+30*cos(ofGetElapsedTimef()*2.0f);
-	float y2 = 300+100*sin(ofGetElapsedTimef());
+	float x1 = 550+50*cos(5.8*1.0f);
+	float y1 = 300+100*sin(5.8/3.5f);
+	float x2 = 600+30*cos(5.8*2.0f);
+	float y2 = 300+100*sin(5.8);
 	float x3 = 650;
 	float y3 = 300;
 		
@@ -252,7 +256,7 @@ void testApp::setup(){
 
 	shapeH = pathH.getShape();
 	//-------------------------------------
-	
+
 	
 	//------(i)--------------------------------------
 	// 
@@ -276,14 +280,14 @@ void testApp::setup(){
 	pathIa.lineTo(380,550);
 	pathIa.lineTo(300,600);
 	pathIa.close();
-	for (int i = 0; i < 20; i++){
+	/*for (int i = 0; i < 20; i++){
 		float anglef = ((float)i / 19.0f) * TWO_PI;
 		float x = 340 + 30 * cos(anglef);
 		float y = 550 + 30 * sin(anglef); 
 		pathIa.lineTo(x,y);
 		radius 	+= radiusAdder; 
-	}
-	pathIa.close();
+	}*/
+	pathIa.arc(340,550,30,30,0,360);
 	shapeIa = pathIa.getShape();
 
 	
@@ -291,44 +295,58 @@ void testApp::setup(){
 	pathIb.setHexColor(0xff00ff);
 	pathIb.setFilled(false);
 	
-	pathIb.lineTo(300,500);
-	pathIb.lineTo(380,550);
-	pathIb.lineTo(300,600);
+	pathIb.lineTo(400,500);
+	pathIb.lineTo(480,550);
+	pathIb.lineTo(400,600);
 	
 	pathIb.close();
 	
-	for (int i = 0; i < 20; i++){
+	/*for (int i = 0; i < 20; i++){
 		float anglef = ((float)i / 19.0f) * TWO_PI;
-		float x = 340 + 30 * cos(anglef);
+		float x = 440 + 30 * cos(anglef);
 		float y = 550 + 30 * sin(anglef); 
 		pathIb.lineTo(x,y);
 		radius 	+= radiusAdder; 
-	}
+	}*/
 	
 	pathIb.close();
+	pathIb.arc(440,550,30,60,0,360);
 	shapeIb = pathIb.getShape();
 
-	
 	pathIc.setPolyWindingMode(OF_POLY_WINDING_ABS_GEQ_TWO);
 	pathIc.setHexColor(0xff00ff);
 	pathIc.setFilled(false);
-	pathIc.lineTo(300,500);
-	pathIc.lineTo(380,550);
-	pathIc.lineTo(300,600);
+	pathIc.lineTo(500,500);
+	pathIc.lineTo(580,550);
+	pathIc.lineTo(500,600);
 	pathIc.close();
 	
-	for (int i = 0; i < 20; i++){
+	/*for (int i = 0; i < 20; i++){
 		float anglef = ((float)i / 19.0f) * TWO_PI;
-		float x = 340 + 30 * cos(anglef);
+		float x = 540 + 30 * cos(anglef);
 		float y = 550 + 30 * sin(anglef); 
 		pathIc.lineTo(x,y);
 		radius 	+= radiusAdder; 
 	}
 	
-	pathIc.close();
+	pathIc.close();*/
+	pathIc.arc(540,550,30,20,0,360);
 	shapeIc = pathIc.getShape();
 	
-	
+
+
+	cairo.draw(pathA);
+	cairo.draw(pathB);
+	cairo.draw(pathC);
+	cairo.draw(pathD);
+	cairo.draw(pathE);
+	cairo.draw(pathF);
+	cairo.draw(pathFNonCurve);
+	cairo.draw(pathG);
+	cairo.draw(pathH);
+	cairo.draw(pathIa);
+	cairo.draw(pathIb);
+	cairo.draw(pathIc);
 	
 }
 
