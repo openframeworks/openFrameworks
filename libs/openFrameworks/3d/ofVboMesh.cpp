@@ -5,6 +5,7 @@ ofVboMesh::ofVboMesh(){
 	vbo = ofVbo();
 	meshElement = NULL;
 	drawType = GL_STATIC_DRAW_ARB;
+	bUseIndices = true;
 }
 
 //--------------------------------------------------------------
@@ -104,6 +105,18 @@ bool ofVboMesh::setupTexCoords(int usage){
 }
 
 //--------------------------------------------------------------
+bool ofVboMesh::setupIndices(int usage){
+	int size = meshElement->getNumIndices();
+	if(size){
+		vbo.setIndexData(meshElement->getIndexPointer(), size, usage);
+		return true;
+	}else{
+		ofLog(OF_LOG_WARNING,"ofVboMesh:setupIndices - no indices in meshElement.");
+		return false;
+	}
+}
+
+//--------------------------------------------------------------
 void ofVboMesh::addMeshVertices(const vector<ofVec3f>& verts){
 	for (int i =0; i < verts.size(); i++){
 		//copy vec3 info
@@ -112,28 +125,42 @@ void ofVboMesh::addMeshVertices(const vector<ofVec3f>& verts){
 }
 
 //--------------------------------------------------------------
-void ofVboMesh::update(){
+void ofVboMesh::update(){	
 	if(meshElement->haveVertsChanged()){
-		vbo.updateVertexData(meshElement->getVerticesPointer(), meshElement->getNumVertices());
+		setupVertices(drawType);
+		//vbo.updateVertexData(meshElement->getVerticesPointer(), meshElement->getNumVertices());
 	}
 	
 	if(meshElement->haveColorsChanged()){
-		vbo.updateColorData(meshElement->getColorsPointer(), meshElement->getNumColors());
+		setupColors(drawType);
+		//vbo.updateColorData(meshElement->getColorsPointer(), meshElement->getNumColors());
 	}
 	
 	if(meshElement->haveNormalsChanged()){
-		vbo.updateNormalData(meshElement->getNormalsPointer(), meshElement->getNumNormals());
+		setupNormals(drawType);
+		//vbo.updateNormalData(meshElement->getNormalsPointer(), meshElement->getNumNormals());
 	}
 	
 	if(meshElement->haveTexCoordsChanged()){
-		vbo.updateTexCoordData(meshElement->getTexCoordsPointer(), meshElement->getNumTexCoords());
+		setupTexCoords(drawType);
+		//vbo.updateTexCoordData(meshElement->getTexCoordsPointer(), meshElement->getNumTexCoords());
 	}	
+	
+	if(meshElement->haveIndicesChanged() && bUseIndices){
+		setupIndices(drawType);
+		//vbo.setIndexData(meshElement->getIndexPointer(),meshElement->getNumIndices());
+		//vbo.updateIndexData(meshElement->getIndexPointer(),meshElement->getNumIndices());
+	}
 }
 
 //--------------------------------------------------------------
 void ofVboMesh::draw(polyMode pMode){
 	if(!vbo.getIsAllocated()){
 		setupVertices(drawType);
+	}
+
+	if(meshElement->getNumColors() && !vbo.getUsingColors()){
+		setupColors(drawType);
 	}
 	
 	if(meshElement->getNumNormals() && !vbo.getUsingNormals()){
@@ -148,6 +175,8 @@ void ofVboMesh::draw(polyMode pMode){
 		meshElement->setupIndices();
 	}
 	
+	update();
+	
 	glPushAttrib(GL_POLYGON_BIT);
 	glPolygonMode(GL_FRONT_AND_BACK, pMode);
 	
@@ -155,12 +184,7 @@ void ofVboMesh::draw(polyMode pMode){
 	
 	if(pMode!=OF_MESH_POINTS){
 		if(bUseIndices){
-			if (!vbo.getUsingIndices()){
-				vbo.setIndexData(meshElement->getIndexPointer(), meshElement->getNumIndices() );
-			}
-			if(meshElement->haveIndicesChanged()){
-				vbo.updateIndexData(meshElement->getIndexPointer(),meshElement->getNumIndices());
-			}
+			cout << meshElement->getNumIndices() << endl;
 			vbo.drawElements(mode,meshElement->getNumIndices());
 		}else{
 			vbo.draw(mode,0,meshElement->getNumVertices());
