@@ -9,6 +9,8 @@
 
 #pragma once
 
+#define OF_EASYCAM_DEFAULT_DISTANCE 100.0f
+
 #include "ofCamera.h"
 
 class ofEasyCam : public ofCamera {
@@ -40,12 +42,18 @@ protected:
 	float distance;
 
 	ofVec3f mousePosViewPrev;
-	bool oldMousePress;
+	float mousePosScreenPrevY;
+	bool oldMousePress[2];
 	int lastMouseActionFrame;
 
 	float speed;
 	float drag;
 
-	ofVec3f rotAxis;
-	float angle;
+	//momentum
+	ofQuaternion rotation;
+	float distanceScaleVelocity;
+	
+//from pre-arcball
+//	ofVec3f rotAxis;
+//	float angle;
 };
