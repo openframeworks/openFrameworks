@@ -9,16 +9,18 @@
 /* Begin PBXBuildFile section */
 		278DE70912DFFD0300945CCC /* ofVec2f.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 278DE70812DFFD0300945CCC /* ofVec2f.cpp */; };
 		278DE72812E001D600945CCC /* ofVec4f.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 278DE72712E001D600945CCC /* ofVec4f.cpp */; };
+		27E498F112E65E9F00C489F5 /* ofShapeUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 27E498EF12E65E9F00C489F5 /* ofShapeUtils.cpp */; };
+		27E498F212E65E9F00C489F5 /* ofShapeUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 27E498F012E65E9F00C489F5 /* ofShapeUtils.h */; };
 		2D4FB15B12DE7271000A51F9 /* ofSoundEffect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D4FB15712DE7271000A51F9 /* ofSoundEffect.cpp */; };
 		2D4FB15C12DE7271000A51F9 /* ofSoundEffect.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D4FB15812DE7271000A51F9 /* ofSoundEffect.h */; };
 		2D4FB15D12DE7271000A51F9 /* ofSoundUnit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D4FB15912DE7271000A51F9 /* ofSoundUnit.cpp */; };
 		2D4FB15E12DE7271000A51F9 /* ofSoundUnit.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D4FB15A12DE7271000A51F9 /* ofSoundUnit.h */; };
-		3021415712DEBC4D00A2885A /* ofLog.h in Headers */ = {isa = PBXBuildFile; fileRef = 3021415512DEBC4D00A2885A /* ofLog.h */; };
-		3021415812DEBC4D00A2885A /* ofLog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3021415612DEBC4D00A2885A /* ofLog.cpp */; };
 		2D7DAC4C12E273D0005BEB11 /* ofShape.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D7DAC4812E273D0005BEB11 /* ofShape.cpp */; };
 		2D7DAC4D12E273D0005BEB11 /* ofShape.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D7DAC4912E273D0005BEB11 /* ofShape.h */; };
 		2D7DAC4E12E273D0005BEB11 /* ofTessellator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D7DAC4A12E273D0005BEB11 /* ofTessellator.cpp */; };
 		2D7DAC4F12E273D0005BEB11 /* ofTessellator.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D7DAC4B12E273D0005BEB11 /* ofTessellator.h */; };
+		3021415712DEBC4D00A2885A /* ofLog.h in Headers */ = {isa = PBXBuildFile; fileRef = 3021415512DEBC4D00A2885A /* ofLog.h */; };
+		3021415812DEBC4D00A2885A /* ofLog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3021415612DEBC4D00A2885A /* ofLog.cpp */; };
 		92750B4512E2319500D47C7A /* ofPixelUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 92750B4312E2319500D47C7A /* ofPixelUtils.h */; };
 		92750B4612E2319500D47C7A /* ofPixelUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 92750B4412E2319500D47C7A /* ofPixelUtils.cpp */; };
 		92B3A68112DA30B3001B8BE8 /* ofBaseTypes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 92B3A67812DA30B3001B8BE8 /* ofBaseTypes.cpp */; };
@@ -114,16 +116,18 @@
 /* Begin PBXFileReference section */
 		278DE70812DFFD0300945CCC /* ofVec2f.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofVec2f.cpp; sourceTree = "<group>"; };
 		278DE72712E001D600945CCC /* ofVec4f.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofVec4f.cpp; sourceTree = "<group>"; };
+		27E498EF12E65E9F00C489F5 /* ofShapeUtils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofShapeUtils.cpp; path = ../../../openFrameworks/graphics/ofShapeUtils.cpp; sourceTree = SOURCE_ROOT; };
+		27E498F012E65E9F00C489F5 /* ofShapeUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofShapeUtils.h; path = ../../../openFrameworks/graphics/ofShapeUtils.h; sourceTree = SOURCE_ROOT; };
 		2D4FB15712DE7271000A51F9 /* ofSoundEffect.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofSoundEffect.cpp; sourceTree = "<group>"; };
 		2D4FB15812DE7271000A51F9 /* ofSoundEffect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofSoundEffect.h; sourceTree = "<group>"; };
 		2D4FB15912DE7271000A51F9 /* ofSoundUnit.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofSoundUnit.cpp; sourceTree = "<group>"; };
 		2D4FB15A12DE7271000A51F9 /* ofSoundUnit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofSoundUnit.h; sourceTree = "<group>"; };
-		3021415512DEBC4D00A2885A /* ofLog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofLog.h; sourceTree = "<group>"; };
-		3021415612DEBC4D00A2885A /* ofLog.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofLog.cpp; sourceTree = "<group>"; };
 		2D7DAC4812E273D0005BEB11 /* ofShape.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofShape.cpp; sourceTree = "<group>"; };
 		2D7DAC4912E273D0005BEB11 /* ofShape.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofShape.h; sourceTree = "<group>"; };
 		2D7DAC4A12E273D0005BEB11 /* ofTessellator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofTessellator.cpp; sourceTree = "<group>"; };
 		2D7DAC4B12E273D0005BEB11 /* ofTessellator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofTessellator.h; sourceTree = "<group>"; };
+		3021415512DEBC4D00A2885A /* ofLog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofLog.h; sourceTree = "<group>"; };
+		3021415612DEBC4D00A2885A /* ofLog.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofLog.cpp; sourceTree = "<group>"; };
 		92750B4312E2319500D47C7A /* ofPixelUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofPixelUtils.h; sourceTree = "<group>"; };
 		92750B4412E2319500D47C7A /* ofPixelUtils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofPixelUtils.cpp; sourceTree = "<group>"; };
 		92B3A67812DA30B3001B8BE8 /* ofBaseTypes.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofBaseTypes.cpp; sourceTree = "<group>"; };
@@ -461,6 +465,8 @@
 		E4B27ABC10CBE92A00536013 /* graphics */ = {
 			isa = PBXGroup;
 			children = (
+				27E498EF12E65E9F00C489F5 /* ofShapeUtils.cpp */,
+				27E498F012E65E9F00C489F5 /* ofShapeUtils.h */,
 				2D7DAC4812E273D0005BEB11 /* ofShape.cpp */,
 				2D7DAC4912E273D0005BEB11 /* ofShape.h */,
 				2D7DAC4A12E273D0005BEB11 /* ofTessellator.cpp */,
@@ -669,6 +675,7 @@
 				E47DBBC212E270D30019AE15 /* ofBaseSoundPlayer.h in Headers */,
 				2D7DAC4D12E273D0005BEB11 /* ofShape.h in Headers */,
 				2D7DAC4F12E273D0005BEB11 /* ofTessellator.h in Headers */,
+				27E498F212E65E9F00C489F5 /* ofShapeUtils.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -699,7 +706,6 @@
 			isa = PBXProject;
 			buildConfigurationList = E4B69B4D0A3A1720003C02F2 /* Build configuration list for PBXProject "openFrameworksLib" */;
 			compatibilityVersion = "Xcode 2.4";
-			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				English,
@@ -773,6 +779,7 @@
 				BB40218912E23A650002A877 /* of3dUtils.cpp in Sources */,
 				2D7DAC4C12E273D0005BEB11 /* ofShape.cpp in Sources */,
 				2D7DAC4E12E273D0005BEB11 /* ofTessellator.cpp in Sources */,
+				27E498F112E65E9F00C489F5 /* ofShapeUtils.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
