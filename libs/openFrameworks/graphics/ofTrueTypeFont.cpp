@@ -305,6 +305,8 @@ ofTrueTypeFont::ofTrueTypeFont(){
 	bLoadedOk		= false;
 	bMakeContours	= false;
 	cps				= NULL;
+	letterSpacing = 1;
+	spaceSize = 1;
 }
 
 //------------------------------------------------------------------
@@ -572,6 +574,26 @@ float ofTrueTypeFont::getLineHeight(){
 	return lineHeight;
 }
 
+//-----------------------------------------------------------
+void ofTrueTypeFont::setLetterSpacing(float _newletterSpacing) {
+	letterSpacing = _newletterSpacing;
+}
+
+//-----------------------------------------------------------
+float ofTrueTypeFont::getLetterSpacing(){
+	return letterSpacing;
+}
+
+//-----------------------------------------------------------
+void ofTrueTypeFont::setSpaceSize(float _newspaceSize) {
+	spaceSize = _newspaceSize;
+}
+
+//-----------------------------------------------------------
+float ofTrueTypeFont::getSpaceSize(){
+	return spaceSize;
+}
+
 //------------------------------------------------------------------
 ofTTFCharacter ofTrueTypeFont::getCharacterAsPoints(int character){
 	if( bMakeContours == false ){
@@ -737,11 +759,11 @@ ofRectangle ofTrueTypeFont::getStringBoundingBox(string c, float x, float y){
 				xoffset = 0 ; //reset X Pos back to zero
 	      } else if (c[index] == ' ') {
 	     		int cy = (int)'p' - NUM_CHARACTER_TO_START;
-				 xoffset += cps[cy].width;
+				 xoffset += cps[cy].width * letterSpacing * spaceSize;
 				 // zach - this is a bug to fix -- for now, we don't currently deal with ' ' in calculating string bounding box
 		  } else {
                 GLint height	= cps[cy].height;
-            	GLint bwidth	= cps[cy].width;
+            	GLint bwidth	= cps[cy].width * letterSpacing;
             	GLint top		= cps[cy].topExtent - cps[cy].height;
             	GLint lextent	= cps[cy].leftExtent;
             	float	x1, y1, x2, y2, corr, stretch;
@@ -751,7 +773,7 @@ ofRectangle ofTrueTypeFont::getStringBoundingBox(string c, float x, float y){
             	y1		= (y + yoffset + height + corr + stretch);
             	x2		= (x + xoffset + lextent);
             	y2		= (y + yoffset + -top + corr);
-				xoffset += cps[cy].setWidth;
+				xoffset += cps[cy].setWidth * letterSpacing;
 				if (bFirstCharacter == true){
                     minx = x2;
                     miny = y2;
@@ -842,12 +864,12 @@ void ofTrueTypeFont::drawString(string c, float x, float y) {
 
 		  }else if (c[index] == ' ') {
 				 int cy = (int)'p' - NUM_CHARACTER_TO_START;
-				 X += cps[cy].width;
-				 glTranslatef((float)cps[cy].width, 0, 0);
+				 X += cps[cy].width * letterSpacing * spaceSize;
+				 glTranslatef((float)cps[cy].width * letterSpacing * spaceSize, 0, 0);
 		  } else {
 				drawChar(cy, 0, 0);
-				X += cps[cy].setWidth;
-				glTranslatef((float)cps[cy].setWidth, 0, 0);
+				X += cps[cy].setWidth * letterSpacing;
+				glTranslatef((float)cps[cy].setWidth * letterSpacing, 0, 0);
 		  }
 		}
 		index++;
