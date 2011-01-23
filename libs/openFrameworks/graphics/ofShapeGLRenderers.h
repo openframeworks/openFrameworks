@@ -13,6 +13,7 @@ public:
 private:
 	ofShape *shape;
 	vector<ofVboMesh> vbos;
+	ofVbo vboOutline;
 };
 
 
