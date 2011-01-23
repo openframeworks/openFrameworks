@@ -96,7 +96,21 @@ public:
 			additionalParams.push_back(angleBegin);
 			additionalParams.push_back(angleEnd);
 		}
+		const float & radiusX() const { return additionalParams[0]; }
+		const float & radiusY()const { return additionalParams[1]; }
+		const float & angleBegin()const { return additionalParams[2]; }
+		const float & angleEnd()const { return additionalParams[3]; }
 
+		const ofPoint & cp1()const { return controlPoints[0]; }
+		const ofPoint & cp2()const { return controlPoints[1]; }
+
+		float & radiusX() { return additionalParams[0]; }
+		float & radiusY() { return additionalParams[1]; }
+		float & angleBegin() { return additionalParams[2]; }
+		float & angleEnd() { return additionalParams[3]; }
+
+		ofPoint & cp1() { return controlPoints[0]; }
+		ofPoint & cp2() { return controlPoints[1]; }
 
 		Type type;
 		ofPoint to;

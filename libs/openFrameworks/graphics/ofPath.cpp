@@ -7,6 +7,7 @@
 #include "ofPath.h"
 
 class ofPathToShapeConverter;
+#include <deque>
 
 ofPath::ofPath(){
 	strokeWidth = 1;
@@ -163,11 +164,11 @@ public:
 				break;
 			case ofPath::Command::bezier2DTo:
 				curveVertices.clear();
-				bezier2DToVertices(currentPolyline,commands[i].controlPoints[0],commands[i].controlPoints[1],commands[i].to, curveResolution);
+				bezier2DToVertices(currentPolyline,commands[i].cp1(),commands[i].cp2(),commands[i].to, curveResolution);
 				break;
 			case ofPath::Command::arc2D:
 				curveVertices.clear();
-				arcToVertices(currentPolyline,commands[i].to,commands[i].additionalParams[0],commands[i].additionalParams[1],commands[i].additionalParams[2],commands[i].additionalParams[3], curveResolution);
+				arcToVertices(currentPolyline,commands[i].to,commands[i].radiusX(),commands[i].radiusY(),commands[i].angleBegin(),commands[i].angleEnd(), curveResolution);
 				break;
 			}
 		}
@@ -230,7 +231,7 @@ public:
 
 		curveVertices.push_back(to);
 
-		if (curveVertices.size() >= 4){
+		if (curveVertices.size() == 4){
 
 			int startPos = (int)curveVertices.size() - 4;
 
@@ -264,6 +265,7 @@ public:
 
 				polyline.addVertex(ofPoint(x,y));
 			}
+			curveVertices.pop_front();
 		}
 	}
 
@@ -280,18 +282,18 @@ public:
 		for( int i=0; i<segments; i++){
 			sinus = sin(angle);
 			cosinus = cos(angle);
-			polyline.addVertex(radius*sinus,radius*cosinus);
+			polyline.addVertex(radiusX*sinus+center.x,radiusY*cosinus+center.y);
 
 			angle-=segment_size ;
 		}
 		angle=-(M_PI*2.0*begin);
 		sinus = sin(angle);
 		cosinus = cos(angle);
-		polyline.addVertex(radius*sinus,radius*cosinus);
+		polyline.addVertex(radiusX*sinus+center.x,radiusY*cosinus+center.y);
 	}
 
 private:
-	vector<ofPoint> curveVertices;
+	deque<ofPoint> curveVertices;
 };
 
 
