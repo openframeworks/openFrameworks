@@ -10,7 +10,6 @@
 #pragma once
 
 #include "ofNode.h"
-#include "ofMain.h"
 
 class ofMesh;
 

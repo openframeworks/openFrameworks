@@ -149,9 +149,7 @@
 		iPhoneGetOFWindow()->rotateXY(touchPoint.x, touchPoint.y);
 		
 		if( touchIndex==0 ){
-			ofGetAppPtr()->mouseX = touchPoint.x;
-			ofGetAppPtr()->mouseY = touchPoint.y;
-			ofGetAppPtr()->mousePressed(touchPoint.x, touchPoint.y, 1);
+			ofNotifyMousePressed(touchPoint.x, touchPoint.y, 0);
 		}
 		
 		ofTouchEventArgs touchArgs;
@@ -180,9 +178,7 @@
 		iPhoneGetOFWindow()->rotateXY(touchPoint.x, touchPoint.y);
 		
 		if( touchIndex==0 ){
-			ofGetAppPtr()->mouseX = touchPoint.x;
-			ofGetAppPtr()->mouseY = touchPoint.y;
-			ofGetAppPtr()->mouseDragged(touchPoint.x, touchPoint.y, 1);
+			ofNotifyMouseDragged(touchPoint.x, touchPoint.y, 0);			
 		}		
 		ofTouchEventArgs touchArgs;
 		touchArgs.numTouches = [[event touchesForView:self] count];
@@ -210,10 +206,7 @@
 		iPhoneGetOFWindow()->rotateXY(touchPoint.x, touchPoint.y);
 		
 		if( touchIndex==0 ){
-			ofGetAppPtr()->mouseX = touchPoint.x;
-			ofGetAppPtr()->mouseY = touchPoint.y;
-			ofGetAppPtr()->mouseReleased(touchPoint.x, touchPoint.y, 1);
-			ofGetAppPtr()->mouseReleased();
+			ofNotifyMouseReleased(touchPoint.x, touchPoint.y, 0);						
 		}
 		
 		ofTouchEventArgs touchArgs;

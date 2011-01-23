@@ -17,12 +17,11 @@ void testApp::reset() {
 	for(int i=0; i<kNumCameras; i++) {
 		cam[i].resetTransform();
 		cam[i].setFov(60);
-		cam[i].setParent(NULL);
+		cam[i].clearParent();
 		lookatIndex[i] = -1;	// don't lookat at any node
 		parentIndex[i] = -1;	// don't parent to any node
 		doMouseOrbit[i] = false;
 	}
-		
 	
 	cam[0].setPosition(40, 40, 190);
 	doMouseOrbit[0] = true;
@@ -44,7 +43,7 @@ void testApp::setup(){
 	
 	// link all testNodes (parent to each other)
 	for(int i=0; i<kNumTestNodes; i++) {
-		if(i>0) testNodes[i].setParent(&testNodes[i-1]);
+		if(i>0) testNodes[i].setParent(testNodes[i-1]);
 	}
 }
 
@@ -71,6 +70,7 @@ void testApp::update(){
 
 //--------------------------------------------------------------
 void testApp::draw(){
+//	printf("%i %i\n", mouseX, mouseY);
 	
 	// update camera transforms
 	for(int i=0; i<kNumCameras; i++) {
@@ -79,11 +79,17 @@ void testApp::draw(){
 		if(lookatIndex[i] >= 0) cam[i].lookAt(testNodes[lookatIndex[i]]);
 		
 		// mouse orbit camera
-		if(doMouseOrbit[i]) {
+		if(doMouseOrbit[i] && ofGetMousePressed(0)) {
+			static float lon = 0;
+			static float lat = 0;
+			
+			lon = ofClamp(lon + mouseX - ofGetPreviousMouseX(), -180, 180);
+			lat = ofClamp(lat + mouseY - ofGetPreviousMouseY(), -90, 90);
+			
 			if(lookatIndex[i] < 0) {
-				cam[i].orbit(ofMap(mouseX, 0, ofGetWidth(), 180, -180), ofMap(mouseY, 0, ofGetHeight(), 90, -90), orbitRadius);
+				cam[i].orbit(lon, lat, orbitRadius);
 			} else {
-				cam[i].orbit(ofMap(mouseX, 0, ofGetWidth(), 180, -180), ofMap(mouseY, 0, ofGetHeight(), 90, -90), orbitRadius, testNodes[lookatIndex[1]]);
+				cam[i].orbit(lon, lat, orbitRadius, testNodes[lookatIndex[1]]);
 			}
 		}
 		
@@ -151,7 +157,7 @@ void testApp::draw(){
 	"\n" + 
 	
 	"o      toggle mouse orbit for cam\n" + 
-	"O      toggle auto orbit for cam\n" + 
+//	"O      toggle auto orbit for cam\n" + 
 	
 	"\n" + 
 	"c      switch camera to configure: " + ofToString(camToConfigure) + "\n" +
@@ -230,7 +236,12 @@ void testApp::keyPressed(int key){
 			
 		case 't':
 			lookatIndex[camToConfigure]++ ; 
-			if(lookatIndex[camToConfigure]>=kNumTestNodes) lookatIndex[camToConfigure] = -1;
+			if(lookatIndex[camToConfigure]>=kNumTestNodes) {
+				lookatIndex[camToConfigure] = -1;
+//				cam[camToConfigure].disableTarget();
+//			} else {
+//				cam[camToConfigure].setTarget(testNodes[parentIndex[camToConfigure]]);
+			}
 			break;
 			
 		case 'p':
@@ -239,9 +250,9 @@ void testApp::keyPressed(int key){
 			ofQuaternion oldQ	= cam[camToConfigure].getGlobalOrientation();
 			if(parentIndex[camToConfigure]>=kNumTestNodes) {
 				parentIndex[camToConfigure] = -1;
-				cam[camToConfigure].setParent(NULL);
+				cam[camToConfigure].clearParent();
 			} else {
-				cam[camToConfigure].setParent(&testNodes[parentIndex[camToConfigure]]);
+				cam[camToConfigure].setParent(testNodes[parentIndex[camToConfigure]]);
 			}
 			cam[camToConfigure].setGlobalPosition(oldP);
 			cam[camToConfigure].setGlobalOrientation(oldQ);
@@ -271,8 +282,8 @@ void testApp::mouseMoved(int x, int y ){
 void testApp::mouseDragged(int x, int y, int button){
 	static float px = -1;
 //	if(doMouseOrbit) {
-		if(px>=0) orbitRadius += x - px;
-		px = x;
+//		if(px>=0) orbitRadius += x - px;
+//		px = x;
 //	}
 }
 

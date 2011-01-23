@@ -39,7 +39,7 @@ vector<ofNode*>& ofScene3d::getNodes() {
 
 //----------------------------------------
 void ofScene3d::draw() {
-	for(int i=0; i<nodes.size(); i++) {
+	for(int i=0; i<(int)nodes.size(); i++) {
 		nodes[i]->draw();
 	}
 }
