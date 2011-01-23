@@ -16,7 +16,6 @@ enum ofTriangleMode{
 	OF_TRIANGLES_ELEMENT,
 	OF_TRIANGLE_STRIP_ELEMENT,
 	OF_TRIANGLE_FAN_ELEMENT,
-	OF_LINE_LOOP_ELEMENT
 };	
 
 inline GLuint ofGetGLTriangleMode(ofTriangleMode mode){
@@ -30,8 +29,6 @@ inline GLuint ofGetGLTriangleMode(ofTriangleMode mode){
 	case OF_TRIANGLE_FAN_ELEMENT:
 		return GL_TRIANGLE_FAN;
 		break;
-	case OF_LINE_LOOP_ELEMENT:
-		return GL_LINE_LOOP;
 	default:
 		return GL_TRIANGLES;
 	}
@@ -48,8 +45,6 @@ inline ofTriangleMode ofGetOFTriangleMode(GLuint mode){
 	case GL_TRIANGLE_FAN:
 		return OF_TRIANGLE_FAN_ELEMENT;
 		break;
-	case GL_LINE_LOOP:
-		return OF_LINE_LOOP_ELEMENT;
 	default:
 		ofLogError("of") << "asked for non existant triangle mode " << mode << " returning GL_TRIANGLES";
 		return OF_TRIANGLES_ELEMENT;

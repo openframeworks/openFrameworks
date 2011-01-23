@@ -12,7 +12,7 @@
 #include "ofBaseTypes.h"
 #include "ofPoint.h"
 
-#define OF_DEFAULT_SHAPE_RENDERER ofVboShapeRenderer()
+#define OF_DEFAULT_SHAPE_RENDERER ofVAShapeRenderer()
 
 /** ofPolyline
  
@@ -23,28 +23,49 @@
 
 class ofPolyline {
 public:	
+	ofPolyline(){
+		bIs3D = false;
+		bHasChanged = true;
+	}
 	/// remove all the points
 	void clear() { points.clear(); }
 
 	/// add a vertex
-	void addVertex( const ofPoint& p ) { points.push_back(p); }
-	void addVertexes( const vector<ofPoint>& verts ) { points.insert( points.end(), verts.begin(), verts.end() ); }
-	
-	/// draw as line segments, with the current line style
-	void draw() const;
+	void addVertex( const ofPoint& p ) { points.push_back(p); bHasChanged=true; }
+	void addVertex( float x, float y ) { addVertex(ofPoint(x,y)); bHasChanged=true; }
+	void addVertexes( const vector<ofPoint>& verts ) { points.insert( points.end(), verts.begin(), verts.end() );  bHasChanged=true;  }
 
 	/// points vector access
 	size_t size() const { return points.size(); }
 	const ofPoint& operator[] (int index) const { return points[index]; }
+	ofPoint& operator[] (int index) {  bHasChanged=true; return points[index]; }
 	
 	/// closed
-	void setClosed( bool tf ) { bClosed = tf; }
-	bool getClosed() const { return bClosed; }
+	void setClosed( bool tf ) {  bHasChanged=true; bClosed = tf; }
+	bool isClosed() const { return bClosed; }
 	
+	void setIs3D(bool bIs3D_){
+		bHasChanged=true;
+		bIs3D = bIs3D_;
+	}
+	bool is3D() const{
+		return bIs3D;
+	}
+	bool hasChanged(){
+		 if(bHasChanged){
+			 bHasChanged=false;
+		 	 return true;
+		 }else{
+			 return false;
+		 }
+	}
+
+	vector<ofPoint> & getVertices(){return points;}
 private:
 	vector<ofPoint> points;
 	bool bClosed;
-	
+	bool bIs3D;
+	bool bHasChanged;
 };
 
 
@@ -63,7 +84,7 @@ public:
 	
 	ofShape();
 	~ofShape();
-	void setCurveResolution(int numPoints);
+
 	void clear();
 	
 	/// Add a vertex. Can be used to create straight lines or to specify start points for Bezier or
@@ -71,25 +92,17 @@ public:
 	void addVertex(ofPoint p1);
 	void addVertex( float x, float y, float z=0 ) 
 		{ addVertex( ofPoint( x,y,z ) ); }
+
+	void setPolyline(const ofPolyline & polyline);
+	ofPolyline & getPolyline(){ return cachedOutline; };
 	
-	/// Add a Bezier vertex by specifying ( control point out from previous point, control point in to 
-	/// next point, next point ).
-	void addBezierVertex(ofPoint cp1, ofPoint cp2, ofPoint p);
-	void addBezierVertex( float cp1x, float cp1y, float cp2x, float cp2y, float px, float py )
-		{ addBezierVertex( ofPoint(cp1x,cp1y), ofPoint(cp2x,cp2y), ofPoint(px,py) ); }
-	void addBezierVertex( float cp1x, float cp1y, float cp1z, float cp2x, float cp2y, float cp2z, float px, float py, float pz )
-		{ addBezierVertex( ofPoint(cp1x,cp1y,cp1z), ofPoint(cp2x,cp2y,cp2z), ofPoint(px,py,pz) ); }
-	
-	/// Add a Catmull-Rom curve vertex. You must add a minimum of vertices to make a Catmull-Rom spline, 
-	/// and the first and last points will be used only as control points.
-	void addCurveVertex(ofPoint p);
-	void addCurveVertex( float x, float y, float z=0 ) 
-		{ addCurveVertex( ofPoint( x,y,z ) ); }
+	void addSubShape(const ofShape & shape);
 
 	/// close the shape
 	void close();
+
 	/// next contour
-	void nextContour( bool bClosePrev=true );
+	ofShape & newSubShape( bool bClosePrev=true );
 
 	ofMesh & getMesh();
 	const ofMesh & getMesh() const;
@@ -103,6 +116,7 @@ public:
 	void setPolyWindingMode( int newMode );
 	/// filled/outline
 	void setFilled( bool bFill ) { bFilled = bFill; bNeedsTessellation = true; }
+	bool isFilled() const { return bFilled; }
 	/// set line + fill color simultaneously
 	void setColor( const ofColor& color ) { setFillColor( color ); setLineColor( color ); }
 	void setHexColor( int hex ) { setColor( ofColor().fromHex( hex ) ); };
@@ -113,100 +127,26 @@ public:
 	void setFillColor( const ofColor& color ) { fillColor = color; }
 	void setFillHexColor( int hex ) { setFillColor( ofColor().fromHex( hex ) ); };
 	
-private:		
-	
-	typedef enum {
-		OFSHAPE_SEG_LINE,
-		OFSHAPE_SEG_BEZIER,
-		OFSHAPE_SEG_CURVE
-	} segmentType;
-	
-	class ofShapeSegment {
-	public: 
-		
-		ofShapeSegment( segmentType _type ){
-			type = _type;
-		}
-		
-		/// up to you to call the correct function
-		void addSegmentVertex(const ofPoint& p) {
-			points.push_back(p)	;
-		}
-		void addSegmentCurveVertex(const ofPoint& p) {
-			type = OFSHAPE_SEG_CURVE; points.push_back(p);
-		}
-		void addSegmentBezierVertex(const ofPoint& c1, const ofPoint& c2, const ofPoint& p) {
-			type = OFSHAPE_SEG_BEZIER; points.push_back( c1 ); points.push_back( c2 ); points.push_back( p ); 
-		}
+	bool hasOutline(){ return bNeedsOutlineDraw || !bFilled; }
 
-		int getType() const { return type; }
-		const vector<ofPoint>& getPoints() const { return points; }
-		const ofPoint& getPoint( int index ) const { return points[index]; }
-		size_t getNumPoints() const { return points.size(); }
-	private:
-		segmentType type;
-		vector<ofPoint> points;
-	};
-	
-	
-	void curveSegmentToPolyline(const ofShapeSegment & seg, ofPolyline& polyline);
-	void bezierSegmentToPolyline(const ofShapeSegment & seg, ofPolyline& polyline);
-	
+
+private:
+	vector<ofPolyline> getSubPolylines();
+	// a shape is a polyline + lineColor, fill, windingMode and subshapes
 	ofColor lineColor;
 	bool bFilled;
 	ofColor fillColor;
-	
-	// true if this shape should be closed
-	
-	int resolution;
-	vector<vector<ofShapeSegment> > segmentVectors;
-	vector<bool> bShouldClose;
-	
 	int polyWindingMode;
 	bool bNeedsTessellation;
-	vector<ofPolyline> cachedPolylines;
+	ofPolyline polyline;
 	
 	// resulting mesh and outline
+	ofMesh cachedTessellation;
 	bool bNeedsOutlineDraw;
 	ofPolyline cachedOutline;
 	
-	ofMesh cachedTessellation;
+	vector<ofShape> subShapes;
 	
 	ofBaseShapeRenderer * renderer;
 
 };
-
-
-/** ofShapeCollection
- 
- An ofShapeCollection holds one or more shapes. It knows its own position.
- 
- @author Damian
- */
-/*
-
-class ofShapeCollection
-{
-public:
-	
-	
-	/// add shapes to this collection
-	void addShape( const ofShape& shape, ofPoint relativePosition = ofPoint( 0,0,0 ) );
-	void addShape( const ofShapeCollection& collection, ofPoint relativePosition = ofPoint( 0,0,0 ) );
-	
-	/// set the position (relative to parent) of this shape collection
-	void setPosition( ofPoint position );
-	
-	void draw();
-	
-private:
-	
-	vector<ofShapeCollection> children;
-	
-	ofPoint position;
-	
-};
-*/
-
-
-

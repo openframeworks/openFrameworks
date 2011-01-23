@@ -62,7 +62,7 @@ private:
 
 	
 	// filled during tessellation
-	static ofTriangleMode currentTriType; // GL_TRIANGLES, GL_TRIANGLE_FAN or GL_TRIANGLE_STRIP
+	static GLint currentTriType; // GL_TRIANGLES, GL_TRIANGLE_FAN or GL_TRIANGLE_STRIP
 	static vector<ofPoint> vertices;
 	
 	//---------------------------- for combine callback:

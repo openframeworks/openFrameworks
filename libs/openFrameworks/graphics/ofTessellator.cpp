@@ -59,7 +59,7 @@ std::vector <double*> ofTessellator::newVertices;
 //---------------------------- store all the polygon vertices:
 std::vector <double*> ofTessellator::ofShapePolyVertexs;
 
-ofTriangleMode ofTessellator::currentTriType; // GL_TRIANGLES, GL_TRIANGLE_FAN or GL_TRIANGLE_STRIP
+GLint ofTessellator::currentTriType; // GL_TRIANGLES, GL_TRIANGLE_FAN or GL_TRIANGLE_STRIP
 vector<ofPoint> ofTessellator::vertices;
 
 
@@ -81,7 +81,7 @@ void CALLBACK ofTessellator::begin(GLint type){
 	// type can be GL_TRIANGLE_FAN, GL_TRIANGLE_STRIP, or GL_TRIANGLES
 	// or GL_LINE_LOOP if GLU_TESS_BOUNDARY_ONLY was set to TRUE
 		
-	currentTriType=ofGetOFTriangleMode(type);
+	currentTriType=type;
 	
 	vertices.clear();
 	
@@ -92,11 +92,10 @@ void CALLBACK ofTessellator::end(){
 	// here we take our big pile of vertices and push them at the mesh
 
 	// deal with mesh elements (triangles, triangle fan, triangle strip)
-	resultMesh.addElement(currentTriType, vertices );
 
-	
-	// deal with line loop (outline only)
-	if ( currentTriType == GL_LINE_LOOP ){
+	if(currentTriType!=GL_LINE_LOOP){
+		resultMesh.addElement(ofGetOFTriangleMode(currentTriType), vertices );
+	}else if ( currentTriType == GL_LINE_LOOP ){ // outline
 		resultOutline.addVertexes( vertices );
 		// close the loop
 		if ( vertices.size()>0 ) {
@@ -162,8 +161,12 @@ ofPolyline ofTessellator::tessellateToOutline( const vector<ofPolyline>& polylin
 	
 
 	return resultOutline;
-	
-	
+}
+
+ofPolyline ofTessellator::tessellateToOutline( const ofPolyline & polyline, int polyWindingMode, bool bIs2D ) {
+	vector<ofPolyline> tmpVector;
+	tmpVector.push_back(polyline);
+	return tessellateToOutline(tmpVector,polyWindingMode, bIs2D);
 }
 
 
@@ -256,7 +259,7 @@ void ofTessellator::performTessellation(const vector<ofPolyline>& polylines, int
 			point[2] = polyline[i].z;
 			ofShapePolyVertexs.push_back(point);
 		}
-		if ( polyline.getClosed() && polyline.size()>0 ) {
+		if ( polyline.isClosed() && polyline.size()>0 ) {
 			double* point = new double[3];
 			point[0] = polyline[0].x;
 			point[1] = polyline[0].y;
