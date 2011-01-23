@@ -7,6 +7,12 @@
  *
  */
 
+// Ortho camera is a custom
+// camera we've created in
+// this example
+//
+// We inherit from ofCamera
+
 #include "ofMain.h"
 
 class OrthoCamera : public ofCamera

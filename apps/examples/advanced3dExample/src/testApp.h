@@ -14,7 +14,7 @@ class testApp : public ofBaseApp{
 		void draw();
 	
 		void setupViewports();
-		void drawScene();
+		void drawScene(int iCameraDraw);
 
 		void keyPressed  (int key);
 		void keyReleased(int key);
