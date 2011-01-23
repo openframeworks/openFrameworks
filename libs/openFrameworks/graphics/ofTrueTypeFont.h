@@ -58,6 +58,10 @@ public:
 
   	float 		getLineHeight();
   	void 		setLineHeight(float height);
+	float 		getLetterSpacing();
+	void 		setLetterSpacing(float spacing);
+	float 		getSpaceSize();
+	void 		setSpaceSize(float size);
 	float 		stringWidth(string s);
 	float 		stringHeight(string s);
 	
@@ -74,6 +78,9 @@ protected:
 	vector <ofTTFCharacter> charOutlines;
 
 	float 			lineHeight;
+	float			letterSpacing;
+	float			spaceSize;
+
 	charProps 		* 	cps;			// properties for each character
 	GLuint			*	texNames;		// textures for each character
 	int				fontSize;
