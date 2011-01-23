@@ -26,7 +26,7 @@ class testApp : public ofBaseApp{
 		vector<ofVboMesh> vboMeshes;
 //		vector<ofVboMesh> vboMeshes2;
 	
-		int whichMesh;
+		bool lightsOn;
 	
 		ofImage tex;
 	

@@ -7,6 +7,7 @@
 #pragma once
 #include "ofMain.h"
 
+/*
 enum {
 	OF_VBO_VERTEX,
 	OF_VBO_NORMAL,
@@ -18,6 +19,7 @@ enum {
 	OF_VBO_STATIC = GL_STATIC_DRAW,	
 	OF_VBO_STREAM = GL_STREAM_DRAW
 };
+ */
 
 class ofVbo {
 	
@@ -64,7 +66,11 @@ public:
 	void setTexCoordData(const ofVec2f * texCoords, int total, int usage);	
 	void setIndexData(const GLuint * indices, int total);
 	
-	//TODO: update methods
+	void updateVertexData(const ofVec3f * verts, int total);
+	void updateColorData(const ofColor * colors, int total);	
+	void updateNormalData(const ofVec3f * normals, int total);	
+	void updateTexCoordData(const ofVec2f * texCoords, int total);	
+	void updateIndexData(const GLuint * indices, int total);
 	
 	float* getVertPointer();
 	float* getColorPointer();
