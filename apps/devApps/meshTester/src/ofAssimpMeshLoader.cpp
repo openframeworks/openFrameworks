@@ -46,7 +46,7 @@ void ofAssimpMeshLoader::aiMeshToOfMesh(const aiMesh* aim, ofMeshElement& ofm){
 	// just one for now
 	if(aim->GetNumUVChannels()>0){
 		for (int i=0; i < aim->mNumVertices;i++){
-			ofm.addTexCoord(ofVec2f(aim->mTextureCoords[0][i].x,aim->mTextureCoords[0][i].y));
+			ofm.addTexCoord(ofVec2f(512*aim->mTextureCoords[0][i].x,512*aim->mTextureCoords[0][i].y));
 		}
 	}
 	

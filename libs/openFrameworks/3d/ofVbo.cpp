@@ -2,8 +2,12 @@
 //GL Error checking
 //inlining?
 // handle idling of arrays: possibly let gl create memory and use map buffers for streaming
+// how are we going to handle the OF_VBO_STATIC vs OF_VBO_STREAM settings? Should it auto-set in update intead of check?
+// index updating/deleting?
 
 #include "ofVbo.h"
+
+
 
 //--------------------------------------------------------------
 ofVbo::ofVbo() {
@@ -110,24 +114,50 @@ void ofVbo::setIndexData(const GLuint * indices, int total){
 	glBufferDataARB(GL_ELEMENT_ARRAY_BUFFER_ARB, sizeof(GLuint) * total, indexData, GL_STATIC_DRAW); 
 }
 
-//TODO: updpate methods
-/*
 //--------------------------------------------------------------
-void ofVbo::updateColorData(const ofColor * colors, int total) {
-if(bUsingColors && colorUsage == GL_STREAM_DRAW) {
-glBindBufferARB(GL_ARRAY_BUFFER_ARB, colorId);
-glBufferSubDataARB(GL_ARRAY_BUFFER_ARB, 0, total*sizeof(ofColor), &colors[0].r);
-}
+void ofVbo::updateVertexData(const ofVec3f * verts, int total) {
+	if(bUsingVerts){
+		glBindBufferARB(GL_ARRAY_BUFFER_ARB, vertId);
+		vertData = (float*)&verts[0].x;
+		glBufferSubDataARB(GL_ARRAY_BUFFER_ARB, 0, total*sizeof(ofVec3f), vertData);
+	}
 }
 
 //--------------------------------------------------------------
-void ofVbo::updateVertexData(const ofVec3f * verts, int total) {
-if(bUsingVerts && vertUsage == GL_STREAM_DRAW) {
-glBindBufferARB(GL_ARRAY_BUFFER_ARB, vertId);
-glBufferSubDataARB(GL_ARRAY_BUFFER_ARB, 0, total*sizeof(ofVec3f), &verts[0].x);
+void ofVbo::updateColorData(const ofColor * colors, int total) {
+	if(bUsingColors) {
+		glBindBufferARB(GL_ARRAY_BUFFER_ARB, colorId);
+		colorData = (float*)&colors[0].r;
+		glBufferSubDataARB(GL_ARRAY_BUFFER_ARB, 0, total*sizeof(ofColor), colorData);
+	}
 }
+
+//--------------------------------------------------------------
+void ofVbo::updateNormalData(const ofVec3f * normals, int total) {
+	if(bUsingNormals) {
+		glBindBufferARB(GL_ARRAY_BUFFER_ARB, normalId);
+		normalData = (float*)&normals[0].x;
+		glBufferSubDataARB(GL_ARRAY_BUFFER_ARB, 0, total*sizeof(ofVec3f), normalData);
+	}
 }
-*/
+
+//--------------------------------------------------------------
+void ofVbo::updateTexCoordData(const ofVec2f * texCoords, int total) {
+	if(bUsingTexCoords) {
+		glBindBufferARB(GL_ARRAY_BUFFER_ARB, texCoordId);
+		texCoordData = (float*)&texCoords[0].x;
+		glBufferSubDataARB(GL_ARRAY_BUFFER_ARB, 0, total*sizeof(ofVec2f), texCoordData);
+	}
+}
+
+//--------------------------------------------------------------
+void ofVbo::updateIndexData(const GLuint * indices, int total) {
+	if(bUsingIndices) {
+		glBindBufferARB(GL_ARRAY_BUFFER_ARB, indexId);
+		indexData = (GLuint*)&indices[0];
+		glBufferSubDataARB(GL_ARRAY_BUFFER_ARB, 0, total*sizeof(GLuint), indexData);
+	}
+}
 
 //--------------------------------------------------------------
 bool ofVbo::getIsAllocated(){
@@ -215,32 +245,35 @@ void ofVbo::bind(){
 	glPushAttrib(GL_ALL_ATTRIB_BITS);
 	glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
 	
-	glDisableClientState(GL_COLOR_ARRAY);
-	glDisableClientState(GL_NORMAL_ARRAY);
-	glDisableClientState(GL_EDGE_FLAG_ARRAY);
-	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-	
 	if(bUsingVerts){
 		glEnableClientState(GL_VERTEX_ARRAY);		
 		glBindBufferARB(GL_ARRAY_BUFFER_ARB, vertId);
-		//glVertexPointer(3, GL_FLOAT, sizeof(ofVec3f), 0);
 		glVertexPointer(3, GL_FLOAT, sizeof(ofVec3f), 0);
 	}
-	//gluErrorString(glGetError());
 	
 	if(bUsingColors){
-		/*
-		glBindBuffer(GL_ARRAY_BUFFER, colorId);
 		glEnableClientState(GL_COLOR_ARRAY);
+		glBindBuffer(GL_ARRAY_BUFFER_ARB, colorId);
 		glColorPointer(4, GL_FLOAT, sizeof(ofColor), 0);
-		 */
+	}
+	
+	if(bUsingNormals){
+		glEnableClientState(GL_NORMAL_ARRAY);		
+		glBindBufferARB(GL_ARRAY_BUFFER_ARB, normalId);
+		glNormalPointer(GL_FLOAT, sizeof(ofVec3f), 0);
+	}
+	
+	if(bUsingTexCoords){
+		glEnableClientState(GL_TEXTURE_COORD_ARRAY);		
+		glBindBufferARB(GL_ARRAY_BUFFER_ARB, texCoordId);
+		glTexCoordPointer(2, GL_FLOAT, sizeof(ofVec2f), 0);
 	}
 }
 
 //--------------------------------------------------------------
 void ofVbo::unbind() {
-	//if(bUsingVerts)	 glDisableClientState(GL_VERTEX_ARRAY);
-	if(bUsingColors) glDisableClientState(GL_COLOR_ARRAY);
+	glEnableClientState(GL_VERTEX_ARRAY);
+	glDisableClientState(GL_COLOR_ARRAY);
 	glDisableClientState(GL_INDEX_ARRAY);
 	glDisableClientState(GL_COLOR_ARRAY);
 	glDisableClientState(GL_NORMAL_ARRAY);
@@ -275,18 +308,32 @@ void ofVbo::drawElements(int drawMode, int amt) {
 
 //--------------------------------------------------------------
 void ofVbo::clear(){
-	//TODO: smartly handle this
-	/*
-	glDeleteBuffers(1, &vertId);
-	glDeleteBuffers(1, &indexId);
-	glDeleteBuffers(1, &normalId);
-	glDeleteBuffers(1, &colorId);
-	glDeleteBuffers(1, &texCoordId);
+
+	if (bUsingVerts){
+		glDeleteBuffers(1, &vertId);
+		bUsingVerts = false;
+	}
 	
-	indexId = 0;
-	indexId = 0;
+	if(bUsingNormals){
+		glDeleteBuffers(1, &normalId);
+		bUsingNormals = false;
+	}
+	
+	if(bUsingColors){
+		glDeleteBuffers(1, &colorId);
+		bUsingColors = false;
+	}
+	
+	if(bUsingTexCoords){
+		glDeleteBuffers(1, &texCoordId);
+		bUsingTexCoords = false;
+	}
+	
+	vertId = 0;
 	normalId = 0;
 	texCoordId = 0;
 	colorId = 0;
-	 */
+	
+	//indexId = 0;
+	//glDeleteBuffers(1, &indexId);
 }
