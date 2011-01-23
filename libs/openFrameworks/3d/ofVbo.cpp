@@ -98,7 +98,7 @@ void ofVbo::setTexCoordData(const ofVec2f * texCoords, int total, int usage) {
 
 
 //--------------------------------------------------------------
-void ofVbo::setIndexData(const GLuint * indices, int total){
+void ofVbo::setIndexData(const GLuint * indices, int total, int usage){
 	if(indices == NULL){
 		ofLog(OF_LOG_WARNING,"ofVbo: bad index data!\n");
 		return;
@@ -111,9 +111,10 @@ void ofVbo::setIndexData(const GLuint * indices, int total){
 	
 	glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, indexId);
 	indexData = (GLuint*)indices;
-	glBufferDataARB(GL_ELEMENT_ARRAY_BUFFER_ARB, sizeof(GLuint) * total, indexData, GL_STATIC_DRAW); 
+	glBufferDataARB(GL_ELEMENT_ARRAY_BUFFER_ARB, sizeof(GLuint) * total, indexData, usage); 
 }
 
+/*
 //--------------------------------------------------------------
 void ofVbo::updateVertexData(const ofVec3f * verts, int total) {
 	if(bUsingVerts){
@@ -158,6 +159,7 @@ void ofVbo::updateIndexData(const GLuint * indices, int total) {
 		glBufferSubDataARB(GL_ARRAY_BUFFER_ARB, 0, total*sizeof(GLuint), indexData);
 	}
 }
+*/
 
 //--------------------------------------------------------------
 bool ofVbo::getIsAllocated(){

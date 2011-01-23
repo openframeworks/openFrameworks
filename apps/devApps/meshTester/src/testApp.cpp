@@ -6,10 +6,13 @@ void testApp::setup(){
 	ofSetLogLevel(OF_LOG_VERBOSE);
     model.loadMeshes("astroBoy_walk.dae",meshes);
 	tex.loadImage("boy_10.tga");
+	
+	ofEnableNormalizedTexCoords();
 
 	for(int i =0; i < meshes.size();i++){
 		vboMeshes.push_back(ofVboMesh());
 		vboMeshes.back().meshElement = &meshes[i];
+		vboMeshes.back().drawType = GL_STREAM_DRAW_ARB;
 	}
 	
 //    ofEnableBlendMode(OF_BLENDMODE_ALPHA);
@@ -37,17 +40,19 @@ void testApp::update(){
 			ofVec3f modVert = .01*ofVec3f(0,sin(theta)*sin(phi),0);
 			vboMeshes[i].meshElement->setVertex(j,curVert+modVert);
 		}
-		vboMeshes[i].vbo.updateVertexData(vboMeshes[i].meshElement->getVerticesPointer(),vboMeshes[i].meshElement->getNumVertices());
+		//vboMeshes[i].vbo.setVertexData(vboMeshes[i].meshElement->getVerticesPointer(),vboMeshes[i].meshElement->getNumVertices());
+		vboMeshes[i].setupVertices(GL_STREAM_DRAW_ARB);
 	}
 	
 	for (int i =0; i < vboMeshes.size();i++){
 		for (int j=0; j<vboMeshes[i].meshElement->getNumTexCoords();j++){
 			ofVec3f curVert = vboMeshes[i].meshElement->getTexCoord(j);
-			float theta = .001*ofGetFrameNum();
-			ofVec2f modVert = .1*ofVec3f(cos(theta),sin(theta));
+			float theta = .002*ofGetFrameNum();
+			ofVec2f modVert = .001*ofVec3f(cos(theta),sin(theta));
 			vboMeshes[i].meshElement->setTexCoord(j,curVert+modVert);
 		}
-		vboMeshes[i].vbo.updateTexCoordData(vboMeshes[i].meshElement->getTexCoordsPointer(),vboMeshes[i].meshElement->getNumTexCoords());
+		vboMeshes[i].setupTexCoords(GL_STREAM_DRAW_ARB);
+		//vboMeshes[i].vbo.updateTexCoordData(vboMeshes[i].meshElement->getTexCoordsPointer(),vboMeshes[i].meshElement->getNumTexCoords());
 	}
 }
 

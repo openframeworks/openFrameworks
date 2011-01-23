@@ -36,7 +36,7 @@ public:
 	bool setupColors(int usage);
 	bool setupNormals(int usage);
 	bool setupTexCoords(int usage);
-	bool setupIndices(int indexMode);
+	bool setupIndices(int usage);
 	 
 	void drawVertices();
 	void drawWireframe();

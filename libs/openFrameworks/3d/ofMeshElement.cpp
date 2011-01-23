@@ -85,13 +85,17 @@ bool ofMeshElement::haveIndicesChanged(){
 void ofMeshElement::addVertex(const ofVec3f& v){
 	//TODO: figure out if we add to all other arrays to match
 	vertices.push_back(v);
+	indices.push_back(vertices.size()-1);
 	bVertsChanged = true;
+	bIndicesChanged = true;
 }
 
 //--------------------------------------------------------------
 void ofMeshElement::addVertices(const vector<ofVec3f>& verts){
 	vertices.insert(vertices.end(),verts.begin(),verts.end());
+	setupIndices();
 	bVertsChanged = true;
+	bIndicesChanged = true;
 }
 
 //--------------------------------------------------------------
@@ -288,6 +292,7 @@ void ofMeshElement::setMode(ofTriangleMode m){
 void ofMeshElement::setVertex(int index, const ofVec3f& v){
 	vertices[index] = v;
 	bVertsChanged = true;
+	bIndicesChanged = true;
 }
 
 //--------------------------------------------------------------
