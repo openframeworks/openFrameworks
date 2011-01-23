@@ -25,7 +25,6 @@ void testApp::setup(){
 	iCurrentCamera = 1;
 	
 	// user camera
-	camEasyCam.setDistance(1);
 	camEasyCam.setTarget(nodeSwarm);
 	cameras[0] = &camEasyCam;
 
@@ -59,7 +58,7 @@ void testApp::setup(){
 	// SETUP SWARM
 	/////////////////////	
 	//
-	nodeSwarm.init(200, 50, 20);
+	nodeSwarm.init(100, 50, 20);
 	//
 	/////////////////////	
 	
@@ -122,17 +121,19 @@ void testApp::draw(){
 	// DRAW ALL VIEWPORTS
 	//////////////////////////
 	//
-	for (int i=0; i<4; i++)
-	{
-		cameras[i]->begin(viewGrid[i]);
-		drawScene();
-		cameras[i]->end();
-	}
 	
 	//draw main viewport
 	cameras[iCurrentCamera]->begin(viewMain);
-	drawScene();
+	drawScene(iCurrentCamera);
 	cameras[iCurrentCamera]->end();
+	
+	for (int i=0; i<4; i++)
+	{
+		cameras[i]->begin(viewGrid[i]);
+		drawScene(i);
+		cameras[i]->end();
+	}
+	
 	//
 	//////////////////////////
 	
@@ -171,10 +172,90 @@ void testApp::draw(){
 	//////////////////////////
 }
 
-void testApp::drawScene(){	
+void testApp::drawScene(int iCameraDraw){	
 	
 	nodeSwarm.draw();
 	nodeGrid.draw();
+	
+	//////////////////////////////////
+	// DRAW EASYCAM FRUSTUM
+	//////////////////////////////////
+	//
+	//this section draws our camera in
+	//the scene
+	//
+	//the pyramid-like shape which the
+	//camera creates is called a 'frustum'
+	//
+	//check we're not looking through ofEasyCam
+	if (iCameraDraw != 0)
+	{
+		
+		//draw camera frustum.
+		//
+		//in 'camera space' this frustum
+		//is defined by a box with bounds
+		//-1->1 in each axis
+		//
+		//to convert from camera to world
+		//space, we multiply by the inverse
+		//matrix of the camera
+		
+		ofMatrix4x4 inverseCamera;
+		
+		inverseCamera.makeInvertOf(cameras[0]->getModelViewProjectionMatrix());
+		
+		ofPushMatrix();
+		glMultMatrixf(inverseCamera.getPtr());
+		
+		
+		ofPushStyle();
+		ofSetColor(255, 100, 100);
+		
+		// xy plane at z=-1 in camera sapce
+		// (small rectangle at camera position)
+		//
+		glBegin(GL_LINE_LOOP);
+			glVertex3f(-1, -1, -1);
+			glVertex3f(-1, 1, -1);
+			glVertex3f(1, 1, -1);
+			glVertex3f(1, -1, -1);
+		glEnd();
+		
+		
+		// xy plane at z=1 in camera space
+		// (generally invisible because so far away)
+		//
+		glBegin(GL_LINE_LOOP);
+			glVertex3f(-1, -1, 1);
+			glVertex3f(-1, 1, 1);
+			glVertex3f(1, 1, 1);
+			glVertex3f(1, -1, 1);
+		glEnd();
+		
+		// connecting lines between above 2 planes
+		// (these are the long lines)
+		//
+		glBegin(GL_LINES);
+			glVertex3f(-1, 1, -1);
+			glVertex3f(-1, 1, 1);
+			
+			glVertex3f(1, 1, -1);
+			glVertex3f(1, 1, 1);
+		
+			glVertex3f(-1, -1, -1);
+			glVertex3f(-1, -1, 1);
+			
+			glVertex3f(1, -1, -1);
+			glVertex3f(1, -1, 1);
+		glEnd();
+
+		ofPopStyle();
+		ofPopMatrix();
+	}
+	
+	//
+	//////////////////////////////////
 	
 }
 
