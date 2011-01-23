@@ -16,7 +16,9 @@ ofCamera::ofCamera()
 fov(60),
 nearClip(0),
 farClip(0),
-isActive(false)
+isActive(false),
+storeMatrices(false),
+hasStoredMatrices(false)
 {
 }
 
@@ -81,11 +83,55 @@ void ofCamera::begin(ofRectangle rect) {
 	glMatrixMode(GL_MODELVIEW);
 	glLoadMatrixf(ofMatrix4x4::getInverseOf(getGlobalTransformMatrix()).getPtr());
 	ofViewport(rect.x, rect.y, rect.width, rect.height);
+	
+	//store current matrices
+	if (storeMatrices)
+	{
+		glGetFloatv(GL_PROJECTION_MATRIX, matProjection.getPtr());
+		glGetFloatv(GL_MODELVIEW_MATRIX, matModelView.getPtr());
+		hasStoredMatrices = true;
+	}
+	
 }
 
 // if begin(); pushes first, then we need an end to pop
 //----------------------------------------
 void ofCamera::end() {
-	ofPopView();
-	isActive = false;
+	if (isActive)
+	{
+		ofPopView();
+		isActive = false;
+	}
+}
+//----------------------------------------
+ofMatrix4x4 ofCamera::getProjectionMatrix() {
+	ensureStoredMatricies();
+	return matProjection;
+}
+//----------------------------------------
+ofMatrix4x4 ofCamera::getModelViewMatrix() {
+	ensureStoredMatricies();
+	return matModelView;
+}
+//----------------------------------------
+ofMatrix4x4 ofCamera::getModelViewProjectionMatrix() {
+	ensureStoredMatricies();
+	
+	return matModelView * matProjection;
+}
+//----------------------------------------
+void ofCamera::ensureStoredMatricies() {
+	if (!hasStoredMatrices)
+	{
+		if (!storeMatrices)
+		{
+			ofLog(OF_LOG_WARNING, "ofCamera: storeMatricies was set to false so couldn't read matricies.");
+			ofLog(OF_LOG_WARNING, "ofCamera: storeMatricies is now = true, so we'll store from now on");
+			
+			storeMatrices = true;
+		}
+		
+		begin();
+		end();
+	}
 }
