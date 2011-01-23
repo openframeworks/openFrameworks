@@ -28,6 +28,7 @@ class ofSoundSource;
 class ofSoundUnit
 {
 public:	
+	virtual ~ofSoundUnit() {};
 	
 	/// Return the name of this synth unit.
 	virtual string getName() = 0;
@@ -54,6 +55,7 @@ protected:
 class ofSoundSource: public virtual ofSoundUnit
 {
 public:
+	virtual ~ofSoundSource() {};
 
 	/// Set the sample rate. If you need to know about sample rate changes, override this function.
 	virtual void setSampleRate( int rate ) {};
@@ -84,66 +86,27 @@ public:
 	int numFrames;
 	int numChannels;
 	
-	ofSoundBuffer() { numFrames = 0; numChannels = 0; buffer = NULL; }
-	ofSoundBuffer( const ofSoundBuffer& other ) { copyFrom( other ); }
-	ofSoundBuffer( int nFrames, int nChannels ) { numFrames = nFrames; numChannels = nChannels; buffer = new float[nFrames*nChannels]; }
-	ofSoundBuffer& operator=( const ofSoundBuffer& other ) { copyFrom( other ); return *this; }
+	ofSoundBuffer();
+	ofSoundBuffer( const ofSoundBuffer& other );
+	ofSoundBuffer( int nFrames, int nChannels );
+	ofSoundBuffer& operator=( const ofSoundBuffer& other );
 	
-	~ofSoundBuffer() { if ( buffer ) delete[] buffer; }
-
-	void copyFrom( const ofSoundBuffer& other ) { 
-		numFrames = 0; numChannels = 0;
-		if ( other.buffer ) {
-			allocate( other.numFrames, other.numChannels );
-			memcpy( buffer, other.buffer, numFrames*numChannels*sizeof(float) );
-		} 
-		else {
-			buffer = NULL;
-		}
-	}
-	
+	~ofSoundBuffer();
+	void copyFrom( const ofSoundBuffer& other );	
 	/// Set audio data to 0.
-	void clear() { if ( buffer ) memset( buffer, 0, sizeof(float)*numFrames*numChannels); }
+	void clear();
 	
 	/// Allocate the buffer to the given size if necessary.
-	void allocate( int nFrames, int nChannels ) { 
-		if ( !buffer || numFrames != nFrames || numChannels != nChannels ) {
-			numFrames = nFrames; numChannels = nChannels; 
-			if ( buffer ) {
-				delete[] buffer;
-			}
-			buffer = new float[numFrames*numChannels];
-		}
-	}
+	void allocate( int nFrames, int nChannels );
 	
 	/// Copy just a single channel to output. output should have space for numFrames floats.
-	void copyChannel( int channel, float* output ) const {
-		if ( buffer && channel < numChannels ) {
-			for ( int i=0; i<numFrames; i++ ) {
-				output[i] = buffer[numChannels*i + channel];
-			}
-		}
-	}
+	void copyChannel( int channel, float* output ) const ;
 	
 	/// Copy safely to out. Copy as many frames as possible, repeat channels as necessary.
-	void copyTo( float* outBuffer, int outNumFrames, int outNumChannels ) {
-		if ( outNumFrames>numFrames ) {
-			ofLog( OF_LOG_WARNING, "ofSoundBuffer::copyTo: %i frames requested but only %i are available", outNumFrames, numFrames );
-		}
-		if ( outNumChannels>numChannels ) {
-			ofLog( OF_LOG_WARNING, "ofSoundBuffer::copyTo: %i channels requested but only %i are available, looping to make up the difference", outNumChannels, numChannels );
-		}
-		for ( int i=0; i<min(numFrames,outNumFrames); i++ ) {
-			for ( int j=0; j<outNumChannels; j++ ) {
-				// copy input to output; in cases where input has fewer channels than output, loop through input frames repeatedly
-				outBuffer[i*outNumChannels+j] = buffer[i*numChannels+(j%numChannels)];
-			}
-		}		
-	}
+	void copyTo( float* outBuffer, int outNumFrames, int outNumChannels );
+
+
 };
-
-
-
 
 
 /** ofSoundSink
@@ -159,6 +122,7 @@ class ofSoundSink: public virtual ofSoundUnit
 {
 public:
 	ofSoundSink() { input = NULL; sampleRate = 44100; }
+	virtual ~ofSoundSink() {};
 	
 	/// Set the sample rate of this synth unit. If you overload this remember to call the base class.
 	virtual void setSampleRate( int rate );
@@ -205,10 +169,19 @@ protected:
 class ofSoundMixer : public ofSoundSink, public ofSoundSource
 {
 public:	
+	ofSoundMixer() { working = NULL; masterVolume = 1.0f; }
+	ofSoundMixer( const ofSoundMixer& other ) { copyFrom( other ); }
+	ofSoundMixer& operator=( const ofSoundMixer& other ) { copyFrom( other ); return *this; }
+	~ofSoundMixer();
+	
 	string getName() { return "ofSoundMixer"; }
 	
+	/// Set the master out volume of this mixer
+	void setMasterVolume( float vol ) { if ( !isnan(vol) && isfinite(vol) ) { masterVolume = vol; } }
 	/// Set the volume of the mixer input for the given unit to vol.
 	void setVolume( ofSoundSource* input, float vol );
+	/// Set the pan of the mixer input for the given unit to pan
+	void setPan( ofSoundSource* input, float pan );
 	
 	/// Add an input to this unit from the given source unit.
 	bool addInputFrom( ofSoundSource* source );
@@ -223,7 +196,8 @@ public:
 	void setSampleRate( int rate );
 	
 private:
-	
+	// safely copy from the other mixer (probably a bad idea though)
+	void copyFrom( const ofSoundMixer& other );
 	
 	// Inputs into the mixer, with volume and pan
 	struct MixerInput
@@ -239,8 +213,11 @@ private:
 			pan = p;
 		}
 	};
-	vector<MixerInput> inputs;
+	vector<MixerInput*> inputs;
+
+	float masterVolume;
 	
+	float* working;
 };
 
 
@@ -268,7 +245,7 @@ public:
 	/// Return the raw value (the target for declicking)
 	float getRawValue() { return target; }
 	/// Set a new value + rebuild ramp
-	void setValue( float newValue ) { target = newValue; rampNeedsRebuild = true; }
+	void setValue( float newValue ) { if ( !isnan(newValue)&&finite(newValue) ) { target = newValue; rampNeedsRebuild = true; } }
 	
 	/// Rebuild the ramp, if necessary. Call before processing a block of samples.
 	void rebuildRampIfNecessary() { if ( rampNeedsRebuild ) rebuildRamp(); rampNeedsRebuild = false; }
@@ -375,7 +352,7 @@ private:
  @author damian
  */
 
-static const string OF_SOUND_SOURCE_MULTIPLEXOR_NAME = "ofSoundSourceMultiplexor";
+static const char* OF_SOUND_SOURCE_MULTIPLEXOR_NAME = "ofSoundSourceMultiplexor";
 
 class ofSoundSourceMultiplexor: public ofSoundSink, public ofSoundSource
 {
@@ -392,6 +369,6 @@ public:
 	
 private:
 	
-	long unsigned long lastRenderedTick;
+	unsigned long lastRenderedTick;
 	
 };
