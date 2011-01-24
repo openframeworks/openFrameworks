@@ -49,6 +49,8 @@ ofPolyline ofSmooth(const ofPolyline& polyline, int smoothingSize, float smoothi
 
 ofPolyline ofResampleSpacing(const ofPolyline& polyline, float spacing) {
 	ofPolyline result;
+	// if more properties are added to ofPolyline, we need to copy them here
+	result.setClosed(polyline.getClosed());
 
 	float totalLength = 0;
 	int curStep = 0;
