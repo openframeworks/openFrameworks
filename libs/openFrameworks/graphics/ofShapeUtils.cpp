@@ -1,6 +1,6 @@
 #include "ofShapeUtils.h"
 
-ofPolyline ofGetSmoothed(const ofPolyline& polyline, int smoothingSize, float smoothingAmount) {
+ofPolyline ofGetSmoothed(const ofPolyline& polyline, int smoothingSize, float smoothingShape) {
 	ofPolyline result = polyline;
 	
 	if(!polyline.getClosed()) {
@@ -14,7 +14,7 @@ ofPolyline ofGetSmoothed(const ofPolyline& polyline, int smoothingSize, float sm
 	weights.push_back(1); // center weight
 	// side weights
 	for(int i = 1; i <= smoothingSize; i++) {
-		float curWeight = ofMap(i, 0, smoothingSize, 1, smoothingAmount);
+		float curWeight = ofMap(i, 0, smoothingSize, 1, smoothingShape);
 		weights.push_back(curWeight);
 		weightSum += curWeight;
 	}
