@@ -1,16 +1,5 @@
 #include "ofShapeUtils.h"
 
-// helper functions for accessing points in polylines without worrying about wraparound indexing
-inline int loopMod(int i, int n) {
-	i = i % n;
-	return i < 0 ? i + n : i;
-}
-
-template <class T>
-inline T& loopGet(vector<T>& vec, int i) {
-	return vec[loopMod(i, vec.size())];
-}
-
 ofPolyline ofGetSmoothed(const ofPolyline& polyline, int smoothingSize, float smoothingAmount) {
 	ofPolyline result = polyline;
 	
@@ -114,10 +103,22 @@ ofRectangle ofGetBoundingBox(const ofPolyline& polyline) {
 	return box;
 }
 
+// http://local.wasp.uwa.edu.au/~pbourke/geometry/pointline/
 ofPoint ofGetClosestPoint(const ofPoint& p1, const ofPoint& p2, const ofPoint& p3, float* normalizedPosition) {
+	// if p1 is coincident with p2, there is no line
+	if(p1 == p2) {
+		if(normalizedPosition != NULL) {
+			*normalizedPosition = 0;
+		}
+		return p1;
+	}
+	
 	float u = (p3.x - p1.x) * (p2.x - p1.x);
 	u += (p3.y - p1.y) * (p2.y - p1.y);
-	u /= (p2 - p1).length();
+	// perfect place for fast inverse sqrt...
+	float len = (p2 - p1).length();
+	u /= (len * len);
+	
 	// clamp u
 	if(u > 1) {
 		u = 1;
@@ -127,37 +128,53 @@ ofPoint ofGetClosestPoint(const ofPoint& p1, const ofPoint& p2, const ofPoint& p
 	if(normalizedPosition != NULL) {
 		*normalizedPosition = u;
 	}
-	return p1.interpolated(p2, u);
+	return p1.getInterpolated(p2, u);
 }
 
-/*
-ofPoint ofGetClosestPoint(ofPolyline& polyline, const ofPoint& target, int& nearest) {
-	vector<ofPoint>& pts = polyline.pts;
-	
-	if(pts.size() == 0) {
+// a much faster but less accurate version would check distances to vertices first,
+// which assumes vertices are evenly spaced
+ofPoint ofGetClosestPoint(const ofPolyline& polyline, const ofPoint& target, unsigned int* nearestIndex) {
+	if(polyline.size() < 2) {
+		if(nearestIndex != NULL) {
+			nearestIndex = 0;
+		}
 		return target;
 	}
 	
 	float distance = 0;
-	for(int i = 0; i < pts.size(); i++) {
-		float curDistance = target.distance(pts[i]);
+	ofPoint nearestPoint;
+	unsigned int nearest = 0;
+	float normalizedPosition = 0;
+	unsigned int lastPosition = polyline.size() - 1;
+	if(polyline.getClosed()) {
+		lastPosition++;
+	}
+	for(int i = 0; i < (int) lastPosition; i++) {
+		bool repeatNext = i == (int) (polyline.size() - 1);
+		
+		const ofPoint& cur = polyline[i];
+		const ofPoint& next = repeatNext ? polyline[0] : polyline[i + 1];
+		
+		float curNormalizedPosition = 0;
+		ofPoint curNearestPoint = ofGetClosestPoint(cur, next, target, &curNormalizedPosition);
+		float curDistance = curNearestPoint.distance(target);
 		if(i == 0 || curDistance < distance) {
 			distance = curDistance;
 			nearest = i;
+			nearestPoint = curNearestPoint;
+			normalizedPosition = curNormalizedPosition;
 		}
 	}
 	
-	ofPoint left = loopGet(pts, nearest - 1);
-	ofPoint center = pts[nearest];
-	ofPoint right = loopGet(pts, nearest + 1);
-	
-	ofPoint leftClosest = closestPoint(left, center, target);
-	ofPoint rightClosest = closestPoint(center, right, target);
-	
-	if(leftClosest.distance(target) < rightClosest.distance(target)) {
-		return leftClosest;
-	} else {
-		return rightClosest;
+	if(nearestIndex != NULL) {
+		if(normalizedPosition > .5) {
+			nearest++;
+			if(nearest == polyline.size()) {
+				nearest = 0;
+			}
+		}
+		*nearestIndex = nearest;
 	}
+	
+	return nearestPoint;
 }
-*/
