@@ -2,24 +2,24 @@
 
 #include "ofShape.h"
 
-// todo: these should return objects instead of doing it faux-in-place
-
 // todo: this should be gaussian with a single width parameter
 // todo: this should handle non-loop polylines correctly
 // given a polyline, smooth all the points using a linear dropoff kernel
 // of radius smoothingSize and weighted towards the edges with smoothingAmount
 // smoothingAmount of 1 will give a moving average, while 0 gives a triangular kernel
-ofPolyline ofSmooth(const ofPolyline& polyline, int smoothingSize = 4, float smoothingAmount = 0);
+ofPolyline ofGetSmoothed(const ofPolyline& polyline, int smoothingSize = 4, float smoothingAmount = 0);
 
 // resample a polyline based on the distance between the points
-ofPolyline ofResampleSpacing(const ofPolyline& polyline, float spacing = 4);
+ofPolyline ofGetResampledSpacing(const ofPolyline& polyline, float spacing = 4);
 
 // resample a polyline based on the total point count
-ofPolyline ofResampleCount(const ofPolyline& polyline, int count);
+ofPolyline ofGetResampledCount(const ofPolyline& polyline, int count);
 
-// todo: fixed number of points resampling
-// todo: douglas-pecker simplification
-// todo: get bounding box from polyline
+// todo: douglas-peucker simplification
+
+// get the bounding box of a polyline
+ofRectangle ofGetBoundingBox(const ofPolyline& polyline);
+
 // todo: interesection, offset
 
 /*
