@@ -149,8 +149,8 @@ void testApp::draw(){
 	//draw some labels
 	ofSetColor(255, 255, 255);
 	ofDrawBitmapString("Press keys 1-4 to select a camera for main view", viewMain.x + 20, 30);
-	ofDrawBitmapString("Camera selected: " + ofToString(iCurrentCamera+1), viewMain.x + 20, 40);
-	ofDrawBitmapString("Press 'f' to toggle fullscreen", viewMain.x + 20, 50);
+	ofDrawBitmapString("Camera selected: " + ofToString(iCurrentCamera+1), viewMain.x + 20, 50);
+	ofDrawBitmapString("Press 'f' to toggle fullscreen", viewMain.x + 20, 70);
 	ofDrawBitmapString("EasyCam",	viewGrid[0].x + 20, viewGrid[0].y + 30);
 	ofDrawBitmapString("Front",		viewGrid[1].x + 20, viewGrid[1].y + 30);
 	ofDrawBitmapString("Top",		viewGrid[2].x + 20, viewGrid[2].y + 30);

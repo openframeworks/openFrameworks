@@ -30,11 +30,12 @@ public:
 	void setDistance(float f);
 	float getDistance() const;
 	
-	void setSpeed(float f);
-	float getSpeed() const;
-	
 	void setDrag(float f);
 	float getDrag() const;
+	
+	void setThrust(float f);
+	float getThrust() const;
+	
 
 	
 protected:
@@ -42,12 +43,12 @@ protected:
 	float distance;
 
 	ofVec3f mousePosViewPrev;
-	float mousePosScreenPrevY;
+	ofVec3f mousePosScreenPrev;
 	bool oldMousePress[2];
 	int lastMouseActionFrame;
 
-	float speed;
 	float drag;
+	float thrust;
 
 	//momentum
 	ofQuaternion rotation;
