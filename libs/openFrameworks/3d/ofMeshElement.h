@@ -4,6 +4,7 @@
 // add/remove/edit vertices, 
 // get face info
 // make this smarter so we don't need wire indices, but can use edge flags
+// figure out if we want to return references for getVertex etc, i.e. we want to allow them to access the info directly or not
 
 #pragma once
 
@@ -59,29 +60,40 @@ public:
 	
 	void setMode(ofTriangleMode mode);
 	ofTriangleMode getMode();
+	
+	void clear();
 
 	void setupIndices();
 //	void setupIndicesSolid();
 //	void setupIndicesWire();
 	
+	ofVec3f getVertex(int i);
 	void addVertex(const ofVec3f& v);
-	void addVertices(const vector<ofVec3f> & vertices);
+	void addVertices(const vector<ofVec3f>& verts);
 	void removeVertex(int index);
 	void setVertex(int index, const ofVec3f& v);
 	
-	void addNormal(const ofVec3f& v);
+	ofVec3f getNormal(int i);
+	void addNormal(const ofVec3f& n);
+	void addNormals(const vector<ofVec3f>& norms);
 	void removeNormal(int index);
-	void setNormal(int index, const ofVec3f& v);
+	void setNormal(int index, const ofVec3f& n);
 	
+	ofColor getColor(int i);
 	void addColor(const ofColor& c);
+	void addColors(const vector<ofColor>& cols);
 	void removeColor(int index);
-	void setColor(int index, const ofColor& v);
+	void setColor(int index, const ofColor& c);
 	
+	ofVec2f getTexCoord(int i);
+	void addTexCoords(const vector<ofVec2f>& tCoords);
 	void addTexCoord(const ofVec2f& t);
 	void removeTexCoord(int index);
-	void setTexCoord(int index, const ofVec2f& v);
+	void setTexCoord(int index, const ofVec2f& t);
 	
+	int getIndex(int i);
 	void addIndex(int i);
+	void addIndices(const vector<GLuint>& inds);
 	void removeIndex(int i);
 	void setIndex(int i, int val);
 	
@@ -100,22 +112,25 @@ public:
 	GLuint* getIndexPointer();
 //	GLuint* getSolidIndexPointer();
 //	GLuint* getWireIndexPointer();
-	
-	void clear();
 
 	vector<int>& getFace(int faceId);
 	
-	bool hasChanged();
-
+	bool haveVertsChanged();
+	bool haveColorsChanged();
+	bool haveNormalsChanged();
+	bool haveTexCoordsChanged();
+	bool haveIndicesChanged();
+	
 protected:
 	vector<ofVec3f> vertices;
 	vector<ofColor> colors;
 	vector<ofVec3f> normals;
 	vector<ofVec2f> texCoords;
 	vector<GLuint> indices;
+	bool bVertsChanged, bColorsChanged, bNormalsChanged, bTexCoordsChanged, bIndicesChanged;
+	ofTriangleMode mode;
+	
 //	vector<GLuint> indicesSolid;
 //	vector<GLuint> indicesWire;
-	ofTriangleMode mode;
-	bool bHasChanged;
-	//ofMaterial *mat;
+//	ofMaterial *mat;
 };
