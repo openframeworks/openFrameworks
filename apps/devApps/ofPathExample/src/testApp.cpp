@@ -56,7 +56,6 @@ void testApp::setup(){
 	pathA.lineTo(165,25);
 	pathA.lineTo(105,200);
 	pathA.lineTo(50,25);
-	shapeA = pathA.getShape();
 	
 	
 
@@ -77,7 +76,6 @@ void testApp::setup(){
 	pathB.lineTo(305,200);
 	pathB.lineTo(250,25);
 	pathB.close();
-	shapeB = pathB.getShape();
 	//-------------------------------------
 	
 	
@@ -115,7 +113,6 @@ void testApp::setup(){
 		}
 		angle += angleChangePerPt;
 	}
-	shapeC = pathC.getShape();
 	//-------------------------------------
 	
 	//------(d)--------------------------------------
@@ -130,7 +127,6 @@ void testApp::setup(){
 	for (int i = 0; i < 10; i++){
 		pathD.lineTo(ofRandom(650,850), ofRandom(20,200));
 	}
-	shapeD = pathD.getShape();
 	//-------------------------------------
 	
 	
@@ -152,7 +148,6 @@ void testApp::setup(){
 		radius 	+= radiusAdder; 
 	}
 	pathE.close();
-	shapeE=pathE.getShape();
 	//-------------------------------------
 	
 	//------(f)--------------------------------------
@@ -189,7 +184,6 @@ void testApp::setup(){
 		}
 	}
 	pathF.close();
-	shapeF = pathF.getShape();
 	
 	// show a faint the non-curve version of the same polygon:
 	pathFNonCurve.setFilled( false );
@@ -198,7 +192,6 @@ void testApp::setup(){
 		pathFNonCurve.lineTo(curveVertices[i].x, curveVertices[i].y);
 	}
 	pathFNonCurve.close();
-	shapeFNonCurve = pathFNonCurve.getShape();
 
 	
 	ofSetColor(0,0,0,80);
@@ -233,7 +226,6 @@ void testApp::setup(){
 	pathG.setHexColor(0xFF9933);
 	pathG.lineTo(x0,y0);
 	pathG.bezierTo(x1,y1,x2,y2,x3,y3);
-	shapeG = pathG.getShape();
 
 	
 	//------(h)--------------------------------------
@@ -254,7 +246,6 @@ void testApp::setup(){
 	pathH.lineTo(120,580);
 	pathH.close();
 
-	shapeH = pathH.getShape();
 	//-------------------------------------
 
 	
@@ -288,8 +279,6 @@ void testApp::setup(){
 		radius 	+= radiusAdder; 
 	}*/
 	pathIa.arc(340,550,30,30,0,360);
-	shapeIa = pathIa.getShape();
-
 	
 	pathIb.setPolyWindingMode(OF_POLY_WINDING_NONZERO);
 	pathIb.setHexColor(0xff00ff);
@@ -311,7 +300,6 @@ void testApp::setup(){
 	
 	pathIb.close();
 	pathIb.arc(440,550,30,60,0,360);
-	shapeIb = pathIb.getShape();
 
 	pathIc.setPolyWindingMode(OF_POLY_WINDING_ABS_GEQ_TWO);
 	pathIc.setHexColor(0xff00ff);
@@ -331,7 +319,6 @@ void testApp::setup(){
 	
 	pathIc.close();*/
 	pathIc.arc(540,550,30,20,0,360);
-	shapeIc = pathIc.getShape();
 	
 
 
@@ -364,8 +351,7 @@ void testApp::update(){
 	for (int i = 0; i < 10; i++){
 		pathD.lineTo(ofRandom(650,850), ofRandom(20,200));
 	}
-	shapeD = pathD.getShape();
-
+	pathD.updateShape();
 	//-------------------------------------
 
 	
@@ -385,7 +371,7 @@ void testApp::update(){
 		radius 	+= radiusAdder; 
 	}
 	pathE.close();
-	shapeE = pathE.getShape();
+	pathE.updateShape();
 	
 	
 	//------(g)--------------------------------------
@@ -410,8 +396,7 @@ void testApp::update(){
 	pathG.clear();
 	pathG.lineTo(x0,y0);
 	pathG.bezierTo(x1,y1,x2,y2,x3,y3);
-	shapeG = pathG.getShape();
-	
+	pathG.updateShape();
 }
 
 
@@ -426,7 +411,7 @@ void testApp::draw(){
 	// 
 	// 		use poly winding odd
 	// 
-	shapeA.draw();
+	pathA.draw();
 
 	//------(b)--------------------------------------
 	// 
@@ -434,20 +419,20 @@ void testApp::draw(){
 	//
 	// 		use poly winding nonzero	
 	// 
-	shapeB.draw();
+	pathB.draw();
 	
 	//------(c)--------------------------------------
 	// 
 	// 		draw a star dynamically	
 	// 
-	shapeC.draw();
+	pathC.draw();
 	
 	
 	//------(d)--------------------------------------
 	// 
 	// 		polygon of random points	
 	// 
-	shapeD.draw();
+	pathD.draw();
 	
 	
 	//------(e)--------------------------------------
@@ -456,7 +441,7 @@ void testApp::draw(){
 	// 
 	glPushMatrix();
 	glTranslatef(100,300,0);
-	shapeE.draw();
+	pathE.draw();
 	glPopMatrix();
 	
 
@@ -465,10 +450,10 @@ void testApp::draw(){
 	// 
 	// 		addCurveVertex
 	// 
-	shapeF.draw();
+	pathF.draw();
 	
 	ofEnableAlphaBlending();
-	shapeFNonCurve.draw();
+	pathFNonCurve.draw();
 
 	ofSetColor(0,0,0,80);
 	for (int i = 0; i < nCurveVertexes; i++){
@@ -483,7 +468,7 @@ void testApp::draw(){
 	// 
 	// 		addBezierVertex	
 	// 
-	shapeG.draw();
+	pathG.draw();
 	float x0 = 500;
 	float y0 = 300;
 	float x1 = 550+50*cos(ofGetElapsedTimef()*1.0f);
@@ -509,7 +494,7 @@ void testApp::draw(){
 	//
 	ofSetHexColor(0xd3ffd3);
 	ofRect(80,480,140,70);
-	shapeH.draw();
+	pathH.draw();
 	
 	
 	//------(i)--------------------------------------
@@ -518,15 +503,15 @@ void testApp::draw(){
 	// 
 	glPushMatrix();
 	
-	shapeIa.draw();
+	pathIa.draw();
 	
 	glTranslatef(100,0,0);
 
-	shapeIb.draw();
+	pathIb.draw();
 	
 	glTranslatef(100,0,0);
 
-	shapeIc.draw();
+	pathIc.draw();
 	
 	glPopMatrix();
 	//-------------------------------------
@@ -624,7 +609,7 @@ void testApp::mouseMoved(int x, int y ){
 		}
 		angle += angleChangePerPt;
 	}
-	shapeC = pathC.getShape();
+	pathC.updateShape();
 	//-------------------------------------
 	
 }
@@ -669,7 +654,6 @@ void testApp::mouseDragged(int x, int y, int button){
 			pathF.curveTo(curveVertices[i].x, curveVertices[i].y);
 		}
 	}
-	shapeF = pathF.getShape();
 
 	
 	// show a faint the non-curve version of the same polygon:
@@ -678,8 +662,7 @@ void testApp::mouseDragged(int x, int y, int button){
 		pathFNonCurve.lineTo(curveVertices[i].x, curveVertices[i].y);
 	}
 	pathFNonCurve.close();
-	shapeFNonCurve = pathFNonCurve.getShape();
-	
+	pathF.updateShape();
 }
 
 //--------------------------------------------------------------

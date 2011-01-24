@@ -46,11 +46,6 @@ class testApp : public ofBaseApp{
 	ofPath pathG,pathH;
 	ofPath pathIa,pathIb,pathIc;
 	
-	ofShape shapeA,shapeB,shapeC,shapeD,shapeE;
-	ofShape shapeF,shapeFNonCurve;
-	ofShape shapeG,shapeH;
-	ofShape shapeIa,shapeIb,shapeIc;
-	
 };
 
 #endif
