@@ -2,6 +2,8 @@
 
 #include "ofShape.h"
 
+// todo: douglas-peucker simplification
+
 // todo: this should be gaussian with a single width parameter
 // todo: this should handle non-loop polylines correctly
 // given a polyline, smooth all the points using a linear dropoff kernel
@@ -15,17 +17,13 @@ ofPolyline ofGetResampledSpacing(const ofPolyline& polyline, float spacing = 4);
 // resample a polyline based on the total point count
 ofPolyline ofGetResampledCount(const ofPolyline& polyline, int count);
 
-// todo: douglas-peucker simplification
-
 // get the bounding box of a polyline
 ofRectangle ofGetBoundingBox(const ofPolyline& polyline);
 
 // find the closest point p3 on the line between p1 and p2
-// optionally pass a pointer to a float to get the normalized position along that line
+// optionally pass a pointer to/address of a float to get the normalized position along that line
 ofPoint ofGetClosestPoint(const ofPoint& p1, const ofPoint& p2, const ofPoint& p3, float* normalizedPosition = NULL);
 
-/*
-// also, helper functions for finding the closest point on a polyline or closest in a vector of polylines
-ofPoint ofGetClosestPoint(const ofPolyline& polyline, const ofPoint& target, int& nearest);
-ofPoint ofGetClosestPoint(vector<ofPolyline>& polylines, const ofPoint& target, ofPolyline*& matchedPolyline, int& matchedIndex);
-*/
+// find the closest point 'target' on a polyline
+// optionally pass a pointer to/address of an unsigned int to get the index of the closest vertex
+ofPoint ofGetClosestPoint(const ofPolyline& polyline, const ofPoint& target, unsigned int* nearestIndex = NULL);
