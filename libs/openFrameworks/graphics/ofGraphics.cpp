@@ -67,7 +67,7 @@ deque <ofRectangle> viewportHistory;
 
 static ofPath path;
 static ofShape shape;
-static ofBaseRenderer * renderer = new ofVARenderer;
+static ofBaseRenderer * renderer = new ofVboRenderer;
 
 void ofSetDefaultRenderer(ofBaseRenderer * renderer_){
 	if(renderer) delete renderer;

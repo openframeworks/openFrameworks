@@ -3,11 +3,80 @@
 //--------------------------------------------------------------
 ofMeshElement::ofMeshElement(){
 	mode = OF_TRIANGLES_ELEMENT;
-	bHasChanged = true;
+	bVertsChanged = true;
+	bColorsChanged = true;
+	bNormalsChanged = true;
+	bTexCoordsChanged = true;
+	bIndicesChanged = true;
 }
 
 //--------------------------------------------------------------
 ofMeshElement::~ofMeshElement(){
+}
+
+//--------------------------------------------------------------
+void ofMeshElement::clear(){
+	bVertsChanged = true;
+	bColorsChanged = true;
+	bNormalsChanged = true;
+	bTexCoordsChanged = true;
+	bIndicesChanged = true;
+	
+	vertices.clear();
+	colors.clear();
+	normals.clear();
+	texCoords.clear();
+	indices.clear();
+}
+
+//--------------------------------------------------------------
+bool ofMeshElement::haveVertsChanged(){
+	if(bVertsChanged){
+		bVertsChanged = false;
+		return true;
+	}else{
+		return false;
+	}
+}
+
+//--------------------------------------------------------------
+bool ofMeshElement::haveColorsChanged(){
+	if(bColorsChanged){
+		bColorsChanged = false;
+		return true;
+	}else{
+		return false;
+	}
+}
+
+//--------------------------------------------------------------
+bool ofMeshElement::haveNormalsChanged(){
+	if(bNormalsChanged){
+		bNormalsChanged = false;
+		return true;
+	}else{
+		return false;
+	}
+}
+
+//--------------------------------------------------------------
+bool ofMeshElement::haveTexCoordsChanged(){
+	if(bTexCoordsChanged){
+		bTexCoordsChanged = false;
+		return true;
+	}else{
+		return false;
+	}
+}
+
+//--------------------------------------------------------------
+bool ofMeshElement::haveIndicesChanged(){
+	if(bIndicesChanged){
+		bIndicesChanged = false;
+		return true;
+	}else{
+		return false;
+	}
 }
 
 //ADDERS
@@ -16,42 +85,96 @@ ofMeshElement::~ofMeshElement(){
 void ofMeshElement::addVertex(const ofVec3f& v){
 	//TODO: figure out if we add to all other arrays to match
 	vertices.push_back(v);
-	bHasChanged = true;
+	indices.push_back(vertices.size()-1);
+	bVertsChanged = true;
+	bIndicesChanged = true;
 }
 
-void ofMeshElement::addVertices(const vector<ofVec3f> & vertices_){
-	vertices.insert(vertices.end(),vertices_.begin(),vertices_.end());
-	bHasChanged = true;
+//--------------------------------------------------------------
+void ofMeshElement::addVertices(const vector<ofVec3f>& verts){
+	vertices.insert(vertices.end(),verts.begin(),verts.end());
+	setupIndices();
+	bVertsChanged = true;
+	bIndicesChanged = true;
 }
 
 //--------------------------------------------------------------
 void ofMeshElement::addColor(const ofColor& c){
 	//TODO: figure out if we add to all other arrays to match
 	colors.push_back(c);
-	bHasChanged = true;
+	bColorsChanged = true;
+}
+
+//--------------------------------------------------------------
+void ofMeshElement::addColors(const vector<ofColor>& cols){
+	colors.insert(colors.end(),cols.begin(),cols.end());
+	bColorsChanged = true;
 }
 
 //--------------------------------------------------------------
 void ofMeshElement::addNormal(const ofVec3f& n){
 	//TODO: figure out if we add to all other arrays to match
 	normals.push_back(n);
-	bHasChanged = true;
+	bNormalsChanged = true;
+}
+
+//--------------------------------------------------------------
+void ofMeshElement::addNormals(const vector<ofVec3f>& norms){
+	normals.insert(normals.end(),norms.begin(),norms.end());
+	bNormalsChanged = true;
 }
 
 //--------------------------------------------------------------
 void ofMeshElement::addTexCoord(const ofVec2f& t){
 	//TODO: figure out if we add to all other arrays to match
 	texCoords.push_back(t);
-	bHasChanged = true;
+	bTexCoordsChanged = true;
+}
+
+//--------------------------------------------------------------
+void ofMeshElement::addTexCoords(const vector<ofVec2f>& tCoords){
+	texCoords.insert(texCoords.end(),tCoords.begin(),tCoords.end());
+	bTexCoordsChanged = true;
 }
 
 //--------------------------------------------------------------
 void ofMeshElement::addIndex(int i){
 	indices.push_back(i);
-	bHasChanged = true;
+	bIndicesChanged = true;
+}
+
+
+//--------------------------------------------------------------
+void ofMeshElement::addIndices(const vector<GLuint>& inds){
+	indices.insert(indices.end(),inds.begin(),inds.end());
+	bIndicesChanged = true;
 }
 
 //GETTERS
+//--------------------------------------------------------------
+ofTriangleMode ofMeshElement::getMode(){
+	return mode;
+}
+
+//--------------------------------------------------------------
+ofVec3f ofMeshElement::getVertex(int i){
+	return vertices[i];
+}
+
+//--------------------------------------------------------------
+ofVec3f ofMeshElement::getNormal(int i){
+	return normals[i];
+}
+
+//--------------------------------------------------------------
+ofColor ofMeshElement::getColor(int i){
+	return colors[i];
+}
+
+//--------------------------------------------------------------
+ofVec2f ofMeshElement::getTexCoord(int i){
+	return texCoords[i];
+}
 
 //--------------------------------------------------------------
 int ofMeshElement::getNumVertices() const{
@@ -159,77 +282,66 @@ vector<int>& ofMeshElement::getFace(int faceNum){
  */
 
 //SETTERS
-
 //--------------------------------------------------------------
 void ofMeshElement::setMode(ofTriangleMode m){
-	bHasChanged = true;
+	bIndicesChanged = true;
 	mode = m;
 }
 
-ofTriangleMode ofMeshElement::getMode(){
-	return mode;
+//--------------------------------------------------------------
+void ofMeshElement::setVertex(int index, const ofVec3f& v){
+	vertices[index] = v;
+	bVertsChanged = true;
+	bIndicesChanged = true;
 }
 
+//--------------------------------------------------------------
+void ofMeshElement::setNormal(int index, const ofVec3f& n){
+	normals[index] = n;
+	bNormalsChanged = true;
+}
+
+//--------------------------------------------------------------
+void ofMeshElement::setColor(int index, const ofColor& c){
+	colors[index] = c;
+	bColorsChanged = true;
+}
+
+//--------------------------------------------------------------
+void ofMeshElement::setTexCoord(int index, const ofVec2f& t){
+	texCoords[index] = t;
+	bTexCoordsChanged = true;
+}
+
+//--------------------------------------------------------------
+void ofMeshElement::setIndex(int i, int val){
+	indices[i] = val;
+	bIndicesChanged = true;
+}
 
 //--------------------------------------------------------------
 void ofMeshElement::setupIndices(){
-	bHasChanged = true;
+	bIndicesChanged = true;
 	indices.clear();
-
-	/*for(int i = 0; i < vertices.size();i++){
-		indices.push_back((GLuint)i);
-	}*/
 	switch(mode){
 		case(OF_TRIANGLES_ELEMENT):
 			for(int i = 0; i < vertices.size();i++){
 				indices.push_back((GLuint)i);
+				indices.push_back((GLuint)i+1);
+				indices.push_back((GLuint)i+2);
 			}
 		break;
 		case(OF_TRIANGLE_STRIP_ELEMENT):
-			indices.push_back((GLuint)0);
-			indices.push_back((GLuint)1);
-			indices.push_back((GLuint)2);
-			for(int i = 3; i < vertices.size();i++){
-				if(i%2==0){
-					indices.push_back((GLuint)i-2);
-					indices.push_back((GLuint)i-1);
-					indices.push_back((GLuint)i);
-				}else{
-					indices.push_back((GLuint)i-2);
-					indices.push_back((GLuint)i);
-					indices.push_back((GLuint)i-1);
-
-				}
+			for(int i = 0; i < vertices.size();i++){
+				indices.push_back((GLuint)i);
 			}
 		break;
 		case(OF_TRIANGLE_FAN_ELEMENT):
 			indices.push_back((GLuint)0);
-			indices.push_back((GLuint)1);
-			indices.push_back((GLuint)2);
-			for(int i = 2; i < vertices.size()-1;i++){
-				indices.push_back((GLuint)0);
+			for(int i = 1; i < vertices.size();i++){
 				indices.push_back((GLuint)i);
-				indices.push_back((GLuint)i+1);
 			}
 		break;
 		default:break;
-	}
-}
-
-void ofMeshElement::clear(){
-	bHasChanged = true;
-	vertices.clear();
-	colors.clear();
-	normals.clear();
-	texCoords.clear();
-	indices.clear();
-}
-
-bool ofMeshElement::hasChanged(){
-	if(bHasChanged){
-		bHasChanged=false;
-		return true;
-	}else{
-		return false;
 	}
 }

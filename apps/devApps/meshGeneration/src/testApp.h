@@ -21,15 +21,8 @@ class testApp : public ofBaseApp{
 		void mouseReleased(int x, int y, int button);
 		void windowResized(int w, int h);
 	
-		ofAssimpMeshLoader model;
-		vector<ofMeshElement> meshes;
-		vector<ofVboMesh> vboMeshes;
-//		vector<ofVboMesh> vboMeshes2;
-	
+		ofVboMesh mesh;
 		bool lightsOn;
-	
-		ofImage tex;
-	
 };
 
 #endif
