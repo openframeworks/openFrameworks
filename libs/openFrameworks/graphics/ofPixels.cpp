@@ -96,6 +96,9 @@ void ofPixels::allocate(int w, int h, ofImageType type){
 		bytesPerPixel = 4;
 		glDataType = GL_RGBA;
 		break;
+	default:
+		ofLogError("of.Pixels") << "format not supported";
+		break;
 	}
 
 	bitsPerPixel = bytesPerPixel * 8;

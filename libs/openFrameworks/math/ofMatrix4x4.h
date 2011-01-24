@@ -479,6 +479,7 @@ inline istream& operator>>(istream& is, ofMatrix4x4& M) {
 	is >> M._mat[1][1]; is.ignore(2);
 	is >> M._mat[1][2]; is.ignore(2);
 	is >> M._mat[1][3];
+	return is;
 }
 
 
