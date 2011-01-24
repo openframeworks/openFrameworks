@@ -287,4 +287,3 @@ void ofTessellator::performTessellation(const vector<ofPolyline>& polylines, int
    	clear();
 
 }
-

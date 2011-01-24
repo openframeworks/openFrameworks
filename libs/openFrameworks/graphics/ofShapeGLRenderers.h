@@ -3,27 +3,30 @@
 #include "ofVboMesh.h"
 class ofShape;
 
-class ofVboShapeRenderer: public ofBaseShapeRenderer{
+class ofVboRenderer: public ofBaseRenderer{
 public:
-	ofVboShapeRenderer(){}
-	~ofVboShapeRenderer(){}
-	void setShape(ofShape & shape_);
-	void draw();
+	ofVboRenderer(){}
+	~ofVboRenderer(){}
+	void draw(ofShape & shape);
+	void draw(ofPath & path);
+	bool rendersPathDirectly(){
+		return false;
+	}
 
 private:
-	ofShape *shape;
 	vector<ofVboMesh> vbos;
 	ofVbo vboOutline;
 };
 
 
-class ofVAShapeRenderer: public ofBaseShapeRenderer{
+class ofVARenderer: public ofBaseRenderer{
 public:
-	ofVAShapeRenderer(){}
-	~ofVAShapeRenderer(){}
-	void setShape(ofShape & shape_);
-	void draw();
+	ofVARenderer(){}
+	~ofVARenderer(){}
+	void draw(ofShape & shape);
+	void draw(ofPath & path);
+	bool rendersPathDirectly(){
+		return false;
+	}
 
-private:
-	ofShape *shape;
 };

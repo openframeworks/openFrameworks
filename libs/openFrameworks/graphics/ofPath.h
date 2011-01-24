@@ -53,11 +53,14 @@ public:
 	float getStrokeWidth() const; // default 1
 	bool isClosed() const;
 
-	ofShape getShape(int curveResolution=16, bool tesselated=false);
+	ofShape & getShape(int curveResolution=16, bool tesselated=false);
 
 	struct Command;
 	const vector<Command> & getCommands() const;
+	vector<ofPath> & getSubPaths();
 	const vector<ofPath> & getSubPaths() const;
+
+	void addCommand(const Command & command);
 
 	struct Command{
 		enum Type{
@@ -135,4 +138,6 @@ private:
 	float				strokeWidth;
 	bool				bFill;
 	bool				bClosed;
+	ofShape				cachedShape;
+	bool				hasChanged;
 };
