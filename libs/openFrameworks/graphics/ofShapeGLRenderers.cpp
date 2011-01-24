@@ -11,6 +11,8 @@
 
 void ofVboRenderer::draw(ofShape & shape){
 	ofMesh & mesh = shape.getMesh();
+
+	ofSetColor( shape.getFillColor() );
 	vbos.resize(mesh.elements.size());
 	for(int i=0; i<(int)mesh.elements.size(); i++){
 		vbos[i].setDrawType(GL_STATIC_DRAW_ARB);
@@ -25,17 +27,19 @@ void ofVboRenderer::draw(ofShape & shape){
 		if(shape.getOutline().hasChanged()){
 			vboOutline.setVertexData(&shape.getOutline().getVertices()[0],shape.getOutline().size(),GL_STATIC_DRAW_ARB);
 		}
+		ofSetColor( shape.getStrokeColor() );
 		vboOutline.draw(GL_LINE_LOOP,0,shape.getOutline().size());
 	}
 }
 
 void ofVboRenderer::draw(ofPath & path){
-	ofShape shape = path.getShape();
+	ofShape & shape = path.getShape();
 	draw(shape);
 }
 
 void ofVARenderer::draw(ofShape & shape){
 	ofMesh & mesh = shape.getMesh();
+	ofSetColor( shape.getFillColor() );
 	glEnableClientState(GL_VERTEX_ARRAY);
 	for(int i=0;i<(int)mesh.elements.size();i++){
 
@@ -45,12 +49,13 @@ void ofVARenderer::draw(ofShape & shape){
 		glDrawArrays(currentTriType, 0, mesh.elements[i].getNumVertices());
 	}
 	if(shape.hasOutline()){
+		ofSetColor( shape.getStrokeColor() );
 		glVertexPointer(shape.getOutline().is3D()?3:2, GL_FLOAT, sizeof(ofVec3f), &shape.getOutline().getVertices()[0].x);
 		glDrawArrays(shape.getOutline().isClosed()?GL_LINE_LOOP:GL_LINE_STRIP, 0, shape.getOutline().size());
 	}
 }
 
 void ofVARenderer::draw(ofPath & path){
-	ofShape shape = path.getShape();
+	ofShape & shape = path.getShape();
 	draw(shape);
 }

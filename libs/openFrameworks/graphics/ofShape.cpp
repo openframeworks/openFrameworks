@@ -79,11 +79,11 @@ void ofShape::tessellate(){
 }
 
 void ofShape::draw(){
-	ofSetColor( fillColor );
 	if(!renderer){
-		renderer=new OF_DEFAULT_SHAPE_RENDERER;
+		ofGetDefaultRenderer()->draw(*this);
+	}else{
+		renderer->draw(*this);
 	}
-	renderer->draw(*this);
 }
 
 

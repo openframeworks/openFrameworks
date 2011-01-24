@@ -5,6 +5,7 @@
 #include "ofBaseTypes.h"
 #include "ofShapeGLRenderers.h"
 #include "ofPath.h"
+#include "ofCairoRenderer.h"
 
 #ifdef TARGET_OSX
 	#include <OpenGL/glu.h>
@@ -66,7 +67,15 @@ deque <ofRectangle> viewportHistory;
 
 static ofPath path;
 static ofShape shape;
-static ofBaseRenderer * renderer = new ofVARenderer();
+static ofBaseRenderer * renderer = new ofVARenderer;
+
+void ofSetDefaultRenderer(ofBaseRenderer * renderer_){
+	if(renderer) delete renderer;
+	renderer = renderer_;
+}
+ofBaseRenderer * ofGetDefaultRenderer(){
+	return renderer;
+}
 
 static void ofSetCurrentStyleTo(ofPath & path){
 	path.setFilled(drawMode == OF_FILLED);

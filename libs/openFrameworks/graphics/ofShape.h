@@ -13,8 +13,6 @@
 #include "ofPoint.h"
 #include <deque>
 
-#define OF_DEFAULT_SHAPE_RENDERER ofVARenderer()
-
 /** ofPolyline
  
  A line composed of straight line segments.
@@ -124,12 +122,17 @@ public:
 	/// set line color
 	void setStrokeColor( const ofColor& color ) { lineColor = color; }
 	void setStrokeHexColor( int hex ) { setStrokeColor( ofColor().fromHex( hex ) ); };
+	ofColor getStrokeColor(){return lineColor;}
+
 	void setStrokeWidth( float width ) {
 		strokeWidth=width;
 	}
+	float getStrokeWidth(){return strokeWidth;}
+
 	/// set fill color
 	void setFillColor( const ofColor& color ) { fillColor = color; }
 	void setFillHexColor( int hex ) { setFillColor( ofColor().fromHex( hex ) ); };
+	ofColor getFillColor(){return fillColor;}
 	
 	bool hasOutline() const { return bNeedsOutlineDraw || !bFilled; }
 
@@ -185,7 +188,7 @@ private:
 	ofPolyline cachedOutline;
 	
 	vector<ofShape> subShapes;
-	
+
 	ofBaseRenderer * renderer;
 
 	deque<ofPoint> curveVertices;

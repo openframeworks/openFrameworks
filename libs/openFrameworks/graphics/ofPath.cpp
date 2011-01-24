@@ -5,6 +5,7 @@
  *      Author: arturo
  */
 #include "ofPath.h"
+#include "ofGraphics.h"
 
 class ofPathToShapeConverter;
 #include <deque>
@@ -14,6 +15,7 @@ ofPath::ofPath(){
 	bFill = true;
 	windingMode = OF_POLY_WINDING_ODD;
 	bClosed = false;
+	renderer = NULL;
 }
 
 void ofPath::clear(){
@@ -168,3 +170,14 @@ ofShape & ofPath::getShape(int curveResolution, bool tesselated){
 	return cachedShape;
 }
 
+void ofPath::updateShape(){
+	getShape();
+}
+
+void ofPath::draw(){
+	if(!renderer){
+		ofGetDefaultRenderer()->draw(*this);
+	}else{
+		renderer->draw(*this);
+	}
+}
