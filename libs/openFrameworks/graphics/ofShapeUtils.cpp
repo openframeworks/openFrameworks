@@ -14,6 +14,11 @@ inline T& loopGet(vector<T>& vec, int i) {
 ofPolyline ofSmooth(const ofPolyline& polyline, int smoothingSize, float smoothingAmount) {
 	ofPolyline result = polyline;
 	
+	if(!polyline.getClosed()) {
+		ofLogError() << "ofSmooth() currently only supports closed ofPolylines.";
+		return polyline;
+	}
+	
 	// precompute weights and normalization
 	vector<float> weights;
 	float weightSum = 0;
@@ -44,12 +49,18 @@ ofPolyline ofSmooth(const ofPolyline& polyline, int smoothingSize, float smoothi
 
 ofPolyline ofResampleSpacing(const ofPolyline& polyline, float spacing) {
 	ofPolyline result;
-	
+
 	float totalLength = 0;
 	int curStep = 0;
-	for(int i = 0; i < (int) polyline.size() - 1; i++) {
+	int lastPosition = polyline.size() - 1;
+	if(polyline.getClosed()) {
+		lastPosition++;
+	}
+	for(int i = 0; i < lastPosition; i++) {
+		bool repeatNext = i == (int) (polyline.size() - 1);
+	
 		const ofPoint& cur = polyline[i];
-		const ofPoint& next = polyline[i + 1];
+		const ofPoint& next = repeatNext ? polyline[0] : polyline[i + 1];
 		ofPoint diff = next - cur;
 		
 		float curSegmentLength = diff.length();
