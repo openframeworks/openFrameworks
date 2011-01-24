@@ -144,7 +144,7 @@ unsigned char * ofiPhoneVideoPlayer::getPixels() {
 		/*We unlock the  image buffer*/
 		CVPixelBufferUnlockBaseAddress(imageBuffer,0);
 		
-		if(width==0 && widthIn != 0) {
+		if(width==0 && widthIn != 0  && pixels != NULL) {
 			if(internalGLFormat == GL_RGB)
 				pixels = (GLubyte *) malloc(widthIn * heightIn * 3);
 			else
@@ -192,6 +192,7 @@ unsigned char * ofiPhoneVideoPlayer::getPixels() {
 
 ofTexture * ofiPhoneVideoPlayer::getTexture()
 {
+	
 	if(videoPlayer != NULL)
 	{
 		CVImageBufferRef imageBuffer = [(AVFoundationVideoPlayer *)videoPlayer getCurrentFrame]; 
@@ -203,9 +204,21 @@ ofTexture * ofiPhoneVideoPlayer::getTexture()
 		if(width != min(size_t(1024),CVPixelBufferGetWidth(imageBuffer))) {
 			if(videoTexture.bAllocated())
 				videoTexture.clear();
+				
+			int widthIn = min(size_t(1024),CVPixelBufferGetWidth(imageBuffer)); 
+			int heightIn = min(size_t(1024),CVPixelBufferGetHeight(imageBuffer));
 			
-			width = min(size_t(1024),CVPixelBufferGetWidth(imageBuffer)); 
-			height = min(size_t(1024),CVPixelBufferGetHeight(imageBuffer));
+			if( width==0 && widthIn != 0 && pixels != NULL) {
+				if(internalGLFormat == GL_RGB)
+					pixels = (GLubyte *) malloc(widthIn * heightIn * 3);
+				else
+					pixels = (GLubyte *) malloc(widthIn * heightIn * 4);
+				
+				pixelsTmp	= (GLubyte *) malloc(widthIn * heightIn * 4);
+			}				
+				
+			width	= widthIn; 
+			height	= heightIn;
 
 			videoTexture.allocate(width, height, GL_RGBA);
 		}

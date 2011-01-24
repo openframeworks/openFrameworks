@@ -51,6 +51,7 @@ using namespace std;
 	bool initialised;
 
 	bool playOnLoad;
+	bool bDoAudio;
 	
 	float current_video_time;
 	float vol;

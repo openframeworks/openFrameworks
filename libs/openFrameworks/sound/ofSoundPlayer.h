@@ -24,7 +24,7 @@ extern "C" {
 // --------------------- global functions:
 
 //TODO: FIX THIS SHIT!!!!!!
-#warning FIX THIS. 
+//#warning FIX THIS.
 void ofSoundStopAll();
 void ofSoundSetVolume(float vol);
 void ofSoundUpdate();						// calls FMOD update.

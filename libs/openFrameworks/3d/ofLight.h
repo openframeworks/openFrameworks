@@ -45,6 +45,11 @@ public:
 	ofColor getDiffuseColor() const;
 	ofColor getSpecularColor() const;
 	
+	void customDraw() {
+		ofBox(10);
+		ofDrawAxis(20);
+	}
+	
 	
 	// this method overrides ofNode to catch the changes and update glLightv(GL_POSITION)
 protected:

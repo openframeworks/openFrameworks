@@ -60,7 +60,7 @@ static string gtkFileDialog(GtkFileChooserAction action,string windowTitle,strin
 	initGTK();
 	string results;
 
-	const gchar* button_name;
+	const gchar* button_name = "";
 	switch(action){
 	case GTK_FILE_CHOOSER_ACTION_OPEN:
 		button_name = GTK_STOCK_OPEN;
@@ -70,6 +70,9 @@ static string gtkFileDialog(GtkFileChooserAction action,string windowTitle,strin
 		break;
 	case GTK_FILE_CHOOSER_ACTION_SAVE:
 		button_name = GTK_STOCK_SAVE;
+		break;
+	default:
+		return "";
 		break;
 	}
 
