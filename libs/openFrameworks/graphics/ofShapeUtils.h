@@ -30,8 +30,4 @@ ofPolyline ofResampleCount(const ofPolyline& polyline, int count);
 ofPoint ofGetClosestPoint(const ofPoint& p1, const ofPoint& p2, const ofPoint& p3, float* uptr = NULL);
 ofPoint ofGetClosestPoint(const ofPolyline& polyline, const ofPoint& target, int& nearest);
 ofPoint ofGetClosestPoint(vector<ofPolyline>& polylines, const ofPoint& target, ofPolyline*& matchedPolyline, int& matchedIndex);
-
-// get a point on a polyline that is a distance in pixels from a given point
-void getOffsetPoint(ofPolyline& polyline, int start, float radius, int& lastIndex, ofPoint& point);
-
 */
