@@ -53,6 +53,9 @@ public:
 	float getStrokeWidth() const; // default 1
 	bool isClosed() const;
 
+	void updateShape();
+	void draw();
+
 	ofShape & getShape(int curveResolution=16, bool tesselated=false);
 
 	struct Command;
@@ -140,4 +143,5 @@ private:
 	bool				bClosed;
 	ofShape				cachedShape;
 	bool				hasChanged;
+	ofBaseRenderer * 	renderer;
 };

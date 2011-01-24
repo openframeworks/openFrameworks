@@ -5,10 +5,14 @@
 #include "ofPoint.h"
 #include "ofRectangle.h"
 #include "ofTypes.h"
+#include "ofBaseTypes.h"
 
 #define  	CIRC_RESOLUTION		    22				// 22 pts for a circle...
 
 enum ofHandednessType {OF_LEFT_HANDED, OF_RIGHT_HANDED};
+
+void ofSetDefaultRenderer(ofBaseRenderer * renderer);
+ofBaseRenderer * ofGetDefaultRenderer();
 
 // bg color
 float * ofBgColorPtr();
