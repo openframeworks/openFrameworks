@@ -8,11 +8,11 @@
 // todo: this should handle non-loop polylines correctly
 // given a polyline, smooth all the points using a linear dropoff kernel
 // of radius smoothingSize and weighted towards the edges with smoothingAmount
-// smoothingAmount of 1 will give a moving average, while 0 gives a triangular kernel
-ofPolyline ofGetSmoothed(const ofPolyline& polyline, int smoothingSize = 4, float smoothingAmount = 0);
+// smoothingShape of 1 will give a moving average, while 0 gives a triangular kernel
+ofPolyline ofGetSmoothed(const ofPolyline& polyline, int smoothingSize, float smoothingShape = 0);
 
 // resample a polyline based on the distance between the points
-ofPolyline ofGetResampledSpacing(const ofPolyline& polyline, float spacing = 4);
+ofPolyline ofGetResampledSpacing(const ofPolyline& polyline, float spacing);
 
 // resample a polyline based on the total point count
 ofPolyline ofGetResampledCount(const ofPolyline& polyline, int count);

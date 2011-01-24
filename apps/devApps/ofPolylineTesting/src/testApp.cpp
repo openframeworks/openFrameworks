@@ -42,8 +42,8 @@ void testApp::update() {
 			
 			// add the cur polyline to all these vector<ofPolyline>
 			polylines.push_back(cur);
-			smoothed.push_back(ofGetSmoothed(cur));
-			resampled.push_back(ofGetSmoothed(ofGetResampledSpacing(cur, 50)));
+			smoothed.push_back(ofGetSmoothed(cur, 8));
+			resampled.push_back(ofGetSmoothed(ofGetResampledCount(cur, 100), 8));
 			
 			boundingBoxes.push_back(ofGetBoundingBox(cur));
 			
