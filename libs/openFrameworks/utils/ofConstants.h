@@ -275,11 +275,16 @@ using namespace std;
 	#define ABS(x) (((x) < 0) ? -(x) : (x))
 #endif
 
-#define 	OF_FILLED				0x01
-#define 	OF_OUTLINE				0x02
-#define 	OF_WINDOW 				0
-#define 	OF_FULLSCREEN 			1
-#define 	OF_GAME_MODE			2
+enum ofFillFlag{
+	OF_FILLED = 0x01,
+	OF_OUTLINE=	0x02
+};
+
+enum ofWindowMode{
+	OF_WINDOW 		= 0,
+	OF_FULLSCREEN 	= 1,
+ 	OF_GAME_MODE	= 2
+};
 
 enum ofRectMode{
 	OF_RECTMODE_CORNER=0,
