@@ -11,7 +11,7 @@ inline T& loopGet(vector<T>& vec, int i) {
 	return vec[loopMod(i, vec.size())];
 }
 
-ofPolyline ofSmooth(const ofPolyline& polyline, int smoothingSize, float smoothingAmount) {
+ofPolyline ofGetSmoothed(const ofPolyline& polyline, int smoothingSize, float smoothingAmount) {
 	ofPolyline result = polyline;
 	
 	if(!polyline.getClosed()) {
@@ -47,7 +47,7 @@ ofPolyline ofSmooth(const ofPolyline& polyline, int smoothingSize, float smoothi
 	return result;
 }
 
-ofPolyline ofResampleSpacing(const ofPolyline& polyline, float spacing) {
+ofPolyline ofGetResampledSpacing(const ofPolyline& polyline, float spacing) {
 	ofPolyline result;
 	// if more properties are added to ofPolyline, we need to copy them here
 	result.setClosed(polyline.getClosed());
@@ -80,9 +80,38 @@ ofPolyline ofResampleSpacing(const ofPolyline& polyline, float spacing) {
 	return result;
 }
 
-ofPolyline ofResampleCount(const ofPolyline& polyline, int count) {
+ofPolyline ofGetResampledCount(const ofPolyline& polyline, int count) {
 	float perimeter = polyline.getPerimeter();
-	return ofResampleSpacing(polyline, perimeter / count);
+	return ofGetResampledSpacing(polyline, perimeter / count);
+}
+
+ofRectangle ofGetBoundingBox(const ofPolyline& polyline) {
+	ofRectangle box;
+	int n = polyline.size();
+	if(n > 0) {
+		const ofPoint& first = polyline[0];
+		// inititally, use width and height as max x and max y
+		box.set(first.x, first.y, first.x, first.y);
+		for(int i = 0; i < n; i++) {
+			const ofPoint& cur = polyline[i];
+			if(cur.x < box.x) {
+				box.x = cur.x;
+			}
+			if(cur.x > box.width) {
+				box.width = cur.x;
+			}
+			if(cur.y < box.y) {
+				box.y = cur.y;
+			}
+			if(cur.y > box.height) {
+				box.height = cur.y;
+			}
+		}
+		// later, we make width and height relative
+		box.width -= box.x;
+		box.height -= box.y;
+	}
+	return box;
 }
 
 /*
