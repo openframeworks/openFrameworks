@@ -9,10 +9,10 @@
 // given a polyline, smooth all the points using a linear dropoff kernel
 // of radius smoothingSize and weighted towards the edges with smoothingAmount
 // smoothingAmount of 1 will give a moving average, while 0 gives a triangular kernel
-ofPolyline ofSmooth(const ofPolyline& polyline, int smoothingSize = 8, float smoothingAmount = 0);
+ofPolyline ofSmooth(const ofPolyline& polyline, int smoothingSize = 4, float smoothingAmount = 0);
 
 // resample a polyline based on the distance between the points
-ofPolyline ofResampleSpacing(const ofPolyline& polyline, float spacing);
+ofPolyline ofResampleSpacing(const ofPolyline& polyline, float spacing = 4);
 
 // resample a polyline based on the total point count
 ofPolyline ofResampleCount(const ofPolyline& polyline, int count);
