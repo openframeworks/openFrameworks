@@ -20,14 +20,12 @@ ofPolyline ofGetResampledCount(const ofPolyline& polyline, int count);
 // get the bounding box of a polyline
 ofRectangle ofGetBoundingBox(const ofPolyline& polyline);
 
-// todo: interesection, offset
+// find the closest point p3 on the line between p1 and p2
+// optionally pass a pointer to a float to get the normalized position along that line
+ofPoint ofGetClosestPoint(const ofPoint& p1, const ofPoint& p2, const ofPoint& p3, float* normalizedPosition = NULL);
 
 /*
-
-// find the closest point to p3 on the line between p1 and p2
-// optionally pass a pointer to a float for the normalized position along that line
 // also, helper functions for finding the closest point on a polyline or closest in a vector of polylines
-ofPoint ofGetClosestPoint(const ofPoint& p1, const ofPoint& p2, const ofPoint& p3, float* uptr = NULL);
 ofPoint ofGetClosestPoint(const ofPolyline& polyline, const ofPoint& target, int& nearest);
 ofPoint ofGetClosestPoint(vector<ofPolyline>& polylines, const ofPoint& target, ofPolyline*& matchedPolyline, int& matchedIndex);
 */

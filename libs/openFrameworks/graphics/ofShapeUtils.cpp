@@ -114,9 +114,7 @@ ofRectangle ofGetBoundingBox(const ofPolyline& polyline) {
 	return box;
 }
 
-/*
-
-ofPoint ofGetClosestPoint(const ofPoint& p1, const ofPoint& p2, const ofPoint& p3, float* uptr) {
+ofPoint ofGetClosestPoint(const ofPoint& p1, const ofPoint& p2, const ofPoint& p3, float* normalizedPosition) {
 	float u = (p3.x - p1.x) * (p2.x - p1.x);
 	u += (p3.y - p1.y) * (p2.y - p1.y);
 	u /= (p2 - p1).length();
@@ -126,12 +124,13 @@ ofPoint ofGetClosestPoint(const ofPoint& p1, const ofPoint& p2, const ofPoint& p
 	} else if(u < 0) {
 		u = 0;
 	}
-	if(uptr != NULL) {
-		*uptr = u;
+	if(normalizedPosition != NULL) {
+		*normalizedPosition = u;
 	}
 	return p1.interpolated(p2, u);
 }
 
+/*
 ofPoint ofGetClosestPoint(ofPolyline& polyline, const ofPoint& target, int& nearest) {
 	vector<ofPoint>& pts = polyline.pts;
 	
@@ -160,31 +159,5 @@ ofPoint ofGetClosestPoint(ofPolyline& polyline, const ofPoint& target, int& near
 	} else {
 		return rightClosest;
 	}
-}
-
-ofPoint ofGetClosestPoint(vector<ofPolyline>& polylines, const ofPoint& target, ofPolyline*& matchedPolyline, int& matchedIndex) {
-	matchedPolyline = NULL;
-	ofPoint closest;
-	float distance;
-	bool hasPoints = false;
-	for(int i = 0; i < polylines.size(); i++) {
-		ofPolyline& cur = polylines[i];
-		if(cur.pts.size() > 0) {
-			hasPoints = true;
-			int curIndex;
-			ofPoint curClosest = closestPoint(cur, target, curIndex);
-			float curDistance = curClosest.distance(target);
-			if(i == 0 || curDistance < distance) {
-				distance = curDistance;
-				closest = curClosest;
-				matchedPolyline = &cur;
-				matchedIndex = curIndex;
-			}
-		}
-	}
-	if(hasPoints)
-		return closest;
-	else
-		return target;
 }
 */
