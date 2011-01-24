@@ -2,6 +2,9 @@
 #include "ofAppRunner.h"
 #include "ofBitmapFont.h"
 #include "ofUtils.h"
+#include "ofBaseTypes.h"
+#include "ofShapeGLRenderers.h"
+#include "ofPath.h"
 
 #ifdef TARGET_OSX
 	#include <OpenGL/glu.h>
@@ -60,11 +63,30 @@ ofStyle			currentStyle;
 deque <ofStyle> styleHistory;
 deque <ofRectangle> viewportHistory;
 
-static float circlePts[OF_MAX_CIRCLE_PTS][3];			// [points][axis]
-static float circlePtsScaled[OF_MAX_CIRCLE_PTS][3];		// [points][axis]
-static float trianglePoints[3][3];						// [points][axis]
-static float linePoints[2][3];							// [points][axis]
-static float rectPoints[4][3];							// [points][axis]
+
+static ofPath path;
+static ofShape shape;
+static ofBaseRenderer * renderer = new ofVARenderer();
+
+static void ofSetCurrentStyleTo(ofPath & path){
+	path.setFilled(drawMode == OF_FILLED);
+	path.setColor(currentStyle.color);
+	path.setPolyWindingMode(currentStyle.polyMode);
+
+	if(drawMode == OF_OUTLINE){
+		path.setStrokeWidth(currentStyle.lineWidth);
+	}
+}
+
+static void ofSetCurrentStyleTo(ofShape & shape){
+	shape.setFilled(drawMode == OF_FILLED);
+	shape.setColor(currentStyle.color);
+	shape.setPolyWindingMode(currentStyle.polyMode);
+
+	if(drawMode == OF_OUTLINE){
+		shape.setStrokeWidth(currentStyle.lineWidth);
+	}
+}
 
 //----------------------------------------------------------
 void  ofSetRectMode(ofRectMode mode){
@@ -447,7 +469,8 @@ void setupCircle(){
 
 //----------------------------------------------------------
 void ofSetCircleResolution(int res){
-	res = MIN( MAX(1, res), OF_MAX_CIRCLE_PTS);
+	numCirclePts = res;
+	/*res = MIN( MAX(1, res), OF_MAX_CIRCLE_PTS);
 
 	if (res > 1 && res != numCirclePts){
 		numCirclePts = res;
@@ -462,7 +485,7 @@ void ofSetCircleResolution(int res){
 			angle += angleAdder;
 		}
 		bSetupCircle = true;
-	}
+	}*/
 }
 
 
@@ -482,20 +505,21 @@ void ofTriangle(float x1,float y1,float z1,float x2,float y2,float z2,float x3, 
 	// use smoothness, if requested:
 	if (bSmoothHinted && drawMode == OF_OUTLINE) startSmoothing();
 
-	// draw:
-	trianglePoints[0][0] = x1;
-	trianglePoints[0][1] = y1;
-	trianglePoints[0][2] = z1;
-	trianglePoints[1][0] = x2;
-	trianglePoints[1][1] = y2;
-	trianglePoints[1][2] = z2;
-	trianglePoints[2][0] = x3;
-	trianglePoints[2][1] = y3;
-	trianglePoints[2][2] = z3;
-
-	glEnableClientState(GL_VERTEX_ARRAY);
-	glVertexPointer(3, GL_FLOAT, 0, &trianglePoints[0][0]);
-	glDrawArrays((drawMode == OF_FILLED) ? GL_TRIANGLES : GL_LINE_LOOP, 0, 3);
+	if(renderer->rendersPathDirectly()){
+		path.clear();
+		ofSetCurrentStyleTo(path);
+		path.lineTo(x1,y1,z1);
+		path.lineTo(x2,y2,z2);
+		path.lineTo(x3,y3,z3);
+		renderer->draw(path);
+	}else{
+		shape.clear();
+		ofSetCurrentStyleTo(shape);
+		shape.lineTo(x1,y1,z1);
+		shape.lineTo(x2,y2,z2);
+		shape.lineTo(x3,y3,z3);
+		renderer->draw(shape);
+	}
 
 	// back to normal, if smoothness is on
 	if (bSmoothHinted && drawMode == OF_OUTLINE) endSmoothing();
@@ -508,26 +532,42 @@ void ofCircle(const ofPoint & p, float radius){
 
 //----------------------------------------------------------
 void ofCircle(float x, float y, float radius){
-	ofCircle(x, y, 0.0f, radius);
+	// use smoothness, if requested:
+	if (bSmoothHinted && drawMode == OF_OUTLINE) startSmoothing();
+
+	if(renderer->rendersPathDirectly()){
+		path.clear();
+		ofSetCurrentStyleTo(path);
+		path.arc(x,y,radius,radius,0,360);
+		renderer->draw(path);
+	}else{
+		shape.clear();
+		ofSetCurrentStyleTo(shape);
+		shape.arc(x,y,radius,radius,0,360,currentStyle.circleResolution);
+		renderer->draw(shape);
+	}
+
+	// back to normal, if smoothness is on
+	if (bSmoothHinted && drawMode == OF_OUTLINE) endSmoothing();
 }
 
 //----------------------------------------------------------
 void ofCircle(float x, float y, float z, float radius){
 
-	if (!bSetupCircle) setupCircle();
-
 	// use smoothness, if requested:
 	if (bSmoothHinted && drawMode == OF_OUTLINE) startSmoothing();
 
-	for(int i = 0; i < numCirclePts; i++){
-		circlePtsScaled[i][0]   = x + circlePts[i][0] * radius;
-		circlePtsScaled[i][1] = y + circlePts[i][1] * radius;
-		circlePtsScaled[i][2] = z;
+	if(renderer->rendersPathDirectly()){
+		path.clear();
+		ofSetCurrentStyleTo(path);
+		path.arc(x,y,z,radius,radius,0,360);
+		renderer->draw(path);
+	}else{
+		shape.clear();
+		ofSetCurrentStyleTo(shape);
+		shape.arc(x,y,z,radius,radius,0,360,currentStyle.circleResolution);
+		renderer->draw(shape);
 	}
-
-	glEnableClientState(GL_VERTEX_ARRAY);
-	glVertexPointer(3, GL_FLOAT, 0, &circlePtsScaled[0][0]);
-	glDrawArrays( (drawMode == OF_FILLED) ? GL_TRIANGLE_FAN : GL_LINE_LOOP, 0, numCirclePts);
 
 	// back to normal, if smoothness is on
 	if (bSmoothHinted && drawMode == OF_OUTLINE) endSmoothing();
@@ -541,26 +581,42 @@ void ofEllipse(const ofPoint & p, float width, float height){
 
 //----------------------------------------------------------
 void ofEllipse(float x, float y, float width, float height){
-	ofEllipse(x, y, 0.0f, width, height);
+	// use smoothness, if requested:
+	if (bSmoothHinted && drawMode == OF_OUTLINE) startSmoothing();
+
+	if(renderer->rendersPathDirectly()){
+		path.clear();
+		ofSetCurrentStyleTo(path);
+		path.arc(x,y,width*0.5,height*0.5,0,360);
+		renderer->draw(path);
+	}else{
+		shape.clear();
+		ofSetCurrentStyleTo(shape);
+		shape.arc(x,y,width*0.5,height*0.5,0,360,currentStyle.circleResolution);
+		renderer->draw(shape);
+	}
+
+	// back to normal, if smoothness is on
+	if (bSmoothHinted && drawMode == OF_OUTLINE) endSmoothing();
 }
 
 //----------------------------------------------------------
 void ofEllipse(float x, float y, float z, float width, float height){
 
-	if (!bSetupCircle) setupCircle();
-
 	// use smoothness, if requested:
 	if (bSmoothHinted && drawMode == OF_OUTLINE) startSmoothing();
 
-	for(int i = 0; i < numCirclePts; i++){
-		circlePtsScaled[i][0]   = x + circlePts[i][0] * width  * 0.5f;
-		circlePtsScaled[i][1] = y + circlePts[i][1] * height * 0.5f;
-		circlePtsScaled[i][2] = z;
+	if(renderer->rendersPathDirectly()){
+		path.clear();
+		ofSetCurrentStyleTo(path);
+		path.arc(x,y,z,width*0.5,height*0.5,0,360);
+		renderer->draw(path);
+	}else{
+		shape.clear();
+		ofSetCurrentStyleTo(shape);
+		shape.arc(x,y,z,width*0.5,height*0.5,0,360,currentStyle.circleResolution);
+		renderer->draw(shape);
 	}
-
-	glEnableClientState(GL_VERTEX_ARRAY);
-	glVertexPointer(3, GL_FLOAT, 0, &circlePtsScaled[0][0]);
-	glDrawArrays( (drawMode == OF_FILLED) ? GL_TRIANGLE_FAN : GL_LINE_LOOP, 0, numCirclePts);
 
 	// back to normal, if smoothness is on
 	if (bSmoothHinted && drawMode == OF_OUTLINE) endSmoothing();
@@ -582,16 +638,19 @@ void ofLine(float x1,float y1,float z1,float x2,float y2,float z2){
 	// use smoothness, if requested:
 	if (bSmoothHinted) startSmoothing();
 
-	linePoints[0][0] = x1;
-	linePoints[0][1] = y1;
-	linePoints[0][2] = z1;
-	linePoints[1][0] = x2;
-	linePoints[1][1] = y2;
-	linePoints[1][2] = z2;
-
-	glEnableClientState(GL_VERTEX_ARRAY);
-	glVertexPointer(3, GL_FLOAT, 0, &linePoints[0][0]);
-	glDrawArrays(GL_LINES, 0, 2);
+	if(renderer->rendersPathDirectly()){
+		path.clear();
+		ofSetCurrentStyleTo(path);
+		path.lineTo(x1,y1,z1);
+		path.lineTo(x2,y2,z2);
+		renderer->draw(path);
+	}else{
+		shape.clear();
+		ofSetCurrentStyleTo(shape);
+		shape.lineTo(x1,y1,z1);
+		shape.lineTo(x2,y2,z2);
+		renderer->draw(shape);
+	}
 
 	// back to normal, if smoothness is on
 	if (bSmoothHinted) endSmoothing();
@@ -619,43 +678,39 @@ void ofRect(float x,float y,float z,float w,float h){
 	// use smoothness, if requested:
 	if (bSmoothHinted && drawMode == OF_OUTLINE) startSmoothing();
 
-	if (cornerMode == OF_RECTMODE_CORNER){
-		rectPoints[0][0] = x;
-		rectPoints[0][1] = y;
-		rectPoints[0][2] = z;
-		
-		rectPoints[1][0] = x+w;
-		rectPoints[1][1] = y;
-		rectPoints[1][2] = z;
-		
-		rectPoints[2][0] = x+w;
-		rectPoints[2][1] = y+h;
-		rectPoints[2][2] = z;
-		
-		rectPoints[3][0] = x;
-		rectPoints[3][1] = y+h;
-		rectPoints[3][2] = z;
+
+	if(renderer->rendersPathDirectly()){
+		path.clear();
+		ofSetCurrentStyleTo(path);
+		if (cornerMode == OF_RECTMODE_CORNER){
+			path.lineTo(x,y,z);
+			path.lineTo(x+w,y,z);
+			path.lineTo(x+w,y+h,z);
+			path.lineTo(x,y+h,z);
+		}else{
+			path.lineTo(x-w/2.0f,y-h/2.0f,z);
+			path.lineTo(x+w/2.0f,y-h/2.0f,z);
+			path.lineTo(x+w/2.0f,y+h/2.0f,z);
+			path.lineTo(x-w/2.0f,y+h/2.0f,z);
+		}
+		renderer->draw(path);
 	}else{
-		rectPoints[0][0] = x-w/2.0f;
-		rectPoints[0][1] = y-h/2.0f;
-		rectPoints[0][2] = z;
-		
-		rectPoints[1][0] = x+w/2.0f;
-		rectPoints[1][1] = y-h/2.0f;
-		rectPoints[1][2] = z;
-		
-		rectPoints[2][0] = x+w/2.0f;
-		rectPoints[2][1] = y+h/2.0f;
-		rectPoints[2][2] = z;
-		
-		rectPoints[3][0] = x-w/2.0f;
-		rectPoints[3][1] = y+h/2.0f;
-		rectPoints[3][2] = z;
+		shape.clear();
+		ofSetCurrentStyleTo(shape);
+		if (cornerMode == OF_RECTMODE_CORNER){
+			shape.lineTo(x,y,z);
+			shape.lineTo(x+w,y,z);
+			shape.lineTo(x+w,y+h,z);
+			shape.lineTo(x,y+h,z);
+		}else{
+			shape.lineTo(x-w/2.0f,y-h/2.0f,z);
+			shape.lineTo(x+w/2.0f,y-h/2.0f,z);
+			shape.lineTo(x+w/2.0f,y+h/2.0f,z);
+			shape.lineTo(x-w/2.0f,y+h/2.0f,z);
+		}
+		renderer->draw(shape);
 	}
 
-	glEnableClientState(GL_VERTEX_ARRAY);
-	glVertexPointer(3, GL_FLOAT, 0, &rectPoints[0][0]);
-	glDrawArrays((drawMode == OF_FILLED) ? GL_TRIANGLE_FAN : GL_LINE_LOOP, 0, 4);
 
 
 	// use smoothness, if requested:
@@ -665,67 +720,41 @@ void ofRect(float x,float y,float z,float w,float h){
 
 //----------------------------------------------------------
 void ofCurve(float x0, float y0, float x1, float y1, float x2, float y2, float x3, float y3){
-
-	int resolution = curveResolution;
-
-	float t,t2,t3;
-	float x,y;
-
-	ofBeginShape();
-
-	for (int i = 0; i < resolution; i++){
-
-		t 	=  (float)i / (float)(resolution-1);
-		t2 	= t * t;
-		t3 	= t2 * t;
-
-		x = 0.5f * ( ( 2.0f * x1 ) +
-		( -x0 + x2 ) * t +
-		( 2.0f * x0 - 5.0f * x1 + 4 * x2 - x3 ) * t2 +
-		( -x0 + 3.0f * x1 - 3.0f * x2 + x3 ) * t3 );
-
-		y = 0.5f * ( ( 2.0f * y1 ) +
-		( -y0 + y2 ) * t +
-		( 2.0f * y0 - 5.0f * y1 + 4 * y2 - y3 ) * t2 +
-		( -y0 + 3.0f * y1 - 3.0f * y2 + y3 ) * t3 );
-
-		ofVertex(x,y);
+	if(renderer->rendersPathDirectly()){
+		path.clear();
+		ofSetCurrentStyleTo(path);
+		path.curveTo(x0,y0);
+		path.curveTo(x1,y1);
+		path.curveTo(x2,y2);
+		path.curveTo(x3,y3);
+		renderer->draw(path);
+	}else{
+		shape.clear();
+		ofSetCurrentStyleTo(shape);
+		shape.curveTo(x0,y0);
+		shape.curveTo(x1,y1);
+		shape.curveTo(x2,y2);
+		shape.curveTo(x3,y3);
+		renderer->draw(shape);
 	}
-
-	ofEndShape();
 }
 
 
 //----------------------------------------------------------
 void ofBezier(float x0, float y0, float x1, float y1, float x2, float y2, float x3, float y3){
-
-	float   ax, bx, cx;
-    float   ay, by, cy;
-    float   t, t2, t3;
-    float   x, y;
-
-    // polynomial coefficients
-    cx = 3.0f * (x1 - x0);
-    bx = 3.0f * (x2 - x1) - cx;
-    ax = x3 - x0 - cx - bx;
-
-    cy = 3.0f * (y1 - y0);
-    by = 3.0f * (y2 - y1) - cy;
-    ay = y3 - y0 - cy - by;
-
-
-    int resolution = curveResolution;
-
-    ofBeginShape();
-    for (int i = 0; i < resolution; i++){
-    	t 	=  (float)i / (float)(resolution-1);
-    	t2 = t * t;
-    	t3 = t2 * t;
-		x = (ax * t3) + (bx * t2) + (cx * t) + x0;
-    	y = (ay * t3) + (by * t2) + (cy * t) + y0;
-    	ofVertex(x,y);
-    }
-    ofEndShape();
+	if(renderer->rendersPathDirectly()){
+		path.clear();
+		ofSetCurrentStyleTo(path);
+		path.moveTo(x0,y0);
+		path.bezierTo(x1,y1,x2,y2,x3,y3);
+		renderer->draw(path);
+	}else{
+		shape.clear();
+		ofSetCurrentStyleTo(shape);
+		shape.moveTo(x0,y0);
+		shape.bezierTo(x1,y1,x2,y2,x3,y3);
+		renderer->draw(shape);
+	}
 }
 
 //----------------------------------------
@@ -1297,166 +1326,10 @@ void ofSetupScreen(){
 }
 
 
-//-------------- polygons ----------------------------------
-//
-// to do polygons, we need tesselation
-// to do tesselation, we need glu and callbacks....
-// ------------------------------------
-// one of the callbacks creates new vertices (on intersections, etc),
-// and there is a potential for memory leaks
-// if we don't clean up properly
-// ------------------------------------
-// also the easiest system, using beginShape
-// vertex(), endShape, will also use dynamically
-// allocated memory
-// ------------------------------------
-// so, therefore, we will be using a static vector here
-// for two things:
-//
-// a) collecting vertices
-// b) new vertices on combine callback
-//
-// important note!
-//
-// this assumes single threaded polygon creation
-// you can have big problems if creating polygons in
-// multiple threads... please be careful
-//
-// (but also be aware that alot of opengl code
-// is single threaded anyway, so you will have problems
-// with many things opengl related across threads)
-//
-// ------------------------------------
-// (note: this implementation is based on code from ftgl)
-// ------------------------------------
-
-//---------------------------- for combine callback:
-std::vector <double*> newVectrices;
-std::vector <float> tessVertices;
-
-//---------------------------- store all the polygon vertices:
-std::vector <double*> polyVertices;
-//---------------------------- and for curve vertexes, since we need 4 to make a curve
-std::vector <double*> curveVertices;
-
-static int currentStartVertex = 0;
-
-// what is the starting vertex of the shape we are drawing
-// this allows multi contour polygons;
-
-static GLUtesselator * tobj = NULL;
-//static bool tessInited = false;
-//static GLdouble point[3];
-static GLint shapeType;
-
-void CALLBACK tessError(GLenum);
-void CALLBACK tessVertex( void* data);
-void CALLBACK tessCombine( GLdouble coords[3], void* vertex_data[4], GLfloat weight[4], void** outData);
-void clearTessVertices();
-void clearCurveVertices();
-
-//----------------------------------------------------------
-void CALLBACK tessError(GLenum errCode){
-	const GLubyte* estring;
-	estring = gluErrorString( errCode);
-	ofLog(OF_LOG_ERROR, "tessError: %s", estring);
-}
-
-
-//----------------------------------------------------------
-void CALLBACK tessBegin(GLint type){
-	shapeType = type;
-	tessVertices.clear();
-}
-
-//----------------------------------------------------------
-void CALLBACK tessEnd(){
-	//we draw as 3d not 2d: change 3s bellow to 2 and comment the 3rd push_back in tessVertex to do 2D
-
-	glEnableClientState(GL_VERTEX_ARRAY);
-	glVertexPointer(3, GL_FLOAT, 0, &tessVertices[0]);
-	glDrawArrays(shapeType, 0, tessVertices.size()/3);
-	tessVertices.clear();
-}
-
-
-//----------------------------------------------------------
-void CALLBACK tessVertex( void* data){
-
-	tessVertices.push_back( ( (double *)data)[0] );
-	tessVertices.push_back( ( (double *)data)[1] );
-	tessVertices.push_back( ( (double *)data)[2] );	//No need for z for now?
-}
-
-
-//----------------------------------------------------------
-void CALLBACK tessCombine( GLdouble coords[3], void* vertex_data[4], GLfloat weight[4], void** outData){
-    double* vertex = new double[3];
-    newVectrices.push_back(vertex);
-    vertex[0] = coords[0];
-    vertex[1] = coords[1];
-    vertex[2] = coords[2];
-    *outData = vertex;
-}
-
-//----------------------------------------------------------
-void clearTessVertices(){
-	// -------------------------------------------------
-    // ---------------- delete newly created vertices !
-     for(vector<double*>::iterator itr=polyVertices.begin();
-        itr!=polyVertices.end();
-        ++itr){
-        delete [] (*itr);
-    }
-    polyVertices.clear();
-
-    // combine callback also makes new vertices, let's clear them:
-    for(vector<double*>::iterator itr=newVectrices.begin();
-        itr!=newVectrices.end();
-        ++itr){
-        delete [] (*itr);
-    }
-    newVectrices.clear();
-    // -------------------------------------------------
-
-    clearCurveVertices();
-    currentStartVertex = 0;
-}
-
-//----------------------------------------------------------
-void clearCurveVertices(){
-	// combine callback also makes new vertices, let's clear them:
-    for(vector<double*>::iterator itr=curveVertices.begin();
-        itr!=curveVertices.end();
-        ++itr){
-        delete [] (*itr);
-    }
-    curveVertices.clear();
-}
 
 //----------------------------------------------------------
 void ofSetPolyMode(ofPolyWindingMode mode){
-	switch (mode){
-		case OF_POLY_WINDING_ODD:
-			polyMode = OF_POLY_WINDING_ODD;
-			break;
-		case OF_POLY_WINDING_NONZERO:
-			polyMode = OF_POLY_WINDING_NONZERO;
-			break;
-		case OF_POLY_WINDING_POSITIVE:
-			polyMode = OF_POLY_WINDING_POSITIVE;
-			break;
-		case OF_POLY_WINDING_NEGATIVE:
-			polyMode = OF_POLY_WINDING_NEGATIVE;
-			break;
-		case OF_POLY_WINDING_ABS_GEQ_TWO:
-			polyMode = OF_POLY_WINDING_ABS_GEQ_TWO;
-			break;
-		default:
-			ofLog(OF_LOG_ERROR," error in ofSetPolyMode");
-
-	}
-
+	polyMode = mode;
 	currentStyle.polyMode = polyMode;
 }
 
@@ -1465,287 +1338,100 @@ void ofBeginShape(){
 
 	if (bSmoothHinted && drawMode == OF_OUTLINE) startSmoothing();
 
-	// just clear the vertices, just to make sure that
-	// someone didn't do something improper, like :
-	// a) ofBeginShape()
-	// b) ofVertex(), ofVertex(), ofVertex() ....
-	// c) ofBeginShape()
-	// etc...
-
-	clearTessVertices();
-
-
-	// now get the tesselator object up and ready:
-
-	tobj = gluNewTess();
-
-
-	// --------------------------------------------------------
-	// note: 	you could write your own begin and end callbacks
-	// 			if you wanted to...
-	// 			for example, to count triangles or know which
-	// 			type of object tess is giving back, etc...
-	// --------------------------------------------------------
-
-	#if defined( TARGET_OSX)
-		#ifndef MAC_OS_X_VERSION_10_5
-			#define OF_NEED_GLU_FIX
-		#endif
-	#endif
-
-	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-	// MAC - XCODE USERS PLEASE NOTE - some machines will not be able to compile the code below
-	// if this happens uncomment the "OF_NEED_GLU_FIX" line below and it
-	// should compile also please post to the forums with the error message, you OS X version,
-	// Xcode verison and the CPU type - PPC or Intel. Thanks!
-	// (note: this is known problem based on different version of glu.h, we are working on a fix)
-	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-	//#define OF_NEED_GLU_FIX
-
-	#ifdef OF_NEED_GLU_FIX
-		#define OF_GLU_CALLBACK_HACK (void(CALLBACK*)(...)
-	#else
-		#define OF_GLU_CALLBACK_HACK (void(CALLBACK*)()
-	#endif
-
-	gluTessCallback( tobj, GLU_TESS_BEGIN, OF_GLU_CALLBACK_HACK)&tessBegin);
-	gluTessCallback( tobj, GLU_TESS_VERTEX, OF_GLU_CALLBACK_HACK)&tessVertex);
-	gluTessCallback( tobj, GLU_TESS_COMBINE, OF_GLU_CALLBACK_HACK)&tessCombine);
-	gluTessCallback( tobj, GLU_TESS_END, OF_GLU_CALLBACK_HACK)&tessEnd);
-	gluTessCallback( tobj, GLU_TESS_ERROR, OF_GLU_CALLBACK_HACK)&tessError);
-
-	gluTessProperty( tobj, GLU_TESS_WINDING_RULE, polyMode);
-	if (drawMode == OF_OUTLINE){
-		gluTessProperty( tobj, GLU_TESS_BOUNDARY_ONLY, true);
-	} else {
-		gluTessProperty( tobj, GLU_TESS_BOUNDARY_ONLY, false);
+	if(renderer->rendersPathDirectly()){
+		path.clear();
+		ofSetCurrentStyleTo(path);
+	}else{
+		shape.clear();
+		ofSetCurrentStyleTo(shape);
 	}
-	gluTessProperty( tobj, GLU_TESS_TOLERANCE, 0);
-
-	/* ------------------------------------------
-	for 2d, this next call (normal) likely helps speed up ....
-	quote : The computation of the normal represents about 10% of
-	the computation time. For example, if all polygons lie in
-	the x-y plane, you can provide the normal by using the
-	-------------------------------------------  */
-
-	gluTessNormal(tobj, 0.0, 0.0, 1.0);
-	gluTessBeginPolygon( tobj, NULL);
-
 }
 
 //----------------------------------------------------------
 void ofVertex(float x, float y){
- 	double* point = new double[3];
- 	point[0] = x;
-	point[1] = y;
-	point[2] = 0;
- 	polyVertices.push_back(point);
-
-
- 	clearCurveVertices();	// we drop any "curve calls"
- 							// once a vertex call has been made
- 							// ie,
- 							// you can't mix
- 							// ofCurveVertex();
- 							// ofCurveVertex();
- 							// ofVertex();
- 							// etc...
- 							// and you need 4 calls
- 							// to curve to see something...
+	if(renderer->rendersPathDirectly()){
+		path.lineTo(x,y);
+	}else{
+		shape.lineTo(x,y);
+	}
 
 }
 
 //---------------------------------------------------
 void ofVertex(ofPoint & p) {
-	ofVertex(p.x, p.y);
+	if(renderer->rendersPathDirectly()){
+		path.lineTo(p);
+	}else{
+		shape.lineTo(p);
+	}
 }
 
 //----------------------------------------------------------
 void ofVertexes( const vector <ofPoint> & polyPoints ){
-	if( polyPoints.size() ){
-		clearCurveVertices();
-		
+	if(renderer->rendersPathDirectly()){
 		for( int k = 0; k < (int)polyPoints.size(); k++){
-			double* point = new double[3];
-			point[0] = polyPoints[k].x;
-			point[1] = polyPoints[k].y;
-			point[2] = 0;
-			polyVertices.push_back(point);		
+			path.lineTo(polyPoints[k]);
+		}
+	}else{
+		for( int k = 0; k < (int)polyPoints.size(); k++){
+			shape.lineTo(polyPoints[k]);
 		}
 	}
 }
 
 //---------------------------------------------------
 void ofCurveVertex(float x, float y){
-
-	double* point = new double[3];
- 	point[0] = x;
-	point[1] = y;
-	point[2] = 0;
- 	curveVertices.push_back(point);
-
- 	if (curveVertices.size() >= 4){
-
- 		int startPos = (int)curveVertices.size() - 4;
-
- 		float x0 = curveVertices[startPos + 0][0];
-	   	float y0 = curveVertices[startPos + 0][1];
- 		float x1 = curveVertices[startPos + 1][0];
-	   	float y1 = curveVertices[startPos + 1][1];
- 		float x2 = curveVertices[startPos + 2][0];
-	   	float y2 = curveVertices[startPos + 2][1];
- 		float x3 = curveVertices[startPos + 3][0];
-	   	float y3 = curveVertices[startPos + 3][1];
-
- 		int resolution = curveResolution;
-
-		float t,t2,t3;
-		float x,y;
-
-		for (int i = 0; i < resolution; i++){
-
-			t 	=  (float)i / (float)(resolution-1);
-			t2 	= t * t;
-			t3 	= t2 * t;
-
-			x = 0.5f * ( ( 2.0f * x1 ) +
-			( -x0 + x2 ) * t +
-			( 2.0f * x0 - 5.0f * x1 + 4 * x2 - x3 ) * t2 +
-			( -x0 + 3.0f * x1 - 3.0f * x2 + x3 ) * t3 );
-
-			y = 0.5f * ( ( 2.0f * y1 ) +
-			( -y0 + y2 ) * t +
-			( 2.0f * y0 - 5.0f * y1 + 4 * y2 - y3 ) * t2 +
-			( -y0 + 3.0f * y1 - 3.0f * y2 + y3 ) * t3 );
-
-			double* newPoint = new double[3];
-			newPoint[0] = x;
-			newPoint[1] = y;
-			newPoint[2] = 0;
-			polyVertices.push_back(newPoint);
-		}
- 	}
-
+	if(renderer->rendersPathDirectly()){
+		path.curveTo(x,y);
+	}else{
+		shape.curveTo(x,y);
+	}
 }
 
 //----------------------------------------------------------
 void ofCurveVertexes( const vector <ofPoint> & curvePoints){
-	if( curvePoints.size() ){
+	if(renderer->rendersPathDirectly()){
 		for( int k = 0; k < (int)curvePoints.size(); k++){
-			ofCurveVertex(curvePoints[k].x, curvePoints[k].y);		
+			path.curveTo(curvePoints[k]);
+		}
+	}else{
+		for( int k = 0; k < (int)curvePoints.size(); k++){
+			shape.curveTo(curvePoints[k]);
 		}
 	}
 }
 
 //---------------------------------------------------
 void ofCurveVertex(ofPoint & p) {
-	ofCurveVertex(p.x, p.y);
+	if(renderer->rendersPathDirectly()){
+		shape.curveTo(p);
+	}
 }
 
 //---------------------------------------------------
 void ofBezierVertex(float x1, float y1, float x2, float y2, float x3, float y3){
-
-
-	clearCurveVertices();	// we drop any stored "curve calls"
-
-
-	// if, and only if poly vertices has points, we can make a bezier
-	// from the last point
-
-	// the resolultion with which we computer this bezier
-	// is arbitrary, can we possibly make it dynamic?
-
-	if (polyVertices.size() > 0){
-
-		float x0 = polyVertices[polyVertices.size()-1][0];
-		float y0 = polyVertices[polyVertices.size()-1][1];
-
-		float   ax, bx, cx;
-		float   ay, by, cy;
-		float   t, t2, t3;
-		float   x, y;
-
-		// polynomial coefficients
-		cx = 3.0f * (x1 - x0);
-		bx = 3.0f * (x2 - x1) - cx;
-		ax = x3 - x0 - cx - bx;
-
-		cy = 3.0f * (y1 - y0);
-		by = 3.0f * (y2 - y1) - cy;
-		ay = y3 - y0 - cy - by;
-
-		// arbitrary ! can we fix??
-		int resolution = curveResolution;
-
-		for (int i = 0; i < resolution; i++){
-			t 	=  (float)i / (float)(resolution-1);
-			t2 = t * t;
-			t3 = t2 * t;
-			x = (ax * t3) + (bx * t2) + (cx * t) + x0;
-			y = (ay * t3) + (by * t2) + (cy * t) + y0;
-			ofVertex(x,y);
-		}
-
-
+	if(renderer->rendersPathDirectly()){
+		path.bezierTo(x1,y1,x2,y2,x3,y3);
+	}else{
+		shape.bezierTo(x1,y1,x2,y2,x3,y3);
 	}
-
-
 }
 
 //----------------------------------------------------------
 void ofNextContour(bool bClose){
-
-	if ((bClose == true)){
-		//---------------------------
-		if ((int)polyVertices.size() > currentStartVertex){
-
-			double* point = new double[3];
-	 		point[0] = polyVertices[currentStartVertex][0];
-			point[1] = polyVertices[currentStartVertex][1];
-			point[2] = 0;
-	 		polyVertices.push_back(point);
- 		}
+	if(renderer->rendersPathDirectly()){
+		if (bClose){
+			path.close();
+		}else{
+			path.newSubPath();
+		}
+	}else{
+		if (bClose){
+			shape.close();
+		}else{
+			shape.newSubShape();
+		}
 	}
-
-	if ((polyMode == OF_POLY_WINDING_ODD) && (drawMode == OF_OUTLINE)){
-		// let's just draw via another method, like glLineLoop
-		// much, much faster, and *no* tess / computation necessary
-
-		int numToDraw = polyVertices.size()-currentStartVertex;
-		if( numToDraw > 0){
-
-			// GLfloat points[numToDraw * 2];	// zach, we can't do this on VS 2008
-			GLfloat * points = new GLfloat[numToDraw * 2];
-			int k = 0;
-
-			for (int i=currentStartVertex; i< (int)polyVertices.size(); i++) {
-				points[k] = polyVertices[i][0];
-				points[k+1] = polyVertices[i][1];
-				k+=2;
-			}
-
-			glEnableClientState(GL_VERTEX_ARRAY);
-			glVertexPointer(2, GL_FLOAT, 0, &points[0]);
-			glDrawArrays(GL_LINE_STRIP, 0, numToDraw);
-
-			delete [] points;
-		}
-
-	} else {
-
-		if ( tobj != NULL){
-	      gluTessBeginContour( tobj);
-			for (int i=currentStartVertex; i<(int)polyVertices.size(); i++) {
-	   			gluTessVertex( tobj, polyVertices[i],polyVertices[i]);
-			}
-			gluTessEndContour( tobj);
-		}
-   	}
-
-   	currentStartVertex = (int)polyVertices.size();
-
 }
 
 
@@ -1755,73 +1441,19 @@ void ofEndShape(bool bClose){
 	// (close -> add the first point to the end)
 	// -----------------------------------------------
 
-	if ((bClose == true)){
-		//---------------------------
-		if ((int)polyVertices.size() > currentStartVertex){
-
-			double* point = new double[3];
-	 		point[0] = polyVertices[currentStartVertex][0];
-			point[1] = polyVertices[currentStartVertex][1];
-			point[2] = 0;
-	 		polyVertices.push_back(point);
-
- 		}
-	}
-	//------------------------------------------------
-
-
-
-	if ((polyMode == OF_POLY_WINDING_ODD) && (drawMode == OF_OUTLINE)){
-
-		// let's just draw via another method, like glLineLoop
-		// much, much faster, and *no* tess / computation necessary
-
-		int numToDraw = polyVertices.size()-currentStartVertex;
-		if( numToDraw > 0){
-
-			// GLfloat points[numToDraw * 2]; // zach, needed for VS 2008
-
-			GLfloat * points = new GLfloat[numToDraw * 2];
-
-			int k = 0;
-
-			for (int i=currentStartVertex; i< (int)polyVertices.size(); i++) {
-				points[k] = polyVertices[i][0];
-				points[k+1] = polyVertices[i][1];
-
-				k+=2;
-			}
-
-			glEnableClientState(GL_VERTEX_ARRAY);
-			glVertexPointer(2, GL_FLOAT, 0, &points[0]);
-			glDrawArrays(GL_LINE_STRIP, 0, numToDraw);
-
-			delete [] points;
+	if(renderer->rendersPathDirectly()){
+		if (bClose){
+			path.close();
 		}
 
-
-	} else {
-
-		if ( tobj != NULL){
-	    	gluTessBeginContour( tobj);
-			for (int i=currentStartVertex; i<(int)polyVertices.size(); i++) {
-	   			gluTessVertex( tobj, polyVertices[i],polyVertices[i]);
-			}
-
-			gluTessEndContour( tobj);
-
+		renderer->draw(path);
+	}else{
+		if (bClose){
+			shape.close();
 		}
-   	}
 
-	if ( tobj != NULL){
-		// no matter what we did / do, we need to delete the tesselator object
-		gluTessEndPolygon( tobj);
-		gluDeleteTess( tobj);
-		tobj = NULL;
+		renderer->draw(shape);
 	}
-
-   	// now clear the vertices on the dynamically allocated data
-   	clearTessVertices();
 
    	if (bSmoothHinted && drawMode == OF_OUTLINE) endSmoothing();
 

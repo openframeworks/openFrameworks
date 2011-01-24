@@ -11,8 +11,9 @@
 #include "ofMesh.h"
 #include "ofBaseTypes.h"
 #include "ofPoint.h"
+#include <deque>
 
-#define OF_DEFAULT_SHAPE_RENDERER ofVAShapeRenderer()
+#define OF_DEFAULT_SHAPE_RENDERER ofVARenderer()
 
 /** ofPolyline
  
@@ -83,6 +84,7 @@ class ofShape{
 public:
 	
 	ofShape();
+	ofShape(const ofPath & path, int curveResolution=16, bool tesselate=false);
 	~ofShape();
 
 	void clear();
@@ -91,10 +93,10 @@ public:
 	/// Catmull-Rom curves.
 	void addVertex(ofPoint p1);
 	void addVertex( float x, float y, float z=0 ) 
-		{ addVertex( ofPoint( x,y,z ) ); }
+		{ getCurrentSubShape().addVertex( ofPoint( x,y,z ) ); }
 
-	void setPolyline(const ofPolyline & polyline);
-	ofPolyline & getPolyline(){ return cachedOutline; };
+	ofPolyline & getOutline() { return cachedOutline; }
+	const ofPolyline & getOutline() const { return cachedOutline; }
 	
 	void addSubShape(const ofShape & shape);
 
@@ -102,7 +104,6 @@ public:
 	void close();
 
 	/// next contour
-	ofShape & newSubShape( bool bClosePrev=true );
 
 	ofMesh & getMesh();
 	const ofMesh & getMesh() const;
@@ -118,22 +119,60 @@ public:
 	void setFilled( bool bFill ) { bFilled = bFill; bNeedsTessellation = true; }
 	bool isFilled() const { return bFilled; }
 	/// set line + fill color simultaneously
-	void setColor( const ofColor& color ) { setFillColor( color ); setLineColor( color ); }
+	void setColor( const ofColor& color ) { setFillColor( color ); setStrokeColor( color ); }
 	void setHexColor( int hex ) { setColor( ofColor().fromHex( hex ) ); };
 	/// set line color
-	void setLineColor( const ofColor& color ) { lineColor = color; }
-	void setLineHexColor( int hex ) { setLineColor( ofColor().fromHex( hex ) ); };
+	void setStrokeColor( const ofColor& color ) { lineColor = color; }
+	void setStrokeHexColor( int hex ) { setStrokeColor( ofColor().fromHex( hex ) ); };
+	void setStrokeWidth( float width ) {
+		strokeWidth=width;
+	}
 	/// set fill color
 	void setFillColor( const ofColor& color ) { fillColor = color; }
 	void setFillHexColor( int hex ) { setFillColor( ofColor().fromHex( hex ) ); };
 	
-	bool hasOutline(){ return bNeedsOutlineDraw || !bFilled; }
+	bool hasOutline() const { return bNeedsOutlineDraw || !bFilled; }
 
+	//any combination of this won't work in all cases, if you need complex shapes
+	//create several objects or use a path and create a shape from it
+	ofShape & newSubShape();
+	void moveTo(const ofPoint & to ){ addVertex(to); }
+	void moveTo(float x, float y, float z=0){
+		addVertex(x,y,z);
+	}
+	void lineTo(const ofPoint & to ){ addVertex(to); }
+	void lineTo(float x, float y, float z=0){
+		addVertex(x,y,z);
+	}
+	void arc( const ofPoint & center, float radiusX, float radiusY, float angleBegin, float angleEnd, int curveResolution=16 );
+	void arc(float x, float y, float radiusX, float radiusY, float angleBegin, float angleEnd, int curveResolution=16){
+		arc(ofPoint(x,y),radiusX,radiusY,angleBegin,angleEnd,curveResolution);
+	}
+	void arc(float x, float y, float z, float radiusX, float radiusY, float angleBegin, float angleEnd, int curveResolution=16){
+		arc(ofPoint(x,y,z),radiusX,radiusY,angleBegin,angleEnd,curveResolution);
+	}
+	void curveTo( const ofPoint & to, int curveResolution=16 );
+	void curveTo(float x, float y, float z=0,  int curveResolution=16 ){
+		curveTo(ofPoint(x,y,z),curveResolution);
+	}
+	void bezierTo( const ofPoint & cp1, const ofPoint & cp2, const ofPoint & to, int curveResolution = 16);
+	void bezierTo(float cx1, float cy1, float cx2, float cy2, float x, float y, int curveResolution=16){
+		bezierTo(ofPoint(cx1,cy1),ofPoint(cx2,cy2),ofPoint(x,y));
+	}
+	void bezierTo(float cx1, float cy1, float cz1, float cx2, float cy2, float cz2, float x, float y, float z, int curveResolution=16){
+		bezierTo(ofPoint(cx1,cy1,cz1),ofPoint(cx2,cy2,cz2),ofPoint(x,y,z),curveResolution);
+	}
 
+	void setFrom(const ofPath & path,  int curveResolution=16, bool tesselate=false);
+	void setPolyline(const ofPolyline & polyline);
 private:
 	vector<ofPolyline> getSubPolylines();
+	void setCircleResolution(int res);
+	ofShape &  getCurrentSubShape();
+
 	// a shape is a polyline + lineColor, fill, windingMode and subshapes
 	ofColor lineColor;
+	float strokeWidth;
 	bool bFilled;
 	ofColor fillColor;
 	int polyWindingMode;
@@ -147,6 +186,8 @@ private:
 	
 	vector<ofShape> subShapes;
 	
-	ofBaseShapeRenderer * renderer;
+	ofBaseRenderer * renderer;
 
+	deque<ofPoint> curveVertices;
+	vector<ofPoint> circlePoints;
 };

@@ -15,6 +15,7 @@
 #include "ofConstants.h"
 class ofShape;
 class ofPixels;
+class ofPath;
 
 
 //----------------------------------------------------------
@@ -183,13 +184,57 @@ public:
 	
 };
 
+//----------------------------------------------------------
+// base renderers
+//----------------------------------------------------------
 
-class ofBaseShapeRenderer{
+class ofBaseRenderer{
 public:
-	virtual ~ofBaseShapeRenderer(){};
-	virtual void setShape(ofShape & shape)=0;
-	virtual void draw()=0;
-
+	virtual ~ofBaseRenderer(){}
+	virtual bool rendersPathDirectly()=0;
+	virtual void draw(ofShape & shape)=0;
+	virtual void draw(ofPath & shape)=0;
 };
 
+/*class ofBaseRenders{
+
+	virtual ~ofBaseRenders(){}
+	virtual void lineTo(const ofPoint & p)=0;
+	virtual void lineTo(float x, float y, float z=0){lineTo(ofPoint(x,y,z));}
+
+	// starts a new subpath with defaults for winding, stroke, fill...
+	// the new subpath starts in p
+	virtual void moveTo(const ofPoint & p)=0;
+	virtual void moveTo(float x, float y, float z=0)
+		{moveTo(ofPoint(x,y,z));}
+
+	virtual void curveTo(const ofPoint & p)=0;
+	virtual void curveTo(float x, float y, float z=0)
+		{curveTo(ofPoint(x,y,z));}
+
+	virtual void bezierTo(const ofPoint & cp1, const ofPoint & cp2, const ofPoint & p)=0;
+	virtual void bezierTo(float cx1, float cy1, float cx2, float cy2, float x, float y)
+		{bezierTo(ofPoint(cx1,cy1),ofPoint(cx2,cy2),ofPoint(x,y));}
+	virtual void bezierTo(float cx1, float cy1, float cz1, float cx2, float cy2, float cz2, float x, float y, float z)
+		{bezierTo(ofPoint(cx1,cy1),ofPoint(cx2,cy2),ofPoint(x,y));}
+
+	virtual void arc(const ofPoint & centre, float radiusX, float radiusY, float angleBegin, float angleEnd)=0;
+	virtual void arc(float x, float y, float radiusX, float radiusY, float angleBegin, float angleEnd)
+		{arc(ofPoint(x,y),radiusX,radiusY,angleBegin,angleEnd);}
+	virtual void arc(float x, float y, float z, float radiusX, float radiusY, float angleBegin, float angleEnd)
+		{arc(ofPoint(x,y,z),radiusX,radiusY,angleBegin,angleEnd);}
+	// closes current path, next command starts a new one with defaults for winding, stroke, fill...
+	virtual void close()=0;
+
+	virtual void setPolyWindingMode(ofPolyWindingMode mode)=0;
+	virtual void setColor( const ofColor& color ) { setFillColor( color ); setStrokeColor( color ); }
+	virtual void setHexColor( int hex ) { setColor( ofColor().fromHex( hex ) ); };
+	virtual void setFilled(bool hasFill)=0; // default false
+	virtual void setFillColor(const ofColor & color)=0;
+	virtual void setFillHexColor( int hex ) { setFillColor( ofColor().fromHex( hex ) ); };
+	virtual void setStrokeColor(const ofColor & color)=0;
+	virtual void setStrokeHexColor( int hex ) { setStrokeColor( ofColor().fromHex( hex ) ); };
+	virtual void setStrokeWidth(float width)=0; // default 1
+};
+ */
 

@@ -45,7 +45,6 @@ private:
 	
 	static void performTessellation( const vector<ofPolyline>& polylines, int polyWindingMode, bool bFilled, bool bIs2D );
 	
-	
 	/// clear out everything
 	static void clear();
 

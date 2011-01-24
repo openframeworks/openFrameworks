@@ -16,7 +16,7 @@ enum ofCairoRendererType{
 	OF_CAIRO_PNG
 };
 
-class ofCairoRenderer{
+class ofCairoRenderer: public ofBaseRenderer{
 public:
 	ofCairoRenderer(ofCairoRendererType type=OF_CAIRO_PDF){
 		switch(type){
@@ -38,7 +38,21 @@ public:
 		surface = NULL;
 	}
 
-	void draw(const ofPath & path,bool is_subpath=false){
+	void draw(ofPath & path){
+		drawPath(path);
+	}
+
+	void draw(ofShape & shape){
+
+	}
+
+	bool rendersPathDirectly(){
+		return true;
+	}
+
+private:
+
+	void drawPath(const ofPath & path,bool is_subpath=false){
 		if(!surface) return;
 		const vector<ofPath::Command> & commands = path.getCommands();
 		if(is_subpath)
@@ -51,6 +65,8 @@ public:
 				curvePoints.clear();
 				cairo_line_to(cr,commands[i].to.x,commands[i].to.y);
 				break;
+
+
 			case ofPath::Command::curveTo:
 				curvePoints.push_back(commands[i].to);
 
@@ -69,10 +85,14 @@ public:
 					curvePoints.pop_front();
 				}
 				break;
+
+
 			case ofPath::Command::bezier2DTo:
 				curvePoints.clear();
 				cairo_curve_to(cr,commands[i].cp1().x,commands[i].cp1().y,commands[i].cp2().x,commands[i].cp2().y,commands[i].to.x,commands[i].to.y);
 				break;
+
+
 			case ofPath::Command::arc2D:
 				curvePoints.clear();
 				// elliptic arcs not directly supported in cairo, lets scale y
@@ -99,7 +119,7 @@ public:
 
 		const vector<ofPath> &subpaths = path.getSubPaths();
 		for(int i=0;i<subpaths.size();i++){
-			draw(subpaths[i],true);
+			drawPath(subpaths[i],true);
 		}
 
 		cairo_fill_rule_t cairo_poly_mode;
@@ -125,7 +145,6 @@ public:
 		}
 	}
 
-private:
 	deque<ofPoint> curvePoints;
 	cairo_t * cr;
 	cairo_surface_t * surface;
