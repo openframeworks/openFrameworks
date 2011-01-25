@@ -1,10 +1,6 @@
-//Keith Pasko, Memo Akten
-
 // TODO:
-// add/remove/edit vertices, 
-// get face info
-// make this smarter so we don't need wire indices, but can use edge flags
-// figure out if we want to return references for getVertex etc, i.e. we want to allow them to access the info directly or not
+// get face info properly
+// use edge flags
 
 #pragma once
 
@@ -17,7 +13,7 @@ enum ofTriangleMode{
 	OF_TRIANGLES_ELEMENT,
 	OF_TRIANGLE_STRIP_ELEMENT,
 	OF_TRIANGLE_FAN_ELEMENT,
-	OF_LINE_LOOP_ELEMENT
+	OF_LINE_LOOP_ELEMENT,
 };
 
 inline GLuint ofGetGLTriangleMode(ofTriangleMode mode){
@@ -143,3 +139,4 @@ protected:
 //	vector<GLuint> indicesWire;
 //	ofMaterial *mat;
 };
+
