@@ -3,7 +3,7 @@
 //--------------------------------------------------------------
 void testApp::setup(){
 	
-	ofSetLogLevel(OF_LOG_VERBOSE);
+//	ofSetLogLevel(OF_LOG_VERBOSE);
     model.loadMeshes("astroBoy_walk.dae",meshes);
 	tex.loadImage("boy_10.tga");
 	
@@ -12,6 +12,8 @@ void testApp::setup(){
 	for(int i =0; i < meshes.size();i++){
 		vboMeshes.push_back(ofVboMesh());
 		vboMeshes.back().meshElement = &meshes[i];
+		vboMeshes.back().enableTexCoords();
+		vboMeshes.back().enableNormals();
 		vboMeshes.back().drawType = GL_STREAM_DRAW_ARB;
 	}
 	
@@ -31,6 +33,7 @@ void testApp::setup(){
 
 //--------------------------------------------------------------
 void testApp::update(){
+
 	for (int i =0; i < vboMeshes.size();i++){
 		for (int j=0; j<vboMeshes[i].meshElement->getNumVertices();j++){
 			ofVec3f curVert = vboMeshes[i].meshElement->getVertex(j);
@@ -41,7 +44,7 @@ void testApp::update(){
 			vboMeshes[i].meshElement->setVertex(j,curVert+modVert);
 		}
 		//vboMeshes[i].vbo.setVertexData(vboMeshes[i].meshElement->getVerticesPointer(),vboMeshes[i].meshElement->getNumVertices());
-		vboMeshes[i].setupVertices(GL_STREAM_DRAW_ARB);
+		//vboMeshes[i].setupVertices(GL_STREAM_DRAW_ARB);
 	}
 	
 	for (int i =0; i < vboMeshes.size();i++){
@@ -51,7 +54,7 @@ void testApp::update(){
 			ofVec2f modVert = .001*ofVec3f(cos(theta),sin(theta));
 			vboMeshes[i].meshElement->setTexCoord(j,curVert+modVert);
 		}
-		vboMeshes[i].setupTexCoords(GL_STREAM_DRAW_ARB);
+		//vboMeshes[i].setupTexCoords(GL_STREAM_DRAW_ARB);
 		//vboMeshes[i].vbo.updateTexCoordData(vboMeshes[i].meshElement->getTexCoordsPointer(),vboMeshes[i].meshElement->getNumTexCoords());
 	}
 }

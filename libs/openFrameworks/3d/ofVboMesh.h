@@ -1,5 +1,3 @@
-//Keith Pasko, Memo Akten
-
 #pragma once
 
 #include "ofMeshElement.h"
@@ -50,8 +48,15 @@ public:
 	
 	void update();
 	
+	void enableColors();
+	void disableColors();
+	void enableNormals();
+	void disableNormals();
+	void enableTexCoords();
+	void disableTexCoords();
+	
     ofMeshElement* meshElement;
-	bool bUseIndices;
+	bool bEnableIndices, bEnableColors, bEnableNormals, bEnableTexCoords;
 	ofVbo vbo;
 	int drawType;
 };

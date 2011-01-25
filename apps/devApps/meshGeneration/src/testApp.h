@@ -3,7 +3,6 @@
 
 
 #include "ofMain.h"
-#include "ofAssimpMeshLoader.h"
 #include "ofVboMesh.h"
 
 class testApp : public ofBaseApp{

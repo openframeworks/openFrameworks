@@ -5,7 +5,10 @@ ofVboMesh::ofVboMesh(){
 	vbo = ofVbo();
 	meshElement = NULL;
 	drawType = GL_STATIC_DRAW_ARB;
-	bUseIndices = true;
+	bEnableIndices = true;
+	bEnableColors = false;
+	bEnableTexCoords = false;
+	bEnableNormals = false;
 }
 
 //--------------------------------------------------------------
@@ -14,7 +17,7 @@ ofVboMesh::~ofVboMesh(){
 
 //--------------------------------------------------------------
 void ofVboMesh::setUseIndices(bool useIndices){
-	bUseIndices = useIndices;
+	bEnableIndices = useIndices;
 }
 
 //--------------------------------------------------------------
@@ -119,36 +122,73 @@ bool ofVboMesh::setupIndices(int usage){
 //--------------------------------------------------------------
 void ofVboMesh::addMeshVertices(const vector<ofVec3f>& verts){
 	for (int i =0; i < verts.size(); i++){
-		//copy vec3 info
 		meshElement->addVertex(verts[i]);
 	}
 }
 
 //--------------------------------------------------------------
+void ofVboMesh::enableColors(){
+	bEnableColors = true;
+}
+
+//--------------------------------------------------------------
+void ofVboMesh::disableColors(){
+	bEnableColors = false;
+}
+
+//--------------------------------------------------------------
+void ofVboMesh::enableNormals(){
+	bEnableNormals = true;
+}
+
+//--------------------------------------------------------------
+void ofVboMesh::disableNormals(){
+	bEnableNormals = false;
+}
+
+//--------------------------------------------------------------
+void ofVboMesh::enableTexCoords(){
+	bEnableTexCoords = true;
+}
+
+//--------------------------------------------------------------
+void ofVboMesh::disableTexCoords(){
+	bEnableTexCoords = false;
+}
+
+//--------------------------------------------------------------
 void ofVboMesh::update(){	
 	if(meshElement->haveVertsChanged()){
+		cout << "change" << endl;
 		setupVertices(drawType);
 		//vbo.updateVertexData(meshElement->getVerticesPointer(), meshElement->getNumVertices());
 	}
 	
-	if(meshElement->haveColorsChanged()){
-		setupColors(drawType);
-		//vbo.updateColorData(meshElement->getColorsPointer(), meshElement->getNumColors());
+	if(bEnableColors){
+		if(meshElement->haveColorsChanged()){
+			setupColors(drawType);
+			//vbo.updateColorData(meshElement->getColorsPointer(), meshElement->getNumColors());
+		}
+	}
+
+	if(bEnableNormals){
+		if(meshElement->haveNormalsChanged()){
+			setupNormals(drawType);
+			//vbo.updateNormalData(meshElement->getNormalsPointer(), meshElement->getNumNormals());
+		}
 	}
 	
-	if(meshElement->haveNormalsChanged()){
-		setupNormals(drawType);
-		//vbo.updateNormalData(meshElement->getNormalsPointer(), meshElement->getNumNormals());
+	if(bEnableTexCoords){
+		if(meshElement->haveTexCoordsChanged()){
+			setupTexCoords(drawType);
+			//vbo.updateTexCoordData(meshElement->getTexCoordsPointer(), meshElement->getNumTexCoords());
+		}	
 	}
-	
-	if(meshElement->haveTexCoordsChanged()){
-		setupTexCoords(drawType);
-		//vbo.updateTexCoordData(meshElement->getTexCoordsPointer(), meshElement->getNumTexCoords());
-	}	
-	
-	if(meshElement->haveIndicesChanged() && bUseIndices){
-		setupIndices(drawType);
-		//vbo.setIndexData(meshElement->getIndexPointer(),meshElement->getNumIndices());
+
+	if(bEnableIndices){
+		if(meshElement->haveIndicesChanged()){
+			setupIndices(drawType);
+		}
 		//vbo.updateIndexData(meshElement->getIndexPointer(),meshElement->getNumIndices());
 	}
 }
@@ -158,21 +198,29 @@ void ofVboMesh::draw(polyMode pMode){
 	if(!vbo.getIsAllocated()){
 		setupVertices(drawType);
 	}
-
-	if(meshElement->getNumColors() && !vbo.getUsingColors()){
-		setupColors(drawType);
+	
+	if(bEnableColors){
+		if(meshElement->getNumColors() && !vbo.getUsingColors()){
+			setupColors(drawType);
+		}
 	}
 	
-	if(meshElement->getNumNormals() && !vbo.getUsingNormals()){
-		setupNormals(drawType);
+	if(bEnableNormals){
+		if(meshElement->getNumNormals() && !vbo.getUsingNormals()){
+			setupNormals(drawType);
+		}
 	}
 	
-	if(meshElement->getNumTexCoords() && !vbo.getUsingTexCoords()){
-		setupTexCoords(drawType);
+	if(bEnableTexCoords){
+		if(meshElement->getNumTexCoords() && !vbo.getUsingTexCoords()){
+			setupTexCoords(drawType);
+		}
 	}
 	
-	if(!meshElement->getNumIndices()){
-		meshElement->setupIndices();
+	if(bEnableIndices){
+		if(meshElement->getNumIndices() && !vbo.getUsingIndices()){
+			setupIndices(drawType);
+		}
 	}
 	
 	update();
@@ -183,8 +231,7 @@ void ofVboMesh::draw(polyMode pMode){
 	GLuint mode = ofGetGLTriangleMode(meshElement->getMode());
 	
 	if(pMode!=OF_MESH_POINTS){
-		if(bUseIndices){
-			cout << meshElement->getNumIndices() << endl;
+		if(bEnableIndices){
 			vbo.drawElements(mode,meshElement->getNumIndices());
 		}else{
 			vbo.draw(mode,0,meshElement->getNumVertices());
