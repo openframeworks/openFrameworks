@@ -2,6 +2,7 @@
 
 //--------------------------------------------------------------
 void testApp::setup(){	
+
 	// register touch events
 	ofRegisterTouchEvents(this);
 

@@ -4,7 +4,7 @@
 #include "ofxiPhone.h"
 #include "ofxiPhoneExtras.h"
 
-class testApp : public ofxiPhoneApp{
+class testApp : public ofxiPhoneApp {
 	
 public:
 	void setup();
