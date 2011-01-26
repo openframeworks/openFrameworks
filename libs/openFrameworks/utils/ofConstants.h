@@ -342,6 +342,9 @@ enum ofPolyWindingMode{
 #define 	OF_CLOSE						  (true)
 
 
+enum ofHandednessType {OF_LEFT_HANDED, OF_RIGHT_HANDED};
+
+
 //--------------------------------------------
 //
 // 	Keyboard definitions
