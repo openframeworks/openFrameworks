@@ -72,11 +72,13 @@ void ofVARenderer::popView() {
 
 //----------------------------------------------------------
 void ofVARenderer::viewport(float x, float y, float width, float height, bool invertY) {
+
 	if(width == 0) width = ofGetWidth();
 	if(height == 0) height = ofGetHeight();
 
-	if (invertY)
+	if (invertY){
 		y = ofGetHeight() - (y + height);
+	}
 
 	glViewport(x, y, width, height);
 }
