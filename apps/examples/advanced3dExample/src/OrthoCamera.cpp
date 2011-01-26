@@ -50,7 +50,7 @@ void OrthoCamera::begin(ofRectangle rect)
 	//
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	glOrtho(-scalex, scalex, -scaley, scaley, -4 * scale, 4 * scale);
+	glOrtho(-scalex, scalex, -scaley, scaley, -20 * scale, 20 * scale);
 	glMatrixMode(GL_MODELVIEW);
 	//
 	//////////////////////////////

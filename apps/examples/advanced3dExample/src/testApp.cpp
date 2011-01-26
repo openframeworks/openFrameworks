@@ -1,10 +1,5 @@
 #include "testApp.h"
 
-ofNode target;
-ofRectangle rect;
-bool oldMousePress = false;
-ofVec3f mousePrev;
-
 ///////////////////////////////////////////////////
 ///////////////////////////////////////////////
 ///////////////////////////////////////////
@@ -26,11 +21,16 @@ ofVec3f mousePrev;
 //
 // 1. Change number of particles in the swarm.
 // 2. Change the dynamic properties of the swarm (speed, orbit radius)
-// 3. Add another camera to the existing 4, have all parts of the example working with all 5 cameras
-// 4. Create your own custom node class and add it to the scene
+//
+// 3. Change the near and far clipping planes of camEasyCam
+// 4. Add another camera to the existing 4.
+//		Have all parts of the example working with all 5 cameras
+//
+// 5. Create your own custom node class and add it to the scene
+//
+// 6. Understand how the 'frustrum preview' works
 //
 ///////////////////////////////////////////////////
-
 
 
 
@@ -71,6 +71,8 @@ void testApp::setup(){
 	//
 	/////////////////////
 	
+	
+	
 	/////////////////////
 	// DEFINE VIEWPORTS
 	/////////////////////	
@@ -78,6 +80,8 @@ void testApp::setup(){
 	setupViewports();
 	//
 	/////////////////////	
+	
+	
 	
 	/////////////////////
 	// SETUP SWARM
@@ -205,21 +209,27 @@ void testApp::drawScene(int iCameraDraw){
 	nodeGrid.draw();
 	
 	//////////////////////////////////
-	// DRAW EASYCAM FRUSTUM
+	// DRAW EASYCAM FRUSTUM PREVIEW
 	//////////////////////////////////
 	//
-	//this section draws our camera in
-	//the scene
+	// This code draws our camera in
+	//	the scene (reddy/pink lines)
 	//
-	//the pyramid-like shape which the
-	//camera creates is called a 'frustum'
+	// The pyramid-like shape defined
+	//	by the cameras view is called
+	//	a 'frustum'.
 	//
-	//check we're not looking through ofEasyCam
+	// Often we refer to the volume
+	//	which can be seen by the
+	//	camera as 'the view frustum'.
+	//
+	
+	
+	//let's not draw the camera
+	//if we're looking through it
 	if (iCameraDraw != 0)
 	{
 		
-		//draw camera frustum.
-		//
 		//in 'camera space' this frustum
 		//is defined by a box with bounds
 		//-1->1 in each axis
@@ -227,18 +237,40 @@ void testApp::drawScene(int iCameraDraw){
 		//to convert from camera to world
 		//space, we multiply by the inverse
 		//matrix of the camera
+		//
+		//by applying this transformation
+		//our box in camera space is
+		//transformed into a frustum in
+		//world space.
 		
-		ofMatrix4x4 inverseCamera;
+		ofMatrix4x4 inverseCameraMatrix;
 		
-		inverseCamera.makeInvertOf(cameras[0]->getModelViewProjectionMatrix());
+		inverseCameraMatrix.makeInvertOf(cameras[0]->getModelViewProjectionMatrix());
 		
+		// By default, we can say
+		//	'we are drawing in world space'
+		//
+		// The camera matrix performs
+		//	world->camera
+		//
+		// The inverse camera matrix performs
+		//	camera->world
+		//
+		// Our box is in camera space, if we
+		//	want to draw that into world space
+		//	we have to apply the camera->world
+		//	transformation.
+		//
 		ofPushMatrix();
-		glMultMatrixf(inverseCamera.getPtr());
+		glMultMatrixf(inverseCameraMatrix.getPtr());
 		
 		
 		ofPushStyle();
 		ofSetColor(255, 100, 100);
 		
+		//////////////////////
+		// DRAW WIREFRAME BOX
+		//
 		// xy plane at z=-1 in camera sapce
 		// (small rectangle at camera position)
 		//
@@ -276,6 +308,8 @@ void testApp::drawScene(int iCameraDraw){
 			glVertex3f(1, -1, -1);
 			glVertex3f(1, -1, 1);
 		glEnd();
+		//
+		//////////////////////
 
 		ofPopStyle();
 		ofPopMatrix();
