@@ -19,6 +19,7 @@ ofColor ofAssimpMeshLoader::aiColorToOfColor(const aiColor4D& c){
 
 void ofAssimpMeshLoader::aiMeshToOfMesh(const aiMesh* aim, ofMeshElement& ofm){
 	
+	
 	// default to triangle mode
 	ofm.setMode(OF_TRIANGLES_ELEMENT);
 	
@@ -26,15 +27,6 @@ void ofAssimpMeshLoader::aiMeshToOfMesh(const aiMesh* aim, ofMeshElement& ofm){
 	for (int i=0; i < (int)aim->mNumVertices;i++){
 		ofm.addVertex(ofVec3f(aim->mVertices[i].x,aim->mVertices[i].y,aim->mVertices[i].z));
 	}
-	
-	for (int i=0; i < (int)aim->mNumFaces;i++){
-		if(aim->mFaces[i].mNumIndices>3){
-			ofLog(OF_LOG_WARNING,"non-triangular face found: model face # " + ofToString(i));
-		}
-		for (int j=0; j<(int)aim->mFaces[i].mNumIndices; j++){
-			ofm.addIndex(aim->mFaces[i].mIndices[j]);
-		}
-	}	
 
 	if(aim->HasNormals()){
 		for (int i=0; i < (int)aim->mNumVertices;i++){
@@ -57,6 +49,15 @@ void ofAssimpMeshLoader::aiMeshToOfMesh(const aiMesh* aim, ofMeshElement& ofm){
 			ofm.addColor(aiColorToOfColor(aim->mColors[0][i]));
 		}
 	}
+	
+	for (int i=0; i < aim->mNumFaces;i++){	
+		if(aim->mFaces[i].mNumIndices>3){
+			ofLog(OF_LOG_WARNING,"non-triangular face found: model face # " + ofToString(i));
+		}
+		for (int j=0; j<aim->mFaces[i].mNumIndices; j++){
+			ofm.addIndex(aim->mFaces[i].mIndices[j]);
+		}
+	}	
 	
 	// copy name
 	//ofm.name = string(aim->mName.data);
