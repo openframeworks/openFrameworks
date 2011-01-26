@@ -1,25 +1,9 @@
-//Todd Vanderlin, Keith Pasko
-
-//TODO: LOADS AND LOADS of GL error checking
+//TODO: GL error checking
 //TODO: Add GLuint for vbo itself. make sure data is only sent to GPU if its updated, not otherwise
 //TODO: Add edge flags
 
 #pragma once
 #include "ofMain.h"
-
-/*
-enum {
-	OF_VBO_VERTEX,
-	OF_VBO_NORMAL,
-	OF_VBO_COLOR,
-	OF_VBO_TEX_COORDS
-};
-
-enum {
-	OF_VBO_STATIC = GL_STATIC_DRAW,	
-	OF_VBO_STREAM = GL_STREAM_DRAW
-};
- */
 
 class ofVbo {
 	
