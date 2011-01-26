@@ -66,23 +66,27 @@ public:
 	ofVec3f getVertex(int i);
 	void addVertex(const ofVec3f& v);
 	void addVertices(const vector<ofVec3f>& verts);
+	void addVertices(const ofVec3f* verts, int size);
 	void removeVertex(int index);
 	void setVertex(int index, const ofVec3f& v);
 	
 	ofVec3f getNormal(int i);
 	void addNormal(const ofVec3f& n);
 	void addNormals(const vector<ofVec3f>& norms);
+	void addNormals(const ofVec3f* norms, int size);
 	void removeNormal(int index);
 	void setNormal(int index, const ofVec3f& n);
 	
 	ofColor getColor(int i);
 	void addColor(const ofColor& c);
 	void addColors(const vector<ofColor>& cols);
+	void addColors(const ofColor* cols, int size);
 	void removeColor(int index);
 	void setColor(int index, const ofColor& c);
 	
 	ofVec2f getTexCoord(int i);
 	void addTexCoords(const vector<ofVec2f>& tCoords);
+	void addTexCoords(const ofVec2f* tCoords, int size);
 	void addTexCoord(const ofVec2f& t);
 	void removeTexCoord(int index);
 	void setTexCoord(int index, const ofVec2f& t);
@@ -90,6 +94,7 @@ public:
 	int getIndex(int i);
 	void addIndex(int i);
 	void addIndices(const vector<GLuint>& inds);
+	void addIndices(const GLuint* inds, int size);
 	void removeIndex(int i);
 	void setIndex(int i, int val);
 	

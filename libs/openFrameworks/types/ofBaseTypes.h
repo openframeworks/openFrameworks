@@ -192,8 +192,44 @@ class ofBaseRenderer{
 public:
 	virtual ~ofBaseRenderer(){}
 	virtual bool rendersPathDirectly()=0;
+	//virtual bool is3DRenderer()=0;
+	//virtual bool isFrameByFrameRenderer()=0;
 	virtual void draw(ofShape & shape)=0;
 	virtual void draw(ofPath & shape)=0;
+
+	//--------------------------------------------
+	// transformations
+	virtual void pushView(){};
+	virtual void popView(){};
+
+	// setup matrices and viewport (upto you to push and pop view before and after)
+	// if width or height are 0, assume windows dimensions (ofGetWidth(), ofGetHeight())
+	// if nearDist or farDist are 0 assume defaults (calculated based on width / height)
+	virtual void viewport(float x = 0, float y = 0, float width = 0, float height = 0, bool invertY = true){};
+	virtual void setupScreenPerspective(float width = 0, float height = 0, bool vFlip = true, float fov = 60, float nearDist = 0, float farDist = 0){};
+	virtual void setupScreenOrtho(float width = 0, float height = 0, bool vFlip = true, float nearDist = -1, float farDist = 1){};
+	virtual ofRectangle getCurrentViewport(){return ofRectangle();};
+	virtual int getViewportWidth(){return 0;};
+	virtual int getViewportHeight(){return 0;};
+
+	virtual void setCoordHandedness(ofHandednessType handedness){};
+	virtual ofHandednessType getCoordHandedness(){return OF_LEFT_HANDED;};
+
+	//our openGL wrappers
+	virtual void pushMatrix(){};
+	virtual void popMatrix(){};
+	virtual void translate(float x, float y, float z = 0){};
+	virtual void translate(const ofPoint & p){};
+	virtual void scale(float xAmnt, float yAmnt, float zAmnt = 1){};
+	virtual void rotate(float degrees, float vecX, float vecY, float vecZ){};
+	virtual void rotateX(float degrees){};
+	virtual void rotateY(float degrees){};
+	virtual void rotateZ(float degrees){};
+	virtual void rotate(float degrees){};
+
+	// screen coordinate things / default gl values
+	virtual void setupGraphicDefaults(){};
+	virtual void setupScreen(){};
 };
 
 /*class ofBaseRenders{

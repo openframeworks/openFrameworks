@@ -95,6 +95,12 @@ void ofMeshElement::addVertices(const vector<ofVec3f>& verts){
 }
 
 //--------------------------------------------------------------
+void ofMeshElement::addVertices(const ofVec3f* verts,int size){
+	vertices.insert(vertices.end(),verts,verts+(size*sizeof(ofVec3f)));
+	bVertsChanged = true;
+}
+
+//--------------------------------------------------------------
 void ofMeshElement::addColor(const ofColor& c){
 	//TODO: figure out if we add to all other arrays to match
 	colors.push_back(c);
@@ -121,6 +127,12 @@ void ofMeshElement::addNormals(const vector<ofVec3f>& norms){
 }
 
 //--------------------------------------------------------------
+void ofMeshElement::addNormals(const ofVec3f* norms, int size){
+	normals.insert(normals.end(),norms,norms+(size*sizeof(norms)));
+	bNormalsChanged = true;
+}
+
+//--------------------------------------------------------------
 void ofMeshElement::addTexCoord(const ofVec2f& t){
 	//TODO: figure out if we add to all other arrays to match
 	texCoords.push_back(t);
@@ -134,15 +146,26 @@ void ofMeshElement::addTexCoords(const vector<ofVec2f>& tCoords){
 }
 
 //--------------------------------------------------------------
+void ofMeshElement::addTexCoords(const ofVec2f* tCoords, int size){
+	texCoords.insert(texCoords.end(),tCoords,tCoords+(size*sizeof(ofVec2f)));
+	bTexCoordsChanged = true;
+}
+
+//--------------------------------------------------------------
 void ofMeshElement::addIndex(int i){
 	indices.push_back(GLuint(i));
 	bIndicesChanged = true;
 }
 
-
 //--------------------------------------------------------------
 void ofMeshElement::addIndices(const vector<GLuint>& inds){
 	indices.insert(indices.end(),inds.begin(),inds.end());
+	bIndicesChanged = true;
+}
+
+//--------------------------------------------------------------
+void ofMeshElement::addIndices(const GLuint* inds, int size){
+	indices.insert(indices.end(),inds,inds+(size*sizeof(GLuint)));
 	bIndicesChanged = true;
 }
 
