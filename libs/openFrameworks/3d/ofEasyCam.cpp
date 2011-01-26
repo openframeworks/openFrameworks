@@ -40,7 +40,7 @@ void ofEasyCam::begin(ofRectangle rect) {
 		
 		lastMouseActionFrame = ofGetFrameNum();
 		
-		ofVec2f mousePosScreen = ofVec3f(ofGetMouseX() - rect.width/2, rect.height/2 - ofGetMouseY(), 0);
+		ofVec2f mousePosScreen = ofVec3f(ofGetMouseX() - rect.width/2 - rect.x, rect.height/2 - (ofGetMouseY() - rect.y), 0);
 		ofVec2f mouseVelScreen = (mousePosScreen - mousePosScreenPrev).lengthSquared();
 		
 		if(ofGetMousePressed(0) || ofGetMousePressed(2) && mouseVelScreen.lengthSquared() > 1.0f ) {
