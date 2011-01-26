@@ -1,5 +1,5 @@
 #include "ofLog.h"
-
+#include "ofConstants.h"
 #include <ofUtils.h>
 
 #include <Poco/PatternFormatter.h>
@@ -35,8 +35,13 @@ ofLogger::ofLogger(){
 	splitterChannel = new Poco::SplitterChannel();
 	
 	consoleChannel = new Poco::ConsoleChannel();
-	fileChannel = new Poco::FileChannel(ofToDataPath("openframeworks.log"));
-
+	
+	#ifndef TARGET_OS_IPHONE
+		fileChannel = new Poco::FileChannel(ofToDataPath("openframeworks.log"));
+	#else
+		fileChannel = new Poco::FileChannel();
+	#endif 
+	
 	// console open, file not opened (added) by default
 	splitterChannel->addChannel(consoleChannel);
 
@@ -397,7 +402,7 @@ void ofLogNotice::restoreConsoleColor(){
 
 //--------------------------------------------------------
 void ofLog(ofLogLevel logLevel, const string& message){
-	ofLogger::instance().log(logLevel, message);
+	//ofLogger::instance().log(logLevel, message);
 }
 
 void ofLog(ofLogLevel logLevel, const char* format, ...){
@@ -406,11 +411,12 @@ void ofLog(ofLogLevel logLevel, const char* format, ...){
 	va_start(args, format);
 		vsprintf(line, format, args);
 	va_end(args);
-	ofLogger::instance().log(logLevel, (string) line);
+	printf("%s\n",line); 
+	//ofLogger::instance().log(logLevel, (string) line);
 }
 
 void ofSetLogLevel(ofLogLevel logLevel){
-	ofLogger::instance().setLevel(logLevel);
+	//ofLogger::instance().setLevel(logLevel);
 }
 
 ofLogLevel ofGetLogLevel(){
