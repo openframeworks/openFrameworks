@@ -5,6 +5,35 @@ ofRectangle rect;
 bool oldMousePress = false;
 ofVec3f mousePrev;
 
+///////////////////////////////////////////////////
+///////////////////////////////////////////////
+///////////////////////////////////////////
+///////////////////////////////////////
+///////////////////////////////////
+//
+//
+// ADVANCED 3D EXAMPLE
+//		ofNode3d, ofCamera, ofEasyCam
+//
+//
+///////////////////////////////////
+///////////////////////////////////////
+///////////////////////////////////////////
+///////////////////////////////////////////////
+///////////////////////////////////////////////////
+//
+// SUGGESTED EXERCISES
+//
+// 1. Change number of particles in the swarm.
+// 2. Change the dynamic properties of the swarm (speed, orbit radius)
+// 3. Add another camera to the existing 4, have all parts of the example working with all 5 cameras
+// 4. Create your own custom node class and add it to the scene
+//
+///////////////////////////////////////////////////
+
+
+
+
 //--------------------------------------------------------------
 void testApp::setup(){
 	
@@ -12,17 +41,13 @@ void testApp::setup(){
 	ofBackground(70, 70, 70);
 	glEnable(GL_DEPTH_TEST);
 	
-//	glEnable(GL_CULL_FACE);
-//	glEnable(GL_LIGHTING);
-//	glEnable(GL_LIGHT0);
-//	glEnable(GL_COLOR_MATERIAL);
-	
 	
 	/////////////////////
 	// SETUP CAMERAS
 	/////////////////////	
 	//
 	iCurrentCamera = 1;
+	bCamParent = false;
 	
 	// user camera
 	camEasyCam.setTarget(nodeSwarm);
@@ -151,6 +176,8 @@ void testApp::draw(){
 	ofDrawBitmapString("Press keys 1-4 to select a camera for main view", viewMain.x + 20, 30);
 	ofDrawBitmapString("Camera selected: " + ofToString(iCurrentCamera+1), viewMain.x + 20, 50);
 	ofDrawBitmapString("Press 'f' to toggle fullscreen", viewMain.x + 20, 70);
+	ofDrawBitmapString("Press 'p' to toggle parents on OrthoCamera's", viewMain.x + 20, 90);
+	
 	ofDrawBitmapString("EasyCam",	viewGrid[0].x + 20, viewGrid[0].y + 30);
 	ofDrawBitmapString("Front",		viewGrid[1].x + 20, viewGrid[1].y + 30);
 	ofDrawBitmapString("Top",		viewGrid[2].x + 20, viewGrid[2].y + 30);
@@ -267,6 +294,23 @@ void testApp::keyPressed(int key){
 	
 	if (key == 'f')
 		ofToggleFullscreen();
+	
+	if (key == 'p')
+		if (bCamParent)
+		{
+			camFront.clearParent();
+			camTop.clearParent();
+			camLeft.clearParent();
+			
+			bCamParent = false;
+		} else {
+			camFront.setParent(nodeSwarm.light);
+			camTop.setParent(nodeSwarm.light);
+			camLeft.setParent(nodeSwarm.light);
+			
+			bCamParent = true;
+		}
+
 	
 }
 
