@@ -2,12 +2,11 @@
 #include "ofCamera.h"
 #include "ofMeshNode.h"
 
-
 #define kMoveInc		10
 #define kRotInc			5
 
-
 // reset all transformations and options to defaults
+//--------------------------------------------------------------
 void testApp::reset() {
 	camToView = 0;
 	camToConfigure = 1;
@@ -302,3 +301,12 @@ void testApp::windowResized(int w, int h){
 	
 }
 
+//--------------------------------------------------------------
+void testApp::gotMessage(ofMessage msg){
+
+}
+
+//--------------------------------------------------------------
+void testApp::dragEvent(ofDragInfo dragInfo){ 
+
+}

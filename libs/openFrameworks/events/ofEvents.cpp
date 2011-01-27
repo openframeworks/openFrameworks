@@ -293,3 +293,9 @@ void ofSendMessage(ofMessage msg){
 		ofNotifyEvent(ofEvents.messageEvent, msg);
 	#endif
 }
+
+//------------------------------------------
+void ofSendMessage(string messageString){
+	ofMessage msg(messageString);
+	ofSendMessage(msg);
+}

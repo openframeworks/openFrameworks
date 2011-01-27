@@ -1,5 +1,6 @@
 #include "testApp.h"
 
+//--------------------------------------------------------------
 void testApp::setup() {	
 	quality = OF_IMAGE_QUALITY_WORST;
 	maxSize = 2048;
@@ -7,6 +8,7 @@ void testApp::setup() {
 	reset();
 }
 
+//--------------------------------------------------------------
 void testApp::reset() {
 	generation = 0;
 	img.loadImage("buses.jpg");
@@ -17,6 +19,7 @@ void testApp::reset() {
 	subY = ofRandom(0, addY);
 }
 
+//--------------------------------------------------------------
 void testApp::update() {
 	string curFilename = "compressed.jpg";
 	
@@ -31,7 +34,7 @@ void testApp::update() {
 			// first loading the file
 			ofBuffer file = ofBufferFromFile(curFilename);
 			int fileSize = file.size();
-			char* buffer = file.getBuffer();
+			char * buffer = file.getBinaryBuffer();
 			
 			// pick a byte offset that is somewhere near the end of the file
 			int whichByte = (int) ofRandom(fileSize * glitchStart, fileSize);
@@ -61,6 +64,7 @@ void testApp::update() {
 	}
 }
 
+//--------------------------------------------------------------
 void testApp::draw() {
 	ofSetColor(255);
 	img.draw(0, 0, ofGetWidth(), ofGetHeight());
@@ -72,6 +76,47 @@ void testApp::draw() {
 	ofDrawBitmapString("Click to reset, hold 'g' to glitch.", 10, 40);
 }
 
-void testApp::mousePressed(int x, int y, int button) {
+//--------------------------------------------------------------
+void testApp::keyPressed  (int key){
+
+}
+
+//--------------------------------------------------------------
+void testApp::keyReleased  (int key){
+
+}
+
+//--------------------------------------------------------------
+void testApp::mouseMoved(int x, int y ){
+
+}
+
+//--------------------------------------------------------------
+void testApp::mouseDragged(int x, int y, int button){
+
+}
+
+//--------------------------------------------------------------
+void testApp::mousePressed(int x, int y, int button){
 	reset();
+}
+
+//--------------------------------------------------------------
+void testApp::mouseReleased(int x, int y, int button){
+
+}
+
+//--------------------------------------------------------------
+void testApp::windowResized(int w, int h){
+
+}
+
+//--------------------------------------------------------------
+void testApp::gotMessage(ofMessage msg){
+
+}
+
+//--------------------------------------------------------------
+void testApp::dragEvent(ofDragInfo dragInfo){ 
+
 }
