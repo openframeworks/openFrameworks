@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ofMeshElement.h"
+#include "ofVertexData.h"
 #include "ofVbo.h"
 
 //enum for drawing mode status
@@ -22,11 +22,11 @@ public:
 	void clone(const ofVboMesh& v);
 	*/
 	
-	void setMeshElement(ofMeshElement* m);
+	void setVertexData(ofVertexData* m);
 	void setUseIndices(bool useIndices=true);
 	
-	ofMeshElement* getMeshElement();
-	const ofMeshElement* getMeshElement() const;
+	ofVertexData* getVertexData();
+	const ofVertexData* getVertexData() const;
 	
 	void setDrawType(int drawType);
 	
@@ -41,11 +41,6 @@ public:
 	void drawFaces();
 	void draw(polyMode mode);
 	
-	void addTriangles(const vector<ofVec3f>& verts);
-	void addTriangleFan(const vector<ofVec3f>& verts);
-	void addTriangleStrip(const vector<ofVec3f>& verts);
-	void addMeshVertices(const vector<ofVec3f>& verts);
-	
 	void update();
 	
 	void enableColors();
@@ -55,7 +50,7 @@ public:
 	void enableTexCoords();
 	void disableTexCoords();
 	
-    ofMeshElement* meshElement;
+    ofVertexData* vertexData;
 	bool bEnableIndices, bEnableColors, bEnableNormals, bEnableTexCoords;
 	ofVbo vbo;
 	int drawType;

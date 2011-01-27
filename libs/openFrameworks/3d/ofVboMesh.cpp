@@ -3,9 +3,9 @@
 //--------------------------------------------------------------
 ofVboMesh::ofVboMesh(){
 	vbo = ofVbo();
-	meshElement = NULL;
+	vertexData = NULL;
 	drawType = GL_STATIC_DRAW_ARB;
-	bEnableIndices = true;
+	bEnableIndices = false;
 	bEnableColors = false;
 	bEnableTexCoords = false;
 	bEnableNormals = false;
@@ -39,90 +39,83 @@ ofVboMesh& ofVboMesh::operator=(const ofVboMesh& v){
 
 //--------------------------------------------------------------
 void ofVboMesh::clone(const ofVboMesh& v){
-	meshElement = v.getMeshElement();
+	vertexData = v.getvertexData();
 	vbo = v.vbo;
 }
  */
 
 //--------------------------------------------------------------
-void ofVboMesh::setMeshElement(ofMeshElement* m){
-	meshElement = m;
+void ofVboMesh::setVertexData(ofVertexData* m){
+	vertexData = m;
 }
 
 //--------------------------------------------------------------
-ofMeshElement* ofVboMesh::getMeshElement(){
-	return meshElement;
+ofVertexData* ofVboMesh::getVertexData(){
+	return vertexData;
 }
 
 //--------------------------------------------------------------
-const ofMeshElement* ofVboMesh::getMeshElement() const{
-	return meshElement;
+const ofVertexData* ofVboMesh::getVertexData() const{
+	return vertexData;
 }
 
 //--------------------------------------------------------------
 bool ofVboMesh::setupVertices(int usage){
-	int size = meshElement->getNumVertices();
+	int size = vertexData->getNumVertices();
 	if(size){
-		vbo.setVertexData(meshElement->getVerticesPointer(),size, usage);
+		vbo.setVertexData(vertexData->getVerticesPointer(),size, usage);
 		return true;
 	}else{
-		ofLog(OF_LOG_WARNING,"ofVboMesh:setupVertices - no vertices in mesh.");
+		ofLog(OF_LOG_WARNING,"ofVboMesh:setupVertices - no vertices in vertexData.");
 		return false;
 	}
 }
 
 //--------------------------------------------------------------
 bool ofVboMesh::setupColors(int usage){
-	int size = meshElement->getNumColors();
+	int size = vertexData->getNumColors();
 	if(size){
-		vbo.setColorData(meshElement->getColorsPointer(), size, usage);
+		vbo.setColorData(vertexData->getColorsPointer(), size, usage);
 		return true;
 	}else{
-		ofLog(OF_LOG_WARNING,"ofVboMesh:setupColors - no colors in meshElement.");
+		ofLog(OF_LOG_WARNING,"ofVboMesh:setupColors - no colors in vertexData.");
 		return false;
 	}
 }
 
 //--------------------------------------------------------------
 bool ofVboMesh::setupNormals(int usage){
-	int size = meshElement->getNumNormals();
+	int size = vertexData->getNumNormals();
 	if(size){
-		vbo.setNormalData(meshElement->getNormalsPointer(), size, usage);
+		vbo.setNormalData(vertexData->getNormalsPointer(), size, usage);
 		return true;
 	}else{
-		ofLog(OF_LOG_WARNING,"ofVboMesh:setupNormals - no normals in meshElement.");
+		ofLog(OF_LOG_WARNING,"ofVboMesh:setupNormals - no normals in vertexData.");
 		return false;
 	}
 }
 
 //--------------------------------------------------------------
 bool ofVboMesh::setupTexCoords(int usage){
-	int size = meshElement->getNumTexCoords();
+	int size = vertexData->getNumTexCoords();
 	if(size){
-		vbo.setTexCoordData(meshElement->getTexCoordsPointer(), size, usage);
+		vbo.setTexCoordData(vertexData->getTexCoordsPointer(), size, usage);
 		return true;
 	}else{
-		ofLog(OF_LOG_WARNING,"ofVboMesh:setupTexCoords - no texCoords in meshElement.");
+		ofLog(OF_LOG_WARNING,"ofVboMesh:setupTexCoords - no texCoords in vertexData.");
 		return false;
 	}
 }
 
 //--------------------------------------------------------------
 bool ofVboMesh::setupIndices(int usage){
-	int size = meshElement->getNumIndices();
+	int size = vertexData->getNumIndices();
 	if(size){
-		vbo.setIndexData(meshElement->getIndexPointer(), size, usage);
+		vbo.setIndexData(vertexData->getIndexPointer(), size, usage);
 		return true;
 	}else{
-		ofLog(OF_LOG_WARNING,"ofVboMesh:setupIndices - no indices in meshElement.");
+		ofLog(OF_LOG_WARNING,"ofVboMesh:setupIndices - no indices in vertexData.");
 		return false;
-	}
-}
-
-//--------------------------------------------------------------
-void ofVboMesh::addMeshVertices(const vector<ofVec3f>& verts){
-	for (int i =0; i < verts.size(); i++){
-		meshElement->addVertex(verts[i]);
 	}
 }
 
@@ -158,67 +151,66 @@ void ofVboMesh::disableTexCoords(){
 
 //--------------------------------------------------------------
 void ofVboMesh::update(){	
-	if(meshElement->haveVertsChanged()){
-		cout << "change" << endl;
+	if(vertexData->haveVertsChanged()){
 		setupVertices(drawType);
-		//vbo.updateVertexData(meshElement->getVerticesPointer(), meshElement->getNumVertices());
+		//vbo.updateVertexData(vertexData->getVerticesPointer(), vertexData->getNumVertices());
 	}
 	
 	if(bEnableColors){
-		if(meshElement->haveColorsChanged()){
+		if(vertexData->haveColorsChanged()){
 			setupColors(drawType);
-			//vbo.updateColorData(meshElement->getColorsPointer(), meshElement->getNumColors());
+			//vbo.updateColorData(vertexData->getColorsPointer(), vertexData->getNumColors());
 		}
 	}
 
 	if(bEnableNormals){
-		if(meshElement->haveNormalsChanged()){
+		if(vertexData->haveNormalsChanged()){
 			setupNormals(drawType);
-			//vbo.updateNormalData(meshElement->getNormalsPointer(), meshElement->getNumNormals());
+			//vbo.updateNormalData(vertexData->getNormalsPointer(), vertexData->getNumNormals());
 		}
 	}
 	
 	if(bEnableTexCoords){
-		if(meshElement->haveTexCoordsChanged()){
+		if(vertexData->haveTexCoordsChanged()){
 			setupTexCoords(drawType);
-			//vbo.updateTexCoordData(meshElement->getTexCoordsPointer(), meshElement->getNumTexCoords());
+			//vbo.updateTexCoordData(vertexData->getTexCoordsPointer(), vertexData->getNumTexCoords());
 		}	
 	}
 
 	if(bEnableIndices){
-		if(meshElement->haveIndicesChanged()){
+		if(vertexData->haveIndicesChanged()){
 			setupIndices(drawType);
 		}
-		//vbo.updateIndexData(meshElement->getIndexPointer(),meshElement->getNumIndices());
+		//vbo.updateIndexData(vertexData->getIndexPointer(),vertexData->getNumIndices());
 	}
 }
 
 //--------------------------------------------------------------
-void ofVboMesh::draw(polyMode pMode){
+void ofVboMesh::draw(polyMode renderType){
 	if(!vbo.getIsAllocated()){
 		setupVertices(drawType);
 	}
 	
 	if(bEnableColors){
-		if(meshElement->getNumColors() && !vbo.getUsingColors()){
+		if(vertexData->getNumColors() && !vbo.getUsingColors()){
 			setupColors(drawType);
 		}
 	}
 	
 	if(bEnableNormals){
-		if(meshElement->getNumNormals() && !vbo.getUsingNormals()){
+		if(vertexData->getNumNormals() && !vbo.getUsingNormals()){
 			setupNormals(drawType);
 		}
 	}
 	
 	if(bEnableTexCoords){
-		if(meshElement->getNumTexCoords() && !vbo.getUsingTexCoords()){
+		if(vertexData->getNumTexCoords() && !vbo.getUsingTexCoords()){
 			setupTexCoords(drawType);
 		}
 	}
 	
 	if(bEnableIndices){
-		if(meshElement->getNumIndices() && !vbo.getUsingIndices()){
+		if(vertexData->getNumIndices() && !vbo.getUsingIndices()){
 			setupIndices(drawType);
 		}
 	}
@@ -226,19 +218,19 @@ void ofVboMesh::draw(polyMode pMode){
 	update();
 	
 	glPushAttrib(GL_POLYGON_BIT);
-	glPolygonMode(GL_FRONT_AND_BACK, pMode);
+	glPolygonMode(GL_FRONT_AND_BACK, renderType);
 	
-	GLuint mode = ofGetGLTriangleMode(meshElement->getMode());
+	GLuint mode = ofGetGLPrimitiveMode(vertexData->getMode());
 	
-	if(pMode!=OF_MESH_POINTS){
+	if(renderType!=OF_MESH_POINTS){
 		if(bEnableIndices){
-			vbo.drawElements(mode,meshElement->getNumIndices());
+			vbo.drawElements(mode,vertexData->getNumIndices());
 		}else{
-			vbo.draw(mode,0,meshElement->getNumVertices());
+			vbo.draw(mode,0,vertexData->getNumVertices());
 		}
 	}else{
 		//no indices needed for just drawing verts as points
-		vbo.draw(GL_POINTS,0,meshElement->getNumVertices());
+		vbo.draw(GL_POINTS,0,vertexData->getNumVertices());
 	}
 	
 	glPopAttrib();
