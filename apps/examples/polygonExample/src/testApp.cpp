@@ -1,7 +1,5 @@
 #include "testApp.h"
 
-
-
 //--------------------------------------------------------------
 void testApp::setup(){	
 	ofBackground(255,255,255);	
@@ -446,8 +444,6 @@ void testApp::mousePressed(int x, int y, int button){
 			curveVertices[i].bBeingDragged = false;
 		}	
 	}
-
-
 }
 
 //--------------------------------------------------------------
@@ -463,3 +459,12 @@ void testApp::windowResized(int w, int h){
 
 }
 
+//--------------------------------------------------------------
+void testApp::gotMessage(ofMessage msg){
+
+}
+
+//--------------------------------------------------------------
+void testApp::dragEvent(ofDragInfo dragInfo){ 
+
+}

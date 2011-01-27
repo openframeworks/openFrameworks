@@ -1,7 +1,5 @@
 #include "testApp.h"
 
-
-
 //--------------------------------------------------------------
 void testApp::setup(){
 
@@ -140,3 +138,12 @@ void testApp::audioRequested 	(float * output, int bufferSize, int nChannels){
 
 }
 
+//--------------------------------------------------------------
+void testApp::gotMessage(ofMessage msg){
+
+}
+
+//--------------------------------------------------------------
+void testApp::dragEvent(ofDragInfo dragInfo){ 
+
+}

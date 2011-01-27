@@ -1,8 +1,4 @@
 #include "testApp.h"
-#include "stdio.h"
-
-
-
 
 //--------------------------------------------------------------
 void testApp::setup(){	 
@@ -22,6 +18,11 @@ void testApp::setup(){
 	
 	bufferCounter = 0;
 	drawCounter = 0;
+
+}
+
+//--------------------------------------------------------------
+void testApp::update(){
 
 }
 
@@ -54,10 +55,8 @@ void testApp::draw(){
 	ofDrawBitmapString(reportString,80,380);
 }
 
-
-static float adder = 0;
 //--------------------------------------------------------------
-void testApp::audioReceived 	(float * input, int bufferSize, int nChannels){	
+void testApp::audioReceived(float * input, int bufferSize, int nChannels){	
 	// samples are "interleaved"
 	for (int i = 0; i < bufferSize; i++){
 		left[i] = input[i*2];
@@ -102,5 +101,13 @@ void testApp::windowResized(int w, int h){
 
 }
 
+//--------------------------------------------------------------
+void testApp::gotMessage(ofMessage msg){
 
+}
+
+//--------------------------------------------------------------
+void testApp::dragEvent(ofDragInfo dragInfo){ 
+
+}
 
