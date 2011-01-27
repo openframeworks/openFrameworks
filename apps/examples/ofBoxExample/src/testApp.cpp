@@ -2,17 +2,22 @@
 
 //--------------------------------------------------------------
 void testApp::setup(){
+	// this uses depth information for occlusion
+	// rather than always drawing things on top of each other
 	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_CULL_FACE);
 	
-	glEnable(GL_LIGHTING);
-	glEnable(GL_LIGHT0);
-	glEnable(GL_COLOR_MATERIAL);
-	
+	// ofBox uses texture coordinates from 0-1, so you can load whatever
+	// sized images you want and still use them to texture your box
+	// but we have to explicitly normalize our tex coords here
 	ofEnableNormalizedTexCoords();
+	
+	// loads the OF logo from disk
 	ofLogo.loadImage("of.png");
 	
+	// draw the ofBox outlines with some weight
 	ofSetLineWidth(10);
+	
+	cam.setDistance(1000);
 }
 
 //--------------------------------------------------------------
@@ -24,15 +29,12 @@ void testApp::update(){
 void testApp::draw(){
 	ofBackground(0, 0, 0);
 	
-	ofTranslate(ofGetWidth() / 2, ofGetHeight() / 2, 0);
-	ofRotateX(-mouseY);
-	ofRotateY(mouseX);
-	
 	float movementSpeed = .1;
 	float cloudSize = ofGetWidth() / 2;
 	float maxBoxSize = 100;
 	int boxCount = 100;
 	
+	cam.begin();
 	for(int i = 0; i < boxCount; i++) {
 		ofPushMatrix();
 		
@@ -62,6 +64,7 @@ void testApp::draw(){
 		
 		ofPopMatrix();
 	}
+	cam.end();
 }
 
 //--------------------------------------------------------------
