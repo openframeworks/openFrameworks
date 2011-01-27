@@ -19,7 +19,6 @@ void testApp::draw(){
 	ofSetHexColor(0xffffff);
 	TO.draw();
 
-
     string str = "I am a the main opengl thread.\nmy current count is: ";
 	str += ofToString(mainAppsCount);
     ofDrawBitmapString(str, 350, 56);
@@ -38,6 +37,11 @@ void testApp::keyPressed  (int key){
     } else if (key == 's'){
         TO.stop();
     }
+}
+
+//--------------------------------------------------------------
+void testApp::keyReleased(int key){
+
 }
 
 //--------------------------------------------------------------
@@ -64,3 +68,12 @@ void testApp::windowResized(int w, int h){
 
 }
 
+//--------------------------------------------------------------
+void testApp::gotMessage(ofMessage msg){
+
+}
+
+//--------------------------------------------------------------
+void testApp::dragEvent(ofDragInfo dragInfo){ 
+
+}
