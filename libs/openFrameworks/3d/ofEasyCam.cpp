@@ -8,15 +8,13 @@ float minimumRotation = 1e-7;
 
 //----------------------------------------
 ofEasyCam::ofEasyCam():
-distance(OF_EASYCAM_DEFAULT_DISTANCE),
 mousePosViewPrev(0, 0), 
 lastMouseActionFrame(0),
 drag(0.5),
 thrust(3.0f),
-distanceScaleVelocity(0)
-{
+distanceScaleVelocity(0) {
 	target.setPosition(0, 0, 0);
-	setPosition(0, 0, distance);
+	reset();
 	setParent(target);
 	
 	oldMousePress[0]=false;
@@ -75,7 +73,7 @@ void ofEasyCam::begin(ofRectangle rect) {
 			target.rotate(rotation.conj());
 		}
 		if (abs(distanceScaleVelocity - 1.0f) > minimumRotation) {
-			setDistance(distance * (1.0f + distanceScaleVelocity));
+			setDistance(getDistance() * (1.0f + distanceScaleVelocity));
 		}
 
 		//perform drag
@@ -99,7 +97,7 @@ void ofEasyCam::begin(ofRectangle rect) {
 //----------------------------------------
 void ofEasyCam::reset() {
 	target.resetTransform();
-	distance = OF_EASYCAM_DEFAULT_DISTANCE;
+	setDistance(OF_EASYCAM_DEFAULT_DISTANCE);
 	rotation = ofQuaternion(0,0,0,1);
 	distanceScaleVelocity = 0;
 }
@@ -123,23 +121,21 @@ ofNode& ofEasyCam::getTarget() {
 
 
 //----------------------------------------
-void ofEasyCam::setDistance(float f) {
-	if (f > 0.0f)
-	{
-		distance = f;
-		setPosition(0, 0, f);
+void ofEasyCam::setDistance(float distance) {
+	if (distance > 0.0f) {
+		setPosition(0, 0, distance);
 	}
 }
 
 //----------------------------------------
 float ofEasyCam::getDistance() const {
-	return distance;
+	return position.z;
 }
 
 
 //----------------------------------------
-void ofEasyCam::setThrust(float f) {
-	thrust = f;
+void ofEasyCam::setThrust(float thrust) {
+	this->thrust = thrust;
 }
 
 
@@ -149,8 +145,8 @@ float ofEasyCam::getThrust() const {
 }
 
 //----------------------------------------
-void ofEasyCam::setDrag(float f) {
-	drag = f;
+void ofEasyCam::setDrag(float drag) {
+	this->drag = drag;
 }
 
 
