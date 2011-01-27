@@ -6,9 +6,24 @@
 #define kNumCameras		2
 #define kNumLights		3
 
-
 class testApp : public ofBaseApp{
-public:
+	public:
+
+	void setup();
+	void update();
+	void draw();
+	
+	void keyPressed (int key);
+	void keyReleased(int key);
+	void mouseMoved(int x, int y );
+	void mouseDragged(int x, int y, int button);
+	void mousePressed(int x, int y, int button);
+	void mouseReleased(int x, int y, int button);
+	void windowResized(int w, int h);
+	void dragEvent(ofDragInfo dragInfo);
+	void gotMessage(ofMessage msg);	
+	
+	void reset();	
 	
 	ofMeshNode	testNodes[kNumTestNodes];
 	ofLight		light[kNumLights];
@@ -20,23 +35,6 @@ public:
 	
 	int			camToView;						// which camera index are we looking through
 	int			camToConfigure;					// which camera index we are configuring
-	
-	
-	void reset();
-	
-	
-	//--------------------------------------------------------------
-	void setup();
-	void update();
-	void draw();
-	
-	void keyPressed  (int key);
-	void keyReleased(int key);
-	void mouseMoved(int x, int y );
-	void mouseDragged(int x, int y, int button);
-	void mousePressed(int x, int y, int button);
-	void mouseReleased(int x, int y, int button);
-	void windowResized(int w, int h);
 	
 	
 };

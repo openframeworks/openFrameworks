@@ -1,21 +1,12 @@
 #include "testApp.h"
-#include "ofShader.h"
-
-// this examples uses a geometry shader to convert lines into triangle strips
-
-
-ofShader shader;
-bool doShader = false;
-
-vector<ofPoint> points;
 
 //--------------------------------------------------------------
 void testApp::setup(){
+
 	ofSetLogLevel(OF_LOG_VERBOSE);
 	ofBackground(50, 50, 50);
 	ofSetVerticalSync(false);
 	ofEnableAlphaBlending();
-	
 	
 	shader.setGeometryInputType(GL_LINES);
 	shader.setGeometryOutputType(GL_TRIANGLE_STRIP);
@@ -30,13 +21,14 @@ void testApp::setup(){
 		points.push_back(ofPoint(ofRandomf() * r, ofRandomf() * r, ofRandomf() * r));
 	}
 	
+	doShader = true;	
 	glEnable(GL_DEPTH_TEST);
 }
 
 //--------------------------------------------------------------
 void testApp::update(){
-}
 
+}
 
 //--------------------------------------------------------------
 void testApp::draw(){
@@ -69,13 +61,50 @@ void testApp::draw(){
 	ofDrawBitmapString("fps: " + ofToString((int)ofGetFrameRate()) + "\nPress 's' to toggle shader: " + (doShader ? "ON" : "OFF"), 20, 20);
 }
 
+//--------------------------------------------------------------
+void testApp::keyPressed  (int key){ 
+	if( key == 's' ){
+		doShader = !doShader;
+	}	
+}
 
 //--------------------------------------------------------------
-void testApp::keyPressed  (int key){
-	switch(key) {
-		case 's':
-			doShader ^= true;
-			break;
-	}
+void testApp::keyReleased(int key){ 
+	
+}
+
+//--------------------------------------------------------------
+void testApp::mouseMoved(int x, int y ){
+	
+}
+
+//--------------------------------------------------------------
+void testApp::mouseDragged(int x, int y, int button){
+	
+}
+
+//--------------------------------------------------------------
+void testApp::mousePressed(int x, int y, int button){
+	
+}
+
+//--------------------------------------------------------------
+void testApp::mouseReleased(int x, int y, int button){
+
+}
+
+//--------------------------------------------------------------
+void testApp::windowResized(int w, int h){
+
+}
+
+//--------------------------------------------------------------
+void testApp::gotMessage(ofMessage msg){
+
+}
+
+//--------------------------------------------------------------
+void testApp::dragEvent(ofDragInfo dragInfo){ 
+
 }
 
