@@ -4,13 +4,16 @@
 void testApp::setup(){
 	ofBackground(50, 50, 50, 0);
 	
+	ofEnableAlphaBlending();
 	ofSetLogLevel(OF_LOG_VERBOSE);
 		
-	mesh.meshElement = new ofMeshElement();
+	mesh.vertexData = new ofVertexData();
 	mesh.setDrawType(GL_STREAM_DRAW_ARB);
-	mesh.meshElement->setMode(OF_TRIANGLE_STRIP_ELEMENT);
+	mesh.bEnableIndices = false;
+	mesh.vertexData->setMode(OF_TRIANGLE_STRIP_MODE);
 	
-	glPointSize(4);
+	glPointSize(3);
+	ofSetLineWidth(3);
 }
 
 //--------------------------------------------------------------
@@ -19,18 +22,25 @@ void testApp::update(){
 
 //--------------------------------------------------------------
 void testApp::draw(){
-    ofSetColor(255, 255, 255, 255);
-    glPushMatrix();
+	ofSetColor(255, 0, 255, 155);
 	mesh.drawFaces();
-    glPopMatrix();
+	ofSetColor(0, 255, 0, 255);
+	mesh.drawWireframe();
+    ofSetColor(255, 255, 255, 255);
+	mesh.drawVertices();
+
     
     ofDrawBitmapString("fps: "+ofToString(ofGetFrameRate(), 2), 10, 15);
 }
 
 //--------------------------------------------------------------
 void testApp::keyPressed(int key){
-	if(key= ' ') {
+	if(key== ' ') {
 		lightsOn = !lightsOn;
+	}
+	
+	if (key == 'c'){
+		mesh.vertexData->clear();
 	}
 }
 
@@ -55,8 +65,8 @@ void testApp::mousePressed(int x, int y, int button){
 
 //--------------------------------------------------------------
 void testApp::mouseReleased(int x, int y, int button){
-	mesh.meshElement->addVertex(ofVec3f(x,y,0));
-	mesh.meshElement->addIndex(mesh.meshElement->getNumVertices()-1);
+	mesh.vertexData->addVertex(ofVec3f(x,y,0));
+	mesh.vertexData->addIndex(mesh.vertexData->getNumVertices()-1);
 }
 
 //--------------------------------------------------------------

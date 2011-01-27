@@ -1,6 +1,5 @@
-//TODO: GL error checking
-//TODO: Add GLuint for vbo itself. make sure data is only sent to GPU if its updated, not otherwise
-//TODO: Add edge flags
+//TODO: Speedtest repeated setup vs. update call
+//TODO: Add edge flags?
 
 #pragma once
 #include "ofMain.h"
