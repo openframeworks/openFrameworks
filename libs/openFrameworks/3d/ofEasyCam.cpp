@@ -52,13 +52,15 @@ void ofEasyCam::begin(ofRectangle rect) {
 			
 			//calc new rotation velocity
 			ofQuaternion newRotation;
-			if(oldMousePress[0])
+			if(oldMousePress[0]) {
 				newRotation.makeRotate(mousePosViewPrev, mousePosView);
+			}
 
 			//calc new scale velocity
 			float newDistanceScaleVelocity = 0.0f;
-			if(oldMousePress[1])
+			if(oldMousePress[1]) {
 				newDistanceScaleVelocity = 2 * (mousePosScreen.y - mousePosScreenPrev.y) / rect.height;
+			}
 			
 			//apply thrust towards new velocities
 			distanceScaleVelocity = ofLerp(distanceScaleVelocity, newDistanceScaleVelocity, thrust*dt);
@@ -85,9 +87,9 @@ void ofEasyCam::begin(ofRectangle rect) {
 		mousePosScreenPrev = mousePosScreen;
 		
 		//reset view on press key 'r'
-		if (ofGetKeyPressed('r'))
+		if (ofGetKeyPressed('r')) {
 			reset();
-		
+		}
 	}
 
 	
