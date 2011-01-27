@@ -48,20 +48,8 @@ void testApp::draw(){
     
     
     ofEnableBlendMode(blendMode);
-    //ofDisableBlendMode();
-    
     
     rainbow.draw(mouseX, mouseY);
-    
-//    ofSetColor(255,255,255, int(alpha * 255));
-//    ofCircle(mouseX, mouseY, 50);
-//
-//    
-//    ofSetColor(255,100, 100, int(alpha * 255));
-//    ofCircle(mouseX - 25, mouseY - 25, 50);
-//    
-//    ofSetColor(100,100, 255, int(alpha * 255));
-//    ofCircle(mouseX + 25, mouseY + 25, 50);
     
     ofDisableBlendMode();
 }
@@ -118,4 +106,15 @@ void testApp::mouseReleased(int x, int y, int button){
 
 //--------------------------------------------------------------
 void testApp::windowResized(int w, int h){
+
+}
+
+//--------------------------------------------------------------
+void testApp::gotMessage(ofMessage msg){
+
+}
+
+//--------------------------------------------------------------
+void testApp::dragEvent(ofDragInfo dragInfo){ 
+
 }

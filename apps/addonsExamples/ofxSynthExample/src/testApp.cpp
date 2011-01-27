@@ -11,7 +11,6 @@ void testApp::setup(){
 	rAudio = new float[1024];
 	
 	ofSoundStreamSetup(2,0,sampleRate,1024, 4);
-
 	
 	// setup synthesizer
 	synth.setPortamento(0.4*sampleRate);
@@ -30,9 +29,7 @@ void testApp::setup(){
 	passthrough.addInputFrom( &filter );
 	
 	//passthrough.addInputFrom( &mixer );
-	ofSoundStreamAddSoundSource( &passthrough );
-	
-	
+	ofSoundStreamAddSoundSource( &passthrough );	
 }
 
 //--------------------------------------------------------------
@@ -57,13 +54,14 @@ void testApp::draw(){
 
 
 //--------------------------------------------------------------
-void testApp::keyPressed  (int key){
+void testApp::keyPressed(int key){
 	synth.setFrequencyMidiNote(key/2);
 	synth.trigger();
 }
 
 //--------------------------------------------------------------
-void testApp::keyReleased  (int key){
+void testApp::keyReleased(int key){
+
 }
 
 //--------------------------------------------------------------
@@ -74,15 +72,17 @@ void testApp::mouseMoved(int x, int y ){
 
 //--------------------------------------------------------------
 void testApp::mouseDragged(int x, int y, int button){
+
 }
 
 //--------------------------------------------------------------
 void testApp::mousePressed(int x, int y, int button){
-}
 
+}
 
 //--------------------------------------------------------------
 void testApp::mouseReleased(int x, int y, int button){
+
 }
 
 //--------------------------------------------------------------
@@ -90,3 +90,12 @@ void testApp::windowResized(int w, int h){
 
 }
 
+//--------------------------------------------------------------
+void testApp::gotMessage(ofMessage msg){
+
+}
+
+//--------------------------------------------------------------
+void testApp::dragEvent(ofDragInfo dragInfo){ 
+
+}
