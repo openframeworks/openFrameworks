@@ -1,17 +1,14 @@
 #include "testApp.h"
 
-
 //--------------------------------------------------------------
 void testApp::setup(){
      nPts = 0;
      rotateAmount.set(0,0,1);
-     speedOfRotation = 0.1f;
+     speedOfRotation = 0.5f;
 
      ofBackground(255,255,255);
 
-
-
-     ofxVec3f center(ofGetWidth()/2, ofGetHeight()/2, 0);
+     ofVec3f center(ofGetWidth()/2, ofGetHeight()/2, 0);
 
      xAxisMin.set(-100,0,0);
      xAxisMax.set(100,0,0);
@@ -45,7 +42,7 @@ void testApp::update(){
      // this could all be one for loop, but broken out here for
      // clarity on the steps:
 
-     ofxVec3f center(ofGetWidth()/2, ofGetHeight()/2,0);
+     ofVec3f center(ofGetWidth()/2, ofGetHeight()/2,0);
 
      // move the points so that their center (ofGetW/2, ofGetH/2) is at 0,0,0
      for (int i = 0; i < nPts; i++){
@@ -188,6 +185,17 @@ void testApp::mouseReleased(int x, int y, int button){
 
 }
 
+//--------------------------------------------------------------
 void testApp::windowResized(int w, int h){
+
+}
+
+//--------------------------------------------------------------
+void testApp::gotMessage(ofMessage msg){
+
+}
+
+//--------------------------------------------------------------
+void testApp::dragEvent(ofDragInfo dragInfo){ 
 
 }

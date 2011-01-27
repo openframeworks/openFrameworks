@@ -34,6 +34,7 @@ void ofEasyCam::begin(ofRectangle rect) {
 		lastMouseActionFrame = ofGetFrameNum();
 		
 		if(ofGetMousePressed(0)) {
+		
 			ofVec3f targetPos =  target.getGlobalPosition();
 			ofVec3f mousePos(ofGetMouseX() - rect.width/2, rect.height/2 - ofGetMouseY(), targetPos.z);
 			ofVec3f mousePosView;
