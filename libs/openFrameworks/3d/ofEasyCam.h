@@ -18,20 +18,19 @@ public:
 	void setTarget(ofNode& target);
 	ofNode& getTarget();
 	
-	void setDistance(float f);
+	void setDistance(float distance);
 	float getDistance() const;
 	
-	void setDrag(float f);
+	void setDrag(float drag);
 	float getDrag() const;
 	
-	void setThrust(float f);
+	void setThrust(float thrust);
 	float getThrust() const;
 	
 
 	
 protected:
 	ofNode target;
-	float distance;
 
 	ofVec3f mousePosViewPrev;
 	ofVec3f mousePosScreenPrev;
