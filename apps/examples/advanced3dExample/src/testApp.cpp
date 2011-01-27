@@ -1,9 +1,38 @@
 #include "testApp.h"
 
-ofNode target;
-ofRectangle rect;
-bool oldMousePress = false;
-ofVec3f mousePrev;
+///////////////////////////////////////////////////
+///////////////////////////////////////////////
+///////////////////////////////////////////
+///////////////////////////////////////
+///////////////////////////////////
+//
+//
+// ADVANCED 3D EXAMPLE
+//		ofNode3d, ofCamera, ofEasyCam
+//
+//
+///////////////////////////////////
+///////////////////////////////////////
+///////////////////////////////////////////
+///////////////////////////////////////////////
+///////////////////////////////////////////////////
+//
+// SUGGESTED EXERCISES
+//
+// 1. Change number of particles in the swarm.
+// 2. Change the dynamic properties of the swarm (speed, orbit radius)
+//
+// 3. Change the near and far clipping planes of camEasyCam
+// 4. Add another camera to the existing 4.
+//		Have all parts of the example working with all 5 cameras
+//
+// 5. Create your own custom node class and add it to the scene
+//
+// 6. Understand how the 'frustrum preview' works
+//
+///////////////////////////////////////////////////
+
+
 
 //--------------------------------------------------------------
 void testApp::setup(){
@@ -12,17 +41,13 @@ void testApp::setup(){
 	ofBackground(70, 70, 70);
 	glEnable(GL_DEPTH_TEST);
 	
-//	glEnable(GL_CULL_FACE);
-//	glEnable(GL_LIGHTING);
-//	glEnable(GL_LIGHT0);
-//	glEnable(GL_COLOR_MATERIAL);
-	
 	
 	/////////////////////
 	// SETUP CAMERAS
 	/////////////////////	
 	//
 	iCurrentCamera = 1;
+	bCamParent = false;
 	
 	// user camera
 	camEasyCam.setTarget(nodeSwarm);
@@ -46,6 +71,8 @@ void testApp::setup(){
 	//
 	/////////////////////
 	
+	
+	
 	/////////////////////
 	// DEFINE VIEWPORTS
 	/////////////////////	
@@ -53,6 +80,8 @@ void testApp::setup(){
 	setupViewports();
 	//
 	/////////////////////	
+	
+	
 	
 	/////////////////////
 	// SETUP SWARM
@@ -149,8 +178,10 @@ void testApp::draw(){
 	//draw some labels
 	ofSetColor(255, 255, 255);
 	ofDrawBitmapString("Press keys 1-4 to select a camera for main view", viewMain.x + 20, 30);
-	ofDrawBitmapString("Camera selected: " + ofToString(iCurrentCamera+1), viewMain.x + 20, 40);
-	ofDrawBitmapString("Press 'f' to toggle fullscreen", viewMain.x + 20, 50);
+	ofDrawBitmapString("Camera selected: " + ofToString(iCurrentCamera+1), viewMain.x + 20, 50);
+	ofDrawBitmapString("Press 'f' to toggle fullscreen", viewMain.x + 20, 70);
+	ofDrawBitmapString("Press 'p' to toggle parents on OrthoCamera's", viewMain.x + 20, 90);
+	
 	ofDrawBitmapString("EasyCam",	viewGrid[0].x + 20, viewGrid[0].y + 30);
 	ofDrawBitmapString("Front",		viewGrid[1].x + 20, viewGrid[1].y + 30);
 	ofDrawBitmapString("Top",		viewGrid[2].x + 20, viewGrid[2].y + 30);
@@ -178,21 +209,27 @@ void testApp::drawScene(int iCameraDraw){
 	nodeGrid.draw();
 	
 	//////////////////////////////////
-	// DRAW EASYCAM FRUSTUM
+	// DRAW EASYCAM FRUSTUM PREVIEW
 	//////////////////////////////////
 	//
-	//this section draws our camera in
-	//the scene
+	// This code draws our camera in
+	//	the scene (reddy/pink lines)
 	//
-	//the pyramid-like shape which the
-	//camera creates is called a 'frustum'
+	// The pyramid-like shape defined
+	//	by the cameras view is called
+	//	a 'frustum'.
 	//
-	//check we're not looking through ofEasyCam
+	// Often we refer to the volume
+	//	which can be seen by the
+	//	camera as 'the view frustum'.
+	//
+	
+	
+	//let's not draw the camera
+	//if we're looking through it
 	if (iCameraDraw != 0)
 	{
 		
-		//draw camera frustum.
-		//
 		//in 'camera space' this frustum
 		//is defined by a box with bounds
 		//-1->1 in each axis
@@ -200,18 +237,40 @@ void testApp::drawScene(int iCameraDraw){
 		//to convert from camera to world
 		//space, we multiply by the inverse
 		//matrix of the camera
+		//
+		//by applying this transformation
+		//our box in camera space is
+		//transformed into a frustum in
+		//world space.
 		
-		ofMatrix4x4 inverseCamera;
+		ofMatrix4x4 inverseCameraMatrix;
 		
-		inverseCamera.makeInvertOf(cameras[0]->getModelViewProjectionMatrix());
+		inverseCameraMatrix.makeInvertOf(cameras[0]->getModelViewProjectionMatrix());
 		
+		// By default, we can say
+		//	'we are drawing in world space'
+		//
+		// The camera matrix performs
+		//	world->camera
+		//
+		// The inverse camera matrix performs
+		//	camera->world
+		//
+		// Our box is in camera space, if we
+		//	want to draw that into world space
+		//	we have to apply the camera->world
+		//	transformation.
+		//
 		ofPushMatrix();
-		glMultMatrixf(inverseCamera.getPtr());
+		glMultMatrixf(inverseCameraMatrix.getPtr());
 		
 		
 		ofPushStyle();
 		ofSetColor(255, 100, 100);
 		
+		//////////////////////
+		// DRAW WIREFRAME BOX
+		//
 		// xy plane at z=-1 in camera sapce
 		// (small rectangle at camera position)
 		//
@@ -249,6 +308,8 @@ void testApp::drawScene(int iCameraDraw){
 			glVertex3f(1, -1, -1);
 			glVertex3f(1, -1, 1);
 		glEnd();
+		//
+		//////////////////////
 
 		ofPopStyle();
 		ofPopMatrix();
@@ -267,6 +328,23 @@ void testApp::keyPressed(int key){
 	
 	if (key == 'f')
 		ofToggleFullscreen();
+	
+	if (key == 'p')
+		if (bCamParent)
+		{
+			camFront.clearParent();
+			camTop.clearParent();
+			camLeft.clearParent();
+			
+			bCamParent = false;
+		} else {
+			camFront.setParent(nodeSwarm.light);
+			camTop.setParent(nodeSwarm.light);
+			camLeft.setParent(nodeSwarm.light);
+			
+			bCamParent = true;
+		}
+
 	
 }
 
