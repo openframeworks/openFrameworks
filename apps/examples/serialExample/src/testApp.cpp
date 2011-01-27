@@ -1,6 +1,5 @@
 #include "testApp.h"
 
-
 //--------------------------------------------------------------
 void testApp::setup(){	 
 
@@ -88,7 +87,6 @@ void testApp::draw(){
 
 }
 
-
 //--------------------------------------------------------------
 void testApp::keyPressed  (int key){ 
 	
@@ -121,6 +119,16 @@ void testApp::mouseReleased(int x, int y, int button){
 
 //--------------------------------------------------------------
 void testApp::windowResized(int w, int h){
+
+}
+
+//--------------------------------------------------------------
+void testApp::gotMessage(ofMessage msg){
+
+}
+
+//--------------------------------------------------------------
+void testApp::dragEvent(ofDragInfo dragInfo){ 
 
 }
 

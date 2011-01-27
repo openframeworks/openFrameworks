@@ -41,14 +41,6 @@ public:
 	int numFiles() {
 		return nameArray.size();
 	}
-
-	void reload() {
-		listDir(relDir);
-	}
-
-	string getDir() {
-		return relDir;
-	}
 	
 	private:
 		vector <string> allowedFileExt;
