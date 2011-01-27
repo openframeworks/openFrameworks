@@ -62,6 +62,9 @@ private:
 	
 };
 
+//TODO: Theo - THIS DOESN'T MAKE SENSE! You are overloading the << operator but its not clear what that is doing. 
+//its not a data structure like ofPoint or ofRect which << overloading makes sense for. 
+//itnerally it should call ofLog for the approproate log levels. 
 inline ostream& operator<<(ostream& os,  const ofxThreadedImageLoader& loader) {
 	
 	deque<ofImageLoaderEntry>::const_iterator it = loader.images_async_loading.begin();

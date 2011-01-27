@@ -12,7 +12,6 @@ void testApp::setup(){
 	lAudio = new float[1024];
 	rAudio = new float[1024];
 	
-	
 	ofSoundStreamSetup(2,0, this, sampleRate,1024, 4);
 
 	int bpm = 120;
@@ -198,5 +197,15 @@ void testApp::mouseReleased(int x, int y, int button){
 
 //--------------------------------------------------------------
 void testApp::windowResized(int w, int h){
+
+}
+
+//--------------------------------------------------------------
+void testApp::gotMessage(ofMessage msg){
+
+}
+
+//--------------------------------------------------------------
+void testApp::dragEvent(ofDragInfo dragInfo){ 
 
 }
