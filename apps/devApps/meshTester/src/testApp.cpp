@@ -11,13 +11,13 @@ void testApp::setup(){
 
 	for(int i =0; i < meshes.size();i++){
 		vboMeshes.push_back(ofVboMesh());
-		vboMeshes.back().meshElement = &meshes[i];
+		vboMeshes.back().vertexData = &meshes[i];
 		vboMeshes.back().enableTexCoords();
 		vboMeshes.back().enableNormals();
 		vboMeshes.back().drawType = GL_STREAM_DRAW_ARB;
+		vboMeshes.back().setUseIndices();
 	}
 	
-//    ofEnableBlendMode(OF_BLENDMODE_ALPHA);
     
     glEnable(GL_DEPTH_TEST);
 	
@@ -35,24 +35,24 @@ void testApp::setup(){
 void testApp::update(){
 
 	for (int i =0; i < vboMeshes.size();i++){
-		for (int j=0; j<vboMeshes[i].meshElement->getNumVertices();j++){
-			ofVec3f curVert = vboMeshes[i].meshElement->getVertex(j);
+		for (int j=0; j<vboMeshes[i].vertexData->getNumVertices();j++){
+			ofVec3f curVert = vboMeshes[i].vertexData->getVertex(j);
 			float phi = .006*ofGetFrameNum() + .05*PI*curVert.x;
 			float theta = .009*ofGetFrameNum() + .15*PI*curVert.x;
 //			ofVec3f modVert = .003*ofVec3f(cos(theta)*sin(phi),sin(theta)*sin(phi),cos(phi));
 			ofVec3f modVert = .01*ofVec3f(0,sin(theta)*sin(phi),0);
-			vboMeshes[i].meshElement->setVertex(j,curVert+modVert);
+			vboMeshes[i].vertexData->setVertex(j,curVert+modVert);
 		}
 		//vboMeshes[i].vbo.setVertexData(vboMeshes[i].meshElement->getVerticesPointer(),vboMeshes[i].meshElement->getNumVertices());
 		//vboMeshes[i].setupVertices(GL_STREAM_DRAW_ARB);
 	}
 	
 	for (int i =0; i < vboMeshes.size();i++){
-		for (int j=0; j<vboMeshes[i].meshElement->getNumTexCoords();j++){
-			ofVec3f curVert = vboMeshes[i].meshElement->getTexCoord(j);
+		for (int j=0; j<vboMeshes[i].vertexData->getNumTexCoords();j++){
+			ofVec3f curVert = vboMeshes[i].vertexData->getTexCoord(j);
 			float theta = .002*ofGetFrameNum();
 			ofVec2f modVert = .001*ofVec3f(cos(theta),sin(theta));
-			vboMeshes[i].meshElement->setTexCoord(j,curVert+modVert);
+			vboMeshes[i].vertexData->setTexCoord(j,curVert+modVert);
 		}
 		//vboMeshes[i].setupTexCoords(GL_STREAM_DRAW_ARB);
 		//vboMeshes[i].vbo.updateTexCoordData(vboMeshes[i].meshElement->getTexCoordsPointer(),vboMeshes[i].meshElement->getNumTexCoords());
@@ -95,7 +95,7 @@ void testApp::draw(){
 
 //--------------------------------------------------------------
 void testApp::keyPressed(int key){
-	if(key= ' ') {
+	if(key== ' ') {
 		lightsOn = !lightsOn;
 	}
 }
