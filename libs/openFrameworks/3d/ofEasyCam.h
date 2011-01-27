@@ -1,12 +1,3 @@
-/*
- *  ofEasyCam.h
- *  openFrameworksLib
- *
- *  Created by Memo Akten on 14/01/2011.
- *  Copyright 2011 MSA Visuals Ltd. All rights reserved.
- *
- */
-
 #pragma once
 
 #define OF_EASYCAM_DEFAULT_DISTANCE 100.0f
@@ -53,8 +44,4 @@ protected:
 	//momentum
 	ofQuaternion rotation;
 	float distanceScaleVelocity;
-	
-//from pre-arcball
-//	ofVec3f rotAxis;
-//	float angle;
 };
