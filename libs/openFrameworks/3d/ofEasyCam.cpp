@@ -11,6 +11,10 @@
 #include "ofEvents.h"
 #include "ofMain.h"
 
+// when an ofEasyCam is moving due to momentum, this keeps it
+// from moving forever by assuming small values are zero.
+float minimumRotation = 1e-7;
+
 //----------------------------------------
 ofEasyCam::ofEasyCam():
 distance(OF_EASYCAM_DEFAULT_DISTANCE),
@@ -76,11 +80,12 @@ void ofEasyCam::begin(ofRectangle rect) {
 		}
 		
 		//apply transforms if they're big enough
-		if (rotation.asVec3().lengthSquared() > 1e-5)
+		if (rotation.asVec3().lengthSquared() > minimumRotation) {
 			target.rotate(rotation.conj());
-		//
-		if (abs(distanceScaleVelocity - 1.0f) > 1e-5)
+		}
+		if (abs(distanceScaleVelocity - 1.0f) > minimumRotation) {
 			setDistance(distance * (1.0f + distanceScaleVelocity));
+		}
 
 		//perform drag
 		rotation.slerp(drag*dt, rotation, ofQuaternion(0,0,0,1));
