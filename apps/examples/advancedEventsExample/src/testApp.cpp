@@ -1,6 +1,5 @@
 #include "testApp.h"
-#include "Poco/Delegate.h"
-#include "Poco/Timestamp.h"
+
 //--------------------------------------------------------------
 void testApp::setup(){
 	ofBackground(50,50,50);
@@ -17,6 +16,7 @@ void testApp::setup(){
 
 //--------------------------------------------------------------
 void testApp::update(){
+
 }
 
 //--------------------------------------------------------------
@@ -71,7 +71,21 @@ void testApp::mousePressed(int x, int y, int button){
 void testApp::mouseReleased(int x, int y, int button){
 
 }
-//--------------------------------------------------------------
+
+//--------------------------------------------------------------
 void testApp::windowResized(int w, int h){
+
 }
+
+//--------------------------------------------------------------
+void testApp::gotMessage(ofMessage msg){
+
+}
+
+//--------------------------------------------------------------
+void testApp::dragEvent(ofDragInfo dragInfo){ 
+
+}
+
+		
 
