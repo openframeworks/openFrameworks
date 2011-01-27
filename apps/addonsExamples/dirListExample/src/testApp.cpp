@@ -4,7 +4,6 @@
 //--------------------------------------------------------------
 void testApp::setup(){
 
-
     DIR.setVerbose(false);
     nImages = DIR.listDir("images/of_logos");
  	images = new ofImage[nImages];
@@ -26,8 +25,6 @@ void testApp::update(){
 //--------------------------------------------------------------
 void testApp::draw(){
 
-
-
     if (nImages > 0){
         ofSetHexColor(0xffffff);
         images[currentImage].draw(300,50);
@@ -46,11 +43,10 @@ void testApp::draw(){
             ofDrawBitmapString(fileInfo, 50,i*20 + 50);
     }
 
-
 }
 
 //--------------------------------------------------------------
-void testApp::keyPressed  (int key){
+void testApp::keyPressed(int key){
     if (nImages > 0){
         currentImage++;
         currentImage %= nImages;
@@ -58,19 +54,23 @@ void testApp::keyPressed  (int key){
 }
 
 //--------------------------------------------------------------
-void testApp::keyReleased  (int key){
+void testApp::keyReleased(int key){
+
 }
 
 //--------------------------------------------------------------
 void testApp::mouseMoved(int x, int y ){
+
 }
 
 //--------------------------------------------------------------
 void testApp::mouseDragged(int x, int y, int button){
+
 }
 
 //--------------------------------------------------------------
 void testApp::mousePressed(int x, int y, int button){
+
 }
 
 //--------------------------------------------------------------
@@ -83,3 +83,12 @@ void testApp::windowResized(int w, int h){
 
 }
 
+//--------------------------------------------------------------
+void testApp::gotMessage(ofMessage msg){
+
+}
+
+//--------------------------------------------------------------
+void testApp::dragEvent(ofDragInfo dragInfo){ 
+
+}
