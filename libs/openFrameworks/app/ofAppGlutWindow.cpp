@@ -562,7 +562,6 @@ void ofAppGlutWindow::display(void){
 //------------------------------------------------------------
 void rotateMouseXY(int orientation, int &x, int &y) {
 	int savedY;
-	int savedX;
 	switch(orientation) {
 		case OF_ORIENTATION_180:
 			x = ofGetWidth() - x;
