@@ -41,8 +41,10 @@ protected:
 	
 	unsigned long lastTap;
 
-	//momentum
+	bool bDistanceSet;
 	float lastDistance;
+	
+	//momentum
 	float drag;
 	float zoomSpeed;
 	ofQuaternion rotation;

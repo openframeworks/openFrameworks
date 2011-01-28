@@ -52,6 +52,10 @@ bool ofCamera::getOrtho() const {
 	return isOrtho;
 }
 
+//----------------------------------------
+float ofCamera::getImagePlaneDistance(ofRectangle rect) const {
+	return rect.height / (2.0f * tanf(PI * fov / 360.0f));
+}
 
 //----------------------------------------
 void ofCamera::begin(ofRectangle rect) {
@@ -63,7 +67,7 @@ void ofCamera::begin(ofRectangle rect) {
 	// autocalculate near/far clip planes if not set by user
 	float nc = nearClip, fc = farClip;
 	if(nearClip == 0 || farClip == 0) {
-		float dist = rect.height * 0.5f / tanf(PI * fov / 360.0f);
+		float dist = getImagePlaneDistance(rect);
 		nc = (nearClip == 0) ? dist / 100.0f : nearClip;
 		fc = (farClip == 0) ? dist * 10.0f : farClip;
 	}

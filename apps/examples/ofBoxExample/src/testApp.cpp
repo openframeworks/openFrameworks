@@ -18,8 +18,6 @@ void testApp::setup(){
 	
 	// draw the ofBox outlines with some weight
 	ofSetLineWidth(10);
-	
-	cam.setDistance(1000);
 }
 
 //--------------------------------------------------------------
@@ -34,13 +32,15 @@ void testApp::draw(){
 	float movementSpeed = .1;
 	float cloudSize = ofGetWidth() / 2;
 	float maxBoxSize = 100;
+	float spacing = 1;
 	int boxCount = 100;
 	
 	cam.begin();
+	
 	for(int i = 0; i < boxCount; i++) {
 		ofPushMatrix();
 		
-		float t = (ofGetElapsedTimef() + i) * movementSpeed;
+		float t = (ofGetElapsedTimef() + i * spacing) * movementSpeed;
 		ofVec3f pos(
 			ofSignedNoise(t, 0, 0),
 			ofSignedNoise(0, t, 0),
@@ -66,6 +66,7 @@ void testApp::draw(){
 		
 		ofPopMatrix();
 	}
+	
 	cam.end();
 }
 
