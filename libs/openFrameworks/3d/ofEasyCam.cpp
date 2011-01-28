@@ -1,8 +1,6 @@
 #include "ofEasyCam.h"
 #include "ofMain.h"
 
-#define OF_EASYCAM_DEFAULT_DISTANCE 100.0f
-
 // when an ofEasyCam is moving due to momentum, this keeps it
 // from moving forever by assuming small values are zero.
 float minimumRotation = 1e-7;
@@ -16,8 +14,9 @@ mousePosViewPrev(0, 0),
 lastFrame(0),
 drag(0.1f),
 zoomSpeed(2.0f),
+bDistanceSet(false),
+lastDistance(0),
 lastTap(0),
-lastDistance(OF_EASYCAM_DEFAULT_DISTANCE),
 distanceScaleVelocity(0) {
 	target.setPosition(0, 0, 0);
 	reset();
@@ -31,6 +30,10 @@ distanceScaleVelocity(0) {
 
 //----------------------------------------
 void ofEasyCam::begin(ofRectangle rect) {
+	if(!bDistanceSet) {
+		setDistance(getImagePlaneDistance(rect));
+	}
+
 	// it's important to check whether we've already accounted for the mouse
 	// just in case you use the camera multiple times in a single frame
 	if (lastFrame != ofGetFrameNum()) {
@@ -96,8 +99,7 @@ void ofEasyCam::begin(ofRectangle rect) {
 //----------------------------------------
 void ofEasyCam::reset() {
 	target.resetTransform();
-	// TODO: this should be handled with a proper tanf() by ofCamera ideally
-	setDistance(lastDistance);
+	setDistance(lastDistance, false);
 	rotation = ofQuaternion(0,0,0,1);
 	distanceScaleVelocity = 0;
 }
@@ -125,6 +127,7 @@ void ofEasyCam::setDistance(float distance, bool save) {
 			this->lastDistance = distance;
 		}
 		setPosition(0, 0, distance);
+		bDistanceSet = true;
 	}
 }
 

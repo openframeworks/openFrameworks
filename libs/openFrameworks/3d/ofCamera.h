@@ -37,6 +37,8 @@ public:
 	void disableOrtho();
 	bool getOrtho() const;
 	
+	float getImagePlaneDistance(ofRectangle rect = ofGetWindowRect()) const;
+	
 	// set the matrices
 	virtual void begin(ofRectangle rect = ofGetWindowRect());
 	virtual void end();
