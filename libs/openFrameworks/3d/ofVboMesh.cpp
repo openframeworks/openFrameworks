@@ -3,13 +3,29 @@
 //--------------------------------------------------------------
 ofVboMesh::ofVboMesh(){
 	vbo = ofVbo();
-	meshElement = NULL;
+	vertexData = NULL;
+	drawType = GL_STATIC_DRAW_ARB;
+	bEnableIndices = false;
+	bEnableColors = false;
+	bEnableTexCoords = false;
+	bEnableNormals = false;
 }
 
 //--------------------------------------------------------------
 ofVboMesh::~ofVboMesh(){
 }
 
+//--------------------------------------------------------------
+void ofVboMesh::setUseIndices(bool useIndices){
+	bEnableIndices = useIndices;
+}
+
+//--------------------------------------------------------------
+void ofVboMesh::setDrawType(int drawType_){
+	drawType = drawType_;
+}
+
+/*
 //--------------------------------------------------------------
 ofVboMesh::ofVboMesh(const ofVboMesh& v){
 	clone(v);
@@ -23,250 +39,214 @@ ofVboMesh& ofVboMesh::operator=(const ofVboMesh& v){
 
 //--------------------------------------------------------------
 void ofVboMesh::clone(const ofVboMesh& v){
-	meshElement = v.getMeshElement();
+	vertexData = v.getvertexData();
 	vbo = v.vbo;
 }
+ */
 
 //--------------------------------------------------------------
-void ofVboMesh::setMeshElement(ofMeshElement* m){
-	meshElement = m;
+void ofVboMesh::setVertexData(ofVertexData* m){
+	vertexData = m;
 }
 
 //--------------------------------------------------------------
-ofMeshElement* ofVboMesh::getMeshElement(){
-	return meshElement;
+ofVertexData* ofVboMesh::getVertexData(){
+	return vertexData;
 }
 
 //--------------------------------------------------------------
-ofMeshElement* ofVboMesh::getMeshElement() const{
-	return meshElement;
+const ofVertexData* ofVboMesh::getVertexData() const{
+	return vertexData;
 }
 
 //--------------------------------------------------------------
 bool ofVboMesh::setupVertices(int usage){
-	int size = meshElement->getNumVertices();
+	int size = vertexData->getNumVertices();
 	if(size){
-		vbo.setVertexData(meshElement->getVerticesPointer(),size, usage);
+		vbo.setVertexData(vertexData->getVerticesPointer(),size, usage);
 		return true;
 	}else{
-		ofLog(OF_LOG_WARNING,"ofVboMesh:setupVertices - no vertices in mesh.");
+		ofLog(OF_LOG_WARNING,"ofVboMesh:setupVertices - no vertices in vertexData.");
 		return false;
 	}
 }
 
 //--------------------------------------------------------------
 bool ofVboMesh::setupColors(int usage){
-	int size = meshElement->getNumColors();
+	int size = vertexData->getNumColors();
 	if(size){
-		vbo.setColorData(meshElement->getColorsPointer(), size, usage);
+		vbo.setColorData(vertexData->getColorsPointer(), size, usage);
 		return true;
 	}else{
-		ofLog(OF_LOG_WARNING,"ofVboMesh:setupColors - no colors in meshElement.");
+		ofLog(OF_LOG_WARNING,"ofVboMesh:setupColors - no colors in vertexData.");
 		return false;
 	}
 }
 
 //--------------------------------------------------------------
 bool ofVboMesh::setupNormals(int usage){
-	int size = meshElement->getNumNormals();
+	int size = vertexData->getNumNormals();
 	if(size){
-		vbo.setNormalData(meshElement->getNormalsPointer(), size, usage);
+		vbo.setNormalData(vertexData->getNormalsPointer(), size, usage);
 		return true;
 	}else{
-		ofLog(OF_LOG_WARNING,"ofVboMesh:setupNormals - no normals in meshElement.");
+		ofLog(OF_LOG_WARNING,"ofVboMesh:setupNormals - no normals in vertexData.");
 		return false;
 	}
 }
 
 //--------------------------------------------------------------
 bool ofVboMesh::setupTexCoords(int usage){
-	int size = meshElement->getNumTexCoords();
+	int size = vertexData->getNumTexCoords();
 	if(size){
-		vbo.setTexCoordData(meshElement->getTexCoordsPointer(), size, usage);
+		vbo.setTexCoordData(vertexData->getTexCoordsPointer(), size, usage);
 		return true;
 	}else{
-		ofLog(OF_LOG_WARNING,"ofVboMesh:setupTexCoords - no texCoords in meshElement.");
+		ofLog(OF_LOG_WARNING,"ofVboMesh:setupTexCoords - no texCoords in vertexData.");
 		return false;
 	}
 }
 
 //--------------------------------------------------------------
-/*
-void ofVboMesh::setupIndices(int indexMode){
-	switch(indexMode){
-		case(OF_MESH_POINTS):
-		case(OF_MESH_FILL):
-			indices.clear();
-			for (int i = 0; i < meshElement->faces.size();i++){
-				for (int j=0; j< meshElement->faces.at(i).indices.size(); j++){
-					indices.push_back((GLuint)meshElement->faces.at(i).indices.at(j));
-				}
-			}
-			vbo.setIndexData(&indices[0], indices.size() );
-			break;
-		case(OF_MESH_WIREFRAME):
-			wfIndices.clear();
-			for (int i=0;i<meshElement->faces.size();i++){
-				
-				int maxIndex = meshElement->faces.at(i).indices.size()-1;
-				
-				for (int j=0;j<maxIndex;j++){
-					wfIndices.push_back( (GLuint) meshElement->faces.at(i).indices.at(j) );
-					wfIndices.push_back( (GLuint) meshElement->faces.at(i).indices.at(j+1) );
-				}
-				
-				wfIndices.push_back((GLuint)meshElement->faces.at(i).indices.at(maxIndex));
-				wfIndices.push_back((GLuint)meshElement->faces.at(i).indices.at(0));
-			}
-			break;
-		default:break;
+bool ofVboMesh::setupIndices(int usage){
+	int size = vertexData->getNumIndices();
+	if(size){
+		vbo.setIndexData(vertexData->getIndexPointer(), size, usage);
+		return true;
+	}else{
+		ofLog(OF_LOG_WARNING,"ofVboMesh:setupIndices - no indices in vertexData.");
+		return false;
 	}
 }
- */
 
-
-/*
 //--------------------------------------------------------------
-void ofVboMesh::addTriangles(const vector<ofVec3f>& verts){
-	if(verts.size()%3==0){
-		//store current size of the mesh vertices
-		int curSize = meshElement->getNumVertices();
-		addMeshVertices(verts);
-		for (int i = 0; i < verts.size()-2;i++){
-			int index = i+curSize;
-			meshElement->addFace(index, index+1, index+2);
-			indices.push_back(index);
-			indices.push_back(index+1);
-			indices.push_back(index+2);
+void ofVboMesh::enableColors(){
+	bEnableColors = true;
+}
+
+//--------------------------------------------------------------
+void ofVboMesh::disableColors(){
+	bEnableColors = false;
+}
+
+//--------------------------------------------------------------
+void ofVboMesh::enableNormals(){
+	bEnableNormals = true;
+}
+
+//--------------------------------------------------------------
+void ofVboMesh::disableNormals(){
+	bEnableNormals = false;
+}
+
+//--------------------------------------------------------------
+void ofVboMesh::enableTexCoords(){
+	bEnableTexCoords = true;
+}
+
+//--------------------------------------------------------------
+void ofVboMesh::disableTexCoords(){
+	bEnableTexCoords = false;
+}
+
+//--------------------------------------------------------------
+void ofVboMesh::update(){	
+	if(vertexData->haveVertsChanged()){
+		setupVertices(drawType);
+		//vbo.updateVertexData(vertexData->getVerticesPointer(), vertexData->getNumVertices());
+	}
+	
+	if(bEnableColors){
+		if(vertexData->haveColorsChanged()){
+			setupColors(drawType);
+			//vbo.updateColorData(vertexData->getColorsPointer(), vertexData->getNumColors());
 		}
-	}else {
-		ofLog(OF_LOG_ERROR,"ofVboMesh::addTriangles: trying to create triangles from non-divisble-by-three array");
-		return;
 	}
-}
- */
 
-/*
-//--------------------------------------------------------------
-void ofVboMesh::addTriangleFan(const vector<ofVec3f>& verts){
-	if(verts.size()>=3){
-		//store current size of the mesh vertices
-		int curSize = mesh->vertices.size();
-		addMeshVertices(verts);
-		for (int i = 1; i < verts.size()-1;i++){
-			int index = i+curSize;
-			mesh->addFace(0, index, index+1);
-			indices.push_back(0);
-			indices.push_back(index);
-			indices.push_back(index+1);
+	if(bEnableNormals){
+		if(vertexData->haveNormalsChanged()){
+			setupNormals(drawType);
+			//vbo.updateNormalData(vertexData->getNormalsPointer(), vertexData->getNumNormals());
 		}
-	}else {
-		ofLog(OF_LOG_ERROR,"ofVboMesh::addTriangleFan: must supply at least 3 vertices");
-		return;
 	}
-}
-*/
+	
+	if(bEnableTexCoords){
+		if(vertexData->haveTexCoordsChanged()){
+			setupTexCoords(drawType);
+			//vbo.updateTexCoordData(vertexData->getTexCoordsPointer(), vertexData->getNumTexCoords());
+		}	
+	}
 
-/*
-//--------------------------------------------------------------
-void ofVboMesh::addTriangleStrip(const vector<ofVec3f>& verts){
-	if(verts.size()>=3){
-		//store current size of the mesh vertices
-		int curSize = meshElement->vertices.size();
-		addMeshVertices(verts);
-		for (int i = 0; i < verts.size()-1;i++){
-			int index = i+curSize;
-			meshElement->addFace(index, index+1, index+2);
+	if(bEnableIndices){
+		if(vertexData->haveIndicesChanged()){
+			setupIndices(drawType);
 		}
-	}else {
-		ofLog(OF_LOG_ERROR,"ofVboMesh::addTriangleStrip: must supply at least 3 vertices");
-		return;
+		//vbo.updateIndexData(vertexData->getIndexPointer(),vertexData->getNumIndices());
 	}
 }
- */
 
 //--------------------------------------------------------------
-void ofVboMesh::addMeshVertices(const vector<ofVec3f>& verts){
-	for (int i =0; i < verts.size(); i++){
-		//copy vec3 info
-		meshElement->addVertex(verts[i]);
-		/*
-		//if we want to use this info, we need to match the vert size
-		if(mesh->bUsingTexCoords) mesh->texCoords.push_back(ofVec2f(0,0));
-		if(mesh->bUsingColors) mesh->colors.push_back(ofColor(255,255,255,255));
-		 */
+void ofVboMesh::draw(polyMode renderType){
+	if(!vbo.getIsAllocated()){
+		setupVertices(drawType);
 	}
+	
+	if(bEnableColors){
+		if(vertexData->getNumColors() && !vbo.getUsingColors()){
+			setupColors(drawType);
+		}
+	}
+	
+	if(bEnableNormals){
+		if(vertexData->getNumNormals() && !vbo.getUsingNormals()){
+			setupNormals(drawType);
+		}
+	}
+	
+	if(bEnableTexCoords){
+		if(vertexData->getNumTexCoords() && !vbo.getUsingTexCoords()){
+			setupTexCoords(drawType);
+		}
+	}
+	
+	if(bEnableIndices){
+		if(vertexData->getNumIndices() && !vbo.getUsingIndices()){
+			setupIndices(drawType);
+		}
+	}
+	
+	update();
+	
+	glPushAttrib(GL_POLYGON_BIT);
+	glPolygonMode(GL_FRONT_AND_BACK, renderType);
+	
+	GLuint mode = ofGetGLPrimitiveMode(vertexData->getMode());
+	
+	if(renderType!=OF_MESH_POINTS){
+		if(bEnableIndices){
+			vbo.drawElements(mode,vertexData->getNumIndices());
+		}else{
+			vbo.draw(mode,0,vertexData->getNumVertices());
+		}
+	}else{
+		//no indices needed for just drawing verts as points
+		vbo.draw(GL_POINTS,0,vertexData->getNumVertices());
+	}
+	
+	glPopAttrib();
 }
 
 //--------------------------------------------------------------
 void ofVboMesh::drawVertices(){
-	//make sure we have vertices setup in the VBO
-	if(!vbo.getIsAllocated()){
-		setupVertices(OF_VBO_STATIC);
-	}else{
-
-		//make sure we have indices
-		if(!meshElement->getNumIndices()){
-			meshElement->setupIndices();
-		}
-		
-		//make sure they're sent to the vbo
-		if(!vbo.getUsingIndices()){
-			vbo.setIndexData(meshElement->getIndexPointer(), meshElement->getNumIndices() );
-		}
-		
-		/* mesh element should now know what mode its in, so we won't need this
-		//feed vbo the correct index data
-		if(mode == OF_MESH_WIREFRAME){
-			vbo.setIndexData(&indices[0], indices.size() );
-		}
-		 */
-		
-		glPolygonMode(GL_FRONT_AND_BACK, GL_POINT);
-
-		vbo.draw(GL_POINTS,0,meshElement->getNumVertices());
-	}
+	draw(OF_MESH_POINTS);
 }
 
 //--------------------------------------------------------------
 void ofVboMesh::drawWireframe(){
-	//make sure we have vertices
-	if(!vbo.getIsAllocated()){
-		setupVertices(OF_VBO_STATIC);
-	}else{
-		//make sure we have indices
-		if(!meshElement->getNumIndices()){
-			meshElement->setupIndices();
-		}
-		
-		//make sure they're sent to the vbo
-		if(!vbo.getUsingIndices()){
-			vbo.setIndexData(meshElement->getIndexPointer(), meshElement->getNumIndices() );
-		}
-		
-		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-		
-		vbo.drawElements(GL_TRIANGLES,meshElement->getNumIndices());
-	}
+	draw(OF_MESH_WIREFRAME);
 }
 
 //--------------------------------------------------------------
 void ofVboMesh::drawFaces(){
-	//make sure we have vertices
-	if(!vbo.getIsAllocated()){
-		setupVertices(OF_VBO_STATIC);
-	}else{
-		//make sure we have indices
-		if(!meshElement->getNumIndices()){
-			meshElement->setupIndices();
-		}
-		
-		//make sure they're sent to the vbo
-		if(!vbo.getUsingIndices()){
-			vbo.setIndexData(meshElement->getIndexPointer(), meshElement->getNumIndices() );
-		}
-		
-		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-		vbo.drawElements(GL_TRIANGLES,meshElement->getNumIndices());
-	}
+	draw(OF_MESH_FILL);
 }
