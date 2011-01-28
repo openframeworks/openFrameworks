@@ -1,5 +1,4 @@
 #include "ofEasyCam.h"
-#include "ofEvents.h"
 #include "ofMain.h"
 
 #define OF_EASYCAM_DEFAULT_DISTANCE 100.0f
@@ -8,17 +7,23 @@
 // from moving forever by assuming small values are zero.
 float minimumRotation = 1e-7;
 
+// this is the default on windows os
+int doubleclickTime = 500;
+
 //----------------------------------------
 ofEasyCam::ofEasyCam():
 mousePosViewPrev(0, 0), 
 lastFrame(0),
 drag(0.1f),
 zoomSpeed(2.0f),
+lastTap(0),
 lastDistance(OF_EASYCAM_DEFAULT_DISTANCE),
 distanceScaleVelocity(0) {
 	target.setPosition(0, 0, 0);
 	reset();
 	setParent(target);
+	
+	ofRegisterMouseEvents(this);
 	
 	lastMousePressed[0] = false;
 	lastMousePressed[1] = false;
@@ -83,12 +88,6 @@ void ofEasyCam::begin(ofRectangle rect) {
 		lastMousePressed[1] = ofGetMousePressed(2);
 		
 		mousePosScreenPrev = mousePosScreen;
-		
-		//reset view on press key 'r'
-		// TODO: this should use double-click instead
-		if (ofGetKeyPressed('r')) {
-			reset();
-		}
 	}
 	
 	ofCamera::begin(rect);
@@ -142,4 +141,25 @@ void ofEasyCam::setDrag(float drag) {
 //----------------------------------------
 float ofEasyCam::getDrag() const {
 	return drag;
+}
+
+//----------------------------------------
+void ofEasyCam::mouseDragged(ofMouseEventArgs& mouse) {
+}
+
+//----------------------------------------
+void ofEasyCam::mouseMoved(ofMouseEventArgs& mouse) {
+}
+
+//----------------------------------------
+void ofEasyCam::mousePressed(ofMouseEventArgs& mouse) {
+	unsigned long curTap = ofGetElapsedTimeMillis();
+	if(lastTap != 0 && curTap - lastTap < doubleclickTime) {
+		reset();
+	}
+	lastTap = curTap;
+}
+
+//----------------------------------------
+void ofEasyCam::mouseReleased(ofMouseEventArgs& mouse) {
 }

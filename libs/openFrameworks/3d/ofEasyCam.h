@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ofCamera.h"
+#include "ofEvents.h"
 
 class ofEasyCam : public ofCamera {
 public:
@@ -24,6 +25,11 @@ public:
 	// it is a normalized value between 0-1
 	void setDrag(float drag);
 	float getDrag() const;
+	
+	void mouseDragged(ofMouseEventArgs& mouse);
+	void mouseMoved(ofMouseEventArgs& mouse);
+	void mousePressed(ofMouseEventArgs& mouse);
+	void mouseReleased(ofMouseEventArgs& mouse);
 
 protected:
 	ofNode target;
@@ -32,6 +38,8 @@ protected:
 	ofVec3f mousePosScreenPrev;
 	bool lastMousePressed[2];
 	int lastFrame;
+	
+	unsigned long lastTap;
 
 	//momentum
 	float lastDistance;
