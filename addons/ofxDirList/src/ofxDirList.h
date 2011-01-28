@@ -37,6 +37,7 @@ class ofxDirList{
         void reset();												// resets extension list
 		bool allowExt(string ext);									// returns true if ext is accepted
 		int listDir(string directory);								// returns number of files found
+		void sort();
 
 	private:
         vector <string> allowedFileExt;
