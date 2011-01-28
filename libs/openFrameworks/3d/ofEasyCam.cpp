@@ -13,6 +13,8 @@ ofEasyCam::ofEasyCam():
 mousePosViewPrev(0, 0), 
 lastFrame(0),
 drag(0.1f),
+zoomSpeed(2.0f),
+lastDistance(OF_EASYCAM_DEFAULT_DISTANCE),
 distanceScaleVelocity(0) {
 	target.setPosition(0, 0, 0);
 	reset();
@@ -28,7 +30,10 @@ void ofEasyCam::begin(ofRectangle rect) {
 	// just in case you use the camera multiple times in a single frame
 	if (lastFrame != ofGetFrameNum()) {
 		lastFrame = ofGetFrameNum();
-		float dt = ofGetLastFrameTime();
+		
+		// if there is some smart way to use dt to scale the values drag, we should do it
+		// you can't simply multiply drag etc because the behavior is unstable at high framerates
+		// float dt = ofGetLastFrameTime();
 		
 		ofVec2f mousePosScreen = ofVec3f(ofGetMouseX() - rect.width/2 - rect.x, rect.height/2 - (ofGetMouseY() - rect.y), 0);
 		ofVec2f mouseVelScreen = (mousePosScreen - mousePosScreenPrev).lengthSquared();
@@ -55,7 +60,7 @@ void ofEasyCam::begin(ofRectangle rect) {
 		//calc new scale velocity
 		float newDistanceScaleVelocity = 0.0f;
 		if(lastMousePressed[1]) {
-			newDistanceScaleVelocity = 10 * (mousePosScreenPrev.y - mousePosScreen.y) / rect.height;
+			newDistanceScaleVelocity = zoomSpeed * (mousePosScreenPrev.y - mousePosScreen.y) / rect.height;
 		}
 		
 		//apply drag towards new velocities
@@ -70,7 +75,7 @@ void ofEasyCam::begin(ofRectangle rect) {
 			target.rotate(rotation.conj());
 		}
 		if (abs(distanceScaleVelocity - 1.0f) > minimumRotation) {
-			setDistance(getDistance() * (1.0f + distanceScaleVelocity));
+			setDistance(getDistance() * (1.0f + distanceScaleVelocity), false);
 		}
 
 		// note the mouse button states
@@ -80,6 +85,7 @@ void ofEasyCam::begin(ofRectangle rect) {
 		mousePosScreenPrev = mousePosScreen;
 		
 		//reset view on press key 'r'
+		// TODO: this should use double-click instead
 		if (ofGetKeyPressed('r')) {
 			reset();
 		}
@@ -92,7 +98,7 @@ void ofEasyCam::begin(ofRectangle rect) {
 void ofEasyCam::reset() {
 	target.resetTransform();
 	// TODO: this should be handled with a proper tanf() by ofCamera ideally
-	setDistance(OF_EASYCAM_DEFAULT_DISTANCE);
+	setDistance(lastDistance);
 	rotation = ofQuaternion(0,0,0,1);
 	distanceScaleVelocity = 0;
 }
@@ -114,8 +120,11 @@ ofNode& ofEasyCam::getTarget() {
 }
 
 //----------------------------------------
-void ofEasyCam::setDistance(float distance) {
+void ofEasyCam::setDistance(float distance, bool save) {
 	if (distance > 0.0f) {
+		if(save) {
+			this->lastDistance = distance;
+		}
 		setPosition(0, 0, distance);
 	}
 }
