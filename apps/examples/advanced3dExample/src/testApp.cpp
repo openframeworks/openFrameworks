@@ -19,16 +19,19 @@
 //
 // SUGGESTED EXERCISES
 //
+// 0. Run and understand the example
+//
 // 1. Change number of particles in the swarm.
 // 2. Change the dynamic properties of the swarm (speed, orbit radius)
-//
 // 3. Change the near and far clipping planes of camEasyCam
+//
 // 4. Add another camera to the existing 4.
-//		Have all parts of the example working with all 5 cameras
+//		Have all parts of the example working with all 5 cameras.
 //
-// 5. Create your own custom node class and add it to the scene
+// 6. Create your own custom node class and add an instance of it
+//		to the scene.
 //
-// 6. Understand how the 'frustrum preview' works
+// 7. Understand how the 'frustrum preview' works
 //
 ///////////////////////////////////////////////////
 
@@ -39,6 +42,7 @@ void testApp::setup(){
 	
 	ofSetVerticalSync(true);
 	ofBackground(70, 70, 70);
+	ofEnableSmoothing();
 	glEnable(GL_DEPTH_TEST);
 	
 	
@@ -46,7 +50,7 @@ void testApp::setup(){
 	// SETUP CAMERAS
 	/////////////////////	
 	//
-	iCurrentCamera = 1;
+	iMainCamera = 0;
 	bCamParent = false;
 	
 	// user camera
@@ -67,6 +71,13 @@ void testApp::setup(){
 	camLeft.scale = 20;
 	camLeft.pan(-90);
 	cameras[3] = &camLeft;
+	
+	//since we're going to be accessing
+	//the matricies for this camera
+	//every frame, let's cache them
+	//for speed
+	for (int i=0; i<N_CAMERAS; i++)
+		cameras[i]->cacheMatrices = false;
 	
 	//
 	/////////////////////
@@ -104,14 +115,14 @@ void testApp::setupViewports()
 	/////////////////////	
 	//
 	float xOffset = ofGetWidth()/3;
-	float yOffset = ofGetHeight()/4;
+	float yOffset = ofGetHeight()/N_CAMERAS;
 	
 	viewMain.x = xOffset;
 	viewMain.y = 0;
 	viewMain.width = xOffset * 2;
 	viewMain.height = ofGetHeight();
 	
-	for (int i=0; i<4; i++) {
+	for (int i=0; i<N_CAMERAS; i++) {
 		
 		viewGrid[i].x = 0;
 		viewGrid[i].y = yOffset * i;
@@ -138,7 +149,7 @@ void testApp::draw(){
 	glDisable(GL_DEPTH_TEST);
 	ofPushStyle();
 	ofSetColor(100, 100, 100);
-	ofRect(viewGrid[iCurrentCamera]);
+	ofRect(viewGrid[iMainCamera]);
 	ofPopStyle();
 	glEnable(GL_DEPTH_TEST);
 	//
@@ -152,11 +163,16 @@ void testApp::draw(){
 	//
 	
 	//draw main viewport
-	cameras[iCurrentCamera]->begin(viewMain);
-	drawScene(iCurrentCamera);
-	cameras[iCurrentCamera]->end();
+	cameras[iMainCamera]->begin(viewMain);
+	drawScene(iMainCamera);
 	
-	for (int i=0; i<4; i++)
+	//calculate mouse ray whilst this camera is active
+	updateMouseRay();
+	
+	cameras[iMainCamera]->end();
+	
+	//draw side viewports
+	for (int i=0; i<N_CAMERAS; i++)
 	{
 		cameras[i]->begin(viewGrid[i]);
 		drawScene(i);
@@ -178,7 +194,7 @@ void testApp::draw(){
 	//draw some labels
 	ofSetColor(255, 255, 255);
 	ofDrawBitmapString("Press keys 1-4 to select a camera for main view", viewMain.x + 20, 30);
-	ofDrawBitmapString("Camera selected: " + ofToString(iCurrentCamera+1), viewMain.x + 20, 50);
+	ofDrawBitmapString("Camera selected: " + ofToString(iMainCamera+1), viewMain.x + 20, 50);
 	ofDrawBitmapString("Press 'f' to toggle fullscreen", viewMain.x + 20, 70);
 	ofDrawBitmapString("Press 'p' to toggle parents on OrthoCamera's", viewMain.x + 20, 90);
 	
@@ -192,7 +208,7 @@ void testApp::draw(){
 	ofNoFill();
 	ofSetColor(255, 255, 255);
 	//
-	for (int i=0; i<4; i++)
+	for (int i=0; i<N_CAMERAS; i++)
 		ofRect(viewGrid[i]);
 	//
 	ofRect(viewMain);
@@ -229,7 +245,8 @@ void testApp::drawScene(int iCameraDraw){
 	//if we're looking through it
 	if (iCameraDraw != 0)
 	{
-		
+		ofPushStyle();
+				
 		//in 'camera space' this frustum
 		//is defined by a box with bounds
 		//-1->1 in each axis
@@ -245,7 +262,13 @@ void testApp::drawScene(int iCameraDraw){
 		
 		ofMatrix4x4 inverseCameraMatrix;
 		
-		inverseCameraMatrix.makeInvertOf(cameras[0]->getModelViewProjectionMatrix());
+		//the camera's matricies are dependant on
+		//the aspect ratio of the viewport
+		//so we must send the viewport if it's not
+		//the same as fullscreen
+		//
+		//watch the aspect ratio of preview camera
+		inverseCameraMatrix.makeInvertOf(camEasyCam.getModelViewProjectionMatrix( (iMainCamera == 0 ? viewMain : viewGrid[0]) ));
 		
 		// By default, we can say
 		//	'we are drawing in world space'
@@ -265,7 +288,6 @@ void testApp::drawScene(int iCameraDraw){
 		glMultMatrixf(inverseCameraMatrix.getPtr());
 		
 		
-		ofPushStyle();
 		ofSetColor(255, 100, 100);
 		
 		//////////////////////
@@ -317,14 +339,45 @@ void testApp::drawScene(int iCameraDraw){
 	
 	//
 	//////////////////////////////////
+
 	
+	
+	//////////////////////////////////
+	// DRAW RAY
+	//////////////////////////////////
+	//
+	//draw if we've got camEasyCam selected
+	//and we're not looking through it
+	if (iMainCamera == 0 && iCameraDraw != 0)
+	{
+		ofPushStyle();
+		ofSetColor(100, 100, 255);
+		ofLine(ray[0], ray[1]);
+		ofPopStyle();
+	}
+	//
+	//////////////////////////////////
+}
+
+//--------------------------------------------------------------
+
+void testApp::updateMouseRay()
+{
+	
+	//define ray in screen space
+	ray[0] = ofVec3f(ofGetMouseX(), ofGetMouseY(), -1);
+	ray[1] = ofVec3f(ofGetMouseX(), ofGetMouseY(), 1);
+	
+	//transform ray into world space
+	ray[0] = cameras[iMainCamera]->screenToWorld(ray[0], viewMain);
+	ray[1] = cameras[iMainCamera]->screenToWorld(ray[1], viewMain);
 }
 
 //--------------------------------------------------------------
 void testApp::keyPressed(int key){
 	
 	if (key >= '1' && key <= '4')
-		iCurrentCamera = key - '1';
+		iMainCamera = key - '1';
 	
 	if (key == 'f')
 		ofToggleFullscreen();
@@ -344,7 +397,6 @@ void testApp::keyPressed(int key){
 			
 			bCamParent = true;
 		}
-
 	
 }
 
