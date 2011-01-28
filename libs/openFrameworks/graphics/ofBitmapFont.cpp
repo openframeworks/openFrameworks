@@ -414,8 +414,16 @@ void  ofDrawBitmapCharacter(int character, int x , int y){
 //---------------------------------------------------------------------
 void ofDrawBitmapCharacterStart(){
 	glesBitmappedFontTexture.bind();
+	
+	// this temporarily enables alpha testing,
+	// which discards pixels unless their alpha is 1.0f
+	glPushAttrib(GL_ENABLE_BIT | GL_COLOR_BUFFER_BIT);
+	glEnable(GL_ALPHA_TEST);
+	glAlphaFunc(GL_EQUAL, 1.0f);
+	
 	glEnableClientState(GL_VERTEX_ARRAY);		
 	glEnableClientState( GL_TEXTURE_COORD_ARRAY );
+	
 	glTexParameterf(glesBitmappedFontTexture.getTextureData().textureTarget, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	vC = 0;
 }
@@ -429,6 +437,7 @@ void ofDrawBitmapCharacterEnd(){
 	}
 
 	glDisableClientState( GL_TEXTURE_COORD_ARRAY );
+	glPopAttrib();
 	glesBitmappedFontTexture.unbind();
 }
 
