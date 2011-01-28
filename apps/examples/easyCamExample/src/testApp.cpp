@@ -19,18 +19,20 @@ void testApp::update(){
 
 //--------------------------------------------------------------
 void testApp::draw(){
-	ofBackground(0, 0, 0);
-	
 	cam.begin();
+	
 	ofRotateX(ofRadToDeg(.5));
   ofRotateY(ofRadToDeg(-.5));
+	
   ofBackground(0);
+	
   ofSetColor(255,0,0);
 	ofFill();
   ofBox(30);
 	ofNoFill();
 	ofSetColor(0);
   ofBox(30);
+	
   ofPushMatrix();
   ofTranslate(0,0,20);
   ofSetColor(0,0,255);
@@ -40,6 +42,7 @@ void testApp::draw(){
 	ofSetColor(0);
   ofBox(5);
   ofPopMatrix();
+	
 	cam.end();
 	
 	ofSetColor(255);
