@@ -200,7 +200,7 @@ void ofSetDataPathRoot(string newRoot){
 
 				vector < string> pathBrokenUp = ofSplitString( pathStr, "/");
 
-				newPath = "/";
+				newPath = "";
 
 				for(int i = 0; i < pathBrokenUp.size()-1; i++){				
 					newPath += pathBrokenUp[i];
@@ -217,8 +217,7 @@ void ofSetDataPathRoot(string newRoot){
 			}
 		#endif 
 	#endif
-		
-	dataPathRoot = newPath+newRoot;
+	dataPathRoot = newRoot;
 }
 
 //--------------------------------------------------
@@ -560,3 +559,4 @@ void ofSaveFrame(bool bUseViewport){
 	}
 	saveImageCounter++;
 }
+

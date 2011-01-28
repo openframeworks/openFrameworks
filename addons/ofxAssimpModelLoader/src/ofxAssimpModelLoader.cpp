@@ -50,19 +50,21 @@ void ofxAssimpModelLoader::loadModel(string modelName){
 	
     
     // if we have a model loaded, unload the fucker.
-    if(scene != NULL)
-    {
+    if(scene != NULL){
         aiReleaseImport(scene);
         scene = NULL;
-        
         deleteGLResources();   
     }
     
     
     // Load our new path.
     string filepath = ofToDataPath(modelName);
+	
+	//theo added - so we can have models and their textures in sub folders
+	modelFolder = ofFileUtils::getEnclosingDirectoryFromPath(filepath);
 
     ofLog(OF_LOG_VERBOSE, "loading model %s", filepath.c_str());
+    ofLog(OF_LOG_VERBOSE, "loading from folder %s", modelFolder.c_str());
     
     // only ever give us triangles.
     aiSetImportPropertyInteger(AI_CONFIG_PP_SBP_REMOVE, aiPrimitiveType_LINE | aiPrimitiveType_POINT );
@@ -154,7 +156,7 @@ void ofxAssimpModelLoader::loadGLResources(){
 
             ofLog(OF_LOG_VERBOSE, "loading image from %s", texPath.data);
             
-            image.loadImage(texPath.data);
+            image.loadImage(modelFolder + texPath.data);
             image.update();
             
             ofLog(OF_LOG_VERBOSE, "texture width: %f height %f", image.getWidth(), image.getHeight());

@@ -1,5 +1,5 @@
 #include "testApp.h"
-#include <sstream>
+
 //--------------------------------------------------------------
 void testApp::setup(){
 	ofSetLogLevel(OF_LOG_VERBOSE);
@@ -7,18 +7,18 @@ void testApp::setup(){
 	total = 24;
 	
 	for(int i = 0; i < total; ++i) {			
-		stringstream ss;
-		ss << "of" << i << ".png";
-		
 		ofImage* img = new ofImage();
 		images.push_back(img);
-		loader.loadFromDisk(images.back(),ss.str());
+		loader.loadFromDisk(img, "of" + ofToString(i) + ".png");
 
 		ofImage* url_img = new ofImage();
 		images.push_back(url_img);
 		loader.loadFromURL(images.back(), "http://www.roxlu.com/assets/images/of_inverted.png");
 	}
-	std::cout << loader << std::endl;
+	
+	//TODO: no! this should be internal - overloading << doesn't make sense
+	//cout << loader << endl;
+	
 	loader.startThread(false, false);
 }
 
@@ -80,3 +80,12 @@ void testApp::windowResized(int w, int h){
 
 }
 
+//--------------------------------------------------------------
+void testApp::gotMessage(ofMessage msg){
+
+}
+
+//--------------------------------------------------------------
+void testApp::dragEvent(ofDragInfo dragInfo){ 
+
+}

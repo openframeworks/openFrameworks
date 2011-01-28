@@ -1,6 +1,4 @@
-#ifndef _TEST_APP
-#define _TEST_APP
-
+#pragma once
 
 #include "ofMain.h"
 
@@ -18,12 +16,10 @@ class testApp : public ofBaseApp{
 		void mousePressed(int x, int y, int button);
 		void mouseReleased(int x, int y, int button);
 		void windowResized(int w, int h);
-		
-		void dragEvent(ofDragInfo info);
-	
-		ofImage temp;
+		void gotMessage(ofMessage msg);
+		void dragEvent(ofDragInfo dragInfo);
+			
+		vector <ofImage> draggedImages;
 		ofPoint dragPt;
 	
 };
-
-#endif

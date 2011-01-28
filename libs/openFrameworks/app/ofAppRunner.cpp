@@ -195,6 +195,15 @@ void ofShowCursor(){
 	window->showCursor();
 }
 
+//--------------------------------------
+void ofSetOrientation(int orientation){
+	window->setOrientation(orientation);
+}
+
+//--------------------------------------
+int ofGetOrientation(){
+	return window->getOrientation();
+}
 
 //--------------------------------------
 void ofSetWindowPosition(int x, int y){
@@ -228,11 +237,11 @@ int ofGetScreenHeight(){
 
 //--------------------------------------------------
 int ofGetWidth(){
-	return (int)window->getWindowSize().x;
+	return (int)window->getWidth();
 }
 //--------------------------------------------------
 int ofGetHeight(){
-	return (int)window->getWindowSize().y;
+	return (int)window->getHeight();
 }
 
 //--------------------------------------------------

@@ -32,7 +32,7 @@ bool ofShader::setup(string vertName, string fragName, string geomName) {
 bool ofShader::setupShaderFromFile(GLenum type, string filename) {
 	ofBuffer buffer = ofBufferFromFile(filename);
 	if(buffer.size()) {
-		return setupShaderFromSource(type, buffer.getBuffer());
+		return setupShaderFromSource(type, buffer.getText());
 	} else {
 		ofLog(OF_LOG_ERROR, "Could not load shader of type " + nameForType(type) + " from file " + filename);
 		return false;
@@ -77,23 +77,17 @@ bool ofShader::setupShaderFromSource(GLenum type, string source) {
 
 void ofShader::setGeometryInputType(GLenum type) {
 	checkAndCreateProgram();
-#ifndef TARGET_LINUX
 	glProgramParameteriEXT(program, GL_GEOMETRY_INPUT_TYPE_EXT, type);
-#endif
 }
 
 void ofShader::setGeometryOutputType(GLenum type) {
 	checkAndCreateProgram();
-#ifndef TARGET_LINUX
 	glProgramParameteriEXT(program, GL_GEOMETRY_OUTPUT_TYPE_EXT, type);
-#endif
 }
 
 void ofShader::setGeometryOutputCount(int count) {
 	checkAndCreateProgram();
-#ifndef TARGET_LINUX
 	glProgramParameteriEXT(program, GL_GEOMETRY_VERTICES_OUT_EXT, count);
-#endif
 }
 
 int ofShader::getGeometryMaxOutputCount() {

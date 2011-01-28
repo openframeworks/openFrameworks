@@ -135,16 +135,141 @@ bool ofSoundSink::addingInputWouldCreateCycle( ofSoundSource* test )
 
 
 
-void ofSoundMixer::setVolume( ofSoundSource* input, float vol )
-{
-	for ( int i=0; i<(int)inputs.size(); i++ )
-	{
-		if ( inputs[i].input == input )
-		{
-			inputs[i].volume = vol;
+ofSoundBuffer::ofSoundBuffer() { 
+	numFrames = 0; 
+	numChannels = 0; 
+	buffer = NULL; 
+}
+ofSoundBuffer::ofSoundBuffer( const ofSoundBuffer& other ) { 
+	copyFrom( other ); 
+}
+ofSoundBuffer::ofSoundBuffer( int nFrames, int nChannels ) { 
+	numFrames = nFrames; 
+	numChannels = nChannels; 
+	buffer = new float[nFrames*nChannels]; 
+}
+ofSoundBuffer& ofSoundBuffer::operator=( const ofSoundBuffer& other ) { 
+	copyFrom( other ); 
+	return *this; 
+}
+
+ofSoundBuffer::~ofSoundBuffer() { 
+	if ( buffer ) {
+		delete[] buffer; 
+	}
+}
+
+void ofSoundBuffer::copyFrom( const ofSoundBuffer& other ) { 
+	numFrames = 0; numChannels = 0;
+	if ( other.buffer ) {
+		allocate( other.numFrames, other.numChannels );
+		memcpy( buffer, other.buffer, numFrames*numChannels*sizeof(float) );
+	} 
+	else {
+		buffer = NULL;
+	}
+}
+
+/// Set audio data to 0.
+void ofSoundBuffer::clear() { 
+	if ( buffer ) { 
+		memset( buffer, 0, sizeof(float)*numFrames*numChannels); 
+	}
+}
+
+/// Allocate the buffer to the given size if necessary.
+void ofSoundBuffer::allocate( int nFrames, int nChannels ) { 
+	if ( !buffer || numFrames != nFrames || numChannels != nChannels ) {
+		numFrames = nFrames; numChannels = nChannels; 
+		if ( buffer ) {
+			delete[] buffer;
+		}
+		buffer = new float[numFrames*numChannels];
+	}
+}
+
+/// Copy just a single channel to output. output should have space for numFrames floats.
+void ofSoundBuffer::copyChannel( int channel, float* output ) const {
+	if ( buffer && channel < numChannels ) {
+		for ( int i=0; i<numFrames; i++ ) {
+			output[i] = buffer[numChannels*i + channel];
 		}
 	}
 }
+
+/// Copy safely to out. Copy as many frames as possible, repeat channels as necessary.
+void ofSoundBuffer::copyTo( float* outBuffer, int outNumFrames, int outNumChannels ) {
+	if ( numFrames == 0 || numChannels == 0 ) {
+		ofLog( OF_LOG_WARNING, "ofSoundBuffer::copyTo: copy requested on empty buffer, returning nothing (check your addInputTo() methods!)" );
+		memset( outBuffer, 0, sizeof(float)*outNumFrames*outNumChannels );
+	}
+	if ( outNumFrames>numFrames ) {
+		ofLog( OF_LOG_WARNING, "ofSoundBuffer::copyTo: %i frames requested but only %i	are available", outNumFrames, numFrames );
+	}
+	if ( outNumChannels>numChannels ) {
+		ofLog( OF_LOG_WARNING, "ofSoundBuffer::copyTo: %i channels requested but only %i are available, looping to make up the difference", outNumChannels, numChannels );
+	}
+	for ( int i=0; i<min(numFrames,outNumFrames); i++ ) {
+		for ( int j=0; j<outNumChannels; j++ ) {
+			// copy input to output; in cases where input has fewer channels than output, loop through input frames repeatedly
+			outBuffer[i*outNumChannels+j] = buffer[i*numChannels+(j%numChannels)];
+		}
+	}		
+}
+
+
+
+
+
+ofSoundMixer::~ofSoundMixer() { 
+	if ( working ) 
+		delete[] working;  	
+	for ( int i =0; i<(int)inputs.size(); i++ ) {
+		delete inputs[i];
+	}
+}
+
+void ofSoundMixer::copyFrom( const ofSoundMixer& other ) {
+	ofLog( OF_LOG_WARNING, "Copying ofSoundMixer, this will probably make things break" );
+	working = NULL;
+	for ( int i=0; i<(int)other.inputs.size(); i++ ) {
+		addInputFrom( other.inputs[i]->input );
+		setVolume( other.inputs[i]->input, other.inputs[i]->volume );
+		setPan( other.inputs[i]->input, other.inputs[i]->pan );
+	}
+	masterVolume = other.masterVolume;
+}
+
+void ofSoundMixer::setVolume( ofSoundSource* input, float vol ) {
+	if ( isnan(vol) || !isfinite(vol) ) {
+		return;
+	}
+	for ( int i=0; i<(int)inputs.size(); i++ ) {
+		if ( inputs[i]->input == input ) {
+			inputs[i]->volume = vol;
+		}
+	}
+}
+
+void ofSoundMixer::setPan( ofSoundSource* input, float pan ) {
+	if ( isnan(pan) || !isfinite(pan) ) {
+		return;
+	}
+	pan = min(1.0f,max(0.0f,pan));
+	bool found = false;
+	for ( int i=0; i<(int)inputs.size(); i++ ) {
+		if ( inputs[i]->input == input ) {
+			found = true;
+			inputs[i]->pan = pan;
+		}
+	}
+	if ( !found ) { 
+		ofLog( OF_LOG_WARNING, "ofSoundMixer: setPan couldn't find input for '%s' (%x), not setting pan", input->getName(), input );
+		
+	}
+}
+
+
 
 
 // Render the DSP chain. output is interleaved and has space for 
@@ -152,8 +277,7 @@ void ofSoundMixer::setVolume( ofSoundSource* input, float vol )
 void ofSoundMixer::audioRequested( float* output, int numFrames, int numChannels )
 {
 	// advance DSP
-	if ( numChannels != 1 && numChannels != 2 )
-	{
+	if ( numChannels != 1 && numChannels != 2 ) {
 		ofLog( OF_LOG_ERROR, "only 1 or 2 channels supported");
 		return;
 	}
@@ -164,34 +288,34 @@ void ofSoundMixer::audioRequested( float* output, int numFrames, int numChannels
 	mutex.lock();
 	
 	// allocate working space
-	float working[numFrames*numChannels];
-	for ( int i=0; i<(int)inputs.size(); i++ )
-	{
+	if ( !working ) {
+		working = new float[numFrames*numChannels];
+	}
+	vector<float> volumePerChannel;
+	volumePerChannel.resize( numChannels );
+	for ( int i=0; i<(int)inputs.size(); i++ ) {
 		// clear working
 		memset( working, 0, numFrames*numChannels*sizeof(float) );
 		
 		// render input into working
-		inputs[i].input->audioRequested( working, numFrames, numChannels );
+		inputs[i]->input->audioRequested( working, numFrames, numChannels );
 		
 		// construct precalculated volume + pan array (for efficiency)
-		float volumePerChannel[numChannels];
-		float vol_l = inputs[i].volume*(1.0f-inputs[i].pan);
-		float vol_r = inputs[i].volume*inputs[i].pan;
-		for ( int j=0; j<numChannels; j++ )
-		{
-			volumePerChannel[j] = (j==0?vol_l:vol_r);
+		float vol_l = inputs[i]->volume*(1.0f-inputs[i]->pan);
+		float vol_r = inputs[i]->volume*inputs[i]->pan;
+		for ( int j=0; j<numChannels; j++ ) {
+			volumePerChannel[j] = (j==0?vol_l:vol_r) * masterVolume;
 		}
 		// mix working into output, respecting pan and volume and preserving interleaving
-		for ( int j=0; j<numFrames*numChannels; j++ )
-		{
-			output[j] += working[j]*volumePerChannel[i%numChannels];
+		for ( int j=0; j<numFrames; j++ ) {
+			for ( int k=0; k<numChannels; k++ ) {
+				output[j*numChannels+k] += working[j*numChannels+k] * volumePerChannel[k];
+			}
 		}
 	}
 	
 	mutex.unlock();
-	
-	//	compileDSPChainWithTails( tails );
-	
+		
 }
 
 
@@ -208,7 +332,7 @@ bool ofSoundMixer::addInputFrom( ofSoundSource* source )
 	}
 
 	mutex.lock();
-	inputs.push_back( MixerInput( source, 1.0f, 0.5f ) );
+	inputs.push_back( new MixerInput( source, 1.0f, 0.5f ) );
 	source->setSampleRate( sampleRate );
 	mutex.unlock();
 	return true;
@@ -219,9 +343,8 @@ vector<ofSoundSource*> ofSoundMixer::getInputs()
 {
 	vector<ofSoundSource*> result;
 	mutex.lock();
-	for ( int i =0; i<(int)inputs.size(); i++ )
-	{
-		result.push_back( inputs[i].input );
+	for ( int i =0; i<(int)inputs.size(); i++ ) {
+		result.push_back( inputs[i]->input );
 	}
 	mutex.unlock();
 	return result;
@@ -231,9 +354,8 @@ vector<ofSoundSource*> ofSoundMixer::getInputs()
 void ofSoundMixer::setSampleRate( int rate )
 {
 	mutex.lock();
-	for ( int i =0; i<(int)inputs.size(); i++ )
-	{
-		inputs[i].input->setSampleRate( rate );
+	for ( int i =0; i<(int)inputs.size(); i++ ) {
+		inputs[i]->input->setSampleRate( rate );
 	}
 	mutex.unlock();
 	ofSoundSource::setSampleRate( rate );
@@ -311,7 +433,7 @@ void ofSoundSinkMicrophone::audioRequested( float* output, int numFrames, int nu
 
 
 void ofSoundSourceMultiplexor::audioRequested( float* output, int numFrames, int numChannels ) {
-	long unsigned long tick = ofSoundStreamGetCurrentTick();
+	unsigned long tick = ofSoundStreamGetCurrentTick();
 	
 	// new tick: render upstream into input buffer
 	if ( tick != lastRenderedTick ) {

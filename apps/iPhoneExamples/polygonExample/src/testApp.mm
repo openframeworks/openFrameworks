@@ -51,7 +51,7 @@ void testApp::draw(){
 
 
 	ofFill();
-	ofSetColor(0xe0be21);
+	ofSetHexColor(0xe0be21);
 
 	//------(a)--------------------------------------
 	// 
@@ -81,7 +81,7 @@ void testApp::draw(){
 	// 		info about the winding rules is here:
 	//		http://glprogramming.com/red/images/Image128.gif
 	// 
-	ofSetColor(0xb5de10);
+	ofSetHexColor(0xb5de10);
 	ofSetPolyMode(OF_POLY_WINDING_NONZERO);
 	ofBeginShape();
 		ofVertex(400,135);
@@ -112,7 +112,7 @@ void testApp::draw(){
 	float origy = 100;
 	float angle = 0;
 	
-	ofSetColor(0xa16bca);
+	ofSetHexColor(0xa16bca);
 	ofBeginShape();
 	for (int i = 0; i < nStarPts; i++){
 		if (i % 2 == 0) {
@@ -138,7 +138,7 @@ void testApp::draw(){
 	// 		lots of self intersection, 500 pts is a good stress test
 	// 
 	// 
-	ofSetColor(0x0cb0b6);
+	ofSetHexColor(0x0cb0b6);
 	ofSetPolyMode(OF_POLY_WINDING_ODD);
 	ofBeginShape();
 	for (int i = 0; i < 10; i++){
@@ -154,7 +154,7 @@ void testApp::draw(){
 	//
 	glPushMatrix();
 		glTranslatef(100,300,0);
-		ofSetColor(0xff2220);
+		ofSetHexColor(0xff2220);
 		ofFill();
 		ofSetPolyMode(OF_POLY_WINDING_ODD);
 		ofBeginShape();
@@ -180,7 +180,7 @@ void testApp::draw(){
 	// 		items so the curve actually goes through those points
 	//
 
-	ofSetColor(0x2bdbe6);
+	ofSetHexColor(0x2bdbe6);
 	ofBeginShape();
 	
 		for (int i = 0; i < nCurveVertexes; i++){
@@ -251,7 +251,7 @@ void testApp::draw(){
 	
 	
 	ofFill();
-	ofSetColor(0xFF9933);
+	ofSetHexColor(0xFF9933);
 	ofBeginShape();
 	ofVertex(x0,y0);
 	ofBezierVertex(x1,y1,x2,y2,x3,y3);
@@ -277,9 +277,9 @@ void testApp::draw(){
 	// 		this allows us to draw holes, for example... 
 	//
 	ofFill();
-	ofSetColor(0xd3ffd3);
+	ofSetHexColor(0xd3ffd3);
 	ofRect(80,480,140,70);
-	ofSetColor(0xff00ff);
+	ofSetHexColor(0xff00ff);
 	
 	ofBeginShape();
 		
@@ -382,32 +382,32 @@ void testApp::draw(){
 	//-------------------------------------
 	
 	
-	ofSetColor(0x000000);
+	ofSetHexColor(0x000000);
 	ofDrawBitmapString("(a) star\nwinding rule odd", 20,210);
 	
-	ofSetColor(0x000000);
+	ofSetHexColor(0x000000);
 	ofDrawBitmapString("(b) star\nwinding rule nonzero", 220,210);
 	
-	ofSetColor(0x000000);
+	ofSetHexColor(0x000000);
 	ofDrawBitmapString("(c) dynamically\ncreated shape", 420,210);
 	
-	ofSetColor(0x000000);
+	ofSetHexColor(0x000000);
 	ofDrawBitmapString("(d) random points\npoly", 670,210);
 	
-	ofSetColor(0x000000);
+	ofSetHexColor(0x000000);
 	ofDrawBitmapString("(e) fun with sin/cos", 20,410);
 	
-	ofSetColor(0x000000);
+	ofSetHexColor(0x000000);
 	ofDrawBitmapString("(f) ofCurveVertex\nuses catmull rom\nto make curved shapes", 220,410);
 	
-	ofSetColor(0x000000);
+	ofSetHexColor(0x000000);
 	ofDrawBitmapString("(g) ofBezierVertex\nuses bezier to draw curves", 460,410);
 	
 	
-	ofSetColor(0x000000);
+	ofSetHexColor(0x000000);
 	ofDrawBitmapString("(h) ofNextContour\nallows for holes", 20,610);
 	
-	ofSetColor(0x000000);
+	ofSetHexColor(0x000000);
 	ofDrawBitmapString("(i) ofNextContour\ncan even be used for CSG operations\nsuch as union and intersection", 260,620);
 		
 }
@@ -451,5 +451,10 @@ void testApp::touchUp(ofTouchEventArgs &touch){
 
 //--------------------------------------------------------------
 void testApp::touchDoubleTap(ofTouchEventArgs &touch){
+
+}
+
+//--------------------------------------------------------------
+void testApp::touchCancelled(ofTouchEventArgs &touch){
 
 }
