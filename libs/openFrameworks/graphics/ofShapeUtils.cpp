@@ -4,7 +4,7 @@ ofPolyline ofGetSmoothed(const ofPolyline& polyline, int smoothingSize, float sm
 	ofPolyline result = polyline;
 	
 	if(!polyline.getClosed()) {
-		ofLogError() << "ofSmooth() currently only supports closed ofPolylines.";
+		ofLog( OF_LOG_ERROR, "ofSmooth() currently only supports closed ofPolylines." );
 		return polyline;
 	}
 	
