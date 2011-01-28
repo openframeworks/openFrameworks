@@ -56,17 +56,22 @@ void ofEasyCam::begin(ofRectangle viewport) {
 		mousePosXYZ.z += targetPos.z;
 		ofVec3f mousePosView = ofMatrix4x4::getInverseOf(target.getGlobalTransformMatrix()) * mousePosXYZ;
 		
+		bool mousePressedCur[] = {ofGetMousePressed(0), ofGetMousePressed(2)};
+
 		//calc new rotation velocity
 		ofQuaternion newRotation;
-		if(ofGetMousePressed(0)) {
+		if(mousePressedPrev[0] && mousePressedCur[0]) {
 			newRotation.makeRotate(mousePosViewPrev, mousePosView);
 		}
 
 		//calc new scale velocity
 		float newDistanceScaleVelocity = 0.0f;
-		if(ofGetMousePressed(2)) {
+		if(mousePressedPrev[1] && mousePressedCur[1]) {
 			newDistanceScaleVelocity = zoomSpeed * (mousePosScreenPrev.y - mousePosScreen.y) / viewport.height;
 		}
+		
+		mousePressedPrev[0] = mousePressedCur[0];
+		mousePressedPrev[1] = mousePressedCur[1];
 		
 		ofVec3f newTranslation;
 		// TODO: this doesn't work at all. why not?
