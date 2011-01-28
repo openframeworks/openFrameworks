@@ -1,18 +1,13 @@
-//Keith Pasko, Memo Akten
-
 #pragma once
 
-#include "ofMeshElement.h"
+#include "ofVertexData.h"
 #include "ofVbo.h"
 
-//TODO:
-// vector of VBOs, 2 per element
-
 //enum for drawing mode status
-enum{
-	OF_MESH_POINTS,
-	OF_MESH_WIREFRAME,
-	OF_MESH_FILL
+enum polyMode{
+	OF_MESH_POINTS = GL_POINT,
+	OF_MESH_WIREFRAME = GL_LINE,
+	OF_MESH_FILL = GL_FILL
 };
 
 
@@ -21,36 +16,42 @@ public:
 	ofVboMesh();
 	~ofVboMesh();
 	
+	/*
 	ofVboMesh(const ofVboMesh& v);
 	ofVboMesh& operator=(const ofVboMesh& v);
 	void clone(const ofVboMesh& v);
+	*/
 	
-	void setMeshElement(ofMeshElement* m);
+	void setVertexData(ofVertexData* m);
+	void setUseIndices(bool useIndices=true);
 	
-	ofMeshElement* getMeshElement();
-	ofMeshElement* getMeshElement() const;
+	ofVertexData* getVertexData();
+	const ofVertexData* getVertexData() const;
+	
+	void setDrawType(int drawType);
 	
 	bool setupVertices(int usage);
 	bool setupColors(int usage);
 	bool setupNormals(int usage);
 	bool setupTexCoords(int usage);
-	bool setupIndices(int indexMode);
-	
-//	void setupNormals(int usage);
-//	void setupTextures(int usage);
+	bool setupIndices(int usage);
 	 
 	void drawVertices();
 	void drawWireframe();
 	void drawFaces();
+	void draw(polyMode mode);
 	
-	void addTriangles(const vector<ofVec3f>& verts);
-	void addTriangleFan(const vector<ofVec3f>& verts);
-	void addTriangleStrip(const vector<ofVec3f>& verts);
+	void update();
 	
-	void addMeshVertices(const vector<ofVec3f>& verts);
+	void enableColors();
+	void disableColors();
+	void enableNormals();
+	void disableNormals();
+	void enableTexCoords();
+	void disableTexCoords();
 	
-	//TODO: update methods, generic update
-	
-    ofMeshElement* meshElement;
+    ofVertexData* vertexData;
+	bool bEnableIndices, bEnableColors, bEnableNormals, bEnableTexCoords;
 	ofVbo vbo;
+	int drawType;
 };

@@ -17,16 +17,24 @@ ofColor ofAssimpMeshLoader::aiColorToOfColor(const aiColor4D& c){
 	return ofColor(255*c.r,255*c.g,255*c.b,255*c.a);
 }
 
-void ofAssimpMeshLoader::aiMeshToOfMesh(const aiMesh* aim, ofVertexData& ofm){
-	
+void ofAssimpMeshLoader::aiMeshToOfMesh(const aiMesh* aim, ofMeshElement& ofm){
 	
 	// default to triangle mode
-	ofm.setMode(OF_TRIANGLES_MODE);
+	ofm.setMode(OF_TRIANGLES_ELEMENT);
 	
 	// copy vertices
 	for (int i=0; i < aim->mNumVertices;i++){
 		ofm.addVertex(ofVec3f(aim->mVertices[i].x,aim->mVertices[i].y,aim->mVertices[i].z));
 	}
+	
+	for (int i=0; i < aim->mNumFaces;i++){	
+		if(aim->mFaces[i].mNumIndices>3){
+			ofLog(OF_LOG_WARNING,"non-triangular face found: model face # " + ofToString(i));
+		}
+		for (int j=0; j<aim->mFaces[i].mNumIndices; j++){
+			ofm.addIndex(aim->mFaces[i].mIndices[j]);
+		}
+	}	
 
 	if(aim->HasNormals()){
 		for (int i=0; i < aim->mNumVertices;i++){
@@ -50,15 +58,6 @@ void ofAssimpMeshLoader::aiMeshToOfMesh(const aiMesh* aim, ofVertexData& ofm){
 		}
 	}
 	
-	for (int i=0; i < aim->mNumFaces;i++){	
-		if(aim->mFaces[i].mNumIndices>3){
-			ofLog(OF_LOG_WARNING,"non-triangular face found: model face # " + ofToString(i));
-		}
-		for (int j=0; j<aim->mFaces[i].mNumIndices; j++){
-			ofm.addIndex(aim->mFaces[i].mIndices[j]);
-		}
-	}	
-	
 	// copy name
 	//ofm.name = string(aim->mName.data);
 	
@@ -70,7 +69,7 @@ void ofAssimpMeshLoader::aiMeshToOfMesh(const aiMesh* aim, ofVertexData& ofm){
 }
 
 //--------------------------------------------------------------
-void ofAssimpMeshLoader::loadMeshes(string modelName,vector<ofVertexData>& m){
+void ofAssimpMeshLoader::loadMeshes(string modelName,vector<ofMeshElement>& m){
 	
     // if we have a model loaded, unload the fucker. (pardon anton's french)
     if(scene != NULL){
@@ -100,7 +99,7 @@ void ofAssimpMeshLoader::loadMeshes(string modelName,vector<ofVertexData>& m){
 			// current mesh we are introspecting
 			aiMesh* aMesh = scene->mMeshes[i];
 				
-			m[i] = ofVertexData();
+			m[i] = ofMeshElement();
 			aiMeshToOfMesh(aMesh,m[i]);
 		}
     }
