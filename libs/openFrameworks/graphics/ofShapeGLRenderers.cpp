@@ -17,8 +17,9 @@ void ofVARenderer::draw(ofPolyline & poly){
 }
 
 void ofVARenderer::draw(ofShape & shape){
+	ofPushStyle();
 	ofMesh & mesh = shape.getMesh();
-	ofSetColor( shape.getFillColor() );
+	ofSetColor( shape.getFillColor() * ofGetStyle().color);
 	glEnableClientState(GL_VERTEX_ARRAY);
 	for(int i=0;i<(int)mesh.elements.size();i++){
 		ofPrimitiveMode mode = mesh.elements[i].getMode();
@@ -27,9 +28,10 @@ void ofVARenderer::draw(ofShape & shape){
 		glDrawArrays(currentTriType, 0, mesh.elements[i].getNumVertices());
 	}
 	if(shape.hasOutline()){
-		ofSetColor( shape.getStrokeColor() );
+		ofSetColor( shape.getStrokeColor() * ofGetStyle().color);
 		draw(shape.getOutline());
 	}
+	ofPopStyle();
 }
 
 void ofVARenderer::draw(ofPath & path){

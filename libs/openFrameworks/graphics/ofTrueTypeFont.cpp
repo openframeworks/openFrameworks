@@ -708,8 +708,8 @@ void ofTrueTypeFont::drawStringAsShapes(string c, float x, float y) {
 	GLfloat		X		= 0;
 	GLfloat		Y		= 0;
 
-	glPushMatrix();
-	glTranslatef(x, y, 0);
+	ofPushMatrix();
+	ofTranslate(x, y);
 	int len = (int)c.length();
 
 	while(index < len){
@@ -733,7 +733,7 @@ void ofTrueTypeFont::drawStringAsShapes(string c, float x, float y) {
 		index++;
 	}
 
-	glPopMatrix();
+	ofPopMatrix();
 
 }
 
