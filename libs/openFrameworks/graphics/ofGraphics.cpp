@@ -1243,39 +1243,6 @@ void ofDrawBitmapString(string textString, float x, float y){
 }
 //--------------------------------------------------
 void ofDrawBitmapString(string textString, float x, float y, float z){
-#ifndef TARGET_OPENGLES	// temp for now, until is ported from existing iphone implementations
-
-    glPushClientAttrib( GL_CLIENT_PIXEL_STORE_BIT );
-    glPixelStorei( GL_UNPACK_SWAP_BYTES,  GL_FALSE );
-    glPixelStorei( GL_UNPACK_LSB_FIRST,   GL_FALSE );
-    glPixelStorei( GL_UNPACK_ROW_LENGTH,  0        );
-    glPixelStorei( GL_UNPACK_SKIP_ROWS,   0        );
-    glPixelStorei( GL_UNPACK_SKIP_PIXELS, 0        );
-    glPixelStorei( GL_UNPACK_ALIGNMENT,   1        );
-
-	int len = (int)textString.length();
-	float yOffset = 0;
-	float fontSize = 8.0f;
-	glRasterPos3f(x,y,z);
-	bool bOrigin = false;
-	for(int c = 0; c < len; c++)
-	{
-		if(textString[c] == '\n')
-		{
-
-			yOffset += bOrigin ? -1 : 1 * (fontSize*1.7);
-			glRasterPos2f(x,y + (int)yOffset);
-		} else if (textString[c] >= 32){
-			// < 32 = control characters - don't draw
-			// solves a bug with control characters
-			// getting drawn when they ought to not be
-			ofDrawBitmapCharacter(textString[c]);
-			//ofDrawBitmapCharacter(textString[c], x + (c * 8), y);
-		}
-	}
-
-	glPopClientAttrib( );
-#else 
 	
 	// this is copied from the ofTrueTypeFont
 	GLboolean blend_enabled = glIsEnabled(GL_BLEND);
@@ -1283,9 +1250,8 @@ void ofDrawBitmapString(string textString, float x, float y, float z){
 	glGetIntegerv( GL_BLEND_SRC, &blend_src );
 	glGetIntegerv( GL_BLEND_DST, &blend_dst );
 	
-    	glEnable(GL_BLEND);
+	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	// (c) enable texture once before we start drawing each char (no point turning it on and off constantly)
 	
 	
 	int len = (int)textString.length();
@@ -1296,10 +1262,12 @@ void ofDrawBitmapString(string textString, float x, float y, float z){
 	float sx = x;
 	float sy = y - fontSize;
 	
-	for(int c = 0; c < len; c++)
-	{
-		if(textString[c] == '\n')
-		{
+	// (c) enable texture once before we start drawing each char (no point turning it on and off constantly)
+	//We do this because its way faster
+	ofDrawBitmapCharacterStart();
+	
+	for(int c = 0; c < len; c++){
+		if(textString[c] == '\n'){
 			
 			sy += bOrigin ? -1 : 1 * (fontSize*1.7);
 			sx = x;
@@ -1314,13 +1282,13 @@ void ofDrawBitmapString(string textString, float x, float y, float z){
 			sx += fontSize;
 		}
 	}
-	
-	if( !blend_enabled )
+	//We do this because its way faster
+	ofDrawBitmapCharacterEnd();
+
+	if( !blend_enabled ){
 		glDisable(GL_BLEND);
+	}
 	glBlendFunc( blend_src, blend_dst );
-	
-	
-#endif
 }
 
 

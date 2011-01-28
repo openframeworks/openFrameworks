@@ -160,9 +160,9 @@ void ofRotate(float degrees);
 
 // bitmapped type
 // ** note, this uses glDrawPixels and may be S L 0 W on some graphics cards
-void ofDrawBitmapString(string textString, const ofPoint & p);
 void ofDrawBitmapString(string textString, float x, float y);
 void ofDrawBitmapString(string textString, float x, float y, float z);
+void ofDrawBitmapString(string textString, const ofPoint & p);
 
 // screen coordinate things / default gl values
 void ofSetupGraphicDefaults();
