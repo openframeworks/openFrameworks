@@ -35,9 +35,9 @@ public:
 	
     // Check similarity/equality.
     //
-    bool operator==( const ofVec2f& vec );
-    bool operator!=( const ofVec2f& vec );
-    bool match( const ofVec2f& vec, float tollerance=0.0001 );
+    bool operator==( const ofVec2f& vec ) const;
+    bool operator!=( const ofVec2f& vec ) const;
+    bool match( const ofVec2f& vec, float tollerance=0.0001 ) const;
     /**
 	 * Checks if vectors look in the same direction.
 	 * Tollerance is specified in degree.
@@ -247,15 +247,15 @@ inline void ofVec2f::set( const ofVec2f& vec ) {
 // Check similarity/equality.
 //
 //
-inline bool ofVec2f::operator==( const ofVec2f& vec ) {
+inline bool ofVec2f::operator==( const ofVec2f& vec ) const {
 	return (x == vec.x) && (y == vec.y);
 }
 
-inline bool ofVec2f::operator!=( const ofVec2f& vec ) {
+inline bool ofVec2f::operator!=( const ofVec2f& vec ) const {
 	return (x != vec.x) || (y != vec.y);
 }
 
-inline bool ofVec2f::match( const ofVec2f& vec, float tollerance ) {
+inline bool ofVec2f::match( const ofVec2f& vec, float tollerance ) const {
 	return (fabs(x - vec.x) < tollerance)
 	&& (fabs(y - vec.y) < tollerance);
 }
