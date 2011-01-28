@@ -39,8 +39,8 @@ public:
 	
     // Check similarity/equality.
     //
-    bool operator==( const ofVec3f& vec );
-    bool operator!=( const ofVec3f& vec );
+    bool operator==( const ofVec3f& vec ) const;
+    bool operator!=( const ofVec3f& vec ) const;
     bool match( const ofVec3f& vec, float tollerance=0.0001 ) const;
     /**
 	 * Checks if vectors look in the same direction.
@@ -268,11 +268,11 @@ inline void ofVec3f::set( const ofVec3f& vec ) {
 // Check similarity/equality.
 //
 //
-inline bool ofVec3f::operator==( const ofVec3f& vec ) {
+inline bool ofVec3f::operator==( const ofVec3f& vec ) const {
 	return (x == vec.x) && (y == vec.y) && (z == vec.z);
 }
 
-inline bool ofVec3f::operator!=( const ofVec3f& vec ) {
+inline bool ofVec3f::operator!=( const ofVec3f& vec ) const {
 	return (x != vec.x) || (y != vec.y) || (z != vec.z);
 }
 
