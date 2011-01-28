@@ -5,6 +5,7 @@
 #include "ofPoint.h"
 #include "ofRectangle.h"
 #include "ofConstants.h"
+#include "ofPath.h"
 
 //--------------------------------------------------
 typedef struct {
@@ -26,16 +27,8 @@ typedef struct {
 //Our default is 0.3 which removes segments that are less than 0.3 of a pixel in length
 #define TTF_SHAPE_SIMPLIFICATION_AMNT (0.3)
 
-class ofTTFContour{
-	public:
-		vector <ofPoint>pts;
-};
 
-
-class ofTTFCharacter{
-	public:
-		vector <ofTTFContour> contours;
-};
+typedef ofPath ofTTFCharacter;
 
 //--------------------------------------------------
 #define NUM_CHARACTER_TO_START		33		// 0 - 32 are control characters, no graphics needed.
@@ -49,8 +42,7 @@ public:
 	virtual ~ofTrueTypeFont();
 		
 	// 			-- default, non-full char set, anti aliased:
-	void 		loadFont(string filename, int fontsize);
-	void 		loadFont(string filename, int fontsize, bool _bAntiAliased, bool _bFullCharacterSet, bool makeContours = false);
+	void 		loadFont(string filename, int fontsize, bool _bAntiAliased=true, bool _bFullCharacterSet=false, bool makeContours = false);
 
 	bool		bLoadedOk;
 	bool 		bAntiAlised;

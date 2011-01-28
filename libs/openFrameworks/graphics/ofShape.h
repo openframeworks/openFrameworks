@@ -23,15 +23,16 @@
 class ofPolyline {
 public:	
 	ofPolyline(){
-		bIs3D = false;
+		bIs3D = true;
 		bHasChanged = true;
+		bClosed=false;
 	}
 	/// remove all the points
 	void clear() { points.clear(); }
 
 	/// add a vertex
 	void addVertex( const ofPoint& p ) { points.push_back(p); bHasChanged=true; }
-	void addVertex( float x, float y ) { addVertex(ofPoint(x,y)); bHasChanged=true; }
+	void addVertex( float x, float y, float z=0 ) { addVertex(ofPoint(x,y,z)); bHasChanged=true; }
 	void addVertexes( const vector<ofPoint>& verts ) { points.insert( points.end(), verts.begin(), verts.end() );  bHasChanged=true;  }
 
 	/// points vector access
@@ -43,6 +44,8 @@ public:
 	void setClosed( bool tf ) {  bHasChanged=true; bClosed = tf; }
 	bool isClosed() const { return bClosed; }
 	
+	void simplify(float tolerance=0.3);
+
 	void setIs3D(bool bIs3D_){
 		bHasChanged=true;
 		bIs3D = bIs3D_;
@@ -59,7 +62,7 @@ public:
 		 }
 	}
 
-	vector<ofPoint> & getVertices(){return points;}
+	const vector<ofPoint> & getVertices() const{return points;}
 private:
 	vector<ofPoint> points;
 	bool bClosed;
@@ -108,6 +111,7 @@ public:
 
 	/// must call tessellate before calling draw, if the shape has changed
 	void tessellate();
+	void simplify(float tolerance=0.3);
 	void draw();
 	
 	/// drawing style
@@ -158,12 +162,23 @@ public:
 	void curveTo(float x, float y, float z=0,  int curveResolution=16 ){
 		curveTo(ofPoint(x,y,z),curveResolution);
 	}
+
+	/// cuadric bezier
 	void bezierTo( const ofPoint & cp1, const ofPoint & cp2, const ofPoint & to, int curveResolution = 16);
 	void bezierTo(float cx1, float cy1, float cx2, float cy2, float x, float y, int curveResolution=16){
 		bezierTo(ofPoint(cx1,cy1),ofPoint(cx2,cy2),ofPoint(x,y));
 	}
 	void bezierTo(float cx1, float cy1, float cz1, float cx2, float cy2, float cz2, float x, float y, float z, int curveResolution=16){
 		bezierTo(ofPoint(cx1,cy1,cz1),ofPoint(cx2,cy2,cz2),ofPoint(x,y,z),curveResolution);
+	}
+
+	/// cubic bezier
+	void cubicBezierTo(float cx1, float cy1, float cz1, float cx2, float cy2, float cz2, float x, float y, float z, int curveResolution=16);
+	void cubicBezierTo(  const ofPoint & p1, const ofPoint & p2,const ofPoint & p3,  int curveResolution=16 ){
+		cubicBezierTo(p1.x,p1.y,p1.z,p2.x,p2.y,p2.z,p3.x,p3.y,p3.z,curveResolution);
+	}
+	void cubicBezierTo(float cx1, float cy1, float cx2, float cy2, float x, float y, int curveResolution=16){
+		cubicBezierTo(cx1,cy1,0,cx2,cy2,0,x,y,0,curveResolution);
 	}
 
 	void setFrom(const ofPath & path,  int curveResolution=16, bool tesselate=false);
@@ -193,4 +208,6 @@ private:
 
 	deque<ofPoint> curveVertices;
 	vector<ofPoint> circlePoints;
+
+	bool bIs3D;
 };

@@ -94,7 +94,7 @@ void CALLBACK ofTessellator::end(){
 	// deal with mesh elements (triangles, triangle fan, triangle strip)
 
 	if(currentTriType!=GL_LINE_LOOP){
-		resultMesh.addElement(ofGetOFTriangleMode(currentTriType), vertices );
+		resultMesh.addElement(ofGetOFPrimitiveMode(currentTriType), vertices );
 	}else if ( currentTriType == GL_LINE_LOOP ){ // outline
 		resultOutline.addVertexes( vertices );
 		// close the loop
