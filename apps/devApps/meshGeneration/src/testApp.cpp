@@ -2,93 +2,75 @@
 
 //--------------------------------------------------------------
 void testApp::setup(){
-	ofSetVerticalSync(true);
+	ofBackground(50, 50, 50, 0);
 	
-	// this uses depth information for occlusion
-	// rather than always drawing things on top of each other
-	glEnable(GL_DEPTH_TEST);
+	ofEnableAlphaBlending();
+	ofSetLogLevel(OF_LOG_VERBOSE);
+		
+	mesh.vertexData = new ofVertexData();
+	mesh.setDrawType(GL_STREAM_DRAW_ARB);
+	mesh.bEnableIndices = false;
+	mesh.vertexData->setMode(OF_TRIANGLE_STRIP_MODE);
 	
-	// this sets the camera's distance from the object
-	cam.setDistance(100);
+	glPointSize(3);
+	ofSetLineWidth(3);
 }
 
 //--------------------------------------------------------------
 void testApp::update(){
-
 }
 
 //--------------------------------------------------------------
 void testApp::draw(){
+	ofSetColor(255, 0, 255, 155);
+	mesh.drawFaces();
+	ofSetColor(0, 255, 0, 255);
+	mesh.drawWireframe();
+    ofSetColor(255, 255, 255, 255);
+	mesh.drawVertices();
 
-	cam.begin();		
-		ofRotateX(ofRadToDeg(.5));
-		ofRotateY(ofRadToDeg(-.5));
-
-		ofBackground(0);
-
-		ofSetColor(255,0,0);
-		ofFill();
-		ofBox(30);
-		ofNoFill();
-		ofSetColor(0);
-		ofBox(30);
-
-		ofPushMatrix();
-			ofTranslate(0,0,20);
-			ofSetColor(0,0,255);
-			ofFill();
-			ofBox(5);
-			ofNoFill();
-			ofSetColor(0);
-			ofBox(5);
-		ofPopMatrix();
-	cam.end();
-
-	ofSetColor(255);
-	ofDrawBitmapString(ofToString((int) ofGetFrameRate()), 10, 20);
+    
+    ofDrawBitmapString("fps: "+ofToString(ofGetFrameRate(), 2), 10, 15);
 }
 
 //--------------------------------------------------------------
 void testApp::keyPressed(int key){
-
+	if(key== ' ') {
+		lightsOn = !lightsOn;
+	}
+	
+	if (key == 'c'){
+		mesh.vertexData->clear();
+	}
 }
 
 //--------------------------------------------------------------
 void testApp::keyReleased(int key){
-
 }
 
 //--------------------------------------------------------------
 void testApp::mouseMoved(int x, int y ){
-
+	
 }
 
 //--------------------------------------------------------------
 void testApp::mouseDragged(int x, int y, int button){
-
+	
 }
 
 //--------------------------------------------------------------
 void testApp::mousePressed(int x, int y, int button){
-
+	
 }
 
 //--------------------------------------------------------------
 void testApp::mouseReleased(int x, int y, int button){
-
+	mesh.vertexData->addVertex(ofVec3f(x,y,0));
+	mesh.vertexData->addIndex(mesh.vertexData->getNumVertices()-1);
 }
 
 //--------------------------------------------------------------
 void testApp::windowResized(int w, int h){
-
+	
 }
 
-//--------------------------------------------------------------
-void testApp::gotMessage(ofMessage msg){
-
-}
-
-//--------------------------------------------------------------
-void testApp::dragEvent(ofDragInfo dragInfo){ 
-
-}
