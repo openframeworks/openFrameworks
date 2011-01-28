@@ -12,11 +12,8 @@
  
  */
 
-#ifndef TARGET_OPENGLES	
-void  ofDrawBitmapCharacter(int character );
-#else
-void  ofDrawBitmapCharacter(int character, int x , int y );
-#endif
-
+void ofDrawBitmapCharacterStart();
+void ofDrawBitmapCharacter(int character, int x , int y );
+void ofDrawBitmapCharacterEnd();
 
 
