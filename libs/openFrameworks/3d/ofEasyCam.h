@@ -35,6 +35,9 @@ protected:
 	void setDistance(float distance, bool save);
 
 	ofNode target;
+	
+	float drag;
+	float zoomSpeed;
 
 	ofVec3f mousePosViewPrev;
 	ofVec3f mousePosScreenPrev;
@@ -44,10 +47,8 @@ protected:
 
 	bool bDistanceSet;
 	float lastDistance;
-	
-	//momentum
-	float drag;
-	float zoomSpeed;
-	ofQuaternion rotation;
 	float distanceScaleVelocity;
+	
+	ofQuaternion rotation;
+	ofVec3f translation;
 };

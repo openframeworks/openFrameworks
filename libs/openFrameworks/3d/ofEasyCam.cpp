@@ -3,7 +3,7 @@
 
 // when an ofEasyCam is moving due to momentum, this keeps it
 // from moving forever by assuming small values are zero.
-float minimumRotation = 1e-7;
+float epsilonTransform = 1e-7;
 
 // this is the default on windows os
 int doubleclickTime = 500;
@@ -68,21 +68,29 @@ void ofEasyCam::begin(ofRectangle rect) {
 			newDistanceScaleVelocity = zoomSpeed * (mousePosScreenPrev.y - mousePosScreen.y) / rect.height;
 		}
 		
-		ofVec3f newPosition;
-		//if(lastMousePressed[0] && 
+		ofVec3f newTranslation;
+		// TODO: this doesn't work at all. why not?
+		if(ofGetMousePressed() && ofGetKeyPressed(OF_KEY_SHIFT)) {
+			newTranslation = mousePosScreenPrev - mousePosScreen;
+		}
 		
 		//apply drag towards new velocities
 		distanceScaleVelocity = ofLerp(distanceScaleVelocity, newDistanceScaleVelocity, drag); // TODO: add dt
 		rotation.slerp(drag, rotation, newRotation); // TODO: add dt		
+		translation.interpolate(newTranslation, drag);
 		
 		mousePosViewPrev = ofMatrix4x4::getInverseOf(target.getGlobalTransformMatrix()) * mousePosXYZ;
 		
 		// apply transforms if they're big enough
-		// TODO: this should be scaled by dt
-		if (rotation.asVec3().lengthSquared() > minimumRotation) {
+		// TODO: these should be scaled by dt
+		if(translation.lengthSquared() > epsilonTransform) {
+			// TODO: this isn't quite right, it needs to move wrt the rotation
+			target.move(translation);
+		}
+		if (rotation.asVec3().lengthSquared() > epsilonTransform) {
 			target.rotate(rotation.conj());
 		}
-		if (abs(distanceScaleVelocity - 1.0f) > minimumRotation) {
+		if (abs(distanceScaleVelocity - 1.0f) > epsilonTransform) {
 			setDistance(getDistance() * (1.0f + distanceScaleVelocity), false);
 		}
 		
