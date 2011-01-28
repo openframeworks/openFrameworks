@@ -2,36 +2,28 @@
 
 #include "ofShape.h"
 
-// todo: these should return objects instead of doing it faux-in-place
+// todo: douglas-peucker simplification
 
 // todo: this should be gaussian with a single width parameter
 // todo: this should handle non-loop polylines correctly
 // given a polyline, smooth all the points using a linear dropoff kernel
 // of radius smoothingSize and weighted towards the edges with smoothingAmount
-// smoothingAmount of 1 will give a moving average, while 0 gives a triangular kernel
-ofPolyline ofSmooth(const ofPolyline& polyline, int smoothingSize = 8, float smoothingAmount = 0);
+// smoothingShape of 1 will give a moving average, while 0 gives a triangular kernel
+ofPolyline ofGetSmoothed(const ofPolyline& polyline, int smoothingSize, float smoothingShape = 0);
 
 // resample a polyline based on the distance between the points
-ofPolyline ofResampleSpacing(const ofPolyline& polyline, float spacing);
+ofPolyline ofGetResampledSpacing(const ofPolyline& polyline, float spacing);
 
 // resample a polyline based on the total point count
-ofPolyline ofResampleCount(const ofPolyline& polyline, int count);
+ofPolyline ofGetResampledCount(const ofPolyline& polyline, int count);
 
-// todo: fixed number of points resampling
-// todo: douglas-pecker simplification
-// todo: get bounding box from polyline
-// todo: interesection, offset
+// get the bounding box of a polyline
+ofRectangle ofGetBoundingBox(const ofPolyline& polyline);
 
-/*
+// find the closest point p3 on the line between p1 and p2
+// optionally pass a pointer to/address of a float to get the normalized position along that line
+ofPoint ofGetClosestPoint(const ofPoint& p1, const ofPoint& p2, const ofPoint& p3, float* normalizedPosition = NULL);
 
-// find the closest point to p3 on the line between p1 and p2
-// optionally pass a pointer to a float for the normalized position along that line
-// also, helper functions for finding the closest point on a polyline or closest in a vector of polylines
-ofPoint ofGetClosestPoint(const ofPoint& p1, const ofPoint& p2, const ofPoint& p3, float* uptr = NULL);
-ofPoint ofGetClosestPoint(const ofPolyline& polyline, const ofPoint& target, int& nearest);
-ofPoint ofGetClosestPoint(vector<ofPolyline>& polylines, const ofPoint& target, ofPolyline*& matchedPolyline, int& matchedIndex);
-
-// get a point on a polyline that is a distance in pixels from a given point
-void getOffsetPoint(ofPolyline& polyline, int start, float radius, int& lastIndex, ofPoint& point);
-
-*/
+// find the closest point 'target' on a polyline
+// optionally pass a pointer to/address of an unsigned int to get the index of the closest vertex
+ofPoint ofGetClosestPoint(const ofPolyline& polyline, const ofPoint& target, unsigned int* nearestIndex = NULL);
