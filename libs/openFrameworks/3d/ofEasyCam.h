@@ -8,7 +8,7 @@ public:
 	ofEasyCam();
 
 	// TODO: this should be ofGetViewRect() eventually
-	virtual void begin(ofRectangle rect = ofGetWindowRect());
+	virtual void begin(ofRectangle viewport = ofGetWindowRect());
 	void reset();
 
 	//----------------------------------------
