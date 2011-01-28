@@ -176,16 +176,27 @@ ofHandednessType ofGetCoordHandedness() {
 }
 
 //----------------------------------------------------------
-void ofSetupScreenPerspective(float width, float height, bool vFlip, float fov, float nearDist, float farDist) {
-	if(width == 0) width = ofGetViewportWidth();
-	if(height == 0) height = ofGetViewportHeight();
-
-	float eyeX = width / 2;
-	float eyeY = height / 2;
+void ofSetupScreenPerspective(float width, float height, int orientation,  bool vFlip, float fov, float nearDist, float farDist) {
+	if(width == 0) width = ofGetWidth();
+	if(height == 0) height = ofGetHeight();
+	if( orientation == 0 ) orientation = ofGetOrientation();
+		
+	float w = width;
+	float h = height;
+	
+	//we do this because ofGetWidth and ofGetHeight return orientated widths and height
+	//for the camera we need width and height of the actual screen
+	if( orientation == OF_ORIENTATION_90_LEFT || orientation == OF_ORIENTATION_90_RIGHT ){
+		h = width;
+		w = height;
+	}
+		
+	float eyeX = w / 2;
+	float eyeY = h / 2;
 	float halfFov = PI * fov / 360;
 	float theTan = tanf(halfFov);
 	float dist = eyeY / theTan;
-	float aspect = (float) width / height;
+	float aspect = (float) w / h;
 	
 	if(nearDist == 0) nearDist = dist / 10.0f;
 	if(farDist == 0) farDist = dist * 10.0f;
@@ -198,13 +209,49 @@ void ofSetupScreenPerspective(float width, float height, bool vFlip, float fov, 
 	glLoadIdentity();
 	gluLookAt(eyeX, eyeY, dist, eyeX, eyeY, 0, 0, 1, 0);
 	
-	ofSetCoordHandedness(OF_RIGHT_HANDED);
-	
-	if(vFlip) {
-		glScalef(1, -1, 1);           // invert Y axis so increasing Y goes down.
-		glTranslatef(0, -height, 0);       // shift origin up to upper-left corner.
-		ofSetCoordHandedness(OF_LEFT_HANDED);
+	//note - theo checked this on iPhone and Desktop for both vFlip = false and true
+	switch(orientation) {
+		case OF_ORIENTATION_180:
+			glRotatef(-180, 0, 0, 1);
+			if(vFlip){
+				glScalef(1, -1, 1);        
+				glTranslatef(-width, 0, 0);  
+			}else{
+				glTranslatef(-width, -height, 0);  			
+			}
+
+			break;
+			
+		case OF_ORIENTATION_90_RIGHT:
+			glRotatef(-90, 0, 0, 1);
+			if(vFlip){						
+				glScalef(-1, 1, 1);        
+			}else{
+				glScalef(-1, -1, 1);        
+				glTranslatef(0, -height, 0);    			
+			}
+			break;
+			
+		case OF_ORIENTATION_90_LEFT:
+			glRotatef(90, 0, 0, 1);
+			if(vFlip){			
+				glScalef(-1, 1, 1);      
+				glTranslatef(-width, -height, 0);
+			}else{
+				glScalef(-1, -1, 1);      			
+				glTranslatef(-width, 0, 0);
+			}
+			break;
+
+		case OF_ORIENTATION_DEFAULT:
+		default:
+			if(vFlip){
+				glScalef(1, -1, 1);        
+				glTranslatef(0, -height, 0);  
+			}
+			break;
 	}
+			
 }
 
 //----------------------------------------------------------
