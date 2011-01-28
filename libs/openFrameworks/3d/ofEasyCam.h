@@ -8,7 +8,7 @@ public:
 	ofEasyCam();
 
 	// TODO: this should be ofGetViewRect() eventually
-	virtual void begin(ofRectangle viewport = ofGetWindowRect());
+	virtual void begin(ofRectangle viewport = ofGetCurrentViewport());
 	void reset();
 
 	//----------------------------------------
@@ -44,6 +44,7 @@ protected:
 	int lastFrame;
 	
 	unsigned long lastTap;
+	bool mousePressedPrev[2];
 
 	bool bDistanceSet;
 	float lastDistance;
