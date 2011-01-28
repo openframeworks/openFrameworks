@@ -14,7 +14,7 @@ class testApp : public ofBaseApp{
 		void draw();
 	
 		void setupViewports();
-		void drawScene();
+		void drawScene(int iCameraDraw);
 
 		void keyPressed  (int key);
 		void keyReleased(int key);
@@ -25,11 +25,14 @@ class testApp : public ofBaseApp{
 		void windowResized(int w, int h);
 	
 
-		//cameras
+		//cameras (all these inherit from ofCamera)
 		ofEasyCam				camEasyCam;
 		OrthoCamera				camFront;
 		OrthoCamera				camTop;
 		OrthoCamera				camLeft;
+	
+		//cameras have parent?
+		bool					bCamParent;
 
 	
 		//camera pointers

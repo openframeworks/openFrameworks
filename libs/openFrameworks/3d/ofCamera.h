@@ -42,13 +42,22 @@ public:
 	virtual void end();
 	
 	// for hardcore peeps, access to the projection matrix()
-	//	ofMatrix4x4 &getProjectionMatrix();	
+	bool storeMatrices;
+	ofMatrix4x4 getProjectionMatrix();	
+	ofMatrix4x4 getModelViewMatrix();
+	ofMatrix4x4 getModelViewProjectionMatrix();
 	
 protected:
+	void ensureStoredMatricies();
+	
 	bool isOrtho;
 	float fov;
 	float nearClip;
 	float farClip;
 	bool isActive;
+	
+	bool hasStoredMatrices;
+	ofMatrix4x4 matProjection;
+	ofMatrix4x4 matModelView;
 };
 
