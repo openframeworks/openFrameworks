@@ -30,7 +30,7 @@ distanceScaleVelocity(0)
 
 
 //----------------------------------------
-void ofEasyCam::begin(ofRectangle rect) {
+void ofEasyCam::begin(ofRectangle viewport) {
 	
 	//check whether we've already interacted
 	//with this camera this frame
@@ -40,14 +40,14 @@ void ofEasyCam::begin(ofRectangle rect) {
 		
 		lastMouseActionFrame = ofGetFrameNum();
 		
-		ofVec2f mousePosScreen = ofVec3f(ofGetMouseX() - rect.width/2 - rect.x, rect.height/2 - (ofGetMouseY() - rect.y), 0);
+		ofVec2f mousePosScreen = ofVec3f(ofGetMouseX() - viewport.width/2 - viewport.x, viewport.height/2 - (ofGetMouseY() - viewport.y), 0);
 		ofVec2f mouseVelScreen = (mousePosScreen - mousePosScreenPrev).lengthSquared();
 		
 		if(ofGetMousePressed(0) || ofGetMousePressed(2) && mouseVelScreen.lengthSquared() > 1.0f ) {
 			ofVec3f targetPos =  target.getGlobalPosition();
 			ofVec3f mousePosXYZ = ofVec3f(mousePosScreen.x, mousePosScreen.y, targetPos.z);
 			
-			float sphereRadius = min(rect.width, rect.height)/2;
+			float sphereRadius = min(viewport.width, viewport.height)/2;
 			float diffSquared = sphereRadius * sphereRadius - (targetPos - mousePosXYZ).lengthSquared();
 			if(diffSquared <= 0) {
 				mousePosXYZ.z = 0;
@@ -65,7 +65,7 @@ void ofEasyCam::begin(ofRectangle rect) {
 			//calc new scale velocity
 			float newDistanceScaleVelocity = 0.0f;
 			if(oldMousePress[1])
-				newDistanceScaleVelocity = 2 * (mousePosScreen.y - mousePosScreenPrev.y) / rect.height;
+				newDistanceScaleVelocity = 2 * (mousePosScreen.y - mousePosScreenPrev.y) / viewport.height;
 			
 			//apply thrust towards new velocities
 			distanceScaleVelocity = ofLerp(distanceScaleVelocity, newDistanceScaleVelocity, thrust*dt);
@@ -97,7 +97,7 @@ void ofEasyCam::begin(ofRectangle rect) {
 	}
 
 	
-	ofCamera::begin(rect);
+	ofCamera::begin(viewport);
 }
 
 //----------------------------------------

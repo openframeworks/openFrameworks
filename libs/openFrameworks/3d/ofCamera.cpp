@@ -17,7 +17,7 @@ fov(60),
 nearClip(0),
 farClip(0),
 isActive(false),
-storeMatrices(false),
+cacheMatrices(false),
 hasStoredMatrices(false)
 {
 }
@@ -54,19 +54,14 @@ bool ofCamera::getOrtho() const {
 
 
 //----------------------------------------
-void ofCamera::begin(ofRectangle rect) {
+void ofCamera::begin(ofRectangle viewport) {
 	if(!isActive) ofPushView();
 	isActive = true;
 	
 	ofSetCoordHandedness(OF_RIGHT_HANDED);
 	
 	// autocalculate near/far clip planes if not set by user
-	float nc = nearClip, fc = farClip;
-	if(nearClip == 0 || farClip == 0) {
-		float dist = rect.height * 0.5f / tanf(PI * fov / 360.0f);
-		nc = (nearClip == 0) ? dist / 100.0f : nearClip;
-		fc = (farClip == 0) ? dist * 10.0f : farClip;
-	}
+	calcClipPlanes(viewport);
 	
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
@@ -74,18 +69,18 @@ void ofCamera::begin(ofRectangle rect) {
 		//			if(vFlip) glOrtho(0, width, height, 0, nearDist, farDist);
 		//			else 
 #ifndef TARGET_OPENGLES
-		glOrtho(0, rect.width, 0, rect.height, nc, fc);
+		glOrtho(0, viewport.width, 0, viewport.height, nearClip, farClip);
 #endif		
 	} else {
-		gluPerspective(fov, rect.width/rect.height, nc, fc);
+		gluPerspective(fov, viewport.width/viewport.height, nearClip, farClip);
 	}
 	
 	glMatrixMode(GL_MODELVIEW);
 	glLoadMatrixf(ofMatrix4x4::getInverseOf(getGlobalTransformMatrix()).getPtr());
-	ofViewport(rect.x, rect.y, rect.width, rect.height);
+	ofViewport(viewport.x, viewport.y, viewport.width, viewport.height);
 	
 	//store current matrices
-	if (storeMatrices)
+	if (cacheMatrices)
 	{
 		glGetFloatv(GL_PROJECTION_MATRIX, matProjection.getPtr());
 		glGetFloatv(GL_MODELVIEW_MATRIX, matModelView.getPtr());
@@ -104,34 +99,85 @@ void ofCamera::end() {
 	}
 }
 //----------------------------------------
-ofMatrix4x4 ofCamera::getProjectionMatrix() {
-	ensureStoredMatricies();
-	return matProjection;
+ofMatrix4x4 ofCamera::getProjectionMatrix(ofRectangle viewport) {
+	
+	if (cacheMatrices)
+		return matProjection;
+	else
+	{
+		OF_CAMERA_MATRIX_CACHE_WARNING
+		matProjection.makePerspectiveMatrix(fov, viewport.width/viewport.height, nearClip, farClip);
+		return matProjection;
+	}
+
 }
 //----------------------------------------
 ofMatrix4x4 ofCamera::getModelViewMatrix() {
-	ensureStoredMatricies();
-	return matModelView;
-}
-//----------------------------------------
-ofMatrix4x4 ofCamera::getModelViewProjectionMatrix() {
-	ensureStoredMatricies();
-	
-	return matModelView * matProjection;
-}
-//----------------------------------------
-void ofCamera::ensureStoredMatricies() {
-	if (!hasStoredMatrices)
+
+	if (cacheMatrices)
+		return matModelView;
+	else
 	{
-		if (!storeMatrices)
-		{
-			ofLog(OF_LOG_WARNING, "ofCamera: storeMatricies was set to false so couldn't read matricies.");
-			ofLog(OF_LOG_WARNING, "ofCamera: storeMatricies is now = true, so we'll store from now on");
-			
-			storeMatrices = true;
-		}
-		
-		begin();
-		end();
+		OF_CAMERA_MATRIX_CACHE_WARNING
+		matModelView.makeInvertOf(getGlobalTransformMatrix());
+		return matModelView;
+	}
+
+}
+//----------------------------------------
+ofMatrix4x4 ofCamera::getModelViewProjectionMatrix(ofRectangle viewport) {
+	return getModelViewMatrix() * getProjectionMatrix(viewport);
+}
+//----------------------------------------
+ofVec3f ofCamera::worldToScreen(ofVec3f WorldXYZ, ofRectangle viewport) {
+	
+	ofVec3f CameraXYZ = WorldXYZ * getModelViewProjectionMatrix();
+	ofVec3f ScreenXYZ;
+	
+	ScreenXYZ.x = (CameraXYZ.x + 1.0f) / 2.0f * viewport.width + viewport.x;
+	ScreenXYZ.y = (1.0f - CameraXYZ.y) / 2.0f * viewport.height + viewport.y;
+	
+	ScreenXYZ.z = CameraXYZ.z;
+	
+	return ScreenXYZ;
+	
+}
+//----------------------------------------
+ofVec3f ofCamera::screenToWorld(ofVec3f ScreenXYZ, ofRectangle viewport) {
+	
+	//convert from screen to camera
+	ofVec3f CameraXYZ;
+	CameraXYZ.x = 2.0f * (ScreenXYZ.x - viewport.x) / viewport.width - 1.0f;
+	CameraXYZ.y = 1.0f - 2.0f *(ScreenXYZ.y - viewport.y) / viewport.height;
+	CameraXYZ.z = ScreenXYZ.z;
+	
+	//get inverse camera matrix
+	ofMatrix4x4 inverseCamera;
+	inverseCamera.makeInvertOf(getModelViewProjectionMatrix(viewport));
+	
+	//convert camera to world
+	return CameraXYZ * inverseCamera;
+	
+}
+//----------------------------------------
+ofVec3f ofCamera::worldToCamera(ofVec3f WorldXYZ, ofRectangle viewport) {
+	return WorldXYZ * getModelViewProjectionMatrix(viewport);
+}
+//----------------------------------------
+ofVec3f ofCamera::cameraToWorld(ofVec3f CameraXYZ, ofRectangle viewport) {
+	
+	ofMatrix4x4 inverseCamera;
+	inverseCamera.makeInvertOf(getModelViewProjectionMatrix(viewport));
+	
+	return CameraXYZ * inverseCamera;
+}
+//----------------------------------------
+void ofCamera::calcClipPlanes(ofRectangle viewport)
+{
+	// autocalculate near/far clip planes if not set by user
+	if(nearClip == 0 || farClip == 0) {
+		float dist = viewport.height * 0.5f / tanf(PI * fov / 360.0f);
+		nearClip = (nearClip == 0) ? dist / 100.0f : nearClip;
+		farClip = (farClip == 0) ? dist * 10.0f : farClip;
 	}
 }
