@@ -29,13 +29,12 @@ static ofTTFCharacter makeContoursForCharacter(FT_Face &face){
 		for(int k = 0; k < nContours; k++){
 			if( k > 0 ){
 				startPos = face->glyph->outline.contours[k-1]+1;
-				charOutlines.newSubPath();
 			}
 			int endPos = face->glyph->outline.contours[k]+1;
 
 			if( printVectorInfo )printf("--NEW CONTOUR\n\n");
 
-			vector <ofPoint> testOutline;
+			//vector <ofPoint> testOutline;
 			ofPoint lastPoint;
 
 			for(int j = startPos; j < endPos; j++){
@@ -127,6 +126,7 @@ static ofTTFCharacter makeContoursForCharacter(FT_Face &face){
 
 			//end for
 			}
+			charOutlines.close();
 		}
 
 	return charOutlines;

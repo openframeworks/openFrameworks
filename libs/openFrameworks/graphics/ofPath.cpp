@@ -12,7 +12,7 @@ class ofPathToShapeConverter;
 
 ofPath::ofPath(){
 	strokeWidth = 1;
-	bFill = true;
+	bFill = false;
 	windingMode = OF_POLY_WINDING_ODD;
 	bClosed = false;
 	renderer = NULL;
@@ -103,6 +103,7 @@ void ofPath::arc(float x, float y, float z, float radiusX, float radiusY, float 
 }
 
 void ofPath::close(){
+	if(!lastPath().commands.empty()) lastPath().lineTo(lastPath().commands[0].to);
 	lastPath().bClosed=true;
 	lastPath().hasChanged = true;
 	newSubPath();

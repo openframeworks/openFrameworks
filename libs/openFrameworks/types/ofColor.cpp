@@ -369,18 +369,19 @@ ofColor & ofColor::operator -= (float const & val){
 }
 
 ofColor ofColor::operator * (ofColor const & color) const{
-	return ofColor( r*(color.r/255.0f), g*(color.g/255.0f), b*(color.b/255.0f) );
+	return ofColor( r*(color.r/255.0f), g*(color.g/255.0f), b*(color.b/255.0f), a*(color.a/255.0f) );
 }
 
 ofColor ofColor::operator * (float const & val) const{
 	float v = CLAMP(val,0.0,1.0);
-	return ofColor( r*v, g*v, b*v).clamp();
+	return ofColor( r*v, g*v, b*v,a*v).clamp();
 }
 
 ofColor & ofColor::operator *= (ofColor const & color){
 	r *= (color.r/255.0f);
 	g *= (color.g/255.0f);
 	b *= (color.b/255.0f);
+	a *= (color.a/255.0f);
 	return *this;
 }
 
@@ -389,6 +390,7 @@ ofColor & ofColor::operator *= (float const & val){
 	r *= v;
 	g *= v;
 	b *= v;
+	a *= v;
 	return *this;
 }
 
