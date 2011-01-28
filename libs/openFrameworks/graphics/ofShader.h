@@ -20,7 +20,7 @@ public:
 	~ofShader();
 	
 	bool setup(string shaderName);
-	bool setup(string vertName, string fragName = "", string geomName = "");
+	bool setup(string vertName, string fragName, string geomName="");
 	
 	
 	
