@@ -38,7 +38,6 @@ protected:
 
 	ofVec3f mousePosViewPrev;
 	ofVec3f mousePosScreenPrev;
-	bool lastMousePressed[2];
 	int lastFrame;
 	
 	unsigned long lastTap;
