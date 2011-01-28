@@ -584,7 +584,7 @@ void ofGstVideoUtils::update(){
 			}
 		}
 	}else{
-		ofLogWarning() << "not loaded";
+		ofLog(OF_LOG_WARNING,"not loaded");
 	}
 	bIsFrameNew = bHavePixelsChanged;
 	bHavePixelsChanged = false;
@@ -634,7 +634,7 @@ GstFlowReturn ofGstVideoUtils::preroll_cb(GstBuffer * buffer){
 
 	size = GST_BUFFER_SIZE (buffer);
 	if(backPixels.isAllocated() && backPixels.getWidth()*backPixels.getHeight()*backPixels.getBytesPerPixel()!=size){
-		ofLogError() << "on_preproll: error preroll buffer size: " << size << "!= init size: " << backPixels.getWidth()*backPixels.getHeight()*backPixels.getBytesPerPixel();
+		ofLog(OF_LOG_ERROR, "on_preproll: error preroll buffer size: " + ofToString(size) + "!= init size: " + ofToString(backPixels.getWidth()*backPixels.getHeight()*backPixels.getBytesPerPixel()));
 		gst_buffer_unref (buffer);
 		return GST_FLOW_ERROR;
 	}
@@ -644,7 +644,7 @@ GstFlowReturn ofGstVideoUtils::preroll_cb(GstBuffer * buffer){
 		  bBackPixelsChanged=true;
 		  ofNotifyEvent(prerollEvent,backPixels);
 	  }else{
-		  ofLogWarning()<< "received a preroll without allocation";
+		  ofLog(OF_LOG_WARNING,"received a preroll without allocation");
 	  }
 	//mutex.unlock();
 
@@ -662,7 +662,7 @@ GstFlowReturn ofGstVideoUtils::buffer_cb(GstBuffer * buffer){
 
 
 	if(backPixels.isAllocated() && backPixels.getWidth()*backPixels.getHeight()*backPixels.getBytesPerPixel()!=size){
-		ofLogError() << "on_buffer: error preroll buffer size: " << size << "!= init size: " << backPixels.getWidth()*backPixels.getHeight()*backPixels.getBytesPerPixel();
+		ofLog(OF_LOG_ERROR, "on_buffer: error preroll buffer size: " +  ofToString(size) + "!= init size: " + ofToString(backPixels.getWidth()*backPixels.getHeight()*backPixels.getBytesPerPixel()));
 		gst_buffer_unref (buffer);
 		return GST_FLOW_OK;
 	}
@@ -672,7 +672,7 @@ GstFlowReturn ofGstVideoUtils::buffer_cb(GstBuffer * buffer){
 		  bBackPixelsChanged=true;
 		  ofNotifyEvent(bufferEvent,backPixels);
 	  }else{
-		  ofLogWarning()<< "received a preroll without allocation";
+		  ofLog(OF_LOG_WARNING, "received a preroll without allocation");
 	  }
 	mutex.unlock();
 

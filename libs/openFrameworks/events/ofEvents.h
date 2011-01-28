@@ -151,6 +151,7 @@ void		exitApp();
 	};
 
 	void ofSendMessage(ofMessage msg);
+	void ofSendMessage(string messageString);
 
 	extern ofCoreEvents ofEvents;
 

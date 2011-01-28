@@ -31,7 +31,6 @@ void ofSoundEffect::setSampleRate( int rate )
 void ofSoundEffectPassthrough::process( float* input, float *output, int numFrames, int numInChannels, int numOutChannels )
 {
 	// passthrough
-	
 	memcpy( output, input, numFrames*numOutChannels*sizeof(float) );
 }
 

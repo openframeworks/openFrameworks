@@ -1,10 +1,3 @@
-/*
- * ofPixels.cpp
- *
- *  Created on: 13/01/2011
- *      Author: arturo
- */
-
 #include "ofPixels.h"
 
 ofPixels::ofPixels(){

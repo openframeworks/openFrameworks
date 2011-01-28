@@ -1,461 +1,61 @@
 #include "ofLog.h"
-
+#include "ofConstants.h"
 #include <ofUtils.h>
 
-#include <Poco/PatternFormatter.h>
-#include <Poco/FormattingChannel.h>
-#include <Poco/Message.h>
-#include <Poco/LocalDateTime.h>
-#include <Poco/DateTimeFormatter.h>
-
-const string ofLogger::s_dateFormat = "%Y-%m-%d %H:%M:%S.%i";
-const string ofLogger::s_timeFormat = "%H:%M:%S.%i";
-const string ofLogger::s_dateAndTimeFormat = "%Y-%m-%d %H:%M:%S.%i";
-
-
-//TODO: logfile currently overwrites the file - make it append
-
-//
-// Useful references:
-//  - http://pocoproject.org/docs/Poco.Logger.html
-//  - http://pocoproject.org/docs/Poco.FileChannel.html
-//
-//------------------------------------------------------------------------------------
-// inspired by the Poco LogRotation sample
-ofLogger::ofLogger(){	
-		
-	bConsole = true;
-	bFile = false;
-	
-	bHeader = false;
-	bDate = true;
-	bTime = true;
-	bFrameNum = false;
-	bMillis = false;
-	
-	splitterChannel = new Poco::SplitterChannel();
-	
-	fileChannel = new Poco::FileChannel(ofToDataPath("openframeworks.log"));
-
-#ifdef TARGET_ANDROID
-	androidChannel = new Poco::AndroidChannel();
-	// console open, file not opened (added) by default
-	splitterChannel->addChannel(androidChannel);
-#else
-	consoleChannel = new Poco::ConsoleChannel();
-	// console open, file not opened (added) by default
-	splitterChannel->addChannel(consoleChannel);
-#endif
-
-	Poco::AutoPtr<Poco::Formatter> formatter(new Poco::PatternFormatter("%t"));
-	formattingChannel = new Poco::FormattingChannel(formatter, splitterChannel);
-
-	// the root logger has an empty name
-	logger = &Poco::Logger::create("", formattingChannel, (int) OF_DEFAULT_LOG_LEVEL);
-	
-
-	// setup file logger
-	fileChannel->setProperty("times", "local");		// use local system time
-	fileChannel->setProperty("archive", "number");	// use number suffixs
-	fileChannel->setProperty("compress", "false"); 	// don't compress
-	fileChannel->setProperty("purgeCount", "10");	// max number of log files
-	
-	// add default of topic every other topic is created
-	// on the go if it doesn't exist yet
-	Poco::Logger::create("of",formattingChannel);
+int currentLogLevel =  OF_LOG_WARNING;
+//--------------------------------------------------
+void ofSetLogLevel(int logLevel){
+	currentLogLevel = logLevel;
 }
 
-//-----------------------------------------------------------------
-ofLogger& ofLogger::instance(){
-	static ofLogger* pointerToTheSingletonInstance = new ofLogger;
-	return *pointerToTheSingletonInstance;
-}
-
-//--------------------------------------------------------------------------------------
-void ofLogger::log(ofLogLevel logLevel, const string& message){
-	_log(logLevel, message, logger);
-}
-
-void ofLogger::log(const string& logTopic, ofLogLevel logLevel, const string& message){
-	Poco::Logger& topicLogger = Poco::Logger::get(logTopic);
-#ifdef TARGET_ANDROID
-		_log(logLevel, message, &topicLogger);
-#else
-		_log(logLevel, logTopic+": "+message, &topicLogger);
-#endif
-}
-
-//--------------------------------------------------------------
-void ofLogger::setLevel(ofLogLevel logLevel){
-	logger->setLevel((int) logLevel);
-}
-
-ofLogLevel ofLogger::getLevel(){
-	return (ofLogLevel) logger->getLevel();
-}
-
-//-------------------------------------------------
-void ofLogger::enableConsole(){
-	splitterChannel->addChannel(consoleChannel);
-	consoleChannel->open();
-	bConsole = true;
-}
-
-void ofLogger::disableConsole(){
-	splitterChannel->removeChannel(consoleChannel);
-	consoleChannel->close();
-	bConsole = false;
-}	
-
-bool ofLogger::usingConsole(){
-	return bConsole;
-}
-
-//----------------------------------------------
-void ofLogger::setFilePath(const string& file){
-	fileChannel->setProperty("path", file);
-}
-
-string ofLogger::getFilePath(){
-	return fileChannel->getProperty("path");
-}
-
-void ofLogger::enableFile(){
-	fileChannel->open();
-	splitterChannel->addChannel(fileChannel);
-	bFile = true;
-}
-
-void ofLogger::disableFile(){
-	fileChannel->close();
-	splitterChannel->addChannel(fileChannel);
-	bFile = false;
-}
-
-bool ofLogger::usingFile(){
-	return bFile;
-}
-
-//-----------------------------------------------------------------------
-void ofLogger::enableFileRotationMins(unsigned int minutes){
-	fileChannel->setProperty("rotation", ofToString(minutes)+" minutes");
-}
-
-void ofLogger::enableFileRotationHours(unsigned int hours){
-	fileChannel->setProperty("rotation", ofToString(hours)+" hours");
-}
-
-void ofLogger::enableFileRotationDays(unsigned int days){
-	fileChannel->setProperty("rotation", ofToString(days)+" days");
-}
-
-void ofLogger::enableFileRotationMonths(unsigned int months){
-	fileChannel->setProperty("rotation", ofToString(months)+" months");
-}
-
-void ofLogger::enableFileRotationSize(unsigned int sizeKB){
-	fileChannel->setProperty("rotation", ofToString(sizeKB)+" K");
-}
-
-void ofLogger::disableFileRotation(){
-	fileChannel->setProperty("rotation", "never");
-}
-
-//--------------------------------------------------------------------------------
-void ofLogger::setFileRotationMaxNum(unsigned int num){
-	fileChannel->setProperty("purgeCount", ofToString(num));
-}
-		
-//--------------------------------------------------------------------------------
-void ofLogger::setFileRotationNumber(){
-	fileChannel->setProperty("archive", "number");
-}
-
-void ofLogger::setFileRotationTimestamp(){
-	fileChannel->setProperty("archive", "timestamp");
-}
-
-void ofLogger::setTopicLogLevel(const string& logTopic, ofLogLevel logLevel){
-	Poco::Logger& topicLogger = Poco::Logger::get(logTopic);
-	topicLogger.setLevel(logLevel);
-}
-
-void ofLogger::resetTopicLogLevel(const string& logTopic){
-	setTopicLogLevel(logTopic, (ofLogLevel) logger->getLevel());
-}
-
-//--------------------------------------------------------
-void ofLogger::enableHeader(){
-	bHeader = true;
-}
-
-void ofLogger::disableHeader(){
-	bHeader = false;
-}
-
-bool ofLogger::usingHeader(){
-	return bHeader;
-}
-
-//----------------------------
-void ofLogger::enableHeaderDate(){
-	bDate = true;
-}
-void ofLogger::disableHeaderDate(){
-	bDate = false;
-}
-
-bool ofLogger::usingHeaderDate(){
-	return bDate;
-}
-//----------------------------
-void ofLogger::enableHeaderTime(){
-	bTime = true;
-}
-
-void ofLogger::disableHeaderTime(){
-	bTime = false;
-}
-
-bool ofLogger::usingHeaderTime(){
-	return bTime;
-}
-
-//-----------------------------
-void ofLogger::enableHeaderFrameNum(){
-	bFrameNum = true;
-}
-
-void ofLogger::disableHeaderFrameNum(){
-	bFrameNum = false;
-}
-
-bool ofLogger::usingHeaderFrameNum(){
-	return bFrameNum;
-}
-
-//-----------------------------
-void ofLogger::enableHeaderMillis(){
-	bMillis = true;
-}
-
-void ofLogger::disableHeaderMillis(){
-	bMillis = false;
-}
-
-bool ofLogger::usingHeaderMillis(){
-	return bMillis;
-}
-
-//---------------------------------------------------------------------------------
-void ofLogger::_log(ofLogLevel logLevel, const string& message, Poco::Logger* theLogger){
-	
-	string timestamp;
-	
-	// build the header
-	if(bHeader){
-	
-		Poco::LocalDateTime now;
-		
-		if(bDate && bTime){
-			timestamp += Poco::DateTimeFormatter::format(now, s_dateAndTimeFormat)+" ";
+//--------------------------------------------------
+void ofLog(int logLevel, string message){
+	if(logLevel >= currentLogLevel){
+		if(logLevel == OF_LOG_VERBOSE){
+			printf("OF_VERBOSE: ");
 		}
-		else if(bDate){
-			timestamp += Poco::DateTimeFormatter::format(now, s_dateFormat)+" ";
+		else if(logLevel == OF_LOG_NOTICE){
+			printf("OF_NOTICE: ");
 		}
-		else if(bTime){
-			timestamp += Poco::DateTimeFormatter::format(now, s_timeFormat)+" ";	
+		else if(logLevel == OF_LOG_WARNING){
+			printf("OF_WARNING: ");
 		}
-		
-		if(bFrameNum){
-			timestamp += ofToString(ofGetFrameNum())+" ";
+		else if(logLevel == OF_LOG_ERROR){
+			printf("OF_ERROR: ");
 		}
-		
-		if(bMillis){
-			timestamp += ofToString(ofGetElapsedTimeMillis())+" ";
+		else if(logLevel == OF_LOG_FATAL_ERROR){
+			printf("OF_FATAL_ERROR: ");
 		}
-	}
-	
-	// log
-	switch(logLevel){
-		case OF_LOG_SILENT:
-			break;
-			
-		case OF_LOG_VERBOSE:
-			try{
-				theLogger->trace(timestamp+"OF_VERBOSE: "+message);
-			}
-			catch(...){
-				_logDestroyed("OF_VERBOSE: "+message);
-			}
-			break;
-			
-		case OF_LOG_DEBUG:
-			try{
-				theLogger->debug(timestamp+"OF_DEBUG: "+message);
-			}
-			catch(...){
-				_logDestroyed("OF_DEBUG: "+message);
-			}
-			break;
-			
-		case OF_LOG_NOTICE:
-			try{
-				theLogger->notice(timestamp+message);
-			}
-			catch(...){
-				_logDestroyed(message);
-			}
-			break;
-
-		case OF_LOG_WARNING:
-			try{
-				theLogger->warning(timestamp+"OF_WARNING: "+message);
-			}
-			catch(...){
-				_logDestroyed("OF_WARNING: "+message);
-			}
-			break;
-
-		case OF_LOG_ERROR:
-			try{
-				theLogger->error(timestamp+"OF_ERROR: "+message);
-			}
-			catch(...){
-				_logDestroyed("OF_ERROR: "+message);
-			}
-			break;
-			
-		case OF_LOG_FATAL_ERROR:
-			try{
-				theLogger->fatal(timestamp+"OF_FATAL_ERROR: "+message);
-			}
-			catch(...){
-				_logDestroyed("OF_FATAL_ERROR: "+message);
-			}
-			break;
+		printf("%s\n",message.c_str());
 	}
 }
 
-void ofLogger::_logDestroyed(const string& message){
-	printf("----------\n");
-	printf("\tHey ... don't call ofLog in a destructor!\n");
-	printf("\t%s\n", message.c_str());
-	printf("----------\n");
-}
+//--------------------------------------------------
+void ofLog(int logLevel, const char* format, ...){
+	//thanks stefan!
+	//http://www.ozzu.com/cpp-tutorials/tutorial-writing-custom-printf-wrapper-function-t89166.html
 
-//-------------------------------------------------------
-ofLogNotice::~ofLogNotice(){
-	if(topic.empty()){
-		ofLogger::instance().log(level, message.str());
+	if(logLevel >= currentLogLevel){
+		va_list args;
+		va_start( args, format );
+		if(logLevel == OF_LOG_VERBOSE){
+			printf("OF_VERBOSE: ");
+		}
+		else if(logLevel == OF_LOG_NOTICE){
+			printf("OF_NOTICE: ");
+		}
+		else if(logLevel == OF_LOG_WARNING){
+			printf("OF_WARNING: ");
+		}
+		else if(logLevel == OF_LOG_ERROR){
+			printf("OF_ERROR: ");
+		}
+		else if(logLevel == OF_LOG_FATAL_ERROR){
+			printf("OF_FATAL_ERROR: ");
+		}
+		vprintf( format, args );
+		printf("\n");
+		va_end( args );
 	}
-	else{
-		ofLogger::instance().log(topic, level, message.str());
-	}
 }
-
-//--------------------------------------------------------------
-void ofLogNotice::setLevel(ofLogLevel logLevel){
-	ofLogger::instance().setLevel(logLevel);
-}
-
-ofLogLevel ofLogNotice::getLevel(){
-	return (ofLogLevel) ofLogger::instance().getLevel();
-}
-
-//----------------------------------------------------------------------------------------
-// using printf instead of the logger since we don't want to write this as a line
-void ofLogNotice::setConsoleColor(int color){
-	#ifdef TARGET_WIN32
-		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), color);
-	#else
-		printf("\033[%im",  color);
-	#endif
-}
-
-void ofLogNotice::restoreConsoleColor(){
-	#ifdef TARGET_WIN32
-		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), OF_CONSOLE_COLOR_RESTORE);
-	#else
-		printf("\033[%im",  OF_CONSOLE_COLOR_RESTORE);
-	#endif
-}
-
-//--------------------------------------------------------
-void ofLog(ofLogLevel logLevel, const string& message){
-	ofLogger::instance().log(logLevel, message);
-}
-
-void ofLog(ofLogLevel logLevel, const char* format, ...){
-	char line[512];	// maybe too small?
-	va_list(args);
-	va_start(args, format);
-		vsprintf(line, format, args);
-	va_end(args);
-	ofLogger::instance().log("of",logLevel, (string) line);
-}
-
-void ofSetLogLevel(ofLogLevel logLevel){
-	ofLogger::instance().setLevel(logLevel);
-}
-
-ofLogLevel ofGetLogLevel(){
-	return ofLogger::instance().getLevel();
-}
-
-//---------------------------------------------------------------------------
-void ofLogEnableConsole()	{ofLogger::instance().enableConsole();}
-void ofLogDisableConsole()	{ofLogger::instance().disableConsole();}
-bool ofLogUsingConsole()	{return ofLogger::instance().usingConsole();}
-
-void ofLogEnableFile()		{ofLogger::instance().enableFile();}
-void ofLogDisableFile()		{ofLogger::instance().disableFile();}
-bool ofLogUsingFile()		{return ofLogger::instance().usingFile();}
-
-void ofLogSetFilePath(const string& file)
-	{ofLogger::instance().setFilePath(file);}
-string ofLogGetFilePath()	{return ofLogger::instance().getFilePath();}
-
-void ofLogEnableFileRotationMins(unsigned int minutes)
-	{ofLogger::instance().enableFileRotationMins(minutes);}
-void ofLogEnableFileRotationHours(unsigned int hours)
-	{ofLogger::instance().enableFileRotationHours(hours);}
-void ofLogEnableFileRotationDays(unsigned int days)
-	{ofLogger::instance().enableFileRotationDays(days);}
-void ofLogEnableFileRotationMonths(unsigned int months)
-	{ofLogger::instance().enableFileRotationMonths(months);}
-void ofLogEnableFileRotationSize(unsigned int sizeKB)
-	{ofLogger::instance().enableFileRotationSize(sizeKB);}
-void ofLogDisableFileRotation()	{ofLogger::instance().disableFileRotation();}
-
-void ofLogSetFileRotationMaxNum(unsigned int num)
-	{ofLogger::instance().setFileRotationMaxNum(num);}
-
-void ofLogSetFileRotationNumber()		{ofLogger::instance().setFileRotationNumber();}
-void ofLogSetFileRotationTimestamp()	{ofLogger::instance().setFileRotationTimestamp();}
-
-void ofLogSetTopicLogLevel(const string& logTopic, ofLogLevel logLevel)
-	{ofLogger::instance().setTopicLogLevel(logTopic, logLevel);}
-void ofLogResetTopicLogLevel(const string& logTopic)
-	{ofLogger::instance().resetTopicLogLevel(logTopic);}
-
-void ofLogEnableHeader()	{ofLogger::instance().enableHeader();}
-void ofLogDisableHeader()	{ofLogger::instance().disableHeader();}
-bool ofLogUsingHeader()		{return ofLogger::instance().usingHeader();}
-
-void ofLogEnableHeaderDate()	{ofLogger::instance().enableHeaderDate();}
-void ofLogDisableHeaderDate()	{ofLogger::instance().disableHeaderDate();}
-bool ofLogUsingHeaderDate()		{return ofLogger::instance().usingHeaderDate();}
-
-void ofLogEnableHeaderTime()	{ofLogger::instance().enableHeaderTime();}
-void ofLogDisableHeaderTime()	{ofLogger::instance().disableHeaderTime();}
-bool ofLogUsingHeaderTime()		{return ofLogger::instance().usingHeaderTime();}
-
-void ofLogEnableHeaderFrameNum()	{ofLogger::instance().enableHeaderFrameNum();}
-void ofLogDisableHeaderFrameNum()	{ofLogger::instance().disableHeaderFrameNum();}
-bool ofLogUsingHeaderFrameNum()		{return ofLogger::instance().usingHeaderFrameNum();}
-
-void ofLogEnableHeaderMillis()	{ofLogger::instance().enableHeaderMillis();}
-void ofLogDisableHeaderMillis()	{ofLogger::instance().disableHeaderMillis();}
-bool ofLogUsingHeaderMillis()	{return ofLogger::instance().usingHeaderMillis();}
 	

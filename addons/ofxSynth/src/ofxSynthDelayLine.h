@@ -5,7 +5,7 @@
 class ofxSynthDelayline : public ofSoundEffect {
 	public:
 		
-		ofxSynthDelayline(){setSize(1.1);setFeedback(0.5);}
+		ofxSynthDelayline();
 		string getName() { return "ofxSynthDelayLine"; }
 		virtual void process( float* input, float *output, int numFrames, int numInChannels, int numOutChannels );
 		void setSize(float _size);

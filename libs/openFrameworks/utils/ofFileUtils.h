@@ -27,8 +27,10 @@ public:
 
 	void allocate(long _size);
 
-	char * getBuffer();
-	const char * getBuffer() const;
+	char * getBinaryBuffer();
+	const char * getBinaryBuffer() const;
+
+	string getText() const;
 
 	long size() const;
 

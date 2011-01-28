@@ -167,7 +167,3 @@ string ofJoinString(vector <string> stringElements, const string & delimiter);
 bool ofIsStringInString(string haystack, string needle);
 
 
-//--------------------------------------------------
-class ofBuffer;
-bool ofReadFile(const string & path, ofBuffer & file, bool binary=false);
-

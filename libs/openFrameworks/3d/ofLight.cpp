@@ -9,6 +9,7 @@
 
 #include "ofLight.h"
 #include "ofMain.h"
+#include "ofConstants.h"
 
 
 //----------------------------------------
