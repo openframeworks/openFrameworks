@@ -15,7 +15,8 @@ public:
 	ofPath & newSubPath();
 
 	void lineTo(const ofPoint & p);
-	void lineTo(float x, float y, float z=0);
+	void lineTo(float x, float y);
+	void lineTo(float x, float y, float z);
 
 	// starts a new subpath with defaults for winding, stroke, fill...
 	// the new subpath starts in p
@@ -23,11 +24,16 @@ public:
 	void moveTo(float x, float y, float z=0);
 
 	void curveTo(const ofPoint & p);
-	void curveTo(float x, float y, float z=0);
+	void curveTo(float x, float y);
+	void curveTo(float x, float y, float z);
 
 	void bezierTo(const ofPoint & cp1, const ofPoint & cp2, const ofPoint & p);
 	void bezierTo(float cx1, float cy1, float cx2, float cy2, float x, float y);
 	void bezierTo(float cx1, float cy1, float cz1, float cx2, float cy2, float cz2, float x, float y, float z);
+
+	void cubicBezierTo(const ofPoint & cp1, const ofPoint & cp2, const ofPoint & p);
+	void cubicBezierTo(float cx1, float cy1, float cx2, float cy2, float x, float y);
+	void cubicBezierTo(float cx1, float cy1, float cz1, float cx2, float cy2, float cz2, float x, float y, float z);
 
 	void arc(const ofPoint & centre, float radiusX, float radiusY, float angleBegin, float angleEnd);
 	void arc(float x, float y, float radiusX, float radiusY, float angleBegin, float angleEnd);
@@ -67,10 +73,14 @@ public:
 
 	struct Command{
 		enum Type{
-			lineTo,
-			curveTo,
+			line2DTo,
+			line3DTo,
+			curve2DTo,
+			curve3DTo,
 			bezier3DTo,
 			bezier2DTo,
+			cubicBezier3DTo,
+			cubicBezier2DTo,
 			arc2D,
 			arc3D,
 		};

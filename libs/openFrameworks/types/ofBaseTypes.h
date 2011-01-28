@@ -16,6 +16,7 @@
 class ofShape;
 class ofPixels;
 class ofPath;
+class ofPolyline;
 
 
 //----------------------------------------------------------
@@ -194,6 +195,7 @@ public:
 	virtual bool rendersPathDirectly()=0;
 	//virtual bool is3DRenderer()=0;
 	//virtual bool isFrameByFrameRenderer()=0;
+	virtual void draw(ofPolyline & poly)=0;
 	virtual void draw(ofShape & shape)=0;
 	virtual void draw(ofPath & shape)=0;
 

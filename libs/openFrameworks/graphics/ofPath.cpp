@@ -35,15 +35,19 @@ ofPath & ofPath::newSubPath(){
 }
 
 void ofPath::lineTo(const ofPoint & p){
-	lastPath().addCommand(Command(Command::lineTo,p));
+	lastPath().addCommand(Command(Command::line3DTo,p));
 }
 
 void ofPath::lineTo(float x, float y, float z){
 	lineTo(ofPoint(x,y,z));
 }
 
+void ofPath::lineTo(float x, float y){
+	lastPath().addCommand(Command(Command::line2DTo,ofPoint(x,y)));
+}
+
 void ofPath::moveTo(const ofPoint & p){
-	newSubPath().addCommand(Command(Command::lineTo,p));
+	newSubPath().addCommand(Command(Command::line2DTo,p));
 }
 
 void ofPath::moveTo(float x, float y, float z){
@@ -51,11 +55,15 @@ void ofPath::moveTo(float x, float y, float z){
 }
 
 void ofPath::curveTo(const ofPoint & p){
-	lastPath().addCommand(Command(Command::curveTo,p));
+	lastPath().addCommand(Command(Command::curve3DTo,p));
 }
 
 void ofPath::curveTo(float x, float y, float z){
 	curveTo(ofPoint(x,y,z));
+}
+
+void ofPath::curveTo(float x, float y){
+	lastPath().addCommand(Command(Command::curve2DTo,ofPoint(x,y)));
 }
 
 void ofPath::bezierTo(const ofPoint & cp1, const ofPoint & cp2, const ofPoint & p){
@@ -68,6 +76,18 @@ void ofPath::bezierTo(float cx1, float cy1, float cx2, float cy2, float x, float
 
 void ofPath::bezierTo(float cx1, float cy1, float cz1, float cx2, float cy2, float cz2, float x, float y, float z){
 	bezierTo(ofPoint(cx1,cy1,cz1),ofPoint(cx2,cy2,cz2),ofPoint(x,y,z));
+}
+
+void ofPath::cubicBezierTo(const ofPoint & cp1, const ofPoint & cp2, const ofPoint & p){
+	lastPath().addCommand(Command(Command::cubicBezier3DTo,p,cp1,cp2));
+}
+
+void ofPath::cubicBezierTo(float cx1, float cy1, float cx2, float cy2, float x, float y){
+	lastPath().addCommand(Command(Command::cubicBezier2DTo,ofPoint(x,y),ofPoint(cx1,cy1),ofPoint(cx2,cy2)));
+}
+
+void ofPath::cubicBezierTo(float cx1, float cy1, float cz1, float cx2, float cy2, float cz2, float x, float y, float z){
+	cubicBezierTo(ofPoint(cx1,cy1,cz1),ofPoint(cx2,cy2,cz2),ofPoint(x,y,z));
 }
 
 void ofPath::arc(const ofPoint & centre, float radiusX, float radiusY, float angleBegin, float angleEnd){

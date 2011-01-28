@@ -68,7 +68,7 @@ void 			setupCircle();
 
 static ofPath path;
 static ofShape shape;
-static ofMeshElement mesh;
+static ofVertexData vertexData;
 static ofBaseRenderer * renderer = new ofVARenderer;
 static ofVboMesh vboMesh;
 
@@ -1207,7 +1207,7 @@ void ofBox(float size) {
 	
 	//glEnableClientState(GL_NORMAL_ARRAY);
 	//glEnableClientState(GL_VERTEX_ARRAY);
-	mesh.clear();
+	vertexData.clear();
 	if(ofGetStyle().bFill) {
 		ofVec3f vertices[] = {
 			ofVec3f(+h,-h,+h), ofVec3f(+h,-h,-h), ofVec3f(+h,+h,-h), ofVec3f(+h,+h,+h),
@@ -1218,7 +1218,7 @@ void ofBox(float size) {
 			ofVec3f(-h,-h,-h), ofVec3f(-h,+h,-h), ofVec3f(+h,+h,-h), ofVec3f(+h,-h,-h)
 		};
 		//glVertexPointer(3, GL_FLOAT, 0, vertices);
-		mesh.addVertices(vertices,24);
+		vertexData.addVertices(vertices,24);
 		
 		static ofVec3f normals[] = {
 			ofVec3f(+1,0,0), ofVec3f(+1,0,0), ofVec3f(+1,0,0), ofVec3f(+1,0,0),
@@ -1229,7 +1229,7 @@ void ofBox(float size) {
 			ofVec3f(0,0,-1), ofVec3f(0,0,-1), ofVec3f(0,0,-1), ofVec3f(0,0,-1)
 		};
 		//glNormalPointer(GL_FLOAT, 0, normals);
-		mesh.addNormals(normals,24);
+		vertexData.addNormals(normals,24);
 
 		//glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 		static ofVec2f tex[] = {
@@ -1241,7 +1241,7 @@ void ofBox(float size) {
 			ofVec2f(0,0), ofVec2f(0,1), ofVec2f(1,1), ofVec2f(1,0)
 		};
 		//glTexCoordPointer(2, GL_FLOAT, 0, tex);
-		mesh.addTexCoords(tex,24);
+		vertexData.addTexCoords(tex,24);
 	
 		GLuint indices[] = {
 			0,1,2, // right top left
@@ -1258,10 +1258,10 @@ void ofBox(float size) {
 			20,22,23
 		};
 		//glDrawElements(GL_TRIANGLES, 3 * 6 * 2, GL_UNSIGNED_BYTE, indices);
-		mesh.addIndices(indices,36);
+		vertexData.addIndices(indices,36);
 		//glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-		mesh.setMode(OF_TRIANGLES_ELEMENT);
-		vboMesh.setMeshElement(&mesh);
+		vertexData.setMode(OF_TRIANGLES_MODE);
+		vboMesh.setVertexData(&vertexData);
 		vboMesh.drawFaces();
 	} else {
 		ofVec3f vertices[] = {
@@ -1275,7 +1275,7 @@ void ofBox(float size) {
 			ofVec3f(-h,-h,-h)
 		};
 		//glVertexPointer(3, GL_FLOAT, 0, vertices);
-		mesh.addVertices(vertices,8);
+		vertexData.addVertices(vertices,8);
 		
 		static float n = sqrtf(3);
 		static ofVec3f normals[] = {
@@ -1289,7 +1289,7 @@ void ofBox(float size) {
 			ofVec3f(-n,-n,-n)
 		};
 		//glNormalPointer(GL_FLOAT, 0, normals);
-		mesh.addNormals(normals,8);
+		vertexData.addNormals(normals,8);
 
 		static GLuint indices[] = {
 			0,1, 1,3, 3,2, 2,0,
@@ -1297,10 +1297,10 @@ void ofBox(float size) {
 			0,4, 5,1, 7,3, 6,2
 		};
 		//glDrawElements(GL_LINES, 4 * 2 * 3, GL_UNSIGNED_BYTE, indices);
-		mesh.addIndices(indices,24);
+		vertexData.addIndices(indices,24);
 
-		mesh.setMode(OF_TRIANGLES_ELEMENT);
-		vboMesh.setMeshElement(&mesh);
+		vertexData.setMode(OF_LINES_MODE);
+		vboMesh.setVertexData(&vertexData);
 		vboMesh.drawWireframe();
 	}
 	

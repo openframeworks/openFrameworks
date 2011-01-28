@@ -8,6 +8,7 @@ class ofVARenderer: public ofBaseRenderer{
 public:
 	ofVARenderer(){}
 	~ofVARenderer(){}
+	void draw(ofPolyline & shape);
 	void draw(ofShape & shape);
 	void draw(ofPath & path);
 	bool rendersPathDirectly(){
