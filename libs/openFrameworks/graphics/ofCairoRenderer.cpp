@@ -76,6 +76,8 @@ void ofCairoRenderer::drawPath(const ofPath & path,bool is_subpath){
 	for(int i=0; i<commands.size(); i++){
 		switch(commands[i].type){
 		case ofPath::Command::line2DTo:
+		case ofPath::Command::line3DTo:
+			cout<< "lineTo" << commands[i].to.x<<","<<commands[i].to.y<< endl;
 			curvePoints.clear();
 			cairo_line_to(cr,commands[i].to.x,commands[i].to.y);
 			break;
