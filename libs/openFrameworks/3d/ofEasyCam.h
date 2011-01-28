@@ -20,15 +20,10 @@ public:
 	void setDistance(float distance);
 	float getDistance() const;
 
-	// drag is how quickly the camera slows down
+	// drag is how quickly the camera picks up and slows down
 	// it is a normalized value between 0-1
 	void setDrag(float drag);
 	float getDrag() const;
-
-	// thrust is how quickly the camera picks up
-	// it is a normalized value between 0-1
-	void setThrust(float thrust);
-	float getThrust() const;
 
 protected:
 	ofNode target;
@@ -40,7 +35,6 @@ protected:
 
 	//momentum
 	float drag;
-	float thrust;
 	ofQuaternion rotation;
 	float distanceScaleVelocity;
 };

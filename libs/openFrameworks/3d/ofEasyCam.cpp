@@ -12,8 +12,7 @@ float minimumRotation = 1e-7;
 ofEasyCam::ofEasyCam():
 mousePosViewPrev(0, 0), 
 lastFrame(0),
-drag(0.5),
-thrust(3.0f),
+drag(0.1f),
 distanceScaleVelocity(0) {
 	target.setPosition(0, 0, 0);
 	reset();
@@ -34,39 +33,36 @@ void ofEasyCam::begin(ofRectangle rect) {
 		ofVec2f mousePosScreen = ofVec3f(ofGetMouseX() - rect.width/2 - rect.x, rect.height/2 - (ofGetMouseY() - rect.y), 0);
 		ofVec2f mouseVelScreen = (mousePosScreen - mousePosScreenPrev).lengthSquared();
 		
-		if(ofGetMousePressed(0) || ofGetMousePressed(2) && mouseVelScreen.lengthSquared() > 1.0f ) {
-			ofVec3f targetPos =  target.getGlobalPosition();
-			ofVec3f mousePosXYZ = ofVec3f(mousePosScreen.x, mousePosScreen.y, targetPos.z);
-			
-			float sphereRadius = min(rect.width, rect.height)/2;
-			float diffSquared = sphereRadius * sphereRadius - (targetPos - mousePosXYZ).lengthSquared();
-			if(diffSquared <= 0) {
-				mousePosXYZ.z = 0;
-			} else {
-				mousePosXYZ.z = sqrtf(diffSquared);
-			}
-			mousePosXYZ.z += targetPos.z;
-			ofVec3f mousePosView = ofMatrix4x4::getInverseOf(target.getGlobalTransformMatrix()) * mousePosXYZ;
-			
-			//calc new rotation velocity
-			ofQuaternion newRotation;
-			if(lastMousePressed[0]) {
-				newRotation.makeRotate(mousePosViewPrev, mousePosView);
-			}
-
-			//calc new scale velocity
-			float newDistanceScaleVelocity = 0.0f;
-			if(lastMousePressed[1]) {
-				newDistanceScaleVelocity = 2 * (mousePosScreenPrev.y - mousePosScreen.y) / rect.height;
-			}
-			
-			//apply thrust towards new velocities
-			distanceScaleVelocity = ofLerp(distanceScaleVelocity, newDistanceScaleVelocity, thrust*dt);
-			rotation.slerp(thrust*dt, rotation, newRotation); 			
-			
-			
-			mousePosViewPrev = ofMatrix4x4::getInverseOf(target.getGlobalTransformMatrix()) * mousePosXYZ;
+		ofVec3f targetPos =  target.getGlobalPosition();
+		ofVec3f mousePosXYZ = ofVec3f(mousePosScreen.x, mousePosScreen.y, targetPos.z);
+		
+		float sphereRadius = min(rect.width, rect.height)/2;
+		float diffSquared = sphereRadius * sphereRadius - (targetPos - mousePosXYZ).lengthSquared();
+		if(diffSquared <= 0) {
+			mousePosXYZ.z = 0;
+		} else {
+			mousePosXYZ.z = sqrtf(diffSquared);
 		}
+		mousePosXYZ.z += targetPos.z;
+		ofVec3f mousePosView = ofMatrix4x4::getInverseOf(target.getGlobalTransformMatrix()) * mousePosXYZ;
+		
+		//calc new rotation velocity
+		ofQuaternion newRotation;
+		if(lastMousePressed[0]) {
+			newRotation.makeRotate(mousePosViewPrev, mousePosView);
+		}
+
+		//calc new scale velocity
+		float newDistanceScaleVelocity = 0.0f;
+		if(lastMousePressed[1]) {
+			newDistanceScaleVelocity = 10 * (mousePosScreenPrev.y - mousePosScreen.y) / rect.height;
+		}
+		
+		//apply drag towards new velocities
+		distanceScaleVelocity = ofLerp(distanceScaleVelocity, newDistanceScaleVelocity, drag); // TODO: add dt
+		rotation.slerp(drag, rotation, newRotation); // TODO: add dt		
+		
+		mousePosViewPrev = ofMatrix4x4::getInverseOf(target.getGlobalTransformMatrix()) * mousePosXYZ;
 		
 		// apply transforms if they're big enough
 		// TODO: this should be scaled by dt
@@ -77,9 +73,7 @@ void ofEasyCam::begin(ofRectangle rect) {
 			setDistance(getDistance() * (1.0f + distanceScaleVelocity));
 		}
 
-		//perform drag
-		rotation.slerp(drag*dt, rotation, ofQuaternion(0,0,0,1));
-		distanceScaleVelocity = distanceScaleVelocity * (1-drag*dt);
+		// note the mouse button states
 		lastMousePressed[0] = ofGetMousePressed(0);
 		lastMousePressed[1] = ofGetMousePressed(2);
 		
@@ -129,16 +123,6 @@ void ofEasyCam::setDistance(float distance) {
 //----------------------------------------
 float ofEasyCam::getDistance() const {
 	return position.z;
-}
-
-//----------------------------------------
-void ofEasyCam::setThrust(float thrust) {
-	this->thrust = thrust;
-}
-
-//----------------------------------------
-float ofEasyCam::getThrust() const {
-	return thrust;
 }
 
 //----------------------------------------
