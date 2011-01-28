@@ -104,7 +104,6 @@
 			<Add directory="../../../libs/glee/lib/linux64" />
 			<Add directory="../../../libs/gstappsink/lib/linux64" />
 			<Add directory="../../../libs/fmodex/lib/linux64" />
-			<Add directory="../../../libs/unicap/lib/linux64" />
 			<Add directory="../../../libs/poco/lib/linux64" />
 			<Add directory="../../../libs/openFrameworksCompiled/lib/linux64"/>
 		</Linker>

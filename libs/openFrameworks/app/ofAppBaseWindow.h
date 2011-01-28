@@ -1,7 +1,6 @@
-#ifndef _OF_BASE_WINDOW
-#define _OF_BASE_WINDOW
+#pragma once
 
-#include "ofTypes.h"
+#include "ofPoint.h"
 
 class ofBaseApp;
 
@@ -30,6 +29,13 @@ public:
 	virtual ofPoint	getWindowSize(){return ofPoint(); }
 	virtual ofPoint	getScreenSize(){return ofPoint(); }
 
+	virtual void	setOrientation(int orientation){ }
+	virtual int		getOrientation(){ return 0; }
+
+	//this is used by ofGetWidth and now determines the window width based on orientation
+	virtual int		getWidth(){ return 0; }
+	virtual int		getHeight(){ return 0; }
+
 	virtual void	setFrameRate(float targetRate){}
 	virtual void	setWindowTitle(string title){}
 
@@ -40,7 +46,6 @@ public:
 
 	virtual void	enableSetupScreen(){}
 	virtual void	disableSetupScreen(){}
-
+	
 };
 
-#endif

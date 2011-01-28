@@ -1,7 +1,7 @@
 //
 // NotificationStrategy.h
 //
-// $Id: //poco/1.3/Foundation/include/Poco/NotificationStrategy.h#2 $
+// $Id: //poco/1.4/Foundation/include/Poco/NotificationStrategy.h#1 $
 //
 // Library: Foundation
 // Package: Events
@@ -36,8 +36,8 @@
 //
 
 
-#ifndef  Foundation_NotificationStrategy_INCLUDED
-#define  Foundation_NotificationStrategy_INCLUDED
+#ifndef Foundation_NotificationStrategy_INCLUDED
+#define Foundation_NotificationStrategy_INCLUDED
 
 
 #include "Poco/Foundation.h"
@@ -49,6 +49,10 @@ namespace Poco {
 template <class TArgs, class TDelegate> 
 class NotificationStrategy
 	/// The interface that all notification strategies must implement.
+	/// 
+	/// Note: Event is based on policy-driven design, so your strategy implementation
+	/// must offer all the methods from this interface (otherwise: compile errors)
+	/// but you don't need to inherit from NotificationStrategy.
 {
 public:
 	NotificationStrategy()
@@ -79,4 +83,4 @@ public:
 } // namespace Poco
 
 
-#endif
+#endif // Foundation_NotificationStrategy_INCLUDED

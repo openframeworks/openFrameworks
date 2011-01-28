@@ -103,7 +103,7 @@ void testApp::draw(){
 
 	//---------
 	//Lets draw the stroke as a continous line
-	ofSetColor(0x222222);
+	ofSetHexColor(0x222222);
 	ofNoFill();
 	ofBeginShape();
 	for(int i = 0; i < pointCount; i++){
@@ -129,7 +129,7 @@ void testApp::draw(){
 	TTF.drawString(drawString, 5, 40);
 
 	//the message bars at the top and bottom of the app
-	//ofSetColor(0xDDDDDD);
+	//ofSetHexColor(0xDDDDDD);
 	ofEnableAlphaBlending();
 	ofSetColor(0, 0, 0, 200);
 
@@ -254,7 +254,16 @@ void testApp::mouseReleased(int x, int y, int button){
 
 //--------------------------------------------------------------
 void testApp::windowResized(int w, int h){
+
 }
 
+//--------------------------------------------------------------
+void testApp::gotMessage(ofMessage msg){
 
+}
+
+//--------------------------------------------------------------
+void testApp::dragEvent(ofDragInfo dragInfo){ 
+
+}
 

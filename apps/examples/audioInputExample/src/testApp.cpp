@@ -1,8 +1,4 @@
 #include "testApp.h"
-#include "stdio.h"
-
-
-
 
 //--------------------------------------------------------------
 void testApp::setup(){	 
@@ -26,38 +22,41 @@ void testApp::setup(){
 }
 
 //--------------------------------------------------------------
+void testApp::update(){
+
+}
+
+//--------------------------------------------------------------
 void testApp::draw(){
 	
 	
 	// draw the left:
-	ofSetColor(0x333333);
+	ofSetHexColor(0x333333);
 	ofRect(100,100,256,200);
-	ofSetColor(0xFFFFFF);
+	ofSetHexColor(0xFFFFFF);
 	for (int i = 0; i < 256; i++){
 		ofLine(100+i,200,100+i,200+left[i]*100.0f);
 	}
 	
 	// draw the right:
-	ofSetColor(0x333333);
+	ofSetHexColor(0x333333);
 	ofRect(600,100,256,200);
-	ofSetColor(0xFFFFFF);
+	ofSetHexColor(0xFFFFFF);
 	for (int i = 0; i < 256; i++){
 		ofLine(600+i,200,600+i,200+right[i]*100.0f);
 	}
 	
     
 
-	ofSetColor(0x333333);
+	ofSetHexColor(0x333333);
 	drawCounter++;
 	char reportString[255];
 	sprintf(reportString, "buffers received: %i\ndraw routines called: %i\n", bufferCounter,drawCounter);
 	ofDrawBitmapString(reportString,80,380);
 }
 
-
-static float adder = 0;
 //--------------------------------------------------------------
-void testApp::audioReceived 	(float * input, int bufferSize, int nChannels){	
+void testApp::audioReceived(float * input, int bufferSize, int nChannels){	
 	// samples are "interleaved"
 	for (int i = 0; i < bufferSize; i++){
 		left[i] = input[i*2];
@@ -102,5 +101,13 @@ void testApp::windowResized(int w, int h){
 
 }
 
+//--------------------------------------------------------------
+void testApp::gotMessage(ofMessage msg){
 
+}
+
+//--------------------------------------------------------------
+void testApp::dragEvent(ofDragInfo dragInfo){ 
+
+}
 

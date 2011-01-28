@@ -1,32 +1,26 @@
-#ifndef _OF_IMAGE_H_
-#define _OF_IMAGE_H_
+#pragma once
 
-#include "ofConstants.h"
+#include "ofFileUtils.h"
 #include "ofTexture.h"
-#include "ofGraphics.h"
-#include "ofAppRunner.h"		// for height()
-#include "FreeImage.h"
-#include "ofUtils.h"
+#include "ofPixels.h"
+#include "ofBaseTypes.h"
 
-typedef struct {
-
-	unsigned char * pixels;
-	int width;
-	int height;
-
-	int		bitsPerPixel;		// 8 = gray, 24 = rgb, 32 = rgba
-	int		bytesPerPixel;		// 1, 3, 4 bytes per pixels
-	GLint	glDataType;			// GL_LUMINANCE, GL_RGB, GL_RGBA
-	int		ofImageType;		// OF_IMAGE_GRAYSCALE, OF_IMAGE_COLOR, OF_IMAGE_COLOR_ALPHA
-	bool	bAllocated;
-
-} ofPixels;
-
+enum ofImageQualityType {
+	OF_IMAGE_QUALITY_BEST,
+	OF_IMAGE_QUALITY_HIGH,
+	OF_IMAGE_QUALITY_MEDIUM,
+	OF_IMAGE_QUALITY_LOW,
+	OF_IMAGE_QUALITY_WORST
+};
 
 //----------------------------------------------------
-// freeImage based stuff:
-void 	ofCloseFreeImage();		// when we exit, we shut down ofImage
+// FreeImage based stuff:
+bool ofLoadImage(ofPixels & pix, string path);
+bool ofLoadImage(ofPixels & pix, const ofBuffer & buffer);
+void ofSaveImage(ofPixels & pix, string path, ofImageQualityType qualityLevel = OF_IMAGE_QUALITY_BEST);
+void ofSaveImage(ofPixels & pix, ofBuffer & buffer, ofImageQualityType qualityLevel = OF_IMAGE_QUALITY_BEST);
 
+void 	ofCloseFreeImage();		// when we exit, we shut down ofImage
 
 //----------------------------------------------------
 class ofImage : public ofBaseImage{
@@ -37,7 +31,7 @@ class ofImage : public ofBaseImage{
 		virtual ~ofImage();
 
 		// alloation / deallocation routines
-		void 				allocate(int w, int h, int type);
+		void 				allocate(int w, int h, ofImageType type);
 		void 				clear();
 
 		// default copy overwriting (for = or std::vector)
@@ -47,31 +41,55 @@ class ofImage : public ofBaseImage{
 		// copying:
 		void 				clone(const ofImage &mom);
 
+	
+		
+	
+		
 		// enable or disable using the texture of this image
 		void 				setUseTexture(bool bUse);
 
 		//for getting a reference to the texture
 		ofTexture & getTextureReference();
 
+		// quick texture binding shortcut
+		void bind();
+		void unbind();
+
 		// file loading / saving
 		bool 				loadImage(string fileName);
-		void 				saveImage(string fileName);
+		bool				loadImage(const ofBuffer & buffer);
+		void 				saveImage(string fileName, ofImageQualityType compressionLevel = OF_IMAGE_QUALITY_BEST);
+		void 				saveImage(ofBuffer & buffer, ofImageQualityType compressionLevel = OF_IMAGE_QUALITY_BEST);
 
 		//Sosolimited: texture compression and mipmaps
 		void				setCompression(ofTexCompression compression);
 
 		// getting the data
 		unsigned char * 	getPixels();			// up to you to get this right
+		ofPixels		 	getOFPixels();
+		ofPixels		 	getOFPixels() const;
 
 		// alter the image
-		void 				setFromPixels(unsigned char * pixels, int w, int h, int newType, bool bOrderIsRGB = true);
-		void 				setImageType(int type);
+		void 				setFromPixels(unsigned char * pixels, int w, int h, ofImageType type, bool bOrderIsRGB = true);
+		void 				setImageType(ofImageType type);
 		void 				resize(int newWidth, int newHeight);
 		void 				grabScreen(int x, int y, int w, int h);		// grab pixels from opengl, using glreadpixels
-
-		// if you've altered the pixels (from getPixels()) call update() to see a change:
-		void				update();
-
+		// this does an inplace crop. 
+		// NOTE: this reallocates memory.
+		void				crop(int x, int y, int w, int h); 
+		// this does a crop from another image.
+		// NOTE: this will reallocate memory if the image types are different, or if the w & h do not
+		// equal this images w & h
+		void				cropFrom(ofImage & otherImage, int x, int y, int w, int h);
+		// perform rotation of 90 degress clockwise rotation amont times. 
+		void				rotate90(int rotation);
+		void				mirror(bool vertical, bool horizontal); 
+	
+	
+	
+		// if you've altered the pixels (e.g., from getPixels())
+		// call update() to see a change (move the pixels to the texture)
+		void update();
 
 		//the anchor is the point the image is drawn around.
 		//this can be useful if you want to rotate an image around a particular point.
@@ -80,38 +98,27 @@ class ofImage : public ofBaseImage{
         void				resetAnchor();								//resets the anchor to (0, 0)
 
 		// draw:
+		void 				draw(const ofRectangle & r);
+		void 				draw(const ofPoint & p, float w, float h);
 		void 				draw(float x, float y, float w, float h);
+		void 				draw(float x, float y, float z, float w, float h);
+		void 				draw(const ofPoint & p);
 		void 				draw(float x, float y);
+		void 				draw(float x, float y, float z);
 
 		float 				getHeight();
 		float 				getWidth();
+		bool 				bAllocated() {return myPixels.isAllocated();};
 
 		int 				width, height, bpp;		// w,h, bits per pixel
 		int					type;					// OF_IMAGE_GRAYSCALE, OF_IMAGE_COLOR, OF_IMAGE_COLOR_ALPHA
 
 	protected:
-
-		// freeImage related functionality:
-
-		bool				loadImageIntoPixels(string fileName, ofPixels &pix);
-		void				saveImageFromPixels(string fileName, ofPixels &pix);
-		void				changeTypeOfPixels(ofPixels &pix, int newType);
+	
+		void				changeTypeOfPixels(ofPixels &pix, ofImageType type);
 		void				resizePixels(ofPixels &pix, int newWidth, int newHeight);
-		FIBITMAP *			getBmpFromPixels(ofPixels &pix);
-		void				putBmpIntoPixels(FIBITMAP * bmp, ofPixels &pix);
-
-		// utils:
-		static void			allocatePixels(ofPixels &pix, int width, int height, int bpp);
-		static void			swapRgb(ofPixels &pix);
 
 		ofPixels			myPixels;
 		bool				bUseTexture;
 		ofTexture			tex;
-
-
-
 };
-
-
-
-#endif

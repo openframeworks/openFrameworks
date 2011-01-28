@@ -1,11 +1,7 @@
 #include "testApp.h"
 
-
-
-
-
 //--------------------------------------------------------------
-void testApp::setup(){	 
+void testApp::setup(){
 	
 	camWidth 		= 320;	// try to grab at this size. 
 	camHeight 		= 240;
@@ -14,8 +10,7 @@ void testApp::setup(){
 	vidGrabber.initGrabber(camWidth,camHeight);
 	
 	videoInverted 	= new unsigned char[camWidth*camHeight*3];
-	videoTexture.allocate(camWidth,camHeight, GL_RGB);
-	
+	videoTexture.allocate(camWidth,camHeight, GL_RGB);	
 }
 
 
@@ -39,7 +34,7 @@ void testApp::update(){
 
 //--------------------------------------------------------------
 void testApp::draw(){
-	ofSetColor(0xffffff);
+	ofSetHexColor(0xffffff);
 	vidGrabber.draw(20,20);
 	videoTexture.draw(20+camWidth,20,camWidth,camHeight);
 }
@@ -60,7 +55,6 @@ void testApp::keyPressed  (int key){
 	
 	
 }
-
 
 //--------------------------------------------------------------
 void testApp::keyReleased(int key){ 
@@ -89,5 +83,15 @@ void testApp::mouseReleased(int x, int y, int button){
 
 //--------------------------------------------------------------
 void testApp::windowResized(int w, int h){
+
+}
+
+//--------------------------------------------------------------
+void testApp::gotMessage(ofMessage msg){
+
+}
+
+//--------------------------------------------------------------
+void testApp::dragEvent(ofDragInfo dragInfo){ 
 
 }

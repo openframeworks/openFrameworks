@@ -1,25 +1,8 @@
-/**
-*  ofxPoint3f.h
-*  by stefanix
-*
-* DEPRECATED!! use ofxVec3f.h for both points and vectors.
-*/
+#pragma once
 
+#include "ofVec3f.h"
 
-#ifndef _OFX_POINT3f
-#define _OFX_POINT3f
+#warning ofxPoint3f has been deprecated. 
+#warning Remove all references to ofxPoint3f.h and use ofVec3f instead.
 
-#if (_MSC_VER)
-#pragma message("warning: ofxPoint3f is deprecated, use ofxVec3f.h for both points and vectors")
-#else
-#warning "ofxPoint3f is deprecated, use ofxVec3f.h for both points and vectors"
-#endif
-
-#include "ofxVec3f.h"
-
-
-typedef ofxVec3f  ofxPoint3f;
-
-
-
-#endif
+typedef ofVec3f ofxPoint3f;
