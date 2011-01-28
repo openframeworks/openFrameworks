@@ -22,11 +22,10 @@ class testApp : public ofBaseApp{
 		void windowResized(int w, int h);
 	
 		ofAssimpMeshLoader model;
-		vector<ofMeshElement> meshes;
+		vector<ofVertexData> meshes;
 		vector<ofVboMesh> vboMeshes;
-//		vector<ofVboMesh> vboMeshes2;
 	
-		int whichMesh;
+		bool lightsOn;
 	
 		ofImage tex;
 	

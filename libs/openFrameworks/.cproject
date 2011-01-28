@@ -3,16 +3,14 @@
 
 <cproject storage_type_id="org.eclipse.cdt.core.XmlProjectDescriptionStorage2">
 	<storageModule moduleId="org.eclipse.cdt.core.settings">
-		<cconfiguration id="0.1919955709">
-			<storageModule externalCElementFile="0.1919955709_org.eclipse.cdt.core.settings" id="0.1919955709" name="Default"/>
-			<storageModule externalCElementFile="0.1919955709_cdtBuildSystem" version="4.0.0"/>
-			<storageModule externalCElementFile="0.1919955709_scannerConfiguration"/>
-			<storageModule externalCElementFile="0.1919955709_org.eclipse.cdt.core.externalSettings"/>
-			<storageModule externalCElementFile="0.1919955709_org.eclipse.cdt.core.language.mapping"/>
-			<storageModule externalCElementFile="0.1919955709_org.eclipse.cdt.internal.ui.text.commentOwnerProjectMappings"/>
+		<cconfiguration id="cdt.managedbuild.toolchain.gnu.base.1095579623">
+			<storageModule externalCElementFile="cdt.managedbuild.toolchain.gnu.base.1095579623_org.eclipse.cdt.core.settings" id="cdt.managedbuild.toolchain.gnu.base.1095579623" name="Default"/>
+			<storageModule externalCElementFile="cdt.managedbuild.toolchain.gnu.base.1095579623_cdtBuildSystem" version="4.0.0"/>
+			<storageModule externalCElementFile="cdt.managedbuild.toolchain.gnu.base.1095579623_scannerConfiguration"/>
+			<storageModule externalCElementFile="cdt.managedbuild.toolchain.gnu.base.1095579623_org.eclipse.cdt.core.externalSettings"/>
 		</cconfiguration>
 	</storageModule>
 	<storageModule moduleId="cdtBuildSystem" version="4.0.0">
-		<project id="openFrameworks.null.1468333884" name="openFrameworks"/>
+		<project id="openFrameworks.null.1746705434" name="openFrameworks"/>
 	</storageModule>
 </cproject>

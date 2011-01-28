@@ -1,60 +1,54 @@
-/*
- *  ofEasyCam.h
- *  openFrameworksLib
- *
- *  Created by Memo Akten on 14/01/2011.
- *  Copyright 2011 MSA Visuals Ltd. All rights reserved.
- *
- */
-
 #pragma once
 
-#define OF_EASYCAM_DEFAULT_DISTANCE 100.0f
-
 #include "ofCamera.h"
+#include "ofEvents.h"
 
 class ofEasyCam : public ofCamera {
 public:
 	ofEasyCam();
-	
+
+	// TODO: this should be ofGetViewRect() eventually
 	virtual void begin(ofRectangle rect = ofGetWindowRect());
 	void reset();
 
 	//----------------------------------------
 	// advanced functions
-	
+
 	void setTarget(const ofVec3f& target);
 	void setTarget(ofNode& target);
 	ofNode& getTarget();
-	
-	void setDistance(float f);
+
+	void setDistance(float distance);
 	float getDistance() const;
-	
-	void setDrag(float f);
+
+	// drag is how quickly the camera picks up and slows down
+	// it is a normalized value between 0-1
+	void setDrag(float drag);
 	float getDrag() const;
 	
-	void setThrust(float f);
-	float getThrust() const;
-	
+	void mouseDragged(ofMouseEventArgs& mouse);
+	void mouseMoved(ofMouseEventArgs& mouse);
+	void mousePressed(ofMouseEventArgs& mouse);
+	void mouseReleased(ofMouseEventArgs& mouse);
 
-	
 protected:
+	void setDistance(float distance, bool save);
+
 	ofNode target;
-	float distance;
+	
+	float drag;
+	float zoomSpeed;
 
 	ofVec3f mousePosViewPrev;
 	ofVec3f mousePosScreenPrev;
-	bool oldMousePress[2];
-	int lastMouseActionFrame;
+	int lastFrame;
+	
+	unsigned long lastTap;
 
-	float drag;
-	float thrust;
-
-	//momentum
-	ofQuaternion rotation;
+	bool bDistanceSet;
+	float lastDistance;
 	float distanceScaleVelocity;
 	
-//from pre-arcball
-//	ofVec3f rotAxis;
-//	float angle;
+	ofQuaternion rotation;
+	ofVec3f translation;
 };

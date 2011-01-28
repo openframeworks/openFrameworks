@@ -429,8 +429,8 @@ void ofGstVideoGrabber::setPixelFormat(ofPixelFormat pixelFormat){
 }
 
 void ofGstVideoGrabber::setVerbose(bool bVerbose){
-	if(bVerbose) ofLogSetTopicLogLevel("ofGstVideoGrabber",OF_LOG_VERBOSE);
-	else ofLogResetTopicLogLevel("ofGstVideoGrabber");
+	//if(bVerbose) ofLogSetTopicLogLevel("ofGstVideoGrabber",OF_LOG_VERBOSE);
+	//else ofLogResetTopicLogLevel("ofGstVideoGrabber");
 }
 
 void ofGstVideoGrabber::listDevices(){
