@@ -59,7 +59,7 @@ void ofEasyCam::begin(ofRectangle rect) {
 			//calc new scale velocity
 			float newDistanceScaleVelocity = 0.0f;
 			if(oldMousePress[1]) {
-				newDistanceScaleVelocity = 2 * (mousePosScreen.y - mousePosScreenPrev.y) / rect.height;
+				newDistanceScaleVelocity = 2 * (mousePosScreenPrev.y - mousePosScreen.y) / rect.height;
 			}
 			
 			//apply thrust towards new velocities
