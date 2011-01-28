@@ -6,17 +6,17 @@
 float epsilonTransform = 1e-7;
 
 // this is the default on windows os
-int doubleclickTime = 500;
+unsigned long doubleclickTime = 500;
 
 //----------------------------------------
 ofEasyCam::ofEasyCam():
-mousePosViewPrev(0, 0), 
-lastFrame(0),
 drag(0.1f),
 zoomSpeed(2.0f),
+mousePosViewPrev(0, 0), 
+lastFrame(0),
+lastTap(0),
 bDistanceSet(false),
 lastDistance(0),
-lastTap(0),
 distanceScaleVelocity(0) {
 	target.setPosition(0, 0, 0);
 	reset();
