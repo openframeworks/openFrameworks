@@ -416,6 +416,7 @@ void ofDrawBitmapCharacterStart(){
 	glesBitmappedFontTexture.bind();
 	glEnableClientState(GL_VERTEX_ARRAY);		
 	glEnableClientState( GL_TEXTURE_COORD_ARRAY );
+	glTexParameterf(glesBitmappedFontTexture.getTextureData().textureTarget, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	vC = 0;
 }
 
