@@ -23,9 +23,6 @@ distanceScaleVelocity(0) {
 	setParent(target);
 	
 	ofRegisterMouseEvents(this);
-	
-	lastMousePressed[0] = false;
-	lastMousePressed[1] = false;
 }
 
 //----------------------------------------
@@ -61,15 +58,18 @@ void ofEasyCam::begin(ofRectangle rect) {
 		
 		//calc new rotation velocity
 		ofQuaternion newRotation;
-		if(lastMousePressed[0]) {
+		if(ofGetMousePressed(0)) {
 			newRotation.makeRotate(mousePosViewPrev, mousePosView);
 		}
 
 		//calc new scale velocity
 		float newDistanceScaleVelocity = 0.0f;
-		if(lastMousePressed[1]) {
+		if(ofGetMousePressed(2)) {
 			newDistanceScaleVelocity = zoomSpeed * (mousePosScreenPrev.y - mousePosScreen.y) / rect.height;
 		}
+		
+		ofVec3f newPosition;
+		//if(lastMousePressed[0] && 
 		
 		//apply drag towards new velocities
 		distanceScaleVelocity = ofLerp(distanceScaleVelocity, newDistanceScaleVelocity, drag); // TODO: add dt
@@ -85,10 +85,6 @@ void ofEasyCam::begin(ofRectangle rect) {
 		if (abs(distanceScaleVelocity - 1.0f) > minimumRotation) {
 			setDistance(getDistance() * (1.0f + distanceScaleVelocity), false);
 		}
-
-		// note the mouse button states
-		lastMousePressed[0] = ofGetMousePressed(0);
-		lastMousePressed[1] = ofGetMousePressed(2);
 		
 		mousePosScreenPrev = mousePosScreen;
 	}
