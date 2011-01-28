@@ -55,6 +55,7 @@ void testApp::setup(){
 	
 	// user camera
 	camEasyCam.setTarget(nodeSwarm);
+	camEasyCam.setDistance(100);
 	cameras[0] = &camEasyCam;
 
 	
