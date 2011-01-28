@@ -1,7 +1,6 @@
 #include "testApp.h"
 
 int letter = '$';
-
 //--------------------------------------------------------------
 void testApp::setup(){
 	ofBackground(255,255,255);
@@ -10,7 +9,6 @@ void testApp::setup(){
 	testFont2.loadFont("cooperBlack.ttf", 52, true, true, true);
 
 	ofSetFullscreen(false);
-
 }
 
 //--------------------------------------------------------------
@@ -102,9 +100,8 @@ void testApp::mouseDragged(int x, int y, int button){
 
 //--------------------------------------------------------------
 void testApp::mousePressed(int x, int y, int button){
-	ofHideCursor();
-}
 
+}
 
 //--------------------------------------------------------------
 void testApp::mouseReleased(int x, int y, int button){
@@ -113,5 +110,15 @@ void testApp::mouseReleased(int x, int y, int button){
 
 //--------------------------------------------------------------
 void testApp::windowResized(int w, int h){
+
+}
+
+//--------------------------------------------------------------
+void testApp::gotMessage(ofMessage msg){
+
+}
+
+//--------------------------------------------------------------
+void testApp::dragEvent(ofDragInfo dragInfo){ 
 
 }

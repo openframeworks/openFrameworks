@@ -3,7 +3,6 @@
 //--------------------------------------------------------------
 void testApp::setup(){	 
 	
-	
 	int screenW = ofGetScreenWidth();
 	int screenH = ofGetScreenHeight();
 	ofSetWindowPosition(screenW/2-300/2, screenH/2-300/2);
@@ -26,7 +25,6 @@ void testApp::setup(){
 	ballVelocityX = ofRandom(-5,5);
 	ballVelocityY = ofRandom(-5,5);
 }
-
 
 //--------------------------------------------------------------
 void testApp::update(){
@@ -74,7 +72,7 @@ void testApp::update(){
 void testApp::draw(){
 	ofSetupScreen();
 	
-	ofSetColor(0x999999);
+	ofSetHexColor(0x999999);
 	
 	//lets show our window pos in pixels
 	//macs actually start the Y pos from 40
@@ -89,7 +87,7 @@ void testApp::draw(){
 	}
 	
 
-	ofSetColor(0xFFFFFF);
+	ofSetHexColor(0xFFFFFF);
 	ofCircle(ballPositionX, ballPositionY, 15);
 }
 
@@ -141,5 +139,15 @@ void testApp::mouseReleased(int x, int y, int button){
 
 //--------------------------------------------------------------
 void testApp::windowResized(int w, int h){
+
+}
+
+//--------------------------------------------------------------
+void testApp::gotMessage(ofMessage msg){
+
+}
+
+//--------------------------------------------------------------
+void testApp::dragEvent(ofDragInfo dragInfo){ 
 
 }

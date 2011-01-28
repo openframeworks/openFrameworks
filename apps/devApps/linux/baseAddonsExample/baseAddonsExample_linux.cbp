@@ -63,7 +63,6 @@
 			<Add directory="../../../libs/FreeImage/include" />
 			<Add directory="../../../libs/freetype/include" />
 			<Add directory="../../../libs/freetype/include/freetype2" />
-			<Add directory="../../../libs/unicap/include" />
 			<Add directory="../../../libs/gstappsink/include" />
 			<Add directory="../../../addons" />
 			<Add directory="../../../libs/poco/include" />

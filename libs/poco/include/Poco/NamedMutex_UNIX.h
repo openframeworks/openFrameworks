@@ -1,7 +1,7 @@
 //
 // NamedMutex_UNIX.h
 //
-// $Id: //poco/1.3/Foundation/include/Poco/NamedMutex_UNIX.h#1 $
+// $Id: //poco/1.4/Foundation/include/Poco/NamedMutex_UNIX.h#1 $
 //
 // Library: Foundation
 // Package: Processes
@@ -43,7 +43,7 @@
 #include "Poco/Foundation.h"
 #include <sys/types.h>
 #include <sys/stat.h>
-#if defined(sun) || defined(__APPLE__) || defined(__osf__) || defined(__QNX__)
+#if defined(sun) || defined(__APPLE__) || defined(__osf__) || defined(__QNX__) || defined(_AIX)
 #include <semaphore.h>
 #endif
 
@@ -64,7 +64,7 @@ private:
 	std::string getFileName();
 
 	std::string _name;
-#if defined(sun) || defined(__APPLE__) || defined(__osf__) || defined(__QNX__)
+#if defined(sun) || defined(__APPLE__) || defined(__osf__) || defined(__QNX__) || defined(_AIX)
 	sem_t* _sem;
 #else
 	int _lockfd; // lock file descriptor

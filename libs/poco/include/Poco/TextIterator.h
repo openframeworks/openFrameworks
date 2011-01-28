@@ -1,7 +1,7 @@
 //
 // TextIterator.h
 //
-// $Id: //poco/1.3/Foundation/include/Poco/TextIterator.h#1 $
+// $Id: //poco/1.4/Foundation/include/Poco/TextIterator.h#1 $
 //
 // Library: Foundation
 // Package: Text
@@ -67,6 +67,8 @@ class Foundation_API TextIterator
 	/// NOTE: When an UTF-16 encoding is used, surrogate pairs will be
 	/// reported as two separate characters, due to restrictions of
 	/// the TextEncoding class.
+	///
+	/// For iterating over char buffers, see the TextBufferIterator class.
 {
 public:
 	TextIterator();
@@ -117,6 +119,10 @@ public:
 	bool operator != (const TextIterator& it) const;
 		/// Compares two iterators for inequality.
 		
+	TextIterator end() const;
+		/// Returns the end iterator for the range handled
+		/// by the iterator.
+		
 private:
 	const TextEncoding*         _pEncoding;
 	std::string::const_iterator _it;
@@ -142,6 +148,12 @@ inline bool TextIterator::operator != (const TextIterator& it) const
 inline void swap(TextIterator& it1, TextIterator& it2)
 {
 	it1.swap(it2);
+}
+
+
+inline TextIterator TextIterator::end() const
+{
+	return TextIterator(_end);
 }
 
 

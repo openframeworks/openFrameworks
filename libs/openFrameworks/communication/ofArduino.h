@@ -22,9 +22,7 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-
-#ifndef OF_ARDUINO_H
-#define OF_ARDUINO_H
+#pragma once
 
 #include <list>
 #include <vector>
@@ -405,4 +403,3 @@ class ofArduino{
 
 typedef ofArduino ofStandardFirmata;
 
-#endif

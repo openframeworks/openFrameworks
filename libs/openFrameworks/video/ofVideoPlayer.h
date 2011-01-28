@@ -1,31 +1,37 @@
-#ifndef _OF_VIDEO_PLAYER
-#define _OF_VIDEO_PLAYER
+#pragma once
 
 #include "ofConstants.h"
 #include "ofTexture.h"
-
+#include "ofBaseTypes.h"
 
 #ifdef OF_VIDEO_PLAYER_GSTREAMER
-	#include "ofGstUtils.h"
-#else
-	#include "ofQtUtils.h"
+	#include "ofGstVideoPlayer.h"
+	#define OF_VID_PLAYER_TYPE ofGstVideoPlayer()
 #endif
 
+#ifdef OF_VIDEO_PLAYER_QUICKTIME
+	#include "ofQuickTimePlayer.h"
+	#define OF_VID_PLAYER_TYPE ofQuickTimePlayer()	
+#endif
 
-
-
+#ifdef OF_VIDEO_PLAYER_IPHONE
+	#include "ofiPhoneVideoPlayer.h"
+	#define OF_VID_PLAYER_TYPE ofiPhoneVideoPlayer()	
+#endif
 
 //---------------------------------------------
-
-class ofVideoPlayer : public ofBaseVideo{
+class ofVideoPlayer : public ofBaseVideoPlayer, public ofBaseDraws, public ofBaseHasTexture{
 
 	public:
-
 
 		ofVideoPlayer ();
 		virtual ~ofVideoPlayer();
 
+		bool				setPlayer(ofBaseVideoPlayer * newPlayer);
+		ofBaseVideoPlayer *	getPlayer();
+
 		bool 				loadMovie(string name);
+		void				setPixelFormat(ofPixelFormat pixelFormat);
 		void 				closeMovie();
 		void 				close();
 
@@ -34,12 +40,10 @@ class ofVideoPlayer : public ofBaseVideo{
 		void 				play();
 		void 				stop();
 
-		int 				width, height;
-		float  				speed;
-		bool 				bLoaded;
-
 		bool 				isFrameNew();
 		unsigned char * 	getPixels();
+//		ofPixels 			getOFPixels();
+//		ofPixels 			getOFPixels() const;
 		float 				getPosition();
 		float 				getSpeed();
 		float 				getDuration();
@@ -47,7 +51,8 @@ class ofVideoPlayer : public ofBaseVideo{
 
 		void 				setPosition(float pct);
 		void 				setVolume(int volume);
-		void 				setLoopState(int state);
+		void 				setLoopState(ofLoopType state);
+		int					getLoopState();
 		void   				setSpeed(float speed);
 		void				setFrame(int frame);  // frame 0 = first frame...
 
@@ -64,7 +69,6 @@ class ofVideoPlayer : public ofBaseVideo{
 
 		void 				setPaused(bool bPause);
 
-		int					currentLoopState;
 		int					getCurrentFrame();
 		int					getTotalNumFrames();
 
@@ -79,50 +83,18 @@ class ofVideoPlayer : public ofBaseVideo{
 		bool				isLoaded();
 		bool				isPlaying();
 
-		//--------------------------------------
-		#ifdef OF_VIDEO_PLAYER_QUICKTIME
-		//--------------------------------------
-			MovieDrawingCompleteUPP myDrawCompleteProc;
-			MovieController  	thePlayer;
-			GWorldPtr 			offscreenGWorld;
-			Movie 			 	moviePtr;
-			unsigned char * 	offscreenGWorldPixels;	// 32 bit: argb (qt k32ARGBPixelFormat)
-			void				qtGetFrameCount(Movie & movForcount);
-		//--------------------------------------
-		#endif
-		//--------------------------------------
-
-		//--------------------------------------
-		#ifdef OF_VIDEO_PLAYER_GSTREAMER
-		//--------------------------------------
-		ofGstUtils 			gstUtils;
-		//--------------------------------------
-		#endif
-		//--------------------------------------
-
-		int					nFrames;				// number of frames
-		unsigned char * 	pixels;					// 24 bit: rgb
-		bool 				bHavePixelsChanged;
-		ofTexture 			tex;					// a ptr to the texture we are utilizing
-		bool 				bUseTexture;			// are we using a texture
-		bool				allocated;				// so we know to free pixels or not
+		//this is kept as legacy to support people accessing width and height directly. 
+		int					height;
+		int					width;
 
 	protected:
-
-
-		void 				start();
-		void 				createImgMemAndGWorld();
-		bool 				bStarted;
-		bool 				bPlaying;
-		bool 				bPaused;
-		bool 				bIsFrameNew;			// if we are new
-
-
-
-
+		ofBaseVideoPlayer		* player;
+		
+		ofTexture tex;
+		ofTexture * playerTex; // a seperate texture that may be optionally implemented by the player to avoid excessive pixel copying.
+		bool bUseTexture;
+		ofPixelFormat internalPixelFormat;
 };
-#endif
-
 
 
 

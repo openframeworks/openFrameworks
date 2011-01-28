@@ -1,7 +1,7 @@
 //
 // Hash.h
 //
-// $Id: //poco/1.3/Foundation/include/Poco/Hash.h#1 $
+// $Id: //poco/1.4/Foundation/include/Poco/Hash.h#1 $
 //
 // Library: Foundation
 // Package: Hashing
@@ -47,18 +47,6 @@
 namespace Poco {
 
 
-template <class T>
-struct Hash
-	/// A generic hash function.
-{
-	std::size_t operator () (T value) const
-		/// Returns the hash for the given value.
-	{
-		return hash(value);
-	}
-};
-
-
 std::size_t Foundation_API hash(Int8 n);
 std::size_t Foundation_API hash(UInt8 n);
 std::size_t Foundation_API hash(Int16 n);
@@ -68,6 +56,18 @@ std::size_t Foundation_API hash(UInt32 n);
 std::size_t Foundation_API hash(Int64 n);
 std::size_t Foundation_API hash(UInt64 n);
 std::size_t Foundation_API hash(const std::string& str);
+
+
+template <class T>
+struct Hash
+	/// A generic hash function.
+{
+	std::size_t operator () (T value) const
+		/// Returns the hash for the given value.
+	{
+		return Poco::hash(value);
+	}
+};
 
 
 //

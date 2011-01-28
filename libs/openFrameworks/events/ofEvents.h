@@ -1,11 +1,25 @@
-#ifndef _OF_EVENTS
-#define _OF_EVENTS
+#pragma once
 
 #include "ofConstants.h"
-#include "ofUtils.h"
+
+//-------------------------- mouse/key query
+bool		ofGetMousePressed(int button=-1); //by default any button
+bool		ofGetKeyPressed(int key=-1); //by default any key
+
+int			ofGetMouseX();
+int			ofGetMouseY();
+
+int			ofGetPreviousMouseX();
+int			ofGetPreviousMouseY();
+
+void		ofSetEscapeQuitsApp(bool bQuitOnEsc);
+
+void		exitApp(); 
+
+//-----------------------------------------------
 
 #ifdef OF_USING_POCO
-
+	#define _OF_EVENTS
 	#ifndef OF_EVENTS_ADDON
 		#include "ofEventUtils.h"
 
@@ -53,6 +67,15 @@
 			int width;
 			int height;
 		};
+		
+		class ofMessage : public ofEventArgs{
+			public:
+				ofMessage( string msg ){
+					message = msg;
+				}
+				string message;
+		};
+		
 	#else
 		#include "ofxEventUtils.h"
 	#endif
@@ -80,6 +103,9 @@
 		ofEvent<ofTouchEventArgs>	touchUp;
 		ofEvent<ofTouchEventArgs>	touchMoved;
 		ofEvent<ofTouchEventArgs>	touchDoubleTap;
+		ofEvent<ofTouchEventArgs>	touchCancelled;
+
+		ofEvent<ofMessage> messageEvent;
 
 		void disable(){
 			setup.disable();
@@ -98,6 +124,8 @@
 			touchUp.disable();
 			touchMoved.disable();
 			touchDoubleTap.disable();
+			touchCancelled.disable();
+			messageEvent.disable();
 		}
 
 		void enable(){
@@ -117,10 +145,13 @@
 			touchUp.enable();
 			touchMoved.enable();
 			touchDoubleTap.enable();
+			touchCancelled.enable();
+			messageEvent.enable();
 		}
 	};
 
-
+	void ofSendMessage(ofMessage msg);
+	void ofSendMessage(string messageString);
 
 	extern ofCoreEvents ofEvents;
 
@@ -144,6 +175,12 @@
 		ofAddListener(ofEvents.touchDown, listener, &ListenerClass::touchDown);
 		ofAddListener(ofEvents.touchMoved, listener, &ListenerClass::touchMoved);
 		ofAddListener(ofEvents.touchUp, listener, &ListenerClass::touchUp);
+		ofAddListener(ofEvents.touchCancelled, listener, &ListenerClass::touchCancelled);
+	}
+
+	template<class ListenerClass>
+	void ofRegisterGetMessages(ListenerClass * listener){
+		ofAddListener(ofEvents.messageEvent, listener, &ListenerClass::gotMessage);
 	}
 
 	template<class ListenerClass>
@@ -166,9 +203,29 @@
 		ofRemoveListener(ofEvents.touchDown, listener, &ListenerClass::touchDown);
 		ofRemoveListener(ofEvents.touchMoved, listener, &ListenerClass::touchMoved);
 		ofRemoveListener(ofEvents.touchUp, listener, &ListenerClass::touchUp);
+		ofRemoveListener(ofEvents.touchCancelled, listener, &ListenerClass::touchCancelled);
 	}
 
-	#endif
+	template<class ListenerClass>
+	void ofUnregisterGetMessages(ListenerClass * listener){
+		ofRemoveListener(ofEvents.messageEvent, listener, &ListenerClass::gotMessage);
+	}
 
 #endif
+
+//  event notification only for internal OF use
+void ofNotifySetup();
+void ofNotifyUpdate();
+void ofNotifyDraw();
+
+void ofNotifyKeyPressed(int key);
+void ofNotifyKeyReleased(int key);
+
+void ofNotifyMousePressed(int x, int y, int button);
+void ofNotifyMouseReleased(int x, int y, int button);
+void ofNotifyMouseDragged(int x, int y, int button);
+void ofNotifyMouseMoved(int x, int y);
+
+void ofNotifyExit();
+void ofNotifyWindowResized(int width, int height);
 

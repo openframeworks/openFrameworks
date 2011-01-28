@@ -2,19 +2,9 @@
 
 #include "ofConstants.h"
 #include "ofAppBaseWindow.h"
+#include "ofEvents.h"
 
-#ifdef TARGET_WIN32
-	#define GLUT_BUILDING_LIB
-	#include "glut.h"
-#endif
-#ifdef TARGET_OSX
-	#include <GLUT/glut.h>
-#endif
-#ifdef TARGET_LINUX
-	#include <GL/glut.h>
-#endif
-
-class ofPoint;
+//class ofPoint;
 class ofBaseApp;
 
 class ofAppGlutWindow : public ofAppBaseWindow {
@@ -36,8 +26,6 @@ public:
 	
 	void setFullscreen(bool fullScreen);
 	void toggleFullscreen();
-	
-	static void exitApp();
 
 	void setWindowTitle(string title);
 	void setWindowPosition(int x, int y);
@@ -46,7 +34,13 @@ public:
 	ofPoint		getWindowPosition();
 	ofPoint		getWindowSize();
 	ofPoint		getScreenSize();
-
+	
+	void		setOrientation(int orientation);
+	int			getOrientation();
+	
+	int			getWidth();
+	int			getHeight();	
+	
 	int			getWindowMode();
 
 	int			getFrameNum();
@@ -67,9 +61,8 @@ public:
 	static void special_key_cb(int key, int x, int y) ;
 	static void special_key_up_cb(int key, int x, int y) ;
 	static void resize_cb(int w, int h);
-
-
+	static void dragEvent(char ** fileNames, int howManyFiles, int dragX, int dragY);
 	string displayString;
-	 
+		 
 };
 

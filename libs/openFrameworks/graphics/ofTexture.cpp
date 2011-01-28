@@ -1,6 +1,8 @@
 #include "ofTexture.h"
 #include "ofUtils.h"		// for nextPow2()
 #include "ofAppRunner.h"	// for getWidth()
+#include "ofGraphics.h"
+#include "ofPixels.h"
 
 static bool bTexHackEnabled = true;
 
@@ -15,25 +17,26 @@ void ofDisableTextureEdgeHack(){
 }
 
 //----------------------------------------------------------
-ofTexture::ofTexture(){
-	texData.bAllocated		= false;
-	texData.textureID		= 0;
-	texData.bFlipTexture	= false;
-	texData.textureTarget	= GL_TEXTURE_2D;
-	texData.glTypeInternal  = 0;
-	texData.glType			= 0;
-	texData.pixelType		= GL_UNSIGNED_BYTE;
-	texData.width			= 0;
-	texData.height			= 0;
-	texData.tex_w			= 0;
-	texData.tex_h			= 0;
-	texData.tex_t			= 0;
-	texData.tex_u			= 0;
-
-	//Sosolimited
-	texData.compressionType = OF_COMPRESS_NONE;
-
+ofTexture::ofTexture()
+:texDataPtr(new ofTextureData)
+,texData(*texDataPtr)
+{
 	resetAnchor();
+}
+
+ofTexture::ofTexture(const ofTexture & mom)
+:texDataPtr(mom.texDataPtr)
+,texData(*texDataPtr)
+{
+	anchor = mom.anchor;
+	bAnchorIsPct = mom.bAnchorIsPct;
+}
+
+void ofTexture::operator=(const ofTexture & mom){
+	texDataPtr = mom.texDataPtr;
+	texData = *texDataPtr;
+	anchor = mom.anchor;
+	bAnchorIsPct = mom.bAnchorIsPct;
 }
 
 //----------------------------------------------------------
@@ -41,39 +44,24 @@ bool ofTexture::bAllocated(){
 	return texData.bAllocated;
 }
 
-//----------------------------------------------------------
-ofTexture::ofTexture(const ofTexture& mom){
-	ofLog(OF_LOG_WARNING, "overloaded ofTexture copy constructor to do nothing. please use FBO or other means to copy textures");
-}
-
-//----------------------------------------------------------
-ofTexture& ofTexture::operator=(const ofTexture& mom){
-	ofLog(OF_LOG_WARNING, "overloaded ofTexture = operator to do nothing. please use FBO or other means to copy textures");
-	return *this;
-}
 
 //----------------------------------------------------------
 ofTextureData ofTexture::getTextureData(){
 	if(!texData.bAllocated){
 		ofLog(OF_LOG_ERROR, "getTextureData() - texture has not been allocated");
 	}
+
 	return texData;
 }
 
 //----------------------------------------------------------
 ofTexture::~ofTexture(){
-	clear();
+
 }
 
 //----------------------------------------------------------
 void ofTexture::clear(){
-	// try to free up the texture memory so we don't reallocate
-	// http://www.opengl.org/documentation/specs/man_pages/hardcopy/GL/html/gl/deletetextures.html
-	if (texData.textureID != 0){
-		glDeleteTextures(1, (GLuint *)&texData.textureID);
-		texData.textureID  = 0;
-	}
-	texData.bAllocated = false;
+	texData.clear();
 }
 
 //----------------------------------------------------------
@@ -86,7 +74,7 @@ void ofTexture::allocate(int w, int h, int internalGlDataType, bool bUseARBExten
 
 	//our graphics card might not support arb so we have to see if it is supported.
 	#ifndef TARGET_OPENGLES
-		if (bUseARBExtention && GLEE_ARB_texture_rectangle){
+		if (bUseARBExtention && GL_ARB_texture_rectangle){
 			texData.tex_w = w;
 			texData.tex_h = h;
 			texData.tex_t = w;
@@ -177,6 +165,14 @@ void ofTexture::loadData(float * data, int w, int h, int glDataType){
 }
 
 //----------------------------------------------------------
+void ofTexture::loadData(ofPixels & pix){
+	loadData(pix.getPixels(), pix.getWidth(), pix.getHeight(), pix.getGlDataType());
+}
+
+
+
+
+//----------------------------------------------------------
 void ofTexture::loadData(void * data, int w, int h, int glDataType){
 
 	//SOSOLIMITED: image load step 5 - sets tex.glType to match 
@@ -191,7 +187,7 @@ void ofTexture::loadData(void * data, int w, int h, int glDataType){
 	// 	check "glTexSubImage2D"
 
 	if ( w > texData.tex_w || h > texData.tex_h) {
-		ofLog(OF_LOG_ERROR,"image data too big for allocated texture. not uploading...");
+		ofLog(OF_LOG_ERROR,"image data too big for allocated texture. %i > %f || %i > %f not uploading...",w , texData.tex_w , h , texData.tex_h);
 		return;
 	}
 
@@ -336,7 +332,7 @@ void ofTexture::loadData(void * data, int w, int h, int glDataType){
 //----------------------------------------------------------
 void ofTexture::loadScreenData(int x, int y, int w, int h){
 
-	int screenHeight = ofGetHeight();
+	int screenHeight = ofGetViewportHeight(); // this call fails if we are in a different viewport or FBO: ofGetHeight();
 	y = screenHeight - y;
 	y -= h; // top, bottom issues
 	texData.bFlipTexture = true;
@@ -510,17 +506,37 @@ void ofTexture::setCompression(ofTexCompression compression){
 	texData.compressionType = compression;
 }
 
+//----------------------------------------------------------
+void ofTexture::draw(const ofRectangle & r){
+	draw(r.x, r.y, 0.0f, r.width, r.height);
+}
+
+//----------------------------------------------------------
+void ofTexture::draw(const ofPoint & p, float w, float h){
+	draw(p.x, p.y, p.z, w, h);
+}
 
 //----------------------------------------------------------
 void ofTexture::draw(float x, float y, float w, float h){
+	draw(x, y, 0.0f, w, h);
+}
 
+//----------------------------------------------------------
+void ofTexture::draw(float x, float y, float z, float w, float h){
+	
+	// make sure we are on unit 0 - we may change this when setting shader samplers
+	// before glEnable or else the shader gets confused
+	/// ps: maybe if bUsingArbTex is enabled we should use glActiveTextureARB?
+	glActiveTexture(GL_TEXTURE0);
+
+	// Enable texturing
 	glEnable(texData.textureTarget);
 
 	// bind the texture
 	glBindTexture( texData.textureTarget, (GLuint)texData.textureID );
 
-		GLfloat px0 = 0;		// up to you to get the aspect ratio right
-		GLfloat py0 = 0;
+		GLfloat px0 = 0.0f;		// up to you to get the aspect ratio right
+		GLfloat py0 = 0.0f;
 		GLfloat px1 = w;
 		GLfloat py1 = h;
 
@@ -566,8 +582,8 @@ void ofTexture::draw(float x, float y, float w, float h){
 		// to constantly add a 2 pixel border on all uploaded images
 		// is insane..
 
-		GLfloat offsetw = 0;
-		GLfloat offseth = 0;
+		GLfloat offsetw = 0.0f;
+		GLfloat offseth = 0.0f;
 
 		if (texData.textureTarget == GL_TEXTURE_2D && bTexHackEnabled) {
 			offsetw = 1.0f / (texData.tex_w);
@@ -582,7 +598,7 @@ void ofTexture::draw(float x, float y, float w, float h){
 
 	glPushMatrix(); 
 	
-		glTranslatef(x,y,0.0f);
+		glTranslatef(x,y,z);
 		
 		GLfloat tex_coords[] = {
 			tx0,ty0,
@@ -606,12 +622,96 @@ void ofTexture::draw(float x, float y, float w, float h){
 
 	glPopMatrix();
 	glDisable(texData.textureTarget);
+
+}
+
+
+// ROGER
+//----------------------------------------------------------
+void ofTexture::draw(ofPoint p1, ofPoint p2, ofPoint p3, ofPoint p4){
+	
+	// Enable alpha channel if has one
+	bool blending = ofGetStyle().blending;
+	if (texData.glType == GL_RGBA && blending == false)
+		ofEnableAlphaBlending();
+	
+	// make sure we are on unit 0 - we may change this when setting shader samplers
+	// before glEnable or else the shader gets confused
+	/// ps: maybe if bUsingArbTex is enabled we should use glActiveTextureARB?
+	glActiveTexture(GL_TEXTURE0);
+	
+	// Enable texturing
+	glEnable(texData.textureTarget);
+	
+	// bind the texture
+	glBindTexture( texData.textureTarget, (GLuint)texData.textureID );
+	
+	// -------------------------------------------------
+	// complete hack to remove border artifacts.
+	// slightly, slightly alters an image, scaling...
+	// to remove the border.
+	// we need a better solution for this, but
+	// to constantly add a 2 pixel border on all uploaded images
+	// is insane..
+	
+	GLfloat offsetw = 0.0f;
+	GLfloat offseth = 0.0f;
+	
+	if (texData.textureTarget == GL_TEXTURE_2D && bTexHackEnabled) {
+		offsetw = 1.0f / (texData.tex_w);
+		offseth = 1.0f / (texData.tex_h);
+	}
+	// -------------------------------------------------
+	
+	GLfloat tx0 = 0+offsetw;
+	GLfloat ty0 = 0+offseth;
+	GLfloat tx1 = texData.tex_t - offsetw;
+	GLfloat ty1 = texData.tex_u - offseth;
+	
+	glPushMatrix(); 
+	
+	GLfloat tex_coords[] = {
+		tx0,ty0,
+		tx1,ty0,
+		tx1,ty1,
+		tx0,ty1
+	};
+	GLfloat verts[] = {
+		p1.x, p1.y,
+		p2.x, p2.y,
+		p3.x, p3.y,
+		p4.x, p4.x
+	};
+	
+	glEnableClientState( GL_TEXTURE_COORD_ARRAY );
+	glTexCoordPointer(2, GL_FLOAT, 0, tex_coords );
+	glEnableClientState(GL_VERTEX_ARRAY);		
+	glVertexPointer(2, GL_FLOAT, 0, verts );
+	glDrawArrays( GL_TRIANGLE_STRIP, 0, 4 );
+	glDisableClientState( GL_TEXTURE_COORD_ARRAY );
+	
+	glPopMatrix();
+	glDisable(texData.textureTarget);
+	
+	// Disable alpha channel if it was disabled
+	if (texData.glType == GL_RGBA && blending == false)
+		ofDisableAlphaBlending();
 }
 
 
 //----------------------------------------------------------
+void ofTexture::draw(const ofPoint & p){
+	draw(p.x, p.y, p.z, texData.width, texData.height);
+}
+
+//----------------------------------------------------------
 void ofTexture::draw(float x, float y){
-	draw(x,y,texData.width, texData.height);
+	draw(x, y, 0.0f, texData.width, texData.height);
+}
+
+//----------------------------------------------------------
+void ofTexture::draw(float x, float y, float z){
+	draw(x, y, z, texData.width, texData.height);
 }
 
 //----------------------------------------------------------

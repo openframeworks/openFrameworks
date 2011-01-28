@@ -113,7 +113,7 @@ void testApp::draw(){
 		ofCircle(px, py,50);	
 	ofDisableAlphaBlending();
 	
-	ofSetColor(0xffffff);
+	ofSetHexColor(0xffffff);
 	ofCircle(px, py,8);
 }
 
@@ -155,6 +155,16 @@ void testApp::mouseReleased(int x, int y, int button){
 
 //--------------------------------------------------------------
 void testApp::windowResized(int w, int h){
+
+}
+
+//--------------------------------------------------------------
+void testApp::gotMessage(ofMessage msg){
+
+}
+
+//--------------------------------------------------------------
+void testApp::dragEvent(ofDragInfo dragInfo){ 
 
 }
 

@@ -46,8 +46,12 @@
 	return [CAEAGLLayer class];
 }
 
-
 - (id) initWithFrame:(CGRect)frame
+{
+	return [self initWithFrame:frame andDepth:false andAA:false andNumSamples:0 andRetina:false];
+}
+
+- (id) initWithFrame:(CGRect)frame andDepth:(bool)depth andAA:(bool)fsaaEnabled andNumSamples:(int)samples andRetina:(bool)retinaEnabled
 {
 	if((self = [super initWithFrame:frame])) {
         // Get the layer
@@ -57,16 +61,28 @@
 		eaglLayer.drawableProperties = [NSDictionary dictionaryWithObjectsAndKeys:
 										[NSNumber numberWithBool:YES], kEAGLDrawablePropertyRetainedBacking, kEAGLColorFormatRGBA8, kEAGLDrawablePropertyColorFormat, nil];
 		
+		touchScaleFactor=1;
+		if(retinaEnabled)
+		{
+			if ([[UIScreen mainScreen] respondsToSelector:@selector(scale)]) {
+				if ([[UIScreen mainScreen] scale] > 1)
+				{
+					[self setContentScaleFactor:[[UIScreen mainScreen] scale]];
+					touchScaleFactor=[[UIScreen mainScreen] scale];
+				}
+			}
+		}
+		
 		// TODO: add initSettings to override ES2Renderer even if available
-        renderer = [[ES2Renderer alloc] init];
+        renderer = [[ES2Renderer alloc] initWithDepth:depth andAA:fsaaEnabled andFSAASamples:samples andRetina:retinaEnabled];
 		
         if (!renderer) {
-            renderer = [[ES1Renderer alloc] init];
-		
+            renderer = [[ES1Renderer alloc] initWithDepth:depth andAA:fsaaEnabled andFSAASamples:samples andRetina:retinaEnabled];
+			
             if (!renderer) {
-			[self release];
-			return nil;
-		}
+				[self release];
+				return nil;
+			}
         }
 		
 		[[self context] renderbufferStorage:GL_RENDERBUFFER_OES fromDrawable:eaglLayer];
@@ -93,10 +109,10 @@
 	
 - (void)layoutSubviews
 {
-	//	NSLog(@"layoutSubviews");
-	//    [renderer resizeFromLayer:(CAEAGLLayer*)self.layer];
-	//    [renderer startRender];
-	//    [renderer finishRender];
+		NSLog(@"layoutSubviews");
+	    [renderer resizeFromLayer:(CAEAGLLayer*)self.layer];
+	    [renderer startRender];
+	    [renderer finishRender];
 }
 
 
@@ -126,12 +142,14 @@
 		[activeTouches setObject:[NSNumber numberWithInt:touchIndex] forKey:[NSValue valueWithPointer:touch]];
 		
 		CGPoint touchPoint = [touch locationInView:self];
+		
+		touchPoint.x*=touchScaleFactor; // this has to be done because retina still returns points in 320x240 but with high percision
+		touchPoint.y*=touchScaleFactor;
+		
 		iPhoneGetOFWindow()->rotateXY(touchPoint.x, touchPoint.y);
 		
 		if( touchIndex==0 ){
-			ofGetAppPtr()->mouseX = touchPoint.x;
-			ofGetAppPtr()->mouseY = touchPoint.y;
-			ofGetAppPtr()->mousePressed(touchPoint.x, touchPoint.y, 1);
+			ofNotifyMousePressed(touchPoint.x, touchPoint.y, 0);
 		}
 		
 		ofTouchEventArgs touchArgs;
@@ -153,12 +171,14 @@
 		//		[activeTouches setObject:[NSNumber numberWithInt:touchIndex] forKey:[NSValue valueWithPointer:touch]];
 		
 		CGPoint touchPoint = [touch locationInView:self];
+		
+		touchPoint.x*=touchScaleFactor; // this has to be done because retina still returns points in 320x240 but with high percision
+		touchPoint.y*=touchScaleFactor;
+		
 		iPhoneGetOFWindow()->rotateXY(touchPoint.x, touchPoint.y);
 		
 		if( touchIndex==0 ){
-			ofGetAppPtr()->mouseX = touchPoint.x;
-			ofGetAppPtr()->mouseY = touchPoint.y;
-			ofGetAppPtr()->mouseDragged(touchPoint.x, touchPoint.y, 1);
+			ofNotifyMouseDragged(touchPoint.x, touchPoint.y, 0);			
 		}		
 		ofTouchEventArgs touchArgs;
 		touchArgs.numTouches = [[event touchesForView:self] count];
@@ -173,20 +193,20 @@
 //------------------------------------------------------
 - (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event {
 	//	NSLog(@"touchesEnded: %i %i %i", [touches count],  [[event touchesForView:self] count], multitouchData.numTouches);
-	
 	for(UITouch *touch in touches) {
 		int touchIndex = [[activeTouches objectForKey:[NSValue valueWithPointer:touch]] intValue];
 		
 		[activeTouches removeObjectForKey:[NSValue valueWithPointer:touch]];
 		
 		CGPoint touchPoint = [touch locationInView:self];
+		
+		touchPoint.x*=touchScaleFactor; // this has to be done because retina still returns points in 320x240 but with high percision
+		touchPoint.y*=touchScaleFactor;
+		
 		iPhoneGetOFWindow()->rotateXY(touchPoint.x, touchPoint.y);
 		
 		if( touchIndex==0 ){
-			ofGetAppPtr()->mouseX = touchPoint.x;
-			ofGetAppPtr()->mouseY = touchPoint.y;
-			ofGetAppPtr()->mouseReleased(touchPoint.x, touchPoint.y, 1);
-			ofGetAppPtr()->mouseReleased();
+			ofNotifyMouseReleased(touchPoint.x, touchPoint.y, 0);						
 		}
 		
 		ofTouchEventArgs touchArgs;
@@ -200,6 +220,26 @@
 
 //------------------------------------------------------
 - (void)touchesCancelled:(NSSet *)touches withEvent:(UIEvent *)event {
+	
+	
+	for(UITouch *touch in touches) {
+		int touchIndex = [[activeTouches objectForKey:[NSValue valueWithPointer:touch]] intValue];
+		
+		CGPoint touchPoint = [touch locationInView:self];
+		
+		touchPoint.x*=touchScaleFactor; // this has to be done because retina still returns points in 320x240 but with high percision
+		touchPoint.y*=touchScaleFactor;
+		
+		iPhoneGetOFWindow()->rotateXY(touchPoint.x, touchPoint.y);
+		
+		ofTouchEventArgs touchArgs;
+		touchArgs.numTouches = [[event touchesForView:self] count];
+		touchArgs.x = touchPoint.x;
+		touchArgs.y = touchPoint.y;
+		touchArgs.id = touchIndex;
+		ofNotifyEvent(ofEvents.touchCancelled, touchArgs);
+	}
+	
 	[self touchesEnded:touches withEvent:event];
 }
 

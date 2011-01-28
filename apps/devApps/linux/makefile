@@ -57,24 +57,31 @@ CORE_INCLUDES = $(shell find ../../../libs/openFrameworks/ -type d)
 CORE_INCLUDE_FLAGS = $(addprefix -I,$(CORE_INCLUDES))
 INCLUDES = $(shell find ../../../libs/*/include -type d)
 INCLUDES_FLAGS = $(addprefix -I,$(INCLUDES))
-LIB_STATIC = $(shell ls ../../../libs/*/lib/$(LIBSPATH)/*.a | grep -v openFrameworksCompiled | sed "s/.*\\/lib\([^/]*\)\.a/-l\1/")
+LIB_STATIC = $(shell ls ../../../libs/*/lib/$(LIBSPATH)/*.a | grep -v openFrameworksCompiled | grep -v poco| sed "s/.*\\/lib\([^/]*\)\.a/-l\1/")
 LIB_SHARED = $(shell ls ../../../libs/*/lib/$(LIBSPATH)/*.so | grep -v openFrameworksCompiled| sed "s/.*\\/lib\([^/]*\)\.so/-l\1/")
-
-#LIB_PATHS_FLAGS = -L../../../libs/openFrameworksCompiled/lib/$(LIBSPATH)
+LIB_STATIC += ../../../libs/poco/lib/$(LIBSPATH)/libPocoNet.a ../../../libs/poco/lib/$(LIBSPATH)/libPocoXML.a ../../../libs/poco/lib/$(LIBSPATH)/libPocoUtil.a ../../../libs/poco/lib/$(LIBSPATH)/libPocoFoundation.a 
 LIB_PATHS_FLAGS = $(shell ls -d ../../../libs/*/lib/$(LIBSPATH) | sed "s/\(\.*\)/-L\1/")
 
 CFLAGS = -Wall -fexceptions
 CFLAGS += -I. 
 CFLAGS += $(INCLUDES_FLAGS)
 CFLAGS += $(CORE_INCLUDE_FLAGS)
-CFLAGS +=`pkg-config  gstreamer-0.10 gstreamer-video-0.10 gstreamer-base-0.10 libudev --cflags`
+CFLAGS += $(shell pkg-config  glew gstreamer-0.10 gstreamer-video-0.10 gstreamer-base-0.10 libudev --cflags)
+ 
 
-LDFLAGS = $(LIB_PATHS_FLAGS) -s -Wl,-rpath=./libs
+LDFLAGS = $(LIB_PATHS_FLAGS) -Wl,-rpath=./libs
 
 LIBS = $(LIB_SHARED)
 LIBS += $(LIB_STATIC)
-LIBS +=`pkg-config  gstreamer-0.10 gstreamer-video-0.10 gstreamer-base-0.10 libudev --libs`
+LIBS += $(shell pkg-config  glew gstreamer-0.10 gstreamer-video-0.10 gstreamer-base-0.10 libudev --libs)
 LIBS += -lglut -lGL -lGLU -lasound
+
+#check if gtk exists and add it
+GTK = $(shell pkg-config gtk+-2.0 --exists; echo $$?)
+ifeq ($(GTK),0)
+	CFLAGS += $(shell pkg-config gtk+-2.0 --cflags) -DOF_USING_GTK
+	LIBS += $(shell pkg-config gtk+-2.0 --libs)
+endif
 
 ifeq ($(findstring addons.make,$(wildcard *.make)),addons.make)
 	ADDONS_INCLUDES = $(shell find ../../../addons/*/src/ -type d)
@@ -103,21 +110,24 @@ ifeq ($(findstring Debug,$(MAKECMDGOALS)),Debug)
 	TARGET_CFLAGS = -g
 	TARGET_LIBS = -lopenFrameworksDebug
 	TARGET_NAME = Debug
-	TARGET = bin/$(APPNAME)_debug
+    BIN_NAME = $(APPNAME)_debug
+	TARGET = bin/$(BIN_NAME)
 endif
 
 ifeq ($(findstring Release,$(MAKECMDGOALS)),Release)
 	TARGET_CFLAGS = $(COMPILER_OPTIMIZATION)
 	TARGET_LIBS = -lopenFrameworks
 	TARGET_NAME = Release
-	TARGET = bin/$(APPNAME)
+    BIN_NAME = $(APPNAME)
+	TARGET = bin/$(BIN_NAME)
 endif
 
 ifeq ($(MAKECMDGOALS),)
 	TARGET_CFLAGS = $(COMPILER_OPTIMIZATION)
 	TARGET_LIBS = -lopenFrameworks
 	TARGET_NAME = Release
-	TARGET = bin/$(APPNAME)
+    BIN_NAME = $(APPNAME)
+	TARGET = bin/$(BIN_NAME)
 endif
 
 ifeq ($(MAKECMDGOALS),clean)
@@ -167,7 +177,7 @@ $(OBJ_OUTPUT)%.o: ../../../%.c
 	$(CC) $(TARGET_CFLAGS) $(CFLAGS) $(ADDONSCFLAGS) $(USER_CFLAGS) -MMD -MP -MF$(OBJ_OUTPUT)$*.d -MT$(OBJ_OUTPUT)$*.d -o $@ -c $<
 	
 $(TARGET): $(OBJS) $(ADDONS_OBJS)
-	@echo "linking" $(TARGET)
+	@echo "linking" $(TARGET) $(GTK)
 	$(CXX) -o $@ $(OBJS) $(ADDONS_OBJS) $(TARGET_CFLAGS) $(CFLAGS) $(ADDONSCFLAGS) $(USER_CFLAGS) $(LDFLAGS) $(USER_LDFLAGS) $(TARGET_LIBS) $(LIBS) $(ADDONSLIBS) $(USER_LIBS)
 
 -include $(DEPFILES)
@@ -190,7 +200,7 @@ after:
 	@echo "     to launch the application"	
 	@echo
 	@echo "     cd bin"
-	@echo "     ./$(TARGET)"
+	@echo "     ./$(BIN_NAME)"
 	@echo
     
 

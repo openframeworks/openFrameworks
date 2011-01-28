@@ -1,45 +1,43 @@
 #include "testApp.h"
 
-
-
 //--------------------------------------------------------------
-void testApp::setup(){	 
+void testApp::setup(){
 	bikers.loadImage("images/bikers.jpg");
 	gears.loadImage("images/gears.gif");
 	tdf.loadImage("images/tdf_1972_poster.jpg");
+
 	tdfSmall.loadImage("images/tdf_1972_poster.jpg");
-	tdfSmall.resize(tdf.width / 4, tdf.height / 4);
+	tdfSmall.resize(tdfSmall.width / 4, tdfSmall.height / 4);
 	tdfSmall.setImageType(OF_IMAGE_GRAYSCALE);
+
 	transparency.loadImage("images/transparency.png");
 	bikeIcon.loadImage("images/bike_icon.png");
 	bikeIcon.setImageType(OF_IMAGE_GRAYSCALE);
 }
-
 
 //--------------------------------------------------------------
 void testApp::update(){
 	ofBackground(255,255,255);	
 }
 
-
 //--------------------------------------------------------------
 void testApp::draw(){	
-	ofSetColor(0xFFFFFF);
+	ofSetHexColor(0xFFFFFF);
 
 	bikers.draw(0,0);
 	gears.draw(600,0);
 	tdf.draw(600,300);
 	
-	ofSetColor(0xDD3333);
+	ofSetHexColor(0xDD3333);
 	tdfSmall.draw(200,300);
 	
-	ofSetColor(0xFFFFFF);
+	ofSetHexColor(0xFFFFFF);
 	ofEnableAlphaBlending();
 	transparency.draw(sin(ofGetElapsedTimeMillis()/1000.0f) * 100 + 500,20);
 	ofDisableAlphaBlending();
 	
 	
-	ofSetColor(0x000000);
+	ofSetHexColor(0x000000);
 	
 	// getting the pixels out of an image, 
 	// and then use the values to draw circles
@@ -54,10 +52,9 @@ void testApp::draw(){
 		}
 	}
 	
-	ofSetColor(0xFFFFFF);
+	ofSetHexColor(0xFFFFFF);
 	bikeIcon.draw(300,500, 20,20);
 }
-
 
 //--------------------------------------------------------------
 void testApp::keyPressed  (int key){ 
@@ -91,5 +88,15 @@ void testApp::mouseReleased(int x, int y, int button){
 
 //--------------------------------------------------------------
 void testApp::windowResized(int w, int h){
+
+}
+
+//--------------------------------------------------------------
+void testApp::gotMessage(ofMessage msg){
+
+}
+
+//--------------------------------------------------------------
+void testApp::dragEvent(ofDragInfo dragInfo){ 
 
 }

@@ -1,13 +1,10 @@
-#ifndef OF_SERIAL_H
-#define OF_SERIAL_H
+#pragma once
 
 #include "ofConstants.h"
+#include "ofTypes.h"
 
 #if defined( TARGET_OSX ) || defined( TARGET_LINUX )
 	#include <termios.h>
-	#include <sys/ioctl.h>
-	#include <getopt.h>
-	#include <dirent.h>
 #else
 	#include <winbase.h>
 	#include <tchar.h>
@@ -23,24 +20,22 @@
     #endif
 #endif
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <fcntl.h>
-#include <errno.h>
-#include <ctype.h>
-
 
 // notes below
 
 //----------------------------------------------------------------------
-class ofSerial{
+class ofSerial {
 
 	public:
 			ofSerial();
 			virtual ~ofSerial();
 
+			void			listDevices();
+							
+			//old method - deprecated
 			void 			enumerateDevices();
+
+			vector <ofSerialDeviceInfo> getDeviceList();
 
 			void 			close();
 			bool			setup();	// use default port, baud (0,9600)
@@ -58,9 +53,15 @@ class ofSerial{
 			bool 			bVerbose;
 			void 			setVerbose(bool bLoudmouth) { bVerbose = bLoudmouth; };
 
-
+			
 
 	protected:
+			void			buildDeviceList();
+						
+			string				deviceType;
+			vector <ofSerialDeviceInfo> devices;
+
+			bool bHaveEnumeratedDevices;
 
 			bool 	bInited;
 
@@ -126,4 +127,3 @@ class ofSerial{
 // ----------------------------
 
 
-#endif
