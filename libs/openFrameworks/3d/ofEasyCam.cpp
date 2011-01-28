@@ -31,7 +31,7 @@ distanceScaleVelocity(0) {
 //----------------------------------------
 void ofEasyCam::begin(ofRectangle rect) {
 	if(!bDistanceSet) {
-		setDistance(getImagePlaneDistance(rect));
+		setDistance(getImagePlaneDistance(rect), true);
 	}
 
 	// it's important to check whether we've already accounted for the mouse
@@ -118,6 +118,11 @@ void ofEasyCam::setTarget(ofNode& targetNode) {
 //----------------------------------------
 ofNode& ofEasyCam::getTarget() {
 	return target;
+}
+
+//----------------------------------------
+void ofEasyCam::setDistance(float distance) {
+	setDistance(distance, true);
 }
 
 //----------------------------------------

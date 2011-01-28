@@ -18,7 +18,7 @@ public:
 	void setTarget(ofNode& target);
 	ofNode& getTarget();
 
-	void setDistance(float distance, bool save = true);
+	void setDistance(float distance);
 	float getDistance() const;
 
 	// drag is how quickly the camera picks up and slows down
@@ -32,6 +32,8 @@ public:
 	void mouseReleased(ofMouseEventArgs& mouse);
 
 protected:
+	void setDistance(float distance, bool save);
+
 	ofNode target;
 
 	ofVec3f mousePosViewPrev;
