@@ -26,9 +26,9 @@ distanceScaleVelocity(0) {
 }
 
 //----------------------------------------
-void ofEasyCam::begin(ofRectangle rect) {
+void ofEasyCam::begin(ofRectangle viewport) {
 	if(!bDistanceSet) {
-		setDistance(getImagePlaneDistance(rect), true);
+		setDistance(getImagePlaneDistance(viewport), true);
 	}
 
 	// it's important to check whether we've already accounted for the mouse
@@ -40,13 +40,13 @@ void ofEasyCam::begin(ofRectangle rect) {
 		// you can't simply multiply drag etc because the behavior is unstable at high framerates
 		// float dt = ofGetLastFrameTime();
 		
-		ofVec2f mousePosScreen = ofVec3f(ofGetMouseX() - rect.width/2 - rect.x, rect.height/2 - (ofGetMouseY() - rect.y), 0);
+		ofVec2f mousePosScreen = ofVec3f(ofGetMouseX() - viewport.width/2 - viewport.x, viewport.height/2 - (ofGetMouseY() - viewport.y), 0);
 		ofVec2f mouseVelScreen = (mousePosScreen - mousePosScreenPrev).lengthSquared();
 		
 		ofVec3f targetPos =  target.getGlobalPosition();
 		ofVec3f mousePosXYZ = ofVec3f(mousePosScreen.x, mousePosScreen.y, targetPos.z);
 		
-		float sphereRadius = min(rect.width, rect.height)/2;
+		float sphereRadius = min(viewport.width, viewport.height)/2;
 		float diffSquared = sphereRadius * sphereRadius - (targetPos - mousePosXYZ).lengthSquared();
 		if(diffSquared <= 0) {
 			mousePosXYZ.z = 0;
@@ -65,7 +65,7 @@ void ofEasyCam::begin(ofRectangle rect) {
 		//calc new scale velocity
 		float newDistanceScaleVelocity = 0.0f;
 		if(ofGetMousePressed(2)) {
-			newDistanceScaleVelocity = zoomSpeed * (mousePosScreenPrev.y - mousePosScreen.y) / rect.height;
+			newDistanceScaleVelocity = zoomSpeed * (mousePosScreenPrev.y - mousePosScreen.y) / viewport.height;
 		}
 		
 		ofVec3f newTranslation;
@@ -97,7 +97,7 @@ void ofEasyCam::begin(ofRectangle rect) {
 		mousePosScreenPrev = mousePosScreen;
 	}
 	
-	ofCamera::begin(rect);
+	ofCamera::begin(viewport);
 }
 
 //----------------------------------------
