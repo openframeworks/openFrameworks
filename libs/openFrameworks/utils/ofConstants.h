@@ -313,6 +313,14 @@ enum ofBlendMode{
 	OF_BLENDMODE_SCREEN   = 5
 };
 
+//this is done to match the iPhone defaults 
+//we don't say landscape, portrait etc becuase iPhone apps default to portrait while desktop apps are typically landscape
+enum{
+	OF_ORIENTATION_DEFAULT = 1,	
+	OF_ORIENTATION_180 = 2,
+	OF_ORIENTATION_90_RIGHT = 3,
+	OF_ORIENTATION_90_LEFT = 4,
+};
 
 // these are straight out of glu, but renamed and included here
 // for convenience
