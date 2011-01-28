@@ -17,7 +17,7 @@ public:
 	void setTarget(ofNode& target);
 	ofNode& getTarget();
 
-	void setDistance(float distance);
+	void setDistance(float distance, bool save = true);
 	float getDistance() const;
 
 	// drag is how quickly the camera picks up and slows down
@@ -34,7 +34,9 @@ protected:
 	int lastFrame;
 
 	//momentum
+	float lastDistance;
 	float drag;
+	float zoomSpeed;
 	ofQuaternion rotation;
 	float distanceScaleVelocity;
 };

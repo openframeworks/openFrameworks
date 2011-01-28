@@ -2,6 +2,8 @@
 
 //--------------------------------------------------------------
 void testApp::setup(){
+	ofSetVerticalSync(true);
+
 	// this uses depth information for occlusion
 	// rather than always drawing things on top of each other
 	glEnable(GL_DEPTH_TEST);
