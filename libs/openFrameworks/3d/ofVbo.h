@@ -4,12 +4,6 @@
 #pragma once
 #include "ofMain.h"
 
-enum {
-	OF_VBO_STATIC  = GL_STATIC_DRAW,
-	OF_VBO_DYNAMIC = GL_DYNAMIC_DRAW
-};
-
-
 class ofVbo {
 	
 private:
@@ -64,6 +58,11 @@ public:
 	
 	void updateVertexData();
 	void updateColorData();
+
+	void setVertexData(const float * vert0x, int total, int usage);
+	void setColorData(const float * color0x, int total, int usage);	
+	void setNormalData(const float * normal0x, int total, int usage);	
+	void setTexCoordData(const float * texCoord0x, int total, int usage);	
 	
 	/*
 	void updateVertexData(const ofVec3f * verts, int total);
