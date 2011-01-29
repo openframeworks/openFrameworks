@@ -11,12 +11,6 @@
 		2D4FB15C12DE7271000A51F9 /* ofSoundEffect.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D4FB15812DE7271000A51F9 /* ofSoundEffect.h */; };
 		2D4FB15D12DE7271000A51F9 /* ofSoundUnit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D4FB15912DE7271000A51F9 /* ofSoundUnit.cpp */; };
 		2D4FB15E12DE7271000A51F9 /* ofSoundUnit.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D4FB15A12DE7271000A51F9 /* ofSoundUnit.h */; };
-		53AD6A7E12E2721800488B9C /* ofVertexData.h in Headers */ = {isa = PBXBuildFile; fileRef = 53AD6A7C12E2721800488B9C /* ofVertexData.h */; };
-		53AD6A7F12E2721800488B9C /* ofVertexData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53AD6A7D12E2721800488B9C /* ofVertexData.cpp */; };
-		53ECD3E112E0EEB60035AA81 /* ofVbo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53ECD3D912E0EEB60035AA81 /* ofVbo.cpp */; };
-		53ECD3E212E0EEB60035AA81 /* ofVbo.h in Headers */ = {isa = PBXBuildFile; fileRef = 53ECD3DA12E0EEB60035AA81 /* ofVbo.h */; };
-		53ECD3E312E0EEB60035AA81 /* ofMesh.h in Headers */ = {isa = PBXBuildFile; fileRef = 53ECD3DB12E0EEB60035AA81 /* ofMesh.h */; };
-		53ECD43A12E121C60035AA81 /* ofMesh.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53ECD43912E121C60035AA81 /* ofMesh.cpp */; };
 		92B3A68112DA30B3001B8BE8 /* ofBaseTypes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 92B3A67812DA30B3001B8BE8 /* ofBaseTypes.cpp */; };
 		92B3A68212DA30B3001B8BE8 /* ofBaseTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 92B3A67912DA30B3001B8BE8 /* ofBaseTypes.h */; };
 		92B3A68312DA30B3001B8BE8 /* ofColor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 92B3A67A12DA30B3001B8BE8 /* ofColor.cpp */; };
@@ -28,6 +22,26 @@
 		92B3A68912DA30B3001B8BE8 /* ofTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 92B3A68012DA30B3001B8BE8 /* ofTypes.h */; };
 		92BFAC2E12DA5FDA001F2778 /* ofSystemUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 92BFAC2C12DA5FDA001F2778 /* ofSystemUtils.cpp */; };
 		92BFAC2F12DA5FDA001F2778 /* ofSystemUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 92BFAC2D12DA5FDA001F2778 /* ofSystemUtils.h */; };
+		BB20C89012F4B43E00203699 /* of3dUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BB20C87C12F4B43E00203699 /* of3dUtils.cpp */; };
+		BB20C89112F4B43E00203699 /* of3dUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = BB20C87D12F4B43E00203699 /* of3dUtils.h */; };
+		BB20C89212F4B43E00203699 /* ofCamera.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BB20C87E12F4B43E00203699 /* ofCamera.cpp */; };
+		BB20C89312F4B43E00203699 /* ofCamera.h in Headers */ = {isa = PBXBuildFile; fileRef = BB20C87F12F4B43E00203699 /* ofCamera.h */; };
+		BB20C89412F4B43E00203699 /* ofEasyCam.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BB20C88012F4B43E00203699 /* ofEasyCam.cpp */; };
+		BB20C89512F4B43E00203699 /* ofEasyCam.h in Headers */ = {isa = PBXBuildFile; fileRef = BB20C88112F4B43E00203699 /* ofEasyCam.h */; };
+		BB20C89612F4B43E00203699 /* ofLight.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BB20C88212F4B43E00203699 /* ofLight.cpp */; };
+		BB20C89712F4B43E00203699 /* ofLight.h in Headers */ = {isa = PBXBuildFile; fileRef = BB20C88312F4B43E00203699 /* ofLight.h */; };
+		BB20C89812F4B43E00203699 /* ofMesh.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BB20C88412F4B43E00203699 /* ofMesh.cpp */; };
+		BB20C89912F4B43E00203699 /* ofMesh.h in Headers */ = {isa = PBXBuildFile; fileRef = BB20C88512F4B43E00203699 /* ofMesh.h */; };
+		BB20C89A12F4B43E00203699 /* ofMeshNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BB20C88612F4B43E00203699 /* ofMeshNode.cpp */; };
+		BB20C89B12F4B43E00203699 /* ofMeshNode.h in Headers */ = {isa = PBXBuildFile; fileRef = BB20C88712F4B43E00203699 /* ofMeshNode.h */; };
+		BB20C89C12F4B43E00203699 /* ofNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BB20C88812F4B43E00203699 /* ofNode.cpp */; };
+		BB20C89D12F4B43E00203699 /* ofNode.h in Headers */ = {isa = PBXBuildFile; fileRef = BB20C88912F4B43E00203699 /* ofNode.h */; };
+		BB20C89E12F4B43E00203699 /* ofScene3d.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BB20C88A12F4B43E00203699 /* ofScene3d.cpp */; };
+		BB20C89F12F4B43E00203699 /* ofScene3d.h in Headers */ = {isa = PBXBuildFile; fileRef = BB20C88B12F4B43E00203699 /* ofScene3d.h */; };
+		BB20C8A012F4B43E00203699 /* ofVbo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BB20C88C12F4B43E00203699 /* ofVbo.cpp */; };
+		BB20C8A112F4B43E00203699 /* ofVbo.h in Headers */ = {isa = PBXBuildFile; fileRef = BB20C88D12F4B43E00203699 /* ofVbo.h */; };
+		BB20C8A212F4B43E00203699 /* ofVertexData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BB20C88E12F4B43E00203699 /* ofVertexData.cpp */; };
+		BB20C8A312F4B43E00203699 /* ofVertexData.h in Headers */ = {isa = PBXBuildFile; fileRef = BB20C88F12F4B43E00203699 /* ofVertexData.h */; };
 		BB4A407712DBBDDE007FFA68 /* ofFbo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BB4A407312DBBDDE007FFA68 /* ofFbo.cpp */; };
 		BB4A407812DBBDDE007FFA68 /* ofFbo.h in Headers */ = {isa = PBXBuildFile; fileRef = BB4A407412DBBDDE007FFA68 /* ofFbo.h */; };
 		BB4A407912DBBDDE007FFA68 /* ofShader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BB4A407512DBBDDE007FFA68 /* ofShader.cpp */; };
@@ -93,12 +107,6 @@
 		2D4FB15812DE7271000A51F9 /* ofSoundEffect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofSoundEffect.h; sourceTree = "<group>"; };
 		2D4FB15912DE7271000A51F9 /* ofSoundUnit.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofSoundUnit.cpp; sourceTree = "<group>"; };
 		2D4FB15A12DE7271000A51F9 /* ofSoundUnit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofSoundUnit.h; sourceTree = "<group>"; };
-		53AD6A7C12E2721800488B9C /* ofVertexData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofVertexData.h; sourceTree = "<group>"; };
-		53AD6A7D12E2721800488B9C /* ofVertexData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofVertexData.cpp; sourceTree = "<group>"; };
-		53ECD3D912E0EEB60035AA81 /* ofVbo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofVbo.cpp; path = ../../../openFrameworks/3d/ofVbo.cpp; sourceTree = SOURCE_ROOT; };
-		53ECD3DA12E0EEB60035AA81 /* ofVbo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofVbo.h; path = ../../../openFrameworks/3d/ofVbo.h; sourceTree = SOURCE_ROOT; };
-		53ECD3DB12E0EEB60035AA81 /* ofMesh.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofMesh.h; sourceTree = "<group>"; };
-		53ECD43912E121C60035AA81 /* ofMesh.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofMesh.cpp; sourceTree = "<group>"; };
 		92B3A67812DA30B3001B8BE8 /* ofBaseTypes.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofBaseTypes.cpp; sourceTree = "<group>"; };
 		92B3A67912DA30B3001B8BE8 /* ofBaseTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofBaseTypes.h; sourceTree = "<group>"; };
 		92B3A67A12DA30B3001B8BE8 /* ofColor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofColor.cpp; sourceTree = "<group>"; };
@@ -110,6 +118,26 @@
 		92B3A68012DA30B3001B8BE8 /* ofTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofTypes.h; sourceTree = "<group>"; };
 		92BFAC2C12DA5FDA001F2778 /* ofSystemUtils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofSystemUtils.cpp; sourceTree = "<group>"; };
 		92BFAC2D12DA5FDA001F2778 /* ofSystemUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofSystemUtils.h; sourceTree = "<group>"; };
+		BB20C87C12F4B43E00203699 /* of3dUtils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = of3dUtils.cpp; sourceTree = "<group>"; };
+		BB20C87D12F4B43E00203699 /* of3dUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = of3dUtils.h; sourceTree = "<group>"; };
+		BB20C87E12F4B43E00203699 /* ofCamera.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofCamera.cpp; sourceTree = "<group>"; };
+		BB20C87F12F4B43E00203699 /* ofCamera.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofCamera.h; sourceTree = "<group>"; };
+		BB20C88012F4B43E00203699 /* ofEasyCam.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofEasyCam.cpp; sourceTree = "<group>"; };
+		BB20C88112F4B43E00203699 /* ofEasyCam.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofEasyCam.h; sourceTree = "<group>"; };
+		BB20C88212F4B43E00203699 /* ofLight.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofLight.cpp; sourceTree = "<group>"; };
+		BB20C88312F4B43E00203699 /* ofLight.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofLight.h; sourceTree = "<group>"; };
+		BB20C88412F4B43E00203699 /* ofMesh.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofMesh.cpp; sourceTree = "<group>"; };
+		BB20C88512F4B43E00203699 /* ofMesh.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofMesh.h; sourceTree = "<group>"; };
+		BB20C88612F4B43E00203699 /* ofMeshNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofMeshNode.cpp; sourceTree = "<group>"; };
+		BB20C88712F4B43E00203699 /* ofMeshNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofMeshNode.h; sourceTree = "<group>"; };
+		BB20C88812F4B43E00203699 /* ofNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofNode.cpp; sourceTree = "<group>"; };
+		BB20C88912F4B43E00203699 /* ofNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofNode.h; sourceTree = "<group>"; };
+		BB20C88A12F4B43E00203699 /* ofScene3d.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofScene3d.cpp; sourceTree = "<group>"; };
+		BB20C88B12F4B43E00203699 /* ofScene3d.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofScene3d.h; sourceTree = "<group>"; };
+		BB20C88C12F4B43E00203699 /* ofVbo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofVbo.cpp; sourceTree = "<group>"; };
+		BB20C88D12F4B43E00203699 /* ofVbo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofVbo.h; sourceTree = "<group>"; };
+		BB20C88E12F4B43E00203699 /* ofVertexData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofVertexData.cpp; sourceTree = "<group>"; };
+		BB20C88F12F4B43E00203699 /* ofVertexData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofVertexData.h; sourceTree = "<group>"; };
 		BB4A407312DBBDDE007FFA68 /* ofFbo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofFbo.cpp; sourceTree = "<group>"; };
 		BB4A407412DBBDDE007FFA68 /* ofFbo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofFbo.h; sourceTree = "<group>"; };
 		BB4A407512DBBDDE007FFA68 /* ofShader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofShader.cpp; sourceTree = "<group>"; };
@@ -228,12 +256,26 @@
 		53ECD3D312E0EEB60035AA81 /* 3d */ = {
 			isa = PBXGroup;
 			children = (
-				53ECD3DA12E0EEB60035AA81 /* ofVbo.h */,
-				53ECD3D912E0EEB60035AA81 /* ofVbo.cpp */,
-				53ECD3DB12E0EEB60035AA81 /* ofMesh.h */,
-				53ECD43912E121C60035AA81 /* ofMesh.cpp */,
-				53AD6A7C12E2721800488B9C /* ofVertexData.h */,
-				53AD6A7D12E2721800488B9C /* ofVertexData.cpp */,
+				BB20C87C12F4B43E00203699 /* of3dUtils.cpp */,
+				BB20C87D12F4B43E00203699 /* of3dUtils.h */,
+				BB20C87E12F4B43E00203699 /* ofCamera.cpp */,
+				BB20C87F12F4B43E00203699 /* ofCamera.h */,
+				BB20C88012F4B43E00203699 /* ofEasyCam.cpp */,
+				BB20C88112F4B43E00203699 /* ofEasyCam.h */,
+				BB20C88212F4B43E00203699 /* ofLight.cpp */,
+				BB20C88312F4B43E00203699 /* ofLight.h */,
+				BB20C88412F4B43E00203699 /* ofMesh.cpp */,
+				BB20C88512F4B43E00203699 /* ofMesh.h */,
+				BB20C88612F4B43E00203699 /* ofMeshNode.cpp */,
+				BB20C88712F4B43E00203699 /* ofMeshNode.h */,
+				BB20C88812F4B43E00203699 /* ofNode.cpp */,
+				BB20C88912F4B43E00203699 /* ofNode.h */,
+				BB20C88A12F4B43E00203699 /* ofScene3d.cpp */,
+				BB20C88B12F4B43E00203699 /* ofScene3d.h */,
+				BB20C88C12F4B43E00203699 /* ofVbo.cpp */,
+				BB20C88D12F4B43E00203699 /* ofVbo.h */,
+				BB20C88E12F4B43E00203699 /* ofVertexData.cpp */,
+				BB20C88F12F4B43E00203699 /* ofVertexData.h */,
 			);
 			name = 3d;
 			path = ../../../openFrameworks/3d;
@@ -588,9 +630,16 @@
 				DA2E399D12DF6E9000EC4A5B /* glew.h in Headers */,
 				DA2E399E12DF6E9000EC4A5B /* glxew.h in Headers */,
 				DA2E399F12DF6E9000EC4A5B /* wglew.h in Headers */,
-				53ECD3E212E0EEB60035AA81 /* ofVbo.h in Headers */,
-				53ECD3E312E0EEB60035AA81 /* ofMesh.h in Headers */,
-				53AD6A7E12E2721800488B9C /* ofVertexData.h in Headers */,
+				BB20C89112F4B43E00203699 /* of3dUtils.h in Headers */,
+				BB20C89312F4B43E00203699 /* ofCamera.h in Headers */,
+				BB20C89512F4B43E00203699 /* ofEasyCam.h in Headers */,
+				BB20C89712F4B43E00203699 /* ofLight.h in Headers */,
+				BB20C89912F4B43E00203699 /* ofMesh.h in Headers */,
+				BB20C89B12F4B43E00203699 /* ofMeshNode.h in Headers */,
+				BB20C89D12F4B43E00203699 /* ofNode.h in Headers */,
+				BB20C89F12F4B43E00203699 /* ofScene3d.h in Headers */,
+				BB20C8A112F4B43E00203699 /* ofVbo.h in Headers */,
+				BB20C8A312F4B43E00203699 /* ofVertexData.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -679,9 +728,16 @@
 				E455519612DCCD0000652B63 /* ofQuaternion.cpp in Sources */,
 				2D4FB15B12DE7271000A51F9 /* ofSoundEffect.cpp in Sources */,
 				2D4FB15D12DE7271000A51F9 /* ofSoundUnit.cpp in Sources */,
-				53ECD3E112E0EEB60035AA81 /* ofVbo.cpp in Sources */,
-				53ECD43A12E121C60035AA81 /* ofMesh.cpp in Sources */,
-				53AD6A7F12E2721800488B9C /* ofVertexData.cpp in Sources */,
+				BB20C89012F4B43E00203699 /* of3dUtils.cpp in Sources */,
+				BB20C89212F4B43E00203699 /* ofCamera.cpp in Sources */,
+				BB20C89412F4B43E00203699 /* ofEasyCam.cpp in Sources */,
+				BB20C89612F4B43E00203699 /* ofLight.cpp in Sources */,
+				BB20C89812F4B43E00203699 /* ofMesh.cpp in Sources */,
+				BB20C89A12F4B43E00203699 /* ofMeshNode.cpp in Sources */,
+				BB20C89C12F4B43E00203699 /* ofNode.cpp in Sources */,
+				BB20C89E12F4B43E00203699 /* ofScene3d.cpp in Sources */,
+				BB20C8A012F4B43E00203699 /* ofVbo.cpp in Sources */,
+				BB20C8A212F4B43E00203699 /* ofVertexData.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
