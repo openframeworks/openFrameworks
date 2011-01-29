@@ -226,8 +226,8 @@ ofHandednessType ofGetCoordHandedness() {
 }
 
 //----------------------------------------------------------
-void ofSetupScreenPerspective(float width, float height, bool vFlip, float fov, float nearDist, float farDist) {
-	renderer->setupScreenPerspective(width,height,vFlip,fov,nearDist,farDist);
+void ofSetupScreenPerspective(float width, float height, int orientation, bool vFlip, float fov, float nearDist, float farDist) {
+	renderer->setupScreenPerspective(width,height, orientation, vFlip,fov,nearDist,farDist);
 }
 
 //----------------------------------------------------------
