@@ -3,7 +3,7 @@
 
 
 #include "ofMain.h"
-#include "ofVboMesh.h"
+#include "ofMesh.h"
 
 class testApp : public ofBaseApp{
 
@@ -20,7 +20,7 @@ class testApp : public ofBaseApp{
 		void mouseReleased(int x, int y, int button);
 		void windowResized(int w, int h);
 	
-		ofVboMesh mesh;
+		ofMesh mesh;
 		bool lightsOn;
 };
 

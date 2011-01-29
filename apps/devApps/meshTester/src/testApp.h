@@ -4,7 +4,7 @@
 
 #include "ofMain.h"
 #include "ofAssimpMeshLoader.h"
-#include "ofVboMesh.h"
+#include "ofMesh.h"
 
 class testApp : public ofBaseApp{
 
@@ -22,8 +22,8 @@ class testApp : public ofBaseApp{
 		void windowResized(int w, int h);
 	
 		ofAssimpMeshLoader model;
-		vector<ofVertexData> meshes;
-		vector<ofVboMesh> vboMeshes;
+		vector<ofVertexData> data;
+		vector<ofMesh> meshes;
 	
 		bool lightsOn;
 	

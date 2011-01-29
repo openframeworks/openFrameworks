@@ -246,23 +246,23 @@ int ofVertexData::getNumIndicesWire(){
  */
 
 //--------------------------------------------------------------
-ofVec3f* ofVertexData::getVerticesPointer(){
-	return &vertices[0];
+float* ofVertexData::getVerticesPointer(){
+	return &vertices[0].x;
 }
 
 //--------------------------------------------------------------
-ofColor* ofVertexData::getColorsPointer(){
-	return &colors[0];
+float* ofVertexData::getColorsPointer(){
+	return &colors[0].r;
 }
 
 //--------------------------------------------------------------
-ofVec3f* ofVertexData::getNormalsPointer(){
-	return &normals[0];
+float* ofVertexData::getNormalsPointer(){
+	return &normals[0].x;
 }
 
 //--------------------------------------------------------------
-ofVec2f* ofVertexData::getTexCoordsPointer(){
-	return &texCoords[0];
+float* ofVertexData::getTexCoordsPointer(){
+	return &texCoords[0].x;
 }
 
 //--------------------------------------------------------------
