@@ -53,12 +53,6 @@ public:
 	void updateNormalData(const float * normal0x, int total);	
 	void updateTexCoordData(const float * texCoord0x, int total);	
 	
-	float* getVertPointer();
-	float* getColorPointer();
-	float* getNormalPointer();
-	float* getTexCoordPointer();
-	GLuint* getIndexPointer();
-	
 	GLuint getVertId();
 	GLuint getColorId();
 	GLuint getNormalId();
