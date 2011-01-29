@@ -3,9 +3,8 @@
 #include "ofBitmapFont.h"
 #include "ofUtils.h"
 #include "ofBaseTypes.h"
-#include "ofShapeGLRenderers.h"
+#include "ofGLRenderer.h"
 #include "ofPath.h"
-#include "ofCairoRenderer.h"
 
 #ifdef TARGET_OSX
 	#include <OpenGL/glu.h>
@@ -69,8 +68,7 @@ void 			setupCircle();
 static ofPath path;
 static ofShape shape;
 static ofVertexData vertexData;
-static ofBaseRenderer * renderer = new ofVARenderer;
-static ofVboMesh vboMesh;
+static ofBaseRenderer * renderer = new ofGLRenderer;
 
 void ofSetDefaultRenderer(ofBaseRenderer * renderer_){
 	if(renderer) delete renderer;
@@ -1261,8 +1259,8 @@ void ofBox(float size) {
 		vertexData.addIndices(indices,36);
 		//glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 		vertexData.setMode(OF_TRIANGLES_MODE);
-		vboMesh.setVertexData(&vertexData);
-		vboMesh.drawFaces();
+		//vboMesh.setVertexData(&vertexData);
+		//vboMesh.drawFaces();
 	} else {
 		ofVec3f vertices[] = {
 			ofVec3f(+h,+h,+h),
@@ -1300,8 +1298,8 @@ void ofBox(float size) {
 		vertexData.addIndices(indices,24);
 
 		vertexData.setMode(OF_LINES_MODE);
-		vboMesh.setVertexData(&vertexData);
-		vboMesh.drawWireframe();
+		//vboMesh.setVertexData(&vertexData);
+		//vboMesh.drawWireframe();
 	}
 	
 	//glDisableClientState(GL_VERTEX_ARRAY);

@@ -33,12 +33,12 @@ class ofTessellator
 public:	
 	
 	/// tessellate polyline and return a mesh. if bIs2D==true, do a 10% more efficient normal calculation.
-	static ofMesh tessellateToMesh( const vector<ofPolyline>& polylines, int polyWindingMode, bool bIs2D=false );
-	static ofMesh tessellateToMesh( const ofPolyline& polyline,  int polyWindingMode, bool bIs2D=false );
+	static vector<ofVertexData> tessellateToMesh( const vector<ofPolyline>& polylines, int polyWindingMode, bool bIs2D=false );
+	static vector<ofVertexData> tessellateToMesh( const ofPolyline& polyline,  int polyWindingMode, bool bIs2D=false );
 
 	/// tessellate polyline and return an outline.
-	static ofPolyline tessellateToOutline( const vector<ofPolyline>& polylines, int polyWindingMode, bool bIs2D=false );
-	static ofPolyline tessellateToOutline( const ofPolyline& polyline, int polyWindingMode, bool bIs2D=false );
+	static vector<ofPolyline> tessellateToOutline( const vector<ofPolyline>& polylines, int polyWindingMode, bool bIs2D=false );
+	static vector<ofPolyline> tessellateToOutline( const ofPolyline& polyline, int polyWindingMode, bool bIs2D=false );
 	
 	
 private:
@@ -70,10 +70,10 @@ private:
 	static std::vector <double*> ofShapePolyVertexs;
 	
 
-	static ofMesh resultMesh;
+	static vector<ofVertexData> resultMesh;
 	
 	
-	static ofPolyline resultOutline;
+	static vector<ofPolyline> resultOutline;
 	
 };
 

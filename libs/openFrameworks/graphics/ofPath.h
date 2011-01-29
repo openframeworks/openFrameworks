@@ -60,7 +60,7 @@ public:
 	bool isClosed() const;
 
 	void updateShape();
-	void draw();
+	void draw(float x=0, float y=0);
 
 	ofShape & getShape(int curveResolution=16, bool tesselated=false);
 
