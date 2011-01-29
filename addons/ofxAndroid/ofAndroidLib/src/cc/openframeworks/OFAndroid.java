@@ -22,7 +22,7 @@ import android.view.SurfaceHolder;
 public class OFAndroid {
 	
 	public OFAndroid(String packageName, Activity ofActivity){
-		Log.i("OF","external files dir: "+ ofActivity.getApplicationContext().getExternalFilesDir(null).getAbsolutePath());
+		//Log.i("OF","external files dir: "+ ofActivity.getApplicationContext().getExternalFilesDir(null));
         try {
         	
 			// try to find if R.raw class exists will throw
@@ -37,9 +37,14 @@ public class OFAndroid {
     		try{
     			//File root = Environment.getExternalStorageDirectory();
     			
-    			Log.i("OF","external files dir: "+ ofActivity.getApplicationContext().getExternalFilesDir(null).getAbsolutePath());
-
-    	    	OFAndroid.setAppDataDir(ofActivity.getApplicationContext().getExternalFilesDir(null).getAbsolutePath());
+    			if(ofActivity.getApplicationContext().getExternalFilesDir(null)!=null){
+    				Log.i("OF","external files dir: "+ ofActivity.getApplicationContext().getExternalFilesDir(null).getAbsolutePath());
+    				OFAndroid.setAppDataDir(ofActivity.getApplicationContext().getExternalFilesDir(null).getAbsolutePath());
+    			}else{
+    				new File("/sdcard/Android/data/"+packageName).mkdir();
+    				new File("/sdcard/Android/data/"+packageName+"/files").mkdir();
+    				OFAndroid.setAppDataDir("/sdcard/Android/data/"+packageName+"/files");
+    			}
     			/*Log.i("OF","creating app directory: " + root + "/" +appName);
     			if(!new File(root + appName).mkdir()){
     				throw new Exception("couldn't create app directory");

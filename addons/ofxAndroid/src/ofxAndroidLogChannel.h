@@ -6,6 +6,7 @@
  */
 
 #pragma once
+#include "Poco/Channel.h"
 
 namespace Poco{
 class AndroidChannel: public Channel{

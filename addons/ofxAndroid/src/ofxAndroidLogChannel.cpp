@@ -8,6 +8,7 @@
 #include "ofxAndroidLogChannel.h"
 
 #include <android/log.h>
+#include "Poco/Message.h"
 
 namespace Poco{
 AndroidChannel::AndroidChannel(){

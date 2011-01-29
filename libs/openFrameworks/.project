@@ -31,12 +31,8 @@
 					<value>make</value>
 				</dictionary>
 				<dictionary>
-					<key>org.eclipse.cdt.make.core.buildLocation</key>
-					<value>${workspace_loc:/androidGraphicsExample/Debug}</value>
-				</dictionary>
-				<dictionary>
 					<key>org.eclipse.cdt.make.core.cleanBuildTarget</key>
-					<value>clean -C../openFrameworksCompiled/project/linux64</value>
+					<value>CleanAndroid -C ../openFrameworksCompiled/project/android</value>
 				</dictionary>
 				<dictionary>
 					<key>org.eclipse.cdt.make.core.contents</key>
@@ -56,7 +52,7 @@
 				</dictionary>
 				<dictionary>
 					<key>org.eclipse.cdt.make.core.fullBuildTarget</key>
-					<value>all -C../openFrameworksCompiled/project/linux64</value>
+					<value>android -C ../openFrameworksCompiled/project/android</value>
 				</dictionary>
 				<dictionary>
 					<key>org.eclipse.cdt.make.core.stopOnError</key>
@@ -80,4 +76,17 @@
 		<nature>org.eclipse.cdt.managedbuilder.core.managedBuildNature</nature>
 		<nature>org.eclipse.cdt.core.cnature</nature>
 	</natures>
+	<linkedResources>
+		<link>
+			<name>openFrameworksCompiled</name>
+			<type>2</type>
+			<locationURI>OF_ROOT/libs/openFrameworksCompiled</locationURI>
+		</link>
+	</linkedResources>
+	<variableList>
+		<variable>
+			<name>OF_ROOT</name>
+			<value>file:/home/arturo/Escritorio/openFrameworksAndroid</value>
+		</variable>
+	</variableList>
 </projectDescription>

@@ -4,7 +4,7 @@
 ofVboMesh::ofVboMesh(){
 	vbo = ofVbo();
 	vertexData = NULL;
-	drawType = GL_STATIC_DRAW_ARB;
+	drawType = GL_STATIC_DRAW;
 	bEnableIndices = false;
 	bEnableColors = false;
 	bEnableTexCoords = false;
@@ -217,10 +217,19 @@ void ofVboMesh::draw(polyMode renderType){
 	
 	update();
 	
+#ifndef TARGET_OPENGLES
 	glPushAttrib(GL_POLYGON_BIT);
 	glPolygonMode(GL_FRONT_AND_BACK, renderType);
 	
 	GLuint mode = ofGetGLPrimitiveMode(vertexData->getMode());
+#else
+	GLuint mode;
+	if(renderType==OF_MESH_WIREFRAME){
+		mode = GL_LINES;
+	}else{
+		mode = ofGetGLPrimitiveMode(vertexData->getMode());
+	}
+#endif
 	
 	if(renderType!=OF_MESH_POINTS){
 		if(bEnableIndices){
@@ -233,7 +242,9 @@ void ofVboMesh::draw(polyMode renderType){
 		vbo.draw(GL_POINTS,0,vertexData->getNumVertices());
 	}
 	
+#ifndef TARGET_OPENGLES
 	glPopAttrib();
+#endif
 }
 
 //--------------------------------------------------------------

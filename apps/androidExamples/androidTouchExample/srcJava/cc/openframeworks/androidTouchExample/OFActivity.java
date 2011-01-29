@@ -13,7 +13,7 @@ public class OFActivity extends Activity{
         super.onCreate(savedInstanceState);
         String packageName = getPackageName();
 
-        ofApp = new OFAndroid(getResources().getText(R.string.app_name).toString(),packageName,this);
+        ofApp = new OFAndroid(packageName,this);
     }
 	
 	@Override
