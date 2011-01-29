@@ -118,7 +118,6 @@ void testApp::update() {
 	}
 	
 	
-	
 	// ------------------------- 
 	// stars fade in and out. a worm
 	// moves around randomly
@@ -184,11 +183,11 @@ void testApp::draw() {
 	// particles
 	if(vboMode == 0) {
 		ofBackground(0);
-		particleVbo.bind();
-		particleVbo.updateVertexData();
-		particleVbo.updateColorData();
+		//update the vbo
+		particleVbo.setColorData(particleColor, NUM_PARTICLES, GL_STATIC_DRAW);
+		particleVbo.setVertexData(particlePos, NUM_PARTICLES, GL_DYNAMIC_DRAW);
+		// and draw
 		particleVbo.draw(GL_POINTS, 0, NUM_PARTICLES);
-		particleVbo.unbind();
 	}
 	
 	// ------------------------- 
@@ -207,18 +206,14 @@ void testApp::draw() {
 		ofRotate(cameraRotation.y, 0, 1, 0);
 		ofRotate(cameraRotation.y, 0, 0, 1);
 		
-		// draw the stars
-		ptsVbo.bind();
-		ptsVbo.updateColorData();
+		// draw the star
+		ptsVbo.setColorData(color,NUM_PTS,GL_DYNAMIC_DRAW);
 		ptsVbo.draw(GL_POINTS, 0, NUM_PTS);
-		ptsVbo.unbind();
 		
 		
 		// the worm
-		wormVbo.bind();
-		wormVbo.updateVertexData();
+		wormVbo.setVertexData(worm,WORM_LEN,GL_DYNAMIC_DRAW);
 		wormVbo.draw(wormDrawMode, 0, WORM_LEN);
-		wormVbo.unbind();
 		
 		ofPopMatrix();
 	}

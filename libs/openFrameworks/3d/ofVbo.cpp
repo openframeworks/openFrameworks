@@ -53,8 +53,7 @@ void ofVbo::setVertexData(const ofVec3f * verts, int total, int usage) {
 	totalVerts = total;
 	
 	glBindBuffer(GL_ARRAY_BUFFER, vertId);
-	vertData = (float*)&verts[0].x;
-	glBufferData(GL_ARRAY_BUFFER, total * vertStride, vertData, usage);
+	glBufferData(GL_ARRAY_BUFFER, total * vertStride, &verts[0].x, usage);
 }
 
 //--------------------------------------------------------------
@@ -75,8 +74,7 @@ void ofVbo::setVertexData(const ofVec2f * verts, int total, int usage) {
 	totalVerts = total;
 	
 	glBindBuffer(GL_ARRAY_BUFFER, vertId);
-	vertData = (float*)&verts[0].x;
-	glBufferData(GL_ARRAY_BUFFER, total * vertStride, vertData, usage);
+	glBufferData(GL_ARRAY_BUFFER, total * vertStride, &verts[0].x, usage);
 }
 
 //--------------------------------------------------------------
@@ -109,7 +107,6 @@ void ofVbo::setColorData(const ofColor * colors, int total, int usage) {
 	}
 	
 	glBindBuffer(GL_ARRAY_BUFFER, colorId);
-	colorData = (float*)&colors[0].r;
 	glBufferData(GL_ARRAY_BUFFER, total * sizeof(ofColor), &colors[0].r, usage);	
 }
 
@@ -207,28 +204,8 @@ void ofVbo::setIndexData(const GLuint * indices, int total, int usage){
 	}
 	
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexId);
-	indexData = (GLuint*)&indices[0];
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * total, indexData, usage); 
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * total, &indices[0], usage);
 }
-
-
-//--------------------------------------------------------------
-void ofVbo::updateVertexData() {
-	
-	if(bUsingVerts && bAllocated) {
-		glBindBuffer(GL_ARRAY_BUFFER, vertId);
-		glBufferSubData(GL_ARRAY_BUFFER, 0, totalVerts * vertStride, vertData);
-	}
-}
-
-//--------------------------------------------------------------
-void ofVbo::updateColorData() {
-	if(bUsingColors) {
-		glBindBuffer(GL_ARRAY_BUFFER, colorId);
-		glBufferSubData(GL_ARRAY_BUFFER, 0, totalVerts*sizeof(ofColor), colorData);
-	}
-}
-
 /*
 //--------------------------------------------------------------
 void ofVbo::updateVertexData(const ofVec3f * verts, int total) {
@@ -306,6 +283,8 @@ bool ofVbo::getUsingIndices(){
 	return bUsingIndices;
 }
 
+
+/*
 //--------------------------------------------------------------
 float* ofVbo::getVertPointer(){
 	return vertData;
@@ -330,7 +309,7 @@ float* ofVbo::getTexCoordPointer(){
 GLuint* ofVbo::getIndexPointer(){
 	return indexData;
 }
-
+*/
 //--------------------------------------------------------------
 GLuint ofVbo::getVertId(){
 	return vertId;
@@ -407,7 +386,9 @@ void ofVbo::unbind() {
 //--------------------------------------------------------------
 void ofVbo::draw(int drawMode, int first, int total) {
 	if(bAllocated) {
+		bind();
 		glDrawArrays(drawMode, first, total);
+		unbind();
 	}
 }
 
