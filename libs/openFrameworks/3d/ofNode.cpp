@@ -3,7 +3,8 @@
 #include "ofMain.h"
 
 
-ofNode::ofNode() : parent(NULL) {
+ofNode::ofNode() : 
+	parent(NULL) {
 	setPosition(ofVec3f(0, 0, 0));
 	setOrientation(ofVec3f(0, 0, 0));
 	setScale(1);
@@ -23,6 +24,24 @@ void ofNode::clearParent() {
 //----------------------------------------
 ofNode* ofNode::getParent() const {
 	return parent;
+}
+
+
+//----------------------------------------
+void ofNode::setTransformMatrix(const ofMatrix4x4 &m44) {
+	setTransformMatrix(m44.getPtr());
+}
+
+
+//----------------------------------------
+void ofNode::setTransformMatrix(float *m44) {
+	memcpy(localTransformMatrix._mat, m44, sizeof(float) * 16);
+	ofQuaternion so;
+	localTransformMatrix.decompose(position, orientation, scale, so);
+	
+	onPositionChanged();
+	onOrientationChanged();
+	onScaleChanged();
 }
 
 
@@ -252,8 +271,6 @@ void ofNode::rotateAround(float degrees, const ofVec3f& axis, const ofVec3f& poi
 
 //----------------------------------------
 void ofNode::lookAt(const ofVec3f& lookAtPosition, ofVec3f upVector) {
-	//		localTransformMatrix.makeLookAtMatrix(position, lookAtPosition, upVector);
-//	ofVec3f savePos = getGlobalPosition();
 	if(parent) upVector = upVector * ofMatrix4x4::getInverseOf(parent->getGlobalTransformMatrix());
 	ofVec3f zaxis = (getGlobalPosition() - lookAtPosition).normalized();
 	ofVec3f xaxis = upVector.getCrossed(zaxis).normalized();
@@ -265,12 +282,6 @@ void ofNode::lookAt(const ofVec3f& lookAtPosition, ofVec3f upVector) {
 	m._mat[2].set(zaxis.x, zaxis.y, zaxis.z, 0);
 	
 	setGlobalOrientation(m.getRotate());
-//	setGlobalPosition(position);
-	//	_mat[3].set(-xaxis.dot(eye), -yaxis.dot(eye), -zaxis.dot(eye), 1);
-	
-//	orientation = localTransformMatrix.getRotate();
-//	createMatrix();
-//	onOrientationChanged();
 }
 
 void ofNode::lookAt(ofNode& lookAtNode, const ofVec3f& upVector) {
@@ -329,11 +340,6 @@ float ofNode::getRoll() const {
 
 
 //----------------------------------------
-//void ofNode::setTransformMatrix(const ofMatrix4x4& matrix) {
-//	this->localTransformMatrix = matrix;
-//}
-
-//----------------------------------------
 const ofMatrix4x4& ofNode::getLocalTransformMatrix() const {
 	return localTransformMatrix;
 }
@@ -342,8 +348,6 @@ const ofMatrix4x4& ofNode::getLocalTransformMatrix() const {
 ofMatrix4x4 ofNode::getGlobalTransformMatrix() const {
 	if(parent) return getLocalTransformMatrix() * parent->getGlobalTransformMatrix();
 	else return getLocalTransformMatrix();
-	
-	//	return globalTransformMatrix;
 }
 
 //----------------------------------------
