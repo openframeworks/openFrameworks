@@ -107,8 +107,7 @@ public:
 	void addVertex( float x, float y, float z=0 ) 
 		{ getCurrentSubShape().addVertex( ofPoint( x,y,z ) ); }
 
-	vector<ofPolyline> & getOutline() { return cachedOutline; }
-	const vector<ofPolyline> & getOutline() const { return cachedOutline; }
+	vector<ofPolyline> & getOutline();
 	
 	void addSubShape(const ofShape & shape);
 
