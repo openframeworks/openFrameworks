@@ -11,7 +11,8 @@ void testApp::setup(){
 	//ofSetFrameRate( 24 );
 	//ofSetVerticalSync(true);
 
-	ofCairoRenderer cairo(OF_CAIRO_SVG);
+	ofCairoRenderer cairo;
+	cairo.setup(ofCairoRenderer::PDF);
 	
 	
 	nCurveVertexes = 7;
@@ -50,6 +51,7 @@ void testApp::setup(){
 	//		http://glprogramming.com/red/images/Image128.gif
 	// 
 	pathA.setHexColor(0xe0be21);
+	pathA.setFilled(true);
 	pathA.setPolyWindingMode(OF_POLY_WINDING_ODD);	// this is the normal mode
 	pathA.moveTo(200,135);
 	pathA.lineTo(15,135);
@@ -69,6 +71,7 @@ void testApp::setup(){
 	//		http://glprogramming.com/red/images/Image128.gif
 	// 
 	pathB.setHexColor(0xb5de10);
+	pathB.setFilled(true);
 	pathB.setPolyWindingMode(OF_POLY_WINDING_NONZERO);
 	pathB.moveTo(400,135);
 	pathB.lineTo(215,135);
@@ -99,6 +102,7 @@ void testApp::setup(){
 	float angle = 0;
 	
 	pathC.setHexColor(0xa16bca);
+	pathC.setFilled(true);
 	for (int i = 0; i < nStarPts; i++){
 		if (i % 2 == 0) {
 			// inside point:
@@ -123,6 +127,7 @@ void testApp::setup(){
 	// 
 	// 
 	pathD.setHexColor(0x0cb0b6);
+	pathD.setFilled(true);
 	pathD.setPolyWindingMode(OF_POLY_WINDING_ODD);
 	for (int i = 0; i < 10; i++){
 		pathD.lineTo(ofRandom(650,850), ofRandom(20,200));
@@ -403,7 +408,7 @@ void testApp::update(){
 //--------------------------------------------------------------
 void testApp::draw(){
 	ofBackground( 255, 255, 255 );
-	
+	ofSetColor(255,255,255);
 
 	//------(a)--------------------------------------
 	// 
@@ -468,6 +473,7 @@ void testApp::draw(){
 	// 
 	// 		addBezierVertex	
 	// 
+	ofSetColor(255,255,255);
 	pathG.draw();
 	float x0 = 500;
 	float y0 = 300;

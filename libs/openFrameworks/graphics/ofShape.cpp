@@ -107,7 +107,6 @@ void ofPolyline::simplify(float tol){
 	vector <ofPoint> sV;
 	sV.resize(n);
 
-<<<<<<< HEAD
     int    i, k, m, pv;            // misc counters
     float  tol2 = tol * tol;       // tolerance squared
     ofPoint * vt = new ofPoint[n];
@@ -141,29 +140,8 @@ void ofPolyline::simplify(float tol){
 	delete [] mk;
 
 	points = sV;
-
-=======
-void ofPolyline::draw() const {
-	for ( int i=1; i<(int)points.size(); i++ ) {
-		ofLine( points[i-1], points[i] );
-	}
-	if(bClosed && points.size() > 1) {
-		ofLine( points[points.size()-1], points[0] );
-	}
 }
 
-float ofPolyline::getPerimeter() const {
-	float perimeter = 0;
-	int lastPosition = points.size() - 1;
-	for(int i = 0; i < lastPosition; i++) {
-		perimeter += points[i].distance(points[i + 1]);
-	}
-	if(bClosed && points.size() > 1) {
-		perimeter += points[points.size() - 1].distance(points[0]);
-	}
-	return perimeter;
->>>>>>> 71c903a61e56798e686464ab05ea99744ebc0f77
-}
 
 ofShape::ofShape(){
 	bFilled = ofGetStyle().bFill;
