@@ -17,6 +17,13 @@
 		53ECD3E212E0EEB60035AA81 /* ofVbo.h in Headers */ = {isa = PBXBuildFile; fileRef = 53ECD3DA12E0EEB60035AA81 /* ofVbo.h */; };
 		53ECD3E312E0EEB60035AA81 /* ofMesh.h in Headers */ = {isa = PBXBuildFile; fileRef = 53ECD3DB12E0EEB60035AA81 /* ofMesh.h */; };
 		53ECD43A12E121C60035AA81 /* ofMesh.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53ECD43912E121C60035AA81 /* ofMesh.cpp */; };
+		5F71507112F4838E00C0EA49 /* ofLog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5F71506F12F4838E00C0EA49 /* ofLog.cpp */; };
+		5F71507212F4838E00C0EA49 /* ofLog.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F71507012F4838E00C0EA49 /* ofLog.h */; };
+		5F71507512F4839B00C0EA49 /* ofFmodSoundPlayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5F71507312F4839B00C0EA49 /* ofFmodSoundPlayer.cpp */; };
+		5F71507612F4839B00C0EA49 /* ofFmodSoundPlayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F71507412F4839B00C0EA49 /* ofFmodSoundPlayer.h */; };
+		5F7150AC12F4848600C0EA49 /* ofPixels.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5F7150A912F4848600C0EA49 /* ofPixels.cpp */; };
+		5F7150AD12F4848600C0EA49 /* ofPixelUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5F7150AA12F4848600C0EA49 /* ofPixelUtils.cpp */; };
+		5F7150AE12F4848600C0EA49 /* ofPixelUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F7150AB12F4848600C0EA49 /* ofPixelUtils.h */; };
 		92B3A68112DA30B3001B8BE8 /* ofBaseTypes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 92B3A67812DA30B3001B8BE8 /* ofBaseTypes.cpp */; };
 		92B3A68212DA30B3001B8BE8 /* ofBaseTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 92B3A67912DA30B3001B8BE8 /* ofBaseTypes.h */; };
 		92B3A68312DA30B3001B8BE8 /* ofColor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 92B3A67A12DA30B3001B8BE8 /* ofColor.cpp */; };
@@ -99,6 +106,13 @@
 		53ECD3DA12E0EEB60035AA81 /* ofVbo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofVbo.h; path = ../../../openFrameworks/3d/ofVbo.h; sourceTree = SOURCE_ROOT; };
 		53ECD3DB12E0EEB60035AA81 /* ofMesh.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofMesh.h; sourceTree = "<group>"; };
 		53ECD43912E121C60035AA81 /* ofMesh.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofMesh.cpp; sourceTree = "<group>"; };
+		5F71506F12F4838E00C0EA49 /* ofLog.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofLog.cpp; sourceTree = "<group>"; };
+		5F71507012F4838E00C0EA49 /* ofLog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofLog.h; sourceTree = "<group>"; };
+		5F71507312F4839B00C0EA49 /* ofFmodSoundPlayer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofFmodSoundPlayer.cpp; sourceTree = "<group>"; };
+		5F71507412F4839B00C0EA49 /* ofFmodSoundPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofFmodSoundPlayer.h; sourceTree = "<group>"; };
+		5F7150A912F4848600C0EA49 /* ofPixels.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofPixels.cpp; sourceTree = "<group>"; };
+		5F7150AA12F4848600C0EA49 /* ofPixelUtils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofPixelUtils.cpp; sourceTree = "<group>"; };
+		5F7150AB12F4848600C0EA49 /* ofPixelUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofPixelUtils.h; sourceTree = "<group>"; };
 		92B3A67812DA30B3001B8BE8 /* ofBaseTypes.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofBaseTypes.cpp; sourceTree = "<group>"; };
 		92B3A67912DA30B3001B8BE8 /* ofBaseTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofBaseTypes.h; sourceTree = "<group>"; };
 		92B3A67A12DA30B3001B8BE8 /* ofColor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofColor.cpp; sourceTree = "<group>"; };
@@ -406,6 +420,9 @@
 		E4B27ABC10CBE92A00536013 /* graphics */ = {
 			isa = PBXGroup;
 			children = (
+				5F7150A912F4848600C0EA49 /* ofPixels.cpp */,
+				5F7150AA12F4848600C0EA49 /* ofPixelUtils.cpp */,
+				5F7150AB12F4848600C0EA49 /* ofPixelUtils.h */,
 				E4554FAF12DBC7E000652B63 /* ofPixels.h */,
 				BB4A407312DBBDDE007FFA68 /* ofFbo.cpp */,
 				BB4A407412DBBDDE007FFA68 /* ofFbo.h */,
@@ -429,6 +446,8 @@
 		E4B27AC810CBE92A00536013 /* sound */ = {
 			isa = PBXGroup;
 			children = (
+				5F71507312F4839B00C0EA49 /* ofFmodSoundPlayer.cpp */,
+				5F71507412F4839B00C0EA49 /* ofFmodSoundPlayer.h */,
 				2D4FB15712DE7271000A51F9 /* ofSoundEffect.cpp */,
 				2D4FB15812DE7271000A51F9 /* ofSoundEffect.h */,
 				2D4FB15912DE7271000A51F9 /* ofSoundUnit.cpp */,
@@ -445,6 +464,8 @@
 		E4B27ACD10CBE92A00536013 /* utils */ = {
 			isa = PBXGroup;
 			children = (
+				5F71506F12F4838E00C0EA49 /* ofLog.cpp */,
+				5F71507012F4838E00C0EA49 /* ofLog.h */,
 				E4554F7812DBC51A00652B63 /* ofURLFileLoader.cpp */,
 				E4554F7712DBC51A00652B63 /* ofURLFileLoader.h */,
 				92BFAC2C12DA5FDA001F2778 /* ofSystemUtils.cpp */,
@@ -591,6 +612,9 @@
 				53ECD3E212E0EEB60035AA81 /* ofVbo.h in Headers */,
 				53ECD3E312E0EEB60035AA81 /* ofMesh.h in Headers */,
 				53AD6A7E12E2721800488B9C /* ofVertexData.h in Headers */,
+				5F71507212F4838E00C0EA49 /* ofLog.h in Headers */,
+				5F71507612F4839B00C0EA49 /* ofFmodSoundPlayer.h in Headers */,
+				5F7150AE12F4848600C0EA49 /* ofPixelUtils.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -682,6 +706,10 @@
 				53ECD3E112E0EEB60035AA81 /* ofVbo.cpp in Sources */,
 				53ECD43A12E121C60035AA81 /* ofMesh.cpp in Sources */,
 				53AD6A7F12E2721800488B9C /* ofVertexData.cpp in Sources */,
+				5F71507112F4838E00C0EA49 /* ofLog.cpp in Sources */,
+				5F71507512F4839B00C0EA49 /* ofFmodSoundPlayer.cpp in Sources */,
+				5F7150AC12F4848600C0EA49 /* ofPixels.cpp in Sources */,
+				5F7150AD12F4848600C0EA49 /* ofPixelUtils.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
