@@ -37,6 +37,7 @@ public:
 
 	/// points vector access
 	size_t size() const { return points.size(); }
+	ofPoint& operator[] (int index) { return points[index]; }
 	const ofPoint& operator[] (int index) const { return points[index]; }
 	ofPoint& operator[] (int index) {  bHasChanged=true; return points[index]; }
 	
@@ -63,6 +64,11 @@ public:
 	}
 
 	const vector<ofPoint> & getVertices() const{return points;}
+	void setClosed( bool tf ) { bClosed = tf; }
+	bool getClosed() const { return bClosed; }
+	
+	float getPerimeter() const;
+	
 private:
 	vector<ofPoint> points;
 	bool bClosed;

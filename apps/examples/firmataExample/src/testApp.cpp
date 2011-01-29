@@ -26,9 +26,7 @@ void testApp::setup(){
 //--------------------------------------------------------------
 void testApp::update(){
 
-
-	if ( ard.isArduinoReady()){
-
+	if (ard.isArduinoReady()){
 		// 1st: setup the arduino if haven't already:
 		if (bSetupArduino == false){
 			setupArduino();
@@ -108,5 +106,15 @@ void testApp::mouseReleased(int x, int y, int button){
 
 //--------------------------------------------------------------
 void testApp::windowResized(int w, int h){
+
+}
+
+//--------------------------------------------------------------
+void testApp::gotMessage(ofMessage msg){
+
+}
+
+//--------------------------------------------------------------
+void testApp::dragEvent(ofDragInfo dragInfo){ 
 
 }

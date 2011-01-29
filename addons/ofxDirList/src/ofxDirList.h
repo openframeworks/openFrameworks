@@ -28,20 +28,20 @@
 
 
 class ofxDirList{
-	
-public:
-	ofxDirList();
-	void setVerbose(bool _verbose);
-	string getName(int pos);
-	string getPath(int pos);
-	void reset();												// resets extension list
-	bool allowExt(string ext);									// returns true if ext is accepted
-	int listDir(string directory);								// returns number of files found
 
-	int numFiles() {
-		return nameArray.size();
-	}
-	
+	public:
+		ofxDirList();
+		void setVerbose(bool _verbose);
+		string getName(int pos);
+		string getPath(int pos);
+        void reset();												// resets extension list
+		bool allowExt(string ext);									// returns true if ext is accepted
+		int listDir(string directory);								// returns number of files found
+		void sort();
+
+		int numFiles() {
+			return nameArray.size();
+		}
 	private:
 		vector <string> allowedFileExt;
 		vector <string> nameArray;

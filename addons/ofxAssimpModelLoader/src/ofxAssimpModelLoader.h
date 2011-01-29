@@ -47,6 +47,10 @@ class ofxAssimpModelLoader{
         float getDuration(int animation);
 
         void draw();
+		
+		ofPoint getPosition(){
+			return pos;
+		}
             
         // Our array of textures we load from the models path.
         vector <ofImage> textures;
@@ -54,7 +58,7 @@ class ofxAssimpModelLoader{
         // TODO: convert to ofMesh or ofVBOMesh
         vector <ofxAssimpMeshHelper> modelMeshes;  
          
-    private:
+    protected:
         // the main Asset Import scene that does the magic.
         aiScene* scene;
 
@@ -75,6 +79,8 @@ class ofxAssimpModelLoader{
         int currentAnimation;
         
         float animationTime;
+		
+		string modelFolder;
         
         // for interpolating between keyframes.
         float lastAnimationTime;

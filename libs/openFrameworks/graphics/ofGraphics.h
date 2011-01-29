@@ -14,7 +14,28 @@ void ofSetDefaultRenderer(ofBaseRenderer * renderer);
 ofBaseRenderer * ofGetDefaultRenderer();
 
 
+// push and pop all matrices and viewport
+void ofPushView();
+void ofPopView();
 
+// setup matrices and viewport (upto you to push and pop view before and after)
+// if width or height are 0, assume windows dimensions (ofGetWidth(), ofGetHeight())
+// if nearDist or farDist are 0 assume defaults (calculated based on width / height)
+void ofViewport(float x = 0, float y = 0, float width = 0, float height = 0, bool invertY = true);
+void ofSetupScreenPerspective(float width = 0, float height = 0, int orientation = 0, bool vFlip = true, float fov = 60, float nearDist = 0, float farDist = 0);
+void ofSetupScreenOrtho(float width = 0, float height = 0, bool vFlip = true, float nearDist = -1, float farDist = 1);
+ofRectangle ofGetCurrentViewport();
+int ofGetViewportWidth();
+int ofGetViewportHeight();
+
+
+
+void ofSetCoordHandedness(ofHandednessType handedness);
+ofHandednessType ofGetCoordHandedness();
+
+void ofClear(float r, float g, float b, float a=0);
+void ofClear(float brightness, float a=0);
+void ofClearAlpha();
 
 //opengl specifics
 
@@ -130,6 +151,7 @@ void ofPushStyle();
 void ofPopStyle();
 
 
+
 void ofSetPolyMode(ofPolyWindingMode mode);
 
 // end drawing modes
@@ -192,6 +214,7 @@ void ofRect(float x,float y,float z,float w,float h);
 
 void ofCurve(float x0, float y0, float x1, float y1, float x2, float y2, float x3, float y3);
 void ofBezier(float x0, float y0, float x1, float y1, float x2, float y2, float x3, float y3);
+
 
 
 void ofCurveVertex(float x, float y);

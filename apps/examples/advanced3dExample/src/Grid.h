@@ -7,6 +7,13 @@
  *
  */
 
+// Grid is a custom 3D
+// object that we've
+// created in this
+// example.
+//
+// We inherit from ofNode
+
 #include "ofMain.h"
 
 class Grid : public ofNode

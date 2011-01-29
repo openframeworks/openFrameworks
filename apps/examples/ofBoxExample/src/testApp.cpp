@@ -1,38 +1,46 @@
 #include "testApp.h"
 
-void testApp::setup() {
+//--------------------------------------------------------------
+void testApp::setup(){
+	ofSetVerticalSync(true);
+
+	// this uses depth information for occlusion
+	// rather than always drawing things on top of each other
 	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_CULL_FACE);
 	
-	glEnable(GL_LIGHTING);
-	glEnable(GL_LIGHT0);
-	glEnable(GL_COLOR_MATERIAL);
-	
+	// ofBox uses texture coordinates from 0-1, so you can load whatever
+	// sized images you want and still use them to texture your box
+	// but we have to explicitly normalize our tex coords here
 	ofEnableNormalizedTexCoords();
+	
+	// loads the OF logo from disk
 	ofLogo.loadImage("of.png");
 	
+	// draw the ofBox outlines with some weight
 	ofSetLineWidth(10);
 }
 
-void testApp::update() {
+//--------------------------------------------------------------
+void testApp::update(){
+
 }
 
-void testApp::draw() {
+//--------------------------------------------------------------
+void testApp::draw(){
 	ofBackground(0, 0, 0);
-	
-	ofTranslate(ofGetWidth() / 2, ofGetHeight() / 2, 0);
-	ofRotateX(-mouseY);
-	ofRotateY(mouseX);
 	
 	float movementSpeed = .1;
 	float cloudSize = ofGetWidth() / 2;
 	float maxBoxSize = 100;
+	float spacing = 1;
 	int boxCount = 100;
+	
+	cam.begin();
 	
 	for(int i = 0; i < boxCount; i++) {
 		ofPushMatrix();
 		
-		float t = (ofGetElapsedTimef() + i) * movementSpeed;
+		float t = (ofGetElapsedTimef() + i * spacing) * movementSpeed;
 		ofVec3f pos(
 			ofSignedNoise(t, 0, 0),
 			ofSignedNoise(0, t, 0),
@@ -58,10 +66,51 @@ void testApp::draw() {
 		
 		ofPopMatrix();
 	}
+	
+	cam.end();
 }
 
-void testApp::keyPressed(int key) {
-	if(key == 'f') {
-		ofToggleFullscreen();
-	}
+//--------------------------------------------------------------
+void testApp::keyPressed(int key){
+
+}
+
+//--------------------------------------------------------------
+void testApp::keyReleased(int key){
+
+}
+
+//--------------------------------------------------------------
+void testApp::mouseMoved(int x, int y ){
+
+}
+
+//--------------------------------------------------------------
+void testApp::mouseDragged(int x, int y, int button){
+
+}
+
+//--------------------------------------------------------------
+void testApp::mousePressed(int x, int y, int button){
+
+}
+
+//--------------------------------------------------------------
+void testApp::mouseReleased(int x, int y, int button){
+
+}
+
+//--------------------------------------------------------------
+void testApp::windowResized(int w, int h){
+
+}
+
+//--------------------------------------------------------------
+void testApp::gotMessage(ofMessage msg){
+
+}
+
+//--------------------------------------------------------------
+void testApp::dragEvent(ofDragInfo dragInfo){ 
+
 }

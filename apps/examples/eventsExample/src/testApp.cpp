@@ -7,7 +7,6 @@ void testApp::setup(){
 	ofBackground(50,50,50);	
 }
 
-
 //--------------------------------------------------------------
 void testApp::update(){
 	counter = counter + 0.033f;
@@ -16,7 +15,7 @@ void testApp::update(){
 //--------------------------------------------------------------
 void testApp::draw(){
 	
-	sprintf (timeString, "time: %0.2i:%0.2i:%0.2i \nelapsed time %i", ofGetHours(), ofGetMinutes(), ofGetSeconds(), ofGetElapsedTimeMillis());
+	sprintf (timeString, "time: %i:%i:%i \nelapsed time %i", ofGetHours(), ofGetMinutes(), ofGetSeconds(), ofGetElapsedTimeMillis());
 	
 	float w = vagRounded.stringWidth(eventString);
 	float h = vagRounded.stringHeight(eventString);
@@ -44,7 +43,7 @@ void testApp::keyPressed  (int key){
 
 //--------------------------------------------------------------
 void testApp::keyReleased(int key){ 
-	
+	sprintf(eventString, "keyReleased = (%i)", key);	
 }
 
 //--------------------------------------------------------------
@@ -60,9 +59,9 @@ void testApp::mouseDragged(int x, int y, int button){
 //--------------------------------------------------------------
 void testApp::mousePressed(int x, int y, int button){
 	sprintf(eventString, "mousePressed = (%i,%i - button %i)", x, y, button);
-
 }
-//--------------------------------------------------------------
+
+//--------------------------------------------------------------
 void testApp::mouseReleased(int x, int y, int button){
 	sprintf(eventString, "mouseReleased = (%i,%i - button %i)", x, y, button);
 }
@@ -70,4 +69,14 @@ void testApp::mouseReleased(int x, int y, int button){
 //--------------------------------------------------------------
 void testApp::windowResized(int w, int h){
 	sprintf(eventString, "resized = (%i,%i)", w, h);
+}
+
+//--------------------------------------------------------------
+void testApp::gotMessage(ofMessage msg){
+	sprintf(eventString, "gotMessage %s ", msg.message.c_str());
+}
+
+//--------------------------------------------------------------
+void testApp::dragEvent(ofDragInfo dragInfo){ 
+	sprintf(eventString, "%i files dragged into the window at (%i, %i)", (int)dragInfo.files.size(), (int)dragInfo.position.x, (int)dragInfo.position.y);
 }
