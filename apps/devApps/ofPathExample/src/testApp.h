@@ -45,6 +45,7 @@ class testApp : public ofBaseApp{
 	ofPath pathF,pathFNonCurve;
 	ofPath pathG,pathH;
 	ofPath pathIa,pathIb,pathIc;
+	ofPath selectedDraggableVertex, unselectedDraggableVertex;
 	
 };
 
