@@ -72,7 +72,7 @@ static ofTTFCharacter makeContoursForCharacter(FT_Face &face){
 							ofPoint nextPoint((float) vec[nextIndex].x,	-(float) vec[nextIndex].y);
 
 							//cubic_bezier(testOutline, lastPoint.x, lastPoint.y, controlPoint1.x, controlPoint1.y, controlPoint2.x, controlPoint2.y, nextPoint.x, nextPoint.y, 8);
-							charOutlines.cubicBezierTo(controlPoint1.x/64, controlPoint1.y/64, controlPoint2.x/64, controlPoint2.y/64, nextPoint.x/64, nextPoint.y/64);
+							charOutlines.bezierTo(controlPoint1.x/64, controlPoint1.y/64, controlPoint2.x/64, controlPoint2.y/64, nextPoint.x/64, nextPoint.y/64);
 						}
 
 					}else{
@@ -116,7 +116,7 @@ static ofTTFCharacter makeContoursForCharacter(FT_Face &face){
 						if( printVectorInfo )printf("--- next point is %f %f \n", nextPoint.x, nextPoint.y);
 
 						//quad_bezier(testOutline, lastPoint.x, lastPoint.y, conicPoint.x, conicPoint.y, nextPoint.x, nextPoint.y, 8);
-						charOutlines.bezierTo(lastPoint.x/64, lastPoint.y/64, conicPoint.x/64, conicPoint.y/64, nextPoint.x/64, nextPoint.y/64);
+						charOutlines.quadBezierTo(lastPoint.x/64, lastPoint.y/64, conicPoint.x/64, conicPoint.y/64, nextPoint.x/64, nextPoint.y/64);
 
 						if( nextIsConnic ){
 							lastPoint = nextPoint;

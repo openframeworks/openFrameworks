@@ -182,12 +182,12 @@ public:
 	}
 
 	/// cubic bezier
-	void cubicBezierTo(float cx1, float cy1, float cz1, float cx2, float cy2, float cz2, float x, float y, float z, int curveResolution=16);
-	void cubicBezierTo(  const ofPoint & p1, const ofPoint & p2,const ofPoint & p3,  int curveResolution=16 ){
-		cubicBezierTo(p1.x,p1.y,p1.z,p2.x,p2.y,p2.z,p3.x,p3.y,p3.z,curveResolution);
+	void quadBezierTo(float cx1, float cy1, float cz1, float cx2, float cy2, float cz2, float x, float y, float z, int curveResolution=16);
+	void quadBezierTo(  const ofPoint & p1, const ofPoint & p2,const ofPoint & p3,  int curveResolution=16 ){
+		quadBezierTo(p1.x,p1.y,p1.z,p2.x,p2.y,p2.z,p3.x,p3.y,p3.z,curveResolution);
 	}
-	void cubicBezierTo(float cx1, float cy1, float cx2, float cy2, float x, float y, int curveResolution=16){
-		cubicBezierTo(cx1,cy1,0,cx2,cy2,0,x,y,0,curveResolution);
+	void quadBezierTo(float cx1, float cy1, float cx2, float cy2, float x, float y, int curveResolution=16){
+		quadBezierTo(cx1,cy1,0,cx2,cy2,0,x,y,0,curveResolution);
 	}
 
 	void setFrom(const ofPath & path,  int curveResolution=16, bool tesselate=false);
