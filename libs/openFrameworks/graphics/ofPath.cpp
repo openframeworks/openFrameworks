@@ -118,7 +118,6 @@ void ofPath::setFilled(bool hasFill){
 	for(int i=0; i<subPaths.size(); i++){
 		subPaths[i].setFilled(hasFill);
 	}
-	hasChanged = true;
 }
 
 void ofPath::setFillColor(const ofColor & color){
@@ -126,7 +125,6 @@ void ofPath::setFillColor(const ofColor & color){
 	for(int i=0; i<subPaths.size(); i++){
 		subPaths[i].setFillColor(color);
 	}
-	hasChanged = true;
 }
 
 void ofPath::setStrokeColor(const ofColor & color){
@@ -134,7 +132,6 @@ void ofPath::setStrokeColor(const ofColor & color){
 	for(int i=0; i<subPaths.size(); i++){
 		subPaths[i].setStrokeColor(color);
 	}
-	hasChanged = true;
 }
 
 void ofPath::setStrokeWidth(float width){
@@ -142,7 +139,6 @@ void ofPath::setStrokeWidth(float width){
 	for(int i=0; i<subPaths.size(); i++){
 		subPaths[i].setStrokeWidth(width);
 	}
-	hasChanged = true;
 }
 
 ofPath & ofPath::lastPath(){
@@ -199,6 +195,11 @@ ofShape & ofPath::getShape(int curveResolution, bool tesselated){
 		cachedShape.setFrom(*this,curveResolution,tesselated);
 		hasChanged = false;
 	}
+	cachedShape.setStrokeColor(strokeColor);
+	cachedShape.setStrokeWidth(strokeWidth);
+	cachedShape.setFillColor(fillColor);
+	cachedShape.setPolyWindingMode(windingMode);
+	cachedShape.setFilled(bFill);
 	return cachedShape;
 }
 
