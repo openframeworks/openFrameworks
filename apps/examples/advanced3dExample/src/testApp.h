@@ -1,10 +1,29 @@
 #pragma once
 
+///////////////////////////////////////////////////
+///////////////////////////////////////////////
+///////////////////////////////////////////
+///////////////////////////////////////
+///////////////////////////////////
+//
+//
+// ADVANCED 3D EXAMPLE
+//		ofNode3d, ofCamera, ofEasyCam
+//
+//
+///////////////////////////////////
+///////////////////////////////////////
+///////////////////////////////////////////
+///////////////////////////////////////////////
+///////////////////////////////////////////////////
+
 #include "ofMain.h"
 #include "Swarm.h"
 #include "Grid.h"
 
 #include "OrthoCamera.h"
+
+#define N_CAMERAS 4
 
 class testApp : public ofBaseApp{
 
@@ -14,8 +33,9 @@ class testApp : public ofBaseApp{
 		void draw();
 	
 		void setupViewports();
-		void drawScene();
-
+		void drawScene(int iCameraDraw);
+		void updateMouseRay();
+	
 		void keyPressed  (int key);
 		void keyReleased(int key);
 		void mouseMoved(int x, int y );
@@ -23,27 +43,30 @@ class testApp : public ofBaseApp{
 		void mousePressed(int x, int y, int button);
 		void mouseReleased(int x, int y, int button);
 		void windowResized(int w, int h);
-	
 
-		//cameras
+		//cameras (all these inherit from ofCamera)
 		ofEasyCam				camEasyCam;
 		OrthoCamera				camFront;
 		OrthoCamera				camTop;
 		OrthoCamera				camLeft;
-
 	
+		//cameras have parent?
+		bool					bCamParent;
+
 		//camera pointers
-		ofCamera*				cameras[4];
-		int						iCurrentCamera;
+		ofCamera*				cameras[N_CAMERAS];
+		int						iMainCamera;
 	
 		//viewports
 		ofRectangle				viewMain;
-		ofRectangle				viewGrid[4];	
+		ofRectangle				viewGrid[N_CAMERAS];	
 	
 		//my custom node
 		Swarm					nodeSwarm;
 		Grid					nodeGrid;
 
+		//ray drawn under mouse cursor [start,end]
+		ofVec3f					ray[2];
 };
 
 /*

@@ -31,12 +31,11 @@ protected:
 	
 	//useful variables
 	int			nParticles;
-
+	float		timeLastUpdate;
+	
 	//objects
 	ofVec3f		*positions;
 	ofVec3f		*velocities;
-	ofColor		*colors;
-	
-	float		timeLastUpdate;
+	ofColor		*colors;	
 	
 };

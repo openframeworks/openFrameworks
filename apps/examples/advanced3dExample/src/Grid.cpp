@@ -11,9 +11,9 @@
 
 void Grid::customDraw()
 {
-	//////////////
+	///////////////////////////////////
 	// DRAW GRID
-	//////////////
+	///////////////////////////////////
 	//
 	//
 	ofPushStyle();
@@ -27,6 +27,13 @@ void Grid::customDraw()
 	// x: iDimension = 0
 	// z: iDimension = 1
 	//
+	// xz is our common variable
+	// in the first loop (0), xz means x
+	// in the second loop (1), xz means z
+	//
+	// we reuse the same variable so we can use
+	// the same code twice (*)
+	//
 	for (int iDimension=0; iDimension<2; iDimension++)
 	{
 		if (iDimension==0)
@@ -38,10 +45,12 @@ void Grid::customDraw()
 		{
 			
 			/////////////////////
-			// draw thicker lines
+			// Draw thicker lines
 			// at whole numbers
-			// on grid
+			// on the grid
 			//
+			
+			//if xz
 			if (fabs(xz) == 50 || xz == 0)
 				ofSetLineWidth(4);
 			
@@ -53,28 +62,62 @@ void Grid::customDraw()
 			//
 			/////////////////////
 			
-			//draw line
+			/////////////////////
+			// Draw lines
+			//
+			
+			//here we check which
+			//dimension we're
+			//drawing in (*)
+			//
 			if (iDimension==0)
 				ofLine(xz, 0, -50, xz, 0, 50);
 			else
 				ofLine(-50, 0, xz, 50, 0, xz);
+			//
+			/////////////////////
 		}
 	}
 	
-	//labels
-	ofSetColor(0, 0, 0);
+	////////////////////////
+	// Draw numbers on axes
+	//
+	
+	ofSetColor(255, 255, 255);
+	
+	//this line ensures
+	//that we're drawing
+	//on top of
+	//everything else.
+	//
+	//The DEPTH FUNCTION
+	//tells OpenGL whether
+	//to draw a new pixel
+	//when it is compared
+	//to the DEPTH BUFFER
+	//
 	glDepthFunc(GL_ALWAYS);
+	
 	for (float xz = -50; xz<=50; xz+=10)
 	{
 		ofDrawBitmapString(ofToString(xz, 0), xz, 0, 0);
 		ofDrawBitmapString(ofToString(xz, 0), 0, 0, xz);		
 	}
+	
+	//this line restores
+	//the depth function
+	//to the default value
+	//for 3D functions
 	glDepthFunc(GL_LESS);
+	
+	//
+	////////////////////////
+
 	
 	ofPopStyle();
 	//
 	//
-	//////////////	
+	///////////////////////////////////
 	
 	ofDrawAxis(10);
 	

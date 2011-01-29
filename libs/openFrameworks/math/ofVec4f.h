@@ -36,9 +36,9 @@ public:
 	
     // Check similarity/equality.
     //
-    bool operator==( const ofVec4f& vec );
-    bool operator!=( const ofVec4f& vec );
-    bool match( const ofVec4f& vec, float tollerance=0.0001);
+    bool operator==( const ofVec4f& vec ) const;
+    bool operator!=( const ofVec4f& vec ) const;
+    bool match( const ofVec4f& vec, float tollerance=0.0001) const;
 	
 	
     // Additions and Subtractions.
@@ -191,15 +191,15 @@ inline void ofVec4f::set( const ofVec4f& vec ) {
 // Check similarity/equality.
 //
 //
-inline bool ofVec4f::operator==( const ofVec4f& vec ) {
+inline bool ofVec4f::operator==( const ofVec4f& vec ) const {
 	return (x == vec.x) && (y == vec.y) && (z == vec.z) && (w == vec.w);
 }
 
-inline bool ofVec4f::operator!=( const ofVec4f& vec ) {
+inline bool ofVec4f::operator!=( const ofVec4f& vec ) const {
 	return (x != vec.x) || (y != vec.y) || (z != vec.z) || (w != vec.w);
 }
 
-inline bool ofVec4f::match( const ofVec4f& vec, float tollerance) {
+inline bool ofVec4f::match( const ofVec4f& vec, float tollerance) const {
 	return (fabs(x - vec.x) < tollerance)
 	&& (fabs(y - vec.y) < tollerance)
 	&& (fabs(z - vec.z) < tollerance)
