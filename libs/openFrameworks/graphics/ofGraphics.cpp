@@ -1082,6 +1082,31 @@ void ofEnableBlendMode(ofBlendMode blendMode){
 }
 
 //----------------------------------------------------------
+void ofEnablePointSprites() {
+#ifdef TARGET_OF_IPHONE
+	glEnable(GL_POINT_SPRITE_OES);
+	glTexEnvi(GL_POINT_SPRITE_OES, GL_COORD_REPLACE_OES, GL_TRUE);
+	// does look like this needs to be enabled in ES because
+	// it is always eneabled...
+	//glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
+	
+#else
+	glEnable(GL_POINT_SPRITE);
+	glTexEnvi(GL_POINT_SPRITE, GL_COORD_REPLACE, GL_TRUE);
+	glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);	
+#endif
+}
+
+//----------------------------------------------------------
+void ofDisablePointSprites() {
+#ifdef TARGET_OF_IPHONE
+	glDisable(GL_POINT_SPRITE_OES);
+#else
+	glDisable(GL_POINT_SPRITE);
+#endif
+}
+
+//----------------------------------------------------------
 void ofDisableBlendMode()
 {
     glDisable(GL_BLEND);
