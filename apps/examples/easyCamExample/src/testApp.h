@@ -2,14 +2,14 @@
 
 #include "ofMain.h"
 
-class testApp : public ofBaseApp{
-
+class testApp : public ofBaseApp {
 	public:
+	
 		void setup();
 		void update();
 		void draw();
-
-		void keyPressed  (int key);
+		
+		void keyPressed(int key);
 		void keyReleased(int key);
 		void mouseMoved(int x, int y );
 		void mouseDragged(int x, int y, int button);
@@ -17,8 +17,7 @@ class testApp : public ofBaseApp{
 		void mouseReleased(int x, int y, int button);
 		void windowResized(int w, int h);
 		void dragEvent(ofDragInfo dragInfo);
-		void gotMessage(ofMessage msg);
-			
-		ofEasyCam cam;
+		void gotMessage(ofMessage msg);		
 
+		ofEasyCam cam; // add mouse controls for camera movement
 };

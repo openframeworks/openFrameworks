@@ -2,93 +2,262 @@
 
 //--------------------------------------------------------------
 ofMesh::ofMesh(){
-
+	vbo = ofVbo();
+	vertexData = NULL;
+	drawType = GL_STATIC_DRAW_ARB;
+	bEnableIndices = false;
+	bEnableColors = false;
+	bEnableTexCoords = false;
+	bEnableNormals = false;
+	renderMethod = OF_MESH_USING_VERTEX_ARRAY;
 }
 
-//--------------------------------------------------------------	
-ofMesh::~ofMesh(){}
-
-//--------------------------------------------------------------	
-void ofMesh::clear(){
-
+//--------------------------------------------------------------
+ofMesh::~ofMesh(){
 }
+
+//--------------------------------------------------------------
+void ofMesh::setUseIndices(bool useIndices){
+	bEnableIndices = useIndices;
+}
+
+//--------------------------------------------------------------
+void ofMesh::setDrawType(int drawType_){
+	drawType = drawType_;
+}
+
+//--------------------------------------------------------------
+void ofMesh::setRenderMethod(meshRenderMethod m){
+	renderMethod = m;
+}
+
 /*
- 
 //--------------------------------------------------------------
-int ofMesh::addVertex(ofVec3f pos, ofVec3f normal, ofColor color, ofVec2f texCoord) {
-	vertices.push_back(ofVec3f(pos));
-	if (bUsingNormals) normals.push_back(ofVec3f(normal));
-	if (bUsingColors) colors.push_back(ofColor(color));
-	if (bUsingTexCoords) texCoords.push_back(ofVec2f(texCoord));
-	return vertices.size()-1;	// keeping 0-begin indexing 
+ofMesh::ofMesh(const ofMesh& v){
+	clone(v);
 }
 
-//--------------------------------------------------------------	
-int ofMesh::addVertex(const ofVec3f& pos) {
-	vertices.push_back(pos);
-	if(bUsingNormals) normals.push_back(ofVec3f(0,0,0));
-	if(bUsingColors) colors.push_back(ofColor(255,255,255));
-	if(bUsingTexCoords) texCoords.push_back(ofVec2f(0,0));
-	return vertices.size()-1;
+//--------------------------------------------------------------
+ofMesh& ofMesh::operator=(const ofMesh& v){
+	clone(v);
+	return *this;
 }
 
-//--------------------------------------------------------------	
-int ofMesh::addFace(int vi1, int vi2, int vi3){
-	int indexMax = vertices.size()-1;
-	if(max(vi3,max(vi1,vi2)) > indexMax){
-		ofLog(OF_LOG_WARNING,"addFace(int, int, int) - vertex index out of range");
-		return -1;
+//--------------------------------------------------------------
+void ofMesh::clone(const ofMesh& v){
+	vertexData = v.getvertexData();
+	vbo = v.vbo;
+}
+ */
+
+//--------------------------------------------------------------
+void ofMesh::setVertexData(ofVertexData* m){
+	vertexData = m;
+}
+
+//--------------------------------------------------------------
+ofVertexData* ofMesh::getVertexData(){
+	return vertexData;
+}
+
+//--------------------------------------------------------------
+const ofVertexData* ofMesh::getVertexData() const{
+	return vertexData;
+}
+
+//--------------------------------------------------------------
+bool ofMesh::setupVerticesForVbo(int usage){
+	int size = vertexData->getNumVertices();
+	if(size){
+		vbo.setVertexData(vertexData->getVerticesPointer(),size, usage);
+		return true;
 	}else{
-		faces.push_back(ofFace(vi1,vi2,vi3));
-		return faces.size()-1;
+		ofLog(OF_LOG_WARNING,"ofMesh:setupVertices - no vertices in vertexData.");
+		return false;
 	}
 }
 
 //--------------------------------------------------------------
-int ofMesh::getFaceVertexId(const ofFace& f, int index){
-	int isize = f.indices.size();
-	if(index < isize){
-		return f.indices[index];
+bool ofMesh::setupColorsForVbo(int usage){
+	int size = vertexData->getNumColors();
+	if(size){
+		vbo.setColorData(vertexData->getColorsPointer(), size, usage);
+		return true;
 	}else{
-		ofLog(OF_LOG_WARNING,"getFaceVertexId - face vertex index out of range");
-		return -1;
+		ofLog(OF_LOG_WARNING,"ofMesh:setupColors - no colors in vertexData.");
+		return false;
 	}
 }
 
 //--------------------------------------------------------------
-//would like to be reference, but what if there is none?
-ofVec3f* ofMesh::getFaceVertex(const ofFace& f, int index){
-	int isize = f.indices.size();
-	if(index < isize){
-		return &vertices[f.indices[index]];
+bool ofMesh::setupNormalsForVbo(int usage){
+	int size = vertexData->getNumNormals();
+	if(size){
+		vbo.setNormalData(vertexData->getNormalsPointer(), size, usage);
+		return true;
 	}else{
-		ofLog(OF_LOG_WARNING,"getFaceVertexId - face vertex index out of range");
-		return NULL;
+		ofLog(OF_LOG_WARNING,"ofMesh:setupNormals - no normals in vertexData.");
+		return false;
 	}
 }
 
 //--------------------------------------------------------------
-int ofMesh::numVertices(){
-	return vertices.size();
+bool ofMesh::setupTexCoordsForVbo(int usage){
+	int size = vertexData->getNumTexCoords();
+	if(size){
+		vbo.setTexCoordData(vertexData->getTexCoordsPointer(), size, usage);
+		return true;
+	}else{
+		ofLog(OF_LOG_WARNING,"ofMesh:setupTexCoords - no texCoords in vertexData.");
+		return false;
+	}
 }
 
-//--------------------------------------------------------------	
-int ofMesh::numFaces(){
-	return faces.size();
+//--------------------------------------------------------------
+bool ofMesh::setupIndicesForVbo(int usage){
+	int size = vertexData->getNumIndices();
+	if(size){
+		vbo.setIndexData(vertexData->getIndexPointer(), size, usage);
+		return true;
+	}else{
+		ofLog(OF_LOG_WARNING,"ofMesh:setupIndices - no indices in vertexData.");
+		return false;
+	}
 }
 
-//--------------------------------------------------------------	
-int ofMesh::numNormals(){
-	return normals.size();			
+//--------------------------------------------------------------
+void ofMesh::enableColors(){
+	bEnableColors = true;
 }
 
-//--------------------------------------------------------------		
-int ofMesh::numTexCoords(){
-	return texCoords.size();			
+//--------------------------------------------------------------
+void ofMesh::disableColors(){
+	bEnableColors = false;
 }
 
-//--------------------------------------------------------------	
-int ofMesh::numColors(){
-	return colors.size();			
+//--------------------------------------------------------------
+void ofMesh::enableNormals(){
+	bEnableNormals = true;
 }
-*/
+
+//--------------------------------------------------------------
+void ofMesh::disableNormals(){
+	bEnableNormals = false;
+}
+
+//--------------------------------------------------------------
+void ofMesh::enableTexCoords(){
+	bEnableTexCoords = true;
+}
+
+//--------------------------------------------------------------
+void ofMesh::disableTexCoords(){
+	bEnableTexCoords = false;
+}
+
+//--------------------------------------------------------------
+void ofMesh::setupVbo(){	
+	if(!vbo.getIsAllocated() || vertexData->haveVertsChanged()){
+		setupVerticesForVbo(drawType);
+	}
+	
+	if(bEnableColors){
+		if((vertexData->getNumColors() && !vbo.getUsingColors()) || vertexData->haveColorsChanged()){
+			setupColorsForVbo(drawType);
+		}
+	}
+	
+	if(bEnableNormals){
+		if((vertexData->getNumNormals() && !vbo.getUsingNormals()) || vertexData->haveNormalsChanged()){
+			setupNormalsForVbo(drawType);
+		}
+	}
+	
+	if(bEnableTexCoords){
+		if((vertexData->getNumTexCoords() && !vbo.getUsingTexCoords()) || vertexData->haveTexCoordsChanged()){
+			setupTexCoordsForVbo(drawType);
+		}
+	}
+	
+	if(bEnableIndices){
+		if((vertexData->getNumIndices() && !vbo.getUsingIndices()) || vertexData->haveIndicesChanged()){
+			setupIndicesForVbo(drawType);
+		}
+	}	
+}
+
+//--------------------------------------------------------------
+void ofMesh::setupVertexArray(){
+	if(vertexData->getNumVertices()){
+		glEnableClientState(GL_VERTEX_ARRAY);
+		glVertexPointer(3, GL_FLOAT, sizeof(ofVec3f), vertexData->getVerticesPointer());
+	}
+	
+	if(bEnableColors && vertexData->getNumColors()){
+		glEnableClientState(GL_COLOR_ARRAY);
+		glColorPointer(4, GL_FLOAT, sizeof(ofColor), vertexData->getColorsPointer());
+	}
+	
+	if(bEnableNormals && vertexData->getNumNormals()){
+		glEnableClientState(GL_NORMAL_ARRAY);
+		glNormalPointer(GL_FLOAT, sizeof(ofVec3f), vertexData->getNormalsPointer());
+	}
+	
+	if(bEnableTexCoords && vertexData->getNumTexCoords()){
+		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+		glTexCoordPointer(2, GL_FLOAT, sizeof(ofVec2f), vertexData->getTexCoordsPointer());
+	}
+
+}
+
+//--------------------------------------------------------------
+void ofMesh::draw(polyMode renderType){
+	if(renderMethod == OF_MESH_USING_VBO){
+		setupVbo();
+	}else if (renderMethod == OF_MESH_USING_VERTEX_ARRAY){
+		setupVertexArray();
+	}
+	
+	glPushAttrib(GL_POLYGON_BIT);
+	glPolygonMode(GL_FRONT_AND_BACK, ofGetGLPolyMode(renderType));
+	
+	GLuint mode = ofGetGLPrimitiveMode(vertexData->getMode());
+	
+	if(bEnableIndices){
+		if(renderMethod == OF_MESH_USING_VBO){
+			vbo.drawElements(mode,vertexData->getNumIndices());
+		}else if(renderMethod == OF_MESH_USING_VERTEX_ARRAY && vertexData->getNumIndices()){
+			glDrawElements(mode, vertexData->getNumIndices(), GL_UNSIGNED_INT, vertexData->getIndexPointer());
+		}
+	}else{
+		if(renderMethod == OF_MESH_USING_VBO){
+			vbo.draw(mode,0,vertexData->getNumVertices());
+		}else if(renderMethod == OF_MESH_USING_VERTEX_ARRAY){
+			glDrawArrays(mode,0,vertexData->getNumVertices());
+		}
+	}
+	
+	if(renderMethod == OF_MESH_USING_VERTEX_ARRAY){
+		glDisableClientState(GL_VERTEX_ARRAY);
+		glDisableClientState(GL_COLOR_ARRAY);
+		glDisableClientState(GL_NORMAL_ARRAY);
+		glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+	}
+		
+	glPopAttrib();
+}
+
+//--------------------------------------------------------------
+void ofMesh::drawVertices(){
+	draw(OF_MESH_POINTS);
+}
+
+//--------------------------------------------------------------
+void ofMesh::drawWireframe(){
+	draw(OF_MESH_WIREFRAME);
+}
+
+//--------------------------------------------------------------
+void ofMesh::drawFaces(){
+	draw(OF_MESH_FILL);
+}

@@ -1,57 +1,100 @@
-//Keith Pasko, Memo Akten
-
 #pragma once
 
-#include "ofMeshElement.h"
-#include "ofUtils.h"
+#include "ofVertexData.h"
+#include "ofVbo.h"
 
-//TODO: implement via this
-// add/edit/remove elements
+enum polyMode{
+	OF_MESH_POINTS,
+	OF_MESH_WIREFRAME,
+	OF_MESH_FILL
+};
+
+inline GLuint ofGetGLPolyMode(polyMode m){
+	switch(m){
+		case(OF_MESH_POINTS):
+			return GL_POINT;
+			break;
+		case(OF_MESH_WIREFRAME):
+			return GL_LINE;	
+			break;
+		case(OF_MESH_FILL):
+			return GL_FILL;	
+			break;
+		default:
+			ofLog(OF_LOG_ERROR,"asked for unsupported or non existant poly mode " + ofToString(m) + " returning GL_FILL");
+			return GL_FILL;
+			break;
+	}
+}
+
+inline polyMode ofGetOFPolyMode(GLuint m){
+	switch(m){
+		case(GL_POINT):
+			return OF_MESH_POINTS;
+			break;
+		case(GL_LINE):
+			return OF_MESH_WIREFRAME;	
+			break;
+		case(GL_FILL):
+			return OF_MESH_FILL;	
+			break;
+		default:
+			ofLog(OF_LOG_ERROR,"asked for non existant glPolygonMode " + ofToString(m) + " returning OF_MESH_FILL");
+			return OF_MESH_FILL;
+			break;
+	}
+}
+
+enum meshRenderMethod{
+	OF_MESH_USING_VBO,
+	OF_MESH_USING_VERTEX_ARRAY
+};
+
 
 class ofMesh{
 public:
 	ofMesh();
 	~ofMesh();
-
-	void clear();
-//	int addVertex(ofVec3f pos, ofVec3f normal, ofColor color, ofVec2f texCoord);
-//	int addVertex(const ofVec3f& pos);
-//	int addFace(int vi1, int vi2, int vi3);
-	void flipNormals();
-//	int getFaceVertexId(const ofFace& f, int index);
-	//would like to be reference, but what if there is none?
-//	ofVec3f* getFaceVertex(const ofFace& f, int index);
-
-	int numVertices();
-	int numFaces();
-	int numNormals();
-	int numTexCoords();
-	int numColors();
-	
-	void addElement(int mode, const vector<ofVec3f>& verts);
 	
 	/*
-	void addTriangleFan(const vector<ofVec3f>& verts) {
-		addElement(OF_MESH_FAN, verts);
-	}
-	 */
-
-	vector<ofMeshElement> elements;
-
-	string name;
-	bool bUsingNormals;
-	bool bUsingColors;
-	bool bUsingTexCoords;
-	int faceType;
-	//	int windingType;
-
-	
-	/* to be included?
-	vector<ofVec3f> tangents;
-	vector<ofVec3f> biTangents;
-
-	// TODO: multiple color/texCoord maps?
-	vector <vector <ofColor> > colors;
-	vector <vector <ofVec2f> > texCoords;
+	ofMesh(const ofMesh& v);
+	ofMesh& operator=(const ofMesh& v);
+	void clone(const ofMesh& v);
 	*/
+	
+	void setVertexData(ofVertexData* m);
+	void setUseIndices(bool useIndices=true);
+	
+	ofVertexData* getVertexData();
+	const ofVertexData* getVertexData() const;
+	
+	void setDrawType(int drawType);
+	void setRenderMethod(meshRenderMethod m);
+	
+	bool setupVerticesForVbo(int usage);
+	bool setupColorsForVbo(int usage);
+	bool setupNormalsForVbo(int usage);
+	bool setupTexCoordsForVbo(int usage);
+	bool setupIndicesForVbo(int usage);
+	 
+	void drawVertices();
+	void drawWireframe();
+	void drawFaces();
+	void draw(polyMode mode);
+	
+	void setupVbo();
+	void setupVertexArray();
+	
+	void enableColors();
+	void disableColors();
+	void enableNormals();
+	void disableNormals();
+	void enableTexCoords();
+	void disableTexCoords();
+	
+    ofVertexData* vertexData;
+	bool bEnableIndices, bEnableColors, bEnableNormals, bEnableTexCoords;
+	ofVbo vbo;
+	int drawType;
+	meshRenderMethod renderMethod;
 };

@@ -24,8 +24,22 @@ void ofPolyline::draw() const {
 	for ( int i=1; i<(int)points.size(); i++ ) {
 		ofLine( points[i-1], points[i] );
 	}
+	if(bClosed && points.size() > 1) {
+		ofLine( points[points.size()-1], points[0] );
+	}
 }
 
+float ofPolyline::getPerimeter() const {
+	float perimeter = 0;
+	int lastPosition = points.size() - 1;
+	for(int i = 0; i < lastPosition; i++) {
+		perimeter += points[i].distance(points[i + 1]);
+	}
+	if(bClosed && points.size() > 1) {
+		perimeter += points[points.size() - 1].distance(points[0]);
+	}
+	return perimeter;
+}
 
 ofShape::ofShape(){
 	bFilled = ofGetStyle().bFill;

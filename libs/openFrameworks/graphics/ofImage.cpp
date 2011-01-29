@@ -641,7 +641,7 @@ void ofImage::changeTypeOfPixels(ofPixels &pix, ofImageType newType){
 			}
 			break;
 		default:
-			ofLogError("of.Image") << "format not supported";
+			ofLog(OF_LOG_ERROR, "format not supported");
 	}
 
 	putBmpIntoPixels(convertedBmp, pix, false);
