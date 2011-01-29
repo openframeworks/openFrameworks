@@ -172,8 +172,6 @@ void ofVideoGrabber::update(){
 #else
 			else if(internalPixelFormat == OF_PIXELS_MONO)
 				tex.loadData(grabber->getPixels(), tex.getWidth(), tex.getHeight(), GL_LUMINANCE);
-			else if(internalPixelFormat == OF_PIXELS_MONO)
-				tex.allocate(width, height, GL_LUMINANCE);
 #endif
 			
 		}

@@ -4,12 +4,19 @@
 #include "ofVbo.h"
 
 //enum for drawing mode status
+#ifndef TARGET_OPENGLES
 enum polyMode{
 	OF_MESH_POINTS = GL_POINT,
 	OF_MESH_WIREFRAME = GL_LINE,
 	OF_MESH_FILL = GL_FILL
 };
-
+#else
+enum polyMode{
+	OF_MESH_POINTS,
+	OF_MESH_WIREFRAME,
+	OF_MESH_FILL
+};
+#endif
 
 class ofVboMesh{
 public:

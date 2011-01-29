@@ -115,8 +115,8 @@ public:
 	
 	int getIndex(int i);
 	void addIndex(int i);
-	void addIndices(const vector<GLuint>& inds);
-	void addIndices(const GLuint* inds, int amt);
+	void addIndices(const vector<GLubyte>& inds);
+	void addIndices(const GLubyte* inds, int amt);
 	void removeIndex(int i);
 	void setIndex(int i, int val);
 	
@@ -130,7 +130,7 @@ public:
 	ofColor* getColorsPointer();
 	ofVec3f* getNormalsPointer();
 	ofVec2f* getTexCoordsPointer();
-	GLuint* getIndexPointer();
+	GLubyte* getIndexPointer();
 	
 	vector<int>& getFace(int faceId);
 	
@@ -145,7 +145,7 @@ protected:
 	vector<ofColor> colors;
 	vector<ofVec3f> normals;
 	vector<ofVec2f> texCoords;
-	vector<GLuint> indices;
+	vector<GLubyte> indices;
 	bool bVertsChanged, bColorsChanged, bNormalsChanged, bTexCoordsChanged, bIndicesChanged;
 	ofPrimitiveMode mode;
 	

@@ -169,13 +169,13 @@ void ofVertexData::addIndex(int i){
 }
 
 //--------------------------------------------------------------
-void ofVertexData::addIndices(const vector<GLuint>& inds){
+void ofVertexData::addIndices(const vector<GLubyte>& inds){
 	indices.insert(indices.end(),inds.begin(),inds.end());
 	bIndicesChanged = true;
 }
 
 //--------------------------------------------------------------
-void ofVertexData::addIndices(const GLuint* inds, int amt){
+void ofVertexData::addIndices(const GLubyte* inds, int amt){
 	for (int i = 0; i < amt;i++){
 		addIndex(inds[i]);
 	}
@@ -266,7 +266,7 @@ ofVec2f* ofVertexData::getTexCoordsPointer(){
 }
 
 //--------------------------------------------------------------
-GLuint* ofVertexData::getIndexPointer(){
+GLubyte* ofVertexData::getIndexPointer(){
 	return &indices[0];
 }
 
@@ -356,6 +356,6 @@ void ofVertexData::setupIndicesAuto(){
 	bIndicesChanged = true;
 	indices.clear();
 	for(int i = 0; i < (int)vertices.size();i++){
-		indices.push_back((GLuint)i);
+		indices.push_back((GLubyte)i);
 	}
 }

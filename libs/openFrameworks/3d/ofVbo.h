@@ -31,7 +31,7 @@ private:
 	float* normalData;
 	float* texCoordData;
 	float* colorData;
-	GLuint* indexData;
+	GLubyte* indexData;
 	
 public:
 	
@@ -47,7 +47,7 @@ public:
 	void setColorData(const ofColor * colors, int total, int usage);	
 	void setNormalData(const ofVec3f * normals, int total, int usage);	
 	void setTexCoordData(const ofVec2f * texCoords, int total, int usage);	
-	void setIndexData(const GLuint * indices, int total, int usage);
+	void setIndexData(const GLubyte * indices, int total, int usage);
 	
 	/*
 	void updateVertexData(const ofVec3f * verts, int total);
@@ -61,13 +61,13 @@ public:
 	float* getColorPointer();
 	float* getNormalPointer();
 	float* getTexCoordPointer();
-	GLuint* getIndexPointer();
+	GLubyte* getIndexPointer();
 	
 	GLuint getVertId();
 	GLuint getColorId();
 	GLuint getNormalId();
 	GLuint getTexCoordId();
-	GLuint getIndexId();
+	GLubyte getIndexId();
 	
 	bool getIsAllocated();
 	bool getUsingVerts();
