@@ -62,11 +62,18 @@ public:
 	void updateShape();
 	void draw(float x=0, float y=0);
 
-	ofShape & getShape(int curveResolution=16, bool tesselated=false);
+	ofShape & getShape(int curveResolution=-1);
+
+
 
 	struct Command;
-	const vector<Command> & getCommands() const;
+
+	// only needs to be called when path is modified externally
+	void markedChanged();
+	vector<Command> & getCommands();
 	vector<ofPath> & getSubPaths();
+
+	const vector<Command> & getCommands() const;
 	const vector<ofPath> & getSubPaths() const;
 
 	void addCommand(const Command & command);
@@ -79,8 +86,8 @@ public:
 			curve3DTo,
 			bezier3DTo,
 			bezier2DTo,
-			quadricBezier3DTo,
-			quadricBezier2DTo,
+			quadBezier3DTo,
+			quadBezier2DTo,
 			arc2D,
 			arc3D,
 		};
@@ -95,47 +102,25 @@ public:
 		Command(Type type , const ofPoint & p, const ofPoint & cp1, const ofPoint & cp2)
 		:type(type)
 		,to(p)
+		,cp1(cp1)
+		,cp2(cp2)
 		{
-			controlPoints.reserve(2);
-			controlPoints.push_back(cp1);
-			controlPoints.push_back(cp2);
 		}
 
 		///for arc
 		Command(Type type , const ofPoint & centre, float radiusX, float radiusY, float angleBegin, float angleEnd)
 		:type(type)
 		,to(centre)
+		,radiusX(radiusX)
+		,angleBegin(angleBegin)
+		,angleEnd(angleEnd)
 		{
-			additionalParams.reserve(4);
-			additionalParams.push_back(radiusX);
-			additionalParams.push_back(radiusY);
-			additionalParams.push_back(angleBegin);
-			additionalParams.push_back(angleEnd);
 		}
-		const float & radiusX() const { return additionalParams[0]; }
-		const float & radiusY()const { return additionalParams[1]; }
-		const float & angleBegin()const { return additionalParams[2]; }
-		const float & angleEnd()const { return additionalParams[3]; }
-
-		const ofPoint & cp1()const { return controlPoints[0]; }
-		const ofPoint & cp2()const { return controlPoints[1]; }
-
-		float & radiusX() { return additionalParams[0]; }
-		float & radiusY() { return additionalParams[1]; }
-		float & angleBegin() { return additionalParams[2]; }
-		float & angleEnd() { return additionalParams[3]; }
-
-		ofPoint & cp1() { return controlPoints[0]; }
-		ofPoint & cp2() { return controlPoints[1]; }
 
 		Type type;
 		ofPoint to;
-
-		/// for arc radius/angles
-		vector<float> additionalParams;
-
-		/// for bezier control points
-		vector<ofPoint> controlPoints;
+		ofPoint cp1, cp2;
+		float radiusX, radiusY, angleBegin, angleEnd;
 	};
 
 

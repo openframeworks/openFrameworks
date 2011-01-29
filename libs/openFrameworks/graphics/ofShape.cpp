@@ -317,7 +317,7 @@ void ofShape::setCircleResolution(int res){
 	}
 }
 
-void ofShape::setFrom(const ofPath & path,  int curveResolution, bool tesselate){
+void ofShape::setFrom(const ofPath & path,  int curveResolution, bool bTesselate){
 	// TODO: 3D commands
 	clear();
 	const vector<ofPath::Command> & commands = path.getCommands();
@@ -332,15 +332,15 @@ void ofShape::setFrom(const ofPath & path,  int curveResolution, bool tesselate)
 			break;
 		case ofPath::Command::bezier2DTo:
 			curveVertices.clear();
-			bezierTo(commands[i].cp1(),commands[i].cp2(),commands[i].to, curveResolution);
+			bezierTo(commands[i].cp1,commands[i].cp2,commands[i].to, curveResolution);
 			break;
-		case ofPath::Command::quadricBezier2DTo:
+		case ofPath::Command::quadBezier2DTo:
 			curveVertices.clear();
-			quadBezierTo(commands[i].cp1(),commands[i].cp2(),commands[i].to, curveResolution);
+			quadBezierTo(commands[i].cp1,commands[i].cp2,commands[i].to, curveResolution);
 			break;
 		case ofPath::Command::arc2D:
 			curveVertices.clear();
-			arc(commands[i].to,commands[i].radiusX(),commands[i].radiusY(),commands[i].angleBegin(),commands[i].angleEnd(), curveResolution);
+			arc(commands[i].to,commands[i].radiusX,commands[i].radiusY,commands[i].angleBegin,commands[i].angleEnd, curveResolution);
 			break;
 
 		case ofPath::Command::line3DTo:
@@ -356,13 +356,13 @@ void ofShape::setFrom(const ofPath & path,  int curveResolution, bool tesselate)
 			break;
 		case ofPath::Command::bezier3DTo:
 			curveVertices.clear();
-			bezierTo(commands[i].cp1(),commands[i].cp2(),commands[i].to, curveResolution);
+			bezierTo(commands[i].cp1,commands[i].cp2,commands[i].to, curveResolution);
 			polyline.setIs3D(true);
 			bIs3D = true;
 			break;
 		case ofPath::Command::arc3D:
 			curveVertices.clear();
-			arc(commands[i].to,commands[i].radiusX(),commands[i].radiusY(),commands[i].angleBegin(),commands[i].angleEnd(), curveResolution);
+			arc(commands[i].to,commands[i].radiusX,commands[i].radiusY,commands[i].angleBegin,commands[i].angleEnd, curveResolution);
 			polyline.setIs3D(true);
 			bIs3D = true;
 			break;
@@ -378,8 +378,9 @@ void ofShape::setFrom(const ofPath & path,  int curveResolution, bool tesselate)
 
 	for(int i=0; i<(int)path.getSubPaths().size(); i++){
 		//TODO: cast to change the constness, nasty but ofPath is internally only changing the cached shape
-		addSubShape(((ofPath&)path).getSubPaths()[i].getShape(curveResolution,tesselate));
+		addSubShape(((ofPath&)path).getSubPaths()[i].getShape(curveResolution));
 	}
+	if(bTesselate) tessellate();
 }
 
 void ofShape::bezierTo( const ofPoint & cp1, const ofPoint & cp2, const ofPoint & to, int curveResolution ){
