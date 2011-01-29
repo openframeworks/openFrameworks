@@ -19,5 +19,7 @@ class testApp : public ofBaseApp {
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);		
 
-		ofImage ofLogo;
+		ofImage ofLogo; // the OF logo
+		ofLight light; // creates a light and enables lighting
+		ofEasyCam cam; // add mouse controls for camera movement
 };

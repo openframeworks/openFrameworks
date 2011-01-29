@@ -1,23 +1,8 @@
-//Todd Vanderlin, Keith Pasko
-
-//TODO: LOADS AND LOADS of GL error checking
-//TODO: Add GLuint for vbo itself. make sure data is only sent to GPU if its updated, not otherwise
-//TODO: Add edge flags
+//TODO: Speedtest repeated setup vs. update call
+//TODO: Add edge flags?
 
 #pragma once
 #include "ofMain.h"
-
-enum {
-	OF_VBO_VERTEX,
-	OF_VBO_NORMAL,
-	OF_VBO_COLOR,
-	OF_VBO_TEX_COORDS
-};
-
-enum {
-	OF_VBO_STATIC = GL_STATIC_DRAW,	
-	OF_VBO_STREAM = GL_STREAM_DRAW
-};
 
 class ofVbo {
 	
@@ -37,16 +22,20 @@ private:
 	bool bUsingNormals;
 	bool bUsingIndices;
 	
+	GLsizei vertStride;
+	int		vertSize;
+	int		totalVerts;
+	
 	int vertUsage;
 	int colorUsage;
 	int normUsage;
 	int texUsage;
 	
-	float* vertData;
-	float* normalData;
-	float* texCoordData;
-	float* colorData;
-	GLuint* indexData;
+	/*float*  vertData;
+	float*  normalData;
+	float*  texCoordData;
+	float*  colorData;
+	GLuint* indexData;*/
 	
 public:
 	
@@ -59,12 +48,25 @@ public:
 	// if you want to move to verts around you use OF_VBO_STREAM
 	
 	void setVertexData(const ofVec3f * verts, int total, int usage);
+	void setVertexData(const ofVec2f * verts, int total, int usage);
+
 	void setColorData(const ofColor * colors, int total, int usage);	
 	void setNormalData(const ofVec3f * normals, int total, int usage);	
 	void setTexCoordData(const ofVec2f * texCoords, int total, int usage);	
-	void setIndexData(const GLuint * indices, int total);
+	void setIndexData(const GLuint * indices, int total, int usage);
+
+	void setVertexData(const float * vert0x, int total, int usage);
+	void setColorData(const float * color0x, int total, int usage);	
+	void setNormalData(const float * normal0x, int total, int usage);	
+	void setTexCoordData(const float * texCoord0x, int total, int usage);	
 	
-	//TODO: update methods
+	/*
+	void updateVertexData(const ofVec3f * verts, int total);
+	void updateColorData(const ofColor * colors, int total);	
+	void updateNormalData(const ofVec3f * normals, int total);	
+	void updateTexCoordData(const ofVec2f * texCoords, int total);	
+	void updateIndexData(const GLuint * indices, int total);
+	 */
 	
 	float* getVertPointer();
 	float* getColorPointer();

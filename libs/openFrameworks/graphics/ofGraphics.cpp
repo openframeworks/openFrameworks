@@ -176,16 +176,27 @@ ofHandednessType ofGetCoordHandedness() {
 }
 
 //----------------------------------------------------------
-void ofSetupScreenPerspective(float width, float height, bool vFlip, float fov, float nearDist, float farDist) {
-	if(width == 0) width = ofGetViewportWidth();
-	if(height == 0) height = ofGetViewportHeight();
-
-	float eyeX = width / 2;
-	float eyeY = height / 2;
+void ofSetupScreenPerspective(float width, float height, int orientation,  bool vFlip, float fov, float nearDist, float farDist) {
+	if(width == 0) width = ofGetWidth();
+	if(height == 0) height = ofGetHeight();
+	if( orientation == 0 ) orientation = ofGetOrientation();
+		
+	float w = width;
+	float h = height;
+	
+	//we do this because ofGetWidth and ofGetHeight return orientated widths and height
+	//for the camera we need width and height of the actual screen
+	if( orientation == OF_ORIENTATION_90_LEFT || orientation == OF_ORIENTATION_90_RIGHT ){
+		h = width;
+		w = height;
+	}
+		
+	float eyeX = w / 2;
+	float eyeY = h / 2;
 	float halfFov = PI * fov / 360;
 	float theTan = tanf(halfFov);
 	float dist = eyeY / theTan;
-	float aspect = (float) width / height;
+	float aspect = (float) w / h;
 	
 	if(nearDist == 0) nearDist = dist / 10.0f;
 	if(farDist == 0) farDist = dist * 10.0f;
@@ -198,13 +209,49 @@ void ofSetupScreenPerspective(float width, float height, bool vFlip, float fov, 
 	glLoadIdentity();
 	gluLookAt(eyeX, eyeY, dist, eyeX, eyeY, 0, 0, 1, 0);
 	
-	ofSetCoordHandedness(OF_RIGHT_HANDED);
-	
-	if(vFlip) {
-		glScalef(1, -1, 1);           // invert Y axis so increasing Y goes down.
-		glTranslatef(0, -height, 0);       // shift origin up to upper-left corner.
-		ofSetCoordHandedness(OF_LEFT_HANDED);
+	//note - theo checked this on iPhone and Desktop for both vFlip = false and true
+	switch(orientation) {
+		case OF_ORIENTATION_180:
+			glRotatef(-180, 0, 0, 1);
+			if(vFlip){
+				glScalef(1, -1, 1);        
+				glTranslatef(-width, 0, 0);  
+			}else{
+				glTranslatef(-width, -height, 0);  			
+			}
+
+			break;
+			
+		case OF_ORIENTATION_90_RIGHT:
+			glRotatef(-90, 0, 0, 1);
+			if(vFlip){						
+				glScalef(-1, 1, 1);        
+			}else{
+				glScalef(-1, -1, 1);        
+				glTranslatef(0, -height, 0);    			
+			}
+			break;
+			
+		case OF_ORIENTATION_90_LEFT:
+			glRotatef(90, 0, 0, 1);
+			if(vFlip){			
+				glScalef(-1, 1, 1);      
+				glTranslatef(-width, -height, 0);
+			}else{
+				glScalef(-1, -1, 1);      			
+				glTranslatef(-width, 0, 0);
+			}
+			break;
+
+		case OF_ORIENTATION_DEFAULT:
+		default:
+			if(vFlip){
+				glScalef(1, -1, 1);        
+				glTranslatef(0, -height, 0);  
+			}
+			break;
 	}
+			
 }
 
 //----------------------------------------------------------
@@ -1035,6 +1082,31 @@ void ofEnableBlendMode(ofBlendMode blendMode){
 }
 
 //----------------------------------------------------------
+void ofEnablePointSprites() {
+#ifdef TARGET_OF_IPHONE
+	glEnable(GL_POINT_SPRITE_OES);
+	glTexEnvi(GL_POINT_SPRITE_OES, GL_COORD_REPLACE_OES, GL_TRUE);
+	// does look like this needs to be enabled in ES because
+	// it is always eneabled...
+	//glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
+	
+#else
+	glEnable(GL_POINT_SPRITE);
+	glTexEnvi(GL_POINT_SPRITE, GL_COORD_REPLACE, GL_TRUE);
+	glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);	
+#endif
+}
+
+//----------------------------------------------------------
+void ofDisablePointSprites() {
+#ifdef TARGET_OF_IPHONE
+	glDisable(GL_POINT_SPRITE_OES);
+#else
+	glDisable(GL_POINT_SPRITE);
+#endif
+}
+
+//----------------------------------------------------------
 void ofDisableBlendMode()
 {
     glDisable(GL_BLEND);
@@ -1196,39 +1268,6 @@ void ofDrawBitmapString(string textString, float x, float y){
 }
 //--------------------------------------------------
 void ofDrawBitmapString(string textString, float x, float y, float z){
-#ifndef TARGET_OPENGLES	// temp for now, until is ported from existing iphone implementations
-
-    glPushClientAttrib( GL_CLIENT_PIXEL_STORE_BIT );
-    glPixelStorei( GL_UNPACK_SWAP_BYTES,  GL_FALSE );
-    glPixelStorei( GL_UNPACK_LSB_FIRST,   GL_FALSE );
-    glPixelStorei( GL_UNPACK_ROW_LENGTH,  0        );
-    glPixelStorei( GL_UNPACK_SKIP_ROWS,   0        );
-    glPixelStorei( GL_UNPACK_SKIP_PIXELS, 0        );
-    glPixelStorei( GL_UNPACK_ALIGNMENT,   1        );
-
-	int len = (int)textString.length();
-	float yOffset = 0;
-	float fontSize = 8.0f;
-	glRasterPos3f(x,y,z);
-	bool bOrigin = false;
-	for(int c = 0; c < len; c++)
-	{
-		if(textString[c] == '\n')
-		{
-
-			yOffset += bOrigin ? -1 : 1 * (fontSize*1.7);
-			glRasterPos2f(x,y + (int)yOffset);
-		} else if (textString[c] >= 32){
-			// < 32 = control characters - don't draw
-			// solves a bug with control characters
-			// getting drawn when they ought to not be
-			ofDrawBitmapCharacter(textString[c]);
-			//ofDrawBitmapCharacter(textString[c], x + (c * 8), y);
-		}
-	}
-
-	glPopClientAttrib( );
-#else 
 	
 	// this is copied from the ofTrueTypeFont
 	GLboolean blend_enabled = glIsEnabled(GL_BLEND);
@@ -1236,9 +1275,8 @@ void ofDrawBitmapString(string textString, float x, float y, float z){
 	glGetIntegerv( GL_BLEND_SRC, &blend_src );
 	glGetIntegerv( GL_BLEND_DST, &blend_dst );
 	
-    	glEnable(GL_BLEND);
+	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	// (c) enable texture once before we start drawing each char (no point turning it on and off constantly)
 	
 	
 	int len = (int)textString.length();
@@ -1249,10 +1287,12 @@ void ofDrawBitmapString(string textString, float x, float y, float z){
 	float sx = x;
 	float sy = y - fontSize;
 	
-	for(int c = 0; c < len; c++)
-	{
-		if(textString[c] == '\n')
-		{
+	// (c) enable texture once before we start drawing each char (no point turning it on and off constantly)
+	//We do this because its way faster
+	ofDrawBitmapCharacterStart();
+	
+	for(int c = 0; c < len; c++){
+		if(textString[c] == '\n'){
 			
 			sy += bOrigin ? -1 : 1 * (fontSize*1.7);
 			sx = x;
@@ -1267,13 +1307,13 @@ void ofDrawBitmapString(string textString, float x, float y, float z){
 			sx += fontSize;
 		}
 	}
-	
-	if( !blend_enabled )
+	//We do this because its way faster
+	ofDrawBitmapCharacterEnd();
+
+	if( !blend_enabled ){
 		glDisable(GL_BLEND);
+	}
 	glBlendFunc( blend_src, blend_dst );
-	
-	
-#endif
 }
 
 

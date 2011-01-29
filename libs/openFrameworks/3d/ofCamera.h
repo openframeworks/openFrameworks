@@ -20,7 +20,8 @@
 #include "ofRectangle.h"
 #include "ofAppRunner.h"
 #include "ofNode.h"
-#include "ofNodeWithTarget.h"
+
+#define OF_CAMERA_MATRIX_CACHE_WARNING ofLog(OF_LOG_WARNING, "ofCamera::getXXXXMatrix : If you want to call this function a lot, then make sure ofCamera::cacheMatrices = true, then we'll cache the data from the draw loop");
 
 // Use the public API of ofNode for all transformations
 //class ofCamera : public ofNodeWithTarget {
@@ -37,18 +38,36 @@ public:
 	void disableOrtho();
 	bool getOrtho() const;
 	
+	float getImagePlaneDistance(ofRectangle viewport = ofGetCurrentViewport()) const;
+	
 	// set the matrices
-	virtual void begin(ofRectangle rect = ofGetWindowRect());
+	virtual void begin(ofRectangle viewport = ofGetCurrentViewport());
 	virtual void end();
 	
-	// for hardcore peeps, access to the projection matrix()
-	//	ofMatrix4x4 &getProjectionMatrix();	
+	// for hardcore peeps, access to the projection matrix
+	bool cacheMatrices;
+	ofMatrix4x4 getProjectionMatrix(ofRectangle viewport = ofGetCurrentViewport());	
+	ofMatrix4x4 getModelViewMatrix();
+	ofMatrix4x4 getModelViewProjectionMatrix(ofRectangle viewport = ofGetCurrentViewport());
+	
+	// convert between spaces
+	ofVec3f worldToScreen(ofVec3f WorldXYZ, ofRectangle viewport = ofGetCurrentViewport()); 
+	ofVec3f screenToWorld(ofVec3f ScreenXYZ, ofRectangle viewport = ofGetCurrentViewport());
+	ofVec3f worldToCamera(ofVec3f WorldXYZ, ofRectangle viewport = ofGetCurrentViewport());
+	ofVec3f cameraToWorld(ofVec3f CameraXYZ, ofRectangle viewport = ofGetCurrentViewport());
+	
 	
 protected:
+	void calcClipPlanes(ofRectangle viewport);
+	
 	bool isOrtho;
 	float fov;
 	float nearClip;
 	float farClip;
 	bool isActive;
+	
+	bool hasStoredMatrices;
+	ofMatrix4x4 matProjection;
+	ofMatrix4x4 matModelView;
 };
 
