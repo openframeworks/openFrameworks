@@ -192,19 +192,11 @@ void testApp::setup(){
 	
 	// show a faint the non-curve version of the same polygon:
 	pathFNonCurve.setFilled( false );
-	pathFNonCurve.setColor( ofColor(0,0,0,40) );
+	pathFNonCurve.setColor( ofColor(0,0,0,80) );
 	for (int i = 0; i < nCurveVertexes; i++){
 		pathFNonCurve.lineTo(curveVertices[i].x, curveVertices[i].y);
 	}
 	pathFNonCurve.close();
-
-	
-	ofSetColor(0,0,0,80);
-	for (int i = 0; i < nCurveVertexes; i++){
-		if (curveVertices[i].bOver == true) ofFill();
-		else ofNoFill();
-		ofCircle(curveVertices[i].x, curveVertices[i].y,4);
-	}
 	//-------------------------------------
 	
 	
@@ -276,33 +268,15 @@ void testApp::setup(){
 	pathIa.lineTo(380,550);
 	pathIa.lineTo(300,600);
 	pathIa.close();
-	/*for (int i = 0; i < 20; i++){
-		float anglef = ((float)i / 19.0f) * TWO_PI;
-		float x = 340 + 30 * cos(anglef);
-		float y = 550 + 30 * sin(anglef); 
-		pathIa.lineTo(x,y);
-		radius 	+= radiusAdder; 
-	}*/
 	pathIa.arc(340,550,30,30,0,360);
-	
+
+
 	pathIb.setPolyWindingMode(OF_POLY_WINDING_NONZERO);
 	pathIb.setHexColor(0xff00ff);
 	pathIb.setFilled(false);
-	
 	pathIb.lineTo(400,500);
 	pathIb.lineTo(480,550);
 	pathIb.lineTo(400,600);
-	
-	pathIb.close();
-	
-	/*for (int i = 0; i < 20; i++){
-		float anglef = ((float)i / 19.0f) * TWO_PI;
-		float x = 440 + 30 * cos(anglef);
-		float y = 550 + 30 * sin(anglef); 
-		pathIb.lineTo(x,y);
-		radius 	+= radiusAdder; 
-	}*/
-	
 	pathIb.close();
 	pathIb.arc(440,550,30,60,0,360);
 
@@ -313,18 +287,16 @@ void testApp::setup(){
 	pathIc.lineTo(580,550);
 	pathIc.lineTo(500,600);
 	pathIc.close();
-	
-	/*for (int i = 0; i < 20; i++){
-		float anglef = ((float)i / 19.0f) * TWO_PI;
-		float x = 540 + 30 * cos(anglef);
-		float y = 550 + 30 * sin(anglef); 
-		pathIc.lineTo(x,y);
-		radius 	+= radiusAdder; 
-	}
-	
-	pathIc.close();*/
 	pathIc.arc(540,550,30,20,0,360);
 	
+	selectedDraggableVertex.arc(0,0,4,4,0,360);
+	selectedDraggableVertex.setFilled(true);
+	selectedDraggableVertex.setColor(ofColor(0,0,0,80));
+
+	unselectedDraggableVertex.arc(0,0,4,4,0,360);
+	unselectedDraggableVertex.setFilled(false);
+	unselectedDraggableVertex.setColor(ofColor(0,0,0,80));
+
 
 
 	cairo.draw(pathA);
@@ -444,10 +416,10 @@ void testApp::draw(){
 	// 
 	// 		use sin cos and time to make some spirally shape
 	// 
-	glPushMatrix();
-	glTranslatef(100,300,0);
+	ofPushMatrix();
+	ofTranslate(100,300);
 	pathE.draw();
-	glPopMatrix();
+	ofPopMatrix();
 	
 
 	
@@ -460,11 +432,10 @@ void testApp::draw(){
 	ofEnableAlphaBlending();
 	pathFNonCurve.draw();
 
-	ofSetColor(0,0,0,80);
+	ofSetColor(255,255,255);
 	for (int i = 0; i < nCurveVertexes; i++){
-		if (curveVertices[i].bOver == true) ofFill();
-		else ofNoFill();
-		ofCircle(curveVertices[i].x, curveVertices[i].y,4);
+		if (curveVertices[i].bOver == true) selectedDraggableVertex.draw(curveVertices[i].x, curveVertices[i].y);
+		else unselectedDraggableVertex.draw(curveVertices[i].x, curveVertices[i].y);
 	}
 	ofDisableAlphaBlending();
 	
@@ -473,7 +444,6 @@ void testApp::draw(){
 	// 
 	// 		addBezierVertex	
 	// 
-	ofSetColor(255,255,255);
 	pathG.draw();
 	float x0 = 500;
 	float y0 = 300;
@@ -485,11 +455,11 @@ void testApp::draw(){
 	float y3 = 300;
 	ofEnableAlphaBlending();
 	ofFill();
-	ofSetColor(0,0,0,40);
-	ofCircle(x0,y0,4);
-	ofCircle(x1,y1,4);
-	ofCircle(x2,y2,4);
-	ofCircle(x3,y3,4);
+
+	selectedDraggableVertex.draw(x0,y0);
+	selectedDraggableVertex.draw(x1,y1);
+	selectedDraggableVertex.draw(x2,y2);
+	selectedDraggableVertex.draw(x3,y3);
 	ofDisableAlphaBlending();
 	
 	
@@ -500,6 +470,7 @@ void testApp::draw(){
 	//
 	ofSetHexColor(0xd3ffd3);
 	ofRect(80,480,140,70);
+	ofSetColor(255,255,255);
 	pathH.draw();
 	
 	
@@ -507,19 +478,19 @@ void testApp::draw(){
 	// 
 	// 		CSG / ofNextContour
 	// 
-	glPushMatrix();
+	ofPushMatrix();
 	
 	pathIa.draw();
 	
-	glTranslatef(100,0,0);
+	ofTranslate(100,0,0);
 
 	pathIb.draw();
 	
-	glTranslatef(100,0,0);
+	ofTranslate(100,0,0);
 
 	pathIc.draw();
 	
-	glPopMatrix();
+	ofPopMatrix();
 	//-------------------------------------
 	
 	
