@@ -17,8 +17,8 @@ void testApp::setup() {
 		particleColor[i].set(1, 0);
 		particleTime[i] = ofRandom(1.0);
 	}
-	particleVbo.setColorData(particleColor, NUM_PARTICLES, OF_VBO_DYNAMIC);
-	particleVbo.setVertexData(particlePos, NUM_PARTICLES, OF_VBO_DYNAMIC);
+	particleVbo.setColorData(particleColor, NUM_PARTICLES, GL_STATIC_DRAW);
+	particleVbo.setVertexData(particlePos, NUM_PARTICLES, GL_DYNAMIC_DRAW);
 	
 	
 	
@@ -40,8 +40,8 @@ void testApp::setup() {
 		fadeSpeed[i] = ofRandom(0.02, 0.03);
 		fadeFlip[i]  = false;
 	}
-	ptsVbo.setVertexData(pts, NUM_PTS, OF_VBO_STATIC);
-	ptsVbo.setColorData(color, NUM_PTS, OF_VBO_DYNAMIC);
+	ptsVbo.setVertexData(pts, NUM_PTS, GL_STATIC_DRAW);
+	ptsVbo.setColorData(color, NUM_PTS, GL_DYNAMIC_DRAW);
 	
 	
 	
@@ -61,8 +61,8 @@ void testApp::setup() {
 		worm[i].z = ofRandom(-1500, 1500);	
 	}
 	
-	wormVbo.setVertexData(worm, WORM_LEN, OF_VBO_DYNAMIC);
-	wormVbo.setColorData(wormColor, WORM_LEN, OF_VBO_STATIC);
+	wormVbo.setVertexData(worm, WORM_LEN, GL_DYNAMIC_DRAW);
+	wormVbo.setColorData(wormColor, WORM_LEN, GL_STATIC_DRAW);
 	
 	
 }
