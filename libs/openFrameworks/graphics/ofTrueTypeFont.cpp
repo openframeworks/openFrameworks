@@ -512,6 +512,7 @@ void ofTrueTypeFont::drawCharAsShape(int c, float x, float y) {
 	ofTTFCharacter & charRef = charOutlines[cu];
 	ofPushMatrix();
 	ofTranslate(x,y);
+	charRef.setFilled(ofGetStyle().bFill);
 	charRef.draw();
 	ofPopMatrix();
 

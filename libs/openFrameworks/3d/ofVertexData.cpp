@@ -11,6 +11,12 @@ ofVertexData::ofVertexData(){
 }
 
 //--------------------------------------------------------------
+ofVertexData::ofVertexData(ofPrimitiveMode mode, const vector<ofVec3f>& verts){
+	setMode(mode);
+	addVertices(verts);
+}
+
+//--------------------------------------------------------------
 ofVertexData::~ofVertexData(){
 }
 
@@ -184,7 +190,7 @@ void ofVertexData::addIndices(const GLuint* inds, int amt){
 
 //GETTERS
 //--------------------------------------------------------------
-ofPrimitiveMode ofVertexData::getMode(){
+ofPrimitiveMode ofVertexData::getMode() const{
 	return mode;
 }
 
@@ -267,6 +273,32 @@ float* ofVertexData::getTexCoordsPointer(){
 
 //--------------------------------------------------------------
 GLuint* ofVertexData::getIndexPointer(){
+	return &indices[0];
+}
+
+
+//--------------------------------------------------------------
+const float* ofVertexData::getVerticesPointer() const{
+	return &vertices[0].x;
+}
+
+//--------------------------------------------------------------
+const float* ofVertexData::getColorsPointer() const{
+	return &colors[0].r;
+}
+
+//--------------------------------------------------------------
+const float* ofVertexData::getNormalsPointer() const{
+	return &normals[0].x;
+}
+
+//--------------------------------------------------------------
+const float* ofVertexData::getTexCoordsPointer() const{
+	return &texCoords[0].x;
+}
+
+//--------------------------------------------------------------
+const GLuint* ofVertexData::getIndexPointer() const{
 	return &indices[0];
 }
 

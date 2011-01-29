@@ -76,10 +76,11 @@ class ofVertexData{
 public:
 	
 	ofVertexData();
+	ofVertexData(ofPrimitiveMode mode, const vector<ofVec3f>& verts);
 	~ofVertexData();
 	
 	void setMode(ofPrimitiveMode mode);
-	ofPrimitiveMode getMode();
+	ofPrimitiveMode getMode() const;
 	
 	void clear();
 
@@ -132,6 +133,12 @@ public:
 	float* getTexCoordsPointer();
 	GLuint* getIndexPointer();
 	
+	const float* getVerticesPointer() const;
+	const float* getColorsPointer() const;
+	const float* getNormalsPointer() const;
+	const float* getTexCoordsPointer() const;
+	const GLuint* getIndexPointer() const;
+
 	vector<int>& getFace(int faceId);
 	
 	void setName(string name_);

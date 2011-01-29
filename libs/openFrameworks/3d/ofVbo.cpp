@@ -6,6 +6,7 @@
 // index updating/deleting?
 
 #include "ofVbo.h"
+#include "ofUtils.h"
 
 
 

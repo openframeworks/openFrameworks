@@ -27,6 +27,13 @@ public:
 		bHasChanged = true;
 		bClosed=false;
 	}
+
+	ofPolyline(const vector<ofPoint>& verts){
+		bIs3D = true;
+		bHasChanged = true;
+		bClosed=false;
+		addVertexes(verts);
+	}
 	/// remove all the points
 	void clear() { points.clear(); }
 
@@ -100,8 +107,8 @@ public:
 	void addVertex( float x, float y, float z=0 ) 
 		{ getCurrentSubShape().addVertex( ofPoint( x,y,z ) ); }
 
-	ofPolyline & getOutline() { return cachedOutline; }
-	const ofPolyline & getOutline() const { return cachedOutline; }
+	vector<ofPolyline> & getOutline() { return cachedOutline; }
+	const vector<ofPolyline> & getOutline() const { return cachedOutline; }
 	
 	void addSubShape(const ofShape & shape);
 
@@ -110,13 +117,12 @@ public:
 
 	/// next contour
 
-	ofMesh & getMesh();
-	const ofMesh & getMesh() const;
+	vector<ofVertexData> & getTessellation();
 
 	/// must call tessellate before calling draw, if the shape has changed
 	void tessellate();
 	void simplify(float tolerance=0.3);
-	void draw();
+	void draw(float x=0, float y=0);
 	
 	/// drawing style
 	/// polygon winding mode for tessellation
@@ -188,7 +194,7 @@ public:
 	void setFrom(const ofPath & path,  int curveResolution=16, bool tesselate=false);
 	void setPolyline(const ofPolyline & polyline);
 private:
-	vector<ofPolyline> getSubPolylines();
+	vector<ofPolyline> & getSubPolylines();
 	void setCircleResolution(int res);
 	ofShape &  getCurrentSubShape();
 
@@ -202,9 +208,9 @@ private:
 	ofPolyline polyline;
 	
 	// resulting mesh and outline
-	ofMesh cachedTessellation;
+	vector<ofVertexData> cachedTessellation;
 	bool bNeedsOutlineDraw;
-	ofPolyline cachedOutline;
+	vector<ofPolyline> cachedOutline;
 	
 	vector<ofShape> subShapes;
 

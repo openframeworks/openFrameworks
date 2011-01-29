@@ -9,8 +9,8 @@
 
 #include "ofShape.h"
 #include "ofTessellator.h"
-#include "ofShapeGLRenderers.h"
 #include "ofPath.h"
+#include "ofGraphics.h"
 
 
 float ofPolyline::getPerimeter() const {
@@ -196,12 +196,7 @@ void ofShape::tessellate(){
 			cachedOutline = ofTessellator::tessellateToOutline( getSubPolylines(), polyWindingMode, bIs2D );
 		}else{
 			cachedOutline.clear();
-			cachedOutline.setIs3D(bIs3D);
-			const vector<ofPolyline> & subPolylines = getSubPolylines();
-			cout << "shape has" << subPolylines.size() << "polylines" << endl;
-			for(int i=0; i<subPolylines.size(); i++){
-				cachedOutline.addVertexes(subPolylines[i].getVertices());
-			}
+			getSubPolylines();
 		}
 	}
 	bNeedsTessellation = false;
@@ -216,12 +211,15 @@ void ofShape::simplify(float tolerance){
 	bNeedsTessellation=true;
 }
 
-void ofShape::draw(){
+void ofShape::draw(float x, float y){
+	ofPushMatrix();
+	ofTranslate(x,y);
 	if(!renderer){
 		ofGetDefaultRenderer()->draw(*this);
 	}else{
 		renderer->draw(*this);
 	}
+	ofPopMatrix();
 }
 
 
@@ -235,21 +233,23 @@ void ofShape::setPolyline(const ofPolyline & polyline_){
 	bNeedsTessellation = true;
 }
 
-ofMesh & ofShape::getMesh(){
+vector<ofVertexData> & ofShape::getTessellation(){
 	if ( bNeedsTessellation ){
 		tessellate();
 	}
 	return cachedTessellation;
 }
 
-vector<ofPolyline> ofShape::getSubPolylines(){
-	vector<ofPolyline> polylines;
-	polylines.push_back(polyline);
-	for(int i=0;i<(int)subShapes.size();i++){
-		vector<ofPolyline> subPolylines = subShapes[i].getSubPolylines();
-		polylines.insert(polylines.end(),subPolylines.begin(),subPolylines.end());
+vector<ofPolyline> & ofShape::getSubPolylines(){
+	if ( bNeedsTessellation ){
+		cachedOutline.clear();
+		cachedOutline.push_back(polyline);
+		for(int i=0;i<(int)subShapes.size();i++){
+			vector<ofPolyline> & subPolylines = subShapes[i].getSubPolylines();
+			cachedOutline.insert(cachedOutline.end(),subPolylines.begin(),subPolylines.end());
+		}
 	}
-	return polylines;
+	return cachedOutline;
 }
 
 //-------------------------------------------------------------------------

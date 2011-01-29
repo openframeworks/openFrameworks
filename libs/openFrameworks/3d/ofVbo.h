@@ -2,7 +2,10 @@
 //TODO: Add edge flags?
 
 #pragma once
-#include "ofMain.h"
+
+#include "ofConstants.h"
+#include "ofVec3f.h"
+#include "ofColor.h"
 
 class ofVbo {
 	

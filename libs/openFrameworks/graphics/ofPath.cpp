@@ -103,35 +103,46 @@ void ofPath::arc(float x, float y, float z, float radiusX, float radiusY, float 
 }
 
 void ofPath::close(){
-	if(!lastPath().commands.empty()) lastPath().lineTo(lastPath().commands[0].to);
 	lastPath().bClosed=true;
 	lastPath().hasChanged = true;
 	newSubPath();
 }
 
 void ofPath::setPolyWindingMode(ofPolyWindingMode mode){
-	lastPath().windingMode = mode;
-	lastPath().hasChanged = true;
+	windingMode = mode;
+	hasChanged = true;
 }
 
 void ofPath::setFilled(bool hasFill){
-	lastPath().bFill = hasFill;
-	lastPath().hasChanged = true;
+	bFill = hasFill;
+	for(int i=0; i<subPaths.size(); i++){
+		subPaths[i].setFilled(hasFill);
+	}
+	hasChanged = true;
 }
 
 void ofPath::setFillColor(const ofColor & color){
-	lastPath().fillColor = color;
-	lastPath().hasChanged = true;
+	fillColor = color;
+	for(int i=0; i<subPaths.size(); i++){
+		subPaths[i].setFillColor(color);
+	}
+	hasChanged = true;
 }
 
 void ofPath::setStrokeColor(const ofColor & color){
-	lastPath().strokeColor = color;
-	lastPath().hasChanged = true;
+	strokeColor = color;
+	for(int i=0; i<subPaths.size(); i++){
+		subPaths[i].setStrokeColor(color);
+	}
+	hasChanged = true;
 }
 
 void ofPath::setStrokeWidth(float width){
-	lastPath().strokeWidth = width;
-	lastPath().hasChanged = true;
+	strokeWidth = width;
+	for(int i=0; i<subPaths.size(); i++){
+		subPaths[i].setStrokeWidth(width);
+	}
+	hasChanged = true;
 }
 
 ofPath & ofPath::lastPath(){
@@ -195,10 +206,13 @@ void ofPath::updateShape(){
 	getShape();
 }
 
-void ofPath::draw(){
+void ofPath::draw(float x, float y){
+	ofPushMatrix();
+	ofTranslate(x,y);
 	if(!renderer){
 		ofGetDefaultRenderer()->draw(*this);
 	}else{
 		renderer->draw(*this);
 	}
+	ofPopMatrix();
 }
