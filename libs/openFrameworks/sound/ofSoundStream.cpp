@@ -101,7 +101,7 @@ int walkDSPGraphLookingForOutputBranches()
 		// fetch all immediate upstream neighbours
 		vector<ofSoundSource*> upstream = u->getInputs();
 	//	ofLog(OF_LOG_WARNING, "inputs to '%s' %x:", u->getName().c_str(), u );
-		for ( int i=0; i<upstream.size(); i++ ) {
+		for ( int i=0; i<(int)upstream.size(); i++ ) {
 	//		ofLog(OF_LOG_WARNING, " - '%s' %x", upstream[i]->getName().c_str(), upstream[i] );
 			// recording u as an output for all upstream branches 
 			outputs[upstream[i]].push_back( u );
@@ -118,7 +118,7 @@ int walkDSPGraphLookingForOutputBranches()
 		if ( outputs.size() > 1 && source->getName() != OF_SOUND_SOURCE_MULTIPLEXOR_NAME ) {
 			ofLog( OF_LOG_ERROR, "ofSoundStream: output branching detected: the following %i units take input from '%s' (%x):", 
 				  outputs.size(), source->getName().c_str(), source );
-			for ( int j=0; j<outputs.size(); j++ ) {
+			for ( int j=0; j<(int)outputs.size(); j++ ) {
 				ofLog( OF_LOG_ERROR, "                 - '%s' (%x)", outputs[j]->getName().c_str(), outputs[j] );
 			}
 			ofLog( OF_LOG_ERROR, "ofSoundStream: output branching will cause odd behaviour in upstream units (eg, clicks in oscillators, sound advancing too fast); "
@@ -160,7 +160,7 @@ int receiveAudioBufferAndCallSimpleApp(void *outputBuffer, void *inputBuffer, un
 			OFSAptr->audioReceived( fPtrIn, bufferSize, nInputChannels);
 		}
 		// send incoming data to all the sinks
-		for ( int i=0; i<soundSinks.size(); i++ ) {
+		for ( int i=0; i<(int)soundSinks.size(); i++ ) {
 			soundSinks[i]->audioReceived( fPtrIn, bufferSize, nInputChannels );
 		}
 		#ifdef OF_USING_POCO
@@ -177,20 +177,21 @@ int receiveAudioBufferAndCallSimpleApp(void *outputBuffer, void *inputBuffer, un
 		// sum together all the inputs
 		if (working == NULL){
 			working = new float[bufferSize*nOutputChannels];
+			memset( working, 0, sizeof(float)*bufferSize*nOutputChannels );
 		}
 		memset( fPtrOut, 0, sizeof(float)*bufferSize*nOutputChannels );
 		// fetch and add from OFSAptr
 		if(OFSAptr) {
-			OFSAptr->audioRequested(working, bufferSize, nOutputChannels);
-			for ( int j=0; j<bufferSize*nOutputChannels; j++ ) {
+			OFSAptr->audioRequested( working, bufferSize, nOutputChannels );
+			for ( int j=0; j<(int)bufferSize*nOutputChannels; j++ ) {
 				fPtrOut[j] += working[j];
 			}
 		}
 		// fetch and add from ofSoundSources
-		for ( int i=0; i<soundSources.size(); i++ ) {
+		for ( int i=0; i<(int)soundSources.size(); i++ ) {
 			soundSources[i]->audioRequested( working, bufferSize, nOutputChannels );
 			// sum
-			for ( int j=0; j<bufferSize*nOutputChannels; j++ ) {
+			for ( int j=0; j<(int)bufferSize*nOutputChannels; j++ ) {
 				fPtrOut[j] += working[j];
 			}
 		}
@@ -200,7 +201,7 @@ int receiveAudioBufferAndCallSimpleApp(void *outputBuffer, void *inputBuffer, un
 			audioEventArgs.bufferSize = bufferSize;
 			audioEventArgs.nChannels = nOutputChannels;
 			ofNotifyEvent( ofEvents.audioRequested, audioEventArgs );
-			for ( int j=0; j<bufferSize*nOutputChannels; j++ ) {
+			for ( int j=0; j<(int)bufferSize*nOutputChannels; j++ ) {
 				fPtrOut[j] += working[j];
 			}
 		#endif

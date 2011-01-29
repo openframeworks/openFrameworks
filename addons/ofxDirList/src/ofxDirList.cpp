@@ -59,6 +59,7 @@ string ofxDirList::getPath(int pos){
 
 //----------------------------------------------------------
 int ofxDirList::listDir(string directory){
+	
     directory = ofToDataPath(directory);
 
 	nameArray.clear();
@@ -142,4 +143,10 @@ int ofxDirList::listDir(string directory){
 
 	ofLog(OF_LOG_VERBOSE, "ofxDirList - listed %i files in %s", nameArray.size(), directory.c_str());
 	return nameArray.size();
+}
+
+
+void ofxDirList::sort(){
+	std::sort(nameArray.begin(),nameArray.end());
+	std::sort(pathArray.begin(),pathArray.end());
 }

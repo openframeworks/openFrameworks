@@ -360,7 +360,7 @@ void ofVertexData::setName(string name_){
 void ofVertexData::setupIndicesAuto(){
 	bIndicesChanged = true;
 	indices.clear();
-	for(int i = 0; i < vertices.size();i++){
+	for(int i = 0; i < (int)vertices.size();i++){
 		indices.push_back((GLuint)i);
 	}
 }

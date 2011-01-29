@@ -42,7 +42,9 @@ enum ofLoopType{
 	#endif
 	#define WIN32_LEAN_AND_MEAN
 	#include <windows.h>
-	#include "GLee.h"
+	#define GLEW_STATIC
+	#include "GL\glew.h"
+	#include "GL\wglew.h"
    	#include "glu.h"
 	#define __WINDOWS_DS__
 	#define __WINDOWS_MM__
@@ -124,6 +126,11 @@ enum ofLoopType{
 	#define TARGET_LITTLE_ENDIAN		// arm cpu	
 #endif
 
+#ifdef TARGET_OPENGLES
+	#include "glu.h"
+#endif
+
+
 
 #ifndef __MWERKS__
 #include <cstdlib>
@@ -171,19 +178,30 @@ enum ofLoopType{
         #ifdef TARGET_OSX
             #define OF_VIDEO_CAPTURE_QUICKTIME
         #else
-            #define OF_VIDEO_CAPTURE_DIRECTSHOW
+			#ifdef TARGET_OF_IPHONE
+				#define OF_VIDEO_CAPTURE_IPHONE
+			#else
+				#define OF_VIDEO_CAPTURE_DIRECTSHOW
+			#endif
         #endif
     #else
-        // all quicktime, all the time
-        #define OF_VIDEO_CAPTURE_QUICKTIME
+		#ifdef TARGET_OF_IPHONE
+			#define OF_VIDEO_CAPTURE_IPHONE
+		#else
+			#define OF_VIDEO_CAPTURE_QUICKTIME
+		#endif
     #endif
 #endif
 
 
 #ifdef TARGET_LINUX
 	#define OF_VIDEO_PLAYER_GSTREAMER
-#else
-	#define OF_VIDEO_PLAYER_QUICKTIME
+#else 
+	#ifdef TARGET_OF_IPHONE
+		#define OF_VIDEO_PLAYER_IPHONE
+	#else
+		#define OF_VIDEO_PLAYER_QUICKTIME
+	#endif
 #endif
 
 // comment out this line to disable all poco related code
@@ -193,17 +211,6 @@ enum ofLoopType{
 //so we forward declare ofBaseApp and make ofSimpleApp mean the same thing
 class ofBaseApp;
 typedef ofBaseApp ofSimpleApp;
-
-enum ofLogLevel{
-	OF_LOG_VERBOSE,
-	OF_LOG_NOTICE,
-	OF_LOG_WARNING,
-	OF_LOG_ERROR,
-	OF_LOG_FATAL_ERROR,
-	OF_LOG_SILENT	//this one is special and should always be last - set ofSetLogLevel to OF_SILENT to not recieve any messages
-};
-
-#define OF_DEFAULT_LOG_LEVEL  OF_LOG_WARNING;
 
 // serial error codes
 #define OF_SERIAL_NO_DATA 	-2
@@ -286,7 +293,15 @@ enum ofImageType{
  	OF_IMAGE_UNDEFINED		= 0x03
 };
 
+enum ofPixelFormat{
+	OF_PIXELS_MONO = 0, 
+	OF_PIXELS_RGB,
+	OF_PIXELS_RGBA,
+	OF_PIXELS_BGRA
+};
+
 #define		OF_MAX_STYLE_HISTORY	32
+#define		OF_MAX_VIEWPORT_HISTORY	32
 #define		OF_MAX_CIRCLE_PTS 1024
 
 // Blend Modes
@@ -298,6 +313,14 @@ enum ofBlendMode{
 	OF_BLENDMODE_SCREEN   = 5
 };
 
+//this is done to match the iPhone defaults 
+//we don't say landscape, portrait etc becuase iPhone apps default to portrait while desktop apps are typically landscape
+enum{
+	OF_ORIENTATION_DEFAULT = 1,	
+	OF_ORIENTATION_180 = 2,
+	OF_ORIENTATION_90_RIGHT = 3,
+	OF_ORIENTATION_90_LEFT = 4,
+};
 
 // these are straight out of glu, but renamed and included here
 // for convenience
@@ -412,4 +435,3 @@ enum ofPolyWindingMode{
 	#define OF_CONSOLE_COLOR_WHITE (37)
 
 #endif
-

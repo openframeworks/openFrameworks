@@ -40,6 +40,10 @@ void ofBaseVideoGrabber::videoSettings(){
 	ofLog(OF_LOG_WARNING, "ofBaseVideoGrabber::videoSettings not implemented");
 }
 
+//---------------------------------------------------------------------------
+void ofBaseVideoGrabber::setPixelFormat(ofPixelFormat pixelFormat){
+	ofLog(OF_LOG_WARNING, "ofBaseVideoGrabber::setPixelFormat not implemented");
+}
 
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
@@ -138,4 +142,8 @@ void ofBaseVideoPlayer::nextFrame(){
 //---------------------------------------------------------------------------
 void ofBaseVideoPlayer::previousFrame(){
 	ofLog(OF_LOG_WARNING, "ofBaseVideoPlayer::previousFrame not implemented");
+}
+//---------------------------------------------------------------------------
+void ofBaseVideoPlayer::setPixelFormat(ofPixelFormat pixelFormat){
+	ofLog(OF_LOG_WARNING, "ofBaseVideoPlayer::setPixelFormat not implemented");
 }

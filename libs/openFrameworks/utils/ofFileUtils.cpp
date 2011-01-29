@@ -5,28 +5,23 @@
 //--------------------------------------------------
 ofBuffer::ofBuffer(){
 	nextLinePos = 0;
-	cout << "ofBuffer()" << endl;
 }
 
 ofBuffer::ofBuffer(const char * buffer,int size){
 	set(buffer,size);
-	cout << "ofBuffer(size,buffer)" << endl;
 }
 
 ofBuffer::ofBuffer(istream & stream){
 	set(stream);
-	cout << "ofBuffer(istream)" << endl;
 }
 
 ofBuffer::ofBuffer(const ofBuffer & buffer_){
 	buffer = buffer_.buffer;
 	nextLinePos = buffer_.nextLinePos;
-	cout << "ofBuffer(ofBuffer&)" << endl;
 }
 
 ofBuffer::~ofBuffer(){
 	clear();
-	cout << "~ofBuffer()" << endl;
 }
 
 bool ofBuffer::set(istream & stream){
@@ -38,7 +33,8 @@ bool ofBuffer::set(istream & stream){
 	stream.read(aux_buffer, 1024);
 	std::streamsize n = stream.gcount();
 	while (n > 0){
-		buffer.resize(size+n);
+		// we resize to size+1 initialized to 0 to have a 0 at the end for strings
+		buffer.resize(size+n+1,0);
 		memcpy(&(buffer[0])+size,aux_buffer,n);
 		size += n;
 		if (stream){
@@ -47,11 +43,7 @@ bool ofBuffer::set(istream & stream){
 		}
 		else n = 0;
 	}
-	if(size){
-		return true;
-	}else{
-		return false;
-	}
+	return true;
 }
 
 bool ofBuffer::writeTo(ostream & stream){
@@ -62,8 +54,9 @@ bool ofBuffer::writeTo(ostream & stream){
 
 void ofBuffer::set(const char * _buffer, int _size){
 	clear();
-	buffer.resize(_size);
-	memcpy(getBuffer(), _buffer, _size);
+	buffer.resize(_size+1);
+	memcpy(getBinaryBuffer(), _buffer, _size);
+	buffer[_size]=0;
 }
 
 void ofBuffer::clear(){
@@ -76,24 +69,31 @@ void ofBuffer::allocate(long _size){
 	buffer.resize(_size);
 }
 
-char * ofBuffer::getBuffer(){
+char * ofBuffer::getBinaryBuffer(){
 	return &buffer[0];
 }
 
-const char * ofBuffer::getBuffer() const{
+const char * ofBuffer::getBinaryBuffer() const{
 	return &buffer[0];
 }
 
-long ofBuffer::getSize() const{
-	return buffer.size();
+string ofBuffer::getText() const{
+	return &buffer[0];
+}
+
+long ofBuffer::size() const{
+	//we always add a 0 at the end to avoid problems with strings
+	return buffer.size()-1;
 }
 
 string ofBuffer::getNextLine(){
 	if( buffer.empty() ) return "";
 	long currentLinePos = nextLinePos;
-	while(nextLinePos<buffer.size() && buffer[nextLinePos]!='\n') nextLinePos++;
-	string line(getBuffer() + currentLinePos,nextLinePos-currentLinePos);
-	if(nextLinePos<buffer.size()-1) nextLinePos++;
+	while(nextLinePos<(int)buffer.size() && buffer[nextLinePos]!='\n') nextLinePos++;
+	string line(getBinaryBuffer() + currentLinePos,nextLinePos-currentLinePos);
+	line.resize(line.size()+1);
+	line[line.size()-1]=0;
+	if(nextLinePos<(int)buffer.size()-1) nextLinePos++;
 	return line;
 }
 
@@ -103,21 +103,21 @@ string ofBuffer::getFirstLine(){
 }
 
 //--------------------------------------------------
-bool ofReadFile(const string & path, ofBuffer & buffer, bool binary){
-	ifstream file(ofToDataPath(path,true).c_str());
-	return buffer.set(file);
-}
-
-//--------------------------------------------------
 ofBuffer ofBufferFromFile(const string & path, bool binary){
-	ifstream istr(ofToDataPath(path,true).c_str(), binary?ifstream::binary:ios_base::in);
-	return ofBuffer(istr);
+	ios_base::openmode mode = binary? ifstream::binary : ios_base::in;
+	ifstream istr(ofToDataPath(path,true).c_str(), mode);
+	ofBuffer buffer(istr);
+	istr.close();
+	return buffer;
 }
 
 //--------------------------------------------------
 bool ofBufferToFile(const string & path, ofBuffer & file, bool binary){
-	ofstream ostr(ofToDataPath(path,true).c_str(),binary?ofstream::binary:ios_base::out);
-	return file.writeTo(ostr);
+	ios_base::openmode mode = binary? ofstream::binary : ios_base::out;
+	ofstream ostr(ofToDataPath(path,true).c_str(), mode);
+	bool ret = file.writeTo(ostr);
+	ostr.close();
+	return ret;
 }
 
 

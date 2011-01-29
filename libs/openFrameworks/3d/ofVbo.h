@@ -21,6 +21,10 @@ private:
 	bool bUsingNormals;
 	bool bUsingIndices;
 	
+	GLsizei vertStride;
+	int		vertSize;
+	int		totalVerts;
+	
 	int vertUsage;
 	int colorUsage;
 	int normUsage;
@@ -32,11 +36,13 @@ public:
 	~ofVbo();
 
 	void setVertexData(const ofVec3f * verts, int total, int usage);
+	void setVertexData(const ofVec2f * verts, int total, int usage);
+
 	void setColorData(const ofColor * colors, int total, int usage);	
 	void setNormalData(const ofVec3f * normals, int total, int usage);	
 	void setTexCoordData(const ofVec2f * texCoords, int total, int usage);	
 	void setIndexData(const GLuint * indices, int total, int usage);
-	
+
 	void setVertexData(const float * vert0x, int total, int usage);
 	void setColorData(const float * color0r, int total, int usage);	
 	void setNormalData(const float * normal0x, int total, int usage);	

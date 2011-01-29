@@ -547,7 +547,6 @@ void ofTrueTypeFont::loadFont(string filename, int fontsize, bool _bAntiAliased,
     	delete [] expanded_data;
 
    }
-	printf("GOT HERE!!\n");
 	// ------------- close the library and typeface
 	FT_Done_Face(face);
 	FT_Done_FreeType(library);

@@ -8,9 +8,12 @@
 
 #define  	CIRC_RESOLUTION		    22				// 22 pts for a circle...
 
+enum ofHandednessType {OF_LEFT_HANDED, OF_RIGHT_HANDED};
+
 // bg color
 float * ofBgColorPtr();
 void ofBackground(const ofColor & c);
+void ofBackground(float brightness);
 void ofBackground(int hexColor, float _a=255.0f);
 void ofBackground(int r, int g, int b, int a=255);
 
@@ -26,11 +29,20 @@ void ofPopView();
 // setup matrices and viewport (upto you to push and pop view before and after)
 // if width or height are 0, assume windows dimensions (ofGetWidth(), ofGetHeight())
 // if nearDist or farDist are 0 assume defaults (calculated based on width / height)
-void ofViewport(float x = 0, float y = 0, float width = 0, float height = 0);
-void ofSetupScreenPerspective(float width = 0, float height = 0, bool vFlip = true, float fov = 60, float nearDist = 0, float farDist = 0);
+void ofViewport(float x = 0, float y = 0, float width = 0, float height = 0, bool invertY = true);
+void ofSetupScreenPerspective(float width = 0, float height = 0, int orientation = 0, bool vFlip = true, float fov = 60, float nearDist = 0, float farDist = 0);
 void ofSetupScreenOrtho(float width = 0, float height = 0, bool vFlip = true, float nearDist = -1, float farDist = 1);
+ofRectangle ofGetCurrentViewport();
+int ofGetViewportWidth();
+int ofGetViewportHeight();
 
-void ofClear(float r=0, float g=0, float b=0, float a=0);
+
+
+void ofSetCoordHandedness(ofHandednessType handedness);
+ofHandednessType ofGetCoordHandedness();
+
+void ofClear(float r, float g, float b, float a=0);
+void ofClear(float brightness, float a=0);
 void ofClearAlpha();
 
 
@@ -119,6 +131,9 @@ void ofSetHexColor( int hexColor ); // hex, like web 0xFF0033;
 void ofEnableBlendMode(ofBlendMode blendMode);
 void ofDisableBlendMode();
 
+// point sprites
+void ofEnablePointSprites();
+void ofDisablePointSprites();
 
 // transparency
 void ofEnableAlphaBlending();  // this just turns on and off opengl blending, the common mode
@@ -148,9 +163,9 @@ void ofRotate(float degrees);
 
 // bitmapped type
 // ** note, this uses glDrawPixels and may be S L 0 W on some graphics cards
-void ofDrawBitmapString(string textString, const ofPoint & p);
 void ofDrawBitmapString(string textString, float x, float y);
 void ofDrawBitmapString(string textString, float x, float y, float z);
+void ofDrawBitmapString(string textString, const ofPoint & p);
 
 // screen coordinate things / default gl values
 void ofSetupGraphicDefaults();
@@ -158,6 +173,7 @@ void ofSetupScreen();
 
 void ofCurveVertex(float x, float y);
 void ofCurveVertex(ofPoint & p);
+void ofCurveVertexes(const vector <ofPoint> & curvePoints);
 
 void ofBezierVertex(float x1, float y1, float x2, float y2, float x3, float y3);
 
@@ -166,5 +182,7 @@ void ofSetPolyMode(ofPolyWindingMode mode);
 void ofBeginShape();
 void ofVertex(float x, float y);
 void ofVertex(ofPoint & p);
+void ofVertexes(const vector <ofPoint> & polyPoints);
+
 void ofEndShape(bool bClose = false);
 void ofNextContour(bool bClose = false);  // for multi contour shapes!

@@ -55,12 +55,19 @@
 
 //--------------------------
 // video
-#ifndef TARGET_OF_IPHONE			//(temp for now, until this is ported)
-	#include "ofVideoGrabber.h"
-	#include "ofVideoPlayer.h"
-#endif
+#include "ofVideoGrabber.h"
+#include "ofVideoPlayer.h"
 
 //--------------------------
 // events
 #include "ofEvents.h"
 
+//--------------------------
+// 3d
+#include "of3dUtils.h"
+#include "ofNode.h"
+#include "ofCamera.h"
+#include "ofMeshNode.h"
+#include "ofEasyCam.h"
+#include "ofLight.h"
+#include "ofVbo.h"
