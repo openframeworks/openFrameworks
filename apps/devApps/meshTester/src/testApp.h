@@ -3,8 +3,7 @@
 
 
 #include "ofMain.h"
-#include "ofAssimpMeshLoader.h"
-#include "ofVboMesh.h"
+#include "ofModel.h"
 
 class testApp : public ofBaseApp{
 
@@ -21,11 +20,10 @@ class testApp : public ofBaseApp{
 		void mouseReleased(int x, int y, int button);
 		void windowResized(int w, int h);
 	
-		ofAssimpMeshLoader model;
-		vector<ofVertexData> meshes;
-		vector<ofVboMesh> vboMeshes;
+		ofModel model;
 	
 		bool lightsOn;
+		bool wiggleModel;
 	
 		ofImage tex;
 	
