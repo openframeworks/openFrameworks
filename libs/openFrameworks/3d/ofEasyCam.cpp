@@ -147,7 +147,7 @@ void ofEasyCam::setDistance(float distance, bool save) {
 
 //----------------------------------------
 float ofEasyCam::getDistance() const {
-	return position.z;
+	return getPosition().z;
 }
 
 //----------------------------------------
