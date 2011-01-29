@@ -10,8 +10,6 @@ void testApp::setup(){
 	
 	// this sets the camera's distance from the object
 	cam.setDistance(100);
-	
-	ofLog(OF_LOG_VERBOSE, "hello" + ofToString(5));
 }
 
 //--------------------------------------------------------------
