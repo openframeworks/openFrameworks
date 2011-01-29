@@ -31,11 +31,11 @@ private:
 	int normUsage;
 	int texUsage;
 	
-	float*  vertData;
+	/*float*  vertData;
 	float*  normalData;
 	float*  texCoordData;
 	float*  colorData;
-	GLuint* indexData;
+	GLuint* indexData;*/
 	
 public:
 	
