@@ -12,18 +12,22 @@
 
 //--------------------------------------------------------------
 ofVbo::ofVbo() {
-	bUsingVerts = false;
+	
+	bUsingVerts		= false;
 	bUsingTexCoords = false;
-	bUsingColors = false;
-	bUsingNormals = false;
-	bUsingIndices = false;
+	bUsingColors	= false;
+	bUsingNormals   = false;
+	bUsingIndices	= false;
 	
-	vertUsage = -1;
-	colorUsage = -1;
-	normUsage = -1;
-	texUsage = -1;
+	vertSize		= -1;
+	vertStride      = 0;
 	
-	bAllocated = false;
+	vertUsage		= -1;
+	colorUsage		= -1;
+	normUsage		= -1;
+	texUsage		= -1;
+	
+	bAllocated		= false;
 }
 
 //--------------------------------------------------------------
@@ -44,9 +48,35 @@ void ofVbo::setVertexData(const ofVec3f * verts, int total, int usage) {
 		glGenBuffers(1, &vertId);
 	}
 	
-	glBindBufferARB(GL_ARRAY_BUFFER_ARB, vertId);
+	vertSize   = 3;
+	vertStride = sizeof(ofVec3f);
+	totalVerts = total;
+	
+	glBindBuffer(GL_ARRAY_BUFFER, vertId);
 	vertData = (float*)&verts[0].x;
-	glBufferDataARB(GL_ARRAY_BUFFER_ARB, total * sizeof(ofVec3f), vertData, usage);
+	glBufferData(GL_ARRAY_BUFFER, total * vertStride, vertData, usage);
+}
+
+//--------------------------------------------------------------
+void ofVbo::setVertexData(const ofVec2f * verts, int total, int usage) {
+	if(verts == NULL) {
+		ofLog(OF_LOG_WARNING,"ofVbo: bad vertex data!\n");
+		return;	
+	}
+	vertUsage = usage;
+	if(!bUsingVerts) {
+		bAllocated  = true;
+		bUsingVerts = true;
+		glGenBuffers(1, &vertId);
+	}
+	
+	vertSize   = 2;
+	vertStride = sizeof(ofVec2f);
+	totalVerts = total;
+	
+	glBindBuffer(GL_ARRAY_BUFFER, vertId);
+	vertData = (float*)&verts[0].x;
+	glBufferData(GL_ARRAY_BUFFER, total * vertStride, vertData, usage);
 }
 
 //--------------------------------------------------------------
@@ -78,8 +108,9 @@ void ofVbo::setColorData(const ofColor * colors, int total, int usage) {
 		glGenBuffers(1, &colorId);
 	}
 	
-	glBindBufferARB(GL_ARRAY_BUFFER_ARB, colorId);
-	glBufferDataARB(GL_ARRAY_BUFFER_ARB, total * sizeof(ofColor), &colors[0].r, usage);	
+	glBindBuffer(GL_ARRAY_BUFFER, colorId);
+	colorData = (float*)&colors[0].r;
+	glBufferData(GL_ARRAY_BUFFER, total * sizeof(ofColor), &colors[0].r, usage);	
 }
 
 //--------------------------------------------------------------
@@ -110,8 +141,8 @@ void ofVbo::setNormalData(const ofVec3f * normals, int total, int usage) {
 		glGenBuffers(1, &normalId);
 	}
 	
-	glBindBufferARB(GL_ARRAY_BUFFER_ARB, normalId);
-	glBufferDataARB(GL_ARRAY_BUFFER_ARB, total * sizeof(ofVec3f), &normals[0].x, usage);	
+	glBindBuffer(GL_ARRAY_BUFFER, normalId);
+	glBufferData(GL_ARRAY_BUFFER, total * sizeof(ofVec3f), &normals[0].x, usage);	
 }
 
 //--------------------------------------------------------------
@@ -142,8 +173,8 @@ void ofVbo::setTexCoordData(const ofVec2f * texCoords, int total, int usage) {
 		glGenBuffers(1, &texCoordId);
 	}
 	
-	glBindBufferARB(GL_ARRAY_BUFFER_ARB, texCoordId);
-	glBufferDataARB(GL_ARRAY_BUFFER_ARB, total * sizeof(ofVec2f), &texCoords[0].x, usage);	
+	glBindBuffer(GL_ARRAY_BUFFER, texCoordId);
+	glBufferData(GL_ARRAY_BUFFER, total * sizeof(ofVec2f), &texCoords[0].x, usage);	
 }
 
 //--------------------------------------------------------------
@@ -175,54 +206,72 @@ void ofVbo::setIndexData(const GLuint * indices, int total, int usage){
 		glGenBuffers(1, &indexId);	
 	}
 	
-	glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, indexId);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexId);
 	indexData = (GLuint*)&indices[0];
-	glBufferDataARB(GL_ELEMENT_ARRAY_BUFFER_ARB, sizeof(GLuint) * total, indexData, usage); 
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * total, indexData, usage); 
+}
+
+
+//--------------------------------------------------------------
+void ofVbo::updateVertexData() {
+	
+	if(bUsingVerts && bAllocated) {
+		glBindBuffer(GL_ARRAY_BUFFER, vertId);
+		glBufferSubData(GL_ARRAY_BUFFER, 0, totalVerts * vertStride, vertData);
+	}
+}
+
+//--------------------------------------------------------------
+void ofVbo::updateColorData() {
+	if(bUsingColors) {
+		glBindBuffer(GL_ARRAY_BUFFER, colorId);
+		glBufferSubData(GL_ARRAY_BUFFER, 0, totalVerts*sizeof(ofColor), colorData);
+	}
 }
 
 /*
 //--------------------------------------------------------------
 void ofVbo::updateVertexData(const ofVec3f * verts, int total) {
 	if(bUsingVerts){
-		glBindBufferARB(GL_ARRAY_BUFFER_ARB, vertId);
+		glBindBuffer(GL_ARRAY_BUFFER, vertId);
 		vertData = (float*)&verts[0].x;
-		glBufferSubDataARB(GL_ARRAY_BUFFER_ARB, 0, total*sizeof(ofVec3f), vertData);
+		glBufferSubData(GL_ARRAY_BUFFER, 0, total*sizeof(ofVec3f), vertData);
 	}
 }
 
 //--------------------------------------------------------------
 void ofVbo::updateColorData(const ofColor * colors, int total) {
 	if(bUsingColors) {
-		glBindBufferARB(GL_ARRAY_BUFFER_ARB, colorId);
+		glBindBuffer(GL_ARRAY_BUFFER, colorId);
 		colorData = (float*)&colors[0].r;
-		glBufferSubDataARB(GL_ARRAY_BUFFER_ARB, 0, total*sizeof(ofColor), colorData);
+		glBufferSubData(GL_ARRAY_BUFFER, 0, total*sizeof(ofColor), colorData);
 	}
 }
 
 //--------------------------------------------------------------
 void ofVbo::updateNormalData(const ofVec3f * normals, int total) {
 	if(bUsingNormals) {
-		glBindBufferARB(GL_ARRAY_BUFFER_ARB, normalId);
+		glBindBuffer(GL_ARRAY_BUFFER, normalId);
 		normalData = (float*)&normals[0].x;
-		glBufferSubDataARB(GL_ARRAY_BUFFER_ARB, 0, total*sizeof(ofVec3f), normalData);
+		glBufferSubData(GL_ARRAY_BUFFER, 0, total*sizeof(ofVec3f), normalData);
 	}
 }
 
 //--------------------------------------------------------------
 void ofVbo::updateTexCoordData(const ofVec2f * texCoords, int total) {
 	if(bUsingTexCoords) {
-		glBindBufferARB(GL_ARRAY_BUFFER_ARB, texCoordId);
+		glBindBuffer(GL_ARRAY_BUFFER, texCoordId);
 		texCoordData = (float*)&texCoords[0].x;
-		glBufferSubDataARB(GL_ARRAY_BUFFER_ARB, 0, total*sizeof(ofVec2f), texCoordData);
+		glBufferSubData(GL_ARRAY_BUFFER, 0, total*sizeof(ofVec2f), texCoordData);
 	}
 }
 
 //--------------------------------------------------------------
 void ofVbo::updateIndexData(const GLuint * indices, int total) {
 	if(bUsingIndices) {
-		glBindBufferARB(GL_ARRAY_BUFFER_ARB, indexId);
+		glBindBuffer(GL_ARRAY_BUFFER, indexId);
 		indexData = (GLuint*)&indices[0];
-		glBufferSubDataARB(GL_ARRAY_BUFFER_ARB, 0, total*sizeof(GLuint), indexData);
+		glBufferSubData(GL_ARRAY_BUFFER, 0, total*sizeof(GLuint), indexData);
 	}
 }
 */
@@ -310,30 +359,30 @@ GLuint ofVbo::getIndexId(){
 //--------------------------------------------------------------
 void ofVbo::bind(){
 	
-	glPushAttrib(GL_ALL_ATTRIB_BITS);
-	glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
+	//glPushAttrib(GL_ALL_ATTRIB_BITS);
+	//glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
 	
-	if(bUsingVerts){
+	if(bUsingVerts) {
 		glEnableClientState(GL_VERTEX_ARRAY);		
-		glBindBufferARB(GL_ARRAY_BUFFER_ARB, vertId);
-		glVertexPointer(3, GL_FLOAT, sizeof(ofVec3f), 0);
+		glBindBuffer(GL_ARRAY_BUFFER, vertId);
+		glVertexPointer(vertSize, GL_FLOAT, vertStride, 0);
 	}
 	
 	if(bUsingColors){
 		glEnableClientState(GL_COLOR_ARRAY);
-		glBindBuffer(GL_ARRAY_BUFFER_ARB, colorId);
+		glBindBuffer(GL_ARRAY_BUFFER, colorId);
 		glColorPointer(4, GL_FLOAT, sizeof(ofColor), 0);
 	}
 	
 	if(bUsingNormals){
 		glEnableClientState(GL_NORMAL_ARRAY);		
-		glBindBufferARB(GL_ARRAY_BUFFER_ARB, normalId);
+		glBindBuffer(GL_ARRAY_BUFFER, normalId);
 		glNormalPointer(GL_FLOAT, sizeof(ofVec3f), 0);
 	}
 	
 	if(bUsingTexCoords){
 		glEnableClientState(GL_TEXTURE_COORD_ARRAY);		
-		glBindBufferARB(GL_ARRAY_BUFFER_ARB, texCoordId);
+		glBindBuffer(GL_ARRAY_BUFFER, texCoordId);
 		glTexCoordPointer(2, GL_FLOAT, sizeof(ofVec2f), 0);
 	}
 }
@@ -342,36 +391,34 @@ void ofVbo::bind(){
 void ofVbo::unbind() {
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glDisableClientState(GL_COLOR_ARRAY);
-	glDisableClientState(GL_INDEX_ARRAY);
+	//glDisableClientState(GL_INDEX_ARRAY);
 	glDisableClientState(GL_COLOR_ARRAY);
 	glDisableClientState(GL_NORMAL_ARRAY);
-	glDisableClientState(GL_EDGE_FLAG_ARRAY);
+	//glDisableClientState(GL_EDGE_FLAG_ARRAY);
 	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 	
-	glPopClientAttrib();
-	glPopAttrib();	
+	//glPopClientAttrib();
+	//glPopAttrib();	
 	
-	glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
-	glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, 0);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
 //--------------------------------------------------------------
 void ofVbo::draw(int drawMode, int first, int total) {
-	if(bAllocated){
-		bind();
+	if(bAllocated) {
 		glDrawArrays(drawMode, first, total);
-		unbind();
 	}
 }
 
 //--------------------------------------------------------------
 void ofVbo::drawElements(int drawMode, int amt) {
-	if(bAllocated){
+	/*if(bAllocated){
 		bind();
-		glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, indexId);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexId);
 		glDrawElements(drawMode, amt, GL_UNSIGNED_INT, NULL);
 		unbind();
-	}
+	}*/
 }
 
 //--------------------------------------------------------------

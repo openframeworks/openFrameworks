@@ -25,15 +25,19 @@ private:
 	bool bUsingNormals;
 	bool bUsingIndices;
 	
+	GLsizei vertStride;
+	int		vertSize;
+	int		totalVerts;
+	
 	int vertUsage;
 	int colorUsage;
 	int normUsage;
 	int texUsage;
 	
-	float* vertData;
-	float* normalData;
-	float* texCoordData;
-	float* colorData;
+	float*  vertData;
+	float*  normalData;
+	float*  texCoordData;
+	float*  colorData;
 	GLuint* indexData;
 	
 public:
@@ -47,6 +51,8 @@ public:
 	// if you want to move to verts around you use OF_VBO_STREAM
 	
 	void setVertexData(const ofVec3f * verts, int total, int usage);
+	void setVertexData(const ofVec2f * verts, int total, int usage);
+
 	void setColorData(const ofColor * colors, int total, int usage);	
 	void setNormalData(const ofVec3f * normals, int total, int usage);	
 	void setTexCoordData(const ofVec2f * texCoords, int total, int usage);	
@@ -57,6 +63,11 @@ public:
 	void setNormalData(const float * normal0x, int total, int usage);	
 	void setTexCoordData(const float * texCoord0x, int total, int usage);	
 	
+
+	//TODO: do we need this?? todd added it but keith removed something similar
+	//some commits ago
+	void updateVertexData();
+	void updateColorData();
 	/*
 	void updateVertexData(const ofVec3f * verts, int total);
 	void updateColorData(const ofColor * colors, int total);	
