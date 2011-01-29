@@ -54,10 +54,6 @@ public:
 	void setNormalData(const ofVec3f * normals, int total, int usage);	
 	void setTexCoordData(const ofVec2f * texCoords, int total, int usage);	
 	void setIndexData(const GLuint * indices, int total, int usage);
-	
-	
-	void updateVertexData();
-	void updateColorData();
 
 	void setVertexData(const float * vert0x, int total, int usage);
 	void setColorData(const float * color0x, int total, int usage);	
