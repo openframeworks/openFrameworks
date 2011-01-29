@@ -49,6 +49,11 @@ public:
 	void setTexCoordData(const ofVec2f * texCoords, int total, int usage);	
 	void setIndexData(const GLuint * indices, int total, int usage);
 	
+	void setVertexData(const float * vert0x, int total, int usage);
+	void setColorData(const float * color0x, int total, int usage);	
+	void setNormalData(const float * normal0x, int total, int usage);	
+	void setTexCoordData(const float * texCoord0x, int total, int usage);	
+	
 	/*
 	void updateVertexData(const ofVec3f * verts, int total);
 	void updateColorData(const ofColor * colors, int total);	
