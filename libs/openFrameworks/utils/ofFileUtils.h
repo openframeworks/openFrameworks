@@ -18,8 +18,8 @@ public:
 
 	~ofBuffer();
 
-	bool set(istream & stream);
 	void set(const char * _buffer, int _size);
+	bool set(istream & stream);
 
 	bool writeTo(ostream & stream);
 
@@ -27,17 +27,21 @@ public:
 
 	void allocate(long _size);
 
-	char * getBuffer();
-	const char * getBuffer() const;
+	char * getBinaryBuffer();
+	const char * getBinaryBuffer() const;
 
-	long getSize() const;
+	string getText() const;
+
+	long size() const;
 
 	string getNextLine();
 	string getFirstLine();
 };
+
 //--------------------------------------------------
-bool ofReadFile(const string & path, ofBuffer & file, bool binary=false);
 ofBuffer ofBufferFromFile(const string & path, bool binary=false);
+
+//--------------------------------------------------
 bool ofBufferToFile(const string & path, ofBuffer & file, bool binary=false);
 
 

@@ -34,6 +34,9 @@
     <Filter Include="libs\openFrameworks\math">
       <UniqueIdentifier>{74e22eb5-45e7-4cf4-ae99-5146982593d9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="libs\openFrameworks\3d">
+      <UniqueIdentifier>{a4103554-0058-41d9-bc6b-b65bc3a3c2dd}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\openFrameworks\ofMain.h">
@@ -43,9 +46,6 @@
       <Filter>libs\openFrameworks\app</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\openFrameworks\app\ofAppRunner.h">
-      <Filter>libs\openFrameworks\app</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\openFrameworks\app\ofSimpleApp.h">
       <Filter>libs\openFrameworks\app</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\openFrameworks\graphics\ofBitmapFont.h">
@@ -150,6 +150,27 @@
     <ClInclude Include="..\..\..\openFrameworks\math\ofVec4f.h">
       <Filter>libs\openFrameworks\math</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\openFrameworks\app\ofBaseApp.h">
+      <Filter>libs\openFrameworks\app</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\openFrameworks\graphics\ofPixels.h">
+      <Filter>libs\openFrameworks\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\openFrameworks\3d\ofScene3d.h">
+      <Filter>libs\openFrameworks\3d</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\openFrameworks\3d\of3d.h">
+      <Filter>libs\openFrameworks\3d</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\openFrameworks\3d\ofCamera.h">
+      <Filter>libs\openFrameworks\3d</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\openFrameworks\3d\ofMeshNode.h">
+      <Filter>libs\openFrameworks\3d</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\openFrameworks\3d\ofNode3D.h">
+      <Filter>libs\openFrameworks\3d</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\openFrameworks\app\ofAppGlutWindow.cpp">
@@ -232,6 +253,21 @@
     </ClCompile>
     <ClCompile Include="..\..\..\openFrameworks\math\ofQuaternion.cpp">
       <Filter>libs\openFrameworks\math</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\openFrameworks\graphics\ofPixels.cpp">
+      <Filter>libs\openFrameworks\graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\openFrameworks\3d\ofCamera.cpp">
+      <Filter>libs\openFrameworks\3d</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\openFrameworks\3d\ofMeshNode.cpp">
+      <Filter>libs\openFrameworks\3d</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\openFrameworks\3d\ofNode3D.cpp">
+      <Filter>libs\openFrameworks\3d</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\openFrameworks\3d\ofScene3d.cpp">
+      <Filter>libs\openFrameworks\3d</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -12,9 +12,9 @@
 
 // TODO: closing seems wonky. 
 // adding this for vc2010 compile: error C3861: 'closeQuicktime': identifier not found
-#include "ofQtUtils.h"
-
-
+#if defined (TARGET_WIN32) || defined(TARGET_OSX)
+	#include "ofQtUtils.h"
+#endif
 
 //========================================================================
 // static variables:
@@ -73,8 +73,8 @@ void ofExitCallback();
 void ofExitCallback(){
 
 	//------------------------
-	// try to close FMOD:
-	ofSoundPlayer::closeFmod();
+	// try to close engine if needed:
+	ofSoundShutdown();
 	//------------------------
 
 	//------------------------
@@ -111,7 +111,7 @@ void ofRunApp(ofBaseApp * OFSA){
 		OFSAptr->mouseX = 0;
 		OFSAptr->mouseY = 0;
 	}
-	
+
 	#ifdef TARGET_OSX 
 		//this internally checks the executable path for osx
 		ofSetDataPathRoot("../../../data/");
@@ -143,6 +143,11 @@ void ofRunApp(ofBaseApp * OFSA){
 //--------------------------------------
 ofBaseApp * ofGetAppPtr(){
 	return OFSAptr;
+}
+
+//--------------------------------------
+void ofSetAppPtr(ofBaseApp *appPtr) {
+	OFSAptr = appPtr;
 }
 
 //--------------------------------------
@@ -184,6 +189,15 @@ void ofShowCursor(){
 	window->showCursor();
 }
 
+//--------------------------------------
+void ofSetOrientation(int orientation){
+	window->setOrientation(orientation);
+}
+
+//--------------------------------------
+int ofGetOrientation(){
+	return window->getOrientation();
+}
 
 //--------------------------------------
 void ofSetWindowPosition(int x, int y){
@@ -217,12 +231,24 @@ int ofGetScreenHeight(){
 
 //--------------------------------------------------
 int ofGetWidth(){
-	return (int)window->getWindowSize().x;
+	return (int)window->getWidth();
 }
 //--------------------------------------------------
 int ofGetHeight(){
-	return (int)window->getWindowSize().y;
+	return (int)window->getHeight();
 }
+
+//--------------------------------------------------
+ofPoint	ofGetWindowSize() {
+	return ofPoint(ofGetWidth(), ofGetHeight());
+}
+
+
+//--------------------------------------------------
+ofRectangle	ofGetWindowRect() {
+	return ofRectangle(0, 0, ofGetWidth(), ofGetHeight());
+}
+
 
 //--------------------------------------
 void ofSetWindowTitle(string title){
@@ -260,9 +286,9 @@ void ofSetVerticalSync(bool bSync){
 	#ifdef TARGET_WIN32
 	//----------------------------
 		if (bSync) {
-			if (GLEE_WGL_EXT_swap_control) wglSwapIntervalEXT (1);
+			if (WGL_EXT_swap_control) wglSwapIntervalEXT (1);
 		} else {
-			if (GLEE_WGL_EXT_swap_control) wglSwapIntervalEXT (0);
+			if (WGL_EXT_swap_control) wglSwapIntervalEXT (0);
 		}
 	//----------------------------
 	#endif
@@ -292,30 +318,4 @@ void ofSetVerticalSync(bool bSync){
 	#endif
 	//--------------------------------------
 
-}
-
-//--------------------------------------
-bool ofGetMousePressed(int button){ //by default any button
-	return window->isMousePressed(button);
-}
-//--------------------------------------
-bool ofGetKeyPressed(int key){
-	return window->isKeyPressed(key);
-}
-//--------------------------------------
-int ofGetMouseX(){
-	return window->getMouseX();
-}
-//--------------------------------------
-int ofGetMouseY(){
-	return window->getMouseY();
-}
-
-//--------------------------------------
-int ofGetPreviousMouseX(){
-	return window->getPreviousMouseX();
-}
-//--------------------------------------
-int ofGetPreviousMouseY(){
-	return window->getPreviousMouseY();
 }

@@ -29,6 +29,13 @@ public:
 	virtual ofPoint	getWindowSize(){return ofPoint(); }
 	virtual ofPoint	getScreenSize(){return ofPoint(); }
 
+	virtual void	setOrientation(int orientation){ }
+	virtual int		getOrientation(){ return 0; }
+
+	//this is used by ofGetWidth and now determines the window width based on orientation
+	virtual int		getWidth(){ return 0; }
+	virtual int		getHeight(){ return 0; }
+
 	virtual void	setFrameRate(float targetRate){}
 	virtual void	setWindowTitle(string title){}
 
@@ -39,14 +46,6 @@ public:
 
 	virtual void	enableSetupScreen(){}
 	virtual void	disableSetupScreen(){}
-
-	virtual bool	isMousePressed(int button){return false;}
-	virtual bool	isKeyPressed(int key){return false;}
-
-	virtual int		getMouseX(){return 0;}
-	virtual int		getMouseY(){return 0;}
-
-	virtual int		getPreviousMouseX(){return 0;}
-	virtual int		getPreviousMouseY(){return 0;}
+	
 };
 

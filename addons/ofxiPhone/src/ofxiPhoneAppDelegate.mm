@@ -126,6 +126,7 @@
 	
 
 	// call testApp::setup()
+	ofRegisterTouchEvents((ofxiPhoneApp*)ofGetAppPtr());
 	ofGetAppPtr()->setup();
 
 	#ifdef OF_USING_POCO
