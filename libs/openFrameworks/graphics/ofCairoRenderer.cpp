@@ -107,7 +107,7 @@ void ofCairoRenderer::drawPath(const ofPath & path,bool is_subpath){
 			cairo_curve_to(cr,commands[i].cp1().x,commands[i].cp1().y,commands[i].cp2().x,commands[i].cp2().y,commands[i].to.x,commands[i].to.y);
 			break;
 
-		case ofPath::Command::cubicBezier2DTo:
+		case ofPath::Command::quadricBezier2DTo:
 			curvePoints.clear();
 			cairo_curve_to(cr,commands[i].cp1().x,commands[i].cp1().y,commands[i].cp2().x,commands[i].cp2().y,commands[i].to.x,commands[i].to.y);
 			break;

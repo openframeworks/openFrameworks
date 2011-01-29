@@ -334,6 +334,10 @@ void ofShape::setFrom(const ofPath & path,  int curveResolution, bool tesselate)
 			curveVertices.clear();
 			bezierTo(commands[i].cp1(),commands[i].cp2(),commands[i].to, curveResolution);
 			break;
+		case ofPath::Command::quadricBezier2DTo:
+			curveVertices.clear();
+			quadBezierTo(commands[i].cp1(),commands[i].cp2(),commands[i].to, curveResolution);
+			break;
 		case ofPath::Command::arc2D:
 			curveVertices.clear();
 			arc(commands[i].to,commands[i].radiusX(),commands[i].radiusY(),commands[i].angleBegin(),commands[i].angleEnd(), curveResolution);
@@ -424,7 +428,7 @@ void ofShape::bezierTo( const ofPoint & cp1, const ofPoint & cp2, const ofPoint 
 	bNeedsTessellation = true;
 }
 
-void ofShape::cubicBezierTo(float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3, int curveResolution){
+void ofShape::quadBezierTo(float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3, int curveResolution){
 	for(int i=0; i <= curveResolution; i++){
 		double t = (double)i / (double)(curveResolution);
 		double a = (1.0 - t)*(1.0 - t);
