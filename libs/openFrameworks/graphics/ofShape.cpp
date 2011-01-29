@@ -149,6 +149,7 @@ ofShape::ofShape(){
 	polyWindingMode = ofGetStyle().polyMode;
 	lineColor = ofGetStyle().color;
 	fillColor = ofGetStyle().color;
+	strokeWidth = 1;
 	renderer = 0;
 	bIs3D = true;
 	clear();
@@ -185,7 +186,6 @@ void ofShape::setPolyWindingMode( int newMode ) {
 }
 
 void ofShape::tessellate(){
-	cout << "tessellating" << endl;
 	bool bIs2D = !bIs3D;
 	cachedTessellation.clear();
 	cachedOutline.clear();
@@ -238,6 +238,13 @@ vector<ofVertexData> & ofShape::getTessellation(){
 		tessellate();
 	}
 	return cachedTessellation;
+}
+
+vector<ofPolyline> & ofShape::getOutline() {
+	if ( bNeedsTessellation ){
+			tessellate();
+		}
+	return cachedOutline;
 }
 
 vector<ofPolyline> & ofShape::getSubPolylines(){
