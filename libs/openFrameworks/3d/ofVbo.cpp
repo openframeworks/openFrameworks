@@ -209,25 +209,6 @@ void ofVbo::setIndexData(const GLuint * indices, int total, int usage){
 	indexData = (GLuint*)&indices[0];
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * total, indexData, usage); 
 }
-
-
-//--------------------------------------------------------------
-void ofVbo::updateVertexData() {
-	
-	if(bUsingVerts && bAllocated) {
-		glBindBuffer(GL_ARRAY_BUFFER, vertId);
-		glBufferSubData(GL_ARRAY_BUFFER, 0, totalVerts * vertStride, vertData);
-	}
-}
-
-//--------------------------------------------------------------
-void ofVbo::updateColorData() {
-	if(bUsingColors) {
-		glBindBuffer(GL_ARRAY_BUFFER, colorId);
-		glBufferSubData(GL_ARRAY_BUFFER, 0, totalVerts*sizeof(ofColor), colorData);
-	}
-}
-
 /*
 //--------------------------------------------------------------
 void ofVbo::updateVertexData(const ofVec3f * verts, int total) {
