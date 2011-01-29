@@ -153,12 +153,6 @@ public:
 protected:
 	ofNode *parent;
 	
-	ofVec3f position;
-	ofQuaternion orientation;
-	ofVec3f scale;
-	
-	ofVec3f axis[3];
-	
 	void createMatrix();
 	
 	
@@ -168,6 +162,12 @@ protected:
 	virtual void onScaleChanged() {}
 
 private:
+	ofVec3f position;
+	ofQuaternion orientation;
+	ofVec3f scale;
+	
+	ofVec3f axis[3];
+	
 	ofMatrix4x4 localTransformMatrix;
 //	ofMatrix4x4 globalTransformMatrix;
 };

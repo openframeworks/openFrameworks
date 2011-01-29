@@ -13,7 +13,7 @@
 
 //----------------------------------------
 ofEasyCam::ofEasyCam():
-distance(100),
+//distance(100),
 mousePosViewPrev(0, 0), 
 oldMousePress(false),
 lastMouseActionFrame(0),
@@ -21,8 +21,8 @@ speed(0.1),
 drag(0.1)
 {
 	target.setPosition(0, 0, 0);
-	setPosition(0, 0, distance);
 	setParent(target);
+	setDistance(100);
 }
 
 
@@ -74,7 +74,7 @@ void ofEasyCam::begin(ofRectangle rect) {
 //----------------------------------------
 void ofEasyCam::reset() {
 	target.resetTransform();
-	distance = 100;
+//	distance = 100;
 }
 
 
@@ -97,12 +97,13 @@ ofNode& ofEasyCam::getTarget() {
 
 //----------------------------------------
 void ofEasyCam::setDistance(float f) {
-	distance = f;
+//	distance = f;
+	setPosition(0, 0, f);
 }
 
 //----------------------------------------
 float ofEasyCam::getDistance() const {
-	return distance;
+	return getPosition().z;
 }
 
 
