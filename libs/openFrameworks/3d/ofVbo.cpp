@@ -1,8 +1,6 @@
 //TODO:
 //GL Error checking
-//inlining?
 // handle idling of arrays: possibly let gl create memory and use map buffers for streaming
-// how are we going to handle the OF_VBO_STATIC vs OF_VBO_STREAM settings? Should it auto-set in update intead of check?
 // index updating/deleting?
 
 #include "ofVbo.h"
@@ -44,8 +42,7 @@ void ofVbo::setVertexData(const ofVec3f * verts, int total, int usage) {
 	}
 	
 	glBindBufferARB(GL_ARRAY_BUFFER_ARB, vertId);
-	vertData = (float*)&verts[0].x;
-	glBufferDataARB(GL_ARRAY_BUFFER_ARB, total * sizeof(ofVec3f), vertData, usage);
+	glBufferDataARB(GL_ARRAY_BUFFER_ARB, total * sizeof(ofVec3f), (float*)&verts[0].x, usage);
 }
 
 //--------------------------------------------------------------
@@ -175,17 +172,22 @@ void ofVbo::setIndexData(const GLuint * indices, int total, int usage){
 	}
 	
 	glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, indexId);
-	indexData = (GLuint*)&indices[0];
-	glBufferDataARB(GL_ELEMENT_ARRAY_BUFFER_ARB, sizeof(GLuint) * total, indexData, usage); 
+	glBufferDataARB(GL_ELEMENT_ARRAY_BUFFER_ARB, sizeof(GLuint) * total, (GLuint*)&indices[0], usage); 
 }
 
-/*
 //--------------------------------------------------------------
 void ofVbo::updateVertexData(const ofVec3f * verts, int total) {
 	if(bUsingVerts){
 		glBindBufferARB(GL_ARRAY_BUFFER_ARB, vertId);
-		vertData = (float*)&verts[0].x;
-		glBufferSubDataARB(GL_ARRAY_BUFFER_ARB, 0, total*sizeof(ofVec3f), vertData);
+		glBufferSubDataARB(GL_ARRAY_BUFFER_ARB, 0, total*sizeof(ofVec3f), (float*)&verts[0].x);
+	}
+}
+
+//--------------------------------------------------------------
+void ofVbo::updateVertexData(const float * vert0x, int total) {
+	if(bUsingVerts){
+		glBindBufferARB(GL_ARRAY_BUFFER_ARB, vertId);
+		glBufferSubDataARB(GL_ARRAY_BUFFER_ARB, 0, total*sizeof(ofVec3f), vert0x);
 	}
 }
 
@@ -193,8 +195,15 @@ void ofVbo::updateVertexData(const ofVec3f * verts, int total) {
 void ofVbo::updateColorData(const ofColor * colors, int total) {
 	if(bUsingColors) {
 		glBindBufferARB(GL_ARRAY_BUFFER_ARB, colorId);
-		colorData = (float*)&colors[0].r;
-		glBufferSubDataARB(GL_ARRAY_BUFFER_ARB, 0, total*sizeof(ofColor), colorData);
+		glBufferSubDataARB(GL_ARRAY_BUFFER_ARB, 0, total*sizeof(ofColor), (float*)&colors[0].r);
+	}
+}
+
+//--------------------------------------------------------------
+void ofVbo::updateColorData(const float * color0r, int total) {
+	if(bUsingColors) {
+		glBindBufferARB(GL_ARRAY_BUFFER_ARB, colorId);
+		glBufferSubDataARB(GL_ARRAY_BUFFER_ARB, 0, total*sizeof(ofColor), color0r);
 	}
 }
 
@@ -202,8 +211,15 @@ void ofVbo::updateColorData(const ofColor * colors, int total) {
 void ofVbo::updateNormalData(const ofVec3f * normals, int total) {
 	if(bUsingNormals) {
 		glBindBufferARB(GL_ARRAY_BUFFER_ARB, normalId);
-		normalData = (float*)&normals[0].x;
-		glBufferSubDataARB(GL_ARRAY_BUFFER_ARB, 0, total*sizeof(ofVec3f), normalData);
+		glBufferSubDataARB(GL_ARRAY_BUFFER_ARB, 0, total*sizeof(ofVec3f), (float*)&normals[0].x);
+	}
+}
+
+//--------------------------------------------------------------
+void ofVbo::updateNormalData(const float * normal0x, int total) {
+	if(bUsingNormals) {
+		glBindBufferARB(GL_ARRAY_BUFFER_ARB, normalId);
+		glBufferSubDataARB(GL_ARRAY_BUFFER_ARB, 0, total*sizeof(ofVec3f), normal0x);
 	}
 }
 
@@ -211,8 +227,15 @@ void ofVbo::updateNormalData(const ofVec3f * normals, int total) {
 void ofVbo::updateTexCoordData(const ofVec2f * texCoords, int total) {
 	if(bUsingTexCoords) {
 		glBindBufferARB(GL_ARRAY_BUFFER_ARB, texCoordId);
-		texCoordData = (float*)&texCoords[0].x;
-		glBufferSubDataARB(GL_ARRAY_BUFFER_ARB, 0, total*sizeof(ofVec2f), texCoordData);
+		glBufferSubDataARB(GL_ARRAY_BUFFER_ARB, 0, total*sizeof(ofVec2f), (float*)&texCoords[0].x);
+	}
+}
+
+//--------------------------------------------------------------
+void ofVbo::updateTexCoordData(const float * texCoord0x, int total) {
+	if(bUsingTexCoords) {
+		glBindBufferARB(GL_ARRAY_BUFFER_ARB, texCoordId);
+		glBufferSubDataARB(GL_ARRAY_BUFFER_ARB, 0, total*sizeof(ofVec2f), texCoord0x);
 	}
 }
 
@@ -220,11 +243,10 @@ void ofVbo::updateTexCoordData(const ofVec2f * texCoords, int total) {
 void ofVbo::updateIndexData(const GLuint * indices, int total) {
 	if(bUsingIndices) {
 		glBindBufferARB(GL_ARRAY_BUFFER_ARB, indexId);
-		indexData = (GLuint*)&indices[0];
-		glBufferSubDataARB(GL_ARRAY_BUFFER_ARB, 0, total*sizeof(GLuint), indexData);
+		glBufferSubDataARB(GL_ARRAY_BUFFER_ARB, 0, total*sizeof(GLuint), (GLuint*)&indices[0]);
 	}
 }
-*/
+
 
 //--------------------------------------------------------------
 bool ofVbo::getIsAllocated(){
@@ -254,31 +276,6 @@ bool ofVbo::getUsingTexCoords(){
 //--------------------------------------------------------------
 bool ofVbo::getUsingIndices(){
 	return bUsingIndices;
-}
-
-//--------------------------------------------------------------
-float* ofVbo::getVertPointer(){
-	return vertData;
-}
-
-//--------------------------------------------------------------
-float* ofVbo::getColorPointer(){
-	return colorData;
-}
-
-//--------------------------------------------------------------
-float* ofVbo::getNormalPointer(){
-	return normalData;
-}
-
-//--------------------------------------------------------------
-float* ofVbo::getTexCoordPointer(){
-	return texCoordData;
-}
-
-//--------------------------------------------------------------
-GLuint* ofVbo::getIndexPointer(){
-	return indexData;
 }
 
 //--------------------------------------------------------------

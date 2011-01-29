@@ -11,6 +11,8 @@ void testApp::setup(){
 	model.enableTexCoords();
 	model.enableNormals();
 	
+	model.setRenderMethod(OF_MESH_USING_VBO);
+	
     glEnable(GL_DEPTH_TEST);
 	
 	lightsOn = true;
