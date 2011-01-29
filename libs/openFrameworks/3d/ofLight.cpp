@@ -11,6 +11,7 @@
 #include "ofMain.h"
 #include "ofConstants.h"
 
+/// test hack //
 
 //----------------------------------------
 void ofEnableLighting() {
@@ -41,12 +42,14 @@ ofLight::ofLight():glIndex(0), isEnabled(false) {
 	// if array hasn't been inited to false, init it
 	if(lightsActiveInited == false) {
 		for(int i=0; i<OF_MAX_LIGHTS; i++) lightsActive[i] = false;
+		lightsActiveInited = true;
 	}
 	
 	// search for the first free block
 	for(int i=0; i<OF_MAX_LIGHTS; i++) {
 		if(lightsActive[i] == false) {
 			glIndex = i;
+			lightsActive[i] = true;
 			enable();
 			return;
 		}
@@ -69,6 +72,7 @@ ofLight::~ofLight() {
 void ofLight::enable() {
 	if(glIndex<OF_MAX_LIGHTS) {
 		ofEnableLighting();
+		cout << "this is my glIndex in ofLight : " << glIndex << endl;
 		glEnable(GL_LIGHT0 + glIndex);
 	}
 }
@@ -103,6 +107,11 @@ void ofLight::setAmbientColor(const ofColor& c) {
 	ambientColor = c/255.0f;
 	GLfloat cc[] = {ambientColor.r, ambientColor.g, ambientColor.b, ambientColor.a};
 	glLightfv(GL_LIGHT0 + glIndex, GL_AMBIENT, cc);
+}
+
+//----------------------------------------
+void ofLight::setAmbientColor(float r, float g, float b, float a) {
+	setAmbientColor(r, g, b, a);
 }
 
 //----------------------------------------

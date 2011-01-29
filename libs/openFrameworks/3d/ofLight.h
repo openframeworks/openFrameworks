@@ -38,6 +38,7 @@ public:
 	bool getIsDirectional() const;
 	
 	void setAmbientColor(const ofColor& c);
+	void setAmbientColor(float r, float g, float b, float a=255.f);
 	void setDiffuseColor(const ofColor& c);
 	void setSpecularColor(const ofColor& c);
 	
