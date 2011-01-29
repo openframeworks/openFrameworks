@@ -4,21 +4,21 @@
 void testApp::setup(){
 	
 //	ofSetLogLevel(OF_LOG_VERBOSE);
-    model.loadMeshes("astroBoy_walk.dae",meshes);
+    model.loadMeshes("astroBoy_walk.dae",data);
 	tex.loadImage("boy_10.tga");
 	
 	ofEnableNormalizedTexCoords();
 
-	for(int i =0; i < meshes.size();i++){
-		vboMeshes.push_back(ofVboMesh());
-		vboMeshes.back().vertexData = &meshes[i];
-		vboMeshes.back().enableTexCoords();
-		vboMeshes.back().enableNormals();
-		vboMeshes.back().drawType = GL_STREAM_DRAW_ARB;
-		vboMeshes.back().setUseIndices();
+	for(int i =0; i < data.size();i++){
+		meshes.push_back(ofMesh());
+		meshes.back().vertexData = &data[i];
+		meshes.back().enableTexCoords();
+		meshes.back().enableNormals();
+		meshes.back().drawType = GL_STREAM_DRAW_ARB;
+		meshes.back().setUseIndices();
+		meshes.back().setRenderMethod(OF_MESH_USING_VBO);
 	}
 	
-    
     glEnable(GL_DEPTH_TEST);
 	
 	lightsOn = true;
@@ -34,28 +34,24 @@ void testApp::setup(){
 //--------------------------------------------------------------
 void testApp::update(){
 
-	for (int i =0; i < vboMeshes.size();i++){
-		for (int j=0; j<vboMeshes[i].vertexData->getNumVertices();j++){
-			ofVec3f curVert = vboMeshes[i].vertexData->getVertex(j);
+
+	for (int i =0; i < meshes.size();i++){
+		for (int j=0; j<meshes[i].vertexData->getNumVertices();j++){
+			ofVec3f curVert = meshes[i].vertexData->getVertex(j);
 			float phi = .006*ofGetFrameNum() + .05*PI*curVert.x;
 			float theta = .009*ofGetFrameNum() + .15*PI*curVert.x;
-//			ofVec3f modVert = .003*ofVec3f(cos(theta)*sin(phi),sin(theta)*sin(phi),cos(phi));
 			ofVec3f modVert = .01*ofVec3f(0,sin(theta)*sin(phi),0);
-			vboMeshes[i].vertexData->setVertex(j,curVert+modVert);
+			meshes[i].vertexData->setVertex(j,curVert+modVert);
 		}
-		//vboMeshes[i].vbo.setVertexData(vboMeshes[i].meshElement->getVerticesPointer(),vboMeshes[i].meshElement->getNumVertices());
-		//vboMeshes[i].setupVertices(GL_STREAM_DRAW_ARB);
 	}
 	
-	for (int i =0; i < vboMeshes.size();i++){
-		for (int j=0; j<vboMeshes[i].vertexData->getNumTexCoords();j++){
-			ofVec3f curVert = vboMeshes[i].vertexData->getTexCoord(j);
+	for (int i =0; i < meshes.size();i++){
+		for (int j=0; j<meshes[i].vertexData->getNumTexCoords();j++){
+			ofVec3f curVert = meshes[i].vertexData->getTexCoord(j);
 			float theta = .002*ofGetFrameNum();
 			ofVec2f modVert = .001*ofVec3f(cos(theta),sin(theta));
-			vboMeshes[i].vertexData->setTexCoord(j,curVert+modVert);
+			meshes[i].vertexData->setTexCoord(j,curVert+modVert);
 		}
-		//vboMeshes[i].setupTexCoords(GL_STREAM_DRAW_ARB);
-		//vboMeshes[i].vbo.updateTexCoordData(vboMeshes[i].meshElement->getTexCoordsPointer(),vboMeshes[i].meshElement->getNumTexCoords());
 	}
 }
 
@@ -75,15 +71,15 @@ void testApp::draw(){
 	glRotatef(ofGetWidth()*.5 - mouseX,0,1,0);		
 
 	tex.getTextureReference().bind();
-	for (int i =0; i < vboMeshes.size(); i++){
-//		ofSetColor(i*255.0/(vboMeshes.size()-1),0,255 - i*255.0/(vboMeshes.size()-1));
-		vboMeshes[i].drawFaces();
+	for (int i =0; i < meshes.size(); i++){
+//		ofSetColor(i*255.0/(meshes.size()-1),0,255 - i*255.0/(meshes.size()-1));
+		meshes[i].drawFaces();
 
 //		ofSetColor(120,i*255.0/(vboMeshes.size()-1),i*255.0/(vboMeshes.size()-1));
-//		vboMeshes[i].drawVertices();
+//		meshes[i].drawVertices();
 
-//		ofSetColor(i*255.0/(vboMeshes.size()-1),i*255.0/(vboMeshes.size()-1),0);
-//		vboMeshes[i].drawWireframe();
+//		ofSetColor(i*255.0/(meshes.size()-1),i*255.0/(meshes.size()-1),0);
+//		meshes[i].drawWireframe();
 	}
 	tex.getTextureReference().unbind();
 

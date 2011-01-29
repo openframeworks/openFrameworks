@@ -49,6 +49,23 @@ void ofVbo::setVertexData(const ofVec3f * verts, int total, int usage) {
 }
 
 //--------------------------------------------------------------
+void ofVbo::setVertexData(const float * vert0x, int total, int usage) {
+	if(vert0x == NULL) {
+		ofLog(OF_LOG_WARNING,"ofVbo: bad vertex data!\n");
+		return;	
+	}
+	vertUsage = usage;
+	if(!bUsingVerts) {
+		bAllocated  = true;
+		bUsingVerts = true;
+		glGenBuffers(1, &vertId);
+	}
+	
+	glBindBufferARB(GL_ARRAY_BUFFER_ARB, vertId);
+	glBufferDataARB(GL_ARRAY_BUFFER_ARB, total * sizeof(ofVec3f), vert0x, usage);
+}
+
+//--------------------------------------------------------------
 void ofVbo::setColorData(const ofColor * colors, int total, int usage) {
 	if(colors == NULL) {
 		ofLog(OF_LOG_WARNING,"ofVbo: bad color data!\n");
@@ -62,6 +79,22 @@ void ofVbo::setColorData(const ofColor * colors, int total, int usage) {
 	
 	glBindBufferARB(GL_ARRAY_BUFFER_ARB, colorId);
 	glBufferDataARB(GL_ARRAY_BUFFER_ARB, total * sizeof(ofColor), &colors[0].r, usage);	
+}
+
+//--------------------------------------------------------------
+void ofVbo::setColorData(const float * color0r, int total, int usage) {
+	if(color0r == NULL) {
+		ofLog(OF_LOG_WARNING,"ofVbo: bad color data!\n");
+		return;	
+	}
+	colorUsage = usage;
+	if(!bUsingColors) {
+		bUsingColors = true;
+		glGenBuffers(1, &colorId);
+	}
+	
+	glBindBufferARB(GL_ARRAY_BUFFER_ARB, colorId);
+	glBufferDataARB(GL_ARRAY_BUFFER_ARB, total * sizeof(ofColor), color0r, usage);	
 }
 
 //--------------------------------------------------------------
@@ -81,6 +114,22 @@ void ofVbo::setNormalData(const ofVec3f * normals, int total, int usage) {
 }
 
 //--------------------------------------------------------------
+void ofVbo::setNormalData(const float * normal0x, int total, int usage) {
+	if(normal0x == NULL) {
+		ofLog(OF_LOG_WARNING,"ofVbo: bad normal data!\n");
+		return;	
+	}
+	normUsage = usage;
+	if(!bUsingNormals) {
+		bUsingNormals = true;
+		glGenBuffers(1, &normalId);
+	}
+	
+	glBindBufferARB(GL_ARRAY_BUFFER_ARB, normalId);
+	glBufferDataARB(GL_ARRAY_BUFFER_ARB, total * sizeof(ofVec3f), normal0x, usage);	
+}
+
+//--------------------------------------------------------------
 void ofVbo::setTexCoordData(const ofVec2f * texCoords, int total, int usage) {
 	if(texCoords == NULL) {
 		ofLog(OF_LOG_WARNING,"ofVbo: bad texCoord data!\n");
@@ -94,6 +143,22 @@ void ofVbo::setTexCoordData(const ofVec2f * texCoords, int total, int usage) {
 	
 	glBindBufferARB(GL_ARRAY_BUFFER_ARB, texCoordId);
 	glBufferDataARB(GL_ARRAY_BUFFER_ARB, total * sizeof(ofVec2f), &texCoords[0].x, usage);	
+}
+
+//--------------------------------------------------------------
+void ofVbo::setTexCoordData(const float * texCoord0x, int total, int usage) {
+	if(texCoord0x == NULL) {
+		ofLog(OF_LOG_WARNING,"ofVbo: bad texCoord data!\n");
+		return;	
+	}
+	texUsage = usage;
+	if(!bUsingTexCoords) {
+		bUsingTexCoords = true;
+		glGenBuffers(1, &texCoordId);
+	}
+	
+	glBindBufferARB(GL_ARRAY_BUFFER_ARB, texCoordId);
+	glBufferDataARB(GL_ARRAY_BUFFER_ARB, total * sizeof(ofVec2f), texCoord0x, usage);	
 }
 
 

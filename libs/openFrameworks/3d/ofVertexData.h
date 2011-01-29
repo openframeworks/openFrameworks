@@ -126,10 +126,10 @@ public:
 	int getNumTexCoords() const;
 	int getNumIndices() const;
 	
-	ofVec3f* getVerticesPointer();
-	ofColor* getColorsPointer();
-	ofVec3f* getNormalsPointer();
-	ofVec2f* getTexCoordsPointer();
+	float* getVerticesPointer();
+	float* getColorsPointer();
+	float* getNormalsPointer();
+	float* getTexCoordsPointer();
 	GLuint* getIndexPointer();
 	
 	vector<int>& getFace(int faceId);
