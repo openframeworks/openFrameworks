@@ -104,20 +104,20 @@ void ofCairoRenderer::drawPath(const ofPath & path,bool is_subpath){
 
 		case ofPath::Command::bezier2DTo:
 			curvePoints.clear();
-			cairo_curve_to(cr,commands[i].cp1().x,commands[i].cp1().y,commands[i].cp2().x,commands[i].cp2().y,commands[i].to.x,commands[i].to.y);
+			cairo_curve_to(cr,commands[i].cp1.x,commands[i].cp1.y,commands[i].cp2.x,commands[i].cp2.y,commands[i].to.x,commands[i].to.y);
 			break;
 
-		case ofPath::Command::quadricBezier2DTo:
+		case ofPath::Command::quadBezier2DTo:
 			curvePoints.clear();
-			cairo_curve_to(cr,commands[i].cp1().x,commands[i].cp1().y,commands[i].cp2().x,commands[i].cp2().y,commands[i].to.x,commands[i].to.y);
+			cairo_curve_to(cr,commands[i].cp1.x,commands[i].cp1.y,commands[i].cp2.x,commands[i].cp2.y,commands[i].to.x,commands[i].to.y);
 			break;
 
 
 		case ofPath::Command::arc2D:
 			curvePoints.clear();
 			// elliptic arcs not directly supported in cairo, lets scale y
-			if(commands[i].radiusX()!=commands[i].radiusY()){
-				float ellipse_ratio = commands[i].radiusY()/commands[i].radiusX();
+			if(commands[i].radiusX!=commands[i].radiusY){
+				float ellipse_ratio = commands[i].radiusY/commands[i].radiusX;
 				/*cairo_matrix_t current_matrix;
 				cairo_get_matrix(cr,&current_matrix);
 				cairo_matrix_t stored_matrix = current_matrix;
@@ -129,11 +129,11 @@ void ofCairoRenderer::drawPath(const ofPath & path,bool is_subpath){
 				translate(0,-commands[i].to.y*ellipse_ratio);
 				scale(1,ellipse_ratio);
 				translate(0,commands[i].to.y*1/ellipse_ratio);
-				cairo_arc(cr,commands[i].to.x,commands[i].to.y,commands[i].radiusX(),commands[i].angleBegin(),commands[i].angleEnd());
+				cairo_arc(cr,commands[i].to.x,commands[i].to.y,commands[i].radiusX,commands[i].angleBegin,commands[i].angleEnd);
 				//cairo_set_matrix(cr,&stored_matrix);
 				popMatrix();
 			}else{
-				cairo_arc(cr,commands[i].to.x,commands[i].to.y,commands[i].radiusX(),commands[i].angleBegin(),commands[i].angleEnd());
+				cairo_arc(cr,commands[i].to.x,commands[i].to.y,commands[i].radiusX,commands[i].angleBegin,commands[i].angleEnd);
 			}
 			break;
 		}

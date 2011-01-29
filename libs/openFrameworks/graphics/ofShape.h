@@ -114,8 +114,6 @@ public:
 	/// close the shape
 	void close();
 
-	/// next contour
-
 	vector<ofVertexData> & getTessellation();
 
 	/// must call tessellate before calling draw, if the shape has changed

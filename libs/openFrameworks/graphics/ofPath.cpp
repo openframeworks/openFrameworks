@@ -16,7 +16,7 @@ ofPath::ofPath(){
 	windingMode = OF_POLY_WINDING_ODD;
 	bClosed = false;
 	renderer = NULL;
-	prevCurveRes = 0;
+	prevCurveRes = 16;
 }
 
 void ofPath::clear(){
@@ -80,11 +80,11 @@ void ofPath::bezierTo(float cx1, float cy1, float cz1, float cx2, float cy2, flo
 }
 
 void ofPath::quadBezierTo(const ofPoint & cp1, const ofPoint & cp2, const ofPoint & p){
-	lastPath().addCommand(Command(Command::quadricBezier3DTo,p,cp1,cp2));
+	lastPath().addCommand(Command(Command::quadBezier3DTo,p,cp1,cp2));
 }
 
 void ofPath::quadBezierTo(float cx1, float cy1, float cx2, float cy2, float x, float y){
-	lastPath().addCommand(Command(Command::quadricBezier2DTo,ofPoint(x,y),ofPoint(cx1,cy1),ofPoint(cx2,cy2)));
+	lastPath().addCommand(Command(Command::quadBezier2DTo,ofPoint(x,y),ofPoint(cx1,cy1),ofPoint(cx2,cy2)));
 }
 
 void ofPath::quadBezierTo(float cx1, float cy1, float cz1, float cx2, float cy2, float cz2, float x, float y, float z){
@@ -152,7 +152,9 @@ ofPath & ofPath::lastPath(){
 const vector<ofPath::Command> & ofPath::getCommands() const{
 	return commands;
 }
-
+vector<ofPath::Command> & ofPath::getCommands(){
+	return commands;
+}
 vector<ofPath> & ofPath::getSubPaths(){
 	return subPaths;
 }
@@ -191,10 +193,11 @@ void ofPath::addCommand(const ofPath::Command & command){
 	hasChanged=true;
 }
 
-ofShape & ofPath::getShape(int curveResolution, bool tesselated){
-	if(hasChanged || curveResolution!=prevCurveRes && curveResolution > 0){
+ofShape & ofPath::getShape(int curveResolution){
+	if(curveResolution<=0) curveResolution=prevCurveRes;
+	if(hasChanged || curveResolution!=prevCurveRes){
 		prevCurveRes = curveResolution;
-		cachedShape.setFrom(*this,curveResolution,tesselated);
+		cachedShape.setFrom(*this,curveResolution);
 		hasChanged = false;
 	}
 	cachedShape.setStrokeColor(strokeColor);
@@ -218,4 +221,9 @@ void ofPath::draw(float x, float y){
 		renderer->draw(*this);
 	}
 	ofPopMatrix();
+}
+
+
+void ofPath::markedChanged(){
+	hasChanged=true;
 }
