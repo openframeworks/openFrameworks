@@ -134,6 +134,8 @@ public:
 	
 	vector<int>& getFace(int faceId);
 	
+	void setName(string name_);
+	
 	bool haveVertsChanged();
 	bool haveColorsChanged();
 	bool haveNormalsChanged();
@@ -148,6 +150,7 @@ protected:
 	vector<GLuint> indices;
 	bool bVertsChanged, bColorsChanged, bNormalsChanged, bTexCoordsChanged, bIndicesChanged;
 	ofPrimitiveMode mode;
+	string name;
 	
 //	ofMaterial *mat;
 };

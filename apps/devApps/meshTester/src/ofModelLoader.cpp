@@ -1,25 +1,8 @@
-#define BUFFER_OFFSET(i) ((char *)NULL + (i))
-
-#include "ofAssimpMeshLoader.h"
-#import "aiConfig.h"
+#include "ofModelLoader.h"
+#include "aiConfig.h"
 
 //--------------------------------------------------------------
-ofAssimpMeshLoader::ofAssimpMeshLoader(){
-	scene = NULL;
-}
-
-//--------------------------------------------------------------
-ofAssimpMeshLoader::~ofAssimpMeshLoader(){
-}
-
-//-------------------------------------------
-ofColor ofAssimpMeshLoader::aiColorToOfColor(const aiColor4D& c){
-	return ofColor(255*c.r,255*c.g,255*c.b,255*c.a);
-}
-
-void ofAssimpMeshLoader::aiMeshToOfMesh(const aiMesh* aim, ofVertexData& ofm){
-	
-	
+void aiMeshToOfVertexData(const aiMesh* aim, ofVertexData& ofm){
 	// default to triangle mode
 	ofm.setMode(OF_TRIANGLES_MODE);
 	
@@ -59,26 +42,12 @@ void ofAssimpMeshLoader::aiMeshToOfMesh(const aiMesh* aim, ofVertexData& ofm){
 		}
 	}	
 	
-	// copy name
-	//ofm.name = string(aim->mName.data);
-	
-	// copy face type
-	//TODO: we are only grabbing the index of the first face, should probably do something smarter
-	//ofm.faceType = aim->mFaces[0].mNumIndices;
-	
+	ofm.setName(string(aim->mName.data));
 	//	ofm.materialId = aim->mMaterialIndex;	
 }
 
 //--------------------------------------------------------------
-void ofAssimpMeshLoader::loadMeshes(string modelName,vector<ofVertexData>& m){
-	
-    // if we have a model loaded, unload the fucker. (pardon anton's french)
-    if(scene != NULL){
-        aiReleaseImport(scene);
-        scene = NULL; 
-    }
-    
-    // Load our new path.
+void loadMeshes(string modelName,vector<ofMesh>& m){
     string filepath = ofToDataPath(modelName);
 	
     ofLog(OF_LOG_VERBOSE, "loading meshes from %s", filepath.c_str());
@@ -89,19 +58,19 @@ void ofAssimpMeshLoader::loadMeshes(string modelName,vector<ofVertexData>& m){
     aiSetImportPropertyInteger(AI_CONFIG_PP_PTV_NORMALIZE, true);
     
     // aiProcess_FlipUVs is for VAR code. Not needed otherwise. Not sure why.
-    scene = (aiScene*) aiImportFile(filepath.c_str(), aiProcessPreset_TargetRealtime_MaxQuality | aiProcess_OptimizeGraph | aiProcess_Triangulate | aiProcess_FlipUVs | 0 );	
-    if(scene){        
+    aiScene * scene = (aiScene*) aiImportFile(filepath.c_str(), aiProcessPreset_TargetRealtime_MaxQuality | aiProcess_OptimizeGraph | aiProcess_Triangulate | aiProcess_FlipUVs | 0 );	
+    if(scene != NULL){        
         ofLog(OF_LOG_VERBOSE, "initted scene with %i meshes", scene->mNumMeshes);
-		
 		m.resize(scene->mNumMeshes);
-		
 		for (unsigned int i = 0; i < scene->mNumMeshes; i++){
 			ofLog(OF_LOG_VERBOSE, "loading mesh %u", i);
 			// current mesh we are introspecting
 			aiMesh* aMesh = scene->mMeshes[i];
-				
-			m[i] = ofVertexData();
-			aiMeshToOfMesh(aMesh,m[i]);
+			m[i] = ofMesh();
+			if(m[i].vertexData == NULL){
+				m[i].vertexData = new ofVertexData();
+			}
+			aiMeshToOfVertexData(aMesh,*m[i].vertexData);
 		}
     }
 }	

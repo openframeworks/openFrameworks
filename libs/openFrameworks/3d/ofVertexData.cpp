@@ -352,6 +352,11 @@ void ofVertexData::setIndex(int i, int val){
 }
 
 //--------------------------------------------------------------
+void ofVertexData::setName(string name_){
+	name = name_;
+}
+
+//--------------------------------------------------------------
 void ofVertexData::setupIndicesAuto(){
 	bIndicesChanged = true;
 	indices.clear();
