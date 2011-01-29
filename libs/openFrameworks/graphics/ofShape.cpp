@@ -178,16 +178,17 @@ void ofShape::close() {
 }
 
 void ofShape::setPolyWindingMode( int newMode ) {
-	polyWindingMode = newMode; 
-	bNeedsTessellation = true; 
-	// we shouldn't draw the tessellated outline if polyWindingMode is not ODD???
-	//TODO: check but this seems from ofGraphics that it just needs to be tesselated in case
-	// winding is != ODD if it is it just doesnt need to be tesselated.
+	if(polyWindingMode != newMode){
+		polyWindingMode = newMode;
+		bNeedsTessellation = true;
+	}
 }
 
 void ofShape::tessellate(){
-
+	cout << "tessellating" << endl;
 	bool bIs2D = !bIs3D;
+	cachedTessellation.clear();
+	cachedOutline.clear();
 	if(bFilled){
 		cachedTessellation = ofTessellator::tessellateToMesh( getSubPolylines(), polyWindingMode, bIs2D );
 	}
@@ -195,7 +196,6 @@ void ofShape::tessellate(){
 		if( polyWindingMode != OF_POLY_WINDING_ODD ) {
 			cachedOutline = ofTessellator::tessellateToOutline( getSubPolylines(), polyWindingMode, bIs2D );
 		}else{
-			cachedOutline.clear();
 			getSubPolylines();
 		}
 	}
@@ -250,6 +250,22 @@ vector<ofPolyline> & ofShape::getSubPolylines(){
 		}
 	}
 	return cachedOutline;
+}
+
+void ofShape::setFilled( bool bFill ) {
+	if(bFill!=bFilled){
+		bFilled = bFill;
+		// if vertex info changes we already set the flag to tessellate
+		// so in this case is only necesary if there wasn't a previous
+		// tesselation. tesselate also clears the caches so there's no
+		// invalid info
+		if(bFilled && cachedTessellation.empty()){
+			bNeedsTessellation = true;
+		}
+		if(!bFilled && cachedOutline.empty()){
+			bNeedsTessellation = true;
+		}
+	}
 }
 
 //-------------------------------------------------------------------------

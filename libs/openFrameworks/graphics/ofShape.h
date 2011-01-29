@@ -128,7 +128,7 @@ public:
 	/// polygon winding mode for tessellation
 	void setPolyWindingMode( int newMode );
 	/// filled/outline
-	void setFilled( bool bFill ) { bFilled = bFill; bNeedsTessellation = true; }
+	void setFilled( bool bFill );
 	bool isFilled() const { return bFilled; }
 	/// set line + fill color simultaneously
 	void setColor( const ofColor& color ) { setFillColor( color ); setStrokeColor( color ); }
