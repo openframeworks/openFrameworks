@@ -37,7 +37,7 @@ public:
 	
 protected:
 	ofNode target;
-	float distance;
+//	float distance;
 
 	ofVec3f mousePosViewPrev;
 	bool oldMousePress;

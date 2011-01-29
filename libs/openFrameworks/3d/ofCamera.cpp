@@ -62,7 +62,7 @@ void ofCamera::begin(ofRectangle rect) {
 	float nc = nearClip, fc = farClip;
 	if(nearClip == 0 || farClip == 0) {
 		float dist = rect.height * 0.5f / tanf(PI * fov / 360.0f);
-		nc = (nearClip == 0) ? dist / 100.0f : nearClip;
+		nc = (nearClip == 0) ? dist / 1000.0f : nearClip;
 		fc = (farClip == 0) ? dist * 10.0f : farClip;
 	}
 	
