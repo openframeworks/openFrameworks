@@ -97,5 +97,4 @@ public:
 	ofVbo vbo;
 	int drawType;
 	meshRenderMethod renderMethod;
-	
 };

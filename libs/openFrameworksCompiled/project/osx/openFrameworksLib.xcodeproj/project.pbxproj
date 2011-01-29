@@ -11,8 +11,6 @@
 		2D4FB15C12DE7271000A51F9 /* ofSoundEffect.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D4FB15812DE7271000A51F9 /* ofSoundEffect.h */; };
 		2D4FB15D12DE7271000A51F9 /* ofSoundUnit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D4FB15912DE7271000A51F9 /* ofSoundUnit.cpp */; };
 		2D4FB15E12DE7271000A51F9 /* ofSoundUnit.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D4FB15A12DE7271000A51F9 /* ofSoundUnit.h */; };
-		539B886912F396210098B2EB /* ofModel.h in Headers */ = {isa = PBXBuildFile; fileRef = 539B886712F396210098B2EB /* ofModel.h */; };
-		539B886A12F396210098B2EB /* ofModel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 539B886812F396210098B2EB /* ofModel.cpp */; };
 		53AD6A7E12E2721800488B9C /* ofVertexData.h in Headers */ = {isa = PBXBuildFile; fileRef = 53AD6A7C12E2721800488B9C /* ofVertexData.h */; };
 		53AD6A7F12E2721800488B9C /* ofVertexData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53AD6A7D12E2721800488B9C /* ofVertexData.cpp */; };
 		53ECD3E112E0EEB60035AA81 /* ofVbo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53ECD3D912E0EEB60035AA81 /* ofVbo.cpp */; };
@@ -95,8 +93,6 @@
 		2D4FB15812DE7271000A51F9 /* ofSoundEffect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofSoundEffect.h; sourceTree = "<group>"; };
 		2D4FB15912DE7271000A51F9 /* ofSoundUnit.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofSoundUnit.cpp; sourceTree = "<group>"; };
 		2D4FB15A12DE7271000A51F9 /* ofSoundUnit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofSoundUnit.h; sourceTree = "<group>"; };
-		539B886712F396210098B2EB /* ofModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofModel.h; sourceTree = "<group>"; };
-		539B886812F396210098B2EB /* ofModel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofModel.cpp; sourceTree = "<group>"; };
 		53AD6A7C12E2721800488B9C /* ofVertexData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofVertexData.h; sourceTree = "<group>"; };
 		53AD6A7D12E2721800488B9C /* ofVertexData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofVertexData.cpp; sourceTree = "<group>"; };
 		53ECD3D912E0EEB60035AA81 /* ofVbo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofVbo.cpp; path = ../../../openFrameworks/3d/ofVbo.cpp; sourceTree = SOURCE_ROOT; };
@@ -232,8 +228,6 @@
 		53ECD3D312E0EEB60035AA81 /* 3d */ = {
 			isa = PBXGroup;
 			children = (
-				539B886712F396210098B2EB /* ofModel.h */,
-				539B886812F396210098B2EB /* ofModel.cpp */,
 				53ECD3DA12E0EEB60035AA81 /* ofVbo.h */,
 				53ECD3D912E0EEB60035AA81 /* ofVbo.cpp */,
 				53ECD3DB12E0EEB60035AA81 /* ofMesh.h */,
@@ -597,7 +591,6 @@
 				53ECD3E212E0EEB60035AA81 /* ofVbo.h in Headers */,
 				53ECD3E312E0EEB60035AA81 /* ofMesh.h in Headers */,
 				53AD6A7E12E2721800488B9C /* ofVertexData.h in Headers */,
-				539B886912F396210098B2EB /* ofModel.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -689,7 +682,6 @@
 				53ECD3E112E0EEB60035AA81 /* ofVbo.cpp in Sources */,
 				53ECD43A12E121C60035AA81 /* ofMesh.cpp in Sources */,
 				53AD6A7F12E2721800488B9C /* ofVertexData.cpp in Sources */,
-				539B886A12F396210098B2EB /* ofModel.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -706,8 +698,10 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
+					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_2)",
 				);
 				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)/../../../glew/libs/osx\"";
+				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_2 = "\"$(SRCROOT)/../../../../addons/ofxAssimpModelLoader/libs/assimp/lib/osx\"";
 				PREBINDING = NO;
 				PRODUCT_NAME = openFrameworksDebug;
 				SDKROOT = "";
@@ -726,8 +720,10 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
+					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_2)",
 				);
 				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)/../../../glew/libs/osx\"";
+				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_2 = "\"$(SRCROOT)/../../../../addons/ofxAssimpModelLoader/libs/assimp/lib/osx\"";
 				PREBINDING = NO;
 				PRODUCT_NAME = openFrameworks;
 				SDKROOT = "";

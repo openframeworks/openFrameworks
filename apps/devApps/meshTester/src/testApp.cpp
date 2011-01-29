@@ -4,24 +4,17 @@
 void testApp::setup(){
 	
 //	ofSetLogLevel(OF_LOG_VERBOSE);
-    model.loadMeshes("astroBoy_walk.dae",data);
+    model.loadModel("astroBoy_walk.dae");
 	tex.loadImage("boy_10.tga");
 	
 	ofEnableNormalizedTexCoords();
-
-	for(int i =0; i < data.size();i++){
-		meshes.push_back(ofMesh());
-		meshes.back().vertexData = &data[i];
-		meshes.back().enableTexCoords();
-		meshes.back().enableNormals();
-		meshes.back().drawType = GL_STREAM_DRAW_ARB;
-		meshes.back().setUseIndices();
-		meshes.back().setRenderMethod(OF_MESH_USING_VBO);
-	}
+	model.enableTexCoords();
+	model.enableNormals();
 	
     glEnable(GL_DEPTH_TEST);
 	
 	lightsOn = true;
+	wiggleModel = false;
 	glEnable(GL_SMOOTH);
 	glEnable(GL_POINT_SMOOTH);
 	glPointSize(4);
@@ -33,24 +26,24 @@ void testApp::setup(){
 
 //--------------------------------------------------------------
 void testApp::update(){
-
-
-	for (int i =0; i < meshes.size();i++){
-		for (int j=0; j<meshes[i].vertexData->getNumVertices();j++){
-			ofVec3f curVert = meshes[i].vertexData->getVertex(j);
-			float phi = .006*ofGetFrameNum() + .05*PI*curVert.x;
-			float theta = .009*ofGetFrameNum() + .15*PI*curVert.x;
-			ofVec3f modVert = .01*ofVec3f(0,sin(theta)*sin(phi),0);
-			meshes[i].vertexData->setVertex(j,curVert+modVert);
+	if(wiggleModel){
+		for (int i =0; i < model.meshes.size();i++){
+			for (int j=0; j<model.meshes[i].vertexData->getNumVertices();j++){
+				ofVec3f curVert = model.meshes[i].vertexData->getVertex(j);
+				float phi = .006*ofGetFrameNum() + .05*PI*curVert.x;
+				float theta = .009*ofGetFrameNum() + .15*PI*curVert.x;
+				ofVec3f modVert = .01*ofVec3f(0,sin(theta)*sin(phi),0);
+				model.meshes[i].vertexData->setVertex(j,curVert+modVert);
+			}
 		}
-	}
-	
-	for (int i =0; i < meshes.size();i++){
-		for (int j=0; j<meshes[i].vertexData->getNumTexCoords();j++){
-			ofVec3f curVert = meshes[i].vertexData->getTexCoord(j);
-			float theta = .002*ofGetFrameNum();
-			ofVec2f modVert = .001*ofVec3f(cos(theta),sin(theta));
-			meshes[i].vertexData->setTexCoord(j,curVert+modVert);
+		
+		for (int i =0; i < model.meshes.size();i++){
+			for (int j=0; j<model.meshes[i].vertexData->getNumTexCoords();j++){
+				ofVec3f curVert = model.meshes[i].vertexData->getTexCoord(j);
+				float theta = .002*ofGetFrameNum();
+				ofVec2f modVert = .001*ofVec3f(cos(theta),sin(theta));
+				model.meshes[i].vertexData->setTexCoord(j,curVert+modVert);
+			}
 		}
 	}
 }
@@ -71,17 +64,10 @@ void testApp::draw(){
 	glRotatef(ofGetWidth()*.5 - mouseX,0,1,0);		
 
 	tex.getTextureReference().bind();
-	for (int i =0; i < meshes.size(); i++){
-//		ofSetColor(i*255.0/(meshes.size()-1),0,255 - i*255.0/(meshes.size()-1));
-		meshes[i].drawFaces();
-
-//		ofSetColor(120,i*255.0/(vboMeshes.size()-1),i*255.0/(vboMeshes.size()-1));
-//		meshes[i].drawVertices();
-
-//		ofSetColor(i*255.0/(meshes.size()-1),i*255.0/(meshes.size()-1),0);
-//		meshes[i].drawWireframe();
-	}
+	model.drawFaces();
 	tex.getTextureReference().unbind();
+	ofSetColor(255,255,255,90);
+	model.drawWireframe();
 
     glPopMatrix();
     
@@ -93,6 +79,9 @@ void testApp::draw(){
 void testApp::keyPressed(int key){
 	if(key== ' ') {
 		lightsOn = !lightsOn;
+	}
+	if (key == 'w'){
+		wiggleModel = !wiggleModel;
 	}
 }
 
