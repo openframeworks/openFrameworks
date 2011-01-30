@@ -9,7 +9,7 @@
 
 //--------------------------------------------------------------
 ofModel::ofModel(){
-
+	renderMethod = OF_MESH_USING_VERTEX_ARRAY;
 }
 
 //--------------------------------------------------------------
@@ -25,11 +25,9 @@ void ofModel::drawWireframe(){
 			meshes.at(i).setUseIndices();
 		}*/
 		
-		/*
-		if(meshes.at(i).renderMethod!=OF_MESH_USING_VBO){
-			meshes.at(i).setRenderMethod(OF_MESH_USING_VBO);
-		}
-		 */
+
+		meshes.at(i).setRenderMethod(renderMethod);
+
 		
 		meshes.at(i).drawWireframe();
 	}
@@ -43,11 +41,9 @@ void ofModel::drawFaces(){
 			meshes.at(i).setUseIndices();
 		}*/
 		
-		/*
-		if(meshes.at(i).renderMethod!=OF_MESH_USING_VBO){
-			meshes.at(i).setRenderMethod(OF_MESH_USING_VBO);
-		}
-		 */
+
+		meshes.at(i).setRenderMethod(renderMethod);
+
 		
 		meshes.at(i).drawFaces();
 	}
@@ -61,11 +57,9 @@ void ofModel::drawVertices(){
 			meshes.at(i).setUseIndices();
 		}*/
 		
-		/*
-		if(meshes.at(i).renderMethod!=OF_MESH_USING_VBO){
-			meshes.at(i).setRenderMethod(OF_MESH_USING_VBO);
-		}
-		 */
+
+		meshes.at(i).setRenderMethod(renderMethod);
+
 		
 		meshes.at(i).drawVertices();
 	}
@@ -115,7 +109,5 @@ void ofModel::disableColors(){
 
 //--------------------------------------------------------------
 void ofModel::setRenderMethod(meshRenderMethod m){
-	for (int i =0; i < (int)meshes.size();i++){
-		meshes.at(i).setRenderMethod(m);
-	}
+	renderMethod = m;
 }

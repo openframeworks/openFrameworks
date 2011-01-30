@@ -23,4 +23,7 @@ public:
 	
 	vector<ofMesh> meshes;
 	vector<ofTexture> textures;
+
+private:
+	meshRenderMethod renderMethod;
 };
