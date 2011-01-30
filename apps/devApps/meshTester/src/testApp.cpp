@@ -4,7 +4,8 @@
 void testApp::setup(){
 	
 //	ofSetLogLevel(OF_LOG_VERBOSE);
-    model.loadModel("astroBoy_walk.dae");
+    ofLoadModel("astroBoy_walk.dae", model);
+	model.setRenderMethod(OF_MESH_USING_VBO);
 	tex.loadImage("boy_10.tga");
 	
 	ofEnableNormalizedTexCoords();
@@ -27,7 +28,7 @@ void testApp::setup(){
 //--------------------------------------------------------------
 void testApp::update(){
 	if(wiggleModel){
-		for (int i =0; i < model.meshes.size();i++){
+		for (int i =0; i < (int)model.meshes.size();i++){
 			for (int j=0; j<model.meshes[i].vertexData->getNumVertices();j++){
 				ofVec3f curVert = model.meshes[i].vertexData->getVertex(j);
 				float phi = .006*ofGetFrameNum() + .05*PI*curVert.x;
@@ -37,7 +38,7 @@ void testApp::update(){
 			}
 		}
 		
-		for (int i =0; i < model.meshes.size();i++){
+		for (int i =0; i < (int)model.meshes.size();i++){
 			for (int j=0; j<model.meshes[i].vertexData->getNumTexCoords();j++){
 				ofVec3f curVert = model.meshes[i].vertexData->getTexCoord(j);
 				float theta = .002*ofGetFrameNum();
@@ -52,8 +53,6 @@ void testApp::update(){
 void testApp::draw(){
 	lightsOn ? glEnable(GL_LIGHTING) : glDisable(GL_LIGHTING);
 	ofBackground(50, 50, 50, 0);
-	
-    ofSetColor(255, 255, 255, 255);
     
     glPushMatrix();
 
@@ -72,7 +71,8 @@ void testApp::draw(){
     glPopMatrix();
     
 	glDisable(GL_LIGHTING);
-    ofDrawBitmapString("fps: "+ofToString(ofGetFrameRate(), 2), 10, 15);
+	ofSetColor(255, 255, 255, 255);
+    ofDrawBitmapString("fps: "+ofToString(ofGetFrameRate(), 2), 10, 15,0);
 }
 
 //--------------------------------------------------------------
