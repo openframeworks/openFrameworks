@@ -28,7 +28,7 @@ void testApp::setup(){
 //--------------------------------------------------------------
 void testApp::update(){
 	if(wiggleModel){
-		for (int i =0; i < model.meshes.size();i++){
+		for (int i =0; i < (int)model.meshes.size();i++){
 			for (int j=0; j<model.meshes[i].vertexData->getNumVertices();j++){
 				ofVec3f curVert = model.meshes[i].vertexData->getVertex(j);
 				float phi = .006*ofGetFrameNum() + .05*PI*curVert.x;
@@ -38,7 +38,7 @@ void testApp::update(){
 			}
 		}
 		
-		for (int i =0; i < model.meshes.size();i++){
+		for (int i =0; i < (int)model.meshes.size();i++){
 			for (int j=0; j<model.meshes[i].vertexData->getNumTexCoords();j++){
 				ofVec3f curVert = model.meshes[i].vertexData->getTexCoord(j);
 				float theta = .002*ofGetFrameNum();
