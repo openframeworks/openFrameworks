@@ -1,4 +1,3 @@
-//TODO: Speedtest repeated setup vs. update call
 //TODO: Add edge flags?
 
 #pragma once
@@ -31,22 +30,11 @@ private:
 	int normUsage;
 	int texUsage;
 	
-	/*float*  vertData;
-	float*  normalData;
-	float*  texCoordData;
-	float*  colorData;
-	GLuint* indexData;*/
-	
 public:
 	
 	ofVbo();
 	~ofVbo();
-	
-	// you pass in a array of verts and the total amount of verts in that
-	// array. The usage param is what you are going to do with the data.
-	// OF_VBO_STATIC means that you are not going to manipulate the data
-	// if you want to move to verts around you use OF_VBO_STREAM
-	
+
 	void setVertexData(const ofVec3f * verts, int total, int usage);
 	void setVertexData(const ofVec2f * verts, int total, int usage);
 
@@ -56,23 +44,20 @@ public:
 	void setIndexData(const GLuint * indices, int total, int usage);
 
 	void setVertexData(const float * vert0x, int total, int usage);
-	void setColorData(const float * color0x, int total, int usage);	
+	void setColorData(const float * color0r, int total, int usage);	
 	void setNormalData(const float * normal0x, int total, int usage);	
 	void setTexCoordData(const float * texCoord0x, int total, int usage);	
 	
-	/*
 	void updateVertexData(const ofVec3f * verts, int total);
 	void updateColorData(const ofColor * colors, int total);	
 	void updateNormalData(const ofVec3f * normals, int total);	
 	void updateTexCoordData(const ofVec2f * texCoords, int total);	
 	void updateIndexData(const GLuint * indices, int total);
-	 */
 	
-	float* getVertPointer();
-	float* getColorPointer();
-	float* getNormalPointer();
-	float* getTexCoordPointer();
-	GLuint* getIndexPointer();
+	void updateVertexData(const float * ver0x, int total);
+	void updateColorData(const float * color0r, int total);	
+	void updateNormalData(const float * normal0x, int total);	
+	void updateTexCoordData(const float * texCoord0x, int total);	
 	
 	GLuint getVertId();
 	GLuint getColorId();
