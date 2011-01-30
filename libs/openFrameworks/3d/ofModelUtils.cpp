@@ -74,9 +74,9 @@ void ofLoadModel(string modelName, ofModel & model){
     if(scene != NULL){        
         ofLog(OF_LOG_VERBOSE, "initted scene with %i meshes", scene->mNumMeshes);
 		
-		aiString texPath;
 		model.meshes.resize(scene->mNumMeshes);
 		
+		map<string,int> texPathMap;
 		for (unsigned int i = 0; i < scene->mNumMeshes; i++){
 			model.textureLinks[i]=-1;
 			
@@ -94,18 +94,20 @@ void ofLoadModel(string modelName, ofModel & model){
 		
 			//load texture
 			aiMaterial* mtl = scene->mMaterials[aMesh->mMaterialIndex];
+			aiString texPath;
 			
-			string curTexPath = texPath.data;
 			//defaults to only get the 0-index texture for now
 			if(mtl->GetTexture(aiTextureType_DIFFUSE, 0, &texPath) == AI_SUCCESS){
-				if(curTexPath!=texPath.data){
+				if(texPathMap.find(texPath.data)==texPathMap.end()){
 					model.textures.push_back(ofImage());
 					ofLog(OF_LOG_VERBOSE, "loading image from %s", texPath.data);
 					string modelFolder = ofFileUtils::getEnclosingDirectoryFromPath(filepath);
 					model.textures.back().loadImage(modelFolder + texPath.data);
 					model.textures.back().update();
+					texPathMap[texPath.data] = model.textures.size()-1;
 				}
-				model.textureLinks[i]=(model.textures.size()-1);
+				
+				model.textureLinks[i] = texPathMap[texPath.data];
 			}
 		}
 	}
