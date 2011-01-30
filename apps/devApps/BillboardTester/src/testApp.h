@@ -2,7 +2,7 @@
 #include "ofMain.h"
 #include "ofVbo.h"
 
-#define	NUM_BILLBOARDS	3000
+#define	NUM_BILLBOARDS	300
 
 class testApp : public ofBaseApp {
 	
@@ -29,6 +29,7 @@ public:
 	ofVec2f		pos[NUM_BILLBOARDS];
 	ofVec2f		vel[NUM_BILLBOARDS];
 	float		pointSizes[NUM_BILLBOARDS];
+	float		rotations[NUM_BILLBOARDS];
 };
 
 

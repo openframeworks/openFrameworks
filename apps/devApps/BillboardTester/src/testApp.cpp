@@ -16,6 +16,7 @@ void testApp::setup() {
 		pos[i].x = ofRandomWidth();
 		pos[i].y = ofRandomHeight();
 		pointSizes[i] = ofNextPow2(ofRandom(2, 64));
+		rotations[i]  = ofRandom(0, 1);
 	}
 	
 	// set the vertex data
@@ -39,6 +40,8 @@ void testApp::update() {
 	ofVec2f mouseVec(ofGetPreviousMouseX()-ofGetMouseX(), ofGetPreviousMouseY()-ofGetMouseY());
 	mouseVec.limit(10.0);
 	for (int i=0; i<NUM_BILLBOARDS; i++) {
+		
+		rotations[i]  += 0.003;
 		
 		if(mouse.distance(pos[i]) < 100.0) {
 			vel[i] -= mouseVec;	
@@ -73,6 +76,9 @@ void testApp::draw() {
 	glBindAttribLocation(shader.getProgram(), pointAttLocation, "pointSize");
 	glEnableVertexAttribArray(pointAttLocation);
 
+	//shader.setUniform2fv("rot", &vel[0].x, NUM_BILLBOARDS);
+	shader.setUniform1fv("timer", rotations, NUM_BILLBOARDS);
+	
 	// bind the texture for point replace
 	texture.getTextureReference().bind();
 	
