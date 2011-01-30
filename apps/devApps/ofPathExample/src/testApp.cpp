@@ -192,7 +192,7 @@ void testApp::setup(){
 	
 	// show a faint the non-curve version of the same polygon:
 	pathFNonCurve.setFilled( false );
-	pathFNonCurve.setColor( ofColor(0,0,0,80) );
+	pathFNonCurve.setColor( ofColor(0,0,0,40) );
 	for (int i = 0; i < nCurveVertexes; i++){
 		pathFNonCurve.lineTo(curveVertices[i].x, curveVertices[i].y);
 	}
