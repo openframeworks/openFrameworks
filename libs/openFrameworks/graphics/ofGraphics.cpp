@@ -1384,13 +1384,6 @@ void ofDrawBitmapString(string textString, float x, float y, float z){
 			//our aim here is to draw to screen
 			//at the viewport position related
 			//to the world position x,y,z
-			//
-			//...would be handy to have ofCamera::worldToScreen
-			//here
-			//
-			//2 possible methods:
-			//* gluProject, setup to draw in screen coords
-			//* 'corrective matrix' <- less reliable but probably faster
 			
 			//gluProject method
 			GLdouble modelview[16], projection[16];
