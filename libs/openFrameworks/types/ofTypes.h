@@ -65,10 +65,11 @@ class ofStyle{
             blendDst            = GL_ONE_MINUS_SRC_ALPHA;
 			smoothing			= false;
 			circleResolution	= 20;
-			sphereResolution = 20;
+			sphereResolution	= 20;
 			lineWidth			= 1.0;
 			polyMode			= OF_POLY_WINDING_ODD;
 			rectMode			= OF_RECTMODE_CORNER;
+			drawBitmapMode		= OF_BITMAPMODE_SIMPLE;
 		}
 
 		virtual ~ofStyle(){}
@@ -77,6 +78,7 @@ class ofStyle{
 		ofPolyWindingMode polyMode;
 		ofRectMode rectMode;
 		bool bFill;
+		ofDrawBitmapMode drawBitmapMode;
     
         // one of the following GL_ZERO, GL_ONE, GL_DST_COLOR, GL_ONE_MINUS_DST_COLOR, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_DST_ALPHA, GL_ONE_MINUS_DST_ALPHA, GL_SRC_ALPHA_SATURATE
         int blendSrc;
