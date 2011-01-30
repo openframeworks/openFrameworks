@@ -69,7 +69,7 @@ void ofGLRenderer::draw(ofShapeTessellation & shape){
 }
 
 void ofGLRenderer::draw(ofShape & path){
-	ofShapeTessellation & shape = path.getShape();
+	ofShapeTessellation & shape = path.getTessellation();
 	draw(shape);
 }
 
