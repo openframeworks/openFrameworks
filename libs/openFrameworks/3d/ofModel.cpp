@@ -8,6 +8,7 @@
 //--------------------------------------------------------------
 ofModel::ofModel(){
 	bUsingTextures = false;
+	renderMethod = OF_MESH_USING_VERTEX_ARRAY;
 }
 
 //--------------------------------------------------------------
@@ -33,19 +34,22 @@ void ofModel::unbindTextureForMesh(int id){
 
 //--------------------------------------------------------------
 void ofModel::drawWireframe(){
-	for (int i =0; i < meshes.size();i++){
+	for (int i =0; i < (int)meshes.size();i++){
 		
-		if(!meshes.at(i).bEnableIndices){
-			meshes.at(i).setUseIndices();
+		if(!meshes.at(i).enableIndices()){
+			ofLog(OF_LOG_WARNING, "no indices in mesh " + ofToString(i));
 		}
-		
-		if(bUsingTextures){
+
+		bool goodToTexture = bUsingTextures && meshes.at(i).getTexCoordsEnabled();
+		if(goodToTexture){
 			bindTextureForMesh(i);
 		}
+
+		meshes.at(i).setRenderMethod(renderMethod);
 		
 		meshes.at(i).drawWireframe();
 		
-		if(bUsingTextures){
+		if(goodToTexture){
 			unbindTextureForMesh(i);
 		}
 	}
@@ -53,19 +57,22 @@ void ofModel::drawWireframe(){
 
 //--------------------------------------------------------------
 void ofModel::drawFaces(){
-	for (int i =0; i < meshes.size();i++){
+	for (int i =0; i < (int)meshes.size();i++){
 		
-		if(!meshes.at(i).bEnableIndices){
-			meshes.at(i).setUseIndices();
+		if(!meshes.at(i).enableIndices()){
+			ofLog(OF_LOG_WARNING, "no indices in mesh " + ofToString(i));
 		}
 		
-		if(bUsingTextures){
+		bool goodToTexture = bUsingTextures && meshes.at(i).getTexCoordsEnabled();
+		if(goodToTexture){
 			bindTextureForMesh(i);
 		}
 		
+		meshes.at(i).setRenderMethod(renderMethod);
+		
 		meshes.at(i).drawFaces();
 		
-		if(bUsingTextures){
+		if(goodToTexture){
 			unbindTextureForMesh(i);
 		}
 	}
@@ -73,42 +80,42 @@ void ofModel::drawFaces(){
 
 //--------------------------------------------------------------
 void ofModel::drawVertices(){
-	for (int i =0; i < meshes.size();i++){
+	for (int i =0; i < (int)meshes.size();i++){
 		
-		if(!meshes.at(i).bEnableIndices){
-			meshes.at(i).setUseIndices();
-		}
-		
-		if(bUsingTextures){
+		bool goodToTexture = bUsingTextures && meshes.at(i).getTexCoordsEnabled();
+		if(goodToTexture){
 			bindTextureForMesh(i);
 		}
+
+		meshes.at(i).setRenderMethod(renderMethod);
 		
 		meshes.at(i).drawVertices();
 		
-		if(bUsingTextures){
+		if(goodToTexture){
 			unbindTextureForMesh(i);
 		}
 	}
 }
 
 //--------------------------------------------------------------
+
 void ofModel::enableTextures(){
 	bUsingTextures = true;
-	for (int i =0; i < meshes.size();i++){
+	for (int i =0; i < (int)meshes.size();i++){
 		meshes.at(i).enableTexCoords();
 	}
 }
 
 //--------------------------------------------------------------
 void ofModel::enableNormals(){
-	for (int i =0; i < meshes.size();i++){
+	for (int i =0; i < (int)meshes.size();i++){
 		meshes.at(i).enableNormals();
 	}
 }
 
 //--------------------------------------------------------------
 void ofModel::enableColors(){
-	for (int i =0; i < meshes.size();i++){
+	for (int i =0; i < (int)meshes.size();i++){
 		meshes.at(i).enableColors();
 	}
 }
@@ -116,28 +123,26 @@ void ofModel::enableColors(){
 //--------------------------------------------------------------
 void ofModel::disableTextures(){
 	bUsingTextures = false;
-	for (int i =0; i < meshes.size();i++){
+	for (int i =0; i < (int)meshes.size();i++){
 		meshes.at(i).disableTexCoords();
 	}
 }
 
 //--------------------------------------------------------------
 void ofModel::disableNormals(){
-	for (int i =0; i < meshes.size();i++){
+	for (int i =0; i < (int)meshes.size();i++){
 		meshes.at(i).disableNormals();
 	}
 }
 
 //--------------------------------------------------------------
 void ofModel::disableColors(){
-	for (int i =0; i < meshes.size();i++){
+	for (int i =0; i < (int)meshes.size();i++){
 		meshes.at(i).disableColors();
 	}
 }
 
 //--------------------------------------------------------------
 void ofModel::setRenderMethod(meshRenderMethod m){
-	for (int i =0; i < meshes.size();i++){
-		meshes.at(i).setRenderMethod(m);
-	}
+	renderMethod = m;
 }

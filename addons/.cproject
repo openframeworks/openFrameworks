@@ -120,15 +120,15 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="ofxOpenCv/src"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="ofxNetwork/src"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="ofxThread/src"/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="ofxDirList/src"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="ofxXmlSettings/src"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="ofxVectorGraphics/src"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="ofxOsc/src"/>
-						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="ofxDirList/src"/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="ofxOpenCv/src"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="ofxVectorMath/src"/>
-						<entry excluding="ofx3DUtils/example|ofxMultiTouch|ofx3DModelLoader/example|ofxDirList/example|ofxNetwork/examples|ofxOpenCv/example|ofxOsc/examples|ofxThread/example|ofxVectorGraphics/example|ofxVectorMath/example|ofxXmlSettings/example|ofxXmlSettings/src|ofxVectorMath/src|ofxVectorGraphics/src|ofxThread/src|ofxOsc/src|ofxOpenCv/src|ofxNetwork/src|ofxDirList/src|ofx3DModelLoader/src" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="ofxFbo/src|ofx3DUtils/example|ofxMultiTouch|ofx3DModelLoader/example|ofxDirList/example|ofxNetwork/examples|ofxOpenCv/example|ofxOsc/examples|ofxThread/example|ofxVectorGraphics/example|ofxVectorMath/example|ofxXmlSettings/example|ofxXmlSettings/src|ofxVectorMath/src|ofxVectorGraphics/src|ofxThread/src|ofxOsc/src|ofxOpenCv/src|ofxNetwork/src|ofxDirList/src|ofx3DModelLoader/src" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -669,15 +669,15 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="ofxOpenCv/src"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="ofxNetwork/src"/>
-						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="ofxThread/src"/>
-						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="ofxXmlSettings/src"/>
-						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="ofxVectorGraphics/src"/>
-						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="ofxOsc/src"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="ofxDirList/src"/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="ofxThread/src"/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="ofxVectorGraphics/src"/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="ofxOpenCv/src"/>
+						<entry excluding="ofxFbo/src|ofx3DUtils/example|ofxMultiTouch|ofx3DModelLoader/example|ofxDirList/example|ofxNetwork/examples|ofxOpenCv/example|ofxOsc/examples|ofxThread/example|ofxVectorGraphics/example|ofxVectorMath/example|ofxXmlSettings/example|ofxXmlSettings/src|ofxVectorMath/src|ofxVectorGraphics/src|ofxThread/src|ofxOsc/src|ofxOpenCv/src|ofxNetwork/src|ofxDirList/src|ofx3DModelLoader/src" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="ofxVectorMath/src"/>
-						<entry excluding="ofx3DUtils/example|ofxMultiTouch|ofx3DModelLoader/example|ofxDirList/example|ofxNetwork/examples|ofxOpenCv/example|ofxOsc/examples|ofxThread/example|ofxVectorGraphics/example|ofxVectorMath/example|ofxXmlSettings/example|ofxXmlSettings/src|ofxVectorMath/src|ofxVectorGraphics/src|ofxThread/src|ofxOsc/src|ofxOpenCv/src|ofxNetwork/src|ofxDirList/src|ofx3DModelLoader/src" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="ofxXmlSettings/src"/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="ofxOsc/src"/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -1220,15 +1220,15 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="ofxOpenCv/src"/>
-						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="ofxNetwork/src"/>
-						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="ofxThread/src"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="ofxXmlSettings/src"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="ofxVectorGraphics/src"/>
-						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="ofxOsc/src"/>
+						<entry excluding="ofxFbo/src|ofx3DUtils/example|ofxMultiTouch|ofx3DModelLoader/example|ofxDirList/example|ofxNetwork/examples|ofxOpenCv/example|ofxOsc/examples|ofxThread/example|ofxVectorGraphics/example|ofxVectorMath/example|ofxXmlSettings/example|ofxXmlSettings/src|ofxVectorMath/src|ofxVectorGraphics/src|ofxThread/src|ofxOsc/src|ofxOpenCv/src|ofxNetwork/src|ofxDirList/src|ofx3DModelLoader/src" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="ofxThread/src"/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="ofxOpenCv/src"/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="ofxNetwork/src"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="ofxDirList/src"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="ofxVectorMath/src"/>
-						<entry excluding="ofx3DUtils/example|ofxMultiTouch|ofx3DModelLoader/example|ofxDirList/example|ofxNetwork/examples|ofxOpenCv/example|ofxOsc/examples|ofxThread/example|ofxVectorGraphics/example|ofxVectorMath/example|ofxXmlSettings/example|ofxXmlSettings/src|ofxVectorMath/src|ofxVectorGraphics/src|ofxThread/src|ofxOsc/src|ofxOpenCv/src|ofxNetwork/src|ofxDirList/src|ofx3DModelLoader/src" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="ofxOsc/src"/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -1770,15 +1770,15 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="ofxOpenCv/src"/>
-						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="ofxNetwork/src"/>
-						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="ofxThread/src"/>
-						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="ofxXmlSettings/src"/>
-						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="ofxVectorGraphics/src"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="ofxOsc/src"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="ofxDirList/src"/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="ofxXmlSettings/src"/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="ofxOpenCv/src"/>
+						<entry excluding="ofxFbo/src|ofx3DUtils/example|ofxMultiTouch|ofx3DModelLoader/example|ofxDirList/example|ofxNetwork/examples|ofxOpenCv/example|ofxOsc/examples|ofxThread/example|ofxVectorGraphics/example|ofxVectorMath/example|ofxXmlSettings/example|ofxXmlSettings/src|ofxVectorMath/src|ofxVectorGraphics/src|ofxThread/src|ofxOsc/src|ofxOpenCv/src|ofxNetwork/src|ofxDirList/src|ofx3DModelLoader/src" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="ofxVectorGraphics/src"/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="ofxThread/src"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="ofxVectorMath/src"/>
-						<entry excluding="ofx3DUtils/example|ofxMultiTouch|ofx3DModelLoader/example|ofxDirList/example|ofxNetwork/examples|ofxOpenCv/example|ofxOsc/examples|ofxThread/example|ofxVectorGraphics/example|ofxVectorMath/example|ofxXmlSettings/example|ofxXmlSettings/src|ofxVectorMath/src|ofxVectorGraphics/src|ofxThread/src|ofxOsc/src|ofxOpenCv/src|ofxNetwork/src|ofxDirList/src|ofx3DModelLoader/src" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="ofxNetwork/src"/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
