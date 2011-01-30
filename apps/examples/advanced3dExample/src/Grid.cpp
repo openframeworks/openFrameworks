@@ -98,6 +98,16 @@ void Grid::customDraw()
 	//
 	glDepthFunc(GL_ALWAYS);
 	
+	//if we want to make
+	//our text always face 
+	//towards the camera
+	//then we need to turn
+	//on billboard mode
+	//
+	//this mode is cleared
+	//at ofPopStyle()
+	ofSetDrawBitmapMode(OF_BITMAPMODE_MODEL_BILLBOARD);
+	
 	for (float xz = -50; xz<=50; xz+=10)
 	{
 		ofDrawBitmapString(ofToString(xz, 0), xz, 0, 0);

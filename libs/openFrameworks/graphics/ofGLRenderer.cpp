@@ -110,6 +110,11 @@ void ofGLRenderer::popView() {
 	glPopMatrix();
 }
 
+//----------------------------------------------------------
+void ofGLRenderer::viewport(ofRectangle viewport_)
+{
+	viewport(viewport_.x, viewport_.y, viewport_.width, viewport_.height,true);
+}
 
 //----------------------------------------------------------
 void ofGLRenderer::viewport(float x, float y, float width, float height, bool invertY) {
