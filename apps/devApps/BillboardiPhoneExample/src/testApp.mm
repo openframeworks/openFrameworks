@@ -40,9 +40,8 @@ void testApp::draw() {
 	
 	ofPushMatrix();
 	ofTranslate(ofGetWidth()/2, ofGetHeight()/2, zoom);
-	ofRotate(rot.x, 1, 0, 0);
-	ofRotate(rot.y, 0, 1, 1);
-	
+	ofRotateX(rot.y);
+	ofRotateY(rot.x);
 	
 	ofEnablePointSprites();
 
@@ -56,7 +55,7 @@ void testApp::draw() {
 	ofPopMatrix();
 	
 	
-	ofSetColor(90, 90, 90);
+	ofSetColor(200);
 	ofDrawBitmapString(ofToString(ofGetFrameRate(), 1), 5, 20);
 }
 
