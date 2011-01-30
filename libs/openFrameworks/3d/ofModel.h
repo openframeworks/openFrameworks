@@ -9,9 +9,7 @@ class ofModel{
 public:
 	ofModel();
 	~ofModel();
-	
-	void loadModel(string filename);	
-	
+		
 	void drawWireframe();
 	void drawFaces();
 	void drawVertices();
