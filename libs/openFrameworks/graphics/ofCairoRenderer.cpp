@@ -171,7 +171,7 @@ void ofCairoRenderer::drawPath(const ofShape & path,bool is_subpath){
 		cairo_close_path(cr);
 	}
 
-	const vector<ofShape> &subpaths = path.getSubPaths();
+	const vector<ofShape> &subpaths = path.getSubShapes();
 	for(int i=0;i<(int)subpaths.size();i++){
 		drawPath(subpaths[i],true);
 	}

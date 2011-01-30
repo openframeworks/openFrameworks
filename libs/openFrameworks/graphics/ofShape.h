@@ -12,7 +12,10 @@ public:
 
 	void clear();
 
-	ofShape & newSubPath();
+	// creates a new subpath with the same parameters for winding, stroke, fill...
+	ofShape & newSubShape();
+	// closes current path, next command starts a new one with the same parameter for winding, stroke, fill...
+	void close();
 
 	void lineTo(const ofPoint & p);
 	void lineTo(float x, float y);
@@ -39,8 +42,6 @@ public:
 	void arc(float x, float y, float radiusX, float radiusY, float angleBegin, float angleEnd);
 	void arc(float x, float y, float z, float radiusX, float radiusY, float angleBegin, float angleEnd);
 
-	// closes current path, next command starts a new one with defaults for winding, stroke, fill...
-	void close();
 
 	void setPolyWindingMode(ofPolyWindingMode mode);
 	void setColor( const ofColor& color ) { setFillColor( color ); setStrokeColor( color ); }
@@ -62,7 +63,7 @@ public:
 	void updateShape();
 	void draw(float x=0, float y=0);
 
-	ofShapeTessellation & getShape(int curveResolution=-1);
+	ofShapeTessellation & getTessellation(int curveResolution=-1);
 
 
 
@@ -71,10 +72,10 @@ public:
 	// only needs to be called when path is modified externally
 	void markedChanged();
 	vector<Command> & getCommands();
-	vector<ofShape> & getSubPaths();
+	vector<ofShape> & getSubShapes();
 
 	const vector<Command> & getCommands() const;
-	const vector<ofShape> & getSubPaths() const;
+	const vector<ofShape> & getSubShapes() const;
 
 	void addCommand(const Command & command);
 
@@ -127,7 +128,7 @@ public:
 
 private:
 
-	ofShape & lastPath();
+	ofShape & lastShape();
 
 	vector<ofShape>		subPaths;
 	vector<Command> 	commands;
