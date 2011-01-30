@@ -22,6 +22,8 @@ public:
 	void enableColors();
 	void disableColors();
 	
+	void setRenderMethod(meshRenderMethod m);
+	
 	vector<ofMesh> meshes;
 	vector<ofTexture> textures;
 };
