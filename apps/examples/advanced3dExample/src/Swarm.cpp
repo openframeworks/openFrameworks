@@ -56,6 +56,8 @@ void Swarm::init(int _nParticles, float positionDispersion, float velocityDisper
 	// INITIALISE VALUES
 	///////////////////////////////////////////
 	//
+	ofSeedRandom();
+	//
 	for (int i=0; i< nParticles; i++)
 	{
 		positions[i].x = (ofRandom(1.0f)-0.5f)  * positionDispersion;
@@ -111,6 +113,8 @@ void Swarm::customDraw()
 	//render light as white sphere
 	ofSetColor(255, 255, 255);
 	ofSphere(positions[0], 2.0);
+	ofSetDrawBitmapMode(OF_BITMAPMODE_MODEL);
+	ofDrawBitmapString(" light", (ofPoint)positions[0]);
 	ofPopStyle();
 }
 
