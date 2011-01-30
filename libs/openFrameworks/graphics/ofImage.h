@@ -66,7 +66,7 @@ class ofImage : public ofBaseImage{
 
 		// getting the data
 		unsigned char * 	getPixels();			// up to you to get this right
-		ofPixels		 	getOFPixels();
+		ofPixels&		 	getOFPixels();
 		ofPixels		 	getOFPixels() const;
 
 		// alter the image

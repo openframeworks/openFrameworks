@@ -425,7 +425,7 @@ unsigned char * ofImage::getPixels(){
 	return myPixels.getPixels();
 }
 
-ofPixels ofImage::getOFPixels(){
+ofPixels& ofImage::getOFPixels(){
 	return myPixels;
 }
 

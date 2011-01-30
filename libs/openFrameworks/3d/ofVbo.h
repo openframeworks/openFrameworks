@@ -22,16 +22,20 @@ private:
 	bool bUsingNormals;
 	bool bUsingIndices;
 	
+	GLsizei vertStride;
+	int		vertSize;
+	int		totalVerts;
+	
 	int vertUsage;
 	int colorUsage;
 	int normUsage;
 	int texUsage;
 	
-	float* vertData;
-	float* normalData;
-	float* texCoordData;
-	float* colorData;
-	GLubyte* indexData;
+	/*float*  vertData;
+	float*  normalData;
+	float*  texCoordData;
+	float*  colorData;
+	GLuint* indexData;*/
 	
 public:
 	
@@ -44,10 +48,17 @@ public:
 	// if you want to move to verts around you use OF_VBO_STREAM
 	
 	void setVertexData(const ofVec3f * verts, int total, int usage);
+	void setVertexData(const ofVec2f * verts, int total, int usage);
+
 	void setColorData(const ofColor * colors, int total, int usage);	
 	void setNormalData(const ofVec3f * normals, int total, int usage);	
 	void setTexCoordData(const ofVec2f * texCoords, int total, int usage);	
-	void setIndexData(const GLubyte * indices, int total, int usage);
+	void setIndexData(const GLuint * indices, int total, int usage);
+
+	void setVertexData(const float * vert0x, int total, int usage);
+	void setColorData(const float * color0x, int total, int usage);	
+	void setNormalData(const float * normal0x, int total, int usage);	
+	void setTexCoordData(const float * texCoord0x, int total, int usage);	
 	
 	/*
 	void updateVertexData(const ofVec3f * verts, int total);
@@ -61,13 +72,13 @@ public:
 	float* getColorPointer();
 	float* getNormalPointer();
 	float* getTexCoordPointer();
-	GLubyte* getIndexPointer();
+	GLuint* getIndexPointer();
 	
 	GLuint getVertId();
 	GLuint getColorId();
 	GLuint getNormalId();
 	GLuint getTexCoordId();
-	GLubyte getIndexId();
+	GLuint getIndexId();
 	
 	bool getIsAllocated();
 	bool getUsingVerts();
