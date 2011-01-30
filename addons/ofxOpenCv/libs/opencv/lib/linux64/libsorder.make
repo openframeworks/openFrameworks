@@ -1,0 +1,14 @@
+opencv_legacy
+opencv_calib3d
+opencv_lapack
+opencv_features2d
+opencv_objdetect
+opencv_ml
+opencv_flann
+opencv_gpu
+opencv_haartraining_engine
+opencv_highgui
+opencv_video
+opencv_imgproc
+opencv_contrib
+opencv_core
