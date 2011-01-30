@@ -401,7 +401,11 @@ void ofVbo::drawElements(int drawMode, int amt) {
 		bind();
 		if(bUsingIndices){
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexId);
+#ifdef TARGET_OF_IPHONE
 			glDrawElements(drawMode, amt, GL_UNSIGNED_SHORT, NULL);
+#else
+			glDrawElements(drawMode, amt, GL_UNSIGNED_INT, NULL);
+#endif
 		}
 		unbind();
 	}
@@ -409,7 +413,7 @@ void ofVbo::drawElements(int drawMode, int amt) {
 
 //--------------------------------------------------------------
 void ofVbo::clear(){
-
+	
 	if (bUsingVerts){
 		glDeleteBuffers(1, &vertId);
 		bUsingVerts = false;
