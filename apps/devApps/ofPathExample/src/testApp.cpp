@@ -1,7 +1,5 @@
 #include "testApp.h"
 
-#include "ofShape.h"
-
 //--------------------------------------------------------------
 void testApp::setup(){
 

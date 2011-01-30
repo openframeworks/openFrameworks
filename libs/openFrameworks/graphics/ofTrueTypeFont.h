@@ -5,7 +5,7 @@
 #include "ofPoint.h"
 #include "ofRectangle.h"
 #include "ofConstants.h"
-#include "ofPath.h"
+#include "ofShape.h"
 
 //--------------------------------------------------
 typedef struct {

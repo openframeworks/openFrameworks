@@ -5,9 +5,9 @@
  *      Author: arturo
  */
 #include "ofGLRenderer.h"
+#include "ofShapeTessellation.h"
+#include "ofVertexData.h"
 #include "ofShape.h"
-#include "ofMesh.h"
-#include "ofPath.h"
 #include "ofGraphics.h"
 #include "ofAppRunner.h"
 #include "ofVertexData.h"

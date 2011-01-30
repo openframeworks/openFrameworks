@@ -4,7 +4,7 @@
 #include "ofUtils.h"
 #include "ofBaseTypes.h"
 #include "ofGLRenderer.h"
-#include "ofPath.h"
+#include "ofShape.h"
 #include "ofShapeUtils.h"
 
 #ifdef TARGET_OSX
