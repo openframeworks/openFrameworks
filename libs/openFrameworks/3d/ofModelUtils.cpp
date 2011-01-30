@@ -82,6 +82,7 @@ void loadMeshes(string modelName,vector<ofMesh>& m){
 				m[i].vertexData = new ofVertexData();
 			}
 			aiMeshToOfVertexData(aMesh,*m[i].vertexData);
+			m[i].setUseIndices();
 		}
     }
 }	
