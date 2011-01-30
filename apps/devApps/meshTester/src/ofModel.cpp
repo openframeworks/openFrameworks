@@ -28,9 +28,11 @@ void ofModel::drawWireframe(){
 			meshes.at(i).setUseIndices();
 		}
 		
+		/*
 		if(meshes.at(i).renderMethod!=OF_MESH_USING_VBO){
 			meshes.at(i).setRenderMethod(OF_MESH_USING_VBO);
 		}
+		 */
 		
 		meshes.at(i).drawWireframe();
 	}
@@ -44,9 +46,11 @@ void ofModel::drawFaces(){
 			meshes.at(i).setUseIndices();
 		}
 		
+		/*
 		if(meshes.at(i).renderMethod!=OF_MESH_USING_VBO){
 			meshes.at(i).setRenderMethod(OF_MESH_USING_VBO);
 		}
+		 */
 		
 		meshes.at(i).drawFaces();
 	}
@@ -60,9 +64,11 @@ void ofModel::drawVertices(){
 			meshes.at(i).setUseIndices();
 		}
 		
+		/*
 		if(meshes.at(i).renderMethod!=OF_MESH_USING_VBO){
 			meshes.at(i).setRenderMethod(OF_MESH_USING_VBO);
 		}
+		 */
 		
 		meshes.at(i).drawVertices();
 	}
