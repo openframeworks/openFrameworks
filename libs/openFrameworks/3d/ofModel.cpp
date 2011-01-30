@@ -9,7 +9,7 @@
 
 //--------------------------------------------------------------
 ofModel::ofModel(){
-	renderMethod = OF_MESH_USING_VERTEX_ARRAY;
+	renderMethod = OF_MESH_USING_DEFAULT_RENDERER;
 }
 
 //--------------------------------------------------------------

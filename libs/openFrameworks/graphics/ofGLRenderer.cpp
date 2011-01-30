@@ -37,6 +37,11 @@ void ofGLRenderer::draw(ofVertexData & vertexData){
 	}else{
 		glDrawArrays(ofGetGLPrimitiveMode(vertexData.getMode()), 0, vertexData.getNumVertices());
 	}
+
+	glDisableClientState(GL_COLOR_ARRAY);
+	glDisableClientState(GL_NORMAL_ARRAY);
+	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+	glDisableClientState(GL_INDEX_ARRAY);
 }
 
 void ofGLRenderer::draw(ofPolyline & poly){

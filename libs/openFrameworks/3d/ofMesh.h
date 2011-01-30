@@ -47,7 +47,7 @@ inline polyMode ofGetOFPolyMode(GLuint m){
 
 enum meshRenderMethod{
 	OF_MESH_USING_VBO,
-	OF_MESH_USING_VERTEX_ARRAY
+	OF_MESH_USING_DEFAULT_RENDERER
 };
 
 
