@@ -1419,7 +1419,6 @@ void ofDrawBitmapString(string textString, float x, float y, float z){
 			
 			glTranslated(dScreenX, dScreenY, 0);
 			glScaled(1, -1, 1);
-			ofCircle(0, 0, 1);
 			break;
 
 		default:
