@@ -1,10 +1,11 @@
 #include "ofMesh.h"
+#include "ofGraphics.h"
 
 //--------------------------------------------------------------
 ofMesh::ofMesh(){
 	vbo = ofVbo();
 	vertexData = NULL;
-	renderMethod = OF_MESH_USING_VERTEX_ARRAY;
+	renderMethod = OF_MESH_USING_DEFAULT_RENDERER;
 	drawType = GL_STATIC_DRAW_ARB;
 	bEnableIndices = false;
 	bEnableColors = false;
@@ -207,37 +208,10 @@ void ofMesh::setupVbo(){
 	}	
 }
 
-
-//--------------------------------------------------------------
-void ofMesh::setupVertexArray(){
-	if(vertexData->getNumVertices()){
-		glEnableClientState(GL_VERTEX_ARRAY);
-		glVertexPointer(3, GL_FLOAT, sizeof(ofVec3f), vertexData->getVerticesPointer());
-	}
-	
-	if(bEnableColors && vertexData->getNumColors()){
-		glEnableClientState(GL_COLOR_ARRAY);
-		glColorPointer(4, GL_FLOAT, sizeof(ofColor), vertexData->getColorsPointer());
-	}
-	
-	if(bEnableNormals && vertexData->getNumNormals()){
-		glEnableClientState(GL_NORMAL_ARRAY);
-		glNormalPointer(GL_FLOAT, sizeof(ofVec3f), vertexData->getNormalsPointer());
-	}
-	
-	if(bEnableTexCoords && vertexData->getNumTexCoords()){
-		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-		glTexCoordPointer(2, GL_FLOAT, sizeof(ofVec2f), vertexData->getTexCoordsPointer());
-	}
-
-}
-
 //--------------------------------------------------------------
 void ofMesh::draw(polyMode renderType){
 	if(renderMethod == OF_MESH_USING_VBO){
 		setupVbo();
-	}else if (renderMethod == OF_MESH_USING_VERTEX_ARRAY){
-		setupVertexArray();
 	}
 	
 	glPushAttrib(GL_POLYGON_BIT);
@@ -245,25 +219,14 @@ void ofMesh::draw(polyMode renderType){
 	
 	GLuint mode = ofGetGLPrimitiveMode(vertexData->getMode());
 	
-	if(bEnableIndices){
-		if(renderMethod == OF_MESH_USING_VBO){
+	if(renderMethod == OF_MESH_USING_VBO){
+		if(bEnableIndices){
 			vbo.drawElements(mode,vertexData->getNumIndices());
-		}else if(renderMethod == OF_MESH_USING_VERTEX_ARRAY && vertexData->getNumIndices()){
-			glDrawElements(mode, vertexData->getNumIndices(), GL_UNSIGNED_INT, vertexData->getIndexPointer());
+		}else{
+			vbo.draw(mode,0,vertexData->getNumVertices());
 		}
 	}else{
-		if(renderMethod == OF_MESH_USING_VBO){
-			vbo.draw(mode,0,vertexData->getNumVertices());
-		}else if(renderMethod == OF_MESH_USING_VERTEX_ARRAY){
-			glDrawArrays(mode,0,vertexData->getNumVertices());
-		}
-	}
-	
-	if(renderMethod == OF_MESH_USING_VERTEX_ARRAY){
-		glDisableClientState(GL_VERTEX_ARRAY);
-		glDisableClientState(GL_COLOR_ARRAY);
-		glDisableClientState(GL_NORMAL_ARRAY);
-		glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+		ofGetDefaultRenderer()->draw(*vertexData);
 	}
 		
 	glPopAttrib();
