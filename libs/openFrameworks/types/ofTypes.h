@@ -69,7 +69,7 @@ class ofStyle{
 			lineWidth			= 1.0;
 			polyMode			= OF_POLY_WINDING_ODD;
 			rectMode			= OF_RECTMODE_CORNER;
-			drawBitmapMode		= OF_BITMAPMODE_MODEL;
+			drawBitmapMode		= OF_BITMAPMODE_SIMPLE;
 		}
 
 		virtual ~ofStyle(){}

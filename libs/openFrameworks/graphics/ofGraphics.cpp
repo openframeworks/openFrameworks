@@ -1324,6 +1324,12 @@ void ofDrawBitmapString(string textString, float x, float y, float z){
 	ofRectangle rViewport;
 	
 	switch (currentStyle.drawBitmapMode) {
+		
+		case OF_BITMAPMODE_SIMPLE:
+			
+			sx += x;
+			sy += y;
+			break;
 			
 		case OF_BITMAPMODE_SCREEN:
 			
@@ -1371,7 +1377,7 @@ void ofDrawBitmapString(string textString, float x, float y, float z){
 			glPushMatrix();
 
 			ofTranslate(x, y, z);
-			ofScale(1, -1, 1);
+			ofScale(1, -1, 0);
 			break;
 
 		case OF_BITMAPMODE_MODEL_BILLBOARD:
