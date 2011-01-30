@@ -15,7 +15,28 @@
 
 void ofGLRenderer::draw(ofVertexData & vertexData){
 	glVertexPointer(3, GL_FLOAT, sizeof(ofVec3f), vertexData.getVerticesPointer());
-	glDrawArrays(ofGetGLPrimitiveMode(vertexData.getMode()), 0, vertexData.getNumVertices());
+	if(vertexData.getNumNormals()){
+		glEnableClientState(GL_NORMAL_ARRAY);
+		glNormalPointer(GL_FLOAT, 0, vertexData.getNormalsPointer());
+	}
+	if(vertexData.getNumColors()){
+		glEnableClientState(GL_COLOR_ARRAY);
+		glColorPointer(4,GL_FLOAT, 0, vertexData.getColorsPointer());
+	}
+	if(vertexData.getNumIndices()){
+		glEnableClientState(GL_INDEX_ARRAY);
+		glIndexPointer(GL_UNSIGNED_INT,0,vertexData.getIndexPointer());
+	}
+	if(vertexData.getNumTexCoords()){
+		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+		glTexCoordPointer(2, GL_FLOAT, 0, vertexData.getTexCoordsPointer());
+	}
+
+	if(vertexData.getNumIndices()){
+		glDrawElements(ofGetGLPrimitiveMode(vertexData.getMode()), vertexData.getNumIndices(),GL_UNSIGNED_INT,vertexData.getIndexPointer());
+	}else{
+		glDrawArrays(ofGetGLPrimitiveMode(vertexData.getMode()), 0, vertexData.getNumVertices());
+	}
 }
 
 void ofGLRenderer::draw(ofPolyline & poly){

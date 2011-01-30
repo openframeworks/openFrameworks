@@ -29,6 +29,7 @@ public:
 	void draw(ofPath & path);
 	void draw(ofPolyline & poly);
 	void draw(ofShape & shape);
+	void draw(ofVertexData & vertexData);
 
 	bool rendersPathDirectly(){
 		return true;

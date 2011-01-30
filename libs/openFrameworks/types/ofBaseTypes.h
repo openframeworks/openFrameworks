@@ -17,6 +17,7 @@ class ofShape;
 class ofPixels;
 class ofPath;
 class ofPolyline;
+class ofVertexData;
 
 
 //----------------------------------------------------------
@@ -198,6 +199,7 @@ public:
 	virtual void draw(ofPolyline & poly)=0;
 	virtual void draw(ofShape & shape)=0;
 	virtual void draw(ofPath & shape)=0;
+	virtual void draw(ofVertexData & vertexData)=0;
 
 	//--------------------------------------------
 	// transformations

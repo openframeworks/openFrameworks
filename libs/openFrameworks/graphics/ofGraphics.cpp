@@ -5,6 +5,7 @@
 #include "ofBaseTypes.h"
 #include "ofGLRenderer.h"
 #include "ofPath.h"
+#include "ofShapeUtils.h"
 
 #ifdef TARGET_OSX
 	#include <OpenGL/glu.h>
@@ -780,18 +781,12 @@ void ofTriangle(float x1,float y1,float z1,float x2,float y2,float z2,float x3, 
 	if (bSmoothHinted && drawMode == OF_OUTLINE) startSmoothing();
 
 	if(renderer->rendersPathDirectly()){
-		path.clear();
+		path=ofTrianglePath(x1,y1,z1,x2,y2,z2,x3,y3,z3);
 		ofSetCurrentStyleTo(path);
-		path.lineTo(x1,y1,z1);
-		path.lineTo(x2,y2,z2);
-		path.lineTo(x3,y3,z3);
 		renderer->draw(path);
 	}else{
-		shape.clear();
+		shape=ofTriangleShape(x1,y1,z1,x2,y2,z2,x3,y3,z3);
 		ofSetCurrentStyleTo(shape);
-		shape.lineTo(x1,y1,z1);
-		shape.lineTo(x2,y2,z2);
-		shape.lineTo(x3,y3,z3);
 		renderer->draw(shape);
 	}
 
@@ -1284,6 +1279,7 @@ void ofBox(float size) {
 		vertexData.addIndices(indices,36);
 		//glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 		vertexData.setMode(OF_TRIANGLES_MODE);
+		renderer->draw(vertexData);
 		//vboMesh.setVertexData(&vertexData);
 		//vboMesh.drawFaces();
 	} else {
@@ -1323,6 +1319,7 @@ void ofBox(float size) {
 		vertexData.addIndices(indices,24);
 
 		vertexData.setMode(OF_LINES_MODE);
+		renderer->draw(vertexData);
 		//vboMesh.setVertexData(&vertexData);
 		//vboMesh.drawWireframe();
 	}

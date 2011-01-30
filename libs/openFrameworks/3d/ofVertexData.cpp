@@ -1,4 +1,5 @@
 #include "ofVertexData.h"
+#include "ofGraphics.h"
 
 //--------------------------------------------------------------
 ofVertexData::ofVertexData(){
