@@ -1,7 +1,7 @@
 #pragma once
 
+#include "ofShapeTessellation.h"
 #include "ofShape.h"
-#include "ofPath.h"
 
 // todo: douglas-peucker simplification
 

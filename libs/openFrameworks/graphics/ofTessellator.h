@@ -10,7 +10,7 @@
 #pragma once
 
 #include "ofConstants.h"
-#include "ofShape.h"
+#include "ofShapeTessellation.h"
 #include "ofMesh.h"
 #include "ofTypes.h"
 
