@@ -1,9 +1,8 @@
 //TODO:
 //GL Error checking
-//inlining?
 // handle idling of arrays: possibly let gl create memory and use map buffers for streaming
-// how are we going to handle the OF_VBO_STATIC vs OF_VBO_STREAM settings? Should it auto-set in update intead of check?
 // index updating/deleting?
+// setVertexData with float* should know about ofVec3f vs ofVec2f?
 
 #include "ofVbo.h"
 
@@ -11,12 +10,11 @@
 
 //--------------------------------------------------------------
 ofVbo::ofVbo() {
-	
-	bUsingVerts		= false;
+	bUsingVerts = false;
 	bUsingTexCoords = false;
-	bUsingColors	= false;
-	bUsingNormals   = false;
-	bUsingIndices	= false;
+	bUsingColors = false;
+	bUsingNormals = false;
+	bUsingIndices = false;
 	
 	vertSize		= -1;
 	vertStride      = 0;
@@ -89,8 +87,13 @@ void ofVbo::setVertexData(const float * vert0x, int total, int usage) {
 		glGenBuffers(1, &vertId);
 	}
 	
-	glBindBufferARB(GL_ARRAY_BUFFER_ARB, vertId);
-	glBufferDataARB(GL_ARRAY_BUFFER_ARB, total * sizeof(ofVec3f), vert0x, usage);
+	// hardwired here for vec3, to be considered...
+	vertSize = 3;
+	vertStride = sizeof(ofVec3f);
+	totalVerts = total;
+	
+	glBindBuffer(GL_ARRAY_BUFFER, vertId);
+	glBufferData(GL_ARRAY_BUFFER, total * sizeof(ofVec3f), vert0x, usage);
 }
 
 //--------------------------------------------------------------
@@ -121,8 +124,8 @@ void ofVbo::setColorData(const float * color0r, int total, int usage) {
 		glGenBuffers(1, &colorId);
 	}
 	
-	glBindBufferARB(GL_ARRAY_BUFFER_ARB, colorId);
-	glBufferDataARB(GL_ARRAY_BUFFER_ARB, total * sizeof(ofColor), color0r, usage);	
+	glBindBuffer(GL_ARRAY_BUFFER, colorId);
+	glBufferData(GL_ARRAY_BUFFER, total * sizeof(ofColor), color0r, usage);	
 }
 
 //--------------------------------------------------------------
@@ -153,8 +156,8 @@ void ofVbo::setNormalData(const float * normal0x, int total, int usage) {
 		glGenBuffers(1, &normalId);
 	}
 	
-	glBindBufferARB(GL_ARRAY_BUFFER_ARB, normalId);
-	glBufferDataARB(GL_ARRAY_BUFFER_ARB, total * sizeof(ofVec3f), normal0x, usage);	
+	glBindBuffer(GL_ARRAY_BUFFER, normalId);
+	glBufferData(GL_ARRAY_BUFFER, total * sizeof(ofVec3f), normal0x, usage);	
 }
 
 //--------------------------------------------------------------
@@ -185,8 +188,8 @@ void ofVbo::setTexCoordData(const float * texCoord0x, int total, int usage) {
 		glGenBuffers(1, &texCoordId);
 	}
 	
-	glBindBufferARB(GL_ARRAY_BUFFER_ARB, texCoordId);
-	glBufferDataARB(GL_ARRAY_BUFFER_ARB, total * sizeof(ofVec2f), texCoord0x, usage);	
+	glBindBuffer(GL_ARRAY_BUFFER, texCoordId);
+	glBufferData(GL_ARRAY_BUFFER, total * sizeof(ofVec2f), texCoord0x, usage);	
 }
 
 
@@ -205,13 +208,20 @@ void ofVbo::setIndexData(const GLuint * indices, int total, int usage){
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexId);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * total, &indices[0], usage);
 }
-/*
+
 //--------------------------------------------------------------
 void ofVbo::updateVertexData(const ofVec3f * verts, int total) {
 	if(bUsingVerts){
+		glBindBufferARB(GL_ARRAY_BUFFER_ARB, vertId);
+		glBufferSubDataARB(GL_ARRAY_BUFFER_ARB, 0, total*sizeof(ofVec3f), (float*)&verts[0].x);
+	}
+}
+
+//--------------------------------------------------------------
+void ofVbo::updateVertexData(const float * vert0x, int total) {
+	if(bUsingVerts){
 		glBindBuffer(GL_ARRAY_BUFFER, vertId);
-		vertData = (float*)&verts[0].x;
-		glBufferSubData(GL_ARRAY_BUFFER, 0, total*sizeof(ofVec3f), vertData);
+		glBufferSubData(GL_ARRAY_BUFFER, 0, total*sizeof(ofVec3f), vert0x);
 	}
 }
 
@@ -219,8 +229,15 @@ void ofVbo::updateVertexData(const ofVec3f * verts, int total) {
 void ofVbo::updateColorData(const ofColor * colors, int total) {
 	if(bUsingColors) {
 		glBindBuffer(GL_ARRAY_BUFFER, colorId);
-		colorData = (float*)&colors[0].r;
-		glBufferSubData(GL_ARRAY_BUFFER, 0, total*sizeof(ofColor), colorData);
+		glBufferSubData(GL_ARRAY_BUFFER, 0, total*sizeof(ofColor), (float*)&colors[0].r);
+	}
+}
+
+//--------------------------------------------------------------
+void ofVbo::updateColorData(const float * color0r, int total) {
+	if(bUsingColors) {
+		glBindBuffer(GL_ARRAY_BUFFER, colorId);
+		glBufferSubData(GL_ARRAY_BUFFER, 0, total*sizeof(ofColor), color0r);
 	}
 }
 
@@ -228,8 +245,15 @@ void ofVbo::updateColorData(const ofColor * colors, int total) {
 void ofVbo::updateNormalData(const ofVec3f * normals, int total) {
 	if(bUsingNormals) {
 		glBindBuffer(GL_ARRAY_BUFFER, normalId);
-		normalData = (float*)&normals[0].x;
-		glBufferSubData(GL_ARRAY_BUFFER, 0, total*sizeof(ofVec3f), normalData);
+		glBufferSubData(GL_ARRAY_BUFFER, 0, total*sizeof(ofVec3f), (float*)&normals[0].x);
+	}
+}
+
+//--------------------------------------------------------------
+void ofVbo::updateNormalData(const float * normal0x, int total) {
+	if(bUsingNormals) {
+		glBindBuffer(GL_ARRAY_BUFFER, normalId);
+		glBufferSubData(GL_ARRAY_BUFFER, 0, total*sizeof(ofVec3f), normal0x);
 	}
 }
 
@@ -237,8 +261,15 @@ void ofVbo::updateNormalData(const ofVec3f * normals, int total) {
 void ofVbo::updateTexCoordData(const ofVec2f * texCoords, int total) {
 	if(bUsingTexCoords) {
 		glBindBuffer(GL_ARRAY_BUFFER, texCoordId);
-		texCoordData = (float*)&texCoords[0].x;
-		glBufferSubData(GL_ARRAY_BUFFER, 0, total*sizeof(ofVec2f), texCoordData);
+		glBufferSubData(GL_ARRAY_BUFFER, 0, total*sizeof(ofVec2f), (float*)&texCoords[0].x);
+	}
+}
+
+//--------------------------------------------------------------
+void ofVbo::updateTexCoordData(const float * texCoord0x, int total) {
+	if(bUsingTexCoords) {
+		glBindBuffer(GL_ARRAY_BUFFER, texCoordId);
+		glBufferSubData(GL_ARRAY_BUFFER, 0, total*sizeof(ofVec2f), texCoord0x);
 	}
 }
 
@@ -246,11 +277,10 @@ void ofVbo::updateTexCoordData(const ofVec2f * texCoords, int total) {
 void ofVbo::updateIndexData(const GLuint * indices, int total) {
 	if(bUsingIndices) {
 		glBindBuffer(GL_ARRAY_BUFFER, indexId);
-		indexData = (GLuint*)&indices[0];
-		glBufferSubData(GL_ARRAY_BUFFER, 0, total*sizeof(GLuint), indexData);
+		glBufferSubData(GL_ARRAY_BUFFER, 0, total*sizeof(GLuint), (GLuint*)&indices[0]);
 	}
 }
-*/
+
 
 //--------------------------------------------------------------
 bool ofVbo::getIsAllocated(){
@@ -282,33 +312,6 @@ bool ofVbo::getUsingIndices(){
 	return bUsingIndices;
 }
 
-
-/*
-//--------------------------------------------------------------
-float* ofVbo::getVertPointer(){
-	return vertData;
-}
-
-//--------------------------------------------------------------
-float* ofVbo::getColorPointer(){
-	return colorData;
-}
-
-//--------------------------------------------------------------
-float* ofVbo::getNormalPointer(){
-	return normalData;
-}
-
-//--------------------------------------------------------------
-float* ofVbo::getTexCoordPointer(){
-	return texCoordData;
-}
-
-//--------------------------------------------------------------
-GLuint* ofVbo::getIndexPointer(){
-	return indexData;
-}
-*/
 //--------------------------------------------------------------
 GLuint ofVbo::getVertId(){
 	return vertId;
@@ -340,7 +343,7 @@ void ofVbo::bind(){
 	//glPushAttrib(GL_ALL_ATTRIB_BITS);
 	//glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
 	
-	if(bUsingVerts) {
+	if(bUsingVerts){
 		glEnableClientState(GL_VERTEX_ARRAY);		
 		glBindBuffer(GL_ARRAY_BUFFER, vertId);
 		glVertexPointer(vertSize, GL_FLOAT, vertStride, 0);
@@ -393,12 +396,14 @@ void ofVbo::draw(int drawMode, int first, int total) {
 
 //--------------------------------------------------------------
 void ofVbo::drawElements(int drawMode, int amt) {
-	/*if(bAllocated){
+	if(bAllocated){
 		bind();
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexId);
-		glDrawElements(drawMode, amt, GL_UNSIGNED_INT, NULL);
+		if(bUsingIndices){
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexId);
+			glDrawElements(drawMode, amt, GL_UNSIGNED_INT, NULL);
+		}
 		unbind();
-	}*/
+	}
 }
 
 //--------------------------------------------------------------

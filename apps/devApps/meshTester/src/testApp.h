@@ -4,6 +4,7 @@
 
 #include "ofMain.h"
 #include "ofModel.h"
+#include "ofModelUtils.h"
 
 class testApp : public ofBaseApp{
 
