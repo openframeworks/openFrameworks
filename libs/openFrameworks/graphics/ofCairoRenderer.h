@@ -23,7 +23,7 @@ public:
 		SVG,
 		PNG
 	};
-	void setup(Type type=ofCairoRenderer::PDF);
+	void setup(string filename, Type type=ofCairoRenderer::PDF);
 	void close();
 
 	void draw(ofPath & path);
@@ -69,6 +69,8 @@ public:
 	void setupGraphicDefaults();
 	void setupScreen();
 
+	cairo_t * getCairoContext();
+	cairo_surface_t * getCairoSurface();
 
 private:
 
