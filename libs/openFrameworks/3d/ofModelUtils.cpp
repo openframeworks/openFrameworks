@@ -1,7 +1,17 @@
-#include "ofModelLoader.h"
+#include "ofModelUtils.h"
 #include "aiConfig.h"
+#include "assimp.h"
+#include "aiPostProcess.h"
+#include "aiScene.h"
+#include "ofColor.h"
 
 //--------------------------------------------------------------
+static inline ofColor aiColorToOfColor(const aiColor4D& c){
+	return ofColor(255*c.r,255*c.g,255*c.b,255*c.a);
+}
+
+//--------------------------------------------------------------
+void aiMeshToOfVertexData(const aiMesh* aim, ofVertexData& ofm);
 void aiMeshToOfVertexData(const aiMesh* aim, ofVertexData& ofm){
 	// default to triangle mode
 	ofm.setMode(OF_TRIANGLES_MODE);
@@ -47,6 +57,7 @@ void aiMeshToOfVertexData(const aiMesh* aim, ofVertexData& ofm){
 }
 
 //--------------------------------------------------------------
+void loadMeshes(string modelName, vector<ofMesh>& m);
 void loadMeshes(string modelName,vector<ofMesh>& m){
     string filepath = ofToDataPath(modelName);
 	
@@ -74,3 +85,12 @@ void loadMeshes(string modelName,vector<ofMesh>& m){
 		}
     }
 }	
+
+//--------------------------------------------------------------
+//--------------------------------------------------------------
+void ofLoadModel(string modelName, ofModel & model){
+
+	loadMeshes(modelName, model.meshes);
+
+}
+

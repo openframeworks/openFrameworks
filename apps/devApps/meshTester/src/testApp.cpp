@@ -4,7 +4,7 @@
 void testApp::setup(){
 	
 //	ofSetLogLevel(OF_LOG_VERBOSE);
-    model.loadModel("astroBoy_walk.dae");
+    ofLoadModel("astroBoy_walk.dae", model);
 	model.setRenderMethod(OF_MESH_USING_VBO);
 	tex.loadImage("boy_10.tga");
 	
