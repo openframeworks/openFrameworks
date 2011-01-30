@@ -63,7 +63,19 @@ void ofCairoRenderer::draw(ofPolyline & poly){
 }
 
 void ofCairoRenderer::draw(ofShape & shape){
+	for(int i=0;i<shape.getTessellation().size();i++){
+		draw(shape.getTessellation()[i]);
+	}
+	for(int i=0;i<shape.getOutline().size();i++){
+		draw(shape.getOutline()[i]);
+	}
+}
 
+void ofCairoRenderer::draw(ofVertexData & vertexData){
+	cairo_new_path(cr);
+	for(int i=0; i<vertexData.getNumVertices(); i++){
+		cairo_line_to(cr,vertexData.getVertex(i).x,vertexData.getVertex(i).y);
+	}
 }
 
 void ofCairoRenderer::drawPath(const ofPath & path,bool is_subpath){
