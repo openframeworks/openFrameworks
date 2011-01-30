@@ -131,6 +131,9 @@ void ofSetHexColor( int hexColor ); // hex, like web 0xFF0033;
 void ofEnableBlendMode(ofBlendMode blendMode);
 void ofDisableBlendMode();
 
+// point sprites
+void ofEnablePointSprites();
+void ofDisablePointSprites();
 
 // transparency
 void ofEnableAlphaBlending();  // this just turns on and off opengl blending, the common mode

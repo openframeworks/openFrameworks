@@ -74,3 +74,4 @@
 #include "ofMeshNode.h"
 #include "ofEasyCam.h"
 #include "ofLight.h"
+#include "ofVbo.h"
