@@ -3,6 +3,7 @@
 #include "ofMesh.h"
 #include "ofUtils.h"
 #include "ofModelLoader.h"
+#include "ofTexture.h"
 
 class ofModel{
 public:
