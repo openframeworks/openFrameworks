@@ -281,7 +281,7 @@ void ofTranslate(float x, float y, float z){
 
 //----------------------------------------------------------
 void ofScale(float xAmnt, float yAmnt, float zAmnt){
-	renderer->translate(xAmnt, yAmnt, zAmnt);
+	renderer->scale(xAmnt, yAmnt, zAmnt);
 }
 
 //----------------------------------------------------------
@@ -291,7 +291,7 @@ void ofRotate(float degrees, float vecX, float vecY, float vecZ){
 
 //----------------------------------------------------------
 void ofRotateX(float degrees){
-	renderer->translate(degrees);
+	renderer->rotateX(degrees);
 }
 
 //----------------------------------------------------------

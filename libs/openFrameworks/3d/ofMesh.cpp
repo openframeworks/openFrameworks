@@ -217,9 +217,9 @@ void ofMesh::draw(polyMode renderType){
 	glPushAttrib(GL_POLYGON_BIT);
 	glPolygonMode(GL_FRONT_AND_BACK, ofGetGLPolyMode(renderType));
 	
-	GLuint mode = ofGetGLPrimitiveMode(vertexData->getMode());
 	
 	if(renderMethod == OF_MESH_USING_VBO){
+		GLuint mode = ofGetGLPrimitiveMode(vertexData->getMode());
 		if(bEnableIndices){
 			vbo.drawElements(mode,vertexData->getNumIndices());
 		}else{
