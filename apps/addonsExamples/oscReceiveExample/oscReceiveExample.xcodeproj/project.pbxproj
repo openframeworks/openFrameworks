@@ -489,6 +489,7 @@
 					../../../libs/poco/include,
 					../../../addons/,
 					"../../../libs/glew/include/GL/**",
+					"../../../libs/assimp/include/**",
 					"../../../libs/fmodex/include/**",
 					"../../../libs/freeimage/include/**",
 				);
@@ -506,6 +507,8 @@
 					"$(OTHER_LDFLAGS_QUOTED_FOR_PROJECT_7)",
 					"$(OTHER_LDFLAGS_QUOTED_FOR_PROJECT_8)",
 					"$(OTHER_LDFLAGS_QUOTED_FOR_PROJECT_9)",
+					"$(OTHER_LDFLAGS_QUOTED_FOR_PROJECT_9)",
+					"$(OTHER_LDFLAGS_QUOTED_FOR_PROJECT_10)",
 				);
 				OTHER_LDFLAGS_QUOTED_FOR_PROJECT_1 = "\"../../../libs/poco/lib/osx/PocoUtil.a\"";
 				OTHER_LDFLAGS_QUOTED_FOR_PROJECT_2 = "\"../../../libs/poco/lib/osx/PocoXML.a\"";
@@ -516,6 +519,7 @@
 				OTHER_LDFLAGS_QUOTED_FOR_PROJECT_7 = "\"../../../libs/FreeImage/lib/osx/freeimage.a\"";
 				OTHER_LDFLAGS_QUOTED_FOR_PROJECT_8 = "\"../../../libs/fmodex/lib/osx/libfmodex.dylib\"";
 				OTHER_LDFLAGS_QUOTED_FOR_PROJECT_9 = "\"../../../libs/glew/lib/osx/glew.a\"";
+				OTHER_LDFLAGS_QUOTED_FOR_PROJECT_10 = "\"../../../libs/assimp/lib/osx/assimp.a\"";
 			};
 			name = Debug;
 		};
@@ -547,6 +551,7 @@
 					../../../libs/poco/include,
 					../../../addons/,
 					"../../../libs/glew/include/GL/**",
+					"../../../libs/assimp/include/**",
 					"../../../libs/fmodex/include/**",
 					"../../../libs/freeimage/include/**",
 				);
@@ -564,6 +569,8 @@
 					"$(OTHER_LDFLAGS_QUOTED_FOR_PROJECT_7)",
 					"$(OTHER_LDFLAGS_QUOTED_FOR_PROJECT_8)",
 					"$(OTHER_LDFLAGS_QUOTED_FOR_PROJECT_9)",
+					"$(OTHER_LDFLAGS_QUOTED_FOR_PROJECT_9)",
+					"$(OTHER_LDFLAGS_QUOTED_FOR_PROJECT_10)",
 				);
 				OTHER_LDFLAGS_QUOTED_FOR_PROJECT_1 = "\"../../../libs/poco/lib/osx/PocoUtil.a\"";
 				OTHER_LDFLAGS_QUOTED_FOR_PROJECT_2 = "\"../../../libs/poco/lib/osx/PocoXML.a\"";
@@ -574,6 +581,7 @@
 				OTHER_LDFLAGS_QUOTED_FOR_PROJECT_7 = "\"../../../libs/FreeImage/lib/osx/freeimage.a\"";
 				OTHER_LDFLAGS_QUOTED_FOR_PROJECT_8 = "\"../../../libs/fmodex/lib/osx/libfmodex.dylib\"";
 				OTHER_LDFLAGS_QUOTED_FOR_PROJECT_9 = "\"../../../libs/glew/lib/osx/glew.a\"";
+				OTHER_LDFLAGS_QUOTED_FOR_PROJECT_10 = "\"../../../libs/assimp/lib/osx/assimp.a\"";
 			};
 			name = Release;
 		};
