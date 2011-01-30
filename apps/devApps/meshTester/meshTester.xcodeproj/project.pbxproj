@@ -296,6 +296,7 @@
 					"../../../libs/glew/include/GL/**",
 					"../../../libs/fmodex/include/**",
 					"../../../libs/freeimage/include/**",
+					"../../../libs/assimp/include/**",
 				);
 				OTHER_CPLUSPLUSFLAGS = (
 					"-D__MACOSX_CORE__",
@@ -355,6 +356,7 @@
 					"../../../libs/glew/include/GL/**",
 					"../../../libs/fmodex/include/**",
 					"../../../libs/freeimage/include/**",
+					"../../../libs/assimp/include/**",
 				);
 				OTHER_CPLUSPLUSFLAGS = (
 					"-D__MACOSX_CORE__",
