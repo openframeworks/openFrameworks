@@ -36,13 +36,13 @@ ofCairoRenderer::~ofCairoRenderer(){
 	close();
 }
 
-void ofCairoRenderer::setup(Type type){
+void ofCairoRenderer::setup(string filename, Type type){
 	switch(type){
 	case PDF:
-		surface = cairo_pdf_surface_create("test.pdf",ofGetWidth(),ofGetHeight());
+		surface = cairo_pdf_surface_create(ofToDataPath(filename).c_str(),ofGetWidth(),ofGetHeight());
 		break;
 	case SVG:
-		surface = cairo_svg_surface_create("test.svg",ofGetWidth(),ofGetHeight());
+		surface = cairo_svg_surface_create(ofToDataPath(filename).c_str(),ofGetWidth(),ofGetHeight());
 		break;
 	}
 
@@ -284,3 +284,12 @@ void ofCairoRenderer::setupGraphicDefaults(){};
 void ofCairoRenderer::rotate(float degrees, float vecX, float vecY, float vecZ){}
 void ofCairoRenderer::rotateX(float degrees){}
 void ofCairoRenderer::rotateY(float degrees){}
+
+
+cairo_t * ofCairoRenderer::getCairoContext(){
+	return cr;
+}
+
+cairo_surface_t * ofCairoRenderer::getCairoSurface(){
+	return surface;
+}

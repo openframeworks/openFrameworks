@@ -12,7 +12,7 @@ void testApp::setup(){
 	//ofSetVerticalSync(true);
 
 	ofCairoRenderer cairo;
-	cairo.setup(ofCairoRenderer::PDF);
+	cairo.setup("paths.pdf",ofCairoRenderer::PDF);
 	
 	
 	nCurveVertexes = 7;
