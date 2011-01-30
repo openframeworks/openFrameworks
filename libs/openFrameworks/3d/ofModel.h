@@ -2,15 +2,12 @@
 
 #include "ofMesh.h"
 #include "ofUtils.h"
-#include "ofModelLoader.h"
 
 class ofModel{
 public:
 	ofModel();
 	~ofModel();
-	
-	void loadModel(string filename);	
-	
+		
 	void drawWireframe();
 	void drawFaces();
 	void drawVertices();
@@ -21,6 +18,8 @@ public:
 	void disableNormals();
 	void enableColors();
 	void disableColors();
+	
+	void setRenderMethod(meshRenderMethod m);
 	
 	vector<ofMesh> meshes;
 	vector<ofTexture> textures;
