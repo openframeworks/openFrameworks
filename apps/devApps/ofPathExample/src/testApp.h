@@ -5,6 +5,10 @@
 #include "ofMain.h"
 #include "ofShape.h"
 #include "ofPath.h"
+#include "ofCairoRenderer.h"
+
+// uncomment to render to pdf
+//#define RENDER_TO_CAIRO
 
 typedef struct {
 	
@@ -47,6 +51,7 @@ class testApp : public ofBaseApp{
 	ofPath pathIa,pathIb,pathIc;
 	ofPath selectedDraggableVertex, unselectedDraggableVertex;
 	
+	ofCairoRenderer cairo;
 };
 
 #endif
