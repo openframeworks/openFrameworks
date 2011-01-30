@@ -1,10 +1,7 @@
 //TODO: Add edge flags?
 
 #pragma once
-
-#include "ofConstants.h"
-#include "ofVec3f.h"
-#include "ofColor.h"
+#include "ofMain.h"
 
 class ofVbo {
 	
@@ -33,6 +30,15 @@ private:
 	int normUsage;
 	int texUsage;
 	
+<<<<<<< HEAD
+=======
+	/*float*  vertData;
+	float*  normalData;
+	float*  texCoordData;
+	float*  colorData;
+	GLuint* indexData;*/
+	
+>>>>>>> da63fbac63689390b8a0b0e099f72352976dfd23
 public:
 	
 	ofVbo();

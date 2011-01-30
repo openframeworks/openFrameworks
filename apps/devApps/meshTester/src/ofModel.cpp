@@ -109,3 +109,10 @@ void ofModel::disableColors(){
 		meshes.at(i).enableColors();
 	}
 }
+
+//--------------------------------------------------------------
+void ofModel::setRenderMethod(meshRenderMethod m){
+	for (int i =0; i < meshes.size();i++){
+		meshes.at(i).setRenderMethod(m);
+	}
+}

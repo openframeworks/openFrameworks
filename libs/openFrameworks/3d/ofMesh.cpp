@@ -157,34 +157,56 @@ void ofMesh::disableTexCoords(){
 
 //--------------------------------------------------------------
 void ofMesh::setupVbo(){	
-	if(!vbo.getIsAllocated() || vertexData->haveVertsChanged()){
+	if(!vbo.getIsAllocated()){
 		setupVerticesForVbo(drawType);
 	}
 	
+	if (vertexData->haveVertsChanged()){
+		vbo.updateVertexData(vertexData->getVerticesPointer(), vertexData->getNumVertices());
+	}
+	
 	if(bEnableColors){
-		if((vertexData->getNumColors() && !vbo.getUsingColors()) || vertexData->haveColorsChanged()){
+		
+		if(vertexData->getNumColors() && !vbo.getUsingColors()){
 			setupColorsForVbo(drawType);
+		}
+		
+		if(vertexData->haveColorsChanged()){
+			vbo.updateColorData(vertexData->getColorsPointer(), vertexData->getNumColors());
 		}
 	}
 	
 	if(bEnableNormals){
-		if((vertexData->getNumNormals() && !vbo.getUsingNormals()) || vertexData->haveNormalsChanged()){
+		if(vertexData->getNumNormals() && !vbo.getUsingNormals()){
 			setupNormalsForVbo(drawType);
+		}
+		
+		if(vertexData->haveNormalsChanged()){
+			vbo.updateNormalData(vertexData->getNormalsPointer(), vertexData->getNumNormals());
 		}
 	}
 	
 	if(bEnableTexCoords){
-		if((vertexData->getNumTexCoords() && !vbo.getUsingTexCoords()) || vertexData->haveTexCoordsChanged()){
+		if(vertexData->getNumTexCoords() && !vbo.getUsingTexCoords()){
 			setupTexCoordsForVbo(drawType);
+		}
+		
+		if(vertexData->haveTexCoordsChanged()){
+			vbo.updateTexCoordData(vertexData->getTexCoordsPointer(), vertexData->getNumTexCoords());
 		}
 	}
 	
 	if(bEnableIndices){
-		if((vertexData->getNumIndices() && !vbo.getUsingIndices()) || vertexData->haveIndicesChanged()){
+		if(vertexData->getNumIndices() && !vbo.getUsingIndices()){
 			setupIndicesForVbo(drawType);
+		}
+		
+		if(vertexData->haveIndicesChanged()){
+			vbo.updateIndexData(vertexData->getIndexPointer(), vertexData->getNumIndices());
 		}
 	}	
 }
+
 
 //--------------------------------------------------------------
 void ofMesh::setupVertexArray(){
