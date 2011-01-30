@@ -170,6 +170,11 @@ void ofVertexData::addTexCoords(const ofVec2f* tCoords, int amt){
 }
 
 //--------------------------------------------------------------
+int ofVertexData::getIndex(int i){
+	return indices[i];
+}
+
+//--------------------------------------------------------------
 void ofVertexData::addIndex(int i){
 	indices.push_back(GLuint(i));
 	bIndicesChanged = true;

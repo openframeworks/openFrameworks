@@ -25,6 +25,38 @@ helper_quadratic_to (cairo_t *cr,
                   y1, y2);
 }
 
+ofVertexData get_triangles(const ofVertexData & vertexData){
+	ofVertexData triangles;
+
+	switch(vertexData.getMode()){
+	case(OF_TRIANGLES_MODE):
+		for(int i = 0; i < vertexData.getNumVertices();i++){
+			triangles.addIndex((GLuint)i);
+	}
+	break;
+	case(OF_TRIANGLE_STRIP_MODE):
+		triangles.addIndex((GLuint)0);
+		triangles.addIndex((GLuint)1);
+		triangles.addIndex((GLuint)2);
+		for(int i = 3; i < vertexData.getNumVertices();i++){
+			triangles.addIndex((GLuint)i);
+			triangles.addIndex((GLuint)i-2);
+		}
+	break;
+	case(OF_TRIANGLE_FAN_MODE):
+		triangles.addIndex((GLuint)0);
+		triangles.addIndex((GLuint)1);
+		triangles.addIndex((GLuint)2);
+		for(int i = 2; i < vertexData.getNumVertices()-1;i++){
+			triangles.addIndex((GLuint)0);
+			triangles.addIndex((GLuint)i);
+			triangles.addIndex((GLuint)i+1);
+		}
+	break;
+	default:break;
+	}
+	return triangles;
+}
 
 ofCairoRenderer::ofCairoRenderer(){
 	type = PDF;
@@ -88,9 +120,87 @@ void ofCairoRenderer::draw(ofShapeTessellation & shape){
 }
 
 void ofCairoRenderer::draw(ofVertexData & vertexData){
-	cairo_new_path(cr);
-	for(int i=0; i<vertexData.getNumVertices(); i++){
-		cairo_line_to(cr,vertexData.getVertex(i).x,vertexData.getVertex(i).y);
+	if(vertexData.getNumVertices()==0) return;
+	ofVertexData indices = get_triangles(vertexData);
+	if(indices.getNumIndices()<4) return;
+	cairo_new_sub_path(cr);
+	//if(indices.getNumIndices()){
+
+		int i = 0;
+		if(vertexData.getMode()==OF_TRIANGLE_STRIP_MODE){
+			cairo_move_to(cr,vertexData.getVertex(vertexData.getIndex(0)).x,vertexData.getVertex(vertexData.getIndex(0)).y);
+			cairo_line_to(cr,vertexData.getVertex(vertexData.getIndex(1)).x,vertexData.getVertex(vertexData.getIndex(1)).y);
+			cairo_line_to(cr,vertexData.getVertex(vertexData.getIndex(2)).x,vertexData.getVertex(vertexData.getIndex(2)).y);
+			i=2;
+		}
+		for(; i<vertexData.getNumIndices(); i++){
+			ofVec3f transformed=projection.preMult(vertexData.getVertex(vertexData.getIndex(i)));
+			transformed=modelView.preMult(transformed);
+			transformed.set(transformed.x/transformed.z,transformed.y/transformed.z);
+			switch(vertexData.getMode()){
+			case(OF_TRIANGLES_MODE):
+				cairo_move_to(cr,vertexData.getVertex(vertexData.getIndex(i)).x,vertexData.getVertex(vertexData.getIndex(i)).y);
+				if((i+1)%3==0){
+
+					ofVec3f transformed_2=projection.preMult(vertexData.getVertex(vertexData.getIndex(i-2)));
+					transformed_2=modelView.preMult(transformed_2);
+					transformed_2.set(transformed_2.x/transformed_2.z,transformed_2.y/transformed_2.z);
+
+					cairo_line_to(cr,transformed_2.x,transformed_2.y);
+					cairo_move_to(cr,transformed.x,transformed.y);
+				}
+
+			break;
+			case(OF_TRIANGLE_STRIP_MODE):{
+
+					ofVec3f transformed_2=projection.preMult(vertexData.getVertex(vertexData.getIndex(i-2)));
+					transformed_2=modelView.preMult(transformed_2);
+					transformed_2.set(transformed_2.x/transformed_2.z,transformed_2.y/transformed_2.z);
+
+					cairo_line_to(cr,transformed.x,transformed.y);
+					cairo_line_to(cr,transformed_2.x,transformed_2.y);
+					cairo_move_to(cr,transformed.x,transformed.y);
+			}break;
+			case(OF_TRIANGLE_FAN_MODE):
+			break;
+			default:break;
+			}
+			/*switch(vertexData.getMode()){
+			case(OF_TRIANGLES_MODE):
+				cairo_move_to(cr,vertexData.getVertex(vertexData.getIndex(i)).x,vertexData.getVertex(vertexData.getIndex(i)).y);
+				if((i+1)%3==0){
+					cairo_line_to(cr,vertexData.getVertex(vertexData.getIndex(i-2)).x,vertexData.getVertex(vertexData.getIndex(i-2)).y);
+					cairo_move_to(cr,vertexData.getVertex(vertexData.getIndex(i)).x,vertexData.getVertex(vertexData.getIndex(i)).y);
+				}
+
+			break;
+			case(OF_TRIANGLE_STRIP_MODE):
+					cairo_line_to(cr,vertexData.getVertex(vertexData.getIndex(i)).x,vertexData.getVertex(vertexData.getIndex(i)).y);
+					cairo_line_to(cr,vertexData.getVertex(vertexData.getIndex(i-2)).x,vertexData.getVertex(vertexData.getIndex(i-2)).y);
+					cairo_move_to(cr,vertexData.getVertex(vertexData.getIndex(i)).x,vertexData.getVertex(vertexData.getIndex(i)).y);
+			break;
+			case(OF_TRIANGLE_FAN_MODE):
+			break;
+			default:break;
+			}*/
+		}
+			/**/
+
+	/*}else{
+		for(int i=0; i<vertexData.getNumVertices(); i++){
+			cairo_line_to(cr,vertexData.getVertex(i).x,vertexData.getVertex(i).y);
+		}
+	}*/
+	if(ofGetStyle().lineWidth>0){
+		ofColor c = ofGetStyle().color;
+		cairo_set_source_rgba(cr, (float)c.r/255.0, (float)c.g/255.0, (float)c.b/255.0, (float)c.a/255.0);
+		cairo_set_line_width( cr, ofGetStyle().lineWidth );
+		/*if(ofGetStyle().)
+			cairo_stroke_preserve( cr );
+		else
+			cairo_stroke( cr );*/
+
+		cairo_stroke( cr );
 	}
 }
 
@@ -257,6 +367,7 @@ void ofCairoRenderer::setupScreen(){
 			cairo_copy_page(cr);
 		}
 	}
+	ofSetupScreenPerspective();	// assume defaults
 }
 
 // screen coordinate things / default gl values
@@ -266,8 +377,103 @@ void ofCairoRenderer::popView(){};
 // setup matrices and viewport (upto you to push and pop view before and after)
 // if width or height are 0, assume windows dimensions (ofGetWidth(), ofGetHeight())
 // if nearDist or farDist are 0 assume defaults (calculated based on width / height)
-void ofCairoRenderer::viewport(float x, float y, float width, float height, bool invertY){};
-void ofCairoRenderer::setupScreenPerspective(float width, float height, bool vFlip, float fov, float nearDist, float farDist){};
+void ofCairoRenderer::viewport(float x, float y, float width, float height, bool invertY){
+
+};
+
+void ofCairoRenderer::setupScreenPerspective(float width, float height, int orientation, bool vFlip, float fov, float nearDist, float farDist){
+	vFlip = !vFlip;
+	if(width == 0) width = ofGetWidth();
+	if(height == 0) height = ofGetHeight();
+	if( orientation == 0 ) orientation = ofGetOrientation();
+
+	float w = width;
+	float h = height;
+
+	//we do this because ofGetWidth and ofGetHeight return orientated widths and height
+	//for the camera we need width and height of the actual screen
+	if( orientation == OF_ORIENTATION_90_LEFT || orientation == OF_ORIENTATION_90_RIGHT ){
+		h = width;
+		w = height;
+	}
+
+	float eyeX = w / 2;
+	float eyeY = h / 2;
+	float halfFov = PI * fov / 360;
+	float theTan = tanf(halfFov);
+	float dist = eyeY / theTan;
+	float aspect = (float) w / h;
+
+	if(nearDist == 0) nearDist = dist / 10.0f;
+	if(farDist == 0) farDist = dist * 10.0f;
+
+	projection.makePerspectiveMatrix(fov,aspect,nearDist,farDist);
+	//gluPerspective(fov, aspect, nearDist, farDist);
+
+	//glMatrixMode(GL_MODELVIEW);
+	//glLoadIdentity();
+	//gluLookAt(eyeX, eyeY, dist, eyeX, eyeY, 0, 0, 1, 0);
+	modelView.makeLookAtMatrix(ofVec3f(eyeX,eyeY,dist),ofVec3f(eyeX,eyeY,0),ofVec3f(0,1,0));
+
+	//note - theo checked this on iPhone and Desktop for both vFlip = false and true
+	switch(orientation) {
+		case OF_ORIENTATION_180:
+			modelView.rotate(-180,0,0,1);
+			//glRotatef(-180, 0, 0, 1);
+			if(vFlip){
+				modelView.scale(1,-1,1);
+				modelView.translate(-width,0,0);
+				//glScalef(1, -1, 1);
+				//glTranslatef(-width, 0, 0);
+			}else{
+				modelView.translate(-width,-height,0);
+				//glTranslatef(-width, -height, 0);
+			}
+
+			break;
+
+		case OF_ORIENTATION_90_RIGHT:
+			//glRotatef(-90, 0, 0, 1);
+			modelView.rotate(-90,0,0,1);
+			if(vFlip){
+				//glScalef(-1, 1, 1);
+				modelView.scale(-1,1,1);
+			}else{
+				//glScalef(-1, -1, 1);
+				//glTranslatef(0, -height, 0);
+				modelView.scale(-1,-1,1);
+				modelView.translate(0,-height,0);
+			}
+			break;
+
+		case OF_ORIENTATION_90_LEFT:
+			//glRotatef(90, 0, 0, 1);
+			modelView.rotate(90,0,0,1);
+			if(vFlip){
+				//glScalef(-1, 1, 1);
+				//glTranslatef(-width, -height, 0);
+				modelView.scale(-1,1,1);
+				modelView.translate(-width,-height,0);
+			}else{
+				//glScalef(-1, -1, 1);
+				//glTranslatef(-width, 0, 0);
+
+				modelView.scale(-1,-1,1);
+				modelView.translate(-width,0,0);
+			}
+			break;
+
+		case OF_ORIENTATION_DEFAULT:
+		default:
+			if(vFlip){
+				//glScalef(1, -1, 1);
+				//glTranslatef(0, -height, 0);
+				modelView.scale(1,-1,1);
+				modelView.translate(0,-height,0);
+			}
+			break;
+	}
+};
 
 void ofCairoRenderer::setupScreenOrtho(float width, float height, bool vFlip, float nearDist, float farDist){};
 
