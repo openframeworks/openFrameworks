@@ -440,7 +440,8 @@ enum ofPolyWindingMode{
 //--------------------------------------------
 //ofBitmap draw mode
 enum ofDrawBitmapMode{
-	OF_BITMAPMODE_SCREEN = 0,
+	OF_BITMAPMODE_SIMPLE = 0,
+	OF_BITMAPMODE_SCREEN,
 	OF_BITMAPMODE_VIEWPORT,
 	OF_BITMAPMODE_MODEL,
 	OF_BITMAPMODE_MODEL_BILLBOARD
