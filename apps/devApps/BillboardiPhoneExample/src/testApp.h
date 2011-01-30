@@ -4,7 +4,7 @@
 #include "ofxiPhone.h"
 #include "ofxiPhoneExtras.h"
 
-#define NUM_PTS 2000
+#define NUM_PTS 3000
 
 class testApp : public ofxiPhoneApp {
 	

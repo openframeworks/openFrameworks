@@ -20,9 +20,6 @@ public:
 	void mouseReleased(int x, int y, int button);
 	void windowResized(int w, int h);
 	
-	ofVec3f		cameraRotation;
-	float		zoom, zoomTarget;
-	
 	ofVbo		vbo;
 	ofShader	shader;
 	ofImage		texture;
