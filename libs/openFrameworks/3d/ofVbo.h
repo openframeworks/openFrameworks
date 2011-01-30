@@ -49,6 +49,7 @@ public:
 	void setTexCoordData(const float * texCoord0x, int total, int usage);	
 	
 	void updateVertexData(const ofVec3f * verts, int total);
+	void updateVertexData(const ofVec2f * verts, int total);
 	void updateColorData(const ofColor * colors, int total);	
 	void updateNormalData(const ofVec3f * normals, int total);	
 	void updateTexCoordData(const ofVec2f * texCoords, int total);	

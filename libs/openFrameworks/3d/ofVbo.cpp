@@ -218,6 +218,14 @@ void ofVbo::updateVertexData(const ofVec3f * verts, int total) {
 }
 
 //--------------------------------------------------------------
+void ofVbo::updateVertexData(const ofVec2f * verts, int total) {
+	if(bUsingVerts){
+		glBindBuffer(GL_ARRAY_BUFFER, vertId);
+		glBufferSubData(GL_ARRAY_BUFFER, 0, total*sizeof(ofVec2f), (float*)&verts[0].x);
+	}
+}
+
+//--------------------------------------------------------------
 void ofVbo::updateVertexData(const float * vert0x, int total) {
 	if(bUsingVerts){
 		glBindBuffer(GL_ARRAY_BUFFER, vertId);
