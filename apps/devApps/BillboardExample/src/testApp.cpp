@@ -22,8 +22,8 @@ void testApp::setup() {
 		billboardSize[i] = ofNextPow2(ofRandom(4, 24));	// faster to have a power of 2
 	}
 	
-	billboardVbo.setVertexData(billboardVerts, NUM_BILLBOARDS, OF_VBO_DYNAMIC);
-	billboardVbo.setColorData(billboardColor, NUM_BILLBOARDS, OF_VBO_DYNAMIC);
+	billboardVbo.setVertexData(billboardVerts, NUM_BILLBOARDS, GL_DYNAMIC_DRAW);
+	billboardVbo.setColorData(billboardColor, NUM_BILLBOARDS, GL_DYNAMIC_DRAW);
 	
 	// load the bilboard shader 
 	// this is used to change the
@@ -101,7 +101,7 @@ void testApp::draw() {
 	ofEnableAlphaBlending();
 	texture.getTextureReference().bind();
 	billboardVbo.bind();
-	billboardVbo.updateVertexData();
+	billboardVbo.setVertexData(billboardVerts, NUM_BILLBOARDS, GL_DYNAMIC_DRAW);
 	billboardVbo.draw(GL_POINTS, 0, NUM_BILLBOARDS);
 	
 	billboardVbo.unbind();
