@@ -80,7 +80,7 @@ void ofCamera::begin(ofRectangle viewport) {
 	
 	glMatrixMode(GL_MODELVIEW);
 	glLoadMatrixf(ofMatrix4x4::getInverseOf(getGlobalTransformMatrix()).getPtr());
-	ofViewport(viewport.x, viewport.y, viewport.width, viewport.height);
+	ofViewport(viewport);
 	
 	//store current matrices
 	if (cacheMatrices)
