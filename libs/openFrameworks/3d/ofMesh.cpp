@@ -4,12 +4,12 @@
 ofMesh::ofMesh(){
 	vbo = ofVbo();
 	vertexData = NULL;
+	renderMethod = OF_MESH_USING_VERTEX_ARRAY;
 	drawType = GL_STATIC_DRAW_ARB;
 	bEnableIndices = false;
 	bEnableColors = false;
 	bEnableTexCoords = false;
 	bEnableNormals = false;
-	renderMethod = OF_MESH_USING_VERTEX_ARRAY;
 }
 
 //--------------------------------------------------------------

@@ -88,6 +88,11 @@ void ofVbo::setVertexData(const float * vert0x, int total, int usage) {
 		glGenBuffers(1, &vertId);
 	}
 	
+	// hardwired here for vec3, to be considered...
+	vertSize = 3;
+	vertStride = sizeof(ofVec3f);
+	totalVerts = total;
+	
 	glBindBuffer(GL_ARRAY_BUFFER, vertId);
 	glBufferData(GL_ARRAY_BUFFER, total * sizeof(ofVec3f), vert0x, usage);
 }
@@ -394,8 +399,10 @@ void ofVbo::draw(int drawMode, int first, int total) {
 void ofVbo::drawElements(int drawMode, int amt) {
 	if(bAllocated){
 		bind();
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexId);
-		glDrawElements(drawMode, amt, GL_UNSIGNED_INT, NULL);
+		if(bUsingIndices){
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexId);
+			glDrawElements(drawMode, amt, GL_UNSIGNED_INT, NULL);
+		}
 		unbind();
 	}
 }

@@ -5,13 +5,12 @@ void testApp::setup(){
 	
 //	ofSetLogLevel(OF_LOG_VERBOSE);
     model.loadModel("astroBoy_walk.dae");
+	model.setRenderMethod(OF_MESH_USING_VBO);
 	tex.loadImage("boy_10.tga");
 	
 	ofEnableNormalizedTexCoords();
 	model.enableTexCoords();
 	model.enableNormals();
-	
-	model.setRenderMethod(OF_MESH_USING_VBO);
 	
     glEnable(GL_DEPTH_TEST);
 	
@@ -54,8 +53,6 @@ void testApp::update(){
 void testApp::draw(){
 	lightsOn ? glEnable(GL_LIGHTING) : glDisable(GL_LIGHTING);
 	ofBackground(50, 50, 50, 0);
-	
-    ofSetColor(255, 255, 255, 255);
     
     glPushMatrix();
 
@@ -74,7 +71,8 @@ void testApp::draw(){
     glPopMatrix();
     
 	glDisable(GL_LIGHTING);
-    ofDrawBitmapString("fps: "+ofToString(ofGetFrameRate(), 2), 10, 15);
+	ofSetColor(255, 255, 255, 255);
+    ofDrawBitmapString("fps: "+ofToString(ofGetFrameRate(), 2), 10, 15,0);
 }
 
 //--------------------------------------------------------------
