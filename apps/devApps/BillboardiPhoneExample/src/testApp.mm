@@ -45,7 +45,7 @@ void testApp::draw() {
 	
 	ofEnablePointSprites();
 
-	glPointSize(16);
+	glPointSize(10);
 	texture.getTextureReference().bind();
 	vbo.draw(GL_POINTS, 0, NUM_PTS);
 	texture.getTextureReference().unbind();
