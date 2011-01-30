@@ -212,8 +212,8 @@ void ofVbo::setIndexData(const GLuint * indices, int total, int usage){
 //--------------------------------------------------------------
 void ofVbo::updateVertexData(const ofVec3f * verts, int total) {
 	if(bUsingVerts){
-		glBindBufferARB(GL_ARRAY_BUFFER_ARB, vertId);
-		glBufferSubDataARB(GL_ARRAY_BUFFER_ARB, 0, total*sizeof(ofVec3f), (float*)&verts[0].x);
+		glBindBuffer(GL_ARRAY_BUFFER, vertId);
+		glBufferSubData(GL_ARRAY_BUFFER, 0, total*sizeof(ofVec3f), (float*)&verts[0].x);
 	}
 }
 
@@ -401,7 +401,7 @@ void ofVbo::drawElements(int drawMode, int amt) {
 		bind();
 		if(bUsingIndices){
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexId);
-			glDrawElements(drawMode, amt, GL_UNSIGNED_INT, NULL);
+			glDrawElements(drawMode, amt, GL_UNSIGNED_SHORT, NULL);
 		}
 		unbind();
 	}
