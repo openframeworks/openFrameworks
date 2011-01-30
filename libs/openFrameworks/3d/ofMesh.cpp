@@ -64,7 +64,7 @@ const ofVertexData* ofMesh::getVertexData() const{
 bool ofMesh::setupVerticesForVbo(int usage){
 	int size = vertexData->getNumVertices();
 	if(size){
-		vbo.setVertexData(vertexData->getVerticesPointer(),size, usage);
+		vbo.setVertexData(vertexData->getVerticesPointer(),3,size, usage);
 		return true;
 	}else{
 		ofLog(OF_LOG_WARNING,"ofMesh:setupVertices - no vertices in vertexData.");
@@ -224,7 +224,7 @@ void ofMesh::setupVbo(){
 		}
 		
 		if (vertexData->haveVertsChanged()){
-			vbo.updateVertexData(vertexData->getVerticesPointer(), vertexData->getNumVertices());
+			vbo.updateVertexData(vertexData->getVerticesPointer(), 3, vertexData->getNumVertices());
 		}
 	}
 	

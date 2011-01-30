@@ -104,7 +104,6 @@ void ofLoadModel(string modelName, ofModel & model){
 					model.textures.push_back(ofImage());
 					ofLog(OF_LOG_VERBOSE, "loading image from %s", texPath.data);
 					string modelFolder = ofFileUtils::getEnclosingDirectoryFromPath(filepath);
-					cout << modelFolder << " --- " << texPath.data << endl; 
 					model.textures.back().loadImage(modelFolder + texPath.data);
 					model.textures.back().update();
 					texPathMap[texPath.data] = model.textures.size()-1;

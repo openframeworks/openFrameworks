@@ -75,7 +75,7 @@ void ofVbo::setVertexData(const ofVec2f * verts, int total, int usage) {
 }
 
 //--------------------------------------------------------------
-void ofVbo::setVertexData(const float * vert0x, int total, int usage) {
+void ofVbo::setVertexData(const float * vert0x, int numCoords, int total, int usage) {
 	if(vert0x == NULL) {
 		ofLog(OF_LOG_WARNING,"ofVbo: bad vertex data!\n");
 		return;	
@@ -86,14 +86,17 @@ void ofVbo::setVertexData(const float * vert0x, int total, int usage) {
 		bUsingVerts = true;
 		glGenBuffers(1, &vertId);
 	}
-	
-	// hardwired here for vec3, to be considered...
-	vertSize = 3;
-	vertStride = sizeof(ofVec3f);
+
+	vertSize = numCoords;
+	if(vertSize == 3){
+		vertStride = sizeof(ofVec3f);
+	}else if(vertSize == 2){
+		vertStride = sizeof(ofVec2f);
+	}
 	totalVerts = total;
 	
 	glBindBuffer(GL_ARRAY_BUFFER, vertId);
-	glBufferData(GL_ARRAY_BUFFER, total * sizeof(ofVec3f), vert0x, usage);
+	glBufferData(GL_ARRAY_BUFFER, total * vertStride, vert0x, usage);
 }
 
 //--------------------------------------------------------------
@@ -218,10 +221,25 @@ void ofVbo::updateVertexData(const ofVec3f * verts, int total) {
 }
 
 //--------------------------------------------------------------
-void ofVbo::updateVertexData(const float * vert0x, int total) {
+void ofVbo::updateVertexData(const ofVec2f * verts, int total) {
+	
 	if(bUsingVerts){
 		glBindBuffer(GL_ARRAY_BUFFER, vertId);
-		glBufferSubData(GL_ARRAY_BUFFER, 0, total*sizeof(ofVec3f), vert0x);
+		glBufferSubData(GL_ARRAY_BUFFER, 0, total*sizeof(ofVec2f), (float*)&verts[0].x);
+	}
+}
+
+//--------------------------------------------------------------
+void ofVbo::updateVertexData(const float * vert0x, int numCoords, int total) {
+	if(bUsingVerts){
+		vertSize = numCoords;
+		if(vertSize == 3){
+			vertStride = sizeof(ofVec3f);
+		}else if(vertSize == 2){
+			vertStride = sizeof(ofVec2f);
+		}
+		glBindBuffer(GL_ARRAY_BUFFER, vertId);
+		glBufferSubData(GL_ARRAY_BUFFER, 0, total*vertStride, vert0x);
 	}
 }
 
