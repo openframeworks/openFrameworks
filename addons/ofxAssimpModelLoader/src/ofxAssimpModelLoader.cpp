@@ -1,6 +1,7 @@
 #include "ofxAssimpModelLoader.h"
 
-#import "aiConfig.h"
+#include "aiConfig.h"
+#include <assert.h>
 
 #define BUFFER_OFFSET(i) ((char *)NULL + (i))
 
@@ -27,10 +28,10 @@ static void set_float4(float f[4], float a, float b, float c, float d)
 
 //-------------------------------------------
 // Can't send color down as a pointer to aiColor4D because AI colors are ABGR.
-static void Color4f(CGLContextObj cgl_ctx, const struct aiColor4D *color)
+/*static void Color4f(CGLContextObj cgl_ctx, const struct aiColor4D *color)
 {
 	glColor4f(color->r, color->g, color->b, color->a);
-}
+}*/
 
 ofxAssimpModelLoader::ofxAssimpModelLoader(){
 
@@ -326,10 +327,10 @@ void ofxAssimpModelLoader::loadGLResources(){
         
         // Create VAO and populate it
         GLuint vaoHandle; 
-        glGenVertexArraysAPPLE(1, &vaoHandle);
+        glGenVertexArrays(1, &vaoHandle);
             
         // TODO: equivalent PC call.
-        glBindVertexArrayAPPLE(vaoHandle);
+        glBindVertexArray(vaoHandle);
         
         glBindBuffer(GL_ARRAY_BUFFER, meshHelper.vertexBuffer);
         
@@ -349,7 +350,7 @@ void ofxAssimpModelLoader::loadGLResources(){
         
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, meshHelper.indexBuffer);
         
-        glBindVertexArrayAPPLE(0);
+        glBindVertexArray(0);
        
         // save the VAO handle into our mesh helper
         meshHelper.vao = vaoHandle;
@@ -376,7 +377,7 @@ void ofxAssimpModelLoader::deleteGLResources(){
         glDeleteBuffers(1, &vertexBuffer);
         glDeleteBuffers(1, &indexBuffer);
         glDeleteBuffers(1, &normalBuffer);
-        glDeleteVertexArraysAPPLE(1, &vaoHandle);
+        glDeleteVertexArrays(1, &vaoHandle);
         
         meshHelper.indexBuffer = 0;
         meshHelper.vertexBuffer = 0;
@@ -787,7 +788,7 @@ void ofxAssimpModelLoader::draw()
                     glDisable(GL_CULL_FACE);
                         
                 // TODO: equivalent VAO callfor linux and windows.
-                glBindVertexArrayAPPLE(meshHelper.vao);        
+                glBindVertexArray(meshHelper.vao);
                 glDrawElements(GL_TRIANGLES, meshHelper.numIndices, GL_UNSIGNED_INT, 0);
                 
                 // Texture Binding

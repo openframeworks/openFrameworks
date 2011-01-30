@@ -32,4 +32,7 @@ public:
 	
 protected:
 	bool bUsingTextures;
+
+private:
+	meshRenderMethod renderMethod;
 };

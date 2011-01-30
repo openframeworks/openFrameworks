@@ -19,12 +19,12 @@ void aiMeshToOfVertexData(const aiMesh* aim, ofVertexData& ofm){
 	ofm.setMode(OF_TRIANGLES_MODE);
 	
 	// copy vertices
-	for (int i=0; i < aim->mNumVertices;i++){
+	for (int i=0; i < (int)aim->mNumVertices;i++){
 		ofm.addVertex(ofVec3f(aim->mVertices[i].x,aim->mVertices[i].y,aim->mVertices[i].z));
 	}
 
 	if(aim->HasNormals()){
-		for (int i=0; i < aim->mNumVertices;i++){
+		for (int i=0; i < (int)aim->mNumVertices;i++){
 			ofm.addNormal(ofVec3f(aim->mNormals[i].x,aim->mNormals[i].y,aim->mNormals[i].z));
 		}
 	}
@@ -32,7 +32,7 @@ void aiMeshToOfVertexData(const aiMesh* aim, ofVertexData& ofm){
 	// aiVector3D * 	mTextureCoords [AI_MAX_NUMBER_OF_TEXTURECOORDS]
 	// just one for now
 	if(aim->GetNumUVChannels()>0){
-		for (int i=0; i < aim->mNumVertices;i++){
+		for (int i=0; i < (int)aim->mNumVertices;i++){
 			ofm.addTexCoord(ofVec2f(aim->mTextureCoords[0][i].x,aim->mTextureCoords[0][i].y));
 		}
 	}
@@ -40,16 +40,16 @@ void aiMeshToOfVertexData(const aiMesh* aim, ofVertexData& ofm){
 	//aiColor4D * 	mColors [AI_MAX_NUMBER_OF_COLOR_SETS]	
 	// just one for now		
 	if(aim->GetNumColorChannels()>0){
-		for (int i=0; i < aim->mNumVertices;i++){
+		for (int i=0; i < (int)aim->mNumVertices;i++){
 			ofm.addColor(aiColorToOfColor(aim->mColors[0][i]));
 		}
 	}
 	
-	for (int i=0; i < aim->mNumFaces;i++){	
+	for (int i=0; i <(int) aim->mNumFaces;i++){
 		if(aim->mFaces[i].mNumIndices>3){
 			ofLog(OF_LOG_WARNING,"non-triangular face found: model face # " + ofToString(i));
 		}
-		for (int j=0; j<aim->mFaces[i].mNumIndices; j++){
+		for (int j=0; j<(int)aim->mFaces[i].mNumIndices; j++){
 			ofm.addIndex(aim->mFaces[i].mIndices[j]);
 		}
 	}	
@@ -91,6 +91,8 @@ void ofLoadModel(string modelName, ofModel & model){
 			}
 			
 			aiMeshToOfVertexData(aMesh,*curMesh.vertexData);			
+			
+			curMesh.enableIndices();
 		
 			//load texture
 			aiMaterial* mtl = scene->mMaterials[aMesh->mMaterialIndex];
@@ -102,6 +104,7 @@ void ofLoadModel(string modelName, ofModel & model){
 					model.textures.push_back(ofImage());
 					ofLog(OF_LOG_VERBOSE, "loading image from %s", texPath.data);
 					string modelFolder = ofFileUtils::getEnclosingDirectoryFromPath(filepath);
+					cout << modelFolder << " --- " << texPath.data << endl; 
 					model.textures.back().loadImage(modelFolder + texPath.data);
 					model.textures.back().update();
 					texPathMap[texPath.data] = model.textures.size()-1;
