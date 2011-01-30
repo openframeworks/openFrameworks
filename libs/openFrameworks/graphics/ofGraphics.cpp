@@ -191,6 +191,11 @@ void ofPopView() {
 	renderer->popView();
 }
 
+//----------------------------------------------------------
+void ofViewport(ofRectangle viewport)
+{
+	renderer->viewport(viewport.x, viewport.y, viewport.width, viewport.height);
+}
 
 //----------------------------------------------------------
 void ofViewport(float x, float y, float width, float height, bool invertY) {
@@ -227,6 +232,11 @@ ofHandednessType ofGetCoordHandedness() {
 //----------------------------------------------------------
 void ofSetupScreenPerspective(float width, float height, int orientation, bool vFlip, float fov, float nearDist, float farDist) {
 	renderer->setupScreenPerspective(width,height, orientation, vFlip,fov,nearDist,farDist);
+}
+
+//----------------------------------------
+void ofSetDrawBitmapMode(ofDrawBitmapMode mode) {
+	currentStyle.drawBitmapMode = mode;
 }
 
 //----------------------------------------------------------
@@ -720,6 +730,9 @@ void ofSetStyle(ofStyle style){
 	}else{
 		ofDisableAlphaBlending();
 	}
+	
+	//bitmap draw mode
+	ofSetDrawBitmapMode(style.drawBitmapMode);
 }
 
 //----------------------------------------------------------
@@ -1337,7 +1350,6 @@ void ofBox(float size) {
 
 //--------------------------------------------------
 // text
-
 //--------------------------------------------------
 void ofDrawBitmapString(string textString, const ofPoint & p){
 	ofDrawBitmapString(textString, p.x, p.y, p.z);
@@ -1346,7 +1358,6 @@ void ofDrawBitmapString(string textString, const ofPoint & p){
 void ofDrawBitmapString(string textString, float x, float y){
 	ofDrawBitmapString(textString, x, y, 0.0f);
 }
-
 //--------------------------------------------------
 void ofDrawBitmapString(string textString, float x, float y, float z){
 	
@@ -1365,8 +1376,118 @@ void ofDrawBitmapString(string textString, float x, float y, float z){
 	float fontSize = 8.0f;
 	bool bOrigin = false;
 	
-	float sx = x;
-	float sy = y - fontSize;
+	float sx = 0;
+	float sy = -fontSize;
+
+
+	///////////////////////////
+	// APPLY TRANSFORM / VIEW
+	///////////////////////////
+	//
+
+	bool hasModelView = false;
+	bool hasProjection = false;
+	bool hasViewport = false;
+
+	ofRectangle rViewport;
+
+	switch (currentStyle.drawBitmapMode) {
+
+		case OF_BITMAPMODE_SIMPLE:
+
+			sx += x;
+			sy += y;
+			break;
+
+		case OF_BITMAPMODE_SCREEN:
+
+			hasViewport = true;
+			ofPushView();
+
+			rViewport = ofGetWindowRect();
+			ofViewport(rViewport);
+
+			glMatrixMode(GL_PROJECTION);
+			glLoadIdentity();
+			glMatrixMode(GL_MODELVIEW);
+			glLoadIdentity();
+
+			glTranslatef(-1, 1, 0);
+			glScalef(2/rViewport.width, -2/rViewport.height, 1);
+
+			ofTranslate(x, y, 0);
+			break;
+
+		case OF_BITMAPMODE_VIEWPORT:
+
+			rViewport = ofGetCurrentViewport();
+
+			hasProjection = true;
+			glMatrixMode(GL_PROJECTION);
+			glPushMatrix();
+			glLoadIdentity();
+
+			hasModelView = true;
+			glMatrixMode(GL_MODELVIEW);
+			glPushMatrix();
+			glLoadIdentity();
+
+			glTranslatef(-1, 1, 0);
+			glScalef(2/rViewport.width, -2/rViewport.height, 1);
+
+			ofTranslate(x, y, 0);
+			break;
+
+		case OF_BITMAPMODE_MODEL:
+
+			hasModelView = true;
+			glMatrixMode(GL_MODELVIEW);
+			glPushMatrix();
+
+			ofTranslate(x, y, z);
+			ofScale(1, -1, 0);
+			break;
+
+		case OF_BITMAPMODE_MODEL_BILLBOARD:
+			//our aim here is to draw to screen
+			//at the viewport position related
+			//to the world position x,y,z
+
+			//gluProject method
+			GLdouble modelview[16], projection[16];
+			GLint view[4];
+			double dScreenX, dScreenY, dScreenZ;
+			glGetDoublev(GL_MODELVIEW_MATRIX, modelview);
+			glGetDoublev(GL_PROJECTION_MATRIX, projection);
+			glGetIntegerv(GL_VIEWPORT, view);
+			view[0] = 0; view[1] = 0; //we're already drawing within viewport
+			gluProject(x, y, z, modelview, projection, view, &dScreenX, &dScreenY, &dScreenZ);
+
+			rViewport = ofGetCurrentViewport();
+
+			hasProjection = true;
+			glMatrixMode(GL_PROJECTION);
+			glPushMatrix();
+			glLoadIdentity();
+
+			hasModelView = true;
+			glMatrixMode(GL_MODELVIEW);
+			glPushMatrix();
+			glLoadIdentity();
+
+			glTranslatef(-1, -1, 0);
+			glScalef(2/rViewport.width, 2/rViewport.height, 1);
+
+			glTranslated(dScreenX, dScreenY, 0);
+			glScaled(1, -1, 1);
+			break;
+
+		default:
+			break;
+	}
+	//
+	///////////////////////////
+
 	
 	// (c) enable texture once before we start drawing each char (no point turning it on and off constantly)
 	//We do this because its way faster
@@ -1391,11 +1512,19 @@ void ofDrawBitmapString(string textString, float x, float y, float z){
 	//We do this because its way faster
 	ofDrawBitmapCharacterEnd();
 
-	if( !blend_enabled ){
-		glDisable(GL_BLEND);
+
+	if (hasModelView)
+		glPopMatrix();
+
+	if (hasProjection)
+	{
+		glMatrixMode(GL_PROJECTION);
+		glPopMatrix();
+		glMatrixMode(GL_MODELVIEW);
 	}
-	glBlendFunc( blend_src, blend_dst );
-}
+
+	if (hasViewport)
+		ofPopView();}
 
 
 // end text

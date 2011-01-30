@@ -443,3 +443,14 @@ enum ofHandednessType {OF_LEFT_HANDED, OF_RIGHT_HANDED};
 	#define OF_CONSOLE_COLOR_WHITE (37)
 
 #endif
+
+
+//--------------------------------------------
+//ofBitmap draw mode
+enum ofDrawBitmapMode{
+	OF_BITMAPMODE_SIMPLE = 0,
+	OF_BITMAPMODE_SCREEN,
+	OF_BITMAPMODE_VIEWPORT,
+	OF_BITMAPMODE_MODEL,
+	OF_BITMAPMODE_MODEL_BILLBOARD
+};
