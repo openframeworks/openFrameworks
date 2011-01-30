@@ -256,8 +256,7 @@ void ofVbo::updateNormalData(const float * normal0x, int total) {
 void ofVbo::updateTexCoordData(const ofVec2f * texCoords, int total) {
 	if(bUsingTexCoords) {
 		glBindBuffer(GL_ARRAY_BUFFER, texCoordId);
-		texCoordData = (float*)&texCoords[0].x;
-		glBufferSubData(GL_ARRAY_BUFFER, 0, total*sizeof(ofVec2f), texCoordData);
+		glBufferSubData(GL_ARRAY_BUFFER, 0, total*sizeof(ofVec2f), (float*)&texCoords[0].x);
 	}
 }
 
