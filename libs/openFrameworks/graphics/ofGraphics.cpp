@@ -380,7 +380,7 @@ void ofBackground(int r, int g, int b, int a){
 
 static void ofSetCurrentStyleTo(ofPath & path){
 	path.setFilled(drawMode == OF_FILLED);
-	path.setColor(currentStyle.color);
+	path.setColor(ofColor(255,255,255,255));
 	path.setPolyWindingMode(currentStyle.polyMode);
 
 	if(drawMode == OF_OUTLINE){
@@ -390,7 +390,7 @@ static void ofSetCurrentStyleTo(ofPath & path){
 
 static void ofSetCurrentStyleTo(ofShape & shape){
 	shape.setFilled(drawMode == OF_FILLED);
-	shape.setColor(currentStyle.color);
+	path.setColor(ofColor(255,255,255,255));
 	shape.setPolyWindingMode(currentStyle.polyMode);
 
 	if(drawMode == OF_OUTLINE){

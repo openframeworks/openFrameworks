@@ -10,6 +10,22 @@
 #include "ofConstants.h"
 #include "ofAppRunner.h"
 
+void
+helper_quadratic_to (cairo_t *cr,
+                     double x1, double y1,
+                     double x2, double y2)
+{
+  double x0, y0;
+  cairo_get_current_point (cr, &x0, &y0);
+  cairo_curve_to (cr,
+                  2.0 / 3.0 * x1 + 1.0 / 3.0 * x0,
+                  2.0 / 3.0 * y1 + 1.0 / 3.0 * y0,
+                  2.0 / 3.0 * x1 + 1.0 / 3.0 * x2,
+                  2.0 / 3.0 * y1 + 1.0 / 3.0 * y2,
+                  y1, y2);
+}
+
+
 ofCairoRenderer::ofCairoRenderer(){
 	type = PDF;
 	surface = NULL;

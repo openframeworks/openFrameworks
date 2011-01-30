@@ -373,7 +373,7 @@ void ofShape::setFrom(const ofPath & path,  int curveResolution, bool bTesselate
 	setStrokeColor(path.getStrokeColor());
 	setPolyWindingMode(path.getWindingMode());
 	setFilled(path.isFilled());
-	//TODO: stroke width;
+	setStrokeWidth(path.getStrokeWidth());
 
 
 	for(int i=0; i<(int)path.getSubPaths().size(); i++){
@@ -430,6 +430,7 @@ void ofShape::bezierTo( const ofPoint & cp1, const ofPoint & cp2, const ofPoint 
 }
 
 void ofShape::quadBezierTo(float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3, int curveResolution){
+	ofPolyline & polyline = getCurrentSubShape().polyline;
 	for(int i=0; i <= curveResolution; i++){
 		double t = (double)i / (double)(curveResolution);
 		double a = (1.0 - t)*(1.0 - t);
