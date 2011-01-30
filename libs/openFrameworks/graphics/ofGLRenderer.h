@@ -1,7 +1,7 @@
 #pragma once
 #include "ofBaseTypes.h"
 #include <deque>
-class ofShape;
+class ofShapeTessellation;
 class ofVertexData;
 
 
@@ -11,8 +11,8 @@ public:
 	~ofGLRenderer(){}
 	void draw(ofVertexData & vertexData);
 	void draw(ofPolyline & poly);
-	void draw(ofShape & shape);
-	void draw(ofPath & path);
+	void draw(ofShapeTessellation & shape);
+	void draw(ofShape & path);
 	bool rendersPathDirectly(){
 		return false;
 	}

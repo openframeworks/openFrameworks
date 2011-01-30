@@ -28,7 +28,7 @@ typedef struct {
 #define TTF_SHAPE_SIMPLIFICATION_AMNT (0.3)
 
 
-typedef ofPath ofTTFCharacter;
+typedef ofShape ofTTFCharacter;
 
 //--------------------------------------------------
 #define NUM_CHARACTER_TO_START		33		// 0 - 32 are control characters, no graphics needed.

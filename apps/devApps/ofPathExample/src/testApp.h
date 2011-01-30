@@ -4,7 +4,6 @@
 
 #include "ofMain.h"
 #include "ofShape.h"
-#include "ofPath.h"
 #include "ofCairoRenderer.h"
 
 // uncomment to render to pdf
@@ -45,11 +44,11 @@ class testApp : public ofBaseApp{
 	draggableVertex bezierVertices[4];
 	
 	
-	ofPath pathA,pathB,pathC,pathD,pathE;
-	ofPath pathF,pathFNonCurve;
-	ofPath pathG,pathH;
-	ofPath pathIa,pathIb,pathIc;
-	ofPath selectedDraggableVertex, unselectedDraggableVertex;
+	ofShape shapeA,shapeB,shapeC,shapeD,shapeE;
+	ofShape shapeF,shapeFNonCurve;
+	ofShape shapeG,shapeH;
+	ofShape shapeIa,shapeIb,shapeIc;
+	ofShape selectedDraggableVertex, unselectedDraggableVertex;
 	
 	ofCairoRenderer cairo;
 };

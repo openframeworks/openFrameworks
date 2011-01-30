@@ -143,7 +143,7 @@ void ofPolyline::simplify(float tol){
 }
 
 
-ofShape::ofShape(){
+ofShapeTessellation::ofShapeTessellation(){
 	bFilled = ofGetStyle().bFill;
 	bNeedsTessellation = true;
 	polyWindingMode = ofGetStyle().polyMode;
@@ -156,16 +156,16 @@ ofShape::ofShape(){
 }
 
 
-ofShape::ofShape(const ofPath & path, int curveResolution, bool tesselate){
+ofShapeTessellation::ofShapeTessellation(const ofShape & path, int curveResolution, bool tesselate){
 	setFrom(path,curveResolution,tesselate);
 }
 
-ofShape::~ofShape(){
+ofShapeTessellation::~ofShapeTessellation(){
 	if(renderer)delete renderer;
 }
 
 
-void ofShape::clear() {
+void ofShapeTessellation::clear() {
 	bNeedsTessellation = true;
 	polyline.clear();
 	cachedTessellation.clear();
@@ -173,19 +173,19 @@ void ofShape::clear() {
 	bNeedsOutlineDraw = false;
 }
 
-void ofShape::close() {
+void ofShapeTessellation::close() {
 	getCurrentSubShape().polyline.setClosed(true);
 	newSubShape();
 }
 
-void ofShape::setPolyWindingMode( int newMode ) {
+void ofShapeTessellation::setPolyWindingMode( int newMode ) {
 	if(polyWindingMode != newMode){
 		polyWindingMode = newMode;
 		bNeedsTessellation = true;
 	}
 }
 
-void ofShape::tessellate(){
+void ofShapeTessellation::tessellate(){
 	bool bIs2D = !bIs3D;
 	cachedTessellation.clear();
 	cachedOutline.clear();
@@ -203,7 +203,7 @@ void ofShape::tessellate(){
 }
 
 
-void ofShape::simplify(float tolerance){
+void ofShapeTessellation::simplify(float tolerance){
 	polyline.simplify(tolerance);
 	for(int i=0;i<subShapes.size();i++){
 		subShapes[i].simplify(tolerance);
@@ -211,7 +211,7 @@ void ofShape::simplify(float tolerance){
 	bNeedsTessellation=true;
 }
 
-void ofShape::draw(float x, float y){
+void ofShapeTessellation::draw(float x, float y){
 	ofPushMatrix();
 	ofTranslate(x,y);
 	if(!renderer){
@@ -223,31 +223,31 @@ void ofShape::draw(float x, float y){
 }
 
 
-void ofShape::addVertex(ofPoint p){
+void ofShapeTessellation::addVertex(ofPoint p){
 	polyline.addVertex(p);
 	bNeedsTessellation = true;
 }
 
-void ofShape::setPolyline(const ofPolyline & polyline_){
+void ofShapeTessellation::setPolyline(const ofPolyline & polyline_){
 	polyline = polyline_;
 	bNeedsTessellation = true;
 }
 
-vector<ofVertexData> & ofShape::getTessellation(){
+vector<ofVertexData> & ofShapeTessellation::getTessellation(){
 	if ( bNeedsTessellation ){
 		tessellate();
 	}
 	return cachedTessellation;
 }
 
-vector<ofPolyline> & ofShape::getOutline() {
+vector<ofPolyline> & ofShapeTessellation::getOutline() {
 	if ( bNeedsTessellation ){
 			tessellate();
 		}
 	return cachedOutline;
 }
 
-vector<ofPolyline> & ofShape::getSubPolylines(){
+vector<ofPolyline> & ofShapeTessellation::getSubPolylines(){
 	if ( bNeedsTessellation ){
 		cachedOutline.clear();
 		cachedOutline.push_back(polyline);
@@ -259,7 +259,7 @@ vector<ofPolyline> & ofShape::getSubPolylines(){
 	return cachedOutline;
 }
 
-void ofShape::setFilled( bool bFill ) {
+void ofShapeTessellation::setFilled( bool bFill ) {
 	if(bFill!=bFilled){
 		bFilled = bFill;
 		// if vertex info changes we already set the flag to tessellate
@@ -278,7 +278,7 @@ void ofShape::setFilled( bool bFill ) {
 //-------------------------------------------------------------------------
 // primitive generation
 
-ofShape &  ofShape::getCurrentSubShape(){
+ofShapeTessellation &  ofShapeTessellation::getCurrentSubShape(){
 	if(subShapes.empty()){
 		return *this;
 	}else{
@@ -286,8 +286,8 @@ ofShape &  ofShape::getCurrentSubShape(){
 	}
 }
 
-ofShape & ofShape::newSubShape(){
-	subShapes.push_back(ofShape());
+ofShapeTessellation & ofShapeTessellation::newSubShape(){
+	subShapes.push_back(ofShapeTessellation());
 	getCurrentSubShape().polyWindingMode = polyWindingMode;
 	getCurrentSubShape().bFilled = bFilled;
 	getCurrentSubShape().lineColor = lineColor;
@@ -297,12 +297,12 @@ ofShape & ofShape::newSubShape(){
 	return subShapes.back();
 }
 
-void ofShape::addSubShape(const ofShape & shape){
+void ofShapeTessellation::addSubShape(const ofShapeTessellation & shape){
 	subShapes.push_back(shape);
 	bNeedsTessellation = true;
 }
 
-void ofShape::setCircleResolution(int res){
+void ofShapeTessellation::setCircleResolution(int res){
 	if (res > 1 && res != (int)circlePoints.size()){
 		circlePoints.resize(res);
 
@@ -317,50 +317,50 @@ void ofShape::setCircleResolution(int res){
 	}
 }
 
-void ofShape::setFrom(const ofPath & path,  int curveResolution, bool bTesselate){
+void ofShapeTessellation::setFrom(const ofShape & path,  int curveResolution, bool bTesselate){
 	// TODO: 3D commands
 	clear();
-	const vector<ofPath::Command> & commands = path.getCommands();
+	const vector<ofShape::Command> & commands = path.getCommands();
 	for(int i=0; i<(int)commands.size();i++){
 		switch(commands[i].type){
-		case ofPath::Command::line2DTo:
+		case ofShape::Command::line2DTo:
 			curveVertices.clear();
 			polyline.addVertex(commands[i].to);
 			break;
-		case ofPath::Command::curve2DTo:
+		case ofShape::Command::curve2DTo:
 			curveTo(commands[i].to, curveResolution);
 			break;
-		case ofPath::Command::bezier2DTo:
+		case ofShape::Command::bezier2DTo:
 			curveVertices.clear();
 			bezierTo(commands[i].cp1,commands[i].cp2,commands[i].to, curveResolution);
 			break;
-		case ofPath::Command::quadBezier2DTo:
+		case ofShape::Command::quadBezier2DTo:
 			curveVertices.clear();
 			quadBezierTo(commands[i].cp1,commands[i].cp2,commands[i].to, curveResolution);
 			break;
-		case ofPath::Command::arc2D:
+		case ofShape::Command::arc2D:
 			curveVertices.clear();
 			arc(commands[i].to,commands[i].radiusX,commands[i].radiusY,commands[i].angleBegin,commands[i].angleEnd, curveResolution);
 			break;
 
-		case ofPath::Command::line3DTo:
+		case ofShape::Command::line3DTo:
 			curveVertices.clear();
 			polyline.addVertex(commands[i].to);
 			polyline.setIs3D(true);
 			bIs3D = true;
 			break;
-		case ofPath::Command::curve3DTo:
+		case ofShape::Command::curve3DTo:
 			curveTo(commands[i].to, curveResolution);
 			polyline.setIs3D(true);
 			bIs3D = true;
 			break;
-		case ofPath::Command::bezier3DTo:
+		case ofShape::Command::bezier3DTo:
 			curveVertices.clear();
 			bezierTo(commands[i].cp1,commands[i].cp2,commands[i].to, curveResolution);
 			polyline.setIs3D(true);
 			bIs3D = true;
 			break;
-		case ofPath::Command::arc3D:
+		case ofShape::Command::arc3D:
 			curveVertices.clear();
 			arc(commands[i].to,commands[i].radiusX,commands[i].radiusY,commands[i].angleBegin,commands[i].angleEnd, curveResolution);
 			polyline.setIs3D(true);
@@ -378,12 +378,12 @@ void ofShape::setFrom(const ofPath & path,  int curveResolution, bool bTesselate
 
 	for(int i=0; i<(int)path.getSubPaths().size(); i++){
 		//TODO: cast to change the constness, nasty but ofPath is internally only changing the cached shape
-		addSubShape(((ofPath&)path).getSubPaths()[i].getShape(curveResolution));
+		addSubShape(((ofShape&)path).getSubPaths()[i].getShape(curveResolution));
 	}
 	if(bTesselate) tessellate();
 }
 
-void ofShape::bezierTo( const ofPoint & cp1, const ofPoint & cp2, const ofPoint & to, int curveResolution ){
+void ofShapeTessellation::bezierTo( const ofPoint & cp1, const ofPoint & cp2, const ofPoint & to, int curveResolution ){
 	// if, and only if poly vertices has points, we can make a bezier
 	// from the last point
 	curveVertices.clear();
@@ -429,7 +429,7 @@ void ofShape::bezierTo( const ofPoint & cp1, const ofPoint & cp2, const ofPoint 
 	bNeedsTessellation = true;
 }
 
-void ofShape::quadBezierTo(float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3, int curveResolution){
+void ofShapeTessellation::quadBezierTo(float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3, int curveResolution){
 	ofPolyline & polyline = getCurrentSubShape().polyline;
 	for(int i=0; i <= curveResolution; i++){
 		double t = (double)i / (double)(curveResolution);
@@ -443,7 +443,7 @@ void ofShape::quadBezierTo(float x1, float y1, float z1, float x2, float y2, flo
 	}
 }
 
-void ofShape::curveTo( const ofPoint & to, int curveResolution ){
+void ofShapeTessellation::curveTo( const ofPoint & to, int curveResolution ){
 
 	curveVertices.push_back(to);
 	ofPolyline & polyline = getCurrentSubShape().polyline;
@@ -496,7 +496,7 @@ void ofShape::curveTo( const ofPoint & to, int curveResolution ){
 	bNeedsTessellation = true;
 }
 
-void ofShape::arc( const ofPoint & center, float radiusX, float radiusY, float angleBegin, float angleEnd, int curveResolution){
+void ofShapeTessellation::arc( const ofPoint & center, float radiusX, float radiusY, float angleBegin, float angleEnd, int curveResolution){
 	setCircleResolution(curveResolution);
 	ofPolyline & polyline = getCurrentSubShape().polyline;
 	float size = (angleEnd - angleBegin)/360.0f;

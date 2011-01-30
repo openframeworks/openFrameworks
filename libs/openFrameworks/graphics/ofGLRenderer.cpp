@@ -49,7 +49,7 @@ void ofGLRenderer::draw(ofPolyline & poly){
 	glDrawArrays(poly.isClosed()?GL_LINE_LOOP:GL_LINE_STRIP, 0, poly.size());;
 }
 
-void ofGLRenderer::draw(ofShape & shape){
+void ofGLRenderer::draw(ofShapeTessellation & shape){
 	ofPushStyle();
 	if(shape.isFilled()){
 		vector<ofVertexData> & mesh = shape.getTessellation();
@@ -68,8 +68,8 @@ void ofGLRenderer::draw(ofShape & shape){
 	ofPopStyle();
 }
 
-void ofGLRenderer::draw(ofPath & path){
-	ofShape & shape = path.getShape();
+void ofGLRenderer::draw(ofShape & path){
+	ofShapeTessellation & shape = path.getShape();
 	draw(shape);
 }
 

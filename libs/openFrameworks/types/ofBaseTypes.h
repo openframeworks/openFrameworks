@@ -13,9 +13,9 @@
 #include "ofPoint.h"
 #include "ofRectangle.h"
 #include "ofConstants.h"
-class ofShape;
+class ofShapeTessellation;
 class ofPixels;
-class ofPath;
+class ofShape;
 class ofPolyline;
 class ofVertexData;
 
@@ -197,8 +197,8 @@ public:
 	//virtual bool is3DRenderer()=0;
 	//virtual bool isFrameByFrameRenderer()=0;
 	virtual void draw(ofPolyline & poly)=0;
+	virtual void draw(ofShapeTessellation & shape)=0;
 	virtual void draw(ofShape & shape)=0;
-	virtual void draw(ofPath & shape)=0;
 	virtual void draw(ofVertexData & vertexData)=0;
 
 	//--------------------------------------------

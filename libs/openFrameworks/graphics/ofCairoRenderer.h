@@ -26,9 +26,9 @@ public:
 	void setup(string filename, Type type=ofCairoRenderer::PDF);
 	void close();
 
-	void draw(ofPath & path);
+	void draw(ofShape & path);
 	void draw(ofPolyline & poly);
-	void draw(ofShape & shape);
+	void draw(ofShapeTessellation & shape);
 	void draw(ofVertexData & vertexData);
 
 	bool rendersPathDirectly(){
@@ -74,7 +74,7 @@ public:
 
 private:
 
-	void drawPath(const ofPath & path,bool is_subpath=false);
+	void drawPath(const ofShape & path,bool is_subpath=false);
 
 	deque<ofPoint> curvePoints;
 	cairo_t * cr;

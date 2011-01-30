@@ -92,12 +92,12 @@ private:
  
  */
 
-class ofShape{
+class ofShapeTessellation{
 public:
 	
-	ofShape();
-	ofShape(const ofPath & path, int curveResolution=16, bool tesselate=false);
-	~ofShape();
+	ofShapeTessellation();
+	ofShapeTessellation(const ofShape & path, int curveResolution=16, bool tesselate=false);
+	~ofShapeTessellation();
 
 	void clear();
 	
@@ -107,49 +107,13 @@ public:
 	void addVertex( float x, float y, float z=0 ) 
 		{ getCurrentSubShape().addVertex( ofPoint( x,y,z ) ); }
 
-	vector<ofPolyline> & getOutline();
-	
-	void addSubShape(const ofShape & shape);
+	// creates a new subshape internally every call from now
+	// will affect the new subshape
+	ofShapeTessellation & newSubShape();
 
-	/// close the shape
+	/// closes the current subshape and creates a new one
 	void close();
 
-	vector<ofVertexData> & getTessellation();
-
-	/// must call tessellate before calling draw, if the shape has changed
-	void tessellate();
-	void simplify(float tolerance=0.3);
-	void draw(float x=0, float y=0);
-	
-	/// drawing style
-	/// polygon winding mode for tessellation
-	void setPolyWindingMode( int newMode );
-	/// filled/outline
-	void setFilled( bool bFill );
-	bool isFilled() const { return bFilled; }
-	/// set line + fill color simultaneously
-	void setColor( const ofColor& color ) { setFillColor( color ); setStrokeColor( color ); }
-	void setHexColor( int hex ) { setColor( ofColor().fromHex( hex ) ); };
-	/// set line color
-	void setStrokeColor( const ofColor& color ) { lineColor = color; }
-	void setStrokeHexColor( int hex ) { setStrokeColor( ofColor().fromHex( hex ) ); };
-	ofColor getStrokeColor(){return lineColor;}
-
-	void setStrokeWidth( float width ) {
-		strokeWidth=width;
-	}
-	float getStrokeWidth(){return strokeWidth;}
-
-	/// set fill color
-	void setFillColor( const ofColor& color ) { fillColor = color; }
-	void setFillHexColor( int hex ) { setFillColor( ofColor().fromHex( hex ) ); };
-	ofColor getFillColor(){return fillColor;}
-	
-	bool hasOutline() const { return bNeedsOutlineDraw || !bFilled; }
-
-	//any combination of this won't work in all cases, if you need complex shapes
-	//create several objects or use a path and create a shape from it
-	ofShape & newSubShape();
 	void moveTo(const ofPoint & to ){ addVertex(to); }
 	void moveTo(float x, float y, float z=0){
 		addVertex(x,y,z);
@@ -188,12 +152,55 @@ public:
 		quadBezierTo(cx1,cy1,0,cx2,cy2,0,x,y,0,curveResolution);
 	}
 
-	void setFrom(const ofPath & path,  int curveResolution=16, bool tesselate=false);
+	/// drawing style
+	/// polygon winding mode for tessellation
+	void setPolyWindingMode( int newMode );
+	/// filled/outline
+	void setFilled( bool bFill );
+	bool isFilled() const { return bFilled; }
+	/// set line + fill color simultaneously
+	void setColor( const ofColor& color ) { setFillColor( color ); setStrokeColor( color ); }
+	void setHexColor( int hex ) { setColor( ofColor().fromHex( hex ) ); };
+	/// set line color
+	void setStrokeColor( const ofColor& color ) { lineColor = color; }
+	void setStrokeHexColor( int hex ) { setStrokeColor( ofColor().fromHex( hex ) ); };
+	ofColor getStrokeColor(){return lineColor;}
+
+	void setStrokeWidth( float width ) {
+		strokeWidth=width;
+	}
+	float getStrokeWidth(){return strokeWidth;}
+
+	/// set fill color
+	void setFillColor( const ofColor& color ) { fillColor = color; }
+	void setFillHexColor( int hex ) { setFillColor( ofColor().fromHex( hex ) ); };
+	ofColor getFillColor(){return fillColor;}
+
+	vector<ofPolyline> & getOutline();
+	vector<ofVertexData> & getTessellation();
+
+
+	void addSubShape(const ofShapeTessellation & shape);
+
+
+
+	/// must call tessellate before calling draw, if the shape has changed
+	void tessellate();
+	void simplify(float tolerance=0.3);
+	void draw(float x=0, float y=0);
+
+
+
+	bool hasOutline() const { return bNeedsOutlineDraw || !bFilled; }
+
+
+
+	void setFrom(const ofShape & path,  int curveResolution=16, bool tesselate=false);
 	void setPolyline(const ofPolyline & polyline);
 private:
 	vector<ofPolyline> & getSubPolylines();
 	void setCircleResolution(int res);
-	ofShape &  getCurrentSubShape();
+	ofShapeTessellation &  getCurrentSubShape();
 
 	// a shape is a polyline + lineColor, fill, windingMode and subshapes
 	ofColor lineColor;
@@ -209,7 +216,7 @@ private:
 	bool bNeedsOutlineDraw;
 	vector<ofPolyline> cachedOutline;
 	
-	vector<ofShape> subShapes;
+	vector<ofShapeTessellation> subShapes;
 
 	ofBaseRenderer * renderer;
 

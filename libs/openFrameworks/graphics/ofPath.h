@@ -5,14 +5,14 @@
 #include "ofColor.h"
 #include "ofShape.h"
 
-class ofPath{
+class ofShape{
 public:
 
-	ofPath();
+	ofShape();
 
 	void clear();
 
-	ofPath & newSubPath();
+	ofShape & newSubPath();
 
 	void lineTo(const ofPoint & p);
 	void lineTo(float x, float y);
@@ -62,7 +62,7 @@ public:
 	void updateShape();
 	void draw(float x=0, float y=0);
 
-	ofShape & getShape(int curveResolution=-1);
+	ofShapeTessellation & getShape(int curveResolution=-1);
 
 
 
@@ -71,10 +71,10 @@ public:
 	// only needs to be called when path is modified externally
 	void markedChanged();
 	vector<Command> & getCommands();
-	vector<ofPath> & getSubPaths();
+	vector<ofShape> & getSubPaths();
 
 	const vector<Command> & getCommands() const;
-	const vector<ofPath> & getSubPaths() const;
+	const vector<ofShape> & getSubPaths() const;
 
 	void addCommand(const Command & command);
 
@@ -127,9 +127,9 @@ public:
 
 private:
 
-	ofPath & lastPath();
+	ofShape & lastPath();
 
-	vector<ofPath>		subPaths;
+	vector<ofShape>		subPaths;
 	vector<Command> 	commands;
 	ofPolyWindingMode 	windingMode;
 	ofColor 			fillColor;
@@ -137,7 +137,7 @@ private:
 	float				strokeWidth;
 	bool				bFill;
 	bool				bClosed;
-	ofShape				cachedShape;
+	ofShapeTessellation				cachedShape;
 	bool				hasChanged;
 	ofBaseRenderer * 	renderer;
 	int					prevCurveRes;
