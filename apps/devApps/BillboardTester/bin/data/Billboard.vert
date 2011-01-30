@@ -1,8 +1,10 @@
 
-attribute float pointSize;
-
+attribute float		pointSize;
+attribute  float	angle;
+varying  float		rotAngle;
 void main() {
 	
+	rotAngle = angle;
 
 	gl_TexCoord[0] = gl_MultiTexCoord0;
 	vec4 eyeCoord  = gl_ModelViewMatrix * gl_Vertex;

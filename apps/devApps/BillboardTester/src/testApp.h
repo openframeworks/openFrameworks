@@ -2,7 +2,7 @@
 #include "ofMain.h"
 #include "ofVbo.h"
 
-#define	NUM_BILLBOARDS	300
+#define	NUM_BILLBOARDS	8000
 
 class testApp : public ofBaseApp {
 	
@@ -25,6 +25,7 @@ public:
 	ofImage		texture;
 	ofVec2f		pos[NUM_BILLBOARDS];
 	ofVec2f		vel[NUM_BILLBOARDS];
+	ofVec2f		home[NUM_BILLBOARDS];
 	float		pointSizes[NUM_BILLBOARDS];
 	float		rotations[NUM_BILLBOARDS];
 };

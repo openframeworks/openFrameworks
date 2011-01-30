@@ -1,20 +1,21 @@
 
 uniform sampler2D	tex;
-uniform float		angle;
+varying  float		rotAngle;
 
 
 void main (void) {
 	
+	float angle		= rotAngle;
 	vec2 offset		= vec2(.5, .5);
-	float rotspeed  = 3.0;
-	vec2 v2 = gl_TexCoord[0].st;
+	vec2 v2 = gl_TexCoord[0].st;	
 	
+	// not sure this is right
+	// I just search on how to rotate
+	// a texture...
 	float cosX, sinX;
 	float cosY, sinY;
-	
 	sinX = sin(angle);
 	cosX = cos(angle);
-	
 	sinY = sin(angle);
 	cosY = cos(angle);
 	
