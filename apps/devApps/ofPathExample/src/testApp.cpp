@@ -50,14 +50,14 @@ void testApp::setup(){
 	// 		info about the winding rules is here:
 	//		http://glprogramming.com/red/images/Image128.gif
 	// 
-	pathA.setHexColor(0xe0be21);
-	pathA.setFilled(true);
-	pathA.setPolyWindingMode(OF_POLY_WINDING_ODD);	// this is the normal mode
-	pathA.moveTo(200,135);
-	pathA.lineTo(15,135);
-	pathA.lineTo(165,25);
-	pathA.lineTo(105,200);
-	pathA.lineTo(50,25);
+	shapeA.setHexColor(0xe0be21);
+	shapeA.setFilled(true);
+	shapeA.setPolyWindingMode(OF_POLY_WINDING_ODD);	// this is the normal mode
+	shapeA.moveTo(200,135);
+	shapeA.lineTo(15,135);
+	shapeA.lineTo(165,25);
+	shapeA.lineTo(105,200);
+	shapeA.lineTo(50,25);
 	
 	
 
@@ -70,15 +70,15 @@ void testApp::setup(){
 	// 		info about the winding rules is here:
 	//		http://glprogramming.com/red/images/Image128.gif
 	// 
-	pathB.setHexColor(0xb5de10);
-	pathB.setFilled(true);
-	pathB.setPolyWindingMode(OF_POLY_WINDING_NONZERO);
-	pathB.moveTo(400,135);
-	pathB.lineTo(215,135);
-	pathB.lineTo(365,25);
-	pathB.lineTo(305,200);
-	pathB.lineTo(250,25);
-	pathB.close();
+	shapeB.setHexColor(0xb5de10);
+	shapeB.setFilled(true);
+	shapeB.setPolyWindingMode(OF_POLY_WINDING_NONZERO);
+	shapeB.moveTo(400,135);
+	shapeB.lineTo(215,135);
+	shapeB.lineTo(365,25);
+	shapeB.lineTo(305,200);
+	shapeB.lineTo(250,25);
+	shapeB.close();
 	//-------------------------------------
 	
 	
@@ -101,19 +101,19 @@ void testApp::setup(){
 	float origy = 100;
 	float angle = 0;
 	
-	pathC.setHexColor(0xa16bca);
-	pathC.setFilled(true);
+	shapeC.setHexColor(0xa16bca);
+	shapeC.setFilled(true);
 	for (int i = 0; i < nStarPts; i++){
 		if (i % 2 == 0) {
 			// inside point:
 			float x = origx + innerRadius * cos(angle);
 			float y = origy + innerRadius * sin(angle);
-			pathC.lineTo(x,y);
+			shapeC.lineTo(x,y);
 		} else {
 			// outside point
 			float x = origx + outerRadius * cos(angle);
 			float y = origy + outerRadius * sin(angle);
-			pathC.lineTo(x,y);
+			shapeC.lineTo(x,y);
 		}
 		angle += angleChangePerPt;
 	}
@@ -126,11 +126,11 @@ void testApp::setup(){
 	// 		lots of self intersection, 500 pts is a good stress test
 	// 
 	// 
-	pathD.setHexColor(0x0cb0b6);
-	pathD.setFilled(true);
-	pathD.setPolyWindingMode(OF_POLY_WINDING_ODD);
+	shapeD.setHexColor(0x0cb0b6);
+	shapeD.setFilled(true);
+	shapeD.setPolyWindingMode(OF_POLY_WINDING_ODD);
 	for (int i = 0; i < 10; i++){
-		pathD.lineTo(ofRandom(650,850), ofRandom(20,200));
+		shapeD.lineTo(ofRandom(650,850), ofRandom(20,200));
 	}
 	//-------------------------------------
 	
@@ -139,9 +139,9 @@ void testApp::setup(){
 	// 
 	// 		use sin cos and time to make some spirally shape
 	//
-	pathE.setHexColor(0xff2220);
-	pathE.setFilled( true );
-	pathE.setPolyWindingMode(OF_POLY_WINDING_ODD);
+	shapeE.setHexColor(0xff2220);
+	shapeE.setFilled( true );
+	shapeE.setPolyWindingMode(OF_POLY_WINDING_ODD);
 	float angleStep 	= TWO_PI/(100.0f + sin(35/5.0f) * 60);
 	float radiusAdder 	= 0.5f;
 	float radius 		= 0;
@@ -149,10 +149,10 @@ void testApp::setup(){
 		float anglef = (i) * angleStep;
 		float x = radius * cos(anglef) + 100;
 		float y = radius * sin(anglef) + 300;
-		pathE.lineTo(x,y);
+		shapeE.lineTo(x,y);
 		radius 	+= radiusAdder; 
 	}
-	pathE.close();
+	shapeE.close();
 	//-------------------------------------
 	
 	//------(f)--------------------------------------
@@ -163,8 +163,8 @@ void testApp::setup(){
 	// 		items so the curve actually goes through those points
 	//
 	
-	pathF.setHexColor(0x2bdbe6);
-	pathF.setFilled(true);
+	shapeF.setHexColor(0x2bdbe6);
+	shapeF.setFilled(true);
 	
 	for (int i = 0; i < nCurveVertexes; i++){
 		
@@ -178,25 +178,25 @@ void testApp::setup(){
 		// otherwise just normal ofCurveVertex call
 		
 		if (i == 0){
-			pathF.curveTo(curveVertices[0].x, curveVertices[0].y); // we need to duplicate 0 for the curve to start at point 0
-			pathF.curveTo(curveVertices[0].x, curveVertices[0].y); // we need to duplicate 0 for the curve to start at point 0
+			shapeF.curveTo(curveVertices[0].x, curveVertices[0].y); // we need to duplicate 0 for the curve to start at point 0
+			shapeF.curveTo(curveVertices[0].x, curveVertices[0].y); // we need to duplicate 0 for the curve to start at point 0
 		} else if (i == nCurveVertexes-1){
-			pathF.curveTo(curveVertices[i].x, curveVertices[i].y);
-			pathF.curveTo(curveVertices[0].x, curveVertices[0].y);	// to draw a curve from pt 6 to pt 0
-			pathF.curveTo(curveVertices[0].x, curveVertices[0].y);	// we duplicate the first point twice
+			shapeF.curveTo(curveVertices[i].x, curveVertices[i].y);
+			shapeF.curveTo(curveVertices[0].x, curveVertices[0].y);	// to draw a curve from pt 6 to pt 0
+			shapeF.curveTo(curveVertices[0].x, curveVertices[0].y);	// we duplicate the first point twice
 		} else {
-			pathF.curveTo(curveVertices[i].x, curveVertices[i].y);
+			shapeF.curveTo(curveVertices[i].x, curveVertices[i].y);
 		}
 	}
-	pathF.close();
+	shapeF.close();
 	
 	// show a faint the non-curve version of the same polygon:
-	pathFNonCurve.setFilled( false );
-	pathFNonCurve.setColor( ofColor(0,0,0,40) );
+	shapeFNonCurve.setFilled( false );
+	shapeFNonCurve.setColor( ofColor(0,0,0,40) );
 	for (int i = 0; i < nCurveVertexes; i++){
-		pathFNonCurve.lineTo(curveVertices[i].x, curveVertices[i].y);
+		shapeFNonCurve.lineTo(curveVertices[i].x, curveVertices[i].y);
 	}
-	pathFNonCurve.close();
+	shapeFNonCurve.close();
 	//-------------------------------------
 	
 	
@@ -219,10 +219,10 @@ void testApp::setup(){
 	float y3 = 300;
 		
 	
-	pathG.setFilled(true);
-	pathG.setHexColor(0xFF9933);
-	pathG.lineTo(x0,y0);
-	pathG.bezierTo(x1,y1,x2,y2,x3,y3);
+	shapeG.setFilled(true);
+	shapeG.setHexColor(0xFF9933);
+	shapeG.lineTo(x0,y0);
+	shapeG.bezierTo(x1,y1,x2,y2,x3,y3);
 
 	
 	//------(h)--------------------------------------
@@ -232,16 +232,16 @@ void testApp::setup(){
 	// 		with nextContour we can create multi-contour shapes
 	// 		this allows us to draw holes, for example... 
 	//
-	pathH.setFilled(true);
-	pathH.setHexColor( 0xff00ff );
-	pathH.lineTo(100,500);
-	pathH.lineTo(180,550);
-	pathH.lineTo(100,600);
-	pathH.close();
-	pathH.lineTo(120,520);
-	pathH.lineTo(160,550);
-	pathH.lineTo(120,580);
-	pathH.close();
+	shapeH.setFilled(true);
+	shapeH.setHexColor( 0xff00ff );
+	shapeH.lineTo(100,500);
+	shapeH.lineTo(180,550);
+	shapeH.lineTo(100,600);
+	shapeH.close();
+	shapeH.lineTo(120,520);
+	shapeH.lineTo(160,550);
+	shapeH.lineTo(120,580);
+	shapeH.close();
 
 	//-------------------------------------
 
@@ -261,33 +261,33 @@ void testApp::setup(){
 	// 		info about the winding rules is here:
 	//		http://glprogramming.com/red/images/Image128.gif
 	// 
-	pathIa.setFilled(false);
-	pathIa.setPolyWindingMode(OF_POLY_WINDING_ODD);
-	pathIa.setHexColor(0xff00ff);
-	pathIa.lineTo(300,500);
-	pathIa.lineTo(380,550);
-	pathIa.lineTo(300,600);
-	pathIa.close();
-	pathIa.arc(340,550,30,30,0,360);
+	shapeIa.setFilled(false);
+	shapeIa.setPolyWindingMode(OF_POLY_WINDING_ODD);
+	shapeIa.setHexColor(0xff00ff);
+	shapeIa.lineTo(300,500);
+	shapeIa.lineTo(380,550);
+	shapeIa.lineTo(300,600);
+	shapeIa.close();
+	shapeIa.arc(340,550,30,30,0,360);
 
 
-	pathIb.setPolyWindingMode(OF_POLY_WINDING_NONZERO);
-	pathIb.setHexColor(0xff00ff);
-	pathIb.setFilled(false);
-	pathIb.lineTo(400,500);
-	pathIb.lineTo(480,550);
-	pathIb.lineTo(400,600);
-	pathIb.close();
-	pathIb.arc(440,550,30,60,0,360);
+	shapeIb.setPolyWindingMode(OF_POLY_WINDING_NONZERO);
+	shapeIb.setHexColor(0xff00ff);
+	shapeIb.setFilled(false);
+	shapeIb.lineTo(400,500);
+	shapeIb.lineTo(480,550);
+	shapeIb.lineTo(400,600);
+	shapeIb.close();
+	shapeIb.arc(440,550,30,60,0,360);
 
-	pathIc.setPolyWindingMode(OF_POLY_WINDING_ABS_GEQ_TWO);
-	pathIc.setHexColor(0xff00ff);
-	pathIc.setFilled(false);
-	pathIc.lineTo(500,500);
-	pathIc.lineTo(580,550);
-	pathIc.lineTo(500,600);
-	pathIc.close();
-	pathIc.arc(540,550,30,20,0,360);
+	shapeIc.setPolyWindingMode(OF_POLY_WINDING_ABS_GEQ_TWO);
+	shapeIc.setHexColor(0xff00ff);
+	shapeIc.setFilled(false);
+	shapeIc.lineTo(500,500);
+	shapeIc.lineTo(580,550);
+	shapeIc.lineTo(500,600);
+	shapeIc.close();
+	shapeIc.arc(540,550,30,20,0,360);
 	
 	selectedDraggableVertex.arc(0,0,4,4,0,360);
 	selectedDraggableVertex.setFilled(true);
@@ -309,11 +309,11 @@ void testApp::update(){
 	// 		lots of self intersection, 500 pts is a good stress test
 	// 
 	// 
-	pathD.clear();
+	shapeD.clear();
 	for (int i = 0; i < 10; i++){
-		pathD.lineTo(ofRandom(650,850), ofRandom(20,200));
+		shapeD.lineTo(ofRandom(650,850), ofRandom(20,200));
 	}
-	pathD.updateShape();
+	shapeD.updateShape();
 	//-------------------------------------
 
 	
@@ -321,7 +321,7 @@ void testApp::update(){
 	// 
 	// 		use sin cos and time to make some spirally shape
 	//
-	pathE.clear();
+	shapeE.clear();
 	float angleStep 	= TWO_PI/(100.0f + sin(ofGetElapsedTimef()/5.0f) * 60); 
 	float radiusAdder 	= 0.5f;
 	float radius 		= 0;
@@ -329,11 +329,11 @@ void testApp::update(){
 		float anglef = (i) * angleStep;
 		float x = radius * cos(anglef);
 		float y = radius * sin(anglef); 
-		pathE.lineTo(x,y);
+		shapeE.lineTo(x,y);
 		radius 	+= radiusAdder; 
 	}
-	pathE.close();
-	pathE.updateShape();
+	shapeE.close();
+	shapeE.updateShape();
 	
 	
 	//------(g)--------------------------------------
@@ -355,10 +355,10 @@ void testApp::update(){
 	float y3 = 300;
 	
 	
-	pathG.clear();
-	pathG.lineTo(x0,y0);
-	pathG.bezierTo(x1,y1,x2,y2,x3,y3);
-	pathG.updateShape();
+	shapeG.clear();
+	shapeG.lineTo(x0,y0);
+	shapeG.bezierTo(x1,y1,x2,y2,x3,y3);
+	shapeG.updateShape();
 }
 
 
@@ -373,7 +373,7 @@ void testApp::draw(){
 	// 
 	// 		use poly winding odd
 	// 
-	pathA.draw();
+	shapeA.draw();
 
 	//------(b)--------------------------------------
 	// 
@@ -381,20 +381,20 @@ void testApp::draw(){
 	//
 	// 		use poly winding nonzero	
 	// 
-	pathB.draw();
+	shapeB.draw();
 	
 	//------(c)--------------------------------------
 	// 
 	// 		draw a star dynamically	
 	// 
-	pathC.draw();
+	shapeC.draw();
 	
 	
 	//------(d)--------------------------------------
 	// 
 	// 		polygon of random points	
 	// 
-	pathD.draw();
+	shapeD.draw();
 	
 	
 	//------(e)--------------------------------------
@@ -403,7 +403,7 @@ void testApp::draw(){
 	// 
 	ofPushMatrix();
 	ofTranslate(100,300);
-	pathE.draw();
+	shapeE.draw();
 	ofPopMatrix();
 	
 
@@ -412,10 +412,10 @@ void testApp::draw(){
 	// 
 	// 		addCurveVertex
 	// 
-	pathF.draw();
+	shapeF.draw();
 	
 	ofEnableAlphaBlending();
-	pathFNonCurve.draw();
+	shapeFNonCurve.draw();
 
 	ofSetColor(255,255,255);
 	for (int i = 0; i < nCurveVertexes; i++){
@@ -429,7 +429,7 @@ void testApp::draw(){
 	// 
 	// 		addBezierVertex	
 	// 
-	pathG.draw();
+	shapeG.draw();
 	float x0 = 500;
 	float y0 = 300;
 	float x1 = 550+50*cos(ofGetElapsedTimef()*1.0f);
@@ -456,7 +456,7 @@ void testApp::draw(){
 	ofSetHexColor(0xd3ffd3);
 	ofRect(80,480,140,70);
 	ofSetColor(255,255,255);
-	pathH.draw();
+	shapeH.draw();
 	
 	
 	//------(i)--------------------------------------
@@ -465,15 +465,15 @@ void testApp::draw(){
 	// 
 	ofPushMatrix();
 	
-	pathIa.draw();
+	shapeIa.draw();
 	
 	ofTranslate(100,0,0);
 
-	pathIb.draw();
+	shapeIb.draw();
 	
 	ofTranslate(100,0,0);
 
-	pathIc.draw();
+	shapeIc.draw();
 	
 	ofPopMatrix();
 	//-------------------------------------
@@ -556,22 +556,22 @@ void testApp::mouseMoved(int x, int y ){
 	float origy = 100;
 	float angle = 0;
 	
-	pathC.clear();
+	shapeC.clear();
 	for (int i = 0; i < nStarPts; i++){
 		if (i % 2 == 0) {
 			// inside point:
 			float x = origx + innerRadius * cos(angle);
 			float y = origy + innerRadius * sin(angle);
-			pathC.lineTo(x,y);
+			shapeC.lineTo(x,y);
 		} else {
 			// outside point
 			float x = origx + outerRadius * cos(angle);
 			float y = origy + outerRadius * sin(angle);
-			pathC.lineTo(x,y);
+			shapeC.lineTo(x,y);
 		}
 		angle += angleChangePerPt;
 	}
-	pathC.updateShape();
+	shapeC.updateShape();
 	//-------------------------------------
 	
 }
@@ -594,7 +594,7 @@ void testApp::mouseDragged(int x, int y, int button){
 	// 		items so the curve actually goes through those points
 	//
 	
-	pathF.clear();
+	shapeF.clear();
 	for (int i = 0; i < nCurveVertexes; i++){
 		
 		// sorry about all the if/states here, but to do catmull rom curves
@@ -606,25 +606,25 @@ void testApp::mouseDragged(int x, int y, int button){
 		// otherwise just normal ofCurveVertex call
 		
 		if (i == 0){
-			pathF.curveTo(curveVertices[0].x, curveVertices[0].y); // we need to duplicate 0 for the curve to start at point 0
-			pathF.curveTo(curveVertices[0].x, curveVertices[0].y); // we need to duplicate 0 for the curve to start at point 0
+			shapeF.curveTo(curveVertices[0].x, curveVertices[0].y); // we need to duplicate 0 for the curve to start at point 0
+			shapeF.curveTo(curveVertices[0].x, curveVertices[0].y); // we need to duplicate 0 for the curve to start at point 0
 		} else if (i == nCurveVertexes-1){
-			pathF.curveTo(curveVertices[i].x, curveVertices[i].y);
-			pathF.curveTo(curveVertices[0].x, curveVertices[0].y);	// to draw a curve from pt 6 to pt 0
-			pathF.curveTo(curveVertices[0].x, curveVertices[0].y);	// we duplicate the first point twice
+			shapeF.curveTo(curveVertices[i].x, curveVertices[i].y);
+			shapeF.curveTo(curveVertices[0].x, curveVertices[0].y);	// to draw a curve from pt 6 to pt 0
+			shapeF.curveTo(curveVertices[0].x, curveVertices[0].y);	// we duplicate the first point twice
 		} else {
-			pathF.curveTo(curveVertices[i].x, curveVertices[i].y);
+			shapeF.curveTo(curveVertices[i].x, curveVertices[i].y);
 		}
 	}
 
 	
 	// show a faint the non-curve version of the same polygon:
-	pathFNonCurve.clear();
+	shapeFNonCurve.clear();
 	for (int i = 0; i < nCurveVertexes; i++){
-		pathFNonCurve.lineTo(curveVertices[i].x, curveVertices[i].y);
+		shapeFNonCurve.lineTo(curveVertices[i].x, curveVertices[i].y);
 	}
-	pathFNonCurve.close();
-	pathF.updateShape();
+	shapeFNonCurve.close();
+	shapeF.updateShape();
 }
 
 //--------------------------------------------------------------

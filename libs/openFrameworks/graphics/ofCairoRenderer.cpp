@@ -63,7 +63,7 @@ void ofCairoRenderer::close(){
 	}
 }
 
-void ofCairoRenderer::draw(ofPath & path){
+void ofCairoRenderer::draw(ofShape & path){
 	drawPath(path);
 }
 
@@ -78,7 +78,7 @@ void ofCairoRenderer::draw(ofPolyline & poly){
 	ofPopStyle();
 }
 
-void ofCairoRenderer::draw(ofShape & shape){
+void ofCairoRenderer::draw(ofShapeTessellation & shape){
 	for(int i=0;i<shape.getTessellation().size();i++){
 		draw(shape.getTessellation()[i]);
 	}
@@ -94,23 +94,23 @@ void ofCairoRenderer::draw(ofVertexData & vertexData){
 	}
 }
 
-void ofCairoRenderer::drawPath(const ofPath & path,bool is_subpath){
+void ofCairoRenderer::drawPath(const ofShape & path,bool is_subpath){
 	if(!surface || !cr) return;
-	const vector<ofPath::Command> & commands = path.getCommands();
+	const vector<ofShape::Command> & commands = path.getCommands();
 	if(is_subpath)
 		cairo_new_sub_path(cr);
 	else
 		cairo_new_path(cr);
 	for(int i=0; i<commands.size(); i++){
 		switch(commands[i].type){
-		case ofPath::Command::line2DTo:
-		case ofPath::Command::line3DTo:
+		case ofShape::Command::line2DTo:
+		case ofShape::Command::line3DTo:
 			curvePoints.clear();
 			cairo_line_to(cr,commands[i].to.x,commands[i].to.y);
 			break;
 
 
-		case ofPath::Command::curve2DTo:
+		case ofShape::Command::curve2DTo:
 			curvePoints.push_back(commands[i].to);
 
 			//code adapted from ofxVectorGraphics to convert catmull rom to bezier
@@ -130,18 +130,18 @@ void ofCairoRenderer::drawPath(const ofPath & path,bool is_subpath){
 			break;
 
 
-		case ofPath::Command::bezier2DTo:
+		case ofShape::Command::bezier2DTo:
 			curvePoints.clear();
 			cairo_curve_to(cr,commands[i].cp1.x,commands[i].cp1.y,commands[i].cp2.x,commands[i].cp2.y,commands[i].to.x,commands[i].to.y);
 			break;
 
-		case ofPath::Command::quadBezier2DTo:
+		case ofShape::Command::quadBezier2DTo:
 			curvePoints.clear();
 			cairo_curve_to(cr,commands[i].cp1.x,commands[i].cp1.y,commands[i].cp2.x,commands[i].cp2.y,commands[i].to.x,commands[i].to.y);
 			break;
 
 
-		case ofPath::Command::arc2D:
+		case ofShape::Command::arc2D:
 			curvePoints.clear();
 			// elliptic arcs not directly supported in cairo, lets scale y
 			if(commands[i].radiusX!=commands[i].radiusY){
@@ -171,7 +171,7 @@ void ofCairoRenderer::drawPath(const ofPath & path,bool is_subpath){
 		cairo_close_path(cr);
 	}
 
-	const vector<ofPath> &subpaths = path.getSubPaths();
+	const vector<ofShape> &subpaths = path.getSubPaths();
 	for(int i=0;i<(int)subpaths.size();i++){
 		drawPath(subpaths[i],true);
 	}

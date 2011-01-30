@@ -66,8 +66,8 @@ static deque <ofRectangle> viewportHistory;
 void 			setupCircle();
 
 
-static ofPath path;
-static ofShape shape;
+static ofShape path;
+static ofShapeTessellation shape;
 static ofVertexData vertexData;
 static ofBaseRenderer * renderer = new ofGLRenderer;
 
@@ -388,7 +388,7 @@ void ofBackground(int r, int g, int b, int a){
 //---------------------------------------------------------------------------
 // drawing modes
 
-static void ofSetCurrentStyleTo(ofPath & path){
+static void ofSetCurrentStyleTo(ofShape & path){
 	path.setFilled(drawMode == OF_FILLED);
 	path.setColor(ofColor(255,255,255,255));
 	path.setPolyWindingMode(currentStyle.polyMode);
@@ -398,7 +398,7 @@ static void ofSetCurrentStyleTo(ofPath & path){
 	}
 }
 
-static void ofSetCurrentStyleTo(ofShape & shape){
+static void ofSetCurrentStyleTo(ofShapeTessellation & shape){
 	shape.setFilled(drawMode == OF_FILLED);
 	path.setColor(ofColor(255,255,255,255));
 	shape.setPolyWindingMode(currentStyle.polyMode);

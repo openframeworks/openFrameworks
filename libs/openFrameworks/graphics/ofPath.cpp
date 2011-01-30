@@ -10,7 +10,7 @@
 class ofPathToShapeConverter;
 #include <deque>
 
-ofPath::ofPath(){
+ofShape::ofShape(){
 	strokeWidth = 1;
 	bFill = false;
 	windingMode = OF_POLY_WINDING_ODD;
@@ -19,14 +19,14 @@ ofPath::ofPath(){
 	prevCurveRes = 16;
 }
 
-void ofPath::clear(){
+void ofShape::clear(){
 	commands.clear();
 	subPaths.clear();
 	hasChanged = true;
 }
 
-ofPath & ofPath::newSubPath(){
-	subPaths.push_back(ofPath());
+ofShape & ofShape::newSubPath(){
+	subPaths.push_back(ofShape());
 	lastPath().windingMode = windingMode;
 	lastPath().bFill = bFill;
 	lastPath().strokeColor = strokeColor;
@@ -35,165 +35,165 @@ ofPath & ofPath::newSubPath(){
 	return subPaths.back();
 }
 
-void ofPath::lineTo(const ofPoint & p){
+void ofShape::lineTo(const ofPoint & p){
 	lastPath().addCommand(Command(Command::line3DTo,p));
 }
 
-void ofPath::lineTo(float x, float y, float z){
+void ofShape::lineTo(float x, float y, float z){
 	lineTo(ofPoint(x,y,z));
 }
 
-void ofPath::lineTo(float x, float y){
+void ofShape::lineTo(float x, float y){
 	lastPath().addCommand(Command(Command::line2DTo,ofPoint(x,y)));
 }
 
-void ofPath::moveTo(const ofPoint & p){
+void ofShape::moveTo(const ofPoint & p){
 	newSubPath().addCommand(Command(Command::line2DTo,p));
 }
 
-void ofPath::moveTo(float x, float y, float z){
+void ofShape::moveTo(float x, float y, float z){
 	moveTo(ofPoint(x,y,z));
 }
 
-void ofPath::curveTo(const ofPoint & p){
+void ofShape::curveTo(const ofPoint & p){
 	lastPath().addCommand(Command(Command::curve3DTo,p));
 }
 
-void ofPath::curveTo(float x, float y, float z){
+void ofShape::curveTo(float x, float y, float z){
 	curveTo(ofPoint(x,y,z));
 }
 
-void ofPath::curveTo(float x, float y){
+void ofShape::curveTo(float x, float y){
 	lastPath().addCommand(Command(Command::curve2DTo,ofPoint(x,y)));
 }
 
-void ofPath::bezierTo(const ofPoint & cp1, const ofPoint & cp2, const ofPoint & p){
+void ofShape::bezierTo(const ofPoint & cp1, const ofPoint & cp2, const ofPoint & p){
 	lastPath().addCommand(Command(Command::bezier3DTo,p,cp1,cp2));
 }
 
-void ofPath::bezierTo(float cx1, float cy1, float cx2, float cy2, float x, float y){
+void ofShape::bezierTo(float cx1, float cy1, float cx2, float cy2, float x, float y){
 	lastPath().addCommand(Command(Command::bezier2DTo,ofPoint(x,y),ofPoint(cx1,cy1),ofPoint(cx2,cy2)));
 }
 
-void ofPath::bezierTo(float cx1, float cy1, float cz1, float cx2, float cy2, float cz2, float x, float y, float z){
+void ofShape::bezierTo(float cx1, float cy1, float cz1, float cx2, float cy2, float cz2, float x, float y, float z){
 	bezierTo(ofPoint(cx1,cy1,cz1),ofPoint(cx2,cy2,cz2),ofPoint(x,y,z));
 }
 
-void ofPath::quadBezierTo(const ofPoint & cp1, const ofPoint & cp2, const ofPoint & p){
+void ofShape::quadBezierTo(const ofPoint & cp1, const ofPoint & cp2, const ofPoint & p){
 	lastPath().addCommand(Command(Command::quadBezier3DTo,p,cp1,cp2));
 }
 
-void ofPath::quadBezierTo(float cx1, float cy1, float cx2, float cy2, float x, float y){
+void ofShape::quadBezierTo(float cx1, float cy1, float cx2, float cy2, float x, float y){
 	lastPath().addCommand(Command(Command::quadBezier2DTo,ofPoint(x,y),ofPoint(cx1,cy1),ofPoint(cx2,cy2)));
 }
 
-void ofPath::quadBezierTo(float cx1, float cy1, float cz1, float cx2, float cy2, float cz2, float x, float y, float z){
+void ofShape::quadBezierTo(float cx1, float cy1, float cz1, float cx2, float cy2, float cz2, float x, float y, float z){
 	quadBezierTo(ofPoint(cx1,cy1,cz1),ofPoint(cx2,cy2,cz2),ofPoint(x,y,z));
 }
 
-void ofPath::arc(const ofPoint & centre, float radiusX, float radiusY, float angleBegin, float angleEnd){
+void ofShape::arc(const ofPoint & centre, float radiusX, float radiusY, float angleBegin, float angleEnd){
 	lastPath().addCommand(Command(Command::arc3D,centre,radiusX,radiusY,angleBegin,angleEnd));
 }
 
-void ofPath::arc(float x, float y, float radiusX, float radiusY, float angleBegin, float angleEnd){
+void ofShape::arc(float x, float y, float radiusX, float radiusY, float angleBegin, float angleEnd){
 	lastPath().addCommand(Command(Command::arc2D,ofPoint(x,y),radiusX,radiusY,angleBegin,angleEnd));
 }
 
-void ofPath::arc(float x, float y, float z, float radiusX, float radiusY, float angleBegin, float angleEnd){
+void ofShape::arc(float x, float y, float z, float radiusX, float radiusY, float angleBegin, float angleEnd){
 	arc(ofPoint(x,y,z),radiusX,radiusY,angleBegin,angleEnd);
 }
 
-void ofPath::close(){
+void ofShape::close(){
 	lastPath().bClosed=true;
 	lastPath().hasChanged = true;
 	newSubPath();
 }
 
-void ofPath::setPolyWindingMode(ofPolyWindingMode mode){
+void ofShape::setPolyWindingMode(ofPolyWindingMode mode){
 	windingMode = mode;
 	hasChanged = true;
 }
 
-void ofPath::setFilled(bool hasFill){
+void ofShape::setFilled(bool hasFill){
 	bFill = hasFill;
 	for(int i=0; i<subPaths.size(); i++){
 		subPaths[i].setFilled(hasFill);
 	}
 }
 
-void ofPath::setFillColor(const ofColor & color){
+void ofShape::setFillColor(const ofColor & color){
 	fillColor = color;
 	for(int i=0; i<subPaths.size(); i++){
 		subPaths[i].setFillColor(color);
 	}
 }
 
-void ofPath::setStrokeColor(const ofColor & color){
+void ofShape::setStrokeColor(const ofColor & color){
 	strokeColor = color;
 	for(int i=0; i<subPaths.size(); i++){
 		subPaths[i].setStrokeColor(color);
 	}
 }
 
-void ofPath::setStrokeWidth(float width){
+void ofShape::setStrokeWidth(float width){
 	strokeWidth = width;
 	for(int i=0; i<subPaths.size(); i++){
 		subPaths[i].setStrokeWidth(width);
 	}
 }
 
-ofPath & ofPath::lastPath(){
+ofShape & ofShape::lastPath(){
 	if(subPaths.empty()){
 		return *this;
 	}else{
 		return subPaths.back();
 	}
 }
-const vector<ofPath::Command> & ofPath::getCommands() const{
+const vector<ofShape::Command> & ofShape::getCommands() const{
 	return commands;
 }
-vector<ofPath::Command> & ofPath::getCommands(){
+vector<ofShape::Command> & ofShape::getCommands(){
 	return commands;
 }
-vector<ofPath> & ofPath::getSubPaths(){
+vector<ofShape> & ofShape::getSubPaths(){
 	return subPaths;
 }
 
-const vector<ofPath> & ofPath::getSubPaths() const{
+const vector<ofShape> & ofShape::getSubPaths() const{
 	return subPaths;
 }
 
 
-ofPolyWindingMode ofPath::getWindingMode() const{
+ofPolyWindingMode ofShape::getWindingMode() const{
 	return windingMode;
 }
 
-bool ofPath::isFilled() const{
+bool ofShape::isFilled() const{
 	return bFill;
 }
 
-ofColor ofPath::getFillColor() const{
+ofColor ofShape::getFillColor() const{
 	return fillColor;
 }
 
-ofColor ofPath::getStrokeColor() const{
+ofColor ofShape::getStrokeColor() const{
 	return strokeColor;
 }
 
-float ofPath::getStrokeWidth() const{
+float ofShape::getStrokeWidth() const{
 	return strokeWidth;
 }
 
-bool ofPath::isClosed() const{
+bool ofShape::isClosed() const{
 	return bClosed;
 }
 
-void ofPath::addCommand(const ofPath::Command & command){
+void ofShape::addCommand(const ofShape::Command & command){
 	commands.push_back(command);
 	hasChanged=true;
 }
 
-ofShape & ofPath::getShape(int curveResolution){
+ofShapeTessellation & ofShape::getShape(int curveResolution){
 	if(curveResolution<=0) curveResolution=prevCurveRes;
 	if(hasChanged || curveResolution!=prevCurveRes){
 		prevCurveRes = curveResolution;
@@ -208,11 +208,11 @@ ofShape & ofPath::getShape(int curveResolution){
 	return cachedShape;
 }
 
-void ofPath::updateShape(){
+void ofShape::updateShape(){
 	getShape();
 }
 
-void ofPath::draw(float x, float y){
+void ofShape::draw(float x, float y){
 	ofPushMatrix();
 	ofTranslate(x,y);
 	if(!renderer){
@@ -224,6 +224,6 @@ void ofPath::draw(float x, float y){
 }
 
 
-void ofPath::markedChanged(){
+void ofShape::markedChanged(){
 	hasChanged=true;
 }
