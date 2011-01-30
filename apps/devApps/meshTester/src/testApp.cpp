@@ -6,10 +6,9 @@ void testApp::setup(){
 //	ofSetLogLevel(OF_LOG_VERBOSE);
     ofLoadModel("astroBoy_walk.dae", model);
 	model.setRenderMethod(OF_MESH_USING_VBO);
-	tex.loadImage("boy_10.tga");
 	
 	ofEnableNormalizedTexCoords();
-	model.enableTexCoords();
+	model.enableTextures();
 	model.enableNormals();
 	
     glEnable(GL_DEPTH_TEST);
@@ -62,9 +61,7 @@ void testApp::draw(){
 	//glScalef(.3,.3,.3);
 	glRotatef(ofGetWidth()*.5 - mouseX,0,1,0);		
 
-	tex.getTextureReference().bind();
 	model.drawFaces();
-	tex.getTextureReference().unbind();
 	ofSetColor(255,255,255,90);
 	model.drawWireframe();
 

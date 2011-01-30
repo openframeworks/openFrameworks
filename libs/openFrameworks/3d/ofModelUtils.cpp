@@ -1,3 +1,5 @@
+//TODO: include multiple textures per mesh/different texture types?
+
 #include "ofModelUtils.h"
 #include "aiConfig.h"
 #include "assimp.h"
@@ -57,8 +59,7 @@ void aiMeshToOfVertexData(const aiMesh* aim, ofVertexData& ofm){
 }
 
 //--------------------------------------------------------------
-void loadMeshes(string modelName, vector<ofMesh>& m);
-void loadMeshes(string modelName,vector<ofMesh>& m){
+void ofLoadModel(string modelName, ofModel & model){
     string filepath = ofToDataPath(modelName);
 	
     ofLog(OF_LOG_VERBOSE, "loading meshes from %s", filepath.c_str());
@@ -72,25 +73,41 @@ void loadMeshes(string modelName,vector<ofMesh>& m){
     aiScene * scene = (aiScene*) aiImportFile(filepath.c_str(), aiProcessPreset_TargetRealtime_MaxQuality | aiProcess_OptimizeGraph | aiProcess_Triangulate | aiProcess_FlipUVs | 0 );	
     if(scene != NULL){        
         ofLog(OF_LOG_VERBOSE, "initted scene with %i meshes", scene->mNumMeshes);
-		m.resize(scene->mNumMeshes);
+		
+		aiString texPath;
+		model.meshes.resize(scene->mNumMeshes);
+		
 		for (unsigned int i = 0; i < scene->mNumMeshes; i++){
+			model.textureLinks[i]=-1;
+			
+			
 			ofLog(OF_LOG_VERBOSE, "loading mesh %u", i);
 			// current mesh we are introspecting
 			aiMesh* aMesh = scene->mMeshes[i];
-			m[i] = ofMesh();
-			if(m[i].vertexData == NULL){
-				m[i].vertexData = new ofVertexData();
+			ofMesh& curMesh = model.meshes[i];
+			curMesh = ofMesh();
+			if(curMesh.vertexData == NULL){
+				curMesh.vertexData = new ofVertexData();
 			}
-			aiMeshToOfVertexData(aMesh,*m[i].vertexData);
+			
+			aiMeshToOfVertexData(aMesh,*curMesh.vertexData);			
+		
+			//load texture
+			aiMaterial* mtl = scene->mMaterials[aMesh->mMaterialIndex];
+			
+			string curTexPath = texPath.data;
+			//defaults to only get the 0-index texture for now
+			if(mtl->GetTexture(aiTextureType_DIFFUSE, 0, &texPath) == AI_SUCCESS){
+				if(curTexPath!=texPath.data){
+					model.textures.push_back(ofImage());
+					ofLog(OF_LOG_VERBOSE, "loading image from %s", texPath.data);
+					string modelFolder = ofFileUtils::getEnclosingDirectoryFromPath(filepath);
+					model.textures.back().loadImage(modelFolder + texPath.data);
+					model.textures.back().update();
+				}
+				model.textureLinks[i]=(model.textures.size()-1);
+			}
 		}
-    }
-}	
-
-//--------------------------------------------------------------
-//--------------------------------------------------------------
-void ofLoadModel(string modelName, ofModel & model){
-
-	loadMeshes(modelName, model.meshes);
-
+	}
 }
 
