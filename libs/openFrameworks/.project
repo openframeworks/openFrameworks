@@ -76,11 +76,4 @@
 		<nature>org.eclipse.cdt.managedbuilder.core.managedBuildNature</nature>
 		<nature>org.eclipse.cdt.core.cnature</nature>
 	</natures>
-	<linkedResources>
-		<link>
-			<name>linux64</name>
-			<type>2</type>
-			<location>/home/arturo/Escritorio/openFrameworks/libs/openFrameworksCompiled/project/linux64</location>
-		</link>
-	</linkedResources>
 </projectDescription>
