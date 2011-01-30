@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		DA97FDAA12F5ACD9005C9991 /* libcairo-script-interpreter.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DA97FDA512F5ACD9005C9991 /* libcairo-script-interpreter.a */; };
+		DA97FDAB12F5ACD9005C9991 /* libcairo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DA97FDA612F5ACD9005C9991 /* libcairo.a */; };
+		DA97FDAC12F5ACD9005C9991 /* libpixman-1.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DA97FDA712F5ACD9005C9991 /* libpixman-1.a */; };
+		DA97FDAD12F5ACD9005C9991 /* libpng15.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DA97FDA812F5ACD9005C9991 /* libpng15.a */; };
 		E45BE97B0E8CC7DD009D7055 /* AGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E45BE9710E8CC7DD009D7055 /* AGL.framework */; };
 		E45BE97C0E8CC7DD009D7055 /* ApplicationServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E45BE9720E8CC7DD009D7055 /* ApplicationServices.framework */; };
 		E45BE97D0E8CC7DD009D7055 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E45BE9730E8CC7DD009D7055 /* AudioToolbox.framework */; };
@@ -57,6 +61,27 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		DA97FD8D12F5ACD9005C9991 /* cairo-deprecated.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "cairo-deprecated.h"; sourceTree = "<group>"; };
+		DA97FD8E12F5ACD9005C9991 /* cairo-features.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "cairo-features.h"; sourceTree = "<group>"; };
+		DA97FD8F12F5ACD9005C9991 /* cairo-pdf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "cairo-pdf.h"; sourceTree = "<group>"; };
+		DA97FD9012F5ACD9005C9991 /* cairo-ps.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "cairo-ps.h"; sourceTree = "<group>"; };
+		DA97FD9112F5ACD9005C9991 /* cairo-quartz.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "cairo-quartz.h"; sourceTree = "<group>"; };
+		DA97FD9212F5ACD9005C9991 /* cairo-script-interpreter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "cairo-script-interpreter.h"; sourceTree = "<group>"; };
+		DA97FD9312F5ACD9005C9991 /* cairo-svg.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "cairo-svg.h"; sourceTree = "<group>"; };
+		DA97FD9412F5ACD9005C9991 /* cairo-version.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "cairo-version.h"; sourceTree = "<group>"; };
+		DA97FD9512F5ACD9005C9991 /* cairo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cairo.h; sourceTree = "<group>"; };
+		DA97FD9712F5ACD9005C9991 /* png.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = png.h; sourceTree = "<group>"; };
+		DA97FD9812F5ACD9005C9991 /* pngconf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pngconf.h; sourceTree = "<group>"; };
+		DA97FD9912F5ACD9005C9991 /* pnglibconf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pnglibconf.h; sourceTree = "<group>"; };
+		DA97FD9B12F5ACD9005C9991 /* pixman-version.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "pixman-version.h"; sourceTree = "<group>"; };
+		DA97FD9C12F5ACD9005C9991 /* pixman.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pixman.h; sourceTree = "<group>"; };
+		DA97FD9D12F5ACD9005C9991 /* png.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = png.h; sourceTree = "<group>"; };
+		DA97FD9E12F5ACD9005C9991 /* pngconf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pngconf.h; sourceTree = "<group>"; };
+		DA97FD9F12F5ACD9005C9991 /* pnglibconf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pnglibconf.h; sourceTree = "<group>"; };
+		DA97FDA512F5ACD9005C9991 /* libcairo-script-interpreter.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = "libcairo-script-interpreter.a"; sourceTree = "<group>"; };
+		DA97FDA612F5ACD9005C9991 /* libcairo.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libcairo.a; sourceTree = "<group>"; };
+		DA97FDA712F5ACD9005C9991 /* libpixman-1.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = "libpixman-1.a"; sourceTree = "<group>"; };
+		DA97FDA812F5ACD9005C9991 /* libpng15.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libpng15.a; sourceTree = "<group>"; };
 		E45BE9710E8CC7DD009D7055 /* AGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AGL.framework; path = /System/Library/Frameworks/AGL.framework; sourceTree = "<absolute>"; };
 		E45BE9720E8CC7DD009D7055 /* ApplicationServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ApplicationServices.framework; path = /System/Library/Frameworks/ApplicationServices.framework; sourceTree = "<absolute>"; };
 		E45BE9730E8CC7DD009D7055 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = /System/Library/Frameworks/AudioToolbox.framework; sourceTree = "<absolute>"; };
@@ -97,6 +122,10 @@
 				E4C2424810CC5A17004149E2 /* Cocoa.framework in Frameworks */,
 				E4C2424910CC5A17004149E2 /* IOKit.framework in Frameworks */,
 				E4C2426610CC5A78004149E2 /* GLUT.framework in Frameworks */,
+				DA97FDAA12F5ACD9005C9991 /* libcairo-script-interpreter.a in Frameworks */,
+				DA97FDAB12F5ACD9005C9991 /* libcairo.a in Frameworks */,
+				DA97FDAC12F5ACD9005C9991 /* libpixman-1.a in Frameworks */,
+				DA97FDAD12F5ACD9005C9991 /* libpng15.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -108,6 +137,83 @@
 			children = (
 			);
 			name = addons;
+			sourceTree = "<group>";
+		};
+		DA97FD8A12F5ACD9005C9991 /* cairo */ = {
+			isa = PBXGroup;
+			children = (
+				DA97FD8B12F5ACD9005C9991 /* include */,
+				DA97FDA012F5ACD9005C9991 /* lib */,
+			);
+			name = cairo;
+			path = ../../../libs/cairo;
+			sourceTree = SOURCE_ROOT;
+		};
+		DA97FD8B12F5ACD9005C9991 /* include */ = {
+			isa = PBXGroup;
+			children = (
+				DA97FD8C12F5ACD9005C9991 /* cairo */,
+				DA97FD9612F5ACD9005C9991 /* libpng15 */,
+				DA97FD9A12F5ACD9005C9991 /* pixman-1 */,
+				DA97FD9D12F5ACD9005C9991 /* png.h */,
+				DA97FD9E12F5ACD9005C9991 /* pngconf.h */,
+				DA97FD9F12F5ACD9005C9991 /* pnglibconf.h */,
+			);
+			path = include;
+			sourceTree = "<group>";
+		};
+		DA97FD8C12F5ACD9005C9991 /* cairo */ = {
+			isa = PBXGroup;
+			children = (
+				DA97FD8D12F5ACD9005C9991 /* cairo-deprecated.h */,
+				DA97FD8E12F5ACD9005C9991 /* cairo-features.h */,
+				DA97FD8F12F5ACD9005C9991 /* cairo-pdf.h */,
+				DA97FD9012F5ACD9005C9991 /* cairo-ps.h */,
+				DA97FD9112F5ACD9005C9991 /* cairo-quartz.h */,
+				DA97FD9212F5ACD9005C9991 /* cairo-script-interpreter.h */,
+				DA97FD9312F5ACD9005C9991 /* cairo-svg.h */,
+				DA97FD9412F5ACD9005C9991 /* cairo-version.h */,
+				DA97FD9512F5ACD9005C9991 /* cairo.h */,
+			);
+			path = cairo;
+			sourceTree = "<group>";
+		};
+		DA97FD9612F5ACD9005C9991 /* libpng15 */ = {
+			isa = PBXGroup;
+			children = (
+				DA97FD9712F5ACD9005C9991 /* png.h */,
+				DA97FD9812F5ACD9005C9991 /* pngconf.h */,
+				DA97FD9912F5ACD9005C9991 /* pnglibconf.h */,
+			);
+			path = libpng15;
+			sourceTree = "<group>";
+		};
+		DA97FD9A12F5ACD9005C9991 /* pixman-1 */ = {
+			isa = PBXGroup;
+			children = (
+				DA97FD9B12F5ACD9005C9991 /* pixman-version.h */,
+				DA97FD9C12F5ACD9005C9991 /* pixman.h */,
+			);
+			path = "pixman-1";
+			sourceTree = "<group>";
+		};
+		DA97FDA012F5ACD9005C9991 /* lib */ = {
+			isa = PBXGroup;
+			children = (
+				DA97FDA112F5ACD9005C9991 /* osx */,
+			);
+			path = lib;
+			sourceTree = "<group>";
+		};
+		DA97FDA112F5ACD9005C9991 /* osx */ = {
+			isa = PBXGroup;
+			children = (
+				DA97FDA512F5ACD9005C9991 /* libcairo-script-interpreter.a */,
+				DA97FDA612F5ACD9005C9991 /* libcairo.a */,
+				DA97FDA712F5ACD9005C9991 /* libpixman-1.a */,
+				DA97FDA812F5ACD9005C9991 /* libpng15.a */,
+			);
+			path = osx;
 			sourceTree = "<group>";
 		};
 		E45BE5980E8CC70C009D7055 /* frameworks */ = {
@@ -133,6 +239,7 @@
 		E4B69B4A0A3A1720003C02F2 = {
 			isa = PBXGroup;
 			children = (
+				DA97FD8A12F5ACD9005C9991 /* cairo */,
 				E4B6FCAD0C3E899E008CF71C /* openFrameworks-Info.plist */,
 				E4B69B5B0A3A1756003C02F2 /* polygonExampleDebug.app */,
 				E4B69E1C0A3A1BDC003C02F2 /* src */,
@@ -197,7 +304,6 @@
 			isa = PBXProject;
 			buildConfigurationList = E4B69B4D0A3A1720003C02F2 /* Build configuration list for PBXProject "ofShapeExample" */;
 			compatibilityVersion = "Xcode 2.4";
-			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				English,
@@ -420,6 +526,8 @@
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_2)",
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_3)",
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_7)",
+					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_8)",
+					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_9)",
 				);
 				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)/../../../libs/freeimage/lib/osx\"";
 				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_14 = "\"$(SRCROOT)/../../../libs/fmodex/lib/osx\"";
@@ -430,6 +538,8 @@
 				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_5 = "\"$(SRCROOT)/../../../libs/poco/lib/osx\"";
 				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_6 = "\"$(SRCROOT)/../../../libs/rtAudio/lib/osx\"";
 				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_7 = "\"$(SRCROOT)/../../../libs/glew/libs/osx\"";
+				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_8 = "\"$(SRCROOT)/../../../libs/cairo/lib/osx/cairo\"";
+				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_9 = "\"$(SRCROOT)/../../../libs/cairo/lib/osx\"";
 				PREBINDING = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)Debug";
 				WRAPPER_EXTENSION = app;
@@ -473,6 +583,8 @@
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_2)",
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_1)",
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_3)",
+					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_7)",
+					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_8)",
 				);
 				LIBRARY_SEARCH_PATHS_QUOTED_1 = "\"$(SRCROOT)/../../../libs/glew/libs/osx\"";
 				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)/../../../libs/freeimage/lib/osx\"";
@@ -483,6 +595,8 @@
 				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_4 = "";
 				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_5 = "\"$(SRCROOT)/../../../libs/poco/lib/osx\"";
 				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_6 = "\"$(SRCROOT)/../../../libs/rtAudio/lib/osx\"";
+				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_7 = "\"$(SRCROOT)/../../../libs/cairo/lib/osx/cairo\"";
+				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_8 = "\"$(SRCROOT)/../../../libs/cairo/lib/osx\"";
 				PREBINDING = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;

@@ -1,19 +1,19 @@
 #include "testApp.h"
 
 #include "ofShape.h"
-#include "ofCairoRenderer.h"
 
 //--------------------------------------------------------------
 void testApp::setup(){
 
 	
 	ofSetLogLevel( OF_LOG_NOTICE );
-	//ofSetFrameRate( 24 );
-	//ofSetVerticalSync(true);
 
-	ofCairoRenderer cairo;
+#ifdef RENDER_TO_CAIRO
 	cairo.setup("paths.pdf",ofCairoRenderer::PDF);
+	ofSetDefaultRenderer(&cairo);
 	
+	ofSetFrameRate( 1 ); //each frame generates a page
+#endif
 	
 	nCurveVertexes = 7;
 	
@@ -296,21 +296,6 @@ void testApp::setup(){
 	unselectedDraggableVertex.arc(0,0,4,4,0,360);
 	unselectedDraggableVertex.setFilled(false);
 	unselectedDraggableVertex.setColor(ofColor(0,0,0,80));
-
-
-
-	cairo.draw(pathA);
-	cairo.draw(pathB);
-	cairo.draw(pathC);
-	cairo.draw(pathD);
-	cairo.draw(pathE);
-	cairo.draw(pathF);
-	cairo.draw(pathFNonCurve);
-	cairo.draw(pathG);
-	cairo.draw(pathH);
-	cairo.draw(pathIa);
-	cairo.draw(pathIb);
-	cairo.draw(pathIc);
 	
 }
 
