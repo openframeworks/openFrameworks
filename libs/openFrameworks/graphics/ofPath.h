@@ -112,6 +112,7 @@ public:
 		:type(type)
 		,to(centre)
 		,radiusX(radiusX)
+		,radiusY(radiusY)
 		,angleBegin(angleBegin)
 		,angleEnd(angleEnd)
 		{
