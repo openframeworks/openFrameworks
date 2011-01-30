@@ -19,7 +19,7 @@ void testApp::setup(){
 		pts[i].z = ofRandom(-worldSize, worldSize);
 	}
 	
-	vbo.setVertexData(pts, NUM_PTS, OF_VBO_STATIC);
+	vbo.setVertexData(pts, NUM_PTS, GL_DYNAMIC_DRAW);
 	
 }
 
@@ -48,9 +48,7 @@ void testApp::draw() {
 
 	glPointSize(16);
 	texture.getTextureReference().bind();
-	vbo.bind();
 	vbo.draw(GL_POINTS, 0, NUM_PTS);
-	vbo.unbind();
 	texture.getTextureReference().unbind();
 	
 	ofDisablePointSprites();
