@@ -17,33 +17,32 @@ void testApp::setup(){
 
 //--------------------------------------------------------------
 void testApp::update(){
-	ofBackground(255,255,255);	
+	ofBackground(255);	
 }
 
 //--------------------------------------------------------------
 void testApp::draw(){	
-	ofSetHexColor(0xFFFFFF);
+	ofSetColor(255);
 
-	bikers.draw(0,0);
-	gears.draw(600,0);
-	tdf.draw(600,300);
+	bikers.draw(0, 0);
+	gears.draw(600, 0);
+	tdf.draw(600, 300);
 	
-	ofSetHexColor(0xDD3333);
-	tdfSmall.draw(200,300);
+	ofSetColor(220, 50, 50);
+	tdfSmall.draw(200, 300);
 	
-	ofSetHexColor(0xFFFFFF);
+	ofSetColor(255);
 	ofEnableAlphaBlending();
-	transparency.draw(sin(ofGetElapsedTimeMillis()/1000.0f) * 100 + 500,20);
+	float wave = sin(ofGetElapsedTimef());
+	transparency.draw(500 + (wave * 100), 20);
 	ofDisableAlphaBlending();
-	
-	
-	ofSetHexColor(0x000000);
 	
 	// getting the pixels out of an image, 
 	// and then use the values to draw circles
-	int w = bikeIcon.width;
-	int h = bikeIcon.height;
+	int w = bikeIcon.getWidth();
+	int h = bikeIcon.getHeight();
 	float diameter = 10;
+	ofSetColor(0);
 	for(int y = 0; y < h; y++) {
 		for(int x = 0; x < w; x++) {
 			ofColor cur = bikeIcon.getPixel(x, y);
@@ -52,8 +51,8 @@ void testApp::draw(){
 		}
 	}
 	
-	ofSetHexColor(0xFFFFFF);
-	bikeIcon.draw(300,500, 20,20);
+	ofSetColor(255);
+	bikeIcon.draw(300, 500, 20, 20);
 }
 
 //--------------------------------------------------------------
