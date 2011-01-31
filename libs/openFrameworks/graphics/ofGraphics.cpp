@@ -1377,7 +1377,8 @@ void ofDrawBitmapString(string textString, float x, float y, float z){
 			glPushMatrix();
 
 			ofTranslate(x, y, z);
-			ofScale(1, -1, 0);
+			if (ofGetCoordHandedness() == OF_RIGHT_HANDED)
+				ofScale(1, -1, 0);
 			break;
 
 		case OF_BITMAPMODE_MODEL_BILLBOARD:
@@ -1410,7 +1411,7 @@ void ofDrawBitmapString(string textString, float x, float y, float z){
 			glTranslatef(-1, -1, 0);
 			glScalef(2/rViewport.width, 2/rViewport.height, 1);
 			
-			glTranslated(dScreenX, dScreenY, 0);
+			glTranslated(dScreenX, dScreenY, dScreenZ);
 			glScaled(1, -1, 1);
 			break;
 

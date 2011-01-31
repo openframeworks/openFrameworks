@@ -143,8 +143,6 @@ void testApp::update(){
 //--------------------------------------------------------------
 void testApp::draw(){
 	
-	ofDrawBitmapString("test", 10, 10);
-	
 	//////////////////////////
 	// BACKGROUND HIGHLIGHT
 	//////////////////////////
