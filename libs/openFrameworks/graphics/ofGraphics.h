@@ -31,7 +31,7 @@ void ofPopView();
 // setup matrices and viewport (upto you to push and pop view before and after)
 // if width or height are 0, assume windows dimensions (ofGetWidth(), ofGetHeight())
 // if nearDist or farDist are 0 assume defaults (calculated based on width / height)
-ofRectangle ofGetCurrentViewport();
+ofRectangle ofGetViewportRect();
 void ofViewport(float x = 0, float y = 0, float width = 0, float height = 0, bool invertY = true);
 void ofViewport(ofRectangle viewport = ofGetWindowRect());
 void ofSetupScreenPerspective(float width = 0, float height = 0, int orientation = 0, bool vFlip = true, float fov = 60, float nearDist = 0, float farDist = 0);

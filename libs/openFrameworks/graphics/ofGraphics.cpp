@@ -137,7 +137,7 @@ void ofViewport(float x, float y, float width, float height, bool invertY) {
 }
 
 //----------------------------------------------------------
-ofRectangle ofGetCurrentViewport(){
+ofRectangle ofGetViewportRect(){
 	
 	// I am using opengl calls here instead of returning viewportRect
 	// since someone might use glViewport instead of ofViewport...
@@ -1341,7 +1341,7 @@ void ofDrawBitmapString(string textString, float x, float y, float z){
 		
 		case OF_BITMAPMODE_VIEWPORT:
 			
-			rViewport = ofGetCurrentViewport();
+			rViewport = ofGetViewportRect();
 			
 			hasProjection = true;
 			glMatrixMode(GL_PROJECTION);
@@ -1354,7 +1354,7 @@ void ofDrawBitmapString(string textString, float x, float y, float z){
 			glLoadIdentity();
 			
 			glTranslatef(-1, 1, 0);
-			glScalef(2/rViewport.width, -2/rViewport.height, 1);
+			glScalef(2/ofGetViewportWidth(), -2/ofGetViewportHeight(), 1);
 			
 			ofTranslate(x, y, 0);
 			break;
@@ -1385,8 +1385,6 @@ void ofDrawBitmapString(string textString, float x, float y, float z){
 			view[0] = 0; view[1] = 0; //we're already drawing within viewport
 			gluProject(x, y, z, modelview, projection, view, &dScreenX, &dScreenY, &dScreenZ);
 			
-			rViewport = ofGetCurrentViewport();
-			
 			hasProjection = true;
 			glMatrixMode(GL_PROJECTION);
 			glPushMatrix();
@@ -1398,7 +1396,7 @@ void ofDrawBitmapString(string textString, float x, float y, float z){
 			glLoadIdentity();
 			
 			glTranslatef(-1, -1, 0);
-			glScalef(2/rViewport.width, 2/rViewport.height, 1);
+			glScalef(2/ofGetViewportWidth(), 2/ofGetViewportHeight(), 1);
 			
 			glTranslated(dScreenX, dScreenY, dScreenZ);
 			glScaled(1, -1, 1);

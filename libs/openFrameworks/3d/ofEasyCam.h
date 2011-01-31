@@ -7,8 +7,7 @@ class ofEasyCam : public ofCamera {
 public:
 	ofEasyCam();
 
-	// TODO: this should be ofGetViewRect() eventually
-	virtual void begin(ofRectangle viewport = ofGetCurrentViewport());
+	virtual void begin(ofRectangle viewport = ofGetViewportRect());
 	void reset();
 
 	//----------------------------------------

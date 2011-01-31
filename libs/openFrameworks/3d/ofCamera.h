@@ -38,23 +38,23 @@ public:
 	void disableOrtho();
 	bool getOrtho() const;
 	
-	float getImagePlaneDistance(ofRectangle viewport = ofGetCurrentViewport()) const;
+	float getImagePlaneDistance(ofRectangle viewport = ofGetViewportRect()) const;
 	
 	// set the matrices
-	virtual void begin(ofRectangle viewport = ofGetCurrentViewport());
+	virtual void begin(ofRectangle viewport = ofGetViewportRect());
 	virtual void end();
 	
 	// for hardcore peeps, access to the projection matrix
 	bool cacheMatrices;
-	ofMatrix4x4 getProjectionMatrix(ofRectangle viewport = ofGetCurrentViewport());	
+	ofMatrix4x4 getProjectionMatrix(ofRectangle viewport = ofGetViewportRect());	
 	ofMatrix4x4 getModelViewMatrix();
-	ofMatrix4x4 getModelViewProjectionMatrix(ofRectangle viewport = ofGetCurrentViewport());
+	ofMatrix4x4 getModelViewProjectionMatrix(ofRectangle viewport = ofGetViewportRect());
 	
 	// convert between spaces
-	ofVec3f worldToScreen(ofVec3f WorldXYZ, ofRectangle viewport = ofGetCurrentViewport()); 
-	ofVec3f screenToWorld(ofVec3f ScreenXYZ, ofRectangle viewport = ofGetCurrentViewport());
-	ofVec3f worldToCamera(ofVec3f WorldXYZ, ofRectangle viewport = ofGetCurrentViewport());
-	ofVec3f cameraToWorld(ofVec3f CameraXYZ, ofRectangle viewport = ofGetCurrentViewport());
+	ofVec3f worldToScreen(ofVec3f WorldXYZ, ofRectangle viewport = ofGetViewportRect()); 
+	ofVec3f screenToWorld(ofVec3f ScreenXYZ, ofRectangle viewport = ofGetViewportRect());
+	ofVec3f worldToCamera(ofVec3f WorldXYZ, ofRectangle viewport = ofGetViewportRect());
+	ofVec3f cameraToWorld(ofVec3f CameraXYZ, ofRectangle viewport = ofGetViewportRect());
 	
 	
 protected:

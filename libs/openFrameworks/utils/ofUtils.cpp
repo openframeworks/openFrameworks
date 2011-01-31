@@ -531,9 +531,9 @@ void ofSaveScreen(string filename) {
 void ofSaveViewport(string filename) {
 	// because ofSaveScreen doesn't related to viewports
 	ofImage screen;
-	ofRectangle view = ofGetCurrentViewport();
+	ofRectangle view = ofGetViewportRect();
 	screen.allocate(view.width, view.height, OF_IMAGE_COLOR);
-	screen.grabScreen(0, 0, view.height, view.width);
+	screen.grabScreen(view.x, view.y, view.height, view.width);
 	screen.saveImage(filename);
 }
 
