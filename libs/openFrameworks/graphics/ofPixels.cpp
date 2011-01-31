@@ -149,7 +149,7 @@ unsigned char * const ofPixels::getPixels() const{
 	return pixels;
 }
 
-int ofPixels::getPixelIndex(int x, int y){
+int ofPixels::getPixelIndex(int x, int y) const {
 	if( !bAllocated ){
 		return 0;
 	}else{
@@ -157,7 +157,7 @@ int ofPixels::getPixelIndex(int x, int y){
 	}
 }
 
-ofColor ofPixels::getPixel(int x, int y){
+ofColor ofPixels::getPixel(int x, int y) const {
 	ofColor c;
 	int index = getPixelIndex(x, y);
 
@@ -170,6 +170,23 @@ ofColor ofPixels::getPixel(int x, int y){
 	}
 
 	return c;
+}
+
+void ofPixels::setPixel(int x, int y, ofColor color) {
+	int index = getPixelIndex(x, y);
+
+	if( bytesPerPixel == 1 ){
+		pixels[index] = color.getBrightness();
+	}else if( bytesPerPixel == 3 ){
+		pixels[index] = color.r;
+		pixels[index+1] = color.g;
+		pixels[index+2] = color.b;
+	}else if( bytesPerPixel == 4 ){
+		pixels[index] = color.r;
+		pixels[index+1] = color.g;
+		pixels[index+2] = color.b;
+		pixels[index+3] = color.a;
+	}
 }
 
 unsigned char ofPixels::operator[](int pos){

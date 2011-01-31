@@ -27,8 +27,9 @@ public:
 	unsigned char * getPixels();
 	unsigned char * const getPixels() const;
 
-	int getPixelIndex(int x, int y);
-	ofColor getPixel(int x, int y);
+	int getPixelIndex(int x, int y) const;
+	ofColor getPixel(int x, int y) const;
+	void setPixel(int x, int y, ofColor color);
 
 	unsigned char operator[](int pos);
 
