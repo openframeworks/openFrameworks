@@ -7,7 +7,7 @@ void testApp::setup(){
 	ofRegisterURLNotification(this);
 
 	//to load synchronously
-	//image.loadImage(ofLoadURL("http://blah").data);
+	//image.loadImage("http://blah.com/img.jpg");
 }
 
 //--------------------------------------------------------------
@@ -38,7 +38,7 @@ void testApp::draw(){
 	if(img.bAllocated())
 		for(int y = 0; y < img.getOFPixels().getHeight(); y+= divider){
 			for(int x = 0; x < img.getOFPixels().getWidth(); x+=divider){
-				ofColor c = img.getOFPixels().getPixel(x, y);
+				ofColor c = img.getColor(x, y);
 
 				ofSetColor( c.r, c.g, c.b );
 				ofCircle( x, y, divider/2 );
