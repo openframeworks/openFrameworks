@@ -1341,8 +1341,6 @@ void ofDrawBitmapString(string textString, float x, float y, float z){
 		
 		case OF_BITMAPMODE_VIEWPORT:
 			
-			rViewport = ofGetViewportRect();
-			
 			hasProjection = true;
 			glMatrixMode(GL_PROJECTION);
 			glPushMatrix();
@@ -1354,7 +1352,7 @@ void ofDrawBitmapString(string textString, float x, float y, float z){
 			glLoadIdentity();
 			
 			glTranslatef(-1, 1, 0);
-			glScalef(2/ofGetViewportWidth(), -2/ofGetViewportHeight(), 1);
+			glScalef(2.0f/float(ofGetViewportWidth()), -2.0f/float(ofGetViewportHeight()), 1);
 			
 			ofTranslate(x, y, 0);
 			break;
@@ -1396,7 +1394,7 @@ void ofDrawBitmapString(string textString, float x, float y, float z){
 			glLoadIdentity();
 			
 			glTranslatef(-1, -1, 0);
-			glScalef(2/ofGetViewportWidth(), 2/ofGetViewportHeight(), 1);
+			glScalef(2.0f/float(ofGetViewportWidth()), 2.0f/float(ofGetViewportHeight()), 1);
 			
 			glTranslated(dScreenX, dScreenY, dScreenZ);
 			glScaled(1, -1, 1);
