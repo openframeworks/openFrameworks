@@ -6,10 +6,9 @@ void testApp::setup(){
 //	ofSetLogLevel(OF_LOG_VERBOSE);
     ofLoadModel("astroBoy_walk.dae", model);
 	model.setRenderMethod(OF_MESH_USING_VBO);
-	tex.loadImage("boy_10.tga");
 	
 	ofEnableNormalizedTexCoords();
-	model.enableTexCoords();
+	model.enableTextures();
 	model.enableNormals();
 	
     glEnable(GL_DEPTH_TEST);
@@ -28,7 +27,7 @@ void testApp::setup(){
 //--------------------------------------------------------------
 void testApp::update(){
 	if(wiggleModel){
-		for (int i =0; i < model.meshes.size();i++){
+		for (int i =0; i < (int)model.meshes.size();i++){
 			for (int j=0; j<model.meshes[i].vertexData->getNumVertices();j++){
 				ofVec3f curVert = model.meshes[i].vertexData->getVertex(j);
 				float phi = .006*ofGetFrameNum() + .05*PI*curVert.x;
@@ -38,7 +37,7 @@ void testApp::update(){
 			}
 		}
 		
-		for (int i =0; i < model.meshes.size();i++){
+		for (int i =0; i < (int)model.meshes.size();i++){
 			for (int j=0; j<model.meshes[i].vertexData->getNumTexCoords();j++){
 				ofVec3f curVert = model.meshes[i].vertexData->getTexCoord(j);
 				float theta = .002*ofGetFrameNum();
@@ -62,9 +61,7 @@ void testApp::draw(){
 	//glScalef(.3,.3,.3);
 	glRotatef(ofGetWidth()*.5 - mouseX,0,1,0);		
 
-	tex.getTextureReference().bind();
 	model.drawFaces();
-	tex.getTextureReference().unbind();
 	ofSetColor(255,255,255,90);
 	model.drawWireframe();
 
