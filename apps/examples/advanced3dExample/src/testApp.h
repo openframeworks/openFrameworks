@@ -56,6 +56,7 @@ class testApp : public ofBaseApp{
 		//camera pointers
 		ofCamera*				cameras[N_CAMERAS];
 		int						iMainCamera;
+		string					camCaptions[N_CAMERAS];
 	
 		//viewports
 		ofRectangle				viewMain;
