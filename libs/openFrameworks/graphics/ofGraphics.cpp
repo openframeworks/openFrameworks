@@ -154,17 +154,6 @@ ofRectangle ofGetCurrentViewport(){
 }
 
 //----------------------------------------------------------
-ofRectangle ofGetCurrentScreen(){
-	
-	ofRectangle screen;
-	screen.x = 0;
-	screen.y = 0;
-	screen.width = ofGetScreenWidth();
-	screen.height = ofGetScreenHeight();
-	return screen;
-	
-}
-//----------------------------------------------------------
 int ofGetViewportWidth(){
 	GLint viewport[4];					// Where The Viewport Values Will Be Stored
 	glGetIntegerv(GL_VIEWPORT, viewport);
@@ -1336,7 +1325,7 @@ void ofDrawBitmapString(string textString, float x, float y, float z){
 			hasViewport = true;
 			ofPushView();
 			
-			rViewport = ofGetCurrentScreen();			
+			rViewport = ofGetWindowRect();			
 			ofViewport(rViewport);
 			
 			glMatrixMode(GL_PROJECTION);
