@@ -15,8 +15,8 @@ enum ofHandednessType {OF_LEFT_HANDED, OF_RIGHT_HANDED};
 float * ofBgColorPtr();
 void ofBackground(const ofColor & c);
 void ofBackground(float brightness);
-void ofBackground(int hexColor, float _a=255.0f);
-void ofBackground(int r, int g, int b, int a=255);
+void ofBackgroundHex(int hexColor, float a = 255.0f);
+void ofBackground(float r, float g, float b, float a = 255.0f);
 
 // user's access to settings (bgAuto, corner mode):
 void 	ofSetBackgroundAuto(bool bManual);		// default is true

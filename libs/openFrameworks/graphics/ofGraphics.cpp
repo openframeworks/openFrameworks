@@ -419,31 +419,34 @@ float * ofBgColorPtr(){
 }
 
 //----------------------------------------------------------
-void ofBackground(const ofColor & c){
-	ofBackground ( c.r, c.g, c.b);
-}
-
-//----------------------------------------------------------
-void ofBackground(float brightness) {
-	ofBackground(brightness);
-}
-
-//----------------------------------------------------------
-void ofBackground(int hexColor, float _a){
-	ofBackground ( (hexColor >> 16) & 0xff, (hexColor >> 8) & 0xff, (hexColor >> 0) & 0xff, _a);
-}
-
-//----------------------------------------------------------
-void ofBackground(int r, int g, int b, int a){
-	bgColor[0] = (float)r / (float)255.0f;
-	bgColor[1] = (float)g / (float)255.0f;
-	bgColor[2] = (float)b / (float)255.0f;
-	bgColor[3] = (float)a / (float)255.0f;
+void ofBackground(const ofColor & color){
+	bgColor[0] = color.r / 255;
+	bgColor[1] = color.g / 255;
+	bgColor[2] = color.b / 255;
+	bgColor[3] = color.a / 255;
 	// if we are in not-auto mode, then clear with a bg call...
 	if (ofbClearBg() == false){
 		glClearColor(bgColor[0],bgColor[1],bgColor[2], bgColor[3]);
 		glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	}
+}
+
+//----------------------------------------------------------
+void ofBackground(float brightness) {
+	ofColor color(brightness);
+	ofBackground(color);
+}
+
+//----------------------------------------------------------
+void ofBackgroundHex(int hexColor, float alpha){
+	ofColor color = ofColor::fromHex(hexColor, alpha);
+	ofBackground(color);
+}
+
+//----------------------------------------------------------
+void ofBackground(float r, float g, float b, float a){
+	ofColor color(r, g, b, a);
+	ofBackground(color);
 }
 
 //----------------------------------------------------------
