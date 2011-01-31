@@ -423,7 +423,15 @@ void ofImage::unbind(){
 		tex.unbind();
 }
 
+//------------------------------------
+ofColor ofImage::getPixel(int x, int y) const {
+	return myPixels.getPixel(x, y);
+}
 
+//------------------------------------
+void ofImage::setPixel(int x, int y, ofColor color) {
+	myPixels.setPixel(x, y, color);
+}
 
 //------------------------------------
 void  ofImage::setFromPixels(unsigned char * newPixels, int w, int h, ofImageType newType, bool bOrderIsRGB){

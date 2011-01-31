@@ -41,14 +41,14 @@ void testApp::draw(){
 	
 	// getting the pixels out of an image, 
 	// and then use the values to draw circles
-	unsigned char * pixels = bikeIcon.getPixels();
 	int w = bikeIcon.width;
 	int h = bikeIcon.height;
-	for (int i = 0; i < w; i++){
-		for (int j = 0; j < h; j++){
-			int value = pixels[j * w + i];
-			float pct = 1 - (value / 255.0f);
-			ofCircle(i*10,500 + j*10,1 + 5*pct);		
+	float diameter = 10;
+	for(int y = 0; y < h; y++) {
+		for(int x = 0; x < w; x++) {
+			ofColor cur = bikeIcon.getPixel(x, y);
+			float size = 1 - (cur.getBrightness() / 255);
+			ofCircle(x * diameter, 500 + y * diameter, 1 + size * diameter / 2);
 		}
 	}
 	
