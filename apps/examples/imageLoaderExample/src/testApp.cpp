@@ -42,7 +42,7 @@ void testApp::draw(){
 	int w = bikeIcon.getWidth();
 	int h = bikeIcon.getHeight();
 	float diameter = 10;
-	ofSetColor(0);
+	ofSetColor(255, 0, 0);
 	for(int y = 0; y < h; y++) {
 		for(int x = 0; x < w; x++) {
 			ofColor cur = bikeIcon.getColor(x, y);
@@ -51,8 +51,21 @@ void testApp::draw(){
 		}
 	}
 	
+	// same as above, but this time
+	// use the raw data directly with getPixels()
+	unsigned char* pixels = bikeIcon.getPixels();
+	ofSetColor(0, 0, 255);
+	for(int y = 0; y < h; y++) {
+		for(int x = 0; x < w; x++) {
+			int index = y * w + x;
+			unsigned char cur = pixels[index];
+			float size = 1 - ((float) cur / 255);
+			ofCircle(200 + x * diameter, 500 + y * diameter, 1 + size * diameter / 2);
+		}
+	}
+	
 	ofSetColor(255);
-	bikeIcon.draw(300, 500, 20, 20);
+	bikeIcon.draw(190, 490, 20, 20);
 }
 
 //--------------------------------------------------------------
