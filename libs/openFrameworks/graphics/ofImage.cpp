@@ -424,13 +424,13 @@ void ofImage::unbind(){
 }
 
 //------------------------------------
-ofColor ofImage::getPixel(int x, int y) const {
-	return myPixels.getPixel(x, y);
+ofColor ofImage::getColor(int x, int y) const {
+	return myPixels.getColor(x, y);
 }
 
 //------------------------------------
-void ofImage::setPixel(int x, int y, ofColor color) {
-	myPixels.setPixel(x, y, color);
+void ofImage::setColor(int x, int y, ofColor color) {
+	myPixels.setColor(x, y, color);
 }
 
 //------------------------------------
