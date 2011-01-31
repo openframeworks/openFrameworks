@@ -68,10 +68,10 @@ class ofImage : public ofBaseImage{
 		unsigned char * 	getPixels();			// up to you to get this right
 		ofPixels&		 	getOFPixels();
 		ofPixels		 	getOFPixels() const;
-		ofColor getPixel(int x, int y) const;
+		ofColor getColor(int x, int y) const;
 
 		// alter the image
-		void setPixel(int x, int y, ofColor color);
+		void setColor(int x, int y, ofColor color);
 		void 				setFromPixels(unsigned char * pixels, int w, int h, ofImageType type, bool bOrderIsRGB = true);
 		void 				setImageType(ofImageType type);
 		void 				resize(int newWidth, int newHeight);

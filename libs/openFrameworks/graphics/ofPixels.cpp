@@ -157,7 +157,7 @@ int ofPixels::getPixelIndex(int x, int y) const {
 	}
 }
 
-ofColor ofPixels::getPixel(int x, int y) const {
+ofColor ofPixels::getColor(int x, int y) const {
 	ofColor c;
 	int index = getPixelIndex(x, y);
 
@@ -172,7 +172,7 @@ ofColor ofPixels::getPixel(int x, int y) const {
 	return c;
 }
 
-void ofPixels::setPixel(int x, int y, ofColor color) {
+void ofPixels::setColor(int x, int y, ofColor color) {
 	int index = getPixelIndex(x, y);
 
 	if( bytesPerPixel == 1 ){

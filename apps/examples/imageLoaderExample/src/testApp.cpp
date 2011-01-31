@@ -37,15 +37,15 @@ void testApp::draw(){
 	transparency.draw(500 + (wave * 100), 20);
 	ofDisableAlphaBlending();
 	
-	// getting the pixels out of an image, 
-	// and then use the values to draw circles
+	// getting the ofColors from an image,
+	// using the brightness to draw circles
 	int w = bikeIcon.getWidth();
 	int h = bikeIcon.getHeight();
 	float diameter = 10;
 	ofSetColor(0);
 	for(int y = 0; y < h; y++) {
 		for(int x = 0; x < w; x++) {
-			ofColor cur = bikeIcon.getPixel(x, y);
+			ofColor cur = bikeIcon.getColor(x, y);
 			float size = 1 - (cur.getBrightness() / 255);
 			ofCircle(x * diameter, 500 + y * diameter, 1 + size * diameter / 2);
 		}
