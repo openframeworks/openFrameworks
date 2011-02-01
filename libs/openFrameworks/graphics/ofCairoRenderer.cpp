@@ -1,10 +1,3 @@
-/*
- * ofCairoRenderer.cpp
- *
- *  Created on: 26/01/2011
- *      Author: arturo
- */
-
 #include "ofCairoRenderer.h"
 #include "ofGraphics.h"
 #include "ofConstants.h"
