@@ -72,6 +72,7 @@ static ofBaseRenderer * renderer = new ofGLRenderer;
 void ofSetDefaultRenderer(ofBaseRenderer * renderer_){
 	if(renderer) delete renderer;
 	renderer = renderer_;
+	renderer->setupGraphicDefaults();
 }
 ofBaseRenderer * ofGetDefaultRenderer(){
 	return renderer;

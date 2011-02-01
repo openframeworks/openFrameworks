@@ -43,6 +43,7 @@ public:
 	// setup matrices and viewport (upto you to push and pop view before and after)
 	// if width or height are 0, assume windows dimensions (ofGetWidth(), ofGetHeight())
 	// if nearDist or farDist are 0 assume defaults (calculated based on width / height)
+	void viewport(ofRectangle viewport);
 	void viewport(float x = 0, float y = 0, float width = 0, float height = 0, bool invertY = true);
 	void setupScreenPerspective(float width = 0, float height = 0, int orientation = 0, bool vFlip = true, float fov = 60, float nearDist = 0, float farDist = 0);
 	void setupScreenOrtho(float width = 0, float height = 0, bool vFlip = true, float nearDist = -1, float farDist = 1);
@@ -69,6 +70,19 @@ public:
 	void setupGraphicDefaults();
 	void setupScreen();
 
+	// bg color
+	ofColor getBgColor();
+	bool bClearBg();
+	void background(const ofColor & c);
+	void background(float brightness);
+	void background(int hexColor, float _a=255.0f);
+	void background(int r, int g, int b, int a=255);
+
+	void setBackgroundAuto(bool bManual);		// default is true
+
+	void clear(float r, float g, float b, float a=0);
+	void clear(float brightness, float a=0);
+	void clearAlpha();
 
 	cairo_t * getCairoContext();
 	cairo_surface_t * getCairoSurface();
@@ -83,6 +97,8 @@ private:
 	deque<ofPoint> curvePoints;
 	cairo_t * cr;
 	cairo_surface_t * surface;
+	bool bBackgroundAuto;
+	ofColor bgColor;
 
 	stack<cairo_matrix_t> matrixStack;
 	cairo_matrix_t tmpMatrix;
