@@ -1,17 +1,20 @@
 #include "testApp.h"
 
+#include "ofCairoRenderer.h"
+#include "ofGLRenderer.h"
+#include "ofRendererCollection.h"
+ofCairoRenderer cairo;
+ofGLRenderer gl;
+ofRendererCollection renderer;
+
+
 //--------------------------------------------------------------
 void testApp::setup(){
-
-	
-	ofSetLogLevel( OF_LOG_NOTICE );
-
-#ifdef RENDER_TO_CAIRO
-	cairo.setup("paths.pdf",ofCairoRenderer::PDF);
-	ofSetDefaultRenderer(&cairo);
-	
-	ofSetFrameRate( 1 ); //each frame generates a page
-#endif
+	cairo.setup("3d.pdf",ofCairoRenderer::PDF);
+	renderer.renderers.push_back(&gl);
+	renderer.renderers.push_back(&cairo);
+	ofSetDefaultRenderer(&renderer);
+	ofSetFrameRate( 12 ); //each frame generates a page
 	
 	nCurveVertexes = 7;
 	
