@@ -210,27 +210,27 @@ ofVec2f ofVertexData::getTexCoord(int i){
 
 //--------------------------------------------------------------
 int ofVertexData::getNumVertices() const{
-	return vertices.size();
+	return (int)vertices.size();
 }
 
 //--------------------------------------------------------------
 int ofVertexData::getNumColors() const{
-	return colors.size();
+	return (int)colors.size();
 }
 
 //--------------------------------------------------------------
 int ofVertexData::getNumNormals() const{
-	return normals.size();
+	return (int)normals.size();
 }
 
 //--------------------------------------------------------------
 int ofVertexData::getNumTexCoords() const{
-	return texCoords.size();
+	return (int)texCoords.size();
 }
 
 //--------------------------------------------------------------
 int ofVertexData::getNumIndices() const{
-	return indices.size();
+	return (int)indices.size();
 }
 
 /*
