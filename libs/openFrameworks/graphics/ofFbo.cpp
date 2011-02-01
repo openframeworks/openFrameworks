@@ -313,7 +313,7 @@ void ofFbo::begin() {
 	bind();
 	ofPushView();
 	ofViewport(0, 0, getWidth(), getHeight(), false);
-	ofSetupScreenPerspective(getWidth(), getHeight(), false);
+	ofSetupScreenPerspective(getWidth(), getHeight(), ofGetOrientation(), false);
 }
 
 
