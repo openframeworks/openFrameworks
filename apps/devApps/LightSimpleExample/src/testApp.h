@@ -28,4 +28,5 @@ public:
 	bool		bPointLight;
 	bool		bSpotLight;
 	bool		bDirLight;
+	bool		bShiny;
 };

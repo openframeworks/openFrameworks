@@ -4,6 +4,7 @@
 void testApp::setup() {
 	ofSetVerticalSync(true);
 	ofSetFrameRate(60);
+	ofBackground(10, 10, 10);
 	glEnable(GL_DEPTH_TEST);
 	
 	radius		= 100.f;
@@ -23,8 +24,8 @@ void testApp::setup() {
 	directionalLight.setOrientation( ofVec3f(0, 90, 0) );
 	
 	ofMaterialSpecular(255, 255, 255);
-	ofMaterialShininess(10);
-	//ofMaterialAmbient(255, 0, 0);
+	bShiny = true;
+	keyPressed('s');
 	
 	ofSetSmoothLighting(true);
 	
@@ -45,9 +46,9 @@ void testApp::update() {
 //--------------------------------------------------------------
 void testApp::draw() {
 	ofEnableLighting();
-	pointLight.enable();
-	spotLight.enable();
-	directionalLight.enable();
+	if (bPointLight) pointLight.enable();
+	if (bSpotLight) spotLight.enable();
+	if (bDirLight) directionalLight.enable();
 	ofSetColor(255, 255, 255, 255);
 	ofSphere( center.x, center.y, center.z, radius);
 	glPushMatrix();
@@ -68,14 +69,38 @@ void testApp::draw() {
 	directionalLight.disable();
 	ofDisableLighting();
 	ofSetColor( pointLight.getDiffuseColor() );
-	pointLight.draw();
+	if(bPointLight) pointLight.draw();
 	ofSetColor( spotLight.getDiffuseColor() );
-	spotLight.draw();
+	if(bSpotLight) spotLight.draw();
+	
+	ofSetColor(255, 255, 255);
+	ofDrawBitmapString("Point Light On (1) : "+ofToString(bPointLight) +"\n"+
+					   "Spot Light On (2) : "+ofToString(bSpotLight) +"\n"+
+					   "Directional Light On (3) : "+ofToString(bDirLight)+"\n"+
+					   "Shiny Objects On (s) : "+ofToString(bShiny) , 
+					   20, 20);
 }
 
 //--------------------------------------------------------------
 void testApp::keyPressed(int key) {
-	
+	switch (key) {
+		case '1':
+			bPointLight = !bPointLight;
+			break;
+		case '2':
+			bSpotLight = !bSpotLight;
+			break;
+		case '3':
+			bDirLight = !bDirLight;
+			break;
+		case 's':
+			bShiny	= !bShiny;
+			if (bShiny) ofMaterialShininess(120);
+			else ofMaterialShininess(30);
+			break;
+		default:
+			break;
+	}
 }
 
 //--------------------------------------------------------------
