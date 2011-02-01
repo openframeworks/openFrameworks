@@ -500,7 +500,7 @@ void ofAppGlutWindow::display(void){
 	}
 
 	// set viewport, clear the screen
-	glViewport(0, 0, glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT));		// used to be glViewport( 0, 0, width, height );
+	ofViewport(0, 0, glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT));		// used to be glViewport( 0, 0, width, height );
 	float * bgPtr = ofBgColorPtr();
 	bool bClearAuto = ofbClearBg();
 
@@ -514,8 +514,7 @@ void ofAppGlutWindow::display(void){
     #endif
 
 	if ( bClearAuto == true || nFrameCount < 3){
-		glClearColor(bgPtr[0],bgPtr[1],bgPtr[2], bgPtr[3]);
-		glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		ofClear(bgPtr[0]*255,bgPtr[1]*255,bgPtr[2]*255, bgPtr[3]*255);
 	}
 
 	if( bEnableSetupScreen )ofSetupScreen();
@@ -527,8 +526,7 @@ void ofAppGlutWindow::display(void){
         // on a PC resizing a window with this method of accumulation (essentially single buffering)
         // is BAD, so we clear on resize events.
         if (nFramesSinceWindowResized < 3){
-            glClearColor(bgPtr[0],bgPtr[1],bgPtr[2], bgPtr[3]);
-            glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        	ofClear(bgPtr[0]*255,bgPtr[1]*255,bgPtr[2]*255, bgPtr[3]*255);
         } else {
             if (nFrameCount < 3 || nFramesSinceWindowResized < 3)    glutSwapBuffers();
             else                                                     glFlush();
@@ -540,8 +538,7 @@ void ofAppGlutWindow::display(void){
 		if (bClearAuto == false){
 			// in accum mode resizing a window is BAD, so we clear on resize events.
 			if (nFramesSinceWindowResized < 3){
-				glClearColor(bgPtr[0],bgPtr[1],bgPtr[2], bgPtr[3]);
-				glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+				ofClear(bgPtr[0]*255,bgPtr[1]*255,bgPtr[2]*255, bgPtr[3]*255);
 			}
 		}
         glutSwapBuffers();
