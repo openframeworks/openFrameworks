@@ -1369,19 +1369,25 @@ void ofDrawBitmapString(string textString, float x, float y, float z){
 			break;
 
 		case OF_BITMAPMODE_MODEL_BILLBOARD:
+		{
 			//our aim here is to draw to screen
 			//at the viewport position related
 			//to the world position x,y,z
 			
 			//gluProject method
-			GLdouble modelview[16], projection[16];
-			GLint view[4];
-			double dScreenX, dScreenY, dScreenZ;
-			glGetDoublev(GL_MODELVIEW_MATRIX, modelview);
-			glGetDoublev(GL_PROJECTION_MATRIX, projection);
-			glGetIntegerv(GL_VIEWPORT, view);
-			view[0] = 0; view[1] = 0; //we're already drawing within viewport
-			gluProject(x, y, z, modelview, projection, view, &dScreenX, &dScreenY, &dScreenZ);
+			ofMatrix4x4 modelview, projection;
+			
+			glGetFloatv(GL_MODELVIEW_MATRIX, modelview.getPtr());
+			glGetFloatv(GL_PROJECTION_MATRIX, projection.getPtr());
+			
+			ofRectangle viewport = ofGetViewportRect();
+
+			ofVec3f camXYZ = ofVec3f(x,y,z) * modelview * projection;
+			
+			ofVec2f viewportXY;
+			
+			viewportXY.x = (camXYZ.x + 1.0f)/2.0f * viewport.width;
+			viewportXY.y = (camXYZ.y + 1.0f)/2.0f * viewport.height;			
 			
 			hasProjection = true;
 			glMatrixMode(GL_PROJECTION);
@@ -1393,12 +1399,14 @@ void ofDrawBitmapString(string textString, float x, float y, float z){
 			glPushMatrix();
 			glLoadIdentity();
 			
+			//quick version of ofSetupScreen()
 			glTranslatef(-1, -1, 0);
 			glScalef(2.0f/float(ofGetViewportWidth()), 2.0f/float(ofGetViewportHeight()), 1);
 			
-			glTranslated(dScreenX, dScreenY, dScreenZ);
-			glScaled(1, -1, 1);
+			ofTranslate(viewportXY.x, viewportXY.y, camXYZ.z);
+			ofScale(1, -1, 1);
 			break;
+		}
 
 		default:
 			break;
