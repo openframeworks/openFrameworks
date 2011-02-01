@@ -18,7 +18,7 @@ class ofPixels;
 class ofShape;
 class ofPolyline;
 class ofVertexData;
-class ofColor;
+#include "ofColor.h"
 
 
 //----------------------------------------------------------
@@ -245,6 +245,20 @@ public:
 	virtual void setColor(const ofColor & color, int _a){};
 	virtual void setColor(int gray){}; // new set a color as grayscale with one argument
 	virtual void setHexColor( int hexColor ){}; // hex, like web 0xFF0033;
+
+	// bg color
+	virtual ofColor getBgColor(){return ofColor();};
+	virtual bool bClearBg(){return true;};
+	virtual void background(const ofColor & c){};
+	virtual void background(float brightness){};
+	virtual void background(int hexColor, float _a=255.0f){};
+	virtual void background(int r, int g, int b, int a=255){};
+
+	virtual void setBackgroundAuto(bool bManual){};		// default is true
+
+	virtual void clear(float r, float g, float b, float a=0){};
+	virtual void clear(float brightness, float a=0){};
+	virtual void clearAlpha(){};
 };
 
 /*class ofBaseRenders{

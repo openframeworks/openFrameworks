@@ -163,5 +163,104 @@ public:
 		 }
 	 }
 
+	// color options
+	void setColor(int r, int g, int b){
+		 for(int i=0;i<(int)renderers.size();i++){
+			 renderers[i]->setColor(r,g,b);
+		 }
+	}
+
+	void setColor(int r, int g, int b, int a){
+		 for(int i=0;i<(int)renderers.size();i++){
+			 renderers[i]->setColor(r,g,b,a);
+		 }
+	}
+
+	void setColor(const ofColor & color){
+		 for(int i=0;i<(int)renderers.size();i++){
+			 renderers[i]->setColor(color);
+		 }
+	}
+
+	void setColor(const ofColor & color, int _a){
+		 for(int i=0;i<(int)renderers.size();i++){
+			 renderers[i]->setColor(color,_a);
+		 }
+	}
+
+	void setColor(int gray){
+		 for(int i=0;i<(int)renderers.size();i++){
+			 renderers[i]->setColor(gray);
+		 }
+	};
+
+	void setHexColor( int hexColor ){
+		 for(int i=0;i<(int)renderers.size();i++){
+			 renderers[i]->setHexColor(hexColor);
+		 }
+	 }; // hex, like web 0xFF0033;
+
+	// bg color
+	ofColor getBgColor(){
+		 if(renderers.size()){
+			 return renderers[0]->getBgColor();
+		 }else{
+			 return ofColor();
+		 }
+	}
+
+	bool bClearBg(){
+		 if(renderers.size()){
+			 return renderers[0]->bClearBg();
+		 }else{
+			 return true;
+		 }
+	}
+
+	void background(const ofColor & c){
+		 for(int i=0;i<(int)renderers.size();i++){
+			 renderers[i]->background(c);
+		 }
+	}
+
+	void background(float brightness){
+		 for(int i=0;i<(int)renderers.size();i++){
+			 renderers[i]->background(brightness);
+		 }
+	}
+
+	void background(int hexColor, float _a=255.0f){
+		 for(int i=0;i<(int)renderers.size();i++){
+			 renderers[i]->background(hexColor,_a);
+		 }
+	}
+
+	void background(int r, int g, int b, int a=255){
+		 for(int i=0;i<(int)renderers.size();i++){
+			 renderers[i]->background(r,g,b,a);
+		 }
+	}
+
+	void setBackgroundAuto(bool bManual){
+		 for(int i=0;i<(int)renderers.size();i++){
+			 renderers[i]->setBackgroundAuto(bManual);
+		 }
+	}
+
+	void clear(float r, float g, float b, float a=0){
+		 for(int i=0;i<(int)renderers.size();i++){
+			 renderers[i]->clear(r,g,b,a);
+		 }
+	}
+	void clear(float brightness, float a=0){
+		 for(int i=0;i<(int)renderers.size();i++){
+			 renderers[i]->clear(brightness,a);
+		 }
+	}
+	void clearAlpha(){
+		 for(int i=0;i<(int)renderers.size();i++){
+			 renderers[i]->clearAlpha();
+		 }
+	}
 	 vector<ofBaseRenderer *> renderers;
 };

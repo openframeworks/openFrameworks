@@ -133,6 +133,7 @@ void ofPushStyle();
 void ofPopStyle();
 
 void ofSetPolyMode(ofPolyWindingMode mode);
+void ofSetRectMode(ofRectMode mode);		// set the mode, either to OF_RECTMODE_CORNER or OF_RECTMODE_CENTER
 
 // end drawing modes
 //-----------------------------------------------------
@@ -150,8 +151,6 @@ void ofBackground(int r, int g, int b, int a=255);
 
 // user's access to settings (bgAuto, corner mode):
 void 	ofSetBackgroundAuto(bool bManual);		// default is true
-void 	ofSetRectMode(ofRectMode mode);		// set the mode, either to OF_RECTMODE_CORNER or OF_RECTMODE_CENTER
-
 
 void ofClear(float r, float g, float b, float a=0);
 void ofClear(float brightness, float a=0);
