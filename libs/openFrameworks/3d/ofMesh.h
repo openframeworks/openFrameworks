@@ -63,7 +63,6 @@ public:
 	*/
 	
 	void setVertexData(ofVertexData* m);
-	void setUseIndices(bool useIndices=true);
 	
 	ofVertexData* getVertexData();
 	const ofVertexData* getVertexData() const;
@@ -85,16 +84,25 @@ public:
 	void setupVbo();
 	void setupVertexArray();
 	
-	void enableColors();
+	bool enableColors();
 	void disableColors();
-	void enableNormals();
+	bool enableNormals();
 	void disableNormals();
-	void enableTexCoords();
+	bool enableTexCoords();
 	void disableTexCoords();
+	bool enableIndices();
+	void disableIndices();
+	
+	bool getTexCoordsEnabled();
+	bool getNormalsEnabled();
+	bool getColorsEnabled();
+	bool getIndicesEnabled();
+	
 	
     ofVertexData* vertexData;
-	bool bEnableIndices, bEnableColors, bEnableNormals, bEnableTexCoords;
 	ofVbo vbo;
 	int drawType;
+protected:	
+	bool bEnableIndices, bEnableColors, bEnableNormals, bEnableTexCoords;
 	meshRenderMethod renderMethod;
 };
