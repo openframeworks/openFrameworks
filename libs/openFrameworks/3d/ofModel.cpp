@@ -1,14 +1,13 @@
 //TODO:
 //handle STREAM vs STATIC draw allocation for meshes
 //animations
-//textures
 //bounding box/scale/etc?
-//incorporate loading here instead of ofModelLoader?
 
 #include "ofModel.h"
 
 //--------------------------------------------------------------
 ofModel::ofModel(){
+	bUsingTextures = false;
 	renderMethod = OF_MESH_USING_VERTEX_ARRAY;
 }
 
@@ -18,18 +17,41 @@ ofModel::~ofModel(){
 }
 
 //--------------------------------------------------------------
+void ofModel::bindTextureForMesh(int id){
+	int texId = textureLinks[id];
+	if(texId!=-1){
+		textures.at(texId).getTextureReference().bind();	
+	}
+}
+
+//--------------------------------------------------------------
+void ofModel::unbindTextureForMesh(int id){
+	int texId = textureLinks[id];
+	if(texId!=-1){
+		textures.at(texId).getTextureReference().unbind();	
+	}
+}
+
+//--------------------------------------------------------------
 void ofModel::drawWireframe(){
 	for (int i =0; i < (int)meshes.size();i++){
 		
-		/*if(!meshes.at(i).bEnableIndices){
-			meshes.at(i).setUseIndices();
-		}*/
-		
+		if(!meshes.at(i).enableIndices()){
+			ofLog(OF_LOG_WARNING, "no indices in mesh " + ofToString(i));
+		}
+
+		bool goodToTexture = bUsingTextures && meshes.at(i).getTexCoordsEnabled();
+		if(goodToTexture){
+			bindTextureForMesh(i);
+		}
 
 		meshes.at(i).setRenderMethod(renderMethod);
-
 		
 		meshes.at(i).drawWireframe();
+		
+		if(goodToTexture){
+			unbindTextureForMesh(i);
+		}
 	}
 }
 
@@ -37,15 +59,22 @@ void ofModel::drawWireframe(){
 void ofModel::drawFaces(){
 	for (int i =0; i < (int)meshes.size();i++){
 		
-		/*if(!meshes.at(i).bEnableIndices){
-			meshes.at(i).setUseIndices();
-		}*/
+		if(!meshes.at(i).enableIndices()){
+			ofLog(OF_LOG_WARNING, "no indices in mesh " + ofToString(i));
+		}
 		
-
+		bool goodToTexture = bUsingTextures && meshes.at(i).getTexCoordsEnabled();
+		if(goodToTexture){
+			bindTextureForMesh(i);
+		}
+		
 		meshes.at(i).setRenderMethod(renderMethod);
-
 		
 		meshes.at(i).drawFaces();
+		
+		if(goodToTexture){
+			unbindTextureForMesh(i);
+		}
 	}
 }
 
@@ -53,20 +82,25 @@ void ofModel::drawFaces(){
 void ofModel::drawVertices(){
 	for (int i =0; i < (int)meshes.size();i++){
 		
-		/*if(!meshes.at(i).bEnableIndices){
-			meshes.at(i).setUseIndices();
-		}*/
-		
+		bool goodToTexture = bUsingTextures && meshes.at(i).getTexCoordsEnabled();
+		if(goodToTexture){
+			bindTextureForMesh(i);
+		}
 
 		meshes.at(i).setRenderMethod(renderMethod);
-
 		
 		meshes.at(i).drawVertices();
+		
+		if(goodToTexture){
+			unbindTextureForMesh(i);
+		}
 	}
 }
 
 //--------------------------------------------------------------
-void ofModel::enableTexCoords(){
+
+void ofModel::enableTextures(){
+	bUsingTextures = true;
 	for (int i =0; i < (int)meshes.size();i++){
 		meshes.at(i).enableTexCoords();
 	}
@@ -87,23 +121,24 @@ void ofModel::enableColors(){
 }
 
 //--------------------------------------------------------------
-void ofModel::disableTexCoords(){
+void ofModel::disableTextures(){
+	bUsingTextures = false;
 	for (int i =0; i < (int)meshes.size();i++){
-		meshes.at(i).enableTexCoords();
+		meshes.at(i).disableTexCoords();
 	}
 }
 
 //--------------------------------------------------------------
 void ofModel::disableNormals(){
 	for (int i =0; i < (int)meshes.size();i++){
-		meshes.at(i).enableNormals();
+		meshes.at(i).disableNormals();
 	}
 }
 
 //--------------------------------------------------------------
 void ofModel::disableColors(){
 	for (int i =0; i < (int)meshes.size();i++){
-		meshes.at(i).enableColors();
+		meshes.at(i).disableColors();
 	}
 }
 

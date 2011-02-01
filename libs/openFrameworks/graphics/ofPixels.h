@@ -10,10 +10,10 @@ public:
 
 	ofPixels();
 	~ofPixels();
-	ofPixels(const ofPixels & mom);
+	ofPixels(const ofPixels & mom) { copyFrom( mom ); }
 	//ofPixels(ofPixels && mom);
 
-	void operator=(const ofPixels & mom);
+	ofPixels& operator=(const ofPixels & mom) { copyFrom( mom ); return *this; }
 
 	void allocate(int w, int h, int bitsPerPixel);
 	void allocate(int w, int h, ofImageType type);
@@ -27,10 +27,10 @@ public:
 	unsigned char * getPixels();
 	unsigned char * const getPixels() const;
 
-	int getPixelIndex(int x, int y);
-	ofColor getPixel(int x, int y);
+	int getPixelIndex(int x, int y) const;
+	ofColor getPixel(int x, int y) const;
 
-	unsigned char operator[](int pos);
+	unsigned char& operator[](int pos);
 
 	bool isAllocated() const;
 
@@ -44,6 +44,7 @@ public:
 	int getGlDataType() const;
 
 private:
+	void copyFrom( const ofPixels& mom );
 	
 	friend class ofPixelUtils;
 	
