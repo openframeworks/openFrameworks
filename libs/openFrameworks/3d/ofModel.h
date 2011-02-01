@@ -4,7 +4,9 @@
 
 #include "ofMesh.h"
 #include "ofUtils.h"
-#include "ofTexture.h"
+#include "ofImage.h"
+#include "ofConstants.h"
+#include <map>
 
 class ofModel{
 public:
