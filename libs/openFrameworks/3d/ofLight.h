@@ -22,6 +22,20 @@
 void ofEnableLighting();
 void ofDisableLighting();
 bool ofGetLightingEnabled();
+void ofSetSmoothLighting(bool b);
+void ofSetGlobalAmbientColor(const ofColor& c);
+void ofSetGlobalAmbientColor(float r, float g, float b, float a=255.f);
+
+//----------------------------------------
+void ofMaterialAmbient(const ofColor& c);
+void ofMaterialAmbient(float r, float g, float b, float a=255.f);
+void ofMaterialDiffuse(const ofColor& c);
+void ofMaterialDiffuse(float r, float g, float b, float a=255.f);
+void ofMaterialSpecular(const ofColor& c);
+void ofMaterialSpecular(float r, float g, float b, float a=255.f);
+void ofMaterialEmission(const ofColor& c);
+void ofMaterialEmission(float r, float g, float b, float a=255.f);
+void ofMaterialShininess(float s);
 
 //----------------------------------------
 // Use the public API of ofNode for all transformations
@@ -37,10 +51,22 @@ public:
 	void setDirectional(bool b);
 	bool getIsDirectional() const;
 	
+	void setSpotlight( float spotCutOff=45.f, float exponent=0.f );
+	bool getIsSpotlight();
+	void setSpotlightCutOff( float spotCutOff );
+	void setSpotConcentration( float exponent );
+	
+	void setPointLight();
+	bool getIsPointLight();
+	
+	void setAttenuation( float constant=2.f, float linear=1.f, float quadratic=0.5f );
+	
 	void setAmbientColor(const ofColor& c);
 	void setAmbientColor(float r, float g, float b, float a=255.f);
 	void setDiffuseColor(const ofColor& c);
+	void setDiffuseColor(float r, float g, float b, float a=255.f);
 	void setSpecularColor(const ofColor& c);
+	void setSpecularColor(float r, float g, float b, float a=255.f);
 	
 	ofColor getAmbientColor() const;
 	ofColor getDiffuseColor() const;
@@ -61,6 +87,7 @@ protected:
 	int glIndex;
 	int isEnabled;
 	bool isDirectional;
+	bool isSpotlight;
 	
 	
 	// update opengl light 
