@@ -54,7 +54,13 @@ public:
 	void setupGraphicDefaults();
 	void setupScreen();
 
-
+	// color options
+	void setColor(int r, int g, int b); // 0-255
+	void setColor(int r, int g, int b, int a); // 0-255
+	void setColor(const ofColor & color);
+	void setColor(const ofColor & color, int _a);
+	void setColor(int gray); // new set a color as grayscale with one argument
+	void setHexColor( int hexColor ); // hex, like web 0xFF0033;
 private:
 	ofHandednessType coordHandedness;
 	deque <ofRectangle> viewportHistory;
