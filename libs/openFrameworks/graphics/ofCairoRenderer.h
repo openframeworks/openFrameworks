@@ -23,7 +23,7 @@ public:
 		SVG,
 		PNG
 	};
-	void setup(string filename, Type type=ofCairoRenderer::PDF);
+	void setup(string filename, Type type=ofCairoRenderer::PDF, bool multiPage=true, bool b3D=false);
 	void close();
 
 	void draw(ofShape & path);
@@ -72,22 +72,31 @@ public:
 	cairo_t * getCairoContext();
 	cairo_surface_t * getCairoSurface();
 
-private:
 
+private:
 	void drawPath(const ofShape & path,bool is_subpath=false);
+	cairo_matrix_t * getCairoMatrix();
+	void setCairoMatrix();
+	ofVec3f transform(ofVec3f vec);
 
 	deque<ofPoint> curvePoints;
 	cairo_t * cr;
 	cairo_surface_t * surface;
 
 	stack<cairo_matrix_t> matrixStack;
-	stack<ofMatrix4x4> projectionStack;
-	stack<ofMatrix4x4> modelViewStack;
 	cairo_matrix_t tmpMatrix;
 
 	Type type;
 	int page;
+	bool multiPage;
 
+	// 3d transformation
+	bool b3D;
 	ofMatrix4x4 projection;
 	ofMatrix4x4 modelView;
+	ofRectangle viewportRect;
+
+	stack<ofMatrix4x4> projectionStack;
+	stack<ofMatrix4x4> modelViewStack;
+	stack<ofRectangle> viewportStack;
 };
