@@ -48,7 +48,7 @@ public:
 	void disable();
 	bool getIsEnabled() const;
 	
-	void setDirectional(bool b);
+	void setDirectional(bool b=true);
 	bool getIsDirectional() const;
 	
 	void setSpotlight( float spotCutOff=45.f, float exponent=0.f );
@@ -73,7 +73,12 @@ public:
 	ofColor getSpecularColor() const;
 	
 	void customDraw() {
-		ofBox(10);
+		if (!isSpotlight) {
+			ofBox(10);
+		} else {
+			
+		}
+		
 		ofDrawAxis(20);
 	}
 	

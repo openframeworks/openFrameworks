@@ -119,6 +119,9 @@ ofLight::ofLight():glIndex(0), isEnabled(false) {
 		if(lightsActive[i] == false) {
 			glIndex = i;
 			lightsActive[i] = true;
+			setAmbientColor(0, 0, 0);
+			setDiffuseColor(0, 0, 0);
+			setSpecularColor(255, 255, 255);
 			enable();
 			return;
 		}
