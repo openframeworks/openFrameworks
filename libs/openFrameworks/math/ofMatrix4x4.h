@@ -171,7 +171,14 @@ public:
 	void makePerspectiveMatrix(double fovy,  double aspectRatio,
 						 double zNear, double zFar);
 
-	// gluLookAt.
+	// makeCameraLookAtMatrix:
+	// creates a transformation matrix which makes the camera at a desired
+	// position pointing at (along z axis) desired target
+	// same as gluLookAt
+	void makeLookAtViewMatrix(const ofVec3f& eye, const ofVec3f& center, const ofVec3f& up);
+
+	// makeCameraLookAtMatrix: creates a transformation matrix which
+	// makes the camera at a desired position pointing at (along z axis) desired target
 	void makeLookAtMatrix(const ofVec3f& eye, const ofVec3f& center, const ofVec3f& up);
 
 
