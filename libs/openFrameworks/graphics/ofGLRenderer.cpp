@@ -54,22 +54,24 @@ void ofGLRenderer::draw(ofPolyline & poly){
 }
 
 void ofGLRenderer::draw(ofShapeTessellation & shape){
-	ofPushStyle();
 	if(shape.isFilled()){
+		ofPushStyle();
 		vector<ofVertexData> & mesh = shape.getTessellation();
-		ofSetColor( shape.getFillColor() * ofGetStyle().color);
+		setColor( shape.getFillColor() * ofGetStyle().color,shape.getFillColor().a/255. * ofGetStyle().color.a);
 		glEnableClientState(GL_VERTEX_ARRAY);
 		for(int i=0;i<(int)mesh.size();i++){
 			draw(mesh[i]);
 		}
+		ofPopStyle();
 	}
 	if(shape.hasOutline()){
-		ofSetColor( shape.getStrokeColor() * ofGetStyle().color);
+		ofPushStyle();
+		setColor( shape.getStrokeColor() * ofGetStyle().color, shape.getStrokeColor().a/255. * ofGetStyle().color.a);
 		vector<ofPolyline> & outlines = shape.getOutline();
 		for(int i=0; i<(int)outlines.size(); i++)
 			draw(outlines[i]);
+		ofPopStyle();
 	}
-	ofPopStyle();
 }
 
 void ofGLRenderer::draw(ofShape & path){
