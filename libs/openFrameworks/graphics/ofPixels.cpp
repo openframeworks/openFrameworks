@@ -10,15 +10,6 @@ ofPixels::~ofPixels(){
 	clear();
 }
 
-ofPixels::ofPixels(const ofPixels & mom){
-	bAllocated = false;
-	pixels = NULL;
-	if(mom.isAllocated()){
-		allocate(mom.getWidth(),mom.getHeight(),mom.getImageType());
-		memcpy(pixels,mom.getPixels(),mom.getWidth()*mom.getHeight()*mom.getBytesPerPixel());
-	}
-}
-
 
 /*ofPixels::ofPixels(ofPixels && mom){
 	pixels = mom.pixels;
@@ -35,7 +26,9 @@ ofPixels::ofPixels(const ofPixels & mom){
 	mom.bAllocated = false;
 }*/
 
-void ofPixels::operator=(const ofPixels & mom){
+void ofPixels::copyFrom(const ofPixels & mom){
+	bAllocated = false;
+	pixels = NULL;
 	if(mom.isAllocated()){
 		allocate(mom.getWidth(),mom.getHeight(),mom.getImageType());
 		memcpy(pixels,mom.getPixels(),mom.getWidth()*mom.getHeight()*mom.getBytesPerPixel());
@@ -149,7 +142,7 @@ unsigned char * const ofPixels::getPixels() const{
 	return pixels;
 }
 
-int ofPixels::getPixelIndex(int x, int y){
+int ofPixels::getPixelIndex(int x, int y) const{
 	if( !bAllocated ){
 		return 0;
 	}else{
@@ -157,7 +150,7 @@ int ofPixels::getPixelIndex(int x, int y){
 	}
 }
 
-ofColor ofPixels::getPixel(int x, int y){
+ofColor ofPixels::getPixel(int x, int y) const{
 	ofColor c;
 	int index = getPixelIndex(x, y);
 
@@ -172,7 +165,7 @@ ofColor ofPixels::getPixel(int x, int y){
 	return c;
 }
 
-unsigned char ofPixels::operator[](int pos){
+unsigned char& ofPixels::operator[](int pos){
 	return pixels[pos];
 }
 

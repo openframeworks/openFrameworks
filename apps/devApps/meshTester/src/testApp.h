@@ -25,9 +25,6 @@ class testApp : public ofBaseApp{
 	
 		bool lightsOn;
 		bool wiggleModel;
-	
-		ofImage tex;
-	
 };
 
 #endif
