@@ -12,6 +12,10 @@
 #include "ofAppRunner.h"
 #include "ofVertexData.h"
 
+ofGLRenderer::ofGLRenderer(){
+	bBackgroundAuto = true;
+	bgColor.set(0,0,0,0);
+}
 
 void ofGLRenderer::draw(ofVertexData & vertexData){
 	glVertexPointer(3, GL_FLOAT, sizeof(ofVec3f), vertexData.getVerticesPointer());
@@ -286,8 +290,8 @@ void ofGLRenderer::setupGraphicDefaults(){
 
 	ofDisableSmoothing();
 	ofEnableAlphaBlending();
-	ofBackground(200, 200, 200);
-	ofSetColor(255, 255, 255, 255);
+	background(200, 200, 200);
+	setColor(255, 255, 255, 255);
 }
 
 //----------------------------------------------------------
@@ -382,4 +386,66 @@ void ofGLRenderer::setHexColor(int hexColor){
 	int g = (hexColor >> 8) & 0xff;
 	int b = (hexColor >> 0) & 0xff;
 	setColor(r,g,b);
+}
+
+//----------------------------------------------------------
+void ofGLRenderer::clear(float r, float g, float b, float a) {
+	glClearColor(r / 255, g / 255, b / 255, a / 255);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+}
+
+//----------------------------------------------------------
+void ofGLRenderer::clear(float brightness, float a) {
+	clear(brightness, brightness, brightness, a);
+}
+
+//----------------------------------------------------------
+void ofGLRenderer::clearAlpha() {
+	glColorMask(0, 0, 0, 1);
+	glClearColor(0, 0, 0, 1);
+	glClear(GL_COLOR_BUFFER_BIT);
+	glColorMask(1, 1, 1, 1);
+}
+
+//----------------------------------------------------------
+void ofGLRenderer::setBackgroundAuto(bool bAuto){
+	bBackgroundAuto = bAuto;
+}
+
+//----------------------------------------------------------
+bool ofGLRenderer::bClearBg(){
+	return !bBackgroundAuto;
+}
+
+//----------------------------------------------------------
+ofColor ofGLRenderer::getBgColor(){
+	return bgColor;
+}
+
+//----------------------------------------------------------
+void ofGLRenderer::background(const ofColor & c){
+	background ( c.r, c.g, c.b);
+}
+
+//----------------------------------------------------------
+void ofGLRenderer::background(float brightness) {
+	background(brightness);
+}
+
+//----------------------------------------------------------
+void ofGLRenderer::background(int hexColor, float _a){
+	background ( (hexColor >> 16) & 0xff, (hexColor >> 8) & 0xff, (hexColor >> 0) & 0xff, _a);
+}
+
+//----------------------------------------------------------
+void ofGLRenderer::background(int r, int g, int b, int a){
+	bgColor[0] = (float)r / (float)255.0f;
+	bgColor[1] = (float)g / (float)255.0f;
+	bgColor[2] = (float)b / (float)255.0f;
+	bgColor[3] = (float)a / (float)255.0f;
+	// if we are in not-auto mode, then clear with a bg call...
+	if (bClearBg() == false){
+		glClearColor(bgColor[0],bgColor[1],bgColor[2], bgColor[3]);
+		glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	}
 }

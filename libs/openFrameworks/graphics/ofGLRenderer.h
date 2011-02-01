@@ -7,7 +7,7 @@ class ofVertexData;
 
 class ofGLRenderer: public ofBaseRenderer{
 public:
-	ofGLRenderer(){}
+	ofGLRenderer();
 	~ofGLRenderer(){}
 	void draw(ofVertexData & vertexData);
 	void draw(ofPolyline & poly);
@@ -61,8 +61,24 @@ public:
 	void setColor(const ofColor & color, int _a);
 	void setColor(int gray); // new set a color as grayscale with one argument
 	void setHexColor( int hexColor ); // hex, like web 0xFF0033;
+
+	// bg color
+	ofColor getBgColor();
+	bool bClearBg();
+	void background(const ofColor & c);
+	void background(float brightness);
+	void background(int hexColor, float _a=255.0f);
+	void background(int r, int g, int b, int a=255);
+
+	void setBackgroundAuto(bool bManual);		// default is true
+
+	void clear(float r, float g, float b, float a=0);
+	void clear(float brightness, float a=0);
+	void clearAlpha();
+
 private:
 	ofHandednessType coordHandedness;
 	deque <ofRectangle> viewportHistory;
-
+	bool bBackgroundAuto;
+	ofColor bgColor;
 };

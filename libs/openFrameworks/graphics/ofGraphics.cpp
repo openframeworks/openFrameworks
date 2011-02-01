@@ -45,11 +45,9 @@
 // static
 static float	drawMode			= OF_FILLED;
 static int		numCirclePts		= 0;
-static float	bgColor[4]			= {0,0,0,0};
 static bool		bSmoothHinted			= false;
 static bool			bUsingArbTex		= true;
 static bool			bUsingNormalizedTexCoords = false;
-static bool 		bBakgroundAuto		= true;
 static ofRectMode	cornerMode			= OF_RECTMODE_CORNER;
 static ofPolyWindingMode		polyMode	= OF_POLY_WINDING_ODD;
 
@@ -319,36 +317,32 @@ void ofRotate(float degrees){
 
 //----------------------------------------------------------
 void ofClear(float r, float g, float b, float a) {
-	glClearColor(r / 255, g / 255, b / 255, a / 255);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	renderer->clear(r,g,b,a);
 }
 
 //----------------------------------------------------------
 void ofClear(float brightness, float a) {
-	ofClear(brightness, brightness, brightness, a);
+	renderer->clear(brightness, brightness, brightness, a);
 }
 
 //----------------------------------------------------------
 void ofClearAlpha() {
-	glColorMask(0, 0, 0, 1);
-	glClearColor(0, 0, 0, 1);
-	glClear(GL_COLOR_BUFFER_BIT);
-	glColorMask(1, 1, 1, 1);
+	renderer->clearAlpha();
 }	
 
 //----------------------------------------------------------
 void ofSetBackgroundAuto(bool bAuto){
-	bBakgroundAuto = bAuto;
+	renderer->setBackgroundAuto(bAuto);
 }
 
 //----------------------------------------------------------
 bool ofbClearBg(){
-	return bBakgroundAuto;
+	return renderer->bClearBg();
 }
 
 //----------------------------------------------------------
 float * ofBgColorPtr(){
-	return bgColor;
+	return &renderer->getBgColor().r;
 }
 
 //----------------------------------------------------------
@@ -368,15 +362,7 @@ void ofBackground(int hexColor, float _a){
 
 //----------------------------------------------------------
 void ofBackground(int r, int g, int b, int a){
-	bgColor[0] = (float)r / (float)255.0f;
-	bgColor[1] = (float)g / (float)255.0f;
-	bgColor[2] = (float)b / (float)255.0f;
-	bgColor[3] = (float)a / (float)255.0f;
-	// if we are in not-auto mode, then clear with a bg call...
-	if (ofbClearBg() == false){
-		glClearColor(bgColor[0],bgColor[1],bgColor[2], bgColor[3]);
-		glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	}
+	renderer->background(r,g,b,a);
 }
 
 // end background functions
@@ -520,7 +506,7 @@ void ofSetColor(int r, int g, int b, int a){
 	currentStyle.color.b = b;
 	currentStyle.color.a = a;
 
-	renderer->setColor(r,g,b,255);
+	renderer->setColor(r,g,b,a);
 }
 
 //----------------------------------------------------------
