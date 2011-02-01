@@ -1,3 +1,5 @@
+//TODO: should textures be ofTexture or ofImage (dynamically drawing to model texture?)
+
 #pragma once
 
 #include "ofMesh.h"
@@ -13,17 +15,24 @@ public:
 	void drawFaces();
 	void drawVertices();
 	
-	void enableTexCoords();
-	void disableTexCoords();
+	void enableTextures();
+	void disableTextures();
 	void enableNormals();
 	void disableNormals();
 	void enableColors();
 	void disableColors();
 	
+	void bindTextureForMesh(int id);
+	void unbindTextureForMesh(int id);
+	
 	void setRenderMethod(meshRenderMethod m);
 	
 	vector<ofMesh> meshes;
-	vector<ofTexture> textures;
+	vector<ofImage> textures;
+	map<int, int> textureLinks;
+	
+protected:
+	bool bUsingTextures;
 
 private:
 	meshRenderMethod renderMethod;
