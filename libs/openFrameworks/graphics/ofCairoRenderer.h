@@ -69,6 +69,7 @@ public:
 	void setupGraphicDefaults();
 	void setupScreen();
 
+
 	cairo_t * getCairoContext();
 	cairo_surface_t * getCairoSurface();
 

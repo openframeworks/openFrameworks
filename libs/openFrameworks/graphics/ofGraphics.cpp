@@ -501,33 +501,26 @@ void ofSetColor(const ofColor & color, int _a){
 }
 
 //----------------------------------------------------------
-void ofSetColor(int _r, int _g, int _b){
-	float r = (float)_r / 255.0f; r = MAX(0,MIN(r,1.0f));
-	float g = (float)_g / 255.0f; g = MAX(0,MIN(g,1.0f));
-	float b = (float)_b / 255.0f; b = MAX(0,MIN(b,1.0f));
+void ofSetColor(int r, int g, int b){
 
-	currentStyle.color.r = r * 255.0f;
-	currentStyle.color.g = g * 255.0f;
-	currentStyle.color.b = b * 255.0f;
+	currentStyle.color.r = r;
+	currentStyle.color.g = g;
+	currentStyle.color.b = b;
 	currentStyle.color.a = 255.0f;
 
-	glColor4f(r,g,b,1);
+	renderer->setColor(r,g,b,255);
 }
 
 
 //----------------------------------------------------------
-void ofSetColor(int _r, int _g, int _b, int _a){
-	float r = (float)_r / 255.0f; r = MAX(0,MIN(r,1.0f));
-	float g = (float)_g / 255.0f; g = MAX(0,MIN(g,1.0f));
-	float b = (float)_b / 255.0f; b = MAX(0,MIN(b,1.0f));
-	float a = (float)_a / 255.0f; a = MAX(0,MIN(a,1.0f));
+void ofSetColor(int r, int g, int b, int a){
 
-	currentStyle.color.r = r * 255.0f;
-	currentStyle.color.g = g * 255.0f;
-	currentStyle.color.b = b * 255.0f;
-	currentStyle.color.a = a * 255.0f;
+	currentStyle.color.r = r;
+	currentStyle.color.g = g;
+	currentStyle.color.b = b;
+	currentStyle.color.a = a;
 
-	glColor4f(r,g,b,a);
+	renderer->setColor(r,g,b,255);
 }
 
 //----------------------------------------------------------

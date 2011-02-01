@@ -349,3 +349,37 @@ void ofGLRenderer::rotateZ(float degrees){
 void ofGLRenderer::rotate(float degrees){
 	glRotatef(degrees, 0, 0, 1);
 }
+
+//----------------------------------------------------------
+void ofGLRenderer::setColor(const ofColor & color){
+	setColor(color.r,color.g,color.b,color.a);
+}
+
+//----------------------------------------------------------
+void ofGLRenderer::setColor(const ofColor & color, int _a){
+	setColor(color.r,color.g,color.b,_a);
+}
+
+//----------------------------------------------------------
+void ofGLRenderer::setColor(int _r, int _g, int _b){
+	glColor4ub(_r,_g,_b,255);
+}
+
+
+//----------------------------------------------------------
+void ofGLRenderer::setColor(int _r, int _g, int _b, int _a){
+	glColor4ub(_r,_g,_b,_a);
+}
+
+//----------------------------------------------------------
+void ofGLRenderer::setColor(int gray){
+	setColor(gray, gray, gray);
+}
+
+//----------------------------------------------------------
+void ofGLRenderer::setHexColor(int hexColor){
+	int r = (hexColor >> 16) & 0xff;
+	int g = (hexColor >> 8) & 0xff;
+	int b = (hexColor >> 0) & 0xff;
+	setColor(r,g,b);
+}

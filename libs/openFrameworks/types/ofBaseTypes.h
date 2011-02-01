@@ -18,6 +18,7 @@ class ofPixels;
 class ofShape;
 class ofPolyline;
 class ofVertexData;
+class ofColor;
 
 
 //----------------------------------------------------------
@@ -235,6 +236,15 @@ public:
 	// screen coordinate things / default gl values
 	virtual void setupGraphicDefaults(){};
 	virtual void setupScreen(){};
+
+
+	// color options
+	virtual void setColor(int r, int g, int b){}; // 0-255
+	virtual void setColor(int r, int g, int b, int a){}; // 0-255
+	virtual void setColor(const ofColor & color){};
+	virtual void setColor(const ofColor & color, int _a){};
+	virtual void setColor(int gray){}; // new set a color as grayscale with one argument
+	virtual void setHexColor( int hexColor ){}; // hex, like web 0xFF0033;
 };
 
 /*class ofBaseRenders{
