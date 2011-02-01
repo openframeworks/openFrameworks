@@ -29,6 +29,7 @@ ofCairoRenderer::ofCairoRenderer(){
 	type = PDF;
 	surface = NULL;
 	cr = NULL;
+	setupGraphicDefaults();
 }
 
 ofCairoRenderer::~ofCairoRenderer(){
@@ -44,8 +45,10 @@ void ofCairoRenderer::setup(string filename, Type type, bool multiPage_, bool b3
 		surface = cairo_svg_surface_create(ofToDataPath(filename).c_str(),ofGetWidth(),ofGetHeight());
 		break;
 	}
-	viewportRect.set(0,0,ofGetWidth(),ofGetHeight());
+
 	cr = cairo_create(surface);
+	viewportRect.set(0,0,ofGetWidth(),ofGetHeight());
+	viewport(viewportRect);
 	page = 0;
 	b3D = b3D_;
 	multiPage = multiPage_;
@@ -248,6 +251,7 @@ void ofCairoRenderer::drawPath(const ofShape & path,bool is_subpath){
 
 	if(path.getStrokeWidth()>0){
 		ofColor c = path.getStrokeColor() * ofGetStyle().color;
+		c.a = path.getStrokeColor().a/255. * ofGetStyle().color.a;
 		cairo_set_source_rgba(cr, (float)c.r/255.0, (float)c.g/255.0, (float)c.b/255.0, (float)c.a/255.0);
 		cairo_set_line_width( cr, path.getStrokeWidth() );
 		if(path.isFilled())
@@ -257,6 +261,7 @@ void ofCairoRenderer::drawPath(const ofShape & path,bool is_subpath){
 	}
 	if(path.isFilled()){
 		ofColor c = path.getFillColor() * ofGetStyle().color;
+		c.a = path.getFillColor().a/255. * ofGetStyle().color.a;
 		cairo_set_source_rgba(cr, (float)c.r/255.0, (float)c.g/255.0, (float)c.b/255.0, (float)c.a/255.0);
 		cairo_fill( cr );
 	}
@@ -323,19 +328,7 @@ void ofCairoRenderer::rotate(float degrees){
 
 void ofCairoRenderer::setupScreen(){
 	if(!surface || !cr) return;
-	if(page==0 || !multiPage){
-		page=1;
-		//TODO: clear page if not bg auto?
-		cairo_surface_flush(surface);
-		return;
-	}else{
-		page++;
-		if(ofbClearBg()){
-			cairo_show_page(cr);
-		}else{
-			cairo_copy_page(cr);
-		}
-	}
+
 	ofSetupScreenPerspective();	// assume defaults
 }
 
@@ -352,6 +345,10 @@ void ofCairoRenderer::popView(){
 // setup matrices and viewport (upto you to push and pop view before and after)
 // if width or height are 0, assume windows dimensions (ofGetWidth(), ofGetHeight())
 // if nearDist or farDist are 0 assume defaults (calculated based on width / height)
+void ofCairoRenderer::viewport(ofRectangle v){
+	viewport(v.x,v.y,v.width,v.height);
+}
+
 void ofCairoRenderer::viewport(float x, float y, float width, float height, bool invertY){
 	if(width == 0) width = ofGetWidth();
 	if(height == 0) height = ofGetHeight();
@@ -360,7 +357,25 @@ void ofCairoRenderer::viewport(float x, float y, float width, float height, bool
 		y = ofGetHeight() - (y + height);
 	}
 
+	cairo_surface_flush(surface);
 	viewportRect.set(x, y, width, height);
+	if(page==0 || !multiPage){
+		page=1;
+	}else{
+		page++;
+		if(bClearBg()){
+			cairo_show_page(cr);
+		}else{
+			cairo_copy_page(cr);
+		}
+	}
+	cairo_reset_clip(cr);
+	cairo_new_path(cr);
+	cairo_line_to(cr,viewportRect.x,viewportRect.y);
+	cairo_line_to(cr,viewportRect.x+viewportRect.width,viewportRect.y);
+	cairo_line_to(cr,viewportRect.x+viewportRect.width,viewportRect.y+viewportRect.height);
+	cairo_line_to(cr,viewportRect.x,viewportRect.y+viewportRect.height);
+	cairo_clip(cr);
 };
 
 void ofCairoRenderer::setupScreenPerspective(float width, float height, int orientation, bool vFlip, float fov, float nearDist, float farDist){
@@ -490,7 +505,8 @@ ofHandednessType ofCairoRenderer::getCoordHandedness(){
 };
 
 void ofCairoRenderer::setupGraphicDefaults(){
-
+	background(200, 200, 200);
+	setColor(255, 255, 255, 255);
 };
 
 void ofCairoRenderer::rotate(float degrees, float vecX, float vecY, float vecZ){
@@ -505,6 +521,64 @@ void ofCairoRenderer::rotateX(float degrees){
 void ofCairoRenderer::rotateY(float degrees){
 	if(!b3D) return;
 	rotate(degrees,0,1,0);
+}
+
+//----------------------------------------------------------
+void ofCairoRenderer::clear(float r, float g, float b, float a) {
+	if(!surface || ! cr) return;
+	cairo_set_source_rgba(cr,r/255., g/255., b/255., a/255.);
+	cairo_paint(cr);
+}
+
+//----------------------------------------------------------
+void ofCairoRenderer::clear(float brightness, float a) {
+	clear(brightness, brightness, brightness, a);
+}
+
+//----------------------------------------------------------
+void ofCairoRenderer::clearAlpha() {
+}
+
+//----------------------------------------------------------
+void ofCairoRenderer::setBackgroundAuto(bool bAuto){
+	bBackgroundAuto = bAuto;
+}
+
+//----------------------------------------------------------
+bool ofCairoRenderer::bClearBg(){
+	return bBackgroundAuto;
+}
+
+//----------------------------------------------------------
+ofColor ofCairoRenderer::getBgColor(){
+	return bgColor;
+}
+
+//----------------------------------------------------------
+void ofCairoRenderer::background(const ofColor & c){
+	background ( c.r, c.g, c.b);
+}
+
+//----------------------------------------------------------
+void ofCairoRenderer::background(float brightness) {
+	background(brightness);
+}
+
+//----------------------------------------------------------
+void ofCairoRenderer::background(int hexColor, float _a){
+	background ( (hexColor >> 16) & 0xff, (hexColor >> 8) & 0xff, (hexColor >> 0) & 0xff, _a);
+}
+
+//----------------------------------------------------------
+void ofCairoRenderer::background(int r, int g, int b, int a){
+	bgColor[0] = (float)r / (float)255.0f;
+	bgColor[1] = (float)g / (float)255.0f;
+	bgColor[2] = (float)b / (float)255.0f;
+	bgColor[3] = (float)a / (float)255.0f;
+	// if we are in not-auto mode, then clear with a bg call...
+	if (bClearBg() == false){
+		clear(r,g,b,a);
+	}
 }
 
 

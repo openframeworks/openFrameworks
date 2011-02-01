@@ -14,7 +14,6 @@
 
 ofGLRenderer::ofGLRenderer(){
 	bBackgroundAuto = true;
-	bgColor.set(0,0,0,0);
 }
 
 void ofGLRenderer::draw(ofVertexData & vertexData){
@@ -293,7 +292,6 @@ void ofGLRenderer::setupGraphicDefaults(){
 	ofDisableSmoothing();
 	ofEnableAlphaBlending();
 	background(200, 200, 200);
-	setColor(255, 255, 255, 255);
 }
 
 //----------------------------------------------------------
@@ -416,7 +414,7 @@ void ofGLRenderer::setBackgroundAuto(bool bAuto){
 
 //----------------------------------------------------------
 bool ofGLRenderer::bClearBg(){
-	return !bBackgroundAuto;
+	return bBackgroundAuto;
 }
 
 //----------------------------------------------------------
