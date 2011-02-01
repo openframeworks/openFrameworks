@@ -910,7 +910,7 @@ void ofMatrix4x4::makeLookAtMatrix(const ofVec3f& eye,const ofVec3f& center,cons
 	_mat[1].set(yaxis.x, yaxis.y, yaxis.z, 0);
 	_mat[2].set(zaxis.x, zaxis.y, zaxis.z, 0);
 //	_mat[3].set(-xaxis.dot(eye), -yaxis.dot(eye), -zaxis.dot(eye), 1);
-	_mat[3].set(eye.x, eye.y, eye.z, 1);
+	_mat[3].set(-xaxis.dot(eye), -yaxis.dot(eye), -zaxis.dot(eye), 1);
 //	_mat[3].set(0, 0, 0, 1);
 	
 //	zaxis = normal(At - Eye)
