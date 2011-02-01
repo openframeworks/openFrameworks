@@ -10,15 +10,6 @@ ofPixels::~ofPixels(){
 	clear();
 }
 
-ofPixels::ofPixels(const ofPixels & mom){
-	bAllocated = false;
-	pixels = NULL;
-	if(mom.isAllocated()){
-		allocate(mom.getWidth(),mom.getHeight(),mom.getImageType());
-		memcpy(pixels,mom.getPixels(),mom.getWidth()*mom.getHeight()*mom.getBytesPerPixel());
-	}
-}
-
 
 /*ofPixels::ofPixels(ofPixels && mom){
 	pixels = mom.pixels;
@@ -35,7 +26,9 @@ ofPixels::ofPixels(const ofPixels & mom){
 	mom.bAllocated = false;
 }*/
 
-void ofPixels::operator=(const ofPixels & mom){
+void ofPixels::copyFrom(const ofPixels & mom){
+	bAllocated = false;
+	pixels = NULL;
 	if(mom.isAllocated()){
 		allocate(mom.getWidth(),mom.getHeight(),mom.getImageType());
 		memcpy(pixels,mom.getPixels(),mom.getWidth()*mom.getHeight()*mom.getBytesPerPixel());
