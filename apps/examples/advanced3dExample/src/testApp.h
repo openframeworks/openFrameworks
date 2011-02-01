@@ -69,24 +69,3 @@ class testApp : public ofBaseApp{
 		//ray drawn under mouse cursor [start,end]
 		ofVec3f					ray[2];
 };
-
-/*
-
- - uncomment out the world drawing things (axis+box)
- - link the camera to the target
- - inverse the rotation
-
-*/
-
-
-/*
- Can we change the global size of objects?
-	there appears to be an arbitrary scale of '100'
-	i.e. a ofBox(100) fills the screen.
- 
- Should customDraw be public?
- Add customUpdate?
- 
- test isActive on camera end
- 
-*/
