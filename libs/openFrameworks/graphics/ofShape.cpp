@@ -1,9 +1,3 @@
-/*
- * ofPath.cpp
- *
- *  Created on: 22/01/2011
- *      Author: arturo
- */
 #include "ofShape.h"
 #include "ofGraphics.h"
 

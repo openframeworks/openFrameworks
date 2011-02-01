@@ -1,9 +1,3 @@
-/*
- * ofShapeGLRenderers.cpp
- *
- *  Created on: 21/01/2011
- *      Author: arturo
- */
 #include "ofGLRenderer.h"
 #include "ofShapeTessellation.h"
 #include "ofVertexData.h"
