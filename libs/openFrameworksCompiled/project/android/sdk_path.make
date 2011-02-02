@@ -1,0 +1,1 @@
+/home/arturo/Descargas/android-sdk-linux_86
