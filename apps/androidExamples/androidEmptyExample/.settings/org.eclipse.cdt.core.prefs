@@ -1,0 +1,7 @@
+#Wed Jul 07 22:26:56 CEST 2010
+eclipse.preferences.version=1
+environment/project/cdt.managedbuild.config.gnu.exe.debug.870248745.1398944811=
+environment/project/cdt.managedbuild.config.gnu.exe.debug.870248745.1398944811/append=true
+environment/project/cdt.managedbuild.config.gnu.exe.debug.870248745.1398944811/appendContributed=true
+environment/project/cdt.managedbuild.config.gnu.exe.debug.963334338.1403946749.1200695244=<?xml version\="1.0" encoding\="UTF-8" standalone\="no"?>\n<environment append\="true" appendContributed\="true">\n<variable delimiter\="\:" name\="PATH" operation\="append" value\="${PATH}\:${NDK_ROOT}/build/prebuilt/linux-x86/arm-eabi-4.4.0/bin"/>\n</environment>\n
+environment/project/cdt.managedbuild.config.gnu.exe.release.1007514024.789166655=<?xml version\="1.0" encoding\="UTF-8" standalone\="no"?>\n<environment append\="true" appendContributed\="true">\n<variable delimiter\="\:" name\="PATH" operation\="append" value\="${PATH}\:${NDK_ROOT}/build/prebuilt/linux-x86/arm-eabi-4.4.0/bin"/>\n<variable delimiter\="\:" name\="NDK_ROOT" operation\="append" value\="/home/arturo/Descargas/ndk-android-ndk-r3-crystax/"/>\n</environment>\n

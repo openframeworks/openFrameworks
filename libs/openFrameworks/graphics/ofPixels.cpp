@@ -83,7 +83,7 @@ void ofPixels::allocate(int w, int h, ofImageType type){
 		glDataType = GL_RGBA;
 		break;
 	default:
-		ofLog(OF_LOG_ERROR, "format not supported");
+		ofLog(OF_LOG_ERROR,"ofPixels: format not supported");
 		break;
 	}
 

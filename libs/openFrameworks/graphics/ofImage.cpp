@@ -10,6 +10,21 @@
 static bool		bFreeImageInited = false;
 //----------------------------------------------------------
 
+#ifdef TARGET_ANDROID
+	// android destroys the opengl context on screen orientation change
+	// or when the application runs in the background so we need to reload
+	// all the textures when the context is created again.
+	// keeping a pointer to all the images we can tell them to reload from a static method
+	#include <set>
+	set<ofImage*> all_images;
+
+	void ofReloadAllImageTextures(){
+		set<ofImage*>::iterator it;
+		for(it=all_images.begin(); it!=all_images.end(); it++){
+			(*it)->reloadTexture();
+		}
+	}
+#endif
 //----------------------------------------------------
 FIBITMAP *  getBmpFromPixels(ofPixels &pix){
 
@@ -237,6 +252,10 @@ ofImage::ofImage(){
 		FreeImage_Initialise();
 		bFreeImageInited = true;
 	}
+
+#ifdef TARGET_ANDROID
+	all_images.insert(this);
+#endif
 }
 
 //----------------------------------------------------------
@@ -262,6 +281,18 @@ ofImage::ofImage(const ofImage& mom) {
 //----------------------------------------------------------
 ofImage::~ofImage(){
 	clear();
+
+#ifdef TARGET_ANDROID
+	all_images.erase(this);
+#endif
+}
+
+
+//----------------------------------------------------------
+void ofImage::reloadTexture(){
+	if (myPixels.isAllocated() == true && bUseTexture == true){
+		tex.allocate(myPixels.getWidth(), myPixels.getHeight(), myPixels.getGlDataType());
+	}
 }
 
 //----------------------------------------------------------
@@ -470,12 +501,12 @@ void ofImage::grabScreen(int _x, int _y, int _w, int _h){
 		resize(_w, _h);
 	}
 
-	#ifndef TARGET_OF_IPHONE
+	#ifndef TARGET_OPENGLES
 		glPushClientAttrib( GL_CLIENT_PIXEL_STORE_BIT );											// be nice to anyone else who might use pixelStore
 	#endif
-		glPixelStorei(GL_PACK_ALIGNMENT, 1);														// set read non block aligned...
+		glPixelStorei(GL_PACK_ALIGNMENT, 1);	
 		glReadPixels(_x, _y, _w, _h, myPixels.getGlDataType(),GL_UNSIGNED_BYTE, myPixels.getPixels());		// read the memory....
-	#ifndef TARGET_OF_IPHONE
+	#ifndef TARGET_OPENGLES
 		glPopClientAttrib();
 	#endif
 
@@ -641,7 +672,7 @@ void ofImage::changeTypeOfPixels(ofPixels &pix, ofImageType newType){
 			}
 			break;
 		default:
-			ofLog(OF_LOG_ERROR, "format not supported");
+			ofLog(OF_LOG_ERROR,"ofImage: format not supported");
 	}
 
 	putBmpIntoPixels(convertedBmp, pix, false);

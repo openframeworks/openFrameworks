@@ -25,6 +25,11 @@
 	#define OF_VID_GRABBER_TYPE ofGstVideoGrabber()
 #endif
 
+#ifdef OF_VIDEO_CAPTURE_ANDROID
+	#include "ofxAndroidVideoGrabber.h"
+	#define OF_VID_GRABBER_TYPE ofxAndroidVideoGrabber()
+#endif
+
 class ofVideoGrabber : public ofBaseVideoGrabber,public ofBaseDraws, public ofBaseHasTexture{
 
 	public :
@@ -43,6 +48,7 @@ class ofVideoGrabber : public ofBaseVideoGrabber,public ofBaseDraws, public ofBa
 		bool				initGrabber(int w, int h){return initGrabber(w,h,true);}
 		bool				initGrabber(int w, int h, bool bTexture);
 		void				setPixelFormat(ofPixelFormat pixelFormat);
+		ofPixelFormat 		getPixelFormat();
 		
 		void				videoSettings();
 		unsigned char 	*	getPixels();
