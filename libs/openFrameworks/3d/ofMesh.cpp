@@ -5,7 +5,7 @@ ofMesh::ofMesh(){
 	vbo = ofVbo();
 	vertexData = NULL;
 	renderMethod = OF_MESH_USING_VERTEX_ARRAY;
-	drawType = GL_STATIC_DRAW_ARB;
+	drawType = GL_STATIC_DRAW;
 	bEnableIndices = false;
 	bEnableColors = false;
 	bEnableTexCoords = false;
@@ -302,16 +302,21 @@ void ofMesh::draw(polyMode renderType){
 		setupVertexArray();
 	}
 	
+#ifndef TARGET_OF_IPHONE 
 	glPushAttrib(GL_POLYGON_BIT);
 	glPolygonMode(GL_FRONT_AND_BACK, ofGetGLPolyMode(renderType));
-	
+#endif
 	GLuint mode = ofGetGLPrimitiveMode(vertexData->getMode());
 	
 	if(getIndicesEnabled()){
 		if(renderMethod == OF_MESH_USING_VBO){
 			vbo.drawElements(mode,vertexData->getNumIndices());
 		}else if(renderMethod == OF_MESH_USING_VERTEX_ARRAY && vertexData->getNumIndices()){
+#ifdef TARGET_OF_IPHONE 
+			glDrawElements(mode, vertexData->getNumIndices(), GL_UNSIGNED_SHORT, vertexData->getIndexPointer());
+#else
 			glDrawElements(mode, vertexData->getNumIndices(), GL_UNSIGNED_INT, vertexData->getIndexPointer());
+#endif
 		}
 	}else{
 		if(renderMethod == OF_MESH_USING_VBO){
@@ -328,7 +333,9 @@ void ofMesh::draw(polyMode renderType){
 		glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 	}
 		
+#ifndef TARGET_OF_IPHONE
 	glPopAttrib();
+#endif
 }
 
 //--------------------------------------------------------------

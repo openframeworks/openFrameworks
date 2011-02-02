@@ -1,7 +1,8 @@
 //TODO: Add edge flags?
 
 #pragma once
-#include "ofMain.h"
+#include "ofGraphics.h"
+#include "ofUtils.h"
 
 class ofVbo {
 	

@@ -44,8 +44,6 @@
 		E4F3BA6E12F4C4BF002D19BB /* ofLight.h in Headers */ = {isa = PBXBuildFile; fileRef = E4F3BA5A12F4C4BF002D19BB /* ofLight.h */; };
 		E4F3BA6F12F4C4BF002D19BB /* ofMesh.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BA5B12F4C4BF002D19BB /* ofMesh.cpp */; };
 		E4F3BA7012F4C4BF002D19BB /* ofMesh.h in Headers */ = {isa = PBXBuildFile; fileRef = E4F3BA5C12F4C4BF002D19BB /* ofMesh.h */; };
-		E4F3BA7112F4C4BF002D19BB /* ofMeshNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BA5D12F4C4BF002D19BB /* ofMeshNode.cpp */; };
-		E4F3BA7212F4C4BF002D19BB /* ofMeshNode.h in Headers */ = {isa = PBXBuildFile; fileRef = E4F3BA5E12F4C4BF002D19BB /* ofMeshNode.h */; };
 		E4F3BA7312F4C4BF002D19BB /* ofNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BA5F12F4C4BF002D19BB /* ofNode.cpp */; };
 		E4F3BA7412F4C4BF002D19BB /* ofNode.h in Headers */ = {isa = PBXBuildFile; fileRef = E4F3BA6012F4C4BF002D19BB /* ofNode.h */; };
 		E4F3BA7512F4C4BF002D19BB /* ofScene3d.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BA6112F4C4BF002D19BB /* ofScene3d.cpp */; };
@@ -226,8 +224,6 @@
 		E4F3BA5A12F4C4BF002D19BB /* ofLight.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofLight.h; path = ../../../openFrameworks/3d/ofLight.h; sourceTree = SOURCE_ROOT; };
 		E4F3BA5B12F4C4BF002D19BB /* ofMesh.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofMesh.cpp; path = ../../../openFrameworks/3d/ofMesh.cpp; sourceTree = SOURCE_ROOT; };
 		E4F3BA5C12F4C4BF002D19BB /* ofMesh.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofMesh.h; path = ../../../openFrameworks/3d/ofMesh.h; sourceTree = SOURCE_ROOT; };
-		E4F3BA5D12F4C4BF002D19BB /* ofMeshNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofMeshNode.cpp; path = ../../../openFrameworks/3d/ofMeshNode.cpp; sourceTree = SOURCE_ROOT; };
-		E4F3BA5E12F4C4BF002D19BB /* ofMeshNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofMeshNode.h; path = ../../../openFrameworks/3d/ofMeshNode.h; sourceTree = SOURCE_ROOT; };
 		E4F3BA5F12F4C4BF002D19BB /* ofNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofNode.cpp; path = ../../../openFrameworks/3d/ofNode.cpp; sourceTree = SOURCE_ROOT; };
 		E4F3BA6012F4C4BF002D19BB /* ofNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofNode.h; path = ../../../openFrameworks/3d/ofNode.h; sourceTree = SOURCE_ROOT; };
 		E4F3BA6112F4C4BF002D19BB /* ofScene3d.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofScene3d.cpp; path = ../../../openFrameworks/3d/ofScene3d.cpp; sourceTree = SOURCE_ROOT; };
@@ -609,8 +605,6 @@
 				E4F3BD2312F4F7BF002D19BB /* ofModelUtils.h */,
 				E4F3BA5B12F4C4BF002D19BB /* ofMesh.cpp */,
 				E4F3BA5C12F4C4BF002D19BB /* ofMesh.h */,
-				E4F3BA5D12F4C4BF002D19BB /* ofMeshNode.cpp */,
-				E4F3BA5E12F4C4BF002D19BB /* ofMeshNode.h */,
 				E4F3BA5F12F4C4BF002D19BB /* ofNode.cpp */,
 				E4F3BA6012F4C4BF002D19BB /* ofNode.h */,
 				E4F3BA6112F4C4BF002D19BB /* ofScene3d.cpp */,
@@ -817,7 +811,6 @@
 				E4F3BA6C12F4C4BF002D19BB /* ofEasyCam.h in Headers */,
 				E4F3BA6E12F4C4BF002D19BB /* ofLight.h in Headers */,
 				E4F3BA7012F4C4BF002D19BB /* ofMesh.h in Headers */,
-				E4F3BA7212F4C4BF002D19BB /* ofMeshNode.h in Headers */,
 				E4F3BA7412F4C4BF002D19BB /* ofNode.h in Headers */,
 				E4F3BA7612F4C4BF002D19BB /* ofScene3d.h in Headers */,
 				E4F3BA7812F4C4BF002D19BB /* ofVbo.h in Headers */,
@@ -963,7 +956,6 @@
 				E4F3BA6B12F4C4BF002D19BB /* ofEasyCam.cpp in Sources */,
 				E4F3BA6D12F4C4BF002D19BB /* ofLight.cpp in Sources */,
 				E4F3BA6F12F4C4BF002D19BB /* ofMesh.cpp in Sources */,
-				E4F3BA7112F4C4BF002D19BB /* ofMeshNode.cpp in Sources */,
 				E4F3BA7312F4C4BF002D19BB /* ofNode.cpp in Sources */,
 				E4F3BA7512F4C4BF002D19BB /* ofScene3d.cpp in Sources */,
 				E4F3BA7712F4C4BF002D19BB /* ofVbo.cpp in Sources */,
