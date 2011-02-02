@@ -13,4 +13,5 @@ androidExamples/*/Release
 androidExamples/*/Release_arm7
 androidExamples/*/test link
 androidExamples/*/bin
+androidExamples/*/obj
 libOFAndroidApp.so

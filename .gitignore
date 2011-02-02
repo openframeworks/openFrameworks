@@ -64,3 +64,5 @@ apps/*/*/Debug
 apps/*/*/Release
 apps/*/*/Release_arm7
 apps/*/*/test link
+apps/*/*/obj
+apps/*/*/bin
