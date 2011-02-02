@@ -3,10 +3,10 @@
 //--------------------------------------------------------------
 void testApp::setup(){
 	ofBackground(255,255,255);
-	
+
 	frameByframe = false;
 
-	fingerMovie.loadMovie("movies/fingers.mov");
+	fingerMovie.loadMovie("movies/fingers.ogv");
 	fingerMovie.play();
 }
 

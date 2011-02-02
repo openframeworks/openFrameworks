@@ -132,11 +132,31 @@ static ofTTFCharacter makeContoursForCharacter(FT_Face &face){
 	return charOutlines;
 }
 
+#ifdef TARGET_ANDROID
+	#include <set>
+	set<ofTrueTypeFont*> all_fonts;
+	void ofUnloadAllFontTextures(){
+		set<ofTrueTypeFont*>::iterator it;
+		for(it=all_fonts.begin();it!=all_fonts.end();it++){
+			(*it)->unloadTextures();
+		}
+	}
+	void ofReloadAllFontTextures(){
+		set<ofTrueTypeFont*>::iterator it;
+		for(it=all_fonts.begin();it!=all_fonts.end();it++){
+			(*it)->reloadTextures();
+		}
+	}
+
+#endif
 
 //------------------------------------------------------------------
 ofTrueTypeFont::ofTrueTypeFont(){
 	bLoadedOk		= false;
 	bMakeContours	= false;
+	#ifdef TARGET_ANDROID
+		all_fonts.insert(this);
+	#endif
 	cps				= NULL;
 }
 
@@ -151,13 +171,26 @@ ofTrueTypeFont::~ofTrueTypeFont(){
 		}
 
 		if (texNames != NULL){
-			for (int i = 0; i < nCharacters; i++){
-				glDeleteTextures(1, &texNames[i]);
-			}
-			delete[] texNames;
-			texNames = NULL;
+			unloadTextures();
 		}
 	}
+
+	#ifdef TARGET_ANDROID
+		all_fonts.erase(this);
+	#endif
+}
+
+void ofTrueTypeFont::unloadTextures(){
+	if(!bLoadedOk) return;
+	for (int i = 0; i < nCharacters; i++){
+		glDeleteTextures(1, &texNames[i]);
+	}
+	delete[] texNames;
+	bLoadedOk = false;
+}
+
+void ofTrueTypeFont::reloadTextures(){
+	loadFont(filename,fontSize,bAntiAlised,bFullCharacterSet,false);
 }
 
 //------------------------------------------------------------------
@@ -634,7 +667,7 @@ void ofTrueTypeFont::drawString(string c, float x, float y) {
 	GLfloat		Y		= 0;
 
 	// (a) record the current "alpha state, blend func, etc"
-	#ifndef TARGET_OF_IPHONE
+	#ifndef TARGET_OPENGLES
 		glPushAttrib(GL_COLOR_BUFFER_BIT);
 	#else
 		GLboolean blend_enabled = glIsEnabled(GL_BLEND);
@@ -679,7 +712,7 @@ void ofTrueTypeFont::drawString(string c, float x, float y) {
 	glPopMatrix();
 	glDisable(GL_TEXTURE_2D);
     // (c) return back to the way things were (with blending, blend func, etc)
-	#ifndef TARGET_OF_IPHONE
+	#ifndef TARGET_OPENGLES
 		glPopAttrib();
 	#else
 		if( !blend_enabled )

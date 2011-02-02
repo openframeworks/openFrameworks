@@ -388,6 +388,15 @@ void AVFoundationVideoGrabber::setPixelFormat(ofPixelFormat PixelFormat) {
 		internalGlDataType = GL_BGRA;
 }
 
+ofPixelFormat AVFoundationVideoGrabber::getPixelFormat() {
+	if(internalGlDataType == GL_RGB)
+        return OF_PIXELS_RGB;
+	else if(internalGlDataType == GL_RGBA)
+        return OF_PIXELS_RGBA;
+	else if(internalGlDataType == GL_BGRA)
+        return OF_PIXELS_BGRA;
+}
+
 #endif	// (__arm__) compile only for ARM
 //
 //#else   // compile for 4.0+

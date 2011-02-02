@@ -327,6 +327,13 @@ static bool		bBitmapTexturePrepared = false;
 ofTexture		glesBitmappedFontTexture;
 unsigned char	myLetterPixels[16*16 * 16*16 * 2];			// letter size:8x14pixels, texture size:16x8letters, gl_luminance_alpha: 2bytes/1pixel
 
+#ifdef TARGET_ANDROID
+//---------------------------------------------------------------------
+void ofUpdateBitmapCharacterTexture(){
+	bBitmapTexturePrepared = false;
+}
+#endif
+
 //static GLfloat tex_coords[8];
 //static GLfloat verts[8];
 static float widthTex = 8.0f/256.0f;
@@ -340,7 +347,7 @@ static int vC = 0;
 //---------------------------------------------------------------------
 void  ofDrawBitmapCharacter(int character, int x , int y){
 
-   
+
 	if (!bBitmapTexturePrepared){
 		
 		glesBitmappedFontTexture.allocate(16*16, 16*16, GL_LUMINANCE_ALPHA, false);

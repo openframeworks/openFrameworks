@@ -1,4 +1,5 @@
 #include "ofGstUtils.h"
+#ifndef TARGET_ANDROID
 #include "ofUtils.h"
 #include <gst/app/gstappsink.h>
 #include <gst/video/video.h>
@@ -687,3 +688,4 @@ void ofGstVideoUtils::eos_cb(){
 	ofEventArgs args;
 	ofNotifyEvent(eosEvent,args);
 }
+#endif

@@ -110,6 +110,8 @@ class ofImage : public ofBaseImage{
 		float 				getWidth();
 		bool 				bAllocated() {return myPixels.isAllocated();};
 
+		void				reloadTexture();
+
 		int 				width, height, bpp;		// w,h, bits per pixel
 		int					type;					// OF_IMAGE_GRAYSCALE, OF_IMAGE_COLOR, OF_IMAGE_COLOR_ALPHA
 
