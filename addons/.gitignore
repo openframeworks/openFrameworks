@@ -13,3 +13,5 @@
 !ofxXmlSettings/**
 !ofxAndroid
 !ofxAndroid/**
+ofxAndroid/ofAndroidLib/bin
+
