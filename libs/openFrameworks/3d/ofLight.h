@@ -46,8 +46,11 @@ public:
 	ofColor getSpecularColor() const;
 	
 	void customDraw() {
+		ofPushMatrix();
+		ofTranslate(getPosition());
 		ofBox(10);
 		ofDrawAxis(20);
+		ofPopMatrix();
 	}
 	
 	
