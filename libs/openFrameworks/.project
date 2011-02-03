@@ -76,13 +76,6 @@
 		<nature>org.eclipse.cdt.managedbuilder.core.managedBuildNature</nature>
 		<nature>org.eclipse.cdt.core.cnature</nature>
 	</natures>
-	<linkedResources>
-		<link>
-			<name>openFrameworksCompiled</name>
-			<type>2</type>
-			<locationURI>OF_ROOT/libs/openFrameworksCompiled</locationURI>
-		</link>
-	</linkedResources>
 	<variableList>
 		<variable>
 			<name>OF_ROOT</name>

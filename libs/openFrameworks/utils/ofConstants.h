@@ -137,6 +137,9 @@ enum ofLoopType{
 
 #ifdef TARGET_OPENGLES
 	#include "glu.h"
+	typedef GLushort ofIndexType ;
+#else
+	typedef GLuint ofIndexType;
 #endif
 
 

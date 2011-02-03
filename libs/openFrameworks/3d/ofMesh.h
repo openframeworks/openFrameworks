@@ -10,7 +10,7 @@ enum polyMode{
 };
 
 inline GLuint ofGetGLPolyMode(polyMode m){
-#ifndef TARGET_OF_IPHONE  
+#ifndef TARGET_OPENGLES
 	switch(m){
 		case(OF_MESH_POINTS):
 			return GL_POINT;
@@ -26,11 +26,13 @@ inline GLuint ofGetGLPolyMode(polyMode m){
 			return GL_FILL;
 			break;
 	}
+#else
+	return 0;
 #endif
 }
 
 inline polyMode ofGetOFPolyMode(GLuint m){
-#ifndef TARGET_OF_IPHONE  
+#ifndef TARGET_OPENGLES
 	switch(m){
 		case(GL_POINT):
 			return OF_MESH_POINTS;
@@ -46,7 +48,9 @@ inline polyMode ofGetOFPolyMode(GLuint m){
 			return OF_MESH_FILL;
 			break;
 	}
-	#endif
+#else
+	return OF_MESH_FILL;
+#endif
 }
 
 enum meshRenderMethod{

@@ -293,7 +293,7 @@ if(renderMethod == OF_MESH_USING_VBO){
 		ofGetDefaultRenderer()->draw(*vertexData);
 	}
 		
-#ifndef TARGET_OF_IPHONE
+#ifndef TARGET_OPENGLES
 	glPopAttrib();
 #endif
 }

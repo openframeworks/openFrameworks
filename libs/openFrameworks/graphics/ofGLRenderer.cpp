@@ -20,17 +20,18 @@ void ofGLRenderer::draw(ofVertexData & vertexData){
 		glEnableClientState(GL_COLOR_ARRAY);
 		glColorPointer(4,GL_FLOAT, 0, vertexData.getColorsPointer());
 	}
-	if(vertexData.getNumIndices()){
-		glEnableClientState(GL_INDEX_ARRAY);
-		glIndexPointer(GL_UNSIGNED_INT,0,vertexData.getIndexPointer());
-	}
+
 	if(vertexData.getNumTexCoords()){
 		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 		glTexCoordPointer(2, GL_FLOAT, 0, vertexData.getTexCoordsPointer());
 	}
 
 	if(vertexData.getNumIndices()){
+#ifdef TARGET_OPENGLES
+		glDrawElements(ofGetGLPrimitiveMode(vertexData.getMode()), vertexData.getNumIndices(),GL_UNSIGNED_SHORT,vertexData.getIndexPointer());
+#else
 		glDrawElements(ofGetGLPrimitiveMode(vertexData.getMode()), vertexData.getNumIndices(),GL_UNSIGNED_INT,vertexData.getIndexPointer());
+#endif
 	}else{
 		glDrawArrays(ofGetGLPrimitiveMode(vertexData.getMode()), 0, vertexData.getNumVertices());
 	}
@@ -38,7 +39,6 @@ void ofGLRenderer::draw(ofVertexData & vertexData){
 	glDisableClientState(GL_COLOR_ARRAY);
 	glDisableClientState(GL_NORMAL_ARRAY);
 	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-	glDisableClientState(GL_INDEX_ARRAY);
 }
 
 void ofGLRenderer::draw(ofPolyline & poly){

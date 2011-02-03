@@ -80,6 +80,10 @@ protected:
 	string			filename;
 
 private:
+#ifdef TARGET_ANDROID
+	friend void ofUnloadAllFontTextures();
+	friend void ofReloadAllFontTextures();
+#endif
 	void		unloadTextures();
 	void		reloadTextures();
 };
