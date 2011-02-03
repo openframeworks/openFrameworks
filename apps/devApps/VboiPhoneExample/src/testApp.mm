@@ -40,7 +40,7 @@ void testApp::setup(){
 	}
 	
 	total = GRID_WIDTH*GRID_HEIGHT*LENGTH;
-	vbo.setVertexData(pos, total, OF_VBO_DYNAMIC);
+	vbo.setVertexData(pos, total, GL_DYNAMIC_DRAW);
 	
 }
 
@@ -96,13 +96,15 @@ void testApp::draw() {
 	ofEnableAlphaBlending();
 	ofSetColor(255, 255, 255);
 	vbo.bind();
-	vbo.updateVertexData();
+	vbo.updateVertexData(pos, total);
+	
 	for (int i=0; i<GRID_WIDTH; i++) {
 		for (int j=0; j<GRID_HEIGHT; j++) {
 			int index = (j*GRID_WIDTH+i) * LENGTH;
 			vbo.draw(GL_LINE_STRIP, index, LENGTH);
 		}
 	}
+	
 	vbo.unbind();
 	
 	ofPopMatrix();

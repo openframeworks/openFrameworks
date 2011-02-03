@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include "ofMain.h"
 #include "ofMesh.h"
 #include "ofUtils.h"
 #include "ofImage.h"
