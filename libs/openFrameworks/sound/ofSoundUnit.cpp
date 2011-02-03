@@ -264,7 +264,7 @@ void ofSoundMixer::setPan( ofSoundSource* input, float pan ) {
 		}
 	}
 	if ( !found ) { 
-		ofLog( OF_LOG_WARNING, "ofSoundMixer: setPan couldn't find input for '%s' (%x), not setting pan", input->getName(), input );
+		ofLog( OF_LOG_WARNING, "ofSoundMixer: setPan couldn't find input for '%s' (%x), not setting pan", input->getName().c_str(), input );
 		
 	}
 }
