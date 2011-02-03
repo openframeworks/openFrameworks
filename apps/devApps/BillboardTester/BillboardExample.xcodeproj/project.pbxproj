@@ -59,7 +59,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		5F0A99B512F1D0E7006569CE /* dot.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = dot.png; sourceTree = "<group>"; };
+		5F0A99B512F1D0E7006569CE /* fly.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = fly.png; sourceTree = "<group>"; };
 		5F0A99B612F1D0E7006569CE /* Billboard.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = Billboard.frag; sourceTree = "<group>"; };
 		5F0A99B712F1D0E7006569CE /* Billboard.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = Billboard.vert; sourceTree = "<group>"; };
 		5FA32B4712E4BC0600813895 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
@@ -111,7 +111,7 @@
 		5F0A99B312F1D0E7006569CE /* data */ = {
 			isa = PBXGroup;
 			children = (
-				5F0A99B512F1D0E7006569CE /* dot.png */,
+				5F0A99B512F1D0E7006569CE /* fly.png */,
 				5F0A99B612F1D0E7006569CE /* Billboard.frag */,
 				5F0A99B712F1D0E7006569CE /* Billboard.vert */,
 			);

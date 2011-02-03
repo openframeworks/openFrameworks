@@ -219,6 +219,14 @@ void ofVbo::updateVertexData(const ofVec3f * verts, int total) {
 }
 
 //--------------------------------------------------------------
+void ofVbo::updateVertexData(const ofVec2f * verts, int total) {
+	if(bUsingVerts){
+		glBindBuffer(GL_ARRAY_BUFFER, vertId);
+		glBufferSubData(GL_ARRAY_BUFFER, 0, total*sizeof(ofVec2f), (float*)&verts[0].x);
+	}
+}
+
+//--------------------------------------------------------------
 void ofVbo::updateVertexData(const float * vert0x, int total) {
 	if(bUsingVerts){
 		glBindBuffer(GL_ARRAY_BUFFER, vertId);
@@ -350,19 +358,19 @@ void ofVbo::bind(){
 		glVertexPointer(vertSize, GL_FLOAT, vertStride, 0);
 	}
 	
-	if(bUsingColors){
+	if(bUsingColors) {
 		glEnableClientState(GL_COLOR_ARRAY);
 		glBindBuffer(GL_ARRAY_BUFFER, colorId);
 		glColorPointer(4, GL_FLOAT, sizeof(ofColor), 0);
 	}
 	
-	if(bUsingNormals){
+	if(bUsingNormals) {
 		glEnableClientState(GL_NORMAL_ARRAY);		
 		glBindBuffer(GL_ARRAY_BUFFER, normalId);
 		glNormalPointer(GL_FLOAT, sizeof(ofVec3f), 0);
 	}
 	
-	if(bUsingTexCoords){
+	if(bUsingTexCoords) {
 		glEnableClientState(GL_TEXTURE_COORD_ARRAY);		
 		glBindBuffer(GL_ARRAY_BUFFER, texCoordId);
 		glTexCoordPointer(2, GL_FLOAT, sizeof(ofVec2f), 0);
@@ -371,8 +379,9 @@ void ofVbo::bind(){
 
 //--------------------------------------------------------------
 void ofVbo::unbind() {
-	glEnableClientState(GL_VERTEX_ARRAY);
-	glDisableClientState(GL_COLOR_ARRAY);
+	
+	if(bUsingVerts)  glEnableClientState(GL_VERTEX_ARRAY);
+	if(bUsingColors) glDisableClientState(GL_COLOR_ARRAY);
 	//glDisableClientState(GL_INDEX_ARRAY);
 	glDisableClientState(GL_COLOR_ARRAY);
 	glDisableClientState(GL_NORMAL_ARRAY);
@@ -401,7 +410,11 @@ void ofVbo::drawElements(int drawMode, int amt) {
 		bind();
 		if(bUsingIndices){
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexId);
+#ifdef TARGET_OF_IPHONE
+			glDrawElements(drawMode, amt, GL_UNSIGNED_SHORT, NULL);
+#else
 			glDrawElements(drawMode, amt, GL_UNSIGNED_INT, NULL);
+#endif
 		}
 		unbind();
 	}
@@ -409,7 +422,7 @@ void ofVbo::drawElements(int drawMode, int amt) {
 
 //--------------------------------------------------------------
 void ofVbo::clear(){
-
+	
 	if (bUsingVerts){
 		glDeleteBuffers(1, &vertId);
 		bUsingVerts = false;
