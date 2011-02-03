@@ -8,6 +8,7 @@
 #include "ofVec2f.h"
 #include "ofColor.h"
 #include "ofUtils.h"
+#include "ofConstants.h"
 
 enum ofPrimitiveMode{
 	OF_TRIANGLES_MODE,
@@ -114,12 +115,12 @@ public:
 	void removeTexCoord(int index);
 	void setTexCoord(int index, const ofVec2f& t);
 	
-	int getIndex(int i);
-	void addIndex(int i);
-	void addIndices(const vector<GLuint>& inds);
-	void addIndices(const GLuint* inds, int amt);
+	ofIndexType getIndex(int i);
+	void addIndex(ofIndexType i);
+	void addIndices(const vector<ofIndexType>& inds);
+	void addIndices(const ofIndexType* inds, int amt);
 	void removeIndex(int i);
-	void setIndex(int i, int val);
+	void setIndex(int i, ofIndexType val);
 	
 	int getNumVertices() const;
 	int getNumColors() const;
@@ -131,13 +132,13 @@ public:
 	float* getColorsPointer();
 	float* getNormalsPointer();
 	float* getTexCoordsPointer();
-	GLuint* getIndexPointer();
+	ofIndexType* getIndexPointer();
 	
 	const float* getVerticesPointer() const;
 	const float* getColorsPointer() const;
 	const float* getNormalsPointer() const;
 	const float* getTexCoordsPointer() const;
-	const GLuint* getIndexPointer() const;
+	const ofIndexType* getIndexPointer() const;
 
 	vector<int>& getFace(int faceId);
 	
@@ -154,7 +155,7 @@ protected:
 	vector<ofColor> colors;
 	vector<ofVec3f> normals;
 	vector<ofVec2f> texCoords;
-	vector<GLuint> indices;
+	vector<ofIndexType> indices;
 	bool bVertsChanged, bColorsChanged, bNormalsChanged, bTexCoordsChanged, bIndicesChanged;
 	ofPrimitiveMode mode;
 	string name;

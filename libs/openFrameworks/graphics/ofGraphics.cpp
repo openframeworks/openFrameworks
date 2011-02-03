@@ -617,7 +617,7 @@ void ofEnableBlendMode(ofBlendMode blendMode){
 
 //----------------------------------------------------------
 void ofEnablePointSprites() {
-#ifdef TARGET_OF_IPHONE
+#ifdef TARGET_OPENGLES
 	glEnable(GL_POINT_SPRITE_OES);
 	glTexEnvi(GL_POINT_SPRITE_OES, GL_COORD_REPLACE_OES, GL_TRUE);
 	// does look like this needs to be enabled in ES because
@@ -633,7 +633,7 @@ void ofEnablePointSprites() {
 
 //----------------------------------------------------------
 void ofDisablePointSprites() {
-#ifdef TARGET_OF_IPHONE
+#ifdef TARGET_OPENGLES
 	glDisable(GL_POINT_SPRITE_OES);
 #else
 	glDisable(GL_POINT_SPRITE);
@@ -1254,7 +1254,7 @@ void ofBox(float size) {
 		//glTexCoordPointer(2, GL_FLOAT, 0, tex);
 		vertexData.addTexCoords(tex,24);
 	
-		GLuint indices[] = {
+		static ofIndexType indices[] = {
 			0,1,2, // right top left
 			0,2,3, // right bottom right
 			4,5,6, // bottom top right
@@ -1303,7 +1303,7 @@ void ofBox(float size) {
 		//glNormalPointer(GL_FLOAT, 0, normals);
 		vertexData.addNormals(normals,8);
 
-		static GLuint indices[] = {
+		static ofIndexType indices[] = {
 			0,1, 1,3, 3,2, 2,0,
 			4,5, 5,7, 7,6, 6,4,
 			0,4, 5,1, 7,3, 6,2
