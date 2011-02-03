@@ -65,6 +65,7 @@ bool ofxAndroidInitGrabber(ofVideoGrabber * grabber){
 
 bool ofxAndroidCloseGrabber(ofVideoGrabber * grabber){
 	instances.erase(cameraId);
+	return true;
 }
 
 void ofPauseVideoGrabbers(){

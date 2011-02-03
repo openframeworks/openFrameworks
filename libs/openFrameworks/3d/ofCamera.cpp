@@ -12,12 +12,12 @@
 
 
 ofCamera::ofCamera() :
+cacheMatrices(false),
 isOrtho(false),
 fov(60),
 nearClip(0),
 farClip(0),
 isActive(false),
-cacheMatrices(false),
 hasStoredMatrices(false) {
 }
 

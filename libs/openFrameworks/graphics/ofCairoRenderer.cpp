@@ -67,7 +67,7 @@ void ofCairoRenderer::draw(ofShape & path){
 void ofCairoRenderer::draw(ofPolyline & poly){
 	ofPushStyle();
 	cairo_new_path(cr);
-	for(int i=0;i<poly.size();i++){
+	for(int i=0;i<(int)poly.size();i++){
 		cairo_line_to(cr,poly.getVertices()[i].x,poly.getVertices()[i].y);
 	}
 	if(poly.isClosed())
@@ -76,10 +76,10 @@ void ofCairoRenderer::draw(ofPolyline & poly){
 }
 
 void ofCairoRenderer::draw(ofShapeTessellation & shape){
-	for(int i=0;i<shape.getTessellation().size();i++){
+	for(int i=0;i<(int)shape.getTessellation().size();i++){
 		draw(shape.getTessellation()[i]);
 	}
-	for(int i=0;i<shape.getOutline().size();i++){
+	for(int i=0;i<(int)shape.getOutline().size();i++){
 		draw(shape.getOutline()[i]);
 	}
 }
@@ -167,7 +167,7 @@ void ofCairoRenderer::drawPath(const ofShape & path,bool is_subpath){
 		cairo_new_sub_path(cr);
 	else
 		cairo_new_path(cr);
-	for(int i=0; i<commands.size(); i++){
+	for(int i=0; i<(int)commands.size(); i++){
 		switch(commands[i].type){
 		case ofShape::Command::line2DTo:
 		case ofShape::Command::line3DTo:

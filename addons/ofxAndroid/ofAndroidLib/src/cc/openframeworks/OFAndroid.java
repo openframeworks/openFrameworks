@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.ObjectInputStream.GetField;
 import java.lang.reflect.Field;
 
 import javax.microedition.khronos.egl.EGLConfig;
@@ -14,7 +13,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.hardware.SensorManager;
 import android.opengl.GLSurfaceView;
-import android.os.Environment;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
@@ -93,7 +91,7 @@ public class OFAndroid {
         
         OFAndroid.ofActivity = ofActivity;
         
-        mGLView = new OFGLSurfaceView(ofActivity, packageName);
+        mGLView = new OFGLSurfaceView(ofActivity);
         ofActivity.setContentView(mGLView);
     }
 
@@ -178,9 +176,9 @@ public class OFAndroid {
 }
 
 class OFGLSurfaceView extends GLSurfaceView {
-	public OFGLSurfaceView(Context context, String appName) {
+	public OFGLSurfaceView(Context context) {
         super(context);
-        mRenderer = new OFAndroidWindow(appName);
+        mRenderer = new OFAndroidWindow();
         setRenderer(mRenderer);
     }
 
@@ -241,9 +239,6 @@ class OFGLSurfaceView extends GLSurfaceView {
 }
 
 class OFAndroidWindow implements GLSurfaceView.Renderer {
-	public OFAndroidWindow(String app_name){
-		this.app_name = app_name;
-	}
 	
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
     	OFAndroid.onSurfaceCreated();
@@ -263,6 +258,5 @@ class OFAndroidWindow implements GLSurfaceView.Renderer {
     	OFAndroid.render();
     }
 
-    private String app_name;
     static boolean initialized;
 }

@@ -110,28 +110,28 @@ void ofShape::setPolyWindingMode(ofPolyWindingMode mode){
 
 void ofShape::setFilled(bool hasFill){
 	bFill = hasFill;
-	for(int i=0; i<subPaths.size(); i++){
+	for(int i=0; i<(int)subPaths.size(); i++){
 		subPaths[i].setFilled(hasFill);
 	}
 }
 
 void ofShape::setFillColor(const ofColor & color){
 	fillColor = color;
-	for(int i=0; i<subPaths.size(); i++){
+	for(int i=0; i<(int)subPaths.size(); i++){
 		subPaths[i].setFillColor(color);
 	}
 }
 
 void ofShape::setStrokeColor(const ofColor & color){
 	strokeColor = color;
-	for(int i=0; i<subPaths.size(); i++){
+	for(int i=0; i<(int)subPaths.size(); i++){
 		subPaths[i].setStrokeColor(color);
 	}
 }
 
 void ofShape::setStrokeWidth(float width){
 	strokeWidth = width;
-	for(int i=0; i<subPaths.size(); i++){
+	for(int i=0; i<(int)subPaths.size(); i++){
 		subPaths[i].setStrokeWidth(width);
 	}
 }
