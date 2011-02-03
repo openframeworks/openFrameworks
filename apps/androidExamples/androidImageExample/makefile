@@ -57,7 +57,11 @@ ifneq ($(ARCH),android)
 		LIBSPATH=linux
 	endif
 else
-	LIBSPATH = android
+	ifeq ($(findstring Release_arm7,$(MAKECMDGOALS)),Release_arm7)
+		LIBSPATH =android/armeabi-v7a
+	else
+		LIBSPATH =android/armeabi
+	endif
 	NDK_ROOT = $(shell cat ../../../libs/openFrameworksCompiled/project/android/ndk_path.make)
 	SDK_ROOT = $(shell cat ../../../libs/openFrameworksCompiled/project/android/sdk_path.make)
 	TOOLCHAIN=arm-linux-androideabi-4.4.3
@@ -98,6 +102,9 @@ LIB_STATIC = $(shell ls ../../../libs/*/lib/$(LIBSPATH)/*.a | grep -v openFramew
 LIB_SHARED = $(shell ls ../../../libs/*/lib/$(LIBSPATH)/*.so | grep -v openFrameworksCompiled| sed "s/.*\\/lib\([^/]*\)\.so/-l\1/")
 LIB_STATIC += ../../../libs/poco/lib/$(LIBSPATH)/libPocoNet.a ../../../libs/poco/lib/$(LIBSPATH)/libPocoXML.a ../../../libs/poco/lib/$(LIBSPATH)/libPocoUtil.a ../../../libs/poco/lib/$(LIBSPATH)/libPocoFoundation.a 
 LIB_PATHS_FLAGS = $(shell ls -d ../../../libs/*/lib/$(LIBSPATH) | sed "s/\(\.*\)/-L\1/")
+ifeq ($(ARCH),android)
+	LIB_PATHS_FLAGS += -L../../../libs/openFrameworksCompiled/lib/android
+endif
 
 CFLAGS += -Wall -fexceptions
 CFLAGS += -I. 
@@ -123,9 +130,14 @@ ifeq ($(findstring addons.make,$(wildcard *.make)),addons.make)
 	ADDONS_INCLUDES += $(shell find ../../../addons/*/libs/ -type d)
 	ADDONSCFLAGS = $(addprefix -I,$(ADDONS_INCLUDES))
 	
-	ADDONS_LIBS_STATICS = $(shell ls ../../../addons/*/libs/*/lib/$(LIBSPATH)/*.a)
+	ifeq ($(findstring libsorder.make,$(wildcard ../../../addons/*/libs/*/lib/$(LIBSPATH)/libsorder.make)),libsorder.make) 
+		ADDONS_LIBS_W_ORDER = $(addprefix -l,$(shell cat ../../../addons/*/libs/*/lib/$(LIBSPATH)/libsorder.make))
+	endif
+	
+	ADDONS_LIBS_STATICS = $(shell ls ../../../addons/*/libs/*/lib/$(LIBSPATH)/*.a | grep -v $(ADDONS_LIBS_W_ORDER))
+	ADDONS_LIBS_STATICS += $(ADDONS_LIBS_W_ORDER)
+	ADDONS_LIBS_STATICS += $(addprefix -L, $(shell ls ../../../addons/*/libs/*/lib/$(LIBSPATH)/libsorder.make | sed s/libsorder.make//g))
 	ADDONS_LIBS_SHARED = $(shell ls ../../../addons/*/libs/*/lib/$(LIBSPATH)/*.so)
-
 	ADDONSLIBS = $(ADDONS_LIBS_STATICS)
 	ADDONSLIBS += $(ADDONS_LIBS_SHARED)
 
@@ -262,8 +274,8 @@ $(OBJ_OUTPUT)%.o: ../../../%.c
 	$(CC) $(TARGET_CFLAGS) $(CFLAGS) $(ADDONSCFLAGS) $(USER_CFLAGS) -MMD -MP -MF$(OBJ_OUTPUT)$*.d -MT$(OBJ_OUTPUT)$*.d -o $@ -c $<
 	
 $(TARGET): $(OBJS) $(ADDONS_OBJS)
-	@echo "linking" $(TARGET) $(GTK)
-	$(CXX) -o $@ $(OBJS) $(ADDONS_OBJS) $(LDFLAGS) $(USER_LDFLAGS) $(TARGET_LIBS) $(LIBS) $(ADDONSLIBS) $(USER_LIBS)
+	@echo "linking" $(TARGET)
+	$(CXX) -o $@ $(OBJS) $(ADDONS_OBJS) $(LDFLAGS) $(USER_LDFLAGS) $(TARGET_LIBS) $(ADDONSLIBS) $(USER_LIBS) $(LIBS) 
 
 -include $(DEPFILES)
 
