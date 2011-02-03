@@ -1307,7 +1307,7 @@ void ofDrawBitmapString(string textString, float x, float y, float z){
 	
 	
 	int len = (int)textString.length();
-	float yOffset = 0;
+	//float yOffset = 0;
 	float fontSize = 8.0f;
 	bool bOrigin = false;
 	
@@ -1388,6 +1388,10 @@ void ofDrawBitmapString(string textString, float x, float y, float z){
 			//at the viewport position related
 			//to the world position x,y,z
 			
+			// ***************
+			// this will not compile for opengl ES
+			// ***************
+#ifndef TARGET_OF_IPHONE 
 			//gluProject method
 			GLdouble modelview[16], projection[16];
 			GLint view[4];
@@ -1413,8 +1417,9 @@ void ofDrawBitmapString(string textString, float x, float y, float z){
 			glTranslatef(-1, -1, 0);
 			glScalef(2/rViewport.width, 2/rViewport.height, 1);
 			
-			glTranslated(dScreenX, dScreenY, 0);
-			glScaled(1, -1, 1);
+			glTranslatef(dScreenX, dScreenY, 0);
+			glScalef(1, -1, 1);
+#endif
 			break;
 
 		default:
