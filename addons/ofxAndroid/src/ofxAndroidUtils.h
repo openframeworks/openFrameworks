@@ -10,6 +10,7 @@
 
 #include <jni.h>
 #include "ofxAndroidApp.h"
+#include "ofSoundStream.h"
 
 JavaVM * ofGetJavaVMPtr();
 JNIEnv * ofGetJNIEnv();
@@ -30,4 +31,10 @@ void ofUnloadAllFontTextures();
 void ofReloadAllFontTextures();
 
 void  ofUpdateBitmapCharacterTexture();
+
+
+//this is just to fix a problem with undefined symbols
+inline void ofFixSoundStreamInclude(){
+	ofSoundStreamClose();
+}
 #endif /* OFANDROIDUTILS_H_ */
