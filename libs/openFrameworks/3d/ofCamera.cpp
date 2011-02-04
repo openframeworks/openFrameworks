@@ -8,7 +8,7 @@
  */
 
 #include "ofCamera.h"
-#include "ofMain.h"
+#include "ofLog.h"
 
 
 ofCamera::ofCamera() :

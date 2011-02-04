@@ -16,7 +16,7 @@ class ofxSynthADSR : public ofSoundSource {
 		void setADSR(float _a, float _d, float _s, float _r){
 			a=_a; d=_d; s=_s; r=_r;
 		};
-		void goToEnd(); // jump to the end of the envelope
+		void goToEnd(){/*TODO:*/} ; // jump to the end of the envelope
 		string getName() { return "ofxSynthADSR"; }
 		void audioRequested( float* buffer, int numFrames, int numChannels );
 	protected:

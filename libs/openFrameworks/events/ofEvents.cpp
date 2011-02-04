@@ -1,7 +1,7 @@
 #include "ofEvents.h"
 #include "ofAppRunner.h"
 #include "ofBaseApp.h"
-#include "ofMain.h"
+#include "ofUtils.h"
 #include <set>
 
 // core events instance & arguments

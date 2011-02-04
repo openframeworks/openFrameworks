@@ -63,7 +63,7 @@ public:
 	void setHexColor( int hexColor ); // hex, like web 0xFF0033;
 
 	// bg color
-	ofColor getBgColor();
+	ofColor & getBgColor();
 	bool bClearBg();
 	void background(const ofColor & c);
 	void background(float brightness);

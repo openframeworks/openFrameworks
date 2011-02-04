@@ -1,5 +1,6 @@
 #include "ofEasyCam.h"
-#include "ofMain.h"
+#include "ofMath.h"
+#include "ofUtils.h"
 
 // when an ofEasyCam is moving due to momentum, this keeps it
 // from moving forever by assuming small values are zero.

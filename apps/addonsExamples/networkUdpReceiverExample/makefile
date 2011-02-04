@@ -131,11 +131,12 @@ ifeq ($(findstring addons.make,$(wildcard *.make)),addons.make)
 	ADDONSCFLAGS = $(addprefix -I,$(ADDONS_INCLUDES))
 	
 	ifeq ($(findstring libsorder.make,$(wildcard ../../../addons/*/libs/*/lib/$(LIBSPATH)/libsorder.make)),libsorder.make) 
-		ADDONS_LIBS_W_ORDER = $(addprefix -l,$(shell cat ../../../addons/*/libs/*/lib/$(LIBSPATH)/libsorder.make))
+		ADDONS_LIBS_W_ORDER = $(shell cat ../../../addons/*/libs/*/lib/$(LIBSPATH)/libsorder.make)
 	endif
 	
-	ADDONS_LIBS_STATICS = $(shell ls ../../../addons/*/libs/*/lib/$(LIBSPATH)/*.a | grep -v $(ADDONS_LIBS_W_ORDER))
-	ADDONS_LIBS_STATICS += $(ADDONS_LIBS_W_ORDER)
+	SED_EXCLUDE_LIBS = $(addsuffix \ \\\| , $(ADDONS_LIBS_W_ORDER))
+	ADDONS_LIBS_STATICS = $(shell ls ../../../addons/*/libs/*/lib/$(LIBSPATH)/*.a | grep -v "$(SED_EXCLUDE_LIBS) null")
+	ADDONS_LIBS_STATICS += $(addprefix -l, $(ADDONS_LIBS_W_ORDER))
 	ADDONS_LIBS_STATICS += $(addprefix -L, $(shell ls ../../../addons/*/libs/*/lib/$(LIBSPATH)/libsorder.make | sed s/libsorder.make//g))
 	ADDONS_LIBS_SHARED = $(shell ls ../../../addons/*/libs/*/lib/$(LIBSPATH)/*.so)
 	ADDONSLIBS = $(ADDONS_LIBS_STATICS)
@@ -206,6 +207,7 @@ else
 		TARGET_NAME = Release
 	    BIN_NAME = $(APPNAME)
 		TARGET = bin/$(BIN_NAME)
+		TARGET_LIBS = -lopenFrameworks
 	endif
 endif
 

@@ -215,7 +215,7 @@ void ofShapeTessellation::draw(float x, float y){
 
 
 void ofShapeTessellation::addVertex(ofPoint p){
-	polyline.addVertex(p);
+	getCurrentSubShape().polyline.addVertex(p);
 	bNeedsTessellation = true;
 }
 

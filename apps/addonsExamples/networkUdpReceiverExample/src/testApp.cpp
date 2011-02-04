@@ -11,8 +11,8 @@ void testApp::setup(){
 	udpConnection.Bind(11999);
 	udpConnection.SetNonBlocking(true);
 
-	ofBackground(255, 255, 255);
 	ofSetBackgroundAuto(false);
+	ofBackground(255, 255, 255);
 }
 
 //--------------------------------------------------------------

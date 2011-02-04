@@ -8,8 +8,9 @@
  */
 
 #include "ofLight.h"
-#include "ofMain.h"
 #include "ofConstants.h"
+#include "ofLog.h"
+#include "ofUtils.h"
 
 
 //----------------------------------------

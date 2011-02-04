@@ -1,7 +1,9 @@
 #include "ofAppGlutWindow.h"
 #include "ofBaseApp.h"
-#include "ofMain.h"
 #include "ofEvents.h"
+#include "ofUtils.h"
+#include "ofGraphics.h"
+#include "ofAppRunner.h"
 
 #ifdef TARGET_WIN32
 	#define GLUT_BUILDING_LIB

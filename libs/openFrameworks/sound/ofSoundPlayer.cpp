@@ -47,7 +47,6 @@ float * ofSoundGetSpectrum(int nBands){
 
 
 #include "ofSoundPlayer.h"
-#include "ofMain.h" // for ofLog?
 //---------------------------------------------------------------------------
 ofSoundPlayer::ofSoundPlayer (){
 	player		= new OF_SOUND_PLAYER_TYPE;

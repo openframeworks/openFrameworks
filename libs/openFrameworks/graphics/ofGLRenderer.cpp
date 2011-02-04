@@ -384,7 +384,7 @@ void ofGLRenderer::setHexColor(int hexColor){
 
 //----------------------------------------------------------
 void ofGLRenderer::clear(float r, float g, float b, float a) {
-	glClearColor(r / 255, g / 255, b / 255, a / 255);
+	glClearColor(r / 255., g / 255., b / 255., a / 255.);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
@@ -412,13 +412,13 @@ bool ofGLRenderer::bClearBg(){
 }
 
 //----------------------------------------------------------
-ofColor ofGLRenderer::getBgColor(){
+ofColor & ofGLRenderer::getBgColor(){
 	return bgColor;
 }
 
 //----------------------------------------------------------
 void ofGLRenderer::background(const ofColor & c){
-	background ( c.r, c.g, c.b);
+	background ( c.r, c.g, c.b, c.a );
 }
 
 //----------------------------------------------------------

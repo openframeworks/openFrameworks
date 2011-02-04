@@ -6,7 +6,7 @@ void testApp::setup(){
 
 	frameByframe = false;
 
-	fingerMovie.loadMovie("movies/fingers.ogv");
+	fingerMovie.loadMovie("movies/fingers.mov");
 	fingerMovie.play();
 }
 
