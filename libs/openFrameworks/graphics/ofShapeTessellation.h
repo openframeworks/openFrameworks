@@ -14,19 +14,20 @@
 class ofPolyline {
 public:	
 	ofPolyline(){
-		bIs3D = true;
-		bHasChanged = true;
-		bClosed=false;
+		clear();
 	}
 
 	ofPolyline(const vector<ofPoint>& verts){
-		bIs3D = true;
-		bHasChanged = true;
-		bClosed=false;
+		clear();
 		addVertexes(verts);
 	}
 	/// remove all the points
-	void clear() { points.clear(); }
+	void clear() {
+		bIs3D = true;
+		bClosed=false;
+		points.clear();
+		bHasChanged = true;
+	}
 
 	/// add a vertex
 	void addVertex( const ofPoint& p ) { points.push_back(p); bHasChanged=true; }
@@ -204,7 +205,6 @@ private:
 	
 	// resulting mesh and outline
 	vector<ofVertexData> cachedTessellation;
-	bool bNeedsOutlineDraw;
 	vector<ofPolyline> cachedOutline;
 	
 	vector<ofShapeTessellation> subShapes;

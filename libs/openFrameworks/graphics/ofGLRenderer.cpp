@@ -6,8 +6,9 @@
 #include "ofAppRunner.h"
 #include "ofVertexData.h"
 
-ofGLRenderer::ofGLRenderer(){
+ofGLRenderer::ofGLRenderer(bool useShapeColor){
 	bBackgroundAuto = true;
+	bUseShapeColor = useShapeColor;
 }
 
 void ofGLRenderer::draw(ofVertexData & vertexData){
@@ -48,22 +49,31 @@ void ofGLRenderer::draw(ofPolyline & poly){
 
 void ofGLRenderer::draw(ofShapeTessellation & shape){
 	if(shape.isFilled()){
-		ofPushStyle();
 		vector<ofVertexData> & mesh = shape.getTessellation();
-		setColor( shape.getFillColor() * ofGetStyle().color,shape.getFillColor().a/255. * ofGetStyle().color.a);
+		if(bUseShapeColor){
+			ofPushStyle();
+			setColor( shape.getFillColor() * ofGetStyle().color,shape.getFillColor().a/255. * ofGetStyle().color.a);
+		}
 		glEnableClientState(GL_VERTEX_ARRAY);
 		for(int i=0;i<(int)mesh.size();i++){
 			draw(mesh[i]);
 		}
-		ofPopStyle();
+		if(bUseShapeColor){
+			ofPopStyle();
+		}
 	}
 	if(shape.hasOutline()){
-		ofPushStyle();
-		setColor( shape.getStrokeColor() * ofGetStyle().color, shape.getStrokeColor().a/255. * ofGetStyle().color.a);
+		if(bUseShapeColor){
+			ofPushStyle();
+			setColor( shape.getStrokeColor() * ofGetStyle().color, shape.getStrokeColor().a/255. * ofGetStyle().color.a);
+		}
 		vector<ofPolyline> & outlines = shape.getOutline();
+		glEnableClientState(GL_VERTEX_ARRAY);
 		for(int i=0; i<(int)outlines.size(); i++)
 			draw(outlines[i]);
-		ofPopStyle();
+		if(bUseShapeColor){
+			ofPopStyle();
+		}
 	}
 }
 
@@ -72,6 +82,9 @@ void ofGLRenderer::draw(ofShape & path){
 	draw(shape);
 }
 
+void ofGLRenderer::useShapeColor(bool bUseShapeColor_){
+	bUseShapeColor = bUseShapeColor_;
+}
 
 //----------------------------------------------------------
 void ofGLRenderer::pushView() {

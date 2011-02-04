@@ -7,12 +7,14 @@ class ofVertexData;
 
 class ofGLRenderer: public ofBaseRenderer{
 public:
-	ofGLRenderer();
+	ofGLRenderer(bool useShapeColor=true);
 	~ofGLRenderer(){}
 	void draw(ofVertexData & vertexData);
 	void draw(ofPolyline & poly);
 	void draw(ofShapeTessellation & shape);
 	void draw(ofShape & path);
+	void useShapeColor(bool bUseShapeColor);
+
 	bool rendersPathDirectly(){
 		return false;
 	}
@@ -81,4 +83,5 @@ private:
 	deque <ofRectangle> viewportHistory;
 	bool bBackgroundAuto;
 	ofColor bgColor;
+	bool bUseShapeColor;
 };
