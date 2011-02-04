@@ -107,10 +107,9 @@ void ofVideoPlayer::update(){
 			
 			playerTex = player->getTexture();
 			
-			if(playerTex == NULL)
-			{
+			if(playerTex == NULL){
 				unsigned char *pxls = player->getPixels();
-			
+
 				if(width==0 || height==0) {
 					if(player->getWidth() != 0 && player->getHeight() != 0) {
 						
@@ -123,9 +122,9 @@ void ofVideoPlayer::update(){
 						tex.allocate(width, height, GL_RGB);
 						tex.loadData(pxls, tex.getWidth(), tex.getHeight(), GL_RGB);
 					}
-				}
-				else
+				}else{
 					tex.loadData(pxls, tex.getWidth(), tex.getHeight(), GL_RGB);
+				}
 			}
 		}
 	}
