@@ -115,8 +115,8 @@
 	
 	// A system version of 3.1 or greater is required to use CADisplayLink. The NSTimer
 	// class is used as fallback when it isn't available.
-	NSString *reqSysVer = @"3.1";
-	NSString *currSysVer = [[UIDevice currentDevice] systemVersion];
+	// NSString *reqSysVer = @"3.1";
+	// NSString *currSysVer = [[UIDevice currentDevice] systemVersion];
 //	if ([currSysVer compare:reqSysVer options:NSNumericSearch] != NSOrderedAscending) displayLinkSupported = TRUE;
 
 	
@@ -279,16 +279,10 @@
 
 - (BOOL)application:(UIApplication *)application handleOpenURL:(NSURL *)url {
 	
-	
-	cout<<"uhh"<<endl;
-	
 	NSString *urlData = [url absoluteString];
-	
-	char response[ [urlData length]+1 ];
-	[urlData getCString:response];
-	
-	
+	const char * response = [urlData UTF8String];
 	ofxiPhoneAlerts.launchedWithURL(response);
+	return YES;
 }
 
 @end

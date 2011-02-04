@@ -6,7 +6,7 @@
 
 #define GRID_WIDTH  16
 #define GRID_HEIGHT 16
-#define LENGTH		2 * 5
+#define LENGTH		2 * 8
 
 class testApp : public ofxiPhoneApp {
 	
