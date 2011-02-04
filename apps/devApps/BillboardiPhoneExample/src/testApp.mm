@@ -19,7 +19,7 @@ void testApp::setup(){
 		pts[i].z = ofRandom(-worldSize, worldSize);
 	}
 	
-	vbo.setVertexData(pts, NUM_PTS, OF_VBO_STATIC);
+	vbo.setVertexData(pts, NUM_PTS, GL_DYNAMIC_DRAW);
 	
 }
 
@@ -40,17 +40,14 @@ void testApp::draw() {
 	
 	ofPushMatrix();
 	ofTranslate(ofGetWidth()/2, ofGetHeight()/2, zoom);
-	ofRotate(rot.x, 1, 0, 0);
-	ofRotate(rot.y, 0, 1, 1);
-	
+	ofRotateX(rot.y);
+	ofRotateY(rot.x);
 	
 	ofEnablePointSprites();
 
-	glPointSize(16);
+	glPointSize(10);
 	texture.getTextureReference().bind();
-	vbo.bind();
 	vbo.draw(GL_POINTS, 0, NUM_PTS);
-	vbo.unbind();
 	texture.getTextureReference().unbind();
 	
 	ofDisablePointSprites();
@@ -58,7 +55,7 @@ void testApp::draw() {
 	ofPopMatrix();
 	
 	
-	ofSetColor(90, 90, 90);
+	ofSetColor(200);
 	ofDrawBitmapString(ofToString(ofGetFrameRate(), 1), 5, 20);
 }
 

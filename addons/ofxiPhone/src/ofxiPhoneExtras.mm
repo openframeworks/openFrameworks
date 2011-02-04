@@ -349,7 +349,7 @@ bool ofxiPhoneCGImageToPixels(CGImageRef & ref, unsigned char * pixels){
 	CGContextDrawImage(spriteContext, CGRectMake(0.0, 0.0, (CGFloat)w, (CGFloat)h), ref);
 	CGContextRelease(spriteContext);
 	
-	int totalSrcBytes = w*h*bytesPerPixel;  
+	// int totalSrcBytes = w*h*bytesPerPixel;  
 	
 	/*
 	// averaging around 3300ms per 100reps
