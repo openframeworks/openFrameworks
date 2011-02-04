@@ -1,7 +1,6 @@
 #ifndef _OF_IPHONE_VIDEO_GRABBER
 #define _OF_IPHONE_VIDEO_GRABBER
 
-#include "ofMain.h"
 
 class AVFoundationVideoGrabber;
 

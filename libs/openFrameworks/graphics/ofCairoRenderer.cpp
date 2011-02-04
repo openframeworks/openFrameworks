@@ -543,7 +543,7 @@ bool ofCairoRenderer::bClearBg(){
 }
 
 //----------------------------------------------------------
-ofColor ofCairoRenderer::getBgColor(){
+ofColor & ofCairoRenderer::getBgColor(){
 	return bgColor;
 }
 

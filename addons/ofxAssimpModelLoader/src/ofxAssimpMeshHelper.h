@@ -1,5 +1,5 @@
 
-#import "aiMesh.h"
+#include "aiMesh.h"
 
 // This is for the VBO
 // TODO: use aiMesh or aiVBOMesh if / when it happens

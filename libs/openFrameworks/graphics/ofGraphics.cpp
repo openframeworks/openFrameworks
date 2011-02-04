@@ -343,12 +343,12 @@ bool ofbClearBg(){
 
 //----------------------------------------------------------
 float * ofBgColorPtr(){
-	return &renderer->getBgColor().r;
+	return renderer->getBgColor().v;
 }
 
 //----------------------------------------------------------
 void ofBackground(const ofColor & c){
-	ofBackground ( c.r, c.g, c.b);
+	ofBackground ( c.r, c.g, c.b, c.a);
 }
 
 //----------------------------------------------------------
@@ -903,14 +903,16 @@ void ofLine(float x1,float y1,float z1,float x2,float y2,float z2){
 	if(renderer->rendersPathDirectly()){
 		path.clear();
 		ofSetCurrentStyleTo(path);
-		path.lineTo(x1,y1,z1);
+		path.moveTo(x1,y1,z1);
 		path.lineTo(x2,y2,z2);
+		path.setFilled(false);
 		renderer->draw(path);
 	}else{
 		shape.clear();
 		ofSetCurrentStyleTo(shape);
-		shape.lineTo(x1,y1,z1);
+		shape.moveTo(x1,y1,z1);
 		shape.lineTo(x2,y2,z2);
+		path.setFilled(false);
 		renderer->draw(shape);
 	}
 

@@ -71,7 +71,7 @@ public:
 	void setupScreen();
 
 	// bg color
-	ofColor getBgColor();
+	ofColor & getBgColor();
 	bool bClearBg();
 	void background(const ofColor & c);
 	void background(float brightness);

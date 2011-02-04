@@ -96,7 +96,7 @@ public:
 	/// Catmull-Rom curves.
 	void addVertex(ofPoint p1);
 	void addVertex( float x, float y, float z=0 ) 
-		{ getCurrentSubShape().addVertex( ofPoint( x,y,z ) ); }
+		{ addVertex( ofPoint( x,y,z ) ); }
 
 	// creates a new subshape internally every call from now
 	// will affect the new subshape
@@ -182,7 +182,7 @@ public:
 
 
 
-	bool hasOutline() const { return bNeedsOutlineDraw || !bFilled; }
+	bool hasOutline() const { return strokeWidth>0; }
 
 
 
