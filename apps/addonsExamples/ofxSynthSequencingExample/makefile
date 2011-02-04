@@ -113,7 +113,7 @@ CFLAGS += $(CORE_INCLUDE_FLAGS)
  
 
 
-LIBS = $(LIB_SHARED)
+LIBS += $(LIB_SHARED)
 LIBS += $(LIB_STATIC)
 ifeq ($(ARCH),android)
 	LDFLAGS = $(LIB_PATHS_FLAGS) --sysroot=$(SYSROOT) -nostdlib -L"$(NDK_ROOT)/sources/cxx-stl/gnu-libstdc++/libs/armeabi"
@@ -276,7 +276,7 @@ $(OBJ_OUTPUT)%.o: ../../../%.c
 	$(CC) $(TARGET_CFLAGS) $(CFLAGS) $(ADDONSCFLAGS) $(USER_CFLAGS) -MMD -MP -MF$(OBJ_OUTPUT)$*.d -MT$(OBJ_OUTPUT)$*.d -o $@ -c $<
 	
 $(TARGET): $(OBJS) $(ADDONS_OBJS)
-	@echo "linking" $(TARGET)
+	@echo "linking" $(TARGET) $(GTK)
 	$(CXX) -o $@ $(OBJS) $(ADDONS_OBJS) $(LDFLAGS) $(USER_LDFLAGS) $(TARGET_LIBS) $(ADDONSLIBS) $(USER_LIBS) $(LIBS) 
 
 -include $(DEPFILES)
