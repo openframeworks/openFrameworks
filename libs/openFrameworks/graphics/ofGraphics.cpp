@@ -67,7 +67,7 @@ void 			setupCircle();
 static ofShape path;
 static ofShapeTessellation shape;
 static ofVertexData vertexData;
-static ofBaseRenderer * renderer = new ofGLRenderer;
+static ofBaseRenderer * renderer = new ofGLRenderer(false);
 
 void ofSetDefaultRenderer(ofBaseRenderer * renderer_){
 	if(renderer) delete renderer;
@@ -382,6 +382,8 @@ static void ofSetCurrentStyleTo(ofShape & path){
 
 	if(drawMode == OF_OUTLINE){
 		path.setStrokeWidth(currentStyle.lineWidth);
+	}else{
+		path.setStrokeWidth(0);
 	}
 }
 
@@ -392,6 +394,8 @@ static void ofSetCurrentStyleTo(ofShapeTessellation & shape){
 
 	if(drawMode == OF_OUTLINE){
 		shape.setStrokeWidth(currentStyle.lineWidth);
+	}else{
+		shape.setStrokeWidth(0);
 	}
 }
 
@@ -906,13 +910,15 @@ void ofLine(float x1,float y1,float z1,float x2,float y2,float z2){
 		path.moveTo(x1,y1,z1);
 		path.lineTo(x2,y2,z2);
 		path.setFilled(false);
+		path.setStrokeWidth(ofGetStyle().lineWidth);
 		renderer->draw(path);
 	}else{
 		shape.clear();
 		ofSetCurrentStyleTo(shape);
 		shape.moveTo(x1,y1,z1);
 		shape.lineTo(x2,y2,z2);
-		path.setFilled(false);
+		shape.setFilled(false);
+		shape.setStrokeWidth(ofGetStyle().lineWidth);
 		renderer->draw(shape);
 	}
 
@@ -957,6 +963,7 @@ void ofRect(float x,float y,float z,float w,float h){
 			path.lineTo(x+w/2.0f,y+h/2.0f,z);
 			path.lineTo(x-w/2.0f,y+h/2.0f,z);
 		}
+		path.close();
 		renderer->draw(path);
 	}else{
 		shape.clear();
@@ -972,6 +979,7 @@ void ofRect(float x,float y,float z,float w,float h){
 			shape.lineTo(x+w/2.0f,y+h/2.0f,z);
 			shape.lineTo(x-w/2.0f,y+h/2.0f,z);
 		}
+		shape.close();
 		renderer->draw(shape);
 	}
 

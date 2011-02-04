@@ -28,6 +28,12 @@ public:
 		 }
 	 }
 
+	 void useShapeColor(bool bUseShapeColor){
+		 for(int i=0;i<(int)renderers.size();i++){
+			 renderers[i]->useShapeColor(bUseShapeColor);
+		 }
+	 }
+
 	//--------------------------------------------
 	// transformations
 	 void pushView(){

@@ -203,6 +203,8 @@ public:
 	virtual void draw(ofShape & shape)=0;
 	virtual void draw(ofVertexData & vertexData)=0;
 
+	virtual void useShapeColor(bool bUseShapeColor)=0;
+
 	//--------------------------------------------
 	// transformations
 	virtual void pushView(){};

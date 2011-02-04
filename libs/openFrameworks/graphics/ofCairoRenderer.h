@@ -30,6 +30,7 @@ public:
 	void draw(ofPolyline & poly);
 	void draw(ofShapeTessellation & shape);
 	void draw(ofVertexData & vertexData);
+	void useShapeColor(bool bUseShapeColor);
 
 	bool rendersPathDirectly(){
 		return true;
@@ -95,6 +96,7 @@ private:
 	ofVec3f transform(ofVec3f vec);
 
 	deque<ofPoint> curvePoints;
+	bool bUseShapeColor;
 	cairo_t * cr;
 	cairo_surface_t * surface;
 	bool bBackgroundAuto;
