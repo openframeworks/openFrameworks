@@ -299,16 +299,30 @@ CleanAndroid:
 	rm -f -v obj/$(APPNAME)
 
 
-afterDebugAndroid:
+afterDebugAndroid:$(TARGET)
 	if [ -f libs/armeabi-v7a/libOFAndroidApp.so ]; then rm libs/armeabi-v7a/libOFAndroidApp.so; fi
-	if [ -f obj/$(BINNAME) ]; then rm obj/$(BINNAME); fi
+	#if [ -f obj/$(BIN_NAME) ]; then rm obj/$(BIN_NAME); fi
 	touch AndroidManifest.xml
+	$(SDK_ROOT)/tools/android update project --target 5 --path $(PWD)
+	ant debug
+	cp bin/OFActivity-debug.apk bin/$(APPNAME).apk 
+	#$(SDK_ROOT)/platform-tools/adb install bin/$(APPNAME).apk
 	
-afterReleaseAndroid:
-	if [ -f obj/$(BINNAME) ]; then rm obj/$(BINNAME); fi
+afterReleaseAndroid:$(TARGET)
+	if [ -f obj/$(BIN_NAME) ]; then rm obj/$(BIN_NAME); fi
 	touch AndroidManifest.xml
+	$(SDK_ROOT)/tools/android update project --target 5 --path $(PWD)
+	ant debug
+	cp bin/OFActivity-debug.apk bin/$(APPNAME).apk 
+	#ant release
+	#cp bin/OFActivity-unsigned.apk bin/$(APPNAME).apk
+	#keytool -genkey -alias release -keyalg RSA \
+    #      -validity 20000 -keystore "$(HOME)/.android/release.keystore"
+	#jarsigner -verbose -keystore "$(HOME)/.android/release.keystore" \
+    #        -signedjar bin\$(APPNAME).apk \
+    #        bin\OFActivity-unsigned.apk release -keypass openframeworks34
 	
-after:
+after:$(TARGET)
 	cp -r ../../../export/$(LIBSPATH)/libs bin/
 	@echo
 	@echo "     compiling done"
