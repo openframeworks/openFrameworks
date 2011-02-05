@@ -181,7 +181,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #if (defined(__BORLANDC__) || defined (__BCPLUSPLUS__))
 #error Currently, Borland is unsupported. Feel free to port Assimp.
 
-// "W8059 Packgröße der Struktur geändert"
+// "W8059 Packgrï¿½ï¿½e der Struktur geï¿½ndert"
 
 #endif
 	//////////////////////////////////////////////////////////////////////////
@@ -238,6 +238,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #		define ASSIMP_BUILD_X86_32BIT_ARCHITECTURE
 #	elif defined(__x86_64__)
 #		define ASSIMP_BUILD_X86_64BIT_ARCHITECTURE
+#	elif defined(__ppc__)
+#		define ASSIMP_BUILD_PPC_32BIT_ARCHITECTURE
+#	elif defined(ANDROID)
+#		define ASSIMP_BUILD_ARM_32BIT_ARCHITECTURE
 #	else
 #		error unknown architecture
 #	endif

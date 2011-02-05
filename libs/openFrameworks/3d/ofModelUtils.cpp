@@ -2,7 +2,7 @@
 
 #include "ofModelUtils.h"
 #include "ofConstants.h"
-#if !defined(TARGET_ANDROID) && !defined(TARGET_OF_IPHONE)
+#if !defined(TARGET_OF_IPHONE)
 #include "aiConfig.h"
 #include "assimp.h"
 #include "aiPostProcess.h"
