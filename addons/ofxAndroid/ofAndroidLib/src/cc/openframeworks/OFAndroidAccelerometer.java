@@ -40,11 +40,9 @@ public class OFAndroidAccelerometer extends OFAndroidObject {
 	
 	private final SensorEventListener sensorListener = new SensorEventListener() {
 		public void onSensorChanged(SensorEvent event) {
-			try{
-				updateAccelerometer(event.values[0],
-				          event.values[1],
-				          event.values[2]);
-			}catch(UnsatisfiedLinkError e){}
+			updateAccelerometer(event.values[0],
+			          event.values[1],
+			          event.values[2]);
 		}
 		 
 		public void onAccuracyChanged(Sensor sensor, int accuracy) {}

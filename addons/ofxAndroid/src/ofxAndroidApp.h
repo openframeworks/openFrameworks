@@ -39,6 +39,10 @@ public:
 	virtual void touchCancelled(ofTouchEventArgs & touch){
 		touchCancelled(touch.x, touch.y, touch.id);
 	}
+
+	virtual bool backPressed(){
+		return false;
+	}
 };
 
 

@@ -14,6 +14,7 @@ import javax.microedition.khronos.opengles.GL10;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.pm.ActivityInfo;
 import android.hardware.SensorManager;
 import android.opengl.GLSurfaceView;
 import android.opengl.GLU;
@@ -98,6 +99,8 @@ public class OFAndroid {
         
         mGLView = new OFGLSurfaceView(ofActivity);
         ofActivity.setContentView(mGLView);
+        
+        accelerometer = new OFAndroidAccelerometer((SensorManager)ofActivity.getSystemService(Context.SENSOR_SERVICE));
     }
 
 	public void start(){
@@ -153,7 +156,6 @@ public class OFAndroid {
     
     private GLSurfaceView mGLView;
     private static OFAndroidAccelerometer accelerometer;
-    private static Activity ofActivity;
 	 
     static {
     	System.loadLibrary("OFAndroidApp"); 
@@ -177,6 +179,35 @@ public class OFAndroid {
     public static native void onTouchDown(int id,float x,float y,float pressure);
     public static native void onTouchUp(int id,float x,float y,float pressure);
     public static native void onTouchMoved(int id,float x,float y,float pressure);
+    
+    public static native void onKeyDown(int keyCode);
+    public static native void onKeyUp(int keyCode);
+    public static native boolean onBackPressed();
+    
+    private static Activity ofActivity;
+    
+
+    
+    public static void setScreenOrientation(int orientation){
+    	switch(orientation){
+    	case 1:
+    		ofActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+    		break;
+    	case 2:
+    		ofActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+    		break;
+    	case 3:
+    		ofActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+    		break;
+    	case 4:
+    		ofActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+    		break;
+    	}
+    }
+    
+    public static void pauseApp(){
+		ofActivity.moveTaskToBack(true);
+    }
     
 }
 

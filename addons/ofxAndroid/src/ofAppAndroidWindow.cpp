@@ -44,6 +44,8 @@ static JavaVM *ofJavaVM=0;
 
 static ofBaseApp * OFApp = NULL;
 static ofxAndroidApp * androidApp = NULL;
+
+static ofOrientation orientation = OF_ORIENTATION_DEFAULT;
 //static ofAppAndroidWindow window;
 
 JavaVM * ofGetJavaVMPtr(){
@@ -71,6 +73,23 @@ void ofRunApp( ofxAndroidApp * app){
 
 void ofxRegisterMultitouch(ofxAndroidApp * app){
 	ofRegisterTouchEvents(app);
+}
+
+
+void ofxAndroidPauseApp(){
+	jclass javaClass = ofGetJNIEnv()->FindClass("cc.openframeworks.OFAndroid");
+
+	if(javaClass==0){
+		ofLog(OF_LOG_ERROR,"cannot find OFAndroid java class");
+		return;
+	}
+
+	jmethodID pauseApp = ofGetJNIEnv()->GetStaticMethodID(javaClass,"pauseApp","()V");
+	if(!pauseApp){
+		ofLog(OF_LOG_ERROR,"cannot find OFAndroid pauseApp method");
+		return;
+	}
+	ofGetJNIEnv()->CallStaticObjectMethod(javaClass,pauseApp);
 }
 
 ofAppAndroidWindow::ofAppAndroidWindow() {
@@ -120,12 +139,26 @@ void ofAppAndroidWindow::disableSetupScreen(){
 	bSetupScreen = false;
 }
 
-void ofAppAndroidWindow::setOrientation(ofOrientation orientation){
+void ofAppAndroidWindow::setOrientation(ofOrientation _orientation){
+	if(orientation==_orientation) return;
+	orientation = _orientation;
+	jclass javaClass = ofGetJNIEnv()->FindClass("cc.openframeworks.OFAndroid");
 
+	if(javaClass==0){
+		ofLog(OF_LOG_ERROR,"cannot find OFAndroid java class");
+		return;
+	}
+
+	jmethodID setScreenOrientation = ofGetJNIEnv()->GetStaticMethodID(javaClass,"setScreenOrientation","(I)V");
+	if(!setScreenOrientation){
+		ofLog(OF_LOG_ERROR,"cannot find OFAndroid setScreenOrientation method");
+		return;
+	}
+	ofGetJNIEnv()->CallStaticObjectMethod(javaClass,setScreenOrientation,orientation);
 }
 
 ofOrientation ofAppAndroidWindow::getOrientation(){
-	return OF_ORIENTATION_DEFAULT;
+	return orientation;
 }
 
 void reloadTextures(){
@@ -200,6 +233,7 @@ Java_cc_openframeworks_OFAndroid_onSurfaceDestroyed( JNIEnv*  env, jclass  thiz 
 	ofLog(OF_LOG_NOTICE,"onSurfaceDestroyed");
 	ofUnloadAllFontTextures();
 	ofPauseVideoGrabbers();
+	ofPushStyle();
 }
 
 void
@@ -210,6 +244,7 @@ Java_cc_openframeworks_OFAndroid_onSurfaceCreated( JNIEnv*  env, jclass  thiz ){
 		androidApp->resume();
 		androidApp->reloadTextures();
 	}
+	ofPopStyle();
 	paused = false;
 }
 
@@ -315,6 +350,28 @@ Java_cc_openframeworks_OFAndroid_onTouchMoved(JNIEnv*  env, jclass  thiz, jint i
 	ofNotifyEvent(ofEvents.touchMoved,touch);
 }
 
+void
+Java_cc_openframeworks_OFAndroid_onKeyDown(JNIEnv*  env, jobject  thiz, jint  keyCode){
+	if(OFApp)OFApp->keyPressed(keyCode);
+	ofKeyEventArgs key;
+	key.key = keyCode;
+	ofNotifyEvent(ofEvents.keyPressed,key);
+}
+
+void
+Java_cc_openframeworks_OFAndroid_onKeyUp(JNIEnv*  env, jobject  thiz, jint  keyCode){
+	if(OFApp)OFApp->keyReleased(keyCode);
+	ofKeyEventArgs key;
+	key.key = keyCode;
+	ofNotifyEvent(ofEvents.keyReleased,key);
+}
+
+jboolean
+Java_cc_openframeworks_OFAndroid_onBackPressed(){
+	ofLog(OF_LOG_NOTICE,"back pressed");
+	if(androidApp) return androidApp->backPressed();
+	else return false;
+}
 }
 
 
