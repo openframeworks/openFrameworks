@@ -44,6 +44,12 @@ void testApp::setup(){
 
 }
 
+// android destroys the gl context when it pauses apps
+// most OF textures are automatically regenerated
+// but you'll need to regenerate the vbo yourself
+void testApp::resume(){
+	vbo.setVertexData(pos, total, GL_DYNAMIC_DRAW);
+}
 
 //--------------------------------------------------------------
 void testApp::update(){

@@ -14,6 +14,11 @@ public:
 	void update();
 	void draw();
 	
+	// android destroys the gl context when it pauses apps
+	// most OF textures are automatically regenerated
+	// but you'll need to regenerate the vbo yourself
+	void resume();
+
 	void touchDown(ofTouchEventArgs &touch);
 	void touchMoved(ofTouchEventArgs &touch);
 	void touchUp(ofTouchEventArgs &touch);
