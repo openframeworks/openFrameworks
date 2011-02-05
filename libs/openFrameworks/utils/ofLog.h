@@ -17,6 +17,6 @@ enum ofLogLevel{
 //TODO: ofLogNotice << "something"; 
 
 //--------------------------------------------------
-void ofSetLogLevel(int logLevel);
-void ofLog(int logLevel, string message);
-void ofLog(int logLevel, const char* format, ...);
+void ofSetLogLevel(ofLogLevel logLevel);
+void ofLog(ofLogLevel logLevel, string message);
+void ofLog(ofLogLevel logLevel, const char* format, ...);

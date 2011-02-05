@@ -337,7 +337,7 @@ enum ofBlendMode{
 
 //this is done to match the iPhone defaults 
 //we don't say landscape, portrait etc becuase iPhone apps default to portrait while desktop apps are typically landscape
-enum{
+enum ofOrientation{
 	OF_ORIENTATION_DEFAULT = 1,	
 	OF_ORIENTATION_180 = 2,
 	OF_ORIENTATION_90_RIGHT = 3,

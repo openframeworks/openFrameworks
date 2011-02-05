@@ -20,7 +20,7 @@ void 		ofSetFrameRate(int targetRate);
 void		ofSleepMillis(int millis);
 double		ofGetLastFrameTime();
 
-void		ofSetOrientation(int orientation);
+void		ofSetOrientation(ofOrientation orientation);
 int			ofGetOrientation();
 
 //-------------------------- cursor

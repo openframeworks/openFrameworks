@@ -31,7 +31,7 @@ ofPoint ofGetClosestPoint(const ofPolyline& polyline, const ofPoint& target, uns
 
 
 
-ofShapeTessellation ofTriangleShape(float x1,float y1,float z1,float x2,float y2,float z2,float x3, float y3,float z3){
+inline ofShapeTessellation ofTriangleShape(float x1,float y1,float z1,float x2,float y2,float z2,float x3, float y3,float z3){
 	ofShapeTessellation shape;
 
 	shape.lineTo(x1,y1,z1);
@@ -42,7 +42,7 @@ ofShapeTessellation ofTriangleShape(float x1,float y1,float z1,float x2,float y2
 	return shape;
 }
 
-ofShape ofTrianglePath(float x1,float y1,float z1,float x2,float y2,float z2,float x3, float y3,float z3){
+inline ofShape ofTrianglePath(float x1,float y1,float z1,float x2,float y2,float z2,float x3, float y3,float z3){
 	ofShape path;
 
 	path.lineTo(x1,y1,z1);

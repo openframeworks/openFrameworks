@@ -5,6 +5,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
+import java.nio.Buffer;
+import java.nio.ByteBuffer;
+import java.nio.FloatBuffer;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
@@ -13,6 +16,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.hardware.SensorManager;
 import android.opengl.GLSurfaceView;
+import android.opengl.GLU;
+import android.os.Environment;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
@@ -31,62 +36,62 @@ public class OFAndroid {
         	// to a folder in the sdcard
 	        Field[] files = raw.getDeclaredFields();
 	        
-
+	        String dataPath="";
     		try{
-    			//File root = Environment.getExternalStorageDirectory();
-    			
-    			if(ofActivity.getApplicationContext().getExternalFilesDir(null)!=null){
-    				Log.i("OF","external files dir: "+ ofActivity.getApplicationContext().getExternalFilesDir(null).getAbsolutePath());
-    				OFAndroid.setAppDataDir(ofActivity.getApplicationContext().getExternalFilesDir(null).getAbsolutePath());
-    			}else{
-    				new File("/sdcard/Android/data/"+packageName).mkdir();
-    				new File("/sdcard/Android/data/"+packageName+"/files").mkdir();
-    				OFAndroid.setAppDataDir("/sdcard/Android/data/"+packageName+"/files");
-    			}
-    			/*Log.i("OF","creating app directory: " + root + "/" +appName);
-    			if(!new File(root + appName).mkdir()){
-    				throw new Exception("couldn't create app directory");
-    			}*/
+    			dataPath = Environment.getExternalStorageDirectory().getAbsolutePath();
+    			dataPath += "/"+packageName;
+				try{
+					File dir = new File(dataPath);
+					if(dir.mkdir()!=true) 
+						throw new Exception();
+				}catch(Exception e){
+					Log.e("OF","error creating dir " + dataPath,e);
+				}
+				
+				OFAndroid.setAppDataDir(dataPath);
+    			Log.i("OF","creating app directory: " + dataPath);
+    			for(int i=0; i<files.length; i++){
+    	        	int fileId;
+    	        	String fileName="";
+    				
+    				InputStream from=null;
+    				File toFile=null;
+    				FileOutputStream to=null;
+    	        	try {
+    					fileId = files[i].getInt(null);
+    					String resName = ofActivity.getResources().getText(fileId).toString();
+    					fileName = resName.substring(resName.lastIndexOf("/"));
+    					
+    					from = ofActivity.getResources().openRawResource(fileId);
+    					//toFile = new File(Environment.getExternalStorageDirectory() + "/" + appName + "/" +fileName);
+    					Log.i("OF","copying file " + fileName + " to " + dataPath);
+    					toFile = new File(dataPath + "/" + fileName);
+    					to = new FileOutputStream(toFile);
+    					byte[] buffer = new byte[4096];
+    					int bytesRead;
+    					
+    					while ((bytesRead = from.read(buffer)) != -1)
+    					    to.write(buffer, 0, bytesRead); // write
+    				} catch (Exception e) {
+    					Log.e("OF","error copying file",e);
+    				} finally {
+    					if (from != null)
+    					  try {
+    					    from.close();
+    					  } catch (IOException e) { }
+    					  
+    			        if (to != null)
+    			          try {
+    			            to.close();
+    			          } catch (IOException e) { }
+    				}
+    	        }
     		}catch(Exception e){
-    			Log.e("OF","couldn't create app directory " + packageName);
+    			Log.e("OF","couldn't move app resources to data directory " + dataPath);
     			e.printStackTrace();
     		}
     		
-	        for(int i=0; i<files.length; i++){
-	        	int fileId;
-	        	String fileName="";
-				
-				InputStream from=null;
-				File toFile=null;
-				FileOutputStream to=null;
-	        	try {
-					fileId = files[i].getInt(null);
-					String resName = ofActivity.getResources().getText(fileId).toString();
-					fileName = resName.substring(resName.lastIndexOf("/"));
-					
-					from = ofActivity.getResources().openRawResource(fileId);
-					//toFile = new File(Environment.getExternalStorageDirectory() + "/" + appName + "/" +fileName);
-					toFile = new File(ofActivity.getApplicationContext().getExternalFilesDir(null) + fileName);
-					to = new FileOutputStream(toFile);
-					byte[] buffer = new byte[4096];
-					int bytesRead;
-					
-					while ((bytesRead = from.read(buffer)) != -1)
-					    to.write(buffer, 0, bytesRead); // write
-				} catch (Exception e) {
-					e.printStackTrace();
-				} finally {
-					if (from != null)
-					  try {
-					    from.close();
-					  } catch (IOException e) { }
-					  
-			        if (to != null)
-			          try {
-			            to.close();
-			          } catch (IOException e) { }
-				}
-	        }
+	        
         } catch (ClassNotFoundException e1) { }
         
         OFAndroid.ofActivity = ofActivity;
@@ -250,7 +255,6 @@ class OFAndroidWindow implements GLSurfaceView.Renderer {
     }
 
     public void onSurfaceChanged(GL10 gl, int w, int h) {
-        //gl.glViewport(0, 0, w, h);
     	OFAndroid.resize(w, h);
     }
 

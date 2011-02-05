@@ -137,7 +137,6 @@ void ofGLRenderer::viewport(float x, float y, float width, float height, bool in
 	if (invertY){
 		y = ofGetHeight() - (y + height);
 	}
-
 	glViewport(x, y, width, height);
 }
 
@@ -303,7 +302,7 @@ void ofGLRenderer::setupGraphicDefaults(){
 
 //----------------------------------------------------------
 void ofGLRenderer::setupScreen(){
-	ofSetupScreenPerspective();	// assume defaults
+	setupScreenPerspective();	// assume defaults
 }
 
 
@@ -373,13 +372,13 @@ void ofGLRenderer::setColor(const ofColor & color, int _a){
 
 //----------------------------------------------------------
 void ofGLRenderer::setColor(int _r, int _g, int _b){
-	glColor4ub(_r,_g,_b,255);
+	glColor4f(_r/255.f,_g/255.f,_b/255.f,1.f);
 }
 
 
 //----------------------------------------------------------
 void ofGLRenderer::setColor(int _r, int _g, int _b, int _a){
-	glColor4ub(_r,_g,_b,_a);
+	glColor4f(_r/255.f,_g/255.f,_b/255.f,_a/255.f);
 }
 
 //----------------------------------------------------------

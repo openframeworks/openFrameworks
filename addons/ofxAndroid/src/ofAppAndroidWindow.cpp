@@ -27,17 +27,17 @@ static int  sTimeOffsetInit = 0;
 static long sTimeStopped  = 0;*/
 
 static bool bSetupScreen = true;
-float			timeNow, timeThen, fps;
-int				nFramesForFPS;
-int				nFrameCount;
-bool			bFrameRateSet;
-int 			millisForFrame;
-int 			prevMillis;
-int 			diffMillis;
+static float			timeNow, timeThen, fps;
+static int				nFramesForFPS;
+static int				nFrameCount;
+static bool			bFrameRateSet;
+static int 			millisForFrame;
+static int 			prevMillis;
+static int 			diffMillis;
 
-float 			frameRate;
+static float 			frameRate;
 
-double			lastFrameTime;
+static double			lastFrameTime;
 
 static JavaVM *ofJavaVM=0;
 
@@ -91,6 +91,14 @@ ofPoint	ofAppAndroidWindow::getWindowSize(){
 	return ofPoint(sWindowWidth,sWindowHeight);
 }
 
+int	ofAppAndroidWindow::getWidth(){
+	return sWindowWidth;
+}
+
+int	ofAppAndroidWindow::getHeight(){
+	return sWindowHeight;
+}
+
 int	ofAppAndroidWindow::getFrameNum() {
 	return nFrameCount;
 }
@@ -110,6 +118,14 @@ void ofAppAndroidWindow::enableSetupScreen(){
 
 void ofAppAndroidWindow::disableSetupScreen(){
 	bSetupScreen = false;
+}
+
+void ofAppAndroidWindow::setOrientation(ofOrientation orientation){
+
+}
+
+ofOrientation ofAppAndroidWindow::getOrientation(){
+	return OF_ORIENTATION_DEFAULT;
 }
 
 void reloadTextures(){
@@ -174,12 +190,12 @@ Java_cc_openframeworks_OFAndroid_onStop( JNIEnv*  env, jobject  thiz ){
 
 
 void
-Java_cc_openframeworks_OFAndroid_onDestroy( JNIEnv*  env, jobject  thiz ){
+Java_cc_openframeworks_OFAndroid_onDestroy( JNIEnv*  env, jclass  thiz ){
 
 }
 
 void
-Java_cc_openframeworks_OFAndroid_onSurfaceDestroyed( JNIEnv*  env, jobject  thiz ){
+Java_cc_openframeworks_OFAndroid_onSurfaceDestroyed( JNIEnv*  env, jclass  thiz ){
 	paused = true;
 	ofLog(OF_LOG_NOTICE,"onSurfaceDestroyed");
 	ofUnloadAllFontTextures();
@@ -187,7 +203,7 @@ Java_cc_openframeworks_OFAndroid_onSurfaceDestroyed( JNIEnv*  env, jobject  thiz
 }
 
 void
-Java_cc_openframeworks_OFAndroid_onSurfaceCreated( JNIEnv*  env, jobject  thiz ){
+Java_cc_openframeworks_OFAndroid_onSurfaceCreated( JNIEnv*  env, jclass  thiz ){
 	ofLog(OF_LOG_NOTICE,"onSurfaceCreated");
 	reloadTextures();
 	if(androidApp){
@@ -198,36 +214,36 @@ Java_cc_openframeworks_OFAndroid_onSurfaceCreated( JNIEnv*  env, jobject  thiz )
 }
 
 void
-Java_cc_openframeworks_OFAndroid_setup( JNIEnv*  env, jobject  thiz )
+Java_cc_openframeworks_OFAndroid_setup( JNIEnv*  env, jclass  thiz )
 {
     //initAndroidOF();
 	ofLog(OF_LOG_NOTICE,"setup");
-    if(OFApp) OFApp->setup();
+	ofNotifySetup();
 }
 
 void
-Java_cc_openframeworks_OFAndroid_resize( JNIEnv*  env, jobject  thiz, jint w, jint h )
+Java_cc_openframeworks_OFAndroid_resize( JNIEnv*  env, jclass  thiz, jint w, jint h )
 {
     sWindowWidth  = w;
     sWindowHeight = h;
-    ofLog(OF_LOG_NOTICE,"resize");
-    if(OFApp)OFApp->windowResized(w,h);
+    ofLog(OF_LOG_NOTICE,"resize %i,%i",w,h);
+    ofNotifyWindowResized(w,h);
 }
 
 /* Call to finalize the graphics state */
 void
-Java_cc_openframeworks_OFAndroid_exit( JNIEnv*  env )
+Java_cc_openframeworks_OFAndroid_exit( JNIEnv*  env, jclass  thiz )
 {
-   if(OFApp) OFApp->exit();
+   ofNotifyExit();
 }
 
 /* Call to render the next GL frame */
 void
-Java_cc_openframeworks_OFAndroid_render( JNIEnv*  env )
+Java_cc_openframeworks_OFAndroid_render( JNIEnv*  env, jclass  thiz )
 {
 	if(paused) return;
 	//LOGI("update");
-	if(OFApp) OFApp->update();
+	ofNotifyUpdate();
 
 
 	int width, height;
@@ -237,17 +253,17 @@ Java_cc_openframeworks_OFAndroid_render( JNIEnv*  env )
 
 	height = height > 0 ? height : 1;
 	// set viewport, clear the screen
-	glViewport( 0, 0, width, height );
+	//glViewport( 0, 0, width, height );
+	ofViewport(0, 0, width, height, false);		// used to be glViewport( 0, 0, width, height );
 	float * bgPtr = ofBgColorPtr();
 	bool bClearAuto = ofbClearBg();
 
-	if ( bClearAuto == true ){
-		glClearColor(bgPtr[0],bgPtr[1],bgPtr[2], bgPtr[3]);
-		glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	if ( bClearAuto == true || nFrameCount < 3){
+		ofClear(bgPtr[0]*255,bgPtr[1]*255,bgPtr[2]*255, bgPtr[3]*255);
 	}
 
 	if(bSetupScreen) ofSetupScreen();
-	if(OFApp) OFApp->draw();
+	ofNotifyDraw();
 
 	timeNow = ofGetElapsedTimef();
 	double diff = timeNow-timeThen;
@@ -260,13 +276,13 @@ Java_cc_openframeworks_OFAndroid_render( JNIEnv*  env )
 	 timeThen		= timeNow;
 	// --------------
 
-	nFrameCount++;		// increase the overall frame count
+	nFrameCount++;		// increase the overall frame count*/
 
 
 }
 
 void
-Java_cc_openframeworks_OFAndroid_onTouchDown(JNIEnv*  env, jobject  thiz, jint id,jfloat x,jfloat y,jfloat pressure){
+Java_cc_openframeworks_OFAndroid_onTouchDown(JNIEnv*  env, jclass  thiz, jint id,jfloat x,jfloat y,jfloat pressure){
 	ofNotifyMousePressed(x,y,0);
 	ofTouchEventArgs touch;
 	touch.id = id;
@@ -277,7 +293,7 @@ Java_cc_openframeworks_OFAndroid_onTouchDown(JNIEnv*  env, jobject  thiz, jint i
 }
 
 void
-Java_cc_openframeworks_OFAndroid_onTouchUp(JNIEnv*  env, jobject  thiz, jint id,jfloat x,jfloat y,jfloat pressure){
+Java_cc_openframeworks_OFAndroid_onTouchUp(JNIEnv*  env, jclass  thiz, jint id,jfloat x,jfloat y,jfloat pressure){
 	ofNotifyMouseReleased(x,y,0);
 	ofTouchEventArgs touch;
 	touch.id = id;
@@ -288,7 +304,7 @@ Java_cc_openframeworks_OFAndroid_onTouchUp(JNIEnv*  env, jobject  thiz, jint id,
 }
 
 void
-Java_cc_openframeworks_OFAndroid_onTouchMoved(JNIEnv*  env, jobject  thiz, jint id,jfloat x,jfloat y,jfloat pressure){
+Java_cc_openframeworks_OFAndroid_onTouchMoved(JNIEnv*  env, jclass  thiz, jint id,jfloat x,jfloat y,jfloat pressure){
 	ofNotifyMouseMoved(x,y);
 	ofNotifyMouseDragged(x,y,0);
 	ofTouchEventArgs touch;

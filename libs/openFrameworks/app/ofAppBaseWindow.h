@@ -29,8 +29,8 @@ public:
 	virtual ofPoint	getWindowSize(){return ofPoint(); }
 	virtual ofPoint	getScreenSize(){return ofPoint(); }
 
-	virtual void	setOrientation(int orientation){ }
-	virtual int		getOrientation(){ return 0; }
+	virtual void			setOrientation(ofOrientation orientation){ }
+	virtual ofOrientation	getOrientation(){ return OF_ORIENTATION_DEFAULT; }
 
 	//this is used by ofGetWidth and now determines the window width based on orientation
 	virtual int		getWidth(){ return 0; }
