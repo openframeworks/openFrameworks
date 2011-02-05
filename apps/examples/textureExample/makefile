@@ -305,8 +305,9 @@ afterDebugAndroid:$(TARGET)
 	touch AndroidManifest.xml
 	$(SDK_ROOT)/tools/android update project --target 5 --path $(PWD)
 	ant debug
-	cp bin/OFActivity-debug.apk bin/$(APPNAME).apk 
-	#$(SDK_ROOT)/platform-tools/adb install bin/$(APPNAME).apk
+	cp bin/OFActivity-debug.apk bin/$(APPNAME).apk
+	#$(SDK_ROOT)/platform-tools/adb uninstall cc.openframeworks.$(APPNAME) 
+	$(SDK_ROOT)/platform-tools/adb install -r bin/$(APPNAME).apk
 	
 afterReleaseAndroid:$(TARGET)
 	if [ -f obj/$(BIN_NAME) ]; then rm obj/$(BIN_NAME); fi
@@ -314,6 +315,8 @@ afterReleaseAndroid:$(TARGET)
 	$(SDK_ROOT)/tools/android update project --target 5 --path $(PWD)
 	ant debug
 	cp bin/OFActivity-debug.apk bin/$(APPNAME).apk 
+	#$(SDK_ROOT)/platform-tools/adb uninstall cc.opeframeworks.$(APPNAME) 
+	$(SDK_ROOT)/platform-tools/adb install -r bin/$(APPNAME).apk 
 	#ant release
 	#cp bin/OFActivity-unsigned.apk bin/$(APPNAME).apk
 	#keytool -genkey -alias release -keyalg RSA \
