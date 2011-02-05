@@ -4,6 +4,7 @@
 #include "ofUtils.h"
 #include "ofGraphics.h"
 #include "ofAppRunner.h"
+#include "ofConstants.h"
 
 #ifdef TARGET_WIN32
 	#define GLUT_BUILDING_LIB
@@ -45,7 +46,7 @@ static int			windowW;
 static int			windowH;
 static ofBaseApp *	ofAppPtr;
 static int          nFramesSinceWindowResized;
-static int			orientation;
+static ofOrientation	orientation;
 
 #ifdef TARGET_WIN32
 
@@ -189,7 +190,7 @@ ofAppGlutWindow::ofAppGlutWindow(){
 	nonFullScreenY		= -1;
 	lastFrameTime		= 0.0;
 	displayString		= "";
-	orientation			= 1;	
+	orientation			= OF_ORIENTATION_DEFAULT;
 
 }
 
@@ -360,12 +361,12 @@ int ofAppGlutWindow::getHeight(){
 }
 
 //------------------------------------------------------------
-void ofAppGlutWindow::setOrientation(int orientationIn){
+void ofAppGlutWindow::setOrientation(ofOrientation orientationIn){
 	orientation = orientationIn;
 }
 
 //------------------------------------------------------------
-int ofAppGlutWindow::getOrientation(){
+ofOrientation ofAppGlutWindow::getOrientation(){
 	return orientation;
 }
 
@@ -559,7 +560,7 @@ void ofAppGlutWindow::display(void){
 }
 
 //------------------------------------------------------------
-void rotateMouseXY(int orientation, int &x, int &y) {
+void rotateMouseXY(ofOrientation orientation, int &x, int &y) {
 	int savedY;
 	switch(orientation) {
 		case OF_ORIENTATION_180:

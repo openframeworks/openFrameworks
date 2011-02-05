@@ -30,11 +30,11 @@ ifeq ($(findstring Android,$(MAKECMDGOALS)),Android)
 endif
 
 ifeq ($(ARCH),android)
-	COMPILER_OPTIMIZATION = -O3
+	COMPILER_OPTIMIZATION = -Os
 	HOST_PLATFORM = linux-x86
-	NDK_PLATFORM = android-9
+	NDK_PLATFORM = android-8
 else
-	COMPILER_OPTIMIZATION = -march=native -mtune=native -O3
+	COMPILER_OPTIMIZATION = -march=native -mtune=native -Os
 endif
 EXCLUDE_FROM_SOURCE="bin,.xcodeproj,obj"
 USER_CFLAGS = 
@@ -169,26 +169,27 @@ ifeq ($(ARCH),android)
 	ifeq ($(findstring Debug,$(MAKECMDGOALS)),Debug)
 		TARGET = libs/armeabi/libOFAndroidApp.so
 		TARGET_LIBS = -lopenFrameworksDebug
-		LDFLAGS += -shared
+		LDFLAGS += -Wl,--fix-cortex-a8 -shared
 	endif
 	
 	ifeq ($(findstring Release,$(MAKECMDGOALS)),Release)
 	    TARGET = libs/armeabi/libOFAndroidApp.so
 		TARGET_LIBS = -lopenFrameworks
-		LDFLAGS += -shared
+		LDFLAGS += -Wl,--fix-cortex-a8 -shared
 	endif
 	
 	ifeq ($(findstring Release_arm7,$(MAKECMDGOALS)),Release_arm7)
+		TARGET_NAME = Release_arm7
 		TARGET_CFLAGS += -march=armv7-a -mfloat-abi=softfp -mfpu=vfp
 	    TARGET = libs/armeabi-v7a/libOFAndroidApp.so
 		TARGET_LIBS = -lopenFrameworks_arm7
-		LDFLAGS += -shared
+		#LDFLAGS += -shared  already included through Release
 	endif
 	
 	ifeq ($(findstring TestLink,$(MAKECMDGOALS)),TestLink)
 		TARGET_NAME = Debug
 		TARGET_LIBS = -lopenFrameworksDebug
-		LDFLAGS += -Wl,--entry=main
+		LDFLAGS += -Wl,--entry=main,--fix-cortex-a8
 	    BIN_NAME = $(APPNAME)
 	    TARGET = obj/$(BIN_NAME)
 	endif
@@ -293,21 +294,28 @@ $(CLEANTARGET):
 	
 CleanAndroid:
 	rm -Rf obj
-	rm -f -v libs/armeabi_v7a/libOFAndroidApp.so
+	rm -f -v libs/armeabi-v7a/libOFAndroidApp.so
 	rm -f -v libs/armeabi/libOFAndroidApp.so
 	rm -f -v obj/$(APPNAME)
 
 
-afterDebugAndroid:
-	if [ -f libs/armeabi_v7a/libOFAndroidApp.so ]; then rm libs/armeabi_v7a/libOFAndroidApp.so; fi
-	if [ -f obj/$(BINNAME) ]; then rm obj/$(BINNAME); fi
+afterDebugAndroid:$(TARGET)
+	if [ -f libs/armeabi-v7a/libOFAndroidApp.so ]; then rm libs/armeabi-v7a/libOFAndroidApp.so; fi
+	#if [ -f obj/$(BIN_NAME) ]; then rm obj/$(BIN_NAME); fi
 	touch AndroidManifest.xml
+	$(SDK_ROOT)/tools/android update project --target 5 --path $(PWD)
+	ant debug
+	cp bin/OFActivity-debug.apk bin/$(APPNAME).apk 
+	#$(SDK_ROOT)/platform-tools/adb install bin/$(APPNAME).apk
 	
-afterReleaseAndroid:
-	if [ -f obj/$(BINNAME) ]; then rm obj/$(BINNAME); fi
+afterReleaseAndroid:$(TARGET)
+	if [ -f obj/$(BIN_NAME) ]; then rm obj/$(BIN_NAME); fi
 	touch AndroidManifest.xml
+	$(SDK_ROOT)/tools/android update project --target 5 --path $(PWD)
+	ant release
+	cp bin/OFActivity-debug.apk bin/$(APPNAME).apk 
 	
-after:
+after:$(TARGET)
 	cp -r ../../../export/$(LIBSPATH)/libs bin/
 	@echo
 	@echo "     compiling done"

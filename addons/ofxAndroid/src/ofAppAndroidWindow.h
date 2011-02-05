@@ -33,6 +33,11 @@ public:
 	ofPoint	getWindowSize();
 	ofPoint	getScreenSize(){return getWindowSize(); }
 
+	int		getWidth();
+	int		getHeight();
+
+
+
 	void	setFrameRate(float targetRate){}
 	void	setWindowTitle(string title){}
 
@@ -43,6 +48,10 @@ public:
 
 	void	enableSetupScreen();
 	void	disableSetupScreen();
+
+	void			setOrientation(ofOrientation orientation);
+	ofOrientation	getOrientation();
+
 };
 
 #endif /* OFAPPANDROIDWINDOW_H_ */

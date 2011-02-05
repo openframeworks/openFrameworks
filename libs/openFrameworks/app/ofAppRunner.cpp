@@ -196,7 +196,7 @@ void ofShowCursor(){
 }
 
 //--------------------------------------
-void ofSetOrientation(int orientation){
+void ofSetOrientation(ofOrientation orientation){
 	window->setOrientation(orientation);
 }
 

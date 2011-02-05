@@ -10,11 +10,11 @@ ofRendererCollection renderer;
 
 //--------------------------------------------------------------
 void testApp::setup(){
-	cairo.setup("3d.pdf",ofCairoRenderer::PDF);
+	//cairo.setup("3d.pdf",ofCairoRenderer::PDF);
 	renderer.renderers.push_back(&gl);
-	renderer.renderers.push_back(&cairo);
+	//renderer.renderers.push_back(&cairo);
 	ofSetDefaultRenderer(&renderer);
-	ofSetFrameRate( 12 ); //each frame generates a page
+	//ofSetFrameRate( 12 ); //each frame generates a page
 	
 	nCurveVertexes = 7;
 	

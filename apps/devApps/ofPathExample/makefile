@@ -25,7 +25,7 @@
 # edit the following  vars to customize the makefile
 
 
-COMPILER_OPTIMIZATION = -march=native -mtune=native -O3
+COMPILER_OPTIMIZATION = -march=native -mtune=native -Os
 EXCLUDE_FROM_SOURCE="bin,.xcodeproj,obj"
 USER_CFLAGS = 
 USER_LD_FLAGS = 

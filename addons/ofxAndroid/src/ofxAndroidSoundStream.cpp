@@ -21,6 +21,8 @@ static ofBaseApp * OFApp;
 static long unsigned long			tickCount;
 static int	sampleRate;
 static int  requestedBufferSize;
+static int  totalOutRequestedBufferSize;
+static int  totalInRequestedBufferSize;
 
 // TODO: can we label this better?
 static float * working = NULL;
@@ -35,6 +37,9 @@ void ofSoundStreamSetup(int nOutputChannels, int nInputChannels, ofBaseApp * OFS
 	OFApp = OFSA;
 	tickCount			=  0;
 	requestedBufferSize =  bufferSize;
+	totalOutRequestedBufferSize = bufferSize*nOutputChannels;
+	totalInRequestedBufferSize = bufferSize*nInputChannels;
+
 	if(!ofGetJavaVMPtr()){
 		ofLog(OF_LOG_ERROR,"ofSoundStreamSetup: Cannot find java virtual machine");
 		return;
@@ -220,8 +225,8 @@ Java_cc_openframeworks_OFAndroidSoundStream_audioRequested(JNIEnv*  env, jobject
 	if(!out_buffer) return 1;
 	if (numChannels > 0) {
 		if (working == NULL){
-			working = new float[requestedBufferSize*numChannels];
-			memset( working, 0, sizeof(float)*requestedBufferSize*numChannels );
+			working = new float[totalOutRequestedBufferSize];
+			memset( working, 0, sizeof(float)*totalOutRequestedBufferSize );
 		}
 		float * out_buffer_ptr = out_float_buffer;
 		memset( out_float_buffer, 0, sizeof(float)*bufferSize*numChannels );
@@ -234,14 +239,14 @@ Java_cc_openframeworks_OFAndroidSoundStream_audioRequested(JNIEnv*  env, jobject
 			for ( int i=0; i<(int)soundSources.size(); i++ ) {
 				soundSources[i]->audioRequested( working, requestedBufferSize, numChannels );
 				// sum
-				for ( int j=0; j<requestedBufferSize*numChannels; j++ ) {
+				for ( int j=0; j<totalOutRequestedBufferSize; j++ ) {
 					out_buffer_ptr[j] += working[j];
 				}
 			}
-			out_buffer_ptr+=requestedBufferSize;
+			out_buffer_ptr+=totalOutRequestedBufferSize;
 		}
 		//time_one_frame = ofGetSystemTime();
-		for(int i=0;i<bufferSize*numChannels;i++){
+		for(int i=0;i<bufferSize*numChannels ;i++){
 			short tempf = (out_float_buffer[i] * 32767.5f) - 0.5;
 			out_buffer[i]=tempf;//lrintf( tempf - 0.5 );
 		}

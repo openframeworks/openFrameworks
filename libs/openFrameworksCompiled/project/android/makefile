@@ -15,11 +15,11 @@ ifeq ($(findstring Android,$(MAKECMDGOALS)),Android)
 endif
 
 ifeq ($(ARCH),android)
-	COMPILER_OPTIMIZATION = -O3
+	COMPILER_OPTIMIZATION = -Os
 	HOST_PLATFORM = linux-x86
-	NDK_PLATFORM = android-9
+	NDK_PLATFORM = android-8
 else
-	COMPILER_OPTIMIZATION = -march=native -mtune=native -finline-functions -funroll-all-loops  -O3
+	COMPILER_OPTIMIZATION = -march=native -mtune=native -finline-functions -funroll-all-loops  -Os
 endif
 USER_CFLAGS = 
 
