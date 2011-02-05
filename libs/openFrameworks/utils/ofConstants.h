@@ -133,6 +133,8 @@ enum ofLoopType{
 	#include <unistd.h>
 	#include <GLES/gl.h>
 	#include <GLES/glext.h>
+
+	#define TARGET_LITTLE_ENDIAN
 #endif
 
 #ifdef TARGET_OPENGLES
