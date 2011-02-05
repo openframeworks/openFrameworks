@@ -312,8 +312,15 @@ afterReleaseAndroid:$(TARGET)
 	if [ -f obj/$(BIN_NAME) ]; then rm obj/$(BIN_NAME); fi
 	touch AndroidManifest.xml
 	$(SDK_ROOT)/tools/android update project --target 5 --path $(PWD)
-	ant release
+	ant debug
 	cp bin/OFActivity-debug.apk bin/$(APPNAME).apk 
+	#ant release
+	#cp bin/OFActivity-unsigned.apk bin/$(APPNAME).apk
+	#keytool -genkey -alias release -keyalg RSA \
+    #      -validity 20000 -keystore "$(HOME)/.android/release.keystore"
+	#jarsigner -verbose -keystore "$(HOME)/.android/release.keystore" \
+    #        -signedjar bin\$(APPNAME).apk \
+    #        bin\OFActivity-unsigned.apk release -keypass openframeworks34
 	
 after:$(TARGET)
 	cp -r ../../../export/$(LIBSPATH)/libs bin/
