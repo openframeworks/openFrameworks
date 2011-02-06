@@ -63,7 +63,7 @@ public:
 		}
 	}
 	
-
+	
 	
 	string toJson() const {
 		ostringstream os;
@@ -83,7 +83,7 @@ public:
 			else if(type == typeid(ofPoint)) os << Poco::RefAnyCast<ofPoint>(it->second);
 			else if(type == typeid(ofVec2f)) os << Poco::RefAnyCast<ofVec2f>(it->second);
 			else if(type == typeid(ofVec3f)) os << Poco::RefAnyCast<ofVec3f>(it->second);
-//			else if(type == typeid(ofDictionary)) os << Poco::RefAnyCast<ofVec3f>(it->second);
+			else if(type == typeid(ofDictionary)) os << Poco::RefAnyCast<ofDictionary>(it->second);
 			else os << "unknown type";
 			
 			os << endl;
@@ -103,11 +103,11 @@ public:
 	}
 
 	
-	friend ostream& operator<<(ostream& os, ofDictionary& dict) {
+	friend ostream& operator<<(ostream& os, const ofDictionary& dict) {
 		os << dict.toJson();
 		return os;
 	}
-	
+
 protected:
 	map<string, Poco::Any> _map;
 };
