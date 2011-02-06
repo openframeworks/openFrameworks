@@ -28,6 +28,8 @@ using namespace std;
 
 class ofDictionary {
 public:
+	
+	// setters
 	void addBool(string key, const bool& v)					{ add(key, v); }
 	void addInt(string key, const int& v)					{ add(key, v); }
 	void addFloat(string key, const float& v)				{ add(key, v); }
@@ -41,28 +43,27 @@ public:
     template <typename ValueType>
     void add(string key, const ValueType& v)				{ _map[key] = v; }
 	
-
 	
-	const bool& getBool(string key, const bool& def=false)									{ return get(key, def); }	
-	const int& getInt(string key, const int& def=0)											{ return get(key, def); }
-	const float& getFloat(string key, const float& def=0)									{ return get(key, def); }
-	const char& getChar(string key, const char& def=0)										{ return get(key, def); }
-	const string& getString(string key, const string& def="")								{ return get(key, def); }
-	const ofPoint& getPoint(string key, const ofPoint& def=ofPoint())						{ return get(key, def); }
-	const ofVec2f& getVec2f(string key, const ofVec2f& def=ofVec2f())						{ return get(key, def); }
-	const ofVec3f& getVec3f(string key, const ofVec3f& def=ofVec3f())						{ return get(key, def); }
-	const ofDictionary& getDictionary(string key, const ofDictionary& def=ofDictionary())	{ return get(key, def); }
+	// getters
+	bool& getBool(string key, const bool& def=false)									{ return get(key, def); }	
+	int& getInt(string key, const int& def=0)											{ return get(key, def); }
+	float& getFloat(string key, const float& def=0)									{ return get(key, def); }
+	char& getChar(string key, const char& def=0)										{ return get(key, def); }
+	string& getString(string key, const string& def="")								{ return get(key, def); }
+	ofPoint& getPoint(string key, const ofPoint& def=ofPoint())						{ return get(key, def); }
+	ofVec2f& getVec2f(string key, const ofVec2f& def=ofVec2f())						{ return get(key, def); }
+	ofVec3f& getVec3f(string key, const ofVec3f& def=ofVec3f())						{ return get(key, def); }
+	ofDictionary& getDictionary(string key, const ofDictionary& def=ofDictionary())	{ return get(key, def); }
 	
 	template <typename ValueType>
-    const ValueType& get(string key, const ValueType& def) { 
+    ValueType& get(string key, const ValueType& def) { 
 		try {
 			return Poco::RefAnyCast<ValueType>(_map[key]);
 		} catch(...) {
 			ofLog(OF_LOG_ERROR, "ofDictionary: key does not exist for that type");
-			return def;
+			return const_cast<ValueType&>(def);
 		}
 	}
-	
 	
 	
 	string toJson() const {
