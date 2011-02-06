@@ -21,7 +21,7 @@ public:
 	void lineTo(float x, float y);
 	void lineTo(float x, float y, float z);
 
-	// starts a new subpath with defaults for winding, stroke, fill...
+	// starts a new subpath with current parameters for winding, stroke, fill...
 	// the new subpath starts in p
 	void moveTo(const ofPoint & p);
 	void moveTo(float x, float y, float z=0);
