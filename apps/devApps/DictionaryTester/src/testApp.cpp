@@ -56,11 +56,11 @@ void testApp::update() {
 	ofPoint size = dict.getPoint("size");
 	
 	// reading new types from dictionary
+	// for this you need to pass in a second parameter for default
 	MyData d = dict.get("custom data", MyData());
 	
 	
 	// you can even read an embedded dictionary!
-	// in this case just adding itself b
 	ofDictionary car = dict.getDictionary("car");
 	
 
