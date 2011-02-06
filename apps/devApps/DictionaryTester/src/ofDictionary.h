@@ -29,7 +29,7 @@ using namespace std;
 class ofDictionary {
 public:
 	
-	// setters
+	// setter for known types
 	void addBool(string key, const bool& v)					{ add(key, v); }
 	void addInt(string key, const int& v)					{ add(key, v); }
 	void addFloat(string key, const float& v)				{ add(key, v); }
@@ -40,23 +40,38 @@ public:
 	void addVec3f(string key, const ofVec3f& v)				{ add(key, v); }
 	void addDictionary(string key, const ofDictionary& v)	{ add(key, v); }
 
+	// setter for unknown types
     template <typename ValueType>
     void add(string key, const ValueType& v)				{ _map[key] = v; }
 	
 	
-	// getters
-	bool& getBool(string key, const bool& def=false)									{ return get(key, def); }	
-	int& getInt(string key, const int& def=0)											{ return get(key, def); }
-	float& getFloat(string key, const float& def=0)									{ return get(key, def); }
-	char& getChar(string key, const char& def=0)										{ return get(key, def); }
-	string& getString(string key, const string& def="")								{ return get(key, def); }
-	ofPoint& getPoint(string key, const ofPoint& def=ofPoint())						{ return get(key, def); }
-	ofVec2f& getVec2f(string key, const ofVec2f& def=ofVec2f())						{ return get(key, def); }
-	ofVec3f& getVec3f(string key, const ofVec3f& def=ofVec3f())						{ return get(key, def); }
-	ofDictionary& getDictionary(string key, const ofDictionary& def=ofDictionary())	{ return get(key, def); }
+	// getters for known types
+	// pass in default value if it can't be found
+	bool& getBool(string key, const bool& def=false)								{ return getRef(key, def); }	
+	int& getInt(string key, const int& def=0)										{ return getRef(key, def); }
+	float& getFloat(string key, const float& def=0)									{ return getRef(key, def); }
+	char& getChar(string key, const char& def=0)									{ return getRef(key, def); }
+	string& getString(string key, const string& def="")								{ return getRef(key, def); }
+	ofPoint& getPoint(string key, const ofPoint& def=ofPoint())						{ return getRef(key, def); }
+	ofVec2f& getVec2f(string key, const ofVec2f& def=ofVec2f())						{ return getRef(key, def); }
+	ofVec3f& getVec3f(string key, const ofVec3f& def=ofVec3f())						{ return getRef(key, def); }
+	ofDictionary& getDictionary(string key, const ofDictionary& def=ofDictionary())	{ return getRef(key, def); }
 	
+
+	// getter for unknown type (returns by reference)
 	template <typename ValueType>
-    ValueType& get(string key, const ValueType& def) { 
+    ValueType& getRef(string key, const ValueType& def) { 
+		try {
+			return Poco::RefAnyCast<ValueType>(_map[key]);
+		} catch(...) {
+			ofLog(OF_LOG_ERROR, "ofDictionary: key does not exist for that type");
+			return const_cast<ValueType&>(def);
+		}
+	}
+	
+	// getter for unknown type (returns by value)
+	template <typename ValueType>
+    ValueType get(string key, ValueType def) { 
 		try {
 			return Poco::RefAnyCast<ValueType>(_map[key]);
 		} catch(...) {
