@@ -13,7 +13,9 @@ import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.pm.ActivityInfo;
 import android.hardware.SensorManager;
 import android.opengl.GLSurfaceView;
@@ -149,19 +151,8 @@ public class OFAndroid {
 		Log.i("OF","onDestroy");
 		onDestroy();
 	}
-	
-	public static void setupAccelerometer(){
-		 accelerometer = new OFAndroidAccelerometer((SensorManager)ofActivity.getSystemService(Context.SENSOR_SERVICE));
-	}
-    
-    private GLSurfaceView mGLView;
-    private static OFAndroidAccelerometer accelerometer;
-	 
-    static {
-    	System.loadLibrary("OFAndroidApp"); 
-    }
 
-
+	// native methods to call OF c++ callbacks
     public static native void setAppDataDir(String data_dir);
     public static native void init();
     public static native void onRestart();
@@ -184,10 +175,8 @@ public class OFAndroid {
     public static native void onKeyUp(int keyCode);
     public static native boolean onBackPressed();
     
-    private static Activity ofActivity;
-    
 
-    
+    // static methods to be called from OF c++ code
     public static void setScreenOrientation(int orientation){
     	switch(orientation){
     	case 1:
@@ -208,7 +197,32 @@ public class OFAndroid {
     public static void pauseApp(){
 		ofActivity.moveTaskToBack(true);
     }
+
+	
+	public static void setupAccelerometer(){
+		 accelerometer = new OFAndroidAccelerometer((SensorManager)ofActivity.getSystemService(Context.SENSOR_SERVICE));
+	}
+	
+	public static void alertBox(String msg){  
+		new AlertDialog.Builder(ofActivity)  
+			.setMessage(msg)  
+			.setTitle("OF")  
+			.setCancelable(false)  
+			.setNeutralButton(android.R.string.ok,  
+					new DialogInterface.OnClickListener() {  
+				public void onClick(DialogInterface dialog, int whichButton){}  
+		  	})  
+		  	.show();    
+	}
     
+    private GLSurfaceView mGLView;
+    private static OFAndroidAccelerometer accelerometer;
+    private static Activity ofActivity;
+    
+	 
+    static {
+    	System.loadLibrary("OFAndroidApp"); 
+    }
 }
 
 class OFGLSurfaceView extends GLSurfaceView {
