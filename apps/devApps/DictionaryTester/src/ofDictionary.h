@@ -21,7 +21,7 @@
 #include "ofVec3f.h"
 #include <map>
 #include <string>
-#include "Poco/Any.h"
+#include "SerializableAny.h"
 
 using namespace std;
 
@@ -84,23 +84,30 @@ public:
 	string toJson() const {
 		ostringstream os;
 		os << endl << "{" << endl;
-		map<string, Poco::Any>::const_iterator end = _map.end();
-		map<string, Poco::Any>::const_iterator begin = _map.begin();
-		for(map<string, Poco::Any>::const_iterator it = begin; it != end; ++it) {
+		map<string, Poco::SerializableAny>::const_iterator end = _map.end();
+		map<string, Poco::SerializableAny>::const_iterator begin = _map.begin();
+		for(map<string, Poco::SerializableAny>::const_iterator it = begin; it != end; ++it) {
 			const std::type_info& type = it->second.type();
 			os << "  " << it->first << " : ";
 			
-			// ugly, is there a better way?
-			if(type == typeid(bool)) os << Poco::RefAnyCast<bool>(it->second);
-			else if(type == typeid(int)) os << Poco::RefAnyCast<int>(it->second);
-			else if(type == typeid(float)) os << Poco::RefAnyCast<float>(it->second);
-			else if(type == typeid(char)) os << Poco::RefAnyCast<char>(it->second);
-			else if(type == typeid(string)) os << Poco::RefAnyCast<string>(it->second);
-			else if(type == typeid(ofPoint)) os << Poco::RefAnyCast<ofPoint>(it->second);
-			else if(type == typeid(ofVec2f)) os << Poco::RefAnyCast<ofVec2f>(it->second);
-			else if(type == typeid(ofVec3f)) os << Poco::RefAnyCast<ofVec3f>(it->second);
-			else if(type == typeid(ofDictionary)) os << Poco::RefAnyCast<ofDictionary>(it->second);
-			else os << "unknown type";
+//			// ugly, is there a better way?
+//			if(type == typeid(bool)) os << Poco::RefAnyCast<bool>(it->second);
+//			else if(type == typeid(int)) os << Poco::RefAnyCast<int>(it->second);
+//			else if(type == typeid(float)) os << Poco::RefAnyCast<float>(it->second);
+//			else if(type == typeid(char)) os << Poco::RefAnyCast<char>(it->second);
+//			else if(type == typeid(string)) os << Poco::RefAnyCast<string>(it->second);
+//			else if(type == typeid(ofPoint)) os << Poco::RefAnyCast<ofPoint>(it->second);
+//			else if(type == typeid(ofVec2f)) os << Poco::RefAnyCast<ofVec2f>(it->second);
+//			else if(type == typeid(ofVec3f)) os << Poco::RefAnyCast<ofVec3f>(it->second);
+//			else if(type == typeid(ofDictionary)) os << Poco::RefAnyCast<ofDictionary>(it->second);
+//			else os << "unknown type";
+			
+			try{
+				os << Poco::AnyCast<std::string>(it->second) << endl;
+			}catch(...){
+				ofLog(OF_LOG_WARNING,"value with key " + it->first + " couldn't be converted to string");
+			}
+			
 			
 			os << endl;
 		}
@@ -125,5 +132,5 @@ public:
 	}
 
 protected:
-	map<string, Poco::Any> _map;
+	map<string, Poco::SerializableAny> _map;
 };
