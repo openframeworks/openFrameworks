@@ -26,7 +26,7 @@ void testApp::setup() {
 	info.addPoint("size", ofPoint(70.5, 175, 30.7));
 	
 	
-	// adding new types to dictionary
+	// adding custom types to dictionary
 	ExampleCustomData d;
 	d.a = 1;
 	d.b = 2;
@@ -55,7 +55,8 @@ void testApp::update() {
 	string name = info.getString("name");
 	ofPoint size = info.getPoint("size");
 	
-	// reading new types from dictionary
+	
+	// reading custom types from dictionary
 	// for this you need to pass in a second parameter for default
 	ExampleCustomData d = info.get("custom data", ExampleCustomData());
 	
@@ -64,7 +65,7 @@ void testApp::update() {
 	ofDictionary car = info.getDictionary("car");
 	
 
-	
+	// dump info to console individually
 	cout << "Dumping contents individually: " << endl
 	<< "year: " << year << endl
 	<< "month: " << month << endl
@@ -75,7 +76,17 @@ void testApp::update() {
 	<< "custom data: " << d.a << ", " << d.b << ", " << d.s << endl
 	<< "car: " <<  car;//car.getString("make") << ", " << car.getString("model") << ", " << car.getInt("year") << endl;
 	
+	
+	// dump info to console using overloaded << operator.
+	// it works with nested dictionaries!
 	cout << endl << endl << "Dumping contents via << operator: " << info;
+	
+	
+	// get info by reference, so you can modify it in place!
+	string &newname = info.getString("name");
+	newname = "Memo Akten";
+	cout << endl << endl << "testing hardcore modifying contents by reference, name should be different: " << info;
+
 	
 	ofCreateAlertDialog("Check console");
 	std::exit(0);
