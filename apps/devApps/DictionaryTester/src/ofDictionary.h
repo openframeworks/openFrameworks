@@ -43,18 +43,18 @@ public:
 	
 
 	
-	bool& getBool(string key, bool def=false)									{ return get(key, def); }	
-	int& getInt(string key, int def=0)											{ return get(key, def); }
-	float& getFloat(string key, float def=0)									{ return get(key, def); }
-	char& getChar(string key, char def=0)										{ return get(key, def); }
-	string& getString(string key, string def="")								{ return get(key, def); }
-	ofPoint& getPoint(string key, ofPoint def=ofPoint())						{ return get(key, def); }
-	ofVec2f& getVec2f(string key, ofVec2f def=ofVec2f())						{ return get(key, def); }
-	ofVec3f& getVec3f(string key, ofVec3f def=ofVec3f())						{ return get(key, def); }
-	ofDictionary& getDictionary(string key, ofDictionary def=ofDictionary())	{ return get(key, def); }
+	const bool& getBool(string key, bool def=false)									{ return get(key, def); }	
+	const int& getInt(string key, int def=0)										{ return get(key, def); }
+	const float& getFloat(string key, float def=0)									{ return get(key, def); }
+	const char& getChar(string key, char def=0)										{ return get(key, def); }
+	const string& getString(string key, string def="")								{ return get(key, def); }
+	const ofPoint& getPoint(string key, ofPoint def=ofPoint())						{ return get(key, def); }
+	const ofVec2f& getVec2f(string key, ofVec2f def=ofVec2f())						{ return get(key, def); }
+	const ofVec3f& getVec3f(string key, ofVec3f def=ofVec3f())						{ return get(key, def); }
+	const ofDictionary& getDictionary(string key, ofDictionary def=ofDictionary())	{ return get(key, def); }
 	
 	template <typename ValueType>
-    ValueType& get(string key, ValueType def) { 
+    const ValueType& get(string key, const ValueType &def) { 
 		try {
 			return Poco::RefAnyCast<ValueType>(_map[key]);
 		} catch(...) {
@@ -83,7 +83,7 @@ public:
 			else if(type == typeid(ofPoint)) os << Poco::RefAnyCast<ofPoint>(it->second);
 			else if(type == typeid(ofVec2f)) os << Poco::RefAnyCast<ofVec2f>(it->second);
 			else if(type == typeid(ofVec3f)) os << Poco::RefAnyCast<ofVec3f>(it->second);
-//			else if(type == typeid(ofDictionary)) os << Poco::RefAnyCast<ofDictionary>(it->second);
+//			else if(type == typeid(ofDictionary)) os << Poco::RefAnyCast<ofVec3f>(it->second);
 			else os << "unknown type";
 			
 			os << endl;
