@@ -8,9 +8,10 @@
  */
 
 // TODO:
-// add iterators (to iterate keys and values)
-// initialization methods (like ObjC)
+// initialization methods (like ObjC) so you can initialize in one line (use va_list?)
 // read/write from disk (As XML, JSON even plist!!!)
+// get() is currently returning by reference but default is passed in by value, causes complications
+// when iterating and dumping, can't dump unknown types or dictionaries
 
 #pragma once
 
