@@ -103,7 +103,7 @@ public:
 //			else os << "unknown type";
 			
 			try{
-				os << Poco::AnyCast<std::string>(it->second) << endl;
+				os << Poco::AnyCast<std::string>(it->second);
 			}catch(...){
 				ofLog(OF_LOG_WARNING,"value with key " + it->first + " couldn't be converted to string");
 			}
