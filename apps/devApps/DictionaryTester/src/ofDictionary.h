@@ -118,9 +118,9 @@ public:
 			}
 			
 			
-			os << endl;
+			os << ", " << endl;
 		}
-		os << sIndent << "}" << endl;
+		os << sIndent << "}";
 		return os.str();
 	}
 	

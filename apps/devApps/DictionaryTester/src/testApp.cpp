@@ -9,7 +9,7 @@ public:
 	
 	
 	friend ostream& operator<<(ostream& os, const ExampleCustomData& d) {
-		os << "a: " << d.a << ", " << " b: " << d.b << ", " << d.s << endl;
+		os << " { a: " << d.a << ", " << " b: " << d.b << ", " << d.s << " }";
 		return os;
 	}
 };
