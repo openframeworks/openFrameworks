@@ -107,7 +107,7 @@
 /* Begin PBXFileReference section */
 		BB49983012FE377F00051610 /* testApp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = testApp.cpp; sourceTree = "<group>"; };
 		BB499CD712FE71E000051610 /* ofDictionary.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofDictionary.h; sourceTree = "<group>"; };
-		BB49A15512FF07B900051610 /* SerializableAny.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SerializableAny.h; path = "../../../../../../Desktop/src 2/SerializableAny.h"; sourceTree = SOURCE_ROOT; };
+		BB49A15812FF080B00051610 /* SerializableAny.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SerializableAny.h; sourceTree = "<group>"; };
 		E42E886412DFDECD000A7674 /* cv.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = cv.h; path = ../../../addons/ofxOpenCv/libs/opencv/include/opencv/cv.h; sourceTree = SOURCE_ROOT; };
 		E42E886512DFDECD000A7674 /* cv.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = cv.hpp; path = ../../../addons/ofxOpenCv/libs/opencv/include/opencv/cv.hpp; sourceTree = SOURCE_ROOT; };
 		E42E886612DFDECD000A7674 /* cvaux.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = cvaux.h; path = ../../../addons/ofxOpenCv/libs/opencv/include/opencv/cvaux.h; sourceTree = SOURCE_ROOT; };
@@ -488,7 +488,7 @@
 				E4B69E1F0A3A1BDC003C02F2 /* testApp.h */,
 				BB49983012FE377F00051610 /* testApp.cpp */,
 				BB499CD712FE71E000051610 /* ofDictionary.h */,
-				BB49A15512FF07B900051610 /* SerializableAny.h */,
+				BB49A15812FF080B00051610 /* SerializableAny.h */,
 			);
 			path = src;
 			sourceTree = SOURCE_ROOT;
