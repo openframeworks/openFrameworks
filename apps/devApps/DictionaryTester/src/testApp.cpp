@@ -6,6 +6,12 @@ class ExampleCustomData {
 public:
 	int a, b;
 	string s;
+	
+	
+	friend ostream& operator<<(ostream& os, const ExampleCustomData& d) {
+		os << "a: " << d.a << ", " << " b: " << d.b << ", " << d.s << endl;
+		return os;
+	}
 };
 
 
