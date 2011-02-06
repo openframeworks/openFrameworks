@@ -47,36 +47,36 @@ public:
 	
 	// getters for known types
 	// pass in default value if it can't be found
-	bool& getBool(string key, const bool& def=false)								{ return getRef(key, def); }	
-	int& getInt(string key, const int& def=0)										{ return getRef(key, def); }
-	float& getFloat(string key, const float& def=0)									{ return getRef(key, def); }
-	char& getChar(string key, const char& def=0)									{ return getRef(key, def); }
-	string& getString(string key, const string& def="")								{ return getRef(key, def); }
-	ofPoint& getPoint(string key, const ofPoint& def=ofPoint())						{ return getRef(key, def); }
-	ofVec2f& getVec2f(string key, const ofVec2f& def=ofVec2f())						{ return getRef(key, def); }
-	ofVec3f& getVec3f(string key, const ofVec3f& def=ofVec3f())						{ return getRef(key, def); }
-	ofDictionary& getDictionary(string key, const ofDictionary& def=ofDictionary())	{ return getRef(key, def); }
+	bool& getBool(string key, const bool& defaultValue=false)				{ return getRef(key, defaultValue); }	
+	int& getInt(string key, const int& defaultValue=0)						{ return getRef(key, defaultValue); }
+	float& getFloat(string key, const float& defaultValue=0)				{ return getRef(key, defaultValue); }
+	char& getChar(string key, const char& defaultValue=0)					{ return getRef(key, defaultValue); }
+	string& getString(string key, const string& defaultValue="")			{ return getRef(key, defaultValue); }
+	ofPoint& getPoint(string key, const ofPoint& defaultValue=ofPoint())	{ return getRef(key, defaultValue); }
+	ofVec2f& getVec2f(string key, const ofVec2f& defaultValue=ofVec2f())	{ return getRef(key, defaultValue); }
+	ofVec3f& getVec3f(string key, const ofVec3f& defaultValue=ofVec3f())	{ return getRef(key, defaultValue); }
+	ofDictionary& getDictionary(string key, const ofDictionary& defaultValue=ofDictionary())	{ return getRef(key, defaultValue); }
 	
 
 	// getter for unknown type (returns by reference)
 	template <typename ValueType>
-    ValueType& getRef(string key, const ValueType& def) { 
+    ValueType& getRef(string key, const ValueType& defaultValue) { 
 		try {
 			return Poco::RefAnyCast<ValueType>(_map[key]);
 		} catch(...) {
 			ofLog(OF_LOG_ERROR, "ofDictionary: key does not exist for that type");
-			return const_cast<ValueType&>(def);
+			return const_cast<ValueType&>(defaultValue);
 		}
 	}
 	
 	// getter for unknown type (returns by value)
 	template <typename ValueType>
-    ValueType get(string key, ValueType def) { 
+    ValueType get(string key, ValueType defaultValue) { 
 		try {
 			return Poco::RefAnyCast<ValueType>(_map[key]);
 		} catch(...) {
 			ofLog(OF_LOG_ERROR, "ofDictionary: key does not exist for that type");
-			return const_cast<ValueType&>(def);
+			return const_cast<ValueType&>(defaultValue);
 		}
 	}
 	
@@ -87,10 +87,10 @@ public:
 		map<string, Poco::SerializableAny>::const_iterator end = _map.end();
 		map<string, Poco::SerializableAny>::const_iterator begin = _map.begin();
 		for(map<string, Poco::SerializableAny>::const_iterator it = begin; it != end; ++it) {
-			const std::type_info& type = it->second.type();
 			os << "  " << it->first << " : ";
 			
 //			// ugly, is there a better way?
+//			const std::type_info& type = it->second.type();
 //			if(type == typeid(bool)) os << Poco::RefAnyCast<bool>(it->second);
 //			else if(type == typeid(int)) os << Poco::RefAnyCast<int>(it->second);
 //			else if(type == typeid(float)) os << Poco::RefAnyCast<float>(it->second);
