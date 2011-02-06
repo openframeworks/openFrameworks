@@ -28,33 +28,33 @@ using namespace std;
 
 class ofDictionary {
 public:
-	void addBool(string key, const bool &v)					{ add(key, v); }
-	void addInt(string key, const int &v)					{ add(key, v); }
-	void addFloat(string key, const float &v)				{ add(key, v); }
-	void addChar(string key, const char &v)					{ add(key, v); }
-	void addString(string key, const string &v)				{ add(key, v); }
-	void addPoint(string key, const ofPoint &v)				{ add(key, v); }
-	void addVec2f(string key, const ofVec2f &v)				{ add(key, v); }
-	void addVec3f(string key, const ofVec3f &v)				{ add(key, v); }
-	void addDictionary(string key, const ofDictionary &v)	{ add(key, v); }
+	void addBool(string key, const bool& v)					{ add(key, v); }
+	void addInt(string key, const int& v)					{ add(key, v); }
+	void addFloat(string key, const float& v)				{ add(key, v); }
+	void addChar(string key, const char& v)					{ add(key, v); }
+	void addString(string key, const string& v)				{ add(key, v); }
+	void addPoint(string key, const ofPoint& v)				{ add(key, v); }
+	void addVec2f(string key, const ofVec2f& v)				{ add(key, v); }
+	void addVec3f(string key, const ofVec3f& v)				{ add(key, v); }
+	void addDictionary(string key, const ofDictionary& v)	{ add(key, v); }
 
     template <typename ValueType>
     void add(string key, const ValueType& v)				{ _map[key] = v; }
 	
 
 	
-	const bool& getBool(string key, bool def=false)									{ return get(key, def); }	
-	const int& getInt(string key, int def=0)										{ return get(key, def); }
-	const float& getFloat(string key, float def=0)									{ return get(key, def); }
-	const char& getChar(string key, char def=0)										{ return get(key, def); }
-	const string& getString(string key, string def="")								{ return get(key, def); }
-	const ofPoint& getPoint(string key, ofPoint def=ofPoint())						{ return get(key, def); }
-	const ofVec2f& getVec2f(string key, ofVec2f def=ofVec2f())						{ return get(key, def); }
-	const ofVec3f& getVec3f(string key, ofVec3f def=ofVec3f())						{ return get(key, def); }
-	const ofDictionary& getDictionary(string key, ofDictionary def=ofDictionary())	{ return get(key, def); }
+	const bool& getBool(string key, const bool& def=false)									{ return get(key, def); }	
+	const int& getInt(string key, const int& def=0)											{ return get(key, def); }
+	const float& getFloat(string key, const float& def=0)									{ return get(key, def); }
+	const char& getChar(string key, const char& def=0)										{ return get(key, def); }
+	const string& getString(string key, const string& def="")								{ return get(key, def); }
+	const ofPoint& getPoint(string key, const ofPoint& def=ofPoint())						{ return get(key, def); }
+	const ofVec2f& getVec2f(string key, const ofVec2f& def=ofVec2f())						{ return get(key, def); }
+	const ofVec3f& getVec3f(string key, const ofVec3f& def=ofVec3f())						{ return get(key, def); }
+	const ofDictionary& getDictionary(string key, const ofDictionary& def=ofDictionary())	{ return get(key, def); }
 	
 	template <typename ValueType>
-    const ValueType& get(string key, const ValueType &def) { 
+    const ValueType& get(string key, const ValueType& def) { 
 		try {
 			return Poco::RefAnyCast<ValueType>(_map[key]);
 		} catch(...) {
@@ -71,7 +71,7 @@ public:
 		map<string, Poco::Any>::const_iterator end = _map.end();
 		map<string, Poco::Any>::const_iterator begin = _map.begin();
 		for(map<string, Poco::Any>::const_iterator it = begin; it != end; ++it) {
-			const std::type_info &type = it->second.type();
+			const std::type_info& type = it->second.type();
 			os << "  " << it->first << " : ";
 			
 			// ugly, is there a better way?
