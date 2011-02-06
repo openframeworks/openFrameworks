@@ -29,6 +29,11 @@ using namespace std;
 class ofDictionary {
 public:
 	
+	ofDictionary() {
+		indentLevel = 0;
+		indentString = "   ";
+	}
+	
 	// setter for known types
 	void addBool(string key, const bool& v)					{ add(key, v); }
 	void addInt(string key, const int& v)					{ add(key, v); }
@@ -38,7 +43,7 @@ public:
 	void addPoint(string key, const ofPoint& v)				{ add(key, v); }
 	void addVec2f(string key, const ofVec2f& v)				{ add(key, v); }
 	void addVec3f(string key, const ofVec3f& v)				{ add(key, v); }
-	void addDictionary(string key, const ofDictionary& v)	{ add(key, v); }
+	void addDictionary(string key, const ofDictionary& v)	{ add(key, v); getDictionary(key).indentLevel = indentLevel + 1; }
 
 	// setter for unknown types
     template <typename ValueType>
@@ -82,12 +87,15 @@ public:
 	
 	
 	string toJson() const {
+		string sIndent;
+		for(int i=0; i<indentLevel; i++) sIndent += indentString;
+		
 		ostringstream os;
-		os << endl << "{" << endl;
+		os << endl << sIndent << "{" << endl;
 		map<string, Poco::SerializableAny>::const_iterator end = _map.end();
 		map<string, Poco::SerializableAny>::const_iterator begin = _map.begin();
 		for(map<string, Poco::SerializableAny>::const_iterator it = begin; it != end; ++it) {
-			os << "  " << it->first << " : ";
+			os << sIndent << indentString << it->first << " : ";
 			
 //			// ugly, is there a better way?
 //			const std::type_info& type = it->second.type();
@@ -112,7 +120,7 @@ public:
 			
 			os << endl;
 		}
-		os<< "}" << endl;
+		os << sIndent << "}" << endl;
 		return os.str();
 	}
 	
@@ -134,4 +142,6 @@ public:
 
 protected:
 	map<string, Poco::SerializableAny> _map;
+	int indentLevel;
+	string indentString;
 };
