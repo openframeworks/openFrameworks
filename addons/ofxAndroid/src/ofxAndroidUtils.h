@@ -14,11 +14,14 @@
 
 JavaVM * ofGetJavaVMPtr();
 JNIEnv * ofGetJNIEnv();
+jclass ofGetJavaOFAndroid();
 
 void ofRunApp( ofxAndroidApp * app);
 
 
 void ofxRegisterMultitouch(ofxAndroidApp * app);
+
+void ofxAndroidAlertBox(string msg);
 
 //-------------------------------------
 // this functions are only for internal use

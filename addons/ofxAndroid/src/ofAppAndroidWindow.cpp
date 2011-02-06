@@ -66,6 +66,10 @@ JNIEnv * ofGetJNIEnv(){
 	return env;
 }
 
+jclass ofGetJavaOFAndroid(){
+	return ofGetJNIEnv()->FindClass("cc.openframeworks.OFAndroid");
+}
+
 void ofRunApp( ofxAndroidApp * app){
 	androidApp = app;
 	ofRunApp((ofBaseApp*)app);
@@ -77,7 +81,7 @@ void ofxRegisterMultitouch(ofxAndroidApp * app){
 
 
 void ofxAndroidPauseApp(){
-	jclass javaClass = ofGetJNIEnv()->FindClass("cc.openframeworks.OFAndroid");
+	jclass javaClass = ofGetJavaOFAndroid();
 
 	if(javaClass==0){
 		ofLog(OF_LOG_ERROR,"cannot find OFAndroid java class");
@@ -90,6 +94,23 @@ void ofxAndroidPauseApp(){
 		return;
 	}
 	ofGetJNIEnv()->CallStaticObjectMethod(javaClass,pauseApp);
+}
+
+void ofxAndroidAlertBox(string msg){
+	jclass javaClass = ofGetJavaOFAndroid();
+
+	if(javaClass==0){
+		ofLog(OF_LOG_ERROR,"cannot find OFAndroid java class");
+		return;
+	}
+
+	jmethodID alertBox = ofGetJNIEnv()->GetStaticMethodID(javaClass,"alertBox","(Ljava/lang/String;)V");
+	if(!alertBox){
+		ofLog(OF_LOG_ERROR,"cannot find OFAndroid alertBox method");
+		return;
+	}
+	jstring jMsg = ofGetJNIEnv()->NewStringUTF(msg.c_str());
+	ofGetJNIEnv()->CallStaticObjectMethod(javaClass,alertBox,jMsg);
 }
 
 ofAppAndroidWindow::ofAppAndroidWindow() {
