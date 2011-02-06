@@ -173,14 +173,13 @@ void ofCairoRenderer::drawPath(const ofShape & path,bool is_subpath){
 		cairo_new_path(cr);
 	for(int i=0; i<(int)commands.size(); i++){
 		switch(commands[i].type){
-		case ofShape::Command::line2DTo:
-		case ofShape::Command::line3DTo:
+		case ofShape::Command::lineTo:
 			curvePoints.clear();
 			cairo_line_to(cr,commands[i].to.x,commands[i].to.y);
 			break;
 
 
-		case ofShape::Command::curve2DTo:
+		case ofShape::Command::curveTo:
 			curvePoints.push_back(commands[i].to);
 
 			//code adapted from ofxVectorGraphics to convert catmull rom to bezier
@@ -200,18 +199,18 @@ void ofCairoRenderer::drawPath(const ofShape & path,bool is_subpath){
 			break;
 
 
-		case ofShape::Command::bezier2DTo:
+		case ofShape::Command::bezierTo:
 			curvePoints.clear();
 			cairo_curve_to(cr,commands[i].cp1.x,commands[i].cp1.y,commands[i].cp2.x,commands[i].cp2.y,commands[i].to.x,commands[i].to.y);
 			break;
 
-		case ofShape::Command::quadBezier2DTo:
+		case ofShape::Command::quadBezierTo:
 			curvePoints.clear();
 			cairo_curve_to(cr,commands[i].cp1.x,commands[i].cp1.y,commands[i].cp2.x,commands[i].cp2.y,commands[i].to.x,commands[i].to.y);
 			break;
 
 
-		case ofShape::Command::arc2D:
+		case ofShape::Command::arc:
 			curvePoints.clear();
 			// elliptic arcs not directly supported in cairo, lets scale y
 			if(commands[i].radiusX!=commands[i].radiusY){
