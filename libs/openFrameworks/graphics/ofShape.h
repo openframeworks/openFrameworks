@@ -81,16 +81,11 @@ public:
 
 	struct Command{
 		enum Type{
-			line2DTo,
-			line3DTo,
-			curve2DTo,
-			curve3DTo,
-			bezier3DTo,
-			bezier2DTo,
-			quadBezier3DTo,
-			quadBezier2DTo,
-			arc2D,
-			arc3D,
+			lineTo,
+			curveTo,
+			bezierTo,
+			quadBezierTo,
+			arc,
 		};
 
 		/// for lineTo and curveTo
@@ -138,7 +133,7 @@ private:
 	float				strokeWidth;
 	bool				bFill;
 	bool				bClosed;
-	ofShapeTessellation				cachedShape;
+	ofShapeTessellation	cachedShape;
 	bool				hasChanged;
 	ofBaseRenderer * 	renderer;
 	int					prevCurveRes;

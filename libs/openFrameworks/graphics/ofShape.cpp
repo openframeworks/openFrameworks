@@ -30,7 +30,7 @@ ofShape & ofShape::newSubShape(){
 }
 
 void ofShape::lineTo(const ofPoint & p){
-	lastShape().addCommand(Command(Command::line3DTo,p));
+	lastShape().addCommand(Command(Command::lineTo,p));
 }
 
 void ofShape::lineTo(float x, float y, float z){
@@ -38,11 +38,11 @@ void ofShape::lineTo(float x, float y, float z){
 }
 
 void ofShape::lineTo(float x, float y){
-	lastShape().addCommand(Command(Command::line2DTo,ofPoint(x,y)));
+	lastShape().addCommand(Command(Command::lineTo,ofPoint(x,y)));
 }
 
 void ofShape::moveTo(const ofPoint & p){
-	newSubShape().addCommand(Command(Command::line2DTo,p));
+	newSubShape().addCommand(Command(Command::lineTo,p));
 }
 
 void ofShape::moveTo(float x, float y, float z){
@@ -50,7 +50,7 @@ void ofShape::moveTo(float x, float y, float z){
 }
 
 void ofShape::curveTo(const ofPoint & p){
-	lastShape().addCommand(Command(Command::curve3DTo,p));
+	lastShape().addCommand(Command(Command::curveTo,p));
 }
 
 void ofShape::curveTo(float x, float y, float z){
@@ -58,15 +58,15 @@ void ofShape::curveTo(float x, float y, float z){
 }
 
 void ofShape::curveTo(float x, float y){
-	lastShape().addCommand(Command(Command::curve2DTo,ofPoint(x,y)));
+	lastShape().addCommand(Command(Command::curveTo,ofPoint(x,y)));
 }
 
 void ofShape::bezierTo(const ofPoint & cp1, const ofPoint & cp2, const ofPoint & p){
-	lastShape().addCommand(Command(Command::bezier3DTo,p,cp1,cp2));
+	lastShape().addCommand(Command(Command::bezierTo,p,cp1,cp2));
 }
 
 void ofShape::bezierTo(float cx1, float cy1, float cx2, float cy2, float x, float y){
-	lastShape().addCommand(Command(Command::bezier2DTo,ofPoint(x,y),ofPoint(cx1,cy1),ofPoint(cx2,cy2)));
+	lastShape().addCommand(Command(Command::bezierTo,ofPoint(x,y),ofPoint(cx1,cy1),ofPoint(cx2,cy2)));
 }
 
 void ofShape::bezierTo(float cx1, float cy1, float cz1, float cx2, float cy2, float cz2, float x, float y, float z){
@@ -74,11 +74,11 @@ void ofShape::bezierTo(float cx1, float cy1, float cz1, float cx2, float cy2, fl
 }
 
 void ofShape::quadBezierTo(const ofPoint & cp1, const ofPoint & cp2, const ofPoint & p){
-	lastShape().addCommand(Command(Command::quadBezier3DTo,p,cp1,cp2));
+	lastShape().addCommand(Command(Command::quadBezierTo,p,cp1,cp2));
 }
 
 void ofShape::quadBezierTo(float cx1, float cy1, float cx2, float cy2, float x, float y){
-	lastShape().addCommand(Command(Command::quadBezier2DTo,ofPoint(x,y),ofPoint(cx1,cy1),ofPoint(cx2,cy2)));
+	lastShape().addCommand(Command(Command::quadBezierTo,ofPoint(x,y),ofPoint(cx1,cy1),ofPoint(cx2,cy2)));
 }
 
 void ofShape::quadBezierTo(float cx1, float cy1, float cz1, float cx2, float cy2, float cz2, float x, float y, float z){
@@ -86,11 +86,11 @@ void ofShape::quadBezierTo(float cx1, float cy1, float cz1, float cx2, float cy2
 }
 
 void ofShape::arc(const ofPoint & centre, float radiusX, float radiusY, float angleBegin, float angleEnd){
-	lastShape().addCommand(Command(Command::arc3D,centre,radiusX,radiusY,angleBegin,angleEnd));
+	lastShape().addCommand(Command(Command::arc,centre,radiusX,radiusY,angleBegin,angleEnd));
 }
 
 void ofShape::arc(float x, float y, float radiusX, float radiusY, float angleBegin, float angleEnd){
-	lastShape().addCommand(Command(Command::arc2D,ofPoint(x,y),radiusX,radiusY,angleBegin,angleEnd));
+	lastShape().addCommand(Command(Command::arc,ofPoint(x,y),radiusX,radiusY,angleBegin,angleEnd));
 }
 
 void ofShape::arc(float x, float y, float z, float radiusX, float radiusY, float angleBegin, float angleEnd){

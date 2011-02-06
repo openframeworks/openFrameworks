@@ -315,38 +315,27 @@ void ofShapeTessellation::setFrom(const ofShape & path,  int curveResolution, bo
 	const vector<ofShape::Command> & commands = path.getCommands();
 	for(int i=0; i<(int)commands.size();i++){
 		switch(commands[i].type){
-		case ofShape::Command::line2DTo:
-			addVertex(commands[i].to);
-			break;
-		case ofShape::Command::curve2DTo:
-			curveTo(commands[i].to, curveResolution);
-			break;
-		case ofShape::Command::bezier2DTo:
-			bezierTo(commands[i].cp1,commands[i].cp2,commands[i].to, curveResolution);
-			break;
-		case ofShape::Command::quadBezier2DTo:
-			quadBezierTo(commands[i].cp1,commands[i].cp2,commands[i].to, curveResolution);
-			break;
-		case ofShape::Command::arc2D:
-			arc(commands[i].to,commands[i].radiusX,commands[i].radiusY,commands[i].angleBegin,commands[i].angleEnd, curveResolution);
-			break;
 
-		case ofShape::Command::line3DTo:
+		case ofShape::Command::lineTo:
 			addVertex(commands[i].to);
 			polyline.setIs3D(true);
 			bIs3D = true;
 			break;
-		case ofShape::Command::curve3DTo:
+		case ofShape::Command::curveTo:
 			curveTo(commands[i].to, curveResolution);
 			polyline.setIs3D(true);
 			bIs3D = true;
 			break;
-		case ofShape::Command::bezier3DTo:
+		case ofShape::Command::bezierTo:
 			bezierTo(commands[i].cp1,commands[i].cp2,commands[i].to, curveResolution);
 			polyline.setIs3D(true);
 			bIs3D = true;
 			break;
-		case ofShape::Command::arc3D:
+		case ofShape::Command::quadBezierTo:
+			quadBezierTo(commands[i].cp1,commands[i].cp2,commands[i].to, curveResolution);
+			bIs3D = true;
+			break;
+		case ofShape::Command::arc:
 			arc(commands[i].to,commands[i].radiusX,commands[i].radiusY,commands[i].angleBegin,commands[i].angleEnd, curveResolution);
 			polyline.setIs3D(true);
 			bIs3D = true;
