@@ -301,29 +301,23 @@ CleanAndroid:
 
 afterDebugAndroid:$(TARGET)
 	if [ -f libs/armeabi-v7a/libOFAndroidApp.so ]; then rm libs/armeabi-v7a/libOFAndroidApp.so; fi
-	#if [ -f obj/$(BIN_NAME) ]; then rm obj/$(BIN_NAME); fi
 	touch AndroidManifest.xml
 	$(SDK_ROOT)/tools/android update project --target 5 --path $(PWD)
 	ant debug
 	cp bin/OFActivity-debug.apk bin/$(APPNAME).apk
-	#$(SDK_ROOT)/platform-tools/adb uninstall cc.openframeworks.$(APPNAME) 
-	$(SDK_ROOT)/platform-tools/adb install -r bin/$(APPNAME).apk
+	if [ "$(shell $(SDK_ROOT)/platform-tools/adb get-state)" = "device" ]; then \
+		$(SDK_ROOT)/platform-tools/adb install -r bin/$(APPNAME).apk; \
+	fi
 	
 afterReleaseAndroid:$(TARGET)
 	if [ -f obj/$(BIN_NAME) ]; then rm obj/$(BIN_NAME); fi
 	touch AndroidManifest.xml
 	$(SDK_ROOT)/tools/android update project --target 5 --path $(PWD)
 	ant debug
-	cp bin/OFActivity-debug.apk bin/$(APPNAME).apk 
-	#$(SDK_ROOT)/platform-tools/adb uninstall cc.opeframeworks.$(APPNAME) 
-	$(SDK_ROOT)/platform-tools/adb install -r bin/$(APPNAME).apk 
-	#ant release
-	#cp bin/OFActivity-unsigned.apk bin/$(APPNAME).apk
-	#keytool -genkey -alias release -keyalg RSA \
-    #      -validity 20000 -keystore "$(HOME)/.android/release.keystore"
-	#jarsigner -verbose -keystore "$(HOME)/.android/release.keystore" \
-    #        -signedjar bin\$(APPNAME).apk \
-    #        bin\OFActivity-unsigned.apk release -keypass openframeworks34
+	cp bin/OFActivity-debug.apk bin/$(APPNAME).apk  
+	if [ "$(shell $(SDK_ROOT)/platform-tools/adb get-state)" = "device" ]; then \
+		$(SDK_ROOT)/platform-tools/adb install -r bin/$(APPNAME).apk; \
+	fi
 	
 after:$(TARGET)
 	cp -r ../../../export/$(LIBSPATH)/libs bin/

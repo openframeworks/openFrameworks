@@ -31,6 +31,7 @@ void testApp::exit() {
 //--------------------------------------------------------------
 void testApp::touchDown(int x, int y, int id){
 	ofLog(OF_LOG_NOTICE,"touch %i down at (%i,%i)\n", id, x,y);
+	ofCreateAlertDialog("touch");
 	balls[id].moveTo(x, y);
 }
 
