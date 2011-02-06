@@ -1,0 +1,112 @@
+/*
+ *  ofDictionary.h
+ *  DictionaryTester
+ *
+ *  Created by Memo Akten on 06/02/2011.
+ *  Copyright 2011 MSA Visuals Ltd. All rights reserved.
+ *
+ */
+
+// TODO:
+// add iterators (to iterate keys and values)
+// initialization methods (like ObjC)
+// read/write from disk (As XML, JSON even plist!!!)
+
+#pragma once
+
+
+#include "ofPoint.h"
+#include "ofVec2f.h"
+#include "ofVec3f.h"
+#include <map>
+#include <string>
+#include "Poco/Any.h"
+
+using namespace std;
+
+
+class ofDictionary {
+public:
+	void addBool(string key, const bool &v)					{ add(key, v); }
+	void addInt(string key, const int &v)					{ add(key, v); }
+	void addFloat(string key, const float &v)				{ add(key, v); }
+	void addChar(string key, const char &v)					{ add(key, v); }
+	void addString(string key, const string &v)				{ add(key, v); }
+	void addPoint(string key, const ofPoint &v)				{ add(key, v); }
+	void addVec2f(string key, const ofVec2f &v)				{ add(key, v); }
+	void addVec3f(string key, const ofVec3f &v)				{ add(key, v); }
+	void addDictionary(string key, const ofDictionary &v)	{ add(key, v); }
+
+    template <typename ValueType>
+    void add(string key, const ValueType& v)				{ _map[key] = v; }
+	
+
+	
+	bool& getBool(string key, bool def=false)									{ return get(key, def); }	
+	int& getInt(string key, int def=0)											{ return get(key, def); }
+	float& getFloat(string key, float def=0)									{ return get(key, def); }
+	char& getChar(string key, char def=0)										{ return get(key, def); }
+	string& getString(string key, string def="")								{ return get(key, def); }
+	ofPoint& getPoint(string key, ofPoint def=ofPoint())						{ return get(key, def); }
+	ofVec2f& getVec2f(string key, ofVec2f def=ofVec2f())						{ return get(key, def); }
+	ofVec3f& getVec3f(string key, ofVec3f def=ofVec3f())						{ return get(key, def); }
+	ofDictionary& getDictionary(string key, ofDictionary def=ofDictionary())	{ return get(key, def); }
+	
+	template <typename ValueType>
+    ValueType& get(string key, ValueType def) { 
+		try {
+			return Poco::RefAnyCast<ValueType>(_map[key]);
+		} catch(...) {
+			ofLog(OF_LOG_ERROR, "ofDictionary: key does not exist for that type");
+			return def;
+		}
+	}
+	
+
+	
+	string toJson() const {
+		ostringstream os;
+		os << endl << "{" << endl;
+		map<string, Poco::Any>::const_iterator end = _map.end();
+		map<string, Poco::Any>::const_iterator begin = _map.begin();
+		for(map<string, Poco::Any>::const_iterator it = begin; it != end; ++it) {
+			const std::type_info &type = it->second.type();
+			os << "  " << it->first << " : ";
+			
+			// ugly, is there a better way?
+			if(type == typeid(bool)) os << Poco::RefAnyCast<bool>(it->second);
+			else if(type == typeid(int)) os << Poco::RefAnyCast<int>(it->second);
+			else if(type == typeid(float)) os << Poco::RefAnyCast<float>(it->second);
+			else if(type == typeid(char)) os << Poco::RefAnyCast<char>(it->second);
+			else if(type == typeid(string)) os << Poco::RefAnyCast<string>(it->second);
+			else if(type == typeid(ofPoint)) os << Poco::RefAnyCast<ofPoint>(it->second);
+			else if(type == typeid(ofVec2f)) os << Poco::RefAnyCast<ofVec2f>(it->second);
+			else if(type == typeid(ofVec3f)) os << Poco::RefAnyCast<ofVec3f>(it->second);
+//			else if(type == typeid(ofDictionary)) os << Poco::RefAnyCast<ofDictionary>(it->second);
+			else os << "unknown type";
+			
+			os << endl;
+		}
+		os<< "}" << endl;
+		return os.str();
+	}
+	
+	string toXml() const {
+		ostringstream os;
+		return os.str();
+	}
+	
+	string toPList() const {
+		ostringstream os;
+		return os.str();
+	}
+
+	
+	friend ostream& operator<<(ostream& os, ofDictionary& dict) {
+		os << dict.toJson();
+		return os;
+	}
+	
+protected:
+	map<string, Poco::Any> _map;
+};
