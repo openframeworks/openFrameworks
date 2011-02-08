@@ -10,12 +10,13 @@
 		DA2E399D12DF6E9000EC4A5B /* glew.h in Headers */ = {isa = PBXBuildFile; fileRef = DA2E399712DF6E9000EC4A5B /* glew.h */; };
 		DA2E399E12DF6E9000EC4A5B /* glxew.h in Headers */ = {isa = PBXBuildFile; fileRef = DA2E399812DF6E9000EC4A5B /* glxew.h */; };
 		DA2E399F12DF6E9000EC4A5B /* wglew.h in Headers */ = {isa = PBXBuildFile; fileRef = DA2E399912DF6E9000EC4A5B /* wglew.h */; };
+		DA94C2F01301D32200CCC773 /* ofRendererCollection.h in Headers */ = {isa = PBXBuildFile; fileRef = DA94C2ED1301D32200CCC773 /* ofRendererCollection.h */; };
+		DA94C2F11301D32200CCC773 /* ofShapeTessellation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DA94C2EE1301D32200CCC773 /* ofShapeTessellation.cpp */; };
+		DA94C2F21301D32200CCC773 /* ofShapeTessellation.h in Headers */ = {isa = PBXBuildFile; fileRef = DA94C2EF1301D32200CCC773 /* ofShapeTessellation.h */; };
 		DA97FD3C12F5A61A005C9991 /* ofCairoRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DA97FD3612F5A61A005C9991 /* ofCairoRenderer.cpp */; };
 		DA97FD3D12F5A61A005C9991 /* ofCairoRenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = DA97FD3712F5A61A005C9991 /* ofCairoRenderer.h */; };
 		DA97FD3E12F5A61A005C9991 /* ofGLRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DA97FD3812F5A61A005C9991 /* ofGLRenderer.cpp */; };
 		DA97FD3F12F5A61A005C9991 /* ofGLRenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = DA97FD3912F5A61A005C9991 /* ofGLRenderer.h */; };
-		DA97FD4012F5A61A005C9991 /* ofPath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DA97FD3A12F5A61A005C9991 /* ofPath.cpp */; };
-		DA97FD4112F5A61A005C9991 /* ofPath.h in Headers */ = {isa = PBXBuildFile; fileRef = DA97FD3B12F5A61A005C9991 /* ofPath.h */; };
 		DA97FD6712F5ABD4005C9991 /* cairo-deprecated.h in Headers */ = {isa = PBXBuildFile; fileRef = DA97FD4B12F5ABD4005C9991 /* cairo-deprecated.h */; };
 		DA97FD6812F5ABD4005C9991 /* cairo-features.h in Headers */ = {isa = PBXBuildFile; fileRef = DA97FD4C12F5ABD4005C9991 /* cairo-features.h */; };
 		DA97FD6912F5ABD4005C9991 /* cairo-pdf.h in Headers */ = {isa = PBXBuildFile; fileRef = DA97FD4D12F5ABD4005C9991 /* cairo-pdf.h */; };
@@ -189,12 +190,13 @@
 		DA2E399712DF6E9000EC4A5B /* glew.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = glew.h; sourceTree = "<group>"; };
 		DA2E399812DF6E9000EC4A5B /* glxew.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = glxew.h; sourceTree = "<group>"; };
 		DA2E399912DF6E9000EC4A5B /* wglew.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = wglew.h; sourceTree = "<group>"; };
+		DA94C2ED1301D32200CCC773 /* ofRendererCollection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofRendererCollection.h; sourceTree = "<group>"; };
+		DA94C2EE1301D32200CCC773 /* ofShapeTessellation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofShapeTessellation.cpp; sourceTree = "<group>"; };
+		DA94C2EF1301D32200CCC773 /* ofShapeTessellation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofShapeTessellation.h; sourceTree = "<group>"; };
 		DA97FD3612F5A61A005C9991 /* ofCairoRenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofCairoRenderer.cpp; sourceTree = "<group>"; };
 		DA97FD3712F5A61A005C9991 /* ofCairoRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofCairoRenderer.h; sourceTree = "<group>"; };
 		DA97FD3812F5A61A005C9991 /* ofGLRenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofGLRenderer.cpp; sourceTree = "<group>"; };
 		DA97FD3912F5A61A005C9991 /* ofGLRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofGLRenderer.h; sourceTree = "<group>"; };
-		DA97FD3A12F5A61A005C9991 /* ofPath.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofPath.cpp; sourceTree = "<group>"; };
-		DA97FD3B12F5A61A005C9991 /* ofPath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofPath.h; sourceTree = "<group>"; };
 		DA97FD4B12F5ABD4005C9991 /* cairo-deprecated.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "cairo-deprecated.h"; sourceTree = "<group>"; };
 		DA97FD4C12F5ABD4005C9991 /* cairo-features.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "cairo-features.h"; sourceTree = "<group>"; };
 		DA97FD4D12F5ABD4005C9991 /* cairo-pdf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "cairo-pdf.h"; sourceTree = "<group>"; };
@@ -806,12 +808,13 @@
 		E4F3BAFF12F4C751002D19BB /* graphics */ = {
 			isa = PBXGroup;
 			children = (
+				DA94C2ED1301D32200CCC773 /* ofRendererCollection.h */,
+				DA94C2EE1301D32200CCC773 /* ofShapeTessellation.cpp */,
+				DA94C2EF1301D32200CCC773 /* ofShapeTessellation.h */,
 				DA97FD3612F5A61A005C9991 /* ofCairoRenderer.cpp */,
 				DA97FD3712F5A61A005C9991 /* ofCairoRenderer.h */,
 				DA97FD3812F5A61A005C9991 /* ofGLRenderer.cpp */,
 				DA97FD3912F5A61A005C9991 /* ofGLRenderer.h */,
-				DA97FD3A12F5A61A005C9991 /* ofPath.cpp */,
-				DA97FD3B12F5A61A005C9991 /* ofPath.h */,
 				E4F3BB0012F4C751002D19BB /* ofBitmapFont.cpp */,
 				E4F3BB0112F4C751002D19BB /* ofBitmapFont.h */,
 				E4F3BB0212F4C751002D19BB /* ofFbo.cpp */,
@@ -999,7 +1002,6 @@
 				E4F3BD7212F4F8B0002D19BB /* ProgressHandler.h in Headers */,
 				DA97FD3D12F5A61A005C9991 /* ofCairoRenderer.h in Headers */,
 				DA97FD3F12F5A61A005C9991 /* ofGLRenderer.h in Headers */,
-				DA97FD4112F5A61A005C9991 /* ofPath.h in Headers */,
 				DA97FD6712F5ABD4005C9991 /* cairo-deprecated.h in Headers */,
 				DA97FD6812F5ABD4005C9991 /* cairo-features.h in Headers */,
 				DA97FD6912F5ABD4005C9991 /* cairo-pdf.h in Headers */,
@@ -1017,6 +1019,8 @@
 				DA97FD7512F5ABD4005C9991 /* png.h in Headers */,
 				DA97FD7612F5ABD4005C9991 /* pngconf.h in Headers */,
 				DA97FD7712F5ABD4005C9991 /* pnglibconf.h in Headers */,
+				DA94C2F01301D32200CCC773 /* ofRendererCollection.h in Headers */,
+				DA94C2F21301D32200CCC773 /* ofShapeTessellation.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1127,7 +1131,7 @@
 				E4F3BD2612F4F7BF002D19BB /* ofModelUtils.cpp in Sources */,
 				DA97FD3C12F5A61A005C9991 /* ofCairoRenderer.cpp in Sources */,
 				DA97FD3E12F5A61A005C9991 /* ofGLRenderer.cpp in Sources */,
-				DA97FD4012F5A61A005C9991 /* ofPath.cpp in Sources */,
+				DA94C2F11301D32200CCC773 /* ofShapeTessellation.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
