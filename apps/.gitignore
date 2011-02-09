@@ -17,4 +17,5 @@ androidExamples/*/obj
 androidExamples/*/gen
 androidExamples/*/local.properties
 androidExamples/*/.settings
+androidExamples/*/.externalToolBuilders
 libOFAndroidApp.so
