@@ -43,16 +43,18 @@ public class OFAndroid {
     		try{
     			dataPath = Environment.getExternalStorageDirectory().getAbsolutePath();
     			dataPath += "/"+packageName;
+    			Log.i("OF","creating app directory: " + dataPath);
 				try{
+					
 					File dir = new File(dataPath);
-					if(dir.mkdir()!=true) 
+					
+					if(!dir.exists() && dir.mkdir()!=true) 
 						throw new Exception();
 				}catch(Exception e){
 					Log.e("OF","error creating dir " + dataPath,e);
 				}
 				
 				OFAndroid.setAppDataDir(dataPath);
-    			Log.i("OF","creating app directory: " + dataPath);
     			for(int i=0; i<files.length; i++){
     	        	int fileId;
     	        	String fileName="";
@@ -186,10 +188,10 @@ public class OFAndroid {
     		ofActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
     		break;
     	case 3:
-    		ofActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+    		ofActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
     		break;
     	case 4:
-    		ofActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+    		ofActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
     		break;
     	}
     }
