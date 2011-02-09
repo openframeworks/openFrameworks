@@ -114,7 +114,7 @@ public:
 				os << PocoHacks::AnyCast<std::string>(it->second);
 			}catch(...){
 				os << "data type does not overload << operator";
-				ofLog(OF_LOG_WARNING,"value with key " + it->first + " couldn't be converted to string");
+//				ofLog(OF_LOG_WARNING,"value with key " + it->first + " couldn't be converted to string");
 			}
 			
 			
