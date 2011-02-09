@@ -222,17 +222,18 @@ Java_cc_openframeworks_OFAndroid_onPause( JNIEnv*  env, jobject  thiz ){
 	paused = true;
 
 	if(androidApp) androidApp->pause();
-	//ofUnloadAllFontTextures();
-	//ofPauseVideoGrabbers();
+	ofUnloadAllFontTextures();
+	ofPauseVideoGrabbers();
+	ofxAndroidSoundStreamPause();
 }
 
 void
 Java_cc_openframeworks_OFAndroid_onResume( JNIEnv*  env, jobject  thiz ){
 
-	//reloadTextures();
+	reloadTextures();
 	if(androidApp){
 		androidApp->resume();
-		//androidApp->reloadTextures();
+		androidApp->reloadTextures();
 	}
 	paused = false;
 }
