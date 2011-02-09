@@ -14,7 +14,7 @@
 #include <deque>
 #include <set>
 
-static short * out_buffer, * in_buffer;
+static short * out_buffer=NULL, * in_buffer=NULL;
 static float * out_float_buffer=NULL, * in_float_buffer=NULL;
 static int outBufferSize=0, outChannels=0, inBufferSize=0, inChannels=0;
 static ofBaseApp * OFApp;
@@ -23,6 +23,7 @@ static int	sampleRate;
 static int  requestedBufferSize;
 static int  totalOutRequestedBufferSize;
 static int  totalInRequestedBufferSize;
+static jshortArray jInArray, jOutArray;
 
 // TODO: can we label this better?
 static float * working = NULL;
@@ -44,8 +45,8 @@ void ofSoundStreamSetup(int nOutputChannels, int nInputChannels, ofBaseApp * OFS
 		ofLog(OF_LOG_ERROR,"ofSoundStreamSetup: Cannot find java virtual machine");
 		return;
 	}
-	JNIEnv *env;
-	if (ofGetJavaVMPtr()->GetEnv((void**) &env, JNI_VERSION_1_4) != JNI_OK) {
+	JNIEnv *env = ofGetJNIEnv();
+	if (!env) {
 		ofLog(OF_LOG_ERROR,"Failed to get the environment using GetEnv()");
 		return;
 	}
@@ -192,6 +193,14 @@ int walkDSPGraphLookingForOutputBranches()
 	return branchCount;
 }
 
+void ofxAndroidSoundStreamPause(){
+	if(in_buffer)
+		ofGetJNIEnv()->ReleasePrimitiveArrayCritical(jInArray,in_buffer,0);
+	if(out_buffer)
+		ofGetJNIEnv()->ReleasePrimitiveArrayCritical(jOutArray,out_buffer,0);
+	in_buffer = NULL;
+	out_buffer = NULL;
+}
 
 extern "C"{
 
@@ -213,16 +222,18 @@ static int time_prev_out = 0;*/
 
 jint
 Java_cc_openframeworks_OFAndroidSoundStream_audioRequested(JNIEnv*  env, jobject  thiz, jshortArray array, jint numChannels, jint bufferSize){
-	tickCount++;
-	if(!out_float_buffer || numChannels!=outChannels || bufferSize!=outBufferSize){
+
+	if(!out_buffer || !out_float_buffer || numChannels!=outChannels || bufferSize!=outBufferSize){
+		if(out_buffer)
+			env->ReleasePrimitiveArrayCritical(array,out_buffer,0);
+		out_buffer = (short*)env->GetPrimitiveArrayCritical(array, NULL);
+		if(!out_buffer) return 1;
 		if(out_float_buffer) delete[] out_float_buffer;
 		out_float_buffer = new float[bufferSize*numChannels];
 		outBufferSize = bufferSize;
 		outChannels   = numChannels;
 	}
 
-	out_buffer = (short*)env->GetPrimitiveArrayCritical(array, NULL);
-	if(!out_buffer) return 1;
 	if (numChannels > 0) {
 		if (working == NULL){
 			working = new float[totalOutRequestedBufferSize];
@@ -231,6 +242,7 @@ Java_cc_openframeworks_OFAndroidSoundStream_audioRequested(JNIEnv*  env, jobject
 		float * out_buffer_ptr = out_float_buffer;
 		memset( out_float_buffer, 0, sizeof(float)*bufferSize*numChannels );
 		for(int t=0;t<bufferSize/requestedBufferSize;t++){
+			tickCount++;
 			if(OFApp){
 				OFApp->audioRequested(out_buffer_ptr,requestedBufferSize,numChannels);
 			}
@@ -252,7 +264,6 @@ Java_cc_openframeworks_OFAndroidSoundStream_audioRequested(JNIEnv*  env, jobject
 		}
 	}
 
-	env->ReleasePrimitiveArrayCritical(array,out_buffer,0);
 	return 0;
 }
 
@@ -261,19 +272,21 @@ static float conv_factor = 1/32767.5f;
 jint
 Java_cc_openframeworks_OFAndroidSoundStream_audioReceived(JNIEnv*  env, jobject  thiz, jshortArray array, jint numChannels, jint bufferSize){
 	if(!in_float_buffer || numChannels!=inChannels || bufferSize!=inBufferSize){
+		if(in_buffer)
+			env->ReleasePrimitiveArrayCritical(array,in_buffer,0);
+		in_buffer = (short*)env->GetPrimitiveArrayCritical(array, NULL);
+		if(!in_buffer) return 1;
+
 		if(in_float_buffer) delete[] in_float_buffer;
 		in_float_buffer = new float[bufferSize*numChannels];
 		inBufferSize = bufferSize;
 		inChannels   = numChannels;
 	}
 	if(OFApp){
-		in_buffer = (short*)env->GetPrimitiveArrayCritical(array, NULL);
-		if(!in_buffer) return 1;
 		for(int i=0;i<bufferSize*numChannels;i++){
 			in_float_buffer[i] = (float(in_buffer[i]) + 0.5) * conv_factor;
 		}
 		OFApp->audioReceived(in_float_buffer,bufferSize,numChannels);
-		env->ReleasePrimitiveArrayCritical(array,in_buffer,0);
 	}
 
 	return 0;
