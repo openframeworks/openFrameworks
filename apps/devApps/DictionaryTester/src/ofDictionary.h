@@ -67,7 +67,7 @@ public:
 	template <typename ValueType>
     ValueType& getRef(string key, const ValueType& defaultValue) { 
 		try {
-			return Poco::RefAnyCast<ValueType>(_map[key]);
+			return PocoHacks::RefAnyCast<ValueType>(_map[key]);
 		} catch(...) {
 			ofLog(OF_LOG_ERROR, "ofDictionary: key does not exist for that type");
 			return const_cast<ValueType&>(defaultValue);
@@ -78,7 +78,7 @@ public:
 	template <typename ValueType>
     ValueType get(string key, ValueType defaultValue) { 
 		try {
-			return Poco::RefAnyCast<ValueType>(_map[key]);
+			return PocoHacks::RefAnyCast<ValueType>(_map[key]);
 		} catch(...) {
 			ofLog(OF_LOG_ERROR, "ofDictionary: key does not exist for that type");
 			return const_cast<ValueType&>(defaultValue);
@@ -92,26 +92,26 @@ public:
 		
 		ostringstream os;
 		os << endl << sIndent << "{" << endl;
-		map<string, Poco::SerializableAny>::const_iterator end = _map.end();
-		map<string, Poco::SerializableAny>::const_iterator begin = _map.begin();
-		for(map<string, Poco::SerializableAny>::const_iterator it = begin; it != end; ++it) {
+		map<string, PocoHacks::SerializableAny>::const_iterator end = _map.end();
+		map<string, PocoHacks::SerializableAny>::const_iterator begin = _map.begin();
+		for(map<string, PocoHacks::SerializableAny>::const_iterator it = begin; it != end; ++it) {
 			os << sIndent << indentString << it->first << " : ";
 			
 //			// ugly, is there a better way?
 //			const std::type_info& type = it->second.type();
-//			if(type == typeid(bool)) os << Poco::RefAnyCast<bool>(it->second);
-//			else if(type == typeid(int)) os << Poco::RefAnyCast<int>(it->second);
-//			else if(type == typeid(float)) os << Poco::RefAnyCast<float>(it->second);
-//			else if(type == typeid(char)) os << Poco::RefAnyCast<char>(it->second);
-//			else if(type == typeid(string)) os << Poco::RefAnyCast<string>(it->second);
-//			else if(type == typeid(ofPoint)) os << Poco::RefAnyCast<ofPoint>(it->second);
-//			else if(type == typeid(ofVec2f)) os << Poco::RefAnyCast<ofVec2f>(it->second);
-//			else if(type == typeid(ofVec3f)) os << Poco::RefAnyCast<ofVec3f>(it->second);
-//			else if(type == typeid(ofDictionary)) os << Poco::RefAnyCast<ofDictionary>(it->second);
+//			if(type == typeid(bool)) os << PocoHacks::RefAnyCast<bool>(it->second);
+//			else if(type == typeid(int)) os << PocoHacks::RefAnyCast<int>(it->second);
+//			else if(type == typeid(float)) os << PocoHacks::RefAnyCast<float>(it->second);
+//			else if(type == typeid(char)) os << PocoHacks::RefAnyCast<char>(it->second);
+//			else if(type == typeid(string)) os << PocoHacks::RefAnyCast<string>(it->second);
+//			else if(type == typeid(ofPoint)) os << PocoHacks::RefAnyCast<ofPoint>(it->second);
+//			else if(type == typeid(ofVec2f)) os << PocoHacks::RefAnyCast<ofVec2f>(it->second);
+//			else if(type == typeid(ofVec3f)) os << PocoHacks::RefAnyCast<ofVec3f>(it->second);
+//			else if(type == typeid(ofDictionary)) os << PocoHacks::RefAnyCast<ofDictionary>(it->second);
 //			else os << "unknown type";
 			
 			try{
-				os << Poco::AnyCast<std::string>(it->second);
+				os << PocoHacks::AnyCast<std::string>(it->second);
 			}catch(...){
 				os << "data type does not overload << operator";
 				ofLog(OF_LOG_WARNING,"value with key " + it->first + " couldn't be converted to string");
@@ -141,7 +141,7 @@ public:
 	}
 
 protected:
-	map<string, Poco::SerializableAny> _map;
+	map<string, PocoHacks::SerializableAny> _map;
 	int indentLevel;
 	string indentString;
 };
