@@ -63,37 +63,28 @@ void testApp::update() {
 	
 	
 	// reading custom types from dictionary
-	// for this you need to pass in a second parameter for default
+	// for this you need to pass in a second parameter for defaults
 	ExampleCustomData d = info.get("custom data", ExampleCustomData());
 	
 	
-	// you can even read an embedded dictionary!
-	ofDictionary car = info.getDictionary("car");
-	
-
-	// dump info to console individually
-	cout << "Dumping contents individually: " << endl
-	<< "year: " << year << endl
-	<< "month: " << month << endl
-	<< "age: " << age << endl 
-	<< "initial: " << initial << endl
-	<< "name: " << name << endl
-	<< "size: " << size << endl
-	<< "custom data: " << d.a << ", " << d.b << ", " << d.s << endl
-	<< "car: " <<  car;//car.getString("make") << ", " << car.getString("model") << ", " << car.getInt("year") << endl;
+	// you can even read back a nested dictionary!
+	ofDictionary &car = info.getDictionary("car");
 	
 	
 	// dump info to console using overloaded << operator.
+	// this could be a filestream or any other stream
 	// it works with nested dictionaries!
 	cout << endl << endl << "Dumping contents via << operator: " << info;
 	
 	
-	// get info by reference, so you can modify it in place!
-	string &newname = info.getString("name");
-	newname = "Memo Akten";
-	cout << endl << endl << "testing hardcore modifying contents by reference, name should be different: " << info;
+	// to directly access a nested dictionaries member you can do
+	cout << endl << endl << "car year: " << info.getDictionary("car").getInt("year");
+	
+	//or you can modify in place
+	info.getDictionary("car").getInt("year") = 2005;
+	cout << endl << endl << "new car year: " << info.getDictionary("car").getInt("year");
 
 	
-	ofCreateAlertDialog("Check console");
+//	ofCreateAlertDialog("Check console");	// crazy memory leaks in this
 	std::exit(0);
 }
