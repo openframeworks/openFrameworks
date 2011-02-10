@@ -4,7 +4,7 @@ maxiOsc::maxiOsc(){
 	phase = 0.0;
 }
 
-double maxiOsc::square(double frequency) {
+float maxiOsc::square(float frequency) {
 	if (phase<0.5) output=-1;
 	if (phase>0.5) output=1;
 	if ( phase >= 1.0 ) phase -= 1.0;
@@ -12,7 +12,7 @@ double maxiOsc::square(double frequency) {
 	return(output);
 }
 
-double maxiOsc::saw(double frequency) {
+float maxiOsc::saw(float frequency) {
 	
 	output=phase;
 	if ( phase >= 1.0 ) phase -= 2.0;
@@ -21,7 +21,7 @@ double maxiOsc::saw(double frequency) {
 	
 } 
 
-double maxiOsc::triangle(double frequency, double phase) {
+float maxiOsc::triangle(float frequency, float phase) {
 	output=tri*2;
 	if ( phase >= 1.0 ) phase -= 1.0;
 	phase += (1./(sampleRate/(frequency)));
@@ -65,9 +65,11 @@ void ofxSynth::audioRequested( float* buffer, int numFrames, int numChannels ){
 	
 	env.audioRequested(envBuffer, numFrames, 1);
 	modEnv.audioRequested(modEnvBuffer, numFrames, 1); // we are only going to update once per buffer
+	float currValue;
+	float *buffer_ptr = buffer;
 	for (int i = 0; i<numFrames; i++) {
 		noteTime++;
-		currentFrequency = ofLerp(startFrequency, targetFrequency, fmin((float)noteTime, portamento+1)/(float)(portamento+20));
+		currentFrequency = ofLerp(startFrequency, targetFrequency, MIN((float)noteTime, portamento+1)/(float)(portamento+20));
 		currentAmp = envBuffer[i];
 		
 		if (currentAmp > 1) {
@@ -77,21 +79,21 @@ void ofxSynth::audioRequested( float* buffer, int numFrames, int numChannels ){
 		// load the proper waveform
 		switch (waveMode) {
 			case 0:
-				buffer[i*numChannels] = wave.square(currentFrequency);
+				currValue = wave.square(currentFrequency);
 				break;
 			case 1:
-				buffer[i*numChannels] = wave.triangle(currentFrequency, 0);
+				currValue = wave.triangle(currentFrequency, 0);
 				break;
 			case 2:
-				buffer[i*numChannels] = wave.saw(currentFrequency);
+				currValue = wave.saw(currentFrequency);
 				break;
 			default:
-				buffer[i*numChannels] = 0;
+				currValue = 0;
 				break;
 		}
-		buffer[i*numChannels] *= currentAmp;
-		for (int j=1; j<numChannels; j++) {
-			buffer[i*numChannels+j]=buffer[i*numChannels];
+		currValue *= currentAmp;
+		for (int j=0; j<numChannels; j++) {
+			(*buffer_ptr++) = currValue;
 		}
 	}
 	if (filterMode != 0) {

@@ -369,6 +369,6 @@ public:
 	
 private:
 	
-	unsigned long lastRenderedTick;
+	long unsigned long lastRenderedTick;
 	
 };

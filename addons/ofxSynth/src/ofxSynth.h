@@ -40,19 +40,18 @@
 
 class maxiOsc {
 	
-	double frequency;
-	double phase;
-	double startphase;
-	double endphase;
-	double output;
-	double tri;
+	float phase;
+	float startphase;
+	float endphase;
+	float output;
+	float tri;
 	int sampleRate;
 	
 public:
 	maxiOsc();
-	double saw(double frequency);
-	double triangle(double frequency,double phase);
-	double square(double frequency);
+	float saw(float frequency);
+	float triangle(float frequency,float phase);
+	float square(float frequency);
 	void setSampleRate(int rate);
 };
 
