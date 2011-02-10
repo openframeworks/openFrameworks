@@ -4,35 +4,6 @@ maxiOsc::maxiOsc(){
 	phase = 0.0;
 }
 
-float maxiOsc::square(float frequency) {
-	if (phase<0.5) output=-1;
-	if (phase>0.5) output=1;
-	if ( phase >= 1.0 ) phase -= 1.0;
-	phase += (1./(sampleRate/(frequency)));
-	return(output);
-}
-
-float maxiOsc::saw(float frequency) {
-	
-	output=phase;
-	if ( phase >= 1.0 ) phase -= 2.0;
-	phase += (1./(sampleRate/(frequency)));
-	return(output);
-	
-} 
-
-float maxiOsc::triangle(float frequency, float phase) {
-	output=tri*2;
-	if ( phase >= 1.0 ) phase -= 1.0;
-	phase += (1./(sampleRate/(frequency)));
-	if (phase <= 0.5 ) {
-		tri = phase;
-	} else {	
-		tri =(1-phase);
-	}
-	return(output);
-	
-} 
 void maxiOsc::setSampleRate(int rate){
 	sampleRate = rate;
 }
@@ -54,6 +25,7 @@ ofxSynth::ofxSynth(){
 	setFilter(0.7, 0.5);
 	setFilterLowPass();
 	waveMode = 0;
+	portamento = 0;
 	
 }
 
@@ -69,7 +41,7 @@ void ofxSynth::audioRequested( float* buffer, int numFrames, int numChannels ){
 	float *buffer_ptr = buffer;
 	for (int i = 0; i<numFrames; i++) {
 		noteTime++;
-		currentFrequency = ofLerp(startFrequency, targetFrequency, MIN((float)noteTime, portamento+1)/(float)(portamento+20));
+		currentFrequency = ofLerp(startFrequency, targetFrequency, MIN((float)noteTime, portamento+1)/(float)(portamento+1));
 		currentAmp = envBuffer[i];
 		
 		if (currentAmp > 1) {
@@ -108,21 +80,24 @@ void ofxSynth::trigger(){
 	modEnv.trigger();
 	modEnv.release();
 }
+
 void ofxSynth::setFilter(float _cutoff, float _res){
 	cutoff = _cutoff;
 	res = _res;
 	filter.setCutoff(_cutoff);
 	filter.setRes(_res);
 }
+
 void ofxSynth::setFrequency(float freq){
 	startFrequency = currentFrequency;
 	targetFrequency = freq;
 	noteTime = 0;
 }
+
 void ofxSynth::setFrequencyMidiNote(float note){
 	setFrequency(440.0*pow(2.0, (note-60.0)/12.0));
 }
-void ofxSynth::setSampleRate( int rate )
-{
+
+void ofxSynth::setSampleRate( int rate ){
 	sampleRate = rate;
 }
