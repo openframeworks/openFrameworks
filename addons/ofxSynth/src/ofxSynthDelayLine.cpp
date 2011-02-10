@@ -21,6 +21,7 @@ void ofxSynthDelayline::process( float* input, float *output, int numFrames, int
 	}
 }
 void ofxSynthDelayline::setSize(float _size){
+	if(_size>2) _size=2;
 	size = _size*sampleRate;
 }
 void ofxSynthDelayline::setFeedback(float _feedback){

@@ -13,12 +13,12 @@ class ofxSynthDelayline : public ofSoundEffect {
 		void setMix(float _mix);
 		
 	private:
-		double frequency;
+		float frequency;
 		int phase;
-		double startphase;
-		double endphase;
-		double output;
-		double memory[88200];
+		float startphase;
+		float endphase;
+		float output;
+		float memory[88200];
 		int size;
 		float feedback;
 		float mix;
