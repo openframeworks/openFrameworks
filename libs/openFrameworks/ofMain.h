@@ -64,10 +64,11 @@
 
 //--------------------------
 // 3d
+#include "ofVbo.h"
 #include "of3dUtils.h"
 #include "ofNode.h"
 #include "ofCamera.h"
-#include "ofMeshNode.h"
+#include "ofMesh.h"
 #include "ofEasyCam.h"
 #include "ofLight.h"
-#include "ofVbo.h"
+
