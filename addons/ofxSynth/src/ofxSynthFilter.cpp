@@ -37,25 +37,27 @@ void ofxSynthFilter::calc()
 	q = resonance * (1.0 + 0.5 * q * (1.0f - q + 5.6 * q * q));
 }
 void ofxSynthFilter::process( float* input, float *output, int numFrames, int numInChannels, int numOutChannels ){
+	float currValue;
 	for (int i = 0; i<numFrames; i++) {
-		output[i*numOutChannels] = input[i*numInChannels];
-		output[i*numOutChannels] -= q * b4;				//feedback
-		t1 = b1;  b1 = (output[i*numOutChannels] + b0) * p - b1 * f;
+		currValue = *input;
+		currValue -= q * b4;				//feedback
+		t1 = b1;  b1 = (currValue + b0) * p - b1 * f;
 		t2 = b2;  b2 = (b1 + t1) * p - b2 * f;
 		t1 = b3;  b3 = (b2 + t2) * p - b3 * f;
 		b4 = (b3 + t1) * p - b4 * f;
 		b4 -= b4 * b4 * b4 * 0.166667;		//clipping
-		b0 = output[i*numOutChannels];
+		b0 = currValue;
 		if(lowPass){
-			output[i*numOutChannels] = b4;
+			currValue = b4;
 		}else{
-			output[i*numOutChannels] = output[i*numOutChannels]-b4;
+			currValue-=b4;
 		}
+		input+=numInChannels;
 //		processSample(&output[i*numOutChannels]);
-		if (numOutChannels > 1) {
-			for (int j=1; j<numOutChannels; j++) {
-				output[i*numOutChannels+j] = output[i*numOutChannels];
-			}
+
+		for (int j=0; j<numOutChannels; j++) {
+			*output++=currValue;
 		}
+
 	}
 }
