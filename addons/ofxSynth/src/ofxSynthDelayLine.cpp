@@ -11,15 +11,17 @@ void ofxSynthDelayline::process( float* input, float *output, int numFrames, int
 		if (phase>=size) {
 			phase=0;
 		}
-		memory[phase]=(memory[phase]*feedback)+(input[i*numInChannels]*feedback)*0.5;
+		memory[phase]=(memory[phase]*feedback)+((*input)*feedback)*0.5;
 		phase+=1;
 		for (int j=0; j<numOutChannels; j++) {
 			// puts the sound in memory on to all the output channels
-			output[i*numOutChannels+j]=memory[phase+1]*mix+input[i*numInChannels]*(1.0-mix);
+			*output++=memory[phase+1]*mix+(*input)*(1.0-mix);
 		}
+		input+=numInChannels;
 	}
 }
 void ofxSynthDelayline::setSize(float _size){
+	if(_size>2) _size=2;
 	size = _size*sampleRate;
 }
 void ofxSynthDelayline::setFeedback(float _feedback){

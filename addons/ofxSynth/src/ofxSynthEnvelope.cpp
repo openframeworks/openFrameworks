@@ -13,25 +13,26 @@ void ofxSynthADSR::release(){
 	noteOn = false;
 }
 void ofxSynthADSR::audioRequested( float* buffer, int numFrames, int numChannels ){
+	float currValue;
 	for (int i = 0; i < numFrames; i++){
 		if(offset<a){ // attack
-			buffer[i*numChannels] = ((float)offset)/a;
+			currValue = ((float)offset)*inv_a;
 			offset++;
 		}else if (offset>a&&offset<a+d) { // decay
-			buffer[i*numChannels] = ofLerp(1.0, s, ((float)offset-a)/d);
+			currValue = ofLerp(1.0, s, ((float)offset-a)*inv_d);
 			offset++;
 		}else if(noteOn){ // sustain
-			buffer[i*numChannels] = s;
+			currValue = s;
 		}else if(offset<a+d+r){ // release
-			buffer[i*numChannels] = ofLerp(s, 0.0, (float)(offset-a-d)/(float)r);
+			currValue = ofLerp(s, 0.0, (float)(offset-a-d)*inv_r);
 			offset++;
 		}else {
-			buffer[i*numChannels] = 0;
+			currValue = 0;
 		}
 
 		// copy to the other channels that are being requested
-		for (int j = 1; j<numChannels; j++) {
-			buffer[i*numChannels+j] = buffer[i*numChannels];
+		for (int j = 0; j<numChannels; j++) {
+			*buffer++ = currValue;
 		}
 	}
 }
