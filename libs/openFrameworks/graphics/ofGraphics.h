@@ -14,7 +14,6 @@
 void ofSetDefaultRenderer(ofBaseRenderer * renderer);
 ofBaseRenderer * ofGetDefaultRenderer();
 
-
 //opengl specifics
 
 //set whether OF uses ARB rectangular texture or the more traditonal GL_TEXTURE_2D
@@ -144,10 +143,10 @@ void ofSetRectMode(ofRectMode mode);		// set the mode, either to OF_RECTMODE_COR
 
 // bg color
 float * ofBgColorPtr();
-void ofBackground(const ofColor & c);
-void ofBackground(float brightness);
-void ofBackground(int hexColor, float _a=255.0f);
 void ofBackground(int r, int g, int b, int a=255);
+void ofBackground(int brightness, int alpha = 255);
+void ofBackground(const ofColor & c);
+void ofBackgroundHex(int hexColor, int alpha = 255);
 
 // user's access to settings (bgAuto, corner mode):
 void 	ofSetBackgroundAuto(bool bManual);		// default is true

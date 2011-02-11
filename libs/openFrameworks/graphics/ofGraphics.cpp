@@ -184,15 +184,13 @@ void ofPushView() {
 	renderer->pushView();
 }
 
-
 //----------------------------------------------------------
 void ofPopView() {
 	renderer->popView();
 }
 
 //----------------------------------------------------------
-void ofViewport(ofRectangle viewport)
-{
+void ofViewport(ofRectangle viewport){
 	renderer->viewport(viewport.x, viewport.y, viewport.width, viewport.height);
 }
 
@@ -203,9 +201,7 @@ void ofViewport(float x, float y, float width, float height, bool invertY) {
 
 //----------------------------------------------------------
 ofRectangle ofGetCurrentViewport(){
-	
 	return renderer->getCurrentViewport();
-	
 }
 
 //----------------------------------------------------------
@@ -347,18 +343,18 @@ float * ofBgColorPtr(){
 }
 
 //----------------------------------------------------------
+void ofBackground(int brightness, int alpha) {
+	ofBackground(brightness, brightness, brightness, alpha);
+}
+
+//----------------------------------------------------------
 void ofBackground(const ofColor & c){
 	ofBackground ( c.r, c.g, c.b, c.a);
 }
 
 //----------------------------------------------------------
-void ofBackground(float brightness) {
-	ofBackground(brightness);
-}
-
-//----------------------------------------------------------
-void ofBackground(int hexColor, float _a){
-	ofBackground ( (hexColor >> 16) & 0xff, (hexColor >> 8) & 0xff, (hexColor >> 0) & 0xff, _a);
+void ofBackgroundHex(int hexColor, int alpha){
+	ofBackground ( (hexColor >> 16) & 0xff, (hexColor >> 8) & 0xff, (hexColor >> 0) & 0xff, alpha);
 }
 
 //----------------------------------------------------------
