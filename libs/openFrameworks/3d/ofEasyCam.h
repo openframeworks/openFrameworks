@@ -33,9 +33,9 @@ public:
 	void mouseReleased(ofMouseEventArgs& mouse);
 
 	// enable or disable mouse input to navigate
-	void enableInput();
-	void disableInput();
-	bool getInputEnabled();
+	void enableMouseInput();
+	void disableMouseInput();
+	bool getMouseInputEnabled();
 
 protected:
 	void setDistance(float distance, bool save);
@@ -44,7 +44,7 @@ protected:
 	
 	float drag;
 	float zoomSpeed;
-	bool bInputEnabled;
+	bool bMouseInputEnabled;
 
 	ofVec3f mousePosViewPrev;
 	ofVec3f mousePosScreenPrev;
