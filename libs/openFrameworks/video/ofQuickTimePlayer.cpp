@@ -152,7 +152,7 @@ unsigned char * ofQuickTimePlayer::getPixels(){
 }
 
 //---------------------------------------------------------------------------
-ofPixelsRef ofGstVideoUtils::getPixelsRef(){
+ofPixelsRef ofQuickTimePlayer::getPixelsRef(){
 	return pixels;
 }
 
