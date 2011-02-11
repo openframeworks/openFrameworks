@@ -142,6 +142,11 @@ unsigned char * ofVideoGrabber::getPixels(){
 	return NULL;
 }
 
+//---------------------------------------------------------------------------
+ofPixelsRef ofVideoGrabber::getPixelsRef(){
+	return grabber->getPixelsRef();
+}
+
 //------------------------------------
 //for getting a reference to the texture
 ofTexture & ofVideoGrabber::getTextureReference(){

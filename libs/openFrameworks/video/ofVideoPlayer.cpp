@@ -65,6 +65,11 @@ unsigned char * ofVideoPlayer::getPixels(){
 	return NULL;	
 }
 
+//---------------------------------------------------------------------------
+ofPixelsRef ofVideoPlayer::getPixelsRef(){
+	return player->getPixelsRef();
+}
+
 //
 //---------------------------------------------------------------------------
 //ofPixels ofVideoPlayer::getOFPixels(){

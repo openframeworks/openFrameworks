@@ -109,8 +109,7 @@ public:
 
 	bool 			isFrameNew();
 	unsigned char * getPixels();
-	ofPixels 		getOFPixels();
-	ofPixels 		getOFPixels() const;
+	ofPixelsRef		getPixelsRef();
 	void 			update();
 
 	float 			getHeight();
@@ -162,3 +161,4 @@ public:
 };
 
 #endif
+
