@@ -190,6 +190,10 @@ unsigned char * ofxAndroidVideoGrabber::getPixels(){
 	return pixels.getPixels();
 }
 
+ofPixelsRef	ofxAndroidVideoGrabber::getPixelsRef(){
+	return pixels;
+}
+
 void ofxAndroidVideoGrabber::setVerbose(bool bTalkToMe){
 
 }

@@ -23,6 +23,7 @@ public:
 	void	update();
 
 	unsigned char 	* getPixels();
+	ofPixelsRef		getPixelsRef();
 
 	void	close();
 
