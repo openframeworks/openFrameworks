@@ -108,8 +108,7 @@ public:
 
 	bool 			isFrameNew();
 	unsigned char * getPixels();
-	ofPixels 		getOFPixels();
-	ofPixels 		getOFPixels() const;
+	ofPixelsRef		getPixelsRef();
 	void 			update();
 
 	float 			getHeight();
@@ -159,3 +158,4 @@ public:
 	// pings when enough data has arrived to be able to get sink properties
 	virtual void on_stream_prepared(){};
 };
+

@@ -247,6 +247,10 @@ unsigned char * ofGstVideoPlayer::getPixels(){
 	return videoUtils.getPixels();
 }
 
+ofPixelsRef ofGstVideoPlayer::getPixelsRef(){
+	return videoUtils.getPixelsRef();
+}
+
 float ofGstVideoPlayer::getHeight(){
 	return videoUtils.getHeight();
 }

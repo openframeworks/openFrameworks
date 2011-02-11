@@ -216,13 +216,9 @@ void ofDirectShowGrabber::clearMemory(){
 unsigned char * ofDirectShowGrabber::getPixels(){
 	return pixels.getPixels();
 }
-//--------------------------------------------------------------------
-ofPixels ofDirectShowGrabber::getOFPixels(){
-	return pixels;
-}
 
-//--------------------------------------------------------------------
-ofPixels ofDirectShowGrabber::getOFPixels() const{
+//---------------------------------------------------------------------------
+ofPixelsRef ofGstVideoUtils::getPixelsRef(){
 	return pixels;
 }
 

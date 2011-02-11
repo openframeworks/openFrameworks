@@ -68,8 +68,9 @@ class ofxCvGrayscaleImage : public ofxCvImage {
 
     // Get Pixel Data
     //
-    virtual unsigned char*  getPixels();
-    virtual unsigned char*  getRoiPixels();
+    //virtual unsigned char*  getPixels();                                     //in base class
+	//virtual ofPixelsRef		getPixelsRef();                                //in base class
+    //virtual unsigned char*  getRoiPixels();                                  //in base class
     // virtual IplImage*  getCvImage();                                        //in base class
 
 

@@ -267,9 +267,9 @@ ofImage::~ofImage(){
 //----------------------------------------------------------
 bool ofImage::loadImage(string fileName){
 	bool bLoadedOk = false;
-	bLoadedOk = ofLoadImage(myPixels, fileName);
-	if (bLoadedOk && myPixels.isAllocated() && bUseTexture){
-		tex.allocate(myPixels.getWidth(), myPixels.getHeight(), myPixels.getGlDataType());
+	bLoadedOk = ofLoadImage(pixels, fileName);
+	if (bLoadedOk && pixels.isAllocated() && bUseTexture){
+		tex.allocate(pixels.getWidth(), pixels.getHeight(), pixels.getGlDataType());
 	} 
 	if (!bLoadedOk) {
 		ofLog(OF_LOG_ERROR, "Couldn't load image from " + fileName);
@@ -280,9 +280,9 @@ bool ofImage::loadImage(string fileName){
 
 bool ofImage::loadImage(const ofBuffer & buffer){
 	bool bLoadedOk = false;
-	bLoadedOk = ofLoadImage(myPixels, buffer);
-	if (bLoadedOk && myPixels.isAllocated() && bUseTexture){
-		tex.allocate(myPixels.getWidth(), myPixels.getHeight(), myPixels.getGlDataType());
+	bLoadedOk = ofLoadImage(pixels, buffer);
+	if (bLoadedOk && pixels.isAllocated() && bUseTexture){
+		tex.allocate(pixels.getWidth(), pixels.getHeight(), pixels.getGlDataType());
 	} 
 	if (!bLoadedOk) {
 		ofLog(OF_LOG_ERROR, "Couldn't load image from buffer.");
@@ -293,12 +293,12 @@ bool ofImage::loadImage(const ofBuffer & buffer){
 
 //----------------------------------------------------------
 void ofImage::saveImage(string fileName, ofImageQualityType qualityLevel){
-	ofSaveImage(myPixels, fileName, qualityLevel);
+	ofSaveImage(pixels, fileName, qualityLevel);
 }
 
 //----------------------------------------------------------
 void ofImage::saveImage(ofBuffer & buffer, ofImageQualityType qualityLevel){
-	ofSaveImage(myPixels, buffer, qualityLevel);
+	ofSaveImage(pixels, buffer, qualityLevel);
 }
 
 //we could cap these values - but it might be more useful
@@ -349,27 +349,27 @@ void ofImage::draw(float _x, float _y, float _z, float _w, float _h){
 
 //------------------------------------
 void ofImage::draw(const ofPoint & p){
-	draw(p.x,p.y,p.z,myPixels.getWidth(),myPixels.getHeight());
+	draw(p.x,p.y,p.z,pixels.getWidth(),pixels.getHeight());
 }
 
 //------------------------------------
 void ofImage::draw(float x, float y){
-	draw(x,y,0.0f,myPixels.getWidth(),myPixels.getHeight());
+	draw(x,y,0.0f,pixels.getWidth(),pixels.getHeight());
 }
 
 //------------------------------------
 void ofImage::draw(float x, float y, float z){
-	draw(x,y,z,myPixels.getWidth(),myPixels.getHeight());
+	draw(x,y,z,pixels.getWidth(),pixels.getHeight());
 }
 
 //------------------------------------
 void ofImage::allocate(int w, int h, ofImageType type){
 
-	myPixels.allocate(w, h, type);
+	pixels.allocate(w, h, type);
 
 	// take care of texture allocation --
-	if (myPixels.isAllocated() && bUseTexture){
-		tex.allocate(myPixels.getWidth(), myPixels.getHeight(), myPixels.getGlDataType());
+	if (pixels.isAllocated() && bUseTexture){
+		tex.allocate(pixels.getWidth(), pixels.getHeight(), pixels.getGlDataType());
 	}
 
 	update();
@@ -379,7 +379,7 @@ void ofImage::allocate(int w, int h, ofImageType type){
 //------------------------------------
 void ofImage::clear(){
 
-	myPixels.clear();
+	pixels.clear();
 	if(bUseTexture)	tex.clear();
 
 	width					= 0;
@@ -391,15 +391,12 @@ void ofImage::clear(){
 
 //------------------------------------
 unsigned char * ofImage::getPixels(){
-	return myPixels.getPixels();
+	return pixels.getPixels();
 }
 
-ofPixels& ofImage::getOFPixels(){
-	return myPixels;
-}
-
-ofPixels ofImage::getOFPixels() const{
-	return myPixels;
+//----------------------------------------------------------
+ofPixelsRef ofImage::getPixelsRef(){
+	return pixels;
 }
 
 //------------------------------------
@@ -429,10 +426,10 @@ void ofImage::unbind(){
 void  ofImage::setFromPixels(unsigned char * newPixels, int w, int h, ofImageType newType, bool bOrderIsRGB){
 
 	allocate(w, h, newType);
-	myPixels.setFromPixels(newPixels,w,h,newType);
+	pixels.setFromPixels(newPixels,w,h,newType);
 
 	if (!bOrderIsRGB){
-		myPixels.swapRgb();
+		pixels.swapRgb();
 	}
 
 	update();
@@ -441,14 +438,14 @@ void  ofImage::setFromPixels(unsigned char * newPixels, int w, int h, ofImageTyp
 //------------------------------------
 void ofImage::update(){
 
-	if (myPixels.isAllocated() && bUseTexture){
-		tex.loadData(myPixels.getPixels(), myPixels.getWidth(), myPixels.getHeight(), myPixels.getGlDataType());
+	if (pixels.isAllocated() && bUseTexture){
+		tex.loadData(pixels.getPixels(), pixels.getWidth(), pixels.getHeight(), pixels.getGlDataType());
 	}
 
-	width	= myPixels.getWidth();
-	height	= myPixels.getHeight();
-	bpp		= myPixels.getBitsPerPixel();
-	type	= myPixels.getImageType();
+	width	= pixels.getWidth();
+	height	= pixels.getHeight();
+	bpp		= pixels.getBitsPerPixel();
+	type	= pixels.getImageType();
 }
 
 //------------------------------------
@@ -474,18 +471,18 @@ void ofImage::grabScreen(int _x, int _y, int _w, int _h){
 		glPushClientAttrib( GL_CLIENT_PIXEL_STORE_BIT );											// be nice to anyone else who might use pixelStore
 	#endif
 		glPixelStorei(GL_PACK_ALIGNMENT, 1);														// set read non block aligned...
-		glReadPixels(_x, _y, _w, _h, myPixels.getGlDataType(),GL_UNSIGNED_BYTE, myPixels.getPixels());		// read the memory....
+		glReadPixels(_x, _y, _w, _h, pixels.getGlDataType(),GL_UNSIGNED_BYTE, pixels.getPixels());		// read the memory....
 	#ifndef TARGET_OF_IPHONE
 		glPopClientAttrib();
 	#endif
 
-	int sizeOfOneLineOfPixels = myPixels.getWidth() * myPixels.getBytesPerPixel();
+	int sizeOfOneLineOfPixels = pixels.getWidth() * pixels.getBytesPerPixel();
 	unsigned char * tempLineOfPix = new unsigned char[sizeOfOneLineOfPixels];
 	unsigned char * linea;
 	unsigned char * lineb;
-	for (int i = 0; i < myPixels.getHeight()/2; i++){
-		linea = myPixels.getPixels() + i * sizeOfOneLineOfPixels;
-		lineb = myPixels.getPixels() + (myPixels.getHeight()-i-1) * sizeOfOneLineOfPixels;
+	for (int i = 0; i < pixels.getHeight()/2; i++){
+		linea = pixels.getPixels() + i * sizeOfOneLineOfPixels;
+		lineb = pixels.getPixels() + (pixels.getHeight()-i-1) * sizeOfOneLineOfPixels;
 		memcpy(tempLineOfPix, linea, sizeOfOneLineOfPixels);
 		memcpy(linea, lineb, sizeOfOneLineOfPixels);
 		memcpy(lineb, tempLineOfPix, sizeOfOneLineOfPixels);
@@ -498,12 +495,12 @@ void ofImage::grabScreen(int _x, int _y, int _w, int _h){
 //------------------------------------
 void ofImage::clone(const ofImage &mom){
 
-	myPixels = mom.getOFPixels();
+	pixels = mom.pixels;
 
 	tex.clear();
 	bUseTexture = mom.bUseTexture;
 	if (bUseTexture == true){
-		tex.allocate(myPixels.getWidth(), myPixels.getHeight(), myPixels.getGlDataType());
+		tex.allocate(pixels.getWidth(), pixels.getHeight(), pixels.getGlDataType());
 	}
 
 	update();
@@ -511,18 +508,18 @@ void ofImage::clone(const ofImage &mom){
 
 //------------------------------------
 void ofImage::setImageType(ofImageType newType){
-	changeTypeOfPixels(myPixels, newType);
+	changeTypeOfPixels(pixels, newType);
 	update();
 }
 
 //------------------------------------
 void ofImage::resize(int newWidth, int newHeight){
 
-	resizePixels(myPixels, newWidth, newHeight);
+	resizePixels(pixels, newWidth, newHeight);
 
 	if (bUseTexture == true){
 		tex.clear();
-		tex.allocate(myPixels.getWidth(), myPixels.getHeight(), myPixels.getGlDataType());
+		tex.allocate(pixels.getWidth(), pixels.getHeight(), pixels.getGlDataType());
 	}
 
 	update();
@@ -531,22 +528,22 @@ void ofImage::resize(int newWidth, int newHeight){
 
 //------------------------------------
 void ofImage::crop(int x, int y, int w, int h){
-	ofPixelUtils::crop(myPixels, x,y,w,h);
+	ofPixelUtils::crop(pixels, x,y,w,h);
 	update();
 }
 
 //------------------------------------
 void ofImage::cropFrom(ofImage & otherImage, int x, int y, int w, int h){
 	
-	int myOldWidth = myPixels.getWidth();
-	int myOldHeight = myPixels.getHeight();
+	int myOldWidth = pixels.getWidth();
+	int myOldHeight = pixels.getHeight();
 	
-	ofPixelUtils::cropFromTo(otherImage.myPixels,myPixels, x,y,w,h);
+	ofPixelUtils::cropFromTo(otherImage.pixels,pixels, x,y,w,h);
 	
-	if (myOldWidth != myPixels.getWidth() || myOldHeight != myPixels.getHeight()){
+	if (myOldWidth != pixels.getWidth() || myOldHeight != pixels.getHeight()){
 		if (bUseTexture == true){
 			tex.clear();
-			tex.allocate(myPixels.getWidth(), myPixels.getHeight(), myPixels.getGlDataType());
+			tex.allocate(pixels.getWidth(), pixels.getHeight(), pixels.getGlDataType());
 		}
 	} 
 	
@@ -555,13 +552,13 @@ void ofImage::cropFrom(ofImage & otherImage, int x, int y, int w, int h){
 
 //------------------------------------
 void ofImage::rotate90(int nRotations){
-	int myOldWidth = myPixels.getWidth();
-	int myOldHeight = myPixels.getHeight();
-	ofPixelUtils::rotate90(myPixels, nRotations);
-	if (myOldWidth != myPixels.getWidth() || myOldHeight != myPixels.getHeight()){
+	int myOldWidth = pixels.getWidth();
+	int myOldHeight = pixels.getHeight();
+	ofPixelUtils::rotate90(pixels, nRotations);
+	if (myOldWidth != pixels.getWidth() || myOldHeight != pixels.getHeight()){
 		if (bUseTexture == true){
 			tex.clear();
-			tex.allocate(myPixels.getWidth(), myPixels.getHeight(), myPixels.getGlDataType());
+			tex.allocate(pixels.getWidth(), pixels.getHeight(), pixels.getGlDataType());
 		}
 	}
 	update();
@@ -569,7 +566,7 @@ void ofImage::rotate90(int nRotations){
 
 //------------------------------------
 void ofImage::mirror(bool vertical, bool horizontal){
-	ofPixelUtils::mirror(myPixels, vertical, horizontal);
+	ofPixelUtils::mirror(pixels, vertical, horizontal);
 	update();
 }
 
@@ -628,7 +625,7 @@ void ofImage::changeTypeOfPixels(ofPixels &pix, ofImageType newType){
 			convertedBmp = FreeImage_ConvertTo24Bits(bmp);
 			if (bNeedNewTexture){
 				tex.clear();
-				tex.allocate(myPixels.getWidth(), myPixels.getHeight(), GL_RGB);
+				tex.allocate(pixels.getWidth(), pixels.getHeight(), GL_RGB);
 			}
 			break;
 		
@@ -637,7 +634,7 @@ void ofImage::changeTypeOfPixels(ofPixels &pix, ofImageType newType){
 			convertedBmp = FreeImage_ConvertTo32Bits(bmp);
 			if (bNeedNewTexture){
 				tex.clear();
-				tex.allocate(myPixels.getWidth(), myPixels.getHeight(), GL_RGBA);
+				tex.allocate(pixels.getWidth(), pixels.getHeight(), GL_RGBA);
 			}
 			break;
 		default:
