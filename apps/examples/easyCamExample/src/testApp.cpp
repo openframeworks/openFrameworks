@@ -45,7 +45,7 @@ void testApp::draw(){
 	cam.end();
 
 	ofSetColor(255);
-	string msg = string("Using mouse inputs to navigate ('m' to toggle): ") + (cam.getInputEnabled() ? "YES" : "NO");
+	string msg = string("Using mouse inputs to navigate ('m' to toggle): ") + (cam.getMouseInputEnabled() ? "YES" : "NO");
 	msg += "\nfps: " + ofToString(ofGetFrameRate(), 2);
 	ofDrawBitmapString(msg, 10, 20);
 }
@@ -55,8 +55,8 @@ void testApp::keyPressed(int key){
 	switch(key) {
 		case 'M':
 		case 'm':
-			if(cam.getInputEnabled()) cam.disableInput();
-			else cam.enableInput();
+			if(cam.getMouseInputEnabled()) cam.disableMouseInput();
+			else cam.enableMouseInput();
 			break;
 			
 		case 'F':
