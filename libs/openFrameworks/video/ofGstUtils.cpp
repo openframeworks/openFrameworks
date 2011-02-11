@@ -545,11 +545,7 @@ unsigned char * ofGstVideoUtils::getPixels(){
 	return pixels.getPixels();
 }
 
-ofPixels ofGstVideoUtils::getOFPixels(){
-	return pixels;
-}
-
-ofPixels ofGstVideoUtils::getOFPixels() const{
+ofPixelsRef ofGstVideoUtils::getPixelsRef(){
 	return pixels;
 }
 

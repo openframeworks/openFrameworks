@@ -3,6 +3,7 @@
 ofPixels::ofPixels(){
 	bAllocated = false;
 	pixels = NULL;
+	pixelsOwner = false;
 	clear();
 }
 
@@ -35,22 +36,26 @@ void ofPixels::copyFrom(const ofPixels & mom){
 	}
 }
 
-void ofPixels::allocate(int w, int h, int bitsPerPixel){
-	ofImageType type;
+
+static ofImageType getImageTypeFromBits(int bitsPerPixel){
 	switch(bitsPerPixel){
 	case 8:
-		type=OF_IMAGE_GRAYSCALE;
+		return OF_IMAGE_GRAYSCALE;
 		break;
 	case 24:
-		type=OF_IMAGE_COLOR;
+		 return OF_IMAGE_COLOR;
 		break;
 	case 32:
-		type=OF_IMAGE_COLOR_ALPHA;
+		 return OF_IMAGE_COLOR_ALPHA;
 		break;
 	default:
 		ofLog(OF_LOG_ERROR,"%i bits per pixel is not a supported image type", bitsPerPixel);
-		return;
+		return OF_IMAGE_UNDEFINED;
 	}
+}
+
+void ofPixels::allocate(int w, int h, int bitsPerPixel){
+	ofImageType type = getImageTypeFromBits(bitsPerPixel);
 	allocate(w,h,type);
 }
 
@@ -91,6 +96,7 @@ void ofPixels::allocate(int w, int h, ofImageType type){
 	pixels = new unsigned char[w*h*bytesPerPixel];
 	memset(pixels, 0, w*h*bytesPerPixel);
 	bAllocated = true;
+	pixelsOwner = true;
 
 }
 
@@ -98,9 +104,65 @@ void ofPixels::set(unsigned char val){
 	memset(pixels,val,width*height*bytesPerPixel);
 }
 
+void ofPixels::setFromPixels(unsigned char * newPixels,int w, int h, int bitsPerPixel){
+	ofImageType type = getImageTypeFromBits(bitsPerPixel);
+	setFromPixels(newPixels,w,h,type);
+}
+
 void ofPixels::setFromPixels(unsigned char * newPixels,int w, int h, ofImageType newType){
 	allocate(w,h,newType);
 	memcpy(pixels,newPixels,w*h*bytesPerPixel);
+}
+
+void ofPixels::setFromExternalPixels(unsigned char * newPixels,int w, int h, int bitsPerPixel){
+	ofImageType type = getImageTypeFromBits(bitsPerPixel);
+	setFromExternalPixels(newPixels,w,h,type);
+}
+
+void ofPixels::setFromExternalPixels(unsigned char * newPixels,int w, int h, ofImageType newType){
+	imageType = newType;
+	width= w;
+	height = h;
+	switch(imageType){
+	case OF_IMAGE_GRAYSCALE:
+		bytesPerPixel = 1;
+		glDataType = GL_LUMINANCE;
+		break;
+	case OF_IMAGE_COLOR:
+		bytesPerPixel = 3;
+		glDataType = GL_RGB;
+		break;
+	case OF_IMAGE_COLOR_ALPHA:
+		bytesPerPixel = 4;
+		glDataType = GL_RGBA;
+		break;
+	default:
+		ofLog(OF_LOG_ERROR, "format not supported");
+		break;
+	}
+
+	bitsPerPixel = bytesPerPixel * 8;
+	pixels = newPixels;
+	pixelsOwner = false;
+}
+
+void ofPixels::setFromAlignedPixels(unsigned char * newPixels,int w, int h, int bitsPerPixel, int widthStep){
+	ofImageType type = getImageTypeFromBits(bitsPerPixel);
+	setFromAlignedPixels(newPixels,w,h,type,widthStep);
+}
+
+void ofPixels::setFromAlignedPixels(unsigned char * newPixels,int w, int h, ofImageType newType, int widthStep){
+	allocate(w,h,newType);
+	if(widthStep==width*bytesPerPixel){
+		memcpy(pixels,newPixels,w*h*bytesPerPixel);
+	}else{
+		for( int i = 0; i < height; i++ ) {
+			memcpy( pixels + (i*width*bytesPerPixel),
+					newPixels + (i*widthStep),
+					width*bytesPerPixel );
+		}
+	}
+
 }
 
 
@@ -122,7 +184,7 @@ void ofPixels::swapRgb(){
 void ofPixels::clear(){
 	
 	if(pixels){
-		delete[] pixels;
+		if(pixelsOwner) delete[] pixels;
 		pixels = NULL;
 	}
 	width			= 0;

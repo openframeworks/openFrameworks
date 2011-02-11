@@ -19,6 +19,7 @@ public:
 	
 	bool isFrameNew();
 	unsigned char * getPixels();
+	ofPixelsRef		getPixelsRef();
 	ofTexture * getTexture();
 	
 	float getWidth();
