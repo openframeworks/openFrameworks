@@ -44,7 +44,7 @@ void testApp::demo4_draw() {
 		int srcPos = i % 2;				// attachment to write to
 		int dstPos = 1 - srcPos;		// attachment to read from
 		glDrawBuffer(GL_COLOR_ATTACHMENT0_EXT + dstPos);	// write to this texture
-		ofClear();
+		ofClear(0, 0, 0, 0);
 
 		shader.setUniform1i("tex0", 0);
 		shader.setUniform1f("sampleOffset", i*2+1);
