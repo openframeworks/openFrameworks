@@ -25,6 +25,7 @@ class ofQuickTimeGrabber : public ofBaseVideoGrabber{
 		bool					isFrameNew();
 
 		unsigned char			* getPixels();
+		ofPixelsRef		 		getPixelsRef();
 		
 		void					close();
 		void					clearMemory();
