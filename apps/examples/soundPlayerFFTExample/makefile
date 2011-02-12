@@ -24,14 +24,19 @@
 #
 # edit the following  vars to customize the makefile
 
+include ../../../libs/openFrameworksCompiled/project/android/paths.make
 
 ifeq ($(findstring Android,$(MAKECMDGOALS)),Android)
 	ARCH = android
+	ifeq ($(shell uname),Darwin)
+		HOST_PLATFORM = darwin-x86
+	else
+		HOST_PLATFORM = linux-x86
+	endif
 endif
 
 ifeq ($(ARCH),android)
 	COMPILER_OPTIMIZATION = -Os
-	HOST_PLATFORM = linux-x86
 	NDK_PLATFORM = android-8
 else
 	COMPILER_OPTIMIZATION = -march=native -mtune=native -Os
@@ -62,8 +67,8 @@ else
 	else
 		LIBSPATH =android/armeabi
 	endif
-	NDK_ROOT = $(shell cat ../../../libs/openFrameworksCompiled/project/android/ndk_path.make)
-	SDK_ROOT = $(shell cat ../../../libs/openFrameworksCompiled/project/android/sdk_path.make)
+	#NDK_ROOT = $(shell cat ../../../libs/openFrameworksCompiled/project/android/ndk_path.make)
+	#SDK_ROOT = $(shell cat ../../../libs/openFrameworksCompiled/project/android/sdk_path.make)
 	TOOLCHAIN=arm-linux-androideabi-4.4.3
 	TOOLCHAIN_PATH=$(NDK_ROOT)/toolchains/$(TOOLCHAIN)/prebuilt/$(HOST_PLATFORM)/bin/
 	ANDROID_PREFIX=arm-linux-androideabi-
@@ -84,8 +89,9 @@ OBJFILES = $(patsubst %.c,%.o,$(patsubst %.cpp,%.o,$(SOURCES)))
 APPNAME = $(shell basename `pwd`)
 CORE_INCLUDES = $(shell find ../../../libs/openFrameworks/ -type d)
 CORE_INCLUDE_FLAGS = $(addprefix -I,$(CORE_INCLUDES))
-INCLUDES = $(shell find ../../../libs/*/include -type d | grep -v glu)
+INCLUDES = $(shell find ../../../libs/*/include -type d | grep -v glu | grep -v quicktime | grep -v poco)
 INCLUDES_FLAGS = $(addprefix -I,$(INCLUDES))
+INCLUDES_FLAGS += -I../../../libs/poco/include
 ifeq ($(ARCH),android)
 	INCLUDES_FLAGS += -I../../../libs/glu/include_android
 else
@@ -302,8 +308,8 @@ CleanAndroid:
 afterDebugAndroid:$(TARGET)
 	if [ -f libs/armeabi-v7a/libOFAndroidApp.so ]; then rm libs/armeabi-v7a/libOFAndroidApp.so; fi
 	touch AndroidManifest.xml
-	$(SDK_ROOT)/tools/android update project --target 5 --path $(PWD)
-	ant debug
+	$(SDK_ROOT)/tools/android update project --target $(NDK_PLATFORM) --path $(PWD)
+	$(ANT_BIN)ant debug
 	cp bin/OFActivity-debug.apk bin/$(APPNAME).apk
 	if [ "$(shell $(SDK_ROOT)/platform-tools/adb get-state)" = "device" ]; then \
 		$(SDK_ROOT)/platform-tools/adb install -r bin/$(APPNAME).apk; \
@@ -312,7 +318,7 @@ afterDebugAndroid:$(TARGET)
 afterReleaseAndroid:$(TARGET)
 	if [ -f obj/$(BIN_NAME) ]; then rm obj/$(BIN_NAME); fi
 	touch AndroidManifest.xml
-	$(SDK_ROOT)/tools/android update project --target 5 --path $(PWD)
+	$(SDK_ROOT)/tools/android update project --target $(NDK_PLATFORM) --path $(PWD)
 	ant debug
 	cp bin/OFActivity-debug.apk bin/$(APPNAME).apk  
 	if [ "$(shell $(SDK_ROOT)/platform-tools/adb get-state)" = "device" ]; then \
