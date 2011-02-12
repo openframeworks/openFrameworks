@@ -5,9 +5,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
-import java.nio.Buffer;
-import java.nio.ByteBuffer;
-import java.nio.FloatBuffer;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
@@ -19,7 +16,6 @@ import android.content.DialogInterface;
 import android.content.pm.ActivityInfo;
 import android.hardware.SensorManager;
 import android.opengl.GLSurfaceView;
-import android.opengl.GLU;
 import android.os.Environment;
 import android.util.Log;
 import android.view.MotionEvent;
