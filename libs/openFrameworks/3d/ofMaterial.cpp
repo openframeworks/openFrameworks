@@ -4,26 +4,33 @@ ofMaterial::ofMaterial() {
 }
 
 ofMaterial& ofMaterial::addTexture(
-	 ofTexture* pTexture
+	 ofTexture& pTexture
 	,ofTextureMapType nMapType
 ) 
 {
-	ofTextureMap tex_map(nMapType, pTexture);
+	ofTextureMap tex_map(nMapType, &pTexture);
 	textures.insert(tex_map);
 	return *this;
 }
 
-ofMaterial& ofMaterial::setDiffuse(ofColor oDiffuse) {
+
+ofMaterial& ofMaterial::setColors(ofColor oDiffuse, ofColor oAmbient, ofColor oSpecular) {
+	setDiffuseColor(oDiffuse);
+	setAmbientColor(oAmbient);
+	setSpecularColor(oSpecular);
+}
+
+ofMaterial& ofMaterial::setDiffuseColor(ofColor oDiffuse) {
 	diffuse = oDiffuse;
 	return *this;
 }
 
-ofMaterial& ofMaterial::setAmbient(ofColor oAmbient) {
+ofMaterial& ofMaterial::setAmbientColor(ofColor oAmbient) {
 	ambient = oAmbient;
 	return *this;
 }
 
-ofMaterial& ofMaterial::setSpecular(ofColor oSpecular) {
+ofMaterial& ofMaterial::setSpecularColor(ofColor oSpecular) {
 	specular = oSpecular;
 	return *this;
 }
