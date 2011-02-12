@@ -3,7 +3,7 @@
 //----------------------------------------------------------
 // ofColor
 //----------------------------------------------------------
-
+#include <ostream>
 class ofColor{
 	public:
 	
@@ -31,7 +31,7 @@ class ofColor{
 
 		void setHex (int hexColor, float alpha = 255.0f);
 		int getHex () const;
-		
+		 
 		ofColor& clamp ();
 		ofColor& invert ();
 		ofColor& normalize ();
@@ -76,13 +76,19 @@ class ofColor{
 		ofColor & operator /= (float const & val);
 		float & operator [] (int n);
 		
+		friend std::ostream& operator<<(std::ostream& os, const ofColor& col);
+	
 		union  {
 			struct {
 				float r, g, b, a;
 			};
 			float v[4];
 		};
-
-
 };
+
+inline std::ostream& operator<<(std::ostream& os, const ofColor& col) {
+	os << col.r << ", " << col.g << ", " << col.b << ", " << col.a;
+	return os;
+}
+
 
