@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		54945A711306B3DA005B3A7B /* ofMaterial.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 54945A6F1306B3DA005B3A7B /* ofMaterial.cpp */; };
 		54945A721306B3DA005B3A7B /* ofMaterial.h in Headers */ = {isa = PBXBuildFile; fileRef = 54945A701306B3DA005B3A7B /* ofMaterial.h */; };
+		54945B321306C760005B3A7B /* ofMeshNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 54945B301306C760005B3A7B /* ofMeshNode.h */; };
+		54945B331306C760005B3A7B /* ofMeshNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 54945B311306C760005B3A7B /* ofMeshNode.cpp */; };
 		DA2E399D12DF6E9000EC4A5B /* glew.h in Headers */ = {isa = PBXBuildFile; fileRef = DA2E399712DF6E9000EC4A5B /* glew.h */; };
 		DA2E399E12DF6E9000EC4A5B /* glxew.h in Headers */ = {isa = PBXBuildFile; fileRef = DA2E399812DF6E9000EC4A5B /* glxew.h */; };
 		DA2E399F12DF6E9000EC4A5B /* wglew.h in Headers */ = {isa = PBXBuildFile; fileRef = DA2E399912DF6E9000EC4A5B /* wglew.h */; };
@@ -167,6 +169,8 @@
 /* Begin PBXFileReference section */
 		54945A6F1306B3DA005B3A7B /* ofMaterial.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofMaterial.cpp; sourceTree = "<group>"; };
 		54945A701306B3DA005B3A7B /* ofMaterial.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofMaterial.h; sourceTree = "<group>"; };
+		54945B301306C760005B3A7B /* ofMeshNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofMeshNode.h; sourceTree = "<group>"; };
+		54945B311306C760005B3A7B /* ofMeshNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofMeshNode.cpp; sourceTree = "<group>"; };
 		DA2E399712DF6E9000EC4A5B /* glew.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = glew.h; sourceTree = "<group>"; };
 		DA2E399812DF6E9000EC4A5B /* glxew.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = glxew.h; sourceTree = "<group>"; };
 		DA2E399912DF6E9000EC4A5B /* wglew.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = wglew.h; sourceTree = "<group>"; };
@@ -619,6 +623,8 @@
 				E4F3BA6412F4C4BF002D19BB /* ofVbo.h */,
 				E4F3BA6512F4C4BF002D19BB /* ofVertexData.cpp */,
 				E4F3BA6612F4C4BF002D19BB /* ofVertexData.h */,
+				54945B301306C760005B3A7B /* ofMeshNode.h */,
+				54945B311306C760005B3A7B /* ofMeshNode.cpp */,
 			);
 			name = 3d;
 			path = ../../../openFrameworks/3d;
@@ -894,6 +900,7 @@
 				E4F3BD7112F4F8B0002D19BB /* NullLogger.h in Headers */,
 				E4F3BD7212F4F8B0002D19BB /* ProgressHandler.h in Headers */,
 				54945A721306B3DA005B3A7B /* ofMaterial.h in Headers */,
+				54945B321306C760005B3A7B /* ofMeshNode.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1003,6 +1010,7 @@
 				E4F3BD2412F4F7BF002D19BB /* ofModel.cpp in Sources */,
 				E4F3BD2612F4F7BF002D19BB /* ofModelUtils.cpp in Sources */,
 				54945A711306B3DA005B3A7B /* ofMaterial.cpp in Sources */,
+				54945B331306C760005B3A7B /* ofMeshNode.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

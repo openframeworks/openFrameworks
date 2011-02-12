@@ -1,18 +1,24 @@
 #include "ofMaterial.h"
 
 ofMaterial::ofMaterial() {
+	enabled_maps = OF_UNKOWN_MAP;
 }
 
-ofMaterial& ofMaterial::addTexture(
-	 ofTexture& pTexture
-	,ofTextureMapType nMapType
-) 
-{
+ofMaterial& ofMaterial::addMap(ofTexture& pTexture, ofTextureMapType nMapType) {
+	enabled_maps |= nMapType;
 	ofTextureMap tex_map(nMapType, &pTexture);
-	textures.insert(tex_map);
+	texture_maps.insert(tex_map);
 	return *this;
 }
 
+ofTexture* ofMaterial::getMap(ofTextureMapType nType) {
+	ofTexture* tex = NULL;
+	ofTextureMaps::iterator it = texture_maps.find(nType);
+	if(it != texture_maps.end()) {
+		tex = it->second;
+	}
+	return tex;
+}
 
 ofMaterial& ofMaterial::setColors(ofColor oDiffuse, ofColor oAmbient, ofColor oSpecular) {
 	setDiffuseColor(oDiffuse);
@@ -38,5 +44,17 @@ ofMaterial& ofMaterial::setSpecularColor(ofColor oSpecular) {
 ofMaterial& ofMaterial::setShininess(float nShininess) {
 	shininess = nShininess;
 	return *this;
+}
+
+void ofMaterial::begin() {
+	if(enabled_maps & OF_DIFFUSE_MAP) {
+		ofTexture* diffuse_tex = getDiffuseMap();
+		if(diffuse_tex != NULL) {
+			diffuse_tex->bind();
+		}
+	}
+}
+
+void ofMaterial::end() {
 }
 

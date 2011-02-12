@@ -72,4 +72,5 @@
 #include "ofEasyCam.h"
 #include "ofLight.h"
 #include "ofMaterial.h"
+#include "ofMeshNode.h"
 
