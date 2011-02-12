@@ -10,15 +10,20 @@ public:
 
 	ofPixels();
 	~ofPixels();
-	ofPixels(const ofPixels & mom);
+	ofPixels(const ofPixels & mom) { copyFrom( mom ); }
 	//ofPixels(ofPixels && mom);
 
-	void operator=(const ofPixels & mom);
+	ofPixels& operator=(const ofPixels & mom) { copyFrom( mom ); return *this; }
 
 	void allocate(int w, int h, int bitsPerPixel);
 	void allocate(int w, int h, ofImageType type);
 	void set(unsigned char val);
 	void setFromPixels(unsigned char * newPixels,int w, int h, ofImageType newType);
+	void setFromExternalPixels(unsigned char * newPixels,int w, int h, ofImageType newType);
+	void setFromAlignedPixels(unsigned char * newPixels,int w, int h, ofImageType newType, int widthStep);
+	void setFromPixels(unsigned char * newPixels,int w, int h, int bitsPerPixel);
+	void setFromExternalPixels(unsigned char * newPixels,int w, int h, int bitsPerPixel);
+	void setFromAlignedPixels(unsigned char * newPixels,int w, int h, int bitsPerPixel, int widthStep);
 
 	void swapRgb();
 
@@ -27,10 +32,11 @@ public:
 	unsigned char * getPixels();
 	unsigned char * const getPixels() const;
 
-	int getPixelIndex(int x, int y);
-	ofColor getPixel(int x, int y);
+	int getPixelIndex(int x, int y) const;
+	ofColor getColor(int x, int y) const;
+	void setColor(int x, int y, ofColor color);
 
-	unsigned char operator[](int pos);
+	unsigned char& operator[](int pos);
 
 	bool isAllocated() const;
 
@@ -44,6 +50,7 @@ public:
 	int getGlDataType() const;
 
 private:
+	void copyFrom( const ofPixels& mom );
 	
 	friend class ofPixelUtils;
 	
@@ -56,5 +63,9 @@ private:
 	GLint	glDataType;			// GL_LUMINANCE, GL_RGB, GL_RGBA
 	ofImageType imageType;		// OF_IMAGE_GRAYSCALE, OF_IMAGE_COLOR, OF_IMAGE_COLOR_ALPHA
 	bool	bAllocated;
+	bool	pixelsOwner;			// if set from external data don't delete it
 
 };
+
+typedef ofPixels& ofPixelsRef;
+

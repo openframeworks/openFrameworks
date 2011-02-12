@@ -82,9 +82,9 @@ class ofxCvFloatImage : public ofxCvImage {
 	
 	// Get Pixel Data
 	//
-    virtual unsigned char*  getPixels();
+    //virtual unsigned char*  getPixels();									   //in base class
     virtual float*  getPixelsAsFloats();  //no scaling
-    virtual unsigned char*  getRoiPixels();
+    //virtual unsigned char*  getRoiPixels();								   //in base class
     virtual float*  getRoiPixelsAsFloats();  //no scaling
     // virtual IplImage*  getCvImage();                                        //in base class
 
@@ -143,6 +143,8 @@ class ofxCvFloatImage : public ofxCvImage {
     void init();
     virtual void convertFloatToGray( IplImage* floatImg, IplImage* grayImg );
     virtual void convertGrayToFloat( IplImage* grayImg, IplImage* floatImg );
+    virtual IplImage* getCv8BitsImage();
+    virtual IplImage* getCv8BitsRoiImage();
     
     float* floatPixels;             // not width stepped for getPixelsAsFloats()
                                     // allocated on demand

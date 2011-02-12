@@ -171,7 +171,14 @@ public:
 	void makePerspectiveMatrix(double fovy,  double aspectRatio,
 						 double zNear, double zFar);
 
-	// gluLookAt.
+	// makeCameraLookAtMatrix:
+	// creates a transformation matrix which makes the camera at a desired
+	// position pointing at (along z axis) desired target
+	// same as gluLookAt
+	void makeLookAtViewMatrix(const ofVec3f& eye, const ofVec3f& center, const ofVec3f& up);
+
+	// makeCameraLookAtMatrix: creates a transformation matrix which
+	// makes the camera at a desired position pointing at (along z axis) desired target
 	void makeLookAtMatrix(const ofVec3f& eye, const ofVec3f& center, const ofVec3f& up);
 
 
@@ -408,7 +415,7 @@ public:
 
 inline bool ofMatrix4x4::isNaN() const {
 	
-#if (_MSC_VER)
+#if (_MSC_VER) || defined (TARGET_ANDROID)
 #ifndef isnan
 #define isnan(a) ((a) != (a))
 #endif
@@ -756,11 +763,11 @@ inline void ofMatrix4x4::rotate(const ofQuaternion& q){
 }
 
 inline void ofMatrix4x4::rotate(float angle, float x, float y, float z){
-	postMultRotate(angle*DEG_TO_RAD,x,y,z);
+	postMultRotate(angle,x,y,z);
 }
 
 inline void ofMatrix4x4::rotateRad(float angle, float x, float y, float z){
-	postMultRotate(angle,x,y,z);
+	postMultRotate(angle*RAD_TO_DEG,x,y,z);
 }
 
 inline void ofMatrix4x4::translate( float tx, float ty, float tz ){
@@ -780,11 +787,11 @@ inline void ofMatrix4x4::scale( const ofVec3f& v ){
 }
 
 inline void ofMatrix4x4::glRotate(float angle, float x, float y, float z){
-	preMultRotate(ofQuaternion(angle*DEG_TO_RAD,ofVec3f(x,y,z)));
+	preMultRotate(ofQuaternion(angle,ofVec3f(x,y,z)));
 }
 
 inline void ofMatrix4x4::glRotateRad(float angle, float x, float y, float z){
-	preMultRotate(ofQuaternion(angle,ofVec3f(x,y,z)));
+	preMultRotate(ofQuaternion(angle*RAD_TO_DEG,ofVec3f(x,y,z)));
 }
 
 inline void ofMatrix4x4::glRotate(const ofQuaternion& q){

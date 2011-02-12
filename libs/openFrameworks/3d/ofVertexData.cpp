@@ -1,4 +1,5 @@
 #include "ofVertexData.h"
+#include "ofGraphics.h"
 
 //--------------------------------------------------------------
 ofVertexData::ofVertexData(){
@@ -8,6 +9,12 @@ ofVertexData::ofVertexData(){
 	bNormalsChanged = true;
 	bTexCoordsChanged = true;
 	bIndicesChanged = true;
+}
+
+//--------------------------------------------------------------
+ofVertexData::ofVertexData(ofPrimitiveMode mode, const vector<ofVec3f>& verts){
+	setMode(mode);
+	addVertices(verts);
 }
 
 //--------------------------------------------------------------
@@ -163,19 +170,24 @@ void ofVertexData::addTexCoords(const ofVec2f* tCoords, int amt){
 }
 
 //--------------------------------------------------------------
-void ofVertexData::addIndex(int i){
-	indices.push_back(GLuint(i));
+ofIndexType ofVertexData::getIndex(int i){
+	return indices[i];
+}
+
+//--------------------------------------------------------------
+void ofVertexData::addIndex(ofIndexType i){
+	indices.push_back(i);
 	bIndicesChanged = true;
 }
 
 //--------------------------------------------------------------
-void ofVertexData::addIndices(const vector<GLuint>& inds){
+void ofVertexData::addIndices(const vector<ofIndexType>& inds){
 	indices.insert(indices.end(),inds.begin(),inds.end());
 	bIndicesChanged = true;
 }
 
 //--------------------------------------------------------------
-void ofVertexData::addIndices(const GLuint* inds, int amt){
+void ofVertexData::addIndices(const ofIndexType* inds, int amt){
 	for (int i = 0; i < amt;i++){
 		addIndex(inds[i]);
 	}
@@ -184,7 +196,7 @@ void ofVertexData::addIndices(const GLuint* inds, int amt){
 
 //GETTERS
 //--------------------------------------------------------------
-ofPrimitiveMode ofVertexData::getMode(){
+ofPrimitiveMode ofVertexData::getMode() const{
 	return mode;
 }
 
@@ -266,7 +278,33 @@ float* ofVertexData::getTexCoordsPointer(){
 }
 
 //--------------------------------------------------------------
-GLuint* ofVertexData::getIndexPointer(){
+ofIndexType* ofVertexData::getIndexPointer(){
+	return &indices[0];
+}
+
+
+//--------------------------------------------------------------
+const float* ofVertexData::getVerticesPointer() const{
+	return &vertices[0].x;
+}
+
+//--------------------------------------------------------------
+const float* ofVertexData::getColorsPointer() const{
+	return &colors[0].r;
+}
+
+//--------------------------------------------------------------
+const float* ofVertexData::getNormalsPointer() const{
+	return &normals[0].x;
+}
+
+//--------------------------------------------------------------
+const float* ofVertexData::getTexCoordsPointer() const{
+	return &texCoords[0].x;
+}
+
+//--------------------------------------------------------------
+const ofIndexType * ofVertexData::getIndexPointer() const{
 	return &indices[0];
 }
 
@@ -346,7 +384,7 @@ void ofVertexData::setTexCoord(int index, const ofVec2f& t){
 }
 
 //--------------------------------------------------------------
-void ofVertexData::setIndex(int i, int val){
+void ofVertexData::setIndex(int i, ofIndexType  val){
 	indices[i] = val;
 	bIndicesChanged = true;
 }
@@ -361,6 +399,6 @@ void ofVertexData::setupIndicesAuto(){
 	bIndicesChanged = true;
 	indices.clear();
 	for(int i = 0; i < (int)vertices.size();i++){
-		indices.push_back((GLuint)i);
+		indices.push_back((ofIndexType)i);
 	}
 }

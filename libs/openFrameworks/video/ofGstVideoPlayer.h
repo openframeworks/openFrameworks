@@ -45,7 +45,10 @@ public:
 	void 	close();
 
 	bool 			isFrameNew();
+
 	unsigned char * getPixels();
+	ofPixelsRef		getPixelsRef();
+
 	float 			getHeight();
 	float 			getWidth();
 

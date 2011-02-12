@@ -1,4 +1,5 @@
 #include "ofShapeUtils.h"
+#include "ofMath.h"
 
 ofPolyline ofGetSmoothed(const ofPolyline& polyline, int smoothingSize, float smoothingShape) {
 	ofPolyline result = polyline;

@@ -56,4 +56,8 @@ void ofiPhoneVideoGrabber::setPixelFormat(ofPixelFormat internalPixelFormat) {
 	grabber->setPixelFormat(internalPixelFormat);
 }
 
+
+ofPixelFormat ofiPhoneVideoGrabber::getPixelFormat(){
+    return grabber->getPixelFormat();
+
 #endif

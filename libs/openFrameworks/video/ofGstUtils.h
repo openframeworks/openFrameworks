@@ -1,5 +1,7 @@
 #pragma once
 
+#include "ofConstants.h"
+#ifndef TARGET_ANDROID
 #include <gst/gst.h>
 #include <gst/app/gstappsink.h>
 #include "ofConstants.h"
@@ -7,7 +9,6 @@
 #include "ofPixels.h"
 #include "ofTypes.h"
 #include "ofEvents.h"
-
 
 class ofGstAppSink;
 
@@ -108,8 +109,7 @@ public:
 
 	bool 			isFrameNew();
 	unsigned char * getPixels();
-	ofPixels 		getOFPixels();
-	ofPixels 		getOFPixels() const;
+	ofPixelsRef		getPixelsRef();
 	void 			update();
 
 	float 			getHeight();
@@ -159,3 +159,6 @@ public:
 	// pings when enough data has arrived to be able to get sink properties
 	virtual void on_stream_prepared(){};
 };
+
+#endif
+

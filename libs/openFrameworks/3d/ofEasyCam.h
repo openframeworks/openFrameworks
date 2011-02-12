@@ -6,6 +6,7 @@
 class ofEasyCam : public ofCamera {
 public:
 	ofEasyCam();
+	~ofEasyCam();
 
 	// TODO: this should be ofGetViewRect() eventually
 	virtual void begin(ofRectangle viewport = ofGetCurrentViewport());
@@ -31,6 +32,11 @@ public:
 	void mousePressed(ofMouseEventArgs& mouse);
 	void mouseReleased(ofMouseEventArgs& mouse);
 
+	// enable or disable mouse input to navigate
+	void enableMouseInput();
+	void disableMouseInput();
+	bool getMouseInputEnabled();
+
 protected:
 	void setDistance(float distance, bool save);
 
@@ -38,6 +44,7 @@ protected:
 	
 	float drag;
 	float zoomSpeed;
+	bool bMouseInputEnabled;
 
 	ofVec3f mousePosViewPrev;
 	ofVec3f mousePosScreenPrev;

@@ -103,7 +103,7 @@ void ofxXmlSettings::removeTag(const string& tag, int which){
 
 	if(which < 0) which = 0;
 
-	for(int x=0;x<tokens.size();x++){
+	for(int x=0;x<(int)tokens.size();x++){
 
 		//we only support multi tags
 		//with same name at root level
@@ -113,7 +113,7 @@ void ofxXmlSettings::removeTag(const string& tag, int which){
 
 		if ( !isRealHandle.ToNode() ) break;
 		else{
-			if (x == tokens.size()-1){
+			if (x == (int)tokens.size()-1){
 				//if we are at the last tag and it exists
 				//we use its parent to remove it - haha
 				tagHandle.ToNode()->RemoveChild( isRealHandle.ToNode() );
@@ -156,7 +156,7 @@ bool ofxXmlSettings::readTag(const string&  tag, TiXmlHandle& valHandle, int whi
 	vector<string> tokens = tokenize(tag,":");
 
 	TiXmlHandle tagHandle = storedHandle;
-	for(int x=0;x<tokens.size();x++){
+	for(int x=0;x<(int)tokens.size();x++){
 		if(x == 0)tagHandle = tagHandle.ChildElement(tokens.at(x), which);
 		else tagHandle = tagHandle.FirstChildElement( tokens.at(x) );
 	}
@@ -224,7 +224,7 @@ bool ofxXmlSettings::tagExists(const string& tag, int which){
 
 	if(which < 0) which = 0;
 
-	for(int x=0;x<tokens.size();x++){
+	for(int x=0;x<(int)tokens.size();x++){
 
 		//we only support multi tags
 		//with same name at root level
@@ -284,7 +284,7 @@ int ofxXmlSettings::writeTag(const string&  tag, const string& valueStr, int whi
 	// allocate on the stack
     vector<TiXmlElement> elements;
     elements.reserve(tokens.size());
-	for(int x=0;x<tokens.size();x++)
+	for(int x=0;x<(int)tokens.size();x++)
         elements.push_back(tokens.at(x));
 	
 
@@ -297,7 +297,7 @@ int ofxXmlSettings::writeTag(const string&  tag, const string& valueStr, int whi
 	bool addNewTag = false;
 	if(which == -1)addNewTag = true;
 
-	for(int x=0;x<tokens.size();x++){
+	for(int x=0;x<(int)tokens.size();x++){
 
 		if( x > 0 ){
 			//multi tags of same name
@@ -310,8 +310,8 @@ int ofxXmlSettings::writeTag(const string&  tag, const string& valueStr, int whi
 
 		if ( !isRealHandle.ToNode() ||  addNewTag){
 
-			for(int i=tokens.size()-1;i>=x;i--){
-				if (i == tokens.size()-1){
+			for(int i=(int)tokens.size()-1;i>=x;i--){
+				if (i == (int)tokens.size()-1){
 					elements[i].InsertEndChild(Value);
 				} else {
 					elements[i].InsertEndChild(elements[i+1]);
@@ -324,7 +324,7 @@ int ofxXmlSettings::writeTag(const string&  tag, const string& valueStr, int whi
 
 		} else {
 			 tagHandle = isRealHandle;
-			 if (x == tokens.size()-1){
+			 if (x == (int)tokens.size()-1){
 				// what we want to change : TiXmlHandle valHandle = tagHandle.Child( 0 );
 				tagHandle.ToNode()->Clear();
 				tagHandle.ToNode()->InsertEndChild(Value);
@@ -441,7 +441,7 @@ int ofxXmlSettings::addAttribute(const string& tag, const string& attribute, con
 void ofxXmlSettings::removeAttribute(const string& tag, const string& attribute, int which){
 	vector<string> tokens = tokenize(tag,":");
 	TiXmlHandle tagHandle = storedHandle;
-	for (int x = 0; x < tokens.size(); x++) {
+	for (int x = 0; x < (int)tokens.size(); x++) {
 		if (x == 0)
 			tagHandle = tagHandle.ChildElement(tokens.at(x), which);
 		else
@@ -466,7 +466,7 @@ void ofxXmlSettings::clearTagAttributes(const string& tag, int which){
 int ofxXmlSettings::getNumAttributes(const string& tag, int which){
 	vector<string> tokens = tokenize(tag,":");
 	TiXmlHandle tagHandle = storedHandle;
-	for (int x = 0; x < tokens.size(); x++) {
+	for (int x = 0; x < (int)tokens.size(); x++) {
 		if (x == 0)
 			tagHandle = tagHandle.ChildElement(tokens.at(x), which);
 		else
@@ -492,7 +492,7 @@ int ofxXmlSettings::getNumAttributes(const string& tag, int which){
 bool ofxXmlSettings::attributeExists(const string& tag, const string& attribute, int which){
 	vector<string> tokens = tokenize(tag,":");
 	TiXmlHandle tagHandle = storedHandle;
-	for (int x = 0; x < tokens.size(); x++) {
+	for (int x = 0; x < (int)tokens.size(); x++) {
 		if (x == 0)
 			tagHandle = tagHandle.ChildElement(tokens.at(x), which);
 		else
@@ -515,7 +515,7 @@ bool ofxXmlSettings::attributeExists(const string& tag, const string& attribute,
 bool ofxXmlSettings::getAttributeNames(const string& tag, vector<string>& outNames, int which){
 	vector<string> tokens = tokenize(tag,":");
 	TiXmlHandle tagHandle = storedHandle;
-	for (int x = 0; x < tokens.size(); x++) {
+	for (int x = 0; x < (int)tokens.size(); x++) {
 		if (x == 0)
 			tagHandle = tagHandle.ChildElement(tokens.at(x), which);
 		else
@@ -579,7 +579,7 @@ int ofxXmlSettings::setAttribute(const string& tag, const string& attribute, con
 TiXmlElement* ofxXmlSettings::getElementForAttribute(const string& tag, int which){
 	vector<string> tokens = tokenize(tag,":");
 	TiXmlHandle tagHandle = storedHandle;
-	for (int x = 0; x < tokens.size(); x++) {
+	for (int x = 0; x < (int)tokens.size(); x++) {
 		if (x == 0)
 			tagHandle = tagHandle.ChildElement(tokens.at(x), which);
 		else
@@ -626,7 +626,7 @@ bool ofxXmlSettings::readStringAttribute(const string& tag, const string& attrib
 int ofxXmlSettings::writeAttribute(const string& tag, const string& attribute, const string& valueString, int which){
 	vector<string> tokens = tokenize(tag,":");
 	TiXmlHandle tagHandle = storedHandle;
-	for (int x = 0; x < tokens.size(); x++) {
+	for (int x = 0; x < (int)tokens.size(); x++) {
 		if (x == 0)
 			tagHandle = tagHandle.ChildElement(tokens.at(x), which);
 		else

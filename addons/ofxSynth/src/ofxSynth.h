@@ -40,19 +40,42 @@
 
 class maxiOsc {
 	
-	double frequency;
-	double phase;
-	double startphase;
-	double endphase;
-	double output;
-	double tri;
+	float phase;
+	float startphase;
+	float endphase;
+	float output;
+	float tri;
 	int sampleRate;
 	
 public:
 	maxiOsc();
-	double saw(double frequency);
-	double triangle(double frequency,double phase);
-	double square(double frequency);
+	inline float saw(float frequency){
+		output=phase;
+		if ( phase >= 1.0 ) phase -= 2.0;
+		phase += (1./(sampleRate/(frequency)));
+		return(output);
+	}
+
+	inline float triangle(float frequency,float phase){
+		output=tri*2;
+		if ( phase >= 1.0 ) phase -= 1.0;
+		phase += (1./(sampleRate/(frequency)));
+		if (phase <= 0.5 ) {
+			tri = phase;
+		} else {
+			tri =(1-phase);
+		}
+		return(output);
+	}
+
+	inline float square(float frequency){
+		if (phase<0.5) output=-1;
+		if (phase>0.5) output=1;
+		if ( phase >= 1.0 ) phase -= 1.0;
+		phase += (1./(sampleRate/(frequency)));
+		return(output);
+	}
+
 	void setSampleRate(int rate);
 };
 
@@ -88,7 +111,7 @@ class ofxSynth : public ofSoundSource{
 		void	setWaveSaw(){waveMode = 2;};
 		
 		void		audioRequested( float* buffer, int numFrames, int numChannels );
-		void				setSampleRate(int rate);
+		void		setSampleRate(int rate);
 
 		ofxMaxiOsc wave;
 		ofxSynthADSR env, modEnv;

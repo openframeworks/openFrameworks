@@ -93,7 +93,9 @@ static string gtkFileDialog(GtkFileChooserAction action,string windowTitle,strin
 }
 
 #endif
-
+#ifdef TARGET_ANDROID
+#include "ofxAndroidUtils.h"
+#endif
 
 //------------------------------------------------------------------------------
 ofFileDialogResult::ofFileDialogResult(){
@@ -146,6 +148,10 @@ void ofCreateAlertDialog(string errorMessage){
 		GtkWidget* dialog = gtk_message_dialog_new (NULL, (GtkDialogFlags) 0, GTK_MESSAGE_INFO, GTK_BUTTONS_OK, errorMessage.c_str());
 		gtk_dialog_run (GTK_DIALOG (dialog));
 		startGTK(dialog);
+	#endif
+
+	#ifdef TARGET_ANDROID
+		ofxAndroidAlertBox(errorMessage);
 	#endif
 }
 

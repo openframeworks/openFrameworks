@@ -2,7 +2,7 @@
 
 #include "ofConstants.h"
 
-#ifndef TARGET_LINUX
+#if defined (TARGET_WIN32) || defined (TARGET_OSX)
 
 
 

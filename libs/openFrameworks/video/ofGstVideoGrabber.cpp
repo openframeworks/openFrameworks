@@ -558,6 +558,10 @@ unsigned char * ofGstVideoGrabber::getPixels(){
 	return videoUtils.getPixels();
 }
 
+ofPixelsRef ofGstVideoGrabber::getPixelsRef(){
+	return videoUtils.getPixelsRef();
+}
+
 float ofGstVideoGrabber::getHeight(){
 	return videoUtils.getHeight();
 }

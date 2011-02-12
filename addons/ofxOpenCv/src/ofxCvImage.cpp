@@ -16,10 +16,7 @@ ofxCvImage::ofxCvImage() {
     bUseTexture		= true;
     bTextureDirty   = true;
 	bAllocated		= false;
-	pixels			= NULL;
     bPixelsDirty    = true;
-    pixelsWidth     = 0;
-    pixelsHeight    = 0;
 }
 
 //--------------------------------------------------------------------------------
@@ -55,13 +52,9 @@ void ofxCvImage::clear() {
 			cvReleaseImage( &cvImage );
 			cvReleaseImage( &cvImageTemp );
 		}
-        if( pixels != NULL ) {
-            delete pixels;
-            pixels = NULL;
-            bPixelsDirty = true;
-            pixelsWidth = 0;
-            pixelsHeight = 0;
-        }
+        pixels.clear();
+        bPixelsDirty = true;
+
 		width = 0;
 		height = 0;
 
@@ -177,8 +170,8 @@ ofRectangle ofxCvImage::getIntersectionROI( const ofRectangle& r1, const ofRecta
         r3x1 = MAX( r1x1, r2x1 );
         r3y1 = MAX( r1y1, r2y1 );
 
-        r3x2 = CV_MIN( r1x2, r2x2 );
-        r3y2 = CV_MIN( r1y2, r2y2 );
+        r3x2 = MIN( r1x2, r2x2 );
+        r3y2 = MIN( r1y2, r2y2 );
 
         return ofRectangle( r3x1,r3y1, r3x2-r3x1,r3y2-r3y1 );
 
@@ -716,7 +709,64 @@ void  ofxCvImage::resetImageROI( IplImage* img ) {
     cvResetImageROI(img);
 }
 
+//--------------------------------------------------------------------------------
+unsigned char*  ofxCvImage::getPixels(){
+	if(bPixelsDirty) {
+		IplImage * cv8bit= getCv8BitsImage();
+
+		//Note this possible introduces a bug where pixels doesn't contain the current image.
+		//Also it means that modifying the pointer return by get pixels - affects the internal cvImage
+		//Where as with the slower way below modifying the pointer doesn't change the image.
+		if(  cv8bit->width*cv8bit->nChannels == cv8bit->widthStep ){
+			pixels.setFromExternalPixels((unsigned char*)cv8bit->imageData,width,height,cv8bit->depth*cv8bit->nChannels);
+		}
+
+		pixels.setFromAlignedPixels((unsigned char*)cv8bit->imageData,width,height,cv8bit->depth*cv8bit->nChannels,cvImage->widthStep);
+		bPixelsDirty = false;
+	}
+	return pixels.getPixels();
+}
+
+//--------------------------------------------------------------------------------
+ofPixelsRef ofxCvImage::getPixelsRef(){
+	if(bPixelsDirty) {
+		IplImage * cv8bit= getCv8BitsImage();
+
+		//Note this possible introduces a bug where pixels doesn't contain the current image.
+		//Also it means that modifying the pointer return by get pixels - affects the internal cvImage
+		//Where as with the slower way below modifying the pointer doesn't change the image.
+		if(  cv8bit->width*cv8bit->nChannels == cvImage->widthStep ){
+			pixels.setFromExternalPixels((unsigned char*)cv8bit->imageData,width,height,cv8bit->depth*cv8bit->nChannels);
+		}
+
+		pixels.setFromAlignedPixels((unsigned char*)cv8bit->imageData,width,height,cv8bit->depth*cv8bit->nChannels,cv8bit->widthStep);
+		bPixelsDirty = false;
+	}
+	return pixels;
+}
+
+//--------------------------------------------------------------------------------
+unsigned char*  ofxCvImage::getRoiPixels(){
+	if(bPixelsDirty) {
+		IplImage * cv8bit= getCv8BitsRoiImage();
+		ofRectangle roi = getROI();
+		unsigned char * roi_ptr = (unsigned char*)cv8bit->imageData + ((int)(roi.y)*cv8bit->widthStep) + (int)roi.x;
+		pixels.setFromAlignedPixels(roi_ptr,width,height,cv8bit->depth*cv8bit->nChannels,cv8bit->widthStep);
+		bPixelsDirty = false;
+	}
+	return pixels.getPixels();
+}
 
 
 
-
+//--------------------------------------------------------------------------------
+ofPixelsRef  ofxCvImage::getRoiPixelsRef(){
+	if(bPixelsDirty) {
+		IplImage * cv8bit= getCv8BitsRoiImage();
+		ofRectangle roi = getROI();
+		unsigned char * roi_ptr = (unsigned char*)cv8bit->imageData + ((int)(roi.y)*cv8bit->widthStep) + (int)roi.x;
+		pixels.setFromAlignedPixels(roi_ptr,width,height,cv8bit->depth,cv8bit->widthStep);
+		bPixelsDirty = false;
+	}
+	return pixels;
+}

@@ -63,8 +63,9 @@ class ofxCvShortImage : public ofxCvImage {
 	
 	// Get Pixel Data
 	//
-    virtual unsigned char*  getPixels();
-    virtual unsigned char*  getRoiPixels();
+    //virtual unsigned char*  getPixels();                                     //in base class
+	//virtual ofPixelsRef		getPixelsRef();                                //in base class
+    //virtual unsigned char*  getRoiPixels();                                  //in base class
     // virtual IplImage*  getCvImage();                                        //in base class
 
     
@@ -122,9 +123,11 @@ class ofxCvShortImage : public ofxCvImage {
     void init();
     virtual void convertShortToGray( IplImage* floatImg, IplImage* grayImg );
     virtual void convertGrayToShort( IplImage* grayImg, IplImage* floatImg );
+    virtual IplImage*  getCv8BitsImage();
+    virtual IplImage*  getCv8BitsRoiImage();
     
     IplImage*  cvGrayscaleImage;    // internal helper grayscale, allocated on demand
-    
+    bool cvGrayscaleDirty;
 };
 
 
