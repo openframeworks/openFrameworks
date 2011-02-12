@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		54945A711306B3DA005B3A7B /* ofMaterial.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 54945A6F1306B3DA005B3A7B /* ofMaterial.cpp */; };
+		54945A721306B3DA005B3A7B /* ofMaterial.h in Headers */ = {isa = PBXBuildFile; fileRef = 54945A701306B3DA005B3A7B /* ofMaterial.h */; };
 		DA2E399D12DF6E9000EC4A5B /* glew.h in Headers */ = {isa = PBXBuildFile; fileRef = DA2E399712DF6E9000EC4A5B /* glew.h */; };
 		DA2E399E12DF6E9000EC4A5B /* glxew.h in Headers */ = {isa = PBXBuildFile; fileRef = DA2E399812DF6E9000EC4A5B /* glxew.h */; };
 		DA2E399F12DF6E9000EC4A5B /* wglew.h in Headers */ = {isa = PBXBuildFile; fileRef = DA2E399912DF6E9000EC4A5B /* wglew.h */; };
@@ -163,6 +165,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		54945A6F1306B3DA005B3A7B /* ofMaterial.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofMaterial.cpp; sourceTree = "<group>"; };
+		54945A701306B3DA005B3A7B /* ofMaterial.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofMaterial.h; sourceTree = "<group>"; };
 		DA2E399712DF6E9000EC4A5B /* glew.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = glew.h; sourceTree = "<group>"; };
 		DA2E399812DF6E9000EC4A5B /* glxew.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = glxew.h; sourceTree = "<group>"; };
 		DA2E399912DF6E9000EC4A5B /* wglew.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = wglew.h; sourceTree = "<group>"; };
@@ -591,6 +595,8 @@
 		E4F3BA5212F4C4BF002D19BB /* 3d */ = {
 			isa = PBXGroup;
 			children = (
+				54945A6F1306B3DA005B3A7B /* ofMaterial.cpp */,
+				54945A701306B3DA005B3A7B /* ofMaterial.h */,
 				E4F3BA5312F4C4BF002D19BB /* of3dUtils.cpp */,
 				E4F3BA5412F4C4BF002D19BB /* of3dUtils.h */,
 				E4F3BA5512F4C4BF002D19BB /* ofCamera.cpp */,
@@ -887,6 +893,7 @@
 				E4F3BD7012F4F8B0002D19BB /* LogStream.h in Headers */,
 				E4F3BD7112F4F8B0002D19BB /* NullLogger.h in Headers */,
 				E4F3BD7212F4F8B0002D19BB /* ProgressHandler.h in Headers */,
+				54945A721306B3DA005B3A7B /* ofMaterial.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -917,7 +924,6 @@
 			isa = PBXProject;
 			buildConfigurationList = E4B69B4D0A3A1720003C02F2 /* Build configuration list for PBXProject "openFrameworksLib" */;
 			compatibilityVersion = "Xcode 2.4";
-			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				English,
@@ -996,6 +1002,7 @@
 				E4F3BB2E12F4C752002D19BB /* ofTrueTypeFont.cpp in Sources */,
 				E4F3BD2412F4F7BF002D19BB /* ofModel.cpp in Sources */,
 				E4F3BD2612F4F7BF002D19BB /* ofModelUtils.cpp in Sources */,
+				54945A711306B3DA005B3A7B /* ofMaterial.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
