@@ -1,5 +1,3 @@
-
-
 #pragma once
 
 #include "ofMain.h"
@@ -14,12 +12,14 @@
 // Kyle McDonald and Arturo Castro for C++ nuances
 
 // TODO:
-// 1) Keyframe interpolation for animations. This is currently done in the AssimpView Direct X project.
-// 2) Path issues (?)
-// 3) convert to ofMesh (?) in OF 007 ?
-// 4) Ability to ease *between* two animations. Maybe later folks.
+// 1) Path issues - not all models:
+//      a) reference images current working dir
+//      b) properly describe sub-folders
+//      c) reference absolute paths for images that dont exist.
+// 2) convert to ofMesh (?) in OF 007 ?
+// 3) Ability to ease *between* two animations. Maybe later folks.
 
-#import "ofxAssimpMeshHelper.h"
+#include "ofxAssimpMeshHelper.h"
 
 class ofxAssimpModelLoader{
 

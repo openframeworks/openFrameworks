@@ -191,8 +191,10 @@ void ofSoundBuffer::allocate( int nFrames, int nChannels ) {
 /// Copy just a single channel to output. output should have space for numFrames floats.
 void ofSoundBuffer::copyChannel( int channel, float* output ) const {
 	if ( buffer && channel < numChannels ) {
+		float * buffer_ptr = buffer;
 		for ( int i=0; i<numFrames; i++ ) {
-			output[i] = buffer[numChannels*i + channel];
+			*output++ = *(buffer_ptr+channel);
+			buffer_ptr += numChannels;
 		}
 	}
 }
@@ -203,18 +205,19 @@ void ofSoundBuffer::copyTo( float* outBuffer, int outNumFrames, int outNumChanne
 		ofLog( OF_LOG_WARNING, "ofSoundBuffer::copyTo: copy requested on empty buffer, returning nothing (check your addInputTo() methods!)" );
 		memset( outBuffer, 0, sizeof(float)*outNumFrames*outNumChannels );
 	}
-	if ( outNumFrames>numFrames ) {
+	if ( outNumFrames>numFrames ||  outNumChannels>numChannels ) {
 		ofLog( OF_LOG_WARNING, "ofSoundBuffer::copyTo: %i frames requested but only %i	are available", outNumFrames, numFrames );
-	}
-	if ( outNumChannels>numChannels ) {
 		ofLog( OF_LOG_WARNING, "ofSoundBuffer::copyTo: %i channels requested but only %i are available, looping to make up the difference", outNumChannels, numChannels );
-	}
-	for ( int i=0; i<min(numFrames,outNumFrames); i++ ) {
-		for ( int j=0; j<outNumChannels; j++ ) {
-			// copy input to output; in cases where input has fewer channels than output, loop through input frames repeatedly
-			outBuffer[i*outNumChannels+j] = buffer[i*numChannels+(j%numChannels)];
+
+		for ( int i=0; i<min(numFrames,outNumFrames); i++ ) {
+			for ( int j=0; j<outNumChannels; j++ ) {
+				// copy input to output; in cases where input has fewer channels than output, loop through input frames repeatedly
+				*outBuffer++ = buffer[i*numChannels+(j%numChannels)];
+			}
 		}
-	}		
+	}else{
+		memcpy(outBuffer,buffer,outNumFrames*outNumChannels*sizeof(float));
+	}
 }
 
 
@@ -264,7 +267,7 @@ void ofSoundMixer::setPan( ofSoundSource* input, float pan ) {
 		}
 	}
 	if ( !found ) { 
-		ofLog( OF_LOG_WARNING, "ofSoundMixer: setPan couldn't find input for '%s' (%x), not setting pan", input->getName(), input );
+		ofLog( OF_LOG_WARNING, "ofSoundMixer: setPan couldn't find input for '%s' (%x), not setting pan", input->getName().c_str(), input );
 		
 	}
 }
@@ -307,9 +310,11 @@ void ofSoundMixer::audioRequested( float* output, int numFrames, int numChannels
 			volumePerChannel[j] = (j==0?vol_l:vol_r) * masterVolume;
 		}
 		// mix working into output, respecting pan and volume and preserving interleaving
+		float *working_ptr = working;
+		float *output_ptr = output;
 		for ( int j=0; j<numFrames; j++ ) {
 			for ( int k=0; k<numChannels; k++ ) {
-				output[j*numChannels+k] += working[j*numChannels+k] * volumePerChannel[k];
+				*output_ptr++ += *working_ptr++ * volumePerChannel[k];
 			}
 		}
 	}
@@ -433,7 +438,7 @@ void ofSoundSinkMicrophone::audioRequested( float* output, int numFrames, int nu
 
 
 void ofSoundSourceMultiplexor::audioRequested( float* output, int numFrames, int numChannels ) {
-	unsigned long tick = ofSoundStreamGetCurrentTick();
+	long unsigned long tick = ofSoundStreamGetCurrentTick();
 	
 	// new tick: render upstream into input buffer
 	if ( tick != lastRenderedTick ) {

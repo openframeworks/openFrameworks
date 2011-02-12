@@ -6,3 +6,4 @@
 #warning Remove all references to ofxMatrix4x4.h and use ofMatrix4x4 instead.
 
 typedef ofMatrix4x4 ofxMatrix4x4;
+

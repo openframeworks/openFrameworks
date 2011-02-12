@@ -50,8 +50,9 @@ void testApp::draw(){
 	//all curves are calculated for us so all we need to do is draw!
 	ofTTFCharacter testChar;
 	testChar = testFont.getCharacterAsPoints(letter);
+    testChar.draw(250,250);
 
-	ofFill();
+	/*ofFill();
 	ofPushMatrix();
 		ofTranslate(250, 250, 0);
 		ofBeginShape();
@@ -75,7 +76,7 @@ void testApp::draw(){
 				}
 			}
 		ofEndShape( true );
-	ofPopMatrix();
+	ofPopMatrix();*/
 
 
 }

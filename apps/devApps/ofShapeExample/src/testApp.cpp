@@ -1,6 +1,6 @@
 #include "testApp.h"
 
-#include "ofShape.h"
+#include "ofPath.h"
 
 //--------------------------------------------------------------
 void testApp::setup(){

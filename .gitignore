@@ -10,7 +10,7 @@ openFrameworksUniversal.a
 
 #rule to avoid non-official addons going into git
 #see addons/.gitignore
-addons
+addons/**
 
 #codeblocks files
 apps/*/*/*.layout
@@ -21,7 +21,7 @@ apps/*/*/obj
 
 #rule to avoid non-official apps going into git
 #see apps/.gitignore
-apps
+apps/**
 
 #codeblocks OF lib files
 libs/openFrameworksCompiled/project/*/*.depend
@@ -50,4 +50,20 @@ apps/*/*/Release Linux
 apps/*/*/Debug Linux64
 apps/*/*/Release Linux64
 
-
+#Android
+addons/Debug Android
+addons/Release Android
+libs/openFrameworks/Debug Android
+libs/openFrameworks/Release Android
+libs/openFrameworks/Release
+libs/openFrameworks/Debug
+libs/openFrameworks/Release_arm7
+apps/*/*/Debug Android
+apps/*/*/Release Android
+apps/*/*/Debug
+apps/*/*/Release
+apps/*/*/Release_arm7
+apps/*/*/test link
+apps/*/*/obj
+apps/*/*/bin
+.csettings

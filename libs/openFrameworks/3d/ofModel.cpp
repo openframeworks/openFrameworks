@@ -7,8 +7,8 @@
 
 //--------------------------------------------------------------
 ofModel::ofModel(){
+	renderMethod = OF_MESH_USING_DEFAULT_RENDERER;
 	bUsingTextures = false;
-	renderMethod = OF_MESH_USING_VERTEX_ARRAY;
 }
 
 //--------------------------------------------------------------

@@ -3,7 +3,7 @@
 #include "ofConstants.h"
 #include "ofTypes.h"
 
-#if defined( TARGET_OSX ) || defined( TARGET_LINUX )
+#if defined( TARGET_OSX ) || defined( TARGET_LINUX ) || defined (TARGET_ANDROID)
 	#include <termios.h>
 #else
 	#include <winbase.h>
