@@ -10,13 +10,20 @@
 #
 # edit the following  vars to customize the makefile
 
+
+
 ifeq ($(findstring Android,$(MAKECMDGOALS)),Android)
+	include paths.make
 	ARCH = android
+	ifeq ($(shell uname),Darwin)
+		HOST_PLATFORM = darwin-x86
+	else
+		HOST_PLATFORM = linux-x86
+	endif
 endif
 
 ifeq ($(ARCH),android)
 	COMPILER_OPTIMIZATION = -Os
-	HOST_PLATFORM = linux-x86
 	NDK_PLATFORM = android-8
 else
 	COMPILER_OPTIMIZATION = -march=native -mtune=native -finline-functions -funroll-all-loops  -Os
@@ -44,7 +51,7 @@ ifneq ($(ARCH),android)
 	endif
 else
 	LIBSPATH = android
-	NDK_ROOT = $(shell cat ndk_path.make)
+	#NDK_ROOT = $(shell cat ndk_path.make)
 	TOOLCHAIN=arm-linux-androideabi-4.4.3
 	TOOLCHAIN_PATH=$(NDK_ROOT)/toolchains/$(TOOLCHAIN)/prebuilt/$(HOST_PLATFORM)/bin/
 	ANDROID_PREFIX=arm-linux-androideabi-
@@ -66,8 +73,9 @@ endif
 OBJFILES = $(patsubst ../../../%.cpp,%.o,$(SOURCES))
 CORE_INCLUDES = $(shell find ../../../openFrameworks/ -type d)
 CORE_INCLUDE_FLAGS = $(addprefix -I,$(CORE_INCLUDES))
-INCLUDES = $(shell find ../../../*/include -type d | grep -v glu)
+INCLUDES = $(shell find ../../../*/include -type d | grep -v glu | grep -v quicktime | grep -v poco)
 INCLUDES_FLAGS = $(addprefix -I,$(INCLUDES))
+INCLUDES_FLAGS += -I../../../poco/include
 ifeq ($(ARCH),android)
 	INCLUDES_FLAGS += -I../../../glu/include_android
  	INCLUDES_FLAGS += -I../../../../addons/ofxAndroid/src
