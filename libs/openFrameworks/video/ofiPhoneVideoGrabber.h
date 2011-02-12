@@ -20,7 +20,6 @@ class ofiPhoneVideoGrabber : public ofBaseVideoGrabber {
 	
 	unsigned char * getPixels();
 	ofPixelsRef		getPixelsRef();
-	const ofPixels&	getPixelsRef() const;
 	
 	void close();	
 	
