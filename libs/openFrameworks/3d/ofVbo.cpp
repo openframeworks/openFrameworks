@@ -52,6 +52,7 @@ void ofVbo::setVertexData(const ofVec3f * verts, int total, int usage) {
 	
 	glBindBuffer(GL_ARRAY_BUFFER, vertId);
 	glBufferData(GL_ARRAY_BUFFER, total * vertStride, &verts[0].x, usage);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
 //--------------------------------------------------------------
@@ -73,6 +74,7 @@ void ofVbo::setVertexData(const ofVec2f * verts, int total, int usage) {
 	
 	glBindBuffer(GL_ARRAY_BUFFER, vertId);
 	glBufferData(GL_ARRAY_BUFFER, total * vertStride, &verts[0].x, usage);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
 //--------------------------------------------------------------
@@ -98,6 +100,7 @@ void ofVbo::setVertexData(const float * vert0x, int numCoords, int total, int us
 	
 	glBindBuffer(GL_ARRAY_BUFFER, vertId);
 	glBufferData(GL_ARRAY_BUFFER, total * vertStride, vert0x, usage);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
 //--------------------------------------------------------------
@@ -114,6 +117,7 @@ void ofVbo::setColorData(const ofColor * colors, int total, int usage) {
 	
 	glBindBuffer(GL_ARRAY_BUFFER, colorId);
 	glBufferData(GL_ARRAY_BUFFER, total * sizeof(ofColor), &colors[0].r, usage);	
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
 //--------------------------------------------------------------
@@ -130,6 +134,7 @@ void ofVbo::setColorData(const float * color0r, int total, int usage) {
 	
 	glBindBuffer(GL_ARRAY_BUFFER, colorId);
 	glBufferData(GL_ARRAY_BUFFER, total * sizeof(ofColor), color0r, usage);	
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
 //--------------------------------------------------------------
@@ -146,6 +151,7 @@ void ofVbo::setNormalData(const ofVec3f * normals, int total, int usage) {
 	
 	glBindBuffer(GL_ARRAY_BUFFER, normalId);
 	glBufferData(GL_ARRAY_BUFFER, total * sizeof(ofVec3f), &normals[0].x, usage);	
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
 //--------------------------------------------------------------
@@ -162,6 +168,7 @@ void ofVbo::setNormalData(const float * normal0x, int total, int usage) {
 	
 	glBindBuffer(GL_ARRAY_BUFFER, normalId);
 	glBufferData(GL_ARRAY_BUFFER, total * sizeof(ofVec3f), normal0x, usage);	
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
 //--------------------------------------------------------------
@@ -178,6 +185,7 @@ void ofVbo::setTexCoordData(const ofVec2f * texCoords, int total, int usage) {
 	
 	glBindBuffer(GL_ARRAY_BUFFER, texCoordId);
 	glBufferData(GL_ARRAY_BUFFER, total * sizeof(ofVec2f), &texCoords[0].x, usage);	
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
 //--------------------------------------------------------------
@@ -194,6 +202,7 @@ void ofVbo::setTexCoordData(const float * texCoord0x, int total, int usage) {
 	
 	glBindBuffer(GL_ARRAY_BUFFER, texCoordId);
 	glBufferData(GL_ARRAY_BUFFER, total * sizeof(ofVec2f), texCoord0x, usage);	
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
 
@@ -211,6 +220,7 @@ void ofVbo::setIndexData(const ofIndexType * indices, int total, int usage){
 	
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexId);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(ofIndexType) * total, &indices[0], usage);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
 //--------------------------------------------------------------
@@ -218,6 +228,7 @@ void ofVbo::updateVertexData(const ofVec3f * verts, int total) {
 	if(bUsingVerts){
 		glBindBuffer(GL_ARRAY_BUFFER, vertId);
 		glBufferSubData(GL_ARRAY_BUFFER, 0, total*sizeof(ofVec3f), (float*)&verts[0].x);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
 	}
 }
 
@@ -226,14 +237,7 @@ void ofVbo::updateVertexData(const ofVec2f * verts, int total) {
 	if(bUsingVerts){
 		glBindBuffer(GL_ARRAY_BUFFER, vertId);
 		glBufferSubData(GL_ARRAY_BUFFER, 0, total*sizeof(ofVec2f), (float*)&verts[0].x);
-	}
-}
-
-//--------------------------------------------------------------
-void ofVbo::updateVertexData(const float * vert0x, int total) {
-	if(bUsingVerts){
-		glBindBuffer(GL_ARRAY_BUFFER, vertId);
-		glBufferSubData(GL_ARRAY_BUFFER, 0, total*sizeof(ofVec2f), (float*)&verts[0].x);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
 	}
 }
 
@@ -248,6 +252,7 @@ void ofVbo::updateVertexData(const float * vert0x, int numCoords, int total) {
 		}
 		glBindBuffer(GL_ARRAY_BUFFER, vertId);
 		glBufferSubData(GL_ARRAY_BUFFER, 0, total*vertStride, vert0x);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
 	}
 }
 
@@ -256,6 +261,7 @@ void ofVbo::updateColorData(const ofColor * colors, int total) {
 	if(bUsingColors) {
 		glBindBuffer(GL_ARRAY_BUFFER, colorId);
 		glBufferSubData(GL_ARRAY_BUFFER, 0, total*sizeof(ofColor), (float*)&colors[0].r);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
 	}
 }
 
@@ -264,6 +270,7 @@ void ofVbo::updateColorData(const float * color0r, int total) {
 	if(bUsingColors) {
 		glBindBuffer(GL_ARRAY_BUFFER, colorId);
 		glBufferSubData(GL_ARRAY_BUFFER, 0, total*sizeof(ofColor), color0r);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
 	}
 }
 
@@ -272,6 +279,7 @@ void ofVbo::updateNormalData(const ofVec3f * normals, int total) {
 	if(bUsingNormals) {
 		glBindBuffer(GL_ARRAY_BUFFER, normalId);
 		glBufferSubData(GL_ARRAY_BUFFER, 0, total*sizeof(ofVec3f), (float*)&normals[0].x);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
 	}
 }
 
@@ -280,6 +288,7 @@ void ofVbo::updateNormalData(const float * normal0x, int total) {
 	if(bUsingNormals) {
 		glBindBuffer(GL_ARRAY_BUFFER, normalId);
 		glBufferSubData(GL_ARRAY_BUFFER, 0, total*sizeof(ofVec3f), normal0x);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
 	}
 }
 
@@ -288,6 +297,7 @@ void ofVbo::updateTexCoordData(const ofVec2f * texCoords, int total) {
 	if(bUsingTexCoords) {
 		glBindBuffer(GL_ARRAY_BUFFER, texCoordId);
 		glBufferSubData(GL_ARRAY_BUFFER, 0, total*sizeof(ofVec2f), (float*)&texCoords[0].x);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
 	}
 }
 
@@ -296,6 +306,7 @@ void ofVbo::updateTexCoordData(const float * texCoord0x, int total) {
 	if(bUsingTexCoords) {
 		glBindBuffer(GL_ARRAY_BUFFER, texCoordId);
 		glBufferSubData(GL_ARRAY_BUFFER, 0, total*sizeof(ofVec2f), texCoord0x);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
 	}
 }
 
@@ -304,6 +315,7 @@ void ofVbo::updateIndexData(const ofIndexType * indices, int total) {
 	if(bUsingIndices) {
 		glBindBuffer(GL_ARRAY_BUFFER, indexId);
 		glBufferSubData(GL_ARRAY_BUFFER, 0, total*sizeof(ofIndexType), &indices[0]);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
 	}
 }
 
