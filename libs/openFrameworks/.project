@@ -32,7 +32,7 @@
 				</dictionary>
 				<dictionary>
 					<key>org.eclipse.cdt.make.core.cleanBuildTarget</key>
-					<value>CleanAndroid -C ../openFrameworksCompiled/project/android</value>
+					<value>CleanAndroid  -C../openFrameworksCompiled/project/android</value>
 				</dictionary>
 				<dictionary>
 					<key>org.eclipse.cdt.make.core.contents</key>
@@ -52,7 +52,7 @@
 				</dictionary>
 				<dictionary>
 					<key>org.eclipse.cdt.make.core.fullBuildTarget</key>
-					<value>android -C ../openFrameworksCompiled/project/android</value>
+					<value>android -C../openFrameworksCompiled/project/android</value>
 				</dictionary>
 				<dictionary>
 					<key>org.eclipse.cdt.make.core.stopOnError</key>
