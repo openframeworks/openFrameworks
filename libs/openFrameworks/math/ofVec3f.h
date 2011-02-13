@@ -76,7 +76,7 @@ public:
 	
 	friend ostream& operator<<(ostream& os, const ofVec3f& vec);
 	friend istream& operator>>(istream& is, const ofVec3f& vec);
-
+	
     //Scale
     //
     ofVec3f  getScaled( const float length ) const;
