@@ -471,11 +471,14 @@ void ofVbo::clear(){
 		bUsingTexCoords = false;
 	}
 	
+	if(bUsingIndices){
+		glDeleteBuffers(1, &indexId);
+		bUsingIndices = false;
+	}
+	
 	vertId = 0;
 	normalId = 0;
 	texCoordId = 0;
 	colorId = 0;
-	
-	//indexId = 0;
-	//glDeleteBuffers(1, &indexId);
+	indexId = 0;
 }

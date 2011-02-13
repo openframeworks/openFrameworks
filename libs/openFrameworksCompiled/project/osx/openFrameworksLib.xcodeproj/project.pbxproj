@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		53EEEF4B130766EF0027C199 /* ofMesh.h in Headers */ = {isa = PBXBuildFile; fileRef = 53EEEF49130766EF0027C199 /* ofMesh.h */; };
+		53EEEF4C130766EF0027C199 /* ofMesh.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53EEEF4A130766EF0027C199 /* ofMesh.cpp */; };
 		DA2E399D12DF6E9000EC4A5B /* glew.h in Headers */ = {isa = PBXBuildFile; fileRef = DA2E399712DF6E9000EC4A5B /* glew.h */; };
 		DA2E399E12DF6E9000EC4A5B /* glxew.h in Headers */ = {isa = PBXBuildFile; fileRef = DA2E399812DF6E9000EC4A5B /* glxew.h */; };
 		DA2E399F12DF6E9000EC4A5B /* wglew.h in Headers */ = {isa = PBXBuildFile; fileRef = DA2E399912DF6E9000EC4A5B /* wglew.h */; };
@@ -66,16 +68,16 @@
 		E4F3BA6C12F4C4BF002D19BB /* ofEasyCam.h in Headers */ = {isa = PBXBuildFile; fileRef = E4F3BA5812F4C4BF002D19BB /* ofEasyCam.h */; };
 		E4F3BA6D12F4C4BF002D19BB /* ofLight.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BA5912F4C4BF002D19BB /* ofLight.cpp */; };
 		E4F3BA6E12F4C4BF002D19BB /* ofLight.h in Headers */ = {isa = PBXBuildFile; fileRef = E4F3BA5A12F4C4BF002D19BB /* ofLight.h */; };
-		E4F3BA6F12F4C4BF002D19BB /* ofMesh.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BA5B12F4C4BF002D19BB /* ofMesh.cpp */; };
-		E4F3BA7012F4C4BF002D19BB /* ofMesh.h in Headers */ = {isa = PBXBuildFile; fileRef = E4F3BA5C12F4C4BF002D19BB /* ofMesh.h */; };
+		E4F3BA6F12F4C4BF002D19BB /* ofMeshRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BA5B12F4C4BF002D19BB /* ofMeshRenderer.cpp */; };
+		E4F3BA7012F4C4BF002D19BB /* ofMeshRenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = E4F3BA5C12F4C4BF002D19BB /* ofMeshRenderer.h */; };
 		E4F3BA7312F4C4BF002D19BB /* ofNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BA5F12F4C4BF002D19BB /* ofNode.cpp */; };
 		E4F3BA7412F4C4BF002D19BB /* ofNode.h in Headers */ = {isa = PBXBuildFile; fileRef = E4F3BA6012F4C4BF002D19BB /* ofNode.h */; };
 		E4F3BA7512F4C4BF002D19BB /* ofScene3d.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BA6112F4C4BF002D19BB /* ofScene3d.cpp */; };
 		E4F3BA7612F4C4BF002D19BB /* ofScene3d.h in Headers */ = {isa = PBXBuildFile; fileRef = E4F3BA6212F4C4BF002D19BB /* ofScene3d.h */; };
 		E4F3BA7712F4C4BF002D19BB /* ofVbo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BA6312F4C4BF002D19BB /* ofVbo.cpp */; };
 		E4F3BA7812F4C4BF002D19BB /* ofVbo.h in Headers */ = {isa = PBXBuildFile; fileRef = E4F3BA6412F4C4BF002D19BB /* ofVbo.h */; };
-		E4F3BA7912F4C4BF002D19BB /* ofVertexData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BA6512F4C4BF002D19BB /* ofVertexData.cpp */; };
-		E4F3BA7A12F4C4BF002D19BB /* ofVertexData.h in Headers */ = {isa = PBXBuildFile; fileRef = E4F3BA6612F4C4BF002D19BB /* ofVertexData.h */; };
+		E4F3BA7912F4C4BF002D19BB /* ofPrimitive.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BA6512F4C4BF002D19BB /* ofPrimitive.cpp */; };
+		E4F3BA7A12F4C4BF002D19BB /* ofPrimitive.h in Headers */ = {isa = PBXBuildFile; fileRef = E4F3BA6612F4C4BF002D19BB /* ofPrimitive.h */; };
 		E4F3BA8812F4C4C9002D19BB /* ofBaseSoundPlayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BA7C12F4C4C9002D19BB /* ofBaseSoundPlayer.cpp */; };
 		E4F3BA8912F4C4C9002D19BB /* ofBaseSoundPlayer.h in Headers */ = {isa = PBXBuildFile; fileRef = E4F3BA7D12F4C4C9002D19BB /* ofBaseSoundPlayer.h */; };
 		E4F3BA8A12F4C4C9002D19BB /* ofFmodSoundPlayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BA7E12F4C4C9002D19BB /* ofFmodSoundPlayer.cpp */; };
@@ -187,6 +189,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		53EEEF49130766EF0027C199 /* ofMesh.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofMesh.h; sourceTree = "<group>"; };
+		53EEEF4A130766EF0027C199 /* ofMesh.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofMesh.cpp; sourceTree = "<group>"; };
 		DA2E399712DF6E9000EC4A5B /* glew.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = glew.h; sourceTree = "<group>"; };
 		DA2E399812DF6E9000EC4A5B /* glxew.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = glxew.h; sourceTree = "<group>"; };
 		DA2E399912DF6E9000EC4A5B /* wglew.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = wglew.h; sourceTree = "<group>"; };
@@ -270,16 +274,16 @@
 		E4F3BA5812F4C4BF002D19BB /* ofEasyCam.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofEasyCam.h; path = ../../../openFrameworks/3d/ofEasyCam.h; sourceTree = SOURCE_ROOT; };
 		E4F3BA5912F4C4BF002D19BB /* ofLight.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofLight.cpp; path = ../../../openFrameworks/3d/ofLight.cpp; sourceTree = SOURCE_ROOT; };
 		E4F3BA5A12F4C4BF002D19BB /* ofLight.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofLight.h; path = ../../../openFrameworks/3d/ofLight.h; sourceTree = SOURCE_ROOT; };
-		E4F3BA5B12F4C4BF002D19BB /* ofMesh.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofMesh.cpp; path = ../../../openFrameworks/3d/ofMesh.cpp; sourceTree = SOURCE_ROOT; };
-		E4F3BA5C12F4C4BF002D19BB /* ofMesh.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofMesh.h; path = ../../../openFrameworks/3d/ofMesh.h; sourceTree = SOURCE_ROOT; };
+		E4F3BA5B12F4C4BF002D19BB /* ofMeshRenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofMeshRenderer.cpp; sourceTree = "<group>"; };
+		E4F3BA5C12F4C4BF002D19BB /* ofMeshRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofMeshRenderer.h; sourceTree = "<group>"; };
 		E4F3BA5F12F4C4BF002D19BB /* ofNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofNode.cpp; path = ../../../openFrameworks/3d/ofNode.cpp; sourceTree = SOURCE_ROOT; };
 		E4F3BA6012F4C4BF002D19BB /* ofNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofNode.h; path = ../../../openFrameworks/3d/ofNode.h; sourceTree = SOURCE_ROOT; };
 		E4F3BA6112F4C4BF002D19BB /* ofScene3d.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofScene3d.cpp; path = ../../../openFrameworks/3d/ofScene3d.cpp; sourceTree = SOURCE_ROOT; };
 		E4F3BA6212F4C4BF002D19BB /* ofScene3d.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofScene3d.h; path = ../../../openFrameworks/3d/ofScene3d.h; sourceTree = SOURCE_ROOT; };
 		E4F3BA6312F4C4BF002D19BB /* ofVbo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofVbo.cpp; path = ../../../openFrameworks/3d/ofVbo.cpp; sourceTree = SOURCE_ROOT; };
 		E4F3BA6412F4C4BF002D19BB /* ofVbo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofVbo.h; path = ../../../openFrameworks/3d/ofVbo.h; sourceTree = SOURCE_ROOT; };
-		E4F3BA6512F4C4BF002D19BB /* ofVertexData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofVertexData.cpp; path = ../../../openFrameworks/3d/ofVertexData.cpp; sourceTree = SOURCE_ROOT; };
-		E4F3BA6612F4C4BF002D19BB /* ofVertexData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofVertexData.h; path = ../../../openFrameworks/3d/ofVertexData.h; sourceTree = SOURCE_ROOT; };
+		E4F3BA6512F4C4BF002D19BB /* ofPrimitive.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofPrimitive.cpp; sourceTree = "<group>"; };
+		E4F3BA6612F4C4BF002D19BB /* ofPrimitive.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofPrimitive.h; sourceTree = "<group>"; };
 		E4F3BA7C12F4C4C9002D19BB /* ofBaseSoundPlayer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofBaseSoundPlayer.cpp; path = ../../../openFrameworks/sound/ofBaseSoundPlayer.cpp; sourceTree = SOURCE_ROOT; };
 		E4F3BA7D12F4C4C9002D19BB /* ofBaseSoundPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofBaseSoundPlayer.h; path = ../../../openFrameworks/sound/ofBaseSoundPlayer.h; sourceTree = SOURCE_ROOT; };
 		E4F3BA7E12F4C4C9002D19BB /* ofFmodSoundPlayer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofFmodSoundPlayer.cpp; path = ../../../openFrameworks/sound/ofFmodSoundPlayer.cpp; sourceTree = SOURCE_ROOT; };
@@ -705,20 +709,22 @@
 				E4F3BA5812F4C4BF002D19BB /* ofEasyCam.h */,
 				E4F3BA5912F4C4BF002D19BB /* ofLight.cpp */,
 				E4F3BA5A12F4C4BF002D19BB /* ofLight.h */,
-				E4F3BD2012F4F7BF002D19BB /* ofModel.cpp */,
-				E4F3BD2112F4F7BF002D19BB /* ofModel.h */,
 				E4F3BD2212F4F7BF002D19BB /* ofModelUtils.cpp */,
 				E4F3BD2312F4F7BF002D19BB /* ofModelUtils.h */,
-				E4F3BA5B12F4C4BF002D19BB /* ofMesh.cpp */,
-				E4F3BA5C12F4C4BF002D19BB /* ofMesh.h */,
+				E4F3BD2012F4F7BF002D19BB /* ofModel.cpp */,
+				E4F3BD2112F4F7BF002D19BB /* ofModel.h */,
+				E4F3BA5B12F4C4BF002D19BB /* ofMeshRenderer.cpp */,
+				E4F3BA5C12F4C4BF002D19BB /* ofMeshRenderer.h */,
+				53EEEF49130766EF0027C199 /* ofMesh.h */,
+				53EEEF4A130766EF0027C199 /* ofMesh.cpp */,
+				E4F3BA6512F4C4BF002D19BB /* ofPrimitive.cpp */,
+				E4F3BA6612F4C4BF002D19BB /* ofPrimitive.h */,
 				E4F3BA5F12F4C4BF002D19BB /* ofNode.cpp */,
 				E4F3BA6012F4C4BF002D19BB /* ofNode.h */,
 				E4F3BA6112F4C4BF002D19BB /* ofScene3d.cpp */,
 				E4F3BA6212F4C4BF002D19BB /* ofScene3d.h */,
 				E4F3BA6312F4C4BF002D19BB /* ofVbo.cpp */,
 				E4F3BA6412F4C4BF002D19BB /* ofVbo.h */,
-				E4F3BA6512F4C4BF002D19BB /* ofVertexData.cpp */,
-				E4F3BA6612F4C4BF002D19BB /* ofVertexData.h */,
 			);
 			name = 3d;
 			path = ../../../openFrameworks/3d;
@@ -923,11 +929,11 @@
 				E4F3BA6A12F4C4BF002D19BB /* ofCamera.h in Headers */,
 				E4F3BA6C12F4C4BF002D19BB /* ofEasyCam.h in Headers */,
 				E4F3BA6E12F4C4BF002D19BB /* ofLight.h in Headers */,
-				E4F3BA7012F4C4BF002D19BB /* ofMesh.h in Headers */,
+				E4F3BA7012F4C4BF002D19BB /* ofMeshRenderer.h in Headers */,
 				E4F3BA7412F4C4BF002D19BB /* ofNode.h in Headers */,
 				E4F3BA7612F4C4BF002D19BB /* ofScene3d.h in Headers */,
 				E4F3BA7812F4C4BF002D19BB /* ofVbo.h in Headers */,
-				E4F3BA7A12F4C4BF002D19BB /* ofVertexData.h in Headers */,
+				E4F3BA7A12F4C4BF002D19BB /* ofPrimitive.h in Headers */,
 				E4F3BA8912F4C4C9002D19BB /* ofBaseSoundPlayer.h in Headers */,
 				E4F3BA8B12F4C4C9002D19BB /* ofFmodSoundPlayer.h in Headers */,
 				E4F3BA8D12F4C4C9002D19BB /* ofSoundEffect.h in Headers */,
@@ -1021,6 +1027,7 @@
 				DA97FD7712F5ABD4005C9991 /* pnglibconf.h in Headers */,
 				DA94C2F01301D32200CCC773 /* ofRendererCollection.h in Headers */,
 				DA94C2F21301D32200CCC773 /* ofShapeTessellation.h in Headers */,
+				53EEEF4B130766EF0027C199 /* ofMesh.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1089,11 +1096,11 @@
 				E4F3BA6912F4C4BF002D19BB /* ofCamera.cpp in Sources */,
 				E4F3BA6B12F4C4BF002D19BB /* ofEasyCam.cpp in Sources */,
 				E4F3BA6D12F4C4BF002D19BB /* ofLight.cpp in Sources */,
-				E4F3BA6F12F4C4BF002D19BB /* ofMesh.cpp in Sources */,
+				E4F3BA6F12F4C4BF002D19BB /* ofMeshRenderer.cpp in Sources */,
 				E4F3BA7312F4C4BF002D19BB /* ofNode.cpp in Sources */,
 				E4F3BA7512F4C4BF002D19BB /* ofScene3d.cpp in Sources */,
 				E4F3BA7712F4C4BF002D19BB /* ofVbo.cpp in Sources */,
-				E4F3BA7912F4C4BF002D19BB /* ofVertexData.cpp in Sources */,
+				E4F3BA7912F4C4BF002D19BB /* ofPrimitive.cpp in Sources */,
 				E4F3BA8812F4C4C9002D19BB /* ofBaseSoundPlayer.cpp in Sources */,
 				E4F3BA8A12F4C4C9002D19BB /* ofFmodSoundPlayer.cpp in Sources */,
 				E4F3BA8C12F4C4C9002D19BB /* ofSoundEffect.cpp in Sources */,
@@ -1133,6 +1140,7 @@
 				DA97FD3C12F5A61A005C9991 /* ofCairoRenderer.cpp in Sources */,
 				DA97FD3E12F5A61A005C9991 /* ofGLRenderer.cpp in Sources */,
 				DA94C2F11301D32200CCC773 /* ofShapeTessellation.cpp in Sources */,
+				53EEEF4C130766EF0027C199 /* ofMesh.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -6,6 +6,7 @@
 #include "ofUtils.h"
 #include "ofImage.h"
 #include "ofConstants.h"
+#include "ofMeshRenderer.h"
 #include <map>
 
 class ofModel{
@@ -24,17 +25,18 @@ public:
 	void enableColors();
 	void disableColors();
 	
-	void bindTextureForMesh(int id);
-	void unbindTextureForMesh(int id);
-	
 	void setRenderMethod(meshRenderMethod m);
 	
-	vector<ofMesh> meshes;
+	vector<ofMesh*> meshes;
+	vector<ofMeshRenderer> renderers;
 	vector<ofImage> textures;
 	map<int, int> textureLinks;
 	
 protected:
-	bool bUsingTextures;
+	bool bUsingTextures, bUsingNormals, bUsingColors;
+	void updateRenderers();
+	void bindTextureForMesh(int id);
+	void unbindTextureForMesh(int id);
 
 private:
 	meshRenderMethod renderMethod;

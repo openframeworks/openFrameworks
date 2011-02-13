@@ -2,14 +2,14 @@
 #include "ofBaseTypes.h"
 #include <deque>
 class ofShapeTessellation;
-class ofVertexData;
+class ofPrimitive;
 
 
 class ofGLRenderer: public ofBaseRenderer{
 public:
 	ofGLRenderer(bool useShapeColor=true);
 	~ofGLRenderer(){}
-	void draw(ofVertexData & vertexData);
+	void draw(ofPrimitive & vertexData);
 	void draw(ofPolyline & poly);
 	void draw(ofShapeTessellation & shape);
 	void draw(ofShape & path);

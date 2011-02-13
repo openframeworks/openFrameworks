@@ -26,6 +26,7 @@ void testApp::setup(){
 
 //--------------------------------------------------------------
 void testApp::update(){
+	/*
 	if(wiggleModel){
 		for (int i =0; i < (int)model.meshes.size();i++){
 			for (int j=0; j<model.meshes[i].vertexData->getNumVertices();j++){
@@ -46,6 +47,7 @@ void testApp::update(){
 			}
 		}
 	}
+	 */
 }
 
 //--------------------------------------------------------------

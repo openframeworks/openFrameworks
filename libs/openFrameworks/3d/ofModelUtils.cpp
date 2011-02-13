@@ -15,8 +15,8 @@ static inline ofColor aiColorToOfColor(const aiColor4D& c){
 }
 
 //--------------------------------------------------------------
-void aiMeshToOfVertexData(const aiMesh* aim, ofVertexData& ofm);
-void aiMeshToOfVertexData(const aiMesh* aim, ofVertexData& ofm){
+void aiMeshToOfPrimitive(const aiMesh* aim, ofPrimitive& ofm);
+void aiMeshToOfPrimitive(const aiMesh* aim, ofPrimitive& ofm){
 	// default to triangle mode
 	ofm.setMode(OF_TRIANGLES_MODE);
 	
@@ -86,15 +86,11 @@ void ofLoadModel(string modelName, ofModel & model){
 			ofLog(OF_LOG_VERBOSE, "loading mesh %u", i);
 			// current mesh we are introspecting
 			aiMesh* aMesh = scene->mMeshes[i];
-			ofMesh& curMesh = model.meshes[i];
-			curMesh = ofMesh();
-			if(curMesh.vertexData == NULL){
-				curMesh.vertexData = new ofVertexData();
-			}
-			
-			aiMeshToOfVertexData(aMesh,*curMesh.vertexData);			
-			
-			curMesh.enableIndices();
+
+			model.meshes[i] = new ofMesh();
+			ofMesh& curMesh = *model.meshes[i];
+			curMesh.primitives.push_back(ofPrimitive());
+			aiMeshToOfPrimitive(aMesh,curMesh.primitives.back());			
 		
 			//load texture
 			aiMaterial* mtl = scene->mMaterials[aMesh->mMaterialIndex];

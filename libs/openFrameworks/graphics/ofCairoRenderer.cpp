@@ -98,31 +98,31 @@ ofVec3f ofCairoRenderer::transform(ofVec3f vec){
 	return vec;
 }
 
-void ofCairoRenderer::draw(ofVertexData & vertexData){
-	if(vertexData.getNumVertices()==0) return;
+void ofCairoRenderer::draw(ofPrimitive & primitive){
+	if(primitive.getNumVertices()==0) return;
 	pushMatrix();
 	cairo_matrix_init_identity(getCairoMatrix());
 	cairo_new_path(cr);
 	//if(indices.getNumIndices()){
 
 		int i = 1;
-		ofVec3f v = transform(vertexData.getVertex(vertexData.getIndex(0)));
+		ofVec3f v = transform(primitive.getVertex(primitive.getIndex(0)));
 		ofVec3f v2;
 		cairo_move_to(cr,v.x,v.y);
-		if(vertexData.getMode()==OF_TRIANGLE_STRIP_MODE){
-			v = transform(vertexData.getVertex(vertexData.getIndex(1)));
+		if(primitive.getMode()==OF_TRIANGLE_STRIP_MODE){
+			v = transform(primitive.getVertex(primitive.getIndex(1)));
 			cairo_line_to(cr,v.x,v.y);
-			v = transform(vertexData.getVertex(vertexData.getIndex(2)));
+			v = transform(primitive.getVertex(primitive.getIndex(2)));
 			cairo_line_to(cr,v.x,v.y);
 			i=2;
 		}
-		for(; i<vertexData.getNumIndices(); i++){
-			v = transform(vertexData.getVertex(vertexData.getIndex(i)));
-			switch(vertexData.getMode()){
+		for(; i<primitive.getNumIndices(); i++){
+			v = transform(primitive.getVertex(primitive.getIndex(i)));
+			switch(primitive.getMode()){
 			case(OF_TRIANGLES_MODE):
 				if((i+1)%3==0){
 					cairo_line_to(cr,v.x,v.y);
-					v2 = transform(vertexData.getVertex(vertexData.getIndex(i-2)));
+					v2 = transform(primitive.getVertex(primitive.getIndex(i-2)));
 					cairo_line_to(cr,v2.x,v2.y);
 					cairo_move_to(cr,v.x,v.y);
 				}else if((i+3)%3==0){
@@ -133,7 +133,7 @@ void ofCairoRenderer::draw(ofVertexData & vertexData){
 
 			break;
 			case(OF_TRIANGLE_STRIP_MODE):
-					v2 = transform(vertexData.getVertex(vertexData.getIndex(i-2)));
+					v2 = transform(primitive.getVertex(primitive.getIndex(i-2)));
 					cairo_line_to(cr,v.x,v.y);
 					cairo_line_to(cr,v2.x,v2.y);
 					cairo_move_to(cr,v.x,v.y);
@@ -142,7 +142,7 @@ void ofCairoRenderer::draw(ofVertexData & vertexData){
 					/*triangles.addIndex((GLuint)0);
 						triangles.addIndex((GLuint)1);
 						triangles.addIndex((GLuint)2);
-						for(int i = 2; i < vertexData.getNumVertices()-1;i++){
+						for(int i = 2; i < primitive.getNumVertices()-1;i++){
 							triangles.addIndex((GLuint)0);
 							triangles.addIndex((GLuint)i);
 							triangles.addIndex((GLuint)i+1);
@@ -152,7 +152,7 @@ void ofCairoRenderer::draw(ofVertexData & vertexData){
 			}
 		}
 
-	cairo_move_to(cr,vertexData.getVertex(vertexData.getIndex(vertexData.getNumIndices()-1)).x,vertexData.getVertex(vertexData.getIndex(vertexData.getNumIndices()-1)).y);
+	cairo_move_to(cr,primitive.getVertex(primitive.getIndex(primitive.getNumIndices()-1)).x,primitive.getVertex(primitive.getIndex(primitive.getNumIndices()-1)).y);
 
 	if(ofGetStyle().lineWidth>0){
 		ofColor c = ofGetStyle().color;
