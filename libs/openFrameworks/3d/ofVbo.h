@@ -5,9 +5,6 @@
 #include "ofVec3f.h"
 #include "ofColor.h"
 
-// Some interesting info on using VBOs:
-// http://www.opengl.org/wiki/Vertex_Specification_Best_Practices
-
 class ofVbo {
 public:
 	
