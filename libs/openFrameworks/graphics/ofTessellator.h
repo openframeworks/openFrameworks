@@ -1,21 +1,9 @@
-/*
- *  ofTessellator.h
- *  openFrameworks
- *
- *  Created by theo on 28/10/2009.
- *  Copyright 2009 __MyCompanyName__. All rights reserved.
- *
- */
-
 #pragma once
 
 #include "ofConstants.h"
-#include "ofMain.h"
-#include "ofShape.h"
-
-#ifndef DRAW_WITH_MESHIES
+#include "ofShapeTessellation.h"
 #include "ofMesh.h"
-#endif
+#include "ofTypes.h"
 
 #ifndef CALLBACK
 #define CALLBACK
@@ -36,23 +24,17 @@ class ofTessellator
 public:	
 	
 	/// tessellate polyline and return a mesh. if bIs2D==true, do a 10% more efficient normal calculation.
-#ifdef DRAW_WITH_MESHIES
-	static vector<meshy> tessellateToMesh( const vector<ofPolyline>& polylines, int polyWindingMode, bool bIs2D=false );
-	static vector<meshy> tessellateToMesh( const ofPolyline& polyline, int polyWindingMode, bool bIs2D=false );
-#else
-	static ofMesh tessellateToMesh( const vector<ofPolyline>& polylines, int polyWindingMode, bool bIs2D=false );
-	static ofMesh tessellateToMesh( const ofPolyline& polyline, bool bFilled, bool bIs2D=false );
-#endif
+	static vector<ofVertexData> tessellateToMesh( const vector<ofPolyline>& polylines, int polyWindingMode, bool bIs2D=false );
+	static vector<ofVertexData> tessellateToMesh( const ofPolyline& polyline,  int polyWindingMode, bool bIs2D=false );
 
 	/// tessellate polyline and return an outline.
-	static ofPolyline tessellateToOutline( const vector<ofPolyline>& polylines, int polyWindingMode, bool bIs2D=false );
-	static ofPolyline tessellateToOutline( const ofPolyline& polyline, int polyWindingMode, bool bIs2D=false );
+	static vector<ofPolyline> tessellateToOutline( const vector<ofPolyline>& polylines, int polyWindingMode, bool bIs2D=false );
+	static vector<ofPolyline> tessellateToOutline( const ofPolyline& polyline, int polyWindingMode, bool bIs2D=false );
 	
 	
 private:
 	
 	static void performTessellation( const vector<ofPolyline>& polylines, int polyWindingMode, bool bFilled, bool bIs2D );
-	
 	
 	/// clear out everything
 	static void clear();
@@ -79,14 +61,10 @@ private:
 	static std::vector <double*> ofShapePolyVertexs;
 	
 
-#ifdef DRAW_WITH_MESHIES
-	static vector<meshy> resultMeshies;
-#else	
-	static ofMesh resultMesh;
-#endif
+	static vector<ofVertexData> resultMesh;
 	
 	
-	static ofPolyline resultOutline;
+	static vector<ofPolyline> resultOutline;
 	
 };
 

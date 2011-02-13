@@ -415,7 +415,7 @@ public:
 
 inline bool ofMatrix4x4::isNaN() const {
 	
-#if (_MSC_VER)
+#if (_MSC_VER) || defined (TARGET_ANDROID)
 #ifndef isnan
 #define isnan(a) ((a) != (a))
 #endif

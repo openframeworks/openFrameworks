@@ -77,8 +77,10 @@ class ofxCvImage : public ofBaseImage {
 
     // Get Pixel Data
     //
-    virtual unsigned char*  getPixels() = 0;
-    virtual unsigned char*  getRoiPixels() = 0;
+    virtual unsigned char*  getPixels();
+    virtual ofPixelsRef		getPixelsRef();
+    virtual unsigned char*  getRoiPixels();
+    virtual ofPixelsRef		getRoiPixelsRef();
     virtual IplImage*  getCvImage() { return cvImage; };
 
 
@@ -156,6 +158,8 @@ class ofxCvImage : public ofBaseImage {
                                      
     virtual void swapTemp();  // swap cvImageTemp back
                               // to cvImage after an image operation
+    virtual IplImage*  getCv8BitsImage() { return cvImage; }
+    virtual IplImage*  getCv8BitsRoiImage() { return cvImage; }
                           
     IplImage*  cvImage;
     IplImage*  cvImageTemp;   // this is typically swapped back into cvImage
@@ -167,9 +171,7 @@ class ofxCvImage : public ofBaseImage {
     int gldepth;              // GL_UNSIGNED_BYTE, GL_UNSIGNED_SHORT, GL_FLOAT, ...
     int glchannels;           // GL_LUMINANCE, GL_RGB, GL_RGBA, ...
     
-    unsigned char* 	pixels;	  // not width stepped for getPixels(), allocated on demand
-    int  pixelsWidth;
-    int  pixelsHeight;
+    ofPixels pixels;	  // not width stepped for getPixels(), allocated on demand
     bool bPixelsDirty;        // pixels need to be reloaded
     
     ofTexture  tex;		      // internal tex

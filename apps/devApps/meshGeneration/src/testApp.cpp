@@ -2,6 +2,7 @@
 
 //--------------------------------------------------------------
 void testApp::setup(){
+	ofSetVerticalSync(true);
 	ofBackground(50, 50, 50, 0);
 	
 	ofEnableAlphaBlending();

@@ -1,10 +1,11 @@
 #include "ofMesh.h"
+#include "ofGraphics.h"
 
 //--------------------------------------------------------------
 ofMesh::ofMesh(){
 	vbo = ofVbo();
 	vertexData = NULL;
-	renderMethod = OF_MESH_USING_VERTEX_ARRAY;
+	renderMethod = OF_MESH_USING_DEFAULT_RENDERER;
 	drawType = GL_STATIC_DRAW;
 	bEnableIndices = false;
 	bEnableColors = false;
@@ -269,71 +270,30 @@ void ofMesh::setupVbo(){
 	}	
 }
 
-
-//--------------------------------------------------------------
-void ofMesh::setupVertexArray(){
-	if(vertexData->getNumVertices()){
-		glEnableClientState(GL_VERTEX_ARRAY);
-		glVertexPointer(3, GL_FLOAT, sizeof(ofVec3f), vertexData->getVerticesPointer());
-	}
-	
-	if(getColorsEnabled()){
-		glEnableClientState(GL_COLOR_ARRAY);
-		glColorPointer(4, GL_FLOAT, sizeof(ofColor), vertexData->getColorsPointer());
-	}
-	
-	if(getNormalsEnabled()){
-		glEnableClientState(GL_NORMAL_ARRAY);
-		glNormalPointer(GL_FLOAT, sizeof(ofVec3f), vertexData->getNormalsPointer());
-	}
-	
-	if(getTexCoordsEnabled()){
-		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-		glTexCoordPointer(2, GL_FLOAT, sizeof(ofVec2f), vertexData->getTexCoordsPointer());
-	}
-
-}
-
 //--------------------------------------------------------------
 void ofMesh::draw(polyMode renderType){
 	if(renderMethod == OF_MESH_USING_VBO){
 		setupVbo();
-	}else if (renderMethod == OF_MESH_USING_VERTEX_ARRAY){
-		setupVertexArray();
 	}
 	
-#ifndef TARGET_OF_IPHONE 
+#ifndef TARGET_OPENGLES 
 	glPushAttrib(GL_POLYGON_BIT);
 	glPolygonMode(GL_FRONT_AND_BACK, ofGetGLPolyMode(renderType));
 #endif
 	GLuint mode = ofGetGLPrimitiveMode(vertexData->getMode());
 	
-	if(getIndicesEnabled()){
-		if(renderMethod == OF_MESH_USING_VBO){
+if(renderMethod == OF_MESH_USING_VBO){
+		GLuint mode = ofGetGLPrimitiveMode(vertexData->getMode());
+		if(getIndicesEnabled()){
 			vbo.drawElements(mode,vertexData->getNumIndices());
-		}else if(renderMethod == OF_MESH_USING_VERTEX_ARRAY && vertexData->getNumIndices()){
-#ifdef TARGET_OF_IPHONE 
-			glDrawElements(mode, vertexData->getNumIndices(), GL_UNSIGNED_SHORT, vertexData->getIndexPointer());
-#else
-			glDrawElements(mode, vertexData->getNumIndices(), GL_UNSIGNED_INT, vertexData->getIndexPointer());
-#endif
+		}else{
+			vbo.draw(mode,0,vertexData->getNumVertices());
 		}
 	}else{
-		if(renderMethod == OF_MESH_USING_VBO){
-			vbo.draw(mode,0,vertexData->getNumVertices());
-		}else if(renderMethod == OF_MESH_USING_VERTEX_ARRAY){
-			glDrawArrays(mode,0,vertexData->getNumVertices());
-		}
-	}
-	
-	if(renderMethod == OF_MESH_USING_VERTEX_ARRAY){
-		glDisableClientState(GL_VERTEX_ARRAY);
-		glDisableClientState(GL_COLOR_ARRAY);
-		glDisableClientState(GL_NORMAL_ARRAY);
-		glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+		ofGetDefaultRenderer()->draw(*vertexData);
 	}
 		
-#ifndef TARGET_OF_IPHONE
+#ifndef TARGET_OPENGLES
 	glPopAttrib();
 #endif
 }

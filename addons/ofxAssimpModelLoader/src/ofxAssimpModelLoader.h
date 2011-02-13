@@ -1,5 +1,3 @@
-
-
 #pragma once
 
 #include "ofMain.h"
@@ -21,7 +19,7 @@
 // 2) convert to ofMesh (?) in OF 007 ?
 // 3) Ability to ease *between* two animations. Maybe later folks.
 
-#import "ofxAssimpMeshHelper.h"
+#include "ofxAssimpMeshHelper.h"
 
 class ofxAssimpModelLoader{
 

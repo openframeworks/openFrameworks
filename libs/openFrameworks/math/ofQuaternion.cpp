@@ -1,6 +1,6 @@
 #include "ofQuaternion.h"
 #include "ofMatrix4x4.h"
-#include "ofMain.h"
+#include "ofMath.h"
 
 void ofQuaternion::set(const ofMatrix4x4& matrix) {
 	*this = matrix.getRotate();

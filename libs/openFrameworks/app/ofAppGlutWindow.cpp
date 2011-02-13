@@ -1,7 +1,10 @@
 #include "ofAppGlutWindow.h"
 #include "ofBaseApp.h"
-#include "ofMain.h"
 #include "ofEvents.h"
+#include "ofUtils.h"
+#include "ofGraphics.h"
+#include "ofAppRunner.h"
+#include "ofConstants.h"
 
 #ifdef TARGET_WIN32
 	#define GLUT_BUILDING_LIB
@@ -9,6 +12,7 @@
 #endif
 #ifdef TARGET_OSX
 	#include "../../../libs/glut/lib/osx/GLUT.framework/Versions/A/Headers/glut.h"
+	#include <Carbon/Carbon.h>
 #endif
 #ifdef TARGET_LINUX
 	#include <GL/glut.h>
@@ -43,7 +47,7 @@ static int			windowW;
 static int			windowH;
 static ofBaseApp *	ofAppPtr;
 static int          nFramesSinceWindowResized;
-static int			orientation;
+static ofOrientation	orientation;
 
 #ifdef TARGET_WIN32
 
@@ -187,7 +191,7 @@ ofAppGlutWindow::ofAppGlutWindow(){
 	nonFullScreenY		= -1;
 	lastFrameTime		= 0.0;
 	displayString		= "";
-	orientation			= 1;	
+	orientation			= OF_ORIENTATION_DEFAULT;
 
 }
 
@@ -358,12 +362,12 @@ int ofAppGlutWindow::getHeight(){
 }
 
 //------------------------------------------------------------
-void ofAppGlutWindow::setOrientation(int orientationIn){
+void ofAppGlutWindow::setOrientation(ofOrientation orientationIn){
 	orientation = orientationIn;
 }
 
 //------------------------------------------------------------
-int ofAppGlutWindow::getOrientation(){
+ofOrientation ofAppGlutWindow::getOrientation(){
 	return orientation;
 }
 
@@ -500,7 +504,7 @@ void ofAppGlutWindow::display(void){
 	}
 
 	// set viewport, clear the screen
-	glViewport(0, 0, glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT));		// used to be glViewport( 0, 0, width, height );
+	ofViewport(0, 0, glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT));		// used to be glViewport( 0, 0, width, height );
 	float * bgPtr = ofBgColorPtr();
 	bool bClearAuto = ofbClearBg();
 
@@ -514,8 +518,7 @@ void ofAppGlutWindow::display(void){
     #endif
 
 	if ( bClearAuto == true || nFrameCount < 3){
-		glClearColor(bgPtr[0],bgPtr[1],bgPtr[2], bgPtr[3]);
-		glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		ofClear(bgPtr[0]*255,bgPtr[1]*255,bgPtr[2]*255, bgPtr[3]*255);
 	}
 
 	if( bEnableSetupScreen )ofSetupScreen();
@@ -527,8 +530,7 @@ void ofAppGlutWindow::display(void){
         // on a PC resizing a window with this method of accumulation (essentially single buffering)
         // is BAD, so we clear on resize events.
         if (nFramesSinceWindowResized < 3){
-            glClearColor(bgPtr[0],bgPtr[1],bgPtr[2], bgPtr[3]);
-            glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        	ofClear(bgPtr[0]*255,bgPtr[1]*255,bgPtr[2]*255, bgPtr[3]*255);
         } else {
             if (nFrameCount < 3 || nFramesSinceWindowResized < 3)    glutSwapBuffers();
             else                                                     glFlush();
@@ -540,8 +542,7 @@ void ofAppGlutWindow::display(void){
 		if (bClearAuto == false){
 			// in accum mode resizing a window is BAD, so we clear on resize events.
 			if (nFramesSinceWindowResized < 3){
-				glClearColor(bgPtr[0],bgPtr[1],bgPtr[2], bgPtr[3]);
-				glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+				ofClear(bgPtr[0]*255,bgPtr[1]*255,bgPtr[2]*255, bgPtr[3]*255);
 			}
 		}
         glutSwapBuffers();
@@ -560,7 +561,7 @@ void ofAppGlutWindow::display(void){
 }
 
 //------------------------------------------------------------
-void rotateMouseXY(int orientation, int &x, int &y) {
+void rotateMouseXY(ofOrientation orientation, int &x, int &y) {
 	int savedY;
 	switch(orientation) {
 		case OF_ORIENTATION_180:

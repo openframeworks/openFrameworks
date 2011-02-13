@@ -1,4 +1,5 @@
 #include "ofGstUtils.h"
+#ifndef TARGET_ANDROID
 #include "ofUtils.h"
 #include <gst/app/gstappsink.h>
 #include <gst/video/video.h>
@@ -545,11 +546,7 @@ unsigned char * ofGstVideoUtils::getPixels(){
 	return pixels.getPixels();
 }
 
-ofPixels ofGstVideoUtils::getOFPixels(){
-	return pixels;
-}
-
-ofPixels ofGstVideoUtils::getOFPixels() const{
+ofPixelsRef ofGstVideoUtils::getPixelsRef(){
 	return pixels;
 }
 
@@ -687,3 +684,4 @@ void ofGstVideoUtils::eos_cb(){
 	ofEventArgs args;
 	ofNotifyEvent(eosEvent,args);
 }
+#endif

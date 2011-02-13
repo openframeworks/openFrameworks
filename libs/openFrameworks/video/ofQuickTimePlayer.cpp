@@ -152,12 +152,7 @@ unsigned char * ofQuickTimePlayer::getPixels(){
 }
 
 //---------------------------------------------------------------------------
-ofPixels ofQuickTimePlayer::getOFPixels(){
-	return pixels;
-}
-
-//---------------------------------------------------------------------------
-ofPixels ofQuickTimePlayer::getOFPixels() const{
+ofPixelsRef ofQuickTimePlayer::getPixelsRef(){
 	return pixels;
 }
 

@@ -23,8 +23,7 @@ class ofDirectShowGrabber : public ofBaseVideoGrabber{
 		bool					isFrameNew();
 
 		unsigned char		* 	getPixels();
-		ofPixels 				getOFPixels();
-		ofPixels 				getOFPixels() const;
+		ofPixelsRef				getPixelsRef();
 		
 		void					close();
 		void					clearMemory();

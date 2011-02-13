@@ -5,6 +5,7 @@
 // setVertexData with float* should know about ofVec3f vs ofVec2f?
 
 #include "ofVbo.h"
+#include "ofUtils.h"
 
 
 
@@ -194,7 +195,7 @@ void ofVbo::setTexCoordData(const float * texCoord0x, int total, int usage) {
 
 
 //--------------------------------------------------------------
-void ofVbo::setIndexData(const GLuint * indices, int total, int usage){
+void ofVbo::setIndexData(const ofIndexType * indices, int total, int usage){
 	if(indices == NULL){
 		ofLog(OF_LOG_WARNING,"ofVbo: bad index data!\n");
 		return;
@@ -206,7 +207,7 @@ void ofVbo::setIndexData(const GLuint * indices, int total, int usage){
 	}
 	
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexId);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * total, &indices[0], usage);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(ofIndexType) * total, &indices[0], usage);
 }
 
 //--------------------------------------------------------------
@@ -282,13 +283,12 @@ void ofVbo::updateTexCoordData(const float * texCoord0x, int total) {
 }
 
 //--------------------------------------------------------------
-void ofVbo::updateIndexData(const GLuint * indices, int total) {
+void ofVbo::updateIndexData(const ofIndexType * indices, int total) {
 	if(bUsingIndices) {
 		glBindBuffer(GL_ARRAY_BUFFER, indexId);
-		glBufferSubData(GL_ARRAY_BUFFER, 0, total*sizeof(GLuint), (GLuint*)&indices[0]);
+		glBufferSubData(GL_ARRAY_BUFFER, 0, total*sizeof(GLuint), &indices[0]);
 	}
 }
-
 
 //--------------------------------------------------------------
 bool ofVbo::getIsAllocated(){
@@ -409,7 +409,7 @@ void ofVbo::drawElements(int drawMode, int amt) {
 		bind();
 		if(bUsingIndices){
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexId);
-#ifdef TARGET_OF_IPHONE
+#ifdef TARGET_OPENGLES
 			glDrawElements(drawMode, amt, GL_UNSIGNED_SHORT, NULL);
 #else
 			glDrawElements(drawMode, amt, GL_UNSIGNED_INT, NULL);

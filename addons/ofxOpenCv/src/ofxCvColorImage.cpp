@@ -80,7 +80,7 @@ void ofxCvColorImage::setFromPixels( unsigned char* _pixels, int w, int h ) {
 
     if( w == width && h == height ) {
 	
-		if( cvImage->width == cvImage->widthStep ){
+		if( cvImage->width*cvImage->nChannels == cvImage->widthStep ){
 			memcpy( cvImage->imageData,  _pixels, w*h*3);
 		}else{
 			
@@ -213,68 +213,6 @@ void ofxCvColorImage::operator = ( const IplImage* _mom ) {
 
 // Get Pixel Data
 
-//--------------------------------------------------------------------------------
-unsigned char* ofxCvColorImage::getPixels() {
-	//Note this possible introduces a bug where pixels doesn't contain the current image.
-	//Also it means that modifying the pointer return by get pixels - affects the internal cvImage
-	//Where as with the slower way below modifying the pointer doesn't change the image. 
-	if(  cvImage->width == cvImage->widthStep ){
-		return (unsigned char *)cvImage->imageData;
-	}
-
-    if(bPixelsDirty) {
-        if(pixels == NULL) {
-            // we need pixels, allocate it
-            pixels = new unsigned char[width*height*3];
-            pixelsWidth = width;
-            pixelsHeight = height;
-        } else if(pixelsWidth != width || pixelsHeight != height) {
-            // ROI changed, reallocate pixels for new size
-            // this is needed because getRoiPixels() might change size of pixels
-            delete pixels;
-            pixels = new unsigned char[width*height*3];
-            pixelsWidth = width;
-            pixelsHeight = height;
-        }
-
-        // copy from ROI to pixels
-        for( int i = 0; i < height; i++ ) {
-            memcpy( pixels + (i*width*3),
-                    cvImage->imageData + (i*cvImage->widthStep),
-                    width*3 );
-        }
-        bPixelsDirty = false;
-    }
-	return pixels;
-}
-
-//--------------------------------------------------------------------------------
-unsigned char* ofxCvColorImage::getRoiPixels() {
-    if(bPixelsDirty) {
-        ofRectangle roi = getROI();
-        if(pixels == NULL) {
-            // we need pixels, allocate it
-            pixels = new unsigned char[(int)(roi.width*roi.height*3)];
-            pixelsWidth = (int)roi.width;
-            pixelsHeight = (int)roi.height;
-        } else if(pixelsWidth != roi.width || pixelsHeight != roi.height) {
-            // ROI changed, reallocate pixels for new size
-            delete pixels;
-            pixels = new unsigned char[(int)(roi.width*roi.height*3)];
-            pixelsWidth = (int)roi.width;
-            pixelsHeight = (int)roi.height;
-        }
-
-        // copy from ROI to pixels
-        for( int i = 0; i < roi.height; i++ ) {
-            memcpy( pixels + (int)(i*roi.width*3),
-                    cvImage->imageData + ((int)(i+roi.y)*cvImage->widthStep) + (int)roi.x*3,
-                    (int)(roi.width * 3) );
-        }
-        bPixelsDirty = false;
-    }
-	return pixels;
-}
 
 //--------------------------------------------------------------------------------
 void ofxCvColorImage::convertToGrayscalePlanarImages(ofxCvGrayscaleImage& red, ofxCvGrayscaleImage& green, ofxCvGrayscaleImage& blue){

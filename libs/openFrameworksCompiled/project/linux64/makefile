@@ -10,8 +10,17 @@
 #
 # edit the following  vars to customize the makefile
 
+ifeq ($(findstring Android,$(MAKECMDGOALS)),Android)
+	ARCH = android
+endif
 
-COMPILER_OPTIMIZATION = -march=native -mtune=native -finline-functions -funroll-all-loops  -O3
+ifeq ($(ARCH),android)
+	COMPILER_OPTIMIZATION = -Os
+	HOST_PLATFORM = linux-x86
+	NDK_PLATFORM = android-8
+else
+	COMPILER_OPTIMIZATION = -march=native -mtune=native -finline-functions -funroll-all-loops  -Os
+endif
 USER_CFLAGS = 
 
 
@@ -24,44 +33,77 @@ USER_CFLAGS =
 
 
 SHELL =  /bin/sh
-CXX =  g++
 
-ARCH = $(shell uname -m)
-ifeq ($(ARCH),x86_64)
-	LIBSPATH=linux64
+ifneq ($(ARCH),android)
+	CXX =  g++
+	ARCH = $(shell uname -m)
+	ifeq ($(ARCH),x86_64)
+		LIBSPATH=linux64
+	else
+		LIBSPATH=linux
+	endif
 else
-	LIBSPATH=linux
+	LIBSPATH = android
+	NDK_ROOT = $(shell cat ndk_path.make)
+	TOOLCHAIN=arm-linux-androideabi-4.4.3
+	TOOLCHAIN_PATH=$(NDK_ROOT)/toolchains/$(TOOLCHAIN)/prebuilt/$(HOST_PLATFORM)/bin/
+	ANDROID_PREFIX=arm-linux-androideabi-
+	CC=$(NDK_ROOT)/toolchains/$(TOOLCHAIN)/prebuilt/$(HOST_PLATFORM)/bin/$(ANDROID_PREFIX)gcc
+	CXX=$(NDK_ROOT)/toolchains/$(TOOLCHAIN)/prebuilt/$(HOST_PLATFORM)/bin/$(ANDROID_PREFIX)g++
+	AR=$(NDK_ROOT)/toolchains/$(TOOLCHAIN)/prebuilt/$(HOST_PLATFORM)/bin/$(ANDROID_PREFIX)ar
+	SYSROOT=$(NDK_ROOT)/platforms/$(NDK_PLATFORM)/arch-arm/
+	CFLAGS += -nostdlib --sysroot=$(SYSROOT) -fno-short-enums 
+	CFLAGS += -I"$(NDK_ROOT)/platforms/$(NDK_PLATFORM)/arch-arm/usr/include" -I"$(NDK_ROOT)/sources/cxx-stl/gnu-libstdc++/include/" -I"$(NDK_ROOT)/sources/cxx-stl/gnu-libstdc++/libs/armeabi/include"
+	CFLAGS += -DANDROID
 endif
 
 SOURCE_DIRS = $(shell find ../../../openFrameworks -maxdepth 1 -mindepth 1 -type d )
-SOURCES = $(shell find $(SOURCE_DIRS) -name "*.cpp")
+ifeq ($(ARCH),android)
+	SOURCES = $(shell find $(SOURCE_DIRS) -name "*.cpp" | grep -v "ofAppGlutWindow.cpp" | grep -v ofGstVideoPlayer.cpp | grep -v ofQuickTimeGrabber.cpp | grep -v ofVideoPlayer.cpp | grep -v ofGstVideoGrabber.cpp | grep -v ofSoundStream.cpp | grep -v ofSoundPlayer.cpp)
+else
+	SOURCES = $(shell find $(SOURCE_DIRS) -name "*.cpp") 
+endif
 OBJFILES = $(patsubst ../../../%.cpp,%.o,$(SOURCES))
 CORE_INCLUDES = $(shell find ../../../openFrameworks/ -type d)
 CORE_INCLUDE_FLAGS = $(addprefix -I,$(CORE_INCLUDES))
-INCLUDES = $(shell find ../../../*/include -type d)
+INCLUDES = $(shell find ../../../*/include -type d | grep -v glu)
 INCLUDES_FLAGS = $(addprefix -I,$(INCLUDES))
+ifeq ($(ARCH),android)
+	INCLUDES_FLAGS += -I../../../glu/include_android
+ 	INCLUDES_FLAGS += -I../../../../addons/ofxAndroid/src
+else
+ 	INCLUDES_FLAGS += -I../../../glu/include
+endif
 
-CFLAGS = -Wall -fexceptions
+CFLAGS += -Wall -fexceptions
 CFLAGS += $(INCLUDES_FLAGS)
 CFLAGS += $(CORE_INCLUDE_FLAGS)
-CFLAGS += $(shell pkg-config  gstreamer-0.10 gstreamer-video-0.10 gstreamer-base-0.10 libudev --cflags)
 
-#check if gtk exists and add it
-GTK = $(shell pkg-config gtk+-2.0 --exists; echo $$?)
-ifeq ($(GTK),0)
-	CFLAGS += $(shell pkg-config gtk+-2.0 --cflags) -DOF_USING_GTK
+
+ifneq ($(ARCH),android)
+	CFLAGS += $(shell pkg-config  gstreamer-0.10 gstreamer-video-0.10 gstreamer-base-0.10 libudev --cflags)
+	#check if gtk exists and add it
+	GTK = $(shell pkg-config gtk+-2.0 --exists; echo $$?)
+	ifeq ($(GTK),0)
+		CFLAGS += $(shell pkg-config gtk+-2.0 --cflags) -DOF_USING_GTK
+	endif
 endif
 
 ifeq ($(findstring Debug,$(MAKECMDGOALS)),Debug)
 	TARGET_CFLAGS = -g3
-	TARGET_NAME = Debug
+	TARGET_NAME = $(MAKECMDGOALS)
 	TARGET = ../../lib/$(LIBSPATH)/libopenFrameworksDebug.a
 endif
 
 ifeq ($(findstring Release,$(MAKECMDGOALS)),Release)
 	TARGET_CFLAGS = $(COMPILER_OPTIMIZATION)
-	TARGET_NAME = Release
+	TARGET_NAME = $(MAKECMDGOALS)
 	TARGET = ../../lib/$(LIBSPATH)/libopenFrameworks.a
+endif
+
+ifeq ($(findstring Release_arm7,$(MAKECMDGOALS)),Release_arm7)
+	TARGET_CFLAGS += -march=armv7-a -mfloat-abi=softfp -mfpu=vfp
+	TARGET = ../../lib/$(LIBSPATH)/libopenFrameworks_arm7.a
 endif
 
 ifeq ($(MAKECMDGOALS),)
@@ -74,21 +116,35 @@ ifeq ($(MAKECMDGOALS),clean)
 	TARGET = ../../lib/$(LIBSPATH)/libopenFrameworks.a ../../lib/$(LIBSPATH)/libopenFrameworksDebug.a
 endif
 
+ifeq ($(MAKECMDGOALS),CleanAndroid)
+	TARGET = ../../lib/$(LIBSPATH)/libopenFrameworks.a ../../lib/$(LIBSPATH)/libopenFrameworksDebug.a ../../lib/$(LIBSPATH)/libopenFrameworks_arm7.a
+endif
+
 CLEANTARGET = $(addprefix Clean,$(TARGET_NAME))
 OBJ_OUTPUT = obj/$(TARGET_NAME)/
 DEPFILES = $(addprefix $(OBJ_OUTPUT),$(patsubst ../../../%.cpp,%.d,$(SOURCES)))
 OBJS = $(addprefix $(OBJ_OUTPUT), $(OBJFILES))
 
-.PHONY: all Debug Release after clean CleanDebug CleanRelease help
+.PHONY: all Debug Release after clean CleanDebug CleanRelease help DebugAndroid ReleaseAndroid Release_arm7Android CleanAndroid
 
 Release: $(TARGET) 
 
 Debug: $(TARGET) 
 
+DebugAndroid: $(TARGET)
+
+ReleaseAndroid: $(TARGET)
+
+Release_arm7Android: $(TARGET)
+
 all: 
 	make Debug
 	make Release
 	
+android:
+	make DebugAndroid
+	make ReleaseAndroid
+	make Release_arm7Android
 
 #This rule does the compilation
 $(OBJ_OUTPUT)%.o: ../../../%.cpp 
@@ -98,7 +154,7 @@ $(OBJ_OUTPUT)%.o: ../../../%.cpp
 
 $(TARGET) : $(OBJS) 
 	echo "creating " $(TARGET)
-	ar cr $@ $(OBJS)
+	$(AR) -r "$@" $(OBJS)
 
 -include $(DEPFILES)
 
@@ -107,13 +163,13 @@ clean:
 	rm -Rf obj
 	rm -f -v $(TARGET)
 	
-	
-	
 $(CLEANTARGET):
 	rm -Rf -v $(OBJ_OUTPUT)
 	rm -f -v $(TARGET)
 	
-    
+CleanAndroid:
+	rm -Rf obj
+	rm -f -v $(TARGET)
 
 #.PHONY: help
 help:

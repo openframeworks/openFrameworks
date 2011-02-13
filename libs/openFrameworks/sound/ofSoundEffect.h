@@ -14,7 +14,6 @@
 #include <deque>
 using namespace std;
 
-#include "ofMain.h"
 
 /** ofSoundEffect
  

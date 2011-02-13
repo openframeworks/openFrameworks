@@ -1,327 +1,223 @@
-/*
- *  ofShape.cpp
- *  openFrameworks
- *
- *  Created by theo on 28/10/2009.
- *  Copyright 2009 __MyCompanyName__. All rights reserved.
- *
- */
-
 #include "ofShape.h"
-#include "ofTessellator.h"
+#include "ofGraphics.h"
 
-
-
-/** 
- @TODO
-	ofShape:
-	- ofShapeCollection for multiple shapes inside (ofShape rename to ofPath)
-	- ttf integration: ttf spits out ofShapeCollection
-*/
-
-
-void ofPolyline::draw() const {
-	for ( int i=1; i<(int)points.size(); i++ ) {
-		ofLine( points[i-1], points[i] );
-	}
-	if(bClosed && points.size() > 1) {
-		ofLine( points[points.size()-1], points[0] );
-	}
-}
-
-float ofPolyline::getPerimeter() const {
-	float perimeter = 0;
-	int lastPosition = points.size() - 1;
-	for(int i = 0; i < lastPosition; i++) {
-		perimeter += points[i].distance(points[i + 1]);
-	}
-	if(bClosed && points.size() > 1) {
-		perimeter += points[points.size() - 1].distance(points[0]);
-	}
-	return perimeter;
-}
+class ofPathToShapeConverter;
+#include <deque>
 
 ofShape::ofShape(){
-	bFilled = ofGetStyle().bFill;
-	resolution = 16;
-	bNeedsTessellation = true;
-	polyWindingMode = ofGetStyle().polyMode;
-	lineColor = ofGetStyle().color;
-	fillColor = ofGetStyle().color;
-	clear();
+	strokeWidth = 1;
+	bFill = false;
+	windingMode = OF_POLY_WINDING_ODD;
+	bClosed = false;
+	renderer = NULL;
+	prevCurveRes = 16;
 }
 
-
-void ofShape::clear() {
-	segmentVectors.clear(); 
-	segmentVectors.resize(1); 
-	bShouldClose.clear(); 
-	bShouldClose.resize(1);
-	bNeedsTessellation = true;
-	cachedPolylines.clear(); 
-#ifdef DRAW_WITH_MESHIES
-	cachedMeshies.clear();
-#else
-	cachedTessellation.clear();
-#endif
-	bNeedsOutlineDraw = false;
+void ofShape::clear(){
+	commands.clear();
+	subPaths.clear();
+	hasChanged = true;
 }
 
-
-void ofShape::setCurveResolution(int numPoints) {
-	resolution = numPoints;
+ofShape & ofShape::newSubShape(){
+	subPaths.push_back(ofShape());
+	lastShape().windingMode = windingMode;
+	lastShape().bFill = bFill;
+	lastShape().strokeColor = strokeColor;
+	lastShape().strokeWidth = strokeWidth;
+	lastShape().fillColor = fillColor;
+	return subPaths.back();
 }
 
-void ofShape::close() {
-	bShouldClose.back() = true;
+void ofShape::lineTo(const ofPoint & p){
+	lastShape().addCommand(Command(Command::lineTo,p));
 }
 
-
-void ofShape::nextContour( bool bClosePrev ){
-	bShouldClose.back() = bClosePrev;
-	segmentVectors.push_back( vector<ofShapeSegment>() );
-	bShouldClose.push_back( false );
-	bNeedsTessellation = true;
-	// we shouldn't draw the tessellated outline if polyWindingMode is ODD.
-	bNeedsOutlineDraw = (polyWindingMode!=OF_POLY_WINDING_ODD);
+void ofShape::lineTo(float x, float y, float z){
+	lineTo(ofPoint(x,y,z));
 }
 
-
-void ofShape::setPolyWindingMode( int newMode ) {
-	polyWindingMode = newMode; 
-	bNeedsTessellation = true; 
-	// we shouldn't draw the tessellated outline if polyWindingMode is ODD.
-	bNeedsOutlineDraw = bNeedsOutlineDraw && (polyWindingMode!=OF_POLY_WINDING_ODD);
+void ofShape::lineTo(float x, float y){
+	lastShape().addCommand(Command(Command::lineTo,ofPoint(x,y)));
 }
 
-
-void ofShape::bezierSegmentToPolyline( const ofShapeSegment & seg, ofPolyline& polyline ){
-
-	
-	// if, and only if poly vertices has points, we can make a bezier
-	// from the last point
-	
-	// the resolultion with which we computer this bezier
-	// is arbitrary, can we possibly make it dynamic?
-	
-	const vector<ofPoint>& points = seg.getPoints();
-	if ( points.size()>= 4 ) {
-		for ( int k=3; k<(int)points.size(); k+=3 ) {
-			int k0 = k-3;
-			int k1 = k-2;
-			int k2 = k-1;
-			int k3 = k;
-
-			const ofPoint& p0 = points[k0];
-			const ofPoint& p1 = points[k1];
-			const ofPoint& p2 = points[k2];
-			const ofPoint& p3 = points[k3];
-			
-			ofPoint a, b, c;
-			float   t, t2, t3;
-			
-			// polynomial coefficients			
-			c = 3.0f*(p1-p0);
-			b = 3.0f*(p2-p1) - c;
-			a = p3 - p0 - c - b;
-			
-			for (int i = 0; i < resolution; i++){
-				t  = (float)i / (float)(resolution-1);
-				t2 = t * t;
-				t3 = t2 * t;
-				ofPoint newPoint = a*t3 + b*t2 + c*t + p0;
-				polyline.addVertex( newPoint );
-			}
-			
-		}
-	}	
+void ofShape::moveTo(const ofPoint & p){
+	newSubShape().addCommand(Command(Command::lineTo,p));
 }
 
+void ofShape::moveTo(float x, float y, float z){
+	moveTo(ofPoint(x,y,z));
+}
 
+void ofShape::curveTo(const ofPoint & p){
+	lastShape().addCommand(Command(Command::curveTo,p));
+}
 
-void ofShape::curveSegmentToPolyline( const ofShapeSegment & seg, ofPolyline& polyline ){
-	
-	if( seg.getPoints().size() == 0 )
-		return;
-	
-	ofPoint p0, p1, p2, p3;
-	
-	const vector<ofPoint>& p = seg.getPoints();
-	
-	if ( p.size() >= 4 ){	
-		for(int k = 3; k < (int)p.size(); k++ ){
-			float t,t2,t3;
-			ofPoint p0 = p[k-3];
-			ofPoint p1 = p[k-2];
-			ofPoint p2 = p[k-1];
-			ofPoint p3 = p[k  ];
-			
-			for (int i = 0; i < resolution; i++){
-				t 	=  (float)i / (float)(resolution-1);
-				t2 	= t * t;
-				t3 	= t2 * t;
+void ofShape::curveTo(float x, float y, float z){
+	curveTo(ofPoint(x,y,z));
+}
 
-				ofPoint pt = 0.5f * ( (2.0f*p1) + (-p0+p2)*t + (2.0f*p0 - 5.0f*p1 + 4.0f*p2 - p3)*t2 + (-p0 + 3.0f*p1 - 3.0f*p2 + p3)*t3 );
-				polyline.addVertex( pt );
-			}
-		}
+void ofShape::curveTo(float x, float y){
+	lastShape().addCommand(Command(Command::curveTo,ofPoint(x,y)));
+}
+
+void ofShape::bezierTo(const ofPoint & cp1, const ofPoint & cp2, const ofPoint & p){
+	lastShape().addCommand(Command(Command::bezierTo,p,cp1,cp2));
+}
+
+void ofShape::bezierTo(float cx1, float cy1, float cx2, float cy2, float x, float y){
+	lastShape().addCommand(Command(Command::bezierTo,ofPoint(x,y),ofPoint(cx1,cy1),ofPoint(cx2,cy2)));
+}
+
+void ofShape::bezierTo(float cx1, float cy1, float cz1, float cx2, float cy2, float cz2, float x, float y, float z){
+	bezierTo(ofPoint(cx1,cy1,cz1),ofPoint(cx2,cy2,cz2),ofPoint(x,y,z));
+}
+
+void ofShape::quadBezierTo(const ofPoint & cp1, const ofPoint & cp2, const ofPoint & p){
+	lastShape().addCommand(Command(Command::quadBezierTo,p,cp1,cp2));
+}
+
+void ofShape::quadBezierTo(float cx1, float cy1, float cx2, float cy2, float x, float y){
+	lastShape().addCommand(Command(Command::quadBezierTo,ofPoint(x,y),ofPoint(cx1,cy1),ofPoint(cx2,cy2)));
+}
+
+void ofShape::quadBezierTo(float cx1, float cy1, float cz1, float cx2, float cy2, float cz2, float x, float y, float z){
+	quadBezierTo(ofPoint(cx1,cy1,cz1),ofPoint(cx2,cy2,cz2),ofPoint(x,y,z));
+}
+
+void ofShape::arc(const ofPoint & centre, float radiusX, float radiusY, float angleBegin, float angleEnd){
+	lastShape().addCommand(Command(Command::arc,centre,radiusX,radiusY,angleBegin,angleEnd));
+}
+
+void ofShape::arc(float x, float y, float radiusX, float radiusY, float angleBegin, float angleEnd){
+	lastShape().addCommand(Command(Command::arc,ofPoint(x,y),radiusX,radiusY,angleBegin,angleEnd));
+}
+
+void ofShape::arc(float x, float y, float z, float radiusX, float radiusY, float angleBegin, float angleEnd){
+	arc(ofPoint(x,y,z),radiusX,radiusY,angleBegin,angleEnd);
+}
+
+void ofShape::close(){
+	lastShape().bClosed=true;
+	lastShape().hasChanged = true;
+	newSubShape();
+}
+
+void ofShape::setPolyWindingMode(ofPolyWindingMode mode){
+	windingMode = mode;
+	hasChanged = true;
+}
+
+void ofShape::setFilled(bool hasFill){
+	bFill = hasFill;
+	for(int i=0; i<(int)subPaths.size(); i++){
+		subPaths[i].setFilled(hasFill);
 	}
 }
 
-void ofShape::tessellate(){
-	
-//	ofLog(OF_LOG_NOTICE, "tessellate, %i segments", segments.size() );
-	cachedPolylines.clear();
-	
-	if( segmentVectors.size()>0 ){
-		cachedPolylines.resize( segmentVectors.size() );
-		/// loop through all the subpaths
-		for ( int h = 0; h < (int)segmentVectors.size(); h++ ) {
-			/// loop through all the segments of this subpath
-			const vector<ofShapeSegment>& segments = segmentVectors[h];
-			ofPolyline& polyline = cachedPolylines[h];
-			for(int i = 0; i < (int)segments.size(); i++){
-				if( segments[i].getType() == OFSHAPE_SEG_LINE ){
-					for(int j = 0; j < (int)segments[i].getPoints().size(); j++){
-						polyline.addVertex( segments[i].getPoint(j) );
-					}
-				}else if( segments[i].getType() == OFSHAPE_SEG_BEZIER ){
-					bezierSegmentToPolyline(segments[i], polyline);
-				}else if( segments[i].getType() == OFSHAPE_SEG_CURVE ){
-					curveSegmentToPolyline(segments[i], polyline);
-				}
-			}
-			
-			// close?
-			polyline.setClosed( bShouldClose[h] );
-			
-		}
-		
-		bool bIs2D = false;
-#ifdef DRAW_WITH_MESHIES
-		cachedMeshies = ofTessellator::tessellateToMesh( cachedPolylines, polyWindingMode, bIs2D );
-#else
-		cachedTessellation = ofTessellator::tessellateToMesh( cachedPolylines, polyWindingMode, bIs2D );
-#endif
-		if ( bNeedsOutlineDraw ) {
-			cachedOutline = ofTessellator::tessellateToOutline( cachedPolylines, polyWindingMode, bIs2D );
-		}
-	}
-//	ofLog(OF_LOG_NOTICE, "tessellate done");
-	
-	bNeedsTessellation = false;
-}
-
-void ofShape::draw(){
-	if ( bNeedsTessellation ){
-		tessellate();
-	}
-	if ( bFilled ) {
-#ifdef DRAW_WITH_MESHIES
-		for ( int i=0; i<(int)cachedMeshies.size(); i++ ) {
-			ofSetColor( fillColor );
-			glBegin( cachedMeshies[i].mode );
-			for ( int j=0; j<(int)cachedMeshies[i].vertices.size(); j++ ) {
-				glVertex3f( cachedMeshies[i].vertices[j].x, cachedMeshies[i].vertices[j].y, cachedMeshies[i].vertices[j].z );
-			}
-			glEnd();
-		}
-#else
-		cachedTessellation.drawVertices();
-#endif
-	}
-	else {
-				
-		ofSetColor( lineColor );
-		if ( bNeedsOutlineDraw ) {
-			cachedOutline.draw();
-		}
-		else {
-			for ( int i=0; i<(int)segmentVectors.size(); i++ ) {
-				for ( int j=0; j<(int)segmentVectors[i].size(); j++ ) {
-					for ( int k=1; k<(int)segmentVectors[i][j].getNumPoints(); k++ ) {
-						ofLine( segmentVectors[i][j].getPoint(k-1), segmentVectors[i][j].getPoint(k) );
-					}
-					if ( bShouldClose[j] ) {
-						// close the loop
-						int last = segmentVectors[i][j].getNumPoints()-1;
-						if ( last > 0 ) {
-							ofLine( segmentVectors[i][j].getPoint(last), segmentVectors[i][j].getPoint(0) ); 
-						}
-					}
-				}
-			}
-		}
-		
+void ofShape::setFillColor(const ofColor & color){
+	fillColor = color;
+	for(int i=0; i<(int)subPaths.size(); i++){
+		subPaths[i].setFillColor(color);
 	}
 }
 
-
-void ofShape::addVertex(ofPoint p){
-	vector<ofShapeSegment>& segments = segmentVectors.back();
-	if ( segments.size() == 0 ) {
-		segments.push_back( ofShapeSegment( OFSHAPE_SEG_LINE ) );
+void ofShape::setStrokeColor(const ofColor & color){
+	strokeColor = color;
+	for(int i=0; i<(int)subPaths.size(); i++){
+		subPaths[i].setStrokeColor(color);
 	}
-	else {
-		ofShapeSegment& backSeg = segments.back();
-		if ( backSeg.getType() != OFSHAPE_SEG_LINE ) {
-			// back segment is not a line
-			if ( backSeg.getNumPoints() > 0 ) {
-				// back segment has points
-				if ( backSeg.getType() == OFSHAPE_SEG_CURVE ) {
-					// back segment is a Catmull-Rom, so we must add the new point to the old curve
-					// to prevent a gap in the line
-					backSeg.addSegmentCurveVertex( p );
-				}
-			}
-			// push back a new line segment
-			segments.push_back( ofShapeSegment( OFSHAPE_SEG_LINE ) );
-		}
-	}
-	segments.back().addSegmentVertex( p );
-	bNeedsTessellation = true;
 }
 
-void ofShape::addBezierVertex(ofPoint cp1, ofPoint cp2, ofPoint p){
-	vector<ofShapeSegment>& segments = segmentVectors.back();
-	if ( segments.size() == 0 || (segments.back().getType() != OFSHAPE_SEG_BEZIER && segments.back().getNumPoints()>1) ) {
-		segments.push_back( ofShapeSegment( OFSHAPE_SEG_BEZIER ) );
-		// user has done something stupid -- let's be kind
-		segments.back().addSegmentVertex( cp1 );
+void ofShape::setStrokeWidth(float width){
+	strokeWidth = width;
+	for(int i=0; i<(int)subPaths.size(); i++){
+		subPaths[i].setStrokeWidth(width);
 	}
-	segments.back().addSegmentBezierVertex( cp1, cp2, p );	
-	bNeedsTessellation = true;
-	bNeedsOutlineDraw = true;
+}
+
+ofShape & ofShape::lastShape(){
+	if(subPaths.empty()){
+		return *this;
+	}else{
+		return subPaths.back();
+	}
+}
+const vector<ofShape::Command> & ofShape::getCommands() const{
+	return commands;
+}
+vector<ofShape::Command> & ofShape::getCommands(){
+	return commands;
+}
+vector<ofShape> & ofShape::getSubShapes(){
+	return subPaths;
+}
+
+const vector<ofShape> & ofShape::getSubShapes() const{
+	return subPaths;
 }
 
 
-void ofShape::addCurveVertex(ofPoint p){
-	vector<ofShapeSegment>& segments = segmentVectors.back();
-	if ( segments.size() == 0 ) {
-		segments.push_back( ofShapeSegment( OFSHAPE_SEG_CURVE ) );
-	}
-	else {
-		ofShapeSegment& backSeg = segments.back();
-		if ( backSeg.getType() != OFSHAPE_SEG_CURVE ) {
-			// back segment is not a curve
-			// so we should start our new segment with the previous 2 points of the segment previous 
-			// to us (for a line) or double up the last point (for a bezier segment)
-			int ultimate, penultimate;
-			ultimate = max(0,int(backSeg.getNumPoints())-1);
-			if ( backSeg.getType() == OFSHAPE_SEG_BEZIER ) {
-				penultimate = max(0,int(backSeg.getNumPoints())-2);
-			}
-			else { // OFSHAPE_SEG_LINE
-				penultimate = max(0,int(backSeg.getNumPoints())-2);
-			}
-			ofShapeSegment newSeg = ofShapeSegment( OFSHAPE_SEG_CURVE );
-			newSeg.addSegmentCurveVertex( backSeg.getPoints()[penultimate] );
-			newSeg.addSegmentCurveVertex( backSeg.getPoints()[ultimate] );
-			segments.push_back( newSeg );
-		}
-	}
-	segments.back().addSegmentCurveVertex( p );	
-	bNeedsTessellation = true;
-	bNeedsOutlineDraw = true;
+ofPolyWindingMode ofShape::getWindingMode() const{
+	return windingMode;
 }
 
+bool ofShape::isFilled() const{
+	return bFill;
+}
+
+ofColor ofShape::getFillColor() const{
+	return fillColor;
+}
+
+ofColor ofShape::getStrokeColor() const{
+	return strokeColor;
+}
+
+float ofShape::getStrokeWidth() const{
+	return strokeWidth;
+}
+
+bool ofShape::isClosed() const{
+	return bClosed;
+}
+
+void ofShape::addCommand(const ofShape::Command & command){
+	commands.push_back(command);
+	hasChanged=true;
+}
+
+ofShapeTessellation & ofShape::getTessellation(int curveResolution){
+	if(curveResolution<=0) curveResolution=prevCurveRes;
+	if(hasChanged || curveResolution!=prevCurveRes){
+		prevCurveRes = curveResolution;
+		cachedShape.setFrom(*this,curveResolution);
+		hasChanged = false;
+	}
+	cachedShape.setStrokeColor(strokeColor);
+	cachedShape.setStrokeWidth(strokeWidth);
+	cachedShape.setFillColor(fillColor);
+	cachedShape.setPolyWindingMode(windingMode);
+	cachedShape.setFilled(bFill);
+	return cachedShape;
+}
+
+void ofShape::updateShape(){
+	getTessellation();
+}
+
+void ofShape::draw(float x, float y){
+	ofPushMatrix();
+	ofTranslate(x,y);
+	if(!renderer){
+		ofGetDefaultRenderer()->draw(*this);
+	}else{
+		renderer->draw(*this);
+	}
+	ofPopMatrix();
+}
+
+
+void ofShape::markedChanged(){
+	hasChanged=true;
+}

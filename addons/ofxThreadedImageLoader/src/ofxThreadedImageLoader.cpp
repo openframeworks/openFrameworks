@@ -86,10 +86,10 @@ void ofxThreadedImageLoader::urlResponse(ofHttpResponse & response) {
 		
 		// Get the loaded url from the async queue and move it into the update queue.
 		entry_iterator it = getEntryFromAsyncQueue(response.request.name);
-		if(it != images_async_loading.end()) {		
-			images_async_loading.erase(it);
+		if(it != images_async_loading.end()) {
 			(*it).image->loadImage(response.data);
 			images_to_update.push_back((*it));
+			images_async_loading.erase(it);
 		}
 		
 		unlock();

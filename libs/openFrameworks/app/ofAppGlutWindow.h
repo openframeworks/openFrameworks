@@ -35,8 +35,8 @@ public:
 	ofPoint		getWindowSize();
 	ofPoint		getScreenSize();
 	
-	void		setOrientation(int orientation);
-	int			getOrientation();
+	void			setOrientation(ofOrientation orientation);
+	ofOrientation	getOrientation();
 	
 	int			getWidth();
 	int			getHeight();	

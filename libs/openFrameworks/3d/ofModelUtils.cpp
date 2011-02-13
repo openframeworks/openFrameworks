@@ -1,6 +1,8 @@
 //TODO: include multiple textures per mesh/different texture types?
 
 #include "ofModelUtils.h"
+#include "ofConstants.h"
+#if !defined(TARGET_OF_IPHONE)
 #include "aiConfig.h"
 #include "assimp.h"
 #include "aiPostProcess.h"
@@ -115,4 +117,4 @@ void ofLoadModel(string modelName, ofModel & model){
 		}
 	}
 }
-
+#endif
