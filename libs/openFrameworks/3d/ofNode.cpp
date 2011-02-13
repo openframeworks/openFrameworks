@@ -29,13 +29,8 @@ ofNode* ofNode::getParent() const {
 
 //----------------------------------------
 void ofNode::setTransformMatrix(const ofMatrix4x4 &m44) {
-	setTransformMatrix(m44.getPtr());
-}
+	localTransformMatrix = m44;
 
-
-//----------------------------------------
-void ofNode::setTransformMatrix(float *m44) {
-	memcpy(localTransformMatrix._mat, m44, sizeof(float) * 16);
 	ofQuaternion so;
 	localTransformMatrix.decompose(position, orientation, scale, so);
 	

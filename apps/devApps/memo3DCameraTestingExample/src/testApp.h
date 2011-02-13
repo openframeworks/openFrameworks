@@ -25,7 +25,7 @@ class testApp : public ofBaseApp{
 	
 	void reset();	
 	
-	ofMeshNode	testNodes[kNumTestNodes];
+	ofNode		testNodes[kNumTestNodes];
 	ofLight		light[kNumLights];
 	ofCamera	cam[kNumCameras];
 	int			lookatIndex[kNumCameras];		// which test node to lookat (one for each camera)

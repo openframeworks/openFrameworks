@@ -71,9 +71,7 @@ public:
 	// Set Transformations
 
 	// directly set transformation matrix
-	// TODO:
 	void setTransformMatrix(const ofMatrix4x4 &m44);
-	void setTransformMatrix(float *m44);
 	
 	// position
 	void setPosition(float px, float py, float pz);
