@@ -376,6 +376,7 @@ GLuint ofVbo::getIndexId(){
 
 //--------------------------------------------------------------
 void ofVbo::bind(){
+	
 //#ifndef TARGET_OPENGLES
 //	glPushAttrib(GL_ALL_ATTRIB_BITS);
 //	glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
@@ -409,11 +410,12 @@ void ofVbo::bind(){
 //--------------------------------------------------------------
 void ofVbo::unbind() {
 	
-	//if(bUsingVerts)  glDisableClientState(GL_VERTEX_ARRAY);
+//	if(bUsingVerts)  glDisableClientState(GL_VERTEX_ARRAY);
 	if(bUsingColors) glDisableClientState(GL_COLOR_ARRAY);
 	if(bUsingNormals) glDisableClientState(GL_NORMAL_ARRAY);
 	if(bUsingTexCoords) glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 	//glDisableClientState(GL_EDGE_FLAG_ARRAY);
+	
 //#ifndef	TARGET_OPENGLES
 //	glPopClientAttrib();
 //	glPopAttrib();	

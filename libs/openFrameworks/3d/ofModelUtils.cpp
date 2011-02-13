@@ -66,7 +66,8 @@ void aiMatrix4x4ToOfMatrix4x4(const aiMatrix4x4& aim, ofMeshNode& ofm){
 					aim.b1,aim.b2,aim.b3,aim.b4,
 					aim.c1,aim.c2,aim.c3,aim.c4,
 					aim.d1,aim.d2,aim.d3,aim.d4 };
-	ofm.setTransformMatrix(m);
+
+	ofm.setTransformMatrix(	m);
 }
 
 //--------------------------------------------------------------
@@ -80,8 +81,8 @@ void aiNodeToOfNode(const aiNode* ain, ofMeshNode& ofn, const ofModel& model){
 
 //--------------------------------------------------------------
 int createNodes(const aiNode* curNode, ofModel& model){
+	//lets only make nodes that have meshes for now
 	if(curNode->mNumMeshes){
-		//lets only make nodes that have meshes
 		model.meshNodes.push_back(ofMeshNode());
 		aiNodeToOfNode(curNode, model.meshNodes.back(), model);
 	}
@@ -106,7 +107,7 @@ void createBones(const aiScene* scene, ofModel& model){
 }
 
 //--------------------------------------------------------------
-void ofLoadModel(string modelName, ofModel & model){
+bool ofLoadModel(string modelName, ofModel & model){
     string filepath = ofToDataPath(modelName);
 	
     ofLog(OF_LOG_VERBOSE, "loading meshes from %s", filepath.c_str());
@@ -160,6 +161,11 @@ void ofLoadModel(string modelName, ofModel & model){
 			createNodes(scene->mRootNode, model);
 			//createBones(scene,model);
 		}
+		
+		return true;
+		
+	}else{
+		return false;
 	}
 }
 
