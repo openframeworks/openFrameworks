@@ -7,37 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		54945A711306B3DA005B3A7B /* ofMaterial.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 54945A6F1306B3DA005B3A7B /* ofMaterial.cpp */; };
-		54945A721306B3DA005B3A7B /* ofMaterial.h in Headers */ = {isa = PBXBuildFile; fileRef = 54945A701306B3DA005B3A7B /* ofMaterial.h */; };
-		54945B321306C760005B3A7B /* ofMeshNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 54945B301306C760005B3A7B /* ofMeshNode.h */; };
-		54945B331306C760005B3A7B /* ofMeshNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 54945B311306C760005B3A7B /* ofMeshNode.cpp */; };
 		DA2E399D12DF6E9000EC4A5B /* glew.h in Headers */ = {isa = PBXBuildFile; fileRef = DA2E399712DF6E9000EC4A5B /* glew.h */; };
 		DA2E399E12DF6E9000EC4A5B /* glxew.h in Headers */ = {isa = PBXBuildFile; fileRef = DA2E399812DF6E9000EC4A5B /* glxew.h */; };
 		DA2E399F12DF6E9000EC4A5B /* wglew.h in Headers */ = {isa = PBXBuildFile; fileRef = DA2E399912DF6E9000EC4A5B /* wglew.h */; };
-		DA94C2F01301D32200CCC773 /* ofRendererCollection.h in Headers */ = {isa = PBXBuildFile; fileRef = DA94C2ED1301D32200CCC773 /* ofRendererCollection.h */; };
-		DA94C2F11301D32200CCC773 /* ofShapeTessellation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DA94C2EE1301D32200CCC773 /* ofShapeTessellation.cpp */; };
-		DA94C2F21301D32200CCC773 /* ofShapeTessellation.h in Headers */ = {isa = PBXBuildFile; fileRef = DA94C2EF1301D32200CCC773 /* ofShapeTessellation.h */; };
-		DA97FD3C12F5A61A005C9991 /* ofCairoRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DA97FD3612F5A61A005C9991 /* ofCairoRenderer.cpp */; };
-		DA97FD3D12F5A61A005C9991 /* ofCairoRenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = DA97FD3712F5A61A005C9991 /* ofCairoRenderer.h */; };
-		DA97FD3E12F5A61A005C9991 /* ofGLRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DA97FD3812F5A61A005C9991 /* ofGLRenderer.cpp */; };
-		DA97FD3F12F5A61A005C9991 /* ofGLRenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = DA97FD3912F5A61A005C9991 /* ofGLRenderer.h */; };
-		DA97FD6712F5ABD4005C9991 /* cairo-deprecated.h in Headers */ = {isa = PBXBuildFile; fileRef = DA97FD4B12F5ABD4005C9991 /* cairo-deprecated.h */; };
-		DA97FD6812F5ABD4005C9991 /* cairo-features.h in Headers */ = {isa = PBXBuildFile; fileRef = DA97FD4C12F5ABD4005C9991 /* cairo-features.h */; };
-		DA97FD6912F5ABD4005C9991 /* cairo-pdf.h in Headers */ = {isa = PBXBuildFile; fileRef = DA97FD4D12F5ABD4005C9991 /* cairo-pdf.h */; };
-		DA97FD6A12F5ABD4005C9991 /* cairo-ps.h in Headers */ = {isa = PBXBuildFile; fileRef = DA97FD4E12F5ABD4005C9991 /* cairo-ps.h */; };
-		DA97FD6B12F5ABD4005C9991 /* cairo-quartz.h in Headers */ = {isa = PBXBuildFile; fileRef = DA97FD4F12F5ABD4005C9991 /* cairo-quartz.h */; };
-		DA97FD6C12F5ABD4005C9991 /* cairo-script-interpreter.h in Headers */ = {isa = PBXBuildFile; fileRef = DA97FD5012F5ABD4005C9991 /* cairo-script-interpreter.h */; };
-		DA97FD6D12F5ABD4005C9991 /* cairo-svg.h in Headers */ = {isa = PBXBuildFile; fileRef = DA97FD5112F5ABD4005C9991 /* cairo-svg.h */; };
-		DA97FD6E12F5ABD4005C9991 /* cairo-version.h in Headers */ = {isa = PBXBuildFile; fileRef = DA97FD5212F5ABD4005C9991 /* cairo-version.h */; };
-		DA97FD6F12F5ABD4005C9991 /* cairo.h in Headers */ = {isa = PBXBuildFile; fileRef = DA97FD5312F5ABD4005C9991 /* cairo.h */; };
-		DA97FD7012F5ABD4005C9991 /* png.h in Headers */ = {isa = PBXBuildFile; fileRef = DA97FD5512F5ABD4005C9991 /* png.h */; };
-		DA97FD7112F5ABD4005C9991 /* pngconf.h in Headers */ = {isa = PBXBuildFile; fileRef = DA97FD5612F5ABD4005C9991 /* pngconf.h */; };
-		DA97FD7212F5ABD4005C9991 /* pnglibconf.h in Headers */ = {isa = PBXBuildFile; fileRef = DA97FD5712F5ABD4005C9991 /* pnglibconf.h */; };
-		DA97FD7312F5ABD4005C9991 /* pixman-version.h in Headers */ = {isa = PBXBuildFile; fileRef = DA97FD5912F5ABD4005C9991 /* pixman-version.h */; };
-		DA97FD7412F5ABD4005C9991 /* pixman.h in Headers */ = {isa = PBXBuildFile; fileRef = DA97FD5A12F5ABD4005C9991 /* pixman.h */; };
-		DA97FD7512F5ABD4005C9991 /* png.h in Headers */ = {isa = PBXBuildFile; fileRef = DA97FD5B12F5ABD4005C9991 /* png.h */; };
-		DA97FD7612F5ABD4005C9991 /* pngconf.h in Headers */ = {isa = PBXBuildFile; fileRef = DA97FD5C12F5ABD4005C9991 /* pngconf.h */; };
-		DA97FD7712F5ABD4005C9991 /* pnglibconf.h in Headers */ = {isa = PBXBuildFile; fileRef = DA97FD5D12F5ABD4005C9991 /* pnglibconf.h */; };
 		E4998A26128A39480094AC3F /* ofEvents.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4998A25128A39480094AC3F /* ofEvents.cpp */; };
 		E4B27C1810CBEB9D00536013 /* ofAppGlutWindow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4B27AAD10CBE92A00536013 /* ofAppGlutWindow.cpp */; };
 		E4B27C1910CBEB9D00536013 /* ofAppRunner.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4B27AAF10CBE92A00536013 /* ofAppRunner.cpp */; };
@@ -191,37 +163,9 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		54945A6F1306B3DA005B3A7B /* ofMaterial.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofMaterial.cpp; sourceTree = "<group>"; };
-		54945A701306B3DA005B3A7B /* ofMaterial.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofMaterial.h; sourceTree = "<group>"; };
-		54945B301306C760005B3A7B /* ofMeshNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofMeshNode.h; sourceTree = "<group>"; };
-		54945B311306C760005B3A7B /* ofMeshNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofMeshNode.cpp; sourceTree = "<group>"; };
 		DA2E399712DF6E9000EC4A5B /* glew.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = glew.h; sourceTree = "<group>"; };
 		DA2E399812DF6E9000EC4A5B /* glxew.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = glxew.h; sourceTree = "<group>"; };
 		DA2E399912DF6E9000EC4A5B /* wglew.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = wglew.h; sourceTree = "<group>"; };
-		DA94C2ED1301D32200CCC773 /* ofRendererCollection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofRendererCollection.h; sourceTree = "<group>"; };
-		DA94C2EE1301D32200CCC773 /* ofShapeTessellation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofShapeTessellation.cpp; sourceTree = "<group>"; };
-		DA94C2EF1301D32200CCC773 /* ofShapeTessellation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofShapeTessellation.h; sourceTree = "<group>"; };
-		DA97FD3612F5A61A005C9991 /* ofCairoRenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofCairoRenderer.cpp; sourceTree = "<group>"; };
-		DA97FD3712F5A61A005C9991 /* ofCairoRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofCairoRenderer.h; sourceTree = "<group>"; };
-		DA97FD3812F5A61A005C9991 /* ofGLRenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofGLRenderer.cpp; sourceTree = "<group>"; };
-		DA97FD3912F5A61A005C9991 /* ofGLRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofGLRenderer.h; sourceTree = "<group>"; };
-		DA97FD4B12F5ABD4005C9991 /* cairo-deprecated.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "cairo-deprecated.h"; sourceTree = "<group>"; };
-		DA97FD4C12F5ABD4005C9991 /* cairo-features.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "cairo-features.h"; sourceTree = "<group>"; };
-		DA97FD4D12F5ABD4005C9991 /* cairo-pdf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "cairo-pdf.h"; sourceTree = "<group>"; };
-		DA97FD4E12F5ABD4005C9991 /* cairo-ps.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "cairo-ps.h"; sourceTree = "<group>"; };
-		DA97FD4F12F5ABD4005C9991 /* cairo-quartz.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "cairo-quartz.h"; sourceTree = "<group>"; };
-		DA97FD5012F5ABD4005C9991 /* cairo-script-interpreter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "cairo-script-interpreter.h"; sourceTree = "<group>"; };
-		DA97FD5112F5ABD4005C9991 /* cairo-svg.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "cairo-svg.h"; sourceTree = "<group>"; };
-		DA97FD5212F5ABD4005C9991 /* cairo-version.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "cairo-version.h"; sourceTree = "<group>"; };
-		DA97FD5312F5ABD4005C9991 /* cairo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cairo.h; sourceTree = "<group>"; };
-		DA97FD5512F5ABD4005C9991 /* png.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = png.h; sourceTree = "<group>"; };
-		DA97FD5612F5ABD4005C9991 /* pngconf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pngconf.h; sourceTree = "<group>"; };
-		DA97FD5712F5ABD4005C9991 /* pnglibconf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pnglibconf.h; sourceTree = "<group>"; };
-		DA97FD5912F5ABD4005C9991 /* pixman-version.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "pixman-version.h"; sourceTree = "<group>"; };
-		DA97FD5A12F5ABD4005C9991 /* pixman.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pixman.h; sourceTree = "<group>"; };
-		DA97FD5B12F5ABD4005C9991 /* png.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = png.h; sourceTree = "<group>"; };
-		DA97FD5C12F5ABD4005C9991 /* pngconf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pngconf.h; sourceTree = "<group>"; };
-		DA97FD5D12F5ABD4005C9991 /* pnglibconf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pnglibconf.h; sourceTree = "<group>"; };
 		E45BE9710E8CC7DD009D7055 /* AGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AGL.framework; path = /System/Library/Frameworks/AGL.framework; sourceTree = "<absolute>"; };
 		E45BE9720E8CC7DD009D7055 /* ApplicationServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ApplicationServices.framework; path = /System/Library/Frameworks/ApplicationServices.framework; sourceTree = "<absolute>"; };
 		E45BE9730E8CC7DD009D7055 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = /System/Library/Frameworks/AudioToolbox.framework; sourceTree = "<absolute>"; };
@@ -263,7 +207,7 @@
 		E4B27B1210CBE9B900536013 /* FreeImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FreeImage.h; path = ../../../FreeImage/include/FreeImage.h; sourceTree = SOURCE_ROOT; };
 		E4B27BCE10CBE9B900536013 /* RtAudio.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RtAudio.h; path = ../../../rtAudio/include/RtAudio.h; sourceTree = SOURCE_ROOT; };
 		E4B27BCF10CBE9B900536013 /* RtError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RtError.h; path = ../../../rtAudio/include/RtError.h; sourceTree = SOURCE_ROOT; };
-		E4B27C1510CBEB8E00536013 /* openFrameworks.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = openFrameworks.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		E4B27C1510CBEB8E00536013 /* openFrameworksDebug.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = openFrameworksDebug.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		E4B5AE1412D94F9B00BA355D /* ofQtUtils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofQtUtils.cpp; path = ../../../openFrameworks/video/ofQtUtils.cpp; sourceTree = SOURCE_ROOT; };
 		E4B5AE1512D94F9B00BA355D /* ofQtUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofQtUtils.h; path = ../../../openFrameworks/video/ofQtUtils.h; sourceTree = SOURCE_ROOT; };
 		E4B5AE1612D94F9B00BA355D /* ofQuickTimeGrabber.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofQuickTimeGrabber.cpp; path = ../../../openFrameworks/video/ofQuickTimeGrabber.cpp; sourceTree = SOURCE_ROOT; };
@@ -451,63 +395,6 @@
 			path = GL;
 			sourceTree = "<group>";
 		};
-		DA97FD4812F5ABD4005C9991 /* cairo */ = {
-			isa = PBXGroup;
-			children = (
-				DA97FD4912F5ABD4005C9991 /* include */,
-			);
-			name = cairo;
-			path = ../../../cairo;
-			sourceTree = SOURCE_ROOT;
-		};
-		DA97FD4912F5ABD4005C9991 /* include */ = {
-			isa = PBXGroup;
-			children = (
-				DA97FD4A12F5ABD4005C9991 /* cairo */,
-				DA97FD5412F5ABD4005C9991 /* libpng15 */,
-				DA97FD5812F5ABD4005C9991 /* pixman-1 */,
-				DA97FD5B12F5ABD4005C9991 /* png.h */,
-				DA97FD5C12F5ABD4005C9991 /* pngconf.h */,
-				DA97FD5D12F5ABD4005C9991 /* pnglibconf.h */,
-			);
-			path = include;
-			sourceTree = "<group>";
-		};
-		DA97FD4A12F5ABD4005C9991 /* cairo */ = {
-			isa = PBXGroup;
-			children = (
-				DA97FD4B12F5ABD4005C9991 /* cairo-deprecated.h */,
-				DA97FD4C12F5ABD4005C9991 /* cairo-features.h */,
-				DA97FD4D12F5ABD4005C9991 /* cairo-pdf.h */,
-				DA97FD4E12F5ABD4005C9991 /* cairo-ps.h */,
-				DA97FD4F12F5ABD4005C9991 /* cairo-quartz.h */,
-				DA97FD5012F5ABD4005C9991 /* cairo-script-interpreter.h */,
-				DA97FD5112F5ABD4005C9991 /* cairo-svg.h */,
-				DA97FD5212F5ABD4005C9991 /* cairo-version.h */,
-				DA97FD5312F5ABD4005C9991 /* cairo.h */,
-			);
-			path = cairo;
-			sourceTree = "<group>";
-		};
-		DA97FD5412F5ABD4005C9991 /* libpng15 */ = {
-			isa = PBXGroup;
-			children = (
-				DA97FD5512F5ABD4005C9991 /* png.h */,
-				DA97FD5612F5ABD4005C9991 /* pngconf.h */,
-				DA97FD5712F5ABD4005C9991 /* pnglibconf.h */,
-			);
-			path = libpng15;
-			sourceTree = "<group>";
-		};
-		DA97FD5812F5ABD4005C9991 /* pixman-1 */ = {
-			isa = PBXGroup;
-			children = (
-				DA97FD5912F5ABD4005C9991 /* pixman-version.h */,
-				DA97FD5A12F5ABD4005C9991 /* pixman.h */,
-			);
-			path = "pixman-1";
-			sourceTree = "<group>";
-		};
 		E45BE0360E8CC5DE009D7055 /* libs */ = {
 			isa = PBXGroup;
 			children = (
@@ -519,7 +406,6 @@
 		E45BE0480E8CC657009D7055 /* core libraries */ = {
 			isa = PBXGroup;
 			children = (
-				DA97FD4812F5ABD4005C9991 /* cairo */,
 				E4F3BD2A12F4F8B0002D19BB /* assimp */,
 				DA2E399412DF6E9000EC4A5B /* glew */,
 				E4B27AF110CBE9B900536013 /* fmodex */,
@@ -698,15 +584,13 @@
 			children = (
 				E4B27AAA10CBE92A00536013 /* openFrameworks */,
 				E45BE0360E8CC5DE009D7055 /* libs */,
-				E4B27C1510CBEB8E00536013 /* openFrameworks.a */,
+				E4B27C1510CBEB8E00536013 /* openFrameworksDebug.a */,
 			);
 			sourceTree = "<group>";
 		};
 		E4F3BA5212F4C4BF002D19BB /* 3d */ = {
 			isa = PBXGroup;
 			children = (
-				54945A6F1306B3DA005B3A7B /* ofMaterial.cpp */,
-				54945A701306B3DA005B3A7B /* ofMaterial.h */,
 				E4F3BA5312F4C4BF002D19BB /* of3dUtils.cpp */,
 				E4F3BA5412F4C4BF002D19BB /* of3dUtils.h */,
 				E4F3BA5512F4C4BF002D19BB /* ofCamera.cpp */,
@@ -729,8 +613,6 @@
 				E4F3BA6412F4C4BF002D19BB /* ofVbo.h */,
 				E4F3BA6512F4C4BF002D19BB /* ofVertexData.cpp */,
 				E4F3BA6612F4C4BF002D19BB /* ofVertexData.h */,
-				54945B301306C760005B3A7B /* ofMeshNode.h */,
-				54945B311306C760005B3A7B /* ofMeshNode.cpp */,
 			);
 			name = 3d;
 			path = ../../../openFrameworks/3d;
@@ -820,13 +702,6 @@
 		E4F3BAFF12F4C751002D19BB /* graphics */ = {
 			isa = PBXGroup;
 			children = (
-				DA94C2ED1301D32200CCC773 /* ofRendererCollection.h */,
-				DA94C2EE1301D32200CCC773 /* ofShapeTessellation.cpp */,
-				DA94C2EF1301D32200CCC773 /* ofShapeTessellation.h */,
-				DA97FD3612F5A61A005C9991 /* ofCairoRenderer.cpp */,
-				DA97FD3712F5A61A005C9991 /* ofCairoRenderer.h */,
-				DA97FD3812F5A61A005C9991 /* ofGLRenderer.cpp */,
-				DA97FD3912F5A61A005C9991 /* ofGLRenderer.h */,
 				E4F3BB0012F4C751002D19BB /* ofBitmapFont.cpp */,
 				E4F3BB0112F4C751002D19BB /* ofBitmapFont.h */,
 				E4F3BB0212F4C751002D19BB /* ofFbo.cpp */,
@@ -1012,27 +887,6 @@
 				E4F3BD7012F4F8B0002D19BB /* LogStream.h in Headers */,
 				E4F3BD7112F4F8B0002D19BB /* NullLogger.h in Headers */,
 				E4F3BD7212F4F8B0002D19BB /* ProgressHandler.h in Headers */,
-				DA97FD3D12F5A61A005C9991 /* ofCairoRenderer.h in Headers */,
-				DA97FD3F12F5A61A005C9991 /* ofGLRenderer.h in Headers */,
-				DA97FD6712F5ABD4005C9991 /* cairo-deprecated.h in Headers */,
-				DA97FD6812F5ABD4005C9991 /* cairo-features.h in Headers */,
-				DA97FD6912F5ABD4005C9991 /* cairo-pdf.h in Headers */,
-				DA97FD6A12F5ABD4005C9991 /* cairo-ps.h in Headers */,
-				DA97FD6B12F5ABD4005C9991 /* cairo-quartz.h in Headers */,
-				DA97FD6C12F5ABD4005C9991 /* cairo-script-interpreter.h in Headers */,
-				DA97FD6D12F5ABD4005C9991 /* cairo-svg.h in Headers */,
-				DA97FD6E12F5ABD4005C9991 /* cairo-version.h in Headers */,
-				DA97FD6F12F5ABD4005C9991 /* cairo.h in Headers */,
-				DA97FD7012F5ABD4005C9991 /* png.h in Headers */,
-				DA97FD7112F5ABD4005C9991 /* pngconf.h in Headers */,
-				DA97FD7212F5ABD4005C9991 /* pnglibconf.h in Headers */,
-				DA97FD7312F5ABD4005C9991 /* pixman-version.h in Headers */,
-				DA97FD7412F5ABD4005C9991 /* pixman.h in Headers */,
-				DA97FD7512F5ABD4005C9991 /* png.h in Headers */,
-				DA97FD7612F5ABD4005C9991 /* pngconf.h in Headers */,
-				DA97FD7712F5ABD4005C9991 /* pnglibconf.h in Headers */,
-				DA94C2F01301D32200CCC773 /* ofRendererCollection.h in Headers */,
-				DA94C2F21301D32200CCC773 /* ofShapeTessellation.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1053,7 +907,7 @@
 			);
 			name = openFrameworks;
 			productName = openFrameworksLib;
-			productReference = E4B27C1510CBEB8E00536013 /* openFrameworks.a */;
+			productReference = E4B27C1510CBEB8E00536013 /* openFrameworksDebug.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 /* End PBXNativeTarget section */
@@ -1063,6 +917,7 @@
 			isa = PBXProject;
 			buildConfigurationList = E4B69B4D0A3A1720003C02F2 /* Build configuration list for PBXProject "openFrameworksLib" */;
 			compatibilityVersion = "Xcode 2.4";
+			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				English,
@@ -1141,14 +996,6 @@
 				E4F3BB2E12F4C752002D19BB /* ofTrueTypeFont.cpp in Sources */,
 				E4F3BD2412F4F7BF002D19BB /* ofModel.cpp in Sources */,
 				E4F3BD2612F4F7BF002D19BB /* ofModelUtils.cpp in Sources */,
-<<<<<<< HEAD
-				54945A711306B3DA005B3A7B /* ofMaterial.cpp in Sources */,
-				54945B331306C760005B3A7B /* ofMeshNode.cpp in Sources */,
-=======
-				DA97FD3C12F5A61A005C9991 /* ofCairoRenderer.cpp in Sources */,
-				DA97FD3E12F5A61A005C9991 /* ofGLRenderer.cpp in Sources */,
-				DA94C2F11301D32200CCC773 /* ofShapeTessellation.cpp in Sources */,
->>>>>>> 2849eae0353de9c2e24ca2a18b809407cad71df7
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1167,14 +1014,10 @@
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_2)",
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_3)",
-					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_4)",
-					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_5)",
 				);
 				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)/../../../glew/libs/osx\"";
 				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_2 = "\"$(SRCROOT)/../../../../addons/ofxAssimpModelLoader/libs/assimp/lib/osx\"";
 				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_3 = "\"$(SRCROOT)/../../../assimp/lib/osx\"";
-				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_4 = "\"$(SRCROOT)/../../../cairo/lib/osx/cairo\"";
-				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_5 = "\"$(SRCROOT)/../../../cairo/lib/osx\"";
 				PREBINDING = NO;
 				PRODUCT_NAME = openFrameworksDebug;
 				SDKROOT = "";
@@ -1195,14 +1038,10 @@
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_2)",
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_3)",
-					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_4)",
-					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_5)",
 				);
 				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)/../../../glew/libs/osx\"";
 				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_2 = "\"$(SRCROOT)/../../../../addons/ofxAssimpModelLoader/libs/assimp/lib/osx\"";
 				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_3 = "\"$(SRCROOT)/../../../assimp/lib/osx\"";
-				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_4 = "\"$(SRCROOT)/../../../cairo/lib/osx/cairo\"";
-				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_5 = "\"$(SRCROOT)/../../../cairo/lib/osx\"";
 				PREBINDING = NO;
 				PRODUCT_NAME = openFrameworks;
 				SDKROOT = "";
