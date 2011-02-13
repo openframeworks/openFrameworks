@@ -2,4 +2,4 @@
 
 #include "ofModel.h"
 
-void ofLoadModel(string modelName, ofModel & model);
+bool ofLoadModel(string modelName, ofModel & model);

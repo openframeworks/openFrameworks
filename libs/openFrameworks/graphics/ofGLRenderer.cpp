@@ -12,7 +12,10 @@ ofGLRenderer::ofGLRenderer(bool useShapeColor){
 }
 
 void ofGLRenderer::draw(ofPrimitive & vertexData){
-	glVertexPointer(3, GL_FLOAT, sizeof(ofVec3f), vertexData.getVerticesPointer());
+	if(vertexData.getNumVertices()){
+		glEnableClientState(GL_VERTEX_ARRAY);
+		glVertexPointer(3, GL_FLOAT, sizeof(ofVec3f), vertexData.getVerticesPointer());
+	}
 	if(vertexData.getNumNormals()){
 		glEnableClientState(GL_NORMAL_ARRAY);
 		glNormalPointer(GL_FLOAT, 0, vertexData.getNormalsPointer());
