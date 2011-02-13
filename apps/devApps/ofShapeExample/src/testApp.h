@@ -3,7 +3,7 @@
 
 
 #include "ofMain.h"
-#include "ofShape.h"
+#include "ofPath.h"
 
 typedef struct {
 	

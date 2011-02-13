@@ -1,7 +1,6 @@
 #ifndef _OF_IPHONE_VIDEO_PLAYER
 #define _OF_IPHONE_VIDEO_PLAYER
 
-#include "ofMain.h"
 
 class ofiPhoneVideoPlayer : public ofBaseVideoPlayer {
 	
@@ -19,6 +18,7 @@ public:
 	
 	bool isFrameNew();
 	unsigned char * getPixels();
+	ofPixelsRef		getPixelsRef();
 	ofTexture * getTexture();
 	
 	float getWidth();

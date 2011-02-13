@@ -71,6 +71,7 @@ class AVFoundationVideoGrabber{
 		void listDevices();
 		void setDevice(int deviceID);
 		void setPixelFormat(ofPixelFormat PixelFormat);
+		ofPixelFormat getPixelFormat();
 	
 		unsigned char * getPixels(){
 			return pixels;

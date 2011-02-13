@@ -1,6 +1,6 @@
 
 #include "ofNode.h"
-#include "ofMain.h"
+#include "ofMath.h"
 
 
 ofNode::ofNode() : 

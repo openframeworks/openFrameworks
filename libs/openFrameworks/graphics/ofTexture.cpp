@@ -71,7 +71,6 @@ void ofTexture::allocate(int w, int h, int internalGlDataType){
 
 //----------------------------------------------------------
 void ofTexture::allocate(int w, int h, int internalGlDataType, bool bUseARBExtention){
-
 	//our graphics card might not support arb so we have to see if it is supported.
 	#ifndef TARGET_OPENGLES
 		if (bUseARBExtention && GL_ARB_texture_rectangle){
@@ -92,11 +91,14 @@ void ofTexture::allocate(int w, int h, int internalGlDataType, bool bUseARBExten
 		texData.textureTarget = GL_TEXTURE_2D;
 	}
 
+#ifdef TARGET_ANDROID
+	texData.glTypeInternal = internalGlDataType==GL_RGB565_OES?GL_RGB:internalGlDataType;
+#else
 	texData.glTypeInternal = internalGlDataType;
-
+#endif
 	
 	// MEMO: todo, add more types
-	switch(texData.glTypeInternal) {
+	switch(internalGlDataType) {
 #ifndef TARGET_OPENGLES	
 		case GL_RGBA32F_ARB:
 		case GL_RGBA16F_ARB:
@@ -113,8 +115,12 @@ void ofTexture::allocate(int w, int h, int internalGlDataType, bool bUseARBExten
 			texData.glType		= GL_LUMINANCE;
 			texData.pixelType	= GL_FLOAT;
 			break;
-#endif			
-			
+#elif defined(TARGET_ANDROID)
+		case GL_RGB565_OES:
+			texData.glType		= GL_RGB;
+			texData.pixelType	= GL_UNSIGNED_SHORT_5_6_5;
+			break;
+#endif
 		default:
 			texData.glType		= GL_LUMINANCE;
 			texData.pixelType	= GL_UNSIGNED_BYTE;
@@ -135,7 +141,7 @@ void ofTexture::allocate(int w, int h, int internalGlDataType, bool bUseARBExten
 //		glTexImage2D(texData.textureTarget, 0, texData.glTypeInternal, (GLint)texData.tex_w, (GLint)texData.tex_h, 0, GL_LUMINANCE, PIXEL_TYPE, 0);  // init to black...
 		glTexImage2D(texData.textureTarget, 0, texData.glTypeInternal, (GLint)texData.tex_w, (GLint)texData.tex_h, 0, texData.glType, texData.pixelType, 0);  // init to black...
 	#else
-		glTexImage2D(texData.textureTarget, 0, texData.glTypeInternal, texData.tex_w, texData.tex_h, 0, texData.glTypeInternal, GL_UNSIGNED_BYTE, 0);
+		glTexImage2D(texData.textureTarget, 0, texData.glTypeInternal, texData.tex_w, texData.tex_h, 0, texData.glTypeInternal, texData.pixelType, 0);
 	#endif
 
 	
@@ -197,7 +203,7 @@ void ofTexture::loadData(void * data, int w, int h, int glDataType){
 	texData.glType  = glDataType;
 
 	//compute new tex co-ords based on the ratio of data's w, h to texture w,h;
-	#ifndef TARGET_OPENGLES	
+	#ifndef TARGET_OPENGLES
 		if (texData.textureTarget == GL_TEXTURE_RECTANGLE_ARB){
 			texData.tex_t = w;
 			texData.tex_u = h;
@@ -250,7 +256,7 @@ void ofTexture::loadData(void * data, int w, int h, int glDataType){
 	else
 	{
 		//SOSOLIMITED: setup mipmaps and use compression
-
+		//TODO: activate at least mimaps for OPENGL_ES
 		//need proper tex_u and tex_t positions, with mipmaps they are the nearest power of 2
 #ifndef TARGET_OPENGLES		
 		if (texData.textureTarget == GL_TEXTURE_RECTANGLE_ARB){
@@ -320,7 +326,6 @@ void ofTexture::loadData(void * data, int w, int h, int glDataType){
 		glDisable(texData.textureTarget);
 
 	}
-
 	//------------------------ back to normal.
 	glPixelStorei(GL_UNPACK_ALIGNMENT, prevAlignment);
 

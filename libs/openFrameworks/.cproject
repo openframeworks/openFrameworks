@@ -3,14 +3,15 @@
 
 <cproject storage_type_id="org.eclipse.cdt.core.XmlProjectDescriptionStorage2">
 	<storageModule moduleId="org.eclipse.cdt.core.settings">
-		<cconfiguration id="cdt.managedbuild.toolchain.gnu.base.1421347826">
-			<storageModule externalCElementFile="cdt.managedbuild.toolchain.gnu.base.1421347826_org.eclipse.cdt.core.settings" id="cdt.managedbuild.toolchain.gnu.base.1421347826" name="Default"/>
-			<storageModule externalCElementFile="cdt.managedbuild.toolchain.gnu.base.1421347826_cdtBuildSystem" version="4.0.0"/>
-			<storageModule externalCElementFile="cdt.managedbuild.toolchain.gnu.base.1421347826_scannerConfiguration"/>
-			<storageModule externalCElementFile="cdt.managedbuild.toolchain.gnu.base.1421347826_org.eclipse.cdt.core.externalSettings"/>
+		<cconfiguration id="0.279255448">
+			<storageModule externalCElementFile="0.279255448_org.eclipse.cdt.core.settings" id="0.279255448" name="Android"/>
+			<storageModule externalCElementFile="0.279255448_cdtBuildSystem" version="4.0.0"/>
+			<storageModule externalCElementFile="0.279255448_scannerConfiguration"/>
+			<storageModule externalCElementFile="0.279255448_org.eclipse.cdt.core.externalSettings"/>
+			<storageModule externalCElementFile="0.279255448_org.eclipse.cdt.core.language.mapping"/>
 		</cconfiguration>
 	</storageModule>
 	<storageModule moduleId="cdtBuildSystem" version="4.0.0">
-		<project id="openFrameworks.null.353603744" name="openFrameworks"/>
+		<project id="openFrameworks.null.1661080247" name="openFrameworks"/>
 	</storageModule>
 </cproject>

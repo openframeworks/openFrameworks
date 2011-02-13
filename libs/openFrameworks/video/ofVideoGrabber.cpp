@@ -6,21 +6,31 @@
 //TODO: getBytesPerPixel()
 //TODO: add ofPixels support which would take care of the above
 
+#ifdef TARGET_ANDROID
+	extern bool ofxAndroidInitGrabber(ofVideoGrabber * grabber);
+	extern bool ofxAndroidCloseGrabber(ofVideoGrabber * grabber);
+#endif
+
 //--------------------------------------------------------------------
 ofVideoGrabber::ofVideoGrabber(){
+
 	grabber				= NULL;
 	bUseTexture			= false;
 	bInitialized		= false;
 	RequestedDeviceID	= -1;
 	internalPixelFormat = OF_PIXELS_RGB;
-	
-	if( grabber == NULL ){
-		setGrabber( new OF_VID_GRABBER_TYPE );
-	}
+
+#ifdef TARGET_ANDROID
+	if(!ofxAndroidInitGrabber(this)) return;
+#endif
+
 }
 
 //--------------------------------------------------------------------
 ofVideoGrabber::~ofVideoGrabber(){
+#ifdef TARGET_ANDROID
+	ofxAndroidCloseGrabber(this);
+#endif
 	close();
 
 	if(	grabber != NULL ){
@@ -50,6 +60,11 @@ ofBaseVideoGrabber * ofVideoGrabber::getGrabber(){
 
 //--------------------------------------------------------------------
 bool ofVideoGrabber::initGrabber(int w, int h, bool setUseTexture){
+
+	if( grabber == NULL ){
+		setGrabber( new OF_VID_GRABBER_TYPE );
+	}
+
 	bInitialized = true;
 	bUseTexture = setUseTexture;
 
@@ -70,6 +85,12 @@ bool ofVideoGrabber::initGrabber(int w, int h, bool setUseTexture){
 			tex.allocate(width, height, GL_RGBA);
 		else if(internalPixelFormat == OF_PIXELS_BGRA)
 			tex.allocate(width, height, GL_RGBA); // for some reason if we allcoate as GL_BGRA we get a white texture
+#ifdef TARGET_ANDROID
+		else if(internalPixelFormat == OF_PIXELS_RGB565)
+			tex.allocate(width, height, GL_RGB565_OES); // for some reason if we allcoate as GL_BGRA we get a white texture
+		else if(internalPixelFormat == OF_PIXELS_MONO)
+			tex.allocate(width, height, GL_LUMINANCE); // for some reason if we allcoate as GL_BGRA we get a white texture
+#endif
 	}
 	
 	return bOk;	
@@ -78,6 +99,10 @@ bool ofVideoGrabber::initGrabber(int w, int h, bool setUseTexture){
 //--------------------------------------------------------------------
 void ofVideoGrabber::setPixelFormat(ofPixelFormat pixelFormat) {
 	internalPixelFormat = pixelFormat;
+}
+
+ofPixelFormat ofVideoGrabber::getPixelFormat(){
+	return grabber->getPixelFormat();
 }
 
 //--------------------------------------------------------------------
@@ -117,6 +142,11 @@ unsigned char * ofVideoGrabber::getPixels(){
 	return NULL;
 }
 
+//---------------------------------------------------------------------------
+ofPixelsRef ofVideoGrabber::getPixelsRef(){
+	return grabber->getPixelsRef();
+}
+
 //------------------------------------
 //for getting a reference to the texture
 ofTexture & ofVideoGrabber::getTextureReference(){
@@ -141,8 +171,13 @@ void ofVideoGrabber::update(){
 				tex.loadData(grabber->getPixels(), tex.getWidth(), tex.getHeight(), GL_RGB);
 			else if(internalPixelFormat == OF_PIXELS_RGBA)
 				tex.loadData(grabber->getPixels(), tex.getWidth(), tex.getHeight(), GL_RGBA);
+#ifndef TARGET_ANDROID
 			else if(internalPixelFormat == OF_PIXELS_BGRA)
 				tex.loadData(grabber->getPixels(), tex.getWidth(), tex.getHeight(), GL_BGRA);
+#else
+			else if(internalPixelFormat == OF_PIXELS_MONO)
+				tex.loadData(grabber->getPixels(), tex.getWidth(), tex.getHeight(), GL_LUMINANCE);
+#endif
 			
 		}
 	}
