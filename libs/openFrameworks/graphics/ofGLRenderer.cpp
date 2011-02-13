@@ -1,17 +1,17 @@
 #include "ofGLRenderer.h"
 #include "ofShapeTessellation.h"
-#include "ofVertexData.h"
+#include "ofPrimitive.h"
 #include "ofShape.h"
 #include "ofGraphics.h"
 #include "ofAppRunner.h"
-#include "ofVertexData.h"
+#include "ofPrimitive.h"
 
 ofGLRenderer::ofGLRenderer(bool useShapeColor){
 	bBackgroundAuto = true;
 	bUseShapeColor = useShapeColor;
 }
 
-void ofGLRenderer::draw(ofVertexData & vertexData){
+void ofGLRenderer::draw(ofPrimitive & vertexData){
 	glVertexPointer(3, GL_FLOAT, sizeof(ofVec3f), vertexData.getVerticesPointer());
 	if(vertexData.getNumNormals()){
 		glEnableClientState(GL_NORMAL_ARRAY);
@@ -49,7 +49,7 @@ void ofGLRenderer::draw(ofPolyline & poly){
 
 void ofGLRenderer::draw(ofShapeTessellation & shape){
 	if(shape.isFilled()){
-		vector<ofVertexData> & mesh = shape.getTessellation();
+		vector<ofPrimitive> & mesh = shape.getTessellation();
 		if(bUseShapeColor){
 			ofPushStyle();
 			setColor( shape.getFillColor() * ofGetStyle().color,shape.getFillColor().a/255. * ofGetStyle().color.a);

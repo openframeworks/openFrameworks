@@ -18,7 +18,7 @@ class ofShapeTessellation;
 class ofPixels;
 class ofShape;
 class ofPolyline;
-class ofVertexData;
+class ofPrimitive;
 typedef ofPixels& ofPixelsRef;
 
 
@@ -201,7 +201,7 @@ public:
 	virtual void draw(ofPolyline & poly)=0;
 	virtual void draw(ofShapeTessellation & shape)=0;
 	virtual void draw(ofShape & shape)=0;
-	virtual void draw(ofVertexData & vertexData)=0;
+	virtual void draw(ofPrimitive & vertexData)=0;
 
 	virtual void useShapeColor(bool bUseShapeColor)=0;
 

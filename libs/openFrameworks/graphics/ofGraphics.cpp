@@ -66,7 +66,7 @@ void 			setupCircle();
 
 static ofShape path;
 static ofShapeTessellation shape;
-static ofVertexData vertexData;
+static ofPrimitive vertexData;
 static ofBaseRenderer * renderer = new ofGLRenderer(false);
 
 void ofSetDefaultRenderer(ofBaseRenderer * renderer_){

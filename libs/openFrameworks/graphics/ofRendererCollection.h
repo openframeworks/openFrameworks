@@ -22,7 +22,7 @@ public:
 			 renderers[i]->draw(shape);
 		 }
 	 }
-	 void draw(ofVertexData & vertexData){
+	 void draw(ofPrimitive & vertexData){
 		 for(int i=0;i<(int)renderers.size();i++){
 			 renderers[i]->draw(vertexData);
 		 }
