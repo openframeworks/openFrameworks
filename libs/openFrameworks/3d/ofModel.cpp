@@ -67,7 +67,6 @@ void ofModel::drawFaces(){
 		if(goodToTexture){
 			bindTextureForMesh(i);
 		}
-		
 		meshes.at(i).setRenderMethod(renderMethod);
 		
 		meshes.at(i).drawFaces();
@@ -96,6 +95,31 @@ void ofModel::drawVertices(){
 		}
 	}
 }
+
+
+ofMesh* ofModel::getMesh(unsigned int nIndex) {
+	if(nIndex < meshes.size()) {
+		return &meshes.at(nIndex);
+	}
+	return NULL;
+}
+
+ofMesh* ofModel::getMesh(string sName) {
+	ofNamedMeshes::iterator it = named_meshes.find(sName);
+	if(it != named_meshes.end()) {
+		return it->second;
+	}
+	return NULL; 
+}
+
+void ofModel::listMeshNames() {
+	ofNamedMeshes::iterator it = named_meshes.begin();
+	while(it != named_meshes.end()) {
+		cout << "Mesh: '" << it->first << "'" << std::endl;
+		++it;
+	}
+}
+
 
 //--------------------------------------------------------------
 
