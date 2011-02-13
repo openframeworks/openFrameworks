@@ -13,11 +13,7 @@
  * @link	assim material
  *			http://assimp.sourceforge.net/lib_html/ai_material_8h.html#7dd415ff703a2cc53d1c22ddbbd7dde0
  */
- /*
-#define OF_DUMMY_MAP (0)
-#define OF_DIFFUSE_MAP (1 << 0)
-#define OF_SPECUAR
-*/
+
 enum ofTextureMapType {
 	OF_UNKOWN_MAP			= 0
 	,OF_DIFFUSE_MAP			= (1 << 0)
