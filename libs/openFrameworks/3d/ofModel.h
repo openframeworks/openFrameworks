@@ -1,5 +1,5 @@
 //TODO: should textures be ofTexture or ofImage (dynamically drawing to model texture?)
-
+//TODO: de-pointerize the meshes if we decide we don't want to do advanced mesh classes
 #pragma once
 
 #include "ofMesh.h"
@@ -7,6 +7,7 @@
 #include "ofImage.h"
 #include "ofConstants.h"
 #include "ofMeshRenderer.h"
+#include "ofMeshNode.h"
 #include <map>
 
 class ofModel{
@@ -26,7 +27,8 @@ public:
 	void disableColors();
 	
 	void setRenderMethod(meshRenderMethod m);
-	
+
+	vector<ofMeshNode> meshNodes;
 	vector<ofMesh*> meshes;
 	vector<ofMeshRenderer> renderers;
 	vector<ofImage> textures;
