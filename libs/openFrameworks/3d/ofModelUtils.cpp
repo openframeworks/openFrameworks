@@ -35,7 +35,7 @@ void aiMeshToOfVertexData(const aiMesh* aim, ofVertexData& ofm){
 	// just one for now
 	if(aim->GetNumUVChannels()>0){
 		for (int i=0; i < (int)aim->mNumVertices;i++){
-			ofm.addTexCoord(ofVec2f(aim->mTextureCoords[0][i].x,aim->mTextureCoords[0][i].y));
+			ofm.addTexCoord(ofVec2f(aim->mTextureCoords[0][i].x ,aim->mTextureCoords[0][i].y));
 		}
 	}
 	
@@ -61,7 +61,7 @@ void aiMeshToOfVertexData(const aiMesh* aim, ofVertexData& ofm){
 }
 
 //--------------------------------------------------------------
-void ofLoadModel(string modelName, ofModel & model){
+bool ofLoadModel(string modelName, ofModel & model){
     string filepath = ofToDataPath(modelName);
 	
     ofLog(OF_LOG_VERBOSE, "loading meshes from %s", filepath.c_str());
@@ -73,7 +73,10 @@ void ofLoadModel(string modelName, ofModel & model){
     
     // aiProcess_FlipUVs is for VAR code. Not needed otherwise. Not sure why.
     aiScene * scene = (aiScene*) aiImportFile(filepath.c_str(), aiProcessPreset_TargetRealtime_MaxQuality | aiProcess_OptimizeGraph | aiProcess_Triangulate | aiProcess_FlipUVs | 0 );	
-    if(scene != NULL){        
+	if(scene == NULL) {
+		return false;
+	}
+	else {
         ofLog(OF_LOG_VERBOSE, "initted scene with %i meshes", scene->mNumMeshes);
 		
 		model.meshes.resize(scene->mNumMeshes);
@@ -99,7 +102,6 @@ void ofLoadModel(string modelName, ofModel & model){
 			//load texture
 			aiMaterial* mtl = scene->mMaterials[aMesh->mMaterialIndex];
 			aiString texPath;
-			
 			//defaults to only get the 0-index texture for now
 			if(mtl->GetTexture(aiTextureType_DIFFUSE, 0, &texPath) == AI_SUCCESS){
 				if(texPathMap.find(texPath.data)==texPathMap.end()){
@@ -107,14 +109,29 @@ void ofLoadModel(string modelName, ofModel & model){
 					ofLog(OF_LOG_VERBOSE, "loading image from %s", texPath.data);
 					string modelFolder = ofFileUtils::getEnclosingDirectoryFromPath(filepath);
 					cout << modelFolder << " --- " << texPath.data << endl; 
-					model.textures.back().loadImage(modelFolder + texPath.data);
+
+					if(ofFileUtils::isAbsolute(texPath.data) && ofFileUtils::doesFileExist(texPath.data)) {
+						model.textures.back().loadImage(texPath.data);
+					}
+					else {
+						model.textures.back().loadImage(modelFolder + texPath.data);
+					}
+
 					model.textures.back().update();
 					texPathMap[texPath.data] = model.textures.size()-1;
 				}
 				
 				model.textureLinks[i] = texPathMap[texPath.data];
 			}
+			
+			// add named meshes: 
+			// TODO: how to handle duplicate names
+			if(aMesh->mName.length > 0) {
+				model.named_meshes.insert(ofNamedMesh(aMesh->mName.data, &curMesh));
+				model.named_vertices.insert(ofNamedVertexData(aMesh->mName.data,curMesh.vertexData));
+			}
 		}
 	}
+	return true;
 }
 #endif
