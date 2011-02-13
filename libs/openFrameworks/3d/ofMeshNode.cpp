@@ -32,8 +32,11 @@ ofMeshNode& ofMeshNode::addMaterial(ofMaterial* pMaterial) {
 
 
 void ofMeshNode::customDraw() {
+
 	if(diffuse_material != NULL && mesh != NULL) {
 		diffuse_material->begin();
 		mesh->draw(OF_MESH_FILL);
+		diffuse_material->end();
 	}
+
 }

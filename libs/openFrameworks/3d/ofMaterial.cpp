@@ -47,6 +47,7 @@ ofMaterial& ofMaterial::setShininess(float nShininess) {
 }
 
 void ofMaterial::begin() {
+	// TODO: needs some work here
 	if(enabled_maps & OF_DIFFUSE_MAP) {
 		ofTexture* diffuse_tex = getDiffuseMap();
 		if(diffuse_tex != NULL) {
@@ -56,5 +57,13 @@ void ofMaterial::begin() {
 }
 
 void ofMaterial::end() {
+	// TODO: needs some work here
+	if(enabled_maps & OF_DIFFUSE_MAP) {
+		ofTexture* diffuse_tex = getDiffuseMap();
+		if(diffuse_tex != NULL) {
+			diffuse_tex->unbind();
+		}
+	}
+
 }
 
