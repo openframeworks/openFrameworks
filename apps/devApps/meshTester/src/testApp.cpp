@@ -63,13 +63,24 @@ void testApp::draw(){
 	//glScalef(.3,.3,.3);
 	glRotatef(ofGetWidth()*.5 - mouseX,0,1,0);		
 
-	model.drawFaces();
+//	model.drawFaces();
 	ofSetColor(255,255,255,90);
 	model.drawWireframe();
+	ofSetColor(255,255,255,190);
+	glPointSize(20);
+	glDisable(GL_LIGHTING);
+//	glBegin(GL_POINTS);
+	ofFill();
+	for (int i =0; i < model.meshNodes.size();i++){
+		model.meshNodes.at(i).transformGL();
+		//why doesn't this work?
+		ofDrawAxis(0.1);
+		model.meshNodes.at(i).restoreTransformGL();
+	}
+//	glEnd();
 
     glPopMatrix();
     
-	glDisable(GL_LIGHTING);
 	ofSetColor(255, 255, 255, 255);
     ofDrawBitmapString("fps: "+ofToString(ofGetFrameRate(), 2), 10, 15,0);
 }

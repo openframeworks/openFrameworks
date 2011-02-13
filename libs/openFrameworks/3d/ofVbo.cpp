@@ -376,9 +376,10 @@ GLuint ofVbo::getIndexId(){
 
 //--------------------------------------------------------------
 void ofVbo::bind(){
-	
-	//glPushAttrib(GL_ALL_ATTRIB_BITS);
-	//glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
+//#ifndef TARGET_OPENGLES
+//	glPushAttrib(GL_ALL_ATTRIB_BITS);
+//	glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
+//#endif
 	
 	if(bUsingVerts){
 		glEnableClientState(GL_VERTEX_ARRAY);		
@@ -408,16 +409,15 @@ void ofVbo::bind(){
 //--------------------------------------------------------------
 void ofVbo::unbind() {
 	
-	if(bUsingVerts)  glDisableClientState(GL_VERTEX_ARRAY);
+	//if(bUsingVerts)  glDisableClientState(GL_VERTEX_ARRAY);
 	if(bUsingColors) glDisableClientState(GL_COLOR_ARRAY);
-	//glDisableClientState(GL_INDEX_ARRAY);
-	glDisableClientState(GL_COLOR_ARRAY);
-	glDisableClientState(GL_NORMAL_ARRAY);
+	if(bUsingNormals) glDisableClientState(GL_NORMAL_ARRAY);
+	if(bUsingTexCoords) glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 	//glDisableClientState(GL_EDGE_FLAG_ARRAY);
-	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-	
-	//glPopClientAttrib();
-	//glPopAttrib();	
+//#ifndef	TARGET_OPENGLES
+//	glPopClientAttrib();
+//	glPopAttrib();	
+//#endif
 	
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);

@@ -1,5 +1,5 @@
 //TODO:
-//handle STREAM vs STATIC draw allocation for meshes
+//handle STREAM vs STATIC draw allocation for meshes?
 //animations
 //bounding box/scale/etc?
 
@@ -121,7 +121,6 @@ void ofModel::drawVertices(){
 }
 
 //--------------------------------------------------------------
-
 void ofModel::enableTextures(){
 	bUsingTextures = true;
 	for (int i =0; i < (int)renderers.size();i++){

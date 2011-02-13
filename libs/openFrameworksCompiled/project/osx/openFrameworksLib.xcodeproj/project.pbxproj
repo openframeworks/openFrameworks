@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		53EEEF4B130766EF0027C199 /* ofMesh.h in Headers */ = {isa = PBXBuildFile; fileRef = 53EEEF49130766EF0027C199 /* ofMesh.h */; };
 		53EEEF4C130766EF0027C199 /* ofMesh.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53EEEF4A130766EF0027C199 /* ofMesh.cpp */; };
+		53EEF15F1307BD5A0027C199 /* ofMeshNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 53EEF15D1307BD5A0027C199 /* ofMeshNode.h */; };
+		53EEF1601307BD5A0027C199 /* ofMeshNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53EEF15E1307BD5A0027C199 /* ofMeshNode.cpp */; };
 		DA2E399D12DF6E9000EC4A5B /* glew.h in Headers */ = {isa = PBXBuildFile; fileRef = DA2E399712DF6E9000EC4A5B /* glew.h */; };
 		DA2E399E12DF6E9000EC4A5B /* glxew.h in Headers */ = {isa = PBXBuildFile; fileRef = DA2E399812DF6E9000EC4A5B /* glxew.h */; };
 		DA2E399F12DF6E9000EC4A5B /* wglew.h in Headers */ = {isa = PBXBuildFile; fileRef = DA2E399912DF6E9000EC4A5B /* wglew.h */; };
@@ -191,6 +193,8 @@
 /* Begin PBXFileReference section */
 		53EEEF49130766EF0027C199 /* ofMesh.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofMesh.h; sourceTree = "<group>"; };
 		53EEEF4A130766EF0027C199 /* ofMesh.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofMesh.cpp; sourceTree = "<group>"; };
+		53EEF15D1307BD5A0027C199 /* ofMeshNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofMeshNode.h; sourceTree = "<group>"; };
+		53EEF15E1307BD5A0027C199 /* ofMeshNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofMeshNode.cpp; sourceTree = "<group>"; };
 		DA2E399712DF6E9000EC4A5B /* glew.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = glew.h; sourceTree = "<group>"; };
 		DA2E399812DF6E9000EC4A5B /* glxew.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = glxew.h; sourceTree = "<group>"; };
 		DA2E399912DF6E9000EC4A5B /* wglew.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = wglew.h; sourceTree = "<group>"; };
@@ -715,8 +719,10 @@
 				E4F3BD2112F4F7BF002D19BB /* ofModel.h */,
 				E4F3BA5B12F4C4BF002D19BB /* ofMeshRenderer.cpp */,
 				E4F3BA5C12F4C4BF002D19BB /* ofMeshRenderer.h */,
-				53EEEF49130766EF0027C199 /* ofMesh.h */,
 				53EEEF4A130766EF0027C199 /* ofMesh.cpp */,
+				53EEEF49130766EF0027C199 /* ofMesh.h */,
+				53EEF15D1307BD5A0027C199 /* ofMeshNode.h */,
+				53EEF15E1307BD5A0027C199 /* ofMeshNode.cpp */,
 				E4F3BA6512F4C4BF002D19BB /* ofPrimitive.cpp */,
 				E4F3BA6612F4C4BF002D19BB /* ofPrimitive.h */,
 				E4F3BA5F12F4C4BF002D19BB /* ofNode.cpp */,
@@ -1028,6 +1034,7 @@
 				DA94C2F01301D32200CCC773 /* ofRendererCollection.h in Headers */,
 				DA94C2F21301D32200CCC773 /* ofShapeTessellation.h in Headers */,
 				53EEEF4B130766EF0027C199 /* ofMesh.h in Headers */,
+				53EEF15F1307BD5A0027C199 /* ofMeshNode.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1141,6 +1148,7 @@
 				DA97FD3E12F5A61A005C9991 /* ofGLRenderer.cpp in Sources */,
 				DA94C2F11301D32200CCC773 /* ofShapeTessellation.cpp in Sources */,
 				53EEEF4C130766EF0027C199 /* ofMesh.cpp in Sources */,
+				53EEF1601307BD5A0027C199 /* ofMeshNode.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
