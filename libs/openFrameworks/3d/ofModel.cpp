@@ -86,7 +86,6 @@ void ofModel::drawFaces(){
 		if(goodToTexture){
 			bindTextureForMesh(i);
 		}
-		
 		renderers.at(i).setRenderMethod(renderMethod);
 		
 		renderers.at(i).drawFaces(meshes.at(i));
@@ -119,6 +118,31 @@ void ofModel::drawVertices(){
 		}
 	}
 }
+
+
+ofMesh* ofModel::getMesh(unsigned int nIndex) {
+	if(nIndex < meshes.size()) {
+		return meshes.at(nIndex);
+	}
+	return NULL;
+}
+
+ofMesh* ofModel::getMesh(string sName) {
+	map<string, ofMesh*>::iterator it = named_meshes.find(sName);
+	if(it != named_meshes.end()) {
+		return it->second;
+	}
+	return NULL; 
+}
+
+void ofModel::listMeshNames() {
+	map<string, ofMesh*>::iterator it = named_meshes.begin();
+	while(it != named_meshes.end()) {
+		cout << "Mesh: '" << it->first << "'" << std::endl;
+		++it;
+	}
+}
+
 
 //--------------------------------------------------------------
 void ofModel::enableTextures(){

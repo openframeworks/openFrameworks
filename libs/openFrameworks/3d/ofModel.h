@@ -27,12 +27,22 @@ public:
 	void disableColors();
 	
 	void setRenderMethod(meshRenderMethod m);
+	
+
+	ofMesh* getMesh(unsigned int nIndex);
+	ofMesh* getMesh(string sName);
+	void listMeshNames();
+
 
 	vector<ofMeshNode> meshNodes;
 	vector<ofMesh*> meshes;
 	vector<ofMeshRenderer> renderers;
 	vector<ofImage> textures;
 	map<int, int> textureLinks;
+	
+
+	map<string, ofMesh*> named_meshes;
+	map<string, ofPrimitive*> named_primitives;
 	
 protected:
 	bool bUsingTextures, bUsingNormals, bUsingColors;
