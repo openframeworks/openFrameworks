@@ -4,7 +4,7 @@
 void testApp::setup(){
 	
 //	ofSetLogLevel(OF_LOG_VERBOSE);
-    ofLoadModel("butterfly.obj", model);
+    ofLoadModel("astroBoy_walk.dae", model);
 	model.setRenderMethod(OF_MESH_USING_VBO);
 	
 	ofEnableNormalizedTexCoords();

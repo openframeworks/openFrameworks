@@ -30,7 +30,7 @@ void ofDrawAxis(float size) {
 	glPopMatrix();
 	
 	// draw z axis
-	ofSetColor(0, 0, 2550);
+	ofSetColor(0, 0, 255);
 	glPushMatrix();
 	glTranslatef(0, 0, size/2);
 	glScalef(2, 2, size);
