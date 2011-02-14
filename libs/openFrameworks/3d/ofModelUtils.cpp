@@ -167,10 +167,11 @@ bool ofLoadModel(string modelName, ofModel & model){
 			}
 			
 			// add named meshes: 
-			// TODO: how to handle duplicate names
+			// TODO: how to handle duplicate names (roxlu)
 			if(aMesh->mName.length > 0) {
 				model.named_meshes.insert(ofNamedMesh(aMesh->mName.data, &curMesh));
-				model.named_vertices.insert(ofNamedVertexData(aMesh->mName.data,curMesh.vertexData));
+				// TODO: workout primitives
+				//model.named_vertices.insert(ofNamedVertexData(aMesh->mName.data,curMesh.primitives));
 			}
 		}
 		
@@ -181,8 +182,6 @@ bool ofLoadModel(string modelName, ofModel & model){
 		
 		return true;
 		
-	}else{
-		return false;
 	}
 	return true;
 }

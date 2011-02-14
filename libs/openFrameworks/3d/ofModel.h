@@ -10,8 +10,8 @@
 #include "ofMeshNode.h"
 #include <map>
 
-typedef pair<string, ofVertexData*> ofNamedVertexData;
-typedef map<string, ofVertexData*> ofNamedVerticesData;
+typedef pair<string, ofPrimitive*> ofNamedVertexData;
+typedef map<string, ofPrimitive*> ofNamedVerticesData;
 typedef pair<string, ofMesh*> ofNamedMesh;
 typedef map<string, ofMesh*> ofNamedMeshes;
 

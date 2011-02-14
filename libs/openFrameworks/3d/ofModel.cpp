@@ -122,7 +122,7 @@ void ofModel::drawVertices(){
 
 ofMesh* ofModel::getMesh(unsigned int nIndex) {
 	if(nIndex < meshes.size()) {
-		return &meshes.at(nIndex);
+		return meshes.at(nIndex);
 	}
 	return NULL;
 }

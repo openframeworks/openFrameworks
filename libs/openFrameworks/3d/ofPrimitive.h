@@ -150,7 +150,7 @@ public:
 	bool haveTexCoordsChanged();
 	bool haveIndicesChanged();
 	
-	friend std::ostream& operator<<(std::ostream& os, ofVertexData& data);
+	friend std::ostream& operator<<(std::ostream& os, ofPrimitive& data);
 	
 protected:
 	vector<ofVec3f> vertices;
@@ -166,7 +166,9 @@ protected:
 };
 
 
-inline std::ostream& operator<<(std::ostream& os, ofVertexData& data) {
+inline std::ostream& operator<<(std::ostream& os, ofPrimitive data) {
+
+	//TODO: update when ofMesh/primitives has been worked out
 	os << "Vertices" << std::endl << "--------------------" << std::endl;
 	for(int i = 0; i < data.getNumVertices(); ++i) {
 		os << data.getVertex(i) << std::endl;
@@ -190,6 +192,7 @@ inline std::ostream& operator<<(std::ostream& os, ofVertexData& data) {
 		os << data.getVertex(i) << std::endl;
 	}
 	os << std::endl << std::endl;
+
 	return os;
 }
 
