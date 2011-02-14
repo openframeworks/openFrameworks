@@ -128,7 +128,7 @@ ofMesh* ofModel::getMesh(unsigned int nIndex) {
 }
 
 ofMesh* ofModel::getMesh(string sName) {
-	ofNamedMeshes::iterator it = named_meshes.find(sName);
+	map<string, ofMesh*>::iterator it = named_meshes.find(sName);
 	if(it != named_meshes.end()) {
 		return it->second;
 	}
@@ -136,7 +136,7 @@ ofMesh* ofModel::getMesh(string sName) {
 }
 
 void ofModel::listMeshNames() {
-	ofNamedMeshes::iterator it = named_meshes.begin();
+	map<string, ofMesh*>::iterator it = named_meshes.begin();
 	while(it != named_meshes.end()) {
 		cout << "Mesh: '" << it->first << "'" << std::endl;
 		++it;

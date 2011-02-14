@@ -15,17 +15,17 @@
  */
 
 enum ofTextureMapType {
-	OF_UNKOWN_MAP			= 0
-	,OF_DIFFUSE_MAP			= (1 << 0)
-	,OF_SPECULAR_MAP		= (1 << 1)
-	,OF_AMBIENT_MAP			= (1 << 2)
-	,OF_HEIGHT_MAP			= (1 << 3)
-	,OF_NORMAL_MAP			= (1 << 4)
-	,OF_SHININESS_MAP		= (1 << 5)
-	,OF_OPACITY_MAP			= (1 << 6)
-	,OF_DISPLACEMENT_MAP	= (1 << 7)
-	,OF_LIGHT_MAP			= (1 << 8)
-	,OF_REFLECTION_MAP		= (1 << 9)
+	OF_TEXMAP_UNKNOWN			= 0
+	,OF_TEXMAP_DIFFUSE			= (1 << 0)
+	,OF_TEXMAP_SPECULAR		= (1 << 1)
+	,OF_TEXMAP_AMBIENT			= (1 << 2)
+	,OF_TEXMAP_HEIGHT			= (1 << 3)
+	,OF_TEXMAP_NORMAL			= (1 << 4)
+	,OF_TEXMAP_SHININESS		= (1 << 5)
+	,OF_TEXMAP_OPACITY			= (1 << 6)
+	,OF_TEXMAP_DISPLACEMENT	= (1 << 7)
+	,OF_TEXMAP_LIGHT			= (1 << 8)
+	,OF_TEXMAP_REFLECTION		= (1 << 9)
 };
 
 typedef std::pair<ofTextureMapType, ofTexture*> ofTextureMap;
@@ -47,25 +47,25 @@ public:
 	
 	
 	// set maps.
-	ofMaterial& setDiffuseMap(ofTexture& oDiffuseMap) {	return addMap(oDiffuseMap, OF_DIFFUSE_MAP);	}
-	ofMaterial& setSpecularMap(ofTexture& oSpecularMap) { return addMap(oSpecularMap, OF_SPECULAR_MAP); }
-	ofMaterial& setAmbientMap(ofTexture& oAmbientMap) { return addMap(oAmbientMap, OF_AMBIENT_MAP); }
-	ofMaterial& setHeightMap(ofTexture& oHeightMap) { return addMap(oHeightMap, OF_HEIGHT_MAP); }
-	ofMaterial& setNormalMap(ofTexture& oNormalMap) { return addMap(oNormalMap, OF_NORMAL_MAP); }
-	ofMaterial& setShininessMap(ofTexture& oShininessMap) { return addMap(oShininessMap, OF_SHININESS_MAP);}
-	ofMaterial& setOpactiyMap(ofTexture& oOpacityMap) { return addMap(oOpacityMap, OF_OPACITY_MAP); }
-	ofMaterial& setDisplacementMap(ofTexture& oDispMap) { return addMap(oDispMap, OF_DISPLACEMENT_MAP); }
-	ofMaterial& setLightMap(ofTexture& oLightMap) { return addMap(oLightMap, OF_LIGHT_MAP); }
-	ofMaterial& setReflectionMap(ofTexture& oReflectionMap) { return addMap(oReflectionMap, OF_REFLECTION_MAP); }
+	ofMaterial& setDiffuseMap(ofTexture& oDiffuseMap) {	return addMap(oDiffuseMap, OF_TEXMAP_DIFFUSE);	}
+	ofMaterial& setSpecularMap(ofTexture& oSpecularMap) { return addMap(oSpecularMap, OF_TEXMAP_SPECULAR); }
+	ofMaterial& setAmbientMap(ofTexture& oAmbientMap) { return addMap(oAmbientMap, OF_TEXMAP_AMBIENT); }
+	ofMaterial& setHeightMap(ofTexture& oHeightMap) { return addMap(oHeightMap, OF_TEXMAP_HEIGHT); }
+	ofMaterial& setNormalMap(ofTexture& oNormalMap) { return addMap(oNormalMap, OF_TEXMAP_NORMAL); }
+	ofMaterial& setShininessMap(ofTexture& oShininessMap) { return addMap(oShininessMap, OF_TEXMAP_SHININESS);}
+	ofMaterial& setOpactiyMap(ofTexture& oOpacityMap) { return addMap(oOpacityMap, OF_TEXMAP_OPACITY); }
+	ofMaterial& setDisplacementMap(ofTexture& oDispMap) { return addMap(oDispMap, OF_TEXMAP_DISPLACEMENT); }
+	ofMaterial& setLightMap(ofTexture& oLightMap) { return addMap(oLightMap, OF_TEXMAP_LIGHT); }
+	ofMaterial& setReflectionMap(ofTexture& oReflectionMap) { return addMap(oReflectionMap, OF_TEXMAP_REFLECTION); }
 		
 	ofMaterial& addMap(
 		 ofTexture& pTexture
-		,ofTextureMapType nType = OF_DIFFUSE_MAP
+		,ofTextureMapType nType = OF_TEXMAP_DIFFUSE
 	);
 	
 	// find maps
 	ofTexture* getMap(ofTextureMapType nType);
-	ofTexture* getDiffuseMap() { return getMap(OF_DIFFUSE_MAP); };
+	ofTexture* getDiffuseMap() { return getMap(OF_TEXMAP_DIFFUSE); };
 
 	// apply the material
 	virtual void begin();
