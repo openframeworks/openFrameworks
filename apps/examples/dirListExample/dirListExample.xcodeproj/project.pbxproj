@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		E42E82C312DFDCFF000A7674 /* ofxDirList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E42E82C112DFDCFF000A7674 /* ofxDirList.cpp */; };
 		E45BE97B0E8CC7DD009D7055 /* AGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E45BE9710E8CC7DD009D7055 /* AGL.framework */; };
 		E45BE97C0E8CC7DD009D7055 /* ApplicationServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E45BE9720E8CC7DD009D7055 /* ApplicationServices.framework */; };
 		E45BE97D0E8CC7DD009D7055 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E45BE9730E8CC7DD009D7055 /* AudioToolbox.framework */; };
@@ -58,8 +57,6 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		E42E82C112DFDCFF000A7674 /* ofxDirList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofxDirList.cpp; path = ../../../addons/ofxDirList/src/ofxDirList.cpp; sourceTree = SOURCE_ROOT; };
-		E42E82C212DFDCFF000A7674 /* ofxDirList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxDirList.h; path = ../../../addons/ofxDirList/src/ofxDirList.h; sourceTree = SOURCE_ROOT; };
 		E45BE9710E8CC7DD009D7055 /* AGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AGL.framework; path = /System/Library/Frameworks/AGL.framework; sourceTree = "<absolute>"; };
 		E45BE9720E8CC7DD009D7055 /* ApplicationServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ApplicationServices.framework; path = /System/Library/Frameworks/ApplicationServices.framework; sourceTree = "<absolute>"; };
 		E45BE9730E8CC7DD009D7055 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = /System/Library/Frameworks/AudioToolbox.framework; sourceTree = "<absolute>"; };
@@ -69,7 +66,7 @@
 		E45BE9770E8CC7DD009D7055 /* CoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreServices.framework; path = /System/Library/Frameworks/CoreServices.framework; sourceTree = "<absolute>"; };
 		E45BE9790E8CC7DD009D7055 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = /System/Library/Frameworks/OpenGL.framework; sourceTree = "<absolute>"; };
 		E45BE97A0E8CC7DD009D7055 /* QuickTime.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuickTime.framework; path = /System/Library/Frameworks/QuickTime.framework; sourceTree = "<absolute>"; };
-		E4B69B5B0A3A1756003C02F2 /* dirListExampleDebug.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = dirListExampleDebug.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		E4B69B5B0A3A1756003C02F2 /* dirListExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = dirListExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E4B69E1D0A3A1BDC003C02F2 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = main.cpp; path = src/main.cpp; sourceTree = SOURCE_ROOT; };
 		E4B69E1E0A3A1BDC003C02F2 /* testApp.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 30; name = testApp.cpp; path = src/testApp.cpp; sourceTree = SOURCE_ROOT; };
 		E4B69E1F0A3A1BDC003C02F2 /* testApp.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = testApp.h; path = src/testApp.h; sourceTree = SOURCE_ROOT; };
@@ -109,29 +106,9 @@
 		BB4B014C10F69532006C3DED /* addons */ = {
 			isa = PBXGroup;
 			children = (
-				E42E82BC12DFDCFF000A7674 /* ofxDirList */,
 			);
 			name = addons;
 			sourceTree = "<group>";
-		};
-		E42E82BC12DFDCFF000A7674 /* ofxDirList */ = {
-			isa = PBXGroup;
-			children = (
-				E42E82C012DFDCFF000A7674 /* src */,
-			);
-			name = ofxDirList;
-			path = ../../../addons/ofxDirList;
-			sourceTree = SOURCE_ROOT;
-		};
-		E42E82C012DFDCFF000A7674 /* src */ = {
-			isa = PBXGroup;
-			children = (
-				E42E82C112DFDCFF000A7674 /* ofxDirList.cpp */,
-				E42E82C212DFDCFF000A7674 /* ofxDirList.h */,
-			);
-			name = src;
-			path = ../../../addons/ofxDirList/src;
-			sourceTree = SOURCE_ROOT;
 		};
 		E45BE5980E8CC70C009D7055 /* frameworks */ = {
 			isa = PBXGroup;
@@ -157,7 +134,7 @@
 			isa = PBXGroup;
 			children = (
 				E4B6FCAD0C3E899E008CF71C /* openFrameworks-Info.plist */,
-				E4B69B5B0A3A1756003C02F2 /* dirListExampleDebug.app */,
+				E4B69B5B0A3A1756003C02F2 /* dirListExample.app */,
 				E4B69E1C0A3A1BDC003C02F2 /* src */,
 				E4C2422310CC54B6004149E2 /* openFrameworks */,
 				BB4B014C10F69532006C3DED /* addons */,
@@ -210,7 +187,7 @@
 			);
 			name = dirListExample;
 			productName = myOFApp;
-			productReference = E4B69B5B0A3A1756003C02F2 /* dirListExampleDebug.app */;
+			productReference = E4B69B5B0A3A1756003C02F2 /* dirListExample.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -220,7 +197,6 @@
 			isa = PBXProject;
 			buildConfigurationList = E4B69B4D0A3A1720003C02F2 /* Build configuration list for PBXProject "dirListExample" */;
 			compatibilityVersion = "Xcode 2.4";
-			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				English,
@@ -277,7 +253,6 @@
 			files = (
 				E4B69E200A3A1BDC003C02F2 /* main.cpp in Sources */,
 				E4B69E210A3A1BDC003C02F2 /* testApp.cpp in Sources */,
-				E42E82C312DFDCFF000A7674 /* ofxDirList.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -340,6 +315,7 @@
 					"$(OTHER_LDFLAGS_QUOTED_FOR_PROJECT_10)",
 				);
 				OTHER_LDFLAGS_QUOTED_FOR_PROJECT_1 = "\"../../../libs/poco/lib/osx/PocoUtil.a\"";
+				OTHER_LDFLAGS_QUOTED_FOR_PROJECT_10 = "\"../../../libs/assimp/lib/osx/assimp.a\"";
 				OTHER_LDFLAGS_QUOTED_FOR_PROJECT_2 = "\"../../../libs/poco/lib/osx/PocoXML.a\"";
 				OTHER_LDFLAGS_QUOTED_FOR_PROJECT_3 = "\"../../../libs/poco/lib/osx/PocoFoundation.a\"";
 				OTHER_LDFLAGS_QUOTED_FOR_PROJECT_4 = "\"../../../libs/poco/lib/osx/PocoNet.a\"";
@@ -348,7 +324,6 @@
 				OTHER_LDFLAGS_QUOTED_FOR_PROJECT_7 = "\"../../../libs/FreeImage/lib/osx/freeimage.a\"";
 				OTHER_LDFLAGS_QUOTED_FOR_PROJECT_8 = "\"../../../libs/fmodex/lib/osx/libfmodex.dylib\"";
 				OTHER_LDFLAGS_QUOTED_FOR_PROJECT_9 = "\"../../../libs/glew/lib/osx/glew.a\"";
-				OTHER_LDFLAGS_QUOTED_FOR_PROJECT_10 = "\"../../../libs/assimp/lib/osx/assimp.a\"";
 			};
 			name = Debug;
 		};
@@ -402,6 +377,7 @@
 					"$(OTHER_LDFLAGS_QUOTED_FOR_PROJECT_10)",
 				);
 				OTHER_LDFLAGS_QUOTED_FOR_PROJECT_1 = "\"../../../libs/poco/lib/osx/PocoUtil.a\"";
+				OTHER_LDFLAGS_QUOTED_FOR_PROJECT_10 = "\"../../../libs/assimp/lib/osx/assimp.a\"";
 				OTHER_LDFLAGS_QUOTED_FOR_PROJECT_2 = "\"../../../libs/poco/lib/osx/PocoXML.a\"";
 				OTHER_LDFLAGS_QUOTED_FOR_PROJECT_3 = "\"../../../libs/poco/lib/osx/PocoFoundation.a\"";
 				OTHER_LDFLAGS_QUOTED_FOR_PROJECT_4 = "\"../../../libs/poco/lib/osx/PocoNet.a\"";
@@ -410,7 +386,6 @@
 				OTHER_LDFLAGS_QUOTED_FOR_PROJECT_7 = "\"../../../libs/FreeImage/lib/osx/freeimage.a\"";
 				OTHER_LDFLAGS_QUOTED_FOR_PROJECT_8 = "\"../../../libs/fmodex/lib/osx/libfmodex.dylib\"";
 				OTHER_LDFLAGS_QUOTED_FOR_PROJECT_9 = "\"../../../libs/glew/lib/osx/glew.a\"";
-				OTHER_LDFLAGS_QUOTED_FOR_PROJECT_10 = "\"../../../libs/assimp/lib/osx/assimp.a\"";
 			};
 			name = Release;
 		};
