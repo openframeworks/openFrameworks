@@ -45,6 +45,7 @@ string 	ofToDataPath(string path, bool absolute=false);
 template<class T>
 vector<T>& ofRandomize(vector<T>& values) {
 	random_shuffle(values.begin(), values.end());
+	return values;
 }
 
 template<class T, class BoolFunction>
