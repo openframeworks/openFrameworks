@@ -42,17 +42,21 @@ void	ofEnableDataPath();
 void	ofDisableDataPath();
 string 	ofToDataPath(string path, bool absolute=false);
 
-template<class T> vector<T>& ofRandomize(vector<T>& values) {
+template<class T>
+vector<T>& ofRandomize(vector<T>& values) {
 	random_shuffle(values.begin(), values.end());
 }
 
 template<class T, class BoolFunction>
 vector<T>& ofRemove(vector<T>& values, BoolFunction shouldErase) {
 	values.erase(remove_if(values.begin(), values.end(), shouldErase), values.end());
+	return values;
 }
 
-template<class T> vector<T>& ofSort(vector<T>& values) {
+template<class T>
+vector<T>& ofSort(vector<T>& values) {
 	sort(values.begin(), values.end());
+	return values;
 }
 
 template <class T>
@@ -69,13 +73,15 @@ bool ofContains(const vector<T>& values, const T& target) {
 //the path must have a trailing slash (/) !!!!
 void	ofSetDataPathRoot( string root );
 
-template <class T> string ofToString(const T& value){
+template <class T>
+string ofToString(const T& value){
 	ostringstream out;
 	out << value;
 	return out.str();
 }
 
-template <class T> string ofToString(const T& value, int precision){
+template <class T>
+string ofToString(const T& value, int precision){
 	ostringstream out;
 	out << fixed << setprecision(precision) << value;
 	return out.str();
@@ -108,7 +114,8 @@ inline string ofToString(const float& value){
 }
 #endif
 
-template<class T> string ofToString(const vector<T>& values) {
+template<class T>
+string ofToString(const vector<T>& values) {
 	stringstream out;
 	int n = values.size();
 	out << "{";
@@ -119,7 +126,8 @@ template<class T> string ofToString(const vector<T>& values) {
 	return out.str();
 }
 
-template <class T> string ofToHex(const T& value) {
+template <class T>
+string ofToHex(const T& value) {
 	ostringstream out;
 	// pretend that the value is a bunch of bytes
 	unsigned char* valuePtr = (unsigned char*) &value;
@@ -132,7 +140,8 @@ template <class T> string ofToHex(const T& value) {
 	}
 	return out.str();
 }
-template <> string ofToHex(const string& value);
+template <>
+string ofToHex(const string& value);
 string ofToHex(const char* value);
 
 int ofHexToInt(const string& intHexString);
@@ -145,7 +154,8 @@ char ofToChar(const string& charString);
 float ofToFloat(const string& floatString);
 bool ofToBool(const string& boolString);
 
-template <class T> string ofToBinary(const T& value) {
+template <class T>
+string ofToBinary(const T& value) {
 	ostringstream out;
 	const char* data = (const char*) &value;
 	// the number of bytes is determined by the datatype
@@ -157,7 +167,8 @@ template <class T> string ofToBinary(const T& value) {
 	}
 	return out.str();
 }
-template <> string ofToBinary(const string& value);
+template <>
+string ofToBinary(const string& value);
 string ofToBinary(const char* value);
 
 int ofBinaryToInt(const string& value);

@@ -196,7 +196,7 @@ void ofShapeTessellation::tessellate(){
 
 void ofShapeTessellation::simplify(float tolerance){
 	polyline.simplify(tolerance);
-	for(int i=0;i<subShapes.size();i++){
+	for(int i=0;i<(int)subShapes.size();i++){
 		subShapes[i].simplify(tolerance);
 	}
 	bNeedsTessellation=true;
@@ -492,7 +492,7 @@ void ofShapeTessellation::arc( const ofPoint & center, float radiusX, float radi
 		cosinus = cos(angle);
 		polyline.addVertex(radiusX*sinus+center.x,radiusY*cosinus+center.y);
 	}else{
-		for(int i=0;i<circlePoints.size();i++){
+		for(int i=0;i<(int)circlePoints.size();i++){
 			polyline.addVertex(radiusX*circlePoints[i].x+center.x,radiusY*circlePoints[i].y+center.y,center.z);
 		}
 		polyline.addVertex(radiusX*circlePoints[0].x+center.x,radiusY*circlePoints[0].y+center.y,center.z);

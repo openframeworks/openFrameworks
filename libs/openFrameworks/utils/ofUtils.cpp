@@ -2,12 +2,12 @@
 #include "ofImage.h"
 #include "ofTypes.h"
 #include "ofGraphics.h"
-#include "Poco/String.h"
-#include "Poco/StringTokenizer.h"
 #include "ofAppRunner.h"
 
-#include <Poco/LocalDateTime.h>
-#include <Poco/DateTimeFormatter.h>
+#include "Poco/String.h"
+#include "Poco/StringTokenizer.h"
+#include "Poco/LocalDateTime.h"
+#include "Poco/DateTimeFormatter.h"
 
 
 #ifdef TARGET_ANDROID
@@ -20,7 +20,7 @@ const int Ascii::CHARACTER_PROPERTIES[128]={0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 
 
 #if defined(TARGET_OF_IPHONE) || defined(TARGET_OSX ) || defined(TARGET_LINUX)
-	#include "sys/time.h"
+	#include <sys/time.h>
 #endif
 
 #ifdef TARGET_OSX 	
