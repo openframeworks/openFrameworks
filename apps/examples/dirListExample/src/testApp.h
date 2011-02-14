@@ -22,7 +22,7 @@ class testApp : public ofBaseApp{
 		
 		// we will have a dynamic number of images, based on the content of a directory:
 		ofDirList dir;
-		vector<ofImage*> images;
+		vector<ofImage> images;
 		
 		int currentImage;
 		

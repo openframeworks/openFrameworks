@@ -3,16 +3,17 @@
 
 //--------------------------------------------------------------
 void testApp::setup(){
+	
 	dir.listDir("images/of_logos");
 	
-	// you can now iterate through the files as you like
+	//allocate the vector to have as many ofImages as files
+	if( dir.size() ){
+		images.assign(dir.size(), ofImage());
+	}
+	
+	// you can now iterate through the files and load them into the ofImage vector
 	for(int i = 0; i < dir.size(); i++){
-		// dynamically create an ofImage*
-		ofImage* curImage = new ofImage();
-		// load an image into the ofImage*
-		curImage->loadImage(dir.getPath(i));
-		// add the image to the array of images
-		images.push_back(curImage);
+		images[i].loadImage(dir.getPath(i));
 	}
 	currentImage = 0;
 	
@@ -30,13 +31,13 @@ void testApp::draw(){
 	
 	if (dir.size() > 0){
 		ofSetColor(ofColor::white);
-		images[currentImage]->draw(300,50);
+		images[currentImage].draw(300,50);
 		
 		ofSetColor(ofColor::gray);
 		string pathInfo = dir.getPath(currentImage) + "\n\n" +
 			"press any key to advance current image\n\n" +
 			"many thanks to hikaru furuhashi for the OFs";
-		ofDrawBitmapString(pathInfo, 300, images[currentImage]->getHeight() + 80);
+		ofDrawBitmapString(pathInfo, 300, images[currentImage].getHeight() + 80);
 	}
 	
 	ofSetColor(ofColor::gray);
