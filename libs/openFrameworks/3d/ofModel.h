@@ -10,8 +10,6 @@
 #include "ofMeshNode.h"
 #include <map>
 
-
-
 class ofModel{
 public:
 	ofModel();
@@ -42,17 +40,9 @@ public:
 	vector<ofImage> textures;
 	map<int, int> textureLinks;
 	
-	
-/*
-typedef pair<string, ofPrimitive*> ofNamedVertexData;
-typedef map<string, ofPrimitive*> ofNamedVerticesData;
-typedef pair<string, ofMesh*> ofNamedMesh;
-typedef map<string, ofMesh*> ofNamedMeshes;
-*/
+
 	map<string, ofMesh*> named_meshes;
 	map<string, ofPrimitive*> named_primitives;
-	//ofNamedMeshes named_meshes;
-	//ofNamedVerticesData named_vertices;
 	
 protected:
 	bool bUsingTextures, bUsingNormals, bUsingColors;
