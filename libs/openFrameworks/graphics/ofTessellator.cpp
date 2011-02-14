@@ -55,7 +55,7 @@ vector<ofPoint> ofTessellator::vertices;
 
 
 vector<ofPolyline> ofTessellator::resultOutline;
-vector<ofVertexData> ofTessellator::resultMesh;
+vector<ofPrimitive> ofTessellator::resultMesh;
 
 
 
@@ -85,7 +85,7 @@ void CALLBACK ofTessellator::end(){
 	// deal with mesh elements (triangles, triangle fan, triangle strip)
 
 	if(currentTriType!=GL_LINE_LOOP){
-		resultMesh.push_back(ofVertexData(ofGetOFPrimitiveMode(currentTriType), vertices) );
+		resultMesh.push_back(ofPrimitive(ofGetOFPrimitiveMode(currentTriType), vertices) );
 	}else if ( currentTriType == GL_LINE_LOOP ){ // outline
 		resultOutline.push_back( ofPolyline(vertices) );
 		resultOutline.back().setClosed(true);
@@ -163,7 +163,7 @@ vector<ofPolyline> ofTessellator::tessellateToOutline( const ofPolyline & polyli
 
 
 //----------------------------------------------------------
-vector<ofVertexData> ofTessellator::tessellateToMesh( const ofPolyline& polyline, int polyWindingMode, bool bIs2D ){
+vector<ofPrimitive> ofTessellator::tessellateToMesh( const ofPolyline& polyline, int polyWindingMode, bool bIs2D ){
 	vector<ofPolyline> tempPolylinesVector;
 	tempPolylinesVector.push_back( polyline );
 	return tessellateToMesh( tempPolylinesVector, polyWindingMode, bIs2D );
@@ -171,7 +171,7 @@ vector<ofVertexData> ofTessellator::tessellateToMesh( const ofPolyline& polyline
 
 	
 //----------------------------------------------------------
-vector<ofVertexData> ofTessellator::tessellateToMesh( const vector<ofPolyline>& polylines, int polyWindingMode, bool bIs2D ) {
+vector<ofPrimitive> ofTessellator::tessellateToMesh( const vector<ofPolyline>& polylines, int polyWindingMode, bool bIs2D ) {
 
 	Poco::ScopedLock<ofMutex> lock(mutex);
 	

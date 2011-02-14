@@ -225,7 +225,7 @@ void ofShapeTessellation::setPolyline(const ofPolyline & polyline_){
 	bNeedsTessellation = true;
 }
 
-vector<ofVertexData> & ofShapeTessellation::getTessellation(){
+vector<ofPrimitive> & ofShapeTessellation::getTessellation(){
 	if ( bNeedsTessellation ){
 		tessellate();
 	}

@@ -1,11 +1,13 @@
 //TODO: should textures be ofTexture or ofImage (dynamically drawing to model texture?)
-
+//TODO: de-pointerize the meshes if we decide we don't want to do advanced mesh classes
 #pragma once
 
 #include "ofMesh.h"
 #include "ofUtils.h"
 #include "ofImage.h"
 #include "ofConstants.h"
+#include "ofMeshRenderer.h"
+#include "ofMeshNode.h"
 #include <map>
 
 typedef pair<string, ofVertexData*> ofNamedVertexData;
@@ -29,9 +31,6 @@ public:
 	void enableColors();
 	void disableColors();
 	
-	void bindTextureForMesh(int id);
-	void unbindTextureForMesh(int id);
-	
 	void setRenderMethod(meshRenderMethod m);
 	
 
@@ -39,7 +38,10 @@ public:
 	ofMesh* getMesh(string sName);
 	void listMeshNames();
 
-	vector<ofMesh> meshes;
+
+	vector<ofMeshNode> meshNodes;
+	vector<ofMesh*> meshes;
+	vector<ofMeshRenderer> renderers;
 	vector<ofImage> textures;
 	map<int, int> textureLinks;
 	
@@ -48,7 +50,10 @@ public:
 	ofNamedVerticesData named_vertices;
 	
 protected:
-	bool bUsingTextures;
+	bool bUsingTextures, bUsingNormals, bUsingColors;
+	void updateRenderers();
+	void bindTextureForMesh(int id);
+	void unbindTextureForMesh(int id);
 
 private:
 	meshRenderMethod renderMethod;

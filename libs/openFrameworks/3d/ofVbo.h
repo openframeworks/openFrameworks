@@ -19,7 +19,7 @@ public:
 	void setTexCoordData(const ofVec2f * texCoords, int total, int usage);
 	void setIndexData(const ofIndexType * indices, int total, int usage);
 
-	void setVertexData(const float * vert0x, int total, int usage);
+	void setVertexData(const float * vert0x, int numCoords, int total, int usage);
 	void setColorData(const float * color0r, int total, int usage);	
 	void setNormalData(const float * normal0x, int total, int usage);	
 	void setTexCoordData(const float * texCoord0x, int total, int usage);	
@@ -31,7 +31,7 @@ public:
 	void updateTexCoordData(const ofVec2f * texCoords, int total);
 	void updateIndexData(const ofIndexType * indices, int total);
 	
-	void updateVertexData(const float * ver0x, int total);
+	void updateVertexData(const float * ver0x, int numCoords, int total);
 	void updateColorData(const float * color0r, int total);	
 	void updateNormalData(const float * normal0x, int total);	
 	void updateTexCoordData(const float * texCoord0x, int total);	
