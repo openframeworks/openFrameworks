@@ -24,6 +24,7 @@ ofMaterial& ofMaterial::setColors(ofColor oDiffuse, ofColor oAmbient, ofColor oS
 	setDiffuseColor(oDiffuse);
 	setAmbientColor(oAmbient);
 	setSpecularColor(oSpecular);
+	return *this;
 }
 
 ofMaterial& ofMaterial::setDiffuseColor(ofColor oDiffuse) {

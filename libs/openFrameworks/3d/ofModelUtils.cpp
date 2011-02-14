@@ -73,7 +73,7 @@ void aiMatrix4x4ToOfMatrix4x4(const aiMatrix4x4& aim, ofMeshNode& ofm){
 //--------------------------------------------------------------
 void aiNodeToOfNode(const aiNode* ain, ofMeshNode& ofn, const ofModel& model){
 	aiMatrix4x4ToOfMatrix4x4(ain->mTransformation, ofn);
-	for (int i =0; i < ain->mNumMeshes;i++){
+	for (int i =0; i < (int)ain->mNumMeshes;i++){
 		ofn.addMesh(model.meshes.at(ain->mMeshes[i]));
 	}
 	ofn.setName(string(ain->mName.data));
@@ -88,18 +88,20 @@ int createNodes(const aiNode* curNode, ofModel& model){
 	}
 	
 	if (curNode->mNumChildren>0){
-		for (int i =0; i<curNode->mNumChildren;i++){
+		for (int i =0; i<(int)curNode->mNumChildren;i++){
 			createNodes(curNode->mChildren[i], model);
 		}
 	}else return 0;
+
+#warning "this is returning nothing ig nNumChildren i>0  fix it"
 }
 
 //--------------------------------------------------------------
 void createBones(const aiScene* scene, ofModel& model){
-	for (int i =0; i < scene->mNumMeshes;i++){
+	for (int i =0; i < (int)scene->mNumMeshes;i++){
 		aiMesh& curMesh = *scene->mMeshes[i];
 		if(curMesh.HasBones()){
-			for (int j=0; j < curMesh.mNumBones;j++){
+			for (int j=0; j < (int)curMesh.mNumBones;j++){
 				aiNode* boneNode = scene->mRootNode->FindNode(curMesh.mBones[j]->mName);
 			}
 		}

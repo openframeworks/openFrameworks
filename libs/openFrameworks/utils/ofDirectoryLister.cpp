@@ -65,7 +65,7 @@ int ofDirectoryLister::listDir(string directory, bool absolute) {
 		}
 		
 		// TODO: if(ofCheckLogLevel(OF_LOG_VERBOSE)) {
-		for(int i = 0; i < size(); i++) {
+		for(int i = 0; i < (int)size(); i++) {
 			ofLog(OF_LOG_VERBOSE, "\t" + getName(i));
 		}
 		ofLog(OF_LOG_VERBOSE, "ofDirectoryLister::listDirectory() listed " + ofToString(size()) + " files in " + directory);
