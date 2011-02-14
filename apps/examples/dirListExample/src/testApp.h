@@ -3,9 +3,9 @@
 #include "ofMain.h"
 
 class testApp : public ofBaseApp{
-
+	
 	public:
-
+		
 		void setup();
 		void update();
 		void draw();
@@ -19,14 +19,12 @@ class testApp : public ofBaseApp{
 		void windowResized(int w, int h);
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);		
-
-		// we will have a dynamic number of images, based on the content of a director:
-
-		int 		nImages;
-		ofImage	* 	images;
-        ofDirList   DIR;
-
-        int         currentImage;
-
+		
+		// we will have a dynamic number of images, based on the content of a directory:
+		ofDirList dir;
+		vector<ofImage*> images;
+		
+		int currentImage;
+		
 };
 
