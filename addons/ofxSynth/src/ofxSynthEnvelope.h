@@ -1,7 +1,7 @@
 
 #pragma once
 #include "ofSoundUnit.h"
-#include "ofMath.h";
+#include "ofMath.h"
 
 /** ofxSynthADSR
  
