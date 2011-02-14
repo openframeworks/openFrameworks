@@ -17,13 +17,13 @@
 enum ofTextureMapType {
 	OF_TEXMAP_UNKNOWN			= 0
 	,OF_TEXMAP_DIFFUSE			= (1 << 0)
-	,OF_TEXMAP_SPECULAR		= (1 << 1)
+	,OF_TEXMAP_SPECULAR			= (1 << 1)
 	,OF_TEXMAP_AMBIENT			= (1 << 2)
 	,OF_TEXMAP_HEIGHT			= (1 << 3)
 	,OF_TEXMAP_NORMAL			= (1 << 4)
 	,OF_TEXMAP_SHININESS		= (1 << 5)
 	,OF_TEXMAP_OPACITY			= (1 << 6)
-	,OF_TEXMAP_DISPLACEMENT	= (1 << 7)
+	,OF_TEXMAP_DISPLACEMENT		= (1 << 7)
 	,OF_TEXMAP_LIGHT			= (1 << 8)
 	,OF_TEXMAP_REFLECTION		= (1 << 9)
 };
