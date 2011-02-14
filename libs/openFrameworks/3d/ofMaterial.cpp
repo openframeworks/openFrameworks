@@ -1,7 +1,7 @@
 #include "ofMaterial.h"
 
 ofMaterial::ofMaterial() {
-	enabled_maps = OF_UNKOWN_MAP;
+	enabled_maps = OF_TEXMAP_UNKNOWN;
 }
 
 ofMaterial& ofMaterial::addMap(ofTexture& pTexture, ofTextureMapType nMapType) {
@@ -48,7 +48,7 @@ ofMaterial& ofMaterial::setShininess(float nShininess) {
 
 void ofMaterial::begin() {
 	// TODO: needs some work here
-	if(enabled_maps & OF_DIFFUSE_MAP) {
+	if(enabled_maps & OF_TEXMAP_DIFFUSE) {
 		ofTexture* diffuse_tex = getDiffuseMap();
 		if(diffuse_tex != NULL) {
 			diffuse_tex->bind();
@@ -58,7 +58,7 @@ void ofMaterial::begin() {
 
 void ofMaterial::end() {
 	// TODO: needs some work here
-	if(enabled_maps & OF_DIFFUSE_MAP) {
+	if(enabled_maps & OF_TEXMAP_DIFFUSE) {
 		ofTexture* diffuse_tex = getDiffuseMap();
 		if(diffuse_tex != NULL) {
 			diffuse_tex->unbind();
