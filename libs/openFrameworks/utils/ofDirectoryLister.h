@@ -3,9 +3,9 @@
 #include "ofMain.h"
 #include "Poco/File.h"
 
-class ofDirList{
+class ofDirectoryLister{
 	public:	
-		ofDirList();
+		ofDirectoryLister();
 
 		void allowExt(string extension);
 		int listDir(string directory, bool absolute = false);

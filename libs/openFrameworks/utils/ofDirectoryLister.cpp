@@ -1,4 +1,4 @@
-#include "ofDirList.h"
+#include "ofDirectoryLister.h"
 
 #include "ofUtils.h"
 #include "Poco/Path.h"
@@ -28,20 +28,20 @@ public:
 };
 
 //----------------------------------------
-ofDirList::ofDirList() {
+ofDirectoryLister::ofDirectoryLister() {
 	showHidden = false;
 }
 
 //----------------------------------------
-void ofDirList::allowExt(string extension) {
+void ofDirectoryLister::allowExt(string extension) {
 	if(extension == "*") {
-		ofLog(OF_LOG_WARNING, "ofDirList::allowExt() the extension * is deprecated");
+		ofLog(OF_LOG_WARNING, "ofDirectoryLister::allowExt() the extension * is deprecated");
 	}
 	extensions.push_back(toLower(extension));
 }
 
 //----------------------------------------
-int ofDirList::listDir(string directory, bool absolute) {
+int ofDirectoryLister::listDir(string directory, bool absolute) {
 	files.clear();
 
 	originalDirectory = directory;
@@ -68,44 +68,44 @@ int ofDirList::listDir(string directory, bool absolute) {
 		for(int i = 0; i < size(); i++) {
 			ofLog(OF_LOG_VERBOSE, "\t" + getName(i));
 		}
-		ofLog(OF_LOG_VERBOSE, "ofDirList::listDirectory() listed " + ofToString(size()) + " files in " + directory);
+		ofLog(OF_LOG_VERBOSE, "ofDirectoryLister::listDirectory() listed " + ofToString(size()) + " files in " + directory);
 		// }
 	} else {
-		ofLog(OF_LOG_ERROR, "ofDirList::listDirectory() error opening directory " + directory);
+		ofLog(OF_LOG_ERROR, "ofDirectoryLister::listDirectory() error opening directory " + directory);
 	}
 	
 	return size();
 }
 
 //----------------------------------------
-string ofDirList::getName(unsigned int position) {
+string ofDirectoryLister::getName(unsigned int position) {
 	Path cur(files[position].path());
 	return cur.getFileName();
 }
 
 //----------------------------------------
-string ofDirList::getPath(unsigned int position) {
+string ofDirectoryLister::getPath(unsigned int position) {
 	Path cur(files[position].path());
 	return cur.toString();
 }
 
 //----------------------------------------
-void ofDirList::reset() {
+void ofDirectoryLister::reset() {
 	files.clear();
 	extensions.clear();
 }
 
 //----------------------------------------
-void ofDirList::sort() {
+void ofDirectoryLister::sort() {
 	ofSort(files);
 }
 
 //----------------------------------------
-unsigned int ofDirList::size() {
+unsigned int ofDirectoryLister::size() {
 	return files.size();
 }
 
 //----------------------------------------
-int ofDirList::numFiles() {
+int ofDirectoryLister::numFiles() {
 	return size();
 }

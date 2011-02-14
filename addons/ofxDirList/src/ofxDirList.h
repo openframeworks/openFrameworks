@@ -1,7 +1,7 @@
 #pragma once
 
-#include "ofDirList.h"
+#include "ofDirectoryLister.h"
 
 #warning ofxDirList has been deprecated. 
-#warning Remove all references to ofxDirList.h and use ofDirList instead.
-typedef ofDirList ofxDirList;
+#warning Remove all references to ofxDirList.h and use ofDirectoryLister instead.
+typedef ofDirectoryLister ofxDirList;
