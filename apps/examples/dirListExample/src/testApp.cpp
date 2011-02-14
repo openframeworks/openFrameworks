@@ -3,8 +3,6 @@
 
 //--------------------------------------------------------------
 void testApp::setup(){
-
-    DIR.setVerbose(false);
     nImages = DIR.listDir("images/of_logos");
  	images = new ofImage[nImages];
     //you can now iterate through the files as you like

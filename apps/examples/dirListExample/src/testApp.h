@@ -1,7 +1,6 @@
 #pragma once
 
 #include "ofMain.h"
-#include "ofxDirList.h"
 
 class testApp : public ofBaseApp{
 
@@ -21,11 +20,11 @@ class testApp : public ofBaseApp{
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);		
 
-		// we will have a dynaimic number of images, based on the content of a director:
+		// we will have a dynamic number of images, based on the content of a director:
 
 		int 		nImages;
 		ofImage	* 	images;
-        ofxDirList   DIR;
+        ofDirList   DIR;
 
         int         currentImage;
 
