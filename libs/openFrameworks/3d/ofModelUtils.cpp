@@ -35,7 +35,7 @@ void aiMeshToOfPrimitive(const aiMesh* aim, ofPrimitive& ofm){
 	// just one for now
 	if(aim->GetNumUVChannels()>0){
 		for (int i=0; i < (int)aim->mNumVertices;i++){
-			ofm.addTexCoord(ofVec2f(aim->mTextureCoords[0][i].x,aim->mTextureCoords[0][i].y));
+			ofm.addTexCoord(ofVec2f(aim->mTextureCoords[0][i].x ,aim->mTextureCoords[0][i].y));
 		}
 	}
 	
@@ -119,7 +119,10 @@ bool ofLoadModel(string modelName, ofModel & model){
     
     // aiProcess_FlipUVs is for VAR code. Not needed otherwise. Not sure why.
     aiScene * scene = (aiScene*) aiImportFile(filepath.c_str(), aiProcessPreset_TargetRealtime_MaxQuality | aiProcess_OptimizeGraph | aiProcess_Triangulate | aiProcess_FlipUVs | 0 );	
-    if(scene != NULL){        
+	if(scene == NULL) {
+		return false;
+	}
+	else {
         ofLog(OF_LOG_VERBOSE, "initted scene with %i meshes", scene->mNumMeshes);
 		
 		model.meshes.resize(scene->mNumMeshes);
@@ -141,19 +144,34 @@ bool ofLoadModel(string modelName, ofModel & model){
 			//load texture
 			aiMaterial* mtl = scene->mMaterials[aMesh->mMaterialIndex];
 			aiString texPath;
-			
 			//defaults to only get the 0-index texture for now
 			if(mtl->GetTexture(aiTextureType_DIFFUSE, 0, &texPath) == AI_SUCCESS){
 				if(texPathMap.find(texPath.data)==texPathMap.end()){
 					model.textures.push_back(ofImage());
 					ofLog(OF_LOG_VERBOSE, "loading image from %s", texPath.data);
 					string modelFolder = ofFileUtils::getEnclosingDirectoryFromPath(filepath);
-					model.textures.back().loadImage(modelFolder + texPath.data);
+					cout << modelFolder << " --- " << texPath.data << endl; 
+
+					if(ofFileUtils::isAbsolute(texPath.data) && ofFileUtils::doesFileExist(texPath.data)) {
+						model.textures.back().loadImage(texPath.data);
+					}
+					else {
+						model.textures.back().loadImage(modelFolder + texPath.data);
+					}
+
 					model.textures.back().update();
 					texPathMap[texPath.data] = model.textures.size()-1;
 				}
 				
 				model.textureLinks[i] = texPathMap[texPath.data];
+			}
+			
+			// add named meshes: 
+			// TODO: how to handle duplicate names (roxlu)
+			if(aMesh->mName.length > 0) {
+				model.named_meshes[aMesh->mName.data] = &curMesh;
+				// TODO: workout primitives
+				//model.named_vertices.insert(ofNamedVertexData(aMesh->mName.data,curMesh.primitives));
 			}
 		}
 		
@@ -164,9 +182,8 @@ bool ofLoadModel(string modelName, ofModel & model){
 		
 		return true;
 		
-	}else{
-		return false;
 	}
+	return true;
 }
 
 #endif

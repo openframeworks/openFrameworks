@@ -11,6 +11,8 @@
 		53EEEF4C130766EF0027C199 /* ofMesh.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53EEEF4A130766EF0027C199 /* ofMesh.cpp */; };
 		53EEF15F1307BD5A0027C199 /* ofMeshNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 53EEF15D1307BD5A0027C199 /* ofMeshNode.h */; };
 		53EEF1601307BD5A0027C199 /* ofMeshNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53EEF15E1307BD5A0027C199 /* ofMeshNode.cpp */; };
+		5494E54A1309C12E001E60FC /* ofMaterial.h in Headers */ = {isa = PBXBuildFile; fileRef = 5494E5481309C12E001E60FC /* ofMaterial.h */; };
+		5494E54B1309C12E001E60FC /* ofMaterial.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5494E5491309C12E001E60FC /* ofMaterial.cpp */; };
 		DA2E399D12DF6E9000EC4A5B /* glew.h in Headers */ = {isa = PBXBuildFile; fileRef = DA2E399712DF6E9000EC4A5B /* glew.h */; };
 		DA2E399E12DF6E9000EC4A5B /* glxew.h in Headers */ = {isa = PBXBuildFile; fileRef = DA2E399812DF6E9000EC4A5B /* glxew.h */; };
 		DA2E399F12DF6E9000EC4A5B /* wglew.h in Headers */ = {isa = PBXBuildFile; fileRef = DA2E399912DF6E9000EC4A5B /* wglew.h */; };
@@ -197,6 +199,8 @@
 		53EEEF4A130766EF0027C199 /* ofMesh.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofMesh.cpp; sourceTree = "<group>"; };
 		53EEF15D1307BD5A0027C199 /* ofMeshNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofMeshNode.h; sourceTree = "<group>"; };
 		53EEF15E1307BD5A0027C199 /* ofMeshNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofMeshNode.cpp; sourceTree = "<group>"; };
+		5494E5481309C12E001E60FC /* ofMaterial.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofMaterial.h; sourceTree = "<group>"; };
+		5494E5491309C12E001E60FC /* ofMaterial.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofMaterial.cpp; sourceTree = "<group>"; };
 		DA2E399712DF6E9000EC4A5B /* glew.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = glew.h; sourceTree = "<group>"; };
 		DA2E399812DF6E9000EC4A5B /* glxew.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = glxew.h; sourceTree = "<group>"; };
 		DA2E399912DF6E9000EC4A5B /* wglew.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = wglew.h; sourceTree = "<group>"; };
@@ -709,6 +713,8 @@
 		E4F3BA5212F4C4BF002D19BB /* 3d */ = {
 			isa = PBXGroup;
 			children = (
+				5494E5481309C12E001E60FC /* ofMaterial.h */,
+				5494E5491309C12E001E60FC /* ofMaterial.cpp */,
 				E4F3BA5312F4C4BF002D19BB /* of3dUtils.cpp */,
 				E4F3BA5412F4C4BF002D19BB /* of3dUtils.h */,
 				E4F3BA5512F4C4BF002D19BB /* ofCamera.cpp */,
@@ -1042,6 +1048,7 @@
 				53EEEF4B130766EF0027C199 /* ofMesh.h in Headers */,
 				53EEF15F1307BD5A0027C199 /* ofMeshNode.h in Headers */,
 				E470211C1309929100A89B9F /* ofDirectoryLister.h in Headers */,
+				5494E54A1309C12E001E60FC /* ofMaterial.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1072,7 +1079,6 @@
 			isa = PBXProject;
 			buildConfigurationList = E4B69B4D0A3A1720003C02F2 /* Build configuration list for PBXProject "openFrameworksLib" */;
 			compatibilityVersion = "Xcode 2.4";
-			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				English,
@@ -1157,6 +1163,7 @@
 				53EEEF4C130766EF0027C199 /* ofMesh.cpp in Sources */,
 				53EEF1601307BD5A0027C199 /* ofMeshNode.cpp in Sources */,
 				E470211B1309929000A89B9F /* ofDirectoryLister.cpp in Sources */,
+				5494E54B1309C12E001E60FC /* ofMaterial.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

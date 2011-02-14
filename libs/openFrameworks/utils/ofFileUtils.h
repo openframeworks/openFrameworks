@@ -83,4 +83,5 @@ class ofFileUtils{
 	static bool deleteFile(string path, bool bRelativeToData = true);
 	static bool deleteFolder(string path, bool bRelativeToData = true);
 
+	static bool isAbsolute(string path);
 };
