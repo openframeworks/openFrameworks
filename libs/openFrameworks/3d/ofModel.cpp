@@ -119,14 +119,15 @@ void ofModel::drawVertices(){
 	}
 }
 
-
-ofMesh* ofModel::getMesh(unsigned int nIndex) {
+//--------------------------------------------------------------
+ofMesh * ofModel::getMesh(unsigned int nIndex) {
 	if(nIndex < meshes.size()) {
 		return meshes.at(nIndex);
 	}
 	return NULL;
 }
 
+//--------------------------------------------------------------
 ofMesh* ofModel::getMesh(string sName) {
 	map<string, ofMesh*>::iterator it = named_meshes.find(sName);
 	if(it != named_meshes.end()) {
@@ -135,6 +136,7 @@ ofMesh* ofModel::getMesh(string sName) {
 	return NULL; 
 }
 
+//--------------------------------------------------------------
 void ofModel::listMeshNames() {
 	map<string, ofMesh*>::iterator it = named_meshes.begin();
 	while(it != named_meshes.end()) {
