@@ -1,12 +1,11 @@
 #pragma once
 
 #include "ofMain.h"
-#include "ofxDirList.h"
 
 class testApp : public ofBaseApp{
-
+	
 	public:
-
+		
 		void setup();
 		void update();
 		void draw();
@@ -20,14 +19,12 @@ class testApp : public ofBaseApp{
 		void windowResized(int w, int h);
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);		
-
-		// we will have a dynaimic number of images, based on the content of a director:
-
-		int 		nImages;
-		ofImage	* 	images;
-        ofxDirList   DIR;
-
-        int         currentImage;
-
+		
+		// we will have a dynamic number of images, based on the content of a directory:
+		ofDirectoryLister dir;
+		vector<ofImage> images;
+		
+		int currentImage;
+		
 };
 

@@ -29,7 +29,7 @@ public:
 	void draw(ofShape & path);
 	void draw(ofPolyline & poly);
 	void draw(ofShapeTessellation & shape);
-	void draw(ofVertexData & vertexData);
+	void draw(ofPrimitive & vertexData);
 	void useShapeColor(bool bUseShapeColor);
 
 	bool rendersPathDirectly(){

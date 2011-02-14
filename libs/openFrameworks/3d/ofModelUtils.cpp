@@ -1,4 +1,5 @@
 //TODO: include multiple textures per mesh/different texture types?
+//TODO: materials
 
 #include "ofModelUtils.h"
 #include "ofConstants.h"
@@ -15,8 +16,7 @@ static inline ofColor aiColorToOfColor(const aiColor4D& c){
 }
 
 //--------------------------------------------------------------
-void aiMeshToOfVertexData(const aiMesh* aim, ofVertexData& ofm);
-void aiMeshToOfVertexData(const aiMesh* aim, ofVertexData& ofm){
+void aiMeshToOfPrimitive(const aiMesh* aim, ofPrimitive& ofm){
 	// default to triangle mode
 	ofm.setMode(OF_TRIANGLES_MODE);
 	
@@ -61,6 +61,52 @@ void aiMeshToOfVertexData(const aiMesh* aim, ofVertexData& ofm){
 }
 
 //--------------------------------------------------------------
+void aiMatrix4x4ToOfMatrix4x4(const aiMatrix4x4& aim, ofMeshNode& ofm){
+	float m[16] = { aim.a1,aim.a2,aim.a3,aim.a4,
+					aim.b1,aim.b2,aim.b3,aim.b4,
+					aim.c1,aim.c2,aim.c3,aim.c4,
+					aim.d1,aim.d2,aim.d3,aim.d4 };
+
+	ofm.setTransformMatrix(	m);
+}
+
+//--------------------------------------------------------------
+void aiNodeToOfNode(const aiNode* ain, ofMeshNode& ofn, const ofModel& model){
+	aiMatrix4x4ToOfMatrix4x4(ain->mTransformation, ofn);
+	for (int i =0; i < ain->mNumMeshes;i++){
+		ofn.addMesh(model.meshes.at(ain->mMeshes[i]));
+	}
+	ofn.setName(string(ain->mName.data));
+}
+
+//--------------------------------------------------------------
+int createNodes(const aiNode* curNode, ofModel& model){
+	//lets only make nodes that have meshes for now
+	if(curNode->mNumMeshes){
+		model.meshNodes.push_back(ofMeshNode());
+		aiNodeToOfNode(curNode, model.meshNodes.back(), model);
+	}
+	
+	if (curNode->mNumChildren>0){
+		for (int i =0; i<curNode->mNumChildren;i++){
+			createNodes(curNode->mChildren[i], model);
+		}
+	}else return 0;
+}
+
+//--------------------------------------------------------------
+void createBones(const aiScene* scene, ofModel& model){
+	for (int i =0; i < scene->mNumMeshes;i++){
+		aiMesh& curMesh = *scene->mMeshes[i];
+		if(curMesh.HasBones()){
+			for (int j=0; j < curMesh.mNumBones;j++){
+				aiNode* boneNode = scene->mRootNode->FindNode(curMesh.mBones[j]->mName);
+			}
+		}
+	}
+}
+
+//--------------------------------------------------------------
 bool ofLoadModel(string modelName, ofModel & model){
     string filepath = ofToDataPath(modelName);
 	
@@ -89,15 +135,11 @@ bool ofLoadModel(string modelName, ofModel & model){
 			ofLog(OF_LOG_VERBOSE, "loading mesh %u", i);
 			// current mesh we are introspecting
 			aiMesh* aMesh = scene->mMeshes[i];
-			ofMesh& curMesh = model.meshes[i];
-			curMesh = ofMesh();
-			if(curMesh.vertexData == NULL){
-				curMesh.vertexData = new ofVertexData();
-			}
-			
-			aiMeshToOfVertexData(aMesh,*curMesh.vertexData);			
-			
-			curMesh.enableIndices();
+
+			model.meshes[i] = new ofMesh();
+			ofMesh& curMesh = *model.meshes[i];
+			curMesh.primitives.push_back(ofPrimitive());
+			aiMeshToOfPrimitive(aMesh,curMesh.primitives.back());			
 		
 			//load texture
 			aiMaterial* mtl = scene->mMaterials[aMesh->mMaterialIndex];
@@ -131,7 +173,18 @@ bool ofLoadModel(string modelName, ofModel & model){
 				model.named_vertices.insert(ofNamedVertexData(aMesh->mName.data,curMesh.vertexData));
 			}
 		}
+		
+		if(scene->mRootNode!=NULL){
+			createNodes(scene->mRootNode, model);
+			//createBones(scene,model);
+		}
+		
+		return true;
+		
+	}else{
+		return false;
 	}
 	return true;
 }
+
 #endif

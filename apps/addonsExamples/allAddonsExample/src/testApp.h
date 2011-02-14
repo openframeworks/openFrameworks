@@ -2,7 +2,6 @@
 
 #include "ofMain.h"
 #include "ofxOpenCv.h"
-#include "ofxDirList.h"
 #include "ofxNetwork.h"
 #include "ofxOsc.h"
 #include "ofxSynth.h"
@@ -34,7 +33,6 @@ class testApp : public ofBaseApp{
         // all work in the same place :)
 
         ofxCvGrayscaleImage cvGray;
-        ofxDirList dirList;
         ofxTCPClient client;
         ofxTCPServer server;
         ofxOscSender osc_sender;

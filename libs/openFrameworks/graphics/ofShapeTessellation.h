@@ -1,5 +1,5 @@
 #pragma once
-#include "ofVertexData.h"
+#include "ofPrimitive.h"
 #include "ofBaseTypes.h"
 #include "ofPoint.h"
 #include <deque>
@@ -169,7 +169,7 @@ public:
 	ofColor getFillColor(){return fillColor;}
 
 	vector<ofPolyline> & getOutline();
-	vector<ofVertexData> & getTessellation();
+	vector<ofPrimitive> & getTessellation();
 
 
 	void addSubShape(const ofShapeTessellation & shape);
@@ -204,7 +204,7 @@ private:
 	ofPolyline polyline;
 	
 	// resulting mesh and outline
-	vector<ofVertexData> cachedTessellation;
+	vector<ofPrimitive> cachedTessellation;
 	vector<ofPolyline> cachedOutline;
 	
 	vector<ofShapeTessellation> subShapes;

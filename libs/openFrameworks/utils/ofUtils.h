@@ -55,6 +55,16 @@ template<class T> vector<T>& ofSort(vector<T>& values) {
 	sort(values.begin(), values.end());
 }
 
+template <class T>
+unsigned int ofFind(const vector<T>& values, const T& target) {
+	return distance(values.begin(), find(values.begin(), values.end(), target));
+}
+
+template <class T>
+bool ofContains(const vector<T>& values, const T& target) {
+	return ofFind(values, target) != values.size();
+}
+
 //set the root path that ofToDataPath will use to search for files relative to the app
 //the path must have a trailing slash (/) !!!!
 void	ofSetDataPathRoot( string root );

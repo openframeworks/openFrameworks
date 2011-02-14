@@ -1,8 +1,8 @@
-#include "ofVertexData.h"
+#include "ofPrimitive.h"
 #include "ofGraphics.h"
 
 //--------------------------------------------------------------
-ofVertexData::ofVertexData(){
+ofPrimitive::ofPrimitive(){
 	mode = OF_TRIANGLES_MODE;
 	bVertsChanged = true;
 	bColorsChanged = true;
@@ -12,17 +12,17 @@ ofVertexData::ofVertexData(){
 }
 
 //--------------------------------------------------------------
-ofVertexData::ofVertexData(ofPrimitiveMode mode, const vector<ofVec3f>& verts){
+ofPrimitive::ofPrimitive(ofPrimitiveMode mode, const vector<ofVec3f>& verts){
 	setMode(mode);
 	addVertices(verts);
 }
 
 //--------------------------------------------------------------
-ofVertexData::~ofVertexData(){
+ofPrimitive::~ofPrimitive(){
 }
 
 //--------------------------------------------------------------
-void ofVertexData::clear(){
+void ofPrimitive::clear(){
 	bVertsChanged = true;
 	bColorsChanged = true;
 	bNormalsChanged = true;
@@ -37,7 +37,7 @@ void ofVertexData::clear(){
 }
 
 //--------------------------------------------------------------
-bool ofVertexData::haveVertsChanged(){
+bool ofPrimitive::haveVertsChanged(){
 	if(bVertsChanged){
 		bVertsChanged = false;
 		return true;
@@ -47,7 +47,7 @@ bool ofVertexData::haveVertsChanged(){
 }
 
 //--------------------------------------------------------------
-bool ofVertexData::haveColorsChanged(){
+bool ofPrimitive::haveColorsChanged(){
 	if(bColorsChanged){
 		bColorsChanged = false;
 		return true;
@@ -57,7 +57,7 @@ bool ofVertexData::haveColorsChanged(){
 }
 
 //--------------------------------------------------------------
-bool ofVertexData::haveNormalsChanged(){
+bool ofPrimitive::haveNormalsChanged(){
 	if(bNormalsChanged){
 		bNormalsChanged = false;
 		return true;
@@ -67,7 +67,7 @@ bool ofVertexData::haveNormalsChanged(){
 }
 
 //--------------------------------------------------------------
-bool ofVertexData::haveTexCoordsChanged(){
+bool ofPrimitive::haveTexCoordsChanged(){
 	if(bTexCoordsChanged){
 		bTexCoordsChanged = false;
 		return true;
@@ -77,7 +77,7 @@ bool ofVertexData::haveTexCoordsChanged(){
 }
 
 //--------------------------------------------------------------
-bool ofVertexData::haveIndicesChanged(){
+bool ofPrimitive::haveIndicesChanged(){
 	if(bIndicesChanged){
 		bIndicesChanged = false;
 		return true;
@@ -89,19 +89,19 @@ bool ofVertexData::haveIndicesChanged(){
 //ADDERS
 
 //--------------------------------------------------------------
-void ofVertexData::addVertex(const ofVec3f& v){
+void ofPrimitive::addVertex(const ofVec3f& v){
 	vertices.push_back(v);
 	bVertsChanged = true;
 }
 
 //--------------------------------------------------------------
-void ofVertexData::addVertices(const vector<ofVec3f>& verts){
+void ofPrimitive::addVertices(const vector<ofVec3f>& verts){
 	vertices.insert(vertices.end(),verts.begin(),verts.end());
 	bVertsChanged = true;
 }
 
 //--------------------------------------------------------------
-void ofVertexData::addVertices(const ofVec3f* verts, int amt){
+void ofPrimitive::addVertices(const ofVec3f* verts, int amt){
 	for (int i = 0; i < amt;i++){
 		addVertex(verts[i]);
 	}
@@ -109,19 +109,19 @@ void ofVertexData::addVertices(const ofVec3f* verts, int amt){
 }
 
 //--------------------------------------------------------------
-void ofVertexData::addColor(const ofColor& c){
+void ofPrimitive::addColor(const ofColor& c){
 	colors.push_back(c);
 	bColorsChanged = true;
 }
 
 //--------------------------------------------------------------
-void ofVertexData::addColors(const vector<ofColor>& cols){
+void ofPrimitive::addColors(const vector<ofColor>& cols){
 	colors.insert(colors.end(),cols.begin(),cols.end());
 	bColorsChanged = true;
 }
 
 //--------------------------------------------------------------
-void ofVertexData::addColors(const ofColor* cols, int amt){
+void ofPrimitive::addColors(const ofColor* cols, int amt){
 	for (int i = 0; i < amt;i++){
 		addColor(cols[i]);
 	}
@@ -129,19 +129,19 @@ void ofVertexData::addColors(const ofColor* cols, int amt){
 }
 
 //--------------------------------------------------------------
-void ofVertexData::addNormal(const ofVec3f& n){
+void ofPrimitive::addNormal(const ofVec3f& n){
 	normals.push_back(n);
 	bNormalsChanged = true;
 }
 
 //--------------------------------------------------------------
-void ofVertexData::addNormals(const vector<ofVec3f>& norms){
+void ofPrimitive::addNormals(const vector<ofVec3f>& norms){
 	normals.insert(normals.end(),norms.begin(),norms.end());
 	bNormalsChanged = true;
 }
 
 //--------------------------------------------------------------
-void ofVertexData::addNormals(const ofVec3f* norms, int amt){
+void ofPrimitive::addNormals(const ofVec3f* norms, int amt){
 	for (int i = 0; i < amt;i++){
 		addNormal(norms[i]);
 	}
@@ -149,20 +149,20 @@ void ofVertexData::addNormals(const ofVec3f* norms, int amt){
 }
 
 //--------------------------------------------------------------
-void ofVertexData::addTexCoord(const ofVec2f& t){
+void ofPrimitive::addTexCoord(const ofVec2f& t){
 	//TODO: figure out if we add to all other arrays to match
 	texCoords.push_back(t);
 	bTexCoordsChanged = true;
 }
 
 //--------------------------------------------------------------
-void ofVertexData::addTexCoords(const vector<ofVec2f>& tCoords){
+void ofPrimitive::addTexCoords(const vector<ofVec2f>& tCoords){
 	texCoords.insert(texCoords.end(),tCoords.begin(),tCoords.end());
 	bTexCoordsChanged = true;
 }
 
 //--------------------------------------------------------------
-void ofVertexData::addTexCoords(const ofVec2f* tCoords, int amt){
+void ofPrimitive::addTexCoords(const ofVec2f* tCoords, int amt){
 	for (int i = 0; i < amt;i++){
 		addTexCoord(tCoords[i]);
 	}
@@ -170,24 +170,24 @@ void ofVertexData::addTexCoords(const ofVec2f* tCoords, int amt){
 }
 
 //--------------------------------------------------------------
-ofIndexType ofVertexData::getIndex(int i){
+ofIndexType ofPrimitive::getIndex(int i){
 	return indices[i];
 }
 
 //--------------------------------------------------------------
-void ofVertexData::addIndex(ofIndexType i){
+void ofPrimitive::addIndex(ofIndexType i){
 	indices.push_back(i);
 	bIndicesChanged = true;
 }
 
 //--------------------------------------------------------------
-void ofVertexData::addIndices(const vector<ofIndexType>& inds){
+void ofPrimitive::addIndices(const vector<ofIndexType>& inds){
 	indices.insert(indices.end(),inds.begin(),inds.end());
 	bIndicesChanged = true;
 }
 
 //--------------------------------------------------------------
-void ofVertexData::addIndices(const ofIndexType* inds, int amt){
+void ofPrimitive::addIndices(const ofIndexType* inds, int amt){
 	for (int i = 0; i < amt;i++){
 		addIndex(inds[i]);
 	}
@@ -196,133 +196,133 @@ void ofVertexData::addIndices(const ofIndexType* inds, int amt){
 
 //GETTERS
 //--------------------------------------------------------------
-ofPrimitiveMode ofVertexData::getMode() const{
+ofPrimitiveMode ofPrimitive::getMode() const{
 	return mode;
 }
 
 //--------------------------------------------------------------
-ofVec3f ofVertexData::getVertex(int i){
+ofVec3f ofPrimitive::getVertex(int i){
 	return vertices[i];
 }
 
 //--------------------------------------------------------------
-ofVec3f ofVertexData::getNormal(int i){
+ofVec3f ofPrimitive::getNormal(int i){
 	return normals[i];
 }
 
 //--------------------------------------------------------------
-ofColor ofVertexData::getColor(int i){
+ofColor ofPrimitive::getColor(int i){
 	return colors[i];
 }
 
 //--------------------------------------------------------------
-ofVec2f ofVertexData::getTexCoord(int i){
+ofVec2f ofPrimitive::getTexCoord(int i){
 	return texCoords[i];
 }
 
 //--------------------------------------------------------------
-int ofVertexData::getNumVertices() const{
+int ofPrimitive::getNumVertices() const{
 	return (int)vertices.size();
 }
 
 //--------------------------------------------------------------
-int ofVertexData::getNumColors() const{
+int ofPrimitive::getNumColors() const{
 	return (int)colors.size();
 }
 
 //--------------------------------------------------------------
-int ofVertexData::getNumNormals() const{
+int ofPrimitive::getNumNormals() const{
 	return (int)normals.size();
 }
 
 //--------------------------------------------------------------
-int ofVertexData::getNumTexCoords() const{
+int ofPrimitive::getNumTexCoords() const{
 	return (int)texCoords.size();
 }
 
 //--------------------------------------------------------------
-int ofVertexData::getNumIndices() const{
+int ofPrimitive::getNumIndices() const{
 	return (int)indices.size();
 }
 
 /*
 //--------------------------------------------------------------
-int ofVertexData::getNumIndicesSolid(){
+int ofPrimitive::getNumIndicesSolid(){
 	return indicesSolid.size();
 }
 
 //--------------------------------------------------------------
-int ofVertexData::getNumIndicesWire(){
+int ofPrimitive::getNumIndicesWire(){
 	return indicesWire.size();
 }
  */
 
 //--------------------------------------------------------------
-float* ofVertexData::getVerticesPointer(){
+float* ofPrimitive::getVerticesPointer(){
 	return &vertices[0].x;
 }
 
 //--------------------------------------------------------------
-float* ofVertexData::getColorsPointer(){
+float* ofPrimitive::getColorsPointer(){
 	return &colors[0].r;
 }
 
 //--------------------------------------------------------------
-float* ofVertexData::getNormalsPointer(){
+float* ofPrimitive::getNormalsPointer(){
 	return &normals[0].x;
 }
 
 //--------------------------------------------------------------
-float* ofVertexData::getTexCoordsPointer(){
+float* ofPrimitive::getTexCoordsPointer(){
 	return &texCoords[0].x;
 }
 
 //--------------------------------------------------------------
-ofIndexType* ofVertexData::getIndexPointer(){
+ofIndexType* ofPrimitive::getIndexPointer(){
 	return &indices[0];
 }
 
 
 //--------------------------------------------------------------
-const float* ofVertexData::getVerticesPointer() const{
+const float* ofPrimitive::getVerticesPointer() const{
 	return &vertices[0].x;
 }
 
 //--------------------------------------------------------------
-const float* ofVertexData::getColorsPointer() const{
+const float* ofPrimitive::getColorsPointer() const{
 	return &colors[0].r;
 }
 
 //--------------------------------------------------------------
-const float* ofVertexData::getNormalsPointer() const{
+const float* ofPrimitive::getNormalsPointer() const{
 	return &normals[0].x;
 }
 
 //--------------------------------------------------------------
-const float* ofVertexData::getTexCoordsPointer() const{
+const float* ofPrimitive::getTexCoordsPointer() const{
 	return &texCoords[0].x;
 }
 
 //--------------------------------------------------------------
-const ofIndexType * ofVertexData::getIndexPointer() const{
+const ofIndexType * ofPrimitive::getIndexPointer() const{
 	return &indices[0];
 }
 
 /*
 //--------------------------------------------------------------
-GLuint* ofVertexData::getSolidIndexPointer(){
+GLuint* ofPrimitive::getSolidIndexPointer(){
 	return &indicesSolid[0];
 }
 
 //--------------------------------------------------------------
-GLuint* ofVertexData::getWireIndexPointer(){
+GLuint* ofPrimitive::getWireIndexPointer(){
 	return &indicesWire[0];
 }
  */
 
 /*
 //--------------------------------------------------------------
-vector<int>& ofVertexData::getFace(int faceNum){
+vector<int>& ofPrimitive::getFace(int faceNum){
 	switch(mode){
 		//GL_QUADS
 		indices[faceNum*4+0];
@@ -353,49 +353,49 @@ vector<int>& ofVertexData::getFace(int faceNum){
 
 //SETTERS
 //--------------------------------------------------------------
-void ofVertexData::setMode(ofPrimitiveMode m){
+void ofPrimitive::setMode(ofPrimitiveMode m){
 	bIndicesChanged = true;
 	mode = m;
 }
 
 //--------------------------------------------------------------
-void ofVertexData::setVertex(int index, const ofVec3f& v){
+void ofPrimitive::setVertex(int index, const ofVec3f& v){
 	vertices[index] = v;
 	bVertsChanged = true;
 	bIndicesChanged = true;
 }
 
 //--------------------------------------------------------------
-void ofVertexData::setNormal(int index, const ofVec3f& n){
+void ofPrimitive::setNormal(int index, const ofVec3f& n){
 	normals[index] = n;
 	bNormalsChanged = true;
 }
 
 //--------------------------------------------------------------
-void ofVertexData::setColor(int index, const ofColor& c){
+void ofPrimitive::setColor(int index, const ofColor& c){
 	colors[index] = c;
 	bColorsChanged = true;
 }
 
 //--------------------------------------------------------------
-void ofVertexData::setTexCoord(int index, const ofVec2f& t){
+void ofPrimitive::setTexCoord(int index, const ofVec2f& t){
 	texCoords[index] = t;
 	bTexCoordsChanged = true;
 }
 
 //--------------------------------------------------------------
-void ofVertexData::setIndex(int i, ofIndexType  val){
+void ofPrimitive::setIndex(int i, ofIndexType  val){
 	indices[i] = val;
 	bIndicesChanged = true;
 }
 
 //--------------------------------------------------------------
-void ofVertexData::setName(string name_){
+void ofPrimitive::setName(string name_){
 	name = name_;
 }
 
 //--------------------------------------------------------------
-void ofVertexData::setupIndicesAuto(){
+void ofPrimitive::setupIndicesAuto(){
 	bIndicesChanged = true;
 	indices.clear();
 	for(int i = 0; i < (int)vertices.size();i++){

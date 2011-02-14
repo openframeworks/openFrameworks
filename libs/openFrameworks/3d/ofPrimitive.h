@@ -73,12 +73,12 @@ inline ofPrimitiveMode ofGetOFPrimitiveMode(GLuint mode){
 	}	
 }
 
-class ofVertexData{
+class ofPrimitive{
 public:
 	
-	ofVertexData();
-	ofVertexData(ofPrimitiveMode mode, const vector<ofVec3f>& verts);
-	~ofVertexData();
+	ofPrimitive();
+	ofPrimitive(ofPrimitiveMode mode, const vector<ofVec3f>& verts);
+	~ofPrimitive();
 	
 	void setMode(ofPrimitiveMode mode);
 	ofPrimitiveMode getMode() const;
