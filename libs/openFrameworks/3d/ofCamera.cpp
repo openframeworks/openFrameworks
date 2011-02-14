@@ -21,6 +21,18 @@ isActive(false),
 hasStoredMatrices(false) {
 }
 
+void ofCamera::setup(SetupMode setupMode, ofRectangle viewport) {
+    switch(setupMode) {
+        case DEFAULT_VIEW:
+            break;
+            
+        case OPENGL_VIEW:
+            break;
+    }
+    
+}
+
+
 //----------------------------------------
 void ofCamera::setFov(float f) {
 	fov = f;
@@ -112,11 +124,11 @@ ofMatrix4x4 ofCamera::getProjectionMatrix(ofRectangle viewport) {
 		matProjection.makePerspectiveMatrix(fov, viewport.width/viewport.height, nearClip, farClip);
 		return matProjection;
 	}
-
+    
 }
 //----------------------------------------
 ofMatrix4x4 ofCamera::getModelViewMatrix() {
-
+    
 	if (cacheMatrices)
 		return matModelView;
 	else
@@ -125,7 +137,7 @@ ofMatrix4x4 ofCamera::getModelViewMatrix() {
 		matModelView.makeInvertOf(getGlobalTransformMatrix());
 		return matModelView;
 	}
-
+    
 }
 //----------------------------------------
 ofMatrix4x4 ofCamera::getModelViewProjectionMatrix(ofRectangle viewport) {
