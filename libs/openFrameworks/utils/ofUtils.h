@@ -43,21 +43,18 @@ void	ofDisableDataPath();
 string 	ofToDataPath(string path, bool absolute=false);
 
 template<class T>
-vector<T>& ofRandomize(vector<T>& values) {
+void ofRandomize(vector<T>& values) {
 	random_shuffle(values.begin(), values.end());
-	return values;
 }
 
 template<class T, class BoolFunction>
-vector<T>& ofRemove(vector<T>& values, BoolFunction shouldErase) {
+void ofRemove(vector<T>& values, BoolFunction shouldErase) {
 	values.erase(remove_if(values.begin(), values.end(), shouldErase), values.end());
-	return values;
 }
 
 template<class T>
-vector<T>& ofSort(vector<T>& values) {
+void ofSort(vector<T>& values) {
 	sort(values.begin(), values.end());
-	return values;
 }
 
 template <class T>
