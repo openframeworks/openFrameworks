@@ -349,3 +349,8 @@ using Poco::NotFoundException;
 	return true;
 }
 
+//------------------------------------------------------------------------------------------------------------
+ bool ofFileUtils::isAbsolute(string path) {
+	Path p(path);
+	return p.isAbsolute();
+ }

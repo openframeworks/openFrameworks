@@ -342,7 +342,7 @@ ofQuaternion ofNode::getGlobalOrientation() const {
 //----------------------------------------
 void ofNode::orbit(float longitude, float latitude, float radius, const ofVec3f& centerPoint) {
 	ofMatrix4x4 m;
-	
+
 	// find position
 	ofVec3f p(0, 0, radius);
 	p.rotate(ofClamp(latitude, -89, 89), ofVec3f(1, 0, 0));
