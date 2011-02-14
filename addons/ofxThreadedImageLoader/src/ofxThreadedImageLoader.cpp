@@ -132,7 +132,7 @@ void ofxThreadedImageLoader::update(ofEventArgs & a){
 	ofImageLoaderEntry entry = getNextImageToUpdate();
 	if (entry.image != NULL) {
 
-		const ofPixels pix = entry.image->getOFPixels();
+		const ofPixels& pix = entry.image->getPixelsRef();
 		entry.image->getTextureReference().allocate(
 				 pix.getWidth()
 				,pix.getHeight()
