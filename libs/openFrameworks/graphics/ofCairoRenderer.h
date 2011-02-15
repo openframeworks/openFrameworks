@@ -26,7 +26,8 @@ public:
 	void setup(string filename, Type type=ofCairoRenderer::PDF, bool multiPage=true, bool b3D=false);
 	void close();
 
-	void draw(ofShape & path);
+	void draw(ofShape & shape);
+	void draw(ofPath & path);
 	void draw(ofPolyline & poly);
 	void draw(ofShapeTessellation & shape);
 	void draw(ofPrimitive & vertexData);
@@ -90,7 +91,6 @@ public:
 
 
 private:
-	void drawPath(const ofShape & path,bool is_subpath=false);
 	cairo_matrix_t * getCairoMatrix();
 	void setCairoMatrix();
 	ofVec3f transform(ofVec3f vec);

@@ -1115,7 +1115,7 @@ void ofNextContour(bool bClose){
 		if (bClose){
 			path.close();
 		}else{
-			path.newSubShape();
+			path.newPath();
 		}
 	}else{
 		if (bClose){
