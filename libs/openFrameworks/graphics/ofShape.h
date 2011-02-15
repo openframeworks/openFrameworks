@@ -53,12 +53,14 @@ public:
 	void setStrokeHexColor( int hex ) { setStrokeColor( ofColor().fromHex( hex ) ); };
 	void setStrokeWidth(float width); // default 1
 
+
 	ofPolyWindingMode getWindingMode() const;
 	bool isFilled() const; // default false
 	ofColor getFillColor() const;
 	ofColor getStrokeColor() const;
 	float getStrokeWidth() const; // default 1
 	bool isClosed() const;
+
 
 	void updateShape();
 	void draw(float x=0, float y=0);
@@ -125,7 +127,7 @@ private:
 
 	ofShape & lastShape();
 
-	vector<ofShape>		subPaths;
+	vector<ofShape>		subShapes;
 	vector<Command> 	commands;
 	ofPolyWindingMode 	windingMode;
 	ofColor 			fillColor;

@@ -4,136 +4,6 @@
 #include "ofGraphics.h"
 
 
-float ofPolyline::getPerimeter() const {
-	float perimeter = 0;
-	int lastPosition = points.size() - 1;
-	for(int i = 0; i < lastPosition; i++) {
-		perimeter += points[i].distance(points[i + 1]);
-	}
-	if(bClosed && points.size() > 1) {
-		perimeter += points[points.size() - 1].distance(points[0]);
-	}
-	return perimeter;
-}
-
-
-//This is for polygon/contour simplification - we use it to reduce the number of points needed in
-//representing the letters as openGL shapes - will soon be moved to ofGraphics.cpp
-
-// From: http://softsurfer.com/Archive/algorithm_0205/algorithm_0205.htm
-// Copyright 2002, softSurfer (www.softsurfer.com)
-// This code may be freely used and modified for any purpose
-// providing that this copyright notice is included with it.
-// SoftSurfer makes no warranty for this code, and cannot be held
-// liable for any real or imagined damage resulting from its use.
-// Users of this code must verify correctness for their application.
-
-typedef struct{
-	ofPoint P0;
-	ofPoint P1;
-}Segment;
-
-// dot product (3D) which allows vector operations in arguments
-#define dot(u,v)   ((u).x * (v).x + (u).y * (v).y + (u).z * (v).z)
-#define norm2(v)   dot(v,v)        // norm2 = squared length of vector
-#define norm(v)    sqrt(norm2(v))  // norm = length of vector
-#define d2(u,v)    norm2(u-v)      // distance squared = norm2 of difference
-#define d(u,v)     norm(u-v)       // distance = norm of difference
-
-static void simplifyDP(float tol, ofPoint* v, int j, int k, int* mk ){
-    if (k <= j+1) // there is nothing to simplify
-        return;
-
-    // check for adequate approximation by segment S from v[j] to v[k]
-    int     maxi	= j;          // index of vertex farthest from S
-    float   maxd2	= 0;         // distance squared of farthest vertex
-    float   tol2	= tol * tol;  // tolerance squared
-    Segment S		= {v[j], v[k]};  // segment from v[j] to v[k]
-    ofPoint u;
-	u				= S.P1 - S.P0;   // segment direction vector
-    double  cu		= dot(u,u);     // segment length squared
-
-    // test each vertex v[i] for max distance from S
-    // compute using the Feb 2001 Algorithm's dist_ofPoint_to_Segment()
-    // Note: this works in any dimension (2D, 3D, ...)
-    ofPoint  w;
-    ofPoint   Pb;                // base of perpendicular from v[i] to S
-    float  b, cw, dv2;        // dv2 = distance v[i] to S squared
-
-    for (int i=j+1; i<k; i++){
-        // compute distance squared
-        w = v[i] - S.P0;
-        cw = dot(w,u);
-        if ( cw <= 0 ) dv2 = d2(v[i], S.P0);
-        else if ( cu <= cw ) dv2 = d2(v[i], S.P1);
-        else {
-            b = (float)(cw / cu);
-            Pb = S.P0 + u*b;
-            dv2 = d2(v[i], Pb);
-        }
-        // test with current max distance squared
-        if (dv2 <= maxd2) continue;
-
-        // v[i] is a new max vertex
-        maxi = i;
-        maxd2 = dv2;
-    }
-    if (maxd2 > tol2)        // error is worse than the tolerance
-    {
-        // split the polyline at the farthest vertex from S
-        mk[maxi] = 1;      // mark v[maxi] for the simplified polyline
-        // recursively simplify the two subpolylines at v[maxi]
-        simplifyDP( tol, v, j, maxi, mk );  // polyline v[j] to v[maxi]
-        simplifyDP( tol, v, maxi, k, mk );  // polyline v[maxi] to v[k]
-    }
-    // else the approximation is OK, so ignore intermediate vertices
-    return;
-}
-
-
-void ofPolyline::simplify(float tol){
-
-	int n = size();
-
-	vector <ofPoint> sV;
-	sV.resize(n);
-
-    int    i, k, m, pv;            // misc counters
-    float  tol2 = tol * tol;       // tolerance squared
-    ofPoint * vt = new ofPoint[n];
-	int * mk = new int[n];
-
-	memset(mk, 0, sizeof(int) * n );
-
-    // STAGE 1.  Vertex Reduction within tolerance of prior vertex cluster
-    vt[0] = points[0];              // start at the beginning
-    for (i=k=1, pv=0; i<n; i++) {
-        if (d2(points[i], points[pv]) < tol2) continue;
-
-        vt[k++] = points[i];
-        pv = i;
-    }
-    if (pv < n-1) vt[k++] = points[n-1];      // finish at the end
-
-    // STAGE 2.  Douglas-Peucker polyline simplification
-    mk[0] = mk[k-1] = 1;       // mark the first and last vertices
-    simplifyDP( tol, vt, 0, k-1, mk );
-
-    // copy marked vertices to the output simplified polyline
-    for (i=m=0; i<k; i++) {
-        if (mk[i]) sV[m++] = vt[i];
-    }
-
-	//get rid of the unused points
-	if( m < (int)sV.size() ) sV.erase( sV.begin()+m, sV.end() );
-
-	delete [] vt;
-	delete [] mk;
-
-	points = sV;
-}
-
-
 ofShapeTessellation::ofShapeTessellation(){
 	bFilled = ofGetStyle().bFill;
 	bNeedsTessellation = true;
@@ -294,21 +164,6 @@ void ofShapeTessellation::addSubShape(const ofShapeTessellation & shape){
 	bNeedsTessellation = true;
 }
 
-void ofShapeTessellation::setCircleResolution(int res){
-	if (res > 1 && res != (int)circlePoints.size()){
-		circlePoints.resize(res);
-
-		float angle = 0.0f;
-		float angleAdder = M_TWO_PI / (float)res;
-		for (int i = 0; i < res; i++){
-			circlePoints[i].x = cos(angle);
-			circlePoints[i].y = sin(angle);
-			circlePoints[i].z = 0.0f;
-			angle += angleAdder;
-		}
-	}
-}
-
 void ofShapeTessellation::setFrom(const ofShape & path,  int curveResolution, bool bTesselate){
 	// TODO: 3D commands
 	clear();
@@ -317,26 +172,26 @@ void ofShapeTessellation::setFrom(const ofShape & path,  int curveResolution, bo
 		switch(commands[i].type){
 
 		case ofShape::Command::lineTo:
-			addVertex(commands[i].to);
+			getCurrentSubShape().polyline.addVertex(commands[i].to);
 			polyline.setIs3D(true);
 			bIs3D = true;
 			break;
 		case ofShape::Command::curveTo:
-			curveTo(commands[i].to, curveResolution);
+			getCurrentSubShape().polyline.curveTo(commands[i].to, curveResolution);
 			polyline.setIs3D(true);
 			bIs3D = true;
 			break;
 		case ofShape::Command::bezierTo:
-			bezierTo(commands[i].cp1,commands[i].cp2,commands[i].to, curveResolution);
+			getCurrentSubShape().polyline.bezierTo(commands[i].cp1,commands[i].cp2,commands[i].to, curveResolution);
 			polyline.setIs3D(true);
 			bIs3D = true;
 			break;
 		case ofShape::Command::quadBezierTo:
-			quadBezierTo(commands[i].cp1,commands[i].cp2,commands[i].to, curveResolution);
+			getCurrentSubShape().polyline.quadBezierTo(commands[i].cp1,commands[i].cp2,commands[i].to, curveResolution);
 			bIs3D = true;
 			break;
 		case ofShape::Command::arc:
-			arc(commands[i].to,commands[i].radiusX,commands[i].radiusY,commands[i].angleBegin,commands[i].angleEnd, curveResolution);
+			getCurrentSubShape().polyline.arc(commands[i].to,commands[i].radiusX,commands[i].radiusY,commands[i].angleBegin,commands[i].angleEnd, curveResolution);
 			polyline.setIs3D(true);
 			bIs3D = true;
 			break;
@@ -351,7 +206,7 @@ void ofShapeTessellation::setFrom(const ofShape & path,  int curveResolution, bo
 
 
 	for(int i=0; i<(int)path.getSubShapes().size(); i++){
-		//TODO: cast to change the constness, nasty but ofPath is internally only changing the cached shape
+		//TODO: cast to change the constness, nasty but ofCommand is internally only changing the cached shape
 		addSubShape(((ofShape&)path).getSubShapes()[i].getTessellation(curveResolution));
 	}
 	if(bTesselate) tessellate();

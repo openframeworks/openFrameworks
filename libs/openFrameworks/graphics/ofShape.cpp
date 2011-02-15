@@ -1,7 +1,7 @@
 #include "ofShape.h"
 #include "ofGraphics.h"
 
-class ofPathToShapeConverter;
+class ofCommandToShapeConverter;
 #include <deque>
 
 ofShape::ofShape(){
@@ -15,18 +15,18 @@ ofShape::ofShape(){
 
 void ofShape::clear(){
 	commands.clear();
-	subPaths.clear();
+	subShapes.clear();
 	hasChanged = true;
 }
 
 ofShape & ofShape::newSubShape(){
-	subPaths.push_back(ofShape());
+	subShapes.push_back(ofShape());
 	lastShape().windingMode = windingMode;
 	lastShape().bFill = bFill;
 	lastShape().strokeColor = strokeColor;
 	lastShape().strokeWidth = strokeWidth;
 	lastShape().fillColor = fillColor;
-	return subPaths.back();
+	return subShapes.back();
 }
 
 void ofShape::lineTo(const ofPoint & p){
@@ -110,37 +110,37 @@ void ofShape::setPolyWindingMode(ofPolyWindingMode mode){
 
 void ofShape::setFilled(bool hasFill){
 	bFill = hasFill;
-	for(int i=0; i<(int)subPaths.size(); i++){
-		subPaths[i].setFilled(hasFill);
+	for(int i=0; i<(int)subShapes.size(); i++){
+		subShapes[i].setFilled(hasFill);
 	}
 }
 
 void ofShape::setFillColor(const ofColor & color){
 	fillColor = color;
-	for(int i=0; i<(int)subPaths.size(); i++){
-		subPaths[i].setFillColor(color);
+	for(int i=0; i<(int)subShapes.size(); i++){
+		subShapes[i].setFillColor(color);
 	}
 }
 
 void ofShape::setStrokeColor(const ofColor & color){
 	strokeColor = color;
-	for(int i=0; i<(int)subPaths.size(); i++){
-		subPaths[i].setStrokeColor(color);
+	for(int i=0; i<(int)subShapes.size(); i++){
+		subShapes[i].setStrokeColor(color);
 	}
 }
 
 void ofShape::setStrokeWidth(float width){
 	strokeWidth = width;
-	for(int i=0; i<(int)subPaths.size(); i++){
-		subPaths[i].setStrokeWidth(width);
+	for(int i=0; i<(int)subShapes.size(); i++){
+		subShapes[i].setStrokeWidth(width);
 	}
 }
 
 ofShape & ofShape::lastShape(){
-	if(subPaths.empty()){
+	if(subShapes.empty()){
 		return *this;
 	}else{
-		return subPaths.back();
+		return subShapes.back();
 	}
 }
 const vector<ofShape::Command> & ofShape::getCommands() const{
@@ -150,11 +150,11 @@ vector<ofShape::Command> & ofShape::getCommands(){
 	return commands;
 }
 vector<ofShape> & ofShape::getSubShapes(){
-	return subPaths;
+	return subShapes;
 }
 
 const vector<ofShape> & ofShape::getSubShapes() const{
-	return subPaths;
+	return subShapes;
 }
 
 
