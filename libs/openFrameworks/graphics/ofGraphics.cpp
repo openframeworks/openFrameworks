@@ -64,16 +64,21 @@ static deque <ofRectangle> viewportHistory;
 void 			setupCircle();
 
 
-static ofShape path;
-static ofShapeTessellation shape;
+static ofShape shape;
 static ofPrimitive vertexData;
-static ofBaseRenderer * renderer = new ofGLRenderer(false);
+static ofBaseRenderer * renderer = NULL;
 
 void ofSetDefaultRenderer(ofBaseRenderer * renderer_){
 	if(renderer) delete renderer;
 	renderer = renderer_;
 	renderer->setupGraphicDefaults();
+	if(renderer->rendersPathDirectly()){
+		shape.setMode(ofShape::PATHS);
+	}else{
+		shape.setMode(ofShape::POLYLINES);
+	}
 }
+
 ofBaseRenderer * ofGetDefaultRenderer(){
 	return renderer;
 }
@@ -773,15 +778,9 @@ void ofTriangle(float x1,float y1,float z1,float x2,float y2,float z2,float x3, 
 	// use smoothness, if requested:
 	if (bSmoothHinted && drawMode == OF_OUTLINE) startSmoothing();
 
-	if(renderer->rendersPathDirectly()){
-		path=ofTrianglePath(x1,y1,z1,x2,y2,z2,x3,y3,z3);
-		ofSetCurrentStyleTo(path);
-		renderer->draw(path);
-	}else{
-		shape=ofTriangleShape(x1,y1,z1,x2,y2,z2,x3,y3,z3);
-		ofSetCurrentStyleTo(shape);
-		renderer->draw(shape);
-	}
+	shape=ofTriangleShape(x1,y1,z1,x2,y2,z2,x3,y3,z3);
+	ofSetCurrentStyleTo(shape);
+	renderer->draw(shape);
 
 	// back to normal, if smoothness is on
 	if (bSmoothHinted && drawMode == OF_OUTLINE) endSmoothing();
@@ -797,17 +796,10 @@ void ofCircle(float x, float y, float radius){
 	// use smoothness, if requested:
 	if (bSmoothHinted && drawMode == OF_OUTLINE) startSmoothing();
 
-	if(renderer->rendersPathDirectly()){
-		path.clear();
-		ofSetCurrentStyleTo(path);
-		path.arc(x,y,radius,radius,0,360);
-		renderer->draw(path);
-	}else{
-		shape.clear();
-		ofSetCurrentStyleTo(shape);
-		shape.arc(x,y,radius,radius,0,360,currentStyle.circleResolution);
-		renderer->draw(shape);
-	}
+	shape.clear();
+	ofSetCurrentStyleTo(shape);
+	shape.arc(x,y,radius,radius,0,360,currentStyle.circleResolution);
+	renderer->draw(shape);
 
 	// back to normal, if smoothness is on
 	if (bSmoothHinted && drawMode == OF_OUTLINE) endSmoothing();
@@ -819,17 +811,10 @@ void ofCircle(float x, float y, float z, float radius){
 	// use smoothness, if requested:
 	if (bSmoothHinted && drawMode == OF_OUTLINE) startSmoothing();
 
-	if(renderer->rendersPathDirectly()){
-		path.clear();
-		ofSetCurrentStyleTo(path);
-		path.arc(x,y,z,radius,radius,0,360);
-		renderer->draw(path);
-	}else{
-		shape.clear();
-		ofSetCurrentStyleTo(shape);
-		shape.arc(x,y,z,radius,radius,0,360,currentStyle.circleResolution);
-		renderer->draw(shape);
-	}
+	shape.clear();
+	ofSetCurrentStyleTo(shape);
+	shape.arc(x,y,z,radius,radius,0,360,currentStyle.circleResolution);
+	renderer->draw(shape);
 
 	// back to normal, if smoothness is on
 	if (bSmoothHinted && drawMode == OF_OUTLINE) endSmoothing();
@@ -846,17 +831,10 @@ void ofEllipse(float x, float y, float width, float height){
 	// use smoothness, if requested:
 	if (bSmoothHinted && drawMode == OF_OUTLINE) startSmoothing();
 
-	if(renderer->rendersPathDirectly()){
-		path.clear();
-		ofSetCurrentStyleTo(path);
-		path.arc(x,y,width*0.5,height*0.5,0,360);
-		renderer->draw(path);
-	}else{
-		shape.clear();
-		ofSetCurrentStyleTo(shape);
-		shape.arc(x,y,width*0.5,height*0.5,0,360,currentStyle.circleResolution);
-		renderer->draw(shape);
-	}
+	shape.clear();
+	ofSetCurrentStyleTo(shape);
+	shape.arc(x,y,width*0.5,height*0.5,0,360,currentStyle.circleResolution);
+	renderer->draw(shape);
 
 	// back to normal, if smoothness is on
 	if (bSmoothHinted && drawMode == OF_OUTLINE) endSmoothing();
@@ -868,17 +846,10 @@ void ofEllipse(float x, float y, float z, float width, float height){
 	// use smoothness, if requested:
 	if (bSmoothHinted && drawMode == OF_OUTLINE) startSmoothing();
 
-	if(renderer->rendersPathDirectly()){
-		path.clear();
-		ofSetCurrentStyleTo(path);
-		path.arc(x,y,z,width*0.5,height*0.5,0,360);
-		renderer->draw(path);
-	}else{
-		shape.clear();
-		ofSetCurrentStyleTo(shape);
-		shape.arc(x,y,z,width*0.5,height*0.5,0,360,currentStyle.circleResolution);
-		renderer->draw(shape);
-	}
+	shape.clear();
+	ofSetCurrentStyleTo(shape);
+	shape.arc(x,y,z,width*0.5,height*0.5,0,360,currentStyle.circleResolution);
+	renderer->draw(shape);
 
 	// back to normal, if smoothness is on
 	if (bSmoothHinted && drawMode == OF_OUTLINE) endSmoothing();
@@ -900,23 +871,13 @@ void ofLine(float x1,float y1,float z1,float x2,float y2,float z2){
 	// use smoothness, if requested:
 	if (bSmoothHinted) startSmoothing();
 
-	if(renderer->rendersPathDirectly()){
-		path.clear();
-		ofSetCurrentStyleTo(path);
-		path.moveTo(x1,y1,z1);
-		path.lineTo(x2,y2,z2);
-		path.setFilled(false);
-		path.setStrokeWidth(ofGetStyle().lineWidth);
-		renderer->draw(path);
-	}else{
-		shape.clear();
-		ofSetCurrentStyleTo(shape);
-		shape.moveTo(x1,y1,z1);
-		shape.lineTo(x2,y2,z2);
-		shape.setFilled(false);
-		shape.setStrokeWidth(ofGetStyle().lineWidth);
-		renderer->draw(shape);
-	}
+	shape.clear();
+	ofSetCurrentStyleTo(shape);
+	shape.moveTo(x1,y1,z1);
+	shape.lineTo(x2,y2,z2);
+	shape.setFilled(false);
+	shape.setStrokeWidth(ofGetStyle().lineWidth);
+	renderer->draw(shape);
 
 	// back to normal, if smoothness is on
 	if (bSmoothHinted) endSmoothing();
@@ -944,42 +905,21 @@ void ofRect(float x,float y,float z,float w,float h){
 	// use smoothness, if requested:
 	if (bSmoothHinted && drawMode == OF_OUTLINE) startSmoothing();
 
-
-	if(renderer->rendersPathDirectly()){
-		path.clear();
-		ofSetCurrentStyleTo(path);
-		if (cornerMode == OF_RECTMODE_CORNER){
-			path.lineTo(x,y,z);
-			path.lineTo(x+w,y,z);
-			path.lineTo(x+w,y+h,z);
-			path.lineTo(x,y+h,z);
-		}else{
-			path.lineTo(x-w/2.0f,y-h/2.0f,z);
-			path.lineTo(x+w/2.0f,y-h/2.0f,z);
-			path.lineTo(x+w/2.0f,y+h/2.0f,z);
-			path.lineTo(x-w/2.0f,y+h/2.0f,z);
-		}
-		path.close();
-		renderer->draw(path);
+	shape.clear();
+	ofSetCurrentStyleTo(shape);
+	if (cornerMode == OF_RECTMODE_CORNER){
+		shape.lineTo(x,y,z);
+		shape.lineTo(x+w,y,z);
+		shape.lineTo(x+w,y+h,z);
+		shape.lineTo(x,y+h,z);
 	}else{
-		shape.clear();
-		ofSetCurrentStyleTo(shape);
-		if (cornerMode == OF_RECTMODE_CORNER){
-			shape.lineTo(x,y,z);
-			shape.lineTo(x+w,y,z);
-			shape.lineTo(x+w,y+h,z);
-			shape.lineTo(x,y+h,z);
-		}else{
-			shape.lineTo(x-w/2.0f,y-h/2.0f,z);
-			shape.lineTo(x+w/2.0f,y-h/2.0f,z);
-			shape.lineTo(x+w/2.0f,y+h/2.0f,z);
-			shape.lineTo(x-w/2.0f,y+h/2.0f,z);
-		}
-		shape.close();
-		renderer->draw(shape);
+		shape.lineTo(x-w/2.0f,y-h/2.0f,z);
+		shape.lineTo(x+w/2.0f,y-h/2.0f,z);
+		shape.lineTo(x+w/2.0f,y+h/2.0f,z);
+		shape.lineTo(x-w/2.0f,y+h/2.0f,z);
 	}
-
-
+	shape.close();
+	renderer->draw(shape);
 
 	// use smoothness, if requested:
 	if (bSmoothHinted && drawMode == OF_OUTLINE) endSmoothing();
@@ -988,41 +928,23 @@ void ofRect(float x,float y,float z,float w,float h){
 
 //----------------------------------------------------------
 void ofCurve(float x0, float y0, float x1, float y1, float x2, float y2, float x3, float y3){
-	if(renderer->rendersPathDirectly()){
-		path.clear();
-		ofSetCurrentStyleTo(path);
-		path.curveTo(x0,y0);
-		path.curveTo(x1,y1);
-		path.curveTo(x2,y2);
-		path.curveTo(x3,y3);
-		renderer->draw(path);
-	}else{
-		shape.clear();
-		ofSetCurrentStyleTo(shape);
-		shape.curveTo(x0,y0);
-		shape.curveTo(x1,y1);
-		shape.curveTo(x2,y2);
-		shape.curveTo(x3,y3);
-		renderer->draw(shape);
-	}
+	shape.clear();
+	ofSetCurrentStyleTo(shape);
+	shape.curveTo(x0,y0);
+	shape.curveTo(x1,y1);
+	shape.curveTo(x2,y2);
+	shape.curveTo(x3,y3);
+	renderer->draw(shape);
 }
 
 
 //----------------------------------------------------------
 void ofBezier(float x0, float y0, float x1, float y1, float x2, float y2, float x3, float y3){
-	if(renderer->rendersPathDirectly()){
-		path.clear();
-		ofSetCurrentStyleTo(path);
-		path.moveTo(x0,y0);
-		path.bezierTo(x1,y1,x2,y2,x3,y3);
-		renderer->draw(path);
-	}else{
-		shape.clear();
-		ofSetCurrentStyleTo(shape);
-		shape.moveTo(x0,y0);
-		shape.bezierTo(x1,y1,x2,y2,x3,y3);
-		renderer->draw(shape);
-	}
+	shape.clear();
+	ofSetCurrentStyleTo(shape);
+	shape.moveTo(x0,y0);
+	shape.bezierTo(x1,y1,x2,y2,x3,y3);
+	renderer->draw(shape);
 }
 
 //----------------------------------------------------------
@@ -1030,99 +952,56 @@ void ofBeginShape(){
 
 	if (bSmoothHinted && drawMode == OF_OUTLINE) startSmoothing();
 
-	if(renderer->rendersPathDirectly()){
-		path.clear();
-		ofSetCurrentStyleTo(path);
-	}else{
-		shape.clear();
-		ofSetCurrentStyleTo(shape);
-	}
+	shape.clear();
+	ofSetCurrentStyleTo(shape);
 }
 
 //----------------------------------------------------------
 void ofVertex(float x, float y){
-	if(renderer->rendersPathDirectly()){
-		path.lineTo(x,y);
-	}else{
-		shape.lineTo(x,y);
-	}
+	shape.lineTo(x,y);
 
 }
 
 //---------------------------------------------------
 void ofVertex(ofPoint & p) {
-	if(renderer->rendersPathDirectly()){
-		path.lineTo(p);
-	}else{
-		shape.lineTo(p);
-	}
+	shape.lineTo(p);
 }
 
 //----------------------------------------------------------
 void ofVertexes( const vector <ofPoint> & polyPoints ){
-	if(renderer->rendersPathDirectly()){
-		for( int k = 0; k < (int)polyPoints.size(); k++){
-			path.lineTo(polyPoints[k]);
-		}
-	}else{
-		for( int k = 0; k < (int)polyPoints.size(); k++){
-			shape.lineTo(polyPoints[k]);
-		}
+	for( int k = 0; k < (int)polyPoints.size(); k++){
+		shape.lineTo(polyPoints[k]);
 	}
 }
 
 //---------------------------------------------------
 void ofCurveVertex(float x, float y){
-	if(renderer->rendersPathDirectly()){
-		path.curveTo(x,y);
-	}else{
-		shape.curveTo(x,y);
-	}
+	shape.curveTo(x,y);
 }
 
 //----------------------------------------------------------
 void ofCurveVertexes( const vector <ofPoint> & curvePoints){
-	if(renderer->rendersPathDirectly()){
-		for( int k = 0; k < (int)curvePoints.size(); k++){
-			path.curveTo(curvePoints[k]);
-		}
-	}else{
-		for( int k = 0; k < (int)curvePoints.size(); k++){
-			shape.curveTo(curvePoints[k]);
-		}
+	for( int k = 0; k < (int)curvePoints.size(); k++){
+		shape.curveTo(curvePoints[k]);
 	}
 }
 
 //---------------------------------------------------
 void ofCurveVertex(ofPoint & p) {
-	if(renderer->rendersPathDirectly()){
-		shape.curveTo(p);
-	}
+	shape.curveTo(p);
 }
 
 //---------------------------------------------------
 void ofBezierVertex(float x1, float y1, float x2, float y2, float x3, float y3){
-	if(renderer->rendersPathDirectly()){
-		path.bezierTo(x1,y1,x2,y2,x3,y3);
-	}else{
-		shape.bezierTo(x1,y1,x2,y2,x3,y3);
-	}
+	shape.bezierTo(x1,y1,x2,y2,x3,y3);
 }
 
 //----------------------------------------------------------
 void ofNextContour(bool bClose){
-	if(renderer->rendersPathDirectly()){
-		if (bClose){
-			path.close();
-		}else{
-			path.newPath();
-		}
+	if (bClose){
+		shape.close();
 	}else{
-		if (bClose){
-			shape.close();
-		}else{
-			shape.newSubShape();
-		}
+		shape.newSubShape();
 	}
 }
 
@@ -1133,19 +1012,11 @@ void ofEndShape(bool bClose){
 	// (close -> add the first point to the end)
 	// -----------------------------------------------
 
-	if(renderer->rendersPathDirectly()){
-		if (bClose){
-			path.close();
-		}
-
-		renderer->draw(path);
-	}else{
-		if (bClose){
-			shape.close();
-		}
-
-		renderer->draw(shape);
+	if (bClose){
+		shape.close();
 	}
+
+	renderer->draw(shape);
 
    	if (bSmoothHinted && drawMode == OF_OUTLINE) endSmoothing();
 
@@ -1222,8 +1093,6 @@ void ofBox(float size) {
 
 	float h = size * .5;
 	
-	//glEnableClientState(GL_NORMAL_ARRAY);
-	//glEnableClientState(GL_VERTEX_ARRAY);
 	vertexData.clear();
 	if(ofGetStyle().bFill) {
 		ofVec3f vertices[] = {
@@ -1234,7 +1103,6 @@ void ofBox(float size) {
 			ofVec3f(-h,-h,+h), ofVec3f(-h,-h,-h), ofVec3f(+h,-h,-h), ofVec3f(+h,-h,+h),
 			ofVec3f(-h,-h,-h), ofVec3f(-h,+h,-h), ofVec3f(+h,+h,-h), ofVec3f(+h,-h,-h)
 		};
-		//glVertexPointer(3, GL_FLOAT, 0, vertices);
 		vertexData.addVertices(vertices,24);
 		
 		static ofVec3f normals[] = {
@@ -1245,10 +1113,8 @@ void ofBox(float size) {
 			ofVec3f(0,-1,0), ofVec3f(0,-1,0), ofVec3f(0,-1,0), ofVec3f(0,-1,0),
 			ofVec3f(0,0,-1), ofVec3f(0,0,-1), ofVec3f(0,0,-1), ofVec3f(0,0,-1)
 		};
-		//glNormalPointer(GL_FLOAT, 0, normals);
 		vertexData.addNormals(normals,24);
 
-		//glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 		static ofVec2f tex[] = {
 			ofVec2f(1,0), ofVec2f(0,0), ofVec2f(0,1), ofVec2f(1,1),
 			ofVec2f(1,1), ofVec2f(1,0), ofVec2f(0,0), ofVec2f(0,1),
@@ -1257,7 +1123,6 @@ void ofBox(float size) {
 			ofVec2f(0,0), ofVec2f(0,1), ofVec2f(1,1), ofVec2f(1,0),
 			ofVec2f(0,0), ofVec2f(0,1), ofVec2f(1,1), ofVec2f(1,0)
 		};
-		//glTexCoordPointer(2, GL_FLOAT, 0, tex);
 		vertexData.addTexCoords(tex,24);
 	
 		static ofIndexType indices[] = {
@@ -1274,13 +1139,9 @@ void ofBox(float size) {
 			20,21,22,
 			20,22,23
 		};
-		//glDrawElements(GL_TRIANGLES, 3 * 6 * 2, GL_UNSIGNED_BYTE, indices);
 		vertexData.addIndices(indices,36);
-		//glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 		vertexData.setMode(OF_TRIANGLES_MODE);
 		renderer->draw(vertexData);
-		//vboMesh.setVertexData(&vertexData);
-		//vboMesh.drawFaces();
 	} else {
 		ofVec3f vertices[] = {
 			ofVec3f(+h,+h,+h),
@@ -1292,7 +1153,6 @@ void ofBox(float size) {
 			ofVec3f(-h,-h,+h),
 			ofVec3f(-h,-h,-h)
 		};
-		//glVertexPointer(3, GL_FLOAT, 0, vertices);
 		vertexData.addVertices(vertices,8);
 		
 		static float n = sqrtf(3);
@@ -1306,7 +1166,6 @@ void ofBox(float size) {
 			ofVec3f(-n,-n,+n),
 			ofVec3f(-n,-n,-n)
 		};
-		//glNormalPointer(GL_FLOAT, 0, normals);
 		vertexData.addNormals(normals,8);
 
 		static ofIndexType indices[] = {
@@ -1314,17 +1173,11 @@ void ofBox(float size) {
 			4,5, 5,7, 7,6, 6,4,
 			0,4, 5,1, 7,3, 6,2
 		};
-		//glDrawElements(GL_LINES, 4 * 2 * 3, GL_UNSIGNED_BYTE, indices);
 		vertexData.addIndices(indices,24);
 
 		vertexData.setMode(OF_LINES_MODE);
 		renderer->draw(vertexData);
-		//vboMesh.setVertexData(&vertexData);
-		//vboMesh.drawWireframe();
 	}
-	
-	//glDisableClientState(GL_VERTEX_ARRAY);
-	//glDisableClientState(GL_NORMAL_ARRAY);
 
 
 	ofPopMatrix();
