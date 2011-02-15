@@ -277,9 +277,6 @@ bool ofQuickTimePlayer::loadMovie(string name){
 		}
 
 		bool bDoWeAlreadyHaveAGworld = false;
-		if (width != 0 && height != 0){
-			bDoWeAlreadyHaveAGworld = true;
-		}
 		Rect 				movieRect;
 		GetMovieBox(moviePtr, &(movieRect));
 		if (bDoWeAlreadyHaveAGworld){
