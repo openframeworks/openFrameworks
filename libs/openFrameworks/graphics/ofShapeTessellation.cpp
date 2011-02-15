@@ -167,7 +167,7 @@ void ofShapeTessellation::addSubShape(const ofShapeTessellation & shape){
 void ofShapeTessellation::setFrom(const ofShape & path,  int curveResolution, bool bTesselate){
 	// TODO: 3D commands
 	clear();
-	const vector<ofShape::Command> & commands = path.getCommands();
+	/*const vector<ofShape::Command> & commands = path.getCommands();
 	for(int i=0; i<(int)commands.size();i++){
 		switch(commands[i].type){
 
@@ -209,7 +209,7 @@ void ofShapeTessellation::setFrom(const ofShape & path,  int curveResolution, bo
 		//TODO: cast to change the constness, nasty but ofCommand is internally only changing the cached shape
 		addSubShape(((ofShape&)path).getSubShapes()[i].getTessellation(curveResolution));
 	}
-	if(bTesselate) tessellate();
+	if(bTesselate) tessellate();*/
 }
 
 void ofShapeTessellation::bezierTo( const ofPoint & cp1, const ofPoint & cp2, const ofPoint & to, int curveResolution ){

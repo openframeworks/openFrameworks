@@ -60,8 +60,36 @@ void ofCairoRenderer::close(){
 	}
 }
 
-void ofCairoRenderer::draw(ofShape & path){
-	drawPath(path);
+void ofCairoRenderer::draw(ofShape & shape){
+	cairo_new_path(cr);
+	vector<ofPath> & paths = shape.getPaths();
+	for(int i=0;i<paths.size();i++){
+		draw(paths[i]);
+	}
+
+	cairo_fill_rule_t cairo_poly_mode;
+	if(shape.getWindingMode()==OF_POLY_WINDING_ODD) cairo_poly_mode=CAIRO_FILL_RULE_EVEN_ODD;
+	else cairo_poly_mode=CAIRO_FILL_RULE_WINDING;
+
+	cairo_set_fill_rule(cr,cairo_poly_mode);
+
+
+	if(shape.getStrokeWidth()>0){
+		ofColor c = shape.getStrokeColor() * ofGetStyle().color;
+		c.a = shape.getStrokeColor().a/255. * ofGetStyle().color.a;
+		cairo_set_source_rgba(cr, (float)c.r/255.0, (float)c.g/255.0, (float)c.b/255.0, (float)c.a/255.0);
+		cairo_set_line_width( cr, shape.getStrokeWidth() );
+		if(shape.isFilled())
+			cairo_stroke_preserve( cr );
+		else
+			cairo_stroke( cr );
+	}
+	if(shape.isFilled()){
+		ofColor c = shape.getFillColor() * ofGetStyle().color;
+		c.a = shape.getFillColor().a/255. * ofGetStyle().color.a;
+		cairo_set_source_rgba(cr, (float)c.r/255.0, (float)c.g/255.0, (float)c.b/255.0, (float)c.a/255.0);
+		cairo_fill( cr );
+	}
 }
 
 void ofCairoRenderer::draw(ofPolyline & poly){
@@ -164,22 +192,19 @@ void ofCairoRenderer::draw(ofPrimitive & primitive){
 	popMatrix();
 }
 
-void ofCairoRenderer::drawPath(const ofShape & path,bool is_subpath){
+void ofCairoRenderer::draw(ofPath & path){
 	if(!surface || !cr) return;
-	const vector<ofShape::Command> & commands = path.getCommands();
-	if(is_subpath)
-		cairo_new_sub_path(cr);
-	else
-		cairo_new_path(cr);
+	const vector<ofPath::Command> & commands = path.getCommands();
+	cairo_new_sub_path(cr);
 	for(int i=0; i<(int)commands.size(); i++){
 		switch(commands[i].type){
-		case ofShape::Command::lineTo:
+		case ofPath::Command::lineTo:
 			curvePoints.clear();
 			cairo_line_to(cr,commands[i].to.x,commands[i].to.y);
 			break;
 
 
-		case ofShape::Command::curveTo:
+		case ofPath::Command::curveTo:
 			curvePoints.push_back(commands[i].to);
 
 			//code adapted from ofxVectorGraphics to convert catmull rom to bezier
@@ -199,18 +224,18 @@ void ofCairoRenderer::drawPath(const ofShape & path,bool is_subpath){
 			break;
 
 
-		case ofShape::Command::bezierTo:
+		case ofPath::Command::bezierTo:
 			curvePoints.clear();
 			cairo_curve_to(cr,commands[i].cp1.x,commands[i].cp1.y,commands[i].cp2.x,commands[i].cp2.y,commands[i].to.x,commands[i].to.y);
 			break;
 
-		case ofShape::Command::quadBezierTo:
+		case ofPath::Command::quadBezierTo:
 			curvePoints.clear();
 			cairo_curve_to(cr,commands[i].cp1.x,commands[i].cp1.y,commands[i].cp2.x,commands[i].cp2.y,commands[i].to.x,commands[i].to.y);
 			break;
 
 
-		case ofShape::Command::arc:
+		case ofPath::Command::arc:
 			curvePoints.clear();
 			// elliptic arcs not directly supported in cairo, lets scale y
 			if(commands[i].radiusX!=commands[i].radiusY){
@@ -233,34 +258,7 @@ void ofCairoRenderer::drawPath(const ofShape & path,bool is_subpath){
 		cairo_close_path(cr);
 	}
 
-	const vector<ofShape> &subpaths = path.getSubShapes();
-	for(int i=0;i<(int)subpaths.size();i++){
-		drawPath(subpaths[i],true);
-	}
 
-	cairo_fill_rule_t cairo_poly_mode;
-	if(path.getWindingMode()==OF_POLY_WINDING_ODD) cairo_poly_mode=CAIRO_FILL_RULE_EVEN_ODD;
-	else cairo_poly_mode=CAIRO_FILL_RULE_WINDING;
-
-	cairo_set_fill_rule(cr,cairo_poly_mode);
-
-
-	if(path.getStrokeWidth()>0){
-		ofColor c = path.getStrokeColor() * ofGetStyle().color;
-		c.a = path.getStrokeColor().a/255. * ofGetStyle().color.a;
-		cairo_set_source_rgba(cr, (float)c.r/255.0, (float)c.g/255.0, (float)c.b/255.0, (float)c.a/255.0);
-		cairo_set_line_width( cr, path.getStrokeWidth() );
-		if(path.isFilled())
-			cairo_stroke_preserve( cr );
-		else
-			cairo_stroke( cr );
-	}
-	if(path.isFilled()){
-		ofColor c = path.getFillColor() * ofGetStyle().color;
-		c.a = path.getFillColor().a/255. * ofGetStyle().color.a;
-		cairo_set_source_rgba(cr, (float)c.r/255.0, (float)c.g/255.0, (float)c.b/255.0, (float)c.a/255.0);
-		cairo_fill( cr );
-	}
 }
 
 //--------------------------------------------

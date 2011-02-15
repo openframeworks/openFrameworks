@@ -4,33 +4,61 @@
 class ofCommandToShapeConverter;
 #include <deque>
 
+ofPath::ofPath(){
+	bClosed = false;
+	bHasChanged = true;
+}
+const vector<ofPath::Command> & ofPath::getCommands() const{
+	return commands;
+}
+
+vector<ofPath::Command> & ofPath::getCommands(){
+	return commands;
+}
+
+void ofPath::addCommand(const ofPath::Command & command){
+	commands.push_back(command);
+	bHasChanged=true;
+}
+
+void ofPath::close(){
+	bClosed = true;
+}
+
+bool ofPath::isClosed(){
+	return bClosed;
+}
+
 ofShape::ofShape(){
 	strokeWidth = 1;
 	bFill = false;
 	windingMode = OF_POLY_WINDING_ODD;
-	bClosed = false;
 	renderer = NULL;
 	prevCurveRes = 16;
+	mode = PATHS;
+	hasChanged = false;
 }
 
 void ofShape::clear(){
-	commands.clear();
-	subShapes.clear();
+	paths.clear();
 	hasChanged = true;
 }
 
-ofShape & ofShape::newSubShape(){
-	subShapes.push_back(ofShape());
-	lastShape().windingMode = windingMode;
-	lastShape().bFill = bFill;
-	lastShape().strokeColor = strokeColor;
-	lastShape().strokeWidth = strokeWidth;
-	lastShape().fillColor = fillColor;
-	return subShapes.back();
+void ofShape::newPath(){
+	if(mode==PATHS){
+		paths.push_back(ofPath());
+	}else{
+		polylines.push_back(ofPolyline());
+	}
+	bNeedsTessellation = true;
 }
 
 void ofShape::lineTo(const ofPoint & p){
-	lastShape().addCommand(Command(Command::lineTo,p));
+	if(mode==PATHS){
+		lastPath().addCommand(ofPath::Command(ofPath::Command::lineTo,p));
+	}else{
+		lastPolyline().lineTo(p);
+	}
 }
 
 void ofShape::lineTo(float x, float y, float z){
@@ -38,11 +66,16 @@ void ofShape::lineTo(float x, float y, float z){
 }
 
 void ofShape::lineTo(float x, float y){
-	lastShape().addCommand(Command(Command::lineTo,ofPoint(x,y)));
+	lineTo(ofPoint(x,y,0));
 }
 
 void ofShape::moveTo(const ofPoint & p){
-	newSubShape().addCommand(Command(Command::lineTo,p));
+	newPath();
+	if(mode==PATHS){
+		lastPath().addCommand(ofPath::Command(ofPath::Command::lineTo,p));
+	}else{
+		lastPolyline().addVertex(p);
+	}
 }
 
 void ofShape::moveTo(float x, float y, float z){
@@ -50,7 +83,11 @@ void ofShape::moveTo(float x, float y, float z){
 }
 
 void ofShape::curveTo(const ofPoint & p){
-	lastShape().addCommand(Command(Command::curveTo,p));
+	if(mode==PATHS){
+		lastPath().addCommand(ofPath::Command(ofPath::Command::curveTo,p));
+	}else{
+		lastPolyline().curveTo(p);
+	}
 }
 
 void ofShape::curveTo(float x, float y, float z){
@@ -58,15 +95,19 @@ void ofShape::curveTo(float x, float y, float z){
 }
 
 void ofShape::curveTo(float x, float y){
-	lastShape().addCommand(Command(Command::curveTo,ofPoint(x,y)));
+	curveTo(ofPoint(x,y,0));
 }
 
 void ofShape::bezierTo(const ofPoint & cp1, const ofPoint & cp2, const ofPoint & p){
-	lastShape().addCommand(Command(Command::bezierTo,p,cp1,cp2));
+	if(mode==PATHS){
+		lastPath().addCommand(ofPath::Command(ofPath::Command::bezierTo,p,cp1,cp2));
+	}else{
+		lastPolyline().bezierTo(cp1,cp2,p);
+	}
 }
 
 void ofShape::bezierTo(float cx1, float cy1, float cx2, float cy2, float x, float y){
-	lastShape().addCommand(Command(Command::bezierTo,ofPoint(x,y),ofPoint(cx1,cy1),ofPoint(cx2,cy2)));
+	bezierTo(ofPoint(cx1,cy1,0),ofPoint(cx2,cy2,0),ofPoint(x,y,0));
 }
 
 void ofShape::bezierTo(float cx1, float cy1, float cz1, float cx2, float cy2, float cz2, float x, float y, float z){
@@ -74,11 +115,15 @@ void ofShape::bezierTo(float cx1, float cy1, float cz1, float cx2, float cy2, fl
 }
 
 void ofShape::quadBezierTo(const ofPoint & cp1, const ofPoint & cp2, const ofPoint & p){
-	lastShape().addCommand(Command(Command::quadBezierTo,p,cp1,cp2));
+	if(mode==PATHS){
+		lastPath().addCommand(ofPath::Command(ofPath::Command::quadBezierTo,p,cp1,cp2));
+	}else{
+		lastPolyline().quadBezierTo(cp1,cp2,p);
+	}
 }
 
 void ofShape::quadBezierTo(float cx1, float cy1, float cx2, float cy2, float x, float y){
-	lastShape().addCommand(Command(Command::quadBezierTo,ofPoint(x,y),ofPoint(cx1,cy1),ofPoint(cx2,cy2)));
+	quadBezierTo(ofPoint(cx1,cy1,0),ofPoint(cx2,cy2,0),ofPoint(x,y,0));
 }
 
 void ofShape::quadBezierTo(float cx1, float cy1, float cz1, float cx2, float cy2, float cz2, float x, float y, float z){
@@ -86,11 +131,15 @@ void ofShape::quadBezierTo(float cx1, float cy1, float cz1, float cx2, float cy2
 }
 
 void ofShape::arc(const ofPoint & centre, float radiusX, float radiusY, float angleBegin, float angleEnd){
-	lastShape().addCommand(Command(Command::arc,centre,radiusX,radiusY,angleBegin,angleEnd));
+	if(mode==PATHS){
+		lastPath().addCommand(ofPath::Command(ofPath::Command::arc,centre,radiusX,radiusY,angleBegin,angleEnd));
+	}else{
+		lastPolyline().arc(centre,radiusX,radiusY,angleBegin,angleEnd);
+	}
 }
 
 void ofShape::arc(float x, float y, float radiusX, float radiusY, float angleBegin, float angleEnd){
-	lastShape().addCommand(Command(Command::arc,ofPoint(x,y),radiusX,radiusY,angleBegin,angleEnd));
+	arc(ofPoint(x,y,0),radiusX,radiusY,angleBegin,angleEnd);
 }
 
 void ofShape::arc(float x, float y, float z, float radiusX, float radiusY, float angleBegin, float angleEnd){
@@ -98,9 +147,11 @@ void ofShape::arc(float x, float y, float z, float radiusX, float radiusY, float
 }
 
 void ofShape::close(){
-	lastShape().bClosed=true;
-	lastShape().hasChanged = true;
-	newSubShape();
+	if(mode==PATHS){
+		lastPath().close();
+	}else{
+		lastPolyline().setClosed(true);
+	}
 }
 
 void ofShape::setPolyWindingMode(ofPolyWindingMode mode){
@@ -110,51 +161,46 @@ void ofShape::setPolyWindingMode(ofPolyWindingMode mode){
 
 void ofShape::setFilled(bool hasFill){
 	bFill = hasFill;
-	for(int i=0; i<(int)subShapes.size(); i++){
-		subShapes[i].setFilled(hasFill);
-	}
 }
 
 void ofShape::setFillColor(const ofColor & color){
 	fillColor = color;
-	for(int i=0; i<(int)subShapes.size(); i++){
-		subShapes[i].setFillColor(color);
-	}
 }
 
 void ofShape::setStrokeColor(const ofColor & color){
 	strokeColor = color;
-	for(int i=0; i<(int)subShapes.size(); i++){
-		subShapes[i].setStrokeColor(color);
-	}
 }
 
 void ofShape::setStrokeWidth(float width){
 	strokeWidth = width;
-	for(int i=0; i<(int)subShapes.size(); i++){
-		subShapes[i].setStrokeWidth(width);
-	}
 }
 
-ofShape & ofShape::lastShape(){
-	if(subShapes.empty()){
-		return *this;
-	}else{
-		return subShapes.back();
+ofPath & ofShape::lastPath(){
+	if(paths.empty()){
+		paths.push_back(ofPath());
 	}
-}
-const vector<ofShape::Command> & ofShape::getCommands() const{
-	return commands;
-}
-vector<ofShape::Command> & ofShape::getCommands(){
-	return commands;
-}
-vector<ofShape> & ofShape::getSubShapes(){
-	return subShapes;
+	return paths.back();
 }
 
-const vector<ofShape> & ofShape::getSubShapes() const{
-	return subShapes;
+ofPolyline & ofShape::lastPolyline(){
+	if(polylines.empty()){
+		polylines.push_back(ofPolyline());
+	}
+	return polylines.back();
+}
+
+vector<ofPath> & ofShape::getPaths(){
+	if(mode==POLYLINES){
+		ofLog(OF_LOG_WARNING,"trying to get paths from shape with polylines only");
+	}
+	return paths;
+}
+
+const vector<ofPath> & ofShape::getPaths() const{
+	if(mode==POLYLINES){
+		ofLog(OF_LOG_WARNING,"trying to get paths from shape with polylines only");
+	}
+	return paths;
 }
 
 
@@ -178,17 +224,9 @@ float ofShape::getStrokeWidth() const{
 	return strokeWidth;
 }
 
-bool ofShape::isClosed() const{
-	return bClosed;
-}
-
-void ofShape::addCommand(const ofShape::Command & command){
-	commands.push_back(command);
-	hasChanged=true;
-}
 
 ofShapeTessellation & ofShape::getTessellation(int curveResolution){
-	if(curveResolution<=0) curveResolution=prevCurveRes;
+	/*if(curveResolution<=0) curveResolution=prevCurveRes;
 	if(hasChanged || curveResolution!=prevCurveRes){
 		prevCurveRes = curveResolution;
 		cachedShape.setFrom(*this,curveResolution);
@@ -199,7 +237,7 @@ ofShapeTessellation & ofShape::getTessellation(int curveResolution){
 	cachedShape.setFillColor(fillColor);
 	cachedShape.setPolyWindingMode(windingMode);
 	cachedShape.setFilled(bFill);
-	return cachedShape;
+	return cachedShape;*/
 }
 
 void ofShape::updateShape(){
