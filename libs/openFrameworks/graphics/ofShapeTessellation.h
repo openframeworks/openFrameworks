@@ -3,79 +3,8 @@
 #include "ofBaseTypes.h"
 #include "ofPoint.h"
 #include <deque>
-
-/** ofPolyline
- 
- A line composed of straight line segments.
- 
- */
-
-
-class ofPolyline {
-public:	
-	ofPolyline(){
-		clear();
-	}
-
-	ofPolyline(const vector<ofPoint>& verts){
-		clear();
-		addVertexes(verts);
-	}
-	/// remove all the points
-	void clear() {
-		bIs3D = true;
-		bClosed=false;
-		points.clear();
-		bHasChanged = true;
-	}
-
-	/// add a vertex
-	void addVertex( const ofPoint& p ) { points.push_back(p); bHasChanged=true; }
-	void addVertex( float x, float y, float z=0 ) { addVertex(ofPoint(x,y,z)); bHasChanged=true; }
-	void addVertexes( const vector<ofPoint>& verts ) { points.insert( points.end(), verts.begin(), verts.end() );  bHasChanged=true;  }
-
-	/// points vector access
-	size_t size() const { return points.size(); }
-	const ofPoint& operator[] (int index) const { return points[index]; }
-	ofPoint& operator[] (int index) {  bHasChanged=true; return points[index]; }
-	
-	/// closed
-	void setClosed( bool tf ) {  bHasChanged=true; bClosed = tf; }
-	bool isClosed() const { return bClosed; }
-	
-	void simplify(float tolerance=0.3);
-
-	void setIs3D(bool bIs3D_){
-		bHasChanged=true;
-		bIs3D = bIs3D_;
-	}
-	bool is3D() const{
-		return bIs3D;
-	}
-	bool hasChanged(){
-		 if(bHasChanged){
-			 bHasChanged=false;
-		 	 return true;
-		 }else{
-			 return false;
-		 }
-	}
-
-	const vector<ofPoint> & getVertices() const{return points;}
-	bool getClosed() const { return bClosed; }
-	
-	float getPerimeter() const;
-	
-private:
-	vector<ofPoint> points;
-	bool bClosed;
-	bool bIs3D;
-	bool bHasChanged;
-};
-
-
-
 #include "ofTessellator.h"
+#include "ofPolyline.h"
 
 
 /** ofShape
