@@ -2,6 +2,8 @@
 #include "ofGraphics.h"
 #include "ofConstants.h"
 #include "ofAppRunner.h"
+#include "ofUtils.h"
+#include "ofPrimitive.h"
 
 void
 helper_quadratic_to (cairo_t *cr,
@@ -101,15 +103,6 @@ void ofCairoRenderer::draw(ofPolyline & poly){
 	if(poly.isClosed())
 		cairo_close_path(cr);
 	ofPopStyle();
-}
-
-void ofCairoRenderer::draw(ofShapeTessellation & shape){
-	for(int i=0;i<(int)shape.getTessellation().size();i++){
-		draw(shape.getTessellation()[i]);
-	}
-	for(int i=0;i<(int)shape.getOutline().size();i++){
-		draw(shape.getOutline()[i]);
-	}
 }
 
 void ofCairoRenderer::useShapeColor(bool bUseShapeColor_){

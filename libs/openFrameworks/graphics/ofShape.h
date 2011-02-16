@@ -4,6 +4,8 @@
 #include "ofPoint.h"
 #include "ofColor.h"
 #include "ofPolyline.h"
+#include "ofBaseTypes.h"
+#include "ofPrimitive.h"
 
 
 class ofPath{
@@ -145,6 +147,7 @@ public:
 
 	void setMode(Mode mode);
 	void setCurveResolution(int curveResolution);
+	int getCurveResolution();
 
 private:
 

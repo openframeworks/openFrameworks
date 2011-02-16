@@ -1,7 +1,7 @@
 #include "ofShape.h"
 #include "ofGraphics.h"
+#include "ofTessellator.h"
 
-class ofCommandToShapeConverter;
 #include <deque>
 
 ofPath::ofPath(){
@@ -203,17 +203,6 @@ const vector<ofPath> & ofShape::getPaths() const{
 	return paths;
 }
 
-vector<ofPolyline> & ofShape::getOutline(){
-	if( polyWindingMode != OF_POLY_WINDING_ODD ) {
-		return tesselatedPolyline;
-	}else{
-		return polyline;
-	}
-}
-
-vector<ofPrimitive> & ofShape::getTessellation(){
-	return cachedTessellation;
-}
 
 ofPolyWindingMode ofShape::getWindingMode() const{
 	return windingMode;
@@ -244,24 +233,24 @@ void ofShape::generatePolylinesFromPaths(){
 		polylines.clear();
 		polylines.resize(paths.size());
 		for(int j=0;j<paths.size();j++){
-			const vector<ofShape::Command> & commands = paths[j].getCommands();
+			const vector<ofPath::Command> & commands = paths[j].getCommands();
 
 			for(int i=0; i<(int)commands.size();i++){
 				switch(commands[i].type){
 
-				case ofShape::Command::lineTo:
+				case ofPath::Command::lineTo:
 					polylines[j].addVertex(commands[i].to);
 					break;
-				case ofShape::Command::curveTo:
+				case ofPath::Command::curveTo:
 					polylines[j].curveTo(commands[i].to, curveResolution);
 					break;
-				case ofShape::Command::bezierTo:
+				case ofPath::Command::bezierTo:
 					polylines[j].bezierTo(commands[i].cp1,commands[i].cp2,commands[i].to, curveResolution);
 					break;
-				case ofShape::Command::quadBezierTo:
+				case ofPath::Command::quadBezierTo:
 					polylines[j].quadBezierTo(commands[i].cp1,commands[i].cp2,commands[i].to, curveResolution);
 					break;
-				case ofShape::Command::arc:
+				case ofPath::Command::arc:
 					polylines[j].arc(commands[i].to,commands[i].radiusX,commands[i].radiusY,commands[i].angleBegin,commands[i].angleEnd, curveResolution);
 					break;
 				}
@@ -275,14 +264,14 @@ void ofShape::generatePolylinesFromPaths(){
 
 void ofShape::tessellate(){
 	generatePolylinesFromPaths();
-	bool bIs2D = !bIs3D;
+	//bool bIs2D = !bIs3D;
 	cachedTessellation.clear();
-	if(bFilled){
-		cachedTessellation = ofTessellator::tessellateToMesh( polylines, polyWindingMode, bIs2D );
+	if(bFill){
+		cachedTessellation = ofTessellator::tessellateToMesh( polylines, windingMode);
 	}
 	if ( hasOutline() ){
-		if( polyWindingMode != OF_POLY_WINDING_ODD ) {
-			tessellatedPolylines = ofTessellator::tessellateToOutline( polylines, polyWindingMode, bIs2D );
+		if( windingMode != OF_POLY_WINDING_ODD ) {
+			tessellatedPolylines = ofTessellator::tessellateToOutline( polylines, windingMode);
 		}
 	}
 	bNeedsTessellation = false;
@@ -292,7 +281,7 @@ vector<ofPolyline> & ofShape::getOutline() {
 	if ( bNeedsTessellation ){
 		tessellate();
 	}
-	if( polyWindingMode != OF_POLY_WINDING_ODD ) {
+	if( windingMode != OF_POLY_WINDING_ODD ) {
 		return tessellatedPolylines;
 	}else{
 		return polylines;
@@ -333,4 +322,8 @@ void ofShape::setMode(Mode _mode){
 
 void ofShape::setCurveResolution(int _curveResolution){
 	curveResolution = _curveResolution;
+}
+
+int ofShape::getCurveResolution(){
+	return curveResolution;
 }
