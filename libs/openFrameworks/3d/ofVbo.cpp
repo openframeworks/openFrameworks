@@ -10,11 +10,11 @@
 
 //--------------------------------------------------------------
 ofVbo::ofVbo() {
-	bUsingVerts = false;
+	bUsingVerts		= false;
 	bUsingTexCoords = false;
-	bUsingColors = false;
-	bUsingNormals = false;
-	bUsingIndices = false;
+	bUsingColors	= false;
+	bUsingNormals	= false;
+	bUsingIndices	= false;
 	
 	vertSize		= -1;
 	vertStride      = 0;
@@ -38,6 +38,7 @@ void ofVbo::setVertexData(const ofVec3f * verts, int total, int usage) {
 		ofLog(OF_LOG_WARNING,"ofVbo: bad vertex data!\n");
 		return;	
 	}
+	
 	vertUsage = usage;
 	if(!bUsingVerts) {
 		bAllocated  = true;
@@ -382,16 +383,16 @@ void ofVbo::unbind() {
 	if(bUsingVerts)  glEnableClientState(GL_VERTEX_ARRAY);
 	if(bUsingColors) glDisableClientState(GL_COLOR_ARRAY);
 	//glDisableClientState(GL_INDEX_ARRAY);
-	glDisableClientState(GL_COLOR_ARRAY);
-	glDisableClientState(GL_NORMAL_ARRAY);
+	// glDisableClientState(GL_COLOR_ARRAY);
+	if(bUsingNormals) glDisableClientState(GL_NORMAL_ARRAY);
 	//glDisableClientState(GL_EDGE_FLAG_ARRAY);
-	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+	if(bUsingTexCoords) glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 	
 	//glPopClientAttrib();
 	//glPopAttrib();	
 	
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
 //--------------------------------------------------------------
