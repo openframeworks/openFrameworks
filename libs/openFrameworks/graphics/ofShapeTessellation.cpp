@@ -2,7 +2,7 @@
 #include "ofTessellator.h"
 #include "ofShape.h"
 #include "ofGraphics.h"
-
+#if 0
 
 ofShapeTessellation::ofShapeTessellation(){
 	bFilled = ofGetStyle().bFill;
@@ -354,3 +354,4 @@ void ofShapeTessellation::arc( const ofPoint & center, float radiusX, float radi
 	}
 	bNeedsTessellation = true;
 }
+#endif

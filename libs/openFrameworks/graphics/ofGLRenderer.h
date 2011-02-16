@@ -11,7 +11,6 @@ public:
 	~ofGLRenderer(){}
 	void draw(ofPrimitive & vertexData);
 	void draw(ofPolyline & poly);
-	void draw(ofShapeTessellation & shape);
 	void draw(ofShape & path);
 	void useShapeColor(bool bUseShapeColor);
 

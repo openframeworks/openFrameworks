@@ -12,11 +12,6 @@ public:
 			 renderers[i]->draw(poly);
 		 }
 	 }
-	 void draw(ofShapeTessellation & shape){
-		 for(int i=0;i<(int)renderers.size();i++){
-			 renderers[i]->draw(shape);
-		 }
-	 }
 	 void draw(ofShape & shape){
 		 for(int i=0;i<(int)renderers.size();i++){
 			 renderers[i]->draw(shape);

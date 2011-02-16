@@ -6,7 +6,7 @@
 #include "ofTessellator.h"
 #include "ofPolyline.h"
 
-
+#if 0
 /** ofShape
  
  Represents a 'shape'.
@@ -145,3 +145,4 @@ private:
 
 	bool bIs3D;
 };
+#endif

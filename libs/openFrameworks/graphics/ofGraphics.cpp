@@ -388,18 +388,6 @@ static void ofSetCurrentStyleTo(ofShape & path){
 	}
 }
 
-static void ofSetCurrentStyleTo(ofShapeTessellation & shape){
-	shape.setFilled(drawMode == OF_FILLED);
-	path.setColor(ofColor(255,255,255,255));
-	shape.setPolyWindingMode(currentStyle.polyMode);
-
-	if(drawMode == OF_OUTLINE){
-		shape.setStrokeWidth(currentStyle.lineWidth);
-	}else{
-		shape.setStrokeWidth(0);
-	}
-}
-
 //----------------------------------------------------------
 void  ofSetRectMode(ofRectMode mode){
 	if (mode == OF_RECTMODE_CORNER) 		cornerMode = OF_RECTMODE_CORNER;
@@ -813,8 +801,11 @@ void ofCircle(float x, float y, float z, float radius){
 
 	shape.clear();
 	ofSetCurrentStyleTo(shape);
-	shape.arc(x,y,z,radius,radius,0,360,currentStyle.circleResolution);
+	int curveRes = shape.getCurveResolution();
+	shape.setCurveResolution(currentStyle.circleResolution);
+	shape.arc(x,y,z,radius,radius,0,360);
 	renderer->draw(shape);
+	shape.setCurveResolution(curveRes);
 
 	// back to normal, if smoothness is on
 	if (bSmoothHinted && drawMode == OF_OUTLINE) endSmoothing();
@@ -828,16 +819,7 @@ void ofEllipse(const ofPoint & p, float width, float height){
 
 //----------------------------------------------------------
 void ofEllipse(float x, float y, float width, float height){
-	// use smoothness, if requested:
-	if (bSmoothHinted && drawMode == OF_OUTLINE) startSmoothing();
-
-	shape.clear();
-	ofSetCurrentStyleTo(shape);
-	shape.arc(x,y,width*0.5,height*0.5,0,360,currentStyle.circleResolution);
-	renderer->draw(shape);
-
-	// back to normal, if smoothness is on
-	if (bSmoothHinted && drawMode == OF_OUTLINE) endSmoothing();
+	ofEllipse(x,y,0,width,height);
 }
 
 //----------------------------------------------------------
@@ -848,8 +830,11 @@ void ofEllipse(float x, float y, float z, float width, float height){
 
 	shape.clear();
 	ofSetCurrentStyleTo(shape);
-	shape.arc(x,y,z,width*0.5,height*0.5,0,360,currentStyle.circleResolution);
+	int curveRes = shape.getCurveResolution();
+	shape.setCurveResolution(currentStyle.circleResolution);
+	shape.arc(x,y,z,width*0.5,height*0.5,0,360);
 	renderer->draw(shape);
+	shape.setCurveResolution(curveRes);
 
 	// back to normal, if smoothness is on
 	if (bSmoothHinted && drawMode == OF_OUTLINE) endSmoothing();
@@ -1001,7 +986,7 @@ void ofNextContour(bool bClose){
 	if (bClose){
 		shape.close();
 	}else{
-		shape.newSubShape();
+		shape.newPath();
 	}
 }
 

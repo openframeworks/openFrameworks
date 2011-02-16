@@ -42,7 +42,6 @@ static ofAppBaseWindow *			window = NULL;
 //--------------------------------------
 void ofSetupOpenGL(ofAppBaseWindow * windowPtr, int w, int h, int screenMode){
 	window = windowPtr;
-	ofSetDefaultRenderer(new ofGLRenderer);
 	window->setupOpenGL(w, h, screenMode);
 	
 #ifndef TARGET_OPENGLES
@@ -52,9 +51,10 @@ void ofSetupOpenGL(ofAppBaseWindow * windowPtr, int w, int h, int screenMode){
 		/* Problem: glewInit failed, something is seriously wrong. */
 		ofLog(OF_LOG_ERROR, "Error: %s\n", glewGetErrorString(err));
 	}
-	//Default colors etc are now in ofGraphics - ofSetupGraphicDefaults
-	ofSetupGraphicDefaults();
 #endif
+	ofSetDefaultRenderer(new ofGLRenderer);
+	//Default colors etc are now in ofGraphics - ofSetupGraphicDefaults
+	//ofSetupGraphicDefaults();
 }
 
 

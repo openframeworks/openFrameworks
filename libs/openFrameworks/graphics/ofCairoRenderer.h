@@ -29,7 +29,6 @@ public:
 	void draw(ofShape & shape);
 	void draw(ofPath & path);
 	void draw(ofPolyline & poly);
-	void draw(ofShapeTessellation & shape);
 	void draw(ofPrimitive & vertexData);
 	void useShapeColor(bool bUseShapeColor);
 
