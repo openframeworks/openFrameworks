@@ -45,12 +45,25 @@ void testApp::draw(){
 	cam.end();
 
 	ofSetColor(255);
-	ofDrawBitmapString(ofToString((int) ofGetFrameRate()), 10, 20);
+	string msg = string("Using mouse inputs to navigate ('m' to toggle): ") + (cam.getMouseInputEnabled() ? "YES" : "NO");
+	msg += "\nfps: " + ofToString(ofGetFrameRate(), 2);
+	ofDrawBitmapString(msg, 10, 20);
 }
 
 //--------------------------------------------------------------
 void testApp::keyPressed(int key){
-
+	switch(key) {
+		case 'M':
+		case 'm':
+			if(cam.getMouseInputEnabled()) cam.disableMouseInput();
+			else cam.enableMouseInput();
+			break;
+			
+		case 'F':
+		case 'f':
+			ofToggleFullscreen();
+			break;
+	}
 }
 
 //--------------------------------------------------------------

@@ -1,4 +1,5 @@
 #include "ofGstUtils.h"
+#ifndef TARGET_ANDROID
 #include "ofUtils.h"
 #include <gst/app/gstappsink.h>
 #include <gst/video/video.h>
@@ -102,7 +103,8 @@ void ofGstUtils::eos_cb(){
 }
 
 bool ofGstUtils::setPipelineWithSink(string pipeline, string sinkname, bool isStream){
-	GMainLoop* loop		= g_main_loop_new (NULL, FALSE);
+	//GMainLoop* loop		=
+	g_main_loop_new (NULL, FALSE);
 
 	gchar* pipeline_string =
 		g_strdup((pipeline).c_str());
@@ -486,6 +488,9 @@ void ofGstUtils::gstHandleMessage(){
 							ofLog(OF_LOG_WARNING,"GStreamer: unable to seek");
 						}
 					}break;
+
+					default:
+					break;
 				}
 
 			break;
@@ -545,11 +550,7 @@ unsigned char * ofGstVideoUtils::getPixels(){
 	return pixels.getPixels();
 }
 
-ofPixels ofGstVideoUtils::getOFPixels(){
-	return pixels;
-}
-
-ofPixels ofGstVideoUtils::getOFPixels() const{
+ofPixelsRef ofGstVideoUtils::getPixelsRef(){
 	return pixels;
 }
 
@@ -632,7 +633,7 @@ GstFlowReturn ofGstVideoUtils::preroll_cb(GstBuffer * buffer){
 	guint size;
 
 	size = GST_BUFFER_SIZE (buffer);
-	if(backPixels.isAllocated() && backPixels.getWidth()*backPixels.getHeight()*backPixels.getBytesPerPixel()!=size){
+	if(backPixels.isAllocated() && backPixels.getWidth()*backPixels.getHeight()*backPixels.getBytesPerPixel()!=(int)size){
 		ofLog(OF_LOG_ERROR, "on_preproll: error preroll buffer size: " + ofToString(size) + "!= init size: " + ofToString(backPixels.getWidth()*backPixels.getHeight()*backPixels.getBytesPerPixel()));
 		gst_buffer_unref (buffer);
 		return GST_FLOW_ERROR;
@@ -660,7 +661,7 @@ GstFlowReturn ofGstVideoUtils::buffer_cb(GstBuffer * buffer){
 	size = GST_BUFFER_SIZE (buffer);
 
 
-	if(backPixels.isAllocated() && backPixels.getWidth()*backPixels.getHeight()*backPixels.getBytesPerPixel()!=size){
+	if(backPixels.isAllocated() && backPixels.getWidth()*backPixels.getHeight()*backPixels.getBytesPerPixel()!=(int)size){
 		ofLog(OF_LOG_ERROR, "on_buffer: error preroll buffer size: " +  ofToString(size) + "!= init size: " + ofToString(backPixels.getWidth()*backPixels.getHeight()*backPixels.getBytesPerPixel()));
 		gst_buffer_unref (buffer);
 		return GST_FLOW_OK;
@@ -687,3 +688,4 @@ void ofGstVideoUtils::eos_cb(){
 	ofEventArgs args;
 	ofNotifyEvent(eosEvent,args);
 }
+#endif

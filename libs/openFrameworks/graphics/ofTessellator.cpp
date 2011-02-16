@@ -1,12 +1,3 @@
-/*
- *  ofTessellator.cpp
- *  openFrameworks
- *
- *  Created by theo on 28/10/2009.
- *  Copyright 2009 __MyCompanyName__. All rights reserved.
- *
- */
-
 #include "ofTessellator.h"
 
 
@@ -50,7 +41,7 @@
 // (note: this implementation is based on code from ftgl)
 // ------------------------------------
 
-
+#include <Poco/ScopedLock.h>
 ofMutex ofTessellator::mutex;
 
 
@@ -63,12 +54,8 @@ GLint ofTessellator::currentTriType; // GL_TRIANGLES, GL_TRIANGLE_FAN or GL_TRIA
 vector<ofPoint> ofTessellator::vertices;
 
 
-ofPolyline ofTessellator::resultOutline;
-#ifdef DRAW_WITH_MESHIES
-vector<meshy> ofTessellator::resultMeshies;
-#else
-ofMesh ofTessellator::resultMesh;
-#endif
+vector<ofPolyline> ofTessellator::resultOutline;
+vector<ofPrimitive> ofTessellator::resultMesh;
 
 
 
@@ -85,8 +72,8 @@ void CALLBACK ofTessellator::begin(GLint type){
 	// type can be GL_TRIANGLE_FAN, GL_TRIANGLE_STRIP, or GL_TRIANGLES
 	// or GL_LINE_LOOP if GLU_TESS_BOUNDARY_ONLY was set to TRUE
 		
+	currentTriType=type;
 	
-	currentTriType = type;
 	vertices.clear();
 	
 }
@@ -95,31 +82,17 @@ void CALLBACK ofTessellator::begin(GLint type){
 void CALLBACK ofTessellator::end(){
 	// here we take our big pile of vertices and push them at the mesh
 
-#ifdef DRAW_WITH_MESHIES
-	meshy m;
-	m.mode = currentTriType;
-	m.vertices = vertices;
-	resultMeshies.push_back( m );
-#else
 	// deal with mesh elements (triangles, triangle fan, triangle strip)
-	if ( currentTriType == GL_TRIANGLES ) {
-		resultMesh.addTriangles( vertices );
-	}
-	else if ( currentTriType == GL_TRIANGLE_FAN ) {
-		resultMesh.addTriangleFan( vertices );
-	}
-	else if ( currentTriType == GL_TRIANGLE_STRIP ) {
-		resultMesh.addTriangleStrip( vertices );
-	} else
-#endif
-	
-	// deal with line loop (outline only)
-	if ( currentTriType == GL_LINE_LOOP ){
-		resultOutline.addVertexes( vertices );
+
+	if(currentTriType!=GL_LINE_LOOP){
+		resultMesh.push_back(ofPrimitive(ofGetOFPrimitiveMode(currentTriType), vertices) );
+	}else if ( currentTriType == GL_LINE_LOOP ){ // outline
+		resultOutline.push_back( ofPolyline(vertices) );
+		resultOutline.back().setClosed(true);
 		// close the loop
-		if ( vertices.size()>0 ) {
+		/*if ( vertices.size()>0 ) {
 			resultOutline.addVertex( vertices[0] );
-		}
+		}*/
 	}
 	else{
 		//ofLog( OF_LOG_WARNING, "ofTessellate: unrecognized type '%i' (expected GL_TRIANGLES, GL_TRIANGLE_FAN or GL_TRIANGLE_STRIP)", currentTriType );
@@ -170,28 +143,27 @@ void ofTessellator::clear(){
 
 
 //----------------------------------------------------------
-ofPolyline ofTessellator::tessellateToOutline( const vector<ofPolyline>& polylines, int polyWindingMode, bool bIs2D ) {
-	mutex.lock();
+vector<ofPolyline> ofTessellator::tessellateToOutline( const vector<ofPolyline>& polylines, int polyWindingMode, bool bIs2D ) {
+	Poco::ScopedLock<ofMutex> lock(mutex);
 	
 	clear();
 	resultOutline.clear();
 	
 	performTessellation( polylines, polyWindingMode, false /* filled */, bIs2D );
 	
-	mutex.unlock();
 
 	return resultOutline;
-	
-	
+}
+
+vector<ofPolyline> ofTessellator::tessellateToOutline( const ofPolyline & polyline, int polyWindingMode, bool bIs2D ) {
+	vector<ofPolyline> tmpVector;
+	tmpVector.push_back(polyline);
+	return tessellateToOutline(tmpVector,polyWindingMode, bIs2D);
 }
 
 
 //----------------------------------------------------------
-#ifdef DRAW_WITH_MESHIES
-vector<meshy> ofTessellator::tessellateToMesh( const ofPolyline& polyline, int polyWindingMode, bool bIs2D ){
-#else
-ofMesh ofTessellator::tessellateToMesh( const ofPolyline& polyline, int polyWindingMode, bool bIs2D ){
-#endif
+vector<ofPrimitive> ofTessellator::tessellateToMesh( const ofPolyline& polyline, int polyWindingMode, bool bIs2D ){
 	vector<ofPolyline> tempPolylinesVector;
 	tempPolylinesVector.push_back( polyline );
 	return tessellateToMesh( tempPolylinesVector, polyWindingMode, bIs2D );
@@ -199,30 +171,17 @@ ofMesh ofTessellator::tessellateToMesh( const ofPolyline& polyline, int polyWind
 
 	
 //----------------------------------------------------------
-#ifdef DRAW_WITH_MESHIES
-vector<meshy> ofTessellator::tessellateToMesh( const vector<ofPolyline>& polylines, int polyWindingMode, bool bIs2D ) {
-#else
-static ofMesh ofTessellator::tessellateToMesh( const vector<ofPolyline>& polylines, int polyWindingMode, bool bIs2D ) {
-#endif
+vector<ofPrimitive> ofTessellator::tessellateToMesh( const vector<ofPolyline>& polylines, int polyWindingMode, bool bIs2D ) {
 
-	mutex.lock();
+	Poco::ScopedLock<ofMutex> lock(mutex);
 	
 	clear();
-#ifdef DRAW_WITH_MESHIES
-	resultMeshies.clear();
-#else
-	resultMesh = ofMesh();
-#endif
+	resultMesh.clear();
 
 	performTessellation( polylines, polyWindingMode, true /* filled */, bIs2D );
 	
-	mutex.unlock();
 	
-#ifdef DRAW_WITH_MESHIES
-	return resultMeshies;
-#else
 	return resultMesh;
-#endif
 		
 }
 
@@ -292,7 +251,7 @@ void ofTessellator::performTessellation(const vector<ofPolyline>& polylines, int
 			point[2] = polyline[i].z;
 			ofShapePolyVertexs.push_back(point);
 		}
-		if ( polyline.getClosed() && polyline.size()>0 ) {
+		if ( polyline.isClosed() && polyline.size()>0 ) {
 			double* point = new double[3];
 			point[0] = polyline[0].x;
 			point[1] = polyline[0].y;
@@ -320,4 +279,3 @@ void ofTessellator::performTessellation(const vector<ofPolyline>& polylines, int
    	clear();
 
 }
-

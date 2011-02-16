@@ -33,7 +33,8 @@ bool ofGstVideoPlayer::loadMovie(string name){
 	}
 	ofLog(OF_LOG_VERBOSE,"loading "+name);
 
-	GMainLoop* loop		= g_main_loop_new (NULL, FALSE);
+	//GMainLoop* loop		=
+	g_main_loop_new (NULL, FALSE);
 
 	GstElement * gstPipeline = gst_element_factory_make("playbin2","player");
 	g_object_set(G_OBJECT(gstPipeline), "uri", name.c_str(), (void*)NULL);
@@ -96,7 +97,6 @@ bool ofGstVideoPlayer::allocate(){
 	if(GstPad* pad = gst_element_get_static_pad(videoUtils.getSink(), "sink")){
 		int width,height,bpp=24;
 		if(gst_video_get_size(GST_PAD(pad), &width, &height)){
-			cout << "allocating " << width << ", "<< height << "@" << bpp << endl;
 			videoUtils.allocate(width,height,bpp);
 		}else{
 			ofLog(OF_LOG_ERROR,"GStreamer: cannot query width and height");
@@ -116,6 +116,7 @@ bool ofGstVideoPlayer::allocate(){
 			ofLog(OF_LOG_WARNING,"Gstreamer: cannot get framerate, frame seek won't work");
 		}
 		gst_object_unref(GST_OBJECT(pad));
+		return true;
 	}else{
 		ofLog(OF_LOG_ERROR,"GStreamer: cannot get sink pad");
 		return false;
@@ -245,6 +246,10 @@ bool ofGstVideoPlayer::isFrameNew(){
 
 unsigned char * ofGstVideoPlayer::getPixels(){
 	return videoUtils.getPixels();
+}
+
+ofPixelsRef ofGstVideoPlayer::getPixelsRef(){
+	return videoUtils.getPixelsRef();
 }
 
 float ofGstVideoPlayer::getHeight(){

@@ -27,6 +27,9 @@ enum ofLoopType{
 	#else
 		#define TARGET_OSX
 	#endif
+#elif defined (ANDROID)
+	#define TARGET_ANDROID
+	#define TARGET_OPENGLES
 #else
 	#define TARGET_LINUX
 #endif
@@ -126,8 +129,19 @@ enum ofLoopType{
 	#define TARGET_LITTLE_ENDIAN		// arm cpu	
 #endif
 
+#ifdef TARGET_ANDROID
+	#include <unistd.h>
+	#include <GLES/gl.h>
+	#include <GLES/glext.h>
+
+	#define TARGET_LITTLE_ENDIAN
+#endif
+
 #ifdef TARGET_OPENGLES
 	#include "glu.h"
+	typedef GLushort ofIndexType ;
+#else
+	typedef GLuint ofIndexType;
 #endif
 
 
@@ -163,7 +177,7 @@ enum ofLoopType{
 	#endif
 
 
-#else
+#elif defined(TARGET_OSX) || defined(TARGET_WIN32)
 
     // non - linux, pc or osx
 
@@ -191,6 +205,9 @@ enum ofLoopType{
 			#define OF_VIDEO_CAPTURE_QUICKTIME
 		#endif
     #endif
+
+#elif defined(TARGET_ANDROID)
+	#define OF_VIDEO_CAPTURE_ANDROID
 #endif
 
 
@@ -199,13 +216,14 @@ enum ofLoopType{
 #else 
 	#ifdef TARGET_OF_IPHONE
 		#define OF_VIDEO_PLAYER_IPHONE
-	#else
+	#elif !defined(TARGET_ANDROID)
 		#define OF_VIDEO_PLAYER_QUICKTIME
 	#endif
 #endif
 
 // comment out this line to disable all poco related code
 #define OF_USING_POCO
+
 
 //we don't want to break old code that uses ofSimpleApp
 //so we forward declare ofBaseApp and make ofSimpleApp mean the same thing
@@ -275,11 +293,16 @@ using namespace std;
 	#define ABS(x) (((x) < 0) ? -(x) : (x))
 #endif
 
-#define 	OF_FILLED				0x01
-#define 	OF_OUTLINE				0x02
-#define 	OF_WINDOW 				0
-#define 	OF_FULLSCREEN 			1
-#define 	OF_GAME_MODE			2
+enum ofFillFlag{
+	OF_FILLED = 0x01,
+	OF_OUTLINE=	0x02
+};
+
+enum ofWindowMode{
+	OF_WINDOW 		= 0,
+	OF_FULLSCREEN 	= 1,
+ 	OF_GAME_MODE	= 2
+};
 
 enum ofRectMode{
 	OF_RECTMODE_CORNER=0,
@@ -297,7 +320,8 @@ enum ofPixelFormat{
 	OF_PIXELS_MONO = 0, 
 	OF_PIXELS_RGB,
 	OF_PIXELS_RGBA,
-	OF_PIXELS_BGRA
+	OF_PIXELS_BGRA,
+	OF_PIXELS_RGB565
 };
 
 #define		OF_MAX_STYLE_HISTORY	32
@@ -315,7 +339,7 @@ enum ofBlendMode{
 
 //this is done to match the iPhone defaults 
 //we don't say landscape, portrait etc becuase iPhone apps default to portrait while desktop apps are typically landscape
-enum{
+enum ofOrientation{
 	OF_ORIENTATION_DEFAULT = 1,	
 	OF_ORIENTATION_180 = 2,
 	OF_ORIENTATION_90_RIGHT = 3,
@@ -343,6 +367,9 @@ enum ofPolyWindingMode{
 };
 
 #define 	OF_CLOSE						  (true)
+
+
+enum ofHandednessType {OF_LEFT_HANDED, OF_RIGHT_HANDED};
 
 
 //--------------------------------------------

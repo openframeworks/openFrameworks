@@ -369,7 +369,7 @@ ofColor & ofColor::operator -= (float const & val){
 }
 
 ofColor ofColor::operator * (ofColor const & color) const{
-	return ofColor( r*(color.r/255.0f), g*(color.g/255.0f), b*(color.b/255.0f) );
+	return ofColor( r*(color.r/255.0f), g*(color.g/255.0f), b*(color.b/255.0f));
 }
 
 ofColor ofColor::operator * (float const & val) const{

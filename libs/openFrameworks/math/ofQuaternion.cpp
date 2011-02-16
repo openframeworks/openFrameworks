@@ -1,6 +1,6 @@
 #include "ofQuaternion.h"
 #include "ofMatrix4x4.h"
-#include "ofMain.h"
+#include "ofMath.h"
 
 void ofQuaternion::set(const ofMatrix4x4& matrix) {
 	*this = matrix.getRotate();
@@ -29,10 +29,10 @@ void ofQuaternion::makeRotate( float angle, float x, float y, float z ) {
 	float coshalfangle = cosf( 0.5f * angle );
 	float sinhalfangle = sinf( 0.5f * angle );
 
-	_v[0] = x * sinhalfangle * inversenorm;
-	_v[1] = y * sinhalfangle * inversenorm;
-	_v[2] = z * sinhalfangle * inversenorm;
-	_v[3] = coshalfangle;
+	_v.x = x * sinhalfangle * inversenorm;
+	_v.y = y * sinhalfangle * inversenorm;
+	_v.z = z * sinhalfangle * inversenorm;
+	_v.w = coshalfangle;
 }
 
 
@@ -110,22 +110,22 @@ void ofQuaternion::makeRotate( const ofVec3f& from, const ofVec3f& to ) {
 		// Trick is to realize one value at least is >0.6 for a normalized vector.
 		if (fabs(sourceVector.x) < 0.6) {
 			const double norm = sqrt(1.0 - sourceVector.x * sourceVector.x);
-			_v[0] = 0.0;
-			_v[1] = sourceVector.z / norm;
-			_v[2] = -sourceVector.y / norm;
-			_v[3] = 0.0;
+			_v.x = 0.0;
+			_v.y = sourceVector.z / norm;
+			_v.z = -sourceVector.y / norm;
+			_v.w = 0.0;
 		} else if (fabs(sourceVector.y) < 0.6) {
 			const double norm = sqrt(1.0 - sourceVector.y * sourceVector.y);
-			_v[0] = -sourceVector.z / norm;
-			_v[1] = 0.0;
-			_v[2] = sourceVector.x / norm;
-			_v[3] = 0.0;
+			_v.x = -sourceVector.z / norm;
+			_v.y = 0.0;
+			_v.z = sourceVector.x / norm;
+			_v.w = 0.0;
 		} else {
 			const double norm = sqrt(1.0 - sourceVector.z * sourceVector.z);
-			_v[0] = sourceVector.y / norm;
-			_v[1] = -sourceVector.x / norm;
-			_v[2] = 0.0;
-			_v[3] = 0.0;
+			_v.x = sourceVector.y / norm;
+			_v.y = -sourceVector.x / norm;
+			_v.z = 0.0;
+			_v.w = 0.0;
 		}
 	}
 
@@ -134,10 +134,10 @@ void ofQuaternion::makeRotate( const ofVec3f& from, const ofVec3f& to ) {
 		// into one other. Formula is still valid when vectors are colinear
 		const double s = sqrt(0.5 * dotProdPlus1);
 		const ofVec3f tmp = sourceVector.getCrossed(targetVector) / (2.0 * s);
-		_v[0] = tmp.x;
-		_v[1] = tmp.y;
-		_v[2] = tmp.z;
-		_v[3] = s;
+		_v.x = tmp.x;
+		_v.y = tmp.y;
+		_v.z = tmp.z;
+		_v.w = s;
 	}
 }
 
@@ -180,10 +180,10 @@ void ofQuaternion::makeRotate_original( const ofVec3f& from, const ofVec3f& to )
 			ofVec3f axis(fromd.getCrossed(tmp));
 			axis.normalize();
 
-			_v[0] = axis[0]; // sin of half angle of PI is 1.0.
-			_v[1] = axis[1]; // sin of half angle of PI is 1.0.
-			_v[2] = axis[2]; // sin of half angle of PI is 1.0.
-			_v[3] = 0; // cos of half angle of PI is zero.
+			_v.x = axis[0]; // sin of half angle of PI is 1.0.
+			_v.y = axis[1]; // sin of half angle of PI is 1.0.
+			_v.z = axis[2]; // sin of half angle of PI is 1.0.
+			_v.w = 0; // cos of half angle of PI is zero.
 
 		} else {
 			// This is the usual situation - take a cross-product of vec1 and vec2
@@ -205,13 +205,13 @@ void ofQuaternion::getRotate( float& angle, ofVec3f& vec ) const {
 // Won't give very meaningful results if the Quat is not associated
 // with a rotation!
 void ofQuaternion::getRotate( float& angle, float& x, float& y, float& z ) const {
-	float sinhalfangle = sqrt( _v[0] * _v[0] + _v[1] * _v[1] + _v[2] * _v[2] );
+	float sinhalfangle = sqrt( _v.x * _v.x + _v.y * _v.y + _v.z * _v.z );
 
-	angle = 2.0 * atan2( sinhalfangle, _v[3] );
+	angle = 2.0 * atan2( sinhalfangle, _v.w );
 	if (sinhalfangle) {
-		x = _v[0] / sinhalfangle;
-		y = _v[1] / sinhalfangle;
-		z = _v[2] / sinhalfangle;
+		x = _v.x / sinhalfangle;
+		y = _v.y / sinhalfangle;
+		z = _v.z / sinhalfangle;
 	} else {
 		x = 0.0;
 		y = 0.0;
@@ -263,8 +263,34 @@ void ofQuaternion::slerp( float t, const ofQuaternion& from, const ofQuaternion&
 }
 
 
-#define QX  _v[0]
-#define QY  _v[1]
-#define QZ  _v[2]
-#define QW  _v[3]
+// ref at http://www.euclideanspace.com/maths/geometry/rotations/conversions/quaternionToEuler/index.htm
+ofVec3f ofQuaternion::getEuler() const {
+	float test = x()*y() + z()*w();
+	float heading;
+	float attitude;
+	float bank;
+	if (test > 0.499) { // singularity at north pole
+		heading = 2 * atan2(x(), w());
+		attitude = PI/2;
+		bank = 0;
+	} else if (test < -0.499) { // singularity at south pole
+		heading = -2 * atan2(x(), w());
+		attitude = - PI/2;
+		bank = 0;
+	} else {
+		float sqx = x() * x();
+		float sqy = y() * y();
+		float sqz = z() * z();
+		heading = atan2(2.0f * y() * w() - 2.0f * x() * z(), 1.0f - 2.0f*sqy - 2.0f*sqz);
+		attitude = asin(2*test);
+		bank = atan2(2.0f*x() * w() - 2.0f * y() * z(), 1.0f - 2.0f*sqx - 2.0f*sqz);
+	}
+	
+	return ofVec3f(ofRadToDeg(attitude), ofRadToDeg(heading), ofRadToDeg(bank));
+}
+
+#define QX  _v.x
+#define QY  _v.y
+#define QZ  _v.z
+#define QW  _v.w
 

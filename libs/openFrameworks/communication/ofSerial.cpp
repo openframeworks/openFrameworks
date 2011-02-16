@@ -471,6 +471,8 @@ int ofSerial::writeBytes(unsigned char * buffer, int length){
 		}
 		ofLog(OF_LOG_VERBOSE,"ofSerial: numWritten %i", (int)written);
 		return (int)written;
+	#else
+		return 0;
 	#endif
 	//---------------------------------------------
 

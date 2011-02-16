@@ -26,6 +26,7 @@ void testApp::setup(){
 
 //--------------------------------------------------------------
 void testApp::update(){
+	/*
 	if(wiggleModel){
 		for (int i =0; i < (int)model.meshes.size();i++){
 			for (int j=0; j<model.meshes[i].vertexData->getNumVertices();j++){
@@ -46,6 +47,7 @@ void testApp::update(){
 			}
 		}
 	}
+	*/
 }
 
 //--------------------------------------------------------------
@@ -58,16 +60,23 @@ void testApp::draw(){
 	glScalef(30,30,30);
 	glTranslatef(17,20,0);
 	glRotatef(180,0,0,1);
-	//glScalef(.3,.3,.3);
 	glRotatef(ofGetWidth()*.5 - mouseX,0,1,0);		
 
+	ofSetColor(255,255,255);
 	model.drawFaces();
-	ofSetColor(255,255,255,90);
-	model.drawWireframe();
+
+	glPointSize(20);
+	glDisable(GL_LIGHTING);
+	ofFill();
+	
+	for (int i =0; i < model.meshNodes.size();i++){
+		model.meshNodes.at(i).transformGL();
+		ofDrawAxis(0.1);
+		model.meshNodes.at(i).restoreTransformGL();
+	}
 
     glPopMatrix();
     
-	glDisable(GL_LIGHTING);
 	ofSetColor(255, 255, 255, 255);
     ofDrawBitmapString("fps: "+ofToString(ofGetFrameRate(), 2), 10, 15,0);
 }

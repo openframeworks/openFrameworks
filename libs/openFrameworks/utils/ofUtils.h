@@ -42,36 +42,78 @@ void	ofEnableDataPath();
 void	ofDisableDataPath();
 string 	ofToDataPath(string path, bool absolute=false);
 
-template<class T> vector<T>& ofRandomize(vector<T>& values) {
+template<class T>
+void ofRandomize(vector<T>& values) {
 	random_shuffle(values.begin(), values.end());
 }
 
 template<class T, class BoolFunction>
-vector<T>& ofRemove(vector<T>& values, BoolFunction shouldErase) {
+void ofRemove(vector<T>& values, BoolFunction shouldErase) {
 	values.erase(remove_if(values.begin(), values.end(), shouldErase), values.end());
 }
 
-template<class T> vector<T>& ofSort(vector<T>& values) {
+template<class T>
+void ofSort(vector<T>& values) {
 	sort(values.begin(), values.end());
+}
+
+template <class T>
+unsigned int ofFind(const vector<T>& values, const T& target) {
+	return distance(values.begin(), find(values.begin(), values.end(), target));
+}
+
+template <class T>
+bool ofContains(const vector<T>& values, const T& target) {
+	return ofFind(values, target) != values.size();
 }
 
 //set the root path that ofToDataPath will use to search for files relative to the app
 //the path must have a trailing slash (/) !!!!
 void	ofSetDataPathRoot( string root );
 
-template <class T> string ofToString(const T& value){
+template <class T>
+string ofToString(const T& value){
 	ostringstream out;
 	out << value;
 	return out.str();
 }
 
-template <class T> string ofToString(const T& value, int precision){
+template <class T>
+string ofToString(const T& value, int precision){
 	ostringstream out;
 	out << fixed << setprecision(precision) << value;
 	return out.str();
 }
 
-template<class T> string ofToString(const vector<T>& values) {
+#ifdef TARGET_ANDROID
+template <>
+inline string ofToString(const double& value, int precision){
+	char str_val[1024];
+	sprintf(str_val,("%.0"+ofToString(precision)+"f").c_str(),value);
+	return str_val;
+}
+template <>
+inline string ofToString(const float& value, int precision){
+	char str_val[1024];
+	sprintf(str_val,("%.0"+ofToString(precision)+"f").c_str(),value);
+	return str_val;
+}
+template <>
+inline string ofToString(const double& value){
+	char str_val[1024];
+	sprintf(str_val,"%.08f",value);
+	return str_val;
+}
+template <>
+inline string ofToString(const float& value){
+	char str_val[1024];
+	sprintf(str_val,"%.08f",value);
+	return str_val;
+}
+#endif
+
+template<class T>
+string ofToString(const vector<T>& values) {
 	stringstream out;
 	int n = values.size();
 	out << "{";
@@ -82,7 +124,8 @@ template<class T> string ofToString(const vector<T>& values) {
 	return out.str();
 }
 
-template <class T> string ofToHex(const T& value) {
+template <class T>
+string ofToHex(const T& value) {
 	ostringstream out;
 	// pretend that the value is a bunch of bytes
 	unsigned char* valuePtr = (unsigned char*) &value;
@@ -95,7 +138,8 @@ template <class T> string ofToHex(const T& value) {
 	}
 	return out.str();
 }
-template <> string ofToHex(const string& value);
+template <>
+string ofToHex(const string& value);
 string ofToHex(const char* value);
 
 int ofHexToInt(const string& intHexString);
@@ -108,7 +152,8 @@ char ofToChar(const string& charString);
 float ofToFloat(const string& floatString);
 bool ofToBool(const string& boolString);
 
-template <class T> string ofToBinary(const T& value) {
+template <class T>
+string ofToBinary(const T& value) {
 	ostringstream out;
 	const char* data = (const char*) &value;
 	// the number of bytes is determined by the datatype
@@ -120,7 +165,8 @@ template <class T> string ofToBinary(const T& value) {
 	}
 	return out.str();
 }
-template <> string ofToBinary(const string& value);
+template <>
+string ofToBinary(const string& value);
 string ofToBinary(const char* value);
 
 int ofBinaryToInt(const string& value);
