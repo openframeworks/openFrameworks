@@ -9,6 +9,7 @@
 #include "ofEvents.h"
 #include "ofMath.h"
 #include "ofGraphics.h"
+#include "ofGLRenderer.h"
 
 // TODO: closing seems wonky. 
 // adding this for vc2010 compile: error C3861: 'closeQuicktime': identifier not found
@@ -41,6 +42,7 @@ static ofAppBaseWindow *			window = NULL;
 //--------------------------------------
 void ofSetupOpenGL(ofAppBaseWindow * windowPtr, int w, int h, int screenMode){
 	window = windowPtr;
+	ofSetDefaultRenderer(new ofGLRenderer);
 	window->setupOpenGL(w, h, screenMode);
 	
 #ifndef TARGET_OPENGLES

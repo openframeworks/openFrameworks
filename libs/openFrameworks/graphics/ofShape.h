@@ -3,7 +3,7 @@
 #include "ofConstants.h"
 #include "ofPoint.h"
 #include "ofColor.h"
-#include "ofShapeTessellation.h"
+#include "ofPolyline.h"
 
 
 class ofPath{
@@ -73,9 +73,9 @@ public:
 
 	void clear();
 
-	// creates a new subpath with the same parameters for winding, stroke, fill...
+	// creates a new subpath
 	void newPath();
-	// closes current path, next command starts a new one with the same parameter for winding, stroke, fill...
+	// closes current path, next command starts a new one
 	void close();
 
 	void lineTo(const ofPoint & p);
@@ -120,15 +120,20 @@ public:
 	ofColor getFillColor() const;
 	ofColor getStrokeColor() const;
 	float getStrokeWidth() const; // default 1
+	bool hasOutline() const { return strokeWidth>0; }
 
 
 	void updateShape();
 	void draw(float x=0, float y=0);
 
-	ofShapeTessellation & getTessellation(int curveResolution=-1);
-
 	vector<ofPath> & getPaths();
 	const vector<ofPath> & getPaths() const;
+
+	vector<ofPolyline> & getOutline();
+	vector<ofPrimitive> & getTessellation();
+	/// must call tessellate before calling draw, if the shape has changed
+	void tessellate();
+	void simplify(float tolerance=0.3);
 
 	// only needs to be called when path is modified externally
 	void markedChanged();
@@ -139,11 +144,14 @@ public:
 	};
 
 	void setMode(Mode mode);
+	void setCurveResolution(int curveResolution);
 
 private:
 
 	ofPath & lastPath();
 	ofPolyline & lastPolyline();
+
+	void generatePolylinesFromPaths();
 
 	// path description
 	vector<ofPath>		paths;
@@ -155,10 +163,12 @@ private:
 
 	// polyline / tesselation
 	vector<ofPolyline>  polylines;
+	vector<ofPolyline>  tessellatedPolylines;
 	vector<ofPrimitive> cachedTessellation;
 	bool				hasChanged;
 	ofBaseRenderer * 	renderer;
 	int					prevCurveRes;
+	int					curveResolution;
 	bool 				bNeedsTessellation;
 
 	Mode				mode;
