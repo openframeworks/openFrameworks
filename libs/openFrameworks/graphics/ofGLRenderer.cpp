@@ -12,6 +12,7 @@ ofGLRenderer::ofGLRenderer(bool useShapeColor){
 }
 
 void ofGLRenderer::draw(ofPrimitive & vertexData){
+	glEnableClientState(GL_VERTEX_ARRAY);
 	if(vertexData.getNumVertices()){
 		glEnableClientState(GL_VERTEX_ARRAY);
 		glVertexPointer(3, GL_FLOAT, sizeof(ofVec3f), vertexData.getVerticesPointer());
@@ -46,6 +47,7 @@ void ofGLRenderer::draw(ofPrimitive & vertexData){
 }
 
 void ofGLRenderer::draw(ofPolyline & poly){
+	glEnableClientState(GL_VERTEX_ARRAY);
 	glVertexPointer(poly.is3D()?3:2, GL_FLOAT, sizeof(ofVec3f), &poly.getVertices()[0].x);
 	glDrawArrays(poly.isClosed()?GL_LINE_LOOP:GL_LINE_STRIP, 0, poly.size());;
 }
@@ -57,7 +59,6 @@ void ofGLRenderer::draw(ofShape & shape){
 			ofPushStyle();
 			setColor( shape.getFillColor() * ofGetStyle().color,shape.getFillColor().a/255. * ofGetStyle().color.a);
 		}
-		glEnableClientState(GL_VERTEX_ARRAY);
 		for(int i=0;i<(int)mesh.size();i++){
 			draw(mesh[i]);
 		}
@@ -71,7 +72,6 @@ void ofGLRenderer::draw(ofShape & shape){
 			setColor( shape.getStrokeColor() * ofGetStyle().color, shape.getStrokeColor().a/255. * ofGetStyle().color.a);
 		}
 		vector<ofPolyline> & outlines = shape.getOutline();
-		glEnableClientState(GL_VERTEX_ARRAY);
 		for(int i=0; i<(int)outlines.size(); i++)
 			draw(outlines[i]);
 		if(bUseShapeColor){

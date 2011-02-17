@@ -146,8 +146,15 @@ public:
 	};
 
 	void setMode(Mode mode);
+
 	void setCurveResolution(int curveResolution);
 	int getCurveResolution();
+
+	void setArcResolution(int res);
+	int getArcResolution();
+
+	void setUseRendererDefaults(bool useRDefaults);
+	bool getUseRendererDefaults();
 
 private:
 
@@ -169,10 +176,12 @@ private:
 	vector<ofPolyline>  tessellatedPolylines;
 	vector<ofPrimitive> cachedTessellation;
 	bool				hasChanged;
-	ofBaseRenderer * 	renderer;
 	int					prevCurveRes;
 	int					curveResolution;
+	int					arcResolution;
 	bool 				bNeedsTessellation;
+
+	bool				bUseRendererDefaults;
 
 	Mode				mode;
 };

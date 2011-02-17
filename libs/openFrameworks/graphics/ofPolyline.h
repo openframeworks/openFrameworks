@@ -29,11 +29,11 @@ public:
 	// if the arc doesn't start at the same point
 	// the last vertex finished a straight line will
 	// be created to join both
-	void arc( const ofPoint & center, float radiusX, float radiusY, float angleBegin, float angleEnd, int curveResolution=16 );
-	void arc(float x, float y, float radiusX, float radiusY, float angleBegin, float angleEnd, int curveResolution=16){
+	void arc( const ofPoint & center, float radiusX, float radiusY, float angleBegin, float angleEnd, int curveResolution=20 );
+	void arc(float x, float y, float radiusX, float radiusY, float angleBegin, float angleEnd, int curveResolution=20){
 		arc(ofPoint(x,y),radiusX,radiusY,angleBegin,angleEnd,curveResolution);
 	}
-	void arc(float x, float y, float z, float radiusX, float radiusY, float angleBegin, float angleEnd, int curveResolution=16){
+	void arc(float x, float y, float z, float radiusX, float radiusY, float angleBegin, float angleEnd, int curveResolution=20){
 		arc(ofPoint(x,y,z),radiusX,radiusY,angleBegin,angleEnd,curveResolution);
 	}
 
