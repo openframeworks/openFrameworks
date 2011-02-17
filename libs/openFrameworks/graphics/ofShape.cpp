@@ -308,11 +308,11 @@ void ofShape::tessellate(){
 	if(!bNeedsTessellation) return;
 	//bool bIs2D = !bIs3D;
 	if(bFill){
-		cachedTessellation = ofTessellator::tessellateToMesh( polylines, windingMode);
+		ofTessellator::tessellateToMesh( polylines, windingMode, cachedTessellation);
 	}
 	if ( hasOutline() ){
 		if( windingMode != OF_POLY_WINDING_ODD ) {
-			tessellatedPolylines = ofTessellator::tessellateToOutline( polylines, windingMode);
+			ofTessellator::tessellateToOutline( polylines, windingMode, tessellatedPolylines);
 		}
 	}
 	bNeedsTessellation = false;

@@ -90,10 +90,6 @@ const vector<ofPoint> & ofPolyline::getVertices() const{
 	return points;
 }
 
-//----------------------------------------------------------
-bool ofPolyline::getClosed() const {
-	return bClosed;
-}
 
 //----------------------------------------------------------
 float ofPolyline::getPerimeter() const {

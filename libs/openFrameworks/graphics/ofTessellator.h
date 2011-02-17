@@ -24,12 +24,12 @@ class ofTessellator
 public:	
 	
 	/// tessellate polyline and return a mesh. if bIs2D==true, do a 10% more efficient normal calculation.
-	static vector<ofPrimitive> tessellateToMesh( const vector<ofPolyline>& polylines, int polyWindingMode, bool bIs2D=false );
-	static vector<ofPrimitive> tessellateToMesh( const ofPolyline& polyline,  int polyWindingMode, bool bIs2D=false );
+	static void tessellateToMesh( const vector<ofPolyline>& src, int polyWindingMode, vector<ofPrimitive> & dstmesh, bool bIs2D=false );
+	static void tessellateToMesh( const ofPolyline& src,  int polyWindingMode, vector<ofPrimitive>& dstmesh, bool bIs2D=false );
 
 	/// tessellate polyline and return an outline.
-	static vector<ofPolyline> tessellateToOutline( const vector<ofPolyline>& polylines, int polyWindingMode, bool bIs2D=false );
-	static vector<ofPolyline> tessellateToOutline( const ofPolyline& polyline, int polyWindingMode, bool bIs2D=false );
+	static void tessellateToOutline( const vector<ofPolyline>& src, int polyWindingMode, vector<ofPolyline> & dst, bool bIs2D=false );
+	static void tessellateToOutline( const ofPolyline& src, int polyWindingMode, vector<ofPolyline> & dst, bool bIs2D=false );
 	
 	
 private:
@@ -53,7 +53,6 @@ private:
 	
 	// filled during tessellation
 	static GLint currentTriType; // GL_TRIANGLES, GL_TRIANGLE_FAN or GL_TRIANGLE_STRIP
-	static vector<ofPoint> vertices;
 	
 	//---------------------------- for combine callback:
 	static std::vector <double*> newVertices;
@@ -61,10 +60,10 @@ private:
 	static std::vector <double*> ofShapePolyVertexs;
 	
 
-	static vector<ofPrimitive> resultMesh;
+	static vector<ofPrimitive> * resultMesh;
 	
 	
-	static vector<ofPolyline> resultOutline;
+	static vector<ofPolyline> * resultOutline;
 	
 };
 
