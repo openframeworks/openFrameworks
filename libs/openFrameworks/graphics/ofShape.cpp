@@ -33,15 +33,23 @@ ofShape::ofShape(){
 	strokeWidth = 1;
 	bFill = false;
 	windingMode = OF_POLY_WINDING_ODD;
-	renderer = NULL;
 	prevCurveRes = 16;
+	curveResolution = 16;
 	mode = PATHS;
+	bNeedsTessellation = false;
 	hasChanged = false;
+	bUseRendererDefaults = false;
+	clear();
 }
 
 void ofShape::clear(){
-	paths.clear();
-	hasChanged = true;
+	if(mode==PATHS){
+		paths.clear();
+		hasChanged = true;
+	}else{
+		polylines.clear();
+		bNeedsTessellation = true;
+	}
 }
 
 void ofShape::newPath(){
@@ -50,14 +58,15 @@ void ofShape::newPath(){
 	}else{
 		polylines.push_back(ofPolyline());
 	}
-	bNeedsTessellation = true;
 }
 
 void ofShape::lineTo(const ofPoint & p){
 	if(mode==PATHS){
 		lastPath().addCommand(ofPath::Command(ofPath::Command::lineTo,p));
+		hasChanged = true;
 	}else{
 		lastPolyline().lineTo(p);
+		bNeedsTessellation = true;
 	}
 }
 
@@ -73,8 +82,10 @@ void ofShape::moveTo(const ofPoint & p){
 	newPath();
 	if(mode==PATHS){
 		lastPath().addCommand(ofPath::Command(ofPath::Command::lineTo,p));
+		hasChanged = true;
 	}else{
 		lastPolyline().addVertex(p);
+		bNeedsTessellation = true;
 	}
 }
 
@@ -85,8 +96,10 @@ void ofShape::moveTo(float x, float y, float z){
 void ofShape::curveTo(const ofPoint & p){
 	if(mode==PATHS){
 		lastPath().addCommand(ofPath::Command(ofPath::Command::curveTo,p));
+		hasChanged = true;
 	}else{
 		lastPolyline().curveTo(p);
+		bNeedsTessellation = true;
 	}
 }
 
@@ -101,8 +114,10 @@ void ofShape::curveTo(float x, float y){
 void ofShape::bezierTo(const ofPoint & cp1, const ofPoint & cp2, const ofPoint & p){
 	if(mode==PATHS){
 		lastPath().addCommand(ofPath::Command(ofPath::Command::bezierTo,p,cp1,cp2));
+		hasChanged = true;
 	}else{
 		lastPolyline().bezierTo(cp1,cp2,p);
+		bNeedsTessellation = true;
 	}
 }
 
@@ -117,8 +132,10 @@ void ofShape::bezierTo(float cx1, float cy1, float cz1, float cx2, float cy2, fl
 void ofShape::quadBezierTo(const ofPoint & cp1, const ofPoint & cp2, const ofPoint & p){
 	if(mode==PATHS){
 		lastPath().addCommand(ofPath::Command(ofPath::Command::quadBezierTo,p,cp1,cp2));
+		hasChanged = true;
 	}else{
 		lastPolyline().quadBezierTo(cp1,cp2,p);
+		bNeedsTessellation = true;
 	}
 }
 
@@ -133,8 +150,10 @@ void ofShape::quadBezierTo(float cx1, float cy1, float cz1, float cx2, float cy2
 void ofShape::arc(const ofPoint & centre, float radiusX, float radiusY, float angleBegin, float angleEnd){
 	if(mode==PATHS){
 		lastPath().addCommand(ofPath::Command(ofPath::Command::arc,centre,radiusX,radiusY,angleBegin,angleEnd));
+		hasChanged = true;
 	}else{
-		lastPolyline().arc(centre,radiusX,radiusY,angleBegin,angleEnd);
+		lastPolyline().arc(centre,radiusX,radiusY,angleBegin,angleEnd,arcResolution);
+		bNeedsTessellation = true;
 	}
 }
 
@@ -149,18 +168,34 @@ void ofShape::arc(float x, float y, float z, float radiusX, float radiusY, float
 void ofShape::close(){
 	if(mode==PATHS){
 		lastPath().close();
+		hasChanged = true;
 	}else{
 		lastPolyline().setClosed(true);
+		bNeedsTessellation = true;
+	}
+	newPath();
+}
+
+void ofShape::setPolyWindingMode(ofPolyWindingMode newMode){
+	if(windingMode != newMode){
+		windingMode = newMode;
+		if(mode==PATHS){
+			hasChanged = true;
+		}else{
+			bNeedsTessellation = true;
+		}
 	}
 }
 
-void ofShape::setPolyWindingMode(ofPolyWindingMode mode){
-	windingMode = mode;
-	hasChanged = true;
-}
-
 void ofShape::setFilled(bool hasFill){
-	bFill = hasFill;
+	if(bFill != hasFill){
+		bFill = hasFill;
+		if(mode==PATHS){
+			hasChanged = true;
+		}else{
+			bNeedsTessellation = true;
+		}
+	}
 }
 
 void ofShape::setFillColor(const ofColor & color){
@@ -172,7 +207,14 @@ void ofShape::setStrokeColor(const ofColor & color){
 }
 
 void ofShape::setStrokeWidth(float width){
-	strokeWidth = width;
+	if(width != 0 && strokeWidth == 0){
+		strokeWidth = width;
+		if(mode==PATHS){
+			hasChanged = true;
+		}else{
+			bNeedsTessellation = true;
+		}
+	}
 }
 
 ofPath & ofShape::lastPath(){
@@ -226,13 +268,12 @@ float ofShape::getStrokeWidth() const{
 
 void ofShape::generatePolylinesFromPaths(){
 	if(mode==POLYLINES) return;
-	if(curveResolution<=0) curveResolution=prevCurveRes;
 	if(hasChanged || curveResolution!=prevCurveRes){
 		prevCurveRes = curveResolution;
 
 		polylines.clear();
 		polylines.resize(paths.size());
-		for(int j=0;j<paths.size();j++){
+		for(int j=0;j<(int)paths.size();j++){
 			const vector<ofPath::Command> & commands = paths[j].getCommands();
 
 			for(int i=0; i<(int)commands.size();i++){
@@ -251,21 +292,21 @@ void ofShape::generatePolylinesFromPaths(){
 					polylines[j].quadBezierTo(commands[i].cp1,commands[i].cp2,commands[i].to, curveResolution);
 					break;
 				case ofPath::Command::arc:
-					polylines[j].arc(commands[i].to,commands[i].radiusX,commands[i].radiusY,commands[i].angleBegin,commands[i].angleEnd, curveResolution);
+					polylines[j].arc(commands[i].to,commands[i].radiusX,commands[i].radiusY,commands[i].angleBegin,commands[i].angleEnd, arcResolution);
 					break;
 				}
 			}
 			polylines[j].setClosed(paths[j].isClosed());
 		}
-
 		hasChanged = false;
+		bNeedsTessellation = true;
 	}
 }
 
 void ofShape::tessellate(){
 	generatePolylinesFromPaths();
+	if(!bNeedsTessellation) return;
 	//bool bIs2D = !bIs3D;
-	cachedTessellation.clear();
 	if(bFill){
 		cachedTessellation = ofTessellator::tessellateToMesh( polylines, windingMode);
 	}
@@ -278,9 +319,8 @@ void ofShape::tessellate(){
 }
 
 vector<ofPolyline> & ofShape::getOutline() {
-	if ( bNeedsTessellation ){
-		tessellate();
-	}
+	tessellate();
+
 	if( windingMode != OF_POLY_WINDING_ODD ) {
 		return tessellatedPolylines;
 	}else{
@@ -289,9 +329,8 @@ vector<ofPolyline> & ofShape::getOutline() {
 }
 
 vector<ofPrimitive> & ofShape::getTessellation(){
-	if ( bNeedsTessellation ){
-		tessellate();
-	}
+	tessellate();
+
 	return cachedTessellation;
 }
 
@@ -302,17 +341,17 @@ void ofShape::updateShape(){
 void ofShape::draw(float x, float y){
 	ofPushMatrix();
 	ofTranslate(x,y);
-	if(!renderer){
-		ofGetDefaultRenderer()->draw(*this);
-	}else{
-		renderer->draw(*this);
-	}
+	ofGetDefaultRenderer()->draw(*this);
 	ofPopMatrix();
 }
 
 
 void ofShape::markedChanged(){
-	hasChanged=true;
+	if(mode==PATHS){
+		hasChanged = true;
+	}else{
+		bNeedsTessellation = true;
+	}
 }
 
 
@@ -327,3 +366,20 @@ void ofShape::setCurveResolution(int _curveResolution){
 int ofShape::getCurveResolution(){
 	return curveResolution;
 }
+
+void ofShape::setArcResolution(int res){
+	arcResolution = res;
+}
+
+int ofShape::getArcResolution(){
+	return arcResolution;
+}
+
+void ofShape::setUseRendererDefaults(bool useRDefaults){
+	bUseRendererDefaults = useRDefaults;
+}
+
+bool ofShape::getUseRendererDefaults(){
+	return bUseRendererDefaults;
+}
+

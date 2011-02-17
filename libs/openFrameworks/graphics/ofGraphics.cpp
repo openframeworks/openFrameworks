@@ -44,7 +44,6 @@
 //----------------------------------------------------------
 // static
 static float	drawMode			= OF_FILLED;
-static int		numCirclePts		= 0;
 static bool		bSmoothHinted			= false;
 static bool			bUsingArbTex		= true;
 static bool			bUsingNormalizedTexCoords = false;
@@ -77,6 +76,10 @@ void ofSetDefaultRenderer(ofBaseRenderer * renderer_){
 	}else{
 		shape.setMode(ofShape::POLYLINES);
 	}
+	shape.setFilled(currentStyle.bFill);
+	shape.setStrokeWidth(currentStyle.bFill?0:currentStyle.lineWidth);
+	shape.setPolyWindingMode(currentStyle.polyMode);
+	shape.setUseRendererDefaults(true);
 }
 
 ofBaseRenderer * ofGetDefaultRenderer(){
@@ -377,15 +380,15 @@ void ofBackground(int r, int g, int b, int a){
 // drawing modes
 
 static void ofSetCurrentStyleTo(ofShape & path){
-	path.setFilled(drawMode == OF_FILLED);
-	path.setColor(ofColor(255,255,255,255));
-	path.setPolyWindingMode(currentStyle.polyMode);
+	//path.setFilled(drawMode == OF_FILLED);
+	//path.setColor(ofColor(255,255,255,255));
+	//path.setPolyWindingMode(currentStyle.polyMode);
 
-	if(drawMode == OF_OUTLINE){
+	/*if(drawMode == OF_OUTLINE){
 		path.setStrokeWidth(currentStyle.lineWidth);
 	}else{
 		path.setStrokeWidth(0);
-	}
+	}*/
 }
 
 //----------------------------------------------------------
@@ -404,12 +407,16 @@ ofRectMode ofGetRectMode(){
 //----------------------------------------------------------
 void ofNoFill(){
 	drawMode = OF_OUTLINE;
+	shape.setFilled(false);
+	shape.setStrokeWidth(currentStyle.lineWidth);
 	currentStyle.bFill = false;
 }
 
 //----------------------------------------------------------
 void ofFill(){
 	drawMode = OF_FILLED;
+	shape.setFilled(true);
+	shape.setStrokeWidth(0);
 	currentStyle.bFill = true;
 }
 
@@ -428,11 +435,23 @@ void ofSetLineWidth(float lineWidth){
 //----------------------------------------
 void ofSetCurveResolution(int res){
 	curveResolution = res;
+	shape.setCurveResolution(res);
 }
 
 //----------------------------------------
 void ofSetSphereResolution(int res) {
 	currentStyle.sphereResolution = res;
+}
+
+//----------------------------------------------------------
+void setupCircle(){
+	ofSetCircleResolution(CIRC_RESOLUTION);
+}
+
+//----------------------------------------------------------
+void ofSetCircleResolution(int res){
+	currentStyle.circleResolution = res;
+	shape.setArcResolution(res);
 }
 
 //----------------------------------------------------------
@@ -459,15 +478,6 @@ void endSmoothing(){
 	#endif
 }
 
-//----------------------------------------------------------
-void setupCircle(){
-	ofSetCircleResolution(CIRC_RESOLUTION);
-}
-
-//----------------------------------------------------------
-void ofSetCircleResolution(int res){
-	numCirclePts = res;
-}
 
 
 //----------------------------------------------------------
@@ -737,6 +747,7 @@ void ofPopStyle(){
 //----------------------------------------------------------
 void ofSetPolyMode(ofPolyWindingMode mode){
 	polyMode = mode;
+	shape.setPolyWindingMode(mode);
 	currentStyle.polyMode = polyMode;
 }
 
@@ -766,8 +777,11 @@ void ofTriangle(float x1,float y1,float z1,float x2,float y2,float z2,float x3, 
 	// use smoothness, if requested:
 	if (bSmoothHinted && drawMode == OF_OUTLINE) startSmoothing();
 
-	shape=ofTriangleShape(x1,y1,z1,x2,y2,z2,x3,y3,z3);
-	ofSetCurrentStyleTo(shape);
+	shape.clear();
+	shape.lineTo(x1,y1,z1);
+	shape.lineTo(x2,y2,z2);
+	shape.lineTo(x3,y3,z3);
+	shape.close();
 	renderer->draw(shape);
 
 	// back to normal, if smoothness is on
@@ -781,16 +795,7 @@ void ofCircle(const ofPoint & p, float radius){
 
 //----------------------------------------------------------
 void ofCircle(float x, float y, float radius){
-	// use smoothness, if requested:
-	if (bSmoothHinted && drawMode == OF_OUTLINE) startSmoothing();
-
-	shape.clear();
-	ofSetCurrentStyleTo(shape);
-	shape.arc(x,y,radius,radius,0,360,currentStyle.circleResolution);
-	renderer->draw(shape);
-
-	// back to normal, if smoothness is on
-	if (bSmoothHinted && drawMode == OF_OUTLINE) endSmoothing();
+	ofCircle(x,y,0,radius);
 }
 
 //----------------------------------------------------------
@@ -800,12 +805,8 @@ void ofCircle(float x, float y, float z, float radius){
 	if (bSmoothHinted && drawMode == OF_OUTLINE) startSmoothing();
 
 	shape.clear();
-	ofSetCurrentStyleTo(shape);
-	int curveRes = shape.getCurveResolution();
-	shape.setCurveResolution(currentStyle.circleResolution);
 	shape.arc(x,y,z,radius,radius,0,360);
 	renderer->draw(shape);
-	shape.setCurveResolution(curveRes);
 
 	// back to normal, if smoothness is on
 	if (bSmoothHinted && drawMode == OF_OUTLINE) endSmoothing();
@@ -829,12 +830,8 @@ void ofEllipse(float x, float y, float z, float width, float height){
 	if (bSmoothHinted && drawMode == OF_OUTLINE) startSmoothing();
 
 	shape.clear();
-	ofSetCurrentStyleTo(shape);
-	int curveRes = shape.getCurveResolution();
-	shape.setCurveResolution(currentStyle.circleResolution);
 	shape.arc(x,y,z,width*0.5,height*0.5,0,360);
 	renderer->draw(shape);
-	shape.setCurveResolution(curveRes);
 
 	// back to normal, if smoothness is on
 	if (bSmoothHinted && drawMode == OF_OUTLINE) endSmoothing();
@@ -857,7 +854,6 @@ void ofLine(float x1,float y1,float z1,float x2,float y2,float z2){
 	if (bSmoothHinted) startSmoothing();
 
 	shape.clear();
-	ofSetCurrentStyleTo(shape);
 	shape.moveTo(x1,y1,z1);
 	shape.lineTo(x2,y2,z2);
 	shape.setFilled(false);
@@ -891,7 +887,6 @@ void ofRect(float x,float y,float z,float w,float h){
 	if (bSmoothHinted && drawMode == OF_OUTLINE) startSmoothing();
 
 	shape.clear();
-	ofSetCurrentStyleTo(shape);
 	if (cornerMode == OF_RECTMODE_CORNER){
 		shape.lineTo(x,y,z);
 		shape.lineTo(x+w,y,z);
@@ -914,7 +909,6 @@ void ofRect(float x,float y,float z,float w,float h){
 //----------------------------------------------------------
 void ofCurve(float x0, float y0, float x1, float y1, float x2, float y2, float x3, float y3){
 	shape.clear();
-	ofSetCurrentStyleTo(shape);
 	shape.curveTo(x0,y0);
 	shape.curveTo(x1,y1);
 	shape.curveTo(x2,y2);
@@ -926,7 +920,6 @@ void ofCurve(float x0, float y0, float x1, float y1, float x2, float y2, float x
 //----------------------------------------------------------
 void ofBezier(float x0, float y0, float x1, float y1, float x2, float y2, float x3, float y3){
 	shape.clear();
-	ofSetCurrentStyleTo(shape);
 	shape.moveTo(x0,y0);
 	shape.bezierTo(x1,y1,x2,y2,x3,y3);
 	renderer->draw(shape);
@@ -938,7 +931,6 @@ void ofBeginShape(){
 	if (bSmoothHinted && drawMode == OF_OUTLINE) startSmoothing();
 
 	shape.clear();
-	ofSetCurrentStyleTo(shape);
 }
 
 //----------------------------------------------------------

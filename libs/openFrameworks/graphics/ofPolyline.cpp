@@ -13,24 +13,28 @@ ofPolyline::ofPolyline(const vector<ofPoint>& verts){
 
 //----------------------------------------------------------
 void ofPolyline::clear() {
-	bIs3D = true;
+	bIs3D = false;
 	bClosed=false;
 	points.clear();
 	bHasChanged = true;
+	curveVertices.clear();
 }
 
 //----------------------------------------------------------
 void ofPolyline::addVertex(const ofPoint& p) {
+	curveVertices.clear();
 	points.push_back(p); bHasChanged=true;
 }
 
 //----------------------------------------------------------
 void ofPolyline::addVertex(float x, float y, float z) {
+	curveVertices.clear();
 	addVertex(ofPoint(x,y,z)); bHasChanged=true;
 }
 
 //----------------------------------------------------------
 void ofPolyline::addVertexes(const vector<ofPoint>& verts) {
+	curveVertices.clear();
 	points.insert( points.end(), verts.begin(), verts.end() );
 	bHasChanged=true;
 }
@@ -63,7 +67,7 @@ bool ofPolyline::isClosed() const {
 //----------------------------------------------------------
 void ofPolyline::setIs3D(bool bIs3D_){
 	bHasChanged=true;
-	bIs3D = bIs3D_;
+	//bIs3D = bIs3D_;
 }
 
 //----------------------------------------------------------
@@ -133,7 +137,7 @@ void ofPolyline::bezierTo( const ofPoint & cp1, const ofPoint & cp2, const ofPoi
 	if (size() > 0){
 		float x0 = points[size()-1].x;
 		float y0 = points[size()-1].y;
-		float z0 = points[size()-1].z;
+		//float z0 = points[size()-1].z;
 
 		float   ax, bx, cx;
 		float   ay, by, cy;
@@ -150,9 +154,9 @@ void ofPolyline::bezierTo( const ofPoint & cp1, const ofPoint & cp2, const ofPoi
 		by = 3.0f * (cp2.y - cp1.y) - cy;
 		ay = to.y - y0 - cy - by;
 
-		cz = 3.0f * (cp1.z - z0);
+		/*cz = 3.0f * (cp1.z - z0);
 		bz = 3.0f * (cp2.z - cp1.z) - cz;
-		az = to.z - z0 - cz - bz;
+		az = to.z - z0 - cz - bz;*/
 
 		for (int i = 0; i < curveResolution; i++){
 			t 	=  (float)i / (float)(curveResolution-1);
@@ -160,8 +164,8 @@ void ofPolyline::bezierTo( const ofPoint & cp1, const ofPoint & cp2, const ofPoi
 			t3 = t2 * t;
 			x = (ax * t3) + (bx * t2) + (cx * t) + x0;
 			y = (ay * t3) + (by * t2) + (cy * t) + y0;
-			z = (az * t3) + (bz * t2) + (cz * t) + z0;
-			addVertex(x,y,z);
+			//z = (az * t3) + (bz * t2) + (cz * t) + z0;
+			points.push_back(ofPoint(x,y,0));
 		}
 	}
 }
@@ -176,7 +180,7 @@ void ofPolyline::quadBezierTo(float x1, float y1, float z1, float x2, float y2, 
 		double x = a * x1 + b * x2 + c * x3;
 		double y = a * y1 + b * y2 + c * y3;
 		double z = a * z1 + b * z2 + c * z3;
-		addVertex(x, y, z);
+		points.push_back(ofPoint(x, y, z));
 	}
 }
 
@@ -186,20 +190,18 @@ void ofPolyline::curveTo( const ofPoint & to, int curveResolution ){
 
 	if (curveVertices.size() == 4){
 
-		int startPos = (int)curveVertices.size() - 4;
-
-		float x0 = curveVertices[startPos + 0].x;
-		float y0 = curveVertices[startPos + 0].y;
-		float z0 = curveVertices[startPos + 0].z;
-		float x1 = curveVertices[startPos + 1].x;
-		float y1 = curveVertices[startPos + 1].y;
-		float z1 = curveVertices[startPos + 1].z;
-		float x2 = curveVertices[startPos + 2].x;
-		float y2 = curveVertices[startPos + 2].y;
-		float z2 = curveVertices[startPos + 2].z;
-		float x3 = curveVertices[startPos + 3].x;
-		float y3 = curveVertices[startPos + 3].y;
-		float z3 = curveVertices[startPos + 3].z;
+		float x0 = curveVertices[0].x;
+		float y0 = curveVertices[0].y;
+		//float z0 = curveVertices[0].z;
+		float x1 = curveVertices[1].x;
+		float y1 = curveVertices[1].y;
+		//float z1 = curveVertices[1].z;
+		float x2 = curveVertices[2].x;
+		float y2 = curveVertices[2].y;
+		//float z2 = curveVertices[2].z;
+		float x3 = curveVertices[3].x;
+		float y3 = curveVertices[3].y;
+		//float z3 = curveVertices[3].z;
 
 		float t,t2,t3;
 		float x,y,z;
@@ -220,12 +222,12 @@ void ofPolyline::curveTo( const ofPoint & to, int curveResolution ){
 			( 2.0f * y0 - 5.0f * y1 + 4 * y2 - y3 ) * t2 +
 			( -y0 + 3.0f * y1 - 3.0f * y2 + y3 ) * t3 );
 
-			z = 0.5f * ( ( 2.0f * z1 ) +
+			/*z = 0.5f * ( ( 2.0f * z1 ) +
 			( -z0 + z2 ) * t +
 			( 2.0f * z0 - 5.0f * z1 + 4 * z2 - z3 ) * t2 +
-			( -z0 + 3.0f * z1 - 3.0f * z2 + z3 ) * t3 );
+			( -z0 + 3.0f * z1 - 3.0f * z2 + z3 ) * t3 );*/
 
-			addVertex(ofPoint(x,y,z));
+			points.push_back(ofPoint(x,y,0));
 		}
 		curveVertices.pop_front();
 	}
@@ -244,18 +246,18 @@ void ofPolyline::arc( const ofPoint & center, float radiusX, float radiusY, floa
 		float segment_size = M_PI*2.0*size/(float)segments;
 		angle=-(M_PI*2.0*begin);
 		for( int i=0; i<segments; i++){
-			addVertex(radiusX*circlePoints[i].x+center.x,radiusY*circlePoints[i].y+center.y);
+			points.push_back(ofPoint(radiusX*circlePoints[i].x+center.x,radiusY*circlePoints[i].y+center.y));
 			angle-=segment_size ;
 		}
 		angle=-(M_PI*2.0*begin);
 		sinus = sin(angle);
 		cosinus = cos(angle);
-		addVertex(radiusX*sinus+center.x,radiusY*cosinus+center.y);
+		points.push_back(ofPoint(radiusX*sinus+center.x,radiusY*cosinus+center.y));
 	}else{
 		for(int i=0;i<(int)circlePoints.size();i++){
-			addVertex(radiusX*circlePoints[i].x+center.x,radiusY*circlePoints[i].y+center.y,center.z);
+			points.push_back(ofPoint(radiusX*circlePoints[i].x+center.x,radiusY*circlePoints[i].y+center.y,center.z));
 		}
-		addVertex(radiusX*circlePoints[0].x+center.x,radiusY*circlePoints[0].y+center.y,center.z);
+		points.push_back(ofPoint(radiusX*circlePoints[0].x+center.x,radiusY*circlePoints[0].y+center.y,center.z));
 	}
 }
 
