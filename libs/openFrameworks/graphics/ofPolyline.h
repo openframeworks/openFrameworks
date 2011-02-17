@@ -77,7 +77,6 @@ public:
 	bool hasChanged();
 
 	const vector<ofPoint> & getVertices() const;
-	bool getClosed() const;
 
 	float getPerimeter() const;
 

@@ -4,7 +4,7 @@
 ofPolyline ofGetSmoothed(const ofPolyline& polyline, int smoothingSize, float smoothingShape) {
 	ofPolyline result = polyline;
 	
-	if(!polyline.getClosed()) {
+	if(!polyline.isClosed()) {
 		ofLog( OF_LOG_ERROR, "ofSmooth() currently only supports closed ofPolylines." );
 		return polyline;
 	}
@@ -40,12 +40,12 @@ ofPolyline ofGetSmoothed(const ofPolyline& polyline, int smoothingSize, float sm
 ofPolyline ofGetResampledSpacing(const ofPolyline& polyline, float spacing) {
 	ofPolyline result;
 	// if more properties are added to ofPolyline, we need to copy them here
-	result.setClosed(polyline.getClosed());
+	result.setClosed(polyline.isClosed());
 
 	float totalLength = 0;
 	int curStep = 0;
 	int lastPosition = polyline.size() - 1;
-	if(polyline.getClosed()) {
+	if(polyline.isClosed()) {
 		lastPosition++;
 	}
 	for(int i = 0; i < lastPosition; i++) {
@@ -147,7 +147,7 @@ ofPoint ofGetClosestPoint(const ofPolyline& polyline, const ofPoint& target, uns
 	unsigned int nearest = 0;
 	float normalizedPosition = 0;
 	unsigned int lastPosition = polyline.size() - 1;
-	if(polyline.getClosed()) {
+	if(polyline.isClosed()) {
 		lastPosition++;
 	}
 	for(int i = 0; i < (int) lastPosition; i++) {

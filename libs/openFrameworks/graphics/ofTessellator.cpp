@@ -51,11 +51,10 @@ std::vector <double*> ofTessellator::newVertices;
 std::vector <double*> ofTessellator::ofShapePolyVertexs;
 
 GLint ofTessellator::currentTriType; // GL_TRIANGLES, GL_TRIANGLE_FAN or GL_TRIANGLE_STRIP
-vector<ofPoint> ofTessellator::vertices;
 
 
-vector<ofPolyline> ofTessellator::resultOutline;
-vector<ofPrimitive> ofTessellator::resultMesh;
+vector<ofPolyline> * ofTessellator::resultOutline=NULL;
+vector<ofPrimitive> * ofTessellator::resultMesh=NULL;
 
 
 
@@ -74,38 +73,32 @@ void CALLBACK ofTessellator::begin(GLint type){
 		
 	currentTriType=type;
 	
-	vertices.clear();
+	if(type==GL_LINE_LOOP){
+		resultOutline->push_back(ofPolyline());
+		resultOutline->back().setClosed(true);
+	}else{
+		resultMesh->push_back(ofPrimitive());
+		resultMesh->back().setMode(ofGetOFPrimitiveMode(type));
+	}
 	
 }
 
 //----------------------------------------------------------
 void CALLBACK ofTessellator::end(){
-	// here we take our big pile of vertices and push them at the mesh
 
-	// deal with mesh elements (triangles, triangle fan, triangle strip)
-
-	if(currentTriType!=GL_LINE_LOOP){
-		resultMesh.push_back(ofPrimitive(ofGetOFPrimitiveMode(currentTriType), vertices) );
-	}else if ( currentTriType == GL_LINE_LOOP ){ // outline
-		resultOutline.push_back( ofPolyline(vertices) );
-		resultOutline.back().setClosed(true);
-		// close the loop
-		/*if ( vertices.size()>0 ) {
-			resultOutline.addVertex( vertices[0] );
-		}*/
-	}
-	else{
-		//ofLog( OF_LOG_WARNING, "ofTessellate: unrecognized type '%i' (expected GL_TRIANGLES, GL_TRIANGLE_FAN or GL_TRIANGLE_STRIP)", currentTriType );
-	}
 	
 }
 
 
 //----------------------------------------------------------
 void CALLBACK ofTessellator::vertex( void* data){
-	
+
 	ofPoint p( ( (double *)data)[0], ( (double *)data)[1], ( (double *)data)[2] );
-	vertices.push_back( p );
+	if(currentTriType==GL_LINE_LOOP){
+		resultOutline->back().addVertex( p );
+	}else{
+		resultMesh->back().addVertex(p);
+	}
 }
 
 
@@ -143,45 +136,42 @@ void ofTessellator::clear(){
 
 
 //----------------------------------------------------------
-vector<ofPolyline> ofTessellator::tessellateToOutline( const vector<ofPolyline>& polylines, int polyWindingMode, bool bIs2D ) {
+void ofTessellator::tessellateToOutline( const vector<ofPolyline>& src, int polyWindingMode,  vector<ofPolyline> & dst, bool bIs2D ) {
 	Poco::ScopedLock<ofMutex> lock(mutex);
-	
+	dst.clear();
 	clear();
-	resultOutline.clear();
+	resultOutline = &dst;
 	
-	performTessellation( polylines, polyWindingMode, false /* filled */, bIs2D );
+	performTessellation( src, polyWindingMode, false /* filled */, bIs2D );
 	
 
-	return resultOutline;
+
 }
 
-vector<ofPolyline> ofTessellator::tessellateToOutline( const ofPolyline & polyline, int polyWindingMode, bool bIs2D ) {
+void ofTessellator::tessellateToOutline( const ofPolyline & src, int polyWindingMode, vector<ofPolyline> & dst, bool bIs2D ) {
 	vector<ofPolyline> tmpVector;
-	tmpVector.push_back(polyline);
-	return tessellateToOutline(tmpVector,polyWindingMode, bIs2D);
+	tmpVector.push_back(src);
+	return tessellateToOutline(tmpVector,polyWindingMode, dst, bIs2D);
 }
 
 
 //----------------------------------------------------------
-vector<ofPrimitive> ofTessellator::tessellateToMesh( const ofPolyline& polyline, int polyWindingMode, bool bIs2D ){
+void ofTessellator::tessellateToMesh( const ofPolyline& src,  int polyWindingMode, vector<ofPrimitive>& dstmesh, bool bIs2D){
 	vector<ofPolyline> tempPolylinesVector;
-	tempPolylinesVector.push_back( polyline );
-	return tessellateToMesh( tempPolylinesVector, polyWindingMode, bIs2D );
+	tempPolylinesVector.push_back( src );
+	tessellateToMesh( tempPolylinesVector, polyWindingMode, dstmesh, bIs2D );
 }
 
 	
 //----------------------------------------------------------
-vector<ofPrimitive> ofTessellator::tessellateToMesh( const vector<ofPolyline>& polylines, int polyWindingMode, bool bIs2D ) {
-
+void ofTessellator::tessellateToMesh( const vector<ofPolyline>& src, int polyWindingMode, vector<ofPrimitive> & dstmesh, bool bIs2D ) {
 	Poco::ScopedLock<ofMutex> lock(mutex);
-	
+	dstmesh.clear();
 	clear();
-	resultMesh.clear();
+	resultMesh = &dstmesh;
 
-	performTessellation( polylines, polyWindingMode, true /* filled */, bIs2D );
+	performTessellation( src, polyWindingMode, true /* filled */,bIs2D );
 	
-	
-	return resultMesh;
 		
 }
 
@@ -189,7 +179,7 @@ vector<ofPrimitive> ofTessellator::tessellateToMesh( const vector<ofPolyline>& p
 	
 //----------------------------------------------------------
 void ofTessellator::performTessellation(const vector<ofPolyline>& polylines, int polyWindingMode, bool bFilled, bool bIs2D ) {
-	
+
 	// now get the tesselator object up and ready:
 	GLUtesselator * ofShapeTobj = gluNewTess();
 	
@@ -244,29 +234,25 @@ void ofTessellator::performTessellation(const vector<ofPolyline>& polylines, int
 	
 	for ( int j=0; j<(int)polylines.size(); j++ ) {
 		const ofPolyline& polyline = polylines[j];
+		gluTessBeginContour( ofShapeTobj );
 		for ( int i=0; i<(int)polyline.size(); i++ ) {
 			double* point = new double[3];
 			point[0] = polyline[i].x;
 			point[1] = polyline[i].y;
 			point[2] = polyline[i].z;
 			ofShapePolyVertexs.push_back(point);
+			gluTessVertex( ofShapeTobj, point, point);
 		}
-		if ( polyline.isClosed() && polyline.size()>0 ) {
+		if(polyline.isClosed()){
 			double* point = new double[3];
 			point[0] = polyline[0].x;
 			point[1] = polyline[0].y;
 			point[2] = polyline[0].z;
 			ofShapePolyVertexs.push_back(point);
-		}
-		
-		gluTessBeginContour( ofShapeTobj );
-		for (int i=currentStartVertex; i<(int)ofShapePolyVertexs.size(); i++) {
-			gluTessVertex( ofShapeTobj, ofShapePolyVertexs[i], ofShapePolyVertexs[i]);
+			gluTessVertex( ofShapeTobj, point, point);
+
 		}
 		gluTessEndContour( ofShapeTobj );
-		
-		currentStartVertex = (int)ofShapePolyVertexs.size();
-		
 	}
 	
 	
