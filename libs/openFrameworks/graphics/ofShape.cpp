@@ -34,6 +34,31 @@ int ofPath::size(){
 	return commands.size();
 }
 
+ofPath::Command::Command(Type type , const ofPoint & p)
+:type(type)
+,to(p)
+{}
+
+/// for bezierTo
+ofPath::Command::Command(Type type , const ofPoint & p, const ofPoint & cp1, const ofPoint & cp2)
+:type(type)
+,to(p)
+,cp1(cp1)
+,cp2(cp2)
+{
+}
+
+///for arc
+ofPath::Command::Command(Type type , const ofPoint & centre, float radiusX, float radiusY, float angleBegin, float angleEnd)
+:type(type)
+,to(centre)
+,radiusX(radiusX)
+,radiusY(radiusY)
+,angleBegin(angleBegin)
+,angleEnd(angleEnd)
+{
+}
+
 ofShape::ofShape(){
 	strokeWidth = 0;
 	bFill = true;
