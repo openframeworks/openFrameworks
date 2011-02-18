@@ -86,7 +86,7 @@ bool ofPolyline::hasChanged(){
 }
 
 //----------------------------------------------------------
-const vector<ofPoint> & ofPolyline::getVertices() const{
+vector<ofPoint> & ofPolyline::getVertices(){
 	return points;
 }
 
@@ -232,6 +232,7 @@ void ofPolyline::curveTo( const ofPoint & to, int curveResolution ){
 void ofPolyline::arc( const ofPoint & center, float radiusX, float radiusY, float angleBegin, float angleEnd, int curveResolution){
 	curveVertices.clear();
 	setCircleResolution(curveResolution);
+	points.reserve(points.size()+curveResolution);
 
 	float size = (angleEnd - angleBegin)/360.0f;
 	float begin = angleBegin/360.0f;

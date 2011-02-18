@@ -12,7 +12,6 @@ ofGLRenderer::ofGLRenderer(bool useShapeColor){
 }
 
 void ofGLRenderer::draw(ofPrimitive & vertexData){
-	glEnableClientState(GL_VERTEX_ARRAY);
 	if(vertexData.getNumVertices()){
 		glEnableClientState(GL_VERTEX_ARRAY);
 		glVertexPointer(3, GL_FLOAT, sizeof(ofVec3f), vertexData.getVerticesPointer());
@@ -40,10 +39,22 @@ void ofGLRenderer::draw(ofPrimitive & vertexData){
 	}else{
 		glDrawArrays(ofGetGLPrimitiveMode(vertexData.getMode()), 0, vertexData.getNumVertices());
 	}
+	if(vertexData.getNumColors()){
+		glDisableClientState(GL_COLOR_ARRAY);
+	}
+	if(vertexData.getNumNormals()){
+		glDisableClientState(GL_NORMAL_ARRAY);
+	}
+	if(vertexData.getNumTexCoords()){
+		glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+	}
+}
 
-	glDisableClientState(GL_COLOR_ARRAY);
-	glDisableClientState(GL_NORMAL_ARRAY);
-	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+
+void ofGLRenderer::draw(vector<ofPoint> & vertexData, ofPrimitiveMode drawMode){
+	glEnableClientState(GL_VERTEX_ARRAY);
+	glVertexPointer(3, GL_FLOAT, sizeof(ofVec3f), &vertexData[0].x);
+	glDrawArrays(ofGetGLPrimitiveMode(drawMode), 0, vertexData.size());
 }
 
 void ofGLRenderer::draw(ofPolyline & poly){
@@ -60,7 +71,7 @@ void ofGLRenderer::draw(ofShape & shape){
 			setColor( shape.getFillColor() * ofGetStyle().color,shape.getFillColor().a/255. * ofGetStyle().color.a);
 		}
 		for(int i=0;i<(int)mesh.size();i++){
-			draw(mesh[i]);
+			draw(mesh[i].getVertices(),mesh[i].getMode());
 		}
 		if(bUseShapeColor){
 			ofPopStyle();

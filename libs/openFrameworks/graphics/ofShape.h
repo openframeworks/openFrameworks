@@ -19,6 +19,7 @@ public:
 	bool hasChanged();
 	void close();
 	bool isClosed();
+	int size();
 
 	struct Command{
 		enum Type{
@@ -126,7 +127,8 @@ public:
 
 
 	void updateShape();
-	void draw(float x=0, float y=0);
+	void draw(float x, float y);
+	void draw();
 
 	vector<ofPath> & getPaths();
 	const vector<ofPath> & getPaths() const;
@@ -174,7 +176,15 @@ private:
 	// polyline / tesselation
 	vector<ofPolyline>  polylines;
 	vector<ofPolyline>  tessellatedPolylines;
-	vector<ofPrimitive> cachedTessellation;
+
+	// this gives more performance for shapes that are
+	// updating frequently by not instanciating new meshes
+	friend class ofTessellator;
+	struct tessCache{
+		vector<ofPrimitive> meshes;
+		int numElements;
+	}cachedTessellation;
+
 	bool				hasChanged;
 	int					prevCurveRes;
 	int					curveResolution;

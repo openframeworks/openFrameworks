@@ -140,6 +140,8 @@ public:
 	const float* getTexCoordsPointer() const;
 	const ofIndexType* getIndexPointer() const;
 
+	vector<ofVec3f> & getVertices();
+
 	vector<int>& getFace(int faceId);
 	
 	void setName(string name_);

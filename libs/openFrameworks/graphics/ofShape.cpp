@@ -29,12 +29,18 @@ bool ofPath::isClosed(){
 	return bClosed;
 }
 
+
+int ofPath::size(){
+	return commands.size();
+}
+
 ofShape::ofShape(){
-	strokeWidth = 1;
-	bFill = false;
+	strokeWidth = 0;
+	bFill = true;
 	windingMode = OF_POLY_WINDING_ODD;
 	prevCurveRes = 16;
 	curveResolution = 16;
+	arcResolution = 20;
 	mode = PATHS;
 	bNeedsTessellation = false;
 	hasChanged = false;
@@ -80,11 +86,12 @@ void ofShape::lineTo(float x, float y){
 }
 
 void ofShape::moveTo(const ofPoint & p){
-	newPath();
 	if(mode==PATHS){
+		if(lastPath().size()>0) newPath();
 		lastPath().addCommand(ofPath::Command(ofPath::Command::lineTo,p));
 		hasChanged = true;
 	}else{
+		if(lastPolyline().size()>0) newPath();
 		lastPolyline().addVertex(p);
 		bNeedsTessellation = true;
 	}
@@ -190,6 +197,7 @@ void ofShape::setPolyWindingMode(ofPolyWindingMode newMode){
 
 void ofShape::setFilled(bool hasFill){
 	if(bFill != hasFill){
+		strokeWidth = 0;
 		bFill = hasFill;
 		if(mode==PATHS){
 			hasChanged = true;
@@ -209,13 +217,13 @@ void ofShape::setStrokeColor(const ofColor & color){
 
 void ofShape::setStrokeWidth(float width){
 	if(width != 0 && strokeWidth == 0){
-		strokeWidth = width;
 		if(mode==PATHS){
 			hasChanged = true;
 		}else{
 			bNeedsTessellation = true;
 		}
 	}
+	strokeWidth = width;
 }
 
 ofPath & ofShape::lastPath(){
@@ -309,7 +317,7 @@ void ofShape::tessellate(){
 	if(!bNeedsTessellation) return;
 	//bool bIs2D = !bIs3D;
 	if(bFill){
-		ofTessellator::tessellateToMesh( polylines, windingMode, cachedTessellation);
+		ofTessellator::tessellateToCache( polylines, windingMode, cachedTessellation);
 	}
 	if ( hasOutline() ){
 		if( windingMode != OF_POLY_WINDING_ODD ) {
@@ -321,7 +329,6 @@ void ofShape::tessellate(){
 
 vector<ofPolyline> & ofShape::getOutline() {
 	tessellate();
-
 	if( windingMode != OF_POLY_WINDING_ODD ) {
 		return tessellatedPolylines;
 	}else{
@@ -331,8 +338,8 @@ vector<ofPolyline> & ofShape::getOutline() {
 
 vector<ofPrimitive> & ofShape::getTessellation(){
 	tessellate();
-
-	return cachedTessellation;
+	cachedTessellation.meshes.resize(cachedTessellation.numElements);
+	return cachedTessellation.meshes;
 }
 
 void ofShape::updateShape(){
@@ -340,10 +347,28 @@ void ofShape::updateShape(){
 }
 
 void ofShape::draw(float x, float y){
+
 	ofPushMatrix();
 	ofTranslate(x,y);
-	ofGetDefaultRenderer()->draw(*this);
+	draw();
 	ofPopMatrix();
+}
+
+
+void ofShape::draw(){
+	tessellate();
+	if(bFill){
+		for(int i=0;i<cachedTessellation.numElements && i<cachedTessellation.meshes.size();i++){
+			ofGetDefaultRenderer()->draw(cachedTessellation.meshes[i]);
+		}
+	}
+
+	if(hasOutline()){
+		vector<ofPolyline> & polys = getOutline();
+		for(int i=0;i<polys.size();i++){
+			ofGetDefaultRenderer()->draw(polys[i]);
+		}
+	}
 }
 
 
