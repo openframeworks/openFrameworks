@@ -12,6 +12,7 @@ public:
 	void draw(ofPrimitive & vertexData);
 	void draw(ofPolyline & poly);
 	void draw(ofShape & path);
+	void draw(vector<ofPoint> & vertexData, ofPrimitiveMode drawMode);
 	void useShapeColor(bool bUseShapeColor);
 
 	bool rendersPathDirectly(){

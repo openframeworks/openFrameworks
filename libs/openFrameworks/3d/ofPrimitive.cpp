@@ -308,6 +308,10 @@ const ofIndexType * ofPrimitive::getIndexPointer() const{
 	return &indices[0];
 }
 
+vector<ofVec3f> & ofPrimitive::getVertices(){
+	return vertices;
+}
+
 /*
 //--------------------------------------------------------------
 GLuint* ofPrimitive::getSolidIndexPointer(){

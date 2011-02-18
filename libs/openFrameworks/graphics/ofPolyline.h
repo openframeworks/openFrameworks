@@ -76,7 +76,7 @@ public:
 	bool is3D() const;
 	bool hasChanged();
 
-	const vector<ofPoint> & getVertices() const;
+	vector<ofPoint> & getVertices();
 
 	float getPerimeter() const;
 

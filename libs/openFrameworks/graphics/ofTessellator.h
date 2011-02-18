@@ -4,6 +4,9 @@
 #include "ofShapeTessellation.h"
 #include "ofMesh.h"
 #include "ofTypes.h"
+#include "ofShape.h"
+
+struct GLUtesselator;
 
 #ifndef CALLBACK
 #define CALLBACK
@@ -31,11 +34,11 @@ public:
 	static void tessellateToOutline( const vector<ofPolyline>& src, int polyWindingMode, vector<ofPolyline> & dst, bool bIs2D=false );
 	static void tessellateToOutline( const ofPolyline& src, int polyWindingMode, vector<ofPolyline> & dst, bool bIs2D=false );
 	
-	
+	static void tessellateToCache( const vector<ofPolyline>& src, int polyWindingMode, ofShape::tessCache & cache, bool bIs2D=false );
 private:
 	
 	static void performTessellation( const vector<ofPolyline>& polylines, int polyWindingMode, bool bFilled, bool bIs2D );
-	
+	static void init();
 	/// clear out everything
 	static void clear();
 
@@ -48,7 +51,7 @@ private:
 	static void CALLBACK end();
 		
 	/// ensure thread-safety
-	static ofMutex mutex;
+	//static ofMutex mutex;
 
 	
 	// filled during tessellation
@@ -57,7 +60,7 @@ private:
 	//---------------------------- for combine callback:
 	static std::vector <double*> newVertices;
 	//---------------------------- store all the polygon vertices:
-	static std::vector <double*> ofShapePolyVertexs;
+	static std::vector <double> ofShapePolyVertexs;
 	
 
 	static vector<ofPrimitive> * resultMesh;
@@ -65,6 +68,12 @@ private:
 	
 	static vector<ofPolyline> * resultOutline;
 	
+	static int  numElements;
+
+	static bool initialized;
+
+	static GLUtesselator * ofShapeTobj;
+
 };
 
 

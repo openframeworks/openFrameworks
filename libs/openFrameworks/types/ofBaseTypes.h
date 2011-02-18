@@ -14,10 +14,10 @@
 #include "ofRectangle.h"
 #include "ofConstants.h"
 #include "ofColor.h"
+#include "ofPrimitive.h"
 class ofPixels;
 class ofShape;
 class ofPolyline;
-class ofPrimitive;
 typedef ofPixels& ofPixelsRef;
 
 
@@ -200,6 +200,7 @@ public:
 	virtual void draw(ofPolyline & poly)=0;
 	virtual void draw(ofShape & shape)=0;
 	virtual void draw(ofPrimitive & vertexData)=0;
+	virtual void draw(vector<ofPoint> & vertexData, ofPrimitiveMode drawMode)=0;
 
 	virtual void useShapeColor(bool bUseShapeColor)=0;
 
