@@ -174,7 +174,7 @@ void ofShape::close(){
 		lastPolyline().setClosed(true);
 		bNeedsTessellation = true;
 	}
-	newPath();
+	//newPath();
 }
 
 void ofShape::setPolyWindingMode(ofPolyWindingMode newMode){
