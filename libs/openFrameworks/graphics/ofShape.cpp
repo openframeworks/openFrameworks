@@ -47,7 +47,8 @@ void ofShape::clear(){
 		paths.clear();
 		hasChanged = true;
 	}else{
-		polylines.clear();
+		polylines.resize(1);
+		polylines[0].clear();
 		bNeedsTessellation = true;
 	}
 }
