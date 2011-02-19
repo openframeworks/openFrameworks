@@ -85,7 +85,6 @@ void ofSetDefaultRenderer(ofBaseRenderer * renderer_){
 	shape.setFilled(currentStyle.bFill);
 	shape.setStrokeWidth(currentStyle.bFill?0:currentStyle.lineWidth);
 	shape.setPolyWindingMode(currentStyle.polyMode);
-	shape.setUseRendererDefaults(true);
 	linePoints.resize(2);
 	rectPoints.resize(4);
 	triPoints.resize(3);
