@@ -34,7 +34,9 @@ public:
 	static void tessellateToOutline( const vector<ofPolyline>& src, int polyWindingMode, vector<ofPolyline> & dst, bool bIs2D=false );
 	static void tessellateToOutline( const ofPolyline& src, int polyWindingMode, vector<ofPolyline> & dst, bool bIs2D=false );
 	
+	/// tessellate to ofShape internal cache, used fromf ofShape for performace
 	static void tessellateToCache( const vector<ofPolyline>& src, int polyWindingMode, ofShape::tessCache & cache, bool bIs2D=false );
+
 private:
 	
 	static void performTessellation( const vector<ofPolyline>& polylines, int polyWindingMode, bool bFilled, bool bIs2D );

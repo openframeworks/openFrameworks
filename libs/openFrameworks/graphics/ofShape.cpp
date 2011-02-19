@@ -69,7 +69,7 @@ ofShape::ofShape(){
 	mode = PATHS;
 	bNeedsTessellation = false;
 	hasChanged = false;
-	bUseRendererDefaults = false;
+	bUseShapeColor = false;
 	clear();
 }
 
@@ -222,22 +222,15 @@ void ofShape::setPolyWindingMode(ofPolyWindingMode newMode){
 
 void ofShape::setFilled(bool hasFill){
 	if(bFill != hasFill){
-		strokeWidth = 0;
 		bFill = hasFill;
+		if(bFill) strokeWidth = 0;
+		else if(strokeWidth==0) strokeWidth = 1;
 		if(mode==PATHS){
 			hasChanged = true;
 		}else{
 			bNeedsTessellation = true;
 		}
 	}
-}
-
-void ofShape::setFillColor(const ofColor & color){
-	fillColor = color;
-}
-
-void ofShape::setStrokeColor(const ofColor & color){
-	strokeColor = color;
 }
 
 void ofShape::setStrokeWidth(float width){
@@ -372,7 +365,6 @@ void ofShape::updateShape(){
 }
 
 void ofShape::draw(float x, float y){
-
 	ofPushMatrix();
 	ofTranslate(x,y);
 	draw();
@@ -383,15 +375,29 @@ void ofShape::draw(float x, float y){
 void ofShape::draw(){
 	tessellate();
 	if(bFill){
+		if(bUseShapeColor){
+			ofPushStyle();
+			ofSetColor(fillColor);
+		}
 		for(int i=0;i<cachedTessellation.numElements && i<cachedTessellation.meshes.size();i++){
 			ofGetDefaultRenderer()->draw(cachedTessellation.meshes[i]);
+		}
+		if(bUseShapeColor){
+			ofPopStyle();
 		}
 	}
 
 	if(hasOutline()){
+		if(bUseShapeColor){
+			ofPushStyle();
+			ofSetColor(fillColor);
+		}
 		vector<ofPolyline> & polys = getOutline();
 		for(int i=0;i<polys.size();i++){
 			ofGetDefaultRenderer()->draw(polys[i]);
+		}
+		if(bUseShapeColor){
+			ofPopStyle();
 		}
 	}
 }
@@ -426,11 +432,37 @@ int ofShape::getArcResolution(){
 	return arcResolution;
 }
 
-void ofShape::setUseRendererDefaults(bool useRDefaults){
-	bUseRendererDefaults = useRDefaults;
+void ofShape::setUseShapeColor(bool useColor){
+	bUseShapeColor = useColor;
 }
 
-bool ofShape::getUseRendererDefaults(){
-	return bUseRendererDefaults;
+bool ofShape::getUseShapeColor(){
+	return bUseShapeColor;
 }
 
+void ofShape::setColor( const ofColor& color ) {
+	setFillColor( color );
+	setStrokeColor( color );
+}
+
+void ofShape::setHexColor( int hex ) {
+	setColor( ofColor().fromHex( hex ) );
+}
+
+void ofShape::setFillColor(const ofColor & color){
+	setUseShapeColor(true);
+	fillColor = color;
+}
+
+void ofShape::setFillHexColor( int hex ) {
+	setFillColor( ofColor().fromHex( hex ) );
+}
+
+void ofShape::setStrokeColor(const ofColor & color){
+	setUseShapeColor(true);
+	strokeColor = color;
+}
+
+void ofShape::setStrokeHexColor( int hex ) {
+	setStrokeColor( ofColor().fromHex( hex ) );
+};

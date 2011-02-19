@@ -173,6 +173,7 @@ void ofTessellator::tessellateToMesh( const vector<ofPolyline>& src, int polyWin
 	performTessellation( src, polyWindingMode, true /* filled */,bIs2D );
 }
 
+//----------------------------------------------------------
 void ofTessellator::tessellateToCache( const vector<ofPolyline>& src, int polyWindingMode, ofShape::tessCache & cache, bool bIs2D){
 	//Poco::ScopedLock<ofMutex> lock(mutex);
 	//clear();

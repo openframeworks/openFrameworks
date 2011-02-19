@@ -91,14 +91,14 @@ public:
 
 
 	void setPolyWindingMode(ofPolyWindingMode mode);
-	void setColor( const ofColor& color ) { setFillColor( color ); setStrokeColor( color ); }
-	void setHexColor( int hex ) { setColor( ofColor().fromHex( hex ) ); };
-	void setFilled(bool hasFill); // default false
+	void setFilled(bool hasFill); // default true
+	void setStrokeWidth(float width); // default 0
+	void setColor( const ofColor& color );
+	void setHexColor( int hex );
 	void setFillColor(const ofColor & color);
-	void setFillHexColor( int hex ) { setFillColor( ofColor().fromHex( hex ) ); };
+	void setFillHexColor( int hex );
 	void setStrokeColor(const ofColor & color);
-	void setStrokeHexColor( int hex ) { setStrokeColor( ofColor().fromHex( hex ) ); };
-	void setStrokeWidth(float width); // default 1
+	void setStrokeHexColor( int hex );
 
 
 	ofPolyWindingMode getWindingMode() const;
@@ -138,8 +138,8 @@ public:
 	void setArcResolution(int res);
 	int getArcResolution();
 
-	void setUseRendererDefaults(bool useRDefaults);
-	bool getUseRendererDefaults();
+	void setUseShapeColor(bool useColor);
+	bool getUseShapeColor();
 
 private:
 
@@ -155,6 +155,7 @@ private:
 	ofColor				strokeColor;
 	float				strokeWidth;
 	bool				bFill;
+	bool				bUseShapeColor;
 
 	// polyline / tesselation
 	vector<ofPolyline>  polylines;
@@ -173,8 +174,6 @@ private:
 	int					curveResolution;
 	int					arcResolution;
 	bool 				bNeedsTessellation;
-
-	bool				bUseRendererDefaults;
 
 	Mode				mode;
 };
