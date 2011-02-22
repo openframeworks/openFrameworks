@@ -1,5 +1,4 @@
 #include "ofGLRenderer.h"
-#include "ofShapeTessellation.h"
 #include "ofPrimitive.h"
 #include "ofShape.h"
 #include "ofGraphics.h"
@@ -59,7 +58,7 @@ void ofGLRenderer::draw(vector<ofPoint> & vertexData, ofPrimitiveMode drawMode){
 
 void ofGLRenderer::draw(ofPolyline & poly){
 	glEnableClientState(GL_VERTEX_ARRAY);
-	glVertexPointer(poly.is3D()?3:2, GL_FLOAT, sizeof(ofVec3f), &poly.getVertices()[0].x);
+	glVertexPointer(3, GL_FLOAT, sizeof(ofVec3f), &poly.getVertices()[0].x);
 	glDrawArrays(poly.isClosed()?GL_LINE_LOOP:GL_LINE_STRIP, 0, poly.size());;
 }
 

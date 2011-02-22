@@ -72,8 +72,6 @@ public:
 	void setClosed( bool tf );
 	bool isClosed() const;
 
-	void setIs3D(bool bIs3D_);
-	bool is3D() const;
 	bool hasChanged();
 
 	vector<ofPoint> & getVertices();
@@ -88,7 +86,6 @@ private:
 	vector<ofPoint> circlePoints;
 
 	bool bClosed;
-	bool bIs3D;
 	bool bHasChanged;
 };
 

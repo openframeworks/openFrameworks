@@ -13,7 +13,6 @@ ofPolyline::ofPolyline(const vector<ofPoint>& verts){
 
 //----------------------------------------------------------
 void ofPolyline::clear() {
-	bIs3D = false;
 	bClosed=false;
 	points.clear();
 	bHasChanged = true;
@@ -62,17 +61,6 @@ void ofPolyline::setClosed( bool tf ) {
 //----------------------------------------------------------
 bool ofPolyline::isClosed() const {
 	return bClosed;
-}
-
-//----------------------------------------------------------
-void ofPolyline::setIs3D(bool bIs3D_){
-	bHasChanged=true;
-	//bIs3D = bIs3D_;
-}
-
-//----------------------------------------------------------
-bool ofPolyline::is3D() const{
-	return bIs3D;
 }
 
 //----------------------------------------------------------
@@ -133,7 +121,7 @@ void ofPolyline::bezierTo( const ofPoint & cp1, const ofPoint & cp2, const ofPoi
 	if (size() > 0){
 		float x0 = points[size()-1].x;
 		float y0 = points[size()-1].y;
-		//float z0 = points[size()-1].z;
+		float z0 = points[size()-1].z;
 
 		float   ax, bx, cx;
 		float   ay, by, cy;
@@ -150,9 +138,9 @@ void ofPolyline::bezierTo( const ofPoint & cp1, const ofPoint & cp2, const ofPoi
 		by = 3.0f * (cp2.y - cp1.y) - cy;
 		ay = to.y - y0 - cy - by;
 
-		/*cz = 3.0f * (cp1.z - z0);
+		cz = 3.0f * (cp1.z - z0);
 		bz = 3.0f * (cp2.z - cp1.z) - cz;
-		az = to.z - z0 - cz - bz;*/
+		az = to.z - z0 - cz - bz;
 
 		for (int i = 0; i < curveResolution; i++){
 			t 	=  (float)i / (float)(curveResolution-1);
@@ -160,7 +148,7 @@ void ofPolyline::bezierTo( const ofPoint & cp1, const ofPoint & cp2, const ofPoi
 			t3 = t2 * t;
 			x = (ax * t3) + (bx * t2) + (cx * t) + x0;
 			y = (ay * t3) + (by * t2) + (cy * t) + y0;
-			//z = (az * t3) + (bz * t2) + (cz * t) + z0;
+			z = (az * t3) + (bz * t2) + (cz * t) + z0;
 			points.push_back(ofPoint(x,y,0));
 		}
 	}
@@ -188,16 +176,16 @@ void ofPolyline::curveTo( const ofPoint & to, int curveResolution ){
 
 		float x0 = curveVertices[0].x;
 		float y0 = curveVertices[0].y;
-		//float z0 = curveVertices[0].z;
+		float z0 = curveVertices[0].z;
 		float x1 = curveVertices[1].x;
 		float y1 = curveVertices[1].y;
-		//float z1 = curveVertices[1].z;
+		float z1 = curveVertices[1].z;
 		float x2 = curveVertices[2].x;
 		float y2 = curveVertices[2].y;
-		//float z2 = curveVertices[2].z;
+		float z2 = curveVertices[2].z;
 		float x3 = curveVertices[3].x;
 		float y3 = curveVertices[3].y;
-		//float z3 = curveVertices[3].z;
+		float z3 = curveVertices[3].z;
 
 		float t,t2,t3;
 		float x,y,z;
@@ -218,10 +206,10 @@ void ofPolyline::curveTo( const ofPoint & to, int curveResolution ){
 			( 2.0f * y0 - 5.0f * y1 + 4 * y2 - y3 ) * t2 +
 			( -y0 + 3.0f * y1 - 3.0f * y2 + y3 ) * t3 );
 
-			/*z = 0.5f * ( ( 2.0f * z1 ) +
+			z = 0.5f * ( ( 2.0f * z1 ) +
 			( -z0 + z2 ) * t +
 			( 2.0f * z0 - 5.0f * z1 + 4 * z2 - z3 ) * t2 +
-			( -z0 + 3.0f * z1 - 3.0f * z2 + z3 ) * t3 );*/
+			( -z0 + 3.0f * z1 - 3.0f * z2 + z3 ) * t3 );
 
 			points.push_back(ofPoint(x,y,0));
 		}
