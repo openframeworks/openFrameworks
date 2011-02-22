@@ -1,7 +1,6 @@
 #pragma once
 
 #include "ofConstants.h"
-#include "ofShapeTessellation.h"
 #include "ofMesh.h"
 #include "ofTypes.h"
 #include "ofShape.h"
