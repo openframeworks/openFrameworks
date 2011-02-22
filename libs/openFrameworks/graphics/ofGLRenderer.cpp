@@ -22,7 +22,7 @@ void ofGLRenderer::draw(ofPrimitive & vertexData){
 	}
 	if(vertexData.getNumColors()){
 		glEnableClientState(GL_COLOR_ARRAY);
-		glColorPointer(4,GL_FLOAT, 0, vertexData.getColorsPointer());
+		glColorPointer(4,GL_FLOAT, sizeof(ofColor), vertexData.getColorsPointer());
 	}
 
 	if(vertexData.getNumTexCoords()){
