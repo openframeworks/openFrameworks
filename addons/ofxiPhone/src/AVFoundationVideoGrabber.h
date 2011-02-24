@@ -64,11 +64,14 @@ class AVFoundationVideoGrabber{
 		bool initGrabber(int w, int h);
 		void updatePixelsCB( CGImageRef & ref );
 	
+		void update();
+	
 		bool isFrameNew();
 		
 		void listDevices();
 		void setDevice(int deviceID);
 		void setPixelFormat(ofPixelFormat PixelFormat);
+		ofPixelFormat getPixelFormat();
 	
 		unsigned char * getPixels(){
 			return pixels;
@@ -91,6 +94,7 @@ class AVFoundationVideoGrabber{
 		
 		int device;
 	
+		bool bHavePixelsChanged;
 		
 		int fps;
 		ofTexture tex;

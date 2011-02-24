@@ -86,10 +86,10 @@ void ofxThreadedImageLoader::urlResponse(ofHttpResponse & response) {
 		
 		// Get the loaded url from the async queue and move it into the update queue.
 		entry_iterator it = getEntryFromAsyncQueue(response.request.name);
-		if(it != images_async_loading.end()) {		
-			images_async_loading.erase(it);
+		if(it != images_async_loading.end()) {
 			(*it).image->loadImage(response.data);
 			images_to_update.push_back((*it));
+			images_async_loading.erase(it);
 		}
 		
 		unlock();
@@ -132,7 +132,7 @@ void ofxThreadedImageLoader::update(ofEventArgs & a){
 	ofImageLoaderEntry entry = getNextImageToUpdate();
 	if (entry.image != NULL) {
 
-		const ofPixels pix = entry.image->getOFPixels();
+		const ofPixels& pix = entry.image->getPixelsRef();
 		entry.image->getTextureReference().allocate(
 				 pix.getWidth()
 				,pix.getHeight()

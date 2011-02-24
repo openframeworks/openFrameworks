@@ -1,9 +1,10 @@
 
 #include "ofNode.h"
-#include "ofMain.h"
+#include "ofMath.h"
+#include "ofLog.h"
 
-
-ofNode::ofNode() : parent(NULL) {
+ofNode::ofNode() : 
+	parent(NULL) {
 	setPosition(ofVec3f(0, 0, 0));
 	setOrientation(ofVec3f(0, 0, 0));
 	setScale(1);
@@ -11,14 +12,31 @@ ofNode::ofNode() : parent(NULL) {
 
 
 //----------------------------------------
-void ofNode::setParent(ofNode* parent) {
-	this->parent = parent;
+void ofNode::setParent(ofNode& parent) {
+	this->parent = &parent;
 }
 
+//----------------------------------------
+void ofNode::clearParent() {
+	this->parent = NULL;
+}
 
 //----------------------------------------
 ofNode* ofNode::getParent() const {
 	return parent;
+}
+
+
+//----------------------------------------
+void ofNode::setTransformMatrix(const ofMatrix4x4 &m44) {
+	localTransformMatrix = m44;
+
+	ofQuaternion so;
+	localTransformMatrix.decompose(position, orientation, scale, so);
+	
+	onPositionChanged();
+	onOrientationChanged();
+	onScaleChanged();
 }
 
 
@@ -108,31 +126,8 @@ ofQuaternion ofNode::getOrientationQuat() const {
 
 
 //----------------------------------------
-// ref at http://www.euclideanspace.com/maths/geometry/rotations/conversions/quaternionToEuler/index.htm
 ofVec3f ofNode::getOrientationEuler() const {
-	ofQuaternion q1 = orientation;
-	float test = q1.x()*q1.y() + q1.z()*q1.w();
-	float heading;
-	float attitude;
-	float bank;
-	if (test > 0.499) { // singularity at north pole
-		heading = 2 * atan2(q1.x(), q1.w());
-		attitude = PI/2;
-		bank = 0;
-	} else if (test < -0.499) { // singularity at south pole
-		heading = -2 * atan2(q1.x(), q1.w());
-		attitude = - PI/2;
-		bank = 0;
-	} else {
-		float sqx = q1.x() * q1.x();
-		float sqy = q1.y() * q1.y();
-		float sqz = q1.z() * q1.z();
-		heading = atan2(2.0f * q1.y() * q1.w() - 2.0f * q1.x() * q1.z(), 1.0f - 2.0f*sqy - 2.0f*sqz);
-		attitude = asin(2*test);
-		bank = atan2(2.0f*q1.x() * q1.w() - 2.0f * q1.y() * q1.z(), 1.0f - 2.0f*sqx - 2.0f*sqz);
-	}
-	
-	return ofVec3f(ofRadToDeg(attitude), ofRadToDeg(heading), ofRadToDeg(bank));
+    return orientation.getEuler();
 }
 
 
@@ -230,6 +225,7 @@ void ofNode::rotate(float degrees, float vx, float vy, float vz) {
 
 //----------------------------------------
 void ofNode::rotateAround(const ofQuaternion& q, const ofVec3f& point) {
+	ofLog(OF_LOG_VERBOSE, "ofNode::rotateAround(const ofQuaternion& q, const ofVec3f& point) not implemented yet");
 	ofMatrix4x4 m = getLocalTransformMatrix();
 	//	m.setTranslation(point);
 	//	m.rotate(q);
@@ -241,15 +237,13 @@ void ofNode::rotateAround(const ofQuaternion& q, const ofVec3f& point) {
 
 //----------------------------------------
 void ofNode::rotateAround(float degrees, const ofVec3f& axis, const ofVec3f& point) {
-	
+	ofLog(OF_LOG_VERBOSE, "ofNode::rotateAround(float degrees, const ofVec3f& axis, const ofVec3f& point) not implemented yet");
 }
 
 
 
 //----------------------------------------
 void ofNode::lookAt(const ofVec3f& lookAtPosition, ofVec3f upVector) {
-	//		localTransformMatrix.makeLookAtMatrix(position, lookAtPosition, upVector);
-//	ofVec3f savePos = getGlobalPosition();
 	if(parent) upVector = upVector * ofMatrix4x4::getInverseOf(parent->getGlobalTransformMatrix());
 	ofVec3f zaxis = (getGlobalPosition() - lookAtPosition).normalized();
 	ofVec3f xaxis = upVector.getCrossed(zaxis).normalized();
@@ -261,12 +255,6 @@ void ofNode::lookAt(const ofVec3f& lookAtPosition, ofVec3f upVector) {
 	m._mat[2].set(zaxis.x, zaxis.y, zaxis.z, 0);
 	
 	setGlobalOrientation(m.getRotate());
-//	setGlobalPosition(position);
-	//	_mat[3].set(-xaxis.dot(eye), -yaxis.dot(eye), -zaxis.dot(eye), 1);
-	
-//	orientation = localTransformMatrix.getRotate();
-//	createMatrix();
-//	onOrientationChanged();
 }
 
 void ofNode::lookAt(ofNode& lookAtNode, const ofVec3f& upVector) {
@@ -325,11 +313,6 @@ float ofNode::getRoll() const {
 
 
 //----------------------------------------
-//void ofNode::setTransformMatrix(const ofMatrix4x4& matrix) {
-//	this->localTransformMatrix = matrix;
-//}
-
-//----------------------------------------
 const ofMatrix4x4& ofNode::getLocalTransformMatrix() const {
 	return localTransformMatrix;
 }
@@ -338,8 +321,6 @@ const ofMatrix4x4& ofNode::getLocalTransformMatrix() const {
 ofMatrix4x4 ofNode::getGlobalTransformMatrix() const {
 	if(parent) return getLocalTransformMatrix() * parent->getGlobalTransformMatrix();
 	else return getLocalTransformMatrix();
-	
-	//	return globalTransformMatrix;
 }
 
 //----------------------------------------
@@ -361,10 +342,10 @@ ofQuaternion ofNode::getGlobalOrientation() const {
 //----------------------------------------
 void ofNode::orbit(float longitude, float latitude, float radius, const ofVec3f& centerPoint) {
 	ofMatrix4x4 m;
-	
+
 	// find position
 	ofVec3f p(0, 0, radius);
-	p.rotate(latitude, ofVec3f(1, 0, 0));
+	p.rotate(ofClamp(latitude, -89, 89), ofVec3f(1, 0, 0));
 	p.rotate(longitude, ofVec3f(0, 1, 0));
 	p += centerPoint;
 	setPosition(p);

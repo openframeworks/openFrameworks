@@ -1,7 +1,7 @@
 #include "ofEvents.h"
 #include "ofAppRunner.h"
 #include "ofBaseApp.h"
-#include "ofMain.h"
+#include "ofUtils.h"
 #include <set>
 
 // core events instance & arguments
@@ -292,4 +292,10 @@ void ofSendMessage(ofMessage msg){
 	#ifdef OF_USING_POCO
 		ofNotifyEvent(ofEvents.messageEvent, msg);
 	#endif
+}
+
+//------------------------------------------
+void ofSendMessage(string messageString){
+	ofMessage msg(messageString);
+	ofSendMessage(msg);
 }

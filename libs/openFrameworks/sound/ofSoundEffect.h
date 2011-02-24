@@ -14,7 +14,6 @@
 #include <deque>
 using namespace std;
 
-#include "ofMain.h"
 
 /** ofSoundEffect
  
@@ -79,9 +78,9 @@ public:
 	string getName() { return "ofSoundEffectVolume"; }
 	
 	/// Set our volume to vol
-	void setVolume( float vol ) { volume = vol; }
+	void setVolume( float vol ) { 	if ( !isnan(vol) && isfinite(vol) ) { volume = vol; } }
 	/// Adjust our current volume by adjustment
-	void adjustVolume( float adjustment ) { volume += adjustment; }
+	void adjustVolume( float adjustment ) { if ( !isnan(adjustment) && isfinite(adjustment) ) { volume += adjustment; } }
 	/// Get current volume (not declicked)
 	float getVolume() { return volume.getRawValue(); }
 	

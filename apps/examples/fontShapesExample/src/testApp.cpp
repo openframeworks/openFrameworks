@@ -1,7 +1,6 @@
 #include "testApp.h"
 
 int letter = '$';
-
 //--------------------------------------------------------------
 void testApp::setup(){
 	ofBackground(255,255,255);
@@ -10,7 +9,6 @@ void testApp::setup(){
 	testFont2.loadFont("cooperBlack.ttf", 52, true, true, true);
 
 	ofSetFullscreen(false);
-
 }
 
 //--------------------------------------------------------------
@@ -52,8 +50,9 @@ void testApp::draw(){
 	//all curves are calculated for us so all we need to do is draw!
 	ofTTFCharacter testChar;
 	testChar = testFont.getCharacterAsPoints(letter);
+    testChar.draw(250,250);
 
-	ofFill();
+	/*ofFill();
 	ofPushMatrix();
 		ofTranslate(250, 250, 0);
 		ofBeginShape();
@@ -77,7 +76,7 @@ void testApp::draw(){
 				}
 			}
 		ofEndShape( true );
-	ofPopMatrix();
+	ofPopMatrix();*/
 
 
 }
@@ -102,9 +101,8 @@ void testApp::mouseDragged(int x, int y, int button){
 
 //--------------------------------------------------------------
 void testApp::mousePressed(int x, int y, int button){
-	ofHideCursor();
-}
 
+}
 
 //--------------------------------------------------------------
 void testApp::mouseReleased(int x, int y, int button){
@@ -113,5 +111,15 @@ void testApp::mouseReleased(int x, int y, int button){
 
 //--------------------------------------------------------------
 void testApp::windowResized(int w, int h){
+
+}
+
+//--------------------------------------------------------------
+void testApp::gotMessage(ofMessage msg){
+
+}
+
+//--------------------------------------------------------------
+void testApp::dragEvent(ofDragInfo dragInfo){ 
 
 }

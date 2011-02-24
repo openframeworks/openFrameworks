@@ -12,165 +12,6 @@
 
 static bool printVectorInfo = false;
 
-//This is for polygon/contour simplification - we use it to reduce the number of points needed in
-//representing the letters as openGL shapes - will soon be moved to ofGraphics.cpp
-
-// From: http://softsurfer.com/Archive/algorithm_0205/algorithm_0205.htm
-// Copyright 2002, softSurfer (www.softsurfer.com)
-// This code may be freely used and modified for any purpose
-// providing that this copyright notice is included with it.
-// SoftSurfer makes no warranty for this code, and cannot be held
-// liable for any real or imagined damage resulting from its use.
-// Users of this code must verify correctness for their application.
-
-typedef struct{
-	ofPoint P0;
-	ofPoint P1;
-}Segment;
-
-// dot product (3D) which allows vector operations in arguments
-#define dot(u,v)   ((u).x * (v).x + (u).y * (v).y + (u).z * (v).z)
-#define norm2(v)   dot(v,v)        // norm2 = squared length of vector
-#define norm(v)    sqrt(norm2(v))  // norm = length of vector
-#define d2(u,v)    norm2(u-v)      // distance squared = norm2 of difference
-#define d(u,v)     norm(u-v)       // distance = norm of difference
-
-static void simplifyDP(float tol, ofPoint* v, int j, int k, int* mk ){
-    if (k <= j+1) // there is nothing to simplify
-        return;
-
-    // check for adequate approximation by segment S from v[j] to v[k]
-    int     maxi	= j;          // index of vertex farthest from S
-    float   maxd2	= 0;         // distance squared of farthest vertex
-    float   tol2	= tol * tol;  // tolerance squared
-    Segment S		= {v[j], v[k]};  // segment from v[j] to v[k]
-    ofPoint u;
-	u				= S.P1 - S.P0;   // segment direction vector
-    double  cu		= dot(u,u);     // segment length squared
-
-    // test each vertex v[i] for max distance from S
-    // compute using the Feb 2001 Algorithm's dist_ofPoint_to_Segment()
-    // Note: this works in any dimension (2D, 3D, ...)
-    ofPoint  w;
-    ofPoint   Pb;                // base of perpendicular from v[i] to S
-    float  b, cw, dv2;        // dv2 = distance v[i] to S squared
-
-    for (int i=j+1; i<k; i++){
-        // compute distance squared
-        w = v[i] - S.P0;
-        cw = dot(w,u);
-        if ( cw <= 0 ) dv2 = d2(v[i], S.P0);
-        else if ( cu <= cw ) dv2 = d2(v[i], S.P1);
-        else {
-            b = (float)(cw / cu);
-            Pb = S.P0 + u*b;
-            dv2 = d2(v[i], Pb);
-        }
-        // test with current max distance squared
-        if (dv2 <= maxd2) continue;
-
-        // v[i] is a new max vertex
-        maxi = i;
-        maxd2 = dv2;
-    }
-    if (maxd2 > tol2)        // error is worse than the tolerance
-    {
-        // split the polyline at the farthest vertex from S
-        mk[maxi] = 1;      // mark v[maxi] for the simplified polyline
-        // recursively simplify the two subpolylines at v[maxi]
-        simplifyDP( tol, v, j, maxi, mk );  // polyline v[j] to v[maxi]
-        simplifyDP( tol, v, maxi, k, mk );  // polyline v[maxi] to v[k]
-    }
-    // else the approximation is OK, so ignore intermediate vertices
-    return;
-}
-
-
-//-------------------------------------------------------------------
-// needs simplifyDP which is above
-static vector <ofPoint> ofSimplifyContour(vector <ofPoint> &V, float tol){
-	int n = V.size();
-
-	vector <ofPoint> sV;
-	sV.assign(n, ofPoint());
-
-    int    i, k, m, pv;            // misc counters
-    float  tol2 = tol * tol;       // tolerance squared
-    ofPoint * vt = new ofPoint[n];
-	int * mk = new int[n];
-
-	memset(mk, 0, sizeof(int) * n );
-
-    // STAGE 1.  Vertex Reduction within tolerance of prior vertex cluster
-    vt[0] = V[0];              // start at the beginning
-    for (i=k=1, pv=0; i<n; i++) {
-        if (d2(V[i], V[pv]) < tol2) continue;
-
-        vt[k++] = V[i];
-        pv = i;
-    }
-    if (pv < n-1) vt[k++] = V[n-1];      // finish at the end
-
-    // STAGE 2.  Douglas-Peucker polyline simplification
-    mk[0] = mk[k-1] = 1;       // mark the first and last vertices
-    simplifyDP( tol, vt, 0, k-1, mk );
-
-    // copy marked vertices to the output simplified polyline
-    for (i=m=0; i<k; i++) {
-        if (mk[i]) sV[m++] = vt[i];
-    }
-
-	//get rid of the unused points
-	if( m < (int)sV.size() ) sV.erase( sV.begin()+m, sV.end() );
-
-	delete [] vt;
-	delete [] mk;
-
-	return sV;
-}
-
-
-//------------------------------------------------------------
-static void quad_bezier(vector <ofPoint> &ptsList, float x1, float y1, float x2, float y2, float x3, float y3, int res){
-	for(int i=0; i <= res; i++){
-        double t = (double)i / (double)(res);
-        double a = pow((1.0 - t), 2.0);
-        double b = 2.0 * t * (1.0 - t);
-        double c = pow(t, 2.0);
-        double x = a * x1 + b * x2 + c * x3;
-        double y = a * y1 + b * y2 + c * y3;
-		ptsList.push_back(ofPoint((float)x, (float)y));
-    }
-}
-
-//-----------------------------------------------------------
-static void cubic_bezier(vector <ofPoint> &ptsList, float x0, float y0, float x1, float y1, float x2, float y2, float x3, float y3, int res){
-	float   ax, bx, cx;
-    float   ay, by, cy;
-    float   t, t2, t3;
-    float   x, y;
-
-    // polynomial coefficients
-    cx = 3.0f * (x1 - x0);
-    bx = 3.0f * (x2 - x1) - cx;
-    ax = x3 - x0 - cx - bx;
-
-    cy = 3.0f * (y1 - y0);
-    by = 3.0f * (y2 - y1) - cy;
-    ay = y3 - y0 - cy - by;
-
-
-    int resolution = res;
-
-    for (int i = 0; i < resolution; i++){
-    	t 	=  (float)i / (float)(resolution-1);
-    	t2 = t * t;
-    	t3 = t2 * t;
-		x = (ax * t3) + (bx * t2) + (cx * t) + x0;
-    	y = (ay * t3) + (by * t2) + (cy * t) + y0;
-    	ptsList.push_back(ofPoint(x,y) );
-    }
-}
 
 //--------------------------------------------------------
 static ofTTFCharacter makeContoursForCharacter(FT_Face &face);
@@ -193,7 +34,7 @@ static ofTTFCharacter makeContoursForCharacter(FT_Face &face){
 
 			if( printVectorInfo )printf("--NEW CONTOUR\n\n");
 
-			vector <ofPoint> testOutline;
+			//vector <ofPoint> testOutline;
 			ofPoint lastPoint;
 
 			for(int j = startPos; j < endPos; j++){
@@ -201,7 +42,8 @@ static ofTTFCharacter makeContoursForCharacter(FT_Face &face){
 				if( FT_CURVE_TAG(tags[j]) == FT_CURVE_TAG_ON ){
 					lastPoint.set((float)vec[j].x, (float)-vec[j].y, 0);
 					if( printVectorInfo )printf("flag[%i] is set to 1 - regular point - %f %f \n", j, lastPoint.x, lastPoint.y);
-					testOutline.push_back(lastPoint);
+					//testOutline.push_back(lastPoint);
+					charOutlines.lineTo(lastPoint/64);
 
 				}else{
 					if( printVectorInfo )printf("flag[%i] is set to 0 - control point \n", j);
@@ -229,7 +71,8 @@ static ofTTFCharacter makeContoursForCharacter(FT_Face &face){
 							ofPoint controlPoint2((float)vec[j].x, (float)-vec[j].y);
 							ofPoint nextPoint((float) vec[nextIndex].x,	-(float) vec[nextIndex].y);
 
-							cubic_bezier(testOutline, lastPoint.x, lastPoint.y, controlPoint1.x, controlPoint1.y, controlPoint2.x, controlPoint2.y, nextPoint.x, nextPoint.y, 8);
+							//cubic_bezier(testOutline, lastPoint.x, lastPoint.y, controlPoint1.x, controlPoint1.y, controlPoint2.x, controlPoint2.y, nextPoint.x, nextPoint.y, 8);
+							charOutlines.bezierTo(controlPoint1.x/64, controlPoint1.y/64, controlPoint2.x/64, controlPoint2.y/64, nextPoint.x/64, nextPoint.y/64);
 						}
 
 					}else{
@@ -272,7 +115,8 @@ static ofTTFCharacter makeContoursForCharacter(FT_Face &face){
 						}
 						if( printVectorInfo )printf("--- next point is %f %f \n", nextPoint.x, nextPoint.y);
 
-						quad_bezier(testOutline, lastPoint.x, lastPoint.y, conicPoint.x, conicPoint.y, nextPoint.x, nextPoint.y, 8);
+						//quad_bezier(testOutline, lastPoint.x, lastPoint.y, conicPoint.x, conicPoint.y, nextPoint.x, nextPoint.y, 8);
+						charOutlines.quadBezierTo(lastPoint.x/64, lastPoint.y/64, conicPoint.x/64, conicPoint.y/64, nextPoint.x/64, nextPoint.y/64);
 
 						if( nextIsConnic ){
 							lastPoint = nextPoint;
@@ -282,28 +126,37 @@ static ofTTFCharacter makeContoursForCharacter(FT_Face &face){
 
 			//end for
 			}
-
-			for(int g =0; g < (int)testOutline.size(); g++){
-				testOutline[g] /= 64.0f;
-			}
-
-			charOutlines.contours.push_back(ofTTFContour());
-
-			if( testOutline.size() ){
-				charOutlines.contours.back().pts = ofSimplifyContour(testOutline, (float)TTF_SHAPE_SIMPLIFICATION_AMNT);
-			}else{
-				charOutlines.contours.back().pts = testOutline;
-			}
+			charOutlines.close();
 		}
 
 	return charOutlines;
 }
 
+#ifdef TARGET_ANDROID
+	#include <set>
+	set<ofTrueTypeFont*> all_fonts;
+	void ofUnloadAllFontTextures(){
+		set<ofTrueTypeFont*>::iterator it;
+		for(it=all_fonts.begin();it!=all_fonts.end();it++){
+			(*it)->unloadTextures();
+		}
+	}
+	void ofReloadAllFontTextures(){
+		set<ofTrueTypeFont*>::iterator it;
+		for(it=all_fonts.begin();it!=all_fonts.end();it++){
+			(*it)->reloadTextures();
+		}
+	}
+
+#endif
 
 //------------------------------------------------------------------
 ofTrueTypeFont::ofTrueTypeFont(){
 	bLoadedOk		= false;
 	bMakeContours	= false;
+	#ifdef TARGET_ANDROID
+		all_fonts.insert(this);
+	#endif
 	cps				= NULL;
 }
 
@@ -318,19 +171,26 @@ ofTrueTypeFont::~ofTrueTypeFont(){
 		}
 
 		if (texNames != NULL){
-			for (int i = 0; i < nCharacters; i++){
-				glDeleteTextures(1, &texNames[i]);
-			}
-			delete[] texNames;
-			texNames = NULL;
+			unloadTextures();
 		}
 	}
+
+	#ifdef TARGET_ANDROID
+		all_fonts.erase(this);
+	#endif
 }
 
-//------------------------------------------------------------------
-void ofTrueTypeFont::loadFont(string filename, int fontsize){
-	// load anti-aliased, non-full character set:
-	loadFont(filename, fontsize, true, false, false);
+void ofTrueTypeFont::unloadTextures(){
+	if(!bLoadedOk) return;
+	for (int i = 0; i < nCharacters; i++){
+		glDeleteTextures(1, &texNames[i]);
+	}
+	delete[] texNames;
+	bLoadedOk = false;
+}
+
+void ofTrueTypeFont::reloadTextures(){
+	loadFont(filename,fontSize,bAntiAlised,bFullCharacterSet,false);
 }
 
 //------------------------------------------------------------------
@@ -511,7 +371,7 @@ void ofTrueTypeFont::loadFont(string filename, int fontsize, bool _bAntiAliased,
 
 		//Now we just setup some texture paramaters.
 		glBindTexture( GL_TEXTURE_2D, texNames[i]);
-		#ifndef TARGET_OF_IPHONE
+		#ifndef TARGET_OPENGLES
 			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
 			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
 		#endif
@@ -528,7 +388,7 @@ void ofTrueTypeFont::loadFont(string filename, int fontsize, bool _bAntiAliased,
 		//that we are using GL_LUMINANCE_ALPHA to indicate that
 		//we are using 2 channel data.
 
-		#ifndef TARGET_OF_IPHONE // gluBuild2DMipmaps doesn't seem to exist in anything i had in the iphone build... so i commented it out
+		#ifndef TARGET_OPENGLES // gluBuild2DMipmaps doesn't seem to exist in anything i had in the iphone build... so i commented it out
 			bool b_use_mipmaps = false;  // FOR now this is fixed to false, could be an option, left in for legacy...
 			if (b_use_mipmaps){
 				gluBuild2DMipmaps(
@@ -683,15 +543,12 @@ void ofTrueTypeFont::drawCharAsShape(int c, float x, float y) {
 
 	int cu = c;
 	ofTTFCharacter & charRef = charOutlines[cu];
+	ofPushMatrix();
+	ofTranslate(x,y);
+	charRef.setFilled(ofGetStyle().bFill);
+	charRef.draw();
+	ofPopMatrix();
 
-	ofBeginShape();
-		for(int k = 0; k < (int)charRef.contours.size(); k++){
-			if( k!= 0)ofNextContour(true);
-			for(int i = 0; i < (int)charRef.contours[k].pts.size(); i++){
-				ofVertex(charRef.contours[k].pts[i].x + x, charRef.contours[k].pts[i].y + y);
-			}
-		}
-	ofEndShape( true );
 
 }
 
@@ -810,7 +667,7 @@ void ofTrueTypeFont::drawString(string c, float x, float y) {
 	GLfloat		Y		= 0;
 
 	// (a) record the current "alpha state, blend func, etc"
-	#ifndef TARGET_OF_IPHONE
+	#ifndef TARGET_OPENGLES
 		glPushAttrib(GL_COLOR_BUFFER_BIT);
 	#else
 		GLboolean blend_enabled = glIsEnabled(GL_BLEND);
@@ -855,7 +712,7 @@ void ofTrueTypeFont::drawString(string c, float x, float y) {
 	glPopMatrix();
 	glDisable(GL_TEXTURE_2D);
     // (c) return back to the way things were (with blending, blend func, etc)
-	#ifndef TARGET_OF_IPHONE
+	#ifndef TARGET_OPENGLES
 		glPopAttrib();
 	#else
 		if( !blend_enabled )
@@ -885,8 +742,8 @@ void ofTrueTypeFont::drawStringAsShapes(string c, float x, float y) {
 	GLfloat		X		= 0;
 	GLfloat		Y		= 0;
 
-	glPushMatrix();
-	glTranslatef(x, y, 0);
+	ofPushMatrix();
+	ofTranslate(x, y);
 	int len = (int)c.length();
 
 	while(index < len){
@@ -910,7 +767,7 @@ void ofTrueTypeFont::drawStringAsShapes(string c, float x, float y) {
 		index++;
 	}
 
-	glPopMatrix();
+	ofPopMatrix();
 
 }
 

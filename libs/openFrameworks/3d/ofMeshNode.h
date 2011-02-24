@@ -1,22 +1,17 @@
-/*
- *  ofMeshNode.h
- *  cameraTest
- *
- *  Created by Memo Akten on 12/01/2011.
- *  Copyright 2011 MSA Visuals Ltd. All rights reserved.
- *
- */
-
 #pragma once
-
+#include "ofMesh.h"
 #include "ofNode.h"
-#include "ofMain.h"
+#include "ofUtils.h"
 
-class ofMesh;
-
-class ofMeshNode : public ofNode {
+class ofMeshNode : public ofNode{
 public:
-	ofMesh *mesh;
-	
-//	void customDraw();
+	ofMeshNode();
+	~ofMeshNode();
+	ofMeshNode& addMesh(ofMesh* m);
+	ofMeshNode& addMesh(ofMesh& m);
+	void setName(string n);
+	string getName();
+protected:
+	vector<ofMesh*> meshes;
+	string name;
 };

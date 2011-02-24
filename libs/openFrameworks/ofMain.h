@@ -3,6 +3,7 @@
 //--------------------------
 // utils
 #include "ofConstants.h"
+#include "ofDirectoryLister.h"
 #include "ofFileUtils.h"
 #include "ofSystemUtils.h"
 #include "ofThread.h"
@@ -24,7 +25,7 @@
 
 //--------------------------
 // communication
-#ifndef TARGET_OF_IPHONE
+#if !defined( TARGET_OF_IPHONE ) & !defined(TARGET_ANDROID)
 	#include "ofSerial.h"
 	#include "ofArduino.h"
 #endif
@@ -47,7 +48,9 @@
 //--------------------------
 // audio
 #include "ofSoundStream.h"
+#ifndef TARGET_ANDROID
 #include "ofSoundPlayer.h"
+#endif
 #ifndef TARGET_OF_IPHONE			//(temp for now, until this is ported)
 	#include "ofSoundUnit.h"
 	#include "ofSoundEffect.h"
@@ -56,7 +59,9 @@
 //--------------------------
 // video
 #include "ofVideoGrabber.h"
-#include "ofVideoPlayer.h"
+#if !defined( TARGET_OF_IPHONE )		//(temp for now, until this is ported)
+	#include "ofVideoPlayer.h"
+#endif
 
 //--------------------------
 // events
@@ -64,9 +69,11 @@
 
 //--------------------------
 // 3d
+#include "ofVbo.h"
 #include "of3dUtils.h"
 #include "ofNode.h"
 #include "ofCamera.h"
-#include "ofMeshNode.h"
+#include "ofMesh.h"
 #include "ofEasyCam.h"
 #include "ofLight.h"
+

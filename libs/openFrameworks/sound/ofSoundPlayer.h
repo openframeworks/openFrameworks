@@ -2,7 +2,7 @@
 
 #include "ofConstants.h"
 
-#ifndef TARGET_OF_IPHONE
+#if !defined( TARGET_OF_IPHONE ) && !defined(TARGET_ANDROID)
 extern "C" {
 #include "fmod.h"
 #include "fmod_errors.h"
@@ -24,7 +24,7 @@ extern "C" {
 // --------------------- global functions:
 
 //TODO: FIX THIS SHIT!!!!!!
-#warning FIX THIS. 
+//#warning FIX THIS.
 void ofSoundStopAll();
 void ofSoundSetVolume(float vol);
 void ofSoundUpdate();						// calls FMOD update.
@@ -36,8 +36,10 @@ void ofSoundShutdown();
 
 #ifdef TARGET_OF_IPHONE 
 	#define OF_SOUND_PLAYER_IPHONE
-#else
+#elif !defined(TARGET_ANDROID)
 	#define OF_SOUND_PLAYER_FMOD
+#else
+	void ofSoundShutdown(){}
 #endif
 
 #ifdef OF_SOUND_PLAYER_QUICKTIME

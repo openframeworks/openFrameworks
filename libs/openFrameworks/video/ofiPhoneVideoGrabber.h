@@ -1,7 +1,6 @@
 #ifndef _OF_IPHONE_VIDEO_GRABBER
 #define _OF_IPHONE_VIDEO_GRABBER
 
-#include "ofMain.h"
 
 class AVFoundationVideoGrabber;
 
@@ -20,6 +19,7 @@ class ofiPhoneVideoGrabber : public ofBaseVideoGrabber {
 	bool isFrameNew();
 	
 	unsigned char * getPixels();
+	ofPixelsRef		getPixelsRef();
 	
 	void close();	
 	
@@ -33,6 +33,7 @@ class ofiPhoneVideoGrabber : public ofBaseVideoGrabber {
 	void setDesiredFrameRate(int framerate);
 	
 	void setPixelFormat(ofPixelFormat internalPixelFormat);
+	ofPixelFormat getPixelFormat();
 	//should implement!
 	/*void setVerbose(bool bTalkToMe);
 	

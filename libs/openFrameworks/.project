@@ -3,17 +3,12 @@
 	<name>openFrameworks</name>
 	<comment></comment>
 	<projects>
-		<project>ofLibs</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
 			<name>org.eclipse.cdt.managedbuilder.core.genmakebuilder</name>
 			<triggers>clean,full,incremental,</triggers>
 			<arguments>
-				<dictionary>
-					<key>?children?</key>
-					<value>?name?=outputEntries\|?children?=?name?=entry\\\\\\\|\\\|\||</value>
-				</dictionary>
 				<dictionary>
 					<key>?name?</key>
 					<value></value>
@@ -36,7 +31,7 @@
 				</dictionary>
 				<dictionary>
 					<key>org.eclipse.cdt.make.core.cleanBuildTarget</key>
-					<value>clean</value>
+					<value>clean -C../openFrameworksCompiled/project/linux</value>
 				</dictionary>
 				<dictionary>
 					<key>org.eclipse.cdt.make.core.contents</key>
@@ -56,7 +51,7 @@
 				</dictionary>
 				<dictionary>
 					<key>org.eclipse.cdt.make.core.fullBuildTarget</key>
-					<value>all</value>
+					<value>all -C../openFrameworksCompiled/project/linux</value>
 				</dictionary>
 				<dictionary>
 					<key>org.eclipse.cdt.make.core.stopOnError</key>
@@ -70,21 +65,15 @@
 		</buildCommand>
 		<buildCommand>
 			<name>org.eclipse.cdt.managedbuilder.core.ScannerConfigBuilder</name>
+			<triggers>full,incremental,</triggers>
 			<arguments>
 			</arguments>
 		</buildCommand>
 	</buildSpec>
 	<natures>
-		<nature>org.eclipse.cdt.core.ccnature</nature>
-		<nature>org.eclipse.cdt.managedbuilder.core.ScannerConfigNature</nature>
-		<nature>org.eclipse.cdt.managedbuilder.core.managedBuildNature</nature>
 		<nature>org.eclipse.cdt.core.cnature</nature>
+		<nature>org.eclipse.cdt.core.ccnature</nature>
+		<nature>org.eclipse.cdt.managedbuilder.core.managedBuildNature</nature>
+		<nature>org.eclipse.cdt.managedbuilder.core.ScannerConfigNature</nature>
 	</natures>
-	<linkedResources>
-		<link>
-			<name>linux64</name>
-			<type>2</type>
-			<location>/home/arturo/Escritorio/openFrameworks/libs/openFrameworksCompiled/project/linux64</location>
-		</link>
-	</linkedResources>
 </projectDescription>

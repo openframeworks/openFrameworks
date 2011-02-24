@@ -1,6 +1,7 @@
 #include "ofxAssimpModelLoader.h"
 
-#import "aiConfig.h"
+#include "aiConfig.h"
+#include <assert.h>
 
 #define BUFFER_OFFSET(i) ((char *)NULL + (i))
 
@@ -27,13 +28,14 @@ static void set_float4(float f[4], float a, float b, float c, float d)
 
 //-------------------------------------------
 // Can't send color down as a pointer to aiColor4D because AI colors are ABGR.
-static void Color4f(CGLContextObj cgl_ctx, const struct aiColor4D *color)
+/*static void Color4f(CGLContextObj cgl_ctx, const struct aiColor4D *color)
 {
 	glColor4f(color->r, color->g, color->b, color->a);
-}
+}*/
 
 ofxAssimpModelLoader::ofxAssimpModelLoader(){
 
+    lastAnimationTime = 0;
     currentAnimation = 0;
     animationTime = 0;
     numRotations = 0;
@@ -50,19 +52,21 @@ void ofxAssimpModelLoader::loadModel(string modelName){
 	
     
     // if we have a model loaded, unload the fucker.
-    if(scene != NULL)
-    {
+    if(scene != NULL){
         aiReleaseImport(scene);
         scene = NULL;
-        
         deleteGLResources();   
     }
     
     
     // Load our new path.
     string filepath = ofToDataPath(modelName);
+	
+	//theo added - so we can have models and their textures in sub folders
+	modelFolder = ofFileUtils::getEnclosingDirectoryFromPath(filepath);
 
     ofLog(OF_LOG_VERBOSE, "loading model %s", filepath.c_str());
+    ofLog(OF_LOG_VERBOSE, "loading from folder %s", modelFolder.c_str());
     
     // only ever give us triangles.
     aiSetImportPropertyInteger(AI_CONFIG_PP_SBP_REMOVE, aiPrimitiveType_LINE | aiPrimitiveType_POINT );
@@ -154,7 +158,7 @@ void ofxAssimpModelLoader::loadGLResources(){
 
             ofLog(OF_LOG_VERBOSE, "loading image from %s", texPath.data);
             
-            image.loadImage(texPath.data);
+            image.loadImage(modelFolder + texPath.data);
             image.update();
             
             ofLog(OF_LOG_VERBOSE, "texture width: %f height %f", image.getWidth(), image.getHeight());
@@ -324,10 +328,10 @@ void ofxAssimpModelLoader::loadGLResources(){
         
         // Create VAO and populate it
         GLuint vaoHandle; 
-        glGenVertexArraysAPPLE(1, &vaoHandle);
+        glGenVertexArrays(1, &vaoHandle);
             
         // TODO: equivalent PC call.
-        glBindVertexArrayAPPLE(vaoHandle);
+        glBindVertexArray(vaoHandle);
         
         glBindBuffer(GL_ARRAY_BUFFER, meshHelper.vertexBuffer);
         
@@ -347,7 +351,7 @@ void ofxAssimpModelLoader::loadGLResources(){
         
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, meshHelper.indexBuffer);
         
-        glBindVertexArrayAPPLE(0);
+        glBindVertexArray(0);
        
         // save the VAO handle into our mesh helper
         meshHelper.vao = vaoHandle;
@@ -374,7 +378,7 @@ void ofxAssimpModelLoader::deleteGLResources(){
         glDeleteBuffers(1, &vertexBuffer);
         glDeleteBuffers(1, &indexBuffer);
         glDeleteBuffers(1, &normalBuffer);
-        glDeleteVertexArraysAPPLE(1, &vaoHandle);
+        glDeleteVertexArrays(1, &vaoHandle);
         
         meshHelper.indexBuffer = 0;
         meshHelper.vertexBuffer = 0;
@@ -472,15 +476,21 @@ void ofxAssimpModelLoader::setNormalizedTime(float t){ // 0 - 1
     {
 
         const aiAnimation* anim = scene->mAnimations[currentAnimation];
-        animationTime = ofMap(t, 0.0, 1.0, 0.0, (float)anim->mDuration, false);
+        float realT = ofMap(t, 0.0, 1.0, 0.0, (float)anim->mDuration, false);
 
-        updateAnimation(currentAnimation, animationTime);
+        setTime(realT);
     }
 }
 
 void ofxAssimpModelLoader::setTime(float t){ // 0 - 1
-    if(getAnimationCount())
-        updateAnimation(currentAnimation, t);
+    if(getAnimationCount()){
+        
+        // only evaluate if we have a delta t.
+        if(animationTime != t){
+            animationTime = t;
+            updateAnimation(currentAnimation, animationTime);
+        }
+    }
 }
 
 
@@ -523,19 +533,112 @@ void ofxAssimpModelLoader::setRotation(int which, float angle, float rot_x, floa
 }
 
 //-------------------------------------------
-/*void ofxAssimpModelLoader::update(){
-    if(getNumAnimations() && (scene != NULL))
-        updateAnimation(currentAnimation);
-}*/
-
-// http://sourceforge.net/projects/assimp/forums/forum/817654/topic/3880745
 void ofxAssimpModelLoader::updateAnimation(unsigned int animationIndex, float currentTime){
     
-    const aiAnimation* anim = scene->mAnimations[animationIndex];
-    
-    for( size_t a = 0; a < anim->mNumChannels; ++a)
-    {
-        const aiNodeAnim* channel = anim->mChannels[a];
+    const aiAnimation* mAnim = scene->mAnimations[animationIndex];
+  
+    // calculate the transformations for each animation channel
+	for( unsigned int a = 0; a < mAnim->mNumChannels; a++)
+	{
+		const aiNodeAnim* channel = mAnim->mChannels[a];
+                
+        aiNode* targetNode = scene->mRootNode->FindNode(channel->mNodeName);
+
+        // ******** Position *****
+        aiVector3D presentPosition( 0, 0, 0);
+        if( channel->mNumPositionKeys > 0)
+        {
+            // Look for present frame number. Search from last position if time is after the last time, else from beginning
+            // Should be much quicker than always looking from start for the average use case.
+            unsigned int frame = 0;// (currentTime >= lastAnimationTime) ? lastFramePositionIndex : 0;
+            while( frame < channel->mNumPositionKeys - 1)
+            {
+                if( currentTime < channel->mPositionKeys[frame+1].mTime)
+                    break;
+                frame++;
+            }
+            
+            // interpolate between this frame's value and next frame's value
+            unsigned int nextFrame = (frame + 1) % channel->mNumPositionKeys;
+            const aiVectorKey& key = channel->mPositionKeys[frame];
+            const aiVectorKey& nextKey = channel->mPositionKeys[nextFrame];
+            double diffTime = nextKey.mTime - key.mTime;
+            if( diffTime < 0.0)
+                diffTime += mAnim->mDuration;
+            if( diffTime > 0)
+            {
+                float factor = float( (currentTime - key.mTime) / diffTime);
+                presentPosition = key.mValue + (nextKey.mValue - key.mValue) * factor;
+            } else
+            {
+                presentPosition = key.mValue;
+            }
+        }
+        
+        // ******** Rotation *********
+        aiQuaternion presentRotation( 1, 0, 0, 0);
+        if( channel->mNumRotationKeys > 0)
+        {
+            unsigned int frame = 0;//(currentTime >= lastAnimationTime) ? lastFrameRotationIndex : 0;
+            while( frame < channel->mNumRotationKeys - 1)
+            {
+                if( currentTime < channel->mRotationKeys[frame+1].mTime)
+                    break;
+                frame++;
+            }
+            
+            // interpolate between this frame's value and next frame's value
+            unsigned int nextFrame = (frame + 1) % channel->mNumRotationKeys;
+            const aiQuatKey& key = channel->mRotationKeys[frame];
+            const aiQuatKey& nextKey = channel->mRotationKeys[nextFrame];
+            double diffTime = nextKey.mTime - key.mTime;
+            if( diffTime < 0.0)
+                diffTime += mAnim->mDuration;
+            if( diffTime > 0)
+            {
+                float factor = float( (currentTime - key.mTime) / diffTime);
+                aiQuaternion::Interpolate( presentRotation, key.mValue, nextKey.mValue, factor);
+            } else
+            {
+                presentRotation = key.mValue;
+            }
+        }
+        
+        // ******** Scaling **********
+        aiVector3D presentScaling( 1, 1, 1);
+        if( channel->mNumScalingKeys > 0)
+        {
+            unsigned int frame = 0;//(currentTime >= lastAnimationTime) ? lastFrameScaleIndex : 0;
+            while( frame < channel->mNumScalingKeys - 1)
+            {
+                if( currentTime < channel->mScalingKeys[frame+1].mTime)
+                    break;
+                frame++;
+            }
+            
+            // TODO: (thom) interpolation maybe? This time maybe even logarithmic, not linear
+            presentScaling = channel->mScalingKeys[frame].mValue;
+        }
+        
+        // build a transformation matrix from it
+        //aiMatrix4x4& mat;// = mTransforms[a];
+        aiMatrix4x4 mat = aiMatrix4x4( presentRotation.GetMatrix());
+        mat.a1 *= presentScaling.x; mat.b1 *= presentScaling.x; mat.c1 *= presentScaling.x;
+        mat.a2 *= presentScaling.y; mat.b2 *= presentScaling.y; mat.c2 *= presentScaling.y;
+        mat.a3 *= presentScaling.z; mat.b3 *= presentScaling.z; mat.c3 *= presentScaling.z;
+        mat.a4 = presentPosition.x; mat.b4 = presentPosition.y; mat.c4 = presentPosition.z;
+        //mat.Transpose();
+        
+        targetNode->mTransformation = mat;
+
+    }
+
+    lastAnimationTime = currentTime;
+
+/*
+ for( size_t a = 0; a < anim->mNumChannels; ++a)
+ {
+ const aiNodeAnim* channel = anim->mChannels[a];
         aiVector3D curPosition;
         aiQuaternion curRotation;
         // scaling purposefully left out 
@@ -544,21 +647,36 @@ void ofxAssimpModelLoader::updateAnimation(unsigned int animationIndex, float cu
         aiNode* targetNode = scene->mRootNode->FindNode(channel->mNodeName);
         
         // find current position
-        size_t posIndex = 0;
-        while( 1 )
+        // Should be much quicker than always looking from start for the average use case.
+        unsigned int frame = (currentTime >= lastAnimationTime) ? lastFramePositionIndex : 0;
+        while( frame < channel->mNumPositionKeys - 1)
         {
-            // break if this is the last key - there are no more keys after this one, we need to use it
-            if( posIndex+1 >= channel->mNumPositionKeys )
+            if( currentTime < channel->mPositionKeys[frame+1].mTime)
                 break;
-            
-            // break if the next key lies in the future - the current one is the correct one then
-            if( channel->mPositionKeys[posIndex + 1].mTime > currentTime )
-                break;
-            posIndex++;
-        } 
+            frame++;
+        }        
+                
+        // interpolate between this frame's value and next frame's value
+        unsigned int nextFrame = (frame + 1) % channel->mNumPositionKeys;
+        const aiVectorKey& key = channel->mPositionKeys[frame];
+        const aiVectorKey& nextKey = channel->mPositionKeys[nextFrame];
+        double diffTime = nextKey.mTime - key.mTime;
+        if( diffTime < 0.0)
+            diffTime += anim->mDuration;
+        if( diffTime > 0)
+        {
+            float factor = float( (currentTime - key.mTime) / diffTime);
+            curPosition = key.mValue + (nextKey.mValue - key.mValue) * factor;
+        } else
+        {
+            curPosition = key.mValue;
+        }
+        
+        lastFramePositionIndex = frame;
+
         
         // maybe add a check here if the anim has any position keys at all
-        curPosition = channel->mPositionKeys[posIndex].mValue;
+        //curPosition = channel->mPositionKeys[posIndex].mValue;
         
         // same goes for rotation, but I shorten it now
         size_t rotIndex = 0;
@@ -582,9 +700,12 @@ void ofxAssimpModelLoader::updateAnimation(unsigned int animationIndex, float cu
         // assign this transformation to the node
         targetNode->mTransformation = trafo;
     }
+    
+    lastAnimationTime = currentTime;
+    */
 }
 
-// http://sourceforge.net/projects/assimp/forums/forum/817654/topic/3880745
+//-------------------------------------------
 void ofxAssimpModelLoader::updateGLResources(){
         
     // update mesh position for the animation
@@ -785,7 +906,7 @@ void ofxAssimpModelLoader::draw()
                     glDisable(GL_CULL_FACE);
                         
                 // TODO: equivalent VAO callfor linux and windows.
-                glBindVertexArrayAPPLE(meshHelper.vao);        
+                glBindVertexArray(meshHelper.vao);
                 glDrawElements(GL_TRIANGLES, meshHelper.numIndices, GL_UNSIGNED_INT, 0);
                 
                 // Texture Binding

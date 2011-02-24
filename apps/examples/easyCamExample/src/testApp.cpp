@@ -2,88 +2,106 @@
 
 //--------------------------------------------------------------
 void testApp::setup(){
+	ofSetVerticalSync(true);
+	
+	// this uses depth information for occlusion
+	// rather than always drawing things on top of each other
 	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_CULL_FACE);
-	glEnable(GL_LIGHTING);
-	glEnable(GL_LIGHT0);
-	glEnable(GL_COLOR_MATERIAL);
 	
-	
-	// start camera, with radius of 100
+	// this sets the camera's distance from the object
+	cam.setDistance(100);
 }
 
 //--------------------------------------------------------------
 void testApp::update(){
-}
 
+}
 
 //--------------------------------------------------------------
 void testApp::draw(){
 
-	cam.begin();
-	
-	// draw world axis
-	float axisLength = 100;
-	// draw world x axis
-	ofSetColor(255, 0, 0);
-	glPushMatrix();
-	glTranslatef(axisLength/2, 0, 0);
-	glScalef(axisLength, 2, 2);
-	ofBox(0, 0, 0, 1);
-	glPopMatrix();
-	
-	// draw world y axis
-	ofSetColor(0, 255, 0);
-	glPushMatrix();
-	glTranslatef(0, axisLength/2, 0);
-	glScalef(2, axisLength, 2);
-	ofBox(0, 0, 0, 1);
-	glPopMatrix();
-	
-	// draw world z axis
-	ofSetColor(0, 0, 255);
-	glPushMatrix();
-	glTranslatef(0, 0, axisLength/2);
-	glScalef(2, 2, axisLength);
-	ofBox(0, 0, 0, 1);
-	glPopMatrix();
-	
-	
-	ofSetColor(255, 255, 0);
-	ofBox(20);
-	
+	cam.begin();		
+		ofRotateX(ofRadToDeg(.5));
+		ofRotateY(ofRadToDeg(-.5));
+
+		ofBackground(0);
+
+		ofSetColor(255,0,0);
+		ofFill();
+		ofBox(30);
+		ofNoFill();
+		ofSetColor(0);
+		ofBox(30);
+
+		ofPushMatrix();
+			ofTranslate(0,0,20);
+			ofSetColor(0,0,255);
+			ofFill();
+			ofBox(5);
+			ofNoFill();
+			ofSetColor(0);
+			ofBox(5);
+		ofPopMatrix();
 	cam.end();
-	
-	ofDisableLighting();
-	ofSetColor(255, 255, 255);
-	ofDrawBitmapString("This text is not affected by camera because it is after cam.end()", 10, 30);
+
+	ofSetColor(255);
+	string msg = string("Using mouse inputs to navigate ('m' to toggle): ") + (cam.getMouseInputEnabled() ? "YES" : "NO");
+	msg += "\nfps: " + ofToString(ofGetFrameRate(), 2);
+	ofDrawBitmapString(msg, 10, 20);
 }
 
 //--------------------------------------------------------------
 void testApp::keyPressed(int key){
+	switch(key) {
+		case 'M':
+		case 'm':
+			if(cam.getMouseInputEnabled()) cam.disableMouseInput();
+			else cam.enableMouseInput();
+			break;
+			
+		case 'F':
+		case 'f':
+			ofToggleFullscreen();
+			break;
+	}
 }
 
 //--------------------------------------------------------------
 void testApp::keyReleased(int key){
+
 }
 
 //--------------------------------------------------------------
 void testApp::mouseMoved(int x, int y ){
+
 }
 
 //--------------------------------------------------------------
 void testApp::mouseDragged(int x, int y, int button){
+
 }
 
 //--------------------------------------------------------------
 void testApp::mousePressed(int x, int y, int button){
+
 }
 
 //--------------------------------------------------------------
 void testApp::mouseReleased(int x, int y, int button){
+
 }
 
 //--------------------------------------------------------------
 void testApp::windowResized(int w, int h){
+
 }
 
+//--------------------------------------------------------------
+void testApp::gotMessage(ofMessage msg){
+
+}
+
+//--------------------------------------------------------------
+void testApp::dragEvent(ofDragInfo dragInfo){ 
+
+}

@@ -250,6 +250,7 @@ AVFoundationVideoGrabber::AVFoundationVideoGrabber(){
 	
 	internalGlDataType = GL_RGB;
 	newFrame=false;
+	bHavePixelsChanged = false;
 }
 
 AVFoundationVideoGrabber::~AVFoundationVideoGrabber(){
@@ -306,6 +307,17 @@ bool AVFoundationVideoGrabber::initGrabber(int w, int h){
 		return false;
 }
 
+void AVFoundationVideoGrabber::update()
+{
+	newFrame = false;
+	cout<<"false"<<endl;
+	if (bHavePixelsChanged == true){
+		newFrame = true;
+		bHavePixelsChanged = false;
+		cout<<"true"<<endl;
+	}
+}
+
 void AVFoundationVideoGrabber::updatePixelsCB( CGImageRef & ref ){
 	
 	CGAffineTransform transform = CGAffineTransformIdentity;
@@ -350,17 +362,12 @@ void AVFoundationVideoGrabber::updatePixelsCB( CGImageRef & ref ){
 	else if(internalGlDataType == GL_RGBA || internalGlDataType == GL_BGRA)
 		memcpy(pixels, pixelsTmp, width*height*4);
 	
-	newFrame=true;
+	bHavePixelsChanged=true;
 }
 
 bool AVFoundationVideoGrabber::isFrameNew()
 {
-	if(newFrame) {
-		newFrame=false;
-		return true;
-	}
-	else
-		return false;
+	return newFrame;
 }
 
 void AVFoundationVideoGrabber::listDevices() {
@@ -379,6 +386,15 @@ void AVFoundationVideoGrabber::setPixelFormat(ofPixelFormat PixelFormat) {
 		internalGlDataType = GL_RGBA;
 	else if(PixelFormat == OF_PIXELS_BGRA)
 		internalGlDataType = GL_BGRA;
+}
+
+ofPixelFormat AVFoundationVideoGrabber::getPixelFormat() {
+	if(internalGlDataType == GL_RGB)
+        return OF_PIXELS_RGB;
+	else if(internalGlDataType == GL_RGBA)
+        return OF_PIXELS_RGBA;
+	else if(internalGlDataType == GL_BGRA)
+        return OF_PIXELS_BGRA;
 }
 
 #endif	// (__arm__) compile only for ARM

@@ -2,16 +2,25 @@
 #include "ofImage.h"
 #include "ofTypes.h"
 #include "ofGraphics.h"
-#include "Poco/String.h"
-#include "Poco/StringTokenizer.h"
 #include "ofAppRunner.h"
 
-#include <Poco/LocalDateTime.h>
-#include <Poco/DateTimeFormatter.h>
+#include "Poco/String.h"
+#include "Poco/StringTokenizer.h"
+#include "Poco/LocalDateTime.h"
+#include "Poco/DateTimeFormatter.h"
+
+
+#ifdef TARGET_ANDROID
+// this is needed to be able to use poco 1.3,
+// will go away as soon as i compile poco 1.4
+namespace Poco{
+const int Ascii::CHARACTER_PROPERTIES[128]={0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+};
+#endif
 
 
 #if defined(TARGET_OF_IPHONE) || defined(TARGET_OSX ) || defined(TARGET_LINUX)
-	#include "sys/time.h"
+	#include <sys/time.h>
 #endif
 
 #ifdef TARGET_OSX 	
@@ -70,7 +79,7 @@ unsigned long ofGetSystemTime( ) {
 
 //--------------------------------------------------
 unsigned int ofGetUnixTime(){
-	return (unsigned int)time;
+	return (unsigned int)time(NULL);
 }
 
 //default ofGetTimestampString returns in this format: 2011-01-15-18-29-35-299
@@ -167,6 +176,8 @@ void ofDisableDataPath(){
 //use ofSetDataPathRoot() to override this
 #if defined TARGET_OSX
 	static string dataPathRoot = "../../../data/";
+#elif defined TARGET_ANDROID
+	static string dataPathRoot = "sdcard/";
 #else
 	static string dataPathRoot = "data/";
 #endif
@@ -189,7 +200,7 @@ void ofSetDataPathRoot(string newRoot){
 
 				vector < string> pathBrokenUp = ofSplitString( pathStr, "/");
 
-				newPath = "/";
+				newPath = "";
 
 				for(int i = 0; i < pathBrokenUp.size()-1; i++){				
 					newPath += pathBrokenUp[i];
@@ -206,8 +217,7 @@ void ofSetDataPathRoot(string newRoot){
 			}
 		#endif 
 	#endif
-		
-	dataPathRoot = newPath+newRoot;
+	dataPathRoot = newRoot;
 }
 
 //--------------------------------------------------
@@ -221,7 +231,7 @@ string ofToDataPath(string path, bool makeAbsolute){
 		}
 
 		if(makeAbsolute && (path.length()==0 || path.substr(0,1) != "/")){
-			#ifndef TARGET_OF_IPHONE
+			#if !defined( TARGET_OF_IPHONE) & !defined(TARGET_ANDROID)
 
 			#ifndef _MSC_VER
 				char currDir[1024];
@@ -538,7 +548,6 @@ void ofSaveViewport(string filename) {
 	screen.saveImage(filename);
 }
 
-
 //--------------------------------------------------
 int saveImageCounter = 0;
 void ofSaveFrame(bool bUseViewport){
@@ -549,31 +558,5 @@ void ofSaveFrame(bool bUseViewport){
 		ofSaveScreen(fileName);
 	}
 	saveImageCounter++;
-}
-
-//--------------------------------------------------
-bool ofReadFile(const string & path, ofBuffer & buffer, bool binary){
-	ifstream * file = new ifstream(ofToDataPath(path,true).c_str());
-
-	if(!file || !file->is_open()){
-		ofLog(OF_LOG_ERROR, "couldn't open " + path);
-		return false;
-	}
-
-	filebuf *pbuf=file->rdbuf();
-
-	// get file size using buffer's members
-	long size = (long)pbuf->pubseekoff (0,ios::end,ios::in);
-	pbuf->pubseekpos (0,ios::in);
-
-	// get file data
-	if(!binary){
-		buffer.allocate(size+1);// = new char[size];
-		buffer.getBuffer()[size]='\0';
-	}else{
-		buffer.allocate(size);
-	}
-	pbuf->sgetn (buffer.getBuffer(),size);
-	return true;
 }
 

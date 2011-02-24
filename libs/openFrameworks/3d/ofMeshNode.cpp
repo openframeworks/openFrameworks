@@ -1,14 +1,31 @@
-/*
- *  ofMeshNode.cpp
- *  cameraTest
- *
- *  Created by Memo Akten on 12/01/2011.
- *  Copyright 2011 MSA Visuals Ltd. All rights reserved.
- *
- */
-
 #include "ofMeshNode.h"
-#include "of3dUtils.h"
 
-//void ofMeshNode::customDraw() {
-//}
+//--------------------------------------------------------------
+ofMeshNode::ofMeshNode(){
+}
+
+//--------------------------------------------------------------
+ofMeshNode::~ofMeshNode(){
+}
+
+//--------------------------------------------------------------
+ofMeshNode& ofMeshNode::addMesh(ofMesh* m){
+	meshes.push_back(m);
+	return *this;
+}
+
+//--------------------------------------------------------------
+ofMeshNode& ofMeshNode::addMesh(ofMesh& m){
+	meshes.push_back(&m);
+	return *this;
+}
+
+//--------------------------------------------------------------
+void ofMeshNode::setName(string n){
+	name = n;
+}
+
+//--------------------------------------------------------------
+string ofMeshNode::getName(){
+	return name;
+}

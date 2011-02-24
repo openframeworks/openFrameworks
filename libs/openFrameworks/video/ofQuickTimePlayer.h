@@ -28,8 +28,8 @@ class ofQuickTimePlayer : public ofBaseVideoPlayer{
 	
 		 bool 			isFrameNew();
 		 unsigned char * 	getPixels();
-		 ofPixels 			getOFPixels();
-		 ofPixels 			getOFPixels() const;
+		 ofPixelsRef		getPixelsRef();
+		 const ofPixels&	getPixelsRef() const;
 		
 		 float 			getWidth();
 		 float 			getHeight();
@@ -60,14 +60,14 @@ class ofQuickTimePlayer : public ofBaseVideoPlayer{
 		bool 				bHavePixelsChanged;
 		 
 		 
-		ofPixels		 	pixels;
 		
 	protected:
 		void createImgMemAndGWorld();
 		void start();
-		
-		int							width, height;
-		bool						bLoaded;
+
+		ofPixels		 	pixels;
+		int					width, height;
+		bool				bLoaded;
 
 		//these are public because the ofQuickTimePlayer implementation has some callback functions that need access
 		//todo - fix this

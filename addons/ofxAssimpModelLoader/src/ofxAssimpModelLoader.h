@@ -1,12 +1,10 @@
-
-// assimp include files. These three are usually needed.
-#import "assimp.h"
-#import "aiPostProcess.h"
-#import "aiScene.h"
-
 #pragma once
 
 #include "ofMain.h"
+// assimp include files. These three are usually needed.
+#include "assimp.h"
+#include "aiPostProcess.h"
+#include "aiScene.h"
 
 // ofDevCon 
 // Written by Anton Marini (http://vade.info)
@@ -14,12 +12,14 @@
 // Kyle McDonald and Arturo Castro for C++ nuances
 
 // TODO:
-// 1) Keyframe interpolation for animations. This is currently done in the AssimpView Direct X project.
-// 2) Path issues (?)
-// 3) convert to ofMesh (?) in OF 007 ?
-// 4) Ability to ease *between* two animations. Maybe later folks.
+// 1) Path issues - not all models:
+//      a) reference images current working dir
+//      b) properly describe sub-folders
+//      c) reference absolute paths for images that dont exist.
+// 2) convert to ofMesh (?) in OF 007 ?
+// 3) Ability to ease *between* two animations. Maybe later folks.
 
-#import "ofxAssimpMeshHelper.h"
+#include "ofxAssimpMeshHelper.h"
 
 class ofxAssimpModelLoader{
 
@@ -45,6 +45,10 @@ class ofxAssimpModelLoader{
         float getDuration(int animation);
 
         void draw();
+		
+		ofPoint getPosition(){
+			return pos;
+		}
             
         // Our array of textures we load from the models path.
         vector <ofImage> textures;
@@ -52,7 +56,7 @@ class ofxAssimpModelLoader{
         // TODO: convert to ofMesh or ofVBOMesh
         vector <ofxAssimpMeshHelper> modelMeshes;  
          
-    private:
+    protected:
         // the main Asset Import scene that does the magic.
         aiScene* scene;
 
@@ -73,6 +77,8 @@ class ofxAssimpModelLoader{
         int currentAnimation;
         
         float animationTime;
+		
+		string modelFolder;
         
         // for interpolating between keyframes.
         float lastAnimationTime;

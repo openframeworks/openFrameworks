@@ -1,78 +1,62 @@
-/*
- *  ofEasyCam.h
- *  openFrameworksLib
- *
- *  Created by Memo Akten on 14/01/2011.
- *  Copyright 2011 MSA Visuals Ltd. All rights reserved.
- *
- */
-
 #pragma once
 
 #include "ofCamera.h"
+#include "ofEvents.h"
 
 class ofEasyCam : public ofCamera {
 public:
 	ofEasyCam();
-	
-	virtual void begin(ofRectangle rect = ofGetWindowRect());
+	~ofEasyCam();
+
+	// TODO: this should be ofGetViewRect() eventually
+	virtual void begin(ofRectangle viewport = ofGetCurrentViewport());
 	void reset();
 
 	//----------------------------------------
 	// advanced functions
-	
+
 	void setTarget(const ofVec3f& target);
 	void setTarget(ofNode& target);
-	
-	void setDistance(float f);
+	ofNode& getTarget();
+
+	void setDistance(float distance);
 	float getDistance() const;
-	
-	void setSpeed(float f);
-	float getSpeed() const;
-	
-	void setDrag(float f);
+
+	// drag is how quickly the camera picks up and slows down
+	// it is a normalized value between 0-1
+	void setDrag(float drag);
 	float getDrag() const;
-
 	
+	void mouseDragged(ofMouseEventArgs& mouse);
+	void mouseMoved(ofMouseEventArgs& mouse);
+	void mousePressed(ofMouseEventArgs& mouse);
+	void mouseReleased(ofMouseEventArgs& mouse);
+
+	// enable or disable mouse input to navigate
+	void enableMouseInput();
+	void disableMouseInput();
+	bool getMouseInputEnabled();
+
 protected:
+	void setDistance(float distance, bool save);
+
+	ofNode target;
 	
-	// only one of these will be relevant (targetNode if non-NULL);
-	ofNode *targetNode;
-	ofVec3f targetPoint;
-	float distance;
-
-	ofVec2f pos;	// longitude, latitude
-	ofVec2f vel;
-	ofVec2f pmouse;
-	bool oldMousePress;
-
-	float speed;
 	float drag;
+	float zoomSpeed;
+	bool bMouseInputEnabled;
+
+	ofVec3f mousePosViewPrev;
+	ofVec3f mousePosScreenPrev;
+	int lastFrame;
 	
-	// arcball stuff
-	// TODO: cleanup
-//	GLfloat ab_quat[16];
-//	GLfloat ab_last[16];
-//	GLfloat ab_next[16];
-//	
-//	GLfloat ab_zoom;
-//	GLfloat ab_zoom2;
-//	GLfloat ab_sphere;
-//	GLfloat ab_sphere2;
-//	GLfloat ab_edge;
-//	bool ab_planar;
-//	GLfloat ab_planedist;
-//	
-//	vec ab_start;
-//	vec ab_curr;
-//	vec ab_eye;
-//	vec ab_eyedir;
-//	vec ab_up;
-//	vec ab_out;
-//	
-//	GLdouble ab_glp[16];
-//	GLdouble ab_glm[16];
-//	int ab_glv[4];
-//	
-//	
+	unsigned long lastTap;
+	bool mousePressedPrev[2];
+
+	bool bDistanceSet;
+	float lastDistance;
+	float distanceScaleVelocity;
+	
+	ofQuaternion rotation;
+	ofVec3f translation;
 };

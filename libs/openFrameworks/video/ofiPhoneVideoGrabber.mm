@@ -41,6 +41,7 @@ float ofiPhoneVideoGrabber::getWidth() {
 }
 
 void ofiPhoneVideoGrabber::update() {
+	grabber->update();
 }
 
 void ofiPhoneVideoGrabber::setDeviceID(int _deviceID) {
@@ -54,5 +55,9 @@ void ofiPhoneVideoGrabber::setDesiredFrameRate(int framerate) {
 void ofiPhoneVideoGrabber::setPixelFormat(ofPixelFormat internalPixelFormat) {
 	grabber->setPixelFormat(internalPixelFormat);
 }
+
+
+ofPixelFormat ofiPhoneVideoGrabber::getPixelFormat(){
+    return grabber->getPixelFormat();
 
 #endif

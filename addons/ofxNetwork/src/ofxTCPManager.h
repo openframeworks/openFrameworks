@@ -67,7 +67,11 @@ SetTimeoutReceive()
 	#include <sys/time.h>
 	#include <sys/ioctl.h>
 
+#ifndef TARGET_ANDROID
     #include <sys/signal.h>
+#else
+	#include <signal.h>
+#endif
 
 	//other types
 	#define INVALID_SOCKET -1

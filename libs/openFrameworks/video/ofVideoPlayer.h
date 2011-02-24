@@ -5,8 +5,8 @@
 #include "ofBaseTypes.h"
 
 #ifdef OF_VIDEO_PLAYER_GSTREAMER
-	#include "ofGstUtils.h"
-	#define OF_VID_PLAYER_TYPE ofGstUtils()
+	#include "ofGstVideoPlayer.h"
+	#define OF_VID_PLAYER_TYPE ofGstVideoPlayer()
 #endif
 
 #ifdef OF_VIDEO_PLAYER_QUICKTIME
@@ -42,8 +42,7 @@ class ofVideoPlayer : public ofBaseVideoPlayer, public ofBaseDraws, public ofBas
 
 		bool 				isFrameNew();
 		unsigned char * 	getPixels();
-//		ofPixels 			getOFPixels();
-//		ofPixels 			getOFPixels() const;
+		ofPixelsRef			getPixelsRef();
 		float 				getPosition();
 		float 				getSpeed();
 		float 				getDuration();
@@ -52,6 +51,7 @@ class ofVideoPlayer : public ofBaseVideoPlayer, public ofBaseDraws, public ofBas
 		void 				setPosition(float pct);
 		void 				setVolume(int volume);
 		void 				setLoopState(ofLoopType state);
+		int					getLoopState();
 		void   				setSpeed(float speed);
 		void				setFrame(int frame);  // frame 0 = first frame...
 

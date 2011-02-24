@@ -34,7 +34,13 @@ public:
 	ofPoint		getWindowPosition();
 	ofPoint		getWindowSize();
 	ofPoint		getScreenSize();
-
+	
+	void			setOrientation(ofOrientation orientation);
+	ofOrientation	getOrientation();
+	
+	int			getWidth();
+	int			getHeight();	
+	
 	int			getWindowMode();
 
 	int			getFrameNum();
@@ -57,6 +63,6 @@ public:
 	static void resize_cb(int w, int h);
 	static void dragEvent(char ** fileNames, int howManyFiles, int dragX, int dragY);
 	string displayString;
-	 
+		 
 };
 

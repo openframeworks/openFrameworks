@@ -6,7 +6,6 @@ void testApp::setup(){
 
 //--------------------------------------------------------------
 void testApp::update(){
-
 }
 
 //--------------------------------------------------------------
@@ -16,7 +15,6 @@ void testApp::draw(){
 
 //--------------------------------------------------------------
 void testApp::keyPressed(int key){
-	
 
 }
 
@@ -50,3 +48,12 @@ void testApp::windowResized(int w, int h){
 
 }
 
+//--------------------------------------------------------------
+void testApp::gotMessage(ofMessage msg){
+
+}
+
+//--------------------------------------------------------------
+void testApp::dragEvent(ofDragInfo dragInfo){ 
+
+}

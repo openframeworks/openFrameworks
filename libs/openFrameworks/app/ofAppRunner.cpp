@@ -24,13 +24,15 @@ bool 						bMousePressed;
 bool						bRightButton;
 int							width, height;
 
-ofAppBaseWindow *			window = NULL;
+static ofAppBaseWindow *			window = NULL;
 
 
 //========================================================================
 // default windowing
 #ifdef TARGET_OF_IPHONE
 	#include "ofAppiPhoneWindow.h"
+#elif defined TARGET_ANDROID
+	#include "ofAppAndroidWindow.h"
 #else
 	#include "ofAppGlutWindow.h"
 #endif
@@ -41,7 +43,7 @@ void ofSetupOpenGL(ofAppBaseWindow * windowPtr, int w, int h, int screenMode){
 	window = windowPtr;
 	window->setupOpenGL(w, h, screenMode);
 	
-#ifndef TARGET_OF_IPHONE
+#ifndef TARGET_OPENGLES
 	GLenum err = glewInit();
 	if (GLEW_OK != err)
 	{
@@ -58,6 +60,8 @@ void ofSetupOpenGL(ofAppBaseWindow * windowPtr, int w, int h, int screenMode){
 void ofSetupOpenGL(int w, int h, int screenMode){
 	#ifdef TARGET_OF_IPHONE
 		window = new ofAppiPhoneWindow();
+	#elif defined TARGET_ANDROID
+		window = new ofAppAndroidWindow();
 	#else
 		window = new ofAppGlutWindow();
 	#endif
@@ -80,6 +84,8 @@ void ofExitCallback(){
 	//------------------------
 	// try to close rtAudio:
 	ofSoundStreamClose();
+	//------------------------
+
 
 	// try to close quicktime, for non-linux systems:
 	#if defined( TARGET_OSX ) || defined( TARGET_WIN32 )
@@ -189,6 +195,15 @@ void ofShowCursor(){
 	window->showCursor();
 }
 
+//--------------------------------------
+void ofSetOrientation(ofOrientation orientation){
+	window->setOrientation(orientation);
+}
+
+//--------------------------------------
+int ofGetOrientation(){
+	return window->getOrientation();
+}
 
 //--------------------------------------
 void ofSetWindowPosition(int x, int y){
@@ -222,11 +237,11 @@ int ofGetScreenHeight(){
 
 //--------------------------------------------------
 int ofGetWidth(){
-	return (int)window->getWindowSize().x;
+	return (int)window->getWidth();
 }
 //--------------------------------------------------
 int ofGetHeight(){
-	return (int)window->getWindowSize().y;
+	return (int)window->getHeight();
 }
 
 //--------------------------------------------------

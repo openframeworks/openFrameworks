@@ -66,10 +66,12 @@ class ofImage : public ofBaseImage{
 
 		// getting the data
 		unsigned char * 	getPixels();			// up to you to get this right
-		ofPixels		 	getOFPixels();
-		ofPixels		 	getOFPixels() const;
+		ofPixelsRef		 	getPixelsRef();
+
+		ofColor getColor(int x, int y) const;
 
 		// alter the image
+		void setColor(int x, int y, ofColor color);
 		void 				setFromPixels(unsigned char * pixels, int w, int h, ofImageType type, bool bOrderIsRGB = true);
 		void 				setImageType(ofImageType type);
 		void 				resize(int newWidth, int newHeight);
@@ -108,7 +110,9 @@ class ofImage : public ofBaseImage{
 
 		float 				getHeight();
 		float 				getWidth();
-		bool 				bAllocated() {return myPixels.isAllocated();};
+		bool 				bAllocated() {return pixels.isAllocated();};
+
+		void				reloadTexture();
 
 		int 				width, height, bpp;		// w,h, bits per pixel
 		int					type;					// OF_IMAGE_GRAYSCALE, OF_IMAGE_COLOR, OF_IMAGE_COLOR_ALPHA
@@ -118,7 +122,7 @@ class ofImage : public ofBaseImage{
 		void				changeTypeOfPixels(ofPixels &pix, ofImageType type);
 		void				resizePixels(ofPixels &pix, int newWidth, int newHeight);
 
-		ofPixels			myPixels;
+		ofPixels			pixels;
 		bool				bUseTexture;
 		ofTexture			tex;
 };

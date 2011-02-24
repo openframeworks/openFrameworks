@@ -9,7 +9,7 @@ class testApp : public ofBaseApp{
 	public:
 		
 		void setup();
-		void update(){};
+		void update();
 		void draw();
 		
 		void keyPressed(int key);
@@ -19,7 +19,9 @@ class testApp : public ofBaseApp{
 		void mousePressed(int x, int y, int button);
 		void mouseReleased(int x, int y, int button);
 		void windowResized(int w, int h);
-		
+		void dragEvent(ofDragInfo dragInfo);
+		void gotMessage(ofMessage msg);
+				
 		void audioReceived 	(float * input, int bufferSize, int nChannels); 
 	
 		float * left;

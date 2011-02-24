@@ -1,6 +1,7 @@
 #include "ofQuickTimePlayer.h"
 #include "ofUtils.h"
 
+#ifndef TARGET_LINUX
 //--------------------------------------------------------------
 #ifdef  OF_VIDEO_PLAYER_QUICKTIME
 //--------------------------------------------------------------
@@ -151,12 +152,7 @@ unsigned char * ofQuickTimePlayer::getPixels(){
 }
 
 //---------------------------------------------------------------------------
-ofPixels ofQuickTimePlayer::getOFPixels(){
-	return pixels;
-}
-
-//---------------------------------------------------------------------------
-ofPixels ofQuickTimePlayer::getOFPixels() const{
+ofPixelsRef ofQuickTimePlayer::getPixelsRef(){
 	return pixels;
 }
 
@@ -834,6 +830,6 @@ bool ofQuickTimePlayer::isPlaying(){
 	return bPlaying;
 }
 
-	
+#endif
 
 
