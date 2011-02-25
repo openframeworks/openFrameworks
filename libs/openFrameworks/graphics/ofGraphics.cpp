@@ -777,10 +777,18 @@ void ofTriangle(float x1,float y1,float z1,float x2,float y2,float z2,float x3, 
 	// use smoothness, if requested:
 	if (bSmoothHinted && drawMode == OF_OUTLINE) startSmoothing();
 
-	triPoints[0].set(x1,y1,z1);
-	triPoints[1].set(x2,y2,z2);
-	triPoints[2].set(x3,y3,z3);
-	renderer->draw(triPoints,drawMode==OF_FILLED?OF_TRIANGLES_MODE:OF_LINE_LOOP_MODE);
+	if(renderer->rendersPathDirectly()){
+		shape.clear();
+		shape.moveTo(x1,y1,z1);
+		shape.lineTo(x2,y2,z2);
+		shape.lineTo(x3,y3,z3);
+		shape.draw();
+	}else{
+		triPoints[0].set(x1,y1,z1);
+		triPoints[1].set(x2,y2,z2);
+		triPoints[2].set(x3,y3,z3);
+		renderer->draw(triPoints,drawMode==OF_FILLED?OF_TRIANGLES_MODE:OF_LINE_LOOP_MODE);
+	}
 
 	// back to normal, if smoothness is on
 	if (bSmoothHinted && drawMode == OF_OUTLINE) endSmoothing();
@@ -867,9 +875,16 @@ void ofLine(float x1,float y1,float z1,float x2,float y2,float z2){
 	// use smoothness, if requested:
 	if (bSmoothHinted) startSmoothing();
 
-	linePoints[0].set(x1,y1,z1);
-	linePoints[1].set(x2,y2,z2);
-	renderer->draw(linePoints,OF_LINES_MODE);
+	if(renderer->rendersPathDirectly()){
+		shape.clear();
+		shape.moveTo(x1,y1,z1);
+		shape.lineTo(x2,y2,z2);
+		shape.draw();
+	}else{
+		linePoints[0].set(x1,y1,z1);
+		linePoints[1].set(x2,y2,z2);
+		renderer->draw(linePoints,OF_LINES_MODE);
+	}
 
 	// back to normal, if smoothness is on
 	if (bSmoothHinted) endSmoothing();
@@ -897,16 +912,31 @@ void ofRect(float x,float y,float z,float w,float h){
 	// use smoothness, if requested:
 	if (bSmoothHinted && drawMode == OF_OUTLINE) startSmoothing();
 
-	if (cornerMode == OF_RECTMODE_CORNER){
-		rectPoints[0].set(x,y,z);
-		rectPoints[1].set(x+w,y,z);
-		rectPoints[2].set(x+w,y+h,z);
-		rectPoints[3].set(x,y+h,z);
+	if(renderer->rendersPathDirectly()){
+		shape.clear();
+		if (cornerMode == OF_RECTMODE_CORNER){
+			shape.moveTo(x,y,z);
+			shape.lineTo(x+w,y,z);
+			shape.lineTo(x+w,y+h,z);
+			shape.lineTo(x,y+h,z);
+		}else{
+			shape.moveTo(x-w/2.0f,y-h/2.0f,z);
+			shape.lineTo(x+w/2.0f,y-h/2.0f,z);
+			shape.lineTo(x+w/2.0f,y+h/2.0f,z);
+			shape.lineTo(x-w/2.0f,y+h/2.0f,z);
+		}
 	}else{
-		rectPoints[0].set(x-w/2.0f,y-h/2.0f,z);
-		rectPoints[1].set(x+w/2.0f,y-h/2.0f,z);
-		rectPoints[2].set(x+w/2.0f,y+h/2.0f,z);
-		rectPoints[3].set(x-w/2.0f,y+h/2.0f,z);
+		if (cornerMode == OF_RECTMODE_CORNER){
+			rectPoints[0].set(x,y,z);
+			rectPoints[1].set(x+w,y,z);
+			rectPoints[2].set(x+w,y+h,z);
+			rectPoints[3].set(x,y+h,z);
+		}else{
+			rectPoints[0].set(x-w/2.0f,y-h/2.0f,z);
+			rectPoints[1].set(x+w/2.0f,y-h/2.0f,z);
+			rectPoints[2].set(x+w/2.0f,y+h/2.0f,z);
+			rectPoints[3].set(x-w/2.0f,y+h/2.0f,z);
+		}
 	}
 	renderer->draw(rectPoints,(drawMode == OF_FILLED) ? OF_TRIANGLE_FAN_MODE : OF_LINE_LOOP_MODE);
 
@@ -987,7 +1017,7 @@ void ofNextContour(bool bClose){
 	if (bClose){
 		shape.close();
 	}
-	shape.newPath();
+	shape.newSubPath();
 }
 
 

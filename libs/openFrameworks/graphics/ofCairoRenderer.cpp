@@ -64,7 +64,7 @@ void ofCairoRenderer::close(){
 
 void ofCairoRenderer::draw(ofShape & shape){
 	cairo_new_path(cr);
-	vector<ofPath> & paths = shape.getPaths();
+	vector<ofSubPath> & paths = shape.getPaths();
 	for(int i=0;i<paths.size();i++){
 		draw(paths[i]);
 	}
@@ -95,14 +95,22 @@ void ofCairoRenderer::draw(ofShape & shape){
 }
 
 void ofCairoRenderer::draw(ofPolyline & poly){
-	ofPushStyle();
 	cairo_new_path(cr);
 	for(int i=0;i<(int)poly.size();i++){
 		cairo_line_to(cr,poly.getVertices()[i].x,poly.getVertices()[i].y);
 	}
 	if(poly.isClosed())
 		cairo_close_path(cr);
-	ofPopStyle();
+}
+
+void ofCairoRenderer::draw(vector<ofPoint> & vertexData, ofPrimitiveMode drawMode){
+	//TODO: how to support filled vs non filled, move to ofGraphics?
+	/*cairo_new_path(cr);
+	for(int i=0;i<(int)vertexData.size();i++){
+		cairo_line_to(cr,vertexData[i].x,vertexData[i].y);
+	}
+	if(poly.isClosed())
+		cairo_close_path(cr);*/
 }
 
 void ofCairoRenderer::useShapeColor(bool bUseShapeColor_){
@@ -185,19 +193,19 @@ void ofCairoRenderer::draw(ofPrimitive & primitive){
 	popMatrix();
 }
 
-void ofCairoRenderer::draw(ofPath & path){
+void ofCairoRenderer::draw(ofSubPath & path){
 	if(!surface || !cr) return;
-	const vector<ofPath::Command> & commands = path.getCommands();
+	const vector<ofSubPath::Command> & commands = path.getCommands();
 	cairo_new_sub_path(cr);
 	for(int i=0; i<(int)commands.size(); i++){
 		switch(commands[i].type){
-		case ofPath::Command::lineTo:
+		case ofSubPath::Command::lineTo:
 			curvePoints.clear();
 			cairo_line_to(cr,commands[i].to.x,commands[i].to.y);
 			break;
 
 
-		case ofPath::Command::curveTo:
+		case ofSubPath::Command::curveTo:
 			curvePoints.push_back(commands[i].to);
 
 			//code adapted from ofxVectorGraphics to convert catmull rom to bezier
@@ -217,18 +225,18 @@ void ofCairoRenderer::draw(ofPath & path){
 			break;
 
 
-		case ofPath::Command::bezierTo:
+		case ofSubPath::Command::bezierTo:
 			curvePoints.clear();
 			cairo_curve_to(cr,commands[i].cp1.x,commands[i].cp1.y,commands[i].cp2.x,commands[i].cp2.y,commands[i].to.x,commands[i].to.y);
 			break;
 
-		case ofPath::Command::quadBezierTo:
+		case ofSubPath::Command::quadBezierTo:
 			curvePoints.clear();
 			cairo_curve_to(cr,commands[i].cp1.x,commands[i].cp1.y,commands[i].cp2.x,commands[i].cp2.y,commands[i].to.x,commands[i].to.y);
 			break;
 
 
-		case ofPath::Command::arc:
+		case ofSubPath::Command::arc:
 			curvePoints.clear();
 			// elliptic arcs not directly supported in cairo, lets scale y
 			if(commands[i].radiusX!=commands[i].radiusY){

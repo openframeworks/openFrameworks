@@ -8,11 +8,11 @@
 #include "ofPrimitive.h"
 
 
-class ofPath{
+class ofSubPath{
 public:
 	struct Command;
 
-	ofPath();
+	ofSubPath();
 	vector<Command> & getCommands();
 	const vector<Command> & getCommands() const;
 	void addCommand(const Command & command);
@@ -60,7 +60,7 @@ public:
 	void clear();
 
 	// creates a new subpath
-	void newPath();
+	void newSubPath();
 	// closes current path, next command starts a new one
 	void close();
 
@@ -113,8 +113,8 @@ public:
 	void draw(float x, float y);
 	void draw();
 
-	vector<ofPath> & getPaths();
-	const vector<ofPath> & getPaths() const;
+	vector<ofSubPath> & getPaths();
+	const vector<ofSubPath> & getPaths() const;
 
 	vector<ofPolyline> & getOutline();
 	vector<ofPrimitive> & getTessellation();
@@ -143,13 +143,13 @@ public:
 
 private:
 
-	ofPath & lastPath();
+	ofSubPath & lastPath();
 	ofPolyline & lastPolyline();
 
 	void generatePolylinesFromPaths();
 
 	// path description
-	vector<ofPath>		paths;
+	vector<ofSubPath>		paths;
 	ofPolyWindingMode 	windingMode;
 	ofColor 			fillColor;
 	ofColor				strokeColor;
