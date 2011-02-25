@@ -27,10 +27,10 @@ public:
 	void close();
 
 	void draw(ofShape & shape);
-	void draw(ofPath & path);
+	void draw(ofSubPath & path);
 	void draw(ofPolyline & poly);
 	void draw(ofPrimitive & vertexData);
-	void draw(vector<ofPoint> & vertexData, ofPrimitiveMode drawMode){}
+	void draw(vector<ofPoint> & vertexData, ofPrimitiveMode drawMode);
 	void useShapeColor(bool bUseShapeColor);
 
 	bool rendersPathDirectly(){
