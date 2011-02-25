@@ -194,7 +194,7 @@ public:
 class ofBaseRenderer{
 public:
 	virtual ~ofBaseRenderer(){}
-	virtual bool rendersPathDirectly()=0;
+	virtual bool rendersPathPrimitives()=0;
 	virtual void draw(ofPolyline & poly)=0;
 	virtual void draw(ofShape & shape)=0;
 	virtual void draw(ofPrimitive & vertexData)=0;

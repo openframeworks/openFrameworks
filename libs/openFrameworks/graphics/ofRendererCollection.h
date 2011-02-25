@@ -6,7 +6,7 @@ class ofRendererCollection: public ofBaseRenderer{
 public:
 	 ~ofRendererCollection(){}
 
-	 bool rendersPathDirectly(){return true;}
+	 bool rendersPathPrimitives(){return true;}
 	 void draw(ofPolyline & poly){
 		 for(int i=0;i<(int)renderers.size();i++){
 			 renderers[i]->draw(poly);
