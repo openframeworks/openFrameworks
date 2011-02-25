@@ -17,6 +17,7 @@ enum ofPrimitiveMode{
 	OF_LINES_MODE,
 	OF_LINE_STRIP_MODE,
 	OF_LINE_LOOP_MODE,
+	OF_POINTS_MODE
 };
 
 inline GLuint ofGetGLPrimitiveMode(ofPrimitiveMode mode){
@@ -38,6 +39,9 @@ inline GLuint ofGetGLPrimitiveMode(ofPrimitiveMode mode){
 			break;
 		case OF_LINE_LOOP_MODE:
 			return GL_LINE_LOOP;
+			break;
+		case OF_POINTS_MODE:
+			return GL_POINTS;
 			break;
 		default:
 			ofLog(OF_LOG_ERROR,"asked for unsupported or non existant primitive mode " + ofToString(mode) + " returning GL_TRIANGLES");
@@ -65,6 +69,9 @@ inline ofPrimitiveMode ofGetOFPrimitiveMode(GLuint mode){
 			break;
 		case GL_LINE_LOOP:
 			return OF_LINE_LOOP_MODE;
+			break;
+		case GL_POINTS:
+			return OF_POINTS_MODE;
 			break;
 		default:
 			ofLog(OF_LOG_ERROR,"asked for non existant primitive mode " + ofToString(mode) + " returning OF_TRIANGLES_MODE");
