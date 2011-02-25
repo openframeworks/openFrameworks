@@ -64,7 +64,7 @@ void ofCairoRenderer::close(){
 
 void ofCairoRenderer::draw(ofShape & shape){
 	cairo_new_path(cr);
-	vector<ofSubPath> & paths = shape.getPaths();
+	vector<ofSubPath> & paths = shape.getSubPaths();
 	for(int i=0;i<paths.size();i++){
 		draw(paths[i]);
 	}
@@ -104,13 +104,69 @@ void ofCairoRenderer::draw(ofPolyline & poly){
 }
 
 void ofCairoRenderer::draw(vector<ofPoint> & vertexData, ofPrimitiveMode drawMode){
-	//TODO: how to support filled vs non filled, move to ofGraphics?
-	/*cairo_new_path(cr);
-	for(int i=0;i<(int)vertexData.size();i++){
-		cairo_line_to(cr,vertexData[i].x,vertexData[i].y);
+	if(vertexData.size()==0) return;
+	pushMatrix();
+	cairo_matrix_init_identity(getCairoMatrix());
+	cairo_new_path(cr);
+	//if(indices.getNumIndices()){
+
+		int i = 1;
+		ofVec3f v = transform(vertexData[0]);
+		ofVec3f v2;
+		cairo_move_to(cr,v.x,v.y);
+		if(drawMode==OF_TRIANGLE_STRIP_MODE){
+			v = transform(vertexData[1]);
+			cairo_line_to(cr,v.x,v.y);
+			v = transform(vertexData[2]);
+			cairo_line_to(cr,v.x,v.y);
+			i=2;
+		}
+		for(; i<vertexData.size(); i++){
+			v = transform(vertexData[i]);
+			switch(drawMode){
+			case(OF_TRIANGLES_MODE):
+				if((i+1)%3==0){
+					cairo_line_to(cr,v.x,v.y);
+					v2 = transform(vertexData[i-2]);
+					cairo_line_to(cr,v2.x,v2.y);
+					cairo_move_to(cr,v.x,v.y);
+				}else if((i+3)%3==0){
+					cairo_move_to(cr,v.x,v.y);
+				}else{
+					cairo_line_to(cr,v.x,v.y);
+				}
+
+			break;
+			case(OF_TRIANGLE_STRIP_MODE):
+					v2 = transform(vertexData[i-2]);
+					cairo_line_to(cr,v.x,v.y);
+					cairo_line_to(cr,v2.x,v2.y);
+					cairo_move_to(cr,v.x,v.y);
+			break;
+			case(OF_TRIANGLE_FAN_MODE):
+					/*triangles.addIndex((GLuint)0);
+						triangles.addIndex((GLuint)1);
+						triangles.addIndex((GLuint)2);
+						for(int i = 2; i < primitive.getNumVertices()-1;i++){
+							triangles.addIndex((GLuint)0);
+							triangles.addIndex((GLuint)i);
+							triangles.addIndex((GLuint)i+1);
+						}*/
+			break;
+			default:break;
+			}
+		}
+
+	cairo_move_to(cr,vertexData[vertexData.size()-1].x,vertexData[vertexData.size()-1].y);
+
+	if(ofGetStyle().lineWidth>0){
+		ofColor c = ofGetStyle().color;
+		cairo_set_source_rgba(cr, (float)c.r/255.0, (float)c.g/255.0, (float)c.b/255.0, (float)c.a/255.0);
+		cairo_set_line_width( cr, ofGetStyle().lineWidth );
+
+		cairo_stroke( cr );
 	}
-	if(poly.isClosed())
-		cairo_close_path(cr);*/
+	popMatrix();
 }
 
 void ofCairoRenderer::useShapeColor(bool bUseShapeColor_){

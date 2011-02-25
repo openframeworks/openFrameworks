@@ -15,7 +15,7 @@ public:
 	void draw(vector<ofPoint> & vertexData, ofPrimitiveMode drawMode);
 	void useShapeColor(bool bUseShapeColor);
 
-	bool rendersPathDirectly(){
+	bool rendersPathPrimitives(){
 		return false;
 	}
 

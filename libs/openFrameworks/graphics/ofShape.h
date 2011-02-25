@@ -108,13 +108,11 @@ public:
 	float getStrokeWidth() const; // default 1
 	bool hasOutline() const { return strokeWidth>0; }
 
-
-	void updateShape();
 	void draw(float x, float y);
 	void draw();
 
-	vector<ofSubPath> & getPaths();
-	const vector<ofSubPath> & getPaths() const;
+	vector<ofSubPath> & getSubPaths();
+	const vector<ofSubPath> & getSubPaths() const;
 
 	vector<ofPolyline> & getOutline();
 	vector<ofPrimitive> & getTessellation();
@@ -123,7 +121,7 @@ public:
 	void simplify(float tolerance=0.3);
 
 	// only needs to be called when path is modified externally
-	void markedChanged();
+	void flagShapeChanged();
 
 	enum Mode{
 		PATHS,

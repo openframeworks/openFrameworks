@@ -296,7 +296,7 @@ ofPolyline & ofShape::lastPolyline(){
 }
 
 //----------------------------------------------------------
-vector<ofSubPath> & ofShape::getPaths(){
+vector<ofSubPath> & ofShape::getSubPaths(){
 	if(mode==POLYLINES){
 		ofLog(OF_LOG_WARNING,"trying to get paths from shape with polylines only");
 	}
@@ -304,7 +304,7 @@ vector<ofSubPath> & ofShape::getPaths(){
 }
 
 //----------------------------------------------------------
-const vector<ofSubPath> & ofShape::getPaths() const{
+const vector<ofSubPath> & ofShape::getSubPaths() const{
 	if(mode==POLYLINES){
 		ofLog(OF_LOG_WARNING,"trying to get paths from shape with polylines only");
 	}
@@ -407,11 +407,6 @@ vector<ofPrimitive> & ofShape::getTessellation(){
 }
 
 //----------------------------------------------------------
-void ofShape::updateShape(){
-	generatePolylinesFromPaths();
-}
-
-//----------------------------------------------------------
 void ofShape::draw(float x, float y){
 	ofPushMatrix();
 	ofTranslate(x,y);
@@ -421,7 +416,7 @@ void ofShape::draw(float x, float y){
 
 //----------------------------------------------------------
 void ofShape::draw(){
-	if(ofGetDefaultRenderer()->rendersPathDirectly()){
+	if(ofGetDefaultRenderer()->rendersPathPrimitives()){
 		ofGetDefaultRenderer()->draw(*this);
 	}else{
 		tessellate();
@@ -455,7 +450,7 @@ void ofShape::draw(){
 }
 
 //----------------------------------------------------------
-void ofShape::markedChanged(){
+void ofShape::flagShapeChanged(){
 	if(mode==PATHS){
 		hasChanged = true;
 	}else{

@@ -5,7 +5,6 @@
 #include "ofBaseTypes.h"
 #include "ofGLRenderer.h"
 #include "ofShape.h"
-#include "ofShapeUtils.h"
 
 #ifdef TARGET_OSX
 	#include <OpenGL/glu.h>
@@ -38,8 +37,6 @@
 	#include <GL/glut.h>
 #endif
 
-
-#include <deque>
 
 //----------------------------------------------------------
 // static
@@ -77,7 +74,7 @@ void ofSetDefaultRenderer(ofBaseRenderer * renderer_){
 	if(renderer) delete renderer;
 	renderer = renderer_;
 	renderer->setupGraphicDefaults();
-	if(renderer->rendersPathDirectly()){
+	if(renderer->rendersPathPrimitives()){
 		shape.setMode(ofShape::PATHS);
 	}else{
 		shape.setMode(ofShape::POLYLINES);
@@ -447,7 +444,7 @@ void setupCircle(){
 
 //----------------------------------------------------------
 void ofSetCircleResolution(int res){
-	if(circlePolyline.size()!=res+1){
+	if((int)circlePolyline.size()!=res+1){
 		circlePolyline.clear();
 		circlePolyline.arc(0,0,0,1,1,0,360,res);
 		circlePoints.resize(circlePolyline.size());
@@ -777,7 +774,7 @@ void ofTriangle(float x1,float y1,float z1,float x2,float y2,float z2,float x3, 
 	// use smoothness, if requested:
 	if (bSmoothHinted && drawMode == OF_OUTLINE) startSmoothing();
 
-	if(renderer->rendersPathDirectly()){
+	if(renderer->rendersPathPrimitives()){
 		shape.clear();
 		shape.moveTo(x1,y1,z1);
 		shape.lineTo(x2,y2,z2);
@@ -810,13 +807,13 @@ void ofCircle(float x, float y, float z, float radius){
 	// use smoothness, if requested:
 	if (bSmoothHinted && drawMode == OF_OUTLINE) startSmoothing();
 
-	if(renderer->rendersPathDirectly()){
+	if(renderer->rendersPathPrimitives()){
 		shape.clear();
 		shape.arc(x,y,z,radius,radius,0,360);
 		shape.draw();
 	}else{
 		vector<ofPoint> & circleCache = circlePolyline.getVertices();
-		for(int i=0;i<circleCache.size();i++){
+		for(int i=0;i<(int)circleCache.size();i++){
 			circlePoints[i].set(radius*circleCache[i].x+x,radius*circleCache[i].y+y,z);
 		}
 		renderer->draw(circlePoints, (drawMode == OF_FILLED) ? OF_TRIANGLE_FAN_MODE : OF_LINE_LOOP_MODE);
@@ -843,13 +840,13 @@ void ofEllipse(float x, float y, float z, float width, float height){
 	if (bSmoothHinted && drawMode == OF_OUTLINE) startSmoothing();
 	float radiusX = width*0.5;
 	float radiusY = height*0.5;
-	if(renderer->rendersPathDirectly()){
+	if(renderer->rendersPathPrimitives()){
 		shape.clear();
 		shape.arc(x,y,z,radiusX,radiusY,0,360);
 		shape.draw();
 	}else{
 		vector<ofPoint> & circleCache = circlePolyline.getVertices();
-		for(int i=0;i<circleCache.size();i++){
+		for(int i=0;i<(int)circleCache.size();i++){
 			circlePoints[i].set(radiusX*circlePolyline[i].x+x,radiusY*circlePolyline[i].y+y,z);
 		}
 		renderer->draw(circlePoints, (drawMode == OF_FILLED) ? OF_TRIANGLE_FAN_MODE : OF_LINE_LOOP_MODE);
@@ -875,7 +872,7 @@ void ofLine(float x1,float y1,float z1,float x2,float y2,float z2){
 	// use smoothness, if requested:
 	if (bSmoothHinted) startSmoothing();
 
-	if(renderer->rendersPathDirectly()){
+	if(renderer->rendersPathPrimitives()){
 		shape.clear();
 		shape.moveTo(x1,y1,z1);
 		shape.lineTo(x2,y2,z2);
@@ -912,7 +909,7 @@ void ofRect(float x,float y,float z,float w,float h){
 	// use smoothness, if requested:
 	if (bSmoothHinted && drawMode == OF_OUTLINE) startSmoothing();
 
-	if(renderer->rendersPathDirectly()){
+	if(renderer->rendersPathPrimitives()){
 		shape.clear();
 		if (cornerMode == OF_RECTMODE_CORNER){
 			shape.moveTo(x,y,z);
