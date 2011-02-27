@@ -8,6 +8,10 @@
 ofGLRenderer::ofGLRenderer(bool useShapeColor){
 	bBackgroundAuto = true;
 	bUseShapeColor = useShapeColor;
+
+	linePoints.resize(2);
+	rectPoints.resize(4);
+	triPoints.resize(3);
 }
 
 void ofGLRenderer::draw(ofPrimitive & vertexData){
@@ -49,7 +53,6 @@ void ofGLRenderer::draw(ofPrimitive & vertexData){
 	}
 }
 
-
 void ofGLRenderer::draw(vector<ofPoint> & vertexData, ofPrimitiveMode drawMode){
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glVertexPointer(3, GL_FLOAT, sizeof(ofVec3f), &vertexData[0].x);
@@ -57,9 +60,15 @@ void ofGLRenderer::draw(vector<ofPoint> & vertexData, ofPrimitiveMode drawMode){
 }
 
 void ofGLRenderer::draw(ofPolyline & poly){
+	// use smoothness, if requested:
+	if (bSmoothHinted) startSmoothing();
+
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glVertexPointer(3, GL_FLOAT, sizeof(ofVec3f), &poly.getVertices()[0].x);
-	glDrawArrays(poly.isClosed()?GL_LINE_LOOP:GL_LINE_STRIP, 0, poly.size());;
+	glDrawArrays(poly.isClosed()?GL_LINE_LOOP:GL_LINE_STRIP, 0, poly.size());
+
+	// use smoothness, if requested:
+	if (bSmoothHinted) endSmoothing();
 }
 
 void ofGLRenderer::draw(ofShape & shape){
@@ -313,7 +322,14 @@ void ofGLRenderer::setupScreen(){
 	setupScreenPerspective();	// assume defaults
 }
 
-
+//----------------------------------------------------------
+void ofGLRenderer::setCircleResolution(int res){
+	if((int)circlePolyline.size()!=res+1){
+		circlePolyline.clear();
+		circlePolyline.arc(0,0,0,1,1,0,360,res);
+		circlePoints.resize(circlePolyline.size());
+	}
+}
 
 //our openGL wrappers
 //----------------------------------------------------------
@@ -462,4 +478,144 @@ void ofGLRenderer::background(int r, int g, int b, int a){
 		glClearColor(bgColor[0],bgColor[1],bgColor[2], bgColor[3]);
 		glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	}
+}
+
+//----------------------------------------------------------
+void ofGLRenderer::setFill(bool fill){
+	bFilled = fill;
+}
+
+//----------------------------------------------------------
+void ofGLRenderer::setLineWidth(float lineWidth){
+	glLineWidth(lineWidth);
+}
+
+//----------------------------------------------------------
+void ofGLRenderer::setLineSmoothing(bool smooth){
+	bSmoothHinted = smooth;
+}
+
+
+//----------------------------------------------------------
+void ofGLRenderer::startSmoothing(){
+	#ifndef TARGET_OPENGLES
+		glPushAttrib(GL_COLOR_BUFFER_BIT | GL_ENABLE_BIT);
+	#endif
+
+	glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
+	glEnable(GL_LINE_SMOOTH);
+
+	//why do we need this?
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+}
+
+
+//----------------------------------------------------------
+void ofGLRenderer::endSmoothing(){
+	#ifndef TARGET_OPENGLES
+		glPopAttrib();
+	#endif
+}
+
+//----------------------------------------------------------
+void ofGLRenderer::drawLine(float x1, float y1, float z1, float x2, float y2, float z2){
+	linePoints[0].set(x1,y1,z1);
+	linePoints[1].set(x2,y2,z2);
+
+	// use smoothness, if requested:
+	if (bSmoothHinted && !bFilled) startSmoothing();
+
+	glEnableClientState(GL_VERTEX_ARRAY);
+	glVertexPointer(3, GL_FLOAT, sizeof(ofVec3f), &linePoints[0].x);
+	glDrawArrays(GL_LINES, 0, 2);
+
+	// use smoothness, if requested:
+	if (bSmoothHinted && !bFilled) endSmoothing();
+
+}
+
+//----------------------------------------------------------
+void ofGLRenderer::drawRectangle(float x, float y, float z,float w, float h){
+
+	if (ofGetStyle().rectMode == OF_RECTMODE_CORNER){
+		rectPoints[0].set(x,y,z);
+		rectPoints[1].set(x+w, y, z);
+		rectPoints[2].set(x+w, y+h, z);
+		rectPoints[3].set(x, y+h, z);
+	}else{
+		rectPoints[0].set(x-w/2.0f, y-h/2.0f, z);
+		rectPoints[1].set(x+w/2.0f, y-h/2.0f, z);
+		rectPoints[2].set(x+w/2.0f, y+h/2.0f, z);
+		rectPoints[3].set(x-w/2.0f, y+h/2.0f, z);
+	}
+
+	// use smoothness, if requested:
+	if (bSmoothHinted && !bFilled) startSmoothing();
+
+	glEnableClientState(GL_VERTEX_ARRAY);
+	glVertexPointer(3, GL_FLOAT, sizeof(ofVec3f), &rectPoints[0].x);
+	glDrawArrays(bFilled ? GL_TRIANGLE_FAN : GL_LINE_LOOP, 0, 4);
+
+	// use smoothness, if requested:
+	if (bSmoothHinted && !bFilled) endSmoothing();
+
+}
+
+//----------------------------------------------------------
+void ofGLRenderer::drawTriangle(float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3){
+	triPoints[0].set(x1,y1,z1);
+	triPoints[1].set(x2,y2,z2);
+	triPoints[2].set(x3,y3,z3);
+
+	// use smoothness, if requested:
+	if (bSmoothHinted && !bFilled) startSmoothing();
+
+	glEnableClientState(GL_VERTEX_ARRAY);
+	glVertexPointer(3, GL_FLOAT, sizeof(ofVec3f), &triPoints[0].x);
+	glDrawArrays(bFilled ? GL_TRIANGLE_FAN : GL_LINE_LOOP, 0, 3);
+
+	// use smoothness, if requested:
+	if (bSmoothHinted && !bFilled) endSmoothing();
+
+}
+
+//----------------------------------------------------------
+void ofGLRenderer::drawCircle(float x, float y, float z,  float radius){
+	vector<ofPoint> & circleCache = circlePolyline.getVertices();
+	for(int i=0;i<(int)circleCache.size();i++){
+		circlePoints[i].set(radius*circleCache[i].x+x,radius*circleCache[i].y+y,z);
+	}
+
+	// use smoothness, if requested:
+	if (bSmoothHinted && !bFilled) startSmoothing();
+
+	glEnableClientState(GL_VERTEX_ARRAY);
+	glVertexPointer(3, GL_FLOAT, sizeof(ofVec3f), &circlePoints[0].x);
+	glDrawArrays(bFilled ? GL_TRIANGLE_FAN : GL_LINE_STRIP, 0, circlePoints.size());
+
+	// use smoothness, if requested:
+	if (bSmoothHinted && !bFilled) endSmoothing();
+
+}
+
+//----------------------------------------------------------
+void ofGLRenderer::drawEllipse(float x, float y, float z, float width, float height){
+	float radiusX = width*0.5;
+	float radiusY = height*0.5;
+	vector<ofPoint> & circleCache = circlePolyline.getVertices();
+	for(int i=0;i<(int)circleCache.size();i++){
+		circlePoints[i].set(radiusX*circlePolyline[i].x+x,radiusY*circlePolyline[i].y+y,z);
+	}
+
+	// use smoothness, if requested:
+	if (bSmoothHinted && !bFilled) startSmoothing();
+
+	glEnableClientState(GL_VERTEX_ARRAY);
+	glVertexPointer(3, GL_FLOAT, sizeof(ofVec3f), &circlePoints[0].x);
+	glDrawArrays(bFilled ? GL_TRIANGLE_FAN : GL_LINE_STRIP, 0, circlePoints.size());
+
+	// use smoothness, if requested:
+	if (bSmoothHinted && !bFilled) endSmoothing();
+
 }

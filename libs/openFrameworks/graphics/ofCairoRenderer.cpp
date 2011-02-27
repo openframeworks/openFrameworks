@@ -633,6 +633,106 @@ void ofCairoRenderer::background(int r, int g, int b, int a){
 }
 
 
+//----------------------------------------------------------
+void ofCairoRenderer::drawLine(ofPoint p1, ofPoint p2){
+	cairo_new_path(cr);
+	cairo_move_to(cr,p1.x,p1.y);
+	cairo_line_to(cr,p2.x,p2.y);
+
+	ofColor c = ofGetStyle().color;
+	cairo_set_source_rgba(cr, (float)c.r/255.0, (float)c.g/255.0, (float)c.b/255.0, (float)c.a/255.0);
+	cairo_set_line_width( cr, ofGetStyle().lineWidth );
+	cairo_stroke( cr );
+}
+
+//----------------------------------------------------------
+void ofCairoRenderer::drawRectangle(ofPoint p, float w, float h){
+
+	cairo_new_path(cr);
+
+	if (ofGetStyle().rectMode == OF_RECTMODE_CORNER){
+		cairo_move_to(cr,p.x,p.y);
+		cairo_line_to(cr,p.x+w, p.y);
+		cairo_line_to(cr,p.x+w, p.y+h);
+		cairo_line_to(cr,p.x, p.y+h);
+	}else{
+		cairo_move_to(cr,p.x-w/2.0f, p.y-h/2.0f);
+		cairo_line_to(cr,p.x+w/2.0f, p.y-h/2.0f);
+		cairo_line_to(cr,p.x+w/2.0f, p.y+h/2.0f);
+		cairo_line_to(cr,p.x-w/2.0f, p.y+h/2.0f);
+	}
+
+	cairo_close_path(cr);
+
+	ofColor c = ofGetStyle().color;
+	cairo_set_source_rgba(cr, (float)c.r/255.0, (float)c.g/255.0, (float)c.b/255.0, (float)c.a/255.0);
+
+	if(ofGetStyle().bFill){
+		cairo_fill( cr );
+	}else{
+		cairo_set_line_width( cr, ofGetStyle().lineWidth );
+		cairo_stroke( cr );
+	}
+}
+
+//----------------------------------------------------------
+void ofCairoRenderer::drawTriangle(ofPoint p1, ofPoint p2, ofPoint p3){
+	cairo_new_path(cr);
+
+	cairo_move_to(cr, p1.x, p1.y);
+	cairo_line_to(cr, p2.x, p2.y);
+	cairo_line_to(cr, p3.x, p3.y);
+
+
+	cairo_close_path(cr);
+
+	ofColor c = ofGetStyle().color;
+	cairo_set_source_rgba(cr, (float)c.r/255.0, (float)c.g/255.0, (float)c.b/255.0, (float)c.a/255.0);
+
+	if(ofGetStyle().bFill){
+		cairo_fill( cr );
+	}else{
+		cairo_set_line_width( cr, ofGetStyle().lineWidth );
+		cairo_stroke( cr );
+	}
+}
+
+//----------------------------------------------------------
+void ofCairoRenderer::drawCircle(ofPoint center, float radius){
+	cairo_arc(cr, center.x,center.y,0,360,radius);
+
+	ofColor c = ofGetStyle().color;
+	cairo_set_source_rgba(cr, (float)c.r/255.0, (float)c.g/255.0, (float)c.b/255.0, (float)c.a/255.0);
+
+	if(ofGetStyle().bFill){
+		cairo_fill( cr );
+	}else{
+		cairo_set_line_width( cr, ofGetStyle().lineWidth );
+		cairo_stroke( cr );
+	}
+}
+
+//----------------------------------------------------------
+void ofCairoRenderer::drawEllipse(ofPoint center, float width, float height){
+	float ellipse_ratio = height/width;
+	pushMatrix();
+	translate(0,center.y*ellipse_ratio);
+	scale(1,ellipse_ratio);
+	translate(0,center.y/ellipse_ratio);
+	cairo_arc(cr,center.x,center.y,width*0.5,0,360);
+	popMatrix();
+
+	ofColor c = ofGetStyle().color;
+	cairo_set_source_rgba(cr, (float)c.r/255.0, (float)c.g/255.0, (float)c.b/255.0, (float)c.a/255.0);
+
+	if(ofGetStyle().bFill){
+		cairo_fill( cr );
+	}else{
+		cairo_set_line_width( cr, ofGetStyle().lineWidth );
+		cairo_stroke( cr );
+	}
+}
+
 cairo_t * ofCairoRenderer::getCairoContext(){
 	return cr;
 }

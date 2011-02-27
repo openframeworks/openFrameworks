@@ -86,6 +86,14 @@ public:
 	void clear(float brightness, float a=0);
 	void clearAlpha();
 
+	// drawing
+	void drawLine(ofPoint p1, ofPoint p2);
+	void drawRectangle(ofPoint p, float w, float h);
+	void drawTriangle(ofPoint p1, ofPoint p2, ofPoint p3);
+	void drawCircle(ofPoint center, float radius);
+	void drawEllipse(ofPoint center, float width, float height);
+
+	// cairo specifics
 	cairo_t * getCairoContext();
 	cairo_surface_t * getCairoSurface();
 

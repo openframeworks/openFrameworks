@@ -1,6 +1,6 @@
 #pragma once
 #include "ofBaseTypes.h"
-#include <deque>
+#include "ofPolyline.h"
 class ofShapeTessellation;
 class ofPrimitive;
 
@@ -56,6 +56,9 @@ public:
 	void setupGraphicDefaults();
 	void setupScreen();
 
+	// drawing modes
+	void setCircleResolution(int res);
+
 	// color options
 	void setColor(int r, int g, int b); // 0-255
 	void setColor(int r, int g, int b, int a); // 0-255
@@ -78,10 +81,35 @@ public:
 	void clear(float brightness, float a=0);
 	void clearAlpha();
 
+	// state
+	void setFill(bool fill);
+	void setLineWidth(float lineWidth);
+	void setLineSmoothing(bool smooth);
+
+
+	// drawing
+	void drawLine(float x1, float y1, float z1, float x2, float y2, float z2);
+	void drawRectangle(float x, float y, float z, float w, float h);
+	void drawTriangle(float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3);
+	void drawCircle(float x, float y, float z, float radius);
+	void drawEllipse(float x, float y, float z, float width, float height);
+
 private:
+	void startSmoothing();
+	void endSmoothing();
+
 	ofHandednessType coordHandedness;
 	deque <ofRectangle> viewportHistory;
 	bool bBackgroundAuto;
 	ofColor bgColor;
 	bool bUseShapeColor;
+
+	vector<ofPoint> linePoints;
+	vector<ofPoint> rectPoints;
+	vector<ofPoint> triPoints;
+	vector<ofPoint> circlePoints;
+	ofPolyline circlePolyline;
+
+	bool bFilled;
+	bool bSmoothHinted;
 };
