@@ -239,6 +239,11 @@ public:
 	// drawing modes
 	virtual void setCircleResolution(int res)=0;
 	virtual void setLineSmoothing(bool smooth)=0;
+	virtual void setFill(bool fill)=0;
+	virtual void setLineWidth(float lineWidth)=0;
+	virtual void setBlendMode(ofBlendMode blendMode)=0;
+	virtual void enablePointSprites(){};
+	virtual void disablePointSprites(){};
 
 	// color options
 	virtual void setColor(int r, int g, int b){}; // 0-255
@@ -261,10 +266,6 @@ public:
 	virtual void clear(float r, float g, float b, float a=0){};
 	virtual void clear(float brightness, float a=0){};
 	virtual void clearAlpha(){};
-
-	// state
-	virtual void setFill(bool fill)=0;
-	virtual void setLineWidth(float lineWidth)=0;
 
 	// drawing
 	virtual void drawLine(float x1, float y1, float z1, float x2, float y2, float z2)=0;
