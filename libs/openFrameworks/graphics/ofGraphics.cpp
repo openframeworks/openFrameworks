@@ -42,11 +42,8 @@
 static bool		bUsingArbTex		= true;
 static bool		bUsingNormalizedTexCoords = false;
 
-
-ofHandednessType coordHandedness;
-
 //style stuff - new in 006
-static ofStyle			currentStyle;
+static ofStyle currentStyle;
 static deque <ofStyle> styleHistory;
 static deque <ofRectangle> viewportHistory;
 
