@@ -66,6 +66,7 @@ class ofStyle{
 			smoothing			= false;
 			circleResolution	= 20;
 			sphereResolution	= 20;
+			curveResolution		= 20;
 			lineWidth			= 1.0;
 			polyMode			= OF_POLY_WINDING_ODD;
 			rectMode			= OF_RECTMODE_CORNER;
@@ -89,5 +90,6 @@ class ofStyle{
 		bool smoothing;
 		int circleResolution;
 		int sphereResolution;
+		int curveResolution;
 		float lineWidth;
 };
