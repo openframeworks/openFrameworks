@@ -8,7 +8,6 @@ class testApp : public ofBaseApp{
 
 	public:
 
-
 		void setup();
 		void update();
 		void draw();
@@ -23,7 +22,10 @@ class testApp : public ofBaseApp{
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
 		
-		void audioRequested 	(float * input, int bufferSize, int nChannels);
+		void audioRequested(float * input, int bufferSize, int nChannels);
+		
+		
+		ofSoundStream soundStream;
 
 		float 	pan;
 		int		sampleRate;
