@@ -39,11 +39,8 @@
 
 //----------------------------------------------------------
 // static
-static float	drawMode			= OF_FILLED;
-static bool			bUsingArbTex		= true;
-static bool			bUsingNormalizedTexCoords = false;
-static ofRectMode	cornerMode			= OF_RECTMODE_CORNER;
-static ofPolyWindingMode		polyMode	= OF_POLY_WINDING_ODD;
+static bool		bUsingArbTex		= true;
+static bool		bUsingNormalizedTexCoords = false;
 
 
 ofHandednessType coordHandedness;
@@ -366,39 +363,35 @@ void ofBackground(int r, int g, int b, int a){
 
 //----------------------------------------------------------
 void  ofSetRectMode(ofRectMode mode){
-	if (mode == OF_RECTMODE_CORNER) 		cornerMode = OF_RECTMODE_CORNER;
-	else if (mode == OF_RECTMODE_CENTER) 	cornerMode = OF_RECTMODE_CENTER;
-
-	currentStyle.rectMode = cornerMode;
+	renderer->setRectMode(mode);
+	currentStyle.rectMode = mode;
 }
 
 //----------------------------------------------------------
 ofRectMode ofGetRectMode(){
-	return 	cornerMode;
+	return 	renderer->getRectMode();
 }
 
 //----------------------------------------------------------
 void ofNoFill(){
-	drawMode = OF_OUTLINE;
 	shape.setFilled(false);
 	shape.setStrokeWidth(currentStyle.lineWidth);
-	renderer->setFill(false);
+	renderer->setFillMode(OF_OUTLINE);
 	currentStyle.bFill = false;
 }
 
 //----------------------------------------------------------
 void ofFill(){
-	drawMode = OF_FILLED;
 	shape.setFilled(true);
 	shape.setStrokeWidth(0);
-	renderer->setFill(true);
+	renderer->setFillMode(OF_FILLED);
 	currentStyle.bFill = true;
 }
 
 // Returns OF_FILLED or OF_OUTLINE
 //----------------------------------------------------------
-int ofGetFill(){
-	return drawMode;
+ofFillFlag ofGetFill(){
+	return renderer->getFillMode();
 }
 
 //----------------------------------------------------------
@@ -525,9 +518,8 @@ void ofDisableSmoothing(){
 
 //----------------------------------------------------------
 void ofSetPolyMode(ofPolyWindingMode mode){
-	polyMode = mode;
 	shape.setPolyWindingMode(mode);
-	currentStyle.polyMode = polyMode;
+	currentStyle.polyMode = mode;
 }
 
 //----------------------------------------
