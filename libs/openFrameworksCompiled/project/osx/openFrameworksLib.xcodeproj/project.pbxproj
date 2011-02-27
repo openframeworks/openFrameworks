@@ -66,6 +66,9 @@
 		E4B5AE2112D94F9B00BA355D /* ofQuickTimeGrabber.h in Headers */ = {isa = PBXBuildFile; fileRef = E4B5AE1712D94F9B00BA355D /* ofQuickTimeGrabber.h */; };
 		E4B5AE2212D94F9B00BA355D /* ofQuickTimePlayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4B5AE1812D94F9B00BA355D /* ofQuickTimePlayer.cpp */; };
 		E4B5AE2312D94F9B00BA355D /* ofQuickTimePlayer.h in Headers */ = {isa = PBXBuildFile; fileRef = E4B5AE1912D94F9B00BA355D /* ofQuickTimePlayer.h */; };
+		E4C5E387131AC1B10050F992 /* ofRtAudioSoundStream.h in Headers */ = {isa = PBXBuildFile; fileRef = E4C5E385131AC1B10050F992 /* ofRtAudioSoundStream.h */; };
+		E4C5E388131AC1B10050F992 /* ofRtAudioSoundStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4C5E386131AC1B10050F992 /* ofRtAudioSoundStream.cpp */; };
+		E4C5E38B131AC1BE0050F992 /* ofBaseSoundStream.h in Headers */ = {isa = PBXBuildFile; fileRef = E4C5E389131AC1BE0050F992 /* ofBaseSoundStream.h */; };
 		E4F3BA6712F4C4BF002D19BB /* of3dUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BA5312F4C4BF002D19BB /* of3dUtils.cpp */; };
 		E4F3BA6812F4C4BF002D19BB /* of3dUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = E4F3BA5412F4C4BF002D19BB /* of3dUtils.h */; };
 		E4F3BA6912F4C4BF002D19BB /* ofCamera.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BA5512F4C4BF002D19BB /* ofCamera.cpp */; };
@@ -88,14 +91,10 @@
 		E4F3BA8912F4C4C9002D19BB /* ofBaseSoundPlayer.h in Headers */ = {isa = PBXBuildFile; fileRef = E4F3BA7D12F4C4C9002D19BB /* ofBaseSoundPlayer.h */; };
 		E4F3BA8A12F4C4C9002D19BB /* ofFmodSoundPlayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BA7E12F4C4C9002D19BB /* ofFmodSoundPlayer.cpp */; };
 		E4F3BA8B12F4C4C9002D19BB /* ofFmodSoundPlayer.h in Headers */ = {isa = PBXBuildFile; fileRef = E4F3BA7F12F4C4C9002D19BB /* ofFmodSoundPlayer.h */; };
-		E4F3BA8C12F4C4C9002D19BB /* ofSoundEffect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BA8012F4C4C9002D19BB /* ofSoundEffect.cpp */; };
-		E4F3BA8D12F4C4C9002D19BB /* ofSoundEffect.h in Headers */ = {isa = PBXBuildFile; fileRef = E4F3BA8112F4C4C9002D19BB /* ofSoundEffect.h */; };
 		E4F3BA8E12F4C4C9002D19BB /* ofSoundPlayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BA8212F4C4C9002D19BB /* ofSoundPlayer.cpp */; };
 		E4F3BA8F12F4C4C9002D19BB /* ofSoundPlayer.h in Headers */ = {isa = PBXBuildFile; fileRef = E4F3BA8312F4C4C9002D19BB /* ofSoundPlayer.h */; };
 		E4F3BA9012F4C4C9002D19BB /* ofSoundStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BA8412F4C4C9002D19BB /* ofSoundStream.cpp */; };
 		E4F3BA9112F4C4C9002D19BB /* ofSoundStream.h in Headers */ = {isa = PBXBuildFile; fileRef = E4F3BA8512F4C4C9002D19BB /* ofSoundStream.h */; };
-		E4F3BA9212F4C4C9002D19BB /* ofSoundUnit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BA8612F4C4C9002D19BB /* ofSoundUnit.cpp */; };
-		E4F3BA9312F4C4C9002D19BB /* ofSoundUnit.h in Headers */ = {isa = PBXBuildFile; fileRef = E4F3BA8712F4C4C9002D19BB /* ofSoundUnit.h */; };
 		E4F3BAC112F4C72F002D19BB /* ofMath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BAB312F4C72E002D19BB /* ofMath.cpp */; };
 		E4F3BAC212F4C72F002D19BB /* ofMath.h in Headers */ = {isa = PBXBuildFile; fileRef = E4F3BAB412F4C72E002D19BB /* ofMath.h */; };
 		E4F3BAC312F4C72F002D19BB /* ofMatrix3x3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BAB512F4C72E002D19BB /* ofMatrix3x3.cpp */; };
@@ -278,6 +277,9 @@
 		E4B5AE1712D94F9B00BA355D /* ofQuickTimeGrabber.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofQuickTimeGrabber.h; path = ../../../openFrameworks/video/ofQuickTimeGrabber.h; sourceTree = SOURCE_ROOT; };
 		E4B5AE1812D94F9B00BA355D /* ofQuickTimePlayer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofQuickTimePlayer.cpp; path = ../../../openFrameworks/video/ofQuickTimePlayer.cpp; sourceTree = SOURCE_ROOT; };
 		E4B5AE1912D94F9B00BA355D /* ofQuickTimePlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofQuickTimePlayer.h; path = ../../../openFrameworks/video/ofQuickTimePlayer.h; sourceTree = SOURCE_ROOT; };
+		E4C5E385131AC1B10050F992 /* ofRtAudioSoundStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofRtAudioSoundStream.h; sourceTree = "<group>"; };
+		E4C5E386131AC1B10050F992 /* ofRtAudioSoundStream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofRtAudioSoundStream.cpp; sourceTree = "<group>"; };
+		E4C5E389131AC1BE0050F992 /* ofBaseSoundStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofBaseSoundStream.h; sourceTree = "<group>"; };
 		E4F3BA5312F4C4BF002D19BB /* of3dUtils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = of3dUtils.cpp; path = ../../../openFrameworks/3d/of3dUtils.cpp; sourceTree = SOURCE_ROOT; };
 		E4F3BA5412F4C4BF002D19BB /* of3dUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = of3dUtils.h; path = ../../../openFrameworks/3d/of3dUtils.h; sourceTree = SOURCE_ROOT; };
 		E4F3BA5512F4C4BF002D19BB /* ofCamera.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofCamera.cpp; path = ../../../openFrameworks/3d/ofCamera.cpp; sourceTree = SOURCE_ROOT; };
@@ -300,14 +302,10 @@
 		E4F3BA7D12F4C4C9002D19BB /* ofBaseSoundPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofBaseSoundPlayer.h; path = ../../../openFrameworks/sound/ofBaseSoundPlayer.h; sourceTree = SOURCE_ROOT; };
 		E4F3BA7E12F4C4C9002D19BB /* ofFmodSoundPlayer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofFmodSoundPlayer.cpp; path = ../../../openFrameworks/sound/ofFmodSoundPlayer.cpp; sourceTree = SOURCE_ROOT; };
 		E4F3BA7F12F4C4C9002D19BB /* ofFmodSoundPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofFmodSoundPlayer.h; path = ../../../openFrameworks/sound/ofFmodSoundPlayer.h; sourceTree = SOURCE_ROOT; };
-		E4F3BA8012F4C4C9002D19BB /* ofSoundEffect.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofSoundEffect.cpp; path = ../../../openFrameworks/sound/ofSoundEffect.cpp; sourceTree = SOURCE_ROOT; };
-		E4F3BA8112F4C4C9002D19BB /* ofSoundEffect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofSoundEffect.h; path = ../../../openFrameworks/sound/ofSoundEffect.h; sourceTree = SOURCE_ROOT; };
 		E4F3BA8212F4C4C9002D19BB /* ofSoundPlayer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofSoundPlayer.cpp; path = ../../../openFrameworks/sound/ofSoundPlayer.cpp; sourceTree = SOURCE_ROOT; };
 		E4F3BA8312F4C4C9002D19BB /* ofSoundPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofSoundPlayer.h; path = ../../../openFrameworks/sound/ofSoundPlayer.h; sourceTree = SOURCE_ROOT; };
 		E4F3BA8412F4C4C9002D19BB /* ofSoundStream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofSoundStream.cpp; path = ../../../openFrameworks/sound/ofSoundStream.cpp; sourceTree = SOURCE_ROOT; };
 		E4F3BA8512F4C4C9002D19BB /* ofSoundStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofSoundStream.h; path = ../../../openFrameworks/sound/ofSoundStream.h; sourceTree = SOURCE_ROOT; };
-		E4F3BA8612F4C4C9002D19BB /* ofSoundUnit.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofSoundUnit.cpp; path = ../../../openFrameworks/sound/ofSoundUnit.cpp; sourceTree = SOURCE_ROOT; };
-		E4F3BA8712F4C4C9002D19BB /* ofSoundUnit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofSoundUnit.h; path = ../../../openFrameworks/sound/ofSoundUnit.h; sourceTree = SOURCE_ROOT; };
 		E4F3BAB312F4C72E002D19BB /* ofMath.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofMath.cpp; path = ../../../openFrameworks/math/ofMath.cpp; sourceTree = SOURCE_ROOT; };
 		E4F3BAB412F4C72E002D19BB /* ofMath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofMath.h; path = ../../../openFrameworks/math/ofMath.h; sourceTree = SOURCE_ROOT; };
 		E4F3BAB512F4C72E002D19BB /* ofMatrix3x3.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofMatrix3x3.cpp; path = ../../../openFrameworks/math/ofMatrix3x3.cpp; sourceTree = SOURCE_ROOT; };
@@ -753,14 +751,13 @@
 				E4F3BA7D12F4C4C9002D19BB /* ofBaseSoundPlayer.h */,
 				E4F3BA7E12F4C4C9002D19BB /* ofFmodSoundPlayer.cpp */,
 				E4F3BA7F12F4C4C9002D19BB /* ofFmodSoundPlayer.h */,
-				E4F3BA8012F4C4C9002D19BB /* ofSoundEffect.cpp */,
-				E4F3BA8112F4C4C9002D19BB /* ofSoundEffect.h */,
 				E4F3BA8212F4C4C9002D19BB /* ofSoundPlayer.cpp */,
 				E4F3BA8312F4C4C9002D19BB /* ofSoundPlayer.h */,
+				E4C5E386131AC1B10050F992 /* ofRtAudioSoundStream.cpp */,
+				E4C5E385131AC1B10050F992 /* ofRtAudioSoundStream.h */,
+				E4C5E389131AC1BE0050F992 /* ofBaseSoundStream.h */,
 				E4F3BA8412F4C4C9002D19BB /* ofSoundStream.cpp */,
 				E4F3BA8512F4C4C9002D19BB /* ofSoundStream.h */,
-				E4F3BA8612F4C4C9002D19BB /* ofSoundUnit.cpp */,
-				E4F3BA8712F4C4C9002D19BB /* ofSoundUnit.h */,
 			);
 			name = sound;
 			path = ../../../openFrameworks/sound;
@@ -954,10 +951,8 @@
 				E4F3BA7A12F4C4BF002D19BB /* ofPrimitive.h in Headers */,
 				E4F3BA8912F4C4C9002D19BB /* ofBaseSoundPlayer.h in Headers */,
 				E4F3BA8B12F4C4C9002D19BB /* ofFmodSoundPlayer.h in Headers */,
-				E4F3BA8D12F4C4C9002D19BB /* ofSoundEffect.h in Headers */,
 				E4F3BA8F12F4C4C9002D19BB /* ofSoundPlayer.h in Headers */,
 				E4F3BA9112F4C4C9002D19BB /* ofSoundStream.h in Headers */,
-				E4F3BA9312F4C4C9002D19BB /* ofSoundUnit.h in Headers */,
 				E4F3BAC212F4C72F002D19BB /* ofMath.h in Headers */,
 				E4F3BAC412F4C72F002D19BB /* ofMatrix3x3.h in Headers */,
 				E4F3BAC612F4C72F002D19BB /* ofMatrix4x4.h in Headers */,
@@ -1049,6 +1044,8 @@
 				53EEF15F1307BD5A0027C199 /* ofMeshNode.h in Headers */,
 				E470211C1309929100A89B9F /* ofDirectoryLister.h in Headers */,
 				5494E54A1309C12E001E60FC /* ofMaterial.h in Headers */,
+				E4C5E387131AC1B10050F992 /* ofRtAudioSoundStream.h in Headers */,
+				E4C5E38B131AC1BE0050F992 /* ofBaseSoundStream.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1079,6 +1076,7 @@
 			isa = PBXProject;
 			buildConfigurationList = E4B69B4D0A3A1720003C02F2 /* Build configuration list for PBXProject "openFrameworksLib" */;
 			compatibilityVersion = "Xcode 2.4";
+			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				English,
@@ -1123,10 +1121,8 @@
 				E4F3BA7912F4C4BF002D19BB /* ofPrimitive.cpp in Sources */,
 				E4F3BA8812F4C4C9002D19BB /* ofBaseSoundPlayer.cpp in Sources */,
 				E4F3BA8A12F4C4C9002D19BB /* ofFmodSoundPlayer.cpp in Sources */,
-				E4F3BA8C12F4C4C9002D19BB /* ofSoundEffect.cpp in Sources */,
 				E4F3BA8E12F4C4C9002D19BB /* ofSoundPlayer.cpp in Sources */,
 				E4F3BA9012F4C4C9002D19BB /* ofSoundStream.cpp in Sources */,
-				E4F3BA9212F4C4C9002D19BB /* ofSoundUnit.cpp in Sources */,
 				E4F3BAC112F4C72F002D19BB /* ofMath.cpp in Sources */,
 				E4F3BAC312F4C72F002D19BB /* ofMatrix3x3.cpp in Sources */,
 				E4F3BAC512F4C72F002D19BB /* ofMatrix4x4.cpp in Sources */,
@@ -1164,6 +1160,7 @@
 				53EEF1601307BD5A0027C199 /* ofMeshNode.cpp in Sources */,
 				E470211B1309929000A89B9F /* ofDirectoryLister.cpp in Sources */,
 				5494E54B1309C12E001E60FC /* ofMaterial.cpp in Sources */,
+				E4C5E388131AC1B10050F992 /* ofRtAudioSoundStream.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
