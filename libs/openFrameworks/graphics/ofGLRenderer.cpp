@@ -618,14 +618,14 @@ void ofGLRenderer::drawLine(float x1, float y1, float z1, float x2, float y2, fl
 	linePoints[1].set(x2,y2,z2);
 
 	// use smoothness, if requested:
-	if (bSmoothHinted && bFilled == OF_OUTLINE) startSmoothing();
+	if (bSmoothHinted) startSmoothing();
 
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glVertexPointer(3, GL_FLOAT, sizeof(ofVec3f), &linePoints[0].x);
 	glDrawArrays(GL_LINES, 0, 2);
 
 	// use smoothness, if requested:
-	if (bSmoothHinted && bFilled == OF_OUTLINE) endSmoothing();
+	if (bSmoothHinted) endSmoothing();
 
 }
 
