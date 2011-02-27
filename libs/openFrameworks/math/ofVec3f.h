@@ -51,7 +51,6 @@ public:
 	
     // Operator overloading for ofVec3f
     //
-    void 	  operator=( const ofVec3f& vec );
     ofVec3f  operator+( const ofVec3f& pnt ) const;
     ofVec3f& operator+=( const ofVec3f& pnt );
     ofVec3f  operator-( const ofVec3f& vec ) const;
@@ -312,12 +311,6 @@ inline istream& operator>>(istream& is, ofVec3f& vec) {
 	is.ignore(2);
 	is >> vec.z;
 	return is;
-}
-
-inline void ofVec3f::operator=( const ofVec3f& vec ){
-	x = vec.x;
-	y = vec.y;
-	z = vec.z;
 }
 
 inline ofVec3f ofVec3f::operator+( const ofVec3f& pnt ) const {
