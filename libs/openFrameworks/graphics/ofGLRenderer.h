@@ -57,8 +57,11 @@ public:
 	void setupScreen();
 
 	// drawing modes
-	void setFill(bool fill);
+	void setFillMode(ofFillFlag fill);
+	ofFillFlag getFillMode();
 	void setCircleResolution(int res);
+	void setRectMode(ofRectMode mode);
+	ofRectMode getRectMode();
 	void setLineWidth(float lineWidth);
 	void setLineSmoothing(bool smooth);
 	void setBlendMode(ofBlendMode blendMode);
@@ -112,6 +115,8 @@ private:
 	vector<ofPoint> circlePoints;
 	ofPolyline circlePolyline;
 
-	bool bFilled;
+	ofFillFlag bFilled;
 	bool bSmoothHinted;
+	ofRectMode rectMode;
+
 };

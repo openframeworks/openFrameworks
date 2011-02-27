@@ -238,8 +238,11 @@ public:
 
 	// drawing modes
 	virtual void setCircleResolution(int res)=0;
+	virtual void setRectMode(ofRectMode mode)=0;
+	virtual ofRectMode getRectMode()=0;
 	virtual void setLineSmoothing(bool smooth)=0;
-	virtual void setFill(bool fill)=0;
+	virtual void setFillMode(ofFillFlag fill)=0;
+	virtual ofFillFlag getFillMode()=0;
 	virtual void setLineWidth(float lineWidth)=0;
 	virtual void setBlendMode(ofBlendMode blendMode)=0;
 	virtual void enablePointSprites(){};

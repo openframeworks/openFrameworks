@@ -97,7 +97,7 @@ void ofSetSphereResolution(int res);
 // drawing options
 void ofNoFill();
 void ofFill();
-int ofGetFill();
+ofFillFlag ofGetFill();
 
 void ofSetLineWidth(float lineWidth);
 

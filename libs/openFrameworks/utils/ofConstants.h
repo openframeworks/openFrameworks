@@ -294,8 +294,8 @@ using namespace std;
 #endif
 
 enum ofFillFlag{
-	OF_FILLED = 0x01,
-	OF_OUTLINE=	0x02
+	OF_OUTLINE=	0,
+	OF_FILLED = 1,
 };
 
 enum ofWindowMode{
