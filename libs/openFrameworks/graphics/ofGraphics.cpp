@@ -1,6 +1,5 @@
 #include "ofGraphics.h"
 #include "ofAppRunner.h"
-#include "ofBitmapFont.h"
 #include "ofUtils.h"
 #include "ofBaseTypes.h"
 #include "ofGLRenderer.h"
@@ -225,11 +224,6 @@ ofHandednessType ofGetCoordHandedness() {
 //----------------------------------------------------------
 void ofSetupScreenPerspective(float width, float height, int orientation, bool vFlip, float fov, float nearDist, float farDist) {
 	renderer->setupScreenPerspective(width,height, orientation, vFlip,fov,nearDist,farDist);
-}
-
-//----------------------------------------
-void ofSetDrawBitmapMode(ofDrawBitmapMode mode) {
-	currentStyle.drawBitmapMode = mode;
 }
 
 //----------------------------------------------------------
@@ -529,12 +523,16 @@ void ofDisableSmoothing(){
 	currentStyle.smoothing = 0;
 }
 
-
 //----------------------------------------------------------
 void ofSetPolyMode(ofPolyWindingMode mode){
 	polyMode = mode;
 	shape.setPolyWindingMode(mode);
 	currentStyle.polyMode = polyMode;
+}
+
+//----------------------------------------
+void ofSetDrawBitmapMode(ofDrawBitmapMode mode) {
+	currentStyle.drawBitmapMode = mode;
 }
 
 //----------------------------------------------------------
@@ -963,176 +961,7 @@ void ofDrawBitmapString(string textString, float x, float y){
 }
 //--------------------------------------------------
 void ofDrawBitmapString(string textString, float x, float y, float z){
-	
-	// this is copied from the ofTrueTypeFont
-	//GLboolean blend_enabled = glIsEnabled(GL_BLEND); //TODO: this is not used?
-	GLint blend_src, blend_dst;
-	glGetIntegerv( GL_BLEND_SRC, &blend_src );
-	glGetIntegerv( GL_BLEND_DST, &blend_dst );
-	
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	
-	
-	int len = (int)textString.length();
-	//float yOffset = 0;
-	float fontSize = 8.0f;
-	bool bOrigin = false;
-	
-	float sx = 0;
-	float sy = -fontSize;
-
-
-	///////////////////////////
-	// APPLY TRANSFORM / VIEW
-	///////////////////////////
-	//
-
-	bool hasModelView = false;
-	bool hasProjection = false;
-	bool hasViewport = false;
-
-	ofRectangle rViewport;
-
-	switch (currentStyle.drawBitmapMode) {
-
-		case OF_BITMAPMODE_SIMPLE:
-
-			sx += x;
-			sy += y;
-			break;
-
-		case OF_BITMAPMODE_SCREEN:
-
-			hasViewport = true;
-			ofPushView();
-
-			rViewport = ofGetWindowRect();
-			ofViewport(rViewport);
-
-			glMatrixMode(GL_PROJECTION);
-			glLoadIdentity();
-			glMatrixMode(GL_MODELVIEW);
-			glLoadIdentity();
-
-			glTranslatef(-1, 1, 0);
-			glScalef(2/rViewport.width, -2/rViewport.height, 1);
-
-			ofTranslate(x, y, 0);
-			break;
-
-		case OF_BITMAPMODE_VIEWPORT:
-
-			rViewport = ofGetCurrentViewport();
-
-			hasProjection = true;
-			glMatrixMode(GL_PROJECTION);
-			glPushMatrix();
-			glLoadIdentity();
-
-			hasModelView = true;
-			glMatrixMode(GL_MODELVIEW);
-			glPushMatrix();
-			glLoadIdentity();
-
-			glTranslatef(-1, 1, 0);
-			glScalef(2/rViewport.width, -2/rViewport.height, 1);
-
-			ofTranslate(x, y, 0);
-			break;
-
-		case OF_BITMAPMODE_MODEL:
-
-			hasModelView = true;
-			glMatrixMode(GL_MODELVIEW);
-			glPushMatrix();
-
-			ofTranslate(x, y, z);
-			ofScale(1, -1, 0);
-			break;
-
-		case OF_BITMAPMODE_MODEL_BILLBOARD:
-			//our aim here is to draw to screen
-			//at the viewport position related
-			//to the world position x,y,z
-			
-			// ***************
-			// this will not compile for opengl ES
-			// ***************
-#ifndef TARGET_OPENGLES
-			//gluProject method
-			GLdouble modelview[16], projection[16];
-			GLint view[4];
-			double dScreenX, dScreenY, dScreenZ;
-			glGetDoublev(GL_MODELVIEW_MATRIX, modelview);
-			glGetDoublev(GL_PROJECTION_MATRIX, projection);
-			glGetIntegerv(GL_VIEWPORT, view);
-			view[0] = 0; view[1] = 0; //we're already drawing within viewport
-			gluProject(x, y, z, modelview, projection, view, &dScreenX, &dScreenY, &dScreenZ);
-
-			rViewport = ofGetCurrentViewport();
-
-			hasProjection = true;
-			glMatrixMode(GL_PROJECTION);
-			glPushMatrix();
-			glLoadIdentity();
-
-			hasModelView = true;
-			glMatrixMode(GL_MODELVIEW);
-			glPushMatrix();
-			glLoadIdentity();
-
-			glTranslatef(-1, -1, 0);
-			glScalef(2/rViewport.width, 2/rViewport.height, 1);
-			
-			glTranslatef(dScreenX, dScreenY, 0);
-			glScalef(1, -1, 1);
-#endif
-			break;
-
-		default:
-			break;
-	}
-	//
-	///////////////////////////
-
-	
-	// (c) enable texture once before we start drawing each char (no point turning it on and off constantly)
-	//We do this because its way faster
-	ofDrawBitmapCharacterStart();
-	
-	for(int c = 0; c < len; c++){
-		if(textString[c] == '\n'){
-			
-			sy += bOrigin ? -1 : 1 * (fontSize*1.7);
-			sx = x;
-			
-			//glRasterPos2f(x,y + (int)yOffset);
-		} else if (textString[c] >= 32){
-			// < 32 = control characters - don't draw
-			// solves a bug with control characters
-			// getting drawn when they ought to not be
-			ofDrawBitmapCharacter(textString[c], (int)sx, (int)sy);
-			
-			sx += fontSize;
-		}
-	}
-	//We do this because its way faster
-	ofDrawBitmapCharacterEnd();
-
-
-	if (hasModelView)
-		glPopMatrix();
-
-	if (hasProjection)
-	{
-		glMatrixMode(GL_PROJECTION);
-		glPopMatrix();
-		glMatrixMode(GL_MODELVIEW);
-	}
-
-	if (hasViewport)
-		ofPopView();
+	renderer->drawString(textString,x,y,z,currentStyle.drawBitmapMode);
 }
 
 
