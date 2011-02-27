@@ -311,10 +311,6 @@ void ofGLRenderer::setupGraphicDefaults(){
 	glDisableClientState(GL_NORMAL_ARRAY);
 	glDisableClientState(GL_COLOR_ARRAY);
 	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-
-	ofDisableSmoothing();
-	ofEnableAlphaBlending();
-	background(200, 200, 200);
 }
 
 //----------------------------------------------------------
@@ -516,6 +512,88 @@ void ofGLRenderer::endSmoothing(){
 	#ifndef TARGET_OPENGLES
 		glPopAttrib();
 	#endif
+}
+
+//----------------------------------------------------------
+void ofGLRenderer::setBlendMode(ofBlendMode blendMode){
+	switch (blendMode){
+
+		case OF_BLENDMODE_ALPHA:{
+			glEnable(GL_BLEND);
+			#ifndef TARGET_OPENGLES
+				glBlendEquation(GL_FUNC_ADD);
+			#endif
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+			break;
+		}
+
+		case OF_BLENDMODE_ADD:{
+			glEnable(GL_BLEND);
+			#ifndef TARGET_OPENGLES
+				glBlendEquation(GL_FUNC_ADD);
+			#endif
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+			break;
+		}
+
+		case OF_BLENDMODE_MULTIPLY:{
+			glEnable(GL_BLEND);
+			#ifndef TARGET_OPENGLES
+				glBlendEquation(GL_FUNC_ADD);
+			#endif
+			glBlendFunc(GL_DST_COLOR, GL_ONE_MINUS_SRC_ALPHA /* GL_ZERO or GL_ONE_MINUS_SRC_ALPHA */);
+			break;
+		}
+
+		case OF_BLENDMODE_SCREEN:{
+			glEnable(GL_BLEND);
+			#ifndef TARGET_OPENGLES
+				glBlendEquation(GL_FUNC_ADD);
+			#endif
+			glBlendFunc(GL_ONE_MINUS_DST_COLOR, GL_ONE);
+			break;
+		}
+
+		case OF_BLENDMODE_SUBTRACT:{
+			glEnable(GL_BLEND);
+		#ifndef TARGET_OPENGLES
+			glBlendEquation(GL_FUNC_REVERSE_SUBTRACT);
+		#else
+			ofLog(OF_LOG_WARNING, "OF_BLENDMODE_SUBTRACT not currently supported on OpenGL/ES");
+		#endif
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+			break;
+		}
+
+
+		default:
+			break;
+	}
+}
+
+//----------------------------------------------------------
+void ofGLRenderer::enablePointSprites(){
+#ifdef TARGET_OPENGLES
+	glEnable(GL_POINT_SPRITE_OES);
+	glTexEnvi(GL_POINT_SPRITE_OES, GL_COORD_REPLACE_OES, GL_TRUE);
+	// does look like this needs to be enabled in ES because
+	// it is always eneabled...
+	//glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
+
+#else
+	glEnable(GL_POINT_SPRITE);
+	glTexEnvi(GL_POINT_SPRITE, GL_COORD_REPLACE, GL_TRUE);
+	glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
+#endif
+}
+
+//----------------------------------------------------------
+void ofGLRenderer::disablePointSprites(){
+#ifdef TARGET_OPENGLES
+	glDisable(GL_POINT_SPRITE_OES);
+#else
+	glDisable(GL_POINT_SPRITE);
+#endif
 }
 
 //----------------------------------------------------------

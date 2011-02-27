@@ -62,15 +62,14 @@ void ofSetDefaultRenderer(ofBaseRenderer * renderer_){
 	if(renderer) delete renderer;
 	renderer = renderer_;
 	renderer->setupGraphicDefaults();
-	renderer->setFill(ofGetStyle().bFill);
+
 	if(renderer->rendersPathPrimitives()){
 		shape.setMode(ofShape::PATHS);
 	}else{
 		shape.setMode(ofShape::POLYLINES);
 	}
-	shape.setFilled(currentStyle.bFill);
-	shape.setStrokeWidth(currentStyle.bFill?0:currentStyle.lineWidth);
-	shape.setPolyWindingMode(currentStyle.polyMode);
+
+	ofSetStyle(currentStyle);
 }
 
 ofBaseRenderer * ofGetDefaultRenderer(){
@@ -242,6 +241,7 @@ void ofSetupScreenOrtho(float width, float height, bool vFlip, float nearDist, f
 //Resets openGL parameters back to OF defaults
 void ofSetupGraphicDefaults(){
 	renderer->setupGraphicDefaults();
+	ofSetStyle(ofStyle());
 }
 
 //----------------------------------------------------------
@@ -484,121 +484,25 @@ void ofSetHexColor(int hexColor){
 //----------------------------------------------------------
 
 void ofEnableBlendMode(ofBlendMode blendMode){
-    switch (blendMode){
-
-        case OF_BLENDMODE_ALPHA:{
-            glEnable(GL_BLEND);
-			#ifndef TARGET_OPENGLES
-				glBlendEquation(GL_FUNC_ADD);
-			#endif
-			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-            currentStyle.blending = 1;
-            currentStyle.blendSrc = GL_SRC_ALPHA;
-            currentStyle.blendDst = GL_ONE_MINUS_SRC_ALPHA;
-			#ifndef TARGET_OPENGLES
-				currentStyle.blendEquation = GL_FUNC_ADD;
-			#endif
-            break;
-        }
-
-        case OF_BLENDMODE_ADD:{
-            glEnable(GL_BLEND);
-			#ifndef TARGET_OPENGLES
-				glBlendEquation(GL_FUNC_ADD);
-			#endif
-			glBlendFunc(GL_SRC_ALPHA, GL_ONE);
-            currentStyle.blending = 1;
-            currentStyle.blendSrc = GL_SRC_ALPHA;
-            currentStyle.blendDst = GL_ONE;
-			#ifndef TARGET_OPENGLES
-				currentStyle.blendEquation = GL_FUNC_ADD;
-			#endif
-			break;
-        }
-
-        case OF_BLENDMODE_MULTIPLY:{
-            glEnable(GL_BLEND);
-			#ifndef TARGET_OPENGLES
-				glBlendEquation(GL_FUNC_ADD);
-			#endif
-			glBlendFunc(GL_DST_COLOR, GL_ONE_MINUS_SRC_ALPHA /* GL_ZERO or GL_ONE_MINUS_SRC_ALPHA */);
-            currentStyle.blending = 1;
-            currentStyle.blendSrc = GL_DST_COLOR;
-            currentStyle.blendDst = GL_ONE_MINUS_SRC_ALPHA;
-			#ifndef TARGET_OPENGLES
-				currentStyle.blendEquation = GL_FUNC_ADD;
-			#endif
-			break;
-        }
-
-        case OF_BLENDMODE_SCREEN:{
-            glEnable(GL_BLEND);
-			#ifndef TARGET_OPENGLES
-				glBlendEquation(GL_FUNC_ADD);
-			#endif
-            glBlendFunc(GL_ONE_MINUS_DST_COLOR, GL_ONE);
-            currentStyle.blending = 1;
-            currentStyle.blendSrc = GL_ONE_MINUS_DST_COLOR;
-            currentStyle.blendDst = GL_ONE;
-			#ifndef TARGET_OPENGLES
-				currentStyle.blendEquation = GL_FUNC_ADD;
-			#endif
-			break;
-        }
-
-        case OF_BLENDMODE_SUBTRACT:{
-            glEnable(GL_BLEND);
-		#ifndef TARGET_OPENGLES
-            glBlendEquation(GL_FUNC_REVERSE_SUBTRACT);
-		#else
-			ofLog(OF_LOG_WARNING, "OF_BLENDMODE_SUBTRACT not currently supported on iPhone");
-		#endif
-            glBlendFunc(GL_SRC_ALPHA, GL_ONE);
-            currentStyle.blending = 1;
-            currentStyle.blendSrc = GL_SRC_ALPHA;
-            currentStyle.blendDst = GL_ONE;
-			#ifndef TARGET_OPENGLES
-				currentStyle.blendEquation = GL_FUNC_ADD;
-			#endif
-			break;
-        }
-
-
-        default:
-            break;
-    }
+	currentStyle.blendingMode = blendMode;
+	renderer->setBlendMode(blendMode);
 }
 
 //----------------------------------------------------------
 void ofEnablePointSprites() {
-#ifdef TARGET_OPENGLES
-	glEnable(GL_POINT_SPRITE_OES);
-	glTexEnvi(GL_POINT_SPRITE_OES, GL_COORD_REPLACE_OES, GL_TRUE);
-	// does look like this needs to be enabled in ES because
-	// it is always eneabled...
-	//glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
-	
-#else
-	glEnable(GL_POINT_SPRITE);
-	glTexEnvi(GL_POINT_SPRITE, GL_COORD_REPLACE, GL_TRUE);
-	glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);	
-#endif
+	renderer->enablePointSprites();
 }
 
 //----------------------------------------------------------
 void ofDisablePointSprites() {
-#ifdef TARGET_OPENGLES
-	glDisable(GL_POINT_SPRITE_OES);
-#else
-	glDisable(GL_POINT_SPRITE);
-#endif
+	renderer->disablePointSprites();
 }
 
 //----------------------------------------------------------
 void ofDisableBlendMode()
 {
     glDisable(GL_BLEND);
-	currentStyle.blending = 0;
+	currentStyle.blendingMode = OF_BLENDMODE_DISABLED;
 }
 
 //----------------------------------------------------------
@@ -638,6 +542,9 @@ void ofSetStyle(ofStyle style){
 	//color
 	ofSetColor((int)style.color.r, (int)style.color.g, (int)style.color.b, (int)style.color.a);
 
+	//bg color
+	ofBackground(style.bgColor);
+
 	//circle resolution - don't worry it only recalculates the display list if the res has changed
 	ofSetCircleResolution(style.circleResolution);
 
@@ -669,11 +576,7 @@ void ofSetStyle(ofStyle style){
 	}
 
 	//blending
-	if(style.blending ){
-		ofEnableAlphaBlending();
-	}else{
-		ofDisableAlphaBlending();
-	}
+	ofEnableBlendMode(currentStyle.blendingMode);
 	
 	//bitmap draw mode
 	ofSetDrawBitmapMode(style.drawBitmapMode);
@@ -1229,7 +1132,8 @@ void ofDrawBitmapString(string textString, float x, float y, float z){
 	}
 
 	if (hasViewport)
-		ofPopView();}
+		ofPopView();
+}
 
 
 // end text

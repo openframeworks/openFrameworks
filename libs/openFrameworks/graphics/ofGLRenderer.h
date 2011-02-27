@@ -57,7 +57,13 @@ public:
 	void setupScreen();
 
 	// drawing modes
+	void setFill(bool fill);
 	void setCircleResolution(int res);
+	void setLineWidth(float lineWidth);
+	void setLineSmoothing(bool smooth);
+	void setBlendMode(ofBlendMode blendMode);
+	void enablePointSprites();
+	void disablePointSprites();
 
 	// color options
 	void setColor(int r, int g, int b); // 0-255
@@ -80,11 +86,6 @@ public:
 	void clear(float r, float g, float b, float a=0);
 	void clear(float brightness, float a=0);
 	void clearAlpha();
-
-	// state
-	void setFill(bool fill);
-	void setLineWidth(float lineWidth);
-	void setLineSmoothing(bool smooth);
 
 
 	// drawing

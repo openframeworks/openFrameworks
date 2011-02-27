@@ -330,6 +330,7 @@ enum ofPixelFormat{
 
 // Blend Modes
 enum ofBlendMode{
+	OF_BLENDMODE_DISABLED = 0,
 	OF_BLENDMODE_ALPHA 	  = 1,
 	OF_BLENDMODE_ADD 	  = 2,
 	OF_BLENDMODE_SUBTRACT = 3,
