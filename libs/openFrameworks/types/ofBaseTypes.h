@@ -273,6 +273,7 @@ public:
 	virtual void drawTriangle(float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3)=0;
 	virtual void drawCircle(float x, float y, float z, float radius)=0;
 	virtual void drawEllipse(float x, float y, float z, float width, float height)=0;
+	virtual void drawString(string text, float x, float y, float z, ofDrawBitmapMode mode)=0;
 
 
 	// returns true if the renderer can render curves without decomposing them
