@@ -28,6 +28,8 @@ class testApp : public ofBaseApp{
 		float * right;
 		int 	bufferCounter;
 		int 	drawCounter;
+		
+		ofSoundStream soundStream;
 };
 
 #endif	

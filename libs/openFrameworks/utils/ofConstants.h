@@ -346,6 +346,12 @@ enum ofOrientation{
 	OF_ORIENTATION_90_LEFT = 4,
 };
 
+enum ofSoundStreamMode{
+	OF_SOUND_STREAM_OUTPUT = 0,
+	OF_SOUND_STREAM_INPUT
+};
+
+
 // these are straight out of glu, but renamed and included here
 // for convenience
 //

@@ -91,6 +91,15 @@ public:
 };
 
 //----------------------------------------------------------
+// ofBaseHasSoundStream
+//----------------------------------------------------------
+class ofBaseHasSoundStream{
+	public:
+		virtual void audioReceived( float * input, int bufferSize, int nChannels ){}
+		virtual void audioRequested( float * output, int bufferSize, int nChannels ){}
+};
+
+//----------------------------------------------------------
 // ofBaseVideo
 //----------------------------------------------------------
 class ofBaseVideo: public ofBaseHasPixels, public ofBaseUpdates{

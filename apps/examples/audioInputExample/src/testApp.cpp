@@ -7,17 +7,21 @@ void testApp::setup(){
 	
 	// 0 output channels, 
 	// 2 input channels
-	// 22050 samples per second
+	// 44100 samples per second
 	// 256 samples per buffer
 	// 4 num buffers (latency)
 	
-	ofSoundStreamSetup(0,2,this, 44100, 256, 4);	
+	soundStream.listDevices();
+	
+	//if you want to set a different device id 
+	//soundStream.setDeviceID(0); //bear in mind the device id corresponds to all audio devices, including  input-only and output-only devices.
+	
+	soundStream.setup(OF_SOUND_STREAM_INPUT, this, 2, 44100, 256, 4);	
 	left = new float[256];
 	right = new float[256];
 	
-	
-	bufferCounter = 0;
-	drawCounter = 0;
+	bufferCounter	= 0;
+	drawCounter		= 0;
 
 }
 
@@ -46,13 +50,16 @@ void testApp::draw(){
 		ofLine(600+i,200,600+i,200+right[i]*100.0f);
 	}
 	
-    
 
 	ofSetHexColor(0x333333);
 	drawCounter++;
 	char reportString[255];
 	sprintf(reportString, "buffers received: %i\ndraw routines called: %i\n", bufferCounter,drawCounter);
 	ofDrawBitmapString(reportString,80,380);
+	
+	ofDrawBitmapString("press 's' to unpause the audio 'e' to pause the audio", 80, 450);
+	ofDrawBitmapString("ticks: " + ofToString(soundStream.getTickCount()), 80, 480);
+	
 }
 
 //--------------------------------------------------------------
@@ -68,7 +75,13 @@ void testApp::audioReceived(float * input, int bufferSize, int nChannels){
 
 //--------------------------------------------------------------
 void testApp::keyPressed  (int key){ 
+	if( key == 's' ){
+		soundStream.start();
+	}
 	
+	if( key == 'e' ){
+		soundStream.stop();
+	}
 }
 
 //--------------------------------------------------------------
