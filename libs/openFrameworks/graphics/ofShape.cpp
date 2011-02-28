@@ -79,7 +79,7 @@ ofShape::ofShape(){
 	mode = PATHS;
 	bNeedsTessellation = false;
 	hasChanged = false;
-	bUseShapeColor = false;
+	bUseShapeColor = true;
 	clear();
 }
 

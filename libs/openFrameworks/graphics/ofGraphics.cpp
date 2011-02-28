@@ -62,6 +62,8 @@ void ofSetDefaultRenderer(ofBaseRenderer * renderer_){
 		shape.setMode(ofShape::POLYLINES);
 	}
 
+	shape.setUseShapeColor(false);
+
 	ofSetStyle(currentStyle);
 }
 
