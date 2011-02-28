@@ -126,7 +126,7 @@ ifeq ($(ARCH),android)
 	LIBS += -lstdc++ -lsupc++ -lGLU -lgcc -lz -lGLESv1_CM -llog -ldl -lm -lc 
 else
 	LDFLAGS = $(LIB_PATHS_FLAGS) -Wl,-rpath=./libs
-	LIBS += $(shell pkg-config  glew gstreamer-0.10 gstreamer-video-0.10 gstreamer-base-0.10 libudev --libs)
+	LIBS += $(shell pkg-config  glew gstreamer-0.10 gstreamer-video-0.10 gstreamer-base-0.10 gstreamer-app-0.10 libudev --libs)
 	LIBS += -lglut -lGL -lGLU -lasound
 endif
 
