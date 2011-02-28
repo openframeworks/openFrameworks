@@ -341,7 +341,36 @@ void ofCairoRenderer::setLineWidth(float lineWidth){
 
 //--------------------------------------------
 void ofCairoRenderer::setBlendMode(ofBlendMode blendMode){
+	switch (blendMode){
+		case OF_BLENDMODE_ALPHA:{
+			cairo_set_operator(cr,CAIRO_OPERATOR_OVER);
+			break;
+		}
 
+		case OF_BLENDMODE_ADD:{
+			cairo_set_operator(cr,CAIRO_OPERATOR_ADD);
+			break;
+		}
+
+		case OF_BLENDMODE_MULTIPLY:{
+			cairo_set_operator(cr,CAIRO_OPERATOR_MULTIPLY);
+			break;
+		}
+
+		case OF_BLENDMODE_SCREEN:{
+			cairo_set_operator(cr,CAIRO_OPERATOR_SCREEN);
+			break;
+		}
+
+		case OF_BLENDMODE_SUBTRACT:{
+			cairo_set_operator(cr,CAIRO_OPERATOR_DIFFERENCE);
+			break;
+		}
+
+
+		default:
+			break;
+	}
 }
 
 //--------------------------------------------
