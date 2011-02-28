@@ -25,11 +25,6 @@ public:
 
 	void draw(vector<ofPoint> & vertexData, ofPrimitiveMode drawMode){}
 
-	 void useShapeColor(bool bUseShapeColor){
-		 for(int i=0;i<(int)renderers.size();i++){
-			 renderers[i]->useShapeColor(bUseShapeColor);
-		 }
-	 }
 
 	//--------------------------------------------
 	// transformations
@@ -266,5 +261,104 @@ public:
 			 renderers[i]->clearAlpha();
 		 }
 	}
-	 vector<ofBaseRenderer *> renderers;
+
+	// drawing modes
+	void setRectMode(ofRectMode mode){
+		 for(int i=0;i<(int)renderers.size();i++){
+			 renderers[i]->setRectMode(mode);
+		 }
+	}
+
+	ofRectMode getRectMode(){
+		if(renderers.empty()){
+			return OF_RECTMODE_CORNER;
+		}else{
+			return renderers[0]->getRectMode();
+		}
+	}
+
+	void setFillMode(ofFillFlag fill){
+		 for(int i=0;i<(int)renderers.size();i++){
+			 renderers[i]->setFillMode(fill);
+		 }
+	}
+
+	ofFillFlag getFillMode(){
+		if(renderers.empty()){
+			return OF_FILLED;
+		}else{
+			return renderers[0]->getFillMode();
+		}
+	}
+
+	void setLineWidth(float lineWidth){
+		 for(int i=0;i<(int)renderers.size();i++){
+			 renderers[i]->setLineWidth(lineWidth);
+		 }
+	}
+
+	void setBlendMode(ofBlendMode blendMode){
+		 for(int i=0;i<(int)renderers.size();i++){
+			 renderers[i]->setBlendMode(blendMode);
+		 }
+	}
+	void setLineSmoothing(bool smooth){
+		 for(int i=0;i<(int)renderers.size();i++){
+			 renderers[i]->setLineSmoothing(smooth);
+		 }
+	}
+	void setCircleResolution(int res){
+		 for(int i=0;i<(int)renderers.size();i++){
+			 renderers[i]->setCircleResolution(res);
+		 }
+	}
+	void enablePointSprites(){
+		 for(int i=0;i<(int)renderers.size();i++){
+			 renderers[i]->enablePointSprites();
+		 }
+	}
+	void disablePointSprites(){
+		 for(int i=0;i<(int)renderers.size();i++){
+			 renderers[i]->disablePointSprites();
+		 }
+	}
+
+	// drawing
+	void drawLine(float x1, float y1, float z1, float x2, float y2, float z2){
+		 for(int i=0;i<(int)renderers.size();i++){
+			 renderers[i]->drawLine(x1,y1,z1,x2,y2,z2);
+		 }
+	}
+
+	void drawRectangle(float x, float y, float z, float w, float h){
+		 for(int i=0;i<(int)renderers.size();i++){
+			 renderers[i]->drawRectangle(x,y,z,w,h);
+		 }
+	}
+
+	void drawTriangle(float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3){
+		 for(int i=0;i<(int)renderers.size();i++){
+			 renderers[i]->drawTriangle(x1,y1,z1,x2,y2,z2,x3,y3,z3);
+		 }
+	}
+
+	void drawCircle(float x, float y, float z, float radius){
+		 for(int i=0;i<(int)renderers.size();i++){
+			 renderers[i]->drawCircle(x,y,z,radius);
+		 }
+	}
+
+	void drawEllipse(float x, float y, float z, float width, float height){
+		 for(int i=0;i<(int)renderers.size();i++){
+			 renderers[i]->drawEllipse(x,y,z,width,height);
+		 }
+	}
+
+	void drawString(string text, float x, float y, float z, ofDrawBitmapMode mode){
+		 for(int i=0;i<(int)renderers.size();i++){
+			 renderers[i]->drawString(text, x,y,z,mode);
+		 }
+	}
+
+	vector<ofBaseRenderer *> renderers;
 };
