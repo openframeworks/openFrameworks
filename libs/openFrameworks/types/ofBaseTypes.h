@@ -199,8 +199,6 @@ public:
 	virtual void draw(ofPrimitive & vertexData)=0;
 	virtual void draw(vector<ofPoint> & vertexData, ofPrimitiveMode drawMode)=0;
 
-	virtual void useShapeColor(bool bUseShapeColor)=0;
-
 	//--------------------------------------------
 	// transformations
 	virtual void pushView(){};

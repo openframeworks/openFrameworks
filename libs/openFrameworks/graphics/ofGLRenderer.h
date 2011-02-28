@@ -13,7 +13,6 @@ public:
 	void draw(ofPolyline & poly);
 	void draw(ofShape & path);
 	void draw(vector<ofPoint> & vertexData, ofPrimitiveMode drawMode);
-	void useShapeColor(bool bUseShapeColor);
 
 	bool rendersPathPrimitives(){
 		return false;
@@ -107,7 +106,6 @@ private:
 	deque <ofRectangle> viewportHistory;
 	bool bBackgroundAuto;
 	ofColor bgColor;
-	bool bUseShapeColor;
 
 	vector<ofPoint> linePoints;
 	vector<ofPoint> rectPoints;
