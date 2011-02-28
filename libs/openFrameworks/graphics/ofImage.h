@@ -132,8 +132,8 @@ inline ostream& operator<<(ostream& os, const ofImage& image) {
 	os	<< "width: " << image.width
 		<< ", height: " << image.height
 		<< ", bpp: " << image.bpp
-		<< ", use texture: " << image.bUseTexture
-		<< ", pixels allocated: " << image.myPixels.isAllocated();
+		<< ", use texture: " << image.bUseTexture;
+	//	<< ", pixels allocated: " << image.myPixels.isAllocated();
 	return os;
 
 }
