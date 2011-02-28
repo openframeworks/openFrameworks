@@ -1,6 +1,9 @@
-#ifndef _OF_IPHONE_VIDEO_GRABBER
-#define _OF_IPHONE_VIDEO_GRABBER
+#pragma once
 
+#include "ofConstants.h"
+#include "ofTexture.h"
+#include "ofBaseTypes.h"
+#include "ofPixels.h"
 
 class AVFoundationVideoGrabber;
 
@@ -43,5 +46,3 @@ class ofiPhoneVideoGrabber : public ofBaseVideoGrabber {
 protected:
 	AVFoundationVideoGrabber * grabber;
 };
-
-#endif

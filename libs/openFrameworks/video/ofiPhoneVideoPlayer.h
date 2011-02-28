@@ -1,6 +1,8 @@
-#ifndef _OF_IPHONE_VIDEO_PLAYER
-#define _OF_IPHONE_VIDEO_PLAYER
+#pragma once
 
+#include "ofConstants.h"
+#include "ofTexture.h"
+#include "ofBaseTypes.h"
 
 class ofiPhoneVideoPlayer : public ofBaseVideoPlayer {
 	
@@ -74,5 +76,3 @@ protected:
 	GLint internalGLFormat;
 	GLubyte *pixelsTmp;
 };
-
-#endif

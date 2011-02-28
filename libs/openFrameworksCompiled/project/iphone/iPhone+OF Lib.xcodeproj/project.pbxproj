@@ -74,8 +74,6 @@
 		5E2E99DD10ED147800587639 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E2E99DC10ED147800587639 /* MapKit.framework */; };
 		5F66FC3812FA068800F8458E /* ofMesh.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5F66FC3412FA068800F8458E /* ofMesh.cpp */; };
 		5F66FC3912FA068800F8458E /* ofMesh.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F66FC3512FA068800F8458E /* ofMesh.h */; };
-		5F66FC3A12FA068800F8458E /* ofVertexData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5F66FC3612FA068800F8458E /* ofVertexData.cpp */; };
-		5F66FC3B12FA068800F8458E /* ofVertexData.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F66FC3712FA068800F8458E /* ofVertexData.h */; };
 		5F715ACB12F4EB5100C0EA49 /* ofVbo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5F715AC912F4EB5100C0EA49 /* ofVbo.cpp */; };
 		5F715ACC12F4EB5100C0EA49 /* ofVbo.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F715ACA12F4EB5100C0EA49 /* ofVbo.h */; };
 		BB24DECA10DA7A3F00E9C588 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BBE5EAB70F49AD8400F28951 /* AudioToolbox.framework */; };
@@ -277,8 +275,6 @@
 		5E2E99DC10ED147800587639 /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
 		5F66FC3412FA068800F8458E /* ofMesh.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofMesh.cpp; sourceTree = "<group>"; };
 		5F66FC3512FA068800F8458E /* ofMesh.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofMesh.h; sourceTree = "<group>"; };
-		5F66FC3612FA068800F8458E /* ofVertexData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofVertexData.cpp; sourceTree = "<group>"; };
-		5F66FC3712FA068800F8458E /* ofVertexData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofVertexData.h; sourceTree = "<group>"; };
 		5F715AC912F4EB5100C0EA49 /* ofVbo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofVbo.cpp; sourceTree = "<group>"; };
 		5F715ACA12F4EB5100C0EA49 /* ofVbo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofVbo.h; sourceTree = "<group>"; };
 		BB16EBD10F2B2A9500518274 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
@@ -889,8 +885,6 @@
 			children = (
 				5F66FC3412FA068800F8458E /* ofMesh.cpp */,
 				5F66FC3512FA068800F8458E /* ofMesh.h */,
-				5F66FC3612FA068800F8458E /* ofVertexData.cpp */,
-				5F66FC3712FA068800F8458E /* ofVertexData.h */,
 				5F715AC912F4EB5100C0EA49 /* ofVbo.cpp */,
 				5F715ACA12F4EB5100C0EA49 /* ofVbo.h */,
 				E4650E7612E2CAF500C77027 /* of3dUtils.cpp */,
@@ -1039,7 +1033,6 @@
 				E4D2F6FB12E4FD890071A3EC /* ofPixelUtils.h in Headers */,
 				5F715ACC12F4EB5100C0EA49 /* ofVbo.h in Headers */,
 				5F66FC3912FA068800F8458E /* ofMesh.h in Headers */,
-				5F66FC3B12FA068800F8458E /* ofVertexData.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1150,7 +1143,6 @@
 				E4D2F6FA12E4FD890071A3EC /* ofPixelUtils.cpp in Sources */,
 				5F715ACB12F4EB5100C0EA49 /* ofVbo.cpp in Sources */,
 				5F66FC3812FA068800F8458E /* ofMesh.cpp in Sources */,
-				5F66FC3A12FA068800F8458E /* ofVertexData.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
