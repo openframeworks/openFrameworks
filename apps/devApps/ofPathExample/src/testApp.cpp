@@ -3,6 +3,7 @@
 #include "ofCairoRenderer.h"
 #include "ofGLRenderer.h"
 #include "ofRendererCollection.h"
+#include <sys/time.h>
 ofCairoRenderer cairo;
 ofGLRenderer gl;
 ofRendererCollection renderer;
@@ -11,9 +12,9 @@ ofRendererCollection renderer;
 //--------------------------------------------------------------
 void testApp::setup(){
 	//cairo.setup("3d.pdf",ofCairoRenderer::PDF);
-	renderer.renderers.push_back(&gl);
+	//renderer.renderers.push_back(&gl);
 	//renderer.renderers.push_back(&cairo);
-	ofSetDefaultRenderer(&renderer);
+	//ofSetDefaultRenderer(&renderer);
 	//ofSetFrameRate( 12 ); //each frame generates a page
 	
 	nCurveVertexes = 7;
@@ -59,6 +60,7 @@ void testApp::setup(){
 	shapeA.lineTo(165,25);
 	shapeA.lineTo(105,200);
 	shapeA.lineTo(50,25);
+	shapeA.close();
 	
 	
 
@@ -239,6 +241,7 @@ void testApp::setup(){
 	shapeH.lineTo(180,550);
 	shapeH.lineTo(100,600);
 	shapeH.close();
+	shapeH.newPath();
 	shapeH.lineTo(120,520);
 	shapeH.lineTo(160,550);
 	shapeH.lineTo(120,580);
@@ -269,6 +272,7 @@ void testApp::setup(){
 	shapeIa.lineTo(380,550);
 	shapeIa.lineTo(300,600);
 	shapeIa.close();
+	shapeIa.newPath();
 	shapeIa.arc(340,550,30,30,0,360);
 
 
@@ -279,6 +283,7 @@ void testApp::setup(){
 	shapeIb.lineTo(480,550);
 	shapeIb.lineTo(400,600);
 	shapeIb.close();
+	shapeIb.newPath();
 	shapeIb.arc(440,550,30,60,0,360);
 
 	shapeIc.setPolyWindingMode(OF_POLY_WINDING_ABS_GEQ_TWO);
@@ -288,20 +293,33 @@ void testApp::setup(){
 	shapeIc.lineTo(580,550);
 	shapeIc.lineTo(500,600);
 	shapeIc.close();
+	shapeIc.newPath();
 	shapeIc.arc(540,550,30,20,0,360);
 	
 	selectedDraggableVertex.arc(0,0,4,4,0,360);
 	selectedDraggableVertex.setFilled(true);
-	selectedDraggableVertex.setColor(ofColor(0,0,0,80));
+	selectedDraggableVertex.setColor(ofColor(0,0,0,40));
 
 	unselectedDraggableVertex.arc(0,0,4,4,0,360);
 	unselectedDraggableVertex.setFilled(false);
-	unselectedDraggableVertex.setColor(ofColor(0,0,0,80));
+	unselectedDraggableVertex.setColor(ofColor(0,0,0,40));
 	
 }
 
+unsigned long getTime(){
+	struct timeval now;
+	gettimeofday( &now, NULL );
+	return now.tv_usec + now.tv_sec*1000000;
+}
+
+static int avgTime=0;
+static int accTime=0;
+static int frames = 0;
+static unsigned long curr_time;
+
 //--------------------------------------------------------------
 void testApp::update(){
+	 curr_time = getTime();
 
 	//------(d)--------------------------------------
 	// 
@@ -365,6 +383,65 @@ void testApp::update(){
 
 //--------------------------------------------------------------
 void testApp::draw(){
+	 curr_time = getTime();
+
+	//------(d)--------------------------------------
+	//
+	// 		poylgon of random points
+	//
+	// 		lots of self intersection, 500 pts is a good stress test
+	//
+	//
+	shapeD.clear();
+	for (int i = 0; i < 10; i++){
+		shapeD.lineTo(ofRandom(650,850), ofRandom(20,200));
+	}
+	shapeD.updateShape();
+	//-------------------------------------
+
+
+	//------(e)--------------------------------------
+	//
+	// 		use sin cos and time to make some spirally shape
+	//
+	shapeE.clear();
+	float angleStep 	= TWO_PI/(100.0f + sin(ofGetElapsedTimef()/5.0f) * 60);
+	float radiusAdder 	= 0.5f;
+	float radius 		= 0;
+	for (int i = 0; i < 200; i++){
+		float anglef = (i) * angleStep;
+		float x = radius * cos(anglef);
+		float y = radius * sin(anglef);
+		shapeE.lineTo(x,y);
+		radius 	+= radiusAdder;
+	}
+	shapeE.close();
+	shapeE.updateShape();
+
+
+	//------(g)--------------------------------------
+	//
+	// 		addBezierVertex
+	//
+	// 		with addBezierVertex we can draw a curve from the current vertex
+	//		through the the next three vertexes we pass in.
+	//		(two control points and the final bezier point)
+	//
+
+	float x0 = 500;
+	float y0 = 300;
+	float x1 = 550+50*cos(ofGetElapsedTimef()*1.0f);
+	float y1 = 300+100*sin(ofGetElapsedTimef()/3.5f);
+	float x2 = 600+30*cos(ofGetElapsedTimef()*2.0f);
+	float y2 = 300+100*sin(ofGetElapsedTimef());
+	float x3 = 650;
+	float y3 = 300;
+
+
+	shapeG.clear();
+	shapeG.lineTo(x0,y0);
+	shapeG.bezierTo(x1,y1,x2,y2,x3,y3);
+	shapeG.updateShape();
 	ofBackground( 255, 255, 255 );
 	ofSetColor(255,255,255);
 
@@ -431,14 +508,14 @@ void testApp::draw(){
 	// 		addBezierVertex	
 	// 
 	shapeG.draw();
-	float x0 = 500;
-	float y0 = 300;
-	float x1 = 550+50*cos(ofGetElapsedTimef()*1.0f);
-	float y1 = 300+100*sin(ofGetElapsedTimef()/3.5f);
-	float x2 = 600+30*cos(ofGetElapsedTimef()*2.0f);
-	float y2 = 300+100*sin(ofGetElapsedTimef());
-	float x3 = 650;
-	float y3 = 300;
+	x0 = 500;
+	y0 = 300;
+	x1 = 550+50*cos(ofGetElapsedTimef()*1.0f);
+	y1 = 300+100*sin(ofGetElapsedTimef()/3.5f);
+	x2 = 600+30*cos(ofGetElapsedTimef()*2.0f);
+	y2 = 300+100*sin(ofGetElapsedTimef());
+	x3 = 650;
+	y3 = 300;
 	ofEnableAlphaBlending();
 	ofFill();
 
@@ -478,7 +555,19 @@ void testApp::draw(){
 	
 	ofPopMatrix();
 	//-------------------------------------
-	
+
+	curr_time = getTime()-curr_time;
+	accTime+=curr_time;
+	frames++;
+	if(frames==600){
+		avgTime=accTime/600;
+		frames=0;
+		ofSetHexColor(0x000000);
+		accTime=0;
+	}
+
+	ofSetHexColor(0x000000);
+	ofDrawBitmapString(ofToString(avgTime), 20,40);
 	
 	ofSetHexColor(0x000000);
 	ofDrawBitmapString("(a) star\nwinding rule odd", 20,210);
