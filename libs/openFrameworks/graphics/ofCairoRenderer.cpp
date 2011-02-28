@@ -76,7 +76,11 @@ void ofCairoRenderer::draw(ofShape & shape){
 	cairo_set_fill_rule(cr,cairo_poly_mode);
 
 
-	ofPushStyle();
+	ofColor prevColor;
+	if(shape.getUseShapeColor()){
+		prevColor = ofGetStyle().color;
+	}
+
 	if(shape.isFilled()){
 		if(shape.getUseShapeColor()){
 			ofColor c = shape.getFillColor() * ofGetStyle().color;
@@ -91,6 +95,7 @@ void ofCairoRenderer::draw(ofShape & shape){
 		}
 	}
 	if(shape.hasOutline()){
+		float lineWidth = ofGetStyle().lineWidth;
 		if(shape.getUseShapeColor()){
 			ofColor c = shape.getFillColor() * ofGetStyle().color;
 			c.a = shape.getFillColor().a/255. * ofGetStyle().color.a;
@@ -98,6 +103,11 @@ void ofCairoRenderer::draw(ofShape & shape){
 		}
 		cairo_set_line_width( cr, shape.getStrokeWidth() );
 		cairo_stroke( cr );
+		cairo_set_line_width( cr, lineWidth );
+	}
+
+	if(shape.getUseShapeColor()){
+		setColor(prevColor);
 	}
 	ofPopStyle();
 }
