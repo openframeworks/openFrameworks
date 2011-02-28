@@ -346,6 +346,7 @@ void ofBackgroundHex(int hexColor, int alpha){
 
 //----------------------------------------------------------
 void ofBackground(int r, int g, int b, int a){
+	currentStyle.bgColor.set(r,g,b,a);
 	renderer->background(r,g,b,a);
 }
 

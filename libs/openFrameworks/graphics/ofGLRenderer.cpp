@@ -6,15 +6,16 @@
 #include "ofPrimitive.h"
 #include "ofBitmapFont.h"
 
+//----------------------------------------------------------
 ofGLRenderer::ofGLRenderer(bool useShapeColor){
 	bBackgroundAuto = true;
-	bUseShapeColor = useShapeColor;
 
 	linePoints.resize(2);
 	rectPoints.resize(4);
 	triPoints.resize(3);
 }
 
+//----------------------------------------------------------
 void ofGLRenderer::draw(ofPrimitive & vertexData){
 	if(vertexData.getNumVertices()){
 		glEnableClientState(GL_VERTEX_ARRAY);
@@ -54,12 +55,14 @@ void ofGLRenderer::draw(ofPrimitive & vertexData){
 	}
 }
 
+//----------------------------------------------------------
 void ofGLRenderer::draw(vector<ofPoint> & vertexData, ofPrimitiveMode drawMode){
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glVertexPointer(3, GL_FLOAT, sizeof(ofVec3f), &vertexData[0].x);
 	glDrawArrays(ofGetGLPrimitiveMode(drawMode), 0, vertexData.size());
 }
 
+//----------------------------------------------------------
 void ofGLRenderer::draw(ofPolyline & poly){
 	// use smoothness, if requested:
 	if (bSmoothHinted) startSmoothing();
@@ -72,6 +75,7 @@ void ofGLRenderer::draw(ofPolyline & poly){
 	if (bSmoothHinted) endSmoothing();
 }
 
+//----------------------------------------------------------
 void ofGLRenderer::draw(ofShape & shape){
 	if(shape.isFilled()){
 		vector<ofPrimitive> & mesh = shape.getTessellation();
@@ -100,10 +104,6 @@ void ofGLRenderer::draw(ofShape & shape){
 	}
 }
 
-void ofGLRenderer::useShapeColor(bool bUseShapeColor_){
-	bUseShapeColor = bUseShapeColor_;
-}
-
 //----------------------------------------------------------
 void ofGLRenderer::pushView() {
 	GLint viewport[4];
@@ -130,7 +130,7 @@ void ofGLRenderer::pushView() {
 void ofGLRenderer::popView() {
 	if( viewportHistory.size() ){
 		ofRectangle viewRect = viewportHistory.front();
-		ofViewport(viewRect.x, viewRect.y, viewRect.width, viewRect.height);
+		viewport(viewRect.x, viewRect.y, viewRect.width, viewRect.height);
 		viewportHistory.pop_front();
 	}
 

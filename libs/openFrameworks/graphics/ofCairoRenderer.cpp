@@ -169,9 +169,6 @@ void ofCairoRenderer::draw(vector<ofPoint> & vertexData, ofPrimitiveMode drawMod
 	popMatrix();
 }
 
-void ofCairoRenderer::useShapeColor(bool bUseShapeColor_){
-	bUseShapeColor = bUseShapeColor_;
-}
 
 ofVec3f ofCairoRenderer::transform(ofVec3f vec){
 	if(!b3D) return vec;
