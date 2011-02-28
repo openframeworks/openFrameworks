@@ -77,30 +77,32 @@ void ofGLRenderer::draw(ofPolyline & poly){
 
 //----------------------------------------------------------
 void ofGLRenderer::draw(ofShape & shape){
+	ofColor prevColor;
+	if(shape.getUseShapeColor()){
+		prevColor = ofGetStyle().color;
+	}
 	if(shape.isFilled()){
 		vector<ofPrimitive> & mesh = shape.getTessellation();
 		if(shape.getUseShapeColor()){
-			ofPushStyle();
 			setColor( shape.getFillColor() * ofGetStyle().color,shape.getFillColor().a/255. * ofGetStyle().color.a);
 		}
 		for(int i=0;i<(int)mesh.size();i++){
 			draw(mesh[i].getVertices(),mesh[i].getMode());
 		}
-		if(shape.getUseShapeColor()){
-			ofPopStyle();
-		}
 	}
 	if(shape.hasOutline()){
+		float lineWidth = ofGetStyle().lineWidth;
 		if(shape.getUseShapeColor()){
-			ofPushStyle();
 			setColor( shape.getStrokeColor() * ofGetStyle().color, shape.getStrokeColor().a/255. * ofGetStyle().color.a);
 		}
+		setLineWidth( shape.getStrokeWidth() );
 		vector<ofPolyline> & outlines = shape.getOutline();
 		for(int i=0; i<(int)outlines.size(); i++)
 			draw(outlines[i]);
-		if(shape.getUseShapeColor()){
-			ofPopStyle();
-		}
+		setLineWidth(lineWidth);
+	}
+	if(shape.getUseShapeColor()){
+		setColor(prevColor);
 	}
 }
 

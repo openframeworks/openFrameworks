@@ -420,31 +420,37 @@ void ofShape::draw(){
 		ofGetDefaultRenderer()->draw(*this);
 	}else{
 		tessellate();
+
+
+		ofColor prevColor;
+		if(bUseShapeColor){
+			prevColor = ofGetStyle().color;
+		}
+
 		if(bFill){
 			if(bUseShapeColor){
-				ofPushStyle();
 				ofSetColor(fillColor);
 			}
 			for(int i=0;i<cachedTessellation.numElements && i<(int)cachedTessellation.meshes.size();i++){
 				ofGetDefaultRenderer()->draw(cachedTessellation.meshes[i]);
 			}
-			if(bUseShapeColor){
-				ofPopStyle();
-			}
 		}
 
 		if(hasOutline()){
+			float lineWidth = ofGetStyle().lineWidth;
 			if(bUseShapeColor){
-				ofPushStyle();
-				ofSetColor(fillColor);
+				ofSetColor(strokeColor);
 			}
+			ofSetLineWidth( strokeWidth );
 			vector<ofPolyline> & polys = getOutline();
 			for(int i=0;i<(int)polys.size();i++){
 				ofGetDefaultRenderer()->draw(polys[i]);
 			}
-			if(bUseShapeColor){
-				ofPopStyle();
-			}
+			ofSetLineWidth(lineWidth);
+		}
+
+		if(bUseShapeColor){
+			ofSetColor(prevColor);
 		}
 	}
 }
