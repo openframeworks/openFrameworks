@@ -5,14 +5,9 @@
 #include "ofVec3f.h"
 #include "ofColor.h"
 #include "ofUtils.h"
+#include "ofMesh.h"
 
-enum polyMode{
-	OF_MESH_POINTS,
-	OF_MESH_WIREFRAME,
-	OF_MESH_FILL
-};
-
-inline GLuint ofGetGLPolyMode(polyMode m){
+inline GLuint ofGetGLPolyMode(ofPolyRenderMode m){
 #ifndef TARGET_OPENGLES
 	switch(m){
 		case(OF_MESH_POINTS):
@@ -34,7 +29,7 @@ inline GLuint ofGetGLPolyMode(polyMode m){
 #endif
 }
 
-inline polyMode ofGetOFPolyMode(GLuint m){
+inline ofPolyRenderMode ofGetOFPolyMode(GLuint m){
 #ifndef TARGET_OPENGLES
 	switch(m){
 		case(GL_POINT):

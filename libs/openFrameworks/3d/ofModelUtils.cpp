@@ -16,7 +16,7 @@ static inline ofColor aiColorToOfColor(const aiColor4D& c){
 }
 
 //--------------------------------------------------------------
-void aiMeshToOfPrimitive(const aiMesh* aim, ofPrimitive& ofm){
+void aiMeshToOfPrimitive(const aiMesh* aim, ofMesh& ofm){
 	// default to triangle mode
 	ofm.setMode(OF_TRIANGLES_MODE);
 	
@@ -140,8 +140,8 @@ bool ofLoadModel(string modelName, ofModel & model){
 
 			model.meshes[i] = new ofMesh();
 			ofMesh& curMesh = *model.meshes[i];
-			curMesh.primitives.push_back(ofPrimitive());
-			aiMeshToOfPrimitive(aMesh,curMesh.primitives.back());			
+			//curMesh.primitives.push_back(ofMesh());
+			aiMeshToOfPrimitive(aMesh,curMesh);
 		
 			//load texture
 			aiMaterial* mtl = scene->mMaterials[aMesh->mMaterialIndex];

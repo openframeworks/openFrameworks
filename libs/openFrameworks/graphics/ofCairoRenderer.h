@@ -29,7 +29,7 @@ public:
 	void draw(ofShape & shape);
 	void draw(ofSubPath & path);
 	void draw(ofPolyline & poly);
-	void draw(ofPrimitive & vertexData);
+	void draw(ofMesh & vertexData);
 	void draw(vector<ofPoint> & vertexData, ofPrimitiveMode drawMode);
 
 	bool rendersPathPrimitives(){

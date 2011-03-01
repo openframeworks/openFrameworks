@@ -1,14 +1,14 @@
 #pragma once
 
-#include "ofPrimitive.h"
+#include "ofMesh.h"
 #include "ofVbo.h"
 
-class ofVboMesh: public ofPrimitive{
+class ofVboMesh: public ofMesh{
 public:
 	ofVboMesh();
-	ofVboMesh(const ofPrimitive & mom);
+	ofVboMesh(const ofMesh & mom);
 	void setUsage(int usage);
-	void draw(polyMode drawMode);
+	void draw(ofPolyRenderMode drawMode);
 
 private:
 	ofVbo vbo;

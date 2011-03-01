@@ -4,8 +4,8 @@ ofVboMesh::ofVboMesh(){
 	usage= GL_STATIC_DRAW;
 }
 
-ofVboMesh::ofVboMesh(const ofPrimitive & mom)
-:ofPrimitive(mom)
+ofVboMesh::ofVboMesh(const ofMesh & mom)
+:ofMesh(mom)
 {
 	usage= GL_STATIC_DRAW;
 }
@@ -14,7 +14,7 @@ void ofVboMesh::setUsage(int _usage){
 	usage = _usage;
 }
 
-void ofVboMesh::draw(polyMode drawMode){
+void ofVboMesh::draw(ofPolyRenderMode drawMode){
 	if(!vbo.getIsAllocated()){
 		if(getNumVertices()){
 			vbo.setVertexData(getVerticesPointer(),3,getNumVertices(),usage);
