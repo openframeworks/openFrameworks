@@ -21,12 +21,6 @@ typedef struct {
 	float yOff;
 } charProps;
 
-//For drawStringAsShapes and getCharacterAsPoints only
-//Make this number smaller to create TTF shapes with more pts = slower but accurate
-//Make this number larger to create TTF shapes with less pts  = faster but not as accurate
-//Our default is 0.3 which removes segments that are less than 0.3 of a pixel in length
-#define TTF_SHAPE_SIMPLIFICATION_AMNT (0.3)
-
 
 typedef ofShape ofTTFCharacter;
 
@@ -42,7 +36,7 @@ public:
 	virtual ~ofTrueTypeFont();
 		
 	// 			-- default, non-full char set, anti aliased:
-	void 		loadFont(string filename, int fontsize, bool _bAntiAliased=true, bool _bFullCharacterSet=false, bool makeContours = false);
+	void 		loadFont(string filename, int fontsize, bool _bAntiAliased=true, bool _bFullCharacterSet=false, bool makeContours = false, bool simplifyAmt = 0.3);
 
 	bool		bLoadedOk;
 	bool 		bAntiAlised;

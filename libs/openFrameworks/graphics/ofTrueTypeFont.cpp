@@ -130,8 +130,6 @@ static ofTTFCharacter makeContoursForCharacter(FT_Face &face){
 			charOutlines.close();
 		}
 
-	charOutlines.simplify(TTF_SHAPE_SIMPLIFICATION_AMNT);
-	charOutlines.tessellate();
 	return charOutlines;
 }
 
@@ -197,7 +195,7 @@ void ofTrueTypeFont::reloadTextures(){
 }
 
 //------------------------------------------------------------------
-void ofTrueTypeFont::loadFont(string filename, int fontsize, bool _bAntiAliased, bool _bFullCharacterSet, bool makeContours){
+void ofTrueTypeFont::loadFont(string filename, int fontsize, bool _bAntiAliased, bool _bFullCharacterSet, bool makeContours, bool simplifyAmt){
 
 	bMakeContours = makeContours;
 
@@ -286,6 +284,8 @@ void ofTrueTypeFont::loadFont(string filename, int fontsize, bool _bAntiAliased,
 
 			//int character = i + NUM_CHARACTER_TO_START;
 			charOutlines[i] = makeContoursForCharacter( face );
+			charOutlines[i].simplify(simplifyAmt);
+			charOutlines[i].tessellate();
 		}
 
 		// prepare the texture:
