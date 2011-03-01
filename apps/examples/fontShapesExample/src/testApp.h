@@ -23,6 +23,7 @@ class testApp : public ofSimpleApp{
 		
 		ofTrueTypeFont testFont;
 		ofTrueTypeFont testFont2;
-
+		ofTTFCharacter testChar;
+		char letter;
 };
 

@@ -60,7 +60,7 @@ public:
 	
 	int 		nCharacters;
 	
-	ofTTFCharacter & getCharacterAsPoints(int character);
+	ofTTFCharacter getCharacterAsPoints(int character);
 
 protected:
 	vector <ofTTFCharacter> charOutlines;
