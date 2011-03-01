@@ -30,12 +30,6 @@
 	#define OF_VID_GRABBER_TYPE ofxAndroidVideoGrabber()
 #endif
 
-//fallthough videograbber type
-
-#ifndef OF_VID_GRABBER_TYPE
-	#define OF_VID_GRABBER_TYPE ofVideoGrabber()
-#endif
-
 class ofVideoGrabber : public ofBaseVideoGrabber,public ofBaseDraws, public ofBaseHasTexture{
 
 	public :

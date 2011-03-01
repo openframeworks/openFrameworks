@@ -62,7 +62,9 @@ ofBaseVideoGrabber * ofVideoGrabber::getGrabber(){
 bool ofVideoGrabber::initGrabber(int w, int h, bool setUseTexture){
 
 	if( grabber == NULL ){
+#ifdef OF_VID_GRABBER_TYPE
 		setGrabber( new OF_VID_GRABBER_TYPE );
+#endif		
 	}
 
 	bInitialized = true;
