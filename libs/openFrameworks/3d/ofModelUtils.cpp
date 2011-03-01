@@ -9,6 +9,7 @@
 #include "aiPostProcess.h"
 #include "aiScene.h"
 #include "ofColor.h"
+#include "ofVboMesh.h"
 
 //--------------------------------------------------------------
 static inline ofColor aiColorToOfColor(const aiColor4D& c){
@@ -138,7 +139,7 @@ bool ofLoadModel(string modelName, ofModel & model){
 			// current mesh we are introspecting
 			aiMesh* aMesh = scene->mMeshes[i];
 
-			model.meshes[i] = new ofMesh();
+			model.meshes[i] = new ofVboMesh();
 			ofMesh& curMesh = *model.meshes[i];
 			//curMesh.primitives.push_back(ofMesh());
 			aiMeshToOfPrimitive(aMesh,curMesh);

@@ -8,6 +8,8 @@ public:
 	ofVboMesh();
 	ofVboMesh(const ofMesh & mom);
 	void setUsage(int usage);
+
+protected:
 	void draw(ofPolyRenderMode drawMode);
 
 private:
