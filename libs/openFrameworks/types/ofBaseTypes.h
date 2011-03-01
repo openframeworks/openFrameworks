@@ -197,6 +197,7 @@ public:
 	virtual void draw(ofPolyline & poly)=0;
 	virtual void draw(ofShape & shape)=0;
 	virtual void draw(ofMesh & vertexData)=0;
+	virtual void draw(ofMesh & vertexData, ofPolyRenderMode renderType)=0;
 	virtual void draw(vector<ofPoint> & vertexData, ofPrimitiveMode drawMode)=0;
 
 	//--------------------------------------------

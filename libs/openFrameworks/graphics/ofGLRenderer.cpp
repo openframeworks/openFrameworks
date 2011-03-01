@@ -5,6 +5,7 @@
 #include "ofAppRunner.h"
 #include "ofMesh.h"
 #include "ofBitmapFont.h"
+#include "ofGLUtils.h"
 
 //----------------------------------------------------------
 ofGLRenderer::ofGLRenderer(bool useShapeColor){
@@ -53,6 +54,63 @@ void ofGLRenderer::draw(ofMesh & vertexData){
 	if(vertexData.getNumTexCoords()){
 		glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 	}
+}
+
+//----------------------------------------------------------
+void ofGLRenderer::draw(ofMesh & vertexData, ofPolyRenderMode renderType){
+#ifndef TARGET_OPENGLES
+		glPushAttrib(GL_POLYGON_BIT);
+		glPolygonMode(GL_FRONT_AND_BACK, ofGetGLPolyMode(renderType));
+		draw(vertexData);
+		glPopAttrib(); //TODO: GLES doesnt support polygon mode, add renderType to gl renderer?
+#else
+		if(vertexData.getNumVertices()){
+			glEnableClientState(GL_VERTEX_ARRAY);
+			glVertexPointer(3, GL_FLOAT, sizeof(ofVec3f), vertexData.getVerticesPointer());
+		}
+		if(vertexData.getNumNormals()){
+			glEnableClientState(GL_NORMAL_ARRAY);
+			glNormalPointer(GL_FLOAT, 0, vertexData.getNormalsPointer());
+		}
+		if(vertexData.getNumColors()){
+			glEnableClientState(GL_COLOR_ARRAY);
+			glColorPointer(4,GL_FLOAT, sizeof(ofColor), vertexData.getColorsPointer());
+		}
+
+		if(vertexData.getNumTexCoords()){
+			glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+			glTexCoordPointer(2, GL_FLOAT, 0, vertexData.getTexCoordsPointer());
+		}
+
+		GLenum drawMode;
+		switch(renderType){
+		case OF_MESH_POINTS:
+			drawMode = GL_POINTS;
+			break;
+		case OF_MESH_WIREFRAME:
+			drawMode = GL_LINES;
+			break;
+		case OF_MESH_FILL:
+			drawMode = ofGetGLPrimitiveMode(vertexData.getMode());
+			break;
+		}
+
+		if(vertexData.getNumIndices()){
+			glDrawElements(drawMode, vertexData.getNumIndices(),GL_UNSIGNED_SHORT,vertexData.getIndexPointer());
+		}else{
+			glDrawArrays(drawMode, 0, vertexData.getNumVertices());
+		}
+		if(vertexData.getNumColors()){
+			glDisableClientState(GL_COLOR_ARRAY);
+		}
+		if(vertexData.getNumNormals()){
+			glDisableClientState(GL_NORMAL_ARRAY);
+		}
+		if(vertexData.getNumTexCoords()){
+			glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+		}
+#endif
+
 }
 
 //----------------------------------------------------------

@@ -10,6 +10,7 @@ public:
 	ofGLRenderer(bool useShapeColor=true);
 	~ofGLRenderer(){}
 	void draw(ofMesh & vertexData);
+	void draw(ofMesh & vertexData, ofPolyRenderMode renderType);
 	void draw(ofPolyline & poly);
 	void draw(ofShape & path);
 	void draw(vector<ofPoint> & vertexData, ofPrimitiveMode drawMode);

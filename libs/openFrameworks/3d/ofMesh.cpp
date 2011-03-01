@@ -422,25 +422,7 @@ void ofMesh::drawFaces(){
 	draw(OF_MESH_FILL);
 }
 
-#include "ofVbo.h"
 //--------------------------------------------------------------
 void ofMesh::draw(ofPolyRenderMode renderType){
-#ifndef TARGET_OPENGLES
-		glPushAttrib(GL_POLYGON_BIT);
-		glPolygonMode(GL_FRONT_AND_BACK, ofGetGLPolyMode(renderType));
-		ofGetDefaultRenderer()->draw(*this);
-		glPopAttrib(); //TODO: GLES doesnt support polygon mode, add renderType to gl renderer?
-#else
-		switch(renderType){
-		case OF_MESH_POINTS:
-			ofGetDefaultRenderer()->draw(*this);
-			break;
-		case OF_MESH_WIREFRAME:
-			ofGetDefaultRenderer()->draw(*this);
-			break;
-		case OF_MESH_FILL:
-			ofGetDefaultRenderer()->draw(*this);
-			break;
-		}
-#endif
+	ofGetDefaultRenderer()->draw(*this,renderType);
 }
