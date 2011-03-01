@@ -130,7 +130,7 @@ static ofTTFCharacter makeContoursForCharacter(FT_Face &face){
 			charOutlines.close();
 		}
 
-	charOutlines.simplify();
+	charOutlines.simplify(TTF_SHAPE_SIMPLIFICATION_AMNT);
 	charOutlines.tessellate();
 	return charOutlines;
 }
@@ -436,7 +436,7 @@ float ofTrueTypeFont::getLineHeight(){
 }
 
 //------------------------------------------------------------------
-ofTTFCharacter & ofTrueTypeFont::getCharacterAsPoints(int character){
+ofTTFCharacter ofTrueTypeFont::getCharacterAsPoints(int character){
 	if( bMakeContours == false ){
 		ofLog(OF_LOG_ERROR, "getCharacterAsPoints: contours not created,  call loadFont with makeContours set to true" );
 	}
