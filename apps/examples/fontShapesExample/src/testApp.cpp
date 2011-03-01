@@ -48,16 +48,17 @@ void testApp::draw(){
 
 	//okay lets get the character back as ofPoints
 	//all curves are calculated for us so all we need to do is draw!
-	ofTTFCharacter testChar;
-	testChar = testFont.getCharacterAsPoints(letter);
+	ofTTFCharacter & testChar = testFont.getCharacterAsPoints(letter);
+	testChar.setFilled(true);
     testChar.draw(250,250);
-
+    testChar.setFilled(false);
+    testChar.draw(400,250);
 	/*ofFill();
 	ofPushMatrix();
 		ofTranslate(250, 250, 0);
 		ofBeginShape();
 			for(int k = 0; k <testChar.contours.size(); k++){
-				if( k!= 0)ofNextContour(true);
+				if( k!= 0)ofNextContour(true) ;
 				for(int i = 0; i < testChar.contours[k].pts.size(); i++){
 					ofVertex(testChar.contours[k].pts[i].x, testChar.contours[k].pts[i].y);
 				}

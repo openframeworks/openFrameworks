@@ -25,6 +25,7 @@ static ofTTFCharacter makeContoursForCharacter(FT_Face &face){
 		FT_Vector * vec = face->glyph->outline.points;
 
 		ofTTFCharacter charOutlines;
+		charOutlines.setUseShapeColor(false);
 
 		for(int k = 0; k < nContours; k++){
 			if( k > 0 ){
@@ -129,6 +130,8 @@ static ofTTFCharacter makeContoursForCharacter(FT_Face &face){
 			charOutlines.close();
 		}
 
+	charOutlines.simplify();
+	charOutlines.tessellate();
 	return charOutlines;
 }
 
@@ -433,7 +436,7 @@ float ofTrueTypeFont::getLineHeight(){
 }
 
 //------------------------------------------------------------------
-ofTTFCharacter ofTrueTypeFont::getCharacterAsPoints(int character){
+ofTTFCharacter & ofTrueTypeFont::getCharacterAsPoints(int character){
 	if( bMakeContours == false ){
 		ofLog(OF_LOG_ERROR, "getCharacterAsPoints: contours not created,  call loadFont with makeContours set to true" );
 	}
@@ -441,7 +444,8 @@ ofTTFCharacter ofTrueTypeFont::getCharacterAsPoints(int character){
 	if( bMakeContours && (int)charOutlines.size() > 0 && character >= NUM_CHARACTER_TO_START && character - NUM_CHARACTER_TO_START < (int)charOutlines.size() ){
 		return charOutlines[character-NUM_CHARACTER_TO_START];
 	}else{
-		return ofTTFCharacter();
+		if(charOutlines.empty())charOutlines.push_back(ofTTFCharacter());
+		return charOutlines[0];
 	}
 }
 
