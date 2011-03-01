@@ -7,7 +7,6 @@
 
 //--------------------------------------------------------------
 ofModel::ofModel(){
-	renderMethod = OF_MESH_USING_VBO;
 	bUsingTextures = false;
 }
 
@@ -141,7 +140,3 @@ void ofModel::disableColors(){
 	bUsingColors = false;
 }
 
-//--------------------------------------------------------------
-void ofModel::setRenderMethod(meshRenderMethod m){
-	renderMethod = m;
-}
