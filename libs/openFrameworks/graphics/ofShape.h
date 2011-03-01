@@ -165,6 +165,7 @@ private:
 	struct tessCache{
 		vector<ofPrimitive> meshes;
 		int numElements;
+		bool changed;
 	}cachedTessellation;
 
 	bool				hasChanged;
