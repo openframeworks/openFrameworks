@@ -25,6 +25,7 @@ static ofTTFCharacter makeContoursForCharacter(FT_Face &face){
 		FT_Vector * vec = face->glyph->outline.points;
 
 		ofTTFCharacter charOutlines;
+		charOutlines.setUseShapeColor(false);
 
 		for(int k = 0; k < nContours; k++){
 			if( k > 0 ){
@@ -194,7 +195,7 @@ void ofTrueTypeFont::reloadTextures(){
 }
 
 //------------------------------------------------------------------
-void ofTrueTypeFont::loadFont(string filename, int fontsize, bool _bAntiAliased, bool _bFullCharacterSet, bool makeContours){
+void ofTrueTypeFont::loadFont(string filename, int fontsize, bool _bAntiAliased, bool _bFullCharacterSet, bool makeContours, bool simplifyAmt){
 
 	bMakeContours = makeContours;
 
@@ -283,6 +284,8 @@ void ofTrueTypeFont::loadFont(string filename, int fontsize, bool _bAntiAliased,
 
 			//int character = i + NUM_CHARACTER_TO_START;
 			charOutlines[i] = makeContoursForCharacter( face );
+			charOutlines[i].simplify(simplifyAmt);
+			charOutlines[i].tessellate();
 		}
 
 		// prepare the texture:
@@ -441,7 +444,8 @@ ofTTFCharacter ofTrueTypeFont::getCharacterAsPoints(int character){
 	if( bMakeContours && (int)charOutlines.size() > 0 && character >= NUM_CHARACTER_TO_START && character - NUM_CHARACTER_TO_START < (int)charOutlines.size() ){
 		return charOutlines[character-NUM_CHARACTER_TO_START];
 	}else{
-		return ofTTFCharacter();
+		if(charOutlines.empty())charOutlines.push_back(ofTTFCharacter());
+		return charOutlines[0];
 	}
 }
 

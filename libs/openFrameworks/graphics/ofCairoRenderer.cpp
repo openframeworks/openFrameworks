@@ -24,7 +24,7 @@ ofCairoRenderer::ofCairoRenderer(){
 	type = PDF;
 	surface = NULL;
 	cr = NULL;
-	setupGraphicDefaults();
+	bBackgroundAuto = true;
 }
 
 ofCairoRenderer::~ofCairoRenderer(){
@@ -65,7 +65,7 @@ void ofCairoRenderer::close(){
 void ofCairoRenderer::draw(ofShape & shape){
 	cairo_new_path(cr);
 	vector<ofSubPath> & paths = shape.getSubPaths();
-	for(int i=0;i<paths.size();i++){
+	for(int i=0;i<(int)paths.size();i++){
 		draw(paths[i]);
 	}
 
@@ -76,22 +76,40 @@ void ofCairoRenderer::draw(ofShape & shape){
 	cairo_set_fill_rule(cr,cairo_poly_mode);
 
 
-	if(shape.getStrokeWidth()>0){
-		ofColor c = shape.getStrokeColor() * ofGetStyle().color;
-		c.a = shape.getStrokeColor().a/255. * ofGetStyle().color.a;
-		cairo_set_source_rgba(cr, (float)c.r/255.0, (float)c.g/255.0, (float)c.b/255.0, (float)c.a/255.0);
-		cairo_set_line_width( cr, shape.getStrokeWidth() );
-		if(shape.isFilled())
-			cairo_stroke_preserve( cr );
-		else
-			cairo_stroke( cr );
+	ofColor prevColor;
+	if(shape.getUseShapeColor()){
+		prevColor = ofGetStyle().color;
 	}
+
 	if(shape.isFilled()){
-		ofColor c = shape.getFillColor() * ofGetStyle().color;
-		c.a = shape.getFillColor().a/255. * ofGetStyle().color.a;
-		cairo_set_source_rgba(cr, (float)c.r/255.0, (float)c.g/255.0, (float)c.b/255.0, (float)c.a/255.0);
-		cairo_fill( cr );
+		if(shape.getUseShapeColor()){
+			ofColor c = shape.getFillColor() * ofGetStyle().color;
+			c.a = shape.getFillColor().a/255. * ofGetStyle().color.a;
+			cairo_set_source_rgba(cr, (float)c.r/255.0, (float)c.g/255.0, (float)c.b/255.0, (float)c.a/255.0);
+		}
+
+		if(shape.hasOutline()){
+			cairo_fill_preserve( cr );
+		}else{
+			cairo_fill(cr);
+		}
 	}
+	if(shape.hasOutline()){
+		float lineWidth = ofGetStyle().lineWidth;
+		if(shape.getUseShapeColor()){
+			ofColor c = shape.getFillColor() * ofGetStyle().color;
+			c.a = shape.getFillColor().a/255. * ofGetStyle().color.a;
+			cairo_set_source_rgba(cr, (float)c.r/255.0, (float)c.g/255.0, (float)c.b/255.0, (float)c.a/255.0);
+		}
+		cairo_set_line_width( cr, shape.getStrokeWidth() );
+		cairo_stroke( cr );
+		cairo_set_line_width( cr, lineWidth );
+	}
+
+	if(shape.getUseShapeColor()){
+		setColor(prevColor);
+	}
+	ofPopStyle();
 }
 
 void ofCairoRenderer::draw(ofPolyline & poly){
@@ -101,6 +119,7 @@ void ofCairoRenderer::draw(ofPolyline & poly){
 	}
 	if(poly.isClosed())
 		cairo_close_path(cr);
+	cairo_stroke( cr );
 }
 
 void ofCairoRenderer::draw(vector<ofPoint> & vertexData, ofPrimitiveMode drawMode){
@@ -121,7 +140,7 @@ void ofCairoRenderer::draw(vector<ofPoint> & vertexData, ofPrimitiveMode drawMod
 			cairo_line_to(cr,v.x,v.y);
 			i=2;
 		}
-		for(; i<vertexData.size(); i++){
+		for(; i<(int)vertexData.size(); i++){
 			v = transform(vertexData[i]);
 			switch(drawMode){
 			case(OF_TRIANGLES_MODE):
@@ -158,20 +177,10 @@ void ofCairoRenderer::draw(vector<ofPoint> & vertexData, ofPrimitiveMode drawMod
 		}
 
 	cairo_move_to(cr,vertexData[vertexData.size()-1].x,vertexData[vertexData.size()-1].y);
-
-	if(ofGetStyle().lineWidth>0){
-		ofColor c = ofGetStyle().color;
-		cairo_set_source_rgba(cr, (float)c.r/255.0, (float)c.g/255.0, (float)c.b/255.0, (float)c.a/255.0);
-		cairo_set_line_width( cr, ofGetStyle().lineWidth );
-
-		cairo_stroke( cr );
-	}
+	cairo_stroke( cr );
 	popMatrix();
 }
 
-void ofCairoRenderer::useShapeColor(bool bUseShapeColor_){
-	bUseShapeColor = bUseShapeColor_;
-}
 
 ofVec3f ofCairoRenderer::transform(ofVec3f vec){
 	if(!b3D) return vec;
@@ -240,9 +249,6 @@ void ofCairoRenderer::draw(ofPrimitive & primitive){
 	cairo_move_to(cr,primitive.getVertex(primitive.getIndex(primitive.getNumIndices()-1)).x,primitive.getVertex(primitive.getIndex(primitive.getNumIndices()-1)).y);
 
 	if(ofGetStyle().lineWidth>0){
-		ofColor c = ofGetStyle().color;
-		cairo_set_source_rgba(cr, (float)c.r/255.0, (float)c.g/255.0, (float)c.b/255.0, (float)c.a/255.0);
-		cairo_set_line_width( cr, ofGetStyle().lineWidth );
 
 		cairo_stroke( cr );
 	}
@@ -300,7 +306,7 @@ void ofCairoRenderer::draw(ofSubPath & path){
 				pushMatrix();
 				translate(0,-commands[i].to.y*ellipse_ratio);
 				scale(1,ellipse_ratio);
-				translate(0,commands[i].to.y*1/ellipse_ratio);
+				translate(0,commands[i].to.y/ellipse_ratio);
 				cairo_arc(cr,commands[i].to.x,commands[i].to.y,commands[i].radiusX,commands[i].angleBegin,commands[i].angleEnd);
 				//cairo_set_matrix(cr,&stored_matrix);
 				popMatrix();
@@ -317,6 +323,105 @@ void ofCairoRenderer::draw(ofSubPath & path){
 
 
 }
+
+//--------------------------------------------
+void ofCairoRenderer::setRectMode(ofRectMode mode){
+	rectMode = mode;
+}
+
+//--------------------------------------------
+ofRectMode ofCairoRenderer::getRectMode(){
+	return rectMode;
+}
+
+//--------------------------------------------
+void ofCairoRenderer::setFillMode(ofFillFlag fill){
+	bFilled = fill;
+}
+
+//--------------------------------------------
+ofFillFlag ofCairoRenderer::getFillMode(){
+	return bFilled;
+}
+
+//--------------------------------------------
+void ofCairoRenderer::setLineWidth(float lineWidth){
+	cairo_set_line_width( cr, lineWidth );
+}
+
+//--------------------------------------------
+void ofCairoRenderer::setBlendMode(ofBlendMode blendMode){
+	switch (blendMode){
+		case OF_BLENDMODE_ALPHA:{
+			cairo_set_operator(cr,CAIRO_OPERATOR_OVER);
+			break;
+		}
+
+		case OF_BLENDMODE_ADD:{
+			cairo_set_operator(cr,CAIRO_OPERATOR_ADD);
+			break;
+		}
+
+		case OF_BLENDMODE_MULTIPLY:{
+			cairo_set_operator(cr,CAIRO_OPERATOR_MULTIPLY);
+			break;
+		}
+
+		case OF_BLENDMODE_SCREEN:{
+			cairo_set_operator(cr,CAIRO_OPERATOR_SCREEN);
+			break;
+		}
+
+		case OF_BLENDMODE_SUBTRACT:{
+			cairo_set_operator(cr,CAIRO_OPERATOR_DIFFERENCE);
+			break;
+		}
+
+
+		default:
+			break;
+	}
+}
+
+//--------------------------------------------
+void ofCairoRenderer::setLineSmoothing(bool smooth){
+
+}
+
+
+// color options
+//--------------------------------------------
+void ofCairoRenderer::setColor(int r, int g, int b){
+	setColor(r,g,b,255);
+};
+
+//--------------------------------------------
+void ofCairoRenderer::setColor(int r, int g, int b, int a){
+	cairo_set_source_rgba(cr, (float)r/255.0, (float)g/255.0, (float)b/255.0, (float)a/255.0);
+};
+
+//--------------------------------------------
+void ofCairoRenderer::setColor(const ofColor & c){
+	setColor(c.r,c.g,c.b,c.a);
+};
+
+//--------------------------------------------
+void ofCairoRenderer::setColor(const ofColor & c, int _a){
+	setColor(c.r,c.g,c.b,_a);
+};
+
+//--------------------------------------------
+void ofCairoRenderer::setColor(int gray){
+	setColor(gray,gray,gray,255);
+};
+
+//--------------------------------------------
+void ofCairoRenderer::setHexColor( int hexColor ){
+	int r = (hexColor >> 16) & 0xff;
+	int g = (hexColor >> 8) & 0xff;
+	int b = (hexColor >> 0) & 0xff;
+	setColor(r,g,b);
+};
 
 //--------------------------------------------
 // transformations
@@ -380,7 +485,7 @@ void ofCairoRenderer::rotate(float degrees){
 void ofCairoRenderer::setupScreen(){
 	if(!surface || !cr) return;
 
-	ofSetupScreenPerspective();	// assume defaults
+	setupScreenPerspective();	// assume defaults
 }
 
 // screen coordinate things / default gl values
@@ -422,7 +527,7 @@ void ofCairoRenderer::viewport(float x, float y, float width, float height, bool
 	}
 	cairo_reset_clip(cr);
 	cairo_new_path(cr);
-	cairo_line_to(cr,viewportRect.x,viewportRect.y);
+	cairo_move_to(cr,viewportRect.x,viewportRect.y);
 	cairo_line_to(cr,viewportRect.x+viewportRect.width,viewportRect.y);
 	cairo_line_to(cr,viewportRect.x+viewportRect.width,viewportRect.y+viewportRect.height);
 	cairo_line_to(cr,viewportRect.x,viewportRect.y+viewportRect.height);
@@ -438,7 +543,7 @@ void ofCairoRenderer::setupScreenPerspective(float width, float height, int orie
 	float w = width;
 	float h = height;
 
-	//we do this because ofGetWidth and ofGetHeight return orientated widths and height
+	//we do this because ofGetWidth and ofGetHeight return oriented widths and height
 	//for the camera we need width and height of the actual screen
 	if( orientation == OF_ORIENTATION_90_LEFT || orientation == OF_ORIENTATION_90_RIGHT ){
 		h = width;
@@ -463,44 +568,31 @@ void ofCairoRenderer::setupScreenPerspective(float width, float height, int orie
 	switch(orientation) {
 		case OF_ORIENTATION_180:
 			modelView.glRotate(-180,0,0,1);
-			//glRotatef(-180, 0, 0, 1);
 			if(vFlip){
 				modelView.glScale(-1,-1,1);
 				modelView.glTranslate(width,0,0);
-				//glScalef(1, -1, 1);
-				//glTranslatef(-width, 0, 0);
 			}else{
 				modelView.glTranslate(width,-height,0);
-				//glTranslatef(-width, -height, 0);
 			}
 
 			break;
 
 		case OF_ORIENTATION_90_RIGHT:
-			//glRotatef(-90, 0, 0, 1);
 			modelView.glRotate(-90,0,0,1);
 			if(vFlip){
-				//glScalef(-1, 1, 1);
 				modelView.glScale(1,1,1);
 			}else{
-				//glScalef(-1, -1, 1);
-				//glTranslatef(0, -height, 0);
 				modelView.glScale(1,-1,1);
 				modelView.glTranslate(-width,-height,0);
 			}
 			break;
 
 		case OF_ORIENTATION_90_LEFT:
-			//glRotatef(90, 0, 0, 1);
 			modelView.glRotate(90,0,0,1);
 			if(vFlip){
-				//glScalef(-1, 1, 1);
-				//glTranslatef(-width, -height, 0);
 				modelView.glScale(1,1,1);
 				modelView.glTranslate(0,-height,0);
 			}else{
-				//glScalef(-1, -1, 1);
-				//glTranslatef(-width, 0, 0);
 
 				modelView.glScale(1,-1,1);
 				modelView.glTranslate(0,0,0);
@@ -510,8 +602,6 @@ void ofCairoRenderer::setupScreenPerspective(float width, float height, int orie
 		case OF_ORIENTATION_DEFAULT:
 		default:
 			if(vFlip){
-				//glScalef(1, -1, 1);
-				//glTranslatef(0, -height, 0);
 				modelView.glScale(-1,-1,1);
 				modelView.glTranslate(-width,-height,0);
 			}
@@ -556,8 +646,6 @@ ofHandednessType ofCairoRenderer::getCoordHandedness(){
 };
 
 void ofCairoRenderer::setupGraphicDefaults(){
-	background(200, 200, 200);
-	setColor(255, 255, 255, 255);
 };
 
 void ofCairoRenderer::rotate(float degrees, float vecX, float vecY, float vecZ){
@@ -632,6 +720,99 @@ void ofCairoRenderer::background(int r, int g, int b, int a){
 	}
 }
 
+
+//----------------------------------------------------------
+void ofCairoRenderer::drawLine(float x1, float y1, float z1, float x2, float y2, float z2){
+	cairo_new_path(cr);
+	cairo_move_to(cr,x1,y1);
+	cairo_line_to(cr,x2,y2);
+
+	cairo_stroke( cr );
+}
+
+//----------------------------------------------------------
+void ofCairoRenderer::drawRectangle(float x, float y, float z, float w, float h){
+
+	cairo_new_path(cr);
+
+	if (ofGetStyle().rectMode == OF_RECTMODE_CORNER){
+		cairo_move_to(cr,x,y);
+		cairo_line_to(cr,x+w, y);
+		cairo_line_to(cr,x+w, y+h);
+		cairo_line_to(cr,x, y+h);
+	}else{
+		cairo_move_to(cr,x-w/2.0f, y-h/2.0f);
+		cairo_line_to(cr,x+w/2.0f, y-h/2.0f);
+		cairo_line_to(cr,x+w/2.0f, y+h/2.0f);
+		cairo_line_to(cr,x-w/2.0f, y+h/2.0f);
+	}
+
+	cairo_close_path(cr);
+
+	if(bFilled==OF_FILLED){
+		cairo_fill( cr );
+	}else{
+		cairo_stroke( cr );
+	}
+}
+
+//----------------------------------------------------------
+void ofCairoRenderer::drawTriangle(float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3){
+	cairo_new_path(cr);
+
+	cairo_move_to(cr, x1, y1);
+	cairo_line_to(cr, x2, y2);
+	cairo_line_to(cr, x3, y3);
+
+
+	cairo_close_path(cr);
+
+	if(bFilled==OF_FILLED){
+		cairo_fill( cr );
+	}else{
+		cairo_stroke( cr );
+	}
+}
+
+//----------------------------------------------------------
+void ofCairoRenderer::drawCircle(float x, float y, float z, float radius){
+	cairo_new_path(cr);
+	cairo_set_source_rgba(cr,0,0,0,1);
+	cairo_arc(cr, x,y,radius,0,360);
+
+	cairo_close_path(cr);
+
+	if(bFilled==OF_FILLED){
+		cairo_fill( cr );
+	}else{
+		cairo_stroke( cr );
+	}
+}
+
+//----------------------------------------------------------
+void ofCairoRenderer::drawEllipse(float x, float y, float z, float width, float height){
+	cairo_new_path(cr);
+	float ellipse_ratio = height/width;
+	pushMatrix();
+	translate(0,-y*ellipse_ratio);
+	scale(1,ellipse_ratio);
+	translate(0,y/ellipse_ratio);
+	cairo_arc(cr,x,y,width*0.5,0,360);
+	popMatrix();
+
+	cairo_close_path(cr);
+
+
+	if(bFilled==OF_FILLED){
+		cairo_fill( cr );
+	}else{
+		cairo_stroke( cr );
+	}
+}
+
+void ofCairoRenderer::drawString(string text, float x, float y, float z, ofDrawBitmapMode mode){
+	//TODO: add some basic text rendering functionality
+}
 
 cairo_t * ofCairoRenderer::getCairoContext(){
 	return cr;

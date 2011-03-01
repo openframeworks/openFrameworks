@@ -102,10 +102,10 @@ public:
 
 
 	ofPolyWindingMode getWindingMode() const;
-	bool isFilled() const; // default false
+	bool isFilled() const; // default true
 	ofColor getFillColor() const;
 	ofColor getStrokeColor() const;
-	float getStrokeWidth() const; // default 1
+	float getStrokeWidth() const; // default 0
 	bool hasOutline() const { return strokeWidth>0; }
 
 	void draw(float x, float y);
@@ -116,7 +116,7 @@ public:
 
 	vector<ofPolyline> & getOutline();
 	vector<ofPrimitive> & getTessellation();
-	/// must call tessellate before calling draw, if the shape has changed
+	/// tessellate is called internally before calling draw, if the shape has changed
 	void tessellate();
 	void simplify(float tolerance=0.3);
 
@@ -155,16 +155,17 @@ private:
 	bool				bFill;
 	bool				bUseShapeColor;
 
-	// polyline / tesselation
+	// polyline / tessellation
 	vector<ofPolyline>  polylines;
 	vector<ofPolyline>  tessellatedPolylines;
 
 	// this gives more performance for shapes that are
-	// updating frequently by not instanciating new meshes
+	// updating frequently by not instantiating new meshes
 	friend class ofTessellator;
 	struct tessCache{
 		vector<ofPrimitive> meshes;
 		int numElements;
+		bool changed;
 	}cachedTessellation;
 
 	bool				hasChanged;

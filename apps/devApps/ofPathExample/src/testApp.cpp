@@ -10,11 +10,11 @@ ofRendererCollection renderer;
 
 //--------------------------------------------------------------
 void testApp::setup(){
-	//cairo.setup("3d.pdf",ofCairoRenderer::PDF);
+	/*cairo.setup("3d.pdf",ofCairoRenderer::PDF,true);
 	renderer.renderers.push_back(&gl);
-	//renderer.renderers.push_back(&cairo);
+	renderer.renderers.push_back(&cairo);
 	ofSetDefaultRenderer(&renderer);
-	//ofSetFrameRate( 12 ); //each frame generates a page
+	ofSetFrameRate( 12 ); //each frame generates a page*/
 	
 	nCurveVertexes = 7;
 	
@@ -41,7 +41,7 @@ void testApp::setup(){
 	
 	
 	
-	
+
 	//------(a)--------------------------------------
 	// 
 	// 		draw a star
@@ -298,6 +298,9 @@ void testApp::setup(){
 	unselectedDraggableVertex.setFilled(false);
 	unselectedDraggableVertex.setColor(ofColor(0,0,0,80));
 	
+
+	ofBackground( 255, 255, 255 );
+
 }
 
 //--------------------------------------------------------------
@@ -314,7 +317,7 @@ void testApp::update(){
 	for (int i = 0; i < 10; i++){
 		shapeD.lineTo(ofRandom(650,850), ofRandom(20,200));
 	}
-	shapeD.updateShape();
+	shapeD.tessellate();
 	//-------------------------------------
 
 	
@@ -334,7 +337,7 @@ void testApp::update(){
 		radius 	+= radiusAdder; 
 	}
 	shapeE.close();
-	shapeE.updateShape();
+	shapeE.tessellate();
 	
 	
 	//------(g)--------------------------------------
@@ -359,13 +362,12 @@ void testApp::update(){
 	shapeG.clear();
 	shapeG.lineTo(x0,y0);
 	shapeG.bezierTo(x1,y1,x2,y2,x3,y3);
-	shapeG.updateShape();
+	shapeG.tessellate();
 }
 
 
 //--------------------------------------------------------------
 void testApp::draw(){
-	ofBackground( 255, 255, 255 );
 	ofSetColor(255,255,255);
 
 	//------(a)--------------------------------------
@@ -509,9 +511,6 @@ void testApp::draw(){
 	ofDrawBitmapString("(i) nextContour\ncan even be used for CSG operations\nsuch as union and intersection", 260,620);
 
 	ofDrawBitmapString(ofToString((int)ofGetFrameRate()),20,20);
-	
-	
-	
 		
 }
 
@@ -572,7 +571,7 @@ void testApp::mouseMoved(int x, int y ){
 		}
 		angle += angleChangePerPt;
 	}
-	shapeC.updateShape();
+	shapeC.tessellate();
 	//-------------------------------------
 	
 }
@@ -625,7 +624,7 @@ void testApp::mouseDragged(int x, int y, int button){
 		shapeFNonCurve.lineTo(curveVertices[i].x, curveVertices[i].y);
 	}
 	shapeFNonCurve.close();
-	shapeF.updateShape();
+	shapeF.tessellate();
 }
 
 //--------------------------------------------------------------
