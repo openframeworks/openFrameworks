@@ -79,7 +79,8 @@ ofShape::ofShape(){
 	mode = PATHS;
 	bNeedsTessellation = false;
 	hasChanged = false;
-	bUseShapeColor = false;
+	cachedTessellation.changed = false;
+	bUseShapeColor = true;
 	clear();
 }
 
@@ -245,11 +246,7 @@ void ofShape::close(){
 void ofShape::setPolyWindingMode(ofPolyWindingMode newMode){
 	if(windingMode != newMode){
 		windingMode = newMode;
-		if(mode==PATHS){
-			hasChanged = true;
-		}else{
-			bNeedsTessellation = true;
-		}
+		bNeedsTessellation = true;
 	}
 }
 
@@ -259,23 +256,12 @@ void ofShape::setFilled(bool hasFill){
 		bFill = hasFill;
 		if(bFill) strokeWidth = 0;
 		else if(strokeWidth==0) strokeWidth = 1;
-		if(mode==PATHS){
-			hasChanged = true;
-		}else{
-			bNeedsTessellation = true;
-		}
+		if(cachedTessellation.changed) bNeedsTessellation = true;
 	}
 }
 
 //----------------------------------------------------------
 void ofShape::setStrokeWidth(float width){
-	if(width != 0 && strokeWidth == 0){
-		if(mode==PATHS){
-			hasChanged = true;
-		}else{
-			bNeedsTessellation = true;
-		}
-	}
 	strokeWidth = width;
 }
 
@@ -371,6 +357,7 @@ void ofShape::generatePolylinesFromPaths(){
 		}
 		hasChanged = false;
 		bNeedsTessellation = true;
+		cachedTessellation.changed=true;
 	}
 }
 
@@ -380,6 +367,7 @@ void ofShape::tessellate(){
 	if(!bNeedsTessellation) return;
 	if(bFill){
 		ofTessellator::tessellateToCache( polylines, windingMode, cachedTessellation);
+		cachedTessellation.changed=false;
 	}
 	if ( hasOutline() ){
 		if( windingMode != OF_POLY_WINDING_ODD ) {
@@ -420,31 +408,37 @@ void ofShape::draw(){
 		ofGetDefaultRenderer()->draw(*this);
 	}else{
 		tessellate();
+
+
+		ofColor prevColor;
+		if(bUseShapeColor){
+			prevColor = ofGetStyle().color;
+		}
+
 		if(bFill){
 			if(bUseShapeColor){
-				ofPushStyle();
 				ofSetColor(fillColor);
 			}
 			for(int i=0;i<cachedTessellation.numElements && i<(int)cachedTessellation.meshes.size();i++){
 				ofGetDefaultRenderer()->draw(cachedTessellation.meshes[i]);
 			}
-			if(bUseShapeColor){
-				ofPopStyle();
-			}
 		}
 
 		if(hasOutline()){
+			float lineWidth = ofGetStyle().lineWidth;
 			if(bUseShapeColor){
-				ofPushStyle();
-				ofSetColor(fillColor);
+				ofSetColor(strokeColor);
 			}
+			ofSetLineWidth( strokeWidth );
 			vector<ofPolyline> & polys = getOutline();
 			for(int i=0;i<(int)polys.size();i++){
 				ofGetDefaultRenderer()->draw(polys[i]);
 			}
-			if(bUseShapeColor){
-				ofPopStyle();
-			}
+			ofSetLineWidth(lineWidth);
+		}
+
+		if(bUseShapeColor){
+			ofSetColor(prevColor);
 		}
 	}
 }
@@ -525,3 +519,11 @@ void ofShape::setStrokeColor(const ofColor & color){
 void ofShape::setStrokeHexColor( int hex ) {
 	setStrokeColor( ofColor().fromHex( hex ) );
 };
+
+//----------------------------------------------------------
+void ofShape::simplify(float tolerance){
+	if(mode==PATHS) generatePolylinesFromPaths();
+	for(int i=0;i<(int)polylines.size();i++){
+		polylines[i].simplify(tolerance);
+	}
+}

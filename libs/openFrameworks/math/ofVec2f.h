@@ -48,7 +48,6 @@ public:
 	
     // Overloading for any type to any type
     //
-    void 	  operator=( const ofVec2f& vec );
     ofVec2f  operator+( const ofVec2f& vec ) const;
     ofVec2f& operator+=( const ofVec2f& vec );
     ofVec2f  operator-( const ofVec2f& vec ) const;
@@ -276,10 +275,6 @@ inline bool ofVec2f::alignRad( const ofVec2f& vec, float tollerance ) const {
 // Overloading for any type to any type
 //
 //
-inline void ofVec2f::operator=( const ofVec2f& vec ){
-	x = vec.x;
-	y = vec.y;
-}
 
 inline ofVec2f ofVec2f::operator+( const ofVec2f& vec ) const {
 	return ofVec2f( x+vec.x, y+vec.y);

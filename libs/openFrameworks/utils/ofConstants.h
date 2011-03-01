@@ -294,8 +294,8 @@ using namespace std;
 #endif
 
 enum ofFillFlag{
-	OF_FILLED = 0x01,
-	OF_OUTLINE=	0x02
+	OF_OUTLINE=	0,
+	OF_FILLED = 1,
 };
 
 enum ofWindowMode{
@@ -330,6 +330,7 @@ enum ofPixelFormat{
 
 // Blend Modes
 enum ofBlendMode{
+	OF_BLENDMODE_DISABLED = 0,
 	OF_BLENDMODE_ALPHA 	  = 1,
 	OF_BLENDMODE_ADD 	  = 2,
 	OF_BLENDMODE_SUBTRACT = 3,
