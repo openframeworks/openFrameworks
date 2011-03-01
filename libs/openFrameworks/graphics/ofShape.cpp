@@ -388,7 +388,7 @@ vector<ofPolyline> & ofShape::getOutline() {
 }
 
 //----------------------------------------------------------
-vector<ofPrimitive> & ofShape::getTessellation(){
+vector<ofMesh> & ofShape::getTessellation(){
 	tessellate();
 	cachedTessellation.meshes.resize(cachedTessellation.numElements);
 	return cachedTessellation.meshes;

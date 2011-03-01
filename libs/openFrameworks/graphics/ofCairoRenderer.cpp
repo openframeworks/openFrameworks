@@ -3,7 +3,7 @@
 #include "ofConstants.h"
 #include "ofAppRunner.h"
 #include "ofUtils.h"
-#include "ofPrimitive.h"
+#include "ofMesh.h"
 
 void
 helper_quadratic_to (cairo_t *cr,
@@ -192,7 +192,7 @@ ofVec3f ofCairoRenderer::transform(ofVec3f vec){
 	return vec;
 }
 
-void ofCairoRenderer::draw(ofPrimitive & primitive){
+void ofCairoRenderer::draw(ofMesh & primitive){
 	if(primitive.getNumVertices()==0) return;
 	pushMatrix();
 	cairo_matrix_init_identity(getCairoMatrix());

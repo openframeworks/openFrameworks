@@ -32,38 +32,17 @@ void ofModel::unbindTextureForMesh(int id){
 	}
 }
 
-//--------------------------------------------------------------
-void ofModel::updateRenderers(){
-	renderers.resize(meshes.size());
-	for (int i =0; i < (int)renderers.size();i++){
-		renderers[i]=ofMeshRenderer();
-		renderers[i].setMesh(meshes[i]);
-		if(bUsingTextures) renderers[i].enableTexCoords();
-		if(bUsingNormals) renderers[i].enableNormals();
-		if(bUsingColors) renderers[i].enableColors();
-	}	
-}
 	
 //--------------------------------------------------------------
 void ofModel::drawWireframe(){
-	if (renderers.size()!=meshes.size()){
-		updateRenderers();
-	}
-	
-	for (int i =0; i < (int)renderers.size();i++){
+	for (int i =0; i < (int)meshes.size();i++){
 		
-		if(!renderers.at(i).enableIndices()){
-			ofLog(OF_LOG_WARNING, "no indices in mesh " + ofToString(i));
-		}
-
-		bool goodToTexture = bUsingTextures && renderers.at(i).getTexCoordsEnabled();
+		bool goodToTexture = bUsingTextures && meshes[i]->getNumTexCoords();
 		if(goodToTexture){
 			bindTextureForMesh(i);
 		}
 
-		renderers.at(i).setRenderMethod(renderMethod);
-		
-		renderers.at(i).drawWireframe(meshes.at(i));
+		meshes[i]->drawWireframe();
 		
 		if(goodToTexture){
 			unbindTextureForMesh(i);
@@ -73,22 +52,14 @@ void ofModel::drawWireframe(){
 
 //--------------------------------------------------------------
 void ofModel::drawFaces(){
-	if (renderers.size()!=meshes.size()){
-		updateRenderers();
-	}
-	
 	for (int i =0; i < (int)meshes.size();i++){
-		if(!renderers.at(i).enableIndices()){
-			ofLog(OF_LOG_WARNING, "no indices in mesh " + ofToString(i));
-		}
 		
-		bool goodToTexture = bUsingTextures && renderers.at(i).getTexCoordsEnabled();
+		bool goodToTexture = bUsingTextures && meshes[i]->getNumTexCoords();
 		if(goodToTexture){
 			bindTextureForMesh(i);
 		}
-		renderers.at(i).setRenderMethod(renderMethod);
-		
-		renderers.at(i).drawFaces(meshes.at(i));
+
+		meshes[i]->drawFaces();
 		
 		if(goodToTexture){
 			unbindTextureForMesh(i);
@@ -98,20 +69,14 @@ void ofModel::drawFaces(){
 
 //--------------------------------------------------------------
 void ofModel::drawVertices(){
-	if (renderers.size()!=meshes.size()){
-		updateRenderers();
-	}
-	
-	for (int i =0; i < (int)renderers.size();i++){
+	for (int i =0; i < (int)meshes.size();i++){
 		
-		bool goodToTexture = bUsingTextures && renderers.at(i).getTexCoordsEnabled();
+		bool goodToTexture = bUsingTextures && meshes[i]->getNumTexCoords();
 		if(goodToTexture){
 			bindTextureForMesh(i);
 		}
 
-		renderers.at(i).setRenderMethod(renderMethod);
-		
-		renderers.at(i).drawVertices(meshes.at(i));
+		meshes[i]->drawVertices();
 		
 		if(goodToTexture){
 			unbindTextureForMesh(i);
@@ -149,49 +114,31 @@ void ofModel::listMeshNames() {
 //--------------------------------------------------------------
 void ofModel::enableTextures(){
 	bUsingTextures = true;
-	for (int i =0; i < (int)renderers.size();i++){
-		renderers.at(i).enableTexCoords();
-	}
 }
 
 //--------------------------------------------------------------
 void ofModel::enableNormals(){
 	bUsingNormals = true;
-	for (int i =0; i < (int)renderers.size();i++){
-		renderers.at(i).enableNormals();
-	}
 }
 
 //--------------------------------------------------------------
 void ofModel::enableColors(){
 	bUsingColors = true;
-	for (int i =0; i < (int)renderers.size();i++){
-		renderers.at(i).enableColors();
-	}
 }
 
 //--------------------------------------------------------------
 void ofModel::disableTextures(){
 	bUsingTextures = false;
-	for (int i =0; i < (int)renderers.size();i++){
-		renderers.at(i).disableTexCoords();
-	}
 }
 
 //--------------------------------------------------------------
 void ofModel::disableNormals(){
 	bUsingNormals = false;
-	for (int i =0; i < (int)renderers.size();i++){
-		renderers.at(i).disableNormals();
-	}
 }
 
 //--------------------------------------------------------------
 void ofModel::disableColors(){
 	bUsingColors = false;
-	for (int i =0; i < (int)renderers.size();i++){
-		renderers.at(i).disableColors();
-	}
 }
 
 //--------------------------------------------------------------

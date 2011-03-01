@@ -1,6 +1,6 @@
 //TODO: individual enabling/disabling (and getters) per-vbo instead of hacky placeholder lump-sum method currently in place
 //TODO: better way to organize vbos in relation to different meshes
-
+#if 0
 #include "ofMeshRenderer.h"
 #include "ofGraphics.h"
 
@@ -287,7 +287,7 @@ void ofMeshRenderer::setupVbos(){
 }
 
 //--------------------------------------------------------------
-void ofMeshRenderer::draw(ofMesh* meshToDraw, polyMode renderType){
+void ofMeshRenderer::draw(ofMesh* meshToDraw, ofPolyRenderMode renderType){
 	if(meshToDraw){
 		if (mesh!=meshToDraw){
 			mesh = meshToDraw;
@@ -343,3 +343,4 @@ void ofMeshRenderer::drawWireframe(ofMesh* meshToDraw){
 void ofMeshRenderer::drawFaces(ofMesh* meshToDraw){
 	draw(meshToDraw, OF_MESH_FILL);
 }
+#endif

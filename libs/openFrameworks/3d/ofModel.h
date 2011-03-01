@@ -36,17 +36,15 @@ public:
 
 	vector<ofMeshNode> meshNodes;
 	vector<ofMesh*> meshes;
-	vector<ofMeshRenderer> renderers;
 	vector<ofImage> textures;
 	map<int, int> textureLinks;
 	
 
 	map<string, ofMesh*> named_meshes;
-	map<string, ofPrimitive*> named_primitives;
+	map<string, ofMesh*> named_primitives;
 	
 protected:
 	bool bUsingTextures, bUsingNormals, bUsingColors;
-	void updateRenderers();
 	void bindTextureForMesh(int id);
 	void unbindTextureForMesh(int id);
 

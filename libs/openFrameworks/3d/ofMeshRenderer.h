@@ -43,7 +43,7 @@ public:
 	bool getColorsEnabled();
 	bool getIndicesEnabled();
 	
-	void draw(ofMesh* meshToDraw, polyMode mode);
+	void draw(ofMesh* meshToDraw, ofPolyRenderMode mode);
 	void drawVertices(ofMesh* meshToDraw);
 	void drawWireframe(ofMesh* meshToDraw);
 	void drawFaces(ofMesh* meshToDraw);

@@ -1,9 +1,9 @@
 #include "ofGLRenderer.h"
-#include "ofPrimitive.h"
+#include "ofMesh.h"
 #include "ofShape.h"
 #include "ofGraphics.h"
 #include "ofAppRunner.h"
-#include "ofPrimitive.h"
+#include "ofMesh.h"
 #include "ofBitmapFont.h"
 
 //----------------------------------------------------------
@@ -16,7 +16,7 @@ ofGLRenderer::ofGLRenderer(bool useShapeColor){
 }
 
 //----------------------------------------------------------
-void ofGLRenderer::draw(ofPrimitive & vertexData){
+void ofGLRenderer::draw(ofMesh & vertexData){
 	if(vertexData.getNumVertices()){
 		glEnableClientState(GL_VERTEX_ARRAY);
 		glVertexPointer(3, GL_FLOAT, sizeof(ofVec3f), vertexData.getVerticesPointer());
@@ -82,7 +82,7 @@ void ofGLRenderer::draw(ofShape & shape){
 		prevColor = ofGetStyle().color;
 	}
 	if(shape.isFilled()){
-		vector<ofPrimitive> & mesh = shape.getTessellation();
+		vector<ofMesh> & mesh = shape.getTessellation();
 		if(shape.getUseShapeColor()){
 			setColor( shape.getFillColor() * ofGetStyle().color,shape.getFillColor().a/255. * ofGetStyle().color.a);
 		}

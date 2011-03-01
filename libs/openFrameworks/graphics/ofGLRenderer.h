@@ -2,14 +2,14 @@
 #include "ofBaseTypes.h"
 #include "ofPolyline.h"
 class ofShapeTessellation;
-class ofPrimitive;
+class ofMesh;
 
 
 class ofGLRenderer: public ofBaseRenderer{
 public:
 	ofGLRenderer(bool useShapeColor=true);
 	~ofGLRenderer(){}
-	void draw(ofPrimitive & vertexData);
+	void draw(ofMesh & vertexData);
 	void draw(ofPolyline & poly);
 	void draw(ofShape & path);
 	void draw(vector<ofPoint> & vertexData, ofPrimitiveMode drawMode);

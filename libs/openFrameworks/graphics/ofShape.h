@@ -5,7 +5,7 @@
 #include "ofColor.h"
 #include "ofPolyline.h"
 #include "ofBaseTypes.h"
-#include "ofPrimitive.h"
+#include "ofMesh.h"
 
 
 class ofSubPath{
@@ -115,7 +115,7 @@ public:
 	const vector<ofSubPath> & getSubPaths() const;
 
 	vector<ofPolyline> & getOutline();
-	vector<ofPrimitive> & getTessellation();
+	vector<ofMesh> & getTessellation();
 	/// tessellate is called internally before calling draw, if the shape has changed
 	void tessellate();
 	void simplify(float tolerance=0.3);
@@ -163,7 +163,7 @@ private:
 	// updating frequently by not instantiating new meshes
 	friend class ofTessellator;
 	struct tessCache{
-		vector<ofPrimitive> meshes;
+		vector<ofMesh> meshes;
 		int numElements;
 		bool changed;
 	}cachedTessellation;
