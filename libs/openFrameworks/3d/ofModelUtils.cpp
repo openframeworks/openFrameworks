@@ -62,7 +62,7 @@ void aiMeshToOfPrimitive(const aiMesh* aim, ofMesh& ofm){
 }
 
 //--------------------------------------------------------------
-void aiMatrix4x4ToOfMatrix4x4(const aiMatrix4x4& aim, ofMeshNode& ofm){
+void aiMatrix4x4ToOfMatrix4x4(const aiMatrix4x4& aim, ofNode& ofm){
 	float m[16] = { aim.a1,aim.a2,aim.a3,aim.a4,
 					aim.b1,aim.b2,aim.b3,aim.b4,
 					aim.c1,aim.c2,aim.c3,aim.c4,
@@ -72,20 +72,20 @@ void aiMatrix4x4ToOfMatrix4x4(const aiMatrix4x4& aim, ofMeshNode& ofm){
 }
 
 //--------------------------------------------------------------
-void aiNodeToOfNode(const aiNode* ain, ofMeshNode& ofn, const ofModel& model){
+void aiNodeToOfNode(const aiNode* ain, ofNode& ofn, const ofModel& model){
 	aiMatrix4x4ToOfMatrix4x4(ain->mTransformation, ofn);
-	for (int i =0; i < (int)ain->mNumMeshes;i++){
+	/*for (int i =0; i < (int)ain->mNumMeshes;i++){
 		ofn.addMesh(model.meshes.at(ain->mMeshes[i]));
 	}
-	ofn.setName(string(ain->mName.data));
+	ofn.setName(string(ain->mName.data));*/
 }
 
 //--------------------------------------------------------------
 int createNodes(const aiNode* curNode, ofModel& model){
 	//lets only make nodes that have meshes for now
 	if(curNode->mNumMeshes){
-		model.meshNodes.push_back(ofMeshNode());
-		aiNodeToOfNode(curNode, model.meshNodes.back(), model);
+		model.nodes.push_back(ofNode());
+		aiNodeToOfNode(curNode, model.nodes.back(), model);
 	}
 	
 	if (curNode->mNumChildren>0){
