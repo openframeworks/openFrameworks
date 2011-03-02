@@ -38,7 +38,6 @@ public:
 	
 
 	map<string, ofMesh*> named_meshes;
-	map<string, ofMesh*> named_primitives;
 	
 protected:
 	bool bUsingTextures, bUsingNormals, bUsingColors;
