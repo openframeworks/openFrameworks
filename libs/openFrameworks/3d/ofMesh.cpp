@@ -258,23 +258,23 @@ int ofPrimitive::getNumIndicesWire(){
  */
 
 //--------------------------------------------------------------
-float* ofMesh::getVerticesPointer(){
-	return &vertices[0].x;
+ofVec3f* ofMesh::getVerticesPointer(){
+	return &vertices[0];
 }
 
 //--------------------------------------------------------------
-float* ofMesh::getColorsPointer(){
-	return &colors[0].r;
+ofColor* ofMesh::getColorsPointer(){
+	return &colors[0];
 }
 
 //--------------------------------------------------------------
-float* ofMesh::getNormalsPointer(){
-	return &normals[0].x;
+ofVec3f* ofMesh::getNormalsPointer(){
+	return &normals[0];
 }
 
 //--------------------------------------------------------------
-float* ofMesh::getTexCoordsPointer(){
-	return &texCoords[0].x;
+ofVec2f* ofMesh::getTexCoordsPointer(){
+	return &texCoords[0];
 }
 
 //--------------------------------------------------------------

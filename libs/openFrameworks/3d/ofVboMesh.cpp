@@ -17,7 +17,7 @@ void ofVboMesh::setUsage(int _usage){
 void ofVboMesh::draw(ofPolyRenderMode drawMode){
 	if(!vbo.getIsAllocated()){
 		if(getNumVertices()){
-			vbo.setVertexData(getVerticesPointer(),3,getNumVertices(),usage);
+			vbo.setVertexData(getVerticesPointer(),getNumVertices(),usage);
 		}
 		if(getNumColors()){
 			vbo.setColorData(getColorsPointer(),getNumColors(),usage);
@@ -36,7 +36,7 @@ void ofVboMesh::draw(ofPolyRenderMode drawMode){
 	}
 
 	if(haveVertsChanged()){
-		vbo.updateVertexData(getVerticesPointer(),3,getNumVertices());
+		vbo.updateVertexData(getVerticesPointer(),getNumVertices());
 	}
 	if(haveColorsChanged()){
 		vbo.updateColorData(getColorsPointer(),getNumColors());
