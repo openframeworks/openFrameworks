@@ -3,6 +3,11 @@
 #include "aiConfig.h"
 #include <assert.h>
 
+//--------------------------------------------------------------
+static inline ofColor aiColorToOfColor(const aiColor4D& c){
+	return ofColor(255*c.r,255*c.g,255*c.b,255*c.a);
+}
+
 ofxAssimpModelLoader::ofxAssimpModelLoader(){
 
     lastAnimationTime = 0;
@@ -43,7 +48,9 @@ void ofxAssimpModelLoader::loadModel(string modelName){
     aiSetImportPropertyInteger(AI_CONFIG_PP_PTV_NORMALIZE, true);
     
     // aiProcess_FlipUVs is for VAR code. Not needed otherwise. Not sure why.
-    scene = (aiScene*) aiImportFile(filepath.c_str(), aiProcessPreset_TargetRealtime_MaxQuality | aiProcess_OptimizeGraph | aiProcess_Triangulate | aiProcess_FlipUVs | 0 );
+    scene = (aiScene*) aiImportFile(filepath.c_str(), aiProcessPreset_TargetRealtime_MaxQuality | aiProcess_ImproveCacheLocality | aiProcess_OptimizeGraph |
+    													aiProcess_OptimizeMeshes | aiProcess_JoinIdenticalVertices | aiProcess_Triangulate |
+    													aiProcess_FlipUVs | aiProcess_RemoveRedundantMaterials | 0 );
     
     if(scene){        
         ofLog(OF_LOG_VERBOSE, "initted scene with %i meshes & %i animations", scene->mNumMeshes, scene->mNumAnimations);
@@ -95,19 +102,6 @@ void ofxAssimpModelLoader::loadGLResources(){
         ofxAssimpMeshHelper & meshHelper = modelMeshes[i];
         
         meshHelper.mesh = mesh;
-        
-        // set the mesh's default values.
-        aiColor4D dcolor = aiColor4D(0.8f, 0.8f, 0.8f, 1.0f);
-        meshHelper.diffuseColor = dcolor;
-
-        aiColor4D scolor = aiColor4D(0.0f, 0.0f, 0.0f, 1.0f);
-        meshHelper.specularColor = scolor;
-
-        aiColor4D acolor = aiColor4D(0.2f, 0.2f, 0.2f, 1.0f);
-        meshHelper.ambientColor = acolor;
-
-        aiColor4D ecolor = aiColor4D(0.0f, 0.0f, 0.0f, 1.0f);
-        meshHelper.emissiveColor = ecolor;
 
         // Handle material info
         aiMaterial* mtl = scene->mMaterials[mesh->mMaterialIndex];
@@ -137,18 +131,39 @@ void ofxAssimpModelLoader::loadGLResources(){
             
         }
         
-        if(AI_SUCCESS == aiGetMaterialColor(mtl, AI_MATKEY_COLOR_DIFFUSE, &dcolor))
-            meshHelper.diffuseColor = dcolor;
+        aiColor4D dcolor, scolor, acolor, ecolor;
+
+        if(AI_SUCCESS == aiGetMaterialColor(mtl, AI_MATKEY_COLOR_DIFFUSE, &dcolor)){
+            meshHelper.material.setDiffuseColor(aiColorToOfColor(dcolor));
+        }
         
-        if(AI_SUCCESS == aiGetMaterialColor(mtl, AI_MATKEY_COLOR_SPECULAR, &scolor))
-            meshHelper.specularColor = scolor;
+        if(AI_SUCCESS == aiGetMaterialColor(mtl, AI_MATKEY_COLOR_SPECULAR, &scolor)){
+        	meshHelper.material.setSpecularColor(aiColorToOfColor(scolor));
+        }
         
-        if(AI_SUCCESS == aiGetMaterialColor(mtl, AI_MATKEY_COLOR_AMBIENT, &acolor))
-            meshHelper.ambientColor = acolor;
+        if(AI_SUCCESS == aiGetMaterialColor(mtl, AI_MATKEY_COLOR_AMBIENT, &acolor)){
+        	meshHelper.material.setAmbientColor(aiColorToOfColor(acolor));
+        }
         
-        if(AI_SUCCESS == aiGetMaterialColor(mtl, AI_MATKEY_COLOR_EMISSIVE, &ecolor))
-            meshHelper.emissiveColor = ecolor;
+        if(AI_SUCCESS == aiGetMaterialColor(mtl, AI_MATKEY_COLOR_EMISSIVE, &ecolor)){
+        	meshHelper.material.setEmissiveColor(aiColorToOfColor(ecolor));
+        }
         
+        float shininess;
+        if(AI_SUCCESS == aiGetMaterialFloat(mtl, AI_MATKEY_SHININESS, &shininess)){
+			meshHelper.material.setShininess(shininess);
+		}
+
+        int blendMode;
+		if(AI_SUCCESS == aiGetMaterialInteger(mtl, AI_MATKEY_BLEND_FUNC, &blendMode)){
+			if(blendMode==aiBlendMode_Default){
+				meshHelper.blendMode=OF_BLENDMODE_ALPHA;
+			}else{
+				meshHelper.blendMode=OF_BLENDMODE_ADD;
+			}
+		}
+
+
         // Culling
         unsigned int max = 1;
         int two_sided;
@@ -518,6 +533,7 @@ void ofxAssimpModelLoader::draw()
         
         glPushAttrib(GL_ALL_ATTRIB_BITS);
         glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
+        ofPushStyle();
         
         glEnable(GL_NORMALIZE);
         
@@ -552,14 +568,7 @@ void ofxAssimpModelLoader::draw()
 				meshHelper.texture.getTextureReference().bind();
 			}
 
-			// Material colors and properties
-			glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, &meshHelper.diffuseColor.r);
-
-			glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, &meshHelper.specularColor.r);
-
-			glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, &meshHelper.ambientColor.r);
-
-			glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, &meshHelper.emissiveColor.r);
+			meshHelper.material.begin();
 
 
 			// Culling
@@ -568,16 +577,20 @@ void ofxAssimpModelLoader::draw()
 			else
 				glDisable(GL_CULL_FACE);
 
+			ofEnableBlendMode(meshHelper.blendMode);
 		    meshHelper.vbo.drawElements(GL_TRIANGLES,meshHelper.indices.size());
 
 			// Texture Binding
 			if(meshHelper.texture.bAllocated()){
 				meshHelper.texture.getTextureReference().unbind();
 			}
+
+			meshHelper.material.end();
 		}
             
         glPopMatrix();
         
+        ofPopStyle();
         glPopClientAttrib();
         glPopAttrib();
     }
