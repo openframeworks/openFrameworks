@@ -22,10 +22,10 @@ public:
 	void setTexCoordData(const ofVec2f * texCoords, int total, int usage);
 	void setIndexData(const ofIndexType * indices, int total, int usage);
 
-	void setVertexData(const float * vert0x, int numCoords, int total, int usage);
-	void setColorData(const float * color0r, int total, int usage);	
-	void setNormalData(const float * normal0x, int total, int usage);	
-	void setTexCoordData(const float * texCoord0x, int total, int usage);	
+	void setVertexData(const float * vert0x, int numCoords, int total, int usage, int stride=0);
+	void setColorData(const float * color0r, int total, int usage, int stride=0);
+	void setNormalData(const float * normal0x, int total, int usage, int stride=0);
+	void setTexCoordData(const float * texCoord0x, int total, int usage, int stride=0);
 	
 	void updateVertexData(const ofVec3f * verts, int total);
 	void updateVertexData(const ofVec2f * verts, int total);
@@ -34,10 +34,10 @@ public:
 	void updateTexCoordData(const ofVec2f * texCoords, int total);
 	void updateIndexData(const ofIndexType * indices, int total);
 	
-	void updateVertexData(const float * ver0x, int numCoords, int total);
-	void updateColorData(const float * color0r, int total);	
-	void updateNormalData(const float * normal0x, int total);	
-	void updateTexCoordData(const float * texCoord0x, int total);	
+	void updateVertexData(const float * ver0x, int total);
+	void updateColorData(const float * color0r, int total);
+	void updateNormalData(const float * normal0x, int total);
+	void updateTexCoordData(const float * texCoord0x, int total);
 	
 	GLuint getVertId();
 	GLuint getColorId();
@@ -75,6 +75,10 @@ private:
 	bool bUsingIndices;
 
 	GLsizei vertStride;
+	GLsizei colorStride;
+	GLsizei normalStride;
+	GLsizei texCoordStride;
+
 	int		vertSize;
 	int		totalVerts;
 
