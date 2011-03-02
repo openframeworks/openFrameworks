@@ -66,10 +66,10 @@ public:
 	int getNumTexCoords() const;
 	int getNumIndices() const;
 	
-	float* getVerticesPointer();
-	float* getColorsPointer();
-	float* getNormalsPointer();
-	float* getTexCoordsPointer();
+	ofVec3f* getVerticesPointer();
+	ofColor* getColorsPointer();
+	ofVec3f* getNormalsPointer();
+	ofVec2f* getTexCoordsPointer();
 	ofIndexType* getIndexPointer();
 	
 	const float* getVerticesPointer() const;
