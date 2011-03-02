@@ -1,70 +1,110 @@
 #include "ofMaterial.h"
 
 ofMaterial::ofMaterial() {
-	enabled_maps = OF_TEXMAP_UNKNOWN;
+
+    diffuse.set(0.8f, 0.8f, 0.8f, 1.0f);
+    specular.set(0.0f, 0.0f, 0.0f, 1.0f);
+    ambient.set(0.2f, 0.2f, 0.2f, 1.0f);
+    emissive.set(0.0f, 0.0f, 0.0f, 1.0f);
+    shininess = 0.2;
 }
 
-ofMaterial& ofMaterial::addMap(ofTexture& pTexture, ofTextureMapType nMapType) {
-	enabled_maps |= nMapType;
-	ofTextureMap tex_map(nMapType, &pTexture);
-	texture_maps.insert(tex_map);
-	return *this;
+void ofMaterial::addMap(ofTexture& pTexture, ofTextureMapType nMapType) {
+	texture_maps[nMapType]=pTexture;
 }
 
-ofTexture* ofMaterial::getMap(ofTextureMapType nType) {
-	ofTexture* tex = NULL;
-	ofTextureMaps::iterator it = texture_maps.find(nType);
-	if(it != texture_maps.end()) {
-		tex = it->second;
-	}
-	return tex;
+ofTexture& ofMaterial::getMap(ofTextureMapType nType) {
+	return texture_maps[nType];
 }
 
-ofMaterial& ofMaterial::setColors(ofColor oDiffuse, ofColor oAmbient, ofColor oSpecular) {
+void ofMaterial::setColors(ofColor oDiffuse, ofColor oAmbient, ofColor oSpecular, ofColor oEmissive) {
 	setDiffuseColor(oDiffuse);
 	setAmbientColor(oAmbient);
 	setSpecularColor(oSpecular);
-	return *this;
+	setEmissiveColor(oEmissive);
 }
 
-ofMaterial& ofMaterial::setDiffuseColor(ofColor oDiffuse) {
-	diffuse = oDiffuse;
-	return *this;
+void ofMaterial::setDiffuseColor(ofColor oDiffuse) {
+	diffuse = oDiffuse/255.f;
+	diffuse.a /= 255.f;
 }
 
-ofMaterial& ofMaterial::setAmbientColor(ofColor oAmbient) {
-	ambient = oAmbient;
-	return *this;
+void ofMaterial::setAmbientColor(ofColor oAmbient) {
+	ambient = oAmbient/255.f;
+	ambient.a /= 255.f;
 }
 
-ofMaterial& ofMaterial::setSpecularColor(ofColor oSpecular) {
-	specular = oSpecular;
-	return *this;
+void ofMaterial::setSpecularColor(ofColor oSpecular) {
+	specular = oSpecular/255.f;
+	specular.a /= 255.f;
 }
 
-ofMaterial& ofMaterial::setShininess(float nShininess) {
+void ofMaterial::setEmissiveColor(ofColor oEmissive) {
+	emissive = oEmissive/255.f;
+	emissive.a /= 255.f;
+}
+
+void ofMaterial::setShininess(float nShininess) {
 	shininess = nShininess;
-	return *this;
+}
+
+float ofMaterial::getShininess(){
+	return shininess;
+}
+
+ofColor ofMaterial::getDiffuseColor() {
+	ofColor ret = diffuse*255.f;
+	ret.a *= 255.f;
+	return ret;
+}
+
+ofColor ofMaterial::getAmbientColor() {
+	ofColor ret = ambient*255.f;
+	ret.a *= 255.f;
+	return ret;
+}
+
+ofColor ofMaterial::getSpecularColor() {
+	ofColor ret = specular*255.f;
+	ret.a *= 255.f;
+	return ret;
+}
+
+ofColor ofMaterial::getEmissiveColor() {
+	ofColor ret = emissive*255.f;
+	ret.a *= 255.f;
+	return ret;
 }
 
 void ofMaterial::begin() {
-	// TODO: needs some work here
-	if(enabled_maps & OF_TEXMAP_DIFFUSE) {
-		ofTexture* diffuse_tex = getDiffuseMap();
-		if(diffuse_tex != NULL) {
-			diffuse_tex->bind();
+
+    glPushAttrib(GL_ALL_ATTRIB_BITS);
+    glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
+	// Material colors and properties
+	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, &diffuse.r);
+
+	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, &specular.r);
+
+	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, &ambient.r);
+
+	glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, &emissive.r);
+
+	glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, shininess);
+
+	for(int i=0; i<OF_TEXMAP_NUM;i++){
+		if(texture_maps[i].bAllocated()) {
+			getMap((ofTextureMapType)i).bind();
 		}
 	}
 }
 
 void ofMaterial::end() {
-	// TODO: needs some work here
-	if(enabled_maps & OF_TEXMAP_DIFFUSE) {
-		ofTexture* diffuse_tex = getDiffuseMap();
-		if(diffuse_tex != NULL) {
-			diffuse_tex->unbind();
+	for(int i=0; i<OF_TEXMAP_NUM;i++){
+		if(texture_maps[i].bAllocated()) {
+			getMap((ofTextureMapType)i).unbind();
 		}
 	}
-
+    glPopClientAttrib();
+    glPopAttrib();
 }
 

@@ -1,6 +1,7 @@
 
 #include "aiMesh.h"
 #include "ofVbo.h"
+#include "ofMaterial.h"
 
 
 struct ofxAssimpMeshHelper{
@@ -17,14 +18,9 @@ struct ofxAssimpMeshHelper{
     vector<ofIndexType> indices;
     
     // Material 
-    aiColor4D diffuseColor;
-    aiColor4D specularColor;
-    aiColor4D ambientColor;
-    aiColor4D emissiveColor;
+    ofMaterial material;
     
-    GLfloat opacity;
-    GLfloat shininess;
-    GLfloat specularStrength;
+    ofBlendMode blendMode;
     
     bool twoSided;
 };
