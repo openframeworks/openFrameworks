@@ -21,6 +21,7 @@ void testApp::setup(){
     glEnable(GL_LIGHT0);
 	
 	bAnimate		= false;
+	bAnimateMouse 	= false;
 	animationTime	= 0.0;
 }
 
@@ -34,8 +35,14 @@ void testApp::update(){
 		if( animationTime >= 1.0 ){
 			animationTime = 0.0;
 		}
+	    model.setNormalizedTime(animationTime);
 	}
-    model.setNormalizedTime(animationTime);
+
+
+	if( bAnimateMouse ){
+		animationTime = float(mouseY)/float(ofGetWidth());
+	    model.setNormalizedTime(animationTime);
+	}
 }
 
 //--------------------------------------------------------------
@@ -45,8 +52,7 @@ void testApp::draw(){
     
     ofPushMatrix();
 		ofTranslate(model.getPosition().x, model.getPosition().y, 0);
-		ofRotate(mouseY, 1, 0, 0);
-		ofRotate(-mouseX, 0, 0, 1);		
+		ofRotate(-mouseX, 0, 1, 0);
 		ofTranslate(-model.getPosition().x, -model.getPosition().y, 0);
     
 		model.draw();
@@ -54,7 +60,8 @@ void testApp::draw(){
     ofPopMatrix();
     
     ofDrawBitmapString("fps: "+ofToString(ofGetFrameRate(), 2), 10, 15);
-    ofDrawBitmapString("keys 1-4 load models, spacebar to trigger animation", 10, 30);	
+    ofDrawBitmapString("keys 1-5 load models, spacebar to trigger animation", 10, 30);
+    ofDrawBitmapString("m to control animation with mouseY", 10, 45);
 }
 
 //--------------------------------------------------------------
@@ -76,7 +83,12 @@ void testApp::keyPressed(int key){
 			model.loadModel("squirrel/NewSquirrel.3ds");
 			break;
 		case ' ':
+			bAnimateMouse = false;
 			bAnimate = !bAnimate;
+			break;
+		case 'm':
+			bAnimate=false;
+			bAnimateMouse = !bAnimateMouse;
 			break;
         default:
             break;

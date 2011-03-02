@@ -49,9 +49,6 @@ class ofxAssimpModelLoader{
 		ofPoint getPosition(){
 			return pos;
 		}
-            
-        // Our array of textures we load from the models path.
-        vector <ofImage> textures;
     
         // TODO: convert to ofMesh or ofVBOMesh
         vector <ofxAssimpMeshHelper> modelMeshes;  
@@ -94,4 +91,5 @@ class ofxAssimpModelLoader{
         ofPoint scale;
         ofPoint pos;
         int numRotations;
+        string filepath;
 };

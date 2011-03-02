@@ -22,6 +22,7 @@ class testApp : public ofBaseApp{
 		void gotMessage(ofMessage msg);		
     
 		bool bAnimate;
+		bool bAnimateMouse;
 		float animationTime;
         ofxAssimpModelLoader model;
 };
