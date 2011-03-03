@@ -49,25 +49,22 @@ public:
 	
 	
 	// set maps.
-	void setDiffuseMap(ofTexture& oDiffuseMap) {	return addMap(oDiffuseMap, OF_TEXMAP_DIFFUSE);	}
-	void setSpecularMap(ofTexture& oSpecularMap) { return addMap(oSpecularMap, OF_TEXMAP_SPECULAR); }
-	void setAmbientMap(ofTexture& oAmbientMap) { return addMap(oAmbientMap, OF_TEXMAP_AMBIENT); }
-	void setHeightMap(ofTexture& oHeightMap) { return addMap(oHeightMap, OF_TEXMAP_HEIGHT); }
-	void setNormalMap(ofTexture& oNormalMap) { return addMap(oNormalMap, OF_TEXMAP_NORMAL); }
-	void setShininessMap(ofTexture& oShininessMap) { return addMap(oShininessMap, OF_TEXMAP_SHININESS);}
-	void setOpactiyMap(ofTexture& oOpacityMap) { return addMap(oOpacityMap, OF_TEXMAP_OPACITY); }
-	void setDisplacementMap(ofTexture& oDispMap) { return addMap(oDispMap, OF_TEXMAP_DISPLACEMENT); }
-	void setLightMap(ofTexture& oLightMap) { return addMap(oLightMap, OF_TEXMAP_LIGHT); }
-	void setReflectionMap(ofTexture& oReflectionMap) { return addMap(oReflectionMap, OF_TEXMAP_REFLECTION); }
+	void setDiffuseMap(ofTexture& oDiffuseMap);
+	void setSpecularMap(ofTexture& oSpecularMap);
+	void setAmbientMap(ofTexture& oAmbientMap);
+	void setHeightMap(ofTexture& oHeightMap);
+	void setNormalMap(ofTexture& oNormalMap);
+	void setShininessMap(ofTexture& oShininessMap);
+	void setOpactiyMap(ofTexture& oOpacityMap);
+	void setDisplacementMap(ofTexture& oDispMap);
+	void setLightMap(ofTexture& oLightMap);
+	void setReflectionMap(ofTexture& oReflectionMap);
 		
-	void addMap(
-		 ofTexture& pTexture
-		,ofTextureMapType nType = OF_TEXMAP_DIFFUSE
-	);
+	void addMap(ofTexture& pTexture, ofTextureMapType nType = OF_TEXMAP_DIFFUSE);
 	
 	// find maps
 	ofTexture& getMap(ofTextureMapType nType);
-	ofTexture& getDiffuseMap() { return getMap(OF_TEXMAP_DIFFUSE); };
+	ofTexture& getDiffuseMap() { getMap(OF_TEXMAP_DIFFUSE); };
 
 	// apply the material
 	virtual void begin();
