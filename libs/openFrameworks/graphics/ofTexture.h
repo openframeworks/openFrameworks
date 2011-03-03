@@ -99,14 +99,11 @@ void ofDisableTextureEdgeHack();
 
 class ofTexture : public ofBaseDraws{
 
-	Poco::SharedPtr<ofTextureData> texDataPtr;
 
 	public :
 
 	ofTexture();
 	virtual ~ofTexture();
-	ofTexture(const ofTexture & mom);
-	ofTexture& operator=(const ofTexture & mom);
 
 	// -----------------------------------------------------------------------
 
@@ -166,6 +163,10 @@ protected:
 
 	ofPoint anchor;
 	bool bAnchorIsPct;
+
+private:
+
+	Poco::SharedPtr<ofTextureData> texDataPtr;
 
 
 };
