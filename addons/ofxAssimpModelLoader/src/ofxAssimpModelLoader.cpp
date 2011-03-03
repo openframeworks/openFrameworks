@@ -243,12 +243,15 @@ void ofxAssimpModelLoader::loadGLResources(){
             string modelFolder = ofFileUtils::getEnclosingDirectoryFromPath(filepath);
 
 			if(ofFileUtils::isAbsolute(texPath.data) && ofFileUtils::doesFileExist(texPath.data)) {
-				meshHelper.texture.loadImage(texPath.data);
+				if(!ofLoadImage(meshHelper.texture,texPath.data)){
+					ofLog(OF_LOG_ERROR,string("error loading image ") + texPath.data);
+				}
 			}
 			else {
-				meshHelper.texture.loadImage(modelFolder + texPath.data);
+				if(!ofLoadImage(meshHelper.texture,modelFolder + texPath.data)){
+					ofLog(OF_LOG_ERROR,"error loading image " + modelFolder + texPath.data);
+				}
 			}
-            meshHelper.texture.update();
             
             ofLog(OF_LOG_VERBOSE, "texture width: %f height %f", meshHelper.texture.getWidth(), meshHelper.texture.getHeight());
             
@@ -705,7 +708,7 @@ void ofxAssimpModelLoader::draw()
 
 			// Texture Binding
 			if(meshHelper.texture.bAllocated()){
-				meshHelper.texture.getTextureReference().bind();
+				meshHelper.texture.bind();
 			}
 
 			meshHelper.material.begin();
@@ -722,7 +725,7 @@ void ofxAssimpModelLoader::draw()
 
 			// Texture Binding
 			if(meshHelper.texture.bAllocated()){
-				meshHelper.texture.getTextureReference().unbind();
+				meshHelper.texture.unbind();
 			}
 
 			meshHelper.material.end();
@@ -777,10 +780,52 @@ ofMesh ofxAssimpModelLoader::getMesh(int num){
 	ofMesh ofm;
 	if((int)scene->mNumMeshes<=num){
 		ofLog(OF_LOG_ERROR,"couldn't find mesh " + ofToString(num) + " there's only " + ofToString(scene->mNumMeshes));
+		return ofm;
 	}
 
 	aiMeshToOfMesh(scene->mMeshes[num],ofm);
 	return ofm;
+}
+
+//-------------------------------------------
+ofMaterial ofxAssimpModelLoader::getMaterialForMesh(string name){
+	for(int i=0; i<(int)modelMeshes.size(); i++){
+		if(string(modelMeshes[i].mesh->mName.data)==name){
+			return modelMeshes[i].material;
+		}
+	}
+	ofLog(OF_LOG_ERROR,"couldn't find mesh " + name);
+	return ofMaterial();
+}
+
+//-------------------------------------------
+ofMaterial ofxAssimpModelLoader::getMaterialForMesh(int num){
+	if((int)modelMeshes.size()<=num){
+		ofLog(OF_LOG_ERROR,"couldn't find mesh " + ofToString(num) + " there's only " + ofToString(scene->mNumMeshes));
+		return ofMaterial();
+	}
+	return modelMeshes[num].material;
+}
+
+//-------------------------------------------
+ofTexture ofxAssimpModelLoader::getTextureForMesh(string name){
+	for(int i=0; i<(int)modelMeshes.size(); i++){
+		if(string(modelMeshes[i].mesh->mName.data)==name){
+			return modelMeshes[i].texture;
+		}
+	}
+	ofLog(OF_LOG_ERROR,"couldn't find mesh " + name);
+	return ofTexture();
+
+}
+
+//-------------------------------------------
+ofTexture ofxAssimpModelLoader::getTextureForMesh(int num){
+	if((int)modelMeshes.size()<=num){
+		ofLog(OF_LOG_ERROR,"couldn't find mesh " + ofToString(num) + " there's only " + ofToString(scene->mNumMeshes));
+		return ofTexture();
+	}
+	return modelMeshes[num].texture;
 }
 
 //-------------------------------------------
@@ -803,3 +848,7 @@ ofPoint ofxAssimpModelLoader::getScale(){
 	return scale;
 }
 
+//-------------------------------------------
+const aiScene* ofxAssimpModelLoader::getAssimpScene(){
+	return scene;
+}

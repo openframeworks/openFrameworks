@@ -14,7 +14,7 @@ struct ofxAssimpMeshHelper{
     ofVbo vbo;
     
     // texture
-    ofImage texture;
+    ofTexture texture;
     vector<ofIndexType> indices;
     
     // Material 
