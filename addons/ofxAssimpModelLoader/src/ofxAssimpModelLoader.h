@@ -55,6 +55,12 @@ class ofxAssimpModelLoader{
         ofMesh getMesh(string name);
         ofMesh getMesh(int num);
 
+        ofMaterial getMaterialForMesh(string name);
+        ofMaterial getMaterialForMesh(int num);
+
+        ofTexture getTextureForMesh(string name);
+        ofTexture getTextureForMesh(int num);
+
         void draw();
 		
 		ofPoint getPosition();
@@ -62,6 +68,7 @@ class ofxAssimpModelLoader{
 		float getNormalizedScale();
 		ofPoint getScale();
 
+		const aiScene* getAssimpScene();
     
          
     protected:
