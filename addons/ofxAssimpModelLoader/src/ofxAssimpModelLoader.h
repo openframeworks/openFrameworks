@@ -3,7 +3,6 @@
 #include "ofMain.h"
 // assimp include files. These three are usually needed.
 #include "assimp.h"
-#include "aiPostProcess.h"
 #include "aiScene.h"
 
 // ofDevCon 
@@ -27,7 +26,11 @@ class ofxAssimpModelLoader{
         ~ofxAssimpModelLoader();
         ofxAssimpModelLoader();
 
-        void loadModel(string modelName);
+        bool loadModel(string modelName, bool optimize=true);
+        bool loadModel(ofBuffer & buffer, bool optimize=true, const char * extension="");
+        void createEmptyModel();
+        void createLightsFromAiModel();
+        void optimizeScene();
     
         void setScale(float x, float y, float z);
         void setPosition(float x, float y, float z);
@@ -49,17 +52,15 @@ class ofxAssimpModelLoader{
 		ofPoint getPosition(){
 			return pos;
 		}
+        void clear();
     
-        // TODO: convert to ofMesh or ofVBOMesh
-        vector <ofxAssimpMeshHelper> modelMeshes;  
          
     protected:
         // the main Asset Import scene that does the magic.
-        aiScene* scene;
+        const aiScene* scene;
 
         // Initial VBO creation, etc
         void loadGLResources();
-        void deleteGLResources();
     
         // Updates the internal animation transforms for the selected animation index
         void updateAnimation(unsigned int animationIndex, float time);
@@ -70,6 +71,8 @@ class ofxAssimpModelLoader{
         void getBoundingBoxWithMinVector(struct aiVector3D* min, struct aiVector3D* max);
         void getBoundingBoxForNode(const struct aiNode* nd,  struct aiVector3D* min, struct aiVector3D* max, struct aiMatrix4x4* trafo);
         
+        void calculateDimensions();
+
         bool hasAnimations;
         int currentAnimation;
         
@@ -90,6 +93,8 @@ class ofxAssimpModelLoader{
         vector <ofPoint> rotAxis;
         ofPoint scale;
         ofPoint pos;
-        int numRotations;
         string filepath;
+
+        vector<ofLight> lights;
+        vector <ofxAssimpMeshHelper> modelMeshes;
 };
