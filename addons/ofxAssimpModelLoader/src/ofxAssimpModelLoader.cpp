@@ -64,6 +64,55 @@ static void aiMeshToOfMesh(const aiMesh* aim, ofMesh& ofm){
 	//	ofm.materialId = aim->mMaterialIndex;
 }
 
+//--------------------------------------------------------------
+static void aiMatrix4x4ToOfMatrix4x4(const aiMatrix4x4& aim, ofNode& ofm){
+	float m[16] = { aim.a1,aim.a2,aim.a3,aim.a4,
+					aim.b1,aim.b2,aim.b3,aim.b4,
+					aim.c1,aim.c2,aim.c3,aim.c4,
+					aim.d1,aim.d2,aim.d3,aim.d4 };
+
+	ofm.setTransformMatrix(	m);
+}
+/*
+//--------------------------------------------------------------
+static void aiNodeToOfNode(const aiNode* ain, ofNode& ofn, const ofModel& model){
+	aiMatrix4x4ToOfMatrix4x4(ain->mTransformation, ofn);
+//	for (int i =0; i < (int)ain->mNumMeshes;i++){
+//		ofn.addMesh(model.meshes.at(ain->mMeshes[i]));
+//	}
+//	ofn.setName(string(ain->mName.data));
+}
+
+//--------------------------------------------------------------
+static int createNodes(const aiNode* curNode, ofModel& model){
+	//lets only make nodes that have meshes for now
+	if(curNode->mNumMeshes){
+		model.nodes.push_back(ofNode());
+		aiNodeToOfNode(curNode, model.nodes.back(), model);
+	}
+
+	if (curNode->mNumChildren>0){
+		for (int i =0; i<(int)curNode->mNumChildren;i++){
+			createNodes(curNode->mChildren[i], model);
+		}
+	}else return 0;
+
+#warning "this is returning nothing ig nNumChildren i>0  fix it"
+}
+
+//--------------------------------------------------------------
+void createBones(const aiScene* scene, ofModel& model){
+	for (int i =0; i < (int)scene->mNumMeshes;i++){
+		aiMesh& curMesh = *scene->mMeshes[i];
+		if(curMesh.HasBones()){
+			for (int j=0; j < (int)curMesh.mNumBones;j++){
+				aiNode* boneNode = scene->mRootNode->FindNode(curMesh.mBones[j]->mName);
+			}
+		}
+	}
+}*/
+
+
 ofxAssimpModelLoader::ofxAssimpModelLoader(){
 	scene = NULL;
 	clear();
@@ -668,6 +717,22 @@ void ofxAssimpModelLoader::updateGLResources(){
 }
 
 
+//--------------------------------------------------------------
+void ofxAssimpModelLoader::drawWireframe(){
+
+}
+
+//--------------------------------------------------------------
+void ofxAssimpModelLoader::drawFaces(){
+
+}
+
+//--------------------------------------------------------------
+void ofxAssimpModelLoader::drawVertices(){
+
+}
+
+
 //-------------------------------------------
 void ofxAssimpModelLoader::draw()
 {
@@ -851,4 +916,34 @@ ofPoint ofxAssimpModelLoader::getScale(){
 //-------------------------------------------
 const aiScene* ofxAssimpModelLoader::getAssimpScene(){
 	return scene;
+}
+
+//--------------------------------------------------------------
+void ofxAssimpModelLoader::enableTextures(){
+	bUsingTextures = true;
+}
+
+//--------------------------------------------------------------
+void ofxAssimpModelLoader::enableNormals(){
+	bUsingNormals = true;
+}
+
+//--------------------------------------------------------------
+void ofxAssimpModelLoader::enableColors(){
+	bUsingColors = true;
+}
+
+//--------------------------------------------------------------
+void ofxAssimpModelLoader::disableTextures(){
+	bUsingTextures = false;
+}
+
+//--------------------------------------------------------------
+void ofxAssimpModelLoader::disableNormals(){
+	bUsingNormals = false;
+}
+
+//--------------------------------------------------------------
+void ofxAssimpModelLoader::disableColors(){
+	bUsingColors = false;
 }

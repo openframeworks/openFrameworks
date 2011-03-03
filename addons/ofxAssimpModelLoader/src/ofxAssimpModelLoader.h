@@ -26,47 +26,59 @@ class ofxAssimpModelLoader{
         ~ofxAssimpModelLoader();
         ofxAssimpModelLoader();
 
-        bool loadModel(string modelName, bool optimize=true);
-        bool loadModel(ofBuffer & buffer, bool optimize=true, const char * extension="");
-        void createEmptyModel();
-        void createLightsFromAiModel();
-        void optimizeScene();
+        bool           loadModel(string modelName, bool optimize=true);
+        bool           loadModel(ofBuffer & buffer, bool optimize=true, const char * extension="");
+        void           createEmptyModel();
+        void           createLightsFromAiModel();
+        void           optimizeScene();
 
-        void clear();
+        void           clear();
     
-        void setScale(float x, float y, float z);
-        void setPosition(float x, float y, float z);
-        void setRotation(int which, float angle, float rot_x, float rot_y, float r_z);
+        void           setScale(float x, float y, float z);
+        void           setPosition(float x, float y, float z);
+        void           setRotation(int which, float angle, float rot_x, float rot_y, float r_z);
 
         // Scale the model to the screen automatically.
-        void setScaleNomalization(bool normalize);
+        void           setScaleNomalization(bool normalize);
 
         // This changes when you load a different model, may be 0.
-        unsigned int getAnimationCount();
+        unsigned int   getAnimationCount();
     
-        void setAnimation(int anim); // 0 to 1 - getNumAnimations()
-        void setNormalizedTime(float time); // 0 - 1
-        void setTime(float time); // 0 - duration
-        float getDuration(int animation);
+        void           setAnimation(int anim); // 0 to 1 - getNumAnimations()
+        void           setNormalizedTime(float time); // 0 - 1
+        void           setTime(float time); // 0 - duration
+        float          getDuration(int animation);
 
         vector<string> getMeshNames();
-        int getNumMeshes();
+        int            getNumMeshes();
 
-        ofMesh getMesh(string name);
-        ofMesh getMesh(int num);
+        ofMesh         getMesh(string name);
+        ofMesh         getMesh(int num);
 
-        ofMaterial getMaterialForMesh(string name);
-        ofMaterial getMaterialForMesh(int num);
+        ofMaterial     getMaterialForMesh(string name);
+        ofMaterial     getMaterialForMesh(int num);
 
-        ofTexture getTextureForMesh(string name);
-        ofTexture getTextureForMesh(int num);
+        ofTexture      getTextureForMesh(string name);
+        ofTexture      getTextureForMesh(int num);
 
-        void draw();
+
+    	void           drawWireframe();
+    	void           drawFaces();
+    	void           drawVertices();
+
+    	void           enableTextures();
+    	void           disableTextures();
+    	void           enableNormals();
+    	void           disableNormals();
+    	void           enableColors();
+    	void           disableColors();
+
+        void           draw();
 		
-		ofPoint getPosition();
-		ofPoint getSceneCenter();
-		float getNormalizedScale();
-		ofPoint getScale();
+		ofPoint        getPosition();
+		ofPoint        getSceneCenter();
+		float          getNormalizedScale();
+		ofPoint        getScale();
 
 		const aiScene* getAssimpScene();
     
@@ -113,4 +125,6 @@ class ofxAssimpModelLoader{
 
         vector<ofLight> lights;
         vector <ofxAssimpMeshHelper> modelMeshes;
+
+        bool bUsingTextures, bUsingNormals, bUsingColors;
 };
