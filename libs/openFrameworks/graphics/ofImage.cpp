@@ -188,7 +188,10 @@ bool ofLoadImage(ofPixels & pix, const ofBuffer & buffer) {
 bool ofLoadImage(ofTexture & tex, string path){
 	ofPixels pixels;
 	bool loaded = ofLoadImage(pixels,path);
-	if(loaded) tex.loadData(pixels);
+	if(loaded){
+		tex.allocate(pixels.getWidth(),pixels.getHeight(),pixels.getGlDataType());
+		tex.loadData(pixels);
+	}
 	return loaded;
 }
 
@@ -196,7 +199,10 @@ bool ofLoadImage(ofTexture & tex, string path){
 bool ofLoadImage(ofTexture & tex, const ofBuffer & buffer){
 	ofPixels pixels;
 	bool loaded = ofLoadImage(pixels,buffer);
-	if(loaded) tex.loadData(pixels);
+	if(loaded){
+		tex.allocate(pixels.getWidth(),pixels.getHeight(),pixels.getGlDataType());
+		tex.loadData(pixels);
+	}
 	return loaded;
 }
 
