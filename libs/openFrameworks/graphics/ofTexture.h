@@ -35,7 +35,9 @@ public:
 	}
 
 	~ofTextureData(){
-		if(!isCopy) clear();
+		if(!isCopy){
+			clear();
+		}
 	}
 
 	ofTextureData(const ofTextureData & mom){
@@ -104,7 +106,7 @@ class ofTexture : public ofBaseDraws{
 	ofTexture();
 	virtual ~ofTexture();
 	ofTexture(const ofTexture & mom);
-	void operator=(const ofTexture & mom);
+	ofTexture& operator=(const ofTexture & mom);
 
 	// -----------------------------------------------------------------------
 
@@ -154,7 +156,7 @@ class ofTexture : public ofBaseDraws{
 
 	// reference to the actual textureData inside the smart pointer
 	// for backwards compatibility
-	ofTextureData & texData;
+	ofTextureData & getTexDataRef(){ return *texDataPtr; }
 
 	float getHeight();
 	float getWidth();
