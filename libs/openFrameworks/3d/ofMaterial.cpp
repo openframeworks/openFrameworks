@@ -48,6 +48,46 @@ void ofMaterial::setShininess(float nShininess) {
 	shininess = nShininess;
 }
 
+void ofMaterial::setDiffuseMap(ofTexture& oDiffuseMap) {
+	addMap(oDiffuseMap, OF_TEXMAP_DIFFUSE);
+}
+
+void ofMaterial::setSpecularMap(ofTexture& oSpecularMap) {
+	addMap(oSpecularMap, OF_TEXMAP_SPECULAR);
+}
+
+void ofMaterial::setAmbientMap(ofTexture& oAmbientMap) {
+	addMap(oAmbientMap, OF_TEXMAP_AMBIENT);
+}
+
+void ofMaterial::setHeightMap(ofTexture& oHeightMap) {
+	addMap(oHeightMap, OF_TEXMAP_HEIGHT);
+}
+
+void ofMaterial::setNormalMap(ofTexture& oNormalMap) {
+	addMap(oNormalMap, OF_TEXMAP_NORMAL);
+}
+
+void ofMaterial::setShininessMap(ofTexture& oShininessMap) {
+	addMap(oShininessMap, OF_TEXMAP_SHININESS);
+}
+
+void ofMaterial::setOpactiyMap(ofTexture& oOpacityMap) {
+	addMap(oOpacityMap, OF_TEXMAP_OPACITY);
+}
+
+void ofMaterial::setDisplacementMap(ofTexture& oDispMap) {
+	addMap(oDispMap, OF_TEXMAP_DISPLACEMENT);
+}
+
+void ofMaterial::setLightMap(ofTexture& oLightMap) {
+	addMap(oLightMap, OF_TEXMAP_LIGHT);
+}
+
+void ofMaterial::setReflectionMap(ofTexture& oReflectionMap) {
+	addMap(oReflectionMap, OF_TEXMAP_REFLECTION);
+}
+
 float ofMaterial::getShininess(){
 	return shininess;
 }
