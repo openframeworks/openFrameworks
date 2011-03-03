@@ -42,6 +42,7 @@ ofLight::ofLight():glIndex(0), isEnabled(false) {
 	// if array hasn't been inited to false, init it
 	if(lightsActiveInited == false) {
 		for(int i=0; i<OF_MAX_LIGHTS; i++) lightsActive[i] = false;
+		lightsActiveInited = true;
 	}
 	
 	// search for the first free block
@@ -102,6 +103,7 @@ bool ofLight::getIsDirectional() const {
 //----------------------------------------
 void ofLight::setAmbientColor(const ofColor& c) {
 	ambientColor = c/255.0f;
+	ambientColor.a /= 255.f;
 	GLfloat cc[] = {ambientColor.r, ambientColor.g, ambientColor.b, ambientColor.a};
 	glLightfv(GL_LIGHT0 + glIndex, GL_AMBIENT, cc);
 }
@@ -109,6 +111,7 @@ void ofLight::setAmbientColor(const ofColor& c) {
 //----------------------------------------
 void ofLight::setDiffuseColor(const ofColor& c) {
 	diffuseColor = c/255.0f;
+	diffuseColor.a /= 255.f;
 	GLfloat cc[] = {diffuseColor.r, diffuseColor.g, diffuseColor.b, diffuseColor.a};
 	glLightfv(GL_LIGHT0 + glIndex, GL_DIFFUSE, cc);
 }
@@ -117,23 +120,30 @@ void ofLight::setDiffuseColor(const ofColor& c) {
 //----------------------------------------
 void ofLight::setSpecularColor(const ofColor& c) {
 	specularColor = c/255.0f;
+	specularColor.a /= 255.f;
 	GLfloat cc[] = {specularColor.r, specularColor.g, specularColor.b, specularColor.a};
 	glLightfv(GL_LIGHT0 + glIndex, GL_SPECULAR, cc);
 }
 
 //----------------------------------------
 ofColor ofLight::getAmbientColor() const {
-	return ambientColor * 255.0f;
+	ofColor ret = ambientColor * 255.0f;
+	ret.a*=255.f;
+	return ret;
 }
 
 //----------------------------------------
 ofColor ofLight::getDiffuseColor() const {
-	return diffuseColor * 255.0f;
+	ofColor ret = diffuseColor * 255.0f;
+	ret.a*=255.f;
+	return ret;
 }
 
 //----------------------------------------
 ofColor ofLight::getSpecularColor() const {
-	return specularColor * 255.0f;
+	ofColor ret = specularColor * 255.0f;
+	ret.a*=255.f;
+	return ret;
 }
 
 

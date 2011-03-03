@@ -64,7 +64,7 @@ public:
 	
 	// find maps
 	ofTexture& getMap(ofTextureMapType nType);
-	ofTexture& getDiffuseMap() { getMap(OF_TEXMAP_DIFFUSE); };
+	ofTexture& getDiffuseMap() { return getMap(OF_TEXMAP_DIFFUSE); };
 
 	// apply the material
 	virtual void begin();
