@@ -31,6 +31,8 @@ class ofxAssimpModelLoader{
         void createEmptyModel();
         void createLightsFromAiModel();
         void optimizeScene();
+
+        void clear();
     
         void setScale(float x, float y, float z);
         void setPosition(float x, float y, float z);
@@ -47,12 +49,19 @@ class ofxAssimpModelLoader{
         void setTime(float time); // 0 - duration
         float getDuration(int animation);
 
+        vector<string> getMeshNames();
+        int getNumMeshes();
+
+        ofMesh getMesh(string name);
+        ofMesh getMesh(int num);
+
         void draw();
 		
-		ofPoint getPosition(){
-			return pos;
-		}
-        void clear();
+		ofPoint getPosition();
+		ofPoint getSceneCenter();
+		float getNormalizedScale();
+		ofPoint getScale();
+
     
          
     protected:

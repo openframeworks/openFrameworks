@@ -19,6 +19,50 @@ static inline ofVec3f aiVecToOfVec(const aiVector3D& v){
 	return ofVec3f(v.x,v.y,v.z);
 }
 
+//--------------------------------------------------------------
+static void aiMeshToOfMesh(const aiMesh* aim, ofMesh& ofm){
+	// default to triangle mode
+	ofm.setMode(OF_TRIANGLES_MODE);
+
+	// copy vertices
+	for (int i=0; i < (int)aim->mNumVertices;i++){
+		ofm.addVertex(ofVec3f(aim->mVertices[i].x,aim->mVertices[i].y,aim->mVertices[i].z));
+	}
+
+	if(aim->HasNormals()){
+		for (int i=0; i < (int)aim->mNumVertices;i++){
+			ofm.addNormal(ofVec3f(aim->mNormals[i].x,aim->mNormals[i].y,aim->mNormals[i].z));
+		}
+	}
+
+	// aiVector3D * 	mTextureCoords [AI_MAX_NUMBER_OF_TEXTURECOORDS]
+	// just one for now
+	if(aim->GetNumUVChannels()>0){
+		for (int i=0; i < (int)aim->mNumVertices;i++){
+			ofm.addTexCoord(ofVec2f(aim->mTextureCoords[0][i].x ,aim->mTextureCoords[0][i].y));
+		}
+	}
+
+	//aiColor4D * 	mColors [AI_MAX_NUMBER_OF_COLOR_SETS]
+	// just one for now
+	if(aim->GetNumColorChannels()>0){
+		for (int i=0; i < (int)aim->mNumVertices;i++){
+			ofm.addColor(aiColorToOfColor(aim->mColors[0][i]));
+		}
+	}
+
+	for (int i=0; i <(int) aim->mNumFaces;i++){
+		if(aim->mFaces[i].mNumIndices>3){
+			ofLog(OF_LOG_WARNING,"non-triangular face found: model face # " + ofToString(i));
+		}
+		for (int j=0; j<(int)aim->mFaces[i].mNumIndices; j++){
+			ofm.addIndex(aim->mFaces[i].mIndices[j]);
+		}
+	}
+
+	ofm.setName(string(aim->mName.data));
+	//	ofm.materialId = aim->mMaterialIndex;
+}
 
 ofxAssimpModelLoader::ofxAssimpModelLoader(){
 	scene = NULL;
@@ -621,6 +665,7 @@ void ofxAssimpModelLoader::updateGLResources(){
 }
 
 
+//-------------------------------------------
 void ofxAssimpModelLoader::draw()
 {
     if(scene){
@@ -631,23 +676,23 @@ void ofxAssimpModelLoader::draw()
         
         glEnable(GL_NORMALIZE);
         
-        glPushMatrix();
+        ofPushMatrix();
             
-        glTranslatef(pos.x, pos.y, pos.z);
+        ofTranslate(pos);
 
-        glRotatef(180, 0, 0, 1);
-        glTranslated(-scene_center.x, -scene_center.y, scene_center.z);    
+        ofRotate(180, 0, 0, 1);
+        ofTranslate(-scene_center.x, -scene_center.y, scene_center.z);
 
         if(normalizeScale)
         {
-            glScaled(normalizedScale , normalizedScale, normalizedScale);
+            ofScale(normalizedScale , normalizedScale, normalizedScale);
         }
             
         for(int i = 0; i < (int)rotAngle.size(); i++){
-            glRotatef(rotAngle[i], rotAxis[i].x, rotAxis[i].y, rotAxis[i].z);
+            ofRotate(rotAngle[i], rotAxis[i].x, rotAxis[i].y, rotAxis[i].z);
         }
         
-        glScalef(scale.x, scale.y, scale.z);
+        ofScale(scale.x, scale.y, scale.z);
         
 
         if(getAnimationCount())
@@ -683,10 +728,78 @@ void ofxAssimpModelLoader::draw()
 			meshHelper.material.end();
 		}
             
-        glPopMatrix();
+        ofPopMatrix();
         
         ofPopStyle();
         glPopClientAttrib();
         glPopAttrib();
     }
 }
+
+//-------------------------------------------
+vector<string> ofxAssimpModelLoader::getMeshNames(){
+	vector<string> names(scene->mNumMeshes);
+	for(int i=0; i<(int)scene->mNumMeshes; i++){
+		names[i] = scene->mMeshes[i]->mName.data;
+	}
+	return names;
+}
+
+//-------------------------------------------
+int ofxAssimpModelLoader::getNumMeshes(){
+	return scene->mNumMeshes;
+}
+
+//-------------------------------------------
+ofMesh ofxAssimpModelLoader::getMesh(string name){
+	ofMesh ofm;
+	// default to triangle mode
+	ofm.setMode(OF_TRIANGLES_MODE);
+	aiMesh * aim = NULL;
+	for(int i=0; i<(int)scene->mNumMeshes; i++){
+		if(string(scene->mMeshes[i]->mName.data)==name){
+			aim = scene->mMeshes[i];
+			break;
+		}
+	}
+
+	if(!aim){
+		ofLog(OF_LOG_ERROR,"couldn't find mesh " + name);
+		return ofm;
+	}
+
+	aiMeshToOfMesh(aim,ofm);
+	return ofm;
+}
+
+//-------------------------------------------
+ofMesh ofxAssimpModelLoader::getMesh(int num){
+	ofMesh ofm;
+	if((int)scene->mNumMeshes<=num){
+		ofLog(OF_LOG_ERROR,"couldn't find mesh " + ofToString(num) + " there's only " + ofToString(scene->mNumMeshes));
+	}
+
+	aiMeshToOfMesh(scene->mMeshes[num],ofm);
+	return ofm;
+}
+
+//-------------------------------------------
+ofPoint ofxAssimpModelLoader::getPosition(){
+	return pos;
+}
+
+//-------------------------------------------
+ofPoint ofxAssimpModelLoader::getSceneCenter(){
+	return aiVecToOfVec(scene_center);
+}
+
+//-------------------------------------------
+float ofxAssimpModelLoader::getNormalizedScale(){
+	return normalizedScale;
+}
+
+//-------------------------------------------
+ofPoint ofxAssimpModelLoader::getScale(){
+	return scale;
+}
+
