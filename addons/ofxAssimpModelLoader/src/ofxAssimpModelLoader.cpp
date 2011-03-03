@@ -1,6 +1,7 @@
 #include "ofxAssimpModelLoader.h"
 
 #include "aiConfig.h"
+#include "aiPostProcess.h"
 #include <assert.h>
 
 //--------------------------------------------------------------
@@ -8,29 +9,29 @@ static inline ofColor aiColorToOfColor(const aiColor4D& c){
 	return ofColor(255*c.r,255*c.g,255*c.b,255*c.a);
 }
 
-ofxAssimpModelLoader::ofxAssimpModelLoader(){
+//--------------------------------------------------------------
+static inline ofColor aiColorToOfColor(const aiColor3D& c){
+	return ofColor(255*c.r,255*c.g,255*c.b,255);
+}
 
-    lastAnimationTime = 0;
-    currentAnimation = 0;
-    animationTime = 0;
-    numRotations = 0;
-    rotAngle.clear();
-    rotAxis.clear();
-    scale = ofPoint(1, 1, 1);
-	
+//--------------------------------------------------------------
+static inline ofVec3f aiVecToOfVec(const aiVector3D& v){
+	return ofVec3f(v.x,v.y,v.z);
+}
+
+
+ofxAssimpModelLoader::ofxAssimpModelLoader(){
 	scene = NULL;
-    normalizeScale = true;   
+	clear();
 }
 
 //------------------------------------------
-void ofxAssimpModelLoader::loadModel(string modelName){
+bool ofxAssimpModelLoader::loadModel(string modelName, bool optimize){
 	
     
     // if we have a model loaded, unload the fucker.
     if(scene != NULL){
-        aiReleaseImport(scene);
-        scene = NULL;
-        deleteGLResources();   
+        clear();   
     }
     
     
@@ -48,32 +49,16 @@ void ofxAssimpModelLoader::loadModel(string modelName){
     aiSetImportPropertyInteger(AI_CONFIG_PP_PTV_NORMALIZE, true);
     
     // aiProcess_FlipUVs is for VAR code. Not needed otherwise. Not sure why.
-    scene = (aiScene*) aiImportFile(filepath.c_str(), aiProcessPreset_TargetRealtime_MaxQuality | aiProcess_ImproveCacheLocality | aiProcess_OptimizeGraph |
-    													aiProcess_OptimizeMeshes | aiProcess_JoinIdenticalVertices | aiProcess_Triangulate |
-    													aiProcess_FlipUVs | aiProcess_RemoveRedundantMaterials | 0 );
-    
-    if(scene){        
-        ofLog(OF_LOG_VERBOSE, "initted scene with %i meshes & %i animations", scene->mNumMeshes, scene->mNumAnimations);
+    unsigned int flags = aiProcessPreset_TargetRealtime_MaxQuality | aiProcess_Triangulate | aiProcess_FlipUVs;
+    if(optimize) flags |=  aiProcess_ImproveCacheLocality | aiProcess_OptimizeGraph |
+			aiProcess_OptimizeMeshes | aiProcess_JoinIdenticalVertices |
+			aiProcess_RemoveRedundantMaterials;
 
-        getBoundingBoxWithMinVector(&scene_min, &scene_max);
-        scene_center.x = (scene_min.x + scene_max.x) / 2.0f;
-        scene_center.y = (scene_min.y + scene_max.y) / 2.0f;
-        scene_center.z = (scene_min.z + scene_max.z) / 2.0f;
-        
-        // optional normalized scaling
-        normalizedScale = scene_max.x-scene_min.x;
-        normalizedScale = MAX(scene_max.y - scene_min.y,normalizedScale);
-        normalizedScale = MAX(scene_max.z - scene_min.z,normalizedScale);
-        normalizedScale = 1.f / normalizedScale;
-        normalizedScale *= ofGetWidth() / 2.0;
-        
-        glPushAttrib(GL_ALL_ATTRIB_BITS);
-        glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
-        
+    scene = aiImportFile(filepath.c_str(), flags);
+
+    if(scene){
+        calculateDimensions();
         loadGLResources();
-        
-        glPopClientAttrib();
-        glPopAttrib();
 
         if(getAnimationCount())
             ofLog(OF_LOG_VERBOSE, "scene has animations");
@@ -81,7 +66,101 @@ void ofxAssimpModelLoader::loadModel(string modelName){
             ofLog(OF_LOG_VERBOSE, "no animations");
             
         }
+        return true;
+    }else{
+    	ofLog(OF_LOG_ERROR,string("ofxAssimpModelLoader: ") + aiGetErrorString());
+    	return false;
     }
+}
+
+//-------------------------------------------
+bool ofxAssimpModelLoader::loadModel(ofBuffer & buffer, bool optimize, const char * extension){
+	// only ever give us triangles.
+	aiSetImportPropertyInteger(AI_CONFIG_PP_SBP_REMOVE, aiPrimitiveType_LINE | aiPrimitiveType_POINT );
+	aiSetImportPropertyInteger(AI_CONFIG_PP_PTV_NORMALIZE, true);
+
+	// aiProcess_FlipUVs is for VAR code. Not needed otherwise. Not sure why.
+	unsigned int flags = aiProcessPreset_TargetRealtime_MaxQuality | aiProcess_Triangulate | aiProcess_FlipUVs;
+	if(optimize) flags |=  aiProcess_ImproveCacheLocality | aiProcess_OptimizeGraph |
+			aiProcess_OptimizeMeshes | aiProcess_JoinIdenticalVertices |
+			aiProcess_RemoveRedundantMaterials;
+
+	if(scene){
+		clear();
+	}
+	scene = aiImportFileFromMemory(buffer.getBinaryBuffer(), buffer.size(), flags, extension);
+	if(scene){
+		calculateDimensions();
+		loadGLResources();
+
+		if(getAnimationCount())
+			ofLog(OF_LOG_VERBOSE, "scene has animations");
+		else {
+			ofLog(OF_LOG_VERBOSE, "no animations");
+
+		}
+		return true;
+	}else{
+		ofLog(OF_LOG_ERROR,string("ofxAssimpModelLoader: ") + aiGetErrorString());
+		return false;
+	}
+
+}
+
+//-------------------------------------------
+void ofxAssimpModelLoader::createEmptyModel(){
+	if(scene){
+		clear();
+	}
+	scene = new aiScene;
+}
+
+//-------------------------------------------
+void ofxAssimpModelLoader::calculateDimensions(){
+	if(!scene) return;
+	ofLog(OF_LOG_VERBOSE, "initted scene with %i meshes & %i animations", scene->mNumMeshes, scene->mNumAnimations);
+
+	getBoundingBoxWithMinVector(&scene_min, &scene_max);
+	scene_center.x = (scene_min.x + scene_max.x) / 2.0f;
+	scene_center.y = (scene_min.y + scene_max.y) / 2.0f;
+	scene_center.z = (scene_min.z + scene_max.z) / 2.0f;
+
+	// optional normalized scaling
+	normalizedScale = scene_max.x-scene_min.x;
+	normalizedScale = MAX(scene_max.y - scene_min.y,normalizedScale);
+	normalizedScale = MAX(scene_max.z - scene_min.z,normalizedScale);
+	normalizedScale = 1.f / normalizedScale;
+	normalizedScale *= ofGetWidth() / 2.0;
+}
+
+//-------------------------------------------
+void ofxAssimpModelLoader::createLightsFromAiModel(){
+	lights.resize(scene->mNumLights);
+	for(int i=0; i<(int)scene->mNumLights; i++){
+		cout << "light " << i << aiVecToOfVec(scene->mLights[i]->mPosition) << endl;
+		lights[i].setDirectional(scene->mLights[i]->mType==aiLightSource_DIRECTIONAL);
+		if(scene->mLights[i]->mType==aiLightSource_DIRECTIONAL){
+			lights[i].setOrientation(aiVecToOfVec(scene->mLights[i]->mDirection));
+		}
+		if(scene->mLights[i]->mType!=aiLightSource_POINT){
+			lights[i].setPosition(aiVecToOfVec(scene->mLights[i]->mPosition));
+		}else{
+			cout << "point light " << endl;
+			lights[i].setPosition(ofVec3f(0,0,1));
+		}
+		cout << "ambient " <<  aiColorToOfColor(scene->mLights[i]->mColorAmbient).r << endl;
+		lights[i].setAmbientColor(aiColorToOfColor(scene->mLights[i]->mColorAmbient));
+		cout << "diffuse " <<  aiColorToOfColor(scene->mLights[i]->mColorDiffuse).r << endl;
+		lights[i].setDiffuseColor(aiColorToOfColor(scene->mLights[i]->mColorDiffuse));
+		cout << "specular " <<  aiColorToOfColor(scene->mLights[i]->mColorSpecular).r << endl;
+		lights[i].setSpecularColor(aiColorToOfColor(scene->mLights[i]->mColorSpecular));
+	}
+}
+
+void ofxAssimpModelLoader::optimizeScene(){
+	aiApplyPostProcessing(scene,aiProcess_ImproveCacheLocality | aiProcess_OptimizeGraph |
+			aiProcess_OptimizeMeshes | aiProcess_JoinIdenticalVertices |
+			aiProcess_RemoveRedundantMaterials);
 }
 
 //-------------------------------------------
@@ -200,17 +279,33 @@ void ofxAssimpModelLoader::loadGLResources(){
 
         meshHelper.vbo.setIndexData(&meshHelper.indices[0],meshHelper.indices.size(),GL_STATIC_DRAW);
     }
+
     ofLog(OF_LOG_VERBOSE, "finished loading gl resources");
+
 }
 
 //-------------------------------------------
-void ofxAssimpModelLoader::deleteGLResources(){
+void ofxAssimpModelLoader::clear(){
 
     ofLog(OF_LOG_VERBOSE, "deleting gl resources");
     
     // clear out everything.
     modelMeshes.clear();
-    
+    pos.set(0,0,0);
+    scale.set(1,1,1);
+    rotAngle.clear();
+    rotAxis.clear();
+    lights.clear();
+
+    lastAnimationTime = 0;
+    currentAnimation = 0;
+    animationTime = 0;
+    scale = ofPoint(1, 1, 1);
+	if(scene){
+		aiReleaseImport(scene);
+		scene = NULL;
+	}
+    normalizeScale = true;
 }
 
 //-------------------------------------------
@@ -334,13 +429,12 @@ void ofxAssimpModelLoader::setScaleNomalization(bool normalize)
 
 //-------------------------------------------
 void ofxAssimpModelLoader::setRotation(int which, float angle, float rot_x, float rot_y, float rot_z){
-    if(which + 1 > numRotations){
-        int diff = 1 + (which - numRotations);
+    if(which + 1 > (int)rotAngle.size()){
+        int diff = 1 + (which - rotAngle.size());
         for(int i = 0; i < diff; i++){
             rotAngle.push_back(0);
             rotAxis.push_back(ofPoint());
         }
-        numRotations = rotAngle.size();
     }
     
     rotAngle[which]  = angle;
@@ -549,12 +643,13 @@ void ofxAssimpModelLoader::draw()
             glScaled(normalizedScale , normalizedScale, normalizedScale);
         }
             
-        for(int i = 0; i < numRotations; i++){
+        for(int i = 0; i < (int)rotAngle.size(); i++){
             glRotatef(rotAngle[i], rotAxis[i].x, rotAxis[i].y, rotAxis[i].z);
         }
         
         glScalef(scale.x, scale.y, scale.z);
         
+
         if(getAnimationCount())
         {
             updateGLResources();
