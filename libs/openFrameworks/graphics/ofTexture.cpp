@@ -19,25 +19,8 @@ void ofDisableTextureEdgeHack(){
 //----------------------------------------------------------
 ofTexture::ofTexture()
 :texDataPtr(new ofTextureData)
-//,texData(*texDataPtr)
 {
 	resetAnchor();
-}
-
-ofTexture::ofTexture(const ofTexture & mom)
-:texDataPtr(mom.texDataPtr)
-//,texData(*texDataPtr)
-{
-	anchor = mom.anchor;
-	bAnchorIsPct = mom.bAnchorIsPct;
-}
-
-ofTexture& ofTexture::operator=(const ofTexture & mom){
-	texDataPtr = mom.texDataPtr;
-	//texData = *texDataPtr;
-	anchor = mom.anchor;
-	bAnchorIsPct = mom.bAnchorIsPct;
-	return *this;
 }
 
 //----------------------------------------------------------
