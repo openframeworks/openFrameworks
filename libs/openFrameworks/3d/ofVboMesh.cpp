@@ -29,8 +29,6 @@ void ofVboMesh::draw(ofPolyRenderMode drawMode){
 			vbo.setTexCoordData(getTexCoordsPointer(),getNumTexCoords(),usage);
 		}
 		if(getNumIndices()){
-			cout << "setting up indices: " << getNumIndices() << endl;
-
 			vbo.setIndexData(getIndexPointer(),getNumIndices(),usage);
 		}
 	}

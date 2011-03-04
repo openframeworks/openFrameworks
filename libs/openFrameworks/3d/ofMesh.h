@@ -31,6 +31,7 @@ public:
 	void addVertices(const ofVec3f* verts, int amt);
 	void removeVertex(int index);
 	void setVertex(int index, const ofVec3f& v);
+	void clearVertices();
 	
 	ofVec3f getNormal(int i);
 	void addNormal(const ofVec3f& n);
@@ -38,6 +39,7 @@ public:
 	void addNormals(const ofVec3f* norms, int amt);
 	void removeNormal(int index);
 	void setNormal(int index, const ofVec3f& n);
+	void clearNormals();
 	
 	ofColor getColor(int i);
 	void addColor(const ofColor& c);
@@ -45,6 +47,7 @@ public:
 	void addColors(const ofColor* cols, int amt);
 	void removeColor(int index);
 	void setColor(int index, const ofColor& c);
+	void clearColors();
 	
 	ofVec2f getTexCoord(int i);
 	void addTexCoord(const ofVec2f& t);
@@ -52,6 +55,7 @@ public:
 	void addTexCoords(const ofVec2f* tCoords, int amt);
 	void removeTexCoord(int index);
 	void setTexCoord(int index, const ofVec2f& t);
+	void clearTexCoords();
 	
 	ofIndexType getIndex(int i);
 	void addIndex(ofIndexType i);
@@ -59,6 +63,7 @@ public:
 	void addIndices(const ofIndexType* inds, int amt);
 	void removeIndex(int i);
 	void setIndex(int i, ofIndexType val);
+	void clearIndexes();
 	
 	int getNumVertices() const;
 	int getNumColors() const;
