@@ -27,4 +27,7 @@ struct ofxAssimpMeshHelper{
 
     std::vector<aiVector3D> animatedPos;
     std::vector<aiVector3D> animatedNorm;
+
+    ofMesh cachedMesh;
+    bool validCache;
 };
