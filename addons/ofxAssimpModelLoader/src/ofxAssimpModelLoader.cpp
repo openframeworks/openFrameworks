@@ -19,6 +19,18 @@ static inline ofVec3f aiVecToOfVec(const aiVector3D& v){
 	return ofVec3f(v.x,v.y,v.z);
 }
 
+static inline vector<ofVec3f> aiVecVecToOfVecVec(const vector<aiVector3D>& v){
+	vector<ofVec3f> ofv(v.size());
+	if(sizeof(aiVector3D)==sizeof(ofVec3f)){
+		memcpy(&ofv[0],&v[0],v.size()*sizeof(ofVec3f));
+	}else{
+		for(int i=0;i<(int)v.size();i++){
+			ofv[i]=aiVecToOfVec(v[i]);
+		}
+	}
+	return ofv;
+}
+
 //--------------------------------------------------------------
 static void aiMeshToOfMesh(const aiMesh* aim, ofMesh& ofm){
 	// default to triangle mode
@@ -274,6 +286,9 @@ void ofxAssimpModelLoader::loadGLResources(){
         ofxAssimpMeshHelper & meshHelper = modelMeshes[i];
         
         meshHelper.mesh = mesh;
+        aiMeshToOfMesh(mesh,meshHelper.cachedMesh);
+        meshHelper.cachedMesh.setMode(OF_TRIANGLES_MODE);
+        meshHelper.validCache = true;
         modelMeshes[i].hasChanged = false;
 
         meshHelper.animatedPos.resize(mesh->mNumVertices);
@@ -678,6 +693,7 @@ void ofxAssimpModelLoader::updateAnimation(unsigned int animationIndex, float cu
 				tempNode = tempNode->mParent;
 			}
 			modelMeshes[i].hasChanged = true;
+			modelMeshes[i].validCache = false;
 		}
 
 		modelMeshes[i].animatedPos.assign(modelMeshes[i].animatedPos.size(),0);
@@ -869,6 +885,42 @@ ofMesh ofxAssimpModelLoader::getMesh(int num){
 }
 
 //-------------------------------------------
+ofMesh ofxAssimpModelLoader::getCurrentAnimatedMesh(string name){
+	for(int i=0; i<(int)modelMeshes.size(); i++){
+		if(string(modelMeshes[i].mesh->mName.data)==name){
+			if(!modelMeshes[i].validCache){
+				modelMeshes[i].cachedMesh.clearVertices();
+				modelMeshes[i].cachedMesh.clearNormals();
+				modelMeshes[i].cachedMesh.addVertices(aiVecVecToOfVecVec(modelMeshes[i].animatedPos));
+				modelMeshes[i].cachedMesh.addNormals(aiVecVecToOfVecVec(modelMeshes[i].animatedNorm));
+				modelMeshes[i].validCache = true;
+			}
+			return modelMeshes[i].cachedMesh;
+		}
+	}
+
+	ofLog(OF_LOG_ERROR,"couldn't find mesh " + name);
+	return ofMesh();
+
+}
+
+//-------------------------------------------
+ofMesh ofxAssimpModelLoader::getCurrentAnimatedMesh(int num){
+	if((int)modelMeshes.size()<=num){
+		ofLog(OF_LOG_ERROR,"couldn't find mesh " + ofToString(num) + " there's only " + ofToString(scene->mNumMeshes));
+		return ofMesh();
+	}
+	if(!modelMeshes[num].validCache){
+		modelMeshes[num].cachedMesh.clearVertices();
+		modelMeshes[num].cachedMesh.clearNormals();
+		modelMeshes[num].cachedMesh.addVertices(aiVecVecToOfVecVec(modelMeshes[num].animatedPos));
+		modelMeshes[num].cachedMesh.addNormals(aiVecVecToOfVecVec(modelMeshes[num].animatedNorm));
+		modelMeshes[num].validCache = true;
+	}
+	return modelMeshes[num].cachedMesh;
+}
+
+//-------------------------------------------
 ofMaterial ofxAssimpModelLoader::getMaterialForMesh(string name){
 	for(int i=0; i<(int)modelMeshes.size(); i++){
 		if(string(modelMeshes[i].mesh->mName.data)==name){
@@ -950,6 +1002,11 @@ void ofxAssimpModelLoader::enableColors(){
 }
 
 //--------------------------------------------------------------
+void ofxAssimpModelLoader::enableMaterials(){
+	bUsingMaterials = true;
+}
+
+//--------------------------------------------------------------
 void ofxAssimpModelLoader::disableTextures(){
 	bUsingTextures = false;
 }
@@ -962,4 +1019,9 @@ void ofxAssimpModelLoader::disableNormals(){
 //--------------------------------------------------------------
 void ofxAssimpModelLoader::disableColors(){
 	bUsingColors = false;
+}
+
+//--------------------------------------------------------------
+void ofxAssimpModelLoader::disableMaterials(){
+	bUsingMaterials = false;
 }

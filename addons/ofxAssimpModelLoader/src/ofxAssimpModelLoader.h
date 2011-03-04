@@ -55,6 +55,9 @@ class ofxAssimpModelLoader{
         ofMesh         getMesh(string name);
         ofMesh         getMesh(int num);
 
+        ofMesh         getCurrentAnimatedMesh(string name);
+        ofMesh         getCurrentAnimatedMesh(int num);
+
         ofMaterial     getMaterialForMesh(string name);
         ofMaterial     getMaterialForMesh(int num);
 
@@ -69,9 +72,11 @@ class ofxAssimpModelLoader{
     	void           enableTextures();
     	void           disableTextures();
     	void           enableNormals();
+    	void           enableMaterials();
     	void           disableNormals();
     	void           enableColors();
     	void           disableColors();
+    	void           disableMaterials();
 
         void           draw();
 		
@@ -126,5 +131,5 @@ class ofxAssimpModelLoader{
         vector<ofLight> lights;
         vector <ofxAssimpMeshHelper> modelMeshes;
 
-        bool bUsingTextures, bUsingNormals, bUsingColors;
+        bool bUsingTextures, bUsingNormals, bUsingColors, bUsingMaterials;
 };
