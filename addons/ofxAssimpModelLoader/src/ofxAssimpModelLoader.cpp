@@ -751,22 +751,22 @@ void ofxAssimpModelLoader::updateGLResources(){
 
 //--------------------------------------------------------------
 void ofxAssimpModelLoader::drawWireframe(){
-
+	draw(OF_MESH_WIREFRAME);
 }
 
 //--------------------------------------------------------------
 void ofxAssimpModelLoader::drawFaces(){
-
+	draw(OF_MESH_FILL);
 }
 
 //--------------------------------------------------------------
 void ofxAssimpModelLoader::drawVertices(){
-
+	draw(OF_MESH_POINTS);
 }
 
 
 //-------------------------------------------
-void ofxAssimpModelLoader::draw()
+void ofxAssimpModelLoader::draw(ofPolyRenderMode renderType)
 {
     if(scene){
         
@@ -774,6 +774,7 @@ void ofxAssimpModelLoader::draw()
         glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
         ofPushStyle();
         
+        glPolygonMode(GL_FRONT_AND_BACK, ofGetGLPolyMode(renderType));
         glEnable(GL_NORMALIZE);
         
         ofPushMatrix();
