@@ -23,4 +23,8 @@ struct ofxAssimpMeshHelper{
     ofBlendMode blendMode;
     
     bool twoSided;
+    bool hasChanged;
+
+    std::vector<aiVector3D> animatedPos;
+    std::vector<aiVector3D> animatedNorm;
 };
