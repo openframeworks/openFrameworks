@@ -224,7 +224,7 @@ void ofArduino::sendSysEx(int command, vector<unsigned char> data){
 	sendByte(command);
 	vector<unsigned char>::iterator it = data.begin();
 	while( it != data.end() ) {
-		//sendByte(*it);	// need to split data into 2 bytes before sending
+		//sendByte(*it);	// jhoefs need to split data into 2 bytes before sending
 		sendValueAsTwo7bitBytes(*it);
 		it++;
 	}
@@ -638,20 +638,31 @@ int ofArduino::getValueFromTwo7bitBytes(unsigned char lsb, unsigned char msb){
    return (msb << 7) | lsb;
 }
 
+/*
 void ofArduino::sendServo(int pin, int value, bool force){
 	if(_digitalPinMode[pin]==ARD_SERVO && (_servoValue[pin]!=value || force)){
-		sendByte(FIRMATA_START_SYSEX);
-		sendByte(SYSEX_SERVO_WRITE);
-		sendByte(pin);
-		sendValueAsTwo7bitBytes(value);
-		sendByte(FIRMATA_END_SYSEX);
+		//sendByte(FIRMATA_START_SYSEX);
+		//sendByte(SYSEX_SERVO_WRITE);
+		//sendByte(pin);
+		//sendValueAsTwo7bitBytes(value);
+		//sendByte(FIRMATA_END_SYSEX);
 		_servoValue[pin]=value;
+	}
+}
+*/
+
+void ofArduino::sendServo(int pin, int value, bool force){
+	if(_digitalPinMode[pin]==ARD_SERVO && (_digitalPinValue[pin]!=value || force)){
+		sendByte(FIRMATA_ANALOG_MESSAGE+pin);
+		sendValueAsTwo7bitBytes(value);
+		_digitalPinValue[pin] = value;
 	}
 }
 
 void ofArduino::sendServoAttach(int pin, int minPulse, int maxPulse, int angle) {
 	sendByte(FIRMATA_START_SYSEX);
-	sendByte(SYSEX_SERVO_ATTACH);
+	//sendByte(SYSEX_SERVO_ATTACH);
+	sendByte(FIRMATA_SYSEX_SERVO_CONFIG);
 	sendByte(pin);
 	sendValueAsTwo7bitBytes(minPulse);
 	sendValueAsTwo7bitBytes(maxPulse);
@@ -666,6 +677,8 @@ void ofArduino::sendServoDetach(int pin) {
 	sendByte(FIRMATA_END_SYSEX);
 	_digitalPinMode[pin]=ARD_OUTPUT;
 }
+
+//void ofArduino::sendDigital(int pin, int value, bool force){
 
 int ofArduino::getServo(int pin){
 	if(_digitalPinMode[pin]==ARD_SERVO)
