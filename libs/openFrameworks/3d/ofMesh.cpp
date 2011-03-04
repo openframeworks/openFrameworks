@@ -407,6 +407,37 @@ void ofMesh::setupIndicesAuto(){
 	}
 }
 
+
+
+//--------------------------------------------------------------
+void ofMesh::clearVertices(){
+	vertices.clear();
+	bVertsChanged=true;
+}
+
+//--------------------------------------------------------------
+void ofMesh::clearNormals(){
+	normals.clear();
+	bNormalsChanged=true;
+}
+
+//--------------------------------------------------------------
+void ofMesh::clearColors(){
+	colors.clear();
+	bColorsChanged=true;
+}
+
+//--------------------------------------------------------------
+void ofMesh::clearTexCoords(){
+	texCoords.clear();
+	bTexCoordsChanged=true;
+}
+
+//--------------------------------------------------------------
+void ofMesh::clearIndexes(){
+
+}
+
 //--------------------------------------------------------------
 void ofMesh::drawVertices(){
 	draw(OF_MESH_POINTS);
