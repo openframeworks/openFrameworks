@@ -3,6 +3,7 @@
 
 #include "ofMain.h"
 #include "ofxAssimpModelLoader.h"
+#include "ofVboMesh.h"
 
 class testApp : public ofBaseApp{
 
@@ -25,6 +26,14 @@ class testApp : public ofBaseApp{
 		bool bAnimateMouse;
 		float animationTime;
         ofxAssimpModelLoader model;
+
+        ofVboMesh mesh;
+        ofPoint position;
+        float normScale;
+        ofPoint scale;
+        ofPoint sceneCenter;
+        ofMaterial material;
+        ofTexture tex;
 };
 
 #endif
