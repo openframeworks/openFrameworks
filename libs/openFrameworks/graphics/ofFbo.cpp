@@ -295,7 +295,7 @@ void ofFbo::createAndAttachTexture(GLenum attachmentPoint) {
 	tex->allocate(settings.width, settings.height, settings.internalformat, settings.textureTarget == GL_TEXTURE_2D ? false : true);
 	tex->setTextureWrap(settings.wrapModeHorizontal, settings.wrapModeVertical);
 	tex->setTextureMinMagFilter(settings.minFilter, settings.maxFilter);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + attachmentPoint, tex->getTexDataRef().textureTarget, tex->getTexDataRef().textureID, 0);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + attachmentPoint, tex->texData.textureTarget, tex->texData.textureID, 0);
 	textures.push_back(tex);
 
 

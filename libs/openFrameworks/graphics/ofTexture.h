@@ -16,8 +16,6 @@ enum ofTexCompression
 class ofTextureData{
 public:
 	ofTextureData(){
-		isCopy = false;
-
 		bAllocated		= false;
 		textureID		= 0;
 		bFlipTexture	= false;
@@ -32,32 +30,6 @@ public:
 		tex_t			= 0;
 		tex_u			= 0;
 		compressionType = OF_COMPRESS_NONE;
-	}
-
-	~ofTextureData(){
-		if(!isCopy){
-			clear();
-		}
-	}
-
-	ofTextureData(const ofTextureData & mom){
-
-		isCopy = true;
-
-		bAllocated		= mom.bAllocated;
-		textureID		= mom.textureID;
-		bFlipTexture	= mom.bFlipTexture;
-		textureTarget	= mom.textureTarget;
-		glTypeInternal  = mom.glTypeInternal;
-		glType			= mom.glType;
-		pixelType		= mom.pixelType;
-		width			= mom.width;
-		height			= mom.height;
-		tex_w			= mom.tex_w;
-		tex_h			= mom.tex_h;
-		tex_t			= mom.tex_t;
-		tex_u			= mom.tex_u;
-		compressionType = mom.compressionType;
 	}
 
 
@@ -75,21 +47,6 @@ public:
 	unsigned int textureID;
 	bool bAllocated;
 	ofTexCompression compressionType;
-
-
-	void clear(){
-		// try to free up the texture memory so we don't reallocate
-		// http://www.opengl.org/documentation/specs/man_pages/hardcopy/GL/html/gl/deletetextures.html
-		if (textureID != 0){
-			glDeleteTextures(1, (GLuint *)&textureID);
-			textureID  = 0;
-		}
-		bAllocated = false;
-	}
-
-private:
-
-	bool isCopy;
 };
 
 //enable / disable the slight offset we add to ofTexture's texture coords to compensate for bad edge artifiacts
@@ -103,6 +60,8 @@ class ofTexture : public ofBaseDraws{
 	public :
 
 	ofTexture();
+	ofTexture(const ofTexture & mom);
+	ofTexture& operator=(const ofTexture & mom);
 	virtual ~ofTexture();
 
 	// -----------------------------------------------------------------------
@@ -153,7 +112,7 @@ class ofTexture : public ofBaseDraws{
 
 	// reference to the actual textureData inside the smart pointer
 	// for backwards compatibility
-	ofTextureData & getTexDataRef(){ return *texDataPtr; }
+	ofTextureData texData;
 
 	float getHeight();
 	float getWidth();
@@ -164,9 +123,9 @@ protected:
 	ofPoint anchor;
 	bool bAnchorIsPct;
 
-private:
+/*private:
 
-	Poco::SharedPtr<ofTextureData> texDataPtr;
+	Poco::SharedPtr<ofTextureData> texDataPtr;*/
 
 
 };
