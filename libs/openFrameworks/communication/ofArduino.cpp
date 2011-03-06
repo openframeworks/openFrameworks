@@ -1,13 +1,10 @@
 /*
  *
+ * Jeff Hoefs 
  * Initial updates for Firmata 2.2 compatibility:
- * - 3/5/11 added servo support for firmata 2.2 (should be backwards
- *			compatible with Erik Sjodin's older firmata servo
- *			implementation)
- *
- * Jeff Hoefs
- * get latest ofArduino updates from my oF fork:
- * https://github.com/soundanalogous/openFrameworks
+ * - 3/5/17 added servo support for firmata 2.2 and greater (should be 
+ *   backwards compatible with Erik Sjodin's older firmata servo
+ *   implementation)
  * 
  *
  * Copyright 2007-2008 (c) Erik Sjodin, eriksjodin.net
@@ -401,6 +398,7 @@ void ofArduino::processData(unsigned char inputData){
 	}
 	// we have SysEx command data
 	else if(_waitForData<0){
+		
 		// we have all sysex data
 		if(inputData==FIRMATA_END_SYSEX){
 			_waitForData=0;
@@ -472,6 +470,7 @@ void ofArduino::processSysExData(vector<unsigned char> data){
 			}
 			_firmwareName = str;
 
+			_firmwareVersionSum = _majorFirmwareVersion * 10 + _minorFirmwareVersion;
 			ofNotifyEvent(EFirmwareVersionReceived, _majorFirmwareVersion, this);
 
 			// trigger the initialization event
@@ -652,7 +651,7 @@ int ofArduino::getValueFromTwo7bitBytes(unsigned char lsb, unsigned char msb){
 
 void ofArduino::sendServo(int pin, int value, bool force){
 	// for firmata v2.2 and greater
-	if (_majorProtocolVersion >= 2 && _minorProtocolVersion >= 2) {
+	if (_firmwareVersionSum >= FIRMWARE2_2) {
 		if(_digitalPinMode[pin]==ARD_SERVO && (_digitalPinValue[pin]!=value || force)){
 			sendByte(FIRMATA_ANALOG_MESSAGE+pin);
 			sendValueAsTwo7bitBytes(value);
@@ -676,7 +675,7 @@ void ofArduino::sendServo(int pin, int value, bool force){
 void ofArduino::sendServoAttach(int pin, int minPulse, int maxPulse, int angle) {
 	sendByte(FIRMATA_START_SYSEX);
 	// for firmata v2.2 and greater
-	if (_majorProtocolVersion >= 2 && _minorProtocolVersion >= 2) {
+	if (_firmwareVersionSum >= FIRMWARE2_2) {
 		sendByte(FIRMATA_SYSEX_SERVO_CONFIG);
 	} 
 	// for versions prior to 2.2
@@ -702,7 +701,7 @@ void ofArduino::sendServoDetach(int pin) {
 int ofArduino::getServo(int pin){
 	if(_digitalPinMode[pin]==ARD_SERVO)
 		// for firmata v2.2 and greater
-		if (_majorProtocolVersion >= 2 && _minorProtocolVersion >= 2) {
+		if (_firmwareVersionSum >= FIRMWARE2_2) {
 			return _digitalPinValue[pin];
 		} 
 		// for versions prior to 2.2
