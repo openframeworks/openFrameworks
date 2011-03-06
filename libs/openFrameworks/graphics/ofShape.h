@@ -3,7 +3,54 @@
 #include "ofConstants.h"
 #include "ofPoint.h"
 #include "ofColor.h"
-#include "ofShapeTessellation.h"
+#include "ofPolyline.h"
+#include "ofBaseTypes.h"
+#include "ofPrimitive.h"
+
+
+class ofSubPath{
+public:
+	struct Command;
+
+	ofSubPath();
+	vector<Command> & getCommands();
+	const vector<Command> & getCommands() const;
+	void addCommand(const Command & command);
+	bool hasChanged();
+	void close();
+	bool isClosed();
+	int size();
+
+	struct Command{
+		enum Type{
+			lineTo,
+			curveTo,
+			bezierTo,
+			quadBezierTo,
+			arc,
+		};
+
+		/// for lineTo and curveTo
+		Command(Type type , const ofPoint & p);
+
+		/// for bezierTo
+		Command(Type type , const ofPoint & p, const ofPoint & cp1, const ofPoint & cp2);
+
+		///for arc
+		Command(Type type , const ofPoint & centre, float radiusX, float radiusY, float angleBegin, float angleEnd);
+
+		Type type;
+		ofPoint to;
+		ofPoint cp1, cp2;
+		float radiusX, radiusY, angleBegin, angleEnd;
+	};
+
+private:
+	vector<Command> commands;
+	bool			bClosed;
+	bool			bHasChanged;
+};
+
 
 class ofShape{
 public:
@@ -12,9 +59,9 @@ public:
 
 	void clear();
 
-	// creates a new subpath with the same parameters for winding, stroke, fill...
-	ofShape & newSubShape();
-	// closes current path, next command starts a new one with the same parameter for winding, stroke, fill...
+	// creates a new subpath
+	void newSubPath();
+	// closes current path, next command starts a new one
 	void close();
 
 	void lineTo(const ofPoint & p);
@@ -44,97 +91,88 @@ public:
 
 
 	void setPolyWindingMode(ofPolyWindingMode mode);
-	void setColor( const ofColor& color ) { setFillColor( color ); setStrokeColor( color ); }
-	void setHexColor( int hex ) { setColor( ofColor().fromHex( hex ) ); };
-	void setFilled(bool hasFill); // default false
+	void setFilled(bool hasFill); // default true
+	void setStrokeWidth(float width); // default 0
+	void setColor( const ofColor& color );
+	void setHexColor( int hex );
 	void setFillColor(const ofColor & color);
-	void setFillHexColor( int hex ) { setFillColor( ofColor().fromHex( hex ) ); };
+	void setFillHexColor( int hex );
 	void setStrokeColor(const ofColor & color);
-	void setStrokeHexColor( int hex ) { setStrokeColor( ofColor().fromHex( hex ) ); };
-	void setStrokeWidth(float width); // default 1
+	void setStrokeHexColor( int hex );
+
 
 	ofPolyWindingMode getWindingMode() const;
-	bool isFilled() const; // default false
+	bool isFilled() const; // default true
 	ofColor getFillColor() const;
 	ofColor getStrokeColor() const;
-	float getStrokeWidth() const; // default 1
-	bool isClosed() const;
+	float getStrokeWidth() const; // default 0
+	bool hasOutline() const { return strokeWidth>0; }
 
-	void updateShape();
-	void draw(float x=0, float y=0);
+	void draw(float x, float y);
+	void draw();
 
-	ofShapeTessellation & getTessellation(int curveResolution=-1);
+	vector<ofSubPath> & getSubPaths();
+	const vector<ofSubPath> & getSubPaths() const;
 
-
-
-	struct Command;
+	vector<ofPolyline> & getOutline();
+	vector<ofPrimitive> & getTessellation();
+	/// tessellate is called internally before calling draw, if the shape has changed
+	void tessellate();
+	void simplify(float tolerance=0.3);
 
 	// only needs to be called when path is modified externally
-	void markedChanged();
-	vector<Command> & getCommands();
-	vector<ofShape> & getSubShapes();
+	void flagShapeChanged();
 
-	const vector<Command> & getCommands() const;
-	const vector<ofShape> & getSubShapes() const;
-
-	void addCommand(const Command & command);
-
-	struct Command{
-		enum Type{
-			lineTo,
-			curveTo,
-			bezierTo,
-			quadBezierTo,
-			arc,
-		};
-
-		/// for lineTo and curveTo
-		Command(Type type , const ofPoint & p)
-		:type(type)
-		,to(p)
-		{}
-
-		/// for bezierTo
-		Command(Type type , const ofPoint & p, const ofPoint & cp1, const ofPoint & cp2)
-		:type(type)
-		,to(p)
-		,cp1(cp1)
-		,cp2(cp2)
-		{
-		}
-
-		///for arc
-		Command(Type type , const ofPoint & centre, float radiusX, float radiusY, float angleBegin, float angleEnd)
-		:type(type)
-		,to(centre)
-		,radiusX(radiusX)
-		,radiusY(radiusY)
-		,angleBegin(angleBegin)
-		,angleEnd(angleEnd)
-		{
-		}
-
-		Type type;
-		ofPoint to;
-		ofPoint cp1, cp2;
-		float radiusX, radiusY, angleBegin, angleEnd;
+	enum Mode{
+		PATHS,
+		POLYLINES
 	};
 
+	void setMode(Mode mode);
+
+	void setCurveResolution(int curveResolution);
+	int getCurveResolution();
+
+	void setArcResolution(int res);
+	int getArcResolution();
+
+	void setUseShapeColor(bool useColor);
+	bool getUseShapeColor();
 
 private:
 
-	ofShape & lastShape();
+	ofSubPath & lastPath();
+	ofPolyline & lastPolyline();
 
-	vector<ofShape>		subPaths;
-	vector<Command> 	commands;
+	void generatePolylinesFromPaths();
+
+	// path description
+	vector<ofSubPath>		paths;
 	ofPolyWindingMode 	windingMode;
 	ofColor 			fillColor;
 	ofColor				strokeColor;
 	float				strokeWidth;
 	bool				bFill;
-	bool				bClosed;
-	ofShapeTessellation	cachedShape;
+	bool				bUseShapeColor;
+
+	// polyline / tessellation
+	vector<ofPolyline>  polylines;
+	vector<ofPolyline>  tessellatedPolylines;
+
+	// this gives more performance for shapes that are
+	// updating frequently by not instantiating new meshes
+	friend class ofTessellator;
+	struct tessCache{
+		vector<ofPrimitive> meshes;
+		int numElements;
+		bool changed;
+	}cachedTessellation;
+
 	bool				hasChanged;
-	ofBaseRenderer * 	renderer;
 	int					prevCurveRes;
+	int					curveResolution;
+	int					arcResolution;
+	bool 				bNeedsTessellation;
+
+	Mode				mode;
 };

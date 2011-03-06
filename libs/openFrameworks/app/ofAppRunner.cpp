@@ -9,6 +9,7 @@
 #include "ofEvents.h"
 #include "ofMath.h"
 #include "ofGraphics.h"
+#include "ofGLRenderer.h"
 
 // TODO: closing seems wonky. 
 // adding this for vc2010 compile: error C3861: 'closeQuicktime': identifier not found
@@ -50,9 +51,10 @@ void ofSetupOpenGL(ofAppBaseWindow * windowPtr, int w, int h, int screenMode){
 		/* Problem: glewInit failed, something is seriously wrong. */
 		ofLog(OF_LOG_ERROR, "Error: %s\n", glewGetErrorString(err));
 	}
-	//Default colors etc are now in ofGraphics - ofSetupGraphicDefaults
-	ofSetupGraphicDefaults();
 #endif
+	ofSetDefaultRenderer(new ofGLRenderer(false));
+	//Default colors etc are now in ofGraphics - ofSetupGraphicDefaults
+	//ofSetupGraphicDefaults();
 }
 
 

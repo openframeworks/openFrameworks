@@ -1,7 +1,7 @@
 #pragma once
 
-#include "ofShapeTessellation.h"
-#include "ofShape.h"
+#include "ofPolyline.h"
+#include "ofRectangle.h"
 
 // todo: douglas-peucker simplification
 
@@ -31,24 +31,3 @@ ofPoint ofGetClosestPoint(const ofPolyline& polyline, const ofPoint& target, uns
 
 
 
-inline ofShapeTessellation ofTriangleShape(float x1,float y1,float z1,float x2,float y2,float z2,float x3, float y3,float z3){
-	ofShapeTessellation shape;
-
-	shape.lineTo(x1,y1,z1);
-	shape.lineTo(x2,y2,z2);
-	shape.lineTo(x3,y3,z3);
-	shape.close();
-
-	return shape;
-}
-
-inline ofShape ofTrianglePath(float x1,float y1,float z1,float x2,float y2,float z2,float x3, float y3,float z3){
-	ofShape path;
-
-	path.lineTo(x1,y1,z1);
-	path.lineTo(x2,y2,z2);
-	path.lineTo(x3,y3,z3);
-	path.close();
-
-	return path;
-}

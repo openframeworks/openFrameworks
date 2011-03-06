@@ -1,6 +1,6 @@
 #pragma once
 #include "ofBaseTypes.h"
-#include <deque>
+#include "ofPolyline.h"
 class ofShapeTessellation;
 class ofPrimitive;
 
@@ -11,11 +11,10 @@ public:
 	~ofGLRenderer(){}
 	void draw(ofPrimitive & vertexData);
 	void draw(ofPolyline & poly);
-	void draw(ofShapeTessellation & shape);
 	void draw(ofShape & path);
-	void useShapeColor(bool bUseShapeColor);
+	void draw(vector<ofPoint> & vertexData, ofPrimitiveMode drawMode);
 
-	bool rendersPathDirectly(){
+	bool rendersPathPrimitives(){
 		return false;
 	}
 
@@ -56,6 +55,18 @@ public:
 	void setupGraphicDefaults();
 	void setupScreen();
 
+	// drawing modes
+	void setFillMode(ofFillFlag fill);
+	ofFillFlag getFillMode();
+	void setCircleResolution(int res);
+	void setRectMode(ofRectMode mode);
+	ofRectMode getRectMode();
+	void setLineWidth(float lineWidth);
+	void setLineSmoothing(bool smooth);
+	void setBlendMode(ofBlendMode blendMode);
+	void enablePointSprites();
+	void disablePointSprites();
+
 	// color options
 	void setColor(int r, int g, int b); // 0-255
 	void setColor(int r, int g, int b, int a); // 0-255
@@ -78,10 +89,32 @@ public:
 	void clear(float brightness, float a=0);
 	void clearAlpha();
 
+
+	// drawing
+	void drawLine(float x1, float y1, float z1, float x2, float y2, float z2);
+	void drawRectangle(float x, float y, float z, float w, float h);
+	void drawTriangle(float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3);
+	void drawCircle(float x, float y, float z, float radius);
+	void drawEllipse(float x, float y, float z, float width, float height);
+	void drawString(string text, float x, float y, float z, ofDrawBitmapMode mode);
+
 private:
+	void startSmoothing();
+	void endSmoothing();
+
 	ofHandednessType coordHandedness;
 	deque <ofRectangle> viewportHistory;
 	bool bBackgroundAuto;
 	ofColor bgColor;
-	bool bUseShapeColor;
+
+	vector<ofPoint> linePoints;
+	vector<ofPoint> rectPoints;
+	vector<ofPoint> triPoints;
+	vector<ofPoint> circlePoints;
+	ofPolyline circlePolyline;
+
+	ofFillFlag bFilled;
+	bool bSmoothHinted;
+	ofRectMode rectMode;
+
 };

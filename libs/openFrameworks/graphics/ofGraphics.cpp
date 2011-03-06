@@ -1,11 +1,9 @@
 #include "ofGraphics.h"
 #include "ofAppRunner.h"
-#include "ofBitmapFont.h"
 #include "ofUtils.h"
 #include "ofBaseTypes.h"
 #include "ofGLRenderer.h"
 #include "ofShape.h"
-#include "ofShapeUtils.h"
 
 #ifdef TARGET_OSX
 	#include <OpenGL/glu.h>
@@ -39,41 +37,36 @@
 #endif
 
 
-#include <deque>
-
 //----------------------------------------------------------
 // static
-static float	drawMode			= OF_FILLED;
-static int		numCirclePts		= 0;
-static bool		bSmoothHinted			= false;
-static bool			bUsingArbTex		= true;
-static bool			bUsingNormalizedTexCoords = false;
-static ofRectMode	cornerMode			= OF_RECTMODE_CORNER;
-static ofPolyWindingMode		polyMode	= OF_POLY_WINDING_ODD;
-
-int				curveResolution = 20;
-
-ofHandednessType coordHandedness;
+static bool		bUsingArbTex		= true;
+static bool		bUsingNormalizedTexCoords = false;
 
 //style stuff - new in 006
-static ofStyle			currentStyle;
+static ofStyle currentStyle;
 static deque <ofStyle> styleHistory;
 static deque <ofRectangle> viewportHistory;
 
-
-void 			setupCircle();
-
-
-static ofShape path;
-static ofShapeTessellation shape;
+static ofShape shape;
 static ofPrimitive vertexData;
-static ofBaseRenderer * renderer = new ofGLRenderer(false);
+static ofBaseRenderer * renderer = NULL;
 
 void ofSetDefaultRenderer(ofBaseRenderer * renderer_){
 	if(renderer) delete renderer;
 	renderer = renderer_;
 	renderer->setupGraphicDefaults();
+
+	if(renderer->rendersPathPrimitives()){
+		shape.setMode(ofShape::PATHS);
+	}else{
+		shape.setMode(ofShape::POLYLINES);
+	}
+
+	shape.setUseShapeColor(false);
+
+	ofSetStyle(currentStyle);
 }
+
 ofBaseRenderer * ofGetDefaultRenderer(){
 	return renderer;
 }
@@ -229,11 +222,6 @@ void ofSetupScreenPerspective(float width, float height, int orientation, bool v
 	renderer->setupScreenPerspective(width,height, orientation, vFlip,fov,nearDist,farDist);
 }
 
-//----------------------------------------
-void ofSetDrawBitmapMode(ofDrawBitmapMode mode) {
-	currentStyle.drawBitmapMode = mode;
-}
-
 //----------------------------------------------------------
 void ofSetupScreenOrtho(float width, float height, bool vFlip, float nearDist, float farDist) {
 	renderer->setupScreenOrtho(width,height,vFlip,nearDist,farDist);
@@ -243,6 +231,7 @@ void ofSetupScreenOrtho(float width, float height, bool vFlip, float nearDist, f
 //Resets openGL parameters back to OF defaults
 void ofSetupGraphicDefaults(){
 	renderer->setupGraphicDefaults();
+	ofSetStyle(ofStyle());
 }
 
 //----------------------------------------------------------
@@ -359,6 +348,7 @@ void ofBackgroundHex(int hexColor, int alpha){
 
 //----------------------------------------------------------
 void ofBackground(int r, int g, int b, int a){
+	currentStyle.bgColor.set(r,g,b,a);
 	renderer->background(r,g,b,a);
 }
 
@@ -371,70 +361,50 @@ void ofBackground(int r, int g, int b, int a){
 //---------------------------------------------------------------------------
 // drawing modes
 
-static void ofSetCurrentStyleTo(ofShape & path){
-	path.setFilled(drawMode == OF_FILLED);
-	path.setColor(ofColor(255,255,255,255));
-	path.setPolyWindingMode(currentStyle.polyMode);
-
-	if(drawMode == OF_OUTLINE){
-		path.setStrokeWidth(currentStyle.lineWidth);
-	}else{
-		path.setStrokeWidth(0);
-	}
-}
-
-static void ofSetCurrentStyleTo(ofShapeTessellation & shape){
-	shape.setFilled(drawMode == OF_FILLED);
-	path.setColor(ofColor(255,255,255,255));
-	shape.setPolyWindingMode(currentStyle.polyMode);
-
-	if(drawMode == OF_OUTLINE){
-		shape.setStrokeWidth(currentStyle.lineWidth);
-	}else{
-		shape.setStrokeWidth(0);
-	}
-}
-
 //----------------------------------------------------------
 void  ofSetRectMode(ofRectMode mode){
-	if (mode == OF_RECTMODE_CORNER) 		cornerMode = OF_RECTMODE_CORNER;
-	else if (mode == OF_RECTMODE_CENTER) 	cornerMode = OF_RECTMODE_CENTER;
-
-	currentStyle.rectMode = cornerMode;
+	renderer->setRectMode(mode);
+	currentStyle.rectMode = mode;
 }
 
 //----------------------------------------------------------
 ofRectMode ofGetRectMode(){
-	return 	cornerMode;
+	return 	renderer->getRectMode();
 }
 
 //----------------------------------------------------------
 void ofNoFill(){
-	drawMode = OF_OUTLINE;
+	shape.setFilled(false);
+	shape.setStrokeWidth(currentStyle.lineWidth);
+	renderer->setFillMode(OF_OUTLINE);
 	currentStyle.bFill = false;
 }
 
 //----------------------------------------------------------
 void ofFill(){
-	drawMode = OF_FILLED;
+	shape.setFilled(true);
+	shape.setStrokeWidth(0);
+	renderer->setFillMode(OF_FILLED);
 	currentStyle.bFill = true;
 }
 
 // Returns OF_FILLED or OF_OUTLINE
 //----------------------------------------------------------
-int ofGetFill(){
-	return drawMode;
+ofFillFlag ofGetFill(){
+	return renderer->getFillMode();
 }
 
 //----------------------------------------------------------
 void ofSetLineWidth(float lineWidth){
-	glLineWidth(lineWidth);
+	shape.setStrokeWidth(lineWidth);
+	renderer->setLineWidth(lineWidth);
 	currentStyle.lineWidth = lineWidth;
 }
 
 //----------------------------------------
 void ofSetCurveResolution(int res){
-	curveResolution = res;
+	shape.setCurveResolution(res);
+	currentStyle.curveResolution = res;
 }
 
 //----------------------------------------
@@ -443,39 +413,10 @@ void ofSetSphereResolution(int res) {
 }
 
 //----------------------------------------------------------
-void startSmoothing();
-void startSmoothing(){
-	#ifndef TARGET_OPENGLES
-		glPushAttrib(GL_COLOR_BUFFER_BIT | GL_ENABLE_BIT);
-	#endif
-
-	glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
-	glEnable(GL_LINE_SMOOTH);
-
-	//why do we need this?
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-}
-
-
-//----------------------------------------------------------
-void endSmoothing();
-void endSmoothing(){
-	#ifndef TARGET_OPENGLES
-		glPopAttrib();
-	#endif
-}
-
-//----------------------------------------------------------
-void setupCircle(){
-	ofSetCircleResolution(CIRC_RESOLUTION);
-}
-
-//----------------------------------------------------------
 void ofSetCircleResolution(int res){
-	numCirclePts = res;
+	currentStyle.circleResolution = res;
+	renderer->setCircleResolution(res);
 }
-
 
 //----------------------------------------------------------
 void ofSetColor(const ofColor & color){
@@ -530,121 +471,25 @@ void ofSetHexColor(int hexColor){
 //----------------------------------------------------------
 
 void ofEnableBlendMode(ofBlendMode blendMode){
-    switch (blendMode){
-
-        case OF_BLENDMODE_ALPHA:{
-            glEnable(GL_BLEND);
-			#ifndef TARGET_OPENGLES
-				glBlendEquation(GL_FUNC_ADD);
-			#endif
-			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-            currentStyle.blending = 1;
-            currentStyle.blendSrc = GL_SRC_ALPHA;
-            currentStyle.blendDst = GL_ONE_MINUS_SRC_ALPHA;
-			#ifndef TARGET_OPENGLES
-				currentStyle.blendEquation = GL_FUNC_ADD;
-			#endif
-            break;
-        }
-
-        case OF_BLENDMODE_ADD:{
-            glEnable(GL_BLEND);
-			#ifndef TARGET_OPENGLES
-				glBlendEquation(GL_FUNC_ADD);
-			#endif
-			glBlendFunc(GL_SRC_ALPHA, GL_ONE);
-            currentStyle.blending = 1;
-            currentStyle.blendSrc = GL_SRC_ALPHA;
-            currentStyle.blendDst = GL_ONE;
-			#ifndef TARGET_OPENGLES
-				currentStyle.blendEquation = GL_FUNC_ADD;
-			#endif
-			break;
-        }
-
-        case OF_BLENDMODE_MULTIPLY:{
-            glEnable(GL_BLEND);
-			#ifndef TARGET_OPENGLES
-				glBlendEquation(GL_FUNC_ADD);
-			#endif
-			glBlendFunc(GL_DST_COLOR, GL_ONE_MINUS_SRC_ALPHA /* GL_ZERO or GL_ONE_MINUS_SRC_ALPHA */);
-            currentStyle.blending = 1;
-            currentStyle.blendSrc = GL_DST_COLOR;
-            currentStyle.blendDst = GL_ONE_MINUS_SRC_ALPHA;
-			#ifndef TARGET_OPENGLES
-				currentStyle.blendEquation = GL_FUNC_ADD;
-			#endif
-			break;
-        }
-
-        case OF_BLENDMODE_SCREEN:{
-            glEnable(GL_BLEND);
-			#ifndef TARGET_OPENGLES
-				glBlendEquation(GL_FUNC_ADD);
-			#endif
-            glBlendFunc(GL_ONE_MINUS_DST_COLOR, GL_ONE);
-            currentStyle.blending = 1;
-            currentStyle.blendSrc = GL_ONE_MINUS_DST_COLOR;
-            currentStyle.blendDst = GL_ONE;
-			#ifndef TARGET_OPENGLES
-				currentStyle.blendEquation = GL_FUNC_ADD;
-			#endif
-			break;
-        }
-
-        case OF_BLENDMODE_SUBTRACT:{
-            glEnable(GL_BLEND);
-		#ifndef TARGET_OPENGLES
-            glBlendEquation(GL_FUNC_REVERSE_SUBTRACT);
-		#else
-			ofLog(OF_LOG_WARNING, "OF_BLENDMODE_SUBTRACT not currently supported on iPhone");
-		#endif
-            glBlendFunc(GL_SRC_ALPHA, GL_ONE);
-            currentStyle.blending = 1;
-            currentStyle.blendSrc = GL_SRC_ALPHA;
-            currentStyle.blendDst = GL_ONE;
-			#ifndef TARGET_OPENGLES
-				currentStyle.blendEquation = GL_FUNC_ADD;
-			#endif
-			break;
-        }
-
-
-        default:
-            break;
-    }
+	currentStyle.blendingMode = blendMode;
+	renderer->setBlendMode(blendMode);
 }
 
 //----------------------------------------------------------
 void ofEnablePointSprites() {
-#ifdef TARGET_OPENGLES
-	glEnable(GL_POINT_SPRITE_OES);
-	glTexEnvi(GL_POINT_SPRITE_OES, GL_COORD_REPLACE_OES, GL_TRUE);
-	// does look like this needs to be enabled in ES because
-	// it is always eneabled...
-	//glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
-	
-#else
-	glEnable(GL_POINT_SPRITE);
-	glTexEnvi(GL_POINT_SPRITE, GL_COORD_REPLACE, GL_TRUE);
-	glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);	
-#endif
+	renderer->enablePointSprites();
 }
 
 //----------------------------------------------------------
 void ofDisablePointSprites() {
-#ifdef TARGET_OPENGLES
-	glDisable(GL_POINT_SPRITE_OES);
-#else
-	glDisable(GL_POINT_SPRITE);
-#endif
+	renderer->disablePointSprites();
 }
 
 //----------------------------------------------------------
 void ofDisableBlendMode()
 {
     glDisable(GL_BLEND);
-	currentStyle.blending = 0;
+	currentStyle.blendingMode = OF_BLENDMODE_DISABLED;
 }
 
 //----------------------------------------------------------
@@ -661,14 +506,25 @@ void ofDisableAlphaBlending(){
 void ofEnableSmoothing(){
 	// please see:
 	// http://www.opengl.org/resources/faq/technical/rasterization.htm
-	bSmoothHinted = true;
+	renderer->setLineSmoothing(true);
 	currentStyle.smoothing = 1;
 }
 
 //----------------------------------------------------------
 void ofDisableSmoothing(){
-	bSmoothHinted = false;
+	renderer->setLineSmoothing(false);
 	currentStyle.smoothing = 0;
+}
+
+//----------------------------------------------------------
+void ofSetPolyMode(ofPolyWindingMode mode){
+	shape.setPolyWindingMode(mode);
+	currentStyle.polyMode = mode;
+}
+
+//----------------------------------------
+void ofSetDrawBitmapMode(ofDrawBitmapMode mode) {
+	currentStyle.drawBitmapMode = mode;
 }
 
 //----------------------------------------------------------
@@ -676,10 +532,15 @@ void ofSetStyle(ofStyle style){
 	//color
 	ofSetColor((int)style.color.r, (int)style.color.g, (int)style.color.b, (int)style.color.a);
 
+	//bg color
+	ofBackground(style.bgColor);
+
 	//circle resolution - don't worry it only recalculates the display list if the res has changed
 	ofSetCircleResolution(style.circleResolution);
 
 	ofSetSphereResolution(style.sphereResolution);
+
+	ofSetCurveResolution(style.curveResolution);
 
 	//line width - finally!
 	ofSetLineWidth(style.lineWidth);
@@ -705,11 +566,7 @@ void ofSetStyle(ofStyle style){
 	}
 
 	//blending
-	if(style.blending ){
-		ofEnableAlphaBlending();
-	}else{
-		ofDisableAlphaBlending();
-	}
+	ofEnableBlendMode(currentStyle.blendingMode);
 	
 	//bitmap draw mode
 	ofSetDrawBitmapMode(style.drawBitmapMode);
@@ -741,12 +598,6 @@ void ofPopStyle(){
 }
 
 
-//----------------------------------------------------------
-void ofSetPolyMode(ofPolyWindingMode mode){
-	polyMode = mode;
-	currentStyle.polyMode = polyMode;
-}
-
 
 // end drawing modes
 //---------------------------------------------------------------------------
@@ -769,22 +620,7 @@ void ofTriangle(float x1,float y1,float x2,float y2,float x3, float y3){
 
 //----------------------------------------------------------
 void ofTriangle(float x1,float y1,float z1,float x2,float y2,float z2,float x3, float y3,float z3){
-
-	// use smoothness, if requested:
-	if (bSmoothHinted && drawMode == OF_OUTLINE) startSmoothing();
-
-	if(renderer->rendersPathDirectly()){
-		path=ofTrianglePath(x1,y1,z1,x2,y2,z2,x3,y3,z3);
-		ofSetCurrentStyleTo(path);
-		renderer->draw(path);
-	}else{
-		shape=ofTriangleShape(x1,y1,z1,x2,y2,z2,x3,y3,z3);
-		ofSetCurrentStyleTo(shape);
-		renderer->draw(shape);
-	}
-
-	// back to normal, if smoothness is on
-	if (bSmoothHinted && drawMode == OF_OUTLINE) endSmoothing();
+	renderer->drawTriangle(x1,y1,z1,x2,y2,z2,x3,y3,z3);
 }
 
 //----------------------------------------------------------
@@ -794,46 +630,12 @@ void ofCircle(const ofPoint & p, float radius){
 
 //----------------------------------------------------------
 void ofCircle(float x, float y, float radius){
-	// use smoothness, if requested:
-	if (bSmoothHinted && drawMode == OF_OUTLINE) startSmoothing();
-
-	if(renderer->rendersPathDirectly()){
-		path.clear();
-		ofSetCurrentStyleTo(path);
-		path.arc(x,y,radius,radius,0,360);
-		renderer->draw(path);
-	}else{
-		shape.clear();
-		ofSetCurrentStyleTo(shape);
-		shape.arc(x,y,radius,radius,0,360,currentStyle.circleResolution);
-		renderer->draw(shape);
-	}
-
-	// back to normal, if smoothness is on
-	if (bSmoothHinted && drawMode == OF_OUTLINE) endSmoothing();
+	ofCircle(x,y,0,radius);
 }
 
 //----------------------------------------------------------
 void ofCircle(float x, float y, float z, float radius){
-
-	// use smoothness, if requested:
-	if (bSmoothHinted && drawMode == OF_OUTLINE) startSmoothing();
-
-	if(renderer->rendersPathDirectly()){
-		path.clear();
-		ofSetCurrentStyleTo(path);
-		path.arc(x,y,z,radius,radius,0,360);
-		renderer->draw(path);
-	}else{
-		shape.clear();
-		ofSetCurrentStyleTo(shape);
-		shape.arc(x,y,z,radius,radius,0,360,currentStyle.circleResolution);
-		renderer->draw(shape);
-	}
-
-	// back to normal, if smoothness is on
-	if (bSmoothHinted && drawMode == OF_OUTLINE) endSmoothing();
-
+	renderer->drawCircle(x,y,z,radius);
 }
 
 //----------------------------------------------------------
@@ -843,45 +645,12 @@ void ofEllipse(const ofPoint & p, float width, float height){
 
 //----------------------------------------------------------
 void ofEllipse(float x, float y, float width, float height){
-	// use smoothness, if requested:
-	if (bSmoothHinted && drawMode == OF_OUTLINE) startSmoothing();
-
-	if(renderer->rendersPathDirectly()){
-		path.clear();
-		ofSetCurrentStyleTo(path);
-		path.arc(x,y,width*0.5,height*0.5,0,360);
-		renderer->draw(path);
-	}else{
-		shape.clear();
-		ofSetCurrentStyleTo(shape);
-		shape.arc(x,y,width*0.5,height*0.5,0,360,currentStyle.circleResolution);
-		renderer->draw(shape);
-	}
-
-	// back to normal, if smoothness is on
-	if (bSmoothHinted && drawMode == OF_OUTLINE) endSmoothing();
+	ofEllipse(x,y,0,width,height);
 }
 
 //----------------------------------------------------------
 void ofEllipse(float x, float y, float z, float width, float height){
-
-	// use smoothness, if requested:
-	if (bSmoothHinted && drawMode == OF_OUTLINE) startSmoothing();
-
-	if(renderer->rendersPathDirectly()){
-		path.clear();
-		ofSetCurrentStyleTo(path);
-		path.arc(x,y,z,width*0.5,height*0.5,0,360);
-		renderer->draw(path);
-	}else{
-		shape.clear();
-		ofSetCurrentStyleTo(shape);
-		shape.arc(x,y,z,width*0.5,height*0.5,0,360,currentStyle.circleResolution);
-		renderer->draw(shape);
-	}
-
-	// back to normal, if smoothness is on
-	if (bSmoothHinted && drawMode == OF_OUTLINE) endSmoothing();
+	renderer->drawEllipse(x,y,z,width,height);
 }
 
 //----------------------------------------------------------
@@ -896,31 +665,7 @@ void ofLine(float x1,float y1,float x2,float y2){
 
 //----------------------------------------------------------
 void ofLine(float x1,float y1,float z1,float x2,float y2,float z2){
-
-	// use smoothness, if requested:
-	if (bSmoothHinted) startSmoothing();
-
-	if(renderer->rendersPathDirectly()){
-		path.clear();
-		ofSetCurrentStyleTo(path);
-		path.moveTo(x1,y1,z1);
-		path.lineTo(x2,y2,z2);
-		path.setFilled(false);
-		path.setStrokeWidth(ofGetStyle().lineWidth);
-		renderer->draw(path);
-	}else{
-		shape.clear();
-		ofSetCurrentStyleTo(shape);
-		shape.moveTo(x1,y1,z1);
-		shape.lineTo(x2,y2,z2);
-		shape.setFilled(false);
-		shape.setStrokeWidth(ofGetStyle().lineWidth);
-		renderer->draw(shape);
-	}
-
-	// back to normal, if smoothness is on
-	if (bSmoothHinted) endSmoothing();
-	
+	renderer->drawLine(x1,y1,z1,x2,y2,z2);
 }
 
 //----------------------------------------------------------
@@ -940,190 +685,80 @@ void ofRect(float x,float y,float w,float h){
 
 //----------------------------------------------------------
 void ofRect(float x,float y,float z,float w,float h){
-
-	// use smoothness, if requested:
-	if (bSmoothHinted && drawMode == OF_OUTLINE) startSmoothing();
-
-
-	if(renderer->rendersPathDirectly()){
-		path.clear();
-		ofSetCurrentStyleTo(path);
-		if (cornerMode == OF_RECTMODE_CORNER){
-			path.lineTo(x,y,z);
-			path.lineTo(x+w,y,z);
-			path.lineTo(x+w,y+h,z);
-			path.lineTo(x,y+h,z);
-		}else{
-			path.lineTo(x-w/2.0f,y-h/2.0f,z);
-			path.lineTo(x+w/2.0f,y-h/2.0f,z);
-			path.lineTo(x+w/2.0f,y+h/2.0f,z);
-			path.lineTo(x-w/2.0f,y+h/2.0f,z);
-		}
-		path.close();
-		renderer->draw(path);
-	}else{
-		shape.clear();
-		ofSetCurrentStyleTo(shape);
-		if (cornerMode == OF_RECTMODE_CORNER){
-			shape.lineTo(x,y,z);
-			shape.lineTo(x+w,y,z);
-			shape.lineTo(x+w,y+h,z);
-			shape.lineTo(x,y+h,z);
-		}else{
-			shape.lineTo(x-w/2.0f,y-h/2.0f,z);
-			shape.lineTo(x+w/2.0f,y-h/2.0f,z);
-			shape.lineTo(x+w/2.0f,y+h/2.0f,z);
-			shape.lineTo(x-w/2.0f,y+h/2.0f,z);
-		}
-		shape.close();
-		renderer->draw(shape);
-	}
-
-
-
-	// use smoothness, if requested:
-	if (bSmoothHinted && drawMode == OF_OUTLINE) endSmoothing();
+	renderer->drawRectangle(x,y,z,w,h);
 }
 
 
 //----------------------------------------------------------
 void ofCurve(float x0, float y0, float x1, float y1, float x2, float y2, float x3, float y3){
-	if(renderer->rendersPathDirectly()){
-		path.clear();
-		ofSetCurrentStyleTo(path);
-		path.curveTo(x0,y0);
-		path.curveTo(x1,y1);
-		path.curveTo(x2,y2);
-		path.curveTo(x3,y3);
-		renderer->draw(path);
-	}else{
-		shape.clear();
-		ofSetCurrentStyleTo(shape);
-		shape.curveTo(x0,y0);
-		shape.curveTo(x1,y1);
-		shape.curveTo(x2,y2);
-		shape.curveTo(x3,y3);
-		renderer->draw(shape);
-	}
+	shape.clear();
+	shape.curveTo(x0,y0);
+	shape.curveTo(x1,y1);
+	shape.curveTo(x2,y2);
+	shape.curveTo(x3,y3);
+	shape.draw();
 }
 
 
 //----------------------------------------------------------
 void ofBezier(float x0, float y0, float x1, float y1, float x2, float y2, float x3, float y3){
-	if(renderer->rendersPathDirectly()){
-		path.clear();
-		ofSetCurrentStyleTo(path);
-		path.moveTo(x0,y0);
-		path.bezierTo(x1,y1,x2,y2,x3,y3);
-		renderer->draw(path);
-	}else{
-		shape.clear();
-		ofSetCurrentStyleTo(shape);
-		shape.moveTo(x0,y0);
-		shape.bezierTo(x1,y1,x2,y2,x3,y3);
-		renderer->draw(shape);
-	}
+	shape.clear();
+	shape.moveTo(x0,y0);
+	shape.bezierTo(x1,y1,x2,y2,x3,y3);
+	shape.draw();
 }
 
 //----------------------------------------------------------
 void ofBeginShape(){
-
-	if (bSmoothHinted && drawMode == OF_OUTLINE) startSmoothing();
-
-	if(renderer->rendersPathDirectly()){
-		path.clear();
-		ofSetCurrentStyleTo(path);
-	}else{
-		shape.clear();
-		ofSetCurrentStyleTo(shape);
-	}
+	shape.clear();
 }
 
 //----------------------------------------------------------
 void ofVertex(float x, float y){
-	if(renderer->rendersPathDirectly()){
-		path.lineTo(x,y);
-	}else{
-		shape.lineTo(x,y);
-	}
+	shape.lineTo(x,y);
 
 }
 
 //---------------------------------------------------
 void ofVertex(ofPoint & p) {
-	if(renderer->rendersPathDirectly()){
-		path.lineTo(p);
-	}else{
-		shape.lineTo(p);
-	}
+	shape.lineTo(p);
 }
 
 //----------------------------------------------------------
 void ofVertexes( const vector <ofPoint> & polyPoints ){
-	if(renderer->rendersPathDirectly()){
-		for( int k = 0; k < (int)polyPoints.size(); k++){
-			path.lineTo(polyPoints[k]);
-		}
-	}else{
-		for( int k = 0; k < (int)polyPoints.size(); k++){
-			shape.lineTo(polyPoints[k]);
-		}
+	for( int k = 0; k < (int)polyPoints.size(); k++){
+		shape.lineTo(polyPoints[k]);
 	}
 }
 
 //---------------------------------------------------
 void ofCurveVertex(float x, float y){
-	if(renderer->rendersPathDirectly()){
-		path.curveTo(x,y);
-	}else{
-		shape.curveTo(x,y);
-	}
+	shape.curveTo(x,y);
 }
 
 //----------------------------------------------------------
 void ofCurveVertexes( const vector <ofPoint> & curvePoints){
-	if(renderer->rendersPathDirectly()){
-		for( int k = 0; k < (int)curvePoints.size(); k++){
-			path.curveTo(curvePoints[k]);
-		}
-	}else{
-		for( int k = 0; k < (int)curvePoints.size(); k++){
-			shape.curveTo(curvePoints[k]);
-		}
+	for( int k = 0; k < (int)curvePoints.size(); k++){
+		shape.curveTo(curvePoints[k]);
 	}
 }
 
 //---------------------------------------------------
 void ofCurveVertex(ofPoint & p) {
-	if(renderer->rendersPathDirectly()){
-		shape.curveTo(p);
-	}
+	shape.curveTo(p);
 }
 
 //---------------------------------------------------
 void ofBezierVertex(float x1, float y1, float x2, float y2, float x3, float y3){
-	if(renderer->rendersPathDirectly()){
-		path.bezierTo(x1,y1,x2,y2,x3,y3);
-	}else{
-		shape.bezierTo(x1,y1,x2,y2,x3,y3);
-	}
+	shape.bezierTo(x1,y1,x2,y2,x3,y3);
 }
 
 //----------------------------------------------------------
 void ofNextContour(bool bClose){
-	if(renderer->rendersPathDirectly()){
-		if (bClose){
-			path.close();
-		}else{
-			path.newSubShape();
-		}
-	}else{
-		if (bClose){
-			shape.close();
-		}else{
-			shape.newSubShape();
-		}
+	if (bClose){
+		shape.close();
 	}
+	shape.newSubPath();
 }
 
 
@@ -1133,21 +768,11 @@ void ofEndShape(bool bClose){
 	// (close -> add the first point to the end)
 	// -----------------------------------------------
 
-	if(renderer->rendersPathDirectly()){
-		if (bClose){
-			path.close();
-		}
-
-		renderer->draw(path);
-	}else{
-		if (bClose){
-			shape.close();
-		}
-
-		renderer->draw(shape);
+	if (bClose){
+		shape.close();
 	}
 
-   	if (bSmoothHinted && drawMode == OF_OUTLINE) endSmoothing();
+	shape.draw();
 
 }
 
@@ -1222,8 +847,6 @@ void ofBox(float size) {
 
 	float h = size * .5;
 	
-	//glEnableClientState(GL_NORMAL_ARRAY);
-	//glEnableClientState(GL_VERTEX_ARRAY);
 	vertexData.clear();
 	if(ofGetStyle().bFill) {
 		ofVec3f vertices[] = {
@@ -1234,7 +857,6 @@ void ofBox(float size) {
 			ofVec3f(-h,-h,+h), ofVec3f(-h,-h,-h), ofVec3f(+h,-h,-h), ofVec3f(+h,-h,+h),
 			ofVec3f(-h,-h,-h), ofVec3f(-h,+h,-h), ofVec3f(+h,+h,-h), ofVec3f(+h,-h,-h)
 		};
-		//glVertexPointer(3, GL_FLOAT, 0, vertices);
 		vertexData.addVertices(vertices,24);
 		
 		static ofVec3f normals[] = {
@@ -1245,10 +867,8 @@ void ofBox(float size) {
 			ofVec3f(0,-1,0), ofVec3f(0,-1,0), ofVec3f(0,-1,0), ofVec3f(0,-1,0),
 			ofVec3f(0,0,-1), ofVec3f(0,0,-1), ofVec3f(0,0,-1), ofVec3f(0,0,-1)
 		};
-		//glNormalPointer(GL_FLOAT, 0, normals);
 		vertexData.addNormals(normals,24);
 
-		//glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 		static ofVec2f tex[] = {
 			ofVec2f(1,0), ofVec2f(0,0), ofVec2f(0,1), ofVec2f(1,1),
 			ofVec2f(1,1), ofVec2f(1,0), ofVec2f(0,0), ofVec2f(0,1),
@@ -1257,7 +877,6 @@ void ofBox(float size) {
 			ofVec2f(0,0), ofVec2f(0,1), ofVec2f(1,1), ofVec2f(1,0),
 			ofVec2f(0,0), ofVec2f(0,1), ofVec2f(1,1), ofVec2f(1,0)
 		};
-		//glTexCoordPointer(2, GL_FLOAT, 0, tex);
 		vertexData.addTexCoords(tex,24);
 	
 		static ofIndexType indices[] = {
@@ -1274,13 +893,9 @@ void ofBox(float size) {
 			20,21,22,
 			20,22,23
 		};
-		//glDrawElements(GL_TRIANGLES, 3 * 6 * 2, GL_UNSIGNED_BYTE, indices);
 		vertexData.addIndices(indices,36);
-		//glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 		vertexData.setMode(OF_TRIANGLES_MODE);
 		renderer->draw(vertexData);
-		//vboMesh.setVertexData(&vertexData);
-		//vboMesh.drawFaces();
 	} else {
 		ofVec3f vertices[] = {
 			ofVec3f(+h,+h,+h),
@@ -1292,7 +907,6 @@ void ofBox(float size) {
 			ofVec3f(-h,-h,+h),
 			ofVec3f(-h,-h,-h)
 		};
-		//glVertexPointer(3, GL_FLOAT, 0, vertices);
 		vertexData.addVertices(vertices,8);
 		
 		static float n = sqrtf(3);
@@ -1306,7 +920,6 @@ void ofBox(float size) {
 			ofVec3f(-n,-n,+n),
 			ofVec3f(-n,-n,-n)
 		};
-		//glNormalPointer(GL_FLOAT, 0, normals);
 		vertexData.addNormals(normals,8);
 
 		static ofIndexType indices[] = {
@@ -1314,17 +927,11 @@ void ofBox(float size) {
 			4,5, 5,7, 7,6, 6,4,
 			0,4, 5,1, 7,3, 6,2
 		};
-		//glDrawElements(GL_LINES, 4 * 2 * 3, GL_UNSIGNED_BYTE, indices);
 		vertexData.addIndices(indices,24);
 
 		vertexData.setMode(OF_LINES_MODE);
 		renderer->draw(vertexData);
-		//vboMesh.setVertexData(&vertexData);
-		//vboMesh.drawWireframe();
 	}
-	
-	//glDisableClientState(GL_VERTEX_ARRAY);
-	//glDisableClientState(GL_NORMAL_ARRAY);
 
 
 	ofPopMatrix();
@@ -1346,176 +953,8 @@ void ofDrawBitmapString(string textString, float x, float y){
 }
 //--------------------------------------------------
 void ofDrawBitmapString(string textString, float x, float y, float z){
-	
-	// this is copied from the ofTrueTypeFont
-	//GLboolean blend_enabled = glIsEnabled(GL_BLEND); //TODO: this is not used?
-	GLint blend_src, blend_dst;
-	glGetIntegerv( GL_BLEND_SRC, &blend_src );
-	glGetIntegerv( GL_BLEND_DST, &blend_dst );
-	
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	
-	
-	int len = (int)textString.length();
-	//float yOffset = 0;
-	float fontSize = 8.0f;
-	bool bOrigin = false;
-	
-	float sx = 0;
-	float sy = -fontSize;
-
-
-	///////////////////////////
-	// APPLY TRANSFORM / VIEW
-	///////////////////////////
-	//
-
-	bool hasModelView = false;
-	bool hasProjection = false;
-	bool hasViewport = false;
-
-	ofRectangle rViewport;
-
-	switch (currentStyle.drawBitmapMode) {
-
-		case OF_BITMAPMODE_SIMPLE:
-
-			sx += x;
-			sy += y;
-			break;
-
-		case OF_BITMAPMODE_SCREEN:
-
-			hasViewport = true;
-			ofPushView();
-
-			rViewport = ofGetWindowRect();
-			ofViewport(rViewport);
-
-			glMatrixMode(GL_PROJECTION);
-			glLoadIdentity();
-			glMatrixMode(GL_MODELVIEW);
-			glLoadIdentity();
-
-			glTranslatef(-1, 1, 0);
-			glScalef(2/rViewport.width, -2/rViewport.height, 1);
-
-			ofTranslate(x, y, 0);
-			break;
-
-		case OF_BITMAPMODE_VIEWPORT:
-
-			rViewport = ofGetCurrentViewport();
-
-			hasProjection = true;
-			glMatrixMode(GL_PROJECTION);
-			glPushMatrix();
-			glLoadIdentity();
-
-			hasModelView = true;
-			glMatrixMode(GL_MODELVIEW);
-			glPushMatrix();
-			glLoadIdentity();
-
-			glTranslatef(-1, 1, 0);
-			glScalef(2/rViewport.width, -2/rViewport.height, 1);
-
-			ofTranslate(x, y, 0);
-			break;
-
-		case OF_BITMAPMODE_MODEL:
-
-			hasModelView = true;
-			glMatrixMode(GL_MODELVIEW);
-			glPushMatrix();
-
-			ofTranslate(x, y, z);
-			ofScale(1, -1, 0);
-			break;
-
-		case OF_BITMAPMODE_MODEL_BILLBOARD:
-			//our aim here is to draw to screen
-			//at the viewport position related
-			//to the world position x,y,z
-			
-			// ***************
-			// this will not compile for opengl ES
-			// ***************
-#ifndef TARGET_OPENGLES
-			//gluProject method
-			GLdouble modelview[16], projection[16];
-			GLint view[4];
-			double dScreenX, dScreenY, dScreenZ;
-			glGetDoublev(GL_MODELVIEW_MATRIX, modelview);
-			glGetDoublev(GL_PROJECTION_MATRIX, projection);
-			glGetIntegerv(GL_VIEWPORT, view);
-			view[0] = 0; view[1] = 0; //we're already drawing within viewport
-			gluProject(x, y, z, modelview, projection, view, &dScreenX, &dScreenY, &dScreenZ);
-
-			rViewport = ofGetCurrentViewport();
-
-			hasProjection = true;
-			glMatrixMode(GL_PROJECTION);
-			glPushMatrix();
-			glLoadIdentity();
-
-			hasModelView = true;
-			glMatrixMode(GL_MODELVIEW);
-			glPushMatrix();
-			glLoadIdentity();
-
-			glTranslatef(-1, -1, 0);
-			glScalef(2/rViewport.width, 2/rViewport.height, 1);
-			
-			glTranslatef(dScreenX, dScreenY, 0);
-			glScalef(1, -1, 1);
-#endif
-			break;
-
-		default:
-			break;
-	}
-	//
-	///////////////////////////
-
-	
-	// (c) enable texture once before we start drawing each char (no point turning it on and off constantly)
-	//We do this because its way faster
-	ofDrawBitmapCharacterStart();
-	
-	for(int c = 0; c < len; c++){
-		if(textString[c] == '\n'){
-			
-			sy += bOrigin ? -1 : 1 * (fontSize*1.7);
-			sx = x;
-			
-			//glRasterPos2f(x,y + (int)yOffset);
-		} else if (textString[c] >= 32){
-			// < 32 = control characters - don't draw
-			// solves a bug with control characters
-			// getting drawn when they ought to not be
-			ofDrawBitmapCharacter(textString[c], (int)sx, (int)sy);
-			
-			sx += fontSize;
-		}
-	}
-	//We do this because its way faster
-	ofDrawBitmapCharacterEnd();
-
-
-	if (hasModelView)
-		glPopMatrix();
-
-	if (hasProjection)
-	{
-		glMatrixMode(GL_PROJECTION);
-		glPopMatrix();
-		glMatrixMode(GL_MODELVIEW);
-	}
-
-	if (hasViewport)
-		ofPopView();}
+	renderer->drawString(textString,x,y,z,currentStyle.drawBitmapMode);
+}
 
 
 // end text
