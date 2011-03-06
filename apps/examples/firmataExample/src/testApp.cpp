@@ -12,11 +12,6 @@ void testApp::setup(){
 	bgImage.loadImage("firmata.png");
 	font.loadFont("franklinGothic.otf", 20);
 
-	// the connection speed has been changing in the
-	// arduino firmata sketch. in 0017 it's 57600
-	// if you have problems try commenting/uncommenting
-	// to change the speed
-
 	ard.connect("/dev/tty.usbmodem1d11", 57600);
 	//ard.connect("/dev/ttyUSB0", 57600);
 	

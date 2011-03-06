@@ -132,6 +132,9 @@
 
 #define OF_ARDUINO_DELAY_LENGTH					4.0
 
+// use to check if firmware version uploaded to arduino is > 2.2 (22)
+#define FIRMWARE2_2								22
+
 
 /**
         This class extend ofStandardFirmata and provides additional functionality like servo support through SysEx messages.
@@ -369,6 +372,9 @@ class ofArduino{
 				int _majorFirmwareVersion;
 				int _minorFirmwareVersion;
 				string _firmwareName;
+	
+				// sum of majorFirmwareVersion * 10 + minorFirmwareVersion
+				int _firmwareVersionSum;
 
 				list<vector<unsigned char> > _sysExHistory;
 				// maintains a history of received sysEx messages (excluding SysEx messages in the extended command set)
