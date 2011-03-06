@@ -22,7 +22,7 @@ public:
 	void dragEvent(ofDragInfo dragInfo);
 	void gotMessage(ofMessage msg);
 		
-	void setupArduino();
+	void setupArduino(const int & version);
 	void updateArduino();
 
 	ofImage				bgImage;
