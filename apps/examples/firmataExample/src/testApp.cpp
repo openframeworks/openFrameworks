@@ -38,9 +38,12 @@ void testApp::update(){
 
 //--------------------------------------------------------------
 void testApp::setupArduino(const int & version) {
+<<<<<<< HEAD
 	
 	// remove listener because we don't need it anymore
 	ofRemoveListener(ard.EInitialized, this, &testApp::setupArduino);
+=======
+>>>>>>> c9af1156986f5e33b66e9f00796ccbc619844c89
 
 	// this is where you setup all the pins and pin modes, etc
 	for (int i = 0; i < 13; i++){
