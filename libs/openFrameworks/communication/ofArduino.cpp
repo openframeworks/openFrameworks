@@ -689,7 +689,7 @@ void ofArduino::sendServoAttach(int pin, int minPulse, int maxPulse, int angle) 
 	_digitalPinMode[pin]=ARD_SERVO;
 }
 
-// sendServoDetach depricated for Firmata 2.2
+// sendServoDetach depricated as of Firmata 2.2
 void ofArduino::sendServoDetach(int pin) {
 	sendByte(FIRMATA_START_SYSEX);
 	sendByte(SYSEX_SERVO_DETACH);
