@@ -132,7 +132,7 @@
 
 #define OF_ARDUINO_DELAY_LENGTH					4.0
 
-// use to check if firmware version uploaded to arduino is > 2.2 (22)
+// use to check if firmware version uploaded to arduino is >= 2.2 (22)
 #define FIRMWARE2_2								22
 
 
