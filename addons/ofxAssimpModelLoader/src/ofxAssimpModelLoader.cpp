@@ -240,10 +240,10 @@ void ofxAssimpModelLoader::calculateDimensions(){
 
 //-------------------------------------------
 void ofxAssimpModelLoader::createLightsFromAiModel(){
+	lights.clear();
 	lights.resize(scene->mNumLights);
 	for(int i=0; i<(int)scene->mNumLights; i++){
-		cout << "light " << i << aiVecToOfVec(scene->mLights[i]->mPosition) << endl;
-		lights[i].enable();
+		lights[i].setup();
 		lights[i].setDirectional(scene->mLights[i]->mType==aiLightSource_DIRECTIONAL);
 		if(scene->mLights[i]->mType==aiLightSource_DIRECTIONAL){
 			lights[i].setOrientation(aiVecToOfVec(scene->mLights[i]->mDirection));
@@ -251,11 +251,8 @@ void ofxAssimpModelLoader::createLightsFromAiModel(){
 		if(scene->mLights[i]->mType!=aiLightSource_POINT){
 			lights[i].setPosition(aiVecToOfVec(scene->mLights[i]->mPosition));
 		}
-		cout << "ambient " <<  aiColorToOfColor(scene->mLights[i]->mColorAmbient).r << endl;
 		lights[i].setAmbientColor(aiColorToOfColor(scene->mLights[i]->mColorAmbient));
-		cout << "diffuse " <<  aiColorToOfColor(scene->mLights[i]->mColorDiffuse).r << endl;
 		lights[i].setDiffuseColor(aiColorToOfColor(scene->mLights[i]->mColorDiffuse));
-		cout << "specular " <<  aiColorToOfColor(scene->mLights[i]->mColorSpecular).r << endl;
 		lights[i].setSpecularColor(aiColorToOfColor(scene->mLights[i]->mColorSpecular));
 	}
 }
