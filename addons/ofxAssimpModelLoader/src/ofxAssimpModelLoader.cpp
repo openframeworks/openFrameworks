@@ -243,15 +243,13 @@ void ofxAssimpModelLoader::createLightsFromAiModel(){
 	lights.resize(scene->mNumLights);
 	for(int i=0; i<(int)scene->mNumLights; i++){
 		cout << "light " << i << aiVecToOfVec(scene->mLights[i]->mPosition) << endl;
+		lights[i].enable();
 		lights[i].setDirectional(scene->mLights[i]->mType==aiLightSource_DIRECTIONAL);
 		if(scene->mLights[i]->mType==aiLightSource_DIRECTIONAL){
 			lights[i].setOrientation(aiVecToOfVec(scene->mLights[i]->mDirection));
 		}
 		if(scene->mLights[i]->mType!=aiLightSource_POINT){
 			lights[i].setPosition(aiVecToOfVec(scene->mLights[i]->mPosition));
-		}else{
-			cout << "point light " << endl;
-			lights[i].setPosition(ofVec3f(0,0,1));
 		}
 		cout << "ambient " <<  aiColorToOfColor(scene->mLights[i]->mColorAmbient).r << endl;
 		lights[i].setAmbientColor(aiColorToOfColor(scene->mLights[i]->mColorAmbient));
@@ -274,7 +272,7 @@ void ofxAssimpModelLoader::loadGLResources(){
     ofLog(OF_LOG_VERBOSE, "loading gl resources");
 
     // create new mesh helpers for each mesh, will populate their data later.
-    modelMeshes.resize(scene->mNumMeshes);
+    modelMeshes.resize(scene->mNumMeshes,ofxAssimpMeshHelper());
         
     // create OpenGL buffers and populate them based on each meshes pertinant info.
     for (unsigned int i = 0; i < scene->mNumMeshes; ++i){
@@ -284,12 +282,13 @@ void ofxAssimpModelLoader::loadGLResources(){
         
         // the current meshHelper we will be populating data into.
         ofxAssimpMeshHelper & meshHelper = modelMeshes[i];
+        //ofxAssimpMeshHelper meshHelper;
         
         meshHelper.mesh = mesh;
         aiMeshToOfMesh(mesh,meshHelper.cachedMesh);
         meshHelper.cachedMesh.setMode(OF_TRIANGLES_MODE);
         meshHelper.validCache = true;
-        modelMeshes[i].hasChanged = false;
+        meshHelper.hasChanged = false;
 
         meshHelper.animatedPos.resize(mesh->mNumVertices);
         if(mesh->HasNormals()){
@@ -395,6 +394,7 @@ void ofxAssimpModelLoader::loadGLResources(){
 		}
 
         meshHelper.vbo.setIndexData(&meshHelper.indices[0],meshHelper.indices.size(),GL_STATIC_DRAW);
+        //modelMeshes.push_back(meshHelper);
     }
 
     animationTime = -1;
@@ -426,6 +426,10 @@ void ofxAssimpModelLoader::clear(){
 		scene = NULL;
 	}
     normalizeScale = true;
+    bUsingMaterials = true;
+    bUsingNormals = true;
+    bUsingTextures = true;
+    bUsingColors = true;
 }
 
 //-------------------------------------------
@@ -805,11 +809,13 @@ void ofxAssimpModelLoader::draw(ofPolyRenderMode renderType)
 			ofxAssimpMeshHelper & meshHelper = modelMeshes.at(i);
 
 			// Texture Binding
-			if(meshHelper.texture.bAllocated()){
+			if(bUsingTextures && meshHelper.texture.bAllocated()){
 				meshHelper.texture.bind();
 			}
 
-			meshHelper.material.begin();
+			if(bUsingMaterials){
+				meshHelper.material.begin();
+			}
 
 
 			// Culling
@@ -822,11 +828,13 @@ void ofxAssimpModelLoader::draw(ofPolyRenderMode renderType)
 		    meshHelper.vbo.drawElements(GL_TRIANGLES,meshHelper.indices.size());
 
 			// Texture Binding
-			if(meshHelper.texture.bAllocated()){
+			if(bUsingTextures && meshHelper.texture.bAllocated()){
 				meshHelper.texture.unbind();
 			}
 
-			meshHelper.material.end();
+			if(bUsingMaterials){
+				meshHelper.material.end();
+			}
 		}
             
         ofPopMatrix();
