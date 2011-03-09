@@ -38,30 +38,19 @@ bool ofGetLightingEnabled() {
 bool lightsActive[OF_MAX_LIGHTS];
 bool lightsActiveInited = false;
 
-ofLight::ofLight():glIndex(0), isEnabled(false) {
+ofLight::ofLight():glIndex(-1), isEnabled(false) {
 	// if array hasn't been inited to false, init it
 	if(lightsActiveInited == false) {
 		for(int i=0; i<OF_MAX_LIGHTS; i++) lightsActive[i] = false;
 		lightsActiveInited = true;
 	}
-	
-	// search for the first free block
-	for(int i=0; i<OF_MAX_LIGHTS; i++) {
-		if(lightsActive[i] == false) {
-			glIndex = i;
-			enable();
-			return;
-		}
-	}
-	
-	ofLog(OF_LOG_ERROR, "Trying to create too many lights: " + ofToString(glIndex));
 	return;
 }
 
 
 //----------------------------------------
 ofLight::~ofLight() {
-	if(glIndex<OF_MAX_LIGHTS) {
+	if(glIndex<OF_MAX_LIGHTS && glIndex>-1) {
 		disable();
 		lightsActive[glIndex] = false;
 	}
@@ -69,16 +58,27 @@ ofLight::~ofLight() {
 
 //----------------------------------------
 void ofLight::enable() {
-	if(glIndex<OF_MAX_LIGHTS) {
+	if(glIndex==-1){
+		// search for the first free block
+		for(int i=0; i<OF_MAX_LIGHTS; i++) {
+			if(lightsActive[i] == false) {
+				glIndex = i;
+				break;
+			}
+		}
+	}
+	if(glIndex>-1) {
 		ofEnableLighting();
 		glEnable(GL_LIGHT0 + glIndex);
+	}else{
+		ofLog(OF_LOG_ERROR, "Trying to create too many lights: " + ofToString(glIndex));
 	}
 }
 
 
 //----------------------------------------
 void ofLight::disable() {
-	if(glIndex<OF_MAX_LIGHTS) {
+	if(glIndex<OF_MAX_LIGHTS && glIndex>-1) {
 		glDisable(GL_LIGHT0 + glIndex);
 	}
 }

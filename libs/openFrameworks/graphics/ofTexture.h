@@ -3,7 +3,6 @@
 #include "ofPoint.h"
 #include "ofRectangle.h"
 #include "ofBaseTypes.h"
-#include "Poco/SharedPtr.h"
 
 //Sosolimited: texture compression
 enum ofTexCompression
