@@ -16,6 +16,7 @@
 
 #include "ofNode.h"
 #include "ofColor.h"
+#include "Poco/SharedPtr.h"
 
 #define OF_MAX_LIGHTS		8		// max number of lights allowed by default opengl
 
@@ -28,8 +29,9 @@ bool ofGetLightingEnabled();
 class ofLight : public ofNode {
 public:
 	ofLight();
-	~ofLight();
+	virtual ~ofLight(){};
 	
+	void setup();
 	void enable();
 	void disable();
 	bool getIsEnabled() const;
@@ -56,13 +58,22 @@ public:
 	
 	// this method overrides ofNode to catch the changes and update glLightv(GL_POSITION)
 protected:
-	ofColor ambientColor;
-	ofColor diffuseColor;
-	ofColor specularColor;
+	struct Data{
+		Data(ofLight*light);
+		~Data();
+
+		ofColor ambientColor;
+		ofColor diffuseColor;
+		ofColor specularColor;
+
+		int glIndex;
+		int isEnabled;
+		bool isDirectional;
+
+		ofLight * light;
+	};
 	
-	int glIndex;
-	int isEnabled;
-	bool isDirectional;
+	Poco::SharedPtr<Data> data;
 	
 	
 	// update opengl light 
