@@ -4,8 +4,11 @@
 #include "ofMaterial.h"
 
 
-struct ofxAssimpMeshHelper{
+class ofxAssimpMeshHelper{
     public:
+	ofxAssimpMeshHelper(){
+		cout << "mesh helper cons"<< endl;
+	}
     
     // pointer to the aiMesh we represent.
     aiMesh* mesh;
