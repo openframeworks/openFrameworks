@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ofTexture.h"
+#include "Poco/SharedPtr.h"
 
 #ifndef TARGET_OPENGLES
 
@@ -11,7 +12,7 @@ public:
 	struct Settings;
 	
 	ofFbo();
-	~ofFbo();
+	virtual ~ofFbo(){};
 
 	void setup(int width, int height, int internalformat = GL_RGBA, int numSamples = 0);
 	void setupShadow( int width, int height );
@@ -43,10 +44,9 @@ public:
 	static int maxDrawBuffers();		// return max simultaneous draw buffers
 	static int maxSamples();			// return max MSAA samples
 
-	GLuint getDepthBuffer(){ return depthBuffer; }
-	GLuint getStencilBuffer(){ return stencilBuffer; }
+	GLuint getDepthBuffer(){ return data->depthBuffer; }
+	GLuint getStencilBuffer(){ return data->stencilBuffer; }
 
-protected:
 	struct Settings {
 		int		width;					// width of images attached to fbo
 		int		height;					// height of images attached to fbo
@@ -62,19 +62,30 @@ protected:
 		int		numSamples;				// number of samples for multisampling (set 0 to disable)
 		
 		Settings();
-	} settings;
-	int					isBound;
+	};
+protected:
 
-	GLuint				fbo;			// main fbo which we bind for drawing into, all renderbuffers are attached to this
-	GLuint				fboTextures;	// textures are attached to this (if MSAA is disabled, this is equal to fbo, otherwise it's a new fbo)
-	GLuint				depthBuffer;
-	GLuint				stencilBuffer;
+	struct Data{
+		Settings 			settings;
+		int					isBound;
 	
-	GLint				savedFramebuffer;	// save bound framebuffer before switching
-	
-	vector<GLuint>		colorBuffers;	// only used if using MSAA
-	vector<ofTexture*>	textures;
-	
+		GLuint				fbo;			// main fbo which we bind for drawing into, all renderbuffers are attached to this
+		GLuint				fboTextures;	// textures are attached to this (if MSAA is disabled, this is equal to fbo, otherwise it's a new fbo)
+		GLuint				depthBuffer;
+		GLuint				stencilBuffer;
+
+		GLint				savedFramebuffer;	// save bound framebuffer before switching
+
+		vector<GLuint>		colorBuffers;	// only used if using MSAA
+		vector<ofTexture>	textures;
+
+		Data();
+		Data(int width, int height, int internalformat, int numSamples);
+		~Data();
+	};
+
+	Poco::SharedPtr<Data> 	data;
+
 	static int			_maxColorAttachments;
 	static int			_maxDrawBuffers;
 	static int			_maxSamples;
