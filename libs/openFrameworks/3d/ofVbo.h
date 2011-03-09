@@ -7,12 +7,15 @@
 #include "ofUtils.h"
 #include "ofMesh.h"
 #include "ofGLUtils.h"
+#include "Poco/SharedPtr.h"
 
 class ofVbo {
 public:
 	
 	ofVbo();
 	~ofVbo();
+
+	void setMesh(const ofMesh & mesh, int usage);
 
 	void setVertexData(const ofVec3f * verts, int total, int usage);
 	void setVertexData(const ofVec2f * verts, int total, int usage);
@@ -27,6 +30,8 @@ public:
 	void setNormalData(const float * normal0x, int total, int usage, int stride=0);
 	void setTexCoordData(const float * texCoord0x, int total, int usage, int stride=0);
 	
+	void updateMesh(const ofMesh & mesh);
+
 	void updateVertexData(const ofVec3f * verts, int total);
 	void updateVertexData(const ofVec2f * verts, int total);
 	void updateColorData(const ofColor * colors, int total);	
@@ -59,32 +64,41 @@ public:
 	void clear();
 
 private:
-	GLuint indexId;
+	struct Data{
+		Data();
+		~Data();
+		void clear();
 
-	GLuint vertId;
-	GLuint colorId;
-	GLuint normalId;
-	GLuint texCoordId;
+		GLuint indexId;
 
-	bool bAllocated;
+		GLuint vertId;
+		GLuint colorId;
+		GLuint normalId;
+		GLuint texCoordId;
 
-	bool bUsingVerts;		// need at least vertex data
-	bool bUsingTexCoords;
-	bool bUsingColors;
-	bool bUsingNormals;
-	bool bUsingIndices;
+		bool bAllocated;
 
-	GLsizei vertStride;
-	GLsizei colorStride;
-	GLsizei normalStride;
-	GLsizei texCoordStride;
+		bool bUsingVerts;		// need at least vertex data
+		bool bUsingTexCoords;
+		bool bUsingColors;
+		bool bUsingNormals;
+		bool bUsingIndices;
 
-	int		vertSize;
-	int		totalVerts;
+		GLsizei vertStride;
+		GLsizei colorStride;
+		GLsizei normalStride;
+		GLsizei texCoordStride;
 
-	int vertUsage;
-	int colorUsage;
-	int normUsage;
-	int texUsage;
+		int		vertSize;
+		int		totalVerts;
+
+		int vertUsage;
+		int colorUsage;
+		int normUsage;
+		int texUsage;
+
+	};
+	Poco::SharedPtr<Data> data;
+	void allocate();
 
 };
