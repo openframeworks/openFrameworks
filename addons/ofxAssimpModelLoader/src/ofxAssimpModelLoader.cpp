@@ -269,7 +269,7 @@ void ofxAssimpModelLoader::loadGLResources(){
     ofLog(OF_LOG_VERBOSE, "loading gl resources");
 
     // create new mesh helpers for each mesh, will populate their data later.
-    modelMeshes.resize(scene->mNumMeshes,ofxAssimpMeshHelper());
+   // modelMeshes.resize(scene->mNumMeshes,ofxAssimpMeshHelper());
         
     // create OpenGL buffers and populate them based on each meshes pertinant info.
     for (unsigned int i = 0; i < scene->mNumMeshes; ++i){
@@ -278,8 +278,8 @@ void ofxAssimpModelLoader::loadGLResources(){
         aiMesh* mesh = scene->mMeshes[i];
         
         // the current meshHelper we will be populating data into.
-        ofxAssimpMeshHelper & meshHelper = modelMeshes[i];
-        //ofxAssimpMeshHelper meshHelper;
+        //ofxAssimpMeshHelper & meshHelper = modelMeshes[i];
+        ofxAssimpMeshHelper meshHelper;
         
         meshHelper.mesh = mesh;
         aiMeshToOfMesh(mesh,meshHelper.cachedMesh);
@@ -391,7 +391,7 @@ void ofxAssimpModelLoader::loadGLResources(){
 		}
 
         meshHelper.vbo.setIndexData(&meshHelper.indices[0],meshHelper.indices.size(),GL_STATIC_DRAW);
-        //modelMeshes.push_back(meshHelper);
+        modelMeshes.push_back(meshHelper);
     }
 
     animationTime = -1;

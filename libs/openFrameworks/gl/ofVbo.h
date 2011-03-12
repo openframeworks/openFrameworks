@@ -13,6 +13,8 @@ class ofVbo {
 public:
 	
 	ofVbo();
+	ofVbo(const ofVbo & mom);
+	ofVbo & operator=(const ofVbo& mom);
 	~ofVbo();
 
 	void setMesh(const ofMesh & mesh, int usage);
@@ -64,41 +66,34 @@ public:
 	void clear();
 
 private:
-	struct Data{
-		Data();
-		~Data();
-		void clear();
 
-		GLuint indexId;
+	GLuint indexId;
 
-		GLuint vertId;
-		GLuint colorId;
-		GLuint normalId;
-		GLuint texCoordId;
+	GLuint vertId;
+	GLuint colorId;
+	GLuint normalId;
+	GLuint texCoordId;
 
-		bool bAllocated;
+	bool bAllocated;
 
-		bool bUsingVerts;		// need at least vertex data
-		bool bUsingTexCoords;
-		bool bUsingColors;
-		bool bUsingNormals;
-		bool bUsingIndices;
+	bool bUsingVerts;		// need at least vertex data
+	bool bUsingTexCoords;
+	bool bUsingColors;
+	bool bUsingNormals;
+	bool bUsingIndices;
 
-		GLsizei vertStride;
-		GLsizei colorStride;
-		GLsizei normalStride;
-		GLsizei texCoordStride;
+	GLsizei vertStride;
+	GLsizei colorStride;
+	GLsizei normalStride;
+	GLsizei texCoordStride;
 
-		int		vertSize;
-		int		totalVerts;
+	int		vertSize;
+	int		totalVerts;
 
-		int vertUsage;
-		int colorUsage;
-		int normUsage;
-		int texUsage;
+	int vertUsage;
+	int colorUsage;
+	int normUsage;
+	int texUsage;
 
-	};
-	Poco::SharedPtr<Data> data;
-	void allocate();
 
 };

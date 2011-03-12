@@ -6,9 +6,40 @@
 
 #include "ofVbo.h"
 #include "ofUtils.h"
+#include <map>
+
+static map<int,int> ids;
 
 //--------------------------------------------------------------
-ofVbo::Data::Data(){
+static void retain(GLuint id){
+	if(id==0) return;
+	if(ids.find(id)!=ids.end()){
+		ids[id]++;
+	}else{
+		ids[id]=1;
+	}
+}
+
+//--------------------------------------------------------------
+static void release(GLuint id){
+	cout << "releasing vbo " << id << endl;
+	if(ids.find(id)!=ids.end()){
+		ids[id]--;
+		cout << "count " << ids[id] << endl;
+		if(ids[id]==0){
+			cout << "count 0 releasing " << id << endl;
+			glDeleteBuffers(1, &id);
+			ids.erase(id);
+		}
+	}else{
+		ofLog(OF_LOG_WARNING,"ofVbo: releasing id not found, this shouldn't be happening releasing anyway");
+		glDeleteBuffers(1, &id);
+	}
+}
+
+//--------------------------------------------------------------
+ofVbo::ofVbo()
+{
 	bUsingVerts = false;
 	bUsingTexCoords = false;
 	bUsingColors = false;
@@ -23,58 +54,86 @@ ofVbo::Data::Data(){
 	normUsage		= -1;
 	texUsage		= -1;
 
+	vertId     = 0;
+	normalId   = 0;
+	colorId    = 0;
+	texCoordId = 0;
+	indexId    = 0;
+
+
 	bAllocated		= false;
 }
 
-//--------------------------------------------------------------
-ofVbo::Data::~Data(){
-	clear();
+ofVbo::ofVbo(const ofVbo & mom){
+	bUsingVerts = mom.bUsingVerts;
+	bUsingTexCoords = mom.bUsingTexCoords;
+	bUsingColors = mom.bUsingColors;
+	bUsingNormals = mom.bUsingNormals;
+	bUsingIndices = mom.bUsingIndices;
+
+	vertSize		= mom.vertSize;
+	vertStride      = mom.vertStride;
+	colorStride		= mom.colorStride;
+	normalStride    = mom.normalStride;
+	texCoordStride  = mom.texCoordStride;
+
+	vertUsage		= mom.vertUsage;
+	colorUsage		= mom.colorUsage;
+	normUsage		= mom.normUsage;
+	texUsage		= mom.texUsage;
+
+	vertId     = mom.vertId;
+	retain(vertId);
+	normalId   = mom.normalId;
+	retain(normalId);
+	colorId    = mom.colorId;
+	retain(colorId);
+	texCoordId = mom.texCoordId;
+	retain(texCoordId);
+	indexId    = mom.indexId;
+	retain(indexId);
+
+
+	bAllocated		= mom.bAllocated;
 }
 
-//--------------------------------------------------------------
-void ofVbo::Data::clear(){
+ofVbo & ofVbo::operator=(const ofVbo& mom){
+	if(&mom==this) return *this;
+	bUsingVerts = mom.bUsingVerts;
+	bUsingTexCoords = mom.bUsingTexCoords;
+	bUsingColors = mom.bUsingColors;
+	bUsingNormals = mom.bUsingNormals;
+	bUsingIndices = mom.bUsingIndices;
 
-	if (bUsingVerts){
-		glDeleteBuffers(1, &vertId);
-		bUsingVerts = false;
-	}
+	vertSize		= mom.vertSize;
+	vertStride      = mom.vertStride;
+	colorStride		= mom.colorStride;
+	normalStride    = mom.normalStride;
+	texCoordStride  = mom.texCoordStride;
 
-	if(bUsingNormals){
-		glDeleteBuffers(1, &normalId);
-		bUsingNormals = false;
-	}
+	vertUsage		= mom.vertUsage;
+	colorUsage		= mom.colorUsage;
+	normUsage		= mom.normUsage;
+	texUsage		= mom.texUsage;
 
-	if(bUsingColors){
-		glDeleteBuffers(1, &colorId);
-		bUsingColors = false;
-	}
+	vertId     = mom.vertId;
+	retain(vertId);
+	normalId   = mom.normalId;
+	retain(normalId);
+	colorId    = mom.colorId;
+	retain(colorId);
+	texCoordId = mom.texCoordId;
+	retain(texCoordId);
+	indexId    = mom.indexId;
+	retain(indexId);
 
-	if(bUsingTexCoords){
-		glDeleteBuffers(1, &texCoordId);
-		bUsingTexCoords = false;
-	}
 
-	if(bUsingIndices){
-		glDeleteBuffers(1, &indexId);
-		bUsingIndices = false;
-	}
-
-	vertId = 0;
-	normalId = 0;
-	texCoordId = 0;
-	colorId = 0;
-	indexId = 0;
-}
-
-//--------------------------------------------------------------
-ofVbo::ofVbo():
-data(NULL)
-{
+	bAllocated		= mom.bAllocated;
 }
 
 //--------------------------------------------------------------
 ofVbo::~ofVbo(){
-
+	clear();
 }
 
 //--------------------------------------------------------------
@@ -101,19 +160,19 @@ void ofVbo::setVertexData(const float * vert0x, int numCoords, int total, int us
 		ofLog(OF_LOG_WARNING,"ofVbo: bad vertex data!\n");
 		return;	
 	}
-	allocate();
-	if(!data->bUsingVerts) {
-		data->bAllocated  = true;
-		data->bUsingVerts = true;
-		glGenBuffers(1, &(data->vertId));
+	if(!bUsingVerts) {
+		bAllocated  = true;
+		bUsingVerts = true;
+		glGenBuffers(1, &(vertId));
+		retain(vertId);
 	}
 
-	data->vertUsage = usage;
-	data->vertSize = numCoords;
-	data->vertStride = stride;
-	data->totalVerts = total;
+	vertUsage = usage;
+	vertSize = numCoords;
+	vertStride = stride;
+	totalVerts = total;
 	
-	glBindBuffer(GL_ARRAY_BUFFER, data->vertId);
+	glBindBuffer(GL_ARRAY_BUFFER, vertId);
 	glBufferData(GL_ARRAY_BUFFER, total * stride, vert0x, usage);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
@@ -129,15 +188,15 @@ void ofVbo::setColorData(const float * color0r, int total, int usage, int stride
 		ofLog(OF_LOG_WARNING,"ofVbo: bad color data!\n");
 		return;	
 	}
-	allocate();
-	if(!data->bUsingColors) {
-		data->bUsingColors = true;
-		glGenBuffers(1, &(data->colorId));
+	if(!bUsingColors) {
+		bUsingColors = true;
+		glGenBuffers(1, &(colorId));
+		retain(colorId);
 	}
-	data->colorUsage = usage;
-	data->colorStride = stride;
+	colorUsage = usage;
+	colorStride = stride;
 	
-	glBindBuffer(GL_ARRAY_BUFFER, data->colorId);
+	glBindBuffer(GL_ARRAY_BUFFER, colorId);
 	glBufferData(GL_ARRAY_BUFFER, total * stride, color0r, usage);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
@@ -153,15 +212,15 @@ void ofVbo::setNormalData(const float * normal0x, int total, int usage, int stri
 		ofLog(OF_LOG_WARNING,"ofVbo: bad normal data!\n");
 		return;	
 	}
-	allocate();
-	if(!data->bUsingNormals) {
-		data->bUsingNormals = true;
-		glGenBuffers(1, &(data->normalId));
+	if(!bUsingNormals) {
+		bUsingNormals = true;
+		glGenBuffers(1, &(normalId));
+		retain(normalId);
 	}
-	data->normUsage = usage;
-	data->normalStride = stride;
+	normUsage = usage;
+	normalStride = stride;
 	
-	glBindBuffer(GL_ARRAY_BUFFER, data->normalId);
+	glBindBuffer(GL_ARRAY_BUFFER, normalId);
 	glBufferData(GL_ARRAY_BUFFER, total * stride, normal0x, usage);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
@@ -177,15 +236,15 @@ void ofVbo::setTexCoordData(const float * texCoord0x, int total, int usage, int 
 		ofLog(OF_LOG_WARNING,"ofVbo: bad texCoord data!\n");
 		return;	
 	}
-	allocate();
-	if(!data->bUsingTexCoords) {
-		data->bUsingTexCoords = true;
-		glGenBuffers(1, &(data->texCoordId));
+	if(!bUsingTexCoords) {
+		bUsingTexCoords = true;
+		glGenBuffers(1, &(texCoordId));
+		retain(texCoordId);
 	}
-	data->texUsage = usage;
-	data->texCoordStride = stride;
+	texUsage = usage;
+	texCoordStride = stride;
 	
-	glBindBuffer(GL_ARRAY_BUFFER, data->texCoordId);
+	glBindBuffer(GL_ARRAY_BUFFER, texCoordId);
 	glBufferData(GL_ARRAY_BUFFER, total * stride, texCoord0x, usage);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
@@ -197,13 +256,13 @@ void ofVbo::setIndexData(const ofIndexType * indices, int total, int usage){
 		ofLog(OF_LOG_WARNING,"ofVbo: bad index data!\n");
 		return;
 	}
-	allocate();
-	if(!data->bUsingIndices){
-		data->bUsingIndices = true;
-		glGenBuffers(1, &(data->indexId));
+	if(!bUsingIndices){
+		bUsingIndices = true;
+		glGenBuffers(1, &(indexId));
+		retain(indexId);
 	}
 	
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, data->indexId);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexId);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(ofIndexType) * total, &indices[0], usage);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
@@ -229,9 +288,9 @@ void ofVbo::updateVertexData(const ofVec2f * verts, int total) {
 
 //--------------------------------------------------------------
 void ofVbo::updateVertexData(const float * vert0x, int total) {
-	if(data && data->bUsingVerts){
-		glBindBuffer(GL_ARRAY_BUFFER, data->vertId);
-		glBufferSubData(GL_ARRAY_BUFFER, 0, total*data->vertStride, vert0x);
+	if(bUsingVerts){
+		glBindBuffer(GL_ARRAY_BUFFER, vertId);
+		glBufferSubData(GL_ARRAY_BUFFER, 0, total*vertStride, vert0x);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 	}
 }
@@ -243,9 +302,9 @@ void ofVbo::updateColorData(const ofColor * colors, int total) {
 
 //--------------------------------------------------------------
 void ofVbo::updateColorData(const float * color0r, int total) {
-	if(data && data->bUsingColors) {
-		glBindBuffer(GL_ARRAY_BUFFER, data->colorId);
-		glBufferSubData(GL_ARRAY_BUFFER, 0, total*data->colorStride, color0r);
+	if(bUsingColors) {
+		glBindBuffer(GL_ARRAY_BUFFER, colorId);
+		glBufferSubData(GL_ARRAY_BUFFER, 0, total*colorStride, color0r);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 	}
 }
@@ -257,9 +316,9 @@ void ofVbo::updateNormalData(const ofVec3f * normals, int total) {
 
 //--------------------------------------------------------------
 void ofVbo::updateNormalData(const float * normal0x, int total) {
-	if(data && data->bUsingNormals) {
-		glBindBuffer(GL_ARRAY_BUFFER, data->normalId);
-		glBufferSubData(GL_ARRAY_BUFFER, 0, total*data->normalStride, normal0x);
+	if(bUsingNormals) {
+		glBindBuffer(GL_ARRAY_BUFFER, normalId);
+		glBufferSubData(GL_ARRAY_BUFFER, 0, total*normalStride, normal0x);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 	}
 }
@@ -271,17 +330,17 @@ void ofVbo::updateTexCoordData(const ofVec2f * texCoords, int total) {
 
 //--------------------------------------------------------------
 void ofVbo::updateTexCoordData(const float * texCoord0x, int total) {
-	if(data && data->bUsingTexCoords) {
-		glBindBuffer(GL_ARRAY_BUFFER, data->texCoordId);
-		glBufferSubData(GL_ARRAY_BUFFER, 0, total*data->texCoordStride, texCoord0x);
+	if(bUsingTexCoords) {
+		glBindBuffer(GL_ARRAY_BUFFER, texCoordId);
+		glBufferSubData(GL_ARRAY_BUFFER, 0, total*texCoordStride, texCoord0x);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 	}
 }
 
 //--------------------------------------------------------------
 void ofVbo::updateIndexData(const ofIndexType * indices, int total) {
-	if(data && data->bUsingIndices) {
-		glBindBuffer(GL_ARRAY_BUFFER, data->indexId);
+	if(bUsingIndices) {
+		glBindBuffer(GL_ARRAY_BUFFER, indexId);
 		glBufferSubData(GL_ARRAY_BUFFER, 0, total*sizeof(ofIndexType), &indices[0]);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 	}
@@ -289,57 +348,57 @@ void ofVbo::updateIndexData(const ofIndexType * indices, int total) {
 
 //--------------------------------------------------------------
 bool ofVbo::getIsAllocated(){
-	return data && data->bAllocated;
+	return bAllocated;
 }	
 
 //--------------------------------------------------------------
 bool ofVbo::getUsingVerts(){
-	return data && data->bUsingVerts;
+	return bUsingVerts;
 }	
 
 //--------------------------------------------------------------
 bool ofVbo::getUsingColors(){
-	return data && data->bUsingColors;
+	return bUsingColors;
 }	
 
 //--------------------------------------------------------------
 bool ofVbo::getUsingNormals(){
-	return data && data->bUsingNormals;
+	return bUsingNormals;
 }
 
 //--------------------------------------------------------------
 bool ofVbo::getUsingTexCoords(){
-	return data && data->bUsingTexCoords;
+	return bUsingTexCoords;
 }
 
 //--------------------------------------------------------------
 bool ofVbo::getUsingIndices(){
-	return data &&  data->bUsingIndices;
+	return  bUsingIndices;
 }
 
 //--------------------------------------------------------------
 GLuint ofVbo::getVertId(){
-	return data && data->vertId;
+	return vertId;
 }
 
 //--------------------------------------------------------------
 GLuint ofVbo::getColorId(){
-	return data && data->colorId;
+	return colorId;
 }
 
 //--------------------------------------------------------------
 GLuint ofVbo::getNormalId(){
-	return data && data->normalId;
+	return normalId;
 }
 
 //--------------------------------------------------------------
 GLuint ofVbo::getTexCoordId(){
-	return data && data->texCoordId;
+	return texCoordId;
 }
 
 //--------------------------------------------------------------
 GLuint ofVbo::getIndexId(){
-	return data && data->indexId;
+	return indexId;
 }
 
 //--------------------------------------------------------------
@@ -349,40 +408,38 @@ void ofVbo::bind(){
 //	glPushAttrib(GL_ALL_ATTRIB_BITS);
 //	glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
 //#endif
-	if(!data) return;
 	
-	if(data->bUsingVerts){
+	if(bUsingVerts){
 		glEnableClientState(GL_VERTEX_ARRAY);		
-		glBindBuffer(GL_ARRAY_BUFFER, data->vertId);
-		glVertexPointer(data->vertSize, GL_FLOAT, data->vertStride, 0);
+		glBindBuffer(GL_ARRAY_BUFFER, vertId);
+		glVertexPointer(vertSize, GL_FLOAT, vertStride, 0);
 	}
 	
-	if(data->bUsingColors) {
+	if(bUsingColors) {
 		glEnableClientState(GL_COLOR_ARRAY);
-		glBindBuffer(GL_ARRAY_BUFFER, data->colorId);
-		glColorPointer(4, GL_FLOAT, data->colorStride, 0);
+		glBindBuffer(GL_ARRAY_BUFFER, colorId);
+		glColorPointer(4, GL_FLOAT, colorStride, 0);
 	}
 	
-	if(data->bUsingNormals) {
+	if(bUsingNormals) {
 		glEnableClientState(GL_NORMAL_ARRAY);		
-		glBindBuffer(GL_ARRAY_BUFFER, data->normalId);
-		glNormalPointer(GL_FLOAT, data->normalStride, 0);
+		glBindBuffer(GL_ARRAY_BUFFER, normalId);
+		glNormalPointer(GL_FLOAT, normalStride, 0);
 	}
 	
-	if(data->bUsingTexCoords) {
+	if(bUsingTexCoords) {
 		glEnableClientState(GL_TEXTURE_COORD_ARRAY);		
-		glBindBuffer(GL_ARRAY_BUFFER, data->texCoordId);
-		glTexCoordPointer(2, GL_FLOAT, data->texCoordStride, 0);
+		glBindBuffer(GL_ARRAY_BUFFER, texCoordId);
+		glTexCoordPointer(2, GL_FLOAT, texCoordStride, 0);
 	}
 }
 
 //--------------------------------------------------------------
 void ofVbo::unbind() {
-	if(!data) return;
 //	if(bUsingVerts)  glDisableClientState(GL_VERTEX_ARRAY);
-	if(data->bUsingColors) glDisableClientState(GL_COLOR_ARRAY);
-	if(data->bUsingNormals) glDisableClientState(GL_NORMAL_ARRAY);
-	if(data->bUsingTexCoords) glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+	if(bUsingColors) glDisableClientState(GL_COLOR_ARRAY);
+	if(bUsingNormals) glDisableClientState(GL_NORMAL_ARRAY);
+	if(bUsingTexCoords) glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 	//glDisableClientState(GL_EDGE_FLAG_ARRAY);
 	
 //#ifndef	TARGET_OPENGLES
@@ -396,7 +453,7 @@ void ofVbo::unbind() {
 
 //--------------------------------------------------------------
 void ofVbo::draw(int drawMode, int first, int total) {
-	if(data && data->bAllocated) {
+	if(bAllocated) {
 		bind();
 		glDrawArrays(drawMode, first, total);
 		unbind();
@@ -405,10 +462,10 @@ void ofVbo::draw(int drawMode, int first, int total) {
 
 //--------------------------------------------------------------
 void ofVbo::drawElements(int drawMode, int amt) {
-	if(data && data->bAllocated){
+	if(bAllocated){
 		bind();
-		if(data->bUsingIndices){
-			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, data->indexId);
+		if(bUsingIndices){
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexId);
 #ifdef TARGET_OPENGLES
 			glDrawElements(drawMode, amt, GL_UNSIGNED_SHORT, NULL);
 #else
@@ -420,9 +477,30 @@ void ofVbo::drawElements(int drawMode, int amt) {
 }
 
 void ofVbo::clear(){
-	if(data) data->clear();
+	if(bUsingVerts){
+		release(vertId);
+		vertId = 0;
+		bUsingVerts = false;
+	}
+	if(bUsingNormals){
+		release(normalId);
+		normalId = 0;
+		bUsingNormals = false;
+	}
+	if(bUsingColors){
+		release(colorId);
+		colorId = 0;
+		bUsingColors = false;
+	}
+	if(bUsingTexCoords){
+		release(texCoordId);
+		texCoordId = 0;
+		bUsingTexCoords = false;
+	}
+	if(bUsingIndices){
+		release(indexId);
+		indexId = 0;
+		bUsingIndices = false;
+	}
 }
 
-void ofVbo::allocate(){
-	if(!data) data = new Data;
-}

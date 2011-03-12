@@ -11,26 +11,28 @@ void testApp::setup(){
     if(model.loadModel("astroBoy_walk.dae",true)){
     	model.setAnimation(0);
     	model.setPosition(ofGetWidth()/2, (float)ofGetHeight() * 0.75 , 0);
+    	//model.createLightsFromAiModel();
     	//model.disableTextures();
     	//model.disableMaterials();
 
-    	mesh = model.getMesh(3);
+    	mesh = model.getMesh(0);
     	position = model.getPosition();
     	normScale = model.getNormalizedScale();
     	scale = model.getScale();
     	sceneCenter = model.getSceneCenter();
-    	material = model.getMaterialForMesh(3);
-        tex = model.getTextureForMesh(3);
+    	material = model.getMaterialForMesh(0);
+        tex = model.getTextureForMesh(0);
     }
 
     ofEnableBlendMode(OF_BLENDMODE_ALPHA);
-  
+
 	glEnable(GL_DEPTH_TEST);
-    
+
     //some model / light stuff
     glShadeModel(GL_SMOOTH);
-    glEnable(GL_LIGHTING);
-    glEnable(GL_LIGHT0);
+    light.setup();
+    ofEnableSeparateSpecularLight();
+
 	
 	bAnimate		= false;
 	bAnimateMouse 	= false;
@@ -48,13 +50,13 @@ void testApp::update(){
 			animationTime = 0.0;
 		}
 	    model.setNormalizedTime(animationTime);
-		mesh = model.getCurrentAnimatedMesh(3);
+		mesh = model.getCurrentAnimatedMesh(0);
 	}
 
 
 	if( bAnimateMouse ){
 	    model.setNormalizedTime(animationTime);
-		mesh = model.getCurrentAnimatedMesh(3);
+		mesh = model.getCurrentAnimatedMesh(0);
 	}
 
 
@@ -66,7 +68,7 @@ void testApp::draw(){
     ofSetColor(255, 255, 255, 255);
     
     ofPushMatrix();
-		ofTranslate(model.getPosition().x, model.getPosition().y, 0);
+		ofTranslate(model.getPosition().x+100, model.getPosition().y, 0);
 		ofRotate(-mouseX, 0, 1, 0);
 		ofTranslate(-model.getPosition().x, -model.getPosition().y, 0);
     
@@ -116,24 +118,29 @@ void testApp::keyPressed(int key){
         case '1':
             model.loadModel("astroBoy_walk.dae");
             model.setPosition(ofGetWidth()/2, (float)ofGetHeight() * 0.75 , 0);
+            ofEnableSeparateSpecularLight();
             break;
         case '2':
             model.loadModel("TurbochiFromXSI.dae");
             model.setPosition(ofGetWidth()/2, (float)ofGetHeight() * 0.75 , 0);
             model.setRotation(0,90,1,0,0);
+            ofEnableSeparateSpecularLight();
             break;
         case '3':
             model.loadModel("dwarf.x");
             model.setPosition(ofGetWidth()/2, (float)ofGetHeight() * 0.75 , 0);
+            ofDisableSeparateSpecularLight();
             break;
         case '4':
             model.loadModel("monster-animated-character-X.X");
             model.setPosition(ofGetWidth()/2, (float)ofGetHeight() * 0.75 , 0);
+            ofDisableSeparateSpecularLight();
             break;
 		case '5':
 			model.loadModel("squirrel/NewSquirrel.3ds");
 		    model.setPosition(ofGetWidth()/2, (float)ofGetHeight() * 0.75 , 0);
             model.setRotation(0,-90,1,0,0);
+            ofDisableSeparateSpecularLight();
 			break;
 		case ' ':
 			bAnimate = !bAnimate;
@@ -141,6 +148,15 @@ void testApp::keyPressed(int key){
         default:
             break;
     }
+
+
+	mesh = model.getMesh(0);
+	position = model.getPosition();
+	normScale = model.getNormalizedScale();
+	scale = model.getScale();
+	sceneCenter = model.getSceneCenter();
+	material = model.getMaterialForMesh(0);
+    tex = model.getTextureForMesh(0);
 
 }
 
