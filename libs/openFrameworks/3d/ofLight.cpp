@@ -28,6 +28,16 @@ void ofDisableLighting() {
 }
 
 //----------------------------------------
+void ofEnableSeparateSpecularLight(){
+	glLightModeli (GL_LIGHT_MODEL_COLOR_CONTROL,GL_SEPARATE_SPECULAR_COLOR);
+}
+
+//----------------------------------------
+void ofDisableSeparateSpecularLight(){
+	glLightModeli (GL_LIGHT_MODEL_COLOR_CONTROL,GL_SINGLE_COLOR);
+}
+
+//----------------------------------------
 bool ofGetLightingEnabled() {
 	return glIsEnabled(GL_LIGHTING);
 }
@@ -96,7 +106,7 @@ void ofLight::enable() {
 
 //----------------------------------------
 void ofLight::disable() {
-	if(data->glIndex<OF_MAX_LIGHTS && data->glIndex>-1) {
+	if(data && data->glIndex<OF_MAX_LIGHTS && data->glIndex>-1) {
 		glDisable(GL_LIGHT0 + data->glIndex);
 	}
 }
