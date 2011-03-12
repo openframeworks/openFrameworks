@@ -11,6 +11,7 @@
 #include "ofConstants.h"
 #include "ofLog.h"
 #include "ofUtils.h"
+#include <map>
 
 
 //----------------------------------------
@@ -46,34 +47,55 @@ bool ofGetLightingEnabled() {
 bool lightsActive[OF_MAX_LIGHTS];
 bool lightsActiveInited = false;
 
+map<GLuint,int> ids;
+
+//--------------------------------------------------------------
+static void retain(GLuint id){
+	if(id==-1) return;
+	if(ids.find(id)!=ids.end()){
+		ids[id]++;
+	}else{
+		ids[id]=1;
+	}
+}
+
+//--------------------------------------------------------------
+static void release(ofLight & light){
+	int id = light.getLightID();
+	if(id==-1) return;
+	bool lastRef=false;
+	if(ids.find(id)!=ids.end()){
+		ids[id]--;
+		if(ids[id]==0){
+			lastRef=true;
+			ids.erase(id);
+		}
+	}else{
+		ofLog(OF_LOG_WARNING,"ofVbo: releasing id not found, this shouldn't be happening releasing anyway");
+		lastRef=true;
+	}
+	if(lastRef){
+		light.setAmbientColor(ofColor(0,0,0,255));
+		if(id>0){
+			light.setDiffuseColor(ofColor(0,0,0,255));
+			light.setSpecularColor(ofColor(0,0,0,255));
+		}else{
+			light.setDiffuseColor(ofColor(255,255,255,255));
+			light.setSpecularColor(ofColor(255,255,255,255));
+		}
+		GLfloat cc[] = {0,0,1, 0};
+		glLightfv(GL_LIGHT0 + id, GL_POSITION, cc);
+
+		light.disable();
+		lightsActive[id] = false;
+	}
+}
 
 //----------------------------------------
-ofLight::Data::Data(ofLight* _light){
-	light = _light;
+ofLight::ofLight(){
 	glIndex = -1;
 	isEnabled = false;
 	isDirectional = false;
-}
-
-//----------------------------------------
-ofLight::Data::~Data(){
-	light->setAmbientColor(ofColor(0,0,0,255));
-	if(glIndex>0){
-		light->setDiffuseColor(ofColor(0,0,0,255));
-		light->setSpecularColor(ofColor(0,0,0,255));
-	}else{
-		light->setDiffuseColor(ofColor(255,255,255,255));
-		light->setSpecularColor(ofColor(255,255,255,255));
-	}
-	GLfloat cc[] = {0,0,1, 0};
-	glLightfv(GL_LIGHT0 + glIndex, GL_POSITION, cc);
-
-	light->disable();
-	lightsActive[glIndex] = false;
-}
-
-//----------------------------------------
-ofLight::ofLight():data(NULL) {
 	// if array hasn't been inited to false, init it
 	if(lightsActiveInited == false) {
 		for(int i=0; i<OF_MAX_LIGHTS; i++) lightsActive[i] = false;
@@ -82,95 +104,129 @@ ofLight::ofLight():data(NULL) {
 }
 
 //----------------------------------------
+ofLight::~ofLight(){
+	release(*this);
+}
+
+//----------------------------------------
+ofLight::ofLight(const ofLight & mom){
+	ambientColor = mom.ambientColor;
+	diffuseColor = mom.diffuseColor;
+	specularColor = mom.specularColor;
+
+	glIndex = mom.glIndex;
+	retain(glIndex);
+	isEnabled = mom.isEnabled;
+	isDirectional  = mom.isDirectional;
+}
+
+//----------------------------------------
+ofLight & ofLight::operator=(const ofLight & mom){
+	if(&mom == this) return *this;
+	ambientColor = mom.ambientColor;
+	diffuseColor = mom.diffuseColor;
+	specularColor = mom.specularColor;
+
+	glIndex = mom.glIndex;
+	retain(glIndex);
+	isEnabled = mom.isEnabled;
+	isDirectional  = mom.isDirectional;
+	return *this;
+}
+
+//----------------------------------------
 void ofLight::setup(){
-	data = new Data(this);
+	if(glIndex!=-1) return;
 	// search for the first free block
 	for(int i=0; i<OF_MAX_LIGHTS; i++) {
 		if(lightsActive[i] == false) {
-			data->glIndex = i;
+			glIndex = i;
+			retain(glIndex);
 			enable();
 			return;
 		}
 	}
 
-	ofLog(OF_LOG_ERROR, "Trying to create too many lights: " + ofToString(data->glIndex));
+	ofLog(OF_LOG_ERROR, "Trying to create too many lights: " + ofToString(glIndex));
 }
 
 //----------------------------------------
 void ofLight::enable() {
-	if(data && data->glIndex>-1) {
+	if(glIndex!=-1) {
 		ofEnableLighting();
-		glEnable(GL_LIGHT0 + data->glIndex);
+		glEnable(GL_LIGHT0 + glIndex);
 	}
 }
 
 //----------------------------------------
 void ofLight::disable() {
-	if(data && data->glIndex<OF_MAX_LIGHTS && data->glIndex>-1) {
-		glDisable(GL_LIGHT0 + data->glIndex);
+	if(glIndex!=-1) {
+		glDisable(GL_LIGHT0 + glIndex);
 	}
 }
 
 //----------------------------------------
+int ofLight::getLightID() const{
+	return glIndex;
+}
+
+//----------------------------------------
 bool ofLight::getIsEnabled() const {
-	return data && data->isEnabled;
+	return isEnabled;
 }
 
 //----------------------------------------
 void ofLight::setDirectional(bool b) {
-	if(data) data->isDirectional = b;
+	isDirectional = b;
 }
 
 //----------------------------------------
 bool ofLight::getIsDirectional() const {
-	return data && data->isDirectional;
+	return isDirectional;
 }
 
 //----------------------------------------
 void ofLight::setAmbientColor(const ofColor& c) {
-	if(!data) return;
-	data->ambientColor = c/255.0f;
-	data->ambientColor.a /= 255.f;
-	glLightfv(GL_LIGHT0 + data->glIndex, GL_AMBIENT, &data->ambientColor.r);
+	if(glIndex==-1) return;
+	ambientColor = c/255.0f;
+	ambientColor.a /= 255.f;
+	glLightfv(GL_LIGHT0 + glIndex, GL_AMBIENT, &ambientColor.r);
 }
 
 //----------------------------------------
 void ofLight::setDiffuseColor(const ofColor& c) {
-	if(!data) return;
-	data->diffuseColor = c/255.0f;
-	data->diffuseColor.a /= 255.f;
-	glLightfv(GL_LIGHT0 + data->glIndex, GL_DIFFUSE, &data->diffuseColor.r);
+	if(glIndex==-1) return;
+	diffuseColor = c/255.0f;
+	diffuseColor.a /= 255.f;
+	glLightfv(GL_LIGHT0 + glIndex, GL_DIFFUSE, &diffuseColor.r);
 }
 
 
 //----------------------------------------
 void ofLight::setSpecularColor(const ofColor& c) {
-	if(!data) return;
-	data->specularColor = c/255.0f;
-	data->specularColor.a /= 255.f;
-	glLightfv(GL_LIGHT0 + data->glIndex, GL_SPECULAR, &data->specularColor.r);
+	if(glIndex==-1) return;
+	specularColor = c/255.0f;
+	specularColor.a /= 255.f;
+	glLightfv(GL_LIGHT0 + glIndex, GL_SPECULAR, &specularColor.r);
 }
 
 //----------------------------------------
 ofColor ofLight::getAmbientColor() const {
-	if(!data) return ofColor();
-	ofColor ret = data->ambientColor * 255.0f;
+	ofColor ret = ambientColor * 255.0f;
 	ret.a*=255.f;
 	return ret;
 }
 
 //----------------------------------------
 ofColor ofLight::getDiffuseColor() const {
-	if(!data) return ofColor();
-	ofColor ret = data->diffuseColor * 255.0f;
+	ofColor ret = diffuseColor * 255.0f;
 	ret.a*=255.f;
 	return ret;
 }
 
 //----------------------------------------
 ofColor ofLight::getSpecularColor() const {
-	if(!data) return ofColor();
-	ofColor ret = data->specularColor * 255.0f;
+	ofColor ret = specularColor * 255.0f;
 	ret.a*=255.f;
 	return ret;
 }
@@ -178,18 +234,20 @@ ofColor ofLight::getSpecularColor() const {
 
 //----------------------------------------
 void ofLight::onPositionChanged() {
+	if(glIndex==-1) return;
 	// if we are a positional light and not directional, update light position
-	if(data && data->isDirectional == false) {
+	if(isDirectional == false) {
 		GLfloat cc[] = {getPosition().x, getPosition().y, getPosition().z, 1};
-		glLightfv(GL_LIGHT0 + data->glIndex, GL_POSITION, cc);
+		glLightfv(GL_LIGHT0 + glIndex, GL_POSITION, cc);
 	}
 }
 
 //----------------------------------------
 void ofLight::onOrientationChanged() {
+	if(glIndex==-1) return;
 	// if we are a directional light and not positional, update light position (direction)
-	if(data && data->isDirectional == true) {
+	if(isDirectional == true) {
 		GLfloat cc[] = {getLookAtDir().x, getLookAtDir().y, getLookAtDir().z, 0};
-		glLightfv(GL_LIGHT0 + data->glIndex, GL_POSITION, cc);
+		glLightfv(GL_LIGHT0 + glIndex, GL_POSITION, cc);
 	}
 }

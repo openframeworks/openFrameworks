@@ -31,7 +31,9 @@ bool ofGetLightingEnabled();
 class ofLight : public ofNode {
 public:
 	ofLight();
-	virtual ~ofLight(){};
+	ofLight(const ofLight & mom);
+	ofLight & operator=(const ofLight & mom);
+	virtual ~ofLight();
 	
 	void setup();
 	void enable();
@@ -49,6 +51,8 @@ public:
 	ofColor getDiffuseColor() const;
 	ofColor getSpecularColor() const;
 	
+	int getLightID() const;
+
 	void customDraw() {
 		ofPushMatrix();
 		ofTranslate(getPosition());
@@ -59,23 +63,15 @@ public:
 	
 	
 	// this method overrides ofNode to catch the changes and update glLightv(GL_POSITION)
-protected:
-	struct Data{
-		Data(ofLight*light);
-		~Data();
+private:
 
-		ofColor ambientColor;
-		ofColor diffuseColor;
-		ofColor specularColor;
+	ofColor ambientColor;
+	ofColor diffuseColor;
+	ofColor specularColor;
 
-		int glIndex;
-		int isEnabled;
-		bool isDirectional;
-
-		ofLight * light;
-	};
-	
-	Poco::SharedPtr<Data> data;
+	int glIndex;
+	int isEnabled;
+	bool isDirectional;
 	
 	
 	// update opengl light 
