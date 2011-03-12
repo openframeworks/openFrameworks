@@ -12,7 +12,9 @@ public:
 	struct Settings;
 	
 	ofFbo();
-	virtual ~ofFbo(){};
+	ofFbo(const ofFbo & mom);
+	ofFbo & operator=(const ofFbo & fbo);
+	virtual ~ofFbo();
 
 	void setup(int width, int height, int internalformat = GL_RGBA, int numSamples = 0);
 	void setupShadow( int width, int height );
@@ -44,8 +46,8 @@ public:
 	static int maxDrawBuffers();		// return max simultaneous draw buffers
 	static int maxSamples();			// return max MSAA samples
 
-	GLuint getDepthBuffer(){ return data->depthBuffer; }
-	GLuint getStencilBuffer(){ return data->stencilBuffer; }
+	GLuint getDepthBuffer(){ return depthBuffer; }
+	GLuint getStencilBuffer(){ return stencilBuffer; }
 
 	struct Settings {
 		int		width;					// width of images attached to fbo
@@ -65,26 +67,18 @@ public:
 	};
 protected:
 
-	struct Data{
-		Settings 			settings;
-		int					isBound;
-	
-		GLuint				fbo;			// main fbo which we bind for drawing into, all renderbuffers are attached to this
-		GLuint				fboTextures;	// textures are attached to this (if MSAA is disabled, this is equal to fbo, otherwise it's a new fbo)
-		GLuint				depthBuffer;
-		GLuint				stencilBuffer;
+	Settings 			settings;
+	int					isBound;
 
-		GLint				savedFramebuffer;	// save bound framebuffer before switching
+	GLuint				fbo;			// main fbo which we bind for drawing into, all renderbuffers are attached to this
+	GLuint				fboTextures;	// textures are attached to this (if MSAA is disabled, this is equal to fbo, otherwise it's a new fbo)
+	GLuint				depthBuffer;
+	GLuint				stencilBuffer;
 
-		vector<GLuint>		colorBuffers;	// only used if using MSAA
-		vector<ofTexture>	textures;
+	GLint				savedFramebuffer;	// save bound framebuffer before switching
 
-		Data();
-		Data(int width, int height, int internalformat, int numSamples);
-		~Data();
-	};
-
-	Poco::SharedPtr<Data> 	data;
+	vector<GLuint>		colorBuffers;	// only used if using MSAA
+	vector<ofTexture>	textures;
 
 	static int			_maxColorAttachments;
 	static int			_maxDrawBuffers;
@@ -99,6 +93,16 @@ protected:
 	// if using MSAA, we will have rendered into a colorbuffer, not directly into the texture
 	// call this to blit from the colorbuffer into the texture so we can use the results for rendering, or input to a shader etc.
 	void updateTexture(int attachmentPoint);
+
+private:
+	/*class Releaser{
+	public:
+		Releaser(ofFbo * fbo);
+		~Releaser();
+
+		ofFbo * fbo;
+	};
+	Poco::SharedPtr<Releaser> releaser;*/
 };
 
 #endif

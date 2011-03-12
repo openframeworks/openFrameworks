@@ -2,6 +2,7 @@
 #include "ofAppRunner.h"
 #include "ofUtils.h"
 #include "ofGraphics.h"
+#include <map>
 
 #ifndef TARGET_OPENGLES
 
@@ -110,47 +111,73 @@ ofFbo::Settings::Settings() {
 	numSamples				= 0;
 }
 
-ofFbo::Data::Data():
-isBound(0),
-fbo(0),
-fboTextures(0),
-depthBuffer(0),
-stencilBuffer(0),
-savedFramebuffer(0)
-{
-
+/*
+ofFbo::Releaser::Releaser(ofFbo * _fbo){
+	fbo = _fbo;
 }
 
-ofFbo::Data::Data(int width, int height, int internalformat, int numSamples):
-isBound(0),
-fbo(0),
-fboTextures(0),
-depthBuffer(0),
-stencilBuffer(0),
-savedFramebuffer(0)
-{
-	settings.width			= width;
-	settings.height			= height;
-	settings.internalformat	= internalformat;
-	settings.numSamples		= numSamples;
-	settings.useDepth		= true;
-	settings.useStencil		= true;
+ofFbo::Releaser::~Releaser(){
+	if(fbo->fbo) glDeleteFramebuffers(1, &fbo->fbo);
+	if(fbo->depthBuffer) glDeleteFramebuffers(1, &fbo->depthBuffer);
+	if(fbo->stencilBuffer) glDeleteFramebuffers(1, &fbo->stencilBuffer);
+
+	if(fbo->settings.numSamples && fbo->fboTextures) glDeleteFramebuffers(1, &fbo->fboTextures);
+
+	fbo->textures.clear();
+
+	for(int i=0; i<(int)fbo->colorBuffers.size(); i++) glDeleteFramebuffers(1, &fbo->colorBuffers[i]);
+	fbo->colorBuffers.clear();
+}*/
+
+static map<GLuint,int> idsFB;
+
+//--------------------------------------------------------------
+static void retainFB(GLuint id){
+	if(id==0) return;
+	if(idsFB.find(id)!=idsFB.end()){
+		idsFB[id]++;
+	}else{
+		idsFB[id]=1;
+	}
 }
 
-ofFbo::Data::~Data(){
-	if(fbo) glDeleteFramebuffers(1, &fbo);
-	if(depthBuffer) glDeleteFramebuffers(1, &depthBuffer);
-	if(stencilBuffer) glDeleteFramebuffers(1, &stencilBuffer);
-
-	if(settings.numSamples && fboTextures) glDeleteFramebuffers(1, &fboTextures);
-
-	textures.clear();
-
-	for(int i=0; i<(int)colorBuffers.size(); i++) glDeleteFramebuffers(1, &colorBuffers[i]);
-	colorBuffers.clear();
+//--------------------------------------------------------------
+static void releaseFB(GLuint id){
+	if(idsFB.find(id)!=idsFB.end()){
+		idsFB[id]--;
+		if(idsFB[id]==0){
+			glDeleteFramebuffers(1, &id);
+		}
+	}else{
+		ofLog(OF_LOG_WARNING,"ofFbo: releasing id not found, this shouldn't be happening releasing anyway");
+		glDeleteFramebuffers(1, &id);
+	}
 }
 
+static map<GLuint,int> idsRB;
 
+//--------------------------------------------------------------
+static void retainRB(GLuint id){
+	if(id==0) return;
+	if(idsRB.find(id)!=idsRB.end()){
+		idsRB[id]++;
+	}else{
+		idsRB[id]=1;
+	}
+}
+
+//--------------------------------------------------------------
+static void releaseRB(GLuint id){
+	if(idsRB.find(id)!=idsRB.end()){
+		idsRB[id]--;
+		if(idsRB[id]==0){
+			glDeleteFramebuffers(1, &id);
+		}
+	}else{
+		ofLog(OF_LOG_WARNING,"ofFbo: releasing id not found, this shouldn't be happening releasing anyway");
+		glDeleteFramebuffers(1, &id);
+	}
+}
 
 //-------------------------------------------------------------------------------------
 
@@ -159,8 +186,68 @@ int	ofFbo::_maxDrawBuffers = -1;
 int	ofFbo::_maxSamples = -1;
 
 
-ofFbo::ofFbo():data(NULL)
+ofFbo::ofFbo():
+isBound(0),
+fbo(0),
+fboTextures(0),
+depthBuffer(0),
+stencilBuffer(0),
+savedFramebuffer(0)
 {
+}
+
+ofFbo::ofFbo(const ofFbo & mom){
+	settings = mom.settings;
+	isBound = mom.isBound;
+
+	fbo = mom.fbo;
+	retainFB(fbo);
+	fboTextures = mom.fboTextures;
+	if(settings.numSamples){
+		retainFB(fboTextures);
+	}
+	depthBuffer = mom.depthBuffer;
+	retainRB(depthBuffer);
+	stencilBuffer = mom.stencilBuffer;
+	retainRB(stencilBuffer);
+
+	savedFramebuffer = mom.savedFramebuffer;
+
+	colorBuffers = mom.colorBuffers;
+	for(int i=0;i<(int)colorBuffers.size();i++){
+		retainRB(colorBuffers[i]);
+	}
+	textures = mom.textures;
+}
+
+ofFbo & ofFbo::operator=(const ofFbo & mom){
+	if(&mom==this) return *this;
+	settings = mom.settings;
+	isBound = mom.isBound;
+
+	fbo = mom.fbo;
+	retainFB(fbo);
+	fboTextures = mom.fboTextures;
+	if(settings.numSamples){
+		retainFB(fboTextures);
+	}
+	depthBuffer = mom.depthBuffer;
+	retainRB(depthBuffer);
+	stencilBuffer = mom.stencilBuffer;
+	retainRB(stencilBuffer);
+
+	savedFramebuffer = mom.savedFramebuffer;
+
+	colorBuffers = mom.colorBuffers;
+	for(int i=0;i<(int)colorBuffers.size();i++){
+		retainRB(colorBuffers[i]);
+	}
+	textures = mom.textures;
+	return *this;
+}
+
+ofFbo::~ofFbo(){
+	destroy();
 }
 
 int	ofFbo::maxColorAttachments() {
@@ -180,7 +267,28 @@ int	ofFbo::maxSamples() {
 
 
 void ofFbo::destroy() {
-	data = new Data;
+	if(fbo){
+		releaseFB(fbo);
+		fbo=0;
+	}
+	if(depthBuffer){
+		releaseRB(depthBuffer);
+		depthBuffer = 0;
+	}
+	if(stencilBuffer){
+		releaseRB(stencilBuffer);
+		stencilBuffer = 0;
+	}
+
+	if(settings.numSamples && fboTextures){
+		releaseFB(fboTextures);
+		fboTextures = 0;
+	}
+
+	textures.clear();
+
+	for(int i=0; i<(int)colorBuffers.size(); i++) releaseRB(colorBuffers[i]);
+	colorBuffers.clear();
 }
 
 
@@ -198,9 +306,15 @@ void ofFbo::checkGLSupport() {
 
 
 void ofFbo::setup(int width, int height, int internalformat, int numSamples) {
-	data = new Data(width,height,internalformat,numSamples);
+
+	settings.width			= width;
+	settings.height			= height;
+	settings.internalformat	= internalformat;
+	settings.numSamples		= numSamples;
+	settings.useDepth		= true;
+	settings.useStencil		= true;
 	
-	setup(data->settings);
+	setup(settings);
 }
 
 
@@ -211,39 +325,52 @@ void ofFbo::setup(Settings settings) {
 
 	if(settings.width == 0) settings.width = ofGetWidth();
 	if(settings.height == 0) settings.height = ofGetHeight();
-	data->settings = settings;
+	settings = settings;
 
 	// create main fbo
 	// this is the main one we bind for drawing into
 	// all the renderbuffers are attached to this (whether MSAA is enabled or not)
-	glGenFramebuffers(1, &data->fbo);
+	glGenFramebuffers(1, &fbo);
+	retainFB(fbo);
 	bind();
 
 		
 	// If we want both a depth AND a stencil buffer tehn combine them into a single buffer
 	if( settings.useDepth && settings.useStencil )
 	{
-		data->stencilBuffer = data->depthBuffer = createAndAttachRenderbuffer(GL_DEPTH_STENCIL, GL_DEPTH_STENCIL_ATTACHMENT);
+		stencilBuffer = depthBuffer = createAndAttachRenderbuffer(GL_DEPTH_STENCIL, GL_DEPTH_STENCIL_ATTACHMENT);
+		retainRB(depthBuffer);
+		retainRB(stencilBuffer);
 	}
 	else
 	{
-	// if we want a depth buffer, create it, and attach to our main fbo
-	if(settings.useDepth) data->depthBuffer = createAndAttachRenderbuffer(GL_DEPTH_COMPONENT, GL_DEPTH_ATTACHMENT);
+		// if we want a depth buffer, create it, and attach to our main fbo
+		if(settings.useDepth){
+			depthBuffer = createAndAttachRenderbuffer(GL_DEPTH_COMPONENT, GL_DEPTH_ATTACHMENT);
+			retainRB(depthBuffer);
+		}
 
-	// if we want a stencil buffer, create it, and attach to our main fbo
-	if(settings.useStencil) data->stencilBuffer = createAndAttachRenderbuffer(GL_STENCIL_INDEX, GL_STENCIL_ATTACHMENT);
+		// if we want a stencil buffer, create it, and attach to our main fbo
+		if(settings.useStencil){
+			stencilBuffer = createAndAttachRenderbuffer(GL_STENCIL_INDEX, GL_STENCIL_ATTACHMENT);
+			retainRB(stencilBuffer);
+		}
 	}
 
 	// if we want MSAA, create a new fbo for textures
-	if(settings.numSamples) glGenFramebuffers(1, &data->fboTextures);
-	else data->fboTextures = data->fbo;
+	if(settings.numSamples){
+		glGenFramebuffers(1, &fboTextures);
+		retainFB(fboTextures);
+	}else{
+		fboTextures = fbo;
+	}
 
 	// now create all textures and color buffers
 	for(int i=0; i<settings.numColorbuffers; i++) createAndAttachTexture(i);
 
 	// if textures are attached to a different fbo (e.g. if using MSAA) check it's status
-	if(data->fbo != data->fboTextures) {
-		glBindFramebuffer(GL_FRAMEBUFFER, data->fboTextures);
+	if(fbo != fboTextures) {
+		glBindFramebuffer(GL_FRAMEBUFFER, fboTextures);
 	}
 
 	// check everything is ok with this fbo
@@ -255,31 +382,32 @@ void ofFbo::setup(Settings settings) {
 
 void ofFbo::setupShadow( int width, int height )
 {
-	if(!data) data = new Data;
 
 	int old;
 	glGetIntegerv( GL_FRAMEBUFFER_BINDING, &old );
 	
-	data->settings.width = width;
-	data->settings.height = height;
+	settings.width = width;
+	settings.height = height;
 	
-	glGenTextures(1, &data->depthBuffer);
-	glBindTexture(GL_TEXTURE_2D, data->depthBuffer);
+	glGenTextures(1, &depthBuffer);
+	retainRB(depthBuffer);
+	glBindTexture(GL_TEXTURE_2D, depthBuffer);
 	
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP );
 	glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP );
 		
-	glTexImage2D( GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, data->settings.width, data->settings.height, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_BYTE, 0 );
+	glTexImage2D( GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, settings.width, settings.height, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_BYTE, 0 );
 	glBindTexture( GL_TEXTURE_2D, 0 );
 	
-	glGenFramebuffers( 1, &data->fbo );
-	glBindFramebuffer( GL_FRAMEBUFFER_EXT, data->fbo );
+	glGenFramebuffers( 1, &fbo );
+	retainFB(fbo);
+	glBindFramebuffer( GL_FRAMEBUFFER_EXT, fbo );
 	
 	glDrawBuffer( GL_NONE );
 	glReadBuffer( GL_NONE );
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,GL_TEXTURE_2D, data->depthBuffer, 0);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,GL_TEXTURE_2D, depthBuffer, 0);
 	
 	if( glCheckFramebufferStatus( GL_FRAMEBUFFER ) != GL_FRAMEBUFFER_COMPLETE )
 		printf("Can't use FBOs !\n");
@@ -288,42 +416,40 @@ void ofFbo::setupShadow( int width, int height )
 }
 
 GLuint ofFbo::createAndAttachRenderbuffer(GLenum internalFormat, GLenum attachmentPoint) {
-	if(!data) return 0;
 	GLuint buffer;
 	glGenRenderbuffers(1, &buffer);
 	glBindRenderbuffer(GL_RENDERBUFFER, buffer);
-	if(data->settings.numSamples==0) glRenderbufferStorage(GL_RENDERBUFFER, internalFormat, data->settings.width, data->settings.height);
-	else glRenderbufferStorageMultisample(GL_RENDERBUFFER, data->settings.numSamples, internalFormat, data->settings.width, data->settings.height);
+	if(settings.numSamples==0) glRenderbufferStorage(GL_RENDERBUFFER, internalFormat, settings.width, settings.height);
+	else glRenderbufferStorageMultisample(GL_RENDERBUFFER, settings.numSamples, internalFormat, settings.width, settings.height);
 	glFramebufferRenderbuffer(GL_FRAMEBUFFER, attachmentPoint, GL_RENDERBUFFER, buffer);
 	return buffer;
 }
 
 
 void ofFbo::createAndAttachTexture(GLenum attachmentPoint) {
-	if(!data) return;
 	// bind fbo for textures (if using MSAA this is the newly created fbo, otherwise its the same fbo as before)
-	glBindFramebuffer(GL_FRAMEBUFFER, data->fboTextures);
+	glBindFramebuffer(GL_FRAMEBUFFER, fboTextures);
 
 	ofTexture tex;
-	tex.allocate(data->settings.width, data->settings.height, data->settings.internalformat, data->settings.textureTarget == GL_TEXTURE_2D ? false : true);
-	tex.setTextureWrap(data->settings.wrapModeHorizontal, data->settings.wrapModeVertical);
-	tex.setTextureMinMagFilter(data->settings.minFilter, data->settings.maxFilter);
+	tex.allocate(settings.width, settings.height, settings.internalformat, settings.textureTarget == GL_TEXTURE_2D ? false : true);
+	tex.setTextureWrap(settings.wrapModeHorizontal, settings.wrapModeVertical);
+	tex.setTextureMinMagFilter(settings.minFilter, settings.maxFilter);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + attachmentPoint, tex.texData.textureTarget, tex.texData.textureID, 0);
-	data->textures.push_back(tex);
+	textures.push_back(tex);
 
 
 	// if MSAA, bind main fbo and attach renderbuffer
-	if(data->settings.numSamples) {
-		glBindFramebuffer(GL_FRAMEBUFFER, data->fbo);
+	if(settings.numSamples) {
+		glBindFramebuffer(GL_FRAMEBUFFER, fbo);
 
-		GLuint colorBuffer = createAndAttachRenderbuffer(data->settings.internalformat, GL_COLOR_ATTACHMENT0 + attachmentPoint);
-		data->colorBuffers.push_back(colorBuffer);
+		GLuint colorBuffer = createAndAttachRenderbuffer(settings.internalformat, GL_COLOR_ATTACHMENT0 + attachmentPoint);
+		colorBuffers.push_back(colorBuffer);
+		retainRB(colorBuffer);
 	}
 }
 
 
 void ofFbo::begin() {
-	if(!data) return;
 	bind();
 	ofPushView();
 	ofViewport(0, 0, getWidth(), getHeight(), false);
@@ -335,45 +461,40 @@ void ofFbo::begin() {
 
 
 void ofFbo::end() {
-	if(!data) return;
 	unbind();
 	ofPopView();
 }
 
 void ofFbo::bind() {
-	if(!data) return;
-	if(data->isBound == 0) {
-		glGetIntegerv(GL_FRAMEBUFFER_BINDING, &data->savedFramebuffer);
-		glBindFramebuffer(GL_FRAMEBUFFER, data->fbo);
+	if(isBound == 0) {
+		glGetIntegerv(GL_FRAMEBUFFER_BINDING, &savedFramebuffer);
+		glBindFramebuffer(GL_FRAMEBUFFER, fbo);
 	}
-	data->isBound++;
+	isBound++;
 }
 
 
 void ofFbo::unbind() {
-	if(!data) return;
-	if(data->isBound) {
-		glBindFramebuffer(GL_FRAMEBUFFER, data->savedFramebuffer);
-		data->isBound = 0;
+	if(isBound) {
+		glBindFramebuffer(GL_FRAMEBUFFER, savedFramebuffer);
+		isBound = 0;
 	}
 }
 
 
 int ofFbo::getNumTextures() {
-	if(!data) return 0;
-	return data->textures.size();
+	return textures.size();
 }
 
 ofTexture& ofFbo::getTexture(int attachmentPoint) {
 	updateTexture(attachmentPoint);
-	return data->textures[attachmentPoint];
+	return textures[attachmentPoint];
 }
 
 void ofFbo::updateTexture(int attachmentPoint) {
-	if(!data) return;
 	// TODO: flag to see if this is dirty or not
-	if(data->fbo != data->fboTextures) {
-		glGetIntegerv( GL_FRAMEBUFFER_BINDING, &data->savedFramebuffer );
+	if(fbo != fboTextures) {
+		glGetIntegerv( GL_FRAMEBUFFER_BINDING, &savedFramebuffer );
 
 		// save current drawbuffer
 		glPushAttrib(GL_COLOR_BUFFER_BIT);
@@ -382,18 +503,18 @@ void ofFbo::updateTexture(int attachmentPoint) {
 		GLint readBuffer;
 		glGetIntegerv(GL_READ_BUFFER, &readBuffer);
 
-		glBindFramebuffer(GL_READ_FRAMEBUFFER, data->fbo);
-		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, data->fboTextures);
+		glBindFramebuffer(GL_READ_FRAMEBUFFER, fbo);
+		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fboTextures);
 		glDrawBuffer(GL_COLOR_ATTACHMENT0 + attachmentPoint);
 		glReadBuffer(GL_COLOR_ATTACHMENT0 + attachmentPoint);
 #ifndef TARGET_OPENGLES
-		glBlitFramebuffer(0, 0, data->settings.width, data->settings.height, 0, 0, data->settings.width, data->settings.height, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+		glBlitFramebuffer(0, 0, settings.width, settings.height, 0, 0, settings.width, settings.height, GL_COLOR_BUFFER_BIT, GL_NEAREST);
 #else
 		glRenderbufferStorageMultisampleAPPLE();	// untested
 #endif
-		glBindFramebuffer(GL_READ_FRAMEBUFFER, data->savedFramebuffer);
-		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, data->savedFramebuffer);
-		glBindFramebuffer( GL_FRAMEBUFFER, data->savedFramebuffer );
+		glBindFramebuffer(GL_READ_FRAMEBUFFER, savedFramebuffer);
+		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, savedFramebuffer);
+		glBindFramebuffer( GL_FRAMEBUFFER, savedFramebuffer );
 
 		// restore readbuffer
 		glReadBuffer(readBuffer);
@@ -407,36 +528,30 @@ void ofFbo::updateTexture(int attachmentPoint) {
 
 
 void ofFbo::draw(float x, float y) {
-	if(!data) return;
-	draw(x, y, data->settings.width, data->settings.height);
+	draw(x, y, settings.width, settings.height);
 }
 
 
 void ofFbo::draw(float x, float y, float width, float height) {
-	if(!data) return;
 	getTexture(0).draw(x, y, width, height);
 }
 
 
 GLuint ofFbo::getFbo() {
-	if(!data) return 0;
-	return data->fbo;
+	return fbo;
 }
 
 int ofFbo::getWidth() {
-	if(!data) return 0;
-	return data->settings.width;
+	return settings.width;
 }
 
 
 int ofFbo::getHeight() {
-	if(!data) return 0;
-	return data->settings.height;
+	return settings.height;
 }
 
 
 bool ofFbo::checkStatus() {
-	if(!data) return false;
 	GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
 	switch(status) {
 		case GL_FRAMEBUFFER_COMPLETE:

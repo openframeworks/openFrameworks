@@ -34,6 +34,7 @@ class testApp : public ofBaseApp{
         ofPoint sceneCenter;
         ofMaterial material;
         ofTexture tex;
+        ofLight	light;
 };
 
 #endif
