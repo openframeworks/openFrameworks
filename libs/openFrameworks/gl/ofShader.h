@@ -98,7 +98,7 @@ public:
 	GLuint& getProgram();
 	GLuint& getShader(GLenum type);
 	
-protected:
+private:
 	GLuint program;
 	map<GLenum, GLuint> shaders;
 	
