@@ -1,7 +1,6 @@
 #pragma once
 
 #include "ofTexture.h"
-#include "Poco/SharedPtr.h"
 
 #ifndef TARGET_OPENGLES
 

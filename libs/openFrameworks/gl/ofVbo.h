@@ -7,7 +7,6 @@
 #include "ofUtils.h"
 #include "ofMesh.h"
 #include "ofGLUtils.h"
-#include "Poco/SharedPtr.h"
 
 class ofVbo {
 public:
