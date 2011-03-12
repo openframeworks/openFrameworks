@@ -65,7 +65,7 @@ public:
 		
 		Settings();
 	};
-protected:
+private:
 
 	Settings 			settings;
 	int					isBound;
@@ -94,15 +94,6 @@ protected:
 	// call this to blit from the colorbuffer into the texture so we can use the results for rendering, or input to a shader etc.
 	void updateTexture(int attachmentPoint);
 
-private:
-	/*class Releaser{
-	public:
-		Releaser(ofFbo * fbo);
-		~Releaser();
-
-		ofFbo * fbo;
-	};
-	Poco::SharedPtr<Releaser> releaser;*/
 };
 
 #endif

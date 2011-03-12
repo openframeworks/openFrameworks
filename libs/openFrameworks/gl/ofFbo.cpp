@@ -111,23 +111,6 @@ ofFbo::Settings::Settings() {
 	numSamples				= 0;
 }
 
-/*
-ofFbo::Releaser::Releaser(ofFbo * _fbo){
-	fbo = _fbo;
-}
-
-ofFbo::Releaser::~Releaser(){
-	if(fbo->fbo) glDeleteFramebuffers(1, &fbo->fbo);
-	if(fbo->depthBuffer) glDeleteFramebuffers(1, &fbo->depthBuffer);
-	if(fbo->stencilBuffer) glDeleteFramebuffers(1, &fbo->stencilBuffer);
-
-	if(fbo->settings.numSamples && fbo->fboTextures) glDeleteFramebuffers(1, &fbo->fboTextures);
-
-	fbo->textures.clear();
-
-	for(int i=0; i<(int)fbo->colorBuffers.size(); i++) glDeleteFramebuffers(1, &fbo->colorBuffers[i]);
-	fbo->colorBuffers.clear();
-}*/
 
 static map<GLuint,int> idsFB;
 
