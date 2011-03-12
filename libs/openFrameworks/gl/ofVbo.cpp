@@ -126,6 +126,7 @@ ofVbo & ofVbo::operator=(const ofVbo& mom){
 
 
 	bAllocated		= mom.bAllocated;
+	return *this;
 }
 
 //--------------------------------------------------------------

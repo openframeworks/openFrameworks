@@ -50,7 +50,7 @@ bool lightsActiveInited = false;
 map<GLuint,int> ids;
 
 //--------------------------------------------------------------
-static void retain(GLuint id){
+static void retain(int id){
 	if(id==-1) return;
 	if(ids.find(id)!=ids.end()){
 		ids[id]++;
