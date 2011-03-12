@@ -22,12 +22,9 @@ static void retain(GLuint id){
 
 //--------------------------------------------------------------
 static void release(GLuint id){
-	cout << "releasing vbo " << id << endl;
 	if(ids.find(id)!=ids.end()){
 		ids[id]--;
-		cout << "count " << ids[id] << endl;
 		if(ids[id]==0){
-			cout << "count 0 releasing " << id << endl;
 			glDeleteBuffers(1, &id);
 			ids.erase(id);
 		}
