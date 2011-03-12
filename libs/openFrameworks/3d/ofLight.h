@@ -22,6 +22,8 @@
 
 void ofEnableLighting();
 void ofDisableLighting();
+void ofEnableSeparateSpecularLight();
+void ofDisableSeparateSpecularLight();
 bool ofGetLightingEnabled();
 
 //----------------------------------------
