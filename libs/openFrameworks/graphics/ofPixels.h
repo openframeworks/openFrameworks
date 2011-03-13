@@ -10,10 +10,8 @@ public:
 
 	ofPixels();
 	~ofPixels();
-	ofPixels(const ofPixels & mom) { copyFrom( mom ); }
-	//ofPixels(ofPixels && mom);
-
-	ofPixels& operator=(const ofPixels & mom) { copyFrom( mom ); return *this; }
+	ofPixels(const ofPixels & mom);
+	ofPixels& operator=(const ofPixels & mom);
 
 	void allocate(int w, int h, int bitsPerPixel);
 	void allocate(int w, int h, ofImageType type);

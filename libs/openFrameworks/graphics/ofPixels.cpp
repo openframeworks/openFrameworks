@@ -11,25 +11,17 @@ ofPixels::~ofPixels(){
 	clear();
 }
 
+ofPixels::ofPixels(const ofPixels & mom){
+	copyFrom( mom );
+}
 
-/*ofPixels::ofPixels(ofPixels && mom){
-	pixels = mom.pixels;
-	width = mom.width;
-	height = mom.height;
-
-	bitsPerPixel = mom.bitsPerPixel;
-	bytesPerPixel = mom.bytesPerPixel;
-	glDataType = mom.glDataType;
-	imageType = mom.imageType;
-	bAllocated = mom.bAllocated;
-
-	mom.pixels = NULL;
-	mom.bAllocated = false;
-}*/
+ofPixels& ofPixels::operator=(const ofPixels & mom){
+	if(&mom==this) return * this;
+	copyFrom( mom );
+	return *this;
+}
 
 void ofPixels::copyFrom(const ofPixels & mom){
-	bAllocated = false;
-	pixels = NULL;
 	if(mom.isAllocated()){
 		allocate(mom.getWidth(),mom.getHeight(),mom.getImageType());
 		memcpy(pixels,mom.getPixels(),mom.getWidth()*mom.getHeight()*mom.getBytesPerPixel());
