@@ -1,4 +1,12 @@
 /*
+ *
+ * Jeff Hoefs 
+ * Initial updates for Firmata 2.2 compatibility:
+ * - 3/5/17 added servo support for firmata 2.2 and greater (should be 
+ *   backwards compatible with Erik Sjodin's older firmata servo
+ *   implementation)
+ * 
+ *
  * Copyright 2007-2008 (c) Erik Sjodin, eriksjodin.net
  *
  * Devloped at: The Interactive Institutet / Art and Technology,
@@ -29,6 +37,7 @@
 #include "ofArduino.h"
 #include "ofUtils.h"
 
+// TODO update to be fully compatible with Firmata v2.2
 // TODO thread it?
 // TODO throw event or exception if the serial port goes down...
 //---------------------------------------------------------------------------
@@ -84,7 +93,7 @@ bool ofArduino::connect(string device, int baud){
 	return connected;
 }
 
-bool ofArduino::isArduinoReady(){
+bool ofArduino::isArduinoReady(){	
 	if(bUseDelay)
 		return (ofGetElapsedTimef() - connectTime) > OF_ARDUINO_DELAY_LENGTH ? connected : false;
 	else
@@ -389,6 +398,7 @@ void ofArduino::processData(unsigned char inputData){
 	}
 	// we have SysEx command data
 	else if(_waitForData<0){
+		
 		// we have all sysex data
 		if(inputData==FIRMATA_END_SYSEX){
 			_waitForData=0;
@@ -460,6 +470,7 @@ void ofArduino::processSysExData(vector<unsigned char> data){
 			}
 			_firmwareName = str;
 
+			_firmwareVersionSum = _majorFirmwareVersion * 10 + _minorFirmwareVersion;
 			ofNotifyEvent(EFirmwareVersionReceived, _majorFirmwareVersion, this);
 
 			// trigger the initialization event
@@ -639,19 +650,38 @@ int ofArduino::getValueFromTwo7bitBytes(unsigned char lsb, unsigned char msb){
 }
 
 void ofArduino::sendServo(int pin, int value, bool force){
-	if(_digitalPinMode[pin]==ARD_SERVO && (_servoValue[pin]!=value || force)){
-		sendByte(FIRMATA_START_SYSEX);
-		sendByte(SYSEX_SERVO_WRITE);
-		sendByte(pin);
-		sendValueAsTwo7bitBytes(value);
-		sendByte(FIRMATA_END_SYSEX);
-		_servoValue[pin]=value;
+	// for firmata v2.2 and greater
+	if (_firmwareVersionSum >= FIRMWARE2_2) {
+		if(_digitalPinMode[pin]==ARD_SERVO && (_digitalPinValue[pin]!=value || force)){
+			sendByte(FIRMATA_ANALOG_MESSAGE+pin);
+			sendValueAsTwo7bitBytes(value);
+			_digitalPinValue[pin] = value;
+		}
+	} 
+	// for versions prior to 2.2
+	else {
+		if(_digitalPinMode[pin]==ARD_SERVO && (_servoValue[pin]!=value || force)){
+			sendByte(FIRMATA_START_SYSEX);
+			sendByte(SYSEX_SERVO_WRITE);
+			sendByte(pin);
+			sendValueAsTwo7bitBytes(value);
+			sendByte(FIRMATA_END_SYSEX);
+			_servoValue[pin]=value;
+		}		
 	}
 }
 
+// angle parameter is no longer supported. keeping for backwards compatibility
 void ofArduino::sendServoAttach(int pin, int minPulse, int maxPulse, int angle) {
 	sendByte(FIRMATA_START_SYSEX);
-	sendByte(SYSEX_SERVO_ATTACH);
+	// for firmata v2.2 and greater
+	if (_firmwareVersionSum >= FIRMWARE2_2) {
+		sendByte(FIRMATA_SYSEX_SERVO_CONFIG);
+	} 
+	// for versions prior to 2.2
+	else {
+		sendByte(SYSEX_SERVO_ATTACH);
+	}
 	sendByte(pin);
 	sendValueAsTwo7bitBytes(minPulse);
 	sendValueAsTwo7bitBytes(maxPulse);
@@ -659,6 +689,7 @@ void ofArduino::sendServoAttach(int pin, int minPulse, int maxPulse, int angle) 
 	_digitalPinMode[pin]=ARD_SERVO;
 }
 
+// sendServoDetach depricated as of Firmata 2.2
 void ofArduino::sendServoDetach(int pin) {
 	sendByte(FIRMATA_START_SYSEX);
 	sendByte(SYSEX_SERVO_DETACH);
@@ -669,7 +700,14 @@ void ofArduino::sendServoDetach(int pin) {
 
 int ofArduino::getServo(int pin){
 	if(_digitalPinMode[pin]==ARD_SERVO)
-		return _servoValue[pin];
+		// for firmata v2.2 and greater
+		if (_firmwareVersionSum >= FIRMWARE2_2) {
+			return _digitalPinValue[pin];
+		} 
+		// for versions prior to 2.2
+		else {
+			return _servoValue[pin];
+		}		
 	else
 		return -1;
 }
