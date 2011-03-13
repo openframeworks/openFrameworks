@@ -752,7 +752,7 @@ void ofTrueTypeFont::drawStringAsShapes(string c, float x, float y) {
 		if (cy < nCharacters){ 			// full char set or not?
 		  if (c[index] == '\n') {
 
-				Y = lineHeight;
+				Y += lineHeight;
 				X = 0 ; //reset X Pos back to zero
 
 		  }else if (c[index] == ' ') {
