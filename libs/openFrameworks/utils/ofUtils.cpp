@@ -544,7 +544,7 @@ void ofSaveViewport(string filename) {
 	ofImage screen;
 	ofRectangle view = ofGetCurrentViewport();
 	screen.allocate(view.width, view.height, OF_IMAGE_COLOR);
-	screen.grabScreen(0, 0, view.height, view.width);
+	screen.grabScreen(0, 0, view.width, view.height);
 	screen.saveImage(filename);
 }
 
