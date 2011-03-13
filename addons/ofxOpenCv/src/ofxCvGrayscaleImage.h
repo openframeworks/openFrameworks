@@ -22,6 +22,7 @@ class ofxCvGrayscaleImage : public ofxCvImage {
   public:
 
     ofxCvGrayscaleImage();
+    ~ofxCvGrayscaleImage();
     ofxCvGrayscaleImage( const ofxCvGrayscaleImage& mom );
     // virtual void  allocate( int w, int h );                                //in base class
     // virtual void  clear();                                                 //in base class
