@@ -41,7 +41,6 @@ void testApp::setup(){
 
 //--------------------------------------------------------------
 void testApp::update(){
-    //model.setRotation(1, ofGetElapsedTimef() * 60, 0, 1, 0);
     
 	//this is for animation if the model has it. 
 	if( bAnimate ){
@@ -75,35 +74,6 @@ void testApp::draw(){
 		model.drawFaces();
             
     ofPopMatrix();
-
-
-    glPushAttrib(GL_ALL_ATTRIB_BITS);
-    glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
-    glEnable(GL_NORMALIZE);
-    //glEnable(GL_CULL_FACE);
-    ofPushMatrix();
-
-		ofTranslate(model.getPosition().x-300, model.getPosition().y, 0);
-		ofRotate(-mouseX, 0, 1, 0);
-		ofTranslate(-model.getPosition().x, -model.getPosition().y, 0);
-
-		ofTranslate(position);
-		ofRotate(180, 0, 0, 1);
-		ofTranslate(-sceneCenter.x, -sceneCenter.y, sceneCenter.z);
-
-
-		ofScale(normScale , normScale, normScale);
-
-
-		ofScale(scale.x,scale.y,scale.z);
-
-		tex.bind();
-		material.begin();
-		mesh.drawWireframe();
-		material.end();
-		tex.unbind();
-
-	ofPopMatrix();
 
 
     ofDrawBitmapString("fps: "+ofToString(ofGetFrameRate(), 2), 10, 15);

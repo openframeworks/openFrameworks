@@ -48,7 +48,7 @@ static deque <ofStyle> styleHistory;
 static deque <ofRectangle> viewportHistory;
 
 static ofShape shape;
-static ofPrimitive vertexData;
+static ofMesh vertexData;
 static ofBaseRenderer * renderer = NULL;
 
 void ofSetDefaultRenderer(ofBaseRenderer * renderer_){
