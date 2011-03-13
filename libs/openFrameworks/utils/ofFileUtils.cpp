@@ -306,19 +306,27 @@ using Poco::NotFoundException;
 }
 
 //------------------------------------------------------------------------------------------------------------
- bool ofFileUtils::makeDirectory(string dirPath, bool bRelativeToData){
+ bool ofFileUtils::makeDirectory(string dirPath, bool bRelativeToData, bool recursive){
 	if( bRelativeToData ) dirPath = ofToDataPath(dirPath);
 
 	File myFile(dirPath);
 	bool success = false;
 	try{
-		success = myFile.createDirectory();
+		if(recursive){
+			success = myFile.createDirectory();
+		}else{
+			myFile.createDirectories();
+			success = true;
+		}
 	}catch( Poco::Exception &except ){
 		ofLog(OF_LOG_ERROR, "makeDirectory - directory could not be created");
 		return false;
 	}
 
-	if(!success)ofLog(OF_LOG_WARNING, "makeDirectory - directory already exists");
+	if(!success){
+		ofLog(OF_LOG_WARNING, "makeDirectory - directory already exists");
+		success = true;
+	}
 
 	return success;
 }
