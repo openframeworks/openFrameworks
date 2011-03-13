@@ -49,7 +49,7 @@ bool ofGetLightingEnabled() {
 
 //----------------------------------------
 bool* getActiveLights(){
-	static bool lightsActive[OF_MAX_LIGHTS];
+	static bool * lightsActive = new bool[OF_MAX_LIGHTS];
 	static bool lightsActiveInited = false;
 	// if array hasn't been inited to false, init it
 	if(lightsActiveInited == false) {
@@ -60,8 +60,8 @@ bool* getActiveLights(){
 }
 
 static map<GLuint,int> & getIds(){
-	static map<GLuint,int> ids;
-	return ids;
+	static map<GLuint,int> * ids = new map<GLuint,int>;
+	return *ids;
 }
 
 //--------------------------------------------------------------

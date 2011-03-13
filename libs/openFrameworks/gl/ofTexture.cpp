@@ -17,12 +17,12 @@ void ofDisableTextureEdgeHack(){
 	bTexHackEnabled = false;
 }
 
-static map<int,int> & getTexturesIndex(){
-	static map<int,int> textureReferences;
-	return textureReferences;
+static map<GLuint,int> & getTexturesIndex(){
+	static map<GLuint,int> * textureReferences = new map<GLuint,int>;
+	return *textureReferences;
 }
 
-static void retain(int id){
+static void retain(GLuint id){
 	if(id!=0){
 		if(getTexturesIndex().find(id)!=getTexturesIndex().end()){
 			getTexturesIndex()[id]++;
@@ -32,7 +32,7 @@ static void retain(int id){
 	}
 }
 
-static void release(int id){
+static void release(GLuint id){
 	// try to free up the texture memory so we don't reallocate
 	// http://www.opengl.org/documentation/specs/man_pages/hardcopy/GL/html/gl/deletetextures.html
 	if (id != 0){

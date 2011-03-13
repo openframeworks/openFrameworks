@@ -8,9 +8,9 @@
 #include "ofUtils.h"
 #include <map>
 
-static map<int,int> & getIds(){
-	static map<int,int> ids;
-	return ids;
+static map<GLuint,int> & getIds(){
+	static map<GLuint,int> * ids = new map<GLuint,int>;
+	return *ids;
 }
 
 //--------------------------------------------------------------

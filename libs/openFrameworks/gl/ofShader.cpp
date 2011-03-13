@@ -7,12 +7,12 @@
 
 
 static map<GLuint,int> & getShaderIds(){
-	static map<GLuint,int> ids;
-	return ids;
+	static map<GLuint,int> * ids = new map<GLuint,int>;
+	return *ids;
 }
 static map<GLuint,int> & getProgramIds(){
-	static map<GLuint,int> ids;
-	return ids;
+	static map<GLuint,int> * ids = new map<GLuint,int>;
+	return *ids;
 }
 
 //--------------------------------------------------------------
