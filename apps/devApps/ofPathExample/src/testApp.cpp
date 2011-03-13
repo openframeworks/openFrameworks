@@ -10,11 +10,13 @@ ofRendererCollection renderer;
 
 //--------------------------------------------------------------
 void testApp::setup(){
-	/*cairo.setup("3d.pdf",ofCairoRenderer::PDF,true);
+#ifdef RENDER_TO_PDF
+	cairo.setup("paths.pdf",ofCairoRenderer::PDF,true);
 	renderer.renderers.push_back(&gl);
 	renderer.renderers.push_back(&cairo);
 	ofSetDefaultRenderer(&renderer);
-	ofSetFrameRate( 12 ); //each frame generates a page*/
+	ofSetFrameRate( 12 ); //each frame generates a page so let's keep it low
+#endif
 	
 	nCurveVertexes = 7;
 	
@@ -291,10 +293,12 @@ void testApp::setup(){
 	shapeIc.arc(540,550,30,20,0,360);
 	
 	selectedDraggableVertex.arc(0,0,4,4,0,360);
+	selectedDraggableVertex.close();
 	selectedDraggableVertex.setFilled(true);
 	selectedDraggableVertex.setColor(ofColor(0,0,0,80));
 
 	unselectedDraggableVertex.arc(0,0,4,4,0,360);
+	unselectedDraggableVertex.close();
 	unselectedDraggableVertex.setFilled(false);
 	unselectedDraggableVertex.setColor(ofColor(0,0,0,80));
 	

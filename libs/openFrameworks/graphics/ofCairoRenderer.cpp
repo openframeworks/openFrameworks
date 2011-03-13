@@ -255,6 +255,10 @@ void ofCairoRenderer::draw(ofMesh & primitive){
 	popMatrix();
 }
 
+void ofCairoRenderer::draw(ofMesh & vertexData, ofPolyRenderMode mode){
+	draw(vertexData);
+}
+
 void ofCairoRenderer::draw(ofSubPath & path){
 	if(!surface || !cr) return;
 	const vector<ofSubPath::Command> & commands = path.getCommands();
@@ -307,11 +311,11 @@ void ofCairoRenderer::draw(ofSubPath & path){
 				translate(0,-commands[i].to.y*ellipse_ratio);
 				scale(1,ellipse_ratio);
 				translate(0,commands[i].to.y/ellipse_ratio);
-				cairo_arc(cr,commands[i].to.x,commands[i].to.y,commands[i].radiusX,commands[i].angleBegin,commands[i].angleEnd);
+				cairo_arc(cr,commands[i].to.x,commands[i].to.y,commands[i].radiusX,commands[i].angleBegin*DEG_TO_RAD,commands[i].angleEnd*DEG_TO_RAD);
 				//cairo_set_matrix(cr,&stored_matrix);
 				popMatrix();
 			}else{
-				cairo_arc(cr,commands[i].to.x,commands[i].to.y,commands[i].radiusX,commands[i].angleBegin,commands[i].angleEnd);
+				cairo_arc(cr,commands[i].to.x,commands[i].to.y,commands[i].radiusX,commands[i].angleBegin*DEG_TO_RAD,commands[i].angleEnd*DEG_TO_RAD);
 			}
 			break;
 		}
@@ -778,7 +782,7 @@ void ofCairoRenderer::drawTriangle(float x1, float y1, float z1, float x2, float
 void ofCairoRenderer::drawCircle(float x, float y, float z, float radius){
 	cairo_new_path(cr);
 	cairo_set_source_rgba(cr,0,0,0,1);
-	cairo_arc(cr, x,y,radius,0,360);
+	cairo_arc(cr, x,y,radius,0,2*PI);
 
 	cairo_close_path(cr);
 

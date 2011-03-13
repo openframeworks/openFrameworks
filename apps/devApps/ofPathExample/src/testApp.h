@@ -3,11 +3,11 @@
 
 
 #include "ofMain.h"
-#include "ofShape.h"
+#include "ofPath.h"
 #include "ofCairoRenderer.h"
 
 // uncomment to render to pdf
-//#define RENDER_TO_CAIRO
+//#define RENDER_TO_PDF
 
 typedef struct {
 	
@@ -44,11 +44,11 @@ class testApp : public ofBaseApp{
 	draggableVertex bezierVertices[4];
 	
 	
-	ofShape shapeA,shapeB,shapeC,shapeD,shapeE;
-	ofShape shapeF,shapeFNonCurve;
-	ofShape shapeG,shapeH;
-	ofShape shapeIa,shapeIb,shapeIc;
-	ofShape selectedDraggableVertex, unselectedDraggableVertex;
+	ofPath shapeA,shapeB,shapeC,shapeD,shapeE;
+	ofPath shapeF,shapeFNonCurve;
+	ofPath shapeG,shapeH;
+	ofPath shapeIa,shapeIb,shapeIc;
+	ofPath selectedDraggableVertex, unselectedDraggableVertex;
 	
 	ofCairoRenderer cairo;
 };
