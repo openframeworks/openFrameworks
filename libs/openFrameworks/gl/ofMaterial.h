@@ -14,20 +14,6 @@
  *			http://assimp.sourceforge.net/lib_html/ai_material_8h.html#7dd415ff703a2cc53d1c22ddbbd7dde0
  */
 
-enum ofTextureMapType {
-	OF_TEXMAP_DIFFUSE
-	,OF_TEXMAP_SPECULAR
-	,OF_TEXMAP_AMBIENT
-	,OF_TEXMAP_HEIGHT
-	,OF_TEXMAP_NORMAL
-	,OF_TEXMAP_SHININESS
-	,OF_TEXMAP_OPACITY
-	,OF_TEXMAP_DISPLACEMENT
-	,OF_TEXMAP_LIGHT
-	,OF_TEXMAP_REFLECTION
-	,OF_TEXMAP_NUM
-};
-
 
 class ofMaterial {
 public:
@@ -47,25 +33,6 @@ public:
 	ofColor getEmissiveColor();
 	float getShininess();
 	
-	
-	// set maps.
-	void setDiffuseMap(ofTexture& oDiffuseMap);
-	void setSpecularMap(ofTexture& oSpecularMap);
-	void setAmbientMap(ofTexture& oAmbientMap);
-	void setHeightMap(ofTexture& oHeightMap);
-	void setNormalMap(ofTexture& oNormalMap);
-	void setShininessMap(ofTexture& oShininessMap);
-	void setOpactiyMap(ofTexture& oOpacityMap);
-	void setDisplacementMap(ofTexture& oDispMap);
-	void setLightMap(ofTexture& oLightMap);
-	void setReflectionMap(ofTexture& oReflectionMap);
-		
-	void addMap(ofTexture& pTexture, ofTextureMapType nType = OF_TEXMAP_DIFFUSE);
-	
-	// find maps
-	ofTexture& getMap(ofTextureMapType nType);
-	ofTexture& getDiffuseMap() { return getMap(OF_TEXMAP_DIFFUSE); };
-
 	// apply the material
 	virtual void begin();
 	virtual void end();
@@ -83,7 +50,4 @@ private:
 	ofColor prev_specular;
 	ofColor prev_emissive;
 	float prev_shininess;
-	//float opacity;
-	//float specularStrength;
-	ofTexture texture_maps[OF_TEXMAP_NUM];
 };
