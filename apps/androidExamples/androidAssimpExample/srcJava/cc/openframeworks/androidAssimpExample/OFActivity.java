@@ -1,4 +1,4 @@
-package cc.openframeworks.androidModelExample;
+package cc.openframeworks.androidAssimpExample;
 
 import android.app.Activity;
 import android.os.Bundle;
