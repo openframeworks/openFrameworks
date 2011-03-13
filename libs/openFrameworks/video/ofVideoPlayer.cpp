@@ -293,7 +293,7 @@ void ofVideoPlayer::setAnchorPercent(float xPct, float yPct){
 }
 
 //----------------------------------------------------------
-void ofVideoPlayer::setAnchorPoint(int x, int y){
+void ofVideoPlayer::setAnchorPoint(float x, float y){
 	tex.setAnchorPoint(x, y);
 }
 
@@ -317,6 +317,26 @@ void ofVideoPlayer::draw(float _x, float _y){
 	else
 	{
 		playerTex->draw(_x,_y);
+	}
+}
+
+//------------------------------------
+void ofVideoPlayer::draw(const ofPoint & p){
+	if(playerTex == NULL)
+		tex.draw(p);
+	else
+	{
+		playerTex->draw(p);
+	}
+}
+
+//------------------------------------
+void ofVideoPlayer::draw(const ofRectangle & r){
+	if(playerTex == NULL)
+		tex.draw(r);
+	else
+	{
+		playerTex->draw(r);
 	}
 }
 

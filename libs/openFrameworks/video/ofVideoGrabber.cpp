@@ -216,7 +216,7 @@ void ofVideoGrabber::setAnchorPercent(float xPct, float yPct){
 }
 
 //----------------------------------------------------------
-void ofVideoGrabber::setAnchorPoint(int x, int y){
+void ofVideoGrabber::setAnchorPoint(float x, float y){
 	tex.setAnchorPoint(x, y);
 }
 
@@ -233,6 +233,16 @@ void ofVideoGrabber::draw(float _x, float _y, float _w, float _h){
 //------------------------------------
 void ofVideoGrabber::draw(float _x, float _y){
 	tex.draw(_x, _y);
+}
+
+//----------------------------------------------------------
+void ofVideoGrabber::draw(const ofPoint & p){
+	tex.draw(p);
+}
+
+//----------------------------------------------------------
+void ofVideoGrabber::draw(const ofRectangle & r){
+	tex.draw(r);
 }
 
 //----------------------------------------------------------
