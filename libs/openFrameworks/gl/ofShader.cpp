@@ -6,27 +6,33 @@
 #ifndef TARGET_OPENGLES
 
 
-static map<GLuint,int> ids;
-static map<GLuint,int> program_ids;
+static map<GLuint,int> & getShaderIds(){
+	static map<GLuint,int> ids;
+	return ids;
+}
+static map<GLuint,int> & getProgramIds(){
+	static map<GLuint,int> ids;
+	return ids;
+}
 
 //--------------------------------------------------------------
-static void retain(GLuint id){
+static void retainShader(GLuint id){
 	if(id==0) return;
-	if(ids.find(id)!=ids.end()){
-		ids[id]++;
+	if(getShaderIds().find(id)!=getShaderIds().end()){
+		getShaderIds()[id]++;
 	}else{
-		ids[id]=1;
+		getShaderIds()[id]=1;
 	}
 }
 
 //--------------------------------------------------------------
-static void release(GLuint program, GLuint id){
-	if(ids.find(id)!=ids.end()){
-		ids[id]--;
-		if(ids[id]==0){
+static void releaseShader(GLuint program, GLuint id){
+	if(getShaderIds().find(id)!=getShaderIds().end()){
+		getShaderIds()[id]--;
+		if(getShaderIds()[id]==0){
 			glDetachShader(program, id);
 			glDeleteShader(id);
-			ids.erase(id);
+			getShaderIds().erase(id);
 		}
 	}else{
 		ofLog(OF_LOG_WARNING,"ofShader: releasing id not found, this shouldn't be happening releasing anyway");
@@ -36,22 +42,22 @@ static void release(GLuint program, GLuint id){
 }
 
 //--------------------------------------------------------------
-static void retain_program(GLuint id){
+static void retainProgram(GLuint id){
 	if(id==0) return;
-	if(program_ids.find(id)!=program_ids.end()){
-		program_ids[id]++;
+	if(getProgramIds().find(id)!=getProgramIds().end()){
+		getProgramIds()[id]++;
 	}else{
-		program_ids[id]=1;
+		getProgramIds()[id]=1;
 	}
 }
 
 //--------------------------------------------------------------
-static void release_program(GLuint id){
-	if(program_ids.find(id)!=program_ids.end()){
-		program_ids[id]--;
-		if(program_ids[id]==0){
+static void releaseProgram(GLuint id){
+	if(getProgramIds().find(id)!=getProgramIds().end()){
+		getProgramIds()[id]--;
+		if(getProgramIds()[id]==0){
 			glDeleteProgram(id);
-			program_ids.erase(id);
+			getProgramIds().erase(id);
 		}
 	}else{
 		ofLog(OF_LOG_WARNING,"ofShader: releasing program not found, this shouldn't be happening releasing anyway");
@@ -130,7 +136,7 @@ bool ofShader::setupShaderFromSource(GLenum type, string source) {
 	}
 	
 	shaders[type] = shader;
-	retain(shader);
+	retainShader(shader);
 
 	return true;
 }
@@ -205,7 +211,7 @@ void ofShader::checkAndCreateProgram() {
 		if(program == 0) {
 			ofLog(OF_LOG_VERBOSE, "Creating GLSL Program");
 			program = glCreateProgram();
-			retain_program(program);
+			retainProgram(program);
 		}
 	} else {
 		ofLog(OF_LOG_ERROR, "Sorry, it looks like you can't run 'ARB_shader_objects'.\nPlease check the capabilites of your graphics card.\nhttp://www.ozone3d.net/gpu_caps_viewer/");
@@ -250,12 +256,12 @@ void ofShader::unload() {
 			GLuint shader = it->second;
 			if(shader) {
 				ofLog(OF_LOG_VERBOSE, "Detaching and deleting shader of type " + nameForType(it->first));
-				release(program,shader);
+				releaseShader(program,shader);
 			}
 		}
 
 		if (program) {
-			release_program(program);
+			releaseProgram(program);
 			program = 0;
 		}
 		

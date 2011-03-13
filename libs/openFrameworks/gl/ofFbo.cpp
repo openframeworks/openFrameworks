@@ -111,24 +111,26 @@ ofFbo::Settings::Settings() {
 	numSamples				= 0;
 }
 
-
-static map<GLuint,int> idsFB;
+static map<GLuint,int> & getIdsFB(){
+	static map<GLuint,int> idsFB;
+	return idsFB;
+}
 
 //--------------------------------------------------------------
 static void retainFB(GLuint id){
 	if(id==0) return;
-	if(idsFB.find(id)!=idsFB.end()){
-		idsFB[id]++;
+	if(getIdsFB().find(id)!=getIdsFB().end()){
+		getIdsFB()[id]++;
 	}else{
-		idsFB[id]=1;
+		getIdsFB()[id]=1;
 	}
 }
 
 //--------------------------------------------------------------
 static void releaseFB(GLuint id){
-	if(idsFB.find(id)!=idsFB.end()){
-		idsFB[id]--;
-		if(idsFB[id]==0){
+	if(getIdsFB().find(id)!=getIdsFB().end()){
+		getIdsFB()[id]--;
+		if(getIdsFB()[id]==0){
 			glDeleteFramebuffers(1, &id);
 		}
 	}else{
@@ -137,28 +139,31 @@ static void releaseFB(GLuint id){
 	}
 }
 
-static map<GLuint,int> idsRB;
+static map<GLuint,int> & getIdsRB(){
+	static map<GLuint,int> idsRB;
+	return idsRB;
+}
 
 //--------------------------------------------------------------
 static void retainRB(GLuint id){
 	if(id==0) return;
-	if(idsRB.find(id)!=idsRB.end()){
-		idsRB[id]++;
+	if(getIdsRB().find(id)!=getIdsRB().end()){
+		getIdsRB()[id]++;
 	}else{
-		idsRB[id]=1;
+		getIdsRB()[id]=1;
 	}
 }
 
 //--------------------------------------------------------------
 static void releaseRB(GLuint id){
-	if(idsRB.find(id)!=idsRB.end()){
-		idsRB[id]--;
-		if(idsRB[id]==0){
-			glDeleteFramebuffers(1, &id);
+	if(getIdsRB().find(id)!=getIdsRB().end()){
+		getIdsRB()[id]--;
+		if(getIdsRB()[id]==0){
+			glDeleteRenderbuffers(1, &id);
 		}
 	}else{
 		ofLog(OF_LOG_WARNING,"ofFbo: releasing id not found, this shouldn't be happening releasing anyway");
-		glDeleteFramebuffers(1, &id);
+		glDeleteRenderbuffers(1, &id);
 	}
 }
 

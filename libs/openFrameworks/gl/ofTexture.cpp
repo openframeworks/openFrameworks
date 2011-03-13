@@ -17,14 +17,17 @@ void ofDisableTextureEdgeHack(){
 	bTexHackEnabled = false;
 }
 
-static map<int,int> textureReferences;
+static map<int,int> & getTexturesIndex(){
+	static map<int,int> textureReferences;
+	return textureReferences;
+}
 
 static void retain(int id){
 	if(id!=0){
-		if(textureReferences.find(id)!=textureReferences.end()){
-			textureReferences[id]++;
+		if(getTexturesIndex().find(id)!=getTexturesIndex().end()){
+			getTexturesIndex()[id]++;
 		}else{
-			textureReferences[id]=1;
+			getTexturesIndex()[id]=1;
 		}
 	}
 }
@@ -33,11 +36,11 @@ static void release(int id){
 	// try to free up the texture memory so we don't reallocate
 	// http://www.opengl.org/documentation/specs/man_pages/hardcopy/GL/html/gl/deletetextures.html
 	if (id != 0){
-		if(textureReferences.find(id)!=textureReferences.end()){
-			textureReferences[id]--;
-			if(textureReferences[id]==0){
+		if(getTexturesIndex().find(id)!=getTexturesIndex().end()){
+			getTexturesIndex()[id]--;
+			if(getTexturesIndex()[id]==0){
 				glDeleteTextures(1, (GLuint *)&id);
-				textureReferences.erase(id);
+				getTexturesIndex().erase(id);
 			}
 		}else{
 			ofLog(OF_LOG_ERROR, "trying to delete a non indexed texture, something weird is happening. Deleting anyway");

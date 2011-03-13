@@ -8,25 +8,28 @@
 #include "ofUtils.h"
 #include <map>
 
-static map<int,int> ids;
+static map<int,int> & getIds(){
+	static map<int,int> ids;
+	return ids;
+}
 
 //--------------------------------------------------------------
 static void retain(GLuint id){
 	if(id==0) return;
-	if(ids.find(id)!=ids.end()){
-		ids[id]++;
+	if(getIds().find(id)!=getIds().end()){
+		getIds()[id]++;
 	}else{
-		ids[id]=1;
+		getIds()[id]=1;
 	}
 }
 
 //--------------------------------------------------------------
 static void release(GLuint id){
-	if(ids.find(id)!=ids.end()){
-		ids[id]--;
-		if(ids[id]==0){
+	if(getIds().find(id)!=getIds().end()){
+		getIds()[id]--;
+		if(getIds()[id]==0){
 			glDeleteBuffers(1, &id);
-			ids.erase(id);
+			getIds().erase(id);
 		}
 	}else{
 		ofLog(OF_LOG_WARNING,"ofVbo: releasing id not found, this shouldn't be happening releasing anyway");
