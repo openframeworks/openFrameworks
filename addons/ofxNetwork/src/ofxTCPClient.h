@@ -85,7 +85,6 @@ protected:
 		bool			connected, verbose;
 		string 			partialPrevMsg;
 
-
 };
 
 #endif
