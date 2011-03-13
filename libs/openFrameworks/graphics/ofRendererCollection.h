@@ -23,7 +23,17 @@ public:
 		 }
 	 }
 
-	void draw(vector<ofPoint> & vertexData, ofPrimitiveMode drawMode){}
+	 void draw(ofMesh & vertexData, ofPolyRenderMode mode){
+		 for(int i=0;i<(int)renderers.size();i++){
+			 renderers[i]->draw(vertexData,mode);
+		 }
+	 }
+
+	void draw(vector<ofPoint> & vertexData, ofPrimitiveMode drawMode){
+		 for(int i=0;i<(int)renderers.size();i++){
+			 renderers[i]->draw(vertexData,drawMode);
+		 }
+	}
 
 
 	//--------------------------------------------
