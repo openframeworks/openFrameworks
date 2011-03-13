@@ -48,18 +48,29 @@ bool ofGetLightingEnabled() {
 }
 
 //----------------------------------------
-bool lightsActive[OF_MAX_LIGHTS];
-bool lightsActiveInited = false;
+bool* getActiveLights(){
+	static bool lightsActive[OF_MAX_LIGHTS];
+	static bool lightsActiveInited = false;
+	// if array hasn't been inited to false, init it
+	if(lightsActiveInited == false) {
+		for(int i=0; i<OF_MAX_LIGHTS; i++) lightsActive[i] = false;
+		lightsActiveInited = true;
+	}
+	return lightsActive;
+}
 
-map<GLuint,int> ids;
+static map<GLuint,int> & getIds(){
+	static map<GLuint,int> ids;
+	return ids;
+}
 
 //--------------------------------------------------------------
 static void retain(int id){
 	if(id==-1) return;
-	if(ids.find(id)!=ids.end()){
-		ids[id]++;
+	if(getIds().find(id)!=getIds().end()){
+		getIds()[id]++;
 	}else{
-		ids[id]=1;
+		getIds()[id]=1;
 	}
 }
 
@@ -68,11 +79,11 @@ static void release(ofLight & light){
 	int id = light.getLightID();
 	if(id==-1) return;
 	bool lastRef=false;
-	if(ids.find(id)!=ids.end()){
-		ids[id]--;
-		if(ids[id]==0){
+	if(getIds().find(id)!=getIds().end()){
+		getIds()[id]--;
+		if(getIds()[id]==0){
 			lastRef=true;
-			ids.erase(id);
+			getIds().erase(id);
 		}
 	}else{
 		ofLog(OF_LOG_WARNING,"ofVbo: releasing id not found, this shouldn't be happening releasing anyway");
@@ -91,7 +102,7 @@ static void release(ofLight & light){
 		glLightfv(GL_LIGHT0 + id, GL_POSITION, cc);
 
 		light.disable();
-		lightsActive[id] = false;
+		getActiveLights()[id] = false;
 	}
 }
 
@@ -100,11 +111,6 @@ ofLight::ofLight(){
 	glIndex = -1;
 	isEnabled = false;
 	isDirectional = false;
-	// if array hasn't been inited to false, init it
-	if(lightsActiveInited == false) {
-		for(int i=0; i<OF_MAX_LIGHTS; i++) lightsActive[i] = false;
-		lightsActiveInited = true;
-	}
 }
 
 //----------------------------------------
@@ -143,7 +149,7 @@ void ofLight::setup(){
 	if(glIndex!=-1) return;
 	// search for the first free block
 	for(int i=0; i<OF_MAX_LIGHTS; i++) {
-		if(lightsActive[i] == false) {
+		if(getActiveLights()[i] == false) {
 			glIndex = i;
 			retain(glIndex);
 			enable();
