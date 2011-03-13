@@ -78,13 +78,13 @@ void CALLBACK ofTessellator::begin(GLint type){
 	currentTriType=type;
 	numElements++;
 	if(type==GL_LINE_LOOP){
-		if(resultOutline->size()<numElements){
+		if(int(resultOutline->size())<numElements){
 			resultOutline->push_back(ofPolyline());
 		}
 		resultOutline->at(numElements-1).clear();
 		resultOutline->at(numElements-1).setClosed(true);
 	}else{
-		if(resultMesh->size()<numElements){
+		if(int(resultMesh->size())<numElements){
 			//cout << "adding mesh size: " <<resultMesh->size()<< endl;
 			resultMesh->push_back(ofMesh());
 		}

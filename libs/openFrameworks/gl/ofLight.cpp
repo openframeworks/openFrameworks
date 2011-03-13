@@ -30,12 +30,16 @@ void ofDisableLighting() {
 
 //----------------------------------------
 void ofEnableSeparateSpecularLight(){
+#ifndef TARGET_OPENGLES
 	glLightModeli (GL_LIGHT_MODEL_COLOR_CONTROL,GL_SEPARATE_SPECULAR_COLOR);
+#endif
 }
 
 //----------------------------------------
 void ofDisableSeparateSpecularLight(){
+#ifndef TARGET_OPENGLES
 	glLightModeli (GL_LIGHT_MODEL_COLOR_CONTROL,GL_SINGLE_COLOR);
+#endif
 }
 
 //----------------------------------------

@@ -76,6 +76,13 @@ private:
 	ofColor specular;
 	ofColor emissive;
 	float shininess;
+
+
+	ofColor prev_diffuse;
+	ofColor prev_ambient;
+	ofColor prev_specular;
+	ofColor prev_emissive;
+	float prev_shininess;
 	//float opacity;
 	//float specularStrength;
 	ofTexture texture_maps[OF_TEXMAP_NUM];
