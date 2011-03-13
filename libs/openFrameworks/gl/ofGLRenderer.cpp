@@ -343,25 +343,30 @@ void ofGLRenderer::setupScreenOrtho(float width, float height, bool vFlip, float
 	if(width == 0) width = ofGetViewportWidth();
 	if(height == 0) height = ofGetViewportHeight();
 
-	#ifndef TARGET_OPENGLES
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
 
-		glMatrixMode(GL_PROJECTION);
-		glLoadIdentity();
+	ofSetCoordHandedness(OF_RIGHT_HANDED);
+#ifndef TARGET_OPENGLES
+	if(vFlip) {
+		glOrtho(0, width, height, 0, nearDist, farDist);
+		ofSetCoordHandedness(OF_LEFT_HANDED);
+	}
+	else glOrtho(0, width, 0, height, nearDist, farDist);
 
-		ofSetCoordHandedness(OF_RIGHT_HANDED);
+#else
+	if(vFlip) {
+		ofMatrix4x4 ortho = ofxMatrix4x4::newOrthoMatrix(0, width, height, 0, nearDist, farDist);
+		ofSetCoordHandedness(OF_LEFT_HANDED);
+		glMultMatrixf(ortho.getPtr());
+	}else{
+		ofMatrix4x4 ortho = ofxMatrix4x4::newOrthoMatrix(0, width, 0, height, nearDist, farDist);
+		glMultMatrixf(ortho.getPtr());
+	}
+#endif
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
 
-		if(vFlip) {
-			glOrtho(0, width, height, 0, nearDist, farDist);
-			ofSetCoordHandedness(OF_LEFT_HANDED);
-		}
-		else glOrtho(0, width, 0, height, nearDist, farDist);
-		glMatrixMode(GL_MODELVIEW);
-		glLoadIdentity();
-
-	#else
-		//FIX: is here http://stackoverflow.com/questions/2847574/opengl-es-2-0-equivalent-of-glortho
-		ofLog(OF_LOG_ERROR, "ofSetupScreenOrtho - you can't use glOrtho with iphone / ES at the moment");
-	#endif
 }
 
 //----------------------------------------------------------
