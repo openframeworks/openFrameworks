@@ -149,7 +149,7 @@ void ofxCvFloatImage::setFromPixels( float* _pixels, int w, int h ) {
         for( int i=0; i < height; i++ ) {
             memcpy( cvImage->imageData + (i*cvImage->widthStep),
                     _pixels + (i*w),
-                    width );
+                    width * sizeof(float) );
         }
         flagImageChanged();
     } else {
