@@ -171,6 +171,7 @@ protected:
 
 	static bool m_bWinsockInit;
 	bool canGetRemoteAddress;
+
 };
 
 #endif // ___ofxUDPManager__H__
