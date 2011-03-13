@@ -5,52 +5,9 @@
 #include "ofColor.h"
 #include "ofPolyline.h"
 #include "ofBaseTypes.h"
-#include "ofPrimitive.h"
+#include "ofMesh.h"
 
-
-class ofSubPath{
-public:
-	struct Command;
-
-	ofSubPath();
-	vector<Command> & getCommands();
-	const vector<Command> & getCommands() const;
-	void addCommand(const Command & command);
-	bool hasChanged();
-	void close();
-	bool isClosed();
-	int size();
-
-	struct Command{
-		enum Type{
-			lineTo,
-			curveTo,
-			bezierTo,
-			quadBezierTo,
-			arc,
-		};
-
-		/// for lineTo and curveTo
-		Command(Type type , const ofPoint & p);
-
-		/// for bezierTo
-		Command(Type type , const ofPoint & p, const ofPoint & cp1, const ofPoint & cp2);
-
-		///for arc
-		Command(Type type , const ofPoint & centre, float radiusX, float radiusY, float angleBegin, float angleEnd);
-
-		Type type;
-		ofPoint to;
-		ofPoint cp1, cp2;
-		float radiusX, radiusY, angleBegin, angleEnd;
-	};
-
-private:
-	vector<Command> commands;
-	bool			bClosed;
-	bool			bHasChanged;
-};
-
+class ofSubPath;
 
 class ofShape{
 public:
@@ -115,7 +72,7 @@ public:
 	const vector<ofSubPath> & getSubPaths() const;
 
 	vector<ofPolyline> & getOutline();
-	vector<ofPrimitive> & getTessellation();
+	vector<ofMesh> & getTessellation();
 	/// tessellate is called internally before calling draw, if the shape has changed
 	void tessellate();
 	void simplify(float tolerance=0.3);
@@ -163,7 +120,7 @@ private:
 	// updating frequently by not instantiating new meshes
 	friend class ofTessellator;
 	struct tessCache{
-		vector<ofPrimitive> meshes;
+		vector<ofMesh> meshes;
 		int numElements;
 		bool changed;
 	}cachedTessellation;
@@ -176,3 +133,48 @@ private:
 
 	Mode				mode;
 };
+
+
+class ofSubPath{
+public:
+	struct Command;
+
+	ofSubPath();
+	vector<Command> & getCommands();
+	const vector<Command> & getCommands() const;
+	void addCommand(const Command & command);
+	bool hasChanged();
+	void close();
+	bool isClosed();
+	int size();
+
+	struct Command{
+		enum Type{
+			lineTo,
+			curveTo,
+			bezierTo,
+			quadBezierTo,
+			arc,
+		};
+
+		/// for lineTo and curveTo
+		Command(Type type , const ofPoint & p);
+
+		/// for bezierTo
+		Command(Type type , const ofPoint & p, const ofPoint & cp1, const ofPoint & cp2);
+
+		///for arc
+		Command(Type type , const ofPoint & centre, float radiusX, float radiusY, float angleBegin, float angleEnd);
+
+		Type type;
+		ofPoint to;
+		ofPoint cp1, cp2;
+		float radiusX, radiusY, angleBegin, angleEnd;
+	};
+
+private:
+	vector<Command> commands;
+	bool			bClosed;
+	bool			bHasChanged;
+};
+

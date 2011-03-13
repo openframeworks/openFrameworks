@@ -57,7 +57,7 @@ public:
 	ofVec3f cameraToWorld(ofVec3f CameraXYZ, ofRectangle viewport = ofGetCurrentViewport());
 	
 	
-protected:
+private:
 	void calcClipPlanes(ofRectangle viewport);
 	
 	bool isOrtho;

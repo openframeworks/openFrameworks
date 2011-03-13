@@ -56,7 +56,7 @@ bool ofTessellator::initialized=false;
 
 
 vector<ofPolyline> * ofTessellator::resultOutline=NULL;
-vector<ofPrimitive> * ofTessellator::resultMesh=NULL;
+vector<ofMesh> * ofTessellator::resultMesh=NULL;
 
 GLUtesselator * ofTessellator::ofShapeTobj=NULL;
 
@@ -78,15 +78,15 @@ void CALLBACK ofTessellator::begin(GLint type){
 	currentTriType=type;
 	numElements++;
 	if(type==GL_LINE_LOOP){
-		if(resultOutline->size()<numElements){
+		if(int(resultOutline->size())<numElements){
 			resultOutline->push_back(ofPolyline());
 		}
 		resultOutline->at(numElements-1).clear();
 		resultOutline->at(numElements-1).setClosed(true);
 	}else{
-		if(resultMesh->size()<numElements){
+		if(int(resultMesh->size())<numElements){
 			//cout << "adding mesh size: " <<resultMesh->size()<< endl;
-			resultMesh->push_back(ofPrimitive());
+			resultMesh->push_back(ofMesh());
 		}
 		resultMesh->at(numElements-1).clear();
 		resultMesh->at(numElements-1).setMode(ofGetOFPrimitiveMode(type));
@@ -156,7 +156,7 @@ void ofTessellator::tessellateToOutline( const ofPolyline & src, int polyWinding
 
 
 //----------------------------------------------------------
-void ofTessellator::tessellateToMesh( const ofPolyline& src,  int polyWindingMode, vector<ofPrimitive>& dstmesh, bool bIs2D){
+void ofTessellator::tessellateToMesh( const ofPolyline& src,  int polyWindingMode, vector<ofMesh>& dstmesh, bool bIs2D){
 	vector<ofPolyline> tempPolylinesVector;
 	tempPolylinesVector.push_back( src );
 	tessellateToMesh( tempPolylinesVector, polyWindingMode, dstmesh, bIs2D );
@@ -164,7 +164,7 @@ void ofTessellator::tessellateToMesh( const ofPolyline& src,  int polyWindingMod
 
 	
 //----------------------------------------------------------
-void ofTessellator::tessellateToMesh( const vector<ofPolyline>& src, int polyWindingMode, vector<ofPrimitive> & dstmesh, bool bIs2D ) {
+void ofTessellator::tessellateToMesh( const vector<ofPolyline>& src, int polyWindingMode, vector<ofMesh> & dstmesh, bool bIs2D ) {
 	//Poco::ScopedLock<ofMutex> lock(mutex);
 	dstmesh.clear();
 	//clear();

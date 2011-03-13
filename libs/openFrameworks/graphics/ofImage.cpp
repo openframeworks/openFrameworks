@@ -185,6 +185,28 @@ bool ofLoadImage(ofPixels & pix, const ofBuffer & buffer) {
 }
 
 //----------------------------------------------------------------
+bool ofLoadImage(ofTexture & tex, string path){
+	ofPixels pixels;
+	bool loaded = ofLoadImage(pixels,path);
+	if(loaded){
+		tex.allocate(pixels.getWidth(),pixels.getHeight(),pixels.getGlDataType());
+		tex.loadData(pixels);
+	}
+	return loaded;
+}
+
+//----------------------------------------------------------------
+bool ofLoadImage(ofTexture & tex, const ofBuffer & buffer){
+	ofPixels pixels;
+	bool loaded = ofLoadImage(pixels,buffer);
+	if(loaded){
+		tex.allocate(pixels.getWidth(),pixels.getHeight(),pixels.getGlDataType());
+		tex.loadData(pixels);
+	}
+	return loaded;
+}
+
+//----------------------------------------------------------------
 void ofSaveImage(ofPixels & pix, string fileName, ofImageQualityType qualityLevel) {
 
 	if (pix.isAllocated() == false){

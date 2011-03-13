@@ -37,7 +37,7 @@ public:
 	void disableMouseInput();
 	bool getMouseInputEnabled();
 
-protected:
+private:
 	void setDistance(float distance, bool save);
 
 	ofNode target;

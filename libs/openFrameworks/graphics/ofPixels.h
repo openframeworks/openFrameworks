@@ -6,6 +6,9 @@
 #include "ofPixelUtils.h"
 
 class ofPixels {
+
+	friend class ofPixelUtils;
+
 public:
 
 	ofPixels();
@@ -50,7 +53,6 @@ public:
 private:
 	void copyFrom( const ofPixels& mom );
 	
-	friend class ofPixelUtils;
 	
 	unsigned char * pixels;
 	int width;

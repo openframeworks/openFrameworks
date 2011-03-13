@@ -1,40 +1,25 @@
 #pragma once
-
-
-#include <cairo-features.h>
-#include <cairo-pdf.h>
-#include <cairo-svg.h>
-#include <cairo.h>
-#include <deque>
-#include <stack>
-#include "ofMatrix4x4.h"
 #include "ofBaseTypes.h"
-#include "ofShape.h"
+#include "ofPolyline.h"
+class ofShapeTessellation;
+class ofMesh;
 
 
-
-class ofCairoRenderer: public ofBaseRenderer{
+class ofGLRenderer: public ofBaseRenderer{
 public:
-	ofCairoRenderer();
-	~ofCairoRenderer();
-
-	enum Type{
-		PDF,
-		SVG,
-		PNG
-	};
-	void setup(string filename, Type type=ofCairoRenderer::PDF, bool multiPage=true, bool b3D=false);
-	void close();
-
-	void draw(ofShape & shape);
-	void draw(ofSubPath & path);
-	void draw(ofPolyline & poly);
+	ofGLRenderer(bool useShapeColor=true);
+	~ofGLRenderer(){}
 	void draw(ofMesh & vertexData);
+	void draw(ofMesh & vertexData, ofPolyRenderMode renderType);
+	void draw(ofPolyline & poly);
+	void draw(ofShape & path);
 	void draw(vector<ofPoint> & vertexData, ofPrimitiveMode drawMode);
 
 	bool rendersPathPrimitives(){
-		return true;
+		return false;
 	}
+
+
 
 	//--------------------------------------------
 	// transformations
@@ -55,15 +40,6 @@ public:
 	void setCoordHandedness(ofHandednessType handedness);
 	ofHandednessType getCoordHandedness();
 
-	// drawing modes
-	void setRectMode(ofRectMode mode);
-	ofRectMode getRectMode();
-	void setFillMode(ofFillFlag fill);
-	ofFillFlag getFillMode();
-	void setLineWidth(float lineWidth);
-	void setBlendMode(ofBlendMode blendMode);
-	void setLineSmoothing(bool smooth);
-
 	//our openGL wrappers
 	void pushMatrix();
 	void popMatrix();
@@ -79,6 +55,18 @@ public:
 	// screen coordinate things / default gl values
 	void setupGraphicDefaults();
 	void setupScreen();
+
+	// drawing modes
+	void setFillMode(ofFillFlag fill);
+	ofFillFlag getFillMode();
+	void setCircleResolution(int res);
+	void setRectMode(ofRectMode mode);
+	ofRectMode getRectMode();
+	void setLineWidth(float lineWidth);
+	void setLineSmoothing(bool smooth);
+	void setBlendMode(ofBlendMode blendMode);
+	void enablePointSprites();
+	void disablePointSprites();
 
 	// color options
 	void setColor(int r, int g, int b); // 0-255
@@ -102,6 +90,7 @@ public:
 	void clear(float brightness, float a=0);
 	void clearAlpha();
 
+
 	// drawing
 	void drawLine(float x1, float y1, float z1, float x2, float y2, float z2);
 	void drawRectangle(float x, float y, float z, float w, float h);
@@ -110,41 +99,23 @@ public:
 	void drawEllipse(float x, float y, float z, float width, float height);
 	void drawString(string text, float x, float y, float z, ofDrawBitmapMode mode);
 
-	// cairo specifics
-	cairo_t * getCairoContext();
-	cairo_surface_t * getCairoSurface();
-
-
 private:
-	cairo_matrix_t * getCairoMatrix();
-	void setCairoMatrix();
-	ofVec3f transform(ofVec3f vec);
+	void startSmoothing();
+	void endSmoothing();
 
-	deque<ofPoint> curvePoints;
-	cairo_t * cr;
-	cairo_surface_t * surface;
+	ofHandednessType coordHandedness;
+	deque <ofRectangle> viewportHistory;
 	bool bBackgroundAuto;
 	ofColor bgColor;
 
-	stack<cairo_matrix_t> matrixStack;
-	cairo_matrix_t tmpMatrix;
-
-	Type type;
-	int page;
-	bool multiPage;
-
-	// 3d transformation
-	bool b3D;
-	ofMatrix4x4 projection;
-	ofMatrix4x4 modelView;
-	ofRectangle viewportRect;
-
-	stack<ofMatrix4x4> projectionStack;
-	stack<ofMatrix4x4> modelViewStack;
-	stack<ofRectangle> viewportStack;
-
+	vector<ofPoint> linePoints;
+	vector<ofPoint> rectPoints;
+	vector<ofPoint> triPoints;
+	vector<ofPoint> circlePoints;
+	ofPolyline circlePolyline;
 
 	ofFillFlag bFilled;
 	bool bSmoothHinted;
 	ofRectMode rectMode;
+
 };

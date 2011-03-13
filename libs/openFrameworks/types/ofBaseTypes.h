@@ -14,7 +14,7 @@
 #include "ofRectangle.h"
 #include "ofConstants.h"
 #include "ofColor.h"
-#include "ofPrimitive.h"
+#include "ofMesh.h"
 class ofPixels;
 class ofShape;
 class ofPolyline;
@@ -196,7 +196,8 @@ public:
 	virtual ~ofBaseRenderer(){}
 	virtual void draw(ofPolyline & poly)=0;
 	virtual void draw(ofShape & shape)=0;
-	virtual void draw(ofPrimitive & vertexData)=0;
+	virtual void draw(ofMesh & vertexData)=0;
+	virtual void draw(ofMesh & vertexData, ofPolyRenderMode renderType)=0;
 	virtual void draw(vector<ofPoint> & vertexData, ofPrimitiveMode drawMode)=0;
 
 	//--------------------------------------------
