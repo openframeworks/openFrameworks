@@ -159,6 +159,11 @@ void ofSetAppPtr(ofBaseApp *appPtr) {
 }
 
 //--------------------------------------
+void ofExit(int status){
+	std::exit(status);
+}
+
+//--------------------------------------
 int ofGetFrameNum(){
 	return window->getFrameNum();
 }
