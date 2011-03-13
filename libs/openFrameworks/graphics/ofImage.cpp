@@ -246,6 +246,7 @@ void ofSaveImage(ofPixels & pix, string fileName, ofImageQualityType qualityLeve
 			if(qualityLevel != OF_IMAGE_QUALITY_BEST) {
 				ofLog(OF_LOG_WARNING, "ofImageCompressionType only applies to JPEG images, ignoring value.");
 			}
+			if (fif==FIF_GIF) bmp = FreeImage_ConvertTo8Bits(bmp);
 			FreeImage_Save(fif, bmp, fileName.c_str());
 		}
 	}
