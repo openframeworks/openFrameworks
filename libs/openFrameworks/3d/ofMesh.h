@@ -16,7 +16,7 @@ public:
 	
 	ofMesh();
 	ofMesh(ofPrimitiveMode mode, const vector<ofVec3f>& verts);
-	~ofMesh();
+	virtual ~ofMesh();
 	
 	void setMode(ofPrimitiveMode mode);
 	ofPrimitiveMode getMode() const;
