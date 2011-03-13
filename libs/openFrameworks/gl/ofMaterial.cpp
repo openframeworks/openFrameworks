@@ -117,34 +117,38 @@ ofColor ofMaterial::getEmissiveColor() {
 }
 
 void ofMaterial::begin() {
+    // save previous values, opengl es cannot use push/pop attrib
+	glGetMaterialfv(GL_FRONT_AND_BACK,GL_DIFFUSE,&prev_diffuse.r);
+	glGetMaterialfv(GL_FRONT_AND_BACK,GL_SPECULAR,&prev_specular.r);
+	glGetMaterialfv(GL_FRONT_AND_BACK,GL_AMBIENT,&prev_ambient.r);
+	glGetMaterialfv(GL_FRONT_AND_BACK,GL_EMISSION,&prev_emissive.r);
+	glGetMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, &shininess);
 
-    glPushAttrib(GL_ALL_ATTRIB_BITS);
-    glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
-	// Material colors and properties
+    // Material colors and properties
 	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, &diffuse.r);
-
 	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, &specular.r);
-
 	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, &ambient.r);
-
 	glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, &emissive.r);
-
 	glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, shininess);
 
-	for(int i=0; i<OF_TEXMAP_NUM;i++){
+	/*for(int i=0; i<OF_TEXMAP_NUM;i++){
 		if(texture_maps[i].bAllocated()) {
 			getMap((ofTextureMapType)i).bind();
 		}
-	}
+	}*/
 }
 
 void ofMaterial::end() {
-	for(int i=0; i<OF_TEXMAP_NUM;i++){
+	/*for(int i=0; i<OF_TEXMAP_NUM;i++){
 		if(texture_maps[i].bAllocated()) {
 			getMap((ofTextureMapType)i).unbind();
 		}
-	}
-    glPopClientAttrib();
-    glPopAttrib();
+	}*/
+    // Set previous material colors and properties
+	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, &prev_diffuse.r);
+	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, &prev_specular.r);
+	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, &prev_ambient.r);
+	glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, &prev_emissive.r);
+	glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, prev_shininess);
 }
 

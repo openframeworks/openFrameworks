@@ -366,7 +366,11 @@ void ofxAssimpModelLoader::loadGLResources(){
         
         int usage;
         if(getAnimationCount()){
+#ifndef TARGET_OPENGLES
         	usage = GL_STREAM_DRAW;
+#else
+        	usage = GL_DYNAMIC_DRAW;
+#endif
         }else{
         	usage = GL_STATIC_DRAW;
 
@@ -771,11 +775,13 @@ void ofxAssimpModelLoader::draw(ofPolyRenderMode renderType)
 {
     if(scene){
         
-        glPushAttrib(GL_ALL_ATTRIB_BITS);
-        glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
         ofPushStyle();
         
+#ifndef TARGET_OPENGLES
+        glPushAttrib(GL_ALL_ATTRIB_BITS);
+        glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
         glPolygonMode(GL_FRONT_AND_BACK, ofGetGLPolyMode(renderType));
+#endif
         glEnable(GL_NORMALIZE);
         
         ofPushMatrix();
@@ -822,7 +828,21 @@ void ofxAssimpModelLoader::draw(ofPolyRenderMode renderType)
 				glDisable(GL_CULL_FACE);
 
 			ofEnableBlendMode(meshHelper.blendMode);
+#ifndef TARGET_OPENGLES
 		    meshHelper.vbo.drawElements(GL_TRIANGLES,meshHelper.indices.size());
+#else
+		    switch(renderType){
+		    case OF_MESH_FILL:
+		    	meshHelper.vbo.drawElements(GL_TRIANGLES,meshHelper.indices.size());
+		    	break;
+		    case OF_MESH_WIREFRAME:
+		    	meshHelper.vbo.drawElements(GL_LINES,meshHelper.indices.size());
+		    	break;
+		    case OF_MESH_POINTS:
+		    	meshHelper.vbo.drawElements(GL_POINTS,meshHelper.indices.size());
+		    	break;
+		    }
+#endif
 
 			// Texture Binding
 			if(bUsingTextures && meshHelper.texture.bAllocated()){
@@ -837,8 +857,10 @@ void ofxAssimpModelLoader::draw(ofPolyRenderMode renderType)
         ofPopMatrix();
         
         ofPopStyle();
+#ifndef TARGET_OPENGLES
         glPopClientAttrib();
         glPopAttrib();
+#endif
     }
 }
 
