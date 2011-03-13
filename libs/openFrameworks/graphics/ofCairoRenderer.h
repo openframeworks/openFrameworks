@@ -9,7 +9,7 @@
 #include <stack>
 #include "ofMatrix4x4.h"
 #include "ofBaseTypes.h"
-#include "ofShape.h"
+#include "ofPath.h"
 
 
 
@@ -26,7 +26,7 @@ public:
 	void setup(string filename, Type type=ofCairoRenderer::PDF, bool multiPage=true, bool b3D=false);
 	void close();
 
-	void draw(ofShape & shape);
+	void draw(ofPath & shape);
 	void draw(ofSubPath & path);
 	void draw(ofPolyline & poly);
 	void draw(ofMesh & vertexData);

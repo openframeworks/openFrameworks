@@ -1,6 +1,6 @@
 #include "ofGLRenderer.h"
 #include "ofMesh.h"
-#include "ofShape.h"
+#include "ofPath.h"
 #include "ofGraphics.h"
 #include "ofAppRunner.h"
 #include "ofMesh.h"
@@ -134,7 +134,7 @@ void ofGLRenderer::draw(ofPolyline & poly){
 }
 
 //----------------------------------------------------------
-void ofGLRenderer::draw(ofShape & shape){
+void ofGLRenderer::draw(ofPath & shape){
 	ofColor prevColor;
 	if(shape.getUseShapeColor()){
 		prevColor = ofGetStyle().color;

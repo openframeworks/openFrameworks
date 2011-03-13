@@ -3,7 +3,7 @@
 #include "ofUtils.h"
 #include "ofBaseTypes.h"
 #include "ofGLRenderer.h"
-#include "ofShape.h"
+#include "ofPath.h"
 
 #ifdef TARGET_OSX
 	#include <OpenGL/glu.h>
@@ -47,7 +47,7 @@ static ofStyle currentStyle;
 static deque <ofStyle> styleHistory;
 static deque <ofRectangle> viewportHistory;
 
-static ofShape shape;
+static ofPath shape;
 static ofMesh vertexData;
 static ofBaseRenderer * renderer = NULL;
 
@@ -57,9 +57,9 @@ void ofSetDefaultRenderer(ofBaseRenderer * renderer_){
 	renderer->setupGraphicDefaults();
 
 	if(renderer->rendersPathPrimitives()){
-		shape.setMode(ofShape::PATHS);
+		shape.setMode(ofPath::PATHS);
 	}else{
-		shape.setMode(ofShape::POLYLINES);
+		shape.setMode(ofPath::POLYLINES);
 	}
 
 	shape.setUseShapeColor(false);

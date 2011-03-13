@@ -62,7 +62,7 @@ void ofCairoRenderer::close(){
 	}
 }
 
-void ofCairoRenderer::draw(ofShape & shape){
+void ofCairoRenderer::draw(ofPath & shape){
 	cairo_new_path(cr);
 	vector<ofSubPath> & paths = shape.getSubPaths();
 	for(int i=0;i<(int)paths.size();i++){

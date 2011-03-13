@@ -16,7 +16,7 @@
 #include "ofColor.h"
 #include "ofMesh.h"
 class ofPixels;
-class ofShape;
+class ofPath;
 class ofPolyline;
 typedef ofPixels& ofPixelsRef;
 
@@ -195,7 +195,7 @@ class ofBaseRenderer{
 public:
 	virtual ~ofBaseRenderer(){}
 	virtual void draw(ofPolyline & poly)=0;
-	virtual void draw(ofShape & shape)=0;
+	virtual void draw(ofPath & shape)=0;
 	virtual void draw(ofMesh & vertexData)=0;
 	virtual void draw(ofMesh & vertexData, ofPolyRenderMode renderType)=0;
 	virtual void draw(vector<ofPoint> & vertexData, ofPrimitiveMode drawMode)=0;
