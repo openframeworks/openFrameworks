@@ -9,14 +9,6 @@ ofMaterial::ofMaterial() {
     shininess = 0.2;
 }
 
-void ofMaterial::addMap(ofTexture& pTexture, ofTextureMapType nMapType) {
-	texture_maps[nMapType]=pTexture;
-}
-
-ofTexture& ofMaterial::getMap(ofTextureMapType nType) {
-	return texture_maps[nType];
-}
-
 void ofMaterial::setColors(ofColor oDiffuse, ofColor oAmbient, ofColor oSpecular, ofColor oEmissive) {
 	setDiffuseColor(oDiffuse);
 	setAmbientColor(oAmbient);
@@ -46,46 +38,6 @@ void ofMaterial::setEmissiveColor(ofColor oEmissive) {
 
 void ofMaterial::setShininess(float nShininess) {
 	shininess = nShininess;
-}
-
-void ofMaterial::setDiffuseMap(ofTexture& oDiffuseMap) {
-	addMap(oDiffuseMap, OF_TEXMAP_DIFFUSE);
-}
-
-void ofMaterial::setSpecularMap(ofTexture& oSpecularMap) {
-	addMap(oSpecularMap, OF_TEXMAP_SPECULAR);
-}
-
-void ofMaterial::setAmbientMap(ofTexture& oAmbientMap) {
-	addMap(oAmbientMap, OF_TEXMAP_AMBIENT);
-}
-
-void ofMaterial::setHeightMap(ofTexture& oHeightMap) {
-	addMap(oHeightMap, OF_TEXMAP_HEIGHT);
-}
-
-void ofMaterial::setNormalMap(ofTexture& oNormalMap) {
-	addMap(oNormalMap, OF_TEXMAP_NORMAL);
-}
-
-void ofMaterial::setShininessMap(ofTexture& oShininessMap) {
-	addMap(oShininessMap, OF_TEXMAP_SHININESS);
-}
-
-void ofMaterial::setOpactiyMap(ofTexture& oOpacityMap) {
-	addMap(oOpacityMap, OF_TEXMAP_OPACITY);
-}
-
-void ofMaterial::setDisplacementMap(ofTexture& oDispMap) {
-	addMap(oDispMap, OF_TEXMAP_DISPLACEMENT);
-}
-
-void ofMaterial::setLightMap(ofTexture& oLightMap) {
-	addMap(oLightMap, OF_TEXMAP_LIGHT);
-}
-
-void ofMaterial::setReflectionMap(ofTexture& oReflectionMap) {
-	addMap(oReflectionMap, OF_TEXMAP_REFLECTION);
 }
 
 float ofMaterial::getShininess(){
@@ -130,20 +82,9 @@ void ofMaterial::begin() {
 	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, &ambient.r);
 	glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, &emissive.r);
 	glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, shininess);
-
-	/*for(int i=0; i<OF_TEXMAP_NUM;i++){
-		if(texture_maps[i].bAllocated()) {
-			getMap((ofTextureMapType)i).bind();
-		}
-	}*/
 }
 
 void ofMaterial::end() {
-	/*for(int i=0; i<OF_TEXMAP_NUM;i++){
-		if(texture_maps[i].bAllocated()) {
-			getMap((ofTextureMapType)i).unbind();
-		}
-	}*/
     // Set previous material colors and properties
 	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, &prev_diffuse.r);
 	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, &prev_specular.r);
