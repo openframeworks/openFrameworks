@@ -5,7 +5,7 @@
 #include "ofPoint.h"
 #include "ofRectangle.h"
 #include "ofConstants.h"
-#include "ofShape.h"
+#include "ofPath.h"
 
 //--------------------------------------------------
 typedef struct {
@@ -22,7 +22,7 @@ typedef struct {
 } charProps;
 
 
-typedef ofShape ofTTFCharacter;
+typedef ofPath ofTTFCharacter;
 
 //--------------------------------------------------
 #define NUM_CHARACTER_TO_START		33		// 0 - 32 are control characters, no graphics needed.

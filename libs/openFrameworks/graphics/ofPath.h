@@ -9,10 +9,10 @@
 
 class ofSubPath;
 
-class ofShape{
+class ofPath{
 public:
 
-	ofShape();
+	ofPath();
 
 	void clear();
 
