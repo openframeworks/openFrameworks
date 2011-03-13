@@ -112,8 +112,8 @@ ofFbo::Settings::Settings() {
 }
 
 static map<GLuint,int> & getIdsFB(){
-	static map<GLuint,int> idsFB;
-	return idsFB;
+	static map<GLuint,int> * idsFB = new map<GLuint,int>;
+	return *idsFB;
 }
 
 //--------------------------------------------------------------
@@ -140,8 +140,8 @@ static void releaseFB(GLuint id){
 }
 
 static map<GLuint,int> & getIdsRB(){
-	static map<GLuint,int> idsRB;
-	return idsRB;
+	static map<GLuint,int> * idsRB = new map<GLuint,int>;
+	return *idsRB;
 }
 
 //--------------------------------------------------------------

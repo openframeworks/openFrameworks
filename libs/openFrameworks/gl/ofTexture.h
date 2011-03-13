@@ -122,10 +122,6 @@ protected:
 	ofPoint anchor;
 	bool bAnchorIsPct;
 
-/*private:
-
-	Poco::SharedPtr<ofTextureData> texDataPtr;*/
-
 
 };
 
