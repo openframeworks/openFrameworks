@@ -129,24 +129,14 @@ void ofArduino::disconnect(){
 }
 
 void ofArduino::update(){
-	int dataRead=0;
-	// try to empty the _port buffer
-	while (dataRead<512) {
-
-		int byte = _port.readByte();
-
-		// process data....
-		//-1 = error
-		//-2 = no data
-		// to do: handle error
-		if (byte >= 0) {
-			processData((char)(byte));
-			dataRead++;
+	int bytesToRead = _port.available();
+	if (bytesToRead>0) {
+		unsigned char* bytesToProcess = new unsigned char[bytesToRead];
+		_port.readBytes(bytesToProcess, bytesToRead);
+		for (int i = 0; i < bytesToRead; i++) {
+			processData((char)(bytesToProcess[i]));
 		}
-		// _port buffer is empty
-		else{
-			break;
-		}
+		delete[] bytesToProcess;
 	}
 }
 
