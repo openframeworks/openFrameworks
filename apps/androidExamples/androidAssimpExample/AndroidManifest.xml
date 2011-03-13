@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-      package="cc.openframeworks.androidModelExample"
+      package="cc.openframeworks.androidAssimpExample"
       android:versionCode="1"
       android:versionName="1.0"
       android:installLocation="preferExternal">
@@ -15,5 +15,6 @@
             </intent-filter>
         </activity>
     </application>
+    <supports-screens android:largeScreens="true" android:normalScreens="true" android:anyDensity="true"></supports-screens>
 	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"></uses-permission>
 </manifest> 
