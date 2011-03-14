@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		53EEEF4B130766EF0027C199 /* ofMesh.h in Headers */ = {isa = PBXBuildFile; fileRef = 53EEEF49130766EF0027C199 /* ofMesh.h */; };
 		53EEEF4C130766EF0027C199 /* ofMesh.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53EEEF4A130766EF0027C199 /* ofMesh.cpp */; };
+		92C55F88132DA7DD00EC2631 /* ofPath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 92C55F86132DA7DD00EC2631 /* ofPath.cpp */; };
+		92C55F89132DA7DD00EC2631 /* ofPath.h in Headers */ = {isa = PBXBuildFile; fileRef = 92C55F87132DA7DD00EC2631 /* ofPath.h */; };
 		DA2E399D12DF6E9000EC4A5B /* glew.h in Headers */ = {isa = PBXBuildFile; fileRef = DA2E399712DF6E9000EC4A5B /* glew.h */; };
 		DA2E399E12DF6E9000EC4A5B /* glxew.h in Headers */ = {isa = PBXBuildFile; fileRef = DA2E399812DF6E9000EC4A5B /* glxew.h */; };
 		DA2E399F12DF6E9000EC4A5B /* wglew.h in Headers */ = {isa = PBXBuildFile; fileRef = DA2E399912DF6E9000EC4A5B /* wglew.h */; };
@@ -146,8 +148,6 @@
 		E4F3BB2112F4C752002D19BB /* ofPixels.h in Headers */ = {isa = PBXBuildFile; fileRef = E4F3BB0912F4C752002D19BB /* ofPixels.h */; };
 		E4F3BB2212F4C752002D19BB /* ofPixelUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BB0A12F4C752002D19BB /* ofPixelUtils.cpp */; };
 		E4F3BB2312F4C752002D19BB /* ofPixelUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = E4F3BB0B12F4C752002D19BB /* ofPixelUtils.h */; };
-		E4F3BB2612F4C752002D19BB /* ofShape.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BB0E12F4C752002D19BB /* ofShape.cpp */; };
-		E4F3BB2712F4C752002D19BB /* ofShape.h in Headers */ = {isa = PBXBuildFile; fileRef = E4F3BB0F12F4C752002D19BB /* ofShape.h */; };
 		E4F3BB2A12F4C752002D19BB /* ofTessellator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BB1212F4C752002D19BB /* ofTessellator.cpp */; };
 		E4F3BB2B12F4C752002D19BB /* ofTessellator.h in Headers */ = {isa = PBXBuildFile; fileRef = E4F3BB1312F4C752002D19BB /* ofTessellator.h */; };
 		E4F3BB2E12F4C752002D19BB /* ofTrueTypeFont.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BB1612F4C752002D19BB /* ofTrueTypeFont.cpp */; };
@@ -188,6 +188,8 @@
 /* Begin PBXFileReference section */
 		53EEEF49130766EF0027C199 /* ofMesh.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofMesh.h; sourceTree = "<group>"; };
 		53EEEF4A130766EF0027C199 /* ofMesh.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofMesh.cpp; sourceTree = "<group>"; };
+		92C55F86132DA7DD00EC2631 /* ofPath.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofPath.cpp; sourceTree = "<group>"; };
+		92C55F87132DA7DD00EC2631 /* ofPath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofPath.h; sourceTree = "<group>"; };
 		DA2E399712DF6E9000EC4A5B /* glew.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = glew.h; sourceTree = "<group>"; };
 		DA2E399812DF6E9000EC4A5B /* glxew.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = glxew.h; sourceTree = "<group>"; };
 		DA2E399912DF6E9000EC4A5B /* wglew.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = wglew.h; sourceTree = "<group>"; };
@@ -349,8 +351,6 @@
 		E4F3BB0912F4C752002D19BB /* ofPixels.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofPixels.h; path = ../../../openFrameworks/graphics/ofPixels.h; sourceTree = SOURCE_ROOT; };
 		E4F3BB0A12F4C752002D19BB /* ofPixelUtils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofPixelUtils.cpp; path = ../../../openFrameworks/graphics/ofPixelUtils.cpp; sourceTree = SOURCE_ROOT; };
 		E4F3BB0B12F4C752002D19BB /* ofPixelUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofPixelUtils.h; path = ../../../openFrameworks/graphics/ofPixelUtils.h; sourceTree = SOURCE_ROOT; };
-		E4F3BB0E12F4C752002D19BB /* ofShape.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofShape.cpp; path = ../../../openFrameworks/graphics/ofShape.cpp; sourceTree = SOURCE_ROOT; };
-		E4F3BB0F12F4C752002D19BB /* ofShape.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofShape.h; path = ../../../openFrameworks/graphics/ofShape.h; sourceTree = SOURCE_ROOT; };
 		E4F3BB1212F4C752002D19BB /* ofTessellator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofTessellator.cpp; path = ../../../openFrameworks/graphics/ofTessellator.cpp; sourceTree = SOURCE_ROOT; };
 		E4F3BB1312F4C752002D19BB /* ofTessellator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofTessellator.h; path = ../../../openFrameworks/graphics/ofTessellator.h; sourceTree = SOURCE_ROOT; };
 		E4F3BB1612F4C752002D19BB /* ofTrueTypeFont.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofTrueTypeFont.cpp; path = ../../../openFrameworks/graphics/ofTrueTypeFont.cpp; sourceTree = SOURCE_ROOT; };
@@ -821,6 +821,8 @@
 		E4F3BAFF12F4C751002D19BB /* graphics */ = {
 			isa = PBXGroup;
 			children = (
+				92C55F86132DA7DD00EC2631 /* ofPath.cpp */,
+				92C55F87132DA7DD00EC2631 /* ofPath.h */,
 				DA48FE73131D85A6000062BC /* ofPolyline.cpp */,
 				DA48FE74131D85A6000062BC /* ofPolyline.h */,
 				DA48FE75131D85A6000062BC /* ofPolyUtils.cpp */,
@@ -838,8 +840,6 @@
 				E4F3BB0912F4C752002D19BB /* ofPixels.h */,
 				E4F3BB0A12F4C752002D19BB /* ofPixelUtils.cpp */,
 				E4F3BB0B12F4C752002D19BB /* ofPixelUtils.h */,
-				E4F3BB0E12F4C752002D19BB /* ofShape.cpp */,
-				E4F3BB0F12F4C752002D19BB /* ofShape.h */,
 				E4F3BB1212F4C752002D19BB /* ofTessellator.cpp */,
 				E4F3BB1312F4C752002D19BB /* ofTessellator.h */,
 				E4F3BB1612F4C752002D19BB /* ofTrueTypeFont.cpp */,
@@ -960,7 +960,6 @@
 				E4F3BB1F12F4C752002D19BB /* ofImage.h in Headers */,
 				E4F3BB2112F4C752002D19BB /* ofPixels.h in Headers */,
 				E4F3BB2312F4C752002D19BB /* ofPixelUtils.h in Headers */,
-				E4F3BB2712F4C752002D19BB /* ofShape.h in Headers */,
 				E4F3BB2B12F4C752002D19BB /* ofTessellator.h in Headers */,
 				E4F3BB2F12F4C752002D19BB /* ofTrueTypeFont.h in Headers */,
 				E4F3BD5412F4F8B0002D19BB /* aiAnim.h in Headers */,
@@ -1026,6 +1025,7 @@
 				DACFA8E6132D09E8008D4B7A /* ofTexture.h in Headers */,
 				DACFA8E8132D09E8008D4B7A /* ofVbo.h in Headers */,
 				DACFA8EA132D09E8008D4B7A /* ofVboMesh.h in Headers */,
+				92C55F89132DA7DD00EC2631 /* ofPath.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1056,6 +1056,7 @@
 			isa = PBXProject;
 			buildConfigurationList = E4B69B4D0A3A1720003C02F2 /* Build configuration list for PBXProject "openFrameworksLib" */;
 			compatibilityVersion = "Xcode 2.4";
+			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				English,
@@ -1120,7 +1121,6 @@
 				E4F3BB1E12F4C752002D19BB /* ofImage.cpp in Sources */,
 				E4F3BB2012F4C752002D19BB /* ofPixels.cpp in Sources */,
 				E4F3BB2212F4C752002D19BB /* ofPixelUtils.cpp in Sources */,
-				E4F3BB2612F4C752002D19BB /* ofShape.cpp in Sources */,
 				E4F3BB2A12F4C752002D19BB /* ofTessellator.cpp in Sources */,
 				E4F3BB2E12F4C752002D19BB /* ofTrueTypeFont.cpp in Sources */,
 				DA97FD3C12F5A61A005C9991 /* ofCairoRenderer.cpp in Sources */,
@@ -1136,6 +1136,7 @@
 				DACFA8E5132D09E8008D4B7A /* ofTexture.cpp in Sources */,
 				DACFA8E7132D09E8008D4B7A /* ofVbo.cpp in Sources */,
 				DACFA8E9132D09E8008D4B7A /* ofVboMesh.cpp in Sources */,
+				92C55F88132DA7DD00EC2631 /* ofPath.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
