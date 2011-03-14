@@ -116,7 +116,7 @@ string ofFileDialogResult::getPath(){
 
 
 //------------------------------------------------------------------------------
-void ofCreateAlertDialog(string errorMessage){	
+void ofSystemAlertDialog(string errorMessage){	
 	
 	
 	#ifdef TARGET_WIN32
@@ -227,7 +227,7 @@ CantGetNavOptions:
 
 
 // OS specific results here.  "" = cancel or something bad like can't load, can't save, etc...
-ofFileDialogResult ofFileLoadDialog(string windowTitle, bool bFolderSelection){
+ofFileDialogResult ofSystemLoadDialog(string windowTitle, bool bFolderSelection){
 	
 	ofFileDialogResult results;
 	
@@ -351,7 +351,7 @@ ofFileDialogResult ofFileLoadDialog(string windowTitle, bool bFolderSelection){
 
 
 
-ofFileDialogResult ofFileSaveDialog(string defaultName, string messageName){
+ofFileDialogResult ofSystemSaveDialog(string defaultName, string messageName){
 	
 	ofFileDialogResult results;
 	
