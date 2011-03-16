@@ -12,7 +12,7 @@
 #include "ofGraphics.h"
 
 void ofDrawAxis(float size) {
-	
+
 	// draw x axis
 	ofSetColor(255, 0, 0);
 	glPushMatrix();
@@ -20,7 +20,7 @@ void ofDrawAxis(float size) {
 	glScalef(size, 2, 2);
 	ofBox(0, 0, 0, 1);
 	glPopMatrix();
-	
+
 	// draw y axis
 	ofSetColor(0, 255, 0);
 	glPushMatrix();
@@ -28,12 +28,12 @@ void ofDrawAxis(float size) {
 	glScalef(2, size, 2);
 	ofBox(0, 0, 0, 1);
 	glPopMatrix();
-	
+
 	// draw z axis
 	ofSetColor(0, 0, 255);
 	glPushMatrix();
 	glTranslatef(0, 0, size/2);
 	glScalef(2, 2, size);
 	ofBox(0, 0, 0, 1);
-	glPopMatrix();	
+	glPopMatrix();
 }
