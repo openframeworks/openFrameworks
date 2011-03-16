@@ -39,8 +39,9 @@
 			<Add directory="..\..\..\rtAudio\include" />
 			<Add directory="..\..\..\fmodex\include" />
 			<Add directory="..\..\..\videoInput\include" />
-			<Add directory="..\..\..\glee\include" />
+			<Add directory="..\..\..\glew\include" />
 			<Add directory="..\..\..\glut\include" />
+			<Add directory="..\..\..\cairo\include\cairo" />
 			<Add directory="..\..\..\openFrameworks" />
 			<Add directory="..\..\..\openFrameworks\app" />
 			<Add directory="..\..\..\openFrameworks\events" />
@@ -49,6 +50,10 @@
 			<Add directory="..\..\..\openFrameworks\sound" />
 			<Add directory="..\..\..\openFrameworks\video" />
 			<Add directory="..\..\..\openFrameworks\communication" />
+			<Add directory="..\..\..\openFrameworks\types" />
+			<Add directory="..\..\..\openFrameworks\3d" />
+			<Add directory="..\..\..\openFrameworks\gl" />
+			<Add directory="..\..\..\openFrameworks\math" />
 			<Add directory="..\..\..\poco\include" />
 		</Compiler>
 		<Unit filename="..\..\..\openFrameworks\3d\of3dUtils.cpp">
