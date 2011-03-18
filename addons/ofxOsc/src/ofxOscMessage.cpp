@@ -184,6 +184,7 @@ void ofxOscMessage::addStringArg( string argument )
 
 ofxOscMessage& ofxOscMessage::copy( const ofxOscMessage& other )
 {
+	clear();
 	// copy address
 	address = other.address;
 

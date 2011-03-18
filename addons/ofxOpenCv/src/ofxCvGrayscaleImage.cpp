@@ -11,6 +11,10 @@ ofxCvGrayscaleImage::ofxCvGrayscaleImage() {
     init();
 }
 
+ofxCvGrayscaleImage::~ofxCvGrayscaleImage(){
+	cvReleaseMat(&briConLutMatrix);
+}
+
 //--------------------------------------------------------------------------------
 ofxCvGrayscaleImage::ofxCvGrayscaleImage( const ofxCvGrayscaleImage& _mom ) {
     init();

@@ -219,6 +219,7 @@ protected:
   unsigned long m_dwTimeoutAccept;
   bool nonBlocking;
   static bool m_bWinsockInit;
+
 };
 
 #endif // ___ofxTCPManager__H__

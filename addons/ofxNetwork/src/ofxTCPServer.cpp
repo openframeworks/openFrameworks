@@ -169,7 +169,7 @@ string ofxTCPServer::getClientIP(int clientID){
 
 //--------------------------
 int ofxTCPServer::getNumClients(){
-	return TCPConnections.size();
+	return TCPConnections.size()-1;
 }
 
 //--------------------------

@@ -14,9 +14,9 @@
 #include "ofRectangle.h"
 #include "ofConstants.h"
 #include "ofColor.h"
-#include "ofPrimitive.h"
+#include "ofMesh.h"
 class ofPixels;
-class ofShape;
+class ofPath;
 class ofPolyline;
 typedef ofPixels& ofPixelsRef;
 
@@ -195,8 +195,9 @@ class ofBaseRenderer{
 public:
 	virtual ~ofBaseRenderer(){}
 	virtual void draw(ofPolyline & poly)=0;
-	virtual void draw(ofShape & shape)=0;
-	virtual void draw(ofPrimitive & vertexData)=0;
+	virtual void draw(ofPath & shape)=0;
+	virtual void draw(ofMesh & vertexData)=0;
+	virtual void draw(ofMesh & vertexData, ofPolyRenderMode renderType)=0;
 	virtual void draw(vector<ofPoint> & vertexData, ofPrimitiveMode drawMode)=0;
 
 	//--------------------------------------------
@@ -210,7 +211,7 @@ public:
 	virtual void viewport(ofRectangle viewport){};
 	virtual void viewport(float x = 0, float y = 0, float width = 0, float height = 0, bool invertY = true){};
 	virtual void setupScreenPerspective(float width = 0, float height = 0, int orientation=0, bool vFlip = true, float fov = 60, float nearDist = 0, float farDist = 0){}
-	virtual void setupScreenOrtho(float width = 0, float height = 0, bool vFlip = true, float nearDist = -1, float farDist = 1){};
+	virtual void setupScreenOrtho(float width = 0, float height = 0, int orientation=0, bool vFlip = true, float nearDist = -1, float farDist = 1){};
 	virtual ofRectangle getCurrentViewport(){return ofRectangle();};
 	virtual int getViewportWidth(){return 0;};
 	virtual int getViewportHeight(){return 0;};

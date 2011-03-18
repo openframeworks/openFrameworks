@@ -11,7 +11,7 @@
 
 OrthoCamera::OrthoCamera()
 {
-	isOrtho = true;
+	enableOrtho();
 	scale = 1;
 }
 

@@ -5,12 +5,16 @@ void testApp::setup(){
 	
 //	ofSetLogLevel(OF_LOG_VERBOSE);
     ofLoadModel("astroBoy_walk.dae", model);
-	model.setRenderMethod(OF_MESH_USING_VBO);
 	
 	ofEnableNormalizedTexCoords();
 	model.enableTextures();
 	model.enableNormals();
-	
+
+	map<string, ofMesh*>::iterator it;
+	for(it=model.named_meshes.begin();it!=model.named_meshes.begin();it++){
+		cout << it->first << endl;
+	}
+
     glEnable(GL_DEPTH_TEST);
 	
 	lightsOn = true;
@@ -63,16 +67,16 @@ void testApp::draw(){
 	glRotatef(ofGetWidth()*.5 - mouseX,0,1,0);		
 
 	ofSetColor(255,255,255);
-	model.drawFaces();
+	model.drawWireframe();
 
 	glPointSize(20);
 	glDisable(GL_LIGHTING);
 	ofFill();
 	
-	for (int i =0; i < model.meshNodes.size();i++){
-		model.meshNodes.at(i).transformGL();
+	for (int i =0; i < (int)model.nodes.size();i++){
+		model.nodes.at(i).transformGL();
 		ofDrawAxis(0.1);
-		model.meshNodes.at(i).restoreTransformGL();
+		model.nodes.at(i).restoreTransformGL();
 	}
 
     glPopMatrix();
