@@ -185,6 +185,28 @@ bool ofLoadImage(ofPixels & pix, const ofBuffer & buffer) {
 }
 
 //----------------------------------------------------------------
+bool ofLoadImage(ofTexture & tex, string path){
+	ofPixels pixels;
+	bool loaded = ofLoadImage(pixels,path);
+	if(loaded){
+		tex.allocate(pixels.getWidth(),pixels.getHeight(),pixels.getGlDataType());
+		tex.loadData(pixels);
+	}
+	return loaded;
+}
+
+//----------------------------------------------------------------
+bool ofLoadImage(ofTexture & tex, const ofBuffer & buffer){
+	ofPixels pixels;
+	bool loaded = ofLoadImage(pixels,buffer);
+	if(loaded){
+		tex.allocate(pixels.getWidth(),pixels.getHeight(),pixels.getGlDataType());
+		tex.loadData(pixels);
+	}
+	return loaded;
+}
+
+//----------------------------------------------------------------
 void ofSaveImage(ofPixels & pix, string fileName, ofImageQualityType qualityLevel) {
 
 	if (pix.isAllocated() == false){
@@ -224,6 +246,7 @@ void ofSaveImage(ofPixels & pix, string fileName, ofImageQualityType qualityLeve
 			if(qualityLevel != OF_IMAGE_QUALITY_BEST) {
 				ofLog(OF_LOG_WARNING, "ofImageCompressionType only applies to JPEG images, ignoring value.");
 			}
+			if (fif==FIF_GIF) bmp = FreeImage_ConvertTo8Bits(bmp);
 			FreeImage_Save(fif, bmp, fileName.c_str());
 		}
 	}

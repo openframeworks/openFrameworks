@@ -3,7 +3,6 @@
 #include "ofMain.h"
 // assimp include files. These three are usually needed.
 #include "assimp.h"
-#include "aiPostProcess.h"
 #include "aiScene.h"
 
 // ofDevCon 
@@ -27,42 +26,74 @@ class ofxAssimpModelLoader{
         ~ofxAssimpModelLoader();
         ofxAssimpModelLoader();
 
-        void loadModel(string modelName);
+        bool           loadModel(string modelName, bool optimize=true);
+        bool           loadModel(ofBuffer & buffer, bool optimize=true, const char * extension="");
+        void           createEmptyModel();
+        void           createLightsFromAiModel();
+        void           optimizeScene();
+
+        void           clear();
     
-        void setScale(float x, float y, float z);
-        void setPosition(float x, float y, float z);
-        void setRotation(int which, float angle, float rot_x, float rot_y, float r_z);
+        void           setScale(float x, float y, float z);
+        void           setPosition(float x, float y, float z);
+        void           setRotation(int which, float angle, float rot_x, float rot_y, float r_z);
 
         // Scale the model to the screen automatically.
-        void setScaleNomalization(bool normalize);
+        void           setScaleNomalization(bool normalize);
 
         // This changes when you load a different model, may be 0.
-        unsigned int getAnimationCount();
+        unsigned int   getAnimationCount();
     
-        void setAnimation(int anim); // 0 to 1 - getNumAnimations()
-        void setNormalizedTime(float time); // 0 - 1
-        void setTime(float time); // 0 - duration
-        float getDuration(int animation);
+        void           setAnimation(int anim); // 0 to 1 - getNumAnimations()
+        void           setNormalizedTime(float time); // 0 - 1
+        void           setTime(float time); // 0 - duration
+        float          getDuration(int animation);
 
-        void draw();
+        vector<string> getMeshNames();
+        int            getNumMeshes();
+
+        ofMesh         getMesh(string name);
+        ofMesh         getMesh(int num);
+
+        ofMesh         getCurrentAnimatedMesh(string name);
+        ofMesh         getCurrentAnimatedMesh(int num);
+
+        ofMaterial     getMaterialForMesh(string name);
+        ofMaterial     getMaterialForMesh(int num);
+
+        ofTexture      getTextureForMesh(string name);
+        ofTexture      getTextureForMesh(int num);
+
+
+    	void           drawWireframe();
+    	void           drawFaces();
+    	void           drawVertices();
+
+    	void           enableTextures();
+    	void           disableTextures();
+    	void           enableNormals();
+    	void           enableMaterials();
+    	void           disableNormals();
+    	void           enableColors();
+    	void           disableColors();
+    	void           disableMaterials();
+
+        void           draw(ofPolyRenderMode renderType);
 		
-		ofPoint getPosition(){
-			return pos;
-		}
-            
-        // Our array of textures we load from the models path.
-        vector <ofImage> textures;
+		ofPoint        getPosition();
+		ofPoint        getSceneCenter();
+		float          getNormalizedScale();
+		ofPoint        getScale();
+
+		const aiScene* getAssimpScene();
     
-        // TODO: convert to ofMesh or ofVBOMesh
-        vector <ofxAssimpMeshHelper> modelMeshes;  
          
     protected:
         // the main Asset Import scene that does the magic.
-        aiScene* scene;
+        const aiScene* scene;
 
         // Initial VBO creation, etc
         void loadGLResources();
-        void deleteGLResources();
     
         // Updates the internal animation transforms for the selected animation index
         void updateAnimation(unsigned int animationIndex, float time);
@@ -73,6 +104,8 @@ class ofxAssimpModelLoader{
         void getBoundingBoxWithMinVector(struct aiVector3D* min, struct aiVector3D* max);
         void getBoundingBoxForNode(const struct aiNode* nd,  struct aiVector3D* min, struct aiVector3D* max, struct aiMatrix4x4* trafo);
         
+        void calculateDimensions();
+
         bool hasAnimations;
         int currentAnimation;
         
@@ -93,5 +126,10 @@ class ofxAssimpModelLoader{
         vector <ofPoint> rotAxis;
         ofPoint scale;
         ofPoint pos;
-        int numRotations;
+        string filepath;
+
+        vector<ofLight> lights;
+        vector <ofxAssimpMeshHelper> modelMeshes;
+
+        bool bUsingTextures, bUsingNormals, bUsingColors, bUsingMaterials;
 };

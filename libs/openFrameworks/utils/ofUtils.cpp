@@ -10,6 +10,13 @@
 #include "Poco/DateTimeFormatter.h"
 
 
+#ifdef TARGET_WIN32
+	#ifndef _MSC_VER
+        #include <unistd.h> // this if for MINGW / _getcwd
+    #endif
+#endif
+
+
 #ifdef TARGET_ANDROID
 // this is needed to be able to use poco 1.3,
 // will go away as soon as i compile poco 1.4
@@ -23,12 +30,12 @@ const int Ascii::CHARACTER_PROPERTIES[128]={0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 	#include <sys/time.h>
 #endif
 
-#ifdef TARGET_OSX 	
+#ifdef TARGET_OSX
 	#ifndef TARGET_OF_IPHONE
 		#include <mach-o/dyld.h>
-		#include <sys/param.h> // for MAXPATHLEN	 	
+		#include <sys/param.h> // for MAXPATHLEN
 	#endif
-#endif 
+#endif
 
 #ifdef TARGET_WIN32
     #include <mmsystem.h>
@@ -90,7 +97,7 @@ string ofGetTimestampString(){
 	return Poco::DateTimeFormatter::format(now, timeFormat);
 }
 
-//specify the string format - eg: %Y-%m-%d-%H-%M-%S-%i ( 2011-01-15-18-29-35-299 ) 
+//specify the string format - eg: %Y-%m-%d-%H-%M-%S-%i ( 2011-01-15-18-29-35-299 )
 //--------------------------------------------------
 string ofGetTimestampString(string timestampFormat){
 	Poco::LocalDateTime now;
@@ -185,11 +192,11 @@ void ofDisableDataPath(){
 //--------------------------------------------------
 void ofSetDataPathRoot(string newRoot){
 	string newPath = "";
-	
+
 	#ifdef TARGET_OSX
-		#ifndef TARGET_OF_IPHONE 
+		#ifndef TARGET_OF_IPHONE
 			char path[MAXPATHLEN];
-			uint32_t size = sizeof(path);				
+			uint32_t size = sizeof(path);
 
 			if (_NSGetExecutablePath(path, &size) == 0){
 				//printf("executable path is %s\n", path);
@@ -202,20 +209,20 @@ void ofSetDataPathRoot(string newRoot){
 
 				newPath = "";
 
-				for(int i = 0; i < pathBrokenUp.size()-1; i++){				
+				for(int i = 0; i < pathBrokenUp.size()-1; i++){
 					newPath += pathBrokenUp[i];
 					newPath += "/";
 				}
 
-				//cout << newPath << endl;   // some sanity checks here				
+				//cout << newPath << endl;   // some sanity checks here
 				//system( "pwd" );
 
-				chdir ( newPath.c_str() );				
-				//system("pwd");        
-			}else{				
+				chdir ( newPath.c_str() );
+				//system("pwd");
+			}else{
 				ofLog(OF_LOG_FATAL_ERROR, "buffer too small; need size %u\n", size);
 			}
-		#endif 
+		#endif
 	#endif
 	dataPathRoot = newRoot;
 }
@@ -233,10 +240,11 @@ string ofToDataPath(string path, bool makeAbsolute){
 		if(makeAbsolute && (path.length()==0 || path.substr(0,1) != "/")){
 			#if !defined( TARGET_OF_IPHONE) & !defined(TARGET_ANDROID)
 
-			#ifndef _MSC_VER
+			#ifndef TARGET_WIN32
 				char currDir[1024];
 				path = "/"+path;
-				path = getcwd(currDir, 1024)+path;
+                path = getcwd(currDir, 1024)+path;
+
 			#else
 
 				char currDir[1024];
@@ -424,7 +432,7 @@ string ofBinaryToString(const string& value) {
 //--------------------------------------------------
 vector <string> ofSplitString(const string & source, const string & delimiters, bool ignoreEmpty, bool trim) {
 	using namespace Poco;
-	
+
 	int flags = 0;
 	if(ignoreEmpty) {
 		flags |= StringTokenizer::TOK_IGNORE_EMPTY;
@@ -432,19 +440,19 @@ vector <string> ofSplitString(const string & source, const string & delimiters, 
 	if(trim) {
 		flags |= StringTokenizer::TOK_TRIM;
 	}
-	
+
 	// tokenize the sring using poco
 	StringTokenizer tokens(source, delimiters, flags);
 	vector<string> result;
 	result.assign(tokens.begin(), tokens.end());
-	
+
 	// poco ignores trailing delimiters, which is inconsistent with everything else
 	string lastCharacter;
 	lastCharacter += source[source.size() - 1];
 	if(ofIsStringInString(delimiters, lastCharacter)) {
 		result.push_back("");
 	}
-	
+
 	return result;
 }
 
@@ -452,7 +460,7 @@ vector <string> ofSplitString(const string & source, const string & delimiters, 
 string ofJoinString(vector <string> stringElements, const string & delimiter){
 	string resultString = "";
 	int numElements = stringElements.size();
-	
+
 	for(int k = 0; k < numElements; k++){
 		if( k < numElements-1 ){
 			resultString += stringElements[k] + delimiter;
@@ -460,7 +468,7 @@ string ofJoinString(vector <string> stringElements, const string & delimiter){
 			resultString += stringElements[k];
 		}
 	}
-	
+
 	return resultString;
 }
 
@@ -544,7 +552,7 @@ void ofSaveViewport(string filename) {
 	ofImage screen;
 	ofRectangle view = ofGetCurrentViewport();
 	screen.allocate(view.width, view.height, OF_IMAGE_COLOR);
-	screen.grabScreen(0, 0, view.height, view.width);
+	screen.grabScreen(0, 0, view.width, view.height);
 	screen.saveImage(filename);
 }
 

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ofMain.h"
+#include "ofEvents.h"
 
 
 class testApp : public ofSimpleApp{
@@ -22,7 +23,7 @@ public:
 	void dragEvent(ofDragInfo dragInfo);
 	void gotMessage(ofMessage msg);
 		
-	void setupArduino();
+	void setupArduino(const int & version);
 	void updateArduino();
 
 	ofImage				bgImage;

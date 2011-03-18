@@ -62,7 +62,7 @@ static ofOrientation	orientation;
 static WNDPROC currentWndProc;
 static HWND handle  = NULL;
 
-// This function takes in a wParam from the WM_DROPFILES message and 
+// This function takes in a wParam from the WM_DROPFILES message and
 // prints all the files to a message box.
 
 void HandleFiles(WPARAM wParam)
@@ -76,7 +76,7 @@ void HandleFiles(WPARAM wParam)
 	POINT pt;
 	DragQueryPoint(hDrop, &pt);
 	//printf("%i %i \n", pt.x, pt.y);
-	
+
 	ofDragInfo info;
 	info.position.x = pt.x;
 	info.position.y = pt.y;
@@ -88,15 +88,15 @@ void HandleFiles(WPARAM wParam)
     // the current file being queried.
     int count = DragQueryFile(hDrop, 0xFFFFFFFF, szName, MAX_PATH);
 
-	
+
     // Here we go through all the files that were drag and dropped then display them
     for(int i = 0; i < count; i++)
     {
         // Grab the name of the file associated with index "i" in the list of files dropped.
         // Be sure you know that the name is attached to the FULL path of the file.
         DragQueryFile(hDrop, i, szName, MAX_PATH);
-		
-		wchar_t * s = szName;
+
+		wchar_t * s =  (wchar_t*)szName;
 		char dfault = '?';
         const std::locale& loc = std::locale();
 		std::ostringstream stm;
@@ -104,7 +104,7 @@ void HandleFiles(WPARAM wParam)
 			stm << std::use_facet< std::ctype<wchar_t> >( loc ).narrow( *s++, dfault );
 		}
 		info.files.push_back(string(stm.str()));
-		
+
 			//toUTF8(udispName, dispName);
 
         // Bring up a message box that displays the current file being processed
@@ -134,7 +134,7 @@ static LRESULT CALLBACK winProc(HWND hwnd, UINT Msg, WPARAM wParam, LPARAM lPara
          OF_EXIT_APP(0);
          break;
 	  case WM_DROPFILES:
-            
+
             // Call our function we created to display all the files.
             // We pass the wParam because it's the HDROP handle.
             HandleFiles(wParam);
@@ -152,8 +152,8 @@ static void fixCloseWindowOnWin32(){
 
 	//get the HWND
 	handle = WindowFromDC(wglGetCurrentDC());
-	
-	// enable drag and drop of files. 
+
+	// enable drag and drop of files.
 	DragAcceptFiles (handle, TRUE);
 
 	//store the current message event handler for the window
@@ -278,10 +278,10 @@ void ofAppGlutWindow::initializeWindow(){
     glutSpecialUpFunc(special_key_up_cb);
 
     glutReshapeFunc(resize_cb);
-	
+
 #ifdef TARGET_OSX
 	glutDragEventFunc(dragEvent);
-#endif 
+#endif
 
     nFramesSinceWindowResized = 0;
 
@@ -300,7 +300,7 @@ void ofAppGlutWindow::runAppViaInfiniteLoop(ofBaseApp * appPtr){
 
 	ofNotifySetup();
 	ofNotifyUpdate();
-	
+
 	glutMainLoop();
 }
 
@@ -358,7 +358,7 @@ int ofAppGlutWindow::getHeight(){
 	if( orientation == OF_ORIENTATION_DEFAULT || orientation == OF_ORIENTATION_180 ){
 		return windowH;
 	}
-	return windowW;	
+	return windowW;
 }
 
 //------------------------------------------------------------
@@ -551,8 +551,8 @@ void ofAppGlutWindow::display(void){
     nFramesSinceWindowResized++;
 
 	//fps calculation moved to idle_cb as we were having fps speedups when heavy drawing was occuring
-	//wasn't reflecting on the actual app fps which was in reality slower. 
-	//could be caused by some sort of deferred drawing? 
+	//wasn't reflecting on the actual app fps which was in reality slower.
+	//could be caused by some sort of deferred drawing?
 
 	nFrameCount++;		// increase the overall frame count
 
@@ -568,19 +568,19 @@ void rotateMouseXY(ofOrientation orientation, int &x, int &y) {
 			x = ofGetWidth() - x;
 			y = ofGetHeight() - y;
 			break;
-			
+
 		case OF_ORIENTATION_90_RIGHT:
 			savedY = y;
 			y = x;
 			x = ofGetWidth()-savedY;
 			break;
-			
+
 		case OF_ORIENTATION_90_LEFT:
 			savedY = y;
 			y = ofGetHeight() - x;
 			x = savedY;
 			break;
-			
+
 		case OF_ORIENTATION_DEFAULT:
 		default:
 			break;
@@ -590,7 +590,7 @@ void rotateMouseXY(ofOrientation orientation, int &x, int &y) {
 //------------------------------------------------------------
 void ofAppGlutWindow::mouse_cb(int button, int state, int x, int y) {
 	rotateMouseXY(orientation, x, y);
-	
+
 	if (nFrameCount > 0){
 		if (state == GLUT_DOWN) {
 			ofNotifyMousePressed(x, y, button);
@@ -623,7 +623,7 @@ void ofAppGlutWindow::passive_motion_cb(int x, int y) {
 
 //------------------------------------------------------------
 void ofAppGlutWindow::dragEvent(char ** names, int howManyFiles, int dragX, int dragY){
-	
+
 	// TODO: we need position info on mac passed through
 	ofDragInfo info;
 	info.position.x = dragX;
@@ -633,9 +633,9 @@ void ofAppGlutWindow::dragEvent(char ** names, int howManyFiles, int dragX, int 
 		string temp = string(names[i]);
 		info.files.push_back(temp);
 	}
-	
+
 	ofAppPtr->dragEvent(info);
-	
+
 }
 
 
@@ -659,11 +659,11 @@ void ofAppGlutWindow::idle_cb(void) {
 		}
 	}
 	prevMillis = ofGetElapsedTimeMillis(); // you have to measure here
-	
+
     // -------------- fps calculation:
 	// theo - now moved from display to idle_cb
 	// discuss here: http://github.com/openframeworks/openFrameworks/issues/labels/0062#issue/187
-	// 
+	//
 	//
 	// theo - please don't mess with this without letting me know.
 	// there was some very strange issues with doing ( timeNow-timeThen ) producing different values to: double diff = timeNow-timeThen;
@@ -678,7 +678,7 @@ void ofAppGlutWindow::idle_cb(void) {
 	 }
 	 lastFrameTime	= diff;
 	 timeThen		= timeNow;
-  	// --------------	
+  	// --------------
 
 	ofNotifyUpdate();
 

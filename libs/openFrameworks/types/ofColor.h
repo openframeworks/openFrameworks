@@ -23,6 +23,9 @@ class ofColor{
 		static const ofColor red;
 		static const ofColor green;
 		static const ofColor blue;
+		static const ofColor cyan;
+		static const ofColor magenta;
+		static const ofColor yellow;
 		static const ofColor black;
 	
 		void set (float _r, float _g, float _b, float _a = 255.0f);

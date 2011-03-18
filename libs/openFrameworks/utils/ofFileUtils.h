@@ -77,7 +77,7 @@ class ofFileUtils{
 	static bool doesFileExist(string fPath,  bool bRelativeToData = true);
 
 	//------------------------------------------------------------------------------------------------------------
-	static bool makeDirectory(string dirPath, bool bRelativeToData = true);
+	static bool makeDirectory(string dirPath, bool bRelativeToData = true, bool recursive = false);
 	
 	//------------------------------------------------------------------------------------------------------------
 	static bool deleteFile(string path, bool bRelativeToData = true);

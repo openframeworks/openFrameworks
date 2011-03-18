@@ -9,7 +9,7 @@
 #include <stack>
 #include "ofMatrix4x4.h"
 #include "ofBaseTypes.h"
-#include "ofShape.h"
+#include "ofPath.h"
 
 
 
@@ -26,10 +26,11 @@ public:
 	void setup(string filename, Type type=ofCairoRenderer::PDF, bool multiPage=true, bool b3D=false);
 	void close();
 
-	void draw(ofShape & shape);
+	void draw(ofPath & shape);
 	void draw(ofSubPath & path);
 	void draw(ofPolyline & poly);
-	void draw(ofPrimitive & vertexData);
+	void draw(ofMesh & vertexData);
+	void draw(ofMesh & vertexData, ofPolyRenderMode mode);
 	void draw(vector<ofPoint> & vertexData, ofPrimitiveMode drawMode);
 
 	bool rendersPathPrimitives(){
@@ -47,7 +48,7 @@ public:
 	void viewport(ofRectangle viewport);
 	void viewport(float x = 0, float y = 0, float width = 0, float height = 0, bool invertY = true);
 	void setupScreenPerspective(float width = 0, float height = 0, int orientation = 0, bool vFlip = true, float fov = 60, float nearDist = 0, float farDist = 0);
-	void setupScreenOrtho(float width = 0, float height = 0, bool vFlip = true, float nearDist = -1, float farDist = 1);
+	void setupScreenOrtho(float width = 0, float height = 0, int orientation = 0, bool vFlip = true, float nearDist = -1, float farDist = 1);
 	ofRectangle getCurrentViewport();
 	int getViewportWidth();
 	int getViewportHeight();
