@@ -356,11 +356,11 @@ void ofGLRenderer::setupScreenOrtho(float width, float height, bool vFlip, float
 
 #else
 	if(vFlip) {
-		ofMatrix4x4 ortho = ofxMatrix4x4::newOrthoMatrix(0, width, height, 0, nearDist, farDist);
+		ofMatrix4x4 ortho = ofMatrix4x4::newOrthoMatrix(0, width, height, 0, nearDist, farDist);
 		ofSetCoordHandedness(OF_LEFT_HANDED);
 		glMultMatrixf(ortho.getPtr());
 	}else{
-		ofMatrix4x4 ortho = ofxMatrix4x4::newOrthoMatrix(0, width, 0, height, nearDist, farDist);
+		ofMatrix4x4 ortho = ofMatrix4x4::newOrthoMatrix(0, width, 0, height, nearDist, farDist);
 		glMultMatrixf(ortho.getPtr());
 	}
 #endif
