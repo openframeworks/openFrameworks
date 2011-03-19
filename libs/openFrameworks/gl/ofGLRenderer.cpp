@@ -201,21 +201,19 @@ void ofGLRenderer::popView() {
 }
 
 //----------------------------------------------------------
-void ofGLRenderer::viewport(ofRectangle viewport_)
-{
+void ofGLRenderer::viewport(ofRectangle viewport_){
 	viewport(viewport_.x, viewport_.y, viewport_.width, viewport_.height,true);
 }
 
 //----------------------------------------------------------
 void ofGLRenderer::viewport(float x, float y, float width, float height, bool invertY) {
-
-	if(width == 0) width = ofGetWidth();
-	if(height == 0) height = ofGetHeight();
+	if(width == 0) width = ofGetWindowWidth();
+	if(height == 0) height = ofGetWindowHeight();
 
 	if (invertY){
-		y = ofGetHeight() - (y + height);
+		y = ofGetWindowHeight() - (y + height);
 	}
-	glViewport(x, y, width, height);
+	glViewport(x, y, width, height);	
 }
 
 //----------------------------------------------------------
@@ -265,22 +263,15 @@ void ofGLRenderer::setupScreenPerspective(float width, float height, int orienta
 	if(height == 0) height = ofGetHeight();
 	if( orientation == 0 ) orientation = ofGetOrientation();
 
-	float w = width;
-	float h = height;
+	float viewW = ofGetViewportWidth();
+	float viewH = ofGetViewportHeight();
 
-	//we do this because ofGetWidth and ofGetHeight return orientated widths and height
-	//for the camera we need width and height of the actual screen
-	if( orientation == OF_ORIENTATION_90_LEFT || orientation == OF_ORIENTATION_90_RIGHT ){
-		h = width;
-		w = height;
-	}
-
-	float eyeX = w / 2;
-	float eyeY = h / 2;
+	float eyeX = viewW / 2;
+	float eyeY = viewH / 2;
 	float halfFov = PI * fov / 360;
 	float theTan = tanf(halfFov);
 	float dist = eyeY / theTan;
-	float aspect = (float) w / h;
+	float aspect = (float) viewW / viewH;
 
 	if(nearDist == 0) nearDist = dist / 10.0f;
 	if(farDist == 0) farDist = dist * 10.0f;
@@ -339,33 +330,81 @@ void ofGLRenderer::setupScreenPerspective(float width, float height, int orienta
 }
 
 //----------------------------------------------------------
-void ofGLRenderer::setupScreenOrtho(float width, float height, bool vFlip, float nearDist, float farDist) {
-	if(width == 0) width = ofGetViewportWidth();
-	if(height == 0) height = ofGetViewportHeight();
-
+void ofGLRenderer::setupScreenOrtho(float width, float height, int orientation, bool vFlip, float nearDist, float farDist) {
+	if(width == 0) width = ofGetWidth();
+	if(height == 0) height = ofGetHeight();
+	if( orientation == 0 ) orientation = ofGetOrientation();
+	
+	float viewW = ofGetViewportWidth();
+	float viewH = ofGetViewportHeight();
+	
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 
 	ofSetCoordHandedness(OF_RIGHT_HANDED);
 #ifndef TARGET_OPENGLES
 	if(vFlip) {
-		glOrtho(0, width, height, 0, nearDist, farDist);
 		ofSetCoordHandedness(OF_LEFT_HANDED);
 	}
-	else glOrtho(0, width, 0, height, nearDist, farDist);
+	
+	glOrtho(0, viewW, 0, viewH, nearDist, farDist);
 
 #else
 	if(vFlip) {
+<<<<<<< HEAD
 		ofMatrix4x4 ortho = ofMatrix4x4::newOrthoMatrix(0, width, height, 0, nearDist, farDist);
 		ofSetCoordHandedness(OF_LEFT_HANDED);
-		glMultMatrixf(ortho.getPtr());
-	}else{
-		ofMatrix4x4 ortho = ofMatrix4x4::newOrthoMatrix(0, width, 0, height, nearDist, farDist);
-		glMultMatrixf(ortho.getPtr());
 	}
+	
+	ofMatrix4x4 ortho = ofMatrix4x4::newOrthoMatrix(0, viewW, 0, viewH, nearDist, farDist);
+	glMultMatrixf(ortho.getPtr());	
 #endif
+
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
+
+	//note - theo checked this on iPhone and Desktop for both vFlip = false and true
+	switch(orientation) {
+		case OF_ORIENTATION_180:
+			glRotatef(-180, 0, 0, 1);
+			if(vFlip){
+				glScalef(1, -1, 1);
+				glTranslatef(-width, 0, 0);
+			}else{
+				glTranslatef(-width, -height, 0);
+			}
+
+			break;
+
+		case OF_ORIENTATION_90_RIGHT:
+			glRotatef(-90, 0, 0, 1);
+			if(vFlip){
+				glScalef(-1, 1, 1);
+			}else{
+				glScalef(-1, -1, 1);
+				glTranslatef(0, -height, 0);
+			}
+			break;
+
+		case OF_ORIENTATION_90_LEFT:
+			glRotatef(90, 0, 0, 1);
+			if(vFlip){
+				glScalef(-1, 1, 1);
+				glTranslatef(-width, -height, 0);
+			}else{
+				glScalef(-1, -1, 1);
+				glTranslatef(-width, 0, 0);
+			}
+			break;
+
+		case OF_ORIENTATION_DEFAULT:
+		default:
+			if(vFlip){
+				glScalef(1, -1, 1);
+				glTranslatef(0, -height, 0);
+			}
+			break;
+	}
 
 }
 

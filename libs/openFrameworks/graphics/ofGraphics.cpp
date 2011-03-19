@@ -223,8 +223,8 @@ void ofSetupScreenPerspective(float width, float height, int orientation, bool v
 }
 
 //----------------------------------------------------------
-void ofSetupScreenOrtho(float width, float height, bool vFlip, float nearDist, float farDist) {
-	renderer->setupScreenOrtho(width,height,vFlip,nearDist,farDist);
+void ofSetupScreenOrtho(float width, float height, int orientation, bool vFlip, float nearDist, float farDist) {
+	renderer->setupScreenOrtho(width,height,orientation,vFlip,nearDist,farDist);
 }
 
 //----------------------------------------------------------
