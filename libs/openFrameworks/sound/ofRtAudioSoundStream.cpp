@@ -77,7 +77,7 @@ bool ofRtAudioSoundStream::setupInput(ofBaseSoundInput * soundInput, int numChan
 		audio = new RtAudio();
 	}	catch (RtError &error) {
 		error.printMessage();
-		//std::exit(EXIT_FAILURE); // need case here
+		return false;
 	}
 
 	RtAudio::StreamParameters * outputParameters=NULL;
@@ -106,7 +106,9 @@ bool ofRtAudioSoundStream::setupInput(ofBaseSoundInput * soundInput, int numChan
 		audio->startStream();
 	} catch (RtError &error) {
 		error.printMessage();
+		return false;
 	}
+	return true;
 }
 
 //------------------------------------------------------------------------------
@@ -127,7 +129,7 @@ bool ofRtAudioSoundStream::setupOutput(ofBaseSoundOutput * soundOutput, int numC
 		audio = new RtAudio();
 	}	catch (RtError &error) {
 		error.printMessage();
-		//std::exit(EXIT_FAILURE); // need case here
+		return false;
 	}
 
 	RtAudio::StreamParameters * outputParameters=NULL;
@@ -156,7 +158,9 @@ bool ofRtAudioSoundStream::setupOutput(ofBaseSoundOutput * soundOutput, int numC
 		audio->startStream();
 	} catch (RtError &error) {
 		error.printMessage();
+		return false;
 	}
+	return true;
 }
 
 //------------------------------------------------------------------------------
