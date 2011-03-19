@@ -90,6 +90,34 @@ public:
 };
 
 //----------------------------------------------------------
+// ofBaseHasSoundStream
+//----------------------------------------------------------
+class ofBaseSoundInput{
+
+	public:
+		virtual void audioIn( float * input, int bufferSize, int nChannels ){  
+			audioReceived(input, bufferSize, nChannels);
+		}
+
+		virtual void audioReceived( float * input, int bufferSize, int nChannels ){}
+};
+
+//----------------------------------------------------------
+// ofBaseHasSoundStream
+//----------------------------------------------------------
+class ofBaseSoundOutput{
+
+	public:
+		virtual void audioOut( float * output, int bufferSize, int nChannels ){
+			audioRequested(output, bufferSize, nChannels);
+		}
+
+		//legacy
+		virtual void audioRequested( float * output, int bufferSize, int nChannels ){}
+};
+
+
+//----------------------------------------------------------
 // ofBaseVideo
 //----------------------------------------------------------
 class ofBaseVideo: public ofBaseHasPixels, public ofBaseUpdates{
