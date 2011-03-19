@@ -10,7 +10,7 @@ class ofDragInfo{
 		ofPoint position;
 };
 
-class ofBaseApp : public ofBaseHasSoundStream{
+class ofBaseApp : public ofBaseSoundInput, public ofBaseSoundOutput{
 
 	public:
         ofBaseApp() {
@@ -34,10 +34,22 @@ class ofBaseApp : public ofBaseHasSoundStream{
 		virtual void mousePressed( int x, int y, int button ){}
 		virtual void mouseReleased(){}
 		virtual void mouseReleased(int x, int y, int button ){}
-
+		
 		virtual void dragEvent(ofDragInfo dragInfo) { }
-	
-		virtual void gotMessage(ofMessage msg){ }
+		virtual void gotMessage(ofMessage msg){ }		
+
+//		virtual void audioIn( float * input, int bufferSize, int nChannels ){  
+//			printf("ofBaseSoundInput 2\n");
+//			audioReceived(input, bufferSize, nChannels);
+//		}
+//
+//		virtual void audioReceived( float * input, int bufferSize, int nChannels ){}
+//
+//		virtual void audioOut( float * output, int bufferSize, int nChannels ){
+//			printf("ofBaseSoundOutput 2\n");
+//			audioRequested(output, bufferSize, nChannels);
+//		}
+//		virtual void audioRequested( float * output, int bufferSize, int nChannels ){}
 		
 		int mouseX, mouseY;			// for processing heads
 };

@@ -12,30 +12,34 @@ class ofRtAudioSoundStream : public ofBaseSoundStream{
 		
 		void listDevices();
 		void setDeviceID(int deviceID);
-		bool setup(ofSoundStreamMode soundStreamMode, ofBaseHasSoundStream * hasSoundStream, int numChannels, int sampleRate, int bufferSize, int nBuffers);
+
+		bool setupInput(ofBaseSoundInput * hasSoundStream, int numChannels, int sampleRate, int bufferSize, int nBuffers);
+		bool setupOutput(ofBaseSoundOutput * hasSoundStream, int numChannels, int sampleRate, int bufferSize, int nBuffers);
 		
 		void start();
 		void stop();
 		void close();
+		
+		void incrementTickCount();
 		
 		long unsigned long getTickCount();		
 				
 		int getNumInputChannels();
 		int getNumOutputChannels();
 		
-		void audioReceived(float * buffer, int bufferSize, int nChannels);
-		void audioRequested(float * buffer, int bufferSize, int nChannels);
+		void audioIn(float * buffer, int bufferSize, int nChannels);
+		void audioOut(float * buffer, int bufferSize, int nChannels);
 	
-		long unsigned long	tickCount;
-		ofBaseHasSoundStream * hasSoundStreamPtr;
+		ofBaseSoundInput * soundInputPtr;
+		ofBaseSoundOutput * soundOutputPtr;
 		
 	protected:
-		//----------------------------------- static variables:
-		RtAudio							*		audio;
-		int										sampleRate;
-		int deviceID;
-		int										nInputChannels;
-		int										nOutputChannels;
+		long unsigned long	tickCount;
+		RtAudio *			audio;
+		int					sampleRate;
+		int					deviceID;
+		int					nInputChannels;
+		int					nOutputChannels;
 		
 };
 

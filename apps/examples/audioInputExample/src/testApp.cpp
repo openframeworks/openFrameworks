@@ -16,7 +16,8 @@ void testApp::setup(){
 	//if you want to set a different device id 
 	//soundStream.setDeviceID(0); //bear in mind the device id corresponds to all audio devices, including  input-only and output-only devices.
 	
-	soundStream.setup(OF_SOUND_STREAM_INPUT, this, 2, 44100, 256, 4);	
+	soundStream.setupInput(this, 2, 44100, 256, 4);	
+	
 	left = new float[256];
 	right = new float[256];
 	
@@ -63,7 +64,7 @@ void testApp::draw(){
 }
 
 //--------------------------------------------------------------
-void testApp::audioReceived(float * input, int bufferSize, int nChannels){	
+void testApp::audioIn(float * input, int bufferSize, int nChannels){	
 	// samples are "interleaved"
 	for (int i = 0; i < bufferSize; i++){
 		left[i] = input[i*2];

@@ -21,12 +21,12 @@ void testApp::setup(){
 	lAudio = new float[bufferSize];
 	rAudio = new float[bufferSize];
 	
-	soundStream.listDevices();
+	//soundStream.listDevices();
 	
 	//if you want to set the device id to be different than the default
 	//soundStream.setDeviceID(1); 	//note some devices are input only and some are output only 
-	
-	soundStream.setup(OF_SOUND_STREAM_OUTPUT, this, 2, sampleRate, bufferSize, 4);
+
+	soundStream.setupOutput(this, 2, sampleRate, bufferSize, 4);
 	
 	ofSetFrameRate(60);
 }
@@ -126,7 +126,7 @@ void testApp::windowResized(int w, int h){
 
 }
 //--------------------------------------------------------------
-void testApp::audioRequested 	(float * output, int bufferSize, int nChannels){
+void testApp::audioOut(float * output, int bufferSize, int nChannels){
 	//pan = 0.5f;
 	float leftScale = 1 - pan;
 	float rightScale = pan;

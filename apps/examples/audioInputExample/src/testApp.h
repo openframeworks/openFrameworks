@@ -22,7 +22,7 @@ class testApp : public ofBaseApp{
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
 				
-		void audioReceived 	(float * input, int bufferSize, int nChannels); 
+		void audioIn(float * input, int bufferSize, int nChannels); 
 	
 		float * left;
 		float * right;
