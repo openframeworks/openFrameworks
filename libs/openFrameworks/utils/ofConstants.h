@@ -1,7 +1,8 @@
 #pragma once
 
 //-------------------------------
-#define OF_VERSION	6
+#define OF_VERSION	7
+#define OF_VERSION_MINOR 0
 //-------------------------------
 
 enum ofLoopType{
