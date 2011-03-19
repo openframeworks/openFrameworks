@@ -35,7 +35,7 @@ ofDirectShowGrabber::~ofDirectShowGrabber(){
 
 //--------------------------------------------------------------------
 bool ofDirectShowGrabber::initGrabber(int w, int h){
-	
+
 	//---------------------------------
 	#ifdef OF_VIDEO_CAPTURE_DIRECTSHOW
 	//---------------------------------
@@ -50,7 +50,7 @@ bool ofDirectShowGrabber::initGrabber(int w, int h){
 		width = w;
 		height = h;
 		bGrabberInited = false;
-		
+
 		if( attemptFramerate >= 0){
 			VI.setIdealFramerate(device, attemptFramerate);
 		}
@@ -176,7 +176,7 @@ void ofDirectShowGrabber::update(){
 
 				}
 
-				
+
 			}
 		}
 
@@ -203,7 +203,7 @@ void ofDirectShowGrabber::close(){
 	//---------------------------------
 
 	clearMemory();
-	
+
 }
 
 
@@ -218,14 +218,14 @@ unsigned char * ofDirectShowGrabber::getPixels(){
 }
 
 //---------------------------------------------------------------------------
-ofPixelsRef ofGstVideoUtils::getPixelsRef(){
+ofPixelsRef ofDirectShowGrabber::getPixelsRef(){
 	return pixels;
 }
 
 //--------------------------------------------------------------------
 float ofDirectShowGrabber::getWidth(){
 	return width;
-}	
+}
 
 //--------------------------------------------------------------------
 float ofDirectShowGrabber::getHeight(){

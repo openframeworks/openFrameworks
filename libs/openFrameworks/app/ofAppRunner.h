@@ -33,8 +33,10 @@ int 		ofGetWindowPositionY();
 int 		ofGetScreenWidth();
 int 		ofGetScreenHeight();
 int			ofGetWindowMode();
-int 		ofGetWidth();			// <-- should we call this ofGetWindowWidth?
+int 		ofGetWidth();			// ofGetWidth is correct for orientation
 int 		ofGetHeight();
+int 		ofGetWindowWidth();			// ofGetWindowWidth is correct for actual window coordinates - so doesn't change with orientation. 
+int 		ofGetWindowHeight();
 ofPoint		ofGetWindowSize();
 ofRectangle	ofGetWindowRect();
 

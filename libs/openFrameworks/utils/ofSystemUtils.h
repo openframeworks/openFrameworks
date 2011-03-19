@@ -14,6 +14,6 @@ class ofFileDialogResult{
 		bool bSuccess;
 };
 
-void ofCreateAlertDialog(string errorMessage);
-ofFileDialogResult ofFileLoadDialog(string windowTitle="", bool bFolderSelection = false);
-ofFileDialogResult ofFileSaveDialog(string defaultName, string messageName);
+void ofSystemAlertDialog(string errorMessage);
+ofFileDialogResult ofSystemLoadDialog(string windowTitle="", bool bFolderSelection = false);
+ofFileDialogResult ofSystemSaveDialog(string defaultName, string messageName);

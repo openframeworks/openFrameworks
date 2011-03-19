@@ -90,6 +90,34 @@ public:
 };
 
 //----------------------------------------------------------
+// ofBaseHasSoundStream
+//----------------------------------------------------------
+class ofBaseSoundInput{
+
+	public:
+		virtual void audioIn( float * input, int bufferSize, int nChannels ){  
+			audioReceived(input, bufferSize, nChannels);
+		}
+
+		virtual void audioReceived( float * input, int bufferSize, int nChannels ){}
+};
+
+//----------------------------------------------------------
+// ofBaseHasSoundStream
+//----------------------------------------------------------
+class ofBaseSoundOutput{
+
+	public:
+		virtual void audioOut( float * output, int bufferSize, int nChannels ){
+			audioRequested(output, bufferSize, nChannels);
+		}
+
+		//legacy
+		virtual void audioRequested( float * output, int bufferSize, int nChannels ){}
+};
+
+
+//----------------------------------------------------------
 // ofBaseVideo
 //----------------------------------------------------------
 class ofBaseVideo: public ofBaseHasPixels, public ofBaseUpdates{
@@ -211,7 +239,7 @@ public:
 	virtual void viewport(ofRectangle viewport){};
 	virtual void viewport(float x = 0, float y = 0, float width = 0, float height = 0, bool invertY = true){};
 	virtual void setupScreenPerspective(float width = 0, float height = 0, int orientation=0, bool vFlip = true, float fov = 60, float nearDist = 0, float farDist = 0){}
-	virtual void setupScreenOrtho(float width = 0, float height = 0, bool vFlip = true, float nearDist = -1, float farDist = 1){};
+	virtual void setupScreenOrtho(float width = 0, float height = 0, int orientation=0, bool vFlip = true, float nearDist = -1, float farDist = 1){};
 	virtual ofRectangle getCurrentViewport(){return ofRectangle();};
 	virtual int getViewportWidth(){return 0;};
 	virtual int getViewportHeight(){return 0;};

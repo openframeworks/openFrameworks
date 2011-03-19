@@ -1,31 +1,44 @@
 #pragma once
 
 #include "ofConstants.h"
-class ofBaseApp;
+#include "ofBaseTypes.h"
+#include "ofBaseApp.h"
 
-// defined in ofSoundUnit.h
-class ofSoundSource;
-class ofSoundSink;
+#ifdef OF_TARGET_IPHONE
+	#error we need swappable sound stream api for iphone
+#else
+	#include "ofRtAudioSoundStream.h"
+	#define OF_SOUND_STREAM_TYPE ofRtAudioSoundStream()
+#endif 
 
-void ofSoundStreamSetup(int nOutputChannels, int nInputChannels, ofBaseApp * OFSA = NULL);
+void ofSoundStreamSetup(int nOutputChannels, int nInputChannels, ofBaseApp * appPtr = NULL);
 void ofSoundStreamSetup(int nOutputChannels, int nInputChannels, int sampleRate, int bufferSize, int nBuffers);
-void ofSoundStreamSetup(int nOutputChannels, int nInputChannels, ofBaseApp * OFSA, int sampleRate, int bufferSize, int nBuffers);
-
-/// Add the given ofSoundSource as an input source for the ofSoundStream system.
-void ofSoundStreamAddSoundSource( ofSoundSource* source );
-/// Remove the given ofSoundSource
-void ofSoundStreamRemoveSoundSource( ofSoundSource* source );
-/// Add the given ofSoundSink as a sink for incoming audio data (eg from a microphone)
-void ofSoundStreamAddSoundSink( ofSoundSink* sink );
-/// Remove the given ofSoundSink
-void ofSoundStreamRemoveSoundSink( ofSoundSink* sink );
-/// Get a list off all sound sources
-vector<ofSoundSource*> ofSoundStreamGetAllSoundSources();
-
-/// Return the current tick count
-long unsigned long ofSoundStreamGetCurrentTick();
-
+void ofSoundStreamSetup(int nOutputChannels, int nInputChannels, ofBaseApp * appPtr, int sampleRate, int bufferSize, int nBuffers);
 void ofSoundStreamStop();
 void ofSoundStreamStart();
 void ofSoundStreamClose();
 void ofSoundStreamListDevices();
+
+class ofSoundStream{
+	public:
+		ofSoundStream();
+		~ofSoundStream();
+		
+		void setSoundStream(ofBaseSoundStream * soundStreamPtr);
+		void listDevices();
+	
+		void setDeviceID(int deviceID);
+
+		bool setupInput(ofBaseSoundInput * soundInputPtr, int numChannels, int sampleRate, int bufferSize, int nBuffers);		
+		bool setupOutput(ofBaseSoundOutput * soundOutputPtr, int numChannels, int sampleRate, int bufferSize, int nBuffers);
+		
+		void start();
+		void stop();
+		void close();
+		
+		long unsigned long getTickCount();
+		
+	protected:
+		
+		ofBaseSoundStream * soundStream;
+};

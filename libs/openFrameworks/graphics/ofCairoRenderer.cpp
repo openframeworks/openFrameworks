@@ -510,11 +510,11 @@ void ofCairoRenderer::viewport(ofRectangle v){
 }
 
 void ofCairoRenderer::viewport(float x, float y, float width, float height, bool invertY){
-	if(width == 0) width = ofGetWidth();
-	if(height == 0) height = ofGetHeight();
+	if(width == 0) width = ofGetWindowWidth();
+	if(height == 0) height = ofGetWindowHeight();
 
 	if (invertY){
-		y = ofGetHeight() - (y + height);
+		y = ofGetWindowHeight() - (y + height);
 	}
 
 	cairo_surface_flush(surface);
@@ -544,22 +544,15 @@ void ofCairoRenderer::setupScreenPerspective(float width, float height, int orie
 	if(height == 0) height = ofGetHeight();
 	if( orientation == 0 ) orientation = ofGetOrientation();
 
-	float w = width;
-	float h = height;
+	float viewW = ofGetViewportWidth();
+	float viewH = ofGetViewportHeight();
 
-	//we do this because ofGetWidth and ofGetHeight return oriented widths and height
-	//for the camera we need width and height of the actual screen
-	if( orientation == OF_ORIENTATION_90_LEFT || orientation == OF_ORIENTATION_90_RIGHT ){
-		h = width;
-		w = height;
-	}
-
-	float eyeX = w / 2;
-	float eyeY = h / 2;
+	float eyeX = viewW / 2;
+	float eyeY = viewH / 2;
 	float halfFov = PI * fov / 360;
 	float theTan = tanf(halfFov);
 	float dist = eyeY / theTan;
-	float aspect = (float) w / h;
+	float aspect = (float) viewW / viewH;
 
 	if(nearDist == 0) nearDist = dist / 10.0f;
 	if(farDist == 0) farDist = dist * 10.0f;
@@ -613,20 +606,67 @@ void ofCairoRenderer::setupScreenPerspective(float width, float height, int orie
 	}
 };
 
-void ofCairoRenderer::setupScreenOrtho(float width, float height, bool vFlip, float nearDist, float farDist){
+void ofCairoRenderer::setupScreenOrtho(float width, float height, int orientation, bool vFlip, float nearDist, float farDist){
 	if(!b3D) return;
-	if(width == 0) width = ofGetViewportWidth();
-	if(height == 0) height = ofGetViewportHeight();
+	if(width == 0) width = ofGetWidth();
+	if(height == 0) height = ofGetHeight();
+	if( orientation == 0 ) orientation = ofGetOrientation();
+
+	float viewW = ofGetViewportWidth();
+	float viewH = ofGetViewportHeight();
 
 	ofSetCoordHandedness(OF_RIGHT_HANDED);
 
 	if(vFlip) {
-		projection.makeOrthoMatrix(0, width, height, 0, nearDist, farDist);
 		ofSetCoordHandedness(OF_LEFT_HANDED);
-	}else{
-		projection.makeOrthoMatrix(0, width, 0, height, nearDist, farDist);
 	}
+	projection.makeOrthoMatrix(0, viewW, 0, viewH, nearDist, farDist);
+	
 	modelView.makeIdentityMatrix();
+	
+	//note - theo checked this on iPhone and Desktop for both vFlip = false and true
+	switch(orientation) {
+		case OF_ORIENTATION_180:
+			modelView.glRotate(-180,0,0,1);
+			if(vFlip){
+				modelView.glScale(-1,-1,1);
+				modelView.glTranslate(width,0,0);
+			}else{
+				modelView.glTranslate(width,-height,0);
+			}
+
+			break;
+
+		case OF_ORIENTATION_90_RIGHT:
+			modelView.glRotate(-90,0,0,1);
+			if(vFlip){
+				modelView.glScale(1,1,1);
+			}else{
+				modelView.glScale(1,-1,1);
+				modelView.glTranslate(-width,-height,0);
+			}
+			break;
+
+		case OF_ORIENTATION_90_LEFT:
+			modelView.glRotate(90,0,0,1);
+			if(vFlip){
+				modelView.glScale(1,1,1);
+				modelView.glTranslate(0,-height,0);
+			}else{
+
+				modelView.glScale(1,-1,1);
+				modelView.glTranslate(0,0,0);
+			}
+			break;
+
+		case OF_ORIENTATION_DEFAULT:
+		default:
+			if(vFlip){
+				modelView.glScale(-1,-1,1);
+				modelView.glTranslate(-width,-height,0);
+			}
+			break;
+	}	
 };
 
 ofRectangle ofCairoRenderer::getCurrentViewport(){

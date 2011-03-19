@@ -8,21 +8,27 @@ void testApp::setup(){
 	// 2 output channels,
 	// 0 input channels
 	// 22050 samples per second
-	// 256 samples per buffer
+	// 512 samples per buffer
 	// 4 num buffers (latency)
-
+	
+	int bufferSize		= 512;
 	sampleRate 			= 44100;
 	phase 				= 0;
 	phaseAdder 			= 0.0f;
 	phaseAdderTarget 	= 0.0f;
 	volume				= 0.1f;
 	bNoise 				= false;
-	lAudio = new float[256];
-	rAudio = new float[256];
-	ofSoundStreamSetup(2,0,this, sampleRate,256, 4);
+	lAudio = new float[bufferSize];
+	rAudio = new float[bufferSize];
+	
+	//soundStream.listDevices();
+	
+	//if you want to set the device id to be different than the default
+	//soundStream.setDeviceID(1); 	//note some devices are input only and some are output only 
 
+	soundStream.setupOutput(this, 2, sampleRate, bufferSize, 4);
+	
 	ofSetFrameRate(60);
-
 }
 
 
@@ -57,6 +63,8 @@ void testApp::draw(){
 	if (!bNoise) sprintf(reportString, "%s (%fhz)", reportString, targetFrequency);
 
 	ofDrawBitmapString(reportString,80,380);
+	ofDrawBitmapString("press 's' to unpause the audio 'e' to pause the audio", 80, 450);
+	ofDrawBitmapString("ticks: " + ofToString(soundStream.getTickCount()), 80, 480);
 
 }
 
@@ -70,6 +78,15 @@ void testApp::keyPressed  (int key){
 		volume += 0.05;
 		volume = MIN(volume, 1);
 	}
+	
+	if( key == 's' ){
+		soundStream.start();
+	}
+	
+	if( key == 'e' ){
+		soundStream.stop();
+	}
+	
 }
 
 //--------------------------------------------------------------
@@ -109,7 +126,7 @@ void testApp::windowResized(int w, int h){
 
 }
 //--------------------------------------------------------------
-void testApp::audioRequested 	(float * output, int bufferSize, int nChannels){
+void testApp::audioOut(float * output, int bufferSize, int nChannels){
 	//pan = 0.5f;
 	float leftScale = 1 - pan;
 	float rightScale = pan;
