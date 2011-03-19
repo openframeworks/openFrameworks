@@ -7,7 +7,18 @@
 
 //----------------------------------------------------------
 // static variable for freeImage initialization:
-static bool		bFreeImageInited = false;
+static void initFreeImage(bool deinit=false){
+	// need a new bool to avoid c++ "deinitialization order fiasco":
+	// http://www.parashift.com/c++-faq-lite/ctors.html#faq-10.15
+	static bool	* bFreeImageInited = new bool(false);
+	if(!bFreeImageInited && !deinit){
+		FreeImage_Initialise();
+		*bFreeImageInited = true;
+	}
+	if(bFreeImageInited && deinit){
+		FreeImage_DeInitialise();
+	}
+}
 //----------------------------------------------------------
 
 #ifdef TARGET_ANDROID
@@ -16,7 +27,7 @@ static bool		bFreeImageInited = false;
 	// all the textures when the context is created again.
 	// keeping a pointer to all the images we can tell them to reload from a static method
 	#include <set>
-	set<ofImage*> all_images;
+	static set<ofImage*> all_images;
 
 	void ofReloadAllImageTextures(){
 		set<ofImage*>::iterator it;
@@ -96,6 +107,7 @@ void putBmpIntoPixels(FIBITMAP * bmp, ofPixels &pix, bool swapForLittleEndian = 
 
 //----------------------------------------------------
 bool ofLoadImage(ofPixels & pix, string fileName) {
+	initFreeImage();
 	if(fileName.substr(0, 7) == "http://") {
 		return ofLoadImage(pix, ofLoadURL(fileName).data);
 	}
@@ -136,7 +148,7 @@ bool ofLoadImage(ofPixels & pix, string fileName) {
 
 //----------------------------------------------------
 bool ofLoadImage(ofPixels & pix, const ofBuffer & buffer) {
-
+	initFreeImage();
 	int					width, height, bpp;
 	bool bLoaded		= false;
 	FIBITMAP * bmp		= NULL;
@@ -208,7 +220,7 @@ bool ofLoadImage(ofTexture & tex, const ofBuffer & buffer){
 
 //----------------------------------------------------------------
 void ofSaveImage(ofPixels & pix, string fileName, ofImageQualityType qualityLevel) {
-
+	initFreeImage();
 	if (pix.isAllocated() == false){
 		ofLog(OF_LOG_ERROR,"error saving image - pixels aren't allocated");
 		return;
@@ -271,10 +283,7 @@ ofImage::ofImage(){
 	bUseTexture					= true;		// the default is, yes, use a texture
 
 	//----------------------- init free image if necessary
-	if (!bFreeImageInited){
-		FreeImage_Initialise();
-		bFreeImageInited = true;
-	}
+	initFreeImage();
 
 #ifdef TARGET_ANDROID
 	all_images.insert(this);
@@ -290,12 +299,6 @@ ofImage& ofImage::operator=(const ofImage& mom) {
 
 //----------------------------------------------------------
 ofImage::ofImage(const ofImage& mom) {
-
-	if (!bFreeImageInited){
-		FreeImage_Initialise();
-		bFreeImageInited = true;
-	}
-
 	clear();
 	clone(mom);
 	update();
@@ -713,10 +716,7 @@ void ofImage::changeTypeOfPixels(ofPixels &pix, ofImageType newType){
 //----------------------------------------------------
 // freeImage based stuff:
 void ofCloseFreeImage(){
-	if (bFreeImageInited){
-		FreeImage_DeInitialise();
-		bFreeImageInited = false;
-	}
+	initFreeImage(true);
 }
 
 //----------------------------------------------------------
