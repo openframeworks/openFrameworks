@@ -103,6 +103,13 @@ else
 		CFLAGS += $(shell pkg-config gtk+-2.0 --cflags) -DOF_USING_GTK
 		LIBS += $(shell pkg-config gtk+-2.0 --libs)
 	endif
+	
+	#check if mpg123 exists and add it
+	MPG123 = $(shell pkg-config libmpg123 --exists; echo $$?)
+	ifeq ($(MPG123),0)
+		CFLAGS += -DOF_USING_MPG123
+		LIBS += -lmpg123
+	endif
 endif
 LIB_STATIC = $(shell ls ../../../libs/*/lib/$(LIBSPATH)/*.a | grep -v openFrameworksCompiled | grep -v poco| sed "s/.*\\/lib\([^/]*\)\.a/-l\1/")
 LIB_SHARED = $(shell ls ../../../libs/*/lib/$(LIBSPATH)/*.so | grep -v openFrameworksCompiled| sed "s/.*\\/lib\([^/]*\)\.so/-l\1/")
@@ -127,7 +134,7 @@ ifeq ($(ARCH),android)
 else
 	LDFLAGS = $(LIB_PATHS_FLAGS) -Wl,-rpath=./libs
 	LIBS += $(shell pkg-config  glew gstreamer-0.10 gstreamer-video-0.10 gstreamer-base-0.10 gstreamer-app-0.10 libudev --libs)
-	LIBS += -lglut -lGL -lGLU -lasound
+	LIBS += -lglut -lGL -lGLU -lasound -lfreeimage
 endif
 
 
