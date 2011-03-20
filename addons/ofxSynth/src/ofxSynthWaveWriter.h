@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ofSoundEffect.h"
+#include "ofxSoundEffect.h"
 
 const int wav_header_size = 0x2C;
 
@@ -11,7 +11,7 @@ const int wav_header_size = 0x2C;
  
  */
  
-class ofxSynthWaveWriter : public ofSoundEffectPassthrough {
+class ofxSynthWaveWriter : public ofxSoundEffectPassthrough {
 	public:
 		bool startWriting(string filename = "out.wav");
 		void stopWriting();

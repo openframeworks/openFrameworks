@@ -29,7 +29,7 @@ ofxSynth::ofxSynth(){
 	
 }
 
-void ofxSynth::audioRequested( float* buffer, int numFrames, int numChannels ){
+void ofxSynth::audioOut( float* buffer, int numFrames, int numChannels,long unsigned long tickCount  ){
 	// fill the required inputs
 	float envBuffer[numFrames];
 	float modEnvBuffer[numFrames];

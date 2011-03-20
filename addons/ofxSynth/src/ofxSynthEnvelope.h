@@ -1,6 +1,6 @@
 
 #pragma once
-#include "ofSoundUnit.h"
+#include "ofBaseTypes.h"
 #include "ofMath.h"
 
 /** ofxSynthADSR
@@ -8,7 +8,7 @@
  produces a 3 point envelope with sustain
  
 */
-class ofxSynthADSR : public ofSoundSource {
+class ofxSynthADSR: public ofBaseSoundOutput {
 	public:
 		ofxSynthADSR();
 		void trigger(); // start the note, go to the sustain stage
