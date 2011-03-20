@@ -29,8 +29,10 @@ class ofSoundStream{
 	
 		void setDeviceID(int deviceID);
 
-		bool setupInput(ofBaseSoundInput * soundInputPtr, int numChannels, int sampleRate, int bufferSize, int nBuffers);		
-		bool setupOutput(ofBaseSoundOutput * soundOutputPtr, int numChannels, int sampleRate, int bufferSize, int nBuffers);
+		bool setup(ofBaseApp * app, int outChannels, int inChannels, int sampleRate, int bufferSize, int nBuffers);
+		void setInput(ofBaseSoundInput * soundInput);
+		void setOutput(ofBaseSoundOutput * soundOutput);
+		bool setup(int outChannels, int inChannels, int sampleRate, int bufferSize, int nBuffers);
 		
 		void start();
 		void stop();

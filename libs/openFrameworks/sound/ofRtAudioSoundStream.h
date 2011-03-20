@@ -2,6 +2,7 @@
 
 #include "ofConstants.h"
 #include "ofBaseSoundStream.h"
+#include "RtAudio.h"
 
 class RtAudio;
 
@@ -13,34 +14,33 @@ class ofRtAudioSoundStream : public ofBaseSoundStream{
 		void listDevices();
 		void setDeviceID(int deviceID);
 
-		bool setupInput(ofBaseSoundInput * hasSoundStream, int numChannels, int sampleRate, int bufferSize, int nBuffers);
-		bool setupOutput(ofBaseSoundOutput * hasSoundStream, int numChannels, int sampleRate, int bufferSize, int nBuffers);
+		void setInput(ofBaseSoundInput * soundInput);
+		void setOutput(ofBaseSoundOutput * soundOutput);
+		bool setup(int outChannels, int inChannels, int sampleRate, int bufferSize, int nBuffers);
+		bool setup(ofBaseApp * app, int outChannels, int inChannels, int sampleRate, int bufferSize, int nBuffers);
 		
 		void start();
 		void stop();
 		void close();
 		
-		void incrementTickCount();
-		
 		long unsigned long getTickCount();		
 				
 		int getNumInputChannels();
 		int getNumOutputChannels();
-		
-		void audioIn(float * buffer, int bufferSize, int nChannels);
-		void audioOut(float * buffer, int bufferSize, int nChannels);
 	
-		ofBaseSoundInput * soundInputPtr;
-		ofBaseSoundOutput * soundOutputPtr;
 		
-	protected:
+	private:
 		long unsigned long	tickCount;
 		RtAudio *			audio;
 		int					sampleRate;
 		int					deviceID;
 		int					nInputChannels;
 		int					nOutputChannels;
+		ofBaseSoundInput *  soundInputPtr;
+		ofBaseSoundOutput * soundOutputPtr;
 		
+		static int rtAudioCallback(void *outputBuffer, void *inputBuffer, unsigned int bufferSize, double streamTime, RtAudioStreamStatus status, void *data);
+
 };
 
 

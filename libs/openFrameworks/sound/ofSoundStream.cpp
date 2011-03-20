@@ -19,16 +19,7 @@ void ofSoundStreamSetup(int nOutputChannels, int nInputChannels, int sampleRate,
 
 //------------------------------------------------------------
 void ofSoundStreamSetup(int nOutputChannels, int nInputChannels, ofBaseApp * appPtr, int sampleRate, int bufferSize, int nBuffers){
-	if( nOutputChannels > 0 ){
-		//wow very strange bug with multiple inheritance - we have to covert to a pointer of ofBaseSound rather than in the call below. 	
-		ofBaseSoundOutput * pOutput = (ofBaseSoundOutput*)appPtr;
-		soundStreamOutput.setupOutput(pOutput, nOutputChannels, sampleRate, bufferSize, nBuffers);
-	}
-	if( nInputChannels > 0 ){
-		//wow very strange bug with multiple inheritance - we have to covert to a pointer of ofBaseSound rather than in the call below. 
-		ofBaseSoundInput * pInput = (ofBaseSoundInput *)appPtr;
-		soundStreamInput.setupInput(pInput, nInputChannels,  sampleRate, bufferSize, nBuffers);
-	}
+	soundStreamOutput.setup(appPtr, nOutputChannels, nInputChannels, sampleRate, bufferSize, nBuffers);
 }
 
 //------------------------------------------------------------
@@ -96,17 +87,35 @@ void ofSoundStream::setDeviceID(int deviceID){
 }
 
 //------------------------------------------------------------
-bool ofSoundStream::setupInput(ofBaseSoundInput * soundInputPtr, int numChannels, int sampleRate, int bufferSize, int nBuffers){
+bool ofSoundStream::setup(ofBaseApp * app, int outChannels, int inChannels, int sampleRate, int bufferSize, int nBuffers){
 	if( soundStream ){
-		soundStream->setupInput(soundInputPtr, numChannels, sampleRate, bufferSize, nBuffers);
+		soundStream->setup(app, outChannels, inChannels, sampleRate, bufferSize, nBuffers);
+		return true;
+	}
+	return false;
+}
+
+//------------------------------------------------------------
+void ofSoundStream::setInput(ofBaseSoundInput * soundInput){
+	if( soundStream ){
+		soundStream->setInput(soundInput);
 	}
 }
 
 //------------------------------------------------------------
-bool ofSoundStream::setupOutput(ofBaseSoundOutput * soundOutputPtr, int numChannels, int sampleRate, int bufferSize, int nBuffers){
+void ofSoundStream::setOutput(ofBaseSoundOutput * soundOutput){
 	if( soundStream ){
-		soundStream->setupOutput(soundOutputPtr, numChannels, sampleRate, bufferSize, nBuffers);
+		soundStream->setOutput(soundOutput);
 	}
+}
+
+//------------------------------------------------------------
+bool ofSoundStream::setup(int outChannels, int inChannels, int sampleRate, int bufferSize, int nBuffers){
+	if( soundStream ){
+		soundStream->setup(outChannels, inChannels, sampleRate, bufferSize, nBuffers);
+		return true;
+	}
+	return false;
 }
 
 //------------------------------------------------------------
@@ -133,7 +142,8 @@ void ofSoundStream::close(){
 //------------------------------------------------------------
 long unsigned long ofSoundStream::getTickCount(){
 	if( soundStream ){
-		soundStream->getTickCount();
+		return soundStream->getTickCount();
 	}
+	return 0;
 }
 
