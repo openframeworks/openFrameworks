@@ -12,9 +12,9 @@ void testApp::setup(){
 
 	vocals.setPlayer(new ofOpenALSoundPlayer);
 	vocals.loadSound("sounds/Violet.mp3");
+
 	synth.setVolume(0.75f);
 	beats.setVolume(0.75f);
-	beats.setLoop(true);
 	vocals.setVolume(0.5f);
 	font.loadFont("Sudbury_Basin_3D.ttf", 32);
 	beats.setMultiPlay(false);
