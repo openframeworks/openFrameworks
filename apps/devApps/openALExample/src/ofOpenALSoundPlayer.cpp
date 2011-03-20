@@ -225,9 +225,11 @@ void ofOpenALSoundPlayer::loadSound(string fileName, bool stream){
 		alGenSources(1, &sources[0]);
 		if (alGetError() != AL_NO_ERROR)
 			return;
-		alSourcei (sources[0], AL_BUFFER,   buffers[0]   );
-		alSourcef (sources[0], AL_PITCH,    1.0f     );
-		alSourcef (sources[0], AL_GAIN,     1.0f     );
+		alSourcei (sources[0], AL_BUFFER,   buffers[0]);
+		alSourcef (sources[0], AL_PITCH,    1.0f);
+		alSourcef (sources[0], AL_GAIN,     1.0f);
+	    alSourcef (sources[0], AL_ROLLOFF_FACTOR,  0.0);
+	    alSourcei (sources[0], AL_SOURCE_RELATIVE, AL_TRUE);
 	}else{
 		vector<vector<short> > multibuffer;
 		multibuffer.resize(channels);
@@ -268,8 +270,9 @@ void ofOpenALSoundPlayer::loadSound(string fileName, bool stream){
 			}else{
 				float pos[3] = {1,0,0};
 				alSourcefv(sources[i],AL_POSITION,pos);
-
 			}
+		    alSourcef (sources[i], AL_ROLLOFF_FACTOR,  0.0);
+		    alSourcei (sources[i], AL_SOURCE_RELATIVE, AL_TRUE);
 		}
 	}
 
@@ -280,7 +283,7 @@ void ofOpenALSoundPlayer::loadSound(string fileName, bool stream){
 
 //------------------------------------------------------------
 void ofOpenALSoundPlayer::update(ofEventArgs & args){
-	for(int i=0; i<int(sources.size())/channels-1; ){
+	for(int i=1; i<int(sources.size())/channels; ){
 		ALint state;
 		alGetSourcei(sources[i*channels],AL_SOURCE_STATE,&state);
 		if(state != AL_PLAYING){
@@ -305,16 +308,24 @@ void ofOpenALSoundPlayer::unloadSound(){
 bool ofOpenALSoundPlayer::getIsPlaying(){
 	if(sources.empty()) return false;
 	ALint state;
-	alGetSourcei(sources[0],AL_SOURCE_STATE,&state);
-	return state == AL_PLAYING;
+	bool playing=false;
+	for(int i=0;i<(int)sources.size();i++){
+		alGetSourcei(sources[i],AL_SOURCE_STATE,&state);
+		playing |= (state == AL_PLAYING);
+	}
+	return playing;
 }
 
 //------------------------------------------------------------
 bool ofOpenALSoundPlayer::getIsPaused(){
 	if(sources.empty()) return false;
 	ALint state;
-	alGetSourcei(sources[0],AL_SOURCE_STATE,&state);
-	return state == AL_PAUSED;
+	bool paused=true;
+	for(int i=0;i<(int)sources.size();i++){
+		alGetSourcei(sources[i],AL_SOURCE_STATE,&state);
+		paused &= (state == AL_PAUSED);
+	}
+	return paused;
 }
 
 //------------------------------------------------------------
@@ -332,7 +343,7 @@ void ofOpenALSoundPlayer::setVolume(float vol){
 	volume = vol;
 	if(sources.empty()) return;
 	if(channels==1){
-		alSourcef (sources[0], AL_GAIN, vol);
+		alSourcef (sources[sources.size()-1], AL_GAIN, vol);
 	}else{
 		setPan(pan);
 	}
@@ -341,8 +352,8 @@ void ofOpenALSoundPlayer::setVolume(float vol){
 //------------------------------------------------------------
 void ofOpenALSoundPlayer::setPosition(float pct){
 	if(sources.empty()) return;
-	for(int i=0;i<(int)sources.size();i++){
-		alSourcef(sources[i],AL_SEC_OFFSET,pct*duration);
+	for(int i=0;i<(int)channels;i++){
+		alSourcef(sources[sources.size()-channels+i],AL_SEC_OFFSET,pct*duration);
 	}
 }
 
@@ -351,7 +362,7 @@ float ofOpenALSoundPlayer::getPosition(){
 	if(duration==0) return 0;
 	if(sources.empty()) return 0;
 	float pos;
-	alGetSourcef(sources[0],AL_SEC_OFFSET,&pos);
+	alGetSourcef(sources[sources.size()-1],AL_SEC_OFFSET,&pos);
 	return pos/duration;
 }
 
@@ -361,13 +372,14 @@ void ofOpenALSoundPlayer::setPan(float p){
 	if(channels==1){
 		p=p*2-1;
 		float pos[3] = {p,0,0};
-		alSourcefv(sources[0],AL_POSITION,pos);
+		alSourcefv(sources[sources.size()-1],AL_POSITION,pos);
 	}else{
 		for(int i=0;i<(int)channels;i++){
-			if(i==0)
+			if(i==0){
 				alSourcef(sources[sources.size()-channels+i],AL_GAIN,(1-p)*volume);
-			else
+			}else{
 				alSourcef(sources[sources.size()-channels+i],AL_GAIN,p*volume);
+			}
 		}
 	}
 	pan = p;
@@ -398,6 +410,7 @@ void ofOpenALSoundPlayer::setSpeed(float spd){
 
 //------------------------------------------------------------
 void ofOpenALSoundPlayer::setLoop(bool bLp){
+	if(bMultiPlay) return; // no looping on multiplay
 	for(int i=0;i<(int)sources.size();i++){
 		alSourcei(sources[i],AL_LOOPING,bLp?AL_TRUE:AL_FALSE);
 	}
@@ -436,8 +449,9 @@ void ofOpenALSoundPlayer::play(){
 			}else{
 				float pos[3] = {1,0,0};
 				alSourcefv(sources[sources.size()-channels+i],AL_POSITION,pos);
-
 			}
+		    alSourcef (sources[sources.size()-channels+i], AL_ROLLOFF_FACTOR,  0.0);
+		    alSourcei (sources[sources.size()-channels+i], AL_SOURCE_RELATIVE, AL_TRUE);
 		}
 
 		if (alGetError() != AL_NO_ERROR){
