@@ -95,6 +95,10 @@ public:
 class ofBaseSoundInput{
 
 	public:
+		virtual void audioIn( float * input, int bufferSize, int nChannels, long unsigned long tickCount ){
+			audioIn(input, bufferSize, nChannels);
+		}
+
 		virtual void audioIn( float * input, int bufferSize, int nChannels ){  
 			audioReceived(input, bufferSize, nChannels);
 		}
@@ -108,6 +112,10 @@ class ofBaseSoundInput{
 class ofBaseSoundOutput{
 
 	public:
+		virtual void audioOut( float * output, int bufferSize, int nChannels, long unsigned long tickCount  ){
+			audioOut(output, bufferSize, nChannels);
+		}
+
 		virtual void audioOut( float * output, int bufferSize, int nChannels ){
 			audioRequested(output, bufferSize, nChannels);
 		}
