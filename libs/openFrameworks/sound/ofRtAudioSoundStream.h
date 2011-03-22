@@ -2,9 +2,9 @@
 
 #include "ofConstants.h"
 #include "ofBaseSoundStream.h"
-#include "RtAudio.h"
 
 class RtAudio;
+typedef unsigned int RtAudioStreamStatus;
 
 class ofRtAudioSoundStream : public ofBaseSoundStream{
 	public:
