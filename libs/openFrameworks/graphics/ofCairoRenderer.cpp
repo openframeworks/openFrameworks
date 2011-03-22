@@ -375,6 +375,9 @@ void ofCairoRenderer::draw(ofImage & img, float x, float y, float z, float w, fl
 			swapPixels[p*4 +3] = imgPix[p*4+3];
 		}
 		stride = cairo_format_stride_for_width (CAIRO_FORMAT_ARGB32, pix.getWidth());
+		image = cairo_image_surface_create_for_data(&swapPixels[0], CAIRO_FORMAT_ARGB32, pix.getWidth(), pix.getHeight(), stride);
+#else
+		stride = cairo_format_stride_for_width (CAIRO_FORMAT_ARGB32, pix.getWidth());
 		image = cairo_image_surface_create_for_data(pix.getPixels(), CAIRO_FORMAT_ARGB32, pix.getWidth(), pix.getHeight(), stride);
 #endif
 		break;
