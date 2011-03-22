@@ -18,6 +18,7 @@
 class ofPixels;
 class ofPath;
 class ofPolyline;
+class ofImage;
 typedef ofPixels& ofPixelsRef;
 
 
@@ -237,6 +238,7 @@ public:
 	virtual void draw(ofMesh & vertexData)=0;
 	virtual void draw(ofMesh & vertexData, ofPolyRenderMode renderType)=0;
 	virtual void draw(vector<ofPoint> & vertexData, ofPrimitiveMode drawMode)=0;
+	virtual void draw(ofImage & image, float x, float y, float z, float w, float h)=0;
 
 	//--------------------------------------------
 	// transformations
