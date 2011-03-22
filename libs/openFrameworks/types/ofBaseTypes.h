@@ -79,6 +79,8 @@ public:
 	virtual ~ofBaseHasPixels(){}
 	virtual unsigned char * getPixels()=0;
 	virtual ofPixelsRef getPixelsRef()=0;
+	virtual float	getHeight() = 0;
+	virtual float	getWidth() = 0;
 };
 
 //----------------------------------------------------------
