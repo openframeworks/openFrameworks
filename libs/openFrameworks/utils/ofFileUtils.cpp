@@ -312,7 +312,7 @@ using Poco::NotFoundException;
 	File myFile(dirPath);
 	bool success = false;
 	try{
-		if(recursive){
+		if(!recursive){
 			success = myFile.createDirectory();
 		}else{
 			myFile.createDirectories();
