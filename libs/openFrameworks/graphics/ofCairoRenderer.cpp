@@ -344,18 +344,28 @@ void ofCairoRenderer::draw(ofImage & img, float x, float y, float z, float w, fl
 
 	switch(pix.getImageType()){
 	case OF_IMAGE_COLOR:
+#ifdef TARGET_LITTLE_ENDIAN
 		swapPixels.resize(picsize * 4);
 
 		for(int p= 0; p<picsize; p++) {
 			swapPixels[p*4] = imgPix[p*3 +2];
 			swapPixels[p*4 +1] = imgPix[p*3 +1];
 			swapPixels[p*4 +2] = imgPix[p*3];
-			//swapPixels[p*4 +3] = 255;
 		}
+#else
+		swapPixels.resize(picsize * 4);
+
+		for(int p= 0; p<picsize; p++) {
+			swapPixels[p*4] = imgPix[p*3];
+			swapPixels[p*4 +1] = imgPix[p*3 +1];
+			swapPixels[p*4 +2] = imgPix[p*3 +2];
+		}
+#endif
 		stride = cairo_format_stride_for_width (CAIRO_FORMAT_RGB24, pix.getWidth());
 		image = cairo_image_surface_create_for_data(&swapPixels[0], CAIRO_FORMAT_RGB24, pix.getWidth(), pix.getHeight(), stride);
 		break;
 	case OF_IMAGE_COLOR_ALPHA:
+#ifdef TARGET_LITTLE_ENDIAN
 		swapPixels.resize(picsize * 4);
 
 		for(int p= 0; p<picsize; p++) {
@@ -365,7 +375,8 @@ void ofCairoRenderer::draw(ofImage & img, float x, float y, float z, float w, fl
 			swapPixels[p*4 +3] = imgPix[p*4+3];
 		}
 		stride = cairo_format_stride_for_width (CAIRO_FORMAT_ARGB32, pix.getWidth());
-		image = cairo_image_surface_create_for_data(&swapPixels[0], CAIRO_FORMAT_ARGB32, pix.getWidth(), pix.getHeight(), stride);
+		image = cairo_image_surface_create_for_data(pix.getPixels(), CAIRO_FORMAT_ARGB32, pix.getWidth(), pix.getHeight(), stride);
+#endif
 		break;
 	case OF_IMAGE_GRAYSCALE:
 		swapPixels.resize(picsize * 4);
@@ -374,7 +385,6 @@ void ofCairoRenderer::draw(ofImage & img, float x, float y, float z, float w, fl
 			swapPixels[p*4] = imgPix[p];
 			swapPixels[p*4 +1] = imgPix[p];
 			swapPixels[p*4 +2] = imgPix[p];
-			//swapPixels[p*4 +3] = 255;
 		}
 		stride = cairo_format_stride_for_width (CAIRO_FORMAT_RGB24, pix.getWidth());
 		image = cairo_image_surface_create_for_data(&swapPixels[0], CAIRO_FORMAT_RGB24, pix.getWidth(), pix.getHeight(), stride);
