@@ -110,7 +110,7 @@ ifeq ($(findstring Release,$(MAKECMDGOALS)),Release)
 endif
 
 ifeq ($(findstring Release_arm7,$(MAKECMDGOALS)),Release_arm7)
-	TARGET_CFLAGS += -march=armv7-a -mfloat-abi=softfp -mfpu=vfp
+	TARGET_CFLAGS += -march=armv7-a -mfloat-abi=softfp -mfpu=neon
 	TARGET = ../../lib/$(LIBSPATH)/libopenFrameworks_arm7.a
 endif
 
