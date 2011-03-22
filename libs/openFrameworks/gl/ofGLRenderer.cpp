@@ -351,7 +351,6 @@ void ofGLRenderer::setupScreenOrtho(float width, float height, int orientation, 
 
 #else
 	if(vFlip) {
-<<<<<<< HEAD
 		ofMatrix4x4 ortho = ofMatrix4x4::newOrthoMatrix(0, width, height, 0, nearDist, farDist);
 		ofSetCoordHandedness(OF_LEFT_HANDED);
 	}
