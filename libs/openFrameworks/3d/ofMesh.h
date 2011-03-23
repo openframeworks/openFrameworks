@@ -105,6 +105,8 @@ protected:
 	virtual void draw(ofPolyRenderMode renderType);
 
 private:
+	friend class ofTessellator2;
+
 	vector<ofVec3f> vertices;
 	vector<ofColor> colors;
 	vector<ofVec3f> normals;
