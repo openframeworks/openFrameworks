@@ -14,7 +14,7 @@ void testApp::setup(){
 	rAudio = new float[1024];
 	
 	
-	ofSoundStreamSetup(2,0, this, sampleRate,1024, 4);
+	soundStream.setup(this,2,0, sampleRate,1024, 4);
 
 	int bpm = 120;
 	beatLength = ((sampleRate*60)/bpm);
@@ -46,8 +46,10 @@ void testApp::setup(){
 	mixer.setVolume(&multiplex, 1.0);
 	
 	passthrough.addInputFrom( &mixer );
+
+	mixer.setAudioInput(this);
 //	writer.addInputFrom(&passthrough);
-	ofSoundStreamAddSoundSource( &passthrough );
+	soundStream.setOutput( &passthrough );
 	
 	delay.setSize(0.1);
 	delay.setFeedback(0.7);
@@ -89,7 +91,7 @@ void testApp::audioRequested(float * output, int bufferSize, int nChannels){
 }
 //--------------------------------------------------------------
 void testApp::update(){
-	const ofSoundBuffer& output = passthrough.getBuffer();
+	const ofxSoundBuffer& output = passthrough.getBuffer();
 	output.copyChannel( 0, lAudio );
 	output.copyChannel( 1, rAudio );
 	
