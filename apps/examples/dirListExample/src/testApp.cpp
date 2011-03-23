@@ -1,10 +1,7 @@
 #include "testApp.h"
 
-
 //--------------------------------------------------------------
 void testApp::setup(){
-
-	Poco::File file;
 
 	dir.listDir("images/of_logos/");
 
@@ -20,7 +17,6 @@ void testApp::setup(){
 	currentImage = 0;
 
 	ofBackground(ofColor::white);
-
 }
 
 //--------------------------------------------------------------
