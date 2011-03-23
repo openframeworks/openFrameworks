@@ -140,13 +140,11 @@ void ofGLRenderer::draw(ofPath & shape){
 		prevColor = ofGetStyle().color;
 	}
 	if(shape.isFilled()){
-		vector<ofMesh> & mesh = shape.getTessellation();
+		ofMesh & mesh = shape.getTessellation();
 		if(shape.getUseShapeColor()){
 			setColor( shape.getFillColor() * ofGetStyle().color,shape.getFillColor().a/255. * ofGetStyle().color.a);
 		}
-		for(int i=0;i<(int)mesh.size();i++){
-			draw(mesh[i].getVertices(),mesh[i].getMode());
-		}
+		draw(mesh);
 	}
 	if(shape.hasOutline()){
 		float lineWidth = ofGetStyle().lineWidth;
