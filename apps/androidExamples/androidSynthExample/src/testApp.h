@@ -31,17 +31,19 @@ class testApp : public ofBaseApp{
 
 		float volume;
 		
-		ofSoundSourceTestTone tone;
+		ofxSoundSourceTestTone tone;
 		
 		ofxSynthDelayline delay;
 		
 		ofxSynth synth;
 		ofxSynthSampler sampler;
 		ofxSynthFilter filter;
-		ofSoundSourceMultiplexor multiplex;
-		ofSoundEffectPassthrough passthrough;
-		ofSoundMixer mixer;
+		ofxSoundSourceMultiplexor multiplex;
+		ofxSoundEffectPassthrough passthrough;
+		ofxSoundMixer mixer;
 		ofxSynthWaveWriter writer;
+
+		ofSoundStream soundStream;
 
 		int beatLength, frameCounter;
 		
