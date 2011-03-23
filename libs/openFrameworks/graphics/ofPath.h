@@ -119,6 +119,7 @@ private:
 	// this gives more performance for shapes that are
 	// updating frequently by not instantiating new meshes
 	friend class ofTessellator;
+	friend class ofTessellator2;
 	struct tessCache{
 		vector<ofMesh> meshes;
 		int numElements;

@@ -457,3 +457,4 @@ void ofMesh::drawFaces(){
 void ofMesh::draw(ofPolyRenderMode renderType){
 	ofGetDefaultRenderer()->draw(*this,renderType);
 }
+

@@ -1,6 +1,7 @@
 #include "ofPath.h"
 #include "ofGraphics.h"
 #include "ofTessellator.h"
+#include "ofTessellator2.h"
 
 //----------------------------------------------------------
 ofSubPath::ofSubPath(){
@@ -366,7 +367,7 @@ void ofPath::tessellate(){
 	generatePolylinesFromPaths();
 	if(!bNeedsTessellation) return;
 	if(bFill){
-		ofTessellator::tessellateToCache( polylines, windingMode, cachedTessellation);
+		ofTessellator2::tessellateToCache( polylines, windingMode, cachedTessellation);
 		cachedTessellation.changed=false;
 	}
 	if ( hasOutline() ){
