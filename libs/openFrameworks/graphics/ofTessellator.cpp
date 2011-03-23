@@ -278,7 +278,8 @@ void ofTessellator::performTessellation(const vector<ofPolyline>& polylines, int
 	gluTessEndPolygon( ofShapeTobj);
 	//gluDeleteTess( ofShapeTobj);
 	//ofShapeTobj = NULL;
-	
+
+	//cout << resultMesh->size() << " " << resultMesh->at(0).getNumVertices() << " " << resultMesh->at(0).getNumIndices() << endl;
    	// now clear the vertices on the dynamically allocated data
 	clear();
 

@@ -64,7 +64,7 @@ enum TessElementType
 };
 
 typedef float TESSreal;
-typedef int TESSindex;
+typedef unsigned int TESSindex;
 typedef struct TESStesselator TESStesselator;
 typedef struct TESSalloc TESSalloc;
 
