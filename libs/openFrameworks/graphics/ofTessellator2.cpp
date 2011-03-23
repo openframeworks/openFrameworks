@@ -112,7 +112,7 @@ void ofTessellator2::tessellateToCache( const vector<ofPolyline>& src, ofPolyWin
 
 	performTessellation( src, polyWindingMode, true /* filled */,bIs2D );
 
-	cache.numElements = numElements;
+	cache.numElements = 1;
 }
 
 //----------------------------------------------------------
@@ -146,14 +146,17 @@ void ofTessellator2::performTessellation(const vector<ofPolyline>& polylines, of
 		tessAddContour( cacheTess, bIs2D?2:3, &polyline.getVertices()[0], sizeof(ofPoint), polyline.size());
 	}
 	
-	tessTesselate( cacheTess, polyWindingMode, TESS_POLYGONS, /*polySize*/ 3,  bIs2D?2:3, NULL );
+	tessTesselate( cacheTess, polyWindingMode, TESS_POLYGONS, /*polySize*/ 3,  3, NULL );
 	
 	int numVertexes = tessGetVertexCount( cacheTess );
+	int numIndices = tessGetElementCount( cacheTess )*3;
 	resultMesh->resize(1);
-	resultMesh->at(0).vertices.resize(numVertexes);
-	memcpy(&resultMesh->at(0).vertices[0],tessGetVertices(cacheTess),numVertexes*sizeof(float)*3);
+	resultMesh->at(0).clear();
+	resultMesh->at(0).addVertices((ofVec3f*)tessGetVertices(cacheTess),numVertexes);
+	resultMesh->at(0).addIndices(tessGetElements(cacheTess),numIndices);
 	resultMesh->at(0).setMode(OF_TRIANGLES_MODE);
-	resultMesh->at(0).bVertsChanged=true;
+
+	//cout << resultMesh->at(0).getNumVertices() << " " << resultMesh->at(0).getNumIndices() << endl;
    	// now clear the vertices on the dynamically allocated data
 	clear();
 
