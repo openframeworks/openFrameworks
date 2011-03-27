@@ -89,8 +89,18 @@ void ofURLFileLoader::threadedFunction() {
 			if(response.status!=-1){
 				lock();
 				responses.push(response);
-				requests.pop_front();
+				if(requests.size() > 0) {
+					requests.pop_front();
+				}
 				unlock();
+			}
+			else {
+				lock();
+				if(requests.size() > 0) {
+					requests.pop_front();
+				}
+				unlock();
+				
 			}
 		}else{
 			unlock();
