@@ -74,16 +74,25 @@ class ofVideoGrabber : public ofBaseVideoGrabber,public ofBaseDraws, public ofBa
 		int					height;
 		int					width;
 
+		friend ostream& operator<<(ostream&, const ofVideoGrabber& grabber);
 	protected:
 		
 		ofTexture tex;
 		bool bUseTexture;
 		bool bInitialized;
-		ofBaseVideoGrabber		* grabber;
+		ofBaseVideoGrabber		* grabber; 
 		int RequestedDeviceID;
 		
 		ofPixelFormat internalPixelFormat;
 };
+
+inline ostream& operator<<(ostream& os, const ofVideoGrabber& grabber) {
+	os	<< "width: " << grabber.width
+		<< ", height: "  << grabber.height
+		<< ", initialzed: " << grabber.bInitialized
+		<< ", use texture: " << grabber.bUseTexture;
+	return os;
+}
 
 
 

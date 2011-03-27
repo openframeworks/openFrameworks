@@ -16,7 +16,7 @@
 //#endif
 //
 #ifdef TARGET_LINUX
-	#include "GL/glu.h"
+	#include <GL/glu.h>
 #endif
 
 #ifdef TARGET_WIN32
@@ -1348,7 +1348,7 @@ void ofDrawBitmapString(string textString, float x, float y){
 void ofDrawBitmapString(string textString, float x, float y, float z){
 	
 	// this is copied from the ofTrueTypeFont
-	GLboolean blend_enabled = glIsEnabled(GL_BLEND);
+	//GLboolean blend_enabled = glIsEnabled(GL_BLEND); //TODO: this is not used?
 	GLint blend_src, blend_dst;
 	glGetIntegerv( GL_BLEND_SRC, &blend_src );
 	glGetIntegerv( GL_BLEND_DST, &blend_dst );

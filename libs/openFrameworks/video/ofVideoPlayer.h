@@ -85,6 +85,8 @@ class ofVideoPlayer : public ofBaseVideoPlayer, public ofBaseDraws, public ofBas
 		//this is kept as legacy to support people accessing width and height directly. 
 		int					height;
 		int					width;
+	
+		friend ostream& operator<<(ostream& os, ofVideoPlayer& player);
 
 	protected:
 		ofBaseVideoPlayer		* player;
@@ -95,6 +97,15 @@ class ofVideoPlayer : public ofBaseVideoPlayer, public ofBaseDraws, public ofBas
 		ofPixelFormat internalPixelFormat;
 };
 
+// TODO: Make ofVideoPlayer const + implement const function for getWidth/..
+inline ostream& operator<<(ostream& os, ofVideoPlayer& player) {
+	os	<< "width: " << player.getWidth()
+		<< ", height: " << player.getHeight()
+		<< ", use texture: " << player.bUseTexture
+		<< ", is loaded: " << player.isLoaded()
+		<< ", is playing: " << player.isPlaying();
+	return os;
+}
 
 
 

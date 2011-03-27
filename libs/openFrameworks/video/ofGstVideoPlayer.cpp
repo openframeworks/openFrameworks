@@ -33,7 +33,8 @@ bool ofGstVideoPlayer::loadMovie(string name){
 	}
 	ofLog(OF_LOG_VERBOSE,"loading "+name);
 
-	GMainLoop* loop		= g_main_loop_new (NULL, FALSE);
+	//GMainLoop* loop		=
+	g_main_loop_new (NULL, FALSE);
 
 	GstElement * gstPipeline = gst_element_factory_make("playbin2","player");
 	g_object_set(G_OBJECT(gstPipeline), "uri", name.c_str(), (void*)NULL);

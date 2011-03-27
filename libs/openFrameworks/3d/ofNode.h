@@ -71,9 +71,7 @@ public:
 	// Set Transformations
 
 	// directly set transformation matrix
-	// TODO:
 	void setTransformMatrix(const ofMatrix4x4 &m44);
-	void setTransformMatrix(float *m44);
 	
 	// position
 	void setPosition(float px, float py, float pz);
@@ -113,6 +111,7 @@ public:
 	void rotate(float degrees, const ofVec3f& v);	// rotate around arbitrary axis by angle
 	void rotate(float degrees, float vx, float vy, float vz);
 	
+	// TODO: immplement these
 	void rotateAround(const ofQuaternion& q, const ofVec3f& point);	// rotate by quaternion around point
 	void rotateAround(float degrees, const ofVec3f& axis, const ofVec3f& point);	// rotate around arbitrary axis by angle around point
 	
@@ -150,6 +149,10 @@ public:
 	// and calls the virtual 'customDraw' method above which you CAN override
 	void draw();
 	
+	// stream operators
+	friend ostream& operator<<(ostream& os, const ofNode& rNode);
+	
+	
 protected:
 	ofNode *parent;
 	
@@ -171,3 +174,10 @@ private:
 	ofMatrix4x4 localTransformMatrix;
 //	ofMatrix4x4 globalTransformMatrix;
 };
+
+inline ostream& operator<<(ostream& os, const ofNode& node) {
+	os	<< "position: " << node.position 
+		<< ", orientation: " << node.orientation 
+		<< ", scale: " << node.scale;
+	return os;
+}

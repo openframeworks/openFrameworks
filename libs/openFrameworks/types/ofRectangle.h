@@ -12,6 +12,8 @@
 #pragma once
 #include "ofPoint.h"
 
+#include <ostream>
+using namespace std;
 
 //----------------------------------------------------------
 // ofRectangle
@@ -44,5 +46,15 @@ class ofRectangle {
 		float y;
 		float width;
 		float height;
+	
+		friend ostream& operator<<(ostream& os, const ofRectangle& rect);
 };
+
+inline ostream& operator<<(ostream& os, const ofRectangle& rect) {
+	os	<< "x: " << rect.x 
+		<< ", y: " << rect.y
+		<< ", width: " << rect.width
+		<< ", height: " << rect.height;		
+	return os;
+}
 

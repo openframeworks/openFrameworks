@@ -1,6 +1,6 @@
 #include "testApp.h"
 #include "ofCamera.h"
-#include "ofMeshNode.h"
+//#include "ofMeshNode.h"
 
 #define kMoveInc		10
 #define kRotInc			5

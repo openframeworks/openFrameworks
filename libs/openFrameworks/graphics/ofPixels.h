@@ -48,6 +48,8 @@ public:
 
 	ofImageType getImageType() const;
 	int getGlDataType() const;
+	
+	friend ostream& operator<<(ostream&os, const ofPixels& pixels);
 
 private:
 	void copyFrom( const ofPixels& mom );

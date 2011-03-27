@@ -159,12 +159,20 @@ class ofTexture : public ofBaseDraws{
 	float getHeight();
 	float getWidth();
 
+	friend ostream& operator<<(ostream& os, const ofTexture& texture);
+	
 protected:
 	void loadData(void * data, int w, int h, int glDataType);
 
 	ofPoint anchor;
 	bool bAnchorIsPct;
-
-
 };
+
+/*
+// We need to add const methods to retrieve the width (?)
+ostream& operator<<(ostream& os, const ofTexture& texture) {
+	os << "widht: " << texture.getWidth();
+	return os;
+}
+ */
 
