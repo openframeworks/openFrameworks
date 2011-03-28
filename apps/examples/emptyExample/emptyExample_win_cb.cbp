@@ -49,16 +49,20 @@
 			<Add directory="..\..\..\libs\rtAudio\include" />
 			<Add directory="..\..\..\libs\fmodex\include" />
 			<Add directory="..\..\..\libs\videoInput\include" />
-			<Add directory="..\..\..\libs\glee\include" />
+			<Add directory="..\..\..\libs\glew\include" />
 			<Add directory="..\..\..\libs\glut\include" />
 			<Add directory="..\..\..\libs\openFrameworks" />
+			<Add directory="..\..\..\libs\openFrameworks\3d" />
 			<Add directory="..\..\..\libs\openFrameworks\app" />
-			<Add directory="..\..\..\libs\openFrameworks\events" />
-			<Add directory="..\..\..\libs\openFrameworks\graphics" />
-			<Add directory="..\..\..\libs\openFrameworks\utils" />
-			<Add directory="..\..\..\libs\openFrameworks\sound" />
-			<Add directory="..\..\..\libs\openFrameworks\video" />
 			<Add directory="..\..\..\libs\openFrameworks\communication" />
+			<Add directory="..\..\..\libs\openFrameworks\events" />
+			<Add directory="..\..\..\libs\openFrameworks\gl" />
+			<Add directory="..\..\..\libs\openFrameworks\graphics" />
+			<Add directory="..\..\..\libs\openFrameworks\math" />
+			<Add directory="..\..\..\libs\openFrameworks\sound" />
+			<Add directory="..\..\..\libs\openFrameworks\types" />
+			<Add directory="..\..\..\libs\openFrameworks\utils" />
+			<Add directory="..\..\..\libs\openFrameworks\video" />
 			<Add directory="..\..\..\libs\poco\include" />
 		</Compiler>
 		<Linker>
