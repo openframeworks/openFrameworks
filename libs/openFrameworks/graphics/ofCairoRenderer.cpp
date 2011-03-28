@@ -4,6 +4,7 @@
 #include "ofAppRunner.h"
 #include "ofUtils.h"
 #include "ofMesh.h"
+#include "ofImage.h"
 
 void
 helper_quadratic_to (cairo_t *cr,
@@ -326,6 +327,82 @@ void ofCairoRenderer::draw(ofSubPath & path){
 	}
 
 
+}
+
+//--------------------------------------------
+void ofCairoRenderer::draw(ofImage & img, float x, float y, float z, float w, float h){
+	ofPixelsRef pix = img.getPixelsRef();
+	pushMatrix();
+	translate(x,y,z);
+	scale(w/pix.getWidth(),h/pix.getHeight());
+	cairo_surface_t *image;
+	int stride=0;
+	int picsize = pix.getWidth()* pix.getHeight();
+	unsigned char *imgPix = pix.getPixels();
+
+	static vector<unsigned char> swapPixels;
+
+	switch(pix.getImageType()){
+	case OF_IMAGE_COLOR:
+#ifdef TARGET_LITTLE_ENDIAN
+		swapPixels.resize(picsize * 4);
+
+		for(int p= 0; p<picsize; p++) {
+			swapPixels[p*4] = imgPix[p*3 +2];
+			swapPixels[p*4 +1] = imgPix[p*3 +1];
+			swapPixels[p*4 +2] = imgPix[p*3];
+		}
+#else
+		swapPixels.resize(picsize * 4);
+
+		for(int p= 0; p<picsize; p++) {
+			swapPixels[p*4] = imgPix[p*3];
+			swapPixels[p*4 +1] = imgPix[p*3 +1];
+			swapPixels[p*4 +2] = imgPix[p*3 +2];
+		}
+#endif
+		stride = cairo_format_stride_for_width (CAIRO_FORMAT_RGB24, pix.getWidth());
+		image = cairo_image_surface_create_for_data(&swapPixels[0], CAIRO_FORMAT_RGB24, pix.getWidth(), pix.getHeight(), stride);
+		break;
+	case OF_IMAGE_COLOR_ALPHA:
+#ifdef TARGET_LITTLE_ENDIAN
+		swapPixels.resize(picsize * 4);
+
+		for(int p= 0; p<picsize; p++) {
+			swapPixels[p*4] = imgPix[p*4+2];
+			swapPixels[p*4 +1] = imgPix[p*4+1];
+			swapPixels[p*4 +2] = imgPix[p*4];
+			swapPixels[p*4 +3] = imgPix[p*4+3];
+		}
+		stride = cairo_format_stride_for_width (CAIRO_FORMAT_ARGB32, pix.getWidth());
+		image = cairo_image_surface_create_for_data(&swapPixels[0], CAIRO_FORMAT_ARGB32, pix.getWidth(), pix.getHeight(), stride);
+#else
+		stride = cairo_format_stride_for_width (CAIRO_FORMAT_ARGB32, pix.getWidth());
+		image = cairo_image_surface_create_for_data(pix.getPixels(), CAIRO_FORMAT_ARGB32, pix.getWidth(), pix.getHeight(), stride);
+#endif
+		break;
+	case OF_IMAGE_GRAYSCALE:
+		swapPixels.resize(picsize * 4);
+
+		for(int p= 0; p<picsize; p++) {
+			swapPixels[p*4] = imgPix[p];
+			swapPixels[p*4 +1] = imgPix[p];
+			swapPixels[p*4 +2] = imgPix[p];
+		}
+		stride = cairo_format_stride_for_width (CAIRO_FORMAT_RGB24, pix.getWidth());
+		image = cairo_image_surface_create_for_data(&swapPixels[0], CAIRO_FORMAT_RGB24, pix.getWidth(), pix.getHeight(), stride);
+		break;
+	case OF_IMAGE_UNDEFINED:
+		ofLog(OF_LOG_ERROR,"ofCairoRenderer: trying to render undefined type image");
+		popMatrix();
+		return;
+		break;
+	}
+	cairo_set_source_surface (cr, image, 0,0);
+	cairo_paint (cr);
+	cairo_surface_flush(image);
+	cairo_surface_destroy (image);
+	popMatrix();
 }
 
 //--------------------------------------------
@@ -855,7 +932,10 @@ void ofCairoRenderer::drawEllipse(float x, float y, float z, float width, float 
 }
 
 void ofCairoRenderer::drawString(string text, float x, float y, float z, ofDrawBitmapMode mode){
-	//TODO: add some basic text rendering functionality
+	cairo_select_font_face (cr, "Mono", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL);
+	cairo_set_font_size (cr, 10);
+	cairo_move_to (cr, x, y);
+	cairo_show_text (cr, text.c_str() );
 }
 
 cairo_t * ofCairoRenderer::getCairoContext(){

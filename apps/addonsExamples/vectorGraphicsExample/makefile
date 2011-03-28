@@ -186,7 +186,7 @@ ifeq ($(ARCH),android)
 	
 	ifeq ($(findstring Release_arm7,$(MAKECMDGOALS)),Release_arm7)
 		TARGET_NAME = Release_arm7
-		TARGET_CFLAGS += -march=armv7-a -mfloat-abi=softfp -mfpu=vfp
+		TARGET_CFLAGS += -march=armv7-a -mfloat-abi=softfp -mfpu=neon
 	    TARGET = libs/armeabi-v7a/libOFAndroidApp.so
 		TARGET_LIBS = -lopenFrameworks_arm7
 		#LDFLAGS += -shared  already included through Release
