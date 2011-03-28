@@ -6,7 +6,7 @@
 		<Option makefile="makefile" />
 		<Option pch_mode="2" />
 		<Option compiler="gcc" />
-		<Option virtualFolders="src\;" />
+		<Option virtualFolders="addons\;src\;" />
 		<Build>
 			<Target title="release">
 				<Option output="bin\$(PROJECT_NAME)" prefix_auto="1" extension_auto="1" />
@@ -50,25 +50,9 @@
 			<Add directory="..\..\..\libs\rtAudio\include" />
 			<Add directory="..\..\..\libs\fmodex\include" />
 			<Add directory="..\..\..\libs\videoInput\include" />
+			<Add directory="..\..\..\libs\glew\include" />
 			<Add directory="..\..\..\libs\glut\include" />
 			<Add directory="..\..\..\libs\openFrameworks" />
-			<Add directory="..\..\..\libs\poco\include" />
-			<Add directory="..\..\..\addons\" />
-			<Add directory="..\..\..\addons\ofx3DModelLoader\src\3DS\" />
-			<Add directory="..\..\..\addons\ofx3DModelLoader\src\" />
-			<Add directory="..\..\..\addons\ofxNetwork\src" />
-			<Add directory="..\..\..\addons\ofxOsc\src" />
-			<Add directory="..\..\..\addons\ofxOsc\libs\oscpack\include\ip" />
-			<Add directory="..\..\..\addons\ofxOsc\libs\oscpack\include\osc" />
-			<Add directory="..\..\..\addons\ofxVectorMath\src" />
-			<Add directory="..\..\..\addons\ofxVectorGraphics\src" />
-			<Add directory="..\..\..\addons\ofxVectorGraphics\libs" />
-			<Add directory="..\..\..\addons\ofxOpenCv\src" />
-			<Add directory="..\..\..\addons\ofxOpenCv\libs\opencv\include" />
-			<Add directory="..\..\..\addons\ofxThread\src" />
-			<Add directory="..\..\..\addons\ofxDirList\src" />
-			<Add directory="..\..\..\addons\ofxXmlSettings\src" />
-			<Add directory="..\..\..\addons\ofxXmlSettings\libs" />
 			<Add directory="..\..\..\libs\openFrameworks\3d" />
 			<Add directory="..\..\..\libs\openFrameworks\app" />
 			<Add directory="..\..\..\libs\openFrameworks\communication" />
@@ -80,7 +64,7 @@
 			<Add directory="..\..\..\libs\openFrameworks\types" />
 			<Add directory="..\..\..\libs\openFrameworks\utils" />
 			<Add directory="..\..\..\libs\openFrameworks\video" />
-			<Add directory="..\..\..\libs\glew\include" />
+			<Add directory="..\..\..\libs\poco\include" />
 		</Compiler>
 		<Linker>
 			<Add option="../../../libs/FreeImage/lib/win_cb/FreeImage.lib" />
@@ -96,9 +80,6 @@
 			<Add option="../../../libs/poco/lib/win_cb/libPocoUtilmt.a" />
 			<Add option="../../../libs/poco/lib/win_cb/libPocoXMLmt.a" />
 			<Add option="../../../libs/poco/lib/win_cb/libPocoFoundationmt.a" />
-			<Add option="../../../addons/ofxOpenCv/libs/opencv/lib/win_cb/libcv.a" />
-			<Add option="../../../addons/ofxOpenCv/libs/opencv/lib/win_cb/libcxcore.a" />
-			<Add option="../../../addons/ofxOsc/libs/oscpack/lib/win_cb/oscpack.a" />
 			<Add option="-lopengl32" />
 			<Add option="-lglu32" />
 			<Add option="-ldsound" />
