@@ -898,7 +898,6 @@ void ofCairoRenderer::drawTriangle(float x1, float y1, float z1, float x2, float
 //----------------------------------------------------------
 void ofCairoRenderer::drawCircle(float x, float y, float z, float radius){
 	cairo_new_path(cr);
-	cairo_set_source_rgba(cr,0,0,0,1);
 	cairo_arc(cr, x,y,radius,0,2*PI);
 
 	cairo_close_path(cr);
