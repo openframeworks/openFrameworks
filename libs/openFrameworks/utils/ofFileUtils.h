@@ -61,6 +61,7 @@ class ofFileUtils{
 	static string addLeadingSlash(string path);
 	static string addTrailingSlash(string path);
 	static string removeTrailingSlash(string path);
+	static string getPathForDirectory(string path);
 
 	//------------------------------------------------------------------------------------------------------------	
 	static string getFilenameFromPath(string filePath, bool bRelativeToData = true);
