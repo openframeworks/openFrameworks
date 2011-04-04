@@ -72,6 +72,20 @@ ofTessellator & ofTessellator::operator=(const ofTessellator & mom){
 }
 
 //----------------------------------------------------------
+void ofTessellator::init(){
+	tessAllocator.memalloc = memAllocator;
+	tessAllocator.memrealloc = memReallocator;
+	tessAllocator.memfree = memFree;
+	tessAllocator.meshEdgeBucketSize=0;
+	tessAllocator.meshVertexBucketSize=0;
+	tessAllocator.meshFaceBucketSize=0;
+	tessAllocator.dictNodeBucketSize=0;
+	tessAllocator.regionBucketSize=0;
+	tessAllocator.extraVertices=0;
+	cacheTess = tessNewTess( &tessAllocator );
+}
+
+//----------------------------------------------------------
 void ofTessellator::tessellateToMesh( const ofPolyline& src,  ofPolyWindingMode polyWindingMode, ofMesh& dstmesh, bool bIs2D){
 	dstmesh.clear();
 
@@ -96,20 +110,6 @@ void ofTessellator::tessellateToMesh( const vector<ofPolyline>& src, ofPolyWindi
 	}
 
 	performTessellation( polyWindingMode, dstmesh, bIs2D );
-}
-
-//----------------------------------------------------------
-void ofTessellator::init(){
-	tessAllocator.memalloc = memAllocator;
-	tessAllocator.memrealloc = memReallocator;
-	tessAllocator.memfree = memFree;
-	tessAllocator.meshEdgeBucketSize=0;
-	tessAllocator.meshVertexBucketSize=0;
-	tessAllocator.meshFaceBucketSize=0;
-	tessAllocator.dictNodeBucketSize=0;
-	tessAllocator.regionBucketSize=0;
-	tessAllocator.extraVertices=0;
-	cacheTess = tessNewTess( &tessAllocator );
 }
 
 	
