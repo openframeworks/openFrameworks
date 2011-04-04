@@ -95,6 +95,11 @@ ifneq ($(ARCH),android)
 	ifeq ($(GTK),0)
 		CFLAGS += $(shell pkg-config gtk+-2.0 --cflags) -DOF_USING_GTK
 	endif
+	#check if mpg123 exists and add it
+	MPG123 = $(shell pkg-config libmpg123 --exists; echo $$?)
+	ifeq ($(MPG123),0)
+		CFLAGS += -DOF_USING_MPG123
+	endif
 endif
 
 ifeq ($(findstring Debug,$(MAKECMDGOALS)),Debug)
