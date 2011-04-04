@@ -1,7 +1,8 @@
 #include "ofPath.h"
 #include "ofGraphics.h"
 #include "ofTessellator.h"
-#include "ofTessellator2.h"
+
+ofTessellator ofPath::tessellator;
 
 //----------------------------------------------------------
 ofSubPath::ofSubPath(){
@@ -366,25 +367,16 @@ void ofPath::tessellate(){
 	generatePolylinesFromPaths();
 	if(!bNeedsTessellation) return;
 	if(bFill){
-		ofTessellator2::tessellateToMesh( polylines, windingMode, cachedTessellation);
+		tessellator.tessellateToMesh( polylines, windingMode, cachedTessellation);
 		cachedTessellationValid=true;
-	}
-	if ( hasOutline() ){
-		if( windingMode != OF_POLY_WINDING_ODD ) {
-			ofTessellator::tessellateToOutline( polylines, windingMode, tessellatedPolylines);
-		}
 	}
 	bNeedsTessellation = false;
 }
 
 //----------------------------------------------------------
 vector<ofPolyline> & ofPath::getOutline() {
-	tessellate();
-	if( windingMode != OF_POLY_WINDING_ODD ) {
-		return tessellatedPolylines;
-	}else{
-		return polylines;
-	}
+	generatePolylinesFromPaths();
+	return polylines;
 }
 
 //----------------------------------------------------------

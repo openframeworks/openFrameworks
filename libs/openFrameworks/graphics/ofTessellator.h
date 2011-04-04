@@ -3,13 +3,8 @@
 #include "ofConstants.h"
 #include "ofMesh.h"
 #include "ofTypes.h"
-#include "ofPath.h"
-
-struct GLUtesselator;
-
-#ifndef CALLBACK
-#define CALLBACK
-#endif
+#include "ofPolyline.h"
+#include "tesselator.h"
 
 
 /** ofTessellator
@@ -25,56 +20,22 @@ class ofTessellator
 {
 public:	
 	
-	/// tessellate polyline and return a mesh. if bIs2D==true, do a 10% more efficient normal calculation.
-	static void tessellateToMesh( const vector<ofPolyline>& src, int polyWindingMode, vector<ofMesh> & dstmesh, bool bIs2D=false );
-	static void tessellateToMesh( const ofPolyline& src,  int polyWindingMode, vector<ofMesh>& dstmesh, bool bIs2D=false );
+	ofTessellator();
+	~ofTessellator();
+	ofTessellator(const ofTessellator & mom);
+	ofTessellator & operator=(const ofTessellator & mom);
 
-	/// tessellate polyline and return an outline.
-	static void tessellateToOutline( const vector<ofPolyline>& src, int polyWindingMode, vector<ofPolyline> & dst, bool bIs2D=false );
-	static void tessellateToOutline( const ofPolyline& src, int polyWindingMode, vector<ofPolyline> & dst, bool bIs2D=false );
-	
-	/// tessellate to ofPath internal cache, used from ofPath for performace
-	//static void tessellateToCache( const vector<ofPolyline>& src, int polyWindingMode, ofPath::tessCache & cache, bool bIs2D=false );
+	/// tessellate polyline and return a mesh. if bIs2D==true, do a 10% more efficient normal calculation.
+	void tessellateToMesh( const vector<ofPolyline>& src, ofPolyWindingMode polyWindingMode, ofMesh & dstmesh, bool bIs2D=false );
+	void tessellateToMesh( const ofPolyline& src,  ofPolyWindingMode polyWindingMode, ofMesh& dstmesh, bool bIs2D=false );
 
 private:
 	
-	static void performTessellation( const vector<ofPolyline>& polylines, int polyWindingMode, bool bFilled, bool bIs2D );
-	static void init();
-	/// clear out everything
-	static void clear();
+	void performTessellation( const vector<ofPolyline>& polylines, ofPolyWindingMode polyWindingMode, ofMesh& dstmesh, bool bIs2D );
+	void init();
 
-	/// callbacks for GLU tesselation
-	static void CALLBACK error(GLenum);
-	static void CALLBACK vertex( void* data);
-	static void CALLBACK combine( GLdouble coords[3], void* vertex_data[4], GLfloat weight[4], void** outData);
-	
-	static void CALLBACK begin(GLint type);
-	static void CALLBACK end();
-		
-	/// ensure thread-safety
-	//static ofMutex mutex;
-
-	
-	// filled during tessellation
-	static GLint currentTriType; // GL_TRIANGLES, GL_TRIANGLE_FAN or GL_TRIANGLE_STRIP
-	
-	//---------------------------- for combine callback:
-	static std::vector <double*> newVertices;
-	//---------------------------- store all the polygon vertices:
-	static std::vector <double> ofShapePolyVertexs;
-	
-
-	static vector<ofMesh> * resultMesh;
-	
-	
-	static vector<ofPolyline> * resultOutline;
-	
-	static int  numElements;
-
-	static bool initialized;
-
-	static GLUtesselator * ofShapeTobj;
-
+	TESStesselator * cacheTess;
+	TESSalloc tessAllocator;
 };
 
 
