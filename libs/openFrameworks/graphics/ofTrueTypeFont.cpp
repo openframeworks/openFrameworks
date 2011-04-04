@@ -286,8 +286,9 @@ void ofTrueTypeFont::loadFont(string filename, int fontsize, bool _bAntiAliased,
 
 			//int character = i + NUM_CHARACTER_TO_START;
 			charOutlines[i] = makeContoursForCharacter( face );
-			charOutlines[i].simplify(simplifyAmt);
-			charOutlines[i].tessellate();
+			if(simplifyAmt>0)
+				charOutlines[i].simplify(simplifyAmt);
+			charOutlines[i].getTessellation();
 		}
 
 		// prepare the texture:
