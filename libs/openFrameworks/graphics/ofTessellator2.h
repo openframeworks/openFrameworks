@@ -20,36 +20,22 @@ class ofTessellator2
 {
 public:	
 	
-	/// tessellate polyline and return a mesh. if bIs2D==true, do a 10% more efficient normal calculation.
-	static void tessellateToMesh( const vector<ofPolyline>& src, ofPolyWindingMode polyWindingMode, ofMesh& dstmesh, bool bIs2D=false );
-	static void tessellateToMesh( const ofPolyline& src,  ofPolyWindingMode polyWindingMode, ofMesh& dstmesh, bool bIs2D=false );
+	ofTessellator2();
+	~ofTessellator2();
+	ofTessellator2(const ofTessellator2 & mom);
+	ofTessellator2 & operator=(const ofTessellator2 & mom);
 
-	/// tessellate polyline and return an outline.
-	static void tessellateToOutline( const vector<ofPolyline>& src, ofPolyWindingMode polyWindingMode, vector<ofPolyline> & dst, bool bIs2D=false );
-	static void tessellateToOutline( const ofPolyline& src, ofPolyWindingMode polyWindingMode, vector<ofPolyline> & dst, bool bIs2D=false );
-	
-	/// tessellate to ofPath internal cache, used from ofPath for performace
-	//static void tessellateToCache( const vector<ofPolyline>& src, ofPolyWindingMode polyWindingMode, ofPath::tessCache & cache, bool bIs2D=false );
+	/// tessellate polyline and return a mesh. if bIs2D==true, do a 10% more efficient normal calculation.
+	void tessellateToMesh( const vector<ofPolyline>& src, ofPolyWindingMode polyWindingMode, ofMesh & dstmesh, bool bIs2D=false );
+	void tessellateToMesh( const ofPolyline& src,  ofPolyWindingMode polyWindingMode, ofMesh& dstmesh, bool bIs2D=false );
 
 private:
 	
-	static void performTessellation( const vector<ofPolyline>& polylines, ofPolyWindingMode polyWindingMode, bool bFilled, bool bIs2D );
-	static void init();
-	/// clear out everything
-	static void clear();
-	
+	void performTessellation( const vector<ofPolyline>& polylines, ofPolyWindingMode polyWindingMode, ofMesh& dstmesh, bool bIs2D );
+	void init();
 
-	static ofMesh * resultMesh;
-	
-	
-	static vector<ofPolyline> * resultOutline;
-	
-	static int  numElements;
-
-	static bool initialized;
-
-	static TESStesselator * cacheTess;
-	static TESSalloc tessAllocator;
+	TESStesselator * cacheTess;
+	TESSalloc tessAllocator;
 };
 
 
