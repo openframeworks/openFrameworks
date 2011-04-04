@@ -31,7 +31,7 @@ public:
 
 private:
 	
-	void performTessellation( const vector<ofPolyline>& polylines, ofPolyWindingMode polyWindingMode, ofMesh& dstmesh, bool bIs2D );
+	void performTessellation( ofPolyWindingMode polyWindingMode, ofMesh& dstmesh, bool bIs2D );
 	void init();
 
 	TESStesselator * cacheTess;

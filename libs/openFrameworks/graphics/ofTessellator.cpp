@@ -73,9 +73,12 @@ ofTessellator & ofTessellator::operator=(const ofTessellator & mom){
 
 //----------------------------------------------------------
 void ofTessellator::tessellateToMesh( const ofPolyline& src,  ofPolyWindingMode polyWindingMode, ofMesh& dstmesh, bool bIs2D){
-	vector<ofPolyline> tempPolylinesVector;
-	tempPolylinesVector.push_back( src );
-	tessellateToMesh( tempPolylinesVector, polyWindingMode, dstmesh, bIs2D );
+	dstmesh.clear();
+
+	ofPolyline& polyline = const_cast<ofPolyline&>(src);
+	tessAddContour( cacheTess, bIs2D?2:3, &polyline.getVertices()[0], sizeof(ofPoint), polyline.size());
+
+	performTessellation( polyWindingMode, dstmesh, bIs2D );
 }
 
 	
@@ -84,7 +87,15 @@ void ofTessellator::tessellateToMesh( const vector<ofPolyline>& src, ofPolyWindi
 	//Poco::ScopedLock<ofMutex> lock(mutex);
 	dstmesh.clear();
 
-	performTessellation( src, polyWindingMode, dstmesh, bIs2D );
+
+	// pass vertex pointers to GLU tessellator
+	for ( int j=0; j<(int)src.size(); j++ ) {
+		ofPolyline& polyline = const_cast<ofPolyline&>(src[j]);
+
+		tessAddContour( cacheTess, bIs2D?2:3, &polyline.getVertices()[0], sizeof(ofPoint), polyline.size());
+	}
+
+	performTessellation( polyWindingMode, dstmesh, bIs2D );
 }
 
 //----------------------------------------------------------
@@ -103,14 +114,7 @@ void ofTessellator::init(){
 
 	
 //----------------------------------------------------------
-void ofTessellator::performTessellation(const vector<ofPolyline>& polylines, ofPolyWindingMode polyWindingMode, ofMesh& dstmesh, bool bIs2D ) {
-
-	// pass vertex pointers to GLU tessellator
-	for ( int j=0; j<(int)polylines.size(); j++ ) {
-		ofPolyline& polyline = const_cast<ofPolyline&>(polylines[j]);
-
-		tessAddContour( cacheTess, bIs2D?2:3, &polyline.getVertices()[0], sizeof(ofPoint), polyline.size());
-	}
+void ofTessellator::performTessellation(ofPolyWindingMode polyWindingMode, ofMesh& dstmesh, bool bIs2D ) {
 	
 	tessTesselate( cacheTess, polyWindingMode, TESS_POLYGONS, /*polySize*/ 3,  3, NULL );
 	
