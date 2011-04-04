@@ -2,7 +2,7 @@
 <CodeBlocks_project_file>
 	<FileVersion major="1" minor="6" />
 	<Project>
-		<Option title="vectorMathExample" />
+		<Option title="advanced3dExample" />
 		<Option makefile="makefile" />
 		<Option pch_mode="2" />
 		<Option compiler="gcc" />
@@ -101,6 +101,12 @@
 			<Add after='cmd /c if not exist &quot;$(PROJECT_DIR)bin/data&quot; mkdir &quot;$(PROJECT_DIR)bin/data&quot;' />
 			<Mode after="always" />
 		</ExtraCommands>
+		<Unit filename="src\Grid.cpp" />
+		<Unit filename="src\Grid.h" />
+		<Unit filename="src\OrthoCamera.cpp" />
+		<Unit filename="src\OrthoCamera.h" />
+		<Unit filename="src\Swarm.cpp" />
+		<Unit filename="src\Swarm.h" />
 		<Unit filename="src\main.cpp">
 			<Option virtualFolder="src\" />
 		</Unit>
