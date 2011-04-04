@@ -302,12 +302,6 @@
 		<Unit filename="..\..\..\openFrameworks\sound\ofFmodSoundPlayer.h">
 			<Option virtualFolder="openframeworks\sound\" />
 		</Unit>
-		<Unit filename="..\..\..\openFrameworks\sound\ofSoundEffect.cpp">
-			<Option virtualFolder="openframeworks\sound\" />
-		</Unit>
-		<Unit filename="..\..\..\openFrameworks\sound\ofSoundEffect.h">
-			<Option virtualFolder="openframeworks\sound\" />
-		</Unit>
 		<Unit filename="..\..\..\openFrameworks\sound\ofSoundPlayer.cpp">
 			<Option virtualFolder="openframeworks\sound\" />
 		</Unit>
@@ -318,12 +312,6 @@
 			<Option virtualFolder="openframeworks\sound\" />
 		</Unit>
 		<Unit filename="..\..\..\openFrameworks\sound\ofSoundStream.h">
-			<Option virtualFolder="openframeworks\sound\" />
-		</Unit>
-		<Unit filename="..\..\..\openFrameworks\sound\ofSoundUnit.cpp">
-			<Option virtualFolder="openframeworks\sound\" />
-		</Unit>
-		<Unit filename="..\..\..\openFrameworks\sound\ofSoundUnit.h">
 			<Option virtualFolder="openframeworks\sound\" />
 		</Unit>
 		<Unit filename="..\..\..\openFrameworks\types\ofBaseTypes.cpp">
