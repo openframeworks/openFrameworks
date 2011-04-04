@@ -240,7 +240,7 @@ Release: $(TARGET) after
 Debug: $(TARGET) after
 
 all: 
-	make Release
+	$(MAKE) Release
 	
 	
 
@@ -253,12 +253,12 @@ Release_arm7Android: $(TARGET) afterReleaseAndroid
 TestLinkAndroid: $(TARGET) afterDebugAndroid
 
 AndroidDebug:
-	make DebugAndroid
-	make TestLinkAndroid
+	$(MAKE) DebugAndroid
+	$(MAKE) TestLinkAndroid
 	
 AndroidRelease:
-	make ReleaseAndroid
-	make Release_arm7Android
+	$(MAKE) ReleaseAndroid
+	$(MAKE) Release_arm7Android
 
 
 #This rule does the compilation
