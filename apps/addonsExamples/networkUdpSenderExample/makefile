@@ -24,7 +24,7 @@
 #
 # edit the following  vars to customize the makefile
 
-OF_ROOT = '../../..'
+OF_ROOT = ../../..
 
 include $(OF_ROOT)/libs/openFrameworksCompiled/project/android/paths.make
 
