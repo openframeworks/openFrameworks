@@ -146,13 +146,13 @@ ReleaseAndroid: $(TARGET)
 Release_arm7Android: $(TARGET)
 
 all: 
-	make Debug
-	make Release
+	$(MAKE) Debug
+	$(MAKE) Release
 	
 android:
-	make DebugAndroid
-	make ReleaseAndroid
-	make Release_arm7Android
+	$(MAKE) DebugAndroid
+	$(MAKE) ReleaseAndroid
+	$(MAKE) Release_arm7Android
 
 #This rule does the compilation
 $(OBJ_OUTPUT)%.o: ../../../%.cpp 
