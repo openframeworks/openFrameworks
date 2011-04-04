@@ -34,7 +34,7 @@ public:
 	static void tessellateToOutline( const ofPolyline& src, int polyWindingMode, vector<ofPolyline> & dst, bool bIs2D=false );
 	
 	/// tessellate to ofPath internal cache, used from ofPath for performace
-	static void tessellateToCache( const vector<ofPolyline>& src, int polyWindingMode, ofPath::tessCache & cache, bool bIs2D=false );
+	//static void tessellateToCache( const vector<ofPolyline>& src, int polyWindingMode, ofPath::tessCache & cache, bool bIs2D=false );
 
 private:
 	
