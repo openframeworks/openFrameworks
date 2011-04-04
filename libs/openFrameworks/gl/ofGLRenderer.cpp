@@ -6,6 +6,7 @@
 #include "ofMesh.h"
 #include "ofBitmapFont.h"
 #include "ofGLUtils.h"
+#include "ofImage.h"
 
 //----------------------------------------------------------
 ofGLRenderer::ofGLRenderer(bool useShapeColor){
@@ -161,6 +162,13 @@ void ofGLRenderer::draw(ofPath & shape){
 	}
 	if(shape.getUseShapeColor()){
 		setColor(prevColor);
+	}
+}
+
+//----------------------------------------------------------
+void ofGLRenderer::draw(ofImage & image, float x, float y, float z, float w, float h){
+	if(image.isUsingTexture()){
+		image.getTextureReference().draw(x,y,z,w,h);
 	}
 }
 

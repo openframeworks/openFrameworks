@@ -11,6 +11,7 @@
 
 
 #ifdef TARGET_WIN32
+	#include <algorithm> // for std::replace
 	#ifndef _MSC_VER
         #include <unistd.h> // this if for MINGW / _getcwd
     #endif

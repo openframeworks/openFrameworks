@@ -14,6 +14,7 @@ public:
 	void draw(ofPolyline & poly);
 	void draw(ofPath & path);
 	void draw(vector<ofPoint> & vertexData, ofPrimitiveMode drawMode);
+	void draw(ofImage & image, float x, float y, float z, float w, float h);
 
 	bool rendersPathPrimitives(){
 		return false;
