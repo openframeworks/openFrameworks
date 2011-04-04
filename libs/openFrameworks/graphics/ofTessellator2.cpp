@@ -37,15 +37,6 @@
 // (note: this implementation is based on code from ftgl)
 // ------------------------------------
 
-int ofTessellator2::numElements;
-bool ofTessellator2::initialized=false;
-
-
-vector<ofPolyline> * ofTessellator2::resultOutline=NULL;
-ofMesh * ofTessellator2::resultMesh=NULL;
-
-TESStesselator * ofTessellator2::cacheTess;
-TESSalloc ofTessellator2::tessAllocator;
 
 void * memAllocator( void *userData, unsigned int size ){
 	return malloc(size);
@@ -59,32 +50,26 @@ void memFree( void *userData, void *ptr ){
 	free (ptr);
 }
 
-
 //----------------------------------------------------------
-
-//----------------------------------------------------------
-void ofTessellator2::clear(){
-
+ofTessellator2::ofTessellator2(){
+	init();
 }
 
-
+//----------------------------------------------------------
+ofTessellator2::~ofTessellator2(){
+	tessDeleteTess(cacheTess);
+}
 
 //----------------------------------------------------------
-void ofTessellator2::tessellateToOutline( const vector<ofPolyline>& src, ofPolyWindingMode polyWindingMode,  vector<ofPolyline> & dst, bool bIs2D ) {
-	//Poco::ScopedLock<ofMutex> lock(mutex);
-	dst.clear();
-	//clear();
-	resultOutline = &dst;
-	
-	performTessellation( src, polyWindingMode, false /* filled */, bIs2D );
+ofTessellator2::ofTessellator2(const ofTessellator2 & mom){
+	if(&mom != this) init();
 }
 
-void ofTessellator2::tessellateToOutline( const ofPolyline & src, ofPolyWindingMode polyWindingMode, vector<ofPolyline> & dst, bool bIs2D ) {
-	vector<ofPolyline> tmpVector;
-	tmpVector.push_back(src);
-	return tessellateToOutline(tmpVector,polyWindingMode, dst, bIs2D);
+//----------------------------------------------------------
+ofTessellator2 & ofTessellator2::operator=(const ofTessellator2 & mom){
+	if(&mom != this) init();
+	return *this;
 }
-
 
 //----------------------------------------------------------
 void ofTessellator2::tessellateToMesh( const ofPolyline& src,  ofPolyWindingMode polyWindingMode, ofMesh& dstmesh, bool bIs2D){
@@ -98,26 +83,12 @@ void ofTessellator2::tessellateToMesh( const ofPolyline& src,  ofPolyWindingMode
 void ofTessellator2::tessellateToMesh( const vector<ofPolyline>& src, ofPolyWindingMode polyWindingMode, ofMesh & dstmesh, bool bIs2D ) {
 	//Poco::ScopedLock<ofMutex> lock(mutex);
 	dstmesh.clear();
-	//clear();
-	resultMesh = &dstmesh;
 
-	performTessellation( src, polyWindingMode, true /* filled */,bIs2D );
+	performTessellation( src, polyWindingMode, dstmesh, bIs2D );
 }
 
 //----------------------------------------------------------
-/*void ofTessellator2::tessellateToCache( const vector<ofPolyline>& src, ofPolyWindingMode polyWindingMode, ofPath::tessCache & cache, bool bIs2D){
-	//Poco::ScopedLock<ofMutex> lock(mutex);
-	//clear();
-	resultMesh = &cache.meshes;
-
-	performTessellation( src, polyWindingMode, true ,bIs2D );
-
-	cache.numElements = 1;
-}*/
-
-//----------------------------------------------------------
 void ofTessellator2::init(){
-	// now get the tesselator object up and ready:
 	tessAllocator.memalloc = memAllocator;
 	tessAllocator.memrealloc = memReallocator;
 	tessAllocator.memfree = memFree;
@@ -128,16 +99,11 @@ void ofTessellator2::init(){
 	tessAllocator.regionBucketSize=0;
 	tessAllocator.extraVertices=0;
 	cacheTess = tessNewTess( &tessAllocator );
-	initialized=true;
 }
 
 	
 //----------------------------------------------------------
-void ofTessellator2::performTessellation(const vector<ofPolyline>& polylines, ofPolyWindingMode polyWindingMode, bool bFilled, bool bIs2D ) {
-	if(!initialized)init();
-
-	numElements = 0;
-	
+void ofTessellator2::performTessellation(const vector<ofPolyline>& polylines, ofPolyWindingMode polyWindingMode, ofMesh& dstmesh, bool bIs2D ) {
 
 	// pass vertex pointers to GLU tessellator
 	for ( int j=0; j<(int)polylines.size(); j++ ) {
@@ -146,16 +112,14 @@ void ofTessellator2::performTessellation(const vector<ofPolyline>& polylines, of
 		tessAddContour( cacheTess, bIs2D?2:3, &polyline.getVertices()[0], sizeof(ofPoint), polyline.size());
 	}
 	
-	tessTesselate( cacheTess, polyWindingMode, TESS_POLYGONS, 3,  3, NULL );
+	tessTesselate( cacheTess, polyWindingMode, TESS_POLYGONS, /*polySize*/ 3,  3, NULL );
 	
 	int numVertexes = tessGetVertexCount( cacheTess );
 	int numIndices = tessGetElementCount( cacheTess )*3;
 
-	resultMesh->clear();
-	resultMesh->addVertices((ofVec3f*)tessGetVertices(cacheTess),numVertexes);
-	resultMesh->addIndices(tessGetElements(cacheTess),numIndices);
-	resultMesh->setMode(OF_TRIANGLES_MODE);
-
-	clear();
+	dstmesh.clear();
+	dstmesh.addVertices((ofVec3f*)tessGetVertices(cacheTess),numVertexes);
+	dstmesh.addIndices(tessGetElements(cacheTess),numIndices);
+	dstmesh.setMode(OF_TRIANGLES_MODE);
 
 }
