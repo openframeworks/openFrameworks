@@ -1,6 +1,7 @@
 #include "ofDirectoryLister.h"
 
 #include "ofUtils.h"
+#include "ofFileUtils.h"
 #include "Poco/Path.h"
 #include "Poco/String.h"
 
@@ -42,6 +43,8 @@ void ofDirectoryLister::allowExt(string extension) {
 
 //----------------------------------------
 int ofDirectoryLister::listDir(string directory, bool absolute) {
+	directory = ofFileUtils::getPathForDirectory(directory);
+	
 	files.clear();
 
 	originalDirectory = directory;
@@ -49,7 +52,7 @@ int ofDirectoryLister::listDir(string directory, bool absolute) {
 	if(!absolute) {
 		absolutePath = ofToDataPath(directory);
 	}
-
+	
 	Path base(absolutePath);
 	File cur(base);
 	if(cur.exists()) {
