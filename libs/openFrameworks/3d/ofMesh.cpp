@@ -312,6 +312,22 @@ vector<ofVec3f> & ofMesh::getVertices(){
 	return vertices;
 }
 
+vector<ofColor> & ofMesh::getColors(){
+	return colors;
+}
+
+vector<ofVec3f> & ofMesh::getNormals(){
+	return normals;
+}
+
+vector<ofVec2f> & ofMesh::getTexCoords(){
+	return texCoords;
+}
+
+vector<ofIndexType> & ofMesh::getIndices(){
+	return indices;
+}
+
 /*
 //--------------------------------------------------------------
 GLuint* ofPrimitive::getSolidIndexPointer(){
@@ -434,8 +450,9 @@ void ofMesh::clearTexCoords(){
 }
 
 //--------------------------------------------------------------
-void ofMesh::clearIndexes(){
-
+void ofMesh::clearIndices(){
+	indices.clear();
+	bIndicesChanged = true;
 }
 
 //--------------------------------------------------------------

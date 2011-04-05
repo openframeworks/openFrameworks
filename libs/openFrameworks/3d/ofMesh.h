@@ -63,7 +63,7 @@ public:
 	void addIndices(const ofIndexType* inds, int amt);
 	void removeIndex(int i);
 	void setIndex(int i, ofIndexType val);
-	void clearIndexes();
+	void clearIndices();
 	
 	int getNumVertices() const;
 	int getNumColors() const;
@@ -84,6 +84,10 @@ public:
 	const ofIndexType* getIndexPointer() const;
 
 	vector<ofVec3f> & getVertices();
+	vector<ofColor> & getColors();
+	vector<ofVec3f> & getNormals();
+	vector<ofVec2f> & getTexCoords();
+	vector<ofIndexType> & getIndices();
 
 	vector<int>& getFace(int faceId);
 	
