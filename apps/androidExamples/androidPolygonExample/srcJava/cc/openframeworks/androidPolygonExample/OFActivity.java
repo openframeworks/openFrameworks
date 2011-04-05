@@ -1,4 +1,4 @@
-package cc.openframeworks.androidEmptyExample;
+package cc.openframeworks.androidPolygonExample;
 
 import android.app.Activity;
 import android.os.Bundle;

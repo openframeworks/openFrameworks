@@ -84,14 +84,12 @@ void ofURLFileLoader::threadedFunction() {
 		lock();
 		if(requests.size()>0){
 			ofHttpRequest request(requests.front());
-			unlock();
 			ofHttpResponse response(handleRequest(request));
 			if(response.status!=-1){
-				lock();
 				responses.push(response);
 				requests.pop_front();
-				unlock();
 			}
+			unlock();
 		}else{
 			unlock();
 			stop();

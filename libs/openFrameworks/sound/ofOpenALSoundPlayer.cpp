@@ -39,7 +39,9 @@ ofOpenALSoundPlayer::ofOpenALSoundPlayer(){
 	duration		= 0;
 	fftCfg			= 0;
 	streamf			= 0;
+#ifdef OF_USING_MPG123
 	mp3streamf		= 0;
+#endif
 	players.insert(this);
 }
 
@@ -293,11 +295,13 @@ bool ofOpenALSoundPlayer::mpg123Stream(string path,vector<short> & buffer,vector
 
 //------------------------------------------------------------
 void ofOpenALSoundPlayer::stream(string fileName, vector<short> & buffer){
+#ifdef OF_USING_MPG123
 	if(ofFileUtils::getFileExt(fileName)=="mp3" || ofFileUtils::getFileExt(fileName)=="MP3" || mp3streamf){
 		if(!mpg123Stream(fileName,buffer,fftAuxBuffer)) return;
-	}else{
+	}else
+#endif
 		if(!sfStream(fileName,buffer,fftAuxBuffer)) return;
-	}
+
 	fftBuffers.resize(channels);
 	int numFrames = buffer.size()/channels;
 
@@ -482,7 +486,13 @@ void ofOpenALSoundPlayer::threadedFunction(){
 			}
 			ALint state;
 			alGetSourcei(sources[i*channels],AL_SOURCE_STATE,&state);
-			if(state != AL_PLAYING && (streamf || mp3streamf) && !stream_end){
+			bool stream_running=false;
+			#ifdef OF_USING_MPG123
+				stream_running = streamf || mp3streamf;
+			#else
+				stream_running = streamf;
+			#endif
+			if(state != AL_PLAYING && stream_running && !stream_end){
 				alSourcePlayv(channels,&sources[i*channels]);
 			}
 
@@ -566,9 +576,12 @@ void ofOpenALSoundPlayer::setVolume(float vol){
 //------------------------------------------------------------
 void ofOpenALSoundPlayer::setPosition(float pct){
 	if(sources.empty()) return;
+#ifdef OF_USING_MPG123
 	if(mp3streamf){
 		mpg123_seek(mp3streamf,duration*pct*samplerate*channels,SEEK_SET);
-	}else if(streamf){
+	}else
+#endif
+	if(streamf){
 		sf_seek(streamf,duration*pct*samplerate*channels,SEEK_SET);
 		stream_samples_read = 0;
 	}else{
@@ -583,9 +596,12 @@ float ofOpenALSoundPlayer::getPosition(){
 	if(duration==0) return 0;
 	if(sources.empty()) return 0;
 	float pos;
+#ifdef OF_USING_MPG123
 	if(mp3streamf){
 		pos = float(mpg123_tell(mp3streamf)) / float(channels) / float(samplerate);
-	}else if(streamf){
+	}else
+#endif
+	if(streamf){
 		pos = float(stream_samples_read) / float(channels) / float(samplerate);
 	}else{
 		alGetSourcef(sources[sources.size()-1],AL_SEC_OFFSET,&pos);

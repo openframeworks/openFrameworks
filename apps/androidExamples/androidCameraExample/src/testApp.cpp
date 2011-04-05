@@ -6,7 +6,7 @@ void testApp::setup(){
 	ofBackground(255,255,255);
 	ofSetLogLevel(OF_LOG_NOTICE);
 	//grabber.setPixelFormat(OF_PIXELS_MONO);
-	grabber.initGrabber(480,320);
+	grabber.initGrabber(320,240);
 	one_second_time = ofGetSystemTime();
 	camera_fps = 0;
 	frames_one_sec = 0;
