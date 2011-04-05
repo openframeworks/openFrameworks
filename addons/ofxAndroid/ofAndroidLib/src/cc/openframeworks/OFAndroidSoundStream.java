@@ -158,7 +158,7 @@ public class OFAndroidSoundStream extends OFAndroidObject implements AudioTrack.
 		
 	}
 	public void onPeriodicNotification(AudioTrack track) {
-		if(audioRequested(outBuffer, numOuts, outBufferSize)==0);
+		if(audioOut(outBuffer, numOuts, outBufferSize)==0);
 			track.write(outBuffer, 0, outBuffer.length);
 	}
 
@@ -168,7 +168,7 @@ public class OFAndroidSoundStream extends OFAndroidObject implements AudioTrack.
 
 	public void onPeriodicNotification(AudioRecord recorder) {
 		recorder.read(inBuffer, 0, inBuffer.length);
-		while(audioReceived(inBuffer, numIns, inBufferSize)==1);
+		while(audioIn(inBuffer, numIns, inBufferSize)==1);
 	}
 	
 	public void run() {
@@ -191,8 +191,8 @@ public class OFAndroidSoundStream extends OFAndroidObject implements AudioTrack.
 		start();
 	}
 
-    public static native int audioRequested(short[] buffer, int numChannels, int bufferSize);
-    public static native int audioReceived(short[] buffer, int numChannels, int bufferSize);
+    public static native int audioOut(short[] buffer, int numChannels, int bufferSize);
+    public static native int audioIn(short[] buffer, int numChannels, int bufferSize);
 
 	
 }
