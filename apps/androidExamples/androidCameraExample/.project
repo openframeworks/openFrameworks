@@ -72,36 +72,6 @@
 			</arguments>
 		</buildCommand>
 		<buildCommand>
-			<name>org.eclipse.ui.externaltools.ExternalToolBuilder</name>
-			<triggers>full,incremental,</triggers>
-			<arguments>
-				<dictionary>
-					<key>LaunchConfigHandle</key>
-					<value>&lt;project&gt;/.externalToolBuilders/com.android.ide.eclipse.adt.PreCompilerBuilder (7).launch</value>
-				</dictionary>
-			</arguments>
-		</buildCommand>
-		<buildCommand>
-			<name>org.eclipse.ui.externaltools.ExternalToolBuilder</name>
-			<triggers>full,incremental,</triggers>
-			<arguments>
-				<dictionary>
-					<key>LaunchConfigHandle</key>
-					<value>&lt;project&gt;/.externalToolBuilders/org.eclipse.jdt.core.javabuilder (8).launch</value>
-				</dictionary>
-			</arguments>
-		</buildCommand>
-		<buildCommand>
-			<name>org.eclipse.ui.externaltools.ExternalToolBuilder</name>
-			<triggers>full,incremental,</triggers>
-			<arguments>
-				<dictionary>
-					<key>LaunchConfigHandle</key>
-					<value>&lt;project&gt;/.externalToolBuilders/com.android.ide.eclipse.adt.ApkBuilder (8).launch</value>
-				</dictionary>
-			</arguments>
-		</buildCommand>
-		<buildCommand>
 			<name>org.eclipse.cdt.managedbuilder.core.ScannerConfigBuilder</name>
 			<arguments>
 			</arguments>
@@ -121,5 +91,16 @@
 			<type>2</type>
 			<locationURI>_android_ofAndroidLib_4b0f72cd/src</locationURI>
 		</link>
+		<link>
+			<name>ofxAndroid</name>
+			<type>2</type>
+			<locationURI>OF_ADDONS/ofxAndroid</locationURI>
+		</link>
 	</linkedResources>
+	<variableList>
+		<variable>
+			<name>OF_ADDONS</name>
+			<value>file:/home/arturo/Desktop/openFrameworks/addons</value>
+		</variable>
+	</variableList>
 </projectDescription>
