@@ -316,15 +316,15 @@ CleanAndroid:
 
 afterDebugAndroid:$(TARGET)
 	if [ -f libs/armeabi-v7a/libOFAndroidApp.so ]; then rm libs/armeabi-v7a/libOFAndroidApp.so; fi
-	touch AndroidManifest.xml
+	#touch AndroidManifest.xml
 	
 afterReleaseAndroid:$(TARGET)
 	if [ -f obj/$(BIN_NAME) ]; then rm obj/$(BIN_NAME); fi
-	touch AndroidManifest.xml
+	#touch AndroidManifest.xml
 	
 AndroidInstall:
 	if [ -f obj/$(BIN_NAME) ]; then rm obj/$(BIN_NAME); fi
-	touch AndroidManifest.xml
+	#touch AndroidManifest.xml
 	$(SDK_ROOT)/tools/android update project --target $(NDK_PLATFORM) --path $(PROJECT_PATH)
 	ant debug
 	cp bin/OFActivity-debug.apk bin/$(APPNAME).apk  
