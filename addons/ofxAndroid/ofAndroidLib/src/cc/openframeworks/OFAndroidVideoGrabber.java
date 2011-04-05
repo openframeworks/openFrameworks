@@ -49,6 +49,7 @@ public class OFAndroidVideoGrabber extends OFAndroidObject implements Runnable, 
 		height = config.getPreviewSize().height;
 		targetFps = _targetFps;
 		Log.i("OF","camera settings: " + width + "x" + height);
+		if(width!=w || height!=h)  Log.w("OF","camera size different than asked for, resizing (this can slow the app)");
 		buffer = new byte[width*height*2];
 		thread = new Thread(this);
 		thread.start();
