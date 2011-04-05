@@ -137,6 +137,7 @@ void ofPixels::setFromExternalPixels(unsigned char * newPixels,int w, int h, int
 }
 
 void ofPixels::setFromExternalPixels(unsigned char * newPixels,int w, int h, ofImageType newType){
+	clear();
 	imageType = newType;
 	width= w;
 	height = h;
@@ -161,6 +162,7 @@ void ofPixels::setFromExternalPixels(unsigned char * newPixels,int w, int h, ofI
 	bitsPerPixel = bytesPerPixel * 8;
 	pixels = newPixels;
 	pixelsOwner = false;
+	bAllocated = true;
 }
 
 void ofPixels::setFromAlignedPixels(unsigned char * newPixels,int w, int h, int bitsPerPixel, int widthStep){
