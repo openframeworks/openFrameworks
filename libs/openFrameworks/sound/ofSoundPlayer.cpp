@@ -38,6 +38,8 @@ void ofSoundShutdown(){
 float * ofSoundGetSpectrum(int nBands){
 	#ifdef OF_SOUND_PLAYER_FMOD
 		return ofFmodSoundGetSpectrum(nBands);
+	#elif defined(OF_SOUND_PLAYER_OPENAL)
+		return ofOpenALSoundPlayer::getSystemSpectrum(nBands);
 	#else
 		ofLog(OF_LOG_ERROR, "ofSoundGetSpectrum returning NULL - no implementation!");
 		return NULL;

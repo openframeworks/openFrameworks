@@ -10,13 +10,20 @@
 #
 # edit the following  vars to customize the makefile
 
+
+
 ifeq ($(findstring Android,$(MAKECMDGOALS)),Android)
+	include paths.make
 	ARCH = android
+	ifeq ($(shell uname),Darwin)
+		HOST_PLATFORM = darwin-x86
+	else
+		HOST_PLATFORM = linux-x86
+	endif
 endif
 
 ifeq ($(ARCH),android)
 	COMPILER_OPTIMIZATION = -Os
-	HOST_PLATFORM = linux-x86
 	NDK_PLATFORM = android-8
 else
 	COMPILER_OPTIMIZATION = -march=native -mtune=native -finline-functions -funroll-all-loops  -Os
@@ -44,7 +51,7 @@ ifneq ($(ARCH),android)
 	endif
 else
 	LIBSPATH = android
-	NDK_ROOT = $(shell cat ndk_path.make)
+	#NDK_ROOT = $(shell cat ndk_path.make)
 	TOOLCHAIN=arm-linux-androideabi-4.4.3
 	TOOLCHAIN_PATH=$(NDK_ROOT)/toolchains/$(TOOLCHAIN)/prebuilt/$(HOST_PLATFORM)/bin/
 	ANDROID_PREFIX=arm-linux-androideabi-
@@ -59,15 +66,16 @@ endif
 
 SOURCE_DIRS = $(shell find ../../../openFrameworks -maxdepth 1 -mindepth 1 -type d )
 ifeq ($(ARCH),android)
-	SOURCES = $(shell find $(SOURCE_DIRS) -name "*.cpp" | grep -v "ofAppGlutWindow.cpp" | grep -v ofGstVideoPlayer.cpp | grep -v ofQuickTimeGrabber.cpp | grep -v ofVideoPlayer.cpp | grep -v ofGstVideoGrabber.cpp | grep -v ofSoundStream.cpp | grep -v ofSoundPlayer.cpp)
+	SOURCES = $(shell find $(SOURCE_DIRS) -name "*.cpp" | grep -v "ofAppGlutWindow.cpp" | grep -v ofGstVideoPlayer.cpp | grep -v ofQuickTimeGrabber.cpp | grep -v ofVideoPlayer.cpp | grep -v ofGstVideoGrabber.cpp | grep -v ofSoundPlayer.cpp | grep -v ofOpenALSoundPlayer.cpp)
 else
 	SOURCES = $(shell find $(SOURCE_DIRS) -name "*.cpp") 
 endif
 OBJFILES = $(patsubst ../../../%.cpp,%.o,$(SOURCES))
 CORE_INCLUDES = $(shell find ../../../openFrameworks/ -type d)
 CORE_INCLUDE_FLAGS = $(addprefix -I,$(CORE_INCLUDES))
-INCLUDES = $(shell find ../../../*/include -type d | grep -v glu)
+INCLUDES = $(shell find ../../../*/include -type d | grep -v glu | grep -v quicktime | grep -v poco)
 INCLUDES_FLAGS = $(addprefix -I,$(INCLUDES))
+INCLUDES_FLAGS += -I../../../poco/include
 ifeq ($(ARCH),android)
 	INCLUDES_FLAGS += -I../../../glu/include_android
  	INCLUDES_FLAGS += -I../../../../addons/ofxAndroid/src
@@ -87,6 +95,11 @@ ifneq ($(ARCH),android)
 	ifeq ($(GTK),0)
 		CFLAGS += $(shell pkg-config gtk+-2.0 --cflags) -DOF_USING_GTK
 	endif
+	#check if mpg123 exists and add it
+	MPG123 = $(shell pkg-config libmpg123 --exists; echo $$?)
+	ifeq ($(MPG123),0)
+		CFLAGS += -DOF_USING_MPG123
+	endif
 endif
 
 ifeq ($(findstring Debug,$(MAKECMDGOALS)),Debug)
@@ -102,7 +115,7 @@ ifeq ($(findstring Release,$(MAKECMDGOALS)),Release)
 endif
 
 ifeq ($(findstring Release_arm7,$(MAKECMDGOALS)),Release_arm7)
-	TARGET_CFLAGS += -march=armv7-a -mfloat-abi=softfp -mfpu=vfp
+	TARGET_CFLAGS += -march=armv7-a -mfloat-abi=softfp -mfpu=neon
 	TARGET = ../../lib/$(LIBSPATH)/libopenFrameworks_arm7.a
 endif
 
@@ -138,13 +151,13 @@ ReleaseAndroid: $(TARGET)
 Release_arm7Android: $(TARGET)
 
 all: 
-	make Debug
-	make Release
+	$(MAKE) Debug
+	$(MAKE) Release
 	
 android:
-	make DebugAndroid
-	make ReleaseAndroid
-	make Release_arm7Android
+	$(MAKE) DebugAndroid
+	$(MAKE) ReleaseAndroid
+	$(MAKE) Release_arm7Android
 
 #This rule does the compilation
 $(OBJ_OUTPUT)%.o: ../../../%.cpp 

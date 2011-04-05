@@ -6,6 +6,9 @@
 
 #ifdef OF_TARGET_IPHONE
 	#error we need swappable sound stream api for iphone
+#elif defined(TARGET_ANDROID)
+	#include "ofxAndroidSoundStream.h"
+	#define OF_SOUND_STREAM_TYPE ofxAndroidSoundStream()
 #else
 	#include "ofRtAudioSoundStream.h"
 	#define OF_SOUND_STREAM_TYPE ofRtAudioSoundStream()

@@ -3,6 +3,7 @@
 	<FileVersion major="1" minor="6" />
 	<Project>
 		<Option title="emptyExample" />
+		<Option makefile="makefile" />
 		<Option pch_mode="2" />
 		<Option compiler="gcc" />
 		<Option virtualFolders="addons\;src\;" />
@@ -49,27 +50,31 @@
 			<Add directory="..\..\..\libs\rtAudio\include" />
 			<Add directory="..\..\..\libs\fmodex\include" />
 			<Add directory="..\..\..\libs\videoInput\include" />
-			<Add directory="..\..\..\libs\glee\include" />
+			<Add directory="..\..\..\libs\glew\include" />
 			<Add directory="..\..\..\libs\glut\include" />
 			<Add directory="..\..\..\libs\openFrameworks" />
+			<Add directory="..\..\..\libs\openFrameworks\3d" />
 			<Add directory="..\..\..\libs\openFrameworks\app" />
-			<Add directory="..\..\..\libs\openFrameworks\events" />
-			<Add directory="..\..\..\libs\openFrameworks\graphics" />
-			<Add directory="..\..\..\libs\openFrameworks\utils" />
-			<Add directory="..\..\..\libs\openFrameworks\sound" />
-			<Add directory="..\..\..\libs\openFrameworks\video" />
 			<Add directory="..\..\..\libs\openFrameworks\communication" />
+			<Add directory="..\..\..\libs\openFrameworks\events" />
+			<Add directory="..\..\..\libs\openFrameworks\gl" />
+			<Add directory="..\..\..\libs\openFrameworks\graphics" />
+			<Add directory="..\..\..\libs\openFrameworks\math" />
+			<Add directory="..\..\..\libs\openFrameworks\sound" />
+			<Add directory="..\..\..\libs\openFrameworks\types" />
+			<Add directory="..\..\..\libs\openFrameworks\utils" />
+			<Add directory="..\..\..\libs\openFrameworks\video" />
 			<Add directory="..\..\..\libs\poco\include" />
 		</Compiler>
 		<Linker>
 			<Add option="../../../libs/FreeImage/lib/win_cb/FreeImage.lib" />
-			<Add option="../../../libs/rtAudio/lib/win_cb/RtAudio.a" />
+			<Add option="../../../libs/rtAudio/lib/win_cb/librtaudio.a" />
 			<Add option="../../../libs/quicktime/lib/win_cb/qtmlClient.lib" />
 			<Add option="../../../libs/freetype/lib/win_cb/libfreetype.a" />
 			<Add option="../../../libs/glut/lib/win_cb/libglut.a" />
 			<Add option="../../../libs/videoInput/lib/win_cb/videoInputLib.a" />
 			<Add option="../../../libs/fmodex/lib/win_cb/libfmodex.a" />
-			<Add option="../../../libs/glee/lib/win_cb/GLee.lib" />
+			<Add option="../../../libs/glew/lib/win_cb/glew32s.lib" />
 			<Add option="../../../libs/glu/lib/win_cb/glu32.lib" />
 			<Add option="../../../libs/poco/lib/win_cb/libPocoNetmt.a" />
 			<Add option="../../../libs/poco/lib/win_cb/libPocoUtilmt.a" />

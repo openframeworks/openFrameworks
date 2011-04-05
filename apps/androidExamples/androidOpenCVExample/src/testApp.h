@@ -23,7 +23,6 @@ class testApp : public ofBaseApp{
 
 
 		ofVideoGrabber grabber;
-		ofxCvColorImage color;
 		ofxCvGrayscaleImage gray, bg;//, diff;
 		ofxCvContourFinder contourFinder;
 

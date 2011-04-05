@@ -6,6 +6,7 @@
 #include "ofMesh.h"
 #include "ofBitmapFont.h"
 #include "ofGLUtils.h"
+#include "ofImage.h"
 
 //----------------------------------------------------------
 ofGLRenderer::ofGLRenderer(bool useShapeColor){
@@ -20,20 +21,20 @@ ofGLRenderer::ofGLRenderer(bool useShapeColor){
 void ofGLRenderer::draw(ofMesh & vertexData){
 	if(vertexData.getNumVertices()){
 		glEnableClientState(GL_VERTEX_ARRAY);
-		glVertexPointer(3, GL_FLOAT, sizeof(ofVec3f), vertexData.getVerticesPointer());
+		glVertexPointer(3, GL_FLOAT, sizeof(ofVec3f), &vertexData.getVerticesPointer()->x);
 	}
 	if(vertexData.getNumNormals()){
 		glEnableClientState(GL_NORMAL_ARRAY);
-		glNormalPointer(GL_FLOAT, 0, vertexData.getNormalsPointer());
+		glNormalPointer(GL_FLOAT, sizeof(ofVec3f), &vertexData.getNormalsPointer()->x);
 	}
 	if(vertexData.getNumColors()){
 		glEnableClientState(GL_COLOR_ARRAY);
-		glColorPointer(4,GL_FLOAT, sizeof(ofColor), vertexData.getColorsPointer());
+		glColorPointer(4,GL_FLOAT, sizeof(ofColor), &vertexData.getColorsPointer()->r);
 	}
 
 	if(vertexData.getNumTexCoords()){
 		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-		glTexCoordPointer(2, GL_FLOAT, 0, vertexData.getTexCoordsPointer());
+		glTexCoordPointer(2, GL_FLOAT, sizeof(ofVec2f), &vertexData.getTexCoordsPointer()->x);
 	}
 
 	if(vertexData.getNumIndices()){
@@ -159,6 +160,13 @@ void ofGLRenderer::draw(ofPath & shape){
 	}
 	if(shape.getUseShapeColor()){
 		setColor(prevColor);
+	}
+}
+
+//----------------------------------------------------------
+void ofGLRenderer::draw(ofImage & image, float x, float y, float z, float w, float h){
+	if(image.isUsingTexture()){
+		image.getTextureReference().draw(x,y,z,w,h);
 	}
 }
 

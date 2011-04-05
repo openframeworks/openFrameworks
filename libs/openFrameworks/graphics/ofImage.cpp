@@ -378,30 +378,22 @@ void ofImage::resetAnchor(){
 
 //------------------------------------
 void ofImage::draw(const ofRectangle & _r){
-	if (bUseTexture){
-		tex.draw(_r);
-	}
+	ofGetDefaultRenderer()->draw(*this,_r.x,_r.y,0,_r.width,_r.height);
 }
 
 //------------------------------------
 void ofImage::draw(const ofPoint & _p, float _w, float _h){
-	if (bUseTexture){
-		tex.draw(_p, _w, _h);
-	}
+	ofGetDefaultRenderer()->draw(*this,_p.x,_p.y,_p.z,_w,_h);
 }
 
 //------------------------------------
 void ofImage::draw(float _x, float _y, float _w, float _h){
-	if (bUseTexture){
-		tex.draw(_x, _y, _w, _h);
-	}
+	ofGetDefaultRenderer()->draw(*this,_x,_y,0,_w,_h);
 }
 
 //------------------------------------
 void ofImage::draw(float _x, float _y, float _z, float _w, float _h){
-	if (bUseTexture){
-		tex.draw(_x, _y, _z, _w, _h);
-	}
+	ofGetDefaultRenderer()->draw(*this,_x,_y,_z,_w,_h);
 }
 
 //------------------------------------
@@ -518,6 +510,10 @@ void ofImage::setUseTexture(bool bUse){
 	bUseTexture = bUse;
 }
 
+//------------------------------------
+bool ofImage::isUsingTexture(){
+	return bUseTexture;
+}
 
 //------------------------------------
 void ofImage::grabScreen(int _x, int _y, int _w, int _h){

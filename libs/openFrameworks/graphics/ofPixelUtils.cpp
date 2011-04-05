@@ -201,76 +201,102 @@ void ofPixelUtils::mirror(ofPixels & pix, bool vertically, bool horizontal){
 //===============================================================================================================
 bool ofPixelUtils::resize (ofPixels &pix, int dstWidth, int dstHeight, ofInterpolationMethod interpMethod){
 	
-	if ((dstWidth<=0) || (dstHeight<=0) || !(pix.bAllocated)) return false;
+	if ((dstWidth<=0) || (dstHeight<=0) || !(pix.isAllocated())) return false;
 	
-	int srcWidth      = pix.width;
-	int srcHeight     = pix.height;
-	int bytesPerPixel = pix.bytesPerPixel;
+	int srcWidth      = pix.getWidth();
+	int srcHeight     = pix.getHeight();
 	
+	ofPixels dstPixels;
+	dstPixels.allocate(dstWidth,dstHeight,pix.getImageType());
 	
-	unsigned char* dstPixels = new unsigned char [dstWidth * dstHeight * bytesPerPixel];
-	memset (dstPixels, 0, dstWidth * dstHeight * bytesPerPixel);
-	
+	if(!resize(pix,dstPixels,interpMethod)) return false;
+
+	delete [] pix.pixels;
+	pix.pixels = dstPixels.getPixels();
+	pix.width  = dstWidth;
+	pix.height = dstHeight;
+	return true; 
+}
+
+//===============================================================================================================
+bool ofPixelUtils::resize (ofPixels &pix, ofPixels& dst, ofInterpolationMethod interpMethod){
+
+	if (!(pix.isAllocated()) || !(dst.isAllocated()) || pix.getBytesPerPixel() != dst.getBytesPerPixel()) return false;
+
+	int srcWidth      = pix.getWidth();
+	int srcHeight     = pix.getHeight();
+	int dstWidth	  = dst.getWidth();
+	int dstHeight	  = dst.getHeight();
+	int bytesPerPixel = pix.getBytesPerPixel();
+
+
+	unsigned char* dstPixels = dst.getPixels();
+
 	switch (interpMethod){
-			
+
 			//----------------------------------------
-		case OF_INTERPOLATE_NEAREST_NEIGHBOR:
+		case OF_INTERPOLATE_NEAREST_NEIGHBOR:{
+			int dstIndex = 0;
+			float srcxFactor = (float)srcWidth/dstWidth;
+			float srcyFactor = (float)srcHeight/dstHeight;
+			float srcy = 0.5;
 			for (int dsty=0; dsty<dstHeight; dsty++){
+				float srcx = 0.5;
+				int srcIndex = int(srcy)*srcWidth;
 				for (int dstx=0; dstx<dstWidth; dstx++){
+					int pixelIndex = int(srcIndex + srcx) * bytesPerPixel;
 					for (int k=0; k<bytesPerPixel; k++){
-						int dstIndex = (dsty*dstWidth + dstx) * bytesPerPixel + k;
-						
-						int srcy = (int) MIN(srcHeight-1, (0.5 + srcHeight * (float)dsty/dstHeight));
-						int srcx = (int) MIN(srcWidth-1,  (0.5 + srcWidth  * (float)dstx/dstWidth));
-						int srcIndex = (srcy*srcWidth + srcx) * bytesPerPixel + k;
-						
-						dstPixels[dstIndex] = pix.pixels[srcIndex];
+						dstPixels[dstIndex] = pix.pixels[pixelIndex];
+						dstIndex++;
+						pixelIndex++;
 					}
+					srcx+=srcxFactor;
 				}
+				srcy+=srcyFactor;
 			}
-			break;
-			
+		}break;
+
 			//----------------------------------------
 		case OF_INTERPOLATE_BILINEAR:
 			// not implemented yet
-			
+
 			//----------------------------------------
 		case OF_INTERPOLATE_BICUBIC:
 			float px1, py1;
 			float px2, py2;
-			float px3, py3; 
-			
+			float px3, py3;
+
 			unsigned char srcColor;
 			unsigned char interpCol;
-			int patchRow; 
-			int patchIndex; 
+			int patchRow;
+			int patchIndex;
 			int patch[16];
-			
+
 			int srcRowBytes = srcWidth*bytesPerPixel;
 			int loIndex = (srcRowBytes)+1;
 			int hiIndex = (srcWidth*srcHeight*bytesPerPixel)-(srcRowBytes)-1;
-			
+
 			for (int dsty=0; dsty<dstHeight; dsty++){
 				for (int dstx=0; dstx<dstWidth; dstx++){
-					
+
 					int   dstIndex0 = (dsty*dstWidth + dstx) * bytesPerPixel;
 					float srcxf = srcWidth  * (float)dstx/(float)dstWidth;
 					float srcyf = srcHeight * (float)dsty/(float)dstHeight;
 					int   srcx = (int) MIN(srcWidth-1,   srcxf);
 					int   srcy = (int) MIN(srcHeight-1,  srcyf);
 					int   srcIndex0 = (srcy*srcWidth + srcx) * bytesPerPixel;
-					
+
 					px1 = srcxf - srcx;
 					py1 = srcyf - srcy;
 					px2 = px1 * px1;
 					px3 = px2 * px1;
 					py2 = py1 * py1;
 					py3 = py2 * py1;
-					
+
 					for (int k=0; k<bytesPerPixel; k++){
 						int   dstIndex = dstIndex0+k;
 						int   srcIndex = srcIndex0+k;
-						
+
 						for (int dy=0; dy<4; dy++) {
 							patchRow = srcIndex + ((dy-1)*srcRowBytes);
 							for (int dx=0; dx<4; dx++) {
@@ -281,23 +307,18 @@ bool ofPixelUtils::resize (ofPixels &pix, int dstWidth, int dstHeight, ofInterpo
 								patch[dx*4 + dy] = srcColor;
 							}
 						}
-						
+
 						interpCol = (unsigned char) bicubicInterpolate (patch, px1,py1, px2,py2, px3,py3);
 						dstPixels[dstIndex] = interpCol;
 					}
-					
+
 				}
 			}
 			break;
 	}
-	
-	delete [] pix.pixels;
-	pix.pixels = dstPixels;
-	pix.width  = dstWidth;
-	pix.height = dstHeight;
-	return true; 
-}
 
+	return true;
+}
 
 //=============================================
 float ofPixelUtils::bicubicInterpolate (const int *patch, float x,float y, float x2,float y2, float x3,float y3) {

@@ -49,6 +49,7 @@ class ofImage : public ofBaseImage{
 		
 		// enable or disable using the texture of this image
 		void 				setUseTexture(bool bUse);
+		bool				isUsingTexture();
 
 		//for getting a reference to the texture
 		ofTexture & getTextureReference();

@@ -24,7 +24,9 @@
 #
 # edit the following  vars to customize the makefile
 
-include ../../../libs/openFrameworksCompiled/project/android/paths.make
+OF_ROOT = ../../..
+
+include $(OF_ROOT)/libs/openFrameworksCompiled/project/android/paths.make
 
 ifeq ($(findstring Android,$(MAKECMDGOALS)),Android)
 	ARCH = android
@@ -67,8 +69,8 @@ else
 	else
 		LIBSPATH =android/armeabi
 	endif
-	#NDK_ROOT = $(shell cat ../../../libs/openFrameworksCompiled/project/android/ndk_path.make)
-	#SDK_ROOT = $(shell cat ../../../libs/openFrameworksCompiled/project/android/sdk_path.make)
+	#NDK_ROOT = $(shell cat $(OF_ROOT)/libs/openFrameworksCompiled/project/android/ndk_path.make)
+	#SDK_ROOT = $(shell cat $(OF_ROOT)/libs/openFrameworksCompiled/project/android/sdk_path.make)
 	TOOLCHAIN=arm-linux-androideabi-4.4.3
 	TOOLCHAIN_PATH=$(NDK_ROOT)/toolchains/$(TOOLCHAIN)/prebuilt/$(HOST_PLATFORM)/bin/
 	ANDROID_PREFIX=arm-linux-androideabi-
@@ -87,15 +89,15 @@ SOURCE_DIRS = $(shell find . -maxdepth 1 -mindepth 1 -type d | grep -v $(SED_EXC
 SOURCES = $(shell find $(SOURCE_DIRS) -name "*.cpp" -or -name "*.c")
 OBJFILES = $(patsubst %.c,%.o,$(patsubst %.cpp,%.o,$(SOURCES)))
 APPNAME = $(shell basename `pwd`)
-CORE_INCLUDES = $(shell find ../../../libs/openFrameworks/ -type d)
+CORE_INCLUDES = $(shell find $(OF_ROOT)/libs/openFrameworks/ -type d)
 CORE_INCLUDE_FLAGS = $(addprefix -I,$(CORE_INCLUDES))
-INCLUDES = $(shell find ../../../libs/*/include -type d | grep -v glu | grep -v quicktime | grep -v poco)
+INCLUDES = $(shell find $(OF_ROOT)/libs/*/include -type d | grep -v glu | grep -v quicktime | grep -v poco)
 INCLUDES_FLAGS = $(addprefix -I,$(INCLUDES))
-INCLUDES_FLAGS += -I../../../libs/poco/include
+INCLUDES_FLAGS += -I$(OF_ROOT)/libs/poco/include
 ifeq ($(ARCH),android)
-	INCLUDES_FLAGS += -I../../../libs/glu/include_android
+	INCLUDES_FLAGS += -I$(OF_ROOT)/libs/glu/include_android
 else
- 	INCLUDES_FLAGS += -I../../../libs/glu/include
+ 	INCLUDES_FLAGS += -I$(OF_ROOT)/libs/glu/include
 	INCLUDES_FLAGS += $(shell pkg-config  glew gstreamer-0.10 gstreamer-video-0.10 gstreamer-base-0.10 libudev --cflags)
 	#check if gtk exists and add it
 	GTK = $(shell pkg-config gtk+-2.0 --exists; echo $$?)
@@ -103,13 +105,20 @@ else
 		CFLAGS += $(shell pkg-config gtk+-2.0 --cflags) -DOF_USING_GTK
 		LIBS += $(shell pkg-config gtk+-2.0 --libs)
 	endif
+	
+	#check if mpg123 exists and add it
+	MPG123 = $(shell pkg-config libmpg123 --exists; echo $$?)
+	ifeq ($(MPG123),0)
+		CFLAGS += -DOF_USING_MPG123
+		LIBS += -lmpg123
+	endif
 endif
-LIB_STATIC = $(shell ls ../../../libs/*/lib/$(LIBSPATH)/*.a | grep -v openFrameworksCompiled | grep -v poco| sed "s/.*\\/lib\([^/]*\)\.a/-l\1/")
-LIB_SHARED = $(shell ls ../../../libs/*/lib/$(LIBSPATH)/*.so | grep -v openFrameworksCompiled| sed "s/.*\\/lib\([^/]*\)\.so/-l\1/")
-LIB_STATIC += ../../../libs/poco/lib/$(LIBSPATH)/libPocoNet.a ../../../libs/poco/lib/$(LIBSPATH)/libPocoXML.a ../../../libs/poco/lib/$(LIBSPATH)/libPocoUtil.a ../../../libs/poco/lib/$(LIBSPATH)/libPocoFoundation.a 
-LIB_PATHS_FLAGS = $(shell ls -d ../../../libs/*/lib/$(LIBSPATH) | sed "s/\(\.*\)/-L\1/")
+LIB_STATIC = $(shell ls $(OF_ROOT)/libs/*/lib/$(LIBSPATH)/*.a | grep -v openFrameworksCompiled | grep -v poco| sed "s/.*\\/lib\([^/]*\)\.a/-l\1/")
+LIB_SHARED = $(shell ls $(OF_ROOT)/libs/*/lib/$(LIBSPATH)/*.so | grep -v openFrameworksCompiled| sed "s/.*\\/lib\([^/]*\)\.so/-l\1/")
+LIB_STATIC += $(OF_ROOT)/libs/poco/lib/$(LIBSPATH)/libPocoNet.a ../../../libs/poco/lib/$(LIBSPATH)/libPocoXML.a ../../../libs/poco/lib/$(LIBSPATH)/libPocoUtil.a ../../../libs/poco/lib/$(LIBSPATH)/libPocoFoundation.a 
+LIB_PATHS_FLAGS = $(shell ls -d $(OF_ROOT)/libs/*/lib/$(LIBSPATH) | sed "s/\(\.*\)/-L\1/")
 ifeq ($(ARCH),android)
-	LIB_PATHS_FLAGS += -L../../../libs/openFrameworksCompiled/lib/android
+	LIB_PATHS_FLAGS += -L$(OF_ROOT)/libs/openFrameworksCompiled/lib/android
 endif
 
 CFLAGS += -Wall -fexceptions
@@ -127,35 +136,35 @@ ifeq ($(ARCH),android)
 else
 	LDFLAGS = $(LIB_PATHS_FLAGS) -Wl,-rpath=./libs
 	LIBS += $(shell pkg-config  glew gstreamer-0.10 gstreamer-video-0.10 gstreamer-base-0.10 gstreamer-app-0.10 libudev --libs)
-	LIBS += -lglut -lGL -lGLU -lasound
+	LIBS += -lglut -lGL -lGLU -lasound -lopenal -lsndfile -lvorbis -lFLAC -logg
 endif
 
 
 ifeq ($(findstring addons.make,$(wildcard *.make)),addons.make)
-	ADDONS_INCLUDES = $(shell find ../../../addons/*/src/ -type d)
-	ADDONS_INCLUDES += $(shell find ../../../addons/*/libs/ -type d)
+	ADDONS_INCLUDES = $(shell find $(OF_ROOT)/addons/*/src/ -type d)
+	ADDONS_INCLUDES += $(shell find $(OF_ROOT)/addons/*/libs/ -type d)
 	ADDONSCFLAGS = $(addprefix -I,$(ADDONS_INCLUDES))
 	
-	ifeq ($(findstring libsorder.make,$(wildcard ../../../addons/*/libs/*/lib/$(LIBSPATH)/libsorder.make)),libsorder.make) 
-		ADDONS_LIBS_W_ORDER = $(shell cat ../../../addons/*/libs/*/lib/$(LIBSPATH)/libsorder.make)
+	ifeq ($(findstring libsorder.make,$(wildcard $(OF_ROOT)/addons/*/libs/*/lib/$(LIBSPATH)/libsorder.make)),libsorder.make) 
+		ADDONS_LIBS_W_ORDER = $(shell cat $(OF_ROOT)/addons/*/libs/*/lib/$(LIBSPATH)/libsorder.make)
 	endif
 	
 	SED_EXCLUDE_LIBS = $(addsuffix \ \\\| , $(ADDONS_LIBS_W_ORDER))
-	ADDONS_LIBS_STATICS = $(shell ls ../../../addons/*/libs/*/lib/$(LIBSPATH)/*.a | grep -v "$(SED_EXCLUDE_LIBS) null")
+	ADDONS_LIBS_STATICS = $(shell ls $(OF_ROOT)/addons/*/libs/*/lib/$(LIBSPATH)/*.a | grep -v "$(SED_EXCLUDE_LIBS) null")
 	ADDONS_LIBS_STATICS += $(addprefix -l, $(ADDONS_LIBS_W_ORDER))
-	ADDONS_LIBS_STATICS += $(addprefix -L, $(shell ls ../../../addons/*/libs/*/lib/$(LIBSPATH)/libsorder.make | sed s/libsorder.make//g))
-	ADDONS_LIBS_SHARED = $(shell ls ../../../addons/*/libs/*/lib/$(LIBSPATH)/*.so)
+	ADDONS_LIBS_STATICS += $(addprefix -L, $(shell ls $(OF_ROOT)/addons/*/libs/*/lib/$(LIBSPATH)/libsorder.make | sed s/libsorder.make//g))
+	ADDONS_LIBS_SHARED = $(shell ls $(OF_ROOT)/addons/*/libs/*/lib/$(LIBSPATH)/*.so)
 	ADDONSLIBS = $(ADDONS_LIBS_STATICS)
 	ADDONSLIBS += $(ADDONS_LIBS_SHARED)
 
 	ADDONS = $(shell cat addons.make)
 	ADDONS_REL_DIRS = $(addsuffix /src, $(ADDONS))
 	ADDONS_LIBS_REL_DIRS = $(addsuffix /libs, $(ADDONS))
-	ADDONS_DIRS = $(addprefix ../../../addons/, $(ADDONS_REL_DIRS) )
-	ADDONS_LIBS_DIRS = $(addprefix ../../../addons/, $(ADDONS_LIBS_REL_DIRS) )
+	ADDONS_DIRS = $(addprefix $(OF_ROOT)/addons/, $(ADDONS_REL_DIRS) )
+	ADDONS_LIBS_DIRS = $(addprefix $(OF_ROOT)/addons/, $(ADDONS_LIBS_REL_DIRS) )
 	ADDONS_SOURCES = $(shell find $(ADDONS_DIRS) -name "*.cpp" -or -name "*.c")
 	ADDONS_SOURCES += $(shell find $(ADDONS_LIBS_DIRS) -name "*.cpp" -or -name "*.c" 2>/dev/null)
-	ADDONS_OBJFILES = $(subst ../../../, ,$(patsubst %.c,%.o,$(patsubst %.cpp,%.o,$(ADDONS_SOURCES))))
+	ADDONS_OBJFILES = $(subst $(OF_ROOT)/, ,$(patsubst %.c,%.o,$(patsubst %.cpp,%.o,$(ADDONS_SOURCES))))
 endif
 
 
@@ -186,7 +195,7 @@ ifeq ($(ARCH),android)
 	
 	ifeq ($(findstring Release_arm7,$(MAKECMDGOALS)),Release_arm7)
 		TARGET_NAME = Release_arm7
-		TARGET_CFLAGS += -march=armv7-a -mfloat-abi=softfp -mfpu=vfp
+		TARGET_CFLAGS += -march=armv7-a -mfloat-abi=softfp -mfpu=neon
 	    TARGET = libs/armeabi-v7a/libOFAndroidApp.so
 		TARGET_LIBS = -lopenFrameworks_arm7
 		#LDFLAGS += -shared  already included through Release
@@ -238,7 +247,7 @@ Release: $(TARGET) after
 Debug: $(TARGET) after
 
 all: 
-	make Release
+	$(MAKE) Release
 	
 	
 
@@ -251,12 +260,12 @@ Release_arm7Android: $(TARGET) afterReleaseAndroid
 TestLinkAndroid: $(TARGET) afterDebugAndroid
 
 AndroidDebug:
-	make DebugAndroid
-	make TestLinkAndroid
+	$(MAKE) DebugAndroid
+	$(MAKE) TestLinkAndroid
 	
 AndroidRelease:
-	make ReleaseAndroid
-	make Release_arm7Android
+	$(MAKE) ReleaseAndroid
+	$(MAKE) Release_arm7Android
 
 
 #This rule does the compilation
@@ -272,12 +281,12 @@ $(OBJ_OUTPUT)%.o: %.c
 	$(CC) -c $(TARGET_CFLAGS) $(CFLAGS) $(ADDONSCFLAGS) $(USER_CFLAGS) -MMD -MP -MF$(OBJ_OUTPUT)$*.d -MT$(OBJ_OUTPUT)$*.d -o$@ -c $< 
 
 
-$(OBJ_OUTPUT)%.o: ../../../%.cpp
+$(OBJ_OUTPUT)%.o: $(OF_ROOT)/%.cpp
 	@echo "compiling addon object for" $<
 	mkdir -p $(@D)
 	$(CXX) $(TARGET_CFLAGS) $(CFLAGS) $(ADDONSCFLAGS) $(USER_CFLAGS) -MMD -MP -MF$(OBJ_OUTPUT)$*.d -MT$(OBJ_OUTPUT)$*.d -o $@ -c $<
 
-$(OBJ_OUTPUT)%.o: ../../../%.c
+$(OBJ_OUTPUT)%.o: $(OF_ROOT)/%.c
 	@echo "compiling addon object for" $<
 	mkdir -p $(@D)
 	$(CC) $(TARGET_CFLAGS) $(CFLAGS) $(ADDONSCFLAGS) $(USER_CFLAGS) -MMD -MP -MF$(OBJ_OUTPUT)$*.d -MT$(OBJ_OUTPUT)$*.d -o $@ -c $<
@@ -326,7 +335,7 @@ afterReleaseAndroid:$(TARGET)
 	fi
 	
 after:$(TARGET)
-	cp -r ../../../export/$(LIBSPATH)/libs bin/
+	cp -r $(OF_ROOT)/export/$(LIBSPATH)/libs bin/
 	@echo
 	@echo "     compiling done"
 	@echo "     to launch the application"	
