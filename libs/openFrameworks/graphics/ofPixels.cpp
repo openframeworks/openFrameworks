@@ -92,6 +92,31 @@ void ofPixels::allocate(int w, int h, ofImageType type){
 
 }
 
+void ofPixels::allocate(int w, int h, ofPixelFormat type){
+
+	if (w < 0 || h < 0) return;
+
+	ofImageType imgType;
+	switch(type){
+	case OF_PIXELS_RGB:
+		imgType = OF_IMAGE_COLOR;
+		break;
+	case OF_PIXELS_RGBA:
+	case OF_PIXELS_BGRA:
+		imgType = OF_IMAGE_COLOR_ALPHA;
+		break;
+	case OF_PIXELS_MONO:
+		imgType = OF_IMAGE_GRAYSCALE;
+		break;
+	default:
+		ofLog(OF_LOG_ERROR,"ofPixels: format not supported");
+		break;
+
+	}
+	allocate(w,h,imgType);
+
+}
+
 void ofPixels::set(unsigned char val){
 	memset(pixels,val,width*height*bytesPerPixel);
 }

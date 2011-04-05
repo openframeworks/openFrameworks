@@ -17,6 +17,7 @@ public:
 	ofPixels& operator=(const ofPixels & mom);
 
 	void allocate(int w, int h, int bitsPerPixel);
+	void allocate(int w, int h, ofPixelFormat type);
 	void allocate(int w, int h, ofImageType type);
 	void set(unsigned char val);
 	void setFromPixels(unsigned char * newPixels,int w, int h, ofImageType newType);
