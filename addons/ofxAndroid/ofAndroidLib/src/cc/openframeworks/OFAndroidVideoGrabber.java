@@ -4,6 +4,7 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
+import android.graphics.ImageFormat;
 import android.graphics.PixelFormat;
 import android.hardware.Camera;
 import android.util.Log;
@@ -36,8 +37,10 @@ public class OFAndroidVideoGrabber extends OFAndroidObject implements Runnable, 
 	void initGrabber(int w, int h, int _targetFps){
 		camera = Camera.open();
 		Camera.Parameters config = camera.getParameters();
+		Log.i("OF", "Grabber default format: " + config.getPreviewFormat());
+		Log.i("OF", "Grabber default preview size: " + config.getPreviewSize().width + "," + config.getPreviewSize().height);
 		config.setPreviewSize(w, h);
-		config.setPreviewFormat(PixelFormat.YCbCr_420_SP);
+		config.setPreviewFormat(ImageFormat.NV21);
 		config.setPreviewFrameRate(targetFps);
 		camera.setParameters(config);
 		
@@ -138,7 +141,6 @@ public class OFAndroidVideoGrabber extends OFAndroidObject implements Runnable, 
 	}
 	
 	public static native int newFrame(byte[] data, int width, int height);
-
 	
 
 }
