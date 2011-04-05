@@ -470,8 +470,12 @@ Java_cc_openframeworks_OFAndroidVideoGrabber_newFrame(JNIEnv*  env, jobject  thi
 
 		unsigned char * dst = instances[cameraId]->getPixels();
 		if(int(instances[cameraId]->getWidth())!=width || int(instances[cameraId]->getHeight())!=height){
-			((ofxAndroidVideoGrabber*)instances[cameraId]->getGrabber())->getAuxBuffer().allocate(width,height,instances[cameraId]->getPixelFormat());
-			dst = ((ofxAndroidVideoGrabber*)instances[cameraId]->getGrabber())->getAuxBuffer().getPixels();
+			if(instances[cameraId]->getPixelFormat()!=OF_PIXELS_MONO){
+				((ofxAndroidVideoGrabber*)instances[cameraId]->getGrabber())->getAuxBuffer().allocate(width,height,instances[cameraId]->getPixelFormat());
+				dst = ((ofxAndroidVideoGrabber*)instances[cameraId]->getGrabber())->getAuxBuffer().getPixels();
+			}else{
+				((ofxAndroidVideoGrabber*)instances[cameraId]->getGrabber())->getAuxBuffer().setFromExternalPixels(buffer,width,height,OF_IMAGE_GRAYSCALE);
+			}
 		}
 
 
@@ -483,7 +487,7 @@ Java_cc_openframeworks_OFAndroidVideoGrabber_newFrame(JNIEnv*  env, jobject  thi
 				       dst,width,height);
 		}else if(instances[cameraId]->getPixelFormat()==OF_PIXELS_RGB565){
 			ConvertYUV2toRGB565(buffer,dst,width,height);
-		}else if(instances[cameraId]->getPixelFormat()==OF_PIXELS_MONO){
+		}else if(instances[cameraId]->getPixelFormat()==OF_PIXELS_MONO && int(instances[cameraId]->getWidth())==width && int(instances[cameraId]->getHeight())==height){
 			memcpy(dst,buffer,(width*height));
 		}
 
