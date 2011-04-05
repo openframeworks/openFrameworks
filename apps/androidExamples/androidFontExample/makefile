@@ -316,23 +316,21 @@ CleanAndroid:
 
 afterDebugAndroid:$(TARGET)
 	if [ -f libs/armeabi-v7a/libOFAndroidApp.so ]; then rm libs/armeabi-v7a/libOFAndroidApp.so; fi
-	touch AndroidManifest.xml
-	$(SDK_ROOT)/tools/android update project --target $(NDK_PLATFORM) --path $(PWD)
-	$(ANT_BIN)ant debug
-	cp bin/OFActivity-debug.apk bin/$(APPNAME).apk
-	if [ "$(shell $(SDK_ROOT)/platform-tools/adb get-state)" = "device" ]; then \
-		$(SDK_ROOT)/platform-tools/adb install -r bin/$(APPNAME).apk; \
-	fi
+	#touch AndroidManifest.xml
 	
 afterReleaseAndroid:$(TARGET)
 	if [ -f obj/$(BIN_NAME) ]; then rm obj/$(BIN_NAME); fi
-	touch AndroidManifest.xml
-	$(SDK_ROOT)/tools/android update project --target $(NDK_PLATFORM) --path $(PWD)
+	#touch AndroidManifest.xml
+	
+AndroidInstall:
+	if [ -f obj/$(BIN_NAME) ]; then rm obj/$(BIN_NAME); fi
+	#touch AndroidManifest.xml
+	$(SDK_ROOT)/tools/android update project --target $(NDK_PLATFORM) --path $(PROJECT_PATH)
 	ant debug
 	cp bin/OFActivity-debug.apk bin/$(APPNAME).apk  
-	if [ "$(shell $(SDK_ROOT)/platform-tools/adb get-state)" = "device" ]; then \
-		$(SDK_ROOT)/platform-tools/adb install -r bin/$(APPNAME).apk; \
-	fi
+	#if [ "$(shell $(SDK_ROOT)/platform-tools/adb get-state)" = "device" ]; then 
+	$(SDK_ROOT)/platform-tools/adb install -r bin/$(APPNAME).apk; 
+	#fi
 	
 after:$(TARGET)
 	cp -r $(OF_ROOT)/export/$(LIBSPATH)/libs bin/
