@@ -22,7 +22,7 @@ void		ofSleepMillis(int millis);
 double		ofGetLastFrameTime();
 
 void		ofSetOrientation(ofOrientation orientation);
-int			ofGetOrientation();
+ofOrientation			ofGetOrientation();
 
 //-------------------------- cursor
 void 		ofHideCursor();
@@ -37,6 +37,7 @@ int 		ofGetWidth();			// ofGetWidth is correct for orientation
 int 		ofGetHeight();
 int 		ofGetWindowWidth();			// ofGetWindowWidth is correct for actual window coordinates - so doesn't change with orientation. 
 int 		ofGetWindowHeight();
+bool		ofDoesHWOrientation();
 ofPoint		ofGetWindowSize();
 ofRectangle	ofGetWindowRect();
 

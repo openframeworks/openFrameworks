@@ -202,7 +202,7 @@ void ofSetOrientation(ofOrientation orientation){
 }
 
 //--------------------------------------
-int ofGetOrientation(){
+ofOrientation ofGetOrientation(){
 	return window->getOrientation();
 }
 
@@ -252,6 +252,11 @@ int ofGetWindowWidth(){
 //--------------------------------------------------
 int ofGetWindowHeight(){
 	return (int)window->getWindowSize().y;
+}
+
+//--------------------------------------------------
+bool ofDoesHWOrientation(){
+	return window->doesHWOrientation();
 }
 
 //--------------------------------------------------
