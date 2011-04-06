@@ -331,6 +331,7 @@ AndroidInstall:
 	#if [ "$(shell $(SDK_ROOT)/platform-tools/adb get-state)" = "device" ]; then 
 	$(SDK_ROOT)/platform-tools/adb install -r bin/$(APPNAME).apk; 
 	#fi
+	$(SDK_ROOT)/platform-tools/adb shell am start -a android.intent.action.MAIN -n cc.openframeworks.$(APPNAME)/cc.openframeworks.$(APPNAME).OFActivity
 	
 after:$(TARGET)
 	cp -r $(OF_ROOT)/export/$(LIBSPATH)/libs bin/
