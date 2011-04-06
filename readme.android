@@ -121,6 +121,15 @@ install the development environment and compile/install applications.
 	will be much smaller. There's also no support for debug for native applications in eclipse but you could theoretically
 	use the ndk tools to debug an application compiled with AndroidDebug.
 
+- Creating new applications:
+	You can copy any of the examples and start a new application from there.
+	You'll need to change the name of the application in different places:
+		- when you copy the application from an example set the name you want to use, let's say your application is called myApp
+		- in res/values/strings.xml change app_name value to the name of your application
+		- in AndroidManifest.xml change the name of the package from cc.openFrameworks.exampleName  to cc.openframeworks.myApp
+		- in srcJava, select the package cc.openFrameworks.exampleName, press F2 to rename it and call it cc.openframeworks.myApp
+	It's important to keep the package prefix as cc.openframeworks somethings can stop working, this will be fixed in future versions
+	when eclipse support for native code is better
 
 
 OF Team
