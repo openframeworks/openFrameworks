@@ -4,6 +4,7 @@
 void testApp::setup(){
 	ofBackground(255,255,255);
 	ofSetLogLevel(OF_LOG_NOTICE);
+	ofSetOrientation(OF_ORIENTATION_90_LEFT);
 	// this makes the camera directly return grayscale image, faster!
 	grabber.setPixelFormat(OF_PIXELS_MONO);
 	grabber.initGrabber(320,240);

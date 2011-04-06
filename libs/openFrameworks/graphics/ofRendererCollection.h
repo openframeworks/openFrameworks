@@ -68,14 +68,14 @@ public:
 			 renderers[i]->viewport(x,y,width,height,invertY);
 		 }
 	 }
-	 void setupScreenPerspective(float width = 0, float height = 0, int orientation=0, bool vFlip = true, float fov = 60, float nearDist = 0, float farDist = 0){
+	 void setupScreenPerspective(float width = 0, float height = 0, ofOrientation orientation=OF_ORIENTATION_UNKNOWN, bool vFlip = true, float fov = 60, float nearDist = 0, float farDist = 0){
 		 for(int i=0;i<(int)renderers.size();i++){
 			 renderers[i]->setupScreenPerspective(width,height,orientation,vFlip,fov,nearDist,farDist);
 		 }
 	 }
-	 void setupScreenOrtho(float width = 0, float height = 0, bool vFlip = true, float nearDist = -1, float farDist = 1){
+	 void setupScreenOrtho(float width = 0, float height = 0, ofOrientation orientation=OF_ORIENTATION_UNKNOWN, bool vFlip = true, float nearDist = -1, float farDist = 1){
 		 for(int i=0;i<(int)renderers.size();i++){
-			 renderers[i]->setupScreenOrtho(width,height,vFlip,nearDist,farDist);
+			 renderers[i]->setupScreenOrtho(width,height,orientation,vFlip,nearDist,farDist);
 		 }
 	 }
 	 ofRectangle getCurrentViewport(){
