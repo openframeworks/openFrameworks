@@ -7,7 +7,7 @@
 # make CleanDebug: cleans the Debug target
 # make CleanRelease: cleans the Release target
 # make clean: cleans everything
-# 
+#
 #
 # this should work with any OF app, just copy any example
 # change the name of the folder and it should compile
@@ -24,8 +24,7 @@
 #
 # edit the following  vars to customize the makefile
 
-OF_ROOT = ../../..
-
+include config.make
 include $(OF_ROOT)/libs/openFrameworksCompiled/project/android/paths.make
 
 ifeq ($(findstring Android,$(MAKECMDGOALS)),Android)
@@ -41,12 +40,9 @@ ifeq ($(ARCH),android)
 	COMPILER_OPTIMIZATION = -Os
 	NDK_PLATFORM = android-8
 else
-	COMPILER_OPTIMIZATION = -march=native -mtune=native -Os
+	COMPILER_OPTIMIZATION = $(USER_COMPILER_OPTIMIZATION)
 endif
 EXCLUDE_FROM_SOURCE="bin,.xcodeproj,obj"
-USER_CFLAGS = 
-USER_LD_FLAGS = 
-USER_LIBS = 
 
 
 
@@ -78,7 +74,7 @@ else
 	CXX=$(NDK_ROOT)/toolchains/$(TOOLCHAIN)/prebuilt/$(HOST_PLATFORM)/bin/$(ANDROID_PREFIX)g++
 	AR=$(NDK_ROOT)/toolchains/$(TOOLCHAIN)/prebuilt/$(HOST_PLATFORM)/bin/$(ANDROID_PREFIX)ar
 	SYSROOT=$(NDK_ROOT)/platforms/$(NDK_PLATFORM)/arch-arm/
-	CFLAGS += -nostdlib --sysroot=$(SYSROOT) -fno-short-enums 
+	CFLAGS += -nostdlib --sysroot=$(SYSROOT) -fno-short-enums
 	CFLAGS += -I"$(NDK_ROOT)/platforms/$(NDK_PLATFORM)/arch-arm/usr/include" -I"$(NDK_ROOT)/sources/cxx-stl/gnu-libstdc++/include/" -I"$(NDK_ROOT)/sources/cxx-stl/gnu-libstdc++/libs/armeabi/include"
 	CFLAGS += -DANDROID
 endif
@@ -105,7 +101,7 @@ else
 		CFLAGS += $(shell pkg-config gtk+-2.0 --cflags) -DOF_USING_GTK
 		LIBS += $(shell pkg-config gtk+-2.0 --libs)
 	endif
-	
+
 	#check if mpg123 exists and add it
 	MPG123 = $(shell pkg-config libmpg123 --exists; echo $$?)
 	ifeq ($(MPG123),0)
@@ -115,28 +111,28 @@ else
 endif
 LIB_STATIC = $(shell ls $(OF_ROOT)/libs/*/lib/$(LIBSPATH)/*.a | grep -v openFrameworksCompiled | grep -v poco| sed "s/.*\\/lib\([^/]*\)\.a/-l\1/")
 LIB_SHARED = $(shell ls $(OF_ROOT)/libs/*/lib/$(LIBSPATH)/*.so | grep -v openFrameworksCompiled| sed "s/.*\\/lib\([^/]*\)\.so/-l\1/")
-LIB_STATIC += $(OF_ROOT)/libs/poco/lib/$(LIBSPATH)/libPocoNet.a ../../../libs/poco/lib/$(LIBSPATH)/libPocoXML.a ../../../libs/poco/lib/$(LIBSPATH)/libPocoUtil.a ../../../libs/poco/lib/$(LIBSPATH)/libPocoFoundation.a 
+LIB_STATIC += $(OF_ROOT)/libs/poco/lib/$(LIBSPATH)/libPocoNet.a ../../../libs/poco/lib/$(LIBSPATH)/libPocoXML.a ../../../libs/poco/lib/$(LIBSPATH)/libPocoUtil.a ../../../libs/poco/lib/$(LIBSPATH)/libPocoFoundation.a
 LIB_PATHS_FLAGS = $(shell ls -d $(OF_ROOT)/libs/*/lib/$(LIBSPATH) | sed "s/\(\.*\)/-L\1/")
 ifeq ($(ARCH),android)
 	LIB_PATHS_FLAGS += -L$(OF_ROOT)/libs/openFrameworksCompiled/lib/android
 endif
 
 CFLAGS += -Wall -fexceptions
-CFLAGS += -I. 
+CFLAGS += -I.
 CFLAGS += $(INCLUDES_FLAGS)
 CFLAGS += $(CORE_INCLUDE_FLAGS)
- 
+
 
 
 LIBS += $(LIB_SHARED)
 LIBS += $(LIB_STATIC)
 ifeq ($(ARCH),android)
 	LDFLAGS = $(LIB_PATHS_FLAGS) --sysroot=$(SYSROOT) -nostdlib -L"$(NDK_ROOT)/sources/cxx-stl/gnu-libstdc++/libs/armeabi"
-	LIBS += -lstdc++ -lsupc++ -lGLU -lgcc -lz -lGLESv1_CM -llog -ldl -lm -lc 
+	LIBS += -lstdc++ -lsupc++ -lGLU -lgcc -lz -lGLESv1_CM -llog -ldl -lm -lc
 else
 	LDFLAGS = $(LIB_PATHS_FLAGS) -Wl,-rpath=./libs
 	LIBS += $(shell pkg-config  glew gstreamer-0.10 gstreamer-video-0.10 gstreamer-base-0.10 gstreamer-app-0.10 libudev --libs)
-	LIBS += -lglut -lGL -lGLU -lasound -lopenal -lsndfile -lvorbis -lFLAC -logg
+	LIBS += -lglut -lGL -lGLU -lasound -lopenal -lsndfile -lvorbis -lFLAC -logg -lfreeimage
 endif
 
 
@@ -144,11 +140,11 @@ ifeq ($(findstring addons.make,$(wildcard *.make)),addons.make)
 	ADDONS_INCLUDES = $(shell find $(OF_ROOT)/addons/*/src/ -type d)
 	ADDONS_INCLUDES += $(shell find $(OF_ROOT)/addons/*/libs/ -type d)
 	ADDONSCFLAGS = $(addprefix -I,$(ADDONS_INCLUDES))
-	
-	ifeq ($(findstring libsorder.make,$(wildcard $(OF_ROOT)/addons/*/libs/*/lib/$(LIBSPATH)/libsorder.make)),libsorder.make) 
+
+	ifeq ($(findstring libsorder.make,$(wildcard $(OF_ROOT)/addons/*/libs/*/lib/$(LIBSPATH)/libsorder.make)),libsorder.make)
 		ADDONS_LIBS_W_ORDER = $(shell cat $(OF_ROOT)/addons/*/libs/*/lib/$(LIBSPATH)/libsorder.make)
 	endif
-	
+
 	SED_EXCLUDE_LIBS = $(addsuffix \ \\\| , $(ADDONS_LIBS_W_ORDER))
 	ADDONS_LIBS_STATICS = $(shell ls $(OF_ROOT)/addons/*/libs/*/lib/$(LIBSPATH)/*.a | grep -v "$(SED_EXCLUDE_LIBS) null")
 	ADDONS_LIBS_STATICS += $(addprefix -l, $(ADDONS_LIBS_W_ORDER))
@@ -186,13 +182,13 @@ ifeq ($(ARCH),android)
 		TARGET_LIBS = -lopenFrameworksDebug
 		LDFLAGS += -Wl,--fix-cortex-a8 -shared
 	endif
-	
+
 	ifeq ($(findstring Release,$(MAKECMDGOALS)),Release)
 	    TARGET = libs/armeabi/libOFAndroidApp.so
 		TARGET_LIBS = -lopenFrameworks
 		LDFLAGS += -Wl,--fix-cortex-a8 -shared
 	endif
-	
+
 	ifeq ($(findstring Release_arm7,$(MAKECMDGOALS)),Release_arm7)
 		TARGET_NAME = Release_arm7
 		TARGET_CFLAGS += -march=armv7-a -mfloat-abi=softfp -mfpu=neon
@@ -200,7 +196,7 @@ ifeq ($(ARCH),android)
 		TARGET_LIBS = -lopenFrameworks_arm7
 		#LDFLAGS += -shared  already included through Release
 	endif
-	
+
 	ifeq ($(findstring TestLink,$(MAKECMDGOALS)),TestLink)
 		TARGET_NAME = Debug
 		TARGET_LIBS = -lopenFrameworksDebug
@@ -213,12 +209,12 @@ else
 	    BIN_NAME = $(APPNAME)_debug
 		TARGET = bin/$(BIN_NAME)
 	endif
-	
+
 	ifeq ($(findstring Release,$(MAKECMDGOALS)),Release)
 	    BIN_NAME = $(APPNAME)
 		TARGET = bin/$(BIN_NAME)
 	endif
-	
+
 	ifeq ($(MAKECMDGOALS),)
 		TARGET_NAME = Release
 	    BIN_NAME = $(APPNAME)
@@ -232,7 +228,7 @@ ifeq ($(MAKECMDGOALS),clean)
 endif
 
 OBJ_OUTPUT = obj/$(TARGET_NAME)/
-CLEANTARGET = Clean$(TARGET_NAME)
+CLEANTARGET = clean$(TARGET_NAME)
 OBJS = $(addprefix $(OBJ_OUTPUT), $(OBJFILES))
 DEPFILES = $(patsubst %.o,%.d,$(OBJS))
 ifeq ($(findstring addons.make,$(wildcard *.make)),addons.make)
@@ -241,15 +237,15 @@ ifeq ($(findstring addons.make,$(wildcard *.make)),addons.make)
 endif
 
 .PHONY: Debug Release all after afterDebugAndroid afterReleaseAndroid
-	
+
 Release: $(TARGET) after
 
 Debug: $(TARGET) after
 
-all: 
+all:
 	$(MAKE) Release
-	
-	
+
+
 
 DebugAndroid: $(TARGET)
 
@@ -262,7 +258,7 @@ TestLinkAndroid: $(TARGET) afterDebugAndroid
 AndroidDebug:
 	$(MAKE) DebugAndroid
 	$(MAKE) TestLinkAndroid
-	
+
 AndroidRelease:
 	$(MAKE) ReleaseAndroid
 	$(MAKE) Release_arm7Android
@@ -273,12 +269,12 @@ AndroidRelease:
 $(OBJ_OUTPUT)%.o: %.cpp
 	@echo "compiling object for: " $<
 	mkdir -p $(@D)
-	$(CXX) -c $(TARGET_CFLAGS) $(CFLAGS) $(ADDONSCFLAGS) $(USER_CFLAGS) -MMD -MP -MF$(OBJ_OUTPUT)$*.d -MT$(OBJ_OUTPUT)$*.d -o$@ -c $<  
+	$(CXX) -c $(TARGET_CFLAGS) $(CFLAGS) $(ADDONSCFLAGS) $(USER_CFLAGS) -MMD -MP -MF$(OBJ_OUTPUT)$*.d -MT$(OBJ_OUTPUT)$*.d -o$@ -c $<
 
 $(OBJ_OUTPUT)%.o: %.c
 	@echo "compiling object for: " $<
 	mkdir -p $(@D)
-	$(CC) -c $(TARGET_CFLAGS) $(CFLAGS) $(ADDONSCFLAGS) $(USER_CFLAGS) -MMD -MP -MF$(OBJ_OUTPUT)$*.d -MT$(OBJ_OUTPUT)$*.d -o$@ -c $< 
+	$(CC) -c $(TARGET_CFLAGS) $(CFLAGS) $(ADDONSCFLAGS) $(USER_CFLAGS) -MMD -MP -MF$(OBJ_OUTPUT)$*.d -MT$(OBJ_OUTPUT)$*.d -o$@ -c $<
 
 
 $(OBJ_OUTPUT)%.o: $(OF_ROOT)/%.cpp
@@ -290,23 +286,23 @@ $(OBJ_OUTPUT)%.o: $(OF_ROOT)/%.c
 	@echo "compiling addon object for" $<
 	mkdir -p $(@D)
 	$(CC) $(TARGET_CFLAGS) $(CFLAGS) $(ADDONSCFLAGS) $(USER_CFLAGS) -MMD -MP -MF$(OBJ_OUTPUT)$*.d -MT$(OBJ_OUTPUT)$*.d -o $@ -c $<
-	
+
 $(TARGET): $(OBJS) $(ADDONS_OBJS)
 	@echo "linking" $(TARGET) $(GTK)
-	$(CXX) -o $@ $(OBJS) $(ADDONS_OBJS) $(LDFLAGS) $(USER_LDFLAGS) $(TARGET_LIBS) $(ADDONSLIBS) $(USER_LIBS) $(LIBS) 
+	$(CXX) -o $@ $(OBJS) $(ADDONS_OBJS) $(LDFLAGS) $(USER_LDFLAGS) $(TARGET_LIBS) $(ADDONSLIBS) $(USER_LIBS) $(LIBS)
 
 -include $(DEPFILES)
 
-.PHONY: clean CleanDebug CleanRelease CleanAndroid
+.PHONY: clean cleanDebug cleanRelease CleanAndroid
 clean:
 	rm -Rf obj
 	rm -f -v $(TARGET)
 	rm -Rf -v bin/libs
-	
+
 $(CLEANTARGET):
 	rm -Rf -v $(OBJ_OUTPUT)
 	rm -f -v $(TARGET)
-	
+
 CleanAndroid:
 	rm -Rf obj
 	rm -f -v libs/armeabi-v7a/libOFAndroidApp.so
@@ -317,36 +313,36 @@ CleanAndroid:
 afterDebugAndroid:$(TARGET)
 	if [ -f libs/armeabi-v7a/libOFAndroidApp.so ]; then rm libs/armeabi-v7a/libOFAndroidApp.so; fi
 	#touch AndroidManifest.xml
-	
+
 afterReleaseAndroid:$(TARGET)
 	if [ -f obj/$(BIN_NAME) ]; then rm obj/$(BIN_NAME); fi
 	#touch AndroidManifest.xml
-	
+
 AndroidInstall:
 	if [ -f obj/$(BIN_NAME) ]; then rm obj/$(BIN_NAME); fi
 	#touch AndroidManifest.xml
 	$(SDK_ROOT)/tools/android update project --target $(NDK_PLATFORM) --path $(PROJECT_PATH)
 	ant debug
-	cp bin/OFActivity-debug.apk bin/$(APPNAME).apk  
-	#if [ "$(shell $(SDK_ROOT)/platform-tools/adb get-state)" = "device" ]; then 
-	$(SDK_ROOT)/platform-tools/adb install -r bin/$(APPNAME).apk; 
+	cp bin/OFActivity-debug.apk bin/$(APPNAME).apk
+	#if [ "$(shell $(SDK_ROOT)/platform-tools/adb get-state)" = "device" ]; then
+	$(SDK_ROOT)/platform-tools/adb install -r bin/$(APPNAME).apk;
 	#fi
 	$(SDK_ROOT)/platform-tools/adb shell am start -a android.intent.action.MAIN -n cc.openframeworks.$(APPNAME)/cc.openframeworks.$(APPNAME).OFActivity
-	
+
 after:$(TARGET)
 	cp -r $(OF_ROOT)/export/$(LIBSPATH)/libs bin/
 	@echo
 	@echo "     compiling done"
-	@echo "     to launch the application"	
+	@echo "     to launch the application"
 	@echo
 	@echo "     cd bin"
 	@echo "     ./$(BIN_NAME)"
 	@echo
-    
+
 
 .PHONY: help
 help:
-	@echo 
+	@echo
 	@echo openFrameworks universal makefile
 	@echo
 	@echo targets:
@@ -364,7 +360,7 @@ help:
 	@echo it will look for files in any folder inside the application
 	@echo folder except that in the EXCLUDE_FROM_SOURCE variable.
 	@echo "it doesn't autodetect include paths yet"
-	@echo "add the include paths editing the var USER_CFLAGS"	
+	@echo "add the include paths editing the var USER_CFLAGS"
 	@echo at the beginning of the makefile using the gcc syntax:
 	@echo -Ipath
 	@echo
