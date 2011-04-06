@@ -7,7 +7,7 @@
 !androidExamples
 !androidExamples/**
 !androidExamples/*/**
-androidExamples/.metadata
+*/.metadata
 androidExamples/*/Debug
 androidExamples/*/Release
 androidExamples/*/Release_arm7
