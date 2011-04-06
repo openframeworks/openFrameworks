@@ -1,0 +1,111 @@
+- Download & uncompress eclipse 
+	- install the c/c++ development version
+	- in ubuntu better to download it from eclipse.org, the version in the repos is usually super outdated
+
+- Download & uncompress OF
+
+- Download & uncompress android sdk and ndk (this is tested with sdk 10 and ndk r5b)
+
+- Install ant:
+	Linux:
+		sudo apt-get install ant-1.8
+		
+		or for newer distributions:
+
+		sudo apt-get install ant
+
+		
+ 	osx:
+		download and uncompress 1.8 or > from http://ant.apache.org/bindownload.cgi
+
+- Only linux: install java
+
+	sudo apt-get install openjdk-6-jdk
+
+- Edit OF/libs/openFrameworksCompiled/project/android/paths.make
+	- set paths of sdk & ndk to the uncompressed folders
+	- set ANT_HOME:
+		linux: /usr
+		osx: folder where you uncompressed ant including 
+
+- Open eclipse with workspace OF/apps/androidExamples
+
+- Install adt plugin in eclipse
+	detailed instructions:	http://developer.android.com/sdk/eclipse-adt.html
+	should do with:
+		- in eclipse, go to help -> install new software -> add:
+   			name: Android ADT
+   			location: https://dl-ssl.google.com/android/eclipse/
+		- check the Developer tools box, this will install:
+   			-android DDMS
+   			-android development tools
+   			-android Hierarchy viewer
+   			-android traceview
+
+- Set eclipse java compiler compliance to 1.5:
+	Window > Preferences > Java > Compiler > Compiler compliance level: 1.5
+
+- Set android eclipse settings:
+	Window > Preferences > Android > SDK Location
+
+- Configure android targets:
+	Android button in toolbar > Available packages > 
+		Install SDK platform 2.2 (makefiles and eclipse projects are configured for this one)
+		Install SDK platform tools 
+
+- Add virtual device (optional)
+	Android button in toolbar > Add device
+
+- Import OF projects:
+	File > Import > General > Existing projects into workspace > Browse
+
+	Import in this order:
+		OF/libs
+		OF/libs/openFrameworks
+		OF/addons/ofxAndroid/ofAndroidLib
+		OF/apps/androidExamples
+
+- Compile OF project, be sure target is set to Android (the hammer icon in toolbar)
+
+- Compile all the examples 
+	- compiling will install the application in the phone by now
+	- be carefull when starting eclipse, it will try to upload all the examples!!  -> will change this later
+
+- Enable development in your device:
+	Adjustments > Applications > Development > USB Debug (the device  needs to be disconnected from the computer)
+
+- Connect the device now.
+
+- Sometimes on linux adb needs to be run as root. With the device connected, in eclipse go to:
+	Window > show view > other... > Android > Devices
+	if the device doesn't appear in the list, from a terminal:
+		cd sdk_root  (the folder where you uncompressed the sdk
+		sudo platform_tools/adb kill-server; sudo platform_tools/adb start-server
+		if the device doesn't appear try restarting eclipse
+		
+- Create an install external tool and use it to install projects on the device or emulator
+	Run > External Tools > External Tools Configuration
+	Select program and press New, name the new configuration: Android Install
+	Main:
+		Location: /usr/bin/make
+		Working Directory: ${project_loc}
+		Arguments: AndroidInstall PROJECT_PATH=${project_loc}
+	Refresh:
+		Mark Refresh resources upon completion
+		Select The selected resource
+	Build:
+		Mark Build before launch
+		Select The project containing the selected resource
+		Mark Include referenced projects
+	Press Apply and Close
+
+- Now to install a project in the device:
+	- connect the device
+	- check that is working and restart adb server if necesary 
+	- press the play button with a toolbox or Run > External Tools > Android Install
+
+- To install a project in the emulator, do the same but with the device disconnected from the computer
+	
+- Now to run any of the examples in the device compile them in AndroidRelease mode (the hammer button in the toolbar) 
+	trying to run them will do nothing. Once compiling finishes the app will be installed, run it from the app menu in the device
+
