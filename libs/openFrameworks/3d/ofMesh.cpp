@@ -122,9 +122,7 @@ void ofMesh::addColors(const vector<ofColor>& cols){
 
 //--------------------------------------------------------------
 void ofMesh::addColors(const ofColor* cols, int amt){
-	for (int i = 0; i < amt;i++){
-		addColor(cols[i]);
-	}
+	colors.insert(colors.end(),cols,cols+amt);
 	bColorsChanged = true;
 }
 
@@ -142,9 +140,7 @@ void ofMesh::addNormals(const vector<ofVec3f>& norms){
 
 //--------------------------------------------------------------
 void ofMesh::addNormals(const ofVec3f* norms, int amt){
-	for (int i = 0; i < amt;i++){
-		addNormal(norms[i]);
-	}
+	normals.insert(normals.end(),norms,norms+amt);
 	bNormalsChanged = true;
 }
 
@@ -163,9 +159,7 @@ void ofMesh::addTexCoords(const vector<ofVec2f>& tCoords){
 
 //--------------------------------------------------------------
 void ofMesh::addTexCoords(const ofVec2f* tCoords, int amt){
-	for (int i = 0; i < amt;i++){
-		addTexCoord(tCoords[i]);
-	}
+	texCoords.insert(texCoords.end(),tCoords,tCoords+amt);
 	bTexCoordsChanged = true;
 }
 
@@ -418,8 +412,9 @@ void ofMesh::setName(string name_){
 void ofMesh::setupIndicesAuto(){
 	bIndicesChanged = true;
 	indices.clear();
+	indices.resize(vertices.size());
 	for(int i = 0; i < (int)vertices.size();i++){
-		indices.push_back((ofIndexType)i);
+		indices[i]=(ofIndexType)i;
 	}
 }
 
