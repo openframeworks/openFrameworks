@@ -104,15 +104,23 @@ install the development environment and compile/install applications.
 		Mark Include referenced projects
 	Press Apply and Close
 
-- Now to install a project in the device:
+- Now to install and run a project in the device:
 	- connect the device
 	- check that is working and restart adb server if necesary 
+	- select the AndroidRelease target (in the hammer button in the toolbar) 
 	- press the play button with a toolbox or Run > External Tools > Android Install
 
 - To install a project in the emulator, do the same but with the device disconnected from the computer
 	
-- Now to run any of the examples in the device compile them in AndroidRelease mode (the hammer button in the toolbar) 
-	trying to run them will do nothing. Once compiling finishes the app will be installed, run it from the app menu in the device
+
+
+- The AndroidDebug target does a different compilation process of the native code that allows to detect linker
+	errors that won't be detected when compiling in AndroidRelease mode. Is recomended to compile your application
+	in AndroidDebug mode at least once or if your application crashes before starting. To install applications
+	on the device or emulator is recommended to use the AndroidRelease mode since it's faster and the applications
+	will be much smaller. There's also no support for debug for native applications in eclipse but you could theoretically
+	use the ndk tools to debug an application compiled with AndroidDebug.
+
 
 
 OF Team
