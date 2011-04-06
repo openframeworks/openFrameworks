@@ -19,3 +19,5 @@ androidExamples/*/local.properties
 androidExamples/*/.settings
 androidExamples/*/.externalToolBuilders
 libOFAndroidApp.so
+*/*/.*project
+!androidExamples/*/.*project
