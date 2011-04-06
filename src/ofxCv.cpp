@@ -56,12 +56,60 @@ namespace ofxCv {
 		return Mat(img.getHeight(), img.getWidth(), cvImageType, img.getPixels(), 0);
 	}
 	
-	ofVec2f makeVec2f(Point2f point) {
+	ofVec2f makeVec(Point2f point) {
 		return ofVec2f(point.x, point.y);
+	}
+	
+	ofVec3f makeVec(Point3f point) {
+		return ofVec3f(point.x, point.y, point.z);
 	}
 	
 	cv::Rect makeRect(ofRectangle& rect) {
 		return cv::Rect(rect.x, rect.y, rect.width, rect.height);
+	}
+	
+	ofMatrix4x4 makeMatrix(Mat rotation, Mat translation) {
+		Mat rot3x3;
+		if(rotation.rows == 3 && rotation.cols == 3) {
+			rot3x3 = rotation;
+		} else {
+			Rodrigues(rotation, rot3x3);
+		}
+		double* rm = rot3x3.ptr<double>(0);
+		double* tm = translation.ptr<double>(0);
+		return ofMatrix4x4(rm[0], rm[3], rm[6], 0.0f,
+											 rm[1], rm[4], rm[7], 0.0f,
+											 rm[2], rm[5], rm[8], 0.0f,
+											 tm[0], tm[1], tm[2], 1.0f);
+	}
+	
+	void drawMat(Mat& mat, float x, float y) {
+		drawMat(mat, x, y, mat.cols, mat.rows);
+	}
+	
+	void drawMat(Mat& mat, float x, float y, float width, float height) {
+		int glType;
+		Mat buffer;
+		if(mat.depth() != CV_8U) {
+			mat.convertTo(buffer, CV_8U);
+		} else {
+			buffer = mat;
+		}
+		if(mat.channels() == 1) {
+			glType = GL_LUMINANCE;
+		} else {
+			glType = GL_RGB;
+		}
+		ofTexture tex;
+		int w = buffer.cols;
+		int h = buffer.rows;
+		tex.allocate(w, h, glType);
+		tex.loadData(buffer.ptr(), w, h, glType);
+		tex.draw(x, y, width, height);
+	}
+	
+	void applyMatrix(const ofMatrix4x4& matrix) {
+		glMultMatrixf((GLfloat*) matrix.getPtr());
 	}
 	
 	void invert(ofImage& img) {

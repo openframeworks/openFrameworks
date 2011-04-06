@@ -2,6 +2,7 @@
 
 // OpenCV 2
 #include "cv.h"
+#include "highgui.h"
 
 // ofxCv
 #include "FloatImage.h"
@@ -46,8 +47,15 @@ namespace ofxCv {
 	void imitate(FloatImage& mirror, FloatImage& original);
 	int getCvImageType(const ofImageType& ofType);
 	Mat getMat(ofImage& img);
-	ofVec2f makeVec2f(Point2f point);
+	ofVec2f makeVec(Point2f point);
+	ofVec3f makeVec(Point3f point);
 	cv::Rect makeRect(ofRectangle& rect);
+	ofMatrix4x4 makeMatrix(Mat rotation, Mat translation);
+	
+	void drawMat(Mat& mat, float x, float y);
+	void drawMat(Mat& mat, float x, float y, float width, float height);
+	
+	void applyMatrix(const ofMatrix4x4& matrix);
 	
 	void invert(ofImage& img);
 	
