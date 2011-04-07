@@ -384,6 +384,11 @@ void  ofDrawBitmapCharacter(int character, int x , int y){
 		
 	if (character < 128) {
 		
+		//TODO: look into a better fix. 
+		//old ofDrawBitmapString was 3 pixels higher, so this version renders text in a different position. 
+		//3 pixel adjustment corrects that. 
+		y -= 3;
+		
 		glesBitmappedFontTexture.bind();
 		
 		float posTexW = (float)(character % 16)/16.0f;
