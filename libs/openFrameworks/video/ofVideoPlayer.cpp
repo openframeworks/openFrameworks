@@ -3,35 +3,24 @@
 
 //---------------------------------------------------------------------------
 ofVideoPlayer::ofVideoPlayer (){
-	player						= NULL;
 	bUseTexture					= true;
 	playerTex					= NULL;
 	internalPixelFormat = OF_PIXELS_RGB;
 }
 
 //---------------------------------------------------------------------------
-ofVideoPlayer::~ofVideoPlayer(){
-	close();
-	
-	if( player != NULL ){
-		delete player;
-		player = NULL;
-	}
-	
-	tex.clear();
+void ofVideoPlayer::setPlayer(ofBaseVideoPlayer * newPlayer){
+	player = ofPtr<ofBaseVideoPlayer>(newPlayer);
 }
 
 //---------------------------------------------------------------------------
-bool ofVideoPlayer::setPlayer(ofBaseVideoPlayer * newPlayer){
-	if( player == NULL ){
-		player = newPlayer;
-		return true;
-	}else{
-		//TODO: should we delete newPlayer? This is why we need smart pointers. 
-		ofLog(OF_LOG_ERROR, "ofVideoPlayer::setPlayer - player already set!");
-	}
-	
-	return false;
+void ofVideoPlayer::setPlayer(ofPtr<ofBaseVideoPlayer> newPlayer){
+	player = newPlayer;
+}
+
+//---------------------------------------------------------------------------
+ofPtr<ofBaseVideoPlayer> ofVideoPlayer::getPlayer(){
+	return player;
 }
 
 //--------------------------------------------------------------------
@@ -59,7 +48,7 @@ bool ofVideoPlayer::loadMovie(string name){
 
 //---------------------------------------------------------------------------
 unsigned char * ofVideoPlayer::getPixels(){
-	if( player != NULL ){		
+	if( player != NULL ){
 		return player->getPixels();
 	}
 	return NULL;	

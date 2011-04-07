@@ -17,7 +17,7 @@ ofGstVideoPlayer::ofGstVideoPlayer(){
 }
 
 ofGstVideoPlayer::~ofGstVideoPlayer(){
-
+	cout << "deleting video player" << endl;
 }
 
 void ofGstVideoPlayer::setPixelFormat(ofPixelFormat pixelFormat){

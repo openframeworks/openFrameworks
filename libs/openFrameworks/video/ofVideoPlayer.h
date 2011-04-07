@@ -25,10 +25,10 @@ class ofVideoPlayer : public ofBaseVideoPlayer, public ofBaseDraws, public ofBas
 	public:
 
 		ofVideoPlayer ();
-		virtual ~ofVideoPlayer();
 
-		bool				setPlayer(ofBaseVideoPlayer * newPlayer);
-		ofBaseVideoPlayer *	getPlayer();
+		void				setPlayer(ofBaseVideoPlayer * newPlayer);
+		void				setPlayer(ofPtr<ofBaseVideoPlayer> newPlayer);
+		ofPtr<ofBaseVideoPlayer>	getPlayer();
 
 		bool 				loadMovie(string name);
 		void				setPixelFormat(ofPixelFormat pixelFormat);
@@ -88,8 +88,8 @@ class ofVideoPlayer : public ofBaseVideoPlayer, public ofBaseDraws, public ofBas
 		int					height;
 		int					width;
 
-	protected:
-		ofBaseVideoPlayer		* player;
+	private:
+		ofPtr<ofBaseVideoPlayer>		player;
 		
 		ofTexture tex;
 		ofTexture * playerTex; // a seperate texture that may be optionally implemented by the player to avoid excessive pixel copying.
