@@ -8,27 +8,33 @@
 //------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------
 
+//--------------------------------------------------
 ofBuffer::ofBuffer(){
 	nextLinePos = 0;
 }
 
+//--------------------------------------------------
 ofBuffer::ofBuffer(const char * buffer,int size){
 	set(buffer,size);
 }
 
+//--------------------------------------------------
 ofBuffer::ofBuffer(istream & stream){
 	set(stream);
 }
 
+//--------------------------------------------------
 ofBuffer::ofBuffer(const ofBuffer & buffer_){
 	buffer = buffer_.buffer;
 	nextLinePos = buffer_.nextLinePos;
 }
 
+//--------------------------------------------------
 ofBuffer::~ofBuffer(){
 	clear();
 }
 
+//--------------------------------------------------
 bool ofBuffer::set(istream & stream){
 	clear();
 	if(stream.bad()) return false;
@@ -51,12 +57,14 @@ bool ofBuffer::set(istream & stream){
 	return true;
 }
 
+//--------------------------------------------------
 bool ofBuffer::writeTo(ostream & stream){
 	if(stream.bad()) return false;
 	stream.write(&(buffer[0]),buffer.size());
 	return true;
 }
 
+//--------------------------------------------------
 void ofBuffer::set(const char * _buffer, int _size){
 	clear();
 	buffer.resize(_size+1);
@@ -64,33 +72,44 @@ void ofBuffer::set(const char * _buffer, int _size){
 	buffer[_size]=0;
 }
 
+//--------------------------------------------------
 void ofBuffer::clear(){
 	buffer.clear();
 	nextLinePos = 0;
 }
 
+//--------------------------------------------------
 void ofBuffer::allocate(long _size){
 	clear();
 	buffer.resize(_size);
 }
 
+//--------------------------------------------------
 char * ofBuffer::getBinaryBuffer(){
+	if(buffer.empty()) return NULL;
 	return &buffer[0];
 }
 
+//--------------------------------------------------
 const char * ofBuffer::getBinaryBuffer() const{
+	if(buffer.empty()) return "";
 	return &buffer[0];
 }
 
+//--------------------------------------------------
 string ofBuffer::getText() const{
+	if(buffer.empty()) return "";
 	return &buffer[0];
 }
 
+//--------------------------------------------------
 long ofBuffer::size() const{
+	if(buffer.empty()) return 0;
 	//we always add a 0 at the end to avoid problems with strings
 	return buffer.size()-1;
 }
 
+//--------------------------------------------------
 string ofBuffer::getNextLine(){
 	if( buffer.empty() ) return "";
 	long currentLinePos = nextLinePos;
@@ -102,9 +121,22 @@ string ofBuffer::getNextLine(){
 	return line;
 }
 
+//--------------------------------------------------
 string ofBuffer::getFirstLine(){
 	nextLinePos = 0;
 	return getNextLine();
+}
+
+//--------------------------------------------------
+ostream & operator<<(ostream & ostr,ofBuffer & buf){
+	ostr << buf.getText();
+	return ostr;
+}
+
+//--------------------------------------------------
+istream & operator>>(istream & istr,ofBuffer & buf){
+	buf.set(istr);
+	return istr;
 }
 
 //--------------------------------------------------
@@ -161,15 +193,18 @@ ofFile::~ofFile(){
 }
 
 //------------------------------------------------------------------------------------------------------------
-void ofFile::open(string _path, bool binary){
-	myFile = File(_path);
-	if(path()=="" || !exists()) return;
-	ios_base::openmode mode = binary? ifstream::binary : ios_base::in;
-	fstr.open(path().c_str(),mode);
+void ofFile::open(string path){
+	myFile = File(ofToDataPath(path));
 }
 
 //-------------------------------------------------------------------------------------------------------------
 ostream & operator<<(ostream & ostr,ofFile & file){
+	bool close=false;
+	if(!file.fstr.is_open() || !file.fstr.good()) {
+		if(file.path()=="" || !file.exists()) return ostr;
+		file.fstr.open(file.path().c_str(),fstream::in);
+		close=true;
+	}
 	char c;
 	while (file.fstr.good()){
 		c = file.fstr.get();       // get character from file
@@ -177,13 +212,58 @@ ostream & operator<<(ostream & ostr,ofFile & file){
 	    	ostr << c;
 	    }
 	}
+	if(close)file.fstr.close();
 	return ostr;
 }
 
+//-------------------------------------------------------------------------------------------------------------
+istream & operator>>(istream & istr,ofFile & file){
+	if(!file.fstr.is_open() || !file.fstr.good()) {
+		if(file.path()=="") return istr;
+		file.fstr.open(file.path().c_str(),fstream::out);
+	}
+	char c;
+	while (istr.good()){
+		c = istr.get();       // get character from file
+		if (istr.good()){
+			file.fstr << c;
+		}
+	}
+	return istr;
+}
+
+//-------------------------------------------------------------------------------------------------------------
+ostream & ofFile::getWriteStream(){
+	if(!fstr.is_open() || !fstr.good()) {
+		if(path()=="") return fstr;
+		fstr.open(path().c_str(),fstream::out);
+	}
+	return fstr;
+}
+
+//-------------------------------------------------------------------------------------------------------------
+istream & ofFile::getReadStream(){
+	if(!fstr.is_open() || !fstr.good()) {
+		if(path()=="" || !exists()) return fstr;
+		fstr.open(path().c_str(),fstream::in);
+	}
+	return fstr;
+}
+
+//-------------------------------------------------------------------------------------------------------------
+ofFile::operator ostream&(){
+	return getWriteStream();
+}
+
+//-------------------------------------------------------------------------------------------------------------
+ofFile::operator istream&(){
+	return getReadStream();
+}
 
 //-------------------------------------------------------------------------------------------------------------
 void ofFile::close(){
 	myFile = File();
+	fstr.close();
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -203,7 +283,7 @@ bool ofFile::create(){
 }
 
 //------------------------------------------------------------------------------------------------------------
-ofBuffer ofFile::getBuffer(bool binary){
+ofBuffer ofFile::readToBuffer(bool binary){
 	if( myFile.path() == "" || myFile.exists() == false ){
 		return ofBuffer();
 	} 
@@ -212,7 +292,7 @@ ofBuffer ofFile::getBuffer(bool binary){
 }
 
 //------------------------------------------------------------------------------------------------------------
-bool ofFile::setBuffer(ofBuffer & buffer, bool binary){
+bool ofFile::writeFromBuffer(ofBuffer & buffer, bool binary){
 	if( myFile.path() == "" ){
 		return false;
 	} 
@@ -474,6 +554,9 @@ bool ofFile::removeFile(string path, bool bRelativeToData){
 	return true;
 }
 
+Poco::File & ofFile::getPocoFile(){
+	return myFile;
+}
 
 //------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------
@@ -703,6 +786,9 @@ bool ofDirectory::isDirectoryEmpty(string dirPath, bool bRelativeToData){
 	return false;
 }
 
+Poco::File & ofDirectory::getPocoFile(){
+	return myDir;
+}
 
 //------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------
