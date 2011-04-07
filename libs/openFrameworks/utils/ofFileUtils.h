@@ -74,11 +74,19 @@ class ofFile{
 
 public:
 	
+	enum Mode{
+		Reference, // default, for non-stream operations
+		ReadOnly,  // the file will switch automatically to read only if theres any read operation
+		WriteOnly, // write modes need to be set explicitly
+		ReadWrite,
+		Append
+	};
+
 	ofFile();
-	ofFile(string filePath);
+	ofFile(string filePath, Mode mode=Reference, bool binary=false);
 	~ofFile();
 
-	void open(string path);
+	void open(string path, Mode mode=Reference, bool binary=false);
 	void close();
 	bool create();
 	
@@ -169,8 +177,10 @@ public:
 	static bool removeFile(string path, bool bRelativeToData = true);
 	
 private:
+	bool isWriteMode();
 	Poco::File::File myFile;
 	fstream fstr;
+	Mode mode;
 };
 
 class ofDirectory{
