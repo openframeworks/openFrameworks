@@ -71,7 +71,11 @@ class ofFile{
 
 	public:
 	
-	void open(string path);
+	ofFile();
+	ofFile(string filePath);
+	~ofFile();
+
+	void open(string path, bool binary=true);
 	void close();
 	bool create();
 	
@@ -104,8 +108,10 @@ class ofFile{
 	//be careful! this deletes a file or folder :) 
 	bool remove(bool recursive);	
 
-	UInt64 getSize();
+	uint64_t getSize();
 	
+	friend ostream & operator<<(ostream & ostr,ofFile & file);
+
 	//if you want access to a few other things
 	Poco::File * getPocoFile();
 	
@@ -123,6 +129,7 @@ class ofFile{
 	
 	protected:
 		Poco::File::File myFile;
+		ifstream fstr;
 };
 
 class ofDirectory{

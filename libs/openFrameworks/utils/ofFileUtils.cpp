@@ -146,13 +146,42 @@ using Poco::DirectoryIterator;
 using Poco::StringTokenizer;
 using Poco::NotFoundException;
 
-
 //------------------------------------------------------------------------------------------------------------
-void ofFile::open(string path){
-	myFile = File(path);
+ofFile::ofFile(){
 }
 
-//------------------------------------------------------------------------------------------------------------§
+//------------------------------------------------------------------------------------------------------------
+ofFile::ofFile(string path){
+	open(path);
+}
+
+//-------------------------------------------------------------------------------------------------------------
+ofFile::~ofFile(){
+	close();
+}
+
+//------------------------------------------------------------------------------------------------------------
+void ofFile::open(string _path, bool binary){
+	myFile = File(_path);
+	if(path()=="" || !exists()) return;
+	ios_base::openmode mode = binary? ifstream::binary : ios_base::in;
+	fstr.open(path().c_str(),mode);
+}
+
+//-------------------------------------------------------------------------------------------------------------
+ostream & operator<<(ostream & ostr,ofFile & file){
+	char c;
+	while (file.fstr.good()){
+		c = file.fstr.get();       // get character from file
+	    if (file.fstr.good()){
+	    	ostr << c;
+	    }
+	}
+	return ostr;
+}
+
+
+//-------------------------------------------------------------------------------------------------------------
 void ofFile::close(){
 	myFile = File();
 }
@@ -178,8 +207,7 @@ ofBuffer ofFile::getBuffer(bool binary){
 	if( myFile.path() == "" || myFile.exists() == false ){
 		return ofBuffer();
 	} 
-	
-	//TODO: use Poco::FileStream ??	
+
 	return ofBufferFromFile(myFile.path(), binary);
 }
 
@@ -189,7 +217,6 @@ bool ofFile::setBuffer(ofBuffer & buffer, bool binary){
 		return false;
 	} 
 	
-	//TODO: use Poco::FileStream ??
 	ofBufferToFile(myFile.path(), buffer, binary);	
 	return true;
 }
@@ -362,7 +389,7 @@ bool ofFile::remove(bool recursive){
 }
 
 //------------------------------------------------------------------------------------------------------------
-UInt64 ofFile::getSize(){
+uint64_t ofFile::getSize(){
 	return myFile.getSize();
 }
 
