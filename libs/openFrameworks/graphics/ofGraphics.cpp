@@ -218,12 +218,12 @@ ofHandednessType ofGetCoordHandedness() {
 }
 
 //----------------------------------------------------------
-void ofSetupScreenPerspective(float width, float height, int orientation, bool vFlip, float fov, float nearDist, float farDist) {
+void ofSetupScreenPerspective(float width, float height, ofOrientation orientation, bool vFlip, float fov, float nearDist, float farDist) {
 	renderer->setupScreenPerspective(width,height, orientation, vFlip,fov,nearDist,farDist);
 }
 
 //----------------------------------------------------------
-void ofSetupScreenOrtho(float width, float height, int orientation, bool vFlip, float nearDist, float farDist) {
+void ofSetupScreenOrtho(float width, float height, ofOrientation orientation, bool vFlip, float nearDist, float farDist) {
 	renderer->setupScreenOrtho(width,height,orientation,vFlip,nearDist,farDist);
 }
 

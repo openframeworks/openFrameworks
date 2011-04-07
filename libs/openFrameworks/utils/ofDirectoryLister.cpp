@@ -1,6 +1,7 @@
 #include "ofDirectoryLister.h"
 
 #include "ofUtils.h"
+#include "ofFileUtils.h"
 #include "Poco/Path.h"
 #include "Poco/String.h"
 
@@ -42,6 +43,8 @@ void ofDirectoryLister::allowExt(string extension) {
 
 //----------------------------------------
 int ofDirectoryLister::listDir(string directory, bool absolute) {
+	directory = ofFileUtils::getPathForDirectory(directory);
+	
 	files.clear();
 
 	originalDirectory = directory;
@@ -50,20 +53,30 @@ int ofDirectoryLister::listDir(string directory, bool absolute) {
 		absolutePath = ofToDataPath(directory);
 	}
 	
-	File cur(absolutePath);
+	Path base(absolutePath);
+	File cur(base);
 	if(cur.exists()) {
-		cur.list(files);
-		
+		// File::list(vector<File>) is broken on windows as of march 23, 2011...
+		// so we need to use File::list(vector<string>) and build a vector<File>
+		// in the future the following can be replaced width: cur.list(files);
+		vector<string> fileStrings;
+		cur.list(fileStrings);
+		for(int i = 0; i < fileStrings.size(); i++) {
+			Path curPath = base;
+			curPath.setFileName(fileStrings[i]);
+			files.push_back(File(curPath));
+		}
+
 		if(!showHidden) {
 			ofRemove(files, hiddenFile);
 		}
-		
+
 		if(!extensions.empty() && !ofContains(extensions, (string) "*")) {
 			ExtensionComparator extensionFilter;
 			extensionFilter.extensions = &extensions;
 			ofRemove(files, extensionFilter);
 		}
-		
+
 		// TODO: if(ofCheckLogLevel(OF_LOG_VERBOSE)) {
 		for(int i = 0; i < (int)size(); i++) {
 			ofLog(OF_LOG_VERBOSE, "\t" + getName(i));
@@ -73,19 +86,20 @@ int ofDirectoryLister::listDir(string directory, bool absolute) {
 	} else {
 		ofLog(OF_LOG_ERROR, "ofDirectoryLister::listDirectory() error opening directory " + directory);
 	}
-	
+
 	return size();
 }
 
 //----------------------------------------
 string ofDirectoryLister::getName(unsigned int position) {
-	Path cur(files[position].path());
+	Path cur(files.at(position).path());
 	return cur.getFileName();
 }
 
 //----------------------------------------
 string ofDirectoryLister::getPath(unsigned int position) {
-	Path cur(files[position].path());
+	Path cur(originalDirectory);
+	cur.setFileName(getName(position));
 	return cur.toString();
 }
 

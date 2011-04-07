@@ -18,6 +18,7 @@
 class ofPixels;
 class ofPath;
 class ofPolyline;
+class ofImage;
 typedef ofPixels& ofPixelsRef;
 
 
@@ -79,6 +80,8 @@ public:
 	virtual ~ofBaseHasPixels(){}
 	virtual unsigned char * getPixels()=0;
 	virtual ofPixelsRef getPixelsRef()=0;
+	virtual float	getHeight() = 0;
+	virtual float	getWidth() = 0;
 };
 
 //----------------------------------------------------------
@@ -88,6 +91,42 @@ class ofBaseImage: public ofBaseDraws, public ofBaseHasTexture, public ofBaseHas
 public:
 	
 };
+
+//----------------------------------------------------------
+// ofBaseHasSoundStream
+//----------------------------------------------------------
+class ofBaseSoundInput{
+
+	public:
+		virtual void audioIn( float * input, int bufferSize, int nChannels, long unsigned long tickCount ){
+			audioIn(input, bufferSize, nChannels);
+		}
+
+		virtual void audioIn( float * input, int bufferSize, int nChannels ){  
+			audioReceived(input, bufferSize, nChannels);
+		}
+
+		virtual void audioReceived( float * input, int bufferSize, int nChannels ){}
+};
+
+//----------------------------------------------------------
+// ofBaseHasSoundStream
+//----------------------------------------------------------
+class ofBaseSoundOutput{
+
+	public:
+		virtual void audioOut( float * output, int bufferSize, int nChannels, long unsigned long tickCount  ){
+			audioOut(output, bufferSize, nChannels);
+		}
+
+		virtual void audioOut( float * output, int bufferSize, int nChannels ){
+			audioRequested(output, bufferSize, nChannels);
+		}
+
+		//legacy
+		virtual void audioRequested( float * output, int bufferSize, int nChannels ){}
+};
+
 
 //----------------------------------------------------------
 // ofBaseVideo
@@ -199,6 +238,7 @@ public:
 	virtual void draw(ofMesh & vertexData)=0;
 	virtual void draw(ofMesh & vertexData, ofPolyRenderMode renderType)=0;
 	virtual void draw(vector<ofPoint> & vertexData, ofPrimitiveMode drawMode)=0;
+	virtual void draw(ofImage & image, float x, float y, float z, float w, float h)=0;
 
 	//--------------------------------------------
 	// transformations
@@ -210,8 +250,8 @@ public:
 	// if nearDist or farDist are 0 assume defaults (calculated based on width / height)
 	virtual void viewport(ofRectangle viewport){};
 	virtual void viewport(float x = 0, float y = 0, float width = 0, float height = 0, bool invertY = true){};
-	virtual void setupScreenPerspective(float width = 0, float height = 0, int orientation=0, bool vFlip = true, float fov = 60, float nearDist = 0, float farDist = 0){}
-	virtual void setupScreenOrtho(float width = 0, float height = 0, int orientation=0, bool vFlip = true, float nearDist = -1, float farDist = 1){};
+	virtual void setupScreenPerspective(float width = 0, float height = 0, ofOrientation orientation=OF_ORIENTATION_UNKNOWN, bool vFlip = true, float fov = 60, float nearDist = 0, float farDist = 0){}
+	virtual void setupScreenOrtho(float width = 0, float height = 0, ofOrientation orientation=OF_ORIENTATION_UNKNOWN, bool vFlip = true, float nearDist = -1, float farDist = 1){};
 	virtual ofRectangle getCurrentViewport(){return ofRectangle();};
 	virtual int getViewportWidth(){return 0;};
 	virtual int getViewportHeight(){return 0;};

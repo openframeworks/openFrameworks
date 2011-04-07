@@ -11,7 +11,7 @@ void ofxSynthSampler::setLoopPoints(float i, float o){
 void ofxSynthSampler::trigger(){
 	sample.position = inPoint*sample.length;
 }
-void ofxSynthSampler::audioRequested( float* buffer, int numFrames, int numChannels ){
+void ofxSynthSampler::audioOut( float* buffer, int numFrames, int numChannels,long unsigned long tickCount  ){
 	sample.setSampleRate(sampleRate);
 	for (int i = 0; i < numFrames; i++){
 		buffer[i*numChannels] = sample.play4(currentFrequency, inPoint*sample.length, outPoint*sample.length);

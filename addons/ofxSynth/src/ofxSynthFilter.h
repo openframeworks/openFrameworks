@@ -1,8 +1,9 @@
 #pragma once
 
 #include "ofMain.h"
+#include "ofxSoundEffect.h"
 
-class ofxSynthFilter : public ofSoundEffect{
+class ofxSynthFilter : public ofxSoundEffect{
 	public:
 		void			setup();
 		string			getName() { return "ofxSynthFilter"; }

@@ -4,8 +4,10 @@
 void testApp::setup(){
 	ofBackground(255,255,255);
 	ofSetLogLevel(OF_LOG_NOTICE);
+	ofSetOrientation(OF_ORIENTATION_90_LEFT);
+	// this makes the camera directly return grayscale image, faster!
+	grabber.setPixelFormat(OF_PIXELS_MONO);
 	grabber.initGrabber(320,240);
-	color.allocate(grabber.getWidth(),grabber.getHeight());
 	gray.allocate(grabber.getWidth(),grabber.getHeight());
 	bg.allocate(grabber.getWidth(),grabber.getHeight());
 	//diff.allocate(grabber.getWidth(),grabber.getHeight());
@@ -26,8 +28,7 @@ void testApp::update(){
 			frames_one_sec = 0;
 			one_second_time = ofGetSystemTime();
 		}
-		color.setFromPixels(grabber.getPixels(),grabber.getWidth(),grabber.getHeight());
-		gray = color;
+		gray.setFromPixels(grabber.getPixels(),grabber.getWidth(),grabber.getHeight());
 		if(captureBg){
 			bg = gray;
 			captureBg = false;

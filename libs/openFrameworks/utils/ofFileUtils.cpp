@@ -239,6 +239,14 @@ using Poco::NotFoundException;
 }
 
 //------------------------------------------------------------------------------------------------------------
+string ofFileUtils::getPathForDirectory(string path) {
+	// if a trailing slash is missing from a path, this will clean it up
+	// if it's a windows-style \ path it will add a \
+	// if it's a unix-style / path it will add a /
+	return Path::forDirectory(path).toString();
+}
+
+//------------------------------------------------------------------------------------------------------------
  string ofFileUtils::removeTrailingSlash(string path){
 	if( path.length() > 0 && path[path.length()-1] == '/' ){
 		path = path.substr(0, path.length()-1);
@@ -312,7 +320,7 @@ using Poco::NotFoundException;
 	File myFile(dirPath);
 	bool success = false;
 	try{
-		if(recursive){
+		if(!recursive){
 			success = myFile.createDirectory();
 		}else{
 			myFile.createDirectories();

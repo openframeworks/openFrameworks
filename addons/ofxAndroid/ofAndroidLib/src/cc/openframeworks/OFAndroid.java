@@ -177,16 +177,16 @@ public class OFAndroid {
     // static methods to be called from OF c++ code
     public static void setScreenOrientation(int orientation){
     	switch(orientation){
-    	case 1:
+    	case 0:
     		ofActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
     		break;
-    	case 2:
+    	case 90:
     		ofActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
     		break;
-    	case 3:
+    	case 270:
     		ofActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
     		break;
-    	case 4:
+    	case 180:
     		ofActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
     		break;
     	}
@@ -211,6 +211,10 @@ public class OFAndroid {
 				public void onClick(DialogInterface dialog, int whichButton){}  
 		  	})  
 		  	.show();    
+	}
+	
+	public static Context getContext(){
+		return ofActivity;
 	}
     
     private GLSurfaceView mGLView;

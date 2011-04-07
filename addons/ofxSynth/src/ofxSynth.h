@@ -37,6 +37,7 @@
 #include "ofxSynthFilter.h"
 #include "ofxSynthEnvelope.h"
 #include "ofxSynthWaveWriter.h"
+#include "ofxSoundUnit.h"
 
 class maxiOsc {
 	
@@ -87,7 +88,7 @@ typedef maxiOsc ofxMaxiOsc;
  A classic subtractive synth
  
 */
-class ofxSynth : public ofSoundSource{
+class ofxSynth : public ofxSoundSource{
 	public:
 		ofxSynth();
 		virtual string	getName() { return "ofxSynth"; }
@@ -110,7 +111,7 @@ class ofxSynth : public ofSoundSource{
 		void	setWaveTri(){waveMode = 1;};
 		void	setWaveSaw(){waveMode = 2;};
 		
-		void		audioRequested( float* buffer, int numFrames, int numChannels );
+		void		audioOut( float* buffer, int numFrames, int numChannels,long unsigned long tickCount  );
 		void		setSampleRate(int rate);
 
 		ofxMaxiOsc wave;
