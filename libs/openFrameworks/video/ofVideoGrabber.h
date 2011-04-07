@@ -37,8 +37,9 @@ class ofVideoGrabber : public ofBaseVideoGrabber,public ofBaseDraws, public ofBa
 		ofVideoGrabber();
 		virtual ~ofVideoGrabber();
 		
-		bool					setGrabber(ofBaseVideoGrabber * newGrabber);
-		ofBaseVideoGrabber *	getGrabber();
+		void					setGrabber(ofBaseVideoGrabber * newGrabber);
+		void					setGrabber(ofPtr<ofBaseVideoGrabber> newGrabber);
+		ofPtr<ofBaseVideoGrabber> getGrabber();
 
 		void				listDevices();
 		bool				isFrameNew();
@@ -76,12 +77,12 @@ class ofVideoGrabber : public ofBaseVideoGrabber,public ofBaseDraws, public ofBa
 		int					height;
 		int					width;
 
-	protected:
+	private:
 		
 		ofTexture tex;
 		bool bUseTexture;
 		bool bInitialized;
-		ofBaseVideoGrabber		* grabber;
+		ofPtr<ofBaseVideoGrabber> grabber;
 		int RequestedDeviceID;
 		
 		ofPixelFormat internalPixelFormat;

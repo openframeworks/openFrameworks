@@ -2,6 +2,7 @@
 
 #include "ofConstants.h"
 #include "ofColor.h"
+#include <tr1/memory>
 
 //----------------------------------------------------------
 // ofDeviceInfo
@@ -87,4 +88,15 @@ class ofStyle{
 		int sphereResolution;
 		int curveResolution;
 		float lineWidth;
+};
+
+//----------------------------------------------------------
+// ofPtr
+//----------------------------------------------------------
+template <typename T>
+class ofPtr: public std::tr1::shared_ptr<T>
+{
+public:
+	ofPtr():std::tr1::shared_ptr<T>(){}
+	ofPtr(T*t):std::tr1::shared_ptr<T>(t){}
 };
