@@ -308,21 +308,21 @@ bool ofFile::create(){
 }
 
 //------------------------------------------------------------------------------------------------------------
-ofBuffer ofFile::readToBuffer(bool binary){
+ofBuffer ofFile::readToBuffer(){
 	if( myFile.path() == "" || myFile.exists() == false ){
 		return ofBuffer();
 	} 
 
-	return ofBufferFromFile(myFile.path(), binary);
+	return ofBuffer(*this);
 }
 
 //------------------------------------------------------------------------------------------------------------
-bool ofFile::writeFromBuffer(ofBuffer & buffer, bool binary){
+bool ofFile::writeFromBuffer(ofBuffer & buffer){
 	if( myFile.path() == "" ){
 		return false;
 	} 
 	
-	ofBufferToFile(myFile.path(), buffer, binary);
+	getWriteStream() << buffer;
 	return true;
 }
 

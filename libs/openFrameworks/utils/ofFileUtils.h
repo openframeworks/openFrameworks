@@ -90,9 +90,6 @@ public:
 	void close();
 	bool create();
 	
-	ofBuffer readToBuffer(bool binary=false);
-	bool writeFromBuffer(ofBuffer & buffer, bool binary=false);
-	
 	bool exists();
 	string path();
 	
@@ -129,6 +126,9 @@ public:
 	//------------------
 	// stream operations
 	//------------------
+
+	ofBuffer readToBuffer();
+	bool writeFromBuffer(ofBuffer & buffer);
 
 	// writes anything to the file
 	// use spaces to separate different elements in the same file
