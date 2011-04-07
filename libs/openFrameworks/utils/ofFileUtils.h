@@ -148,6 +148,12 @@ public:
 	friend ostream & operator<<(ostream & ostr,ofFile & file);
 	friend istream & operator>>(istream & istr,ofFile & file);
 
+	template<typename T>
+	ostream & operator<<(const T&t);
+
+	template<typename T>
+	istream & operator>>(T&t);
+
 	// used to convert the ofFile to istream or ostream
 	// they are used by the operators at the end of the file to allow things like
 	// file << "hello" << 5 << ofVec3f(4,5,6)
@@ -228,15 +234,15 @@ private:
 };
 
 template<typename T>
-inline ostream & operator<<(ofFile & f, const T&t){
-	f.getWriteStream() << t;
-	return f.getWriteStream();
+inline ostream & ofFile::operator<<(const T&t){
+	getWriteStream() << t;
+	return getWriteStream();
 }
 
 template<typename T>
-inline istream & operator>>(ofFile & f, T&t){
-	f.getReadStream() >> t;
-	return f.getReadStream();
+inline istream & ofFile::operator>>(T&t){
+	getReadStream() >> t;
+	return getReadStream();
 }
 
 template<typename T>
