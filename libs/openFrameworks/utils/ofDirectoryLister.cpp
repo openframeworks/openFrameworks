@@ -43,7 +43,7 @@ void ofDirectoryLister::allowExt(string extension) {
 
 //----------------------------------------
 int ofDirectoryLister::listDir(string directory, bool absolute) {
-	directory = ofFileUtils::getPathForDirectory(directory);
+	directory = ofFilePath::getPathForDirectory(directory);
 	
 	files.clear();
 
