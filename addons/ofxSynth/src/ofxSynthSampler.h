@@ -73,7 +73,7 @@ class ofxSynthSampler : public ofxSynth {
 		void				setLoopPoints(float i, float o);
 
 		void				setSampleRate(int rate);
-		virtual void		audioRequested( float* buffer, int numFrames, int numChannels );
+		virtual void		audioOut( float* buffer, int numFrames, int numChannels,long unsigned long tickCount  );
 
 	private:
 		int					sampleRate, direction;

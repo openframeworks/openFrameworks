@@ -1,8 +1,9 @@
 #pragma once
 
 #include "ofMain.h"
+#include "ofxSoundEffect.h"
 
-class ofxSynthDelayline : public ofSoundEffect {
+class ofxSynthDelayline : public ofxSoundEffect {
 	public:
 		
 		ofxSynthDelayline();

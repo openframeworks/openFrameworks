@@ -4,20 +4,14 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
-import android.graphics.PixelFormat;
+import android.content.Context;
+import android.graphics.ImageFormat;
 import android.hardware.Camera;
 import android.util.Log;
+import android.view.OrientationEventListener;
 
 public class OFAndroidVideoGrabber extends OFAndroidObject implements Runnable, Camera.PreviewCallback {
-	private Camera camera;
-	private byte[] buffer;
-	private int width, height, targetFps;
-	private Thread thread;
-	private int id;
-	private static int nextId=0;
-	public static Map<Integer,OFAndroidVideoGrabber> camera_instances = new HashMap<Integer,OFAndroidVideoGrabber>();
-	private boolean initialized = false;
-	private Method addBufferMethod;
+	
 	
 	public OFAndroidVideoGrabber(){
 		id=nextId++;
@@ -36,8 +30,10 @@ public class OFAndroidVideoGrabber extends OFAndroidObject implements Runnable, 
 	void initGrabber(int w, int h, int _targetFps){
 		camera = Camera.open();
 		Camera.Parameters config = camera.getParameters();
+		Log.i("OF", "Grabber default format: " + config.getPreviewFormat());
+		Log.i("OF", "Grabber default preview size: " + config.getPreviewSize().width + "," + config.getPreviewSize().height);
 		config.setPreviewSize(w, h);
-		config.setPreviewFormat(PixelFormat.YCbCr_420_SP);
+		config.setPreviewFormat(ImageFormat.NV21);
 		config.setPreviewFrameRate(targetFps);
 		camera.setParameters(config);
 		
@@ -46,7 +42,12 @@ public class OFAndroidVideoGrabber extends OFAndroidObject implements Runnable, 
 		height = config.getPreviewSize().height;
 		targetFps = _targetFps;
 		Log.i("OF","camera settings: " + width + "x" + height);
+		if(width!=w || height!=h)  Log.w("OF","camera size different than asked for, resizing (this can slow the app)");
 		buffer = new byte[width*height*2];
+		
+		orientationListener = new OrientationListener(OFAndroid.getContext());
+		orientationListener.enable();
+		
 		thread = new Thread(this);
 		thread.start();
 		initialized = true;
@@ -65,6 +66,7 @@ public class OFAndroidVideoGrabber extends OFAndroidObject implements Runnable, 
 				Log.e("OF", "problem trying to close camera thread", e);
 			}
 			camera.release();
+			orientationListener.disable();
 		}
 	}
 	
@@ -73,6 +75,7 @@ public class OFAndroidVideoGrabber extends OFAndroidObject implements Runnable, 
 		if(initialized){
 			Log.i("OF","pausing camera preview");
 			camera.stopPreview();
+			orientationListener.disable();
 		}
 			
 	}
@@ -90,6 +93,7 @@ public class OFAndroidVideoGrabber extends OFAndroidObject implements Runnable, 
 				initGrabber(width,height,targetFps);
 				break;
 			}
+			orientationListener.enable();
 		}
 	}
 	
@@ -136,9 +140,48 @@ public class OFAndroidVideoGrabber extends OFAndroidObject implements Runnable, 
 		//camera.setPreviewCallbackWithBuffer(this);
 		camera.startPreview();
 	}
+
+	private class OrientationListener extends OrientationEventListener{
+
+		public OrientationListener(Context context) {
+			super(context);
+			// TODO Auto-generated constructor stub
+		}
+
+		@Override
+		public void onOrientationChanged(int orientation) {
+			if (orientation == ORIENTATION_UNKNOWN) return;
+			Camera.Parameters config = camera.getParameters();
+			/*Camera.CameraInfo info =
+			        new Camera.CameraInfo();*/
+			//Camera.getCameraInfo(camera, info);
+			orientation = (orientation + 45) / 90 * 90;
+			int rotation = orientation % 360;
+			//if (info.facing == CameraInfo.CAMERA_FACING_FRONT) {
+			    //rotation = (info.orientation - orientation + 360) % 360;
+			/*} else {  // back-facing camera
+			    rotation = (info.orientation + orientation) % 360;
+			}*/
+			config.setRotation(rotation);
+			camera.setParameters(config);
+		}
+		
+	}
 	
 	public static native int newFrame(byte[] data, int width, int height);
+	
+	
 
+	private Camera camera;
+	private byte[] buffer;
+	private int width, height, targetFps;
+	private Thread thread;
+	private int id;
+	private static int nextId=0;
+	public static Map<Integer,OFAndroidVideoGrabber> camera_instances = new HashMap<Integer,OFAndroidVideoGrabber>();
+	private boolean initialized = false;
+	private Method addBufferMethod;
+	private OrientationListener orientationListener;
 	
 
 }

@@ -8,7 +8,7 @@ class ofColor{
 	public:
 	
 		ofColor ();
-		virtual ~ ofColor ();
+		~ofColor ();
 		
 		ofColor (float _r, float _g, float _b, float _a = 255.0f);
 		ofColor (ofColor const & color);

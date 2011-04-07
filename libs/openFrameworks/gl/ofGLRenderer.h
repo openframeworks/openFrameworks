@@ -14,6 +14,7 @@ public:
 	void draw(ofPolyline & poly);
 	void draw(ofPath & path);
 	void draw(vector<ofPoint> & vertexData, ofPrimitiveMode drawMode);
+	void draw(ofImage & image, float x, float y, float z, float w, float h);
 
 	bool rendersPathPrimitives(){
 		return false;
@@ -31,8 +32,8 @@ public:
 	// if nearDist or farDist are 0 assume defaults (calculated based on width / height)
 	void viewport(ofRectangle viewport);
 	void viewport(float x = 0, float y = 0, float width = 0, float height = 0, bool invertY = true);
-	void setupScreenPerspective(float width = 0, float height = 0, int orientation = 0, bool vFlip = true, float fov = 60, float nearDist = 0, float farDist = 0);
-	void setupScreenOrtho(float width = 0, float height = 0, int orientation = 0, bool vFlip = true, float nearDist = -1, float farDist = 1);
+	void setupScreenPerspective(float width = 0, float height = 0, ofOrientation orientation = OF_ORIENTATION_UNKNOWN, bool vFlip = true, float fov = 60, float nearDist = 0, float farDist = 0);
+	void setupScreenOrtho(float width = 0, float height = 0, ofOrientation orientation = OF_ORIENTATION_UNKNOWN, bool vFlip = true, float nearDist = -1, float farDist = 1);
 	ofRectangle getCurrentViewport();
 	int getViewportWidth();
 	int getViewportHeight();

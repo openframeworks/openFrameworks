@@ -66,7 +66,7 @@ endif
 
 SOURCE_DIRS = $(shell find ../../../openFrameworks -maxdepth 1 -mindepth 1 -type d )
 ifeq ($(ARCH),android)
-	SOURCES = $(shell find $(SOURCE_DIRS) -name "*.cpp" | grep -v "ofAppGlutWindow.cpp" | grep -v ofGstVideoPlayer.cpp | grep -v ofQuickTimeGrabber.cpp | grep -v ofVideoPlayer.cpp | grep -v ofGstVideoGrabber.cpp | grep -v ofSoundStream.cpp | grep -v ofSoundPlayer.cpp)
+	SOURCES = $(shell find $(SOURCE_DIRS) -name "*.cpp" | grep -v "ofAppGlutWindow.cpp" | grep -v ofGstVideoPlayer.cpp | grep -v ofQuickTimeGrabber.cpp | grep -v ofVideoPlayer.cpp | grep -v ofGstVideoGrabber.cpp | grep -v ofSoundPlayer.cpp | grep -v ofOpenALSoundPlayer.cpp)
 else
 	SOURCES = $(shell find $(SOURCE_DIRS) -name "*.cpp") 
 endif
@@ -95,6 +95,11 @@ ifneq ($(ARCH),android)
 	ifeq ($(GTK),0)
 		CFLAGS += $(shell pkg-config gtk+-2.0 --cflags) -DOF_USING_GTK
 	endif
+	#check if mpg123 exists and add it
+	MPG123 = $(shell pkg-config libmpg123 --exists; echo $$?)
+	ifeq ($(MPG123),0)
+		CFLAGS += -DOF_USING_MPG123
+	endif
 endif
 
 ifeq ($(findstring Debug,$(MAKECMDGOALS)),Debug)
@@ -110,7 +115,7 @@ ifeq ($(findstring Release,$(MAKECMDGOALS)),Release)
 endif
 
 ifeq ($(findstring Release_arm7,$(MAKECMDGOALS)),Release_arm7)
-	TARGET_CFLAGS += -march=armv7-a -mfloat-abi=softfp -mfpu=vfp
+	TARGET_CFLAGS += -march=armv7-a -mfloat-abi=softfp -mfpu=neon
 	TARGET = ../../lib/$(LIBSPATH)/libopenFrameworks_arm7.a
 endif
 
@@ -146,13 +151,13 @@ ReleaseAndroid: $(TARGET)
 Release_arm7Android: $(TARGET)
 
 all: 
-	make Debug
-	make Release
+	$(MAKE) Debug
+	$(MAKE) Release
 	
 android:
-	make DebugAndroid
-	make ReleaseAndroid
-	make Release_arm7Android
+	$(MAKE) DebugAndroid
+	$(MAKE) ReleaseAndroid
+	$(MAKE) Release_arm7Android
 
 #This rule does the compilation
 $(OBJ_OUTPUT)%.o: ../../../%.cpp 

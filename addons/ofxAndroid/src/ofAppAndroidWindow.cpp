@@ -27,15 +27,13 @@ static int  sTimeOffsetInit = 0;
 static long sTimeStopped  = 0;*/
 
 static bool bSetupScreen = true;
-static float			timeNow, timeThen, fps;
-static int				nFramesForFPS;
-static int				nFrameCount;
-static bool			bFrameRateSet;
-static int 			millisForFrame;
-static int 			prevMillis;
-static int 			diffMillis;
 
-static float 			frameRate;
+static float frameRate = 60;
+
+static int frames = 0;
+static int onesec = 0;
+static int previousFrameMillis = 0;
+static int nFrameCount = 0;
 
 static double			lastFrameTime;
 
@@ -322,7 +320,7 @@ Java_cc_openframeworks_OFAndroid_render( JNIEnv*  env, jclass  thiz )
 	if(bSetupScreen) ofSetupScreen();
 	ofNotifyDraw();
 
-	timeNow = ofGetElapsedTimef();
+	/*timeNow = ofGetElapsedTimef();
 	double diff = timeNow-timeThen;
 	if( diff  > 0.00001 ){
 		fps			= 1.0 / diff;
@@ -330,8 +328,18 @@ Java_cc_openframeworks_OFAndroid_render( JNIEnv*  env, jclass  thiz )
 		frameRate	+= 0.1f*fps;
 	 }
 	 lastFrameTime	= diff;
-	 timeThen		= timeNow;
+	 timeThen		= timeNow;*/
 	// --------------
+
+	int currTime = ofGetElapsedTimeMillis();
+	if(currTime - onesec>=1000){
+		frameRate = frames;
+		frames = 0;
+		onesec = currTime;
+	}
+	frames++;
+	lastFrameTime = double(previousFrameMillis - currTime)/1000.;
+	previousFrameMillis = currTime;
 
 	nFrameCount++;		// increase the overall frame count*/
 
