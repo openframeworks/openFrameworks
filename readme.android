@@ -73,8 +73,6 @@ install the development environment and compile/install applications.
 - Compile OF project, be sure target is set to Android (the hammer icon in toolbar)
 
 - Compile all the examples 
-	- compiling will install the application in the phone by now
-	- be carefull when starting eclipse, it will try to upload all the examples!!  -> will change this later
 
 - Enable development in your device:
 	Adjustments > Applications > Development > USB Debug (the device  needs to be disconnected from the computer)
