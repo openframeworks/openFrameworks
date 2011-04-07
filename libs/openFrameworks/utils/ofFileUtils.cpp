@@ -180,11 +180,12 @@ using Poco::NotFoundException;
 
 //------------------------------------------------------------------------------------------------------------
 ofFile::ofFile(){
+	mode = Reference;
 }
 
 //------------------------------------------------------------------------------------------------------------
-ofFile::ofFile(string path){
-	open(path);
+ofFile::ofFile(string path,Mode mode, bool binary){
+	open(path,mode);
 }
 
 //-------------------------------------------------------------------------------------------------------------
@@ -193,14 +194,37 @@ ofFile::~ofFile(){
 }
 
 //------------------------------------------------------------------------------------------------------------
-void ofFile::open(string path){
-	myFile = File(ofToDataPath(path));
+void ofFile::open(string _path, Mode _mode, bool binary){
+	mode = _mode;
+	myFile = File(ofToDataPath(_path));
+	ios_base::openmode binary_mode = binary ? ios::binary : (ios_base::openmode)0;
+	switch(mode){
+	case ReadOnly:
+		if(exists()) fstr.open(path().c_str(),ios::in | binary_mode);
+		break;
+	case WriteOnly:
+		fstr.open(path().c_str(),ios::out | binary_mode);
+		break;
+	case ReadWrite:
+		fstr.open(path().c_str(),ios_base::in | ios_base::out | binary_mode);
+		break;
+	case Append:
+		fstr.open(path().c_str(),ios::out | ios::app | binary_mode);
+		break;
+	default:
+		break;
+	}
+}
+
+bool ofFile::isWriteMode(){
+	return mode != ReadOnly && mode != Reference;
 }
 
 //-------------------------------------------------------------------------------------------------------------
 ostream & operator<<(ostream & ostr,ofFile & file){
 	bool close=false;
 	if(!file.fstr.is_open() || !file.fstr.good()) {
+		file.mode = ofFile::ReadOnly;
 		if(file.path()=="" || !file.exists()) return ostr;
 		file.fstr.open(file.path().c_str(),fstream::in);
 		close=true;
@@ -218,10 +242,11 @@ ostream & operator<<(ostream & ostr,ofFile & file){
 
 //-------------------------------------------------------------------------------------------------------------
 istream & operator>>(istream & istr,ofFile & file){
-	if(!file.fstr.is_open() || !file.fstr.good()) {
-		if(file.path()=="") return istr;
-		file.fstr.open(file.path().c_str(),fstream::out);
+	if(!file.isWriteMode()){
+		ofLog(OF_LOG_WARNING,"trying to write to a non-write ofFile");
+		return istr;
 	}
+	if(file.path()=="") return istr;
 	char c;
 	while (istr.good()){
 		c = istr.get();       // get character from file
@@ -234,9 +259,9 @@ istream & operator>>(istream & istr,ofFile & file){
 
 //-------------------------------------------------------------------------------------------------------------
 ostream & ofFile::getWriteStream(){
-	if(!fstr.is_open() || !fstr.good()) {
-		if(path()=="") return fstr;
-		fstr.open(path().c_str(),fstream::out);
+	if(!isWriteMode()){
+		ofLog(OF_LOG_WARNING,"trying to get write stream for a non-write ofFile");
+		return fstr;
 	}
 	return fstr;
 }
@@ -297,7 +322,7 @@ bool ofFile::writeFromBuffer(ofBuffer & buffer, bool binary){
 		return false;
 	} 
 	
-	ofBufferToFile(myFile.path(), buffer, binary);	
+	ofBufferToFile(myFile.path(), buffer, binary);
 	return true;
 }
 
