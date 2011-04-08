@@ -171,12 +171,9 @@ bool ofBufferToFile(const string & path, ofBuffer & buffer, bool binary){
 #include "Poco/StringTokenizer.h"
 #include "Poco/Exception.h"
 #include "Poco/FileStream.h"
+#include "Poco/String.h"
 
-using Poco::Path;
-using Poco::File;
-using Poco::DirectoryIterator;
-using Poco::StringTokenizer;
-using Poco::NotFoundException;
+using namespace Poco;
 
 //------------------------------------------------------------------------------------------------------------
 ofFile::ofFile(){
@@ -193,24 +190,48 @@ ofFile::~ofFile(){
 	close();
 }
 
+//-------------------------------------------------------------------------------------------------------------
+ofFile::ofFile(const ofFile & mom){
+	copyFrom(mom);
+}
+
+//-------------------------------------------------------------------------------------------------------------
+ofFile & ofFile::operator= (const ofFile & mom){
+	copyFrom(mom);
+	return *this;
+}
+
+//-------------------------------------------------------------------------------------------------------------
+void ofFile::copyFrom(const ofFile & mom){
+	if(&mom!=this){
+		Mode new_mode = mom.mode;
+		if(new_mode!= Reference && new_mode!= ReadOnly){
+			new_mode = ReadOnly;
+			ofLog(OF_LOG_WARNING,"ofFile: trying to copy a write file, opening copy as read only");
+		}
+		open(mom.myFile.path(),new_mode);
+	}
+}
+
 //------------------------------------------------------------------------------------------------------------
-bool ofFile::openStream(string path, Mode _mode, bool binary){
+bool ofFile::openStream(Mode _mode, bool binary){
+	mode = _mode;
 	ios_base::openmode binary_mode = binary ? ios::binary : (ios_base::openmode)0;
-	switch(mode){
+	switch(_mode){
 	case Reference:
 		return true;
 		break;
 	case ReadOnly:
-		if(exists()) fstream::open(path.c_str(),ios::in | binary_mode);
+		if(exists()) fstream::open(path().c_str(),ios::in | binary_mode);
 		break;
 	case WriteOnly:
-		fstream::open(path.c_str(),ios::out | binary_mode);
+		fstream::open(path().c_str(),ios::out | binary_mode);
 		break;
 	case ReadWrite:
-		fstream::open(path.c_str(),ios_base::in | ios_base::out | binary_mode);
+		fstream::open(path().c_str(),ios_base::in | ios_base::out | binary_mode);
 		break;
 	case Append:
-		fstream::open(path.c_str(),ios::out | ios::app | binary_mode);
+		fstream::open(path().c_str(),ios::out | ios::app | binary_mode);
 		break;
 	}
 	return fstream::good();
@@ -218,10 +239,9 @@ bool ofFile::openStream(string path, Mode _mode, bool binary){
 
 //------------------------------------------------------------------------------------------------------------
 bool ofFile::open(string _path, Mode _mode, bool binary){
-	mode = _mode;
 	close();
 	myFile = File(ofToDataPath(_path));
-	return openStream(path(),_mode,binary);
+	return openStream(_mode,binary);
 }
 
 //-------------------------------------------------------------------------------------------------------------
@@ -230,7 +250,7 @@ bool ofFile::changeMode(Mode _mode, bool binary){
 		string _path = path();
 		close();
 		myFile = File(_path);
-		return openStream(_path, _mode, binary);
+		return openStream(_mode, binary);
 	}else{
 		return true;
 	}
@@ -292,52 +312,72 @@ filebuf * ofFile::getFileBuffer() const{
 
 //-- poco wrappers
 //------------------------------------------------------------------------------------------------------------
-bool ofFile::exists(){
+bool ofFile::exists() const{
 	return myFile.exists();
 }
 
 //------------------------------------------------------------------------------------------------------------
-string ofFile::path(){
+string ofFile::path() const{
 	return myFile.path();
 }
 
 //------------------------------------------------------------------------------------------------------------
-bool ofFile::canRead(){
+string ofFile::getExtension(){
+	return ofFilePath::getFileExt(path());
+}
+
+//------------------------------------------------------------------------------------------------------------
+string ofFile::getFileName(){
+	return ofFilePath::getFilename(path());
+}
+
+//------------------------------------------------------------------------------------------------------------
+string ofFile::getBaseName(){
+	return ofFilePath::removeExt(ofFilePath::getFilename(path()));
+}
+
+//------------------------------------------------------------------------------------------------------------
+string ofFile::getEnclosingDirectory(){
+	return ofFilePath::getEnclosingDirectory(path());
+}
+
+//------------------------------------------------------------------------------------------------------------
+bool ofFile::canRead() const{
 	return myFile.canRead();
 }
 
 //------------------------------------------------------------------------------------------------------------
-bool ofFile::canWrite(){
+bool ofFile::canWrite() const{
 	return myFile.canWrite();
 }
 
 //------------------------------------------------------------------------------------------------------------
-bool ofFile::canExecute(){
+bool ofFile::canExecute() const{
 	return myFile.canExecute();
 }
 
 //------------------------------------------------------------------------------------------------------------
-bool ofFile::isFile(){
+bool ofFile::isFile() const{
 	return myFile.isFile();
 }
 
 //------------------------------------------------------------------------------------------------------------
-bool ofFile::isLink(){
+bool ofFile::isLink() const{
 	return myFile.isLink();
 }
 
 //------------------------------------------------------------------------------------------------------------
-bool ofFile::isDirectory(){
+bool ofFile::isDirectory() const{
 	return myFile.isDirectory();
 }
 		
 //------------------------------------------------------------------------------------------------------------
-bool ofFile::isDevice(){
+bool ofFile::isDevice() const{
 	return myFile.isDevice();
 }
 
 //------------------------------------------------------------------------------------------------------------
-bool ofFile::isHidden(){
+bool ofFile::isHidden() const{
 	return myFile.isHidden();
 }
 
@@ -457,8 +497,38 @@ bool ofFile::remove(bool recursive){
 }
 
 //------------------------------------------------------------------------------------------------------------
-uint64_t ofFile::getSize(){
+uint64_t ofFile::getSize() const{
 	return myFile.getSize();
+}
+
+//------------------------------------------------------------------------------------------------------------
+bool ofFile::operator==(const ofFile & file){
+	return path() == file.path();
+}
+
+//------------------------------------------------------------------------------------------------------------
+bool ofFile::operator!=(const ofFile & file){
+	return path() != file.path();
+}
+
+//------------------------------------------------------------------------------------------------------------
+bool ofFile::operator<(const ofFile & file){
+	return path()<file.path();
+}
+
+//------------------------------------------------------------------------------------------------------------
+bool ofFile::operator<=(const ofFile & file){
+	return path() <= file.path();
+}
+
+//------------------------------------------------------------------------------------------------------------
+bool ofFile::operator>(const ofFile & file){
+	return path() > file.path();
+}
+
+//------------------------------------------------------------------------------------------------------------
+bool ofFile::operator>=(const ofFile & file){
+	return path() >= file.path();
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -552,9 +622,30 @@ Poco::File & ofFile::getPocoFile(){
 //------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------
 
+
+//----------------------------------------
+// Simple example of a boolean function that can be used
+// with ofRemove to remove items from vectors.
+bool hiddenFile(ofFile file) {
+	return file.isHidden();
+}
+
+//----------------------------------------
+// Advanced example of a class that has a boolean function
+// that can be used with ofRemove to remove items from vectors.
+class ExtensionComparator : public unary_function<ofFile, bool> {
+public:
+	vector <string>* extensions;
+	inline bool operator()(const ofFile& file) {
+		Path curPath(file.path());
+		string curExtension = toLower(curPath.getExtension());
+		return !ofContains(*extensions, curExtension);
+	}
+};
+
 //------------------------------------------------------------------------------------------------------------
 void ofDirectory::open(string path){
-	myDir = File(path);
+	myDir = File(ofToDataPath(path));
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -579,17 +670,17 @@ bool ofDirectory::create(){
 }
 
 //------------------------------------------------------------------------------------------------------------
-bool ofDirectory::exists(){
+bool ofDirectory::exists() const{
 	return myDir.exists();
 }
 
 //------------------------------------------------------------------------------------------------------------
-string ofDirectory::path(){
+string ofDirectory::path() const{
 	return myDir.path();
 }
 
 //------------------------------------------------------------------------------------------------------------
-bool ofDirectory::isHidden(){
+bool ofDirectory::isHidden() const{
 	return myDir.isHidden();
 }
 
@@ -604,7 +695,7 @@ void ofDirectory::setReadOnly(bool flag = true){
 }
 
 //------------------------------------------------------------------------------------------------------------
-bool ofDirectory::isDirectory(){
+bool ofDirectory::isDirectory() const{
 	return myDir.isDirectory();
 }
 
@@ -708,7 +799,108 @@ bool ofDirectory::remove(bool recursive){
 	return true;
 }
 
+//------------------------------------------------------------------------------------------------------------
+void ofDirectory::allowExt(string extension){
+	if(extension == "*") {
+		ofLog(OF_LOG_WARNING, "ofDirectoryLister::allowExt() the extension * is deprecated");
+	}
+	extensions.push_back(toLower(extension));
+}
 
+//------------------------------------------------------------------------------------------------------------
+int ofDirectory::listDir(string directory, bool absolute){
+
+	/*directory = ofFilePath::getPathForDirectory(directory);
+
+	files.clear();
+
+	originalDirectory = directory;
+	string absolutePath = directory;
+	if(!absolute) {
+		absolutePath = ofToDataPath(directory);
+	}*/
+
+	originalDirectory = directory;
+	cout << originalDirectory << endl;
+	open(directory);
+	return listDir();
+}
+
+//------------------------------------------------------------------------------------------------------------
+int ofDirectory::listDir(){
+	Path base(path());
+	if(myDir.exists()) {
+		// File::list(vector<File>) is broken on windows as of march 23, 2011...
+		// so we need to use File::list(vector<string>) and build a vector<File>
+		// in the future the following can be replaced width: cur.list(files);
+		vector<string> fileStrings;
+		myDir.list(fileStrings);
+		for(int i = 0; i < (int)fileStrings.size(); i++) {
+			Path curPath(originalDirectory);
+			curPath.setFileName(fileStrings[i]);
+			files.push_back(ofFile(curPath.toString(),ofFile::Reference));
+		}
+
+		if(!showHidden) {
+			ofRemove(files, hiddenFile);
+		}
+
+		if(!extensions.empty() && !ofContains(extensions, (string) "*")) {
+			ExtensionComparator extensionFilter;
+			extensionFilter.extensions = &extensions;
+			ofRemove(files, extensionFilter);
+		}
+
+		// TODO: if(ofCheckLogLevel(OF_LOG_VERBOSE)) {
+		for(int i = 0; i < (int)size(); i++) {
+			ofLog(OF_LOG_VERBOSE, "\t" + getName(i));
+		}
+		ofLog(OF_LOG_VERBOSE, "ofDirectoryLister::listDirectory() listed " + ofToString(size()) + " files in " + originalDirectory);
+		// }
+	} else {
+		ofLog(OF_LOG_ERROR, "ofDirectoryLister::listDirectory() error opening directory " + originalDirectory);
+	}
+
+	return size();
+}
+
+//------------------------------------------------------------------------------------------------------------
+string ofDirectory::getName(unsigned int position){
+	Path cur(files.at(position).path());
+	return cur.getFileName();
+}
+
+//------------------------------------------------------------------------------------------------------------
+string ofDirectory::getPath(unsigned int position){
+	return files.at(position).path();
+}
+
+//------------------------------------------------------------------------------------------------------------
+ofFile ofDirectory::getFile(unsigned int position, ofFile::Mode mode, bool binary){
+	ofFile file = files[position];
+	file.changeMode(mode, binary);
+	return file;
+}
+
+//------------------------------------------------------------------------------------------------------------
+void ofDirectory::reset(){
+	close();
+}
+
+//------------------------------------------------------------------------------------------------------------
+void ofDirectory::sort(){
+	ofSort(files);
+}
+
+//------------------------------------------------------------------------------------------------------------
+unsigned int ofDirectory::size(){
+	return files.size();
+}
+
+//------------------------------------------------------------------------------------------------------------
+int ofDirectory::numFiles(){
+	return size();
+}
 
 //------------------------------------------------------------------------------------------------------------
 // ofDirectory Static Methods
@@ -774,8 +966,39 @@ bool ofDirectory::isDirectoryEmpty(string dirPath, bool bRelativeToData){
 	return false;
 }
 
+//------------------------------------------------------------------------------------------------------------
 Poco::File & ofDirectory::getPocoFile(){
 	return myDir;
+}
+
+//------------------------------------------------------------------------------------------------------------
+bool ofDirectory::operator==(const ofDirectory & dir){
+	return path() == dir.path();
+}
+
+//------------------------------------------------------------------------------------------------------------
+bool ofDirectory::operator!=(const ofDirectory & dir){
+	return path() != dir.path();
+}
+
+//------------------------------------------------------------------------------------------------------------
+bool ofDirectory::operator<(const ofDirectory & dir){
+	return path() < dir.path();
+}
+
+//------------------------------------------------------------------------------------------------------------
+bool ofDirectory::operator<=(const ofDirectory & dir){
+	return path() <= dir.path();
+}
+
+//------------------------------------------------------------------------------------------------------------
+bool ofDirectory::operator>(const ofDirectory & dir){
+	return path() > dir.path();
+}
+
+//------------------------------------------------------------------------------------------------------------
+bool ofDirectory::operator>=(const ofDirectory & dir){
+	return path() >= dir.path();
 }
 
 //------------------------------------------------------------------------------------------------------------
