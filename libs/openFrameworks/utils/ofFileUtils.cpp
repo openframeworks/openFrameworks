@@ -180,7 +180,7 @@ using Poco::NotFoundException;
 
 //------------------------------------------------------------------------------------------------------------
 ofFile::ofFile(){
-	mode = Reference;
+	mode = Closed;
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -196,99 +196,36 @@ ofFile::~ofFile(){
 //------------------------------------------------------------------------------------------------------------
 void ofFile::open(string _path, Mode _mode, bool binary){
 	mode = _mode;
+	if(mode==Closed) return;
 	myFile = File(ofToDataPath(_path));
 	ios_base::openmode binary_mode = binary ? ios::binary : (ios_base::openmode)0;
 	switch(mode){
 	case ReadOnly:
-		if(exists()) fstr.open(path().c_str(),ios::in | binary_mode);
+		if(exists()) fstream::open(path().c_str(),ios::in | binary_mode);
 		break;
 	case WriteOnly:
-		fstr.open(path().c_str(),ios::out | binary_mode);
+		fstream::open(path().c_str(),ios::out | binary_mode);
 		break;
 	case ReadWrite:
-		fstr.open(path().c_str(),ios_base::in | ios_base::out | binary_mode);
+		fstream::open(path().c_str(),ios_base::in | ios_base::out | binary_mode);
 		break;
 	case Append:
-		fstr.open(path().c_str(),ios::out | ios::app | binary_mode);
+		fstream::open(path().c_str(),ios::out | ios::app | binary_mode);
 		break;
 	default:
 		break;
 	}
 }
 
+//-------------------------------------------------------------------------------------------------------------
 bool ofFile::isWriteMode(){
-	return mode != ReadOnly && mode != Reference;
-}
-
-//-------------------------------------------------------------------------------------------------------------
-ostream & operator<<(ostream & ostr,ofFile & file){
-	bool close=false;
-	if(!file.fstr.is_open() || !file.fstr.good()) {
-		file.mode = ofFile::ReadOnly;
-		if(file.path()=="" || !file.exists()) return ostr;
-		file.fstr.open(file.path().c_str(),fstream::in);
-		close=true;
-	}
-	char c;
-	while (file.fstr.good()){
-		c = file.fstr.get();       // get character from file
-	    if (file.fstr.good()){
-	    	ostr << c;
-	    }
-	}
-	if(close)file.fstr.close();
-	return ostr;
-}
-
-//-------------------------------------------------------------------------------------------------------------
-istream & operator>>(istream & istr,ofFile & file){
-	if(!file.isWriteMode()){
-		ofLog(OF_LOG_WARNING,"trying to write to a non-write ofFile");
-		return istr;
-	}
-	if(file.path()=="") return istr;
-	char c;
-	while (istr.good()){
-		c = istr.get();       // get character from file
-		if (istr.good()){
-			file.fstr << c;
-		}
-	}
-	return istr;
-}
-
-//-------------------------------------------------------------------------------------------------------------
-ostream & ofFile::getWriteStream(){
-	if(!isWriteMode()){
-		ofLog(OF_LOG_WARNING,"trying to get write stream for a non-write ofFile");
-		return fstr;
-	}
-	return fstr;
-}
-
-//-------------------------------------------------------------------------------------------------------------
-istream & ofFile::getReadStream(){
-	if(!fstr.is_open() || !fstr.good()) {
-		if(path()=="" || !exists()) return fstr;
-		fstr.open(path().c_str(),fstream::in);
-	}
-	return fstr;
-}
-
-//-------------------------------------------------------------------------------------------------------------
-ofFile::operator ostream&(){
-	return getWriteStream();
-}
-
-//-------------------------------------------------------------------------------------------------------------
-ofFile::operator istream&(){
-	return getReadStream();
+	return mode != ReadOnly;
 }
 
 //-------------------------------------------------------------------------------------------------------------
 void ofFile::close(){
 	myFile = File();
-	fstr.close();
+	fstream::close();
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -321,9 +258,16 @@ bool ofFile::writeFromBuffer(ofBuffer & buffer){
 	if( myFile.path() == "" ){
 		return false;
 	} 
-	
-	getWriteStream() << buffer;
+	if(!isWriteMode()){
+		ofLog(OF_LOG_ERROR,"ofFile: trying to a file opened as read only");
+	}
+	*this << buffer;
 	return true;
+}
+
+//------------------------------------------------------------------------------------------------------------
+filebuf * ofFile::getFileBuffer() const{
+	return rdbuf();
 }
 
 
