@@ -83,12 +83,6 @@ void ofExitCallback(){
 	ofSoundShutdown();
 	//------------------------
 
-	//------------------------
-	// try to close rtAudio:
-	ofSoundStreamClose();
-	//------------------------
-
-
 	// try to close quicktime, for non-linux systems:
 	#if defined( TARGET_OSX ) || defined( TARGET_WIN32 )
 	closeQuicktime();
@@ -159,6 +153,11 @@ void ofSetAppPtr(ofBaseApp *appPtr) {
 }
 
 //--------------------------------------
+void ofExit(int status){
+	std::exit(status);
+}
+
+//--------------------------------------
 int ofGetFrameNum(){
 	return window->getFrameNum();
 }
@@ -203,7 +202,7 @@ void ofSetOrientation(ofOrientation orientation){
 }
 
 //--------------------------------------
-int ofGetOrientation(){
+ofOrientation ofGetOrientation(){
 	return window->getOrientation();
 }
 
@@ -247,14 +246,28 @@ int ofGetHeight(){
 }
 
 //--------------------------------------------------
-ofPoint	ofGetWindowSize() {
-	return ofPoint(ofGetWidth(), ofGetHeight());
+int ofGetWindowWidth(){
+	return (int)window->getWindowSize().x;
+}
+//--------------------------------------------------
+int ofGetWindowHeight(){
+	return (int)window->getWindowSize().y;
 }
 
+//--------------------------------------------------
+bool ofDoesHWOrientation(){
+	return window->doesHWOrientation();
+}
+
+//--------------------------------------------------
+ofPoint	ofGetWindowSize() {
+	//this can't be return ofPoint(ofGetWidth(), ofGetHeight()) as width and height change based on orientation. 
+	return window->getWindowSize();
+}
 
 //--------------------------------------------------
 ofRectangle	ofGetWindowRect() {
-	return ofRectangle(0, 0, ofGetWidth(), ofGetHeight());
+	return ofRectangle(0, 0, ofGetWindowWidth(), ofGetWindowHeight());
 }
 
 

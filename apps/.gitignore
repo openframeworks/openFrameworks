@@ -7,7 +7,7 @@
 !androidExamples
 !androidExamples/**
 !androidExamples/*/**
-androidExamples/.metadata
+*/.metadata
 androidExamples/*/Debug
 androidExamples/*/Release
 androidExamples/*/Release_arm7
@@ -19,3 +19,5 @@ androidExamples/*/local.properties
 androidExamples/*/.settings
 androidExamples/*/.externalToolBuilders
 libOFAndroidApp.so
+*/*/.*project
+!androidExamples/*/.*project

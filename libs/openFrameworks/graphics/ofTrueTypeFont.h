@@ -5,7 +5,7 @@
 #include "ofPoint.h"
 #include "ofRectangle.h"
 #include "ofConstants.h"
-#include "ofShape.h"
+#include "ofPath.h"
 
 //--------------------------------------------------
 typedef struct {
@@ -22,7 +22,7 @@ typedef struct {
 } charProps;
 
 
-typedef ofShape ofTTFCharacter;
+typedef ofPath ofTTFCharacter;
 
 //--------------------------------------------------
 #define NUM_CHARACTER_TO_START		33		// 0 - 32 are control characters, no graphics needed.
@@ -44,6 +44,10 @@ public:
 
   	float 		getLineHeight();
   	void 		setLineHeight(float height);
+	float 		getLetterSpacing();
+	void 		setLetterSpacing(float spacing);
+	float 		getSpaceSize();
+	void 		setSpaceSize(float size);
 	float 		stringWidth(string s);
 	float 		stringHeight(string s);
 	
@@ -60,6 +64,9 @@ protected:
 	vector <ofTTFCharacter> charOutlines;
 
 	float 			lineHeight;
+	float			letterSpacing;
+	float			spaceSize;
+
 	charProps 		* 	cps;			// properties for each character
 	GLuint			*	texNames;		// textures for each character
 	int				fontSize;

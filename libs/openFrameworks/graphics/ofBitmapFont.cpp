@@ -343,10 +343,9 @@ static float heightTex = 14.0f/256.0f;
 static GLfloat coords[2048];
 static GLfloat verts[2048];
 static int vC = 0;
-		
-//---------------------------------------------------------------------
-void  ofDrawBitmapCharacter(int character, int x , int y){
 
+//---------------------------------------------------------------------
+static void prepareBitmapTexture(){
 
 	if (!bBitmapTexturePrepared){
 		
@@ -373,8 +372,22 @@ void  ofDrawBitmapCharacter(int character, int x , int y){
 		glesBitmappedFontTexture.loadData(myLetterPixels, 16*16, 16*16, GL_LUMINANCE_ALPHA);
 		
 	}
+
+}
+		
+//---------------------------------------------------------------------
+void  ofDrawBitmapCharacter(int character, int x , int y){
+
+	if(!bBitmapTexturePrepared){
+		prepareBitmapTexture();
+	}
 		
 	if (character < 128) {
+		
+		//TODO: look into a better fix. 
+		//old ofDrawBitmapString was 3 pixels higher, so this version renders text in a different position. 
+		//3 pixel adjustment corrects that. 
+		y -= 3;
 		
 		glesBitmappedFontTexture.bind();
 		
@@ -420,6 +433,11 @@ void  ofDrawBitmapCharacter(int character, int x , int y){
 
 //---------------------------------------------------------------------
 void ofDrawBitmapCharacterStart(){
+
+	if(!bBitmapTexturePrepared){
+		prepareBitmapTexture();
+	}
+	
 	glesBitmappedFontTexture.bind();
 
 #ifndef TARGET_OPENGLES

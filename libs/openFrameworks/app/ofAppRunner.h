@@ -12,6 +12,7 @@ void 		ofSetupOpenGL(int w, int h, int screenMode);	// sets up the opengl contex
 void 		ofRunApp(ofBaseApp * OFSA = NULL);
 ofBaseApp * ofGetAppPtr();
 void ofSetAppPtr(ofBaseApp *appPtr);
+void		ofExit(int status=0);
 
 //-------------------------- time
 float 		ofGetFrameRate();
@@ -21,7 +22,7 @@ void		ofSleepMillis(int millis);
 double		ofGetLastFrameTime();
 
 void		ofSetOrientation(ofOrientation orientation);
-int			ofGetOrientation();
+ofOrientation			ofGetOrientation();
 
 //-------------------------- cursor
 void 		ofHideCursor();
@@ -32,8 +33,11 @@ int 		ofGetWindowPositionY();
 int 		ofGetScreenWidth();
 int 		ofGetScreenHeight();
 int			ofGetWindowMode();
-int 		ofGetWidth();			// <-- should we call this ofGetWindowWidth?
+int 		ofGetWidth();			// ofGetWidth is correct for orientation
 int 		ofGetHeight();
+int 		ofGetWindowWidth();			// ofGetWindowWidth is correct for actual window coordinates - so doesn't change with orientation. 
+int 		ofGetWindowHeight();
+bool		ofDoesHWOrientation();
 ofPoint		ofGetWindowSize();
 ofRectangle	ofGetWindowRect();
 

@@ -37,10 +37,14 @@ public:
 	void videoSettings();
 	void setPixelFormat(ofPixelFormat pixelFormat);
 	ofPixelFormat getPixelFormat();
+
+	// only to be used internally to resize;
+	ofPixelsRef getAuxBuffer();
 private:
 	int attemptFramerate;
 	bool bIsFrameNew;
 	bool bGrabberInited;
 	ofPixelFormat internalPixelFormat;
 	ofPixels pixels;
+	ofPixels auxBuffer;
 };

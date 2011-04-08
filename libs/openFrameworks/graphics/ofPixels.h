@@ -6,16 +6,18 @@
 #include "ofPixelUtils.h"
 
 class ofPixels {
+
+	friend class ofPixelUtils;
+
 public:
 
 	ofPixels();
 	~ofPixels();
-	ofPixels(const ofPixels & mom) { copyFrom( mom ); }
-	//ofPixels(ofPixels && mom);
-
-	ofPixels& operator=(const ofPixels & mom) { copyFrom( mom ); return *this; }
+	ofPixels(const ofPixels & mom);
+	ofPixels& operator=(const ofPixels & mom);
 
 	void allocate(int w, int h, int bitsPerPixel);
+	void allocate(int w, int h, ofPixelFormat type);
 	void allocate(int w, int h, ofImageType type);
 	void set(unsigned char val);
 	void setFromPixels(unsigned char * newPixels,int w, int h, ofImageType newType);
@@ -52,7 +54,6 @@ public:
 private:
 	void copyFrom( const ofPixels& mom );
 	
-	friend class ofPixelUtils;
 	
 	unsigned char * pixels;
 	int width;

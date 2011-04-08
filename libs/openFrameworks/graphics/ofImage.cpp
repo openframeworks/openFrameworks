@@ -7,7 +7,18 @@
 
 //----------------------------------------------------------
 // static variable for freeImage initialization:
-static bool		bFreeImageInited = false;
+static void initFreeImage(bool deinit=false){
+	// need a new bool to avoid c++ "deinitialization order fiasco":
+	// http://www.parashift.com/c++-faq-lite/ctors.html#faq-10.15
+	static bool	* bFreeImageInited = new bool(false);
+	if(!bFreeImageInited && !deinit){
+		FreeImage_Initialise();
+		*bFreeImageInited = true;
+	}
+	if(bFreeImageInited && deinit){
+		FreeImage_DeInitialise();
+	}
+}
 //----------------------------------------------------------
 
 #ifdef TARGET_ANDROID
@@ -16,7 +27,7 @@ static bool		bFreeImageInited = false;
 	// all the textures when the context is created again.
 	// keeping a pointer to all the images we can tell them to reload from a static method
 	#include <set>
-	set<ofImage*> all_images;
+	static set<ofImage*> all_images;
 
 	void ofReloadAllImageTextures(){
 		set<ofImage*>::iterator it;
@@ -96,6 +107,7 @@ void putBmpIntoPixels(FIBITMAP * bmp, ofPixels &pix, bool swapForLittleEndian = 
 
 //----------------------------------------------------
 bool ofLoadImage(ofPixels & pix, string fileName) {
+	initFreeImage();
 	if(fileName.substr(0, 7) == "http://") {
 		return ofLoadImage(pix, ofLoadURL(fileName).data);
 	}
@@ -136,7 +148,7 @@ bool ofLoadImage(ofPixels & pix, string fileName) {
 
 //----------------------------------------------------
 bool ofLoadImage(ofPixels & pix, const ofBuffer & buffer) {
-
+	initFreeImage();
 	int					width, height, bpp;
 	bool bLoaded		= false;
 	FIBITMAP * bmp		= NULL;
@@ -185,8 +197,30 @@ bool ofLoadImage(ofPixels & pix, const ofBuffer & buffer) {
 }
 
 //----------------------------------------------------------------
-void ofSaveImage(ofPixels & pix, string fileName, ofImageQualityType qualityLevel) {
+bool ofLoadImage(ofTexture & tex, string path){
+	ofPixels pixels;
+	bool loaded = ofLoadImage(pixels,path);
+	if(loaded){
+		tex.allocate(pixels.getWidth(),pixels.getHeight(),pixels.getGlDataType());
+		tex.loadData(pixels);
+	}
+	return loaded;
+}
 
+//----------------------------------------------------------------
+bool ofLoadImage(ofTexture & tex, const ofBuffer & buffer){
+	ofPixels pixels;
+	bool loaded = ofLoadImage(pixels,buffer);
+	if(loaded){
+		tex.allocate(pixels.getWidth(),pixels.getHeight(),pixels.getGlDataType());
+		tex.loadData(pixels);
+	}
+	return loaded;
+}
+
+//----------------------------------------------------------------
+void ofSaveImage(ofPixels & pix, string fileName, ofImageQualityType qualityLevel) {
+	initFreeImage();
 	if (pix.isAllocated() == false){
 		ofLog(OF_LOG_ERROR,"error saving image - pixels aren't allocated");
 		return;
@@ -224,6 +258,7 @@ void ofSaveImage(ofPixels & pix, string fileName, ofImageQualityType qualityLeve
 			if(qualityLevel != OF_IMAGE_QUALITY_BEST) {
 				ofLog(OF_LOG_WARNING, "ofImageCompressionType only applies to JPEG images, ignoring value.");
 			}
+			if (fif==FIF_GIF) bmp = FreeImage_ConvertTo8Bits(bmp);
 			FreeImage_Save(fif, bmp, fileName.c_str());
 		}
 	}
@@ -248,10 +283,7 @@ ofImage::ofImage(){
 	bUseTexture					= true;		// the default is, yes, use a texture
 
 	//----------------------- init free image if necessary
-	if (!bFreeImageInited){
-		FreeImage_Initialise();
-		bFreeImageInited = true;
-	}
+	initFreeImage();
 
 #ifdef TARGET_ANDROID
 	all_images.insert(this);
@@ -267,12 +299,6 @@ ofImage& ofImage::operator=(const ofImage& mom) {
 
 //----------------------------------------------------------
 ofImage::ofImage(const ofImage& mom) {
-
-	if (!bFreeImageInited){
-		FreeImage_Initialise();
-		bFreeImageInited = true;
-	}
-
 	clear();
 	clone(mom);
 	update();
@@ -352,30 +378,22 @@ void ofImage::resetAnchor(){
 
 //------------------------------------
 void ofImage::draw(const ofRectangle & _r){
-	if (bUseTexture){
-		tex.draw(_r);
-	}
+	ofGetDefaultRenderer()->draw(*this,_r.x,_r.y,0,_r.width,_r.height);
 }
 
 //------------------------------------
 void ofImage::draw(const ofPoint & _p, float _w, float _h){
-	if (bUseTexture){
-		tex.draw(_p, _w, _h);
-	}
+	ofGetDefaultRenderer()->draw(*this,_p.x,_p.y,_p.z,_w,_h);
 }
 
 //------------------------------------
 void ofImage::draw(float _x, float _y, float _w, float _h){
-	if (bUseTexture){
-		tex.draw(_x, _y, _w, _h);
-	}
+	ofGetDefaultRenderer()->draw(*this,_x,_y,0,_w,_h);
 }
 
 //------------------------------------
 void ofImage::draw(float _x, float _y, float _z, float _w, float _h){
-	if (bUseTexture){
-		tex.draw(_x, _y, _z, _w, _h);
-	}
+	ofGetDefaultRenderer()->draw(*this,_x,_y,_z,_w,_h);
 }
 
 //------------------------------------
@@ -492,6 +510,10 @@ void ofImage::setUseTexture(bool bUse){
 	bUseTexture = bUse;
 }
 
+//------------------------------------
+bool ofImage::isUsingTexture(){
+	return bUseTexture;
+}
 
 //------------------------------------
 void ofImage::grabScreen(int _x, int _y, int _w, int _h){
@@ -690,10 +712,7 @@ void ofImage::changeTypeOfPixels(ofPixels &pix, ofImageType newType){
 //----------------------------------------------------
 // freeImage based stuff:
 void ofCloseFreeImage(){
-	if (bFreeImageInited){
-		FreeImage_DeInitialise();
-		bFreeImageInited = false;
-	}
+	initFreeImage(true);
 }
 
 //----------------------------------------------------------

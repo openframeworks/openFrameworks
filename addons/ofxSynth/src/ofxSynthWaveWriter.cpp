@@ -39,7 +39,7 @@ void ofxSynthWaveWriter::process( float* input, float *output, int numFrames, in
 		}
 	}
 	// this sample writer operates like a passthrough, even when it is writing samples to disk
-	ofSoundEffectPassthrough::process(input, output, numFrames, numInChannels, numOutChannels);
+	ofxSoundEffectPassthrough::process(input, output, numFrames, numInChannels, numOutChannels);
 }
 
 void ofxSynthWaveWriter::flush(){

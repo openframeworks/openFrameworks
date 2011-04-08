@@ -30,16 +30,17 @@ class testApp : public ofBaseApp{
 
 		float volume;
 		
-		ofSoundSourceTestTone tone;
+		//ofSoundSourceTestTone tone;
 		
+		ofSoundStream soundStream;
 		ofxSynthDelayline delay;
 		
 		ofxSynth synth;
 		ofxSynthSampler sampler;
 		ofxSynthFilter filter;
-		ofSoundSourceMultiplexor multiplex;
-		ofSoundEffectPassthrough passthrough;
-		ofSoundMixer mixer;
+		ofxSoundSourceMultiplexor multiplex;
+		ofxSoundEffectPassthrough passthrough;
+		ofxSoundMixer mixer;
 		ofxSynthWaveWriter writer;
 
 		int beatLength, frameCounter;

@@ -3,7 +3,7 @@
 #include "ofUtils.h"
 #include "ofBaseTypes.h"
 #include "ofGLRenderer.h"
-#include "ofShape.h"
+#include "ofPath.h"
 
 #ifdef TARGET_OSX
 	#include <OpenGL/glu.h>
@@ -47,8 +47,8 @@ static ofStyle currentStyle;
 static deque <ofStyle> styleHistory;
 static deque <ofRectangle> viewportHistory;
 
-static ofShape shape;
-static ofPrimitive vertexData;
+static ofPath shape;
+static ofMesh vertexData;
 static ofBaseRenderer * renderer = NULL;
 
 void ofSetDefaultRenderer(ofBaseRenderer * renderer_){
@@ -57,9 +57,9 @@ void ofSetDefaultRenderer(ofBaseRenderer * renderer_){
 	renderer->setupGraphicDefaults();
 
 	if(renderer->rendersPathPrimitives()){
-		shape.setMode(ofShape::PATHS);
+		shape.setMode(ofPath::PATHS);
 	}else{
-		shape.setMode(ofShape::POLYLINES);
+		shape.setMode(ofPath::POLYLINES);
 	}
 
 	shape.setUseShapeColor(false);
@@ -218,13 +218,13 @@ ofHandednessType ofGetCoordHandedness() {
 }
 
 //----------------------------------------------------------
-void ofSetupScreenPerspective(float width, float height, int orientation, bool vFlip, float fov, float nearDist, float farDist) {
+void ofSetupScreenPerspective(float width, float height, ofOrientation orientation, bool vFlip, float fov, float nearDist, float farDist) {
 	renderer->setupScreenPerspective(width,height, orientation, vFlip,fov,nearDist,farDist);
 }
 
 //----------------------------------------------------------
-void ofSetupScreenOrtho(float width, float height, bool vFlip, float nearDist, float farDist) {
-	renderer->setupScreenOrtho(width,height,vFlip,nearDist,farDist);
+void ofSetupScreenOrtho(float width, float height, ofOrientation orientation, bool vFlip, float nearDist, float farDist) {
+	renderer->setupScreenOrtho(width,height,orientation,vFlip,nearDist,farDist);
 }
 
 //----------------------------------------------------------

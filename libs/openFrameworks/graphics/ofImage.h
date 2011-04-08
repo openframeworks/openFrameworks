@@ -17,6 +17,8 @@ enum ofImageQualityType {
 // FreeImage based stuff:
 bool ofLoadImage(ofPixels & pix, string path);
 bool ofLoadImage(ofPixels & pix, const ofBuffer & buffer);
+bool ofLoadImage(ofTexture & tex, string path);
+bool ofLoadImage(ofTexture & tex, const ofBuffer & buffer);
 void ofSaveImage(ofPixels & pix, string path, ofImageQualityType qualityLevel = OF_IMAGE_QUALITY_BEST);
 void ofSaveImage(ofPixels & pix, ofBuffer & buffer, ofImageQualityType qualityLevel = OF_IMAGE_QUALITY_BEST);
 
@@ -47,6 +49,7 @@ class ofImage : public ofBaseImage{
 		
 		// enable or disable using the texture of this image
 		void 				setUseTexture(bool bUse);
+		bool				isUsingTexture();
 
 		//for getting a reference to the texture
 		ofTexture & getTextureReference();

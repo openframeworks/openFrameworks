@@ -1,66 +1,147 @@
 #include "ofxAssimpModelLoader.h"
 
 #include "aiConfig.h"
+#include "aiPostProcess.h"
 #include <assert.h>
 
-#define BUFFER_OFFSET(i) ((char *)NULL + (i))
-
-#define aisgl_min(x,y) (x<y?x:y)
-#define aisgl_max(x,y) (y>x?y:x)
-
-//-------------------------------------------
-static void color4_to_float4(const struct aiColor4D *c, float f[4])
-{
-	f[0] = c->r;
-	f[1] = c->g;
-	f[2] = c->b;
-	f[3] = c->a;
+//--------------------------------------------------------------
+static inline ofColor aiColorToOfColor(const aiColor4D& c){
+	return ofColor(255*c.r,255*c.g,255*c.b,255*c.a);
 }
 
-//-------------------------------------------
-static void set_float4(float f[4], float a, float b, float c, float d)
-{
-	f[0] = a;
-	f[1] = b;
-	f[2] = c;
-	f[3] = d;
+//--------------------------------------------------------------
+static inline ofColor aiColorToOfColor(const aiColor3D& c){
+	return ofColor(255*c.r,255*c.g,255*c.b,255);
 }
 
-//-------------------------------------------
-// Can't send color down as a pointer to aiColor4D because AI colors are ABGR.
-/*static void Color4f(CGLContextObj cgl_ctx, const struct aiColor4D *color)
-{
-	glColor4f(color->r, color->g, color->b, color->a);
+//--------------------------------------------------------------
+static inline ofVec3f aiVecToOfVec(const aiVector3D& v){
+	return ofVec3f(v.x,v.y,v.z);
+}
+
+static inline vector<ofVec3f> aiVecVecToOfVecVec(const vector<aiVector3D>& v){
+	vector<ofVec3f> ofv(v.size());
+	if(sizeof(aiVector3D)==sizeof(ofVec3f)){
+		memcpy(&ofv[0],&v[0],v.size()*sizeof(ofVec3f));
+	}else{
+		for(int i=0;i<(int)v.size();i++){
+			ofv[i]=aiVecToOfVec(v[i]);
+		}
+	}
+	return ofv;
+}
+
+//--------------------------------------------------------------
+static void aiMeshToOfMesh(const aiMesh* aim, ofMesh& ofm){
+	// default to triangle mode
+	ofm.setMode(OF_TRIANGLES_MODE);
+
+	// copy vertices
+	for (int i=0; i < (int)aim->mNumVertices;i++){
+		ofm.addVertex(ofVec3f(aim->mVertices[i].x,aim->mVertices[i].y,aim->mVertices[i].z));
+	}
+
+	if(aim->HasNormals()){
+		for (int i=0; i < (int)aim->mNumVertices;i++){
+			ofm.addNormal(ofVec3f(aim->mNormals[i].x,aim->mNormals[i].y,aim->mNormals[i].z));
+		}
+	}
+
+	// aiVector3D * 	mTextureCoords [AI_MAX_NUMBER_OF_TEXTURECOORDS]
+	// just one for now
+	if(aim->GetNumUVChannels()>0){
+		for (int i=0; i < (int)aim->mNumVertices;i++){
+			ofm.addTexCoord(ofVec2f(aim->mTextureCoords[0][i].x ,aim->mTextureCoords[0][i].y));
+		}
+	}
+
+	//aiColor4D * 	mColors [AI_MAX_NUMBER_OF_COLOR_SETS]
+	// just one for now
+	if(aim->GetNumColorChannels()>0){
+		for (int i=0; i < (int)aim->mNumVertices;i++){
+			ofm.addColor(aiColorToOfColor(aim->mColors[0][i]));
+		}
+	}
+
+	for (int i=0; i <(int) aim->mNumFaces;i++){
+		if(aim->mFaces[i].mNumIndices>3){
+			ofLog(OF_LOG_WARNING,"non-triangular face found: model face # " + ofToString(i));
+		}
+		for (int j=0; j<(int)aim->mFaces[i].mNumIndices; j++){
+			ofm.addIndex(aim->mFaces[i].mIndices[j]);
+		}
+	}
+
+	ofm.setName(string(aim->mName.data));
+	//	ofm.materialId = aim->mMaterialIndex;
+}
+
+//--------------------------------------------------------------
+static void aiMatrix4x4ToOfMatrix4x4(const aiMatrix4x4& aim, ofNode& ofm){
+	float m[16] = { aim.a1,aim.a2,aim.a3,aim.a4,
+					aim.b1,aim.b2,aim.b3,aim.b4,
+					aim.c1,aim.c2,aim.c3,aim.c4,
+					aim.d1,aim.d2,aim.d3,aim.d4 };
+
+	ofm.setTransformMatrix(	m);
+}
+/*
+//--------------------------------------------------------------
+static void aiNodeToOfNode(const aiNode* ain, ofNode& ofn, const ofModel& model){
+	aiMatrix4x4ToOfMatrix4x4(ain->mTransformation, ofn);
+//	for (int i =0; i < (int)ain->mNumMeshes;i++){
+//		ofn.addMesh(model.meshes.at(ain->mMeshes[i]));
+//	}
+//	ofn.setName(string(ain->mName.data));
+}
+
+//--------------------------------------------------------------
+static int createNodes(const aiNode* curNode, ofModel& model){
+	//lets only make nodes that have meshes for now
+	if(curNode->mNumMeshes){
+		model.nodes.push_back(ofNode());
+		aiNodeToOfNode(curNode, model.nodes.back(), model);
+	}
+
+	if (curNode->mNumChildren>0){
+		for (int i =0; i<(int)curNode->mNumChildren;i++){
+			createNodes(curNode->mChildren[i], model);
+		}
+	}else return 0;
+
+#warning "this is returning nothing ig nNumChildren i>0  fix it"
+}
+
+//--------------------------------------------------------------
+void createBones(const aiScene* scene, ofModel& model){
+	for (int i =0; i < (int)scene->mNumMeshes;i++){
+		aiMesh& curMesh = *scene->mMeshes[i];
+		if(curMesh.HasBones()){
+			for (int j=0; j < (int)curMesh.mNumBones;j++){
+				aiNode* boneNode = scene->mRootNode->FindNode(curMesh.mBones[j]->mName);
+			}
+		}
+	}
 }*/
 
-ofxAssimpModelLoader::ofxAssimpModelLoader(){
 
-    lastAnimationTime = 0;
-    currentAnimation = 0;
-    animationTime = 0;
-    numRotations = 0;
-    rotAngle.clear();
-    rotAxis.clear();
-    scale = ofPoint(1, 1, 1);
-	
+ofxAssimpModelLoader::ofxAssimpModelLoader(){
 	scene = NULL;
-    normalizeScale = true;   
+	clear();
 }
 
 //------------------------------------------
-void ofxAssimpModelLoader::loadModel(string modelName){
+bool ofxAssimpModelLoader::loadModel(string modelName, bool optimize){
 	
     
     // if we have a model loaded, unload the fucker.
     if(scene != NULL){
-        aiReleaseImport(scene);
-        scene = NULL;
-        deleteGLResources();   
+        clear();   
     }
     
     
     // Load our new path.
-    string filepath = ofToDataPath(modelName);
+    filepath = ofToDataPath(modelName);
 	
 	//theo added - so we can have models and their textures in sub folders
 	modelFolder = ofFileUtils::getEnclosingDirectoryFromPath(filepath);
@@ -73,30 +154,16 @@ void ofxAssimpModelLoader::loadModel(string modelName){
     aiSetImportPropertyInteger(AI_CONFIG_PP_PTV_NORMALIZE, true);
     
     // aiProcess_FlipUVs is for VAR code. Not needed otherwise. Not sure why.
-    scene = (aiScene*) aiImportFile(filepath.c_str(), aiProcessPreset_TargetRealtime_MaxQuality | aiProcess_OptimizeGraph | aiProcess_Triangulate | aiProcess_FlipUVs | 0 );
-    
-    if(scene){        
-        ofLog(OF_LOG_VERBOSE, "initted scene with %i meshes & %i animations", scene->mNumMeshes, scene->mNumAnimations);
+    unsigned int flags = aiProcessPreset_TargetRealtime_MaxQuality | aiProcess_Triangulate | aiProcess_FlipUVs;
+    if(optimize) flags |=  aiProcess_ImproveCacheLocality | aiProcess_OptimizeGraph |
+			aiProcess_OptimizeMeshes | aiProcess_JoinIdenticalVertices |
+			aiProcess_RemoveRedundantMaterials;
 
-        getBoundingBoxWithMinVector(&scene_min, &scene_max);
-        scene_center.x = (scene_min.x + scene_max.x) / 2.0f;
-        scene_center.y = (scene_min.y + scene_max.y) / 2.0f;
-        scene_center.z = (scene_min.z + scene_max.z) / 2.0f;
-        
-        // optional normalized scaling
-        normalizedScale = scene_max.x-scene_min.x;
-        normalizedScale = aisgl_max(scene_max.y - scene_min.y,normalizedScale);
-        normalizedScale = aisgl_max(scene_max.z - scene_min.z,normalizedScale);
-        normalizedScale = 1.f / normalizedScale;
-        normalizedScale *= ofGetWidth() / 2.0;
-        
-        glPushAttrib(GL_ALL_ATTRIB_BITS);
-        glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
-        
+    scene = aiImportFile(filepath.c_str(), flags);
+
+    if(scene){
+        calculateDimensions();
         loadGLResources();
-        
-        glPopClientAttrib();
-        glPopAttrib();
 
         if(getAnimationCount())
             ofLog(OF_LOG_VERBOSE, "scene has animations");
@@ -104,7 +171,96 @@ void ofxAssimpModelLoader::loadModel(string modelName){
             ofLog(OF_LOG_VERBOSE, "no animations");
             
         }
+        return true;
+    }else{
+    	ofLog(OF_LOG_ERROR,string("ofxAssimpModelLoader: ") + aiGetErrorString());
+    	return false;
     }
+}
+
+//-------------------------------------------
+bool ofxAssimpModelLoader::loadModel(ofBuffer & buffer, bool optimize, const char * extension){
+	// only ever give us triangles.
+	aiSetImportPropertyInteger(AI_CONFIG_PP_SBP_REMOVE, aiPrimitiveType_LINE | aiPrimitiveType_POINT );
+	aiSetImportPropertyInteger(AI_CONFIG_PP_PTV_NORMALIZE, true);
+
+	// aiProcess_FlipUVs is for VAR code. Not needed otherwise. Not sure why.
+	unsigned int flags = aiProcessPreset_TargetRealtime_MaxQuality | aiProcess_Triangulate | aiProcess_FlipUVs;
+	if(optimize) flags |=  aiProcess_ImproveCacheLocality | aiProcess_OptimizeGraph |
+			aiProcess_OptimizeMeshes | aiProcess_JoinIdenticalVertices |
+			aiProcess_RemoveRedundantMaterials;
+
+	if(scene){
+		clear();
+	}
+	scene = aiImportFileFromMemory(buffer.getBinaryBuffer(), buffer.size(), flags, extension);
+	if(scene){
+		calculateDimensions();
+		loadGLResources();
+
+		if(getAnimationCount())
+			ofLog(OF_LOG_VERBOSE, "scene has animations");
+		else {
+			ofLog(OF_LOG_VERBOSE, "no animations");
+
+		}
+		return true;
+	}else{
+		ofLog(OF_LOG_ERROR,string("ofxAssimpModelLoader: ") + aiGetErrorString());
+		return false;
+	}
+
+}
+
+//-------------------------------------------
+void ofxAssimpModelLoader::createEmptyModel(){
+	if(scene){
+		clear();
+	}
+	scene = new aiScene;
+}
+
+//-------------------------------------------
+void ofxAssimpModelLoader::calculateDimensions(){
+	if(!scene) return;
+	ofLog(OF_LOG_VERBOSE, "initted scene with %i meshes & %i animations", scene->mNumMeshes, scene->mNumAnimations);
+
+	getBoundingBoxWithMinVector(&scene_min, &scene_max);
+	scene_center.x = (scene_min.x + scene_max.x) / 2.0f;
+	scene_center.y = (scene_min.y + scene_max.y) / 2.0f;
+	scene_center.z = (scene_min.z + scene_max.z) / 2.0f;
+
+	// optional normalized scaling
+	normalizedScale = scene_max.x-scene_min.x;
+	normalizedScale = MAX(scene_max.y - scene_min.y,normalizedScale);
+	normalizedScale = MAX(scene_max.z - scene_min.z,normalizedScale);
+	normalizedScale = 1.f / normalizedScale;
+	normalizedScale *= ofGetWidth() / 2.0;
+}
+
+//-------------------------------------------
+void ofxAssimpModelLoader::createLightsFromAiModel(){
+	lights.clear();
+	lights.resize(scene->mNumLights);
+	for(int i=0; i<(int)scene->mNumLights; i++){
+		lights[i].setup();
+		lights[i].setDirectional(scene->mLights[i]->mType==aiLightSource_DIRECTIONAL);
+		if(scene->mLights[i]->mType==aiLightSource_DIRECTIONAL){
+			lights[i].setOrientation(aiVecToOfVec(scene->mLights[i]->mDirection));
+		}
+		if(scene->mLights[i]->mType!=aiLightSource_POINT){
+			lights[i].setPosition(aiVecToOfVec(scene->mLights[i]->mPosition));
+		}
+		lights[i].setAmbientColor(aiColorToOfColor(scene->mLights[i]->mColorAmbient));
+		lights[i].setDiffuseColor(aiColorToOfColor(scene->mLights[i]->mColorDiffuse));
+		lights[i].setSpecularColor(aiColorToOfColor(scene->mLights[i]->mColorSpecular));
+	}
+}
+
+void ofxAssimpModelLoader::optimizeScene(){
+	aiApplyPostProcessing(scene,aiProcess_ImproveCacheLocality | aiProcess_OptimizeGraph |
+			aiProcess_OptimizeMeshes | aiProcess_JoinIdenticalVertices |
+			aiProcess_RemoveRedundantMaterials);
 }
 
 //-------------------------------------------
@@ -113,7 +269,7 @@ void ofxAssimpModelLoader::loadGLResources(){
     ofLog(OF_LOG_VERBOSE, "loading gl resources");
 
     // create new mesh helpers for each mesh, will populate their data later.
-    modelMeshes.reserve(scene->mNumMeshes); 
+   // modelMeshes.resize(scene->mNumMeshes,ofxAssimpMeshHelper());
         
     // create OpenGL buffers and populate them based on each meshes pertinant info.
     for (unsigned int i = 0; i < scene->mNumMeshes; ++i){
@@ -122,22 +278,19 @@ void ofxAssimpModelLoader::loadGLResources(){
         aiMesh* mesh = scene->mMeshes[i];
         
         // the current meshHelper we will be populating data into.
+        //ofxAssimpMeshHelper & meshHelper = modelMeshes[i];
         ofxAssimpMeshHelper meshHelper;
         
         meshHelper.mesh = mesh;
-        
-        // set the mesh's default values.
-        aiColor4D dcolor = aiColor4D(0.8f, 0.8f, 0.8f, 1.0f);
-        meshHelper.diffuseColor = dcolor;
+        aiMeshToOfMesh(mesh,meshHelper.cachedMesh);
+        meshHelper.cachedMesh.setMode(OF_TRIANGLES_MODE);
+        meshHelper.validCache = true;
+        meshHelper.hasChanged = false;
 
-        aiColor4D scolor = aiColor4D(0.0f, 0.0f, 0.0f, 1.0f);
-        meshHelper.specularColor = scolor;
-
-        aiColor4D acolor = aiColor4D(0.2f, 0.2f, 0.2f, 1.0f);
-        meshHelper.ambientColor = acolor;
-
-        aiColor4D ecolor = aiColor4D(0.0f, 0.0f, 0.0f, 1.0f);
-        meshHelper.emissiveColor = ecolor;
+        meshHelper.animatedPos.resize(mesh->mNumVertices);
+        if(mesh->HasNormals()){
+        	meshHelper.animatedNorm.resize(mesh->mNumVertices);
+        }
 
         // Handle material info
         aiMaterial* mtl = scene->mMaterials[mesh->mMaterialIndex];
@@ -151,34 +304,58 @@ void ofxAssimpModelLoader::loadGLResources(){
         // TODO: handle other aiTextureTypes
         if(AI_SUCCESS == mtl->GetTexture(aiTextureType_DIFFUSE, texIndex, &texPath)){
             // This is magic. Thanks Kyle.
-            
-            textures.push_back(ofImage());            
-            
-            ofImage& image = textures.back();                
 
             ofLog(OF_LOG_VERBOSE, "loading image from %s", texPath.data);
+            string modelFolder = ofFileUtils::getEnclosingDirectoryFromPath(filepath);
+
+			if(ofFileUtils::isAbsolute(texPath.data) && ofFileUtils::doesFileExist(texPath.data)) {
+				if(!ofLoadImage(meshHelper.texture,texPath.data)){
+					ofLog(OF_LOG_ERROR,string("error loading image ") + texPath.data);
+				}
+			}
+			else {
+				if(!ofLoadImage(meshHelper.texture,modelFolder + texPath.data)){
+					ofLog(OF_LOG_ERROR,"error loading image " + modelFolder + texPath.data);
+				}
+			}
             
-            image.loadImage(modelFolder + texPath.data);
-            image.update();
+            ofLog(OF_LOG_VERBOSE, "texture width: %f height %f", meshHelper.texture.getWidth(), meshHelper.texture.getHeight());
             
-            ofLog(OF_LOG_VERBOSE, "texture width: %f height %f", image.getWidth(), image.getHeight());
-            
-            //meshHelper.texture = &(image.getTextureReference()); 
-            meshHelper.textureIndex = textures.size()-1;
         }
         
-        if(AI_SUCCESS == aiGetMaterialColor(mtl, AI_MATKEY_COLOR_DIFFUSE, &dcolor))
-            meshHelper.diffuseColor = dcolor;
+        aiColor4D dcolor, scolor, acolor, ecolor;
+
+        if(AI_SUCCESS == aiGetMaterialColor(mtl, AI_MATKEY_COLOR_DIFFUSE, &dcolor)){
+            meshHelper.material.setDiffuseColor(aiColorToOfColor(dcolor));
+        }
         
-        if(AI_SUCCESS == aiGetMaterialColor(mtl, AI_MATKEY_COLOR_SPECULAR, &scolor))
-            meshHelper.specularColor = scolor;
+        if(AI_SUCCESS == aiGetMaterialColor(mtl, AI_MATKEY_COLOR_SPECULAR, &scolor)){
+        	meshHelper.material.setSpecularColor(aiColorToOfColor(scolor));
+        }
         
-        if(AI_SUCCESS == aiGetMaterialColor(mtl, AI_MATKEY_COLOR_AMBIENT, &acolor))
-            meshHelper.ambientColor = acolor;
+        if(AI_SUCCESS == aiGetMaterialColor(mtl, AI_MATKEY_COLOR_AMBIENT, &acolor)){
+        	meshHelper.material.setAmbientColor(aiColorToOfColor(acolor));
+        }
         
-        if(AI_SUCCESS == aiGetMaterialColor(mtl, AI_MATKEY_COLOR_EMISSIVE, &ecolor))
-            meshHelper.emissiveColor = ecolor;
+        if(AI_SUCCESS == aiGetMaterialColor(mtl, AI_MATKEY_COLOR_EMISSIVE, &ecolor)){
+        	meshHelper.material.setEmissiveColor(aiColorToOfColor(ecolor));
+        }
         
+        float shininess;
+        if(AI_SUCCESS == aiGetMaterialFloat(mtl, AI_MATKEY_SHININESS, &shininess)){
+			meshHelper.material.setShininess(shininess);
+		}
+
+        int blendMode;
+		if(AI_SUCCESS == aiGetMaterialInteger(mtl, AI_MATKEY_BLEND_FUNC, &blendMode)){
+			if(blendMode==aiBlendMode_Default){
+				meshHelper.blendMode=OF_BLENDMODE_ALPHA;
+			}else{
+				meshHelper.blendMode=OF_BLENDMODE_ADD;
+			}
+		}
+
+
         // Culling
         unsigned int max = 1;
         int two_sided;
@@ -187,213 +364,73 @@ void ofxAssimpModelLoader::loadGLResources(){
         else
             meshHelper.twoSided = false;
         
-        // Create a VBO for our vertices
-        GLuint vhandle;
-        glGenBuffers(1, &vhandle);
-        
-        glBindBuffer(GL_ARRAY_BUFFER, vhandle);
-        
-        if(getAnimationCount())
-            glBufferData(GL_ARRAY_BUFFER, sizeof(aiVertex) * mesh->mNumVertices, NULL, GL_STREAM_DRAW/*GL_STATIC_DRAW GL_STREAM_DRAW*/);
-        else
-            glBufferData(GL_ARRAY_BUFFER, sizeof(aiVertex) * mesh->mNumVertices, NULL, GL_STATIC_DRAW/*GL_STATIC_DRAW GL_STREAM_DRAW*/);
+        int usage;
+        if(getAnimationCount()){
+#ifndef TARGET_OPENGLES
+        	usage = GL_STREAM_DRAW;
+#else
+        	usage = GL_DYNAMIC_DRAW;
+#endif
+        }else{
+        	usage = GL_STATIC_DRAW;
 
-        // populate vertices
-        aiVertex* verts = (aiVertex*)glMapBuffer(GL_ARRAY_BUFFER_ARB, GL_WRITE_ONLY_ARB);
-        
-        for (unsigned int x = 0; x < mesh->mNumVertices; ++x)
-        {
-            verts->vPosition = mesh->mVertices[x];
-            
-            if (NULL == mesh->mNormals)
-                verts->vNormal = aiVector3D(0.0f,0.0f,0.0f);
-            else
-                verts->vNormal = mesh->mNormals[x];
-            
-            if (mesh->HasVertexColors(0))
-            {
-                verts->dColorDiffuse = mesh->mColors[0][x];
-            }
-            else
-                verts->dColorDiffuse = aiColor4D(1.0, 1.0, 1.0, 1.0);
-            
-            // This varies slightly form Assimp View, we support the 3rd texture component.
-            if (mesh->HasTextureCoords(0))
-                verts->vTextureUV = mesh->mTextureCoords[0][x];
-            else
-                verts->vTextureUV = aiVector3D(0.5f,0.5f, 0.0f);
-           
-            // No longer in aiVertex VBO structure
-            /*          
-            if (NULL == mesh->mTangents)
-            {
-                verts->vTangent = aiVector3D(0.0f,0.0f,0.0f);
-                verts->vBitangent = aiVector3D(0.0f,0.0f,0.0f);
-            }
-            else
-            {
-                verts->vTangent = mesh->mTangents[x];
-                verts->vBitangent = mesh->mBitangents[x];
-            }
-             
-            if (mesh->HasTextureCoords(1))
-                verts->vTextureUV2 = mesh->mTextureCoords[1][x];
-            else 
-                verts->vTextureUV2 = aiVector3D(0.5f,0.5f, 0.0f);
-
-            if( mesh->HasBones()){
-                unsigned char boneIndices[4] = { 0, 0, 0, 0 };
-                unsigned char boneWeights[4] = { 0, 0, 0, 0 };
-                ai_assert( weightsPerVertex[x].size() <= 4);
-
-                for( unsigned int a = 0; a < weightsPerVertex[x].size(); a++){
-                    boneIndices[a] = weightsPerVertex[x][a].mVertexId;
-                    boneWeights[a] = (unsigned char) (weightsPerVertex[x][a].mWeight * 255.0f);
-                }
-
-                memcpy( verts->mBoneIndices, boneIndices, sizeof( boneIndices));
-                memcpy( verts->mBoneWeights, boneWeights, sizeof( boneWeights));
-            }
-            else{
-               // memset( verts->mBoneIndices, 0, sizeof( verts->mBoneIndices));
-               // memset( verts->mBoneWeights, 0, sizeof( verts->mBoneWeights));
-            }
- */           
-            ++verts;
         }
-        
-        glUnmapBufferARB(GL_ARRAY_BUFFER_ARB); //invalidates verts
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
-        
-        // set the mesh vertex buffer handle to our new vertex buffer.
-        meshHelper.vertexBuffer = vhandle;
-        
-        // Create Index Buffer
-        unsigned int nidx;
-        switch (mesh->mPrimitiveTypes){
-            case aiPrimitiveType_POINT:
-                nidx = 1;break;
-            case aiPrimitiveType_LINE:
-                nidx = 2;break;
-            case aiPrimitiveType_TRIANGLE:
-                nidx = 3;break;
-            default: assert(false);
-        }   
-        
-        GLuint ihandle;
-        glGenBuffers(1, &ihandle);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ihandle);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * mesh->mNumFaces * nidx, NULL, GL_STATIC_DRAW/*GL_STATIC_DRAW GL_STREAM_DRAW*/);
-        
-        unsigned int* indices = (unsigned int*)glMapBuffer(GL_ELEMENT_ARRAY_BUFFER, GL_WRITE_ONLY_ARB);
-        
-        // now fill the index buffer
+        meshHelper.vbo.setVertexData(&mesh->mVertices[0].x,3,mesh->mNumVertices,usage,sizeof(aiVector3D));
+        if(mesh->HasVertexColors(0)){
+        	meshHelper.vbo.setColorData(&mesh->mColors[0][0].r,mesh->mNumVertices,GL_STATIC_DRAW,sizeof(aiColor4D));
+        }
+        if(mesh->HasNormals()){
+        	meshHelper.vbo.setNormalData(&mesh->mNormals[0].x,mesh->mNumVertices,usage,sizeof(aiVector3D));
+        }
+        if (mesh->HasTextureCoords(0)){
+        	meshHelper.vbo.setTexCoordData(&mesh->mTextureCoords[0][0].x,mesh->mNumVertices,GL_STATIC_DRAW,sizeof(aiVector3D));
+        }
+
+        meshHelper.indices.resize(mesh->mNumFaces * 3);
+        int i=0;
         for (unsigned int x = 0; x < mesh->mNumFaces; ++x){
-            for (unsigned int a = 0; a < nidx; ++a){
-                *indices++ = mesh->mFaces[x].mIndices[a];
-            }
-        }
-        
-        glUnmapBuffer(GL_ELEMENT_ARRAY_BUFFER);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-        
-        // set the mesh index buffer handle to our new index buffer.
-        meshHelper.indexBuffer = ihandle;
-        meshHelper.numIndices = mesh->mNumFaces * nidx;
-        
-        // create the normal buffer. Assimp View creates a second normal buffer. Unsure why. Using only the interleaved normals for now.
-        // This is here for reference.
-        
-        /*
-        GLuint nhandle;
-        glGenBuffers(1, &nhandle);
-        glBindBuffer(GL_ARRAY_BUFFER, nhandle);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(aiVector3D)* mesh->mNumVertices, NULL, GL_STATIC_DRAW);
+			for (unsigned int a = 0; a < mesh->mFaces[x].mNumIndices; ++a){
+				meshHelper.indices[i++]=mesh->mFaces[x].mIndices[a];
+			}
+		}
 
-        // populate normals
-        aiVector3D* normals = (aiVector3D*)glMapBuffer(GL_ARRAY_BUFFER_ARB, GL_WRITE_ONLY_ARB);
-
-        for (unsigned int x = 0; x < mesh->mNumVertices; ++x)
-        {
-        aiVector3D vNormal = mesh->mNormals[x];
-        *normals = vNormal;
-        ++normals;
-        }
-
-        glUnmapBufferARB(GL_ARRAY_BUFFER_ARB); //invalidates verts
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-        meshHelper.normalBuffer = nhandle;
-        */
-        
-        // Create VAO and populate it
-        GLuint vaoHandle; 
-        glGenVertexArrays(1, &vaoHandle);
-            
-        // TODO: equivalent PC call.
-        glBindVertexArray(vaoHandle);
-        
-        glBindBuffer(GL_ARRAY_BUFFER, meshHelper.vertexBuffer);
-        
-        glEnableClientState(GL_NORMAL_ARRAY);
-        glNormalPointer(GL_FLOAT, sizeof(aiVertex), BUFFER_OFFSET(12));
-        
-        glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-        glTexCoordPointer(3, GL_FLOAT, sizeof(aiVertex), BUFFER_OFFSET(24));
-        //TODO: handle second texture
-
-        glEnableClientState(GL_COLOR_ARRAY);
-        glColorPointer(4, GL_FLOAT, sizeof(aiVertex), BUFFER_OFFSET(36));
-        
-        // VertexPointer ought to come last, apparently this is some optimization, since if its set once first, it gets fiddled with every time something else is update.
-        glEnableClientState(GL_VERTEX_ARRAY);
-        glVertexPointer(3, GL_FLOAT, sizeof(aiVertex), 0);
-        
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, meshHelper.indexBuffer);
-        
-        glBindVertexArray(0);
-       
-        // save the VAO handle into our mesh helper
-        meshHelper.vao = vaoHandle;
-        
+        meshHelper.vbo.setIndexData(&meshHelper.indices[0],meshHelper.indices.size(),GL_STATIC_DRAW);
         modelMeshes.push_back(meshHelper);
     }
+
+    animationTime = -1;
+    setNormalizedTime(0);
+
     ofLog(OF_LOG_VERBOSE, "finished loading gl resources");
+
 }
 
 //-------------------------------------------
-void ofxAssimpModelLoader::deleteGLResources(){
+void ofxAssimpModelLoader::clear(){
 
     ofLog(OF_LOG_VERBOSE, "deleting gl resources");
-
-    for (unsigned int i = 0; i < modelMeshes.size(); ++i){
     
-        ofxAssimpMeshHelper meshHelper = modelMeshes[i];
-        
-        const GLuint indexBuffer = meshHelper.indexBuffer;
-        const GLuint vertexBuffer = meshHelper.vertexBuffer;
-        const GLuint normalBuffer = meshHelper.normalBuffer;
-        const GLuint vaoHandle = meshHelper.vao;
-        
-        glDeleteBuffers(1, &vertexBuffer);
-        glDeleteBuffers(1, &indexBuffer);
-        glDeleteBuffers(1, &normalBuffer);
-        glDeleteVertexArrays(1, &vaoHandle);
-        
-        meshHelper.indexBuffer = 0;
-        meshHelper.vertexBuffer = 0;
-        meshHelper.normalBuffer = 0;
-        meshHelper.vao = 0; 
-        meshHelper.mesh = NULL;
-        
-        meshHelper.textureIndex = -1;
-    }
-    
-    // clear out our meshes array.
+    // clear out everything.
     modelMeshes.clear();
-    
-    // clear out our textures (ofImages)
-    textures.clear();
+    pos.set(0,0,0);
+    scale.set(1,1,1);
+    rotAngle.clear();
+    rotAxis.clear();
+    lights.clear();
+
+    lastAnimationTime = 0;
+    currentAnimation = 0;
+    animationTime = 0;
+    scale = ofPoint(1, 1, 1);
+	if(scene){
+		aiReleaseImport(scene);
+		scene = NULL;
+	}
+    normalizeScale = true;
+    bUsingMaterials = true;
+    bUsingNormals = true;
+    bUsingTextures = true;
+    bUsingColors = true;
 }
 
 //-------------------------------------------
@@ -429,13 +466,13 @@ void ofxAssimpModelLoader::getBoundingBoxForNode(const struct aiNode* nd,  struc
 			aiTransformVecByMatrix4(&tmp,trafo);
         
             
-			min->x = aisgl_min(min->x,tmp.x);
-			min->y = aisgl_min(min->y,tmp.y);
-			min->z = aisgl_min(min->z,tmp.z);
+			min->x = MIN(min->x,tmp.x);
+			min->y = MIN(min->y,tmp.y);
+			min->z = MIN(min->z,tmp.z);
             
-			max->x = aisgl_max(max->x,tmp.x);
-			max->y = aisgl_max(max->y,tmp.y);
-			max->z = aisgl_max(max->z,tmp.z);
+			max->x = MAX(max->x,tmp.x);
+			max->y = MAX(max->y,tmp.y);
+			max->z = MAX(max->z,tmp.z);
 		}
 	}
     
@@ -459,7 +496,7 @@ unsigned int ofxAssimpModelLoader::getAnimationCount(){
 
 //-------------------------------------------
 void ofxAssimpModelLoader::setAnimation(int anim){
-        currentAnimation = MIN(anim, scene->mNumAnimations);
+    currentAnimation = MIN(anim, (int)scene->mNumAnimations);
 }
 
 //-------------------------------------------
@@ -517,13 +554,12 @@ void ofxAssimpModelLoader::setScaleNomalization(bool normalize)
 
 //-------------------------------------------
 void ofxAssimpModelLoader::setRotation(int which, float angle, float rot_x, float rot_y, float rot_z){
-    if(which + 1 > numRotations){
-        int diff = 1 + (which - numRotations);
+    if(which + 1 > (int)rotAngle.size()){
+        int diff = 1 + (which - rotAngle.size());
         for(int i = 0; i < diff; i++){
             rotAngle.push_back(0);
             rotAxis.push_back(ofPoint());
         }
-        numRotations = rotAngle.size();
     }
     
     rotAngle[which]  = angle;
@@ -635,290 +671,385 @@ void ofxAssimpModelLoader::updateAnimation(unsigned int animationIndex, float cu
 
     lastAnimationTime = currentTime;
 
-/*
- for( size_t a = 0; a < anim->mNumChannels; ++a)
- {
- const aiNodeAnim* channel = anim->mChannels[a];
-        aiVector3D curPosition;
-        aiQuaternion curRotation;
-        // scaling purposefully left out 
-        
-        // find the node which the channel affects
-        aiNode* targetNode = scene->mRootNode->FindNode(channel->mNodeName);
-        
-        // find current position
-        // Should be much quicker than always looking from start for the average use case.
-        unsigned int frame = (currentTime >= lastAnimationTime) ? lastFramePositionIndex : 0;
-        while( frame < channel->mNumPositionKeys - 1)
-        {
-            if( currentTime < channel->mPositionKeys[frame+1].mTime)
-                break;
-            frame++;
-        }        
-                
-        // interpolate between this frame's value and next frame's value
-        unsigned int nextFrame = (frame + 1) % channel->mNumPositionKeys;
-        const aiVectorKey& key = channel->mPositionKeys[frame];
-        const aiVectorKey& nextKey = channel->mPositionKeys[nextFrame];
-        double diffTime = nextKey.mTime - key.mTime;
-        if( diffTime < 0.0)
-            diffTime += anim->mDuration;
-        if( diffTime > 0)
-        {
-            float factor = float( (currentTime - key.mTime) / diffTime);
-            curPosition = key.mValue + (nextKey.mValue - key.mValue) * factor;
-        } else
-        {
-            curPosition = key.mValue;
-        }
-        
-        lastFramePositionIndex = frame;
+    // update mesh position for the animation
+	for (unsigned int i = 0; i < modelMeshes.size(); ++i){
 
-        
-        // maybe add a check here if the anim has any position keys at all
-        //curPosition = channel->mPositionKeys[posIndex].mValue;
-        
-        // same goes for rotation, but I shorten it now
-        size_t rotIndex = 0;
-        while( 1 )
-        {
-            if( rotIndex+1 >= channel->mNumRotationKeys )
-                break;
-            
-            if( channel->mRotationKeys[rotIndex+1].mTime > currentTime )
-                break;
-            rotIndex++;
-        } 
-        
-        
-        curRotation = channel->mRotationKeys[rotIndex].mValue;
-        
-        // now build a transformation matrix from it. First rotation, thenn push position in it as well. 
-        aiMatrix4x4 trafo = (aiMatrix4x4) curRotation.GetMatrix();
-        trafo.a4 = curPosition.x; trafo.b4 = curPosition.y; trafo.c4 = curPosition.z;
-        
-        // assign this transformation to the node
-        targetNode->mTransformation = trafo;
-    }
-    
-    lastAnimationTime = currentTime;
-    */
+		// current mesh we are introspecting
+		const aiMesh* mesh = modelMeshes[i].mesh;
+
+		// calculate bone matrices
+		std::vector<aiMatrix4x4> boneMatrices( mesh->mNumBones);
+		for( size_t a = 0; a < mesh->mNumBones; ++a)
+		{
+			const aiBone* bone = mesh->mBones[a];
+
+			// find the corresponding node by again looking recursively through the node hierarchy for the same name
+			aiNode* node = scene->mRootNode->FindNode(bone->mName);
+
+			// start with the mesh-to-bone matrix
+			boneMatrices[a] = bone->mOffsetMatrix;
+			// and now append all node transformations down the parent chain until we're back at mesh coordinates again
+			const aiNode* tempNode = node;
+			while( tempNode)
+			{
+				// check your matrix multiplication order here!!!
+				boneMatrices[a] = tempNode->mTransformation * boneMatrices[a];
+				// boneMatrices[a] = boneMatrices[a] * tempNode->mTransformation;
+				tempNode = tempNode->mParent;
+			}
+			modelMeshes[i].hasChanged = true;
+			modelMeshes[i].validCache = false;
+		}
+
+		modelMeshes[i].animatedPos.assign(modelMeshes[i].animatedPos.size(),0);
+		if(mesh->HasNormals()){
+			modelMeshes[i].animatedNorm.assign(modelMeshes[i].animatedNorm.size(),0);
+		}
+		// loop through all vertex weights of all bones
+		for( size_t a = 0; a < mesh->mNumBones; ++a)
+		{
+			const aiBone* bone = mesh->mBones[a];
+			const aiMatrix4x4& posTrafo = boneMatrices[a];
+
+
+			for( size_t b = 0; b < bone->mNumWeights; ++b)
+			{
+				const aiVertexWeight& weight = bone->mWeights[b];
+
+				size_t vertexId = weight.mVertexId;
+				const aiVector3D& srcPos = mesh->mVertices[vertexId];
+
+				modelMeshes[i].animatedPos[vertexId] += weight.mWeight * (posTrafo * srcPos);
+			}
+			if(mesh->HasNormals()){
+				// 3x3 matrix, contains the bone matrix without the translation, only with rotation and possibly scaling
+				aiMatrix3x3 normTrafo = aiMatrix3x3( posTrafo);
+				for( size_t b = 0; b < bone->mNumWeights; ++b)
+				{
+					const aiVertexWeight& weight = bone->mWeights[b];
+					size_t vertexId = weight.mVertexId;
+
+					const aiVector3D& srcNorm = mesh->mNormals[vertexId];
+					modelMeshes[i].animatedNorm[vertexId] += weight.mWeight * (normTrafo * srcNorm);
+
+				}
+			}
+		}
+	}
 }
 
 //-------------------------------------------
 void ofxAssimpModelLoader::updateGLResources(){
-        
-    // update mesh position for the animation
+    // now upload the result position and normal along with the other vertex attributes into a dynamic vertex buffer, VBO or whatever
     for (unsigned int i = 0; i < modelMeshes.size(); ++i){
-
-        // current mesh we are introspecting
-        const aiMesh* mesh = modelMeshes[i].mesh;
-        
-        // calculate bone matrices
-        std::vector<aiMatrix4x4> boneMatrices( mesh->mNumBones);
-        for( size_t a = 0; a < mesh->mNumBones; ++a)
-        {
-            const aiBone* bone = mesh->mBones[a];
-            
-            // find the corresponding node by again looking recursively through the node hierarchy for the same name
-            aiNode* node = scene->mRootNode->FindNode(bone->mName);
-            
-            // start with the mesh-to-bone matrix 
-            boneMatrices[a] = bone->mOffsetMatrix;
-            // and now append all node transformations down the parent chain until we're back at mesh coordinates again
-            const aiNode* tempNode = node;
-            while( tempNode)
-            {
-                // check your matrix multiplication order here!!!
-                boneMatrices[a] = tempNode->mTransformation * boneMatrices[a];   
-                // boneMatrices[a] = boneMatrices[a] * tempNode->mTransformation;
-                tempNode = tempNode->mParent;
-            }
-        }
-        
-        // all using the results from the previous code snippet
-        std::vector<aiVector3D> resultPos( mesh->mNumVertices); 
-        std::vector<aiVector3D> resultNorm( mesh->mNumVertices);
-        
-        // loop through all vertex weights of all bones
-        for( size_t a = 0; a < mesh->mNumBones; ++a)
-        {
-            const aiBone* bone = mesh->mBones[a];
-            const aiMatrix4x4& posTrafo = boneMatrices[a];
-            
-            // 3x3 matrix, contains the bone matrix without the translation, only with rotation and possibly scaling
-            aiMatrix3x3 normTrafo = aiMatrix3x3( posTrafo); 
-            for( size_t b = 0; b < bone->mNumWeights; ++b)
-            {
-                const aiVertexWeight& weight = bone->mWeights[b];
-                
-                size_t vertexId = weight.mVertexId; 
-                const aiVector3D& srcPos = mesh->mVertices[vertexId];
-                const aiVector3D& srcNorm = mesh->mNormals[vertexId];
-                
-                resultPos[vertexId] += weight.mWeight * (posTrafo * srcPos);
-                resultNorm[vertexId] += weight.mWeight * (normTrafo * srcNorm);
-            }
-        }
-                
-        // now upload the result position and normal along with the other vertex attributes into a dynamic vertex buffer, VBO or whatever
-        
-        // get mesh helper for this mesh;
-        ofxAssimpMeshHelper meshHelper = modelMeshes[i];
-        
-        glBindBuffer(GL_ARRAY_BUFFER, meshHelper.vertexBuffer);
-        aiVertex* verts = (aiVertex*)glMapBuffer(GL_ARRAY_BUFFER_ARB, GL_WRITE_ONLY_ARB);
-        
-        for (unsigned int x = 0; x < mesh->mNumVertices; ++x)
-        {
-            //verts->vPosition = mesh->mVertices[x];
-            verts->vPosition = resultPos[x];
-            
-            if (NULL == mesh->mNormals)
-                verts->vNormal = aiVector3D(0.0f,0.0f,0.0f);
-            else
-                verts->vNormal = resultNorm[x];
-            
-            if (mesh->HasVertexColors(0))
-            {
-                verts->dColorDiffuse = mesh->mColors[0][x];
-            }
-            else
-                verts->dColorDiffuse = aiColor4D(1.0, 1.0, 1.0, 1.0);
-            
-            // This varies slightly form Assimp View, we support the 3rd texture component.
-            if (mesh->HasTextureCoords(0))
-                verts->vTextureUV = mesh->mTextureCoords[0][x];
-            else
-                verts->vTextureUV = aiVector3D(0.5f,0.5f, 0.0f);
-            
-            // No longer in aiVertex VBO structure
-            /*          
-             if (NULL == mesh->mTangents)
-             {
-             verts->vTangent = aiVector3D(0.0f,0.0f,0.0f);
-             verts->vBitangent = aiVector3D(0.0f,0.0f,0.0f);
-             }
-             else
-             {
-             verts->vTangent = mesh->mTangents[x];
-             verts->vBitangent = mesh->mBitangents[x];
-             }
-             
-             if (mesh->HasTextureCoords(1))
-             verts->vTextureUV2 = mesh->mTextureCoords[1][x];
-             else 
-             verts->vTextureUV2 = aiVector3D(0.5f,0.5f, 0.0f);
-             
-             if( mesh->HasBones()){
-             unsigned char boneIndices[4] = { 0, 0, 0, 0 };
-             unsigned char boneWeights[4] = { 0, 0, 0, 0 };
-             ai_assert( weightsPerVertex[x].size() <= 4);
-             
-             for( unsigned int a = 0; a < weightsPerVertex[x].size(); a++){
-             boneIndices[a] = weightsPerVertex[x][a].mVertexId;
-             boneWeights[a] = (unsigned char) (weightsPerVertex[x][a].mWeight * 255.0f);
-             }
-             
-             memcpy( verts->mBoneIndices, boneIndices, sizeof( boneIndices));
-             memcpy( verts->mBoneWeights, boneWeights, sizeof( boneWeights));
-             }
-             else{
-             // memset( verts->mBoneIndices, 0, sizeof( verts->mBoneIndices));
-             // memset( verts->mBoneWeights, 0, sizeof( verts->mBoneWeights));
-             }
-             */           
-            ++verts;
-        }
-        
-        glUnmapBufferARB(GL_ARRAY_BUFFER_ARB); //invalidates verts
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
+    	if(modelMeshes[i].hasChanged){
+			const aiMesh* mesh = modelMeshes[i].mesh;
+			modelMeshes[i].vbo.updateVertexData(&modelMeshes[i].animatedPos[0].x,mesh->mNumVertices);
+			if(mesh->HasNormals()){
+				 modelMeshes[i].vbo.updateNormalData(&modelMeshes[i].animatedNorm[0].x,mesh->mNumVertices);
+			}
+			modelMeshes[i].hasChanged = false;
+    	}
     }
 }
 
 
-void ofxAssimpModelLoader::draw()
+//--------------------------------------------------------------
+void ofxAssimpModelLoader::drawWireframe(){
+	draw(OF_MESH_WIREFRAME);
+}
+
+//--------------------------------------------------------------
+void ofxAssimpModelLoader::drawFaces(){
+	draw(OF_MESH_FILL);
+}
+
+//--------------------------------------------------------------
+void ofxAssimpModelLoader::drawVertices(){
+	draw(OF_MESH_POINTS);
+}
+
+
+//-------------------------------------------
+void ofxAssimpModelLoader::draw(ofPolyRenderMode renderType)
 {
     if(scene){
         
+        ofPushStyle();
+        
+#ifndef TARGET_OPENGLES
         glPushAttrib(GL_ALL_ATTRIB_BITS);
         glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
-        
+        glPolygonMode(GL_FRONT_AND_BACK, ofGetGLPolyMode(renderType));
+#endif
         glEnable(GL_NORMALIZE);
         
-        glPushMatrix();
+        ofPushMatrix();
             
-        glTranslatef(pos.x, pos.y, pos.z);
+        ofTranslate(pos);
 
-        glRotatef(180, 0, 0, 1);
-        glTranslated(-scene_center.x, -scene_center.y, scene_center.z);    
+        ofRotate(180, 0, 0, 1);
+        ofTranslate(-scene_center.x, -scene_center.y, scene_center.z);
 
         if(normalizeScale)
         {
-            glScaled(normalizedScale , normalizedScale, normalizedScale);
+            ofScale(normalizedScale , normalizedScale, normalizedScale);
         }
             
-        for(int i = 0; i < numRotations; i++){
-            glRotatef(rotAngle[i], rotAxis[i].x, rotAxis[i].y, rotAxis[i].z);
+        for(int i = 0; i < (int)rotAngle.size(); i++){
+            ofRotate(rotAngle[i], rotAxis[i].x, rotAxis[i].y, rotAxis[i].z);
         }
         
-        glScalef(scale.x, scale.y, scale.z);
+        ofScale(scale.x, scale.y, scale.z);
         
+
         if(getAnimationCount())
         {
             updateGLResources();
         }
         
-        if(modelMeshes.size())
-        {
-            for(int i = 0; i < modelMeshes.size(); i++){
-                ofxAssimpMeshHelper meshHelper = modelMeshes.at(i);
-                
-                // Texture Binding
-                if(meshHelper.textureIndex!=-1){
-                    textures[meshHelper.textureIndex].getTextureReference().bind();
-                }
-                // Set up meterial state.
+		for(int i = 0; i < (int)modelMeshes.size(); i++){
+			ofxAssimpMeshHelper & meshHelper = modelMeshes.at(i);
 
-                float dc[4];
-                float sc[4];
-                float ac[4];
-                float emc[4];
-                
-                // Material colors and properties
-                color4_to_float4(&meshHelper.diffuseColor, dc);
-                glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, dc);
-                
-                color4_to_float4(&meshHelper.specularColor, sc);
-                glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, sc);
-                
-                color4_to_float4(&meshHelper.ambientColor, ac);
-                glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, ac);
-                
-                color4_to_float4(&meshHelper.emissiveColor, emc);
-                glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, emc);
-                
+			// Texture Binding
+			if(bUsingTextures && meshHelper.texture.bAllocated()){
+				meshHelper.texture.bind();
+			}
 
-                // Culling
-                if(meshHelper.twoSided)
-                    glEnable(GL_CULL_FACE);
-                else 
-                    glDisable(GL_CULL_FACE);
-                        
-                // TODO: equivalent VAO callfor linux and windows.
-                glBindVertexArray(meshHelper.vao);
-                glDrawElements(GL_TRIANGLES, meshHelper.numIndices, GL_UNSIGNED_INT, 0);
-                
-                // Texture Binding
-                if(meshHelper.textureIndex!=-1){
-                    textures[meshHelper.textureIndex].getTextureReference().unbind();
-                }
-            }
-        }        
+			if(bUsingMaterials){
+				meshHelper.material.begin();
+			}
+
+
+			// Culling
+			if(meshHelper.twoSided)
+				glEnable(GL_CULL_FACE);
+			else
+				glDisable(GL_CULL_FACE);
+
+			ofEnableBlendMode(meshHelper.blendMode);
+#ifndef TARGET_OPENGLES
+		    meshHelper.vbo.drawElements(GL_TRIANGLES,meshHelper.indices.size());
+#else
+		    switch(renderType){
+		    case OF_MESH_FILL:
+		    	meshHelper.vbo.drawElements(GL_TRIANGLES,meshHelper.indices.size());
+		    	break;
+		    case OF_MESH_WIREFRAME:
+		    	meshHelper.vbo.drawElements(GL_LINES,meshHelper.indices.size());
+		    	break;
+		    case OF_MESH_POINTS:
+		    	meshHelper.vbo.drawElements(GL_POINTS,meshHelper.indices.size());
+		    	break;
+		    }
+#endif
+
+			// Texture Binding
+			if(bUsingTextures && meshHelper.texture.bAllocated()){
+				meshHelper.texture.unbind();
+			}
+
+			if(bUsingMaterials){
+				meshHelper.material.end();
+			}
+		}
             
-        glPopMatrix();
+        ofPopMatrix();
         
+        ofPopStyle();
+#ifndef TARGET_OPENGLES
         glPopClientAttrib();
         glPopAttrib();
+#endif
     }
+}
+
+//-------------------------------------------
+vector<string> ofxAssimpModelLoader::getMeshNames(){
+	vector<string> names(scene->mNumMeshes);
+	for(int i=0; i<(int)scene->mNumMeshes; i++){
+		names[i] = scene->mMeshes[i]->mName.data;
+	}
+	return names;
+}
+
+//-------------------------------------------
+int ofxAssimpModelLoader::getNumMeshes(){
+	return scene->mNumMeshes;
+}
+
+//-------------------------------------------
+ofMesh ofxAssimpModelLoader::getMesh(string name){
+	ofMesh ofm;
+	// default to triangle mode
+	ofm.setMode(OF_TRIANGLES_MODE);
+	aiMesh * aim = NULL;
+	for(int i=0; i<(int)scene->mNumMeshes; i++){
+		if(string(scene->mMeshes[i]->mName.data)==name){
+			aim = scene->mMeshes[i];
+			break;
+		}
+	}
+
+	if(!aim){
+		ofLog(OF_LOG_ERROR,"couldn't find mesh " + name);
+		return ofm;
+	}
+
+	aiMeshToOfMesh(aim,ofm);
+	return ofm;
+}
+
+//-------------------------------------------
+ofMesh ofxAssimpModelLoader::getMesh(int num){
+	ofMesh ofm;
+	if((int)scene->mNumMeshes<=num){
+		ofLog(OF_LOG_ERROR,"couldn't find mesh " + ofToString(num) + " there's only " + ofToString(scene->mNumMeshes));
+		return ofm;
+	}
+
+	aiMeshToOfMesh(scene->mMeshes[num],ofm);
+	return ofm;
+}
+
+//-------------------------------------------
+ofMesh ofxAssimpModelLoader::getCurrentAnimatedMesh(string name){
+	for(int i=0; i<(int)modelMeshes.size(); i++){
+		if(string(modelMeshes[i].mesh->mName.data)==name){
+			if(!modelMeshes[i].validCache){
+				modelMeshes[i].cachedMesh.clearVertices();
+				modelMeshes[i].cachedMesh.clearNormals();
+				modelMeshes[i].cachedMesh.addVertices(aiVecVecToOfVecVec(modelMeshes[i].animatedPos));
+				modelMeshes[i].cachedMesh.addNormals(aiVecVecToOfVecVec(modelMeshes[i].animatedNorm));
+				modelMeshes[i].validCache = true;
+			}
+			return modelMeshes[i].cachedMesh;
+		}
+	}
+
+	ofLog(OF_LOG_ERROR,"couldn't find mesh " + name);
+	return ofMesh();
+
+}
+
+//-------------------------------------------
+ofMesh ofxAssimpModelLoader::getCurrentAnimatedMesh(int num){
+	if((int)modelMeshes.size()<=num){
+		ofLog(OF_LOG_ERROR,"couldn't find mesh " + ofToString(num) + " there's only " + ofToString(scene->mNumMeshes));
+		return ofMesh();
+	}
+	if(!modelMeshes[num].validCache){
+		modelMeshes[num].cachedMesh.clearVertices();
+		modelMeshes[num].cachedMesh.clearNormals();
+		modelMeshes[num].cachedMesh.addVertices(aiVecVecToOfVecVec(modelMeshes[num].animatedPos));
+		modelMeshes[num].cachedMesh.addNormals(aiVecVecToOfVecVec(modelMeshes[num].animatedNorm));
+		modelMeshes[num].validCache = true;
+	}
+	return modelMeshes[num].cachedMesh;
+}
+
+//-------------------------------------------
+ofMaterial ofxAssimpModelLoader::getMaterialForMesh(string name){
+	for(int i=0; i<(int)modelMeshes.size(); i++){
+		if(string(modelMeshes[i].mesh->mName.data)==name){
+			return modelMeshes[i].material;
+		}
+	}
+	ofLog(OF_LOG_ERROR,"couldn't find mesh " + name);
+	return ofMaterial();
+}
+
+//-------------------------------------------
+ofMaterial ofxAssimpModelLoader::getMaterialForMesh(int num){
+	if((int)modelMeshes.size()<=num){
+		ofLog(OF_LOG_ERROR,"couldn't find mesh " + ofToString(num) + " there's only " + ofToString(scene->mNumMeshes));
+		return ofMaterial();
+	}
+	return modelMeshes[num].material;
+}
+
+//-------------------------------------------
+ofTexture ofxAssimpModelLoader::getTextureForMesh(string name){
+	for(int i=0; i<(int)modelMeshes.size(); i++){
+		if(string(modelMeshes[i].mesh->mName.data)==name){
+			return modelMeshes[i].texture;
+		}
+	}
+	ofLog(OF_LOG_ERROR,"couldn't find mesh " + name);
+	return ofTexture();
+
+}
+
+//-------------------------------------------
+ofTexture ofxAssimpModelLoader::getTextureForMesh(int num){
+	if((int)modelMeshes.size()<=num){
+		ofLog(OF_LOG_ERROR,"couldn't find mesh " + ofToString(num) + " there's only " + ofToString(scene->mNumMeshes));
+		return ofTexture();
+	}
+	return modelMeshes[num].texture;
+}
+
+//-------------------------------------------
+ofPoint ofxAssimpModelLoader::getPosition(){
+	return pos;
+}
+
+//-------------------------------------------
+ofPoint ofxAssimpModelLoader::getSceneCenter(){
+	return aiVecToOfVec(scene_center);
+}
+
+//-------------------------------------------
+float ofxAssimpModelLoader::getNormalizedScale(){
+	return normalizedScale;
+}
+
+//-------------------------------------------
+ofPoint ofxAssimpModelLoader::getScale(){
+	return scale;
+}
+
+//-------------------------------------------
+const aiScene* ofxAssimpModelLoader::getAssimpScene(){
+	return scene;
+}
+
+//--------------------------------------------------------------
+void ofxAssimpModelLoader::enableTextures(){
+	bUsingTextures = true;
+}
+
+//--------------------------------------------------------------
+void ofxAssimpModelLoader::enableNormals(){
+	bUsingNormals = true;
+}
+
+//--------------------------------------------------------------
+void ofxAssimpModelLoader::enableColors(){
+	bUsingColors = true;
+}
+
+//--------------------------------------------------------------
+void ofxAssimpModelLoader::enableMaterials(){
+	bUsingMaterials = true;
+}
+
+//--------------------------------------------------------------
+void ofxAssimpModelLoader::disableTextures(){
+	bUsingTextures = false;
+}
+
+//--------------------------------------------------------------
+void ofxAssimpModelLoader::disableNormals(){
+	bUsingNormals = false;
+}
+
+//--------------------------------------------------------------
+void ofxAssimpModelLoader::disableColors(){
+	bUsingColors = false;
+}
+
+//--------------------------------------------------------------
+void ofxAssimpModelLoader::disableMaterials(){
+	bUsingMaterials = false;
 }

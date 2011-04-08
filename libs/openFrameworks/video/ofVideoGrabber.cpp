@@ -2,7 +2,7 @@
 #include "ofUtils.h"
 
 //TODO: allow for non rgb pixel formats to work with textures
-//TODO: getImageBytes() 
+//TODO: getImageBytes()
 //TODO: getBytesPerPixel()
 //TODO: add ofPixels support which would take care of the above
 
@@ -36,8 +36,8 @@ ofVideoGrabber::~ofVideoGrabber(){
 	if(	grabber != NULL ){
 		delete grabber;
 		grabber = NULL;
-	}	
-		
+	}
+
 	tex.clear();
 }
 
@@ -47,7 +47,7 @@ bool ofVideoGrabber::setGrabber(ofBaseVideoGrabber * newGrabber){
 		grabber = newGrabber;
 		return true;
 	}else{
-		//TODO: should we delete grabberPtr? This is why we need smart pointers. 
+		//TODO: should we delete grabberPtr? This is why we need smart pointers.
 		ofLog(OF_LOG_ERROR, "ofVideoGrabber::setGrabber - grabber already set!");
 	}
 	return false;
@@ -73,11 +73,11 @@ bool ofVideoGrabber::initGrabber(int w, int h, bool setUseTexture){
 	}
 
 	grabber->setPixelFormat(internalPixelFormat);
-	
+
 	bool bOk = grabber->initGrabber(w, h);
-	width	 = grabber->getWidth();
-	height	 = grabber->getHeight();	
-	
+	width	 = (int)grabber->getWidth();
+	height	 = (int)grabber->getHeight();
+
 	if( bOk && bUseTexture ){
 		if(internalPixelFormat == OF_PIXELS_RGB)
 			tex.allocate(width, height, GL_RGB);
@@ -92,8 +92,8 @@ bool ofVideoGrabber::initGrabber(int w, int h, bool setUseTexture){
 			tex.allocate(width, height, GL_LUMINANCE); // for some reason if we allcoate as GL_BGRA we get a white texture
 #endif
 	}
-	
-	return bOk;	
+
+	return bOk;
 }
 
 //--------------------------------------------------------------------
@@ -166,19 +166,19 @@ void ofVideoGrabber::update(){
 	if(	grabber != NULL ){
 		grabber->update();
 		if( bUseTexture && grabber->isFrameNew() ){
-			//note we should look at ways to do other pixel formats. 
+			//note we should look at ways to do other pixel formats.
 			if(internalPixelFormat == OF_PIXELS_RGB)
-				tex.loadData(grabber->getPixels(), tex.getWidth(), tex.getHeight(), GL_RGB);
+				tex.loadData(grabber->getPixels(), (int)tex.getWidth(), (int)tex.getHeight(), GL_RGB);
 			else if(internalPixelFormat == OF_PIXELS_RGBA)
-				tex.loadData(grabber->getPixels(), tex.getWidth(), tex.getHeight(), GL_RGBA);
+				tex.loadData(grabber->getPixels(), (int)tex.getWidth(), (int)tex.getHeight(), GL_RGBA);
 #ifndef TARGET_ANDROID
 			else if(internalPixelFormat == OF_PIXELS_BGRA)
-				tex.loadData(grabber->getPixels(), tex.getWidth(), tex.getHeight(), GL_BGRA);
+				tex.loadData(grabber->getPixels(), (int)tex.getWidth(), (int)tex.getHeight(), GL_BGRA);
 #else
 			else if(internalPixelFormat == OF_PIXELS_MONO)
-				tex.loadData(grabber->getPixels(), tex.getWidth(), tex.getHeight(), GL_LUMINANCE);
+				tex.loadData(grabber->getPixels(), (int)tex.getWidth(), (int)tex.getHeight(), GL_LUMINANCE);
 #endif
-			
+
 		}
 	}
 }
@@ -206,7 +206,7 @@ void ofVideoGrabber::videoSettings(void){
 
 //------------------------------------
 void ofVideoGrabber::setUseTexture(bool bUse){
-	bUseTexture = bUse;	
+	bUseTexture = bUse;
 }
 
 
@@ -216,7 +216,7 @@ void ofVideoGrabber::setAnchorPercent(float xPct, float yPct){
 }
 
 //----------------------------------------------------------
-void ofVideoGrabber::setAnchorPoint(int x, int y){
+void ofVideoGrabber::setAnchorPoint(float x, float y){
 	tex.setAnchorPoint(x, y);
 }
 
@@ -233,6 +233,16 @@ void ofVideoGrabber::draw(float _x, float _y, float _w, float _h){
 //------------------------------------
 void ofVideoGrabber::draw(float _x, float _y){
 	tex.draw(_x, _y);
+}
+
+//----------------------------------------------------------
+void ofVideoGrabber::draw(const ofPoint & p){
+	tex.draw(p);
+}
+
+//----------------------------------------------------------
+void ofVideoGrabber::draw(const ofRectangle & r){
+	tex.draw(r);
 }
 
 //----------------------------------------------------------
