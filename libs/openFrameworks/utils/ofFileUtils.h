@@ -70,23 +70,23 @@ public:
 	
 };
 
-class ofFile{
+class ofFile: public fstream{
 
 public:
 	
 	enum Mode{
-		Reference, // default, for non-stream operations
-		ReadOnly,  // the file will switch automatically to read only if theres any read operation
-		WriteOnly, // write modes need to be set explicitly
+		Closed,
+		ReadOnly,
+		WriteOnly,
 		ReadWrite,
 		Append
 	};
 
 	ofFile();
-	ofFile(string filePath, Mode mode=Reference, bool binary=false);
+	ofFile(string filePath, Mode mode=ReadOnly, bool binary=false);
 	~ofFile();
 
-	void open(string path, Mode mode=Reference, bool binary=false);
+	void open(string path, Mode mode=ReadOnly, bool binary=false);
 	void close();
 	bool create();
 	
@@ -127,47 +127,20 @@ public:
 	// stream operations
 	//------------------
 
+	// since this class inherits from fstream it can be used as a r/w stream:
+	// http://www.cplusplus.com/reference/iostream/fstream/
+
+
+	//helper functions to read/write a whole file to/from an ofBuffer
 	ofBuffer readToBuffer();
 	bool writeFromBuffer(ofBuffer & buffer);
 
-	// writes anything to the file
-	// use spaces to separate different elements in the same file
-	// ie: file.write(5);
-	//     file.write(" ");
-	//     file.write(ofVec3f(0,0,1))
-	template<typename T>
-	bool write(T & t);
-
-	// reads anything from the file
-	// ie: file.read(num);
-	//     file.read(vec3)
-	template<typename T>
-	bool read(T & t);
-
-	// allows for cout << file
-	friend ostream & operator<<(ostream & ostr,ofFile & file);
-	friend istream & operator>>(istream & istr,ofFile & file);
-
-	template<typename T>
-	ostream & operator<<(const T&t);
-
-	template<typename T>
-	istream & operator>>(T&t);
-
-	// used to convert the ofFile to istream or ostream
-	// they are used by the operators at the end of the file to allow things like
-	// file << "hello" << 5 << ofVec3f(4,5,6)
-	// to write to a file or
-	// file >> str >> number >> vec3
-	// to read from the file to variables of type string int and ofVec3f
-	ostream & getWriteStream();
-	istream & getReadStream();
-
-	// cast operator, allows to use an ofFile as an ostream or istream
-	// ie ofBuffer(ofFile("file.txt"));
-	operator ostream&();
-	operator istream&();
 	
+	// this can be used to read the whole stream into an output stream. ie:
+	// it's equivalent to rdbuf() just here to make it easier to use
+	// cout << file.getFileBuffer() << endl;
+	// write_file << file.getFileBuffer();
+	filebuf * getFileBuffer() const;
 
 
 	//-------
@@ -185,7 +158,7 @@ public:
 private:
 	bool isWriteMode();
 	Poco::File::File myFile;
-	fstream fstr;
+	//fstream fstr;
 	Mode mode;
 };
 
@@ -233,28 +206,3 @@ private:
 
 };
 
-template<typename T>
-inline ostream & ofFile::operator<<(const T&t){
-	getWriteStream() << t;
-	return getWriteStream();
-}
-
-template<typename T>
-inline istream & ofFile::operator>>(T&t){
-	getReadStream() >> t;
-	return getReadStream();
-}
-
-template<typename T>
-bool ofFile::write(T & t){
-	if(path() == "") return false;
-	getWriteStream() << t;
-	return true;
-}
-
-template<typename T>
-bool ofFile::read(T & t){
-	if(path() == "" || !exists()) return false;
-	getReadStream() >> t;
-	return true;
-}
