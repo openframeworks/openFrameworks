@@ -180,7 +180,7 @@ using Poco::NotFoundException;
 
 //------------------------------------------------------------------------------------------------------------
 ofFile::ofFile(){
-	mode = Closed;
+	mode = Reference;
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -194,26 +194,45 @@ ofFile::~ofFile(){
 }
 
 //------------------------------------------------------------------------------------------------------------
-void ofFile::open(string _path, Mode _mode, bool binary){
-	mode = _mode;
-	if(mode==Closed) return;
-	myFile = File(ofToDataPath(_path));
+bool ofFile::openStream(string path, Mode _mode, bool binary){
 	ios_base::openmode binary_mode = binary ? ios::binary : (ios_base::openmode)0;
 	switch(mode){
+	case Reference:
+		return true;
+		break;
 	case ReadOnly:
-		if(exists()) fstream::open(path().c_str(),ios::in | binary_mode);
+		if(exists()) fstream::open(path.c_str(),ios::in | binary_mode);
 		break;
 	case WriteOnly:
-		fstream::open(path().c_str(),ios::out | binary_mode);
+		fstream::open(path.c_str(),ios::out | binary_mode);
 		break;
 	case ReadWrite:
-		fstream::open(path().c_str(),ios_base::in | ios_base::out | binary_mode);
+		fstream::open(path.c_str(),ios_base::in | ios_base::out | binary_mode);
 		break;
 	case Append:
-		fstream::open(path().c_str(),ios::out | ios::app | binary_mode);
+		fstream::open(path.c_str(),ios::out | ios::app | binary_mode);
 		break;
-	default:
-		break;
+	}
+	return fstream::good();
+}
+
+//------------------------------------------------------------------------------------------------------------
+bool ofFile::open(string _path, Mode _mode, bool binary){
+	mode = _mode;
+	close();
+	myFile = File(ofToDataPath(_path));
+	return openStream(path(),_mode,binary);
+}
+
+//-------------------------------------------------------------------------------------------------------------
+bool ofFile::changeMode(Mode _mode, bool binary){
+	if(_mode != mode){
+		string _path = path();
+		close();
+		myFile = File(_path);
+		return openStream(_path, _mode, binary);
+	}else{
+		return true;
 	}
 }
 

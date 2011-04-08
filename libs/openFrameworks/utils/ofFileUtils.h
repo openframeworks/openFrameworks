@@ -75,7 +75,7 @@ class ofFile: public fstream{
 public:
 	
 	enum Mode{
-		Closed,
+		Reference,
 		ReadOnly,
 		WriteOnly,
 		ReadWrite,
@@ -86,7 +86,8 @@ public:
 	ofFile(string filePath, Mode mode=ReadOnly, bool binary=false);
 	~ofFile();
 
-	void open(string path, Mode mode=ReadOnly, bool binary=false);
+	bool open(string path, Mode mode=ReadOnly, bool binary=false);
+	bool changeMode(Mode mode, bool binary); // reopens a file to the same path with a different mode;
 	void close();
 	bool create();
 	
@@ -157,6 +158,7 @@ public:
 	
 private:
 	bool isWriteMode();
+	bool openStream(string path, Mode _mode, bool binary);
 	Poco::File::File myFile;
 	//fstream fstr;
 	Mode mode;
