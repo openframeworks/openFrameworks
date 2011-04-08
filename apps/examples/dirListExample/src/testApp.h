@@ -21,7 +21,7 @@ class testApp : public ofBaseApp{
 		void gotMessage(ofMessage msg);		
 		
 		// we will have a dynamic number of images, based on the content of a directory:
-		ofDirectoryLister dir;
+		ofDirectory dir;
 		vector<ofImage> images;
 		
 		int currentImage;
