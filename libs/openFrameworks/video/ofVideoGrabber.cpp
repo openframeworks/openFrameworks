@@ -32,11 +32,6 @@ ofVideoGrabber::~ofVideoGrabber(){
 }
 
 //--------------------------------------------------------------------
-void ofVideoGrabber::setGrabber(ofBaseVideoGrabber * newGrabber){
-	grabber = ofPtr<ofBaseVideoGrabber>(newGrabber);
-}
-
-
 void ofVideoGrabber::setGrabber(ofPtr<ofBaseVideoGrabber> newGrabber){
 	grabber = newGrabber;
 }
@@ -50,7 +45,7 @@ ofPtr<ofBaseVideoGrabber> ofVideoGrabber::getGrabber(){
 bool ofVideoGrabber::initGrabber(int w, int h, bool setUseTexture){
 
 	if( grabber == NULL ){
-		setGrabber( new OF_VID_GRABBER_TYPE );
+		setGrabber( ofPtr<OF_VID_GRABBER_TYPE>(new OF_VID_GRABBER_TYPE) );
 	}
 
 	bInitialized = true;

@@ -2,6 +2,7 @@
 
 #include "ofConstants.h"
 #include "ofBaseSoundStream.h"
+#include "ofTypes.h"
 
 class RtAudio;
 typedef unsigned int RtAudioStreamStatus;
@@ -31,7 +32,7 @@ class ofRtAudioSoundStream : public ofBaseSoundStream{
 		
 	private:
 		long unsigned long	tickCount;
-		RtAudio *			audio;
+		ofPtr<RtAudio>		audio;
 		int					sampleRate;
 		int					deviceID;
 		int					nInputChannels;

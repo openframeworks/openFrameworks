@@ -9,11 +9,6 @@ ofVideoPlayer::ofVideoPlayer (){
 }
 
 //---------------------------------------------------------------------------
-void ofVideoPlayer::setPlayer(ofBaseVideoPlayer * newPlayer){
-	player = ofPtr<ofBaseVideoPlayer>(newPlayer);
-}
-
-//---------------------------------------------------------------------------
 void ofVideoPlayer::setPlayer(ofPtr<ofBaseVideoPlayer> newPlayer){
 	player = newPlayer;
 }
@@ -31,7 +26,7 @@ void ofVideoPlayer::setPixelFormat(ofPixelFormat pixelFormat) {
 //---------------------------------------------------------------------------
 bool ofVideoPlayer::loadMovie(string name){
 	if( player == NULL ){
-		setPlayer( new OF_VID_PLAYER_TYPE );
+		setPlayer( ofPtr<OF_VID_PLAYER_TYPE>(new OF_VID_PLAYER_TYPE) );
 		player->setPixelFormat(internalPixelFormat);
 	}
 	

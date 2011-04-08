@@ -45,31 +45,19 @@ void ofSoundStreamListDevices(){
 	soundStreamOutput.listDevices();
 }
 
-
-//------------------------------------------------------------
 //------------------------------------------------------------
 ofSoundStream::ofSoundStream(){
-	soundStream = NULL;
-	setSoundStream( new OF_SOUND_STREAM_TYPE );
+	setSoundStream( ofPtr<OF_SOUND_STREAM_TYPE>(new OF_SOUND_STREAM_TYPE) );
 }
 
 //------------------------------------------------------------
-ofSoundStream::~ofSoundStream(){
-	close();
-	if( soundStream ){
-		delete soundStream;
-		soundStream = NULL;
-	}
-}
-
-//------------------------------------------------------------
-void ofSoundStream::setSoundStream(ofBaseSoundStream * soundStreamPtr){
-	if( soundStream ){
-		soundStream->stop();
-		soundStream->close();
-		delete soundStream;
-	}
+void ofSoundStream::setSoundStream(ofPtr<ofBaseSoundStream> soundStreamPtr){
 	soundStream = soundStreamPtr;
+}
+
+//------------------------------------------------------------
+ofPtr<ofBaseSoundStream> ofSoundStream::getSoundStream(){
+	return soundStream;
 }
 
 //------------------------------------------------------------

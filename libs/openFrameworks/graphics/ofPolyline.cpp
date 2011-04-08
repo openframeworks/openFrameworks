@@ -325,15 +325,17 @@ void ofPolyline::simplify(float tol){
 
 	int n = size();
 
-	vector <ofPoint> sV;
+	static vector <ofPoint> sV;
 	sV.resize(n);
 
     int    i, k, m, pv;            // misc counters
     float  tol2 = tol * tol;       // tolerance squared
-    ofPoint * vt = new ofPoint[n];
-	int * mk = new int[n];
+    static vector<ofPoint> vt;
+    static vector<int> mk;
+    vt.resize(n);
+	mk.resize(n);
 
-	memset(mk, 0, sizeof(int) * n );
+	memset(&mk[0], 0, sizeof(int) * n );
 
     // STAGE 1.  Vertex Reduction within tolerance of prior vertex cluster
     vt[0] = points[0];              // start at the beginning
@@ -347,7 +349,7 @@ void ofPolyline::simplify(float tol){
 
     // STAGE 2.  Douglas-Peucker polyline simplification
     mk[0] = mk[k-1] = 1;       // mark the first and last vertices
-    simplifyDP( tol, vt, 0, k-1, mk );
+    simplifyDP( tol, &vt[0], 0, k-1, &mk[0] );
 
     // copy marked vertices to the output simplified polyline
     for (i=m=0; i<k; i++) {
@@ -355,10 +357,10 @@ void ofPolyline::simplify(float tol){
     }
 
 	//get rid of the unused points
-	if( m < (int)sV.size() ) sV.erase( sV.begin()+m, sV.end() );
+	if( m < (int)sV.size() ){
+		points.assign( sV.begin()+m, sV.end() );
+	}else{
+		points = sV;
+	}
 
-	delete [] vt;
-	delete [] mk;
-
-	points = sV;
 }
