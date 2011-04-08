@@ -3,7 +3,6 @@
 //--------------------------
 // utils
 #include "ofConstants.h"
-#include "ofDirectoryLister.h"
 #include "ofFileUtils.h"
 #include "ofSystemUtils.h"
 #include "ofThread.h"
