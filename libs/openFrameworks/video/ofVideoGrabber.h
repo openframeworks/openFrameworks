@@ -7,27 +7,27 @@
 
 #ifdef OF_VIDEO_CAPTURE_IPHONE
 	#include "ofiPhoneVideoGrabber.h"
-	#define OF_VID_GRABBER_TYPE ofiPhoneVideoGrabber()
+	#define OF_VID_GRABBER_TYPE ofiPhoneVideoGrabber
 #endif
 
 #ifdef OF_VIDEO_CAPTURE_QUICKTIME
 	#include "ofQuickTimeGrabber.h"
-	#define OF_VID_GRABBER_TYPE ofQuickTimeGrabber()
+	#define OF_VID_GRABBER_TYPE ofQuickTimeGrabber
 #endif
 
 #ifdef OF_VIDEO_CAPTURE_DIRECTSHOW
 	#include "ofDirectShowGrabber.h"
-	#define OF_VID_GRABBER_TYPE ofDirectShowGrabber()
+	#define OF_VID_GRABBER_TYPE ofDirectShowGrabber
 #endif
 
 #ifdef OF_VIDEO_CAPTURE_GSTREAMER
 	#include "ofGstVideoGrabber.h"
-	#define OF_VID_GRABBER_TYPE ofGstVideoGrabber()
+	#define OF_VID_GRABBER_TYPE ofGstVideoGrabber
 #endif
 
 #ifdef OF_VIDEO_CAPTURE_ANDROID
 	#include "ofxAndroidVideoGrabber.h"
-	#define OF_VID_GRABBER_TYPE ofxAndroidVideoGrabber()
+	#define OF_VID_GRABBER_TYPE ofxAndroidVideoGrabber
 #endif
 
 class ofVideoGrabber : public ofBaseVideoGrabber,public ofBaseDraws, public ofBaseHasTexture{
@@ -37,7 +37,6 @@ class ofVideoGrabber : public ofBaseVideoGrabber,public ofBaseDraws, public ofBa
 		ofVideoGrabber();
 		virtual ~ofVideoGrabber();
 		
-		void					setGrabber(ofBaseVideoGrabber * newGrabber);
 		void					setGrabber(ofPtr<ofBaseVideoGrabber> newGrabber);
 		ofPtr<ofBaseVideoGrabber> getGrabber();
 

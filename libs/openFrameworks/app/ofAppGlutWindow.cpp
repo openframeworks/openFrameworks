@@ -45,7 +45,7 @@ static int 			nonFullScreenX;
 static int 			nonFullScreenY;
 static int			windowW;
 static int			windowH;
-static ofBaseApp *	ofAppPtr;
+static ofPtr<ofBaseApp>	ofAppPtr;
 static int          nFramesSinceWindowResized;
 static ofOrientation	orientation;
 
@@ -294,7 +294,7 @@ void ofAppGlutWindow::initializeWindow(){
 }
 
 //------------------------------------------------------------
-void ofAppGlutWindow::runAppViaInfiniteLoop(ofBaseApp * appPtr){
+void ofAppGlutWindow::runAppViaInfiniteLoop(ofPtr<ofBaseApp> appPtr){
 
 	ofAppPtr = appPtr;
 

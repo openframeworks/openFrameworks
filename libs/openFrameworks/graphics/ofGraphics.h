@@ -11,8 +11,8 @@
 #define  	CIRC_RESOLUTION		    22				// 22 pts for a circle...
 
 
-void ofSetDefaultRenderer(ofBaseRenderer * renderer);
-ofBaseRenderer * ofGetDefaultRenderer();
+void ofSetDefaultRenderer(ofPtr<ofBaseRenderer> renderer);
+ofPtr<ofBaseRenderer> & ofGetDefaultRenderer();
 
 //opengl specifics
 

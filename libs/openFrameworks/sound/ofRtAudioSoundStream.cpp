@@ -14,7 +14,6 @@ int receiveAudioBufferAndCallSimpleApp(void *outputBuffer, void *inputBuffer, un
 //------------------------------------------------------------------------------
 ofRtAudioSoundStream::ofRtAudioSoundStream(){
 	deviceID		= -1;
-	audio			= NULL;
 	soundOutputPtr	= NULL;
 	soundInputPtr	= NULL;
 	tickCount= 0;
@@ -28,11 +27,12 @@ ofRtAudioSoundStream::~ofRtAudioSoundStream(){
 
 //------------------------------------------------------------------------------
 void ofRtAudioSoundStream::listDevices(){	
-	RtAudio *audioTemp = 0;
+	ofPtr<RtAudio> audioTemp;
 	try {
-		audioTemp = new RtAudio();
+		audioTemp = ofPtr<RtAudio>(new RtAudio());
 	} catch (RtError &error) {
 		error.printMessage();
+		return;
 	}
  	int devices = audioTemp->getDeviceCount();
 	RtAudio::DeviceInfo info;
@@ -50,7 +50,6 @@ void ofRtAudioSoundStream::listDevices(){
 		std::cout << "-----------------------------------------\n";
 
 	}
-	delete audioTemp;
 }
 
 //------------------------------------------------------------------------------
@@ -82,7 +81,7 @@ bool ofRtAudioSoundStream::setup(int outChannels, int inChannels, int _sampleRat
 	bufferSize			= ofNextPow2(bufferSize);	// must be pow2
 
 	try {
-		audio = new RtAudio();
+		audio = ofPtr<RtAudio>(new RtAudio());
 	}	catch (RtError &error) {
 		error.printMessage();
 		return false;
@@ -164,8 +163,6 @@ void ofRtAudioSoundStream::close(){
   	} catch (RtError &error) {
    		error.printMessage();
  	}
-	delete audio;
-	audio = NULL;
 	soundOutputPtr	= NULL;
 	soundInputPtr	= NULL;	
 }
