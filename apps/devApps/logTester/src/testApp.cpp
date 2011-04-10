@@ -31,7 +31,12 @@ void testApp::update(){
 }
 
 //--------------------------------------------------------------
-void testApp::draw(){}
+void testApp::draw(){
+
+	ofDrawBitmapString(20, 12) << "frame: " << ofGetFrameNum() << endl
+						   	   << "  fps: " << ofGetFrameRate();
+	ofDrawBitmapString("millis: "+ofToString(ofGetElapsedTimeMillis()), 20, 100);
+}
 
 //--------------------------------------------------------------
 void testApp::logTest(const string& msg){
