@@ -573,7 +573,7 @@ void ofSetStyle(ofStyle style){
 }
 
 //----------------------------------------------------------
-ofStyle ofGetStyle(){
+ofStyle& ofGetStyle(){
 	return currentStyle;
 }
 
@@ -938,24 +938,4 @@ void ofBox(float size) {
 }
 
 // end 3d primitives
-//--------------------------------------------------
-
-
-//--------------------------------------------------
-// text
-//--------------------------------------------------
-void ofDrawBitmapString(string textString, const ofPoint & p){
-	ofDrawBitmapString(textString, p.x, p.y, p.z);
-}
-//--------------------------------------------------
-void ofDrawBitmapString(string textString, float x, float y){
-	ofDrawBitmapString(textString, x, y, 0.0f);
-}
-//--------------------------------------------------
-void ofDrawBitmapString(string textString, float x, float y, float z){
-	renderer->drawString(textString,x,y,z,currentStyle.drawBitmapMode);
-}
-
-
-// end text
 //--------------------------------------------------
