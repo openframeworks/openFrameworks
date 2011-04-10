@@ -102,7 +102,7 @@ ofLog::ofLog(ofLogLevel logLevel, const char* format, ...){
 
 //-------------------------------------------------------
 ofLog::~ofLog(){
-	// don't print if we printed in the constructor already
+	// don't log if we printed in the constructor already
 	if(!bPrinted){
 		_log(level, message.str());
 	}
