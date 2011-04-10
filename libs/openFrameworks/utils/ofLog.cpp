@@ -8,6 +8,11 @@ void ofSetLogLevel(ofLogLevel logLevel){
 	currentLogLevel = logLevel;
 }
 
+//--------------------------------------------------
+ofLogLevel ofGetLogLevel(){
+	return currentLogLevel;
+}
+
 #ifdef TARGET_ANDROID
 
 #include <android/log.h>
@@ -26,7 +31,85 @@ void ofSetLogLevel(ofLogLevel logLevel){
 #endif
 
 //--------------------------------------------------
-void ofLog(ofLogLevel logLevel, string message){
+ofLog::ofLog(){
+	level = OF_LOG_NOTICE;
+	bPrinted = false;
+}
+		
+//--------------------------------------------------
+ofLog::ofLog(ofLogLevel logLevel){
+	level = logLevel;
+	bPrinted = false;
+}
+
+//--------------------------------------------------
+ofLog::ofLog(ofLogLevel logLevel, string message){
+	_log(level, message);
+	bPrinted = true;
+}
+
+//--------------------------------------------------
+ofLog::ofLog(ofLogLevel logLevel, const char* format, ...){
+	//thanks stefan!
+	//http://www.ozzu.com/cpp-tutorials/tutorial-writing-custom-printf-wrapper-function-t89166.html
+
+	if(logLevel >= currentLogLevel){
+		va_list args;
+		va_start( args, format );
+		if(logLevel == OF_LOG_VERBOSE){
+			#ifdef TARGET_ANDROID
+				vLOGVERBOSE( format, args );
+			#else
+				printf("OF_VERBOSE: ");
+			#endif
+		}
+		else if(logLevel == OF_LOG_NOTICE){
+			#ifdef TARGET_ANDROID
+				vLOGNOTICE( format, args );
+			#else
+				printf("OF_NOTICE: ");
+			#endif
+		}
+		else if(logLevel == OF_LOG_WARNING){
+			#ifdef TARGET_ANDROID
+				vLOGWARNING( format, args );
+			#else
+				printf("OF_WARNING: ");
+			#endif
+		}
+		else if(logLevel == OF_LOG_ERROR){
+			#ifdef TARGET_ANDROID
+				vLOGERROR( format, args );
+			#else
+				printf("OF_ERROR: ");
+			#endif
+		}
+		else if(logLevel == OF_LOG_FATAL_ERROR){
+			#ifdef TARGET_ANDROID
+				vLOGFATAL( format, args );
+			#else
+				printf("OF_FATAL_ERROR: ");
+			#endif
+		}
+		#ifndef TARGET_ANDROID
+			vprintf( format, args );
+			printf("\n");
+		#endif
+		va_end( args );
+	}
+	bPrinted = true;
+}
+
+//-------------------------------------------------------
+ofLog::~ofLog(){
+	// don't print if we printed in the constructor already
+	if(!bPrinted){
+		_log(level, message.str());
+	}
+}
+
+//-------------------------------------------------------
+void ofLog::_log(ofLogLevel logLevel, string message){
 	if(logLevel >= currentLogLevel){
 		if(logLevel == OF_LOG_VERBOSE){
 			#ifdef TARGET_ANDROID
@@ -66,57 +149,6 @@ void ofLog(ofLogLevel logLevel, string message){
 		#ifndef TARGET_ANDROID
 			printf("%s\n",message.c_str());
 		#endif
-	}
-}
-
-//--------------------------------------------------
-void ofLog(ofLogLevel logLevel, const char* format, ...){
-	//thanks stefan!
-	//http://www.ozzu.com/cpp-tutorials/tutorial-writing-custom-printf-wrapper-function-t89166.html
-
-	if(logLevel >= currentLogLevel){
-		va_list args;
-		va_start( args, format );
-		if(logLevel == OF_LOG_VERBOSE){
-			#ifdef TARGET_ANDROID
-				vLOGVERBOSE( format, args );
-			#else
-				printf("OF_VERBOSE: ");
-			#endif
-		}
-		else if(logLevel == OF_LOG_NOTICE){
-			#ifdef TARGET_ANDROID
-				vLOGNOTICE( format, args );
-			#else
-						printf("OF_NOTICE: ");
-			#endif
-		}
-		else if(logLevel == OF_LOG_WARNING){
-			#ifdef TARGET_ANDROID
-				vLOGWARNING( format, args );
-			#else
-				printf("OF_WARNING: ");
-			#endif
-		}
-		else if(logLevel == OF_LOG_ERROR){
-			#ifdef TARGET_ANDROID
-				vLOGERROR( format, args );
-			#else
-				printf("OF_ERROR: ");
-			#endif
-		}
-		else if(logLevel == OF_LOG_FATAL_ERROR){
-			#ifdef TARGET_ANDROID
-				vLOGFATAL( format, args );
-			#else
-				printf("OF_FATAL_ERROR: ");
-			#endif
-		}
-		#ifndef TARGET_ANDROID
-			vprintf( format, args );
-			printf("\n");
-		#endif
-		va_end( args );
 	}
 }
 	
