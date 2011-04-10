@@ -173,7 +173,7 @@ private:
 	bool isWriteMode();
 	bool openStream(Mode _mode, bool binary);
 	void copyFrom(const ofFile & mom);
-	Poco::File::File myFile;
+	Poco::File myFile;
 	Mode mode;
 };
 
@@ -247,7 +247,7 @@ public:
 
 
 private:
-	Poco::File::File myDir;
+	Poco::File myDir;
 	string originalDirectory;
 	vector <string> extensions;
 	vector <ofFile> files;
