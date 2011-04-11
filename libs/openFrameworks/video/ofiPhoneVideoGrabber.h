@@ -4,6 +4,8 @@
 
 class AVFoundationVideoGrabber;
 
+#include "ofVideoGrabber.h"
+
 class ofiPhoneVideoGrabber : public ofBaseVideoGrabber {
 	
 	public :

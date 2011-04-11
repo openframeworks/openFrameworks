@@ -9,7 +9,8 @@
 #include "Poco/FIFOEvent.h"
 #include "Poco/Delegate.h"
 
-
+#include <stdio.h>
+#include <stdlib.h>
 
 //-----------------------------------------
 // define ofEvent as a poco FIFOEvent
@@ -17,7 +18,13 @@
 // ofEvent<argType> myEvent
 
 template <typename ArgumentsType>
-class ofEvent: public Poco::FIFOEvent<ArgumentsType> {};
+class ofEvent: public Poco::FIFOEvent<ArgumentsType> 
+{
+public:
+    ofEvent() {}
+    virtual ~ofEvent() {};
+    
+};
 
 
 
