@@ -18,7 +18,7 @@ ofLogLevel ofGetLogLevel();
 
 //------------------------------------------------------------------------------
 /// \class ofLog
-/// \brief a public streaming log interface
+/// \brief a streaming log interface
 ///
 /// ofLog accepts variables via the ostream operator << and builds a string
 /// and logs it when the stream is finished (via the destructor). A newline is
@@ -28,7 +28,9 @@ ofLogLevel ofGetLogLevel();
 ///
 /// Usage: ofLog() << "a string" << 100 << 20.234f;
 ///
-/// or:    ofLog(OF_LOG_ERROR, "another string"); 
+/// It also accepts the legacy ofLog interface: ofLog(ofLogLevel level, string message):
+///
+/// Usage: ofLog(OF_LOG_ERROR, "another string");
 ///
 /// class idea from:
 /// 	http://www.gamedev.net/community/forums/topic.asp?topic_id=525405&whichpage=1&#3406418
