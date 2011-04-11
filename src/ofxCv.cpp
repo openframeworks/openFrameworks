@@ -52,8 +52,12 @@ namespace ofxCv {
 	}
 	
 	Mat getMat(ofImage& img) {
-		int cvImageType = getCvImageType(img.getPixelsRef().getImageType());
-		return Mat(img.getHeight(), img.getWidth(), cvImageType, img.getPixels(), 0);
+		return getMat(img.getPixelsRef());
+	}
+	
+	Mat getMat(ofPixels& pix) {
+		int cvImageType = getCvImageType(pix.getImageType());
+		return Mat(pix.getHeight(), pix.getWidth(), cvImageType, pix.getPixels(), 0);
 	}
 	
 	ofVec2f makeVec(Point2f point) {
@@ -291,6 +295,18 @@ namespace ofxCv {
 		size = forceOdd(size);
 		Mat mat = getMat(img);
 		medianBlur(mat, mat, size);
+	}
+	
+	void warpPerspective(ofImage& src, ofImage& dst, Mat& m, int flags) {
+		Mat srcMat = getMat(src);
+		Mat dstMat = getMat(dst);
+		warpPerspective(srcMat, dstMat, m, dstMat.size(), flags);
+	}
+	
+	void warpPerspective(ofPixels& src, ofPixels& dst, Mat& m, int flags) {
+		Mat srcMat = getMat(src);
+		Mat dstMat = getMat(dst);
+		warpPerspective(srcMat, dstMat, m, dstMat.size(), flags);
 	}
 	
 	void resize(ofImage& source, ofImage& destination, int interpolation) {

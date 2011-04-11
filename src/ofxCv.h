@@ -35,6 +35,16 @@
  need to print better errors than default opencv errors...?
  if ofMat has a buffer image in it, then every function that needs a buffer can use that
  how is cv2 dealing w buffers?
+ 
+ a good reference for ocv2 design is cinder's implementation:
+ https://github.com/cinder/Cinder-OpenCV/blob/master/include/CinderOpenCV.h
+ the naming is nice because it's very consistent: toThis, fromThat, etc
+ but it's a bit odd to distinguish between sources and targets
+ 
+ externally facing functions should use cv datatypes
+ and you should be obliged to say fromCv or toCv if you want to use ofxCv
+ 
+ alternatively, you can create an ofxMat that has the various functions as member methods
  */
 
 namespace ofxCv {
@@ -47,6 +57,7 @@ namespace ofxCv {
 	void imitate(FloatImage& mirror, FloatImage& original);
 	int getCvImageType(const ofImageType& ofType);
 	Mat getMat(ofImage& img);
+	Mat getMat(ofPixels& pix);
 	ofVec2f makeVec(Point2f point);
 	ofVec3f makeVec(Point3f point);
 	cv::Rect makeRect(ofRectangle& rect);
@@ -71,6 +82,8 @@ namespace ofxCv {
 	void convolve(ofImage& img, FloatImage& kernel);
 	void blur(FloatImage& original, FloatImage& blurred, int size);
 	void medianBlur(ofImage& img, int size);
+	void warpPerspective(ofImage& src, ofImage& dst, Mat& m, int flags = 0);
+	void warpPerspective(ofPixels& src, ofPixels& dst, Mat& m, int flags = 0);
 	
 	// options: INTER_NEAREST, INTER_LINEAR, INTER_AREA, INTER_CUBIC, INTER LANCZOS4
 	void resize(ofImage& source, ofImage& destination, int interpolation = INTER_LINEAR);
