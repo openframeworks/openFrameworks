@@ -3,19 +3,21 @@
 #include "ofPoint.h"
 #include "ofConstants.h"
 
-// ** note, this uses glDrawPixels and may be S L 0 W on some graphics cards
-
 //------------------------------------------------------------------------------
 /// \class ofDrawBitmapStream
 /// \brief a stream interface to draw a bitmap string
 ///
-/// ofxBitmapStream accepts variables via the ostream operator <<, builds a string,
+/// ofDrawBitmapStream accepts variables via the ostream operator <<, builds a string,
 /// and logs it when the stream is finished (via the destructor). All the stream
 /// controls work (endl, flush, hex, etc).
 ///
 /// Usage: ofDrawBitmapString(10, 10) << "a string" << 100 << 20.234f;
+///    
+/// It also accepts the legacy ofDrawBitmapString interface: 
 ///
-/// or:    ofDrawBitmapString("another string", 10, 10); 
+/// Usage: ofDrawBitmapString("another string", 10, 10);
+///
+/// \note: this uses glDrawPixels and may be S L 0 W on some graphics cards ...
 ///
 /// class idea from:
 /// 	http://www.gamedev.net/community/forums/topic.asp?topic_id=525405&whichpage=1&#3406418
