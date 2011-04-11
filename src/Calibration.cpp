@@ -5,6 +5,44 @@
 namespace ofxCv {
 	using namespace cv;
 	
+	void Intrinsics::setup(Mat cameraMatrixm cv::Size imageSize, cv::Size sensorSize) {
+		this->cameraMatrix = cameraMatrix;
+		this->imageSize = imageSize;
+		this->sensorSize = sensorSize;
+		calibrationMatrixValues(cameraMatrix, imageSize, sensorSize.width, sensorSize.height,
+														fov.x, fov.y, focalLength, principalPoint, aspectRatio);
+	}
+	
+	Mat Intrinsics::getCameraMatrix() const {
+		return cameraMatrix;
+	}
+	
+	cv::Size Intrinsics::getImageSize() const {
+		return imageSize;
+	}
+	
+	cv::Size Intrinsics::getSensorSize() const {
+		return sensorSize;
+	}
+	
+	cv::Point2d Intrinsics::getFov() const {
+		return fov;
+	}
+	
+	double Intrinsics::getFocalLength() const {
+		return focalLength;
+	}
+	
+	double Intrinsics::getAspectRatio() const {
+		return aspectRatio;
+	}
+	
+	Point2d Intrinsics::getPrincipalPoint() const {
+		return principalPoint;
+	}
+	
+	
+	
 	Calibration::Calibration() :
 	boardSize(cv::Size(9, 6)),
 	squareSize(1),
@@ -14,7 +52,7 @@ namespace ofxCv {
     FileStorage fs(ofToDataPath(filename, absolute), FileStorage::WRITE);
 		fs << "image_width" << imageSize.width;
 		fs << "image_height" << imageSize.height;
-    fs << "camera_matrix" << cameraMatrix;
+    fs << "camera_matrix" << distortedIntrinsics.getCameraMatrix();
     fs << "distortion_coefficients" << distCoeffs;
 		fs << "reprojection_error" << reprojectionError;
 	}
@@ -121,32 +159,11 @@ namespace ofxCv {
 	float Calibration::getReprojectionError(int i) const {
 		return perViewErrors[i];
 	}
-	Mat Calibration::getDistortedCameraMatrix() {
-		return cameraMatrix;
+	const Intrinsics& Calibration::getDistortedIntrinsics() const {
+		return distortedIntrinsics;
 	}
-	Mat Calibration::getUndistortedCameraMatrix() {
-		return undistortedCameraMatrix;
-	}
-	Mat Calibration::getDistortionCoefficients() {
-		return distCoeffs;
-	}
-	ofVec2f Calibration::getSensorSize() const {
-		return ofVec2f(sensorWidth, sensorHeight);
-	}
-	ofVec2f Calibration::getDistortedFov() const {
-		return ofVec2f(distortedFovx, distortedFovy);
-	}
-	ofVec2f Calibration::getUndistortedFov() const {
-		return ofVec2f(fovx, fovy);
-	}
-	ofVec2f Calibration::getUndistortedPrincipalPoint() const {
-		return ofVec2f(undistortedPrincipalPoint.x, undistortedPrincipalPoint.y);
-	}
-	ofVec2f Calibration::getImageSize() const {
-		return ofVec2f(imageSize.width, imageSize.height);
-	}
-	float Calibration::getFocalLength() const {
-		return focalLength;
+	const Intrinsics& CalibratioN::getUndistortedIntrinsics() const {
+		return undistortedIntrinsics;
 	}
 	int Calibration::size() const {
 		return imagePoints.size();
@@ -232,14 +249,8 @@ namespace ofxCv {
 		ofLog(OF_LOG_VERBOSE, "all views have error of " + ofToString(reprojectionError));
 	}
 	void Calibration::updateUndistortion() {
-		undistortedCameraMatrix = getOptimalNewCameraMatrix(cameraMatrix, distCoeffs, imageSize, fillFrame ? 0 : 1);
-		initUndistortRectifyMap(cameraMatrix, distCoeffs, Mat(),
-														undistortedCameraMatrix,
-														imageSize, CV_16SC2, undistortMapX, undistortMapY);
-		// this should be done with a small struct/class like CalibrationParameters
-		calibrationMatrixValues(cameraMatrix, imageSize, sensorWidth, sensorHeight,
-														distortedFovx, distortedFovy, focalLength, principalPoint, aspectRatio);
-		calibrationMatrixValues(undistortedCameraMatrix, imageSize, sensorWidth, sensorHeight,
-														fovx, fovy, focalLength, undistortedPrincipalPoint, aspectRatio);
+		Mat undistortedCameraMatrix = getOptimalNewCameraMatrix(distortedIntrinsics.getCameraMatrix(), distCoeffs, distortedIntrinsics.getImageSize(), fillFrame ? 0 : 1);
+		initUndistortRectifyMap(distortedIntrinsics.cameraMatrix, distCoeffs, Mat(), undistortedCameraMatrix, distortedIntrinsics.imageSize(), CV_16SC2, undistortMapX, undistortMapY);
+		undistortedIntrinsics.setup(undistortedCameraMatrix);
 	}
 }	

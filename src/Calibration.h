@@ -30,6 +30,24 @@ namespace ofxCv {
 	
 	using namespace cv;
 	
+	class Intrinsics {
+	public:
+		void setup(Mat cameraMatrixm cv::Size imageSize, cv::Size sensorSize);
+		Mat getCameraMatrix() const;
+		cv::Size getImageSize() const;
+		cv::Size getSensorSize() const;
+		cv::Point2d getFov() const;
+		double getFocalLength() const;
+		double getAspectRatio() const;
+		Point2d getPrincipalPoint() const;
+	protected:
+		Mat cameraMatrix;
+		cv::Size imageSize, sensorSize;
+		cv::Point2d fov;
+		double focalLength, aspectRatio;
+		Point2d principalPoint;
+	};
+	
 	class Calibration {
 	public:	
 		Calibration();
@@ -49,15 +67,8 @@ namespace ofxCv {
 		float getReprojectionError() const;
 		float getReprojectionError(int i) const;
 		
-		Mat getDistortionCoefficients();
-		Mat getDistortedCameraMatrix();
-		Mat getUndistortedCameraMatrix();
-		ofVec2f getSensorSize() const;
-		ofVec2f getDistortedFov() const;
-		ofVec2f getUndistortedFov() const;
-		ofVec2f getUndistortedPrincipalPoint() const;
-		ofVec2f getImageSize() const;
-		float getFocalLength() const;
+		const Intrinsics& getDistortedIntrinsics() const;
+		const Intrinsics& getUndistortedIntrinsics() const;
 		
 		// if you want a wider fov, say setFillFrame(false) before load() or calibrate()
 		void setFillFrame(bool fillFrame);
@@ -74,7 +85,8 @@ namespace ofxCv {
 		cv::Size boardSize, imageSize;
 		float squareSize;
 		Mat grayMat;
-		Mat cameraMatrix, distCoeffs;
+		
+		Mat distCoeffs;
 		
 		vector<Mat> boardRotations, boardTranslations;
 		vector<vector<Point3f> > objectPoints;
@@ -83,7 +95,6 @@ namespace ofxCv {
 		vector<float> perViewErrors;
 		
 		bool fillFrame;
-		Mat undistortedCameraMatrix;
 		Mat undistortBuffer;
 		Mat undistortMapX, undistortMapY;
 		
@@ -91,11 +102,8 @@ namespace ofxCv {
 		void updateReprojectionError();
 		void updateUndistortion();
 		
-		// these should all be in a small struct/class like CalibrationParameters
-		// it will allow distorted/undistorted parameters to be represented better
-		double sensorWidth, sensorHeight, fovx, fovy, focalLength, aspectRatio;
-		double distortedFovx, distortedFovy;
-		Point2d principalPoint, undistortedPrincipalPoint;
+		Intrinsics distortedIntrinsics;
+		Intrinsics undistortedIntrinsics;
 	};
 	
 }
