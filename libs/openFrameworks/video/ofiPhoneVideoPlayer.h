@@ -2,6 +2,8 @@
 #define _OF_IPHONE_VIDEO_PLAYER
 
 
+#include "ofVideoPlayer.h"
+
 class ofiPhoneVideoPlayer : public ofBaseVideoPlayer {
 	
 public:

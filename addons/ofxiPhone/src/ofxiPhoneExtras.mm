@@ -145,7 +145,19 @@ void ofxiPhoneEnableLoopInThread() {
 
 //--------------------------------------------------------------
 void ofxiPhoneSetOrientation(UIDeviceOrientation orientation) {
-	ofxiPhoneGetOFWindow()->setOrientation(orientation);
+    ofOrientation occidentation = OF_ORIENTATION_DEFAULT;
+
+    // iOS's UIDeviceOrientation is foreign to us
+    if ( orientation == UIDeviceOrientationPortrait )
+        occidentation = OF_ORIENTATION_DEFAULT;
+    else if ( orientation == UIDeviceOrientationLandscapeLeft )
+        occidentation = OF_ORIENTATION_90_RIGHT;
+    else if ( orientation == UIDeviceOrientationLandscapeRight )
+        occidentation = OF_ORIENTATION_90_LEFT;
+    else if ( orientation == UIDeviceOrientationPortraitUpsideDown )
+        occidentation = OF_ORIENTATION_180;
+    
+	ofxiPhoneGetOFWindow()->setOrientation(occidentation);
 }
 
 

@@ -43,6 +43,5 @@
 
 #import "ofxAccelerometer.h"
 #import "ofxiPhoneAlerts.h"
-#import "ofxMultiTouch.h"
 #import "ofxiPhoneApp.h"
 
