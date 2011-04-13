@@ -1,11 +1,11 @@
 #include "Calibration.h"
 
-#include "ofDirectoryLister.h"
+#include "ofFileUtils.h"
 
 namespace ofxCv {
 	using namespace cv;
 	
-	void Intrinsics::setup(Mat cameraMatrixm cv::Size imageSize, cv::Size sensorSize) {
+	void Intrinsics::setup(Mat cameraMatrix, cv::Size imageSize, cv::Size sensorSize) {
 		this->cameraMatrix = cameraMatrix;
 		this->imageSize = imageSize;
 		this->sensorSize = sensorSize;
@@ -41,8 +41,6 @@ namespace ofxCv {
 		return principalPoint;
 	}
 	
-	
-	
 	Calibration::Calibration() :
 	boardSize(cv::Size(9, 6)),
 	squareSize(1),
@@ -50,19 +48,33 @@ namespace ofxCv {
 	}
 	void Calibration::save(string filename, bool absolute) const {
     FileStorage fs(ofToDataPath(filename, absolute), FileStorage::WRITE);
-		fs << "image_width" << imageSize.width;
-		fs << "image_height" << imageSize.height;
-    fs << "camera_matrix" << distortedIntrinsics.getCameraMatrix();
-    fs << "distortion_coefficients" << distCoeffs;
-		fs << "reprojection_error" << reprojectionError;
+		cv::Size imageSize = distortedIntrinsics.getImageSize();
+		cv::Size sensorSize = distortedIntrinsics.getSensorSize();
+		Mat cameraMatrix = distortedIntrinsics.getCameraMatrix();
+		
+    fs << "cameraMatrix" << cameraMatrix;
+		fs << "imageSize_width" << imageSize.width;
+		fs << "imageSize_height" << imageSize.height;
+		fs << "sensorSize_width" << sensorSize.width;
+		fs << "sensorSize_height" << sensorSize.height;
+    fs << "distCoeffs" << distCoeffs;
+		fs << "reprojectionError" << reprojectionError;
 	}
 	void Calibration::load(string filename, bool absolute) {
 		FileStorage fs(ofToDataPath(filename, absolute), FileStorage::READ);
-		imageSize.width = (int) fs["image_width"];
-		imageSize.height = (int) fs["image_height"];
-		fs["camera_matrix"] >> cameraMatrix;
-		fs["distortion_coefficients"] >> distCoeffs;
-		reprojectionError = (float) fs["reprojection_error"];
+		cv::Size imageSize, sensorSize;
+		Mat cameraMatrix;
+		
+		fs["cameraMatrix"] >> cameraMatrix;
+		fs["imageSize_width"] >> imageSize.width;
+		fs["imageSize_height"] >> imageSize.height;
+		fs["sensorSize_width"] >> sensorSize.width;
+		fs["sensorSize_height"] >> sensorSize.height;
+		fs["distCoeffs"] >> distCoeffs;
+		fs["reprojectionError"] >> reprojectionError;
+		
+		distortedIntrinsics.setup(cameraMatrix, imageSize, sensorSize);
+		
 		updateUndistortion();
 	}
 	void Calibration::setBoardSize(int xCount, int yCount) {
@@ -75,7 +87,7 @@ namespace ofxCv {
 		this->fillFrame = fillFrame;
 	}
 	bool Calibration::add(ofImage& img) {
-		imageSize = cv::Size(img.getWidth(), img.getHeight());
+		addedImageSize = cv::Size(img.getWidth(), img.getHeight());
 		
 		vector<Point2f> pointBuf;
 		Mat imgMat = getMat(img);
@@ -102,24 +114,29 @@ namespace ofxCv {
 		return found;
 	}
 	bool Calibration::calibrate() {
-		cameraMatrix = Mat::eye(3, 3, CV_64F);
+		Mat cameraMatrix = Mat::eye(3, 3, CV_64F);
     distCoeffs = Mat::zeros(8, 1, CV_64F);
     
 		updateObjectPoints();
 		
-		bool calibFlags = 0; // uses more coeffs, but not necc. better
-    float rms = calibrateCamera(objectPoints, imagePoints, imageSize, cameraMatrix, distCoeffs, boardRotations, boardTranslations, calibFlags);
+		int calibFlags = 0;
+    float rms = calibrateCamera(objectPoints, imagePoints, addedImageSize, cameraMatrix, distCoeffs, boardRotations, boardTranslations, calibFlags);
     ofLog(OF_LOG_VERBOSE, "calibrateCamera() reports RMS error of " + ofToString(rms));
 		
     bool ok = checkRange(cameraMatrix) && checkRange(distCoeffs);
+		
+		if(!ok) {
+			ofLog(OF_LOG_ERROR, "Calibration::calibrate() failed to calibrate the camera");
+		}
     
+		distortedIntrinsics.setup(cameraMatrix, addedImageSize);
 		updateReprojectionError();
 		updateUndistortion();
 		
 		return ok;
 	}
 	bool Calibration::calibrateFromDirectory(string directory) {
-		ofDirectoryLister dirList;
+		ofDirectory dirList;
 		ofImage cur;
 		dirList.listDir(directory);
 		for(int i = 0; i < dirList.size(); i++) {
@@ -145,12 +162,14 @@ namespace ofxCv {
 			return;
 		}
 		Mat fundamentalMatrix, essentionalMatrix;
+		Mat cameraMatrix = distortedIntrinsics.getCameraMatrix();
+		Mat dstCameraMatrix = dst.getDistortedIntrinsics().getCameraMatrix();
 		// uses CALIB_FIX_INTRINSIC by default
 		stereoCalibrate(objectPoints,
 										imagePoints, dst.imagePoints,
 										cameraMatrix, distCoeffs,
-										dst.cameraMatrix, dst.distCoeffs,
-										imageSize, rotation, translation,
+										dstCameraMatrix, dst.distCoeffs,
+										distortedIntrinsics.getImageSize(), rotation, translation,
 										essentionalMatrix, fundamentalMatrix);			
 	}		
 	float Calibration::getReprojectionError() const {
@@ -162,7 +181,7 @@ namespace ofxCv {
 	const Intrinsics& Calibration::getDistortedIntrinsics() const {
 		return distortedIntrinsics;
 	}
-	const Intrinsics& CalibratioN::getUndistortedIntrinsics() const {
+	const Intrinsics& Calibration::getUndistortedIntrinsics() const {
 		return undistortedIntrinsics;
 	}
 	int Calibration::size() const {
@@ -235,7 +254,7 @@ namespace ofxCv {
 		perViewErrors.resize(objectPoints.size());
 		
 		for(int i = 0; i < objectPoints.size(); i++) {
-			projectPoints(Mat(objectPoints[i]), boardRotations[i], boardTranslations[i], cameraMatrix, distCoeffs, imagePoints2);
+			projectPoints(Mat(objectPoints[i]), boardRotations[i], boardTranslations[i], distortedIntrinsics.getCameraMatrix(), distCoeffs, imagePoints2);
 			double err = norm(Mat(imagePoints[i]), Mat(imagePoints2), CV_L2);
 			int n = objectPoints[i].size();
 			perViewErrors[i] = sqrt(err * err / n);
@@ -250,7 +269,7 @@ namespace ofxCv {
 	}
 	void Calibration::updateUndistortion() {
 		Mat undistortedCameraMatrix = getOptimalNewCameraMatrix(distortedIntrinsics.getCameraMatrix(), distCoeffs, distortedIntrinsics.getImageSize(), fillFrame ? 0 : 1);
-		initUndistortRectifyMap(distortedIntrinsics.cameraMatrix, distCoeffs, Mat(), undistortedCameraMatrix, distortedIntrinsics.imageSize(), CV_16SC2, undistortMapX, undistortMapY);
-		undistortedIntrinsics.setup(undistortedCameraMatrix);
+		initUndistortRectifyMap(distortedIntrinsics.getCameraMatrix(), distCoeffs, Mat(), undistortedCameraMatrix, distortedIntrinsics.getImageSize(), CV_16SC2, undistortMapX, undistortMapY);
+		undistortedIntrinsics.setup(undistortedCameraMatrix, distortedIntrinsics.getImageSize());
 	}
 }	

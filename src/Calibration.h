@@ -32,7 +32,8 @@ namespace ofxCv {
 	
 	class Intrinsics {
 	public:
-		void setup(Mat cameraMatrixm cv::Size imageSize, cv::Size sensorSize);
+		// kinect is 6.66mm(H) x 5.32mm(V)
+		void setup(Mat cameraMatrix, cv::Size imageSize, cv::Size sensorSize = cv::Size(0, 0));
 		Mat getCameraMatrix() const;
 		cv::Size getImageSize() const;
 		cv::Size getSensorSize() const;
@@ -82,7 +83,7 @@ namespace ofxCv {
 		
 	protected:
 		vector<vector<Point2f> > imagePoints;
-		cv::Size boardSize, imageSize;
+		cv::Size boardSize, addedImageSize;
 		float squareSize;
 		Mat grayMat;
 		
