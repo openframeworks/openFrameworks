@@ -36,6 +36,8 @@ void ofSoundShutdown();
 
 #ifdef TARGET_OF_IPHONE 
 	#define OF_SOUND_PLAYER_IPHONE
+#elif defined TARGET_LINUX
+	#define OF_SOUND_PLAYER_OPENAL
 #elif !defined(TARGET_ANDROID)
 	#define OF_SOUND_PLAYER_FMOD
 #else
@@ -50,6 +52,11 @@ void ofSoundShutdown();
 #ifdef OF_SOUND_PLAYER_FMOD
 #include "ofFmodSoundPlayer.h"
 #define OF_SOUND_PLAYER_TYPE ofFmodSoundPlayer()
+#endif
+
+#ifdef OF_SOUND_PLAYER_OPENAL
+#include "ofOpenALSoundPlayer.h"
+#define OF_SOUND_PLAYER_TYPE ofOpenALSoundPlayer()
 #endif
 
 #ifdef TARGET_OF_IPHONE

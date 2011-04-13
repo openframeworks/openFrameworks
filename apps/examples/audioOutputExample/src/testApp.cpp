@@ -26,7 +26,7 @@ void testApp::setup(){
 	//if you want to set the device id to be different than the default
 	//soundStream.setDeviceID(1); 	//note some devices are input only and some are output only 
 
-	soundStream.setupOutput(this, 2, sampleRate, bufferSize, 4);
+	soundStream.setup(this, 2, 0, sampleRate, bufferSize, 4);
 	
 	ofSetFrameRate(60);
 }

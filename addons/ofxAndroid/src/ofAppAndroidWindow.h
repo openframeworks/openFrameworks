@@ -36,7 +36,7 @@ public:
 	int		getWidth();
 	int		getHeight();
 
-
+	bool	doesHWOrientation(){return true;}
 
 	void	setFrameRate(float targetRate){}
 	void	setWindowTitle(string title){}

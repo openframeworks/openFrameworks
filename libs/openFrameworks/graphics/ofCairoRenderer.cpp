@@ -615,11 +615,11 @@ void ofCairoRenderer::viewport(float x, float y, float width, float height, bool
 	cairo_clip(cr);
 };
 
-void ofCairoRenderer::setupScreenPerspective(float width, float height, int orientation, bool vFlip, float fov, float nearDist, float farDist){
+void ofCairoRenderer::setupScreenPerspective(float width, float height, ofOrientation orientation, bool vFlip, float fov, float nearDist, float farDist){
 	if(!b3D) return;
 	if(width == 0) width = ofGetWidth();
 	if(height == 0) height = ofGetHeight();
-	if( orientation == 0 ) orientation = ofGetOrientation();
+	if( orientation == OF_ORIENTATION_UNKNOWN ) orientation = ofGetOrientation();
 
 	float viewW = ofGetViewportWidth();
 	float viewH = ofGetViewportHeight();
@@ -683,11 +683,11 @@ void ofCairoRenderer::setupScreenPerspective(float width, float height, int orie
 	}
 };
 
-void ofCairoRenderer::setupScreenOrtho(float width, float height, int orientation, bool vFlip, float nearDist, float farDist){
+void ofCairoRenderer::setupScreenOrtho(float width, float height, ofOrientation orientation, bool vFlip, float nearDist, float farDist){
 	if(!b3D) return;
 	if(width == 0) width = ofGetWidth();
 	if(height == 0) height = ofGetHeight();
-	if( orientation == 0 ) orientation = ofGetOrientation();
+	if( orientation == OF_ORIENTATION_UNKNOWN ) orientation = ofGetOrientation();
 
 	float viewW = ofGetViewportWidth();
 	float viewH = ofGetViewportHeight();

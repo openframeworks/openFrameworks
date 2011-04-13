@@ -9,6 +9,7 @@
 
 #include "ofBaseTypes.h"
 #include "ofPixels.h"
+#include "ofEvents.h"
 
 class ofxAndroidVideoGrabber: public ofBaseVideoGrabber{
 public:
@@ -37,10 +38,16 @@ public:
 	void videoSettings();
 	void setPixelFormat(ofPixelFormat pixelFormat);
 	ofPixelFormat getPixelFormat();
+
+	ofEvent<ofPixels> newFrameE;
+
+	// only to be used internally to resize;
+	ofPixelsRef getAuxBuffer();
 private:
 	int attemptFramerate;
 	bool bIsFrameNew;
 	bool bGrabberInited;
 	ofPixelFormat internalPixelFormat;
 	ofPixels pixels;
+	ofPixels auxBuffer;
 };

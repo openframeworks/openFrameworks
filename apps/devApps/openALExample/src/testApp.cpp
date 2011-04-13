@@ -4,13 +4,10 @@
 //--------------------------------------------------------------
 void testApp::setup(){	 
 	ofSetVerticalSync(true);
-	synth.setPlayer(new ofOpenALSoundPlayer);
 	synth.loadSound("sounds/synth.wav");
 
-	beats.setPlayer(new ofOpenALSoundPlayer);
 	beats.loadSound("sounds/1085.mp3");
 
-	vocals.setPlayer(new ofOpenALSoundPlayer);
 	vocals.loadSound("sounds/Violet.mp3");
 
 	synth.setVolume(0.75f);
