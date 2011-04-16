@@ -16,6 +16,7 @@ public:
 	void touchMoved(ofTouchEventArgs &touch);
 	void touchUp(ofTouchEventArgs &touch);
 	void touchDoubleTap(ofTouchEventArgs &touch);
+	void touchCancelled(ofTouchEventArgs &touch);
 
 	void lostFocus();
 	void gotFocus();
