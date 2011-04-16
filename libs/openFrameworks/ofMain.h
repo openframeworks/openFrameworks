@@ -54,9 +54,7 @@
 //--------------------------
 // video
 #include "ofVideoGrabber.h"
-#if !defined( TARGET_OF_IPHONE )		//(temp for now, until this is ported)
-	#include "ofVideoPlayer.h"
-#endif
+#include "ofVideoPlayer.h"
 
 //--------------------------
 // events
