@@ -17,5 +17,5 @@ public:
 	
 	// a scalar is like an ofVec4f
 	// but it's normally used for storing color information
-	Scalar diffMean, diffMeanMean;
+	Scalar diffMean;
 };
