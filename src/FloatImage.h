@@ -22,8 +22,8 @@ namespace ofxCv {
 		void draw(float x,float y);	
 		void draw(float x,float y,float w, float h);	
 		float getWidth();	
-		float getHeight();	
-		Mat& getMat();
+		float getHeight();
+		Mat& toCv();
 	private:
 		Mat pixels;
 		ofTexture texture;

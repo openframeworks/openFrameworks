@@ -51,25 +51,25 @@ namespace ofxCv {
 		}
 	}
 	
-	Mat getMat(ofImage& img) {
-		return getMat(img.getPixelsRef());
+	Mat toCv(ofImage& img) {
+		return toCv(img.getPixelsRef());
 	}
 	
-	Mat getMat(ofPixels& pix) {
+	Mat toCv(ofPixels& pix) {
 		int cvImageType = getCvImageType(pix.getImageType());
 		return Mat(pix.getHeight(), pix.getWidth(), cvImageType, pix.getPixels(), 0);
 	}
 	
-	ofVec2f makeVec(Point2f point) {
+	cv::Rect toCv(ofRectangle& rect) {
+		return cv::Rect(rect.x, rect.y, rect.width, rect.height);
+	}
+	
+	ofVec2f toOf(Point2f point) {
 		return ofVec2f(point.x, point.y);
 	}
 	
-	ofVec3f makeVec(Point3f point) {
+	ofVec3f toOf(Point3f point) {
 		return ofVec3f(point.x, point.y, point.z);
-	}
-	
-	cv::Rect makeRect(ofRectangle& rect) {
-		return cv::Rect(rect.x, rect.y, rect.width, rect.height);
 	}
 	
 	ofMatrix4x4 makeMatrix(Mat rotation, Mat translation) {
@@ -117,7 +117,7 @@ namespace ofxCv {
 	}
 	
 	void invert(ofImage& img) {
-		Mat imgMat = getMat(img);
+		Mat imgMat = toCv(img);
 		bitwise_not(imgMat, imgMat);
 	}
 	
@@ -127,8 +127,8 @@ namespace ofxCv {
 	void rotate(ofImage& original, ofImage& rotated, double angle, unsigned char fill, int interpolation) {
 		imitate(rotated, original);
 		
-		Mat originalMat = getMat(original);
-		Mat rotatedMat = getMat(rotated);
+		Mat originalMat = toCv(original);
+		Mat rotatedMat = toCv(rotated);
 		
 		Point2f center(originalMat.rows / 2, originalMat.cols / 2);
 		Mat rotationMatrix = getRotationMatrix2D(center, angle, 1);
@@ -138,8 +138,8 @@ namespace ofxCv {
 	void autothreshold(ofImage& original, ofImage& thresh, bool invert) {
 		imitate(thresh, original);
 		
-		Mat originalMat = getMat(original);
-		Mat threshMat = getMat(thresh);
+		Mat originalMat = toCv(original);
+		Mat threshMat = toCv(thresh);
 		
 		// this might only work on grayscale atm...
 		// if normal thresholding is 400 fps, THRESH_OTSU is 100 fps 
@@ -156,21 +156,21 @@ namespace ofxCv {
 	}
 	
 	void threshold(FloatImage& original, FloatImage& thresh, float value, bool invert) {
-		threshold(original.getMat(), thresh.getMat(), value, 1, invert ? THRESH_BINARY_INV : THRESH_BINARY);
+		threshold(original.toCv(), thresh.toCv(), value, 1, invert ? THRESH_BINARY_INV : THRESH_BINARY);
 	}
 	
 	void matchRegion(ofImage& source, ofRectangle& region, ofImage& search, FloatImage& result) {
 		imitate(search, source);
 		imitate(result, source);
 		
-		Mat sourceMat = getMat(source);
-		Mat searchMat = getMat(search);
-		Mat& resultMat = result.getMat(); // ideally FloatImage is ofImage and we won't need this
+		Mat sourceMat = toCv(source);
+		Mat searchMat = toCv(search);
+		Mat& resultMat = result.toCv(); // ideally FloatImage is ofImage and we won't need this
 		matchRegion(sourceMat, region, searchMat, resultMat);
 	}
 	
 	void matchRegion(Mat& source, ofRectangle& region, Mat& search, Mat& result) {
-		Mat sourceMat = Mat(source, makeRect(region));
+		Mat sourceMat = Mat(source, toCv(region));
 		
 		matchTemplate(search, sourceMat, result, CV_TM_CCOEFF_NORMED);
 	}
@@ -201,9 +201,9 @@ namespace ofxCv {
 	void autorotate(ofImage& original, ofImage& thresh, ofImage& output, float* rotation) {
 		imitate(output, original);
 		
-		Mat originalMat = getMat(original);
-		Mat threshMat = getMat(thresh);
-		Mat outputMat = getMat(output);
+		Mat originalMat = toCv(original);
+		Mat threshMat = toCv(thresh);
+		Mat outputMat = toCv(output);
 		vector<Vec4i> lines;
 		
 		double distanceResolution = 1;
@@ -226,9 +226,9 @@ namespace ofxCv {
 	void convolve(ofImage& source, FloatImage& kernel, ofImage& destination) {
 		imitate(destination, source);
 		
-		Mat sourceMat = getMat(source);
-		Mat kernelMat = kernel.getMat();
-		Mat destinationMat = getMat(destination);
+		Mat sourceMat = toCv(source);
+		Mat kernelMat = kernel.toCv();
+		Mat destinationMat = toCv(destination);
 		
 		flip(kernelMat, kernelMat, -1); // flip both axes
 		// we may need to 'set the anchor position'...?
@@ -254,7 +254,7 @@ namespace ofxCv {
 	}
 	
 	ofVec2f findMaxLocation(FloatImage& img) {
-		return findMaxLocation(img.getMat());
+		return findMaxLocation(img.toCv());
 	}
 	
 	ofVec2f findMaxLocation(Mat& mat) {
@@ -265,7 +265,7 @@ namespace ofxCv {
 	}
 	
 	void getBoundingBox(ofImage& img, ofRectangle& box, int thresh, bool invert) {
-		Mat mat = getMat(img);
+		Mat mat = toCv(img);
 		int flags = (invert ? THRESH_BINARY_INV : THRESH_BINARY);
 		
 		Mat rowMat = meanRows(mat);
@@ -288,30 +288,30 @@ namespace ofxCv {
 	void blur(FloatImage& original, FloatImage& blurred, int size) {
 		size = forceOdd(size);
 		imitate(blurred, original);
-		GaussianBlur(original.getMat(), blurred.getMat(), cv::Size(size, size), 0, 0);
+		GaussianBlur(original.toCv(), blurred.toCv(), cv::Size(size, size), 0, 0);
 	}
 	
 	void medianBlur(ofImage& img, int size) {
 		size = forceOdd(size);
-		Mat mat = getMat(img);
+		Mat mat = toCv(img);
 		medianBlur(mat, mat, size);
 	}
 	
 	void warpPerspective(ofImage& src, ofImage& dst, Mat& m, int flags) {
-		Mat srcMat = getMat(src);
-		Mat dstMat = getMat(dst);
+		Mat srcMat = toCv(src);
+		Mat dstMat = toCv(dst);
 		warpPerspective(srcMat, dstMat, m, dstMat.size(), flags);
 	}
 	
 	void warpPerspective(ofPixels& src, ofPixels& dst, Mat& m, int flags) {
-		Mat srcMat = getMat(src);
-		Mat dstMat = getMat(dst);
+		Mat srcMat = toCv(src);
+		Mat dstMat = toCv(dst);
 		warpPerspective(srcMat, dstMat, m, dstMat.size(), flags);
 	}
 	
 	void resize(ofImage& source, ofImage& destination, int interpolation) {
-		Mat sourceMat = getMat(source);
-		Mat destinationMat = getMat(destination);
+		Mat sourceMat = toCv(source);
+		Mat destinationMat = toCv(destination);
 		resize(sourceMat, destinationMat, destinationMat.size(), 0, 0, interpolation);
 	}
 	

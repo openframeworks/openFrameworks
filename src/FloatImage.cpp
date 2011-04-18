@@ -14,7 +14,7 @@ namespace ofxCv {
 	
 	void FloatImage::set(ofImage& img) {
 		imitate(*this, img);
-		Mat imgMat = ofxCv::getMat(img);
+		Mat imgMat = ofxCv::toCv(img);
 		imgMat.convertTo(pixels, CV_32F, 1 / 255.);
 	}
 	
@@ -64,7 +64,7 @@ namespace ofxCv {
 		return pixels.rows;
 	}
 	
-	Mat& FloatImage::getMat() {
+	Mat& FloatImage::toCv() {
 		return pixels;
 	}
 	

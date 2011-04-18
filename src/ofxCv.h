@@ -33,16 +33,16 @@
  all functions guarantee internally that the output images imitates input
  there should be a ton more const functions, but it's hard because of OF const issues
  need to print better errors than default opencv errors...?
- if ofMat has a buffer image in it, then every function that needs a buffer can use that
- how is cv2 dealing w buffers?
+ if ofMat has a buffer image in it, then every function that needs a buffer can use that?
  
  a good reference for ocv2 design is cinder's implementation:
  https://github.com/cinder/Cinder-OpenCV/blob/master/include/CinderOpenCV.h
  the naming is nice because it's very consistent: toThis, fromThat, etc
- but it's a bit odd to distinguish between sources and targets
+ maybe only 'to' makes it cleaner. toOf and toCv
+ but it's a bit odd to distinguish between sources and targets, if it can be avoided
  
  externally facing functions should use cv datatypes
- and you should be obliged to say fromCv or toCv if you want to use ofxCv
+ and you should be obliged to say toOf or toCv if you want to use ofxCv
  
  alternatively, you can create an ofxMat that has the various functions as member methods
  */
@@ -56,11 +56,14 @@ namespace ofxCv {
 	void imitate(FloatImage& mirror, ofImage& original);
 	void imitate(FloatImage& mirror, FloatImage& original);
 	int getCvImageType(const ofImageType& ofType);
-	Mat getMat(ofImage& img);
-	Mat getMat(ofPixels& pix);
-	ofVec2f makeVec(Point2f point);
-	ofVec3f makeVec(Point3f point);
-	cv::Rect makeRect(ofRectangle& rect);
+	
+	Mat toCv(ofImage& img);
+	Mat toCv(ofPixels& pix);
+	cv::Rect toCv(ofRectangle& rect);
+	
+	ofVec2f toOf(Point2f point);
+	ofVec3f toOf(Point3f point);
+	
 	ofMatrix4x4 makeMatrix(Mat rotation, Mat translation);
 	
 	void drawMat(Mat& mat, float x, float y);

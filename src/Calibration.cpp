@@ -90,7 +90,7 @@ namespace ofxCv {
 		addedImageSize = cv::Size(img.getWidth(), img.getHeight());
 		
 		vector<Point2f> pointBuf;
-		Mat imgMat = getMat(img);
+		Mat imgMat = toCv(img);
 		
 		// find corners
 		// no CV_CALIB_CB_FAST_CHECK, it breaks on dark images (e.g., dark IR images from kinect)
@@ -148,7 +148,7 @@ namespace ofxCv {
 		return calibrate();
 	}
 	void Calibration::undistort(ofImage& img) {
-		Mat imgMat = getMat(img);
+		Mat imgMat = toCv(img);
 		imgMat.copyTo(undistortBuffer);
 		remap(undistortBuffer, imgMat, undistortMapX, undistortMapY, INTER_LINEAR);
 	}
@@ -197,7 +197,7 @@ namespace ofxCv {
 		ofNoFill();
 		ofSetColor(ofColor::red);
 		for(int j = 0; j < imagePoints[i].size(); j++) {
-			ofCircle(makeVec(imagePoints[i][j]), 5);
+			ofCircle(toOf(imagePoints[i][j]), 5);
 		}
 		ofPopStyle();
 	}
@@ -219,13 +219,13 @@ namespace ofxCv {
 		
 		for(int j = 0; j < objectPoints[i].size(); j++) {
 			ofPushMatrix();
-			ofTranslate(makeVec(objectPoints[i][j]));
+			ofTranslate(toOf(objectPoints[i][j]));
 			ofCircle(0, 0, .5);
 			ofPopMatrix();
 		}
 		glBegin(GL_LINE_STRIP);
 		for(int j = 0; j < objectPoints[i].size(); j++) {
-			ofVec3f cur = makeVec(objectPoints[i][j]);
+			ofVec3f cur = toOf(objectPoints[i][j]);
 			glVertex3f(cur.x, cur.y, cur.z);
 		}
 		glEnd();
