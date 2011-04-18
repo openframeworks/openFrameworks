@@ -51,7 +51,7 @@ namespace ofxCv {
 		}
 	}
 	
-	Mat toCv(ofImage& img) {
+	Mat toCv(ofBaseHasPixels& img) {
 		return toCv(img.getPixelsRef());
 	}
 	

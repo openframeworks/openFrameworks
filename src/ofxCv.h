@@ -57,7 +57,7 @@ namespace ofxCv {
 	void imitate(FloatImage& mirror, FloatImage& original);
 	int getCvImageType(const ofImageType& ofType);
 	
-	Mat toCv(ofImage& img);
+	Mat toCv(ofBaseHasPixels& img);
 	Mat toCv(ofPixels& pix);
 	cv::Rect toCv(ofRectangle& rect);
 	

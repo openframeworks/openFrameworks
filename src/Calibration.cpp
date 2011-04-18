@@ -147,12 +147,14 @@ namespace ofxCv {
 		}
 		return calibrate();
 	}
-	void Calibration::undistort(ofImage& img) {
-		Mat imgMat = toCv(img);
-		imgMat.copyTo(undistortBuffer);
-		remap(undistortBuffer, imgMat, undistortMapX, undistortMapY, INTER_LINEAR);
+	void Calibration::undistort(Mat img) {
+		img.copyTo(undistortBuffer);
+		undistort(undistortBuffer, img);
 	}
-	void Calibration::getTransformation(Calibration& dst, Mat& rotation, Mat& translation) {
+	void Calibration::undistort(Mat src, Mat dst) {
+		remap(src, dst, undistortMapX, undistortMapY, INTER_LINEAR);
+	}
+	void Calibration::getTransformation(Calibration& dst, Mat rotation, Mat translation) {
 		if(imagePoints.size() == 0 || dst.imagePoints.size() == 0) {
 			ofLog(OF_LOG_ERROR, "getTransformation() requires both Calibration objects to have just been calibrated");
 			return;

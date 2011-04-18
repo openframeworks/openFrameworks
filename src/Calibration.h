@@ -17,11 +17,6 @@
 	to do inter-camera (extrinsics) calibration, you need to first calibrate
 	each camera individually. then use getTransformation to determine the
 	rotation and translation from camera to another.
-	
-	- - --
-	
-	need to clena up getters by adding another class
-	will help distinguishing distorted from undistorted parameters
 */
 
 #include "ofxCv.h"
@@ -61,9 +56,11 @@ namespace ofxCv {
 		bool add(ofImage& img);
 		bool calibrate();
 		bool calibrateFromDirectory(string directory);
-		void undistort(ofImage& img);
 		
-		void getTransformation(Calibration& dst, Mat& rotation, Mat& translation);
+		void undistort(Mat img);
+		void undistort(Mat src, Mat dst);
+		
+		void getTransformation(Calibration& dst, Mat rotation, Mat translation);
 		
 		float getReprojectionError() const;
 		float getReprojectionError(int i) const;
