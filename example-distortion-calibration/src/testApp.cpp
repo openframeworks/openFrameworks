@@ -3,13 +3,18 @@
 void testApp::setup() {
 	ofSetVerticalSync(true);
 	cam.initGrabber(640, 480);
-	undistorted.allocate(640, 480, OF_IMAGE_COLOR);
+	
+	imitate(undistorted, cam);
+	imitate(previous, cam);;
+	imitate(diff, cam);
 }
 
 void testApp::update() {
 	cam.update();
 	if(cam.isFrameNew()) {
-		//calibration.undistort(toCv(cam), toCv(undistorted));
+		if(calibration.size() > 0) {
+			calibration.undistort(toCv(cam), toCv(undistorted));
+		}
 	}
 }
 

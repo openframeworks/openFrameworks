@@ -13,5 +13,8 @@ public:
 	
 	ofVideoGrabber cam;
 	ofImage undistorted;
+	ofPixels previous;
+	ofImage diff;
+	
 	Calibration calibration;
 };

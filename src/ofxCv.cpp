@@ -6,43 +6,51 @@ namespace ofxCv {
 	
 	using namespace cv;
 	
-	void imitate(ofImage& mirror, ofImage& original) {
-		int w = original.getWidth();
-		int h = original.getHeight();
-		ofImageType mirrorType = mirror.getPixelsRef().getImageType();
-		ofImageType originalType = original.getPixelsRef().getImageType();
-		
-		if(mirror.bAllocated()) {
-			if(mirror.getWidth() != w || mirror.getHeight() != h) {
-				mirror.resize(w, h);
-			}
-			if(mirrorType != originalType) {
-				mirror.setImageType(originalType);
-			}
-		} else {
-			mirror.allocate(w, h, originalType);
+	void imitate(ofPixels& mirror, ofPixels& original) {
+		int mw = mirror.getWidth();
+		int mh = mirror.getHeight();
+		int ow = original.getWidth();
+		int oh = original.getHeight();
+		ofImageType mt = mirror.getImageType();
+		ofImageType ot = original.getImageType();
+		if(mw != ow || mh != oh || mt != ot) {
+			mirror.allocate(ow, oh, ot);
 		}
 	}
 	
-	void imitate(FloatImage& mirror, ofImage& original) {
-		int w = original.getWidth();
-		int h = original.getHeight();
-		
-		if(mirror.getWidth() != w || mirror.getHeight() != h) {
-			mirror.allocate(w, h);
+	void imitate(ofImage& mirror, ofPixels& original) {
+		int mw = mirror.getWidth();
+		int mh = mirror.getHeight();
+		int ow = original.getWidth();
+		int oh = original.getHeight();
+		ofImageType mt = mirror.getPixelsRef().getImageType();
+		ofImageType ot = original.getImageType();
+		if(mw != ow || mh != oh || mt != ot) {
+			mirror.allocate(ow, oh, ot);
+		}
+	}
+	
+	void imitate(FloatImage& mirror, ofPixels& original) {
+		int mw = mirror.getWidth();
+		int mh = mirror.getHeight();
+		int ow = original.getWidth();
+		int oh = original.getHeight();
+		if(mw != ow || mh != oh) {
+			mirror.allocate(ow, oh);
 		}
 	}
 	
 	void imitate(FloatImage& mirror, FloatImage& original) {
-		int w = original.getWidth();
-		int h = original.getHeight();
-		
-		if(mirror.getWidth() != w || mirror.getHeight() != h) {
-			mirror.allocate(w, h);
+		int mw = mirror.getWidth();
+		int mh = mirror.getHeight();
+		int ow = original.getWidth();
+		int oh = original.getHeight();
+		if(mw != ow || mh != oh) {
+			mirror.allocate(ow, oh);
 		}
 	}
 	
-	int getCvImageType(const ofImageType& ofType) {
+	int toCv(const ofImageType& ofType) {
 		switch(ofType) {
 			case OF_IMAGE_GRAYSCALE: return CV_8UC1;
 			case OF_IMAGE_COLOR: return CV_8UC3;
@@ -56,7 +64,7 @@ namespace ofxCv {
 	}
 	
 	Mat toCv(ofPixels& pix) {
-		int cvImageType = getCvImageType(pix.getImageType());
+		int cvImageType = toCv(pix.getImageType());
 		return Mat(pix.getHeight(), pix.getWidth(), cvImageType, pix.getPixels(), 0);
 	}
 	

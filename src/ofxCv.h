@@ -51,15 +51,23 @@ namespace ofxCv {
 	
 	using namespace cv;
 	
-	// util functions
-	void imitate(ofImage& mirror, ofImage& original);
-	void imitate(FloatImage& mirror, ofImage& original);
+	// imitate() is good for preparing buffers
+	// it's like allocate(), but uses the size and type of the original as a reference
+	void imitate(ofPixels& mirror, ofPixels& original);
+	void imitate(ofImage& mirror, ofPixels& original);
+	void imitate(FloatImage& mirror, ofPixels& original);
 	void imitate(FloatImage& mirror, FloatImage& original);
-	int getCvImageType(const ofImageType& ofType);
 	
+	template <class T>
+	void imitate(T& mirror, ofBaseHasPixels& original) {
+		imitate(mirror, original.getPixelsRef());
+	}
+	
+	// conversion functions toOf() and toCv()
 	Mat toCv(ofBaseHasPixels& img);
 	Mat toCv(ofPixels& pix);
-	cv::Rect toCv(ofRectangle& rect);
+	cv::Rect toCv(const ofRectangle& rect);
+	int toCv(const ofImageType& ofType);
 	
 	ofVec2f toOf(Point2f point);
 	ofVec3f toOf(Point3f point);
