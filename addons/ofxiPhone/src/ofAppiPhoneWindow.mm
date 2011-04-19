@@ -240,13 +240,13 @@ void ofAppiPhoneWindow::rotateXY(float &x, float &y) {
 			y = getHeight() - y;
 			break;
 			
-		case OF_ORIENTATION_90_RIGHT:
+		case OF_ORIENTATION_90_LEFT:
 			savedX = x;
 			x = y;
 			y = getHeight() - savedX;
 			break;
 			
-		case OF_ORIENTATION_90_LEFT:
+		case OF_ORIENTATION_90_RIGHT:
 			savedX = x;
 			x = getWidth() - y;
 			y = savedX;
