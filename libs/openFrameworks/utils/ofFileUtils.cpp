@@ -649,6 +649,9 @@ ofDirectory::ofDirectory() {
 
 //------------------------------------------------------------------------------------------------------------
 void ofDirectory::open(string path){
+	path = ofFilePath::getPathForDirectory(path);
+	originalDirectory = path;
+	files.clear();
 	myDir = File(ofToDataPath(path));
 }
 
@@ -822,20 +825,7 @@ void ofDirectory::allowExt(string extension){
 }
 
 //------------------------------------------------------------------------------------------------------------
-int ofDirectory::listDir(string directory, bool absolute){
-
-	/*directory = ofFilePath::getPathForDirectory(directory);
-
-	files.clear();
-
-	originalDirectory = directory;
-	string absolutePath = directory;
-	if(!absolute) {
-		absolutePath = ofToDataPath(directory);
-	}*/
-
-	originalDirectory = directory;
-	cout << originalDirectory << endl;
+int ofDirectory::listDir(string directory){
 	open(directory);
 	return listDir();
 }
@@ -886,7 +876,7 @@ string ofDirectory::getName(unsigned int position){
 
 //------------------------------------------------------------------------------------------------------------
 string ofDirectory::getPath(unsigned int position){
-	return files.at(position).path();
+	return originalDirectory + getName(position);
 }
 
 //------------------------------------------------------------------------------------------------------------

@@ -212,7 +212,7 @@ public:
 	// dirList operations
 	//-------------------
 	void allowExt(string extension);
-	int listDir(string path, bool absolute = false);
+	int listDir(string path);
 	int listDir();
 
 	string getName(unsigned int position); // e.g., "image.png"
