@@ -643,6 +643,10 @@ public:
 	}
 };
 
+ofDirectory::ofDirectory() {
+	showHidden = false;
+}
+
 //------------------------------------------------------------------------------------------------------------
 void ofDirectory::open(string path){
 	myDir = File(ofToDataPath(path));
@@ -692,6 +696,16 @@ void ofDirectory::setWriteable(bool flag = true){
 //------------------------------------------------------------------------------------------------------------
 void ofDirectory::setReadOnly(bool flag = true){
 	myDir.setReadOnly(flag);
+}
+
+//------------------------------------------------------------------------------------------------------------
+void ofDirectory::setExecutable(bool flag = true){
+	myDir.setExecutable(flag);
+}
+
+//------------------------------------------------------------------------------------------------------------
+void ofDirectory::setShowHidden(bool showHidden) {
+	this->showHidden = showHidden;
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -880,6 +894,11 @@ ofFile ofDirectory::getFile(unsigned int position, ofFile::Mode mode, bool binar
 	ofFile file = files[position];
 	file.changeMode(mode, binary);
 	return file;
+}
+
+//------------------------------------------------------------------------------------------------------------
+bool ofDirectory::getShowHidden() {
+	return showHidden;
 }
 
 //------------------------------------------------------------------------------------------------------------
