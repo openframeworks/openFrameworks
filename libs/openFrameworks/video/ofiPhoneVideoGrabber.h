@@ -1,6 +1,8 @@
 #ifndef _OF_IPHONE_VIDEO_GRABBER
 #define _OF_IPHONE_VIDEO_GRABBER
 
+#include "ofPixels.h"
+#include "ofBaseTypes.h"
 
 class AVFoundationVideoGrabber;
 

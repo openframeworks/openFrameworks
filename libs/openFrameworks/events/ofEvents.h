@@ -186,7 +186,7 @@ class ofDragInfo{
 		ofAddListener(ofEvents.touchDown, listener, &ListenerClass::touchDown);
 		ofAddListener(ofEvents.touchMoved, listener, &ListenerClass::touchMoved);
 		ofAddListener(ofEvents.touchUp, listener, &ListenerClass::touchUp);
-		ofAddListener(ofEvents.touchCancelled, listener, &ListenerClass::touchCancelled);
+//		ofAddListener(ofEvents.touchCancelled, listener, &ListenerClass::touchCancelled);
 	}
 
 	template<class ListenerClass>

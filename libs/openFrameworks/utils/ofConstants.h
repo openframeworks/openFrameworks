@@ -194,14 +194,14 @@ enum ofLoopType{
             #define OF_VIDEO_CAPTURE_QUICKTIME
         #else
 			#ifdef TARGET_OF_IPHONE
-				#define OF_VIDEO_CAPTURE_IPHONE
+//				#define OF_VIDEO_CAPTURE_IPHONE
 			#else
 				#define OF_VIDEO_CAPTURE_DIRECTSHOW
 			#endif
         #endif
     #else
 		#ifdef TARGET_OF_IPHONE
-			#define OF_VIDEO_CAPTURE_IPHONE
+//			#define OF_VIDEO_CAPTURE_IPHONE
 		#else
 			#define OF_VIDEO_CAPTURE_QUICKTIME
 		#endif
@@ -217,6 +217,7 @@ enum ofLoopType{
 #else 
 	#ifdef TARGET_OF_IPHONE
 		#define OF_VIDEO_PLAYER_IPHONE
+        #define OF_VIDEO_CAPTURE_IPHONE
 	#elif !defined(TARGET_ANDROID)
 		#define OF_VIDEO_PLAYER_QUICKTIME
 	#endif

@@ -183,16 +183,16 @@ void ofxiPhoneKeyboard::updateOrientation()
 		
 		switch (ofxiPhoneGetOrientation()) 
 		{
-			case OFXIPHONE_ORIENTATION_LANDSCAPE_LEFT:
+			case OF_ORIENTATION_90_LEFT:
 				_textField.transform = CGAffineTransformMakeRotation(-M_PI_2);
 				break;
 				
-			case OFXIPHONE_ORIENTATION_LANDSCAPE_RIGHT:
+			case OF_ORIENTATION_90_RIGHT:
 				
 				_textField.transform = CGAffineTransformMakeRotation(M_PI_2);
 				break;
 				
-				/*case OFXIPHONE_ORIENTATION_UPSIDEDOWN:
+				/*case OF_ORIENTATION_180:
 				 _textField.transform = CGAffineTransformMakeRotation(M_PI / 2.0);
 				 break;*/
 				
@@ -224,17 +224,17 @@ void ofxiPhoneKeyboard::updateOrientation()
 	
 	switch (ofxiPhoneGetOrientation()) 
 	{
-		case OFXIPHONE_ORIENTATION_LANDSCAPE_LEFT:
+		case OF_ORIENTATION_90_LEFT:
 			_textField.transform = CGAffineTransformMakeRotation(-M_PI_2);
 			break;
 			
-		case OFXIPHONE_ORIENTATION_LANDSCAPE_RIGHT:
+		case OF_ORIENTATION_90_RIGHT:
 			
 			_textField.transform = CGAffineTransformMakeRotation(M_PI_2);
 			break;
 			
-		case OFXIPHONE_ORIENTATION_PORTRAIT:
-		case OFXIPHONE_ORIENTATION_UPSIDEDOWN:
+		case OF_ORIENTATION_DEFAULT:
+		case OF_ORIENTATION_180:
 			_textField.transform = CGAffineTransformMakeRotation(0.0f);
 			break;
 			
@@ -330,15 +330,15 @@ void ofxiPhoneKeyboard::updateOrientation()
 	
 	switch (ofxiPhoneGetOrientation()) 
 	{
-		case OFXIPHONE_ORIENTATION_LANDSCAPE_LEFT:
+		case OF_ORIENTATION_90_LEFT:
 			[_textField setFrame: CGRectMake(rect.origin.y-rect.size.height, s.height-rect.size.width-rect.origin.x, rect.size.height, rect.size.width)];
 			break;
 			
-		case OFXIPHONE_ORIENTATION_LANDSCAPE_RIGHT:
+		case OF_ORIENTATION_90_RIGHT:
 			[_textField setFrame: CGRectMake(s.width-rect.origin.y , rect.origin.x, rect.size.height, rect.size.width)];
 			break;
 			
-			/*case OFXIPHONE_ORIENTATION_UPSIDEDOWN:
+			/*case OF_ORIENTATION_180:
 			 _textField = [[UITextField alloc] initWithFrame:CGRectMake(x+320, y, w, h)];
 			 _textField.transform = CGAffineTransformMakeRotation(M_PI / 2.0);
 			 break;*/

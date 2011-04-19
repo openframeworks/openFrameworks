@@ -122,7 +122,7 @@
 	
 	
 	
-	iPhoneSetOrientation(OFXIPHONE_ORIENTATION_PORTRAIT);
+//	iPhoneSetOrientation(OFXIPHONE_ORIENTATION_PORTRAIT);
 	
 	
 	// call testApp::setup()

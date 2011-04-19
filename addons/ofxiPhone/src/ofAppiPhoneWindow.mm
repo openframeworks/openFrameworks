@@ -146,14 +146,14 @@ ofPoint	ofAppiPhoneWindow::getScreenSize() {
 }
 
 int ofAppiPhoneWindow::getWidth(){
-	if( orientation == OFXIPHONE_ORIENTATION_PORTRAIT || orientation == OFXIPHONE_ORIENTATION_UPSIDEDOWN ){
+	if( orientation == OF_ORIENTATION_DEFAULT || orientation == OF_ORIENTATION_DEFAULT ){
 		return (int)getScreenSize().x;
 	}
 	return (int)getScreenSize().y;
 }
 
 int ofAppiPhoneWindow::getHeight(){
-	if( orientation == OFXIPHONE_ORIENTATION_PORTRAIT || orientation == OFXIPHONE_ORIENTATION_UPSIDEDOWN ){
+	if( orientation == OF_ORIENTATION_DEFAULT || orientation == OF_ORIENTATION_180 ){
 		return (int)getScreenSize().y;
 	}
 	return (int)getScreenSize().x;
@@ -201,20 +201,19 @@ void ofAppiPhoneWindow::disableSetupScreen(){
 	bEnableSetupScreen = false;
 };
 
-void ofAppiPhoneWindow::setOrientation(int orientation) {
-
+void ofAppiPhoneWindow::setOrientation(ofOrientation orientation) {
 	ofLog(OF_LOG_VERBOSE, "ofAppiPhoneWindow::setOrientation: " + ofToString(orientation));
 	switch (orientation) {
-		case OFXIPHONE_ORIENTATION_PORTRAIT:
+		case OF_ORIENTATION_DEFAULT:
 			[[UIApplication sharedApplication] setStatusBarOrientation: UIInterfaceOrientationPortrait];
 			break;
-		case OFXIPHONE_ORIENTATION_UPSIDEDOWN:
+		case OF_ORIENTATION_180:
 			[[UIApplication sharedApplication] setStatusBarOrientation: UIInterfaceOrientationPortraitUpsideDown];
 			break;
-		case OFXIPHONE_ORIENTATION_LANDSCAPE_RIGHT:
+		case OF_ORIENTATION_90_RIGHT:
 			[[UIApplication sharedApplication] setStatusBarOrientation: UIInterfaceOrientationLandscapeRight];
 			break;
-		case OFXIPHONE_ORIENTATION_LANDSCAPE_LEFT:
+		case OF_ORIENTATION_90_LEFT:
 			[[UIApplication sharedApplication] setStatusBarOrientation: UIInterfaceOrientationLandscapeLeft];			break;
 			
 		default:
@@ -229,31 +228,31 @@ void ofAppiPhoneWindow::setOrientation(int orientation) {
 }
 
 
-int ofAppiPhoneWindow::getOrientation() {
+ofOrientation ofAppiPhoneWindow::getOrientation() {
 	return orientation;
 }
 
 void ofAppiPhoneWindow::rotateXY(float &x, float &y) {
 	float savedX;
 	switch(orientation) {
-		case OFXIPHONE_ORIENTATION_UPSIDEDOWN:
+		case OF_ORIENTATION_180:
 			x = getWidth() - x;
 			y = getHeight() - y;
 			break;
 			
-		case OFXIPHONE_ORIENTATION_LANDSCAPE_RIGHT:
+		case OF_ORIENTATION_90_RIGHT:
 			savedX = x;
 			x = y;
 			y = getHeight() - savedX;
 			break;
 			
-		case OFXIPHONE_ORIENTATION_LANDSCAPE_LEFT:
+		case OF_ORIENTATION_90_LEFT:
 			savedX = x;
 			x = getWidth() - y;
 			y = savedX;
 			break;
 			
-		case OFXIPHONE_ORIENTATION_PORTRAIT:
+		case OF_ORIENTATION_DEFAULT:
 		default:
 			break;
 			
