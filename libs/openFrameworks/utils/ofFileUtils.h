@@ -180,6 +180,8 @@ private:
 class ofDirectory{
 
 public:
+	ofDirectory();
+
 	void open(string path);
 	void close();
 	bool create();
@@ -197,6 +199,7 @@ public:
 	void setWriteable(bool writeable);
 	void setReadOnly(bool readable);
 	void setExecutable(bool executable);
+	void setShowHidden(bool showHidden);
 
 	bool copyTo(string path, bool bRelativeToData = true, bool overwrite = false);
 	bool moveTo(string path, bool bRelativeToData = true, bool overwrite = false);
@@ -215,6 +218,7 @@ public:
 	string getName(unsigned int position); // e.g., "image.png"
 	string getPath(unsigned int position);
 	ofFile getFile(unsigned int position, ofFile::Mode mode=ofFile::Reference, bool binary=false);
+	bool getShowHidden();
 
 	void reset(); //equivalent to close, just here for bw compatibility with ofxDirList
 	void sort();
