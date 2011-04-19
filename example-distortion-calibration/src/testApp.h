@@ -14,7 +14,10 @@ public:
 	ofVideoGrabber cam;
 	ofImage undistorted;
 	ofPixels previous;
-	ofImage diff;
+	ofPixels diff;
+	float diffMean;
+	
+	bool lastRecording;
 	
 	Calibration calibration;
 };

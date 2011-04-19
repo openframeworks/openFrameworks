@@ -53,7 +53,7 @@ namespace ofxCv {
 		
 		void setBoardSize(int xCount, int yCount);
 		void setSquareSize(float squareSize);
-		bool add(ofImage& img);
+		bool add(Mat img);
 		bool calibrate();
 		bool calibrateFromDirectory(string directory);
 		
@@ -67,6 +67,7 @@ namespace ofxCv {
 		
 		const Intrinsics& getDistortedIntrinsics() const;
 		const Intrinsics& getUndistortedIntrinsics() const;
+		Mat getDistCoeffs() const;
 		
 		// if you want a wider fov, say setFillFrame(false) before load() or calibrate()
 		void setFillFrame(bool fillFrame);

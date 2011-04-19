@@ -1,1 +1,1 @@
-This addon represents an alternative approach to wrapping OpenCV for open frameworks. I wouldn't encourage anyone to actually use it for now.
+This addon represents an alternative approach to wrapping OpenCV for openFrameworks. I don't encourage anyone to use it at the moment, as it is undergoing heavy development and constant refactoring. Suggestions, however, are welcome.

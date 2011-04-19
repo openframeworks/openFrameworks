@@ -42,7 +42,7 @@ namespace ofxCv {
 	}
 	
 	Calibration::Calibration() :
-	boardSize(cv::Size(9, 6)),
+	boardSize(cv::Size(10, 7)), // based on Chessboard_A4.pdf
 	squareSize(1),
 	fillFrame(true) {
 	}
@@ -86,29 +86,28 @@ namespace ofxCv {
 	void Calibration::setFillFrame(bool fillFrame) {
 		this->fillFrame = fillFrame;
 	}
-	bool Calibration::add(ofImage& img) {
-		addedImageSize = cv::Size(img.getWidth(), img.getHeight());
+	bool Calibration::add(Mat img) {
+		addedImageSize = img.size();
 		
 		vector<Point2f> pointBuf;
-		Mat imgMat = toCv(img);
 		
 		// find corners
-		// no CV_CALIB_CB_FAST_CHECK, it breaks on dark images (e.g., dark IR images from kinect)
+		// no CV_CALIB_CB_FAST_CHECK, because it breaks on dark images (e.g., dark IR images from kinect)
 		int chessFlags = CV_CALIB_CB_ADAPTIVE_THRESH | CV_CALIB_CB_NORMALIZE_IMAGE;
-		bool found = findChessboardCorners(imgMat, boardSize, pointBuf, chessFlags);
+		bool found = findChessboardCorners(img, boardSize, pointBuf, chessFlags);
 		
 		// improve corner accuracy
 		if(found) {
-			if(imgMat.type() != CV_8UC1) {
-				cvtColor(imgMat, grayMat, CV_RGB2GRAY);
+			if(img.type() != CV_8UC1) {
+				cvtColor(img, grayMat, CV_RGB2GRAY);
 			} else {
-				grayMat = imgMat;
+				grayMat = img;
 			}
 			
 			cornerSubPix(grayMat, pointBuf, cv::Size(11, 11),  cv::Size(-1,-1), TermCriteria(CV_TERMCRIT_EPS + CV_TERMCRIT_ITER, 30, 0.1 ));
 			
 			imagePoints.push_back(pointBuf);
-		} else {		
+		} else {
 			ofLog(OF_LOG_ERROR, "Calibration::add() failed, maybe your boardSize is wrong or the image has poor lighting?");
 		}
 		return found;
@@ -141,7 +140,7 @@ namespace ofxCv {
 		dirList.listDir(directory);
 		for(int i = 0; i < dirList.size(); i++) {
 			cur.loadImage(dirList.getPath(i));
-			if(!add(cur)) {
+			if(!add(toCv(cur))) {
 				ofLog(OF_LOG_ERROR, "Calibration::add() failed on " + dirList.getPath(i));
 			}
 		}
@@ -185,6 +184,9 @@ namespace ofxCv {
 	}
 	const Intrinsics& Calibration::getUndistortedIntrinsics() const {
 		return undistortedIntrinsics;
+	}
+	Mat Calibration::getDistCoeffs() const {
+		return distCoeffs;
 	}
 	int Calibration::size() const {
 		return imagePoints.size();
