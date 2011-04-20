@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2D5395AC1359F56000EC603B /* AVFoundationVideoGrabber.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D5395A81359F56000EC603B /* AVFoundationVideoGrabber.h */; };
+		2D5395AD1359F56000EC603B /* AVFoundationVideoGrabber.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D5395A91359F56000EC603B /* AVFoundationVideoGrabber.mm */; };
+		2D5395AE1359F56000EC603B /* AVFoundationVideoPlayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D5395AA1359F56000EC603B /* AVFoundationVideoPlayer.h */; };
+		2D5395AF1359F56000EC603B /* AVFoundationVideoPlayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D5395AB1359F56000EC603B /* AVFoundationVideoPlayer.mm */; };
 		2D72F0E013530BCF00A70379 /* ofFbo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D72F0CF13530BCF00A70379 /* ofFbo.cpp */; };
 		2D72F0E113530BCF00A70379 /* ofFbo.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D72F0D013530BCF00A70379 /* ofFbo.h */; };
 		2D72F0E213530BCF00A70379 /* ofGLRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D72F0D113530BCF00A70379 /* ofGLRenderer.cpp */; };
@@ -225,6 +229,10 @@
 		1D30AB110D05D00D00671497 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		1DF5F4DF0D08C38300B7A737 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		288765FC0DF74451002DB57D /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		2D5395A81359F56000EC603B /* AVFoundationVideoGrabber.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AVFoundationVideoGrabber.h; sourceTree = "<group>"; };
+		2D5395A91359F56000EC603B /* AVFoundationVideoGrabber.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AVFoundationVideoGrabber.mm; sourceTree = "<group>"; };
+		2D5395AA1359F56000EC603B /* AVFoundationVideoPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AVFoundationVideoPlayer.h; sourceTree = "<group>"; };
+		2D5395AB1359F56000EC603B /* AVFoundationVideoPlayer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AVFoundationVideoPlayer.mm; sourceTree = "<group>"; };
 		2D72F0CF13530BCF00A70379 /* ofFbo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofFbo.cpp; sourceTree = "<group>"; };
 		2D72F0D013530BCF00A70379 /* ofFbo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofFbo.h; sourceTree = "<group>"; };
 		2D72F0D113530BCF00A70379 /* ofGLRenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofGLRenderer.cpp; sourceTree = "<group>"; };
@@ -327,7 +335,7 @@
 		5F66FC3512FA068800F8458E /* ofMesh.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofMesh.h; sourceTree = "<group>"; };
 		BB16EBD10F2B2A9500518274 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
 		BB16EBD80F2B2AB500518274 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
-		BB24DED610DA7A3F00E9C588 /* libofxiPhone_iphoneos_Release.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libofxiPhone_iphoneos_Release.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		BB24DED610DA7A3F00E9C588 /* libofxiPhone_iphoneos_Debug.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libofxiPhone_iphoneos_Debug.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		BB24DF0310DA7BEF00E9C588 /* ofEvents.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofEvents.h; sourceTree = "<group>"; };
 		BB24DF0410DA7BEF00E9C588 /* ofEventUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofEventUtils.h; sourceTree = "<group>"; };
 		BB24DF1010DA7BEF00E9C588 /* ofMain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofMain.h; sourceTree = "<group>"; };
@@ -472,7 +480,7 @@
 		19C28FACFE9D520D11CA2CBB /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				BB24DED610DA7A3F00E9C588 /* libofxiPhone_iphoneos_Release.a */,
+				BB24DED610DA7A3F00E9C588 /* libofxiPhone_iphoneos_Debug.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -884,6 +892,10 @@
 		BB24E02810DA7C6100E9C588 /* src */ = {
 			isa = PBXGroup;
 			children = (
+				2D5395A81359F56000EC603B /* AVFoundationVideoGrabber.h */,
+				2D5395A91359F56000EC603B /* AVFoundationVideoGrabber.mm */,
+				2D5395AA1359F56000EC603B /* AVFoundationVideoPlayer.h */,
+				2D5395AB1359F56000EC603B /* AVFoundationVideoPlayer.mm */,
 				BB24E02910DA7C6100E9C588 /* EAGLView.h */,
 				BB24E02A10DA7C6100E9C588 /* EAGLView.mm */,
 				BB3140C511BB098A0019348E /* ESRenderer.h */,
@@ -1107,6 +1119,8 @@
 				2D72F10B13530C4B00A70379 /* ofBaseSoundStream.h in Headers */,
 				2D72F18B1353385D00A70379 /* ofxMultiTouch.h in Headers */,
 				2D72F18C1353385D00A70379 /* ofxMultiTouchListener.h in Headers */,
+				2D5395AC1359F56000EC603B /* AVFoundationVideoGrabber.h in Headers */,
+				2D5395AE1359F56000EC603B /* AVFoundationVideoPlayer.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1127,7 +1141,7 @@
 			);
 			name = "iPhone+OF Static Library";
 			productName = "Static Library";
-			productReference = BB24DED610DA7A3F00E9C588 /* libofxiPhone_iphoneos_Release.a */;
+			productReference = BB24DED610DA7A3F00E9C588 /* libofxiPhone_iphoneos_Debug.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 /* End PBXNativeTarget section */
@@ -1227,6 +1241,8 @@
 				2D72F11313530C5500A70379 /* ofVec2f.cpp in Sources */,
 				2D72F11413530C5500A70379 /* ofVec4f.cpp in Sources */,
 				2D72F18A1353385D00A70379 /* ofxMultiTouch.cpp in Sources */,
+				2D5395AD1359F56000EC603B /* AVFoundationVideoGrabber.mm in Sources */,
+				2D5395AF1359F56000EC603B /* AVFoundationVideoPlayer.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
