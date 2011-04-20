@@ -26,7 +26,7 @@ static vector<string> tokenize(const string & str, const string & delim)
 }
 //----------------------------------------
 
-
+//----------------------------------------
 ofxXmlSettings::ofxXmlSettings():
     storedHandle(NULL)
 {
@@ -36,8 +36,18 @@ ofxXmlSettings::ofxXmlSettings():
 	storedHandle   = TiXmlHandle(&doc);
 }
 
-//---------------------------------------------------------
+//----------------------------------------
+ofxXmlSettings::ofxXmlSettings(const string& xmlFile):
+    storedHandle(NULL)
+{
+	level			= 0;
+	//we do this so that we have a valid handle
+	//without the need for loadFile
+	storedHandle   = TiXmlHandle(&doc);
+	loadFile(xmlFile);
+}
 
+//---------------------------------------------------------
 ofxXmlSettings::~ofxXmlSettings()
 {
 }
@@ -80,6 +90,11 @@ void ofxXmlSettings::saveFile(const string& xmlFile){
 
 	string fullXmlFile = ofToDataPath(xmlFile);
 	doc.SaveFile(fullXmlFile);
+}
+
+//---------------------------------------------------------
+void ofxXmlSettings::saveFile(){
+	doc.SaveFile();
 }
 
 //---------------------------------------------------------

@@ -36,9 +36,10 @@ class ofRectangle {
 		bool inside (ofPoint p);
 		bool inside (float px, float py);
 		
-		ofRectangle & operator = (ofRectangle const & rect);
+		ofRectangle & operator = (const ofRectangle & rect);
 		bool operator == (ofRectangle const & r);
 		bool operator != (ofRectangle const & r);
+		ofRectangle & operator + (const ofPoint & point);
 		
 		float x;
 		float y;

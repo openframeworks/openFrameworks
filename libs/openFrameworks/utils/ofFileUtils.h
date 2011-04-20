@@ -30,6 +30,7 @@ public:
 	const char * getBinaryBuffer() const;
 
 	string getText() const;
+	operator string() const;  // cast to string, to use a buffer as a string
 
 	long size() const;
 
@@ -61,6 +62,8 @@ public:
 	static string addTrailingSlash(string path);
 	static string removeTrailingSlash(string path);
 	static string getPathForDirectory(string path);
+	static string getAbsolutePath(string path, bool bRelativeToData = true);
+
 	static bool isAbsolute(string path);
 	
 	static string getFilename(string filePath, bool bRelativeToData = true);	
@@ -96,10 +99,11 @@ public:
 	bool exists() const;
 	string path() const;
 	
-	string getExtension();
-	string getFileName();
-	string getBaseName(); // filename without extension
-	string getEnclosingDirectory();
+	string getExtension() const;
+	string getFileName() const;
+	string getBaseName() const; // filename without extension
+	string getEnclosingDirectory() const;
+	string getAbsolutePath() const;
 
 	bool canRead() const;
 	bool canWrite() const;
@@ -180,6 +184,9 @@ private:
 class ofDirectory{
 
 public:
+	ofDirectory();
+	ofDirectory(string path);
+
 	void open(string path);
 	void close();
 	bool create();
@@ -197,6 +204,7 @@ public:
 	void setWriteable(bool writeable);
 	void setReadOnly(bool readable);
 	void setExecutable(bool executable);
+	void setShowHidden(bool showHidden);
 
 	bool copyTo(string path, bool bRelativeToData = true, bool overwrite = false);
 	bool moveTo(string path, bool bRelativeToData = true, bool overwrite = false);
@@ -209,12 +217,13 @@ public:
 	// dirList operations
 	//-------------------
 	void allowExt(string extension);
-	int listDir(string path, bool absolute = false);
+	int listDir(string path);
 	int listDir();
 
 	string getName(unsigned int position); // e.g., "image.png"
 	string getPath(unsigned int position);
 	ofFile getFile(unsigned int position, ofFile::Mode mode=ofFile::Reference, bool binary=false);
+	bool getShowHidden();
 
 	void reset(); //equivalent to close, just here for bw compatibility with ofxDirList
 	void sort();
