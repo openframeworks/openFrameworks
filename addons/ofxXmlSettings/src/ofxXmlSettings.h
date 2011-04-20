@@ -45,12 +45,15 @@ class ofxXmlSettings{
 
 	public:
         ofxXmlSettings();
+        ofxXmlSettings(const string& xmlFile);
+
         ~ofxXmlSettings();
 
 		void setVerbose(bool _verbose);
 
-		bool loadFile(const string& xmlFile);	//this is not relative to your data/ path - use ofDataPath(...) to make it relative
-		void saveFile(const string& xmlFile);   //this is not relative to your data/ path - use ofDataPath(...) to make it relative
+		bool loadFile(const string& xmlFile);
+		void saveFile(const string& xmlFile);
+		void saveFile();
 
 		void clearTagContents(const string& tag, int which = 0);
 		void removeTag(const string& tag, int which = 0);

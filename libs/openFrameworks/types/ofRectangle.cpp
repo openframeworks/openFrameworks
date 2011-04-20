@@ -78,6 +78,12 @@ ofRectangle & ofRectangle::operator = (ofRectangle const & rect){
 	return *this;
 }
 
+ofRectangle & ofRectangle::operator + (const ofPoint & point){
+	x += point.x;
+	y += point.y;
+	return *this;
+}
+
 bool ofRectangle::operator == (ofRectangle const & r){
 	return (x == r.x) && (y == r.y) && (width == r.width) && (height == r.height);
 }

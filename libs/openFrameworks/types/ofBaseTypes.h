@@ -139,10 +139,16 @@ public:
 };
 
 
+// common base for ofVideoGrabber and ofVideoPlayer
+class ofBaseVideoDraws: virtual public ofBaseVideo, public ofBaseDraws, public ofBaseHasTexture{
+
+};
+
+
 //----------------------------------------------------------
 // ofBaseVideoGrabber
 //----------------------------------------------------------
-class ofBaseVideoGrabber: public ofBaseVideo{
+class ofBaseVideoGrabber: virtual public ofBaseVideo{
 	
 	public :
 	
@@ -176,7 +182,7 @@ class ofBaseVideoGrabber: public ofBaseVideo{
 //----------------------------------------------------------
 // ofBaseVideoPlayer
 //----------------------------------------------------------
-class ofBaseVideoPlayer: public ofBaseVideo{
+class ofBaseVideoPlayer: virtual public ofBaseVideo{
 	
 public:
 	
