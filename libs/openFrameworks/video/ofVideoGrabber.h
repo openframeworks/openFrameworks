@@ -30,7 +30,7 @@
 	#define OF_VID_GRABBER_TYPE ofxAndroidVideoGrabber()
 #endif
 
-class ofVideoGrabber : public ofBaseVideoGrabber,public ofBaseDraws, public ofBaseHasTexture{
+class ofVideoGrabber : public ofBaseVideoGrabber,public ofBaseVideoDraws{
 
 	public :
 
