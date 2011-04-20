@@ -479,7 +479,7 @@ bool ofGstVideoGrabber::initGrabber(int w, int h){
 	}
 
 	ofGstVideoFormat & format = selectFormat(w, h, attemptFramerate);
-
+	ofLog(OF_LOG_NOTICE,"ofGstUtils: selected device: " + camData.webcam_devices[deviceID].product_name);
 	ofLog(OF_LOG_NOTICE,"ofGstUtils: selected format: " + ofToString(format.width) + "x" + ofToString(format.height) + " " + format.mimetype + " framerate: " + ofToString(format.choosen_framerate.numerator) + "/" + ofToString(format.choosen_framerate.denominator));
 
 	bIsCamera = true;
