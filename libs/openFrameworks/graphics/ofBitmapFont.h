@@ -12,7 +12,7 @@
  
  */
 
-void ofDrawBitmapCharacterStart();
+void ofDrawBitmapCharacterStart(int stringLength);
 void ofDrawBitmapCharacter(int character, int x , int y );
 void ofDrawBitmapCharacterEnd();
 

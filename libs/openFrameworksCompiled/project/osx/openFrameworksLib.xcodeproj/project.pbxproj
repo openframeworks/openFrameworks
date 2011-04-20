@@ -55,8 +55,6 @@
 		DACFA8E8132D09E8008D4B7A /* ofVbo.h in Headers */ = {isa = PBXBuildFile; fileRef = DACFA8D7132D09E8008D4B7A /* ofVbo.h */; };
 		DACFA8E9132D09E8008D4B7A /* ofVboMesh.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DACFA8D8132D09E8008D4B7A /* ofVboMesh.cpp */; };
 		DACFA8EA132D09E8008D4B7A /* ofVboMesh.h in Headers */ = {isa = PBXBuildFile; fileRef = DACFA8D9132D09E8008D4B7A /* ofVboMesh.h */; };
-		E470211B1309929000A89B9F /* ofDirectoryLister.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E47021191309929000A89B9F /* ofDirectoryLister.cpp */; };
-		E470211C1309929100A89B9F /* ofDirectoryLister.h in Headers */ = {isa = PBXBuildFile; fileRef = E470211A1309929000A89B9F /* ofDirectoryLister.h */; };
 		E4998A26128A39480094AC3F /* ofEvents.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4998A25128A39480094AC3F /* ofEvents.cpp */; };
 		E4B27C1810CBEB9D00536013 /* ofAppGlutWindow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4B27AAD10CBE92A00536013 /* ofAppGlutWindow.cpp */; };
 		E4B27C1910CBEB9D00536013 /* ofAppRunner.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4B27AAF10CBE92A00536013 /* ofAppRunner.cpp */; };
@@ -243,8 +241,6 @@
 		E45BE9780E8CC7DD009D7055 /* GLUT.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLUT.framework; path = /System/Library/Frameworks/GLUT.framework; sourceTree = "<absolute>"; };
 		E45BE9790E8CC7DD009D7055 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = /System/Library/Frameworks/OpenGL.framework; sourceTree = "<absolute>"; };
 		E45BE97A0E8CC7DD009D7055 /* QuickTime.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuickTime.framework; path = /System/Library/Frameworks/QuickTime.framework; sourceTree = "<absolute>"; };
-		E47021191309929000A89B9F /* ofDirectoryLister.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofDirectoryLister.cpp; path = ../../../openFrameworks/utils/ofDirectoryLister.cpp; sourceTree = SOURCE_ROOT; };
-		E470211A1309929000A89B9F /* ofDirectoryLister.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofDirectoryLister.h; path = ../../../openFrameworks/utils/ofDirectoryLister.h; sourceTree = SOURCE_ROOT; };
 		E4998A25128A39480094AC3F /* ofEvents.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofEvents.cpp; sourceTree = "<group>"; };
 		E4B27AAC10CBE92A00536013 /* ofAppBaseWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofAppBaseWindow.h; path = ../../../openFrameworks/app/ofAppBaseWindow.h; sourceTree = SOURCE_ROOT; };
 		E4B27AAD10CBE92A00536013 /* ofAppGlutWindow.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofAppGlutWindow.cpp; path = ../../../openFrameworks/app/ofAppGlutWindow.cpp; sourceTree = SOURCE_ROOT; };
@@ -794,8 +790,6 @@
 		E4F3BAE212F4C745002D19BB /* utils */ = {
 			isa = PBXGroup;
 			children = (
-				E47021191309929000A89B9F /* ofDirectoryLister.cpp */,
-				E470211A1309929000A89B9F /* ofDirectoryLister.h */,
 				E4F3BAE312F4C745002D19BB /* ofConstants.h */,
 				E4F3BAE412F4C745002D19BB /* ofFileUtils.cpp */,
 				E4F3BAE512F4C745002D19BB /* ofFileUtils.h */,
@@ -1008,7 +1002,6 @@
 				DA97FD7712F5ABD4005C9991 /* pnglibconf.h in Headers */,
 				DA94C2F01301D32200CCC773 /* ofRendererCollection.h in Headers */,
 				53EEEF4B130766EF0027C199 /* ofMesh.h in Headers */,
-				E470211C1309929100A89B9F /* ofDirectoryLister.h in Headers */,
 				DA48FE78131D85A6000062BC /* ofPolyline.h in Headers */,
 				DA48FE7A131D85A6000062BC /* ofPolyUtils.h in Headers */,
 				DACFA8DB132D09E8008D4B7A /* ofFbo.h in Headers */,
@@ -1053,7 +1046,6 @@
 			isa = PBXProject;
 			buildConfigurationList = E4B69B4D0A3A1720003C02F2 /* Build configuration list for PBXProject "openFrameworksLib" */;
 			compatibilityVersion = "Xcode 2.4";
-			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				English,
@@ -1120,7 +1112,6 @@
 				E4F3BB2E12F4C752002D19BB /* ofTrueTypeFont.cpp in Sources */,
 				DA97FD3C12F5A61A005C9991 /* ofCairoRenderer.cpp in Sources */,
 				53EEEF4C130766EF0027C199 /* ofMesh.cpp in Sources */,
-				E470211B1309929000A89B9F /* ofDirectoryLister.cpp in Sources */,
 				DA48FE77131D85A6000062BC /* ofPolyline.cpp in Sources */,
 				DA48FE79131D85A6000062BC /* ofPolyUtils.cpp in Sources */,
 				DACFA8DA132D09E8008D4B7A /* ofFbo.cpp in Sources */,

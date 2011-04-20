@@ -102,6 +102,10 @@ string ofBuffer::getText() const{
 	return &buffer[0];
 }
 
+ofBuffer::operator string() const{
+	return getText();
+}
+
 //--------------------------------------------------
 long ofBuffer::size() const{
 	if(buffer.empty()) return 0;
@@ -129,7 +133,7 @@ string ofBuffer::getFirstLine(){
 
 //--------------------------------------------------
 ostream & operator<<(ostream & ostr,ofBuffer & buf){
-	ostr << buf.getText();
+	buf.writeTo(ostr);
 	return ostr;
 }
 
@@ -322,23 +326,28 @@ string ofFile::path() const{
 }
 
 //------------------------------------------------------------------------------------------------------------
-string ofFile::getExtension(){
+string ofFile::getExtension() const{
 	return ofFilePath::getFileExt(path());
 }
 
 //------------------------------------------------------------------------------------------------------------
-string ofFile::getFileName(){
+string ofFile::getFileName() const{
 	return ofFilePath::getFilename(path());
 }
 
 //------------------------------------------------------------------------------------------------------------
-string ofFile::getBaseName(){
+string ofFile::getBaseName() const{
 	return ofFilePath::removeExt(ofFilePath::getFilename(path()));
 }
 
 //------------------------------------------------------------------------------------------------------------
-string ofFile::getEnclosingDirectory(){
+string ofFile::getEnclosingDirectory() const{
 	return ofFilePath::getEnclosingDirectory(path());
+}
+
+//------------------------------------------------------------------------------------------------------------
+string ofFile::getAbsolutePath() const{
+	return ofFilePath::getAbsolutePath(path());
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -399,6 +408,7 @@ void ofFile::setExecutable(bool flag = true){
 //------------------------------------------------------------------------------------------------------------
 bool ofFile::copyTo(string path, bool bRelativeToData, bool overwrite){
 	if( !myFile.exists() ){
+		ofLog(OF_LOG_ERROR,"ofFile::copyTo: trying to copy a non existing file");
 		return false;
 	}
 	
@@ -644,7 +654,21 @@ public:
 };
 
 //------------------------------------------------------------------------------------------------------------
+ofDirectory::ofDirectory(){
+	showHidden = false;
+}
+
+//------------------------------------------------------------------------------------------------------------
+ofDirectory::ofDirectory(string path){
+	showHidden = false;
+	open(path);
+}
+
+//------------------------------------------------------------------------------------------------------------
 void ofDirectory::open(string path){
+	path = ofFilePath::getPathForDirectory(path);
+	originalDirectory = path;
+	files.clear();
 	myDir = File(ofToDataPath(path));
 }
 
@@ -692,6 +716,16 @@ void ofDirectory::setWriteable(bool flag = true){
 //------------------------------------------------------------------------------------------------------------
 void ofDirectory::setReadOnly(bool flag = true){
 	myDir.setReadOnly(flag);
+}
+
+//------------------------------------------------------------------------------------------------------------
+void ofDirectory::setExecutable(bool flag = true){
+	myDir.setExecutable(flag);
+}
+
+//------------------------------------------------------------------------------------------------------------
+void ofDirectory::setShowHidden(bool showHidden) {
+	this->showHidden = showHidden;
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -808,20 +842,7 @@ void ofDirectory::allowExt(string extension){
 }
 
 //------------------------------------------------------------------------------------------------------------
-int ofDirectory::listDir(string directory, bool absolute){
-
-	/*directory = ofFilePath::getPathForDirectory(directory);
-
-	files.clear();
-
-	originalDirectory = directory;
-	string absolutePath = directory;
-	if(!absolute) {
-		absolutePath = ofToDataPath(directory);
-	}*/
-
-	originalDirectory = directory;
-	cout << originalDirectory << endl;
+int ofDirectory::listDir(string directory){
 	open(directory);
 	return listDir();
 }
@@ -872,7 +893,7 @@ string ofDirectory::getName(unsigned int position){
 
 //------------------------------------------------------------------------------------------------------------
 string ofDirectory::getPath(unsigned int position){
-	return files.at(position).path();
+	return originalDirectory + getName(position);
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -880,6 +901,11 @@ ofFile ofDirectory::getFile(unsigned int position, ofFile::Mode mode, bool binar
 	ofFile file = files[position];
 	file.changeMode(mode, binary);
 	return file;
+}
+
+//------------------------------------------------------------------------------------------------------------
+bool ofDirectory::getShowHidden() {
+	return showHidden;
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -1097,6 +1123,15 @@ string ofFilePath::getEnclosingDirectory(string filePath, bool bRelativeToData){
 	Path myPath(filePath);
 
 	return myPath.parent().toString();
+}
+
+//------------------------------------------------------------------------------------------------------------
+string ofFilePath::getAbsolutePath(string path, bool bRelativeToData){
+	if( bRelativeToData ) path = ofToDataPath(path);
+
+	Path myPath(path);
+
+	return myPath.makeAbsolute().toString();
 }
 
 
