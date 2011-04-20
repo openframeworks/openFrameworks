@@ -29,6 +29,12 @@ unsigned char * ofiPhoneVideoGrabber::getPixels() {
 	return grabber->getPixels();
 }
 
+ofPixelsRef ofiPhoneVideoGrabber::getPixelsRef(){
+    static ofPixels dummy;
+    //@TODO implement me
+    return dummy;
+}
+
 void ofiPhoneVideoGrabber::close() {
 }
 

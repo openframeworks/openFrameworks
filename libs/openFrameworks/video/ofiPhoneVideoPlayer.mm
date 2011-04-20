@@ -337,3 +337,10 @@ void ofiPhoneVideoPlayer::initWithPath(string path) {
 	videoWasStopped=false;
 	setVolume(vol);
 }
+
+
+ofPixelsRef ofiPhoneVideoPlayer::getPixelsRef()
+{
+    static ofPixels dummy;
+    return dummy;
+}
