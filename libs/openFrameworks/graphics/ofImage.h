@@ -32,6 +32,8 @@ class ofImage : public ofBaseImage{
 		ofImage();
 		virtual ~ofImage();
 
+		ofImage(const ofPixels & pix);
+
 		// alloation / deallocation routines
 		void 				allocate(int w, int h, ofImageType type);
 		void 				clear();
@@ -61,8 +63,10 @@ class ofImage : public ofBaseImage{
 		// file loading / saving
 		bool 				loadImage(string fileName);
 		bool				loadImage(const ofBuffer & buffer);
+		bool 				loadImage(const ofFile & file);
 		void 				saveImage(string fileName, ofImageQualityType compressionLevel = OF_IMAGE_QUALITY_BEST);
 		void 				saveImage(ofBuffer & buffer, ofImageQualityType compressionLevel = OF_IMAGE_QUALITY_BEST);
+		void 				saveImage(const ofFile & file, ofImageQualityType compressionLevel = OF_IMAGE_QUALITY_BEST);
 
 		//Sosolimited: texture compression and mipmaps
 		void				setCompression(ofTexCompression compression);
@@ -76,6 +80,7 @@ class ofImage : public ofBaseImage{
 		// alter the image
 		void setColor(int x, int y, ofColor color);
 		void 				setFromPixels(unsigned char * pixels, int w, int h, ofImageType type, bool bOrderIsRGB = true);
+		void				setFromPixels(const ofPixels & pixels);
 		void 				setImageType(ofImageType type);
 		void 				resize(int newWidth, int newHeight);
 		void 				grabScreen(int x, int y, int w, int h);		// grab pixels from opengl, using glreadpixels
@@ -120,6 +125,7 @@ class ofImage : public ofBaseImage{
 		int 				width, height, bpp;		// w,h, bits per pixel
 		int					type;					// OF_IMAGE_GRAYSCALE, OF_IMAGE_COLOR, OF_IMAGE_COLOR_ALPHA
 
+		ofImage & operator=(ofPixels & pixels);
 	protected:
 	
 		void				changeTypeOfPixels(ofPixels &pix, ofImageType type);
