@@ -204,6 +204,7 @@ public:
 	void setWriteable(bool writeable);
 	void setReadOnly(bool readable);
 	void setExecutable(bool executable);
+	void setShowHidden(bool showHidden);
 
 	bool copyTo(string path, bool bRelativeToData = true, bool overwrite = false);
 	bool moveTo(string path, bool bRelativeToData = true, bool overwrite = false);
@@ -216,12 +217,13 @@ public:
 	// dirList operations
 	//-------------------
 	void allowExt(string extension);
-	int listDir(string path, bool absolute = false);
+	int listDir(string path);
 	int listDir();
 
 	string getName(unsigned int position); // e.g., "image.png"
 	string getPath(unsigned int position);
 	ofFile getFile(unsigned int position, ofFile::Mode mode=ofFile::Reference, bool binary=false);
+	bool getShowHidden();
 
 	void reset(); //equivalent to close, just here for bw compatibility with ofxDirList
 	void sort();
