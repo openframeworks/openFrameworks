@@ -653,10 +653,6 @@ public:
 	}
 };
 
-ofDirectory::ofDirectory() {
-	showHidden = false;
-}
-
 //------------------------------------------------------------------------------------------------------------
 ofDirectory::ofDirectory(){
 	showHidden = false;
