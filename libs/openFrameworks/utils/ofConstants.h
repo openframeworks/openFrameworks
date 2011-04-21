@@ -216,6 +216,7 @@ enum ofLoopType{
 	#define OF_VIDEO_PLAYER_GSTREAMER
 #else 
 	#ifdef TARGET_OF_IPHONE
+		#define OF_VIDEO_CAPTURE_IPHONE
 		#define OF_VIDEO_PLAYER_IPHONE
 	#elif !defined(TARGET_ANDROID)
 		#define OF_VIDEO_PLAYER_QUICKTIME

@@ -201,7 +201,7 @@ void ofAppiPhoneWindow::disableSetupScreen(){
 	bEnableSetupScreen = false;
 };
 
-void ofAppiPhoneWindow::setOrientation(int orientation) {
+void ofAppiPhoneWindow::setOrientation(ofOrientation orientation) {
 
 	ofLog(OF_LOG_VERBOSE, "ofAppiPhoneWindow::setOrientation: " + ofToString(orientation));
 	switch (orientation) {
@@ -229,7 +229,7 @@ void ofAppiPhoneWindow::setOrientation(int orientation) {
 }
 
 
-int ofAppiPhoneWindow::getOrientation() {
+ofOrientation ofAppiPhoneWindow::getOrientation() {
 	return orientation;
 }
 
