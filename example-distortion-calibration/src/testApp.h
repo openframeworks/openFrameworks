@@ -10,6 +10,7 @@ public:
 	void setup();
 	void update();
 	void draw();
+	void keyPressed(int key);
 	
 	ofVideoGrabber cam;
 	ofImage undistorted;
@@ -17,7 +18,8 @@ public:
 	ofPixels diff;
 	float diffMean;
 	
-	bool lastRecording;
+	float lastTime;
+	bool active;
 	
 	Calibration calibration;
 };

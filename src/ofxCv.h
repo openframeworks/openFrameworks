@@ -63,6 +63,8 @@ namespace ofxCv {
 		imitate(mirror, original.getPixelsRef());
 	}
 	
+	void copy(Mat to, Mat from);
+	
 	// conversion functions toOf() and toCv()
 	Mat toCv(ofPixels& pix);
 	Mat toCv(ofBaseHasPixels& img);

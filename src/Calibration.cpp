@@ -112,6 +112,26 @@ namespace ofxCv {
 		}
 		return found;
 	}
+	bool Calibration::clean(float minReprojectionError) {
+		int removed = 0;
+		for(int i = size() - 1; i >= 0; i--) {
+			if(getReprojectionError(i) > minReprojectionError) {
+				objectPoints.erase(objectPoints.begin() + i);
+				imagePoints.erase(imagePoints.begin() + i);
+				removed++;
+			}
+		}
+		if(size() > 0) {
+			if(removed > 0) {
+				return calibrate();
+			} else {
+				return true;
+			}
+		} else {
+			ofLog(OF_LOG_ERROR, "Calibration::clean() removed the last object/image point pair");
+			return false;
+		}
+	}
 	bool Calibration::calibrate() {
 		Mat cameraMatrix = Mat::eye(3, 3, CV_64F);
     distCoeffs = Mat::zeros(8, 1, CV_64F);

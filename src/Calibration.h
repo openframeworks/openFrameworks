@@ -54,6 +54,7 @@ namespace ofxCv {
 		void setBoardSize(int xCount, int yCount);
 		void setSquareSize(float squareSize);
 		bool add(Mat img);
+		bool clean(float minReprojectionError = 2.f);
 		bool calibrate();
 		bool calibrateFromDirectory(string directory);
 		
