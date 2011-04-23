@@ -12,7 +12,7 @@
 #include "ofMain.h"
 #include "ofEvents.h"
 #include "ofxiPhoneAlerts.h"
-#include "ofxMultitouch.h"
+#include "ofxMultiTouch.h"
 
 class ofxiPhoneApp : public ofSimpleApp, public ofxiPhoneAlertsListener, public ofxMultiTouchListener {
 	

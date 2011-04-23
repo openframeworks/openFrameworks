@@ -214,53 +214,19 @@
 		E485F7941360A90000E939D3 /* ofVideoPlayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E485F70B1360A90000E939D3 /* ofVideoPlayer.cpp */; };
 		E485F7951360A90000E939D3 /* ofVideoPlayer.h in Headers */ = {isa = PBXBuildFile; fileRef = E485F70C1360A90000E939D3 /* ofVideoPlayer.h */; };
 		E485F7961360A90000E939D3 /* ofMain.h in Headers */ = {isa = PBXBuildFile; fileRef = E485F70D1360A90000E939D3 /* ofMain.h */; };
+		E485F8191363242200E939D3 /* ofxMultiTouch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E485F8161363242100E939D3 /* ofxMultiTouch.cpp */; };
+		E485F81A1363242200E939D3 /* ofxMultiTouch.h in Headers */ = {isa = PBXBuildFile; fileRef = E485F8171363242100E939D3 /* ofxMultiTouch.h */; };
+		E485F81B1363242200E939D3 /* ofxMultiTouchListener.h in Headers */ = {isa = PBXBuildFile; fileRef = E485F8181363242100E939D3 /* ofxMultiTouchListener.h */; };
+		E485F8B413632A7300E939D3 /* AVFoundationVideoGrabber.h in Headers */ = {isa = PBXBuildFile; fileRef = E485F8B213632A7300E939D3 /* AVFoundationVideoGrabber.h */; };
+		E485F8B513632A7300E939D3 /* AVFoundationVideoGrabber.mm in Sources */ = {isa = PBXBuildFile; fileRef = E485F8B313632A7300E939D3 /* AVFoundationVideoGrabber.mm */; };
+		E485F8C713632B6600E939D3 /* AVFoundationVideoPlayer.h in Headers */ = {isa = PBXBuildFile; fileRef = E485F8C513632B6600E939D3 /* AVFoundationVideoPlayer.h */; };
+		E485F8C813632B6600E939D3 /* AVFoundationVideoPlayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = E485F8C613632B6600E939D3 /* AVFoundationVideoPlayer.mm */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		1D30AB110D05D00D00671497 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		1DF5F4DF0D08C38300B7A737 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		288765FC0DF74451002DB57D /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
-		2D5395A81359F56000EC603B /* AVFoundationVideoGrabber.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AVFoundationVideoGrabber.h; sourceTree = "<group>"; };
-		2D5395A91359F56000EC603B /* AVFoundationVideoGrabber.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AVFoundationVideoGrabber.mm; sourceTree = "<group>"; };
-		2D5395AA1359F56000EC603B /* AVFoundationVideoPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AVFoundationVideoPlayer.h; sourceTree = "<group>"; };
-		2D5395AB1359F56000EC603B /* AVFoundationVideoPlayer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AVFoundationVideoPlayer.mm; sourceTree = "<group>"; };
-		2D72F0CF13530BCF00A70379 /* ofFbo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofFbo.cpp; sourceTree = "<group>"; };
-		2D72F0D013530BCF00A70379 /* ofFbo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofFbo.h; sourceTree = "<group>"; };
-		2D72F0D113530BCF00A70379 /* ofGLRenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofGLRenderer.cpp; sourceTree = "<group>"; };
-		2D72F0D213530BCF00A70379 /* ofGLRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofGLRenderer.h; sourceTree = "<group>"; };
-		2D72F0D313530BCF00A70379 /* ofGLUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofGLUtils.h; sourceTree = "<group>"; };
-		2D72F0D413530BCF00A70379 /* ofLight.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofLight.cpp; sourceTree = "<group>"; };
-		2D72F0D513530BCF00A70379 /* ofLight.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofLight.h; sourceTree = "<group>"; };
-		2D72F0D613530BCF00A70379 /* ofMaterial.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofMaterial.cpp; sourceTree = "<group>"; };
-		2D72F0D713530BCF00A70379 /* ofMaterial.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofMaterial.h; sourceTree = "<group>"; };
-		2D72F0D813530BCF00A70379 /* ofShader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofShader.cpp; sourceTree = "<group>"; };
-		2D72F0D913530BCF00A70379 /* ofShader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofShader.h; sourceTree = "<group>"; };
-		2D72F0DA13530BCF00A70379 /* ofTexture.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofTexture.cpp; sourceTree = "<group>"; };
-		2D72F0DB13530BCF00A70379 /* ofTexture.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofTexture.h; sourceTree = "<group>"; };
-		2D72F0DC13530BCF00A70379 /* ofVbo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofVbo.cpp; sourceTree = "<group>"; };
-		2D72F0DD13530BCF00A70379 /* ofVbo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofVbo.h; sourceTree = "<group>"; };
-		2D72F0DE13530BCF00A70379 /* ofVboMesh.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofVboMesh.cpp; sourceTree = "<group>"; };
-		2D72F0DF13530BCF00A70379 /* ofVboMesh.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofVboMesh.h; sourceTree = "<group>"; };
-		2D72F0F113530C3300A70379 /* ofPath.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofPath.cpp; sourceTree = "<group>"; };
-		2D72F0F213530C3300A70379 /* ofPath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofPath.h; sourceTree = "<group>"; };
-		2D72F0F313530C3300A70379 /* ofPolyline.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofPolyline.cpp; sourceTree = "<group>"; };
-		2D72F0F413530C3400A70379 /* ofPolyline.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofPolyline.h; sourceTree = "<group>"; };
-		2D72F0F513530C3400A70379 /* ofPolyUtils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofPolyUtils.cpp; sourceTree = "<group>"; };
-		2D72F0F613530C3400A70379 /* ofPolyUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofPolyUtils.h; sourceTree = "<group>"; };
-		2D72F0F713530C3500A70379 /* ofRendererCollection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofRendererCollection.h; sourceTree = "<group>"; };
-		2D72F0F813530C3500A70379 /* ofTessellator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofTessellator.cpp; sourceTree = "<group>"; };
-		2D72F0F913530C3500A70379 /* ofTessellator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofTessellator.h; sourceTree = "<group>"; };
-		2D72F10313530C4800A70379 /* ofBaseSoundStream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofBaseSoundStream.cpp; sourceTree = "<group>"; };
-		2D72F10413530C4800A70379 /* ofBaseSoundStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofBaseSoundStream.h; sourceTree = "<group>"; };
-		2D72F10913530C4A00A70379 /* ofSoundStream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofSoundStream.cpp; sourceTree = "<group>"; };
-		2D72F11113530C5500A70379 /* ofVec2f.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofVec2f.cpp; sourceTree = "<group>"; };
-		2D72F11213530C5500A70379 /* ofVec4f.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofVec4f.cpp; sourceTree = "<group>"; };
-		2D72F1831353385D00A70379 /* changelog.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = changelog.txt; sourceTree = "<group>"; };
-		2D72F1841353385D00A70379 /* install.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = install.xml; sourceTree = "<group>"; };
-		2D72F1851353385D00A70379 /* LICENSE.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE.txt; sourceTree = "<group>"; };
-		2D72F1871353385D00A70379 /* ofxMultiTouch.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxMultiTouch.cpp; sourceTree = "<group>"; };
-		2D72F1881353385D00A70379 /* ofxMultiTouch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxMultiTouch.h; sourceTree = "<group>"; };
-		2D72F1891353385D00A70379 /* ofxMultiTouchListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxMultiTouchListener.h; sourceTree = "<group>"; };
 		5326AEA710A23A0500278DE6 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		53DA338912DF8F4500C622CE /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		53DA338D12DF8F5000C622CE /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = System/Library/Frameworks/CoreAudio.framework; sourceTree = SDKROOT; };
@@ -471,6 +437,13 @@
 		E485F70B1360A90000E939D3 /* ofVideoPlayer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofVideoPlayer.cpp; path = ../../../openFrameworks/video/ofVideoPlayer.cpp; sourceTree = SOURCE_ROOT; };
 		E485F70C1360A90000E939D3 /* ofVideoPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofVideoPlayer.h; path = ../../../openFrameworks/video/ofVideoPlayer.h; sourceTree = SOURCE_ROOT; };
 		E485F70D1360A90000E939D3 /* ofMain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofMain.h; path = ../../../openFrameworks/ofMain.h; sourceTree = SOURCE_ROOT; };
+		E485F8161363242100E939D3 /* ofxMultiTouch.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofxMultiTouch.cpp; path = ../../../../addons/ofxMultiTouch/src/ofxMultiTouch.cpp; sourceTree = SOURCE_ROOT; };
+		E485F8171363242100E939D3 /* ofxMultiTouch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxMultiTouch.h; path = ../../../../addons/ofxMultiTouch/src/ofxMultiTouch.h; sourceTree = SOURCE_ROOT; };
+		E485F8181363242100E939D3 /* ofxMultiTouchListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxMultiTouchListener.h; path = ../../../../addons/ofxMultiTouch/src/ofxMultiTouchListener.h; sourceTree = SOURCE_ROOT; };
+		E485F8B213632A7300E939D3 /* AVFoundationVideoGrabber.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AVFoundationVideoGrabber.h; path = ../../../../addons/ofxiPhone/src/AVFoundationVideoGrabber.h; sourceTree = SOURCE_ROOT; };
+		E485F8B313632A7300E939D3 /* AVFoundationVideoGrabber.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AVFoundationVideoGrabber.mm; path = ../../../../addons/ofxiPhone/src/AVFoundationVideoGrabber.mm; sourceTree = SOURCE_ROOT; };
+		E485F8C513632B6600E939D3 /* AVFoundationVideoPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AVFoundationVideoPlayer.h; path = ../../../../addons/ofxiPhone/src/AVFoundationVideoPlayer.h; sourceTree = SOURCE_ROOT; };
+		E485F8C613632B6600E939D3 /* AVFoundationVideoPlayer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AVFoundationVideoPlayer.mm; path = ../../../../addons/ofxiPhone/src/AVFoundationVideoPlayer.mm; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -536,7 +509,6 @@
 			name = "core frameworks";
 			sourceTree = "<group>";
 		};
-
 		BB16E9930F2B1E5900518274 /* libs */ = {
 			isa = PBXGroup;
 			children = (
@@ -548,7 +520,7 @@
 		BB16F26B0F2B646B00518274 /* addons */ = {
 			isa = PBXGroup;
 			children = (
-				2D72F1821353385D00A70379 /* ofxMultiTouch */,
+				E485F8111363242100E939D3 /* ofxMultiTouch */,
 				BB24E01C10DA7C6100E9C588 /* ofxAccelerometer */,
 				BB24E02310DA7C6100E9C588 /* ofxiPhone */,
 			);
@@ -722,10 +694,10 @@
 		BB24E02810DA7C6100E9C588 /* src */ = {
 			isa = PBXGroup;
 			children = (
-				2D5395A81359F56000EC603B /* AVFoundationVideoGrabber.h */,
-				2D5395A91359F56000EC603B /* AVFoundationVideoGrabber.mm */,
-				2D5395AA1359F56000EC603B /* AVFoundationVideoPlayer.h */,
-				2D5395AB1359F56000EC603B /* AVFoundationVideoPlayer.mm */,
+				E485F8B313632A7300E939D3 /* AVFoundationVideoGrabber.mm */,
+				E485F8B213632A7300E939D3 /* AVFoundationVideoGrabber.h */,
+				E485F8C513632B6600E939D3 /* AVFoundationVideoPlayer.h */,
+				E485F8C613632B6600E939D3 /* AVFoundationVideoPlayer.mm */,
 				BB24E02910DA7C6100E9C588 /* EAGLView.h */,
 				BB24E02A10DA7C6100E9C588 /* EAGLView.mm */,
 				BB3140C511BB098A0019348E /* ESRenderer.h */,
@@ -979,6 +951,26 @@
 			path = ../../../openFrameworks/video;
 			sourceTree = SOURCE_ROOT;
 		};
+		E485F8111363242100E939D3 /* ofxMultiTouch */ = {
+			isa = PBXGroup;
+			children = (
+				E485F8151363242100E939D3 /* src */,
+			);
+			name = ofxMultiTouch;
+			path = ../../../../addons/ofxMultiTouch;
+			sourceTree = SOURCE_ROOT;
+		};
+		E485F8151363242100E939D3 /* src */ = {
+			isa = PBXGroup;
+			children = (
+				E485F8161363242100E939D3 /* ofxMultiTouch.cpp */,
+				E485F8171363242100E939D3 /* ofxMultiTouch.h */,
+				E485F8181363242100E939D3 /* ofxMultiTouchListener.h */,
+			);
+			name = src;
+			path = ../../../../addons/ofxMultiTouch/src;
+			sourceTree = SOURCE_ROOT;
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -999,7 +991,6 @@
 				BB24E0D810DA9F5200E9C588 /* ofAppiPhoneWindow.h in Headers */,
 				BB24E0DA10DA9F5500E9C588 /* ofxiPhoneExtras.h in Headers */,
 				BB24E0DC10DA9F5700E9C588 /* ofxAccelerometer.h in Headers */,
-				BB24E0DE10DA9F5800E9C588 /* ofxMultiTouch.h in Headers */,
 				BB24E0E110DA9F5C00E9C588 /* EAGLView.h in Headers */,
 				BB24E0E210DA9F5C00E9C588 /* ofxiPhoneMapKitListener.h in Headers */,
 				BB24E0FC10DA9F7700E9C588 /* ftotval.h in Headers */,
@@ -1115,6 +1106,10 @@
 				E485F7931360A90000E939D3 /* ofVideoGrabber.h in Headers */,
 				E485F7951360A90000E939D3 /* ofVideoPlayer.h in Headers */,
 				E485F7961360A90000E939D3 /* ofMain.h in Headers */,
+				E485F81A1363242200E939D3 /* ofxMultiTouch.h in Headers */,
+				E485F81B1363242200E939D3 /* ofxMultiTouchListener.h in Headers */,
+				E485F8B413632A7300E939D3 /* AVFoundationVideoGrabber.h in Headers */,
+				E485F8C713632B6600E939D3 /* AVFoundationVideoPlayer.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1233,6 +1228,9 @@
 				E485F78B1360A90000E939D3 /* ofiPhoneVideoPlayer.mm in Sources */,
 				E485F7921360A90000E939D3 /* ofVideoGrabber.cpp in Sources */,
 				E485F7941360A90000E939D3 /* ofVideoPlayer.cpp in Sources */,
+				E485F8191363242200E939D3 /* ofxMultiTouch.cpp in Sources */,
+				E485F8B513632A7300E939D3 /* AVFoundationVideoGrabber.mm in Sources */,
+				E485F8C813632B6600E939D3 /* AVFoundationVideoPlayer.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1298,7 +1296,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 3.2;
 				OTHER_LDFLAGS = "";
 				PREBINDING = NO;
-				SDKROOT = iphoneos;
+				SDKROOT = iphoneos4.1;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				WARNING_LDFLAGS = "-w";
 			};
@@ -1319,7 +1317,7 @@
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 3.2;
 				PREBINDING = NO;
-				SDKROOT = iphoneos;
+				SDKROOT = iphoneos4.1;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
@@ -1339,7 +1337,7 @@
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 3.2;
 				PREBINDING = NO;
-				SDKROOT = iphoneos;
+				SDKROOT = iphoneos4.1;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = ReleaseArmv7;
