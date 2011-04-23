@@ -1,8 +1,7 @@
 #if defined  __arm__
 
+#include "AVFoundationVideoGrabber.h"
 #include "ofiPhoneVideoGrabber.h"
-#import "AVFoundationVideoGrabber.h"
-
 
 ofiPhoneVideoGrabber::ofiPhoneVideoGrabber() {
 	grabber = new AVFoundationVideoGrabber();
