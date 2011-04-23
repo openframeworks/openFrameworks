@@ -20,11 +20,9 @@
 		BB24DECF10DA7A3F00E9C588 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 288765FC0DF74451002DB57D /* CoreGraphics.framework */; };
 		BB24DED010DA7A3F00E9C588 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5326AEA710A23A0500278DE6 /* CoreLocation.framework */; };
 		BB24DED110DA7A3F00E9C588 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB16EBD80F2B2AB500518274 /* QuartzCore.framework */; };
-		BB24E0C310DA9F4200E9C588 /* ofxMultiTouch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BB24E04910DA7C6100E9C588 /* ofxMultiTouch.cpp */; };
 		BB24E0C410DA9F4200E9C588 /* ofxiPhoneKeyboard.h in Headers */ = {isa = PBXBuildFile; fileRef = BB24E03B10DA7C6100E9C588 /* ofxiPhoneKeyboard.h */; };
 		BB24E0C510DA9F4300E9C588 /* ofxiPhoneAppDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = BB24E03410DA7C6100E9C588 /* ofxiPhoneAppDelegate.h */; };
 		BB24E0C610DA9F4400E9C588 /* ofxiPhoneImagePicker.h in Headers */ = {isa = PBXBuildFile; fileRef = BB24E03910DA7C6100E9C588 /* ofxiPhoneImagePicker.h */; };
-		BB24E0C710DA9F4400E9C588 /* ofxMultiTouchListener.h in Headers */ = {isa = PBXBuildFile; fileRef = BB24E04B10DA7C6100E9C588 /* ofxMultiTouchListener.h */; };
 		BB24E0C810DA9F4500E9C588 /* ofxiPhoneMapKit.mm in Sources */ = {isa = PBXBuildFile; fileRef = BB24E03E10DA7C6100E9C588 /* ofxiPhoneMapKit.mm */; };
 		BB24E0C910DA9F4600E9C588 /* ofxiPhoneCoreLocation.h in Headers */ = {isa = PBXBuildFile; fileRef = BB24E03610DA7C6100E9C588 /* ofxiPhoneCoreLocation.h */; };
 		BB24E0CA10DA9F4600E9C588 /* ofxiPhoneAlertsListener.h in Headers */ = {isa = PBXBuildFile; fileRef = BB24E03210DA7C6100E9C588 /* ofxiPhoneAlertsListener.h */; };
@@ -47,7 +45,6 @@
 		BB24E0DB10DA9F5600E9C588 /* ofxiPhoneAppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = BB24E03510DA7C6100E9C588 /* ofxiPhoneAppDelegate.mm */; };
 		BB24E0DC10DA9F5700E9C588 /* ofxAccelerometer.h in Headers */ = {isa = PBXBuildFile; fileRef = BB24E02210DA7C6100E9C588 /* ofxAccelerometer.h */; };
 		BB24E0DD10DA9F5800E9C588 /* ofxiPhoneAccelerometer.mm in Sources */ = {isa = PBXBuildFile; fileRef = BB24E02F10DA7C6100E9C588 /* ofxiPhoneAccelerometer.mm */; };
-		BB24E0DE10DA9F5800E9C588 /* ofxMultiTouch.h in Headers */ = {isa = PBXBuildFile; fileRef = BB24E04A10DA7C6100E9C588 /* ofxMultiTouch.h */; };
 		BB24E0E110DA9F5C00E9C588 /* EAGLView.h in Headers */ = {isa = PBXBuildFile; fileRef = BB24E02910DA7C6100E9C588 /* EAGLView.h */; };
 		BB24E0E210DA9F5C00E9C588 /* ofxiPhoneMapKitListener.h in Headers */ = {isa = PBXBuildFile; fileRef = BB24E04110DA7C6100E9C588 /* ofxiPhoneMapKitListener.h */; };
 		BB24E0E310DA9F5D00E9C588 /* ofxiPhoneAlerts.mm in Sources */ = {isa = PBXBuildFile; fileRef = BB24E03110DA7C6100E9C588 /* ofxiPhoneAlerts.mm */; };
@@ -223,6 +220,47 @@
 		1D30AB110D05D00D00671497 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		1DF5F4DF0D08C38300B7A737 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		288765FC0DF74451002DB57D /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		2D5395A81359F56000EC603B /* AVFoundationVideoGrabber.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AVFoundationVideoGrabber.h; sourceTree = "<group>"; };
+		2D5395A91359F56000EC603B /* AVFoundationVideoGrabber.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AVFoundationVideoGrabber.mm; sourceTree = "<group>"; };
+		2D5395AA1359F56000EC603B /* AVFoundationVideoPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AVFoundationVideoPlayer.h; sourceTree = "<group>"; };
+		2D5395AB1359F56000EC603B /* AVFoundationVideoPlayer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AVFoundationVideoPlayer.mm; sourceTree = "<group>"; };
+		2D72F0CF13530BCF00A70379 /* ofFbo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofFbo.cpp; sourceTree = "<group>"; };
+		2D72F0D013530BCF00A70379 /* ofFbo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofFbo.h; sourceTree = "<group>"; };
+		2D72F0D113530BCF00A70379 /* ofGLRenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofGLRenderer.cpp; sourceTree = "<group>"; };
+		2D72F0D213530BCF00A70379 /* ofGLRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofGLRenderer.h; sourceTree = "<group>"; };
+		2D72F0D313530BCF00A70379 /* ofGLUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofGLUtils.h; sourceTree = "<group>"; };
+		2D72F0D413530BCF00A70379 /* ofLight.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofLight.cpp; sourceTree = "<group>"; };
+		2D72F0D513530BCF00A70379 /* ofLight.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofLight.h; sourceTree = "<group>"; };
+		2D72F0D613530BCF00A70379 /* ofMaterial.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofMaterial.cpp; sourceTree = "<group>"; };
+		2D72F0D713530BCF00A70379 /* ofMaterial.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofMaterial.h; sourceTree = "<group>"; };
+		2D72F0D813530BCF00A70379 /* ofShader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofShader.cpp; sourceTree = "<group>"; };
+		2D72F0D913530BCF00A70379 /* ofShader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofShader.h; sourceTree = "<group>"; };
+		2D72F0DA13530BCF00A70379 /* ofTexture.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofTexture.cpp; sourceTree = "<group>"; };
+		2D72F0DB13530BCF00A70379 /* ofTexture.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofTexture.h; sourceTree = "<group>"; };
+		2D72F0DC13530BCF00A70379 /* ofVbo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofVbo.cpp; sourceTree = "<group>"; };
+		2D72F0DD13530BCF00A70379 /* ofVbo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofVbo.h; sourceTree = "<group>"; };
+		2D72F0DE13530BCF00A70379 /* ofVboMesh.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofVboMesh.cpp; sourceTree = "<group>"; };
+		2D72F0DF13530BCF00A70379 /* ofVboMesh.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofVboMesh.h; sourceTree = "<group>"; };
+		2D72F0F113530C3300A70379 /* ofPath.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofPath.cpp; sourceTree = "<group>"; };
+		2D72F0F213530C3300A70379 /* ofPath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofPath.h; sourceTree = "<group>"; };
+		2D72F0F313530C3300A70379 /* ofPolyline.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofPolyline.cpp; sourceTree = "<group>"; };
+		2D72F0F413530C3400A70379 /* ofPolyline.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofPolyline.h; sourceTree = "<group>"; };
+		2D72F0F513530C3400A70379 /* ofPolyUtils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofPolyUtils.cpp; sourceTree = "<group>"; };
+		2D72F0F613530C3400A70379 /* ofPolyUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofPolyUtils.h; sourceTree = "<group>"; };
+		2D72F0F713530C3500A70379 /* ofRendererCollection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofRendererCollection.h; sourceTree = "<group>"; };
+		2D72F0F813530C3500A70379 /* ofTessellator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofTessellator.cpp; sourceTree = "<group>"; };
+		2D72F0F913530C3500A70379 /* ofTessellator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofTessellator.h; sourceTree = "<group>"; };
+		2D72F10313530C4800A70379 /* ofBaseSoundStream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofBaseSoundStream.cpp; sourceTree = "<group>"; };
+		2D72F10413530C4800A70379 /* ofBaseSoundStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofBaseSoundStream.h; sourceTree = "<group>"; };
+		2D72F10913530C4A00A70379 /* ofSoundStream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofSoundStream.cpp; sourceTree = "<group>"; };
+		2D72F11113530C5500A70379 /* ofVec2f.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofVec2f.cpp; sourceTree = "<group>"; };
+		2D72F11213530C5500A70379 /* ofVec4f.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofVec4f.cpp; sourceTree = "<group>"; };
+		2D72F1831353385D00A70379 /* changelog.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = changelog.txt; sourceTree = "<group>"; };
+		2D72F1841353385D00A70379 /* install.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = install.xml; sourceTree = "<group>"; };
+		2D72F1851353385D00A70379 /* LICENSE.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE.txt; sourceTree = "<group>"; };
+		2D72F1871353385D00A70379 /* ofxMultiTouch.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxMultiTouch.cpp; sourceTree = "<group>"; };
+		2D72F1881353385D00A70379 /* ofxMultiTouch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxMultiTouch.h; sourceTree = "<group>"; };
+		2D72F1891353385D00A70379 /* ofxMultiTouchListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxMultiTouchListener.h; sourceTree = "<group>"; };
 		5326AEA710A23A0500278DE6 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		53DA338912DF8F4500C622CE /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		53DA338D12DF8F5000C622CE /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = System/Library/Frameworks/CoreAudio.framework; sourceTree = SDKROOT; };
@@ -312,12 +350,6 @@
 		BB24E04010DA7C6100E9C588 /* ofxiPhoneMapKitDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ofxiPhoneMapKitDelegate.mm; sourceTree = "<group>"; };
 		BB24E04110DA7C6100E9C588 /* ofxiPhoneMapKitListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxiPhoneMapKitListener.h; sourceTree = "<group>"; };
 		BB24E04310DA7C6100E9C588 /* ofxiPhoneSoundStream.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ofxiPhoneSoundStream.mm; sourceTree = "<group>"; };
-		BB24E04510DA7C6100E9C588 /* changelog.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = changelog.txt; sourceTree = "<group>"; };
-		BB24E04610DA7C6100E9C588 /* install.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = install.xml; sourceTree = "<group>"; };
-		BB24E04710DA7C6100E9C588 /* LICENSE.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE.txt; sourceTree = "<group>"; };
-		BB24E04910DA7C6100E9C588 /* ofxMultiTouch.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxMultiTouch.cpp; sourceTree = "<group>"; };
-		BB24E04A10DA7C6100E9C588 /* ofxMultiTouch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxMultiTouch.h; sourceTree = "<group>"; };
-		BB24E04B10DA7C6100E9C588 /* ofxMultiTouchListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxMultiTouchListener.h; sourceTree = "<group>"; };
 		BB3140BC11BB09220019348E /* ES1Renderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ES1Renderer.h; sourceTree = "<group>"; };
 		BB3140BD11BB09220019348E /* ES1Renderer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ES1Renderer.mm; sourceTree = "<group>"; };
 		BB3140BE11BB09220019348E /* ES2Renderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ES2Renderer.h; sourceTree = "<group>"; };
@@ -504,6 +536,7 @@
 			name = "core frameworks";
 			sourceTree = "<group>";
 		};
+
 		BB16E9930F2B1E5900518274 /* libs */ = {
 			isa = PBXGroup;
 			children = (
@@ -515,9 +548,9 @@
 		BB16F26B0F2B646B00518274 /* addons */ = {
 			isa = PBXGroup;
 			children = (
+				2D72F1821353385D00A70379 /* ofxMultiTouch */,
 				BB24E01C10DA7C6100E9C588 /* ofxAccelerometer */,
 				BB24E02310DA7C6100E9C588 /* ofxiPhone */,
-				BB24E04410DA7C6100E9C588 /* ofxMultiTouch */,
 			);
 			name = addons;
 			sourceTree = "<group>";
@@ -689,6 +722,10 @@
 		BB24E02810DA7C6100E9C588 /* src */ = {
 			isa = PBXGroup;
 			children = (
+				2D5395A81359F56000EC603B /* AVFoundationVideoGrabber.h */,
+				2D5395A91359F56000EC603B /* AVFoundationVideoGrabber.mm */,
+				2D5395AA1359F56000EC603B /* AVFoundationVideoPlayer.h */,
+				2D5395AB1359F56000EC603B /* AVFoundationVideoPlayer.mm */,
 				BB24E02910DA7C6100E9C588 /* EAGLView.h */,
 				BB24E02A10DA7C6100E9C588 /* EAGLView.mm */,
 				BB3140C511BB098A0019348E /* ESRenderer.h */,
@@ -722,28 +759,6 @@
 				BB24E04010DA7C6100E9C588 /* ofxiPhoneMapKitDelegate.mm */,
 				BB24E04110DA7C6100E9C588 /* ofxiPhoneMapKitListener.h */,
 				BB24E04310DA7C6100E9C588 /* ofxiPhoneSoundStream.mm */,
-			);
-			path = src;
-			sourceTree = "<group>";
-		};
-		BB24E04410DA7C6100E9C588 /* ofxMultiTouch */ = {
-			isa = PBXGroup;
-			children = (
-				BB24E04510DA7C6100E9C588 /* changelog.txt */,
-				BB24E04610DA7C6100E9C588 /* install.xml */,
-				BB24E04710DA7C6100E9C588 /* LICENSE.txt */,
-				BB24E04810DA7C6100E9C588 /* src */,
-			);
-			name = ofxMultiTouch;
-			path = ../../../../addons/ofxMultiTouch;
-			sourceTree = SOURCE_ROOT;
-		};
-		BB24E04810DA7C6100E9C588 /* src */ = {
-			isa = PBXGroup;
-			children = (
-				BB24E04910DA7C6100E9C588 /* ofxMultiTouch.cpp */,
-				BB24E04A10DA7C6100E9C588 /* ofxMultiTouch.h */,
-				BB24E04B10DA7C6100E9C588 /* ofxMultiTouchListener.h */,
 			);
 			path = src;
 			sourceTree = "<group>";
@@ -974,7 +989,6 @@
 				BB24E0C410DA9F4200E9C588 /* ofxiPhoneKeyboard.h in Headers */,
 				BB24E0C510DA9F4300E9C588 /* ofxiPhoneAppDelegate.h in Headers */,
 				BB24E0C610DA9F4400E9C588 /* ofxiPhoneImagePicker.h in Headers */,
-				BB24E0C710DA9F4400E9C588 /* ofxMultiTouchListener.h in Headers */,
 				BB24E0C910DA9F4600E9C588 /* ofxiPhoneCoreLocation.h in Headers */,
 				BB24E0CA10DA9F4600E9C588 /* ofxiPhoneAlertsListener.h in Headers */,
 				BB24E0CB10DA9F4700E9C588 /* ofxiPhoneMapKit.h in Headers */,
@@ -1153,7 +1167,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BB24E0C310DA9F4200E9C588 /* ofxMultiTouch.cpp in Sources */,
 				BB24E0C810DA9F4500E9C588 /* ofxiPhoneMapKit.mm in Sources */,
 				BB24E0CC10DA9F4800E9C588 /* ofxiPhoneExtras.mm in Sources */,
 				BB24E0CD10DA9F4800E9C588 /* ofxAccelerometer.cpp in Sources */,
@@ -1235,10 +1248,15 @@
 				EXECUTABLE_PREFIX = lib;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				IPHONEOS_DEPLOYMENT_TARGET = 3.1;
+				GCC_WARN_HIDDEN_VIRTUAL_FUNCTIONS = YES;
+				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/kiss/lib/linux\"",
+					"\"$(SRCROOT)/kiss/lib/linux64\"",
+				);
 				PREBINDING = NO;
 				PRODUCT_NAME = "ofxiPhone_${PLATFORM_NAME}_Debug";
-				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
 		};
@@ -1251,10 +1269,15 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				EXECUTABLE_PREFIX = lib;
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
-				IPHONEOS_DEPLOYMENT_TARGET = 3.1;
+				GCC_WARN_HIDDEN_VIRTUAL_FUNCTIONS = YES;
+				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/kiss/lib/linux\"",
+					"\"$(SRCROOT)/kiss/lib/linux64\"",
+				);
 				PREBINDING = NO;
 				PRODUCT_NAME = "ofxiPhone_${PLATFORM_NAME}_Release";
-				TARGETED_DEVICE_FAMILY = "1,2";
 				ZERO_LINK = NO;
 			};
 			name = Release;
@@ -1276,6 +1299,7 @@
 				OTHER_LDFLAGS = "";
 				PREBINDING = NO;
 				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
 				WARNING_LDFLAGS = "-w";
 			};
 			name = Debug;
@@ -1293,8 +1317,10 @@
 					../../../../libs/freetype/include/,
 					../../../../libs/freetype/include/freetype2,
 				);
+				IPHONEOS_DEPLOYMENT_TARGET = 3.2;
 				PREBINDING = NO;
-				SDKROOT = iphoneos4.1;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
 		};
@@ -1311,8 +1337,10 @@
 					../../../../libs/freetype/include/,
 					../../../../libs/freetype/include/freetype2,
 				);
+				IPHONEOS_DEPLOYMENT_TARGET = 3.2;
 				PREBINDING = NO;
-				SDKROOT = iphoneos4.1;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = ReleaseArmv7;
 		};
@@ -1325,10 +1353,15 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				EXECUTABLE_PREFIX = lib;
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
-				IPHONEOS_DEPLOYMENT_TARGET = 3.1;
+				GCC_WARN_HIDDEN_VIRTUAL_FUNCTIONS = YES;
+				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/kiss/lib/linux\"",
+					"\"$(SRCROOT)/kiss/lib/linux64\"",
+				);
 				PREBINDING = NO;
 				PRODUCT_NAME = "ofxiPhone_${PLATFORM_NAME}_ReleaseArmv7";
-				TARGETED_DEVICE_FAMILY = "1,2";
 				ZERO_LINK = NO;
 			};
 			name = ReleaseArmv7;

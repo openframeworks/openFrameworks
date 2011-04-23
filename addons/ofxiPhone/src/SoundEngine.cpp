@@ -85,7 +85,8 @@
 #include <vector>
 #include <pthread.h>
 #include <mach/mach.h>
-#include <iostream.h>
+#include <iostream>
+using namespace std;
 
 // Local Includes
 #include "SoundEngine.h"

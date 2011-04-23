@@ -177,10 +177,11 @@ enum ofLoopType{
 		#define OF_VIDEO_CAPTURE_GSTREAMER
 	#endif
 
+#elif defined(TARGET_OSX) 
 
-#elif defined(TARGET_OSX) || defined(TARGET_WIN32)
+    #define OF_VIDEO_CAPTURE_QUICKTIME
 
-    // non - linux, pc or osx
+#elif defined (TARGET_WIN32)
 
     // comment out this following line, if you'd like to use the
     // quicktime capture interface on windows
@@ -190,25 +191,19 @@ enum ofLoopType{
     #define OF_SWITCH_TO_DSHOW_FOR_WIN_VIDCAP
 
     #ifdef OF_SWITCH_TO_DSHOW_FOR_WIN_VIDCAP
-        #ifdef TARGET_OSX
-            #define OF_VIDEO_CAPTURE_QUICKTIME
-        #else
-			#ifdef TARGET_OF_IPHONE
-				#define OF_VIDEO_CAPTURE_IPHONE
-			#else
-				#define OF_VIDEO_CAPTURE_DIRECTSHOW
-			#endif
-        #endif
+		#define OF_VIDEO_CAPTURE_DIRECTSHOW
     #else
-		#ifdef TARGET_OF_IPHONE
-			#define OF_VIDEO_CAPTURE_IPHONE
-		#else
-			#define OF_VIDEO_CAPTURE_QUICKTIME
-		#endif
+		#define OF_VIDEO_CAPTURE_QUICKTIME
     #endif
 
 #elif defined(TARGET_ANDROID)
+
 	#define OF_VIDEO_CAPTURE_ANDROID
+
+#elif defined(TARGET_OF_IPHONE)
+
+    #define OF_VIDEO_CAPTURE_IPHONE
+
 #endif
 
 

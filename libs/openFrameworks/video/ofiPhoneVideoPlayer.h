@@ -5,6 +5,8 @@
 #include "ofBaseTypes.h"
 #include "ofTexture.h"
 
+#include "ofVideoPlayer.h"
+
 class ofiPhoneVideoPlayer : public ofBaseVideoPlayer {
 	
 public:
