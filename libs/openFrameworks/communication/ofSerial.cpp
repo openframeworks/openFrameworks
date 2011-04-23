@@ -456,7 +456,7 @@ int ofSerial::writeBytes(unsigned char * buffer, int length){
 			return OF_SERIAL_ERROR;
 		}
 
-		//ofLog(OF_LOG_VERBOSE,"ofSerial: numWritten %i", numWritten);
+		ofLog(OF_LOG_VERBOSE,"ofSerial: numWritten %i", numWritten);
 
 	    return numWritten;
     #endif
@@ -628,12 +628,11 @@ void ofSerial::flush(bool flushIn, bool flushOut){
 
 }
 
-void ofSerial::drain()
-{
+void ofSerial::drain(){
     if (!bInited){
-		ofLog(OF_LOG_ERROR,"ofSerial: serial not inited");
-		return;
-	}
+	ofLog(OF_LOG_ERROR,"ofSerial: serial not inited");
+	return;
+    }
 
     #if defined( TARGET_OSX ) || defined( TARGET_LINUX )
         tcdrain( fd );

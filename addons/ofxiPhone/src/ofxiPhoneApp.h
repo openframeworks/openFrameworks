@@ -17,39 +17,36 @@
 class ofxiPhoneApp : public ofSimpleApp, public ofxiPhoneAlertsListener, public ofxMultiTouchListener {
 	
 public:
-    virtual ~ofxiPhoneApp() {};
-    
 	virtual void setup() {};
 	virtual void update() {};
 	virtual void draw() {};
 	virtual void exit() {};
+
+	virtual void touchDown(int x, int y, int id) {};
+	virtual void touchMoved(int x, int y, int id) {};
+	virtual void touchUp(int x, int y, int id) {};
+	virtual void touchDoubleTap(int x, int y, int id) {};
+	virtual void touchCancelled(int x, int y, int id) {};
 	
 	virtual void lostFocus() {}
 	virtual void gotFocus() {}
 	virtual void gotMemoryWarning() {}
 
-    
-	virtual void touchDown(float x, float y, int touchId, ofxMultiTouchCustomData *data = NULL) {}
-	virtual void touchMoved(float x, float y, int touchId, ofxMultiTouchCustomData *data = NULL) {}
-	virtual void touchUp(float x, float y, int touchId, ofxMultiTouchCustomData *data = NULL) {}
-	virtual void touchDoubleTap(float x, float y, int touchId, ofxMultiTouchCustomData *data = NULL) {}
-	virtual void touchCancelled(float x, float y, int touchId, ofxMultiTouchCustomData *data = NULL) {}
-    
-	virtual void touchDown(ofTouchEventArgs & touch){
-		touchDown(touch.x,touch.y,touch.id, &touch);
-	}
-	virtual void touchMoved(ofTouchEventArgs & touch){
-		touchMoved(touch.x,touch.y,touch.id, &touch);
-	}
-	virtual void touchUp(ofTouchEventArgs & touch){
-		touchUp(touch.x,touch.y,touch.id, &touch);
-	}
-	virtual void touchDoubleTap(ofTouchEventArgs & touch){
-		touchDoubleTap(touch.x,touch.y,touch.id, &touch);
-	}
-	virtual void touchCancelled(ofTouchEventArgs & touch){
-		touchCancelled(touch.x,touch.y,touch.id, &touch);
-	}
+	virtual void touchDown(ofTouchEventArgs & touch) {
+		touchDown(touch.x, touch.y, touch.id);
+	};
+	virtual void touchMoved(ofTouchEventArgs & touch) {
+		touchMoved(touch.x, touch.y, touch.id);
+	};
+	virtual void touchUp(ofTouchEventArgs & touch) {
+		touchUp(touch.x, touch.y, touch.id);
+	};
+	virtual void touchDoubleTap(ofTouchEventArgs & touch) {
+		touchDoubleTap(touch.x, touch.y, touch.id);
+	};
+	virtual void touchCancelled(ofTouchEventArgs & touch) {
+		touchCancelled(touch.x, touch.y, touch.id);
+	};
 
 };
 
