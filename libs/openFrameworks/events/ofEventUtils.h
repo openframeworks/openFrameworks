@@ -9,7 +9,8 @@
 #include "Poco/FIFOEvent.h"
 #include "Poco/Delegate.h"
 
-
+#include <stdio.h>
+#include <stdlib.h>
 
 //-----------------------------------------
 // define ofEvent as a poco FIFOEvent
@@ -44,8 +45,8 @@ public:
 		this->_enabled = mom._enabled;
 		return *this;
 	}
-};
 
+};
 
 
 //----------------------------------------------------

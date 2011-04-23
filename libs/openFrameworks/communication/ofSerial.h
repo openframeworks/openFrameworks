@@ -50,6 +50,8 @@ class ofSerial {
 			void			flush(bool flushIn = true, bool flushOut = true);
 			int				available();
 
+            void            drain();
+    
 			bool 			bVerbose;
 			void 			setVerbose(bool bLoudmouth) { bVerbose = bLoudmouth; };
 
