@@ -12,29 +12,30 @@
 		288765FD0DF74451002DB57D /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 288765FC0DF74451002DB57D /* CoreGraphics.framework */; };
 		5326AEA810A23A0500278DE6 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5326AEA710A23A0500278DE6 /* CoreLocation.framework */; };
 		53F323EB10A20EDB00E0DAE4 /* OpenAL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53F323EA10A20EDB00E0DAE4 /* OpenAL.framework */; };
-		5E25689710ED26CC00A9501C /* CppUnit.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E25687010ED26CC00A9501C /* CppUnit.a */; };
 		5E25689810ED26CC00A9501C /* PocoFoundation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E25687110ED26CC00A9501C /* PocoFoundation.a */; };
 		5E25689910ED26CC00A9501C /* PocoNet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E25687210ED26CC00A9501C /* PocoNet.a */; };
 		5E25689A10ED26CC00A9501C /* PocoUtil.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E25687310ED26CC00A9501C /* PocoUtil.a */; };
 		5E25689B10ED26CC00A9501C /* PocoXML.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E25687410ED26CC00A9501C /* PocoXML.a */; };
-		5E2568A410ED26CD00A9501C /* CppUnit.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E25688010ED26CC00A9501C /* CppUnit.a */; };
-		5E2568A510ED26CD00A9501C /* PocoFoundation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E25688110ED26CC00A9501C /* PocoFoundation.a */; };
-		5E2568A610ED26CD00A9501C /* PocoNet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E25688210ED26CC00A9501C /* PocoNet.a */; };
-		5E2568A710ED26CD00A9501C /* PocoUtil.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E25688310ED26CC00A9501C /* PocoUtil.a */; };
-		5E2568A810ED26CD00A9501C /* PocoXML.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E25688410ED26CC00A9501C /* PocoXML.a */; };
 		BB16EBD20F2B2A9500518274 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB16EBD10F2B2A9500518274 /* OpenGLES.framework */; };
 		BB16EBD90F2B2AB500518274 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB16EBD80F2B2AB500518274 /* QuartzCore.framework */; };
 		BB24DD8F10DA77E000E9C588 /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = BB24DD8C10DA77E000E9C588 /* Default.png */; };
 		BB24DD9010DA77E000E9C588 /* Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = BB24DD8D10DA77E000E9C588 /* Icon.png */; };
 		BB24DDCA10DA781C00E9C588 /* ofxiphone-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = BB24DDC910DA781C00E9C588 /* ofxiphone-Info.plist */; };
+		BB47D910136358EF0057C702 /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB47D90F136358EF0057C702 /* CoreVideo.framework */; };
+		BB47D912136359350057C702 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB47D911136359350057C702 /* CoreFoundation.framework */; };
+		BB47D9141363594C0057C702 /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB47D9131363594C0057C702 /* CoreMedia.framework */; };
+		BB47D9161363598C0057C702 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB47D9151363598C0057C702 /* AVFoundation.framework */; };
+		BBD28A9413636CA9002BF7C7 /* freeimage.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BBD28A9313636CA9002BF7C7 /* freeimage.a */; };
+		BBD28A9A13636CB7002BF7C7 /* PocoFoundation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BBD28A9613636CB7002BF7C7 /* PocoFoundation.a */; };
+		BBD28A9B13636CB7002BF7C7 /* PocoNet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BBD28A9713636CB7002BF7C7 /* PocoNet.a */; };
+		BBD28A9C13636CB7002BF7C7 /* PocoUtil.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BBD28A9813636CB7002BF7C7 /* PocoUtil.a */; };
+		BBD28A9D13636CB7002BF7C7 /* PocoXML.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BBD28A9913636CB7002BF7C7 /* PocoXML.a */; };
 		BBE5EAB80F49AD8400F28951 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BBE5EAB70F49AD8400F28951 /* AudioToolbox.framework */; };
 		E434BF6512477ED500452519 /* freeimage-iphone.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E434BF6412477ED500452519 /* freeimage-iphone.a */; };
-		E434BF6812477EDE00452519 /* freeimage.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E434BF6712477EDE00452519 /* freeimage.a */; };
 		E434BF7312477FBA00452519 /* freetype-iphone.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E434BF7212477FBA00452519 /* freetype-iphone.a */; };
 		E496D5B11252C8210098A2B3 /* glu-iphone.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E496D5AF1252C8210098A2B3 /* glu-iphone.a */; };
 		E496D5B21252C8210098A2B3 /* glu.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E496D5B01252C8210098A2B3 /* glu.a */; };
 		E49BCC7A12554CD6009F19D0 /* libofxiPhone_iphoneos_Debug.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E49BCC5012554B6A009F19D0 /* libofxiPhone_iphoneos_Debug.a */; };
-		E4A8229F12560AFE002F86A2 /* freetype.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E4A8229E12560AFE002F86A2 /* freetype.a */; };
 		E4A823A412561BE3002F86A2 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E4A823A312561BE3002F86A2 /* CoreGraphics.framework */; };
 		E4D8936E11527B74007E1F53 /* main.mm in Sources */ = {isa = PBXBuildFile; fileRef = E4D8936B11527B74007E1F53 /* main.mm */; };
 		E4D8936F11527B74007E1F53 /* testApp.mm in Sources */ = {isa = PBXBuildFile; fileRef = E4D8936D11527B74007E1F53 /* testApp.mm */; };
@@ -65,16 +66,10 @@
 		32CA4F630368D1EE00C91783 /* iPhone_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iPhone_Prefix.pch; sourceTree = "<group>"; };
 		5326AEA710A23A0500278DE6 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		53F323EA10A20EDB00E0DAE4 /* OpenAL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenAL.framework; path = System/Library/Frameworks/OpenAL.framework; sourceTree = SDKROOT; };
-		5E25687010ED26CC00A9501C /* CppUnit.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = CppUnit.a; path = ../../../libs/poco/lib/iphone/CppUnit.a; sourceTree = SOURCE_ROOT; };
 		5E25687110ED26CC00A9501C /* PocoFoundation.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = PocoFoundation.a; path = ../../../libs/poco/lib/iphone/PocoFoundation.a; sourceTree = SOURCE_ROOT; };
 		5E25687210ED26CC00A9501C /* PocoNet.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = PocoNet.a; path = ../../../libs/poco/lib/iphone/PocoNet.a; sourceTree = SOURCE_ROOT; };
 		5E25687310ED26CC00A9501C /* PocoUtil.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = PocoUtil.a; path = ../../../libs/poco/lib/iphone/PocoUtil.a; sourceTree = SOURCE_ROOT; };
 		5E25687410ED26CC00A9501C /* PocoXML.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = PocoXML.a; path = ../../../libs/poco/lib/iphone/PocoXML.a; sourceTree = SOURCE_ROOT; };
-		5E25688010ED26CC00A9501C /* CppUnit.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = CppUnit.a; path = ../../../libs/poco/lib/osx/CppUnit.a; sourceTree = SOURCE_ROOT; };
-		5E25688110ED26CC00A9501C /* PocoFoundation.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = PocoFoundation.a; path = ../../../libs/poco/lib/osx/PocoFoundation.a; sourceTree = SOURCE_ROOT; };
-		5E25688210ED26CC00A9501C /* PocoNet.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = PocoNet.a; path = ../../../libs/poco/lib/osx/PocoNet.a; sourceTree = SOURCE_ROOT; };
-		5E25688310ED26CC00A9501C /* PocoUtil.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = PocoUtil.a; path = ../../../libs/poco/lib/osx/PocoUtil.a; sourceTree = SOURCE_ROOT; };
-		5E25688410ED26CC00A9501C /* PocoXML.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = PocoXML.a; path = ../../../libs/poco/lib/osx/PocoXML.a; sourceTree = SOURCE_ROOT; };
 		BB16EBD10F2B2A9500518274 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
 		BB16EBD80F2B2AB500518274 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		BB24DD8C10DA77E000E9C588 /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Default.png; sourceTree = "<group>"; };
@@ -126,16 +121,23 @@
 		BB24DE0C10DA785000E9C588 /* tttags.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tttags.h; sourceTree = "<group>"; };
 		BB24DE0D10DA785000E9C588 /* ttunpat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ttunpat.h; sourceTree = "<group>"; };
 		BB24DE0E10DA785000E9C588 /* ft2build.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ft2build.h; sourceTree = "<group>"; };
+		BB47D90F136358EF0057C702 /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = System/Library/Frameworks/CoreVideo.framework; sourceTree = SDKROOT; };
+		BB47D911136359350057C702 /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
+		BB47D9131363594C0057C702 /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = System/Library/Frameworks/CoreMedia.framework; sourceTree = SDKROOT; };
+		BB47D9151363598C0057C702 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
+		BBD28A9313636CA9002BF7C7 /* freeimage.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = freeimage.a; sourceTree = "<group>"; };
+		BBD28A9613636CB7002BF7C7 /* PocoFoundation.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = PocoFoundation.a; sourceTree = "<group>"; };
+		BBD28A9713636CB7002BF7C7 /* PocoNet.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = PocoNet.a; sourceTree = "<group>"; };
+		BBD28A9813636CB7002BF7C7 /* PocoUtil.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = PocoUtil.a; sourceTree = "<group>"; };
+		BBD28A9913636CB7002BF7C7 /* PocoXML.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = PocoXML.a; sourceTree = "<group>"; };
 		BBE5EAB70F49AD8400F28951 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		DA7851271105C039007EFC90 /* glu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = glu.h; sourceTree = "<group>"; };
 		DA7851281105C039007EFC90 /* gluos.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gluos.h; sourceTree = "<group>"; };
 		E434BF6412477ED500452519 /* freeimage-iphone.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "freeimage-iphone.a"; path = "../../../libs/FreeImage/lib/iphone/freeimage-iphone.a"; sourceTree = SOURCE_ROOT; };
-		E434BF6712477EDE00452519 /* freeimage.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = freeimage.a; path = ../../../libs/FreeImage/lib/osx/freeimage.a; sourceTree = SOURCE_ROOT; };
 		E434BF7212477FBA00452519 /* freetype-iphone.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "freetype-iphone.a"; path = "../../../libs/freetype/lib/iphone/freetype-iphone.a"; sourceTree = SOURCE_ROOT; };
 		E496D5AF1252C8210098A2B3 /* glu-iphone.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "glu-iphone.a"; path = "../../../libs/glu/lib/iphone/glu-iphone.a"; sourceTree = SOURCE_ROOT; };
 		E496D5B01252C8210098A2B3 /* glu.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = glu.a; path = ../../../libs/glu/lib/iphone/glu.a; sourceTree = SOURCE_ROOT; };
 		E49BCC4812554B69009F19D0 /* iPhone+OF Lib.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = "iPhone+OF Lib.xcodeproj"; path = "../../../libs/openFrameworksCompiled/project/iphone/iPhone+OF Lib.xcodeproj"; sourceTree = SOURCE_ROOT; };
-		E4A8229E12560AFE002F86A2 /* freetype.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = freetype.a; path = ../../../libs/freetype/lib/osx/freetype.a; sourceTree = SOURCE_ROOT; };
 		E4A823A312561BE3002F86A2 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		E4D8936B11527B74007E1F53 /* main.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = main.mm; path = src/main.mm; sourceTree = SOURCE_ROOT; };
 		E4D8936C11527B74007E1F53 /* testApp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = testApp.h; path = src/testApp.h; sourceTree = SOURCE_ROOT; };
@@ -156,23 +158,24 @@
 				BBE5EAB80F49AD8400F28951 /* AudioToolbox.framework in Frameworks */,
 				53F323EB10A20EDB00E0DAE4 /* OpenAL.framework in Frameworks */,
 				5326AEA810A23A0500278DE6 /* CoreLocation.framework in Frameworks */,
-				5E25689710ED26CC00A9501C /* CppUnit.a in Frameworks */,
 				5E25689810ED26CC00A9501C /* PocoFoundation.a in Frameworks */,
 				5E25689910ED26CC00A9501C /* PocoNet.a in Frameworks */,
 				5E25689A10ED26CC00A9501C /* PocoUtil.a in Frameworks */,
 				5E25689B10ED26CC00A9501C /* PocoXML.a in Frameworks */,
-				5E2568A410ED26CD00A9501C /* CppUnit.a in Frameworks */,
-				5E2568A510ED26CD00A9501C /* PocoFoundation.a in Frameworks */,
-				5E2568A610ED26CD00A9501C /* PocoNet.a in Frameworks */,
-				5E2568A710ED26CD00A9501C /* PocoUtil.a in Frameworks */,
-				5E2568A810ED26CD00A9501C /* PocoXML.a in Frameworks */,
 				E434BF6512477ED500452519 /* freeimage-iphone.a in Frameworks */,
-				E434BF6812477EDE00452519 /* freeimage.a in Frameworks */,
 				E434BF7312477FBA00452519 /* freetype-iphone.a in Frameworks */,
 				E496D5B11252C8210098A2B3 /* glu-iphone.a in Frameworks */,
 				E496D5B21252C8210098A2B3 /* glu.a in Frameworks */,
-				E4A8229F12560AFE002F86A2 /* freetype.a in Frameworks */,
 				E4A823A412561BE3002F86A2 /* CoreGraphics.framework in Frameworks */,
+				BB47D910136358EF0057C702 /* CoreVideo.framework in Frameworks */,
+				BB47D912136359350057C702 /* CoreFoundation.framework in Frameworks */,
+				BB47D9141363594C0057C702 /* CoreMedia.framework in Frameworks */,
+				BB47D9161363598C0057C702 /* AVFoundation.framework in Frameworks */,
+				BBD28A9413636CA9002BF7C7 /* freeimage.a in Frameworks */,
+				BBD28A9A13636CB7002BF7C7 /* PocoFoundation.a in Frameworks */,
+				BBD28A9B13636CB7002BF7C7 /* PocoNet.a in Frameworks */,
+				BBD28A9C13636CB7002BF7C7 /* PocoUtil.a in Frameworks */,
+				BBD28A9D13636CB7002BF7C7 /* PocoXML.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -212,6 +215,9 @@
 		29B97323FDCFA39411CA2CEA /* core frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				BB47D9151363598C0057C702 /* AVFoundation.framework */,
+				BB47D90F136358EF0057C702 /* CoreVideo.framework */,
+				BB47D9131363594C0057C702 /* CoreMedia.framework */,
 				53F323EA10A20EDB00E0DAE4 /* OpenAL.framework */,
 				E4A823A312561BE3002F86A2 /* CoreGraphics.framework */,
 				BBE5EAB70F49AD8400F28951 /* AudioToolbox.framework */,
@@ -220,6 +226,7 @@
 				1DF5F4DF0D08C38300B7A737 /* UIKit.framework */,
 				1D30AB110D05D00D00671497 /* Foundation.framework */,
 				288765FC0DF74451002DB57D /* CoreGraphics.framework */,
+				BB47D911136359350057C702 /* CoreFoundation.framework */,
 				5326AEA710A23A0500278DE6 /* CoreLocation.framework */,
 			);
 			name = "core frameworks";
@@ -236,8 +243,8 @@
 		5E25686E10ED26CC00A9501C /* lib */ = {
 			isa = PBXGroup;
 			children = (
+				BBD28A9513636CB7002BF7C7 /* osx */,
 				5E25686F10ED26CC00A9501C /* iphone */,
-				5E25687F10ED26CC00A9501C /* osx */,
 			);
 			name = lib;
 			path = ../../../libs/poco/lib;
@@ -246,7 +253,6 @@
 		5E25686F10ED26CC00A9501C /* iphone */ = {
 			isa = PBXGroup;
 			children = (
-				5E25687010ED26CC00A9501C /* CppUnit.a */,
 				5E25687110ED26CC00A9501C /* PocoFoundation.a */,
 				5E25687210ED26CC00A9501C /* PocoNet.a */,
 				5E25687310ED26CC00A9501C /* PocoUtil.a */,
@@ -254,19 +260,6 @@
 			);
 			name = iphone;
 			path = ../../../libs/poco/lib/iphone;
-			sourceTree = SOURCE_ROOT;
-		};
-		5E25687F10ED26CC00A9501C /* osx */ = {
-			isa = PBXGroup;
-			children = (
-				5E25688010ED26CC00A9501C /* CppUnit.a */,
-				5E25688110ED26CC00A9501C /* PocoFoundation.a */,
-				5E25688210ED26CC00A9501C /* PocoNet.a */,
-				5E25688310ED26CC00A9501C /* PocoUtil.a */,
-				5E25688410ED26CC00A9501C /* PocoXML.a */,
-			);
-			name = osx;
-			path = ../../../libs/poco/lib/osx;
 			sourceTree = SOURCE_ROOT;
 		};
 		BB16E9930F2B1E5900518274 /* libs */ = {
@@ -315,7 +308,7 @@
 		BB24DDD010DA784F00E9C588 /* lib */ = {
 			isa = PBXGroup;
 			children = (
-				E434BF6612477EDE00452519 /* osx */,
+				BBD28A9213636CA9002BF7C7 /* osx */,
 				BB24DDD110DA784F00E9C588 /* iphone */,
 			);
 			path = lib;
@@ -418,7 +411,6 @@
 		BB24DE1110DA785000E9C588 /* lib */ = {
 			isa = PBXGroup;
 			children = (
-				E4A8229D12560AFE002F86A2 /* osx */,
 				BB24DE1210DA785000E9C588 /* iphone */,
 			);
 			path = lib;
@@ -479,6 +471,25 @@
 			name = "core libraries";
 			sourceTree = "<group>";
 		};
+		BBD28A9213636CA9002BF7C7 /* osx */ = {
+			isa = PBXGroup;
+			children = (
+				BBD28A9313636CA9002BF7C7 /* freeimage.a */,
+			);
+			path = osx;
+			sourceTree = "<group>";
+		};
+		BBD28A9513636CB7002BF7C7 /* osx */ = {
+			isa = PBXGroup;
+			children = (
+				BBD28A9613636CB7002BF7C7 /* PocoFoundation.a */,
+				BBD28A9713636CB7002BF7C7 /* PocoNet.a */,
+				BBD28A9813636CB7002BF7C7 /* PocoUtil.a */,
+				BBD28A9913636CB7002BF7C7 /* PocoXML.a */,
+			);
+			path = osx;
+			sourceTree = "<group>";
+		};
 		BBE5E94E0F497BD800F28951 /* core */ = {
 			isa = PBXGroup;
 			children = (
@@ -497,15 +508,6 @@
 			path = include_iphone;
 			sourceTree = "<group>";
 		};
-		E434BF6612477EDE00452519 /* osx */ = {
-			isa = PBXGroup;
-			children = (
-				E434BF6712477EDE00452519 /* freeimage.a */,
-			);
-			name = osx;
-			path = ../../../libs/FreeImage/lib/osx;
-			sourceTree = SOURCE_ROOT;
-		};
 		E49BCC4912554B69009F19D0 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -513,15 +515,6 @@
 			);
 			name = Products;
 			sourceTree = "<group>";
-		};
-		E4A8229D12560AFE002F86A2 /* osx */ = {
-			isa = PBXGroup;
-			children = (
-				E4A8229E12560AFE002F86A2 /* freetype.a */,
-			);
-			name = osx;
-			path = ../../../libs/freetype/lib/osx;
-			sourceTree = SOURCE_ROOT;
 		};
 		E4D8936A11527B74007E1F53 /* src */ = {
 			isa = PBXGroup;
@@ -657,6 +650,8 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../../../libs/freetype/lib/osx\"",
+					"\"$(SRCROOT)/../../../libs/FreeImage/lib/osx\"",
+					"\"$(SRCROOT)/../../../libs/poco/lib/osx\"",
 				);
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = "${TARGET_NAME}";
@@ -674,6 +669,8 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../../../libs/freetype/lib/osx\"",
+					"\"$(SRCROOT)/../../../libs/FreeImage/lib/osx\"",
+					"\"$(SRCROOT)/../../../libs/poco/lib/osx\"",
 				);
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = "${TARGET_NAME}";
@@ -718,12 +715,12 @@
 					"\"$(SRCROOT)/../../../libs/poco/lib/osx\"",
 					"\"$(SRCROOT)/../../../libs/poco/lib/iphone\"",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.5;
+				MACOSX_DEPLOYMENT_TARGET = "";
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_LDFLAGS = "-ObjC";
 				PREBINDING = NO;
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
-				SDKROOT = iphoneos4.2;
+				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = 1;
 				WARNING_LDFLAGS = "";
 			};
@@ -763,12 +760,12 @@
 					"\"$(SRCROOT)/../../../libs/poco/lib/osx\"",
 					"\"$(SRCROOT)/../../../libs/poco/lib/iphone\"",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.5;
+				MACOSX_DEPLOYMENT_TARGET = "";
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_LDFLAGS = "-ObjC";
 				PREBINDING = NO;
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
-				SDKROOT = iphoneos4.1;
+				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
@@ -807,12 +804,12 @@
 					"\"$(SRCROOT)/../../../libs/poco/lib/osx\"",
 					"\"$(SRCROOT)/../../../libs/poco/lib/iphone\"",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.5;
+				MACOSX_DEPLOYMENT_TARGET = "";
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_LDFLAGS = "-ObjC";
 				PREBINDING = NO;
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
-				SDKROOT = iphoneos4.1;
+				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = ReleaseArmv7;
@@ -828,6 +825,8 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../../../libs/freetype/lib/osx\"",
+					"\"$(SRCROOT)/../../../libs/FreeImage/lib/osx\"",
+					"\"$(SRCROOT)/../../../libs/poco/lib/osx\"",
 				);
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = "${TARGET_NAME}";
