@@ -61,7 +61,7 @@ namespace ofxCv {
 		void undistort(Mat img);
 		void undistort(Mat src, Mat dst);
 		
-		void getTransformation(Calibration& dst, Mat rotation, Mat translation);
+		void getTransformation(Calibration& dst, Mat& rotation, Mat& translation);
 		
 		float getReprojectionError() const;
 		float getReprojectionError(int i) const;

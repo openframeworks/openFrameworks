@@ -173,7 +173,7 @@ namespace ofxCv {
 	void Calibration::undistort(Mat src, Mat dst) {
 		remap(src, dst, undistortMapX, undistortMapY, INTER_LINEAR);
 	}
-	void Calibration::getTransformation(Calibration& dst, Mat rotation, Mat translation) {
+	void Calibration::getTransformation(Calibration& dst, Mat& rotation, Mat& translation) {
 		if(imagePoints.size() == 0 || dst.imagePoints.size() == 0) {
 			ofLog(OF_LOG_ERROR, "getTransformation() requires both Calibration objects to have just been calibrated");
 			return;
@@ -182,7 +182,7 @@ namespace ofxCv {
 			ofLog(OF_LOG_ERROR, "getTransformation() requires both Calibration objects to be trained simultaneously on the same board");
 			return;
 		}
-		Mat fundamentalMatrix, essentionalMatrix;
+		Mat fundamentalMatrix, essentialMatrix;
 		Mat cameraMatrix = distortedIntrinsics.getCameraMatrix();
 		Mat dstCameraMatrix = dst.getDistortedIntrinsics().getCameraMatrix();
 		// uses CALIB_FIX_INTRINSIC by default
@@ -191,7 +191,7 @@ namespace ofxCv {
 										cameraMatrix, distCoeffs,
 										dstCameraMatrix, dst.distCoeffs,
 										distortedIntrinsics.getImageSize(), rotation, translation,
-										essentionalMatrix, fundamentalMatrix);			
+										essentialMatrix, fundamentalMatrix);			
 	}		
 	float Calibration::getReprojectionError() const {
 		return reprojectionError;
