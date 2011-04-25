@@ -64,7 +64,11 @@ enum TessElementType
 };
 
 typedef float TESSreal;
+#if defined (TARGET_OS_IPHONE) || defined(ANDROID)
+typedef unsigned short TESSindex;
+#else
 typedef unsigned int TESSindex;
+#endif
 typedef struct TESStesselator TESStesselator;
 typedef struct TESSalloc TESSalloc;
 
