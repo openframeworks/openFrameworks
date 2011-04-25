@@ -16,7 +16,7 @@ JavaVM * ofGetJavaVMPtr();
 JNIEnv * ofGetJNIEnv();
 jclass ofGetJavaOFAndroid();
 
-void ofRunApp( ofxAndroidApp * app);
+//void ofRunApp( ofxAndroidApp * app);
 
 
 void ofxRegisterMultitouch(ofxAndroidApp * app);

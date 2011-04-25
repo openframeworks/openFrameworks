@@ -49,10 +49,9 @@ static deque <ofRectangle> viewportHistory;
 
 static ofPath shape;
 static ofMesh vertexData;
-static ofBaseRenderer * renderer = NULL;
+static ofPtr<ofBaseRenderer> renderer;
 
-void ofSetDefaultRenderer(ofBaseRenderer * renderer_){
-	if(renderer) delete renderer;
+void ofSetDefaultRenderer(ofPtr<ofBaseRenderer> renderer_){
 	renderer = renderer_;
 	renderer->setupGraphicDefaults();
 
@@ -67,7 +66,7 @@ void ofSetDefaultRenderer(ofBaseRenderer * renderer_){
 	ofSetStyle(currentStyle);
 }
 
-ofBaseRenderer * ofGetDefaultRenderer(){
+ofPtr<ofBaseRenderer> & ofGetDefaultRenderer(){
 	return renderer;
 }
 

@@ -19,8 +19,8 @@
 static bool paused=true;
 
 
-static int  sWindowWidth  = 320;
-static int  sWindowHeight = 480;
+static int  sWindowWidth  = 480;
+static int  sWindowHeight = 800;
 /*static int  sDemoStopped  = 0;
 static long sTimeOffset   = 0;
 static int  sTimeOffsetInit = 0;
@@ -40,8 +40,8 @@ static double			lastFrameTime;
 static JavaVM *ofJavaVM=0;
 
 
-static ofBaseApp * OFApp = NULL;
-static ofxAndroidApp * androidApp = NULL;
+static ofPtr<ofBaseApp> OFApp;
+static ofxAndroidApp * androidApp;
 
 static ofOrientation orientation = OF_ORIENTATION_DEFAULT;
 //static ofAppAndroidWindow window;
@@ -68,10 +68,15 @@ jclass ofGetJavaOFAndroid(){
 	return ofGetJNIEnv()->FindClass("cc.openframeworks.OFAndroid");
 }
 
-void ofRunApp( ofxAndroidApp * app){
+/*void ofRunApp( ofxAndroidApp * app){
 	androidApp = app;
 	ofRunApp((ofBaseApp*)app);
 }
+
+void ofRunApp( ofPtr<ofxAndroidApp> app){
+	androidApp = app;
+	ofRunApp((ofBaseApp*)app);
+}*/
 
 void ofxRegisterMultitouch(ofxAndroidApp * app){
 	ofRegisterTouchEvents(app);
@@ -120,9 +125,9 @@ ofAppAndroidWindow::~ofAppAndroidWindow() {
 	// TODO Auto-generated destructor stub
 }
 
-void ofAppAndroidWindow::runAppViaInfiniteLoop(ofBaseApp * appPtr){
+void ofAppAndroidWindow::runAppViaInfiniteLoop(ofPtr<ofBaseApp> appPtr){
+	androidApp = dynamic_cast<ofxAndroidApp*>( appPtr.get() );
 	OFApp = appPtr;
-	ofLog(OF_LOG_NOTICE,"runAppViaInfiniteLoop");
 }
 
 ofPoint	ofAppAndroidWindow::getWindowSize(){
@@ -164,7 +169,7 @@ void ofAppAndroidWindow::setOrientation(ofOrientation _orientation){
 	jclass javaClass = ofGetJNIEnv()->FindClass("cc.openframeworks.OFAndroid");
 
 	if(javaClass==0){
-		ofLog(OF_LOG_ERROR,"cannot find OFAndroid java class");
+		ofLog(OF_LOG_ERROR,"setOrientation: cannot find OFAndroid java class");
 		return;
 	}
 
@@ -178,6 +183,26 @@ void ofAppAndroidWindow::setOrientation(ofOrientation _orientation){
 
 ofOrientation ofAppAndroidWindow::getOrientation(){
 	return orientation;
+}
+
+void ofAppAndroidWindow::setFullscreen(bool fullscreen){
+	jclass javaClass = ofGetJNIEnv()->FindClass("cc.openframeworks.OFAndroid");
+
+	if(javaClass==0){
+		ofLog(OF_LOG_ERROR,"setFullscreen: cannot find OFAndroid java class");
+		return;
+	}
+
+	jmethodID setFullscreen = ofGetJNIEnv()->GetStaticMethodID(javaClass,"setFullscreen","(Z)V");
+	if(!setFullscreen){
+		ofLog(OF_LOG_ERROR,"cannot find OFAndroid setFullscreen method");
+		return;
+	}
+	ofGetJNIEnv()->CallStaticObjectMethod(javaClass,setFullscreen,fullscreen);
+}
+
+void ofAppAndroidWindow::toggleFullscreen(){
+
 }
 
 void reloadTextures(){
@@ -382,23 +407,17 @@ Java_cc_openframeworks_OFAndroid_onTouchMoved(JNIEnv*  env, jclass  thiz, jint i
 
 void
 Java_cc_openframeworks_OFAndroid_onKeyDown(JNIEnv*  env, jobject  thiz, jint  keyCode){
-	if(OFApp)OFApp->keyPressed(keyCode);
-	ofKeyEventArgs key;
-	key.key = keyCode;
-	ofNotifyEvent(ofEvents.keyPressed,key);
+	ofNotifyKeyPressed(keyCode);
 }
 
 void
 Java_cc_openframeworks_OFAndroid_onKeyUp(JNIEnv*  env, jobject  thiz, jint  keyCode){
-	if(OFApp)OFApp->keyReleased(keyCode);
-	ofKeyEventArgs key;
-	key.key = keyCode;
-	ofNotifyEvent(ofEvents.keyReleased,key);
+	ofNotifyKeyReleased(keyCode);
 }
 
 jboolean
 Java_cc_openframeworks_OFAndroid_onBackPressed(){
-	ofLog(OF_LOG_NOTICE,"back pressed");
+	ofLog(OF_LOG_VERBOSE,"back pressed");
 	if(androidApp) return androidApp->backPressed();
 	else return false;
 }

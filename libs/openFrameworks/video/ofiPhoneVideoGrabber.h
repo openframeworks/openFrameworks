@@ -11,7 +11,6 @@ class ofiPhoneVideoGrabber : public ofBaseVideoGrabber {
 	public :
 	
 	ofiPhoneVideoGrabber();
-	virtual ~ofiPhoneVideoGrabber();
 	
 	//needs implementing
 	void listDevices();	
@@ -41,8 +40,8 @@ class ofiPhoneVideoGrabber : public ofBaseVideoGrabber {
 	
 	void videoSettings();*/
 	
-	protected:
-		AVFoundationVideoGrabber * grabber;
+protected:
+	ofPtr<AVFoundationVideoGrabber> grabber;
 };
 
 #endif

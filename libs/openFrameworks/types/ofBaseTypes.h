@@ -152,7 +152,7 @@ class ofBaseVideoDraws: virtual public ofBaseVideo, public ofBaseDraws, public o
 //----------------------------------------------------------
 // ofBaseVideoGrabber
 //----------------------------------------------------------
-class ofBaseVideoGrabber: virtual public ofBaseVideo{
+class ofBaseVideoGrabber: public ofBaseVideo{
 	
 	public :
 	
@@ -186,7 +186,7 @@ class ofBaseVideoGrabber: virtual public ofBaseVideo{
 //----------------------------------------------------------
 // ofBaseVideoPlayer
 //----------------------------------------------------------
-class ofBaseVideoPlayer: virtual public ofBaseVideo{
+class ofBaseVideoPlayer: public ofBaseVideo{
 	
 public:
 	
