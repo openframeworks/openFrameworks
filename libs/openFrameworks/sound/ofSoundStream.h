@@ -3,6 +3,7 @@
 #include "ofConstants.h"
 #include "ofBaseTypes.h"
 #include "ofBaseApp.h"
+#include "ofTypes.h"
 
 #ifdef OF_TARGET_IPHONE
 	#error we need swappable sound stream api for iphone

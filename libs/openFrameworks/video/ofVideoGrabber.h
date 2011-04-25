@@ -4,6 +4,7 @@
 #include "ofTexture.h"
 #include "ofBaseTypes.h"
 #include "ofPixels.h"
+#include "ofTypes.h"
 
 #ifdef OF_VIDEO_CAPTURE_IPHONE
 	#include "ofiPhoneVideoGrabber.h"

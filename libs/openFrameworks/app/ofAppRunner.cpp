@@ -152,6 +152,7 @@ void ofRunApp(ofPtr<ofBaseApp> OFSA){
 
 	window->runAppViaInfiniteLoop(OFSAptr);
 
+
 }
 
 //--------------------------------------

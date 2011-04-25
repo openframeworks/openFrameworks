@@ -17,7 +17,7 @@ public:
 
 	void setupOpenGL(int w, int h, int screenMode) {}
 	void initializeWindow() {}
-	void runAppViaInfiniteLoop(ofBaseApp * appPtr);
+	void runAppViaInfiniteLoop(ofPtr<ofBaseApp> appPtr);
 
 	void hideCursor() {}
 	void showCursor() {}
@@ -43,8 +43,8 @@ public:
 
 	int		getWindowMode() {return 0;}
 
-	void	setFullscreen(bool fullscreen){}
-	void	toggleFullscreen(){}
+	void	setFullscreen(bool fullscreen);
+	void	toggleFullscreen();
 
 	void	enableSetupScreen();
 	void	disableSetupScreen();
