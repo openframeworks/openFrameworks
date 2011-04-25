@@ -614,6 +614,7 @@ void ofImage::setImageType(ofImageType newType){
 
 //------------------------------------
 void ofImage::resize(int newWidth, int newHeight){
+	if(newWidth == width && newHeight == height) return;
 
 	resizePixels(pixels, newWidth, newHeight);
 
