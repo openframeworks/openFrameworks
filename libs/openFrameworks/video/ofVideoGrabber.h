@@ -5,6 +5,7 @@
 #include "ofBaseTypes.h"
 #include "ofPixels.h"
 
+
 #ifdef OF_VIDEO_CAPTURE_IPHONE
 	#include "ofiPhoneVideoGrabber.h"
 	#define OF_VID_GRABBER_TYPE ofiPhoneVideoGrabber()

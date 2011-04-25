@@ -628,6 +628,17 @@ void ofSerial::flush(bool flushIn, bool flushOut){
 
 }
 
+void ofSerial::drain(){
+    if (!bInited){
+	ofLog(OF_LOG_ERROR,"ofSerial: serial not inited");
+	return;
+    }
+
+    #if defined( TARGET_OSX ) || defined( TARGET_LINUX )
+        tcdrain( fd );
+    #endif
+}
+
 //-------------------------------------------------------------
 int ofSerial::available(){
 
