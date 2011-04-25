@@ -102,9 +102,7 @@ void ofMesh::addVertices(const vector<ofVec3f>& verts){
 
 //--------------------------------------------------------------
 void ofMesh::addVertices(const ofVec3f* verts, int amt){
-	for (int i = 0; i < amt;i++){
-		addVertex(verts[i]);
-	}
+	vertices.insert(vertices.end(),verts,verts+amt);
 	bVertsChanged = true;
 }
 
@@ -182,9 +180,7 @@ void ofMesh::addIndices(const vector<ofIndexType>& inds){
 
 //--------------------------------------------------------------
 void ofMesh::addIndices(const ofIndexType* inds, int amt){
-	for (int i = 0; i < amt;i++){
-		addIndex(inds[i]);
-	}
+	indices.insert(indices.end(),inds,inds+amt);
 	bIndicesChanged = true;
 }
 
@@ -477,3 +473,4 @@ void ofMesh::drawFaces(){
 void ofMesh::draw(ofPolyRenderMode renderType){
 	ofGetDefaultRenderer()->draw(*this,renderType);
 }
+
