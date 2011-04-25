@@ -376,5 +376,5 @@ public:
 		 }
 	}
 
-	vector<ofBaseRenderer *> renderers;
+	vector<ofPtr<ofBaseRenderer> > renderers;
 };

@@ -18,8 +18,11 @@ import android.hardware.SensorManager;
 import android.opengl.GLSurfaceView;
 import android.os.Environment;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
+import android.view.Window;
+import android.view.WindowManager;
 
 public class OFAndroid {
 	
@@ -175,6 +178,26 @@ public class OFAndroid {
     
 
     // static methods to be called from OF c++ code
+    public static void setFullscreen(boolean fs){
+    	//ofActivity.requestWindowFeature(Window.FEATURE_NO_TITLE);
+    	//ofActivity.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, 
+        //                        WindowManager.LayoutParams.FLAG_FULLSCREEN);
+	  /* if(fs)
+	   {
+	        ofActivity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+	        ofActivity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
+	    }
+	    else
+	    {
+	    	ofActivity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
+	    	ofActivity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+	    }*/
+
+	    //m_contentView.requestLayout();
+
+    	//ofActivity.getWindow().setAttributes(attrs);
+    }
+    
     public static void setScreenOrientation(int orientation){
     	switch(orientation){
     	case 0:
@@ -286,6 +309,7 @@ class OFGLSurfaceView extends GLSurfaceView {
 		super.surfaceDestroyed(holder);
     	OFAndroid.onSurfaceDestroyed();
 	}
+
 
     OFAndroidWindow mRenderer;
 }

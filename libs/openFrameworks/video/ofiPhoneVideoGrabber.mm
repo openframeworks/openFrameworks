@@ -4,11 +4,7 @@
 #include "ofiPhoneVideoGrabber.h"
 
 ofiPhoneVideoGrabber::ofiPhoneVideoGrabber() {
-	grabber = new AVFoundationVideoGrabber();
-}
-
-ofiPhoneVideoGrabber::~ofiPhoneVideoGrabber() {
-	delete grabber;
+	grabber = ofPtr<AVFoundationVideoGrabber>(new AVFoundationVideoGrabber());
 }
 
 //needs implementing
