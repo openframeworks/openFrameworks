@@ -512,32 +512,32 @@ uint64_t ofFile::getSize() const{
 }
 
 //------------------------------------------------------------------------------------------------------------
-bool ofFile::operator==(const ofFile & file){
+bool ofFile::operator==(const ofFile & file) const{
 	return path() == file.path();
 }
 
 //------------------------------------------------------------------------------------------------------------
-bool ofFile::operator!=(const ofFile & file){
+bool ofFile::operator!=(const ofFile & file) const{
 	return path() != file.path();
 }
 
 //------------------------------------------------------------------------------------------------------------
-bool ofFile::operator<(const ofFile & file){
+bool ofFile::operator<(const ofFile & file) const{
 	return path()<file.path();
 }
 
 //------------------------------------------------------------------------------------------------------------
-bool ofFile::operator<=(const ofFile & file){
+bool ofFile::operator<=(const ofFile & file) const{
 	return path() <= file.path();
 }
 
 //------------------------------------------------------------------------------------------------------------
-bool ofFile::operator>(const ofFile & file){
+bool ofFile::operator>(const ofFile & file) const{
 	return path() > file.path();
 }
 
 //------------------------------------------------------------------------------------------------------------
-bool ofFile::operator>=(const ofFile & file){
+bool ofFile::operator>=(const ofFile & file) const{
 	return path() >= file.path();
 }
 
@@ -1115,6 +1115,10 @@ string ofFilePath::getFilename(string filePath, bool bRelativeToData){
 	return fileName;
 }
 
+//------------------------------------------------------------------------------------------------------------
+string ofFilePath::getBaseName(string filePath){
+	return removeExt(getFilename(filePath));
+}
 
 //------------------------------------------------------------------------------------------------------------
 string ofFilePath::getEnclosingDirectory(string filePath, bool bRelativeToData){
