@@ -67,6 +67,7 @@ public:
 	static bool isAbsolute(string path);
 	
 	static string getFilename(string filePath, bool bRelativeToData = true);	
+	static string getBaseName(string filePath); // filename without extension
 
 	static string getEnclosingDirectory(string filePath, bool bRelativeToData = true);
 	static string getCurrentWorkingDirectory();
@@ -134,12 +135,12 @@ public:
 	Poco::File & getPocoFile();
 
 	//this allows to compare files by their paths, also provides sorting and use as key in stl containers
-	bool operator==(const ofFile & file);
-	bool operator!=(const ofFile & file);
-	bool operator<(const ofFile & file);
-	bool operator<=(const ofFile & file);
-	bool operator>(const ofFile & file);
-	bool operator>=(const ofFile & file);
+	bool operator==(const ofFile & file) const;
+	bool operator!=(const ofFile & file) const;
+	bool operator<(const ofFile & file) const;
+	bool operator<=(const ofFile & file) const;
+	bool operator>(const ofFile & file) const;
+	bool operator>=(const ofFile & file) const;
 
 
 	//------------------
