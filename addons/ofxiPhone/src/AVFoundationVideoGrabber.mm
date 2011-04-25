@@ -16,7 +16,6 @@
 
 #if defined  __arm__
 
-
 @implementation iPhoneVideoGrabber
 
 @synthesize captureSession	= _captureSession;
@@ -307,14 +306,11 @@ bool AVFoundationVideoGrabber::initGrabber(int w, int h){
 		return false;
 }
 
-void AVFoundationVideoGrabber::update()
-{
+void AVFoundationVideoGrabber::update(){
 	newFrame = false;
-	cout<<"false"<<endl;
 	if (bHavePixelsChanged == true){
 		newFrame = true;
 		bHavePixelsChanged = false;
-		cout<<"true"<<endl;
 	}
 }
 
@@ -395,10 +391,12 @@ ofPixelFormat AVFoundationVideoGrabber::getPixelFormat() {
         return OF_PIXELS_RGBA;
 	else if(internalGlDataType == GL_BGRA)
         return OF_PIXELS_BGRA;
+    else
+        return OF_PIXELS_RGB;
 }
 
 #endif	// (__arm__) compile only for ARM
-//
+
 //#else   // compile for 4.0+
 //
 //#warning "skipping AVFoundationVideoGrabber compilation because you need > 3.2 iOS SDK"

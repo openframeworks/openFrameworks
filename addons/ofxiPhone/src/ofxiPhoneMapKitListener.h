@@ -36,6 +36,7 @@
 
 class ofxiPhoneMapKitListener { 
 public:
+    virtual ~ofxiPhoneMapKitListener() {};
 	virtual void regionWillChange(bool animated) {}
 	virtual void regionDidChange(bool animated) {}
 	virtual void willStartLoadingMap() {}

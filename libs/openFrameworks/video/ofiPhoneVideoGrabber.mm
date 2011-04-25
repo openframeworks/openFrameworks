@@ -1,8 +1,7 @@
 #if defined  __arm__
 
+#include "AVFoundationVideoGrabber.h"
 #include "ofiPhoneVideoGrabber.h"
-#import "AVFoundationVideoGrabber.h"
-
 
 ofiPhoneVideoGrabber::ofiPhoneVideoGrabber() {
 	grabber = new AVFoundationVideoGrabber();
@@ -27,6 +26,12 @@ bool ofiPhoneVideoGrabber::isFrameNew() {
 
 unsigned char * ofiPhoneVideoGrabber::getPixels() {
 	return grabber->getPixels();
+}
+
+ofPixelsRef ofiPhoneVideoGrabber::getPixelsRef(){
+    static ofPixels dummy;
+    //@TODO implement me
+    return dummy;
 }
 
 void ofiPhoneVideoGrabber::close() {
@@ -59,5 +64,6 @@ void ofiPhoneVideoGrabber::setPixelFormat(ofPixelFormat internalPixelFormat) {
 
 ofPixelFormat ofiPhoneVideoGrabber::getPixelFormat(){
     return grabber->getPixelFormat();
+}
 
 #endif

@@ -14,14 +14,13 @@
 #include "ofxiPhoneAlerts.h"
 #include "ofxMultiTouch.h"
 
-
 class ofxiPhoneApp : public ofSimpleApp, public ofxiPhoneAlertsListener, public ofxMultiTouchListener {
 	
 public:
-	void setup() {};
-	void update() {};
-	void draw() {};
-	void exit() {};
+	virtual void setup() {};
+	virtual void update() {};
+	virtual void draw() {};
+	virtual void exit() {};
 
 	virtual void touchDown(int x, int y, int id) {};
 	virtual void touchMoved(int x, int y, int id) {};
@@ -29,9 +28,9 @@ public:
 	virtual void touchDoubleTap(int x, int y, int id) {};
 	virtual void touchCancelled(int x, int y, int id) {};
 	
-	void lostFocus() {}
-	void gotFocus() {}
-	void gotMemoryWarning() {}
+	virtual void lostFocus() {}
+	virtual void gotFocus() {}
+	virtual void gotMemoryWarning() {}
 
 	virtual void touchDown(ofTouchEventArgs & touch) {
 		touchDown(touch.x, touch.y, touch.id);
@@ -48,6 +47,6 @@ public:
 	virtual void touchCancelled(ofTouchEventArgs & touch) {
 		touchCancelled(touch.x, touch.y, touch.id);
 	};
-	
+
 };
 
