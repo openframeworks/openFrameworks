@@ -72,7 +72,7 @@ public:
 	const vector<ofSubPath> & getSubPaths() const;
 
 	vector<ofPolyline> & getOutline();
-	vector<ofMesh> & getTessellation();
+	ofMesh & getTessellation();
 	/// tessellate is called internally before calling draw, if the shape has changed
 	void tessellate();
 	void simplify(float tolerance=0.3);
@@ -116,14 +116,18 @@ private:
 	vector<ofPolyline>  polylines;
 	vector<ofPolyline>  tessellatedPolylines;
 
+	ofMesh				cachedTessellation;
+	bool				cachedTessellationValid;
+
 	// this gives more performance for shapes that are
 	// updating frequently by not instantiating new meshes
-	friend class ofTessellator;
+	/*friend class ofTessellator;
+	friend class ofTessellator2;
 	struct tessCache{
 		vector<ofMesh> meshes;
 		int numElements;
 		bool changed;
-	}cachedTessellation;
+	}cachedTessellation;*/
 
 	bool				hasChanged;
 	int					prevCurveRes;
