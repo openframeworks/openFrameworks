@@ -962,7 +962,7 @@ int tessGetElementCount( TESStesselator *tess )
 	return tess->elementCount;
 }
 
-const int* tessGetElements( TESStesselator *tess )
+const TESSindex* tessGetElements( TESStesselator *tess )
 {
 	return tess->elements;
 }
