@@ -4,13 +4,42 @@ from lxml import etree
 from lxml import objectify
 import argparse
 import shutil
+import glob
 
 of_root = '/home/arturo/Desktop/openFrameworks'
 platform = 'linux'
 arch = 'linux64'
 templates_path = '../../apps/examples/emptyExample/'
 template = {'cbp': templates_path + 'emptyExample_' + arch + '.cbp', 'makefile': templates_path + 'Makefile', 'config.make': templates_path + 'config.make'}
+fullCBP = True
 
+def addCBPIncludePath(project,dirpath):
+    found=False
+    if project.find('Compiler') == None:
+        etree.SubElement(project,"Compiler")
+    if project.Compiler.find('Add') != None:
+        for include in project.Compiler.Add:
+            if str(include.get("directory"))==str(dirpath):
+                found=True
+                break
+    if not found:
+        include = etree.SubElement(project.Compiler,"Add")
+        include.set("directory",dirpath)
+        
+def addCBPLibrary(project,libpath):
+    print libpath
+    found=False
+    if project.find('Linker') == None:
+        etree.SubElement(project,"Linker")
+    if project.Linker.find('Add') != None:
+        for lib in project.Linker.Add:
+            if str(lib.get("library"))==str(libpath):
+                found=True
+                break
+    if not found:
+        include = etree.SubElement(project.Linker,"Add")
+        include.set("library",libpath)
+        
 def addCBPUnit(project,filepath,basefolder):
     found=False
     for unit in project.Unit:
@@ -32,12 +61,55 @@ def addAddon(project,addon):
     if not os.path.exists(os.path.join(of_root,'addons',addon,'src')):
         print 'error', addon, 'has no src folder'
         return
+    if fullCBP:
+        addon_src = os.path.join('..','..','..',os.path.join(of_root,'addons',addon,'src')[len(of_root)+1:])
+        addCBPIncludePath(project,addon_src)
     for root, dirs, files in os.walk(os.path.join(of_root,'addons',addon,'src')):
         for name in files:
             basefolder = root[len(of_root)+1:]
             filepath = str(os.path.join('..','..','..',basefolder,name))
-            print filepath 
             addCBPUnit(project,filepath,basefolder)
+        if fullCBP:
+            for dir in dirs:
+                basefolder = root[len(of_root)+1:]
+                dirpath = os.path.join('..','..','..',basefolder,dir)
+                addCBPIncludePath(project,dirpath)
+    
+    if fullCBP:
+        if not os.path.exists(os.path.join(of_root,'addons',addon,'libs')):
+            return
+        for libdir in os.listdir(os.path.join(of_root,'addons',addon,'libs')):
+            if not os.path.isdir(os.path.join(of_root,'addons',addon,'libs',libdir)):
+                continue
+            basefolder = os.path.join('addons',addon,'libs',libdir);
+            if os.path.exists(os.path.join(of_root,basefolder,'include')):
+                dirpath = os.path.join('..','..','..',basefolder,'include')
+                addCBPIncludePath(project,dirpath)
+                for root, dirs, files in os.walk(os.path.join(libdir,'include')):
+                    for dir in dirs:
+                        basefolder = root[len(of_root)+1:]
+                        dirpath = os.path.join('..','..','..',basefolder,dir)
+                        addCBPIncludePath(project,dirpath)
+            
+            if os.path.exists(os.path.join(of_root,basefolder,'lib',arch)):
+                dirpath = os.path.join('..','..','..',basefolder,'lib',arch)
+                if os.path.exists(os.path.join(of_root,basefolder,'lib',arch,'libsorder.make')):
+                    libsorder = open(os.path.join(of_root,basefolder,'lib',arch,'libsorder.make'))
+                    for lib in libsorder:
+                        if lib[-1]=='\n':
+                            lib = lib[:-1]
+                        addCBPLibrary(project,os.path.join(dirpath,'lib'+lib.strip()+'.a'))
+                    libsorder.close()
+                else:
+                    for lib in glob.glob(os.path.join(of_root,basefolder,'lib',arch,'*.a')):
+                        baselib = lib[len(of_root)+1:]
+                        addCBPLibrary(project,os.path.join('..','..','..',baselib))
+                        print baselib
+                    for lib in glob.glob(os.path.join(of_root,basefolder,'lib',arch,'*.so')):
+                        baselib = lib[len(of_root)+1:]
+                        addCBPLibrary(project,os.path.join('..','..','..',baselib))
+                        print baselib
+                        
 
 def addAddons(project,project_path):
     if not os.path.exists(os.path.join(project_path,'addons.make')):
@@ -65,7 +137,6 @@ def createCBP(project_path):
         for name in files:
             basefolder = root[len(project_path)+1:]
             filepath = str(os.path.join(basefolder,name))
-            print filepath 
             addCBPUnit(project,filepath,basefolder)
     
     # add addons from addons.make to the cbp
@@ -119,3 +190,4 @@ if project_path==None: #parse all examples
         createProject(os.path.join('..','..','apps','addonsExamples',example))
 else:
     createProject(project_path)
+    
