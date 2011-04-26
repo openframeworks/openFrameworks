@@ -169,7 +169,7 @@ int ofxCvHaarFinder::findHaarObjects(const ofxCvGrayscaleImage& input,
 		nHaarResults = haarResults->total;
 
 		for (int i = 0; i < nHaarResults; i++ ) {
-			printf("%i objects\n", i);
+			//printf("%i objects\n", i);
 			
 			ofxCvBlob blob;
 
