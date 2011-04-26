@@ -40,6 +40,8 @@ public:
 
 	float getWidth();
 	float getHeight();
+	
+	void draw(float x, float y);
 
 protected:
 	CvHaarClassifierCascade* cascade;
