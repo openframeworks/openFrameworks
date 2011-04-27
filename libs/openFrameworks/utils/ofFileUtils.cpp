@@ -904,6 +904,11 @@ ofFile ofDirectory::getFile(unsigned int position, ofFile::Mode mode, bool binar
 }
 
 //------------------------------------------------------------------------------------------------------------
+vector<ofFile> ofDirectory::getFiles(){
+	return files;
+}
+
+//------------------------------------------------------------------------------------------------------------
 bool ofDirectory::getShowHidden() {
 	return showHidden;
 }
