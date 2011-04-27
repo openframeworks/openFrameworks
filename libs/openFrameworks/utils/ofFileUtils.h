@@ -224,6 +224,8 @@ public:
 	string getName(unsigned int position); // e.g., "image.png"
 	string getPath(unsigned int position);
 	ofFile getFile(unsigned int position, ofFile::Mode mode=ofFile::Reference, bool binary=false);
+	vector<ofFile> getFiles();
+
 	bool getShowHidden();
 
 	void reset(); //equivalent to close, just here for bw compatibility with ofxDirList

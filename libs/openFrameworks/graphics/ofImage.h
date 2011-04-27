@@ -33,6 +33,8 @@ class ofImage : public ofBaseImage{
 		virtual ~ofImage();
 
 		ofImage(const ofPixels & pix);
+		ofImage(const ofFile & file);
+		ofImage(const string & filename);
 
 		// alloation / deallocation routines
 		void 				allocate(int w, int h, ofImageType type);
