@@ -218,6 +218,7 @@ void ofPolyline::curveTo( const ofPoint & to, int curveResolution ){
 }
 
 void ofPolyline::arc( const ofPoint & center, float radiusX, float radiusY, float angleBegin, float angleEnd, int curveResolution){
+	if(curveResolution==1) curveResolution=2;
 	curveVertices.clear();
 	setCircleResolution(curveResolution);
 	points.reserve(points.size()+curveResolution);
