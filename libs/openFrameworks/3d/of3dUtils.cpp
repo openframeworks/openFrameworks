@@ -1,13 +1,3 @@
-/*
- *  of3dUtils.cpp
- *  openFrameworksLib
- *
- *  Created by Memo Akten on 15/01/2011.
- *  Copyright 2011 MSA Visuals Ltd. All rights reserved.
- *
- */
-
-
 #include "of3dUtils.h"
 #include "ofGraphics.h"
 
