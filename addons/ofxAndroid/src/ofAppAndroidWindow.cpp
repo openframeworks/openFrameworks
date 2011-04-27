@@ -406,6 +406,17 @@ Java_cc_openframeworks_OFAndroid_onTouchMoved(JNIEnv*  env, jclass  thiz, jint i
 }
 
 void
+Java_cc_openframeworks_OFAndroid_onTouchDoubleTap(JNIEnv*  env, jclass  thiz, jint id,jfloat x,jfloat y,jfloat pressure){
+	ofNotifyMousePressed(x,y,0);
+	ofTouchEventArgs touch;
+	touch.id = id;
+	touch.x = x;
+	touch.y = y;
+	touch.pressure = pressure;
+	ofNotifyEvent(ofEvents.touchDoubleTap,touch);
+}
+
+void
 Java_cc_openframeworks_OFAndroid_onKeyDown(JNIEnv*  env, jobject  thiz, jint  keyCode){
 	ofNotifyKeyPressed(keyCode);
 }
