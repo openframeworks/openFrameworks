@@ -176,7 +176,7 @@ public class OFAndroid {
     public static native void onDestroy();
     public static native void onSurfaceCreated();
     public static native void onSurfaceDestroyed();
-    public static native void setup();
+    public static native void setup(int w, int h);
     public static native void resize(int w, int h);
     public static native void render();
     public static native void exit();
@@ -304,7 +304,6 @@ class OFGestureListener extends SimpleOnGestureListener implements OnClickListen
 	}
 	
 	public void onClick(View view) {
-		Log.i("OF","onClick");
 	}
 
     private GestureDetector gestureDetector;
@@ -312,7 +311,6 @@ class OFGestureListener extends SimpleOnGestureListener implements OnClickListen
 
 	@Override
 	public boolean onDoubleTap(MotionEvent event) {
-		Log.i("OF","onDoubleTap");
 		final int action = event.getAction();
 		final int pointerIndex = (action & MotionEvent.ACTION_POINTER_ID_MASK) >> MotionEvent.ACTION_POINTER_ID_SHIFT;
         final int pointerId = event.getPointerId(pointerIndex);
@@ -325,49 +323,39 @@ class OFGestureListener extends SimpleOnGestureListener implements OnClickListen
 	
 	@Override
 	public boolean onDoubleTapEvent(MotionEvent event) {
-		Log.i("OF","onDoubleTapEvent");
 		return super.onDoubleTapEvent(event);
 	}
 
 	@Override
 	public boolean onSingleTapConfirmed(MotionEvent event) {
-		Log.i("OF","onSingleTapConfirmed");
 		return super.onSingleTapConfirmed(event);
 	}
 
 	@Override
 	public boolean onDown(MotionEvent event) {
-		Log.i("OF","onDown");
 		return true;
 	}
 
 	@Override
-	public boolean onFling(MotionEvent arg0, MotionEvent arg1, float arg2,
-			float arg3) {
-		Log.i("OF","onFling");
+	public boolean onFling(MotionEvent arg0, MotionEvent arg1, float arg2,float arg3) {
 		return super.onFling(arg0, arg1, arg2, arg3);
 	}
 
 	@Override
 	public void onLongPress(MotionEvent arg0) {
-		Log.i("OF","onLongPress");
 	}
 
 	@Override
-	public boolean onScroll(MotionEvent arg0, MotionEvent arg1, float arg2,
-			float arg3) {
-		Log.i("OF","onScroll");
+	public boolean onScroll(MotionEvent arg0, MotionEvent arg1, float arg2,	float arg3) {
 		return super.onScroll(arg0, arg1, arg2, arg3);
 	}
 
 	@Override
 	public void onShowPress(MotionEvent arg0) {
-		Log.i("OF","onShowPress");
 	}
 
 	@Override
 	public boolean onSingleTapUp(MotionEvent event) {
-		Log.i("OF","onSingleTapUp");
 		return super.onSingleTapUp(event);
 	}
 }
@@ -377,7 +365,7 @@ class OFGestureListener extends SimpleOnGestureListener implements OnClickListen
 class OFGLSurfaceView extends GLSurfaceView{
 	public OFGLSurfaceView(Context context) {
         super(context);
-        mRenderer = new OFAndroidWindow();
+        mRenderer = new OFAndroidWindow(getWidth(),getHeight());
         setRenderer(mRenderer);
     }
 
@@ -393,17 +381,26 @@ class OFGLSurfaceView extends GLSurfaceView{
 
 class OFAndroidWindow implements GLSurfaceView.Renderer {
 	
+	public OFAndroidWindow(int w, int h){
+		this.w = w;
+		this.h = h;
+	}
+	
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
-    	OFAndroid.onSurfaceCreated();
-    	if(initialized) return;
+    	if(initialized){
+    		OFAndroid.onSurfaceCreated();
+    		return;
+    	}
     	Log.i("OF","initializing app");
     	OFAndroid.init();
-    	OFAndroid.setup();
+    	OFAndroid.setup(w,h);
     	initialized = true;
     }
 
     public void onSurfaceChanged(GL10 gl, int w, int h) {
     	OFAndroid.resize(w, h);
+		this.w = w;
+		this.h = h;
     }
 
     public void onDrawFrame(GL10 gl) {
@@ -411,4 +408,5 @@ class OFAndroidWindow implements GLSurfaceView.Renderer {
     }
 
     static boolean initialized;
+    int w,h;
 }
