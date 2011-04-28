@@ -109,13 +109,10 @@ else
 		LIBS += -lmpg123
 	endif
 endif
-LIB_STATIC = $(shell ls $(OF_ROOT)/libs/*/lib/$(LIBSPATH)/*.a  2> /dev/null | grep -v openFrameworksCompiled | grep -v poco| sed "s/.*\\/lib\([^/]*\)\.a/-l\1/")
-LIB_SHARED = $(shell ls $(OF_ROOT)/libs/*/lib/$(LIBSPATH)/*.so  2> /dev/null | grep -v openFrameworksCompiled| sed "s/.*\\/lib\([^/]*\)\.so/-l\1/")
+LIB_STATIC = $(shell ls $(OF_ROOT)/libs/*/lib/$(LIBSPATH)/*.a  2> /dev/null | grep -v openFrameworksCompiled | grep -v Poco)
+LIB_SHARED = $(shell ls $(OF_ROOT)/libs/*/lib/$(LIBSPATH)/*.so  2> /dev/null | grep -v openFrameworksCompiled)
 LIB_STATIC += $(OF_ROOT)/libs/poco/lib/$(LIBSPATH)/libPocoNet.a ../../../libs/poco/lib/$(LIBSPATH)/libPocoXML.a ../../../libs/poco/lib/$(LIBSPATH)/libPocoUtil.a ../../../libs/poco/lib/$(LIBSPATH)/libPocoFoundation.a
-LIB_PATHS_FLAGS = $(shell ls -d $(OF_ROOT)/libs/*/lib/$(LIBSPATH)  2> /dev/null | sed "s/\(\.*\)/-L\1/")
-ifeq ($(ARCH),android)
-	LIB_PATHS_FLAGS += -L$(OF_ROOT)/libs/openFrameworksCompiled/lib/android
-endif
+
 
 CFLAGS += -Wall -fexceptions
 CFLAGS += -I.
@@ -127,12 +124,12 @@ CFLAGS += $(CORE_INCLUDE_FLAGS)
 LIBS += $(LIB_SHARED)
 LIBS += $(LIB_STATIC)
 ifeq ($(ARCH),android)
-	LDFLAGS = $(LIB_PATHS_FLAGS) --sysroot=$(SYSROOT) -nostdlib -L"$(NDK_ROOT)/sources/cxx-stl/gnu-libstdc++/libs/armeabi"
-	LIBS += -lstdc++ -lsupc++ -lGLU -lgcc -lz -lGLESv1_CM -llog -ldl -lm -lc
+	LDFLAGS = --sysroot=$(SYSROOT) -nostdlib -L"$(NDK_ROOT)/sources/cxx-stl/gnu-libstdc++/libs/armeabi"
+	SYSTEMLIBS += -lstdc++ -lsupc++ -lgcc -lz -lGLESv1_CM -llog -ldl -lm -lc
 else
-	LDFLAGS = $(LIB_PATHS_FLAGS) -Wl,-rpath=./libs
-	LIBS += $(shell pkg-config  glew gstreamer-0.10 gstreamer-video-0.10 gstreamer-base-0.10 gstreamer-app-0.10 libudev --libs)
-	LIBS += -lglut -lGL -lGLU -lasound -lopenal -lsndfile -lvorbis -lFLAC -logg -lfreeimage
+	LDFLAGS = -Wl,-rpath=./libs
+	SYSTEMLIBS += $(shell pkg-config  glew gstreamer-0.10 gstreamer-video-0.10 gstreamer-base-0.10 gstreamer-app-0.10 libudev --libs)
+	SYSTEMLIBS += -lglut -lGL -lasound -lopenal -lsndfile -lvorbis -lFLAC -logg -lfreeimage
 endif
 
 
@@ -171,26 +168,26 @@ endif
 
 ifeq ($(findstring Debug,$(MAKECMDGOALS)),Debug)
 	TARGET_CFLAGS = -g
-	TARGET_LIBS = -lopenFrameworksDebug
+	TARGET_LIBS = $(OF_ROOT)/libs/openFrameworksCompiled/lib/$(ARCH)/libopenFrameworksDebug.a
 	TARGET_NAME = Debug
 endif
 
 ifeq ($(findstring Release,$(MAKECMDGOALS)),Release)
 	TARGET_CFLAGS = $(COMPILER_OPTIMIZATION)
-	TARGET_LIBS = -lopenFrameworks
+	TARGET_LIBS = $(OF_ROOT)/libs/openFrameworksCompiled/lib/$(ARCH)/libopenFrameworks.a
 	TARGET_NAME = Release
 endif
 
 ifeq ($(ARCH),android)
 	ifeq ($(findstring Debug,$(MAKECMDGOALS)),Debug)
 		TARGET = libs/armeabi/libOFAndroidApp.so
-		TARGET_LIBS = -lopenFrameworksDebug
+		TARGET_LIBS = $(OF_ROOT)/libs/openFrameworksCompiled/lib/$(ARCH)/libopenFrameworksDebug.a
 		LDFLAGS += -Wl,--fix-cortex-a8 -shared
 	endif
 
 	ifeq ($(findstring Release,$(MAKECMDGOALS)),Release)
 	    TARGET = libs/armeabi/libOFAndroidApp.so
-		TARGET_LIBS = -lopenFrameworks
+		TARGET_LIBS = $(OF_ROOT)/libs/openFrameworksCompiled/lib/$(ARCH)/libopenFrameworks.a
 		LDFLAGS += -Wl,--fix-cortex-a8 -shared
 	endif
 
@@ -198,13 +195,13 @@ ifeq ($(ARCH),android)
 		TARGET_NAME = Release_arm7
 		TARGET_CFLAGS += -march=armv7-a -mfloat-abi=softfp -mfpu=neon
 	    TARGET = libs/armeabi-v7a/libOFAndroidApp.so
-		TARGET_LIBS = -lopenFrameworks_arm7
+		TARGET_LIBS = $(OF_ROOT)/libs/openFrameworksCompiled/lib/$(ARCH)/libopenFrameworks_arm7.a
 		#LDFLAGS += -shared  already included through Release
 	endif
 
 	ifeq ($(findstring TestLink,$(MAKECMDGOALS)),TestLink)
 		TARGET_NAME = Debug
-		TARGET_LIBS = -lopenFrameworksDebug
+		TARGET_LIBS = $(OF_ROOT)/libs/openFrameworksCompiled/lib/$(ARCH)/libopenFrameworksDebug.a
 		LDFLAGS += -Wl,--entry=main,--fix-cortex-a8
 	    BIN_NAME = $(APPNAME)
 	    TARGET = obj/$(BIN_NAME)
@@ -301,9 +298,9 @@ $(OBJ_OUTPUT)%.o: $(OF_ROOT)/%.cc
 	mkdir -p $(@D)
 	$(CC) $(TARGET_CFLAGS) $(CFLAGS) $(ADDONSCFLAGS) $(USER_CFLAGS) -MMD -MP -MF$(OBJ_OUTPUT)$*.d -MT$(OBJ_OUTPUT)$*.d -o $@ -c $<
 
-$(TARGET): $(OBJS) $(ADDONS_OBJS)
+$(TARGET): $(OBJS) $(ADDONS_OBJS) $(TARGET_LIBS) $(LIBS)
 	@echo 'linking $(TARGET)'
-	$(CXX) -o $@ $(OBJS) $(ADDONS_OBJS) $(LDFLAGS) $(USER_LDFLAGS) $(TARGET_LIBS) $(ADDONSLIBS) $(USER_LIBS) $(LIBS)
+	$(CXX) -o $@ $(OBJS) $(ADDONS_OBJS) $(LDFLAGS) $(USER_LDFLAGS) $(TARGET_LIBS) $(ADDONSLIBS) $(USER_LIBS) $(LIBS) $(SYSTEMLIBS)
 
 -include $(DEPFILES)
 
