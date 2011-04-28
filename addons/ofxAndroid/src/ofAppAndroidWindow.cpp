@@ -294,10 +294,13 @@ Java_cc_openframeworks_OFAndroid_onSurfaceCreated( JNIEnv*  env, jclass  thiz ){
 }
 
 void
-Java_cc_openframeworks_OFAndroid_setup( JNIEnv*  env, jclass  thiz )
+Java_cc_openframeworks_OFAndroid_setup( JNIEnv*  env, jclass  thiz, jint w, jint h  )
 {
     //initAndroidOF();
 	ofLog(OF_LOG_NOTICE,"setup");
+	paused = false;
+    sWindowWidth  = w;
+    sWindowHeight = h;
 	ofNotifySetup();
 }
 
