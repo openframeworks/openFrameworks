@@ -34,6 +34,9 @@ static int frames = 0;
 static int onesec = 0;
 static int previousFrameMillis = 0;
 static int nFrameCount = 0;
+static float targetRate = 60;
+static int oneFrameTime = 0;
+static bool bFrameRateSet = false;
 
 static double			lastFrameTime;
 
@@ -205,6 +208,12 @@ void ofAppAndroidWindow::toggleFullscreen(){
 
 }
 
+void ofAppAndroidWindow::setFrameRate(float _targetRate){
+	targetRate = _targetRate;
+	oneFrameTime = 1000.f/targetRate;
+	bFrameRateSet = true;
+}
+
 void reloadTextures(){
 	ofUpdateBitmapCharacterTexture();
 	ofReloadAllImageTextures();
@@ -324,6 +333,8 @@ Java_cc_openframeworks_OFAndroid_exit( JNIEnv*  env, jclass  thiz )
 void
 Java_cc_openframeworks_OFAndroid_render( JNIEnv*  env, jclass  thiz )
 {
+	int beginFrameMillis = ofGetElapsedTimeMillis();
+
 	if(paused) return;
 	//LOGI("update");
 	ofNotifyUpdate();
@@ -366,11 +377,14 @@ Java_cc_openframeworks_OFAndroid_render( JNIEnv*  env, jclass  thiz )
 		onesec = currTime;
 	}
 	frames++;
-	lastFrameTime = double(previousFrameMillis - currTime)/1000.;
+	int frameMillis = currTime - beginFrameMillis;
+	lastFrameTime = double(frameMillis)/1000.;
+
 	previousFrameMillis = currTime;
 
 	nFrameCount++;		// increase the overall frame count*/
 
+	if(bFrameRateSet && frameMillis<oneFrameTime) ofSleepMillis(oneFrameTime-frameMillis);
 
 }
 
