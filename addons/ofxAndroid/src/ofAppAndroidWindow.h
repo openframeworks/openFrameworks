@@ -38,7 +38,7 @@ public:
 
 	bool	doesHWOrientation(){return true;}
 
-	void	setFrameRate(float targetRate){}
+	void	setFrameRate(float targetRate);
 	void	setWindowTitle(string title){}
 
 	int		getWindowMode() {return 0;}

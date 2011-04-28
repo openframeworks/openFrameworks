@@ -26,7 +26,6 @@ void ofSoundStreamListDevices();
 class ofSoundStream{
 	public:
 		ofSoundStream();
-		~ofSoundStream();
 		
 		void setSoundStream(ofPtr<ofBaseSoundStream> soundStreamPtr);
 		ofPtr<ofBaseSoundStream> getSoundStream();
