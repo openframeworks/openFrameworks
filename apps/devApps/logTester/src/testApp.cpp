@@ -32,9 +32,12 @@ void testApp::update(){
 
 //--------------------------------------------------------------
 void testApp::draw(){
+	
+	//this is not part of ofLog - needs to be discussed before we put this on
+	//ie - is this less effecient than using a global function. 
+//	ofDrawBitmapString(20, 12) << "frame: " << ofGetFrameNum() << endl
+//							   << "  fps: " << ofGetFrameRate();
 
-	ofDrawBitmapString(20, 12) << "frame: " << ofGetFrameNum() << endl
-						   	   << "  fps: " << ofGetFrameRate();
 	ofDrawBitmapString("millis: "+ofToString(ofGetElapsedTimeMillis()), 20, 100);
 }
 
