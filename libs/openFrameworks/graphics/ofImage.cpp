@@ -308,6 +308,41 @@ ofImage::ofImage(const ofPixels & pix){
 	setFromPixels(pix);
 }
 
+
+ofImage::ofImage(const ofFile & file){
+	width						= 0;
+	height						= 0;
+	bpp							= 0;
+	type						= OF_IMAGE_UNDEFINED;
+	bUseTexture					= true;		// the default is, yes, use a texture
+
+	//----------------------- init free image if necessary
+	initFreeImage();
+
+#ifdef TARGET_ANDROID
+	all_images.insert(this);
+#endif
+
+	loadImage(file);
+}
+
+ofImage::ofImage(const string & filename){
+	width						= 0;
+	height						= 0;
+	bpp							= 0;
+	type						= OF_IMAGE_UNDEFINED;
+	bUseTexture					= true;		// the default is, yes, use a texture
+
+	//----------------------- init free image if necessary
+	initFreeImage();
+
+#ifdef TARGET_ANDROID
+	all_images.insert(this);
+#endif
+
+	loadImage(filename);
+}
+
 //----------------------------------------------------------
 ofImage& ofImage::operator=(const ofImage& mom) {
 	clone(mom);
@@ -614,6 +649,7 @@ void ofImage::setImageType(ofImageType newType){
 
 //------------------------------------
 void ofImage::resize(int newWidth, int newHeight){
+	if(newWidth == width && newHeight == height) return;
 
 	resizePixels(pixels, newWidth, newHeight);
 
