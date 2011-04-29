@@ -72,6 +72,10 @@ namespace ofxCv {
 		return Mat(pix.getHeight(), pix.getWidth(), cvImageType, pix.getPixels(), 0);
 	}
 	
+	Mat toCv(FloatImage& img) {
+		return img.toCv();
+	}
+	
 	cv::Rect toCv(ofRectangle& rect) {
 		return cv::Rect(rect.x, rect.y, rect.width, rect.height);
 	}

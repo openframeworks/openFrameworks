@@ -68,6 +68,7 @@ namespace ofxCv {
 	// conversion functions toOf() and toCv()
 	Mat toCv(ofPixels& pix);
 	Mat toCv(ofBaseHasPixels& img);
+	Mat toCv(FloatImage& img);
 	cv::Rect toCv(const ofRectangle& rect);
 	int toCv(const ofImageType& ofType);
 	

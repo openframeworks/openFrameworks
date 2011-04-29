@@ -1,6 +1,6 @@
 #include "testApp.h"
 
-const float diffThreshold = 2; // maximum amount of movement
+const float diffThreshold = 2.5; // maximum amount of movement
 const float timeThreshold = 1; // minimum time between snapshots
 const int startCleaning = 10; // start cleaning outliers after this many samples
 
@@ -62,9 +62,9 @@ void testApp::draw() {
 	cam.draw(0, 0);
 	undistorted.draw(640, 0);
 	
-	stringstream distCoeffs;
-	distCoeffs << calibration.getDistCoeffs();
-	drawHighlightString("dist coeffs: " + distCoeffs.str(), 10, 20, ofColor::fromHex(0xffee00), ofColor(0));
+	stringstream intrinsics;
+	intrinsics << "fov: " << toOf(calibration.getDistortedIntrinsics().getFov()) << " distCoeffs: " << calibration.getDistCoeffs();
+	drawHighlightString(intrinsics.str(), 10, 20, ofColor::fromHex(0xffee00), ofColor(0));
 	drawHighlightString("movement: " + ofToString(diffMean), 10, 40, ofColor::fromHex(0x00abec));
 	drawHighlightString("reproj error: " + ofToString(calibration.getReprojectionError()) + " from " + ofToString(calibration.size()), 10, 60, ofColor::fromHex(0xec008c));
 	for(int i = 0; i < calibration.size(); i++) {
