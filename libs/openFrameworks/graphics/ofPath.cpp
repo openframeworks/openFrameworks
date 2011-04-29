@@ -2,6 +2,8 @@
 #include "ofGraphics.h"
 #include "ofTessellator.h"
 
+ofTessellator ofPath::tessellator;
+
 //----------------------------------------------------------
 ofSubPath::ofSubPath(){
 	bClosed = false;
@@ -79,7 +81,6 @@ ofPath::ofPath(){
 	mode = PATHS;
 	bNeedsTessellation = false;
 	hasChanged = false;
-	cachedTessellation.changed = false;
 	bUseShapeColor = true;
 	clear();
 }
@@ -256,7 +257,7 @@ void ofPath::setFilled(bool hasFill){
 		bFill = hasFill;
 		if(bFill) strokeWidth = 0;
 		else if(strokeWidth==0) strokeWidth = 1;
-		if(cachedTessellation.changed) bNeedsTessellation = true;
+		if(!cachedTessellationValid) bNeedsTessellation = true;
 	}
 }
 
@@ -357,7 +358,7 @@ void ofPath::generatePolylinesFromPaths(){
 		}
 		hasChanged = false;
 		bNeedsTessellation = true;
-		cachedTessellation.changed=true;
+		cachedTessellationValid=false;
 	}
 }
 
@@ -366,32 +367,22 @@ void ofPath::tessellate(){
 	generatePolylinesFromPaths();
 	if(!bNeedsTessellation) return;
 	if(bFill){
-		ofTessellator::tessellateToCache( polylines, windingMode, cachedTessellation);
-		cachedTessellation.changed=false;
-	}
-	if ( hasOutline() ){
-		if( windingMode != OF_POLY_WINDING_ODD ) {
-			ofTessellator::tessellateToOutline( polylines, windingMode, tessellatedPolylines);
-		}
+		tessellator.tessellateToMesh( polylines, windingMode, cachedTessellation);
+		cachedTessellationValid=true;
 	}
 	bNeedsTessellation = false;
 }
 
 //----------------------------------------------------------
 vector<ofPolyline> & ofPath::getOutline() {
-	tessellate();
-	if( windingMode != OF_POLY_WINDING_ODD ) {
-		return tessellatedPolylines;
-	}else{
-		return polylines;
-	}
+	generatePolylinesFromPaths();
+	return polylines;
 }
 
 //----------------------------------------------------------
-vector<ofMesh> & ofPath::getTessellation(){
+ofMesh & ofPath::getTessellation(){
 	tessellate();
-	cachedTessellation.meshes.resize(cachedTessellation.numElements);
-	return cachedTessellation.meshes;
+	return cachedTessellation;
 }
 
 //----------------------------------------------------------
@@ -419,9 +410,9 @@ void ofPath::draw(){
 			if(bUseShapeColor){
 				ofSetColor(fillColor);
 			}
-			for(int i=0;i<cachedTessellation.numElements && i<(int)cachedTessellation.meshes.size();i++){
-				ofGetDefaultRenderer()->draw(cachedTessellation.meshes[i]);
-			}
+
+			ofGetDefaultRenderer()->draw(cachedTessellation);
+
 		}
 
 		if(hasOutline()){

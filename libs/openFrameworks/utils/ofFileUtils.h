@@ -190,7 +190,7 @@ public:
 
 	void open(string path);
 	void close();
-	bool create();
+	bool create(bool recursive = false);
 
 	bool exists() const;
 	string path() const;

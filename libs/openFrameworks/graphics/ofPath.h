@@ -6,6 +6,7 @@
 #include "ofPolyline.h"
 #include "ofBaseTypes.h"
 #include "ofMesh.h"
+#include "ofTessellator.h"
 
 class ofSubPath;
 
@@ -72,9 +73,8 @@ public:
 	const vector<ofSubPath> & getSubPaths() const;
 
 	vector<ofPolyline> & getOutline();
-	vector<ofMesh> & getTessellation();
-	/// tessellate is called internally before calling draw, if the shape has changed
-	void tessellate();
+	ofMesh & getTessellation();
+
 	void simplify(float tolerance=0.3);
 
 	// only needs to be called when path is modified externally
@@ -100,6 +100,7 @@ private:
 
 	ofSubPath & lastPath();
 	ofPolyline & lastPolyline();
+	void tessellate();
 
 	void generatePolylinesFromPaths();
 
@@ -114,16 +115,11 @@ private:
 
 	// polyline / tessellation
 	vector<ofPolyline>  polylines;
-	vector<ofPolyline>  tessellatedPolylines;
 
-	// this gives more performance for shapes that are
-	// updating frequently by not instantiating new meshes
-	friend class ofTessellator;
-	struct tessCache{
-		vector<ofMesh> meshes;
-		int numElements;
-		bool changed;
-	}cachedTessellation;
+	ofMesh				cachedTessellation;
+	bool				cachedTessellationValid;
+
+	static ofTessellator tessellator;
 
 	bool				hasChanged;
 	int					prevCurveRes;
