@@ -7,7 +7,6 @@
 #include "ofRectangle.h"
 #include "ofTypes.h"
 #include "ofBaseTypes.h"
-#include "ofDrawBitmapString.h"
 
 #define  	CIRC_RESOLUTION		    22				// 22 pts for a circle...
 
@@ -127,7 +126,7 @@ void ofEnableSmoothing();
 void ofDisableSmoothing();
 
 // drawing style - combines color, fill, blending and smoothing
-ofStyle& ofGetStyle();
+ofStyle ofGetStyle();
 void ofSetStyle(ofStyle style);
 void ofPushStyle();
 void ofPopStyle();
@@ -225,7 +224,12 @@ void ofBox(float size);
 
 
 // bitmapped type
+// ** note, this uses glDrawPixels and may be S L 0 W on some graphics cards
 void ofSetDrawBitmapMode(ofDrawBitmapMode mode);
+void ofDrawBitmapString(string textString, const ofPoint & p);
+void ofDrawBitmapString(string textString, float x, float y);
+void ofDrawBitmapString(string textString, float x, float y, float z);
+
 
 // end primitives
 //-------------------------------------------
