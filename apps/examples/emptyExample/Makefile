@@ -109,10 +109,10 @@ else
 		LIBS += -lmpg123
 	endif
 endif
-LIB_STATIC = $(shell ls $(OF_ROOT)/libs/*/lib/$(LIBSPATH)/*.a | grep -v openFrameworksCompiled | grep -v poco| sed "s/.*\\/lib\([^/]*\)\.a/-l\1/")
-LIB_SHARED = $(shell ls $(OF_ROOT)/libs/*/lib/$(LIBSPATH)/*.so | grep -v openFrameworksCompiled| sed "s/.*\\/lib\([^/]*\)\.so/-l\1/")
+LIB_STATIC = $(shell ls $(OF_ROOT)/libs/*/lib/$(LIBSPATH)/*.a  2> /dev/null | grep -v openFrameworksCompiled | grep -v poco| sed "s/.*\\/lib\([^/]*\)\.a/-l\1/")
+LIB_SHARED = $(shell ls $(OF_ROOT)/libs/*/lib/$(LIBSPATH)/*.so  2> /dev/null | grep -v openFrameworksCompiled| sed "s/.*\\/lib\([^/]*\)\.so/-l\1/")
 LIB_STATIC += $(OF_ROOT)/libs/poco/lib/$(LIBSPATH)/libPocoNet.a ../../../libs/poco/lib/$(LIBSPATH)/libPocoXML.a ../../../libs/poco/lib/$(LIBSPATH)/libPocoUtil.a ../../../libs/poco/lib/$(LIBSPATH)/libPocoFoundation.a
-LIB_PATHS_FLAGS = $(shell ls -d $(OF_ROOT)/libs/*/lib/$(LIBSPATH) | sed "s/\(\.*\)/-L\1/")
+LIB_PATHS_FLAGS = $(shell ls -d $(OF_ROOT)/libs/*/lib/$(LIBSPATH)  2> /dev/null | sed "s/\(\.*\)/-L\1/")
 ifeq ($(ARCH),android)
 	LIB_PATHS_FLAGS += -L$(OF_ROOT)/libs/openFrameworksCompiled/lib/android
 endif
@@ -137,30 +137,35 @@ endif
 
 
 ifeq ($(findstring addons.make,$(wildcard *.make)),addons.make)
-	ADDONS_INCLUDES = $(shell find $(OF_ROOT)/addons/*/src/ -type d)
-	ADDONS_INCLUDES += $(shell find $(OF_ROOT)/addons/*/libs/ -type d)
-	ADDONSCFLAGS = $(addprefix -I,$(ADDONS_INCLUDES))
-
-	ifeq ($(findstring libsorder.make,$(wildcard $(OF_ROOT)/addons/*/libs/*/lib/$(LIBSPATH)/libsorder.make)),libsorder.make)
-		ADDONS_LIBS_W_ORDER = $(shell cat $(OF_ROOT)/addons/*/libs/*/lib/$(LIBSPATH)/libsorder.make)
-	endif
-
-	SED_EXCLUDE_LIBS = $(addsuffix \ \\\| , $(ADDONS_LIBS_W_ORDER))
-	ADDONS_LIBS_STATICS = $(shell ls $(OF_ROOT)/addons/*/libs/*/lib/$(LIBSPATH)/*.a | grep -v "$(SED_EXCLUDE_LIBS) null")
-	ADDONS_LIBS_STATICS += $(addprefix -l, $(ADDONS_LIBS_W_ORDER))
-	ADDONS_LIBS_STATICS += $(addprefix -L, $(shell ls $(OF_ROOT)/addons/*/libs/*/lib/$(LIBSPATH)/libsorder.make | sed s/libsorder.make//g))
-	ADDONS_LIBS_SHARED = $(shell ls $(OF_ROOT)/addons/*/libs/*/lib/$(LIBSPATH)/*.so)
-	ADDONSLIBS = $(ADDONS_LIBS_STATICS)
-	ADDONSLIBS += $(ADDONS_LIBS_SHARED)
-
 	ADDONS = $(shell cat addons.make)
 	ADDONS_REL_DIRS = $(addsuffix /src, $(ADDONS))
 	ADDONS_LIBS_REL_DIRS = $(addsuffix /libs, $(ADDONS))
 	ADDONS_DIRS = $(addprefix $(OF_ROOT)/addons/, $(ADDONS_REL_DIRS) )
 	ADDONS_LIBS_DIRS = $(addprefix $(OF_ROOT)/addons/, $(ADDONS_LIBS_REL_DIRS) )
-	ADDONS_SOURCES = $(shell find $(ADDONS_DIRS) -name "*.cpp" -or -name "*.c")
-	ADDONS_SOURCES += $(shell find $(ADDONS_LIBS_DIRS) -name "*.cpp" -or -name "*.c" 2>/dev/null)
-	ADDONS_OBJFILES = $(subst $(OF_ROOT)/, ,$(patsubst %.c,%.o,$(patsubst %.cpp,%.o,$(ADDONS_SOURCES))))
+	ADDONS_BIN_LIBS_DIRS = $(addsuffix /*/lib/$(LIBSPATH), $(ADDONS_LIBS_DIRS) )
+	
+	ADDONS_INCLUDES = $(ADDONS_DIRS)
+	ADDONS_INCLUDES = $(ADDONS_LIBS_DIRS)
+	ADDONS_INCLUDES += $(shell find $(ADDONS_DIRS) -type d 2> /dev/null)
+	ADDONS_INCLUDES += $(shell find $(ADDONS_LIBS_DIRS) -type d 2> /dev/null)
+	ADDONSCFLAGS = $(addprefix -I,$(ADDONS_INCLUDES))
+
+	ifeq ($(findstring libsorder.make,$(shell find $(ADDONS_BIN_LIBS_DIRS) -name libsorder.make 2> /dev/null)),libsorder.make)
+		ADDONS_LIBS_W_ORDER = $(shell cat $(shell find $(ADDONS_BIN_LIBS_DIRS) -name libsorder.make 2> /dev/null))
+	endif
+
+	SED_EXCLUDE_LIBS = $(addsuffix \|,$(ADDONS_LIBS_W_ORDER))
+	ADDONS_LIBS_STATICS = $(shell find $(ADDONS_BIN_LIBS_DIRS) -name *.a 2> /dev/null | grep -v '$(SED_EXCLUDE_LIBS)')
+	ADDONS_LIBS_STATICS += $(addprefix -l, $(ADDONS_LIBS_W_ORDER))
+	ADDONS_LIBS_STATICS += $(addprefix -L, $(shell find $(ADDONS_BIN_LIBS_DIRS) -name libsorder.make 2> /dev/null | sed s/libsorder.make//g))
+	ADDONS_LIBS_SHARED = $(shell find $(ADDONS_BIN_LIBS_DIRS) -name *.so 2> /dev/null)
+	ADDONSLIBS = $(ADDONS_LIBS_STATICS)
+	ADDONSLIBS += $(ADDONS_LIBS_SHARED)
+
+
+	ADDONS_SOURCES = $(shell find $(ADDONS_DIRS) -name "*.cpp" -or -name "*.c" 2> /dev/null)
+	ADDONS_SOURCES += $(shell find $(ADDONS_LIBS_DIRS) -name "*.cpp" -or -name "*.c" -or -name "*.cc" 2>/dev/null)
+	ADDONS_OBJFILES = $(subst $(OF_ROOT)/, ,$(patsubst %.cc,%.o,$(patsubst %.c,%.o,$(patsubst %.cpp,%.o,$(ADDONS_SOURCES)))))
 endif
 
 
@@ -276,6 +281,10 @@ $(OBJ_OUTPUT)%.o: %.c
 	mkdir -p $(@D)
 	$(CC) -c $(TARGET_CFLAGS) $(CFLAGS) $(ADDONSCFLAGS) $(USER_CFLAGS) -MMD -MP -MF$(OBJ_OUTPUT)$*.d -MT$(OBJ_OUTPUT)$*.d -o$@ -c $<
 
+$(OBJ_OUTPUT)%.o: %.cc
+	@echo "compiling object for: " $<
+	mkdir -p $(@D)
+	$(CC) -c $(TARGET_CFLAGS) $(CFLAGS) $(ADDONSCFLAGS) $(USER_CFLAGS) -MMD -MP -MF$(OBJ_OUTPUT)$*.d -MT$(OBJ_OUTPUT)$*.d -o$@ -c $<
 
 $(OBJ_OUTPUT)%.o: $(OF_ROOT)/%.cpp
 	@echo "compiling addon object for" $<
@@ -286,20 +295,19 @@ $(OBJ_OUTPUT)%.o: $(OF_ROOT)/%.c
 	@echo "compiling addon object for" $<
 	mkdir -p $(@D)
 	$(CC) $(TARGET_CFLAGS) $(CFLAGS) $(ADDONSCFLAGS) $(USER_CFLAGS) -MMD -MP -MF$(OBJ_OUTPUT)$*.d -MT$(OBJ_OUTPUT)$*.d -o $@ -c $<
-
-$(OBJ_OUTPUT)%.o: %.cc
-	@echo "compiling object for: " $<
+	
+$(OBJ_OUTPUT)%.o: $(OF_ROOT)/%.cc
+	@echo "compiling addon object for" $<
 	mkdir -p $(@D)
-	$(CC) -c $(TARGET_CFLAGS) $(CFLAGS) $(ADDONSCFLAGS) $(USER_CFLAGS) -MMD -MP -MF$(OBJ_OUTPUT)$*.d -MT$(OBJ_OUTPUT)$*.d -o$@ -c $<
+	$(CC) $(TARGET_CFLAGS) $(CFLAGS) $(ADDONSCFLAGS) $(USER_CFLAGS) -MMD -MP -MF$(OBJ_OUTPUT)$*.d -MT$(OBJ_OUTPUT)$*.d -o $@ -c $<
 
 $(TARGET): $(OBJS) $(ADDONS_OBJS)
-	@echo "linking" $(TARGET) $(GTK)
+	@echo 'linking $(TARGET)'
 	$(CXX) -o $@ $(OBJS) $(ADDONS_OBJS) $(LDFLAGS) $(USER_LDFLAGS) $(TARGET_LIBS) $(ADDONSLIBS) $(USER_LIBS) $(LIBS)
 
 -include $(DEPFILES)
 
 .PHONY: clean cleanDebug cleanRelease CleanAndroid
-
 $(CLEANTARGET):
 	rm -Rf -v $(OBJ_OUTPUT)
 	rm -f -v $(TARGET)

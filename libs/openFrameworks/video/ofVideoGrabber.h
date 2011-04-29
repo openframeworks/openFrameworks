@@ -4,31 +4,32 @@
 #include "ofTexture.h"
 #include "ofBaseTypes.h"
 #include "ofPixels.h"
+#include "ofTypes.h"
 
 
 #ifdef OF_VIDEO_CAPTURE_IPHONE
 	#include "ofiPhoneVideoGrabber.h"
-	#define OF_VID_GRABBER_TYPE ofiPhoneVideoGrabber()
+	#define OF_VID_GRABBER_TYPE ofiPhoneVideoGrabber
 #endif
 
 #ifdef OF_VIDEO_CAPTURE_QUICKTIME
 	#include "ofQuickTimeGrabber.h"
-	#define OF_VID_GRABBER_TYPE ofQuickTimeGrabber()
+	#define OF_VID_GRABBER_TYPE ofQuickTimeGrabber
 #endif
 
 #ifdef OF_VIDEO_CAPTURE_DIRECTSHOW
 	#include "ofDirectShowGrabber.h"
-	#define OF_VID_GRABBER_TYPE ofDirectShowGrabber()
+	#define OF_VID_GRABBER_TYPE ofDirectShowGrabber
 #endif
 
 #ifdef OF_VIDEO_CAPTURE_GSTREAMER
 	#include "ofGstVideoGrabber.h"
-	#define OF_VID_GRABBER_TYPE ofGstVideoGrabber()
+	#define OF_VID_GRABBER_TYPE ofGstVideoGrabber
 #endif
 
 #ifdef OF_VIDEO_CAPTURE_ANDROID
 	#include "ofxAndroidVideoGrabber.h"
-	#define OF_VID_GRABBER_TYPE ofxAndroidVideoGrabber()
+	#define OF_VID_GRABBER_TYPE ofxAndroidVideoGrabber
 #endif
 
 class ofVideoGrabber : public ofBaseVideoGrabber,public ofBaseVideoDraws{
@@ -38,8 +39,8 @@ class ofVideoGrabber : public ofBaseVideoGrabber,public ofBaseVideoDraws{
 		ofVideoGrabber();
 		virtual ~ofVideoGrabber();
 		
-		bool					setGrabber(ofBaseVideoGrabber * newGrabber);
-		ofBaseVideoGrabber *	getGrabber();
+		void					setGrabber(ofPtr<ofBaseVideoGrabber> newGrabber);
+		ofPtr<ofBaseVideoGrabber> getGrabber();
 
 		void				listDevices();
 		bool				isFrameNew();
@@ -77,12 +78,12 @@ class ofVideoGrabber : public ofBaseVideoGrabber,public ofBaseVideoDraws{
 		int					height;
 		int					width;
 
-	protected:
+	private:
 		
 		ofTexture tex;
 		bool bUseTexture;
 		bool bInitialized;
-		ofBaseVideoGrabber		* grabber;
+		ofPtr<ofBaseVideoGrabber> grabber;
 		int RequestedDeviceID;
 		
 		ofPixelFormat internalPixelFormat;

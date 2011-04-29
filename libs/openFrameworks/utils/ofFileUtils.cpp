@@ -678,19 +678,19 @@ void ofDirectory::close(){
 }
 
 //------------------------------------------------------------------------------------------------------------
-bool ofDirectory::create(){
-	bool success = false;
+bool ofDirectory::create(bool recursive){
 	
 	if( myDir.path() != "" ){
 		try{
-			success = myDir.createDirectory();
+			if(recursive) myDir.createDirectories();
+			else myDir.createDirectory();
 		}catch (Poco::Exception & except){
 			ofLog(OF_LOG_ERROR, "ofDirectory::create - unable to create directory");
 			return false;
 		}
 	}
 	
-	return success;
+	return true;
 }
 
 //------------------------------------------------------------------------------------------------------------
