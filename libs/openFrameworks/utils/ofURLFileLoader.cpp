@@ -48,19 +48,20 @@ ofHttpResponse ofURLFileLoader::get(string url) {
 }
 
 
-void ofURLFileLoader::getAsync(string url, string name){
+int ofURLFileLoader::getAsync(string url, string name){
 	if(name=="") name=url;
 	ofHttpRequest request(url,name);
 	lock();
 	requests.push_back(request);
 	unlock();
 	start();
+	return request.getID();
 }
 
-void ofURLFileLoader::remove(ofHttpRequest httpRequest){
+void ofURLFileLoader::remove(int id){
 	lock();
 	for(int i=0;i<(int)requests.size();i++){
-		if(requests[i].getID()==httpRequest.getID()){
+		if(requests[i].getID()==id){
 			requests.erase(requests.begin()+i);
 			return;
 		}
@@ -68,13 +69,18 @@ void ofURLFileLoader::remove(ofHttpRequest httpRequest){
 	unlock();
 }
 
+void ofURLFileLoader::clear(){
+	lock();
+	requests.clear();
+	while(!responses.empty()) responses.pop();
+	unlock();
+}
+
 void ofURLFileLoader::start() {
      if (isThreadRunning() == false){
-    	ofAddListener(ofEvents.update,this,&ofURLFileLoader::update);
         startThread(false, false);   // blocking, verbose
     }else{
     	ofLog(OF_LOG_VERBOSE,"signaling new request condition");
-    	ofAddListener(ofEvents.update,this,&ofURLFileLoader::update);
     	condition.signal();
     }
 }
@@ -99,6 +105,7 @@ void ofURLFileLoader::threadedFunction() {
 		    	ofLog(OF_LOG_VERBOSE,"got request " + requests.front().name);
 				responses.push(response);
 				requests.pop_front();
+		    	ofAddListener(ofEvents.update,this,&ofURLFileLoader::update);
 				unlock();
 			}else{
 		    	ofLog(OF_LOG_VERBOSE,"failed getting request " + requests.front().name);
@@ -153,10 +160,14 @@ ofHttpResponse ofLoadURL(string url){
 	return fileLoader.get(url);
 }
 
-void ofLoadURLAsync(string url, string name){
-	fileLoader.getAsync(url,name);
+int ofLoadURLAsync(string url, string name){
+	return fileLoader.getAsync(url,name);
 }
 
-void ofRemoveURLRequest(ofHttpRequest request){
-	fileLoader.remove(request);
+void ofRemoveURLRequest(int id){
+	fileLoader.remove(id);
+}
+
+void ofRemoveAllURLRequests(){
+	fileLoader.clear();
 }
