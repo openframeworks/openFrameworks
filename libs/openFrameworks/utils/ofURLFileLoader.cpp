@@ -73,7 +73,7 @@ void ofURLFileLoader::start() {
     	ofAddListener(ofEvents.update,this,&ofURLFileLoader::update);
         startThread(false, false);   // blocking, verbose
     }else{
-    	ofLog(OF_LOG_ERROR,"signaling no images condition");
+    	ofLog(OF_LOG_VERBOSE,"signaling new request condition");
     	ofAddListener(ofEvents.update,this,&ofURLFileLoader::update);
     	condition.signal();
     }
@@ -86,9 +86,9 @@ void ofURLFileLoader::stop() {
 void ofURLFileLoader::threadedFunction() {
 	while( isThreadRunning() == true ){
 		lock();
-    	ofLog(OF_LOG_ERROR,"starting thread loop ");
+    	ofLog(OF_LOG_VERBOSE,"starting thread loop ");
 		if(requests.size()>0){
-	    	ofLog(OF_LOG_ERROR,"querying request " + requests.front().name);
+	    	ofLog(OF_LOG_VERBOSE,"querying request " + requests.front().name);
 			ofHttpRequest request(requests.front());
 			unlock();
 
@@ -96,16 +96,16 @@ void ofURLFileLoader::threadedFunction() {
 
 			if(response.status!=-1){
 				lock();
-		    	ofLog(OF_LOG_ERROR,"got request " + requests.front().name);
+		    	ofLog(OF_LOG_VERBOSE,"got request " + requests.front().name);
 				responses.push(response);
 				requests.pop_front();
 				unlock();
 			}else{
-		    	ofLog(OF_LOG_ERROR,"failed getting request " + requests.front().name);
+		    	ofLog(OF_LOG_VERBOSE,"failed getting request " + requests.front().name);
 			}
 			ofSleepMillis(10);
 		}else{
-			ofLog(OF_LOG_ERROR,"stopping on no requests condition");
+			ofLog(OF_LOG_VERBOSE,"stopping on no requests condition");
 			condition.wait(mutex);
 		}
 	}
