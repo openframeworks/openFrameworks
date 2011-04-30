@@ -132,6 +132,7 @@ int ofxCvHaarFinder::findHaarObjects(const ofxCvGrayscaleImage& input,
 		// because we need to equalize it.
 
 		if (img.width == input.width && img.height == input.height) {
+                img.resetROI();
 				img = input;
 		} else {
 				img.clear();
