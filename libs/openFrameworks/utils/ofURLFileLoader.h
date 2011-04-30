@@ -1,11 +1,14 @@
 #pragma once
 
+#include <deque>
+#include <queue>
+
 #include "ofThread.h"
 #include "ofEvents.h"
 #include "ofFileUtils.h"
 
-#include <deque>
-#include <queue>
+#include "Poco/Condition.h"
+
 
 class ofHttpRequest{
 public:
@@ -83,5 +86,7 @@ class ofURLFileLoader : public ofThread  {
 
 		deque<ofHttpRequest> requests;
 		queue<ofHttpResponse> responses;
+
+		Poco::Condition condition;
 
 };

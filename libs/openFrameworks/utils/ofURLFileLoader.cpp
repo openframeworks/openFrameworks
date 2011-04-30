@@ -70,8 +70,12 @@ void ofURLFileLoader::remove(ofHttpRequest httpRequest){
 
 void ofURLFileLoader::start() {
      if (isThreadRunning() == false){
-    	 ofAddListener(ofEvents.update,this,&ofURLFileLoader::update);
-         startThread(false, false);   // blocking, verbose
+    	ofAddListener(ofEvents.update,this,&ofURLFileLoader::update);
+        startThread(false, false);   // blocking, verbose
+    }else{
+    	ofLog(OF_LOG_ERROR,"signaling no images condition");
+    	ofAddListener(ofEvents.update,this,&ofURLFileLoader::update);
+    	condition.signal();
     }
 }
 
@@ -82,19 +86,28 @@ void ofURLFileLoader::stop() {
 void ofURLFileLoader::threadedFunction() {
 	while( isThreadRunning() == true ){
 		lock();
+    	ofLog(OF_LOG_ERROR,"starting thread loop ");
 		if(requests.size()>0){
+	    	ofLog(OF_LOG_ERROR,"querying request " + requests.front().name);
 			ofHttpRequest request(requests.front());
+			unlock();
+
 			ofHttpResponse response(handleRequest(request));
+
 			if(response.status!=-1){
+				lock();
+		    	ofLog(OF_LOG_ERROR,"got request " + requests.front().name);
 				responses.push(response);
 				requests.pop_front();
+				unlock();
+			}else{
+		    	ofLog(OF_LOG_ERROR,"failed getting request " + requests.front().name);
 			}
-			unlock();
+			ofSleepMillis(10);
 		}else{
-			unlock();
-			stop();
+			ofLog(OF_LOG_ERROR,"stopping on no requests condition");
+			condition.wait(mutex);
 		}
-		ofSleepMillis(10);
 	}
 }
 
@@ -120,12 +133,16 @@ ofHttpResponse ofURLFileLoader::handleRequest(ofHttpRequest request) {
 }	
 
 void ofURLFileLoader::update(ofEventArgs & args){
+	lock();
 	if(responses.size()){
 		ofHttpResponse response(responses.front());
-		ofNotifyEvent(ofURLResponseEvent,response);
 		responses.pop();
-		if(!isThreadRunning() && !responses.size())
+		if(!responses.size())
 			ofRemoveListener(ofEvents.update,this,&ofURLFileLoader::update);
+		unlock();
+		ofNotifyEvent(ofURLResponseEvent,response);
+	}else{
+		unlock();
 	}
 
 }
