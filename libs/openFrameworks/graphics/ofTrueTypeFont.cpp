@@ -197,7 +197,7 @@ void ofTrueTypeFont::reloadTextures(){
 }
 
 //------------------------------------------------------------------
-void ofTrueTypeFont::loadFont(string filename, int fontsize, bool _bAntiAliased, bool _bFullCharacterSet, bool makeContours, bool simplifyAmt){
+void ofTrueTypeFont::loadFont(string filename, int fontsize, bool _bAntiAliased, bool _bFullCharacterSet, bool makeContours, float simplifyAmt){
 
 	bMakeContours = makeContours;
 

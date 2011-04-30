@@ -325,7 +325,7 @@ float ofPath::getStrokeWidth() const{
 
 //----------------------------------------------------------
 void ofPath::generatePolylinesFromPaths(){
-	if(mode==POLYLINES) return;
+	if(mode==POLYLINES || paths.empty()) return;
 	if(hasChanged || curveResolution!=prevCurveRes){
 		prevCurveRes = curveResolution;
 
@@ -370,13 +370,21 @@ void ofPath::tessellate(){
 		tessellator.tessellateToMesh( polylines, windingMode, cachedTessellation);
 		cachedTessellationValid=true;
 	}
+	if(hasOutline() && windingMode!=OF_POLY_WINDING_ODD){
+		tessellator.tessellateToPolylines( polylines, windingMode, tessellatedContour);
+	}
 	bNeedsTessellation = false;
 }
 
 //----------------------------------------------------------
 vector<ofPolyline> & ofPath::getOutline() {
-	generatePolylinesFromPaths();
-	return polylines;
+	if(windingMode!=OF_POLY_WINDING_ODD){
+		tessellate();
+		return tessellatedContour;
+	}else{
+		generatePolylinesFromPaths();
+		return polylines;
+	}
 }
 
 //----------------------------------------------------------
