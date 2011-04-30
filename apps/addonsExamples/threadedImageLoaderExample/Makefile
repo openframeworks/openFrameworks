@@ -99,14 +99,14 @@ else
 	GTK = $(shell pkg-config gtk+-2.0 --exists; echo $$?)
 	ifeq ($(GTK),0)
 		CFLAGS += $(shell pkg-config gtk+-2.0 --cflags) -DOF_USING_GTK
-		LIBS += $(shell pkg-config gtk+-2.0 --libs)
+		SYSTEMLIBS += $(shell pkg-config gtk+-2.0 --libs)
 	endif
 
 	#check if mpg123 exists and add it
 	MPG123 = $(shell pkg-config libmpg123 --exists; echo $$?)
 	ifeq ($(MPG123),0)
 		CFLAGS += -DOF_USING_MPG123
-		LIBS += -lmpg123
+		SYSTEMLIBS += -lmpg123
 	endif
 endif
 LIB_STATIC = $(shell ls $(OF_ROOT)/libs/*/lib/$(LIBSPATH)/*.a  2> /dev/null | grep -v openFrameworksCompiled | grep -v Poco)
@@ -168,13 +168,13 @@ endif
 
 ifeq ($(findstring Debug,$(MAKECMDGOALS)),Debug)
 	TARGET_CFLAGS = -g
-	TARGET_LIBS = $(OF_ROOT)/libs/openFrameworksCompiled/lib/$(ARCH)/libopenFrameworksDebug.a
+	TARGET_LIBS = $(OF_ROOT)/libs/openFrameworksCompiled/lib/$(LIBSPATH)/libopenFrameworksDebug.a
 	TARGET_NAME = Debug
 endif
 
 ifeq ($(findstring Release,$(MAKECMDGOALS)),Release)
 	TARGET_CFLAGS = $(COMPILER_OPTIMIZATION)
-	TARGET_LIBS = $(OF_ROOT)/libs/openFrameworksCompiled/lib/$(ARCH)/libopenFrameworks.a
+	TARGET_LIBS = $(OF_ROOT)/libs/openFrameworksCompiled/lib/$(LIBSPATH)/libopenFrameworks.a
 	TARGET_NAME = Release
 endif
 
