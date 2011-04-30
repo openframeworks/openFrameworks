@@ -371,6 +371,7 @@ ofImage::~ofImage(){
 void ofImage::reloadTexture(){
 	if (pixels.isAllocated() == true && bUseTexture == true){
 		tex.allocate(pixels.getWidth(), pixels.getHeight(), pixels.getGlDataType());
+		tex.loadData(pixels.getPixels(), pixels.getWidth(), pixels.getHeight(), pixels.getGlDataType());
 	}
 }
 
@@ -569,7 +570,7 @@ ofImage & ofImage::operator=(ofPixels & pixels){
 //------------------------------------
 void ofImage::update(){
 
-	if (pixels.isAllocated() && bUseTexture){
+	if (pixels.isAllocated() == true && bUseTexture == true){
 		tex.loadData(pixels.getPixels(), pixels.getWidth(), pixels.getHeight(), pixels.getGlDataType());
 	}
 
