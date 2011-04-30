@@ -37,7 +37,7 @@ ifeq ($(findstring Android,$(MAKECMDGOALS)),Android)
 endif
 
 ifeq ($(ARCH),android)
-	COMPILER_OPTIMIZATION = -Os
+	COMPILER_OPTIMIZATION = $(ANDROID_COMPILER_OPTIMIZATION)
 	NDK_PLATFORM = android-8
 else
 	COMPILER_OPTIMIZATION = $(USER_COMPILER_OPTIMIZATION)
@@ -84,6 +84,12 @@ SED_EXCLUDE_FROM_SRC = $(shell echo  $(EXCLUDE_FROM_SOURCE) | sed s/\,/\\\\\|/g)
 SOURCE_DIRS = $(shell find . -maxdepth 1 -mindepth 1 -type d | grep -v $(SED_EXCLUDE_FROM_SRC) | sed s/.\\///)
 SOURCES = $(shell find $(SOURCE_DIRS) -name "*.cpp" -or -name "*.c" -or -name "*.cc")
 OBJFILES = $(patsubst %.c,%.o,$(patsubst %.cpp,%.o,$(patsubst %.cc,%.o,$(SOURCES))))
+
+ifneq (,$(USER_SOURCE_DIR))
+	USER_SOURCES = $(shell find $(USER_SOURCE_DIR) -name "*.cpp" -or -name "*.c" -or -name "*.cc")
+	USER_OBJFILES =  $(subst $(USER_SOURCE_DIR)/, ,$(patsubst %.c,%.o,$(patsubst %.cpp,%.o,$(patsubst %.cc,%.o,$(USER_SOURCES)))))
+endif
+
 APPNAME = $(shell basename `pwd`)
 CORE_INCLUDES = $(shell find $(OF_ROOT)/libs/openFrameworks/ -type d)
 CORE_INCLUDE_FLAGS = $(addprefix -I,$(CORE_INCLUDES))
@@ -99,14 +105,14 @@ else
 	GTK = $(shell pkg-config gtk+-2.0 --exists; echo $$?)
 	ifeq ($(GTK),0)
 		CFLAGS += $(shell pkg-config gtk+-2.0 --cflags) -DOF_USING_GTK
-		LIBS += $(shell pkg-config gtk+-2.0 --libs)
+		SYSTEMLIBS += $(shell pkg-config gtk+-2.0 --libs)
 	endif
 
 	#check if mpg123 exists and add it
 	MPG123 = $(shell pkg-config libmpg123 --exists; echo $$?)
 	ifeq ($(MPG123),0)
 		CFLAGS += -DOF_USING_MPG123
-		LIBS += -lmpg123
+		SYSTEMLIBS += -lmpg123
 	endif
 endif
 LIB_STATIC = $(shell ls $(OF_ROOT)/libs/*/lib/$(LIBSPATH)/*.a  2> /dev/null | grep -v openFrameworksCompiled | grep -v Poco)
@@ -168,13 +174,13 @@ endif
 
 ifeq ($(findstring Debug,$(MAKECMDGOALS)),Debug)
 	TARGET_CFLAGS = -g
-	TARGET_LIBS = $(OF_ROOT)/libs/openFrameworksCompiled/lib/$(ARCH)/libopenFrameworksDebug.a
+	TARGET_LIBS = $(OF_ROOT)/libs/openFrameworksCompiled/lib/$(LIBSPATH)/libopenFrameworksDebug.a
 	TARGET_NAME = Debug
 endif
 
 ifeq ($(findstring Release,$(MAKECMDGOALS)),Release)
 	TARGET_CFLAGS = $(COMPILER_OPTIMIZATION)
-	TARGET_LIBS = $(OF_ROOT)/libs/openFrameworksCompiled/lib/$(ARCH)/libopenFrameworks.a
+	TARGET_LIBS = $(OF_ROOT)/libs/openFrameworksCompiled/lib/$(LIBSPATH)/libopenFrameworks.a
 	TARGET_NAME = Release
 endif
 
@@ -229,10 +235,16 @@ ifeq ($(MAKECMDGOALS),clean)
 	TARGET = bin/$(APPNAME)_debug bin/$(APPNAME)
 endif
 
-OBJ_OUTPUT = obj/$(TARGET_NAME)/
+
+OBJ_OUTPUT = obj/$(ARCH)$(TARGET_NAME)/
 CLEANTARGET = clean$(TARGET_NAME)
+
 OBJS = $(addprefix $(OBJ_OUTPUT), $(OBJFILES))
 DEPFILES = $(patsubst %.o,%.d,$(OBJS))
+
+USER_OBJS = $(addprefix $(OBJ_OUTPUT), $(USER_OBJFILES))
+DEPFILES += $(patsubst %.o,%.d,$(USER_OBJS))
+
 ifeq ($(findstring addons.make,$(wildcard *.make)),addons.make)
 	ADDONS_OBJS = $(addprefix $(OBJ_OUTPUT), $(ADDONS_OBJFILES))
     DEPFILES += $(patsubst %.o,%.d,$(ADDONS_OBJS))
@@ -298,9 +310,24 @@ $(OBJ_OUTPUT)%.o: $(OF_ROOT)/%.cc
 	mkdir -p $(@D)
 	$(CC) $(TARGET_CFLAGS) $(CFLAGS) $(ADDONSCFLAGS) $(USER_CFLAGS) -MMD -MP -MF$(OBJ_OUTPUT)$*.d -MT$(OBJ_OUTPUT)$*.d -o $@ -c $<
 
-$(TARGET): $(OBJS) $(ADDONS_OBJS) $(TARGET_LIBS) $(LIBS)
+$(OBJ_OUTPUT)%.o: $(USER_SOURCE_DIR)/%.c
+	@echo "compiling object for: " $<
+	mkdir -p $(@D)
+	$(CC) $(TARGET_CFLAGS) $(CFLAGS) $(ADDONSCFLAGS) $(USER_CFLAGS) -MMD -MP -MF$(OBJ_OUTPUT)$*.d -MT$(OBJ_OUTPUT)$*.d -o$@ -c $<
+	
+$(OBJ_OUTPUT)%.o: $(USER_SOURCE_DIR)/%.cc
+	@echo "compiling object for: " $<
+	mkdir -p $(@D)
+	$(CC) $(TARGET_CFLAGS) $(CFLAGS) $(ADDONSCFLAGS) $(USER_CFLAGS) -MMD -MP -MF$(OBJ_OUTPUT)$*.d -MT$(OBJ_OUTPUT)$*.d -o$@ -c $<
+
+$(OBJ_OUTPUT)%.o: $(USER_SOURCE_DIR)/%.cpp
+	@echo "compiling object for: " $<
+	mkdir -p $(@D)
+	$(CXX) $(TARGET_CFLAGS) $(CFLAGS) $(ADDONSCFLAGS) $(USER_CFLAGS) -MMD -MP -MF$(OBJ_OUTPUT)$*.d -MT$(OBJ_OUTPUT)$*.d -o$@ -c $<
+	
+$(TARGET): $(OBJS) $(ADDONS_OBJS) $(USER_OBJS) $(TARGET_LIBS) $(LIBS)
 	@echo 'linking $(TARGET)'
-	$(CXX) -o $@ $(OBJS) $(ADDONS_OBJS) $(LDFLAGS) $(USER_LDFLAGS) $(TARGET_LIBS) $(ADDONSLIBS) $(USER_LIBS) $(LIBS) $(SYSTEMLIBS)
+	$(CXX) -o $@ $(OBJS) $(ADDONS_OBJS) $(USER_OBJS) $(LDFLAGS) $(USER_LDFLAGS) $(TARGET_LIBS) $(ADDONSLIBS) $(USER_LIBS) $(LIBS) $(SYSTEMLIBS)
 
 -include $(DEPFILES)
 
