@@ -35,8 +35,6 @@ void testApp::update(){
 
 //--------------------------------------------------------------
 void testApp::draw(){
-	int time = ofGetElapsedTimeMillis();
-	for(int i=0;i<100;i++){
 	ofFill();
 	ofSetHexColor(0xe0be21);
 
@@ -366,10 +364,8 @@ void testApp::draw(){
 	ofEndShape(true);
 	
 	glPopMatrix();
-	}
+
 	//-------------------------------------
-	
-	time = ofGetElapsedTimeMillis() -time;
 	
 	ofSetHexColor(0x000000);
 	ofDrawBitmapString("(a) star\nwinding rule odd", 20,210);
@@ -399,7 +395,6 @@ void testApp::draw(){
 	ofSetHexColor(0x000000);
 	ofDrawBitmapString("(i) ofNextContour\ncan even be used for CSG operations\nsuch as union and intersection", 260,620);
 	
-	ofDrawBitmapString(ofToString(time),20,20);
 }
 
 //--------------------------------------------------------------
