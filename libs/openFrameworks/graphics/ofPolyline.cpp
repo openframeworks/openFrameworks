@@ -149,7 +149,7 @@ void ofPolyline::bezierTo( const ofPoint & cp1, const ofPoint & cp2, const ofPoi
 			x = (ax * t3) + (bx * t2) + (cx * t) + x0;
 			y = (ay * t3) + (by * t2) + (cy * t) + y0;
 			z = (az * t3) + (bz * t2) + (cz * t) + z0;
-			points.push_back(ofPoint(x,y,0));
+			points.push_back(ofPoint(x,y,z));
 		}
 	}
 }
@@ -211,7 +211,7 @@ void ofPolyline::curveTo( const ofPoint & to, int curveResolution ){
 			( 2.0f * z0 - 5.0f * z1 + 4 * z2 - z3 ) * t2 +
 			( -z0 + 3.0f * z1 - 3.0f * z2 + z3 ) * t3 );
 
-			points.push_back(ofPoint(x,y,0));
+			points.push_back(ofPoint(x,y,z));
 		}
 		curveVertices.pop_front();
 	}
