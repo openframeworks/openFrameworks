@@ -39,6 +39,13 @@ void ofPolyline::addVertexes(const vector<ofPoint>& verts) {
 }
 
 //----------------------------------------------------------
+void ofPolyline::addVertexes(const ofPoint* verts, int numverts) {
+	curveVertices.clear();
+	points.insert( points.end(), verts, verts + numverts );
+	bHasChanged=true;
+}
+
+//----------------------------------------------------------
 size_t ofPolyline::size() const {
 	return points.size();
 }
@@ -321,22 +328,20 @@ static void simplifyDP(float tol, ofPoint* v, int j, int k, int* mk ){
     return;
 }
 
-
 void ofPolyline::simplify(float tol){
 
 	int n = size();
 
-	static vector <ofPoint> sV;
+	vector <ofPoint> sV;
 	sV.resize(n);
 
     int    i, k, m, pv;            // misc counters
     float  tol2 = tol * tol;       // tolerance squared
-    static vector<ofPoint> vt;
-    static vector<int> mk;
+    vector<ofPoint> vt;
+    vector<int> mk;
     vt.resize(n);
-	mk.resize(n);
+	mk.resize(n,0);
 
-	memset(&mk[0], 0, sizeof(int) * n );
 
     // STAGE 1.  Vertex Reduction within tolerance of prior vertex cluster
     vt[0] = points[0];              // start at the beginning
@@ -359,7 +364,7 @@ void ofPolyline::simplify(float tol){
 
 	//get rid of the unused points
 	if( m < (int)sV.size() ){
-		points.assign( sV.begin()+m, sV.end() );
+		points.assign( sV.begin(),sV.begin()+m );
 	}else{
 		points = sV;
 	}

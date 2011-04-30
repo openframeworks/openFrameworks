@@ -36,7 +36,7 @@ public:
 	virtual ~ofTrueTypeFont();
 		
 	// 			-- default, non-full char set, anti aliased:
-	void 		loadFont(string filename, int fontsize, bool _bAntiAliased=true, bool _bFullCharacterSet=false, bool makeContours = false, bool simplifyAmt = 0.3);
+	void 		loadFont(string filename, int fontsize, bool _bAntiAliased=true, bool _bFullCharacterSet=false, bool makeContours = false, float simplifyAmt = 0.3);
 
 	bool		bLoadedOk;
 	bool 		bAntiAlised;

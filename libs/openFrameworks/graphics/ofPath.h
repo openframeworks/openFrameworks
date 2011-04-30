@@ -115,6 +115,7 @@ private:
 
 	// polyline / tessellation
 	vector<ofPolyline>  polylines;
+	vector<ofPolyline>  tessellatedContour; // if winding mode != ODD
 
 	ofMesh				cachedTessellation;
 	bool				cachedTessellationValid;
