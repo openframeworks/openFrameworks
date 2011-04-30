@@ -11,7 +11,7 @@ ofPolyline ofGetSmoothed(const ofPolyline& polyline, int smoothingSize, float sm
 	}
 	
 	// precompute weights and normalization
-	static vector<float> weights;
+	vector<float> weights;
 	weights.resize(smoothingSize+1);
 	float weightSum = 0;
 	weights[0]=1; // center weight
