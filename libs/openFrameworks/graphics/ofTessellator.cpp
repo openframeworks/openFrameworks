@@ -123,7 +123,7 @@ void ofTessellator::performTessellation(ofPolyWindingMode polyWindingMode, ofMes
 
 	dstmesh.clear();
 	dstmesh.addVertices((ofVec3f*)tessGetVertices(cacheTess),numVertexes);
-	dstmesh.addIndices(tessGetElements(cacheTess),numIndices);
+	dstmesh.addIndices((ofIndexType *)tessGetElements(cacheTess),numIndices);
 	dstmesh.setMode(OF_TRIANGLES_MODE);
 
 }

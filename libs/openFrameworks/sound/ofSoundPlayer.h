@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ofConstants.h"
+#include "ofTypes.h"
 
 #if !defined( TARGET_OF_IPHONE ) && !defined(TARGET_ANDROID)
 extern "C" {
