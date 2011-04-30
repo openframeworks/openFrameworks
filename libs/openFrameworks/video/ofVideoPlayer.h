@@ -3,6 +3,7 @@
 #include "ofConstants.h"
 #include "ofTexture.h"
 #include "ofBaseTypes.h"
+#include "ofTypes.h"
 
 #ifdef OF_VIDEO_PLAYER_GSTREAMER
 	#include "ofGstVideoPlayer.h"
@@ -26,7 +27,7 @@ class ofVideoPlayer : public ofBaseVideoPlayer,public ofBaseVideoDraws{
 
 		ofVideoPlayer ();
 
-		void				setPlayer(ofPtr<ofBaseVideoPlayer> newPlayer);
+		void						setPlayer(ofPtr<ofBaseVideoPlayer> newPlayer);
 		ofPtr<ofBaseVideoPlayer>	getPlayer();
 
 		bool 				loadMovie(string name);
