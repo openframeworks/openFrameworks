@@ -42,7 +42,6 @@ ifeq ($(ARCH),android)
 else
 	COMPILER_OPTIMIZATION = $(USER_COMPILER_OPTIMIZATION)
 endif
-EXCLUDE_FROM_SOURCE="bin,.xcodeproj,obj"
 
 
 
@@ -355,7 +354,16 @@ afterReleaseAndroid:$(TARGET)
 	if [ -f obj/$(BIN_NAME) ]; then rm obj/$(BIN_NAME); fi
 	#touch AndroidManifest.xml
 
-AndroidInstall:
+RESNAME=$(shell echo $(APPNAME)Resources | tr '[A-Z]' '[a-z]')
+
+AndroidInstall:	
+	if [ -d "bin/data" ]; then \
+		mkdir -p res/raw; \
+		rm res/raw/$(RESNAME).zip; \
+		cd bin/data; \
+		zip -r ../../res/raw/$(RESNAME).zip *; \
+		cd ../..; \
+	fi 
 	if [ -f obj/$(BIN_NAME) ]; then rm obj/$(BIN_NAME); fi
 	#touch AndroidManifest.xml
 	$(SDK_ROOT)/tools/android update project --target $(NDK_PLATFORM) --path $(PROJECT_PATH)
