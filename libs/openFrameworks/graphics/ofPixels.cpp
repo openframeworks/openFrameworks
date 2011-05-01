@@ -110,6 +110,7 @@ void ofPixels::allocate(int w, int h, ofPixelFormat type){
 		break;
 	default:
 		ofLog(OF_LOG_ERROR,"ofPixels: format not supported");
+		return;
 		break;
 
 	}
