@@ -9,6 +9,7 @@ import java.lang.reflect.Field;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
+import android.R;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -61,7 +62,6 @@ public class OFAndroid {
 					Log.e("OF","error creating dir " + dataPath,e);
 				}
 				
-				OFAndroid.setAppDataDir(dataPath);
     			for(int i=0; i<files.length; i++){
     	        	int fileId;
     	        	String fileName="";
@@ -102,7 +102,16 @@ public class OFAndroid {
     			Log.e("OF","couldn't move app resources to data directory " + dataPath);
     			e.printStackTrace();
     		}
-    		
+    		String app_name="";
+			try {
+				int app_name_id = Class.forName(packageName+".R$string").getField("app_name").getInt(null);
+				app_name = ofActivity.getResources().getText(app_name_id).toString();
+				Log.i("OF","app name: " + app_name);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				Log.e("OF","error retrieving app name",e);
+			} 
+			OFAndroid.setAppDataDir(dataPath,app_name);
 	        
         } catch (ClassNotFoundException e1) { }
         
@@ -111,9 +120,11 @@ public class OFAndroid {
         mGLView = new OFGLSurfaceView(ofActivity);
         ofActivity.setContentView(mGLView);
         
-        accelerometer = new OFAndroidAccelerometer((SensorManager)ofActivity.getSystemService(Context.SENSOR_SERVICE));
+        //accelerometer = new OFAndroidAccelerometer((SensorManager)ofActivity.getSystemService(Context.SENSOR_SERVICE));
         
         gestureListener = new OFGestureListener(ofActivity);
+        
+        
         
         mGLView.setOnClickListener(gestureListener); 
         mGLView.setOnTouchListener(gestureListener.touchListener);
@@ -167,7 +178,7 @@ public class OFAndroid {
 	}
 
 	// native methods to call OF c++ callbacks
-    public static native void setAppDataDir(String data_dir);
+    public static native void setAppDataDir(String data_dir,String app_name);
     public static native void init();
     public static native void onRestart();
     public static native void onPause();
@@ -235,7 +246,20 @@ public class OFAndroid {
 
 	
 	public static void setupAccelerometer(){
-		 accelerometer = new OFAndroidAccelerometer((SensorManager)ofActivity.getSystemService(Context.SENSOR_SERVICE));
+		if(accelerometer==null)
+			accelerometer = new OFAndroidAccelerometer((SensorManager)ofActivity.getSystemService(Context.SENSOR_SERVICE));
+	}
+	
+	public static void setupGPS(){
+		if(gps==null)
+			gps = new OFAndroidGPS(ofActivity);
+		gps.startGPS();
+	}
+	
+	public static void stopGPS(){
+		if(gps==null)
+			return;
+		gps.stopGPS();
 	}
 	
 	public static void alertBox(String msg){  
@@ -256,6 +280,7 @@ public class OFAndroid {
     
     private OFGLSurfaceView mGLView;
     private static OFAndroidAccelerometer accelerometer;
+    private static OFAndroidGPS gps;
     private static Activity ofActivity;
     private OFGestureListener gestureListener;
 
@@ -274,7 +299,6 @@ class OFGestureListener extends SimpleOnGestureListener implements OnClickListen
         touchListener = new View.OnTouchListener() {
         	
             public boolean onTouch(View v, MotionEvent event) {
-            	Log.i("OF","onTouch");
             	final int action = event.getAction();
             	final int pointerIndex = (action & MotionEvent.ACTION_POINTER_ID_MASK) 
                 >> MotionEvent.ACTION_POINTER_ID_SHIFT;

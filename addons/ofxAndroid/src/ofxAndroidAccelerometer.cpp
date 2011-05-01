@@ -34,12 +34,12 @@ void ofxAccelerometerHandler::setup(){
 		return;
 	}
 
-	/*jmethodID setupAccelerometer = env->GetStaticMethodID(javaClass,"setupAccelerometer","()V;");
+	jmethodID setupAccelerometer = env->GetStaticMethodID(javaClass,"setupAccelerometer","()V");
 	if(!setupAccelerometer){
 		ofLog(OF_LOG_ERROR,"cannot find OFAndroid.setupAccelerometer method");
 		return;
 	}
-	env->CallStaticObjectMethod(javaClass,setupAccelerometer);*/
+	env->CallStaticObjectMethod(javaClass,setupAccelerometer);
 }
 
 void ofxAccelerometerHandler::exit(){
