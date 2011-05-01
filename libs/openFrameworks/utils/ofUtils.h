@@ -185,4 +185,9 @@ vector <string> ofSplitString(const string & source, const string & delimiters, 
 string ofJoinString(vector <string> stringElements, const string & delimiter);
 bool ofIsStringInString(string haystack, string needle);
 
+string ofToLower(const string & src);
+string ofToUpper(const string & src);
+
+string ofVAArgsToString(const char * format, ...);
+
 
