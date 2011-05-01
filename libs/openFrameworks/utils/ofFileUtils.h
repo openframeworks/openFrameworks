@@ -36,6 +36,7 @@ public:
 
 	string getNextLine();
 	string getFirstLine();
+	bool isLastLine();
 
 	friend ostream & operator<<(ostream & ostr,ofBuffer & buf);
 	friend istream & operator>>(istream & istr,ofBuffer & buf);

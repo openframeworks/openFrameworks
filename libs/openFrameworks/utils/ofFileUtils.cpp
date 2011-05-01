@@ -115,12 +115,10 @@ long ofBuffer::size() const{
 
 //--------------------------------------------------
 string ofBuffer::getNextLine(){
-	if( buffer.empty() ) return "";
+	if( buffer.empty() || int(buffer.size())==nextLinePos) return "";
 	long currentLinePos = nextLinePos;
 	while(nextLinePos<(int)buffer.size() && buffer[nextLinePos]!='\n') nextLinePos++;
 	string line(getBinaryBuffer() + currentLinePos,nextLinePos-currentLinePos);
-	line.resize(line.size()+1);
-	line[line.size()-1]=0;
 	if(nextLinePos<(int)buffer.size()-1) nextLinePos++;
 	return line;
 }
@@ -129,6 +127,11 @@ string ofBuffer::getNextLine(){
 string ofBuffer::getFirstLine(){
 	nextLinePos = 0;
 	return getNextLine();
+}
+
+//--------------------------------------------------
+bool ofBuffer::isLastLine(){
+	return int(buffer.size())==nextLinePos;
 }
 
 //--------------------------------------------------
