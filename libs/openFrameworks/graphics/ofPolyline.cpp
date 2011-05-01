@@ -72,6 +72,11 @@ bool ofPolyline::isClosed() const {
 }
 
 //----------------------------------------------------------
+void ofPolyline::close(){
+	bClosed = true;
+}
+
+//----------------------------------------------------------
 bool ofPolyline::hasChanged(){
 	 if(bHasChanged){
 		 bHasChanged=false;
