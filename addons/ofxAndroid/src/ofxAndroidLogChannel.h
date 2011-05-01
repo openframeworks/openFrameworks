@@ -6,14 +6,13 @@
  */
 
 #pragma once
-#include "Poco/Channel.h"
+#include "ofLog.h"
 
-namespace Poco{
-class AndroidChannel: public Channel{
+class ofxAndroidLogChannel: public ofBaseLoggerChannel{
 public:
-	AndroidChannel();
+	ofxAndroidLogChannel();
 
-	void log(const Message& msg);
+	void log(ofLogLevel level, const string & module, const string& msg);
+	void log(ofLogLevel logLevel, const string & module, const char* format, ...);
 };
-}
 
