@@ -1,4 +1,5 @@
 #include "ofPolyline.h"
+#include "ofGraphics.h"
 
 //----------------------------------------------------------
 ofPolyline::ofPolyline(){
@@ -369,4 +370,8 @@ void ofPolyline::simplify(float tol){
 		points = sV;
 	}
 
+}
+
+void ofPolyline::draw(){
+	ofGetDefaultRenderer()->draw(*this);
 }
