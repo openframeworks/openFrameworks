@@ -58,7 +58,7 @@ bool ofBuffer::set(istream & stream){
 }
 
 //--------------------------------------------------
-bool ofBuffer::writeTo(ostream & stream){
+bool ofBuffer::writeTo(ostream & stream) const{
 	if(stream.bad()) return false;
 	stream.write(&(buffer[0]),buffer.size());
 	return true;
@@ -115,9 +115,9 @@ long ofBuffer::size() const{
 
 //--------------------------------------------------
 string ofBuffer::getNextLine(){
-	if( buffer.empty() || int(buffer.size())==nextLinePos) return "";
+	if( buffer.empty() || int(buffer.size()-1)==nextLinePos) return "";
 	long currentLinePos = nextLinePos;
-	while(nextLinePos<(int)buffer.size() && buffer[nextLinePos]!='\n') nextLinePos++;
+	while(nextLinePos<(int)buffer.size()-1 && buffer[nextLinePos]!='\n') nextLinePos++;
 	string line(getBinaryBuffer() + currentLinePos,nextLinePos-currentLinePos);
 	if(nextLinePos<(int)buffer.size()-1) nextLinePos++;
 	return line;
@@ -131,17 +131,17 @@ string ofBuffer::getFirstLine(){
 
 //--------------------------------------------------
 bool ofBuffer::isLastLine(){
-	return int(buffer.size())==nextLinePos;
+	return int(buffer.size()-1)==nextLinePos;
 }
 
 //--------------------------------------------------
-ostream & operator<<(ostream & ostr,ofBuffer & buf){
+ostream & operator<<(ostream & ostr,const ofBuffer & buf){
 	buf.writeTo(ostr);
 	return ostr;
 }
 
 //--------------------------------------------------
-istream & operator>>(istream & istr,ofBuffer & buf){
+istream & operator>>(istream & istr, ofBuffer & buf){
 	buf.set(istr);
 	return istr;
 }

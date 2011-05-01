@@ -20,7 +20,7 @@ public:
 	void set(const char * _buffer, int _size);
 	bool set(istream & stream);
 
-	bool writeTo(ostream & stream);
+	bool writeTo(ostream & stream) const;
 
 	void clear();
 
@@ -38,8 +38,8 @@ public:
 	string getFirstLine();
 	bool isLastLine();
 
-	friend ostream & operator<<(ostream & ostr,ofBuffer & buf);
-	friend istream & operator>>(istream & istr,ofBuffer & buf);
+	friend ostream & operator<<(ostream & ostr, const ofBuffer & buf);
+	friend istream & operator>>(istream & istr, ofBuffer & buf);
 
 private:
 	vector<char> 	buffer;
