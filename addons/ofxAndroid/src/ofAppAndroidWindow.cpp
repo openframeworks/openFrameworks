@@ -7,6 +7,11 @@
 
 #include "ofAppAndroidWindow.h"
 
+extern "C"{
+#include "unzip.h"
+#include "miniunz.h"
+}
+
 #include <jni.h>
 #include "ofGraphics.h"
 #include "ofAppRunner.h"
@@ -15,6 +20,7 @@
 #include "ofxAndroidUtils.h"
 #include "ofxAccelerometer.h"
 #include <android/log.h>
+#include "ofFileUtils.h"
 
 static bool paused=true;
 
@@ -236,12 +242,28 @@ jint JNI_OnLoad(JavaVM* vm, void* reserved)
 }
 
 void
-Java_cc_openframeworks_OFAndroid_setAppDataDir( JNIEnv*  env, jobject  thiz, jstring data_dir )
+Java_cc_openframeworks_OFAndroid_setAppDataDir( JNIEnv*  env, jobject  thiz, jstring data_dir, jstring app_name )
 {
 	jboolean iscopy;
 	const char *mfile = env->GetStringUTFChars(data_dir, &iscopy);
-	ofLog(OF_LOG_NOTICE,"Setting app dir name to: " + string(mfile));
+	__android_log_print(ANDROID_LOG_INFO,"OF",("Setting app dir name to: " + string(mfile)).c_str());
     ofSetDataPathRoot(string(mfile)+"/");
+    string appname = env->GetStringUTFChars(app_name, &iscopy);
+    __android_log_print(ANDROID_LOG_INFO,"OF",("app name: " + appname).c_str());
+    if(appname!=""){
+		string resources_name = ofToLower(appname + "resources.zip");
+		__android_log_print(ANDROID_LOG_INFO,"OF",("uncompressing " + resources_name).c_str());
+		ofFile resources(resources_name);
+		__android_log_print(ANDROID_LOG_INFO,"OF",("uncompressing " + resources.getAbsolutePath()).c_str());
+		if(resources.exists()){
+			unzFile zip = unzOpen(resources.getAbsolutePath().c_str());
+			char current_dir[1000];
+			getcwd(current_dir,1000);
+			chdir(ofToDataPath("",true).c_str());
+			do_extract(zip,0,1,NULL);
+			chdir(current_dir);
+		}
+    }
 }
 
 void
