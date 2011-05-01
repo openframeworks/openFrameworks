@@ -143,12 +143,12 @@ void ofURLFileLoader::update(ofEventArgs & args){
 	lock();
 	if(responses.size()){
 		ofHttpResponse response(responses.front());
+		ofLog(OF_LOG_VERBOSE,"ofURLLoader::update: new response " +response.request.name);
 		responses.pop();
-		if(!responses.size())
-			ofRemoveListener(ofEvents.update,this,&ofURLFileLoader::update);
 		unlock();
 		ofNotifyEvent(ofURLResponseEvent,response);
 	}else{
+		ofRemoveListener(ofEvents.update,this,&ofURLFileLoader::update);
 		unlock();
 	}
 
