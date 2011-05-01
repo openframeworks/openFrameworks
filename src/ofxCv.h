@@ -74,6 +74,7 @@ namespace ofxCv {
 	
 	ofVec2f toOf(Point2f point);
 	ofVec3f toOf(Point3f point);
+	ofRectangle toOf(cv::Rect& rect);
 	
 	ofMatrix4x4 makeMatrix(Mat rotation, Mat translation);
 	

@@ -88,6 +88,10 @@ namespace ofxCv {
 		return ofVec3f(point.x, point.y, point.z);
 	}
 	
+	ofRectangle toOf(cv::Rect& rect) {
+		return ofRectangle(rect.x, rect.y, rect.width, rect.height);
+	}
+	
 	ofMatrix4x4 makeMatrix(Mat rotation, Mat translation) {
 		Mat rot3x3;
 		if(rotation.rows == 3 && rotation.cols == 3) {
