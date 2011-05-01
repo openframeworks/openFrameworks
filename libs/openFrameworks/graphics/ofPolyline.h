@@ -72,6 +72,7 @@ public:
 	/// closed
 	void setClosed( bool tf );
 	bool isClosed() const;
+	void close();
 
 	bool hasChanged();
 
