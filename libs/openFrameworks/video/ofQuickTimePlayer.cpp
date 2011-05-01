@@ -166,9 +166,7 @@ void ofQuickTimePlayer::update(){
 		#ifdef OF_VIDEO_PLAYER_QUICKTIME
 		//--------------------------------------------------------------
 
-			#if defined(TARGET_WIN32) || defined(QT_USE_MOVIETASK)
-				MoviesTask(moviePtr,0);
-			#endif
+            MoviesTask(moviePtr,0);
 
 		//--------------------------------------------------------------
 		#endif
