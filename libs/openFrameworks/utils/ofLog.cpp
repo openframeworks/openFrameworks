@@ -44,7 +44,8 @@ ofLog::ofLog(ofLogLevel logLevel){
 
 //--------------------------------------------------
 ofLog::ofLog(ofLogLevel logLevel, string message){
-	_log(level, message);
+	level = logLevel;
+	_log(logLevel, message);
 	bPrinted = true;
 }
 
@@ -122,7 +123,7 @@ void ofLog::_log(ofLogLevel logLevel, string message){
 			#ifdef TARGET_ANDROID
 				LOGNOTICE(message.c_str());
 			#else
-						printf("OF_NOTICE: ");
+				printf("OF_NOTICE: ");
 			#endif
 		}
 		else if(logLevel == OF_LOG_WARNING){
