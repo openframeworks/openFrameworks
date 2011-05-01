@@ -79,6 +79,8 @@ public:
 
 	float getPerimeter() const;
 
+	void draw();
+
 private:
 	void setCircleResolution(int res);
 	vector<ofPoint> points;
