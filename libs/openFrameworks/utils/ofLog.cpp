@@ -186,7 +186,8 @@ string ofGetLogLevelName(ofLogLevel level){
 }
 
 void ofConsoleLoggerChannel::log(ofLogLevel level, const string & module, const string & message){
-	cout << module << ": " << ofGetLogLevelName(level) << ": " << message << endl;
+	if(level<OF_LOG_ERROR) cout << module << ": " << ofGetLogLevelName(level) << ": " << message << endl;
+	else cerr << module << ": " << ofGetLogLevelName(level) << ": " << message << endl;
 }
 
 void ofConsoleLoggerChannel::log(ofLogLevel logLevel, const string & module, const char* format, ...){
@@ -194,10 +195,18 @@ void ofConsoleLoggerChannel::log(ofLogLevel logLevel, const string & module, con
 	//http://www.ozzu.com/cpp-tutorials/tutorial-writing-custom-printf-wrapper-function-t89166.html
 	va_list args;
 	va_start( args, format );
-	printf("%s: ", module.c_str());
-	printf("%s: ", ofGetLogLevelName(logLevel).c_str());
-	vprintf( format, args );
-	printf("\n");
+	if(logLevel<OF_LOG_ERROR){
+		printf("%s: ", module.c_str());
+		printf("%s: ", ofGetLogLevelName(logLevel).c_str());
+		vprintf( format, args );
+		printf("\n");
+	}else{
+		fprintf(stderr,"%s: ", module.c_str());
+		fprintf(stderr,"%s: ", ofGetLogLevelName(logLevel).c_str());
+		vfprintf( stderr, format, args );
+		fprintf(stderr,"\n");
+	}
+
 	va_end( args );
 }
 
