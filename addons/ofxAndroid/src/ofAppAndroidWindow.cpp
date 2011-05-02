@@ -471,6 +471,14 @@ Java_cc_openframeworks_OFAndroid_onBackPressed(){
 	if(androidApp) return androidApp->backPressed();
 	else return false;
 }
+
+jboolean
+Java_cc_openframeworks_OFAndroid_onMenuItemSelected( JNIEnv*  env, jobject  thiz, jstring menu_id){
+	jboolean iscopy;
+	const char *menu_id_str = env->GetStringUTFChars(menu_id, &iscopy);
+	if(androidApp) return androidApp->menuItemSelected(menu_id_str);
+	else return false;
+}
 }
 
 
