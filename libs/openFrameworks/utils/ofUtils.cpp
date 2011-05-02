@@ -512,17 +512,23 @@ string ofVAArgsToString(const char * format, ...){
 		// Get formatted string length adding one for NULL
 		size_t len = vsprintf(aux_buffer, format, marker) + 1;
 
-		// Create a char vector to hold the formatted string.
-		vector<char> buffer(len, '\0');
-		int nWritten = vsprintf(&buffer[0], format, marker);
-
-		if (nWritten > 0)
-		{
-		 retStr = &buffer[0];
-		}
-
 		// Reset variable arguments
 		va_end(marker);
+
+		if (len > 0)
+		{
+			va_list args;
+
+			// initialize variable arguments
+			va_start(args, format);
+
+			// Create a char vector to hold the formatted string.
+			vector<char> buffer(len, '\0');
+			int nWritten = vsprintf(&buffer[0], format, args);
+			retStr = &buffer[0];
+			va_end(args);
+		}
+
 	}
 	return retStr;
 }
