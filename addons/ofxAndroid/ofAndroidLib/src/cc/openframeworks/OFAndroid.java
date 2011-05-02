@@ -18,25 +18,27 @@ import android.content.pm.ActivityInfo;
 import android.hardware.SensorManager;
 import android.opengl.GLSurfaceView;
 import android.os.Environment;
+import android.util.AttributeSet;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.GestureDetector.SimpleOnGestureListener;
-import android.view.KeyEvent;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.View.OnClickListener;
-import android.view.View.OnTouchListener;
-import android.view.Window;
-import android.view.WindowManager;
-import android.widget.Filter;
 
 public class OFAndroid {
 	
 
 
+
+
+
 	public OFAndroid(String packageName, Activity ofActivity){
 		//Log.i("OF","external files dir: "+ ofActivity.getApplicationContext().getExternalFilesDir(null));
+		OFAndroid.packageName = packageName;
         try {
         	
 			// try to find if R.raw class exists will throw
@@ -116,18 +118,30 @@ public class OFAndroid {
         } catch (ClassNotFoundException e1) { }
         
         OFAndroid.ofActivity = ofActivity;
-        
-        mGLView = new OFGLSurfaceView(ofActivity);
-        ofActivity.setContentView(mGLView);
-        
-        //accelerometer = new OFAndroidAccelerometer((SensorManager)ofActivity.getSystemService(Context.SENSOR_SERVICE));
-        
+
         gestureListener = new OFGestureListener(ofActivity);
         
-        
-        
-        mGLView.setOnClickListener(gestureListener); 
-        mGLView.setOnTouchListener(gestureListener.touchListener);
+        try {
+        	Log.v("OF","trying to find class: "+packageName+".R$layout");
+			Class<?> layout = Class.forName(packageName+".R$layout");
+			View view = ofActivity.getLayoutInflater().inflate(layout.getField("main_layout").getInt(null),null);
+			ofActivity.setContentView(view);
+			
+			Class<?> id = Class.forName(packageName+".R$id");
+			mGLView = (OFGLSurfaceView)ofActivity.findViewById(id.getField("of_gl_surface").getInt(null));
+			mGLView.setOnClickListener(gestureListener); 
+			mGLView.setOnTouchListener(gestureListener.touchListener);
+			
+			
+		} catch (Exception e) {
+			Log.e("OF", "couldn't create view from layout falling back to GL only",e);
+	        mGLView = new OFGLSurfaceView(ofActivity);
+	        ofActivity.setContentView(mGLView);
+	        
+	        mGLView.setOnClickListener(gestureListener); 
+	        mGLView.setOnTouchListener(gestureListener.touchListener);
+		}
+		android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_URGENT_AUDIO);
     }
 
 	public void start(){
@@ -176,6 +190,22 @@ public class OFAndroid {
 		Log.i("OF","onDestroy");
 		onDestroy();
 	}
+	
+	static public boolean menuItemSelected(MenuItem item){
+		try {
+			Class<?> menu_ids = Class.forName(packageName+".R$id");
+			Field[] fields = menu_ids.getFields();
+			for(Field field: fields){
+				Log.i("OF", "checking " + field.getName());
+				if(item.getItemId() == field.getInt(null)){
+					return onMenuItemSelected(field.getName());
+				}
+			}
+		} catch (Exception e) {
+			Log.w("OF","Trying to get menu items ", e);
+		}
+		return false;
+	}
 
 	// native methods to call OF c++ callbacks
     public static native void setAppDataDir(String data_dir,String app_name);
@@ -200,6 +230,8 @@ public class OFAndroid {
     public static native void onKeyDown(int keyCode);
     public static native void onKeyUp(int keyCode);
     public static native boolean onBackPressed();
+    
+    public static native boolean onMenuItemSelected(String menu_id);
     
 
     // static methods to be called from OF c++ code
@@ -283,12 +315,20 @@ public class OFAndroid {
     private static OFAndroidGPS gps;
     private static Activity ofActivity;
     private OFGestureListener gestureListener;
+	private static String packageName;
 
     
 	 
     static {
     	System.loadLibrary("OFAndroidApp"); 
     }
+
+
+
+	public View getGLContentView() {
+        return mGLView;
+	}
+	
 }
 
 class OFGestureListener extends SimpleOnGestureListener implements OnClickListener {
@@ -392,6 +432,12 @@ class OFGLSurfaceView extends GLSurfaceView{
         mRenderer = new OFAndroidWindow(getWidth(),getHeight());
         setRenderer(mRenderer);
     }
+	
+	public OFGLSurfaceView(Context context,AttributeSet attributes) {
+        super(context,attributes);
+        mRenderer = new OFAndroidWindow(getWidth(),getHeight());
+        setRenderer(mRenderer);
+    }
 
     @Override
 	public void surfaceDestroyed(SurfaceHolder holder) {
@@ -419,6 +465,7 @@ class OFAndroidWindow implements GLSurfaceView.Renderer {
     	OFAndroid.init();
     	OFAndroid.setup(w,h);
     	initialized = true;
+    	android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_LOWEST);
     }
 
     public void onSurfaceChanged(GL10 gl, int w, int h) {
