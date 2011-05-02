@@ -9,7 +9,6 @@ import java.lang.reflect.Field;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
-import android.R;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -22,11 +21,11 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.GestureDetector.SimpleOnGestureListener;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 
 public class OFAndroid {
@@ -328,6 +327,14 @@ public class OFAndroid {
 	public View getGLContentView() {
         return mGLView;
 	}
+	
+    static public MenuItem getMenuItemByID(Menu menu, int id){
+    	for(int i=0; i<menu.size(); i++){
+    		if(menu.getItem(i).getItemId()==id) return menu.getItem(i);
+    	}
+    	return null;
+    }
+    
 	
 }
 
