@@ -128,7 +128,7 @@ public:
 	
 	
 	//be careful! this deletes a file or folder :) 
-	bool remove(bool recursive);	
+	bool remove(bool recursive=false);
 
 	uint64_t getSize() const;
 
