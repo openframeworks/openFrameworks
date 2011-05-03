@@ -92,6 +92,14 @@ namespace ofxCv {
 		return ofRectangle(rect.x, rect.y, rect.width, rect.height);
 	}
 	
+	void loadImage(Mat& mat, string filename) {
+		mat = imread(ofToDataPath(filename));
+	}
+	
+	void saveImage(Mat& mat, string filename) {
+		imwrite(ofToDataPath(filename), mat);
+	}
+	
 	ofMatrix4x4 makeMatrix(Mat rotation, Mat translation) {
 		Mat rot3x3;
 		if(rotation.rows == 3 && rotation.cols == 3) {

@@ -76,6 +76,9 @@ namespace ofxCv {
 	ofVec3f toOf(Point3f point);
 	ofRectangle toOf(cv::Rect& rect);
 	
+	void loadImage(Mat& mat, string filename);
+	void saveImage(Mat& mat, string filename);
+	
 	ofMatrix4x4 makeMatrix(Mat rotation, Mat translation);
 	
 	void drawMat(Mat& mat, float x, float y);
