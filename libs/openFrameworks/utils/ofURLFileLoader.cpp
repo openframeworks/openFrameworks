@@ -154,20 +154,23 @@ void ofURLFileLoader::update(ofEventArgs & args){
 
 }
 
-static ofURLFileLoader fileLoader;
+static ofURLFileLoader & getFileLoader(){
+	static ofURLFileLoader * fileLoader = new ofURLFileLoader;
+	return *fileLoader;
+}
 
 ofHttpResponse ofLoadURL(string url){
-	return fileLoader.get(url);
+	return getFileLoader().get(url);
 }
 
 int ofLoadURLAsync(string url, string name){
-	return fileLoader.getAsync(url,name);
+	return getFileLoader().getAsync(url,name);
 }
 
 void ofRemoveURLRequest(int id){
-	fileLoader.remove(id);
+	getFileLoader().remove(id);
 }
 
 void ofRemoveAllURLRequests(){
-	fileLoader.clear();
+	getFileLoader().clear();
 }
