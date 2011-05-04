@@ -52,10 +52,16 @@ const int Ascii::CHARACTER_PROPERTIES[128]={0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 
 static bool enableDataPath = true;
 static unsigned long startTime = ofGetSystemTime();   //  better at the first frame ?? (currently, there is some delay from static init, to running.
+static unsigned long startTimeMicros = ofGetSystemTimeMicros();
 
 //--------------------------------------
 int ofGetElapsedTimeMillis(){
 	return (int)(ofGetSystemTime() - startTime);
+}
+
+//--------------------------------------
+unsigned long ofGetElapsedTimeMicros(){
+	return (int)(ofGetSystemTimeMicros() - startTimeMicros);
 }
 
 //--------------------------------------
@@ -85,6 +91,20 @@ unsigned long ofGetSystemTime( ) {
 			return GetTickCount();
 		#else
 			return timeGetTime();
+		#endif
+	#endif
+}
+
+unsigned long ofGetSystemTimeMicros( ) {
+	#ifndef TARGET_WIN32
+		struct timeval now;
+		gettimeofday( &now, NULL );
+		return now.tv_usec + now.tv_sec*1000000;
+	#else
+		#if defined(_WIN32_WCE)
+			return GetTickCount()*1000;
+		#else
+			return timeGetTime()*1000;
 		#endif
 	#endif
 }
