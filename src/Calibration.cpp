@@ -42,8 +42,7 @@ namespace ofxCv {
 	}
 	
 	Calibration::Calibration() :
-	boardSize(cv::Size(10, 7)), // based on Chessboard_A4.pdf
-	squareSize(1),
+	boardSize(cv::Size(10, 7)), squareSize(2.5), // based on Chessboard_A4.pdf, assuming world units are centimeters
 	fillFrame(true) {
 	}
 	void Calibration::save(string filename, bool absolute) const {
@@ -143,6 +142,7 @@ namespace ofxCv {
 		int calibFlags = 0;
     float rms = calibrateCamera(objectPoints, imagePoints, addedImageSize, cameraMatrix, distCoeffs, boardRotations, boardTranslations, calibFlags);
     ofLog(OF_LOG_VERBOSE, "calibrateCamera() reports RMS error of " + ofToString(rms));
+		cout << "should be printing..." << endl;
 		
     bool ok = checkRange(cameraMatrix) && checkRange(distCoeffs);
 		
