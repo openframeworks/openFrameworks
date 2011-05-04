@@ -123,7 +123,7 @@ public:
 	
 	//these all work for files and directories
 	bool copyTo(string path, bool bRelativeToData = true, bool overwrite = false);
-	bool moveTo(string path, bool bRelativeToData = true, bool overwrite = false);		
+	bool moveTo(string path, bool bRelativeToData = true, bool overwrite = false);
 	bool renameTo(string path, bool bRelativeToData = true, bool overwrite = false);
 	
 	
