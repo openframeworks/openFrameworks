@@ -77,6 +77,8 @@ class ofImage : public ofBaseImage{
 		unsigned char * 	getPixels();			// up to you to get this right
 		ofPixelsRef		 	getPixelsRef();
 
+		operator ofPixels&();
+
 		ofColor getColor(int x, int y) const;
 
 		// alter the image
