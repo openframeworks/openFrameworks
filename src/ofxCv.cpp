@@ -76,8 +76,17 @@ namespace ofxCv {
 		return img.toCv();
 	}
 	
+	Point3f toCv(ofVec3f& vec) {
+		return Point3f(vec.x, vec.y, vec.z);
+	}
+	
 	cv::Rect toCv(ofRectangle& rect) {
 		return cv::Rect(rect.x, rect.y, rect.width, rect.height);
+	}
+	
+	Mat toCv(ofMesh& mesh) {
+		vector<ofVec3f>& vertices = mesh.getVertices();
+		return Mat(1, vertices.size(), CV_32FC3, &vertices[0]);
 	}
 	
 	ofVec2f toOf(Point2f point) {
