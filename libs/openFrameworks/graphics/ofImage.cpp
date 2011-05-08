@@ -193,6 +193,7 @@ void putBmpIntoPixels(FIBITMAP * bmp, ofPixels &pix, bool swapForLittleEndian = 
 
 //----------------------------------------------------
 void putBmpIntoPixels(FIBITMAP * bmp, ofFloatPixels &pix, bool swapForLittleEndian = true){
+	cout << "trying to put into float pixels" << endl;
 	//TODO
 	/*int width			= FreeImage_GetWidth(bmp);
 	int height			= FreeImage_GetHeight(bmp);
@@ -237,6 +238,7 @@ void putBmpIntoPixels(FIBITMAP * bmp, ofFloatPixels &pix, bool swapForLittleEndi
 
 //----------------------------------------------------
 void putBmpIntoPixels(FIBITMAP * bmp, ofShortPixels &pix, bool swapForLittleEndian = true){
+	cout << "trying to put into short pixels" << endl;
 	//TODO
 	/*int width			= FreeImage_GetWidth(bmp);
 	int height			= FreeImage_GetHeight(bmp);
@@ -785,9 +787,13 @@ ofImage_<T>::operator ofPixels_<T>&(){
 //for getting a reference to the texture
 template<typename T>
 ofTexture & ofImage_<T>::getTextureReference(){
+/*
+	// it should be the responsibility of anything using getTextureReference()
+	// to check that it's allocated
 	if(!tex.bAllocated() ){
 		ofLog(OF_LOG_WARNING, "ofImage - getTextureReference - texture is not allocated");
 	}
+	*/
 	return tex;
 }
 
