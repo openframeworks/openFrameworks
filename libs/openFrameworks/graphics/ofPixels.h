@@ -3,7 +3,6 @@
 #include "ofConstants.h"
 #include "ofUtils.h"
 #include "ofColor.h"
-#include "ofPixelUtils.h"
 
 template <typename T>
 class ofPixels_ {
@@ -20,7 +19,8 @@ public:
 
 	void allocate(int w, int h, int channels);
 	//void allocate(int w, int h, ofPixelFormat type);
-	//void allocate(int w, int h, ofImageType type);
+	void allocate(int w, int h, ofImageType type);
+
 	void set(T val);
 	void setFromPixels(const T * newPixels,int w, int h, int channels);
 	void setFromExternalPixels(const T * newPixels,int w, int h, int channels);
@@ -53,8 +53,8 @@ public:
 	int getBitsPerChannel() const;
 	int getNumChannels() const;
 
-	//ofImageType getImageType() const;
-	//int getGlDataType() const;
+	ofImageType getImageType() const;
+	int getGlDataType() const;
 
 private:
 	void copyFrom( const ofPixels_<T>& mom );
@@ -75,17 +75,8 @@ private:
 };
 
 
-class ofPixels: public ofPixels_<unsigned char>{
-public:
-	int getGlDataType() const;
-	ofImageType getImageType() const;
-};
-
-class ofFloatPixels: public ofPixels_<float>{
-public:
-	int getGlDataType() const;
-	ofImageType getImageType() const;
-};
+typedef ofPixels_<unsigned char> ofPixels;
+typedef ofPixels_<float> ofFloatPixels;
 
 
 
@@ -211,6 +202,21 @@ void ofPixels_<T>::allocate(int w, int h, int _channels){
 }
 
 template<typename T>
+void ofPixels_<T>::allocate(int w, int h, ofImageType type){
+	switch(type){
+	case OF_IMAGE_GRAYSCALE:
+		allocate(w,h,1);
+		break;
+	case OF_IMAGE_COLOR:
+		allocate(w,h,3);
+		break;
+	case OF_IMAGE_COLOR_ALPHA:
+		allocate(w,h,4);
+		break;
+	}
+}
+
+template<typename T>
 void ofPixels_<T>::swapRgb(){
 	if (channels >= 3){
 		int sizePixels		= width*height;
@@ -328,6 +334,33 @@ int ofPixels_<T>::getNumChannels() const{
 	return channels;
 }
 
+template<typename T>
+int ofPixels_<T>::getGlDataType() const{
+	switch(getNumChannels()){
+	case 1:
+		return GL_LUMINANCE;
+	case 3:
+		return GL_RGB;
+	case 4:
+		return GL_RGBA;
+	default:
+		return GL_LUMINANCE;
+	}
+}
+
+template<typename T>
+ofImageType ofPixels_<T>::getImageType() const{
+	switch(getNumChannels()){
+	case 1:
+		return OF_IMAGE_GRAYSCALE;
+	case 3:
+		return OF_IMAGE_COLOR;
+	case 4:
+		return OF_IMAGE_COLOR_ALPHA;
+	default:
+		return OF_IMAGE_UNDEFINED;
+	}
+}
 
 typedef ofPixels& ofPixelsRef;
 
