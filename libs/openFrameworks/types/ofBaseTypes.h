@@ -82,21 +82,27 @@ public:
 // ofBaseHasPixels
 //----------------------------------------------------------
 template<typename T>
-class ofBaseHasPixels{
+class ofBaseHasPixels_{
 public:
-	virtual ~ofBaseHasPixels(){}
+	virtual ~ofBaseHasPixels_(){}
 	virtual T * getPixels()=0;
 	virtual ofPixels_<T> & getPixelsRef()=0;
 };
+
+typedef ofBaseHasPixels_<unsigned char> ofBaseHasPixels;
+typedef ofBaseHasPixels_<float> ofBaseHasFloatPixels;
 
 //----------------------------------------------------------
 // ofBaseImage
 //----------------------------------------------------------
 template<typename T>
-class ofBaseImage: public ofBaseDraws, public ofBaseHasTexture, public ofBaseHasPixels<T>{
+class ofBaseImage_: public ofBaseDraws, public ofBaseHasTexture, public ofBaseHasPixels_<T>{
 public:
 	
 };
+
+typedef ofBaseImage_<unsigned char> ofBaseImage;
+typedef ofBaseImage_<float> ofBaseFloatImage;
 
 //----------------------------------------------------------
 // ofBaseHasSoundStream
@@ -141,7 +147,7 @@ class ofBaseSoundOutput{
 //----------------------------------------------------------
 // ofBaseVideo
 //----------------------------------------------------------
-class ofBaseVideo: public ofBaseHasPixels<unsigned char>, public ofBaseUpdates{
+class ofBaseVideo: public ofBaseHasPixels, public ofBaseUpdates{
 public:
 	virtual ~ofBaseVideo(){}
 	virtual bool isFrameNew()=0;
