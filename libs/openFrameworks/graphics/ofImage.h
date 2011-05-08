@@ -23,10 +23,18 @@ enum ofImageQualityType {
 // FreeImage based stuff:
 bool ofLoadImage(ofPixels & pix, string path);
 bool ofLoadImage(ofPixels & pix, const ofBuffer & buffer);
+
+bool ofLoadImage(ofFloatPixels & pix, string path);
+bool ofLoadImage(ofFloatPixels & pix, const ofBuffer & buffer);
+
 bool ofLoadImage(ofTexture & tex, string path);
 bool ofLoadImage(ofTexture & tex, const ofBuffer & buffer);
+
 void ofSaveImage(ofPixels & pix, string path, ofImageQualityType qualityLevel = OF_IMAGE_QUALITY_BEST);
 void ofSaveImage(ofPixels & pix, ofBuffer & buffer, ofImageQualityType qualityLevel = OF_IMAGE_QUALITY_BEST);
+
+void ofSaveImage(ofFloatPixels & pix, string path, ofImageQualityType qualityLevel = OF_IMAGE_QUALITY_BEST);
+void ofSaveImage(ofFloatPixels & pix, ofBuffer & buffer, ofImageQualityType qualityLevel = OF_IMAGE_QUALITY_BEST);
 
 void 	ofCloseFreeImage();		// when we exit, we shut down ofImage
 

@@ -17,6 +17,7 @@ void ofInitFreeImage(bool deinit){
 		FreeImage_DeInitialise();
 	}
 }
+
 //----------------------------------------------------
 FIBITMAP *  getBmpFromPixels(ofPixels &pix){
 
@@ -41,6 +42,33 @@ FIBITMAP *  getBmpFromPixels(ofPixels &pix){
 	}
 
 	return bmp;
+}
+
+//----------------------------------------------------
+FIBITMAP *  getBmpFromPixels(ofFloatPixels &pix){
+/*  TODO:
+	FIBITMAP * bmp = NULL;
+
+	int w						= pix.getWidth();
+	int h						= pix.getHeight();
+	unsigned char * pixels		= pix.getPixels();
+	int bpp						= pix.getBitsPerPixel();
+	int bytesPerPixel			= pix.getBytesPerPixel();
+
+	bmp							= FreeImage_ConvertFromRawBits(pixels, w,h, w*bytesPerPixel, bpp, 0,0,0, true);
+
+	//this is for grayscale images they need to be paletted from: http://sourceforge.net/forum/message.php?msg_id=2856879
+	if( pix.getImageType() == OF_IMAGE_GRAYSCALE ){
+		RGBQUAD *pal = FreeImage_GetPalette(bmp);
+		for(int i = 0; i < 256; i++) {
+			pal[i].rgbRed = i;
+			pal[i].rgbGreen = i;
+			pal[i].rgbBlue = i;
+		}
+	}
+
+	return bmp;*/
+	return NULL;
 }
 
 //----------------------------------------------------
@@ -87,7 +115,51 @@ void putBmpIntoPixels(FIBITMAP * bmp, ofPixels &pix, bool swapForLittleEndian = 
 }
 
 //----------------------------------------------------
-bool ofLoadImage(ofPixels & pix, string fileName) {
+void putBmpIntoPixels(FIBITMAP * bmp, ofFloatPixels &pix, bool swapForLittleEndian = true){
+	//TODO
+	/*int width			= FreeImage_GetWidth(bmp);
+	int height			= FreeImage_GetHeight(bmp);
+	int bpp				= FreeImage_GetBPP(bmp);
+
+	FIBITMAP * bmpTemp = NULL;
+
+	switch (bpp){
+		case 8:
+			if (FreeImage_GetColorType(bmp) == FIC_PALETTE) {
+				bmpTemp = FreeImage_ConvertTo24Bits(bmp);
+				bmp = bmpTemp;
+				bpp = FreeImage_GetBPP(bmp);
+			} else {
+			// do nothing we are grayscale
+			}
+		break;
+		case 24:
+			// do nothing we are color
+		break;
+		case 32:
+			// do nothing we are colorAlpha
+		break;
+		default:
+			bmpTemp = FreeImage_ConvertTo24Bits(bmp);
+			bmp = bmpTemp;
+			bpp = FreeImage_GetBPP(bmp);
+		break;
+	}
+
+	int channels	= bpp / 8;
+	pix.allocate(width, height, channels);
+	FreeImage_ConvertToRawBits(pix.getPixels(), bmp, width*channels, bpp, FI_RGBA_RED_MASK, FI_RGBA_GREEN_MASK, FI_RGBA_BLUE_MASK, true);  // get bits
+
+	if (bmpTemp != NULL) FreeImage_Unload(bmpTemp);
+
+	#ifdef TARGET_LITTLE_ENDIAN
+		if(swapForLittleEndian)
+			pix.swapRgb();
+	#endif*/
+}
+
+template<typename T>
+static bool loadImage(ofPixels_<T> & pix, string fileName){
 	ofInitFreeImage();
 	if(fileName.substr(0, 7) == "http://") {
 		return ofLoadImage(pix, ofLoadURL(fileName).data);
@@ -127,8 +199,8 @@ bool ofLoadImage(ofPixels & pix, string fileName) {
 	return bLoaded;
 }
 
-//----------------------------------------------------
-bool ofLoadImage(ofPixels & pix, const ofBuffer & buffer) {
+template<typename T>
+static bool loadImage(ofPixels_<T> & pix, const ofBuffer & buffer){
 	ofInitFreeImage();
 	int					width, height, bpp;
 	bool bLoaded		= false;
@@ -177,6 +249,27 @@ bool ofLoadImage(ofPixels & pix, const ofBuffer & buffer) {
 	return bLoaded;
 }
 
+
+//----------------------------------------------------
+bool ofLoadImage(ofPixels & pix, string fileName) {
+	return loadImage(pix,fileName);
+}
+
+//----------------------------------------------------
+bool ofLoadImage(ofPixels & pix, const ofBuffer & buffer) {
+	return loadImage(pix,buffer);
+}
+
+//----------------------------------------------------
+bool ofLoadImage(ofFloatPixels & pix, string path){
+	return loadImage(pix,path);
+}
+
+bool ofLoadImage(ofFloatPixels & pix, const ofBuffer & buffer){
+	return loadImage(pix,buffer);
+}
+
+
 //----------------------------------------------------------------
 bool ofLoadImage(ofTexture & tex, string path){
 	ofPixels pixels;
@@ -200,7 +293,8 @@ bool ofLoadImage(ofTexture & tex, const ofBuffer & buffer){
 }
 
 //----------------------------------------------------------------
-void ofSaveImage(ofPixels & pix, string fileName, ofImageQualityType qualityLevel) {
+template<typename T>
+static void saveImage(ofPixels_<T> & pix, string fileName, ofImageQualityType qualityLevel) {
 	ofInitFreeImage();
 	if (pix.isAllocated() == false){
 		ofLog(OF_LOG_ERROR,"error saving image - pixels aren't allocated");
@@ -247,6 +341,14 @@ void ofSaveImage(ofPixels & pix, string fileName, ofImageQualityType qualityLeve
 	if (bmp != NULL){
 		FreeImage_Unload(bmp);
 	}
+}
+
+void ofSaveImage(ofPixels & pix, string fileName, ofImageQualityType qualityLevel){
+	saveImage(pix,fileName,qualityLevel);
+}
+
+void ofSaveImage(ofFloatPixels & pix, string fileName, ofImageQualityType qualityLevel) {
+	saveImage(pix,fileName,qualityLevel);
 }
 
 void ofSaveImage(ofPixels & pix, ofBuffer & buffer, ofImageQualityType qualityLevel) {
