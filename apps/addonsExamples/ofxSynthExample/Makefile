@@ -229,7 +229,7 @@ else
 		TARGET_NAME = Release
 	    BIN_NAME = $(APPNAME)
 		TARGET = bin/$(BIN_NAME)
-		TARGET_LIBS = -lopenFrameworks
+		TARGET_LIBS = $(OF_ROOT)/libs/openFrameworksCompiled/lib/$(LIBSPATH)/libopenFrameworks.a
 	endif
 endif
 
