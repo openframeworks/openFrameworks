@@ -15,10 +15,15 @@
 #include "ofConstants.h"
 #include "ofColor.h"
 #include "ofMesh.h"
-class ofPixels;
+#include "ofPixels.h"
+
+template<typename T>
+class ofImage_;
+
+typedef ofImage_<unsigned char> ofImage;
+
 class ofPath;
 class ofPolyline;
-class ofImage;
 typedef ofPixels& ofPixelsRef;
 
 
