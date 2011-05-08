@@ -178,6 +178,13 @@ void ofGLRenderer::draw(ofFloatImage & image, float x, float y, float z, float w
 }
 
 //----------------------------------------------------------
+void ofGLRenderer::draw(ofShortImage & image, float x, float y, float z, float w, float h){
+	if(image.isUsingTexture()){
+		image.getTextureReference().draw(x,y,z,w,h);
+	}
+}
+
+//----------------------------------------------------------
 void ofGLRenderer::pushView() {
 	GLint viewport[4];
 	glGetIntegerv(GL_VIEWPORT, viewport);

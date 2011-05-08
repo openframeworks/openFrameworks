@@ -524,7 +524,7 @@ string ofVAArgsToString(const char * format, ...){
 
 			// Create a char vector to hold the formatted string.
 			vector<char> buffer(len, '\0');
-			int nWritten = vsprintf(&buffer[0], format, args);
+			vsprintf(&buffer[0], format, args);
 			retStr = &buffer[0];
 			va_end(args);
 		}

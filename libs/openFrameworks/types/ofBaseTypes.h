@@ -22,6 +22,7 @@ class ofImage_;
 
 typedef ofImage_<unsigned char> ofImage;
 typedef ofImage_<float> ofFloatImage;
+typedef ofImage_<unsigned short> ofShortImage;
 
 class ofPath;
 class ofPolyline;
@@ -262,6 +263,7 @@ public:
 	virtual void draw(vector<ofPoint> & vertexData, ofPrimitiveMode drawMode)=0;
 	virtual void draw(ofImage & image, float x, float y, float z, float w, float h)=0;
 	virtual void draw(ofFloatImage & image, float x, float y, float z, float w, float h)=0;
+	virtual void draw(ofShortImage & image, float x, float y, float z, float w, float h)=0;
 
 	//--------------------------------------------
 	// transformations

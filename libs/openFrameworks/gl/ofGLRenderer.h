@@ -16,6 +16,7 @@ public:
 	void draw(vector<ofPoint> & vertexData, ofPrimitiveMode drawMode);
 	void draw(ofImage & image, float x, float y, float z, float w, float h);
 	void draw(ofFloatImage & image, float x, float y, float z, float w, float h);
+	void draw(ofShortImage & image, float x, float y, float z, float w, float h);
 
 	bool rendersPathPrimitives(){
 		return false;

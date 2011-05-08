@@ -23,6 +23,9 @@ bool ofLoadImage(ofPixels & pix, const ofBuffer & buffer);
 bool ofLoadImage(ofFloatPixels & pix, string path);
 bool ofLoadImage(ofFloatPixels & pix, const ofBuffer & buffer);
 
+bool ofLoadImage(ofShortPixels & pix, string path);
+bool ofLoadImage(ofShortPixels & pix, const ofBuffer & buffer);
+
 bool ofLoadImage(ofTexture & tex, string path);
 bool ofLoadImage(ofTexture & tex, const ofBuffer & buffer);
 
@@ -31,6 +34,9 @@ void ofSaveImage(ofPixels & pix, ofBuffer & buffer, ofImageQualityType qualityLe
 
 void ofSaveImage(ofFloatPixels & pix, string path, ofImageQualityType qualityLevel = OF_IMAGE_QUALITY_BEST);
 void ofSaveImage(ofFloatPixels & pix, ofBuffer & buffer, ofImageQualityType qualityLevel = OF_IMAGE_QUALITY_BEST);
+
+void ofSaveImage(ofShortPixels & pix, string path, ofImageQualityType qualityLevel = OF_IMAGE_QUALITY_BEST);
+void ofSaveImage(ofShortPixels & pix, ofBuffer & buffer, ofImageQualityType qualityLevel = OF_IMAGE_QUALITY_BEST);
 
 // when we exit, we shut down ofImage
 void ofCloseFreeImage();
@@ -151,6 +157,7 @@ class ofImage_ : public ofBaseImage_<T>{
 
 typedef ofImage_<unsigned char> ofImage;
 typedef ofImage_<float> ofFloatImage;
+typedef ofImage_<unsigned short> ofShortImage;
 
 
 
