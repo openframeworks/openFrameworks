@@ -1,17 +1,19 @@
 #include "testApp.h"
 
-void loadImages(string directory, vector<ofImage*>& images) {
+template <class T>
+void loadImages(string directory, vector<ofImage_<T>*>& images) {
 	ofDirectory dir;
 	dir.listDir(directory);
 	dir.sort();
 	images.resize(dir.size());
 	for(int i = 0; i < dir.size(); i++) {
-		images[i] = new ofImage();
+		images[i] = new ofImage_<T>();
 		images[i]->loadImage(dir.getFile(i));
 	}
 }
 
-void drawImages(string name, vector<ofImage*>& images) {
+template <class T>
+void drawImages(string name, vector<ofImage_<T>*>& images) {
 	float offset = 0;
 	for(int i = 0; i < images.size(); i++) {
 		images[i]->draw(offset, 0);
