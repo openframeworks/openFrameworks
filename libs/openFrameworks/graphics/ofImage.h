@@ -83,7 +83,7 @@ class ofImage : public ofBaseImage{
 
 		// alter the image
 		void setColor(int x, int y, ofColor color);
-		void 				setFromPixels(unsigned char * pixels, int w, int h, ofImageType type, bool bOrderIsRGB = true);
+		void 				setFromPixels(const unsigned char * pixels, int w, int h, ofImageType type, bool bOrderIsRGB = true);
 		void				setFromPixels(const ofPixels & pixels);
 		void 				setImageType(ofImageType type);
 		void 				resize(int newWidth, int newHeight);

@@ -549,7 +549,7 @@ void ofImage::setColor(int x, int y, ofColor color) {
 }
 
 //------------------------------------
-void  ofImage::setFromPixels(unsigned char * newPixels, int w, int h, ofImageType newType, bool bOrderIsRGB){
+void  ofImage::setFromPixels(const unsigned char * newPixels, int w, int h, ofImageType newType, bool bOrderIsRGB){
 
 	allocate(w, h, newType);
 	pixels.setFromPixels(newPixels,w,h,newType);
