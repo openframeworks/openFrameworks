@@ -21,6 +21,7 @@ template<typename T>
 class ofImage_;
 
 typedef ofImage_<unsigned char> ofImage;
+typedef ofImage_<float> ofFloatImage;
 
 class ofPath;
 class ofPolyline;
@@ -80,17 +81,19 @@ public:
 //----------------------------------------------------------
 // ofBaseHasPixels
 //----------------------------------------------------------
+template<typename T>
 class ofBaseHasPixels{
 public:
 	virtual ~ofBaseHasPixels(){}
-	virtual unsigned char * getPixels()=0;
-	virtual ofPixelsRef getPixelsRef()=0;
+	virtual T * getPixels()=0;
+	virtual ofPixels_<T> & getPixelsRef()=0;
 };
 
 //----------------------------------------------------------
 // ofBaseImage
 //----------------------------------------------------------
-class ofBaseImage: public ofBaseDraws, public ofBaseHasTexture, public ofBaseHasPixels{
+template<typename T>
+class ofBaseImage: public ofBaseDraws, public ofBaseHasTexture, public ofBaseHasPixels<T>{
 public:
 	
 };
@@ -138,7 +141,7 @@ class ofBaseSoundOutput{
 //----------------------------------------------------------
 // ofBaseVideo
 //----------------------------------------------------------
-class ofBaseVideo: public ofBaseHasPixels, public ofBaseUpdates{
+class ofBaseVideo: public ofBaseHasPixels<unsigned char>, public ofBaseUpdates{
 public:
 	virtual ~ofBaseVideo(){}
 	virtual bool isFrameNew()=0;
@@ -252,6 +255,7 @@ public:
 	virtual void draw(ofMesh & vertexData, ofPolyRenderMode renderType)=0;
 	virtual void draw(vector<ofPoint> & vertexData, ofPrimitiveMode drawMode)=0;
 	virtual void draw(ofImage & image, float x, float y, float z, float w, float h)=0;
+	virtual void draw(ofFloatImage & image, float x, float y, float z, float w, float h)=0;
 
 	//--------------------------------------------
 	// transformations
