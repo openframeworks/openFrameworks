@@ -55,10 +55,35 @@ public:
 		return false;
 	}
 
-	static bool resize (ofFloatPixels &pix, ofPixels& dst, ofInterpolationMethod interpMethod=OF_INTERPOLATE_NEAREST_NEIGHBOR){//TODO
+	static bool resize (ofFloatPixels &pix, ofFloatPixels& dst, ofInterpolationMethod interpMethod=OF_INTERPOLATE_NEAREST_NEIGHBOR){//TODO
 		return false;
 	}
 
+	// crop to a new width and height, this reallocates memory.
+	static void crop(ofShortPixels &pix, int x, int y, int width, int height){//TODO
+
+	}
+	// not in place
+	static void cropFromTo(ofShortPixels &frompix, ofShortPixels &topix, int x, int y, int width, int height){//TODO
+
+	}
+
+	// crop to a new width and height, this reallocates memory.
+	static void rotate90(ofShortPixels &pix, int nClockwiseRotations){//TODO
+
+	}
+
+	static void mirror(ofShortPixels &pix, bool vertically, bool horizontal){//TODO
+
+	}
+
+	static bool resize(ofShortPixels &pix, int dstWidth, int dstHeight, ofInterpolationMethod interpMethod=OF_INTERPOLATE_NEAREST_NEIGHBOR){//TODO
+		return false;
+	}
+
+	static bool resize (ofShortPixels &pix, ofShortPixels& dst, ofInterpolationMethod interpMethod=OF_INTERPOLATE_NEAREST_NEIGHBOR){//TODO
+		return false;
+	}
 protected:
 
 	static float bicubicInterpolate (const int *patch, float x, float y, float x2,float y2, float x3,float y3);

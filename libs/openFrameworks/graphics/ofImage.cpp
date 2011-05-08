@@ -14,6 +14,7 @@
 	// keeping a pointer to all the images we can tell them to reload from a static method
 	static set<ofImage *> all_images;
 	static set<ofFloatImage *> all_float_images;
+	static set<ofShortImage *> all_short_images;
 
 	static void registerImage(ofImage * img){
 		all_images.insert(img);
@@ -23,11 +24,19 @@
 		all_float_images.insert(img);
 	}
 
+	static void registerImage(ofShortImage * img){
+		all_short_images.insert(img);
+	}
+
 	static void unregisterImage(ofImage * img){
 		all_images.erase(img);
 	}
 
 	static void unregisterImage(ofFloatImage * img){
+		all_float_images.erase(img);
+	}
+
+	static void unregisterImage(ofShortImage * img){
 		all_float_images.erase(img);
 	}
 
@@ -113,6 +122,33 @@ FIBITMAP *  getBmpFromPixels(ofFloatPixels &pix){
 }
 
 //----------------------------------------------------
+FIBITMAP *  getBmpFromPixels(ofShortPixels &pix){
+/*  TODO:
+	FIBITMAP * bmp = NULL;
+
+	int w						= pix.getWidth();
+	int h						= pix.getHeight();
+	unsigned char * pixels		= pix.getPixels();
+	int bpp						= pix.getBitsPerPixel();
+	int bytesPerPixel			= pix.getBytesPerPixel();
+
+	bmp							= FreeImage_ConvertFromRawBits(pixels, w,h, w*bytesPerPixel, bpp, 0,0,0, true);
+
+	//this is for grayscale images they need to be paletted from: http://sourceforge.net/forum/message.php?msg_id=2856879
+	if( pix.getImageType() == OF_IMAGE_GRAYSCALE ){
+		RGBQUAD *pal = FreeImage_GetPalette(bmp);
+		for(int i = 0; i < 256; i++) {
+			pal[i].rgbRed = i;
+			pal[i].rgbGreen = i;
+			pal[i].rgbBlue = i;
+		}
+	}
+
+	return bmp;*/
+	return NULL;
+}
+
+//----------------------------------------------------
 void putBmpIntoPixels(FIBITMAP * bmp, ofPixels &pix, bool swapForLittleEndian = true){
 	int width			= FreeImage_GetWidth(bmp);
 	int height			= FreeImage_GetHeight(bmp);
@@ -157,6 +193,50 @@ void putBmpIntoPixels(FIBITMAP * bmp, ofPixels &pix, bool swapForLittleEndian = 
 
 //----------------------------------------------------
 void putBmpIntoPixels(FIBITMAP * bmp, ofFloatPixels &pix, bool swapForLittleEndian = true){
+	//TODO
+	/*int width			= FreeImage_GetWidth(bmp);
+	int height			= FreeImage_GetHeight(bmp);
+	int bpp				= FreeImage_GetBPP(bmp);
+
+	FIBITMAP * bmpTemp = NULL;
+
+	switch (bpp){
+		case 8:
+			if (FreeImage_GetColorType(bmp) == FIC_PALETTE) {
+				bmpTemp = FreeImage_ConvertTo24Bits(bmp);
+				bmp = bmpTemp;
+				bpp = FreeImage_GetBPP(bmp);
+			} else {
+			// do nothing we are grayscale
+			}
+		break;
+		case 24:
+			// do nothing we are color
+		break;
+		case 32:
+			// do nothing we are colorAlpha
+		break;
+		default:
+			bmpTemp = FreeImage_ConvertTo24Bits(bmp);
+			bmp = bmpTemp;
+			bpp = FreeImage_GetBPP(bmp);
+		break;
+	}
+
+	int channels	= bpp / 8;
+	pix.allocate(width, height, channels);
+	FreeImage_ConvertToRawBits(pix.getPixels(), bmp, width*channels, bpp, FI_RGBA_RED_MASK, FI_RGBA_GREEN_MASK, FI_RGBA_BLUE_MASK, true);  // get bits
+
+	if (bmpTemp != NULL) FreeImage_Unload(bmpTemp);
+
+	#ifdef TARGET_LITTLE_ENDIAN
+		if(swapForLittleEndian)
+			pix.swapRgb();
+	#endif*/
+}
+
+//----------------------------------------------------
+void putBmpIntoPixels(FIBITMAP * bmp, ofShortPixels &pix, bool swapForLittleEndian = true){
 	//TODO
 	/*int width			= FreeImage_GetWidth(bmp);
 	int height			= FreeImage_GetHeight(bmp);
@@ -306,7 +386,18 @@ bool ofLoadImage(ofFloatPixels & pix, string path){
 	return loadImage(pix,path);
 }
 
+//----------------------------------------------------
 bool ofLoadImage(ofFloatPixels & pix, const ofBuffer & buffer){
+	return loadImage(pix,buffer);
+}
+
+//----------------------------------------------------
+bool ofLoadImage(ofShortPixels & pix, string path){
+	return loadImage(pix,path);
+}
+
+//----------------------------------------------------
+bool ofLoadImage(ofShortPixels & pix, const ofBuffer & buffer){
 	return loadImage(pix,buffer);
 }
 
@@ -392,11 +483,19 @@ void ofSaveImage(ofFloatPixels & pix, string fileName, ofImageQualityType qualit
 	saveImage(pix,fileName,qualityLevel);
 }
 
+void ofSaveImage(ofShortPixels & pix, string fileName, ofImageQualityType qualityLevel) {
+	saveImage(pix,fileName,qualityLevel);
+}
+
 void ofSaveImage(ofPixels & pix, ofBuffer & buffer, ofImageQualityType qualityLevel) {
 	ofLog(OF_LOG_ERROR, "ofSaveImage(pix, buffer) is not yet implemented");
 }
 
 void ofSaveImage(ofFloatPixels & pix, ofBuffer & buffer, ofImageQualityType qualityLevel) {
+	ofLog(OF_LOG_ERROR, "ofSaveImage(pix, buffer) is not yet implemented");
+}
+
+void ofSaveImage(ofShortPixels & pix, ofBuffer & buffer, ofImageQualityType qualityLevel) {
 	ofLog(OF_LOG_ERROR, "ofSaveImage(pix, buffer) is not yet implemented");
 }
 
@@ -995,6 +1094,6 @@ void ofImage_<T>::setCompression(ofTexCompression compression)
 
 template class ofImage_<unsigned char>;
 template class ofImage_<float>;
-
+template class ofImage_<unsigned short>;
 
 

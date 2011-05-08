@@ -208,6 +208,11 @@ void ofTexture::loadData(float * data, int w, int h, int glDataType){
 }
 
 //----------------------------------------------------------
+void ofTexture::loadData(unsigned short * data, int w, int h, int glDataType){
+	loadData( (void *)data, w, h, glDataType);
+}
+
+//----------------------------------------------------------
 void ofTexture::loadData(ofPixels & pix){
 	loadData(pix.getPixels(), pix.getWidth(), pix.getHeight(), pix.getGlDataType());
 }

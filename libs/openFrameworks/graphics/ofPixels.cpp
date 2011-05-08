@@ -1,22 +1,5 @@
 #include "ofPixels.h"
 
-static ofImageType getImageTypeFromBits(int bitsPerPixel){
-	switch(bitsPerPixel){
-	case 8:
-		return OF_IMAGE_GRAYSCALE;
-		break;
-	case 24:
-		 return OF_IMAGE_COLOR;
-		break;
-	case 32:
-		 return OF_IMAGE_COLOR_ALPHA;
-		break;
-	default:
-		ofLog(OF_LOG_ERROR,"%i bits per pixel is not a supported image type", bitsPerPixel);
-		return OF_IMAGE_UNDEFINED;
-	}
-}
-
 
 template<typename T>
 ofPixels_<T>::ofPixels_(){
@@ -86,6 +69,9 @@ void ofPixels_<T>::setFromPixels(const T * newPixels,int w, int h, ofImageType t
 		break;
 	case OF_IMAGE_COLOR_ALPHA:
 		setFromPixels(newPixels,w,h,4);
+		break;
+	default:
+		ofLog(OF_LOG_ERROR,"ofPixels: image type not supported");
 		break;
 	}
 }
@@ -176,7 +162,8 @@ void ofPixels_<T>::allocate(int w, int h, ofPixelFormat format){
 			imgType = OF_IMAGE_GRAYSCALE;
 			break;
 		default:
-			ofLog(OF_LOG_ERROR,"ofPixels: format not supported");
+			ofLog(OF_LOG_ERROR,"ofPixels: format not supported, not allocating");
+			return;
 			break;
 
 	}
@@ -348,3 +335,4 @@ ofImageType ofPixels_<T>::getImageType() const{
 
 template class ofPixels_<unsigned char>;
 template class ofPixels_<float>;
+template class ofPixels_<unsigned short>;

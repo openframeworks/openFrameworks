@@ -75,6 +75,8 @@ private:
 
 typedef ofPixels_<unsigned char> ofPixels;
 typedef ofPixels_<float> ofFloatPixels;
+typedef ofPixels_<unsigned short> ofShortPixels;
+
 
 typedef ofPixels& ofPixelsRef;
 
