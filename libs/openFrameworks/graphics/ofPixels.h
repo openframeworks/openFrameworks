@@ -18,16 +18,14 @@ public:
 
 
 	void allocate(int w, int h, int channels);
-	//void allocate(int w, int h, ofPixelFormat type);
+	void allocate(int w, int h, ofPixelFormat type);
 	void allocate(int w, int h, ofImageType type);
 
 	void set(T val);
 	void setFromPixels(const T * newPixels,int w, int h, int channels);
+	void setFromPixels(const T * newPixels,int w, int h, ofImageType type);
 	void setFromExternalPixels(const T * newPixels,int w, int h, int channels);
 	void setFromAlignedPixels(const T * newPixels,int w, int h, int channels, int widthStep);
-	//void setFromPixels(unsigned char * newPixels,int w, int h, int bitsPerPixel);
-	//void setFromExternalPixels(unsigned char * newPixels,int w, int h, int bitsPerPixel);
-	//void setFromAlignedPixels(unsigned char * newPixels,int w, int h, int bitsPerPixel, int widthStep);
 
 	void swapRgb();
 
@@ -133,7 +131,24 @@ void ofPixels_<T>::set(T val){
 
 template<typename T>
 void ofPixels_<T>::setFromPixels(const T * newPixels,int w, int h, int channels){
+	allocate(w,h,channels);
 	memcpy(pixels,newPixels,w*h*channels*bytesPerChannel);
+}
+
+template<typename T>
+void ofPixels_<T>::setFromPixels(const T * newPixels,int w, int h, ofImageType type){
+	allocate(w,h,type);
+	switch(type){
+	case OF_IMAGE_GRAYSCALE:
+		setFromPixels(newPixels,w,h,1);
+		break;
+	case OF_IMAGE_COLOR:
+		setFromPixels(newPixels,w,h,3);
+		break;
+	case OF_IMAGE_COLOR_ALPHA:
+		setFromPixels(newPixels,w,h,4);
+		break;
+	}
 }
 
 template<typename T>
@@ -203,6 +218,33 @@ void ofPixels_<T>::allocate(int w, int h, int _channels){
 
 }
 
+
+template<typename T>
+void ofPixels_<T>::allocate(int w, int h, ofPixelFormat format){
+
+	if (w < 0 || h < 0) return;
+
+	ofImageType imgType;
+	switch(format){
+		case OF_PIXELS_RGB:
+			imgType = OF_IMAGE_COLOR;
+			break;
+		case OF_PIXELS_RGBA:
+		case OF_PIXELS_BGRA:
+			imgType = OF_IMAGE_COLOR_ALPHA;
+			break;
+		case OF_PIXELS_MONO:
+			imgType = OF_IMAGE_GRAYSCALE;
+			break;
+		default:
+			ofLog(OF_LOG_ERROR,"ofPixels: format not supported");
+			break;
+
+	}
+	allocate(w,h,imgType);
+
+}
+
 template<typename T>
 void ofPixels_<T>::allocate(int w, int h, ofImageType type){
 	switch(type){
@@ -215,6 +257,10 @@ void ofPixels_<T>::allocate(int w, int h, ofImageType type){
 	case OF_IMAGE_COLOR_ALPHA:
 		allocate(w,h,4);
 		break;
+	default:
+		ofLog(OF_LOG_ERROR,"ofPixels: image type not supported");
+		break;
+
 	}
 }
 
