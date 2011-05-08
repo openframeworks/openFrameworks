@@ -3,6 +3,7 @@
 void loadImages(string directory, vector<ofImage*>& images) {
 	ofDirectory dir;
 	dir.listDir(directory);
+	dir.sort();
 	images.resize(dir.size());
 	for(int i = 0; i < dir.size(); i++) {
 		images[i] = new ofImage();
@@ -11,13 +12,16 @@ void loadImages(string directory, vector<ofImage*>& images) {
 }
 
 void drawImages(string name, vector<ofImage*>& images) {
-	ofPushMatrix();
+	float offset = 0;
 	for(int i = 0; i < images.size(); i++) {
-		images[i]->draw(0, 0);
-		ofTranslate(images[i]->getWidth());
+		images[i]->draw(offset, 0);
+		if(offset + 100 > ofGetWidth()) {
+			offset = 0;
+			ofTranslate(0, 32);
+		}
+		offset += images[i]->getWidth();
 	}
-	ofDrawBitmapString(name, 10, 20);
-	ofPopMatrix();
+	ofDrawBitmapString(name, offset + 10, 20);
 }
 
 void testApp::setup() {	
