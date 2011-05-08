@@ -1,6 +1,7 @@
 
 
 #pragma once
+#include "ofPixels.h"
 
 //---------------------------------------
 enum ofInterpolationMethod {
@@ -11,8 +12,6 @@ enum ofInterpolationMethod {
 
 
 //---------------------------------------
-
-class ofPixels;
 
 class ofPixelUtils{
 
