@@ -115,6 +115,8 @@ ofPixels_<T>& ofPixels_<T>::operator=(const ofPixels_<T> & mom){
 template<typename T>
 void ofPixels_<T>::copyFrom(const ofPixels_<T> & mom){
 	if(mom.isAllocated()){
+		bytesPerChannel = sizeof(T);
+		bitsPerChannel = bytesPerChannel*8;
 		allocate(mom.getWidth(),mom.getHeight(),mom.getNumChannels());
 		memcpy(pixels,mom.getPixels(),mom.getWidth()*mom.getHeight()*mom.getBytesPerPixel());
 	}
@@ -241,8 +243,6 @@ void ofPixels_<T>::clear(){
 	width			= 0;
 	height			= 0;
 	channels		= 0;
-	bitsPerChannel	= 0;
-	bytesPerChannel	= 0;
 	bAllocated		= false;
 }
 
