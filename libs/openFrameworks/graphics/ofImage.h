@@ -37,7 +37,7 @@ void ofCloseFreeImage();
 
 //----------------------------------------------------
 template<typename T>
-class ofImage_ : public ofBaseImage<T>{
+class ofImage_ : public ofBaseImage_<T>{
 
 	public :
 
@@ -82,7 +82,7 @@ class ofImage_ : public ofBaseImage<T>{
 		void				setCompression(ofTexCompression compression);
 
 		// getting the data
-		T * 	getPixels();			// up to you to get this right
+		T * 				getPixels();			// up to you to get this right
 		ofPixels_<T> &	 	getPixelsRef();
 
 		operator ofPixels_<T>&();

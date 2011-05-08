@@ -12,12 +12,33 @@
 	// or when the application runs in the background so we need to reload
 	// all the textures when the context is created again.
 	// keeping a pointer to all the images we can tell them to reload from a static method
-	static set<ofImage_<T> *> all_images;
+	static set<ofImage *> all_images;
+	static set<ofFloatImage *> all_float_images;
+
+	static void registerImage(ofImage * img){
+		all_images.insert(img);
+	}
+
+	static void registerImage(ofFloatImage * img){
+		all_float_images.insert(img);
+	}
+
+	static void unregisterImage(ofImage * img){
+		all_images.erase(img);
+	}
+
+	static void unregisterImage(ofFloatImage * img){
+		all_float_images.erase(img);
+	}
 
 	void reloadAllImageTextures(){
-		set<ofImage_<T> *>::iterator it;
+		set<ofImage *>::iterator it;
 		for(it=all_images.begin(); it!=all_images.end(); it++){
 			(*it)->reloadTexture();
+		}
+		set<ofFloatImage *>::iterator f_it;
+		for(f_it=all_float_images.begin(); f_it!=all_float_images.end(); f_it++){
+			(*f_it)->reloadTexture();
 		}
 	}
 #endif
@@ -403,7 +424,7 @@ ofImage_<T>::ofImage_(){
 	ofInitFreeImage();
 
 #ifdef TARGET_ANDROID
-	all_images.insert(this);
+	registerImage(this);
 #endif
 }
 
@@ -420,7 +441,7 @@ ofImage_<T>::ofImage_(const ofPixels_<T> & pix){
 	ofInitFreeImage();
 
 #ifdef TARGET_ANDROID
-	all_images.insert(this);
+	registerImage(this);
 #endif
 
 	setFromPixels(pix);
@@ -438,7 +459,7 @@ ofImage_<T>::ofImage_(const ofFile & file){
 	ofInitFreeImage();
 
 #ifdef TARGET_ANDROID
-	all_images.insert(this);
+	registerImage(this);
 #endif
 
 	loadImage(file);
@@ -456,7 +477,7 @@ ofImage_<T>::ofImage_(const string & filename){
 	ofInitFreeImage();
 
 #ifdef TARGET_ANDROID
-	all_images.insert(this);
+	registerImage(this);
 #endif
 
 	loadImage(filename);
@@ -484,7 +505,7 @@ ofImage_<T>::~ofImage_(){
 	clear();
 
 #ifdef TARGET_ANDROID
-	all_images.erase(this);
+	unregisterImage(this);
 #endif
 }
 
