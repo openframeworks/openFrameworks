@@ -1,54 +1,40 @@
 #include "testApp.h"
 
-void testApp::setup() {	
+void loadImages(string directory, vector<ofImage*>& images) {
 	ofDirectory dir;
-	
-	dir.listDir("png8");
-	imgPng8.resize(dir.size());
+	dir.listDir(directory);
+	images.resize(dir.size());
 	for(int i = 0; i < dir.size(); i++) {
-		imgPng8[i] = new ofImage();
-		imgPng8[i]->loadImage(dir.getFile(i));
+		images[i] = new ofImage();
+		images[i]->loadImage(dir.getFile(i));
 	}
-	
-	dir.listDir("png16");
-	imgPng16.resize(dir.size());
-	for(int i = 0; i < dir.size(); i++) {
-		imgPng16[i] = new ofImage();
-		imgPng16[i]->loadImage(dir.getFile(i));
+}
+
+void drawImages(vector<ofImage*>& images) {
+	ofPushMatrix();
+	for(int i = 0; i < images.size(); i++) {
+		images[i]->draw(0, 0);
+		ofTranslate(images[i]->getWidth());
 	}
-	
-	dir.listDir("exrFloat");
-	imgExrFloat.resize(dir.size());
-	for(int i = 0; i < dir.size(); i++) {
-		imgExrFloat[i] = new ofImage();
-		imgExrFloat[i]->loadImage(dir.getFile(i));
-	}
+	ofPopMatrix();
+}
+
+void testApp::setup() {	
+	loadImages("jpg8", jpg8);
+	loadImages("png8", png8);
+	loadImages("png16", png16);
+	loadImages("exrFloat", exrFloat);
 }
 
 void testApp::update() {
 }
 
 void testApp::draw() {
-	ofPushMatrix();
-	for(int i = 0; i < imgPng8.size(); i++) {
-		imgPng8[i]->draw(0, 0);
-		ofTranslate(imgPng8[i]->getWidth());
-	}
-	ofPopMatrix();
-	
+	drawImages(jpg8);
 	ofTranslate(0, 40);
-	ofPushMatrix();
-	for(int i = 0; i < imgPng16.size(); i++) {
-		imgPng16[i]->draw(0, 0);
-		ofTranslate(imgPng16[i]->getWidth());
-	}
-	ofPopMatrix();
-	
+	drawImages(png8);
 	ofTranslate(0, 40);
-	ofPushMatrix();
-	for(int i = 0; i < imgExrFloat.size(); i++) {
-		imgExrFloat[i]->draw(0, 0);
-		ofTranslate(imgExrFloat[i]->getWidth());
-	}
-	ofPopMatrix();
+	drawImages(png16);
+	ofTranslate(0, 40);
+	drawImages(exrFloat);
 }

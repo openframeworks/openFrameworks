@@ -8,7 +8,5 @@ public:
 	void update();
 	void draw();
 	
-	vector<ofImage*> imgPng8;
-	vector<ofImage*> imgPng16;
-	vector<ofImage*> imgExrFloat;
+	vector<ofImage*> jpg8, png8, png16, exrFloat;
 };
