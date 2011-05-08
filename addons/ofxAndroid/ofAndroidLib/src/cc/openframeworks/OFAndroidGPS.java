@@ -24,7 +24,9 @@ public class OFAndroidGPS extends OFAndroidObject implements LocationListener {
 		// Register the listener with the Location Manager to receive location updates
 		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
 		
-		onLocationChanged(locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER));
+		Location lastLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+		if(lastLocation!=null)
+			onLocationChanged(lastLocation);
 		
 		started = true;
 	}
