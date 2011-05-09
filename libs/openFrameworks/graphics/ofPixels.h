@@ -52,7 +52,6 @@ public:
 	int getNumChannels() const;
 
 	ofImageType getImageType() const;
-	int getGlDataType() const;
 
 private:
 	void copyFrom( const ofPixels_<T>& mom );

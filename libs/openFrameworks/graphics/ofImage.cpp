@@ -355,7 +355,7 @@ bool ofLoadImage(ofTexture & tex, string path){
 	ofPixels pixels;
 	bool loaded = ofLoadImage(pixels,path);
 	if(loaded){
-		tex.allocate(pixels.getWidth(),pixels.getHeight(),pixels.getGlDataType());
+		tex.allocate(pixels.getWidth(), pixels.getHeight(), ofGetGlDataType(pixels));
 		tex.loadData(pixels);
 	}
 	return loaded;
@@ -366,7 +366,7 @@ bool ofLoadImage(ofTexture & tex, const ofBuffer & buffer){
 	ofPixels pixels;
 	bool loaded = ofLoadImage(pixels,buffer);
 	if(loaded){
-		tex.allocate(pixels.getWidth(),pixels.getHeight(),pixels.getGlDataType());
+		tex.allocate(pixels.getWidth(), pixels.getHeight(), ofGetGlDataType(pixels));
 		tex.loadData(pixels);
 	}
 	return loaded;
@@ -561,8 +561,8 @@ ofImage_<T>::~ofImage_(){
 template<typename T>
 void ofImage_<T>::reloadTexture(){
 	if (pixels.isAllocated() == true && bUseTexture == true){
-		tex.allocate(pixels.getWidth(), pixels.getHeight(), pixels.getGlDataType());
-		tex.loadData(pixels.getPixels(), pixels.getWidth(), pixels.getHeight(), pixels.getGlDataType());
+		tex.allocate(pixels.getWidth(), pixels.getHeight(), ofGetGlDataType(pixels));
+		tex.loadData(pixels.getPixels(), pixels.getWidth(), pixels.getHeight(), ofGetGlDataType(pixels));
 	}
 }
 
@@ -578,7 +578,7 @@ bool ofImage_<T>::loadImage(string fileName){
 	bool bLoadedOk = false;
 	bLoadedOk = ofLoadImage(pixels, fileName);
 	if (bLoadedOk && pixels.isAllocated() && bUseTexture){
-		tex.allocate(pixels.getWidth(), pixels.getHeight(), pixels.getGlDataType());
+		tex.allocate(pixels.getWidth(), pixels.getHeight(), ofGetGlDataType(pixels));
 	}
 	if (!bLoadedOk) {
 		ofLog(OF_LOG_ERROR, "Couldn't load image from " + fileName);
@@ -592,7 +592,7 @@ bool ofImage_<T>::loadImage(const ofBuffer & buffer){
 	bool bLoadedOk = false;
 	bLoadedOk = ofLoadImage(pixels, buffer);
 	if (bLoadedOk && pixels.isAllocated() && bUseTexture){
-		tex.allocate(pixels.getWidth(), pixels.getHeight(), pixels.getGlDataType());
+		tex.allocate(pixels.getWidth(), pixels.getHeight(), ofGetGlDataType(pixels));
 	}
 	if (!bLoadedOk) {
 		ofLog(OF_LOG_ERROR, "Couldn't load image from buffer.");
@@ -690,7 +690,7 @@ void ofImage_<T>::allocate(int w, int h, ofImageType type){
 
 	// take care of texture allocation --
 	if (pixels.isAllocated() && bUseTexture){
-		tex.allocate(pixels.getWidth(), pixels.getHeight(), pixels.getGlDataType());
+		tex.allocate(pixels.getWidth(), pixels.getHeight(), ofGetGlDataType(pixels));
 	}
 
 	update();
@@ -801,7 +801,7 @@ template<typename T>
 void ofImage_<T>::update(){
 
 	if (pixels.isAllocated() == true && bUseTexture == true){
-		tex.loadData(pixels.getPixels(), pixels.getWidth(), pixels.getHeight(), pixels.getGlDataType());
+		tex.loadData(pixels.getPixels(), pixels.getWidth(), pixels.getHeight(), ofGetGlDataType(pixels));
 	}
 
 	width	= pixels.getWidth();
@@ -840,7 +840,7 @@ void ofImage_<T>::grabScreen(int _x, int _y, int _w, int _h){
 		glPushClientAttrib( GL_CLIENT_PIXEL_STORE_BIT );											// be nice to anyone else who might use pixelStore
 	#endif
 		glPixelStorei(GL_PACK_ALIGNMENT, 1);
-		glReadPixels(_x, _y, _w, _h, pixels.getGlDataType(),GL_UNSIGNED_BYTE, pixels.getPixels());		// read the memory....
+		glReadPixels(_x, _y, _w, _h, ofGetGlDataType(pixels), GL_UNSIGNED_BYTE, pixels.getPixels()); // read the memory....
 	#ifndef TARGET_OPENGLES
 		glPopClientAttrib();
 	#endif
@@ -870,7 +870,7 @@ void ofImage_<T>::clone(const ofImage_<T> &mom){
 	tex.clear();
 	bUseTexture = mom.bUseTexture;
 	if (bUseTexture == true){
-		tex.allocate(pixels.getWidth(), pixels.getHeight(), pixels.getGlDataType());
+		tex.allocate(pixels.getWidth(), pixels.getHeight(), ofGetGlDataType(pixels));
 	}
 
 	update();
@@ -892,7 +892,7 @@ void ofImage_<T>::resize(int newWidth, int newHeight){
 
 	if (bUseTexture == true){
 		tex.clear();
-		tex.allocate(pixels.getWidth(), pixels.getHeight(), pixels.getGlDataType());
+		tex.allocate(pixels.getWidth(), pixels.getHeight(), ofGetGlDataType(pixels));
 	}
 
 	update();
@@ -918,7 +918,7 @@ void ofImage_<T>::cropFrom(ofImage_<T> & otherImage, int x, int y, int w, int h)
 	if (myOldWidth != pixels.getWidth() || myOldHeight != pixels.getHeight()){
 		if (bUseTexture == true){
 			tex.clear();
-			tex.allocate(pixels.getWidth(), pixels.getHeight(), pixels.getGlDataType());
+			tex.allocate(pixels.getWidth(), pixels.getHeight(), ofGetGlDataType(pixels));
 		}
 	}
 
@@ -934,7 +934,7 @@ void ofImage_<T>::rotate90(int nRotations){
 	if (myOldWidth != pixels.getWidth() || myOldHeight != pixels.getHeight()){
 		if (bUseTexture == true){
 			tex.clear();
-			tex.allocate(pixels.getWidth(), pixels.getHeight(), pixels.getGlDataType());
+			tex.allocate(pixels.getWidth(), pixels.getHeight(), ofGetGlDataType(pixels));
 		}
 	}
 	update();

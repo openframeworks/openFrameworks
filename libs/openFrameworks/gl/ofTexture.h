@@ -4,6 +4,10 @@
 #include "ofRectangle.h"
 #include "ofBaseTypes.h"
 
+int ofGetGlDataType(ofPixels_<unsigned char>& pix);
+int ofGetGlDataType(ofPixels_<unsigned short>& pix);
+int ofGetGlDataType(ofPixels_<float>& pix);
+
 //Sosolimited: texture compression
 enum ofTexCompression
 {
