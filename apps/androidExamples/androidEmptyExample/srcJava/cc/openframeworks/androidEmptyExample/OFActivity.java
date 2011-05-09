@@ -2,6 +2,7 @@ package cc.openframeworks.androidEmptyExample;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -35,6 +36,24 @@ public class OFActivity extends Activity{
         super.onResume();
         ofApp.resume();
     }
+    
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        OFAndroid.onKeyDown(keyCode);
+        return super.onKeyDown(keyCode, event);
+    }
+    
+    @Override
+    public boolean onKeyUp(int keyCode, KeyEvent event) {
+        if ((keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0)) {
+            if( OFAndroid.onBackPressed() ) return true;
+            else return super.onKeyUp(keyCode, event);
+        }
+        
+        OFAndroid.onKeyUp(keyCode);
+        return super.onKeyUp(keyCode, event);
+    }
+
 
 	OFAndroid ofApp;
     
@@ -52,6 +71,7 @@ public class OFActivity extends Activity{
     public boolean onOptionsItemSelected(MenuItem item) {
     	// This passes the menu option string to OF
     	// you can add additional behavior from java modifying this method
+    	// but keep the call to OFAndroid so OF is notified of menu events
     	if(OFAndroid.menuItemSelected(item)){
     		
     		return true;
