@@ -17,11 +17,11 @@ void drawImages(string name, vector<ofImage_<T>*>& images) {
 	float offset = 0;
 	for(int i = 0; i < images.size(); i++) {
 		images[i]->draw(offset, 0);
-		if(offset + 100 > ofGetWidth()) {
+		offset += images[i]->getWidth();
+		if(offset > ofGetWidth()) {
 			offset = 0;
 			ofTranslate(0, 32);
 		}
-		offset += images[i]->getWidth();
 	}
 	ofDrawBitmapString(name, offset + 10, 20);
 }
@@ -40,7 +40,7 @@ void testApp::draw() {
 	ofBackground(85);
 	ofSetColor(170);
 	for(int i = -ofGetHeight(); i < ofGetWidth(); i += 3) {
-		ofLine(i, 0, i + ofGetWidth(), ofGetWidth());
+		ofLine(i, 0, i + ofGetHeight(), ofGetHeight());
 	}
 
 	ofSetColor(255);
