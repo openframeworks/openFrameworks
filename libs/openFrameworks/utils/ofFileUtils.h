@@ -123,12 +123,12 @@ public:
 	
 	//these all work for files and directories
 	bool copyTo(string path, bool bRelativeToData = true, bool overwrite = false);
-	bool moveTo(string path, bool bRelativeToData = true, bool overwrite = false);		
+	bool moveTo(string path, bool bRelativeToData = true, bool overwrite = false);
 	bool renameTo(string path, bool bRelativeToData = true, bool overwrite = false);
 	
 	
 	//be careful! this deletes a file or folder :) 
-	bool remove(bool recursive);	
+	bool remove(bool recursive=false);
 
 	uint64_t getSize() const;
 

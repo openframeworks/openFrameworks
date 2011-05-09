@@ -512,6 +512,11 @@ ofPixelsRef ofImage::getPixelsRef(){
 	return pixels;
 }
 
+//----------------------------------------------------------
+ofImage::operator ofPixels&(){
+	return pixels;
+}
+
 //------------------------------------
 //for getting a reference to the texture
 ofTexture & ofImage::getTextureReference(){
