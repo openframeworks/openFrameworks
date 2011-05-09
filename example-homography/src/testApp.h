@@ -21,4 +21,7 @@ public:
 	bool movingPoint;
 	ofVec2f* curPoint;
 	bool saveMatrix;
+	bool homographyReady;
+	
+	Mat homography;
 };

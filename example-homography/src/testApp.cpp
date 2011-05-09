@@ -9,6 +9,15 @@ void testApp::setup() {
 	
 	movingPoint = false;
 	saveMatrix = false;
+	homographyReady = false;
+	
+	// load the previous homography if it's available
+	ofFile previous("homography.yml");
+	if(previous.exists()) {
+		FileStorage fs(ofToDataPath("homography.yml"), FileStorage::READ);
+		fs["homography"] >> homography;
+		homographyReady = true;
+	}
 }
 
 void testApp::update() {
@@ -18,12 +27,10 @@ void testApp::update() {
 			srcPoints.push_back(Point2f(colorPoints[i].x - depth.getWidth(), colorPoints[i].y));
 			dstPoints.push_back(Point2f(depthPoints[i].x, depthPoints[i].y));
 		}
-		Mat homography = findHomography(Mat(srcPoints), Mat(dstPoints));
 		
-		// CV INTER NN is 113 fps, CV_INTER_LINEAR is 93 fps
-		warpPerspective(color, warpedColor, homography, CV_INTER_LINEAR);
-		
-		warpedColor.update();
+		// generate a homography from the two sets of points
+		homography = findHomography(Mat(srcPoints), Mat(dstPoints));
+		homographyReady = true;
 		
 		if(saveMatrix) {
 			FileStorage fs(ofToDataPath("homography.yml"), FileStorage::WRITE);
@@ -31,10 +38,17 @@ void testApp::update() {
 			saveMatrix = false;
 		}
 	}
+	
+	if(homographyReady) {
+		// this is how you warp one ofImage into another ofImage given the homography matrix
+		// CV INTER NN is 113 fps, CV_INTER_LINEAR is 93 fps
+		warpPerspective(color, warpedColor, homography, CV_INTER_LINEAR);
+		warpedColor.update();
+	}
 }
 
 void drawPoints(vector<ofVec2f>& points) {
-		ofNoFill();
+	ofNoFill();
 	for(int i = 0; i < points.size(); i++) {
 		ofCircle(points[i], 10);
 		ofCircle(points[i], 1);
@@ -46,7 +60,7 @@ void testApp::draw() {
 	ofSetColor(255);
 	depth.draw(0, 0);
 	color.draw(depth.getWidth(), 0);
-	if(depthPoints.size() > 4) {
+	if(homographyReady) {
 		ofEnableBlendMode(OF_BLENDMODE_MULTIPLY);
 		ofSetColor(255, 128);
 		warpedColor.draw(0, 0);

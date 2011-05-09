@@ -126,3 +126,5 @@ namespace ofxCv {
 	float weightedAverageAngle(const vector<Vec4i>& lines);
 	
 }
+
+// <3 kyle
