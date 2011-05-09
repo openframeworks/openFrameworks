@@ -193,92 +193,38 @@ void putBmpIntoPixels(FIBITMAP * bmp, ofPixels &pix, bool swapForLittleEndian = 
 
 //----------------------------------------------------
 void putBmpIntoPixels(FIBITMAP * bmp, ofFloatPixels &pix, bool swapForLittleEndian = true){
-	cout << "trying to put into float pixels" << endl;
-	//TODO
-	/*int width			= FreeImage_GetWidth(bmp);
-	int height			= FreeImage_GetHeight(bmp);
-	int bpp				= FreeImage_GetBPP(bmp);
-
-	FIBITMAP * bmpTemp = NULL;
-
-	switch (bpp){
-		case 8:
-			if (FreeImage_GetColorType(bmp) == FIC_PALETTE) {
-				bmpTemp = FreeImage_ConvertTo24Bits(bmp);
-				bmp = bmpTemp;
-				bpp = FreeImage_GetBPP(bmp);
-			} else {
-			// do nothing we are grayscale
-			}
-		break;
-		case 24:
-			// do nothing we are color
-		break;
-		case 32:
-			// do nothing we are colorAlpha
-		break;
-		default:
-			bmpTemp = FreeImage_ConvertTo24Bits(bmp);
-			bmp = bmpTemp;
-			bpp = FreeImage_GetBPP(bmp);
-		break;
-	}
-
-	int channels	= bpp / 8;
+	unsigned int width = FreeImage_GetWidth(bmp);
+	unsigned int height = FreeImage_GetHeight(bmp);
+	unsigned int bpp = FreeImage_GetBPP(bmp);
+	unsigned int channels = bpp / sizeof(float);
+	unsigned int pitch = width * channels;
+	
 	pix.allocate(width, height, channels);
-	FreeImage_ConvertToRawBits(pix.getPixels(), bmp, width*channels, bpp, FI_RGBA_RED_MASK, FI_RGBA_GREEN_MASK, FI_RGBA_BLUE_MASK, true);  // get bits
-
-	if (bmpTemp != NULL) FreeImage_Unload(bmpTemp);
-
-	#ifdef TARGET_LITTLE_ENDIAN
-		if(swapForLittleEndian)
-			pix.swapRgb();
-	#endif*/
+	FreeImage_ConvertToRawBits((uint8_t*) pix.getPixels(), bmp, pitch, bpp, FI_RGBA_RED_MASK, FI_RGBA_GREEN_MASK, FI_RGBA_BLUE_MASK, true);
+	
+#ifdef TARGET_LITTLE_ENDIAN
+	if(swapForLittleEndian) {
+		pix.swapRgb();
+	}
+#endif
 }
 
 //----------------------------------------------------
 void putBmpIntoPixels(FIBITMAP * bmp, ofShortPixels &pix, bool swapForLittleEndian = true){
-	cout << "trying to put into short pixels" << endl;
-	//TODO
-	/*int width			= FreeImage_GetWidth(bmp);
-	int height			= FreeImage_GetHeight(bmp);
-	int bpp				= FreeImage_GetBPP(bmp);
-
-	FIBITMAP * bmpTemp = NULL;
-
-	switch (bpp){
-		case 8:
-			if (FreeImage_GetColorType(bmp) == FIC_PALETTE) {
-				bmpTemp = FreeImage_ConvertTo24Bits(bmp);
-				bmp = bmpTemp;
-				bpp = FreeImage_GetBPP(bmp);
-			} else {
-			// do nothing we are grayscale
-			}
-		break;
-		case 24:
-			// do nothing we are color
-		break;
-		case 32:
-			// do nothing we are colorAlpha
-		break;
-		default:
-			bmpTemp = FreeImage_ConvertTo24Bits(bmp);
-			bmp = bmpTemp;
-			bpp = FreeImage_GetBPP(bmp);
-		break;
-	}
-
-	int channels	= bpp / 8;
+	unsigned int width = FreeImage_GetWidth(bmp);
+	unsigned int height = FreeImage_GetHeight(bmp);
+	unsigned int bpp = FreeImage_GetBPP(bmp);
+	unsigned int channels = bpp / sizeof(unsigned short);
+	unsigned int pitch = width * channels;
+	
 	pix.allocate(width, height, channels);
-	FreeImage_ConvertToRawBits(pix.getPixels(), bmp, width*channels, bpp, FI_RGBA_RED_MASK, FI_RGBA_GREEN_MASK, FI_RGBA_BLUE_MASK, true);  // get bits
-
-	if (bmpTemp != NULL) FreeImage_Unload(bmpTemp);
-
-	#ifdef TARGET_LITTLE_ENDIAN
-		if(swapForLittleEndian)
-			pix.swapRgb();
-	#endif*/
+	FreeImage_ConvertToRawBits((uint8_t*) pix.getPixels(), bmp, pitch, bpp, FI_RGBA_RED_MASK, FI_RGBA_GREEN_MASK, FI_RGBA_BLUE_MASK, true);
+	
+#ifdef TARGET_LITTLE_ENDIAN
+	if(swapForLittleEndian) {
+		pix.swapRgb();
+	}
+#endif
 }
 
 template<typename T>
