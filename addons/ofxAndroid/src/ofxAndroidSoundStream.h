@@ -27,8 +27,11 @@ class ofxAndroidSoundStream : public ofBaseSoundStream{
 		int getNumOutputChannels();
 
 		int androidInputAudioCallback(JNIEnv*  env, jobject  thiz,jshortArray array, jint numChannels, jint bufferSize);
-		int androidOutputAudioCallback(JNIEnv*  env, jobject  thiz,jshortArray array, jint numChannels, jint bufferSize);
+		int androidOutputAudioCallback(JNIEnv*  env, jobject  thiz,jshortArray array, jint numChannels, jint bufferSize, jlong currentTime, jlong jni_internal_time);
 		
+		int getMinOutBufferSize(int samplerate, int nchannels);
+		int getMinInBufferSize(int samplerate, int nchannels);
+
 	private:
 		long unsigned long	tickCount;
 		int					sampleRate;
@@ -44,9 +47,13 @@ class ofxAndroidSoundStream : public ofBaseSoundStream{
 		int  totalInRequestedBufferSize;
 		jshortArray jInArray, jOutArray;
 
+		bool isPaused;
+
 
 		friend void ofxAndroidSoundStreamPause();
+		friend void ofxAndroidSoundStreamResume();
 		void pause();
+		void resume();
 };
 
 

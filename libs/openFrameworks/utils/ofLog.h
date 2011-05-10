@@ -70,7 +70,7 @@ class ofLog{
         /// catch the << ostream with a template class to read any type of data
         template <class T> 
 		ofLog& operator<<(const T& value){
-            message << value;
+            message << value << " ";
             return *this;
         }
 
