@@ -9,12 +9,11 @@
 #include "ofxAndroidSoundStream.h"
 #include "ofUtils.h"
 #include "ofxAndroidUtils.h"
+#include "ofAppRunner.h"
 #include <deque>
 #include <set>
 
 static ofxAndroidSoundStream* instance=NULL;
-
-
 
 ofxAndroidSoundStream::ofxAndroidSoundStream(){
 	out_buffer=NULL;
@@ -25,6 +24,7 @@ ofxAndroidSoundStream::ofxAndroidSoundStream(){
 	outChannels=0;
 	inBufferSize=0;
 	inChannels=0;
+	isPaused = false;
 }
 
 ofxAndroidSoundStream::~ofxAndroidSoundStream(){
@@ -90,6 +90,7 @@ bool ofxAndroidSoundStream::setup(int outChannels, int inChannels, int _sampleRa
 		ofLog(OF_LOG_ERROR, "cannot get OFAndroidSoundStream instance or setup method");
 
 	instance = this;
+	return true;
 }
 
 bool ofxAndroidSoundStream::setup(ofBaseApp * app, int outChannels, int inChannels, int sampleRate, int bufferSize, int nBuffers){
@@ -124,16 +125,22 @@ int ofxAndroidSoundStream::getNumOutputChannels(){
 
 
 void ofxAndroidSoundStream::pause(){
+	ofLogVerbose("ofxAndroidSoundStream") << "pause: releasing buffers";
 	if(in_buffer)
 		ofGetJNIEnv()->ReleasePrimitiveArrayCritical(jInArray,in_buffer,0);
 	if(out_buffer)
 		ofGetJNIEnv()->ReleasePrimitiveArrayCritical(jOutArray,out_buffer,0);
 	in_buffer = NULL;
 	out_buffer = NULL;
+	isPaused = true;
+}
+
+void ofxAndroidSoundStream::resume(){
+	isPaused = false;
 }
 
 
-static float conv_factor = 1/32767.5f;
+static const float conv_factor = 1/32767.5f;
 
 int ofxAndroidSoundStream::androidInputAudioCallback(JNIEnv*  env, jobject  thiz,jshortArray array, jint numChannels, jint bufferSize){
 	if(!in_float_buffer || numChannels!=inChannels || bufferSize!=inBufferSize){
@@ -157,7 +164,11 @@ int ofxAndroidSoundStream::androidInputAudioCallback(JNIEnv*  env, jobject  thiz
 	return 0;
 }
 
-int ofxAndroidSoundStream::androidOutputAudioCallback(JNIEnv*  env, jobject  thiz,jshortArray array, jint numChannels, jint bufferSize){
+//#define OFX_ANDROID_SOUNDSTREAM_SLEEP_FIX
+
+int ofxAndroidSoundStream::androidOutputAudioCallback(JNIEnv*  env, jobject  thiz,jshortArray array, jint numChannels, jint bufferSize, jlong currentTime, jlong jni_internal_time){
+
+	if(!soundOutputPtr || isPaused) return 0;
 
 	if(!out_buffer || !out_float_buffer || numChannels!=outChannels || bufferSize!=outBufferSize){
 		if(out_buffer)
@@ -170,24 +181,59 @@ int ofxAndroidSoundStream::androidOutputAudioCallback(JNIEnv*  env, jobject  thi
 		outChannels   = numChannels;
 	}
 
+	int nBlocks = bufferSize/requestedBufferSize;
+
 	if (numChannels > 0) {
 		float * out_buffer_ptr = out_float_buffer;
-		memset( out_float_buffer, 0, sizeof(float)*bufferSize*numChannels );
-		for(int t=0;t<bufferSize/requestedBufferSize;t++){
+
+		//memset( out_float_buffer, 0, sizeof(float)*bufferSize*numChannels );
+		for(int t = 0;t<nBlocks;t++){
 			tickCount++;
-			if(soundOutputPtr){
-				soundOutputPtr->audioOut(out_buffer_ptr,requestedBufferSize,numChannels,tickCount);
-			}
+			soundOutputPtr->audioOut(out_buffer_ptr,requestedBufferSize,numChannels,tickCount);
+
 			out_buffer_ptr+=totalOutRequestedBufferSize;
 		}
-		//time_one_frame = ofGetSystemTime();
 		for(int i=0;i<bufferSize*numChannels ;i++){
-			short tempf = (out_float_buffer[i] * 32767.5f) - 0.5;
+			float tempf = (out_float_buffer[i] * 32767.5f) - 0.5;
 			out_buffer[i]=tempf;//lrintf( tempf - 0.5 );
 		}
 	}
 
 	return 0;
+}
+
+int ofxAndroidSoundStream::getMinOutBufferSize(int samplerate, int nchannels){
+	jclass javaClass = ofGetJNIEnv()->FindClass("cc.openframeworks.OFAndroidSoundStream");
+
+	if(javaClass==0){
+		ofLog(OF_LOG_ERROR,"cannot find OFAndroidSoundStream java class");
+		return false;
+	}
+
+	jmethodID getMinBuffSize = ofGetJNIEnv()->GetStaticMethodID(javaClass,"getMinOutBufferSize","(II)I");
+	if(!getMinBuffSize){
+		ofLog(OF_LOG_ERROR,"cannot find getMinOutBufferSize method");
+		return false;
+	}
+	int minBuff = ofGetJNIEnv()->CallStaticIntMethod(javaClass,getMinBuffSize,samplerate,nchannels);
+	ofLogError("ofxAndroidSoundStream") << "min output buffer size" << minBuff;
+	return minBuff;
+}
+
+int ofxAndroidSoundStream::getMinInBufferSize(int samplerate, int nchannels){
+	jclass javaClass = ofGetJNIEnv()->FindClass("cc.openframeworks.OFAndroidSoundStream");
+
+	if(javaClass==0){
+		ofLog(OF_LOG_ERROR,"cannot find OFAndroidSoundStream java class");
+		return false;
+	}
+
+	jmethodID getMinBuffSize = ofGetJNIEnv()->GetStaticMethodID(javaClass,"getMinInBufferSize","(II)I");
+	if(!getMinBuffSize){
+		ofLog(OF_LOG_ERROR,"cannot find getMinInBufferSize method");
+		return false;
+	}
+	return ofGetJNIEnv()->CallStaticIntMethod(javaClass,getMinBuffSize,samplerate,nchannels);
 }
 
 void ofxAndroidSoundStreamPause(){
@@ -196,36 +242,28 @@ void ofxAndroidSoundStreamPause(){
 	}
 }
 
+void ofxAndroidSoundStreamResume(){
+	if(instance){
+		instance->resume();
+	}
+}
+
 extern "C"{
 
-/*
-void
-Java_cc_openframeworks_OFAndroidSoundStream_initAudioOutput(JNIEnv*  env, jobject  thiz, jobject javaSoundStream){
-	jclass javaClass = env->FindClass("cc.openframeworks.OFAndroidSoundStream");
-	if(javaClass!=0){
-		javaObject = javaSoundStream;
-		javaSetup = env->GetMethodID(javaClass,"setup","(IIIII)V");
-	}
-	javaEnv = env;
-}*/
-
-/*static int time_one_frame = 0;
-static int acc_time = 0;
-static int num_frames = 0;
-static int time_prev_out = 0;*/
-
 jint
-Java_cc_openframeworks_OFAndroidSoundStream_audioOut(JNIEnv*  env, jobject  thiz, jshortArray array, jint numChannels, jint bufferSize){
+Java_cc_openframeworks_OFAndroidSoundStream_audioOut(JNIEnv*  env, jobject  thiz, jshortArray array, jint numChannels, jint bufferSize, jlong currentTime, jlong jni_internal_time){
 	if(instance){
-		instance->androidOutputAudioCallback(env,thiz,array,numChannels,bufferSize);
+		return instance->androidOutputAudioCallback(env,thiz,array,numChannels,bufferSize,currentTime,jni_internal_time);
 	}
+	return 0;
 }
 
 
 jint
 Java_cc_openframeworks_OFAndroidSoundStream_audioIn(JNIEnv*  env, jobject  thiz, jshortArray array, jint numChannels, jint bufferSize){
 	if(instance){
-		instance->androidInputAudioCallback(env,thiz,array,numChannels,bufferSize);
+		return instance->androidInputAudioCallback(env,thiz,array,numChannels,bufferSize);
 	}
+	return 0;
 }
 }

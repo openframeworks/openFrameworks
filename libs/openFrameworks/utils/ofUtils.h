@@ -15,6 +15,7 @@ int 	ofNextPow2(int input);
 void	ofResetElapsedTimeCounter();		// this happens on the first frame
 float 	ofGetElapsedTimef();
 int		ofGetElapsedTimeMillis();
+unsigned long ofGetElapsedTimeMicros();
 int 	ofGetFrameNum();
 
 int 	ofGetSeconds();
@@ -25,6 +26,7 @@ int 	ofGetHours();
 unsigned int ofGetUnixTime();
 
 unsigned long ofGetSystemTime( );			// system time in milliseconds;
+unsigned long ofGetSystemTimeMicros( );			// system time in microseconds;
 
 		//returns 
 string ofGetTimestampString();
