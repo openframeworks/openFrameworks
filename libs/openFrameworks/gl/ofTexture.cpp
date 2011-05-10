@@ -204,8 +204,8 @@ void ofTexture::allocate(int w, int h, int internalGlDataType, bool bUseARBExten
 		texData.textureTarget = GL_TEXTURE_2D;
 	}
 	
-	// get the glType and pixelType corresponding to the internalGlDataType
 	texData.glTypeInternal = internalGlDataType;
+	// get the glType (format) and pixelType (type) corresponding to the glTypeInteral (internalFormat)
 	ofGetGlFormatAndType(texData.glTypeInternal, texData.glType, texData.pixelType);
 	
 	// attempt to free the previous bound texture, if we can:
@@ -219,7 +219,7 @@ void ofTexture::allocate(int w, int h, int internalGlDataType, bool bUseARBExten
 	glBindTexture(texData.textureTarget, (GLuint)texData.textureID);
 #ifndef TARGET_OPENGLES
 	// can't do this on OpenGL ES: on full-blown OpenGL, 
-	// internalGlDataType and glDataType (GL_LUMINANCE below)
+	// glInternalFormat and glFormat (GL_LUMINANCE below)
 	// can be different; on ES they must be exactly the same.
 	//		glTexImage2D(texData.textureTarget, 0, texData.glTypeInternal, (GLint)texData.tex_w, (GLint)texData.tex_h, 0, GL_LUMINANCE, PIXEL_TYPE, 0);  // init to black...
 	glTexImage2D(texData.textureTarget, 0, texData.glTypeInternal, (GLint)texData.tex_w, (GLint)texData.tex_h, 0, texData.glType, texData.pixelType, 0);  // init to black...
@@ -244,18 +244,18 @@ void ofTexture::allocate(int w, int h, int internalGlDataType, bool bUseARBExten
 }
 
 //----------------------------------------------------------
-void ofTexture::loadData(unsigned char * data, int w, int h, int glDataType){
-	loadData( (void *)data, w, h, glDataType);
+void ofTexture::loadData(unsigned char * data, int w, int h, int glInternalFormat){
+	loadData( (void *)data, w, h, glInternalFormat);
 }
 
 //----------------------------------------------------------
-void ofTexture::loadData(float * data, int w, int h, int glDataType){
-	loadData( (void *)data, w, h, glDataType);
+void ofTexture::loadData(float * data, int w, int h, int glInternalFormat){
+	loadData( (void *)data, w, h, glInternalFormat);
 }
 
 //----------------------------------------------------------
-void ofTexture::loadData(unsigned short * data, int w, int h, int glDataType){
-	loadData( (void *)data, w, h, glDataType);
+void ofTexture::loadData(unsigned short * data, int w, int h, int glInternalFormat){
+	loadData( (void *)data, w, h, glInternalFormat);
 }
 
 //----------------------------------------------------------
@@ -267,7 +267,7 @@ void ofTexture::loadData(ofPixels & pix){
 
 
 //----------------------------------------------------------
-void ofTexture::loadData(void * data, int w, int h, int glDataType){
+void ofTexture::loadData(void * data, int w, int h, int glInternalFormat){
 	
 	//SOSOLIMITED: image load step 5 - sets tex.glType to match 
 	
@@ -286,9 +286,9 @@ void ofTexture::loadData(void * data, int w, int h, int glDataType){
 	}
 	
 	//update our size with the new dimensions - this should be the same size or smaller than the allocated texture size
-	texData.width 	= w;
-	texData.height 	= h;
-	texData.glType  = glDataType;
+	texData.width = w;
+	texData.height = h;
+	texData.glType = glInternalFormat; // this is a bug, you can't just change the glType
 	
 	//compute new tex co-ords based on the ratio of data's w, h to texture w,h;
 #ifndef TARGET_OPENGLES
@@ -383,32 +383,32 @@ void ofTexture::loadData(void * data, int w, int h, int glDataType){
 		if (texData.compressionType == OF_COMPRESS_SRGB)
 		{
 			if(texData.glType == GL_RGBA)
-				gluBuild2DMipmaps(texData.textureTarget, GL_COMPRESSED_SRGB_ALPHA, w, h, texData.glType, GL_UNSIGNED_BYTE, data);
+				gluBuild2DMipmaps(texData.textureTarget, GL_COMPRESSED_SRGB_ALPHA, w, h, texData.glType, texData.pixelType, data);
 			
 			else if(texData.glType == GL_RGB)
-				gluBuild2DMipmaps(texData.textureTarget, GL_COMPRESSED_SRGB_ALPHA, w, h, texData.glType, GL_UNSIGNED_BYTE, data);
+				gluBuild2DMipmaps(texData.textureTarget, GL_COMPRESSED_SRGB_ALPHA, w, h, texData.glType, texData.pixelType, data);
 			
 			else if(texData.glType == GL_LUMINANCE_ALPHA)
-				gluBuild2DMipmaps(texData.textureTarget, GL_COMPRESSED_SRGB_ALPHA, w, h, texData.glType, GL_UNSIGNED_BYTE, data);
+				gluBuild2DMipmaps(texData.textureTarget, GL_COMPRESSED_SRGB_ALPHA, w, h, texData.glType, texData.pixelType, data);
 			
 			else if(texData.glType == GL_LUMINANCE)
-				gluBuild2DMipmaps(texData.textureTarget, GL_COMPRESSED_SRGB_ALPHA, w, h, texData.glType, GL_UNSIGNED_BYTE, data);
+				gluBuild2DMipmaps(texData.textureTarget, GL_COMPRESSED_SRGB_ALPHA, w, h, texData.glType, texData.pixelType, data);
 		}
 		
 		//using ARB compression: default
 		else
 		{
 			if(texData.glType == GL_RGBA)
-				gluBuild2DMipmaps(texData.textureTarget, GL_COMPRESSED_RGBA_ARB, w, h, texData.glType, GL_UNSIGNED_BYTE, data);
+				gluBuild2DMipmaps(texData.textureTarget, GL_COMPRESSED_RGBA_ARB, w, h, texData.glType, texData.pixelType, data);
 			
 			else if(texData.glType == GL_RGB)
-				gluBuild2DMipmaps(texData.textureTarget, GL_COMPRESSED_RGB_ARB, w, h, texData.glType, GL_UNSIGNED_BYTE, data);
+				gluBuild2DMipmaps(texData.textureTarget, GL_COMPRESSED_RGB_ARB, w, h, texData.glType, texData.pixelType, data);
 			
 			else if(texData.glType == GL_LUMINANCE_ALPHA)
-				gluBuild2DMipmaps(texData.textureTarget, GL_COMPRESSED_LUMINANCE_ALPHA_ARB, w, h, texData.glType, GL_UNSIGNED_BYTE, data);
+				gluBuild2DMipmaps(texData.textureTarget, GL_COMPRESSED_LUMINANCE_ALPHA_ARB, w, h, texData.glType, texData.pixelType, data);
 			
 			else if(texData.glType == GL_LUMINANCE)
-				gluBuild2DMipmaps(texData.textureTarget, GL_COMPRESSED_LUMINANCE_ARB, w, h, texData.glType, GL_UNSIGNED_BYTE, data);
+				gluBuild2DMipmaps(texData.textureTarget, GL_COMPRESSED_LUMINANCE_ARB, w, h, texData.glType, texData.pixelType, data);
 		}
 #endif
 		
@@ -727,8 +727,9 @@ void ofTexture::draw(ofPoint p1, ofPoint p2, ofPoint p3, ofPoint p4){
 	
 	// Enable alpha channel if has one
 	bool blending = ofGetStyle().blendingMode;
-	if (texData.glType == GL_RGBA && blending==OF_BLENDMODE_DISABLED)
+	if (texData.glType == GL_RGBA && blending == OF_BLENDMODE_DISABLED) {
 		ofEnableAlphaBlending();
+	}
 	
 	// make sure we are on unit 0 - we may change this when setting shader samplers
 	// before glEnable or else the shader gets confused
@@ -789,8 +790,9 @@ void ofTexture::draw(ofPoint p1, ofPoint p2, ofPoint p3, ofPoint p4){
 	glDisable(texData.textureTarget);
 	
 	// Disable alpha channel if it was disabled
-	if (texData.glType == GL_RGBA && blending == OF_BLENDMODE_DISABLED)
+	if (texData.glType == GL_RGBA && blending == OF_BLENDMODE_DISABLED) {
 		ofDisableAlphaBlending();
+	}
 }
 
 
