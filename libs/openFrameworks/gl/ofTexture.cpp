@@ -269,8 +269,6 @@ void ofTexture::loadData(ofPixels & pix){
 //----------------------------------------------------------
 void ofTexture::loadData(void * data, int w, int h, int glInternalFormat){
 	
-	//SOSOLIMITED: image load step 5 - sets tex.glType to match 
-	
 	//	can we allow for uploads bigger then texture and
 	//	just take as much as the texture can?
 	//
@@ -280,17 +278,21 @@ void ofTexture::loadData(void * data, int w, int h, int glInternalFormat){
 	//  but with a "step" size of w?
 	// 	check "glTexSubImage2D"
 	
-	if ( w > texData.tex_w || h > texData.tex_h) {
-		ofLog(OF_LOG_ERROR,"image data too big for allocated texture. %i > %f || %i > %f not uploading...",w , texData.tex_w , h , texData.tex_h);
+	if(glInternalFormat != texData.glTypeInternal) {
+		ofLogError() << "ofTexture::loadData() failed to upload internalFormat " <<  glInternalFormat << " data to " << texData.glTypeInternal << " texture";
 		return;
 	}
 	
-	//update our size with the new dimensions - this should be the same size or smaller than the allocated texture size
+	if(w > texData.tex_w || h > texData.tex_h) {
+		ofLogError() << "ofTexture::loadData() failed to upload " <<  w << "x" << h << " data to " << texData.tex_w << "x" << texData.tex_h << " texture";
+		return;
+	}
+	
+	// update our size with the new dimensions
 	texData.width = w;
 	texData.height = h;
-	texData.glType = glInternalFormat; // this is a bug, you can't just change the glType
 	
-	//compute new tex co-ords based on the ratio of data's w, h to texture w,h;
+	// compute new tex co-ords based on the ratio of data's w, h to texture w,h;
 #ifndef TARGET_OPENGLES
 	if (texData.textureTarget == GL_TEXTURE_RECTANGLE_ARB){
 		texData.tex_t = w;
@@ -331,18 +333,15 @@ void ofTexture::loadData(void * data, int w, int h, int glInternalFormat){
 	
 	
 	//Sosolimited: texture compression
-	if (texData.compressionType == OF_COMPRESS_NONE)
-	{
+	if (texData.compressionType == OF_COMPRESS_NONE) {
 		//STANDARD openFrameworks: no compression
 		
 		//update the texture image: 
 		glEnable(texData.textureTarget);
-		glBindTexture(texData.textureTarget, (GLuint)texData.textureID);
- 		glTexSubImage2D(texData.textureTarget, 0, 0, 0, w, h, texData.glType, texData.pixelType, data); // MEMO: important to use pixelType here
+		glBindTexture(texData.textureTarget, (GLuint) texData.textureID);
+ 		glTexSubImage2D(texData.textureTarget, 0, 0, 0, w, h, texData.glType, texData.pixelType, data);
 		glDisable(texData.textureTarget);
-	}
-	else
-	{
+	} else {
 		//SOSOLIMITED: setup mipmaps and use compression
 		//TODO: activate at least mimaps for OPENGL_ES
 		//need proper tex_u and tex_t positions, with mipmaps they are the nearest power of 2
