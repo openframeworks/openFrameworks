@@ -53,22 +53,7 @@ int ofGetGlInternalFormat(ofFloatPixels& pix) {
 }
 
 //---------------------------------
-void ofGetGlFormatAndType(int glInternalFormat, int& glFormat, int& glType) {	
-	/*switch(glInternalFormat) {
-		case GL_RGBA:
-			glInternalFormat = GL_RGBA8;
-			ofLogError() << "ofGetGlFormatAndType(): GL_RGBA is deprecated, use GL_RGBA8";
-			break;
-		case GL_RGB:
-			glInternalFormat = GL_RGB8;
-			ofLogError() << "ofGetGlFormatAndType(): GL_RGB is deprecated, use GL_RGB8";
-			break;
-		case GL_LUMINANCE:
-			glInternalFormat = GL_LUMINANCE8;
-			ofLogError() << "ofGetGlFormatAndType(): GL_LUMINANCE is deprecated, use GL_LUMINANCE8";
-			break;
-	}*/
-
+void ofGetGlFormatAndType(int glInternalFormat, int& glFormat, int& glType) {
 	switch(glInternalFormat) {
 		// common 8-bit formats: rgba, rgb, grayscale
 		case GL_RGBA:
