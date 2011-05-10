@@ -7,6 +7,7 @@
 int ofGetGlDataType(ofPixels_<unsigned char>& pix);
 int ofGetGlDataType(ofPixels_<unsigned short>& pix);
 int ofGetGlDataType(ofPixels_<float>& pix);
+void ofGetGlType(int glTypeInternal, int& glType, int& pixelType);
 
 //Sosolimited: texture compression
 enum ofTexCompression
