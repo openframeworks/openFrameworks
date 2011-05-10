@@ -196,9 +196,11 @@ void putBmpIntoPixels(FIBITMAP * bmp, ofFloatPixels &pix, bool swapForLittleEndi
 	unsigned int width = FreeImage_GetWidth(bmp);
 	unsigned int height = FreeImage_GetHeight(bmp);
 	unsigned int bpp = FreeImage_GetBPP(bmp);
-	unsigned int channels = bpp / sizeof(float);
+	unsigned int channels = bpp / sizeof(float) / 8;
 	unsigned int pitch = width * channels;
 	
+	ofLogVerbose() << "putBmpIntoPixels: float , w" << width << "h" << height << "bpp" << bpp << "channels" << channels << "pitch" << pitch;
+
 	pix.allocate(width, height, channels);
 	FreeImage_ConvertToRawBits((uint8_t*) pix.getPixels(), bmp, pitch, bpp, FI_RGBA_RED_MASK, FI_RGBA_GREEN_MASK, FI_RGBA_BLUE_MASK, true);
 	
@@ -214,9 +216,11 @@ void putBmpIntoPixels(FIBITMAP * bmp, ofShortPixels &pix, bool swapForLittleEndi
 	unsigned int width = FreeImage_GetWidth(bmp);
 	unsigned int height = FreeImage_GetHeight(bmp);
 	unsigned int bpp = FreeImage_GetBPP(bmp);
-	unsigned int channels = bpp / sizeof(unsigned short);
+	unsigned int channels = bpp / sizeof(unsigned short) / 8;
 	unsigned int pitch = width * channels;
 	
+	ofLogVerbose() << "putBmpIntoPixels: short, w" << width << "h" << height << "bpp" << bpp << "channels" << channels << "pitch" << pitch;
+
 	pix.allocate(width, height, channels);
 	FreeImage_ConvertToRawBits((uint8_t*) pix.getPixels(), bmp, pitch, bpp, FI_RGBA_RED_MASK, FI_RGBA_GREEN_MASK, FI_RGBA_BLUE_MASK, true);
 	
