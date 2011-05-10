@@ -130,7 +130,7 @@ void ofPixels_<T>::copyFrom(const ofPixels_<T2> & mom){
 		}else if(sizeof(T)==4){
 			factor = 1.f/float(numeric_limits<T2>::max());
 		}else{
-			factor = numeric_limits<T>::max()/std::numeric_limits<T2>::max();
+			factor = float(numeric_limits<T>::max())/float(std::numeric_limits<T2>::max());
 		}
 
 		for(int i=0; i<mom.size(); i++){
