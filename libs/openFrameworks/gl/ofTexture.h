@@ -4,10 +4,10 @@
 #include "ofRectangle.h"
 #include "ofBaseTypes.h"
 
-int ofGetGlDataType(ofPixels_<unsigned char>& pix);
-int ofGetGlDataType(ofPixels_<unsigned short>& pix);
-int ofGetGlDataType(ofPixels_<float>& pix);
-void ofGetGlType(int glTypeInternal, int& glType, int& pixelType);
+int ofGetGlInternalFormat(ofPixels_<unsigned char>& pix);
+int ofGetGlInternalFormat(ofPixels_<unsigned short>& pix);
+int ofGetGlInternalFormat(ofPixels_<float>& pix);
+void ofGetGlType(int glInternalFormat, int& glFormat, int& glType);
 
 //Sosolimited: texture compression
 enum ofTexCompression
@@ -37,10 +37,10 @@ public:
 	}
 
 
-	int glType;
-	int glTypeInternal;
 	int textureTarget;
-	int pixelType;  // MEMO: added this (GL_FLOAT, GL_UNSIGNED_BYTE etc.
+	int glTypeInternal; // internalFormat, e.g., GL_RGB8
+	int glType; // format, e.g., GL_RGB
+	int pixelType;  // type, e.g., GL_UNSIGNED_BYTE
 	float tex_t;
 	float tex_u;
 	float tex_w;

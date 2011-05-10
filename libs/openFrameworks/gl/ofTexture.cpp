@@ -8,7 +8,7 @@
 static bool bTexHackEnabled = true;
 
 //---------------------------------
-int ofGetGlDataType(ofPixels_<unsigned char>& pix) {
+int ofGetGlInternalFormat(ofPixels_<unsigned char>& pix) {
 	switch(pix.getNumChannels()) {
 		case 3: return GL_RGB8;
 		case 4: return GL_RGBA8;
@@ -17,7 +17,7 @@ int ofGetGlDataType(ofPixels_<unsigned char>& pix) {
 }
 
 //---------------------------------
-int ofGetGlDataType(ofPixels_<unsigned short>& pix) {
+int ofGetGlInternalFormat(ofPixels_<unsigned short>& pix) {
 	switch(pix.getNumChannels()) {
 		case 3: return GL_RGB16;
 		case 4: return GL_RGBA16;
@@ -26,7 +26,7 @@ int ofGetGlDataType(ofPixels_<unsigned short>& pix) {
 }
 
 //---------------------------------
-int ofGetGlDataType(ofPixels_<float>& pix) {
+int ofGetGlInternalFormat(ofPixels_<float>& pix) {
 	switch(pix.getNumChannels()) {
 		case 3: return GL_RGB32F_ARB;
 		case 4: return GL_RGBA32F_ARB;
@@ -260,7 +260,7 @@ void ofTexture::loadData(unsigned short * data, int w, int h, int glDataType){
 
 //----------------------------------------------------------
 void ofTexture::loadData(ofPixels & pix){
-	loadData(pix.getPixels(), pix.getWidth(), pix.getHeight(), ofGetGlDataType(pix));
+	loadData(pix.getPixels(), pix.getWidth(), pix.getHeight(), ofGetGlInternalFormat(pix));
 }
 
 
