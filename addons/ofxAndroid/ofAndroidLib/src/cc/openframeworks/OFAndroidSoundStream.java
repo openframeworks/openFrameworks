@@ -23,6 +23,24 @@ public class OFAndroidSoundStream extends OFAndroidObject implements AudioTrack.
 		return instance;
 	}
 	
+	static public int getMinOutBufferSize(int samplerate, int nchannels){
+		int outChannels = AudioFormat.CHANNEL_OUT_STEREO;
+		if(nchannels==1){
+			outChannels = AudioFormat.CHANNEL_OUT_MONO;
+		}
+		int minBuff = android.media.AudioTrack.getMinBufferSize(samplerate, outChannels, AudioFormat.ENCODING_PCM_16BIT)/2;
+		Log.i("OF","min buffer size: " + minBuff);
+		return minBuff;
+	}
+	
+	static public int getMinInBufferSize(int samplerate, int nchannels){
+		int inChannels = AudioFormat.CHANNEL_IN_STEREO;
+		if(nchannels==1){
+			inChannels = AudioFormat.CHANNEL_IN_MONO;
+		}
+		return android.media.AudioRecord.getMinBufferSize(samplerate, inChannels, AudioFormat.ENCODING_PCM_16BIT)/2;
+	}
+	
 	private void setupOut(int nOutputChannels, int sampleRate, int bufferSize){
 		int outChannels = AudioFormat.CHANNEL_OUT_STEREO;
 		numOuts = 2;
@@ -87,6 +105,8 @@ public class OFAndroidSoundStream extends OFAndroidObject implements AudioTrack.
 		
 		thread = new Thread(this);
 		thread.start();
+
+		
 	}
 	
 	public void start(){
@@ -157,9 +177,15 @@ public class OFAndroidSoundStream extends OFAndroidObject implements AudioTrack.
 	public void onMarkerReached(AudioTrack arg0) {
 		
 	}
+	
+	
+	long jni_time=0;
 	public void onPeriodicNotification(AudioTrack track) {
-		if(audioOut(outBuffer, numOuts, outBufferSize)==0);
+		if(audioOut(outBuffer, numOuts, outBufferSize,System.currentTimeMillis(),jni_time)==0){
+			jni_time = System.nanoTime();
 			track.write(outBuffer, 0, outBuffer.length);
+			jni_time = System.nanoTime()-jni_time;
+		}
 	}
 
 	public void onMarkerReached(AudioRecord recorder) {
@@ -172,8 +198,7 @@ public class OFAndroidSoundStream extends OFAndroidObject implements AudioTrack.
 	}
 	
 	public void run() {
-		android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_AUDIO);
-		
+		android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_URGENT_AUDIO);
 		if(oTrack!=null){
 			if(oTrack.setPositionNotificationPeriod(outBufferSize)!=AudioTrack.SUCCESS){
 				Log.e("OF","cannot set callback");
@@ -191,7 +216,7 @@ public class OFAndroidSoundStream extends OFAndroidObject implements AudioTrack.
 		start();
 	}
 
-    public static native int audioOut(short[] buffer, int numChannels, int bufferSize);
+    public static native int audioOut(short[] buffer, int numChannels, int bufferSize, long currentTime, long jni_time);
     public static native int audioIn(short[] buffer, int numChannels, int bufferSize);
 
 	

@@ -6,6 +6,7 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.util.Log;
 
 public class OFAndroidAccelerometer extends OFAndroidObject {
 	private SensorManager sensorManager;
@@ -18,6 +19,10 @@ public class OFAndroidAccelerometer extends OFAndroidObject {
         if(sensors.size() > 0)
         {
         	accelerometer = sensors.get(0);
+        	sensorManager.registerListener(sensorListener, accelerometer, SensorManager.SENSOR_DELAY_GAME);   
+        	Log.v("OF", "accelerometer set up correctly");
+        }else{
+        	Log.e("OF","no accelerometer available");
         }
     }
 
