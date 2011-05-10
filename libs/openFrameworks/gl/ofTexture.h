@@ -22,8 +22,8 @@ public:
 	ofTextureData() {
 		textureID = 0;
 		textureTarget	= GL_TEXTURE_2D;
-		glTypeInternal = 0;
-		glType = 0;
+		glTypeInternal = GL_RGB8;
+		glType = GL_RGB;
 		pixelType = GL_UNSIGNED_BYTE;
 		
 		tex_t = 0;
