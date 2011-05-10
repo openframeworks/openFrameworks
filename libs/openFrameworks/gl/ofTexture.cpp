@@ -35,8 +35,24 @@ int ofGetGlInternalFormat(ofPixels_<float>& pix) {
 }
 
 //---------------------------------
-void ofGetGlFormatAndType(int glInternalFormat, int& glFormat, int& glType) {
+void ofGetGlFormatAndType(int glInternalFormat, int& glFormat, int& glType) {	
 	switch(glInternalFormat) {
+		case GL_RGBA:
+			glInternalFormat = GL_RGBA8;
+			ofLogError() << "ofGetGlFormatAndType(): GL_RGBA is deprecated, use GL_RGBA8";
+			break;
+		case GL_RGB:
+			glInternalFormat = GL_RGB8;
+			ofLogError() << "ofGetGlFormatAndType(): GL_RGB is deprecated, use GL_RGB8";
+			break;
+		case GL_LUMINANCE:
+			glInternalFormat = GL_LUMINANCE8;
+			ofLogError() << "ofGetGlFormatAndType(): GL_LUMINANCE is deprecated, use GL_LUMINANCE8";
+			break;
+	}
+
+	switch(glInternalFormat) {
+		// common 8-bit formats: rgba, rgb, grayscale
 		case GL_RGBA8:
 			glFormat = GL_RGBA;
 			glType = GL_UNSIGNED_BYTE;
@@ -51,6 +67,7 @@ void ofGetGlFormatAndType(int glInternalFormat, int& glFormat, int& glType) {
 			break;
 			
 #ifndef TARGET_OPENGLES
+		// 16-bit unsigned short formats
 		case GL_RGBA16:
 			glFormat = GL_RGBA;
 			glType = GL_UNSIGNED_SHORT;
@@ -64,6 +81,7 @@ void ofGetGlFormatAndType(int glInternalFormat, int& glFormat, int& glType) {
 			glType = GL_UNSIGNED_SHORT;
 			break;
 			
+		// 32-bit float formats
 		case GL_RGBA32F_ARB:
 			glFormat = GL_RGBA;
 			glType = GL_FLOAT;
@@ -77,10 +95,18 @@ void ofGetGlFormatAndType(int glInternalFormat, int& glFormat, int& glType) {
 			glType = GL_FLOAT;
 			break;			
 #endif
-			
+
+		// used by prepareBitmapTexture(), not supported by ofPixels
+		case GL_LUMINANCE8_ALPHA8:
+			glFormat = GL_LUMINANCE_ALPHA;
+			glType = GL_UNSIGNED_BYTE;
+			break;
+		
 		default:
 			glFormat = GL_RGB;
 			glType = GL_UNSIGNED_BYTE;
+			ofLogError() << "ofGetGlFormatAndType(): glInternalFormat not recognized";
+			break;
 	}
 }
 
@@ -439,7 +465,7 @@ void ofTexture::loadScreenData(int x, int y, int w, int h){
 	//update our size with the new dimensions - this should be the same size or smaller than the allocated texture size
 	texData.width 	= w;
 	texData.height 	= h;
-	texData.glType  = GL_RGB;
+	//texData.glType  = GL_RGB; // this was probably a bug, because you might be resetting the glType to something other than what the texture was created for
 	
 	//compute new tex co-ords based on the ratio of data's w, h to texture w,h;
 #ifndef TARGET_OPENGLES // DAMIAN
