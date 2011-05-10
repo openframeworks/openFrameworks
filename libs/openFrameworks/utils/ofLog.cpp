@@ -105,7 +105,7 @@ ofLogVerbose::ofLogVerbose(const string & _module){
 
 ofLogVerbose::ofLogVerbose(const string & _module, const string & _message){
 	_log(OF_LOG_VERBOSE,_module,_message);
-	bPrinted = false;
+	bPrinted = true;
 }
 
 ofLogNotice::ofLogNotice(const string & _module) {
@@ -116,7 +116,7 @@ ofLogNotice::ofLogNotice(const string & _module) {
 
 ofLogNotice::ofLogNotice(const string & _module, const string & _message){
 	_log(OF_LOG_NOTICE,_module,_message);
-	bPrinted = false;
+	bPrinted = true;
 }
 
 ofLogWarning::ofLogWarning(const string & _module) {
@@ -127,18 +127,18 @@ ofLogWarning::ofLogWarning(const string & _module) {
 
 ofLogWarning::ofLogWarning(const string & _module, const string & _message){
 	_log(OF_LOG_WARNING,_module,_message);
-	bPrinted = false;
+	bPrinted = true;
 }
 
 ofLogError::ofLogError(const string & _module) {
 	level = OF_LOG_ERROR;
 	module = _module;
-	bPrinted=true;
+	bPrinted=false;
 }
 
 ofLogError::ofLogError(const string & _module, const string & _message){
 	_log(OF_LOG_ERROR,_module,_message);
-	bPrinted = false;
+	bPrinted = true;
 }
 
 ofLogFatalError::ofLogFatalError(const string &  _module) {
@@ -149,7 +149,7 @@ ofLogFatalError::ofLogFatalError(const string &  _module) {
 
 ofLogFatalError::ofLogFatalError(const string & _module, const string & _message){
 	_log(OF_LOG_FATAL_ERROR,_module,_message);
-	bPrinted = false;
+	bPrinted = true;
 }
 
 void ofLog::setChannel(ofPtr<ofBaseLoggerChannel> _channel){
