@@ -306,20 +306,6 @@ int ofPixels_<T>::getNumChannels() const{
 }
 
 template<typename T>
-int ofPixels_<T>::getGlDataType() const{
-	switch(getNumChannels()){
-	case 1:
-		return GL_LUMINANCE;
-	case 3:
-		return GL_RGB;
-	case 4:
-		return GL_RGBA;
-	default:
-		return GL_LUMINANCE;
-	}
-}
-
-template<typename T>
 ofImageType ofPixels_<T>::getImageType() const{
 	switch(getNumChannels()){
 	case 1:
