@@ -4,9 +4,9 @@
 #include "ofRectangle.h"
 #include "ofBaseTypes.h"
 
-int ofGetGlInternalFormat(ofPixels_<unsigned char>& pix);
-int ofGetGlInternalFormat(ofPixels_<unsigned short>& pix);
-int ofGetGlInternalFormat(ofPixels_<float>& pix);
+int ofGetGlInternalFormat(ofPixels& pix);
+int ofGetGlInternalFormat(ofShortPixels& pix);
+int ofGetGlInternalFormat(ofFloatPixels& pix);
 void ofGetGlFormatAndType(int glInternalFormat, int& glFormat, int& glType);
 
 //Sosolimited: texture compression
