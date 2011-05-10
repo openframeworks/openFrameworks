@@ -10,33 +10,51 @@ static bool bTexHackEnabled = true;
 //---------------------------------
 int ofGetGlInternalFormat(ofPixels& pix) {
 	switch(pix.getNumChannels()) {
-		case 3: return GL_RGB8;
-		case 4: return GL_RGBA8;
-		default: return GL_LUMINANCE8;
+		case 3: return GL_RGB;
+		case 4: return GL_RGBA;
+		default: return GL_LUMINANCE;
 	}
 }
 
 //---------------------------------
 int ofGetGlInternalFormat(ofShortPixels& pix) {
+#ifndef TARGET_OPENGLES
 	switch(pix.getNumChannels()) {
 		case 3: return GL_RGB16;
 		case 4: return GL_RGBA16;
 		default: return GL_LUMINANCE16;
 	}
+#else
+	ofLogWarning()<< "16bit textures not supported in GLES";
+	switch(pix.getNumChannels()) {
+		case 3: return GL_RGB;
+		case 4: return GL_RGBA;
+		default: return GL_LUMINANCE;
+	}
+#endif
 }
 
 //---------------------------------
 int ofGetGlInternalFormat(ofFloatPixels& pix) {
+#ifndef TARGET_OPENGLES
 	switch(pix.getNumChannels()) {
 		case 3: return GL_RGB32F_ARB;
 		case 4: return GL_RGBA32F_ARB;
 		default: return GL_LUMINANCE32F_ARB;
 	}
+#else
+	ofLogWarning()<< "float textures not supported in GLES";
+	switch(pix.getNumChannels()) {
+		case 3: return GL_RGB;
+		case 4: return GL_RGBA;
+		default: return GL_LUMINANCE;
+	}
+#endif
 }
 
 //---------------------------------
 void ofGetGlFormatAndType(int glInternalFormat, int& glFormat, int& glType) {	
-	switch(glInternalFormat) {
+	/*switch(glInternalFormat) {
 		case GL_RGBA:
 			glInternalFormat = GL_RGBA8;
 			ofLogError() << "ofGetGlFormatAndType(): GL_RGBA is deprecated, use GL_RGBA8";
@@ -49,19 +67,28 @@ void ofGetGlFormatAndType(int glInternalFormat, int& glFormat, int& glType) {
 			glInternalFormat = GL_LUMINANCE8;
 			ofLogError() << "ofGetGlFormatAndType(): GL_LUMINANCE is deprecated, use GL_LUMINANCE8";
 			break;
-	}
+	}*/
 
 	switch(glInternalFormat) {
 		// common 8-bit formats: rgba, rgb, grayscale
+		case GL_RGBA:
+#ifndef TARGET_OPENGLES
 		case GL_RGBA8:
+#endif
 			glFormat = GL_RGBA;
 			glType = GL_UNSIGNED_BYTE;
 			break;
+		case GL_RGB:
+#ifndef TARGET_OPENGLES
 		case GL_RGB8:
+#endif
 			glFormat = GL_RGB;
 			glType = GL_UNSIGNED_BYTE;
 			break;
+		case GL_LUMINANCE:
+#ifndef TARGET_OPENGLES
 		case GL_LUMINANCE8:
+#endif
 			glFormat = GL_LUMINANCE;
 			glType = GL_UNSIGNED_BYTE;
 			break;
@@ -97,7 +124,10 @@ void ofGetGlFormatAndType(int glInternalFormat, int& glFormat, int& glType) {
 #endif
 
 		// used by prepareBitmapTexture(), not supported by ofPixels
+		case GL_LUMINANCE_ALPHA:
+#ifndef TARGET_OPENGLES
 		case GL_LUMINANCE8_ALPHA8:
+#endif
 			glFormat = GL_LUMINANCE_ALPHA;
 			glType = GL_UNSIGNED_BYTE;
 			break;

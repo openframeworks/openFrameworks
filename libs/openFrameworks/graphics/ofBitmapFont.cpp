@@ -350,7 +350,7 @@ static void prepareBitmapTexture(){
 
 	if (!bBitmapTexturePrepared){
 		
-		glesBitmappedFontTexture.allocate(16*16, 16*16, GL_LUMINANCE8_ALPHA8, false);
+		glesBitmappedFontTexture.allocate(16*16, 16*16, GL_LUMINANCE_ALPHA, false);
 		bBitmapTexturePrepared = true;
 		
 		for (int i = 0; i < 256; i++) {
@@ -370,7 +370,7 @@ static void prepareBitmapTexture(){
 			}
 		}
 		
-		glesBitmappedFontTexture.loadData(myLetterPixels, 16*16, 16*16, GL_LUMINANCE8_ALPHA8);
+		glesBitmappedFontTexture.loadData(myLetterPixels, 16*16, 16*16, GL_LUMINANCE_ALPHA);
 		
 	}
 

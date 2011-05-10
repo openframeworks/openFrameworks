@@ -40,7 +40,7 @@
 		all_short_images.erase(img);
 	}
 
-	void reloadAllImageTextures(){
+	void ofReloadAllImageTextures(){
 		set<ofImage *>::iterator it;
 		for(it=all_images.begin(); it!=all_images.end(); it++){
 			(*it)->reloadTexture();

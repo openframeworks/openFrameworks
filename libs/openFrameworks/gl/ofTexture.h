@@ -3,6 +3,7 @@
 #include "ofPoint.h"
 #include "ofRectangle.h"
 #include "ofBaseTypes.h"
+#include "ofConstants.h"
 
 int ofGetGlInternalFormat(ofPixels& pix);
 int ofGetGlInternalFormat(ofShortPixels& pix);
@@ -22,7 +23,11 @@ public:
 	ofTextureData() {
 		textureID = 0;
 		textureTarget	= GL_TEXTURE_2D;
+#ifndef TARGET_OPENGLES
 		glTypeInternal = GL_RGB8;
+#else
+		glTypeInternal = GL_RGB;
+#endif
 		glType = GL_RGB;
 		pixelType = GL_UNSIGNED_BYTE;
 		
