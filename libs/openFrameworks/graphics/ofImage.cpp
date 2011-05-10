@@ -37,7 +37,7 @@
 	}
 
 	static void unregisterImage(ofShortImage * img){
-		all_float_images.erase(img);
+		all_short_images.erase(img);
 	}
 
 	void reloadAllImageTextures(){
