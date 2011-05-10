@@ -466,6 +466,7 @@ ofImage_<T>::ofImage_(const string & filename){
 //----------------------------------------------------------
 template<typename T>
 ofImage_<T>& ofImage_<T>::operator=(const ofImage_<T>& mom) {
+	if(&mom==this) return *this;
 	clone(mom);
 	update();
 	return *this;
@@ -790,22 +791,6 @@ void ofImage_<T>::grabScreen(int _x, int _y, int _w, int _h){
 		memcpy(lineb, tempLineOfPix, sizeOfOneLineOfPixels);
 	}
 	delete [] tempLineOfPix;
-	update();
-}
-
-
-//------------------------------------
-template<typename T>
-void ofImage_<T>::clone(const ofImage_<T> &mom){
-
-	pixels = mom.pixels;
-
-	tex.clear();
-	bUseTexture = mom.bUseTexture;
-	if (bUseTexture == true){
-		tex.allocate(pixels.getWidth(), pixels.getHeight(), ofGetGlInternalFormat(pixels));
-	}
-
 	update();
 }
 
