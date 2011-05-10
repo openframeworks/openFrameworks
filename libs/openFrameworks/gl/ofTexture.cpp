@@ -35,52 +35,52 @@ int ofGetGlInternalFormat(ofPixels_<float>& pix) {
 }
 
 //---------------------------------
-void ofGetGlType(int glTypeInternal, int& glType, int& pixelType) {
-	switch(glTypeInternal) {
+void ofGetGlFormatAndType(int glInternalFormat, int& glFormat, int& glType) {
+	switch(glInternalFormat) {
 		case GL_RGBA8:
-			glType = GL_RGBA;
-			pixelType = GL_UNSIGNED_BYTE;
+			glFormat = GL_RGBA;
+			glType = GL_UNSIGNED_BYTE;
 			break;
 		case GL_RGB8:
-			glType = GL_RGB;
-			pixelType = GL_UNSIGNED_BYTE;
+			glFormat = GL_RGB;
+			glType = GL_UNSIGNED_BYTE;
 			break;
 		case GL_LUMINANCE8:
-			glType = GL_LUMINANCE;
-			pixelType = GL_UNSIGNED_BYTE;
+			glFormat = GL_LUMINANCE;
+			glType = GL_UNSIGNED_BYTE;
 			break;
 			
 #ifndef TARGET_OPENGLES
 		case GL_RGBA16:
-			glType = GL_RGBA;
-			pixelType = GL_UNSIGNED_SHORT;
+			glFormat = GL_RGBA;
+			glType = GL_UNSIGNED_SHORT;
 			break;
 		case GL_RGB16:
-			glType = GL_RGB;
-			pixelType = GL_UNSIGNED_SHORT;
+			glFormat = GL_RGB;
+			glType = GL_UNSIGNED_SHORT;
 			break;
 		case GL_LUMINANCE16:
-			glType = GL_LUMINANCE;
-			pixelType = GL_UNSIGNED_SHORT;
+			glFormat = GL_LUMINANCE;
+			glType = GL_UNSIGNED_SHORT;
 			break;
 			
 		case GL_RGBA32F_ARB:
-			glType = GL_RGBA;
-			pixelType = GL_FLOAT;
+			glFormat = GL_RGBA;
+			glType = GL_FLOAT;
 			break;
 		case GL_RGB32F_ARB:
-			glType = GL_RGB;
-			pixelType = GL_FLOAT;
+			glFormat = GL_RGB;
+			glType = GL_FLOAT;
 			break;
 		case GL_LUMINANCE32F_ARB:
-			glType = GL_LUMINANCE;
-			pixelType = GL_FLOAT;
+			glFormat = GL_LUMINANCE;
+			glType = GL_FLOAT;
 			break;			
 #endif
 			
 		default:
-			glType = GL_RGB;
-			pixelType = GL_UNSIGNED_BYTE;
+			glFormat = GL_RGB;
+			glType = GL_UNSIGNED_BYTE;
 	}
 }
 
@@ -206,7 +206,7 @@ void ofTexture::allocate(int w, int h, int internalGlDataType, bool bUseARBExten
 	
 	// get the glType and pixelType corresponding to the internalGlDataType
 	texData.glTypeInternal = internalGlDataType;
-	ofGetGlType(internalGlDataType, texData.glType, texData.pixelType);
+	ofGetGlFormatAndType(texData.glTypeInternal, texData.glType, texData.pixelType);
 	
 	// attempt to free the previous bound texture, if we can:
 	clear();
