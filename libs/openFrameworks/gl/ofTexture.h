@@ -7,7 +7,7 @@
 int ofGetGlInternalFormat(ofPixels_<unsigned char>& pix);
 int ofGetGlInternalFormat(ofPixels_<unsigned short>& pix);
 int ofGetGlInternalFormat(ofPixels_<float>& pix);
-void ofGetGlType(int glInternalFormat, int& glFormat, int& glType);
+void ofGetGlFormatAndType(int glInternalFormat, int& glFormat, int& glType);
 
 //Sosolimited: texture compression
 enum ofTexCompression
@@ -20,37 +20,43 @@ enum ofTexCompression
 class ofTextureData{
 public:
 	ofTextureData(){
-		bAllocated		= false;
-		textureID		= 0;
-		bFlipTexture	= false;
+		textureID = 0;
 		textureTarget	= GL_TEXTURE_2D;
-		glTypeInternal  = 0;
-		glType			= 0;
-		pixelType		= GL_UNSIGNED_BYTE;
-		width			= 0;
-		height			= 0;
-		tex_w			= 0;
-		tex_h			= 0;
-		tex_t			= 0;
-		tex_u			= 0;
+		glTypeInternal = 0;
+		glType = 0;
+		pixelType = GL_UNSIGNED_BYTE;
+		
+		tex_t = 0;
+		tex_u = 0;
+		tex_w = 0;
+		tex_h = 0;
+		
+		width = 0;
+		height = 0;
+		
+		bFlipTexture = false;
 		compressionType = OF_COMPRESS_NONE;
+		
+		bAllocated = false;
 	}
 
-
+	unsigned int textureID;
 	int textureTarget;
 	int glTypeInternal; // internalFormat, e.g., GL_RGB8
 	int glType; // format, e.g., GL_RGB
 	int pixelType;  // type, e.g., GL_UNSIGNED_BYTE
+	
 	float tex_t;
 	float tex_u;
 	float tex_w;
 	float tex_h;
-	float width;
-	float height;
+	
+	float width, height;
+	
 	bool bFlipTexture;
-	unsigned int textureID;
-	bool bAllocated;
 	ofTexCompression compressionType;
+	
+	bool bAllocated;
 };
 
 //enable / disable the slight offset we add to ofTexture's texture coords to compensate for bad edge artifiacts
