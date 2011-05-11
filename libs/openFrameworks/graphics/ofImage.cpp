@@ -70,28 +70,27 @@ void ofInitFreeImage(bool deinit=false){
 
 //----------------------------------------------------
 template<typename T>
-FIBITMAP *  getBmpFromPixels(ofPixels_<T> &pix){
-
-	FIBITMAP * bmp = NULL;
-
-	int w						= pix.getWidth();
-	int h						= pix.getHeight();
-	unsigned char * pixels		= (unsigned char*)pix.getPixels();
-	int bpp						= pix.getBitsPerPixel();
-	int bytesPerPixel			= pix.getBytesPerPixel();
-
-	bmp							= FreeImage_ConvertFromRawBits(pixels, w,h, w*bytesPerPixel, bpp, 0,0,0, true);
-
-	//this is for grayscale images they need to be paletted from: http://sourceforge.net/forum/message.php?msg_id=2856879
-	if( pix.getImageType() == OF_IMAGE_GRAYSCALE ){
+FIBITMAP* getBmpFromPixels(ofPixels_<T> &pix){	
+	unsigned char* pixels = (unsigned char*) pix.getPixels();
+	int w = pix.getWidth();
+	int h = pix.getHeight();
+	unsigned int bytesPerPixel = pix.getBytesPerPixel();
+	int pitch = w * bytesPerPixel;
+	unsigned int bpp = pix.getBitsPerPixel();
+	
+	FIBITMAP* bmp = FreeImage_ConvertFromRawBits(pixels, w, h, pitch, bpp, 0,0,0, true);
+	
+	// {afaict, this paletting code isn't necessary anymore - kyle, may 2011}
+	// this is for grayscale images they need to be paletted from: http://sourceforge.net/forum/message.php?msg_id=2856879
+	if(pix.getImageType() == OF_IMAGE_GRAYSCALE && pix.getBitsPerChannel() <= 8){
 		RGBQUAD *pal = FreeImage_GetPalette(bmp);
-		for(int i = 0; i < 256; i++) {
+		for(unsigned int i = 0; i < 256; i++) {
 			pal[i].rgbRed = i;
 			pal[i].rgbGreen = i;
 			pal[i].rgbBlue = i;
 		}
 	}
-
+	
 	return bmp;
 }
 
