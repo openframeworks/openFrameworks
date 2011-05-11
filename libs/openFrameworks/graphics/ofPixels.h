@@ -75,9 +75,8 @@ private:
 	int width;
 	int height;
 
-	int		bitsPerChannel;		// 8 = gray, 24 = rgb, 32 = rgba
-	int		bytesPerChannel;		// 1, 3, 4 bytes per pixels
-	int		channels;
+	int bytesPerChannel; // 1, 2, 4 bytes per pixel (unsigned char, unsigned short, float)
+	int channels; // 1, 3, 4 channels per pixel (grayscale, rgb, rgba)
 	//GLint	glDataType;			// GL_LUMINANCE, GL_RGB, GL_RGBA
 	//ofImageType imageType;		// OF_IMAGE_GRAYSCALE, OF_IMAGE_COLOR, OF_IMAGE_COLOR_ALPHA
 	bool	bAllocated;
@@ -119,7 +118,6 @@ template<typename T2>
 void ofPixels_<T>::copyFrom(const ofPixels_<T2> & mom){
 	if(mom.isAllocated()){
 		bytesPerChannel = sizeof(T);
-		bitsPerChannel = bytesPerChannel*8;
 		allocate(mom.getWidth(),mom.getHeight(),mom.getNumChannels());
 
 		float factor;
