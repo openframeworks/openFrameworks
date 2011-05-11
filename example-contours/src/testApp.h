@@ -10,4 +10,7 @@ public:
 	void setup();
 	void update();
 	void draw();
+	
+	ofVideoGrabber cam;
+	ofImage thresh;
 };

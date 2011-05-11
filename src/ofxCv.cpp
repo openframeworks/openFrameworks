@@ -76,6 +76,10 @@ namespace ofxCv {
 		return img.toCv();
 	}
 	
+	Point2f toCv(ofVec2f& vec) {
+		return Point2f(vec.x, vec.y);
+	}
+	
 	Point3f toCv(ofVec3f& vec) {
 		return Point3f(vec.x, vec.y, vec.z);
 	}
@@ -97,7 +101,7 @@ namespace ofxCv {
 		return ofVec3f(point.x, point.y, point.z);
 	}
 	
-	ofRectangle toOf(cv::Rect& rect) {
+	ofRectangle toOf(cv::Rect rect) {
 		return ofRectangle(rect.x, rect.y, rect.width, rect.height);
 	}
 	
@@ -151,6 +155,34 @@ namespace ofxCv {
 	
 	void applyMatrix(const ofMatrix4x4& matrix) {
 		glMultMatrixf((GLfloat*) matrix.getPtr());
+	}
+	
+	float getMaxVal(const Mat& mat) {
+		switch(mat.depth()) {
+			case CV_8U: return numeric_limits<uint8_t>::max();
+			case CV_16U: return numeric_limits<uint16_t>::max();
+			
+			case CV_8S: return numeric_limits<int8_t>::max();
+			case CV_16S: return numeric_limits<int16_t>::max();
+			case CV_32S: return numeric_limits<int32_t>::max();
+			
+			case CV_32F: return 1;
+			case CV_64F: return 1;
+		}
+	}
+	
+	void threshold(Mat src, Mat dst, float thresholdValue, bool invert) {
+		int thresholdType = invert ? THRESH_BINARY_INV : THRESH_BINARY;
+		float maxVal = getMaxVal(dst);
+		cv::threshold(src, dst, thresholdValue, maxVal, thresholdType);
+	}
+	
+	void threshold(Mat srcDst, float thresholdValue, bool invert) {
+		threshold(srcDst, srcDst, thresholdValue, invert);
+	}
+	
+	void convertColor(Mat src, Mat dst, int code) {
+		cvtColor(src, dst, code);
 	}
 	
 	void invert(ofImage& img) {

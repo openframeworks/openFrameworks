@@ -14,14 +14,22 @@
 #include "ofImage.h"
 
 /*
- all functions guarantee internally that the output images imitates input
- there should be a ton more const functions, but it's hard because of OF const issues
- need to print better errors than default opencv errors...?
+	there should be three kinds of functions:
+	1 utility functions like imitate and toCv
+	2 wrapper functions that accept Mat and return cv types
+	3 wrapper functions that accept toCv-compatible objects and return toOf objects
+	
+	all type 3 functions should guarantee the size of the output with imitate
+	
+	there should be a ton more const functions, but it's hard because of OF const issues
+	need to print better errors than default opencv errors...?
 */
 
 namespace ofxCv {
 	
 	using namespace cv;
+	
+// 1 utility functions
 	
 	// imitate() is good for preparing buffers
 	// it's like allocate(), but uses the size and type of the original as a reference
@@ -37,31 +45,28 @@ namespace ofxCv {
 	
 	void copy(Mat to, Mat from);
 	
-	// conversion functions toOf() and toCv()
+	// toCv functions
 	Mat toCv(ofPixels& pix);
 	Mat toCv(ofBaseHasPixels& img);
 	Mat toCv(FloatImage& img);
 	Mat toCv(ofMesh& mesh);
+	Point2f toCv(ofVec2f& vec);
 	Point3f toCv(ofVec3f& vec);
 	cv::Rect toCv(const ofRectangle& rect);
 	int toCv(const ofImageType& ofType);
 	
+	// toOf functions
 	ofVec2f toOf(Point2f point);
 	ofVec3f toOf(Point3f point);
-	ofRectangle toOf(cv::Rect& rect);
+	ofRectangle toOf(cv::Rect rect);
 	
-	void loadImage(Mat& mat, string filename);
-	void saveImage(Mat& mat, string filename);
-	
-	ofMatrix4x4 makeMatrix(Mat rotation, Mat translation);
-	
-	void drawMat(Mat& mat, float x, float y);
-	void drawMat(Mat& mat, float x, float y, float width, float height);
-	
-	void applyMatrix(const ofMatrix4x4& matrix);
-	
+// 2 Mat wrappers
+	void threshold(Mat src, Mat dst, float thresholdValue, bool invert = false); // threshold out of place
+	void threshold(Mat srcDst, float thresholdValue, bool invert = false); // threshold in place
+	void convertColor(Mat src, Mat dst, int code); // CV_RGB2GRAY, CV_HSV2RGB, etc. with [RGB, BGR, GRAY, HSV, HLS, XYZ, YCrCb, Lab, Luv]
+
+// 3 toCv-compatible wrappers
 	void invert(ofImage& img);
-	
 	void rotate(ofImage& source, ofImage& destination, double angle, unsigned char fill = 0, int interpolation = INTER_LINEAR);
 	void autorotate(ofImage& original, ofImage& thresh, ofImage& output, float* rotation = NULL);
 	void autothreshold(ofImage& original, ofImage& thresh, bool invert = false);
@@ -76,10 +81,20 @@ namespace ofxCv {
 	void medianBlur(ofImage& img, int size);
 	void warpPerspective(ofImage& src, ofImage& dst, Mat& m, int flags = 0);
 	void warpPerspective(ofPixels& src, ofPixels& dst, Mat& m, int flags = 0);
-	
-	// options: INTER_NEAREST, INTER_LINEAR, INTER_AREA, INTER_CUBIC, INTER LANCZOS4
-	void resize(ofImage& source, ofImage& destination, int interpolation = INTER_LINEAR);
+	void resize(ofImage& source, ofImage& destination, int interpolation = INTER_LINEAR); // options: INTER_NEAREST, INTER_LINEAR, INTER_AREA, INTER_CUBIC, INTER LANCZOS4
 	void resize(ofImage& source, ofImage& destination, float xScale, float yScale, int interpolation = INTER_LINEAR);
+	
+//
+
+// 4 misc
+	void loadImage(Mat& mat, string filename);
+	void saveImage(Mat& mat, string filename);
+	
+	ofMatrix4x4 makeMatrix(Mat rotation, Mat translation);
+	void applyMatrix(const ofMatrix4x4& matrix);
+	
+	void drawMat(Mat& mat, float x, float y);
+	void drawMat(Mat& mat, float x, float y, float width, float height);
 	
 	ofVec2f findMaxLocation(FloatImage& img);
 	ofVec2f findMaxLocation(Mat& mat);
@@ -96,7 +111,6 @@ namespace ofxCv {
 	Mat sumRows(const Mat& mat);
 	
 	float weightedAverageAngle(const vector<Vec4i>& lines);
-	
 }
 
 // <3 kyle
