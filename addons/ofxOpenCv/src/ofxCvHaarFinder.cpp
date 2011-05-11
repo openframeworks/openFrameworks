@@ -98,6 +98,26 @@ int ofxCvHaarFinder::findHaarObjects(const ofxCvGrayscaleImage&  input,
 		minWidth, minHeight);
 }
 
+
+void ofxCvHaarFinder::draw( float x, float y ) {
+	ofPushStyle();
+	ofEnableAlphaBlending();
+	ofSetColor( 255,0,200,100 );
+	glPushMatrix();
+	
+	glTranslatef( x, y, 0.0 );
+	
+	ofNoFill();
+	for( int i=0; i<blobs.size(); i++ ) {
+		ofRect( blobs[i].boundingRect.x, blobs[i].boundingRect.y, 
+			   blobs[i].boundingRect.width, blobs[i].boundingRect.height );
+	}
+	
+	glPopMatrix();
+	ofPopStyle();
+}
+
+
 int ofxCvHaarFinder::findHaarObjects(const ofxCvGrayscaleImage& input,
 	int x, int y, int w, int h,
 	int minWidth, int minHeight) {
@@ -149,7 +169,7 @@ int ofxCvHaarFinder::findHaarObjects(const ofxCvGrayscaleImage& input,
 		nHaarResults = haarResults->total;
 
 		for (int i = 0; i < nHaarResults; i++ ) {
-			printf("%i objects\n", i);
+			//printf("%i objects\n", i);
 			
 			ofxCvBlob blob;
 

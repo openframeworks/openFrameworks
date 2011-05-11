@@ -74,7 +74,7 @@ LDFLAGS = $(LIB_PATHS_FLAGS) -Wl,-rpath=./libs
 LIBS = $(LIB_SHARED)
 LIBS += $(LIB_STATIC)
 LIBS += $(shell pkg-config  glew gstreamer-0.10 gstreamer-video-0.10 gstreamer-base-0.10 libudev --libs)
-LIBS += -lglut -lGL -lGLU -lasound
+LIBS += -lglut -lGL -lGLU -lasound -lfreeimage
 
 #check if gtk exists and add it
 GTK = $(shell pkg-config gtk+-2.0 --exists; echo $$?)

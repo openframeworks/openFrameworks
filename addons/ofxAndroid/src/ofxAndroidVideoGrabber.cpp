@@ -503,6 +503,7 @@ Java_cc_openframeworks_OFAndroidVideoGrabber_newFrame(JNIEnv*  env, jobject  thi
 
 		env->ReleasePrimitiveArrayCritical(array,buffer,0);
 		newPixels = true;
+		ofNotifyEvent(((ofxAndroidVideoGrabber*)instances[cameraId]->getGrabber())->newFrameE,instances[cameraId]->getPixelsRef());
 		//((ofxAndroidApp*)ofGetAppPtr())->imageReceived(pixels,width,height);
 		return 0;
 	}

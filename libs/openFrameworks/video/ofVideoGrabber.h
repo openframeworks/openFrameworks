@@ -5,6 +5,7 @@
 #include "ofBaseTypes.h"
 #include "ofPixels.h"
 
+
 #ifdef OF_VIDEO_CAPTURE_IPHONE
 	#include "ofiPhoneVideoGrabber.h"
 	#define OF_VID_GRABBER_TYPE ofiPhoneVideoGrabber()
@@ -30,7 +31,7 @@
 	#define OF_VID_GRABBER_TYPE ofxAndroidVideoGrabber()
 #endif
 
-class ofVideoGrabber : public ofBaseVideoGrabber,public ofBaseDraws, public ofBaseHasTexture{
+class ofVideoGrabber : public ofBaseVideoGrabber,public ofBaseVideoDraws{
 
 	public :
 

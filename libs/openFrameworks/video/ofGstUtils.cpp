@@ -639,13 +639,13 @@ GstFlowReturn ofGstVideoUtils::preroll_cb(GstBuffer * buffer){
 		return GST_FLOW_ERROR;
 	}
 	//mutex.lock();
-	  if(backPixels.isAllocated()){
-		  backPixels.setFromPixels(GST_BUFFER_DATA (buffer),backPixels.getWidth(),backPixels.getHeight(),backPixels.getImageType());
-		  bBackPixelsChanged=true;
-		  ofNotifyEvent(prerollEvent,backPixels);
-	  }else{
-		  ofLog(OF_LOG_WARNING,"received a preroll without allocation");
-	  }
+	if(backPixels.isAllocated()){
+		backPixels.setFromPixels(GST_BUFFER_DATA (buffer),backPixels.getWidth(),backPixels.getHeight(),backPixels.getImageType());
+		bBackPixelsChanged=true;
+		ofNotifyEvent(prerollEvent,backPixels);
+	}else{
+		ofLog(OF_LOG_WARNING,"received a preroll without allocation");
+	}
 	//mutex.unlock();
 
 
@@ -667,13 +667,13 @@ GstFlowReturn ofGstVideoUtils::buffer_cb(GstBuffer * buffer){
 		return GST_FLOW_OK;
 	}
 	mutex.lock();
-	  if(backPixels.isAllocated()){
-		  backPixels.setFromPixels(GST_BUFFER_DATA (buffer),backPixels.getWidth(),backPixels.getHeight(),backPixels.getImageType());
-		  bBackPixelsChanged=true;
-		  ofNotifyEvent(bufferEvent,backPixels);
-	  }else{
-		  ofLog(OF_LOG_WARNING, "received a preroll without allocation");
-	  }
+	if(backPixels.isAllocated()){
+		backPixels.setFromPixels(GST_BUFFER_DATA (buffer),backPixels.getWidth(),backPixels.getHeight(),backPixels.getImageType());
+		bBackPixelsChanged=true;
+		ofNotifyEvent(bufferEvent,backPixels);
+	}else{
+		ofLog(OF_LOG_WARNING, "received a preroll without allocation");
+	}
 	mutex.unlock();
 
 

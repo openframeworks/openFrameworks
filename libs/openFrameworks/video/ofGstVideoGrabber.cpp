@@ -25,7 +25,28 @@ extern "C" {
 #include <fcntl.h>
 #include <unistd.h>
 #include <sys/ioctl.h>
-#include <linux/videodev.h>
+
+#include <linux/version.h>
+
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,35)
+	#include <linux/videodev2.h>
+	#define VIDIOCGCAP              _IOR('v',1,struct video_capability)     /* Get capabilities */
+
+	struct video_capability
+	{
+			 char name[32];
+			 int type;
+			 int channels;   /* Num channels */
+			 int audios;     /* Num audio devices */
+			 int maxwidth;   /* Supported width */
+			 int maxheight;  /* And height */
+			 int minwidth;   /* Supported width */
+			 int minheight;  /* And height */
+	};
+#else
+	#include <linux/videodev.h>
+#endif
+
 
 #endif
 
@@ -479,7 +500,7 @@ bool ofGstVideoGrabber::initGrabber(int w, int h){
 	}
 
 	ofGstVideoFormat & format = selectFormat(w, h, attemptFramerate);
-
+	ofLog(OF_LOG_NOTICE,"ofGstUtils: selected device: " + camData.webcam_devices[deviceID].product_name);
 	ofLog(OF_LOG_NOTICE,"ofGstUtils: selected format: " + ofToString(format.width) + "x" + ofToString(format.height) + " " + format.mimetype + " framerate: " + ofToString(format.choosen_framerate.numerator) + "/" + ofToString(format.choosen_framerate.denominator));
 
 	bIsCamera = true;

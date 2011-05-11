@@ -20,7 +20,7 @@
 #endif
 
 //---------------------------------------------
-class ofVideoPlayer : public ofBaseVideoPlayer, public ofBaseDraws, public ofBaseHasTexture{
+class ofVideoPlayer : public ofBaseVideoPlayer,public ofBaseVideoDraws{
 
 	public:
 

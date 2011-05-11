@@ -283,6 +283,18 @@ void ofNotifyWindowResized(int width, int height){
 }
 
 //------------------------------------------
+void ofNotifyDragEvent(ofDragInfo info){
+	ofBaseApp * ofAppPtr = ofGetAppPtr();
+	if(ofAppPtr){
+		ofAppPtr->dragEvent(info);
+	}
+	
+	#ifdef OF_USING_POCO
+		ofNotifyEvent(ofEvents.fileDragEvent, info);
+	#endif
+}
+
+//------------------------------------------
 void ofSendMessage(ofMessage msg){
 	ofBaseApp * ofAppPtr = ofGetAppPtr();
 	if(ofAppPtr){

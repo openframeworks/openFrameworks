@@ -87,3 +87,9 @@ void testApp::deviceOrientationChanged(int newOrientation){
 	sprintf(eventString, "alert - orientation change to %i", newOrientation);
 }
 
+
+//--------------------------------------------------------------
+void testApp::touchCancelled(ofTouchEventArgs& args){
+
+}
+

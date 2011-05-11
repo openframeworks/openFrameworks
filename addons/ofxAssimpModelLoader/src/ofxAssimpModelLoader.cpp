@@ -144,7 +144,7 @@ bool ofxAssimpModelLoader::loadModel(string modelName, bool optimize){
     filepath = ofToDataPath(modelName);
 	
 	//theo added - so we can have models and their textures in sub folders
-	modelFolder = ofFileUtils::getEnclosingDirectoryFromPath(filepath);
+	modelFolder = ofFilePath::getEnclosingDirectory(filepath);
 
     ofLog(OF_LOG_VERBOSE, "loading model %s", filepath.c_str());
     ofLog(OF_LOG_VERBOSE, "loading from folder %s", modelFolder.c_str());
@@ -306,9 +306,9 @@ void ofxAssimpModelLoader::loadGLResources(){
             // This is magic. Thanks Kyle.
 
             ofLog(OF_LOG_VERBOSE, "loading image from %s", texPath.data);
-            string modelFolder = ofFileUtils::getEnclosingDirectoryFromPath(filepath);
+            string modelFolder = ofFilePath::getEnclosingDirectory(filepath);
 
-			if(ofFileUtils::isAbsolute(texPath.data) && ofFileUtils::doesFileExist(texPath.data)) {
+			if(ofFilePath::isAbsolute(texPath.data) && ofFile::doesFileExist(texPath.data)) {
 				if(!ofLoadImage(meshHelper.texture,texPath.data)){
 					ofLog(OF_LOG_ERROR,string("error loading image ") + texPath.data);
 				}

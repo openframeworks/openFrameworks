@@ -291,6 +291,59 @@ ofImage::ofImage(){
 }
 
 //----------------------------------------------------------
+ofImage::ofImage(const ofPixels & pix){
+	width						= 0;
+	height						= 0;
+	bpp							= 0;
+	type						= OF_IMAGE_UNDEFINED;
+	bUseTexture					= true;		// the default is, yes, use a texture
+
+	//----------------------- init free image if necessary
+	initFreeImage();
+
+#ifdef TARGET_ANDROID
+	all_images.insert(this);
+#endif
+
+	setFromPixels(pix);
+}
+
+
+ofImage::ofImage(const ofFile & file){
+	width						= 0;
+	height						= 0;
+	bpp							= 0;
+	type						= OF_IMAGE_UNDEFINED;
+	bUseTexture					= true;		// the default is, yes, use a texture
+
+	//----------------------- init free image if necessary
+	initFreeImage();
+
+#ifdef TARGET_ANDROID
+	all_images.insert(this);
+#endif
+
+	loadImage(file);
+}
+
+ofImage::ofImage(const string & filename){
+	width						= 0;
+	height						= 0;
+	bpp							= 0;
+	type						= OF_IMAGE_UNDEFINED;
+	bUseTexture					= true;		// the default is, yes, use a texture
+
+	//----------------------- init free image if necessary
+	initFreeImage();
+
+#ifdef TARGET_ANDROID
+	all_images.insert(this);
+#endif
+
+	loadImage(filename);
+}
+
+//----------------------------------------------------------
 ofImage& ofImage::operator=(const ofImage& mom) {
 	clone(mom);
 	update();
@@ -319,6 +372,11 @@ void ofImage::reloadTexture(){
 	if (pixels.isAllocated() == true && bUseTexture == true){
 		tex.allocate(pixels.getWidth(), pixels.getHeight(), pixels.getGlDataType());
 	}
+}
+
+//----------------------------------------------------------
+bool ofImage::loadImage(const ofFile & file){
+	return loadImage(file.getAbsolutePath());
 }
 
 //----------------------------------------------------------
@@ -356,6 +414,11 @@ void ofImage::saveImage(string fileName, ofImageQualityType qualityLevel){
 //----------------------------------------------------------
 void ofImage::saveImage(ofBuffer & buffer, ofImageQualityType qualityLevel){
 	ofSaveImage(pixels, buffer, qualityLevel);
+}
+
+//----------------------------------------------------------
+void ofImage::saveImage(const ofFile & file, ofImageQualityType compressionLevel){
+	ofSaveImage(pixels,file.getAbsolutePath(),compressionLevel);
 }
 
 //we could cap these values - but it might be more useful
@@ -493,6 +556,17 @@ void  ofImage::setFromPixels(unsigned char * newPixels, int w, int h, ofImageTyp
 }
 
 //------------------------------------
+void ofImage::setFromPixels(const ofPixels & pixels){
+	setFromPixels(pixels.getPixels(),pixels.getWidth(),pixels.getHeight(),pixels.getImageType());
+}
+
+//------------------------------------
+ofImage & ofImage::operator=(ofPixels & pixels){
+	setFromPixels(pixels);
+	return *this;
+}
+
+//------------------------------------
 void ofImage::update(){
 
 	if (pixels.isAllocated() && bUseTexture){
@@ -575,6 +649,7 @@ void ofImage::setImageType(ofImageType newType){
 
 //------------------------------------
 void ofImage::resize(int newWidth, int newHeight){
+	if(newWidth == width && newHeight == height) return;
 
 	resizePixels(pixels, newWidth, newHeight);
 

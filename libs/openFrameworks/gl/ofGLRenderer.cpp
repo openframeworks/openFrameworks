@@ -976,7 +976,7 @@ void ofGLRenderer::drawString(string textString, float x, float y, float z, ofDr
 
 	// (c) enable texture once before we start drawing each char (no point turning it on and off constantly)
 	//We do this because its way faster
-	ofDrawBitmapCharacterStart();
+	ofDrawBitmapCharacterStart(textString.size());
 
 	for(int c = 0; c < len; c++){
 		if(textString[c] == '\n'){
@@ -990,7 +990,7 @@ void ofGLRenderer::drawString(string textString, float x, float y, float z, ofDr
 			// solves a bug with control characters
 			// getting drawn when they ought to not be
 			ofDrawBitmapCharacter(textString[c], (int)sx, (int)sy);
-
+						
 			sx += fontSize;
 		}
 	}

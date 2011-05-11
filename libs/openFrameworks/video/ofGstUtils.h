@@ -119,9 +119,9 @@ public:
 
 	// this events happen in a different thread
 	// do not use them for opengl stuff
-	ofEvent<const ofPixels> prerollEvent;
-	ofEvent<const ofPixels> bufferEvent;
-	ofEvent<const ofEventArgs> eosEvent;
+	ofEvent<ofPixels> prerollEvent;
+	ofEvent<ofPixels> bufferEvent;
+	ofEvent<ofEventArgs> eosEvent;
 
 protected:
 	GstFlowReturn 	preroll_cb(GstBuffer * buffer);

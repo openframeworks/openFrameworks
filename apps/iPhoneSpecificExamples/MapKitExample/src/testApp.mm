@@ -167,3 +167,9 @@ void testApp::deviceOrientationChanged(int newOrientation){
 }
 
 
+
+//--------------------------------------------------------------
+void testApp::touchCancelled(ofTouchEventArgs& args){
+
+}
+

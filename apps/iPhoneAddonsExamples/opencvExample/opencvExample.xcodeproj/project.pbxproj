@@ -68,7 +68,7 @@
 		E47DB78F12E215F50019AE15 /* ofxCvShortImage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E47DB74E12E215F40019AE15 /* ofxCvShortImage.cpp */; };
 		E496D5B11252C8210098A2B3 /* glu-iphone.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E496D5AF1252C8210098A2B3 /* glu-iphone.a */; };
 		E496D5B21252C8210098A2B3 /* glu.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E496D5B01252C8210098A2B3 /* glu.a */; };
-		E49BCC7A12554CD6009F19D0 /* libofxiPhone_iphoneos_Release.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E49BCC5012554B6A009F19D0 /* libofxiPhone_iphoneos_Release.a */; };
+		E49BCC7A12554CD6009F19D0 /* libofxiPhone_iphoneos_Debug.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E49BCC5012554B6A009F19D0 /* libofxiPhone_iphoneos_Debug.a */; };
 		E4A8229F12560AFE002F86A2 /* freetype.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E4A8229E12560AFE002F86A2 /* freetype.a */; };
 		E4A8235E12561BC4002F86A2 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E4A8235B12561BC4002F86A2 /* AVFoundation.framework */; };
 		E4A8235F12561BC4002F86A2 /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E4A8235C12561BC4002F86A2 /* CoreMedia.framework */; };
@@ -245,7 +245,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E49BCC7A12554CD6009F19D0 /* libofxiPhone_iphoneos_Release.a in Frameworks */,
+				E49BCC7A12554CD6009F19D0 /* libofxiPhone_iphoneos_Debug.a in Frameworks */,
 				1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */,
 				1DF5F4E00D08C38300B7A737 /* UIKit.framework in Frameworks */,
 				288765FD0DF74451002DB57D /* CoreGraphics.framework in Frameworks */,
@@ -778,7 +778,7 @@
 		E49BCC4912554B69009F19D0 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				E49BCC5012554B6A009F19D0 /* libofxiPhone_iphoneos_Release.a */,
+				E49BCC5012554B6A009F19D0 /* libofxiPhone_iphoneos_Debug.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -855,10 +855,10 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		E49BCC5012554B6A009F19D0 /* libofxiPhone_iphoneos_Release.a */ = {
+		E49BCC5012554B6A009F19D0 /* libofxiPhone_iphoneos_Debug.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = libofxiPhone_iphoneos_Release.a;
+			path = libofxiPhone_iphoneos_Debug.a;
 			remoteRef = E49BCC4F12554B6A009F19D0 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
@@ -973,7 +973,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Theodore Watson (E5V2NH2VU3)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COMPRESS_PNG_FILES = NO;
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -1012,9 +1012,10 @@
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_LDFLAGS = "-ObjC";
 				PREBINDING = NO;
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "BBCEFA1A-F43D-401A-95AF-AF85F2B037E0";
-				SDKROOT = iphoneos4.1;
-				TARGETED_DEVICE_FAMILY = 1;
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALID_ARCHS = "armv6 armv7";
 				WARNING_LDFLAGS = "";
 			};
 			name = Debug;
@@ -1023,7 +1024,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Theodore Watson (E5V2NH2VU3)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COMPRESS_PNG_FILES = NO;
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_DYNAMIC_NO_PIC = YES;
@@ -1058,9 +1059,10 @@
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_LDFLAGS = "-ObjC";
 				PREBINDING = NO;
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "BBCEFA1A-F43D-401A-95AF-AF85F2B037E0";
-				SDKROOT = iphoneos4.1;
-				TARGETED_DEVICE_FAMILY = 1;
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALID_ARCHS = "armv6 armv7";
 			};
 			name = Release;
 		};
@@ -1068,7 +1070,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_UNIVERSAL_IPHONE_OS)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Theodore Watson (E5V2NH2VU3)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COMPRESS_PNG_FILES = NO;
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_DYNAMIC_NO_PIC = YES;
@@ -1103,9 +1105,10 @@
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_LDFLAGS = "-ObjC";
 				PREBINDING = NO;
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "BBCEFA1A-F43D-401A-95AF-AF85F2B037E0";
-				SDKROOT = iphoneos4.1;
-				TARGETED_DEVICE_FAMILY = 1;
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALID_ARCHS = "armv6 armv7";
 			};
 			name = ReleaseArmv7;
 		};

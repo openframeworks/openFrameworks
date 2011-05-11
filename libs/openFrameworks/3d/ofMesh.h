@@ -65,6 +65,8 @@ public:
 	void setIndex(int i, ofIndexType val);
 	void clearIndices();
 	
+    void addTriangle(ofIndexType index1, ofIndexType index2, ofIndexType index3);
+	
 	int getNumVertices() const;
 	int getNumColors() const;
 	int getNumNormals() const;
