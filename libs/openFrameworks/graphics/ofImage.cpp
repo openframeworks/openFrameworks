@@ -68,6 +68,31 @@ void ofInitFreeImage(bool deinit=false){
 	}
 }
 
+template <typename T>
+FREE_IMAGE_TYPE getFreeImageType(ofPixels_<T>& pix);
+
+template <>
+FREE_IMAGE_TYPE getFreeImageType(ofPixels& pix) {
+	return FIT_BITMAP;
+}
+
+template <>
+FREE_IMAGE_TYPE getFreeImageType(ofShortPixels& pix) {
+	switch(pix.getNumChannels()) {
+		case 1: return FIT_UINT16;
+		case 3: return FIT_RGB16;
+		case 4: return FIT_RGBA16;
+	}
+}
+template <>
+FREE_IMAGE_TYPE getFreeImageType(ofFloatPixels& pix) {
+	switch(pix.getNumChannels()) {
+		case 1: return FIT_FLOAT;
+		case 3: return FIT_RGBF;
+		case 4: return FIT_RGBAF;
+	}
+}
+
 //----------------------------------------------------
 template<typename T>
 FIBITMAP* getBmpFromPixels(ofPixels_<T> &pix){	
@@ -79,6 +104,12 @@ FIBITMAP* getBmpFromPixels(ofPixels_<T> &pix){
 	unsigned int bpp = pix.getBitsPerPixel();
 	
 	FIBITMAP* bmp = FreeImage_ConvertFromRawBits(pixels, w, h, pitch, bpp, 0,0,0, true);
+
+	BITMAPINFOHEADER* header;
+	header = FreeImage_GetInfoHeader(bmp);
+	//ofLogVerbose() << "getBmpFromPixels(" << bpp << ") is " << header->biSize << ", " << header->biPlanes << ", " << header->biBitCount << ", " << header->biCompression << ", " << header->biSizeImage;
+	//header->biBitCount = bpp;
+	//header->biPlanes = pix.getNumChannels();
 	
 	// {afaict, this paletting code isn't necessary anymore - kyle, may 2011}
 	// this is for grayscale images they need to be paletted from: http://sourceforge.net/forum/message.php?msg_id=2856879
@@ -100,8 +131,11 @@ void putBmpIntoPixels(FIBITMAP * bmp, ofPixels_<T> &pix, bool swapForLittleEndia
 	unsigned int width = FreeImage_GetWidth(bmp);
 	unsigned int height = FreeImage_GetHeight(bmp);
 	unsigned int bpp = FreeImage_GetBPP(bmp);
-	unsigned int channels = bpp / sizeof(T) / 8;
-	unsigned int pitch = width * bpp / 8;
+	unsigned int channels = (bpp / sizeof(T)) / 8;
+	unsigned int pitch = (width * bpp) / 8;
+	
+	//BITMAPINFOHEADER* header = FreeImage_GetInfoHeader(bmp);
+	//ofLogVerbose() << "putBmpIntoPixels(" << bpp << " / " << channels << ") is " << header->biSize << ", " << header->biPlanes << ", " << header->biBitCount << ", " << header->biCompression << ", " << header->biSizeImage;
 
 	pix.allocate(width, height, channels);
 	FreeImage_ConvertToRawBits((uint8_t*) pix.getPixels(), bmp, pitch, bpp, FI_RGBA_RED_MASK, FI_RGBA_GREEN_MASK, FI_RGBA_BLUE_MASK, true);
