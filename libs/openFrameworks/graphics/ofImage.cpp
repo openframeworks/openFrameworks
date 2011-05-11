@@ -99,17 +99,15 @@ FIBITMAP* getBmpFromPixels(ofPixels_<T> &pix){
 	unsigned char* pixels = (unsigned char*) pix.getPixels();
 	int w = pix.getWidth();
 	int h = pix.getHeight();
-	unsigned int bytesPerPixel = pix.getBytesPerPixel();
-	int pitch = w * bytesPerPixel;
 	unsigned int bpp = pix.getBitsPerPixel();
 	
-	FIBITMAP* bmp = FreeImage_ConvertFromRawBits(pixels, w, h, pitch, bpp, 0,0,0, true);
-
-	BITMAPINFOHEADER* header;
-	header = FreeImage_GetInfoHeader(bmp);
-	//ofLogVerbose() << "getBmpFromPixels(" << bpp << ") is " << header->biSize << ", " << header->biPlanes << ", " << header->biBitCount << ", " << header->biCompression << ", " << header->biSizeImage;
-	//header->biBitCount = bpp;
-	//header->biPlanes = pix.getNumChannels();
+	FREE_IMAGE_TYPE freeImageType = getFreeImageType(pix);
+	FIBITMAP* bmp = FreeImage_AllocateT(freeImageType, w, h, bpp);
+	unsigned char* bmpBits = FreeImage_GetBits(bmp);
+	if(bmpBits != NULL) {
+		memcpy(bmpBits, pixels, w * h * pix.getBytesPerPixel());
+		FreeImage_FlipVertical(bmp);
+	}
 	
 	// {afaict, this paletting code isn't necessary anymore - kyle, may 2011}
 	// this is for grayscale images they need to be paletted from: http://sourceforge.net/forum/message.php?msg_id=2856879
