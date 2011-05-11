@@ -66,6 +66,24 @@ namespace ofxCv {
 	void convertColor(Mat src, Mat dst, int code); // CV_RGB2GRAY, CV_HSV2RGB, etc. with [RGB, BGR, GRAY, HSV, HLS, XYZ, YCrCb, Lab, Luv]
 
 // 3 toCv-compatible wrappers
+
+	template <class SrcType, class DstType>
+	void threshold(SrcType& src, DstType& dst, float thresholdValue, bool invert = false) {
+		return threshold(toCv(src), toCv(dst), thresholdValue, invert);
+	}
+	
+	template <class SrcDstType>
+	void threshold(SrcDstType& srcDst, float thresholdValue, bool invert = false) {
+		return threshold(toCv(srcDst), toCv(srcDst), thresholdValue, invert);
+	}
+	
+	template <class SrcType, class DstType>
+	void convertColor(SrcType& src, DstType& dst, int code) {
+		return convertColor(toCv(src), toCv(dst), code);
+	}
+
+	// older wrappers, need to be split into two parts
+	// {
 	void invert(ofImage& img);
 	void rotate(ofImage& source, ofImage& destination, double angle, unsigned char fill = 0, int interpolation = INTER_LINEAR);
 	void autorotate(ofImage& original, ofImage& thresh, ofImage& output, float* rotation = NULL);
@@ -83,8 +101,7 @@ namespace ofxCv {
 	void warpPerspective(ofPixels& src, ofPixels& dst, Mat& m, int flags = 0);
 	void resize(ofImage& source, ofImage& destination, int interpolation = INTER_LINEAR); // options: INTER_NEAREST, INTER_LINEAR, INTER_AREA, INTER_CUBIC, INTER LANCZOS4
 	void resize(ofImage& source, ofImage& destination, float xScale, float yScale, int interpolation = INTER_LINEAR);
-	
-//
+	// }
 
 // 4 misc
 	void loadImage(Mat& mat, string filename);

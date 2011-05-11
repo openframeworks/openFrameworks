@@ -12,6 +12,6 @@ public:
 	void draw();
 	void keyPressed(int key);
 	
-	ofImage bayer, rgb, yuv;
+	ofImage bayer, rgb;
 	int bayerType;
 };

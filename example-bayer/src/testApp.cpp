@@ -5,7 +5,6 @@ void testApp::setup() {
 
 	bayer.loadImage("bayer.png");
 	rgb.loadImage("rgb.png");
-	yuv.loadImage("yuv.png");
 	
 	bayerType = 0;
 }
@@ -19,18 +18,15 @@ void testApp::update() {
 		case 3: code = CV_BayerGR2RGB; break;
 	}
 	
-	Mat bayerMat = toCv(bayer);
-	Mat rgbMat = toCv(rgb);
-	cvtColor(bayerMat, rgbMat, code);
+	convertColor(bayer, rgb, code);
 	rgb.update();
 }
 
 void testApp::draw() {
-	rgb.draw(0, 0);
-	ofTranslate(rgb.getWidth(), 0);
 	bayer.draw(0, 0);
+	ofTranslate(rgb.getWidth(), 0);
+	rgb.draw(0, 0);
 	ofTranslate(bayer.getWidth(), 0);
-	yuv.draw(0, 0);
 }
 
 void testApp::keyPressed(int key) {
