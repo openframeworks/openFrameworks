@@ -23,8 +23,6 @@ public:
 	template<typename T2>
 	ofPixels_<T>& operator=(const ofPixels_<T2> & mom);
 
-
-
 	void allocate(int w, int h, int channels);
 	void allocate(int w, int h, ofPixelFormat type);
 	void allocate(int w, int h, ofImageType type);
@@ -75,7 +73,6 @@ private:
 	int width;
 	int height;
 
-	int bytesPerChannel; // 1, 2, 4 bytes per pixel (unsigned char, unsigned short, float)
 	int channels; // 1, 3, 4 channels per pixel (grayscale, rgb, rgba)
 	//GLint	glDataType;			// GL_LUMINANCE, GL_RGB, GL_RGBA
 	//ofImageType imageType;		// OF_IMAGE_GRAYSCALE, OF_IMAGE_COLOR, OF_IMAGE_COLOR_ALPHA
@@ -98,41 +95,40 @@ typedef ofPixels& ofPixelsRef;
 //
 // ofPixels pix;
 // ofFloatPixels pixf;
-// pix = pixf
+// pix = pixf;
 
-template<typename T>
-template<typename T2>
-ofPixels_<T>::ofPixels_(const ofPixels_<T2> & mom){
+template<typename DstType>
+template<typename SrcType>
+ofPixels_<DstType>::ofPixels_(const ofPixels_<SrcType> & mom){
 	(*this).template copyFrom( mom );
 }
 
-template<typename T>
-template<typename T2>
-ofPixels_<T>& ofPixels_<T>::operator=(const ofPixels_<T2> & mom){
+template<typename DstType>
+template<typename SrcType>
+ofPixels_<DstType>& ofPixels_<DstType>::operator=(const ofPixels_<SrcType> & mom){
 	(*this).template copyFrom( mom );
 	return *this;
 }
 
-template<typename T>
-template<typename T2>
-void ofPixels_<T>::copyFrom(const ofPixels_<T2> & mom){
+template<typename DstType>
+template<typename SrcType>
+void ofPixels_<DstType>::copyFrom(const ofPixels_<SrcType> & mom){
 	if(mom.isAllocated()){
-		bytesPerChannel = sizeof(T);
 		allocate(mom.getWidth(),mom.getHeight(),mom.getNumChannels());
 
 		float factor;
 
-		if(sizeof(T2)==4){
+		if(sizeof(SrcType)==4){
 			//float so values are normalized
-			factor = numeric_limits<T>::max();
-		}else if(sizeof(T)==4){
-			factor = 1.f/float(numeric_limits<T2>::max());
+			factor = numeric_limits<DstType>::max();
+		}else if(sizeof(DstType)==4){
+			factor = 1.f/float(numeric_limits<SrcType>::max());
 		}else{
-			factor = float(numeric_limits<T>::max())/float(std::numeric_limits<T2>::max());
+			factor = float(numeric_limits<DstType>::max()) / float(numeric_limits<SrcType>::max());
 		}
 
-		for(int i=0; i<mom.size(); i++){
-			pixels[i] = mom[i]*factor;
+		for(int i = 0; i < mom.size(); i++){
+			pixels[i] = mom[i] * factor;
 		}
 	}
 }

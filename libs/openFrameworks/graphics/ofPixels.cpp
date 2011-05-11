@@ -5,7 +5,6 @@ template<typename T>
 ofPixels_<T>::ofPixels_(){
 	bAllocated = false;
 	pixelsOwner = false;
-	bytesPerChannel = sizeof(T);
 	channels = 0;
 	pixels = NULL;
 	clear();
@@ -283,7 +282,7 @@ int ofPixels_<T>::getHeight() const{
 
 template<typename T>
 int ofPixels_<T>::getBytesPerPixel() const{
-	return bytesPerChannel * channels;
+	return getBytesPerChannel() * channels;
 }
 
 template<typename T>
@@ -293,7 +292,7 @@ int ofPixels_<T>::getBitsPerPixel() const{
 
 template<typename T>
 int ofPixels_<T>::getBytesPerChannel() const{
-	return bytesPerChannel;
+	return sizeof(T);
 }
 
 template<typename T>
