@@ -18,17 +18,15 @@ ofPixels_<T>::~ofPixels_(){
 	clear();
 }
 
-
 template<typename T>
 ofPixels_<T>::ofPixels_(const ofPixels_<T> & mom){
-	copyFrom( mom );
+	(*this).template copyFrom( mom );
 }
-
 
 template<typename T>
 ofPixels_<T>& ofPixels_<T>::operator=(const ofPixels_<T> & mom){
-	if(&mom==this) return * this;
-	copyFrom( mom );
+	if(this==&mom) return * this;
+	(*this).template copyFrom( mom );
 	return *this;
 }
 
@@ -41,7 +39,6 @@ void ofPixels_<T>::copyFrom(const ofPixels_<T> & mom){
 		memcpy(pixels,mom.getPixels(),mom.getWidth()*mom.getHeight()*mom.getBytesPerPixel());
 	}
 }
-
 
 template<typename T>
 void ofPixels_<T>::set(T val){
@@ -266,6 +263,11 @@ T & ofPixels_<T>::operator[](int pos){
 }
 
 template<typename T>
+const T & ofPixels_<T>::operator[](int pos) const{
+	return pixels[pos];
+}
+
+template<typename T>
 bool ofPixels_<T>::isAllocated() const{
 	return bAllocated;
 }
@@ -317,6 +319,11 @@ ofImageType ofPixels_<T>::getImageType() const{
 	default:
 		return OF_IMAGE_UNDEFINED;
 	}
+}
+
+template<typename T>
+int ofPixels_<T>::size() const{
+	return width*height*channels;
 }
 
 template class ofPixels_<unsigned char>;

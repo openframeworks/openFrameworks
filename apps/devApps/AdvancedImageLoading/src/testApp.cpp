@@ -1,23 +1,22 @@
 #include "testApp.h"
 
 template <class T>
-void loadImages(string directory, vector<ofImage_<T>*>& images) {
+void loadImages(string directory, vector<ofImage_<T> >& images) {
 	ofDirectory dir;
 	dir.listDir(directory);
 	dir.sort();
 	images.resize(dir.size());
-	for(int i = 0; i < dir.size(); i++) {
-		images[i] = new ofImage_<T>();
-		images[i]->loadImage(dir.getFile(i));
+	for(int i = 0; i < (int)dir.size(); i++) {
+		images[i].loadImage(dir.getFile(i));
 	}
 }
 
 template <class T>
-void drawImages(string name, vector<ofImage_<T>*>& images) {
+void drawImages(string name, vector<ofImage_<T> >& images) {
 	float offset = 0;
-	for(int i = 0; i < images.size(); i++) {
-		images[i]->draw(offset, 0);
-		offset += images[i]->getWidth();
+	for(int i = 0; i < (int)images.size(); i++) {
+		images[i].draw(offset, 0);
+		offset += images[i].getWidth();
 		if(offset > ofGetWidth()) {
 			offset = 0;
 			ofTranslate(0, 32);
@@ -27,10 +26,14 @@ void drawImages(string name, vector<ofImage_<T>*>& images) {
 }
 
 void testApp::setup() {	
+	ofSetFrameRate(12);
 	loadImages("jpg8", jpg8);
 	loadImages("png8", png8);
 	loadImages("png16", png16);
 	loadImages("exrFloat", exrFloat);
+
+	img8 = exrFloat[0];
+	imgf = png16[2];
 }
 
 void testApp::update() {
@@ -51,4 +54,7 @@ void testApp::draw() {
 	drawImages("png16", png16);
 	ofTranslate(0, 40);
 	drawImages("exrFloat", exrFloat);
+
+	img8.draw(exrFloat[0].getWidth()+20,40,240,240);
+	imgf.draw(exrFloat[0].getWidth()+20,300,240,240);
 }
