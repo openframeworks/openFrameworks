@@ -14,38 +14,10 @@
 #include "ofImage.h"
 
 /*
- some things for ofxCv to solve:
- 1 wrap complex things in an easy way: easier functions, and provide demos
- 2 buffer management (is this still necessary in cv2?)
- 3 make it more obvious what's available (e.g., member methods)
- 4 lightweight CV <-> OF datatype conversion
- 
- best thing would be being able to use opencv but with ofImages...
- 
- e.g.:
- ofImage img;
- img.loadImage("img.png");
- cv::bitwise_not(img, img);
- // but, more likely
- cv::bitwise_not(ofMat(img), ofMat(img));
- // and: class ofMat : public Mat {ofMat(ofImage& img);};
- 
  all functions guarantee internally that the output images imitates input
  there should be a ton more const functions, but it's hard because of OF const issues
  need to print better errors than default opencv errors...?
- if ofMat has a buffer image in it, then every function that needs a buffer can use that?
- 
- a good reference for ocv2 design is cinder's implementation:
- https://github.com/cinder/Cinder-OpenCV/blob/master/include/CinderOpenCV.h
- the naming is nice because it's very consistent: toThis, fromThat, etc
- maybe only 'to' makes it cleaner. toOf and toCv
- but it's a bit odd to distinguish between sources and targets, if it can be avoided
- 
- externally facing functions should use cv datatypes
- and you should be obliged to say toOf or toCv if you want to use ofxCv
- 
- alternatively, you can create an ofxMat that has the various functions as member methods
- */
+*/
 
 namespace ofxCv {
 	

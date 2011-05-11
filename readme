@@ -1,1 +1,15 @@
-This addon represents an alternative approach to wrapping OpenCV for openFrameworks. I don't encourage anyone to use it at the moment, as it is undergoing heavy development and constant refactoring. Suggestions, however, are welcome.
+This addon represents an alternative approach to wrapping OpenCV for openFrameworks.
+
+It is being designed for openFrameworks 007+ compatibility only. I don't recommend using ofxCv until 007 is released.
+
+ofxCv currently expects you to have a copy of the ofxOpenCv addon, and ofxCv will used the static libraries in ofxOpenCv/libs.
+
+- - --
+
+Here are some things ofxCv aims to solve:
+
+1 Wrap complex things in an easy way. Sometimes this means providing wrapper functions that require fewer arguments than the real CV functions. Sometimes it means providing a smart interface that handles dynamic memory allocation to make things faster for you.
+
+2 Making it obvious what you can do with CV. This means naming things in an intuitive way, and, more importantly, providing classes that have methods that transform the data represented by that class. It also means providing demos of CV functions.
+
+3 Making it easy to work directly with CV by providing lightweight conversion functions, and providing wrappers for CV functions that do the conversions for you.
