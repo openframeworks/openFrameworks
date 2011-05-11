@@ -6,7 +6,6 @@ ofPixels_<T>::ofPixels_(){
 	bAllocated = false;
 	pixelsOwner = false;
 	bytesPerChannel = sizeof(T);
-	bitsPerChannel = bytesPerChannel*8;
 	channels = 0;
 	pixels = NULL;
 	clear();
@@ -25,33 +24,33 @@ ofPixels_<T>::ofPixels_(const ofPixels_<T> & mom){
 
 template<typename T>
 ofPixels_<T>& ofPixels_<T>::operator=(const ofPixels_<T> & mom){
-	if(this==&mom) return * this;
+	if(this==&mom) {
+		return * this;
+	}
 	(*this).template copyFrom( mom );
 	return *this;
 }
 
 template<typename T>
 void ofPixels_<T>::copyFrom(const ofPixels_<T> & mom){
-	if(mom.isAllocated()){
-		bytesPerChannel = sizeof(T);
-		bitsPerChannel = bytesPerChannel*8;
-		allocate(mom.getWidth(),mom.getHeight(),mom.getNumChannels());
-		memcpy(pixels,mom.getPixels(),mom.getWidth()*mom.getHeight()*mom.getBytesPerPixel());
+	if(mom.isAllocated()) {
+		allocate(mom.getWidth(), mom.getHeight(), mom.getNumChannels());
+		memcpy(pixels, mom.getPixels(), mom.getWidth() * mom.getHeight() * mom.getBytesPerPixel());
 	}
 }
 
 template<typename T>
 void ofPixels_<T>::set(T val){
-	int size = width*height*channels;
-	for(int i=0;i<size;i++){
+	int size = width * height * channels;
+	for(int i = 0; i < size; i++){
 		pixels[i] = val;
 	}
 }
 
 template<typename T>
 void ofPixels_<T>::setFromPixels(const T * newPixels,int w, int h, int channels){
-	allocate(w,h,channels);
-	memcpy(pixels,newPixels,w*h*channels*bytesPerChannel);
+	allocate(w, h, channels);
+	memcpy(pixels, newPixels, w * h * getBytesPerPixel());
 }
 
 template<typename T>
@@ -88,13 +87,13 @@ void ofPixels_<T>::setFromExternalPixels(T * newPixels,int w, int h, int _channe
 template<typename T>
 void ofPixels_<T>::setFromAlignedPixels(const T * newPixels,int w, int h, int channels, int widthStep){
 	allocate(w,h,channels);
-	if(widthStep==width*bytesPerChannel*channels){
+	if(widthStep == width * getBytesPerPixel()){
 		setFromPixels(newPixels,w,h,channels);
 	}else{
 		for( int i = 0; i < height; i++ ) {
-			memcpy( pixels + (i*width*bytesPerChannel*channels),
+			memcpy( pixels + (i * width * getBytesPerPixel()),
 					newPixels + (i*widthStep),
-					width*bytesPerChannel*channels );
+					width * getBytesPerPixel());
 		}
 	}
 
@@ -119,11 +118,12 @@ void ofPixels_<T>::allocate(int w, int h, int bitsPerPixel){
 
 template<typename T>
 void ofPixels_<T>::allocate(int w, int h, int _channels){
-
-	if (w < 0 || h < 0) return;
+	if (w < 0 || h < 0) {
+		return;
+	}
 
 	//we check if we are already allocated at the right size
-	if(bAllocated && w==width && h==height && channels==_channels){
+	if(bAllocated && w == width && h == height && channels ==_channels){
 		return; //we don't need to allocate
 	}
 
@@ -134,10 +134,9 @@ void ofPixels_<T>::allocate(int w, int h, int _channels){
 	width= w;
 	height = h;
 
-	pixels = new T[w*h*channels];
+	pixels = new T[w * h * channels];
 	bAllocated = true;
 	pixelsOwner = true;
-
 }
 
 
@@ -289,7 +288,7 @@ int ofPixels_<T>::getBytesPerPixel() const{
 
 template<typename T>
 int ofPixels_<T>::getBitsPerPixel() const{
-	return bitsPerChannel * channels;
+	return getBitsPerChannel() * channels;
 }
 
 template<typename T>
@@ -299,7 +298,7 @@ int ofPixels_<T>::getBytesPerChannel() const{
 
 template<typename T>
 int ofPixels_<T>::getBitsPerChannel() const{
-	return bitsPerChannel;
+	return getBytesPerChannel() * 8;
 }
 
 template<typename T>
