@@ -69,13 +69,14 @@ void ofInitFreeImage(bool deinit=false){
 }
 
 //----------------------------------------------------
-FIBITMAP *  getBmpFromPixels(ofPixels &pix){
+template<typename T>
+FIBITMAP *  getBmpFromPixels(ofPixels_<T> &pix){
 
 	FIBITMAP * bmp = NULL;
 
 	int w						= pix.getWidth();
 	int h						= pix.getHeight();
-	unsigned char * pixels		= pix.getPixels();
+	unsigned char * pixels		= (unsigned char*)pix.getPixels();
 	int bpp						= pix.getBitsPerPixel();
 	int bytesPerPixel			= pix.getBytesPerPixel();
 
@@ -95,61 +96,29 @@ FIBITMAP *  getBmpFromPixels(ofPixels &pix){
 }
 
 //----------------------------------------------------
-FIBITMAP *  getBmpFromPixels(ofFloatPixels &pix){
-/*  TODO:
-	FIBITMAP * bmp = NULL;
+template<typename T>
+void putBmpIntoPixels(FIBITMAP * bmp, ofPixels_<T> &pix, bool swapForLittleEndian = true){
+	unsigned int width = FreeImage_GetWidth(bmp);
+	unsigned int height = FreeImage_GetHeight(bmp);
+	unsigned int bpp = FreeImage_GetBPP(bmp);
+	unsigned int channels = bpp / sizeof(T) / 8;
+	unsigned int pitch = width * bpp / 8;
 
-	int w						= pix.getWidth();
-	int h						= pix.getHeight();
-	unsigned char * pixels		= pix.getPixels();
-	int bpp						= pix.getBitsPerPixel();
-	int bytesPerPixel			= pix.getBytesPerPixel();
+	ofLogVerbose() << "putBmpIntoPixels: float , w" << width << "h" << height << "bpp" << bpp << "channels" << channels << "pitch" << pitch;
 
-	bmp							= FreeImage_ConvertFromRawBits(pixels, w,h, w*bytesPerPixel, bpp, 0,0,0, true);
+	pix.allocate(width, height, channels);
+	FreeImage_ConvertToRawBits((uint8_t*) pix.getPixels(), bmp, pitch, bpp, FI_RGBA_RED_MASK, FI_RGBA_GREEN_MASK, FI_RGBA_BLUE_MASK, true);
 
-	//this is for grayscale images they need to be paletted from: http://sourceforge.net/forum/message.php?msg_id=2856879
-	if( pix.getImageType() == OF_IMAGE_GRAYSCALE ){
-		RGBQUAD *pal = FreeImage_GetPalette(bmp);
-		for(int i = 0; i < 256; i++) {
-			pal[i].rgbRed = i;
-			pal[i].rgbGreen = i;
-			pal[i].rgbBlue = i;
-		}
+#ifdef TARGET_LITTLE_ENDIAN
+	if(swapForLittleEndian) {
+		pix.swapRgb();
 	}
-
-	return bmp;*/
-	return NULL;
+#endif
 }
 
 //----------------------------------------------------
-FIBITMAP *  getBmpFromPixels(ofShortPixels &pix){
-/*  TODO:
-	FIBITMAP * bmp = NULL;
-
-	int w						= pix.getWidth();
-	int h						= pix.getHeight();
-	unsigned char * pixels		= pix.getPixels();
-	int bpp						= pix.getBitsPerPixel();
-	int bytesPerPixel			= pix.getBytesPerPixel();
-
-	bmp							= FreeImage_ConvertFromRawBits(pixels, w,h, w*bytesPerPixel, bpp, 0,0,0, true);
-
-	//this is for grayscale images they need to be paletted from: http://sourceforge.net/forum/message.php?msg_id=2856879
-	if( pix.getImageType() == OF_IMAGE_GRAYSCALE ){
-		RGBQUAD *pal = FreeImage_GetPalette(bmp);
-		for(int i = 0; i < 256; i++) {
-			pal[i].rgbRed = i;
-			pal[i].rgbGreen = i;
-			pal[i].rgbBlue = i;
-		}
-	}
-
-	return bmp;*/
-	return NULL;
-}
-
-//----------------------------------------------------
-void putBmpIntoPixels(FIBITMAP * bmp, ofPixels &pix, bool swapForLittleEndian = true){
+template<>
+void putBmpIntoPixels(FIBITMAP * bmp, ofPixels &pix, bool swapForLittleEndian){
 	int width			= FreeImage_GetWidth(bmp);
 	int height			= FreeImage_GetHeight(bmp);
 	int bpp				= FreeImage_GetBPP(bmp);
@@ -189,46 +158,6 @@ void putBmpIntoPixels(FIBITMAP * bmp, ofPixels &pix, bool swapForLittleEndian = 
 		if(swapForLittleEndian)
 			pix.swapRgb();
 	#endif
-}
-
-//----------------------------------------------------
-void putBmpIntoPixels(FIBITMAP * bmp, ofFloatPixels &pix, bool swapForLittleEndian = true){
-	unsigned int width = FreeImage_GetWidth(bmp);
-	unsigned int height = FreeImage_GetHeight(bmp);
-	unsigned int bpp = FreeImage_GetBPP(bmp);
-	unsigned int channels = bpp / sizeof(float) / 8;
-	unsigned int pitch = width * bpp / 8;
-	
-	ofLogVerbose() << "putBmpIntoPixels: float , w" << width << "h" << height << "bpp" << bpp << "channels" << channels << "pitch" << pitch;
-
-	pix.allocate(width, height, channels);
-	FreeImage_ConvertToRawBits((uint8_t*) pix.getPixels(), bmp, pitch, bpp, FI_RGBA_RED_MASK, FI_RGBA_GREEN_MASK, FI_RGBA_BLUE_MASK, true);
-	
-#ifdef TARGET_LITTLE_ENDIAN
-	if(swapForLittleEndian) {
-		pix.swapRgb();
-	}
-#endif
-}
-
-//----------------------------------------------------
-void putBmpIntoPixels(FIBITMAP * bmp, ofShortPixels &pix, bool swapForLittleEndian = true){
-	unsigned int width = FreeImage_GetWidth(bmp);
-	unsigned int height = FreeImage_GetHeight(bmp);
-	unsigned int bpp = FreeImage_GetBPP(bmp);
-	unsigned int channels = bpp / sizeof(unsigned short) / 8;
-	unsigned int pitch = width * bpp / 8;
-	
-	ofLogVerbose() << "putBmpIntoPixels: short, w" << width << "h" << height << "bpp" << bpp << "channels" << channels << "pitch" << pitch;
-
-	pix.allocate(width, height, channels);
-	FreeImage_ConvertToRawBits((uint8_t*) pix.getPixels(), bmp, pitch, bpp, FI_RGBA_RED_MASK, FI_RGBA_GREEN_MASK, FI_RGBA_BLUE_MASK, true);
-	
-#ifdef TARGET_LITTLE_ENDIAN
-	if(swapForLittleEndian) {
-		pix.swapRgb();
-	}
-#endif
 }
 
 template<typename T>
@@ -537,6 +466,7 @@ ofImage_<T>::ofImage_(const string & filename){
 //----------------------------------------------------------
 template<typename T>
 ofImage_<T>& ofImage_<T>::operator=(const ofImage_<T>& mom) {
+	if(&mom==this) return *this;
 	clone(mom);
 	update();
 	return *this;
@@ -861,22 +791,6 @@ void ofImage_<T>::grabScreen(int _x, int _y, int _w, int _h){
 		memcpy(lineb, tempLineOfPix, sizeOfOneLineOfPixels);
 	}
 	delete [] tempLineOfPix;
-	update();
-}
-
-
-//------------------------------------
-template<typename T>
-void ofImage_<T>::clone(const ofImage_<T> &mom){
-
-	pixels = mom.pixels;
-
-	tex.clear();
-	bUseTexture = mom.bUseTexture;
-	if (bUseTexture == true){
-		tex.allocate(pixels.getWidth(), pixels.getHeight(), ofGetGlInternalFormat(pixels));
-	}
-
 	update();
 }
 

@@ -62,8 +62,15 @@ class ofImage_ : public ofBaseImage_<T>{
 		ofImage_(const ofImage_<T>& mom);
 		ofImage_<T>& operator= (const ofImage_<T>& mom);
 
+		template<typename T2>
+		ofImage_(const ofImage_<T2>& mom);
+
+		template<typename T2>
+		ofImage_<T>& operator= (const ofImage_<T2>& mom);
+
 		// copying:
-		void 				clone(const ofImage_<T> &mom);
+		template<typename T2>
+		void 				clone(const ofImage_<T2> &mom);
 
 		// enable or disable using the texture of this image
 		void 				setUseTexture(bool bUse);
@@ -161,3 +168,37 @@ typedef ofImage_<unsigned short> ofShortImage;
 
 
 
+
+//----------------------------------------------------------
+template<typename T>
+template<typename T2>
+ofImage_<T>& ofImage_<T>::operator=(const ofImage_<T2>& mom) {
+	clone(mom);
+	update();
+	return *this;
+}
+
+//----------------------------------------------------------
+template<typename T>
+template<typename T2>
+ofImage_<T>::ofImage_(const ofImage_<T2>& mom) {
+	clear();
+	clone(mom);
+	update();
+}
+
+//------------------------------------
+template<typename T>
+template<typename T2>
+void ofImage_<T>::clone(const ofImage_<T2> &mom){
+	ofImage_<T2> & nonConst = const_cast<ofImage_<T2> & >(mom);
+	pixels = nonConst.getPixelsRef();
+
+	tex.clear();
+	bUseTexture = nonConst.isUsingTexture();
+	if (bUseTexture == true){
+		tex.allocate(pixels.getWidth(), pixels.getHeight(), ofGetGlInternalFormat(pixels));
+	}
+
+	update();
+}

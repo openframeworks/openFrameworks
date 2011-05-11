@@ -3,6 +3,7 @@
 #include "ofConstants.h"
 #include "ofUtils.h"
 #include "ofColor.h"
+#include <limits>
 
 template <typename T>
 class ofPixels_ {
@@ -15,6 +16,13 @@ public:
 	~ofPixels_();
 	ofPixels_(const ofPixels_<T> & mom);
 	ofPixels_<T>& operator=(const ofPixels_<T> & mom);
+
+	template<typename T2>
+	ofPixels_(const ofPixels_<T2> & mom);
+
+	template<typename T2>
+	ofPixels_<T>& operator=(const ofPixels_<T2> & mom);
+
 
 
 	void allocate(int w, int h, int channels);
@@ -38,6 +46,7 @@ public:
 	ofColor getColor(int x, int y) const;
 	void setColor(int x, int y, ofColor color);
 
+	const T& operator[](int pos) const;
 	T& operator[](int pos);
 
 	bool isAllocated() const;
@@ -53,9 +62,14 @@ public:
 
 	ofImageType getImageType() const;
 
+	int size() const;
+
 private:
+
 	void copyFrom( const ofPixels_<T>& mom );
-	
+
+	template<typename T2>
+	void copyFrom( const ofPixels_<T2>& mom );
 	
 	T * pixels;
 	int width;
@@ -78,4 +92,50 @@ typedef ofPixels_<unsigned short> ofShortPixels;
 
 
 typedef ofPixels& ofPixelsRef;
+
+
+// sorry for these ones, being templated functions inside a template i needed to do it in the .h
+// they allow to do things like:
+//
+// ofPixels pix;
+// ofFloatPixels pixf;
+// pix = pixf
+
+template<typename T>
+template<typename T2>
+ofPixels_<T>::ofPixels_(const ofPixels_<T2> & mom){
+	(*this).template copyFrom( mom );
+}
+
+template<typename T>
+template<typename T2>
+ofPixels_<T>& ofPixels_<T>::operator=(const ofPixels_<T2> & mom){
+	(*this).template copyFrom( mom );
+	return *this;
+}
+
+template<typename T>
+template<typename T2>
+void ofPixels_<T>::copyFrom(const ofPixels_<T2> & mom){
+	if(mom.isAllocated()){
+		bytesPerChannel = sizeof(T);
+		bitsPerChannel = bytesPerChannel*8;
+		allocate(mom.getWidth(),mom.getHeight(),mom.getNumChannels());
+
+		float factor;
+
+		if(sizeof(T2)==4){
+			//float so values are normalized
+			factor = numeric_limits<T>::max();
+		}else if(sizeof(T)==4){
+			factor = 1.f/float(numeric_limits<T2>::max());
+		}else{
+			factor = float(numeric_limits<T>::max())/float(std::numeric_limits<T2>::max());
+		}
+
+		for(int i=0; i<mom.size(); i++){
+			pixels[i] = mom[i]*factor;
+		}
+	}
+}
 
