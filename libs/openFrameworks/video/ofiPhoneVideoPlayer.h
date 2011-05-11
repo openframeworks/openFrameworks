@@ -1,6 +1,11 @@
 #ifndef _OF_IPHONE_VIDEO_PLAYER
 #define _OF_IPHONE_VIDEO_PLAYER
 
+#include "ofPixels.h"
+#include "ofBaseTypes.h"
+#include "ofTexture.h"
+
+#include "ofVideoPlayer.h"
 
 class ofiPhoneVideoPlayer : public ofBaseVideoPlayer {
 	

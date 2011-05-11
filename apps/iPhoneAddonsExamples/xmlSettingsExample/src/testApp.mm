@@ -255,3 +255,9 @@ void testApp::windowResized(int w, int h){
 
 
 
+
+//--------------------------------------------------------------
+void testApp::touchCancelled(ofTouchEventArgs& args){
+
+}
+

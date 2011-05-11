@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ofConstants.h"
+#include "ofPoint.h"
 
 //-------------------------- mouse/key query
 bool		ofGetMousePressed(int button=-1); //by default any button
@@ -15,6 +16,13 @@ int			ofGetPreviousMouseY();
 void		ofSetEscapeQuitsApp(bool bQuitOnEsc);
 
 void		exitApp(); 
+
+//-----------------------------------------------
+class ofDragInfo{
+	public:
+		vector <string> files;
+		ofPoint position;
+};
 
 //-----------------------------------------------
 
@@ -105,7 +113,8 @@ void		exitApp();
 		ofEvent<ofTouchEventArgs>	touchDoubleTap;
 		ofEvent<ofTouchEventArgs>	touchCancelled;
 
-		ofEvent<ofMessage> messageEvent;
+		ofEvent<ofMessage>			messageEvent;
+		ofEvent<ofDragInfo>			fileDragEvent;
 
 		void disable(){
 			setup.disable();
@@ -126,6 +135,7 @@ void		exitApp();
 			touchDoubleTap.disable();
 			touchCancelled.disable();
 			messageEvent.disable();
+			fileDragEvent.disable();
 		}
 
 		void enable(){
@@ -147,6 +157,7 @@ void		exitApp();
 			touchDoubleTap.enable();
 			touchCancelled.enable();
 			messageEvent.enable();
+			fileDragEvent.enable();
 		}
 	};
 
@@ -184,6 +195,11 @@ void		exitApp();
 	}
 
 	template<class ListenerClass>
+	void ofRegisterDragEvents(ListenerClass * listener){
+		ofAddListener(ofEvents.fileDragEvent, listener, &ListenerClass::dragEvent);
+	}
+
+	template<class ListenerClass>
 	void ofUnregisterMouseEvents(ListenerClass * listener){
 		ofRemoveListener(ofEvents.mouseDragged,listener,&ListenerClass::mouseDragged);
 		ofRemoveListener(ofEvents.mouseMoved,listener,&ListenerClass::mouseMoved);
@@ -210,6 +226,11 @@ void		exitApp();
 	void ofUnregisterGetMessages(ListenerClass * listener){
 		ofRemoveListener(ofEvents.messageEvent, listener, &ListenerClass::gotMessage);
 	}
+	
+	template<class ListenerClass>
+	void ofUnregisterDragEvents(ListenerClass * listener){
+		ofRemoveListener(ofEvents.fileDragEvent, listener, &ListenerClass::dragEvent);
+	}	
 
 #endif
 
@@ -229,3 +250,4 @@ void ofNotifyMouseMoved(int x, int y);
 void ofNotifyExit();
 void ofNotifyWindowResized(int width, int height);
 
+void ofNotifyDragEvent(ofDragInfo info);

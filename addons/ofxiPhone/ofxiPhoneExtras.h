@@ -74,11 +74,11 @@ enum ofxiPhoneDeviceType {
 
 
 // possible values for iPhoneSetOrientation or iPhoneGetOrientation
-#define	OFXIPHONE_ORIENTATION_PORTRAIT			UIDeviceOrientationPortrait
-#define OFXIPHONE_ORIENTATION_UPSIDEDOWN		UIDeviceOrientationPortraitUpsideDown
-#define OFXIPHONE_ORIENTATION_LANDSCAPE_RIGHT	UIDeviceOrientationLandscapeRight
-#define OFXIPHONE_ORIENTATION_LANDSCAPE_LEFT	UIDeviceOrientationLandscapeLeft
-
+#define  OFXIPHONE_ORIENTATION_PORTRAIT      OF_ORIENTATION_DEFAULT  // UIDeviceOrientationPortrait
+#define OFXIPHONE_ORIENTATION_UPSIDEDOWN    OF_ORIENTATION_180      // UIDeviceOrientationPortraitUpsideDown
+#define OFXIPHONE_ORIENTATION_LANDSCAPE_RIGHT  OF_ORIENTATION_90_RIGHT // UIDeviceOrientationLandscapeRight
+#define OFXIPHONE_ORIENTATION_LANDSCAPE_LEFT  OF_ORIENTATION_90_LEFT  // UIDeviceOrientationLandscapeLeft
+ 
 // whether device has audio in
 bool ofxiPhoneHasAudioIn();
 
@@ -148,7 +148,7 @@ void ofxiPhoneEnableLoopInThread();
 
 
 // set orientation of device (affects statusbar, opengl viewport, touch positions)
-void ofxiPhoneSetOrientation(UIDeviceOrientation orientation);
+void ofxiPhoneSetOrientation(ofOrientation orientation);
 UIDeviceOrientation ofxiPhoneGetOrientation();
 
 

@@ -1,5 +1,7 @@
 #include "ofVideoGrabber.h"
 #include "ofUtils.h"
+#include "ofBaseTypes.h"
+#include "ofConstants.h"
 
 //TODO: allow for non rgb pixel formats to work with textures
 //TODO: getImageBytes()
@@ -61,6 +63,10 @@ ofBaseVideoGrabber * ofVideoGrabber::getGrabber(){
 //--------------------------------------------------------------------
 bool ofVideoGrabber::initGrabber(int w, int h, bool setUseTexture){
 
+#ifndef OF_VID_GRABBER_TYPE
+#error OF_VID_GRABBER_TYPE is not #defined! 
+#endif
+    
 	if( grabber == NULL ){
 		setGrabber( new OF_VID_GRABBER_TYPE );
 	}

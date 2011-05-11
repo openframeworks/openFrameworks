@@ -188,6 +188,14 @@ void ofMesh::addIndices(const ofIndexType* inds, int amt){
 	bIndicesChanged = true;
 }
 
+//--------------------------------------------------------------
+void ofMesh::addTriangle(ofIndexType index1, ofIndexType index2, ofIndexType index3) {
+    addIndex(index1);
+    addIndex(index2);
+    addIndex(index3);
+}
+
+
 //GETTERS
 //--------------------------------------------------------------
 ofPrimitiveMode ofMesh::getMode() const{

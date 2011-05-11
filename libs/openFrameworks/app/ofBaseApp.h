@@ -4,12 +4,6 @@
 #include "ofEvents.h"
 #include "ofBaseTypes.h"
 
-class ofDragInfo{
-	public:
-		vector <string> files;
-		ofPoint position;
-};
-
 class ofBaseApp : public ofBaseSoundInput, public ofBaseSoundOutput{
 
 	public:

@@ -54,7 +54,7 @@ class ofxiPhoneMapKit : public ofxiPhoneMapKitListener {
 public:
 	
 	ofxiPhoneMapKit();
-	~ofxiPhoneMapKit();
+	virtual ~ofxiPhoneMapKit();
 	
 	
 	// open the mapview

@@ -634,8 +634,7 @@ void ofAppGlutWindow::dragEvent(char ** names, int howManyFiles, int dragX, int 
 		info.files.push_back(temp);
 	}
 
-	ofAppPtr->dragEvent(info);
-
+	ofNotifyDragEvent(info);
 }
 
 

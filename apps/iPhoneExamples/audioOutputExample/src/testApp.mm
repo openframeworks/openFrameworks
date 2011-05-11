@@ -61,27 +61,27 @@ void testApp::draw(){
 	float rightX	= leftX + boxW + 20;
 
 	// draw the left:
-	ofSetColor(0x333333);
+	ofSetHexColor(0x333333);
 	ofRect(leftX,topY,boxW,boxH);
-	ofSetColor(0xFFFFFF);
+	ofSetHexColor(0xFFFFFF);
 	for (int i = 0; i < initialBufferSize; i++){
 		float x = ofMap(i, 0, initialBufferSize, 0, boxW, true);
 		ofLine(leftX+x,topY + boxH/2,leftX+x,topY + boxH/2 + lAudio[i]*boxH*0.5);
 	}
 
 	// draw the right:
-	ofSetColor(0x333333);
+	ofSetHexColor(0x333333);
 	ofRect(rightX,topY,boxW,boxH);
-	ofSetColor(0xFFFFFF);
+	ofSetHexColor(0xFFFFFF);
 	for (int i = 0; i < initialBufferSize; i++){
 		float x = ofMap(i, 0, initialBufferSize, 0, boxW, true);	
 		ofLine(rightX+x,topY + boxH/2,rightX+x,topY + boxH/2 + rAudio[i]*boxH*0.5);
 	}
 
-	ofSetColor(0x333333);
+	ofSetHexColor(0x333333);
 	char reportString[255];
 	sprintf(reportString, "volume: (%f) \npan: (%f)\nsynthesis: %s", volume, pan, bNoise ? "noise" : "sine wave");
-	if (!bNoise) sprintf(reportString, "%s (%fhz)", reportString, targetFrequency);
+	sprintf(reportString, "%s (%fhz)", reportString, targetFrequency);
 
 	ofDrawBitmapString(reportString,leftX,topY + boxH + 20);
 
@@ -133,6 +133,10 @@ void testApp::touchMoved(ofTouchEventArgs &touch){
 	if( touch.id ==  0 ){
 		int width = ofGetWidth();
 		pan = (float) touch.x / (float)width;
+        
+        int height = ofGetHeight();
+        targetFrequency = ((float)touch.y / (float)height) * 1000;
+        phaseAdderTarget = (targetFrequency / (float) sampleRate) * TWO_PI;
 	}
 }
 
@@ -143,6 +147,10 @@ void testApp::touchUp(ofTouchEventArgs &touch){
 
 //--------------------------------------------------------------
 void testApp::touchDoubleTap(ofTouchEventArgs &touch){
-
 }
 
+
+//--------------------------------------------------------------
+void testApp::touchCancelled(ofTouchEventArgs &touch){
+	bNoise = false;
+}

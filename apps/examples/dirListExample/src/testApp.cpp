@@ -4,6 +4,7 @@
 void testApp::setup(){
 
 	dir.listDir("images/of_logos/");
+	dir.sort(); // in linux the file system doesn't return file lists ordered in alphabetical order
 
 	//allocate the vector to have as many ofImages as files
 	if( dir.size() ){
@@ -11,7 +12,7 @@ void testApp::setup(){
 	}
 
 	// you can now iterate through the files and load them into the ofImage vector
-	for(int i = 0; i < dir.size(); i++){
+	for(int i = 0; i < (int)dir.size(); i++){
 		images[i].loadImage(dir.getPath(i));
 	}
 	currentImage = 0;
@@ -39,7 +40,7 @@ void testApp::draw(){
 	}
 
 	ofSetColor(ofColor::gray);
-	for(int i = 0; i < dir.size(); i++){
+	for(int i = 0; i < (int)dir.size(); i++){
 		if(i == currentImage) {
 			ofSetColor(ofColor::red);
 		}	else {

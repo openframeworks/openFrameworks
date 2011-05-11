@@ -4,13 +4,22 @@
 #include "ofBaseSoundPlayer.h"
 #include "ofEvents.h"
 #include "ofThread.h"
+
+#if defined (TARGET_OF_IPHONE) || defined (TARGET_OSX)
+#include <OpenAL/al.h>
+#include <OpenAL/alc.h>
+#else
 #include <AL/al.h>
 #include <AL/alc.h>
+#endif
+
 #include "kiss_fft.h"
 #include "kiss_fftr.h"
-#include <sndfile.h>
-#ifdef OF_USING_MPG123
-	#include <mpg123.h>
+#ifdef TARGET_LINUX
+    #include <sndfile.h>
+    #ifdef OF_USING_MPG123
+        #include <mpg123.h>
+    #endif
 #endif
 
 //		TO DO :
@@ -125,10 +134,12 @@ class ofOpenALSoundPlayer : public ofBaseSoundPlayer, public ofThread {
 		static vector<float> systemBins;
 		static vector<kiss_fft_cpx> systemCx_out;
 
+#ifdef TARGET_LINUX
 		SNDFILE* streamf;
 		size_t stream_samples_read;
 #ifdef OF_USING_MPG123
 		mpg123_handle * mp3streamf;
+#endif
 #endif
 		int stream_encoding;
 		int mp3_buffer_size;
