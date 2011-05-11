@@ -104,8 +104,6 @@ void putBmpIntoPixels(FIBITMAP * bmp, ofPixels_<T> &pix, bool swapForLittleEndia
 	unsigned int channels = bpp / sizeof(T) / 8;
 	unsigned int pitch = width * bpp / 8;
 
-	ofLogVerbose() << "putBmpIntoPixels: float , w" << width << "h" << height << "bpp" << bpp << "channels" << channels << "pitch" << pitch;
-
 	pix.allocate(width, height, channels);
 	FreeImage_ConvertToRawBits((uint8_t*) pix.getPixels(), bmp, pitch, bpp, FI_RGBA_RED_MASK, FI_RGBA_GREEN_MASK, FI_RGBA_BLUE_MASK, true);
 
