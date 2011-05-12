@@ -8,14 +8,39 @@ void testApp::setup() {
 void testApp::update() {
 	cam.update();
 	if(cam.isFrameNew()) {
-		convertColor(toCv(cam), toCv(thresh), CV_RGB2GRAY);
+		convertColor(cam, thresh, CV_RGB2GRAY);
 		float thresholdValue = ofMap(mouseX, 0, ofGetWidth(), 0, 255);
-		threshold(toCv(thresh), thresholdValue);
+		threshold(thresh, thresholdValue);
+		Mat threshMat = toCv(thresh);
+		findContours(threshMat, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE);
 		thresh.update();
+		
+		// to implement in ContourFinder:
+		// drawing
+		// holes/no holes
+		// cv::arcLength
+		// cv::boundingRect
+		// cv::contourArea and filtering
+		// cv::convexHull
+		// cv::minAreaRect
+		// cv::fitEllipse
+		// cv::pointPolygonTest
+		
+		// cv::matchShapes?
+		// cv::estimateRigidTransform? subdivision-based estimation for outline-flow?
 	}
 }
 
 void testApp::draw() {
 	cam.draw(0, 0);
 	thresh.draw(640, 0);
+	
+	for(int i = 0; i < contours.size(); i++) {
+		ofNoFill();
+		ofBeginShape();
+		for(int j = 0; j < contours[i].size(); j++) {
+			ofVertex(contours[i][j].x, contours[i][j].y);
+		}
+		ofEndShape(true);
+	}
 }
