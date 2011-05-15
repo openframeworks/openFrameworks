@@ -125,8 +125,11 @@ void ofPixels_<T>::copyFrom(const ofPixels_<T2> & mom){
 		float factor;
 
 		if(sizeof(T2)==4){
-			//float so values are normalized
 			factor = numeric_limits<T>::max();
+			for(int i=0; i<mom.size(); i++){
+				pixels[i] = ofClamp(mom[i],0,1)*factor;
+			}
+			return;
 		}else if(sizeof(T)==4){
 			factor = 1.f/float(numeric_limits<T2>::max());
 		}else{
