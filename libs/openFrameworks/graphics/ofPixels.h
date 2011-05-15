@@ -60,6 +60,9 @@ public:
 	int getBitsPerChannel() const;
 	int getNumChannels() const;
 
+	ofPixels_<T> getChannel(int channel) const;
+	void setChannel(int channel, const ofPixels_<T> channelPixels);
+
 	ofImageType getImageType() const;
 
 	int size() const;
