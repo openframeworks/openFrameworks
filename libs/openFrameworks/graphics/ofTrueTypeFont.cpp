@@ -254,7 +254,7 @@ void ofTrueTypeFont::loadFont(string filename, int fontsize, bool _bAntiAliased,
 		charOutlines.assign(nCharacters, ofTTFCharacter());
 	}
 
-	vector<unsigned char*> expanded_data(nCharacters);
+	vector<ofPixels> expanded_data(nCharacters);
 
 	long areaSum=0;
 
@@ -323,15 +323,10 @@ void ofTrueTypeFont::loadFont(string filename, int fontsize, bool _bAntiAliased,
 		cps[i].character		= i;
 
 		// Allocate Memory For The Texture Data.
-		expanded_data[i] = new unsigned char[ 2 * width * height];
-
+		expanded_data[i].allocate(width, height, 2);
 		//-------------------------------- clear data:
-		for(int j=0; j <height;j++) {
-			for(int k=0; k < width; k++){
-				expanded_data[i][2*(k+j*width)  ] = 255;   // every luminance pixel = 255
-				expanded_data[i][2*(k+j*width)+1] = 0;
-			}
-		}
+		expanded_data[i].set(0,255); // every luminance pixel = 255
+		expanded_data[i].set(1,0);
 
 
 		if (bAntiAlised == true){
@@ -395,8 +390,7 @@ void ofTrueTypeFont::loadFont(string filename, int fontsize, bool _bAntiAliased,
 		int y=0;
 		int maxRowHeight = sorting_copy[0].tH;
 		for(int i=0;i<(int)cps.size();i++){
-			ofPixels charPixels;
-			charPixels.setFromExternalPixels(expanded_data[sorting_copy[i].character],sorting_copy[i].tW,sorting_copy[i].tH,2);
+			ofPixels & charPixels = expanded_data[sorting_copy[i].character];
 			/*if(i>0 && sorting_copy[i].tH>sorting_copy[i-1].tH){
 				cout << "wrong sort " << sorting_copy[i].tH << " > " <<sorting_copy[i-1].tH<< endl;
 			}*/
