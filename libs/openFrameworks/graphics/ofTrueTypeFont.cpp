@@ -176,6 +176,8 @@ ofTrueTypeFont::ofTrueTypeFont(){
 
 	border			= 3;
 	visibleBorder	= 2;
+	stringQuads.setMode(OF_TRIANGLES_MODE);
+	binded = false;
 }
 
 //------------------------------------------------------------------
@@ -322,6 +324,26 @@ void ofTrueTypeFont::loadFont(string filename, int fontsize, bool _bAntiAliased,
 
 		cps[i].character		= i;
 
+
+		GLint fheight	= cps[i].height;
+		GLint bwidth	= cps[i].width;
+		GLint top		= cps[i].topExtent - cps[i].height;
+		GLint lextent	= cps[i].leftExtent;
+
+		GLfloat	corr, stretch;
+
+		//this accounts for the fact that we are showing 2*visibleBorder extra pixels
+		//so we make the size of each char that many pixels bigger
+		stretch = 0;//(float)(visibleBorder * 2);
+
+		corr	= (float)(( (fontSize - fheight) + top) - fontSize);
+
+		cps[i].x1		= lextent + bwidth + stretch;
+		cps[i].y1		= fheight + corr + stretch;
+		cps[i].x2		= (float) lextent;
+		cps[i].y2		= -top + corr;
+
+
 		// Allocate Memory For The Texture Data.
 		expanded_data[i].allocate(width, height, 2);
 		//-------------------------------- clear data:
@@ -405,8 +427,10 @@ void ofTrueTypeFont::loadFont(string filename, int fontsize, bool _bAntiAliased,
 				}
 			}
 
-			cps[sorting_copy[i].character].xOff = x;
-			cps[sorting_copy[i].character].yOff = y;
+			cps[sorting_copy[i].character].t2		= x;
+			cps[sorting_copy[i].character].v2		= y;
+			cps[sorting_copy[i].character].t1		= cps[sorting_copy[i].character].tW + x;
+			cps[sorting_copy[i].character].v1		= cps[sorting_copy[i].character].tH + y;
 			ofPixelUtils::pasteInto(charPixels,atlasPixels,x,y);
 			x+= sorting_copy[i].tW;
 			if(i==(int)cps.size()-1) packed = true;
@@ -591,7 +615,7 @@ void ofTrueTypeFont::drawChar(int c, float x, float y) {
 		ofLog(OF_LOG_WARNING," texture not bound for character -- line %d in %s", __LINE__,__FILE__);
 	}*/
 
-	GLint height	= cps[c].height;
+	/*GLint height	= cps[c].height;
 	GLint bwidth	= cps[c].width;
 	GLint top		= cps[c].topExtent - cps[c].height;
 	GLint lextent	= cps[c].leftExtent;
@@ -614,23 +638,53 @@ void ofTrueTypeFont::drawChar(int c, float x, float y) {
 	x1		= lextent + bwidth + stretch +x;
 	y1		= height + corr + stretch +y;
 	x2		= (float) lextent +x;
-	y2		= -top + corr +y;
+	y2		= -top + corr +y;*/
 
-	GLfloat verts[] = { x2,y2,
+	/*GLfloat verts[] = { x2,y2,
 		x2, y1,
 		x1, y1,
 	x1, y2 };
 	GLfloat tex_coords[] = { t2, v2,
 		t2, v1,
 		t1, v1,
-	t1, v2 };
+	t1, v2 };*/
 
+	GLfloat	x1, y1, x2, y2;
+	GLfloat t1, v1, t2, v2;
+	t2		= cps[c].t2;
+	v2		= cps[c].v2;
+	t1		= cps[c].t1;
+	v1		= cps[c].v1;
 
-	glEnableClientState( GL_TEXTURE_COORD_ARRAY );
+	x1		= cps[c].x1+x;
+	y1		= cps[c].y1+y;
+	x2		= cps[c].x2+x;
+	y2		= cps[c].y2+y;
+
+	int firstIndex = stringQuads.getVertices().size();
+
+	stringQuads.addVertex(ofVec3f(x1,y1));
+	stringQuads.addVertex(ofVec3f(x2,y1));
+	stringQuads.addVertex(ofVec3f(x2,y2));
+	stringQuads.addVertex(ofVec3f(x1,y2));
+
+	stringQuads.addTexCoord(ofVec2f(t1,v1));
+	stringQuads.addTexCoord(ofVec2f(t2,v1));
+	stringQuads.addTexCoord(ofVec2f(t2,v2));
+	stringQuads.addTexCoord(ofVec2f(t1,v2));
+
+	stringQuads.addIndex(firstIndex);
+	stringQuads.addIndex(firstIndex+1);
+	stringQuads.addIndex(firstIndex+2);
+	stringQuads.addIndex(firstIndex+2);
+	stringQuads.addIndex(firstIndex+3);
+	stringQuads.addIndex(firstIndex);
+
+	/*glEnableClientState( GL_TEXTURE_COORD_ARRAY );
 	glTexCoordPointer(2, GL_FLOAT, 0, tex_coords );
 	glEnableClientState( GL_VERTEX_ARRAY );
 	glVertexPointer(2, GL_FLOAT, 0, verts );
-	glDrawArrays( GL_TRIANGLE_FAN, 0, 4 );
+	glDrawArrays( GL_TRIANGLE_FAN, 0, 4 );*/
 
 	//texAtlas.unbind();
 }
@@ -786,7 +840,10 @@ void ofTrueTypeFont::drawString(string c, float x, float y) {
 	//glPushMatrix();
 	//glTranslatef(x, y, 0);
 
-	bind();
+	bool alreadyBinded = binded;
+
+	if(!alreadyBinded) bind();
+
 	int len = (int)c.length();
 
 	while(index < len){
@@ -815,7 +872,7 @@ void ofTrueTypeFont::drawString(string c, float x, float y) {
 		index++;
 	}
 
-	unbind();
+	if(!alreadyBinded) unbind();
 	//glPopMatrix();
 	//glDisable(GL_TEXTURE_2D);
     // (c) return back to the way things were (with blending, blend func, etc)
@@ -831,7 +888,6 @@ void ofTrueTypeFont::bind(){
 		#else
 			GLboolean blend_enabled = glIsEnabled(GL_BLEND);
 			GLboolean texture_2d_enabled = glIsEnabled(GL_TEXTURE_2D);
-			GLint blend_src, blend_dst;
 			glGetIntegerv( GL_BLEND_SRC, &blend_src );
 			glGetIntegerv( GL_BLEND_DST, &blend_dst );
 		#endif
@@ -841,6 +897,7 @@ void ofTrueTypeFont::bind(){
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 		texAtlas.bind();
+		stringQuads.clear();
 		binded = true;
 	}
 }
@@ -848,6 +905,7 @@ void ofTrueTypeFont::bind(){
 //-----------------------------------------------------------
 void ofTrueTypeFont::unbind(){
 	if(binded){
+		stringQuads.drawFaces();
 		texAtlas.unbind();
 
 		#ifndef TARGET_OPENGLES
