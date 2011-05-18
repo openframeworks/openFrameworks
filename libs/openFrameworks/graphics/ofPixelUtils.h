@@ -31,7 +31,7 @@ public:
 	static bool resize(ofPixels &pix, int dstWidth, int dstHeight, ofInterpolationMethod interpMethod=OF_INTERPOLATE_NEAREST_NEIGHBOR);
 	static bool resize (ofPixels &pix, ofPixels& dst, ofInterpolationMethod interpMethod=OF_INTERPOLATE_NEAREST_NEIGHBOR);
 
-
+	static bool pasteInto(ofPixels &src, ofPixels &dst, int x, int y);
 
 	// crop to a new width and height, this reallocates memory.
 	static void crop(ofFloatPixels &pix, int x, int y, int width, int height){//TODO

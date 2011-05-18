@@ -6,6 +6,7 @@
 #include "ofRectangle.h"
 #include "ofConstants.h"
 #include "ofPath.h"
+#include "ofTexture.h"
 
 //--------------------------------------------------
 typedef struct {
@@ -19,6 +20,9 @@ typedef struct {
 	float vTex;		//0-1 pct of bitmap...
 	float xOff;
 	float yOff;
+	float tW,tH;
+	GLuint texName;
+	int character;
 } charProps;
 
 
@@ -60,6 +64,9 @@ public:
 	
 	ofTTFCharacter getCharacterAsPoints(int character);
 
+	void bind();
+	void unbind();
+
 protected:
 	vector <ofTTFCharacter> charOutlines;
 
@@ -67,8 +74,8 @@ protected:
 	float			letterSpacing;
 	float			spaceSize;
 
-	charProps 		* 	cps;			// properties for each character
-	GLuint			*	texNames;		// textures for each character
+	vector<charProps> 	cps;			// properties for each character
+
 	int				fontSize;
 	bool			bMakeContours;
 
@@ -78,6 +85,9 @@ protected:
 	int 			ofNextPow2(int a);
 	int				border, visibleBorder;
 	string			filename;
+
+	ofTexture texAtlas;
+	bool binded;
 
 private:
 #ifdef TARGET_ANDROID

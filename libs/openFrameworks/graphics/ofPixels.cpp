@@ -50,6 +50,14 @@ void ofPixels_<T>::set(T val){
 }
 
 template<typename T>
+void ofPixels_<T>::set(int channel,T val){
+	int size = width*height*channels;
+	for(int i=channel;i<size;i+=channels){
+		pixels[i] = val;
+	}
+}
+
+template<typename T>
 void ofPixels_<T>::setFromPixels(const T * newPixels,int w, int h, int channels){
 	allocate(w,h,channels);
 	memcpy(pixels,newPixels,w*h*channels*bytesPerChannel);
