@@ -26,8 +26,13 @@ ifeq ($(ARCH),android)
 	COMPILER_OPTIMIZATION = -Os
 	NDK_PLATFORM = android-8
 else
+ifeq ($(ARCH),armv7l)
+	COMPILER_OPTIMIZATION = -march=armv7-a -mtune=cortex-a8 -finline-functions -funroll-all-loops  -O3 -funsafe-math-optimizations -mfpu=neon -ftree-vectorize -mfloat-abi=softfp
+else
 	COMPILER_OPTIMIZATION = -march=native -mtune=native -finline-functions -funroll-all-loops  -Os
 endif
+endif
+
 USER_CFLAGS = 
 
 
@@ -47,7 +52,11 @@ ifneq ($(ARCH),android)
 	ifeq ($(ARCH),x86_64)
 		LIBSPATH=linux64
 	else
-		LIBSPATH=linux
+		ifeq ($(ARCH),armv7l)
+			LIBSPATH=linuxarmv7l
+		else
+			LIBSPATH=linux
+		endif
 	endif
 else
 	LIBSPATH = android
@@ -75,7 +84,7 @@ CORE_INCLUDES = $(shell find ../../../openFrameworks/ -type d)
 CORE_INCLUDE_FLAGS = $(addprefix -I,$(CORE_INCLUDES))
 INCLUDES = $(shell find ../../../*/include -type d | grep -v glu | grep -v quicktime | grep -v poco)
 INCLUDES_FLAGS = $(addprefix -I,$(INCLUDES))
-INCLUDES_FLAGS += -I../../../poco/include
+#INCLUDES_FLAGS += -I../../../poco/include
 ifeq ($(ARCH),android)
 	INCLUDES_FLAGS += -I../../../glu/include_android
  	INCLUDES_FLAGS += -I../../../../addons/ofxAndroid/src

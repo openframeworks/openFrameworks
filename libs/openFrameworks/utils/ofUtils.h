@@ -5,6 +5,9 @@
 
 #include "ofLog.h"
 
+#include <algorithm>
+using namespace std;
+
 #ifdef TARGET_WIN32	 // for ofLaunchBrowser
 	#include <shellapi.h>
 #endif
