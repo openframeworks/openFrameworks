@@ -371,4 +371,21 @@ float ofPixelUtils::bicubicInterpolate (const int *patch, float x,float y, float
 }
 
 
+bool ofPixelUtils::pasteInto(ofPixels &src, ofPixels &dst, int xTo, int yTo){
+	if (!(src.isAllocated()) || !(dst.isAllocated()) || src.getBytesPerPixel() != dst.getBytesPerPixel() || xTo>=dst.getWidth() || yTo>=dst.getHeight()) return false;
 
+
+	int bytesToCopyPerRow = (xTo + src.getWidth()<=dst.getWidth() ? src.getWidth() : dst.getWidth()-xTo) * src.getBytesPerPixel();
+	int columnsToCopy = yTo + src.getHeight() <= dst.getHeight() ? src.getHeight() : dst.getHeight()-yTo;
+	unsigned char * dstPix = dst.getPixels() + ((xTo + yTo*dst.getWidth())*src.getBytesPerPixel());
+	unsigned char * srcPix = src.getPixels();
+	int srcStride = src.getWidth()*src.getBytesPerPixel();
+	int dstStride = dst.getWidth()*dst.getBytesPerPixel();
+
+
+	for(int y=0;y<columnsToCopy; y++){
+		memcpy(dstPix,srcPix,bytesToCopyPerRow);
+		dstPix += dstStride;
+		srcPix += srcStride;
+	}
+}

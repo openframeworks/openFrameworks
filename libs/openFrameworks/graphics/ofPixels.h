@@ -30,6 +30,7 @@ public:
 	void allocate(int w, int h, ofImageType type);
 
 	void set(T val);
+	void set(int channel,T val);
 	void setFromPixels(const T * newPixels,int w, int h, int channels);
 	void setFromPixels(const T * newPixels,int w, int h, ofImageType type);
 	void setFromExternalPixels(T * newPixels,int w, int h, int channels);

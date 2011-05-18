@@ -7,8 +7,11 @@
 #include <freetype/ftoutln.h>
 #include <freetype/fttrigon.h>
 
+#include <algorithm>
+
 #include "ofUtils.h"
 #include "ofGraphics.h"
+#include "ofPixelUtils.h"
 
 static bool printVectorInfo = false;
 
@@ -151,6 +154,11 @@ static ofTTFCharacter makeContoursForCharacter(FT_Face &face){
 
 #endif
 
+bool compare_cps(const charProps & c1, const charProps & c2){
+	if(c1.tH == c2.tH) return c1.tW > c2.tW;
+	else return c1.tH > c2.tH;
+}
+
 //------------------------------------------------------------------
 ofTrueTypeFont::ofTrueTypeFont(){
 	bLoadedOk		= false;
@@ -158,24 +166,23 @@ ofTrueTypeFont::ofTrueTypeFont(){
 	#ifdef TARGET_ANDROID
 		all_fonts.insert(this);
 	#endif
-	cps				= NULL;
+	//cps				= NULL;
 	letterSpacing = 1;
 	spaceSize = 1;
+
+	// 3 pixel border around the glyph
+	// We show 2 pixels of this, so that blending looks good.
+	// 1 pixels is hidden because we don't want to see the real edge of the texture
+
+	border			= 3;
+	visibleBorder	= 2;
 }
 
 //------------------------------------------------------------------
 ofTrueTypeFont::~ofTrueTypeFont(){
 
 	if (bLoadedOk){
-
-		if (cps != NULL){
-			delete[] cps;
-			cps = NULL;
-		}
-
-		if (texNames != NULL){
-			unloadTextures();
-		}
+		unloadTextures();
 	}
 
 	#ifdef TARGET_ANDROID
@@ -185,10 +192,10 @@ ofTrueTypeFont::~ofTrueTypeFont(){
 
 void ofTrueTypeFont::unloadTextures(){
 	if(!bLoadedOk) return;
-	for (int i = 0; i < nCharacters; i++){
-		glDeleteTextures(1, &texNames[i]);
+
+	for (int i = 0; i < (int)cps.size(); i++){
+		glDeleteTextures(1, &cps[i].texName);
 	}
-	delete[] texNames;
 	bLoadedOk = false;
 }
 
@@ -205,19 +212,7 @@ void ofTrueTypeFont::loadFont(string filename, int fontsize, bool _bAntiAliased,
 	if (bLoadedOk == true){
 
 		// we've already been loaded, try to clean up :
-
-		if (cps != NULL){
-			delete[] cps;
-			cps = NULL;
-		}
-		if (texNames != NULL){
-			for (int i = 0; i < nCharacters; i++){
-				glDeleteTextures(1, &texNames[i]);
-			}
-			delete[] texNames;
-			texNames = NULL;
-		}
-		bLoadedOk = false;
+		unloadTextures();
 	}
 	//------------------------------------------------
 
@@ -252,14 +247,17 @@ void ofTrueTypeFont::loadFont(string filename, int fontsize, bool _bAntiAliased,
 	nCharacters = bFullCharacterSet ? 256 : 128 - NUM_CHARACTER_TO_START;
 
 	//--------------- initialize character info and textures
-	cps       = new charProps[nCharacters];
-	texNames  = new GLuint[nCharacters];
-	glGenTextures(nCharacters, texNames);
+	cps.resize(nCharacters);
 
 	if(bMakeContours){
 		charOutlines.clear();
 		charOutlines.assign(nCharacters, ofTTFCharacter());
 	}
+
+	vector<unsigned char*> expanded_data(nCharacters);
+
+	long areaSum=0;
+
 	//--------------------- load each char -----------------------
 	for (int i = 0 ; i < nCharacters; i++){
 
@@ -274,12 +272,19 @@ void ofTrueTypeFont::loadFont(string filename, int fontsize, bool _bAntiAliased,
 		//------------------------------------------
 		FT_Bitmap& bitmap= face->glyph->bitmap;
 
-		// 3 pixel border around the glyph
-		// We show 2 pixels of this, so that blending looks good.
-		// 1 pixels is hidden because we don't want to see the real edge of the texture
 
-		border			= 3;
-		visibleBorder	= 2;
+		// prepare the texture:
+		/*int width  = ofNextPow2( bitmap.width + border*2 );
+		int height = ofNextPow2( bitmap.rows  + border*2 );
+
+
+		// ------------------------- this is fixing a bug with small type
+		// ------------------------- appearantly, opengl has trouble with
+		// ------------------------- width or height textures of 1, so we
+		// ------------------------- we just set it to 2...
+		if (width == 1) width = 2;
+		if (height == 1) height = 2;*/
+
 
 		if(bMakeContours){
 			if( printVectorInfo )printf("\n\ncharacter %c: \n", char( i+NUM_CHARACTER_TO_START ) );
@@ -291,17 +296,6 @@ void ofTrueTypeFont::loadFont(string filename, int fontsize, bool _bAntiAliased,
 			charOutlines[i].getTessellation();
 		}
 
-		// prepare the texture:
-		int width  = ofNextPow2( bitmap.width + border*2 );
-		int height = ofNextPow2( bitmap.rows  + border*2 );
-
-
-		// ------------------------- this is fixing a bug with small type
-		// ------------------------- appearantly, opengl has trouble with
-		// ------------------------- width or height textures of 1, so we
-		// ------------------------- we just set it to 2...
-		if (width == 1) width = 2;
-		if (height == 1) height = 2;
 
 		// -------------------------
 		// info about the character:
@@ -312,33 +306,30 @@ void ofTrueTypeFont::loadFont(string filename, int fontsize, bool _bAntiAliased,
 		cps[i].topExtent 		= face->glyph->bitmap.rows;
 		cps[i].leftExtent		= face->glyph->bitmap_left;
 
+		int width  = cps[i].width;
+		int height = bitmap.rows;
+
 		// texture internals
 		cps[i].tTex             = (float)(bitmap.width + visibleBorder*2)  /  (float)width;
 		cps[i].vTex             = (float)(bitmap.rows +  visibleBorder*2)   /  (float)height;
 
-		cps[i].xOff             = (float)(border - visibleBorder) / (float)width;
-		cps[i].yOff             = (float)(border - visibleBorder) / (float)height;
+		/*cps[i].xOff             = (float)(border - visibleBorder) / (float)width;
+		cps[i].yOff             = (float)(border - visibleBorder) / (float)height;*/
 
 
-		/* sanity check:
-		ofLog(OF_LOG_NOTICE,"%i %i %i %i %i %i",
-		cps[i].value ,
-		cps[i].height ,
-		cps[i].width 	,
-		cps[i].setWidth 	,
-		cps[i].topExtent ,
-		cps[i].leftExtent	);
-		*/
+		cps[i].tW				= width;
+		cps[i].tH				= height;
 
+		cps[i].character		= i;
 
 		// Allocate Memory For The Texture Data.
-		unsigned char* expanded_data = new unsigned char[ 2 * width * height];
+		expanded_data[i] = new unsigned char[ 2 * width * height];
 
 		//-------------------------------- clear data:
 		for(int j=0; j <height;j++) {
 			for(int k=0; k < width; k++){
-				expanded_data[2*(k+j*width)  ] = 255;   // every luminance pixel = 255
-				expanded_data[2*(k+j*width)+1] = 0;
+				expanded_data[i][2*(k+j*width)  ] = 255;   // every luminance pixel = 255
+				expanded_data[i][2*(k+j*width)+1] = 0;
 			}
 		}
 
@@ -348,7 +339,7 @@ void ofTrueTypeFont::loadFont(string filename, int fontsize, bool _bAntiAliased,
 			for(int j=0; j <height; j++) {
 				for(int k=0; k < width; k++){
 					if ((k<bitmap.width) && (j<bitmap.rows)){
-						expanded_data[2*((k+border)+(j+border)*width)+1] = bitmap.buffer[k + bitmap.width*(j)];
+						expanded_data[i][2*(k+j*width)+1] = bitmap.buffer[k + bitmap.width*(j)];
 					}
 				}
 			}
@@ -363,20 +354,81 @@ void ofTrueTypeFont::loadFont(string filename, int fontsize, bool _bAntiAliased,
 				unsigned char b=0;
 				unsigned char *bptr =  src;
 				for(int k=0; k < bitmap.width ; k++){
-					expanded_data[2*((k+1)+(j+1)*width)] = 255;
+					expanded_data[i][2*((k+1)+(j+1)*width)] = 255;
 					if (k%8==0){ b = (*bptr++);}
-					expanded_data[2*((k+1)+(j+1)*width) + 1] =
+					expanded_data[i][2*((k+1)+(j+1)*width) + 1] =
 						b&0x80 ? 255 : 0;
-				    b <<= 1;
+					b <<= 1;
 				}
 				src += bitmap.pitch;
 			}
 			//-----------------------------------
 		}
 
+		areaSum += cps[i].width*cps[i].height;
+	}
+
+
+	vector<charProps> sorting_copy = cps;
+	sort(sorting_copy.begin(),sorting_copy.end(),&compare_cps);
+
+	// pack in a texture, algorithm to calculate min w/h from
+	// http://upcommons.upc.edu/pfc/bitstream/2099.1/7720/1/TesiMasterJonas.pdf
+	//cout << areaSum << endl;
+
+	bool packed = false;
+	float alpha = log2(areaSum);
+
+	ofPixels atlasPixels;
+
+	while(!packed){
+		int w = pow(2,round(alpha/2.f));
+		int h =  pow(2,round(alpha - round(alpha/2.f)));
+		atlasPixels.allocate(w,h,2);
+		atlasPixels.set(0,255);
+		atlasPixels.set(1,0);
+
+		//cout << "w: " << w << endl;
+		//cout << "h: " << h << endl;
+
+		int x=0;
+		int y=0;
+		int maxRowHeight = sorting_copy[0].tH;
+		for(int i=0;i<(int)cps.size();i++){
+			ofPixels charPixels;
+			charPixels.setFromExternalPixels(expanded_data[sorting_copy[i].character],sorting_copy[i].tW,sorting_copy[i].tH,2);
+			/*if(i>0 && sorting_copy[i].tH>sorting_copy[i-1].tH){
+				cout << "wrong sort " << sorting_copy[i].tH << " > " <<sorting_copy[i-1].tH<< endl;
+			}*/
+			if(x+sorting_copy[i].tW>atlasPixels.getWidth()){
+				x = 0;
+				//cout << " row full next y " << y << "+" << maxRowHeight << endl;
+				y += maxRowHeight;
+				maxRowHeight = sorting_copy[i].tH;
+				if(y + maxRowHeight > atlasPixels.getHeight()){
+					alpha++;
+					break;
+				}
+			}
+
+			cps[sorting_copy[i].character].xOff = x;
+			cps[sorting_copy[i].character].yOff = y;
+			ofPixelUtils::pasteInto(charPixels,atlasPixels,x,y);
+			x+= sorting_copy[i].tW;
+			if(i==(int)cps.size()-1) packed = true;
+		}
+	}
+
+	texAtlas.allocate(atlasPixels.getWidth(),atlasPixels.getHeight(),GL_LUMINANCE_ALPHA);
+	texAtlas.loadData(atlasPixels.getPixels(),atlasPixels.getWidth(),atlasPixels.getHeight(),GL_LUMINANCE_ALPHA);
+
+
+	/*for (int i = 0 ; i < nCharacters; i++){
+
+		glGenTextures(1, &cps[i].texName);
 
 		//Now we just setup some texture paramaters.
-		glBindTexture( GL_TEXTURE_2D, texNames[i]);
+		glBindTexture( GL_TEXTURE_2D, cps[i].texName);
 		#ifndef TARGET_OPENGLES
 			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
 			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
@@ -398,21 +450,22 @@ void ofTrueTypeFont::loadFont(string filename, int fontsize, bool _bAntiAliased,
 			bool b_use_mipmaps = false;  // FOR now this is fixed to false, could be an option, left in for legacy...
 			if (b_use_mipmaps){
 				gluBuild2DMipmaps(
-					GL_TEXTURE_2D, GL_LUMINANCE_ALPHA, width, height,
-					GL_LUMINANCE_ALPHA, GL_UNSIGNED_BYTE, expanded_data);
+					GL_TEXTURE_2D, GL_LUMINANCE_ALPHA, cps[i].tW, cps[i].tH,
+					GL_LUMINANCE_ALPHA, GL_UNSIGNED_BYTE, expanded_data[i]);
 			} else
 		#endif
 		{
-	    	glTexImage2D( GL_TEXTURE_2D, 0, GL_LUMINANCE_ALPHA, width, height,
-			   0, GL_LUMINANCE_ALPHA, GL_UNSIGNED_BYTE, expanded_data );
+	    	glTexImage2D( GL_TEXTURE_2D, 0, GL_LUMINANCE_ALPHA, cps[i].tW, cps[i].tH,
+			   0, GL_LUMINANCE_ALPHA, GL_UNSIGNED_BYTE, expanded_data[i] );
 		}
 
 
 		//With the texture created, we don't need to expanded data anymore
 
-    	delete [] expanded_data;
+    	delete [] expanded_data[i];
 
-   }
+   }*/
+
 	// ------------- close the library and typeface
 	FT_Done_Face(face);
 	FT_Done_FreeType(library);
@@ -488,7 +541,7 @@ void ofTrueTypeFont::drawChar(int c, float x, float y) {
 	}
 	//-----------------------
 
-	int cu = c;
+	/*int cu = c;
 
 	GLint height	= cps[cu].height;
 	GLint bwidth	= cps[cu].width;
@@ -513,12 +566,12 @@ void ofTrueTypeFont::drawChar(int c, float x, float y) {
 	x1		= lextent + bwidth + stretch;
 	y1		= height + corr + stretch;
 	x2		= (float) lextent;
-	y2		= -top + corr;
+	y2		= -top + corr;*
 
 
 
-	if (glIsTexture(texNames[cu])) {
-		glBindTexture(GL_TEXTURE_2D, texNames[cu]);
+	if (glIsTexture(cps[cu].texName)) {
+		glBindTexture(GL_TEXTURE_2D, cps[cu].texName);
 		glNormal3f(0, 0, 1);
 
 		GLfloat verts[] = { x2,y2,
@@ -542,8 +595,50 @@ void ofTrueTypeFont::drawChar(int c, float x, float y) {
 		//this error, for example, is kind of annoying to see
 		//all the time:
 		ofLog(OF_LOG_WARNING," texture not bound for character -- line %d in %s", __LINE__,__FILE__);
-	}
+	}*/
 
+	GLint height	= cps[c].height;
+	GLint bwidth	= cps[c].width;
+	GLint top		= cps[c].topExtent - cps[c].height;
+	GLint lextent	= cps[c].leftExtent;
+
+	GLfloat	x1, y1, x2, y2, corr, stretch;
+	GLfloat t1, v1, t2, v2;
+
+	//this accounts for the fact that we are showing 2*visibleBorder extra pixels
+	//so we make the size of each char that many pixels bigger
+	stretch = 0;//(float)(visibleBorder * 2);
+
+
+	t2		= cps[c].xOff;
+	v2		= cps[c].yOff;
+	t1		= cps[c].tW + t2;
+	v1		= cps[c].tH + v2;
+
+	corr	= (float)(( (fontSize - height) + top) - fontSize);
+
+	x1		= lextent + bwidth + stretch +x;
+	y1		= height + corr + stretch +y;
+	x2		= (float) lextent +x;
+	y2		= -top + corr +y;
+
+	GLfloat verts[] = { x2,y2,
+		x2, y1,
+		x1, y1,
+	x1, y2 };
+	GLfloat tex_coords[] = { t2, v2,
+		t2, v1,
+		t1, v1,
+	t1, v2 };
+
+
+	glEnableClientState( GL_TEXTURE_COORD_ARRAY );
+	glTexCoordPointer(2, GL_FLOAT, 0, tex_coords );
+	glEnableClientState( GL_VERTEX_ARRAY );
+	glVertexPointer(2, GL_FLOAT, 0, verts );
+	glDrawArrays( GL_TRIANGLE_FAN, 0, 4 );
+
+	//texAtlas.unbind();
 }
 
 //-----------------------------------------------------------
@@ -601,7 +696,7 @@ ofRectangle ofTrueTypeFont::getStringBoundingBox(string c, float x, float y){
     float       maxx    = -1;
     float       maxy    = -1;
 
-    if ( len < 1 || cps == NULL ){
+    if ( len < 1 || cps.empty() ){
         myRect.x        = 0;
         myRect.y        = 0;
         myRect.width    = 0;
@@ -690,26 +785,14 @@ void ofTrueTypeFont::drawString(string c, float x, float y) {
 	GLfloat		X		= 0;
 	GLfloat		Y		= 0;
 
-	// (a) record the current "alpha state, blend func, etc"
-	#ifndef TARGET_OPENGLES
-		glPushAttrib(GL_COLOR_BUFFER_BIT);
-	#else
-		GLboolean blend_enabled = glIsEnabled(GL_BLEND);
-		GLboolean texture_2d_enabled = glIsEnabled(GL_TEXTURE_2D);
-		GLint blend_src, blend_dst;
-		glGetIntegerv( GL_BLEND_SRC, &blend_src );
-		glGetIntegerv( GL_BLEND_DST, &blend_dst );
-	#endif
 
-    // (b) enable our regular ALPHA blending!
-    glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	// (c) enable texture once before we start drawing each char (no point turning it on and off constantly)
-	glEnable(GL_TEXTURE_2D);
+	//glEnable(GL_TEXTURE_2D);
 	// (d) store the current matrix position and do a translation to the drawing position
-	glPushMatrix();
-	glTranslatef(x, y, 0);
+	//glPushMatrix();
+	//glTranslatef(x, y, 0);
 
+	bind();
 	int len = (int)c.length();
 
 	while(index < len){
@@ -718,34 +801,72 @@ void ofTrueTypeFont::drawString(string c, float x, float y) {
 		  if (c[index] == '\n') {
 
 				Y = (float) lineHeight;
-				glTranslatef(-X, Y, 0);
+				x-=X;
+				y+=Y;
+				//glTranslatef(-X, Y, 0);
 				X = 0 ; //reset X Pos back to zero
 
 		  }else if (c[index] == ' ') {
 				 int cy = (int)'p' - NUM_CHARACTER_TO_START;
 				 X += cps[cy].width * letterSpacing * spaceSize;
-				 glTranslatef((float)cps[cy].width * letterSpacing * spaceSize, 0, 0);
+				 //glTranslatef((float)cps[cy].width * letterSpacing * spaceSize, 0, 0);
+				 x += (float)cps[cy].width * letterSpacing * spaceSize;
 		  } else {
-				drawChar(cy, 0, 0);
+				drawChar(cy, x, y);
 				X += cps[cy].setWidth * letterSpacing;
-				glTranslatef((float)cps[cy].setWidth * letterSpacing, 0, 0);
+				//glTranslatef((float)cps[cy].setWidth * letterSpacing, 0, 0);
+				x += (float)cps[cy].setWidth * letterSpacing;
 		  }
 		}
 		index++;
 	}
-	glPopMatrix();
-	glDisable(GL_TEXTURE_2D);
-    // (c) return back to the way things were (with blending, blend func, etc)
-	#ifndef TARGET_OPENGLES
-		glPopAttrib();
-	#else
-		if( !blend_enabled )
-			glDisable(GL_BLEND);
-		if( !texture_2d_enabled )
-			glDisable(GL_TEXTURE_2D);
-		glBlendFunc( blend_src, blend_dst );
-	#endif
 
+	unbind();
+	//glPopMatrix();
+	//glDisable(GL_TEXTURE_2D);
+    // (c) return back to the way things were (with blending, blend func, etc)
+
+}
+
+//-----------------------------------------------------------
+void ofTrueTypeFont::bind(){
+	if(!binded){
+		// (a) record the current "alpha state, blend func, etc"
+		#ifndef TARGET_OPENGLES
+			glPushAttrib(GL_COLOR_BUFFER_BIT);
+		#else
+			GLboolean blend_enabled = glIsEnabled(GL_BLEND);
+			GLboolean texture_2d_enabled = glIsEnabled(GL_TEXTURE_2D);
+			GLint blend_src, blend_dst;
+			glGetIntegerv( GL_BLEND_SRC, &blend_src );
+			glGetIntegerv( GL_BLEND_DST, &blend_dst );
+		#endif
+
+	    // (b) enable our regular ALPHA blending!
+	    glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+		texAtlas.bind();
+		binded = true;
+	}
+}
+
+//-----------------------------------------------------------
+void ofTrueTypeFont::unbind(){
+	if(binded){
+		texAtlas.unbind();
+
+		#ifndef TARGET_OPENGLES
+			glPopAttrib();
+		#else
+			if( !blend_enabled )
+				glDisable(GL_BLEND);
+			if( !texture_2d_enabled )
+				glDisable(GL_TEXTURE_2D);
+			glBlendFunc( blend_src, blend_dst );
+		#endif
+		binded = false;
+	}
 }
 
 //=====================================================================
