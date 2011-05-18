@@ -7,6 +7,7 @@
 #include "ofConstants.h"
 #include "ofPath.h"
 #include "ofTexture.h"
+#include "ofMesh.h"
 
 //--------------------------------------------------
 typedef struct {
@@ -18,9 +19,9 @@ typedef struct {
 	int leftExtent;
 	float tTex;
 	float vTex;		//0-1 pct of bitmap...
-	float xOff;
-	float yOff;
 	float tW,tH;
+	float x1,x2,y1,y2;
+	float t1,t2,v1,v2;
 	GLuint texName;
 	int character;
 } charProps;
@@ -88,11 +89,15 @@ protected:
 
 	ofTexture texAtlas;
 	bool binded;
+	ofMesh stringQuads;
 
 private:
 #ifdef TARGET_ANDROID
 	friend void ofUnloadAllFontTextures();
 	friend void ofReloadAllFontTextures();
+#endif
+#ifdef TARGET_OPENGLES
+	GLint blend_src, blend_dst;
 #endif
 	void		unloadTextures();
 	void		reloadTextures();
