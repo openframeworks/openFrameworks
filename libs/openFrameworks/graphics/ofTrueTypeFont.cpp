@@ -372,9 +372,12 @@ void ofTrueTypeFont::loadFont(string filename, int fontsize, bool _bAntiAliased,
 				unsigned char *bptr =  src;
 				for(int k=0; k < bitmap.width ; k++){
 					expanded_data[i][2*(k+j*width)] = 255;
-					if (k%8==0){ b = (*bptr++);}
-					expanded_data[i][2*(k+j*width) + 1] =
-						b&0x80 ? 255 : 0;
+
+					if (k%8==0){
+						b = (*bptr++);
+					}
+
+					expanded_data[i][2*(k+j*width) + 1] = b&0x80 ? 255 : 0;
 					b <<= 1;
 				}
 				src += bitmap.pitch;
@@ -382,7 +385,7 @@ void ofTrueTypeFont::loadFont(string filename, int fontsize, bool _bAntiAliased,
 			//-----------------------------------
 		}
 
-		areaSum += cps[i].width*cps[i].height;
+		areaSum += (cps[i].width+border*2)*(cps[i].height+border*2);
 	}
 
 
@@ -410,79 +413,32 @@ void ofTrueTypeFont::loadFont(string filename, int fontsize, bool _bAntiAliased,
 
 		int x=0;
 		int y=0;
-		int maxRowHeight = sorting_copy[0].tH;
+		int maxRowHeight = sorting_copy[0].tH + border*2;
 		for(int i=0;i<(int)cps.size();i++){
 			ofPixels & charPixels = expanded_data[sorting_copy[i].character];
-			/*if(i>0 && sorting_copy[i].tH>sorting_copy[i-1].tH){
-				cout << "wrong sort " << sorting_copy[i].tH << " > " <<sorting_copy[i-1].tH<< endl;
-			}*/
-			if(x+sorting_copy[i].tW>atlasPixels.getWidth()){
+
+			if(x+sorting_copy[i].tW + border*2>atlasPixels.getWidth()){
 				x = 0;
-				//cout << " row full next y " << y << "+" << maxRowHeight << endl;
 				y += maxRowHeight;
-				maxRowHeight = sorting_copy[i].tH;
+				maxRowHeight = sorting_copy[i].tH + border*2;
 				if(y + maxRowHeight > atlasPixels.getHeight()){
 					alpha++;
 					break;
 				}
 			}
 
-			cps[sorting_copy[i].character].t2		= x;
-			cps[sorting_copy[i].character].v2		= y;
-			cps[sorting_copy[i].character].t1		= cps[sorting_copy[i].character].tW + x;
-			cps[sorting_copy[i].character].v1		= cps[sorting_copy[i].character].tH + y;
-			ofPixelUtils::pasteInto(charPixels,atlasPixels,x,y);
-			x+= sorting_copy[i].tW;
+			cps[sorting_copy[i].character].t2		= x + border;
+			cps[sorting_copy[i].character].v2		= y + border;
+			cps[sorting_copy[i].character].t1		= cps[sorting_copy[i].character].tW + x + border;
+			cps[sorting_copy[i].character].v1		= cps[sorting_copy[i].character].tH + y + border;
+			ofPixelUtils::pasteInto(charPixels,atlasPixels,x+border,y+border);
+			x+= sorting_copy[i].tW + border*2;
 			if(i==(int)cps.size()-1) packed = true;
 		}
 	}
 
 	texAtlas.allocate(atlasPixels.getWidth(),atlasPixels.getHeight(),GL_LUMINANCE_ALPHA);
 	texAtlas.loadData(atlasPixels.getPixels(),atlasPixels.getWidth(),atlasPixels.getHeight(),GL_LUMINANCE_ALPHA);
-
-
-	/*for (int i = 0 ; i < nCharacters; i++){
-
-		glGenTextures(1, &cps[i].texName);
-
-		//Now we just setup some texture paramaters.
-		glBindTexture( GL_TEXTURE_2D, cps[i].texName);
-		#ifndef TARGET_OPENGLES
-			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-		#endif
-   		if (bAntiAlised == true){
-			glTexParameterf(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
-			glTexParameterf(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
-		} else {
-			glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
-			glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
-		}
-		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-
-		//Here we actually create the texture itself, notice
-		//that we are using GL_LUMINANCE_ALPHA to indicate that
-		//we are using 2 channel data.
-
-		#ifndef TARGET_OPENGLES // gluBuild2DMipmaps doesn't seem to exist in anything i had in the iphone build... so i commented it out
-			bool b_use_mipmaps = false;  // FOR now this is fixed to false, could be an option, left in for legacy...
-			if (b_use_mipmaps){
-				gluBuild2DMipmaps(
-					GL_TEXTURE_2D, GL_LUMINANCE_ALPHA, cps[i].tW, cps[i].tH,
-					GL_LUMINANCE_ALPHA, GL_UNSIGNED_BYTE, expanded_data[i]);
-			} else
-		#endif
-		{
-	    	glTexImage2D( GL_TEXTURE_2D, 0, GL_LUMINANCE_ALPHA, cps[i].tW, cps[i].tH,
-			   0, GL_LUMINANCE_ALPHA, GL_UNSIGNED_BYTE, expanded_data[i] );
-		}
-
-
-		//With the texture created, we don't need to expanded data anymore
-
-    	delete [] expanded_data[i];
-
-   }*/
 
 	// ------------- close the library and typeface
 	FT_Done_Face(face);
@@ -557,97 +513,6 @@ void ofTrueTypeFont::drawChar(int c, float x, float y) {
 		//ofLog(OF_LOG_ERROR,"Error : char (%i) not allocated -- line %d in %s", (c + NUM_CHARACTER_TO_START), __LINE__,__FILE__);
 		return;
 	}
-	//-----------------------
-
-	/*int cu = c;
-
-	GLint height	= cps[cu].height;
-	GLint bwidth	= cps[cu].width;
-	GLint top		= cps[cu].topExtent - cps[cu].height;
-	GLint lextent	= cps[cu].leftExtent;
-
-	GLfloat	x1, y1, x2, y2, corr, stretch;
-	GLfloat t1, v1, t2, v2;
-
-	//this accounts for the fact that we are showing 2*visibleBorder extra pixels
-	//so we make the size of each char that many pixels bigger
-	stretch = (float)(visibleBorder * 2);
-
-
-	t2		= cps[cu].xOff;
-	v2		= cps[cu].yOff;
-	t1		= cps[cu].tTex + t2;
-	v1		= cps[cu].vTex + v2;
-
-	corr	= (float)(( (fontSize - height) + top) - fontSize);
-
-	x1		= lextent + bwidth + stretch;
-	y1		= height + corr + stretch;
-	x2		= (float) lextent;
-	y2		= -top + corr;*
-
-
-
-	if (glIsTexture(cps[cu].texName)) {
-		glBindTexture(GL_TEXTURE_2D, cps[cu].texName);
-		glNormal3f(0, 0, 1);
-
-		GLfloat verts[] = { x2,y2,
-			x2, y1,
-			x1, y1,
-		x1, y2 };
-		GLfloat tex_coords[] = { t2, v2,
-			t2, v1,
-			t1, v1,
-		t1, v2 };
-
-		glEnableClientState( GL_TEXTURE_COORD_ARRAY );
-		glTexCoordPointer(2, GL_FLOAT, 0, tex_coords );
-		glEnableClientState( GL_VERTEX_ARRAY );
-		glVertexPointer(2, GL_FLOAT, 0, verts );
-		glDrawArrays( GL_TRIANGLE_FAN, 0, 4 );
-		glDisableClientState( GL_TEXTURE_COORD_ARRAY );
-
-	} else {
-		//let's add verbosity levels somewhere...
-		//this error, for example, is kind of annoying to see
-		//all the time:
-		ofLog(OF_LOG_WARNING," texture not bound for character -- line %d in %s", __LINE__,__FILE__);
-	}*/
-
-	/*GLint height	= cps[c].height;
-	GLint bwidth	= cps[c].width;
-	GLint top		= cps[c].topExtent - cps[c].height;
-	GLint lextent	= cps[c].leftExtent;
-
-	GLfloat	x1, y1, x2, y2, corr, stretch;
-	GLfloat t1, v1, t2, v2;
-
-	//this accounts for the fact that we are showing 2*visibleBorder extra pixels
-	//so we make the size of each char that many pixels bigger
-	stretch = 0;//(float)(visibleBorder * 2);
-
-
-	t2		= cps[c].xOff;
-	v2		= cps[c].yOff;
-	t1		= cps[c].tW + t2;
-	v1		= cps[c].tH + v2;
-
-	corr	= (float)(( (fontSize - height) + top) - fontSize);
-
-	x1		= lextent + bwidth + stretch +x;
-	y1		= height + corr + stretch +y;
-	x2		= (float) lextent +x;
-	y2		= -top + corr +y;*/
-
-	/*GLfloat verts[] = { x2,y2,
-		x2, y1,
-		x1, y1,
-	x1, y2 };
-	GLfloat tex_coords[] = { t2, v2,
-		t2, v1,
-		t1, v1,
-	t1, v2 };*/
 
 	GLfloat	x1, y1, x2, y2;
 	GLfloat t1, v1, t2, v2;
@@ -679,14 +544,6 @@ void ofTrueTypeFont::drawChar(int c, float x, float y) {
 	stringQuads.addIndex(firstIndex+2);
 	stringQuads.addIndex(firstIndex+3);
 	stringQuads.addIndex(firstIndex);
-
-	/*glEnableClientState( GL_TEXTURE_COORD_ARRAY );
-	glTexCoordPointer(2, GL_FLOAT, 0, tex_coords );
-	glEnableClientState( GL_VERTEX_ARRAY );
-	glVertexPointer(2, GL_FLOAT, 0, verts );
-	glDrawArrays( GL_TRIANGLE_FAN, 0, 4 );*/
-
-	//texAtlas.unbind();
 }
 
 //-----------------------------------------------------------
@@ -800,8 +657,6 @@ ofRectangle ofTrueTypeFont::getStringBoundingBox(string c, float x, float y){
     return myRect;
 }
 
-
-
 //-----------------------------------------------------------
 float ofTrueTypeFont::stringHeight(string c) {
     ofRectangle rect = getStringBoundingBox(c, 0,0);
@@ -816,29 +671,10 @@ void ofTrueTypeFont::drawString(string c, float x, float y) {
     	return;
     };
 
-    // we need transparency to draw text, but we don't know
-    // if that is set up in outside of this function
-    // we "pushAttrib", turn on alpha and "popAttrib"
-    // http://www.opengl.org/documentation/specs/man_pages/hardcopy/GL/html/gl/pushattrib.html
-
-    // **** note ****
-    // I have read that pushAttrib() is slow, if used often,
-    // maybe there is a faster way to do this?
-    // ie, check if blending is enabled, etc...
-    // glIsEnabled().... glGet()...
-    // http://www.opengl.org/documentation/specs/man_pages/hardcopy/GL/html/gl/get.html
-    // **************
-
 	GLint		index	= 0;
-	GLfloat		X		= 0;
-	GLfloat		Y		= 0;
+	GLfloat		X		= x;
+	GLfloat		Y		= y;
 
-
-	// (c) enable texture once before we start drawing each char (no point turning it on and off constantly)
-	//glEnable(GL_TEXTURE_2D);
-	// (d) store the current matrix position and do a translation to the drawing position
-	//glPushMatrix();
-	//glTranslatef(x, y, 0);
 
 	bool alreadyBinded = binded;
 
@@ -851,37 +687,39 @@ void ofTrueTypeFont::drawString(string c, float x, float y) {
 		if (cy < nCharacters){ 			// full char set or not?
 		  if (c[index] == '\n') {
 
-				Y = (float) lineHeight;
-				x-=X;
-				y+=Y;
-				//glTranslatef(-X, Y, 0);
-				X = 0 ; //reset X Pos back to zero
+				Y += (float) lineHeight;
+				X = x ; //reset X Pos back to zero
 
 		  }else if (c[index] == ' ') {
 				 int cy = (int)'p' - NUM_CHARACTER_TO_START;
 				 X += cps[cy].width * letterSpacing * spaceSize;
-				 //glTranslatef((float)cps[cy].width * letterSpacing * spaceSize, 0, 0);
-				 x += (float)cps[cy].width * letterSpacing * spaceSize;
 		  } else {
-				drawChar(cy, x, y);
+				drawChar(cy, X, Y);
 				X += cps[cy].setWidth * letterSpacing;
-				//glTranslatef((float)cps[cy].setWidth * letterSpacing, 0, 0);
-				x += (float)cps[cy].setWidth * letterSpacing;
 		  }
 		}
 		index++;
 	}
 
 	if(!alreadyBinded) unbind();
-	//glPopMatrix();
-	//glDisable(GL_TEXTURE_2D);
-    // (c) return back to the way things were (with blending, blend func, etc)
 
 }
 
 //-----------------------------------------------------------
 void ofTrueTypeFont::bind(){
 	if(!binded){
+	    // we need transparency to draw text, but we don't know
+	    // if that is set up in outside of this function
+	    // we "pushAttrib", turn on alpha and "popAttrib"
+	    // http://www.opengl.org/documentation/specs/man_pages/hardcopy/GL/html/gl/pushattrib.html
+
+	    // **** note ****
+	    // I have read that pushAttrib() is slow, if used often,
+	    // maybe there is a faster way to do this?
+	    // ie, check if blending is enabled, etc...
+	    // glIsEnabled().... glGet()...
+	    // http://www.opengl.org/documentation/specs/man_pages/hardcopy/GL/html/gl/get.html
+	    // **************
 		// (a) record the current "alpha state, blend func, etc"
 		#ifndef TARGET_OPENGLES
 			glPushAttrib(GL_COLOR_BUFFER_BIT);
