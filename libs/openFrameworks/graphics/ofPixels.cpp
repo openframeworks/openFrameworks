@@ -21,6 +21,12 @@ ofPixels_<T>::~ofPixels_(){
 
 template<typename T>
 ofPixels_<T>::ofPixels_(const ofPixels_<T> & mom){
+	bAllocated = false;
+	pixelsOwner = false;
+	bytesPerChannel = sizeof(T);
+	bitsPerChannel = bytesPerChannel*8;
+	channels = 0;
+	pixels = NULL;
 	(*this).template copyFrom( mom );
 }
 
