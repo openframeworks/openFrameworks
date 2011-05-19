@@ -195,9 +195,7 @@ ofTrueTypeFont::~ofTrueTypeFont(){
 void ofTrueTypeFont::unloadTextures(){
 	if(!bLoadedOk) return;
 
-	for (int i = 0; i < (int)cps.size(); i++){
-		glDeleteTextures(1, &cps[i].texName);
-	}
+	texAtlas.clear();
 	bLoadedOk = false;
 }
 
@@ -540,8 +538,6 @@ void ofTrueTypeFont::drawChar(int c, float x, float y) {
 
 //-----------------------------------------------------------
 void ofTrueTypeFont::drawCharAsShape(int c, float x, float y) {
-
-
 	//----------------------- error checking
 	if (!bLoadedOk){
 		ofLog(OF_LOG_ERROR,"Error : font not allocated -- line %d in %s", __LINE__,__FILE__);
@@ -564,8 +560,6 @@ void ofTrueTypeFont::drawCharAsShape(int c, float x, float y) {
 	ofTTFCharacter & charRef = charOutlines[cu];
 	charRef.setFilled(ofGetStyle().bFill);
 	charRef.draw(x,y);
-
-
 }
 
 //-----------------------------------------------------------

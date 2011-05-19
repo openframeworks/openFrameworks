@@ -20,7 +20,6 @@ typedef struct {
 	float tW,tH;
 	float x1,x2,y1,y2;
 	float t1,t2,v1,v2;
-	GLuint texName;
 } charProps;
 
 
