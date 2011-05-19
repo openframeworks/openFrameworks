@@ -448,15 +448,6 @@ void ofTrueTypeFont::loadFont(string filename, int fontsize, bool _bAntiAliased,
 }
 
 //-----------------------------------------------------------
-int ofTrueTypeFont::ofNextPow2 ( int a )
-{
-	int rval=1;
-	while(rval<a) rval<<=1;
-	return rval;
-}
-
-
-//-----------------------------------------------------------
 void ofTrueTypeFont::setLineHeight(float _newLineHeight) {
 	lineHeight = _newLineHeight;
 }
