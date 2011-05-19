@@ -498,13 +498,6 @@ ofTTFCharacter ofTrueTypeFont::getCharacterAsPoints(int character){
 //-----------------------------------------------------------
 void ofTrueTypeFont::drawChar(int c, float x, float y) {
 
-
-	//----------------------- error checking
-	if (!bLoadedOk){
-		ofLog(OF_LOG_ERROR,"Error : font not allocated -- line %d in %s", __LINE__,__FILE__);
-		return;
-	}
-
 	if (c >= nCharacters){
 		//ofLog(OF_LOG_ERROR,"Error : char (%i) not allocated -- line %d in %s", (c + NUM_CHARACTER_TO_START), __LINE__,__FILE__);
 		return;
@@ -544,18 +537,6 @@ void ofTrueTypeFont::drawChar(int c, float x, float y) {
 
 //-----------------------------------------------------------
 void ofTrueTypeFont::drawCharAsShape(int c, float x, float y) {
-	//----------------------- error checking
-	if (!bLoadedOk){
-		ofLog(OF_LOG_ERROR,"Error : font not allocated -- line %d in %s", __LINE__,__FILE__);
-		return;
-	}
-
-	//----------------------- error checking
-	if (!bMakeContours){
-		ofLog(OF_LOG_ERROR,"Error : contours not created for this font - call loadFont with makeContours set to true");
-		return;
-	}
-
 	if (c >= nCharacters){
 		//ofLog(OF_LOG_ERROR,"Error : char (%i) not allocated -- line %d in %s", (c + NUM_CHARACTER_TO_START), __LINE__,__FILE__);
 		return;
