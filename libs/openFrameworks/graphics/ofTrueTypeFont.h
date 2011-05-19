@@ -80,7 +80,6 @@ protected:
 	void 			drawChar(int c, float x, float y);
 	void			drawCharAsShape(int c, float x, float y);
 	
-	int 			ofNextPow2(int a);
 	int				border;//, visibleBorder;
 	string			filename;
 
