@@ -344,15 +344,9 @@ void ofTrueTypeFont::loadFont(string filename, int fontsize, bool _bAntiAliased,
 
 
 		if (bAntiAlised == true){
-			//-----------------------------------
-			for(int j=0; j <height; j++) {
-				for(int k=0; k < width; k++){
-					if ((k<bitmap.width) && (j<bitmap.rows)){
-						expanded_data[i][2*(k+j*width)+1] = bitmap.buffer[k + bitmap.width*(j)];
-					}
-				}
-			}
-			//-----------------------------------
+			ofPixels bitmapPixels;
+			bitmapPixels.setFromExternalPixels(bitmap.buffer,bitmap.width,bitmap.rows,1);
+			expanded_data[i].setChannel(1,bitmapPixels);
 		} else {
 			//-----------------------------------
 			// true type packs monochrome info in a
@@ -443,6 +437,7 @@ void ofTrueTypeFont::loadFont(string filename, int fontsize, bool _bAntiAliased,
 		x+= sortedCopy[i].tW + border*2;
 	}
 
+	texAtlas.setCompression(OF_COMPRESS_ARB);
 	texAtlas.allocate(atlasPixels.getWidth(),atlasPixels.getHeight(),GL_LUMINANCE_ALPHA,false);
 	texAtlas.loadData(atlasPixels.getPixels(),atlasPixels.getWidth(),atlasPixels.getHeight(),GL_LUMINANCE_ALPHA);
 
