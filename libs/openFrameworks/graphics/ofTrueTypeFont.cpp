@@ -437,8 +437,14 @@ void ofTrueTypeFont::loadFont(string filename, int fontsize, bool _bAntiAliased,
 		x+= sortedCopy[i].tW + border*2;
 	}
 
-	texAtlas.setCompression(OF_COMPRESS_ARB);
+
 	texAtlas.allocate(atlasPixels.getWidth(),atlasPixels.getHeight(),GL_LUMINANCE_ALPHA,false);
+	if(bAntiAlised){
+		texAtlas.setTextureMinMagFilter(GL_LINEAR,GL_LINEAR);
+	}else{
+		texAtlas.setTextureMinMagFilter(GL_NEAREST,GL_NEAREST);
+	}
+
 	texAtlas.loadData(atlasPixels.getPixels(),atlasPixels.getWidth(),atlasPixels.getHeight(),GL_LUMINANCE_ALPHA);
 
 	// ------------- close the library and typeface
