@@ -1,13 +1,21 @@
 #include "testApp.h"
 
+
 //--------------------------------------------------------------
 void testApp::setup(){
+
+#ifdef NO_WINDOW
+	ofSetLogLevel( OF_LOG_VERBOSE );
+	ofSetDataPathRoot( "data/" );
+	ofSetFrameRate( 60 );
+#endif
 
 	#ifdef _USE_LIVE_VIDEO
         vidGrabber.setVerbose(true);
         vidGrabber.initGrabber(320,240);
 	#else
         vidPlayer.loadMovie("fingers.mov");
+		vidPlayer.setLoopState( OF_LOOP_NORMAL );
         vidPlayer.play();
 	#endif
 
@@ -55,6 +63,17 @@ void testApp::update(){
 		// find contours which are between the size of 20 pixels and 1/3 the w*h pixels.
 		// also, find holes is set to true so we will get interior contours as well....
 		contourFinder.findContours(grayDiff, 20, (340*240)/3, 10, true);	// find holes
+		#ifdef NO_WINDOW
+			int frame;
+			#ifdef _USE_LIVE_VIDEO
+				frame = -1;
+			#else
+				frame = vidPlayer.getCurrentFrame();
+			#endif
+
+			ofLog(OF_LOG_VERBOSE, "frame %3i: %i blobs found, fps %5.2f", frame, contourFinder.nBlobs, 
+					ofGetFrameRate() );
+		#endif
 	}
 
 }

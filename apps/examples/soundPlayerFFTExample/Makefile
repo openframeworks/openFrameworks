@@ -34,6 +34,10 @@ ifeq ($(findstring Android,$(MAKECMDGOALS)),Android)
 	else
 		HOST_PLATFORM = linux-x86
 	endif
+else
+	ifndef ARCH
+		ARCH=$(shell uname -m)
+	endif
 endif
 
 ifeq ($(ARCH),android)

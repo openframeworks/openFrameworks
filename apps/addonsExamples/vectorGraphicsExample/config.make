@@ -15,9 +15,9 @@ USER_CFLAGS =
 
 # USER_LDFLAGS allows to pass custom flags to the linker
 # for example libraries like:
-# USER_LD_FLAGS = libs/libawesomelib.a
+# USER_LDFLAGS = libs/libawesomelib.a
 
-USER_LD_FLAGS =
+USER_LDFLAGS =
 
 
 # use this to add system libraries for example:
