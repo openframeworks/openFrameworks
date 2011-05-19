@@ -81,7 +81,7 @@ protected:
 	void			drawCharAsShape(int c, float x, float y);
 	
 	int 			ofNextPow2(int a);
-	int				border, visibleBorder;
+	int				border;//, visibleBorder;
 	string			filename;
 
 	ofTexture texAtlas;
@@ -95,6 +95,8 @@ private:
 #endif
 #ifdef TARGET_OPENGLES
 	GLint blend_src, blend_dst;
+	GLboolean blend_enabled;
+	GLboolean texture_2d_enabled;
 #endif
 	void		unloadTextures();
 	void		reloadTextures();

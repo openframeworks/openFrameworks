@@ -175,7 +175,7 @@ ofTrueTypeFont::ofTrueTypeFont(){
 	// 1 pixels is hidden because we don't want to see the real edge of the texture
 
 	border			= 3;
-	visibleBorder	= 2;
+	//visibleBorder	= 2;
 	stringQuads.setMode(OF_TRIANGLES_MODE);
 	binded = false;
 }
@@ -381,52 +381,66 @@ void ofTrueTypeFont::loadFont(string filename, int fontsize, bool _bAntiAliased,
 	}
 
 
-	vector<charProps> sorting_copy = cps;
-	sort(sorting_copy.begin(),sorting_copy.end(),&compare_cps);
+	vector<charProps> sortedCopy = cps;
+	sort(sortedCopy.begin(),sortedCopy.end(),&compare_cps);
 
 	// pack in a texture, algorithm to calculate min w/h from
 	// http://upcommons.upc.edu/pfc/bitstream/2099.1/7720/1/TesiMasterJonas.pdf
 	//cout << areaSum << endl;
 
 	bool packed = false;
-	float alpha = log2(areaSum);
+	float alpha = log(areaSum)*1.44269;
 
-	ofPixels atlasPixels;
-
+	int w;
+	int h;
 	while(!packed){
-		int w = pow(2,round(alpha/2.f));
-		int h = w;//pow(2,round(alpha - round(alpha/2.f)));
-		atlasPixels.allocate(w,h,2);
-		atlasPixels.set(0,255);
-		atlasPixels.set(1,0);
-
-		//cout << "w: " << w << endl;
-		//cout << "h: " << h << endl;
-
+		w = pow(2,round(alpha/2.f));
+		h = w;//pow(2,round(alpha - round(alpha/2.f)));
 		int x=0;
 		int y=0;
-		int maxRowHeight = sorting_copy[0].tH + border*2;
+		int maxRowHeight = sortedCopy[0].tH + border*2;
 		for(int i=0;i<(int)cps.size();i++){
-			ofPixels & charPixels = expanded_data[sorting_copy[i].character];
-
-			if(x+sorting_copy[i].tW + border*2>atlasPixels.getWidth()){
+			if(x+sortedCopy[i].tW + border*2>w){
 				x = 0;
 				y += maxRowHeight;
-				maxRowHeight = sorting_copy[i].tH + border*2;
-				if(y + maxRowHeight > atlasPixels.getHeight()){
+				maxRowHeight = sortedCopy[i].tH + border*2;
+				if(y + maxRowHeight > h){
 					alpha++;
 					break;
 				}
 			}
-
-			cps[sorting_copy[i].character].t2		= float(x + border)/float(w);
-			cps[sorting_copy[i].character].v2		= float(y + border)/float(h);
-			cps[sorting_copy[i].character].t1		= float(cps[sorting_copy[i].character].tW + x + border)/float(w);
-			cps[sorting_copy[i].character].v1		= float(cps[sorting_copy[i].character].tH + y + border)/float(h);
-			ofPixelUtils::pasteInto(charPixels,atlasPixels,x+border,y+border);
-			x+= sorting_copy[i].tW + border*2;
+			x+= sortedCopy[i].tW + border*2;
 			if(i==(int)cps.size()-1) packed = true;
 		}
+
+	}
+
+
+
+	ofPixels atlasPixels;
+	atlasPixels.allocate(w,h,2);
+	atlasPixels.set(0,255);
+	atlasPixels.set(1,0);
+
+
+	int x=0;
+	int y=0;
+	int maxRowHeight = sortedCopy[0].tH + border*2;
+	for(int i=0;i<(int)cps.size();i++){
+		ofPixels & charPixels = expanded_data[sortedCopy[i].character];
+
+		if(x+sortedCopy[i].tW + border*2>w){
+			x = 0;
+			y += maxRowHeight;
+			maxRowHeight = sortedCopy[i].tH + border*2;
+		}
+
+		cps[sortedCopy[i].character].t2		= float(x + border)/float(w);
+		cps[sortedCopy[i].character].v2		= float(y + border)/float(h);
+		cps[sortedCopy[i].character].t1		= float(cps[sortedCopy[i].character].tW + x + border)/float(w);
+		cps[sortedCopy[i].character].v1		= float(cps[sortedCopy[i].character].tH + y + border)/float(h);
+		ofPixelUtils::pasteInto(charPixels,atlasPixels,x+border,y+border);
+		x+= sortedCopy[i].tW + border*2;
 	}
 
 	texAtlas.allocate(atlasPixels.getWidth(),atlasPixels.getHeight(),GL_LUMINANCE_ALPHA,false);
@@ -618,7 +632,7 @@ ofRectangle ofTrueTypeFont::getStringBoundingBox(string c, float x, float y){
             	GLint top		= cps[cy].topExtent - cps[cy].height;
             	GLint lextent	= cps[cy].leftExtent;
             	float	x1, y1, x2, y2, corr, stretch;
-            	stretch = (float)visibleBorder * 2;
+            	stretch = 0;//(float)visibleBorder * 2;
 				corr = (float)(((fontSize - height) + top) - fontSize);
 				x1		= (x + xoffset + lextent + bwidth + stretch);
             	y1		= (y + yoffset + height + corr + stretch);
@@ -716,8 +730,8 @@ void ofTrueTypeFont::bind(){
 		#ifndef TARGET_OPENGLES
 			glPushAttrib(GL_COLOR_BUFFER_BIT);
 		#else
-			GLboolean blend_enabled = glIsEnabled(GL_BLEND);
-			GLboolean texture_2d_enabled = glIsEnabled(GL_TEXTURE_2D);
+			blend_enabled = glIsEnabled(GL_BLEND);
+			texture_2d_enabled = glIsEnabled(GL_TEXTURE_2D);
 			glGetIntegerv( GL_BLEND_SRC, &blend_src );
 			glGetIntegerv( GL_BLEND_DST, &blend_dst );
 		#endif
