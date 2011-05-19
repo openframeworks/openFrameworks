@@ -11,19 +11,16 @@
 
 //--------------------------------------------------
 typedef struct {
-	int value;
+	int character;
 	int height;
 	int width;
 	int setWidth;
 	int topExtent;
 	int leftExtent;
-	float tTex;
-	float vTex;		//0-1 pct of bitmap...
 	float tW,tH;
 	float x1,x2,y1,y2;
 	float t1,t2,v1,v2;
 	GLuint texName;
-	int character;
 } charProps;
 
 

@@ -301,7 +301,7 @@ void ofTrueTypeFont::loadFont(string filename, int fontsize, bool _bAntiAliased,
 
 		// -------------------------
 		// info about the character:
-		cps[i].value 			= i;
+		cps[i].character		= i;
 		cps[i].height 			= face->glyph->bitmap_top;
 		cps[i].width 			= face->glyph->bitmap.width;
 		cps[i].setWidth 		= face->glyph->advance.x >> 6;
@@ -311,18 +311,10 @@ void ofTrueTypeFont::loadFont(string filename, int fontsize, bool _bAntiAliased,
 		int width  = cps[i].width;
 		int height = bitmap.rows;
 
-		// texture internals
-		cps[i].tTex             = (float)(bitmap.width + visibleBorder*2)  /  (float)width;
-		cps[i].vTex             = (float)(bitmap.rows +  visibleBorder*2)   /  (float)height;
-
-		/*cps[i].xOff             = (float)(border - visibleBorder) / (float)width;
-		cps[i].yOff             = (float)(border - visibleBorder) / (float)height;*/
-
 
 		cps[i].tW				= width;
 		cps[i].tH				= height;
 
-		cps[i].character		= i;
 
 
 		GLint fheight	= cps[i].height;
@@ -403,7 +395,7 @@ void ofTrueTypeFont::loadFont(string filename, int fontsize, bool _bAntiAliased,
 
 	while(!packed){
 		int w = pow(2,round(alpha/2.f));
-		int h =  pow(2,round(alpha - round(alpha/2.f)));
+		int h = w;//pow(2,round(alpha - round(alpha/2.f)));
 		atlasPixels.allocate(w,h,2);
 		atlasPixels.set(0,255);
 		atlasPixels.set(1,0);
@@ -427,17 +419,17 @@ void ofTrueTypeFont::loadFont(string filename, int fontsize, bool _bAntiAliased,
 				}
 			}
 
-			cps[sorting_copy[i].character].t2		= x + border;
-			cps[sorting_copy[i].character].v2		= y + border;
-			cps[sorting_copy[i].character].t1		= cps[sorting_copy[i].character].tW + x + border;
-			cps[sorting_copy[i].character].v1		= cps[sorting_copy[i].character].tH + y + border;
+			cps[sorting_copy[i].character].t2		= float(x + border)/float(w);
+			cps[sorting_copy[i].character].v2		= float(y + border)/float(h);
+			cps[sorting_copy[i].character].t1		= float(cps[sorting_copy[i].character].tW + x + border)/float(w);
+			cps[sorting_copy[i].character].v1		= float(cps[sorting_copy[i].character].tH + y + border)/float(h);
 			ofPixelUtils::pasteInto(charPixels,atlasPixels,x+border,y+border);
 			x+= sorting_copy[i].tW + border*2;
 			if(i==(int)cps.size()-1) packed = true;
 		}
 	}
 
-	texAtlas.allocate(atlasPixels.getWidth(),atlasPixels.getHeight(),GL_LUMINANCE_ALPHA);
+	texAtlas.allocate(atlasPixels.getWidth(),atlasPixels.getHeight(),GL_LUMINANCE_ALPHA,false);
 	texAtlas.loadData(atlasPixels.getPixels(),atlasPixels.getWidth(),atlasPixels.getHeight(),GL_LUMINANCE_ALPHA);
 
 	// ------------- close the library and typeface
