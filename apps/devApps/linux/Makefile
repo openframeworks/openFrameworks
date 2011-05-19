@@ -36,11 +36,19 @@ ifeq ($(findstring Android,$(MAKECMDGOALS)),Android)
 	endif
 endif
 
+ifndef ARCH
+	ARCH=$(shell uname -m)
+endif
+
 ifeq ($(ARCH),android)
 	COMPILER_OPTIMIZATION = -Os
 	NDK_PLATFORM = android-8
 else
-	COMPILER_OPTIMIZATION = $(USER_COMPILER_OPTIMIZATION)
+	ifeq ($(ARCH),armv7l)
+		COMPILER_OPTIMIZATION = -march=armv7-a -mtune=cortex-a8 -finline-functions -funroll-all-loops  -O3 -funsafe-math-optimizations -mfpu=neon -ftree-vectorize -mfloat-abi=softfp 
+	else
+		COMPILER_OPTIMIZATION = $(USER_COMPILER_OPTIMIZATION)
+	endif
 endif
 EXCLUDE_FROM_SOURCE="bin,.xcodeproj,obj"
 
@@ -53,11 +61,14 @@ EXCLUDE_FROM_SOURCE="bin,.xcodeproj,obj"
 SHELL =  /bin/sh
 ifneq ($(ARCH),android)
 	CXX =  g++
-	ARCH = $(shell uname -m)
 	ifeq ($(ARCH),x86_64)
 		LIBSPATH=linux64
 	else
-		LIBSPATH=linux
+		ifeq ($(ARCH),armv7l)
+			LIBSPATH=linuxarmv7l
+		else
+			LIBSPATH=linux
+		endif
 	endif
 else
 	ifeq ($(findstring Release_arm7,$(MAKECMDGOALS)),Release_arm7)
@@ -82,8 +93,8 @@ endif
 NODEPS = clean
 SED_EXCLUDE_FROM_SRC = $(shell echo  $(EXCLUDE_FROM_SOURCE) | sed s/\,/\\\\\|/g)
 SOURCE_DIRS = $(shell find . -maxdepth 1 -mindepth 1 -type d | grep -v $(SED_EXCLUDE_FROM_SRC) | sed s/.\\///)
-SOURCES = $(shell find $(SOURCE_DIRS) -name "*.cpp" -or -name "*.c")
-OBJFILES = $(patsubst %.c,%.o,$(patsubst %.cpp,%.o,$(SOURCES)))
+SOURCES = $(shell find $(SOURCE_DIRS) -name "*.cpp" -or -name "*.c" -or -name "*.cc")
+OBJFILES = $(patsubst %.c,%.o,$(patsubst %.cpp,%.o,$(patsubst %.cc,%.o,$(SOURCES))))
 APPNAME = $(shell basename `pwd`)
 CORE_INCLUDES = $(shell find $(OF_ROOT)/libs/openFrameworks/ -type d)
 CORE_INCLUDE_FLAGS = $(addprefix -I,$(CORE_INCLUDES))
@@ -220,6 +231,7 @@ else
 	    BIN_NAME = $(APPNAME)
 		TARGET = bin/$(BIN_NAME)
 		TARGET_LIBS = -lopenFrameworks
+		TARGET_CFLAGS = $(COMPILER_OPTIMIZATION)
 	endif
 endif
 
@@ -267,25 +279,30 @@ AndroidRelease:
 #This rule does the compilation
 #$(OBJS): $(SOURCES)
 $(OBJ_OUTPUT)%.o: %.cpp
-	@echo "compiling object for: " $<
+	@echo "compiling $(ARCH) object for: " $<
 	mkdir -p $(@D)
 	$(CXX) -c $(TARGET_CFLAGS) $(CFLAGS) $(ADDONSCFLAGS) $(USER_CFLAGS) -MMD -MP -MF$(OBJ_OUTPUT)$*.d -MT$(OBJ_OUTPUT)$*.d -o$@ -c $<
 
 $(OBJ_OUTPUT)%.o: %.c
-	@echo "compiling object for: " $<
+	@echo "compiling $(ARCH) object for: " $<
 	mkdir -p $(@D)
 	$(CC) -c $(TARGET_CFLAGS) $(CFLAGS) $(ADDONSCFLAGS) $(USER_CFLAGS) -MMD -MP -MF$(OBJ_OUTPUT)$*.d -MT$(OBJ_OUTPUT)$*.d -o$@ -c $<
 
 
 $(OBJ_OUTPUT)%.o: $(OF_ROOT)/%.cpp
-	@echo "compiling addon object for" $<
+	@echo "compiling $(ARCH) addon object for" $<
 	mkdir -p $(@D)
 	$(CXX) $(TARGET_CFLAGS) $(CFLAGS) $(ADDONSCFLAGS) $(USER_CFLAGS) -MMD -MP -MF$(OBJ_OUTPUT)$*.d -MT$(OBJ_OUTPUT)$*.d -o $@ -c $<
 
 $(OBJ_OUTPUT)%.o: $(OF_ROOT)/%.c
-	@echo "compiling addon object for" $<
+	@echo "compiling $(ARCH) addon object for" $<
 	mkdir -p $(@D)
 	$(CC) $(TARGET_CFLAGS) $(CFLAGS) $(ADDONSCFLAGS) $(USER_CFLAGS) -MMD -MP -MF$(OBJ_OUTPUT)$*.d -MT$(OBJ_OUTPUT)$*.d -o $@ -c $<
+
+$(OBJ_OUTPUT)%.o: %.cc
+	@echo "compiling $(ARCH) object for: " $<
+	mkdir -p $(@D)
+	$(CC) -c $(TARGET_CFLAGS) $(CFLAGS) $(ADDONSCFLAGS) $(USER_CFLAGS) -MMD -MP -MF$(OBJ_OUTPUT)$*.d -MT$(OBJ_OUTPUT)$*.d -o$@ -c $<
 
 $(TARGET): $(OBJS) $(ADDONS_OBJS)
 	@echo "linking" $(TARGET) $(GTK)
@@ -294,14 +311,11 @@ $(TARGET): $(OBJS) $(ADDONS_OBJS)
 -include $(DEPFILES)
 
 .PHONY: clean cleanDebug cleanRelease CleanAndroid
-clean:
-	rm -Rf obj
-	rm -f -v $(TARGET)
-	rm -Rf -v bin/libs
 
 $(CLEANTARGET):
 	rm -Rf -v $(OBJ_OUTPUT)
 	rm -f -v $(TARGET)
+	rm -Rf -v bin/libs
 
 CleanAndroid:
 	rm -Rf obj
