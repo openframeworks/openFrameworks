@@ -98,10 +98,14 @@ void ofPixels_<T>::setFromAlignedPixels(const T * newPixels,int w, int h, int ch
 	if(widthStep==width*bytesPerChannel*channels){
 		setFromPixels(newPixels,w,h,channels);
 	}else{
+		int srcStride = widthStep/bytesPerChannel;
+		int dstStride = width*channels;
+		const T * src = newPixels;
+		T * dst = pixels;
 		for( int i = 0; i < height; i++ ) {
-			memcpy( pixels + (i*width*bytesPerChannel*channels),
-					newPixels + (i*widthStep),
-					width*bytesPerChannel*channels );
+			memcpy( dst, src, width*bytesPerChannel*channels );
+			src += srcStride;
+			dst += dstStride;
 		}
 	}
 
