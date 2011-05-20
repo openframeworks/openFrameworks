@@ -58,6 +58,9 @@ public:
 	int getBitsPerChannel() const;
 	int getNumChannels() const;
 
+	ofPixels_<T> getChannel(int channel) const;
+	void setChannel(int channel, const ofPixels_<T> channelPixels);
+
 	ofImageType getImageType() const;
 
 	int size() const;
@@ -116,19 +119,20 @@ void ofPixels_<DstType>::copyFrom(const ofPixels_<SrcType> & mom){
 	if(mom.isAllocated()){
 		allocate(mom.getWidth(),mom.getHeight(),mom.getNumChannels());
 
-		float factor;
+		float srcMax = sizeof(SrcType) == sizeof(float) ? 1.f : numeric_limits<SrcType>::max();
+		float dstMax = sizeof(DstType) == sizeof(float) ? 1.f : numeric_limits<DstType>::max();
+		float factor = dstMax / srcMax;
 
-		if(sizeof(SrcType)==4){
-			//float so values are normalized
-			factor = numeric_limits<DstType>::max();
-		}else if(sizeof(DstType)==4){
-			factor = 1.f/float(numeric_limits<SrcType>::max());
-		}else{
-			factor = float(numeric_limits<DstType>::max()) / float(numeric_limits<SrcType>::max());
-		}
-
-		for(int i = 0; i < mom.size(); i++){
-			pixels[i] = mom[i] * factor;
+		if(sizeof(SrcType) == sizeof(float)) {
+			// coming from float we need a special case to clamp the values
+			for(int i = 0; i < mom.size(); i++){
+				pixels[i] = ofClamp(mom[i], 0, 1) * factor;
+			}
+		} else{
+			// everything else is a straight scaling
+			for(int i = 0; i < mom.size(); i++){
+				pixels[i] = mom[i] * factor;
+			}
 		}
 	}
 }

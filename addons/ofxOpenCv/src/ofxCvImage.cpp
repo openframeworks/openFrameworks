@@ -718,10 +718,10 @@ unsigned char*  ofxCvImage::getPixels(){
 		//Also it means that modifying the pointer return by get pixels - affects the internal cvImage
 		//Where as with the slower way below modifying the pointer doesn't change the image.
 		if(  cv8bit->width*cv8bit->nChannels == cv8bit->widthStep ){
-			pixels.setFromExternalPixels((unsigned char*)cv8bit->imageData,width,height,cv8bit->depth*cv8bit->nChannels);
+			pixels.setFromExternalPixels((unsigned char*)cv8bit->imageData,width,height,cv8bit->nChannels);
 		}
 
-		pixels.setFromAlignedPixels((unsigned char*)cv8bit->imageData,width,height,cv8bit->depth*cv8bit->nChannels,cvImage->widthStep);
+		pixels.setFromAlignedPixels((unsigned char*)cv8bit->imageData,width,height,cv8bit->nChannels,cvImage->widthStep);
 		bPixelsDirty = false;
 	}
 	return pixels.getPixels();
@@ -736,10 +736,10 @@ ofPixelsRef ofxCvImage::getPixelsRef(){
 		//Also it means that modifying the pointer return by get pixels - affects the internal cvImage
 		//Where as with the slower way below modifying the pointer doesn't change the image.
 		if(  cv8bit->width*cv8bit->nChannels == cvImage->widthStep ){
-			pixels.setFromExternalPixels((unsigned char*)cv8bit->imageData,width,height,cv8bit->depth*cv8bit->nChannels);
+			pixels.setFromExternalPixels((unsigned char*)cv8bit->imageData,width,height,cv8bit->nChannels);
 		}
 
-		pixels.setFromAlignedPixels((unsigned char*)cv8bit->imageData,width,height,cv8bit->depth*cv8bit->nChannels,cv8bit->widthStep);
+		pixels.setFromAlignedPixels((unsigned char*)cv8bit->imageData,width,height,cv8bit->nChannels,cv8bit->widthStep);
 		bPixelsDirty = false;
 	}
 	return pixels;
@@ -751,7 +751,7 @@ unsigned char*  ofxCvImage::getRoiPixels(){
 		IplImage * cv8bit= getCv8BitsRoiImage();
 		ofRectangle roi = getROI();
 		unsigned char * roi_ptr = (unsigned char*)cv8bit->imageData + ((int)(roi.y)*cv8bit->widthStep) + (int)roi.x;
-		pixels.setFromAlignedPixels(roi_ptr,width,height,cv8bit->depth*cv8bit->nChannels,cv8bit->widthStep);
+		pixels.setFromAlignedPixels(roi_ptr,width,height,cv8bit->nChannels,cv8bit->widthStep);
 		bPixelsDirty = false;
 	}
 	return pixels.getPixels();
@@ -765,7 +765,7 @@ ofPixelsRef  ofxCvImage::getRoiPixelsRef(){
 		IplImage * cv8bit= getCv8BitsRoiImage();
 		ofRectangle roi = getROI();
 		unsigned char * roi_ptr = (unsigned char*)cv8bit->imageData + ((int)(roi.y)*cv8bit->widthStep) + (int)roi.x;
-		pixels.setFromAlignedPixels(roi_ptr,width,height,cv8bit->depth,cv8bit->widthStep);
+		pixels.setFromAlignedPixels(roi_ptr,width,height,cv8bit->nChannels,cv8bit->widthStep);
 		bPixelsDirty = false;
 	}
 	return pixels;
