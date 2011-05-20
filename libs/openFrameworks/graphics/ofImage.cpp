@@ -68,30 +68,58 @@ void ofInitFreeImage(bool deinit=false){
 	}
 }
 
+template <typename T>
+FREE_IMAGE_TYPE getFreeImageType(ofPixels_<T>& pix);
+
+template <>
+FREE_IMAGE_TYPE getFreeImageType(ofPixels& pix) {
+	return FIT_BITMAP;
+}
+
+template <>
+FREE_IMAGE_TYPE getFreeImageType(ofShortPixels& pix) {
+	switch(pix.getNumChannels()) {
+		case 1: return FIT_UINT16;
+		case 3: return FIT_RGB16;
+		case 4: return FIT_RGBA16;
+	}
+}
+template <>
+FREE_IMAGE_TYPE getFreeImageType(ofFloatPixels& pix) {
+	switch(pix.getNumChannels()) {
+		case 1: return FIT_FLOAT;
+		case 3: return FIT_RGBF;
+		case 4: return FIT_RGBAF;
+	}
+}
+
 //----------------------------------------------------
 template<typename T>
-FIBITMAP *  getBmpFromPixels(ofPixels_<T> &pix){
-
-	FIBITMAP * bmp = NULL;
-
-	int w						= pix.getWidth();
-	int h						= pix.getHeight();
-	unsigned char * pixels		= (unsigned char*)pix.getPixels();
-	int bpp						= pix.getBitsPerPixel();
-	int bytesPerPixel			= pix.getBytesPerPixel();
-
-	bmp							= FreeImage_ConvertFromRawBits(pixels, w,h, w*bytesPerPixel, bpp, 0,0,0, true);
-
-	//this is for grayscale images they need to be paletted from: http://sourceforge.net/forum/message.php?msg_id=2856879
-	if( pix.getImageType() == OF_IMAGE_GRAYSCALE ){
+FIBITMAP* getBmpFromPixels(ofPixels_<T> &pix){	
+	unsigned char* pixels = (unsigned char*) pix.getPixels();
+	int w = pix.getWidth();
+	int h = pix.getHeight();
+	unsigned int bpp = pix.getBitsPerPixel();
+	
+	FREE_IMAGE_TYPE freeImageType = getFreeImageType(pix);
+	FIBITMAP* bmp = FreeImage_AllocateT(freeImageType, w, h, bpp);
+	unsigned char* bmpBits = FreeImage_GetBits(bmp);
+	if(bmpBits != NULL) {
+		memcpy(bmpBits, pixels, w * h * pix.getBytesPerPixel());
+		FreeImage_FlipVertical(bmp);
+	}
+	
+	// {afaict, this paletting code isn't necessary anymore - kyle, may 2011}
+	// this is for grayscale images they need to be paletted from: http://sourceforge.net/forum/message.php?msg_id=2856879
+	if(pix.getImageType() == OF_IMAGE_GRAYSCALE && pix.getBitsPerChannel() <= 8){
 		RGBQUAD *pal = FreeImage_GetPalette(bmp);
-		for(int i = 0; i < 256; i++) {
+		for(unsigned int i = 0; i < 256; i++) {
 			pal[i].rgbRed = i;
 			pal[i].rgbGreen = i;
 			pal[i].rgbBlue = i;
 		}
 	}
-
+	
 	return bmp;
 }
 
@@ -101,10 +129,11 @@ void putBmpIntoPixels(FIBITMAP * bmp, ofPixels_<T> &pix, bool swapForLittleEndia
 	unsigned int width = FreeImage_GetWidth(bmp);
 	unsigned int height = FreeImage_GetHeight(bmp);
 	unsigned int bpp = FreeImage_GetBPP(bmp);
-	unsigned int channels = bpp / sizeof(T) / 8;
-	unsigned int pitch = width * bpp / 8;
-
-	ofLogVerbose() << "putBmpIntoPixels: float , w" << width << "h" << height << "bpp" << bpp << "channels" << channels << "pitch" << pitch;
+	unsigned int channels = (bpp / sizeof(T)) / 8;
+	unsigned int pitch = (width * bpp) / 8;
+	
+	//BITMAPINFOHEADER* header = FreeImage_GetInfoHeader(bmp);
+	//ofLogVerbose() << "putBmpIntoPixels(" << bpp << " / " << channels << ") is " << header->biSize << ", " << header->biPlanes << ", " << header->biBitCount << ", " << header->biCompression << ", " << header->biSizeImage;
 
 	pix.allocate(width, height, channels);
 	FreeImage_ConvertToRawBits((uint8_t*) pix.getPixels(), bmp, pitch, bpp, FI_RGBA_RED_MASK, FI_RGBA_GREEN_MASK, FI_RGBA_BLUE_MASK, true);
