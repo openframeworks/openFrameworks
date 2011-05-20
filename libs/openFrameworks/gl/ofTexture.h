@@ -5,9 +5,9 @@
 #include "ofBaseTypes.h"
 #include "ofConstants.h"
 
-int ofGetGlInternalFormat(ofPixels& pix);
-int ofGetGlInternalFormat(ofShortPixels& pix);
-int ofGetGlInternalFormat(ofFloatPixels& pix);
+int ofGetGlInternalFormat(const ofPixels& pix);
+int ofGetGlInternalFormat(const ofShortPixels& pix);
+int ofGetGlInternalFormat(const ofFloatPixels& pix);
 void ofGetGlFormatAndType(int glInternalFormat, int& glFormat, int& glType);
 
 //Sosolimited: texture compression

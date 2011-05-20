@@ -12,6 +12,19 @@ void loadImages(string directory, vector<ofImage_<T> >& images) {
 }
 
 template <class T>
+void resaveImages(string directory) {
+	ofDirectory dir;
+	dir.listDir(directory);
+	dir.sort();
+	for(int i = 0; i < (int)dir.size(); i++) {
+		T img;
+		ofLogVerbose() << "resaving " << dir.getPath(i);
+		img.loadImage(dir.getFile(i));
+		img.saveImage("resaved/" + dir.getPath(i));
+	}
+}
+
+template <class T>
 void drawImages(string name, vector<ofImage_<T> >& images) {
 	float offset = 0;
 	for(int i = 0; i < (int)images.size(); i++) {
@@ -27,13 +40,21 @@ void drawImages(string name, vector<ofImage_<T> >& images) {
 
 void testApp::setup() {	
 	ofSetFrameRate(12);
+	ofSetLogLevel(OF_LOG_VERBOSE);
+	
 	loadImages("jpg8", jpg8);
 	loadImages("png8", png8);
 	loadImages("png16", png16);
 	loadImages("exrFloat", exrFloat);
+	
+	resaveImages<ofImage>("jpg8");
+	resaveImages<ofImage>("png8");
+	resaveImages<ofShortImage>("png16");
+	resaveImages<ofFloatImage>("exrFloat");
 
 	img8 = exrFloat[0];
-	imgf = png16[2];
+	img16 = exrFloat[0];
+	imgf = exrFloat[0];
 }
 
 void testApp::update() {
@@ -55,6 +76,8 @@ void testApp::draw() {
 	ofTranslate(0, 40);
 	drawImages("exrFloat", exrFloat);
 
-	img8.draw(exrFloat[0].getWidth()+20,40,240,240);
-	imgf.draw(exrFloat[0].getWidth()+20,300,240,240);
+	ofTranslate(exrFloat[0].getWidth()+10, 0);
+	img8.draw(0, 0, 128, 128);
+	img16.draw(0, 128, 128, 128);
+	imgf.draw(0, 256, 128, 128);
 }

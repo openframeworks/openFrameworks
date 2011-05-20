@@ -136,7 +136,7 @@ void ofxThreadedImageLoader::update(ofEventArgs & a){
 		entry.image->getTextureReference().allocate(
 				 pix.getWidth()
 				,pix.getHeight()
-				,pix.getGlDataType()
+				,ofGetGlInternalFormat(pix)
 		);
 		
 		entry.image->setUseTexture(true);
