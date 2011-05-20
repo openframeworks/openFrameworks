@@ -82,6 +82,9 @@ FREE_IMAGE_TYPE getFreeImageType(ofShortPixels& pix) {
 		case 1: return FIT_UINT16;
 		case 3: return FIT_RGB16;
 		case 4: return FIT_RGBA16;
+		default:
+			ofLogError() << "Unkown freeimage type for" << pix.getNumChannels() << "channels";
+			return FIT_UNKNOWN;
 	}
 }
 template <>
@@ -90,6 +93,9 @@ FREE_IMAGE_TYPE getFreeImageType(ofFloatPixels& pix) {
 		case 1: return FIT_FLOAT;
 		case 3: return FIT_RGBF;
 		case 4: return FIT_RGBAF;
+		default:
+			ofLogError() << "Unkown freeimage type for" << pix.getNumChannels() << "channels";
+			return FIT_UNKNOWN;
 	}
 }
 
