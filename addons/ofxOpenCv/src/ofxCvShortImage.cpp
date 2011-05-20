@@ -32,6 +32,7 @@ void ofxCvShortImage::init() {
     gldepth = GL_UNSIGNED_SHORT;
     glchannels = GL_LUMINANCE;
     cvGrayscaleImage = NULL;
+    bShortPixelsDirty = true;
 }
 
 //--------------------------------------------------------------------------------
@@ -43,6 +44,13 @@ void ofxCvShortImage::clear() {
     }
     ofxCvImage::clear();    //call clear in base class
 }
+
+//--------------------------------------------------------------------------------
+void ofxCvShortImage::flagImageChanged() {
+    bShortPixelsDirty = true;
+    ofxCvImage::flagImageChanged();
+}
+
 
 //--------------------------------------------------------------------------------
 void ofxCvShortImage::convertShortToGray( IplImage* shortImg, IplImage* grayImg ) {
@@ -69,7 +77,7 @@ void ofxCvShortImage::set(float value){
 }
 
 //--------------------------------------------------------------------------------
-void ofxCvShortImage::setFromPixels( unsigned char* _pixels, int w, int h ) {
+void ofxCvShortImage::setFromPixels( const unsigned char* _pixels, int w, int h ) {
     // This sets the internal image ignoring any ROI
 
     if( w == width &&  h == height ) {
@@ -94,7 +102,7 @@ void ofxCvShortImage::setFromPixels( unsigned char* _pixels, int w, int h ) {
 }
 
 //--------------------------------------------------------------------------------
-void ofxCvShortImage::setRoiFromPixels( unsigned char* _pixels, int w, int h ) {
+void ofxCvShortImage::setRoiFromPixels( const unsigned char* _pixels, int w, int h ) {
     ofRectangle roi = getROI();
     ofRectangle inputROI = ofRectangle( roi.x, roi.y, w, h );
     ofRectangle iRoi = getIntersectionROI( roi, inputROI );
@@ -297,4 +305,32 @@ void ofxCvShortImage::scaleIntoMe( ofxCvImage& mom, int interpolationMethod ){
     } else {
         ofLog(OF_LOG_ERROR, "in scaleIntoMe, mom image type has to match");
     }
+}
+
+ofShortPixels & ofxCvShortImage::getShortPixelsRef(){
+	if(bShortPixelsDirty) {
+
+		//Note this possible introduces a bug where pixels doesn't contain the current image.
+		//Also it means that modifying the pointer return by get pixels - affects the internal cvImage
+		//Where as with the slower way below modifying the pointer doesn't change the image.
+		if(  cvImage->width*cvImage->depth/8 == cvImage->widthStep ){
+			shortPixels.setFromExternalPixels((unsigned short*)cvImage->imageData,width,height,cvImage->nChannels);
+		}else{
+			shortPixels.setFromAlignedPixels((unsigned short*)cvImage->imageData,width,height,cvImage->nChannels,cvImage->widthStep);
+		}
+		bShortPixelsDirty = false;
+	}
+	return shortPixels;
+
+}
+
+ofShortPixels & ofxCvShortImage::getRoiShortPixelsRef(){
+	if(bShortPixelsDirty) {
+		ofRectangle roi = getROI();
+		unsigned short * roi_ptr = (unsigned short*)cvImage->imageData + ((int)(roi.y)*cvImage->widthStep/(cvImage->depth/8) + (int)roi.x * cvImage->nChannels);
+		shortPixels.setFromAlignedPixels(roi_ptr,roi.width,roi.height,cvImage->nChannels,cvImage->widthStep);
+		bShortPixelsDirty = false;
+	}
+	return shortPixels;
+
 }
