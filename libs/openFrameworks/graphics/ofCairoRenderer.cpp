@@ -945,8 +945,11 @@ void ofCairoRenderer::drawEllipse(float x, float y, float z, float width, float 
 void ofCairoRenderer::drawString(string text, float x, float y, float z, ofDrawBitmapMode mode){
 	cairo_select_font_face (cr, "Mono", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL);
 	cairo_set_font_size (cr, 10);
-	cairo_move_to (cr, x, y);
-	cairo_show_text (cr, text.c_str() );
+	vector<string> lines = ofSplitString(text, "\n");
+	for(int i=0;i<(int)lines.size();i++){
+		cairo_move_to (cr, x, y+i*14.3);
+		cairo_show_text (cr, lines[i].c_str() );
+	}
 }
 
 cairo_t * ofCairoRenderer::getCairoContext(){
