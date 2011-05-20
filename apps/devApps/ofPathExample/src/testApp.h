@@ -49,8 +49,6 @@ class testApp : public ofBaseApp{
 	ofPath shapeG,shapeH;
 	ofPath shapeIa,shapeIb,shapeIc;
 	ofPath selectedDraggableVertex, unselectedDraggableVertex;
-	
-	ofCairoRenderer cairo;
 };
 
 #endif
