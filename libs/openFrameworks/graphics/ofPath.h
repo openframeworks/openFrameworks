@@ -95,12 +95,13 @@ public:
 
 	void setUseShapeColor(bool useColor);
 	bool getUseShapeColor();
+	
+	void tessellate();
 
 private:
 
 	ofSubPath & lastPath();
 	ofPolyline & lastPolyline();
-	void tessellate();
 
 	void generatePolylinesFromPaths();
 
