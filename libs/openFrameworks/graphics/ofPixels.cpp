@@ -1,4 +1,5 @@
 #include "ofPixels.h"
+#include "ofMath.h"
 
 
 template<typename T>
@@ -18,6 +19,10 @@ ofPixels_<T>::~ofPixels_(){
 
 template<typename T>
 ofPixels_<T>::ofPixels_(const ofPixels_<T> & mom){
+	bAllocated = false;
+	pixelsOwner = false;
+	channels = 0;
+	pixels = NULL;
 	(*this).template copyFrom( mom );
 }
 
@@ -322,6 +327,28 @@ ofImageType ofPixels_<T>::getImageType() const{
 template<typename T>
 int ofPixels_<T>::size() const{
 	return width*height*channels;
+}
+
+template<typename T>
+ofPixels_<T> ofPixels_<T>::getChannel(int channel) const{
+	ofPixels_<T> channelPixels;
+	channelPixels.allocate(width,height,1);
+	channel = ofClamp(channel,0,channels-1);
+	int j=0;
+	for(int i=channel;i<size();i+=channels, ++j){
+		channelPixels[j]=pixels[i];
+	}
+	return channelPixels;
+}
+
+template<typename T>
+void ofPixels_<T>::setChannel(int channel, const ofPixels_<T> channelPixels){
+	channel = ofClamp(channel,0,channels-1);
+	int j=0;
+	for(int i=channel;i<size();i+=channels, ++j){
+		pixels[i]=channelPixels[j];
+	}
+
 }
 
 template class ofPixels_<unsigned char>;
