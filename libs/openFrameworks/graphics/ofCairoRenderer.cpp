@@ -406,6 +406,16 @@ void ofCairoRenderer::draw(ofImage & img, float x, float y, float z, float w, fl
 }
 
 //--------------------------------------------
+void draw(ofFloatImage & image, float x, float y, float z, float w, float h){
+	draw((ofImage)image,x,y,z,w,h);
+}
+
+//--------------------------------------------
+void draw(ofShortImage & image, float x, float y, float z, float w, float h){
+	draw((ofImage)image,x,y,z,w,h);	
+}
+
+//--------------------------------------------
 void ofCairoRenderer::setRectMode(ofRectMode mode){
 	rectMode = mode;
 }
