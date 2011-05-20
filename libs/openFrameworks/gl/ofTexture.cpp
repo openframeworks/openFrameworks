@@ -8,7 +8,7 @@
 static bool bTexHackEnabled = true;
 
 //---------------------------------
-int ofGetGlInternalFormat(ofPixels& pix) {
+int ofGetGlInternalFormat(const ofPixels& pix) {
 	switch(pix.getNumChannels()) {
 		case 3: return GL_RGB;
 		case 4: return GL_RGBA;
@@ -17,7 +17,7 @@ int ofGetGlInternalFormat(ofPixels& pix) {
 }
 
 //---------------------------------
-int ofGetGlInternalFormat(ofShortPixels& pix) {
+int ofGetGlInternalFormat(const ofShortPixels& pix) {
 #ifndef TARGET_OPENGLES
 	switch(pix.getNumChannels()) {
 		case 3: return GL_RGB16;
@@ -35,7 +35,7 @@ int ofGetGlInternalFormat(ofShortPixels& pix) {
 }
 
 //---------------------------------
-int ofGetGlInternalFormat(ofFloatPixels& pix) {
+int ofGetGlInternalFormat(const ofFloatPixels& pix) {
 #ifndef TARGET_OPENGLES
 	switch(pix.getNumChannels()) {
 		case 3: return GL_RGB32F_ARB;
