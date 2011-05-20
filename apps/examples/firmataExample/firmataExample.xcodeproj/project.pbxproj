@@ -10,7 +10,6 @@
 		E423CACF136B4CD800392358 /* libcairo-script-interpreter.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E423C7A0136B4CD600392358 /* libcairo-script-interpreter.a */; };
 		E423CAD0136B4CD800392358 /* libcairo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E423C7A1136B4CD600392358 /* libcairo.a */; };
 		E423CAD1136B4CD800392358 /* libpixman-1.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E423C7A2136B4CD600392358 /* libpixman-1.a */; };
-		E423CAD2136B4CD800392358 /* libpng15.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E423C7A3136B4CD600392358 /* libpng15.a */; };
 		E423CAD7136B4CD900392358 /* libfmodex.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = E423C7B9136B4CD600392358 /* libfmodex.dylib */; };
 		E423CAD8136B4CD900392358 /* libfmodex.dylib~1ff4e510c44ce83eb6abef94a7b24181cb9280ba in Frameworks */ = {isa = PBXBuildFile; fileRef = E423C7BA136B4CD600392358 /* libfmodex.dylib~1ff4e510c44ce83eb6abef94a7b24181cb9280ba */; };
 		E423CAE2136B4CD900392358 /* freeimage.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E423C7CF136B4CD600392358 /* freeimage.a */; };
@@ -145,7 +144,6 @@
 		E423C7A0136B4CD600392358 /* libcairo-script-interpreter.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libcairo-script-interpreter.a"; path = "../../../libs/cairo/lib/osx/libcairo-script-interpreter.a"; sourceTree = SOURCE_ROOT; };
 		E423C7A1136B4CD600392358 /* libcairo.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libcairo.a; path = ../../../libs/cairo/lib/osx/libcairo.a; sourceTree = SOURCE_ROOT; };
 		E423C7A2136B4CD600392358 /* libpixman-1.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libpixman-1.a"; path = "../../../libs/cairo/lib/osx/libpixman-1.a"; sourceTree = SOURCE_ROOT; };
-		E423C7A3136B4CD600392358 /* libpng15.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libpng15.a; path = ../../../libs/cairo/lib/osx/libpng15.a; sourceTree = SOURCE_ROOT; };
 		E423C7AB136B4CD600392358 /* fmod.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = fmod.h; path = ../../../libs/fmodex/include/fmod.h; sourceTree = SOURCE_ROOT; };
 		E423C7AC136B4CD600392358 /* fmod.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = fmod.hpp; path = ../../../libs/fmodex/include/fmod.hpp; sourceTree = SOURCE_ROOT; };
 		E423C7AD136B4CD600392358 /* fmod_codec.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = fmod_codec.h; path = ../../../libs/fmodex/include/fmod_codec.h; sourceTree = SOURCE_ROOT; };
@@ -215,7 +213,6 @@
 				E423CACF136B4CD800392358 /* libcairo-script-interpreter.a in Frameworks */,
 				E423CAD0136B4CD800392358 /* libcairo.a in Frameworks */,
 				E423CAD1136B4CD800392358 /* libpixman-1.a in Frameworks */,
-				E423CAD2136B4CD800392358 /* libpng15.a in Frameworks */,
 				E423CAD7136B4CD900392358 /* libfmodex.dylib in Frameworks */,
 				E423CAD8136B4CD900392358 /* libfmodex.dylib~1ff4e510c44ce83eb6abef94a7b24181cb9280ba in Frameworks */,
 				E423CAE2136B4CD900392358 /* freeimage.a in Frameworks */,
@@ -512,7 +509,6 @@
 				E423C7A0136B4CD600392358 /* libcairo-script-interpreter.a */,
 				E423C7A1136B4CD600392358 /* libcairo.a */,
 				E423C7A2136B4CD600392358 /* libpixman-1.a */,
-				E423C7A3136B4CD600392358 /* libpng15.a */,
 			);
 			name = osx;
 			path = ../../../libs/cairo/lib/osx;
@@ -887,7 +883,6 @@
 			isa = PBXProject;
 			buildConfigurationList = E4B69B4D0A3A1720003C02F2 /* Build configuration list for PBXProject "firmataExample" */;
 			compatibilityVersion = "Xcode 2.4";
-			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				English,
