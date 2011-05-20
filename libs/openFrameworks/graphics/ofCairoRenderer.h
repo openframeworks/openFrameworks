@@ -33,6 +33,8 @@ public:
 	void draw(ofMesh & vertexData, ofPolyRenderMode mode);
 	void draw(vector<ofPoint> & vertexData, ofPrimitiveMode drawMode);
 	void draw(ofImage & img, float x, float y, float z, float w, float h);
+	void draw(ofFloatImage & image, float x, float y, float z, float w, float h);
+	void draw(ofShortImage & image, float x, float y, float z, float w, float h);
 
 	bool rendersPathPrimitives(){
 		return true;
