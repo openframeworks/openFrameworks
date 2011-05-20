@@ -14,5 +14,6 @@ public:
 	vector<ofFloatImage> exrFloat;
 
 	ofImage img8;
+	ofShortImage img16;
 	ofFloatImage imgf;
 };
