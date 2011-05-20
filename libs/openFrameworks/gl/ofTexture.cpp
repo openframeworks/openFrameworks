@@ -8,7 +8,7 @@
 static bool bTexHackEnabled = true;
 
 //---------------------------------
-int ofGetGlInternalFormat(ofPixels& pix) {
+int ofGetGlInternalFormat(const ofPixels& pix) {
 	switch(pix.getNumChannels()) {
 		case 3: return GL_RGB;
 		case 4: return GL_RGBA;
@@ -17,7 +17,7 @@ int ofGetGlInternalFormat(ofPixels& pix) {
 }
 
 //---------------------------------
-int ofGetGlInternalFormat(ofShortPixels& pix) {
+int ofGetGlInternalFormat(const ofShortPixels& pix) {
 #ifndef TARGET_OPENGLES
 	switch(pix.getNumChannels()) {
 		case 3: return GL_RGB16;
@@ -35,7 +35,7 @@ int ofGetGlInternalFormat(ofShortPixels& pix) {
 }
 
 //---------------------------------
-int ofGetGlInternalFormat(ofFloatPixels& pix) {
+int ofGetGlInternalFormat(const ofFloatPixels& pix) {
 #ifndef TARGET_OPENGLES
 	switch(pix.getNumChannels()) {
 		case 3: return GL_RGB32F_ARB;
@@ -53,22 +53,7 @@ int ofGetGlInternalFormat(ofFloatPixels& pix) {
 }
 
 //---------------------------------
-void ofGetGlFormatAndType(int glInternalFormat, int& glFormat, int& glType) {	
-	/*switch(glInternalFormat) {
-		case GL_RGBA:
-			glInternalFormat = GL_RGBA8;
-			ofLogError() << "ofGetGlFormatAndType(): GL_RGBA is deprecated, use GL_RGBA8";
-			break;
-		case GL_RGB:
-			glInternalFormat = GL_RGB8;
-			ofLogError() << "ofGetGlFormatAndType(): GL_RGB is deprecated, use GL_RGB8";
-			break;
-		case GL_LUMINANCE:
-			glInternalFormat = GL_LUMINANCE8;
-			ofLogError() << "ofGetGlFormatAndType(): GL_LUMINANCE is deprecated, use GL_LUMINANCE8";
-			break;
-	}*/
-
+void ofGetGlFormatAndType(int glInternalFormat, int& glFormat, int& glType) {
 	switch(glInternalFormat) {
 		// common 8-bit formats: rgba, rgb, grayscale
 		case GL_RGBA:

@@ -59,8 +59,10 @@ class ofxCvImage : public ofBaseImage {
     virtual void  operator -= ( float value );
     virtual void  operator += ( float value );
 
-    virtual void  setFromPixels( unsigned char* _pixels, int w, int h ) = 0;
-    virtual void  setRoiFromPixels( unsigned char* _pixels, int w, int h ) = 0;
+    virtual void  setFromPixels( const unsigned char* _pixels, int w, int h ) = 0;
+    virtual void  setFromPixels( const ofPixels & pixels );
+    virtual void  setRoiFromPixels( const unsigned char* _pixels, int w, int h ) = 0;
+    virtual void  setRoiFromPixels( const ofPixels & pixels );
     virtual void  operator = ( const ofxCvGrayscaleImage& mom ) = 0;
     virtual void  operator = ( const ofxCvColorImage& mom ) = 0;
     virtual void  operator = ( const ofxCvFloatImage& mom ) = 0;
@@ -172,7 +174,9 @@ class ofxCvImage : public ofBaseImage {
     int glchannels;           // GL_LUMINANCE, GL_RGB, GL_RGBA, ...
     
     ofPixels pixels;	  // not width stepped for getPixels(), allocated on demand
+    ofPixels roiPixels;
     bool bPixelsDirty;        // pixels need to be reloaded
+    bool bRoiPixelsDirty;        // pixels need to be reloaded
     
     ofTexture  tex;		      // internal tex
     bool bUseTexture;

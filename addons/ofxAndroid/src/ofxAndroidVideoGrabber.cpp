@@ -11,6 +11,7 @@
 #include "ofAppRunner.h"
 #include "ofUtils.h"
 #include "ofVideoGrabber.h"
+#include "ofPixelUtils.h"
 
 static int cameraId;
 static bool newPixels;

@@ -31,10 +31,7 @@ void ofxCvFloatImage::init() {
     iplchannels = 1;
     gldepth = GL_FLOAT;
     glchannels = GL_LUMINANCE;
-    floatPixels = NULL;
     bFloatPixelsDirty = true;
-    floatPixelsW = 0;
-    floatPixelsH = 0;
     cvGrayscaleImage = NULL;
     scaleMin = 0.0f;
     scaleMax = 1.0f;
@@ -46,13 +43,8 @@ void ofxCvFloatImage::clear() {
         if( cvGrayscaleImage != NULL ){
             cvReleaseImage( &cvGrayscaleImage );
         }
-        if( floatPixels != NULL ) {
-            delete floatPixels;
-            floatPixels = NULL;
-            bFloatPixelsDirty = true;
-            floatPixelsW = 0;
-            floatPixelsH = 0;
-        }
+
+        floatPixels.clear();
     }
     ofxCvImage::clear();    //call clear in base class
 }
@@ -117,7 +109,7 @@ void ofxCvFloatImage::operator /= ( float scalar ){
 }
 
 //--------------------------------------------------------------------------------
-void ofxCvFloatImage::setFromPixels( unsigned char* _pixels, int w, int h ) {
+void ofxCvFloatImage::setFromPixels( const unsigned char* _pixels, int w, int h ) {
     // This sets the internal image ignoring any ROI
 
     if( w == width && h == height ) {
@@ -158,7 +150,7 @@ void ofxCvFloatImage::setFromPixels( float* _pixels, int w, int h ) {
 }
 
 //--------------------------------------------------------------------------------
-void ofxCvFloatImage::setRoiFromPixels( unsigned char* _pixels, int w, int h ) {
+void ofxCvFloatImage::setRoiFromPixels( const unsigned char* _pixels, int w, int h ) {
     ofRectangle roi = getROI();
     ofRectangle inputROI = ofRectangle( roi.x, roi.y, w, h);
     ofRectangle iRoi = getIntersectionROI( roi, inputROI );
@@ -366,60 +358,36 @@ IplImage*  ofxCvFloatImage::getCv8BitsRoiImage() {
 
 //--------------------------------------------------------------------------------
 float*  ofxCvFloatImage::getPixelsAsFloats(){
+	return getFloatPixelsRef().getPixels();
+}
+//--------------------------------------------------------------------------------
+ofFloatPixels &	ofxCvFloatImage::getFloatPixelsRef(){
     if(bFloatPixelsDirty) {
-        if(floatPixels == NULL) {
-            // we need pixels, allocate it
-            floatPixels = new float[width*height];
-            floatPixelsW = width;
-            floatPixelsH = height;
-        } else if(floatPixelsW != width || floatPixelsH != height) {
-            // ROI changed, reallocate floatPixels for new size
-            delete floatPixels;
-            floatPixels = new float[width*height];
-            floatPixelsW = width;
-            floatPixelsH = height;
-        }
-
-        // copy from ROI to pixels
-        for( int i = 0; i < height; i++ ) {
-            memcpy( floatPixels + (i*width),
-                    cvImage->imageData + (i*cvImage->widthStep),
-                    width*sizeof(float) );
+        if(  cvImage->width*cvImage->depth/8 == cvImage->widthStep ){
+        	floatPixels.setFromExternalPixels((float*)cvImage->imageData,width,height,1);
+        }else{
+        	floatPixels.setFromAlignedPixels((float*)cvImage->imageData,width,height,1,cvImage->widthStep);
         }
         bFloatPixelsDirty = false;
     }
-	return floatPixels;
+    return floatPixels;
 }
-
 
 //--------------------------------------------------------------------------------
 float*  ofxCvFloatImage::getRoiPixelsAsFloats(){
-    if(bFloatPixelsDirty) {
-        ofRectangle roi = getROI();
-        if(floatPixels == NULL) {
-            // we need pixels, allocate it
-            floatPixels = new float[(int)(roi.width*roi.height)];
-            floatPixelsW = (int)roi.width;
-            floatPixelsH = (int)roi.height;
-        } else if(floatPixelsW != roi.width || floatPixelsH != roi.height) {
-            // ROI changed, reallocate floatPixels for new size
-            delete floatPixels;
-            floatPixels = new float[(int)(roi.width*roi.height)];
-            floatPixelsW = (int)roi.width;
-            floatPixelsH = (int)roi.height;
-        }
-
-        // copy from ROI to pixels
-        for( int i = 0; i < roi.height; i++ ) {
-            memcpy( floatPixels + (int)(i*roi.width),
-                    cvImage->imageData + ((int)(i+roi.y)*cvImage->widthStep) + (int)roi.x*sizeof(float),
-                    (int)(roi.width * sizeof(float)) );
-        }
-        bFloatPixelsDirty = false;
-    }
-	return floatPixels;
+	return getRoiFloatPixelsRef().getPixels();
 }
 
+//--------------------------------------------------------------------------------
+ofFloatPixels &	ofxCvFloatImage::getRoiFloatPixelsRef(){
+	if(bFloatPixelsDirty) {
+		ofRectangle roi = getROI();
+		float * roi_ptr = (float*)cvImage->imageData + ((int)(roi.y)*cvImage->widthStep/(cvImage->depth/8)) + (int)roi.x;
+		floatPixels.setFromAlignedPixels(roi_ptr,roi.width,roi.height,cvImage->nChannels,cvImage->widthStep);
+		bPixelsDirty = false;
+	}
+	return floatPixels;
+}
 
 
 // Draw Image
