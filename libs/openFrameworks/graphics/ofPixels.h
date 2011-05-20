@@ -3,6 +3,7 @@
 #include "ofConstants.h"
 #include "ofUtils.h"
 #include "ofColor.h"
+#include "ofMath.h"
 #include <limits>
 
 template <typename T>
