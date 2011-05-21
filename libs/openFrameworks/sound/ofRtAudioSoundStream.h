@@ -31,6 +31,7 @@ class ofRtAudioSoundStream : public ofBaseSoundStream{
 	
 		
 	private:
+		bool				bSetup;
 		long unsigned long	tickCount;
 		ofPtr<RtAudio>		audio;
 		int					sampleRate;
