@@ -13,6 +13,7 @@ int receiveAudioBufferAndCallSimpleApp(void *outputBuffer, void *inputBuffer, un
 
 //------------------------------------------------------------------------------
 ofRtAudioSoundStream::ofRtAudioSoundStream(){
+	bSetup			= false;
 	deviceID		= -1;
 	soundOutputPtr	= NULL;
 	soundInputPtr	= NULL;
@@ -21,7 +22,6 @@ ofRtAudioSoundStream::ofRtAudioSoundStream(){
 
 //------------------------------------------------------------------------------
 ofRtAudioSoundStream::~ofRtAudioSoundStream(){
-	stop();
 	close();
 }
 
@@ -69,7 +69,7 @@ void ofRtAudioSoundStream::setOutput(ofBaseSoundOutput * soundOutput){
 
 //------------------------------------------------------------------------------
 bool ofRtAudioSoundStream::setup(int outChannels, int inChannels, int _sampleRate, int bufferSize, int nBuffers){
-	if( audio != NULL ){
+	if( bSetup ){
 		close();
 	}
 
@@ -122,6 +122,7 @@ bool ofRtAudioSoundStream::setup(int outChannels, int inChannels, int _sampleRat
 		error.printMessage();
 		return false;
 	}
+	bSetup = true;
 	return true;
 }
 
@@ -134,7 +135,7 @@ bool ofRtAudioSoundStream::setup(ofBaseApp * app, int outChannels, int inChannel
 
 //------------------------------------------------------------------------------
 void ofRtAudioSoundStream::start(){
-	if( audio == NULL )return;
+	if( !bSetup ) return;
 	
 	try{
 		audio->startStream();
@@ -145,11 +146,11 @@ void ofRtAudioSoundStream::start(){
 
 //------------------------------------------------------------------------------
 void ofRtAudioSoundStream::stop(){
-	if( audio == NULL )return;
+	if( !bSetup ) return;
 	
 	try {
-    		if(audio->isStreamRunning()) {
-			audio->stopStream();
+		if(audio->isStreamRunning()) {
+    		audio->stopStream();
 		}
   	} catch (RtError &error) {
    		error.printMessage();
@@ -158,17 +159,18 @@ void ofRtAudioSoundStream::stop(){
 
 //------------------------------------------------------------------------------
 void ofRtAudioSoundStream::close(){
-	if(audio == NULL) return;
+	if( !bSetup ) return;
 	
 	try {
-    		if(audio->isStreamOpen()) {
-    			audio->closeStream();
+		if(audio->isStreamOpen()) {
+    		audio->closeStream();
 		}
   	} catch (RtError &error) {
    		error.printMessage();
  	}
 	soundOutputPtr	= NULL;
-	soundInputPtr	= NULL;	
+	soundInputPtr	= NULL;
+	bSetup = false;
 }
 
 //------------------------------------------------------------------------------
