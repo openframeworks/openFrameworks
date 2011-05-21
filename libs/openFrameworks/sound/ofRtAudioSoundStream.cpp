@@ -148,7 +148,9 @@ void ofRtAudioSoundStream::stop(){
 	if( audio == NULL )return;
 	
 	try {
-    	audio->stopStream();
+    		if(audio->isStreamRunning()) {
+			audio->stopStream();
+		}
   	} catch (RtError &error) {
    		error.printMessage();
  	}
@@ -159,7 +161,9 @@ void ofRtAudioSoundStream::close(){
 	if(audio == NULL) return;
 	
 	try {
-    	audio->closeStream();
+    		if(audio->isStreamOpen()) {
+    			audio->closeStream();
+		}
   	} catch (RtError &error) {
    		error.printMessage();
  	}
