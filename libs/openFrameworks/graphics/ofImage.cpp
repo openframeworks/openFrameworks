@@ -833,6 +833,7 @@ void ofImage_<T>::grabScreen(int _x, int _y, int _w, int _h){
 template<typename T>
 void ofImage_<T>::setImageType(ofImageType newType){
 	changeTypeOfPixels(pixels, newType);
+	tex.allocate(width, height, ofGetGlInternalFormat(*this));
 	update();
 }
 
