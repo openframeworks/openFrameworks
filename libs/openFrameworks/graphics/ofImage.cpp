@@ -4,7 +4,7 @@
 #include "ofURLFileLoader.h"
 #include "ofGraphics.h"
 #include "ofPixelUtils.h"
-#include "FreeImage.h"
+#include "FreeImage/include/FreeImage.h"
 
 #ifdef TARGET_ANDROID
 #include <set>

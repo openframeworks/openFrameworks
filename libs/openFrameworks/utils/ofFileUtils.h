@@ -1,7 +1,7 @@
 #pragma once
 
 #include "ofConstants.h"
-#include "Poco/File.h"
+#include "poco/include/Poco/File.h"
 
 //----------------------------------------------------------
 // ofBuffer

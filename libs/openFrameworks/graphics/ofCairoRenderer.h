@@ -1,10 +1,10 @@
 #pragma once
 
 
-#include <cairo-features.h>
-#include <cairo-pdf.h>
-#include <cairo-svg.h>
-#include <cairo.h>
+#include "cairo/include/cairo/cairo-features.h"
+#include "cairo/include/cairo/cairo-pdf.h"
+#include "cairo/include/cairo/cairo-svg.h"
+#include "cairo/include/cairo/cairo.h"
 #include <deque>
 #include <stack>
 #include "ofMatrix4x4.h"
