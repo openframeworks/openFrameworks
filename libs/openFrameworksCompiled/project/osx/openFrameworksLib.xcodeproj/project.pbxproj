@@ -731,6 +731,10 @@
 				COPY_PHASE_STRIP = NO;
 				EXECUTABLE_PREFIX = "";
 				FRAMEWORK_SEARCH_PATHS = "";
+				HEADER_FREETYPE = "\"$(OF_PATH)/libs/freetype/include\"";
+				HEADER_FREETYPE2 = "\"$(OF_PATH)/libs/freetype/include/freetype2\"";
+				HEADER_POCO = "\"$(OF_PATH)/libs/poco/include\"";
+				HEADER_ROOT = "\"$(OF_PATH)/libs\"";
 				INSTALL_PATH = /usr/local/lib;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -784,6 +788,10 @@
 				EXECUTABLE_PREFIX = "";
 				FRAMEWORK_SEARCH_PATHS = "";
 				GCC_FAST_MATH = YES;
+				HEADER_FREETYPE = "\"$(OF_PATH)/libs/freetype/include\"";
+				HEADER_FREETYPE2 = "\"$(OF_PATH)/libs/freetype/include/freetype2\"";
+				HEADER_POCO = "\"$(OF_PATH)/libs/poco/include\"";
+				HEADER_ROOT = "\"$(OF_PATH)/libs\"";
 				INSTALL_PATH = /usr/local/lib;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -849,15 +857,11 @@
 				GCC_WARN_UNUSED_VALUE = NO;
 				GCC_WARN_UNUSED_VARIABLE = NO;
 				HEADER_SEARCH_PATHS = (
-					"$(HEADER_SEARCH_PATHS_QUOTED_FOR_PROJECT_1)",
-					"$(HEADER_SEARCH_PATHS_QUOTED_FOR_PROJECT_2)",
-					"$(HEADER_SEARCH_PATHS_QUOTED_FOR_PROJECT_3)",
-					"$(HEADER_SEARCH_PATHS_QUOTED_FOR_PROJECT_4)",
+					"$(HEADER_ROOT)",
+					"$(HEADER_POCO)",
+					"$(HEADER_FREETYPE)",
+					"$(HEADER_FREETYPE2)",
 				);
-				HEADER_SEARCH_PATHS_QUOTED_FOR_PROJECT_1 = "\"$(OF_PATH)/libs\"";
-				HEADER_SEARCH_PATHS_QUOTED_FOR_PROJECT_2 = "\"$(OF_PATH)/libs/poco/include\"";
-				HEADER_SEARCH_PATHS_QUOTED_FOR_PROJECT_3 = "\"$(OF_PATH)/libs/freetype/include/freetype2\"";
-				HEADER_SEARCH_PATHS_QUOTED_FOR_PROJECT_4 = "\"$(OF_PATH)/libs/freetype/include\"";
 				OF_PATH = "";
 				OTHER_CPLUSPLUSFLAGS = (
 					"-D__MACOSX_CORE__",
@@ -897,15 +901,11 @@
 				GCC_WARN_UNUSED_VALUE = NO;
 				GCC_WARN_UNUSED_VARIABLE = NO;
 				HEADER_SEARCH_PATHS = (
-					"$(HEADER_SEARCH_PATHS_QUOTED_FOR_PROJECT_1)",
-					"$(HEADER_SEARCH_PATHS_QUOTED_FOR_PROJECT_2)",
-					"$(HEADER_SEARCH_PATHS_QUOTED_FOR_PROJECT_3)",
-					"$(HEADER_SEARCH_PATHS_QUOTED_FOR_PROJECT_4)",
+					"$(HEADER_ROOT)",
+					"$(HEADER_POCO)",
+					"$(HEADER_FREETYPE)",
+					"$(HEADER_FREETYPE2)",
 				);
-				HEADER_SEARCH_PATHS_QUOTED_FOR_PROJECT_1 = "\"$(OF_PATH)/libs\"";
-				HEADER_SEARCH_PATHS_QUOTED_FOR_PROJECT_2 = "\"$(OF_PATH)/libs/poco/include\"";
-				HEADER_SEARCH_PATHS_QUOTED_FOR_PROJECT_3 = "\"$(OF_PATH)/libs/freetype/include/freetype2\"";
-				HEADER_SEARCH_PATHS_QUOTED_FOR_PROJECT_4 = "\"$(OF_PATH)/libs/freetype/include\"";
 				OF_PATH = "";
 				OTHER_CPLUSPLUSFLAGS = (
 					"-D__MACOSX_CORE__",
