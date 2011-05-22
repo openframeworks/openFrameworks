@@ -5,8 +5,8 @@
 
 #if !defined( TARGET_OF_IPHONE ) && !defined(TARGET_ANDROID)
 extern "C" {
-#include "fmod.h"
-#include "fmod_errors.h"
+#include "fmodex/include/fmod.h"
+#include "fmodex/include/fmod_errors.h"
 }
 #endif
 

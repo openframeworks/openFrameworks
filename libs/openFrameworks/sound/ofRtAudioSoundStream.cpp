@@ -3,7 +3,7 @@
 #include "ofSoundStream.h"
 #include "ofMath.h"
 #include "ofUtils.h"
-#include "RtAudio.h"
+#include "rtAudio/include/RtAudio.h"
 
 
 //------------------------------------------------------------------------------
