@@ -16,12 +16,12 @@ void ofPixelUtils::crop(ofPixels & pix, int x, int y, int _width, int _height){
 
 		int width = pix.width;
 		int height = pix.height;
-		int bytesPerPixel = pix.bytesPerPixel;
+		int bytesPerPixel = pix.channels;
 
 		int newWidth = _width;
 		int newHeight = _height;
 		unsigned char * newPixels = new unsigned char [newWidth*newHeight*bytesPerPixel];
-		memset(newPixels, 0, newWidth*newHeight*pix.bytesPerPixel);
+		memset(newPixels, 0, newWidth*newHeight*pix.channels);
 
 		// this prevents having to do a check for bounds in the for loop;
 		int minX = MAX(x, 0);
@@ -59,11 +59,11 @@ void ofPixelUtils::cropFromTo(ofPixels &frompix, ofPixels &topix, int x, int y, 
 
 		int width = frompix.width;
 		int height = frompix.height;
-		int bytesPerPixel = frompix.bytesPerPixel;
+		int bytesPerPixel = frompix.channels;
 
 
-		if ((topix.width != _width) || (topix.height != _height) || (topix.imageType != frompix.imageType)){
-			topix.allocate(_width, _height, frompix.imageType);
+		if ((topix.width != _width) || (topix.height != _height) || (topix.channels != frompix.channels)){
+			topix.allocate(_width, _height, frompix.channels);
 		}
 
 		int newWidth = _width;
@@ -122,7 +122,7 @@ void ofPixelUtils::rotate90(ofPixels & pix, int nClockwiseRotations){
 	// otherwise, we will need to do some new allocaiton.
 	int width = pix.width;
 	int height = pix.height;
-	int bytesPerPixel = pix.bytesPerPixel;
+	int bytesPerPixel = pix.channels;
 	unsigned char * oldPixels = pix.pixels;
 	int newWidth = height;
 	int newHeight = width;
@@ -168,7 +168,7 @@ void ofPixelUtils::mirror(ofPixels & pix, bool vertically, bool horizontal){
 
 	int width = pix.width;
 	int height = pix.height;
-	int bytesPerPixel = pix.bytesPerPixel;
+	int bytesPerPixel = pix.channels;
 	unsigned char * oldPixels = pix.pixels;
 	unsigned char tempVal;
 
@@ -371,4 +371,21 @@ float ofPixelUtils::bicubicInterpolate (const int *patch, float x,float y, float
 }
 
 
+bool ofPixelUtils::pasteInto(ofPixels &src, ofPixels &dst, int xTo, int yTo){
+	if (!(src.isAllocated()) || !(dst.isAllocated()) || src.getBytesPerPixel() != dst.getBytesPerPixel() || xTo>=dst.getWidth() || yTo>=dst.getHeight()) return false;
 
+
+	int bytesToCopyPerRow = (xTo + src.getWidth()<=dst.getWidth() ? src.getWidth() : dst.getWidth()-xTo) * src.getBytesPerPixel();
+	int columnsToCopy = yTo + src.getHeight() <= dst.getHeight() ? src.getHeight() : dst.getHeight()-yTo;
+	unsigned char * dstPix = dst.getPixels() + ((xTo + yTo*dst.getWidth())*src.getBytesPerPixel());
+	unsigned char * srcPix = src.getPixels();
+	int srcStride = src.getWidth()*src.getBytesPerPixel();
+	int dstStride = dst.getWidth()*dst.getBytesPerPixel();
+
+
+	for(int y=0;y<columnsToCopy; y++){
+		memcpy(dstPix,srcPix,bytesToCopyPerRow);
+		dstPix += dstStride;
+		srcPix += srcStride;
+	}
+}

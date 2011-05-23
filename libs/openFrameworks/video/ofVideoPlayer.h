@@ -3,20 +3,21 @@
 #include "ofConstants.h"
 #include "ofTexture.h"
 #include "ofBaseTypes.h"
+#include "ofTypes.h"
 
 #ifdef OF_VIDEO_PLAYER_GSTREAMER
 	#include "ofGstVideoPlayer.h"
-	#define OF_VID_PLAYER_TYPE ofGstVideoPlayer()
+	#define OF_VID_PLAYER_TYPE ofGstVideoPlayer
 #endif
 
 #ifdef OF_VIDEO_PLAYER_QUICKTIME
 	#include "ofQuickTimePlayer.h"
-	#define OF_VID_PLAYER_TYPE ofQuickTimePlayer()	
+	#define OF_VID_PLAYER_TYPE ofQuickTimePlayer
 #endif
 
 #ifdef OF_VIDEO_PLAYER_IPHONE
 	#include "ofiPhoneVideoPlayer.h"
-	#define OF_VID_PLAYER_TYPE ofiPhoneVideoPlayer()	
+	#define OF_VID_PLAYER_TYPE ofiPhoneVideoPlayer
 #endif
 
 //---------------------------------------------
@@ -25,10 +26,9 @@ class ofVideoPlayer : public ofBaseVideoPlayer,public ofBaseVideoDraws{
 	public:
 
 		ofVideoPlayer ();
-		virtual ~ofVideoPlayer();
 
-		bool				setPlayer(ofBaseVideoPlayer * newPlayer);
-		ofBaseVideoPlayer *	getPlayer();
+		void						setPlayer(ofPtr<ofBaseVideoPlayer> newPlayer);
+		ofPtr<ofBaseVideoPlayer>	getPlayer();
 
 		bool 				loadMovie(string name);
 		void				setPixelFormat(ofPixelFormat pixelFormat);
@@ -88,8 +88,8 @@ class ofVideoPlayer : public ofBaseVideoPlayer,public ofBaseVideoDraws{
 		int					height;
 		int					width;
 
-	protected:
-		ofBaseVideoPlayer		* player;
+	private:
+		ofPtr<ofBaseVideoPlayer>		player;
 		
 		ofTexture tex;
 		ofTexture * playerTex; // a seperate texture that may be optionally implemented by the player to avoid excessive pixel copying.

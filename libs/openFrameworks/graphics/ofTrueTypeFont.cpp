@@ -7,8 +7,11 @@
 #include <freetype/ftoutln.h>
 #include <freetype/fttrigon.h>
 
+#include <algorithm>
+
 #include "ofUtils.h"
 #include "ofGraphics.h"
+#include "ofPixelUtils.h"
 
 static bool printVectorInfo = false;
 
@@ -151,6 +154,11 @@ static ofTTFCharacter makeContoursForCharacter(FT_Face &face){
 
 #endif
 
+bool compare_cps(const charProps & c1, const charProps & c2){
+	if(c1.tH == c2.tH) return c1.tW > c2.tW;
+	else return c1.tH > c2.tH;
+}
+
 //------------------------------------------------------------------
 ofTrueTypeFont::ofTrueTypeFont(){
 	bLoadedOk		= false;
@@ -158,24 +166,25 @@ ofTrueTypeFont::ofTrueTypeFont(){
 	#ifdef TARGET_ANDROID
 		all_fonts.insert(this);
 	#endif
-	cps				= NULL;
+	//cps				= NULL;
 	letterSpacing = 1;
 	spaceSize = 1;
+
+	// 3 pixel border around the glyph
+	// We show 2 pixels of this, so that blending looks good.
+	// 1 pixels is hidden because we don't want to see the real edge of the texture
+
+	border			= 3;
+	//visibleBorder	= 2;
+	stringQuads.setMode(OF_TRIANGLES_MODE);
+	binded = false;
 }
 
 //------------------------------------------------------------------
 ofTrueTypeFont::~ofTrueTypeFont(){
 
 	if (bLoadedOk){
-
-		if (cps != NULL){
-			delete[] cps;
-			cps = NULL;
-		}
-
-		if (texNames != NULL){
-			unloadTextures();
-		}
+		unloadTextures();
 	}
 
 	#ifdef TARGET_ANDROID
@@ -185,10 +194,8 @@ ofTrueTypeFont::~ofTrueTypeFont(){
 
 void ofTrueTypeFont::unloadTextures(){
 	if(!bLoadedOk) return;
-	for (int i = 0; i < nCharacters; i++){
-		glDeleteTextures(1, &texNames[i]);
-	}
-	delete[] texNames;
+
+	texAtlas.clear();
 	bLoadedOk = false;
 }
 
@@ -197,7 +204,7 @@ void ofTrueTypeFont::reloadTextures(){
 }
 
 //------------------------------------------------------------------
-void ofTrueTypeFont::loadFont(string filename, int fontsize, bool _bAntiAliased, bool _bFullCharacterSet, bool makeContours, bool simplifyAmt){
+void ofTrueTypeFont::loadFont(string filename, int fontsize, bool _bAntiAliased, bool _bFullCharacterSet, bool makeContours, float simplifyAmt){
 
 	bMakeContours = makeContours;
 
@@ -205,19 +212,7 @@ void ofTrueTypeFont::loadFont(string filename, int fontsize, bool _bAntiAliased,
 	if (bLoadedOk == true){
 
 		// we've already been loaded, try to clean up :
-
-		if (cps != NULL){
-			delete[] cps;
-			cps = NULL;
-		}
-		if (texNames != NULL){
-			for (int i = 0; i < nCharacters; i++){
-				glDeleteTextures(1, &texNames[i]);
-			}
-			delete[] texNames;
-			texNames = NULL;
-		}
-		bLoadedOk = false;
+		unloadTextures();
 	}
 	//------------------------------------------------
 
@@ -252,14 +247,17 @@ void ofTrueTypeFont::loadFont(string filename, int fontsize, bool _bAntiAliased,
 	nCharacters = bFullCharacterSet ? 256 : 128 - NUM_CHARACTER_TO_START;
 
 	//--------------- initialize character info and textures
-	cps       = new charProps[nCharacters];
-	texNames  = new GLuint[nCharacters];
-	glGenTextures(nCharacters, texNames);
+	cps.resize(nCharacters);
 
 	if(bMakeContours){
 		charOutlines.clear();
 		charOutlines.assign(nCharacters, ofTTFCharacter());
 	}
+
+	vector<ofPixels> expanded_data(nCharacters);
+
+	long areaSum=0;
+
 	//--------------------- load each char -----------------------
 	for (int i = 0 ; i < nCharacters; i++){
 
@@ -274,24 +272,9 @@ void ofTrueTypeFont::loadFont(string filename, int fontsize, bool _bAntiAliased,
 		//------------------------------------------
 		FT_Bitmap& bitmap= face->glyph->bitmap;
 
-		// 3 pixel border around the glyph
-		// We show 2 pixels of this, so that blending looks good.
-		// 1 pixels is hidden because we don't want to see the real edge of the texture
-
-		border			= 3;
-		visibleBorder	= 2;
-
-		if(bMakeContours){
-			if( printVectorInfo )printf("\n\ncharacter %c: \n", char( i+NUM_CHARACTER_TO_START ) );
-
-			//int character = i + NUM_CHARACTER_TO_START;
-			charOutlines[i] = makeContoursForCharacter( face );
-			charOutlines[i].simplify(simplifyAmt);
-			charOutlines[i].tessellate();
-		}
 
 		// prepare the texture:
-		int width  = ofNextPow2( bitmap.width + border*2 );
+		/*int width  = ofNextPow2( bitmap.width + border*2 );
 		int height = ofNextPow2( bitmap.rows  + border*2 );
 
 
@@ -300,58 +283,68 @@ void ofTrueTypeFont::loadFont(string filename, int fontsize, bool _bAntiAliased,
 		// ------------------------- width or height textures of 1, so we
 		// ------------------------- we just set it to 2...
 		if (width == 1) width = 2;
-		if (height == 1) height = 2;
+		if (height == 1) height = 2;*/
+
+
+		if(bMakeContours){
+			if( printVectorInfo )printf("\n\ncharacter %c: \n", char( i+NUM_CHARACTER_TO_START ) );
+
+			//int character = i + NUM_CHARACTER_TO_START;
+			charOutlines[i] = makeContoursForCharacter( face );
+			if(simplifyAmt>0)
+				charOutlines[i].simplify(simplifyAmt);
+			charOutlines[i].getTessellation();
+		}
+
 
 		// -------------------------
 		// info about the character:
-		cps[i].value 			= i;
+		cps[i].character		= i;
 		cps[i].height 			= face->glyph->bitmap_top;
 		cps[i].width 			= face->glyph->bitmap.width;
 		cps[i].setWidth 		= face->glyph->advance.x >> 6;
 		cps[i].topExtent 		= face->glyph->bitmap.rows;
 		cps[i].leftExtent		= face->glyph->bitmap_left;
 
-		// texture internals
-		cps[i].tTex             = (float)(bitmap.width + visibleBorder*2)  /  (float)width;
-		cps[i].vTex             = (float)(bitmap.rows +  visibleBorder*2)   /  (float)height;
-
-		cps[i].xOff             = (float)(border - visibleBorder) / (float)width;
-		cps[i].yOff             = (float)(border - visibleBorder) / (float)height;
+		int width  = cps[i].width;
+		int height = bitmap.rows;
 
 
-		/* sanity check:
-		ofLog(OF_LOG_NOTICE,"%i %i %i %i %i %i",
-		cps[i].value ,
-		cps[i].height ,
-		cps[i].width 	,
-		cps[i].setWidth 	,
-		cps[i].topExtent ,
-		cps[i].leftExtent	);
-		*/
+		cps[i].tW				= width;
+		cps[i].tH				= height;
+
+
+
+		GLint fheight	= cps[i].height;
+		GLint bwidth	= cps[i].width;
+		GLint top		= cps[i].topExtent - cps[i].height;
+		GLint lextent	= cps[i].leftExtent;
+
+		GLfloat	corr, stretch;
+
+		//this accounts for the fact that we are showing 2*visibleBorder extra pixels
+		//so we make the size of each char that many pixels bigger
+		stretch = 0;//(float)(visibleBorder * 2);
+
+		corr	= (float)(( (fontSize - fheight) + top) - fontSize);
+
+		cps[i].x1		= lextent + bwidth + stretch;
+		cps[i].y1		= fheight + corr + stretch;
+		cps[i].x2		= (float) lextent;
+		cps[i].y2		= -top + corr;
 
 
 		// Allocate Memory For The Texture Data.
-		unsigned char* expanded_data = new unsigned char[ 2 * width * height];
-
+		expanded_data[i].allocate(width, height, 2);
 		//-------------------------------- clear data:
-		for(int j=0; j <height;j++) {
-			for(int k=0; k < width; k++){
-				expanded_data[2*(k+j*width)  ] = 255;   // every luminance pixel = 255
-				expanded_data[2*(k+j*width)+1] = 0;
-			}
-		}
+		expanded_data[i].set(0,255); // every luminance pixel = 255
+		expanded_data[i].set(1,0);
 
 
 		if (bAntiAlised == true){
-			//-----------------------------------
-			for(int j=0; j <height; j++) {
-				for(int k=0; k < width; k++){
-					if ((k<bitmap.width) && (j<bitmap.rows)){
-						expanded_data[2*((k+border)+(j+border)*width)+1] = bitmap.buffer[k + bitmap.width*(j)];
-					}
-				}
-			}
-			//-----------------------------------
+			ofPixels bitmapPixels;
+			bitmapPixels.setFromExternalPixels(bitmap.buffer,bitmap.width,bitmap.rows,1);
+			expanded_data[i].setChannel(1,bitmapPixels);
 		} else {
 			//-----------------------------------
 			// true type packs monochrome info in a
@@ -362,70 +355,101 @@ void ofTrueTypeFont::loadFont(string filename, int fontsize, bool _bAntiAliased,
 				unsigned char b=0;
 				unsigned char *bptr =  src;
 				for(int k=0; k < bitmap.width ; k++){
-					expanded_data[2*((k+1)+(j+1)*width)] = 255;
-					if (k%8==0){ b = (*bptr++);}
-					expanded_data[2*((k+1)+(j+1)*width) + 1] =
-						b&0x80 ? 255 : 0;
-				    b <<= 1;
+					expanded_data[i][2*(k+j*width)] = 255;
+
+					if (k%8==0){
+						b = (*bptr++);
+					}
+
+					expanded_data[i][2*(k+j*width) + 1] = b&0x80 ? 255 : 0;
+					b <<= 1;
 				}
 				src += bitmap.pitch;
 			}
 			//-----------------------------------
 		}
 
+		areaSum += (cps[i].width+border*2)*(cps[i].height+border*2);
+	}
 
-		//Now we just setup some texture paramaters.
-		glBindTexture( GL_TEXTURE_2D, texNames[i]);
-		#ifndef TARGET_OPENGLES
-			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-		#endif
-   		if (bAntiAlised == true){
-			glTexParameterf(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
-			glTexParameterf(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
-		} else {
-			glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
-			glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
+
+	vector<charProps> sortedCopy = cps;
+	sort(sortedCopy.begin(),sortedCopy.end(),&compare_cps);
+
+	// pack in a texture, algorithm to calculate min w/h from
+	// http://upcommons.upc.edu/pfc/bitstream/2099.1/7720/1/TesiMasterJonas.pdf
+	//cout << areaSum << endl;
+
+	bool packed = false;
+	float alpha = log(areaSum)*1.44269;
+
+	int w;
+	int h;
+	while(!packed){
+		w = pow(2,round(alpha/2.f));
+		h = w;//pow(2,round(alpha - round(alpha/2.f)));
+		int x=0;
+		int y=0;
+		int maxRowHeight = sortedCopy[0].tH + border*2;
+		for(int i=0;i<(int)cps.size();i++){
+			if(x+sortedCopy[i].tW + border*2>w){
+				x = 0;
+				y += maxRowHeight;
+				maxRowHeight = sortedCopy[i].tH + border*2;
+				if(y + maxRowHeight > h){
+					alpha++;
+					break;
+				}
+			}
+			x+= sortedCopy[i].tW + border*2;
+			if(i==(int)cps.size()-1) packed = true;
 		}
-		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 
-		//Here we actually create the texture itself, notice
-		//that we are using GL_LUMINANCE_ALPHA to indicate that
-		//we are using 2 channel data.
+	}
 
-		#ifndef TARGET_OPENGLES // gluBuild2DMipmaps doesn't seem to exist in anything i had in the iphone build... so i commented it out
-			bool b_use_mipmaps = false;  // FOR now this is fixed to false, could be an option, left in for legacy...
-			if (b_use_mipmaps){
-				gluBuild2DMipmaps(
-					GL_TEXTURE_2D, GL_LUMINANCE_ALPHA, width, height,
-					GL_LUMINANCE_ALPHA, GL_UNSIGNED_BYTE, expanded_data);
-			} else
-		#endif
-		{
-	    	glTexImage2D( GL_TEXTURE_2D, 0, GL_LUMINANCE_ALPHA, width, height,
-			   0, GL_LUMINANCE_ALPHA, GL_UNSIGNED_BYTE, expanded_data );
+
+
+	ofPixels atlasPixels;
+	atlasPixels.allocate(w,h,2);
+	atlasPixels.set(0,255);
+	atlasPixels.set(1,0);
+
+
+	int x=0;
+	int y=0;
+	int maxRowHeight = sortedCopy[0].tH + border*2;
+	for(int i=0;i<(int)cps.size();i++){
+		ofPixels & charPixels = expanded_data[sortedCopy[i].character];
+
+		if(x+sortedCopy[i].tW + border*2>w){
+			x = 0;
+			y += maxRowHeight;
+			maxRowHeight = sortedCopy[i].tH + border*2;
 		}
 
+		cps[sortedCopy[i].character].t2		= float(x + border)/float(w);
+		cps[sortedCopy[i].character].v2		= float(y + border)/float(h);
+		cps[sortedCopy[i].character].t1		= float(cps[sortedCopy[i].character].tW + x + border)/float(w);
+		cps[sortedCopy[i].character].v1		= float(cps[sortedCopy[i].character].tH + y + border)/float(h);
+		ofPixelUtils::pasteInto(charPixels,atlasPixels,x+border,y+border);
+		x+= sortedCopy[i].tW + border*2;
+	}
 
-		//With the texture created, we don't need to expanded data anymore
 
-    	delete [] expanded_data;
+	texAtlas.allocate(atlasPixels.getWidth(),atlasPixels.getHeight(),GL_LUMINANCE_ALPHA,false);
+	if(bAntiAlised){
+		texAtlas.setTextureMinMagFilter(GL_LINEAR,GL_LINEAR);
+	}else{
+		texAtlas.setTextureMinMagFilter(GL_NEAREST,GL_NEAREST);
+	}
 
-   }
+	texAtlas.loadData(atlasPixels.getPixels(),atlasPixels.getWidth(),atlasPixels.getHeight(),GL_LUMINANCE_ALPHA);
+
 	// ------------- close the library and typeface
 	FT_Done_Face(face);
 	FT_Done_FreeType(library);
   	bLoadedOk = true;
 }
-
-//-----------------------------------------------------------
-int ofTrueTypeFont::ofNextPow2 ( int a )
-{
-	int rval=1;
-	while(rval<a) rval<<=1;
-	return rval;
-}
-
 
 //-----------------------------------------------------------
 void ofTrueTypeFont::setLineHeight(float _newLineHeight) {
@@ -474,93 +498,45 @@ ofTTFCharacter ofTrueTypeFont::getCharacterAsPoints(int character){
 //-----------------------------------------------------------
 void ofTrueTypeFont::drawChar(int c, float x, float y) {
 
-
-	//----------------------- error checking
-	if (!bLoadedOk){
-		ofLog(OF_LOG_ERROR,"Error : font not allocated -- line %d in %s", __LINE__,__FILE__);
-		return;
-	}
-
 	if (c >= nCharacters){
 		//ofLog(OF_LOG_ERROR,"Error : char (%i) not allocated -- line %d in %s", (c + NUM_CHARACTER_TO_START), __LINE__,__FILE__);
 		return;
 	}
-	//-----------------------
 
-	int cu = c;
-
-	GLint height	= cps[cu].height;
-	GLint bwidth	= cps[cu].width;
-	GLint top		= cps[cu].topExtent - cps[cu].height;
-	GLint lextent	= cps[cu].leftExtent;
-
-	GLfloat	x1, y1, x2, y2, corr, stretch;
+	GLfloat	x1, y1, x2, y2;
 	GLfloat t1, v1, t2, v2;
+	t2		= cps[c].t2;
+	v2		= cps[c].v2;
+	t1		= cps[c].t1;
+	v1		= cps[c].v1;
 
-	//this accounts for the fact that we are showing 2*visibleBorder extra pixels
-	//so we make the size of each char that many pixels bigger
-	stretch = (float)(visibleBorder * 2);
+	x1		= cps[c].x1+x;
+	y1		= cps[c].y1+y;
+	x2		= cps[c].x2+x;
+	y2		= cps[c].y2+y;
 
+	int firstIndex = stringQuads.getVertices().size();
 
-	t2		= cps[cu].xOff;
-	v2		= cps[cu].yOff;
-	t1		= cps[cu].tTex + t2;
-	v1		= cps[cu].vTex + v2;
+	stringQuads.addVertex(ofVec3f(x1,y1));
+	stringQuads.addVertex(ofVec3f(x2,y1));
+	stringQuads.addVertex(ofVec3f(x2,y2));
+	stringQuads.addVertex(ofVec3f(x1,y2));
 
-	corr	= (float)(( (fontSize - height) + top) - fontSize);
+	stringQuads.addTexCoord(ofVec2f(t1,v1));
+	stringQuads.addTexCoord(ofVec2f(t2,v1));
+	stringQuads.addTexCoord(ofVec2f(t2,v2));
+	stringQuads.addTexCoord(ofVec2f(t1,v2));
 
-	x1		= lextent + bwidth + stretch;
-	y1		= height + corr + stretch;
-	x2		= (float) lextent;
-	y2		= -top + corr;
-
-
-
-	if (glIsTexture(texNames[cu])) {
-		glBindTexture(GL_TEXTURE_2D, texNames[cu]);
-		glNormal3f(0, 0, 1);
-
-		GLfloat verts[] = { x2,y2,
-			x2, y1,
-			x1, y1,
-		x1, y2 };
-		GLfloat tex_coords[] = { t2, v2,
-			t2, v1,
-			t1, v1,
-		t1, v2 };
-
-		glEnableClientState( GL_TEXTURE_COORD_ARRAY );
-		glTexCoordPointer(2, GL_FLOAT, 0, tex_coords );
-		glEnableClientState( GL_VERTEX_ARRAY );
-		glVertexPointer(2, GL_FLOAT, 0, verts );
-		glDrawArrays( GL_TRIANGLE_FAN, 0, 4 );
-		glDisableClientState( GL_TEXTURE_COORD_ARRAY );
-
-	} else {
-		//let's add verbosity levels somewhere...
-		//this error, for example, is kind of annoying to see
-		//all the time:
-		ofLog(OF_LOG_WARNING," texture not bound for character -- line %d in %s", __LINE__,__FILE__);
-	}
-
+	stringQuads.addIndex(firstIndex);
+	stringQuads.addIndex(firstIndex+1);
+	stringQuads.addIndex(firstIndex+2);
+	stringQuads.addIndex(firstIndex+2);
+	stringQuads.addIndex(firstIndex+3);
+	stringQuads.addIndex(firstIndex);
 }
 
 //-----------------------------------------------------------
 void ofTrueTypeFont::drawCharAsShape(int c, float x, float y) {
-
-
-	//----------------------- error checking
-	if (!bLoadedOk){
-		ofLog(OF_LOG_ERROR,"Error : font not allocated -- line %d in %s", __LINE__,__FILE__);
-		return;
-	}
-
-	//----------------------- error checking
-	if (!bMakeContours){
-		ofLog(OF_LOG_ERROR,"Error : contours not created for this font - call loadFont with makeContours set to true");
-		return;
-	}
-
 	if (c >= nCharacters){
 		//ofLog(OF_LOG_ERROR,"Error : char (%i) not allocated -- line %d in %s", (c + NUM_CHARACTER_TO_START), __LINE__,__FILE__);
 		return;
@@ -571,8 +547,6 @@ void ofTrueTypeFont::drawCharAsShape(int c, float x, float y) {
 	ofTTFCharacter & charRef = charOutlines[cu];
 	charRef.setFilled(ofGetStyle().bFill);
 	charRef.draw(x,y);
-
-
 }
 
 //-----------------------------------------------------------
@@ -600,7 +574,7 @@ ofRectangle ofTrueTypeFont::getStringBoundingBox(string c, float x, float y){
     float       maxx    = -1;
     float       maxy    = -1;
 
-    if ( len < 1 || cps == NULL ){
+    if ( len < 1 || cps.empty() ){
         myRect.x        = 0;
         myRect.y        = 0;
         myRect.width    = 0;
@@ -625,7 +599,7 @@ ofRectangle ofTrueTypeFont::getStringBoundingBox(string c, float x, float y){
             	GLint top		= cps[cy].topExtent - cps[cy].height;
             	GLint lextent	= cps[cy].leftExtent;
             	float	x1, y1, x2, y2, corr, stretch;
-            	stretch = (float)visibleBorder * 2;
+            	stretch = 0;//(float)visibleBorder * 2;
 				corr = (float)(((fontSize - height) + top) - fontSize);
 				x1		= (x + xoffset + lextent + bwidth + stretch);
             	y1		= (y + yoffset + height + corr + stretch);
@@ -656,8 +630,6 @@ ofRectangle ofTrueTypeFont::getStringBoundingBox(string c, float x, float y){
     return myRect;
 }
 
-
-
 //-----------------------------------------------------------
 float ofTrueTypeFont::stringHeight(string c) {
     ofRectangle rect = getStringBoundingBox(c, 0,0);
@@ -672,42 +644,14 @@ void ofTrueTypeFont::drawString(string c, float x, float y) {
     	return;
     };
 
-    // we need transparency to draw text, but we don't know
-    // if that is set up in outside of this function
-    // we "pushAttrib", turn on alpha and "popAttrib"
-    // http://www.opengl.org/documentation/specs/man_pages/hardcopy/GL/html/gl/pushattrib.html
-
-    // **** note ****
-    // I have read that pushAttrib() is slow, if used often,
-    // maybe there is a faster way to do this?
-    // ie, check if blending is enabled, etc...
-    // glIsEnabled().... glGet()...
-    // http://www.opengl.org/documentation/specs/man_pages/hardcopy/GL/html/gl/get.html
-    // **************
-
 	GLint		index	= 0;
-	GLfloat		X		= 0;
-	GLfloat		Y		= 0;
+	GLfloat		X		= x;
+	GLfloat		Y		= y;
 
-	// (a) record the current "alpha state, blend func, etc"
-	#ifndef TARGET_OPENGLES
-		glPushAttrib(GL_COLOR_BUFFER_BIT);
-	#else
-		GLboolean blend_enabled = glIsEnabled(GL_BLEND);
-		GLboolean texture_2d_enabled = glIsEnabled(GL_TEXTURE_2D);
-		GLint blend_src, blend_dst;
-		glGetIntegerv( GL_BLEND_SRC, &blend_src );
-		glGetIntegerv( GL_BLEND_DST, &blend_dst );
-	#endif
 
-    // (b) enable our regular ALPHA blending!
-    glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	// (c) enable texture once before we start drawing each char (no point turning it on and off constantly)
-	glEnable(GL_TEXTURE_2D);
-	// (d) store the current matrix position and do a translation to the drawing position
-	glPushMatrix();
-	glTranslatef(x, y, 0);
+	bool alreadyBinded = binded;
+
+	if(!alreadyBinded) bind();
 
 	int len = (int)c.length();
 
@@ -716,35 +660,76 @@ void ofTrueTypeFont::drawString(string c, float x, float y) {
 		if (cy < nCharacters){ 			// full char set or not?
 		  if (c[index] == '\n') {
 
-				Y = (float) lineHeight;
-				glTranslatef(-X, Y, 0);
-				X = 0 ; //reset X Pos back to zero
+				Y += (float) lineHeight;
+				X = x ; //reset X Pos back to zero
 
 		  }else if (c[index] == ' ') {
 				 int cy = (int)'p' - NUM_CHARACTER_TO_START;
 				 X += cps[cy].width * letterSpacing * spaceSize;
-				 glTranslatef((float)cps[cy].width * letterSpacing * spaceSize, 0, 0);
 		  } else {
-				drawChar(cy, 0, 0);
+				drawChar(cy, X, Y);
 				X += cps[cy].setWidth * letterSpacing;
-				glTranslatef((float)cps[cy].setWidth * letterSpacing, 0, 0);
 		  }
 		}
 		index++;
 	}
-	glPopMatrix();
-	glDisable(GL_TEXTURE_2D);
-    // (c) return back to the way things were (with blending, blend func, etc)
-	#ifndef TARGET_OPENGLES
-		glPopAttrib();
-	#else
-		if( !blend_enabled )
-			glDisable(GL_BLEND);
-		if( !texture_2d_enabled )
-			glDisable(GL_TEXTURE_2D);
-		glBlendFunc( blend_src, blend_dst );
-	#endif
 
+	if(!alreadyBinded) unbind();
+
+}
+
+//-----------------------------------------------------------
+void ofTrueTypeFont::bind(){
+	if(!binded){
+	    // we need transparency to draw text, but we don't know
+	    // if that is set up in outside of this function
+	    // we "pushAttrib", turn on alpha and "popAttrib"
+	    // http://www.opengl.org/documentation/specs/man_pages/hardcopy/GL/html/gl/pushattrib.html
+
+	    // **** note ****
+	    // I have read that pushAttrib() is slow, if used often,
+	    // maybe there is a faster way to do this?
+	    // ie, check if blending is enabled, etc...
+	    // glIsEnabled().... glGet()...
+	    // http://www.opengl.org/documentation/specs/man_pages/hardcopy/GL/html/gl/get.html
+	    // **************
+		// (a) record the current "alpha state, blend func, etc"
+		#ifndef TARGET_OPENGLES
+			glPushAttrib(GL_COLOR_BUFFER_BIT);
+		#else
+			blend_enabled = glIsEnabled(GL_BLEND);
+			texture_2d_enabled = glIsEnabled(GL_TEXTURE_2D);
+			glGetIntegerv( GL_BLEND_SRC, &blend_src );
+			glGetIntegerv( GL_BLEND_DST, &blend_dst );
+		#endif
+
+	    // (b) enable our regular ALPHA blending!
+	    glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+		texAtlas.bind();
+		stringQuads.clear();
+		binded = true;
+	}
+}
+
+//-----------------------------------------------------------
+void ofTrueTypeFont::unbind(){
+	if(binded){
+		stringQuads.drawFaces();
+		texAtlas.unbind();
+
+		#ifndef TARGET_OPENGLES
+			glPopAttrib();
+		#else
+			if( !blend_enabled )
+				glDisable(GL_BLEND);
+			if( !texture_2d_enabled )
+				glDisable(GL_TEXTURE_2D);
+			glBlendFunc( blend_src, blend_dst );
+		#endif
+		binded = false;
+	}
 }
 
 //=====================================================================

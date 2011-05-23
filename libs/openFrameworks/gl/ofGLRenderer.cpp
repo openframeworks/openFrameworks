@@ -141,13 +141,11 @@ void ofGLRenderer::draw(ofPath & shape){
 		prevColor = ofGetStyle().color;
 	}
 	if(shape.isFilled()){
-		vector<ofMesh> & mesh = shape.getTessellation();
+		ofMesh & mesh = shape.getTessellation();
 		if(shape.getUseShapeColor()){
 			setColor( shape.getFillColor() * ofGetStyle().color,shape.getFillColor().a/255. * ofGetStyle().color.a);
 		}
-		for(int i=0;i<(int)mesh.size();i++){
-			draw(mesh[i].getVertices(),mesh[i].getMode());
-		}
+		draw(mesh);
 	}
 	if(shape.hasOutline()){
 		float lineWidth = ofGetStyle().lineWidth;
@@ -168,7 +166,36 @@ void ofGLRenderer::draw(ofPath & shape){
 //----------------------------------------------------------
 void ofGLRenderer::draw(ofImage & image, float x, float y, float z, float w, float h){
 	if(image.isUsingTexture()){
-		image.getTextureReference().draw(x,y,z,w,h);
+		ofTexture& tex = image.getTextureReference();
+		if(tex.bAllocated()) {
+			tex.draw(x,y,z,w,h);
+		} else {
+			ofLogWarning() << "ofGLRenderer::draw(): texture is not allocated";
+		}
+	}
+}
+
+//----------------------------------------------------------
+void ofGLRenderer::draw(ofFloatImage & image, float x, float y, float z, float w, float h){
+	if(image.isUsingTexture()){
+		ofTexture& tex = image.getTextureReference();
+		if(tex.bAllocated()) {
+			tex.draw(x,y,z,w,h);
+		} else {
+			ofLogWarning() << "ofGLRenderer::draw(): texture is not allocated";
+		}
+	}
+}
+
+//----------------------------------------------------------
+void ofGLRenderer::draw(ofShortImage & image, float x, float y, float z, float w, float h){
+	if(image.isUsingTexture()){
+		ofTexture& tex = image.getTextureReference();
+		if(tex.bAllocated()) {
+			tex.draw(x,y,z,w,h);
+		} else {
+			ofLogWarning() << "ofGLRenderer::draw(): texture is not allocated";
+		}
 	}
 }
 

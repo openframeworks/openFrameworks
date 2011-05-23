@@ -18,6 +18,7 @@ public:
 	void addVertex( const ofPoint& p );
 	void addVertex( float x, float y, float z=0 );
 	void addVertexes( const vector<ofPoint>& verts );
+	void addVertexes(const ofPoint* verts, int numverts);
 
 	// adds a straight line to the polyline
 	void lineTo(const ofPoint & to ){ addVertex(to); }
@@ -71,12 +72,15 @@ public:
 	/// closed
 	void setClosed( bool tf );
 	bool isClosed() const;
+	void close();
 
 	bool hasChanged();
 
 	vector<ofPoint> & getVertices();
 
 	float getPerimeter() const;
+
+	void draw();
 
 private:
 	void setCircleResolution(int res);

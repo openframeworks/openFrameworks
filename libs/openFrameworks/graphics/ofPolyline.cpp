@@ -1,4 +1,5 @@
 #include "ofPolyline.h"
+#include "ofGraphics.h"
 
 //----------------------------------------------------------
 ofPolyline::ofPolyline(){
@@ -39,6 +40,13 @@ void ofPolyline::addVertexes(const vector<ofPoint>& verts) {
 }
 
 //----------------------------------------------------------
+void ofPolyline::addVertexes(const ofPoint* verts, int numverts) {
+	curveVertices.clear();
+	points.insert( points.end(), verts, verts + numverts );
+	bHasChanged=true;
+}
+
+//----------------------------------------------------------
 size_t ofPolyline::size() const {
 	return points.size();
 }
@@ -61,6 +69,11 @@ void ofPolyline::setClosed( bool tf ) {
 //----------------------------------------------------------
 bool ofPolyline::isClosed() const {
 	return bClosed;
+}
+
+//----------------------------------------------------------
+void ofPolyline::close(){
+	bClosed = true;
 }
 
 //----------------------------------------------------------
@@ -149,7 +162,7 @@ void ofPolyline::bezierTo( const ofPoint & cp1, const ofPoint & cp2, const ofPoi
 			x = (ax * t3) + (bx * t2) + (cx * t) + x0;
 			y = (ay * t3) + (by * t2) + (cy * t) + y0;
 			z = (az * t3) + (bz * t2) + (cz * t) + z0;
-			points.push_back(ofPoint(x,y,0));
+			points.push_back(ofPoint(x,y,z));
 		}
 	}
 }
@@ -211,7 +224,7 @@ void ofPolyline::curveTo( const ofPoint & to, int curveResolution ){
 			( 2.0f * z0 - 5.0f * z1 + 4 * z2 - z3 ) * t2 +
 			( -z0 + 3.0f * z1 - 3.0f * z2 + z3 ) * t3 );
 
-			points.push_back(ofPoint(x,y,0));
+			points.push_back(ofPoint(x,y,z));
 		}
 		curveVertices.pop_front();
 	}
@@ -321,7 +334,6 @@ static void simplifyDP(float tol, ofPoint* v, int j, int k, int* mk ){
     return;
 }
 
-
 void ofPolyline::simplify(float tol){
 
 	int n = size();
@@ -331,10 +343,11 @@ void ofPolyline::simplify(float tol){
 
     int    i, k, m, pv;            // misc counters
     float  tol2 = tol * tol;       // tolerance squared
-    ofPoint * vt = new ofPoint[n];
-	int * mk = new int[n];
+    vector<ofPoint> vt;
+    vector<int> mk;
+    vt.resize(n);
+	mk.resize(n,0);
 
-	memset(mk, 0, sizeof(int) * n );
 
     // STAGE 1.  Vertex Reduction within tolerance of prior vertex cluster
     vt[0] = points[0];              // start at the beginning
@@ -348,7 +361,7 @@ void ofPolyline::simplify(float tol){
 
     // STAGE 2.  Douglas-Peucker polyline simplification
     mk[0] = mk[k-1] = 1;       // mark the first and last vertices
-    simplifyDP( tol, vt, 0, k-1, mk );
+    simplifyDP( tol, &vt[0], 0, k-1, &mk[0] );
 
     // copy marked vertices to the output simplified polyline
     for (i=m=0; i<k; i++) {
@@ -356,10 +369,14 @@ void ofPolyline::simplify(float tol){
     }
 
 	//get rid of the unused points
-	if( m < (int)sV.size() ) sV.erase( sV.begin()+m, sV.end() );
+	if( m < (int)sV.size() ){
+		points.assign( sV.begin(),sV.begin()+m );
+	}else{
+		points = sV;
+	}
 
-	delete [] vt;
-	delete [] mk;
+}
 
-	points = sV;
+void ofPolyline::draw(){
+	ofGetDefaultRenderer()->draw(*this);
 }

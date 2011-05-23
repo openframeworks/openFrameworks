@@ -20,12 +20,12 @@
 //========================================================================
 // static variables:
 
-ofBaseApp	*				OFSAptr = NULL;
+ofPtr<ofBaseApp>				OFSAptr;
 bool 						bMousePressed;
 bool						bRightButton;
 int							width, height;
 
-static ofAppBaseWindow *			window = NULL;
+static ofPtr<ofAppBaseWindow> window;
 
 
 //========================================================================
@@ -38,9 +38,23 @@ static ofAppBaseWindow *			window = NULL;
 	#include "ofAppGlutWindow.h"
 #endif
 
+// this is hacky only to provide bw compatibility, a shared_ptr should always be initialized using a shared_ptr
+// it shouldn't be a problem since it's only called from main and never deleted from outside
+// also since old versions created the window in the stack, if this function is called we create a shared_ptr that never deletes
+//--------------------------------------
+static void noopDeleter(ofAppBaseWindow*){}
+void ofSetupOpenGL(ofAppBaseWindow * windowPtr, int w, int h, int screenMode){
+	ofSetupOpenGL(ofPtr<ofAppBaseWindow>(windowPtr,std::ptr_fun(noopDeleter)),w,h,screenMode);
+}
+
+// the same hack but in this case the shared_ptr will delete, old versions created the testApp as new...
+//--------------------------------------
+void ofRunApp(ofBaseApp * OFSA){
+	ofRunApp ( ofPtr<ofBaseApp>( OFSA ) );
+}
 
 //--------------------------------------
-void ofSetupOpenGL(ofAppBaseWindow * windowPtr, int w, int h, int screenMode){
+void ofSetupOpenGL(ofPtr<ofAppBaseWindow> windowPtr, int w, int h, int screenMode){
 	window = windowPtr;
 	window->setupOpenGL(w, h, screenMode);
 	
@@ -52,7 +66,7 @@ void ofSetupOpenGL(ofAppBaseWindow * windowPtr, int w, int h, int screenMode){
 		ofLog(OF_LOG_ERROR, "Error: %s\n", glewGetErrorString(err));
 	}
 #endif
-	ofSetDefaultRenderer(new ofGLRenderer(false));
+	ofSetDefaultRenderer(ofPtr<ofBaseRenderer>(new ofGLRenderer(false)));
 	//Default colors etc are now in ofGraphics - ofSetupGraphicDefaults
 	//ofSetupGraphicDefaults();
 }
@@ -61,11 +75,11 @@ void ofSetupOpenGL(ofAppBaseWindow * windowPtr, int w, int h, int screenMode){
 //--------------------------------------
 void ofSetupOpenGL(int w, int h, int screenMode){
 	#ifdef TARGET_OF_IPHONE
-		window = new ofAppiPhoneWindow();
+		window = ofPtr<ofAppBaseWindow>(new ofAppiPhoneWindow());
 	#elif defined TARGET_ANDROID
-		window = new ofAppAndroidWindow();
+		window = ofPtr<ofAppBaseWindow>(new ofAppAndroidWindow());
 	#else
-		window = new ofAppGlutWindow();
+		window = ofPtr<ofAppBaseWindow>(new ofAppGlutWindow());
 	#endif
 
 	ofSetupOpenGL(window,w,h,screenMode);
@@ -101,12 +115,10 @@ void ofExitCallback(){
 	#endif
 
 	ofNotifyExit();
-
-	if(OFSAptr)delete OFSAptr;
 }
 
 //--------------------------------------
-void ofRunApp(ofBaseApp * OFSA){
+void ofRunApp(ofPtr<ofBaseApp> OFSA){
 
 	OFSAptr = OFSA;
 	if(OFSAptr){
@@ -140,15 +152,16 @@ void ofRunApp(ofBaseApp * OFSA){
 
 	window->runAppViaInfiniteLoop(OFSAptr);
 
+
 }
 
 //--------------------------------------
 ofBaseApp * ofGetAppPtr(){
-	return OFSAptr;
+	return OFSAptr.get();
 }
 
 //--------------------------------------
-void ofSetAppPtr(ofBaseApp *appPtr) {
+void ofSetAppPtr(ofPtr<ofBaseApp> appPtr) {
 	OFSAptr = appPtr;
 }
 

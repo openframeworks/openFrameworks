@@ -358,11 +358,11 @@ enum ofOrientation{
 // (CSG ideas)
 
 enum ofPolyWindingMode{
-	OF_POLY_WINDING_ODD 	        = 100130,
-	OF_POLY_WINDING_NONZERO         = 100131,
-	OF_POLY_WINDING_POSITIVE        = 100132,
-	OF_POLY_WINDING_NEGATIVE        = 100133,
-	OF_POLY_WINDING_ABS_GEQ_TWO     = 100134
+	OF_POLY_WINDING_ODD 	        ,
+	OF_POLY_WINDING_NONZERO         ,
+	OF_POLY_WINDING_POSITIVE        ,
+	OF_POLY_WINDING_NEGATIVE        ,
+	OF_POLY_WINDING_ABS_GEQ_TWO
 };
 
 #define 	OF_CLOSE						  (true)

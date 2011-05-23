@@ -3,15 +3,16 @@
 #include "ofConstants.h"
 #include "ofBaseTypes.h"
 #include "ofBaseApp.h"
+#include "ofTypes.h"
 
 #ifdef OF_TARGET_IPHONE
 	#error we need swappable sound stream api for iphone
 #elif defined(TARGET_ANDROID)
 	#include "ofxAndroidSoundStream.h"
-	#define OF_SOUND_STREAM_TYPE ofxAndroidSoundStream()
+	#define OF_SOUND_STREAM_TYPE ofxAndroidSoundStream
 #else
 	#include "ofRtAudioSoundStream.h"
-	#define OF_SOUND_STREAM_TYPE ofRtAudioSoundStream()
+	#define OF_SOUND_STREAM_TYPE ofRtAudioSoundStream
 #endif 
 
 void ofSoundStreamSetup(int nOutputChannels, int nInputChannels, ofBaseApp * appPtr = NULL);
@@ -25,9 +26,10 @@ void ofSoundStreamListDevices();
 class ofSoundStream{
 	public:
 		ofSoundStream();
-		~ofSoundStream();
 		
-		void setSoundStream(ofBaseSoundStream * soundStreamPtr);
+		void setSoundStream(ofPtr<ofBaseSoundStream> soundStreamPtr);
+		ofPtr<ofBaseSoundStream> getSoundStream();
+
 		void listDevices();
 	
 		void setDeviceID(int deviceID);
@@ -45,5 +47,5 @@ class ofSoundStream{
 		
 	protected:
 		
-		ofBaseSoundStream * soundStream;
+		ofPtr<ofBaseSoundStream> soundStream;
 };

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ofConstants.h"
+#include "ofTypes.h"
 
 #if !defined( TARGET_OF_IPHONE ) && !defined(TARGET_ANDROID)
 extern "C" {
@@ -46,22 +47,22 @@ void ofSoundShutdown();
 
 #ifdef OF_SOUND_PLAYER_QUICKTIME
 #include "ofQuicktimeSoundPlayer.h"
-#define OF_SOUND_PLAYER_TYPE ofQuicktimeSoundPlayer()
+#define OF_SOUND_PLAYER_TYPE ofQuicktimeSoundPlayer
 #endif
 
 #ifdef OF_SOUND_PLAYER_FMOD
 #include "ofFmodSoundPlayer.h"
-#define OF_SOUND_PLAYER_TYPE ofFmodSoundPlayer()
+#define OF_SOUND_PLAYER_TYPE ofFmodSoundPlayer
 #endif
 
 #ifdef OF_SOUND_PLAYER_OPENAL
 #include "ofOpenALSoundPlayer.h"
-#define OF_SOUND_PLAYER_TYPE ofOpenALSoundPlayer()
+#define OF_SOUND_PLAYER_TYPE ofOpenALSoundPlayer
 #endif
 
 #ifdef TARGET_OF_IPHONE
 #include "ofxOpenALSoundPlayer.h"
-#define OF_SOUND_PLAYER_TYPE ofxOpenALSoundPlayer()
+#define OF_SOUND_PLAYER_TYPE ofxOpenALSoundPlayer
 #endif
 
 //---------------------------------------------
@@ -70,10 +71,9 @@ class ofSoundPlayer : public ofBaseSoundPlayer {
 	public:
 		
 		ofSoundPlayer();
-		~ofSoundPlayer();
 		
-		bool setPlayer(ofBaseSoundPlayer * newPlayer);
-		ofBaseSoundPlayer *	getPlayer();
+		void setPlayer(ofPtr<ofBaseSoundPlayer> newPlayer);
+		ofPtr<ofBaseSoundPlayer> getPlayer();
 		
 		void loadSound(string fileName, bool stream = false);
 		void unloadSound();
@@ -96,7 +96,7 @@ class ofSoundPlayer : public ofBaseSoundPlayer {
 		
 	protected:
 		
-		ofBaseSoundPlayer		* player;
+		ofPtr<ofBaseSoundPlayer> player;
 	
 	
 };

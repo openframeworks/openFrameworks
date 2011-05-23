@@ -11,6 +11,7 @@
 #include "ofAppRunner.h"
 #include "ofUtils.h"
 #include "ofVideoGrabber.h"
+#include "ofPixelUtils.h"
 
 static int cameraId;
 static bool newPixels;
@@ -467,14 +468,15 @@ Java_cc_openframeworks_OFAndroidVideoGrabber_newFrame(JNIEnv*  env, jobject  thi
 		if(!buffer) return 1;
 
 		static ofPixels aux_buffer;
+		ofxAndroidVideoGrabber* grabber = (ofxAndroidVideoGrabber*)instances[cameraId]->getGrabber().get();
 
 		unsigned char * dst = instances[cameraId]->getPixels();
 		if(int(instances[cameraId]->getWidth())!=width || int(instances[cameraId]->getHeight())!=height){
 			if(instances[cameraId]->getPixelFormat()!=OF_PIXELS_MONO){
-				((ofxAndroidVideoGrabber*)instances[cameraId]->getGrabber())->getAuxBuffer().allocate(width,height,instances[cameraId]->getPixelFormat());
-				dst = ((ofxAndroidVideoGrabber*)instances[cameraId]->getGrabber())->getAuxBuffer().getPixels();
+				grabber->getAuxBuffer().allocate(width,height,instances[cameraId]->getPixelFormat());
+				dst = grabber->getAuxBuffer().getPixels();
 			}else{
-				((ofxAndroidVideoGrabber*)instances[cameraId]->getGrabber())->getAuxBuffer().setFromExternalPixels(buffer,width,height,OF_IMAGE_GRAYSCALE);
+				grabber->getAuxBuffer().setFromExternalPixels(buffer,width,height,OF_IMAGE_GRAYSCALE);
 			}
 		}
 
@@ -492,7 +494,7 @@ Java_cc_openframeworks_OFAndroidVideoGrabber_newFrame(JNIEnv*  env, jobject  thi
 		}
 
 		if(int(instances[cameraId]->getWidth())!=width || int(instances[cameraId]->getHeight())!=height){
-			ofPixelUtils::resize(((ofxAndroidVideoGrabber*)instances[cameraId]->getGrabber())->getAuxBuffer(),instances[cameraId]->getPixelsRef());
+			ofPixelUtils::resize(grabber->getAuxBuffer(),instances[cameraId]->getPixelsRef());
 		}
 		/*acc_time += ofGetSystemTime() - time_one_frame;
 		num_frames ++;
@@ -503,7 +505,7 @@ Java_cc_openframeworks_OFAndroidVideoGrabber_newFrame(JNIEnv*  env, jobject  thi
 
 		env->ReleasePrimitiveArrayCritical(array,buffer,0);
 		newPixels = true;
-		ofNotifyEvent(((ofxAndroidVideoGrabber*)instances[cameraId]->getGrabber())->newFrameE,instances[cameraId]->getPixelsRef());
+		ofNotifyEvent(grabber->newFrameE,instances[cameraId]->getPixelsRef());
 		//((ofxAndroidApp*)ofGetAppPtr())->imageReceived(pixels,width,height);
 		return 0;
 	}

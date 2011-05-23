@@ -15,10 +15,17 @@
 #include "ofConstants.h"
 #include "ofColor.h"
 #include "ofMesh.h"
-class ofPixels;
+#include "ofPixels.h"
+
+template<typename T>
+class ofImage_;
+
+typedef ofImage_<unsigned char> ofImage;
+typedef ofImage_<float> ofFloatImage;
+typedef ofImage_<unsigned short> ofShortImage;
+
 class ofPath;
 class ofPolyline;
-class ofImage;
 typedef ofPixels& ofPixelsRef;
 
 
@@ -75,22 +82,28 @@ public:
 //----------------------------------------------------------
 // ofBaseHasPixels
 //----------------------------------------------------------
-class ofBaseHasPixels{
+template<typename T>
+class ofBaseHasPixels_{
 public:
-	virtual ~ofBaseHasPixels(){}
-	virtual unsigned char * getPixels()=0;
-	virtual ofPixelsRef getPixelsRef()=0;
-	virtual float	getHeight() = 0;
-	virtual float	getWidth() = 0;
+	virtual ~ofBaseHasPixels_(){}
+	virtual T * getPixels()=0;
+	virtual ofPixels_<T> & getPixelsRef()=0;
 };
+
+typedef ofBaseHasPixels_<unsigned char> ofBaseHasPixels;
+typedef ofBaseHasPixels_<float> ofBaseHasFloatPixels;
 
 //----------------------------------------------------------
 // ofBaseImage
 //----------------------------------------------------------
-class ofBaseImage: public ofBaseDraws, public ofBaseHasTexture, public ofBaseHasPixels{
+template<typename T>
+class ofBaseImage_: public ofBaseDraws, public ofBaseHasTexture, public ofBaseHasPixels_<T>{
 public:
 	
 };
+
+typedef ofBaseImage_<unsigned char> ofBaseImage;
+typedef ofBaseImage_<float> ofBaseFloatImage;
 
 //----------------------------------------------------------
 // ofBaseHasSoundStream
@@ -152,7 +165,7 @@ class ofBaseVideoDraws: virtual public ofBaseVideo, public ofBaseDraws, public o
 //----------------------------------------------------------
 // ofBaseVideoGrabber
 //----------------------------------------------------------
-class ofBaseVideoGrabber: virtual public ofBaseVideo{
+class ofBaseVideoGrabber: public ofBaseVideo{
 	
 	public :
 	
@@ -186,7 +199,7 @@ class ofBaseVideoGrabber: virtual public ofBaseVideo{
 //----------------------------------------------------------
 // ofBaseVideoPlayer
 //----------------------------------------------------------
-class ofBaseVideoPlayer: virtual public ofBaseVideo{
+class ofBaseVideoPlayer: public ofBaseVideo{
 	
 public:
 	
@@ -249,6 +262,8 @@ public:
 	virtual void draw(ofMesh & vertexData, ofPolyRenderMode renderType)=0;
 	virtual void draw(vector<ofPoint> & vertexData, ofPrimitiveMode drawMode)=0;
 	virtual void draw(ofImage & image, float x, float y, float z, float w, float h)=0;
+	virtual void draw(ofFloatImage & image, float x, float y, float z, float w, float h)=0;
+	virtual void draw(ofShortImage & image, float x, float y, float z, float w, float h)=0;
 
 	//--------------------------------------------
 	// transformations
