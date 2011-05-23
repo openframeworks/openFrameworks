@@ -4,7 +4,7 @@
 #include "ofMesh.h"
 #include "ofTypes.h"
 #include "ofPolyline.h"
-#include "tess2/include/tesselator.h"
+#include "tesselator.h"
 
 
 class ofTessellator
