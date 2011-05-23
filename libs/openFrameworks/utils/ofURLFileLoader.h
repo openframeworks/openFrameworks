@@ -7,7 +7,7 @@
 #include "ofEvents.h"
 #include "ofFileUtils.h"
 
-#include "poco/include/Poco/Condition.h"
+#include "Poco/Condition.h"
 
 
 class ofHttpRequest{

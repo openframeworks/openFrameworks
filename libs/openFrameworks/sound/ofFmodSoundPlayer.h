@@ -5,8 +5,8 @@
 
 #ifndef TARGET_OF_IPHONE
 extern "C" {
-#include "fmodex/include/fmod.h"
-#include "fmodex/include/fmod_errors.h"
+#include "fmod.h"
+#include "fmod_errors.h"
 }
 #endif
 

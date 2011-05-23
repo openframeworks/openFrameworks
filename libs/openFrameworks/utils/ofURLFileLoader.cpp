@@ -2,15 +2,15 @@
 #include "ofAppRunner.h"
 #include "ofUtils.h"
 
-#include "poco/include/Poco/Net/HTTPClientSession.h"
-#include "poco/include/Poco/Net/HTTPRequest.h"
-#include "poco/include/Poco/Net/HTTPResponse.h"
-#include "poco/include/Poco/StreamCopier.h"
-#include "poco/include/Poco/Path.h"
-#include "poco/include/Poco/URI.h"
-#include "poco/include/Poco/Exception.h"
-#include "poco/include/Poco/URIStreamOpener.h"
-#include "poco/include/Poco/Net/HTTPStreamFactory.h"
+#include "Poco/Net/HTTPClientSession.h"
+#include "Poco/Net/HTTPRequest.h"
+#include "Poco/Net/HTTPResponse.h"
+#include "Poco/StreamCopier.h"
+#include "Poco/Path.h"
+#include "Poco/URI.h"
+#include "Poco/Exception.h"
+#include "Poco/URIStreamOpener.h"
+#include "Poco/Net/HTTPStreamFactory.h"
 
 using Poco::Net::HTTPClientSession;
 using Poco::Net::HTTPRequest;

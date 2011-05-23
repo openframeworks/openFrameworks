@@ -171,14 +171,14 @@ bool ofBufferToFile(const string & path, ofBuffer & buffer, bool binary){
 //------------------------------------------------------------------------------------------------------------
 
 
-#include "poco/include/Poco/Util/FilesystemConfiguration.h"
-#include "poco/include/Poco/File.h"
-#include "poco/include/Poco/Path.h"
-#include "poco/include/Poco/DirectoryIterator.h"
-#include "poco/include/Poco/StringTokenizer.h"
-#include "poco/include/Poco/Exception.h"
-#include "poco/include/Poco/FileStream.h"
-#include "poco/include/Poco/String.h"
+#include "Poco/Util/FilesystemConfiguration.h"
+#include "Poco/File.h"
+#include "Poco/Path.h"
+#include "Poco/DirectoryIterator.h"
+#include "Poco/StringTokenizer.h"
+#include "Poco/Exception.h"
+#include "Poco/FileStream.h"
+#include "Poco/String.h"
 
 using namespace Poco;
 

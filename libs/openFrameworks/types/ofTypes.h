@@ -49,7 +49,7 @@ class ofSerialDeviceInfo{
 // ofMutex
 //----------------------------------------------------------
 
-#include "poco/include/Poco/Mutex.h"
+#include "Poco/Mutex.h"
 typedef Poco::FastMutex ofMutex;
 
 //----------------------------------------------------------

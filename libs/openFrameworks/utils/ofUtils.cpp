@@ -4,10 +4,10 @@
 #include "ofGraphics.h"
 #include "ofAppRunner.h"
 
-#include "poco/include/Poco/String.h"
-#include "poco/include/Poco/StringTokenizer.h"
-#include "poco/include/Poco/LocalDateTime.h"
-#include "poco/include/Poco/DateTimeFormatter.h"
+#include "Poco/String.h"
+#include "Poco/StringTokenizer.h"
+#include "Poco/LocalDateTime.h"
+#include "Poco/DateTimeFormatter.h"
 
 #include <cctype> // for toupper
 #include <algorithm>
