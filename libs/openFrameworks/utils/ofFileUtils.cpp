@@ -58,9 +58,9 @@ bool ofBuffer::set(istream & stream){
 }
 
 //--------------------------------------------------
-bool ofBuffer::writeTo(ostream & stream){
+bool ofBuffer::writeTo(ostream & stream) const{
 	if(stream.bad()) return false;
-	stream.write(&(buffer[0]),buffer.size());
+	stream.write(&(buffer[0]),buffer.size()-1);
 	return true;
 }
 
@@ -115,12 +115,10 @@ long ofBuffer::size() const{
 
 //--------------------------------------------------
 string ofBuffer::getNextLine(){
-	if( buffer.empty() ) return "";
+	if( buffer.empty() || int(buffer.size()-1)==nextLinePos) return "";
 	long currentLinePos = nextLinePos;
-	while(nextLinePos<(int)buffer.size() && buffer[nextLinePos]!='\n') nextLinePos++;
+	while(nextLinePos<(int)buffer.size()-1 && buffer[nextLinePos]!='\n') nextLinePos++;
 	string line(getBinaryBuffer() + currentLinePos,nextLinePos-currentLinePos);
-	line.resize(line.size()+1);
-	line[line.size()-1]=0;
 	if(nextLinePos<(int)buffer.size()-1) nextLinePos++;
 	return line;
 }
@@ -132,13 +130,18 @@ string ofBuffer::getFirstLine(){
 }
 
 //--------------------------------------------------
-ostream & operator<<(ostream & ostr,ofBuffer & buf){
+bool ofBuffer::isLastLine(){
+	return int(buffer.size()-1)==nextLinePos;
+}
+
+//--------------------------------------------------
+ostream & operator<<(ostream & ostr,const ofBuffer & buf){
 	buf.writeTo(ostr);
 	return ostr;
 }
 
 //--------------------------------------------------
-istream & operator>>(istream & istr,ofBuffer & buf){
+istream & operator>>(istream & istr, ofBuffer & buf){
 	buf.set(istr);
 	return istr;
 }
@@ -317,7 +320,12 @@ filebuf * ofFile::getFileBuffer() const{
 //-- poco wrappers
 //------------------------------------------------------------------------------------------------------------
 bool ofFile::exists() const{
-	return myFile.exists();
+	if(path().empty()) return false;
+	try{
+		return myFile.exists();
+	}catch(...){
+		return false;
+	}
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -407,7 +415,7 @@ void ofFile::setExecutable(bool flag = true){
 
 //------------------------------------------------------------------------------------------------------------
 bool ofFile::copyTo(string path, bool bRelativeToData, bool overwrite){
-	if( !myFile.exists() ){
+	if(  path.empty() || !myFile.exists() ){
 		ofLog(OF_LOG_ERROR,"ofFile::copyTo: trying to copy a non existing file");
 		return false;
 	}
@@ -436,7 +444,7 @@ bool ofFile::copyTo(string path, bool bRelativeToData, bool overwrite){
 
 //------------------------------------------------------------------------------------------------------------
 bool ofFile::moveTo(string path, bool bRelativeToData, bool overwrite){
-	if( !myFile.exists() ){
+	if(  path.empty() || !myFile.exists() ){
 		return false;
 	}
 	
@@ -464,7 +472,7 @@ bool ofFile::moveTo(string path, bool bRelativeToData, bool overwrite){
 
 //------------------------------------------------------------------------------------------------------------
 bool ofFile::renameTo(string path, bool bRelativeToData, bool overwrite){
-	if( !myFile.exists() ){
+	if(  path.empty() || !myFile.exists() ){
 		return false;
 	}
 	
@@ -492,7 +500,7 @@ bool ofFile::renameTo(string path, bool bRelativeToData, bool overwrite){
 
 //------------------------------------------------------------------------------------------------------------
 bool ofFile::remove(bool recursive){
-	if( !myFile.exists() ){
+	if( myFile.path().empty() || !myFile.exists() ){
 		return false;
 	}
 	
@@ -606,7 +614,7 @@ bool ofFile::moveFromTo(string pathSrc, string pathDst, bool bRelativeToData, bo
 bool ofFile::doesFileExist(string fPath,  bool bRelativeToData){
 	if( bRelativeToData ) fPath = ofToDataPath(fPath);
 	File file( fPath );
-	return file.exists();
+	return  !fPath.empty() && file.exists();
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -678,19 +686,19 @@ void ofDirectory::close(){
 }
 
 //------------------------------------------------------------------------------------------------------------
-bool ofDirectory::create(){
-	bool success = false;
+bool ofDirectory::create(bool recursive){
 	
 	if( myDir.path() != "" ){
 		try{
-			success = myDir.createDirectory();
+			if(recursive) myDir.createDirectories();
+			else myDir.createDirectory();
 		}catch (Poco::Exception & except){
 			ofLog(OF_LOG_ERROR, "ofDirectory::create - unable to create directory");
 			return false;
 		}
 	}
 	
-	return success;
+	return true;
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -735,7 +743,7 @@ bool ofDirectory::isDirectory() const{
 
 //------------------------------------------------------------------------------------------------------------
 bool ofDirectory::copyTo(string path, bool bRelativeToData, bool overwrite){
-	if( !myDir.exists() ){
+	if( myDir.path().empty() || !myDir.exists() ){
 		return false;
 	}
 	
@@ -763,7 +771,7 @@ bool ofDirectory::copyTo(string path, bool bRelativeToData, bool overwrite){
 
 //------------------------------------------------------------------------------------------------------------
 bool ofDirectory::moveTo(string path,  bool bRelativeToData, bool overwrite){
-	if( !myDir.exists() ){
+	if( myDir.path().empty() || !myDir.exists() ){
 		return false;
 	}
 	
@@ -791,7 +799,7 @@ bool ofDirectory::moveTo(string path,  bool bRelativeToData, bool overwrite){
 
 //------------------------------------------------------------------------------------------------------------
 bool ofDirectory::renameTo(string path, bool bRelativeToData, bool overwrite){
-	if( !myDir.exists() ){
+	if( myDir.path().empty() || !myDir.exists() ){
 		return false;
 	}
 	
@@ -819,7 +827,7 @@ bool ofDirectory::renameTo(string path, bool bRelativeToData, bool overwrite){
 
 //------------------------------------------------------------------------------------------------------------
 bool ofDirectory::remove(bool recursive){
-	if( !myDir.exists() ){
+	if( path().empty() || !myDir.exists() ){
 		return false;
 	}
 	
@@ -850,7 +858,7 @@ int ofDirectory::listDir(string directory){
 //------------------------------------------------------------------------------------------------------------
 int ofDirectory::listDir(){
 	Path base(path());
-	if(myDir.exists()) {
+	if(!path().empty() && myDir.exists()) {
 		// File::list(vector<File>) is broken on windows as of march 23, 2011...
 		// so we need to use File::list(vector<string>) and build a vector<File>
 		// in the future the following can be replaced width: cur.list(files);
@@ -987,7 +995,7 @@ bool ofDirectory::doesDirectoryExist(string dirPath, bool bRelativeToData){
 bool ofDirectory::isDirectoryEmpty(string dirPath, bool bRelativeToData){
 	if( bRelativeToData )dirPath = ofToDataPath(dirPath);
 	File file(dirPath);
-	if( file.exists() && file.isDirectory() ){
+	if( !dirPath.empty() && file.exists() && file.isDirectory() ){
 		vector <string> contents;
 		file.list(contents);
 		if( contents.size() == 0 ){

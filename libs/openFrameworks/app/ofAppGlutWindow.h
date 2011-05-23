@@ -3,6 +3,7 @@
 #include "ofConstants.h"
 #include "ofAppBaseWindow.h"
 #include "ofEvents.h"
+#include "ofTypes.h"
 
 //class ofPoint;
 class ofBaseApp;
@@ -16,7 +17,7 @@ public:
 
 	void setupOpenGL(int w, int h, int screenMode);
 	void initializeWindow();
-	void runAppViaInfiniteLoop(ofBaseApp * appPtr);
+	void runAppViaInfiniteLoop(ofPtr<ofBaseApp> appPtr);
 	
 	//note if you fail to set a compatible string the app will not launch
 	void setGlutDisplayString(string str);

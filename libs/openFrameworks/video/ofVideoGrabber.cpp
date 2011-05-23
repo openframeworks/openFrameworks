@@ -15,8 +15,6 @@
 
 //--------------------------------------------------------------------
 ofVideoGrabber::ofVideoGrabber(){
-
-	grabber				= NULL;
 	bUseTexture			= false;
 	bInitialized		= false;
 	RequestedDeviceID	= -1;
@@ -33,30 +31,15 @@ ofVideoGrabber::~ofVideoGrabber(){
 #ifdef TARGET_ANDROID
 	ofxAndroidCloseGrabber(this);
 #endif
-	close();
-
-	if(	grabber != NULL ){
-		delete grabber;
-		grabber = NULL;
-	}
-
-	tex.clear();
 }
 
 //--------------------------------------------------------------------
-bool ofVideoGrabber::setGrabber(ofBaseVideoGrabber * newGrabber){
-	if( grabber == NULL ){
-		grabber = newGrabber;
-		return true;
-	}else{
-		//TODO: should we delete grabberPtr? This is why we need smart pointers.
-		ofLog(OF_LOG_ERROR, "ofVideoGrabber::setGrabber - grabber already set!");
-	}
-	return false;
+void ofVideoGrabber::setGrabber(ofPtr<ofBaseVideoGrabber> newGrabber){
+	grabber = newGrabber;
 }
 
 //--------------------------------------------------------------------
-ofBaseVideoGrabber * ofVideoGrabber::getGrabber(){
+ofPtr<ofBaseVideoGrabber> ofVideoGrabber::getGrabber(){
 	return grabber;
 }
 
@@ -68,7 +51,7 @@ bool ofVideoGrabber::initGrabber(int w, int h, bool setUseTexture){
 #endif
     
 	if( grabber == NULL ){
-		setGrabber( new OF_VID_GRABBER_TYPE );
+		setGrabber( ofPtr<OF_VID_GRABBER_TYPE>(new OF_VID_GRABBER_TYPE) );
 	}
 
 	bInitialized = true;

@@ -20,7 +20,7 @@ public:
 	void set(const char * _buffer, int _size);
 	bool set(istream & stream);
 
-	bool writeTo(ostream & stream);
+	bool writeTo(ostream & stream) const;
 
 	void clear();
 
@@ -36,9 +36,10 @@ public:
 
 	string getNextLine();
 	string getFirstLine();
+	bool isLastLine();
 
-	friend ostream & operator<<(ostream & ostr,ofBuffer & buf);
-	friend istream & operator>>(istream & istr,ofBuffer & buf);
+	friend ostream & operator<<(ostream & ostr, const ofBuffer & buf);
+	friend istream & operator>>(istream & istr, ofBuffer & buf);
 
 private:
 	vector<char> 	buffer;
@@ -122,12 +123,12 @@ public:
 	
 	//these all work for files and directories
 	bool copyTo(string path, bool bRelativeToData = true, bool overwrite = false);
-	bool moveTo(string path, bool bRelativeToData = true, bool overwrite = false);		
+	bool moveTo(string path, bool bRelativeToData = true, bool overwrite = false);
 	bool renameTo(string path, bool bRelativeToData = true, bool overwrite = false);
 	
 	
 	//be careful! this deletes a file or folder :) 
-	bool remove(bool recursive);	
+	bool remove(bool recursive=false);
 
 	uint64_t getSize() const;
 
@@ -190,7 +191,7 @@ public:
 
 	void open(string path);
 	void close();
-	bool create();
+	bool create(bool recursive = false);
 
 	bool exists() const;
 	string path() const;

@@ -15,6 +15,7 @@ int 	ofNextPow2(int input);
 void	ofResetElapsedTimeCounter();		// this happens on the first frame
 float 	ofGetElapsedTimef();
 int		ofGetElapsedTimeMillis();
+unsigned long ofGetElapsedTimeMicros();
 int 	ofGetFrameNum();
 
 int 	ofGetSeconds();
@@ -25,6 +26,7 @@ int 	ofGetHours();
 unsigned int ofGetUnixTime();
 
 unsigned long ofGetSystemTime( );			// system time in milliseconds;
+unsigned long ofGetSystemTimeMicros( );			// system time in microseconds;
 
 		//returns 
 string ofGetTimestampString();
@@ -84,33 +86,6 @@ string ofToString(const T& value, int precision){
 	out << fixed << setprecision(precision) << value;
 	return out.str();
 }
-
-#ifdef TARGET_ANDROID
-template <>
-inline string ofToString(const double& value, int precision){
-	char str_val[1024];
-	sprintf(str_val,("%.0"+ofToString(precision)+"f").c_str(),value);
-	return str_val;
-}
-template <>
-inline string ofToString(const float& value, int precision){
-	char str_val[1024];
-	sprintf(str_val,("%.0"+ofToString(precision)+"f").c_str(),value);
-	return str_val;
-}
-template <>
-inline string ofToString(const double& value){
-	char str_val[1024];
-	sprintf(str_val,"%.08f",value);
-	return str_val;
-}
-template <>
-inline string ofToString(const float& value){
-	char str_val[1024];
-	sprintf(str_val,"%.08f",value);
-	return str_val;
-}
-#endif
 
 template<class T>
 string ofToString(const vector<T>& values) {
@@ -184,5 +159,10 @@ void	ofSaveViewport(string filename);
 vector <string> ofSplitString(const string & source, const string & delimiters, bool ignoreEmpty = false, bool trim = false);
 string ofJoinString(vector <string> stringElements, const string & delimiter);
 bool ofIsStringInString(string haystack, string needle);
+
+string ofToLower(const string & src);
+string ofToUpper(const string & src);
+
+string ofVAArgsToString(const char * format, ...);
 
 

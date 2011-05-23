@@ -48,19 +48,20 @@ ofHttpResponse ofURLFileLoader::get(string url) {
 }
 
 
-void ofURLFileLoader::getAsync(string url, string name){
+int ofURLFileLoader::getAsync(string url, string name){
 	if(name=="") name=url;
 	ofHttpRequest request(url,name);
 	lock();
 	requests.push_back(request);
 	unlock();
 	start();
+	return request.getID();
 }
 
-void ofURLFileLoader::remove(ofHttpRequest httpRequest){
+void ofURLFileLoader::remove(int id){
 	lock();
 	for(int i=0;i<(int)requests.size();i++){
-		if(requests[i].getID()==httpRequest.getID()){
+		if(requests[i].getID()==id){
 			requests.erase(requests.begin()+i);
 			return;
 		}
@@ -68,10 +69,19 @@ void ofURLFileLoader::remove(ofHttpRequest httpRequest){
 	unlock();
 }
 
+void ofURLFileLoader::clear(){
+	lock();
+	requests.clear();
+	while(!responses.empty()) responses.pop();
+	unlock();
+}
+
 void ofURLFileLoader::start() {
      if (isThreadRunning() == false){
-    	 ofAddListener(ofEvents.update,this,&ofURLFileLoader::update);
-         startThread(false, false);   // blocking, verbose
+        startThread(false, false);   // blocking, verbose
+    }else{
+    	ofLog(OF_LOG_VERBOSE,"signaling new request condition");
+    	condition.signal();
     }
 }
 
@@ -82,19 +92,29 @@ void ofURLFileLoader::stop() {
 void ofURLFileLoader::threadedFunction() {
 	while( isThreadRunning() == true ){
 		lock();
+    	ofLog(OF_LOG_VERBOSE,"starting thread loop ");
 		if(requests.size()>0){
+	    	ofLog(OF_LOG_VERBOSE,"querying request " + requests.front().name);
 			ofHttpRequest request(requests.front());
+			unlock();
+
 			ofHttpResponse response(handleRequest(request));
+
 			if(response.status!=-1){
+				lock();
+		    	ofLog(OF_LOG_VERBOSE,"got request " + requests.front().name);
 				responses.push(response);
 				requests.pop_front();
+		    	ofAddListener(ofEvents.update,this,&ofURLFileLoader::update);
+				unlock();
+			}else{
+		    	ofLog(OF_LOG_VERBOSE,"failed getting request " + requests.front().name);
 			}
-			unlock();
+			ofSleepMillis(10);
 		}else{
-			unlock();
-			stop();
+			ofLog(OF_LOG_VERBOSE,"stopping on no requests condition");
+			condition.wait(mutex);
 		}
-		ofSleepMillis(10);
 	}
 }
 
@@ -120,26 +140,37 @@ ofHttpResponse ofURLFileLoader::handleRequest(ofHttpRequest request) {
 }	
 
 void ofURLFileLoader::update(ofEventArgs & args){
+	lock();
 	if(responses.size()){
 		ofHttpResponse response(responses.front());
-		ofNotifyEvent(ofURLResponseEvent,response);
+		ofLog(OF_LOG_VERBOSE,"ofURLLoader::update: new response " +response.request.name);
 		responses.pop();
-		if(!isThreadRunning() && !responses.size())
-			ofRemoveListener(ofEvents.update,this,&ofURLFileLoader::update);
+		unlock();
+		ofNotifyEvent(ofURLResponseEvent,response);
+	}else{
+		ofRemoveListener(ofEvents.update,this,&ofURLFileLoader::update);
+		unlock();
 	}
 
 }
 
-static ofURLFileLoader fileLoader;
+static ofURLFileLoader & getFileLoader(){
+	static ofURLFileLoader * fileLoader = new ofURLFileLoader;
+	return *fileLoader;
+}
 
 ofHttpResponse ofLoadURL(string url){
-	return fileLoader.get(url);
+	return getFileLoader().get(url);
 }
 
-void ofLoadURLAsync(string url, string name){
-	fileLoader.getAsync(url,name);
+int ofLoadURLAsync(string url, string name){
+	return getFileLoader().getAsync(url,name);
 }
 
-void ofRemoveURLRequest(ofHttpRequest request){
-	fileLoader.remove(request);
+void ofRemoveURLRequest(int id){
+	getFileLoader().remove(id);
+}
+
+void ofRemoveAllURLRequests(){
+	getFileLoader().clear();
 }

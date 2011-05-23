@@ -26,13 +26,14 @@
 		BB24DD9010DA77E000E9C588 /* Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = BB24DD8D10DA77E000E9C588 /* Icon.png */; };
 		BB24DDCA10DA781C00E9C588 /* ofxiphone-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = BB24DDC910DA781C00E9C588 /* ofxiphone-Info.plist */; };
 		BBE5EAB80F49AD8400F28951 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BBE5EAB70F49AD8400F28951 /* AudioToolbox.framework */; };
+		DA9274491387D21A00BA21A9 /* tess2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DA9274331387D21900BA21A9 /* tess2.a */; };
 		E434BF6512477ED500452519 /* freeimage-iphone.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E434BF6412477ED500452519 /* freeimage-iphone.a */; };
 		E434BF6812477EDE00452519 /* freeimage.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E434BF6712477EDE00452519 /* freeimage.a */; };
 		E434BF7312477FBA00452519 /* freetype-iphone.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E434BF7212477FBA00452519 /* freetype-iphone.a */; };
 		E439D111128C8AE4002B245D /* ofxDirList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E439D10D128C8AE4002B245D /* ofxDirList.cpp */; };
 		E496D5B11252C8210098A2B3 /* glu-iphone.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E496D5AF1252C8210098A2B3 /* glu-iphone.a */; };
 		E496D5B21252C8210098A2B3 /* glu.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E496D5B01252C8210098A2B3 /* glu.a */; };
-		E49BCC7A12554CD6009F19D0 /* libofxiPhone_iphoneos_Debug.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E49BCC5012554B6A009F19D0 /* libofxiPhone_iphoneos_Debug.a */; };
+		E49BCC7A12554CD6009F19D0 /* libofxiPhone_macosx_Debug.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E49BCC5012554B6A009F19D0 /* libofxiPhone_macosx_Debug.a */; };
 		E4A8229F12560AFE002F86A2 /* freetype.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E4A8229E12560AFE002F86A2 /* freetype.a */; };
 		E4A823A412561BE3002F86A2 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E4A823A312561BE3002F86A2 /* CoreGraphics.framework */; };
 		E4D8936E11527B74007E1F53 /* main.mm in Sources */ = {isa = PBXBuildFile; fileRef = E4D8936B11527B74007E1F53 /* main.mm */; };
@@ -126,6 +127,8 @@
 		BBE5EAB70F49AD8400F28951 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		DA7851271105C039007EFC90 /* glu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = glu.h; sourceTree = "<group>"; };
 		DA7851281105C039007EFC90 /* gluos.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gluos.h; sourceTree = "<group>"; };
+		DA9274271387D21900BA21A9 /* tesselator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tesselator.h; sourceTree = "<group>"; };
+		DA9274331387D21900BA21A9 /* tess2.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = tess2.a; sourceTree = "<group>"; };
 		E434BF6412477ED500452519 /* freeimage-iphone.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "freeimage-iphone.a"; path = "../../../libs/FreeImage/lib/iphone/freeimage-iphone.a"; sourceTree = SOURCE_ROOT; };
 		E434BF6712477EDE00452519 /* freeimage.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = freeimage.a; path = ../../../libs/FreeImage/lib/osx/freeimage.a; sourceTree = SOURCE_ROOT; };
 		E434BF7212477FBA00452519 /* freetype-iphone.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "freetype-iphone.a"; path = "../../../libs/freetype/lib/iphone/freetype-iphone.a"; sourceTree = SOURCE_ROOT; };
@@ -146,7 +149,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E49BCC7A12554CD6009F19D0 /* libofxiPhone_iphoneos_Debug.a in Frameworks */,
+				E49BCC7A12554CD6009F19D0 /* libofxiPhone_macosx_Debug.a in Frameworks */,
 				1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */,
 				1DF5F4E00D08C38300B7A737 /* UIKit.framework in Frameworks */,
 				288765FD0DF74451002DB57D /* CoreGraphics.framework in Frameworks */,
@@ -170,6 +173,7 @@
 				E496D5B21252C8210098A2B3 /* glu.a in Frameworks */,
 				E4A8229F12560AFE002F86A2 /* freetype.a in Frameworks */,
 				E4A823A412561BE3002F86A2 /* CoreGraphics.framework in Frameworks */,
+				DA9274491387D21A00BA21A9 /* tess2.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -466,10 +470,11 @@
 		BB3F144E0F4C6BF200A33527 /* core libraries */ = {
 			isa = PBXGroup;
 			children = (
-				5E25686A10ED26BE00A9501C /* poco */,
 				BB24DDCD10DA784F00E9C588 /* FreeImage */,
+				5E25686A10ED26BE00A9501C /* poco */,
 				BB24DDDD10DA785000E9C588 /* freetype */,
 				BB24DE1F10DA785000E9C588 /* glu */,
+				DA9274251387D21900BA21A9 /* tess2 */,
 				29B97315FDCFA39411CA2CEA /* Other Sources */,
 			);
 			name = "core libraries";
@@ -491,6 +496,40 @@
 				DA7851281105C039007EFC90 /* gluos.h */,
 			);
 			path = include_iphone;
+			sourceTree = "<group>";
+		};
+		DA9274251387D21900BA21A9 /* tess2 */ = {
+			isa = PBXGroup;
+			children = (
+				DA9274261387D21900BA21A9 /* include */,
+				DA9274281387D21900BA21A9 /* lib */,
+			);
+			name = tess2;
+			path = ../../../libs/tess2;
+			sourceTree = SOURCE_ROOT;
+		};
+		DA9274261387D21900BA21A9 /* include */ = {
+			isa = PBXGroup;
+			children = (
+				DA9274271387D21900BA21A9 /* tesselator.h */,
+			);
+			path = include;
+			sourceTree = "<group>";
+		};
+		DA9274281387D21900BA21A9 /* lib */ = {
+			isa = PBXGroup;
+			children = (
+				DA9274321387D21900BA21A9 /* osx */,
+			);
+			path = lib;
+			sourceTree = "<group>";
+		};
+		DA9274321387D21900BA21A9 /* osx */ = {
+			isa = PBXGroup;
+			children = (
+				DA9274331387D21900BA21A9 /* tess2.a */,
+			);
+			path = osx;
 			sourceTree = "<group>";
 		};
 		E434BF6612477EDE00452519 /* osx */ = {
@@ -524,7 +563,7 @@
 		E49BCC4912554B69009F19D0 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				E49BCC5012554B6A009F19D0 /* libofxiPhone_iphoneos_Debug.a */,
+				E49BCC5012554B6A009F19D0 /* libofxiPhone_macosx_Debug.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -577,7 +616,6 @@
 			isa = PBXProject;
 			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "iPhoneDirListExample" */;
 			compatibilityVersion = "Xcode 3.1";
-			developmentRegion = English;
 			hasScannedForEncodings = 1;
 			knownRegions = (
 				English,
@@ -601,10 +639,10 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		E49BCC5012554B6A009F19D0 /* libofxiPhone_iphoneos_Debug.a */ = {
+		E49BCC5012554B6A009F19D0 /* libofxiPhone_macosx_Debug.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = libofxiPhone_iphoneos_Debug.a;
+			path = libofxiPhone_macosx_Debug.a;
 			remoteRef = E49BCC4F12554B6A009F19D0 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
@@ -673,6 +711,12 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../../../libs/freetype/lib/osx\"",
+					"\"$(SRCROOT)/../../../libs/tess2/lib/android/armeabi\"",
+					"\"$(SRCROOT)/../../../libs/tess2/lib/android/armeabi-v7a\"",
+					"\"$(SRCROOT)/../../../libs/tess2/lib/linux\"",
+					"\"$(SRCROOT)/../../../libs/tess2/lib/linux64\"",
+					"\"$(SRCROOT)/../../../libs/tess2/lib/osx\"",
+					"\"$(SRCROOT)/../../../libs/tess2/lib/win_cb\"",
 				);
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = "${TARGET_NAME}";
@@ -690,6 +734,12 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../../../libs/freetype/lib/osx\"",
+					"\"$(SRCROOT)/../../../libs/tess2/lib/android/armeabi\"",
+					"\"$(SRCROOT)/../../../libs/tess2/lib/android/armeabi-v7a\"",
+					"\"$(SRCROOT)/../../../libs/tess2/lib/linux\"",
+					"\"$(SRCROOT)/../../../libs/tess2/lib/linux64\"",
+					"\"$(SRCROOT)/../../../libs/tess2/lib/osx\"",
+					"\"$(SRCROOT)/../../../libs/tess2/lib/win_cb\"",
 				);
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = "${TARGET_NAME}";
@@ -844,6 +894,12 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../../../libs/freetype/lib/osx\"",
+					"\"$(SRCROOT)/../../../libs/tess2/lib/android/armeabi\"",
+					"\"$(SRCROOT)/../../../libs/tess2/lib/android/armeabi-v7a\"",
+					"\"$(SRCROOT)/../../../libs/tess2/lib/linux\"",
+					"\"$(SRCROOT)/../../../libs/tess2/lib/linux64\"",
+					"\"$(SRCROOT)/../../../libs/tess2/lib/osx\"",
+					"\"$(SRCROOT)/../../../libs/tess2/lib/win_cb\"",
 				);
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = "${TARGET_NAME}";

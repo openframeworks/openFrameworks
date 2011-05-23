@@ -12,12 +12,13 @@ ofPolyline ofGetSmoothed(const ofPolyline& polyline, int smoothingSize, float sm
 	
 	// precompute weights and normalization
 	vector<float> weights;
+	weights.resize(smoothingSize+1);
 	float weightSum = 0;
-	weights.push_back(1); // center weight
+	weights[0]=1; // center weight
 	// side weights
 	for(int i = 1; i <= smoothingSize; i++) {
 		float curWeight = ofMap(i, 0, smoothingSize, 1, smoothingShape);
-		weights.push_back(curWeight);
+		weights[i]=curWeight;
 		weightSum += curWeight;
 	}
 	float weightNormalization = 1 / (1 + 2 * weightSum);

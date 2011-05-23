@@ -31,5 +31,5 @@ class testApp : public ofBaseApp{
 		ofxSynth					synth;
 		ofxSynthDelayline			delay;
 		ofxSynthFilter				filter;
-		ofSoundEffectPassthrough	passthrough;
+		ofxSoundEffectPassthrough	passthrough;
 };

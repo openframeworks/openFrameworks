@@ -618,8 +618,8 @@ bool ofGstVideoUtils::setPipeline(string pipeline, int bpp, bool isStream, int w
 }
 
 bool ofGstVideoUtils::allocate(int w, int h, int bpp){
-	pixels.allocate(w,h,bpp);
-	backPixels.allocate(w,h,bpp);
+	pixels.allocate(w,h,bpp/8);
+	backPixels.allocate(w,h,bpp/8);
 
 	pixels.set(0);
 	pixels.set(0);
@@ -640,7 +640,7 @@ GstFlowReturn ofGstVideoUtils::preroll_cb(GstBuffer * buffer){
 	}
 	//mutex.lock();
 	if(backPixels.isAllocated()){
-		backPixels.setFromPixels(GST_BUFFER_DATA (buffer),backPixels.getWidth(),backPixels.getHeight(),backPixels.getImageType());
+		backPixels.setFromPixels(GST_BUFFER_DATA (buffer),backPixels.getWidth(),backPixels.getHeight(),backPixels.getNumChannels());
 		bBackPixelsChanged=true;
 		ofNotifyEvent(prerollEvent,backPixels);
 	}else{
@@ -668,7 +668,7 @@ GstFlowReturn ofGstVideoUtils::buffer_cb(GstBuffer * buffer){
 	}
 	mutex.lock();
 	if(backPixels.isAllocated()){
-		backPixels.setFromPixels(GST_BUFFER_DATA (buffer),backPixels.getWidth(),backPixels.getHeight(),backPixels.getImageType());
+		backPixels.setFromPixels(GST_BUFFER_DATA (buffer),backPixels.getWidth(),backPixels.getHeight(),backPixels.getNumChannels());
 		bBackPixelsChanged=true;
 		ofNotifyEvent(bufferEvent,backPixels);
 	}else{

@@ -3,18 +3,19 @@
 #include "ofCairoRenderer.h"
 #include "ofGLRenderer.h"
 #include "ofRendererCollection.h"
-ofCairoRenderer cairo;
-ofGLRenderer gl;
-ofRendererCollection renderer;
+ofPtr<ofCairoRenderer> cairo(new ofCairoRenderer);
+ofPtr<ofGLRenderer> gl(new ofGLRenderer);
+ofPtr<ofRendererCollection> renderer(new ofRendererCollection);
 
+#define RENDER_TO_PDF
 
 //--------------------------------------------------------------
 void testApp::setup(){
 #ifdef RENDER_TO_PDF
-	cairo.setup("paths.pdf",ofCairoRenderer::PDF,true);
-	renderer.renderers.push_back(&gl);
-	renderer.renderers.push_back(&cairo);
-	ofSetDefaultRenderer(&renderer);
+	cairo->setup("paths.pdf",ofCairoRenderer::PDF,true);
+	renderer->renderers.push_back(gl);
+	renderer->renderers.push_back(cairo);
+	ofSetDefaultRenderer(renderer);
 	ofSetFrameRate( 12 ); //each frame generates a page so let's keep it low
 #endif
 	

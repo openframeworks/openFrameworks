@@ -1,9 +1,11 @@
 #pragma once
 
+
 #include "ofFileUtils.h"
 #include "ofTexture.h"
 #include "ofPixels.h"
 #include "ofBaseTypes.h"
+#include "ofConstants.h"
 
 enum ofImageQualityType {
 	OF_IMAGE_QUALITY_BEST,
@@ -17,40 +19,59 @@ enum ofImageQualityType {
 // FreeImage based stuff:
 bool ofLoadImage(ofPixels & pix, string path);
 bool ofLoadImage(ofPixels & pix, const ofBuffer & buffer);
+
+bool ofLoadImage(ofFloatPixels & pix, string path);
+bool ofLoadImage(ofFloatPixels & pix, const ofBuffer & buffer);
+
+bool ofLoadImage(ofShortPixels & pix, string path);
+bool ofLoadImage(ofShortPixels & pix, const ofBuffer & buffer);
+
 bool ofLoadImage(ofTexture & tex, string path);
 bool ofLoadImage(ofTexture & tex, const ofBuffer & buffer);
+
 void ofSaveImage(ofPixels & pix, string path, ofImageQualityType qualityLevel = OF_IMAGE_QUALITY_BEST);
 void ofSaveImage(ofPixels & pix, ofBuffer & buffer, ofImageQualityType qualityLevel = OF_IMAGE_QUALITY_BEST);
 
-void 	ofCloseFreeImage();		// when we exit, we shut down ofImage
+void ofSaveImage(ofFloatPixels & pix, string path, ofImageQualityType qualityLevel = OF_IMAGE_QUALITY_BEST);
+void ofSaveImage(ofFloatPixels & pix, ofBuffer & buffer, ofImageQualityType qualityLevel = OF_IMAGE_QUALITY_BEST);
+
+void ofSaveImage(ofShortPixels & pix, string path, ofImageQualityType qualityLevel = OF_IMAGE_QUALITY_BEST);
+void ofSaveImage(ofShortPixels & pix, ofBuffer & buffer, ofImageQualityType qualityLevel = OF_IMAGE_QUALITY_BEST);
+
+// when we exit, we shut down ofImage
+void ofCloseFreeImage();
 
 //----------------------------------------------------
-class ofImage : public ofBaseImage{
+template<typename T>
+class ofImage_ : public ofBaseImage_<T>{
 
 	public :
 
-		ofImage();
-		virtual ~ofImage();
+		ofImage_();
+		virtual ~ofImage_();
 
-		ofImage(const ofPixels & pix);
-		ofImage(const ofFile & file);
-		ofImage(const string & filename);
+		ofImage_(const ofPixels_<T> & pix);
+		ofImage_(const ofFile & file);
+		ofImage_(const string & filename);
 
 		// alloation / deallocation routines
 		void 				allocate(int w, int h, ofImageType type);
 		void 				clear();
 
 		// default copy overwriting (for = or std::vector)
-		ofImage(const ofImage& mom);
-		ofImage& operator= (const ofImage& mom);
+		ofImage_(const ofImage_<T>& mom);
+		ofImage_<T>& operator= (const ofImage_<T>& mom);
+
+		template<typename T2>
+		ofImage_(const ofImage_<T2>& mom);
+
+		template<typename T2>
+		ofImage_<T>& operator= (const ofImage_<T2>& mom);
 
 		// copying:
-		void 				clone(const ofImage &mom);
+		template<typename T2>
+		void 				clone(const ofImage_<T2> &mom);
 
-	
-		
-	
-		
 		// enable or disable using the texture of this image
 		void 				setUseTexture(bool bUse);
 		bool				isUsingTexture();
@@ -74,15 +95,17 @@ class ofImage : public ofBaseImage{
 		void				setCompression(ofTexCompression compression);
 
 		// getting the data
-		unsigned char * 	getPixels();			// up to you to get this right
-		ofPixelsRef		 	getPixelsRef();
+		T * 				getPixels();			// up to you to get this right
+		ofPixels_<T> &	 	getPixelsRef();
+
+		operator ofPixels_<T>&();
 
 		ofColor getColor(int x, int y) const;
 
 		// alter the image
 		void setColor(int x, int y, ofColor color);
-		void 				setFromPixels(unsigned char * pixels, int w, int h, ofImageType type, bool bOrderIsRGB = true);
-		void				setFromPixels(const ofPixels & pixels);
+		void 				setFromPixels(const T * pixels, int w, int h, ofImageType type, bool bOrderIsRGB = true);
+		void				setFromPixels(const ofPixels_<T> & pixels);
 		void 				setImageType(ofImageType type);
 		void 				resize(int newWidth, int newHeight);
 		void 				grabScreen(int x, int y, int w, int h);		// grab pixels from opengl, using glreadpixels
@@ -92,7 +115,7 @@ class ofImage : public ofBaseImage{
 		// this does a crop from another image.
 		// NOTE: this will reallocate memory if the image types are different, or if the w & h do not
 		// equal this images w & h
-		void				cropFrom(ofImage & otherImage, int x, int y, int w, int h);
+		void				cropFrom(ofImage_<T> & otherImage, int x, int y, int w, int h);
 		// perform rotation of 90 degress clockwise rotation amont times. 
 		void				rotate90(int rotation);
 		void				mirror(bool vertical, bool horizontal); 
@@ -127,13 +150,55 @@ class ofImage : public ofBaseImage{
 		int 				width, height, bpp;		// w,h, bits per pixel
 		int					type;					// OF_IMAGE_GRAYSCALE, OF_IMAGE_COLOR, OF_IMAGE_COLOR_ALPHA
 
-		ofImage & operator=(ofPixels & pixels);
+		ofImage_<T> & operator=(ofPixels_<T> & pixels);
 	protected:
 	
-		void				changeTypeOfPixels(ofPixels &pix, ofImageType type);
-		void				resizePixels(ofPixels &pix, int newWidth, int newHeight);
+		void				changeTypeOfPixels(ofPixels_<T> &pix, ofImageType type);
+		void				resizePixels(ofPixels_<T> &pix, int newWidth, int newHeight);
 
-		ofPixels			pixels;
+		ofPixels_<T>		pixels;
 		bool				bUseTexture;
 		ofTexture			tex;
+
 };
+
+typedef ofImage_<unsigned char> ofImage;
+typedef ofImage_<float> ofFloatImage;
+typedef ofImage_<unsigned short> ofShortImage;
+
+
+
+
+//----------------------------------------------------------
+template<typename T>
+template<typename T2>
+ofImage_<T>& ofImage_<T>::operator=(const ofImage_<T2>& mom) {
+	clone(mom);
+	update();
+	return *this;
+}
+
+//----------------------------------------------------------
+template<typename T>
+template<typename T2>
+ofImage_<T>::ofImage_(const ofImage_<T2>& mom) {
+	clear();
+	clone(mom);
+	update();
+}
+
+//------------------------------------
+template<typename T>
+template<typename T2>
+void ofImage_<T>::clone(const ofImage_<T2> &mom){
+	ofImage_<T2> & nonConst = const_cast<ofImage_<T2> & >(mom);
+	pixels = nonConst.getPixelsRef();
+
+	tex.clear();
+	bUseTexture = nonConst.isUsingTexture();
+	if (bUseTexture == true){
+		tex.allocate(pixels.getWidth(), pixels.getHeight(), ofGetGlInternalFormat(pixels));
+	}
+
+	update();
+}

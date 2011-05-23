@@ -4,7 +4,7 @@
 #include "ofGraphics.h"
 #include <map>
 
-#ifndef TARGET_OPENGLES
+//#ifndef TARGET_OPENGLES
 
 
 /*
@@ -63,6 +63,7 @@
 	#define glGenFramebuffers								glGenFramebuffersOES
 	#define glGenRenderbuffers								glGenRenderbuffersOES
 	#define	glDeleteFramebuffers							glDeleteFramebuffersOES
+	#define	glDeleteRenderbuffers							glDeleteRenderbuffersOES
 	#define	glBindFramebuffer								glBindFramebufferOES
 	#define	glBindRenderbuffer								glBindRenderbufferOES
 	#define glRenderbufferStorage							glRenderbufferStorageOES
@@ -74,6 +75,10 @@
 	#define GL_RENDERBUFFER									GL_RENDERBUFFER_OES
 	#define GL_DEPTH_ATTACHMENT								GL_DEPTH_ATTACHMENT_OES
 	#define GL_STENCIL_ATTACHMENT							GL_STENCIL_ATTACHMENT_OES
+	//#define GL_DEPTH_STENCIL_ATTACHMENT						GL_DEPTH_STENCIL_ATTACHMENT_OES
+	#define GL_DEPTH_STENCIL								GL_DEPTH24_STENCIL8_OES
+	#define GL_DEPTH_COMPONENT								GL_DEPTH_COMPONENT16_OES
+	#define GL_STENCIL_INDEX								GL_STENCIL_INDEX8_OES
 	#define GL_FRAMEBUFFER_BINDING							GL_FRAMEBUFFER_BINDING_OES
 	#define GL_MAX_COLOR_ATTACHMENTS						GL_MAX_COLOR_ATTACHMENTS_OES
 	#define GL_MAX_SAMPLES									GL_MAX_SAMPLES_OES
@@ -100,9 +105,13 @@ ofFbo::Settings::Settings() {
 	width					= 0;
 	height					= 0;
 	numColorbuffers			= 1;
-	useDepth				= true;
+	useDepth				= false;
 	useStencil				= false;
+#ifndef TARGET_OPENGLES
 	textureTarget			= GL_TEXTURE_RECTANGLE_ARB;
+#else
+	textureTarget			= GL_TEXTURE_2D;
+#endif
 	internalformat			= GL_RGBA;
 	wrapModeHorizontal		= GL_CLAMP_TO_EDGE;
 	wrapModeVertical		= GL_CLAMP_TO_EDGE;
@@ -277,10 +286,37 @@ void ofFbo::destroy() {
 
 	for(int i=0; i<(int)colorBuffers.size(); i++) releaseRB(colorBuffers[i]);
 	colorBuffers.clear();
+
+	isBound = 0;
+}
+
+static GLboolean CheckExtension( const char *extName ){
+	/*
+	 ** Search for extName in the extensions string.  Use of strstr()
+	 ** is not sufficient because extension names can be prefixes of
+	 ** other extension names.  Could use strtok() but the constant
+	 ** string returned by glGetString can be in read-only memory.
+	 */
+	char *p = (char *) glGetString(GL_EXTENSIONS);
+	char *end;
+	int extNameLen;
+
+	extNameLen = strlen(extName);
+	end = p + strlen(p);
+
+	while (p < end) {
+		int n = strcspn(p, " ");
+		if ((extNameLen == n) && (strncmp(extName, p, n) == 0)) {
+			return GL_TRUE;
+		}
+		p += (n + 1);
+	}
+	return GL_FALSE;
 }
 
 
 void ofFbo::checkGLSupport() {
+#ifndef TARGET_OPENGLES
 	glGetIntegerv(GL_MAX_COLOR_ATTACHMENTS, &_maxColorAttachments);
 	glGetIntegerv(GL_MAX_DRAW_BUFFERS, &_maxDrawBuffers);
 	glGetIntegerv(GL_MAX_SAMPLES, &_maxSamples);
@@ -290,6 +326,16 @@ void ofFbo::checkGLSupport() {
 		  "maxDrawBuffers: " + ofToString(_maxDrawBuffers) + "\n" +
 		  "maxSamples: " + ofToString(_maxSamples)
 		  );
+#else
+	if(CheckExtension("GL_OES_framebuffer_object")){
+		ofLog(OF_LOG_VERBOSE,"FBO supported");
+	}else{
+		ofLog(OF_LOG_ERROR, "FBO not supported");
+	}
+
+	string extensions = (char*)glGetString(GL_EXTENSIONS);
+	ofLog(OF_LOG_VERBOSE,extensions);
+#endif
 }
 
 
@@ -306,14 +352,14 @@ void ofFbo::setup(int width, int height, int internalformat, int numSamples) {
 }
 
 
-void ofFbo::setup(Settings settings) {
+void ofFbo::setup(Settings _settings) {
 	checkGLSupport();
 
 	destroy();
 
-	if(settings.width == 0) settings.width = ofGetWidth();
-	if(settings.height == 0) settings.height = ofGetHeight();
-	settings = settings;
+	if(_settings.width == 0) _settings.width = ofGetWidth();
+	if(_settings.height == 0) _settings.height = ofGetHeight();
+	settings = _settings;
 
 	// create main fbo
 	// this is the main one we bind for drawing into
@@ -324,13 +370,14 @@ void ofFbo::setup(Settings settings) {
 
 		
 	// If we want both a depth AND a stencil buffer tehn combine them into a single buffer
+#ifndef TARGET_OPENGLES
 	if( settings.useDepth && settings.useStencil )
 	{
 		stencilBuffer = depthBuffer = createAndAttachRenderbuffer(GL_DEPTH_STENCIL, GL_DEPTH_STENCIL_ATTACHMENT);
 		retainRB(depthBuffer);
 		retainRB(stencilBuffer);
-	}
-	else
+	}else
+#endif
 	{
 		// if we want a depth buffer, create it, and attach to our main fbo
 		if(settings.useDepth){
@@ -344,15 +391,20 @@ void ofFbo::setup(Settings settings) {
 			retainRB(stencilBuffer);
 		}
 	}
-
 	// if we want MSAA, create a new fbo for textures
+#ifndef TARGET_OPENGLES
 	if(settings.numSamples){
 		glGenFramebuffers(1, &fboTextures);
 		retainFB(fboTextures);
 	}else{
 		fboTextures = fbo;
 	}
-
+#else
+	fboTextures = fbo;
+	if(settings.numSamples){
+		ofLog(OF_LOG_WARNING,"ofFbo: multisampling not supported in opengles");
+	}
+#endif
 	// now create all textures and color buffers
 	for(int i=0; i<settings.numColorbuffers; i++) createAndAttachTexture(i);
 
@@ -370,7 +422,7 @@ void ofFbo::setup(Settings settings) {
 
 void ofFbo::setupShadow( int width, int height )
 {
-
+//#ifndef TARGET_OPENGLES
 	int old;
 	glGetIntegerv( GL_FRAMEBUFFER_BINDING, &old );
 	
@@ -383,18 +435,25 @@ void ofFbo::setupShadow( int width, int height )
 	
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+#ifndef TARGET_OPENGLES
 	glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP );
 	glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP );
-		
+#else
+	glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE );
+	glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE );
+#endif
 	glTexImage2D( GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, settings.width, settings.height, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_BYTE, 0 );
 	glBindTexture( GL_TEXTURE_2D, 0 );
 	
 	glGenFramebuffers( 1, &fbo );
 	retainFB(fbo);
-	glBindFramebuffer( GL_FRAMEBUFFER_EXT, fbo );
+	glBindFramebuffer( GL_FRAMEBUFFER, fbo );
 	
+#ifndef TARGET_OPENGLES
 	glDrawBuffer( GL_NONE );
 	glReadBuffer( GL_NONE );
+#endif
+
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,GL_TEXTURE_2D, depthBuffer, 0);
 	
 	if( glCheckFramebufferStatus( GL_FRAMEBUFFER ) != GL_FRAMEBUFFER_COMPLETE )
@@ -407,8 +466,12 @@ GLuint ofFbo::createAndAttachRenderbuffer(GLenum internalFormat, GLenum attachme
 	GLuint buffer;
 	glGenRenderbuffers(1, &buffer);
 	glBindRenderbuffer(GL_RENDERBUFFER, buffer);
+#ifndef TARGET_OPENGLES
 	if(settings.numSamples==0) glRenderbufferStorage(GL_RENDERBUFFER, internalFormat, settings.width, settings.height);
 	else glRenderbufferStorageMultisample(GL_RENDERBUFFER, settings.numSamples, internalFormat, settings.width, settings.height);
+#else
+	glRenderbufferStorage(GL_RENDERBUFFER, internalFormat, settings.width, settings.height);
+#endif
 	glFramebufferRenderbuffer(GL_FRAMEBUFFER, attachmentPoint, GL_RENDERBUFFER, buffer);
 	return buffer;
 }
@@ -481,6 +544,7 @@ ofTexture& ofFbo::getTexture(int attachmentPoint) {
 
 void ofFbo::updateTexture(int attachmentPoint) {
 	// TODO: flag to see if this is dirty or not
+#ifndef TARGET_OPENGLES
 	if(fbo != fboTextures) {
 		glGetIntegerv( GL_FRAMEBUFFER_BINDING, &savedFramebuffer );
 
@@ -495,11 +559,8 @@ void ofFbo::updateTexture(int attachmentPoint) {
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fboTextures);
 		glDrawBuffer(GL_COLOR_ATTACHMENT0 + attachmentPoint);
 		glReadBuffer(GL_COLOR_ATTACHMENT0 + attachmentPoint);
-#ifndef TARGET_OPENGLES
 		glBlitFramebuffer(0, 0, settings.width, settings.height, 0, 0, settings.width, settings.height, GL_COLOR_BUFFER_BIT, GL_NEAREST);
-#else
-		glRenderbufferStorageMultisampleAPPLE();	// untested
-#endif
+
 		glBindFramebuffer(GL_READ_FRAMEBUFFER, savedFramebuffer);
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, savedFramebuffer);
 		glBindFramebuffer( GL_FRAMEBUFFER, savedFramebuffer );
@@ -511,6 +572,7 @@ void ofFbo::updateTexture(int attachmentPoint) {
 		glPopAttrib();
 
 	}
+#endif
 }
 
 
@@ -558,18 +620,20 @@ bool ofFbo::checkStatus() {
 		case GL_FRAMEBUFFER_INCOMPLETE_FORMATS:
 			ofLog(OF_LOG_ERROR, "FRAMEBUFFER_INCOMPLETE_FORMATS");
 			break;
+		case GL_FRAMEBUFFER_UNSUPPORTED:
+			ofLog(OF_LOG_ERROR, "FRAMEBUFFER_UNSUPPORTED");
+			break;
+#ifndef TARGET_OPENGLES
 		case GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER:
 			ofLog(OF_LOG_ERROR, "FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER");
 			break;
 		case GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER:
 			ofLog(OF_LOG_ERROR, "FRAMEBUFFER_INCOMPLETE_READ_BUFFER");
 			break;
-		case GL_FRAMEBUFFER_UNSUPPORTED:
-			ofLog(OF_LOG_ERROR, "FRAMEBUFFER_UNSUPPORTED");
-			break;
 		case GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE:
 			ofLog(OF_LOG_ERROR, "GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE");
 			break;
+#endif
 		default:
 			ofLog(OF_LOG_ERROR, "UNKNOWN ERROR");
 			break;
@@ -579,4 +643,4 @@ bool ofFbo::checkStatus() {
 	return false;
 }
 
-#endif
+//#endif
