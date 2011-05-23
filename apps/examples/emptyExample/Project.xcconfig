@@ -1,0 +1,9 @@
+#include "../../../libs/openFrameworksCompiled/project/osx/CoreOF.xcconfig"
+
+//if you want to add a header path do so like this:
+// OPENCV_HEADER = $(OF_PATH)/addons/ofxOpenCv/libs/opencv/include
+//then: 
+// HEADER_SEARCH_PATHS = $(OF_CORE_HEADERS) $(OPENCV_HEADER)
+
+OTHER_LDFLAGS = $(OF_CORE_LIBS) 
+HEADER_SEARCH_PATHS = $(OF_CORE_HEADERS)

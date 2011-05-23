@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		BBAB23BF13894E4700AA2426 /* GLUT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BBAB23BE13894E4700AA2426 /* GLUT.framework */; };
 		BBAB23CB13894F3D00AA2426 /* GLUT.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = BBAB23BE13894E4700AA2426 /* GLUT.framework */; };
 		E4328149138ABC9F0047C5CB /* openFrameworks.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E4328148138ABC890047C5CB /* openFrameworks.a */; };
 		E45BE97B0E8CC7DD009D7055 /* AGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E45BE9710E8CC7DD009D7055 /* AGL.framework */; };
@@ -24,6 +23,7 @@
 		E4C2424710CC5A17004149E2 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E4C2424410CC5A17004149E2 /* AppKit.framework */; };
 		E4C2424810CC5A17004149E2 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E4C2424510CC5A17004149E2 /* Cocoa.framework */; };
 		E4C2424910CC5A17004149E2 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E4C2424610CC5A17004149E2 /* IOKit.framework */; };
+		E4EB6799138ADC1D00A09F29 /* GLUT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BBAB23BE13894E4700AA2426 /* GLUT.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -31,7 +31,14 @@
 			isa = PBXContainerItemProxy;
 			containerPortal = E4328143138ABC890047C5CB /* openFrameworksLib.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = E4B27C1510CBEB8E00536013 /* openFrameworks.a */;
+			remoteGlobalIDString = E4B27C1510CBEB8E00536013;
+			remoteInfo = openFrameworks;
+		};
+		E4EEB9AB138B136A00A80321 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E4328143138ABC890047C5CB /* openFrameworksLib.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = E4B27C1410CBEB8E00536013 /* openFrameworks */;
 			remoteInfo = openFrameworks;
 		};
 /* End PBXContainerItemProxy section */
@@ -69,6 +76,8 @@
 		E4C2424410CC5A17004149E2 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		E4C2424510CC5A17004149E2 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
 		E4C2424610CC5A17004149E2 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = /System/Library/Frameworks/IOKit.framework; sourceTree = "<absolute>"; };
+		E4EB691F138AFCF100A09F29 /* CoreOF.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = CoreOF.xcconfig; path = ../../../libs/openFrameworksCompiled/project/osx/CoreOF.xcconfig; sourceTree = SOURCE_ROOT; };
+		E4EB6923138AFD0F00A09F29 /* Project.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Project.xcconfig; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -76,6 +85,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E4EB6799138ADC1D00A09F29 /* GLUT.framework in Frameworks */,
 				E4328149138ABC9F0047C5CB /* openFrameworks.a in Frameworks */,
 				E45BE97B0E8CC7DD009D7055 /* AGL.framework in Frameworks */,
 				E45BE97C0E8CC7DD009D7055 /* ApplicationServices.framework in Frameworks */,
@@ -89,7 +99,6 @@
 				E4C2424710CC5A17004149E2 /* AppKit.framework in Frameworks */,
 				E4C2424810CC5A17004149E2 /* Cocoa.framework in Frameworks */,
 				E4C2424910CC5A17004149E2 /* IOKit.framework in Frameworks */,
-				BBAB23BF13894E4700AA2426 /* GLUT.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -150,9 +159,11 @@
 		E4B69B4A0A3A1720003C02F2 = {
 			isa = PBXGroup;
 			children = (
+				E4EB6923138AFD0F00A09F29 /* Project.xcconfig */,
+				E4EB691F138AFCF100A09F29 /* CoreOF.xcconfig */,
+				E4328143138ABC890047C5CB /* openFrameworksLib.xcodeproj */,
 				E4B6FCAD0C3E899E008CF71C /* openFrameworks-Info.plist */,
 				E4B69B5B0A3A1756003C02F2 /* emptyExampleDebug.app */,
-				E4328143138ABC890047C5CB /* openFrameworksLib.xcodeproj */,
 				E4B69E1C0A3A1BDC003C02F2 /* src */,
 				BB4B014C10F69532006C3DED /* addons */,
 				E45BE5980E8CC70C009D7055 /* frameworks */,
@@ -184,6 +195,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				E4EEB9AC138B136A00A80321 /* PBXTargetDependency */,
 			);
 			name = emptyExample;
 			productName = myOFApp;
@@ -259,15 +271,23 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		E4EEB9AC138B136A00A80321 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = openFrameworks;
+			targetProxy = E4EEB9AB138B136A00A80321 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin XCBuildConfiguration section */
 		E4B69B4E0A3A1720003C02F2 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = E4EB6923138AFD0F00A09F29 /* Project.xcconfig */;
 			buildSettings = {
 				ARCHS = "$(NATIVE_ARCH)";
 				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/bin/";
 				COPY_PHASE_STRIP = NO;
 				DEAD_CODE_STRIPPING = YES;
-				FRAMEWORK_SEARCH_PATHS = "$(FRAMEWORK_GLUT)";
 				GCC_AUTO_VECTORIZATION = YES;
 				GCC_ENABLE_SSE3_EXTENSIONS = YES;
 				GCC_ENABLE_SUPPLEMENTAL_SSE3_INSTRUCTIONS = YES;
@@ -280,32 +300,23 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = NO;
 				GCC_WARN_UNUSED_VALUE = NO;
 				GCC_WARN_UNUSED_VARIABLE = NO;
-				HEADER_OF = "\"$(OF_PATH)/libs/openFrameworks\"/**";
-				HEADER_POCO = "\"$(OF_PATH)/libs/poco/include\"";
-				HEADER_ROOT = "\"$(OF_PATH)/libs\"";
-				HEADER_SEARCH_PATHS = (
-					"$(HEADER_ROOT)",
-					"$(HEADER_OF)",
-					"$(HEADER_POCO)",
-				);
-				OF_PATH = "";
+				OF_PATH = ../../..;
 				OTHER_CPLUSPLUSFLAGS = (
 					"-D__MACOSX_CORE__",
 					"-lpthread",
 				);
-				OTHER_LDFLAGS = ../../../libs/fmodex/lib/osx/libfmodex.dylib;
-				USER_HEADER_SEARCH_PATHS = "";
+				OTHER_LDFLAGS = "$(LIB_FMODEX)";
 			};
 			name = Debug;
 		};
 		E4B69B4F0A3A1720003C02F2 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = E4EB6923138AFD0F00A09F29 /* Project.xcconfig */;
 			buildSettings = {
 				ARCHS = "$(NATIVE_ARCH)";
 				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/bin/";
 				COPY_PHASE_STRIP = YES;
 				DEAD_CODE_STRIPPING = YES;
-				FRAMEWORK_SEARCH_PATHS = "$(FRAMEWORK_GLUT)";
 				GCC_AUTO_VECTORIZATION = YES;
 				GCC_ENABLE_SSE3_EXTENSIONS = YES;
 				GCC_ENABLE_SUPPLEMENTAL_SSE3_INSTRUCTIONS = YES;
@@ -320,21 +331,12 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = NO;
 				GCC_WARN_UNUSED_VALUE = NO;
 				GCC_WARN_UNUSED_VARIABLE = NO;
-				HEADER_OF = "\"$(OF_PATH)/libs/openFrameworks\"/**";
-				HEADER_POCO = "\"$(OF_PATH)/libs/poco/include\"";
-				HEADER_ROOT = "\"$(OF_PATH)/libs\"";
-				HEADER_SEARCH_PATHS = (
-					"$(HEADER_ROOT)",
-					"$(HEADER_OF)",
-					"$(HEADER_POCO)",
-				);
-				OF_PATH = "";
+				OF_PATH = ../../..;
 				OTHER_CPLUSPLUSFLAGS = (
 					"-D__MACOSX_CORE__",
 					"-lpthread",
 				);
-				OTHER_LDFLAGS = ../../../libs/fmodex/lib/osx/libfmodex.dylib;
-				USER_HEADER_SEARCH_PATHS = "";
+				OTHER_LDFLAGS = "$(LIB_FMODEX)";
 			};
 			name = Release;
 		};
@@ -342,13 +344,15 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
-				FRAMEWORK_GLUT = "\"$(SRCROOT)/../../../libs/glut/lib/osx\"";
-				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
+				);
+				FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)/../../../libs/glut/lib/osx\"";
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_MODEL_TUNING = G4;
-				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
 				INFOPLIST_FILE = "openFrameworks-Info.plist";
@@ -416,13 +420,26 @@
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_50)",
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_51)",
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_52)",
+					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
+					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_2)",
+					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_3)",
+					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_4)",
+					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_5)",
+					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_6)",
+					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_7)",
+					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_8)",
 				);
-				LIB_FMODEX = "\"../../../libs/fmodex/lib/osx/libfmodex.dylib\"";
-				OF_PATH = "$(SRCROOT)/../../..";
+				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)/../../../addons/ofxOpenCv/libs/opencv/lib/android/armeabi\"";
+				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_2 = "\"$(SRCROOT)/../../../addons/ofxOpenCv/libs/opencv/lib/android/armeabi-v7a\"";
+				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_3 = "\"$(SRCROOT)/../../../addons/ofxOpenCv/libs/opencv/lib/iphone\"";
+				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_4 = "\"$(SRCROOT)/../../../addons/ofxOpenCv/libs/opencv/lib/linux\"";
+				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_5 = "\"$(SRCROOT)/../../../addons/ofxOpenCv/libs/opencv/lib/linux64\"";
+				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_6 = "\"$(SRCROOT)/../../../addons/ofxOpenCv/libs/opencv/lib/osx\"";
+				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_7 = "\"$(SRCROOT)/../../../addons/ofxOpenCv/libs/opencv/lib/vs2010\"";
+				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_8 = "\"$(SRCROOT)/../../../addons/ofxOpenCv/libs/opencv/lib/win_cb\"";
 				PREBINDING = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)Debug";
 				WRAPPER_EXTENSION = app;
-				ZERO_LINK = NO;
 			};
 			name = Debug;
 		};
@@ -430,8 +447,11 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COPY_PHASE_STRIP = YES;
-				FRAMEWORK_GLUT = "\"$(SRCROOT)/../../../libs/glut/lib/osx\"";
-				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
+				);
+				FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)/../../../libs/glut/lib/osx\"";
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_MODEL_TUNING = G4;
@@ -502,13 +522,26 @@
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_49)",
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_50)",
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_51)",
+					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
+					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_2)",
+					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_3)",
+					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_4)",
+					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_5)",
+					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_6)",
+					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_7)",
+					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_8)",
 				);
-				LIB_FMODEX = "\"../../../libs/fmodex/lib/osx/libfmodex.dylib\"";
-				OF_PATH = "$(SRCROOT)/../../..";
+				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)/../../../addons/ofxOpenCv/libs/opencv/lib/android/armeabi\"";
+				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_2 = "\"$(SRCROOT)/../../../addons/ofxOpenCv/libs/opencv/lib/android/armeabi-v7a\"";
+				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_3 = "\"$(SRCROOT)/../../../addons/ofxOpenCv/libs/opencv/lib/iphone\"";
+				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_4 = "\"$(SRCROOT)/../../../addons/ofxOpenCv/libs/opencv/lib/linux\"";
+				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_5 = "\"$(SRCROOT)/../../../addons/ofxOpenCv/libs/opencv/lib/linux64\"";
+				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_6 = "\"$(SRCROOT)/../../../addons/ofxOpenCv/libs/opencv/lib/osx\"";
+				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_7 = "\"$(SRCROOT)/../../../addons/ofxOpenCv/libs/opencv/lib/vs2010\"";
+				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_8 = "\"$(SRCROOT)/../../../addons/ofxOpenCv/libs/opencv/lib/win_cb\"";
 				PREBINDING = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
-				ZERO_LINK = NO;
 			};
 			name = Release;
 		};
