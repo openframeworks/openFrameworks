@@ -140,12 +140,14 @@ class ofBaseLoggerChannel{
 public:
 	virtual void log(ofLogLevel level, const string & module, const string & message)=0;
 	virtual void log(ofLogLevel logLevel, const string & module, const char* format, ...)=0;
+	virtual void log(ofLogLevel logLevel, const string & module, const char* format, va_list args)=0;
 };
 
 class ofConsoleLoggerChannel: public ofBaseLoggerChannel{
 public:
 	void log(ofLogLevel level, const string & module, const string & message);
 	void log(ofLogLevel logLevel, const string & module, const char* format, ...);
+	void log(ofLogLevel logLevel, const string & module, const char* format, va_list args);
 };
 
 class ofFileLoggerChannel: public ofBaseLoggerChannel{
@@ -158,6 +160,7 @@ public:
 
 	void log(ofLogLevel level, const string & module, const string & message);
 	void log(ofLogLevel logLevel, const string & module, const char* format, ...);
+	void log(ofLogLevel logLevel, const string & module, const char* format, va_list args);
 
 	void close();
 
