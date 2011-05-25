@@ -43,7 +43,7 @@ public:
 	
 	virtual void		setupOpenGL(int w, int h, int screenMode);
 	virtual void		initializeWindow();
-	virtual void		runAppViaInfiniteLoop(ofBaseApp * appPtr);
+	virtual void		runAppViaInfiniteLoop(ofPtr<ofBaseApp> appPtr);
 	
 	virtual void		hideCursor() {};
 	virtual void		showCursor() {};
