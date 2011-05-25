@@ -1,0 +1,73 @@
+{
+    IBClasses = (
+        {
+            ACTIONS = {save = id; saveAs = id; }; 
+            CLASS = FirstResponder; 
+            LANGUAGE = ObjC; 
+            SUPERCLASS = NSObject; 
+        }, 
+        {
+            ACTIONS = {
+                cancel = id; 
+                joyAssign = id; 
+                joyDevice = id; 
+                joyElement = id; 
+                joyInvert = id; 
+                launchDebugMode = id; 
+                launchGamemodeCaptureSingle = id; 
+                launchIconic = id; 
+                launchUseCurrWD = id; 
+                launchUseExtDesktop = id; 
+                launchUseMacOSCoords = id; 
+                mouseEanbleEmulation = id; 
+                mouseMiddleMenu = id; 
+                mouseRightMenu = id; 
+                ok = id; 
+                spaceAssign = id; 
+                spaceDevice = id; 
+                spaceElement = id; 
+                spaceInvert = id; 
+            }; 
+            CLASS = GLUTPreferencesController; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {
+                joyAssign = NSButton; 
+                joyAssignNote = NSTextField; 
+                joyAssignWarningIcon = NSImageView; 
+                joyDeviceMenu = NSPopUpButton; 
+                joyElement = NSTextField; 
+                joyInputMenu = NSPopUpButton; 
+                joyInverted = NSButton; 
+                launchDebugMode = NSButton; 
+                launchFadeTime = NSTextField; 
+                launchGamemodeCaptureSingle = NSButton; 
+                launchIconic = NSButton; 
+                launchInitHeight = NSTextField; 
+                launchInitWidth = NSTextField; 
+                launchInitX = NSTextField; 
+                launchInitY = NSTextField; 
+                launchMenuIdle = NSTextField; 
+                launchSyncToVBL = NSButton; 
+                launchUseCurrWD = NSButton; 
+                launchUseExtendedDesktop = NSButton; 
+                launchUseMacOSXCoords = NSButton; 
+                mouseAssignWarningIcon = NSImageView; 
+                mouseAssignWarningText = NSTextField; 
+                mouseDetected = NSTextField; 
+                mouseEmulation = NSButton; 
+                mouseMiddleConfigMenu = NSPopUpButton; 
+                mouseRightConfigMenu = NSPopUpButton; 
+                prefsTabView = NSTabView; 
+                spaceAssign = NSButton; 
+                spaceAssignNote = NSTextField; 
+                spaceAssignWarningIcon = NSImageView; 
+                spaceDeviceMenu = NSPopUpButton; 
+                spaceElement = NSTextField; 
+                spaceInputMenu = NSPopUpButton; 
+                spaceInverted = NSButton; 
+            }; 
+            SUPERCLASS = NSWindowController; 
+        }
+    ); 
+    IBVersion = 1; 
+}
