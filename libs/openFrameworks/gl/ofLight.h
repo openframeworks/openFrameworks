@@ -23,7 +23,7 @@ void ofEnableLighting();
 void ofDisableLighting();
 void ofEnableSeparateSpecularLight();
 void ofDisableSeparateSpecularLight();
-bool ofGetLightingEnabled();
+bool ofGetLightingEnabled(); 
 
 //----------------------------------------
 // Use the public API of ofNode for all transformations

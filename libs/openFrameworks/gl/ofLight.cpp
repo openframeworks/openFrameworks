@@ -56,7 +56,7 @@ bool* getActiveLights(){
 		for(int i=0; i<OF_MAX_LIGHTS; i++) lightsActive[i] = false;
 		lightsActiveInited = true;
 	}
-	return lightsActive;
+	return lightsActive; 
 }
 
 static map<GLuint,int> & getIds(){
