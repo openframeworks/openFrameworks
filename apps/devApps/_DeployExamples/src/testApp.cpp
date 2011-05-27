@@ -515,6 +515,19 @@ void testApp::setup(){
 		
 		system( string("cd "+folderPath+" ; find .  -name \"*.pbxproj*\" | xargs perl -pi -e 's/emptyExample/'"+folderName+"'/g'").c_str() );
 		
+
+		if( folderName == "allAddonsExample" ){
+			convertProjectToXML(xcodePath);
+			addAddonsFromInstallXML( appsPath + "../addons/ofx3DModelLoader/", folderPath, xcodePath);
+			addAddonsFromInstallXML( appsPath + "../addons/ofxAssimpModelLoader/", folderPath, xcodePath);					
+			addAddonsFromInstallXML( appsPath + "../addons/ofxSynth/", folderPath, xcodePath);
+			addAddonsFromInstallXML( appsPath + "../addons/ofxOsc/", folderPath, xcodePath);
+			addAddonsFromInstallXML( appsPath + "../addons/ofxThreadedImageLoader/", folderPath, xcodePath);
+			addAddonsFromInstallXML( appsPath + "../addons/ofxOpenCv/", folderPath, xcodePath);
+			addAddonsFromInstallXML( appsPath + "../addons/ofxNetwork/", folderPath, xcodePath);
+			addAddonsFromInstallXML( appsPath + "../addons/ofxVectorGraphics/", folderPath, xcodePath);
+			addAddonsFromInstallXML( appsPath + "../addons/ofxXmlSettings/", folderPath, xcodePath);
+		}
 		
 		if( folderName == "3DModelLoaderExample" ){
 			convertProjectToXML(xcodePath);
@@ -526,12 +539,7 @@ void testApp::setup(){
 			addAddonsFromInstallXML( appsPath + "../addons/ofxAssimpModelLoader/", folderPath, xcodePath);
 		}
 
-		if( folderName ==  "ofxSynthExample" ){
-			convertProjectToXML(xcodePath);
-			addAddonsFromInstallXML( appsPath + "../addons/ofxSynth/", folderPath, xcodePath);
-		}
-
-		if( folderName ==  "ofxSynthSequencingExample" ){
+		if( folderName ==  "ofxSynthExample" || folderName ==  "ofxSynthSequencingExample" ){
 			convertProjectToXML(xcodePath);
 			addAddonsFromInstallXML( appsPath + "../addons/ofxSynth/", folderPath, xcodePath);
 		}
