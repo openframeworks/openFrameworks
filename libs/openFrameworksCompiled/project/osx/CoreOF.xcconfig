@@ -8,6 +8,7 @@ HEADER_FREEIMAGE = "$(OF_PATH)/libs/FreeImage/include"
 HEADER_TESS2 = "$(OF_PATH)/libs/tess2/include"
 HEADER_CAIRO = "$(OF_PATH)/libs/cairo/include/cairo"
 HEADER_RTAUDIO = "$(OF_PATH)/libs/rtaudio/include"
+
 LIB_ASSIMP = "$(OF_PATH)/libs/assimp/lib/osx/assimp.a"
 LIB_FMODEX = "$(OF_PATH)/libs/fmodex/lib/osx/libfmodex.dylib"
 LIB_GLUT = "$(OF_PATH)/libs/glut/lib/osx/GLUT.framework/Versions/A/GLUT"
