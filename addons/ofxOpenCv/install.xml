@@ -34,16 +34,16 @@
 		<include>
 			<path>../../../addons/ofxOpenCv/src</path>
 			<path>../../../addons/ofxOpenCv/libs/opencv/include</path>
+			<path>../../../addons/ofxOpenCv/libs/opencv/include/opencv</path>
 		</include>
 		
-
 		<link>
 			<lib os="win32" compiler="codeblocks">../../../addons/ofxOpenCv/libs/opencv/lib/win32/libcv.a</lib>
 			<lib os="win32" compiler="codeblocks">../../../addons/ofxOpenCv/libs/opencv/lib/win32/libcxcore.a</lib>
 			<lib os="win32" compiler="visualstudio">../../../addons/ofxOpenCv/libs/opencv/lib/win32/cv110.lib</lib>
 			<lib os="win32" compiler="visualstudio">../../../addons/ofxOpenCv/libs/opencv/lib/win32/cxcore110.lib</lib>
-			<lib os="mac"   compiler="xcode">../../../addons/ofxOpenCv/libs/opencv/lib/osx/libOpenCv.a</lib>
-			<lib os="linux" compiler="codeblocks, makefile">../../../addons/ofxOpenCv/libs/opencv/lib/linux/libcv.a</lib>
+			<lib os="mac"   compiler="xcode">../../../addons/ofxOpenCv/libs/opencv/lib/osx/opencv.a</lib>
+            <lib os="linux" compiler="codeblocks, makefile">../../../addons/ofxOpenCv/libs/opencv/lib/linux/libcv.a</lib>
 			<lib os="linux" compiler="codeblocks, makefile">../../../addons/ofxOpenCv/libs/opencv/lib/linux/libcxcore.a</lib>
 			<lib os="linux64" compiler="codeblocks, makefile">../../../addons/ofxOpenCv/libs/opencv/lib/linux64/libcv.a</lib>
 			<lib os="linux64" compiler="codeblocks, makefile">../../../addons/ofxOpenCv/libs/opencv/lib/linux64/libcxcore.a</lib>
