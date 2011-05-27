@@ -13,16 +13,15 @@ string appsPath = "../../../../";
 
 //--------------------------------------------------------------
 string getHash(string input){
-
-		std::string passphrase("openFrameworks"); // HMAC needs a passphrase
-		
-		HMACEngine<MD5Engine> hmac(passphrase); // we'll compute a MD5 Hash
-		hmac.update(input);
-		
-		const DigestEngine::Digest& digest = hmac.digest(); // finish HMAC computation and obtain digest
-		std::string digestString(DigestEngine::digestToHex(digest)); // convert to a string of hexadecimal numbers
+	std::string passphrase("openFrameworks"); // HMAC needs a passphrase
 	
-		return digestString;	
+	HMACEngine<MD5Engine> hmac(passphrase); // we'll compute a MD5 Hash
+	hmac.update(input);
+	
+	const DigestEngine::Digest& digest = hmac.digest(); // finish HMAC computation and obtain digest
+	std::string digestString(DigestEngine::digestToHex(digest)); // convert to a string of hexadecimal numbers
+
+	return digestString;	
 }
 
 //--------------------------------------------------------------
@@ -210,44 +209,8 @@ void addFilesToProjectXML(string xcodePath, vector <string> filePath, vector <st
 	xml.saveFile();
 }
 
-//<install>
-//    <name>ofxOpenCv</name>
-//	<version>0.02</version>
-//	<author>zach lieberman, stefan hechenberger</author>
-//	<url></url>
 //
-//	<add>
-//
-//		<!-- 	=====================================================================	-->
-//		<!--	========================== add per project using this addon =========	-->
-//		<!-- 	=====================================================================	-->
-//
-//		<src>
-//			<folder name="addons/ofxOpenCv/src">						
-//				<file>../../../addons/ofxOpenCv/src/ofxCvBlob.h</file>
-//				<file>../../../addons/ofxOpenCv/src/ofxCvColorImage.cpp</file>
-//				<file>../../../addons/ofxOpenCv/src/ofxCvColorImage.h</file>
-//				<file>../../../addons/ofxOpenCv/src/ofxCvConstants.h</file>
-//				<file>../../../addons/ofxOpenCv/src/ofxCvContourFinder.cpp</file>
-//				<file>../../../addons/ofxOpenCv/src/ofxCvContourFinder.h</file>
-//				<file>../../../addons/ofxOpenCv/src/ofxCvFloatImage.cpp</file>
-//				<file>../../../addons/ofxOpenCv/src/ofxCvFloatImage.h</file>
-//				<file>../../../addons/ofxOpenCv/src/ofxCvGrayscaleImage.cpp</file>
-//				<file>../../../addons/ofxOpenCv/src/ofxCvGrayscaleImage.h</file>
-//				<file>../../../addons/ofxOpenCv/src/ofxCvImage.cpp</file>
-//				<file>../../../addons/ofxOpenCv/src/ofxCvImage.h</file>
-//				<file>../../../addons/ofxOpenCv/src/ofxCvMain.h</file>
-//				<file>../../../addons/ofxOpenCv/src/ofxCvShortImage.cpp</file>
-//				<file>../../../addons/ofxOpenCv/src/ofxCvShortImage.h</file>				
-//				<file>../../../addons/ofxOpenCv/src/ofxOpenCv.h</file>
-//			</folder>
-//		</src>
-//
-//		<include>
-
-
-
-
+//-----------------------------------------------------------------------------------------------------
 void addGroupToProject(string xcodePath,  string hashParent, string groupName, string hashChild ){
 	
 	ofxXmlSettings xml;
@@ -315,9 +278,46 @@ void addGroupToProject(string xcodePath,  string hashParent, string groupName, s
 
 }
 
+//---------------------------------------------------------------
+void appendToProjectXcconfig(string projectFile, string buildValue, vector <string> libraryFiles){
+	string str;
+	
+	ifstream in;
+	in.open(ofToDataPath(projectFile, true).c_str(), ( ios::in ) );
+	
+	ofstream out;
+	out.open(ofToDataPath(projectFile + ".tmp", true).c_str(), ( ios::out ) );
+	
+	int k = 0; 
+	getline(in, str);
+	while( in ){
+		
+		if( str.find(buildValue) != string::npos ){			
+			for(int k = 0; k < libraryFiles.size(); k++){
+				string pathToAdd = libraryFiles[k];
+				
+				if( pathToAdd.substr(0, 15) == "../../../addons" ){
+					pathToAdd = "$(OF_PATH)" + pathToAdd.substr( 8, pathToAdd.length()-8 );
+				}
+				str += " ";
+				str += pathToAdd;
+			}
+		}
+		
+		out << str + "\n";
+		getline(in, str);		
+		k++;
+	}
+	
+	in.close();
+	out.close();
+	
+	ofFile::moveFromTo(projectFile + ".tmp", projectFile, true, true);
+}
+
 //
 //--------------------------------------------------------------
-void addAddonsFromInstallXML(string addonPath, string xcodePath){
+void addAddonsFromInstallXML(string addonPath, string projectFolder, string xcodePath){
 	ofxXmlSettings xml;
 	
 	string installXmlPath = addonPath + "install.xml";
@@ -330,6 +330,7 @@ void addAddonsFromInstallXML(string addonPath, string xcodePath){
 		addGroupToProject(xcodePath, "BB4B014C10F69532006C3DED", addonName, rootHash);
 	
 		if( xml.pushTag("add") ){
+		
 			if( xml.pushTag("src") ){
 				int numFolders = xml.getNumTags("folder");
 				for(int k = 0; k < numFolders; k++){
@@ -362,11 +363,49 @@ void addAddonsFromInstallXML(string addonPath, string xcodePath){
 				}
 				xml.popTag();
 			}
+			
+			if( xml.pushTag("link") ){
+				vector <string> libs;
+				
+				int numLibTags = xml.getNumTags("lib");
+				for(int k = 0; k < numLibTags; k++){
+					if( xml.getAttribute("lib", "os", "null", k) == "mac" ){
+						libs.push_back(xml.getValue("lib", "null", k));
+					}
+				}
+				
+				if( numLibTags ){
+					appendToProjectXcconfig( projectFolder + "Project.xcconfig", "OTHER_LDFLAGS", libs );
+				}
+
+				xml.popTag();
+			}
+
+			if( xml.pushTag("include") ){
+				vector <string> includes;
+				
+				int numIncludes = xml.getNumTags("path");
+				for(int k = 0; k < numIncludes; k++){
+					includes.push_back(xml.getValue("path", "null", k));
+				}
+				
+				if( numIncludes ){
+					appendToProjectXcconfig( projectFolder + "Project.xcconfig", "HEADER_SEARCH_PATHS", includes );
+				}
+
+				xml.popTag();
+			}
+			
 			xml.popTag();
 		}
 	
 		xml.popTag();
 	}
+}
+
+//---------------------------------------------------------------
+void addSearchPathsToProjectXcconfig(string projectFile, vector <string> searchPaths){
+
 }
 
 //--------------------------------------------------------------
@@ -427,10 +466,13 @@ void testApp::setup(){
 	
 	for(int k = 0; k < examples.size(); k++){
 		string folderName = examples.getName(k);
-	
+		string folderPath = ofFilePath::getAbsolutePath(examples.getPath(k) + "/");
+		
 		msgStr << " " << folderName << endl;
 		ofFile::copyFromTo("OF_template.xcodeproj", examples.getPath(k) + "/" + folderName + ".xcodeproj");
 		ofFile::copyFromTo("Project.xcconfig",  examples.getPath(k) + "/Project.xcconfig" );
+		
+		system( string("cd "+folderPath+" ; find .  -name \"*.pbxproj*\" | xargs perl -pi -e 's/emptyExample/'"+folderName+"'/g'").c_str() );		
 	}
 	
 	msgStr << endl << "deploying advancedExamples" << endl;
@@ -440,6 +482,7 @@ void testApp::setup(){
 	
 	for(int k = 0; k < advanced.size(); k++){
 		string folderName = advanced.getName(k);
+		string folderPath = ofFilePath::getAbsolutePath(advanced.getPath(k) + "/");
 		string xcodePath = advanced.getPath(k) + "/" + folderName + ".xcodeproj";
 		
 		msgStr << " " << folderName << endl;
@@ -447,6 +490,8 @@ void testApp::setup(){
 		ofDirectory::removeDirectory(xcodePath, true);
 		ofFile::copyFromTo("OF_template.xcodeproj", xcodePath);
 		ofFile::copyFromTo("Project.xcconfig",  advanced.getPath(k) + "/Project.xcconfig" );
+		
+		system( string("cd "+folderPath+" ; find .  -name \"*.pbxproj*\" | xargs perl -pi -e 's/emptyExample/'"+folderName+"'/g'").c_str() );
 	
 		checkAddSrcFiles(folderName, xcodePath, advanced.getPath(k) + "/src/");		
 	}	
@@ -459,6 +504,7 @@ void testApp::setup(){
 	
 	for(int k = 0; k < addons.size(); k++){
 		string folderName = addons.getName(k);
+		string folderPath = ofFilePath::getAbsolutePath(addons.getPath(k) + "/");		
 		string xcodePath = addons.getPath(k) + "/" + folderName + ".xcodeproj";
 		
 		msgStr << " " << folderName << endl;
@@ -467,20 +513,59 @@ void testApp::setup(){
 		ofFile::copyFromTo("OF_template.xcodeproj", xcodePath);
 		ofFile::copyFromTo("Project.xcconfig",  addons.getPath(k) + "/Project.xcconfig" );
 		
-		if( folderName == "xmlSettingsExample" ){
-			convertProjectToXML(xcodePath);
-			addAddonsFromInstallXML( appsPath + "../addons/ofxXmlSettings/", xcodePath);
-		}
+		system( string("cd "+folderPath+" ; find .  -name \"*.pbxproj*\" | xargs perl -pi -e 's/emptyExample/'"+folderName+"'/g'").c_str() );
 		
-		if( folderName.substr(0,7) == "network" ){
+		
+		if( folderName == "3DModelLoaderExample" ){
 			convertProjectToXML(xcodePath);
-			addAddonsFromInstallXML( appsPath + "../addons/ofxNetwork/", xcodePath);
+			addAddonsFromInstallXML( appsPath + "../addons/ofx3DModelLoader/", folderPath, xcodePath);
 		}
 
-		if( folderName  == "ofxCvHaarFinderExample" || folderName  == "opencvExample"){
+		if( folderName ==  "ofxAssimpExample"){
 			convertProjectToXML(xcodePath);
-			addAddonsFromInstallXML( appsPath + "../addons/ofxOpenCv/", xcodePath);
+			addAddonsFromInstallXML( appsPath + "../addons/ofxAssimpModelLoader/", folderPath, xcodePath);
 		}
+
+		if( folderName ==  "ofxSynthExample" ){
+			convertProjectToXML(xcodePath);
+			addAddonsFromInstallXML( appsPath + "../addons/ofxSynth/", folderPath, xcodePath);
+		}
+
+		if( folderName ==  "ofxSynthSequencingExample" ){
+			convertProjectToXML(xcodePath);
+			addAddonsFromInstallXML( appsPath + "../addons/ofxSynth/", folderPath, xcodePath);
+		}
+
+		if( folderName ==  "oscReceiveExample" || folderName ==  "oscSenderExample"){
+			convertProjectToXML(xcodePath);
+			addAddonsFromInstallXML( appsPath + "../addons/ofxOsc/", folderPath, xcodePath);
+		}
+
+		if( folderName ==  "threadedImageLoaderExample" ){
+			convertProjectToXML(xcodePath);
+			addAddonsFromInstallXML( appsPath + "../addons/ofxThreadedImageLoader/", folderPath, xcodePath);
+		}
+
+		if( folderName == "ofxCvHaarFinderExample" || folderName == "opencvExample" ){
+			convertProjectToXML(xcodePath);
+			addAddonsFromInstallXML( appsPath + "../addons/ofxOpenCv/", folderPath, xcodePath);
+		}
+
+		if( folderName == "network" ){
+			convertProjectToXML(xcodePath);
+			addAddonsFromInstallXML( appsPath + "../addons/ofxNetwork/", folderPath, xcodePath);
+		}
+		
+		if( folderName == "vectorGraphicsExample" ){
+			convertProjectToXML(xcodePath);
+			addAddonsFromInstallXML( appsPath + "../addons/ofxVectorGraphics/", folderPath, xcodePath);
+		}
+
+		if( folderName == "xmlSettingsExample" ){
+			convertProjectToXML(xcodePath);
+			addAddonsFromInstallXML( appsPath + "../addons/ofxXmlSettings/", folderPath, xcodePath);
+		}								
+				
 				
 		checkAddSrcFiles(folderName, xcodePath, addons.getPath(k) + "/src/");	
 	}		
