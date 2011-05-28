@@ -120,6 +120,8 @@ FIBITMAP* getBmpFromPixels(ofPixels_<T> &pix){
 			src += srcStride;
 			dst += dstStride;
 		}
+	} else {
+		ofLogError() << "ofImage::getBmpFromPixels() unable to get FIBITMAP from ofPixels";
 	}
 	
 	// ofPixels are top left, FIBITMAP is bottom left
@@ -130,23 +132,41 @@ FIBITMAP* getBmpFromPixels(ofPixels_<T> &pix){
 
 //----------------------------------------------------
 template<typename T>
-void putBmpIntoPixels(FIBITMAP * bmp, ofPixels_<T> &pix, bool swapForLittleEndian = true){		
+void putBmpIntoPixels(FIBITMAP * bmp, ofPixels_<T> &pix, bool swapForLittleEndian = true) {
+	// some images use a palette, so convert them to raster		
+	FIBITMAP* bmpConverted = NULL;
+	if(FreeImage_GetColorType(bmp) == FIC_PALETTE) {
+		if(FreeImage_IsTransparent(bmp)) {
+			bmpConverted = FreeImage_ConvertTo32Bits(bmp);
+		} else {
+			bmpConverted = FreeImage_ConvertTo24Bits(bmp);
+		}
+		bmp = bmpConverted;
+	}
+
 	unsigned int width = FreeImage_GetWidth(bmp);
 	unsigned int height = FreeImage_GetHeight(bmp);
 	unsigned int bpp = FreeImage_GetBPP(bmp);
-	unsigned int pitch = FreeImage_GetPitch(bmp);
 	unsigned int channels = (bpp / sizeof(unsigned char)) / 8;
+	unsigned int pitch = FreeImage_GetPitch(bmp);
+	
+	// need to update bpp and channels in case they changed from conversion
+	bpp = FreeImage_GetBPP(bmp);
+	channels = (bpp / sizeof(unsigned char)) / 8;
 	
 	// ofPixels are top left, FIBITMAP is bottom left
 	FreeImage_FlipVertical(bmp);
 	
-	if(bpp == 8 &&	FreeImage_GetColorType(bmp) == FIC_PALETTE) {
-		//bmpTemp = FreeImage_ConvertTo24Bits(bmp);
-		ofLogError() << "ofImage::putBmpIntoPixels() doesn't support FreeImage_GetColorType() FIC_PALETTE";
+	unsigned char* bmpBits = FreeImage_GetBits(bmp);
+	if(bmpBits != NULL) {
+		pix.setFromAlignedPixels((T*) bmpBits, width, height, channels, pitch);
+	} else {
+		ofLogError() << "ofImage::putBmpIntoPixels() unable to set ofPixels from FIBITMAP";
 	}
 	
-	unsigned char* bits = FreeImage_GetBits(bmp);
-	pix.setFromAlignedPixels((T*) bits, width, height, channels, pitch);
+	if(bmpConverted != NULL) {
+		FreeImage_Unload(bmpConverted);
+	}
 
 #ifdef TARGET_LITTLE_ENDIAN
 	if(swapForLittleEndian) {
@@ -162,11 +182,10 @@ static bool loadImage(ofPixels_<T> & pix, string fileName){
 		return ofLoadImage(pix, ofLoadURL(fileName).data);
 	}
 	
-	int					width, height, bpp;
-	fileName			= ofToDataPath(fileName);
-	bool bLoaded		= false;
-	FIBITMAP 			* bmp = NULL;
-
+	int width, height, bpp;
+	fileName = ofToDataPath(fileName);
+	bool bLoaded = false;
+	FIBITMAP * bmp = NULL;
 
 	FREE_IMAGE_FORMAT fif = FIF_UNKNOWN;
 	fif = FreeImage_GetFileType(fileName.c_str(), 0);
@@ -175,12 +194,13 @@ static bool loadImage(ofPixels_<T> & pix, string fileName){
 		fif = FreeImage_GetFIFFromFilename(fileName.c_str());
 	}
 	if((fif != FIF_UNKNOWN) && FreeImage_FIFSupportsReading(fif)) {
-		bmp					= FreeImage_Load(fif, fileName.c_str(), 0);
+		bmp = FreeImage_Load(fif, fileName.c_str(), 0);
 
-		if (bmp){
+		if (bmp != NULL){
 			bLoaded = true;
 		}
 	}
+	
 	//-----------------------------
 
 	if ( bLoaded ){
@@ -199,12 +219,12 @@ static bool loadImage(ofPixels_<T> & pix, string fileName){
 template<typename T>
 static bool loadImage(ofPixels_<T> & pix, const ofBuffer & buffer){
 	ofInitFreeImage();
-	int					width, height, bpp;
-	bool bLoaded		= false;
-	FIBITMAP * bmp		= NULL;
-	FIMEMORY *hmem		= NULL;
+	int width, height, bpp;
+	bool bLoaded = false;
+	FIBITMAP* bmp = NULL;
+	FIMEMORY* hmem = NULL;
 	
-	hmem = FreeImage_OpenMemory((unsigned char*)buffer.getBinaryBuffer(), buffer.size());
+	hmem = FreeImage_OpenMemory((unsigned char*) buffer.getBinaryBuffer(), buffer.size());
 	if (hmem == NULL){
 		ofLog(OF_LOG_ERROR, "couldn't create memory handle!");
 		return false;
@@ -224,11 +244,10 @@ static bool loadImage(ofPixels_<T> & pix, const ofBuffer & buffer){
 	
 	if( bmp != NULL ){
 		bLoaded = true;
-		ofLog(OF_LOG_VERBOSE, "FreeImage_LoadFromMemory worked!");
 	}
 	
 	//-----------------------------
-
+	
 	if (bLoaded){
 		putBmpIntoPixels(bmp,pix);
 	} else {
