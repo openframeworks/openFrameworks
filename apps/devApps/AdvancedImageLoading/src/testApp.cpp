@@ -45,12 +45,12 @@ void testApp::setup() {
 	
 	loadImages("gif8", gif8);
 	resaveImages<ofImage>("gif8");
-	/*
-	loadImages("jpg8", jpg8);
-	resaveImages<ofImage>("jpg8");
 	
 	loadImages("png8", png8);
 	resaveImages<ofImage>("png8");
+	
+	loadImages("jpg8", jpg8);
+	resaveImages<ofImage>("jpg8");
 
 	loadImages("png16", png16);
 	resaveImages<ofShortImage>("png16");
@@ -59,7 +59,7 @@ void testApp::setup() {
 	resaveImages<ofFloatImage>("exrFloat");
 	img8 = *exrFloat[0];
 	img16 = *exrFloat[0];
-	imgf = *exrFloat[0];*/
+	imgf = *exrFloat[0];
 }
 
 void testApp::update() {
@@ -74,11 +74,10 @@ void testApp::draw() {
 
 	ofSetColor(255);
 	drawImages("gif8", gif8);
-	/*
-	ofTranslate(0, 40);
-	drawImages("jpg8", jpg8);
 	ofTranslate(0, 40);
 	drawImages("png8", png8);
+	ofTranslate(0, 40);
+	drawImages("jpg8", jpg8);
 	ofTranslate(0, 40);
 	drawImages("png16", png16);
 	ofTranslate(0, 40);
@@ -86,5 +85,5 @@ void testApp::draw() {
 	ofTranslate(exrFloat[0]->getWidth()+10, 0);
 	img8.draw(0, 0, 128, 128);
 	img16.draw(0, 128, 128, 128);
-	imgf.draw(0, 256, 128, 128);*/
+	imgf.draw(0, 256, 128, 128);
 }
