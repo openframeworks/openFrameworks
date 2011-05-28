@@ -100,9 +100,8 @@ template<typename T>
 void ofPixels_<T>::setFromAlignedPixels(const T * newPixels, int width, int height, int channels, int stride) {
 	allocate(width, height, channels);
 	int dstStride = width * getBytesPerPixel();
-	cout << "copying: " << width << " " << height << " " << channels << " " << getBytesPerPixel() << endl;
-	const T * src = newPixels;
-	T * dst = pixels;
+	const unsigned char* src = (unsigned char*) newPixels;
+	unsigned char* dst =  (unsigned char*) pixels;
 	for(int i = 0; i < height; i++) {
 		memcpy(dst, src, dstStride);
 		src += stride;

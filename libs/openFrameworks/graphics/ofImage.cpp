@@ -147,7 +147,7 @@ void putBmpIntoPixels(FIBITMAP * bmp, ofPixels_<T> &pix, bool swapForLittleEndia
 	unsigned int width = FreeImage_GetWidth(bmp);
 	unsigned int height = FreeImage_GetHeight(bmp);
 	unsigned int bpp = FreeImage_GetBPP(bmp);
-	unsigned int channels = (bpp / sizeof(unsigned char)) / 8;
+	unsigned int channels = (bpp / sizeof(T)) / 8;
 	unsigned int pitch = FreeImage_GetPitch(bmp);
 	
 	// ofPixels are top left, FIBITMAP is bottom left
