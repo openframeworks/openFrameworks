@@ -133,10 +133,9 @@ FIBITMAP* getBmpFromPixels(ofPixels_<T> &pix){
 //----------------------------------------------------
 template<typename T>
 void putBmpIntoPixels(FIBITMAP * bmp, ofPixels_<T> &pix, bool swapForLittleEndian = true) {
-	// some images use a palette, so convert them to raster		
+	// some images use a palette, or <8 bpp, so convert them to raster 8-bit channels
 	FIBITMAP* bmpConverted = NULL;
 	if(FreeImage_GetColorType(bmp) == FIC_PALETTE || FreeImage_GetBPP(bmp) < 8) {
-		ofLogVerbose() << "putBmpIntoPixels() has FIC_PALETTE";
 		if(FreeImage_IsTransparent(bmp)) {
 			bmpConverted = FreeImage_ConvertTo32Bits(bmp);
 		} else {
@@ -151,12 +150,6 @@ void putBmpIntoPixels(FIBITMAP * bmp, ofPixels_<T> &pix, bool swapForLittleEndia
 	unsigned int channels = (bpp / sizeof(T)) / 8;
 	unsigned int pitch = FreeImage_GetPitch(bmp);
 	
-	ofLogVerbose() << endl << 
-	"\tsize:" << width << "x" << height << endl <<
-	"\tbpp:" << bpp << endl <<
-	"\tchannels:" << channels << endl <<
-	"\tpitch:" << pitch;
-	
 	// ofPixels are top left, FIBITMAP is bottom left
 	FreeImage_FlipVertical(bmp);
 	
@@ -167,17 +160,6 @@ void putBmpIntoPixels(FIBITMAP * bmp, ofPixels_<T> &pix, bool swapForLittleEndia
 		ofLogError() << "ofImage::putBmpIntoPixels() unable to set ofPixels from FIBITMAP";
 	}
 	
-	/*
-	// this is for grayscale GIF images they need to be paletted from: http://sourceforge.net/forum/message.php?msg_id=2856879
-	if(pix.getImageType() == OF_IMAGE_GRAYSCALE && pix.getBitsPerChannel() <= 8){
-		RGBQUAD *pal = FreeImage_GetPalette(bmp);
-		for(unsigned int i = 0; i < 256; i++) {
-			pal[i].rgbRed = i;
-			pal[i].rgbGreen = i;
-			pal[i].rgbBlue = i;
-		}
-	}
-	*/
 	if(bmpConverted != NULL) {
 		FreeImage_Unload(bmpConverted);
 	}
@@ -372,10 +354,25 @@ static void saveImage(ofPixels_<T> & pix, string fileName, ofImageQualityType qu
 			FreeImage_Save(fif, bmp, fileName.c_str(), quality);
 		} else {
 			if(qualityLevel != OF_IMAGE_QUALITY_BEST) {
-				ofLog(OF_LOG_WARNING, "ofImageCompressionType only applies to JPEG images, ignoring value.");
+				ofLogWarning() << "ofImageCompressionType only applies to JPEG images, ignoring value";
 			}
-			if (fif==FIF_GIF) bmp = FreeImage_ConvertTo8Bits(bmp);
-			FreeImage_Save(fif, bmp, fileName.c_str());
+			
+			if (fif == FIF_GIF) {
+				FIBITMAP* convertedBmp;
+				if(pix.getImageType() == OF_IMAGE_COLOR_ALPHA) {
+					// this just converts the image to grayscale so it can save something
+					convertedBmp = FreeImage_ConvertTo8Bits(bmp);
+				} else {
+					// this will create a 256-color palette from the image
+					convertedBmp = FreeImage_ColorQuantize(bmp, FIQ_NNQUANT);
+				}
+				FreeImage_Save(fif, convertedBmp, fileName.c_str());
+				if (convertedBmp != NULL){
+					FreeImage_Unload(convertedBmp);
+				}
+			} else {
+				FreeImage_Save(fif, bmp, fileName.c_str());
+			}
 		}
 	}
 
