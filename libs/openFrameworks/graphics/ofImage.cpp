@@ -928,52 +928,40 @@ void ofImage_<T>::resizePixels(ofPixels_<T> &pix, int newWidth, int newHeight){
 //----------------------------------------------------
 template<typename T>
 void ofImage_<T>::changeTypeOfPixels(ofPixels_<T> &pix, ofImageType newType){
-	if (pix.getImageType() == newType) return;
-
-	FIBITMAP * bmp					= getBmpFromPixels(pix);
-	FIBITMAP * convertedBmp			= NULL;
-
-	// check if we need to reallocate the texture.
-	bool bNeedNewTexture = false;
 	int oldType = pix.getImageType();
-	if (newType > oldType){
-		bNeedNewTexture = true;
+	
+	if (oldType == newType) {
+		return; // no need to reallocate
 	}
 
-	// new type !
-	switch (newType){
+	FIBITMAP * bmp = getBmpFromPixels(pix);
+	FIBITMAP * convertedBmp = NULL;
 
-		//------------------------------------
+	switch (newType){
 		case OF_IMAGE_GRAYSCALE:
 			convertedBmp = FreeImage_ConvertToGreyscale(bmp);
 			break;
-
-		//------------------------------------
 		case OF_IMAGE_COLOR:
 			convertedBmp = FreeImage_ConvertTo24Bits(bmp);
-			if (bNeedNewTexture){
-				tex.clear();
-				tex.allocate(pixels.getWidth(), pixels.getHeight(), GL_RGB);
-			}
 			break;
-
-		//------------------------------------
 		case OF_IMAGE_COLOR_ALPHA:
 			convertedBmp = FreeImage_ConvertTo32Bits(bmp);
-			if (bNeedNewTexture){
-				tex.clear();
-				tex.allocate(pixels.getWidth(), pixels.getHeight(), GL_RGBA);
-			}
 			break;
 		default:
-			ofLog(OF_LOG_ERROR,"ofImage: format not supported");
+			ofLog(OF_LOG_ERROR, "changeTypeOfPixels: format not supported");
 	}
-
+	
 	putBmpIntoPixels(convertedBmp, pix, false);
 
-	if (bmp != NULL)				FreeImage_Unload(bmp);
-	if (convertedBmp != NULL)		FreeImage_Unload(convertedBmp);
+	if (bmp != NULL) {
+		FreeImage_Unload(bmp);
+	}
+	if (convertedBmp != NULL) {
+		FreeImage_Unload(convertedBmp);
+	}
 
+	// always reallocate the texture. if ofTexture doesn't need reallocation, it can handle this.
+	tex.allocate(pixels.getWidth(), pixels.getHeight(), ofGetGlInternalFormat(pixels));
 }
 
 //----------------------------------------------------------
