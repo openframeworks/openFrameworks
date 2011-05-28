@@ -7,6 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		30CE84E21391176600DBF125 /* tess2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 30CE84E11391176600DBF125 /* tess2.a */; };
+		30CE84E41391177100DBF125 /* tesselator.h in Headers */ = {isa = PBXBuildFile; fileRef = 30CE84E31391177100DBF125 /* tesselator.h */; };
+		30CE851E13911B5800DBF125 /* PocoFoundation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 30CE851A13911B5800DBF125 /* PocoFoundation.a */; };
+		30CE851F13911B5800DBF125 /* PocoNet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 30CE851B13911B5800DBF125 /* PocoNet.a */; };
+		30CE852013911B5800DBF125 /* PocoUtil.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 30CE851C13911B5800DBF125 /* PocoUtil.a */; };
+		30CE852113911B5800DBF125 /* PocoXML.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 30CE851D13911B5800DBF125 /* PocoXML.a */; };
 		53DA338A12DF8F4500C622CE /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53DA338912DF8F4500C622CE /* AVFoundation.framework */; };
 		53DA338E12DF8F5000C622CE /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53DA338D12DF8F5000C622CE /* CoreAudio.framework */; };
 		53DA339012DF8F5000C622CE /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53DA338F12DF8F5000C622CE /* CoreMedia.framework */; };
@@ -227,6 +233,12 @@
 		1D30AB110D05D00D00671497 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		1DF5F4DF0D08C38300B7A737 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		288765FC0DF74451002DB57D /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		30CE84E11391176600DBF125 /* tess2.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = tess2.a; sourceTree = "<group>"; };
+		30CE84E31391177100DBF125 /* tesselator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = tesselator.h; path = ../../../tess2/include/tesselator.h; sourceTree = SOURCE_ROOT; };
+		30CE851A13911B5800DBF125 /* PocoFoundation.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = PocoFoundation.a; sourceTree = "<group>"; };
+		30CE851B13911B5800DBF125 /* PocoNet.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = PocoNet.a; sourceTree = "<group>"; };
+		30CE851C13911B5800DBF125 /* PocoUtil.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = PocoUtil.a; sourceTree = "<group>"; };
+		30CE851D13911B5800DBF125 /* PocoXML.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = PocoXML.a; sourceTree = "<group>"; };
 		5326AEA710A23A0500278DE6 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		53DA338912DF8F4500C622CE /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		53DA338D12DF8F5000C622CE /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = System/Library/Frameworks/CoreAudio.framework; sourceTree = SDKROOT; };
@@ -236,7 +248,7 @@
 		5E2E99DC10ED147800587639 /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
 		BB16EBD10F2B2A9500518274 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
 		BB16EBD80F2B2AB500518274 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
-		BB24DED610DA7A3F00E9C588 /* libofxiPhone_iphonesimulator_Release.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libofxiPhone_iphonesimulator_Release.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		BB24DED610DA7A3F00E9C588 /* libofxiPhone_iphoneos_Debug.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libofxiPhone_iphoneos_Debug.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		BB24DF7A10DA7C1B00E9C588 /* FreeImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FreeImage.h; sourceTree = "<group>"; };
 		BB24DF8D10DA7C1B00E9C588 /* ftconfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ftconfig.h; sourceTree = "<group>"; };
 		BB24DF8E10DA7C1B00E9C588 /* ftheader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ftheader.h; sourceTree = "<group>"; };
@@ -464,6 +476,11 @@
 				53DA338E12DF8F5000C622CE /* CoreAudio.framework in Frameworks */,
 				53DA339012DF8F5000C622CE /* CoreMedia.framework in Frameworks */,
 				53DA339212DF8F5000C622CE /* CoreVideo.framework in Frameworks */,
+				30CE84E21391176600DBF125 /* tess2.a in Frameworks */,
+				30CE851E13911B5800DBF125 /* PocoFoundation.a in Frameworks */,
+				30CE851F13911B5800DBF125 /* PocoNet.a in Frameworks */,
+				30CE852013911B5800DBF125 /* PocoUtil.a in Frameworks */,
+				30CE852113911B5800DBF125 /* PocoXML.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -473,7 +490,7 @@
 		19C28FACFE9D520D11CA2CBB /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				BB24DED610DA7A3F00E9C588 /* libofxiPhone_iphonesimulator_Release.a */,
+				BB24DED610DA7A3F00E9C588 /* libofxiPhone_iphoneos_Debug.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -507,6 +524,68 @@
 				53DA339112DF8F5000C622CE /* CoreVideo.framework */,
 			);
 			name = "core frameworks";
+			sourceTree = "<group>";
+		};
+		30CE84DB1391173000DBF125 /* tess2 */ = {
+			isa = PBXGroup;
+			children = (
+				30CE84DC1391173B00DBF125 /* include */,
+				30CE84DD1391174700DBF125 /* lib */,
+			);
+			name = tess2;
+			sourceTree = "<group>";
+		};
+		30CE84DC1391173B00DBF125 /* include */ = {
+			isa = PBXGroup;
+			children = (
+				30CE84E31391177100DBF125 /* tesselator.h */,
+			);
+			name = include;
+			sourceTree = "<group>";
+		};
+		30CE84DD1391174700DBF125 /* lib */ = {
+			isa = PBXGroup;
+			children = (
+				30CE84E01391176600DBF125 /* iphone */,
+			);
+			name = lib;
+			sourceTree = "<group>";
+		};
+		30CE84E01391176600DBF125 /* iphone */ = {
+			isa = PBXGroup;
+			children = (
+				30CE84E11391176600DBF125 /* tess2.a */,
+			);
+			name = iphone;
+			path = ../../../tess2/lib/iphone;
+			sourceTree = SOURCE_ROOT;
+		};
+		30CE851713911B5800DBF125 /* poco */ = {
+			isa = PBXGroup;
+			children = (
+				30CE851813911B5800DBF125 /* lib */,
+			);
+			name = poco;
+			sourceTree = "<group>";
+		};
+		30CE851813911B5800DBF125 /* lib */ = {
+			isa = PBXGroup;
+			children = (
+				30CE851913911B5800DBF125 /* iphone */,
+			);
+			name = lib;
+			path = ../../../poco/lib;
+			sourceTree = SOURCE_ROOT;
+		};
+		30CE851913911B5800DBF125 /* iphone */ = {
+			isa = PBXGroup;
+			children = (
+				30CE851A13911B5800DBF125 /* PocoFoundation.a */,
+				30CE851B13911B5800DBF125 /* PocoNet.a */,
+				30CE851C13911B5800DBF125 /* PocoUtil.a */,
+				30CE851D13911B5800DBF125 /* PocoXML.a */,
+			);
+			path = iphone;
 			sourceTree = "<group>";
 		};
 		BB16E9930F2B1E5900518274 /* libs */ = {
@@ -738,9 +817,11 @@
 		BB3F144E0F4C6BF200A33527 /* core libraries */ = {
 			isa = PBXGroup;
 			children = (
+				30CE851713911B5800DBF125 /* poco */,
 				BB24DF7810DA7C1B00E9C588 /* FreeImage */,
 				BB24DF8810DA7C1B00E9C588 /* freetype */,
 				BB24DFCA10DA7C1B00E9C588 /* glu */,
+				30CE84DB1391173000DBF125 /* tess2 */,
 			);
 			name = "core libraries";
 			sourceTree = "<group>";
@@ -1110,6 +1191,7 @@
 				E485F81B1363242200E939D3 /* ofxMultiTouchListener.h in Headers */,
 				E485F8B413632A7300E939D3 /* AVFoundationVideoGrabber.h in Headers */,
 				E485F8C713632B6600E939D3 /* AVFoundationVideoPlayer.h in Headers */,
+				30CE84E41391177100DBF125 /* tesselator.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1130,7 +1212,7 @@
 			);
 			name = "iPhone+OF Static Library";
 			productName = "Static Library";
-			productReference = BB24DED610DA7A3F00E9C588 /* libofxiPhone_iphonesimulator_Release.a */;
+			productReference = BB24DED610DA7A3F00E9C588 /* libofxiPhone_iphoneos_Debug.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 /* End PBXNativeTarget section */
@@ -1252,6 +1334,8 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/kiss/lib/linux\"",
 					"\"$(SRCROOT)/kiss/lib/linux64\"",
+					"\"$(SRCROOT)/../../../tess2/lib/iphone\"",
+					"\"$(SRCROOT)/../../../poco/lib/iphone\"",
 				);
 				PREBINDING = NO;
 				PRODUCT_NAME = "ofxiPhone_${PLATFORM_NAME}_Debug";
@@ -1273,6 +1357,8 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/kiss/lib/linux\"",
 					"\"$(SRCROOT)/kiss/lib/linux64\"",
+					"\"$(SRCROOT)/../../../tess2/lib/iphone\"",
+					"\"$(SRCROOT)/../../../poco/lib/iphone\"",
 				);
 				PREBINDING = NO;
 				PRODUCT_NAME = "ofxiPhone_${PLATFORM_NAME}_Release";
@@ -1357,6 +1443,8 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/kiss/lib/linux\"",
 					"\"$(SRCROOT)/kiss/lib/linux64\"",
+					"\"$(SRCROOT)/../../../tess2/lib/iphone\"",
+					"\"$(SRCROOT)/../../../poco/lib/iphone\"",
 				);
 				PREBINDING = NO;
 				PRODUCT_NAME = "ofxiPhone_${PLATFORM_NAME}_ReleaseArmv7";
