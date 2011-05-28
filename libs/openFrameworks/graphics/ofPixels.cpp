@@ -97,23 +97,16 @@ void ofPixels_<T>::setFromExternalPixels(T * newPixels,int w, int h, int _channe
 }
 
 template<typename T>
-void ofPixels_<T>::setFromAlignedPixels(const T * newPixels,int w, int h, int channels, int widthStep){
-	allocate(w,h,channels);
-	if(widthStep == width * getBytesPerPixel()){
-		setFromPixels(newPixels,w,h,channels);
-	}else{
-		int srcStride = widthStep/getBytesPerChannel();
-		int dstStride = width*channels;
-		int copySizePerRow = width*getBytesPerChannel()*channels;
-		const T * src = newPixels;
-		T * dst = pixels;
-		for( int i = 0; i < height; i++ ) {
-			memcpy( dst, src, copySizePerRow );
-			src += srcStride;
-			dst += dstStride;
-		}
+void ofPixels_<T>::setFromAlignedPixels(const T * newPixels, int width, int height, int channels, int stride) {
+	allocate(width, height, channels);
+	int dstStride = width * getBytesPerPixel();
+	const T * src = newPixels;
+	T * dst = pixels;
+	for(int i = 0; i < height; i++) {
+		memcpy(dst, src, dstStride);
+		src += stride;
+		dst += dstStride;
 	}
-
 }
 
 template<typename T>
