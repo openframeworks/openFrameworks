@@ -101,98 +101,58 @@ FREE_IMAGE_TYPE getFreeImageType(ofFloatPixels& pix) {
 
 //----------------------------------------------------
 template<typename T>
-FIBITMAP* getBmpFromPixels(ofPixels_<T> &pix){	
-	unsigned char* pixels = (unsigned char*) pix.getPixels();
-	int w = pix.getWidth();
-	int h = pix.getHeight();
+FIBITMAP* getBmpFromPixels(ofPixels_<T> &pix){
+	T* pixels = pix.getPixels();
+	unsigned int width = pix.getWidth();
+	unsigned int height = pix.getHeight();
 	unsigned int bpp = pix.getBitsPerPixel();
 	
 	FREE_IMAGE_TYPE freeImageType = getFreeImageType(pix);
-	FIBITMAP* bmp = FreeImage_AllocateT(freeImageType, w, h, bpp);
+	FIBITMAP* bmp = FreeImage_AllocateT(freeImageType, width, height, bpp);
 	unsigned char* bmpBits = FreeImage_GetBits(bmp);
 	if(bmpBits != NULL) {
-		memcpy(bmpBits, pixels, w * h * pix.getBytesPerPixel());
-		FreeImage_FlipVertical(bmp);
-	}
-	
-	// {afaict, this paletting code isn't necessary anymore - kyle, may 2011}
-	// this is for grayscale images they need to be paletted from: http://sourceforge.net/forum/message.php?msg_id=2856879
-	if(pix.getImageType() == OF_IMAGE_GRAYSCALE && pix.getBitsPerChannel() <= 8){
-		RGBQUAD *pal = FreeImage_GetPalette(bmp);
-		for(unsigned int i = 0; i < 256; i++) {
-			pal[i].rgbRed = i;
-			pal[i].rgbGreen = i;
-			pal[i].rgbBlue = i;
+		int srcStride = width * pix.getBytesPerPixel();
+		int dstStride = FreeImage_GetPitch(bmp);
+		unsigned char* src = (unsigned char*) pixels;
+		unsigned char* dst = bmpBits;
+		for(int i = 0; i < height; i++) {
+			memcpy(dst, src, dstStride);
+			src += srcStride;
+			dst += dstStride;
 		}
 	}
+	
+	// ofPixels are top left, FIBITMAP is bottom left
+	FreeImage_FlipVertical(bmp);
 	
 	return bmp;
 }
 
 //----------------------------------------------------
 template<typename T>
-void putBmpIntoPixels(FIBITMAP * bmp, ofPixels_<T> &pix, bool swapForLittleEndian = true){
+void putBmpIntoPixels(FIBITMAP * bmp, ofPixels_<T> &pix, bool swapForLittleEndian = true){		
 	unsigned int width = FreeImage_GetWidth(bmp);
 	unsigned int height = FreeImage_GetHeight(bmp);
 	unsigned int bpp = FreeImage_GetBPP(bmp);
-	unsigned int channels = (bpp / sizeof(T)) / 8;
-	unsigned int pitch = (width * bpp) / 8;
+	unsigned int pitch = FreeImage_GetPitch(bmp);
+	unsigned int channels = (bpp / sizeof(unsigned char)) / 8;
 	
-	//BITMAPINFOHEADER* header = FreeImage_GetInfoHeader(bmp);
-	//ofLogVerbose() << "putBmpIntoPixels(" << bpp << " / " << channels << ") is " << header->biSize << ", " << header->biPlanes << ", " << header->biBitCount << ", " << header->biCompression << ", " << header->biSizeImage;
-
-	pix.allocate(width, height, channels);
-	FreeImage_ConvertToRawBits((uint8_t*) pix.getPixels(), bmp, pitch, bpp, FI_RGBA_RED_MASK, FI_RGBA_GREEN_MASK, FI_RGBA_BLUE_MASK, true);
+	// ofPixels are top left, FIBITMAP is bottom left
+	FreeImage_FlipVertical(bmp);
+	
+	if(bpp == 8 &&	FreeImage_GetColorType(bmp) == FIC_PALETTE) {
+		//bmpTemp = FreeImage_ConvertTo24Bits(bmp);
+		ofLogError() << "ofImage::putBmpIntoPixels() doesn't support FreeImage_GetColorType() FIC_PALETTE";
+	}
+	
+	unsigned char* bits = FreeImage_GetBits(bmp);
+	pix.setFromAlignedPixels((T*) bits, width, height, channels, pitch);
 
 #ifdef TARGET_LITTLE_ENDIAN
 	if(swapForLittleEndian) {
 		pix.swapRgb();
 	}
 #endif
-}
-
-//----------------------------------------------------
-template<>
-void putBmpIntoPixels(FIBITMAP * bmp, ofPixels &pix, bool swapForLittleEndian){
-	int width			= FreeImage_GetWidth(bmp);
-	int height			= FreeImage_GetHeight(bmp);
-	int bpp				= FreeImage_GetBPP(bmp);
-
-	FIBITMAP * bmpTemp = NULL;
-
-	switch (bpp){
-		case 8:
-			if (FreeImage_GetColorType(bmp) == FIC_PALETTE) {
-				bmpTemp = FreeImage_ConvertTo24Bits(bmp);
-				bmp = bmpTemp;
-				bpp = FreeImage_GetBPP(bmp);
-			} else {
-			// do nothing we are grayscale
-			}
-		break;
-		case 24:
-			// do nothing we are color
-		break;
-		case 32:
-			// do nothing we are colorAlpha
-		break;
-		default:
-			bmpTemp = FreeImage_ConvertTo24Bits(bmp);
-			bmp = bmpTemp;
-			bpp = FreeImage_GetBPP(bmp);
-		break;
-	}
-
-	int channels	= bpp / 8;
-	pix.allocate(width, height, channels);
-	FreeImage_ConvertToRawBits(pix.getPixels(), bmp, width*channels, bpp, FI_RGBA_RED_MASK, FI_RGBA_GREEN_MASK, FI_RGBA_BLUE_MASK, true);  // get bits
-
-	if (bmpTemp != NULL) FreeImage_Unload(bmpTemp);
-
-	#ifdef TARGET_LITTLE_ENDIAN
-		if(swapForLittleEndian)
-			pix.swapRgb();
-	#endif
 }
 
 template<typename T>
@@ -929,7 +889,7 @@ void ofImage_<T>::resizePixels(ofPixels_<T> &pix, int newWidth, int newHeight){
 template<typename T>
 void ofImage_<T>::changeTypeOfPixels(ofPixels_<T> &pix, ofImageType newType){
 	int oldType = pix.getImageType();
-	
+		
 	if (oldType == newType) {
 		return; // no need to reallocate
 	}
@@ -960,7 +920,8 @@ void ofImage_<T>::changeTypeOfPixels(ofPixels_<T> &pix, ofImageType newType){
 		FreeImage_Unload(convertedBmp);
 	}
 
-	// always reallocate the texture. if ofTexture doesn't need reallocation, it can handle this.
+	// always reallocate the texture. if ofTexture doesn't need reallocation,
+	// it doesn't have to. but it needs to change the internal format.
 	tex.allocate(pixels.getWidth(), pixels.getHeight(), ofGetGlInternalFormat(pixels));
 }
 
