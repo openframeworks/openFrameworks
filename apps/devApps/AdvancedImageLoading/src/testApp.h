@@ -9,6 +9,7 @@ public:
 	void draw();
 	
 	vector<ofImage*> jpg8;
+	vector<ofImage*> gif8;
 	vector<ofImage*> png8;
 	vector<ofShortImage*> png16;
 	vector<ofFloatImage*> exrFloat;
