@@ -135,7 +135,8 @@ template<typename T>
 void putBmpIntoPixels(FIBITMAP * bmp, ofPixels_<T> &pix, bool swapForLittleEndian = true) {
 	// some images use a palette, so convert them to raster		
 	FIBITMAP* bmpConverted = NULL;
-	if(FreeImage_GetColorType(bmp) == FIC_PALETTE) {
+	if(FreeImage_GetColorType(bmp) == FIC_PALETTE || FreeImage_GetBPP(bmp) < 8) {
+		ofLogVerbose() << "putBmpIntoPixels() has FIC_PALETTE";
 		if(FreeImage_IsTransparent(bmp)) {
 			bmpConverted = FreeImage_ConvertTo32Bits(bmp);
 		} else {
@@ -150,6 +151,12 @@ void putBmpIntoPixels(FIBITMAP * bmp, ofPixels_<T> &pix, bool swapForLittleEndia
 	unsigned int channels = (bpp / sizeof(T)) / 8;
 	unsigned int pitch = FreeImage_GetPitch(bmp);
 	
+	ofLogVerbose() << endl << 
+	"\tsize:" << width << "x" << height << endl <<
+	"\tbpp:" << bpp << endl <<
+	"\tchannels:" << channels << endl <<
+	"\tpitch:" << pitch;
+	
 	// ofPixels are top left, FIBITMAP is bottom left
 	FreeImage_FlipVertical(bmp);
 	
@@ -160,6 +167,17 @@ void putBmpIntoPixels(FIBITMAP * bmp, ofPixels_<T> &pix, bool swapForLittleEndia
 		ofLogError() << "ofImage::putBmpIntoPixels() unable to set ofPixels from FIBITMAP";
 	}
 	
+	/*
+	// this is for grayscale GIF images they need to be paletted from: http://sourceforge.net/forum/message.php?msg_id=2856879
+	if(pix.getImageType() == OF_IMAGE_GRAYSCALE && pix.getBitsPerChannel() <= 8){
+		RGBQUAD *pal = FreeImage_GetPalette(bmp);
+		for(unsigned int i = 0; i < 256; i++) {
+			pal[i].rgbRed = i;
+			pal[i].rgbGreen = i;
+			pal[i].rgbBlue = i;
+		}
+	}
+	*/
 	if(bmpConverted != NULL) {
 		FreeImage_Unload(bmpConverted);
 	}
