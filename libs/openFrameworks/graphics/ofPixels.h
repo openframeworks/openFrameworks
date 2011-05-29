@@ -33,7 +33,7 @@ public:
 	void setFromPixels(const T * newPixels,int w, int h, int channels);
 	void setFromPixels(const T * newPixels,int w, int h, ofImageType type);
 	void setFromExternalPixels(T * newPixels,int w, int h, int channels);
-	void setFromAlignedPixels(const T * newPixels,int w, int h, int channels, int widthStep);
+	void setFromAlignedPixels(const T * newPixels, int width, int height, int channels, int stride);
 
 	void swapRgb();
 
