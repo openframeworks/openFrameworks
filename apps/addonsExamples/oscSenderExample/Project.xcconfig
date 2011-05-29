@@ -5,5 +5,5 @@ OF_PATH = ../../..
 //THIS HAS ALL THE HEADER AND LIBS FOR OF CORE
 #include "../../../libs/openFrameworksCompiled/project/osx/CoreOF.xcconfig"
 
-OTHER_LDFLAGS = $(OF_CORE_LIBS) 
-HEADER_SEARCH_PATHS = $(OF_CORE_HEADERS)
+OTHER_LDFLAGS = $(OF_CORE_LIBS)  $(OF_PATH)/addons/ofxOsc/libs/oscpack/lib/osx/osc.a
+HEADER_SEARCH_PATHS = $(OF_CORE_HEADERS) $(OF_PATH)/addons/ofxOsc/src $(OF_PATH)/addons/ofxOsc/libs/oscpack/include/ip $(OF_PATH)/addons/ofxOsc/libs/oscpack/include/osc
