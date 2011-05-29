@@ -101,98 +101,74 @@ FREE_IMAGE_TYPE getFreeImageType(ofFloatPixels& pix) {
 
 //----------------------------------------------------
 template<typename T>
-FIBITMAP* getBmpFromPixels(ofPixels_<T> &pix){	
-	unsigned char* pixels = (unsigned char*) pix.getPixels();
-	int w = pix.getWidth();
-	int h = pix.getHeight();
+FIBITMAP* getBmpFromPixels(ofPixels_<T> &pix){
+	T* pixels = pix.getPixels();
+	unsigned int width = pix.getWidth();
+	unsigned int height = pix.getHeight();
 	unsigned int bpp = pix.getBitsPerPixel();
 	
 	FREE_IMAGE_TYPE freeImageType = getFreeImageType(pix);
-	FIBITMAP* bmp = FreeImage_AllocateT(freeImageType, w, h, bpp);
+	FIBITMAP* bmp = FreeImage_AllocateT(freeImageType, width, height, bpp);
 	unsigned char* bmpBits = FreeImage_GetBits(bmp);
 	if(bmpBits != NULL) {
-		memcpy(bmpBits, pixels, w * h * pix.getBytesPerPixel());
-		FreeImage_FlipVertical(bmp);
+		int srcStride = width * pix.getBytesPerPixel();
+		int dstStride = FreeImage_GetPitch(bmp);
+		unsigned char* src = (unsigned char*) pixels;
+		unsigned char* dst = bmpBits;
+		for(int i = 0; i < height; i++) {
+			memcpy(dst, src, dstStride);
+			src += srcStride;
+			dst += dstStride;
+		}
+	} else {
+		ofLogError() << "ofImage::getBmpFromPixels() unable to get FIBITMAP from ofPixels";
 	}
 	
-	// {afaict, this paletting code isn't necessary anymore - kyle, may 2011}
-	// this is for grayscale images they need to be paletted from: http://sourceforge.net/forum/message.php?msg_id=2856879
-	if(pix.getImageType() == OF_IMAGE_GRAYSCALE && pix.getBitsPerChannel() <= 8){
-		RGBQUAD *pal = FreeImage_GetPalette(bmp);
-		for(unsigned int i = 0; i < 256; i++) {
-			pal[i].rgbRed = i;
-			pal[i].rgbGreen = i;
-			pal[i].rgbBlue = i;
-		}
-	}
+	// ofPixels are top left, FIBITMAP is bottom left
+	FreeImage_FlipVertical(bmp);
 	
 	return bmp;
 }
 
 //----------------------------------------------------
 template<typename T>
-void putBmpIntoPixels(FIBITMAP * bmp, ofPixels_<T> &pix, bool swapForLittleEndian = true){
+void putBmpIntoPixels(FIBITMAP * bmp, ofPixels_<T> &pix, bool swapForLittleEndian = true) {
+	// some images use a palette, or <8 bpp, so convert them to raster 8-bit channels
+	FIBITMAP* bmpConverted = NULL;
+	if(FreeImage_GetColorType(bmp) == FIC_PALETTE || FreeImage_GetBPP(bmp) < 8) {
+		if(FreeImage_IsTransparent(bmp)) {
+			bmpConverted = FreeImage_ConvertTo32Bits(bmp);
+		} else {
+			bmpConverted = FreeImage_ConvertTo24Bits(bmp);
+		}
+		bmp = bmpConverted;
+	}
+
 	unsigned int width = FreeImage_GetWidth(bmp);
 	unsigned int height = FreeImage_GetHeight(bmp);
 	unsigned int bpp = FreeImage_GetBPP(bmp);
 	unsigned int channels = (bpp / sizeof(T)) / 8;
-	unsigned int pitch = (width * bpp) / 8;
+	unsigned int pitch = FreeImage_GetPitch(bmp);
 	
-	//BITMAPINFOHEADER* header = FreeImage_GetInfoHeader(bmp);
-	//ofLogVerbose() << "putBmpIntoPixels(" << bpp << " / " << channels << ") is " << header->biSize << ", " << header->biPlanes << ", " << header->biBitCount << ", " << header->biCompression << ", " << header->biSizeImage;
-
-	pix.allocate(width, height, channels);
-	FreeImage_ConvertToRawBits((uint8_t*) pix.getPixels(), bmp, pitch, bpp, FI_RGBA_RED_MASK, FI_RGBA_GREEN_MASK, FI_RGBA_BLUE_MASK, true);
+	// ofPixels are top left, FIBITMAP is bottom left
+	FreeImage_FlipVertical(bmp);
+	
+	unsigned char* bmpBits = FreeImage_GetBits(bmp);
+	if(bmpBits != NULL) {
+		pix.setFromAlignedPixels((T*) bmpBits, width, height, channels, pitch);
+	} else {
+		ofLogError() << "ofImage::putBmpIntoPixels() unable to set ofPixels from FIBITMAP";
+	}
+	
+	if(bmpConverted != NULL) {
+		FreeImage_Unload(bmpConverted);
+	}
 
 #ifdef TARGET_LITTLE_ENDIAN
 	if(swapForLittleEndian) {
 		pix.swapRgb();
 	}
 #endif
-}
-
-//----------------------------------------------------
-template<>
-void putBmpIntoPixels(FIBITMAP * bmp, ofPixels &pix, bool swapForLittleEndian){
-	int width			= FreeImage_GetWidth(bmp);
-	int height			= FreeImage_GetHeight(bmp);
-	int bpp				= FreeImage_GetBPP(bmp);
-
-	FIBITMAP * bmpTemp = NULL;
-
-	switch (bpp){
-		case 8:
-			if (FreeImage_GetColorType(bmp) == FIC_PALETTE) {
-				bmpTemp = FreeImage_ConvertTo24Bits(bmp);
-				bmp = bmpTemp;
-				bpp = FreeImage_GetBPP(bmp);
-			} else {
-			// do nothing we are grayscale
-			}
-		break;
-		case 24:
-			// do nothing we are color
-		break;
-		case 32:
-			// do nothing we are colorAlpha
-		break;
-		default:
-			bmpTemp = FreeImage_ConvertTo24Bits(bmp);
-			bmp = bmpTemp;
-			bpp = FreeImage_GetBPP(bmp);
-		break;
-	}
-
-	int channels	= bpp / 8;
-	pix.allocate(width, height, channels);
-	FreeImage_ConvertToRawBits(pix.getPixels(), bmp, width*channels, bpp, FI_RGBA_RED_MASK, FI_RGBA_GREEN_MASK, FI_RGBA_BLUE_MASK, true);  // get bits
-
-	if (bmpTemp != NULL) FreeImage_Unload(bmpTemp);
-
-	#ifdef TARGET_LITTLE_ENDIAN
-		if(swapForLittleEndian)
-			pix.swapRgb();
-	#endif
 }
 
 template<typename T>
@@ -202,11 +178,10 @@ static bool loadImage(ofPixels_<T> & pix, string fileName){
 		return ofLoadImage(pix, ofLoadURL(fileName).data);
 	}
 	
-	int					width, height, bpp;
-	fileName			= ofToDataPath(fileName);
-	bool bLoaded		= false;
-	FIBITMAP 			* bmp = NULL;
-
+	int width, height, bpp;
+	fileName = ofToDataPath(fileName);
+	bool bLoaded = false;
+	FIBITMAP * bmp = NULL;
 
 	FREE_IMAGE_FORMAT fif = FIF_UNKNOWN;
 	fif = FreeImage_GetFileType(fileName.c_str(), 0);
@@ -215,12 +190,13 @@ static bool loadImage(ofPixels_<T> & pix, string fileName){
 		fif = FreeImage_GetFIFFromFilename(fileName.c_str());
 	}
 	if((fif != FIF_UNKNOWN) && FreeImage_FIFSupportsReading(fif)) {
-		bmp					= FreeImage_Load(fif, fileName.c_str(), 0);
+		bmp = FreeImage_Load(fif, fileName.c_str(), 0);
 
-		if (bmp){
+		if (bmp != NULL){
 			bLoaded = true;
 		}
 	}
+	
 	//-----------------------------
 
 	if ( bLoaded ){
@@ -239,12 +215,12 @@ static bool loadImage(ofPixels_<T> & pix, string fileName){
 template<typename T>
 static bool loadImage(ofPixels_<T> & pix, const ofBuffer & buffer){
 	ofInitFreeImage();
-	int					width, height, bpp;
-	bool bLoaded		= false;
-	FIBITMAP * bmp		= NULL;
-	FIMEMORY *hmem		= NULL;
+	int width, height, bpp;
+	bool bLoaded = false;
+	FIBITMAP* bmp = NULL;
+	FIMEMORY* hmem = NULL;
 	
-	hmem = FreeImage_OpenMemory((unsigned char*)buffer.getBinaryBuffer(), buffer.size());
+	hmem = FreeImage_OpenMemory((unsigned char*) buffer.getBinaryBuffer(), buffer.size());
 	if (hmem == NULL){
 		ofLog(OF_LOG_ERROR, "couldn't create memory handle!");
 		return false;
@@ -264,11 +240,10 @@ static bool loadImage(ofPixels_<T> & pix, const ofBuffer & buffer){
 	
 	if( bmp != NULL ){
 		bLoaded = true;
-		ofLog(OF_LOG_VERBOSE, "FreeImage_LoadFromMemory worked!");
 	}
 	
 	//-----------------------------
-
+	
 	if (bLoaded){
 		putBmpIntoPixels(bmp,pix);
 	} else {
@@ -379,10 +354,25 @@ static void saveImage(ofPixels_<T> & pix, string fileName, ofImageQualityType qu
 			FreeImage_Save(fif, bmp, fileName.c_str(), quality);
 		} else {
 			if(qualityLevel != OF_IMAGE_QUALITY_BEST) {
-				ofLog(OF_LOG_WARNING, "ofImageCompressionType only applies to JPEG images, ignoring value.");
+				ofLogWarning() << "ofImageCompressionType only applies to JPEG images, ignoring value";
 			}
-			if (fif==FIF_GIF) bmp = FreeImage_ConvertTo8Bits(bmp);
-			FreeImage_Save(fif, bmp, fileName.c_str());
+			
+			if (fif == FIF_GIF) {
+				FIBITMAP* convertedBmp;
+				if(pix.getImageType() == OF_IMAGE_COLOR_ALPHA) {
+					// this just converts the image to grayscale so it can save something
+					convertedBmp = FreeImage_ConvertTo8Bits(bmp);
+				} else {
+					// this will create a 256-color palette from the image
+					convertedBmp = FreeImage_ColorQuantize(bmp, FIQ_NNQUANT);
+				}
+				FreeImage_Save(fif, convertedBmp, fileName.c_str());
+				if (convertedBmp != NULL){
+					FreeImage_Unload(convertedBmp);
+				}
+			} else {
+				FreeImage_Save(fif, bmp, fileName.c_str());
+			}
 		}
 	}
 
@@ -929,52 +919,41 @@ void ofImage_<T>::resizePixels(ofPixels_<T> &pix, int newWidth, int newHeight){
 //----------------------------------------------------
 template<typename T>
 void ofImage_<T>::changeTypeOfPixels(ofPixels_<T> &pix, ofImageType newType){
-	if (pix.getImageType() == newType) return;
-
-	FIBITMAP * bmp					= getBmpFromPixels(pix);
-	FIBITMAP * convertedBmp			= NULL;
-
-	// check if we need to reallocate the texture.
-	bool bNeedNewTexture = false;
 	int oldType = pix.getImageType();
-	if (newType > oldType){
-		bNeedNewTexture = true;
+		
+	if (oldType == newType) {
+		return; // no need to reallocate
 	}
 
-	// new type !
-	switch (newType){
+	FIBITMAP * bmp = getBmpFromPixels(pix);
+	FIBITMAP * convertedBmp = NULL;
 
-		//------------------------------------
+	switch (newType){
 		case OF_IMAGE_GRAYSCALE:
 			convertedBmp = FreeImage_ConvertToGreyscale(bmp);
 			break;
-
-		//------------------------------------
 		case OF_IMAGE_COLOR:
 			convertedBmp = FreeImage_ConvertTo24Bits(bmp);
-			if (bNeedNewTexture){
-				tex.clear();
-				tex.allocate(pixels.getWidth(), pixels.getHeight(), GL_RGB);
-			}
 			break;
-
-		//------------------------------------
 		case OF_IMAGE_COLOR_ALPHA:
 			convertedBmp = FreeImage_ConvertTo32Bits(bmp);
-			if (bNeedNewTexture){
-				tex.clear();
-				tex.allocate(pixels.getWidth(), pixels.getHeight(), GL_RGBA);
-			}
 			break;
 		default:
-			ofLog(OF_LOG_ERROR,"ofImage: format not supported");
+			ofLog(OF_LOG_ERROR, "changeTypeOfPixels: format not supported");
 	}
-
+	
 	putBmpIntoPixels(convertedBmp, pix, false);
 
-	if (bmp != NULL)				FreeImage_Unload(bmp);
-	if (convertedBmp != NULL)		FreeImage_Unload(convertedBmp);
+	if (bmp != NULL) {
+		FreeImage_Unload(bmp);
+	}
+	if (convertedBmp != NULL) {
+		FreeImage_Unload(convertedBmp);
+	}
 
+	// always reallocate the texture. if ofTexture doesn't need reallocation,
+	// it doesn't have to. but it needs to change the internal format.
+	tex.allocate(pixels.getWidth(), pixels.getHeight(), ofGetGlInternalFormat(pixels));
 }
 
 //----------------------------------------------------------
