@@ -716,7 +716,7 @@
 					"../../../libs/openFrameworks/**",
 					"../../../libs/freetype/**",
 				);
-				IPHONEOS_DEPLOYMENT_TARGET = 3.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 4.2;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../../../libs/freetype/lib\"",
@@ -729,12 +729,16 @@
 					"\"$(SRCROOT)/../../../libs/poco/lib/osx\"",
 					"\"$(SRCROOT)/../../../libs/poco/lib/iphone\"",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.5;
+				MACOSX_DEPLOYMENT_TARGET = 10.6;
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_LDFLAGS = "-ObjC";
 				PREBINDING = NO;
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
+<<<<<<< HEAD
+				SDKROOT = iphoneos4.2;
+=======
 				SDKROOT = iphoneos;
+>>>>>>> b4397c147a920d583e129fce15939687c716df72
 				TARGETED_DEVICE_FAMILY = 1;
 				WARNING_LDFLAGS = "";
 			};
@@ -761,7 +765,7 @@
 					"../../../libs/openFrameworks/**",
 					"../../../libs/freetype/**",
 				);
-				IPHONEOS_DEPLOYMENT_TARGET = 3.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 4.2;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../../../libs/freetype/lib\"",
@@ -774,12 +778,16 @@
 					"\"$(SRCROOT)/../../../libs/poco/lib/osx\"",
 					"\"$(SRCROOT)/../../../libs/poco/lib/iphone\"",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.5;
+				MACOSX_DEPLOYMENT_TARGET = 10.6;
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_LDFLAGS = "-ObjC";
 				PREBINDING = NO;
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
+<<<<<<< HEAD
+				SDKROOT = iphoneos4.2;
+=======
 				SDKROOT = iphoneos;
+>>>>>>> b4397c147a920d583e129fce15939687c716df72
 				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
@@ -805,7 +813,7 @@
 					"../../../libs/openFrameworks/**",
 					"../../../libs/freetype/**",
 				);
-				IPHONEOS_DEPLOYMENT_TARGET = 3.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 4.2;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../../../libs/freetype/lib\"",
@@ -818,12 +826,16 @@
 					"\"$(SRCROOT)/../../../libs/poco/lib/osx\"",
 					"\"$(SRCROOT)/../../../libs/poco/lib/iphone\"",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.5;
+				MACOSX_DEPLOYMENT_TARGET = 10.6;
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_LDFLAGS = "-ObjC";
 				PREBINDING = NO;
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
+<<<<<<< HEAD
+				SDKROOT = iphoneos4.2;
+=======
 				SDKROOT = iphoneos;
+>>>>>>> b4397c147a920d583e129fce15939687c716df72
 				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = ReleaseArmv7;

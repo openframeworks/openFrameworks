@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ofMain.h"
+#include "ofMaterial.h"
 
 class testApp : public ofBaseApp{
 
@@ -18,5 +19,17 @@ public:
 	void windowResized(int w, int h);
 	void dragEvent(ofDragInfo dragInfo);
 	void gotMessage(ofMessage msg);
-		
+	
+	ofLight pointLight;
+	ofLight spotLight;
+	ofLight directionalLight;
+	
+	ofMaterial material;
+	
+	float radius;
+	ofVec3f center;
+	bool bShiny;
+	bool bPointLight, bSpotLight, bDirLight;
+	
+	
 };

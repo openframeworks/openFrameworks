@@ -67,7 +67,7 @@ class ofURLFileLoader : public ofThread  {
 
     public:
 
-        ofURLFileLoader();
+        ofURLFileLoader();	
         ofHttpResponse get(string url);
         int getAsync(string url, string name=""); // returns id
 		void remove(int id);
