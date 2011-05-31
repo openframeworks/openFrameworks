@@ -9,7 +9,7 @@ import glob
 of_root = '/home/arturo/Desktop/openFrameworks'
 platform = 'linux'
 arch = 'linux64'
-templates_path = '../../apps/devApps/linux/'
+templates_path = of_root + '/apps/devApps/linux/'
 template = {'cbp': templates_path + 'emptyExample_' + arch + '.cbp', 'full_cbp': templates_path + 'emptyExample_' + arch + '_fullCBP.cbp', 'makefile': templates_path + 'Makefile', 'config.make': templates_path + 'config.make'}
 fullCBP = True
 
@@ -27,7 +27,6 @@ def addCBPIncludePath(project,dirpath):
         include.set("directory",dirpath)
         
 def addCBPLibrary(project,libpath):
-    print libpath
     found=False
     if project.find('Linker') == None:
         etree.SubElement(project,"Linker")
@@ -105,11 +104,9 @@ def addAddon(project,addon):
                     for lib in glob.glob(os.path.join(of_root,basefolder,'lib',arch,'*.a')):
                         baselib = lib[len(of_root)+1:]
                         addCBPLibrary(project,os.path.join('..','..','..',baselib))
-                        print baselib
                     for lib in glob.glob(os.path.join(of_root,basefolder,'lib',arch,'*.so')):
                         baselib = lib[len(of_root)+1:]
                         addCBPLibrary(project,os.path.join('..','..','..',baselib))
-                        print baselib
                         
 
 def addAddons(project,project_path):
@@ -148,6 +145,7 @@ def createCBP(project_path):
     cbp_file.close()
 
 def createProject(project_path):
+    print 'generating',project_path
     if os.path.abspath(project_path) == os.path.abspath(templates_path):
         return
     if project_path[-1]==os.sep:
@@ -188,12 +186,7 @@ parser.add_argument('-n', '--not_mk', dest='not_mk', action='store_const',
 project_path = parser.parse_args().project_path
 fullCBP = parser.parse_args().not_mk
 
-print "fullCBP:", fullCBP
-
 if project_path==None: #parse all examples
-    #for root, dirs, files in os.walk('../../apps/examples'):
-    #    for name in dirs:
-    #        print os.path.join(root,name)
     for example in os.listdir(os.path.join(of_root,'apps','examples')):
         createProject(os.path.join(of_root,'apps','examples',example))
     for example in os.listdir(os.path.join(of_root,'apps','addonsExamples')):
