@@ -69,7 +69,7 @@ namespace ofxCv {
 	}
 	
 	void FloatImage::update() {
-		texture.loadData((float*) pixels.data, getWidth(), getHeight(), GL_LUMINANCE);
+		texture.loadData((float*) pixels.data, getWidth(), getHeight(), GL_LUMINANCE32F_ARB);
 	}
 	
 	void FloatImage::draw() {
