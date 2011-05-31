@@ -6,14 +6,14 @@ void testApp::setup() {
 	
 	// imitate() will set up previous and diff
 	// so they have the same size and type as cam
-	imitate(previous, cam);;
-	imitate(diff, cam);
+	imitate(previous, cam.getPixelsRef());;
+	imitate(diff, cam.getPixelsRef());
 }
 
 void testApp::update() {
 	cam.update();
 	if(cam.isFrameNew()) {
-		Mat camMat = toCv(cam);
+		Mat camMat = toCv(cam.getPixelsRef());
 		Mat prevMat = toCv(previous);
 		Mat diffMat = toCv(diff);
 		
