@@ -42,7 +42,7 @@ fi
 
 apt-get update
 
-apt-get install libcodeblocks0 codeblocks libwxsmithlib0 codeblocks-contrib libwxgtk2.8-0
+apt-get install libcodeblocks0 codeblocks codeblocks-contrib libwxsmithlib0 codeblocks-contrib libwxgtk2.8-0
 
 if [ -f /etc/apt/sources.list.d/wxwidgets.list ]; then
     rm /etc/apt/sources.list.d/wxwidgets.list
