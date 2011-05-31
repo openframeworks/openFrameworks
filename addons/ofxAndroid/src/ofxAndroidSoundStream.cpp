@@ -25,6 +25,8 @@ ofxAndroidSoundStream::ofxAndroidSoundStream(){
 	inBufferSize=0;
 	inChannels=0;
 	isPaused = false;
+	soundInputPtr = NULL;
+	soundOutputPtr = NULL;
 }
 
 ofxAndroidSoundStream::~ofxAndroidSoundStream(){
@@ -50,7 +52,7 @@ void ofxAndroidSoundStream::setOutput(ofBaseSoundOutput * _soundOutput){
 }
 
 bool ofxAndroidSoundStream::setup(int outChannels, int inChannels, int _sampleRate, int bufferSize, int nBuffers){
-	if(instance!=NULL){
+	if(instance!=NULL && instance!=this){
 		ofLog(OF_LOG_ERROR,"ofxAndroidSoundStream: error, only one instance allowed by now");
 		return false;
 	}
@@ -94,21 +96,50 @@ bool ofxAndroidSoundStream::setup(int outChannels, int inChannels, int _sampleRa
 }
 
 bool ofxAndroidSoundStream::setup(ofBaseApp * app, int outChannels, int inChannels, int sampleRate, int bufferSize, int nBuffers){
-	setInput(app);
-	setOutput(app);
+	if(inChannels>0)  setInput(app);
+	if(outChannels>0) setOutput(app);
+
 	return setup(outChannels,inChannels,sampleRate,bufferSize,nBuffers);
 }
 
 void ofxAndroidSoundStream::start(){
-
+	setup(outChannels,inChannels,sampleRate,requestedBufferSize,1);
 }
 
 void ofxAndroidSoundStream::stop(){
-
+	pause();
 }
 
 void ofxAndroidSoundStream::close(){
+	pause();
 
+	if(!ofGetJavaVMPtr()){
+		ofLog(OF_LOG_ERROR,"ofSoundStreamSetup: Cannot find java virtual machine");
+		return;
+	}
+	JNIEnv *env = ofGetJNIEnv();
+	if (!env) {
+		ofLog(OF_LOG_ERROR,"Failed to get the environment using GetEnv()");
+		return;
+	}
+	jclass javaClass = env->FindClass("cc.openframeworks.OFAndroidSoundStream");
+
+	if(javaClass==0){
+		ofLog(OF_LOG_ERROR,"cannot find OFAndroidSoundStream java class");
+		return;
+	}
+
+	jmethodID soundStreamSingleton = env->GetStaticMethodID(javaClass,"getInstance","()Lcc/openframeworks/OFAndroidSoundStream;");
+	if(!soundStreamSingleton){
+		ofLog(OF_LOG_ERROR,"cannot find OFAndroidSoundStream singleton method");
+		return;
+	}
+	jobject javaObject = env->CallStaticObjectMethod(javaClass,soundStreamSingleton);
+	jmethodID javaStop = env->GetMethodID(javaClass,"stop","()V");
+	if(javaObject && javaStop)
+		env->CallVoidMethod(javaObject,javaStop);
+	else
+		ofLog(OF_LOG_ERROR, "cannot get OFAndroidSoundStream instance or stop method");
 }
 
 long unsigned long ofxAndroidSoundStream::getTickCount(){
@@ -143,61 +174,62 @@ void ofxAndroidSoundStream::resume(){
 static const float conv_factor = 1/32767.5f;
 
 int ofxAndroidSoundStream::androidInputAudioCallback(JNIEnv*  env, jobject  thiz,jshortArray array, jint numChannels, jint bufferSize){
+	if(!soundInputPtr || isPaused) return 0;
+
 	if(!in_float_buffer || numChannels!=inChannels || bufferSize!=inBufferSize){
-		if(in_buffer)
+		if(in_buffer){
 			env->ReleasePrimitiveArrayCritical(array,in_buffer,0);
+			jInArray = 0;
+		}
 		in_buffer = (short*)env->GetPrimitiveArrayCritical(array, NULL);
 		if(!in_buffer) return 1;
+		jInArray = array;
 
 		if(in_float_buffer) delete[] in_float_buffer;
 		in_float_buffer = new float[bufferSize*numChannels];
 		inBufferSize = bufferSize;
 		inChannels   = numChannels;
+		ofLogVerbose("ofxAndroidSoundStream", "input buffers setup");
 	}
-	if(soundInputPtr){
-		for(int i=0;i<bufferSize*numChannels;i++){
-			in_float_buffer[i] = (float(in_buffer[i]) + 0.5) * conv_factor;
-		}
-		soundInputPtr->audioIn(in_float_buffer,bufferSize,numChannels,tickCount);
+
+	ofLogVerbose("ofxAndroidSoundStream", "input callback");
+	for(int i=0;i<bufferSize*numChannels;i++){
+		in_float_buffer[i] = (float(in_buffer[i]) + 0.5) * conv_factor;
 	}
+	soundInputPtr->audioIn(in_float_buffer,bufferSize,inChannels,tickCount);
+
 
 	return 0;
 }
 
-//#define OFX_ANDROID_SOUNDSTREAM_SLEEP_FIX
-
-int ofxAndroidSoundStream::androidOutputAudioCallback(JNIEnv*  env, jobject  thiz,jshortArray array, jint numChannels, jint bufferSize, jlong currentTime, jlong jni_internal_time){
+int ofxAndroidSoundStream::androidOutputAudioCallback(JNIEnv*  env, jobject  thiz,jshortArray array, jint numChannels, jint bufferSize){
 
 	if(!soundOutputPtr || isPaused) return 0;
 
 	if(!out_buffer || !out_float_buffer || numChannels!=outChannels || bufferSize!=outBufferSize){
-		if(out_buffer)
+		if(out_buffer){
 			env->ReleasePrimitiveArrayCritical(array,out_buffer,0);
+			jOutArray = 0;
+		}
 		out_buffer = (short*)env->GetPrimitiveArrayCritical(array, NULL);
 		if(!out_buffer) return 1;
+		jOutArray = array;
+
 		if(out_float_buffer) delete[] out_float_buffer;
 		out_float_buffer = new float[bufferSize*numChannels];
 		outBufferSize = bufferSize;
 		outChannels   = numChannels;
+
+		ofLogWarning("ofxAndroidSoundStream") << "setting out buffers frames: " << bufferSize;
 	}
 
-	int nBlocks = bufferSize/requestedBufferSize;
+	soundOutputPtr->audioOut(out_float_buffer,bufferSize,numChannels,tickCount);
 
-	if (numChannels > 0) {
-		float * out_buffer_ptr = out_float_buffer;
-
-		//memset( out_float_buffer, 0, sizeof(float)*bufferSize*numChannels );
-		for(int t = 0;t<nBlocks;t++){
-			tickCount++;
-			soundOutputPtr->audioOut(out_buffer_ptr,requestedBufferSize,numChannels,tickCount);
-
-			out_buffer_ptr+=totalOutRequestedBufferSize;
-		}
-		for(int i=0;i<bufferSize*numChannels ;i++){
-			float tempf = (out_float_buffer[i] * 32767.5f) - 0.5;
-			out_buffer[i]=tempf;//lrintf( tempf - 0.5 );
-		}
+	for(int i=0;i<bufferSize*numChannels ;i++){
+		float tempf = (out_float_buffer[i] * 32767.5f) - 0.5;
+		out_buffer[i] = tempf;//lrintf( tempf - 0.5 );
 	}
+	tickCount++;
 
 	return 0;
 }
@@ -251,9 +283,9 @@ void ofxAndroidSoundStreamResume(){
 extern "C"{
 
 jint
-Java_cc_openframeworks_OFAndroidSoundStream_audioOut(JNIEnv*  env, jobject  thiz, jshortArray array, jint numChannels, jint bufferSize, jlong currentTime, jlong jni_internal_time){
+Java_cc_openframeworks_OFAndroidSoundStream_audioOut(JNIEnv*  env, jobject  thiz, jshortArray array, jint numChannels, jint bufferSize){
 	if(instance){
-		return instance->androidOutputAudioCallback(env,thiz,array,numChannels,bufferSize,currentTime,jni_internal_time);
+		return instance->androidOutputAudioCallback(env,thiz,array,numChannels,bufferSize);
 	}
 	return 0;
 }
