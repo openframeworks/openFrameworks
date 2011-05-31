@@ -62,6 +62,7 @@ apps/examples/*/Makefile
 apps/examples/*/config.make
 apps/addonsExamples/*/Makefile
 apps/addonsExamples/*/config.make
+*.pyc
 
 #Android
 addons/Debug Android
