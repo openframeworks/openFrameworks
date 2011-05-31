@@ -6,7 +6,8 @@ import argparse
 import shutil
 import glob
 
-of_root = '/home/arturo/Desktop/openFrameworks'
+
+of_root = os.path.realpath(__file__)[0:-(len('scripts/linux/createProject.py')+2)]
 platform = 'linux'
 arch = 'linux64'
 templates_path = of_root + '/apps/devApps/linux/'
