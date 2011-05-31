@@ -28,6 +28,7 @@
 		BB24DD9010DA77E000E9C588 /* Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = BB24DD8D10DA77E000E9C588 /* Icon.png */; };
 		BB24DDCA10DA781C00E9C588 /* ofxiphone-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = BB24DDC910DA781C00E9C588 /* ofxiphone-Info.plist */; };
 		BBE5EAB80F49AD8400F28951 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BBE5EAB70F49AD8400F28951 /* AudioToolbox.framework */; };
+		DA9274CE1387D33500BA21A9 /* tess2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DA9274CD1387D33500BA21A9 /* tess2.a */; };
 		E434BF6512477ED500452519 /* freeimage-iphone.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E434BF6412477ED500452519 /* freeimage-iphone.a */; };
 		E434BF6812477EDE00452519 /* freeimage.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E434BF6712477EDE00452519 /* freeimage.a */; };
 		E434BF7312477FBA00452519 /* freetype-iphone.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E434BF7212477FBA00452519 /* freetype-iphone.a */; };
@@ -129,6 +130,8 @@
 		BBE5EAB70F49AD8400F28951 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		DA7851271105C039007EFC90 /* glu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = glu.h; sourceTree = "<group>"; };
 		DA7851281105C039007EFC90 /* gluos.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gluos.h; sourceTree = "<group>"; };
+		DA9274CA1387D33500BA21A9 /* tesselator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tesselator.h; sourceTree = "<group>"; };
+		DA9274CD1387D33500BA21A9 /* tess2.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = tess2.a; sourceTree = "<group>"; };
 		E434BF6412477ED500452519 /* freeimage-iphone.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "freeimage-iphone.a"; path = "../../../libs/FreeImage/lib/iphone/freeimage-iphone.a"; sourceTree = SOURCE_ROOT; };
 		E434BF6712477EDE00452519 /* freeimage.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = freeimage.a; path = ../../../libs/FreeImage/lib/osx/freeimage.a; sourceTree = SOURCE_ROOT; };
 		E434BF7212477FBA00452519 /* freetype-iphone.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "freetype-iphone.a"; path = "../../../libs/freetype/lib/iphone/freetype-iphone.a"; sourceTree = SOURCE_ROOT; };
@@ -174,6 +177,7 @@
 				2D6B1B41135EE563004F0A92 /* AVFoundation.framework in Frameworks */,
 				2D6B1B42135EE563004F0A92 /* CoreMedia.framework in Frameworks */,
 				2D6B1B43135EE563004F0A92 /* CoreVideo.framework in Frameworks */,
+				DA9274CE1387D33500BA21A9 /* tess2.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -475,6 +479,7 @@
 				BB24DDCD10DA784F00E9C588 /* FreeImage */,
 				BB24DDDD10DA785000E9C588 /* freetype */,
 				BB24DE1F10DA785000E9C588 /* glu */,
+				DA9274C81387D33500BA21A9 /* tess2 */,
 				29B97315FDCFA39411CA2CEA /* Other Sources */,
 			);
 			name = "core libraries";
@@ -496,6 +501,40 @@
 				DA7851281105C039007EFC90 /* gluos.h */,
 			);
 			path = include_iphone;
+			sourceTree = "<group>";
+		};
+		DA9274C81387D33500BA21A9 /* tess2 */ = {
+			isa = PBXGroup;
+			children = (
+				DA9274C91387D33500BA21A9 /* include */,
+				DA9274CB1387D33500BA21A9 /* lib */,
+			);
+			name = tess2;
+			path = ../../../libs/tess2;
+			sourceTree = SOURCE_ROOT;
+		};
+		DA9274C91387D33500BA21A9 /* include */ = {
+			isa = PBXGroup;
+			children = (
+				DA9274CA1387D33500BA21A9 /* tesselator.h */,
+			);
+			path = include;
+			sourceTree = "<group>";
+		};
+		DA9274CB1387D33500BA21A9 /* lib */ = {
+			isa = PBXGroup;
+			children = (
+				DA9274CC1387D33500BA21A9 /* osx */,
+			);
+			path = lib;
+			sourceTree = "<group>";
+		};
+		DA9274CC1387D33500BA21A9 /* osx */ = {
+			isa = PBXGroup;
+			children = (
+				DA9274CD1387D33500BA21A9 /* tess2.a */,
+			);
+			path = osx;
 			sourceTree = "<group>";
 		};
 		E434BF6612477EDE00452519 /* osx */ = {
@@ -658,6 +697,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../../../libs/freetype/lib/osx\"",
+					"\"$(SRCROOT)/../../../libs/tess2/lib/osx\"",
 				);
 				PRODUCT_NAME = "${TARGET_NAME}";
 			};
@@ -674,6 +714,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../../../libs/freetype/lib/osx\"",
+					"\"$(SRCROOT)/../../../libs/tess2/lib/osx\"",
 				);
 				PRODUCT_NAME = "${TARGET_NAME}";
 			};
@@ -827,6 +868,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../../../libs/freetype/lib/osx\"",
+					"\"$(SRCROOT)/../../../libs/tess2/lib/osx\"",
 				);
 				PRODUCT_NAME = "${TARGET_NAME}";
 			};

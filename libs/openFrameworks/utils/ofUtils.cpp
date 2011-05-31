@@ -554,6 +554,11 @@ string ofVAArgsToString(const char * format, ...){
 }
 
 //--------------------------------------------------
+string ofVAArgsToString(const char * format, va_list args){
+	return "ofVAArgsToString va_list: Not Implemented Yet";
+}
+
+//--------------------------------------------------
 void ofLaunchBrowser(string url){
 
 	// http://support.microsoft.com/kb/224816

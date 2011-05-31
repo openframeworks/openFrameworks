@@ -90,8 +90,8 @@ enum ofLoopType{
 	#ifndef __MACOSX_CORE__
 		#define __MACOSX_CORE__
 	#endif
-#include <unistd.h>
-	#include "glew.h"
+	#include <unistd.h>
+	#include "GL/glew.h"
 	#include <OpenGL/gl.h>
 	#include <ApplicationServices/ApplicationServices.h>
 

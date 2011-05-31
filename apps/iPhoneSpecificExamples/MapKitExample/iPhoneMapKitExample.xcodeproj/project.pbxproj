@@ -32,11 +32,12 @@
 		BB24DE3510DA785000E9C588 /* libFreeType_iphone_universal.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BB24DE1310DA785000E9C588 /* libFreeType_iphone_universal.a */; };
 		BB24DE3C10DA785000E9C588 /* libGLU.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BB24DE2710DA785000E9C588 /* libGLU.a */; };
 		BB24DE3D10DA785000E9C588 /* libGLU_arm.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BB24DE2810DA785000E9C588 /* libGLU_arm.a */; };
-		BB24E23510DAA8AD00E9C588 /* libofxiPhoneOFLib_iphoneos _Debug.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BB24E23410DAA8A700E9C588 /* libofxiPhoneOFLib_iphoneos _Debug.a */; };
+		BB24E23510DAA8AD00E9C588 /* libofxiPhone_macosx_Debug.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BB24E23410DAA8A700E9C588 /* libofxiPhone_macosx_Debug.a */; };
 		BB59313610F690F5005EE3B4 /* main.mm in Sources */ = {isa = PBXBuildFile; fileRef = BB59313410F690F5005EE3B4 /* main.mm */; };
 		BB59313710F690F5005EE3B4 /* testApp.mm in Sources */ = {isa = PBXBuildFile; fileRef = BB59313510F690F5005EE3B4 /* testApp.mm */; };
 		BB59314D10F69169005EE3B4 /* verdana.ttf in Resources */ = {isa = PBXBuildFile; fileRef = BB59314C10F69169005EE3B4 /* verdana.ttf */; };
 		BBE5EAB80F49AD8400F28951 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BBE5EAB70F49AD8400F28951 /* AudioToolbox.framework */; };
+		DA9276D31387D4A600BA21A9 /* tess2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DA9276D21387D4A600BA21A9 /* tess2.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -138,6 +139,8 @@
 		BBE5EAB70F49AD8400F28951 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		DA7851BD1105C0BE007EFC90 /* glu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = glu.h; sourceTree = "<group>"; };
 		DA7851BE1105C0BE007EFC90 /* gluos.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gluos.h; sourceTree = "<group>"; };
+		DA9276CF1387D4A600BA21A9 /* tesselator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tesselator.h; sourceTree = "<group>"; };
+		DA9276D21387D4A600BA21A9 /* tess2.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = tess2.a; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -157,7 +160,7 @@
 				BB24DE3510DA785000E9C588 /* libFreeType_iphone_universal.a in Frameworks */,
 				BB24DE3C10DA785000E9C588 /* libGLU.a in Frameworks */,
 				BB24DE3D10DA785000E9C588 /* libGLU_arm.a in Frameworks */,
-				BB24E23510DAA8AD00E9C588 /* libofxiPhoneOFLib_iphoneos _Debug.a in Frameworks */,
+				BB24E23510DAA8AD00E9C588 /* libofxiPhone_macosx_Debug.a in Frameworks */,
 				5E25689710ED26CC00A9501C /* CppUnit.a in Frameworks */,
 				5E25689810ED26CC00A9501C /* PocoFoundation.a in Frameworks */,
 				5E25689910ED26CC00A9501C /* PocoNet.a in Frameworks */,
@@ -169,6 +172,7 @@
 				5E2568A710ED26CD00A9501C /* PocoUtil.a in Frameworks */,
 				5E2568A810ED26CD00A9501C /* PocoXML.a in Frameworks */,
 				BB0ECA6310F55E7900A35406 /* MapKit.framework in Frameworks */,
+				DA9276D31387D4A600BA21A9 /* tess2.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -475,7 +479,7 @@
 		BB24E23010DAA8A700E9C588 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				BB24E23410DAA8A700E9C588 /* libofxiPhoneOFLib_iphoneos _Debug.a */,
+				BB24E23410DAA8A700E9C588 /* libofxiPhone_macosx_Debug.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -487,6 +491,7 @@
 				BB24DDCD10DA784F00E9C588 /* FreeImage */,
 				BB24DDDD10DA785000E9C588 /* freetype */,
 				BB24DE1F10DA785000E9C588 /* glu */,
+				DA9276CD1387D4A600BA21A9 /* tess2 */,
 				29B97315FDCFA39411CA2CEA /* Other Sources */,
 			);
 			name = "core libraries";
@@ -508,6 +513,40 @@
 				DA7851BE1105C0BE007EFC90 /* gluos.h */,
 			);
 			path = include_iphone;
+			sourceTree = "<group>";
+		};
+		DA9276CD1387D4A600BA21A9 /* tess2 */ = {
+			isa = PBXGroup;
+			children = (
+				DA9276CE1387D4A600BA21A9 /* include */,
+				DA9276D01387D4A600BA21A9 /* lib */,
+			);
+			name = tess2;
+			path = ../../../libs/tess2;
+			sourceTree = SOURCE_ROOT;
+		};
+		DA9276CE1387D4A600BA21A9 /* include */ = {
+			isa = PBXGroup;
+			children = (
+				DA9276CF1387D4A600BA21A9 /* tesselator.h */,
+			);
+			path = include;
+			sourceTree = "<group>";
+		};
+		DA9276D01387D4A600BA21A9 /* lib */ = {
+			isa = PBXGroup;
+			children = (
+				DA9276D11387D4A600BA21A9 /* osx */,
+			);
+			path = lib;
+			sourceTree = "<group>";
+		};
+		DA9276D11387D4A600BA21A9 /* osx */ = {
+			isa = PBXGroup;
+			children = (
+				DA9276D21387D4A600BA21A9 /* tess2.a */,
+			);
+			path = osx;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -556,10 +595,10 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		BB24E23410DAA8A700E9C588 /* libofxiPhoneOFLib_iphoneos _Debug.a */ = {
+		BB24E23410DAA8A700E9C588 /* libofxiPhone_macosx_Debug.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = "libofxiPhoneOFLib_iphoneos _Debug.a";
+			path = libofxiPhone_macosx_Debug.a;
 			remoteRef = BB24E23310DAA8A700E9C588 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
@@ -663,6 +702,7 @@
 					"\"$(DEVELOPER_DIR)/openFrameworks/libs/poco/lib/osx\"",
 					"\"$(DEVELOPER_DIR)/openFrameworks/libs/poco/lib/vs2008\"",
 					"\"$(DEVELOPER_DIR)/openFrameworks/libs/poco/lib/win_cb\"",
+					"\"$(SRCROOT)/../../../libs/tess2/lib/osx\"",
 				);
 				OTHER_LDFLAGS = (
 					"-w",
@@ -720,6 +760,7 @@
 					"\"$(DEVELOPER_DIR)/openFrameworks/libs/poco/lib/osx\"",
 					"\"$(DEVELOPER_DIR)/openFrameworks/libs/poco/lib/vs2008\"",
 					"\"$(DEVELOPER_DIR)/openFrameworks/libs/poco/lib/win_cb\"",
+					"\"$(SRCROOT)/../../../libs/tess2/lib/osx\"",
 				);
 				OTHER_LDFLAGS = (
 					"-w",
@@ -790,6 +831,7 @@
 					"\"$(DEVELOPER_DIR)/openFrameworks/libs/poco/lib/osx\"",
 					"\"$(DEVELOPER_DIR)/openFrameworks/libs/poco/lib/vs2008\"",
 					"\"$(DEVELOPER_DIR)/openFrameworks/libs/poco/lib/win_cb\"",
+					"\"$(SRCROOT)/../../../libs/tess2/lib/osx\"",
 				);
 				OTHER_LDFLAGS = (
 					"-w",

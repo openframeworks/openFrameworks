@@ -6,11 +6,12 @@ import argparse
 import shutil
 import glob
 
-of_root = '/home/arturo/Desktop/openFrameworks'
+
+of_root = os.path.realpath(__file__)[0:-(len('scripts/linux/createProject.py')+2)]
 platform = 'linux'
 arch = 'linux64'
-templates_path = '../../apps/examples/emptyExample/'
-template = {'cbp': templates_path + 'emptyExample_' + arch + '.cbp', 'makefile': templates_path + 'Makefile', 'config.make': templates_path + 'config.make'}
+templates_path = of_root + '/apps/devApps/linux/'
+template = {'cbp': templates_path + 'emptyExample_' + arch + '.cbp', 'full_cbp': templates_path + 'emptyExample_' + arch + '_fullCBP.cbp', 'makefile': templates_path + 'Makefile', 'config.make': templates_path + 'config.make'}
 fullCBP = True
 
 def addCBPIncludePath(project,dirpath):
@@ -27,7 +28,6 @@ def addCBPIncludePath(project,dirpath):
         include.set("directory",dirpath)
         
 def addCBPLibrary(project,libpath):
-    print libpath
     found=False
     if project.find('Linker') == None:
         etree.SubElement(project,"Linker")
@@ -83,14 +83,15 @@ def addAddon(project,addon):
                 continue
             basefolder = os.path.join('addons',addon,'libs',libdir);
             if os.path.exists(os.path.join(of_root,basefolder,'include')):
-                dirpath = os.path.join('..','..','..',basefolder,'include')
-                addCBPIncludePath(project,dirpath)
-                for root, dirs, files in os.walk(os.path.join(libdir,'include')):
+                dirpath = os.path.join(of_root,basefolder,'include')
+                addCBPIncludePath(project,os.path.join('..','..','..',basefolder,'include'))
+                for root, dirs, files in os.walk(dirpath):
                     for dir in dirs:
-                        basefolder = root[len(of_root)+1:]
-                        dirpath = os.path.join('..','..','..',basefolder,dir)
-                        addCBPIncludePath(project,dirpath)
+                        basefolder_addon = root[len(of_root)+1:]
+                        dirpath_addon = os.path.join('..','..','..',basefolder_addon,dir)
+                        addCBPIncludePath(project,dirpath_addon)
             
+            basefolder = os.path.join('addons',addon,'libs',libdir);
             if os.path.exists(os.path.join(of_root,basefolder,'lib',arch)):
                 dirpath = os.path.join('..','..','..',basefolder,'lib',arch)
                 if os.path.exists(os.path.join(of_root,basefolder,'lib',arch,'libsorder.make')):
@@ -104,11 +105,9 @@ def addAddon(project,addon):
                     for lib in glob.glob(os.path.join(of_root,basefolder,'lib',arch,'*.a')):
                         baselib = lib[len(of_root)+1:]
                         addCBPLibrary(project,os.path.join('..','..','..',baselib))
-                        print baselib
                     for lib in glob.glob(os.path.join(of_root,basefolder,'lib',arch,'*.so')):
                         baselib = lib[len(of_root)+1:]
                         addCBPLibrary(project,os.path.join('..','..','..',baselib))
-                        print baselib
                         
 
 def addAddons(project,project_path):
@@ -147,6 +146,7 @@ def createCBP(project_path):
     cbp_file.close()
 
 def createProject(project_path):
+    print 'generating',project_path
     if os.path.abspath(project_path) == os.path.abspath(templates_path):
         return
     if project_path[-1]==os.sep:
@@ -155,7 +155,10 @@ def createProject(project_path):
         os.mkdir(project_path)
     
     project_name = os.path.basename(project_path)
-    shutil.copyfile(template['cbp'],os.path.join(project_path,project_name+'.cbp'))
+    if fullCBP:
+        shutil.copyfile(template['full_cbp'],os.path.join(project_path,project_name+'.cbp'))
+    else:
+        shutil.copyfile(template['cbp'],os.path.join(project_path,project_name+'.cbp'))
     shutil.copyfile(template['makefile'],os.path.join(project_path,'Makefile'))
 
     if not os.path.exists(os.path.join(project_path, 'config.make')):
@@ -178,16 +181,17 @@ def createProject(project_path):
 
 parser = argparse.ArgumentParser(description='OF linux project generator')
 parser.add_argument('project_path', metavar='project_path', nargs='?')
+parser.add_argument('-n', '--not_mk', dest='not_mk', action='store_const',
+        default=False, const=True, help='create cbp not dependent on Makefile')
+
 project_path = parser.parse_args().project_path
+fullCBP = parser.parse_args().not_mk
 
 if project_path==None: #parse all examples
-    #for root, dirs, files in os.walk('../../apps/examples'):
-    #    for name in dirs:
-    #        print os.path.join(root,name)
-    for example in os.listdir(os.path.join('..','..','apps','examples')):
-        createProject(os.path.join('..','..','apps','examples',example))
-    for example in os.listdir(os.path.join('..','..','apps','addonsExamples')):
-        createProject(os.path.join('..','..','apps','addonsExamples',example))
+    for example in os.listdir(os.path.join(of_root,'apps','examples')):
+        createProject(os.path.join(of_root,'apps','examples',example))
+    for example in os.listdir(os.path.join(of_root,'apps','addonsExamples')):
+        createProject(os.path.join(of_root,'apps','addonsExamples',example))
 else:
     createProject(project_path)
     

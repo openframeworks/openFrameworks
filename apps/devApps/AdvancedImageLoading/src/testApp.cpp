@@ -1,13 +1,14 @@
 #include "testApp.h"
 
 template <class T>
-void loadImages(string directory, vector<ofImage_<T> >& images) {
+void loadImages(string directory, vector<ofImage_<T>*>& images) {
 	ofDirectory dir;
 	dir.listDir(directory);
 	dir.sort();
 	images.resize(dir.size());
 	for(int i = 0; i < (int)dir.size(); i++) {
-		images[i].loadImage(dir.getFile(i));
+		images[i] = new ofImage_<T>();
+		images[i]->loadImage(dir.getFile(i));
 	}
 }
 
@@ -25,11 +26,11 @@ void resaveImages(string directory) {
 }
 
 template <class T>
-void drawImages(string name, vector<ofImage_<T> >& images) {
+void drawImages(string name, vector<ofImage_<T>*>& images) {
 	float offset = 0;
 	for(int i = 0; i < (int)images.size(); i++) {
-		images[i].draw(offset, 0);
-		offset += images[i].getWidth();
+		images[i]->draw(offset, 0);
+		offset += images[i]->getWidth();
 		if(offset > ofGetWidth()) {
 			offset = 0;
 			ofTranslate(0, 32);
@@ -42,19 +43,23 @@ void testApp::setup() {
 	ofSetFrameRate(12);
 	ofSetLogLevel(OF_LOG_VERBOSE);
 	
-	loadImages("jpg8", jpg8);
-	loadImages("png8", png8);
-	loadImages("png16", png16);
-	loadImages("exrFloat", exrFloat);
+	loadImages("gif8", gif8);
+	resaveImages<ofImage>("gif8");
 	
-	resaveImages<ofImage>("jpg8");
+	loadImages("png8", png8);
 	resaveImages<ofImage>("png8");
-	resaveImages<ofShortImage>("png16");
-	resaveImages<ofFloatImage>("exrFloat");
+	
+	loadImages("jpg8", jpg8);
+	resaveImages<ofImage>("jpg8");
 
-	img8 = exrFloat[0];
-	img16 = exrFloat[0];
-	imgf = exrFloat[0];
+	loadImages("png16", png16);
+	resaveImages<ofShortImage>("png16");
+	
+	loadImages("exrFloat", exrFloat);
+	resaveImages<ofFloatImage>("exrFloat");
+	img8 = *exrFloat[0];
+	img16 = *exrFloat[0];
+	imgf = *exrFloat[0];
 }
 
 void testApp::update() {
@@ -68,15 +73,16 @@ void testApp::draw() {
 	}
 
 	ofSetColor(255);
-	drawImages("jpg8", jpg8);
+	drawImages("gif8", gif8);
 	ofTranslate(0, 40);
 	drawImages("png8", png8);
+	ofTranslate(0, 40);
+	drawImages("jpg8", jpg8);
 	ofTranslate(0, 40);
 	drawImages("png16", png16);
 	ofTranslate(0, 40);
 	drawImages("exrFloat", exrFloat);
-
-	ofTranslate(exrFloat[0].getWidth()+10, 0);
+	ofTranslate(exrFloat[0]->getWidth()+10, 0);
 	img8.draw(0, 0, 128, 128);
 	img16.draw(0, 128, 128, 128);
 	imgf.draw(0, 256, 128, 128);
