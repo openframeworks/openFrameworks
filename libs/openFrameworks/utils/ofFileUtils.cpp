@@ -911,6 +911,10 @@ ofFile ofDirectory::getFile(unsigned int position, ofFile::Mode mode, bool binar
 	return file;
 }
 
+ofFile ofDirectory::operator[](unsigned int position){
+	return getFile(position);
+}
+
 //------------------------------------------------------------------------------------------------------------
 vector<ofFile> ofDirectory::getFiles(){
 	return files;
