@@ -53,6 +53,36 @@ int ofGetGlInternalFormat(const ofFloatPixels& pix) {
 }
 
 //---------------------------------
+// this is helpful for debugging ofTexture
+string ofGetGlInternalFormatName(int glInternalFormat) {
+	switch(glInternalFormat) {
+		case GL_RGBA: return "GL_RGBA";
+#ifndef TARGET_OPENGLES
+		case GL_RGBA8: return "GL_RGBA8";
+#endif
+		case GL_RGB: return "GL_RGB";
+#ifndef TARGET_OPENGLES
+		case GL_RGB8: return "GL_RGB8";
+#endif
+		case GL_LUMINANCE: return "GL_LUMINANCE";
+#ifndef TARGET_OPENGLES
+		case GL_LUMINANCE8: return "GL_LUMINANCE8";
+		case GL_RGBA16: return "GL_RGBA16";
+		case GL_RGB16: return "GL_RGB16";
+		case GL_LUMINANCE16: return "GL_LUMINANCE16";
+		case GL_RGBA32F_ARB: return "GL_RGBA32F_ARB";
+		case GL_RGB32F_ARB: return "GL_RGB32F_ARB";
+		case GL_LUMINANCE32F_ARB: return "GL_LUMINANCE32F_ARB";
+#endif
+		case GL_LUMINANCE_ALPHA: return "GL_LUMINANCE_ALPHA";
+#ifndef TARGET_OPENGLES
+		case GL_LUMINANCE8_ALPHA8: return "GL_LUMINANCE8_ALPHA8";
+#endif
+		default: return "unknown glInternalFormat";
+	}
+}
+
+//---------------------------------
 void ofGetGlFormatAndType(int glInternalFormat, int& glFormat, int& glType) {
 	switch(glInternalFormat) {
 		// common 8-bit formats: rgba, rgb, grayscale
@@ -320,7 +350,7 @@ void ofTexture::loadData(void * data, int w, int h, int glInternalFormat){
 	// 	check "glTexSubImage2D"
 	
 	if(glInternalFormat != texData.glTypeInternal) {
-		ofLogError() << "ofTexture::loadData() failed to upload internalFormat " <<  glInternalFormat << " data to " << texData.glTypeInternal << " texture";
+		ofLogError() << "ofTexture::loadData() failed to upload internalFormat " <<  ofGetGlInternalFormatName(glInternalFormat) << " data to " << ofGetGlInternalFormatName(texData.glTypeInternal) << " texture";
 		return;
 	}
 	

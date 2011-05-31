@@ -21,7 +21,6 @@ ofRtAudioSoundStream::ofRtAudioSoundStream(){
 
 //------------------------------------------------------------------------------
 ofRtAudioSoundStream::~ofRtAudioSoundStream(){
-	stop();
 	close();
 }
 
@@ -134,7 +133,7 @@ bool ofRtAudioSoundStream::setup(ofBaseApp * app, int outChannels, int inChannel
 
 //------------------------------------------------------------------------------
 void ofRtAudioSoundStream::start(){
-	if( audio == NULL )return;
+	if( audio == NULL ) return;
 	
 	try{
 		audio->startStream();
@@ -145,10 +144,12 @@ void ofRtAudioSoundStream::start(){
 
 //------------------------------------------------------------------------------
 void ofRtAudioSoundStream::stop(){
-	if( audio == NULL )return;
+	if( audio == NULL ) return;
 	
 	try {
-    	audio->stopStream();
+		if(audio->isStreamRunning()) {
+    		audio->stopStream();
+		}
   	} catch (RtError &error) {
    		error.printMessage();
  	}
@@ -156,15 +157,18 @@ void ofRtAudioSoundStream::stop(){
 
 //------------------------------------------------------------------------------
 void ofRtAudioSoundStream::close(){
-	if(audio == NULL) return;
+	if( audio == NULL ) return;
 	
 	try {
-    	audio->closeStream();
+		if(audio->isStreamOpen()) {
+    		audio->closeStream();
+		}
   	} catch (RtError &error) {
    		error.printMessage();
  	}
 	soundOutputPtr	= NULL;
-	soundInputPtr	= NULL;	
+	soundInputPtr	= NULL;
+	audio = ofPtr<RtAudio>();	// delete
 }
 
 //------------------------------------------------------------------------------

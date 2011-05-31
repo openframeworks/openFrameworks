@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="emptyExample" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Option virtualFolders="addons/;src/;" />
+        <Build>
+            <Target title="Debug">
+                <Option output="bin/$(PROJECT_NAME)_debug" extension_auto="1" prefix_auto="1" />
+                <Option working_dir="bin" />
+                <Option object_output="obj/Debug/" />
+                <Option external_deps="$(OF_ROOT)/libs/openFrameworksCompiled/lib/linux64/libopenFrameworksDebug.a;" />
+                <Option type="1" />
+                <Option compiler="gcc" />
+                <Option projectLinkerOptionsRelation="2" />
+                <Compiler>
+                    <Add option="-g" />
+                    <Add option="-MMD" />
+                </Compiler>
+                <Linker>
+                    <Add option="-Wl,-rpath=./libs" />
+                    <Add library="openFrameworksDebug" />
+                </Linker>
+            </Target>
+            <Target title="Release">
+                <Option output="bin/$(PROJECT_NAME)" extension_auto="1" prefix_auto="1" />
+                <Option working_dir="bin" />
+                <Option object_output="obj/Release/" />
+                <Option external_deps="$(OF_ROOT)/libs/openFrameworksCompiled/lib/linux64/libopenFrameworks.a;" />
+                <Option type="1" />
+                <Option compiler="gcc" />
+                <Option projectLinkerOptionsRelation="2" />
+                <Compiler>
+                    <Add option="-march=native" />
+                    <Add option="-O3" />
+                    <Add option="-MMD" />
+                </Compiler>
+                <Linker>
+                    <Add option="-Wl,-rpath=./libs" />
+                    <Add option="-s" />
+                    <Add library="openFrameworks" />
+                </Linker>
+            </Target>
+			<Environment>
+				<Variable name="OF_ROOT" value="../../.." />
+			</Environment>
+        </Build>
+		<Compiler>
+            <Add option="-Wall" />
+            <Add option="-fexceptions" />
+            <Add directory="$(OF_ROOT)/addons/" />
+            <Add directory="$(OF_ROOT)/libs/openFrameworks/" />
+            <Add directory="$(OF_ROOT)/libs/openFrameworks/3d" />
+            <Add directory="$(OF_ROOT)/libs/openFrameworks/events" />
+            <Add directory="$(OF_ROOT)/libs/openFrameworks/app" />
+            <Add directory="$(OF_ROOT)/libs/openFrameworks/communication" />
+            <Add directory="$(OF_ROOT)/libs/openFrameworks/gl" />
+            <Add directory="$(OF_ROOT)/libs/openFrameworks/graphics" />
+            <Add directory="$(OF_ROOT)/libs/openFrameworks/math" />
+            <Add directory="$(OF_ROOT)/libs/openFrameworks/video" />
+            <Add directory="$(OF_ROOT)/libs/openFrameworks/utils" />
+            <Add directory="$(OF_ROOT)/libs/openFrameworks/types" />
+            <Add directory="$(OF_ROOT)/libs/openFrameworks/sound" />
+            <Add directory="$(OF_ROOT)/libs/rtAudio/include" />
+            <Add directory="$(OF_ROOT)/libs/fmodex/include" />
+            <Add directory="$(OF_ROOT)/libs/tess2/include" />
+            <Add directory="$(OF_ROOT)/libs/kiss/include" />
+            <Add directory="$(OF_ROOT)/libs/FreeImage/include" />
+            <Add directory="$(OF_ROOT)/libs/freetype/include" />
+            <Add directory="$(OF_ROOT)/libs/freetype/include/freetype2" />
+            <Add directory="$(OF_ROOT)/libs/gstappsink/include" />
+            <Add directory="$(OF_ROOT)/addons" />
+            <Add directory="$(OF_ROOT)/libs/poco/include" />
+        </Compiler>
+        <Linker>
+            <Add library="fmodex" />
+            <Add library="glut" />
+            <Add library="GL" />
+            <Add library="GLU" />
+            <Add library="Xxf86vm" />
+            <Add library="asound" />
+            <Add library="PocoNet" />
+            <Add library="PocoUtil" />
+            <Add library="PocoFoundation" />
+            <Add library="freetype" />
+            <Add library="tess2" />
+            <Add library="RtAudio" />
+            <Add library="freeimage" />
+            <Add library="kiss" />
+            <Add library="sndfile" />
+            <Add library="vorbis" />
+            <Add library="FLAC" />
+            <Add library="ogg" />
+            <Add directory="$(OF_ROOT)/libs/freetype/lib/linux64" />
+            <Add directory="$(OF_ROOT)/libs/rtAudio/lib/linux64" />
+            <Add directory="$(OF_ROOT)/libs/fmodex/lib/linux64" />
+            <Add directory="$(OF_ROOT)/libs/poco/lib/linux64" />
+            <Add directory="$(OF_ROOT)/libs/kiss/lib/linux64" />
+            <Add directory="$(OF_ROOT)/libs/tess2/lib/linux64" />
+            <Add directory="$(OF_ROOT)/libs/openFrameworksCompiled/lib/linux64" />
+        </Linker>
+        <ExtraCommands>
+            <Add after="#" />
+            <Add after="#      copy libs and shell script to bin directory:" />
+            <Add after="#" />
+            <Add after="cp -r $(OF_ROOT)/export/linux64/libs $(PROJECT_DIR)bin/" />
+        </ExtraCommands>
+		<Unit filename="src/main.cpp">
+			<Option virtualFolder="src/" />
+		</Unit>
+		<Unit filename="src/testApp.cpp">
+			<Option virtualFolder="src/" />
+		</Unit>
+		<Unit filename="src/testApp.h">
+			<Option virtualFolder="src/" />
+		</Unit>
+        <Extensions>
+            <lib_finder>
+                <lib name="gstreamer-0.10" />
+                <lib name="gstreamer-video-0.10" />
+                <lib name="gstreamer-base-0.10" />
+                <lib name="gstreamer-app-0.10" />
+                <lib name="libudev" />
+                <lib name="glew" />
+                <lib name="openal" />
+                <lib name="libmpg123" />
+                <lib name="cairo" />
+                <lib name="gtk+-2.0" />
+            </lib_finder>
+            <code_completion />
+            <envvars />
+            <debugger />
+        </Extensions>
+	</Project>
+</CodeBlocks_project_file>
