@@ -23,7 +23,7 @@ void testApp::update() {
 		resize(gray, graySmall);
 		
 		Mat graySmallMat = toCv(graySmall);
-		classifier.detectMultiScale(graySmallMat, objects, 1.06, 3,
+		classifier.detectMultiScale(graySmallMat, objects, 1.06, 1,
 			CascadeClassifier::DO_CANNY_PRUNING |
 			CascadeClassifier::FIND_BIGGEST_OBJECT |
 			CascadeClassifier::DO_ROUGH_SEARCH);
@@ -38,4 +38,6 @@ void testApp::draw() {
 	for(int i = 0; i < objects.size(); i++) {
 		ofRect(toOf(objects[i]));
 	}
+	
+	ofDrawBitmapString(ofToString(objects.size()), 10, 20);
 }
