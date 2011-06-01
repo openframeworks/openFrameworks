@@ -1,5 +1,9 @@
 package cc.openframeworks;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.media.AudioFormat;
 import android.media.AudioManager;
 import android.media.AudioRecord;
@@ -102,6 +106,10 @@ public class OFAndroidSoundStream extends OFAndroidObject implements Runnable{
 		if(nInputChannels>0){
 			setupIn(nInputChannels,sampleRate,bufferSize);
 		}
+
+        
+        broadcastReceiver = new HeadphonesReceiver();
+		activity.registerReceiver(broadcastReceiver, new IntentFilter(Intent.ACTION_HEADSET_PLUG ));
 		
 		thread = new Thread(this);
 		thread.start();
@@ -182,6 +190,24 @@ public class OFAndroidSoundStream extends OFAndroidObject implements Runnable{
 
     public static native int audioOut(short[] buffer, int numChannels, int bufferSize);
     public static native int audioIn(short[] buffer, int numChannels, int bufferSize);
+    public static native void headphonesConnected(boolean connected);
 
+	HeadphonesReceiver broadcastReceiver;
+
+    class HeadphonesReceiver extends BroadcastReceiver{
+
+    	@Override
+    	public void onReceive(Context context, Intent intent) {
+    		
+    		if(intent.getIntExtra("state",0)==0){
+    			Log.i("OF","Headphones disconnected" + intent.getStringExtra("state"));
+    			headphonesConnected(false);
+    		}else{
+    			Log.i("OF","Headphones connected" + intent.getStringExtra("state"));
+    			headphonesConnected(true);
+    		}
+    	}
+    	
+    }
 	
 }
