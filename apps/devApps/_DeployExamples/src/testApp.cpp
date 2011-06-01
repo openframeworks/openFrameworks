@@ -457,6 +457,18 @@ void checkAddSrcFiles(string projectName, string xcodePath, string srcFolderPath
 }
 
 //--------------------------------------------------------------
+void copyProjectFiles(string folderName, string folderPath, string xcodePath ){
+
+		msgStr << " " << folderName << endl;
+		ofDirectory::removeDirectory(xcodePath, true);
+		ofFile::copyFromTo("OF_template.xcodeproj", xcodePath);
+		ofFile::copyFromTo("Project.xcconfig", folderPath + "Project.xcconfig" );
+		ofFile::copyFromTo("openFrameworks-Info.plist", folderPath + "openFrameworks-Info.plist" );
+		system( string("cd "+folderPath+" ; find .  -name \"*.pbxproj*\" | xargs perl -pi -e 's/emptyExample/'"+folderName+"'/g'").c_str() );		
+
+}
+
+//--------------------------------------------------------------
 void testApp::setup(){
 
 	msgStr << "deploying examples"  << endl;
@@ -467,12 +479,10 @@ void testApp::setup(){
 	for(int k = 0; k < examples.size(); k++){
 		string folderName = examples.getName(k);
 		string folderPath = ofFilePath::getAbsolutePath(examples.getPath(k) + "/");
-		
-		msgStr << " " << folderName << endl;
-		ofFile::copyFromTo("OF_template.xcodeproj", examples.getPath(k) + "/" + folderName + ".xcodeproj");
-		ofFile::copyFromTo("Project.xcconfig",  examples.getPath(k) + "/Project.xcconfig" );
-		
-		system( string("cd "+folderPath+" ; find .  -name \"*.pbxproj*\" | xargs perl -pi -e 's/emptyExample/'"+folderName+"'/g'").c_str() );		
+		string xcodePath  = folderPath + folderName + ".xcodeproj";
+
+		copyProjectFiles(folderName, folderPath, xcodePath);
+		checkAddSrcFiles(folderName, xcodePath, folderPath + "/src/");		
 	}
 	
 	msgStr << endl << "deploying advancedExamples" << endl;
@@ -484,16 +494,9 @@ void testApp::setup(){
 		string folderName = advanced.getName(k);
 		string folderPath = ofFilePath::getAbsolutePath(advanced.getPath(k) + "/");
 		string xcodePath = advanced.getPath(k) + "/" + folderName + ".xcodeproj";
-		
-		msgStr << " " << folderName << endl;
-				
-		ofDirectory::removeDirectory(xcodePath, true);
-		ofFile::copyFromTo("OF_template.xcodeproj", xcodePath);
-		ofFile::copyFromTo("Project.xcconfig",  advanced.getPath(k) + "/Project.xcconfig" );
-		
-		system( string("cd "+folderPath+" ; find .  -name \"*.pbxproj*\" | xargs perl -pi -e 's/emptyExample/'"+folderName+"'/g'").c_str() );
-	
-		checkAddSrcFiles(folderName, xcodePath, advanced.getPath(k) + "/src/");		
+						
+		copyProjectFiles(folderName, folderPath, xcodePath);
+		checkAddSrcFiles(folderName, xcodePath, folderPath + "/src/");		
 	}	
 
 
@@ -507,15 +510,9 @@ void testApp::setup(){
 		string folderPath = ofFilePath::getAbsolutePath(addons.getPath(k) + "/");		
 		string xcodePath = addons.getPath(k) + "/" + folderName + ".xcodeproj";
 		
-		msgStr << " " << folderName << endl;
-				
-		ofDirectory::removeDirectory(xcodePath, true);
-		ofFile::copyFromTo("OF_template.xcodeproj", xcodePath);
-		ofFile::copyFromTo("Project.xcconfig",  addons.getPath(k) + "/Project.xcconfig" );
+		copyProjectFiles(folderName, folderPath, xcodePath);
+		checkAddSrcFiles(folderName, xcodePath, folderPath + "/src/");		
 		
-		system( string("cd "+folderPath+" ; find .  -name \"*.pbxproj*\" | xargs perl -pi -e 's/emptyExample/'"+folderName+"'/g'").c_str() );
-		
-
 		if( folderName == "allAddonsExample" ){
 			convertProjectToXML(xcodePath);
 			addAddonsFromInstallXML( appsPath + "../addons/ofx3DModelLoader/", folderPath, xcodePath);
@@ -573,9 +570,7 @@ void testApp::setup(){
 			convertProjectToXML(xcodePath);
 			addAddonsFromInstallXML( appsPath + "../addons/ofxXmlSettings/", folderPath, xcodePath);
 		}								
-				
-				
-		checkAddSrcFiles(folderName, xcodePath, addons.getPath(k) + "/src/");	
+								
 	}		
 	
 }
