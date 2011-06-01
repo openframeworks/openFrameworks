@@ -2,8 +2,8 @@
 #include "ofMath.h"
 
 
-template<typename T>
-ofPixels_<T>::ofPixels_(){
+template<typename PixelType>
+ofPixels_<PixelType>::ofPixels_(){
 	bAllocated = false;
 	pixelsOwner = false;
 	channels = 0;
@@ -12,13 +12,13 @@ ofPixels_<T>::ofPixels_(){
 }
 
 
-template<typename T>
-ofPixels_<T>::~ofPixels_(){
+template<typename PixelType>
+ofPixels_<PixelType>::~ofPixels_(){
 	clear();
 }
 
-template<typename T>
-ofPixels_<T>::ofPixels_(const ofPixels_<T> & mom){
+template<typename PixelType>
+ofPixels_<PixelType>::ofPixels_(const ofPixels_<PixelType> & mom){
 	bAllocated = false;
 	pixelsOwner = false;
 	channels = 0;
@@ -26,8 +26,8 @@ ofPixels_<T>::ofPixels_(const ofPixels_<T> & mom){
 	copyFrom( mom );
 }
 
-template<typename T>
-ofPixels_<T>& ofPixels_<T>::operator=(const ofPixels_<T> & mom){
+template<typename PixelType>
+ofPixels_<PixelType>& ofPixels_<PixelType>::operator=(const ofPixels_<PixelType> & mom){
 	if(this==&mom) {
 		return * this;
 	}
@@ -35,38 +35,38 @@ ofPixels_<T>& ofPixels_<T>::operator=(const ofPixels_<T> & mom){
 	return *this;
 }
 
-template<typename T>
-void ofPixels_<T>::copyFrom(const ofPixels_<T> & mom){
+template<typename PixelType>
+void ofPixels_<PixelType>::copyFrom(const ofPixels_<PixelType> & mom){
 	if(mom.isAllocated()) {
 		allocate(mom.getWidth(), mom.getHeight(), mom.getNumChannels());
 		memcpy(pixels, mom.getPixels(), mom.getWidth() * mom.getHeight() * mom.getBytesPerPixel());
 	}
 }
 
-template<typename T>
-void ofPixels_<T>::set(T val){
+template<typename PixelType>
+void ofPixels_<PixelType>::set(PixelType val){
 	int size = width * height * channels;
 	for(int i = 0; i < size; i++){
 		pixels[i] = val;
 	}
 }
 
-template<typename T>
-void ofPixels_<T>::set(int channel,T val){
+template<typename PixelType>
+void ofPixels_<PixelType>::set(int channel,PixelType val){
 	int size = width*height*channels;
 	for(int i=channel;i<size;i+=channels){
 		pixels[i] = val;
 	}
 }
 
-template<typename T>
-void ofPixels_<T>::setFromPixels(const T * newPixels,int w, int h, int channels){
+template<typename PixelType>
+void ofPixels_<PixelType>::setFromPixels(const PixelType * newPixels,int w, int h, int channels){
 	allocate(w, h, channels);
 	memcpy(pixels, newPixels, w * h * getBytesPerPixel());
 }
 
-template<typename T>
-void ofPixels_<T>::setFromPixels(const T * newPixels,int w, int h, ofImageType type){
+template<typename PixelType>
+void ofPixels_<PixelType>::setFromPixels(const PixelType * newPixels,int w, int h, ofImageType type){
 	allocate(w,h,type);
 	switch(type){
 	case OF_IMAGE_GRAYSCALE:
@@ -84,8 +84,8 @@ void ofPixels_<T>::setFromPixels(const T * newPixels,int w, int h, ofImageType t
 	}
 }
 
-template<typename T>
-void ofPixels_<T>::setFromExternalPixels(T * newPixels,int w, int h, int _channels){
+template<typename PixelType>
+void ofPixels_<PixelType>::setFromExternalPixels(PixelType * newPixels,int w, int h, int _channels){
 	clear();
 	channels = _channels;
 	width= w;
@@ -96,8 +96,8 @@ void ofPixels_<T>::setFromExternalPixels(T * newPixels,int w, int h, int _channe
 	bAllocated = true;
 }
 
-template<typename T>
-void ofPixels_<T>::setFromAlignedPixels(const T * newPixels, int width, int height, int channels, int stride) {
+template<typename PixelType>
+void ofPixels_<PixelType>::setFromAlignedPixels(const PixelType * newPixels, int width, int height, int channels, int stride) {
 	allocate(width, height, channels);
 	int dstStride = width * getBytesPerPixel();
 	const unsigned char* src = (unsigned char*) newPixels;
@@ -109,25 +109,25 @@ void ofPixels_<T>::setFromAlignedPixels(const T * newPixels, int width, int heig
 	}
 }
 
-template<typename T>
-T * ofPixels_<T>::getPixels(){
+template<typename PixelType>
+PixelType * ofPixels_<PixelType>::getPixels(){
 	return &pixels[0];
 }
 
-template<typename T>
-const T * ofPixels_<T>::getPixels() const{
+template<typename PixelType>
+const PixelType * ofPixels_<PixelType>::getPixels() const{
 	return &pixels[0];
 }
 
 
-/*template<typename T>
-void ofPixels_<T>::allocate(int w, int h, int bitsPerPixel){
+/*template<typename PixelType>
+void ofPixels_<PixelType>::allocate(int w, int h, int bitsPerPixel){
 	ofImageType type = getImageTypeFromBits(bitsPerPixel);
 	allocate(w,h,type);
 }*/
 
-template<typename T>
-void ofPixels_<T>::allocate(int w, int h, int _channels){
+template<typename PixelType>
+void ofPixels_<PixelType>::allocate(int w, int h, int _channels){
 	if (w < 0 || h < 0) {
 		return;
 	}
@@ -144,14 +144,14 @@ void ofPixels_<T>::allocate(int w, int h, int _channels){
 	width= w;
 	height = h;
 
-	pixels = new T[w * h * channels];
+	pixels = new PixelType[w * h * channels];
 	bAllocated = true;
 	pixelsOwner = true;
 }
 
 
-template<typename T>
-void ofPixels_<T>::allocate(int w, int h, ofPixelFormat format){
+template<typename PixelType>
+void ofPixels_<PixelType>::allocate(int w, int h, ofPixelFormat format){
 
 	if (w < 0 || h < 0) return;
 
@@ -176,8 +176,8 @@ void ofPixels_<T>::allocate(int w, int h, ofPixelFormat format){
 	allocate(w,h,imgType);
 }
 
-template<typename T>
-void ofPixels_<T>::allocate(int w, int h, ofImageType type){
+template<typename PixelType>
+void ofPixels_<PixelType>::allocate(int w, int h, ofImageType type){
 	switch(type){
 	case OF_IMAGE_GRAYSCALE:
 		allocate(w,h,1);
@@ -195,12 +195,12 @@ void ofPixels_<T>::allocate(int w, int h, ofImageType type){
 	}
 }
 
-template<typename T>
-void ofPixels_<T>::swapRgb(){
+template<typename PixelType>
+void ofPixels_<PixelType>::swapRgb(){
 	if (channels >= 3){
 		int sizePixels		= width*height;
 		int cnt				= 0;
-		T * pixels_ptr = pixels;
+		PixelType * pixels_ptr = pixels;
 
 		while (cnt < sizePixels){
 			std::swap(pixels_ptr[0],pixels_ptr[2]);
@@ -210,8 +210,8 @@ void ofPixels_<T>::swapRgb(){
 	}
 }
 
-template<typename T>
-void ofPixels_<T>::clear(){
+template<typename PixelType>
+void ofPixels_<PixelType>::clear(){
 	if(pixels){
 		if(pixelsOwner) delete[] pixels;
 		pixels = NULL;
@@ -223,8 +223,8 @@ void ofPixels_<T>::clear(){
 	bAllocated		= false;
 }
 
-template<typename T>
-int ofPixels_<T>::getPixelIndex(int x, int y) const {
+template<typename PixelType>
+int ofPixels_<PixelType>::getPixelIndex(int x, int y) const {
 	if( !bAllocated ){
 		return 0;
 	}else{
@@ -232,8 +232,8 @@ int ofPixels_<T>::getPixelIndex(int x, int y) const {
 	}
 }
 
-template<typename T>
-ofColor ofPixels_<T>::getColor(int x, int y) const {
+template<typename PixelType>
+ofColor ofPixels_<PixelType>::getColor(int x, int y) const {
 	ofColor c;
 	int index = getPixelIndex(x, y);
 
@@ -248,8 +248,8 @@ ofColor ofPixels_<T>::getColor(int x, int y) const {
 	return c;
 }
 
-template<typename T>
-void ofPixels_<T>::setColor(int x, int y, ofColor color) {
+template<typename PixelType>
+void ofPixels_<PixelType>::setColor(int x, int y, ofColor color) {
 	int index = getPixelIndex(x, y);
 
 	if( channels == 1 ){
@@ -266,58 +266,58 @@ void ofPixels_<T>::setColor(int x, int y, ofColor color) {
 	}
 }
 
-template<typename T>
-T & ofPixels_<T>::operator[](int pos){
+template<typename PixelType>
+PixelType & ofPixels_<PixelType>::operator[](int pos){
 	return pixels[pos];
 }
 
-template<typename T>
-const T & ofPixels_<T>::operator[](int pos) const{
+template<typename PixelType>
+const PixelType & ofPixels_<PixelType>::operator[](int pos) const{
 	return pixels[pos];
 }
 
-template<typename T>
-bool ofPixels_<T>::isAllocated() const{
+template<typename PixelType>
+bool ofPixels_<PixelType>::isAllocated() const{
 	return bAllocated;
 }
 
-template<typename T>
-int ofPixels_<T>::getWidth() const{
+template<typename PixelType>
+int ofPixels_<PixelType>::getWidth() const{
 	return width;
 }
 
-template<typename T>
-int ofPixels_<T>::getHeight() const{
+template<typename PixelType>
+int ofPixels_<PixelType>::getHeight() const{
 	return height;
 }
 
-template<typename T>
-int ofPixels_<T>::getBytesPerPixel() const{
+template<typename PixelType>
+int ofPixels_<PixelType>::getBytesPerPixel() const{
 	return getBytesPerChannel() * channels;
 }
 
-template<typename T>
-int ofPixels_<T>::getBitsPerPixel() const{
+template<typename PixelType>
+int ofPixels_<PixelType>::getBitsPerPixel() const{
 	return getBitsPerChannel() * channels;
 }
 
-template<typename T>
-int ofPixels_<T>::getBytesPerChannel() const{
-	return sizeof(T);
+template<typename PixelType>
+int ofPixels_<PixelType>::getBytesPerChannel() const{
+	return sizeof(PixelType);
 }
 
-template<typename T>
-int ofPixels_<T>::getBitsPerChannel() const{
+template<typename PixelType>
+int ofPixels_<PixelType>::getBitsPerChannel() const{
 	return getBytesPerChannel() * 8;
 }
 
-template<typename T>
-int ofPixels_<T>::getNumChannels() const{
+template<typename PixelType>
+int ofPixels_<PixelType>::getNumChannels() const{
 	return channels;
 }
 
-template<typename T>
-ofImageType ofPixels_<T>::getImageType() const{
+template<typename PixelType>
+ofImageType ofPixels_<PixelType>::getImageType() const{
 	switch(getNumChannels()){
 	case 1:
 		return OF_IMAGE_GRAYSCALE;
@@ -330,14 +330,14 @@ ofImageType ofPixels_<T>::getImageType() const{
 	}
 }
 
-template<typename T>
-int ofPixels_<T>::size() const{
+template<typename PixelType>
+int ofPixels_<PixelType>::size() const{
 	return width*height*channels;
 }
 
-template<typename T>
-ofPixels_<T> ofPixels_<T>::getChannel(int channel) const{
-	ofPixels_<T> channelPixels;
+template<typename PixelType>
+ofPixels_<PixelType> ofPixels_<PixelType>::getChannel(int channel) const{
+	ofPixels_<PixelType> channelPixels;
 	channelPixels.allocate(width,height,1);
 	channel = ofClamp(channel,0,channels-1);
 	int j=0;
@@ -347,8 +347,8 @@ ofPixels_<T> ofPixels_<T>::getChannel(int channel) const{
 	return channelPixels;
 }
 
-template<typename T>
-void ofPixels_<T>::setChannel(int channel, const ofPixels_<T> channelPixels){
+template<typename PixelType>
+void ofPixels_<PixelType>::setChannel(int channel, const ofPixels_<PixelType> channelPixels){
 	channel = ofClamp(channel,0,channels-1);
 	int j=0;
 	for(int i=channel;i<size();i+=channels, ++j){
