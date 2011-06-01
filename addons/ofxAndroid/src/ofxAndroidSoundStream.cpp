@@ -14,6 +14,7 @@
 #include <set>
 
 static ofxAndroidSoundStream* instance=NULL;
+static bool headphonesConnected;
 
 ofxAndroidSoundStream::ofxAndroidSoundStream(){
 	out_buffer=NULL;
@@ -27,6 +28,7 @@ ofxAndroidSoundStream::ofxAndroidSoundStream(){
 	isPaused = false;
 	soundInputPtr = NULL;
 	soundOutputPtr = NULL;
+	headphonesConnected = false;
 }
 
 ofxAndroidSoundStream::~ofxAndroidSoundStream(){
@@ -268,6 +270,10 @@ int ofxAndroidSoundStream::getMinInBufferSize(int samplerate, int nchannels){
 	return ofGetJNIEnv()->CallStaticIntMethod(javaClass,getMinBuffSize,samplerate,nchannels);
 }
 
+bool ofxAndroidSoundStream::isHeadPhonesConnected(){
+	return headphonesConnected;
+}
+
 void ofxAndroidSoundStreamPause(){
 	if(instance){
 		instance->pause();
@@ -297,5 +303,10 @@ Java_cc_openframeworks_OFAndroidSoundStream_audioIn(JNIEnv*  env, jobject  thiz,
 		return instance->androidInputAudioCallback(env,thiz,array,numChannels,bufferSize);
 	}
 	return 0;
+}
+
+void Java_cc_openframeworks_OFAndroidSoundStream_headphonesConnected(JNIEnv*  env, jobject  thiz, jboolean connected){
+	headphonesConnected = connected;
+	if(instance) ofNotifyEvent(instance->headphonesConnectedE,headphonesConnected);
 }
 }
