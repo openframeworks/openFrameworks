@@ -46,7 +46,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\..\..\..\libs\openFrameworks;..\..\..\..\libs\openFrameworks\graphics;..\..\..\..\libs\openFrameworks\app;..\..\..\..\libs\openFrameworks\sound;..\..\..\..\libs\openFrameworks\utils;..\..\..\..\libs\openFrameworks\communication;..\..\..\..\libs\openFrameworks\video;..\..\..\..\libs\openFrameworks\types;..\..\..\..\libs\openFrameworks\math;..\..\..\..\libs\openFrameworks\3d;..\..\..\..\libs\openFrameworks\events;..\..\..\..\libs\glut\include;..\..\..\..\libs\rtAudio\include;..\..\..\..\libs\quicktime\include;..\..\..\..\libs\freetype\include;..\..\..\..\libs\freetype\include\freetype2;..\..\..\..\libs\freeImage\include;..\..\..\..\libs\fmodex\include;..\..\..\..\libs\videoInput\include;..\..\..\..\libs\glew\include\;..\..\..\..\libs\glu\include;..\..\..\..\libs\poco\include;..\..\..\addons;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\..\libs\openFrameworks;..\..\..\..\libs\openFrameworks\graphics;..\..\..\..\libs\openFrameworks\app;..\..\..\..\libs\openFrameworks\sound;..\..\..\..\libs\openFrameworks\utils;..\..\..\..\libs\openFrameworks\communication;..\..\..\..\libs\openFrameworks\video;..\..\..\..\libs\openFrameworks\types;..\..\..\..\libs\openFrameworks\math;..\..\..\..\libs\openFrameworks\3d;..\..\..\..\libs\openFrameworks\gl;..\..\..\..\libs\openFrameworks\events;..\..\..\..\libs\glut\include;..\..\..\..\libs\rtAudio\include;..\..\..\..\libs\quicktime\include;..\..\..\..\libs\freetype\include;..\..\..\..\libs\freetype\include\freetype2;..\..\..\..\libs\freeImage\include;..\..\..\..\libs\fmodex\include;..\..\..\..\libs\videoInput\include;..\..\..\..\libs\glew\include\;..\..\..\..\libs\glu\include;..\..\..\..\libs\poco\include;..\..\..\addons;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;POCO_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -67,7 +67,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
       <WholeProgramOptimization>false</WholeProgramOptimization>
-      <AdditionalIncludeDirectories>..\..\..\..\libs\openFrameworks;..\..\..\..\libs\openFrameworks\graphics;..\..\..\..\libs\openFrameworks\app;..\..\..\..\libs\openFrameworks\sound;..\..\..\..\libs\openFrameworks\utils;..\..\..\..\libs\openFrameworks\communication;..\..\..\..\libs\openFrameworks\video;..\..\..\..\libs\openFrameworks\types;..\..\..\..\libs\openFrameworks\math;..\..\..\..\libs\openFrameworks\3d;..\..\..\..\libs\openFrameworks\events;..\..\..\..\libs\glut\include;..\..\..\..\libs\rtAudio\include;..\..\..\..\libs\quicktime\include;..\..\..\..\libs\freetype\include;..\..\..\..\libs\freetype\include\freetype2;..\..\..\..\libs\freeImage\include;..\..\..\..\libs\fmodex\include;..\..\..\..\libs\videoInput\include;..\..\..\..\libs\glew\include\;..\..\..\..\libs\glu\include;..\..\..\..\libs\poco\include;..\..\..\addons;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\..\libs\openFrameworks;..\..\..\..\libs\openFrameworks\graphics;..\..\..\..\libs\openFrameworks\app;..\..\..\..\libs\openFrameworks\sound;..\..\..\..\libs\openFrameworks\utils;..\..\..\..\libs\openFrameworks\communication;..\..\..\..\libs\openFrameworks\video;..\..\..\..\libs\openFrameworks\types;..\..\..\..\libs\openFrameworks\math;..\..\..\..\libs\openFrameworks\3d;..\..\..\..\libs\openFrameworks\gl;..\..\..\..\libs\openFrameworks\events;..\..\..\..\libs\glut\include;..\..\..\..\libs\rtAudio\include;..\..\..\..\libs\quicktime\include;..\..\..\..\libs\freetype\include;..\..\..\..\libs\freetype\include\freetype2;..\..\..\..\libs\freeImage\include;..\..\..\..\libs\fmodex\include;..\..\..\..\libs\videoInput\include;..\..\..\..\libs\glew\include\;..\..\..\..\libs\glu\include;..\..\..\..\libs\poco\include;..\..\..\addons;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;POCO_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <PrecompiledHeader>
@@ -82,14 +82,34 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\openFrameworks\3d\of3d.h" />
+    <ClInclude Include="..\..\..\openFrameworks\3d\of3dUtils.h" />
     <ClInclude Include="..\..\..\openFrameworks\3d\ofCamera.h" />
-    <ClInclude Include="..\..\..\openFrameworks\3d\ofMeshNode.h" />
-    <ClInclude Include="..\..\..\openFrameworks\3d\ofNode3D.h" />
-    <ClInclude Include="..\..\..\openFrameworks\3d\ofScene3d.h" />
+    <ClInclude Include="..\..\..\openFrameworks\3d\ofEasyCam.h" />
+    <ClInclude Include="..\..\..\openFrameworks\3d\ofMesh.h" />
+    <ClInclude Include="..\..\..\openFrameworks\3d\ofNode.h" />
     <ClInclude Include="..\..\..\openFrameworks\app\ofAppBaseWindow.h" />
     <ClInclude Include="..\..\..\openFrameworks\app\ofBaseApp.h" />
+    <ClInclude Include="..\..\..\openFrameworks\gl\ofFbo.h" />
+    <ClInclude Include="..\..\..\openFrameworks\gl\ofGLRenderer.h" />
+    <ClInclude Include="..\..\..\openFrameworks\gl\ofGLUtils.h" />
+    <ClInclude Include="..\..\..\openFrameworks\gl\ofLight.h" />
+    <ClInclude Include="..\..\..\openFrameworks\gl\ofMaterial.h" />
+    <ClInclude Include="..\..\..\openFrameworks\gl\ofShader.h" />
+    <ClInclude Include="..\..\..\openFrameworks\gl\ofTexture.h" />
+    <ClInclude Include="..\..\..\openFrameworks\gl\ofVbo.h" />
+    <ClInclude Include="..\..\..\openFrameworks\gl\ofVboMesh.h" />
+    <ClInclude Include="..\..\..\openFrameworks\graphics\ofBitmapFont.h" />
+    <ClInclude Include="..\..\..\openFrameworks\graphics\ofCairoRenderer.h" />
+    <ClInclude Include="..\..\..\openFrameworks\graphics\ofGraphics.h" />
+    <ClInclude Include="..\..\..\openFrameworks\graphics\ofImage.h" />
+    <ClInclude Include="..\..\..\openFrameworks\graphics\ofPath.h" />
     <ClInclude Include="..\..\..\openFrameworks\graphics\ofPixels.h" />
+    <ClInclude Include="..\..\..\openFrameworks\graphics\ofPixelUtils.h" />
+    <ClInclude Include="..\..\..\openFrameworks\graphics\ofPolyline.h" />
+    <ClInclude Include="..\..\..\openFrameworks\graphics\ofPolyUtils.h" />
+    <ClInclude Include="..\..\..\openFrameworks\graphics\ofRendererCollection.h" />
+    <ClInclude Include="..\..\..\openFrameworks\graphics\ofTessellator.h" />
+    <ClInclude Include="..\..\..\openFrameworks\graphics\ofTrueTypeFont.h" />
     <ClInclude Include="..\..\..\openFrameworks\math\ofMath.h" />
     <ClInclude Include="..\..\..\openFrameworks\math\ofMatrix3x3.h" />
     <ClInclude Include="..\..\..\openFrameworks\math\ofMatrix4x4.h" />
@@ -101,11 +121,6 @@
     <ClInclude Include="..\..\..\openFrameworks\ofMain.h" />
     <ClInclude Include="..\..\..\openFrameworks\app\ofAppGlutWindow.h" />
     <ClInclude Include="..\..\..\openFrameworks\app\ofAppRunner.h" />
-    <ClInclude Include="..\..\..\openFrameworks\graphics\ofBitmapFont.h" />
-    <ClInclude Include="..\..\..\openFrameworks\graphics\ofGraphics.h" />
-    <ClInclude Include="..\..\..\openFrameworks\graphics\ofImage.h" />
-    <ClInclude Include="..\..\..\openFrameworks\graphics\ofTexture.h" />
-    <ClInclude Include="..\..\..\openFrameworks\graphics\ofTrueTypefont.h" />
     <ClInclude Include="..\..\..\openFrameworks\sound\ofSoundPlayer.h" />
     <ClInclude Include="..\..\..\openFrameworks\sound\ofSoundStream.h" />
     <ClInclude Include="..\..\..\openFrameworks\types\ofBaseTypes.h" />
@@ -115,8 +130,11 @@
     <ClInclude Include="..\..\..\openFrameworks\types\ofTypes.h" />
     <ClInclude Include="..\..\..\openFrameworks\utils\ofConstants.h" />
     <ClInclude Include="..\..\..\openFrameworks\utils\ofFileUtils.h" />
+    <ClInclude Include="..\..\..\openFrameworks\utils\ofLog.h" />
     <ClInclude Include="..\..\..\openFrameworks\utils\ofNoise.h" />
     <ClInclude Include="..\..\..\openFrameworks\utils\ofSystemUtils.h" />
+    <ClInclude Include="..\..\..\openFrameworks\utils\ofThread.h" />
+    <ClInclude Include="..\..\..\openFrameworks\utils\ofURLFileLoader.h" />
     <ClInclude Include="..\..\..\openFrameworks\utils\ofUtils.h" />
     <ClInclude Include="..\..\..\openFrameworks\video\ofDirectShowGrabber.h" />
     <ClInclude Include="..\..\..\openFrameworks\video\ofQtUtils.h" />
@@ -128,20 +146,32 @@
     <ClInclude Include="..\..\..\openFrameworks\events\ofEventUtils.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\openFrameworks\3d\of3dUtils.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\3d\ofCamera.cpp" />
-    <ClCompile Include="..\..\..\openFrameworks\3d\ofMeshNode.cpp" />
-    <ClCompile Include="..\..\..\openFrameworks\3d\ofNode3D.cpp" />
-    <ClCompile Include="..\..\..\openFrameworks\3d\ofScene3d.cpp" />
+    <ClCompile Include="..\..\..\openFrameworks\3d\ofEasyCam.cpp" />
+    <ClCompile Include="..\..\..\openFrameworks\3d\ofMesh.cpp" />
+    <ClCompile Include="..\..\..\openFrameworks\3d\ofNode.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\app\ofAppGlutWindow.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\app\ofAppRunner.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\events\ofEvents.cpp" />
-    <ClCompile Include="..\..\..\openFrameworks\graphics\ofBitmapFont.cpp">
-      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Level1</WarningLevel>
-    </ClCompile>
+    <ClCompile Include="..\..\..\openFrameworks\gl\ofFbo.cpp" />
+    <ClCompile Include="..\..\..\openFrameworks\gl\ofGLRenderer.cpp" />
+    <ClCompile Include="..\..\..\openFrameworks\gl\ofLight.cpp" />
+    <ClCompile Include="..\..\..\openFrameworks\gl\ofMaterial.cpp" />
+    <ClCompile Include="..\..\..\openFrameworks\gl\ofShader.cpp" />
+    <ClCompile Include="..\..\..\openFrameworks\gl\ofTexture.cpp" />
+    <ClCompile Include="..\..\..\openFrameworks\gl\ofVbo.cpp" />
+    <ClCompile Include="..\..\..\openFrameworks\gl\ofVboMesh.cpp" />
+    <ClCompile Include="..\..\..\openFrameworks\graphics\ofBitmapFont.cpp" />
+    <ClCompile Include="..\..\..\openFrameworks\graphics\ofCairoRenderer.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\graphics\ofGraphics.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\graphics\ofImage.cpp" />
+    <ClCompile Include="..\..\..\openFrameworks\graphics\ofPath.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\graphics\ofPixels.cpp" />
-    <ClCompile Include="..\..\..\openFrameworks\graphics\ofTexture.cpp" />
+    <ClCompile Include="..\..\..\openFrameworks\graphics\ofPixelUtils.cpp" />
+    <ClCompile Include="..\..\..\openFrameworks\graphics\ofPolyline.cpp" />
+    <ClCompile Include="..\..\..\openFrameworks\graphics\ofPolyUtils.cpp" />
+    <ClCompile Include="..\..\..\openFrameworks\graphics\ofTessellator.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\graphics\ofTrueTypeFont.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\math\ofMath.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\math\ofMatrix3x3.cpp" />
@@ -154,7 +184,10 @@
     <ClCompile Include="..\..\..\openFrameworks\types\ofPoint.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\types\ofRectangle.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\utils\ofFileUtils.cpp" />
+    <ClCompile Include="..\..\..\openFrameworks\utils\ofLog.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\utils\ofSystemUtils.cpp" />
+    <ClCompile Include="..\..\..\openFrameworks\utils\ofThread.cpp" />
+    <ClCompile Include="..\..\..\openFrameworks\utils\ofURLFileLoader.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\utils\ofUtils.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\video\ofDirectShowGrabber.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\video\ofQtUtils.cpp" />
