@@ -45,6 +45,11 @@ enum ofLoopType{
 		#   define _WIN32_WINNT 0x400
 	#endif
 	#define WIN32_LEAN_AND_MEAN
+
+#if (_MSC_VER)
+#define NOMINMAX
+#endif
+
 	#include <windows.h>
 	#define GLEW_STATIC
 	#include "GL\glew.h"
