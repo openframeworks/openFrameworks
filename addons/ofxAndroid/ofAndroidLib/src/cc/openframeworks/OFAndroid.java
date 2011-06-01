@@ -15,29 +15,25 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.ActivityInfo;
 import android.hardware.SensorManager;
+import android.opengl.ETC1Util;
 import android.opengl.GLSurfaceView;
 import android.os.Environment;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.GestureDetector.SimpleOnGestureListener;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.CompoundButton;
 
 public class OFAndroid {
 	
-
-
-
-
-
 	public OFAndroid(String packageName, Activity ofActivity){
 		//Log.i("OF","external files dir: "+ ofActivity.getApplicationContext().getExternalFilesDir(null));
 		OFAndroid.packageName = packageName;
+		OFAndroidObject.setActivity(ofActivity);
         try {
         	
 			// try to find if R.raw class exists will throw
@@ -48,7 +44,7 @@ public class OFAndroid {
         	// to a folder in the sdcard
 	        Field[] files = raw.getDeclaredFields();
 	        
-	        String dataPath="";
+	        dataPath="";
     		try{
     			dataPath = Environment.getExternalStorageDirectory().getAbsolutePath();
     			dataPath += "/"+packageName;
@@ -128,27 +124,26 @@ public class OFAndroid {
 			
 			Class<?> id = Class.forName(packageName+".R$id");
 			mGLView = (OFGLSurfaceView)ofActivity.findViewById(id.getField("of_gl_surface").getInt(null));
-			mGLView.setOnClickListener(gestureListener); 
-			mGLView.setOnTouchListener(gestureListener.touchListener);
+			enableTouchEvents();
 			
 			
 		} catch (Exception e) {
 			Log.e("OF", "couldn't create view from layout falling back to GL only",e);
 	        mGLView = new OFGLSurfaceView(ofActivity);
 	        ofActivity.setContentView(mGLView);
-	        
-	        mGLView.setOnClickListener(gestureListener); 
-	        mGLView.setOnTouchListener(gestureListener.touchListener);
+	        enableTouchEvents();
 		}
 		android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_URGENT_AUDIO);
     }
 
 	public void start(){
 		Log.i("OF","onStart");
+		enableTouchEvents();
 	}
 	
 	public void restart(){
 		Log.i("OF","onRestart");
+		enableTouchEvents();
 		onRestart();
         /*if(OFAndroidSoundStream.isInitialized() && OFAndroidSoundStream.wasStarted())
         	OFAndroidSoundStream.getInstance().start();*/
@@ -156,6 +151,7 @@ public class OFAndroid {
 	
 	public void pause(){
 		Log.i("OF","onPause");
+		disableTouchEvents();
 		mGLView.onPause();
 		onPause();
 
@@ -167,6 +163,7 @@ public class OFAndroid {
 	
 	public void resume(){
 		Log.i("OF","onResume");
+		enableTouchEvents();
         mGLView.onResume();
         onResume();
 
@@ -177,6 +174,7 @@ public class OFAndroid {
 	
 	public void stop(){
 		Log.i("OF","onStop");
+		disableTouchEvents();
 		onStop();
 		for(OFAndroidObject object : OFAndroidObject.ofObjects){
 			object.onStop();
@@ -190,13 +188,13 @@ public class OFAndroid {
 		onDestroy();
 	}
 	
-	static public boolean menuItemSelected(MenuItem item){
+	static public boolean menuItemSelected(int id){
 		try {
 			Class<?> menu_ids = Class.forName(packageName+".R$id");
 			Field[] fields = menu_ids.getFields();
 			for(Field field: fields){
 				Log.i("OF", "checking " + field.getName());
-				if(item.getItemId() == field.getInt(null)){
+				if(id == field.getInt(null)){
 					return onMenuItemSelected(field.getName());
 				}
 			}
@@ -204,6 +202,42 @@ public class OFAndroid {
 			Log.w("OF","Trying to get menu items ", e);
 		}
 		return false;
+	}
+	
+	static public boolean menuItemChecked(int id, boolean checked){
+		try {
+			Class<?> menu_ids = Class.forName(packageName+".R$id");
+			Field[] fields = menu_ids.getFields();
+			for(Field field: fields){
+				if(id == field.getInt(null)){
+					return onMenuItemChecked(field.getName(),checked);
+				}
+			}
+		} catch (Exception e) {
+			Log.w("OF","Trying to get menu items ", e);
+		}
+		return false;
+	}
+	
+	static public void setMenuItemChecked(String idStr, boolean checked){
+		try {
+			Class<?> menu_ids = Class.forName(packageName+".R$id");
+			Field field = menu_ids.getField(idStr);
+			//ofActivity.getMenuInflater().
+		} catch (Exception e) {
+			Log.w("OF","Trying to get menu items ", e);
+		}
+	}
+	
+	static public void setViewItemChecked(String idStr, boolean checked){
+		try {
+			Class<?> menu_ids = Class.forName(packageName+".R$id");
+			Field field = menu_ids.getField(idStr);
+			CompoundButton checkbox = (CompoundButton) ofActivity.findViewById(field.getInt(null));
+			checkbox.setChecked(checked);
+		} catch (Exception e) {
+			Log.w("OF","Trying to get menu items ", e);
+		}
 	}
 
 	// native methods to call OF c++ callbacks
@@ -231,6 +265,7 @@ public class OFAndroid {
     public static native boolean onBackPressed();
     
     public static native boolean onMenuItemSelected(String menu_id);
+    public static native boolean onMenuItemChecked(String menu_id, boolean checked);
     
 
     // static methods to be called from OF c++ code
@@ -294,19 +329,30 @@ public class OFAndroid {
 	}
 	
 	public static void alertBox(String msg){  
-		new AlertDialog.Builder(ofActivity)  
-			.setMessage(msg)  
-			.setTitle("OF")  
-			.setCancelable(false)  
-			.setNeutralButton(android.R.string.ok,  
-					new DialogInterface.OnClickListener() {  
-				public void onClick(DialogInterface dialog, int whichButton){}  
-		  	})  
-		  	.show();    
+		final String alertMsg = msg;
+		ofActivity.runOnUiThread(new Runnable(){
+			public void run() {
+				new AlertDialog.Builder(ofActivity)  
+					.setMessage(alertMsg)  
+					.setTitle("OF")  
+					.setCancelable(false)  
+					.setNeutralButton(android.R.string.ok,  
+							new DialogInterface.OnClickListener() {  
+						public void onClick(DialogInterface dialog, int whichButton){}
+	
+				  	})  
+				  	.show();    
+				
+			}  
+		});
 	}
 	
 	public static Context getContext(){
 		return ofActivity;
+	}
+	
+	public static String toDataPath(String path){
+		return dataPath + "/" + path;
 	}
     
     private OFGLSurfaceView mGLView;
@@ -315,7 +361,7 @@ public class OFAndroid {
     private static Activity ofActivity;
     private OFGestureListener gestureListener;
 	private static String packageName;
-
+	private static String dataPath;
     
 	 
     static {
@@ -328,13 +374,15 @@ public class OFAndroid {
         return mGLView;
 	}
 	
-    static public MenuItem getMenuItemByID(Menu menu, int id){
-    	for(int i=0; i<menu.size(); i++){
-    		if(menu.getItem(i).getItemId()==id) return menu.getItem(i);
-    	}
-    	return null;
-    }
-    
+	public void disableTouchEvents(){
+        mGLView.setOnClickListener(null); 
+        mGLView.setOnTouchListener(null);
+	}
+	
+	public void enableTouchEvents(){
+        mGLView.setOnClickListener(gestureListener); 
+        mGLView.setOnTouchListener(gestureListener.touchListener);
+	}
 	
 }
 
@@ -458,7 +506,7 @@ class OFGLSurfaceView extends GLSurfaceView{
 
 class OFAndroidWindow implements GLSurfaceView.Renderer {
 	
-	public OFAndroidWindow(int w, int h){
+	public OFAndroidWindow(int w, int h){ 
 		this.w = w;
 		this.h = h;
 	}
@@ -472,7 +520,11 @@ class OFAndroidWindow implements GLSurfaceView.Renderer {
     	OFAndroid.init();
     	OFAndroid.setup(w,h);
     	initialized = true;
-    	android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_LOWEST);
+    	android.os.Process.setThreadPriority(8);
+    	
+    	if(ETC1Util.isETC1Supported()) Log.i("OF","ETC supported");
+    	else Log.i("OF","ETC not supported");
+    	
     }
 
     public void onSurfaceChanged(GL10 gl, int w, int h) {
