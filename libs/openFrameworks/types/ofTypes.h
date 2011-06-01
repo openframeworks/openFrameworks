@@ -2,7 +2,12 @@
 
 #include "ofConstants.h"
 #include "ofColor.h"
+
+#ifdef _WIN32
+#include <memory>
+#else
 #include <tr1/memory>
+#endif
 
 //----------------------------------------------------------
 // ofDeviceInfo
