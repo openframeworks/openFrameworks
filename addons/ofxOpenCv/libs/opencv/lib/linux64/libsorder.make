@@ -13,4 +13,3 @@ opencv_lapack
 opencv_flann
 opencv_contrib
 opencv_gpu
-zlib 

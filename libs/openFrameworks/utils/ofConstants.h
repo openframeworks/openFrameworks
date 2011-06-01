@@ -45,6 +45,11 @@ enum ofLoopType{
 		#   define _WIN32_WINNT 0x400
 	#endif
 	#define WIN32_LEAN_AND_MEAN
+
+#if (_MSC_VER)
+#define NOMINMAX
+#endif
+
 	#include <windows.h>
 	#define GLEW_STATIC
 	#include "GL\glew.h"
@@ -53,6 +58,7 @@ enum ofLoopType{
 	#define __WINDOWS_DS__
 	#define __WINDOWS_MM__
 	#if (_MSC_VER)       // microsoft visual studio
+		typedef unsigned __int64  uint64_t;		// allow us to use uint64_t
 		#pragma warning(disable : 4996)     // disable all deprecation warnings
 		#pragma warning(disable : 4068)     // unknown pragmas
 		#pragma warning(disable : 4101)     // unreferenced local variable
