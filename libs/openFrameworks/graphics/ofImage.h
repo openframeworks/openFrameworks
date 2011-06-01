@@ -42,15 +42,15 @@ void ofSaveImage(ofShortPixels & pix, ofBuffer & buffer, ofImageQualityType qual
 void ofCloseFreeImage();
 
 //----------------------------------------------------
-template<typename T>
-class ofImage_ : public ofBaseImage_<T>{
+template<typename PixelType>
+class ofImage_ : public ofBaseImage_<PixelType>{
 
 	public :
 
 		ofImage_();
 		virtual ~ofImage_();
 
-		ofImage_(const ofPixels_<T> & pix);
+		ofImage_(const ofPixels_<PixelType> & pix);
 		ofImage_(const ofFile & file);
 		ofImage_(const string & filename);
 
@@ -59,18 +59,18 @@ class ofImage_ : public ofBaseImage_<T>{
 		void 				clear();
 
 		// default copy overwriting (for = or std::vector)
-		ofImage_(const ofImage_<T>& mom);
-		ofImage_<T>& operator= (const ofImage_<T>& mom);
+		ofImage_(const ofImage_<PixelType>& mom);
+		ofImage_<PixelType>& operator= (const ofImage_<PixelType>& mom);
 
-		template<typename T2>
-		ofImage_(const ofImage_<T2>& mom);
+		template<typename SrcType>
+		ofImage_(const ofImage_<SrcType>& mom);
 
-		template<typename T2>
-		ofImage_<T>& operator= (const ofImage_<T2>& mom);
+		template<typename SrcType>
+		ofImage_<PixelType>& operator= (const ofImage_<SrcType>& mom);
 
 		// copying:
-		template<typename T2>
-		void 				clone(const ofImage_<T2> &mom);
+		template<typename SrcType>
+		void 				clone(const ofImage_<SrcType> &mom);
 
 		// enable or disable using the texture of this image
 		void 				setUseTexture(bool bUse);
@@ -95,17 +95,17 @@ class ofImage_ : public ofBaseImage_<T>{
 		void				setCompression(ofTexCompression compression);
 
 		// getting the data
-		T * 				getPixels();			// up to you to get this right
-		ofPixels_<T> &	 	getPixelsRef();
+		PixelType * 				getPixels();			// up to you to get this right
+		ofPixels_<PixelType> &	 	getPixelsRef();
 
-		operator ofPixels_<T>&();
+		operator ofPixels_<PixelType>&();
 
 		ofColor getColor(int x, int y) const;
 
 		// alter the image
 		void setColor(int x, int y, ofColor color);
-		void 				setFromPixels(const T * pixels, int w, int h, ofImageType type, bool bOrderIsRGB = true);
-		void				setFromPixels(const ofPixels_<T> & pixels);
+		void 				setFromPixels(const PixelType * pixels, int w, int h, ofImageType type, bool bOrderIsRGB = true);
+		void				setFromPixels(const ofPixels_<PixelType> & pixels);
 		void 				setImageType(ofImageType type);
 		void 				resize(int newWidth, int newHeight);
 		void 				grabScreen(int x, int y, int w, int h);		// grab pixels from opengl, using glreadpixels
@@ -115,7 +115,7 @@ class ofImage_ : public ofBaseImage_<T>{
 		// this does a crop from another image.
 		// NOTE: this will reallocate memory if the image types are different, or if the w & h do not
 		// equal this images w & h
-		void				cropFrom(ofImage_<T> & otherImage, int x, int y, int w, int h);
+		void				cropFrom(ofImage_<PixelType> & otherImage, int x, int y, int w, int h);
 		// perform rotation of 90 degress clockwise rotation amont times. 
 		void				rotate90(int rotation);
 		void				mirror(bool vertical, bool horizontal); 
@@ -150,13 +150,13 @@ class ofImage_ : public ofBaseImage_<T>{
 		int 				width, height, bpp;		// w,h, bits per pixel
 		int					type;					// OF_IMAGE_GRAYSCALE, OF_IMAGE_COLOR, OF_IMAGE_COLOR_ALPHA
 
-		ofImage_<T> & operator=(ofPixels_<T> & pixels);
+		ofImage_<PixelType> & operator=(ofPixels_<PixelType> & pixels);
 	protected:
 	
-		void				changeTypeOfPixels(ofPixels_<T> &pix, ofImageType type);
-		void				resizePixels(ofPixels_<T> &pix, int newWidth, int newHeight);
+		void				changeTypeOfPixels(ofPixels_<PixelType> &pix, ofImageType type);
+		void				resizePixels(ofPixels_<PixelType> &pix, int newWidth, int newHeight);
 
-		ofPixels_<T>		pixels;
+		ofPixels_<PixelType>		pixels;
 		bool				bUseTexture;
 		ofTexture			tex;
 
@@ -170,28 +170,28 @@ typedef ofImage_<unsigned short> ofShortImage;
 
 
 //----------------------------------------------------------
-template<typename T>
-template<typename T2>
-ofImage_<T>& ofImage_<T>::operator=(const ofImage_<T2>& mom) {
+template<typename PixelType>
+template<typename SrcType>
+ofImage_<PixelType>& ofImage_<PixelType>::operator=(const ofImage_<SrcType>& mom) {
 	clone(mom);
 	update();
 	return *this;
 }
 
 //----------------------------------------------------------
-template<typename T>
-template<typename T2>
-ofImage_<T>::ofImage_(const ofImage_<T2>& mom) {
+template<typename PixelType>
+template<typename SrcType>
+ofImage_<PixelType>::ofImage_(const ofImage_<SrcType>& mom) {
 	clear();
 	clone(mom);
 	update();
 }
 
 //------------------------------------
-template<typename T>
-template<typename T2>
-void ofImage_<T>::clone(const ofImage_<T2> &mom){
-	ofImage_<T2> & nonConst = const_cast<ofImage_<T2> & >(mom);
+template<typename PixelType>
+template<typename SrcType>
+void ofImage_<PixelType>::clone(const ofImage_<SrcType> &mom){
+	ofImage_<SrcType> & nonConst = const_cast<ofImage_<SrcType> & >(mom);
 	pixels = nonConst.getPixelsRef();
 
 	tex.clear();
