@@ -1,7 +1,7 @@
 //
 // PriorityEvent.h
 //
-// $Id: //poco/1.3/Foundation/include/Poco/PriorityEvent.h#2 $
+// $Id: //poco/1.4/Foundation/include/Poco/PriorityEvent.h#1 $
 //
 // Library: Foundation
 // Package: Events
@@ -36,8 +36,8 @@
 //
 
 
-#ifndef  Foundation_PriorityEvent_INCLUDED
-#define  Foundation_PriorityEvent_INCLUDED
+#ifndef Foundation_PriorityEvent_INCLUDED
+#define Foundation_PriorityEvent_INCLUDED
 
 
 #include "Poco/AbstractEvent.h"
@@ -49,11 +49,12 @@
 namespace Poco {
 
 
-template <class TArgs> 
+template <class TArgs, class TMutex = FastMutex> 
 class PriorityEvent: public AbstractEvent < 
 	TArgs,
-	DefaultStrategy<TArgs, AbstractPriorityDelegate< TArgs>, p_less<AbstractPriorityDelegate<TArgs> > >,
-	AbstractPriorityDelegate<TArgs> 
+	DefaultStrategy<TArgs, AbstractPriorityDelegate<TArgs>, p_less<AbstractPriorityDelegate<TArgs> > >,
+	AbstractPriorityDelegate<TArgs>,
+	TMutex
 >
 	/// A PriorityEvent uses internally a DefaultStrategy which 
 	/// invokes delegates in a manner determined by the priority field 
@@ -79,12 +80,12 @@ public:
 	}
 
 private:
-	PriorityEvent(const PriorityEvent& e);
-	PriorityEvent& operator = (const PriorityEvent& e);
+	PriorityEvent(const PriorityEvent&);
+	PriorityEvent& operator = (const PriorityEvent&);
 };
 
 
 } // namespace Poco
 
 
-#endif
+#endif // Foundation_PriorityEvent_INCLUDED

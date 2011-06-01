@@ -1,7 +1,7 @@
 //
 // Application.h
 //
-// $Id: //poco/1.3/Util/include/Poco/Util/Application.h#8 $
+// $Id: //poco/1.4/Util/include/Poco/Util/Application.h#1 $
 //
 // Library: Util
 // Package: Application
@@ -145,21 +145,33 @@ public:
 		/// is okay.
 
 	void init(int argc, char* argv[]);
-		/// Initializes the application and all registered subsystems,
-		/// using the given command line arguments.
+		/// Processes the application's command line arguments
+		/// and sets the application's properties (e.g., 
+		/// "application.path", "application.name", etc.).
+		///
+		/// Note that as of release 1.3.7, init() no longer
+		/// calls initialize(). This is now called from run().
 
 #if defined(POCO_WIN32_UTF8) && !defined(POCO_NO_WSTRING)
 	void init(int argc, wchar_t* argv[]);
-		/// Initializes the application and all registered subsystems,
-		/// using the given command line arguments.
+		/// Processes the application's command line arguments
+		/// and sets the application's properties (e.g., 
+		/// "application.path", "application.name", etc.).
+		///
+		/// Note that as of release 1.3.7, init() no longer
+		/// calls initialize(). This is now called from run().
 		///
 		/// This Windows-specific version of init is used for passing
 		/// Unicode command line arguments from wmain().
 #endif
 
 	void init(const std::vector<std::string>& args);
-		/// Initializes the application and all registered subsystems,
-		/// using the given command line arguments.
+		/// Processes the application's command line arguments
+		/// and sets the application's properties (e.g., 
+		/// "application.path", "application.name", etc.).
+		///
+		/// Note that as of release 1.3.7, init() no longer
+		/// calls initialize(). This is now called from run().
 
 	bool initialized() const;
 		/// Returns true iff the application is in initialized state
@@ -225,6 +237,12 @@ public:
 	virtual int run();
 		/// Runs the application by performing additional initializations
 		/// and calling the main() method.
+		///
+		/// First calls initialize(), then calls main(), and
+		/// finally calls uninitialize(). The latter will be called
+		/// even if main() throws an exception. If initialize() throws
+		/// an exception, main() will not be called and the exception
+		/// will be propagated to the caller.
 
 	std::string commandName() const;
 		/// Returns the command name used to invoke the application.

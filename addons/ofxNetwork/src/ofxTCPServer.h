@@ -2,15 +2,16 @@
 #define _OFX_TCP_SERVER_
 
 #include "ofConstants.h"
-#include "ofxThread.h"
+#include "ofThread.h"
 #include "ofxTCPManager.h"
+#include <map>
 
 #define TCP_MAX_CLIENTS  32
 
 //forward decleration
 class ofxTCPClient;
 
-class ofxTCPServer : public ofxThread{
+class ofxTCPServer : public ofThread{
 
 	public:
 
@@ -69,13 +70,13 @@ class ofxTCPServer : public ofxThread{
 		void threadedFunction();
 
 
-		ofxTCPManager	TCPServer;
-		ofxTCPClient *	TCPConnections;
+		ofxTCPManager			TCPServer;
+		map<int,ofxTCPClient>	TCPConnections;
 
 	protected:
 		bool			connected, verbose;
 		string			str;
-		int				count, port;
+		int				idCount, port;
 		bool			bClientBlocking;
 
 };

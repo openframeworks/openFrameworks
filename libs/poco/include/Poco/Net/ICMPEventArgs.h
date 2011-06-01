@@ -1,7 +1,7 @@
 //
 // ICMPEventArgs.h
 //
-// $Id: //poco/1.3/Net/include/Poco/Net/ICMPEventArgs.h#1 $
+// $Id: //poco/1.4/Net/include/Poco/Net/ICMPEventArgs.h#1 $
 //
 // Library: Net
 // Package: ICMP
@@ -43,9 +43,7 @@
 #include "Poco/Net/Net.h"
 #include "Poco/Net/SocketAddress.h"
 #include <vector>
-#undef min // macros collide with valarray::min() and valarray::max()
-#undef max
-#include <valarray>
+#include <algorithm>
 
 
 namespace Poco {
@@ -118,13 +116,12 @@ private:
 	void setError(int index, const std::string& text);
 	ICMPEventArgs& operator ++ ();
 	ICMPEventArgs operator ++ (int);
-	static int zeroVal(int n);
 
 	SocketAddress _address;
 	int _sent;
 	int _dataSize;
 	int _ttl;
-	std::valarray<int> _rtt;
+	std::vector<int> _rtt;
 	std::vector<std::string> _errors;
 
 	friend class ICMPClient;
@@ -172,13 +169,13 @@ inline int ICMPEventArgs::sent() const
 
 inline int ICMPEventArgs::minRTT() const
 {
-	return _rtt.min();
+	return *std::min_element(_rtt.begin(), _rtt.end());
 }
 
 
 inline int ICMPEventArgs::maxRTT() const
 {
-	return _rtt.max();
+	return *std::max_element(_rtt.begin(), _rtt.end());
 }
 
 

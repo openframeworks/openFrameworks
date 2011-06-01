@@ -1,7 +1,7 @@
 //
 // IPAddress.h
 //
-// $Id: //poco/1.3/Net/include/Poco/Net/IPAddress.h#2 $
+// $Id: //poco/1.4/Net/include/Poco/Net/IPAddress.h#1 $
 //
 // Library: Net
 // Package: NetCore
@@ -322,6 +322,12 @@ public:
 		///
 		/// Returns false and leaves result unchanged otherwise.
 
+	static IPAddress wildcard(Family family = IPv4);
+		/// Returns a wildcard IPv4 or IPv6 address (0.0.0.0).
+		
+	static IPAddress broadcast();
+		/// Returns a broadcast IPv4 address (255.255.255.255).
+
 	enum
 	{
 		MAX_ADDRESS_LENGTH = 
@@ -344,9 +350,9 @@ private:
 //
 // inlines
 //
-inline void swap(IPAddress& a1, IPAddress& a2)
+inline void swap(IPAddress& addr1, IPAddress& addr2)
 {
-	a1.swap(a2);
+	addr1.swap(addr2);
 }
 
 

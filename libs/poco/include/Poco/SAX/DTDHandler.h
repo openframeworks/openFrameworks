@@ -1,7 +1,7 @@
 //
 // DTDHandler.h
 //
-// $Id: //poco/1.3/XML/include/Poco/SAX/DTDHandler.h#1 $
+// $Id: //poco/1.4/XML/include/Poco/SAX/DTDHandler.h#1 $
 //
 // Library: XML
 // Package: SAX

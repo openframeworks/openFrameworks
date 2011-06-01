@@ -1,0 +1,4 @@
+set solib-search-path /home/arturo/Escritorio/openFrameworks/apps/androidExamples/androidOpenCVExample/bin/ndk/local/armeabi
+directory /home/arturo/Descargas/android-ndk-r4-crystax/build/platforms/android-8/arch-arm/usr/include
+directory /home/arturo/Escritorio/openFrameworks/apps/androidExamples/androidOpenCVExample/jni
+target remote :5039

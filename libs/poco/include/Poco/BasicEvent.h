@@ -1,7 +1,7 @@
 //
 // BasicEvent.h
 //
-// $Id: //poco/1.3/Foundation/include/Poco/BasicEvent.h#2 $
+// $Id: //poco/1.4/Foundation/include/Poco/BasicEvent.h#1 $
 //
 // Library: Foundation
 // Package: Events
@@ -36,8 +36,8 @@
 //
 
 
-#ifndef  Foundation_BasicEvent_INCLUDED
-#define  Foundation_BasicEvent_INCLUDED
+#ifndef Foundation_BasicEvent_INCLUDED
+#define Foundation_BasicEvent_INCLUDED
 
 
 #include "Poco/AbstractEvent.h"
@@ -49,10 +49,11 @@
 namespace Poco {
 
 
-template <class TArgs> 
+template <class TArgs, class TMutex = FastMutex> 
 class BasicEvent: public AbstractEvent < 
 	TArgs, DefaultStrategy<TArgs, AbstractDelegate<TArgs>, p_less<AbstractDelegate<TArgs> > >,
-	AbstractDelegate<TArgs> 
+	AbstractDelegate<TArgs>,
+	TMutex
 >
 	/// A BasicEvent uses internally a DefaultStrategy which 
 	/// invokes delegates in an arbitrary manner.
@@ -85,4 +86,4 @@ private:
 } // namespace Poco
 
 
-#endif
+#endif // Foundation_BasicEvent_INCLUDED

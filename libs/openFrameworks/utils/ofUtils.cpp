@@ -1,8 +1,45 @@
 #include "ofUtils.h"
 #include "ofImage.h"
+#include "ofTypes.h"
+#include "ofGraphics.h"
+#include "ofAppRunner.h"
+
+#include "Poco/String.h"
+#include "Poco/StringTokenizer.h"
+#include "Poco/LocalDateTime.h"
+#include "Poco/DateTimeFormatter.h"
+
+#include <cctype> // for toupper
+#include <algorithm>
+
+
+
+#ifdef TARGET_WIN32
+	#include <algorithm> // for std::replace
+	#ifndef _MSC_VER
+        #include <unistd.h> // this if for MINGW / _getcwd
+    #endif
+#endif
+
+
+#ifdef TARGET_ANDROID
+// this is needed to be able to use poco 1.3,
+// will go away as soon as i compile poco 1.4
+namespace Poco{
+const int Ascii::CHARACTER_PROPERTIES[128]={0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+};
+#endif
+
 
 #if defined(TARGET_OF_IPHONE) || defined(TARGET_OSX ) || defined(TARGET_LINUX)
-	#include "sys/time.h"
+	#include <sys/time.h>
+#endif
+
+#ifdef TARGET_OSX
+	#ifndef TARGET_OF_IPHONE
+		#include <mach-o/dyld.h>
+		#include <sys/param.h> // for MAXPATHLEN
+	#endif
 #endif
 
 #ifdef TARGET_WIN32
@@ -15,10 +52,16 @@
 
 static bool enableDataPath = true;
 static unsigned long startTime = ofGetSystemTime();   //  better at the first frame ?? (currently, there is some delay from static init, to running.
+static unsigned long startTimeMicros = ofGetSystemTimeMicros();
 
 //--------------------------------------
 int ofGetElapsedTimeMillis(){
 	return (int)(ofGetSystemTime() - startTime);
+}
+
+//--------------------------------------
+unsigned long ofGetElapsedTimeMicros(){
+	return (int)(ofGetSystemTimeMicros() - startTimeMicros);
 }
 
 //--------------------------------------
@@ -50,6 +93,40 @@ unsigned long ofGetSystemTime( ) {
 			return timeGetTime();
 		#endif
 	#endif
+}
+
+unsigned long ofGetSystemTimeMicros( ) {
+	#ifndef TARGET_WIN32
+		struct timeval now;
+		gettimeofday( &now, NULL );
+		return now.tv_usec + now.tv_sec*1000000;
+	#else
+		#if defined(_WIN32_WCE)
+			return GetTickCount()*1000;
+		#else
+			return timeGetTime()*1000;
+		#endif
+	#endif
+}
+
+//--------------------------------------------------
+unsigned int ofGetUnixTime(){
+	return (unsigned int)time(NULL);
+}
+
+//default ofGetTimestampString returns in this format: 2011-01-15-18-29-35-299
+//--------------------------------------------------
+string ofGetTimestampString(){
+	string timeFormat = "%Y-%m-%d-%H-%M-%S-%i";
+	Poco::LocalDateTime now;
+	return Poco::DateTimeFormatter::format(now, timeFormat);
+}
+
+//specify the string format - eg: %Y-%m-%d-%H-%M-%S-%i ( 2011-01-15-18-29-35-299 )
+//--------------------------------------------------
+string ofGetTimestampString(string timestampFormat){
+	Poco::LocalDateTime now;
+	return Poco::DateTimeFormatter::format(now, timestampFormat);
 }
 
 //--------------------------------------------------
@@ -127,16 +204,51 @@ void ofDisableDataPath(){
 	enableDataPath = false;
 }
 
-
+//--------------------------------------------------
 //use ofSetDataPathRoot() to override this
 #if defined TARGET_OSX
 	static string dataPathRoot = "../../../data/";
+#elif defined TARGET_ANDROID
+	static string dataPathRoot = "sdcard/";
 #else
 	static string dataPathRoot = "data/";
 #endif
 
 //--------------------------------------------------
 void ofSetDataPathRoot(string newRoot){
+	string newPath = "";
+
+	#ifdef TARGET_OSX
+		#ifndef TARGET_OF_IPHONE
+			char path[MAXPATHLEN];
+			uint32_t size = sizeof(path);
+
+			if (_NSGetExecutablePath(path, &size) == 0){
+				//printf("executable path is %s\n", path);
+				string pathStr = string(path);
+
+				//theo: check this with having '/' as a character in a folder name - OSX treats the '/' as a ':'
+				//checked with spaces too!
+
+				vector < string> pathBrokenUp = ofSplitString( pathStr, "/");
+
+				newPath = "";
+
+				for(int i = 0; i < pathBrokenUp.size()-1; i++){
+					newPath += pathBrokenUp[i];
+					newPath += "/";
+				}
+
+				//cout << newPath << endl;   // some sanity checks here
+				//system( "pwd" );
+
+				chdir ( newPath.c_str() );
+				//system("pwd");
+			}else{
+				ofLog(OF_LOG_FATAL_ERROR, "buffer too small; need size %u\n", size);
+			}
+		#endif
+	#endif
 	dataPathRoot = newRoot;
 }
 
@@ -146,17 +258,18 @@ string ofToDataPath(string path, bool makeAbsolute){
 
 		//check if absolute path has been passed or if data path has already been applied
 		//do we want to check for C: D: etc ?? like  substr(1, 2) == ':' ??
-		if( path.substr(0,1) != "/" &&  path.substr(1,1) != ":" &&  path.substr(0,dataPathRoot.length()) != dataPathRoot){
+		if( path.length()==0 || (path.substr(0,1) != "/" &&  path.substr(1,1) != ":" &&  path.substr(0,dataPathRoot.length()) != dataPathRoot)){
 			path = dataPathRoot+path;
 		}
 
-		if(makeAbsolute && path.substr(0,1) != "/"){
-			#ifndef TARGET_OF_IPHONE
+		if(makeAbsolute && (path.length()==0 || path.substr(0,1) != "/")){
+			#if !defined( TARGET_OF_IPHONE) & !defined(TARGET_ANDROID)
 
-			#ifndef _MSC_VER
+			#ifndef TARGET_WIN32
 				char currDir[1024];
 				path = "/"+path;
-				path = getcwd(currDir, 1024)+path;
+                path = getcwd(currDir, 1024)+path;
+
 			#else
 
 				char currDir[1024];
@@ -177,50 +290,272 @@ string ofToDataPath(string path, bool makeAbsolute){
 	return path;
 }
 
-//--------------------------------------------------
-string ofToString(double value, int precision){
-	stringstream sstr;
-	sstr << fixed << setprecision(precision) << value;
-	return sstr.str();
+//----------------------------------------
+template <>
+string ofToHex(const string& value) {
+	ostringstream out;
+	// how many bytes are in the string
+	int numBytes = value.size();
+	for(int i = 0; i < numBytes; i++) {
+		// print each byte as a 2-character wide hex value
+		out << setfill('0') << setw(2) << hex << (unsigned int) value[i];
+	}
+	return out.str();
 }
 
-//--------------------------------------------------
-string ofToString(int value){
-	stringstream sstr;
-	sstr << value;
-	return sstr.str();
+//----------------------------------------
+string ofToHex(const char* value) {
+	// this function is necessary if you want to print a string
+	// using a syntax like ofToHex("test")
+	return ofToHex((string) value);
 }
 
-//--------------------------------------------------
+//----------------------------------------
 int ofToInt(const string& intString) {
-   int x;
-   sscanf(intString.c_str(), "%d", &x);
-   return x;
+	int x = 0;
+	istringstream cur(intString);
+	cur >> x;
+	return x;
 }
 
+//----------------------------------------
+int ofHexToInt(const string& intHexString) {
+	int x = 0;
+	istringstream cur(intHexString);
+	cur >> hex >> x;
+	return x;
+}
+
+//----------------------------------------
+char ofHexToChar(const string& charHexString) {
+	int x = 0;
+	istringstream cur(charHexString);
+	cur >> hex >> x;
+	return (char) x;
+}
+
+//----------------------------------------
+float ofHexToFloat(const string& floatHexString) {
+	int x = 0;
+	istringstream cur(floatHexString);
+	cur >> hex >> x;
+	return *((float*) &x);
+}
+
+//----------------------------------------
+string ofHexToString(const string& stringHexString) {
+	stringstream out;
+	stringstream stream(stringHexString);
+	// a hex string has two characters per byte
+	int numBytes = stringHexString.size() / 2;
+	for(int i = 0; i < numBytes; i++) {
+		string curByte;
+		// grab two characters from the hex string
+		stream >> setw(2) >> curByte;
+		// prepare to parse the two characters
+		stringstream curByteStream(curByte);
+		int cur = 0;
+		// parse the two characters as a hex-encoded int
+		curByteStream >> hex >> cur;
+		// add the int as a char to our output stream
+		out << (char) cur;
+	}
+	return out.str();
+}
+
+//----------------------------------------
 float ofToFloat(const string& floatString) {
-   float x;
-   sscanf(floatString.c_str(), "%f", &x);
-   return x;
+	float x = 0;
+	istringstream cur(floatString);
+	cur >> x;
+	return x;
 }
-//--------------------------------------------------
-vector<string> ofSplitString(const string& str, const string& delimiter = " "){
-    vector<string> elements;
-	// Skip delimiters at beginning.
-    string::size_type lastPos = str.find_first_not_of(delimiter, 0);
-    // Find first "non-delimiter".
-    string::size_type pos     = str.find_first_of(delimiter, lastPos);
 
-    while (string::npos != pos || string::npos != lastPos)
-    {
-        // Found a token, add it to the vector.
-    	elements.push_back(str.substr(lastPos, pos - lastPos));
-        // Skip delimiters.  Note the "not_of"
-        lastPos = str.find_first_not_of(delimiter, pos);
-        // Find next "non-delimiter"
-        pos = str.find_first_of(delimiter, lastPos);
-    }
-    return elements;
+//----------------------------------------
+bool ofToBool(const string& boolString) {
+	static const string trueString = "true";
+	static const string falseString = "false";
+	string lower = Poco::toLower(boolString);
+	if(lower == trueString) {
+		return true;
+	}
+	if(lower == falseString) {
+		return false;
+	}
+	bool x = false;
+	istringstream cur(lower);
+	cur >> x;
+	return x;
+}
+
+//----------------------------------------
+char ofToChar(const string& charString) {
+	char x = '\0';
+	istringstream cur(charString);
+	cur >> x;
+	return x;
+}
+
+//----------------------------------------
+template <> string ofToBinary(const string& value) {
+	stringstream out;
+	int numBytes = value.size();
+	for(int i = 0; i < numBytes; i++) {
+		bitset<8> bitBuffer(value[i]);
+		out << bitBuffer;
+	}
+	return out.str();
+}
+
+//----------------------------------------
+string ofToBinary(const char* value) {
+	// this function is necessary if you want to print a string
+	// using a syntax like ofToBinary("test")
+	return ofToBinary((string) value);
+}
+
+//----------------------------------------
+int ofBinaryToInt(const string& value) {
+	const int intSize = sizeof(int) * 8;
+	bitset<intSize> binaryString(value);
+	return (int) binaryString.to_ulong();
+}
+
+//----------------------------------------
+char ofBinaryToChar(const string& value) {
+	const int charSize = sizeof(char) * 8;
+	bitset<charSize> binaryString(value);
+	return (char) binaryString.to_ulong();
+}
+
+//----------------------------------------
+float ofBinaryToFloat(const string& value) {
+	const int floatSize = sizeof(float) * 8;
+	bitset<floatSize> binaryString(value);
+	unsigned long result = binaryString.to_ulong();
+	// this line means:
+	// 1 take the address of the unsigned long
+	// 2 pretend it is the address of a float
+	// 3 then use it as a float
+	// this is a bit-for-bit 'typecast'
+	return *((float*) &result);
+}
+
+//----------------------------------------
+string ofBinaryToString(const string& value) {
+	ostringstream out;
+	stringstream stream(value);
+	bitset<8> byteString;
+	int numBytes = value.size() / 8;
+	for(int i = 0; i < numBytes; i++) {
+		stream >> byteString;
+		out << (char) byteString.to_ulong();
+	}
+	return out.str();
+}
+
+//--------------------------------------------------
+vector <string> ofSplitString(const string & source, const string & delimiters, bool ignoreEmpty, bool trim) {
+	using namespace Poco;
+
+	int flags = 0;
+	if(ignoreEmpty) {
+		flags |= StringTokenizer::TOK_IGNORE_EMPTY;
+	}
+	if(trim) {
+		flags |= StringTokenizer::TOK_TRIM;
+	}
+
+	// tokenize the sring using poco
+	StringTokenizer tokens(source, delimiters, flags);
+	vector<string> result;
+	result.assign(tokens.begin(), tokens.end());
+
+	// poco ignores trailing delimiters, which is inconsistent with everything else
+	string lastCharacter;
+	lastCharacter += source[source.size() - 1];
+	if(ofIsStringInString(delimiters, lastCharacter)) {
+		result.push_back("");
+	}
+
+	return result;
+}
+
+//--------------------------------------------------
+string ofJoinString(vector <string> stringElements, const string & delimiter){
+	string resultString = "";
+	int numElements = stringElements.size();
+
+	for(int k = 0; k < numElements; k++){
+		if( k < numElements-1 ){
+			resultString += stringElements[k] + delimiter;
+		} else {
+			resultString += stringElements[k];
+		}
+	}
+
+	return resultString;
+}
+
+//--------------------------------------------------
+bool ofIsStringInString(string haystack, string needle){
+	return ( strstr(haystack.c_str(), needle.c_str() ) != NULL );
+}
+
+//--------------------------------------------------
+string ofToLower(const string & src){
+	string dst(src);
+	transform(src.begin(),src.end(),dst.begin(),::tolower);
+	return dst;
+}
+
+//--------------------------------------------------
+string ofToUpper(const string & src){
+	string dst(src);
+	transform(src.begin(),src.end(),dst.begin(),::toupper);
+	return dst;
+}
+
+//--------------------------------------------------
+string ofVAArgsToString(const char * format, ...){
+	// variadic args to string:
+	// http://www.codeproject.com/KB/string/string_format.aspx
+	static char aux_buffer[10000];
+	string retStr("");
+	if (NULL != format){
+
+		va_list marker;
+
+		// initialize variable arguments
+		va_start(marker, format);
+
+		// Get formatted string length adding one for NULL
+		size_t len = vsprintf(aux_buffer, format, marker) + 1;
+
+		// Reset variable arguments
+		va_end(marker);
+
+		if (len > 0)
+		{
+			va_list args;
+
+			// initialize variable arguments
+			va_start(args, format);
+
+			// Create a char vector to hold the formatted string.
+			vector<char> buffer(len, '\0');
+			vsprintf(&buffer[0], format, args);
+			retStr = &buffer[0];
+			va_end(args);
+		}
+
+	}
+	return retStr;
+}
+
+//--------------------------------------------------
+string ofVAArgsToString(const char * format, va_list args){
+	return "ofVAArgsToString va_list: Not Implemented Yet";
 }
 
 //--------------------------------------------------
@@ -293,101 +628,24 @@ void ofSaveScreen(string filename) {
 }
 
 //--------------------------------------------------
+void ofSaveViewport(string filename) {
+	// because ofSaveScreen doesn't related to viewports
+	ofImage screen;
+	ofRectangle view = ofGetCurrentViewport();
+	screen.allocate(view.width, view.height, OF_IMAGE_COLOR);
+	screen.grabScreen(0, 0, view.width, view.height);
+	screen.saveImage(filename);
+}
+
+//--------------------------------------------------
 int saveImageCounter = 0;
-void ofSaveFrame(){
+void ofSaveFrame(bool bUseViewport){
    string fileName = ofToString(saveImageCounter) + ".png";
-   ofSaveScreen(fileName);
-   saveImageCounter++;
-}
-
-//levels are currently:
-// see ofConstants.h
-// OF_LOG_NOTICE
-// OF_LOG_WARNING
-// OF_LOG_ERROR
-// OF_LOG_FATAL_ERROR
-
-int currentLogLevel =  OF_DEFAULT_LOG_LEVEL;
-//--------------------------------------------------
-void ofSetLogLevel(int logLevel){
-	currentLogLevel = logLevel;
-}
-
-//--------------------------------------------------
-void ofLog(int logLevel, string message){
-	if(logLevel >= currentLogLevel){
-		if(logLevel == OF_LOG_VERBOSE){
-			printf("OF_VERBOSE: ");
-		}
-		else if(logLevel == OF_LOG_NOTICE){
-			printf("OF_NOTICE: ");
-		}
-		else if(logLevel == OF_LOG_WARNING){
-			printf("OF_WARNING: ");
-		}
-		else if(logLevel == OF_LOG_ERROR){
-			printf("OF_ERROR: ");
-		}
-		else if(logLevel == OF_LOG_FATAL_ERROR){
-			printf("OF_FATAL_ERROR: ");
-		}
-		printf("%s\n",message.c_str());
+	if (bUseViewport){
+		ofSaveViewport(fileName);
+	} else {
+		ofSaveScreen(fileName);
 	}
+	saveImageCounter++;
 }
-
-//--------------------------------------------------
-void ofLog(int logLevel, const char* format, ...){
-	//thanks stefan!
-	//http://www.ozzu.com/cpp-tutorials/tutorial-writing-custom-printf-wrapper-function-t89166.html
-
-	if(logLevel >= currentLogLevel){
-		va_list args;
-		va_start( args, format );
-		if(logLevel == OF_LOG_VERBOSE){
-			printf("OF_VERBOSE: ");
-		}
-		else if(logLevel == OF_LOG_NOTICE){
-			printf("OF_NOTICE: ");
-		}
-		else if(logLevel == OF_LOG_WARNING){
-			printf("OF_WARNING: ");
-		}
-		else if(logLevel == OF_LOG_ERROR){
-			printf("OF_ERROR: ");
-		}
-		else if(logLevel == OF_LOG_FATAL_ERROR){
-			printf("OF_FATAL_ERROR: ");
-		}
-		vprintf( format, args );
-		printf("\n");
-		va_end( args );
-	}
-}
-
-//for setting console color
-//doesn't work in the xcode console - do we need this?
-//works fine on the terminal though - not much use
-
-//--------------------------------------------------
-void ofSetConsoleColor(int color){
-	#ifdef TARGET_WIN32
-		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), color);
-	#else
-		printf("\033[%im",  color);
-	#endif
-}
-
-//--------------------------------------------------
-void ofRestoreConsoleColor(){
-	#ifdef TARGET_WIN32
-		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), OF_CONSOLE_COLOR_RESTORE);
-	#else
-		printf("\033[%im",  OF_CONSOLE_COLOR_RESTORE);
-	#endif
-}
-
-
-
-
-
 

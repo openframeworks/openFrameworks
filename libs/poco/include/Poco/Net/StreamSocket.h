@@ -1,7 +1,7 @@
 //
 // StreamSocket.h
 //
-// $Id: //poco/1.3/Net/include/Poco/Net/StreamSocket.h#1 $
+// $Id: //poco/1.4/Net/include/Poco/Net/StreamSocket.h#1 $
 //
 // Library: Net
 // Package: Sockets
@@ -62,9 +62,18 @@ public:
 		/// Before sending or receiving data, the socket
 		/// must be connected with a call to connect().
 
-	StreamSocket(const SocketAddress& address);
+	explicit StreamSocket(const SocketAddress& address);
 		/// Creates a stream socket and connects it to
 		/// the socket specified by address.
+
+	explicit StreamSocket(IPAddress::Family family);
+		/// Creates an unconnected stream socket
+		/// for the given address family.
+		///
+		/// This is useful if certain socket options
+		/// (like send and receive buffer) sizes, that must 
+		/// be set before connecting the socket, will be
+		/// set later on.
 
 	StreamSocket(const Socket& socket);
 		/// Creates the StreamSocket with the SocketImpl
@@ -115,6 +124,9 @@ public:
 		///
 		/// Returns the number of bytes sent, which may be
 		/// less than the number of bytes specified.
+		///
+		/// Certain socket implementations may also return a negative
+		/// value denoting a certain condition.
 
 	int receiveBytes(void* buffer, int length, int flags = 0);
 		/// Receives data from the socket and stores it

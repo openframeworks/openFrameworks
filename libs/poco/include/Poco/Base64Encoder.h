@@ -1,7 +1,7 @@
 //
 // Base64Encoder.h
 //
-// $Id: //poco/1.3/Foundation/include/Poco/Base64Encoder.h#3 $
+// $Id: //poco/1.4/Foundation/include/Poco/Base64Encoder.h#1 $
 //
 // Library: Foundation
 // Package: Streams

@@ -1,7 +1,7 @@
 //
 // ThreadPool.h
 //
-// $Id: //poco/1.3/Foundation/include/Poco/ThreadPool.h#3 $
+// $Id: //poco/1.4/Foundation/include/Poco/ThreadPool.h#1 $
 //
 // Library: Foundation
 // Package: Threading
@@ -73,12 +73,19 @@ public:
 		int maxCapacity = 16,
 		int idleTime = 60,
 		int stackSize = POCO_THREAD_STACK_SIZE);
+		/// Creates a thread pool with minCapacity threads.
+		/// If required, up to maxCapacity threads are created
+		/// a NoThreadAvailableException exception is thrown.
+		/// If a thread is running idle for more than idleTime seconds,
+		/// and more than minCapacity threads are running, the thread
+		/// is killed. Threads are created with given stack size.
+
 	ThreadPool(const std::string& name,
 		int minCapacity = 2,
 		int maxCapacity = 16,
 		int idleTime = 60,
 		int stackSize = POCO_THREAD_STACK_SIZE);
-		/// Creates a thread pool with minCapacity threads.
+		/// Creates a thread pool with the given name and minCapacity threads.
 		/// If required, up to maxCapacity threads are created
 		/// a NoThreadAvailableException exception is thrown.
 		/// If a thread is running idle for more than idleTime seconds,
@@ -135,13 +142,25 @@ public:
 		/// threads are available.
 
 	void stopAll();
-		/// Stops all running threads.
+		/// Stops all running threads and waits for their completion.
+		///
 		/// Will also delete all thread objects.
 		/// If used, this method should be the last action before
 		/// the thread pool is deleted.
+		///
+		/// Note: If a thread fails to stop within 10 seconds 
+		/// (due to a programming error, for example), the
+		/// underlying thread object will not be deleted and
+		/// this method will return anyway. This allows for a
+		/// more or less graceful shutdown in case of a misbehaving
+		/// thread.
 
 	void joinAll();
 		/// Waits for all threads to complete.
+		///
+		/// Note that this will not actually join() the underlying
+		/// thread, but rather wait for the thread's runnables
+		/// to finish.
 
 	void collect();
 		/// Stops and removes no longer used threads from the
@@ -150,6 +169,11 @@ public:
 		/// manage its threads. Calling this method is optional,
 		/// as the thread pool is also implicitly managed in
 		/// calls to start(), addCapacity() and joinAll().
+
+	const std::string& name() const;
+		/// Returns the name of the thread pool,
+		/// or an empty string if no name has been
+		/// specified in the constructor.
 
 	static ThreadPool& defaultPool();
 		/// Returns a reference to the default
@@ -191,6 +215,12 @@ inline void ThreadPool::setStackSize(int stackSize)
 inline int ThreadPool::getStackSize() const
 {
 	return _stackSize;
+}
+
+
+inline const std::string& ThreadPool::name() const
+{
+	return _name;
 }
 
 

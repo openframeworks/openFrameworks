@@ -27,6 +27,7 @@ class ofxCvFloatImage : public ofxCvImage {
     // want to pay closer attention to what the scales are.
 
   public:
+	using ofxCvImage::setFromPixels;
 
     ofxCvFloatImage();
     ofxCvFloatImage( const ofxCvFloatImage& mom );
@@ -60,9 +61,9 @@ class ofxCvFloatImage : public ofxCvImage {
     virtual void  operator *= ( float scalar );
 	virtual void  operator /= ( float scalar );
 	      
-    virtual void  setFromPixels( unsigned char* _pixels, int w, int h);
+    virtual void  setFromPixels( const unsigned char* _pixels, int w, int h);
     virtual void  setFromPixels( float * _pixels, int w, int h );  //no scaling
-    virtual void  setRoiFromPixels( unsigned char* _pixels, int w, int h);
+    virtual void  setRoiFromPixels( const unsigned char* _pixels, int w, int h);
     virtual void  setRoiFromPixels( float * _pixels, int w, int h );  //no scaling
     virtual void  operator = ( unsigned char* _pixels );
     virtual void  operator = ( float* _pixels );  //no scaling
@@ -82,11 +83,13 @@ class ofxCvFloatImage : public ofxCvImage {
 	
 	// Get Pixel Data
 	//
-    virtual unsigned char*  getPixels();
-    virtual float*  getPixelsAsFloats();  //no scaling
-    virtual unsigned char*  getRoiPixels();
+    //virtual unsigned char*  getPixels();									   //in base class
+    virtual float*  getPixelsAsFloats();  //no scaling                                   //in base class
+    virtual ofFloatPixels &		getFloatPixelsRef();
+    //virtual unsigned char*  getRoiPixels();								   //in base class
     virtual float*  getRoiPixelsAsFloats();  //no scaling
-    // virtual IplImage*  getCvImage();                                        //in base class
+    virtual ofFloatPixels &		getRoiFloatPixelsRef();
+    // virtual IplImage*  getCvImage();
 
     
     // Draw Image
@@ -143,11 +146,11 @@ class ofxCvFloatImage : public ofxCvImage {
     void init();
     virtual void convertFloatToGray( IplImage* floatImg, IplImage* grayImg );
     virtual void convertGrayToFloat( IplImage* grayImg, IplImage* floatImg );
+    virtual IplImage* getCv8BitsImage();
+    virtual IplImage* getCv8BitsRoiImage();
     
-    float* floatPixels;             // not width stepped for getPixelsAsFloats()
-                                    // allocated on demand
-    int  floatPixelsW;
-    int  floatPixelsH;
+    ofFloatPixels floatPixels;             // not width stepped for getPixelsAsFloats()
+
     
     bool bFloatPixelsDirty;
     IplImage*  cvGrayscaleImage;    // internal helper grayscale, allocated on demand

@@ -1,7 +1,7 @@
 //
 // DOMWriter.h
 //
-// $Id: //poco/1.3/XML/include/Poco/DOM/DOMWriter.h#2 $
+// $Id: //poco/1.4/XML/include/Poco/DOM/DOMWriter.h#1 $
 //
 // Library: XML
 // Package: DOM
@@ -89,6 +89,17 @@ public:
 		/// Returns the line ending characters used by the
 		/// internal XMLWriter.
 
+	void setIndent(const std::string& indent);
+		/// Sets the string used for one indentation step.
+		///
+		/// The default is a single TAB character.
+		/// The given string should only contain TAB or SPACE
+		/// characters (e.g., a single TAB character, or
+		/// two to four SPACE characters).
+		
+	const std::string& getIndent() const;
+		/// Returns the string used for one indentation step.
+
 	void writeNode(XMLByteOutputStream& ostr, const Node* pNode);
 		/// Writes the XML for the given node to the specified stream.
 
@@ -101,6 +112,7 @@ private:
 	Poco::TextEncoding* _pTextEncoding;
 	int                 _options;
 	std::string         _newLine;
+	std::string         _indent;
 };
 
 
@@ -122,6 +134,12 @@ inline int DOMWriter::getOptions() const
 inline const std::string& DOMWriter::getNewLine() const
 {
 	return _newLine;
+}
+
+
+inline const std::string& DOMWriter::getIndent() const
+{
+	return _indent;
 }
 
 

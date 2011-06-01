@@ -1,7 +1,7 @@
 //
 // HTTPMessage.h
 //
-// $Id: //poco/1.3/Net/include/Poco/Net/HTTPMessage.h#1 $
+// $Id: //poco/1.4/Net/include/Poco/Net/HTTPMessage.h#1 $
 //
 // Library: Net
 // Package: HTTP
@@ -142,6 +142,8 @@ public:
 	
 	static const std::string CONNECTION_KEEP_ALIVE;
 	static const std::string CONNECTION_CLOSE;
+
+	static const std::string EMPTY;
 
 protected:
 	HTTPMessage();

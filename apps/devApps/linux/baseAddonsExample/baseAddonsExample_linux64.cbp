@@ -8,7 +8,7 @@
 		<Option virtualFolders="addons/;src/;" />
 		<Build>
 			<Target title="Debug">
-				<Option output="bin/baseAddonsExample_debug" extension_auto="1" prefix_auto="1"/>
+				<Option output="bin/$(PROJECT_NAME)_debug" extension_auto="1" prefix_auto="1"/>
 				<Option working_dir="bin"/>
 				<Option object_output="obj/Debug/"/>
 				<Option external_deps="../../../libs/openFrameworksCompiled/lib/linux64/libopenFrameworksDebug.a;"/>
@@ -20,11 +20,12 @@
 					<Add option="-MMD"/>
 				</Compiler>
 				<Linker>
+					<Add option="-Wl,-rpath=./libs"/>
 					<Add library="openFrameworksDebug"/>
 				</Linker>
 			</Target>
 			<Target title="Release">
-				<Option output="bin/baseAddonsExample" extension_auto="1" prefix_auto="1"/>
+				<Option output="bin/$(PROJECT_NAME)" extension_auto="1" prefix_auto="1"/>
 				<Option working_dir="bin"/>
 				<Option object_output="obj/Release/"/>
 				<Option external_deps="../../../libs/openFrameworksCompiled/lib/linux64/libopenFrameworks.a;"/>
@@ -37,15 +38,11 @@
 					<Add option="-MMD"/>
 				</Compiler>
 				<Linker>
+					<Add option="-Wl,-rpath=./libs"/>
 					<Add option="-s"/>
 					<Add library="openFrameworks"/>
 				</Linker>
 			</Target>
-			<Environment>
-				<Variable name="target" value="allAddonsExample" />
-				<Variable name="runOnBuild" value="false" />
-				<Variable name="nautilusOnBuild" value="false" />
-			</Environment>
 		</Build>
 		<Compiler>
 			<Add option="-Wall" />
@@ -66,7 +63,6 @@
 			<Add directory="../../../libs/FreeImage/include" />
 			<Add directory="../../../libs/freetype/include" />
 			<Add directory="../../../libs/freetype/include/freetype2" />
-			<Add directory="../../../libs/unicap/include" />
 			<Add directory="../../../libs/gstappsink/include" />
 			<Add directory="../../../addons" />
 			<Add directory="../../../libs/poco/include" />
@@ -88,14 +84,12 @@
 		</Compiler>
 		<Linker>
 			<Add library="fmodex"/>
-			<Add library="raw1394" />
 			<Add library="glut" />
 			<Add library="GL" />
 			<Add library="GLU" />
 			<Add library="Xxf86vm" />
 			<Add library="asound" />
 			<Add library="PocoFoundation" />
-			<Add library="unicap" />
 			<Add library="freetype" />
 			<Add library="freeimage" />
 			<Add library="RtAudio" />
@@ -110,7 +104,6 @@
 			<Add directory="../../../libs/glee/lib/linux64" />
 			<Add directory="../../../libs/gstappsink/lib/linux64" />
 			<Add directory="../../../libs/fmodex/lib/linux64" />
-			<Add directory="../../../libs/unicap/lib/linux64" />
 			<Add directory="../../../libs/poco/lib/linux64" />
 			<Add directory="../../../libs/openFrameworksCompiled/lib/linux64"/>
 		</Linker>
@@ -119,19 +112,6 @@
 			<Add after="#      copy libs and shell script to bin directory:" />
 			<Add after="#" />
 			<Add after="cp -r ../../../export/linux64/libs $(PROJECT_DIR)bin/" />
-			<Add after="cp ../../../export/linux64/clickToLaunchApp.sh $(PROJECT_DIR)bin/clickToLaunchApp_$(TARGET_NAME).sh" />
-			<Add after="sed -i s/applicationName/$(TARGET_OUTPUT_BASENAME)/g  $(PROJECT_DIR)bin/clickToLaunchApp_$(TARGET_NAME).sh" />
-			<Add after="#" />
-			<Add after="#    this is a shell script that can either (a) run the app or (b) launch nautilus to a good directory for you to run the app" />
-			<Add after="#" />
-			<Add after="./cb_build_runner.sh $(TARGET_OUTPUT_BASENAME) $runOnBuild $nautilusOnBuild" />
-			<Add after="#" />
-			<Add after="#     to enable either, change the custom variables in project-&gt;build options-&gt;custom variables" />
-			<Add after="#     to true / false." />
-			<Add after="#" />
-			<Add after="#     currently this is disabled, but allows you to run the app from w/in CB." />
-			<Add after="#" />
-			<Mode after="always" />
 		</ExtraCommands> 
 		<Unit filename="src/main.cpp">
 			<Option virtualFolder="src/" />

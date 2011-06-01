@@ -29,7 +29,7 @@ void testApp::draw(){
 
 	// now just an outline
 	ofNoFill();
-	ofSetColor(0xCCCCCC);
+	ofSetHexColor(0xCCCCCC);
 	ofCircle(100,400,80);
 
 	// use the bitMap type
@@ -37,7 +37,7 @@ void testApp::draw(){
 	// because it is using glDrawPixels which varies in
 	// speed from system to system.  try using ofTrueTypeFont
 	// if this bitMap type slows you down.
-	ofSetColor(0x000000);
+	ofSetHexColor(0x000000);
 	ofDrawBitmapString("circle", 75,500);
 
 
@@ -47,11 +47,11 @@ void testApp::draw(){
 		ofSetColor((int)ofRandom(0,255),(int)ofRandom(0,255),(int)ofRandom(0,255));
 		ofRect(ofRandom(250,350),ofRandom(350,450),ofRandom(10,20),ofRandom(10,20));
 	}
-	ofSetColor(0x000000);
+	ofSetHexColor(0x000000);
 	ofDrawBitmapString("rectangles", 275,500);
 
 	//---------------------------  transparency
-	ofSetColor(0x00FF33);
+	ofSetHexColor(0x00FF33);
 	ofRect(400,350,100,100);
 	// alpha is usually turned off - for speed puposes.  let's turn it on!
 	ofEnableAlphaBlending();
@@ -61,7 +61,7 @@ void testApp::draw(){
 	ofRect(450,370,100,33);
 	ofDisableAlphaBlending();
 
-	ofSetColor(0x000000);
+	ofSetHexColor(0x000000);
 	ofDrawBitmapString("transparency", 410,500);
 
 	//---------------------------  lines
@@ -71,7 +71,7 @@ void testApp::draw(){
 		ofEnableSmoothing();
 	}
 
-	ofSetColor(0xFF0000);
+	ofSetHexColor(0xFF0000);
 	for (int i = 0; i < 20; i++){
 		ofLine(600,300 + (i*5),800, 250 + (i*10));
 	}
@@ -80,7 +80,7 @@ void testApp::draw(){
 		ofDisableSmoothing();
 	}
 
-	ofSetColor(0x000000);
+	ofSetHexColor(0x000000);
 	ofDrawBitmapString("lines\npress 's' to toggle smoothness", 600,500);
 
 }
@@ -100,6 +100,7 @@ void testApp::keyReleased  (int key){
 
 //--------------------------------------------------------------
 void testApp::mouseMoved(int x, int y ){
+
 }
 
 //--------------------------------------------------------------
@@ -108,8 +109,8 @@ void testApp::mouseDragged(int x, int y, int button){
 
 //--------------------------------------------------------------
 void testApp::mousePressed(int x, int y, int button){
-}
 
+}
 
 //--------------------------------------------------------------
 void testApp::mouseReleased(int x, int y, int button){
@@ -118,5 +119,15 @@ void testApp::mouseReleased(int x, int y, int button){
 
 //--------------------------------------------------------------
 void testApp::windowResized(int w, int h){
+
+}
+
+//--------------------------------------------------------------
+void testApp::gotMessage(ofMessage msg){
+
+}
+
+//--------------------------------------------------------------
+void testApp::dragEvent(ofDragInfo dragInfo){ 
 
 }

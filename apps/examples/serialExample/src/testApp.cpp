@@ -1,6 +1,5 @@
 #include "testApp.h"
 
-
 //--------------------------------------------------------------
 void testApp::setup(){	 
 
@@ -8,10 +7,13 @@ void testApp::setup(){
 
 	bSendSerialMessage = false;
 	ofBackground(255,255,255);	
-	
-	
-	serial.enumerateDevices();
+	ofSetLogLevel(OF_LOG_NOTICE);
+
+	//----------------------------------- 
+	font.loadFont("DIN.otf", 64);
 			
+	serial.listDevices();
+	vector <ofSerialDeviceInfo> deviceList = serial.getDeviceList();
 	
 	//----------------------------------- note:
 	// < this should be set
@@ -20,13 +22,13 @@ void testApp::setup(){
 	// connected to.
 	// (ie, COM4 on a pc, /dev/tty.... on linux, /dev/tty... on a mac)
 	// arduino users check in arduino app....
+		
+	serial.setup(0, 9600); //open the first device
 
 	//serial.setup("COM4");  						  // windows example
-	serial.setup("/dev/tty.usbserial-A4001JEC",9600); // mac osx example
+	//serial.setup("/dev/tty.usbserial-A4001JEC",9600); // mac osx example
 	//serial.setup("/dev/ttyUSB0", 9600);			  //linux example
 
-	//----------------------------------- 
-	font.loadFont("DIN.otf",64);
 	nTimesRead = 0;
 	nBytesRead = 0;
 	readTime = 0;
@@ -77,14 +79,13 @@ void testApp::draw(){
 	sprintf(tempStr, "click to test serial:\nnBytes read %i\nnTimes read %i\nread: %s\n(at time %0.3f)", nBytesRead, nTimesRead, bytesReadString, readTime);
 	
 	if (nBytesRead > 0 && ((ofGetElapsedTimef() - readTime) < 0.5f)){
-		ofSetColor(0x000000);
+		ofSetHexColor(0x000000);
 	} else {
-		ofSetColor(0xdddddd);
+		ofSetHexColor(0xdddddd);
 	}
 	font.drawString(tempStr, 50,100);
 
 }
-
 
 //--------------------------------------------------------------
 void testApp::keyPressed  (int key){ 
@@ -118,6 +119,16 @@ void testApp::mouseReleased(int x, int y, int button){
 
 //--------------------------------------------------------------
 void testApp::windowResized(int w, int h){
+
+}
+
+//--------------------------------------------------------------
+void testApp::gotMessage(ofMessage msg){
+
+}
+
+//--------------------------------------------------------------
+void testApp::dragEvent(ofDragInfo dragInfo){ 
 
 }
 

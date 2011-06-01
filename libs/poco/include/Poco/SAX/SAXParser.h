@@ -1,7 +1,7 @@
 //
 // SAXParser.h
 //
-// $Id: //poco/1.3/XML/include/Poco/SAX/SAXParser.h#2 $
+// $Id: //poco/1.4/XML/include/Poco/SAX/SAXParser.h#1 $
 //
 // Library: XML
 // Package: SAX
@@ -59,6 +59,10 @@ class XML_API SAXParser: public XMLReader
 	///   * http://xml.org/sax/features/namespace-prefixes
 	///   * http://xml.org/sax/properties/lexical-handler
 	///   * http://xml.org/sax/properties/declaration-handler
+	///
+	/// The following proprietary extensions are supported:
+	///   * http://www.appinf.com/features/enable-partial-reads --
+	///     see ParserEngine::setEnablePartialReads()
 {
 public:
 	SAXParser();
@@ -102,6 +106,8 @@ public:
 	
 	/// Extensions
 	void parseString(const std::string& xml);
+	
+	static const XMLString FEATURE_PARTIAL_READS;
 
 protected:
 	void setupParse();

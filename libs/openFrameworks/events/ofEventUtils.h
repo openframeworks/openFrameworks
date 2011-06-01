@@ -1,3 +1,7 @@
+#ifndef _OF_EVENTS
+#error "ofEventUtils shouldn't be included directly, include ofEvents.h or ofMain.h"
+#endif
+
 #include "ofConstants.h"
 
 #ifdef OF_USING_POCO
@@ -5,7 +9,8 @@
 #include "Poco/FIFOEvent.h"
 #include "Poco/Delegate.h"
 
-
+#include <stdio.h>
+#include <stdlib.h>
 
 //-----------------------------------------
 // define ofEvent as a poco FIFOEvent
@@ -13,8 +18,35 @@
 // ofEvent<argType> myEvent
 
 template <typename ArgumentsType>
-class ofEvent: public Poco::FIFOEvent<ArgumentsType> {};
+class ofEvent: public Poco::FIFOEvent<ArgumentsType> {
+public:
 
+	ofEvent():Poco::FIFOEvent<ArgumentsType>(){
+
+	}
+
+	// allow copy of events, by copying everything except the mutex
+	ofEvent(const ofEvent<ArgumentsType> & mom):Poco::FIFOEvent<ArgumentsType>(){
+		mom._mutex.lock();
+		this->_mutex.lock();
+		this->_strategy = mom._strategy;
+		this->_mutex.unlock();
+		mom._mutex.unlock();
+		this->_enabled = mom._enabled;
+	}
+
+	ofEvent<ArgumentsType> & operator=(const ofEvent<ArgumentsType> & mom){
+		if(&mom == this) return *this;
+		mom._mutex.lock();
+		this->_mutex.lock();
+		this->_strategy = mom._strategy;
+		this->_mutex.unlock();
+		mom._mutex.unlock();
+		this->_enabled = mom._enabled;
+		return *this;
+	}
+
+};
 
 
 //----------------------------------------------------

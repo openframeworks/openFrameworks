@@ -1,7 +1,7 @@
 //
 // Timezone.h
 //
-// $Id: //poco/1.3/Foundation/include/Poco/Timezone.h#1 $
+// $Id: //poco/1.4/Foundation/include/Poco/Timezone.h#1 $
 //
 // Library: Foundation
 // Package: DateTime
@@ -53,7 +53,7 @@ class Foundation_API Timezone
 public:
 	static int utcOffset();
 		/// Returns the offset of local time to UTC, in seconds.
-		///     local time = UTC + utcOffset().
+		///     local time = UTC + utcOffset() + dst().
 		
 	static int dst();
 		/// Returns the daylight saving time offset in seconds if

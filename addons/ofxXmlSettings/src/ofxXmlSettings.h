@@ -45,12 +45,15 @@ class ofxXmlSettings{
 
 	public:
         ofxXmlSettings();
+        ofxXmlSettings(const string& xmlFile);
+
         ~ofxXmlSettings();
 
 		void setVerbose(bool _verbose);
 
-		bool loadFile(const string& xmlFile);	//this is not relative to your data/ path - use ofDataPath(...) to make it relative
-		void saveFile(const string& xmlFile);   //this is not relative to your data/ path - use ofDataPath(...) to make it relative
+		bool loadFile(const string& xmlFile);
+		void saveFile(const string& xmlFile);
+		void saveFile();
 
 		void clearTagContents(const string& tag, int which = 0);
 		void removeTag(const string& tag, int which = 0);
@@ -135,7 +138,7 @@ class ofxXmlSettings{
 		int		setAttribute(const string& tag, const string& attribute, double value);
 		int		setAttribute(const string& tag, const string& attribute, const string& value);
 
-		void	loadFromBuffer( string buffer );
+		bool	loadFromBuffer( string buffer );
 		void	copyXmlToString(string & str);
 	
 		TiXmlDocument 	doc;

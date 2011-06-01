@@ -1,7 +1,7 @@
 //
 // StreamSocketImpl.h
 //
-// $Id: //poco/1.3/Net/include/Poco/Net/StreamSocketImpl.h#1 $
+// $Id: //poco/1.4/Net/include/Poco/Net/StreamSocketImpl.h#1 $
 //
 // Library: Net
 // Package: Sockets
@@ -54,12 +54,21 @@ class Net_API StreamSocketImpl: public SocketImpl
 public:
 	StreamSocketImpl();
 		/// Creates a StreamSocketImpl.
+
+	explicit StreamSocketImpl(IPAddress::Family addressFamily);
+		/// Creates a SocketImpl, with the underlying
+		/// socket initialized for the given address family.
 		
 	StreamSocketImpl(poco_socket_t sockfd);
 		/// Creates a StreamSocketImpl using the given native socket.
 		
 	virtual int sendBytes(const void* buffer, int length, int flags = 0);
-		/// Ensures that all data in buffer is sent.
+		/// Ensures that all data in buffer is sent if the socket
+		/// is blocking. In case of a non-blocking socket, sends as
+		/// many bytes as possible.
+		///
+		/// Returns the number of bytes sent. The return value may also be
+		/// negative to denote some special condition.
 
 protected:
 	virtual ~StreamSocketImpl();

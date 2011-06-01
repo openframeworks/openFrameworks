@@ -1,7 +1,7 @@
 //
 // TextEncoding.h
 //
-// $Id: //poco/1.3/Foundation/include/Poco/TextEncoding.h#2 $
+// $Id: //poco/1.4/Foundation/include/Poco/TextEncoding.h#1 $
 //
 // Library: Foundation
 // Package: Text
@@ -104,11 +104,45 @@ public:
 	virtual int convert(const unsigned char* bytes) const;
 		/// The convert function is used to convert multibyte sequences;
 		/// bytes will point to a byte sequence of n bytes where 
-		/// getCharacterMap()[*bytes] == -n.
+		/// sequenceLength(bytes, length) == -n, with length >= n.
 		///
 		/// The convert function must return the Unicode scalar value
 		/// represented by this byte sequence or -1 if the byte sequence is malformed.
 		/// The default implementation returns (int) bytes[0].
+
+	virtual	int queryConvert(const unsigned char* bytes, int length) const;
+		/// The queryConvert function is used to convert single byte characters 
+		/// or multibyte sequences;
+		/// bytes will point to a byte sequence of length bytes.
+		///
+		/// The queryConvert function must return the Unicode scalar value
+		/// represented by this byte sequence or -1 if the byte sequence is malformed
+		/// or -n where n is number of bytes requested for the sequence, if lenght is 
+		/// shorter than the sequence.
+		/// The length of the sequence might not be determined by the first byte, 
+		/// in which case the conversion becomes an iterative process:
+		/// First call with length == 1 might return -2,
+		/// Then a second call with lenght == 2 might return -4
+		/// Eventually, the third call with length == 4 should return either a 
+		/// Unicode scalar value, or -1 if the byte sequence is malformed.
+		/// The default implementation returns (int) bytes[0].
+
+	virtual int sequenceLength(const unsigned char* bytes, int length) const;
+		/// The sequenceLength function is used to get the lenth of the sequence pointed
+		/// by bytes. The length paramater should be greater or equal to the length of 
+		/// the sequence.
+		///
+		/// The sequenceLength function must return the lenght of the sequence
+		/// represented by this byte sequence or a negative value -n if length is 
+		/// shorter than the sequence, where n is the number of byte requested 
+		/// to determine the length of the sequence.
+		/// The length of the sequence might not be determined by the first byte, 
+		/// in which case the conversion becomes an iterative process as long as the 
+		/// result is negative:
+		/// First call with length == 1 might return -2,
+		/// Then a second call with lenght == 2 might return -4
+		/// Eventually, the third call with length == 4 should return 4.
+		/// The default implementation returns 1.
 
 	virtual int convert(int ch, unsigned char* bytes, int length) const;
 		/// Transform the Unicode character ch into the encoding's 

@@ -1,7 +1,7 @@
 //
 // RemoteSyslogChannel.h
 //
-// $Id: //poco/1.3/Net/include/Poco/Net/RemoteSyslogChannel.h#2 $
+// $Id: //poco/1.4/Net/include/Poco/Net/RemoteSyslogChannel.h#1 $
 //
 // Library: Net
 // Package: Logging
@@ -42,7 +42,9 @@
 
 #include "Poco/Net/Net.h"
 #include "Poco/Channel.h"
+#include "Poco/Mutex.h"
 #include "Poco/Net/DatagramSocket.h"
+#include "Poco/Net/SocketAddress.h"
 
 
 namespace Poco {
@@ -159,7 +161,9 @@ private:
 	int  _facility;
 	bool _bsdFormat;
 	DatagramSocket _socket;
+	SocketAddress _socketAddress;
 	bool _open;
+	mutable Poco::FastMutex _mutex;
 };
 
 

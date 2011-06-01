@@ -16,10 +16,8 @@ ofxCvImage::ofxCvImage() {
     bUseTexture		= true;
     bTextureDirty   = true;
 	bAllocated		= false;
-	pixels			= NULL;
     bPixelsDirty    = true;
-    pixelsWidth     = 0;
-    pixelsHeight    = 0;
+    bRoiPixelsDirty = true;
 }
 
 //--------------------------------------------------------------------------------
@@ -55,13 +53,10 @@ void ofxCvImage::clear() {
 			cvReleaseImage( &cvImage );
 			cvReleaseImage( &cvImageTemp );
 		}
-        if( pixels != NULL ) {
-            delete pixels;
-            pixels = NULL;
-            bPixelsDirty = true;
-            pixelsWidth = 0;
-            pixelsHeight = 0;
-        }
+        pixels.clear();
+        bPixelsDirty = true;
+        bRoiPixelsDirty = true;
+
 		width = 0;
 		height = 0;
 
@@ -98,6 +93,7 @@ ofTexture& ofxCvImage::getTextureReference() {
 void ofxCvImage::flagImageChanged() {
     bTextureDirty = true;
     bPixelsDirty = true;
+    bRoiPixelsDirty = true;
 }
 
 
@@ -313,22 +309,39 @@ void ofxCvImage::draw( float x, float y ) {
     draw( x,y, width, height );
 }
 
+//----------------------------------------------------------
+void ofxCvImage::draw(const ofPoint & point){
+	draw(point.x, point.y);
+}
+
+
+//----------------------------------------------------------
+void ofxCvImage::draw(const ofRectangle & rect){
+	draw(rect.x, rect.y, rect.width, rect.height);
+}
+
+
+//--------------------------------------------------------------------------------
+void ofxCvImage::updateTexture(){
+	if( bUseTexture ) {
+		if( bTextureDirty ) {
+			if(tex.getWidth() != width || tex.getHeight() != height) {
+				//ROI was changed
+				// reallocating texture - this could be faster with ROI support
+				tex.clear();
+				tex.allocate( width, height, glchannels );
+			}
+			tex.loadData( getPixelsRef() );
+			bTextureDirty = false;
+		}
+	}
+}
+
 //--------------------------------------------------------------------------------
 void ofxCvImage::draw( float x, float y, float w, float h ) {
     if( bUseTexture ) {
-        if( bTextureDirty ) {
-            if(tex.getWidth() != width || tex.getHeight() != height) {
-                //ROI was changed
-                // reallocating texture - this could be faster with ROI support
-                tex.clear();
-                tex.allocate( width, height, glchannels );
-            }
-            tex.loadData( getPixels(), width, height, glchannels );
-            bTextureDirty = false;
-        }
-
+    	updateTexture();
         tex.draw(x,y, w,h);
-
     } else {
         #ifdef TARGET_OPENGLES
             ofLog(OF_LOG_ERROR, "texture-less drawing not supported in OpenGL ES");
@@ -382,7 +395,7 @@ void ofxCvImage::drawROI( float x, float y, float w, float h ) {
                 tex.clear();
                 tex.allocate( (int)roi.width, (int)roi.height, glchannels );
             }
-            tex.loadData( getRoiPixels(), (int)roi.width, (int)roi.height, glchannels );
+            tex.loadData( getRoiPixelsRef() );
             bTextureDirty = false;
         }
 
@@ -699,7 +712,54 @@ void  ofxCvImage::resetImageROI( IplImage* img ) {
     cvResetImageROI(img);
 }
 
+//--------------------------------------------------------------------------------
+void ofxCvImage::setFromPixels( const ofPixels & pixels ){
+	setFromPixels(pixels.getPixels(),pixels.getWidth(),pixels.getHeight());
+}
+
+//--------------------------------------------------------------------------------
+void ofxCvImage::setRoiFromPixels( const ofPixels & pixels ){
+	setRoiFromPixels(pixels.getPixels(),pixels.getWidth(),pixels.getHeight());
+}
+
+//--------------------------------------------------------------------------------
+unsigned char*  ofxCvImage::getPixels(){
+	return getPixelsRef().getPixels();
+}
+
+//--------------------------------------------------------------------------------
+ofPixelsRef ofxCvImage::getPixelsRef(){
+	if(bPixelsDirty) {
+		IplImage * cv8bit= getCv8BitsImage();
+
+		//Note this possible introduces a bug where pixels doesn't contain the current image.
+		//Also it means that modifying the pointer return by get pixels - affects the internal cvImage
+		//Where as with the slower way below modifying the pointer doesn't change the image.
+		if(  cv8bit->width*cv8bit->nChannels == cvImage->widthStep ){
+			pixels.setFromExternalPixels((unsigned char*)cv8bit->imageData,width,height,cv8bit->nChannels);
+		}else{
+			pixels.setFromAlignedPixels((unsigned char*)cv8bit->imageData,width,height,cv8bit->nChannels,cv8bit->widthStep);
+		}
+		bPixelsDirty = false;
+	}
+	return pixels;
+}
+
+//--------------------------------------------------------------------------------
+unsigned char*  ofxCvImage::getRoiPixels(){
+	return getRoiPixelsRef().getPixels();
+}
 
 
 
-
+//--------------------------------------------------------------------------------
+ofPixelsRef  ofxCvImage::getRoiPixelsRef(){
+	if(bRoiPixelsDirty) {
+		IplImage * cv8bit= getCv8BitsRoiImage();
+		ofRectangle roi = getROI();
+		unsigned char * roi_ptr = (unsigned char*)cv8bit->imageData + ((int)(roi.y)*cv8bit->widthStep + (int)roi.x * cv8bit->nChannels);
+		roiPixels.setFromAlignedPixels(roi_ptr,roi.width,roi.height,cv8bit->nChannels,cv8bit->widthStep);
+		bRoiPixelsDirty = false;
+	}
+	return roiPixels;
+}

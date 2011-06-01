@@ -45,19 +45,30 @@ ie (copy "emptyExample" and paste "copy of emptyExample")
 
 b) rename the folder, and inside the folder, rename the .cbp and .workspace
 
+<<<<<<< HEAD
 c) open the .cbp file with a text editor.  change the occurances of the old name to the new name:
 
 line 5: <Option title="emptyExample" />
 line 11: <Option output="bin\emptyExample" prefix_auto="1" extension_auto="1" />
 line 18: <Option output="bin\emptyExample_DEBUG" prefix_auto="1" extension_auto="1" />
+=======
+c) open the .cbp file with a text editor.  Change the occurance of the old name to the new name:
+
+line 5: <Option title="emptyExample" />
+>>>>>>> d832d224208f805f67c15d0f030d0f75bee33647
 
 for example, if I copied emptyexample and wanted to call it "coolExample" would look like:
 
 line 5: <Option title="coolExample" />
+<<<<<<< HEAD
 line 11: <Option output="bin\coolExample" prefix_auto="1" extension_auto="1" />
 line 18: <Option output="bin\coolExample_DEBUG" prefix_auto="1" extension_auto="1" />
 
 in the solution file, change the name of .cbp file:
+=======
+
+in the workspace file, change the name of .cbp file:
+>>>>>>> d832d224208f805f67c15d0f030d0f75bee33647
 
 line 4: <Project filename="emptyExample.cbp" active="1" />
 

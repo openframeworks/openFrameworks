@@ -1,7 +1,7 @@
 //
 // HashSet.h
 //
-// $Id: //poco/1.3/Foundation/include/Poco/HashSet.h#1 $
+// $Id: //poco/1.4/Foundation/include/Poco/HashSet.h#1 $
 //
 // Library: Foundation
 // Package: Hashing

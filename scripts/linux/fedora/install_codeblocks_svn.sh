@@ -1,6 +1,6 @@
 ## download codeblocks from svn compile generate rpm and install
 
-yum install subversion intltool wxGTK-devel libjpeg-devel libtiff-devel
+yum install subversion intltool wxGTK-devel libjpeg-devel libtiff-devel xterm
 su -c'yum groupinstall "Development Tools"'
 
 cd

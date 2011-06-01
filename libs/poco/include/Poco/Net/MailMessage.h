@@ -1,7 +1,7 @@
 //
 // MailMessage.h
 //
-// $Id: //poco/1.3/Net/include/Poco/Net/MailMessage.h#2 $
+// $Id: //poco/1.4/Net/include/Poco/Net/MailMessage.h#1 $
 //
 // Library: Net
 // Package: Mail
@@ -100,6 +100,11 @@ public:
 
 	void setSubject(const std::string& subject);
 		/// Sets the subject of the message.
+		///
+		/// The subject must not contain any non-ASCII
+		/// characters. To include non-ASCII characters
+		/// in the subject, use RFC 2047 word encoding
+		/// (see encodeWord()).
 		
 	const std::string& getSubject() const;
 		/// Returns the subject of the message.
@@ -111,7 +116,12 @@ public:
 		/// The sender must either be a valid email
 		/// address, or a real name followed by
 		/// an email address enclosed in < and >.
-		
+		///
+		/// The sender must not contain any non-ASCII
+		/// characters. To include non-ASCII characters
+		/// in the sender, use RFC 2047 word encoding
+		/// (see encodeWord()).
+
 	const std::string& getSender() const;
 		/// Returns the sender of the message (taken
 		/// from the From header field).
@@ -159,14 +169,30 @@ public:
 		///
 		/// The MailMessage will be converted to a multipart message
 		/// if it is not already one.
+		///
+		/// The part name, and the filename specified in the part source
+		/// must not contain any non-ASCII characters.
+		/// To include non-ASCII characters in the part name or filename, 
+		/// use RFC 2047 word encoding (see encodeWord()).
+
 
 	void addContent(PartSource* pSource, ContentTransferEncoding encoding = ENCODING_QUOTED_PRINTABLE);
 		/// Adds a part to the mail message by calling
 		/// addPart("", pSource, CONTENT_INLINE, encoding);
+		///
+		/// The part name, and the filename specified in the part source
+		/// must not contain any non-ASCII characters.
+		/// To include non-ASCII characters in the part name or filename, 
+		/// use RFC 2047 word encoding (see encodeWord()).
 		
 	void addAttachment(const std::string& name, PartSource* pSource, ContentTransferEncoding encoding = ENCODING_BASE64);
 		/// Adds an attachment to the mail message by calling
 		/// addPart(name, pSource, CONTENT_ATTACHMENT, encoding);
+		///
+		/// The part name, and the filename specified in the part source
+		/// must not contain any non-ASCII characters.
+		/// To include non-ASCII characters in the part name or filename, 
+		/// use RFC 2047 word encoding (see encodeWord()).
 
 	void read(std::istream& istr, PartHandler& handler);
 		/// Reads the MailMessage from the given input stream.
@@ -184,6 +210,16 @@ public:
 
 	void write(std::ostream& ostr) const;
 		/// Writes the mail message to the given output stream.
+		
+	static std::string encodeWord(const std::string& text, const std::string& charset = "UTF-8");
+		/// If the given string contains non-ASCII characters, 
+		/// encodes the given string using RFC 2047 "Q" word encoding.
+		/// 
+		/// The given text must already be encoded in the character set
+		/// given in charset (default is UTF-8).
+		///
+		/// Returns the encoded string, or the original string if it 
+		/// consists only of ASCII characters.
 
 protected:
 	struct Part

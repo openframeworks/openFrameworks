@@ -1,7 +1,7 @@
 //
 // AbstractCache.h
 //
-// $Id: //poco/1.3/Foundation/include/Poco/AbstractCache.h#2 $
+// $Id: //poco/1.4/Foundation/include/Poco/AbstractCache.h#1 $
 //
 // Library: Foundation
 // Package: Cache
@@ -36,8 +36,8 @@
 //
 
 
-#ifndef  Foundation_AbstractCache_INCLUDED
-#define  Foundation_AbstractCache_INCLUDED
+#ifndef Foundation_AbstractCache_INCLUDED
+#define Foundation_AbstractCache_INCLUDED
 
 
 #include "Poco/KeyValueArgs.h"
@@ -56,15 +56,16 @@
 namespace Poco {
 
 
-template <class TKey, class TValue, class TStrategy> 
+template <class TKey, class TValue, class TStrategy, class TMutex = FastMutex, class TEventMutex = FastMutex> 
 class AbstractCache
 	/// An AbstractCache is the interface of all caches. 
 {
 public:
-	FIFOEvent<const KeyValueArgs<TKey, TValue > > Add;
-	FIFOEvent<const TKey>                         Remove;
-	FIFOEvent<const TKey>                         Get;
-	FIFOEvent<const EventArgs>                    Clear;
+	FIFOEvent<const KeyValueArgs<TKey, TValue >, TEventMutex > Add;
+	FIFOEvent<const KeyValueArgs<TKey, TValue >, TEventMutex > Update;
+	FIFOEvent<const TKey, TEventMutex>                         Remove;
+	FIFOEvent<const TKey, TEventMutex>                         Get;
+	FIFOEvent<const EventArgs, TEventMutex>                    Clear;
 
 	typedef std::map<TKey, SharedPtr<TValue > > DataHolder;
 	typedef typename DataHolder::iterator       Iterator;
@@ -90,23 +91,46 @@ public:
 		/// Adds the key value pair to the cache.
 		/// If for the key already an entry exists, it will be overwritten.
 	{
-		FastMutex::ScopedLock lock(_mutex);
+		typename TMutex::ScopedLock lock(_mutex);
 		doAdd(key, val);
+	}
+
+	void update(const TKey& key, const TValue& val)
+		/// Adds the key value pair to the cache. Note that adding a NULL SharedPtr will fail!
+		/// If for the key already an entry exists, it will be overwritten.
+		/// The difference to add is that no remove or add events are thrown in this case, 
+		/// just a simply silent update is performed
+		/// If the key doesnot exist the behavior is equal to add, ie. an add event is thrown
+	{
+		typename TMutex::ScopedLock lock(_mutex);
+		doUpdate(key, val);
 	}
 
 	void add(const TKey& key, SharedPtr<TValue > val)
 		/// Adds the key value pair to the cache. Note that adding a NULL SharedPtr will fail!
-		/// If for the key already an entry exists, it will be overwritten.
+		/// If for the key already an entry exists, it will be overwritten, ie. first a remove event
+		/// is thrown, then a add event
 	{
-		FastMutex::ScopedLock lock(_mutex);
+		typename TMutex::ScopedLock lock(_mutex);
 		doAdd(key, val);
+	}
+
+	void update(const TKey& key, SharedPtr<TValue > val)
+		/// Adds the key value pair to the cache. Note that adding a NULL SharedPtr will fail!
+		/// If for the key already an entry exists, it will be overwritten.
+		/// The difference to add is that no remove or add events are thrown in this case, 
+		/// just an Update is thrown
+		/// If the key doesnot exist the behavior is equal to add, ie. an add event is thrown
+	{
+		typename TMutex::ScopedLock lock(_mutex);
+		doUpdate(key, val);
 	}
 
 	void remove(const TKey& key)
 		/// Removes an entry from the cache. If the entry is not found,
 		/// the remove is ignored.
 	{
-		FastMutex::ScopedLock lock(_mutex);
+		typename TMutex::ScopedLock lock(_mutex);
 		Iterator it = _data.find(key);
 		doRemove(it);
 	}
@@ -114,7 +138,7 @@ public:
 	bool has(const TKey& key) const
 		/// Returns true if the cache contains a value for the key.
 	{
-		FastMutex::ScopedLock lock(_mutex);
+		typename TMutex::ScopedLock lock(_mutex);
 		return doHas(key);
 	}
 
@@ -123,21 +147,21 @@ public:
 		/// even when cache replacement removes the element.
 		/// If for the key no value exists, an empty SharedPtr is returned.
 	{
-		FastMutex::ScopedLock lock(_mutex);
+		typename TMutex::ScopedLock lock(_mutex);
 		return doGet (key);
 	}
 
 	void clear()
 		/// Removes all elements from the cache.
 	{
-		FastMutex::ScopedLock lock(_mutex);
+		typename TMutex::ScopedLock lock(_mutex);
 		doClear();
 	}
 
 	std::size_t size()
 		/// Returns the number of cached elements
 	{
-		FastMutex::ScopedLock lock(_mutex);
+		typename TMutex::ScopedLock lock(_mutex);
 		doReplace();
 		return _data.size();
 	}
@@ -149,14 +173,14 @@ public:
 		/// In some cases, i.e. expire based caching where for a long time no access to the cache happens,
 		/// it might be desirable to be able to trigger cache replacement manually.
 	{
-		FastMutex::ScopedLock lock(_mutex);
+		typename TMutex::ScopedLock lock(_mutex);
 		doReplace();
 	}
 
 	std::set<TKey> getAllKeys()
 		/// Returns a copy of all keys stored in the cache
 	{
-		FastMutex::ScopedLock lock(_mutex);
+		typename TMutex::ScopedLock lock(_mutex);
 		doReplace();
 		ConstIterator it = _data.begin();
 		ConstIterator itEnd = _data.end();
@@ -175,6 +199,7 @@ protected:
 		/// Sets up event registration.
 	{
 		Add		+= Delegate<TStrategy, const KeyValueArgs<TKey, TValue> >(&_strategy, &TStrategy::onAdd);
+		Update	+= Delegate<TStrategy, const KeyValueArgs<TKey, TValue> >(&_strategy, &TStrategy::onUpdate);
 		Remove	+= Delegate<TStrategy, const TKey>(&_strategy, &TStrategy::onRemove);
 		Get		+= Delegate<TStrategy, const TKey>(&_strategy, &TStrategy::onGet);
 		Clear	+= Delegate<TStrategy, const EventArgs>(&_strategy, &TStrategy::onClear);
@@ -186,6 +211,7 @@ protected:
 		/// Reverts event registration.
 	{
 		Add		-= Delegate<TStrategy, const KeyValueArgs<TKey, TValue> >(&_strategy, &TStrategy::onAdd );
+		Update	-= Delegate<TStrategy, const KeyValueArgs<TKey, TValue> >(&_strategy, &TStrategy::onUpdate);
 		Remove	-= Delegate<TStrategy, const TKey>(&_strategy, &TStrategy::onRemove);
 		Get		-= Delegate<TStrategy, const TKey>(&_strategy, &TStrategy::onGet);
 		Clear	-= Delegate<TStrategy, const EventArgs>(&_strategy, &TStrategy::onClear);
@@ -217,6 +243,46 @@ protected:
 		KeyValueArgs<TKey, TValue> args(key, *val);
 		Add.notify(this, args);
 		_data.insert(std::make_pair(key, val));
+		
+		doReplace();
+	}
+
+	void doUpdate(const TKey& key, const TValue& val)
+		/// Adds the key value pair to the cache.
+		/// If for the key already an entry exists, it will be overwritten.
+	{
+		KeyValueArgs<TKey, TValue> args(key, val);
+		Iterator it = _data.find(key);
+		if (it == _data.end())
+		{
+			Add.notify(this, args);
+			_data.insert(std::make_pair(key, SharedPtr<TValue>(new TValue(val))));
+		}
+		else
+		{
+			Update.notify(this, args);
+			it->second = SharedPtr<TValue>(new TValue(val));
+		}
+		
+		doReplace();
+	}
+
+	void doUpdate(const TKey& key, SharedPtr<TValue>& val)
+		/// Adds the key value pair to the cache.
+		/// If for the key already an entry exists, it will be overwritten.
+	{
+		KeyValueArgs<TKey, TValue> args(key, *val);
+		Iterator it = _data.find(key);
+		if (it == _data.end())
+		{
+			Add.notify(this, args);
+			_data.insert(std::make_pair(key, val));
+		}
+		else
+		{
+			Update.notify(this, args);
+			it->second = val;
+		}
 		
 		doReplace();
 	}
@@ -301,7 +367,7 @@ protected:
 
 	TStrategy          _strategy;
 	mutable DataHolder _data;
-	mutable FastMutex  _mutex;
+	mutable TMutex  _mutex;
 
 private:
 	AbstractCache(const AbstractCache& aCache);
@@ -312,4 +378,4 @@ private:
 } // namespace Poco
 
 
-#endif
+#endif // Foundation_AbstractCache_INCLUDED

@@ -1,7 +1,7 @@
 //
 // Bugcheck.h
 //
-// $Id: //poco/1.3/Foundation/include/Poco/Bugcheck.h#2 $
+// $Id: //poco/1.4/Foundation/include/Poco/Bugcheck.h#1 $
 //
 // Library: Foundation
 // Package: Core
@@ -42,6 +42,9 @@
 
 #include "Poco/Foundation.h"
 #include <string>
+#if defined(_DEBUG)
+#	include <iostream>
+#endif
 
 
 namespace Poco {
@@ -122,6 +125,22 @@ protected:
 
 #define poco_debugger_msg(msg) \
 	Poco::Bugcheck::debugger(msg, __FILE__, __LINE__)
+
+
+#if defined(_DEBUG)
+#	define poco_stdout_dbg(outstr) \
+	std::cout << __FILE__ << '(' << std::dec << __LINE__ << "):" << outstr << std::endl;
+#else
+#	define poco_stdout_dbg(outstr)
+#endif
+
+
+#if defined(_DEBUG)
+#	define poco_stderr_dbg(outstr) \
+		std::cerr << __FILE__ << '(' << std::dec << __LINE__ << "):" << outstr << std::endl;
+#else
+#	define poco_stderr_dbg(outstr)
+#endif
 
 
 //

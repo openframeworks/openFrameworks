@@ -1,7 +1,7 @@
 //
 // NamespaceSupport.h
 //
-// $Id: //poco/1.3/XML/include/Poco/SAX/NamespaceSupport.h#1 $
+// $Id: //poco/1.4/XML/include/Poco/SAX/NamespaceSupport.h#1 $
 //
 // Library: XML
 // Package: SAX
@@ -95,7 +95,7 @@ public:
 		/// Return an enumeration of all prefixes declared in this context.
 		/// 
 		/// The empty (default) prefix will be included in this enumeration; note that
-		/// this behaviour differs from that of getPrefix(java.lang.String) and getPrefixes().
+		/// this behaviour differs from that of getPrefix() and getPrefixes().
 
 	const XMLString& getPrefix(const XMLString& namespaceURI) const;
 		/// Return one of the prefixes mapped to a Namespace URI.
@@ -182,8 +182,8 @@ public:
 		/// value will be false, otherwise true.
 		///
 		/// Note that attribute names are processed differently than element names: 
-		/// an unprefixed element name will received the
-		/// default Namespace (if any), while an unprefixed element name will not.
+		/// an unprefixed element name will receive the
+		/// default Namespace (if any), while an unprefixed attribute name will not.
 
 	void reset();
 		/// Reset this Namespace support object for reuse.

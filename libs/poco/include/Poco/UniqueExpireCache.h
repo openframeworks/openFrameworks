@@ -1,7 +1,7 @@
 //
 // UniqueExpireCache.h
 //
-// $Id: //poco/1.3/Foundation/include/Poco/UniqueExpireCache.h#2 $
+// $Id: //poco/1.4/Foundation/include/Poco/UniqueExpireCache.h#1 $
 //
 // Library: Foundation
 // Package: Cache
@@ -36,8 +36,8 @@
 //
 
 
-#ifndef  Foundation_UniqueExpireCache_INCLUDED
-#define  Foundation_UniqueExpireCache_INCLUDED
+#ifndef Foundation_UniqueExpireCache_INCLUDED
+#define Foundation_UniqueExpireCache_INCLUDED
 
 
 #include "Poco/AbstractCache.h"
@@ -47,8 +47,13 @@
 namespace Poco {
 
 
-template <class TKey, class TValue> 
-class UniqueExpireCache: public AbstractCache<TKey, TValue, UniqueExpireStrategy<TKey, TValue> >
+template <
+	class TKey, 
+	class TValue,
+	class TMutex = FastMutex, 
+	class TEventMutex = FastMutex
+> 
+class UniqueExpireCache: public AbstractCache<TKey, TValue, UniqueExpireStrategy<TKey, TValue>, TMutex, TEventMutex>
 	/// An UniqueExpireCache caches entries for a given time amount. In contrast
 	/// to ExpireCache which only allows to set a per cache expiration value, it allows to define 
 	/// expiration per CacheEntry.
@@ -69,7 +74,7 @@ class UniqueExpireCache: public AbstractCache<TKey, TValue, UniqueExpireStrategy
 {
 public:
 	UniqueExpireCache():
-		AbstractCache<TKey, TValue, UniqueExpireStrategy<TKey, TValue> >(UniqueExpireStrategy<TKey, TValue>())
+		AbstractCache<TKey, TValue, UniqueExpireStrategy<TKey, TValue>, TMutex, TEventMutex>(UniqueExpireStrategy<TKey, TValue>())
 	{
 	}
 
@@ -86,4 +91,4 @@ private:
 } // namespace Poco
 
 
-#endif
+#endif // Foundation_UniqueExpireCache_INCLUDED

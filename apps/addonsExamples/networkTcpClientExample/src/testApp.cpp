@@ -8,12 +8,7 @@ void testApp::setup(){
 	// we don't want to be running to fast
 	ofSetVerticalSync(true);
 
-	//load our type
-	mono.loadFont("type/mono.ttf",9);
-	monosm.loadFont("type/mono.ttf",8);
-
-	//some variables
-
+	//some variables:
 	//have we typed
 	typed	= false;
 
@@ -41,12 +36,15 @@ void testApp::update(){
 
 	//we are connected - lets send our text and check what we get back
 	if(weConnected){
-		tcpClient.send(msgTx);
+		if(tcpClient.send(msgTx)){
 
-		//if data has been sent lets update our text
-		string str = tcpClient.receive();
-		if( str.length() > 0 ){
-			msgRx = str;
+			//if data has been sent lets update our text
+			string str = tcpClient.receive();
+			if( str.length() > 0 ){
+				msgRx = str;
+			}
+		}else if(!tcpClient.isConnected()){
+			weConnected = false;
 		}
 	}else{
 		//if we are not connected lets try and reconnect every 5 seconds
@@ -64,18 +62,18 @@ void testApp::update(){
 void testApp::draw(){
 
 	ofSetColor(20, 20, 20);
-	mono.drawString("openFrameworks TCP Send Example", 15, 30);
+	ofDrawBitmapString("openFrameworks TCP Send Example", 15, 30);
 
 	if(typed){
-		monosm.drawString("sending:", 15, 55);
-		monosm.drawString(msgTx, 85, 55);
+		ofDrawBitmapString("sending:", 15, 55);
+		ofDrawBitmapString(msgTx, 85, 55);
 	}
 	else{
-		if(weConnected)monosm.drawString("status: type something to send data to port 11999", 15, 55);
-		else monosm.drawString("status: server not found. launch server app and check ports!\n\nreconnecting in "+ofToString( (5000 - deltaTime) / 1000 )+" seconds", 15, 55);
+		if(weConnected)ofDrawBitmapString("status: type something to send data to port 11999", 15, 55);
+		else ofDrawBitmapString("status: server not found. launch server app and check ports!\n\nreconnecting in "+ofToString( (5000 - deltaTime) / 1000 )+" seconds", 15, 55);
 	}
 
-	monosm.drawString("from server: \n"+msgRx, 15, 270);
+	ofDrawBitmapString("from server: \n"+msgRx, 15, 270);
 
 }
 
@@ -129,3 +127,12 @@ void testApp::windowResized(int w, int h){
 
 }
 
+//--------------------------------------------------------------
+void testApp::gotMessage(ofMessage msg){
+
+}
+
+//--------------------------------------------------------------
+void testApp::dragEvent(ofDragInfo dragInfo){ 
+
+}

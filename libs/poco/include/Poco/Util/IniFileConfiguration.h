@@ -1,7 +1,7 @@
 //
 // IniFileConfiguration.h
 //
-// $Id: //poco/1.3/Util/include/Poco/Util/IniFileConfiguration.h#1 $
+// $Id: //poco/1.4/Util/include/Poco/Util/IniFileConfiguration.h#1 $
 //
 // Library: Util
 // Package: Configuration
@@ -65,9 +65,6 @@ class Util_API IniFileConfiguration: public AbstractConfiguration
 	///
 	/// Property names are not case sensitive. Leading and trailing whitespace is
 	/// removed from both keys and values.
-	///
-	/// Setting properties is not supported. An attempt to set a property results
-	/// in a NotImplementedException being thrown.
 {
 public:
 	IniFileConfiguration();
@@ -93,6 +90,7 @@ protected:
 	bool getRaw(const std::string& key, std::string& value) const;
 	void setRaw(const std::string& key, const std::string& value);
 	void enumerate(const std::string& key, Keys& range) const;
+	void removeRaw(const std::string& key);
 	~IniFileConfiguration();
 
 private:

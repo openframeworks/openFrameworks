@@ -1,31 +1,37 @@
-#ifndef _OF_VIDEO_PLAYER
-#define _OF_VIDEO_PLAYER
+#pragma once
 
 #include "ofConstants.h"
 #include "ofTexture.h"
-
+#include "ofBaseTypes.h"
+#include "ofTypes.h"
 
 #ifdef OF_VIDEO_PLAYER_GSTREAMER
-	#include "ofGstUtils.h"
-#else
-	#include "ofQtUtils.h"
+	#include "ofGstVideoPlayer.h"
+	#define OF_VID_PLAYER_TYPE ofGstVideoPlayer
 #endif
 
+#ifdef OF_VIDEO_PLAYER_QUICKTIME
+	#include "ofQuickTimePlayer.h"
+	#define OF_VID_PLAYER_TYPE ofQuickTimePlayer
+#endif
 
-
-
+#ifdef OF_VIDEO_PLAYER_IPHONE
+	#include "ofiPhoneVideoPlayer.h"
+	#define OF_VID_PLAYER_TYPE ofiPhoneVideoPlayer
+#endif
 
 //---------------------------------------------
-
-class ofVideoPlayer : public ofBaseVideo{
+class ofVideoPlayer : public ofBaseVideoPlayer,public ofBaseVideoDraws{
 
 	public:
 
-
 		ofVideoPlayer ();
-		virtual ~ofVideoPlayer();
+
+		void						setPlayer(ofPtr<ofBaseVideoPlayer> newPlayer);
+		ofPtr<ofBaseVideoPlayer>	getPlayer();
 
 		bool 				loadMovie(string name);
+		void				setPixelFormat(ofPixelFormat pixelFormat);
 		void 				closeMovie();
 		void 				close();
 
@@ -34,12 +40,9 @@ class ofVideoPlayer : public ofBaseVideo{
 		void 				play();
 		void 				stop();
 
-		int 				width, height;
-		float  				speed;
-		bool 				bLoaded;
-
 		bool 				isFrameNew();
 		unsigned char * 	getPixels();
+		ofPixelsRef			getPixelsRef();
 		float 				getPosition();
 		float 				getSpeed();
 		float 				getDuration();
@@ -47,7 +50,8 @@ class ofVideoPlayer : public ofBaseVideo{
 
 		void 				setPosition(float pct);
 		void 				setVolume(int volume);
-		void 				setLoopState(int state);
+		void 				setLoopState(ofLoopType state);
+		int					getLoopState();
 		void   				setSpeed(float speed);
 		void				setFrame(int frame);  // frame 0 = first frame...
 
@@ -55,11 +59,13 @@ class ofVideoPlayer : public ofBaseVideo{
 		ofTexture &			getTextureReference();
 		void 				draw(float x, float y, float w, float h);
 		void 				draw(float x, float y);
+		void				draw(const ofPoint & p);
+		void				draw(const ofRectangle & r);
 
 		//the anchor is the point the image is drawn around.
 		//this can be useful if you want to rotate an image around a particular point.
         void				setAnchorPercent(float xPct, float yPct);	//set the anchor as a percentage of the image width/height ( 0.0-1.0 range )
-        void				setAnchorPoint(int x, int y);				//set the anchor point in pixels
+        void				setAnchorPoint(float x, float y);				//set the anchor point in pixels
         void				resetAnchor();								//resets the anchor to (0, 0)
 
 		void 				setPaused(bool bPause);
@@ -74,50 +80,22 @@ class ofVideoPlayer : public ofBaseVideo{
 		float 				getHeight();
 		float 				getWidth();
 
-		//--------------------------------------
-		#ifdef OF_VIDEO_PLAYER_QUICKTIME
-		//--------------------------------------
-			MovieDrawingCompleteUPP myDrawCompleteProc;
-			MovieController  	thePlayer;
-			GWorldPtr 			offscreenGWorld;
-			Movie 			 	moviePtr;
-			unsigned char * 	offscreenGWorldPixels;	// 32 bit: argb (qt k32ARGBPixelFormat)
-			void				qtGetFrameCount(Movie & movForcount);
-		//--------------------------------------
-		#endif
-		//--------------------------------------
+		bool				isPaused();
+		bool				isLoaded();
+		bool				isPlaying();
 
-		//--------------------------------------
-		#ifdef OF_VIDEO_PLAYER_GSTREAMER
-		//--------------------------------------
-		ofGstUtils 			gstUtils;
-		//--------------------------------------
-		#endif
-		//--------------------------------------
+		//this is kept as legacy to support people accessing width and height directly. 
+		int					height;
+		int					width;
 
-		int					nFrames;				// number of frames
-		unsigned char * 	pixels;					// 24 bit: rgb
-		bool 				bHavePixelsChanged;
-		ofTexture 			tex;					// a ptr to the texture we are utilizing
-		bool 				bUseTexture;			// are we using a texture
-		bool				allocated;				// so we know to free pixels or not
-
-	protected:
-
-
-		void 				start();
-		void 				createImgMemAndGWorld();
-		bool 				bStarted;
-		bool 				bPlaying;
-		bool 				bPaused;
-		bool 				bIsFrameNew;			// if we are new
-
-
-
-
+	private:
+		ofPtr<ofBaseVideoPlayer>		player;
+		
+		ofTexture tex;
+		ofTexture * playerTex; // a seperate texture that may be optionally implemented by the player to avoid excessive pixel copying.
+		bool bUseTexture;
+		ofPixelFormat internalPixelFormat;
 };
-#endif
-
 
 
 

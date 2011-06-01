@@ -155,7 +155,7 @@ void ofxOscReceiver::ProcessMessage( const osc::ReceivedMessage &m, const IpEndp
 			ofMessage->addStringArg( arg->AsStringUnchecked() );
 		else
 		{
-			assert( false && "message argument is not int, float, or string" );
+			cout << "message argument is not int, float, or string" << endl;
 		}
 	}
 

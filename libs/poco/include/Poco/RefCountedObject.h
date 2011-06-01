@@ -1,7 +1,7 @@
 //
 // RefCountedObject.h
 //
-// $Id: //poco/1.3/Foundation/include/Poco/RefCountedObject.h#1 $
+// $Id: //poco/1.4/Foundation/include/Poco/RefCountedObject.h#1 $
 //
 // Library: Foundation
 // Package: Core
@@ -9,7 +9,7 @@
 //
 // Definition of the RefCountedObject class.
 //
-// Copyright (c) 2004-2006, Applied Informatics Software Engineering GmbH.
+// Copyright (c) 2004-2009, Applied Informatics Software Engineering GmbH.
 // and Contributors.
 //
 // Permission is hereby granted, free of charge, to any person or organization
@@ -41,7 +41,7 @@
 
 
 #include "Poco/Foundation.h"
-#include "Poco/Mutex.h"
+#include "Poco/AtomicCounter.h"
 
 
 namespace Poco {
@@ -78,8 +78,7 @@ private:
 	RefCountedObject(const RefCountedObject&);
 	RefCountedObject& operator = (const RefCountedObject&);
 
-	mutable int _rc;
-	mutable FastMutex _rcMutex;
+	mutable AtomicCounter _counter;
 };
 
 
@@ -88,7 +87,19 @@ private:
 //
 inline int RefCountedObject::referenceCount() const
 {
-	return _rc;
+	return _counter.value();
+}
+
+
+inline void RefCountedObject::duplicate() const
+{
+	++_counter;
+}
+
+
+inline void RefCountedObject::release() const
+{
+	if (--_counter == 0) delete this;
 }
 
 

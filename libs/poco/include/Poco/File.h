@@ -1,7 +1,7 @@
 //
 // File.h
 //
-// $Id: //poco/1.3/Foundation/include/Poco/File.h#6 $
+// $Id: //poco/1.4/Foundation/include/Poco/File.h#1 $
 //
 // Library: Foundation
 // Package: Filesystem
@@ -46,7 +46,11 @@
 
 
 #if defined(POCO_OS_FAMILY_WINDOWS) && defined(POCO_WIN32_UTF8)
+#if defined(_WIN32_WCE)
+#include "File_WINCE.h"
+#else
 #include "Poco/File_WIN32U.h"
+#endif
 #elif defined(POCO_OS_FAMILY_WINDOWS)
 #include "Poco/File_WIN32.h"
 #elif defined(POCO_OS_FAMILY_UNIX)
@@ -129,6 +133,9 @@ public:
 		
 	bool isDirectory() const;
 		/// Returns true iff the file is a directory.
+		
+	bool isDevice() const;
+		/// Returns true iff the file is a device.
 
 	bool isHidden() const;
 		/// Returns true if the file is hidden.

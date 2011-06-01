@@ -1,65 +1,8 @@
-#ifndef _OFX_THREAD_H_
-#define _OFX_THREAD_H_
+#pragma once
 
-#include "ofConstants.h"
+#include "ofThread.h"
 
-#ifdef TARGET_WIN32
-	#include <process.h>
-#else
-    #include <pthread.h>
-    #include <semaphore.h>
-#endif
+#warning ofxThread has been deprecated. 
+#warning Remove all references to ofxThread.h and use ofThread instead.
+typedef ofThread ofxThread;
 
-class ofxThread{
-
-	public:
-		ofxThread();
-		virtual ~ofxThread();
-		bool isThreadRunning();
-		void startThread(bool _blocking = true, bool _verbose = true);
-		bool lock();
-		bool unlock();
-		void stopThread();
-
-	protected:
-
-		//-------------------------------------------------
-		//you need to overide this with the function you want to thread
-		virtual void threadedFunction(){
-			if(verbose)printf("ofxThread: overide threadedFunction with your own\n");
-		}
-
-		//-------------------------------------------------
-
-		#ifdef TARGET_WIN32
-			static unsigned int __stdcall thread(void * objPtr){
-				ofxThread* me	= (ofxThread*)objPtr;
-				me->threadedFunction();
-				me->stopThread();
-				return 0;
-			}
-
-		#else
-			static void * thread(void * objPtr){
-				ofxThread* me	= (ofxThread*)objPtr;
-				me->threadedFunction();
-				me->stopThread();
-				return 0;
-			}
-		#endif
-
-
-	#ifdef TARGET_WIN32
-			HANDLE            myThread;
-			CRITICAL_SECTION  critSec;  	//same as a mutex
-	#else
-			pthread_t        myThread;
-			pthread_mutex_t  myMutex;
-	#endif
-
-	bool threadRunning;
-	bool blocking;
-	bool verbose;
-};
-
-#endif
