@@ -33,6 +33,10 @@ class ofxAndroidSoundStream : public ofBaseSoundStream{
 		int getMinOutBufferSize(int samplerate, int nchannels);
 		int getMinInBufferSize(int samplerate, int nchannels);
 
+		bool isHeadPhonesConnected();
+
+		ofEvent<bool> headphonesConnectedE;
+
 	private:
 		long unsigned long	tickCount;
 		int					sampleRate;
