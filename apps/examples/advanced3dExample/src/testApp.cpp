@@ -78,7 +78,7 @@ void testApp::setup(){
 	//every frame, let's cache them
 	//for speed
 	for (int i=0; i<N_CAMERAS; i++)
-		cameras[i]->cacheMatrices = false;
+		cameras[i]->cacheMatrices();
 	
 	//
 	/////////////////////

@@ -34,7 +34,6 @@ public:
 	ofLight & operator=(const ofLight & mom);
 	virtual ~ofLight();
 	
-	void setup();
 	void enable();
 	void disable();
 	bool getIsEnabled() const;
