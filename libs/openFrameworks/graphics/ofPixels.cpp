@@ -23,7 +23,7 @@ ofPixels_<T>::ofPixels_(const ofPixels_<T> & mom){
 	pixelsOwner = false;
 	channels = 0;
 	pixels = NULL;
-	(*this).template copyFrom( mom );
+	copyFrom( mom );
 }
 
 template<typename T>
@@ -31,7 +31,7 @@ ofPixels_<T>& ofPixels_<T>::operator=(const ofPixels_<T> & mom){
 	if(this==&mom) {
 		return * this;
 	}
-	(*this).template copyFrom( mom );
+	copyFrom( mom );
 	return *this;
 }
 
