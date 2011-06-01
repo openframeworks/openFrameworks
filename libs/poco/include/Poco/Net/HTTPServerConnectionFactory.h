@@ -1,7 +1,7 @@
 //
 // HTTPServerConnectionFactory.h
 //
-// $Id: //poco/1.3/Net/include/Poco/Net/HTTPServerConnectionFactory.h#1 $
+// $Id: //poco/1.4/Net/include/Poco/Net/HTTPServerConnectionFactory.h#1 $
 //
 // Library: Net
 // Package: HTTPServer
@@ -42,14 +42,12 @@
 
 #include "Poco/Net/Net.h"
 #include "Poco/Net/TCPServerConnectionFactory.h"
+#include "Poco/Net/HTTPRequestHandlerFactory.h"
+#include "Poco/Net/HTTPServerParams.h"
 
 
 namespace Poco {
 namespace Net {
-
-
-class HTTPServerParams;
-class HTTPRequestHandlerFactory;
 
 
 class Net_API HTTPServerConnectionFactory: public TCPServerConnectionFactory
@@ -57,7 +55,7 @@ class Net_API HTTPServerConnectionFactory: public TCPServerConnectionFactory
 	/// is used by HTTPServer to create HTTPServerConnection objects.
 {
 public:
-	HTTPServerConnectionFactory(HTTPServerParams* pParams, HTTPRequestHandlerFactory* pFactory);
+	HTTPServerConnectionFactory(HTTPServerParams::Ptr pParams, HTTPRequestHandlerFactory::Ptr pFactory);
 		/// Creates the HTTPServerConnectionFactory.
 
 	~HTTPServerConnectionFactory();
@@ -68,8 +66,8 @@ public:
 		/// using the given StreamSocket.
 	
 private:
-	HTTPServerParams*          _pParams;
-	HTTPRequestHandlerFactory* _pFactory;
+	HTTPServerParams::Ptr          _pParams;
+	HTTPRequestHandlerFactory::Ptr _pFactory;
 };
 
 

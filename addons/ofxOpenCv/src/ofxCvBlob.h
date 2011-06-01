@@ -41,13 +41,13 @@ class ofxCvBlob {
         //----------------------------------------
         void draw(float x = 0, float y = 0){
             ofNoFill();
-            ofSetColor(0x00FFFF);
+            ofSetHexColor(0x00FFFF);
             ofBeginShape();
             for (int i = 0; i < nPts; i++){
                    ofVertex(x + pts[i].x, y + pts[i].y);
             }
             ofEndShape(true);
-            ofSetColor(0xff0099);
+            ofSetHexColor(0xff0099);
             ofRect(x + boundingRect.x, y + boundingRect.y, boundingRect.width, boundingRect.height);
         }
 };

@@ -1,7 +1,7 @@
 //
 // SMTPClientSession.h
 //
-// $Id: //poco/1.3/Net/include/Poco/Net/SMTPClientSession.h#3 $
+// $Id: //poco/1.4/Net/include/Poco/Net/SMTPClientSession.h#1 $
 //
 // Library: Net
 // Package: Mail
@@ -42,6 +42,7 @@
 
 #include "Poco/Net/Net.h"
 #include "Poco/Net/DialogSocket.h"
+#include "Poco/DigestEngine.h"
 #include "Poco/Timespan.h"
 
 
@@ -67,10 +68,12 @@ public:
 	{
 		AUTH_NONE,
 		AUTH_CRAM_MD5,
+		AUTH_CRAM_SHA1,
 		AUTH_LOGIN,
+		AUTH_PLAIN
 	};
 
-	SMTPClientSession(const StreamSocket& socket);
+	explicit SMTPClientSession(const StreamSocket& socket);
 		/// Creates the SMTPClientSession using
 		/// the given socket, which must be connected
 		/// to a SMTP server.
@@ -100,6 +103,10 @@ public:
 
 	void login();
 		/// Calls login(hostname) with the current host name.
+
+	void login(const std::string& hostname, LoginMethod loginMethod, const std::string& username, const std::string& password);
+		/// Logs in to the SMTP server using the given authentication method and the given
+		/// credentials.
 
 	void login(LoginMethod loginMethod, const std::string& username, const std::string& password);
 		/// Logs in to the SMTP server using the given authentication method and the given
@@ -161,9 +168,12 @@ protected:
 	static bool isPermanentNegative(int status);
 
 	void login(const std::string& hostname, std::string& response);
-	void loginUsingCRAM_MD5(const std::string& username, const std::string& password);
+	void loginUsingCRAMMD5(const std::string& username, const std::string& password);
+	void loginUsingCRAMSHA1(const std::string& username, const std::string& password);
+	void loginUsingCRAM(const std::string& username, const std::string& method, Poco::DigestEngine& hmac);
 	void loginUsingLogin(const std::string& username, const std::string& password);
 	void loginUsingPlain(const std::string& username, const std::string& password);
+	DialogSocket& socket();
 
 private:
 	DialogSocket _socket;
@@ -195,6 +205,12 @@ inline bool SMTPClientSession::isTransientNegative(int status)
 inline bool SMTPClientSession::isPermanentNegative(int status)
 {
 	return status/100 == SMTP_PERMANENT_NEGATIVE;
+}
+
+
+inline DialogSocket& SMTPClientSession::socket()
+{
+	return _socket;
 }
 
 

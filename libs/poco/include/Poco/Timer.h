@@ -1,7 +1,7 @@
 //
 // Timer.h
 //
-// $Id: //poco/1.3/Foundation/include/Poco/Timer.h#3 $
+// $Id: //poco/1.4/Foundation/include/Poco/Timer.h#1 $
 //
 // Library: Foundation
 // Package: Threading
@@ -45,6 +45,7 @@
 #include "Poco/Mutex.h"
 #include "Poco/Event.h"
 #include "Poco/Thread.h"
+#include "Poco/Timestamp.h"
 
 
 namespace Poco {
@@ -70,6 +71,16 @@ class Foundation_API Timer: protected Runnable
 	/// The exact interval at which the callback is called depends on many 
 	/// factors like operating system, CPU performance and system load and
 	/// may differ from the specified interval.
+	///
+	/// The time needed to execute the timer callback is not included
+	/// in the interval between invocations. For example, if the interval
+	/// is 500 milliseconds, and the callback needs 400 milliseconds to
+	/// execute, the callback function is nevertheless called every 500
+	/// milliseconds. If the callback takes longer to execute than the
+	/// interval, the callback function will not be called until the next
+	/// proper interval. The number of skipped invocations since the last
+	/// invocation will be recorded and can be obtained by the callback
+	/// by calling skipped().
 	///
 	/// The timer thread is taken from a thread pool, so
 	/// there is a limit to the number of available concurrent timers.
@@ -142,6 +153,11 @@ public:
 		/// Sets the periodic interval. If the timer is already running
 		/// the new interval will be effective when the current interval
 		/// expires.
+		
+	long skipped() const;
+		/// Returns the number of skipped invocations since the last invocation.
+		/// Skipped invocations happen if the timer callback function takes
+		/// longer to execute than the timer interval.
 
 protected:
 	void run();
@@ -151,7 +167,9 @@ private:
 	volatile long _periodicInterval;
 	Event         _wakeUp;
 	Event         _done;
+	long          _skipped;
 	AbstractTimerCallback* _pCallback;
+	Timestamp              _nextInvocation;
 	mutable FastMutex      _mutex;
 	
 	Timer(const Timer&);

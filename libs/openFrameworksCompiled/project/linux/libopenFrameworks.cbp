@@ -3,6 +3,8 @@
 	<FileVersion major="1" minor="6" />
 	<Project>
 		<Option title="libopenFrameworks" />
+		<Option makefile="makefile" />
+		<Option makefile_is_custom="1" />
 		<Option pch_mode="2" />
 		<Option compiler="gcc" />
 		<Option virtualFolders="openFrameworks/sound/;openFrameworks/;openFrameworks/utils/;openFrameworks/video/;openFrameworks/graphics/;openFrameworks/events/;openFrameworks/communication/;openFrameworks/app/;" />
@@ -13,9 +15,6 @@
 				<Option object_output="obj/Debug" />
 				<Option type="2" />
 				<Option compiler="gcc" />
-				<Compiler>
-					<Add option="-g" />
-				</Compiler>
 			</Target>
 			<Target title="Release">
 				<Option output="../../lib/linux/libopenFrameworks" prefix_auto="1" extension_auto="1" />
@@ -24,36 +23,12 @@
 				<Option type="2" />
 				<Option compiler="gcc" />
 				<Compiler>
-					<Add option="-march=native" />
-					<Add option="-O3" />
 				</Compiler>
 				<Linker>
-					<Add option="-s" />
 				</Linker>
 			</Target>
 		</Build>
 		<Compiler>
-			<Add option="-Wall" />
-			<Add option="-fexceptions" />
-			<Add directory="../../../openFrameworks/" />
-			<Add directory="../../../openFrameworks/events" />
-			<Add directory="../../../openFrameworks/app" />
-			<Add directory="../../../openFrameworks/communication" />
-			<Add directory="../../../openFrameworks/graphics" />
-			<Add directory="../../../openFrameworks/video" />
-			<Add directory="../../../openFrameworks/utils" />
-			<Add directory="../../../openFrameworks/sound" />
-			<Add directory="../../../rtAudio/include" />
-			<Add directory="../../../fmodex/include" />
-			<Add directory="../../../glee/include" />
-			<Add directory="../../../glee/" />
-			<Add directory="../../../FreeImage/include" />
-			<Add directory="../../../freetype/include" />
-			<Add directory="../../../freetype/include/freetype2" />
-			<Add directory="../../../unicap/include" />
-			<Add directory="../../../gstappsink/include" />
-			<Add directory="../../../addons" />
-			<Add directory="../../../poco/include" />
 		</Compiler>
 		<Unit filename="../../../openFrameworks/app/ofAppBaseWindow.h">
 			<Option virtualFolder="openFrameworks/app/" />
@@ -174,14 +149,6 @@
 		</Unit>
 		<Extensions>
 			<lib_finder>
-				<lib name="gstreamer-0.10" />
-				<lib name="gstreamer-video-0.10" />
-				<lib name="gstreamer-base-0.10" />
-				<lib name="libudev" />
-				<lib name="gstreamer-app-0.10" />
-				<lib name="libavcodec"/>
-				<lib name="libformat"/>
-				<lib name="libutil"/>
 			</lib_finder>
 			<code_completion />
 			<envvars />

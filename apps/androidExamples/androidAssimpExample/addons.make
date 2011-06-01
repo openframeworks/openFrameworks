@@ -1,0 +1,3 @@
+ofxAssimpModelLoader
+ofxAndroid
+ofxAccelerometer

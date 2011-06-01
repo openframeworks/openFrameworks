@@ -1,7 +1,7 @@
 //
 // ExpirationDecorator.h
 //
-// $Id: //poco/1.3/Foundation/include/Poco/ExpirationDecorator.h#2 $
+// $Id: //poco/1.4/Foundation/include/Poco/ExpirationDecorator.h#1 $
 //
 // Library: Foundation
 // Package: Events
@@ -36,8 +36,8 @@
 //
 
 
-#ifndef  Foundation_ExpirationDecorator_INCLUDED
-#define  Foundation_ExpirationDecorator_INCLUDED
+#ifndef Foundation_ExpirationDecorator_INCLUDED
+#define Foundation_ExpirationDecorator_INCLUDED
 
 
 #include "Poco/Timestamp.h"
@@ -50,7 +50,7 @@ namespace Poco {
 template <typename TArgs>
 class ExpirationDecorator
 	/// ExpirationDecorator adds an expiration method to values so that they can be used
-	/// with the UniqueExpireCache
+	/// with the UniqueExpireCache.
 {
 public:
 	ExpirationDecorator():
@@ -111,4 +111,4 @@ private:
 } // namespace Poco
 
 
-#endif
+#endif // Foundation_ExpirationDecorator_INCLUDED

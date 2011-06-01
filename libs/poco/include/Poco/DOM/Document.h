@@ -1,7 +1,7 @@
 //
 // Document.h
 //
-// $Id: //poco/1.3/XML/include/Poco/DOM/Document.h#1 $
+// $Id: //poco/1.4/XML/include/Poco/DOM/Document.h#1 $
 //
 // Library: XML
 // Package: DOM
@@ -43,6 +43,7 @@
 #include "Poco/XML/XML.h"
 #include "Poco/DOM/AbstractContainerNode.h"
 #include "Poco/DOM/DocumentEvent.h"
+#include "Poco/DOM/Element.h"
 #include "Poco/XML/XMLString.h"
 #include "Poco/XML/NamePool.h"
 #include "Poco/AutoReleasePool.h"
@@ -55,7 +56,6 @@ namespace XML {
 class NamePool;
 class DocumentType;
 class DOMImplementation;
-class Element;
 class DocumentFragment;
 class Text;
 class Comment;
@@ -243,6 +243,48 @@ public:
 	Element* getElementByIdNS(const XMLString& elementId, const XMLString& idAttributeURI, const XMLString& idAttributeLocalName) const;
 		/// Returns the first Element whose ID attribute (given in idAttributeURI and idAttributeLocalName)
 		/// has the given elementId. If no such element exists, returns null. 
+		///
+		/// This method is an extension to the W3C Document Object Model.
+
+	Node* getNodeByPath(const XMLString& path);
+		/// Searches a node (element or attribute) based on a simplified XPath 
+		/// expression.
+		///
+		/// Only simple XPath expressions are supported. These are the slash
+		/// notation for specifying paths to elements, and the square bracket
+		/// expression for finding elements by their index, by attribute value, 
+		/// or finding attributes by names.
+		///
+		/// The slash at the beginning is optional, the evaluation always starts
+		/// at the document element.
+		///
+		/// Examples:
+		///     /elem1/elem2/elem3
+		///     /elem1/elem2[1]
+		///     /elem1/elem2[@attr1]
+		///     /elem1/elem2[@attr1='value']
+		///
+		/// This method is an extension to the W3C Document Object Model.
+
+	Node* getNodeByPathNS(const XMLString& path, const Element::NSMap& nsMap);
+		/// Searches a node (element or attribute) based on a simplified XPath 
+		/// expression. The given NSMap must contain mappings from namespace
+		/// prefixes to namespace URIs for all namespace prefixes used in 
+		/// the path expression.
+		///
+		/// Only simple XPath expressions are supported. These are the slash
+		/// notation for specifying paths to elements, and the square bracket
+		/// expression for finding elements by their index, by attribute value, 
+		/// or finding attributes by names.
+		///
+		/// The slash at the beginning is optional, the evaluation always starts
+		/// at the document element.
+		///
+		/// Examples:
+		///     /ns1:elem1/ns2:elem2/ns2:elem3
+		///     /ns1:elem1/ns2:elem2[1]
+		///     /ns1:elem1/ns2:elem2[@attr1]
+		///     /ns1:elem1/ns2:elem2[@attr1='value']
 		///
 		/// This method is an extension to the W3C Document Object Model.
 

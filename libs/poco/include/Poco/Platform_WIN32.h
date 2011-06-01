@@ -1,7 +1,7 @@
 //
 // Platform_WIN32.h
 //
-// $Id: //poco/1.3/Foundation/include/Poco/Platform_WIN32.h#5 $
+// $Id: //poco/1.4/Foundation/include/Poco/Platform_WIN32.h#1 $
 //
 // Library: Foundation
 // Package: Core
@@ -79,6 +79,7 @@
 	#pragma warning(disable:4996) // VC++ 8.0 deprecation warnings
 	#pragma warning(disable:4351) // new behavior: elements of array '...' will be default initialized
 	#pragma warning(disable:4675) // resolved overload was found by argument-dependent lookup
+	#pragma warning(disable:4275) // non dll-interface class 'std::exception' used as base for dll-interface class 'Poco::Exception'
 #endif
 
 

@@ -1,8 +1,7 @@
-#ifndef _TEST_APP
-#define _TEST_APP
-
+#pragma once
 
 #include "ofMain.h"
+#include "ofEvents.h"
 
 
 class testApp : public ofSimpleApp{
@@ -21,8 +20,10 @@ public:
 	void mousePressed(int x, int y, int button);
 	void mouseReleased(int x, int y, int button);
 	void windowResized(int w, int h);
-
-	void setupArduino();
+	void dragEvent(ofDragInfo dragInfo);
+	void gotMessage(ofMessage msg);
+		
+	void setupArduino(const int & version);
 	void updateArduino();
 
 	ofImage				bgImage;
@@ -31,6 +32,4 @@ public:
 	bool		bSetupArduino;			// flag variable for setting up arduino once
 
 };
-
-#endif
 

@@ -1,7 +1,7 @@
 //
 // ValidArgs.h
 //
-// $Id: //poco/1.3/Foundation/include/Poco/ValidArgs.h#1 $
+// $Id: //poco/1.4/Foundation/include/Poco/ValidArgs.h#1 $
 //
 // Library: Foundation
 // Package: Cache
@@ -36,8 +36,8 @@
 //
 
 
-#ifndef  Foundation_ValidArgs_INCLUDED
-#define  Foundation_ValidArgs_INCLUDED
+#ifndef Foundation_ValidArgs_INCLUDED
+#define Foundation_ValidArgs_INCLUDED
 
 
 #include "Poco/Foundation.h"
@@ -93,4 +93,4 @@ private:
 } // namespace Poco
 
 
-#endif
+#endif // Foundation_ValidArgs_INCLUDED

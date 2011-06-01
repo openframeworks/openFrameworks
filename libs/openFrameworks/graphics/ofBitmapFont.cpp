@@ -320,18 +320,153 @@ static const unsigned char* bmpChar_8x13_Map[] = {	bmpChar_8x13_000,bmpChar_8x13
 													bmpChar_8x13_240,bmpChar_8x13_241,bmpChar_8x13_242,bmpChar_8x13_243,bmpChar_8x13_244,bmpChar_8x13_245,bmpChar_8x13_246,bmpChar_8x13_247,bmpChar_8x13_248,bmpChar_8x13_249,bmpChar_8x13_250,bmpChar_8x13_251,bmpChar_8x13_252,bmpChar_8x13_253,bmpChar_8x13_254,bmpChar_8x13_255,NULL};
 
 
+
+#include "ofTexture.h"
+
+static bool		bBitmapTexturePrepared = false;
+ofTexture		glesBitmappedFontTexture;
+unsigned char	myLetterPixels[16*16 * 16*16 * 2];			// letter size:8x14pixels, texture size:16x8letters, gl_luminance_alpha: 2bytes/1pixel
+
+#ifdef TARGET_ANDROID
 //---------------------------------------------------------------------
-void  ofDrawBitmapCharacter(int character ){
-
-    const unsigned char * face = bmpChar_8x13_Map[ character ];
-
-    glBitmap(
-			 face[ 0 ], 14,      /* The bitmap's width and height  */
-			 0,3,     /* The origin in the font glyph   */
-			 ( float )( face[ 0 ] ), 0.0,  /* The raster advance -- inc. x,y */
-			 ( face + 1 )                  /* The packed bitmap data...      */
-			 );
-    
+void ofUpdateBitmapCharacterTexture(){
+	bBitmapTexturePrepared = false;
 }
+#endif
+
+//static GLfloat tex_coords[8];
+//static GLfloat verts[8];
+static float widthTex = 8.0f/256.0f;
+static float heightTex = 14.0f/256.0f;
+
+//TODO: make this bigger - or re-port back to vector?
+vector <GLfloat> coords;
+vector <GLfloat> verts;
+
+static int vC = 0;
+
 //---------------------------------------------------------------------
+static void prepareBitmapTexture(){
+
+	if (!bBitmapTexturePrepared){
+		
+		glesBitmappedFontTexture.allocate(16*16, 16*16, GL_LUMINANCE_ALPHA, false);
+		bBitmapTexturePrepared = true;
+		
+		for (int i = 0; i < 256; i++) {
+			
+			const unsigned char * face = bmpChar_8x13_Map[i];
+			
+			for (int j = 1; j < 15; j++){
+				for (int k = 0; k < 8; k++){
+					if ( ((face[15-j] << k) & (128)) > 0 ){
+						myLetterPixels[(((int)(i/16))*16*16*16+(i%16)*16 + (j-1)*16*16 + k)*2] = 255;
+						myLetterPixels[(((int)(i/16))*16*16*16+(i%16)*16 + (j-1)*16*16 + k)*2+1] = 255;
+					}else{
+						myLetterPixels[(((int)(i/16))*16*16*16+(i%16)*16 + (j-1)*16*16 + k)*2] = 0;
+						myLetterPixels[(((int)(i/16))*16*16*16+(i%16)*16 + (j-1)*16*16 + k)*2+1] = 0;
+					}
+				}
+			}
+		}
+		
+		glesBitmappedFontTexture.loadData(myLetterPixels, 16*16, 16*16, GL_LUMINANCE_ALPHA);
+		
+	}
+
+}
+		
+//---------------------------------------------------------------------
+void  ofDrawBitmapCharacter(int character, int x , int y){
+
+	if(!bBitmapTexturePrepared){
+		prepareBitmapTexture();
+	}
+		
+	if (character < 128) {		
+		//TODO: look into a better fix. 
+		//old ofDrawBitmapString was 3 pixels higher, so this version renders text in a different position. 
+		//3 pixel adjustment corrects that. 
+		y -= 3;
+
+		float posTexW = (float)(character % 16)/16.0f;
+		float posTexH = ((int)(character / 16.0f))/16.0f;
+				
+		coords[vC]		= posTexW;
+		coords[vC+1]	= posTexH;
+		coords[vC+2]	= posTexW + widthTex;
+		coords[vC+3]	= posTexH;
+		coords[vC+4]	= posTexW+widthTex;
+		coords[vC+5]	= posTexH+heightTex;
+		
+
+		coords[vC+6]	= posTexW + widthTex;
+		coords[vC+7]	= posTexH+heightTex;
+		coords[vC+8]	= posTexW;
+		coords[vC+9]	= posTexH+heightTex;
+		coords[vC+10]	= posTexW;
+		coords[vC+11]	= posTexH;
+		
+		verts[vC]	= x;
+		verts[vC+1]	= y;
+		verts[vC+2]	= x+8;
+		verts[vC+3]	= y;
+		verts[vC+4]	= x+8;
+		verts[vC+5]	= y+14;
+				
+		verts[vC+6]	= x+8;
+		verts[vC+7]	= y+14;
+		verts[vC+8] = x;
+		verts[vC+9] = y+14;
+		verts[vC+10] = x;
+		verts[vC+11] = y;
+			
+		vC += 12;
+	}	
+}
+
+//---------------------------------------------------------------------
+void ofDrawBitmapCharacterStart(int stringLength){
+
+	verts.clear();
+	coords.clear();
+	
+	verts.assign(12 * (stringLength+1), 0);
+	coords.assign(12 * (stringLength+1), 0);
+
+	if(!bBitmapTexturePrepared){
+		prepareBitmapTexture();
+	}
+	
+	glesBitmappedFontTexture.bind();
+
+#ifndef TARGET_OPENGLES
+	// this temporarily enables alpha testing,
+	// which discards pixels unless their alpha is 1.0f
+	glPushAttrib(GL_ENABLE_BIT | GL_COLOR_BUFFER_BIT);
+	glEnable(GL_ALPHA_TEST);
+	glAlphaFunc(GL_EQUAL, 1.0f);
+#endif
+
+	glEnableClientState(GL_VERTEX_ARRAY);		
+	glEnableClientState( GL_TEXTURE_COORD_ARRAY );
+	
+	glTexParameterf(glesBitmappedFontTexture.getTextureData().textureTarget, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	vC = 0;
+}
+
+//---------------------------------------------------------------------
+void ofDrawBitmapCharacterEnd(){
+	if( vC > 0 ){
+		glTexCoordPointer(2, GL_FLOAT, 0, &coords[0] );
+		glVertexPointer(2, GL_FLOAT, 0, &verts[0] );
+		glDrawArrays(GL_TRIANGLES, 0, vC/2 );
+	}
+
+	glDisableClientState( GL_TEXTURE_COORD_ARRAY );
+#ifndef TARGET_OPENGLES
+	glPopAttrib();
+#endif
+	glesBitmappedFontTexture.unbind();
+}
 

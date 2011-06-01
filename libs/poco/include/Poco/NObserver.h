@@ -1,7 +1,7 @@
 //
 // NObserver.h
 //
-// $Id: //poco/1.3/Foundation/include/Poco/NObserver.h#1 $
+// $Id: //poco/1.4/Foundation/include/Poco/NObserver.h#1 $
 //
 // Library: Foundation
 // Package: Notifications
@@ -42,7 +42,6 @@
 
 #include "Poco/Foundation.h"
 #include "Poco/AbstractObserver.h"
-#include "Poco/AutoPtr.h"
 
 
 namespace Poco {

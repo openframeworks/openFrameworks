@@ -1,7 +1,7 @@
 //
 // RWLock_POSIX.h
 //
-// $Id: //poco/1.3/Foundation/include/Poco/RWLock_POSIX.h#1 $
+// $Id: //poco/1.4/Foundation/include/Poco/RWLock_POSIX.h#1 $
 //
 // Library: Foundation
 // Package: Threading
@@ -47,7 +47,7 @@
 
 
 namespace Poco {
-
+#ifndef ANDROID
 
 class Foundation_API RWLockImpl
 {
@@ -114,8 +114,75 @@ inline void RWLockImpl::unlockImpl()
 		throw SystemException("cannot unlock mutex");
 }
 
+#else
+
+class Foundation_API RWLockImpl
+{
+protected:
+	RWLockImpl();
+	~RWLockImpl();
+	void readLockImpl();
+	bool tryReadLockImpl();
+	void writeLockImpl();
+	bool tryWriteLockImpl();
+	void unlockImpl();
+
+private:
+	//pthread_rwlock_t _rwl;
+};
+
+
+//
+// inlines
+//
+inline void RWLockImpl::readLockImpl()
+{
+	//if (pthread_rwlock_rdlock(&_rwl))
+		throw SystemException("cannot lock reader/writer lock");
+}
+
+
+inline bool RWLockImpl::tryReadLockImpl()
+{
+	/*int rc = pthread_rwlock_tryrdlock(&_rwl);
+	if (rc == 0)
+		return true;
+	else if (rc == EBUSY)
+		return false;
+	else*/
+		throw SystemException("cannot lock reader/writer lock");
+
+}
+
+
+inline void RWLockImpl::writeLockImpl()
+{
+	//if (pthread_rwlock_wrlock(&_rwl))
+		throw SystemException("cannot lock reader/writer lock");
+}
+
+
+inline bool RWLockImpl::tryWriteLockImpl()
+{
+	/*int rc = pthread_rwlock_trywrlock(&_rwl);
+	if (rc == 0)
+		return true;
+	else if (rc == EBUSY)
+		return false;
+	else*/
+		throw SystemException("cannot lock reader/writer lock");
+
+}
+
+
+inline void RWLockImpl::unlockImpl()
+{
+	//if (pthread_rwlock_unlock(&_rwl))
+		throw SystemException("cannot unlock mutex");
+}
+
+#endif
 
 } // namespace Poco
-
 
 #endif // Foundation_RWLock_POSIX_INCLUDED

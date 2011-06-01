@@ -4,7 +4,7 @@
 /*                                                                         */
 /*    Generic list support for FreeType (specification).                   */
 /*                                                                         */
-/*  Copyright 1996-2001, 2003, 2007 by                                     */
+/*  Copyright 1996-2001, 2003, 2007, 2010 by                               */
 /*  David Turner, Robert Wilhelm, and Werner Lemberg.                      */
 /*                                                                         */
 /*  This file is part of the FreeType project, and may only be used,       */
@@ -81,7 +81,7 @@ FT_BEGIN_HEADER
   /*    FT_List_Find                                                       */
   /*                                                                       */
   /* <Description>                                                         */
-  /*    Finds the list node for a given listed object.                     */
+  /*    Find the list node for a given listed object.                      */
   /*                                                                       */
   /* <Input>                                                               */
   /*    list :: A pointer to the parent list.                              */
@@ -101,7 +101,7 @@ FT_BEGIN_HEADER
   /*    FT_List_Add                                                        */
   /*                                                                       */
   /* <Description>                                                         */
-  /*    Appends an element to the end of a list.                           */
+  /*    Append an element to the end of a list.                            */
   /*                                                                       */
   /* <InOut>                                                               */
   /*    list :: A pointer to the parent list.                              */
@@ -118,7 +118,7 @@ FT_BEGIN_HEADER
   /*    FT_List_Insert                                                     */
   /*                                                                       */
   /* <Description>                                                         */
-  /*    Inserts an element at the head of a list.                          */
+  /*    Insert an element at the head of a list.                           */
   /*                                                                       */
   /* <InOut>                                                               */
   /*    list :: A pointer to parent list.                                  */
@@ -135,7 +135,7 @@ FT_BEGIN_HEADER
   /*    FT_List_Remove                                                     */
   /*                                                                       */
   /* <Description>                                                         */
-  /*    Removes a node from a list.  This function doesn't check whether   */
+  /*    Remove a node from a list.  This function doesn't check whether    */
   /*    the node is in the list!                                           */
   /*                                                                       */
   /* <Input>                                                               */
@@ -155,7 +155,7 @@ FT_BEGIN_HEADER
   /*    FT_List_Up                                                         */
   /*                                                                       */
   /* <Description>                                                         */
-  /*    Moves a node to the head/top of a list.  Used to maintain LRU      */
+  /*    Move a node to the head/top of a list.  Used to maintain LRU       */
   /*    lists.                                                             */
   /*                                                                       */
   /* <InOut>                                                               */
@@ -193,7 +193,7 @@ FT_BEGIN_HEADER
   /*    FT_List_Iterate                                                    */
   /*                                                                       */
   /* <Description>                                                         */
-  /*    Parses a list and calls a given iterator function on each element. */
+  /*    Parse a list and calls a given iterator function on each element.  */
   /*    Note that parsing is stopped as soon as one of the iterator calls  */
   /*    returns a non-zero value.                                          */
   /*                                                                       */
@@ -242,7 +242,7 @@ FT_BEGIN_HEADER
   /*    FT_List_Finalize                                                   */
   /*                                                                       */
   /* <Description>                                                         */
-  /*    Destroys all elements in the list as well as the list itself.      */
+  /*    Destroy all elements in the list as well as the list itself.       */
   /*                                                                       */
   /* <Input>                                                               */
   /*    list    :: A handle to the list.                                   */
@@ -254,6 +254,10 @@ FT_BEGIN_HEADER
   /*                                                                       */
   /*    user    :: A user-supplied field which is passed as the last       */
   /*               argument to the destructor.                             */
+  /*                                                                       */
+  /* <Note>                                                                */
+  /*    This function expects that all nodes added by @FT_List_Add or      */
+  /*    @FT_List_Insert have been dynamically allocated.                   */
   /*                                                                       */
   FT_EXPORT( void )
   FT_List_Finalize( FT_List             list,

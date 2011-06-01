@@ -1,7 +1,7 @@
 //
 // PriorityDelegate.h
 //
-// $Id: //poco/1.3/Foundation/include/Poco/PriorityDelegate.h#2 $
+// $Id: //poco/1.4/Foundation/include/Poco/PriorityDelegate.h#1 $
 //
 // Library: Foundation
 // Package: Events
@@ -36,8 +36,8 @@
 //
 
 
-#ifndef  Foundation_PriorityDelegate_INCLUDED
-#define  Foundation_PriorityDelegate_INCLUDED
+#ifndef Foundation_PriorityDelegate_INCLUDED
+#define Foundation_PriorityDelegate_INCLUDED
 
 
 #include "Poco/Foundation.h"
@@ -103,7 +103,6 @@ protected:
 private:
 	PriorityDelegate();
 };
-
 
 
 template <class TObj, class TArgs> 
@@ -235,4 +234,4 @@ static FunctionPriorityDelegate<TArgs, false> priorityDelegate(void (*NotifyMeth
 } // namespace Poco
 
 
-#endif
+#endif // Foundation_PriorityDelegate_INCLUDED

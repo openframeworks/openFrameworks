@@ -1,7 +1,7 @@
 //
 // RWLock_WIN32.h
 //
-// $Id: //poco/1.3/Foundation/include/Poco/RWLock_WIN32.h#3 $
+// $Id: //poco/1.4/Foundation/include/Poco/RWLock_WIN32.h#1 $
 //
 // Library: Foundation
 // Package: Threading
@@ -62,6 +62,7 @@ protected:
 private:
 	void addWriter();
 	void removeWriter();
+	DWORD tryReadLockOnce();
 
 	HANDLE   _mutex;
 	HANDLE   _readEvent;

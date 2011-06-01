@@ -1,7 +1,7 @@
 //
 // LinearHashTable.h
 //
-// $Id: //poco/1.3/Foundation/include/Poco/LinearHashTable.h#5 $
+// $Id: //poco/1.4/Foundation/include/Poco/LinearHashTable.h#1 $
 //
 // Library: Foundation
 // Package: Hashing
@@ -364,13 +364,16 @@ public:
 		/// pair(iterator, true) with iterator
 		/// pointing to the new element is returned.
 	{
-		split();
-		std::size_t addr = bucketAddress(value);
+		std::size_t hash = _hash(value);
+		std::size_t addr = bucketAddressForHash(hash);
 		BucketVecIterator it(_buckets.begin() + addr);
 		BucketIterator buckIt(std::find(it->begin(), it->end(), value));
 		if (buckIt == it->end())
 		{
-			buckIt = it->insert(buckIt, value);
+			split();
+			addr = bucketAddressForHash(hash);
+			it = _buckets.begin() + addr;
+			buckIt = it->insert(it->end(), value);
 			++_size;
 			return std::make_pair(Iterator(it, _buckets.end(), buckIt), true);
 		}
@@ -417,6 +420,12 @@ public:
 		return _size == 0;
 	}
 	
+	std::size_t buckets() const
+		/// Returns the number of allocated buckets.
+	{
+		return _buckets.size();
+	}
+	
 protected:
 	std::size_t bucketAddress(const Value& value) const
 	{
@@ -425,6 +434,14 @@ protected:
 			return n % _front;
 		else
 			return n % (2*_front);
+	}
+	
+	std::size_t bucketAddressForHash(std::size_t hash)
+	{
+		if (hash % _front >= _split)
+			return hash % _front;
+		else
+			return hash % (2*_front);
 	}
 	
 	void split()

@@ -1,2 +1,23 @@
 !examples
+!examples/**
 !addonsExamples
+!addonsExamples/**
+!iPhoneExamples
+!iPhoneExamples/**
+!androidExamples
+!androidExamples/**
+!androidExamples/*/**
+*/.metadata
+androidExamples/*/Debug
+androidExamples/*/Release
+androidExamples/*/Release_arm7
+androidExamples/*/test link
+androidExamples/*/bin
+androidExamples/*/obj
+androidExamples/*/gen
+androidExamples/*/local.properties
+androidExamples/*/.settings
+androidExamples/*/.externalToolBuilders
+libOFAndroidApp.so
+*/*/.*project
+!androidExamples/*/.*project

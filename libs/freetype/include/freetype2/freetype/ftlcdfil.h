@@ -5,7 +5,7 @@
 /*    FreeType API for color filtering of subpixel bitmap glyphs           */
 /*    (specification).                                                     */
 /*                                                                         */
-/*  Copyright 2006, 2007 by                                                */
+/*  Copyright 2006, 2007, 2008, 2010 by                                    */
 /*  David Turner, Robert Wilhelm, and Werner Lemberg.                      */
 /*                                                                         */
 /*  This file is part of the FreeType project, and may only be used,       */
@@ -22,6 +22,12 @@
 
 #include <ft2build.h>
 #include FT_FREETYPE_H
+
+#ifdef FREETYPE_H
+#error "freetype.h of FreeType 1 has been loaded!"
+#error "Please fix the directory search order for header files"
+#error "so that freetype.h of FreeType 2 is found first."
+#endif
 
 
 FT_BEGIN_HEADER
@@ -52,7 +58,7 @@ FT_BEGIN_HEADER
 
   /****************************************************************************
    *
-   * @func:
+   * @enum:
    *   FT_LcdFilter
    *
    * @description:
@@ -85,7 +91,7 @@ FT_BEGIN_HEADER
    * @since:
    *   2.3.0
    */
-  typedef enum
+  typedef enum  FT_LcdFilter_
   {
     FT_LCD_FILTER_NONE    = 0,
     FT_LCD_FILTER_DEFAULT = 1,
@@ -119,7 +125,7 @@ FT_BEGIN_HEADER
    *     well on most LCD screens.
    *
    * @return:
-   *   FreeType error code.  0 means success.
+   *   FreeType error code.  0~means success.
    *
    * @note:
    *   This feature is always disabled by default.  Clients must make an
@@ -141,8 +147,8 @@ FT_BEGIN_HEADER
    *   If this feature is activated, the dimensions of LCD glyph bitmaps are
    *   either larger or taller than the dimensions of the corresponding
    *   outline with regards to the pixel grid.  For example, for
-   *   @FT_RENDER_MODE_LCD, the filter adds up to 3 pixels to the left, and
-   *   up to 3 pixels to the right.
+   *   @FT_RENDER_MODE_LCD, the filter adds up to 3~pixels to the left, and
+   *   up to 3~pixels to the right.
    *
    *   The bitmap offset values are adjusted correctly, so clients shouldn't
    *   need to modify their layout and glyph positioning code when enabling
@@ -154,6 +160,47 @@ FT_BEGIN_HEADER
   FT_EXPORT( FT_Error )
   FT_Library_SetLcdFilter( FT_Library    library,
                            FT_LcdFilter  filter );
+
+
+  /**************************************************************************
+   *
+   * @func:
+   *   FT_Library_SetLcdFilterWeights
+   *
+   * @description:
+   *   Use this function to override the filter weights selected by
+   *   @FT_Library_SetLcdFilter.  By default, FreeType uses the quintuple
+   *   (0x00, 0x55, 0x56, 0x55, 0x00) for FT_LCD_FILTER_LIGHT, and (0x10,
+   *   0x40, 0x70, 0x40, 0x10) for FT_LCD_FILTER_DEFAULT and
+   *   FT_LCD_FILTER_LEGACY.
+   *
+   * @input:
+   *   library ::
+   *     A handle to the target library instance.
+   *
+   *   weights ::
+   *     A pointer to an array; the function copies the first five bytes and
+   *     uses them to specify the filter weights.
+   *
+   * @return:
+   *   FreeType error code.  0~means success.
+   *
+   * @note:
+   *   Due to *PATENTS* covering subpixel rendering, this function doesn't
+   *   do anything except returning `FT_Err_Unimplemented_Feature' if the
+   *   configuration macro FT_CONFIG_OPTION_SUBPIXEL_RENDERING is not
+   *   defined in your build of the library, which should correspond to all
+   *   default builds of FreeType.
+   *
+   *   This function must be called after @FT_Library_SetLcdFilter to have
+   *   any effect.
+   *
+   * @since:
+   *   2.4.0
+   */
+  FT_EXPORT( FT_Error )
+  FT_Library_SetLcdFilterWeights( FT_Library      library,
+                                  unsigned char  *weights );
 
   /* */
 

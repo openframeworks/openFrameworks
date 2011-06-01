@@ -1,7 +1,7 @@
 //
 // Types.h
 //
-// $Id: //poco/1.3/Foundation/include/Poco/Types.h#1 $
+// $Id: //poco/1.4/Foundation/include/Poco/Types.h#1 $
 //
 // Library: Foundation
 // Package: Core
@@ -67,7 +67,7 @@ namespace Poco {
 		typedef unsigned long      UIntPtr;
 	#endif
 	#define POCO_HAVE_INT64 1
-#elif defined(__GNUC__)
+#elif defined(__GNUC__) || defined(__clang__)
 	//
 	// Unix/GCC
 	//

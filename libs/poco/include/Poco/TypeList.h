@@ -1,7 +1,7 @@
 //
 // TypeList.h
 //
-// $Id: //poco/1.3/Foundation/include/Poco/TypeList.h#6 $
+// $Id: //poco/1.4/Foundation/include/Poco/TypeList.h#1 $
 //
 // Library: Foundation
 // Package: Core
@@ -40,8 +40,8 @@
 //
 
 
-#ifndef  Foundation_TypeList_INCLUDED
-#define  Foundation_TypeList_INCLUDED
+#ifndef Foundation_TypeList_INCLUDED
+#define Foundation_TypeList_INCLUDED
 
 
 #include "Poco/Foundation.h"
@@ -484,4 +484,4 @@ struct TypeAllReplacer<TypeList<Head, Tail>, T, R>
 } // namespace Poco
 
 
-#endif
+#endif // Foundation_TypeList_INCLUDED

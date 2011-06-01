@@ -1,7 +1,7 @@
 //
 // FunctionPriorityDelegate.h
 //
-// $Id: //poco/1.3/Foundation/include/Poco/FunctionPriorityDelegate.h#1 $
+// $Id: //poco/1.4/Foundation/include/Poco/FunctionPriorityDelegate.h#1 $
 //
 // Library: Foundation
 // Package: Events
@@ -36,8 +36,8 @@
 //
 
 
-#ifndef  Foundation_FunctionPriorityDelegate_INCLUDED
-#define  Foundation_FunctionPriorityDelegate_INCLUDED
+#ifndef Foundation_FunctionPriorityDelegate_INCLUDED
+#define Foundation_FunctionPriorityDelegate_INCLUDED
 
 
 #include "Poco/Foundation.h"
@@ -151,7 +151,6 @@ protected:
 private:
 	FunctionPriorityDelegate();
 };
-
 
 
 template <class TArgs> 

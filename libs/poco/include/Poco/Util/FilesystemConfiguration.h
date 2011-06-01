@@ -1,7 +1,7 @@
 //
 // FilesystemConfiguration.h
 //
-// $Id: //poco/1.3/Util/include/Poco/Util/FilesystemConfiguration.h#1 $
+// $Id: //poco/1.4/Util/include/Poco/Util/FilesystemConfiguration.h#1 $
 //
 // Library: Util
 // Package: Configuration
@@ -100,6 +100,7 @@ protected:
 	bool getRaw(const std::string& key, std::string& value) const;
 	void setRaw(const std::string& key, const std::string& value);
 	void enumerate(const std::string& key, Keys& range) const;
+	void removeRaw(const std::string& key);
 	Poco::Path keyToPath(const std::string& key) const;
 	~FilesystemConfiguration();
 

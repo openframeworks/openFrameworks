@@ -1,7 +1,7 @@
 //
 // ServerApplication.h
 //
-// $Id: //poco/1.3/Util/include/Poco/Util/ServerApplication.h#3 $
+// $Id: //poco/1.4/Util/include/Poco/Util/ServerApplication.h#1 $
 //
 // Library: Util
 // Package: Application
@@ -43,6 +43,7 @@
 #include "Poco/Util/Util.h"
 #include "Poco/Util/Application.h"
 #include "Poco/Event.h"
+#include "Poco/NamedEvent.h"
 
 
 namespace Poco {
@@ -64,6 +65,12 @@ class Util_API ServerApplication: public Application
 	///     initialize() method.
 	///   - At the end of the main() method, waitForTerminationRequest()
 	///     should be called.
+	///   - New threads must only be created in initialize() or main() or
+	///     methods called from there, but not in the application class'
+	///     constructor or in the constructor of instance variables.
+	///     The reason for this is that fork() will be called in order to
+	///     create the daemon process, and threads created prior to calling
+	///     fork() won't be taken over to the daemon process.
 	///   - The main(argc, argv) function must look as follows:
 	///
 	///   int main(int argc, char** argv)
@@ -89,6 +96,8 @@ class Util_API ServerApplication: public Application
 	/// The file name of the application executable (excluding the .exe suffix)
 	/// is used as the service name. Additionally, a more user-friendly name can be
 	/// specified, using the /displayName option (e.g., /displayName="Demo Service").
+	/// The startup mode (automatic or manual) for the service can be specified
+	/// with the /startup option.
 	///
 	/// An application can determine whether it is running as a service by checking
 	/// for the "application.runAsService" configuration property.
@@ -100,14 +109,18 @@ class Util_API ServerApplication: public Application
 	///
 	/// Note that the working directory for an application running as a service
 	/// is the Windows system directory (e.g., C:\Windows\system32). Take this
-	/// into account when working with relative filesystem paths.
+	/// into account when working with relative filesystem paths. Also, services
+	/// run under a different user account, so an application that works when
+	/// started from the command line may fail to run as a service if it depends
+	/// on a certain environment (e.g., the PATH environment variable).
 	///
 	/// An application registered as a Windows service can be started
 	/// with the NET START <name> command and stopped with the NET STOP <name>
 	/// command. Alternatively, the Services MMC applet can be used.
 	///
 	/// On Unix platforms, an application built on top of the ServerApplication
-	/// class can be optionally run as a daemon. A daemon, when launched, immediately
+	/// class can be optionally run as a daemon by giving the --daemon
+	/// command line option. A daemon, when launched, immediately
 	/// forks off a background process that does the actual work. After launching
 	/// the background process, the foreground process exits.
 	/// 
@@ -124,6 +137,11 @@ class Util_API ServerApplication: public Application
 	///     {
 	///         // do daemon specific things
 	///     }
+	///
+	/// When running as a daemon, specifying the --pidfile option (e.g.,
+	/// --pidfile=/var/run/sample.pid) may be useful to record the process ID of 
+	/// the daemon in a file. The PID file will be removed when the daemon process 
+	/// terminates (but not, if it crashes).
 {
 public:
 	ServerApplication();
@@ -153,15 +171,19 @@ public:
 protected:
 	int run();
 	void waitForTerminationRequest();
+#if !defined(_WIN32_WCE)
 	void defineOptions(OptionSet& options);
-	void handleOption(const std::string& name, const std::string& value);
+#endif
 	static void terminate();
 
 private:
 #if defined(POCO_OS_FAMILY_UNIX)
+	void handleDaemon(const std::string& name, const std::string& value);
+	void handlePidFile(const std::string& name, const std::string& value);
 	bool isDaemon(int argc, char** argv);
 	void beDaemon();
 #elif defined(POCO_OS_FAMILY_WINDOWS)
+#if !defined(_WIN32_WCE)
 	enum Action
 	{
 		SRV_RUN,
@@ -181,13 +203,20 @@ private:
 	void beService();
 	void registerService();
 	void unregisterService();
+	void handleRegisterService(const std::string& name, const std::string& value);
+	void handleUnregisterService(const std::string& name, const std::string& value);
+	void handleDisplayName(const std::string& name, const std::string& value);
+	void handleStartup(const std::string& name, const std::string& value);	
 	
 	Action      _action;
 	std::string _displayName;
+	std::string _startup;
 
 	static Poco::Event           _terminated;
 	static SERVICE_STATUS        _serviceStatus; 
 	static SERVICE_STATUS_HANDLE _serviceStatusHandle; 
+#endif // _WIN32_WCE
+	static Poco::NamedEvent      _terminate;
 #endif
 };
 

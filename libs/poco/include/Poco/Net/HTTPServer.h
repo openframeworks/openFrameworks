@@ -1,7 +1,7 @@
 //
 // HTTPServer.h
 //
-// $Id: //poco/1.3/Net/include/Poco/Net/HTTPServer.h#1 $
+// $Id: //poco/1.4/Net/include/Poco/Net/HTTPServer.h#1 $
 //
 // Library: Net
 // Package: HTTPServer
@@ -42,14 +42,12 @@
 
 #include "Poco/Net/Net.h"
 #include "Poco/Net/TCPServer.h"
+#include "Poco/Net/HTTPRequestHandlerFactory.h"
+#include "Poco/Net/HTTPServerParams.h"
 
 
 namespace Poco {
 namespace Net {
-
-
-class HTTPRequestHandlerFactory;
-class HTTPServerParams;
 
 
 class Net_API HTTPServer: public TCPServer
@@ -75,25 +73,15 @@ class Net_API HTTPServer: public TCPServer
 	/// information about the HTTP protocol.
 {
 public:
-	HTTPServer(HTTPRequestHandlerFactory* pFactory, const ServerSocket& socket, HTTPServerParams* pParams);
+	HTTPServer(HTTPRequestHandlerFactory::Ptr pFactory, const ServerSocket& socket, HTTPServerParams::Ptr pParams);
 		/// Creates the HTTPServer, using the given ServerSocket.
 		///
-		/// The server takes ownership of the HTTPRequstHandlerFactory
-		/// and deletes it when it's no longer needed.
-		///
-		/// The server also takes ownership of the HTTPServerParams object.
-		///
-		/// News threads are taken from the default thread pool.
+		/// New threads are taken from the default thread pool.
 
-	HTTPServer(HTTPRequestHandlerFactory* pFactory, Poco::ThreadPool& threadPool, const ServerSocket& socket, HTTPServerParams* pParams);
+	HTTPServer(HTTPRequestHandlerFactory::Ptr pFactory, Poco::ThreadPool& threadPool, const ServerSocket& socket, HTTPServerParams::Ptr pParams);
 		/// Creates the HTTPServer, using the given ServerSocket.
 		///
-		/// The server takes ownership of the HTTPRequstHandlerFactory
-		/// and deletes it when it's no longer needed.
-		///
-		/// The server also takes ownership of the HTTPServerParams object.
-		///
-		/// News threads are taken from the given thread pool.
+		/// New threads are taken from the given thread pool.
 
 	~HTTPServer();
 		/// Destroys the HTTPServer and its HTTPRequestHandlerFactory.

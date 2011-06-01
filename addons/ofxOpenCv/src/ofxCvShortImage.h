@@ -25,6 +25,7 @@ class ofxCvShortImage : public ofxCvImage {
     ofxCvShortImage( const ofxCvShortImage& mom );
     // virtual void  allocate( int w, int h );                                //in base class
     virtual void  clear();
+    virtual void  flagImageChanged();
 	//virtual float getWidth();                                               //in base class
 	//virtual float getHeight();                                              //in base class    
     // virtual void  setUseTexture( bool bUse );                              //in base class 
@@ -46,8 +47,8 @@ class ofxCvShortImage : public ofxCvImage {
     // virtual void  operator -= ( float value );                             //in base class 
     // virtual void  operator += ( float value );                             //in base class     
 	      
-    virtual void  setFromPixels( unsigned char* _pixels, int w, int h);
-    virtual void  setRoiFromPixels( unsigned char* _pixels, int w, int h);
+    virtual void  setFromPixels( const unsigned char* _pixels, int w, int h);
+    virtual void  setRoiFromPixels( const unsigned char* _pixels, int w, int h);
     virtual void  operator = ( unsigned char* _pixels );
     virtual void  operator = ( const ofxCvGrayscaleImage& mom );
     virtual void  operator = ( const ofxCvColorImage& mom );
@@ -63,8 +64,9 @@ class ofxCvShortImage : public ofxCvImage {
 	
 	// Get Pixel Data
 	//
-    virtual unsigned char*  getPixels();
-    virtual unsigned char*  getRoiPixels();
+    //virtual unsigned char*  getPixels();                                     //in base class
+	//virtual ofPixelsRef		getPixelsRef();                                //in base class
+    //virtual unsigned char*  getRoiPixels();                                  //in base class
     // virtual IplImage*  getCvImage();                                        //in base class
 
     
@@ -116,15 +118,22 @@ class ofxCvShortImage : public ofxCvImage {
     //
     // virtual int  countNonZeroInRegion( int x, int y, int w, int h );  //in base class
     
+    ofShortPixels & getShortPixelsRef();
+    ofShortPixels & getRoiShortPixelsRef();
 
   protected:
     
     void init();
     virtual void convertShortToGray( IplImage* floatImg, IplImage* grayImg );
     virtual void convertGrayToShort( IplImage* grayImg, IplImage* floatImg );
+    virtual IplImage*  getCv8BitsImage();
+    virtual IplImage*  getCv8BitsRoiImage();
     
     IplImage*  cvGrayscaleImage;    // internal helper grayscale, allocated on demand
-    
+    bool cvGrayscaleDirty;
+    bool bShortPixelsDirty;
+
+    ofShortPixels shortPixels;
 };
 
 

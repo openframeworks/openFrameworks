@@ -1,0 +1,135 @@
+Right now thre android distribution of OF uses eclipse as the default IDE. android plugin for eclipse is not yet
+very well prepared for working with native projects ( c/c++ ) so we are using a custom makefile solution. If you are used
+to android development in eclipse, things are a little different check the following instructions to know how to 
+install the development environment and compile/install applications.
+
+- Download & uncompress eclipse 
+	- install the c/c++ development version
+	- in ubuntu better to download it from eclipse.org, the version in the repos is usually super outdated
+
+- Download & uncompress OF
+
+- Download & uncompress android sdk and ndk (this is tested with sdk 10 and ndk r5b)
+
+- Install ant:
+	Linux:
+		sudo apt-get install ant-1.8
+		
+		or for newer distributions:
+
+		sudo apt-get install ant
+
+		
+ 	osx:
+		download and uncompress 1.8 or > from http://ant.apache.org/bindownload.cgi
+
+- Only linux: install java
+
+	sudo apt-get install openjdk-6-jdk
+
+- Edit OF/libs/openFrameworksCompiled/project/android/paths.make
+	- set paths of sdk & ndk to the uncompressed folders
+	- set ANT_HOME:
+		linux: /usr
+		osx: folder where you uncompressed ant including 
+
+- Open eclipse with workspace OF/apps/androidExamples
+
+- Install adt plugin in eclipse
+	detailed instructions:	http://developer.android.com/sdk/eclipse-adt.html
+	should do with:
+		- in eclipse, go to help -> install new software -> add:
+   			name: Android ADT
+   			location: https://dl-ssl.google.com/android/eclipse/
+		- check the Developer tools box, this will install:
+   			-android DDMS
+   			-android development tools
+   			-android Hierarchy viewer
+   			-android traceview
+
+- Set eclipse java compiler compliance to 1.5:
+	Window > Preferences > Java > Compiler > Compiler compliance level: 1.5
+
+- Set android eclipse settings:
+	Window > Preferences > Android > SDK Location
+
+- Configure android targets:
+	Android button in toolbar > Available packages > 
+		Install SDK platform 2.2 (makefiles and eclipse projects are configured for this one)
+		Install SDK platform tools 
+
+- Add virtual device (optional)
+	Android button in toolbar > Add device
+
+- Import OF projects:
+	File > Import > General > Existing projects into workspace > Browse
+
+	Import in this order:
+		OF/libs
+		OF/libs/openFrameworks
+		OF/addons/ofxAndroid/ofAndroidLib
+		OF/apps/androidExamples
+
+- Compile OF project, be sure target is set to Android (the hammer icon in toolbar)
+
+- Compile all the examples 
+
+- Enable development in your device:
+	Adjustments > Applications > Development > USB Debug (the device  needs to be disconnected from the computer)
+
+- Connect the device now.
+
+- Sometimes on linux adb needs to be run as root. With the device connected, in eclipse go to:
+	Window > show view > other... > Android > Devices
+	if the device doesn't appear in the list, from a terminal:
+		cd sdk_root  (the folder where you uncompressed the sdk
+		sudo platform_tools/adb kill-server; sudo platform_tools/adb start-server
+		if the device doesn't appear try restarting eclipse
+		
+- Create an install external tool and use it to install projects on the device or emulator
+	Run > External Tools > External Tools Configuration
+	Select program and press New, name the new configuration: Android Install
+	Main:
+		Location: /usr/bin/make
+		Working Directory: ${project_loc}
+		Arguments: AndroidInstall PROJECT_PATH=${project_loc}
+	Refresh:
+		Mark Refresh resources upon completion
+		Select The selected resource
+	Build:
+		Mark Build before launch
+		Select The project containing the selected resource
+		Mark Include referenced projects
+	Press Apply and Close
+
+- Now to install and run a project in the device:
+	- connect the device
+	- check that is working and restart adb server if necesary 
+	- select the AndroidRelease target (in the hammer button in the toolbar) 
+	- press the play button with a toolbox or Run > External Tools > Android Install
+
+- To install a project in the emulator, do the same but with the device disconnected from the computer
+	
+
+
+- The AndroidDebug target does a different compilation process of the native code that allows to detect linker
+	errors that won't be detected when compiling in AndroidRelease mode. Is recomended to compile your application
+	in AndroidDebug mode at least once or if your application crashes before starting. To install applications
+	on the device or emulator is recommended to use the AndroidRelease mode since it's faster and the applications
+	will be much smaller. There's also no support for debug for native applications in eclipse but you could theoretically
+	use the ndk tools to debug an application compiled with AndroidDebug.
+
+- Creating new applications:
+	You can copy any of the examples and start a new application from there.
+	You'll need to change the name of the application in different places:
+		- when you copy the application from an example set the name you want to use, let's say your application is called myApp
+		- in res/values/strings.xml change app_name value to the name of your application
+		- in AndroidManifest.xml change the name of the package from cc.openFrameworks.exampleName  to cc.openframeworks.myApp
+		- in srcJava, select the package cc.openFrameworks.exampleName, press F2 to rename it and call it cc.openframeworks.myApp
+	It's important to keep the package prefix as cc.openframeworks somethings can stop working, this will be fixed in future versions
+	when eclipse support for native code is better
+
+
+OF Team
+
+

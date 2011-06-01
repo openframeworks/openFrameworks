@@ -1,7 +1,7 @@
 //
 // TCPServer.h
 //
-// $Id: //poco/1.3/Net/include/Poco/Net/TCPServer.h#2 $
+// $Id: //poco/1.4/Net/include/Poco/Net/TCPServer.h#1 $
 //
 // Library: Net
 // Package: TCPServer
@@ -42,6 +42,8 @@
 
 #include "Poco/Net/Net.h"
 #include "Poco/Net/ServerSocket.h"
+#include "Poco/Net/TCPServerConnectionFactory.h"
+#include "Poco/Net/TCPServerParams.h"
 #include "Poco/Runnable.h"
 #include "Poco/Thread.h"
 #include "Poco/ThreadPool.h"
@@ -51,9 +53,7 @@ namespace Poco {
 namespace Net {
 
 
-class TCPServerParams;
 class TCPServerDispatcher;
-class TCPServerConnectionFactory;
 
 
 class Net_API TCPServer: public Poco::Runnable
@@ -98,29 +98,21 @@ class Net_API TCPServer: public Poco::Runnable
 	/// Already served connections, however, will continue being served.
 {
 public:
-	TCPServer(TCPServerConnectionFactory* pFactory, const ServerSocket& socket, TCPServerParams* pParams = 0);
+	TCPServer(TCPServerConnectionFactory::Ptr pFactory, const ServerSocket& socket, TCPServerParams::Ptr pParams = 0);
 		/// Creates the TCPServer, using the given ServerSocket.
 		///
-		/// The server takes ownership of the TCPServerConnectionFactory
-		/// and deletes it when it's no longer needed.
-		///
-		/// The server also takes ownership of the TCPServerParams object.
 		/// If no TCPServerParams object is given, the server's TCPServerDispatcher
 		/// creates its own one.
 		///
-		/// News threads are taken from the default thread pool.
+		/// New threads are taken from the default thread pool.
 
-	TCPServer(TCPServerConnectionFactory* pFactory, Poco::ThreadPool& threadPool, const ServerSocket& socket, TCPServerParams* pParams = 0);
+	TCPServer(TCPServerConnectionFactory::Ptr pFactory, Poco::ThreadPool& threadPool, const ServerSocket& socket, TCPServerParams::Ptr pParams = 0);
 		/// Creates the TCPServer, using the given ServerSocket.
 		///
-		/// The server takes ownership of the TCPServerConnectionFactory
-		/// and deletes it when it's no longer needed.
-		///
-		/// The server also takes ownership of the TCPServerParams object.
 		/// If no TCPServerParams object is given, the server's TCPServerDispatcher
 		/// creates its own one.
 		///
-		/// News threads are taken from the given thread pool.
+		/// New threads are taken from the given thread pool.
 
 	virtual ~TCPServer();
 		/// Destroys the TCPServer and its TCPServerConnectionFactory.
@@ -143,7 +135,7 @@ public:
 		/// No new connections will be accepted.
 		/// Already handled connections will continue to be served.
 		///
-		/// Once the server is stopped, it cannot be restarted.
+		/// Once the server has been stopped, it cannot be restarted.
 		
 	int currentThreads() const;
 		/// Returns the number of currently used connection threads.
@@ -164,7 +156,7 @@ public:
 		/// Returns the number of refused connections.
 
 	Poco::UInt16 port() const;
-		/// Returns the port the server socket listens to
+		/// Returns the port the server socket listens on.
 
 protected:
 	void run();

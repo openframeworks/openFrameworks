@@ -1,7 +1,7 @@
 //
-// TypeChecks.h
+// MetaProgramming.h
 //
-// $Id: //poco/1.3/Foundation/include/Poco/MetaProgramming.h#1 $
+// $Id: //poco/1.4/Foundation/include/Poco/MetaProgramming.h#1 $
 //
 // Library: Foundation
 // Package: Core
@@ -36,8 +36,8 @@
 //
 
 
-#ifndef  Foundation_TypeChecks_INCLUDED
-#define  Foundation_TypeChecks_INCLUDED
+#ifndef Foundation_MetaProgramming_INCLUDED
+#define Foundation_MetaProgramming_INCLUDED
 
 
 #include "Poco/Foundation.h"
@@ -48,7 +48,7 @@ namespace Poco {
 
 template <typename T>
 struct IsReference
-	///Use this struct to determine if a template type is a reference
+	/// Use this struct to determine if a template type is a reference.
 {
 	enum 
 	{
@@ -77,10 +77,9 @@ struct IsReference<const T&>
 };
 
 
-
 template <typename T>
 struct IsConst
-	///Use this struct to determine if a template type is a const type
+	/// Use this struct to determine if a template type is a const type.
 {
 	enum 
 	{
@@ -111,7 +110,7 @@ struct IsConst<const T>
 
 template <typename T>
 struct TypeWrapper
-	/// Use the type wrapper if you want to dedecouple constness and references from template types
+	/// Use the type wrapper if you want to decouple constness and references from template types.
 {
 	typedef T TYPE;
 	typedef const T CONSTTYPE;
@@ -150,8 +149,7 @@ struct TypeWrapper<T&>
 };
 
 
-
 } // namespace Poco
 
 
-#endif
+#endif // Foundation_MetaProgramming_INCLUDED

@@ -18,6 +18,7 @@ class ofxCvColorImage : public ofxCvImage {
 
 
   public:
+	using ofxCvImage::setFromPixels;
 
     ofxCvColorImage();
     ofxCvColorImage( const ofxCvColorImage& mom );
@@ -46,8 +47,8 @@ class ofxCvColorImage : public ofxCvImage {
     virtual void  operator -= ( float value );
     virtual void  operator += ( float value ); 
         
-    virtual void  setFromPixels( unsigned char * _pixels, int w, int h );
-    virtual void  setRoiFromPixels( unsigned char * _pixels, int w, int h );
+    virtual void  setFromPixels( const unsigned char * _pixels, int w, int h );
+    virtual void  setRoiFromPixels( const unsigned char * _pixels, int w, int h );
     virtual void  setFromGrayscalePlanarImages( ofxCvGrayscaleImage& red, ofxCvGrayscaleImage& green, ofxCvGrayscaleImage& blue );
     virtual void  operator = ( unsigned char* _pixels );
     virtual void  operator = ( const ofxCvGrayscaleImage& mom );
@@ -66,8 +67,10 @@ class ofxCvColorImage : public ofxCvImage {
 
     // Get Pixel Data
     //
-    virtual unsigned char*  getPixels();
-    virtual unsigned char*  getRoiPixels();
+    //virtual unsigned char*  getPixels();                                     //in base class
+	//virtual ofPixelsRef		getPixelsRef();                                //in base class
+    //virtual unsigned char*  getRoiPixels();                                  //in base class
+    // virtual IplImage*  getCvImage();                                        //in base class
     
 	virtual void	convertToGrayscalePlanarImages( ofxCvGrayscaleImage& red, ofxCvGrayscaleImage& green, ofxCvGrayscaleImage& blue );
 	virtual void	convertToGrayscalePlanarImage (ofxCvGrayscaleImage& grayImage, int whichPlane);

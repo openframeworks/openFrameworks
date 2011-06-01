@@ -1,5 +1,4 @@
-#ifndef OF_BMP_TYPE
-#define OF_BMP_TYPE
+#pragma once
 
 #include "ofConstants.h"
 
@@ -13,9 +12,8 @@
  
  */
 
-void  ofDrawBitmapCharacter(int character );
-
-#endif
-
+void ofDrawBitmapCharacterStart(int stringLength);
+void ofDrawBitmapCharacter(int character, int x , int y );
+void ofDrawBitmapCharacterEnd();
 
 

@@ -1,7 +1,7 @@
 //
 // AbstractConfiguration.h
 //
-// $Id: //poco/1.3/Util/include/Poco/Util/AbstractConfiguration.h#1 $
+// $Id: //poco/1.4/Util/include/Poco/Util/AbstractConfiguration.h#1 $
 //
 // Library: Util
 // Package: Configuration
@@ -43,7 +43,9 @@
 #include "Poco/Util/Util.h"
 #include "Poco/Mutex.h"
 #include "Poco/RefCountedObject.h"
+#include "Poco/BasicEvent.h"
 #include <vector>
+#include <utility>
 
 
 namespace Poco {
@@ -67,6 +69,62 @@ class Util_API AbstractConfiguration: public Poco::RefCountedObject
 {
 public:
 	typedef std::vector<std::string> Keys;
+	
+	class KeyValue
+		/// A key-value pair, used as event argument.
+	{
+	public:
+		KeyValue(const std::string& key, std::string& value):
+			_key(key),
+			_value(value)
+		{
+		}
+		
+		const std::string& key() const
+		{
+			return _key;
+		}
+		
+		const std::string& value() const
+		{
+			return _value;
+		}
+		
+		std::string& value()
+		{
+			return _value;
+		}
+	
+	private:
+		const std::string& _key;
+		std::string& _value;
+	};
+	
+	Poco::BasicEvent<KeyValue> propertyChanging;
+		/// Fired before a property value is changed or
+		/// a new property is created.
+		///
+		/// Can be used to check or fix a property value,
+		/// or to cancel the change by throwing an exception.
+		///
+		/// The event delegate can use one of the get...() functions
+		/// to obtain the current property value.
+
+	Poco::BasicEvent<const KeyValue> propertyChanged;
+		/// Fired after a property value has been changed
+		/// or a property has been created.
+
+	Poco::BasicEvent<const std::string> propertyRemoving;
+		/// Fired before a property is removed by a
+		/// call to remove().
+		///
+		/// Note: This will even be fired if the key
+		/// does not exist and the remove operation will
+		/// fail with an exception.
+		
+	Poco::BasicEvent<const std::string> propertyRemoved;
+		/// Fired after a property has been removed by
+		/// a call to remove().
 
 	AbstractConfiguration();
 		/// Creates the AbstractConfiguration.
@@ -76,6 +134,12 @@ public:
 
 	bool hasOption(const std::string& key) const;
 		/// Returns true iff the property with the given key exists.
+		///
+		/// Same as hasProperty().
+
+	bool has(const std::string& key) const;
+		/// Returns true iff the property with the given key exists.
+		///
 		/// Same as hasProperty().
 		
 	std::string getString(const std::string& key) const;
@@ -135,15 +199,15 @@ public:
 		/// are expanded.
 
 	bool getBool(const std::string& key) const;
-		/// Returns the double value of the property with the given name.
+		/// Returns the boolean value of the property with the given name.
 		/// Throws a NotFoundException if the key does not exist.
 		/// Throws a SyntaxException if the property can not be converted
-		/// to a double.
+		/// to a boolean.
 		/// If the value contains references to other properties (${<property>}), these
 		/// are expanded.
 		
 	bool getBool(const std::string& key, bool defaultValue) const;
-		/// If a property with the given key exists, returns the property's bool value,
+		/// If a property with the given key exists, returns the property's boolean value,
 		/// otherwise returns the given default value.
 		/// Throws a SyntaxException if the property can not be converted
 		/// to a boolean.
@@ -190,6 +254,11 @@ public:
 		///
 		/// If a circular property reference is detected, a
 		/// CircularReferenceException will be thrown.
+
+	void remove(const std::string& key);
+		/// Removes the property with the given key.
+		///
+		/// Does nothing if the key does not exist.
 	
 protected:
 	virtual bool getRaw(const std::string& key, std::string& value) const = 0;
@@ -207,9 +276,18 @@ protected:
 	virtual void enumerate(const std::string& key, Keys& range) const = 0;
 		/// Returns in range the names of all subkeys under the given key.
 		/// If an empty key is passed, all root level keys are returned.
+		
+	virtual void removeRaw(const std::string& key);
+		/// Removes the property with the given key.
+		///
+		/// Does nothing if the key does not exist.
+		///
+		/// Should be overridden by subclasses; the default
+		/// implementation throws a Poco::NotImplementedException.
 
 	static int parseInt(const std::string& value);
 	static bool parseBool(const std::string& value);
+	void setRawWithEvent(const std::string& key, std::string value);
 	
 	virtual ~AbstractConfiguration();
 

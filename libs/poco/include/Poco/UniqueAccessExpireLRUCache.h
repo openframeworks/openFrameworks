@@ -1,7 +1,7 @@
 //
 // UniqueAccessExpireLRUCache.h
 //
-// $Id: //poco/1.3/Foundation/include/Poco/UniqueAccessExpireLRUCache.h#1 $
+// $Id: //poco/1.4/Foundation/include/Poco/UniqueAccessExpireLRUCache.h#1 $
 //
 // Library: Foundation
 // Package: Cache
@@ -36,8 +36,8 @@
 //
 
 
-#ifndef  Foundation_UniqueAccessExpireLRUCache_INCLUDED
-#define  Foundation_UniqueAccessExpireLRUCache_INCLUDED
+#ifndef Foundation_UniqueAccessExpireLRUCache_INCLUDED
+#define Foundation_UniqueAccessExpireLRUCache_INCLUDED
 
 
 #include "Poco/AbstractCache.h"
@@ -51,9 +51,11 @@ namespace Poco {
 
 template < 
 	class TKey,
-	class TValue
+	class TValue,
+	class TMutex = FastMutex, 
+	class TEventMutex = FastMutex
 >
-class UniqueAccessExpireLRUCache: public AbstractCache<TKey, TValue, StrategyCollection<TKey, TValue> >
+class UniqueAccessExpireLRUCache: public AbstractCache<TKey, TValue, StrategyCollection<TKey, TValue>, TMutex, TEventMutex>
 	/// A UniqueAccessExpireLRUCache combines LRU caching and time based per entry expire caching.
 	/// One can define for each cache entry a seperate timepoint
 	/// but also limit the size of the cache (per default: 1024).
@@ -69,7 +71,7 @@ class UniqueAccessExpireLRUCache: public AbstractCache<TKey, TValue, StrategyCol
 {
 public:
 	UniqueAccessExpireLRUCache(long cacheSize = 1024): 
-		AbstractCache<TKey, TValue, StrategyCollection<TKey, TValue> >(StrategyCollection<TKey, TValue>())
+		AbstractCache<TKey, TValue, StrategyCollection<TKey, TValue>, TMutex, TEventMutex>(StrategyCollection<TKey, TValue>())
 	{
 		this->_strategy.pushBack(new LRUStrategy<TKey, TValue>(cacheSize));
 		this->_strategy.pushBack(new UniqueAccessExpireStrategy<TKey, TValue>());

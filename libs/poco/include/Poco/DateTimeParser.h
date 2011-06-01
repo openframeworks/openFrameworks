@@ -1,7 +1,7 @@
 //
 // DateTimeParser.h
 //
-// $Id: //poco/1.3/Foundation/include/Poco/DateTimeParser.h#2 $
+// $Id: //poco/1.4/Foundation/include/Poco/DateTimeParser.h#1 $
 //
 // Library: Foundation
 // Package: DateTime
@@ -61,6 +61,12 @@ class Foundation_API DateTimeParser
 	/// Note: When parsing a time in 12-hour (AM/PM) format, the hour
 	/// (%h) must be parsed before the AM/PM designator (%a, %A),
 	/// otherwise the AM/PM designator will be ignored.
+	///
+	/// See the DateTimeFormatter class for a list of supported format specifiers.
+	/// In addition to the format specifiers supported by DateTimeFormatter, an
+	/// additional specifier is supported: %r will parse a year given by either
+	/// two or four digits. Years 69-00 are interpreted in the 20th century
+	/// (1969-2000), years 01-68 in the 21th century (2001-2068).
 {
 public:
 	static void parse(const std::string& fmt, const std::string& str, DateTime& dateTime, int& timeZoneDifferential);

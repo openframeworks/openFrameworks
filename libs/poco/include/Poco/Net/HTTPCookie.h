@@ -1,7 +1,7 @@
 //
 // HTTPCookie.h
 //
-// $Id: //poco/1.3/Net/include/Poco/Net/HTTPCookie.h#2 $
+// $Id: //poco/1.4/Net/include/Poco/Net/HTTPCookie.h#1 $
 //
 // Library: Net
 // Package: HTTP
@@ -80,6 +80,10 @@ public:
 	HTTPCookie(const std::string& name, const std::string& value);
 		/// Creates a cookie with the given name and value.
 		/// The cookie never expires.
+		///
+		/// Note: If value contains whitespace or non-alphanumeric
+		/// characters, the value should be escaped by calling escape()
+		/// before passing it to the constructor.
 		
 	HTTPCookie(const HTTPCookie& cookie);
 		/// Creates the HTTPCookie by copying another one.
@@ -111,6 +115,10 @@ public:
 		///
 		/// According to the cookie specification, the
 		/// size of the value should not exceed 4 Kbytes.
+		///
+		/// Note: If value contains whitespace or non-alphanumeric
+		/// characters, the value should be escaped by calling escape()
+		/// prior to passing it to setName().
 		
 	const std::string& getValue() const;
 		/// Returns the value of the cookie.
@@ -166,6 +174,34 @@ public:
 	std::string toString() const;
 		/// Returns a string representation of the cookie,
 		/// suitable for use in a Set-Cookie header.
+		
+	static std::string escape(const std::string& str);
+		/// Escapes the given string by replacing all 
+		/// non-alphanumeric characters with escape
+		/// sequences in the form %xx, where xx is the
+		/// hexadecimal character code.
+		///
+		/// The following characters will be replaced
+		/// with escape sequences:
+		///   - percent sign %
+		///   - less-than and greater-than < and >
+		///   - curly brackets { and }
+		///   - square brackets [ and ]
+		///   - parenthesis ( and )
+		///   - solidus /
+		///   - vertical line |
+		///   - reverse solidus (backslash /)
+		///   - quotation mark "
+		///   - apostrophe '
+		///   - circumflex accent ^
+		///   - grave accent `
+		///   - comma and semicolon , and ;
+		///   - whitespace and control characters
+		
+	static std::string unescape(const std::string& str);
+		/// Unescapes the given string by replacing all
+		/// escape sequences in the form %xx with the
+		/// respective characters.
 
 private:
 	int         _version;

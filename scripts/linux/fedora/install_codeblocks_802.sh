@@ -1,1 +1,1 @@
-yum install codeblocks codeblocks-contrib
+yum install codeblocks codeblocks-contrib xterm

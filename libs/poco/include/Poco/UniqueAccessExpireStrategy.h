@@ -1,7 +1,7 @@
 //
 // UniqueAccessExpireStrategy.h
 //
-// $Id: //poco/1.3/Foundation/include/Poco/UniqueAccessExpireStrategy.h#1 $
+// $Id: //poco/1.4/Foundation/include/Poco/UniqueAccessExpireStrategy.h#1 $
 //
 // Library: Foundation
 // Package: Cache
@@ -36,8 +36,8 @@
 //
 
 
-#ifndef  Foundation_UniqueAccessExpireStrategy_INCLUDED
-#define  Foundation_UniqueAccessExpireStrategy_INCLUDED
+#ifndef Foundation_UniqueAccessExpireStrategy_INCLUDED
+#define Foundation_UniqueAccessExpireStrategy_INCLUDED
 
 
 #include "Poco/KeyValueArgs.h"
@@ -70,12 +70,12 @@ class UniqueAccessExpireStrategy: public AbstractStrategy<TKey, TValue>
 	/// which returns the timespan for how long an object will be valid without being accessed.
 {
 public:
-	typedef std::pair<TKey, Timespan> KeyExpire;
-	typedef std::multimap<Timestamp, KeyExpire>     TimeIndex;
-	typedef typename TimeIndex::iterator       IndexIterator;
-	typedef typename TimeIndex::const_iterator ConstIndexIterator;
-	typedef std::map<TKey, IndexIterator>      Keys;
-	typedef typename Keys::iterator            Iterator;
+	typedef std::pair<TKey, Timespan>           KeyExpire;
+	typedef std::multimap<Timestamp, KeyExpire> TimeIndex;
+	typedef typename TimeIndex::iterator        IndexIterator;
+	typedef typename TimeIndex::const_iterator  ConstIndexIterator;
+	typedef std::map<TKey, IndexIterator>       Keys;
+	typedef typename Keys::iterator             Iterator;
 
 public:
 	UniqueAccessExpireStrategy()

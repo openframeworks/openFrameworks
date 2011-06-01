@@ -1,7 +1,7 @@
 //
 // FIFOStrategy.h
 //
-// $Id: //poco/1.3/Foundation/include/Poco/FIFOStrategy.h#5 $
+// $Id: //poco/1.4/Foundation/include/Poco/FIFOStrategy.h#1 $
 //
 // Library: Foundation
 // Package: Events
@@ -35,8 +35,9 @@
 // DEALINGS IN THE SOFTWARE.
 //
 
-#ifndef  Foundation_FIFOStrategy_INCLUDED
-#define  Foundation_FIFOStrategy_INCLUDED
+
+#ifndef Foundation_FIFOStrategy_INCLUDED
+#define Foundation_FIFOStrategy_INCLUDED
 
 
 #include "Poco/NotificationStrategy.h"
@@ -163,4 +164,4 @@ protected:
 } // namespace Poco
 
 
-#endif
+#endif // Foundation_FIFOStrategy_INCLUDED

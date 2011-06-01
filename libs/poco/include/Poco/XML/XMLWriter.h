@@ -1,7 +1,7 @@
 //
 // XMLWriter.h
 //
-// $Id: //poco/1.3/XML/include/Poco/XML/XMLWriter.h#1 $
+// $Id: //poco/1.4/XML/include/Poco/XML/XMLWriter.h#1 $
 //
 // Library: XML
 // Package: XML
@@ -85,9 +85,24 @@ class XML_API XMLWriter: public ContentHandler, public LexicalHandler, public DT
 public:
 	enum Options
 	{
-		CANONICAL             = 0x00, /// do not write an XML declaration
-		WRITE_XML_DECLARATION = 0x01, /// write an XML declaration 
-		PRETTY_PRINT          = 0x02  /// pretty-print XML markup
+		CANONICAL               = 0x00,
+			/// Do not write an XML declaration (default).
+
+		CANONICAL_XML           = 0x01, 
+			/// Enables basic support for Canonical XML: 
+			///   - do not write an XML declaration
+			///   - do not use special empty element syntax
+			///   - set the New Line character to NEWLINE_LF
+
+		WRITE_XML_DECLARATION   = 0x02, 
+			/// Write an XML declaration.
+
+		PRETTY_PRINT            = 0x04, 
+			/// Pretty-print XML markup.
+
+		PRETTY_PRINT_ATTRIBUTES = 0x08
+			/// Write each attribute on a separate line. 
+			/// PRETTY_PRINT must be specified as well.
 	};
 
 	XMLWriter(XMLByteOutputStream& str, int options);
@@ -125,6 +140,17 @@ public:
 
 	const std::string& getNewLine() const;
 		/// Returns the line ending currently in use.
+
+	void setIndent(const std::string& indent);
+		/// Sets the string used for one indentation step.
+		///
+		/// The default is a single TAB character.
+		/// The given string should only contain TAB or SPACE
+		/// characters (e.g., a single TAB character, or
+		/// two to four SPACE characters).
+		
+	const std::string& getIndent() const;
+		/// Returns the string used for one indentation step.
 
 	// ContentHandler
 	void setDocumentLocator(const Locator* loc);
@@ -263,6 +289,7 @@ protected:
 	void writeXML(XMLChar ch) const;
 	void writeNewLine() const;
 	void writeIndent() const;
+	void writeIndent(int indent) const;
 	void writeName(const XMLString& prefix, const XMLString& localName);
 	void writeXMLDeclaration();
 	void closeStartTag();
@@ -305,12 +332,17 @@ private:
 	ElementStack     _elementStack;
 	NamespaceSupport _namespaces;
 	int              _prefix;
+	bool             _nsContextPushed;
+	std::string      _indent;
 
 	static const std::string MARKUP_QUOTENC;
 	static const std::string MARKUP_APOSENC;
 	static const std::string MARKUP_AMPENC;
 	static const std::string MARKUP_LTENC;
 	static const std::string MARKUP_GTENC;
+	static const std::string MARKUP_TABENC;
+	static const std::string MARKUP_CRENC;
+	static const std::string MARKUP_LFENC;
 	static const std::string MARKUP_LT;
 	static const std::string MARKUP_GT;
 	static const std::string MARKUP_SLASHGT;

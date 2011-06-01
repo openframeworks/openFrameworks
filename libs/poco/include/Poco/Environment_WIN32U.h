@@ -1,7 +1,7 @@
 //
 // Environment_WIN32U.h
 //
-// $Id: //poco/1.3/Foundation/include/Poco/Environment_WIN32U.h#2 $
+// $Id: //poco/1.4/Foundation/include/Poco/Environment_WIN32U.h#1 $
 //
 // Library: Foundation
 // Package: Core
@@ -59,6 +59,7 @@ public:
 	static std::string osArchitectureImpl();
 	static std::string nodeNameImpl();
 	static void nodeIdImpl(NodeId& id);
+	static unsigned processorCountImpl();
 };
 
 

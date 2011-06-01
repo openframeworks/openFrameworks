@@ -1,7 +1,7 @@
 //
 // Mutex_WIN32.h
 //
-// $Id: //poco/1.3/Foundation/include/Poco/Mutex_WIN32.h#3 $
+// $Id: //poco/1.4/Foundation/include/Poco/Mutex_WIN32.h#1 $
 //
 // Library: Foundation
 // Package: Threading
@@ -86,7 +86,7 @@ inline bool MutexImpl::tryLockImpl()
 {
 	try
 	{
-		return TryEnterCriticalSection(&_cs) == TRUE;
+		return TryEnterCriticalSection(&_cs) != 0;
 	}
 	catch (...)
 	{

@@ -39,11 +39,11 @@ ofxOscBundle::~ofxOscBundle()
 
 ofxOscBundle& ofxOscBundle::copy( const ofxOscBundle& other )
 {
-	for ( int i=0; i<other.bundles.size(); i++ )
+	for ( int i=0; i<(int)other.bundles.size(); i++ )
 	{
 		bundles.push_back( other.bundles[i] );
 	}
-	for ( int i=0; i<other.messages.size(); i++ )
+	for ( int i=0; i<(int)other.messages.size(); i++ )
 	{
 		messages.push_back( other.messages[i] );
 	}

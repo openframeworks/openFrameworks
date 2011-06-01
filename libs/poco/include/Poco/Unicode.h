@@ -1,7 +1,7 @@
 //
 // Unicode.h
 //
-// $Id: //poco/1.3/Foundation/include/Poco/Unicode.h#2 $
+// $Id: //poco/1.4/Foundation/include/Poco/Unicode.h#1 $
 //
 // Library: Foundation
 // Package: Text
@@ -201,6 +201,18 @@ public:
 		/// Return the Unicode character properties for the
 		/// character with the given Unicode value.
 		
+	static bool isSpace(int ch);
+		/// Returns true iff the given character is a separator.
+		
+	static bool isDigit(int ch);
+		/// Returns true iff the given character is a numeric character.
+		
+	static bool isPunct(int ch);
+		/// Returns true iff the given character is a punctuation character.
+		
+	static bool isAlpha(int ch);
+		/// Returns true iff the given character is a letter.	
+		
 	static bool isLower(int ch);
 		/// Returns true iff the given character is a lowercase
 		/// character.
@@ -219,6 +231,57 @@ public:
 		/// return its uppercase counterpart, otherwise return
 		/// the character.
 };
+
+
+//
+// inlines
+//
+inline bool Unicode::isSpace(int ch)
+{
+	CharacterProperties props;
+	properties(ch, props);
+	return props.category == UCP_SEPARATOR;
+}
+
+
+inline bool Unicode::isDigit(int ch)
+{
+	CharacterProperties props;
+	properties(ch, props);
+	return props.category == UCP_NUMBER;
+}
+
+
+inline bool Unicode::isPunct(int ch)
+{
+	CharacterProperties props;
+	properties(ch, props);
+	return props.category == UCP_PUNCTUATION;
+}
+
+
+inline bool Unicode::isAlpha(int ch)
+{
+	CharacterProperties props;
+	properties(ch, props);
+	return props.category == UCP_LETTER;
+}
+
+
+inline bool Unicode::isLower(int ch)
+{
+	CharacterProperties props;
+	properties(ch, props);
+	return props.category == UCP_LETTER && props.type == UCP_LOWER_CASE_LETTER;
+}
+
+	
+inline bool Unicode::isUpper(int ch)
+{
+	CharacterProperties props;
+	properties(ch, props);
+	return props.category == UCP_LETTER && props.type == UCP_UPPER_CASE_LETTER;
+}
 
 
 } // namespace Poco

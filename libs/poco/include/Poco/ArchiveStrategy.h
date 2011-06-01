@@ -1,7 +1,7 @@
 //
 // ArchiveStrategy.h
 //
-// $Id: //poco/1.3/Foundation/include/Poco/ArchiveStrategy.h#4 $
+// $Id: //poco/1.4/Foundation/include/Poco/ArchiveStrategy.h#1 $
 //
 // Library: Foundation
 // Package: Logging
@@ -120,7 +120,7 @@ public:
 		delete pFile;
 		std::string archPath = path;
 		archPath.append(".");
-		archPath.append(DateTimeFormatter::format(DT().timestamp(), "%Y%m%d%H%M%S%i"));
+		DateTimeFormatter::append(archPath, DT().timestamp(), "%Y%m%d%H%M%S%i");
 		
 		if (exists(archPath)) archiveByNumber(archPath);
 		else moveFile(path, archPath);
@@ -140,7 +140,7 @@ private:
 		{
 			path = basePath;
 			path.append(".");
-			path.append(NumberFormatter::format(++n));
+			NumberFormatter::append(path, ++n);
 		}
 		while (exists(path));
 		
@@ -150,11 +150,11 @@ private:
 			if (n > 0)
 			{
 				oldPath.append(".");
-				oldPath.append(NumberFormatter::format(n - 1));
+				NumberFormatter::append(oldPath, n - 1);
 			}
 			std::string newPath = basePath;
 			newPath.append(".");
-			newPath.append(NumberFormatter::format(n));
+			NumberFormatter::append(newPath, n);
 			moveFile(oldPath, newPath);
 			--n;
 		}

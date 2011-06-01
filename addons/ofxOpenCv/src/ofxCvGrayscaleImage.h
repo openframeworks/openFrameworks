@@ -20,8 +20,10 @@ class ofxCvGrayscaleImage : public ofxCvImage {
 
 
   public:
+	using ofxCvImage::setFromPixels;
 
     ofxCvGrayscaleImage();
+    ~ofxCvGrayscaleImage();
     ofxCvGrayscaleImage( const ofxCvGrayscaleImage& mom );
     // virtual void  allocate( int w, int h );                                //in base class
     // virtual void  clear();                                                 //in base class
@@ -48,8 +50,8 @@ class ofxCvGrayscaleImage : public ofxCvImage {
     // virtual void  operator -= ( float value );                              //in base class 
     // virtual void  operator += ( float value );                              //in base class
     
-    virtual void  setFromPixels( unsigned char* _pixels, int w, int h );
-    virtual void  setRoiFromPixels( unsigned char* _pixels, int w, int h );
+    virtual void  setFromPixels( const unsigned char* _pixels, int w, int h );
+    virtual void  setRoiFromPixels( const unsigned char* _pixels, int w, int h );
     virtual void  operator = ( unsigned char* _pixels );
     virtual void  operator = ( const ofxCvGrayscaleImage& mom );
     virtual void  operator = ( const ofxCvColorImage& mom );
@@ -68,8 +70,9 @@ class ofxCvGrayscaleImage : public ofxCvImage {
 
     // Get Pixel Data
     //
-    virtual unsigned char*  getPixels();
-    virtual unsigned char*  getRoiPixels();
+    //virtual unsigned char*  getPixels();                                     //in base class
+	//virtual ofPixelsRef		getPixelsRef();                                //in base class
+    //virtual unsigned char*  getRoiPixels();                                  //in base class
     // virtual IplImage*  getCvImage();                                        //in base class
 
 
@@ -92,7 +95,7 @@ class ofxCvGrayscaleImage : public ofxCvImage {
     virtual void  adaptiveThreshold( int blockSize, int offset=0,
                                      bool invert=false, bool gauss=false);
 	
-	virtual void  brightnessContrast(float brightness, float contrast);		   // (uses values between -100 and 100)
+	virtual void  brightnessContrast(float brightness, float contrast);		   // (uses values between -1 and 1)
 	
     // virtual void  erode( );                                                 //in base class
     // virtual void  dilate( );                                                //in base class
@@ -149,7 +152,6 @@ class ofxCvGrayscaleImage : public ofxCvImage {
 	// for brightness contrast:
 	//
 	
-	uchar		briConLut[256];
 	CvMat*		briConLutMatrix;
 	
     void init();

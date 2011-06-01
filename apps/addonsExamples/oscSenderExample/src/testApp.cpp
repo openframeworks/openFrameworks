@@ -14,7 +14,6 @@ void testApp::update(){
 
 }
 
-
 //--------------------------------------------------------------
 void testApp::draw(){
 	// display instructions
@@ -26,11 +25,9 @@ void testApp::draw(){
 	ofDrawBitmapString( "press A to send osc message [/test 1 3.5 hello <time>]", 10, 80 );
 }
 
-
 //--------------------------------------------------------------
 void testApp::keyPressed  (int key){
-	if ( key =='a' || key == 'A' )
-	{
+	if ( key =='a' || key == 'A' ){
 		ofxOscMessage m;
 		m.setAddress( "/test" );
 		m.addIntArg( 1 );
@@ -39,6 +36,11 @@ void testApp::keyPressed  (int key){
 		m.addFloatArg( ofGetElapsedTimef() );
 		sender.sendMessage( m );
 	}
+}
+
+//--------------------------------------------------------------
+void testApp::keyReleased(int key){
+
 }
 
 //--------------------------------------------------------------
@@ -74,6 +76,16 @@ void testApp::mouseReleased(int x, int y, int button){
 
 //--------------------------------------------------------------
 void testApp::windowResized(int w, int h){
+
+}
+
+//--------------------------------------------------------------
+void testApp::gotMessage(ofMessage msg){
+
+}
+
+//--------------------------------------------------------------
+void testApp::dragEvent(ofDragInfo dragInfo){ 
 
 }
 

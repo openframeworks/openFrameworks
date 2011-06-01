@@ -1,7 +1,7 @@
 //
 // LayeredConfiguration.h
 //
-// $Id: //poco/1.3/Util/include/Poco/Util/LayeredConfiguration.h#2 $
+// $Id: //poco/1.4/Util/include/Poco/Util/LayeredConfiguration.h#1 $
 //
 // Library: Util
 // Package: Configuration
@@ -127,6 +127,12 @@ public:
 		/// If shared is true, the LayeredConfiguration takes ownership
 		/// of the given configuration.
 		
+	void removeConfiguration(AbstractConfiguration* pConfig);
+		/// Removes the given configuration from the LayeredConfiguration.
+		///
+		/// Does nothing if the given configuration is not part of the
+		/// LayeredConfiguration.
+		
 protected:
 	typedef Poco::AutoPtr<AbstractConfiguration> ConfigPtr;
 	
@@ -140,6 +146,7 @@ protected:
 	bool getRaw(const std::string& key, std::string& value) const;
 	void setRaw(const std::string& key, const std::string& value);
 	void enumerate(const std::string& key, Keys& range) const;
+	void removeRaw(const std::string& key);
 	
 	int lowest() const;
 	int highest() const;

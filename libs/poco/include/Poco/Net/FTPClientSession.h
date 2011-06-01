@@ -1,7 +1,7 @@
 //
 // FTPClientSession.h
 //
-// $Id: //poco/1.3/Net/include/Poco/Net/FTPClientSession.h#1 $
+// $Id: //poco/1.4/Net/include/Poco/Net/FTPClientSession.h#1 $
 //
 // Library: Net
 // Package: FTP
@@ -101,8 +101,13 @@ public:
 	Poco::Timespan getTimeout() const;
 		/// Returns the timeout for socket operations.
 
-	void setPassive(bool flag);
+	void setPassive(bool flag, bool useRFC1738 = true);
 		/// Enables (default) or disables FTP passive mode for this session.
+		///
+		/// If useRFC1738 is true (the default), the RFC 1738
+		/// EPSV command is used (with a fallback to PASV if EPSV fails)
+		/// for switching to passive mode. The same applies to
+		/// EPRT and PORT for active connections.
 		
 	bool getPassive() const;
 		/// Returns true iff passive mode is enabled for this connection.

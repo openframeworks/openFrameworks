@@ -32,6 +32,7 @@ void ofxCvShortImage::init() {
     gldepth = GL_UNSIGNED_SHORT;
     glchannels = GL_LUMINANCE;
     cvGrayscaleImage = NULL;
+    bShortPixelsDirty = true;
 }
 
 //--------------------------------------------------------------------------------
@@ -43,6 +44,13 @@ void ofxCvShortImage::clear() {
     }
     ofxCvImage::clear();    //call clear in base class
 }
+
+//--------------------------------------------------------------------------------
+void ofxCvShortImage::flagImageChanged() {
+    bShortPixelsDirty = true;
+    ofxCvImage::flagImageChanged();
+}
+
 
 //--------------------------------------------------------------------------------
 void ofxCvShortImage::convertShortToGray( IplImage* shortImg, IplImage* grayImg ) {
@@ -69,7 +77,7 @@ void ofxCvShortImage::set(float value){
 }
 
 //--------------------------------------------------------------------------------
-void ofxCvShortImage::setFromPixels( unsigned char* _pixels, int w, int h ) {
+void ofxCvShortImage::setFromPixels( const unsigned char* _pixels, int w, int h ) {
     // This sets the internal image ignoring any ROI
 
     if( w == width &&  h == height ) {
@@ -94,7 +102,7 @@ void ofxCvShortImage::setFromPixels( unsigned char* _pixels, int w, int h ) {
 }
 
 //--------------------------------------------------------------------------------
-void ofxCvShortImage::setRoiFromPixels( unsigned char* _pixels, int w, int h ) {
+void ofxCvShortImage::setRoiFromPixels( const unsigned char* _pixels, int w, int h ) {
     ofRectangle roi = getROI();
     ofRectangle inputROI = ofRectangle( roi.x, roi.y, w, h );
     ofRectangle iRoi = getIntersectionROI( roi, inputROI );
@@ -205,82 +213,34 @@ void ofxCvShortImage::addWeighted( ofxCvGrayscaleImage& mom, float f ) {
 // Get Pixel Data
 
 //--------------------------------------------------------------------------------
-unsigned char*  ofxCvShortImage::getPixels(){
-    // get pixels ignoring any ROI
+IplImage*  ofxCvShortImage::getCv8BitsImage() {
+	if(bPixelsDirty) {
+		if( cvGrayscaleImage == NULL ) {
+			cvGrayscaleImage = cvCreateImage( cvSize(width,height), IPL_DEPTH_8U, 1 );
+		}
 
-    if(bPixelsDirty) {
-        if( cvGrayscaleImage == NULL ) {
-            cvGrayscaleImage = cvCreateImage( cvSize(width,height), IPL_DEPTH_8U, 1 );
-        }
+		ofRectangle lastROI = getROI();
 
-        ofRectangle lastROI = getROI();
-        
-        resetImageROI(cvGrayscaleImage);
-        convertShortToGray(cvImage, cvGrayscaleImage);
-        setROI(lastROI);
-
-        if(pixels == NULL) {
-            // we need pixels, allocate it
-            pixels = new unsigned char[width*height];
-            pixelsWidth = width;
-            pixelsHeight = height;
-        } else if(pixelsWidth != width || pixelsHeight != height) {
-            // ROI changed, reallocate pixels for new size
-            // this is needed because getRoiPixels() might change size of pixels
-            delete pixels;
-            pixels = new unsigned char[width*height];
-            pixelsWidth = width;
-            pixelsHeight = height;
-        }
-
-        // copy from ROI to pixels
-        for( int i = 0; i < height; i++ ) {
-            memcpy( pixels + (i*width),
-                    cvGrayscaleImage->imageData + (i*cvGrayscaleImage->widthStep),
-                    width );
-        }
-        bPixelsDirty = false;
-    }
-	return pixels;
-
+		resetImageROI(cvGrayscaleImage);
+		convertShortToGray(cvImage, cvGrayscaleImage);
+		setROI(lastROI);
+	}
+	return cvGrayscaleImage;
 }
 
 //--------------------------------------------------------------------------------
-unsigned char*  ofxCvShortImage::getRoiPixels(){
-    if(bPixelsDirty) {
-        if( cvGrayscaleImage == NULL ) {
-            cvGrayscaleImage = cvCreateImage( cvSize(width,height), IPL_DEPTH_8U, 1 );
-        }
+IplImage*  ofxCvShortImage::getCv8BitsRoiImage() {
+	if(bPixelsDirty) {
+		if( cvGrayscaleImage == NULL ) {
+			cvGrayscaleImage = cvCreateImage( cvSize(width,height), IPL_DEPTH_8U, 1 );
+		}
 
-        ofRectangle roi = getROI();
-        setImageROI(cvGrayscaleImage, roi);  //make sure ROI is in sync
-        convertShortToGray(cvImage, cvGrayscaleImage);
-
-        if(pixels == NULL) {
-            // we need pixels, allocate it
-            pixels = new unsigned char[(int)(roi.width*roi.height)];
-            pixelsWidth = (int)roi.width;
-            pixelsHeight = (int)roi.height;
-        } else if(pixelsWidth != roi.width || pixelsHeight != roi.height) {
-            // ROI changed, reallocate pixels for new size
-            delete pixels;
-            pixels = new unsigned char[(int)(roi.width*roi.height)];
-            pixelsWidth = (int)roi.width;
-            pixelsHeight = (int)roi.height;
-        }
-
-        // copy from ROI to pixels
-        for( int i = 0; i < roi.height; i++ ) {
-            memcpy( pixels + (int)(i*roi.width),
-                    cvGrayscaleImage->imageData + ((int)(i+roi.y)*cvGrayscaleImage->widthStep) + (int)roi.x,
-                    (int)roi.width );
-        }
-        bPixelsDirty = false;
-    }
-	return pixels;
+		ofRectangle roi = getROI();
+		setImageROI(cvGrayscaleImage, roi);  //make sure ROI is in sync
+		convertShortToGray(cvImage, cvGrayscaleImage);
+	}
+	return cvGrayscaleImage;
 }
-
-
 
 // Draw Image
 
@@ -345,4 +305,32 @@ void ofxCvShortImage::scaleIntoMe( ofxCvImage& mom, int interpolationMethod ){
     } else {
         ofLog(OF_LOG_ERROR, "in scaleIntoMe, mom image type has to match");
     }
+}
+
+ofShortPixels & ofxCvShortImage::getShortPixelsRef(){
+	if(bShortPixelsDirty) {
+
+		//Note this possible introduces a bug where pixels doesn't contain the current image.
+		//Also it means that modifying the pointer return by get pixels - affects the internal cvImage
+		//Where as with the slower way below modifying the pointer doesn't change the image.
+		if(  cvImage->width*cvImage->depth/8 == cvImage->widthStep ){
+			shortPixels.setFromExternalPixels((unsigned short*)cvImage->imageData,width,height,cvImage->nChannels);
+		}else{
+			shortPixels.setFromAlignedPixels((unsigned short*)cvImage->imageData,width,height,cvImage->nChannels,cvImage->widthStep);
+		}
+		bShortPixelsDirty = false;
+	}
+	return shortPixels;
+
+}
+
+ofShortPixels & ofxCvShortImage::getRoiShortPixelsRef(){
+	if(bShortPixelsDirty) {
+		ofRectangle roi = getROI();
+		unsigned short * roi_ptr = (unsigned short*)cvImage->imageData + ((int)(roi.y)*cvImage->widthStep/(cvImage->depth/8) + (int)roi.x * cvImage->nChannels);
+		shortPixels.setFromAlignedPixels(roi_ptr,roi.width,roi.height,cvImage->nChannels,cvImage->widthStep);
+		bShortPixelsDirty = false;
+	}
+	return shortPixels;
+
 }

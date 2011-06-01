@@ -11,6 +11,10 @@ ofxCvGrayscaleImage::ofxCvGrayscaleImage() {
     init();
 }
 
+ofxCvGrayscaleImage::~ofxCvGrayscaleImage(){
+	cvReleaseMat(&briConLutMatrix);
+}
+
 //--------------------------------------------------------------------------------
 ofxCvGrayscaleImage::ofxCvGrayscaleImage( const ofxCvGrayscaleImage& _mom ) {
     init();
@@ -30,6 +34,7 @@ void ofxCvGrayscaleImage::init() {
     iplchannels = 1;
     gldepth = GL_UNSIGNED_BYTE;
     glchannels = GL_LUMINANCE;
+    briConLutMatrix = cvCreateMat(1,256,CV_8UC1);
 }
 
 
@@ -41,7 +46,7 @@ void ofxCvGrayscaleImage::set( float value ){
 }
 
 //--------------------------------------------------------------------------------
-void ofxCvGrayscaleImage::setFromPixels( unsigned char* _pixels, int w, int h ) {
+void ofxCvGrayscaleImage::setFromPixels( const unsigned char* _pixels, int w, int h ) {
     // This sets the internal image ignoring any ROI
 
     if( w == width && h == height ) {
@@ -65,7 +70,7 @@ void ofxCvGrayscaleImage::setFromPixels( unsigned char* _pixels, int w, int h ) 
 }
 
 //--------------------------------------------------------------------------------
-void ofxCvGrayscaleImage::setRoiFromPixels( unsigned char* _pixels, int w, int h ) {
+void ofxCvGrayscaleImage::setRoiFromPixels( const unsigned char* _pixels, int w, int h ) {
     ofRectangle roi = getROI();
     ofRectangle inputROI = ofRectangle( roi.x, roi.y, w, h);
     ofRectangle iRoi = getIntersectionROI( roi, inputROI );
@@ -175,71 +180,6 @@ void ofxCvGrayscaleImage::absDiff( ofxCvGrayscaleImage& mom,
 }
 
 
-// Get Pixel Data
-//--------------------------------------------------------------------------------
-unsigned char* ofxCvGrayscaleImage::getPixels() {
-	//Note this possible introduces a bug where pixels doesn't contain the current image.
-	//Also it means that modifying the pointer return by get pixels - affects the internal cvImage
-	//Where as with the slower way below modifying the pointer doesn't change the image. 
-	if(  cvImage->width == cvImage->widthStep ){
-		return (unsigned char *)cvImage->imageData;
-	}
-
-    if(bPixelsDirty) {
-        if(pixels == NULL) {
-            // we need pixels, allocate it
-            pixels = new unsigned char[width*height];
-            pixelsWidth = width;
-            pixelsHeight = height;
-        } else if(pixelsWidth != width || pixelsHeight != height) {
-            // ROI changed, reallocate pixels for new size
-            // this is needed because getRoiPixels() might change size of pixels
-            delete pixels;
-            pixels = new unsigned char[width*height];
-            pixelsWidth = width;
-            pixelsHeight = height;
-        }
-
-        // copy from ROI to pixels
-        for( int i = 0; i < height; i++ ) {
-            memcpy( pixels + (i*width),
-                    cvImage->imageData + (i*cvImage->widthStep),
-                    width );
-        }
-        bPixelsDirty = false;
-    }
-	return pixels;
-}
-
-//--------------------------------------------------------------------------------
-unsigned char* ofxCvGrayscaleImage::getRoiPixels() {
-    if(bPixelsDirty) {
-        ofRectangle roi = getROI();
-        if(pixels == NULL) {
-            // we need pixels, allocate it
-            pixels = new unsigned char[(int)(roi.width*roi.height)];
-            pixelsWidth = (int)roi.width;
-            pixelsHeight = (int)roi.height;
-        } else if(pixelsWidth != roi.width || pixelsHeight != roi.height) {
-            // ROI changed, reallocate pixels for new size
-            delete pixels;
-            pixels = new unsigned char[(int)(roi.width*roi.height)];
-            pixelsWidth = (int)roi.width;
-            pixelsHeight = (int)roi.height;
-        }
-
-        // copy from ROI to pixels
-        for( int i = 0; i < roi.height; i++ ) {
-            memcpy( pixels + (int)(i*roi.width),
-                    cvImage->imageData + ((int)(i+roi.y)*cvImage->widthStep) + (int)roi.x,
-                    (int)roi.width );
-        }
-        bPixelsDirty = false;
-    }
-	return pixels;
-}
-
-
 // Draw Image
 
 
@@ -302,41 +242,35 @@ void ofxCvGrayscaleImage::brightnessContrast(float brightness, float contrast){
 	/*
 	 * The algorithm is by Werner D. Streidt
 	 * (http://visca.com/ffactory/archives/5-99/msg00021.html)
-	 * (note: uses values between -100 and 100)
+	 * (note: uses values between -1 and 1)
 	 */
-	
+
+	double delta;
+	double a;
+	double b;
 	if( contrast > 0 )
 	{
-		double delta = 127.*contrast;
-		double a = 255./(255. - delta*2);
-		double b = a*(brightness*100 - delta);
-		for( i = 0; i < 256; i++ )
-		{
-			int v = cvRound(a*i + b);
-			if( v < 0 )
-				v = 0;
-				if( v > 255 )
-					v = 255;
-					briConLut[i] = (uchar)v;
-					}
-	}
-	else
-	{
-		double delta = -128.*contrast;
-		double a = (256.-delta*2)/255.;
-		double b = a*brightness*100. + delta;
-		for( i = 0; i < 256; i++ )
-		{
-			int v = cvRound(a*i + b);
-			if( v < 0 )
-				v = 0;
-				if( v > 255 )
-					v = 255;
-					briConLut[i] = (uchar)v;
-					}
+		delta = 127.*contrast;
+		a = 255./(255. - delta*2);
+		b = a*(brightness*100 - delta);
+	}else{
+		delta = -128.*contrast;
+		a = (256.-delta*2)/255.;
+		b = a*brightness*100. + delta;
 	}
 
-	cvSetData( briConLutMatrix, briConLut, 0 );
+	for( i = 0; i < 256; i++ )
+	{
+		int v = cvRound(a*i + b);
+		if( v < 0 )
+			v = 0;
+		if( v > 255 )
+			v = 255;
+		briConLutMatrix->data.ptr[i] = (uchar)v;
+		//briConLut[i] = (uchar)v;
+	}
+
+	//cvSetData( briConLutMatrix, briConLut, 0 );
 
 	cvLUT( cvImage, cvImageTemp, briConLutMatrix); 
 	swapTemp();

@@ -1,7 +1,7 @@
 //
 // HTTPServerResponseImpl.h
 //
-// $Id: //poco/1.3/Net/include/Poco/Net/HTTPServerResponseImpl.h#1 $
+// $Id: //poco/1.4/Net/include/Poco/Net/HTTPServerResponseImpl.h#1 $
 //
 // Library: Net
 // Package: HTTPServer
@@ -110,8 +110,10 @@ public:
 		/// Must not be called after send(), sendFile()  
 		/// or redirect() has been called.
 		
-	void redirect(const std::string& uri);
-		/// Sets the status code to 302 (Found)
+	void redirect(const std::string& uri, HTTPStatus status = HTTP_FOUND);
+		/// Sets the status code, which must be one of
+		/// HTTP_MOVED_PERMANENTLY (301), HTTP_FOUND (302),
+		/// or HTTP_SEE_OTHER (303),
 		/// and sets the "Location" header field
 		/// to the given URI, which according to
 		/// the HTTP specification, must be absolute.
