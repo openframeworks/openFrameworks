@@ -173,7 +173,7 @@ void ofAppAndroidWindow::disableSetupScreen(){
 }
 
 void ofAppAndroidWindow::setOrientation(ofOrientation _orientation){
-	if(orientation==_orientation) return;
+	//if(orientation==_orientation) return;
 	orientation = _orientation;
 	jclass javaClass = ofGetJNIEnv()->FindClass("cc.openframeworks.OFAndroid");
 
