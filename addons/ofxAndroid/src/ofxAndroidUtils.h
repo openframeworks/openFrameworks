@@ -36,6 +36,7 @@ void ofReloadAllFontTextures();
 void  ofUpdateBitmapCharacterTexture();
 
 void ofxAndroidSoundStreamPause();
+void ofxAndroidSoundStreamResume();
 
 
 //this is just to fix a problem with undefined symbols
