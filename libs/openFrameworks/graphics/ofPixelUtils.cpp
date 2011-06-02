@@ -388,4 +388,6 @@ bool ofPixelUtils::pasteInto(ofPixels &src, ofPixels &dst, int xTo, int yTo){
 		dstPix += dstStride;
 		srcPix += srcStride;
 	}
+
+	return true;
 }
