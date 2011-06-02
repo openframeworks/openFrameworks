@@ -105,13 +105,17 @@ typedef ofPixels& ofPixelsRef;
 template<typename PixelType>
 template<typename SrcType>
 ofPixels_<PixelType>::ofPixels_(const ofPixels_<SrcType> & mom){
-	(*this).template copyFrom( mom );
+	bAllocated = false;
+	pixelsOwner = false;
+	channels = 0;
+	pixels = NULL;
+	copyFrom( mom );
 }
 
 template<typename PixelType>
 template<typename SrcType>
 ofPixels_<PixelType>& ofPixels_<PixelType>::operator=(const ofPixels_<SrcType> & mom){
-	(*this).template copyFrom( mom );
+	copyFrom( mom );
 	return *this;
 }
 
