@@ -145,26 +145,23 @@ ofLight & ofLight::operator=(const ofLight & mom){
 }
 
 //----------------------------------------
-void ofLight::setup(){
-	if(glIndex!=-1) return;
-	// search for the first free block
-	for(int i=0; i<OF_MAX_LIGHTS; i++) {
-		if(getActiveLights()[i] == false) {
-			glIndex = i;
-			retain(glIndex);
-			enable();
-			return;
+void ofLight::enable() {
+	if(glIndex==-1){
+		// search for the first free block
+		for(int i=0; i<OF_MAX_LIGHTS; i++) {
+			if(getActiveLights()[i] == false) {
+				glIndex = i;
+				retain(glIndex);
+				enable();
+				return;
+			}
 		}
 	}
-
-	ofLog(OF_LOG_ERROR, "Trying to create too many lights: " + ofToString(glIndex));
-}
-
-//----------------------------------------
-void ofLight::enable() {
 	if(glIndex!=-1) {
 		ofEnableLighting();
 		glEnable(GL_LIGHT0 + glIndex);
+	}else{
+		ofLog(OF_LOG_ERROR, "Trying to create too many lights: " + ofToString(glIndex));
 	}
 }
 

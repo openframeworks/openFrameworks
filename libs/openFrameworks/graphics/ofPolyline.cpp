@@ -1,6 +1,12 @@
 #include "ofPolyline.h"
 #include "ofGraphics.h"
 
+#if (_MSC_VER)
+	// on windows, we seem to need M_PI
+	#define _USE_MATH_DEFINES
+	#include <math.h>
+#endif
+
 //----------------------------------------------------------
 ofPolyline::ofPolyline(){
 	clear();
