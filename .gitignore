@@ -21,6 +21,8 @@ apps/*/*/*.depend
 apps/*/*/bin/clickToLaunch*
 apps/*/*/bin/libs
 apps/*/*/obj
+apps/examples/*.cbp
+apps/addonsExamples/*.workspace
 
 #rule to avoid non-official apps going into git
 #see apps/.gitignore
@@ -54,10 +56,6 @@ apps/*/*/Debug Linux
 apps/*/*/Release Linux
 apps/*/*/Debug Linux64
 apps/*/*/Release Linux64
-apps/examples/*linux*.cbp
-apps/examples/*linux*.workspace
-apps/addonsExamples/*linux*.cbp
-apps/addonsExamples/*linux*.workspace
 apps/examples/*/Makefile
 apps/examples/*/config.make
 apps/addonsExamples/*/Makefile
