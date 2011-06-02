@@ -3,8 +3,8 @@
 
 //--------------------------------------------------------------
 void testApp::setup(){
-    ofSetLogLevel(OF_LOG_VERBOSE);    
-	
+    ofSetLogLevel(OF_LOG_VERBOSE);
+
     // we need GL_TEXTURE_2D for our models coords.
     ofDisableArbTex();
 
@@ -30,10 +30,10 @@ void testApp::setup(){
 
     //some model / light stuff
     glShadeModel(GL_SMOOTH);
-    light.setup();
+    light.enable();
     ofEnableSeparateSpecularLight();
 
-	
+
 	bAnimate		= false;
 	bAnimateMouse 	= false;
 	animationTime	= 0.0;
@@ -42,8 +42,8 @@ void testApp::setup(){
 //--------------------------------------------------------------
 void testApp::update(){
     //model.setRotation(1, ofGetElapsedTimef() * 60, 0, 1, 0);
-    
-	//this is for animation if the model has it. 
+
+	//this is for animation if the model has it.
 	if( bAnimate ){
 		animationTime += ofGetLastFrameTime();
 		if( animationTime >= 1.0 ){
@@ -66,14 +66,14 @@ void testApp::update(){
 void testApp::draw(){
     ofBackground(50, 50, 50, 0);
     ofSetColor(255, 255, 255, 255);
-    
+
     ofPushMatrix();
 		ofTranslate(model.getPosition().x+100, model.getPosition().y, 0);
 		ofRotate(-mouseX, 0, 1, 0);
 		ofTranslate(-model.getPosition().x, -model.getPosition().y, 0);
-    
+
 		model.drawFaces();
-            
+
     ofPopMatrix();
 
 
@@ -198,7 +198,7 @@ void testApp::gotMessage(ofMessage msg){
 }
 
 //--------------------------------------------------------------
-void testApp::dragEvent(ofDragInfo dragInfo){ 
+void testApp::dragEvent(ofDragInfo dragInfo){
 
 }
 
