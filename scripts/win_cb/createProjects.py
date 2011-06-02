@@ -62,16 +62,16 @@ def addAddon(project,addon):
         print 'error', addon, 'has no src folder'
         return
     if fullCBP:
-        addon_src = os.path.join('..','..','..',os.path.join(of_root,'addons',addon,'src')[len(of_root)+1:])
+        addon_src = os.path.join('..','..','..','addons',addon,'src')
         addCBPIncludePath(project,addon_src)
     for root, dirs, files in os.walk(os.path.join(of_root,'addons',addon,'src')):
         for name in files:
-            basefolder = root[len(of_root)+1:]
+            basefolder = root[len(of_root):]
             filepath = str(os.path.join('..','..','..',basefolder,name))
             addCBPUnit(project,filepath,basefolder)
         if fullCBP:
             for dir in dirs:
-                basefolder = root[len(of_root)+1:]
+                basefolder = root[len(of_root):]
                 dirpath = os.path.join('..','..','..',basefolder,dir)
                 addCBPIncludePath(project,dirpath)
     
@@ -87,7 +87,7 @@ def addAddon(project,addon):
                 addCBPIncludePath(project,os.path.join('..','..','..',basefolder,'include'))
                 for root, dirs, files in os.walk(dirpath):
                     for dir in dirs:
-                        basefolder_addon = root[len(of_root)+1:]
+                        basefolder_addon = root[len(of_root):]
                         dirpath_addon = os.path.join('..','..','..',basefolder_addon,dir)
                         addCBPIncludePath(project,dirpath_addon)
             
@@ -103,10 +103,10 @@ def addAddon(project,addon):
                     libsorder.close()
                 else:
                     for lib in glob.glob(os.path.join(of_root,basefolder,'lib',arch,'*.a')):
-                        baselib = lib[len(of_root)+1:]
+                        baselib = lib[len(of_root):]
                         addCBPLibrary(project,os.path.join('..','..','..',baselib))
                     for lib in glob.glob(os.path.join(of_root,basefolder,'lib',arch,'*.so')):
-                        baselib = lib[len(of_root)+1:]
+                        baselib = lib[len(of_root):]
                         addCBPLibrary(project,os.path.join('..','..','..',baselib))
                         
 
