@@ -15,7 +15,6 @@
 
 static bool printVectorInfo = false;
 
-
 //--------------------------------------------------------
 static ofTTFCharacter makeContoursForCharacter(FT_Face &face);
 static ofTTFCharacter makeContoursForCharacter(FT_Face &face){
@@ -381,12 +380,13 @@ void ofTrueTypeFont::loadFont(string filename, int fontsize, bool _bAntiAliased,
 	//cout << areaSum << endl;
 
 	bool packed = false;
-	float alpha = log(areaSum)*1.44269;
+	float alpha = logf(areaSum)*1.44269;
 
 	int w;
 	int h;
 	while(!packed){
-		w = pow(2,round(alpha/2.f));
+		w = pow(2,floor((alpha/2.f) + 0.5)); // there doesn't seem to be a round in cmath for windows. 
+		//w = pow(2,round(alpha/2.f));
 		h = w;//pow(2,round(alpha - round(alpha/2.f)));
 		int x=0;
 		int y=0;
