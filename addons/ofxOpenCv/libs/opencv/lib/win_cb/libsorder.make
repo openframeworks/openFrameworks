@@ -1,0 +1,16 @@
+opencv_legacy220
+opencv_haartraining_engine
+opencv_features2d220
+opencv_calib3d220
+opencv_objdetect220 
+opencv_imgproc220
+opencv_video220  
+opencv_highgui220 
+opencv_ml220 
+opencv_legacy220 
+opencv_core220 
+opencv_lapack
+opencv_flann220
+opencv_contrib220
+opencv_gpu220
+zlib
