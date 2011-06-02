@@ -9,7 +9,14 @@ import glob
 
 of_root = os.path.realpath(__file__)[0:-(len(os.path.join('scripts','linux','createProject.py'))+2)]
 platform = 'linux'
-arch = 'linux64'
+
+arch = 'linux'
+
+uname = os.uname()
+for uname_str in uname:
+    if uname_str=='x86_64':
+        arch = 'linux64'
+        
 templates_path = os.path.join(of_root,'apps','devApps',platform)
 template = {'cbp': os.path.join(templates_path , 'emptyExample_' + arch + '.cbp'), 'full_cbp': os.path.join(templates_path , 'emptyExample_' + arch + '_fullCBP.cbp'), 'makefile': os.path.join(templates_path , 'Makefile'), 'config.make': os.path.join(templates_path , 'config.make')}
 
