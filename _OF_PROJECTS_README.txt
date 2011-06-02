@@ -20,5 +20,13 @@ OS X:
 iPhone: 
 	is still to be automated but will also use the OS X _DeployExamples app 
 
-Windows:
-	is still to be automated for windows codeblocks
+Windows Codeblocks:
+	install python from http://python.org
+	install setup tools from http://pypi.python.org/pypi/setuptools#files
+	add python to you path: 
+		start > right click on My PC > properties > Advanced > Environment Variables
+		edit the Path variable and at the end add:
+		;c:\Python27;c:\Python27\Scripts
+	open a console: start > Run... > cmd   and execute
+		easy_install lxml
+	execute scripts/win_cb/createProjects.py
