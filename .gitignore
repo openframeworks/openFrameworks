@@ -21,8 +21,10 @@ apps/*/*/*.depend
 apps/*/*/bin/clickToLaunch*
 apps/*/*/bin/libs
 apps/*/*/obj
-apps/examples/*.cbp
-apps/addonsExamples/*.workspace
+apps/examples/*/*.cbp
+apps/examples/*/*.workspace
+apps/addonsExamples/*/*.cbp
+apps/addonsExamples/*/*.workspace
 
 #rule to avoid non-official apps going into git
 #see apps/.gitignore
