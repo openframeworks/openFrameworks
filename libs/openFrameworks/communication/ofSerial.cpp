@@ -516,7 +516,8 @@ bool ofSerial::writeByte(unsigned char singleByte){
 
 	if (!bInited){
 		ofLog(OF_LOG_ERROR,"ofSerial: serial not inited");
-		return OF_SERIAL_ERROR;
+		//return OF_SERIAL_ERROR; // this looks wrong.
+		return false;
 	}
 
 	unsigned char tmpByte[1];
