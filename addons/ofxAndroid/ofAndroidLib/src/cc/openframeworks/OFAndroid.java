@@ -303,6 +303,9 @@ public class OFAndroid {
     	case 180:
     		ofActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
     		break;
+    	case -1:
+    		ofActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
+    		break;
     	}
     }
     
