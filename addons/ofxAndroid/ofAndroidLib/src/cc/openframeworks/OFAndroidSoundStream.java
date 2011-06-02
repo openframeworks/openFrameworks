@@ -107,9 +107,10 @@ public class OFAndroidSoundStream extends OFAndroidObject implements Runnable{
 			setupIn(nInputChannels,sampleRate,bufferSize);
 		}
 
-        
-        broadcastReceiver = new HeadphonesReceiver();
-		activity.registerReceiver(broadcastReceiver, new IntentFilter(Intent.ACTION_HEADSET_PLUG ));
+        if(broadcastReceiver==null){
+        	broadcastReceiver = new HeadphonesReceiver();
+        	activity.registerReceiver(broadcastReceiver, new IntentFilter(Intent.ACTION_HEADSET_PLUG ));
+        }
 		
 		thread = new Thread(this);
 		thread.start();
@@ -147,6 +148,7 @@ public class OFAndroidSoundStream extends OFAndroidObject implements Runnable{
 			iTrack.release();
 			iTrack = null;
 		}
+		
 	}
 
 	@Override
