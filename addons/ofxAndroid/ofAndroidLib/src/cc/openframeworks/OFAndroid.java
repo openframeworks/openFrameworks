@@ -18,6 +18,7 @@ import android.hardware.SensorManager;
 import android.opengl.ETC1Util;
 import android.opengl.GLSurfaceView;
 import android.os.Environment;
+import android.os.PowerManager;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.GestureDetector;
@@ -160,6 +161,7 @@ public class OFAndroid {
 			object.onPause();
 		}
 		
+		unlockScreenSleep();
 	}
 	
 	public void resume(){
@@ -171,6 +173,8 @@ public class OFAndroid {
 		for(OFAndroidObject object : OFAndroidObject.ofObjects){
 			object.onResume();
 		}
+		
+		if(wl!=null) lockScreenSleep();
 	}
 	
 	public void stop(){
@@ -180,6 +184,8 @@ public class OFAndroid {
 		for(OFAndroidObject object : OFAndroidObject.ofObjects){
 			object.onStop();
 		}
+		
+		unlockScreenSleep();
 		/*if(OFAndroidSoundStream.isInitialized()) 
 			OFAndroidSoundStream.getInstance().stop();*/
 	}
@@ -369,6 +375,21 @@ public class OFAndroid {
 	public static String toDataPath(String path){
 		return dataPath + "/" + path;
 	}
+	
+	public static void lockScreenSleep(){
+		if(wl==null){
+			PowerManager pm = (PowerManager) ofActivity.getSystemService(Context.POWER_SERVICE);
+	        wl = pm.newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK, "DoNotDimScreen");
+		}
+        wl.acquire();
+        
+	}
+	
+	public static void unlockScreenSleep(){
+		if(wl==null) return;
+		wl.release();
+	}
+	
     
     private OFGLSurfaceView mGLView;
     private static OFAndroidAccelerometer accelerometer;
@@ -377,6 +398,8 @@ public class OFAndroid {
     private OFGestureListener gestureListener;
 	private static String packageName;
 	private static String dataPath;
+	private static PowerManager.WakeLock wl;
+
     
 	 
     static {

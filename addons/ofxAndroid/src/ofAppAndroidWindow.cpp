@@ -125,6 +125,55 @@ void ofxAndroidAlertBox(string msg){
 	ofGetJNIEnv()->CallStaticObjectMethod(javaClass,alertBox,jMsg);
 }
 
+void ofxAndroidToast(string msg){
+	jclass javaClass = ofGetJavaOFAndroid();
+
+	if(javaClass==0){
+		ofLog(OF_LOG_ERROR,"cannot find OFAndroid java class");
+		return;
+	}
+
+	jmethodID toast = ofGetJNIEnv()->GetStaticMethodID(javaClass,"toast","(Ljava/lang/String;)V");
+	if(!toast){
+		ofLog(OF_LOG_ERROR,"cannot find OFAndroid toast method");
+		return;
+	}
+	jstring jMsg = ofGetJNIEnv()->NewStringUTF(msg.c_str());
+	ofGetJNIEnv()->CallStaticObjectMethod(javaClass,toast,jMsg);
+}
+
+void ofxAndroidLockScreenSleep(){
+	jclass javaClass = ofGetJavaOFAndroid();
+
+	if(javaClass==0){
+		ofLog(OF_LOG_ERROR,"cannot find OFAndroid java class");
+		return;
+	}
+
+	jmethodID lockScreenSleep = ofGetJNIEnv()->GetStaticMethodID(javaClass,"lockScreenSleep","()V");
+	if(!lockScreenSleep){
+		ofLog(OF_LOG_ERROR,"cannot find OFAndroid lockScreenSleep method");
+		return;
+	}
+	ofGetJNIEnv()->CallStaticObjectMethod(javaClass,lockScreenSleep);
+}
+
+void ofxAndroidUnlockScreenSleep(){
+	jclass javaClass = ofGetJavaOFAndroid();
+
+	if(javaClass==0){
+		ofLog(OF_LOG_ERROR,"cannot find OFAndroid java class");
+		return;
+	}
+
+	jmethodID unlockScreenSleep = ofGetJNIEnv()->GetStaticMethodID(javaClass,"unlockScreenSleep","()V");
+	if(!unlockScreenSleep){
+		ofLog(OF_LOG_ERROR,"cannot find OFAndroid unlockScreenSleep method");
+		return;
+	}
+	ofGetJNIEnv()->CallStaticObjectMethod(javaClass,unlockScreenSleep);
+}
+
 ofAppAndroidWindow::ofAppAndroidWindow() {
 	// TODO Auto-generated constructor stub
 
