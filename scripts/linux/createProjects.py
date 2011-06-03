@@ -7,11 +7,19 @@ import shutil
 import glob
 
 
-of_root = os.path.realpath(__file__)[0:-(len('scripts/linux/createProject.py')+2)]
+of_root = os.path.realpath(__file__)[0:-(len(os.path.join('scripts','linux','createProject.py'))+2)]
 platform = 'linux'
-arch = 'linux64'
-templates_path = of_root + '/apps/devApps/linux/'
-template = {'cbp': templates_path + 'emptyExample_' + arch + '.cbp', 'full_cbp': templates_path + 'emptyExample_' + arch + '_fullCBP.cbp', 'makefile': templates_path + 'Makefile', 'config.make': templates_path + 'config.make'}
+
+arch = 'linux'
+
+uname = os.uname()
+for uname_str in uname:
+    if uname_str=='x86_64':
+        arch = 'linux64'
+        
+templates_path = os.path.join(of_root,'apps','devApps',platform)
+template = {'cbp': os.path.join(templates_path , 'emptyExample_' + arch + '.cbp'), 'full_cbp': os.path.join(templates_path , 'emptyExample_' + arch + '_fullCBP.cbp'), 'makefile': os.path.join(templates_path , 'Makefile'), 'config.make': os.path.join(templates_path , 'config.make')}
+
 fullCBP = True
 
 def addCBPIncludePath(project,dirpath):
@@ -159,9 +167,10 @@ def createProject(project_path):
         shutil.copyfile(template['full_cbp'],os.path.join(project_path,project_name+'.cbp'))
     else:
         shutil.copyfile(template['cbp'],os.path.join(project_path,project_name+'.cbp'))
-    shutil.copyfile(template['makefile'],os.path.join(project_path,'Makefile'))
+    if platform == "linux":
+        shutil.copyfile(template['makefile'],os.path.join(project_path,'Makefile'))
 
-    if not os.path.exists(os.path.join(project_path, 'config.make')):
+    if platform == "linux" and not os.path.exists(os.path.join(project_path, 'config.make')):
         shutil.copyfile(template['config.make'],os.path.join(project_path,'config.make'))
 
     if not os.path.exists(os.path.join(project_path,'src')):
