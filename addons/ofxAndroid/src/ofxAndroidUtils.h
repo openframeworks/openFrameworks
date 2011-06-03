@@ -25,6 +25,9 @@ void ofxAndroidAlertBox(string msg);
 
 void ofxAndroidToast(string msg);
 
+void ofxAndroidLockScreenSleep();
+void ofxAndroidUnlockScreenSleep();
+
 //-------------------------------------
 // this functions are only for internal use
 void ofPauseVideoGrabbers();
