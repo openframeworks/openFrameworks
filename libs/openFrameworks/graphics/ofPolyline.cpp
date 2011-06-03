@@ -1,12 +1,6 @@
 #include "ofPolyline.h"
 #include "ofGraphics.h"
 
-#if (_MSC_VER)
-	// on windows, we seem to need M_PI
-	#define _USE_MATH_DEFINES
-	#include <math.h>
-#endif
-
 //----------------------------------------------------------
 ofPolyline::ofPolyline(){
 	clear();
@@ -248,13 +242,13 @@ void ofPolyline::arc( const ofPoint & center, float radiusX, float radiusY, floa
 	if(size<1){
 		const int segments = curveResolution*size;
 		float angle,sinus,cosinus;
-		float segment_size = M_PI*2.0*size/(float)segments;
-		angle=-(M_PI*2.0*begin);
+		float segment_size = PI*2.0*size/(float)segments;
+		angle=-(PI*2.0*begin);
 		for( int i=0; i<segments; i++){
 			points.push_back(ofPoint(radiusX*circlePoints[i].x+center.x,radiusY*circlePoints[i].y+center.y));
 			angle-=segment_size ;
 		}
-		angle=-(M_PI*2.0*begin);
+		angle=-(PI*2.0*begin);
 		sinus = sin(angle);
 		cosinus = cos(angle);
 		points.push_back(ofPoint(radiusX*sinus+center.x,radiusY*cosinus+center.y));
