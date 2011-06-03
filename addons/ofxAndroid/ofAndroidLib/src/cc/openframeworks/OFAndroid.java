@@ -27,6 +27,7 @@ import android.view.SurfaceHolder;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.CompoundButton;
+import android.widget.Toast;
 
 public class OFAndroid {
 	
@@ -346,6 +347,17 @@ public class OFAndroid {
 				  	})  
 				  	.show();    
 				
+			}  
+		});
+	}
+	
+	public static void toast(String msg){  
+		if(msg=="") return;
+		final String alertMsg = msg;
+		ofActivity.runOnUiThread(new Runnable(){
+			public void run() {
+				Toast toast = Toast.makeText(ofActivity, alertMsg, Toast.LENGTH_SHORT);
+	        	toast.show();  
 			}  
 		});
 	}
