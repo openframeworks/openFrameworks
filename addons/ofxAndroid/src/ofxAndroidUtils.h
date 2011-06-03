@@ -23,6 +23,8 @@ void ofxRegisterMultitouch(ofxAndroidApp * app);
 
 void ofxAndroidAlertBox(string msg);
 
+void ofxAndroidToast(string msg);
+
 //-------------------------------------
 // this functions are only for internal use
 void ofPauseVideoGrabbers();
