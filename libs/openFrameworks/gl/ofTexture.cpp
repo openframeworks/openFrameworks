@@ -135,7 +135,22 @@ void ofGetGlFormatAndType(int glInternalFormat, int& glFormat, int& glType) {
 		case GL_LUMINANCE32F_ARB:
 			glFormat = GL_LUMINANCE;
 			glType = GL_FLOAT;
-			break;			
+			break;
+
+
+		// 16-bit float formats
+		case GL_RGBA16F_ARB:
+			glFormat = GL_RGBA;
+			glType = GL_FLOAT;
+			break;
+		case GL_RGB16F_ARB:
+			glFormat = GL_RGB;
+			glType = GL_FLOAT;
+			break;
+		case GL_LUMINANCE16F_ARB:
+			glFormat = GL_LUMINANCE;
+			glType = GL_FLOAT;
+			break;
 #endif
 
 		// used by prepareBitmapTexture(), not supported by ofPixels
