@@ -1,49 +1,55 @@
 #pragma once
+#include <limits>
+#include "ofMath.h"
 
 //----------------------------------------------------------
 // ofColor
 //----------------------------------------------------------
 
-class ofColor{
+template<typename PixelType>
+class ofColor_{
 	public:
 	
-		ofColor ();
-		~ofColor ();
+		ofColor_<PixelType> ();
+		~ofColor_<PixelType> ();
 		
-		ofColor (float _r, float _g, float _b, float _a = 255.0f);
-		ofColor (ofColor const & color);
-		ofColor (ofColor const & color, float _a);
-		ofColor (float gray, float _a = 255.0f);
+		ofColor_<PixelType> (float _r, float _g, float _b, float _a = 255.0f);
+		ofColor_<PixelType> (const ofColor_<PixelType> & color);
+		ofColor_<PixelType> (const ofColor_<PixelType> & color, float _a);
+		ofColor_<PixelType> (float gray, float _a = 255.0f);
 		
-		static ofColor fromHsb (float hue, float saturation, float brightness, float alpha = 255.f);
-		static ofColor fromHex (int hexColor, float alpha = 255.f);
+		template<typename SrcType>
+		ofColor_<PixelType> (const ofColor_<SrcType> & color);
+
+		static ofColor_<PixelType> fromHsb (float hue, float saturation, float brightness, float alpha = 255.f);
+		static ofColor_<PixelType> fromHex (int hexColor, float alpha = 255.f);
 		
-		static const ofColor gray;
-		static const ofColor white;
-		static const ofColor red;
-		static const ofColor green;
-		static const ofColor blue;
-		static const ofColor cyan;
-		static const ofColor magenta;
-		static const ofColor yellow;
-		static const ofColor black;
+		static const ofColor_<PixelType> gray;
+		static const ofColor_<PixelType> white;
+		static const ofColor_<PixelType> red;
+		static const ofColor_<PixelType> green;
+		static const ofColor_<PixelType> blue;
+		static const ofColor_<PixelType> cyan;
+		static const ofColor_<PixelType> magenta;
+		static const ofColor_<PixelType> yellow;
+		static const ofColor_<PixelType> black;
 	
 		void set (float _r, float _g, float _b, float _a = 255.0f);
 		void set (float _gray, float _a = 255.0f);
-		void set (ofColor const & color);
+		void set (ofColor_<PixelType> const & color);
 
 		void setHex (int hexColor, float alpha = 255.0f);
 		int getHex () const;
 		
-		ofColor& clamp ();
-		ofColor& invert ();
-		ofColor& normalize ();
-		ofColor& lerp(const ofColor& target, float amount);
+		ofColor_<PixelType>& clamp ();
+		ofColor_<PixelType>& invert ();
+		ofColor_<PixelType>& normalize ();
+		ofColor_<PixelType>& lerp(const ofColor_<PixelType>& target, float amount);
 		
-		ofColor getClamped () const;
-		ofColor getInverted () const;
-		ofColor getNormalized () const;
-		ofColor getLerped(const ofColor& target, float amount) const;
+		ofColor_<PixelType> getClamped () const;
+		ofColor_<PixelType> getInverted () const;
+		ofColor_<PixelType> getNormalized () const;
+		ofColor_<PixelType> getLerped(const ofColor_<PixelType>& target, float amount) const;
 		
 		float getHue () const;
 		float getSaturation () const;
@@ -57,35 +63,80 @@ class ofColor{
 		void setHsb(float hue, float saturation, float brightness, float alpha);
 		void setHsb(float hue, float saturation, float brightness);
 		
-		ofColor & operator = (ofColor const & color);
-		ofColor & operator = (float const & val);
-		bool operator == (ofColor const & color);
-		bool operator != (ofColor const & color);
-		ofColor operator + (ofColor const & color) const;
-		ofColor operator + (float const & val) const;
-		ofColor & operator += (ofColor const & color);
-		ofColor & operator += (float const & val);
-		ofColor operator - (ofColor const & color) const;
-		ofColor operator - (float const & val) const;
-		ofColor & operator -= (ofColor const & color);
-		ofColor & operator -= (float const & val);
-		ofColor operator * (ofColor const & color) const;
-		ofColor operator * (float const & val) const;
-		ofColor & operator *= (ofColor const & color);
-		ofColor & operator *= (float const & val);
-		ofColor operator / (ofColor const & color) const;
-		ofColor operator / (float const & val) const;
-		ofColor & operator /= (ofColor const & color);
-		ofColor & operator /= (float const & val);
-		float & operator [] (int n);
+		ofColor_<PixelType> & operator = (ofColor_<PixelType> const & color);
+
+		template<typename SrcType>
+		ofColor_<PixelType> & operator = (ofColor_<SrcType> const & color);
+
+		ofColor_<PixelType> & operator = (float const & val);
+		bool operator == (ofColor_<PixelType> const & color);
+		bool operator != (ofColor_<PixelType> const & color);
+		ofColor_<PixelType> operator + (ofColor_<PixelType> const & color) const;
+		ofColor_<PixelType> operator + (float const & val) const;
+		ofColor_<PixelType> & operator += (ofColor_<PixelType> const & color);
+		ofColor_<PixelType> & operator += (float const & val);
+		ofColor_<PixelType> operator - (ofColor_<PixelType> const & color) const;
+		ofColor_<PixelType> operator - (float const & val) const;
+		ofColor_<PixelType> & operator -= (ofColor_<PixelType> const & color);
+		ofColor_<PixelType> & operator -= (float const & val);
+		ofColor_<PixelType> operator * (ofColor_<PixelType> const & color) const;
+		ofColor_<PixelType> operator * (float const & val) const;
+		ofColor_<PixelType> & operator *= (ofColor_<PixelType> const & color);
+		ofColor_<PixelType> & operator *= (float const & val);
+		ofColor_<PixelType> operator / (ofColor_<PixelType> const & color) const;
+		ofColor_<PixelType> operator / (float const & val) const;
+		ofColor_<PixelType> & operator /= (ofColor_<PixelType> const & color);
+		ofColor_<PixelType> & operator /= (float const & val);
+		const PixelType & operator [] (int n) const;
+		PixelType & operator [] (int n);
 		
 		union  {
 			struct {
-				float r, g, b, a;
+				PixelType r, g, b, a;
 			};
-			float v[4];
+			PixelType v[4];
 		};
 
 
+	private:
+		template<typename SrcType>
+		void copyFrom(const ofColor_<SrcType> & mom);
 };
 
+
+typedef ofColor_<unsigned char> ofColor;
+typedef ofColor_<float> ofFloatColor;
+typedef ofColor_<unsigned short> ofShortColor;
+
+template<typename PixelType>
+template<typename SrcType>
+ofColor_<PixelType>::ofColor_(const ofColor_<SrcType> & mom){
+	copyFrom(mom);
+}
+
+template<typename PixelType>
+template<typename SrcType>
+ofColor_<PixelType> & ofColor_<PixelType>::operator=(const ofColor_<SrcType> & mom){
+	copyFrom(mom);
+	return *this;
+}
+
+template<typename PixelType>
+template<typename SrcType>
+void ofColor_<PixelType>::copyFrom(const ofColor_<SrcType> & mom){
+	const float srcMax = ( (sizeof(SrcType) == sizeof(float) ) ? 1.f : numeric_limits<SrcType>::max() );
+	const float dstMax = ( (sizeof(PixelType) == sizeof(float) ) ? 1.f : numeric_limits<PixelType>::max() );
+	const float factor = dstMax / srcMax;
+
+	if(sizeof(SrcType) == sizeof(float)) {
+		// coming from float we need a special case to clamp the values
+		for(int i = 0; i < 4; i++){
+			v[i] = ofClamp(mom[i], 0, 1) * factor;
+		}
+	} else{
+		// everything else is a straight scaling
+		for(int i = 0; i < 4; i++){
+			v[i] = mom[i] * factor;
+		}
+	}
+}

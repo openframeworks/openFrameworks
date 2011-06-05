@@ -80,7 +80,7 @@ public:
 	void setHexColor( int hexColor ); // hex, like web 0xFF0033;
 
 	// bg color
-	ofColor & getBgColor();
+	ofFloatColor & getBgColor();
 	bool bClearBg();
 	void background(const ofColor & c);
 	void background(float brightness);
@@ -109,7 +109,7 @@ private:
 	ofHandednessType coordHandedness;
 	deque <ofRectangle> viewportHistory;
 	bool bBackgroundAuto;
-	ofColor bgColor;
+	ofFloatColor bgColor;
 
 	vector<ofPoint> linePoints;
 	vector<ofPoint> rectPoints;

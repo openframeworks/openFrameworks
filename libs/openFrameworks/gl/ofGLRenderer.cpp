@@ -29,7 +29,7 @@ void ofGLRenderer::draw(ofMesh & vertexData){
 	}
 	if(vertexData.getNumColors()){
 		glEnableClientState(GL_COLOR_ARRAY);
-		glColorPointer(4,GL_FLOAT, sizeof(ofColor), &vertexData.getColorsPointer()->r);
+		glColorPointer(4,GL_FLOAT, sizeof(ofFloatColor), &vertexData.getColorsPointer()->r);
 	}
 
 	if(vertexData.getNumTexCoords()){
@@ -75,7 +75,7 @@ void ofGLRenderer::draw(ofMesh & vertexData, ofPolyRenderMode renderType){
 		}
 		if(vertexData.getNumColors()){
 			glEnableClientState(GL_COLOR_ARRAY);
-			glColorPointer(4,GL_FLOAT, sizeof(ofColor), vertexData.getColorsPointer());
+			glColorPointer(4,GL_FLOAT, sizeof(ofFloatColor), vertexData.getColorsPointer());
 		}
 
 		if(vertexData.getNumTexCoords()){
@@ -597,13 +597,18 @@ bool ofGLRenderer::bClearBg(){
 }
 
 //----------------------------------------------------------
-ofColor & ofGLRenderer::getBgColor(){
+ofFloatColor & ofGLRenderer::getBgColor(){
 	return bgColor;
 }
 
 //----------------------------------------------------------
 void ofGLRenderer::background(const ofColor & c){
-	background ( c.r, c.g, c.b, c.a );
+	bgColor = c;
+	// if we are in not-auto mode, then clear with a bg call...
+	if (bClearBg() == false){
+		glClearColor(bgColor[0],bgColor[1],bgColor[2], bgColor[3]);
+		glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	}
 }
 
 //----------------------------------------------------------
@@ -618,15 +623,7 @@ void ofGLRenderer::background(int hexColor, float _a){
 
 //----------------------------------------------------------
 void ofGLRenderer::background(int r, int g, int b, int a){
-	bgColor[0] = (float)r / (float)255.0f;
-	bgColor[1] = (float)g / (float)255.0f;
-	bgColor[2] = (float)b / (float)255.0f;
-	bgColor[3] = (float)a / (float)255.0f;
-	// if we are in not-auto mode, then clear with a bg call...
-	if (bClearBg() == false){
-		glClearColor(bgColor[0],bgColor[1],bgColor[2], bgColor[3]);
-		glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	}
+	background(ofColor(r,g,b,a));
 }
 
 //----------------------------------------------------------
@@ -1037,4 +1034,6 @@ void ofGLRenderer::drawString(string textString, float x, float y, float z, ofDr
 
 	if (hasViewport)
 		ofPopView();
+
+	glBlendFunc(blend_src, blend_dst);
 }

@@ -822,13 +822,17 @@ bool ofCairoRenderer::bClearBg(){
 }
 
 //----------------------------------------------------------
-ofColor & ofCairoRenderer::getBgColor(){
+ofFloatColor & ofCairoRenderer::getBgColor(){
 	return bgColor;
 }
 
 //----------------------------------------------------------
 void ofCairoRenderer::background(const ofColor & c){
-	background ( c.r, c.g, c.b);
+	bgColor = c;
+	// if we are in not-auto mode, then clear with a bg call...
+	if (bClearBg() == false){
+		clear(c.r,c.g,c.b,c.a);
+	}
 }
 
 //----------------------------------------------------------
@@ -843,14 +847,7 @@ void ofCairoRenderer::background(int hexColor, float _a){
 
 //----------------------------------------------------------
 void ofCairoRenderer::background(int r, int g, int b, int a){
-	bgColor[0] = (float)r / (float)255.0f;
-	bgColor[1] = (float)g / (float)255.0f;
-	bgColor[2] = (float)b / (float)255.0f;
-	bgColor[3] = (float)a / (float)255.0f;
-	// if we are in not-auto mode, then clear with a bg call...
-	if (bClearBg() == false){
-		clear(r,g,b,a);
-	}
+	background(ofColor(r,g,b,a));
 }
 
 

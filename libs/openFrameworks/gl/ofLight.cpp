@@ -193,49 +193,37 @@ bool ofLight::getIsDirectional() const {
 }
 
 //----------------------------------------
-void ofLight::setAmbientColor(const ofColor& c) {
+void ofLight::setAmbientColor(const ofFloatColor& c) {
 	if(glIndex==-1) return;
-	ambientColor = c/255.0f;
-	ambientColor.a /= 255.f;
 	glLightfv(GL_LIGHT0 + glIndex, GL_AMBIENT, &ambientColor.r);
 }
 
 //----------------------------------------
-void ofLight::setDiffuseColor(const ofColor& c) {
+void ofLight::setDiffuseColor(const ofFloatColor& c) {
 	if(glIndex==-1) return;
-	diffuseColor = c/255.0f;
-	diffuseColor.a /= 255.f;
 	glLightfv(GL_LIGHT0 + glIndex, GL_DIFFUSE, &diffuseColor.r);
 }
 
 
 //----------------------------------------
-void ofLight::setSpecularColor(const ofColor& c) {
+void ofLight::setSpecularColor(const ofFloatColor& c) {
 	if(glIndex==-1) return;
-	specularColor = c/255.0f;
-	specularColor.a /= 255.f;
 	glLightfv(GL_LIGHT0 + glIndex, GL_SPECULAR, &specularColor.r);
 }
 
 //----------------------------------------
-ofColor ofLight::getAmbientColor() const {
-	ofColor ret = ambientColor * 255.0f;
-	ret.a*=255.f;
-	return ret;
+ofFloatColor ofLight::getAmbientColor() const {
+	return ambientColor;
 }
 
 //----------------------------------------
-ofColor ofLight::getDiffuseColor() const {
-	ofColor ret = diffuseColor * 255.0f;
-	ret.a*=255.f;
-	return ret;
+ofFloatColor ofLight::getDiffuseColor() const {
+	return diffuseColor;
 }
 
 //----------------------------------------
-ofColor ofLight::getSpecularColor() const {
-	ofColor ret = specularColor * 255.0f;
-	ret.a*=255.f;
-	return ret;
+ofFloatColor ofLight::getSpecularColor() const {
+	return specularColor;
 }
 
 
