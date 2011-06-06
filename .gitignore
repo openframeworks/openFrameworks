@@ -1,5 +1,4 @@
 *.mode*
-*.pbxuser
 build/
 obj/
 *.o
@@ -12,12 +11,20 @@ openFrameworksUniversal.a
 #see addons/.gitignore
 addons/**
 
+#xcode files
+*.pbxuser
+*.perspectivev3
+
 #codeblocks files
 apps/*/*/*.layout
 apps/*/*/*.depend
 apps/*/*/bin/clickToLaunch*
 apps/*/*/bin/libs
 apps/*/*/obj
+apps/examples/*/*.cbp
+apps/examples/*/*.workspace
+apps/addonsExamples/*/*.cbp
+apps/addonsExamples/*/*.workspace
 
 #rule to avoid non-official apps going into git
 #see apps/.gitignore
@@ -51,6 +58,11 @@ apps/*/*/Debug Linux
 apps/*/*/Release Linux
 apps/*/*/Debug Linux64
 apps/*/*/Release Linux64
+apps/examples/*/Makefile
+apps/examples/*/config.make
+apps/addonsExamples/*/Makefile
+apps/addonsExamples/*/config.make
+*.pyc
 
 #Android
 addons/Debug Android

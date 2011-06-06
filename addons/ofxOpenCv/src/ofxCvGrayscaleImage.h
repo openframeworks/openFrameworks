@@ -20,6 +20,7 @@ class ofxCvGrayscaleImage : public ofxCvImage {
 
 
   public:
+	using ofxCvImage::setFromPixels;
 
     ofxCvGrayscaleImage();
     ~ofxCvGrayscaleImage();
@@ -49,8 +50,8 @@ class ofxCvGrayscaleImage : public ofxCvImage {
     // virtual void  operator -= ( float value );                              //in base class 
     // virtual void  operator += ( float value );                              //in base class
     
-    virtual void  setFromPixels( unsigned char* _pixels, int w, int h );
-    virtual void  setRoiFromPixels( unsigned char* _pixels, int w, int h );
+    virtual void  setFromPixels( const unsigned char* _pixels, int w, int h );
+    virtual void  setRoiFromPixels( const unsigned char* _pixels, int w, int h );
     virtual void  operator = ( unsigned char* _pixels );
     virtual void  operator = ( const ofxCvGrayscaleImage& mom );
     virtual void  operator = ( const ofxCvColorImage& mom );

@@ -40,6 +40,19 @@ public:
 			 renderers[i]->draw(img,x,y,z,w,h);
 		 }
 	}
+	
+	void draw(ofFloatImage & img, float x, float y, float z, float w, float h){
+		for(int i=0;i<(int)renderers.size();i++){
+			renderers[i]->draw(img,x,y,z,w,h);
+		}
+	}
+	
+	void draw(ofShortImage & img, float x, float y, float z, float w, float h){
+		for(int i=0;i<(int)renderers.size();i++){
+			renderers[i]->draw(img,x,y,z,w,h);
+		}
+	}
+	
 
 
 	//--------------------------------------------
@@ -376,5 +389,5 @@ public:
 		 }
 	}
 
-	vector<ofBaseRenderer *> renderers;
+	vector<ofPtr<ofBaseRenderer> > renderers;
 };

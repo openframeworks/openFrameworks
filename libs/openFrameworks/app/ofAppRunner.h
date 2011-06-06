@@ -3,15 +3,21 @@
 #include "ofConstants.h"
 #include "ofPoint.h"
 #include "ofRectangle.h"
+#include "ofTypes.h"
 
 class ofAppBaseWindow;
 class ofBaseApp;
 
-void 		ofSetupOpenGL(ofAppBaseWindow * windowPtr, int w, int h, int screenMode);	// sets up the opengl context!
+void 		ofSetupOpenGL(ofPtr<ofAppBaseWindow> windowPtr, int w, int h, int screenMode);	// sets up the opengl context!
+void 		ofSetupOpenGL(ofAppBaseWindow * windowPtr, int w, int h, int screenMode); // this is deprecated, use an ofPtr
 void 		ofSetupOpenGL(int w, int h, int screenMode);	// sets up the opengl context!
+
+void 		ofRunApp(ofPtr<ofBaseApp> OFSA); // this is for deprecated, use an ofPtr
 void 		ofRunApp(ofBaseApp * OFSA = NULL);
+
 ofBaseApp * ofGetAppPtr();
-void ofSetAppPtr(ofBaseApp *appPtr);
+void ofSetAppPtr(ofPtr<ofBaseApp> appPtr);
+
 void		ofExit(int status=0);
 
 //-------------------------- time

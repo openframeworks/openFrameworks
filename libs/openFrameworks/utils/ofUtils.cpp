@@ -9,6 +9,10 @@
 #include "Poco/LocalDateTime.h"
 #include "Poco/DateTimeFormatter.h"
 
+#include <cctype> // for toupper
+#include <algorithm>
+
+
 
 #ifdef TARGET_WIN32
 	#include <algorithm> // for std::replace
@@ -48,10 +52,16 @@ const int Ascii::CHARACTER_PROPERTIES[128]={0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 
 static bool enableDataPath = true;
 static unsigned long startTime = ofGetSystemTime();   //  better at the first frame ?? (currently, there is some delay from static init, to running.
+static unsigned long startTimeMicros = ofGetSystemTimeMicros();
 
 //--------------------------------------
 int ofGetElapsedTimeMillis(){
 	return (int)(ofGetSystemTime() - startTime);
+}
+
+//--------------------------------------
+unsigned long ofGetElapsedTimeMicros(){
+	return (int)(ofGetSystemTimeMicros() - startTimeMicros);
 }
 
 //--------------------------------------
@@ -81,6 +91,20 @@ unsigned long ofGetSystemTime( ) {
 			return GetTickCount();
 		#else
 			return timeGetTime();
+		#endif
+	#endif
+}
+
+unsigned long ofGetSystemTimeMicros( ) {
+	#ifndef TARGET_WIN32
+		struct timeval now;
+		gettimeofday( &now, NULL );
+		return now.tv_usec + now.tv_sec*1000000;
+	#else
+		#if defined(_WIN32_WCE)
+			return GetTickCount()*1000;
+		#else
+			return timeGetTime()*1000;
 		#endif
 	#endif
 }
@@ -476,6 +500,62 @@ string ofJoinString(vector <string> stringElements, const string & delimiter){
 //--------------------------------------------------
 bool ofIsStringInString(string haystack, string needle){
 	return ( strstr(haystack.c_str(), needle.c_str() ) != NULL );
+}
+
+//--------------------------------------------------
+string ofToLower(const string & src){
+	string dst(src);
+	transform(src.begin(),src.end(),dst.begin(),::tolower);
+	return dst;
+}
+
+//--------------------------------------------------
+string ofToUpper(const string & src){
+	string dst(src);
+	transform(src.begin(),src.end(),dst.begin(),::toupper);
+	return dst;
+}
+
+//--------------------------------------------------
+string ofVAArgsToString(const char * format, ...){
+	// variadic args to string:
+	// http://www.codeproject.com/KB/string/string_format.aspx
+	static char aux_buffer[10000];
+	string retStr("");
+	if (NULL != format){
+
+		va_list marker;
+
+		// initialize variable arguments
+		va_start(marker, format);
+
+		// Get formatted string length adding one for NULL
+		size_t len = vsprintf(aux_buffer, format, marker) + 1;
+
+		// Reset variable arguments
+		va_end(marker);
+
+		if (len > 0)
+		{
+			va_list args;
+
+			// initialize variable arguments
+			va_start(args, format);
+
+			// Create a char vector to hold the formatted string.
+			vector<char> buffer(len, '\0');
+			vsprintf(&buffer[0], format, args);
+			retStr = &buffer[0];
+			va_end(args);
+		}
+
+	}
+	return retStr;
+}
+
+//--------------------------------------------------
+string ofVAArgsToString(const char * format, va_list args){
+	return "ofVAArgsToString va_list: Not Implemented Yet";
 }
 
 //--------------------------------------------------

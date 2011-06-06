@@ -129,14 +129,14 @@ void ofArduino::disconnect(){
 }
 
 void ofArduino::update(){
+	static vector<unsigned char> bytesToProcess;
 	int bytesToRead = _port.available();
 	if (bytesToRead>0) {
-		unsigned char* bytesToProcess = new unsigned char[bytesToRead];
-		_port.readBytes(bytesToProcess, bytesToRead);
+		bytesToProcess.resize(bytesToRead);
+		_port.readBytes(&bytesToProcess[0], bytesToRead);
 		for (int i = 0; i < bytesToRead; i++) {
 			processData((char)(bytesToProcess[i]));
 		}
-		delete[] bytesToProcess;
 	}
 }
 

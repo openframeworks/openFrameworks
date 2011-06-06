@@ -15,16 +15,27 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.ActivityInfo;
 import android.hardware.SensorManager;
+import android.opengl.ETC1Util;
 import android.opengl.GLSurfaceView;
 import android.os.Environment;
+import android.os.PowerManager;
+import android.util.AttributeSet;
 import android.util.Log;
+import android.view.GestureDetector;
+import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.CompoundButton;
+import android.widget.Toast;
 
 public class OFAndroid {
 	
 	public OFAndroid(String packageName, Activity ofActivity){
 		//Log.i("OF","external files dir: "+ ofActivity.getApplicationContext().getExternalFilesDir(null));
+		OFAndroid.packageName = packageName;
+		OFAndroidObject.setActivity(ofActivity);
         try {
         	
 			// try to find if R.raw class exists will throw
@@ -35,7 +46,7 @@ public class OFAndroid {
         	// to a folder in the sdcard
 	        Field[] files = raw.getDeclaredFields();
 	        
-	        String dataPath="";
+	        dataPath="";
     		try{
     			dataPath = Environment.getExternalStorageDirectory().getAbsolutePath();
     			dataPath += "/"+packageName;
@@ -50,7 +61,6 @@ public class OFAndroid {
 					Log.e("OF","error creating dir " + dataPath,e);
 				}
 				
-				OFAndroid.setAppDataDir(dataPath);
     			for(int i=0; i<files.length; i++){
     	        	int fileId;
     	        	String fileName="";
@@ -91,24 +101,51 @@ public class OFAndroid {
     			Log.e("OF","couldn't move app resources to data directory " + dataPath);
     			e.printStackTrace();
     		}
-    		
+    		String app_name="";
+			try {
+				int app_name_id = Class.forName(packageName+".R$string").getField("app_name").getInt(null);
+				app_name = ofActivity.getResources().getText(app_name_id).toString();
+				Log.i("OF","app name: " + app_name);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				Log.e("OF","error retrieving app name",e);
+			} 
+			OFAndroid.setAppDataDir(dataPath,app_name);
 	        
         } catch (ClassNotFoundException e1) { }
         
         OFAndroid.ofActivity = ofActivity;
+
+        gestureListener = new OFGestureListener(ofActivity);
         
-        mGLView = new OFGLSurfaceView(ofActivity);
-        ofActivity.setContentView(mGLView);
-        
-        accelerometer = new OFAndroidAccelerometer((SensorManager)ofActivity.getSystemService(Context.SENSOR_SERVICE));
+        try {
+        	Log.v("OF","trying to find class: "+packageName+".R$layout");
+			Class<?> layout = Class.forName(packageName+".R$layout");
+			View view = ofActivity.getLayoutInflater().inflate(layout.getField("main_layout").getInt(null),null);
+			ofActivity.setContentView(view);
+			
+			Class<?> id = Class.forName(packageName+".R$id");
+			mGLView = (OFGLSurfaceView)ofActivity.findViewById(id.getField("of_gl_surface").getInt(null));
+			enableTouchEvents();
+			
+			
+		} catch (Exception e) {
+			Log.e("OF", "couldn't create view from layout falling back to GL only",e);
+	        mGLView = new OFGLSurfaceView(ofActivity);
+	        ofActivity.setContentView(mGLView);
+	        enableTouchEvents();
+		}
+		android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_URGENT_AUDIO);
     }
 
 	public void start(){
 		Log.i("OF","onStart");
+		enableTouchEvents();
 	}
 	
 	public void restart(){
 		Log.i("OF","onRestart");
+		enableTouchEvents();
 		onRestart();
         /*if(OFAndroidSoundStream.isInitialized() && OFAndroidSoundStream.wasStarted())
         	OFAndroidSoundStream.getInstance().start();*/
@@ -116,6 +153,7 @@ public class OFAndroid {
 	
 	public void pause(){
 		Log.i("OF","onPause");
+		disableTouchEvents();
 		mGLView.onPause();
 		onPause();
 
@@ -123,24 +161,31 @@ public class OFAndroid {
 			object.onPause();
 		}
 		
+		unlockScreenSleep();
 	}
 	
 	public void resume(){
 		Log.i("OF","onResume");
+		enableTouchEvents();
         mGLView.onResume();
         onResume();
 
 		for(OFAndroidObject object : OFAndroidObject.ofObjects){
 			object.onResume();
 		}
+		
+		if(wl!=null) lockScreenSleep();
 	}
 	
 	public void stop(){
 		Log.i("OF","onStop");
+		disableTouchEvents();
 		onStop();
 		for(OFAndroidObject object : OFAndroidObject.ofObjects){
 			object.onStop();
 		}
+		
+		unlockScreenSleep();
 		/*if(OFAndroidSoundStream.isInitialized()) 
 			OFAndroidSoundStream.getInstance().stop();*/
 	}
@@ -149,9 +194,61 @@ public class OFAndroid {
 		Log.i("OF","onDestroy");
 		onDestroy();
 	}
+	
+	static public boolean menuItemSelected(int id){
+		try {
+			Class<?> menu_ids = Class.forName(packageName+".R$id");
+			Field[] fields = menu_ids.getFields();
+			for(Field field: fields){
+				Log.i("OF", "checking " + field.getName());
+				if(id == field.getInt(null)){
+					return onMenuItemSelected(field.getName());
+				}
+			}
+		} catch (Exception e) {
+			Log.w("OF","Trying to get menu items ", e);
+		}
+		return false;
+	}
+	
+	static public boolean menuItemChecked(int id, boolean checked){
+		try {
+			Class<?> menu_ids = Class.forName(packageName+".R$id");
+			Field[] fields = menu_ids.getFields();
+			for(Field field: fields){
+				if(id == field.getInt(null)){
+					return onMenuItemChecked(field.getName(),checked);
+				}
+			}
+		} catch (Exception e) {
+			Log.w("OF","Trying to get menu items ", e);
+		}
+		return false;
+	}
+	
+	static public void setMenuItemChecked(String idStr, boolean checked){
+		try {
+			Class<?> menu_ids = Class.forName(packageName+".R$id");
+			Field field = menu_ids.getField(idStr);
+			//ofActivity.getMenuInflater().
+		} catch (Exception e) {
+			Log.w("OF","Trying to get menu items ", e);
+		}
+	}
+	
+	static public void setViewItemChecked(String idStr, boolean checked){
+		try {
+			Class<?> menu_ids = Class.forName(packageName+".R$id");
+			Field field = menu_ids.getField(idStr);
+			CompoundButton checkbox = (CompoundButton) ofActivity.findViewById(field.getInt(null));
+			checkbox.setChecked(checked);
+		} catch (Exception e) {
+			Log.w("OF","Trying to get menu items ", e);
+		}
+	}
 
 	// native methods to call OF c++ callbacks
-    public static native void setAppDataDir(String data_dir);
+    public static native void setAppDataDir(String data_dir,String app_name);
     public static native void init();
     public static native void onRestart();
     public static native void onPause();
@@ -160,12 +257,13 @@ public class OFAndroid {
     public static native void onDestroy();
     public static native void onSurfaceCreated();
     public static native void onSurfaceDestroyed();
-    public static native void setup();
+    public static native void setup(int w, int h);
     public static native void resize(int w, int h);
     public static native void render();
     public static native void exit();
     
     public static native void onTouchDown(int id,float x,float y,float pressure);
+    public static native void onTouchDoubleTap(int id,float x,float y,float pressure);
     public static native void onTouchUp(int id,float x,float y,float pressure);
     public static native void onTouchMoved(int id,float x,float y,float pressure);
     
@@ -173,8 +271,31 @@ public class OFAndroid {
     public static native void onKeyUp(int keyCode);
     public static native boolean onBackPressed();
     
+    public static native boolean onMenuItemSelected(String menu_id);
+    public static native boolean onMenuItemChecked(String menu_id, boolean checked);
+    
 
     // static methods to be called from OF c++ code
+    public static void setFullscreen(boolean fs){
+    	//ofActivity.requestWindowFeature(Window.FEATURE_NO_TITLE);
+    	//ofActivity.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, 
+        //                        WindowManager.LayoutParams.FLAG_FULLSCREEN);
+	  /* if(fs)
+	   {
+	        ofActivity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+	        ofActivity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
+	    }
+	    else
+	    {
+	    	ofActivity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
+	    	ofActivity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+	    }*/
+
+	    //m_contentView.requestLayout();
+
+    	//ofActivity.getWindow().setAttributes(attrs);
+    }
+    
     public static void setScreenOrientation(int orientation){
     	switch(orientation){
     	case 0:
@@ -189,6 +310,9 @@ public class OFAndroid {
     	case 180:
     		ofActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
     		break;
+    	case -1:
+    		ofActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
+    		break;
     	}
     }
     
@@ -198,87 +322,214 @@ public class OFAndroid {
 
 	
 	public static void setupAccelerometer(){
-		 accelerometer = new OFAndroidAccelerometer((SensorManager)ofActivity.getSystemService(Context.SENSOR_SERVICE));
+		if(accelerometer==null)
+			accelerometer = new OFAndroidAccelerometer((SensorManager)ofActivity.getSystemService(Context.SENSOR_SERVICE));
+	}
+	
+	public static void setupGPS(){
+		if(gps==null)
+			gps = new OFAndroidGPS(ofActivity);
+		gps.startGPS();
+	}
+	
+	public static void stopGPS(){
+		if(gps==null)
+			return;
+		gps.stopGPS();
 	}
 	
 	public static void alertBox(String msg){  
-		new AlertDialog.Builder(ofActivity)  
-			.setMessage(msg)  
-			.setTitle("OF")  
-			.setCancelable(false)  
-			.setNeutralButton(android.R.string.ok,  
-					new DialogInterface.OnClickListener() {  
-				public void onClick(DialogInterface dialog, int whichButton){}  
-		  	})  
-		  	.show();    
+		final String alertMsg = msg;
+		ofActivity.runOnUiThread(new Runnable(){
+			public void run() {
+				new AlertDialog.Builder(ofActivity)  
+					.setMessage(alertMsg)  
+					.setTitle("OF")  
+					.setCancelable(false)  
+					.setNeutralButton(android.R.string.ok,  
+							new DialogInterface.OnClickListener() {  
+						public void onClick(DialogInterface dialog, int whichButton){}
+	
+				  	})  
+				  	.show();    
+				
+			}  
+		});
+	}
+	
+	public static void toast(String msg){  
+		if(msg=="") return;
+		final String alertMsg = msg;
+		ofActivity.runOnUiThread(new Runnable(){
+			public void run() {
+				Toast toast = Toast.makeText(ofActivity, alertMsg, Toast.LENGTH_SHORT);
+	        	toast.show();  
+			}  
+		});
 	}
 	
 	public static Context getContext(){
 		return ofActivity;
 	}
+	
+	public static String toDataPath(String path){
+		return dataPath + "/" + path;
+	}
+	
+	public static void lockScreenSleep(){
+		if(wl==null){
+			PowerManager pm = (PowerManager) ofActivity.getSystemService(Context.POWER_SERVICE);
+	        wl = pm.newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK, "DoNotDimScreen");
+		}
+        wl.acquire();
+        
+	}
+	
+	public static void unlockScreenSleep(){
+		if(wl==null) return;
+		wl.release();
+	}
+	
     
-    private GLSurfaceView mGLView;
+    private OFGLSurfaceView mGLView;
     private static OFAndroidAccelerometer accelerometer;
+    private static OFAndroidGPS gps;
     private static Activity ofActivity;
+    private OFGestureListener gestureListener;
+	private static String packageName;
+	private static String dataPath;
+	private static PowerManager.WakeLock wl;
+
     
 	 
     static {
     	System.loadLibrary("OFAndroidApp"); 
     }
+
+
+
+	public View getGLContentView() {
+        return mGLView;
+	}
+	
+	public void disableTouchEvents(){
+        mGLView.setOnClickListener(null); 
+        mGLView.setOnTouchListener(null);
+	}
+	
+	public void enableTouchEvents(){
+        mGLView.setOnClickListener(gestureListener); 
+        mGLView.setOnTouchListener(gestureListener.touchListener);
+	}
+	
 }
 
-class OFGLSurfaceView extends GLSurfaceView {
+class OFGestureListener extends SimpleOnGestureListener implements OnClickListener {
+	
+
+	OFGestureListener(Activity activity){
+		gestureDetector = new GestureDetector(activity,this);
+        touchListener = new View.OnTouchListener() {
+        	
+            public boolean onTouch(View v, MotionEvent event) {
+            	final int action = event.getAction();
+            	final int pointerIndex = (action & MotionEvent.ACTION_POINTER_ID_MASK) 
+                >> MotionEvent.ACTION_POINTER_ID_SHIFT;
+                final int pointerId = event.getPointerId(pointerIndex);
+                switch((action & MotionEvent.ACTION_MASK)){
+                case MotionEvent.ACTION_MOVE:
+	            	for(int i=0; i<event.getPointerCount(); i++){
+	            		OFAndroid.onTouchMoved(event.getPointerId(i), event.getX(i), event.getY(i), event.getPressure(i));
+	            	}
+	            	break;
+                case MotionEvent.ACTION_POINTER_UP:
+                case MotionEvent.ACTION_UP:
+                	OFAndroid.onTouchUp(pointerId, event.getX(pointerIndex), event.getY(pointerIndex), event.getPressure(pointerIndex));
+                	break;
+                case MotionEvent.ACTION_POINTER_DOWN:
+                case MotionEvent.ACTION_DOWN:
+                	OFAndroid.onTouchDown(pointerId, event.getX(pointerIndex), event.getY(pointerIndex), event.getPressure(pointerIndex));
+                	break;
+                case MotionEvent.ACTION_CANCEL:
+                	//TODO: cancelled
+                	break;
+                }
+                return gestureDetector.onTouchEvent(event);
+            }
+            
+        };
+	}
+	
+	public void onClick(View view) {
+	}
+
+    private GestureDetector gestureDetector;
+    View.OnTouchListener touchListener;
+
+	@Override
+	public boolean onDoubleTap(MotionEvent event) {
+		final int action = event.getAction();
+		final int pointerIndex = (action & MotionEvent.ACTION_POINTER_ID_MASK) >> MotionEvent.ACTION_POINTER_ID_SHIFT;
+        final int pointerId = event.getPointerId(pointerIndex);
+
+        OFAndroid.onTouchDoubleTap(pointerId, event.getX(pointerIndex), event.getY(pointerIndex), event.getPressure(pointerIndex));
+
+		return true;
+		//return super.onDoubleTap(e);
+	}
+	
+	@Override
+	public boolean onDoubleTapEvent(MotionEvent event) {
+		return super.onDoubleTapEvent(event);
+	}
+
+	@Override
+	public boolean onSingleTapConfirmed(MotionEvent event) {
+		return super.onSingleTapConfirmed(event);
+	}
+
+	@Override
+	public boolean onDown(MotionEvent event) {
+		return true;
+	}
+
+	@Override
+	public boolean onFling(MotionEvent arg0, MotionEvent arg1, float arg2,float arg3) {
+		return super.onFling(arg0, arg1, arg2, arg3);
+	}
+
+	@Override
+	public void onLongPress(MotionEvent arg0) {
+	}
+
+	@Override
+	public boolean onScroll(MotionEvent arg0, MotionEvent arg1, float arg2,	float arg3) {
+		return super.onScroll(arg0, arg1, arg2, arg3);
+	}
+
+	@Override
+	public void onShowPress(MotionEvent arg0) {
+	}
+
+	@Override
+	public boolean onSingleTapUp(MotionEvent event) {
+		return super.onSingleTapUp(event);
+	}
+}
+
+
+
+class OFGLSurfaceView extends GLSurfaceView{
 	public OFGLSurfaceView(Context context) {
         super(context);
-        mRenderer = new OFAndroidWindow();
+        mRenderer = new OFAndroidWindow(getWidth(),getHeight());
         setRenderer(mRenderer);
     }
-
-    public boolean onTouchEvent(final MotionEvent event) {
-    	final int action = event.getAction();
-        switch (action & MotionEvent.ACTION_MASK) {
-        case MotionEvent.ACTION_DOWN: {
-        	OFAndroid.onTouchDown(event.getPointerId(0),event.getX(),event.getY(),event.getPressure());
-            break;
-        }
-            
-        case MotionEvent.ACTION_MOVE: {
-        	for(int i=0; i<event.getPointerCount(); i++){
-        		OFAndroid.onTouchMoved(event.getPointerId(i), event.getX(i), event.getY(i), event.getPressure(i));
-        	}
-            break;
-        }
-            
-        case MotionEvent.ACTION_UP: {
-        	OFAndroid.onTouchUp(event.getPointerId(0), event.getX(), event.getY(), event.getPressure());
-            break;
-        }
-            
-        case MotionEvent.ACTION_CANCEL: {
-            break;
-        }
-        
-        case MotionEvent.ACTION_POINTER_UP: {
-            // Extract the index of the pointer that left the touch sensor
-            final int pointerIndex = (action & MotionEvent.ACTION_POINTER_ID_MASK) 
-                    >> MotionEvent.ACTION_POINTER_ID_SHIFT;
-            final int pointerId = event.getPointerId(pointerIndex);
-
-            OFAndroid.onTouchUp(pointerId, event.getX(pointerIndex), event.getY(pointerIndex), event.getPressure(pointerIndex));
-            break;
-        }
-        case MotionEvent.ACTION_POINTER_DOWN: {
-            // Extract the index of the pointer that left the touch sensor
-            final int pointerIndex = (action & MotionEvent.ACTION_POINTER_ID_MASK) 
-                    >> MotionEvent.ACTION_POINTER_ID_SHIFT;
-            final int pointerId = event.getPointerId(pointerIndex);
-
-            OFAndroid.onTouchDown(pointerId, event.getX(pointerIndex), event.getY(pointerIndex), event.getPressure(pointerIndex));
-            break;
-        }
-        }
-        
-        return true;
+	
+	public OFGLSurfaceView(Context context,AttributeSet attributes) {
+        super(context,attributes);
+        mRenderer = new OFAndroidWindow(getWidth(),getHeight());
+        setRenderer(mRenderer);
     }
 
     @Override
@@ -287,22 +538,37 @@ class OFGLSurfaceView extends GLSurfaceView {
     	OFAndroid.onSurfaceDestroyed();
 	}
 
+
     OFAndroidWindow mRenderer;
 }
 
 class OFAndroidWindow implements GLSurfaceView.Renderer {
 	
+	public OFAndroidWindow(int w, int h){ 
+		this.w = w;
+		this.h = h;
+	}
+	
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
-    	OFAndroid.onSurfaceCreated();
-    	if(initialized) return;
+    	if(initialized){
+    		OFAndroid.onSurfaceCreated();
+    		return;
+    	}
     	Log.i("OF","initializing app");
     	OFAndroid.init();
-    	OFAndroid.setup();
+    	OFAndroid.setup(w,h);
     	initialized = true;
+    	android.os.Process.setThreadPriority(8);
+    	
+    	if(ETC1Util.isETC1Supported()) Log.i("OF","ETC supported");
+    	else Log.i("OF","ETC not supported");
+    	
     }
 
     public void onSurfaceChanged(GL10 gl, int w, int h) {
     	OFAndroid.resize(w, h);
+		this.w = w;
+		this.h = h;
     }
 
     public void onDrawFrame(GL10 gl) {
@@ -310,4 +576,5 @@ class OFAndroidWindow implements GLSurfaceView.Renderer {
     }
 
     static boolean initialized;
+    int w,h;
 }

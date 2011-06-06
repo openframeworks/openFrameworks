@@ -1,11 +1,14 @@
 #pragma once
 
+#include <deque>
+#include <queue>
+
 #include "ofThread.h"
 #include "ofEvents.h"
 #include "ofFileUtils.h"
 
-#include <deque>
-#include <queue>
+#include "Poco/Condition.h"
+
 
 class ofHttpRequest{
 public:
@@ -43,8 +46,9 @@ public:
 };
 
 ofHttpResponse ofLoadURL(string url);
-void ofLoadURLAsync(string url, string name="");
-void ofRemoveURLRequest(ofHttpRequest request);
+int ofLoadURLAsync(string url, string name=""); // returns id
+void ofRemoveURLRequest(int id);
+void ofRemoveAllURLRequests();
 
 extern ofEvent<ofHttpResponse> ofURLResponseEvent;
 
@@ -65,8 +69,9 @@ class ofURLFileLoader : public ofThread  {
 
         ofURLFileLoader();
         ofHttpResponse get(string url);
-		void getAsync(string url, string name="");
-		void remove(ofHttpRequest httpRequest);
+        int getAsync(string url, string name=""); // returns id
+		void remove(int id);
+		void clear();
 
     protected:
 
@@ -83,5 +88,7 @@ class ofURLFileLoader : public ofThread  {
 
 		deque<ofHttpRequest> requests;
 		queue<ofHttpResponse> responses;
+
+		Poco::Condition condition;
 
 };

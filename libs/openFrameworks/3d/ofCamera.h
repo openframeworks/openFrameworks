@@ -45,7 +45,7 @@ public:
 	virtual void end();
 	
 	// for hardcore peeps, access to the projection matrix
-	bool cacheMatrices;
+	void cacheMatrices(bool cache=true);
 	ofMatrix4x4 getProjectionMatrix(ofRectangle viewport = ofGetCurrentViewport());	
 	ofMatrix4x4 getModelViewMatrix();
 	ofMatrix4x4 getModelViewProjectionMatrix(ofRectangle viewport = ofGetCurrentViewport());
@@ -69,5 +69,7 @@ private:
 	bool hasStoredMatrices;
 	ofMatrix4x4 matProjection;
 	ofMatrix4x4 matModelView;
+
+	bool bCacheMatrices;
 };
 

@@ -15,10 +15,17 @@
 #include "ofConstants.h"
 #include "ofColor.h"
 #include "ofMesh.h"
-class ofPixels;
+#include "ofPixels.h"
+
+template<typename T>
+class ofImage_;
+
+typedef ofImage_<unsigned char> ofImage;
+typedef ofImage_<float> ofFloatImage;
+typedef ofImage_<unsigned short> ofShortImage;
+
 class ofPath;
 class ofPolyline;
-class ofImage;
 typedef ofPixels& ofPixelsRef;
 
 
@@ -73,24 +80,46 @@ public:
 };
 
 //----------------------------------------------------------
+// ofAbstractHasPixels
+//----------------------------------------------------------
+class ofAbstractHasPixels{
+public:
+	virtual ~ofAbstractHasPixels(){}
+};
+
+//----------------------------------------------------------
 // ofBaseHasPixels
 //----------------------------------------------------------
-class ofBaseHasPixels{
+template<typename T>
+class ofBaseHasPixels_: public ofAbstractHasPixels{
 public:
-	virtual ~ofBaseHasPixels(){}
-	virtual unsigned char * getPixels()=0;
-	virtual ofPixelsRef getPixelsRef()=0;
-	virtual float	getHeight() = 0;
-	virtual float	getWidth() = 0;
+	virtual ~ofBaseHasPixels_<T>(){}
+	virtual T * getPixels()=0;
+	virtual ofPixels_<T> & getPixelsRef()=0;
+};
+
+typedef ofBaseHasPixels_<unsigned char> ofBaseHasPixels;
+typedef ofBaseHasPixels_<float> ofBaseHasFloatPixels;
+
+//----------------------------------------------------------
+// ofAbstractImage    ->   to be able to put different types of images in vectors...
+//----------------------------------------------------------
+class ofAbstractImage: public ofBaseDraws, public ofBaseHasTexture{
+public:
+	virtual ~ofAbstractImage(){}
 };
 
 //----------------------------------------------------------
 // ofBaseImage
 //----------------------------------------------------------
-class ofBaseImage: public ofBaseDraws, public ofBaseHasTexture, public ofBaseHasPixels{
+template<typename T>
+class ofBaseImage_: public ofAbstractImage, public ofBaseHasPixels_<T>{
 public:
-	
+	virtual ~ofBaseImage_<T>(){};
 };
+
+typedef ofBaseImage_<unsigned char> ofBaseImage;
+typedef ofBaseImage_<float> ofBaseFloatImage;
 
 //----------------------------------------------------------
 // ofBaseHasSoundStream
@@ -143,11 +172,13 @@ public:
 };
 
 
-// common base for ofVideoGrabber and ofVideoPlayer
+//----------------------------------------------------------
+// ofBaseVideoDraws
+//----------------------------------------------------------
 class ofBaseVideoDraws: virtual public ofBaseVideo, public ofBaseDraws, public ofBaseHasTexture{
-
+public:
+	virtual ~ofBaseVideoDraws(){}
 };
-
 
 //----------------------------------------------------------
 // ofBaseVideoGrabber
@@ -155,8 +186,6 @@ class ofBaseVideoDraws: virtual public ofBaseVideo, public ofBaseDraws, public o
 class ofBaseVideoGrabber: virtual public ofBaseVideo{
 	
 	public :
-	
-	ofBaseVideoGrabber();
 	virtual ~ofBaseVideoGrabber();
 	
 	//needs implementing
@@ -189,8 +218,6 @@ class ofBaseVideoGrabber: virtual public ofBaseVideo{
 class ofBaseVideoPlayer: virtual public ofBaseVideo{
 	
 public:
-	
-	ofBaseVideoPlayer();
 	virtual ~ofBaseVideoPlayer();
 	
 	//needs implementing
@@ -249,6 +276,8 @@ public:
 	virtual void draw(ofMesh & vertexData, ofPolyRenderMode renderType)=0;
 	virtual void draw(vector<ofPoint> & vertexData, ofPrimitiveMode drawMode)=0;
 	virtual void draw(ofImage & image, float x, float y, float z, float w, float h)=0;
+	virtual void draw(ofFloatImage & image, float x, float y, float z, float w, float h)=0;
+	virtual void draw(ofShortImage & image, float x, float y, float z, float w, float h)=0;
 
 	//--------------------------------------------
 	// transformations

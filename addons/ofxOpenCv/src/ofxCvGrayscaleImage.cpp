@@ -46,7 +46,7 @@ void ofxCvGrayscaleImage::set( float value ){
 }
 
 //--------------------------------------------------------------------------------
-void ofxCvGrayscaleImage::setFromPixels( unsigned char* _pixels, int w, int h ) {
+void ofxCvGrayscaleImage::setFromPixels( const unsigned char* _pixels, int w, int h ) {
     // This sets the internal image ignoring any ROI
 
     if( w == width && h == height ) {
@@ -70,7 +70,7 @@ void ofxCvGrayscaleImage::setFromPixels( unsigned char* _pixels, int w, int h ) 
 }
 
 //--------------------------------------------------------------------------------
-void ofxCvGrayscaleImage::setRoiFromPixels( unsigned char* _pixels, int w, int h ) {
+void ofxCvGrayscaleImage::setRoiFromPixels( const unsigned char* _pixels, int w, int h ) {
     ofRectangle roi = getROI();
     ofRectangle inputROI = ofRectangle( roi.x, roi.y, w, h);
     ofRectangle iRoi = getIntersectionROI( roi, inputROI );

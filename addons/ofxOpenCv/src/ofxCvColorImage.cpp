@@ -75,7 +75,7 @@ void ofxCvColorImage::operator += ( float value ) {
 }
 
 //--------------------------------------------------------------------------------
-void ofxCvColorImage::setFromPixels( unsigned char* _pixels, int w, int h ) {
+void ofxCvColorImage::setFromPixels( const unsigned char* _pixels, int w, int h ) {
     // copy pixels ignoring any ROI
 
     if( w == width && h == height ) {
@@ -99,7 +99,7 @@ void ofxCvColorImage::setFromPixels( unsigned char* _pixels, int w, int h ) {
 }
 
 //--------------------------------------------------------------------------------
-void ofxCvColorImage::setRoiFromPixels( unsigned char* _pixels, int w, int h ) {
+void ofxCvColorImage::setRoiFromPixels( const unsigned char* _pixels, int w, int h ) {
     ofRectangle roi = getROI();
     ofRectangle inputROI = ofRectangle( roi.x, roi.y, w, h);
     ofRectangle iRoi = getIntersectionROI( roi, inputROI );

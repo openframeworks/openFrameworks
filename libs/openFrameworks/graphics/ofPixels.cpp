@@ -1,261 +1,264 @@
 #include "ofPixels.h"
+#include "ofMath.h"
 
-ofPixels::ofPixels(){
+
+template<typename PixelType>
+ofPixels_<PixelType>::ofPixels_(){
 	bAllocated = false;
-	pixels = NULL;
 	pixelsOwner = false;
+	channels = 0;
+	pixels = NULL;
 	clear();
 }
 
-ofPixels::~ofPixels(){
+
+template<typename PixelType>
+ofPixels_<PixelType>::~ofPixels_(){
 	clear();
 }
 
-ofPixels::ofPixels(const ofPixels & mom){
+template<typename PixelType>
+ofPixels_<PixelType>::ofPixels_(const ofPixels_<PixelType> & mom){
+	bAllocated = false;
+	pixelsOwner = false;
+	channels = 0;
+	pixels = NULL;
 	copyFrom( mom );
 }
 
-ofPixels& ofPixels::operator=(const ofPixels & mom){
-	if(&mom==this) return * this;
+template<typename PixelType>
+ofPixels_<PixelType>& ofPixels_<PixelType>::operator=(const ofPixels_<PixelType> & mom){
+	if(this==&mom) {
+		return * this;
+	}
 	copyFrom( mom );
 	return *this;
 }
 
-void ofPixels::copyFrom(const ofPixels & mom){
-	if(mom.isAllocated()){
-		allocate(mom.getWidth(),mom.getHeight(),mom.getImageType());
-		memcpy(pixels,mom.getPixels(),mom.getWidth()*mom.getHeight()*mom.getBytesPerPixel());
+template<typename PixelType>
+void ofPixels_<PixelType>::copyFrom(const ofPixels_<PixelType> & mom){
+	if(mom.isAllocated()) {
+		allocate(mom.getWidth(), mom.getHeight(), mom.getNumChannels());
+		memcpy(pixels, mom.getPixels(), mom.getWidth() * mom.getHeight() * mom.getBytesPerPixel());
 	}
 }
 
+template<typename PixelType>
+void ofPixels_<PixelType>::set(PixelType val){
+	int size = width * height * channels;
+	for(int i = 0; i < size; i++){
+		pixels[i] = val;
+	}
+}
 
-static ofImageType getImageTypeFromBits(int bitsPerPixel){
-	switch(bitsPerPixel){
-	case 8:
-		return OF_IMAGE_GRAYSCALE;
+template<typename PixelType>
+void ofPixels_<PixelType>::set(int channel,PixelType val){
+	int size = width*height*channels;
+	for(int i=channel;i<size;i+=channels){
+		pixels[i] = val;
+	}
+}
+
+template<typename PixelType>
+void ofPixels_<PixelType>::setFromPixels(const PixelType * newPixels,int w, int h, int channels){
+	allocate(w, h, channels);
+	memcpy(pixels, newPixels, w * h * getBytesPerPixel());
+}
+
+template<typename PixelType>
+void ofPixels_<PixelType>::setFromPixels(const PixelType * newPixels,int w, int h, ofImageType type){
+	allocate(w,h,type);
+	switch(type){
+	case OF_IMAGE_GRAYSCALE:
+		setFromPixels(newPixels,w,h,1);
 		break;
-	case 24:
-		 return OF_IMAGE_COLOR;
+	case OF_IMAGE_COLOR:
+		setFromPixels(newPixels,w,h,3);
 		break;
-	case 32:
-		 return OF_IMAGE_COLOR_ALPHA;
+	case OF_IMAGE_COLOR_ALPHA:
+		setFromPixels(newPixels,w,h,4);
 		break;
 	default:
-		ofLog(OF_LOG_ERROR,"%i bits per pixel is not a supported image type", bitsPerPixel);
-		return OF_IMAGE_UNDEFINED;
+		ofLog(OF_LOG_ERROR,"ofPixels: image type not supported");
+		break;
 	}
 }
 
-void ofPixels::allocate(int w, int h, int bitsPerPixel){
-	ofImageType type = getImageTypeFromBits(bitsPerPixel);
-	allocate(w,h,type);
+template<typename PixelType>
+void ofPixels_<PixelType>::setFromExternalPixels(PixelType * newPixels,int w, int h, int _channels){
+	clear();
+	channels = _channels;
+	width= w;
+	height = h;
+
+	pixels = newPixels;
+	pixelsOwner = false;
+	bAllocated = true;
 }
 
-void ofPixels::allocate(int w, int h, ofImageType type){
+template<typename PixelType>
+void ofPixels_<PixelType>::setFromAlignedPixels(const PixelType * newPixels, int width, int height, int channels, int stride) {
+	allocate(width, height, channels);
+	int dstStride = width * getBytesPerPixel();
+	const unsigned char* src = (unsigned char*) newPixels;
+	unsigned char* dst =  (unsigned char*) pixels;
+	for(int i = 0; i < height; i++) {
+		memcpy(dst, src, dstStride);
+		src += stride;
+		dst += dstStride;
+	}
+}
 
-	if (w < 0 || h < 0) return; 
-	
+template<typename PixelType>
+PixelType * ofPixels_<PixelType>::getPixels(){
+	return &pixels[0];
+}
+
+template<typename PixelType>
+const PixelType * ofPixels_<PixelType>::getPixels() const{
+	return &pixels[0];
+}
+
+
+/*template<typename PixelType>
+void ofPixels_<PixelType>::allocate(int w, int h, int bitsPerPixel){
+	ofImageType type = getImageTypeFromBits(bitsPerPixel);
+	allocate(w,h,type);
+}*/
+
+template<typename PixelType>
+void ofPixels_<PixelType>::allocate(int w, int h, int _channels){
+	if (w < 0 || h < 0) {
+		return;
+	}
+
 	//we check if we are already allocated at the right size
-	if(bAllocated && w==width && h==height && type==imageType){
+	if(bAllocated && w == width && h == height && channels ==_channels){
 		return; //we don't need to allocate
 	}
 
 	//we do need to allocate, clear the data
 	clear();
 
-	imageType = type;
+	channels = _channels;
 	width= w;
 	height = h;
-	switch(imageType){
-	case OF_IMAGE_GRAYSCALE:
-		bytesPerPixel = 1;
-		glDataType = GL_LUMINANCE;
-		break;
-	case OF_IMAGE_COLOR:
-		bytesPerPixel = 3;
-		glDataType = GL_RGB;
-		break;
-	case OF_IMAGE_COLOR_ALPHA:
-		bytesPerPixel = 4;
-		glDataType = GL_RGBA;
-		break;
-	default:
-		ofLog(OF_LOG_ERROR,"ofPixels: format not supported");
-		break;
-	}
 
-	bitsPerPixel = bytesPerPixel * 8;
-	pixels = new unsigned char[w*h*bytesPerPixel];
-	memset(pixels, 0, w*h*bytesPerPixel);
+	pixels = new PixelType[w * h * channels];
 	bAllocated = true;
 	pixelsOwner = true;
-
 }
 
-void ofPixels::allocate(int w, int h, ofPixelFormat type){
+
+template<typename PixelType>
+void ofPixels_<PixelType>::allocate(int w, int h, ofPixelFormat format){
 
 	if (w < 0 || h < 0) return;
 
 	ofImageType imgType;
-	switch(type){
-	case OF_PIXELS_RGB:
-		imgType = OF_IMAGE_COLOR;
-		break;
-	case OF_PIXELS_RGBA:
-	case OF_PIXELS_BGRA:
-		imgType = OF_IMAGE_COLOR_ALPHA;
-		break;
-	case OF_PIXELS_MONO:
-		imgType = OF_IMAGE_GRAYSCALE;
-		break;
-	default:
-		ofLog(OF_LOG_ERROR,"ofPixels: format not supported");
-		break;
+	switch(format){
+		case OF_PIXELS_RGB:
+			imgType = OF_IMAGE_COLOR;
+			break;
+		case OF_PIXELS_RGBA:
+		case OF_PIXELS_BGRA:
+			imgType = OF_IMAGE_COLOR_ALPHA;
+			break;
+		case OF_PIXELS_MONO:
+			imgType = OF_IMAGE_GRAYSCALE;
+			break;
+		default:
+			ofLog(OF_LOG_ERROR,"ofPixels: format not supported, not allocating");
+			return;
+			break;
 
 	}
 	allocate(w,h,imgType);
-
 }
 
-void ofPixels::set(unsigned char val){
-	memset(pixels,val,width*height*bytesPerPixel);
-}
-
-void ofPixels::setFromPixels(unsigned char * newPixels,int w, int h, int bitsPerPixel){
-	ofImageType type = getImageTypeFromBits(bitsPerPixel);
-	setFromPixels(newPixels,w,h,type);
-}
-
-void ofPixels::setFromPixels(unsigned char * newPixels,int w, int h, ofImageType newType){
-	allocate(w,h,newType);
-	memcpy(pixels,newPixels,w*h*bytesPerPixel);
-}
-
-void ofPixels::setFromExternalPixels(unsigned char * newPixels,int w, int h, int bitsPerPixel){
-	ofImageType type = getImageTypeFromBits(bitsPerPixel);
-	setFromExternalPixels(newPixels,w,h,type);
-}
-
-void ofPixels::setFromExternalPixels(unsigned char * newPixels,int w, int h, ofImageType newType){
-	clear();
-	imageType = newType;
-	width= w;
-	height = h;
-	switch(imageType){
+template<typename PixelType>
+void ofPixels_<PixelType>::allocate(int w, int h, ofImageType type){
+	switch(type){
 	case OF_IMAGE_GRAYSCALE:
-		bytesPerPixel = 1;
-		glDataType = GL_LUMINANCE;
+		allocate(w,h,1);
 		break;
 	case OF_IMAGE_COLOR:
-		bytesPerPixel = 3;
-		glDataType = GL_RGB;
+		allocate(w,h,3);
 		break;
 	case OF_IMAGE_COLOR_ALPHA:
-		bytesPerPixel = 4;
-		glDataType = GL_RGBA;
+		allocate(w,h,4);
 		break;
 	default:
-		ofLog(OF_LOG_ERROR, "format not supported");
+		ofLog(OF_LOG_ERROR,"ofPixels: image type not supported");
 		break;
+
 	}
-
-	bitsPerPixel = bytesPerPixel * 8;
-	pixels = newPixels;
-	pixelsOwner = false;
-	bAllocated = true;
 }
 
-void ofPixels::setFromAlignedPixels(unsigned char * newPixels,int w, int h, int bitsPerPixel, int widthStep){
-	ofImageType type = getImageTypeFromBits(bitsPerPixel);
-	setFromAlignedPixels(newPixels,w,h,type,widthStep);
-}
-
-void ofPixels::setFromAlignedPixels(unsigned char * newPixels,int w, int h, ofImageType newType, int widthStep){
-	allocate(w,h,newType);
-	if(widthStep==width*bytesPerPixel){
-		memcpy(pixels,newPixels,w*h*bytesPerPixel);
-	}else{
-		for( int i = 0; i < height; i++ ) {
-			memcpy( pixels + (i*width*bytesPerPixel),
-					newPixels + (i*widthStep),
-					width*bytesPerPixel );
-		}
-	}
-
-}
-
-
-void ofPixels::swapRgb(){
-	if (bitsPerPixel != 8){
+template<typename PixelType>
+void ofPixels_<PixelType>::swapRgb(){
+	if (channels >= 3){
 		int sizePixels		= width*height;
 		int cnt				= 0;
-		unsigned char * pixels_ptr = pixels;
+		PixelType * pixels_ptr = pixels;
 
 		while (cnt < sizePixels){
 			std::swap(pixels_ptr[0],pixels_ptr[2]);
 			cnt++;
-			pixels_ptr+=bytesPerPixel;
+			pixels_ptr+=channels;
 		}
 	}
 }
 
-
-void ofPixels::clear(){
-	
+template<typename PixelType>
+void ofPixels_<PixelType>::clear(){
 	if(pixels){
 		if(pixelsOwner) delete[] pixels;
 		pixels = NULL;
 	}
+
 	width			= 0;
 	height			= 0;
-	bytesPerPixel	= 0;
-	bitsPerPixel	= 0;
+	channels		= 0;
 	bAllocated		= false;
-	glDataType		= GL_LUMINANCE;
-	imageType		= OF_IMAGE_UNDEFINED;
 }
 
-unsigned char * ofPixels::getPixels(){
-	return pixels;
-}
-
-unsigned char * const ofPixels::getPixels() const{
-	return pixels;
-}
-
-int ofPixels::getPixelIndex(int x, int y) const {
+template<typename PixelType>
+int ofPixels_<PixelType>::getPixelIndex(int x, int y) const {
 	if( !bAllocated ){
 		return 0;
 	}else{
-		return ( x + y * width ) * bytesPerPixel;
+		return ( x + y * width ) * channels;
 	}
 }
 
-ofColor ofPixels::getColor(int x, int y) const {
+template<typename PixelType>
+ofColor ofPixels_<PixelType>::getColor(int x, int y) const {
 	ofColor c;
 	int index = getPixelIndex(x, y);
 
-	if( bytesPerPixel == 1 ){
+	if( channels == 1 ){
 		c.set( pixels[index] );
-	}else if( bytesPerPixel == 3 ){
+	}else if( channels == 3 ){
 		c.set( pixels[index], pixels[index+1], pixels[index+2] );
-	}else if( bytesPerPixel == 4 ){
+	}else if( channels == 4 ){
 		c.set( pixels[index], pixels[index+1], pixels[index+2], pixels[index+3] );
 	}
 
 	return c;
 }
 
-void ofPixels::setColor(int x, int y, ofColor color) {
+template<typename PixelType>
+void ofPixels_<PixelType>::setColor(int x, int y, ofColor color) {
 	int index = getPixelIndex(x, y);
 
-	if( bytesPerPixel == 1 ){
+	if( channels == 1 ){
 		pixels[index] = color.getBrightness();
-	}else if( bytesPerPixel == 3 ){
+	}else if( channels == 3 ){
 		pixels[index] = color.r;
 		pixels[index+1] = color.g;
 		pixels[index+2] = color.b;
-	}else if( bytesPerPixel == 4 ){
+	}else if( channels == 4 ){
 		pixels[index] = color.r;
 		pixels[index+1] = color.g;
 		pixels[index+2] = color.b;
@@ -263,35 +266,97 @@ void ofPixels::setColor(int x, int y, ofColor color) {
 	}
 }
 
-unsigned char & ofPixels::operator[](int pos){
+template<typename PixelType>
+PixelType & ofPixels_<PixelType>::operator[](int pos){
 	return pixels[pos];
 }
 
-bool ofPixels::isAllocated() const{
+template<typename PixelType>
+const PixelType & ofPixels_<PixelType>::operator[](int pos) const{
+	return pixels[pos];
+}
+
+template<typename PixelType>
+bool ofPixels_<PixelType>::isAllocated() const{
 	return bAllocated;
 }
 
-int ofPixels::getWidth() const{
+template<typename PixelType>
+int ofPixels_<PixelType>::getWidth() const{
 	return width;
 }
 
-int ofPixels::getHeight() const{
+template<typename PixelType>
+int ofPixels_<PixelType>::getHeight() const{
 	return height;
 }
 
-int ofPixels::getBytesPerPixel() const{
-	return bytesPerPixel;
+template<typename PixelType>
+int ofPixels_<PixelType>::getBytesPerPixel() const{
+	return getBytesPerChannel() * channels;
 }
 
-int ofPixels::getBitsPerPixel() const{
-	return bitsPerPixel;
+template<typename PixelType>
+int ofPixels_<PixelType>::getBitsPerPixel() const{
+	return getBitsPerChannel() * channels;
 }
 
-ofImageType ofPixels::getImageType() const{
-	return imageType;
+template<typename PixelType>
+int ofPixels_<PixelType>::getBytesPerChannel() const{
+	return sizeof(PixelType);
 }
 
-int ofPixels::getGlDataType() const{
-	return glDataType;
+template<typename PixelType>
+int ofPixels_<PixelType>::getBitsPerChannel() const{
+	return getBytesPerChannel() * 8;
 }
 
+template<typename PixelType>
+int ofPixels_<PixelType>::getNumChannels() const{
+	return channels;
+}
+
+template<typename PixelType>
+ofImageType ofPixels_<PixelType>::getImageType() const{
+	switch(getNumChannels()){
+	case 1:
+		return OF_IMAGE_GRAYSCALE;
+	case 3:
+		return OF_IMAGE_COLOR;
+	case 4:
+		return OF_IMAGE_COLOR_ALPHA;
+	default:
+		return OF_IMAGE_UNDEFINED;
+	}
+}
+
+template<typename PixelType>
+int ofPixels_<PixelType>::size() const{
+	return width*height*channels;
+}
+
+template<typename PixelType>
+ofPixels_<PixelType> ofPixels_<PixelType>::getChannel(int channel) const{
+	ofPixels_<PixelType> channelPixels;
+	channelPixels.allocate(width,height,1);
+	channel = ofClamp(channel,0,channels-1);
+	int j=0;
+	for(int i=channel;i<size();i+=channels, ++j){
+		channelPixels[j]=pixels[i];
+	}
+	return channelPixels;
+}
+
+template<typename PixelType>
+void ofPixels_<PixelType>::setChannel(int channel, const ofPixels_<PixelType> channelPixels){
+	channel = ofClamp(channel,0,channels-1);
+	int j=0;
+	for(int i=channel;i<size();i+=channels, ++j){
+		pixels[i]=channelPixels[j];
+	}
+
+}
+
+template class ofPixels_<unsigned char>;
+template class ofPixels_<float>;
+template class ofPixels_<unsigned short>;

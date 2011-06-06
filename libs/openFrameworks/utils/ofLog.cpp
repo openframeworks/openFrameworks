@@ -1,11 +1,30 @@
 #include "ofLog.h"
 #include "ofConstants.h"
 #include <ofUtils.h>
+#include <map>
 
-ofLogLevel currentLogLevel =  OF_LOG_WARNING;
+static ofLogLevel currentLogLevel =  OF_LOG_WARNING;
+static map<string,ofLogLevel> & getModules(){
+	static map<string,ofLogLevel> * modules = new map<string,ofLogLevel>;
+	return *modules;
+}
+
+static void noopDeleter(ofBaseLoggerChannel*){}
+#ifdef TARGET_ANDROID
+	#include "ofxAndroidLogChannel.h"
+	ofPtr<ofBaseLoggerChannel> ofLog::channel = ofPtr<ofxAndroidLogChannel>(new ofxAndroidLogChannel,std::ptr_fun(noopDeleter));
+#else
+	ofPtr<ofBaseLoggerChannel> ofLog::channel = ofPtr<ofConsoleLoggerChannel>(new ofConsoleLoggerChannel,std::ptr_fun(noopDeleter));
+#endif
+
 //--------------------------------------------------
 void ofSetLogLevel(ofLogLevel logLevel){
 	currentLogLevel = logLevel;
+}
+
+//--------------------------------------------------
+void ofSetLogLevel(string module, ofLogLevel logLevel){
+	getModules()[module] = logLevel;
 }
 
 //--------------------------------------------------
@@ -13,88 +32,42 @@ ofLogLevel ofGetLogLevel(){
 	return currentLogLevel;
 }
 
-#ifdef TARGET_ANDROID
+//--------------------------------------------------
+void ofLogToFile(const string & path){
+	ofLog::setChannel(ofPtr<ofFileLoggerChannel>(new ofFileLoggerChannel(path)));
+}
 
-#include <android/log.h>
-
-#define  LOG_TAG    "OF"
-#define  LOGNOTICE(...)  __android_log_print(ANDROID_LOG_INFO,LOG_TAG,__VA_ARGS__)
-#define  LOGWARNING(...)  __android_log_print(ANDROID_LOG_WARN,LOG_TAG,__VA_ARGS__)
-#define  LOGERROR(...)  __android_log_print(ANDROID_LOG_ERROR,LOG_TAG,__VA_ARGS__)
-#define  LOGFATAL(...)  __android_log_print(ANDROID_LOG_FATAL,LOG_TAG,__VA_ARGS__)
-#define  LOGVERBOSE(...)  __android_log_print(ANDROID_LOG_VERBOSE,LOG_TAG,__VA_ARGS__)
-#define  vLOGNOTICE(...)  __android_log_vprint(ANDROID_LOG_INFO,LOG_TAG,__VA_ARGS__)
-#define  vLOGWARNING(...)  __android_log_vprint(ANDROID_LOG_WARN,LOG_TAG,__VA_ARGS__)
-#define  vLOGERROR(...)  __android_log_vprint(ANDROID_LOG_ERROR,LOG_TAG,__VA_ARGS__)
-#define  vLOGFATAL(...)  __android_log_vprint(ANDROID_LOG_FATAL,LOG_TAG,__VA_ARGS__)
-#define  vLOGVERBOSE(...)  __android_log_vprint(ANDROID_LOG_VERBOSE,LOG_TAG,__VA_ARGS__)
-#endif
+//--------------------------------------------------
+void ofLogToConsole(){
+	ofLog::setChannel(ofPtr<ofConsoleLoggerChannel>(new ofConsoleLoggerChannel,std::ptr_fun(noopDeleter)));
+}
 
 //--------------------------------------------------
 ofLog::ofLog(){
 	level = OF_LOG_NOTICE;
+	module = "OF";
 	bPrinted = false;
 }
 		
 //--------------------------------------------------
 ofLog::ofLog(ofLogLevel logLevel){
 	level = logLevel;
+	module = "OF";
 	bPrinted = false;
 }
 
 //--------------------------------------------------
-ofLog::ofLog(ofLogLevel logLevel, string message){
-	_log(level, message);
+ofLog::ofLog(ofLogLevel logLevel, const string & message){
+	_log(logLevel,"OF",message);
 	bPrinted = true;
 }
 
 //--------------------------------------------------
 ofLog::ofLog(ofLogLevel logLevel, const char* format, ...){
-	//thanks stefan!
-	//http://www.ozzu.com/cpp-tutorials/tutorial-writing-custom-printf-wrapper-function-t89166.html
-
-	if(logLevel >= currentLogLevel){
+	if(checkLog(logLevel,"OF")){
 		va_list args;
 		va_start( args, format );
-		if(logLevel == OF_LOG_VERBOSE){
-			#ifdef TARGET_ANDROID
-				vLOGVERBOSE( format, args );
-			#else
-				printf("OF_VERBOSE: ");
-			#endif
-		}
-		else if(logLevel == OF_LOG_NOTICE){
-			#ifdef TARGET_ANDROID
-				vLOGNOTICE( format, args );
-			#else
-				printf("OF_NOTICE: ");
-			#endif
-		}
-		else if(logLevel == OF_LOG_WARNING){
-			#ifdef TARGET_ANDROID
-				vLOGWARNING( format, args );
-			#else
-				printf("OF_WARNING: ");
-			#endif
-		}
-		else if(logLevel == OF_LOG_ERROR){
-			#ifdef TARGET_ANDROID
-				vLOGERROR( format, args );
-			#else
-				printf("OF_ERROR: ");
-			#endif
-		}
-		else if(logLevel == OF_LOG_FATAL_ERROR){
-			#ifdef TARGET_ANDROID
-				vLOGFATAL( format, args );
-			#else
-				printf("OF_FATAL_ERROR: ");
-			#endif
-		}
-		#ifndef TARGET_ANDROID
-			vprintf( format, args );
-			printf("\n");
-		#endif
+		channel->log(logLevel,"OF",format,args);
 		va_end( args );
 	}
 	bPrinted = true;
@@ -104,51 +77,175 @@ ofLog::ofLog(ofLogLevel logLevel, const char* format, ...){
 ofLog::~ofLog(){
 	// don't log if we printed in the constructor already
 	if(!bPrinted){
-		_log(level, message.str());
+		_log(level,module,message.str());
 	}
 }
 
+bool ofLog::checkLog(ofLogLevel level, const string & module){
+	if(module=="" || getModules().find(module)==getModules().end()){
+		if(level >= currentLogLevel) return true;
+	}else{
+		if(level >= getModules()[module]) return true;
+	}
+	return false;
+}
+
 //-------------------------------------------------------
-void ofLog::_log(ofLogLevel logLevel, string message){
-	if(logLevel >= currentLogLevel){
-		if(logLevel == OF_LOG_VERBOSE){
-			#ifdef TARGET_ANDROID
-				LOGVERBOSE(message.c_str());
-			#else
-				printf("OF_VERBOSE: ");
-			#endif
-		}
-		else if(logLevel == OF_LOG_NOTICE){
-			#ifdef TARGET_ANDROID
-				LOGNOTICE(message.c_str());
-			#else
-						printf("OF_NOTICE: ");
-			#endif
-		}
-		else if(logLevel == OF_LOG_WARNING){
-			#ifdef TARGET_ANDROID
-				LOGWARNING(message.c_str());
-			#else
-				printf("OF_WARNING: ");
-			#endif
-		}
-		else if(logLevel == OF_LOG_ERROR){
-			#ifdef TARGET_ANDROID
-				LOGERROR(message.c_str());
-			#else
-				printf("OF_ERROR: ");
-			#endif
-		}
-		else if(logLevel == OF_LOG_FATAL_ERROR){
-			#ifdef TARGET_ANDROID
-				LOGFATAL(message.c_str());
-			#else
-				printf("OF_FATAL_ERROR: ");
-			#endif
-		}
-		#ifndef TARGET_ANDROID
-			printf("%s\n",message.c_str());
-		#endif
+void ofLog::_log(ofLogLevel level, const string & module, const string & message){
+	if(checkLog(level,module)){
+		channel->log(level,module, message);
 	}
 }
 	
+ofLogVerbose::ofLogVerbose(const string & _module){
+	level = OF_LOG_VERBOSE;
+	module = _module;
+	bPrinted=false;
+}
+
+ofLogVerbose::ofLogVerbose(const string & _module, const string & _message){
+	_log(OF_LOG_VERBOSE,_module,_message);
+	bPrinted = true;
+}
+
+ofLogNotice::ofLogNotice(const string & _module) {
+	level = OF_LOG_NOTICE;
+	module = _module;
+	bPrinted=false;
+}
+
+ofLogNotice::ofLogNotice(const string & _module, const string & _message){
+	_log(OF_LOG_NOTICE,_module,_message);
+	bPrinted = true;
+}
+
+ofLogWarning::ofLogWarning(const string & _module) {
+	level = OF_LOG_WARNING;
+	module = _module;
+	bPrinted=false;
+}
+
+ofLogWarning::ofLogWarning(const string & _module, const string & _message){
+	_log(OF_LOG_WARNING,_module,_message);
+	bPrinted = true;
+}
+
+ofLogError::ofLogError(const string & _module) {
+	level = OF_LOG_ERROR;
+	module = _module;
+	bPrinted=false;
+}
+
+ofLogError::ofLogError(const string & _module, const string & _message){
+	_log(OF_LOG_ERROR,_module,_message);
+	bPrinted = true;
+}
+
+ofLogFatalError::ofLogFatalError(const string &  _module) {
+	level = OF_LOG_FATAL_ERROR;
+	module = _module;
+	bPrinted=false;
+}
+
+ofLogFatalError::ofLogFatalError(const string & _module, const string & _message){
+	_log(OF_LOG_FATAL_ERROR,_module,_message);
+	bPrinted = true;
+}
+
+void ofLog::setChannel(ofPtr<ofBaseLoggerChannel> _channel){
+	channel = _channel;
+}
+
+void ofSetLoggerChannel(ofPtr<ofBaseLoggerChannel> loggerChannel){
+	ofLog::setChannel(loggerChannel);
+}
+
+string ofGetLogLevelName(ofLogLevel level){
+	switch(level){
+	case OF_LOG_VERBOSE:
+		return "OF_VERBOSE";
+		break;
+	case OF_LOG_NOTICE:
+		return "OF_LOG_NOTICE";
+		break;
+	case OF_LOG_WARNING:
+		return "OF_LOG_WARNING";
+		break;
+	case OF_LOG_ERROR:
+		return "OF_LOG_ERROR";
+		break;
+	case OF_LOG_FATAL_ERROR:
+		return "OF_LOG_FATAL_ERROR";
+		break;
+	case OF_LOG_SILENT:
+		return "OF_LOG_SILENT";
+		break;
+	default:
+		return "";
+	}
+}
+
+void ofConsoleLoggerChannel::log(ofLogLevel level, const string & module, const string & message){
+	if(level<OF_LOG_ERROR) cout << module << ": " << ofGetLogLevelName(level) << ": " << message << endl;
+	else cerr << module << ": " << ofGetLogLevelName(level) << ": " << message << endl;
+}
+
+void ofConsoleLoggerChannel::log(ofLogLevel logLevel, const string & module, const char* format, ...){
+	va_list args;
+	va_start(args, format);
+	log(logLevel, module, format, args);
+	va_end(args);
+}
+
+void ofConsoleLoggerChannel::log(ofLogLevel logLevel, const string & module, const char* format, va_list args){
+	//thanks stefan!
+	//http://www.ozzu.com/cpp-tutorials/tutorial-writing-custom-printf-wrapper-function-t89166.html
+	if(logLevel<OF_LOG_ERROR){
+		printf("%s: ", module.c_str());
+		printf("%s: ", ofGetLogLevelName(logLevel).c_str());
+		vprintf( format, args );
+		printf("\n");
+	}else{
+		fprintf(stderr,"%s: ", module.c_str());
+		fprintf(stderr,"%s: ", ofGetLogLevelName(logLevel).c_str());
+		vfprintf( stderr, format, args );
+		fprintf(stderr,"\n");
+	}
+}
+
+ofFileLoggerChannel::ofFileLoggerChannel(){
+
+}
+
+ofFileLoggerChannel::ofFileLoggerChannel(const string & path){
+	setFile(path);
+}
+
+ofFileLoggerChannel::~ofFileLoggerChannel(){
+	close();
+}
+
+void ofFileLoggerChannel::close(){
+	file.close();
+}
+
+void ofFileLoggerChannel::setFile(const string & path){
+	file.open(path,ofFile::WriteOnly);
+
+}
+
+void ofFileLoggerChannel::log(ofLogLevel level, const string & module, const string & message){
+	file << module << ": " << ofGetLogLevelName(level) << ": " << message << endl;
+}
+
+void ofFileLoggerChannel::log(ofLogLevel logLevel, const string & module, const char* format, ...){
+	va_list args;
+	va_start(args, format);
+	log(logLevel, module, format, args);
+	va_end(args);
+}
+
+void ofFileLoggerChannel::log(ofLogLevel logLevel, const string & module, const char* format, va_list args){
+	file << module << ": " << ofGetLogLevelName(logLevel) << ": ";
+	file << ofVAArgsToString(format,args) << endl;
+}

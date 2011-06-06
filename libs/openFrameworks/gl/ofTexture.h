@@ -3,6 +3,12 @@
 #include "ofPoint.h"
 #include "ofRectangle.h"
 #include "ofBaseTypes.h"
+#include "ofConstants.h"
+
+int ofGetGlInternalFormat(const ofPixels& pix);
+int ofGetGlInternalFormat(const ofShortPixels& pix);
+int ofGetGlInternalFormat(const ofFloatPixels& pix);
+void ofGetGlFormatAndType(int glInternalFormat, int& glFormat, int& glType);
 
 //Sosolimited: texture compression
 enum ofTexCompression
@@ -12,40 +18,46 @@ enum ofTexCompression
 	OF_COMPRESS_ARB
 };
 
-class ofTextureData{
+class ofTextureData {
 public:
-	ofTextureData(){
-		bAllocated		= false;
-		textureID		= 0;
-		bFlipTexture	= false;
+	ofTextureData() {
+		textureID = 0;
 		textureTarget	= GL_TEXTURE_2D;
-		glTypeInternal  = 0;
-		glType			= 0;
-		pixelType		= GL_UNSIGNED_BYTE;
-		width			= 0;
-		height			= 0;
-		tex_w			= 0;
-		tex_h			= 0;
-		tex_t			= 0;
-		tex_u			= 0;
+#ifndef TARGET_OPENGLES
+		glTypeInternal = GL_RGB8;
+#else
+		glTypeInternal = GL_RGB;
+#endif
+		glType = GL_RGB;
+		pixelType = GL_UNSIGNED_BYTE;
+		
+		tex_t = 0;
+		tex_u = 0;
+		tex_w = 0;
+		tex_h = 0;
+		width = 0;
+		height = 0;
+		
+		bFlipTexture = false;
 		compressionType = OF_COMPRESS_NONE;
+		bAllocated = false;
 	}
 
-
-	int glType;
-	int glTypeInternal;
+	unsigned int textureID;
 	int textureTarget;
-	int pixelType;  // MEMO: added this (GL_FLOAT, GL_UNSIGNED_BYTE etc.
+	int glTypeInternal; // internalFormat, e.g., GL_RGB8. should be named glInternalFormat
+	int glType; // format, e.g., GL_RGB. should be named glFormat
+	int pixelType;  // type, e.g., GL_UNSIGNED_BYTE. should be named glType
+	
 	float tex_t;
 	float tex_u;
 	float tex_w;
 	float tex_h;
-	float width;
-	float height;
+	float width, height;
+	
 	bool bFlipTexture;
-	unsigned int textureID;
-	bool bAllocated;
 	ofTexCompression compressionType;
+	bool bAllocated;
 };
 
 //enable / disable the slight offset we add to ofTexture's texture coords to compensate for bad edge artifiacts
@@ -53,9 +65,7 @@ public:
 void ofEnableTextureEdgeHack();
 void ofDisableTextureEdgeHack();
 
-class ofTexture : public ofBaseDraws{
-
-
+class ofTexture : public ofBaseDraws {
 	public :
 
 	ofTexture();
@@ -65,12 +75,13 @@ class ofTexture : public ofBaseDraws{
 
 	// -----------------------------------------------------------------------
 
-	virtual void allocate(int w, int h, int internalGlDataType); //uses the currently set OF texture type - default ARB texture
-	virtual void allocate(int w, int h, int internalGlDataType, bool bUseARBExtention); //lets you overide the default OF texture type
+	virtual void allocate(int w, int h, int glInternalFormat); //uses the currently set OF texture type - default ARB texture
+	virtual void allocate(int w, int h, int glInternalFormat, bool bUseARBExtention); //lets you overide the default OF texture type
 	void clear();
 
-	void loadData(float * data, int w, int h, int glDataType);
-	void loadData(unsigned char * data, int w, int h, int glDataType);
+	void loadData(float* data, int w, int h, int glInternalFormat);
+	void loadData(unsigned char* data, int w, int h, int glInternalFormat);
+	void loadData(unsigned short* data, int w, int h, int glInternalFormat);
 	void loadData(ofPixels & pix);		
 	
 	void loadScreenData(int x, int y, int w, int h);
@@ -117,11 +128,8 @@ class ofTexture : public ofBaseDraws{
 	float getWidth();
 
 protected:
-	void loadData(void * data, int w, int h, int glDataType);
+	void loadData(void * data, int w, int h, int glInternalFormat);
 
 	ofPoint anchor;
 	bool bAnchorIsPct;
-
-
 };
-

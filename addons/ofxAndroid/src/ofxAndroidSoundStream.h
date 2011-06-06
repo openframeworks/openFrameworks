@@ -3,6 +3,7 @@
 #include "ofConstants.h"
 #include "ofBaseSoundStream.h"
 #include <jni.h>
+#include <queue>
 
 class ofxAndroidSoundStream : public ofBaseSoundStream{
 	public:
@@ -29,6 +30,13 @@ class ofxAndroidSoundStream : public ofBaseSoundStream{
 		int androidInputAudioCallback(JNIEnv*  env, jobject  thiz,jshortArray array, jint numChannels, jint bufferSize);
 		int androidOutputAudioCallback(JNIEnv*  env, jobject  thiz,jshortArray array, jint numChannels, jint bufferSize);
 		
+		int getMinOutBufferSize(int samplerate, int nchannels);
+		int getMinInBufferSize(int samplerate, int nchannels);
+
+		bool isHeadPhonesConnected();
+
+		ofEvent<bool> headphonesConnectedE;
+
 	private:
 		long unsigned long	tickCount;
 		int					sampleRate;
@@ -44,9 +52,12 @@ class ofxAndroidSoundStream : public ofBaseSoundStream{
 		int  totalInRequestedBufferSize;
 		jshortArray jInArray, jOutArray;
 
+		bool isPaused;
 
 		friend void ofxAndroidSoundStreamPause();
+		friend void ofxAndroidSoundStreamResume();
 		void pause();
+		void resume();
 };
 
 

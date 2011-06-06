@@ -45,6 +45,12 @@ enum ofLoopType{
 		#   define _WIN32_WINNT 0x400
 	#endif
 	#define WIN32_LEAN_AND_MEAN
+
+	#if (_MSC_VER)
+		#define NOMINMAX		
+		//http://stackoverflow.com/questions/1904635/warning-c4003-and-errors-c2589-and-c2059-on-x-stdnumeric-limitsintmax
+	#endif
+
 	#include <windows.h>
 	#define GLEW_STATIC
 	#include "GL\glew.h"
@@ -53,6 +59,7 @@ enum ofLoopType{
 	#define __WINDOWS_DS__
 	#define __WINDOWS_MM__
 	#if (_MSC_VER)       // microsoft visual studio
+		typedef unsigned __int64  uint64_t;		// allow us to use uint64_t
 		#pragma warning(disable : 4996)     // disable all deprecation warnings
 		#pragma warning(disable : 4068)     // unknown pragmas
 		#pragma warning(disable : 4101)     // unreferenced local variable
@@ -90,8 +97,8 @@ enum ofLoopType{
 	#ifndef __MACOSX_CORE__
 		#define __MACOSX_CORE__
 	#endif
-#include <unistd.h>
-	#include "glew.h"
+	#include <unistd.h>
+	#include "GL/glew.h"
 	#include <OpenGL/gl.h>
 	#include <ApplicationServices/ApplicationServices.h>
 
@@ -358,11 +365,11 @@ enum ofOrientation{
 // (CSG ideas)
 
 enum ofPolyWindingMode{
-	OF_POLY_WINDING_ODD 	        = 100130,
-	OF_POLY_WINDING_NONZERO         = 100131,
-	OF_POLY_WINDING_POSITIVE        = 100132,
-	OF_POLY_WINDING_NEGATIVE        = 100133,
-	OF_POLY_WINDING_ABS_GEQ_TWO     = 100134
+	OF_POLY_WINDING_ODD 	        ,
+	OF_POLY_WINDING_NONZERO         ,
+	OF_POLY_WINDING_POSITIVE        ,
+	OF_POLY_WINDING_NEGATIVE        ,
+	OF_POLY_WINDING_ABS_GEQ_TWO
 };
 
 #define 	OF_CLOSE						  (true)
