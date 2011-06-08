@@ -21,7 +21,7 @@ inline int ofxNetworkCheckErrno(const string & file, const string & line){
 	#endif
 	switch(err){
 	case 0:
-		return;
+		break;
 	case EBADF:
 		ofLog(OF_LOG_ERROR,"ofxNetwork:"+file+": " +line+" EBADF: invalid socket");
 		break;
