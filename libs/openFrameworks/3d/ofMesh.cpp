@@ -470,6 +470,11 @@ void ofMesh::drawFaces(){
 }
 
 //--------------------------------------------------------------
+void ofMesh::draw(){
+	draw(OF_MESH_FILL);
+}
+
+//--------------------------------------------------------------
 void ofMesh::draw(ofPolyRenderMode renderType){
 	ofGetDefaultRenderer()->draw(*this,renderType);
 }
