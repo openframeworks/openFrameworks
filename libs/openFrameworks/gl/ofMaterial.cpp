@@ -1,4 +1,5 @@
 #include "ofMaterial.h"
+#include "ofConstants.h"
 
 ofMaterial::ofMaterial() {
 
