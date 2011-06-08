@@ -1,5 +1,5 @@
 pacman -Syu
-pacman -S --needed make pkg-config gcc openal python-lxml glew
+pacman -S --needed make pkg-config gcc openal python-lxml glew freeglut freeimage gstreamer0.10-ffmpeg gstreamer0.10-good-plugins gstreamer0.10-bad-plugins gstreamer0.10-ugly-plugins
 
 ARCH=$(uname -m)
 if [ "$ARCH" = "x86_64" ]; then
