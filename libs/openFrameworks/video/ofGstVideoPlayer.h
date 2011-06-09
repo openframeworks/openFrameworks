@@ -52,6 +52,8 @@ public:
 	float 			getHeight();
 	float 			getWidth();
 
+	void setFrameByFrame(bool frameByFrame);
+
 	ofGstVideoUtils * getGstVideoUtils();
 
 protected:

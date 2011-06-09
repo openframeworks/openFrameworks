@@ -263,3 +263,7 @@ float ofGstVideoPlayer::getWidth(){
 ofGstVideoUtils * ofGstVideoPlayer::getGstVideoUtils(){
 	return &videoUtils;
 }
+
+void ofGstVideoPlayer::setFrameByFrame(bool frameByFrame){
+	videoUtils.setFrameByFrame(frameByFrame);
+}
