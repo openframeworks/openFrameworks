@@ -18,7 +18,7 @@ fi
 chown -R $ID:$ID obj ../../lib/${LIBSPATH}/*
 make Release
 if [ $? != 0 ]; then
-        echo "there has been a problem compiling Debug OF library"
+        echo "there has been a problem compiling Release OF library"
         echo "please report this problem in the forums"
 fi
 chown -R $ID:$ID obj ../../lib/${LIBSPATH}/*
