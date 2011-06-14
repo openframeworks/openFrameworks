@@ -48,6 +48,13 @@ public:
 	virtual bool menuItemSelected(string menu_id_str){
 		return false;
 	}
+
+	virtual bool menuItemChecked(string menu_id_str, bool checked){
+		return false;
+	}
+
+	virtual void okPressed(){};
+	virtual void cancelPressed(){};
 };
 
 
