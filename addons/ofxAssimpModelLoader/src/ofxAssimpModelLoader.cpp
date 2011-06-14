@@ -244,11 +244,12 @@ void ofxAssimpModelLoader::createLightsFromAiModel(){
 	lights.resize(scene->mNumLights);
 	for(int i=0; i<(int)scene->mNumLights; i++){
 		lights[i].enable();
-		lights[i].setDirectional(scene->mLights[i]->mType==aiLightSource_DIRECTIONAL);
 		if(scene->mLights[i]->mType==aiLightSource_DIRECTIONAL){
+			lights[i].setDirectional();
 			lights[i].setOrientation(aiVecToOfVec(scene->mLights[i]->mDirection));
 		}
 		if(scene->mLights[i]->mType!=aiLightSource_POINT){
+			lights[i].setSpotlight();
 			lights[i].setPosition(aiVecToOfVec(scene->mLights[i]->mPosition));
 		}
 		lights[i].setAmbientColor(aiColorToOfColor(scene->mLights[i]->mColorAmbient));
