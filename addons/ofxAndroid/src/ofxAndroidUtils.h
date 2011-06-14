@@ -22,11 +22,18 @@ jclass ofGetJavaOFAndroid();
 void ofxRegisterMultitouch(ofxAndroidApp * app);
 
 void ofxAndroidAlertBox(string msg);
+int ofxAndroidProgressBox(string msg);
+void ofxAndroidDismissProgressBox(int id);
+bool ofxAndroidOkCancelBox(string msg);
 
 void ofxAndroidToast(string msg);
 
 void ofxAndroidLockScreenSleep();
 void ofxAndroidUnlockScreenSleep();
+
+bool ofxAndroidIsOnline();
+bool ofxAndroidIsWifiOnline();
+bool ofxAndroidIsMobileOnline();
 
 //-------------------------------------
 // this functions are only for internal use
