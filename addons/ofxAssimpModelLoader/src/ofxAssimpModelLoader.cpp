@@ -856,11 +856,11 @@ void ofxAssimpModelLoader::draw(ofPolyRenderMode renderType)
 
         ofPopMatrix();
 
-        ofPopStyle();
 #ifndef TARGET_OPENGLES
         glPopClientAttrib();
         glPopAttrib();
 #endif
+        ofPopStyle();
     }
 }
 
