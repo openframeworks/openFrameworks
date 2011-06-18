@@ -143,7 +143,7 @@ class ofImage_ : public ofBaseImage_<PixelType>{
 
 		float 				getHeight();
 		float 				getWidth();
-		bool 				bAllocated() {return pixels.isAllocated();};
+		bool 				isAllocated() {return pixels.isAllocated();};
 
 		void				reloadTexture();
 
