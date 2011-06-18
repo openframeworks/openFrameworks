@@ -37,11 +37,11 @@ public:
 	virtual ~ofTrueTypeFont();
 		
 	// 			-- default, non-full char set, anti aliased:
-	void 		loadFont(string filename, int fontsize, bool _bAntiAliased=true, bool _bFullCharacterSet=false, bool makeContours = false, float simplifyAmt = 0.3);
+	void 		loadFont(string filename, int fontsize, bool _bAntiAliased=true, bool _bFullCharacterSet=false, bool makeContours=false, float simplifyAmt=0.3);
 
-	bool		bLoadedOk;
-	bool 		bAntiAlised;
-	bool 		bFullCharacterSet;
+	bool		isLoaded();
+	bool		isAntiALiased();
+	bool		hasFullCharacterSet();
 
   	float 		getLineHeight();
   	void 		setLineHeight(float height);
@@ -65,6 +65,10 @@ public:
 	void unbind();
 
 protected:
+	bool			bLoadedOk;
+	bool 			bAntiAliased;
+	bool 			bFullCharacterSet;
+	
 	vector <ofTTFCharacter> charOutlines;
 
 	float 			lineHeight;

@@ -1,11 +1,11 @@
 #include "ofTrueTypeFont.h"
 //--------------------------
 
-#include <ft2build.h>
-#include <freetype/freetype.h>
-#include <freetype/ftglyph.h>
-#include <freetype/ftoutln.h>
-#include <freetype/fttrigon.h>
+#include "ft2build.h"
+#include "freetype2/freetype/freetype.h"
+#include "freetype2/freetype/ftglyph.h"
+#include "freetype2/freetype/ftoutln.h"
+#include "freetype2/freetype/fttrigon.h"
 
 #include <algorithm>
 
@@ -14,7 +14,6 @@
 #include "ofPixelUtils.h"
 
 static bool printVectorInfo = false;
-
 
 //--------------------------------------------------------
 static ofTTFCharacter makeContoursForCharacter(FT_Face &face);
@@ -200,7 +199,7 @@ void ofTrueTypeFont::unloadTextures(){
 }
 
 void ofTrueTypeFont::reloadTextures(){
-	loadFont(filename,fontSize,bAntiAlised,bFullCharacterSet,false);
+	loadFont(filename,fontSize,bAntiAliased,bFullCharacterSet,false);
 }
 
 //------------------------------------------------------------------
@@ -220,7 +219,7 @@ void ofTrueTypeFont::loadFont(string filename, int fontsize, bool _bAntiAliased,
 	filename = ofToDataPath(filename);
 
 	bLoadedOk 			= false;
-	bAntiAlised 		= _bAntiAliased;
+	bAntiAliased 		= _bAntiAliased;
 	bFullCharacterSet 	= _bFullCharacterSet;
 	fontSize			= fontsize;
 
@@ -266,7 +265,7 @@ void ofTrueTypeFont::loadFont(string filename, int fontsize, bool _bAntiAliased,
 			ofLog(OF_LOG_ERROR,"error with FT_Load_Glyph %i", i);
 		}
 
-		if (bAntiAlised == true) FT_Render_Glyph(face->glyph, FT_RENDER_MODE_NORMAL);
+		if (bAntiAliased == true) FT_Render_Glyph(face->glyph, FT_RENDER_MODE_NORMAL);
 		else FT_Render_Glyph(face->glyph, FT_RENDER_MODE_MONO);
 
 		//------------------------------------------
@@ -341,7 +340,7 @@ void ofTrueTypeFont::loadFont(string filename, int fontsize, bool _bAntiAliased,
 		expanded_data[i].set(1,0);
 
 
-		if (bAntiAlised == true){
+		if (bAntiAliased == true){
 			ofPixels bitmapPixels;
 			bitmapPixels.setFromExternalPixels(bitmap.buffer,bitmap.width,bitmap.rows,1);
 			expanded_data[i].setChannel(1,bitmapPixels);
@@ -381,12 +380,13 @@ void ofTrueTypeFont::loadFont(string filename, int fontsize, bool _bAntiAliased,
 	//cout << areaSum << endl;
 
 	bool packed = false;
-	float alpha = log(areaSum)*1.44269;
+	float alpha = logf(areaSum)*1.44269;
 
 	int w;
 	int h;
 	while(!packed){
-		w = pow(2,round(alpha/2.f));
+		w = pow(2,floor((alpha/2.f) + 0.5)); // there doesn't seem to be a round in cmath for windows. 
+		//w = pow(2,round(alpha/2.f));
 		h = w;//pow(2,round(alpha - round(alpha/2.f)));
 		int x=0;
 		int y=0;
@@ -437,7 +437,7 @@ void ofTrueTypeFont::loadFont(string filename, int fontsize, bool _bAntiAliased,
 
 
 	texAtlas.allocate(atlasPixels.getWidth(),atlasPixels.getHeight(),GL_LUMINANCE_ALPHA,false);
-	if(bAntiAlised){
+	if(bAntiAliased){
 		texAtlas.setTextureMinMagFilter(GL_LINEAR,GL_LINEAR);
 	}else{
 		texAtlas.setTextureMinMagFilter(GL_NEAREST,GL_NEAREST);
