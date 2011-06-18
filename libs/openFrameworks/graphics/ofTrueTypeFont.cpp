@@ -203,7 +203,7 @@ void ofTrueTypeFont::reloadTextures(){
 }
 
 //------------------------------------------------------------------
-void ofTrueTypeFont::loadFont(string filename, int fontsize, bool _bAntiAliased, bool _bFullCharacterSet, bool makeContours, float simplifyAmt){
+bool ofTrueTypeFont::loadFont(string filename, int fontsize, bool _bAntiAliased, bool _bFullCharacterSet, bool makeContours, float simplifyAmt){
 
 	bMakeContours = makeContours;
 
@@ -227,12 +227,12 @@ void ofTrueTypeFont::loadFont(string filename, int fontsize, bool _bAntiAliased,
 	FT_Library library;
 	if (FT_Init_FreeType( &library )){
 		ofLog(OF_LOG_ERROR," PROBLEM WITH FT lib");
-		return;
+		return false;
 	}
 
 	FT_Face face;
 	if (FT_New_Face( library, filename.c_str(), 0, &face )) {
-		return;
+		return false;
 	}
 
 	FT_Set_Char_Size( face, fontsize << 6, fontsize << 6, 96, 96);
@@ -449,6 +449,7 @@ void ofTrueTypeFont::loadFont(string filename, int fontsize, bool _bAntiAliased,
 	FT_Done_Face(face);
 	FT_Done_FreeType(library);
   	bLoadedOk = true;
+	return true;
 }
 
 //-----------------------------------------------------------
