@@ -13,6 +13,8 @@
 #include "ofGraphics.h"
 #include "ofPixelUtils.h"
 
+#define DEFAULT_DPI 96
+
 static bool printVectorInfo = false;
 
 //--------------------------------------------------------
@@ -199,11 +201,16 @@ void ofTrueTypeFont::unloadTextures(){
 }
 
 void ofTrueTypeFont::reloadTextures(){
-	loadFont(filename,fontSize,bAntiAliased,bFullCharacterSet,false);
+	loadFont(filename, fontSize, bAntiAliased, bFullCharacterSet, false);
+}
+
+//-----------------------------------------------------------
+bool ofTrueTypeFont::loadFont(string filename, int fontsize, bool _bAntiAliased, bool _bFullCharacterSet, bool makeContours, float simplifyAmt) {
+	return loadFont(filename, fontsize, DEFAULT_DPI, _bAntiAliased, _bFullCharacterSet, makeContours, simplifyAmt);
 }
 
 //------------------------------------------------------------------
-bool ofTrueTypeFont::loadFont(string filename, int fontsize, bool _bAntiAliased, bool _bFullCharacterSet, bool makeContours, float simplifyAmt){
+bool ofTrueTypeFont::loadFont(string filename, int fontsize, int dpi, bool _bAntiAliased, bool _bFullCharacterSet, bool makeContours, float simplifyAmt){
 
 	bMakeContours = makeContours;
 
@@ -235,7 +242,7 @@ bool ofTrueTypeFont::loadFont(string filename, int fontsize, bool _bAntiAliased,
 		return false;
 	}
 
-	FT_Set_Char_Size( face, fontsize << 6, fontsize << 6, 96, 96);
+	FT_Set_Char_Size( face, fontsize << 6, fontsize << 6, dpi, dpi);
 	lineHeight = fontsize * 1.43f;
 
 	//------------------------------------------------------
