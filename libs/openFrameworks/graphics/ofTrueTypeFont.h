@@ -57,7 +57,8 @@ public:
 	void 		drawString(string s, float x, float y);
 	void		drawStringAsShapes(string s, float x, float y);
 	
-	int 		nCharacters;
+	//			get the num chars in the loaded char set
+	int			getNumCharacters();
 	
 	ofTTFCharacter getCharacterAsPoints(int character);
 
@@ -68,6 +69,7 @@ protected:
 	bool			bLoadedOk;
 	bool 			bAntiAliased;
 	bool 			bFullCharacterSet;
+	int 			nCharacters;
 	
 	vector <ofTTFCharacter> charOutlines;
 

@@ -452,6 +452,21 @@ void ofTrueTypeFont::loadFont(string filename, int fontsize, bool _bAntiAliased,
 }
 
 //-----------------------------------------------------------
+bool ofTrueTypeFont::isLoaded() {
+	return bLoadedOk;
+}
+
+//-----------------------------------------------------------
+bool ofTrueTypeFont::isAntiALiased() {
+	return bAntiAliased;
+}
+
+//-----------------------------------------------------------
+bool ofTrueTypeFont::hasFullCharacterSet() {
+	return bFullCharacterSet;
+}
+
+//-----------------------------------------------------------
 void ofTrueTypeFont::setLineHeight(float _newLineHeight) {
 	lineHeight = _newLineHeight;
 }
@@ -777,6 +792,11 @@ void ofTrueTypeFont::drawStringAsShapes(string c, float x, float y) {
 
 	ofPopMatrix();
 
+}
+
+//-----------------------------------------------------------
+int ofTrueTypeFont::getNumCharacters() {
+	return nCharacters;
 }
 
 
