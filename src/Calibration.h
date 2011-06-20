@@ -61,6 +61,9 @@ namespace ofxCv {
 		void undistort(Mat img);
 		void undistort(Mat src, Mat dst);
 		
+        ofVec2f undistort(ofVec2f &src);
+        void undistort(vector<ofVec2f> &src, vector<ofVec2f> &dst);
+        
 		void getTransformation(Calibration& dst, Mat& rotation, Mat& translation);
 		
 		float getReprojectionError() const;
@@ -79,6 +82,8 @@ namespace ofxCv {
 		void draw(int i) const;
 		void draw3d() const;
 		void draw3d(int i) const;
+        
+        const bool &isReady;
 		
 	protected:
 		vector<vector<Point2f> > imagePoints;
@@ -104,6 +109,8 @@ namespace ofxCv {
 		
 		Intrinsics distortedIntrinsics;
 		Intrinsics undistortedIntrinsics;
+        
+        bool _isReady;
 	};
 	
 }
