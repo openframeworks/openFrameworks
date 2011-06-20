@@ -43,7 +43,9 @@ namespace ofxCv {
 	
 	Calibration::Calibration() :
 	boardSize(cv::Size(10, 7)), squareSize(2.5), // based on Chessboard_A4.pdf, assuming world units are centimeters
-	fillFrame(true) {
+	fillFrame(true),
+    isReady(_isReady),
+    _isReady(false) {
 	}
 	void Calibration::save(string filename, bool absolute) const {
     FileStorage fs(ofToDataPath(filename, absolute), FileStorage::WRITE);
@@ -75,6 +77,8 @@ namespace ofxCv {
 		distortedIntrinsics.setup(cameraMatrix, imageSize, sensorSize);
 		
 		updateUndistortion();
+        
+        _isReady = true;
 	}
 	void Calibration::setBoardSize(int xCount, int yCount) {
 		boardSize = cv::Size(xCount, yCount);
@@ -149,6 +153,9 @@ namespace ofxCv {
 		if(!ok) {
 			ofLog(OF_LOG_ERROR, "Calibration::calibrate() failed to calibrate the camera");
 		}
+        
+        if (ok)
+            _isReady = true;
     
 		distortedIntrinsics.setup(cameraMatrix, addedImageSize);
 		updateReprojectionError();
@@ -175,6 +182,34 @@ namespace ofxCv {
 	void Calibration::undistort(Mat src, Mat dst) {
 		remap(src, dst, undistortMapX, undistortMapY, INTER_LINEAR);
 	}
+    
+    ofVec2f Calibration::undistort(ofVec2f &src)
+    {
+        ofVec2f dst;
+        
+        Mat matSrc = Mat(1, 1, CV_32FC2, &src.x);
+        Mat matDst = Mat(1, 1, CV_32FC2, &dst.x);;
+        
+        undistortPoints(matSrc, matDst, distortedIntrinsics.getCameraMatrix(), distCoeffs);
+        
+        return dst;
+        
+    }
+    
+    void Calibration::undistort(vector<ofVec2f> &src, vector<ofVec2f> &dst)
+    {
+        int nPoints = src.size();
+        
+        if (dst.size() != nPoints)
+            dst.resize(src.size());
+        
+        Mat matSrc = Mat(nPoints, 1, CV_32FC2, &src[0].x);
+        Mat matDst = Mat(nPoints, 1, CV_32FC2, &dst[0].x);
+        
+        undistortPoints(matSrc, matDst, distortedIntrinsics.getCameraMatrix(), distCoeffs);
+        
+    }
+    
 	void Calibration::getTransformation(Calibration& dst, Mat& rotation, Mat& translation) {
 		if(imagePoints.size() == 0 || dst.imagePoints.size() == 0) {
 			ofLog(OF_LOG_ERROR, "getTransformation() requires both Calibration objects to have just been calibrated");
