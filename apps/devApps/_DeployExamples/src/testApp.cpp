@@ -11,6 +11,22 @@ using Poco::MD5Engine;
 ostringstream msgStr;
 string appsPath = "../../../../";
 
+void findandreplace( std::string& tInput, std::string tFind, std::string tReplace ) { 
+	size_t uPos = 0; 
+	size_t uFindLen = tFind.length(); 
+	size_t uReplaceLen = tReplace.length();
+		
+	if( uFindLen == 0 ){
+		return;
+	}
+
+	for( ;(uPos = tInput.find( tFind, uPos )) != std::string::npos; ){
+		tInput.replace( uPos, uFindLen, tReplace );
+		uPos += uReplaceLen;
+	}	
+	
+}
+
 //--------------------------------------------------------------
 string getHash(string input){
 	std::string passphrase("openFrameworks"); // HMAC needs a passphrase
@@ -412,7 +428,9 @@ void addSearchPathsToProjectXcconfig(string projectFile, vector <string> searchP
 void convertProjectToXML(string projectPath){
 	msgStr << "  --converting project to xml " << endl;
 	
-	string absPath = ofFilePath::getAbsolutePath(projectPath);
+	findandreplace(projectPath, " ", "\\ ");
+	
+	string absPath = ofFilePath::getAbsolutePath(projectPath);	
 	system(string("cd "+absPath+"; plutil -convert xml1 -o - project.pbxproj > project.xml; mv project.xml project.pbxproj").c_str());
 }
 
@@ -420,6 +438,9 @@ void convertProjectToXML(string projectPath){
 void openProject(string projectPath){
 	cout << "opening: " << projectPath << endl;
 	projectPath = ofFilePath::getAbsolutePath(projectPath, true);
+	
+	findandreplace(projectPath, " ", "\\ ");
+	
 	system(string("open "+ projectPath).c_str());	
 	ofSleepMillis(3000);
 }
@@ -464,8 +485,18 @@ void copyProjectFiles(string folderName, string folderPath, string xcodePath ){
 		ofFile::copyFromTo("OF_template.xcodeproj", xcodePath);
 		ofFile::copyFromTo("Project.xcconfig", folderPath + "Project.xcconfig" );
 		ofFile::copyFromTo("openFrameworks-Info.plist", folderPath + "openFrameworks-Info.plist" );
-		system( string("cd "+folderPath+" ; find .  -name \"*.pbxproj*\" | xargs perl -pi -e 's/emptyExample/'"+folderName+"'/g'").c_str() );		
-
+		
+		folderPath = ofFilePath::getAbsolutePath(folderPath, false);
+		findandreplace(folderPath, " ", "\\ ");
+		findandreplace(folderName, " ", "\\ ");
+		
+//		cout << "folderPath = " << folderPath <<endl;
+//		cout << "folderName = " << folderName <<endl;
+//		cout << "to perl = " << "'s/emptyExample/"+folderName+"/g'" <<endl;
+		
+//		cout << " before find and replace " << endl;
+		system( string("cd "+folderPath+" ; find . -name \"*.pbxproj*\" -print0 | xargs -0 perl -pi -e 's/emptyExample/"+folderName+"/g'").c_str() );		
+//		cout << " after find and replace " << endl;
 }
 
 //--------------------------------------------------------------
@@ -480,7 +511,7 @@ void testApp::setup(){
 		string folderName = examples.getName(k);
 		string folderPath = ofFilePath::getAbsolutePath(examples.getPath(k) + "/");
 		string xcodePath  = folderPath + folderName + ".xcodeproj";
-
+		
 		copyProjectFiles(folderName, folderPath, xcodePath);
 		checkAddSrcFiles(folderName, xcodePath, folderPath + "/src/");		
 	}
@@ -494,7 +525,7 @@ void testApp::setup(){
 		string folderName = advanced.getName(k);
 		string folderPath = ofFilePath::getAbsolutePath(advanced.getPath(k) + "/");
 		string xcodePath = advanced.getPath(k) + "/" + folderName + ".xcodeproj";
-						
+												
 		copyProjectFiles(folderName, folderPath, xcodePath);
 		checkAddSrcFiles(folderName, xcodePath, folderPath + "/src/");		
 	}	
@@ -509,7 +540,7 @@ void testApp::setup(){
 		string folderName = addons.getName(k);
 		string folderPath = ofFilePath::getAbsolutePath(addons.getPath(k) + "/");		
 		string xcodePath = addons.getPath(k) + "/" + folderName + ".xcodeproj";
-		
+				
 		copyProjectFiles(folderName, folderPath, xcodePath);
 		checkAddSrcFiles(folderName, xcodePath, folderPath + "/src/");		
 		
