@@ -488,7 +488,7 @@ void copyProjectFiles(string folderName, string folderPath, string xcodePath ){
 		
 		folderPath = ofFilePath::getAbsolutePath(folderPath, false);
 		findandreplace(folderPath, " ", "\\ ");
-		findandreplace(folderName, " ", "\\ ");
+		findandreplace(folderName, " ", "");
 		
 //		cout << "folderPath = " << folderPath <<endl;
 //		cout << "folderName = " << folderName <<endl;
