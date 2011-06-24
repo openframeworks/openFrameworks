@@ -13,7 +13,6 @@
 		<src>
 			<folder name="addons/ofxDirList/src">
 				<file>../../../addons/ofxDirList/src/ofxDirList.h</file>
-				<file>../../../addons/ofxDirList/src/ofxDirList.cpp</file>
 			</folder>
 		</src>
 		
