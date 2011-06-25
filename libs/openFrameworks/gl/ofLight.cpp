@@ -293,7 +293,7 @@ void ofLight::setAmbientColor(const ofColor& c) {
 
 //----------------------------------------
 void ofLight::setAmbientColor(float r, float g, float b, float a) {
-	setAmbientColor(r, g, b, a);
+	setAmbientColor(ofColor(r, g, b, a));
 }
 
 //----------------------------------------
