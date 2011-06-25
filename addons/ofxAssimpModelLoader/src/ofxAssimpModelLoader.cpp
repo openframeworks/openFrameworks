@@ -388,10 +388,10 @@ void ofxAssimpModelLoader::loadGLResources(){
         }
 
         meshHelper.indices.resize(mesh->mNumFaces * 3);
-        int i=0;
+        int j=0;
         for (unsigned int x = 0; x < mesh->mNumFaces; ++x){
 			for (unsigned int a = 0; a < mesh->mFaces[x].mNumIndices; ++a){
-				meshHelper.indices[i++]=mesh->mFaces[x].mIndices[a];
+				meshHelper.indices[j++]=mesh->mFaces[x].mIndices[a];
 			}
 		}
 
