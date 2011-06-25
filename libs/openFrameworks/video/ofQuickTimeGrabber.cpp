@@ -217,7 +217,11 @@ bool ofQuickTimeGrabber::initGrabber(int w, int h){
 
 			bGrabberInited = false;
 			return false;
-
+			
+	//---------------------------------
+	#else
+	//---------------------------------
+		return false;
 	//---------------------------------
 	#endif
 	//---------------------------------
