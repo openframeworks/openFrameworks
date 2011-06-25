@@ -401,5 +401,11 @@
     <ClCompile Include="..\..\..\openFrameworks\sound\ofRtAudioSoundStream.cpp">
       <Filter>libs\openFrameworks\sound</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\openFrameworks\math\ofVec4f.cpp">
+      <Filter>libs\openFrameworks\math</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\openFrameworks\math\ofVec2f.cpp">
+      <Filter>libs\openFrameworks\math</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
