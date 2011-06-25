@@ -121,6 +121,10 @@
     <ClInclude Include="..\..\..\openFrameworks\ofMain.h" />
     <ClInclude Include="..\..\..\openFrameworks\app\ofAppGlutWindow.h" />
     <ClInclude Include="..\..\..\openFrameworks\app\ofAppRunner.h" />
+    <ClInclude Include="..\..\..\openFrameworks\sound\ofBaseSoundPlayer.h" />
+    <ClInclude Include="..\..\..\openFrameworks\sound\ofBaseSoundStream.h" />
+    <ClInclude Include="..\..\..\openFrameworks\sound\ofFmodSoundPlayer.h" />
+    <ClInclude Include="..\..\..\openFrameworks\sound\ofRtAudioSoundStream.h" />
     <ClInclude Include="..\..\..\openFrameworks\sound\ofSoundPlayer.h" />
     <ClInclude Include="..\..\..\openFrameworks\sound\ofSoundStream.h" />
     <ClInclude Include="..\..\..\openFrameworks\types\ofBaseTypes.h" />
@@ -177,6 +181,10 @@
     <ClCompile Include="..\..\..\openFrameworks\math\ofMatrix3x3.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\math\ofMatrix4x4.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\math\ofQuaternion.cpp" />
+    <ClCompile Include="..\..\..\openFrameworks\sound\ofBaseSoundPlayer.cpp" />
+    <ClCompile Include="..\..\..\openFrameworks\sound\ofBaseSoundStream.cpp" />
+    <ClCompile Include="..\..\..\openFrameworks\sound\ofFmodSoundPlayer.cpp" />
+    <ClCompile Include="..\..\..\openFrameworks\sound\ofRtAudioSoundStream.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\sound\ofSoundPlayer.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\sound\ofSoundStream.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\types\ofBaseTypes.cpp" />
