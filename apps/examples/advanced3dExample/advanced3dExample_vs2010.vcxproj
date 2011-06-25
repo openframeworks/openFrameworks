@@ -116,10 +116,16 @@ if not exist "$(ProjectDir)\bin\data" mkdir  "$(ProjectDir)\bin\data"
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Grid.cpp" />
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\OrthoCamera.cpp" />
+    <ClCompile Include="src\Swarm.cpp" />
     <ClCompile Include="src\testApp.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Grid.h" />
+    <ClInclude Include="src\OrthoCamera.h" />
+    <ClInclude Include="src\Swarm.h" />
     <ClInclude Include="src\testApp.h" />
   </ItemGroup>
   <ItemGroup>
