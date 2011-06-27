@@ -5,16 +5,23 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
+import com.reactable.R;
+
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.ActivityInfo;
 import android.hardware.SensorManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.opengl.ETC1Util;
 import android.opengl.GLSurfaceView;
 import android.os.Environment;
@@ -245,6 +252,65 @@ public class OFAndroid {
 		} catch (Exception e) {
 			Log.w("OF","Trying to get menu items ", e);
 		}
+	}
+	
+	static public String getStringRes(String idStr){
+		Class<?> string_ids;
+		try {
+			string_ids = Class.forName(packageName+".R$string");
+			Field field = string_ids.getField(idStr);
+			int id = field.getInt(null);
+			return (String) ofActivity.getResources().getText(id);
+		} catch (Exception e) {
+			Log.e("OF","Couldn't get string resource",e);
+		} 
+		return "";
+	}
+	
+	static public boolean isOnline(){
+		ConnectivityManager conMgr =  (ConnectivityManager)ofActivity.getSystemService(Context.CONNECTIVITY_SERVICE);
+
+		return ( conMgr.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.CONNECTED 
+			    ||  conMgr.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.CONNECTED  ) ;
+	}
+	
+	static public boolean isWifiOnline(){
+		ConnectivityManager conMgr =  (ConnectivityManager)ofActivity.getSystemService(Context.CONNECTIVITY_SERVICE);
+
+		return ( conMgr.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.CONNECTED  ) ;
+	}
+	
+	static public boolean isMobileOnline(){
+		ConnectivityManager conMgr =  (ConnectivityManager)ofActivity.getSystemService(Context.CONNECTIVITY_SERVICE);
+
+		return ( conMgr.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.CONNECTED  ) ;
+	}
+	
+	
+	static Map<Integer,ProgressDialog> progressDialogs = new HashMap<Integer, ProgressDialog>();
+	static int lastProgressID=0;
+	static public int progressBox(String msg){
+		final String finmsg = msg;
+		final int id = lastProgressID++;
+		ofActivity.runOnUiThread(new Runnable(){
+			public void run() {
+				ProgressDialog d = new ProgressDialog(ofActivity);
+				d.setMessage(finmsg);
+				d.show();
+				progressDialogs.put(id,d);
+			}
+		});
+		return id;
+	}
+	
+	static public void dismissProgressBox(int id){
+		final ProgressDialog d = progressDialogs.get(id);
+		ofActivity.runOnUiThread(new Runnable(){
+			public void run() {
+				d.dismiss();
+			}
+		});
+		progressDialogs.remove(id);
 	}
 
 	// native methods to call OF c++ callbacks
