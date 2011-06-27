@@ -115,8 +115,13 @@ ifeq ($(findstring Release,$(MAKECMDGOALS)),Release)
 endif
 
 ifeq ($(findstring Release_arm7,$(MAKECMDGOALS)),Release_arm7)
-	TARGET_CFLAGS += -march=armv7-a -mfloat-abi=softfp -mfpu=neon
+	TARGET_CFLAGS += -march=armv7-a -mfloat-abi=softfp -mthumb
 	TARGET = ../../lib/$(LIBSPATH)/libopenFrameworks_arm7.a
+endif
+
+ifeq ($(findstring Release_neon,$(MAKECMDGOALS)),Release_neon)
+	TARGET_CFLAGS += -march=armv7-a -mfloat-abi=softfp -mfpu=neon
+	TARGET = ../../lib/$(LIBSPATH)/libopenFrameworks_neon.a
 endif
 
 ifeq ($(MAKECMDGOALS),)
@@ -130,7 +135,7 @@ ifeq ($(MAKECMDGOALS),clean)
 endif
 
 ifeq ($(MAKECMDGOALS),CleanAndroid)
-	TARGET = ../../lib/$(LIBSPATH)/libopenFrameworks.a ../../lib/$(LIBSPATH)/libopenFrameworksDebug.a ../../lib/$(LIBSPATH)/libopenFrameworks_arm7.a
+	TARGET = ../../lib/$(LIBSPATH)/libopenFrameworks.a ../../lib/$(LIBSPATH)/libopenFrameworksDebug.a ../../lib/$(LIBSPATH)/libopenFrameworks_arm7.a ../../lib/$(LIBSPATH)/libopenFrameworks_neon.a
 endif
 
 CLEANTARGET = $(addprefix Clean,$(TARGET_NAME))
@@ -138,7 +143,7 @@ OBJ_OUTPUT = obj/$(TARGET_NAME)/
 DEPFILES = $(addprefix $(OBJ_OUTPUT),$(patsubst ../../../%.cpp,%.d,$(SOURCES)))
 OBJS = $(addprefix $(OBJ_OUTPUT), $(OBJFILES))
 
-.PHONY: all Debug Release after clean CleanDebug CleanRelease help DebugAndroid ReleaseAndroid Release_arm7Android CleanAndroid
+.PHONY: all Debug Release after clean CleanDebug CleanRelease help DebugAndroid ReleaseAndroid Release_arm7Android Release_neonAndroid CleanAndroid
 
 Release: $(TARGET) 
 
@@ -150,6 +155,8 @@ ReleaseAndroid: $(TARGET)
 
 Release_arm7Android: $(TARGET)
 
+Release_neonAndroid: $(TARGET)
+
 all: 
 	$(MAKE) Debug
 	$(MAKE) Release
@@ -158,6 +165,7 @@ android:
 	$(MAKE) DebugAndroid
 	$(MAKE) ReleaseAndroid
 	$(MAKE) Release_arm7Android
+	$(MAKE) Release_neonAndroid
 
 #This rule does the compilation
 $(OBJ_OUTPUT)%.o: ../../../%.cpp 

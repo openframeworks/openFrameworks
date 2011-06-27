@@ -135,7 +135,7 @@ public class OFAndroid {
 	        ofActivity.setContentView(mGLView);
 	        enableTouchEvents();
 		}
-		android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_URGENT_AUDIO);
+		//android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_URGENT_AUDIO);
     }
 
 	public void start(){
@@ -400,10 +400,22 @@ public class OFAndroid {
 	private static String dataPath;
 	private static PowerManager.WakeLock wl;
 
-    
+    public static native boolean hasNeon();
 	 
     static {
-    	System.loadLibrary("OFAndroidApp"); 
+    	try{
+    		System.loadLibrary("neondetection"); 
+	    	if(hasNeon()){
+	    		Log.i("OF","loading neon optimized library");
+	    		System.loadLibrary("OFAndroidApp_neon");
+	    	}else{
+	    		Log.i("OF","loading not-neon optimized library");
+	    		System.loadLibrary("OFAndroidApp");
+	    	}
+    	}catch(Throwable e){
+    		Log.i("OF","failed neon detection, loading not-neon library",e);
+    		System.loadLibrary("OFAndroidApp");
+    	}
     }
 
 
