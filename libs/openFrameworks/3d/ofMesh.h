@@ -106,6 +106,7 @@ public:
 	void drawVertices();
 	void drawWireframe();
 	void drawFaces();
+	void draw();
 
 protected:
 	virtual void draw(ofPolyRenderMode renderType);

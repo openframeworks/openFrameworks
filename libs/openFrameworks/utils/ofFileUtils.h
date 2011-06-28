@@ -227,6 +227,8 @@ public:
 	ofFile getFile(unsigned int position, ofFile::Mode mode=ofFile::Reference, bool binary=false);
 	vector<ofFile> getFiles();
 
+	ofFile operator[](unsigned int position);
+
 	bool getShowHidden();
 
 	void reset(); //equivalent to close, just here for bw compatibility with ofxDirList

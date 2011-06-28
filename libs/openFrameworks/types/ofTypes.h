@@ -2,7 +2,12 @@
 
 #include "ofConstants.h"
 #include "ofColor.h"
+
+#if (_MSC_VER)
+#include <memory>
+#else
 #include <tr1/memory>
+#endif
 
 //----------------------------------------------------------
 // ofDeviceInfo
@@ -10,9 +15,9 @@
 class ofSerial;
 class ofSerialDeviceInfo{
 	friend class ofSerial;
-	
-	public: 
-	
+
+	public:
+
 		ofSerialDeviceInfo(string devicePathIn, string deviceNameIn, int deviceIDIn){
 			devicePath			= devicePathIn;
 			deviceName			= deviceNameIn;
@@ -27,11 +32,11 @@ class ofSerialDeviceInfo{
 		string getDevicePath(){
 			return devicePath;
 		}
-		
+
 		string getDeviceName(){
 			return deviceName;
 		}
-		
+
 		int getDeviceID(){
 			return deviceID;
 		}
@@ -39,8 +44,8 @@ class ofSerialDeviceInfo{
 	protected:
 		string devicePath;			//eg: /dev/tty.cu/usbdevice-a440
 		string deviceName;			//eg: usbdevice-a440 / COM4
-		int deviceID;				//eg: 0,1,2,3 etc 
-		
+		int deviceID;				//eg: 0,1,2,3 etc
+
 		//TODO: other stuff for serial ?
 };
 
@@ -82,7 +87,7 @@ class ofStyle{
 		ofDrawBitmapMode drawBitmapMode;
 
 		ofBlendMode blendingMode;
-    
+
 		bool smoothing;
 		int circleResolution;
 		int sphereResolution;

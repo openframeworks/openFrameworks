@@ -1,0 +1,34 @@
+<install>
+	<name>ofxSynth</name>
+	<url></url>
+	
+	<add>
+		
+		<!-- 	=====================================================================	-->
+		<!--	========================== add per project using this addon =========	-->
+		<!-- 	=====================================================================	-->
+	
+		<src>
+			<folder name="addons/ofxSynth/src">
+				<file>../../../addons/ofxSynth/src/ofxSoundEffect.cpp</file>
+				<file>../../../addons/ofxSynth/src/ofxSoundEffect.h</file>
+				<file>../../../addons/ofxSynth/src/ofxSoundUnit.cpp</file>
+				<file>../../../addons/ofxSynth/src/ofxSoundUnit.h</file>
+				<file>../../../addons/ofxSynth/src/ofxSynth.cpp</file>
+				<file>../../../addons/ofxSynth/src/ofxSynth.h</file>
+				<file>../../../addons/ofxSynth/src/ofxSynthDelayLine.cpp</file>
+				<file>../../../addons/ofxSynth/src/ofxSynthDelayLine.h</file>
+				<file>../../../addons/ofxSynth/src/ofxSynthEnvelope.cpp</file>
+				<file>../../../addons/ofxSynth/src/ofxSynthEnvelope.h</file>
+				<file>../../../addons/ofxSynth/src/ofxSynthFilter.cpp</file>
+				<file>../../../addons/ofxSynth/src/ofxSynthFilter.h</file>
+				<file>../../../addons/ofxSynth/src/ofxSynthSampler.cpp</file>
+				<file>../../../addons/ofxSynth/src/ofxSynthSampler.h</file>
+				<file>../../../addons/ofxSynth/src/ofxSynthWaveWriter.cpp</file>
+				<file>../../../addons/ofxSynth/src/ofxSynthWaveWriter.h</file>
+			</folder>
+		</src>
+		
+	</add>
+	 
+</install>

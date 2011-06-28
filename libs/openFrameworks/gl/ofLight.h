@@ -8,8 +8,6 @@
  */
 
 // TODO:
-// attenuation
-// spotlight stuff
 
 
 #pragma once
@@ -19,11 +17,20 @@
 
 #define OF_MAX_LIGHTS		8		// max number of lights allowed by default opengl
 
+enum ofLightType {
+	OF_LIGHT_POINT,
+	OF_LIGHT_SPOT,
+	OF_LIGHT_DIRECTIONAL
+};
+
 void ofEnableLighting();
 void ofDisableLighting();
 void ofEnableSeparateSpecularLight();
 void ofDisableSeparateSpecularLight();
 bool ofGetLightingEnabled();
+void ofSetSmoothLighting(bool b);
+void ofSetGlobalAmbientColor(const ofColor& c);
+void ofSetGlobalAmbientColor(float r, float g, float b, float a=255.f);
 
 //----------------------------------------
 // Use the public API of ofNode for all transformations
@@ -33,18 +40,32 @@ public:
 	ofLight(const ofLight & mom);
 	ofLight & operator=(const ofLight & mom);
 	virtual ~ofLight();
+	void destroy();
 	
-	void setup();
 	void enable();
 	void disable();
 	bool getIsEnabled() const;
 	
-	void setDirectional(bool b);
+	void setDirectional();
 	bool getIsDirectional() const;
 	
+	void setSpotlight( float spotCutOff=45.f, float exponent=0.f );
+	bool getIsSpotlight();
+	void setSpotlightCutOff( float spotCutOff );
+	void setSpotConcentration( float exponent );
+	
+	void setPointLight();
+	bool getIsPointLight();
+	void setAttenuation( float constant=2.f, float linear=1.f, float quadratic=0.5f );
+	
+	int getType();
+	
 	void setAmbientColor(const ofColor& c);
+	void setAmbientColor(float r, float g, float b, float a=255.f);
 	void setDiffuseColor(const ofColor& c);
+	void setDiffuseColor(float r, float g, float b, float a=255.f);
 	void setSpecularColor(const ofColor& c);
+	void setSpecularColor(float r, float g, float b, float a=255.f);
 	
 	ofColor getAmbientColor() const;
 	ofColor getDiffuseColor() const;
@@ -68,10 +89,12 @@ private:
 	ofColor diffuseColor;
 	ofColor specularColor;
 
+	ofLightType lightType;
+	
 	int glIndex;
 	int isEnabled;
 	bool isDirectional;
-	
+	bool isSpotlight;
 	
 	// update opengl light 
 	virtual void onPositionChanged();

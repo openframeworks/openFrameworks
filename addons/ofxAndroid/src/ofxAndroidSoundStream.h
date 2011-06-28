@@ -1,13 +1,16 @@
 #pragma once
 
+#include <jni.h>
+#include <queue>
+
 #include "ofConstants.h"
 #include "ofBaseSoundStream.h"
-#include <jni.h>
+#include "ofxAndroidCircBuffer.h"
 
 class ofxAndroidSoundStream : public ofBaseSoundStream{
 	public:
 		ofxAndroidSoundStream();
-		~ofxAndroidSoundStream();
+		virtual ~ofxAndroidSoundStream();
 		
 		void listDevices();
 		void setDeviceID(int deviceID);
@@ -27,10 +30,14 @@ class ofxAndroidSoundStream : public ofBaseSoundStream{
 		int getNumOutputChannels();
 
 		int androidInputAudioCallback(JNIEnv*  env, jobject  thiz,jshortArray array, jint numChannels, jint bufferSize);
-		int androidOutputAudioCallback(JNIEnv*  env, jobject  thiz,jshortArray array, jint numChannels, jint bufferSize, jlong currentTime, jlong jni_internal_time);
+		int androidOutputAudioCallback(JNIEnv*  env, jobject  thiz,jshortArray array, jint numChannels, jint bufferSize);
 		
 		int getMinOutBufferSize(int samplerate, int nchannels);
 		int getMinInBufferSize(int samplerate, int nchannels);
+
+		bool isHeadPhonesConnected();
+
+		ofEvent<bool> headphonesConnectedE;
 
 	private:
 		long unsigned long	tickCount;
@@ -38,6 +45,8 @@ class ofxAndroidSoundStream : public ofBaseSoundStream{
 		ofBaseSoundInput *  soundInputPtr;
 		ofBaseSoundOutput * soundOutputPtr;
 		
+		ofxAndroidCircBuffer<float> input_buffer;
+
 
 		short * out_buffer, * in_buffer;
 		float * out_float_buffer, * in_float_buffer;
@@ -48,7 +57,6 @@ class ofxAndroidSoundStream : public ofBaseSoundStream{
 		jshortArray jInArray, jOutArray;
 
 		bool isPaused;
-
 
 		friend void ofxAndroidSoundStreamPause();
 		friend void ofxAndroidSoundStreamResume();

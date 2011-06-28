@@ -5,6 +5,7 @@
 
 class ofVboMesh: public ofMesh{
 public:
+	using ofMesh::draw;
 	ofVboMesh();
 	ofVboMesh(const ofMesh & mom);
 	void setUsage(int usage);

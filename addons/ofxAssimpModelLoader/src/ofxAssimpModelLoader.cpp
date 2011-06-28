@@ -132,27 +132,27 @@ ofxAssimpModelLoader::ofxAssimpModelLoader(){
 
 //------------------------------------------
 bool ofxAssimpModelLoader::loadModel(string modelName, bool optimize){
-	
-    
+
+
     // if we have a model loaded, unload the fucker.
     if(scene != NULL){
-        clear();   
+        clear();
     }
-    
-    
+
+
     // Load our new path.
     filepath = ofToDataPath(modelName);
-	
+
 	//theo added - so we can have models and their textures in sub folders
 	modelFolder = ofFilePath::getEnclosingDirectory(filepath);
 
     ofLog(OF_LOG_VERBOSE, "loading model %s", filepath.c_str());
     ofLog(OF_LOG_VERBOSE, "loading from folder %s", modelFolder.c_str());
-    
+
     // only ever give us triangles.
     aiSetImportPropertyInteger(AI_CONFIG_PP_SBP_REMOVE, aiPrimitiveType_LINE | aiPrimitiveType_POINT );
     aiSetImportPropertyInteger(AI_CONFIG_PP_PTV_NORMALIZE, true);
-    
+
     // aiProcess_FlipUVs is for VAR code. Not needed otherwise. Not sure why.
     unsigned int flags = aiProcessPreset_TargetRealtime_MaxQuality | aiProcess_Triangulate | aiProcess_FlipUVs;
     if(optimize) flags |=  aiProcess_ImproveCacheLocality | aiProcess_OptimizeGraph |
@@ -169,7 +169,7 @@ bool ofxAssimpModelLoader::loadModel(string modelName, bool optimize){
             ofLog(OF_LOG_VERBOSE, "scene has animations");
         else {
             ofLog(OF_LOG_VERBOSE, "no animations");
-            
+
         }
         return true;
     }else{
@@ -243,12 +243,13 @@ void ofxAssimpModelLoader::createLightsFromAiModel(){
 	lights.clear();
 	lights.resize(scene->mNumLights);
 	for(int i=0; i<(int)scene->mNumLights; i++){
-		lights[i].setup();
-		lights[i].setDirectional(scene->mLights[i]->mType==aiLightSource_DIRECTIONAL);
+		lights[i].enable();
 		if(scene->mLights[i]->mType==aiLightSource_DIRECTIONAL){
+			lights[i].setDirectional();
 			lights[i].setOrientation(aiVecToOfVec(scene->mLights[i]->mDirection));
 		}
 		if(scene->mLights[i]->mType!=aiLightSource_POINT){
+			lights[i].setSpotlight();
 			lights[i].setPosition(aiVecToOfVec(scene->mLights[i]->mPosition));
 		}
 		lights[i].setAmbientColor(aiColorToOfColor(scene->mLights[i]->mColorAmbient));
@@ -270,17 +271,17 @@ void ofxAssimpModelLoader::loadGLResources(){
 
     // create new mesh helpers for each mesh, will populate their data later.
    // modelMeshes.resize(scene->mNumMeshes,ofxAssimpMeshHelper());
-        
+
     // create OpenGL buffers and populate them based on each meshes pertinant info.
     for (unsigned int i = 0; i < scene->mNumMeshes; ++i){
         ofLog(OF_LOG_VERBOSE, "loading mesh %u", i);
         // current mesh we are introspecting
         aiMesh* mesh = scene->mMeshes[i];
-        
+
         // the current meshHelper we will be populating data into.
         //ofxAssimpMeshHelper & meshHelper = modelMeshes[i];
         ofxAssimpMeshHelper meshHelper;
-        
+
         meshHelper.mesh = mesh;
         aiMeshToOfMesh(mesh,meshHelper.cachedMesh);
         meshHelper.cachedMesh.setMode(OF_TRIANGLES_MODE);
@@ -294,13 +295,13 @@ void ofxAssimpModelLoader::loadGLResources(){
 
         // Handle material info
         aiMaterial* mtl = scene->mMaterials[mesh->mMaterialIndex];
-        
+
         // Load Textures
         int texIndex = 0;
         aiString texPath;
-        
+
         //meshHelper.texture = NULL;
-        
+
         // TODO: handle other aiTextureTypes
         if(AI_SUCCESS == mtl->GetTexture(aiTextureType_DIFFUSE, texIndex, &texPath)){
             // This is magic. Thanks Kyle.
@@ -318,29 +319,29 @@ void ofxAssimpModelLoader::loadGLResources(){
 					ofLog(OF_LOG_ERROR,"error loading image " + modelFolder + texPath.data);
 				}
 			}
-            
+
             ofLog(OF_LOG_VERBOSE, "texture width: %f height %f", meshHelper.texture.getWidth(), meshHelper.texture.getHeight());
-            
+
         }
-        
+
         aiColor4D dcolor, scolor, acolor, ecolor;
 
         if(AI_SUCCESS == aiGetMaterialColor(mtl, AI_MATKEY_COLOR_DIFFUSE, &dcolor)){
             meshHelper.material.setDiffuseColor(aiColorToOfColor(dcolor));
         }
-        
+
         if(AI_SUCCESS == aiGetMaterialColor(mtl, AI_MATKEY_COLOR_SPECULAR, &scolor)){
         	meshHelper.material.setSpecularColor(aiColorToOfColor(scolor));
         }
-        
+
         if(AI_SUCCESS == aiGetMaterialColor(mtl, AI_MATKEY_COLOR_AMBIENT, &acolor)){
         	meshHelper.material.setAmbientColor(aiColorToOfColor(acolor));
         }
-        
+
         if(AI_SUCCESS == aiGetMaterialColor(mtl, AI_MATKEY_COLOR_EMISSIVE, &ecolor)){
         	meshHelper.material.setEmissiveColor(aiColorToOfColor(ecolor));
         }
-        
+
         float shininess;
         if(AI_SUCCESS == aiGetMaterialFloat(mtl, AI_MATKEY_SHININESS, &shininess)){
 			meshHelper.material.setShininess(shininess);
@@ -363,7 +364,7 @@ void ofxAssimpModelLoader::loadGLResources(){
             meshHelper.twoSided = true;
         else
             meshHelper.twoSided = false;
-        
+
         int usage;
         if(getAnimationCount()){
 #ifndef TARGET_OPENGLES
@@ -387,10 +388,10 @@ void ofxAssimpModelLoader::loadGLResources(){
         }
 
         meshHelper.indices.resize(mesh->mNumFaces * 3);
-        int i=0;
+        int j=0;
         for (unsigned int x = 0; x < mesh->mNumFaces; ++x){
 			for (unsigned int a = 0; a < mesh->mFaces[x].mNumIndices; ++a){
-				meshHelper.indices[i++]=mesh->mFaces[x].mIndices[a];
+				meshHelper.indices[j++]=mesh->mFaces[x].mIndices[a];
 			}
 		}
 
@@ -409,7 +410,7 @@ void ofxAssimpModelLoader::loadGLResources(){
 void ofxAssimpModelLoader::clear(){
 
     ofLog(OF_LOG_VERBOSE, "deleting gl resources");
-    
+
     // clear out everything.
     modelMeshes.clear();
     pos.set(0,0,0);
@@ -443,10 +444,10 @@ void ofxAssimpModelLoader::getBoundingBoxWithMinVector(struct aiVector3D* min, s
 {
 	struct aiMatrix4x4 trafo;
 	aiIdentityMatrix4(&trafo);
-    
+
 	min->x = min->y = min->z =  1e10f;
 	max->x = max->y = max->z = -1e10f;
-    
+
     this->getBoundingBoxForNode(scene->mRootNode, min, max, &trafo);
 }
 
@@ -455,38 +456,38 @@ void ofxAssimpModelLoader::getBoundingBoxForNode(const struct aiNode* nd,  struc
 {
 	struct aiMatrix4x4 prev;
 	unsigned int n = 0, t;
-    
+
 	prev = *trafo;
 	aiMultiplyMatrix4(trafo,&nd->mTransformation);
-    
+
 	for (; n < nd->mNumMeshes; ++n){
 		const struct aiMesh* mesh = scene->mMeshes[nd->mMeshes[n]];
 		for (t = 0; t < mesh->mNumVertices; ++t){
         	struct aiVector3D tmp = mesh->mVertices[t];
 			aiTransformVecByMatrix4(&tmp,trafo);
-        
-            
+
+
 			min->x = MIN(min->x,tmp.x);
 			min->y = MIN(min->y,tmp.y);
 			min->z = MIN(min->z,tmp.z);
-            
+
 			max->x = MAX(max->x,tmp.x);
 			max->y = MAX(max->y,tmp.y);
 			max->z = MAX(max->z,tmp.z);
 		}
 	}
-    
+
 	for (n = 0; n < nd->mNumChildren; ++n){
 		this->getBoundingBoxForNode(nd->mChildren[n], min, max, trafo);
 	}
-    
+
 	*trafo = prev;
 }
 
 //-------------------------------------------
 unsigned int ofxAssimpModelLoader::getAnimationCount(){
     if(scene)
-        return scene->mNumAnimations; 
+        return scene->mNumAnimations;
     else {
         ofLog(OF_LOG_WARNING, "No Model Loaded");
         return 0;
@@ -508,7 +509,7 @@ float ofxAssimpModelLoader::getDuration(int animation){
 
 //-------------------------------------------
 void ofxAssimpModelLoader::setNormalizedTime(float t){ // 0 - 1
-    
+
     if(getAnimationCount())
     {
 
@@ -521,7 +522,7 @@ void ofxAssimpModelLoader::setNormalizedTime(float t){ // 0 - 1
 
 void ofxAssimpModelLoader::setTime(float t){ // 0 - 1
     if(getAnimationCount()){
-        
+
         // only evaluate if we have a delta t.
         if(animationTime != t){
             animationTime = t;
@@ -561,7 +562,7 @@ void ofxAssimpModelLoader::setRotation(int which, float angle, float rot_x, floa
             rotAxis.push_back(ofPoint());
         }
     }
-    
+
     rotAngle[which]  = angle;
     rotAxis[which].x = rot_x;
     rotAxis[which].y = rot_y;
@@ -570,14 +571,14 @@ void ofxAssimpModelLoader::setRotation(int which, float angle, float rot_x, floa
 
 //-------------------------------------------
 void ofxAssimpModelLoader::updateAnimation(unsigned int animationIndex, float currentTime){
-    
+
     const aiAnimation* mAnim = scene->mAnimations[animationIndex];
-  
+
     // calculate the transformations for each animation channel
 	for( unsigned int a = 0; a < mAnim->mNumChannels; a++)
 	{
 		const aiNodeAnim* channel = mAnim->mChannels[a];
-                
+
         aiNode* targetNode = scene->mRootNode->FindNode(channel->mNodeName);
 
         // ******** Position *****
@@ -593,7 +594,7 @@ void ofxAssimpModelLoader::updateAnimation(unsigned int animationIndex, float cu
                     break;
                 frame++;
             }
-            
+
             // interpolate between this frame's value and next frame's value
             unsigned int nextFrame = (frame + 1) % channel->mNumPositionKeys;
             const aiVectorKey& key = channel->mPositionKeys[frame];
@@ -610,7 +611,7 @@ void ofxAssimpModelLoader::updateAnimation(unsigned int animationIndex, float cu
                 presentPosition = key.mValue;
             }
         }
-        
+
         // ******** Rotation *********
         aiQuaternion presentRotation( 1, 0, 0, 0);
         if( channel->mNumRotationKeys > 0)
@@ -622,7 +623,7 @@ void ofxAssimpModelLoader::updateAnimation(unsigned int animationIndex, float cu
                     break;
                 frame++;
             }
-            
+
             // interpolate between this frame's value and next frame's value
             unsigned int nextFrame = (frame + 1) % channel->mNumRotationKeys;
             const aiQuatKey& key = channel->mRotationKeys[frame];
@@ -639,7 +640,7 @@ void ofxAssimpModelLoader::updateAnimation(unsigned int animationIndex, float cu
                 presentRotation = key.mValue;
             }
         }
-        
+
         // ******** Scaling **********
         aiVector3D presentScaling( 1, 1, 1);
         if( channel->mNumScalingKeys > 0)
@@ -651,11 +652,11 @@ void ofxAssimpModelLoader::updateAnimation(unsigned int animationIndex, float cu
                     break;
                 frame++;
             }
-            
+
             // TODO: (thom) interpolation maybe? This time maybe even logarithmic, not linear
             presentScaling = channel->mScalingKeys[frame].mValue;
         }
-        
+
         // build a transformation matrix from it
         //aiMatrix4x4& mat;// = mTransforms[a];
         aiMatrix4x4 mat = aiMatrix4x4( presentRotation.GetMatrix());
@@ -664,7 +665,7 @@ void ofxAssimpModelLoader::updateAnimation(unsigned int animationIndex, float cu
         mat.a3 *= presentScaling.z; mat.b3 *= presentScaling.z; mat.c3 *= presentScaling.z;
         mat.a4 = presentPosition.x; mat.b4 = presentPosition.y; mat.c4 = presentPosition.z;
         //mat.Transpose();
-        
+
         targetNode->mTransformation = mat;
 
     }
@@ -774,18 +775,18 @@ void ofxAssimpModelLoader::drawVertices(){
 void ofxAssimpModelLoader::draw(ofPolyRenderMode renderType)
 {
     if(scene){
-        
+
         ofPushStyle();
-        
+
 #ifndef TARGET_OPENGLES
         glPushAttrib(GL_ALL_ATTRIB_BITS);
         glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
         glPolygonMode(GL_FRONT_AND_BACK, ofGetGLPolyMode(renderType));
 #endif
         glEnable(GL_NORMALIZE);
-        
+
         ofPushMatrix();
-            
+
         ofTranslate(pos);
 
         ofRotate(180, 0, 0, 1);
@@ -795,19 +796,19 @@ void ofxAssimpModelLoader::draw(ofPolyRenderMode renderType)
         {
             ofScale(normalizedScale , normalizedScale, normalizedScale);
         }
-            
+
         for(int i = 0; i < (int)rotAngle.size(); i++){
             ofRotate(rotAngle[i], rotAxis[i].x, rotAxis[i].y, rotAxis[i].z);
         }
-        
+
         ofScale(scale.x, scale.y, scale.z);
-        
+
 
         if(getAnimationCount())
         {
             updateGLResources();
         }
-        
+
 		for(int i = 0; i < (int)modelMeshes.size(); i++){
 			ofxAssimpMeshHelper & meshHelper = modelMeshes.at(i);
 
@@ -853,14 +854,14 @@ void ofxAssimpModelLoader::draw(ofPolyRenderMode renderType)
 				meshHelper.material.end();
 			}
 		}
-            
+
         ofPopMatrix();
-        
-        ofPopStyle();
+
 #ifndef TARGET_OPENGLES
         glPopClientAttrib();
         glPopAttrib();
 #endif
+        ofPopStyle();
     }
 }
 
