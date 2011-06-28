@@ -48,6 +48,23 @@ bool ofGetLightingEnabled() {
 }
 
 //----------------------------------------
+void ofSetSmoothLighting(bool b) {
+	if (b) glShadeModel(GL_SMOOTH);
+	else glShadeModel(GL_FLAT);
+}
+
+//----------------------------------------
+void ofSetGlobalAmbientColor(const ofColor& c) {
+	GLfloat cc[] = {c.r/255.f, c.g/255.f, c.b/255.f, c.a/255.f};
+	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, cc);
+}
+
+//----------------------------------------
+void ofSetGlobalAmbientColor(float r, float g, float b, float a) {
+	ofSetGlobalAmbientColor( ofColor(r, g, b, a) );
+}
+
+//----------------------------------------
 bool* getActiveLights(){
 	static bool * lightsActive = new bool[OF_MAX_LIGHTS];
 	static bool lightsActiveInited = false;
@@ -59,6 +76,7 @@ bool* getActiveLights(){
 	return lightsActive;
 }
 
+//--------------------------------------------------------------
 static map<GLuint,int> & getIds(){
 	static map<GLuint,int> * ids = new map<GLuint,int>;
 	return *ids;
@@ -67,6 +85,7 @@ static map<GLuint,int> & getIds(){
 //--------------------------------------------------------------
 static void retain(int id){
 	if(id==-1) return;
+	getActiveLights()[id] = true;
 	if(getIds().find(id)!=getIds().end()){
 		getIds()[id]++;
 	}else{
@@ -86,7 +105,7 @@ static void release(ofLight & light){
 			getIds().erase(id);
 		}
 	}else{
-		ofLog(OF_LOG_WARNING,"ofVbo: releasing id not found, this shouldn't be happening releasing anyway");
+		ofLog(OF_LOG_WARNING,"ofLight: releasing id not found, this shouldn't be happening releasing anyway");
 		lastRef=true;
 	}
 	if(lastRef){
@@ -108,26 +127,33 @@ static void release(ofLight & light){
 
 //----------------------------------------
 ofLight::ofLight(){
-	glIndex = -1;
-	isEnabled = false;
-	isDirectional = false;
+	glIndex			= -1;
+	isEnabled		= false;
+	setPointLight();
 }
 
 //----------------------------------------
 ofLight::~ofLight(){
+	destroy();
+}
+
+//----------------------------------------
+void ofLight::destroy(){
 	release(*this);
 }
 
 //----------------------------------------
 ofLight::ofLight(const ofLight & mom){
-	ambientColor = mom.ambientColor;
-	diffuseColor = mom.diffuseColor;
-	specularColor = mom.specularColor;
+	ambientColor	= mom.ambientColor;
+	diffuseColor	= mom.diffuseColor;
+	specularColor	= mom.specularColor;
 
 	glIndex = mom.glIndex;
 	retain(glIndex);
-	isEnabled = mom.isEnabled;
-	isDirectional  = mom.isDirectional;
+	isEnabled		= mom.isEnabled;
+	isDirectional	= mom.isDirectional;
+	isSpotlight		= mom.isSpotlight;
+	lightType		= mom.lightType;
 }
 
 //----------------------------------------
@@ -139,33 +165,33 @@ ofLight & ofLight::operator=(const ofLight & mom){
 
 	glIndex = mom.glIndex;
 	retain(glIndex);
-	isEnabled = mom.isEnabled;
-	isDirectional  = mom.isDirectional;
+	isEnabled		= mom.isEnabled;
+	isDirectional	= mom.isDirectional;
+	isSpotlight		= mom.isSpotlight;
+	lightType		= mom.lightType;
 	return *this;
 }
 
 //----------------------------------------
-void ofLight::setup(){
-	if(glIndex!=-1) return;
-	// search for the first free block
-	for(int i=0; i<OF_MAX_LIGHTS; i++) {
-		if(getActiveLights()[i] == false) {
-			glIndex = i;
-			retain(glIndex);
-			enable();
-			return;
+void ofLight::enable() {
+	if(glIndex==-1){
+		bool bLightFound = false;
+		// search for the first free block
+		for(int i=0; i<OF_MAX_LIGHTS; i++) {
+			if(getActiveLights()[i] == false) {
+				glIndex = i;
+				retain(glIndex);
+				bLightFound = true;
+				break;
+			}
+		}
+		if( !bLightFound ){
+			ofLog(OF_LOG_ERROR, "ofLight : Trying to create too many lights: " + ofToString(glIndex));
 		}
 	}
-
-	ofLog(OF_LOG_ERROR, "Trying to create too many lights: " + ofToString(glIndex));
-}
-
-//----------------------------------------
-void ofLight::enable() {
-	if(glIndex!=-1) {
-		ofEnableLighting();
-		glEnable(GL_LIGHT0 + glIndex);
-	}
+	
+	ofEnableLighting();
+	glEnable(GL_LIGHT0 + glIndex);
 }
 
 //----------------------------------------
@@ -186,13 +212,63 @@ bool ofLight::getIsEnabled() const {
 }
 
 //----------------------------------------
-void ofLight::setDirectional(bool b) {
-	isDirectional = b;
+void ofLight::setDirectional() {
+	isDirectional	= true;
+	isSpotlight		= false;
+	lightType		= OF_LIGHT_DIRECTIONAL;
 }
 
 //----------------------------------------
 bool ofLight::getIsDirectional() const {
 	return isDirectional;
+}
+
+//----------------------------------------
+void ofLight::setSpotlight(float spotCutOff, float exponent) {
+	isDirectional	= false;
+	isSpotlight		= true;
+	lightType		= OF_LIGHT_SPOT;
+	setSpotlightCutOff( spotCutOff );
+	setSpotConcentration( exponent );
+}
+
+//----------------------------------------
+bool ofLight::getIsSpotlight() {
+	return isSpotlight;
+}
+
+//----------------------------------------
+void ofLight::setSpotlightCutOff( float spotCutOff ) {
+	glLightf(GL_LIGHT0 + glIndex, GL_SPOT_CUTOFF, CLAMP(spotCutOff, 0, 90) );
+}
+
+//----------------------------------------
+void ofLight::setSpotConcentration( float exponent ) {
+	glLightf(GL_LIGHT0 + glIndex, GL_SPOT_EXPONENT, exponent);
+}
+
+//----------------------------------------
+void ofLight::setPointLight() {
+	isDirectional	= false;
+	isSpotlight	= false;
+	lightType	= OF_LIGHT_POINT;
+}
+
+//----------------------------------------
+bool ofLight::getIsPointLight() {
+	return (!isDirectional && !isSpotlight);
+}
+
+//----------------------------------------
+void ofLight::setAttenuation( float constant, float linear, float quadratic ) {
+	glLightf(GL_LIGHT0 + glIndex, GL_CONSTANT_ATTENUATION, constant);
+	glLightf(GL_LIGHT0 + glIndex, GL_LINEAR_ATTENUATION, linear);
+	glLightf(GL_LIGHT0 + glIndex, GL_QUADRATIC_ATTENUATION, quadratic);
+}
+
+//----------------------------------------
+int ofLight::getType() {
+	return lightType;
 }
 
 //----------------------------------------
@@ -204,6 +280,11 @@ void ofLight::setAmbientColor(const ofColor& c) {
 }
 
 //----------------------------------------
+void ofLight::setAmbientColor(float r, float g, float b, float a) {
+	setAmbientColor(ofColor(r, g, b, a));
+}
+
+//----------------------------------------
 void ofLight::setDiffuseColor(const ofColor& c) {
 	if(glIndex==-1) return;
 	diffuseColor = c/255.0f;
@@ -211,6 +292,10 @@ void ofLight::setDiffuseColor(const ofColor& c) {
 	glLightfv(GL_LIGHT0 + glIndex, GL_DIFFUSE, &diffuseColor.r);
 }
 
+//----------------------------------------
+void ofLight::setDiffuseColor(float r, float g, float b, float a) {
+	setDiffuseColor(ofColor(r, g, b, a));
+}
 
 //----------------------------------------
 void ofLight::setSpecularColor(const ofColor& c) {
@@ -221,24 +306,23 @@ void ofLight::setSpecularColor(const ofColor& c) {
 }
 
 //----------------------------------------
+void ofLight::setSpecularColor(float r, float g, float b, float a) {
+	setSpecularColor(ofColor(r, g, b, a));
+}
+
+//----------------------------------------
 ofColor ofLight::getAmbientColor() const {
-	ofColor ret = ambientColor * 255.0f;
-	ret.a*=255.f;
-	return ret;
+	return ofColor(ambientColor.r * 255.f, ambientColor.g * 255.f, ambientColor.b * 255.f, ambientColor.a * 255.f);
 }
 
 //----------------------------------------
 ofColor ofLight::getDiffuseColor() const {
-	ofColor ret = diffuseColor * 255.0f;
-	ret.a*=255.f;
-	return ret;
+	return ofColor(diffuseColor.r * 255.0f, diffuseColor.g * 255.f, diffuseColor.b * 255.f, diffuseColor.a * 255.f);
 }
 
 //----------------------------------------
 ofColor ofLight::getSpecularColor() const {
-	ofColor ret = specularColor * 255.0f;
-	ret.a*=255.f;
-	return ret;
+	return ofColor(specularColor.r * 255.f, specularColor.g * 255.f, specularColor.b * 255.f, specularColor.a * 255.f);
 }
 
 
@@ -259,5 +343,11 @@ void ofLight::onOrientationChanged() {
 	if(isDirectional == true) {
 		GLfloat cc[] = {getLookAtDir().x, getLookAtDir().y, getLookAtDir().z, 0};
 		glLightfv(GL_LIGHT0 + glIndex, GL_POSITION, cc);
+	} else {
+		if(isSpotlight) {
+			// determines the axis of the cone light //
+			GLfloat spot_direction[] = { getLookAtDir().x, getLookAtDir().y, getLookAtDir().z, 1.0 };
+			glLightfv(GL_LIGHT0 + glIndex, GL_SPOT_DIRECTION, spot_direction);
+		}
 	}
 }

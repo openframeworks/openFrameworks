@@ -80,12 +80,20 @@ public:
 };
 
 //----------------------------------------------------------
+// ofAbstractHasPixels
+//----------------------------------------------------------
+class ofAbstractHasPixels{
+public:
+	virtual ~ofAbstractHasPixels(){}
+};
+
+//----------------------------------------------------------
 // ofBaseHasPixels
 //----------------------------------------------------------
 template<typename T>
-class ofBaseHasPixels_{
+class ofBaseHasPixels_: public ofAbstractHasPixels{
 public:
-	virtual ~ofBaseHasPixels_(){}
+	virtual ~ofBaseHasPixels_<T>(){}
 	virtual T * getPixels()=0;
 	virtual ofPixels_<T> & getPixelsRef()=0;
 };
@@ -94,12 +102,20 @@ typedef ofBaseHasPixels_<unsigned char> ofBaseHasPixels;
 typedef ofBaseHasPixels_<float> ofBaseHasFloatPixels;
 
 //----------------------------------------------------------
+// ofAbstractImage    ->   to be able to put different types of images in vectors...
+//----------------------------------------------------------
+class ofAbstractImage: public ofBaseDraws, public ofBaseHasTexture{
+public:
+	virtual ~ofAbstractImage(){}
+};
+
+//----------------------------------------------------------
 // ofBaseImage
 //----------------------------------------------------------
 template<typename T>
-class ofBaseImage_: public ofBaseDraws, public ofBaseHasTexture, public ofBaseHasPixels_<T>{
+class ofBaseImage_: public ofAbstractImage, public ofBaseHasPixels_<T>{
 public:
-	
+	virtual ~ofBaseImage_<T>(){};
 };
 
 typedef ofBaseImage_<unsigned char> ofBaseImage;
@@ -156,20 +172,20 @@ public:
 };
 
 
-// common base for ofVideoGrabber and ofVideoPlayer
+//----------------------------------------------------------
+// ofBaseVideoDraws
+//----------------------------------------------------------
 class ofBaseVideoDraws: virtual public ofBaseVideo, public ofBaseDraws, public ofBaseHasTexture{
-
+public:
+	virtual ~ofBaseVideoDraws(){}
 };
-
 
 //----------------------------------------------------------
 // ofBaseVideoGrabber
 //----------------------------------------------------------
-class ofBaseVideoGrabber: public ofBaseVideo{
+class ofBaseVideoGrabber: virtual public ofBaseVideo{
 	
 	public :
-	
-	ofBaseVideoGrabber();
 	virtual ~ofBaseVideoGrabber();
 	
 	//needs implementing
@@ -199,11 +215,9 @@ class ofBaseVideoGrabber: public ofBaseVideo{
 //----------------------------------------------------------
 // ofBaseVideoPlayer
 //----------------------------------------------------------
-class ofBaseVideoPlayer: public ofBaseVideo{
+class ofBaseVideoPlayer: virtual public ofBaseVideo{
 	
 public:
-	
-	ofBaseVideoPlayer();
 	virtual ~ofBaseVideoPlayer();
 	
 	//needs implementing

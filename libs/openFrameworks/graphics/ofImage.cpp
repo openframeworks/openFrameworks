@@ -100,49 +100,69 @@ FREE_IMAGE_TYPE getFreeImageType(ofFloatPixels& pix) {
 }
 
 //----------------------------------------------------
-template<typename T>
-FIBITMAP* getBmpFromPixels(ofPixels_<T> &pix){	
-	unsigned char* pixels = (unsigned char*) pix.getPixels();
-	int w = pix.getWidth();
-	int h = pix.getHeight();
+template<typename PixelType>
+FIBITMAP* getBmpFromPixels(ofPixels_<PixelType> &pix){
+	PixelType* pixels = pix.getPixels();
+	unsigned int width = pix.getWidth();
+	unsigned int height = pix.getHeight();
 	unsigned int bpp = pix.getBitsPerPixel();
 	
 	FREE_IMAGE_TYPE freeImageType = getFreeImageType(pix);
-	FIBITMAP* bmp = FreeImage_AllocateT(freeImageType, w, h, bpp);
+	FIBITMAP* bmp = FreeImage_AllocateT(freeImageType, width, height, bpp);
 	unsigned char* bmpBits = FreeImage_GetBits(bmp);
 	if(bmpBits != NULL) {
-		memcpy(bmpBits, pixels, w * h * pix.getBytesPerPixel());
-		FreeImage_FlipVertical(bmp);
+		int srcStride = width * pix.getBytesPerPixel();
+		int dstStride = FreeImage_GetPitch(bmp);
+		unsigned char* src = (unsigned char*) pixels;
+		unsigned char* dst = bmpBits;
+		for(int i = 0; i < (int)height; i++) {
+			memcpy(dst, src, dstStride);
+			src += srcStride;
+			dst += dstStride;
+		}
+	} else {
+		ofLogError() << "ofImage::getBmpFromPixels() unable to get FIBITMAP from ofPixels";
 	}
 	
-	// {afaict, this paletting code isn't necessary anymore - kyle, may 2011}
-	// this is for grayscale images they need to be paletted from: http://sourceforge.net/forum/message.php?msg_id=2856879
-	if(pix.getImageType() == OF_IMAGE_GRAYSCALE && pix.getBitsPerChannel() <= 8){
-		RGBQUAD *pal = FreeImage_GetPalette(bmp);
-		for(unsigned int i = 0; i < 256; i++) {
-			pal[i].rgbRed = i;
-			pal[i].rgbGreen = i;
-			pal[i].rgbBlue = i;
-		}
-	}
+	// ofPixels are top left, FIBITMAP is bottom left
+	FreeImage_FlipVertical(bmp);
 	
 	return bmp;
 }
 
 //----------------------------------------------------
-template<typename T>
-void putBmpIntoPixels(FIBITMAP * bmp, ofPixels_<T> &pix, bool swapForLittleEndian = true){
+template<typename PixelType>
+void putBmpIntoPixels(FIBITMAP * bmp, ofPixels_<PixelType> &pix, bool swapForLittleEndian = true) {
+	// some images use a palette, or <8 bpp, so convert them to raster 8-bit channels
+	FIBITMAP* bmpConverted = NULL;
+	if(FreeImage_GetColorType(bmp) == FIC_PALETTE || FreeImage_GetBPP(bmp) < 8) {
+		if(FreeImage_IsTransparent(bmp)) {
+			bmpConverted = FreeImage_ConvertTo32Bits(bmp);
+		} else {
+			bmpConverted = FreeImage_ConvertTo24Bits(bmp);
+		}
+		bmp = bmpConverted;
+	}
+
 	unsigned int width = FreeImage_GetWidth(bmp);
 	unsigned int height = FreeImage_GetHeight(bmp);
 	unsigned int bpp = FreeImage_GetBPP(bmp);
-	unsigned int channels = (bpp / sizeof(T)) / 8;
-	unsigned int pitch = (width * bpp) / 8;
+	unsigned int channels = (bpp / sizeof(PixelType)) / 8;
+	unsigned int pitch = FreeImage_GetPitch(bmp);
 	
-	//BITMAPINFOHEADER* header = FreeImage_GetInfoHeader(bmp);
-	//ofLogVerbose() << "putBmpIntoPixels(" << bpp << " / " << channels << ") is " << header->biSize << ", " << header->biPlanes << ", " << header->biBitCount << ", " << header->biCompression << ", " << header->biSizeImage;
-
-	pix.allocate(width, height, channels);
-	FreeImage_ConvertToRawBits((uint8_t*) pix.getPixels(), bmp, pitch, bpp, FI_RGBA_RED_MASK, FI_RGBA_GREEN_MASK, FI_RGBA_BLUE_MASK, true);
+	// ofPixels are top left, FIBITMAP is bottom left
+	FreeImage_FlipVertical(bmp);
+	
+	unsigned char* bmpBits = FreeImage_GetBits(bmp);
+	if(bmpBits != NULL) {
+		pix.setFromAlignedPixels((PixelType*) bmpBits, width, height, channels, pitch);
+	} else {
+		ofLogError() << "ofImage::putBmpIntoPixels() unable to set ofPixels from FIBITMAP";
+	}
+	
+	if(bmpConverted != NULL) {
+		FreeImage_Unload(bmpConverted);
+	}
 
 #ifdef TARGET_LITTLE_ENDIAN
 	if(swapForLittleEndian) {
@@ -151,62 +171,17 @@ void putBmpIntoPixels(FIBITMAP * bmp, ofPixels_<T> &pix, bool swapForLittleEndia
 #endif
 }
 
-//----------------------------------------------------
-template<>
-void putBmpIntoPixels(FIBITMAP * bmp, ofPixels &pix, bool swapForLittleEndian){
-	int width			= FreeImage_GetWidth(bmp);
-	int height			= FreeImage_GetHeight(bmp);
-	int bpp				= FreeImage_GetBPP(bmp);
-
-	FIBITMAP * bmpTemp = NULL;
-
-	switch (bpp){
-		case 8:
-			if (FreeImage_GetColorType(bmp) == FIC_PALETTE) {
-				bmpTemp = FreeImage_ConvertTo24Bits(bmp);
-				bmp = bmpTemp;
-				bpp = FreeImage_GetBPP(bmp);
-			} else {
-			// do nothing we are grayscale
-			}
-		break;
-		case 24:
-			// do nothing we are color
-		break;
-		case 32:
-			// do nothing we are colorAlpha
-		break;
-		default:
-			bmpTemp = FreeImage_ConvertTo24Bits(bmp);
-			bmp = bmpTemp;
-			bpp = FreeImage_GetBPP(bmp);
-		break;
-	}
-
-	int channels	= bpp / 8;
-	pix.allocate(width, height, channels);
-	FreeImage_ConvertToRawBits(pix.getPixels(), bmp, width*channels, bpp, FI_RGBA_RED_MASK, FI_RGBA_GREEN_MASK, FI_RGBA_BLUE_MASK, true);  // get bits
-
-	if (bmpTemp != NULL) FreeImage_Unload(bmpTemp);
-
-	#ifdef TARGET_LITTLE_ENDIAN
-		if(swapForLittleEndian)
-			pix.swapRgb();
-	#endif
-}
-
-template<typename T>
-static bool loadImage(ofPixels_<T> & pix, string fileName){
+template<typename PixelType>
+static bool loadImage(ofPixels_<PixelType> & pix, string fileName){
 	ofInitFreeImage();
 	if(fileName.substr(0, 7) == "http://") {
 		return ofLoadImage(pix, ofLoadURL(fileName).data);
 	}
 	
-	int					width, height, bpp;
-	fileName			= ofToDataPath(fileName);
-	bool bLoaded		= false;
-	FIBITMAP 			* bmp = NULL;
-
+	int width, height, bpp;
+	fileName = ofToDataPath(fileName);
+	bool bLoaded = false;
+	FIBITMAP * bmp = NULL;
 
 	FREE_IMAGE_FORMAT fif = FIF_UNKNOWN;
 	fif = FreeImage_GetFileType(fileName.c_str(), 0);
@@ -215,12 +190,13 @@ static bool loadImage(ofPixels_<T> & pix, string fileName){
 		fif = FreeImage_GetFIFFromFilename(fileName.c_str());
 	}
 	if((fif != FIF_UNKNOWN) && FreeImage_FIFSupportsReading(fif)) {
-		bmp					= FreeImage_Load(fif, fileName.c_str(), 0);
+		bmp = FreeImage_Load(fif, fileName.c_str(), 0);
 
-		if (bmp){
+		if (bmp != NULL){
 			bLoaded = true;
 		}
 	}
+	
 	//-----------------------------
 
 	if ( bLoaded ){
@@ -236,15 +212,15 @@ static bool loadImage(ofPixels_<T> & pix, string fileName){
 	return bLoaded;
 }
 
-template<typename T>
-static bool loadImage(ofPixels_<T> & pix, const ofBuffer & buffer){
+template<typename PixelType>
+static bool loadImage(ofPixels_<PixelType> & pix, const ofBuffer & buffer){
 	ofInitFreeImage();
-	int					width, height, bpp;
-	bool bLoaded		= false;
-	FIBITMAP * bmp		= NULL;
-	FIMEMORY *hmem		= NULL;
+	int width, height, bpp;
+	bool bLoaded = false;
+	FIBITMAP* bmp = NULL;
+	FIMEMORY* hmem = NULL;
 	
-	hmem = FreeImage_OpenMemory((unsigned char*)buffer.getBinaryBuffer(), buffer.size());
+	hmem = FreeImage_OpenMemory((unsigned char*) buffer.getBinaryBuffer(), buffer.size());
 	if (hmem == NULL){
 		ofLog(OF_LOG_ERROR, "couldn't create memory handle!");
 		return false;
@@ -264,11 +240,10 @@ static bool loadImage(ofPixels_<T> & pix, const ofBuffer & buffer){
 	
 	if( bmp != NULL ){
 		bLoaded = true;
-		ofLog(OF_LOG_VERBOSE, "FreeImage_LoadFromMemory worked!");
 	}
 	
 	//-----------------------------
-
+	
 	if (bLoaded){
 		putBmpIntoPixels(bmp,pix);
 	} else {
@@ -341,8 +316,8 @@ bool ofLoadImage(ofTexture & tex, const ofBuffer & buffer){
 }
 
 //----------------------------------------------------------------
-template<typename T>
-static void saveImage(ofPixels_<T> & pix, string fileName, ofImageQualityType qualityLevel) {
+template<typename PixelType>
+static void saveImage(ofPixels_<PixelType> & pix, string fileName, ofImageQualityType qualityLevel) {
 	ofInitFreeImage();
 	if (pix.isAllocated() == false){
 		ofLog(OF_LOG_ERROR,"error saving image - pixels aren't allocated");
@@ -379,10 +354,25 @@ static void saveImage(ofPixels_<T> & pix, string fileName, ofImageQualityType qu
 			FreeImage_Save(fif, bmp, fileName.c_str(), quality);
 		} else {
 			if(qualityLevel != OF_IMAGE_QUALITY_BEST) {
-				ofLog(OF_LOG_WARNING, "ofImageCompressionType only applies to JPEG images, ignoring value.");
+				ofLogWarning() << "ofImageCompressionType only applies to JPEG images, ignoring value";
 			}
-			if (fif==FIF_GIF) bmp = FreeImage_ConvertTo8Bits(bmp);
-			FreeImage_Save(fif, bmp, fileName.c_str());
+			
+			if (fif == FIF_GIF) {
+				FIBITMAP* convertedBmp;
+				if(pix.getImageType() == OF_IMAGE_COLOR_ALPHA) {
+					// this just converts the image to grayscale so it can save something
+					convertedBmp = FreeImage_ConvertTo8Bits(bmp);
+				} else {
+					// this will create a 256-color palette from the image
+					convertedBmp = FreeImage_ColorQuantize(bmp, FIQ_NNQUANT);
+				}
+				FreeImage_Save(fif, convertedBmp, fileName.c_str());
+				if (convertedBmp != NULL){
+					FreeImage_Unload(convertedBmp);
+				}
+			} else {
+				FreeImage_Save(fif, bmp, fileName.c_str());
+			}
 		}
 	}
 
@@ -426,8 +416,8 @@ void ofCloseFreeImage(){
 //  implementation
 
 //----------------------------------------------------------
-template<typename T>
-ofImage_<T>::ofImage_(){
+template<typename PixelType>
+ofImage_<PixelType>::ofImage_(){
 
 	width						= 0;
 	height						= 0;
@@ -444,8 +434,8 @@ ofImage_<T>::ofImage_(){
 }
 
 //----------------------------------------------------------
-template<typename T>
-ofImage_<T>::ofImage_(const ofPixels_<T> & pix){
+template<typename PixelType>
+ofImage_<PixelType>::ofImage_(const ofPixels_<PixelType> & pix){
 	width						= 0;
 	height						= 0;
 	bpp							= 0;
@@ -462,8 +452,8 @@ ofImage_<T>::ofImage_(const ofPixels_<T> & pix){
 	setFromPixels(pix);
 }
 
-template<typename T>
-ofImage_<T>::ofImage_(const ofFile & file){
+template<typename PixelType>
+ofImage_<PixelType>::ofImage_(const ofFile & file){
 	width						= 0;
 	height						= 0;
 	bpp							= 0;
@@ -480,8 +470,8 @@ ofImage_<T>::ofImage_(const ofFile & file){
 	loadImage(file);
 }
 
-template<typename T>
-ofImage_<T>::ofImage_(const string & filename){
+template<typename PixelType>
+ofImage_<PixelType>::ofImage_(const string & filename){
 	width						= 0;
 	height						= 0;
 	bpp							= 0;
@@ -499,8 +489,8 @@ ofImage_<T>::ofImage_(const string & filename){
 }
 
 //----------------------------------------------------------
-template<typename T>
-ofImage_<T>& ofImage_<T>::operator=(const ofImage_<T>& mom) {
+template<typename PixelType>
+ofImage_<PixelType>& ofImage_<PixelType>::operator=(const ofImage_<PixelType>& mom) {
 	if(&mom==this) return *this;
 	clone(mom);
 	update();
@@ -508,16 +498,16 @@ ofImage_<T>& ofImage_<T>::operator=(const ofImage_<T>& mom) {
 }
 
 //----------------------------------------------------------
-template<typename T>
-ofImage_<T>::ofImage_(const ofImage_<T>& mom) {
+template<typename PixelType>
+ofImage_<PixelType>::ofImage_(const ofImage_<PixelType>& mom) {
 	clear();
 	clone(mom);
 	update();
 }
 
 //----------------------------------------------------------
-template<typename T>
-ofImage_<T>::~ofImage_(){
+template<typename PixelType>
+ofImage_<PixelType>::~ofImage_(){
 	clear();
 
 #ifdef TARGET_ANDROID
@@ -527,8 +517,8 @@ ofImage_<T>::~ofImage_(){
 
 
 //----------------------------------------------------------
-template<typename T>
-void ofImage_<T>::reloadTexture(){
+template<typename PixelType>
+void ofImage_<PixelType>::reloadTexture(){
 	if (pixels.isAllocated() == true && bUseTexture == true){
 		tex.allocate(pixels.getWidth(), pixels.getHeight(), ofGetGlInternalFormat(pixels));
 		tex.loadData(pixels.getPixels(), pixels.getWidth(), pixels.getHeight(), ofGetGlInternalFormat(pixels));
@@ -536,14 +526,14 @@ void ofImage_<T>::reloadTexture(){
 }
 
 //----------------------------------------------------------
-template<typename T>
-bool ofImage_<T>::loadImage(const ofFile & file){
+template<typename PixelType>
+bool ofImage_<PixelType>::loadImage(const ofFile & file){
 	return loadImage(file.getAbsolutePath());
 }
 
 //----------------------------------------------------------
-template<typename T>
-bool ofImage_<T>::loadImage(string fileName){
+template<typename PixelType>
+bool ofImage_<PixelType>::loadImage(string fileName){
 	bool bLoadedOk = false;
 	bLoadedOk = ofLoadImage(pixels, fileName);
 	if (bLoadedOk && pixels.isAllocated() && bUseTexture){
@@ -556,8 +546,8 @@ bool ofImage_<T>::loadImage(string fileName){
 	return bLoadedOk;
 }
 
-template<typename T>
-bool ofImage_<T>::loadImage(const ofBuffer & buffer){
+template<typename PixelType>
+bool ofImage_<PixelType>::loadImage(const ofBuffer & buffer){
 	bool bLoadedOk = false;
 	bLoadedOk = ofLoadImage(pixels, buffer);
 	if (bLoadedOk && pixels.isAllocated() && bUseTexture){
@@ -571,20 +561,20 @@ bool ofImage_<T>::loadImage(const ofBuffer & buffer){
 }
 
 //----------------------------------------------------------
-template<typename T>
-void ofImage_<T>::saveImage(string fileName, ofImageQualityType qualityLevel){
+template<typename PixelType>
+void ofImage_<PixelType>::saveImage(string fileName, ofImageQualityType qualityLevel){
 	ofSaveImage(pixels, fileName, qualityLevel);
 }
 
 //----------------------------------------------------------
-template<typename T>
-void ofImage_<T>::saveImage(ofBuffer & buffer, ofImageQualityType qualityLevel){
+template<typename PixelType>
+void ofImage_<PixelType>::saveImage(ofBuffer & buffer, ofImageQualityType qualityLevel){
 	ofSaveImage(pixels, buffer, qualityLevel);
 }
 
 //----------------------------------------------------------
-template<typename T>
-void ofImage_<T>::saveImage(const ofFile & file, ofImageQualityType compressionLevel){
+template<typename PixelType>
+void ofImage_<PixelType>::saveImage(const ofFile & file, ofImageQualityType compressionLevel){
 	ofSaveImage(pixels,file.getAbsolutePath(),compressionLevel);
 }
 
@@ -592,68 +582,68 @@ void ofImage_<T>::saveImage(const ofFile & file, ofImageQualityType compressionL
 //to be able to set anchor points outside the image
 
 //----------------------------------------------------------
-template<typename T>
-void ofImage_<T>::setAnchorPercent(float xPct, float yPct){
+template<typename PixelType>
+void ofImage_<PixelType>::setAnchorPercent(float xPct, float yPct){
     if (bUseTexture)tex.setAnchorPercent(xPct, yPct);
 }
 
 //----------------------------------------------------------
-template<typename T>
-void ofImage_<T>::setAnchorPoint(float x, float y){
+template<typename PixelType>
+void ofImage_<PixelType>::setAnchorPoint(float x, float y){
     if (bUseTexture)tex.setAnchorPoint(x, y);
 }
 
 //----------------------------------------------------------
-template<typename T>
-void ofImage_<T>::resetAnchor(){
+template<typename PixelType>
+void ofImage_<PixelType>::resetAnchor(){
    	if (bUseTexture)tex.resetAnchor();
 }
 
 //------------------------------------
-template<typename T>
-void ofImage_<T>::draw(const ofRectangle & _r){
+template<typename PixelType>
+void ofImage_<PixelType>::draw(const ofRectangle & _r){
 	ofGetDefaultRenderer()->draw(*this,_r.x,_r.y,0,_r.width,_r.height);
 }
 
 //------------------------------------
-template<typename T>
-void ofImage_<T>::draw(const ofPoint & _p, float _w, float _h){
+template<typename PixelType>
+void ofImage_<PixelType>::draw(const ofPoint & _p, float _w, float _h){
 	ofGetDefaultRenderer()->draw(*this,_p.x,_p.y,_p.z,_w,_h);
 }
 
 //------------------------------------
-template<typename T>
-void ofImage_<T>::draw(float _x, float _y, float _w, float _h){
+template<typename PixelType>
+void ofImage_<PixelType>::draw(float _x, float _y, float _w, float _h){
 	ofGetDefaultRenderer()->draw(*this,_x,_y,0,_w,_h);
 }
 
 //------------------------------------
-template<typename T>
-void ofImage_<T>::draw(float _x, float _y, float _z, float _w, float _h){
+template<typename PixelType>
+void ofImage_<PixelType>::draw(float _x, float _y, float _z, float _w, float _h){
 	ofGetDefaultRenderer()->draw(*this,_x,_y,_z,_w,_h);
 }
 
 //------------------------------------
-template<typename T>
-void ofImage_<T>::draw(const ofPoint & p){
+template<typename PixelType>
+void ofImage_<PixelType>::draw(const ofPoint & p){
 	draw(p.x,p.y,p.z,pixels.getWidth(),pixels.getHeight());
 }
 
 //------------------------------------
-template<typename T>
-void ofImage_<T>::draw(float x, float y){
+template<typename PixelType>
+void ofImage_<PixelType>::draw(float x, float y){
 	draw(x,y,0.0f,pixels.getWidth(),pixels.getHeight());
 }
 
 //------------------------------------
-template<typename T>
-void ofImage_<T>::draw(float x, float y, float z){
+template<typename PixelType>
+void ofImage_<PixelType>::draw(float x, float y, float z){
 	draw(x,y,z,pixels.getWidth(),pixels.getHeight());
 }
 
 //------------------------------------
-template<typename T>
-void ofImage_<T>::allocate(int w, int h, ofImageType type){
+template<typename PixelType>
+void ofImage_<PixelType>::allocate(int w, int h, ofImageType type){
 
 	pixels.allocate(w, h, type);
 
@@ -667,8 +657,8 @@ void ofImage_<T>::allocate(int w, int h, ofImageType type){
 
 
 //------------------------------------
-template<typename T>
-void ofImage_<T>::clear(){
+template<typename PixelType>
+void ofImage_<PixelType>::clear(){
 
 	pixels.clear();
 	if(bUseTexture)	tex.clear();
@@ -681,27 +671,27 @@ void ofImage_<T>::clear(){
 }
 
 //------------------------------------
-template<typename T>
-T * ofImage_<T>::getPixels(){
+template<typename PixelType>
+PixelType * ofImage_<PixelType>::getPixels(){
 	return pixels.getPixels();
 }
 
 //----------------------------------------------------------
-template<typename T>
-ofPixels_<T> & ofImage_<T>::getPixelsRef(){
+template<typename PixelType>
+ofPixels_<PixelType> & ofImage_<PixelType>::getPixelsRef(){
 	return pixels;
 }
 
 //----------------------------------------------------------
-template<typename T>
-ofImage_<T>::operator ofPixels_<T>&(){
+template<typename PixelType>
+ofImage_<PixelType>::operator ofPixels_<PixelType>&(){
 	return pixels;
 }
 
 //------------------------------------
 //for getting a reference to the texture
-template<typename T>
-ofTexture & ofImage_<T>::getTextureReference(){
+template<typename PixelType>
+ofTexture & ofImage_<PixelType>::getTextureReference(){
 /*
 	// it should be the responsibility of anything using getTextureReference()
 	// to check that it's allocated
@@ -713,34 +703,34 @@ ofTexture & ofImage_<T>::getTextureReference(){
 }
 
 //----------------------------------------------------------
-template<typename T>
-void ofImage_<T>::bind(){
+template<typename PixelType>
+void ofImage_<PixelType>::bind(){
 	if (bUseTexture && tex.bAllocated())
 		tex.bind();
 }
 
 //----------------------------------------------------------
-template<typename T>
-void ofImage_<T>::unbind(){
+template<typename PixelType>
+void ofImage_<PixelType>::unbind(){
 	if (bUseTexture && tex.bAllocated())
 		tex.unbind();
 }
 
 //------------------------------------
-template<typename T>
-ofColor ofImage_<T>::getColor(int x, int y) const {
+template<typename PixelType>
+ofColor ofImage_<PixelType>::getColor(int x, int y) const {
 	return pixels.getColor(x, y);
 }
 
 //------------------------------------
-template<typename T>
-void ofImage_<T>::setColor(int x, int y, ofColor color) {
+template<typename PixelType>
+void ofImage_<PixelType>::setColor(int x, int y, ofColor color) {
 	pixels.setColor(x, y, color);
 }
 
 //------------------------------------
-template<typename T>
-void  ofImage_<T>::setFromPixels(const T * newPixels, int w, int h, ofImageType newType, bool bOrderIsRGB){
+template<typename PixelType>
+void  ofImage_<PixelType>::setFromPixels(const PixelType * newPixels, int w, int h, ofImageType newType, bool bOrderIsRGB){
 
 	allocate(w, h, newType);
 	pixels.setFromPixels(newPixels,w,h,newType);
@@ -753,21 +743,21 @@ void  ofImage_<T>::setFromPixels(const T * newPixels, int w, int h, ofImageType 
 }
 
 //------------------------------------
-template<typename T>
-void ofImage_<T>::setFromPixels(const ofPixels_<T> & pixels){
+template<typename PixelType>
+void ofImage_<PixelType>::setFromPixels(const ofPixels_<PixelType> & pixels){
 	setFromPixels(pixels.getPixels(),pixels.getWidth(),pixels.getHeight(),pixels.getImageType());
 }
 
 //------------------------------------
-template<typename T>
-ofImage_<T> & ofImage_<T>::operator=(ofPixels_<T> & pixels){
+template<typename PixelType>
+ofImage_<PixelType> & ofImage_<PixelType>::operator=(ofPixels_<PixelType> & pixels){
 	setFromPixels(pixels);
 	return *this;
 }
 
 //------------------------------------
-template<typename T>
-void ofImage_<T>::update(){
+template<typename PixelType>
+void ofImage_<PixelType>::update(){
 
 	if (pixels.isAllocated() == true && bUseTexture == true){
 		tex.loadData(pixels.getPixels(), pixels.getWidth(), pixels.getHeight(), ofGetGlInternalFormat(pixels));
@@ -780,20 +770,20 @@ void ofImage_<T>::update(){
 }
 
 //------------------------------------
-template<typename T>
-void ofImage_<T>::setUseTexture(bool bUse){
+template<typename PixelType>
+void ofImage_<PixelType>::setUseTexture(bool bUse){
 	bUseTexture = bUse;
 }
 
 //------------------------------------
-template<typename T>
-bool ofImage_<T>::isUsingTexture(){
+template<typename PixelType>
+bool ofImage_<PixelType>::isUsingTexture(){
 	return bUseTexture;
 }
 
 //------------------------------------
-template<typename T>
-void ofImage_<T>::grabScreen(int _x, int _y, int _w, int _h){
+template<typename PixelType>
+void ofImage_<PixelType>::grabScreen(int _x, int _y, int _w, int _h){
 
 	allocate(_w, _h, OF_IMAGE_COLOR);
 
@@ -815,9 +805,9 @@ void ofImage_<T>::grabScreen(int _x, int _y, int _w, int _h){
 	#endif
 
 	int sizeOfOneLineOfPixels = pixels.getWidth() * pixels.getBytesPerPixel();
-	T * tempLineOfPix = new T[sizeOfOneLineOfPixels];
-	T * linea;
-	T * lineb;
+	PixelType * tempLineOfPix = new PixelType[sizeOfOneLineOfPixels];
+	PixelType * linea;
+	PixelType * lineb;
 	for (int i = 0; i < pixels.getHeight()/2; i++){
 		linea = pixels.getPixels() + i * sizeOfOneLineOfPixels;
 		lineb = pixels.getPixels() + (pixels.getHeight()-i-1) * sizeOfOneLineOfPixels;
@@ -830,16 +820,16 @@ void ofImage_<T>::grabScreen(int _x, int _y, int _w, int _h){
 }
 
 //------------------------------------
-template<typename T>
-void ofImage_<T>::setImageType(ofImageType newType){
+template<typename PixelType>
+void ofImage_<PixelType>::setImageType(ofImageType newType){
 	changeTypeOfPixels(pixels, newType);
 	tex.allocate(width, height, ofGetGlInternalFormat(*this));
 	update();
 }
 
 //------------------------------------
-template<typename T>
-void ofImage_<T>::resize(int newWidth, int newHeight){
+template<typename PixelType>
+void ofImage_<PixelType>::resize(int newWidth, int newHeight){
 	if(newWidth == width && newHeight == height) return;
 
 	resizePixels(pixels, newWidth, newHeight);
@@ -854,15 +844,15 @@ void ofImage_<T>::resize(int newWidth, int newHeight){
 
 
 //------------------------------------
-template<typename T>
-void ofImage_<T>::crop(int x, int y, int w, int h){
+template<typename PixelType>
+void ofImage_<PixelType>::crop(int x, int y, int w, int h){
 	ofPixelUtils::crop(pixels, x,y,w,h);
 	update();
 }
 
 //------------------------------------
-template<typename T>
-void ofImage_<T>::cropFrom(ofImage_<T> & otherImage, int x, int y, int w, int h){
+template<typename PixelType>
+void ofImage_<PixelType>::cropFrom(ofImage_<PixelType> & otherImage, int x, int y, int w, int h){
 
 	int myOldWidth = pixels.getWidth();
 	int myOldHeight = pixels.getHeight();
@@ -880,8 +870,8 @@ void ofImage_<T>::cropFrom(ofImage_<T> & otherImage, int x, int y, int w, int h)
 }
 
 //------------------------------------
-template<typename T>
-void ofImage_<T>::rotate90(int nRotations){
+template<typename PixelType>
+void ofImage_<PixelType>::rotate90(int nRotations){
 	int myOldWidth = pixels.getWidth();
 	int myOldHeight = pixels.getHeight();
 	ofPixelUtils::rotate90(pixels, nRotations);
@@ -895,8 +885,8 @@ void ofImage_<T>::rotate90(int nRotations){
 }
 
 //------------------------------------
-template<typename T>
-void ofImage_<T>::mirror(bool vertical, bool horizontal){
+template<typename PixelType>
+void ofImage_<PixelType>::mirror(bool vertical, bool horizontal){
 	ofPixelUtils::mirror(pixels, vertical, horizontal);
 	update();
 }
@@ -913,8 +903,8 @@ void ofImage_<T>::mirror(bool vertical, bool horizontal){
 
 
 //----------------------------------------------------
-template<typename T>
-void ofImage_<T>::resizePixels(ofPixels_<T> &pix, int newWidth, int newHeight){
+template<typename PixelType>
+void ofImage_<PixelType>::resizePixels(ofPixels_<PixelType> &pix, int newWidth, int newHeight){
 
 	FIBITMAP * bmp					= getBmpFromPixels(pix);
 	FIBITMAP * convertedBmp			= NULL;
@@ -927,73 +917,62 @@ void ofImage_<T>::resizePixels(ofPixels_<T> &pix, int newWidth, int newHeight){
 }
 
 //----------------------------------------------------
-template<typename T>
-void ofImage_<T>::changeTypeOfPixels(ofPixels_<T> &pix, ofImageType newType){
-	if (pix.getImageType() == newType) return;
-
-	FIBITMAP * bmp					= getBmpFromPixels(pix);
-	FIBITMAP * convertedBmp			= NULL;
-
-	// check if we need to reallocate the texture.
-	bool bNeedNewTexture = false;
+template<typename PixelType>
+void ofImage_<PixelType>::changeTypeOfPixels(ofPixels_<PixelType> &pix, ofImageType newType){
 	int oldType = pix.getImageType();
-	if (newType > oldType){
-		bNeedNewTexture = true;
+		
+	if (oldType == newType) {
+		return; // no need to reallocate
 	}
 
-	// new type !
-	switch (newType){
+	FIBITMAP * bmp = getBmpFromPixels(pix);
+	FIBITMAP * convertedBmp = NULL;
 
-		//------------------------------------
+	switch (newType){
 		case OF_IMAGE_GRAYSCALE:
 			convertedBmp = FreeImage_ConvertToGreyscale(bmp);
 			break;
-
-		//------------------------------------
 		case OF_IMAGE_COLOR:
 			convertedBmp = FreeImage_ConvertTo24Bits(bmp);
-			if (bNeedNewTexture){
-				tex.clear();
-				tex.allocate(pixels.getWidth(), pixels.getHeight(), GL_RGB);
-			}
 			break;
-
-		//------------------------------------
 		case OF_IMAGE_COLOR_ALPHA:
 			convertedBmp = FreeImage_ConvertTo32Bits(bmp);
-			if (bNeedNewTexture){
-				tex.clear();
-				tex.allocate(pixels.getWidth(), pixels.getHeight(), GL_RGBA);
-			}
 			break;
 		default:
-			ofLog(OF_LOG_ERROR,"ofImage: format not supported");
+			ofLog(OF_LOG_ERROR, "changeTypeOfPixels: format not supported");
 	}
-
+	
 	putBmpIntoPixels(convertedBmp, pix, false);
 
-	if (bmp != NULL)				FreeImage_Unload(bmp);
-	if (convertedBmp != NULL)		FreeImage_Unload(convertedBmp);
+	if (bmp != NULL) {
+		FreeImage_Unload(bmp);
+	}
+	if (convertedBmp != NULL) {
+		FreeImage_Unload(convertedBmp);
+	}
 
+	// always reallocate the texture. if ofTexture doesn't need reallocation,
+	// it doesn't have to. but it needs to change the internal format.
+	tex.allocate(pixels.getWidth(), pixels.getHeight(), ofGetGlInternalFormat(pixels));
 }
 
 //----------------------------------------------------------
-template<typename T>
-float ofImage_<T>::getHeight(){
+template<typename PixelType>
+float ofImage_<PixelType>::getHeight(){
 	return height;
 }
 
 //----------------------------------------------------------
-template<typename T>
-float ofImage_<T>::getWidth(){
+template<typename PixelType>
+float ofImage_<PixelType>::getWidth(){
 	return width;
 }
 
 //----------------------------------------------------------
 // Sosolimited: texture compression
 // call this function before you call loadImage()
-template<typename T>
-void ofImage_<T>::setCompression(ofTexCompression compression)
+template<typename PixelType>
+void ofImage_<PixelType>::setCompression(ofTexCompression compression)
 {
 	tex.setCompression( compression );
 }

@@ -69,4 +69,5 @@
 #include "ofMesh.h"
 #include "ofEasyCam.h"
 #include "ofLight.h"
+#include "ofVboMesh.h"
 

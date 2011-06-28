@@ -58,6 +58,21 @@ int ofURLFileLoader::getAsync(string url, string name){
 	return request.getID();
 }
 
+
+ofHttpResponse ofURLFileLoader::saveTo(string url, string path){
+    ofHttpRequest request(url,path,true);
+    return handleRequest(request);
+}
+
+int ofURLFileLoader::saveAsync(string url, string path){
+	ofHttpRequest request(url,path,true);
+	lock();
+	requests.push_back(request);
+	unlock();
+	start();
+	return request.getID();
+}
+
 void ofURLFileLoader::remove(int id){
 	lock();
 	for(int i=0;i<(int)requests.size();i++){
@@ -130,7 +145,25 @@ ofHttpResponse ofURLFileLoader::handleRequest(ofHttpRequest request) {
 		session.sendRequest(req);
 		HTTPResponse res;
 		istream& rs = session.receiveResponse(res);
-		return ofHttpResponse(request,rs,res.getStatus(),res.getReason());
+		if(!request.saveTo){
+			return ofHttpResponse(request,rs,res.getStatus(),res.getReason());
+		}else{
+			ofFile saveTo(request.name,ofFile::WriteOnly);
+			char aux_buffer[1024];
+			rs.read(aux_buffer, 1024);
+			std::streamsize n = rs.gcount();
+			while (n > 0){
+				// we resize to size+1 initialized to 0 to have a 0 at the end for strings
+				saveTo.write(aux_buffer,n);
+				if (rs){
+					rs.read(aux_buffer, 1024);
+					n = rs.gcount();
+				}
+				else n = 0;
+			}
+			return ofHttpResponse(request,res.getStatus(),res.getReason());
+		}
+
 	} catch (Exception& exc) {
         ofLog(OF_LOG_ERROR, "ofURLFileLoader " + exc.displayText());
 
@@ -165,6 +198,14 @@ ofHttpResponse ofLoadURL(string url){
 
 int ofLoadURLAsync(string url, string name){
 	return getFileLoader().getAsync(url,name);
+}
+
+ofHttpResponse ofSaveURLTo(string url, string path){
+	return getFileLoader().saveTo(url,path);
+}
+
+int ofSaveURLAsync(string url, string path){
+	return getFileLoader().saveAsync(url,path);
 }
 
 void ofRemoveURLRequest(int id){

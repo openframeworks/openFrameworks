@@ -1,19 +1,6 @@
-/*
- *  ofBaseTypes.cpp
- *  openFrameworksLib
- *
- *  Created by zachary lieberman on 1/9/11.
- *  Copyright 2011 __MyCompanyName__. All rights reserved.
- *
- */
-
 #include "ofBaseTypes.h"
 #include "ofUtils.h"
 
-//---------------------------------------------------------------------------
-ofBaseVideoGrabber::ofBaseVideoGrabber(){
-	
-}
 
 //---------------------------------------------------------------------------
 ofBaseVideoGrabber::~ofBaseVideoGrabber(){
@@ -51,11 +38,7 @@ ofPixelFormat ofBaseVideoGrabber::getPixelFormat(){
 }
 
 //---------------------------------------------------------------------------
-//---------------------------------------------------------------------------
 
-ofBaseVideoPlayer::ofBaseVideoPlayer (){
-
-}
 
 //---------------------------------------------------------------------------
 ofBaseVideoPlayer::~ofBaseVideoPlayer(){

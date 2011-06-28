@@ -6,7 +6,7 @@
 #include "ofMath.h"
 #include <limits>
 
-template <typename T>
+template <typename PixelType>
 class ofPixels_ {
 
 	friend class ofPixelUtils;
@@ -15,39 +15,39 @@ public:
 
 	ofPixels_();
 	~ofPixels_();
-	ofPixels_(const ofPixels_<T> & mom);
-	ofPixels_<T>& operator=(const ofPixels_<T> & mom);
+	ofPixels_(const ofPixels_<PixelType> & mom);
+	ofPixels_<PixelType>& operator=(const ofPixels_<PixelType> & mom);
 
-	template<typename T2>
-	ofPixels_(const ofPixels_<T2> & mom);
+	template<typename SrcType>
+	ofPixels_(const ofPixels_<SrcType> & mom);
 
-	template<typename T2>
-	ofPixels_<T>& operator=(const ofPixels_<T2> & mom);
+	template<typename SrcType>
+	ofPixels_<PixelType>& operator=(const ofPixels_<SrcType> & mom);
 
 	void allocate(int w, int h, int channels);
 	void allocate(int w, int h, ofPixelFormat type);
 	void allocate(int w, int h, ofImageType type);
 
-	void set(T val);
-	void set(int channel,T val);
-	void setFromPixels(const T * newPixels,int w, int h, int channels);
-	void setFromPixels(const T * newPixels,int w, int h, ofImageType type);
-	void setFromExternalPixels(T * newPixels,int w, int h, int channels);
-	void setFromAlignedPixels(const T * newPixels,int w, int h, int channels, int widthStep);
+	void set(PixelType val);
+	void set(int channel,PixelType val);
+	void setFromPixels(const PixelType * newPixels,int w, int h, int channels);
+	void setFromPixels(const PixelType * newPixels,int w, int h, ofImageType type);
+	void setFromExternalPixels(PixelType * newPixels,int w, int h, int channels);
+	void setFromAlignedPixels(const PixelType * newPixels, int width, int height, int channels, int stride);
 
 	void swapRgb();
 
 	void clear();
 	
-	T * getPixels();
-	const T * getPixels() const;
+	PixelType * getPixels();
+	const PixelType * getPixels() const;
 
 	int getPixelIndex(int x, int y) const;
 	ofColor getColor(int x, int y) const;
 	void setColor(int x, int y, ofColor color);
 
-	const T& operator[](int pos) const;
-	T& operator[](int pos);
+	const PixelType& operator[](int pos) const;
+	PixelType& operator[](int pos);
 
 	bool isAllocated() const;
 
@@ -60,8 +60,8 @@ public:
 	int getBitsPerChannel() const;
 	int getNumChannels() const;
 
-	ofPixels_<T> getChannel(int channel) const;
-	void setChannel(int channel, const ofPixels_<T> channelPixels);
+	ofPixels_<PixelType> getChannel(int channel) const;
+	void setChannel(int channel, const ofPixels_<PixelType> channelPixels);
 
 	ofImageType getImageType() const;
 
@@ -69,12 +69,12 @@ public:
 
 private:
 
-	void copyFrom( const ofPixels_<T>& mom );
+	void copyFrom( const ofPixels_<PixelType>& mom );
 
-	template<typename T2>
-	void copyFrom( const ofPixels_<T2>& mom );
+	template<typename SrcType>
+	void copyFrom( const ofPixels_<SrcType>& mom );
 	
-	T * pixels;
+	PixelType * pixels;
 	int width;
 	int height;
 
@@ -102,27 +102,31 @@ typedef ofPixels& ofPixelsRef;
 // ofFloatPixels pixf;
 // pix = pixf;
 
-template<typename DstType>
+template<typename PixelType>
 template<typename SrcType>
-ofPixels_<DstType>::ofPixels_(const ofPixels_<SrcType> & mom){
-	(*this).template copyFrom( mom );
+ofPixels_<PixelType>::ofPixels_(const ofPixels_<SrcType> & mom){
+	bAllocated = false;
+	pixelsOwner = false;
+	channels = 0;
+	pixels = NULL;
+	copyFrom( mom );
 }
 
-template<typename DstType>
+template<typename PixelType>
 template<typename SrcType>
-ofPixels_<DstType>& ofPixels_<DstType>::operator=(const ofPixels_<SrcType> & mom){
-	(*this).template copyFrom( mom );
+ofPixels_<PixelType>& ofPixels_<PixelType>::operator=(const ofPixels_<SrcType> & mom){
+	copyFrom( mom );
 	return *this;
 }
 
-template<typename DstType>
+template<typename PixelType>
 template<typename SrcType>
-void ofPixels_<DstType>::copyFrom(const ofPixels_<SrcType> & mom){
+void ofPixels_<PixelType>::copyFrom(const ofPixels_<SrcType> & mom){
 	if(mom.isAllocated()){
 		allocate(mom.getWidth(),mom.getHeight(),mom.getNumChannels());
 
 		float srcMax = ( (sizeof(SrcType) == sizeof(float) ) ? 1.f : numeric_limits<SrcType>::max() );
-		float dstMax = ( (sizeof(DstType) == sizeof(float) ) ? 1.f : numeric_limits<DstType>::max() );
+		float dstMax = ( (sizeof(PixelType) == sizeof(float) ) ? 1.f : numeric_limits<PixelType>::max() );
 		float factor = dstMax / srcMax;
 
 		if(sizeof(SrcType) == sizeof(float)) {

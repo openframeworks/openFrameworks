@@ -135,7 +135,22 @@ void ofGetGlFormatAndType(int glInternalFormat, int& glFormat, int& glType) {
 		case GL_LUMINANCE32F_ARB:
 			glFormat = GL_LUMINANCE;
 			glType = GL_FLOAT;
-			break;			
+			break;
+
+
+		// 16-bit float formats
+		case GL_RGBA16F_ARB:
+			glFormat = GL_RGBA;
+			glType = GL_FLOAT;
+			break;
+		case GL_RGB16F_ARB:
+			glFormat = GL_RGB;
+			glType = GL_FLOAT;
+			break;
+		case GL_LUMINANCE16F_ARB:
+			glFormat = GL_LUMINANCE;
+			glType = GL_FLOAT;
+			break;
 #endif
 
 		// used by prepareBitmapTexture(), not supported by ofPixels
@@ -153,6 +168,37 @@ void ofGetGlFormatAndType(int glInternalFormat, int& glFormat, int& glType) {
 			ofLogError() << "ofGetGlFormatAndType(): glInternalFormat not recognized";
 			break;
 	}
+}
+
+static bool ofCheckGLTypesEqual(int type1, int type2){
+#ifndef TARGET_OPENGLES
+	if(type1==GL_LUMINANCE || type1==GL_LUMINANCE8){
+		if(type2==GL_LUMINANCE || type2==GL_LUMINANCE8){
+			return true;
+		}else{
+			return false;
+		}
+	}
+
+	else if(type1==GL_RGB || type1==GL_RGB8){
+		if(type2==GL_RGB || type2==GL_RGB8){
+			return true;
+		}else{
+			return false;
+		}
+	}
+
+	else if(type1==GL_RGBA || type1==GL_RGBA8){
+		if(type2==GL_RGBA || type2==GL_RGBA8){
+			return true;
+		}else{
+			return false;
+		}
+	}
+
+	else
+#endif
+		return type1==type2;
 }
 
 //---------------------------------
@@ -349,7 +395,7 @@ void ofTexture::loadData(void * data, int w, int h, int glInternalFormat){
 	//  but with a "step" size of w?
 	// 	check "glTexSubImage2D"
 	
-	if(glInternalFormat != texData.glTypeInternal) {
+	if(!ofCheckGLTypesEqual(glInternalFormat,texData.glTypeInternal)) {
 		ofLogError() << "ofTexture::loadData() failed to upload internalFormat " <<  ofGetGlInternalFormatName(glInternalFormat) << " data to " << ofGetGlInternalFormatName(texData.glTypeInternal) << " texture";
 		return;
 	}

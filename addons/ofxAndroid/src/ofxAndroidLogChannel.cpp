@@ -67,3 +67,29 @@ void ofxAndroidLogChannel::log(ofLogLevel logLevel, const string & module, const
 	va_end(args);
 }
 
+
+void ofxAndroidLogChannel::log(ofLogLevel logLevel, const string & module, const char* format, va_list args){
+	android_LogPriority androidPrio;
+	switch (logLevel){
+	case OF_LOG_VERBOSE:
+		androidPrio=ANDROID_LOG_VERBOSE;
+		break;
+	case OF_LOG_NOTICE:
+		androidPrio=ANDROID_LOG_INFO;
+		break;
+	case OF_LOG_WARNING:
+		androidPrio=ANDROID_LOG_WARN;
+		break;
+	case OF_LOG_ERROR:
+		androidPrio=ANDROID_LOG_ERROR;
+		break;
+	case OF_LOG_FATAL_ERROR:
+		androidPrio=ANDROID_LOG_FATAL;
+		break;
+	default:
+		androidPrio=ANDROID_LOG_INFO;
+		break;
+	}
+	__android_log_vprint(androidPrio,module.c_str(),format,args);
+}
+
