@@ -140,21 +140,21 @@ void ofxAndroidDismissProgressBox(int id){
 
 
 
-bool ofxAndroidOkCancelBox(string msg){
+void ofxAndroidOkCancelBox(string msg){
 	jclass javaClass = ofGetJavaOFAndroid();
 
 	if(javaClass==0){
 		ofLog(OF_LOG_ERROR,"cannot find OFAndroid java class");
-		return -1;
+		return;
 	}
 
-	jmethodID okCancelBox = ofGetJNIEnv()->GetStaticMethodID(javaClass,"okCancelBox","(Ljava/lang/String;)Z");
+	jmethodID okCancelBox = ofGetJNIEnv()->GetStaticMethodID(javaClass,"okCancelBox","(Ljava/lang/String;)V");
 	if(!okCancelBox){
 		ofLog(OF_LOG_ERROR,"cannot find OFAndroid okCancelBox method");
-		return -1;
+		return;
 	}
 	jstring jMsg = ofGetJNIEnv()->NewStringUTF(msg.c_str());
-	return ofGetJNIEnv()->CallStaticBooleanMethod(javaClass,okCancelBox,jMsg);
+	ofGetJNIEnv()->CallStaticVoidMethod(javaClass,okCancelBox,jMsg);
 }
 
 void ofxAndroidToast(string msg){
