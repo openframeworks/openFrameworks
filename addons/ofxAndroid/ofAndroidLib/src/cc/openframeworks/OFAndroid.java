@@ -11,8 +11,6 @@ import java.util.Map;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
-import com.reactable.R;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -312,6 +310,34 @@ public class OFAndroid {
 		});
 		progressDialogs.remove(id);
 	}
+	
+	static public void okCancelBox(String msg){
+		final String alertMsg = msg;
+		ofActivity.runOnUiThread(new Runnable(){
+			public void run() {
+				new AlertDialog.Builder(ofActivity)  
+					.setMessage(alertMsg)  
+					.setTitle("OF")  
+					.setCancelable(false)  
+					.setNeutralButton(android.R.string.ok,  
+							new DialogInterface.OnClickListener() {  
+						public void onClick(DialogInterface dialog, int whichButton){
+							OFAndroid.okPressed();
+						}
+	
+				  	})
+				  	.setNegativeButton(android.R.string.cancel,
+
+							new DialogInterface.OnClickListener() {  
+						public void onClick(DialogInterface dialog, int whichButton){
+							OFAndroid.cancelPressed();
+						}
+				  	})
+				  	.show();    
+				
+			}  
+		});
+	}
 
 	// native methods to call OF c++ callbacks
     public static native void setAppDataDir(String data_dir,String app_name);
@@ -339,6 +365,9 @@ public class OFAndroid {
     
     public static native boolean onMenuItemSelected(String menu_id);
     public static native boolean onMenuItemChecked(String menu_id, boolean checked);
+    
+    public static native void okPressed();
+    public static native void cancelPressed();
     
 
     // static methods to be called from OF c++ code
