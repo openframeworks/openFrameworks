@@ -83,6 +83,8 @@ private:
 	static int			_maxDrawBuffers;
 	static int			_maxSamples;
 	
+	bool				dirty;
+
 	void destroy();
 	
 	bool checkStatus();
