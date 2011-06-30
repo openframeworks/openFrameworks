@@ -142,6 +142,8 @@
     <ClInclude Include="..\..\..\openFrameworks\utils\ofUtils.h" />
     <ClInclude Include="..\..\..\openFrameworks\video\ofDirectShowGrabber.h" />
     <ClInclude Include="..\..\..\openFrameworks\video\ofQtUtils.h" />
+    <ClInclude Include="..\..\..\openFrameworks\video\ofQuickTimeGrabber.h" />
+    <ClInclude Include="..\..\..\openFrameworks\video\ofQuickTimePlayer.h" />
     <ClInclude Include="..\..\..\openFrameworks\video\ofVideoGrabber.h" />
     <ClInclude Include="..\..\..\openFrameworks\video\ofVideoPlayer.h" />
     <ClInclude Include="..\..\..\openFrameworks\communication\ofArduino.h" />
@@ -201,6 +203,8 @@
     <ClCompile Include="..\..\..\openFrameworks\utils\ofUtils.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\video\ofDirectShowGrabber.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\video\ofQtUtils.cpp" />
+    <ClCompile Include="..\..\..\openFrameworks\video\ofQuickTimeGrabber.cpp" />
+    <ClCompile Include="..\..\..\openFrameworks\video\ofQuickTimePlayer.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\video\ofVideoGrabber.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\video\ofVideoPlayer.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\communication\ofArduino.cpp" />

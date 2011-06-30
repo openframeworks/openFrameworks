@@ -13,32 +13,41 @@ public class OFAndroidGPS extends OFAndroidObject implements LocationListener {
 	}
 	
 	void startGPS(){
-
-		// Acquire a reference to the system Location Manager
-		LocationManager locationManager = (LocationManager) ofActivity.getSystemService(Context.LOCATION_SERVICE);
-
-
-		// Register the listener with the Location Manager to receive location updates
-		locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, this);
+		final OFAndroidGPS gps = this;
+		ofActivity.runOnUiThread(new Runnable(){
+			public void run(){
+				// Acquire a reference to the system Location Manager
+				LocationManager locationManager = (LocationManager) ofActivity.getSystemService(Context.LOCATION_SERVICE);
 		
-		// Register the listener with the Location Manager to receive location updates
-		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
 		
-		Location lastLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-		if(lastLocation!=null)
-			onLocationChanged(lastLocation);
+				// Register the listener with the Location Manager to receive location updates
+				locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, gps);
+				
+				// Register the listener with the Location Manager to receive location updates
+				locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, gps);
+				
+				Location lastLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+				if(lastLocation!=null)
+					onLocationChanged(lastLocation);
+				started = true;
+			}
+		});
 		
-		started = true;
 	}
 	
 	void stopGPS(){
 
-		// Acquire a reference to the system Location Manager
-		LocationManager locationManager = (LocationManager) ofActivity.getSystemService(Context.LOCATION_SERVICE);
-
-		locationManager.removeUpdates(this);
+		final OFAndroidGPS gps = this;
+		ofActivity.runOnUiThread(new Runnable(){
+			public void run(){
+				// Acquire a reference to the system Location Manager
+				LocationManager locationManager = (LocationManager) ofActivity.getSystemService(Context.LOCATION_SERVICE);
 		
-		started = false;
+				locationManager.removeUpdates(gps);
+				
+				started = false;
+			}
+		});
 	}
 	
 
