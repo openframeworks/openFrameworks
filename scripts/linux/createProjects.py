@@ -18,7 +18,7 @@ for uname_str in uname:
         arch = 'linux64'
         
 templates_path = os.path.join(of_root,'apps','devApps',platform)
-template = {'cbp': os.path.join(templates_path , 'emptyExample_' + arch + '.cbp'), 'full_cbp': os.path.join(templates_path , 'emptyExample_' + arch + '_fullCBP.cbp'), 'makefile': os.path.join(templates_path , 'Makefile'), 'config.make': os.path.join(templates_path , 'config.make')}
+template = {'cbp': os.path.join(templates_path , 'emptyExample_' + arch + '.cbp'), 'full_cbp': os.path.join(templates_path , 'emptyExample_' + arch + '_fullCBP.cbp'), 'workspace': os.path.join(templates_path , 'emptyExample_' + arch + '.workspace'),'makefile': os.path.join(templates_path , 'Makefile'), 'config.make': os.path.join(templates_path , 'config.make')}
 
 fullCBP = True
 
@@ -167,6 +167,9 @@ def createProject(project_path):
         shutil.copyfile(template['full_cbp'],os.path.join(project_path,project_name+'.cbp'))
     else:
         shutil.copyfile(template['cbp'],os.path.join(project_path,project_name+'.cbp'))
+        
+    shutil.copyfile(template['workspace'],os.path.join(project_path,project_name+'.workspace'))
+    
     if platform == "linux":
         shutil.copyfile(template['makefile'],os.path.join(project_path,'Makefile'))
 

@@ -191,22 +191,32 @@ ifeq ($(ARCH),android)
 		TARGET = libs/armeabi/libOFAndroidApp.so
 		TARGET_LIBS = $(OF_ROOT)/libs/openFrameworksCompiled/lib/$(ARCH)/libopenFrameworksDebug.a
 		LDFLAGS += -Wl,--fix-cortex-a8 -shared
+		USER_LIBS = $(USER_LIBS_ARM)
 	endif
 
 	ifeq ($(findstring Release,$(MAKECMDGOALS)),Release)
 	    TARGET = libs/armeabi/libOFAndroidApp.so
 		TARGET_LIBS = $(OF_ROOT)/libs/openFrameworksCompiled/lib/$(ARCH)/libopenFrameworks.a
 		LDFLAGS += -Wl,--fix-cortex-a8 -shared
+		USER_LIBS = $(USER_LIBS_ARM)
 	endif
 
 	ifeq ($(findstring Release_arm7,$(MAKECMDGOALS)),Release_arm7)
 		TARGET_NAME = Release_arm7
-		TARGET_CFLAGS += -march=armv7-a -mfloat-abi=softfp -mfpu=neon
+		TARGET_CFLAGS += -march=armv7-a -mfloat-abi=softfp -mthumb
 	    TARGET = libs/armeabi-v7a/libOFAndroidApp.so
 		TARGET_LIBS = $(OF_ROOT)/libs/openFrameworksCompiled/lib/$(ARCH)/libopenFrameworks_arm7.a
-		#LDFLAGS += -shared  already included through Release
+		USER_LIBS = $(USER_LIBS_ARM7)
 	endif
 
+	ifeq ($(findstring Release_neon,$(MAKECMDGOALS)),Release_neon)
+		TARGET_NAME = Release_neon
+		TARGET_CFLAGS += -march=armv7-a -mfloat-abi=softfp -mfpu=neon
+	    TARGET = libs/armeabi-v7a/libOFAndroidApp_neon.so
+		TARGET_LIBS = $(OF_ROOT)/libs/openFrameworksCompiled/lib/$(ARCH)/libopenFrameworks_neon.a
+		USER_LIBS = $(USER_LIBS_NEON)
+	endif
+	
 	ifeq ($(findstring TestLink,$(MAKECMDGOALS)),TestLink)
 		TARGET_NAME = Debug
 		TARGET_LIBS = $(OF_ROOT)/libs/openFrameworksCompiled/lib/$(ARCH)/libopenFrameworksDebug.a
@@ -267,7 +277,9 @@ DebugAndroid: $(TARGET)
 
 ReleaseAndroid: $(TARGET)
 
-Release_arm7Android: $(TARGET) afterReleaseAndroid
+Release_arm7Android: $(TARGET)
+
+Release_neonAndroid: $(TARGET) afterReleaseAndroid
 
 TestLinkAndroid: $(TARGET) afterDebugAndroid
 
@@ -278,6 +290,7 @@ AndroidDebug:
 AndroidRelease:
 	$(MAKE) ReleaseAndroid
 	$(MAKE) Release_arm7Android
+	$(MAKE) Release_neonAndroid
 
 
 #This rule does the compilation
@@ -373,6 +386,7 @@ AndroidInstall:
 	$(SDK_ROOT)/platform-tools/adb install -r bin/$(APPNAME).apk;
 	#fi
 	$(SDK_ROOT)/platform-tools/adb shell am start -a android.intent.action.MAIN -n cc.openframeworks.$(APPNAME)/cc.openframeworks.$(APPNAME).OFActivity
+
 
 after:$(TARGET)
 	cp -r $(OF_ROOT)/export/$(LIBSPATH)/libs bin/

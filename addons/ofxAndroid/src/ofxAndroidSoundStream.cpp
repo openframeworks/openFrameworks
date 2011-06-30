@@ -12,6 +12,7 @@
 #include "ofAppRunner.h"
 #include <deque>
 #include <set>
+#include <jni.h>
 
 static ofxAndroidSoundStream* instance=NULL;
 static bool headphonesConnected;
@@ -53,11 +54,22 @@ void ofxAndroidSoundStream::setOutput(ofBaseSoundOutput * _soundOutput){
 	soundOutputPtr = _soundOutput;
 }
 
-bool ofxAndroidSoundStream::setup(int outChannels, int inChannels, int _sampleRate, int bufferSize, int nBuffers){
+bool ofxAndroidSoundStream::setup(int outChannels, int _inChannels, int _sampleRate, int bufferSize, int nBuffers){
 	if(instance!=NULL && instance!=this){
 		ofLog(OF_LOG_ERROR,"ofxAndroidSoundStream: error, only one instance allowed by now");
 		return false;
 	}
+
+
+	int input_buffer_size = _inChannels*getMinInBufferSize(_sampleRate,_inChannels)* 2;
+	input_buffer.setup(input_buffer_size,0);
+
+	if(in_float_buffer){
+		delete[] in_float_buffer;
+	}
+	in_float_buffer = new float[bufferSize*_inChannels];
+	inBufferSize = bufferSize;
+	inChannels   = _inChannels;
 
 	sampleRate			=  _sampleRate;
 	tickCount			=  0;
@@ -176,9 +188,11 @@ void ofxAndroidSoundStream::resume(){
 static const float conv_factor = 1/32767.5f;
 
 int ofxAndroidSoundStream::androidInputAudioCallback(JNIEnv*  env, jobject  thiz,jshortArray array, jint numChannels, jint bufferSize){
+	//ofLogError("ofxAndroidSoundStream") <<  "input callback" << bufferSize;
+
 	if(!soundInputPtr || isPaused) return 0;
 
-	if(!in_float_buffer || numChannels!=inChannels || bufferSize!=inBufferSize){
+	if(!in_buffer || !in_float_buffer || numChannels!=inChannels || bufferSize!=inBufferSize){
 		if(in_buffer){
 			env->ReleasePrimitiveArrayCritical(array,in_buffer,0);
 			jInArray = 0;
@@ -186,19 +200,14 @@ int ofxAndroidSoundStream::androidInputAudioCallback(JNIEnv*  env, jobject  thiz
 		in_buffer = (short*)env->GetPrimitiveArrayCritical(array, NULL);
 		if(!in_buffer) return 1;
 		jInArray = array;
-
-		if(in_float_buffer) delete[] in_float_buffer;
-		in_float_buffer = new float[bufferSize*numChannels];
-		inBufferSize = bufferSize;
-		inChannels   = numChannels;
-		ofLogVerbose("ofxAndroidSoundStream", "input buffers setup");
 	}
 
-	ofLogVerbose("ofxAndroidSoundStream", "input callback");
+
 	for(int i=0;i<bufferSize*numChannels;i++){
-		in_float_buffer[i] = (float(in_buffer[i]) + 0.5) * conv_factor;
+		//in_float_buffer[i] = (float(in_buffer[i]) + 0.5) * conv_factor;
+
+		input_buffer.write((float(in_buffer[i]) + 0.5) * conv_factor);
 	}
-	soundInputPtr->audioIn(in_float_buffer,bufferSize,inChannels,tickCount);
 
 
 	return 0;
@@ -222,16 +231,45 @@ int ofxAndroidSoundStream::androidOutputAudioCallback(JNIEnv*  env, jobject  thi
 		outBufferSize = bufferSize;
 		outChannels   = numChannels;
 
-		ofLogWarning("ofxAndroidSoundStream") << "setting out buffers frames: " << bufferSize;
+		ofLogNotice("ofxAndroidSoundStream") << "setting out buffers frames: " << bufferSize;
 	}
 
-	soundOutputPtr->audioOut(out_float_buffer,bufferSize,numChannels,tickCount);
+
+	for(int i=0;i<bufferSize*inChannels;i++){
+		in_float_buffer[i] = input_buffer.read(0);
+	}
+	soundInputPtr->audioIn(in_float_buffer,bufferSize,inChannels,0,tickCount);
+
+
+	soundOutputPtr->audioOut(out_float_buffer,bufferSize,numChannels,0,tickCount);
 
 	for(int i=0;i<bufferSize*numChannels ;i++){
 		float tempf = (out_float_buffer[i] * 32767.5f) - 0.5;
 		out_buffer[i] = tempf;//lrintf( tempf - 0.5 );
 	}
 	tickCount++;
+
+	/*int nBlocks = bufferSize/requestedBufferSize;
+	//ofLogWarning("ofxAndroidSoundStream") << "total blocs: " << nBlocks;
+
+	if (numChannels > 0) {
+		float * out_buffer_ptr = out_float_buffer;
+
+		//memset( out_float_buffer, 0, sizeof(float)*bufferSize*numChannels );
+		for(int t = 0;t<nBlocks;t++){
+			ofLogWarning("ofxAndroidSoundStream") << "block: " << t;
+			tickCount++;
+			soundOutputPtr->audioOut(out_buffer_ptr,requestedBufferSize,numChannels,tickCount);
+
+			out_buffer_ptr+=totalOutRequestedBufferSize;
+		}
+
+		//ofLogWarning("ofxAndroidSoundStream") << "translating float to short";
+		for(int i=0;i<bufferSize*numChannels ;i++){
+			float tempf = (out_float_buffer[i] * 32767.5f) - 0.5;
+			out_buffer[i]=tempf;//lrintf( tempf - 0.5 );
+		}
+	}*/
 
 	return 0;
 }
@@ -250,7 +288,6 @@ int ofxAndroidSoundStream::getMinOutBufferSize(int samplerate, int nchannels){
 		return false;
 	}
 	int minBuff = ofGetJNIEnv()->CallStaticIntMethod(javaClass,getMinBuffSize,samplerate,nchannels);
-	ofLogError("ofxAndroidSoundStream") << "min output buffer size" << minBuff;
 	return minBuff;
 }
 

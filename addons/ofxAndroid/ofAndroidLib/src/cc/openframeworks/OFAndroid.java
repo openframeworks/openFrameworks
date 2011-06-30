@@ -5,16 +5,21 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.ActivityInfo;
 import android.hardware.SensorManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.opengl.ETC1Util;
 import android.opengl.GLSurfaceView;
 import android.os.Environment;
@@ -135,7 +140,7 @@ public class OFAndroid {
 	        ofActivity.setContentView(mGLView);
 	        enableTouchEvents();
 		}
-		android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_URGENT_AUDIO);
+		//android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_URGENT_AUDIO);
     }
 
 	public void start(){
@@ -246,6 +251,93 @@ public class OFAndroid {
 			Log.w("OF","Trying to get menu items ", e);
 		}
 	}
+	
+	static public String getStringRes(String idStr){
+		Class<?> string_ids;
+		try {
+			string_ids = Class.forName(packageName+".R$string");
+			Field field = string_ids.getField(idStr);
+			int id = field.getInt(null);
+			return (String) ofActivity.getResources().getText(id);
+		} catch (Exception e) {
+			Log.e("OF","Couldn't get string resource",e);
+		} 
+		return "";
+	}
+	
+	static public boolean isOnline(){
+		ConnectivityManager conMgr =  (ConnectivityManager)ofActivity.getSystemService(Context.CONNECTIVITY_SERVICE);
+
+		return ( conMgr.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.CONNECTED 
+			    ||  conMgr.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.CONNECTED  ) ;
+	}
+	
+	static public boolean isWifiOnline(){
+		ConnectivityManager conMgr =  (ConnectivityManager)ofActivity.getSystemService(Context.CONNECTIVITY_SERVICE);
+
+		return ( conMgr.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.CONNECTED  ) ;
+	}
+	
+	static public boolean isMobileOnline(){
+		ConnectivityManager conMgr =  (ConnectivityManager)ofActivity.getSystemService(Context.CONNECTIVITY_SERVICE);
+
+		return ( conMgr.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.CONNECTED  ) ;
+	}
+	
+	
+	static Map<Integer,ProgressDialog> progressDialogs = new HashMap<Integer, ProgressDialog>();
+	static int lastProgressID=0;
+	static public int progressBox(String msg){
+		final String finmsg = msg;
+		final int id = lastProgressID++;
+		ofActivity.runOnUiThread(new Runnable(){
+			public void run() {
+				ProgressDialog d = new ProgressDialog(ofActivity);
+				d.setMessage(finmsg);
+				d.show();
+				progressDialogs.put(id,d);
+			}
+		});
+		return id;
+	}
+	
+	static public void dismissProgressBox(int id){
+		final ProgressDialog d = progressDialogs.get(id);
+		ofActivity.runOnUiThread(new Runnable(){
+			public void run() {
+				d.dismiss();
+			}
+		});
+		progressDialogs.remove(id);
+	}
+	
+	static public void okCancelBox(String msg){
+		final String alertMsg = msg;
+		ofActivity.runOnUiThread(new Runnable(){
+			public void run() {
+				new AlertDialog.Builder(ofActivity)  
+					.setMessage(alertMsg)  
+					.setTitle("OF")  
+					.setCancelable(false)  
+					.setNeutralButton(android.R.string.ok,  
+							new DialogInterface.OnClickListener() {  
+						public void onClick(DialogInterface dialog, int whichButton){
+							OFAndroid.okPressed();
+						}
+	
+				  	})
+				  	.setNegativeButton(android.R.string.cancel,
+
+							new DialogInterface.OnClickListener() {  
+						public void onClick(DialogInterface dialog, int whichButton){
+							OFAndroid.cancelPressed();
+						}
+				  	})
+				  	.show();    
+				
+			}  
+		});
+	}
 
 	// native methods to call OF c++ callbacks
     public static native void setAppDataDir(String data_dir,String app_name);
@@ -273,6 +365,9 @@ public class OFAndroid {
     
     public static native boolean onMenuItemSelected(String menu_id);
     public static native boolean onMenuItemChecked(String menu_id, boolean checked);
+    
+    public static native void okPressed();
+    public static native void cancelPressed();
     
 
     // static methods to be called from OF c++ code
@@ -400,10 +495,22 @@ public class OFAndroid {
 	private static String dataPath;
 	private static PowerManager.WakeLock wl;
 
-    
+    public static native boolean hasNeon();
 	 
     static {
-    	System.loadLibrary("OFAndroidApp"); 
+    	try{
+    		System.loadLibrary("neondetection"); 
+	    	if(hasNeon()){
+	    		Log.i("OF","loading neon optimized library");
+	    		System.loadLibrary("OFAndroidApp_neon");
+	    	}else{
+	    		Log.i("OF","loading not-neon optimized library");
+	    		System.loadLibrary("OFAndroidApp");
+	    	}
+    	}catch(Throwable e){
+    		Log.i("OF","failed neon detection, loading not-neon library",e);
+    		System.loadLibrary("OFAndroidApp");
+    	}
     }
 
 
