@@ -83,18 +83,6 @@ static map<GLuint,int> & getIds(){
 }
 
 //--------------------------------------------------------------
-static void setActiveLight( int id ) {
-	if (id < 0 || id >= OF_MAX_LIGHTS) return;
-	getActiveLights()[id] = true;
-}
-
-//--------------------------------------------------------------
-static void setInactiveLight( int id ) {
-	if (id < 0 || id >= OF_MAX_LIGHTS) return;
-	getActiveLights()[id] = false;
-}
-
-//--------------------------------------------------------------
 static void retain(int id){
 	if(id==-1) return;
 	getActiveLights()[id] = true;
@@ -146,7 +134,7 @@ ofLight::ofLight(){
 
 //----------------------------------------
 ofLight::~ofLight(){
-	release(*this);
+	destroy();
 }
 
 //----------------------------------------
@@ -293,7 +281,7 @@ void ofLight::setAmbientColor(const ofColor& c) {
 
 //----------------------------------------
 void ofLight::setAmbientColor(float r, float g, float b, float a) {
-	setAmbientColor(r, g, b, a);
+	setAmbientColor(ofColor(r, g, b, a));
 }
 
 //----------------------------------------
