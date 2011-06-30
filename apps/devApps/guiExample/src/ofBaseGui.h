@@ -26,8 +26,20 @@ public:
 	virtual void setValue(float mx, float my, bool bCheckBounds) = 0;
 	virtual void draw() = 0;
 	
-	virtual void save(ofxXmlSettings& xml) = 0;
-	virtual void load(ofxXmlSettings& xml) = 0;
+	void saveToFile(string filename) {
+		ofxXmlSettings xml;
+		saveToXml(xml);
+		xml.saveFile(filename);
+	}
+	
+	void loadFromFile(string filename) {
+		ofxXmlSettings xml;
+		xml.loadFile(filename);
+		loadFromXml(xml);
+	}
+	
+	virtual void saveToXml(ofxXmlSettings& xml) = 0;
+	virtual void loadFromXml(ofxXmlSettings& xml) = 0;
 	
 	string name;
 	unsigned long currentFrame;			

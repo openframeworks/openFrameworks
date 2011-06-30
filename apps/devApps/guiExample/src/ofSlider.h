@@ -36,11 +36,11 @@ public:
 		bGuiActive = false;		
 	}	
 	
-	virtual void save(ofxXmlSettings& xml) {
+	virtual void saveToXml(ofxXmlSettings& xml) {
 		xml.addValue(name, val);
 	}
 	
-	virtual void load(ofxXmlSettings& xml) {
+	virtual void loadFromXml(ofxXmlSettings& xml) {
 		val = xml.getValue(name, val);
 	}
 	
