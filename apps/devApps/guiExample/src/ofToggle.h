@@ -1,21 +1,21 @@
 #pragma once
 
-#include "ofBaseGui.h"
+#include "ofPanel.h"
 
 class ofToggle : public ofBaseGui{
-	friend class ofGuiCollection;
+	friend class ofPanel;
 	
 public:
 	
 	void setup(string toggleName, bool _bVal, float width = 200, float height = 20){
-		name		= toggleName;
-		b.x			= 0;
-		b.y			= 0;
-		b.width		= width;
-		b.height	= height;
+		name = toggleName;
+		b.x = 0;
+		b.y = 0;
+		b.width = width;
+		b.height = height;
 		currentFrame = 0;			
-		bGuiActive	= false;
-		bVal		= _bVal;
+		bGuiActive = false;
+		bVal = _bVal;
 		checkboxRect.width = b.height - 3;
 		checkboxRect.height = b.height - 3;
 	}
@@ -43,27 +43,27 @@ public:
 		ofPushStyle();
 		
 		currentFrame = ofGetFrameNum();
-		ofSetColor(30, 30, 80);
+		ofSetColor(backgroundColor);
 		ofRect(b);
 		
 		checkboxRect.x = b.x + 2;
 		checkboxRect.y = b.y + 1;
 		
 		ofNoFill();
-		ofSetColor(180, 180, 180);			
+		ofSetColor(fillColor);
 		ofRect(checkboxRect);
 		
 		if( bVal ){
 			ofFill();
-			ofSetColor(180, 180, 180);			
+			ofSetColor(fillColor);
 			ofRect(checkboxRect);
 			
-			ofSetColor(30, 30, 80);
+			ofSetColor(textColor);
 			ofLine(checkboxRect.x, checkboxRect.y, checkboxRect.x + checkboxRect.width, checkboxRect.y + checkboxRect.height);
 			ofLine(checkboxRect.x, checkboxRect.y+ checkboxRect.height, checkboxRect.x + checkboxRect.width, checkboxRect.y);
 		}
 		
-		ofSetColor(230, 230, 230, 255);			
+		ofSetColor(textColor);
 		
 		float stringY = b.y + 14;
 		

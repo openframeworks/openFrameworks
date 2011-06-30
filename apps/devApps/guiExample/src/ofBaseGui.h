@@ -1,5 +1,11 @@
 #pragma once
 
+const ofColor
+headerBackgroundColor(64),
+backgroundColor(0),
+textColor(255),
+fillColor(128);
+
 class ofBaseGui{
 public:
 	ofBaseGui(){

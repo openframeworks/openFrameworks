@@ -1,22 +1,24 @@
 #pragma once
 
+#include "ofPanel.h"
+
 class ofSlider : public ofBaseGui{
-	friend class ofGuiCollection;
+	friend class ofPanel;
 	
 public:
 	
 	void setup(string sliderName, double _val, double _min, double _max, bool _bInt = false, float width = 200, float height = 20){
-		name		= sliderName;
-		val			= _val;
-		min			= _min;
-		max			= _max;
-		b.x			= 0;
-		b.y			= 0;
-		b.width		= width;
-		b.height	= height;
+		name = sliderName;
+		val = _val;
+		min = _min;
+		max = _max;
+		b.x = 0;
+		b.y = 0;
+		b.width = width;
+		b.height = height;
 		currentFrame = 0;			
 		bGuiActive = false;
-		bInt	   = _bInt;
+		bInt = _bInt;
 	}
 	
 	
@@ -42,18 +44,18 @@ public:
 		return val;
 	}
 	
-	void draw(){
+	void draw(){	
 		currentFrame = ofGetFrameNum();
 		ofFill();
-		ofSetColor(30, 30, 80);
+		ofSetColor(backgroundColor);
 		ofRect(b);
 		
 		float valAsPct = ofMap( val, min, max, 0, b.width, true );
 		ofEnableAlphaBlending();
-		ofSetColor(180, 180, 180);			
+		ofSetColor(fillColor);		
 		ofRect(b.x+1, b.y+1, valAsPct-1, b.height-2);
 		
-		ofSetColor(230, 230, 230, 255);			
+		ofSetColor(textColor);			
 		
 		float stringY = b.y + 14;
 		
@@ -87,5 +89,4 @@ protected:
 			val = ofMap(mx, b.x, b.x + b.width, min, max, true);
 		}
 	}
-	
 };
