@@ -36,6 +36,14 @@ public:
 		bGuiActive = false;		
 	}	
 	
+	virtual void save(ofxXmlSettings& xml) {
+		xml.addValue(name, val);
+	}
+	
+	virtual void load(ofxXmlSettings& xml) {
+		val = xml.getValue(name, val);
+	}
+	
 	double getValue(){
 		if( bInt ){
 			return (int)val;

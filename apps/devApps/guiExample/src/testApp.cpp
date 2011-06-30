@@ -54,6 +54,12 @@ void testApp::keyPressed(int key){
 	if( key == 'h' ){
 		bHide = !bHide;
 	}
+	if(key == 's') {
+		gui.save("settings.xml");
+	}
+	if(key == 'l') {
+		gui.load("settings.xml");
+	}
 }
 
 //--------------------------------------------------------------
