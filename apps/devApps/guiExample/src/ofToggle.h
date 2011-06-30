@@ -6,8 +6,7 @@ class ofToggle : public ofBaseGui{
 	friend class ofPanel;
 	
 public:
-	
-	void setup(string toggleName, bool _bVal, float width = defaultWidth, float height = defaultHeight){
+	ofToggle* setup(string toggleName, bool _bVal, float width = defaultWidth, float height = defaultHeight){
 		name = toggleName;
 		b.x = 0;
 		b.y = 0;
@@ -16,8 +15,8 @@ public:
 		currentFrame = 0;			
 		bGuiActive = false;
 		bVal = _bVal;
+		return this;
 	}
-	
 	
 	virtual void mouseMoved(ofMouseEventArgs & args){
 	}

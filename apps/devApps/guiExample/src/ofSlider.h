@@ -5,9 +5,8 @@
 class ofSlider : public ofBaseGui{
 	friend class ofPanel;
 	
-public:
-	
-	void setup(string sliderName, double _val, double _min, double _max, bool _bInt = false, float width = defaultWidth, float height = defaultHeight){
+public:	
+	ofSlider* setup(string sliderName, double _val, double _min, double _max, bool _bInt = false, float width = defaultWidth, float height = defaultHeight){
 		name = sliderName;
 		val = _val;
 		min = _min;
@@ -19,8 +18,8 @@ public:
 		currentFrame = 0;			
 		bGuiActive = false;
 		bInt = _bInt;
+		return this;
 	}
-	
 	
 	virtual void mouseMoved(ofMouseEventArgs & args){
 	}
@@ -62,12 +61,7 @@ public:
 		ofTranslate(0, b.height / 2 + 4);
 		ofSetColor(textColor);
 		ofDrawBitmapString(name, textPadding, 0);
-		string valStr;
-		if( bInt ){
-			valStr = ofToString(val, 0);
-		}else{
-			valStr = ofToString(val, 2);
-		}
+		string valStr = ofToString(val, bInt ? 0 : 2);
 		ofDrawBitmapString(valStr, b.width - textPadding - valStr.length() * 8, 0);
 		
 		ofPopMatrix();
