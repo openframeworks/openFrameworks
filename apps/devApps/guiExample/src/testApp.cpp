@@ -14,20 +14,13 @@ ofPanel gui;
 void testApp::setup(){
 	ofSetVerticalSync(true);
 	
-	radius.setup( "radius", 140, 10, 300 );
-	r.setup( "red", 100.0f, 0, 255 );
-	g.setup( "green", 100.0f, 0, 255 );
-	b.setup( "blue", 140.0f, 0, 255 );
-	circleResolution.setup("circle res", 5, 3, 90, true);
-	filled.setup("bFill", true);
-	
 	gui.setup(); // most of the time you don't need a name
-	gui.add(&filled);
-	gui.add(&radius);
-	gui.add(&r);
-	gui.add(&g);
-	gui.add(&b);
-	gui.add(&circleResolution);
+	gui.add(filled.setup("bFill", true));
+	gui.add(radius.setup( "radius", 140, 10, 300 ));
+	gui.add(r.setup( "red", 100.0f, 0, 255 ));
+	gui.add(g.setup( "green", 100.0f, 0, 255 ));
+	gui.add(b.setup( "blue", 140.0f, 0, 255 ));
+	gui.add(circleResolution.setup("circle res", 5, 3, 90, true));
 	
 }
 
