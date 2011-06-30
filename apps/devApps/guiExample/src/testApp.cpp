@@ -8,7 +8,7 @@ ofSlider r, g, b;
 ofSlider circleResolution;
 ofToggle filled;
 
-ofGuiCollection gui;
+ofPanel gui;
 
 //--------------------------------------------------------------
 void testApp::setup(){
@@ -21,7 +21,7 @@ void testApp::setup(){
 	circleResolution.setup("circle res", 5, 3, 90, true);
 	filled.setup("bFill", true);
 	
-	gui.setup("gui", 10, 10);
+	gui.setup(); // most of the time you don't need a name
 	gui.add(&filled);
 	gui.add(&radius);
 	gui.add(&r);
@@ -47,8 +47,10 @@ void testApp::draw(){
 	
 	ofSetCircleResolution(circleResolution.getValue());
 	ofSetColor(r.getValue(), g.getValue(), b.getValue());
-	ofCircle( ofGetWidth()/2, ofGetHeight()/2, radius.getValue() );
+	ofCircle(ofGetWidth()/2, ofGetHeight()/2, radius.getValue() );
 	
+	// auto draw?
+	// should the gui control hiding?
 	if( bHide ){
 		gui.draw();
 	}
