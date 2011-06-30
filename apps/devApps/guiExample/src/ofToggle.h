@@ -7,7 +7,7 @@ class ofToggle : public ofBaseGui{
 	
 public:
 	
-	void setup(string toggleName, bool _bVal, float width = 200, float height = 20){
+	void setup(string toggleName, bool _bVal, float width = defaultWidth, float height = defaultHeight){
 		name = toggleName;
 		b.x = 0;
 		b.y = 0;
@@ -16,8 +16,6 @@ public:
 		currentFrame = 0;			
 		bGuiActive = false;
 		bVal = _bVal;
-		checkboxRect.width = b.height - 3;
-		checkboxRect.height = b.height - 3;
 	}
 	
 	
@@ -40,44 +38,43 @@ public:
 	}
 	
 	void draw(){
-		ofPushStyle();
-		
 		currentFrame = ofGetFrameNum();
+		
+		ofPushStyle();
+		ofPushMatrix();
+		
 		ofSetColor(backgroundColor);
 		ofRect(b);
 		
-		checkboxRect.x = b.x + 2;
-		checkboxRect.y = b.y + 1;
+		ofTranslate(b.x, b.y);
 		
-		ofNoFill();
+		ofRectangle checkboxRect(1, 1, b.height - 2, b.height - 2);
+		
+		ofFill();
 		ofSetColor(fillColor);
 		ofRect(checkboxRect);
 		
-		if( bVal ){
-			ofFill();
-			ofSetColor(fillColor);
-			ofRect(checkboxRect);
-			
+		if( bVal ){			
 			ofSetColor(textColor);
 			ofLine(checkboxRect.x, checkboxRect.y, checkboxRect.x + checkboxRect.width, checkboxRect.y + checkboxRect.height);
 			ofLine(checkboxRect.x, checkboxRect.y+ checkboxRect.height, checkboxRect.x + checkboxRect.width, checkboxRect.y);
+		} else {
+			ofSetColor(backgroundColor);
+			ofRect(checkboxRect.x + 1, checkboxRect.y + 1, checkboxRect.width - 2, checkboxRect.height - 2);
 		}
 		
-		ofSetColor(textColor);
+		ofSetColor(textColor);		
+		ofTranslate(0, b.height / 2 + 4);
+		ofDrawBitmapString(name, textPadding + checkboxRect.width, 0);
+		string valStr = bVal ? "true" : "false";		
+		ofDrawBitmapString(valStr, b.width - textPadding - valStr.length() * 8, 0);
 		
-		float stringY = b.y + 14;
-		
-		ofDrawBitmapString(name, b.x + 4 + checkboxRect.width, stringY);
-		string valStr = bVal ? "true" : "false";
-		
-		ofDrawBitmapString( valStr, (b.x + b.width) - 3 - valStr.length() * 8, stringY );
-		
+		ofPopMatrix();
 		ofPopStyle();
 	}
 	
 protected:
 	bool bVal;
-	ofRectangle checkboxRect;
 	
 	void setValue(float mx, float my, bool bCheck){
 		if( ofGetFrameNum() - currentFrame > 1 ){
