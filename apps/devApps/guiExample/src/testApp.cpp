@@ -55,10 +55,10 @@ void testApp::keyPressed(int key){
 		bHide = !bHide;
 	}
 	if(key == 's') {
-		gui.save("settings.xml");
+		gui.saveToFile("settings.xml");
 	}
 	if(key == 'l') {
-		gui.load("settings.xml");
+		gui.loadFromFile("settings.xml");
 	}
 }
 

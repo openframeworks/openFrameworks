@@ -21,28 +21,15 @@ public:
 		ofRegisterMouseEvents(this);
 	}
 	
-	// no reason these two functions can't be in ofBaseGui
-	void save(string filename) {
-		ofxXmlSettings xml;
-		save(xml);
-		xml.saveFile(filename);
-	}
-	
-	void load(string filename) {
-		ofxXmlSettings xml;
-		xml.loadFile(filename);
-		load(xml);
-	}
-	
-	virtual void save(ofxXmlSettings& xml) {
+	virtual void saveToXml(ofxXmlSettings& xml) {
 		for(int i = 0; i < collection.size(); i++){
-			collection[i]->save(xml);
+			collection[i]->saveToXml(xml);
 		}
 	}
 	
-	virtual void load(ofxXmlSettings& xml) {
+	virtual void loadFromXml(ofxXmlSettings& xml) {
 		for(int i = 0; i < collection.size(); i++){
-			collection[i]->load(xml);
+			collection[i]->loadFromXml(xml);
 		}
 	}
 	
