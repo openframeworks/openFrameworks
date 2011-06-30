@@ -81,9 +81,11 @@ public:
 	}		
 	
 	void draw(){
+		ofPushStyle();
+		ofPushMatrix();
+		
 		currentFrame = ofGetFrameNum();
 		
-		ofPushStyle();
 		ofFill();
 		
 		//ofSetColor(10, 10, 10, 170);
@@ -95,11 +97,11 @@ public:
 		ofSetColor(textColor);
 		ofDrawBitmapString(name, b.x + 4, b.y + 12);
 		
-		ofPushMatrix();
 		ofTranslate(b.x, b.y, 0);		
 		for(int k = 0; k < collection.size(); k++){
 			collection[k]->draw();
 		}
+		
 		ofPopMatrix();
 		ofPopStyle();
 	}

@@ -45,6 +45,9 @@ public:
 	}
 	
 	void draw(){	
+		ofPushStyle();
+		ofPushMatrix();
+	
 		currentFrame = ofGetFrameNum();
 		ofFill();
 		ofSetColor(backgroundColor);
@@ -67,6 +70,9 @@ public:
 			valStr = ofToString(val, 2);
 		}
 		ofDrawBitmapString( valStr, (b.x + b.width) - 3 - valStr.length() * 8, stringY );
+		
+		ofPopMatrix();
+		ofPopStyle();
 	}
 	
 protected:
