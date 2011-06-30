@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ofBaseGui.h"
+#include "ofxXmlSettings.h"
 
 class ofPanel : public ofBaseGui{
 public:
@@ -19,6 +20,12 @@ public:
 		b.width = 200;
 		b.height = 100;
 		ofRegisterMouseEvents(this);
+	}
+	
+	void save(string filename) {
+	}
+	
+	void load(string filename) {
 	}
 	
 	void add(ofBaseGui * element){
@@ -41,8 +48,8 @@ public:
 		ofMouseEventArgs a = args;
 		a.x -= b.x;
 		a.y -= b.y;		
-		for(int k = 0; k < collection.size(); k++){
-			collection[k]->mouseMoved(a);
+		for(int i = 0; i < collection.size(); i++){
+			collection[i]->mouseMoved(a);
 		}		
 	}
 	
@@ -52,8 +59,8 @@ public:
 			ofMouseEventArgs a = args;
 			a.x -= b.x;
 			a.y -= b.y;
-			for(int k = 0; k < collection.size(); k++){
-				collection[k]->mousePressed(a);
+			for(int i = 0; i < collection.size(); i++){
+				collection[i]->mousePressed(a);
 			}
 		}
 	}
@@ -64,8 +71,8 @@ public:
 			ofMouseEventArgs a = args;
 			a.x -= b.x;
 			a.y -= b.y;			
-			for(int k = 0; k < collection.size(); k++){
-				collection[k]->mouseDragged(a);
+			for(int i = 0; i < collection.size(); i++){
+				collection[i]->mouseDragged(a);
 			}
 		}					
 	}
@@ -94,8 +101,8 @@ public:
 		ofDrawBitmapString(name, b.x + 4, b.y + 12);
 		
 		ofTranslate(b.x, b.y, 0);		
-		for(int k = 0; k < collection.size(); k++){
-			collection[k]->draw();
+		for(int i = 0; i < collection.size(); i++){
+			collection[i]->draw();
 		}
 		
 		ofPopMatrix();
