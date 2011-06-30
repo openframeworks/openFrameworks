@@ -7,7 +7,7 @@ class ofSlider : public ofBaseGui{
 	
 public:
 	
-	void setup(string sliderName, double _val, double _min, double _max, bool _bInt = false, float width = 200, float height = 20){
+	void setup(string sliderName, double _val, double _min, double _max, bool _bInt = false, float width = defaultWidth, float height = defaultHeight){
 		name = sliderName;
 		val = _val;
 		min = _min;
@@ -44,7 +44,7 @@ public:
 		return val;
 	}
 	
-	void draw(){	
+	void draw(){
 		ofPushStyle();
 		ofPushMatrix();
 	
@@ -53,23 +53,22 @@ public:
 		ofSetColor(backgroundColor);
 		ofRect(b);
 		
-		float valAsPct = ofMap( val, min, max, 0, b.width, true );
+		ofTranslate(b.x, b.y);		
+		float valAsPct = ofMap( val, min, max, 0, b.width-2, true );
 		ofEnableAlphaBlending();
 		ofSetColor(fillColor);		
-		ofRect(b.x+1, b.y+1, valAsPct-1, b.height-2);
+		ofRect(1, 1, valAsPct, b.height-2);
 		
-		ofSetColor(textColor);			
-		
-		float stringY = b.y + 14;
-		
-		ofDrawBitmapString(name, b.x + 4, stringY);
+		ofTranslate(0, b.height / 2 + 4);
+		ofSetColor(textColor);
+		ofDrawBitmapString(name, textPadding, 0);
 		string valStr;
 		if( bInt ){
 			valStr = ofToString(val, 0);
 		}else{
 			valStr = ofToString(val, 2);
 		}
-		ofDrawBitmapString( valStr, (b.x + b.width) - 3 - valStr.length() * 8, stringY );
+		ofDrawBitmapString(valStr, b.width - textPadding - valStr.length() * 8, 0);
 		
 		ofPopMatrix();
 		ofPopStyle();

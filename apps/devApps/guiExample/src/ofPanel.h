@@ -87,10 +87,6 @@ public:
 		currentFrame = ofGetFrameNum();
 		
 		ofFill();
-		
-		//ofSetColor(10, 10, 10, 170);
-		//ofRect(b);	
-		
 		ofSetColor(headerBackgroundColor);
 		ofRect(b.x, b.y, b.width, header);			
 		
