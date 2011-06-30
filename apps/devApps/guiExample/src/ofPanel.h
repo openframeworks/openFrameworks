@@ -1,7 +1,6 @@
 #pragma once
 
 #include "ofBaseGui.h"
-#include "ofxXmlSettings.h"
 
 class ofPanel : public ofBaseGui{
 public:
@@ -22,10 +21,29 @@ public:
 		ofRegisterMouseEvents(this);
 	}
 	
+	// no reason these two functions can't be in ofBaseGui
 	void save(string filename) {
+		ofxXmlSettings xml;
+		save(xml);
+		xml.saveFile(filename);
 	}
 	
 	void load(string filename) {
+		ofxXmlSettings xml;
+		xml.loadFile(filename);
+		load(xml);
+	}
+	
+	virtual void save(ofxXmlSettings& xml) {
+		for(int i = 0; i < collection.size(); i++){
+			collection[i]->save(xml);
+		}
+	}
+	
+	virtual void load(ofxXmlSettings& xml) {
+		for(int i = 0; i < collection.size(); i++){
+			collection[i]->load(xml);
+		}
 	}
 	
 	void add(ofBaseGui * element){
@@ -38,7 +56,7 @@ public:
 		if( currentY >= b.height ){
 			b.height += 40;
 		}
-	}		
+	}
 	
 	void clear(){
 		collection.clear();
@@ -74,7 +92,7 @@ public:
 			for(int i = 0; i < collection.size(); i++){
 				collection[i]->mouseDragged(a);
 			}
-		}					
+		}
 	}
 	
 	virtual void mouseReleased(ofMouseEventArgs & args){

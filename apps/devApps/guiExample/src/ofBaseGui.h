@@ -1,5 +1,7 @@
 #pragma once
 
+#include "ofxXmlSettings.h"
+
 const ofColor
 headerBackgroundColor(64),
 backgroundColor(0),
@@ -23,6 +25,9 @@ public:
 	
 	virtual void setValue(float mx, float my, bool bCheckBounds) = 0;
 	virtual void draw() = 0;
+	
+	virtual void save(ofxXmlSettings& xml) = 0;
+	virtual void load(ofxXmlSettings& xml) = 0;
 	
 	string name;
 	unsigned long currentFrame;			
