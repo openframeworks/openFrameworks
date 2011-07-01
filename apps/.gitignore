@@ -19,5 +19,6 @@ androidExamples/*/local.properties
 androidExamples/*/.settings
 androidExamples/*/.externalToolBuilders
 libOFAndroidApp.so
+libOFAndroidApp_neon.so
 */*/.*project
 !androidExamples/*/.*project

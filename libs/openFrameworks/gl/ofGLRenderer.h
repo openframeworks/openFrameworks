@@ -1,6 +1,7 @@
 #pragma once
 #include "ofBaseTypes.h"
 #include "ofPolyline.h"
+#include <stack>
 class ofShapeTessellation;
 class ofMesh;
 
@@ -107,7 +108,7 @@ private:
 	void endSmoothing();
 
 	ofHandednessType coordHandedness;
-	deque <ofRectangle> viewportHistory;
+	stack <ofRectangle> viewportHistory;
 	bool bBackgroundAuto;
 	ofColor bgColor;
 
