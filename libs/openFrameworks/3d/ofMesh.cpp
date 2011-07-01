@@ -476,6 +476,6 @@ void ofMesh::draw(){
 
 //--------------------------------------------------------------
 void ofMesh::draw(ofPolyRenderMode renderType){
-	ofGetDefaultRenderer()->draw(*this,renderType);
+	ofGetCurrentRenderer()->draw(*this,renderType);
 }
 

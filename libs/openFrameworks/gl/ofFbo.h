@@ -15,9 +15,9 @@ public:
 	ofFbo & operator=(const ofFbo & fbo);
 	virtual ~ofFbo();
 
-	void setup(int width, int height, int internalformat = GL_RGBA, int numSamples = 0);
-	void setupShadow( int width, int height );
-	void setup(Settings settings = Settings());
+	void allocate(int width, int height, int internalformat = GL_RGBA, int numSamples = 0);
+	void allocateForShadow( int width, int height );
+	void allocate(Settings settings = Settings());
 	
 	void draw(float x, float y);
 	void draw(float x, float y, float width, float height);

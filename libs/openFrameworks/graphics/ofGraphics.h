@@ -7,12 +7,14 @@
 #include "ofRectangle.h"
 #include "ofTypes.h"
 #include "ofBaseTypes.h"
+#include "ofGLRenderer.h"
 
 #define  	CIRC_RESOLUTION		    22				// 22 pts for a circle...
 
 
-void ofSetDefaultRenderer(ofPtr<ofBaseRenderer> renderer);
-ofPtr<ofBaseRenderer> & ofGetDefaultRenderer();
+void ofSetCurrentRenderer(ofPtr<ofBaseRenderer> renderer);
+ofPtr<ofBaseRenderer> & ofGetCurrentRenderer();
+ofPtr<ofGLRenderer> ofGetGLRenderer();
 
 //opengl specifics
 
