@@ -482,6 +482,7 @@ void ofFbo::createAndAttachTexture(GLenum attachmentPoint) {
 	glBindFramebuffer(GL_FRAMEBUFFER, fboTextures);
 
 	ofTexture tex;
+	tex.texData.bFlipTexture = true;
 	tex.allocate(settings.width, settings.height, settings.internalformat, settings.textureTarget == GL_TEXTURE_2D ? false : true);
 	tex.setTextureWrap(settings.wrapModeHorizontal, settings.wrapModeVertical);
 	tex.setTextureMinMagFilter(settings.minFilter, settings.maxFilter);
