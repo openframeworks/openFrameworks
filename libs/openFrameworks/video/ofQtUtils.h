@@ -1,12 +1,9 @@
-#ifndef _QT_UTILS
-#define _QT_UTILS
-
+#pragma once
 
 #include "ofConstants.h"
 
-#ifndef TARGET_LINUX
+#if defined (TARGET_WIN32) || defined (TARGET_OSX)
 
-#include "ofGraphics.h"
 
 
 #ifdef TARGET_OSX
@@ -52,8 +49,6 @@ void            MovieGetStaticFrameRate(Movie inMovie, double *outStaticFrameRat
 #ifdef TARGET_OSX
 	OSErr	GetSettingsPreference(CFStringRef inKey, UserData *outUserData);
 	OSErr	SaveSettingsPreference(CFStringRef inKey, UserData inUserData);
-#endif
-
 #endif
 
 #endif

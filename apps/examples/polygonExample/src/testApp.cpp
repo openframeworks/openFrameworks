@@ -1,7 +1,5 @@
 #include "testApp.h"
 
-
-
 //--------------------------------------------------------------
 void testApp::setup(){	
 	ofBackground(255,255,255);	
@@ -37,7 +35,6 @@ void testApp::update(){
 
 //--------------------------------------------------------------
 void testApp::draw(){
-
 	ofFill();
 	ofSetHexColor(0xe0be21);
 
@@ -367,8 +364,8 @@ void testApp::draw(){
 	ofEndShape(true);
 	
 	glPopMatrix();
+
 	//-------------------------------------
-	
 	
 	ofSetHexColor(0x000000);
 	ofDrawBitmapString("(a) star\nwinding rule odd", 20,210);
@@ -397,7 +394,6 @@ void testApp::draw(){
 	
 	ofSetHexColor(0x000000);
 	ofDrawBitmapString("(i) ofNextContour\ncan even be used for CSG operations\nsuch as union and intersection", 260,620);
-	
 	
 }
 
@@ -446,8 +442,6 @@ void testApp::mousePressed(int x, int y, int button){
 			curveVertices[i].bBeingDragged = false;
 		}	
 	}
-
-
 }
 
 //--------------------------------------------------------------
@@ -463,3 +457,12 @@ void testApp::windowResized(int w, int h){
 
 }
 
+//--------------------------------------------------------------
+void testApp::gotMessage(ofMessage msg){
+
+}
+
+//--------------------------------------------------------------
+void testApp::dragEvent(ofDragInfo dragInfo){ 
+
+}

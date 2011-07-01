@@ -1,0 +1,30 @@
+<install>
+	<name>ofxThreadedImageLoader</name>
+    <version>1.0</version>
+    <author><[CDATA[Diederick Huijbers <diederick@apollomedia.nl> ]]></author>
+   
+    <code_url>https://github.com/roxlu/openFrameworks/tree/master/addons</code_url>
+    <site_url>http://www.openframeworks.cc</site_url>
+    <download_url></download_url>
+   
+    <description><![CDATA[
+          Loads threads from disk or url in a separate thread so your 
+          application will not hang while loading.
+    ]]></description>
+    
+	<add>
+		
+		<!-- 	=====================================================================	-->
+		<!--	========================== add per project using this addon =========	-->
+		<!-- 	=====================================================================	-->
+	
+		<src>
+			<folder name="addons/ofxThreadedImageLoader/src">
+				<file>../../../addons/ofxThreadedImageLoader/src/ofxThreadedImageLoader.cpp</file>
+				<file>../../../addons/ofxThreadedImageLoader/src/ofxThreadedImageLoader.h</file>
+			</folder>
+		</src>
+		
+	</add>    
+    
+</install>

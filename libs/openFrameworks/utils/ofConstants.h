@@ -1,15 +1,15 @@
-#ifndef OF_CONSTANTS
-#define OF_CONSTANTS
+#pragma once
 
 //-------------------------------
-#define OF_VERSION	6
+#define OF_VERSION	7
+#define OF_VERSION_MINOR 0
 //-------------------------------
 
-
-#define OF_LOOP_NONE					0x01
-#define OF_LOOP_PALINDROME				0x02
-#define OF_LOOP_NORMAL					0x03
-
+enum ofLoopType{
+	OF_LOOP_NONE=0x01,
+	OF_LOOP_PALINDROME=0x02,
+	OF_LOOP_NORMAL=0x03
+};
 //-------------------------------
 //  find the system type --------
 //-------------------------------
@@ -28,6 +28,9 @@
 	#else
 		#define TARGET_OSX
 	#endif
+#elif defined (ANDROID)
+	#define TARGET_ANDROID
+	#define TARGET_OPENGLES
 #else
 	#define TARGET_LINUX
 #endif
@@ -42,12 +45,21 @@
 		#   define _WIN32_WINNT 0x400
 	#endif
 	#define WIN32_LEAN_AND_MEAN
+
+	#if (_MSC_VER)
+		#define NOMINMAX		
+		//http://stackoverflow.com/questions/1904635/warning-c4003-and-errors-c2589-and-c2059-on-x-stdnumeric-limitsintmax
+	#endif
+
 	#include <windows.h>
-	#include "GLee.h"
+	#define GLEW_STATIC
+	#include "GL\glew.h"
+	#include "GL\wglew.h"
    	#include "glu.h"
 	#define __WINDOWS_DS__
 	#define __WINDOWS_MM__
 	#if (_MSC_VER)       // microsoft visual studio
+		typedef unsigned __int64  uint64_t;		// allow us to use uint64_t
 		#pragma warning(disable : 4996)     // disable all deprecation warnings
 		#pragma warning(disable : 4068)     // unknown pragmas
 		#pragma warning(disable : 4101)     // unreferenced local variable
@@ -86,9 +98,8 @@
 		#define __MACOSX_CORE__
 	#endif
 	#include <unistd.h>
+	#include "GL/glew.h"
 	#include <OpenGL/gl.h>
-	#include <OpenGL/glext.h>
-	#include <OpenGL/glu.h>
 	#include <ApplicationServices/ApplicationServices.h>
 
 	#if defined(__LITTLE_ENDIAN__)
@@ -99,10 +110,9 @@
 #ifdef TARGET_LINUX
 		#define GL_GLEXT_PROTOTYPES
         #include <unistd.h>
+		#include <GL/glew.h>
 		#include <GL/gl.h>
 		#include <GL/glx.h>
-        #include <GL/glext.h>
-        #include <GL/glu.h>
 
     // for some reason, this isn't defined at compile time,
     // so this hack let's us work
@@ -126,6 +136,22 @@
 	
 	#define TARGET_LITTLE_ENDIAN		// arm cpu	
 #endif
+
+#ifdef TARGET_ANDROID
+	#include <unistd.h>
+	#include <GLES/gl.h>
+	#include <GLES/glext.h>
+
+	#define TARGET_LITTLE_ENDIAN
+#endif
+
+#ifdef TARGET_OPENGLES
+	#include "glu.h"
+	typedef GLushort ofIndexType ;
+#else
+	typedef GLuint ofIndexType;
+#endif
+
 
 
 #ifndef __MWERKS__
@@ -158,10 +184,11 @@
 		#define OF_VIDEO_CAPTURE_GSTREAMER
 	#endif
 
+#elif defined(TARGET_OSX) 
 
-#else
+    #define OF_VIDEO_CAPTURE_QUICKTIME
 
-    // non - linux, pc or osx
+#elif defined (TARGET_WIN32)
 
     // comment out this following line, if you'd like to use the
     // quicktime capture interface on windows
@@ -171,42 +198,41 @@
     #define OF_SWITCH_TO_DSHOW_FOR_WIN_VIDCAP
 
     #ifdef OF_SWITCH_TO_DSHOW_FOR_WIN_VIDCAP
-        #ifdef TARGET_OSX
-            #define OF_VIDEO_CAPTURE_QUICKTIME
-        #else
-            #define OF_VIDEO_CAPTURE_DIRECTSHOW
-        #endif
+		#define OF_VIDEO_CAPTURE_DIRECTSHOW
     #else
-        // all quicktime, all the time
-        #define OF_VIDEO_CAPTURE_QUICKTIME
+		#define OF_VIDEO_CAPTURE_QUICKTIME
     #endif
+
+#elif defined(TARGET_ANDROID)
+
+	#define OF_VIDEO_CAPTURE_ANDROID
+
+#elif defined(TARGET_OF_IPHONE)
+
+    #define OF_VIDEO_CAPTURE_IPHONE
+
 #endif
 
 
 #ifdef TARGET_LINUX
 	#define OF_VIDEO_PLAYER_GSTREAMER
-#else
-	#define OF_VIDEO_PLAYER_QUICKTIME
+#else 
+	#ifdef TARGET_OF_IPHONE
+		#define OF_VIDEO_CAPTURE_IPHONE
+		#define OF_VIDEO_PLAYER_IPHONE
+	#elif !defined(TARGET_ANDROID)
+		#define OF_VIDEO_PLAYER_QUICKTIME
+	#endif
 #endif
 
 // comment out this line to disable all poco related code
 #define OF_USING_POCO
 
+
 //we don't want to break old code that uses ofSimpleApp
 //so we forward declare ofBaseApp and make ofSimpleApp mean the same thing
 class ofBaseApp;
 typedef ofBaseApp ofSimpleApp;
-
-enum ofLogLevel{
-	OF_LOG_VERBOSE,
-	OF_LOG_NOTICE,
-	OF_LOG_WARNING,
-	OF_LOG_ERROR,
-	OF_LOG_FATAL_ERROR,
-	OF_LOG_SILENT	//this one is special and should always be last - set ofSetLogLevel to OF_SILENT to not recieve any messages
-};
-
-#define OF_DEFAULT_LOG_LEVEL  OF_LOG_WARNING;
 
 // serial error codes
 #define OF_SERIAL_NO_DATA 	-2
@@ -271,30 +297,60 @@ using namespace std;
 	#define ABS(x) (((x) < 0) ? -(x) : (x))
 #endif
 
-#define 	OF_FILLED				0x01
-#define 	OF_OUTLINE				0x02
-#define 	OF_WINDOW 				0
-#define 	OF_FULLSCREEN 			1
-#define 	OF_GAME_MODE			2
+enum ofFillFlag{
+	OF_OUTLINE=	0,
+	OF_FILLED = 1,
+};
 
-#define 	OF_RECTMODE_CORNER				0
-#define 	OF_RECTMODE_CENTER				1
+enum ofWindowMode{
+	OF_WINDOW 		= 0,
+	OF_FULLSCREEN 	= 1,
+ 	OF_GAME_MODE	= 2
+};
 
-#define 	OF_IMAGE_GRAYSCALE		0x00
-#define 	OF_IMAGE_COLOR			0x01
-#define 	OF_IMAGE_COLOR_ALPHA	0x02
-#define 	OF_IMAGE_UNDEFINED		0x03
+enum ofRectMode{
+	OF_RECTMODE_CORNER=0,
+ 	OF_RECTMODE_CENTER=1
+};
+
+enum ofImageType{
+	OF_IMAGE_GRAYSCALE		= 0x00,
+ 	OF_IMAGE_COLOR			= 0x01,
+ 	OF_IMAGE_COLOR_ALPHA	= 0x02,
+ 	OF_IMAGE_UNDEFINED		= 0x03
+};
+
+enum ofPixelFormat{
+	OF_PIXELS_MONO = 0, 
+	OF_PIXELS_RGB,
+	OF_PIXELS_RGBA,
+	OF_PIXELS_BGRA,
+	OF_PIXELS_RGB565
+};
 
 #define		OF_MAX_STYLE_HISTORY	32
+#define		OF_MAX_VIEWPORT_HISTORY	32
 #define		OF_MAX_CIRCLE_PTS 1024
 
 // Blend Modes
-#define OF_BLENDMODE_ALPHA    1
-#define OF_BLENDMODE_ADD      2
-#define OF_BLENDMODE_SUBTRACT 3
-#define OF_BLENDMODE_MULTIPLY 4
-#define OF_BLENDMODE_SCREEN   5
+enum ofBlendMode{
+	OF_BLENDMODE_DISABLED = 0,
+	OF_BLENDMODE_ALPHA 	  = 1,
+	OF_BLENDMODE_ADD 	  = 2,
+	OF_BLENDMODE_SUBTRACT = 3,
+	OF_BLENDMODE_MULTIPLY = 4,
+	OF_BLENDMODE_SCREEN   = 5
+};
 
+//this is done to match the iPhone defaults 
+//we don't say landscape, portrait etc becuase iPhone apps default to portrait while desktop apps are typically landscape
+enum ofOrientation{
+	OF_ORIENTATION_UNKNOWN = -1,
+	OF_ORIENTATION_DEFAULT = 0,
+	OF_ORIENTATION_90_LEFT = 90,
+	OF_ORIENTATION_180 = 180,
+	OF_ORIENTATION_90_RIGHT = 270,
+};
 
 // these are straight out of glu, but renamed and included here
 // for convenience
@@ -308,13 +364,18 @@ using namespace std;
 // also: http://glprogramming.com/red/chapter11.html
 // (CSG ideas)
 
-#define 	OF_POLY_WINDING_ODD 	          100130
-#define 	OF_POLY_WINDING_NONZERO           100131
-#define 	OF_POLY_WINDING_POSITIVE          100132
-#define 	OF_POLY_WINDING_NEGATIVE          100133
-#define		OF_POLY_WINDING_ABS_GEQ_TWO       100134
+enum ofPolyWindingMode{
+	OF_POLY_WINDING_ODD 	        ,
+	OF_POLY_WINDING_NONZERO         ,
+	OF_POLY_WINDING_POSITIVE        ,
+	OF_POLY_WINDING_NEGATIVE        ,
+	OF_POLY_WINDING_ABS_GEQ_TWO
+};
 
 #define 	OF_CLOSE						  (true)
+
+
+enum ofHandednessType {OF_LEFT_HANDED, OF_RIGHT_HANDED};
 
 
 //--------------------------------------------
@@ -335,6 +396,9 @@ using namespace std;
 	#define OF_KEY_MODIFIER 	0x0100
 	#define OF_KEY_RETURN		13
 	#define OF_KEY_ESC			27
+	#define OF_KEY_CTRL			0x0200
+	#define OF_KEY_ALT			0x0300
+	#define OF_KEY_SHIFT		0x0400
 
 	// http://www.openframeworks.cc/forum/viewtopic.php?t=494
 	// some issues with keys across platforms:
@@ -405,6 +469,13 @@ using namespace std;
 
 #endif
 
-//--------------------------------------------
 
-#endif
+//--------------------------------------------
+//ofBitmap draw mode
+enum ofDrawBitmapMode{
+	OF_BITMAPMODE_SIMPLE = 0,
+	OF_BITMAPMODE_SCREEN,
+	OF_BITMAPMODE_VIEWPORT,
+	OF_BITMAPMODE_MODEL,
+	OF_BITMAPMODE_MODEL_BILLBOARD
+};

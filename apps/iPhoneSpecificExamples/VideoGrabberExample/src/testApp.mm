@@ -9,18 +9,19 @@ void testApp::setup(){
 	// register touch events
 	ofRegisterTouchEvents(this);
 	
-	grabber.initGrabber(480, 360);
+	grabber.initGrabber(480, 360, OF_PIXELS_BGRA);
 	tex.allocate(grabber.getWidth(), grabber.getHeight(), GL_RGB);
 	
-	pix = new unsigned char[ (int)( grabber.getWidth() * grabber.getHeight() * 3.0)];
+	pix = new unsigned char[ (int)( grabber.getWidth() * grabber.getHeight() * 3.0) ];
 }
 
 //--------------------------------------------------------------
 void testApp::update(){
-	ofBackground(255,255,255);		
+	ofBackground(255,255,255);	
+	
+	grabber.update();
 	
 	unsigned char * src = grabber.getPixels();
-	
 	int totalPix = grabber.getWidth() * grabber.getHeight() * 3;
 	
 	for(int k = 0; k < totalPix; k+= 3){
@@ -35,7 +36,7 @@ void testApp::update(){
 //--------------------------------------------------------------
 void testApp::draw(){	
 	
-	ofSetColor(0xFFFFFF);
+	ofSetColor(255);
 	grabber.draw(0, 0);
 	
 	tex.draw(0, 0, tex.getWidth() / 4, tex.getHeight() / 4);
@@ -43,6 +44,11 @@ void testApp::draw(){
 
 //--------------------------------------------------------------
 void testApp::touchDown(ofTouchEventArgs &touch){
+
+}
+
+//--------------------------------------------------------------
+void testApp::touchCancelled(ofTouchEventArgs &touch){
 
 }
 
@@ -60,3 +66,9 @@ void testApp::touchUp(ofTouchEventArgs &touch){
 void testApp::touchDoubleTap(ofTouchEventArgs &touch){
 
 }
+
+//--------------------------------------------------------------
+void testApp::touchCancelled(ofTouchEventArgs& args){
+
+}
+

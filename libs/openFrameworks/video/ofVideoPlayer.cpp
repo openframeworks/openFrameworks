@@ -3,64 +3,73 @@
 
 //---------------------------------------------------------------------------
 ofVideoPlayer::ofVideoPlayer (){
-	player						= NULL;
 	bUseTexture					= true;
+	playerTex					= NULL;
+	internalPixelFormat = OF_PIXELS_RGB;
 }
 
 //---------------------------------------------------------------------------
-ofVideoPlayer::~ofVideoPlayer(){
-	close();
-	
-	if( player != NULL ){
-		delete player;
-		player = NULL;
-	}
-	
-	tex.clear();
+void ofVideoPlayer::setPlayer(ofPtr<ofBaseVideoPlayer> newPlayer){
+	player = newPlayer;
 }
 
 //---------------------------------------------------------------------------
-bool ofVideoPlayer::setPlayer(ofBaseVideoPlayer * newPlayer){
-	if( player == NULL ){
-		player = newPlayer;
-		return true;
-	}else{
-		//TODO: should we delete newPlayer? This is why we need smart pointers. 
-		ofLog(OF_LOG_ERROR, "ofVideoPlayer::setPlayer - player already set!");
-	}
-	
-	return false;
+ofPtr<ofBaseVideoPlayer> ofVideoPlayer::getPlayer(){
+	return player;
 }
 
 //--------------------------------------------------------------------
-ofBaseVideoPlayer * ofVideoPlayer::getPlayer(){
-	return player;
+void ofVideoPlayer::setPixelFormat(ofPixelFormat pixelFormat) {
+	internalPixelFormat = pixelFormat;
 }
 
 //---------------------------------------------------------------------------
 bool ofVideoPlayer::loadMovie(string name){
 	if( player == NULL ){
-		setPlayer( new OF_VID_PLAYER_TYPE );
+		setPlayer( ofPtr<OF_VID_PLAYER_TYPE>(new OF_VID_PLAYER_TYPE) );
+		player->setPixelFormat(internalPixelFormat);
 	}
 	
 	bool bOk = player->loadMovie(name);
 	width	 = player->getWidth();
 	height	 = player->getHeight();
 	
-	if( bOk && bUseTexture ){
-		tex.allocate(width, height, GL_RGB);
-	}
+	if( bOk && bUseTexture )
+		if(width!=0 && height!=0)
+			tex.allocate(width, height, GL_RGB);
 	
 	return bOk;
 }
 
 //---------------------------------------------------------------------------
 unsigned char * ofVideoPlayer::getPixels(){
-	if( player != NULL ){		
+	if( player != NULL ){
 		return player->getPixels();
 	}
 	return NULL;	
 }
+
+//---------------------------------------------------------------------------
+ofPixelsRef ofVideoPlayer::getPixelsRef(){
+	return player->getPixelsRef();
+}
+
+//
+//---------------------------------------------------------------------------
+//ofPixels ofVideoPlayer::getOFPixels(){
+//	if( player != NULL ){
+//		return player->getOFPixels();
+//	}
+//	return ofPixels();
+//}
+//
+//---------------------------------------------------------------------------
+//ofPixels ofVideoPlayer::getOFPixels() const{
+//	if( player != NULL ){
+//		return player->getOFPixels();
+//	}
+//	return ofPixels();
+//}
 
 //---------------------------------------------------------------------------
 //for getting a reference to the texture
@@ -80,10 +89,32 @@ bool ofVideoPlayer::isFrameNew(){
 //--------------------------------------------------------------------
 void ofVideoPlayer::update(){
 	if(	player != NULL ){
-		player->idleMovie();
-		if( bUseTexture && player->isFrameNew() ){
-			//note we should look at ways to do other pixel formats. 
-			tex.loadData(player->getPixels(), tex.getWidth(), tex.getHeight(), GL_RGB);
+
+		player->update();
+		
+		if( bUseTexture && player->isFrameNew() ) {
+			
+			playerTex = player->getTexture();
+			
+			if(playerTex == NULL){
+				unsigned char *pxls = player->getPixels();
+
+				if(width==0 || height==0) {
+					if(player->getWidth() != 0 && player->getHeight() != 0) {
+						
+						width = player->getWidth();
+						height = player->getHeight();
+					
+						if(tex.bAllocated())
+							tex.clear();
+					
+						tex.allocate(width, height, GL_RGB);
+						tex.loadData(pxls, tex.getWidth(), tex.getHeight(), GL_RGB);
+					}
+				}else{
+					tex.loadData(pxls, tex.getWidth(), tex.getHeight(), GL_RGB);
+				}
+			}
 		}
 	}
 }
@@ -101,7 +132,7 @@ void ofVideoPlayer::closeMovie(){
 //---------------------------------------------------------------------------
 void ofVideoPlayer::close(){
 	if( player != NULL ){
-		player->closeMovie();
+		player->close();
 	}
 	tex.clear();
 }
@@ -129,12 +160,19 @@ void ofVideoPlayer::setVolume(int volume){
 
 
 //--------------------------------------------------------
-void ofVideoPlayer::setLoopState(int state){
+void ofVideoPlayer::setLoopState(ofLoopType state){
 	if( player != NULL ){
 		player->setLoopState(state);
 	}
 }
 
+int	ofVideoPlayer::getLoopState(){
+	if( player != NULL ){
+		return player->getLoopState();
+	}else{
+		return OF_LOOP_NONE;
+	}
+}
 
 //---------------------------------------------------------------------------
 void ofVideoPlayer::setPosition(float pct){
@@ -239,7 +277,7 @@ void ofVideoPlayer::setAnchorPercent(float xPct, float yPct){
 }
 
 //----------------------------------------------------------
-void ofVideoPlayer::setAnchorPoint(int x, int y){
+void ofVideoPlayer::setAnchorPoint(float x, float y){
 	tex.setAnchorPoint(x, y);
 }
 
@@ -250,12 +288,40 @@ void ofVideoPlayer::resetAnchor(){
 
 //------------------------------------
 void ofVideoPlayer::draw(float _x, float _y, float _w, float _h){
-	tex.draw(_x, _y, _w, _h);
+	if(playerTex == NULL)
+		tex.draw(_x, _y, _w, _h);
+	else
+		playerTex->draw(_x, _y, _w, _h);
 }
 
 //------------------------------------
 void ofVideoPlayer::draw(float _x, float _y){
-	tex.draw(_x, _y);
+	if(playerTex == NULL)
+		tex.draw(_x, _y);
+	else
+	{
+		playerTex->draw(_x,_y);
+	}
+}
+
+//------------------------------------
+void ofVideoPlayer::draw(const ofPoint & p){
+	if(playerTex == NULL)
+		tex.draw(p);
+	else
+	{
+		playerTex->draw(p);
+	}
+}
+
+//------------------------------------
+void ofVideoPlayer::draw(const ofRectangle & r){
+	if(playerTex == NULL)
+		tex.draw(r);
+	else
+	{
+		playerTex->draw(r);
+	}
 }
 
 //------------------------------------

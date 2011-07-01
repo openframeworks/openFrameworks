@@ -86,7 +86,7 @@ void ofAppiPhoneWindow::initializeWindow() {
 }
 
 
-void  ofAppiPhoneWindow::runAppViaInfiniteLoop(ofBaseApp * appPtr) {
+void  ofAppiPhoneWindow::runAppViaInfiniteLoop(ofPtr<ofBaseApp> appPtr) {
 	ofLog(OF_LOG_VERBOSE, "ofAppiPhoneWindow::runAppViaInfiniteLoop()");
 	
 	NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
@@ -125,15 +125,8 @@ ofPoint	ofAppiPhoneWindow::getWindowPosition() {
 ofPoint	ofAppiPhoneWindow::getWindowSize() {
 	if(windowSize.x == NOT_INITIALIZED) {
 		CGSize s = [[[UIApplication sharedApplication] keyWindow] bounds].size;
-		if(orientation == OFXIPHONE_ORIENTATION_PORTRAIT || orientation == OFXIPHONE_ORIENTATION_UPSIDEDOWN)
-		{
-			windowSize.set(s.width, s.height, 0);
-		}
-		else //if(orientation == OFXIPHONE_ORIENTATION_LANDSCAPE)
-		{
-			windowSize.set(s.height, s.width, 0);
-		}
-		
+		windowSize.set(s.width, s.height, 0);
+
 		if(retinaEnabled)
 			if ([[UIScreen mainScreen] respondsToSelector:@selector(scale)])
 				windowSize*=[[UIScreen mainScreen] scale];
@@ -147,16 +140,23 @@ ofPoint	ofAppiPhoneWindow::getWindowSize() {
 ofPoint	ofAppiPhoneWindow::getScreenSize() {
 	if(screenSize.x == NOT_INITIALIZED) {
 		CGSize s = [[UIScreen mainScreen] bounds].size;
-		if(orientation == OFXIPHONE_ORIENTATION_PORTRAIT || orientation == OFXIPHONE_ORIENTATION_UPSIDEDOWN)
-		{
-			screenSize.set(s.width, s.height, 0);
-		}
-		else //if(orientation == OFXIPHONE_ORIENTATION_LANDSCAPE)
-		{
-			screenSize.set(s.height, s.width, 0);
-		}
+		screenSize.set(s.width, s.height, 0);
 	}
 	return screenSize;
+}
+
+int ofAppiPhoneWindow::getWidth(){
+	if( orientation == OF_ORIENTATION_DEFAULT || orientation == OF_ORIENTATION_180 ){
+		return (int)getScreenSize().x;
+	}
+	return (int)getScreenSize().y;
+}
+
+int ofAppiPhoneWindow::getHeight(){
+	if( orientation == OF_ORIENTATION_DEFAULT || orientation == OF_ORIENTATION_180 ){
+		return (int)getScreenSize().y;
+	}
+	return (int)getScreenSize().x;
 }
 
 int	ofAppiPhoneWindow::getWindowMode() {
@@ -201,20 +201,21 @@ void ofAppiPhoneWindow::disableSetupScreen(){
 	bEnableSetupScreen = false;
 };
 
-void ofAppiPhoneWindow::setOrientation(int orientation) {
+void ofAppiPhoneWindow::setOrientation(ofOrientation orientation) {
+
 	ofLog(OF_LOG_VERBOSE, "ofAppiPhoneWindow::setOrientation: " + ofToString(orientation));
 	switch (orientation) {
-		case OFXIPHONE_ORIENTATION_PORTRAIT:
+		case OF_ORIENTATION_DEFAULT:
 			[[UIApplication sharedApplication] setStatusBarOrientation: UIInterfaceOrientationPortrait];
 			break;
-		case OFXIPHONE_ORIENTATION_UPSIDEDOWN:
+		case OF_ORIENTATION_180:
 			[[UIApplication sharedApplication] setStatusBarOrientation: UIInterfaceOrientationPortraitUpsideDown];
 			break;
-		case OFXIPHONE_ORIENTATION_LANDSCAPE_RIGHT:
-			[[UIApplication sharedApplication] setStatusBarOrientation: UIInterfaceOrientationLandscapeRight];
+		case OF_ORIENTATION_90_RIGHT:
+			[[UIApplication sharedApplication] setStatusBarOrientation: UIInterfaceOrientationLandscapeLeft];
 			break;
-		case OFXIPHONE_ORIENTATION_LANDSCAPE_LEFT:
-			[[UIApplication sharedApplication] setStatusBarOrientation: UIInterfaceOrientationLandscapeLeft];			break;
+		case OF_ORIENTATION_90_LEFT:
+			[[UIApplication sharedApplication] setStatusBarOrientation: UIInterfaceOrientationLandscapeRight];			break;
 			
 		default:
 			break;
@@ -228,7 +229,7 @@ void ofAppiPhoneWindow::setOrientation(int orientation) {
 }
 
 
-int ofAppiPhoneWindow::getOrientation() {
+ofOrientation ofAppiPhoneWindow::getOrientation() {
 	return orientation;
 }
 
@@ -236,19 +237,19 @@ void ofAppiPhoneWindow::rotateXY(float &x, float &y) {
 	float savedX;
 	switch(orientation) {
 		case OFXIPHONE_ORIENTATION_UPSIDEDOWN:
-			x = windowSize.x - x;
-			y = windowSize.y - y;
-			break;
-			
-		case OFXIPHONE_ORIENTATION_LANDSCAPE_RIGHT:
-			savedX = x;
-			x = y;
-			y = windowSize.y - savedX;
+			x = getWidth() - x;
+			y = getHeight() - y;
 			break;
 			
 		case OFXIPHONE_ORIENTATION_LANDSCAPE_LEFT:
 			savedX = x;
-			x = windowSize.x - y;
+			x = y;
+			y = getHeight() - savedX;
+			break;
+			
+		case OFXIPHONE_ORIENTATION_LANDSCAPE_RIGHT:
+			savedX = x;
+			x = getWidth() - y;
 			y = savedX;
 			break;
 			
@@ -295,7 +296,6 @@ bool ofAppiPhoneWindow::isRetinaSupported()
 	return retinaEnabled;
 }
 
-
 void ofAppiPhoneWindow::timerLoop() {
 	static ofEventArgs voidEventArgs;
 	
@@ -309,12 +309,10 @@ void ofAppiPhoneWindow::timerLoop() {
 
 	[ofxiPhoneGetGLView() startRender];
 
-	// this could be taken out and included in ofAppBaseWIndow
-	if(orientation == OFXIPHONE_ORIENTATION_PORTRAIT || orientation == OFXIPHONE_ORIENTATION_UPSIDEDOWN)
-		glViewport( 0, 0, ofGetWidth(), ofGetHeight() );
-	else
-		glViewport( 0, 0, ofGetHeight(), ofGetWidth() );
-	
+	//we do this as ofGetWidth() now accounts for rotation 
+	//so we just make our viewport across the whole screen
+	glViewport( 0, 0, getScreenSize().x, getScreenSize().y );
+
 	float * bgPtr = ofBgColorPtr();
 	bool bClearAuto = ofbClearBg();
 	if ( bClearAuto == true){
@@ -322,75 +320,9 @@ void ofAppiPhoneWindow::timerLoop() {
 		glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	}
 	
-	
 	if(bEnableSetupScreen) {
-		int w, h;
-		
-		switch(orientation) {
-			case OFXIPHONE_ORIENTATION_LANDSCAPE_RIGHT:
-					h = ofGetWidth();
-					w = ofGetHeight();
-				break;
-				
-			case OFXIPHONE_ORIENTATION_LANDSCAPE_LEFT:
-					h = ofGetWidth();
-					w = ofGetHeight();
-				break;
-	
-			default:
-				w = ofGetWidth();
-				h = ofGetHeight();
-			break;
-		}
-		
-		float halfFov, theTan, screenFov, aspect;
-		screenFov 		= 60.0f;
-		
-		float eyeX 		= (float)w / 2.0;
-		float eyeY 		= (float)h / 2.0;
-		halfFov 		= PI * screenFov / 360.0;
-		theTan 			= tanf(halfFov);
-		float dist 		= eyeY / theTan;
-		float nearDist 	= dist / 10.0;	// near / far clip plane
-		float farDist 	= dist * 10.0;
-		aspect 			= (float)w/(float)h;
-		
-		glMatrixMode(GL_PROJECTION);
-		glLoadIdentity();
-		gluPerspective(screenFov, aspect, nearDist, farDist);
-		
-		glMatrixMode(GL_MODELVIEW);
-		glLoadIdentity();
-		gluLookAt(eyeX, eyeY, dist, eyeX, eyeY, 0.0, 0.0, 1.0, 0.0);
-		
-		// adjust so that top left is always 0,0
-		switch(orientation) {
-			case OFXIPHONE_ORIENTATION_UPSIDEDOWN:
-				glRotatef(180, 0, 0, 1);
-				//				glTranslatef(0, -w, 0);
-				break;
-				
-			case OFXIPHONE_ORIENTATION_LANDSCAPE_RIGHT:
-				glRotatef(-90, 0, 0, 1);
-				glScalef(1, -1, 1);        
-				glTranslatef(-h, -w, 0);    
-				break;
-				
-			case OFXIPHONE_ORIENTATION_LANDSCAPE_LEFT:
-				glRotatef(90, 0, 0, 1);
-				glScalef(1, -1, 1);        
-				break;
-				
-			case OFXIPHONE_ORIENTATION_PORTRAIT:
-			default:
-				glScalef(1, -1, 1);        
-				glTranslatef(0, -h, 0);    
-				break;
-		}
-		
-		
+		ofSetupScreen();
 	}
-	
 	
 	ofGetAppPtr()->draw();
 	#ifdef OF_USING_POCO

@@ -16,8 +16,9 @@ class testApp : public ofxiPhoneApp{
 		void touchMoved(ofTouchEventArgs &touch);
 		void touchUp(ofTouchEventArgs &touch);
 		void touchDoubleTap(ofTouchEventArgs &touch);
+		void touchCancelled(ofTouchEventArgs &touch);
 		
-		ofxiPhoneVideoGrabber grabber;
+		ofVideoGrabber grabber;
 		ofTexture tex;
 		unsigned char * pix;
 };

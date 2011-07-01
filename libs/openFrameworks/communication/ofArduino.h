@@ -22,9 +22,7 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-
-#ifndef OF_ARDUINO_H
-#define OF_ARDUINO_H
+#pragma once
 
 #include <list>
 #include <vector>
@@ -63,14 +61,28 @@
 #define FIRMATA_ANALOG                                  0x02 // analog pin in analogInput mode
 #define FIRMATA_PWM                                     0x03 // digital pin in PWM output mode
 #define FIRMATA_SERVO                                   0x04 // digital pin in Servo output mode
+#define SHIFT											0x05 // shiftIn/shiftOut mode
+#define I2C												0x06 // pin included in I2C setup
+#define TOTAL_PIN_MODES 7 
 // extended command set using SysEx (0-127/0x00-0x7F)
 /* 0x00-0x0F reserved for custom commands */
-#define FIRMATA_SYSEX_SERVO_CONFIG                      0x70
+#define FIRMATA_SYSEX_SERVO_CONFIG                      0x70 // set max angle, minPulse, maxPulse, freq
 #define FIRMATA_SYSEX_FIRMATA_STRING					0x71 // a string message with 14-bits per char
+#define SHIFT_DATA										0x75 // a bitstram to/from a shift register
+#define I2C_REQUEST										0x76 // send an I2C read/write request
+#define I2C_REPLY										0x77 // a reply to an I2C request
+#define I2C_CONFIG										0x78 // config I2C settings such as delay times and power pins
+#define EXTENDED_ANALOG									0x6F // analog write (PWM, Servo, etc) to any pin
+#define PIN_STATE_QUERY									0x6D // ask for a pin's current mode and value
+#define PIN_STATE_RESPONSE								0x6E // reply with pin's current mode and value
+#define CAPABILITY_QUERY								0x6B // ask for supported modes and resolution of all pins
+#define CAPABILITY_RESPONSE								0x6C // reply with supported modes and resolution
+#define ANALOG_MAPPING_QUERY							0x69 // ask for mapping of analog to pin numbers
+#define ANALOG_MAPPING_RESPONSE							0x6A // reply with mapping info
 #define FIRMATA_SYSEX_REPORT_FIRMWARE					0x79 // report name and version of the firmware
+#define SAMPLING_INTERVAL								0x7A // set the poll rate of the main loop 
 #define FIRMATA_SYSEX_NON_REALTIME                      0x7E // MIDI Reserved for non-realtime messages
 #define FIRMATA_SYSEX_REALTIME                          0x7F // MIDI Reserved for realtime messages
-//#define FIRMATA_SYSEX_SHIFTOUT_MESSAGE				0xB0 // proposed shiftOut message (SysEx)
 
 // ---- arduino constants (for Arduino NG and Diecimila)
 
@@ -113,12 +125,15 @@
  #endif
  */
 
-
+// DEPRECATED as of firmata v2.2
 #define SYSEX_SERVO_ATTACH                      0x00
 #define SYSEX_SERVO_DETACH                      0x01
 #define SYSEX_SERVO_WRITE                       0x02
 
 #define OF_ARDUINO_DELAY_LENGTH					4.0
+
+// use to check if firmware version uploaded to arduino is >= 2.2 (22)
+#define FIRMWARE2_2								22
 
 
 /**
@@ -137,7 +152,7 @@ class ofArduino{
 
 
                 // --- setup functions
-				bool connect(string device, int baud = 115200);
+				bool connect(string device, int baud = 57600);
 				// opens a serial port connection to the arduino
 
 				void disconnect();
@@ -304,10 +319,12 @@ class ofArduino{
                 // pin: 9, 10
 				// the pin has to have a servo attached
 
+				// angle parameter DEPRECATED as of Firmata 2.2
                 void sendServoAttach(int pin, int minPulse=544, int maxPulse=2400, int angle=180);
 				// pin: 9, 10
                 // attaches a servo to a pin
 
+				// sendServoDetach DEPRECATED as of Firmata 2.2
                 void sendServoDetach(int pin);
 				// pin: 9, 10
                 // detaches a servo from a pin, the pin mode remains as OUTPUT
@@ -355,6 +372,9 @@ class ofArduino{
 				int _majorFirmwareVersion;
 				int _minorFirmwareVersion;
 				string _firmwareName;
+	
+				// sum of majorFirmwareVersion * 10 + minorFirmwareVersion
+				int _firmwareVersionSum;
 
 				list<vector<unsigned char> > _sysExHistory;
 				// maintains a history of received sysEx messages (excluding SysEx messages in the extended command set)
@@ -395,14 +415,7 @@ class ofArduino{
 				int _servoValue[ARD_TOTAL_DIGITAL_PINS];
                 // the last set servo values
 
-				float _temp;
-				// the last received temperature
-
-				float _humidity;
-				// the last received humidity
-
 };
 
 typedef ofArduino ofStandardFirmata;
 
-#endif

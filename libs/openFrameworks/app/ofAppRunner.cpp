@@ -1,41 +1,88 @@
 #include "ofAppRunner.h"
 
+#include "ofBaseApp.h"
+#include "ofAppBaseWindow.h"
+#include "ofSoundPlayer.h"
+#include "ofSoundStream.h"
+#include "ofImage.h"
+#include "ofUtils.h"
+#include "ofEvents.h"
+#include "ofMath.h"
+#include "ofGraphics.h"
+#include "ofGLRenderer.h"
+
+// TODO: closing seems wonky. 
+// adding this for vc2010 compile: error C3861: 'closeQuicktime': identifier not found
+#if defined (TARGET_WIN32) || defined(TARGET_OSX)
+	#include "ofQtUtils.h"
+#endif
+
 //========================================================================
 // static variables:
 
-ofBaseApp	*				OFSAptr = NULL;
+ofPtr<ofBaseApp>				OFSAptr;
 bool 						bMousePressed;
 bool						bRightButton;
 int							width, height;
 
-ofAppBaseWindow *			window = NULL;
+static ofPtr<ofAppBaseWindow> window;
 
 
 //========================================================================
 // default windowing
 #ifdef TARGET_OF_IPHONE
 	#include "ofAppiPhoneWindow.h"
+#elif defined TARGET_ANDROID
+	#include "ofAppAndroidWindow.h"
 #else
 	#include "ofAppGlutWindow.h"
 #endif
 
+// this is hacky only to provide bw compatibility, a shared_ptr should always be initialized using a shared_ptr
+// it shouldn't be a problem since it's only called from main and never deleted from outside
+// also since old versions created the window in the stack, if this function is called we create a shared_ptr that never deletes
+//--------------------------------------
+static void noopDeleter(ofAppBaseWindow*){}
+void ofSetupOpenGL(ofAppBaseWindow * windowPtr, int w, int h, int screenMode){
+	ofSetupOpenGL(ofPtr<ofAppBaseWindow>(windowPtr,std::ptr_fun(noopDeleter)),w,h,screenMode);
+}
+
+// the same hack but in this case the shared_ptr will delete, old versions created the testApp as new...
+//--------------------------------------
+void ofRunApp(ofBaseApp * OFSA){
+	ofRunApp ( ofPtr<ofBaseApp>( OFSA ) );
+}
 
 //--------------------------------------
-void ofSetupOpenGL(ofAppBaseWindow * windowPtr, int w, int h, int screenMode){
+void ofSetupOpenGL(ofPtr<ofAppBaseWindow> windowPtr, int w, int h, int screenMode){
 	window = windowPtr;
 	window->setupOpenGL(w, h, screenMode);
+	
+#ifndef TARGET_OPENGLES
+	GLenum err = glewInit();
+	if (GLEW_OK != err)
+	{
+		/* Problem: glewInit failed, something is seriously wrong. */
+		ofLog(OF_LOG_ERROR, "Error: %s\n", glewGetErrorString(err));
+	}
+#endif
+	ofSetDefaultRenderer(ofPtr<ofBaseRenderer>(new ofGLRenderer(false)));
+	//Default colors etc are now in ofGraphics - ofSetupGraphicDefaults
+	//ofSetupGraphicDefaults();
 }
 
 
 //--------------------------------------
 void ofSetupOpenGL(int w, int h, int screenMode){
 	#ifdef TARGET_OF_IPHONE
-		window = new ofAppiPhoneWindow();
+		window = ofPtr<ofAppBaseWindow>(new ofAppiPhoneWindow());
+	#elif defined TARGET_ANDROID
+		window = ofPtr<ofAppBaseWindow>(new ofAppAndroidWindow());
 	#else
-		window = new ofAppGlutWindow();
+		window = ofPtr<ofAppBaseWindow>(new ofAppGlutWindow());
 	#endif
 
-	window->setupOpenGL(w, h, screenMode);
+	ofSetupOpenGL(window,w,h,screenMode);
 }
 
 //----------------------- 	gets called when the app exits
@@ -46,13 +93,9 @@ void ofExitCallback();
 void ofExitCallback(){
 
 	//------------------------
-	// try to close FMOD:
-	ofSoundPlayer::closeFmod();
+	// try to close engine if needed:
+	ofSoundShutdown();
 	//------------------------
-
-	//------------------------
-	// try to close rtAudio:
-	ofSoundStreamClose();
 
 	// try to close quicktime, for non-linux systems:
 	#if defined( TARGET_OSX ) || defined( TARGET_WIN32 )
@@ -72,19 +115,17 @@ void ofExitCallback(){
 	#endif
 
 	ofNotifyExit();
-
-	if(OFSAptr)delete OFSAptr;
 }
 
 //--------------------------------------
-void ofRunApp(ofBaseApp * OFSA){
+void ofRunApp(ofPtr<ofBaseApp> OFSA){
 
 	OFSAptr = OFSA;
 	if(OFSAptr){
 		OFSAptr->mouseX = 0;
 		OFSAptr->mouseY = 0;
 	}
-	
+
 	#ifdef TARGET_OSX 
 		//this internally checks the executable path for osx
 		ofSetDataPathRoot("../../../data/");
@@ -111,11 +152,22 @@ void ofRunApp(ofBaseApp * OFSA){
 
 	window->runAppViaInfiniteLoop(OFSAptr);
 
+
 }
 
 //--------------------------------------
 ofBaseApp * ofGetAppPtr(){
-	return OFSAptr;
+	return OFSAptr.get();
+}
+
+//--------------------------------------
+void ofSetAppPtr(ofPtr<ofBaseApp> appPtr) {
+	OFSAptr = appPtr;
+}
+
+//--------------------------------------
+void ofExit(int status){
+	std::exit(status);
 }
 
 //--------------------------------------
@@ -157,6 +209,15 @@ void ofShowCursor(){
 	window->showCursor();
 }
 
+//--------------------------------------
+void ofSetOrientation(ofOrientation orientation){
+	window->setOrientation(orientation);
+}
+
+//--------------------------------------
+ofOrientation ofGetOrientation(){
+	return window->getOrientation();
+}
 
 //--------------------------------------
 void ofSetWindowPosition(int x, int y){
@@ -190,12 +251,38 @@ int ofGetScreenHeight(){
 
 //--------------------------------------------------
 int ofGetWidth(){
-	return (int)window->getWindowSize().x;
+	return (int)window->getWidth();
 }
 //--------------------------------------------------
 int ofGetHeight(){
+	return (int)window->getHeight();
+}
+
+//--------------------------------------------------
+int ofGetWindowWidth(){
+	return (int)window->getWindowSize().x;
+}
+//--------------------------------------------------
+int ofGetWindowHeight(){
 	return (int)window->getWindowSize().y;
 }
+
+//--------------------------------------------------
+bool ofDoesHWOrientation(){
+	return window->doesHWOrientation();
+}
+
+//--------------------------------------------------
+ofPoint	ofGetWindowSize() {
+	//this can't be return ofPoint(ofGetWidth(), ofGetHeight()) as width and height change based on orientation. 
+	return window->getWindowSize();
+}
+
+//--------------------------------------------------
+ofRectangle	ofGetWindowRect() {
+	return ofRectangle(0, 0, ofGetWindowWidth(), ofGetWindowHeight());
+}
+
 
 //--------------------------------------
 void ofSetWindowTitle(string title){
@@ -233,9 +320,9 @@ void ofSetVerticalSync(bool bSync){
 	#ifdef TARGET_WIN32
 	//----------------------------
 		if (bSync) {
-			if (GLEE_WGL_EXT_swap_control) wglSwapIntervalEXT (1);
+			if (WGL_EXT_swap_control) wglSwapIntervalEXT (1);
 		} else {
-			if (GLEE_WGL_EXT_swap_control) wglSwapIntervalEXT (0);
+			if (WGL_EXT_swap_control) wglSwapIntervalEXT (0);
 		}
 	//----------------------------
 	#endif
@@ -266,5 +353,3 @@ void ofSetVerticalSync(bool bSync){
 	//--------------------------------------
 
 }
-
-

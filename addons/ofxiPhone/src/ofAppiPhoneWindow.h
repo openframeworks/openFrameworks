@@ -43,7 +43,7 @@ public:
 	
 	virtual void		setupOpenGL(int w, int h, int screenMode);
 	virtual void		initializeWindow();
-	virtual void		runAppViaInfiniteLoop(ofBaseApp * appPtr);
+	virtual void		runAppViaInfiniteLoop(ofPtr<ofBaseApp> appPtr);
 	
 	virtual void		hideCursor() {};
 	virtual void		showCursor() {};
@@ -58,6 +58,9 @@ public:
 	virtual ofPoint		getWindowSize();
 	virtual ofPoint		getScreenSize();
 	
+	virtual int			getWidth();
+	virtual int			getHeight();
+	
 	virtual void		setFrameRate(float targetRate);
 	virtual void		setWindowTitle(string title);
 	
@@ -69,13 +72,13 @@ public:
 	virtual void		enableSetupScreen();
 	virtual void		disableSetupScreen();
 	
-	void				setOrientation(int orientation);
-	int					getOrientation();
+	void				setOrientation(ofOrientation orientation);
+	ofOrientation		getOrientation();
 	void				rotateXY(float &x, float &y);		// updates
 	
 	void				enableRetinaSupport();
 	void				enableDepthBuffer();
-	void				enableAntiAliasing(int samples); // samples doesnt work on iphone but is setup to provide support for this function being in the core
+	void				enableAntiAliasing(int samples);
 	
 	bool				isDepthEnabled();
 	bool				isAntiAliasingEnabled();
@@ -98,7 +101,7 @@ protected:
 	int					nFrameCount;
 	bool				bEnableSetupScreen;
 	float				frameRate;
-	int					orientation;
+	ofOrientation		orientation;
 	
 	bool depthEnabled;
 	bool antiAliasingEnabled;

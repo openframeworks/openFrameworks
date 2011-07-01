@@ -20,8 +20,10 @@ class ofxCvGrayscaleImage : public ofxCvImage {
 
 
   public:
+	using ofxCvImage::setFromPixels;
 
     ofxCvGrayscaleImage();
+    ~ofxCvGrayscaleImage();
     ofxCvGrayscaleImage( const ofxCvGrayscaleImage& mom );
     // virtual void  allocate( int w, int h );                                //in base class
     // virtual void  clear();                                                 //in base class
@@ -48,8 +50,8 @@ class ofxCvGrayscaleImage : public ofxCvImage {
     // virtual void  operator -= ( float value );                              //in base class 
     // virtual void  operator += ( float value );                              //in base class
     
-    virtual void  setFromPixels( unsigned char* _pixels, int w, int h );
-    virtual void  setRoiFromPixels( unsigned char* _pixels, int w, int h );
+    virtual void  setFromPixels( const unsigned char* _pixels, int w, int h );
+    virtual void  setRoiFromPixels( const unsigned char* _pixels, int w, int h );
     virtual void  operator = ( unsigned char* _pixels );
     virtual void  operator = ( const ofxCvGrayscaleImage& mom );
     virtual void  operator = ( const ofxCvColorImage& mom );
@@ -68,8 +70,9 @@ class ofxCvGrayscaleImage : public ofxCvImage {
 
     // Get Pixel Data
     //
-    virtual unsigned char*  getPixels();
-    virtual unsigned char*  getRoiPixels();
+    //virtual unsigned char*  getPixels();                                     //in base class
+	//virtual ofPixelsRef		getPixelsRef();                                //in base class
+    //virtual unsigned char*  getRoiPixels();                                  //in base class
     // virtual IplImage*  getCvImage();                                        //in base class
 
 

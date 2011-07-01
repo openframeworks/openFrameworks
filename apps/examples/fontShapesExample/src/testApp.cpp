@@ -1,7 +1,5 @@
 #include "testApp.h"
 
-int letter = '$';
-
 //--------------------------------------------------------------
 void testApp::setup(){
 	ofBackground(255,255,255);
@@ -9,8 +7,9 @@ void testApp::setup(){
 	testFont.loadFont("Batang.ttf", 160, true, true, true);
 	testFont2.loadFont("cooperBlack.ttf", 52, true, true, true);
 
+	letter = '$';
+	testChar = testFont.getCharacterAsPoints(letter);
 	ofSetFullscreen(false);
-
 }
 
 //--------------------------------------------------------------
@@ -46,21 +45,24 @@ void testApp::draw(){
 	string str = "";
 	str += char(letter);
 
-	testFont.drawString(str, 100, 250);
+	testFont.drawString(str, 50, 250);
 
-	//okay lets get the character back as ofPoints
-	//all curves are calculated for us so all we need to do is draw!
-	ofTTFCharacter testChar;
-	testChar = testFont.getCharacterAsPoints(letter);
+	//okay lets get the character back as shapes
+	testChar.setFilled(true);
+    testChar.draw(200,250);
+    testChar.setFilled(false);
+    testChar.draw(350,250);
 
+
+    // we can also access the individual points
 	ofFill();
 	ofPushMatrix();
-		ofTranslate(250, 250, 0);
+		ofTranslate(550, 250, 0);
 		ofBeginShape();
-			for(int k = 0; k <testChar.contours.size(); k++){
-				if( k!= 0)ofNextContour(true);
-				for(int i = 0; i < testChar.contours[k].pts.size(); i++){
-					ofVertex(testChar.contours[k].pts[i].x, testChar.contours[k].pts[i].y);
+			for(int k = 0; k <(int)testChar.getOutline().size(); k++){
+				if( k!= 0)ofNextContour(true) ;
+				for(int i = 0; i < (int)testChar.getOutline()[k].size(); i++){
+					ofVertex(testChar.getOutline()[k].getVertices()[i].x, testChar.getOutline()[k].getVertices()[i].y);
 				}
 			}
 		ofEndShape( true );
@@ -68,12 +70,12 @@ void testApp::draw(){
 
 	ofNoFill();
 	ofPushMatrix();
-		ofTranslate(400, 250, 0);
+		ofTranslate(700, 250, 0);
 		ofBeginShape();
-			for(int k = 0; k <testChar.contours.size(); k++){
-				if( k!= 0)ofNextContour(true);
-				for(int i = 0; i < testChar.contours[k].pts.size(); i++){
-					ofVertex(testChar.contours[k].pts[i].x, testChar.contours[k].pts[i].y);
+			for(int k = 0; k <(int)testChar.getOutline().size(); k++){
+				if( k!= 0)ofNextContour(true) ;
+				for(int i = 0; i < (int)testChar.getOutline()[k].size(); i++){
+					ofVertex(testChar.getOutline()[k].getVertices()[i].x, testChar.getOutline()[k].getVertices()[i].y);
 				}
 			}
 		ofEndShape( true );
@@ -84,6 +86,7 @@ void testApp::draw(){
 
 //--------------------------------------------------------------
 void testApp::keyPressed  (int key){
+	testChar = testFont.getCharacterAsPoints(key);
 	letter = key;
 	if( key == 'f')ofToggleFullscreen();
 }
@@ -102,9 +105,8 @@ void testApp::mouseDragged(int x, int y, int button){
 
 //--------------------------------------------------------------
 void testApp::mousePressed(int x, int y, int button){
-	ofHideCursor();
-}
 
+}
 
 //--------------------------------------------------------------
 void testApp::mouseReleased(int x, int y, int button){
@@ -113,5 +115,15 @@ void testApp::mouseReleased(int x, int y, int button){
 
 //--------------------------------------------------------------
 void testApp::windowResized(int w, int h){
+
+}
+
+//--------------------------------------------------------------
+void testApp::gotMessage(ofMessage msg){
+
+}
+
+//--------------------------------------------------------------
+void testApp::dragEvent(ofDragInfo dragInfo){ 
 
 }

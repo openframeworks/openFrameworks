@@ -15,10 +15,10 @@ void testApp::setup(){
 		synth[i].loadSound("synth.caf");
 	}
 	
-	ofxALSoundPlayer::ofxALSoundPlayerSetListenerLocation(ofGetWidth()/2,0,ofGetHeight()/2);
-	ofxALSoundPlayer::ofxALSoundPlayerSetReferenceDistance(10);
-	ofxALSoundPlayer::ofxALSoundPlayerSetMaxDistance(500);
-	ofxALSoundPlayer::ofxALSoundPlayerSetListenerGain(5.0);
+	ofxOpenALSoundPlayer::ofxALSoundSetListenerLocation(ofGetWidth()/2,0,ofGetHeight()/2);
+	ofxOpenALSoundPlayer::ofxALSoundSetReferenceDistance(10);
+	ofxOpenALSoundPlayer::ofxALSoundSetMaxDistance(500);
+	ofxOpenALSoundPlayer::ofxALSoundSetListenerGain(5.0);
 	for(int i=0;i<5;i++)
 	{
 		audioLoc[i].set(-1,-1);
@@ -104,6 +104,12 @@ void testApp::gotMemoryWarning(){
 
 //--------------------------------------------------------------
 void testApp::deviceOrientationChanged(int newOrientation){
+
+}
+
+
+//--------------------------------------------------------------
+void testApp::touchCancelled(ofTouchEventArgs& args){
 
 }
 

@@ -149,9 +149,7 @@
 		iPhoneGetOFWindow()->rotateXY(touchPoint.x, touchPoint.y);
 		
 		if( touchIndex==0 ){
-			ofGetAppPtr()->mouseX = touchPoint.x;
-			ofGetAppPtr()->mouseY = touchPoint.y;
-			ofGetAppPtr()->mousePressed(touchPoint.x, touchPoint.y, 1);
+			ofNotifyMousePressed(touchPoint.x, touchPoint.y, 0);
 		}
 		
 		ofTouchEventArgs touchArgs;
@@ -180,9 +178,7 @@
 		iPhoneGetOFWindow()->rotateXY(touchPoint.x, touchPoint.y);
 		
 		if( touchIndex==0 ){
-			ofGetAppPtr()->mouseX = touchPoint.x;
-			ofGetAppPtr()->mouseY = touchPoint.y;
-			ofGetAppPtr()->mouseDragged(touchPoint.x, touchPoint.y, 1);
+			ofNotifyMouseDragged(touchPoint.x, touchPoint.y, 0);			
 		}		
 		ofTouchEventArgs touchArgs;
 		touchArgs.numTouches = [[event touchesForView:self] count];
@@ -197,7 +193,6 @@
 //------------------------------------------------------
 - (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event {
 	//	NSLog(@"touchesEnded: %i %i %i", [touches count],  [[event touchesForView:self] count], multitouchData.numTouches);
-	
 	for(UITouch *touch in touches) {
 		int touchIndex = [[activeTouches objectForKey:[NSValue valueWithPointer:touch]] intValue];
 		
@@ -211,10 +206,7 @@
 		iPhoneGetOFWindow()->rotateXY(touchPoint.x, touchPoint.y);
 		
 		if( touchIndex==0 ){
-			ofGetAppPtr()->mouseX = touchPoint.x;
-			ofGetAppPtr()->mouseY = touchPoint.y;
-			ofGetAppPtr()->mouseReleased(touchPoint.x, touchPoint.y, 1);
-			ofGetAppPtr()->mouseReleased();
+			ofNotifyMouseReleased(touchPoint.x, touchPoint.y, 0);						
 		}
 		
 		ofTouchEventArgs touchArgs;
@@ -228,6 +220,26 @@
 
 //------------------------------------------------------
 - (void)touchesCancelled:(NSSet *)touches withEvent:(UIEvent *)event {
+	
+	
+	for(UITouch *touch in touches) {
+		int touchIndex = [[activeTouches objectForKey:[NSValue valueWithPointer:touch]] intValue];
+		
+		CGPoint touchPoint = [touch locationInView:self];
+		
+		touchPoint.x*=touchScaleFactor; // this has to be done because retina still returns points in 320x240 but with high percision
+		touchPoint.y*=touchScaleFactor;
+		
+		iPhoneGetOFWindow()->rotateXY(touchPoint.x, touchPoint.y);
+		
+		ofTouchEventArgs touchArgs;
+		touchArgs.numTouches = [[event touchesForView:self] count];
+		touchArgs.x = touchPoint.x;
+		touchArgs.y = touchPoint.y;
+		touchArgs.id = touchIndex;
+		ofNotifyEvent(ofEvents.touchCancelled, touchArgs);
+	}
+	
 	[self touchesEnded:touches withEvent:event];
 }
 

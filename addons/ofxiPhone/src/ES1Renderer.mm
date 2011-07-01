@@ -7,7 +7,7 @@
 // Create an OpenGL ES 1.1 context
 - (id)init
 {
-	return [self initWithDepth:false andFSAASamples:0 andAA:false andRetina:false];
+	return [self initWithDepth:false andAA:false  andFSAASamples:0 andRetina:false];
 }
 
 - (id)initWithDepth:(bool)depth andAA:(bool)fsaa andFSAASamples:(int)samples andRetina:(bool)retina

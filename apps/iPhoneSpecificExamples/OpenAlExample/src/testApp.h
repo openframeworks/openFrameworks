@@ -3,7 +3,7 @@
 #include "ofMain.h"
 #include "ofxiPhone.h"
 #include "ofxiPhoneExtras.h"
-#include "ofxALSoundPlayer.h"
+#include "ofxOpenALSoundPlayer.h"
 
 class testApp : public ofxiPhoneApp {
 	
@@ -16,6 +16,7 @@ class testApp : public ofxiPhoneApp {
 		void touchMoved(ofTouchEventArgs & touch);
 		void touchUp(ofTouchEventArgs & touch);
 		void touchDoubleTap(ofTouchEventArgs & touch);
+		void touchCancelled(ofTouchEventArgs &touch);
 		
 		void exit();
 		
@@ -24,7 +25,7 @@ class testApp : public ofxiPhoneApp {
 		void gotMemoryWarning();
 		void deviceOrientationChanged(int newOrientation);
 		
-		ofxALSoundPlayer synth[10]; //load in 10 instances so that they can be played multiple times (sort of). Right now ofxALSoundPlayer doesn't work with multiPlay
+		ofxOpenALSoundPlayer synth[10]; //load in 10 instances so that they can be played multiple times (sort of). Right now ofxALSoundPlayer doesn't work with multiPlay
 		int lastSoundPlayed; //counter to keep track of which sound we're playing
 		
 		ofPoint audioLoc[5]; // one for each possible touch ID

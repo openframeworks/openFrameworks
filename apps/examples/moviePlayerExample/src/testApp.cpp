@@ -3,7 +3,7 @@
 //--------------------------------------------------------------
 void testApp::setup(){
 	ofBackground(255,255,255);
-	
+
 	frameByframe = false;
 
 	fingerMovie.loadMovie("movies/fingers.mov");
@@ -114,6 +114,16 @@ void testApp::mouseReleased(int x, int y, int button){
 }
 
 //--------------------------------------------------------------
-void testApp::resized(int w, int h){
+void testApp::windowResized(int w, int h){
+
+}
+
+//--------------------------------------------------------------
+void testApp::gotMessage(ofMessage msg){
+
+}
+
+//--------------------------------------------------------------
+void testApp::dragEvent(ofDragInfo dragInfo){ 
 
 }

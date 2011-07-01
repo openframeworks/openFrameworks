@@ -1,6 +1,7 @@
 #include "ofQuickTimePlayer.h"
 #include "ofUtils.h"
 
+#ifndef TARGET_LINUX
 //--------------------------------------------------------------
 #ifdef  OF_VIDEO_PLAYER_QUICKTIME
 //--------------------------------------------------------------
@@ -93,7 +94,7 @@ OSErr 	DrawCompleteProc(Movie theMovie, long refCon){
 	ofQuickTimePlayer * ofvp = (ofQuickTimePlayer *)refCon;
 
 	#if defined(TARGET_OSX) && defined(__BIG_ENDIAN__)
-		convertPixels(ofvp->offscreenGWorldPixels, ofvp->pixels, ofvp->width, ofvp->height);
+		convertPixels(ofvp->offscreenGWorldPixels, ofvp->pixels.getPixels(), ofvp->width, ofvp->height);
 	#endif
 
 	ofvp->bHavePixelsChanged = true;
@@ -123,7 +124,6 @@ ofQuickTimePlayer::ofQuickTimePlayer (){
 	height						= 0;
 	speed 						= 1;
 	bStarted					= false;
-	pixels						= NULL;
 	nFrames						= 0;
 	bPaused						= true;
 	currentLoopState			= OF_LOOP_NORMAL;
@@ -148,11 +148,16 @@ ofQuickTimePlayer::~ofQuickTimePlayer(){
 
 //---------------------------------------------------------------------------
 unsigned char * ofQuickTimePlayer::getPixels(){
-	return pixels;	
+	return pixels.getPixels();
 }
 
 //---------------------------------------------------------------------------
-void ofQuickTimePlayer::idleMovie(){
+ofPixelsRef ofQuickTimePlayer::getPixelsRef(){
+	return pixels;
+}
+
+//---------------------------------------------------------------------------
+void ofQuickTimePlayer::update(){
 
 	if (bLoaded == true){
 
@@ -192,6 +197,10 @@ void ofQuickTimePlayer::idleMovie(){
 bool ofQuickTimePlayer::isFrameNew(){
 	return bIsFrameNew;
 }
+//---------------------------------------------------------------------------
+void ofQuickTimePlayer::close(){
+	closeMovie();
+}
 
 //---------------------------------------------------------------------------
 void ofQuickTimePlayer::closeMovie(){
@@ -228,13 +237,13 @@ void ofQuickTimePlayer::createImgMemAndGWorld(){
 	movieRect.left 			= 0;
 	movieRect.bottom 		= height;
 	movieRect.right 		= width;
-	offscreenGWorldPixels 	= new unsigned char[4 * width * height + 32];
-	pixels					= new unsigned char[width*height*3];
+	offscreenGWorldPixels = new unsigned char[4 * width * height + 32];
+	pixels.allocate(width,height,OF_IMAGE_COLOR);
 
 	#if defined(TARGET_OSX) && defined(__BIG_ENDIAN__)
 		QTNewGWorldFromPtr (&(offscreenGWorld), k32ARGBPixelFormat, &(movieRect), NULL, NULL, 0, (offscreenGWorldPixels), 4 * width);		
 	#else
-		QTNewGWorldFromPtr (&(offscreenGWorld), k24RGBPixelFormat, &(movieRect), NULL, NULL, 0, (pixels), 3 * width);
+		QTNewGWorldFromPtr (&(offscreenGWorld), k24RGBPixelFormat, &(movieRect), NULL, NULL, 0, (pixels.getPixels()), 3 * width);
 	#endif
 
 	LockPixels(GetGWorldPixMap(offscreenGWorld));
@@ -281,7 +290,7 @@ bool ofQuickTimePlayer::loadMovie(string name){
 			} else {
 				width 	= movieRect.right;
 				height 	= movieRect.bottom;
-				delete(pixels);
+				pixels.clear();
 				delete(offscreenGWorldPixels);
 				if ((offscreenGWorld)) DisposeGWorld((offscreenGWorld));
 				createImgMemAndGWorld();
@@ -327,7 +336,7 @@ bool ofQuickTimePlayer::loadMovie(string name){
 		MoviesTask(moviePtr,0);
 
 		#if defined(TARGET_OSX) && defined(__BIG_ENDIAN__)
-			convertPixels(offscreenGWorldPixels, pixels, width, height);
+			convertPixels(offscreenGWorldPixels, pixels.getPixels(), width, height);
 		#endif
 
 		bStarted 				= false;
@@ -371,7 +380,7 @@ void ofQuickTimePlayer::start(){
 		// get some pixels in there right away:
 		MoviesTask(moviePtr,0);
 		#if defined(TARGET_OSX) && defined(__BIG_ENDIAN__)
-			convertPixels(offscreenGWorldPixels, pixels, width, height);
+			convertPixels(offscreenGWorldPixels, pixels.getPixels(), width, height);
 		#endif
 		bHavePixelsChanged = true;
 
@@ -462,7 +471,7 @@ void ofQuickTimePlayer::setVolume(int volume){
 
 
 //--------------------------------------------------------
-void ofQuickTimePlayer::setLoopState(int state){
+void ofQuickTimePlayer::setLoopState(ofLoopType state){
 	
 	//--------------------------------------
 	#ifdef OF_VIDEO_PLAYER_QUICKTIME
@@ -782,10 +791,7 @@ void ofQuickTimePlayer::setPaused(bool _bPause){
 //---------------------------------------------------------------------------
 void ofQuickTimePlayer::clearMemory(){
 
-	if(pixels){
-		delete[] pixels;
-		pixels = NULL;
-	}
+	pixels.clear();
 
 }
 
@@ -824,6 +830,6 @@ bool ofQuickTimePlayer::isPlaying(){
 	return bPlaying;
 }
 
-	
+#endif
 
 

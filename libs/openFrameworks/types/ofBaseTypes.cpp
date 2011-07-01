@@ -1,19 +1,6 @@
-/*
- *  ofBaseTypes.cpp
- *  openFrameworksLib
- *
- *  Created by zachary lieberman on 1/9/11.
- *  Copyright 2011 __MyCompanyName__. All rights reserved.
- *
- */
-
 #include "ofBaseTypes.h"
 #include "ofUtils.h"
 
-//---------------------------------------------------------------------------
-ofBaseVideoGrabber::ofBaseVideoGrabber(){
-	
-}
 
 //---------------------------------------------------------------------------
 ofBaseVideoGrabber::~ofBaseVideoGrabber(){
@@ -40,13 +27,18 @@ void ofBaseVideoGrabber::videoSettings(){
 	ofLog(OF_LOG_WARNING, "ofBaseVideoGrabber::videoSettings not implemented");
 }
 
-
 //---------------------------------------------------------------------------
-//---------------------------------------------------------------------------
-
-ofBaseVideoPlayer::ofBaseVideoPlayer (){
-
+void ofBaseVideoGrabber::setPixelFormat(ofPixelFormat pixelFormat){
+	ofLog(OF_LOG_WARNING, "ofBaseVideoGrabber::setPixelFormat not implemented");
 }
+
+ofPixelFormat ofBaseVideoGrabber::getPixelFormat(){
+	ofLog(OF_LOG_WARNING, "ofBaseVideoGrabber::setPixelFormat not implemented");
+	return ofPixelFormat();
+}
+
+//---------------------------------------------------------------------------
+
 
 //---------------------------------------------------------------------------
 ofBaseVideoPlayer::~ofBaseVideoPlayer(){
@@ -93,7 +85,7 @@ void ofBaseVideoPlayer::setVolume(int volume){
 }
 
 //---------------------------------------------------------------------------
-void ofBaseVideoPlayer::setLoopState(int state){
+void ofBaseVideoPlayer::setLoopState(ofLoopType state){
 	ofLog(OF_LOG_WARNING, "ofBaseVideoPlayer::setLoopState not implemented");
 }
 
@@ -138,4 +130,8 @@ void ofBaseVideoPlayer::nextFrame(){
 //---------------------------------------------------------------------------
 void ofBaseVideoPlayer::previousFrame(){
 	ofLog(OF_LOG_WARNING, "ofBaseVideoPlayer::previousFrame not implemented");
+}
+//---------------------------------------------------------------------------
+void ofBaseVideoPlayer::setPixelFormat(ofPixelFormat pixelFormat){
+	ofLog(OF_LOG_WARNING, "ofBaseVideoPlayer::setPixelFormat not implemented");
 }

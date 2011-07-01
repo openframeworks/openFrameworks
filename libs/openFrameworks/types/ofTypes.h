@@ -1,13 +1,61 @@
-#ifndef _OF_TYPES
-#define _OF_TYPES
+#pragma once
 
 #include "ofConstants.h"
-#include "ofUtils.h"
-#include "ofRectangle.h"
-#include "ofPoint.h"
 #include "ofColor.h"
-#include "ofBaseTypes.h"
 
+#if (_MSC_VER)
+#include <memory>
+#else
+#include <tr1/memory>
+#endif
+
+//----------------------------------------------------------
+// ofDeviceInfo
+//----------------------------------------------------------
+class ofSerial;
+class ofSerialDeviceInfo{
+	friend class ofSerial;
+
+	public:
+
+		ofSerialDeviceInfo(string devicePathIn, string deviceNameIn, int deviceIDIn){
+			devicePath			= devicePathIn;
+			deviceName			= deviceNameIn;
+			deviceID			= deviceIDIn;
+		}
+
+		ofSerialDeviceInfo(){
+			deviceName = "device undefined";
+			deviceID   = -1;
+		}
+
+		string getDevicePath(){
+			return devicePath;
+		}
+
+		string getDeviceName(){
+			return deviceName;
+		}
+
+		int getDeviceID(){
+			return deviceID;
+		}
+
+	protected:
+		string devicePath;			//eg: /dev/tty.cu/usbdevice-a440
+		string deviceName;			//eg: usbdevice-a440 / COM4
+		int deviceID;				//eg: 0,1,2,3 etc
+
+		//TODO: other stuff for serial ?
+};
+
+
+//----------------------------------------------------------
+// ofMutex
+//----------------------------------------------------------
+
+#include "Poco/Mutex.h"
+typedef Poco::FastMutex ofMutex;
 
 //----------------------------------------------------------
 // ofStyle
@@ -17,96 +65,88 @@ class ofStyle{
 	public:
 		ofStyle(){
 			bFill				= true;
-            blending            = false;
-			blendEquation		= 0;
-            blendSrc            = GL_SRC_ALPHA;
-            blendDst            = GL_ONE_MINUS_SRC_ALPHA;
+			blendingMode		= OF_BLENDMODE_DISABLED;
 			smoothing			= false;
 			circleResolution	= 20;
+			sphereResolution	= 20;
+			curveResolution		= 20;
 			lineWidth			= 1.0;
 			polyMode			= OF_POLY_WINDING_ODD;
 			rectMode			= OF_RECTMODE_CORNER;
+			drawBitmapMode		= OF_BITMAPMODE_SIMPLE;
+			bgColor.set(200,200,200);
 		}
 
 		virtual ~ofStyle(){}
 
 		ofColor color;
-		int polyMode;
-		int rectMode;
+		ofColor bgColor;
+		ofPolyWindingMode polyMode;
+		ofRectMode rectMode;
 		bool bFill;
-    
-        // one of the following GL_ZERO, GL_ONE, GL_DST_COLOR, GL_ONE_MINUS_DST_COLOR, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_DST_ALPHA, GL_ONE_MINUS_DST_ALPHA, GL_SRC_ALPHA_SATURATE
-        int blendSrc;
-        int blendDst;
-        bool blending;  // blending enabled?
-		int blendEquation; // GL_FUNC_ADD, GL_FUNC_SUBTRACT, GL_FUNC_REVERSE_SUBTRACT, GL_MIN, GL_MAX
-    
+		ofDrawBitmapMode drawBitmapMode;
+
+		ofBlendMode blendingMode;
+
 		bool smoothing;
 		int circleResolution;
+		int sphereResolution;
+		int curveResolution;
 		float lineWidth;
 };
 
 //----------------------------------------------------------
-// ofBuffer
+// ofPtr
 //----------------------------------------------------------
+template <typename T>
+class ofPtr: public std::tr1::shared_ptr<T>
+{
 
-class ofBuffer{
-
-	long 	size;
-	char * 	buffer;
-	long 	nextLinePos;
 public:
 
-	ofBuffer(){
-		size 	= 0;
-		buffer 	= NULL;
-		nextLinePos = 0;
-	}
+	ofPtr()
+	  : std::tr1::shared_ptr<T>() { }
 
-	ofBuffer(int _size, char * _buffer){
-		size 	= _size;
-		buffer 	= _buffer;
-		nextLinePos = 0;
-	}
+	  template<typename Tp1>
+		explicit
+		ofPtr(Tp1* __p)
+	: std::tr1::shared_ptr<T>(__p) { }
 
-	ofBuffer(const ofBuffer & mom){
-		size = mom.size;
-		nextLinePos = mom.nextLinePos;
-		memcpy(buffer,mom.buffer,size);
-	}
+	  template<typename Tp1, typename _Deleter>
+		ofPtr(Tp1* __p, _Deleter __d)
+	: std::tr1::shared_ptr<T>(__p, __d) { }
 
-	~ofBuffer(){
-		if(buffer) delete[] buffer;
-	}
+	  template<typename Tp1, typename _Deleter, typename _Alloc>
+		ofPtr(Tp1* __p, _Deleter __d, const _Alloc& __a)
+	: std::tr1::shared_ptr<T>(__p, __d, __a) { }
 
-	void allocate(long _size){
-		if(buffer) delete[] buffer;
-		buffer = new char[_size];
-		size = _size;
-	}
+	  // Aliasing constructor
+	  template<typename Tp1>
+		ofPtr(const ofPtr<Tp1>& __r, T* __p)
+	: std::tr1::shared_ptr<T>(__r, __p) { }
 
-	char * getBuffer(){
-		return buffer;
-	}
+	  template<typename Tp1>
+		ofPtr(const ofPtr<Tp1>& __r)
+	: std::tr1::shared_ptr<T>(__r) { }
 
-	long getSize(){
-		return size;
-	}
+	  /*ofPtr(ofPtr&& __r)
+	  : std::tr1::shared_ptr<T>(std::move(__r)) { }
 
-	string getNextLine(){
-		if( size <= 0 ) return "";
-		long currentLinePos = nextLinePos;
-		while(nextLinePos<size && buffer[nextLinePos]!='\n') nextLinePos++;
-		string line(buffer + currentLinePos,nextLinePos-currentLinePos);
-		if(nextLinePos<size-1) nextLinePos++;
-		return line;
-	}
+	  template<typename Tp1>
+		ofPtr(ofPtr<Tp1>&& __r)
+		: std::tr1::shared_ptr<T>(std::move(__r)) { }*/
 
-	string getFirstLine(){
-		nextLinePos = 0;
-		return getNextLine();
-	}
+	  template<typename Tp1>
+		explicit
+		ofPtr(const std::tr1::weak_ptr<Tp1>& __r)
+	: std::tr1::shared_ptr<T>(__r) { }
+
+	  /*template<typename Tp1, typename Del>
+		explicit
+		ofPtr(const std::tr1::unique_ptr<Tp1, Del>&) = delete;
+
+	  template<typename Tp1, typename Del>
+		explicit
+		ofPtr(std::tr1::unique_ptr<Tp1, Del>&& __r)
+	: std::tr1::shared_ptr<T>(std::move(__r)) { }*/
 };
-
-
-#endif

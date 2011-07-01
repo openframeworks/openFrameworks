@@ -64,7 +64,7 @@ public:
 - (UIImageOrientation) getImageOrientation;
 
 - (bool) openLibrary;
-- (bool) openCamera;
+- (bool) openCamera:(int)camera;
 #ifdef __IPHONE_3_1
 - (bool) showCameraOverlay;
 - (void) hideCameraOverlay;
@@ -94,7 +94,7 @@ public:
 	ofxiPhoneImagePicker();
 	~ofxiPhoneImagePicker();
 	
-	bool openCamera();
+	bool openCamera(int camera=0); // 0 for rear, 1 for front
 	bool openLibrary();
 	
 #ifdef __IPHONE_3_1
@@ -125,6 +125,8 @@ public:
 	int glType;
 	int texType;
 	int bpp;
+	
+	bool pixelsAllocated;
 	
 	int maxDimension;
 	
