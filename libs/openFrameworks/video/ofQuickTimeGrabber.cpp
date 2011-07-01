@@ -2,6 +2,8 @@
 #include "ofUtils.h"
 
 
+#ifndef TARGET_LINUX
+
 //---------------------------------
 #ifdef OF_VIDEO_CAPTURE_QUICKTIME
 //---------------------------------
@@ -32,7 +34,6 @@ ofQuickTimeGrabber::ofQuickTimeGrabber(){
 
 		initializeQuicktime();
 		bSgInited				= false;
-		pixels					= NULL;
 		gSeqGrabber				= NULL;
 		offscreenGWorldPixels	= NULL;
 
@@ -46,9 +47,9 @@ ofQuickTimeGrabber::ofQuickTimeGrabber(){
 	bGrabberInited 			= false;
 	bChooseDevice			= false;
 	deviceID				= 0;
-	width 					= 320;	// default setting
-	height 					= 240;	// default setting
-	pixels					= NULL;
+	//width 					= 320;	// default setting
+	//height 					= 240;	// default setting
+	//pixels					= NULL;
 	attemptFramerate		= -1;
 
 }
@@ -102,23 +103,23 @@ bool ofQuickTimeGrabber::initGrabber(int w, int h){
 		}
 
 		//---------------------------------- 2 - set the dimensions
-		width 		= w;
-		height 		= h;
+		//width 		= w;
+		//height 		= h;
 
-		MacSetRect(&videoRect, 0, 0, width, height);
+		MacSetRect(&videoRect, 0, 0, w, h);
 
 		//---------------------------------- 3 - buffer allocation
 		// Create a buffer big enough to hold the video data,
 		// make sure the pointer is 32-byte aligned.
 		// also the rgb image that people will grab
 
-		offscreenGWorldPixels 	= (unsigned char*)malloc(4 * width * height + 32);
-		pixels					= new unsigned char[width*height*3];
+		offscreenGWorldPixels 	= (unsigned char*)malloc(4 * w * h + 32);
+		pixels.allocate(w, h, OF_IMAGE_COLOR);
 		
 		#if defined(TARGET_OSX) && defined(__BIG_ENDIAN__)
-			QTNewGWorldFromPtr (&(videogworld), k32ARGBPixelFormat, &(videoRect), NULL, NULL, 0, (offscreenGWorldPixels), 4 * width);		
+			QTNewGWorldFromPtr (&(videogworld), k32ARGBPixelFormat, &(videoRect), NULL, NULL, 0, (offscreenGWorldPixels), 4 * w);		
 		#else
-			QTNewGWorldFromPtr (&(videogworld), k24RGBPixelFormat, &(videoRect), NULL, NULL, 0, (pixels), 3 * width);
+			QTNewGWorldFromPtr (&(videogworld), k24RGBPixelFormat, &(videoRect), NULL, NULL, 0, (pixels.getPixels()), 3 * w);
 		#endif		
 		
 		LockPixels(GetGWorldPixMap(videogworld));
@@ -216,7 +217,11 @@ bool ofQuickTimeGrabber::initGrabber(int w, int h){
 
 			bGrabberInited = false;
 			return false;
-
+			
+	//---------------------------------
+	#else
+	//---------------------------------
+		return false;
 	//---------------------------------
 	#endif
 	//---------------------------------
@@ -317,7 +322,7 @@ void ofQuickTimeGrabber::listDevices(){
 }
 
 //--------------------------------------------------------------------
-void ofQuickTimeGrabber::grabFrame(){
+void ofQuickTimeGrabber::update(){
 
 	//---------------------------------
 	#ifdef OF_VIDEO_CAPTURE_QUICKTIME
@@ -332,7 +337,7 @@ void ofQuickTimeGrabber::grabFrame(){
 			if (bHavePixelsChanged){
 				
 				#if defined(TARGET_OSX) && defined(__BIG_ENDIAN__)
-					convertPixels(offscreenGWorldPixels, pixels, width, height);
+					convertPixels(offscreenGWorldPixels, pixels.getPixels(), width, height);
 				#endif
 			}
 		}
@@ -355,6 +360,11 @@ void ofQuickTimeGrabber::grabFrame(){
 
 //---------------------------------------------------------------------------
 unsigned char * ofQuickTimeGrabber::getPixels(){
+	return pixels.getPixels();
+}
+
+//---------------------------------------------------------------------------
+ofPixelsRef ofQuickTimeGrabber::getPixelsRef(){
 	return pixels;
 }
 
@@ -365,20 +375,17 @@ bool  ofQuickTimeGrabber::isFrameNew(){
 
 //--------------------------------------------------------------------
 float ofQuickTimeGrabber::getWidth(){
-	return width;
+	return pixels.getWidth();
 }	
 
 //--------------------------------------------------------------------
 float ofQuickTimeGrabber::getHeight(){
-	return height;
+	return pixels.getHeight();
 }
 
 //--------------------------------------------------------------------
 void ofQuickTimeGrabber::clearMemory(){
-	if (pixels != NULL){
-		delete[] pixels;
-		pixels = NULL;
-	}
+	pixels.clear();
 
 }
 
@@ -731,4 +738,4 @@ bool ofQuickTimeGrabber::qtSelectDevice(int deviceNumber, bool didWeChooseADevic
 #endif
 //---------------------------------
 
-
+#endif

@@ -1,5 +1,4 @@
 #pragma once
-#include "ofConstants.h"
 
 //----------------------------------------------------------
 // ofColor
@@ -9,7 +8,7 @@ class ofColor{
 	public:
 	
 		ofColor ();
-		virtual ~ ofColor ();
+		~ofColor ();
 		
 		ofColor (float _r, float _g, float _b, float _a = 255.0f);
 		ofColor (ofColor const & color);
@@ -19,6 +18,16 @@ class ofColor{
 		static ofColor fromHsb (float hue, float saturation, float brightness, float alpha = 255.f);
 		static ofColor fromHex (int hexColor, float alpha = 255.f);
 		
+		static const ofColor gray;
+		static const ofColor white;
+		static const ofColor red;
+		static const ofColor green;
+		static const ofColor blue;
+		static const ofColor cyan;
+		static const ofColor magenta;
+		static const ofColor yellow;
+		static const ofColor black;
+	
 		void set (float _r, float _g, float _b, float _a = 255.0f);
 		void set (float _gray, float _a = 255.0f);
 		void set (ofColor const & color);
@@ -76,4 +85,7 @@ class ofColor{
 			};
 			float v[4];
 		};
+
+
 };
+

@@ -1,26 +1,33 @@
-#ifndef _OF_EVENTS
-#define _OF_EVENTS
+#pragma once
 
 #include "ofConstants.h"
-#include "ofUtils.h"
+#include "ofPoint.h"
 
-void ofNotifySetup();
-void ofNotifyUpdate();
-void ofNotifyDraw();
+//-------------------------- mouse/key query
+bool		ofGetMousePressed(int button=-1); //by default any button
+bool		ofGetKeyPressed(int key=-1); //by default any key
 
-void ofNotifyKeyPressed(int key);
-void ofNotifyKeyReleased(int key);
+int			ofGetMouseX();
+int			ofGetMouseY();
 
-void ofNotifyMousePressed(int x, int y, int button);
-void ofNotifyMouseReleased(int x, int y, int button);
-void ofNotifyMouseDragged(int x, int y, int button);
-void ofNotifyMouseMoved(int x, int y);
+int			ofGetPreviousMouseX();
+int			ofGetPreviousMouseY();
 
-void ofNotifyExit();
-void ofNotifyWindowResized(int width, int height);
+void		ofSetEscapeQuitsApp(bool bQuitOnEsc);
+
+void		exitApp(); 
+
+//-----------------------------------------------
+class ofDragInfo{
+	public:
+		vector <string> files;
+		ofPoint position;
+};
+
+//-----------------------------------------------
 
 #ifdef OF_USING_POCO
-
+	#define _OF_EVENTS
 	#ifndef OF_EVENTS_ADDON
 		#include "ofEventUtils.h"
 
@@ -68,6 +75,15 @@ void ofNotifyWindowResized(int width, int height);
 			int width;
 			int height;
 		};
+		
+		class ofMessage : public ofEventArgs{
+			public:
+				ofMessage( string msg ){
+					message = msg;
+				}
+				string message;
+		};
+		
 	#else
 		#include "ofxEventUtils.h"
 	#endif
@@ -95,6 +111,10 @@ void ofNotifyWindowResized(int width, int height);
 		ofEvent<ofTouchEventArgs>	touchUp;
 		ofEvent<ofTouchEventArgs>	touchMoved;
 		ofEvent<ofTouchEventArgs>	touchDoubleTap;
+		ofEvent<ofTouchEventArgs>	touchCancelled;
+
+		ofEvent<ofMessage>			messageEvent;
+		ofEvent<ofDragInfo>			fileDragEvent;
 
 		void disable(){
 			setup.disable();
@@ -113,6 +133,9 @@ void ofNotifyWindowResized(int width, int height);
 			touchUp.disable();
 			touchMoved.disable();
 			touchDoubleTap.disable();
+			touchCancelled.disable();
+			messageEvent.disable();
+			fileDragEvent.disable();
 		}
 
 		void enable(){
@@ -132,10 +155,14 @@ void ofNotifyWindowResized(int width, int height);
 			touchUp.enable();
 			touchMoved.enable();
 			touchDoubleTap.enable();
+			touchCancelled.enable();
+			messageEvent.enable();
+			fileDragEvent.enable();
 		}
 	};
 
-
+	void ofSendMessage(ofMessage msg);
+	void ofSendMessage(string messageString);
 
 	extern ofCoreEvents ofEvents;
 
@@ -159,6 +186,17 @@ void ofNotifyWindowResized(int width, int height);
 		ofAddListener(ofEvents.touchDown, listener, &ListenerClass::touchDown);
 		ofAddListener(ofEvents.touchMoved, listener, &ListenerClass::touchMoved);
 		ofAddListener(ofEvents.touchUp, listener, &ListenerClass::touchUp);
+		ofAddListener(ofEvents.touchCancelled, listener, &ListenerClass::touchCancelled);
+	}
+
+	template<class ListenerClass>
+	void ofRegisterGetMessages(ListenerClass * listener){
+		ofAddListener(ofEvents.messageEvent, listener, &ListenerClass::gotMessage);
+	}
+
+	template<class ListenerClass>
+	void ofRegisterDragEvents(ListenerClass * listener){
+		ofAddListener(ofEvents.fileDragEvent, listener, &ListenerClass::dragEvent);
 	}
 
 	template<class ListenerClass>
@@ -181,9 +219,35 @@ void ofNotifyWindowResized(int width, int height);
 		ofRemoveListener(ofEvents.touchDown, listener, &ListenerClass::touchDown);
 		ofRemoveListener(ofEvents.touchMoved, listener, &ListenerClass::touchMoved);
 		ofRemoveListener(ofEvents.touchUp, listener, &ListenerClass::touchUp);
+		ofRemoveListener(ofEvents.touchCancelled, listener, &ListenerClass::touchCancelled);
 	}
 
-	#endif
+	template<class ListenerClass>
+	void ofUnregisterGetMessages(ListenerClass * listener){
+		ofRemoveListener(ofEvents.messageEvent, listener, &ListenerClass::gotMessage);
+	}
+	
+	template<class ListenerClass>
+	void ofUnregisterDragEvents(ListenerClass * listener){
+		ofRemoveListener(ofEvents.fileDragEvent, listener, &ListenerClass::dragEvent);
+	}	
 
 #endif
 
+//  event notification only for internal OF use
+void ofNotifySetup();
+void ofNotifyUpdate();
+void ofNotifyDraw();
+
+void ofNotifyKeyPressed(int key);
+void ofNotifyKeyReleased(int key);
+
+void ofNotifyMousePressed(int x, int y, int button);
+void ofNotifyMouseReleased(int x, int y, int button);
+void ofNotifyMouseDragged(int x, int y, int button);
+void ofNotifyMouseMoved(int x, int y);
+
+void ofNotifyExit();
+void ofNotifyWindowResized(int width, int height);
+
+void ofNotifyDragEvent(ofDragInfo info);

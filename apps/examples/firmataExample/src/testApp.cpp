@@ -12,36 +12,30 @@ void testApp::setup(){
 	bgImage.loadImage("firmata.png");
 	font.loadFont("franklinGothic.otf", 20);
 
-	// the connection speed has been changing in the
-	// arduino firmata sketch. in 0017 it's 57600
-	// if you have problems try commenting/uncommenting
-	// to change the speed
+	ard.connect("/dev/tty.usbmodem1d11", 57600);
+	//ard.connect("/dev/ttyUSB0", 57600);
+	
+	// listen for EInitialized notification. this indicates that
+	// the arduino is ready to receive commands and it is safe to
+	// call setupArduino()
+	ofAddListener(ard.EInitialized, this, &testApp::setupArduino);
 
-	// ard.connect("/dev/ttyUSB0", 115200);
-	ard.connect("/dev/ttyUSB0", 57600);
 
-	bSetupArduino	= false;							// flag so we setup arduino when its ready, you don't need to touch this :)
+	bSetupArduino	= false;	// flag so we setup arduino when its ready, you don't need to touch this :)
 }
 
 //--------------------------------------------------------------
 void testApp::update(){
 
-
-	if ( ard.isArduinoReady()){
-
-		// 1st: setup the arduino if haven't already:
-		if (bSetupArduino == false){
-			setupArduino();
-			bSetupArduino = true;	// only do this once
-		}
-		// 2nd do the update of the arduino
-		updateArduino();
-	}
+	updateArduino();
 
 }
 
 //--------------------------------------------------------------
-void testApp::setupArduino(){
+void testApp::setupArduino(const int & version) {
+	
+	// remove listener because we don't need it anymore
+	ofRemoveListener(ard.EInitialized, this, &testApp::setupArduino);
 
 	// this is where you setup all the pins and pin modes, etc
 	for (int i = 0; i < 13; i++){
@@ -51,14 +45,21 @@ void testApp::setupArduino(){
 	ard.sendDigitalPinMode(13, ARD_OUTPUT);
 	ard.sendAnalogPinReporting(0, ARD_ANALOG);	// AB: report data
 	ard.sendDigitalPinMode(11, ARD_PWM);		// on diecimelia: 11 pwm?*/
+	
+	bSetupArduino = true;
 }
 
 //--------------------------------------------------------------
 void testApp::updateArduino(){
 
-	// update the arduino, get any data or messages:
+	// update the arduino, get any data or messages.
 	ard.update();
-	ard.sendPwm(11, (int)(128 + 128 * sin(ofGetElapsedTimef())));   // pwm...
+	
+	// do not send anything until the arduino has been set up
+	if (bSetupArduino) {
+		ard.sendPwm(11, (int)(128 + 128 * sin(ofGetElapsedTimef())));   // pwm...
+	}
+	
 
 }
 
@@ -67,7 +68,7 @@ void testApp::updateArduino(){
 void testApp::draw(){
 	bgImage.draw(0,0);
 
-	if (!ard.isArduinoReady()){
+	if (!bSetupArduino){
 		font.drawString("arduino not ready\n", 545, 40);
 	} else {
 		font.drawString("analog pin 0: " + ofToString(ard.getAnalog(0)) +
@@ -108,5 +109,15 @@ void testApp::mouseReleased(int x, int y, int button){
 
 //--------------------------------------------------------------
 void testApp::windowResized(int w, int h){
+
+}
+
+//--------------------------------------------------------------
+void testApp::gotMessage(ofMessage msg){
+
+}
+
+//--------------------------------------------------------------
+void testApp::dragEvent(ofDragInfo dragInfo){ 
 
 }

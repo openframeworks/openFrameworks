@@ -21,7 +21,10 @@ ofxiPhoneImagePicker::ofxiPhoneImagePicker()
 	pixels = NULL;
 	maxDimension = 0;
 	imageUpdated = false;
+	width = 0;
+	height = 0;
 	[imagePicker setMaxDimension: 640];
+	pixelsAllocated=false;
 }
 
 //--------------------------------------------------------------
@@ -41,9 +44,9 @@ void ofxiPhoneImagePicker::setMaxDimension(int _maxDimension)
 }
 
 //----------------------------------------------------------------
-bool ofxiPhoneImagePicker::openCamera()
+bool ofxiPhoneImagePicker::openCamera(int camera)
 {
-	return [imagePicker openCamera];
+	return [imagePicker openCamera:camera];
 }
 #ifdef __IPHONE_3_1
 //----------------------------------------------------------------
@@ -107,6 +110,10 @@ void ofxiPhoneImagePicker::loadPixels()
 	photo = [imagePicker getCGImage];
 	
 	int bpp = 4;
+	bool mallocPixels = false;
+	
+	if(width != (int) CGImageGetWidth(photo) || height != (int) CGImageGetHeight(photo))
+		mallocPixels = true;
 	
 	// Get the width and height of the image
 	width = (int) CGImageGetWidth(photo);
@@ -116,17 +123,25 @@ void ofxiPhoneImagePicker::loadPixels()
 	{
 		photoData = (GLubyte *) malloc(width * height * bpp);
 		
-		pixels = (unsigned char *) malloc(width * height * bpp);
+		if(mallocPixels) {
+			if(pixelsAllocated)
+				free(pixels);
+				
+			pixels = (unsigned char *) malloc(width * height * bpp);
+			
+			pixelsAllocated = true;
+		}
 		
 		photoContext = CGBitmapContextCreate(photoData, width, height, 8, width * bpp, CGImageGetColorSpace(photo), kCGImageAlphaPremultipliedLast);
 		
 		CGContextDrawImage(photoContext, CGRectMake(0.0, 0.0, (CGFloat)width, (CGFloat)height), photo);
 		
-		int numBytesPerRow = width * bpp;
+		/*int numBytesPerRow = width * bpp;
 		for(int y=0; y<height; y++) {
 			memcpy(pixels + (numBytesPerRow * y), photoData + (numBytesPerRow * (height - 1 - y)), numBytesPerRow);
-		}
+		}*/
 		
+		memcpy(pixels, photoData, width*height*4);
 		
 		CGContextRelease(photoContext);
 		CGImageRelease(photo);
@@ -193,7 +208,7 @@ void ofxiPhoneImagePicker::saveImage()
 { 
 	[_imagePicker release];
 	
-	[_image	release];
+	//[_image	release];
 	
 	[super dealloc];
 }
@@ -205,7 +220,7 @@ void ofxiPhoneImagePicker::saveImage()
 {	
 	[_image initWithCGImage: [self scaleAndRotateImage:image].CGImage];
 	[_imagePicker.view removeFromSuperview];
-	
+	[_imagePicker dismissModalViewControllerAnimated:NO];
 	cppPixelLoader->loadPixels();
 }
 
@@ -215,7 +230,8 @@ void ofxiPhoneImagePicker::saveImage()
 {
 	[_image initWithCGImage: [self scaleAndRotateImage:[info objectForKey:UIImagePickerControllerOriginalImage]].CGImage];
 	[_imagePicker.view removeFromSuperview];
-	
+	[_imagePicker dismissModalViewControllerAnimated:NO];
+
 	cppPixelLoader->loadPixels();
 }
 
@@ -230,6 +246,7 @@ void ofxiPhoneImagePicker::saveImage()
 - (void) imagePickerControllerDidCancel:(UIImagePickerController *)picker
 {
 	[_imagePicker.view removeFromSuperview];
+	[_imagePicker dismissModalViewControllerAnimated:NO];
 }
 //--------------------------------------------------------------
 - (void) saveImageToPhotoAlbum
@@ -238,12 +255,21 @@ void ofxiPhoneImagePicker::saveImage()
 	printf("saved!");
 }
 //--------------------------------------------------------------
-- (bool) openCamera
+- (bool) openCamera:(int)camera
 {
 	if(cameraIsAvailable)
-	{
-		[_imagePicker init]; //needs this to refresh the camera.
+	{		
 		_imagePicker.sourceType = UIImagePickerControllerSourceTypeCamera;
+		
+		if(camera==0)
+			_imagePicker.cameraDevice = UIImagePickerControllerCameraDeviceRear;
+		else {
+			if([UIImagePickerController isCameraDeviceAvailable:UIImagePickerControllerCameraDeviceFront])
+				_imagePicker.cameraDevice = UIImagePickerControllerCameraDeviceFront;
+			else
+				_imagePicker.cameraDevice = UIImagePickerControllerCameraDeviceRear;
+		}
+
 		[[[UIApplication sharedApplication] keyWindow] addSubview:_imagePicker.view];
 		
 		return true;

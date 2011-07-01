@@ -55,7 +55,7 @@ void testApp::setup(){
 	mode = OFXQTVIDEOPLAYER_MODE_PIXELS_ONLY;
 	//mode = OFXQTVIDEOPLAYER_MODE_PIXELS_AND_TEXTURE;
 	
-	player.setPlayer(&testMovie);
+	player.setPlayer(new ofxQTKitVideoPlayer());
 	
 	player.loadMovie("synchronizedswim.mp4");
 	player.play();	
@@ -76,13 +76,13 @@ void testApp::draw(){
 	ofSetColor(255, 255, 255);	
 	
 	char format[1024];
-	sprintf(format, "playback framerate: %f\nmovie is size %f x %f\nat time: %f/%f\non frame %d / %d\npercent done: %f \nLoops? %s\nDone Yet? %s",  
+	sprintf(format, "playback framerate: %f\nmovie is size %f x %f\nat time: %f/%f\non frame %d / %d\npercent done: %f \nDone Yet? %s",  
 			ofGetFrameRate(), 
-			testMovie.getWidth(), testMovie.getHeight(),
-			testMovie.getPositionInSeconds(), testMovie.getDuration(),
-			testMovie.getCurrentFrame(), testMovie.getTotalNumFrames(),
-			testMovie.getPosition()*100,
-			(testMovie.getMovieLoops() ? "yes" : "no"), (testMovie.getIsMovieDone() ? "yes" : "no") );
+			player.getWidth(), player.getHeight(),
+			player.getPosition()*player.getDuration(), player.getDuration(),
+			player.getCurrentFrame(), player.getTotalNumFrames(),
+			player.getPosition()*100,
+			(player.getIsMovieDone() ? "yes" : "no") );
 	
 	
 	ofDrawBitmapString(format, 20, testMovie.getHeight()+15);

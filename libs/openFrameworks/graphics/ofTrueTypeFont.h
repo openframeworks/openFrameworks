@@ -1,42 +1,29 @@
-#ifndef _OF_TTF_FONT_H_
-#define _OF_TTF_FONT_H_
+#pragma once
 
 
+#include <vector>
+#include "ofPoint.h"
+#include "ofRectangle.h"
 #include "ofConstants.h"
-#include "ofGraphics.h"
-#include "ofUtils.h"
-#include "ofTypes.h"
+#include "ofPath.h"
+#include "ofTexture.h"
+#include "ofMesh.h"
 
 //--------------------------------------------------
 typedef struct {
-	int value;
+	int character;
 	int height;
 	int width;
 	int setWidth;
 	int topExtent;
 	int leftExtent;
-	float tTex;
-	float vTex;		//0-1 pct of bitmap...
-	float xOff;
-	float yOff;
+	float tW,tH;
+	float x1,x2,y1,y2;
+	float t1,t2,v1,v2;
 } charProps;
 
-//For drawStringAsShapes and getCharacterAsPoints only
-//Make this number smaller to create TTF shapes with more pts = slower but accurate
-//Make this number larger to create TTF shapes with less pts  = faster but not as accurate
-//Our default is 0.3 which removes segments that are less than 0.3 of a pixel in length
-#define TTF_SHAPE_SIMPLIFICATION_AMNT (0.3)
 
-class ofTTFContour{
-	public:
-		vector <ofPoint>pts;
-};
-
-
-class ofTTFCharacter{
-	public:
-		vector <ofTTFContour> contours;
-};
+typedef ofPath ofTTFCharacter;
 
 //--------------------------------------------------
 #define NUM_CHARACTER_TO_START		33		// 0 - 32 are control characters, no graphics needed.
@@ -50,8 +37,7 @@ public:
 	virtual ~ofTrueTypeFont();
 		
 	// 			-- default, non-full char set, anti aliased:
-	void 		loadFont(string filename, int fontsize);
-	void 		loadFont(string filename, int fontsize, bool _bAntiAliased, bool _bFullCharacterSet, bool makeContours = false);
+	void 		loadFont(string filename, int fontsize, bool _bAntiAliased=true, bool _bFullCharacterSet=false, bool makeContours = false, float simplifyAmt = 0.3);
 
 	bool		bLoadedOk;
 	bool 		bAntiAlised;
@@ -59,6 +45,10 @@ public:
 
   	float 		getLineHeight();
   	void 		setLineHeight(float height);
+	float 		getLetterSpacing();
+	void 		setLetterSpacing(float spacing);
+	float 		getSpaceSize();
+	void 		setSpaceSize(float size);
 	float 		stringWidth(string s);
 	float 		stringHeight(string s);
 	
@@ -71,24 +61,43 @@ public:
 	
 	ofTTFCharacter getCharacterAsPoints(int character);
 
+	void bind();
+	void unbind();
+
 protected:
 	vector <ofTTFCharacter> charOutlines;
 
 	float 			lineHeight;
-	charProps 		* 	cps;			// properties for each character
-	GLuint			*	texNames;		// textures for each character
+	float			letterSpacing;
+	float			spaceSize;
+
+	vector<charProps> 	cps;			// properties for each character
+
 	int				fontSize;
 	bool			bMakeContours;
 
 	void 			drawChar(int c, float x, float y);
 	void			drawCharAsShape(int c, float x, float y);
 	
-	int 			ofNextPow2(int a);
-	int				border, visibleBorder;
+	int				border;//, visibleBorder;
+	string			filename;
 
+	ofTexture texAtlas;
+	bool binded;
+	ofMesh stringQuads;
 
+private:
+#ifdef TARGET_ANDROID
+	friend void ofUnloadAllFontTextures();
+	friend void ofReloadAllFontTextures();
+#endif
+#ifdef TARGET_OPENGLES
+	GLint blend_src, blend_dst;
+	GLboolean blend_enabled;
+	GLboolean texture_2d_enabled;
+#endif
+	void		unloadTextures();
+	void		reloadTextures();
 };
 
-
-#endif
 

@@ -3,7 +3,6 @@
 //--------------------------------------------------------------
 void testApp::setup(){	 
 	
-	
 	int screenW = ofGetScreenWidth();
 	int screenH = ofGetScreenHeight();
 	ofSetWindowPosition(screenW/2-300/2, screenH/2-300/2);
@@ -26,7 +25,6 @@ void testApp::setup(){
 	ballVelocityX = ofRandom(-5,5);
 	ballVelocityY = ofRandom(-5,5);
 }
-
 
 //--------------------------------------------------------------
 void testApp::update(){
@@ -141,5 +139,15 @@ void testApp::mouseReleased(int x, int y, int button){
 
 //--------------------------------------------------------------
 void testApp::windowResized(int w, int h){
+
+}
+
+//--------------------------------------------------------------
+void testApp::gotMessage(ofMessage msg){
+
+}
+
+//--------------------------------------------------------------
+void testApp::dragEvent(ofDragInfo dragInfo){ 
 
 }

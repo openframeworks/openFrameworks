@@ -1,8 +1,15 @@
 #include "ofColor.h"
+#include "ofConstants.h"
 
-
-#define RGBMAX	255
-#define HLSMAX	255 
+const ofColor ofColor::gray = ofColor( 128,128,128 );
+const ofColor ofColor::white = ofColor( 255,255,255 );
+const ofColor ofColor::red = ofColor( 255,0,0 );
+const ofColor ofColor::green = ofColor( 0,255,0 );
+const ofColor ofColor::blue = ofColor( 0,0,255 );
+const ofColor ofColor::cyan = ofColor( 0,255,255 );
+const ofColor ofColor::magenta = ofColor( 255,0,255 );
+const ofColor ofColor::yellow = ofColor( 255,255,0 );
+const ofColor ofColor::black = ofColor( 0,0,0 );
 
 ofColor::ofColor (){
 	r = 255.0f;
@@ -359,7 +366,7 @@ ofColor & ofColor::operator -= (float const & val){
 }
 
 ofColor ofColor::operator * (ofColor const & color) const{
-	return ofColor( r*(color.r/255.0f), g*(color.g/255.0f), b*(color.b/255.0f) );
+	return ofColor( r*(color.r/255.0f), g*(color.g/255.0f), b*(color.b/255.0f));
 }
 
 ofColor ofColor::operator * (float const & val) const{

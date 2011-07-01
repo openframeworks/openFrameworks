@@ -49,7 +49,6 @@
 #import "ofxiPhoneCoreLocation.h"
 #import "ofxiPhoneImagePicker.h"
 #import "ofxiPhoneMapKit.h"
-#import "ofxiPhoneVideoGrabber.h"
 #include <sys/sysctl.h>
 
 
@@ -75,11 +74,11 @@ enum ofxiPhoneDeviceType {
 
 
 // possible values for iPhoneSetOrientation or iPhoneGetOrientation
-#define	OFXIPHONE_ORIENTATION_PORTRAIT			UIDeviceOrientationPortrait
-#define OFXIPHONE_ORIENTATION_UPSIDEDOWN		UIDeviceOrientationPortraitUpsideDown
-#define OFXIPHONE_ORIENTATION_LANDSCAPE_RIGHT	UIDeviceOrientationLandscapeRight
-#define OFXIPHONE_ORIENTATION_LANDSCAPE_LEFT	UIDeviceOrientationLandscapeLeft
-
+#define  OFXIPHONE_ORIENTATION_PORTRAIT      OF_ORIENTATION_DEFAULT  // UIDeviceOrientationPortrait
+#define OFXIPHONE_ORIENTATION_UPSIDEDOWN    OF_ORIENTATION_180      // UIDeviceOrientationPortraitUpsideDown
+#define OFXIPHONE_ORIENTATION_LANDSCAPE_RIGHT  OF_ORIENTATION_90_RIGHT // UIDeviceOrientationLandscapeRight
+#define OFXIPHONE_ORIENTATION_LANDSCAPE_LEFT  OF_ORIENTATION_90_LEFT  // UIDeviceOrientationLandscapeLeft
+ 
 // whether device has audio in
 bool ofxiPhoneHasAudioIn();
 
@@ -149,7 +148,7 @@ void ofxiPhoneEnableLoopInThread();
 
 
 // set orientation of device (affects statusbar, opengl viewport, touch positions)
-void ofxiPhoneSetOrientation(UIDeviceOrientation orientation);
+void ofxiPhoneSetOrientation(ofOrientation orientation);
 UIDeviceOrientation ofxiPhoneGetOrientation();
 
 
@@ -175,6 +174,8 @@ bool ofxiPhoneUIImageToGLTexture(UIImage *uiImage, GLuint *spriteTexture);
 bool ofxiPhoneUIImageToOFImage(UIImage *uiImage, ofImage &outImage, int targetWidth = 0, int targetHeight = 0);
 
 bool ofxiPhoneUIImageToPixels(UIImage *uiImage, unsigned char * pix, int targetWidth = 0, int targetHeight = 0);
+
+bool ofxiPhoneCGImageToPixels(CGImageRef & ref, unsigned char * pixels);
 
 // save current opengl screen to photos app
 // based on code from http://www.bit-101.com/blog/?p=1861

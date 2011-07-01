@@ -1,0 +1,22 @@
+set solib-search-path /home/arturo/Escritorio/openFrameworksAndroid/apps/androidExamples/androidCameraExample/obj/local/armeabi:/home/arturo/Escritorio/openFrameworksAndroid/apps/androidExamples/androidCameraExample/libs/armeabi
+directory /home/arturo/Descargas/android-ndk-r5/platforms/android-9/arch-arm/usr/include
+directory /home/arturo/Escritorio/openFrameworksAndroid/apps/androidExamples/artvertiser/src 
+directory /home/arturo/Descargas/android-ndk-r5/sources/cxx-stl/system
+directory /home/arturo/Escritorio/openFrameworksAndroid/libs/openFrameworks/app
+directory /home/arturo/Escritorio/openFrameworksAndroid/libs/openFrameworks/events
+directory /home/arturo/Escritorio/openFrameworksAndroid/libs/openFrameworks/graphics
+directory /home/arturo/Escritorio/openFrameworksAndroid/libs/openFrameworks/sound
+directory /home/arturo/Escritorio/openFrameworksAndroid/libs/openFrameworks/utils
+directory /home/arturo/Escritorio/openFrameworksAndroid/libs/openFrameworks/video
+directory /home/arturo/Escritorio/openFrameworksAndroid/libs/openFrameworks
+directory /home/arturo/Escritorio/openFrameworksAndroid/addons/ofxAccelerometer/src
+directory /home/arturo/Escritorio/openFrameworksAndroid/addons/ofxAndroid/src
+directory /home/arturo/Escritorio/openFrameworksAndroid/addons/ofxDirList/src
+directory /home/arturo/Escritorio/openFrameworksAndroid/addons/ofxNetwork/src
+directory /home/arturo/Escritorio/openFrameworksAndroid/addons/ofxOpenCv/src
+directory /home/arturo/Escritorio/openFrameworksAndroid/addons/ofxOsc/src
+directory /home/arturo/Escritorio/openFrameworksAndroid/addons/ofxThread/src
+directory /home/arturo/Escritorio/openFrameworksAndroid/addons/ofxVectorMath/src
+directory /home/arturo/Escritorio/openFrameworksAndroid/addons/ofxXmlSettings/src
+directory /home/arturo/Escritorio/openFrameworksAndroid/addons/ofxVectorGraphics/src
+directory /home/arturo/Escritorio/openFrameworksAndroid/apps/androidExamples/androidCameraExample/libs/armeabi

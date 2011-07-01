@@ -40,7 +40,7 @@
 	NSTimer				*animationTimer;
     BOOL				animating;
     BOOL				displayLinkSupported;
-    NSInteger			animationFrameInterval;
+    float				animationFrameInterval;
     id					displayLink;
 	
 	EAGLView			*glView;

@@ -42,15 +42,15 @@
 
 
 -(void) timerLoop {
-//	NSLog(@"ofxiPhoneAppDelegate::timerLoop");
+	//	NSLog(@"ofxiPhoneAppDelegate::timerLoop");
 	
 	// create autorelease pool in case anything needs it
-//	NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
+	//	NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
 	
 	iPhoneGetOFWindow()->timerLoop();
-		
+	
 	// release pool
-//	[pool release];
+	//	[pool release];
 }
 
 -(EAGLView*) getGLView {
@@ -106,7 +106,7 @@
 	ofSetDataPathRoot( path );
 	//-----
 	
-
+	
 	animating = FALSE;
 	displayLinkSupported = FALSE;
 	animationFrameInterval = 1;
@@ -115,23 +115,24 @@
 	
 	// A system version of 3.1 or greater is required to use CADisplayLink. The NSTimer
 	// class is used as fallback when it isn't available.
-	NSString *reqSysVer = @"3.1";
-	NSString *currSysVer = [[UIDevice currentDevice] systemVersion];
-//	if ([currSysVer compare:reqSysVer options:NSNumericSearch] != NSOrderedAscending) displayLinkSupported = TRUE;
-
+	// NSString *reqSysVer = @"3.1";
+	// NSString *currSysVer = [[UIDevice currentDevice] systemVersion];
+	//	if ([currSysVer compare:reqSysVer options:NSNumericSearch] != NSOrderedAscending) displayLinkSupported = TRUE;
+	
 	
 	
 	
 	iPhoneSetOrientation(OFXIPHONE_ORIENTATION_PORTRAIT);
 	
-
+	
 	// call testApp::setup()
+	ofRegisterTouchEvents((ofxiPhoneApp*)ofGetAppPtr());
 	ofGetAppPtr()->setup();
-
-	#ifdef OF_USING_POCO
-		ofNotifyEvent( ofEvents.setup, voidEventArgs );
-		ofNotifyEvent( ofEvents.update, voidEventArgs );
-	#endif
+	
+#ifdef OF_USING_POCO
+	ofNotifyEvent( ofEvents.setup, voidEventArgs );
+	ofNotifyEvent( ofEvents.update, voidEventArgs );
+#endif
 	
 	
 	// show or hide status bar depending on OF_WINDOW or OF_FULLSCREEN
@@ -168,16 +169,16 @@
             // CADisplayLink is API new to iPhone SDK 3.1. Compiling against earlier versions will result in a warning, but can be dismissed
             // if the system version runtime check for CADisplayLink exists in -initWithCoder:. The runtime check ensures this code will
             // not be called in system versions earlier than 3.1.
-	
+			
             displayLink = [NSClassFromString(@"CADisplayLink") displayLinkWithTarget:self selector:@selector(timerLoop)];
             [displayLink setFrameInterval:animationFrameInterval];
             [displayLink addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
 			ofLog(OF_LOG_VERBOSE, "CADisplayLink supported, running with interval: %i", animationFrameInterval);
         }
-        else
+        else {
 			ofLog(OF_LOG_VERBOSE, "CADisplayLink not supported, running with interval: %i", animationFrameInterval);
-		
             animationTimer = [NSTimer scheduledTimerWithTimeInterval:(NSTimeInterval)((1.0 / 60.0) * animationFrameInterval) target:self selector:@selector(timerLoop) userInfo:nil repeats:TRUE];
+		}
 		
         animating = TRUE;
     }
@@ -196,14 +197,14 @@
         {
             [animationTimer invalidate];
             animationTimer = nil;
-	}
-	
+		}
+		
         animating = FALSE;
     }
 }
 
 
-- (void)setAnimationFrameInterval:(NSInteger)frameInterval
+- (void)setAnimationFrameInterval:(float)frameInterval
 {
     // Frame interval defines how many display frames must pass between each time the
     // display link fires. The display link will only fire 30 times a second when the
@@ -226,10 +227,10 @@
 
 -(void) setFrameRate:(float)rate {
 	ofLog(OF_LOG_VERBOSE, "setFrameRate %.3f using NSTimer", rate);
-
+	
 	if(rate>0) [self setAnimationFrameInterval:60.0/rate];
 	else [self stopAnimation];
-	}
+}
 
 
 
@@ -244,7 +245,7 @@
 
 -(void) applicationWillResignActive:(UIApplication *)application {
 	[self stopAnimation];
-
+	
 	ofxiPhoneAlerts.lostFocus();
 	
 	//just extend ofxiPhoneAlertsListener with testApp and implement these methods to use them,
@@ -278,16 +279,10 @@
 
 - (BOOL)application:(UIApplication *)application handleOpenURL:(NSURL *)url {
 	
-	
-	cout<<"uhh"<<endl;
-	
 	NSString *urlData = [url absoluteString];
-	
-	char response[ [urlData length]+1 ];
-	[urlData getCString:response];
-	
-	
+	const char * response = [urlData UTF8String];
 	ofxiPhoneAlerts.launchedWithURL(response);
+	return YES;
 }
 
 @end

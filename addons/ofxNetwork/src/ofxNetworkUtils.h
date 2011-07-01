@@ -9,7 +9,8 @@
 #define OFXNETWORKUTILS_H_
 
 #include <cerrno>
-#include <ofMain.h>
+#include "ofConstants.h"
+#include "ofUtils.h"
 
 #define ofxNetworkCheckError() ofxNetworkCheckErrno(__FILE__,ofToString(__LINE__))
 
@@ -20,6 +21,8 @@ inline int ofxNetworkCheckErrno(const string & file, const string & line){
 		int err = errno;
 	#endif
 	switch(err){
+	case 0:
+		break;
 	case EBADF:
 		ofLog(OF_LOG_ERROR,"ofxNetwork:"+file+": " +line+" EBADF: invalid socket");
 		break;

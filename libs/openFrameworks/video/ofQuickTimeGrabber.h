@@ -1,14 +1,12 @@
 #pragma once
 
 #include "ofConstants.h"
-#include "ofTexture.h"
-#include "ofGraphics.h"
-#include "ofTypes.h"
-#include "ofBaseTypes.h"
 
-#ifdef OF_VIDEO_CAPTURE_QUICKTIME
+#ifndef TARGET_LINUX
 	#include "ofQtUtils.h"
-#endif
+	#include "ofTexture.h"
+	#include "ofBaseTypes.h"
+	#include "ofPixels.h"
 
 // todo:
 // 		QT - callback, via SGSetDataProc - couldn't get this to work yet
@@ -24,10 +22,11 @@ class ofQuickTimeGrabber : public ofBaseVideoGrabber{
 
 		void					listDevices();
 		bool					initGrabber(int w, int h);
-		void					grabFrame();
+		void					update();
 		bool					isFrameNew();
 
 		unsigned char			* getPixels();
+		ofPixelsRef		 		getPixelsRef();
 		
 		void					close();
 		void					clearMemory();
@@ -47,14 +46,14 @@ class ofQuickTimeGrabber : public ofBaseVideoGrabber{
 		int						deviceID;
 		bool 					bVerbose;
 		bool 					bGrabberInited;
-	    unsigned char * 		pixels;
+	    ofPixels				pixels;
 		int						attemptFramerate;
 		bool 					bIsFrameNew;	
 		
-		int						width, height;
+		//int						width, height;
 
 		unsigned char *			offscreenGWorldPixels;	// 32 bit: argb (qt k32ARGBPixelFormat)
-		int						w,h;
+		//int						w,h;
 		bool					bHavePixelsChanged;
 		GWorldPtr				videogworld;
 		SeqGrabComponent		gSeqGrabber;
@@ -74,3 +73,5 @@ class ofQuickTimeGrabber : public ofBaseVideoGrabber{
 
 };
 
+
+#endif

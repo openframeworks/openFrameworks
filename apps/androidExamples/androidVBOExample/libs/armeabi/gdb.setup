@@ -1,0 +1,3 @@
+set solib-search-path /home/arturo/workspace/ofxAndroid/bin/ndk/local/armeabi
+directory /home/arturo/Descargas/android-ndk-r3-crystax/build/platforms/android-5/arch-arm/usr/include
+directory /home/arturo/workspace/ofxAndroid/jni

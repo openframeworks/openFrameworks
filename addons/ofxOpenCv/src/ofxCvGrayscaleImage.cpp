@@ -11,6 +11,10 @@ ofxCvGrayscaleImage::ofxCvGrayscaleImage() {
     init();
 }
 
+ofxCvGrayscaleImage::~ofxCvGrayscaleImage(){
+	cvReleaseMat(&briConLutMatrix);
+}
+
 //--------------------------------------------------------------------------------
 ofxCvGrayscaleImage::ofxCvGrayscaleImage( const ofxCvGrayscaleImage& _mom ) {
     init();
@@ -42,7 +46,7 @@ void ofxCvGrayscaleImage::set( float value ){
 }
 
 //--------------------------------------------------------------------------------
-void ofxCvGrayscaleImage::setFromPixels( unsigned char* _pixels, int w, int h ) {
+void ofxCvGrayscaleImage::setFromPixels( const unsigned char* _pixels, int w, int h ) {
     // This sets the internal image ignoring any ROI
 
     if( w == width && h == height ) {
@@ -66,7 +70,7 @@ void ofxCvGrayscaleImage::setFromPixels( unsigned char* _pixels, int w, int h ) 
 }
 
 //--------------------------------------------------------------------------------
-void ofxCvGrayscaleImage::setRoiFromPixels( unsigned char* _pixels, int w, int h ) {
+void ofxCvGrayscaleImage::setRoiFromPixels( const unsigned char* _pixels, int w, int h ) {
     ofRectangle roi = getROI();
     ofRectangle inputROI = ofRectangle( roi.x, roi.y, w, h);
     ofRectangle iRoi = getIntersectionROI( roi, inputROI );
@@ -173,71 +177,6 @@ void ofxCvGrayscaleImage::absDiff( ofxCvGrayscaleImage& mom,
         ofLog(OF_LOG_ERROR, "in absDiff, images are different sizes");
     }
 
-}
-
-
-// Get Pixel Data
-//--------------------------------------------------------------------------------
-unsigned char* ofxCvGrayscaleImage::getPixels() {
-	//Note this possible introduces a bug where pixels doesn't contain the current image.
-	//Also it means that modifying the pointer return by get pixels - affects the internal cvImage
-	//Where as with the slower way below modifying the pointer doesn't change the image. 
-	if(  cvImage->width == cvImage->widthStep ){
-		return (unsigned char *)cvImage->imageData;
-	}
-
-    if(bPixelsDirty) {
-        if(pixels == NULL) {
-            // we need pixels, allocate it
-            pixels = new unsigned char[width*height];
-            pixelsWidth = width;
-            pixelsHeight = height;
-        } else if(pixelsWidth != width || pixelsHeight != height) {
-            // ROI changed, reallocate pixels for new size
-            // this is needed because getRoiPixels() might change size of pixels
-            delete pixels;
-            pixels = new unsigned char[width*height];
-            pixelsWidth = width;
-            pixelsHeight = height;
-        }
-
-        // copy from ROI to pixels
-        for( int i = 0; i < height; i++ ) {
-            memcpy( pixels + (i*width),
-                    cvImage->imageData + (i*cvImage->widthStep),
-                    width );
-        }
-        bPixelsDirty = false;
-    }
-	return pixels;
-}
-
-//--------------------------------------------------------------------------------
-unsigned char* ofxCvGrayscaleImage::getRoiPixels() {
-    if(bPixelsDirty) {
-        ofRectangle roi = getROI();
-        if(pixels == NULL) {
-            // we need pixels, allocate it
-            pixels = new unsigned char[(int)(roi.width*roi.height)];
-            pixelsWidth = (int)roi.width;
-            pixelsHeight = (int)roi.height;
-        } else if(pixelsWidth != roi.width || pixelsHeight != roi.height) {
-            // ROI changed, reallocate pixels for new size
-            delete pixels;
-            pixels = new unsigned char[(int)(roi.width*roi.height)];
-            pixelsWidth = (int)roi.width;
-            pixelsHeight = (int)roi.height;
-        }
-
-        // copy from ROI to pixels
-        for( int i = 0; i < roi.height; i++ ) {
-            memcpy( pixels + (int)(i*roi.width),
-                    cvImage->imageData + ((int)(i+roi.y)*cvImage->widthStep) + (int)roi.x,
-                    (int)roi.width );
-        }
-        bPixelsDirty = false;
-    }
-	return pixels;
 }
 
 

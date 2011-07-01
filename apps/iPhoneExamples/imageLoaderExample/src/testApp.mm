@@ -80,3 +80,9 @@ void testApp::touchUp(ofTouchEventArgs &touch){
 void testApp::touchDoubleTap(ofTouchEventArgs &touch){
 
 }
+
+//--------------------------------------------------------------
+void testApp::touchCancelled(ofTouchEventArgs& args){
+
+}
+

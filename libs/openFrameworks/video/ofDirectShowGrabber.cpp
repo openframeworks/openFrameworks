@@ -1,6 +1,6 @@
 #include "ofDirectShowGrabber.h"
 #include "ofUtils.h"
-
+#ifdef TARGET_WIN32
 //--------------------------------------------------------------------
 ofDirectShowGrabber::ofDirectShowGrabber(){
 
@@ -23,7 +23,6 @@ ofDirectShowGrabber::ofDirectShowGrabber(){
 	deviceID				= 0;
 	width 					= 320;	// default setting
 	height 					= 240;	// default setting
-	pixels					= NULL;
 	attemptFramerate		= -1;
 }
 
@@ -36,7 +35,7 @@ ofDirectShowGrabber::~ofDirectShowGrabber(){
 
 //--------------------------------------------------------------------
 bool ofDirectShowGrabber::initGrabber(int w, int h){
-	
+
 	//---------------------------------
 	#ifdef OF_VIDEO_CAPTURE_DIRECTSHOW
 	//---------------------------------
@@ -51,7 +50,7 @@ bool ofDirectShowGrabber::initGrabber(int w, int h){
 		width = w;
 		height = h;
 		bGrabberInited = false;
-		
+
 		if( attemptFramerate >= 0){
 			VI.setIdealFramerate(device, attemptFramerate);
 		}
@@ -74,7 +73,7 @@ bool ofDirectShowGrabber::initGrabber(int w, int h){
 			}
 
 
-			pixels	= new unsigned char[width * height * 3];
+			pixels.allocate(width, height, 24);
 			return true;
 		} else {
 			ofLog(OF_LOG_ERROR, "error allocating a video device");
@@ -106,7 +105,7 @@ void ofDirectShowGrabber::listDevices(){
 }
 
 //--------------------------------------------------------------------
-void ofDirectShowGrabber::grabFrame(){
+void ofDirectShowGrabber::update(){
 
 	//---------------------------------
 	#ifdef OF_VIDEO_CAPTURE_DIRECTSHOW
@@ -164,20 +163,20 @@ void ofDirectShowGrabber::grabFrame(){
 
 							int posPix = (((int)posy * inputW * 3) + ((int)posx * 3));
 
-							pixels[(j*width*3) + i*3    ] = viPixels[posPix  ];
-							pixels[(j*width*3) + i*3 + 1] = viPixels[posPix+1];
-							pixels[(j*width*3) + i*3 + 2] = viPixels[posPix+2];
+							pixels.getPixels()[(j*width*3) + i*3    ] = viPixels[posPix  ];
+							pixels.getPixels()[(j*width*3) + i*3 + 1] = viPixels[posPix+1];
+							pixels.getPixels()[(j*width*3) + i*3 + 2] = viPixels[posPix+2];
 
 						}
 					}
 
 				} else {
 
-					memcpy(pixels, viPixels, width*height*3);
+					pixels.setFromPixels(viPixels,width,height,OF_IMAGE_COLOR);
 
 				}
 
-				
+
 			}
 		}
 
@@ -204,28 +203,29 @@ void ofDirectShowGrabber::close(){
 	//---------------------------------
 
 	clearMemory();
-	
+
 }
 
 
 //--------------------------------------------------------------------
 void ofDirectShowGrabber::clearMemory(){
-	if (pixels != NULL){
-		delete[] pixels;
-		pixels = NULL;
-	}
-
+	pixels.clear();
 }
 
 //---------------------------------------------------------------------------
 unsigned char * ofDirectShowGrabber::getPixels(){
+	return pixels.getPixels();
+}
+
+//---------------------------------------------------------------------------
+ofPixelsRef ofDirectShowGrabber::getPixelsRef(){
 	return pixels;
 }
 
 //--------------------------------------------------------------------
 float ofDirectShowGrabber::getWidth(){
 	return width;
-}	
+}
 
 //--------------------------------------------------------------------
 float ofDirectShowGrabber::getHeight(){
@@ -267,3 +267,4 @@ void ofDirectShowGrabber::videoSettings(void){
 	#endif
 	//---------------------------------
 }
+#endif

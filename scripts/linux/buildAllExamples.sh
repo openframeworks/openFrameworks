@@ -17,13 +17,13 @@ cd $example
 make Debug
 ret=$?
 if [ $ret -ne 0 ]; then
-  echo error comiling $example
+  echo error compiling $example
   exit
 fi
 make Release
 ret=$?
 if [ $ret -ne 0 ]; then
-  echo error comiling $example
+  echo error compiling $example
   exit
 fi
 cd ../

@@ -1,0 +1,30 @@
+<install>
+    <name>ofxAssimpModelLoader</name>
+
+	<add>
+
+		<!-- 	=====================================================================	-->
+		<!--	========================== add per project using this addon =========	-->
+		<!-- 	=====================================================================	-->
+
+		<src>
+			<folder name="addons/ofxAssimpModelLoader/src">						
+				<file>../../../addons/ofxAssimpModelLoader/src/ofx3DBaseLoader.h</file>
+				<file>../../../addons/ofxAssimpModelLoader/src/ofxAssimpModelLoader.cpp</file>
+				<file>../../../addons/ofxAssimpModelLoader/src/ofxAssimpMeshHelper.h</file>
+				<file>../../../addons/ofxAssimpModelLoader/src/ofxAssimpModelLoader.h</file>
+			</folder>
+		</src>
+
+		<include>
+			<path>../../../addons/ofxAssimpModelLoader/libs/assimp/include</path>
+		</include>
+		
+		<link>
+			<lib os="mac" compiler="xcode">../../../addons/ofxAssimpModelLoader/libs/assimp/lib/osx/assimp.a</lib> 
+			<lib os="win32" compiler="codeblocks">../../../addons/ofxAssimpModelLoader/libs/assimp/lib/win32/libassimp.a</lib>
+			<lib os="linux64" compiler="codeblocks, makefile">../../../addons/ofxAssimpModelLoader/libs/assimp/lib/linux64/libassimp.a</lib>            
+		</link>
+		
+	</add>
+</install>

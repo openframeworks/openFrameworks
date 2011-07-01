@@ -2,6 +2,7 @@
 
 #include "ofConstants.h"
 #include "ofBaseTypes.h"
+#include "ofPixels.h"
 
 #ifdef OF_VIDEO_PLAYER_QUICKTIME
 	#include "ofQtUtils.h"
@@ -17,7 +18,8 @@ class ofQuickTimePlayer : public ofBaseVideoPlayer{
 
 		 bool			loadMovie(string name);
 		 void			closeMovie();	
-		 void			idleMovie();
+		 void			close();
+		 void			update();
 
 		 void			play();
 		 void			stop();
@@ -26,6 +28,8 @@ class ofQuickTimePlayer : public ofBaseVideoPlayer{
 	
 		 bool 			isFrameNew();
 		 unsigned char * 	getPixels();
+		 ofPixelsRef		getPixelsRef();
+		 const ofPixels&	getPixelsRef() const;
 		
 		 float 			getWidth();
 		 float 			getHeight();
@@ -42,7 +46,7 @@ class ofQuickTimePlayer : public ofBaseVideoPlayer{
 
 		 void 			setPosition(float pct);
 		 void 			setVolume(int volume);
-		 void 			setLoopState(int state);
+		 void 			setLoopState(ofLoopType state);
 		 void   		setSpeed(float speed);
 		 void			setFrame(int frame);  // frame 0 = first frame...
 		 void 			setPaused(bool bPause);
@@ -55,21 +59,23 @@ class ofQuickTimePlayer : public ofBaseVideoPlayer{
 		 
 		bool 				bHavePixelsChanged;
 		 
-				
+		 
+		
 	protected:
 		void createImgMemAndGWorld();
 		void start();
-		
-		int							width, height;
-		bool						bLoaded;
+
+		ofPixels		 	pixels;
+		int					width, height;
+		bool				bLoaded;
 
 		//these are public because the ofQuickTimePlayer implementation has some callback functions that need access
 		//todo - fix this
-		unsigned char * 	pixels;				
 
 		int					nFrames;				// number of frames
 		bool				allocated;				// so we know to free pixels or not
-		int					currentLoopState;
+
+		ofLoopType					currentLoopState;
 		bool 				bStarted;
 		bool 				bPlaying;
 		bool 				bPaused;

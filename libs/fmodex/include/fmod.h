@@ -124,7 +124,7 @@ typedef struct
 [STRUCTURE] 
 [
     [DESCRIPTION]   
-    Structure describing a globally unique identifier.
+    Structure describing a glocelly unique identifier.
 
     [REMARKS]
 

@@ -6,10 +6,6 @@ void testApp::setup(){
 	//we run at 60 fps!
 	ofSetVerticalSync(true);
 
-	//load our type
-	mono.loadFont("type/mono.ttf", 9);
-	monosm.loadFont("type/mono.ttf", 8);
-
 	//setup the server to listen on 11999
 	TCP.setup(11999);
 }
@@ -29,7 +25,7 @@ void testApp::update(){
 void testApp::draw(){
 
 	ofSetHexColor(0xDDDDDD);
-	mono.drawString("TCP SERVER Example \n\nconnect on port: "+ofToString(TCP.getPort()), 10, 20);
+	ofDrawBitmapString("TCP SERVER Example \n\nconnect on port: "+ofToString(TCP.getPort()), 10, 20);
 
 	ofSetHexColor(0x000000);
 	ofRect(10, 60, ofGetWidth()-24, ofGetHeight() - 65 - 15);
@@ -66,8 +62,8 @@ void testApp::draw(){
 		}
 
 		//draw the info text and the received text bellow it
-		monosm.drawString(info, xPos, yPos);
-		monosm.drawString(storeText[i], 25, yPos + 20);
+		ofDrawBitmapString(info, xPos, yPos);
+		ofDrawBitmapString(storeText[i], 25, yPos + 20);
 
 	}
 
@@ -75,15 +71,17 @@ void testApp::draw(){
 
 //--------------------------------------------------------------
 void testApp::keyPressed(int key){
+
 }
 
 //--------------------------------------------------------------
 void testApp::keyReleased(int key){
-}
 
+}
 
 //--------------------------------------------------------------
 void testApp::mouseMoved(int x, int y ){
+
 }
 
 //--------------------------------------------------------------
@@ -106,3 +104,12 @@ void testApp::windowResized(int w, int h){
 
 }
 
+//--------------------------------------------------------------
+void testApp::gotMessage(ofMessage msg){
+
+}
+
+//--------------------------------------------------------------
+void testApp::dragEvent(ofDragInfo dragInfo){ 
+
+}

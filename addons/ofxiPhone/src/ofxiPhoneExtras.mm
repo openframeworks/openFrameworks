@@ -144,7 +144,7 @@ void ofxiPhoneEnableLoopInThread() {
 
 
 //--------------------------------------------------------------
-void ofxiPhoneSetOrientation(UIDeviceOrientation orientation) {
+void ofxiPhoneSetOrientation(ofOrientation orientation) {
 	ofxiPhoneGetOFWindow()->setOrientation(orientation);
 }
 
@@ -245,7 +245,7 @@ bool ofxiPhoneUIImageToOFImage(UIImage *uiImage, ofImage &outImage, int targetWi
 //	outImage.setFromPixels(pixelsFlipped, width, height, OF_IMAGE_COLOR_ALPHA, true);
 //	free(pixelsFlipped);
 	
-	int ofImageMode;
+	ofImageType ofImageMode;
 	
 	switch(bytesPerPixel) {
 		case 1:
@@ -320,6 +320,69 @@ bool ofxiPhoneUIImageToOFTexture(UIImage *uiImage, ofTexture &outTexture, int ta
 	free(pixels);
 	
 	return true;
+}
+
+//--------------------------------------------------------------
+
+bool ofxiPhoneCGImageToPixels(CGImageRef & ref, unsigned char * pixels){
+	
+	CGContextRef spriteContext;
+	
+	int bytesPerPixel	= CGImageGetBitsPerPixel(ref)/8;
+	if(bytesPerPixel == 3) bytesPerPixel = 4;
+	
+	int w			= CGImageGetWidth(ref);
+	int h			= CGImageGetHeight(ref);
+	
+	// Allocated memory needed for the bitmap context
+	GLubyte *pixelsTmp	= (GLubyte *) malloc(w * h * bytesPerPixel);
+	
+	// Uses the bitmap creation function provided by the Core Graphics framework. 
+	spriteContext = CGBitmapContextCreate(pixelsTmp, w, h, CGImageGetBitsPerComponent(ref), w * bytesPerPixel, CGImageGetColorSpace(ref), bytesPerPixel == 4 ? kCGImageAlphaPremultipliedLast : kCGImageAlphaNone);
+	
+	if(spriteContext == NULL) {
+		ofLog(OF_LOG_ERROR, "convertCGImageToPixels - CGBitmapContextCreate returned NULL");
+		free(pixelsTmp);
+		return false;
+	}
+	
+	CGContextDrawImage(spriteContext, CGRectMake(0.0, 0.0, (CGFloat)w, (CGFloat)h), ref);
+	CGContextRelease(spriteContext);
+	
+	// int totalSrcBytes = w*h*bytesPerPixel;  
+	
+	/*
+	// averaging around 3300ms per 100reps
+	long then = ofGetElapsedTimeMillis();
+	for (int N=0; N<100; N++){
+		int j = 0;
+		for(int k = 0; k < totalSrcBytes; k+= bytesPerPixel ){
+			pixels[j  ] = pixelsTmp[k  ];
+			pixels[j+1] = pixelsTmp[k+1];
+			pixels[j+2] = pixelsTmp[k+2];
+			j+=3;
+		}
+		
+	}
+	long now = ofGetElapsedTimeMillis();
+	printf("elapsed = %d\n", (now-then));
+	*/
+	
+	// Step through both source and destination 4 bytes at a time.
+	// But reset the destination pointer by shifting it backwards 1 byte each time. 
+	// Effectively: 4 steps forward, 1 step back each time through the loop. 
+	// on average, around 1900ms for 100 reps // GOOD
+	unsigned int *isrc4 = (unsigned int *)pixelsTmp;
+	unsigned int *idst3 = (unsigned int *)pixels;
+	unsigned int *ilast4 = &isrc4[w*h-1];
+	while (isrc4 < ilast4){
+		*(idst3++) = *(isrc4++);
+		idst3 = (unsigned int *) (((unsigned char *) idst3) - 1);
+	}
+	
+	free(pixelsTmp);
+	return true;
+	 
 }
 
 //--------------------------------------------------------------

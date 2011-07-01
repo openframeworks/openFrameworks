@@ -2,7 +2,7 @@
 #define _OFX_TCP_SERVER_
 
 #include "ofConstants.h"
-#include "ofxThread.h"
+#include "ofThread.h"
 #include "ofxTCPManager.h"
 #include <map>
 
@@ -11,7 +11,7 @@
 //forward decleration
 class ofxTCPClient;
 
-class ofxTCPServer : public ofxThread{
+class ofxTCPServer : public ofThread{
 
 	public:
 

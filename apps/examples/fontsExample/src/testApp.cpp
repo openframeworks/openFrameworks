@@ -1,6 +1,5 @@
 #include "testApp.h"
 
-
 //--------------------------------------------------------------
 void testApp::setup(){	 
 	
@@ -16,7 +15,6 @@ void testApp::setup(){
 	
 	counter = 0;
 }
-
 
 //--------------------------------------------------------------
 void testApp::update(){
@@ -113,5 +111,15 @@ void testApp::mouseReleased(int x, int y, int button){
 
 //--------------------------------------------------------------
 void testApp::windowResized(int w, int h){
+
+}
+
+//--------------------------------------------------------------
+void testApp::gotMessage(ofMessage msg){
+
+}
+
+//--------------------------------------------------------------
+void testApp::dragEvent(ofDragInfo dragInfo){ 
 
 }

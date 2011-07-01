@@ -1,8 +1,6 @@
-#ifndef OF_BMP_TYPE
-#define OF_BMP_TYPE
+#pragma once
 
 #include "ofConstants.h"
-#include "ofTexture.h"
 
 
 /*
@@ -14,14 +12,8 @@
  
  */
 
-#ifndef TARGET_OPENGLES	
-void  ofDrawBitmapCharacter(int character );
-#else
-void  ofDrawBitmapCharacter(int character, int x , int y );
-#endif
-
-
-#endif
-
+void ofDrawBitmapCharacterStart(int stringLength);
+void ofDrawBitmapCharacter(int character, int x , int y );
+void ofDrawBitmapCharacterEnd();
 
 

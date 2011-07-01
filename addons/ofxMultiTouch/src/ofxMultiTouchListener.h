@@ -45,22 +45,25 @@ class ofxMultiTouchListener /*: ofTouchListener*/ {
 public:
 	virtual ~ofxMultiTouchListener() {}
 
-	virtual void touchDown(float x, float y, int touchId, ofxMultiTouchCustomData *data = NULL) {}
-	virtual void touchMoved(float x, float y, int touchId, ofxMultiTouchCustomData *data = NULL) {}
-	virtual void touchUp(float x, float y, int touchId, ofxMultiTouchCustomData *data = NULL) {}
-	virtual void touchDoubleTap(float x, float y, int touchId, ofxMultiTouchCustomData *data = NULL) {}
-
+	virtual void touchDown(float x, float y, int touchId) {}
+	virtual void touchMoved(float x, float y, int touchId) {}
+	virtual void touchUp(float x, float y, int touchId) {}
+	virtual void touchDoubleTap(float x, float y, int touchId) {}
+	virtual void touchCancelled(float x, float y, int touchId) {}
 
 	virtual void _touchDown(ofTouchEventArgs & touch){
-		touchDown(touch.x,touch.y,touch.id, &touch);
+		touchDown(touch.x,touch.y,touch.id);
 	}
 	virtual void _touchMoved(ofTouchEventArgs & touch){
-		touchMoved(touch.x,touch.y,touch.id, &touch);
+		touchMoved(touch.x,touch.y,touch.id);
 	}
 	virtual void _touchUp(ofTouchEventArgs & touch){
-		touchUp(touch.x,touch.y,touch.id, &touch);
+		touchUp(touch.x,touch.y,touch.id);
 	}
 	virtual void _touchDoubleTap(ofTouchEventArgs & touch){
-		touchDoubleTap(touch.x,touch.y,touch.id, &touch);
+		touchDoubleTap(touch.x,touch.y,touch.id);
+	}
+	virtual void _touchCancelled(ofTouchEventArgs & touch){
+		touchCancelled(touch.x,touch.y,touch.id);
 	}
 };
