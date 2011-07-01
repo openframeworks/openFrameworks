@@ -30,7 +30,7 @@ void testApp::setup(){
 
     //some model / light stuff
     glShadeModel(GL_SMOOTH);
-    light.setup();
+    light.enable();
     ofEnableSeparateSpecularLight();
 
 	
