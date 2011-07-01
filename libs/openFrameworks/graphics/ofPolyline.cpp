@@ -378,5 +378,5 @@ void ofPolyline::simplify(float tol){
 }
 
 void ofPolyline::draw(){
-	ofGetDefaultRenderer()->draw(*this);
+	ofGetCurrentRenderer()->draw(*this);
 }

@@ -2,6 +2,7 @@
 #include "ofAppRunner.h"
 #include "ofUtils.h"
 #include "ofGraphics.h"
+#include "ofGLRenderer.h"
 #include <map>
 
 //#ifndef TARGET_OPENGLES
@@ -504,6 +505,9 @@ void ofFbo::createAndAttachTexture(GLenum attachmentPoint) {
 void ofFbo::begin() {
 	bind();
 	ofPushView();
+	if(ofGetGLRenderer()){
+		ofGetGLRenderer()->setCurrentFBO(this);
+	}
 	ofViewport(0, 0, getWidth(), getHeight(), false);
 	ofSetupScreenPerspective(getWidth(), getHeight(), ofGetOrientation(), false);
 }
@@ -514,6 +518,9 @@ void ofFbo::begin() {
 
 void ofFbo::end() {
 	unbind();
+	if(ofGetGLRenderer()){
+		ofGetGLRenderer()->setCurrentFBO(NULL);
+	}
 	ofPopView();
 }
 

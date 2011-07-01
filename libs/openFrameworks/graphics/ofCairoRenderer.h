@@ -18,6 +18,8 @@ public:
 	ofCairoRenderer();
 	~ofCairoRenderer();
 
+	string getType(){ return "cairo"; }
+
 	enum Type{
 		PDF,
 		SVG,

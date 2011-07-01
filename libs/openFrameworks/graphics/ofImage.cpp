@@ -602,25 +602,25 @@ void ofImage_<PixelType>::resetAnchor(){
 //------------------------------------
 template<typename PixelType>
 void ofImage_<PixelType>::draw(const ofRectangle & _r){
-	ofGetDefaultRenderer()->draw(*this,_r.x,_r.y,0,_r.width,_r.height);
+	ofGetCurrentRenderer()->draw(*this,_r.x,_r.y,0,_r.width,_r.height);
 }
 
 //------------------------------------
 template<typename PixelType>
 void ofImage_<PixelType>::draw(const ofPoint & _p, float _w, float _h){
-	ofGetDefaultRenderer()->draw(*this,_p.x,_p.y,_p.z,_w,_h);
+	ofGetCurrentRenderer()->draw(*this,_p.x,_p.y,_p.z,_w,_h);
 }
 
 //------------------------------------
 template<typename PixelType>
 void ofImage_<PixelType>::draw(float _x, float _y, float _w, float _h){
-	ofGetDefaultRenderer()->draw(*this,_x,_y,0,_w,_h);
+	ofGetCurrentRenderer()->draw(*this,_x,_y,0,_w,_h);
 }
 
 //------------------------------------
 template<typename PixelType>
 void ofImage_<PixelType>::draw(float _x, float _y, float _z, float _w, float _h){
-	ofGetDefaultRenderer()->draw(*this,_x,_y,_z,_w,_h);
+	ofGetCurrentRenderer()->draw(*this,_x,_y,_z,_w,_h);
 }
 
 //------------------------------------
