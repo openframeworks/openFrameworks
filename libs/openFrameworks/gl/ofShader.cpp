@@ -78,12 +78,12 @@ ofShader::~ofShader() {
 }
 
 //--------------------------------------------------------------
-bool ofShader::setup(string shaderName) {
-	return setup(shaderName + ".vert", shaderName + ".frag");
+bool ofShader::load(string shaderName) {
+	return load(shaderName + ".vert", shaderName + ".frag");
 }
 
 //--------------------------------------------------------------
-bool ofShader::setup(string vertName, string fragName, string geomName) {
+bool ofShader::load(string vertName, string fragName, string geomName) {
 	unload();
 
 	if(vertName.empty() == false) setupShaderFromFile(GL_VERTEX_SHADER, vertName);

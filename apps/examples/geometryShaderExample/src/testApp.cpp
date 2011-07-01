@@ -11,7 +11,7 @@ void testApp::setup(){
 	shader.setGeometryInputType(GL_LINES);
 	shader.setGeometryOutputType(GL_TRIANGLE_STRIP);
 	shader.setGeometryOutputCount(4);
-	shader.setup("shaders/vert.glsl", "shaders/frag.glsl", "shaders/geom.glsl"); 
+	shader.load("shaders/vert.glsl", "shaders/frag.glsl", "shaders/geom.glsl"); 
 	
 	printf("Maximum number of output vertices support is: %i\n", shader.getGeometryMaxOutputCount());
 	
