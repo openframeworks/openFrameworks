@@ -175,7 +175,7 @@ ofTrueTypeFont::ofTrueTypeFont(){
 
 	border			= 3;
 	//visibleBorder	= 2;
-	stringQuads.setMode(OF_TRIANGLES_MODE);
+	stringQuads.setMode(OF_PRIMITIVE_TRIANGLES);
 	binded = false;
 }
 
