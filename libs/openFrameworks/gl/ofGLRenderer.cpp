@@ -94,6 +94,9 @@ void ofGLRenderer::draw(ofMesh & vertexData, ofPolyRenderMode renderType){
 		case OF_MESH_FILL:
 			drawMode = ofGetGLPrimitiveMode(vertexData.getMode());
 			break;
+		default:
+			drawMode = ofGetGLPrimitiveMode(vertexData.getMode());
+			break;
 		}
 
 		if(vertexData.getNumIndices()){
@@ -206,13 +209,8 @@ void ofGLRenderer::pushView() {
 
 	ofRectangle currentViewport;
 	currentViewport.set(viewport[0], viewport[1], viewport[2], viewport[3]);
-	viewportHistory.push_front(currentViewport);
+	viewportHistory.push(currentViewport);
 
-	if( viewportHistory.size() > OF_MAX_VIEWPORT_HISTORY ){
-		viewportHistory.pop_back();
-		//should we warn here?
-		//ofLog(OF_LOG_WARNING, "ofPushView - warning: you have used ofPushView more than %i times without calling ofPopView - check your code!", OF_MAX_VIEWPORT_HISTORY);
-	}
 
 	glMatrixMode(GL_PROJECTION);
 	glPushMatrix();
@@ -224,9 +222,9 @@ void ofGLRenderer::pushView() {
 //----------------------------------------------------------
 void ofGLRenderer::popView() {
 	if( viewportHistory.size() ){
-		ofRectangle viewRect = viewportHistory.front();
+		ofRectangle viewRect = viewportHistory.top();
 		viewport(viewRect.x, viewRect.y, viewRect.width, viewRect.height);
-		viewportHistory.pop_front();
+		viewportHistory.pop();
 	}
 
 	glMatrixMode(GL_PROJECTION);
