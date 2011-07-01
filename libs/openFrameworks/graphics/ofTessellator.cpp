@@ -152,7 +152,7 @@ void ofTessellator::performTessellation(ofPolyWindingMode polyWindingMode, ofMes
 		if(tessElements[i]!=TESS_UNDEF)
 			dstmesh.addIndex(tessElements[i]);
 	}*/
-	dstmesh.setMode(OF_TRIANGLES_MODE);
+	dstmesh.setMode(OF_PRIMITIVE_TRIANGLES);
 
 }
 
