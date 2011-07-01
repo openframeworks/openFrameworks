@@ -228,6 +228,24 @@
     <ClInclude Include="..\..\..\openFrameworks\utils\ofUtils.h">
       <Filter>libs\openFrameworks\utils</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\openFrameworks\sound\ofRtAudioSoundStream.h">
+      <Filter>libs\openFrameworks\sound</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\openFrameworks\sound\ofBaseSoundPlayer.h">
+      <Filter>libs\openFrameworks\sound</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\openFrameworks\sound\ofBaseSoundStream.h">
+      <Filter>libs\openFrameworks\sound</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\openFrameworks\sound\ofFmodSoundPlayer.h">
+      <Filter>libs\openFrameworks\sound</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\openFrameworks\video\ofQuickTimePlayer.h">
+      <Filter>libs\openFrameworks\video</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\openFrameworks\video\ofQuickTimeGrabber.h">
+      <Filter>libs\openFrameworks\video</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\openFrameworks\app\ofAppGlutWindow.cpp">
@@ -376,6 +394,30 @@
     </ClCompile>
     <ClCompile Include="..\..\..\openFrameworks\utils\ofUtils.cpp">
       <Filter>libs\openFrameworks\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\openFrameworks\sound\ofBaseSoundPlayer.cpp">
+      <Filter>libs\openFrameworks\sound</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\openFrameworks\sound\ofBaseSoundStream.cpp">
+      <Filter>libs\openFrameworks\sound</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\openFrameworks\sound\ofFmodSoundPlayer.cpp">
+      <Filter>libs\openFrameworks\sound</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\openFrameworks\sound\ofRtAudioSoundStream.cpp">
+      <Filter>libs\openFrameworks\sound</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\openFrameworks\math\ofVec4f.cpp">
+      <Filter>libs\openFrameworks\math</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\openFrameworks\math\ofVec2f.cpp">
+      <Filter>libs\openFrameworks\math</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\openFrameworks\video\ofQuickTimeGrabber.cpp">
+      <Filter>libs\openFrameworks\video</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\openFrameworks\video\ofQuickTimePlayer.cpp">
+      <Filter>libs\openFrameworks\video</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

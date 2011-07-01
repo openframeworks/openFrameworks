@@ -568,9 +568,9 @@ void OutputPolymesh( TESStesselator *tess, TESSmesh *mesh, int elementType, int 
 	TESSvertex* v = 0;
 	TESSface* f = 0;
 	TESShalfEdge* edge = 0;
-	int maxFaceCount = 0;
-	int maxVertexCount = 0;
-	int faceVerts, i;
+	TESSindex maxFaceCount = 0;
+	TESSindex maxVertexCount = 0;
+	TESSindex faceVerts, i;
 	TESSindex *elements = 0;
 	TESSreal *vert;
 

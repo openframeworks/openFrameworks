@@ -482,6 +482,7 @@ void ofFbo::createAndAttachTexture(GLenum attachmentPoint) {
 	glBindFramebuffer(GL_FRAMEBUFFER, fboTextures);
 
 	ofTexture tex;
+	tex.texData.bFlipTexture = true;
 	tex.allocate(settings.width, settings.height, settings.internalformat, settings.textureTarget == GL_TEXTURE_2D ? false : true);
 	tex.setTextureWrap(settings.wrapModeHorizontal, settings.wrapModeVertical);
 	tex.setTextureMinMagFilter(settings.minFilter, settings.maxFilter);
@@ -529,6 +530,7 @@ void ofFbo::unbind() {
 	if(isBound) {
 		glBindFramebuffer(GL_FRAMEBUFFER, savedFramebuffer);
 		isBound = 0;
+		dirty = true;
 	}
 }
 
@@ -545,7 +547,7 @@ ofTexture& ofFbo::getTexture(int attachmentPoint) {
 void ofFbo::updateTexture(int attachmentPoint) {
 	// TODO: flag to see if this is dirty or not
 #ifndef TARGET_OPENGLES
-	if(fbo != fboTextures) {
+	if(fbo != fboTextures && dirty) {
 		glGetIntegerv( GL_FRAMEBUFFER_BINDING, &savedFramebuffer );
 
 		// save current drawbuffer
@@ -570,6 +572,7 @@ void ofFbo::updateTexture(int attachmentPoint) {
 
 		// restore drawbuffer
 		glPopAttrib();
+		dirty = false;
 
 	}
 #endif

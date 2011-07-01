@@ -43,6 +43,7 @@
 			<lib os="win32" compiler="visualstudio">../../../addons/ofxOpenCv/libs/opencv/lib/win32/cv110.lib</lib>
 			<lib os="win32" compiler="visualstudio">../../../addons/ofxOpenCv/libs/opencv/lib/win32/cxcore110.lib</lib>
 			<lib os="mac"   compiler="xcode">../../../addons/ofxOpenCv/libs/opencv/lib/osx/opencv.a</lib>
+			<lib os="iphone" compiler="xcode">../../../addons/ofxOpenCv/libs/opencv/lib/iphone/opencv.a</lib>
             <lib os="linux" compiler="codeblocks, makefile">../../../addons/ofxOpenCv/libs/opencv/lib/linux/libcv.a</lib>
 			<lib os="linux" compiler="codeblocks, makefile">../../../addons/ofxOpenCv/libs/opencv/lib/linux/libcxcore.a</lib>
 			<lib os="linux64" compiler="codeblocks, makefile">../../../addons/ofxOpenCv/libs/opencv/lib/linux64/libcv.a</lib>

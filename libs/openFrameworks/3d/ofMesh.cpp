@@ -3,7 +3,7 @@
 
 //--------------------------------------------------------------
 ofMesh::ofMesh(){
-	mode = OF_TRIANGLES_MODE;
+	mode = OF_PRIMITIVE_TRIANGLES;
 	bVertsChanged = true;
 	bColorsChanged = true;
 	bNormalsChanged = true;

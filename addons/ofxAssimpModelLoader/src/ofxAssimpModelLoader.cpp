@@ -34,7 +34,7 @@ static inline vector<ofVec3f> aiVecVecToOfVecVec(const vector<aiVector3D>& v){
 //--------------------------------------------------------------
 static void aiMeshToOfMesh(const aiMesh* aim, ofMesh& ofm){
 	// default to triangle mode
-	ofm.setMode(OF_TRIANGLES_MODE);
+	ofm.setMode(OF_PRIMITIVE_TRIANGLES);
 
 	// copy vertices
 	for (int i=0; i < (int)aim->mNumVertices;i++){
@@ -284,7 +284,7 @@ void ofxAssimpModelLoader::loadGLResources(){
 
         meshHelper.mesh = mesh;
         aiMeshToOfMesh(mesh,meshHelper.cachedMesh);
-        meshHelper.cachedMesh.setMode(OF_TRIANGLES_MODE);
+        meshHelper.cachedMesh.setMode(OF_PRIMITIVE_TRIANGLES);
         meshHelper.validCache = true;
         meshHelper.hasChanged = false;
 
@@ -388,10 +388,10 @@ void ofxAssimpModelLoader::loadGLResources(){
         }
 
         meshHelper.indices.resize(mesh->mNumFaces * 3);
-        int i=0;
+        int j=0;
         for (unsigned int x = 0; x < mesh->mNumFaces; ++x){
 			for (unsigned int a = 0; a < mesh->mFaces[x].mNumIndices; ++a){
-				meshHelper.indices[i++]=mesh->mFaces[x].mIndices[a];
+				meshHelper.indices[j++]=mesh->mFaces[x].mIndices[a];
 			}
 		}
 
@@ -883,7 +883,7 @@ int ofxAssimpModelLoader::getNumMeshes(){
 ofMesh ofxAssimpModelLoader::getMesh(string name){
 	ofMesh ofm;
 	// default to triangle mode
-	ofm.setMode(OF_TRIANGLES_MODE);
+	ofm.setMode(OF_PRIMITIVE_TRIANGLES);
 	aiMesh * aim = NULL;
 	for(int i=0; i<(int)scene->mNumMeshes; i++){
 		if(string(scene->mMeshes[i]->mName.data)==name){

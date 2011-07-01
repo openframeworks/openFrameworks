@@ -9,7 +9,8 @@
 #define OFXNETWORKUTILS_H_
 
 #include <cerrno>
-#include <ofMain.h>
+#include "ofConstants.h"
+#include "ofUtils.h"
 
 #define ofxNetworkCheckError() ofxNetworkCheckErrno(__FILE__,ofToString(__LINE__))
 

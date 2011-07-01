@@ -98,12 +98,21 @@ void addFilesToProjectXML(string xcodePath, vector <string> filePath, vector <st
 					for(int k = 0; k < filePath.size(); k++){
 					
 						bool addToBuild = true;
-						string fileKind = "sourcecode.cpp.cpp";		
-						if( ofFilePath::getFileExt(filePath[k]) == "h" ){
+						string fileKind = "sourcecode.cpp.cpp";	
+						string ext =  ofFilePath::getFileExt(filePath[k]);	
+						
+						if(ext == "h"){
 							fileKind = "sourcecode.c.h";
 							addToBuild = false;
 						}
-						
+						if(ext == "mm" || ext == "m"){
+							fileKind = "sourcecode.cpp.objcpp";
+						}
+						if(ext == "xib"){
+							fileKind = "file.xib";
+							addToBuild = false;
+						}
+																		
 						//lets add our file hash to the group 									
 						int numKeyTags = xml.getNumTags("key");
 						for(int j = 0; j < numKeyTags; j++){
@@ -227,6 +236,44 @@ void addFilesToProjectXML(string xcodePath, vector <string> filePath, vector <st
 
 //
 //-----------------------------------------------------------------------------------------------------
+string getHashForGroupName(string xcodePath, string parentGroup ){
+	
+	ofxXmlSettings xml;
+	if( xml.loadFile(xcodePath + "/project.pbxproj") ){
+		if( xml.pushTag("plist") ){
+			if( xml.pushTag("dict") ){
+				if( xml.pushTag("dict", 1)  ){
+									
+					int numKeyTags = xml.getNumTags("dict");
+					for(int j = 0; j < numKeyTags; j++){
+						if( xml.pushTag("dict", j) ){
+						
+							if( xml.getValue("string", "null", 1) == parentGroup ){
+								cout << " FOUND ADDONS - breaking " << endl; 
+								
+								xml.popTag();
+								
+								return xml.getValue("key", "no hash key found", j);
+							}
+							
+							xml.popTag();
+						}
+						
+					}
+										
+					xml.popTag();
+				}
+				xml.popTag();
+			}
+			xml.popTag();
+		}
+	}
+	
+	return "no hash key";
+}
+
+//
+//-----------------------------------------------------------------------------------------------------
 void addGroupToProject(string xcodePath,  string hashParent, string groupName, string hashChild ){
 	
 	ofxXmlSettings xml;
@@ -333,7 +380,7 @@ void appendToProjectXcconfig(string projectFile, string buildValue, vector <stri
 
 //
 //--------------------------------------------------------------
-void addAddonsFromInstallXML(string addonPath, string projectFolder, string xcodePath){
+void addAddonsFromInstallXML(string addonPath, string projectFolder, string xcodePath, string platform = "mac"){
 	ofxXmlSettings xml;
 	
 	string installXmlPath = addonPath + "install.xml";
@@ -343,7 +390,10 @@ void addAddonsFromInstallXML(string addonPath, string projectFolder, string xcod
 		string addonName = xml.getValue("name", "null");
 
 		string rootHash =  getHash(addonPath+addonName);
-		addGroupToProject(xcodePath, "BB4B014C10F69532006C3DED", addonName, rootHash);
+		
+		string hashOfAddons = getHashForGroupName(xcodePath, "addons");
+		cout << "hash is " << hashOfAddons << endl;
+		addGroupToProject(xcodePath, hashOfAddons, addonName, rootHash);
 	
 		if( xml.pushTag("add") ){
 		
@@ -385,7 +435,7 @@ void addAddonsFromInstallXML(string addonPath, string projectFolder, string xcod
 				
 				int numLibTags = xml.getNumTags("lib");
 				for(int k = 0; k < numLibTags; k++){
-					if( xml.getAttribute("lib", "os", "null", k) == "mac" ){
+					if( xml.getAttribute("lib", "os", "null", k) == platform ){
 						libs.push_back(xml.getValue("lib", "null", k));
 					}
 				}
@@ -446,57 +496,96 @@ void openProject(string projectPath){
 }
 
 //--------------------------------------------------------------
-void checkAddSrcFiles(string projectName, string xcodePath, string srcFolderPath){
+void checkAddSrcFiles(string projectName, string xcodePath, string srcFolderPath, string currentPath, string groupHashToAddTo ){
 
 	ofDirectory srcPath;
-	srcPath.allowExt("h");
-	srcPath.allowExt("cpp");		
+//	srcPath.allowExt("h");
+//	srcPath.allowExt("cpp");		
+//	srcPath.allowExt("mm");		
+//	srcPath.allowExt("m");		
+//	srcPath.allowExt("xib");		
+
 	srcPath.listDir( srcFolderPath );
-	if( srcPath.size() > 3 ){
+	cout << "listing " << srcFolderPath << endl;
+	
+	if( srcPath.size() ){
 		msgStr << "   adding src/ files " << endl;
 		//openProject(xcodePath);
-		convertProjectToXML(xcodePath);
 	
 		vector <string> filePathsToAdd;
 		vector <string> fileNamesToAdd;	
 		vector <string> hashes;
 		for(int j = 0; j < srcPath.size(); j++){
-			if( srcPath.getName(j) != "main.cpp" && srcPath.getName(j) != "testApp.cpp" &&  srcPath.getName(j) != "testApp.h" ){
+		
+			if( srcPath.getName(j) != "main.cpp" && srcPath.getName(j) != "testApp.cpp" &&  srcPath.getName(j) != "testApp.h" 
+			 && srcPath.getName(j) != "testApp.mm" && srcPath.getName(j) != "main.mm" ){
+								
+				if( ofFile(srcPath.getPath(j)).isDirectory() ){
+					cout << "project: " << projectName << " dir " << srcPath.getName(j) << endl;
 				
-				//this should be: filePathsToAdd.push_back( "src/" + srcPath.getName(j) ); but applescript makes it relative to group not project
-				filePathsToAdd.push_back( "src/"+srcPath.getName(j) );
-				fileNamesToAdd.push_back( srcPath.getName(j) );
+					string dirHash = getHash(srcPath.getPath(j));
 				
-				hashes.push_back( getHash(srcPath.getPath(j)) );
+					addGroupToProject(xcodePath, groupHashToAddTo, srcPath.getName(j), dirHash);
+					checkAddSrcFiles(projectName, xcodePath, srcFolderPath + srcPath.getName(j) + "/", currentPath + srcPath.getName(j) + "/", dirHash);
+									
+				}else{
+					cout << "project: " << projectName << " file " << srcPath.getName(j) << endl;
+				
+					filePathsToAdd.push_back( currentPath + srcPath.getName(j) );
+					fileNamesToAdd.push_back( srcPath.getName(j) );
+					hashes.push_back( getHash(srcPath.getPath(j)) );
+				
+				}
 			}
 		}
 		
 		//TODO: get group hash of src/ folder programmatically 
-		addFilesToProjectXML(xcodePath, filePathsToAdd, fileNamesToAdd, hashes, "E4B69E1C0A3A1BDC003C02F2");			
+		addFilesToProjectXML(xcodePath, filePathsToAdd, fileNamesToAdd, hashes, groupHashToAddTo);			
 	}	
 
 }
 
 //--------------------------------------------------------------
-void copyProjectFiles(string folderName, string folderPath, string xcodePath ){
+void checkAddSrcFiles(string projectName, string xcodePath, string srcFolderPath ){
+	convertProjectToXML(xcodePath);
+
+	string srcHash = getHashForGroupName(xcodePath, "src");
+	cout << "hash to add to " <<  srcHash << endl;
+
+	checkAddSrcFiles( projectName, xcodePath, srcFolderPath, "src/", srcHash );
+}
+
+//--------------------------------------------------------------
+void copyProjectFilesOSX(string folderName, string folderPath, string xcodePath ){
 
 		msgStr << " " << folderName << endl;
 		ofDirectory::removeDirectory(xcodePath, true);
-		ofFile::copyFromTo("OF_template.xcodeproj", xcodePath);
-		ofFile::copyFromTo("Project.xcconfig", folderPath + "Project.xcconfig" );
-		ofFile::copyFromTo("openFrameworks-Info.plist", folderPath + "openFrameworks-Info.plist" );
+		ofFile::copyFromTo("deploy_osx/OF_template.xcodeproj", xcodePath);
+		ofFile::copyFromTo("deploy_osx/Project.xcconfig", folderPath + "Project.xcconfig" );
+		ofFile::copyFromTo("deploy_osx/openFrameworks-Info.plist", folderPath + "openFrameworks-Info.plist" );
 		
 		folderPath = ofFilePath::getAbsolutePath(folderPath, false);
 		findandreplace(folderPath, " ", "\\ ");
 		findandreplace(folderName, " ", "");
 		
-//		cout << "folderPath = " << folderPath <<endl;
-//		cout << "folderName = " << folderName <<endl;
-//		cout << "to perl = " << "'s/emptyExample/"+folderName+"/g'" <<endl;
-		
-//		cout << " before find and replace " << endl;
 		system( string("cd "+folderPath+" ; find . -name \"*.pbxproj*\" -print0 | xargs -0 perl -pi -e 's/emptyExample/"+folderName+"/g'").c_str() );		
-//		cout << " after find and replace " << endl;
+}
+
+//--------------------------------------------------------------
+void copyProjectFilesiPhone(string folderName, string folderPath, string xcodePath ){
+
+		msgStr << " " << folderName << endl;
+		ofDirectory::removeDirectory(xcodePath, true);
+		ofFile::copyFromTo("deploy_iphone/OF_template_iphone.xcodeproj", xcodePath);
+		ofFile::copyFromTo("deploy_iphone/Project.xcconfig", folderPath + "Project.xcconfig" );
+		ofFile::copyFromTo("deploy_iphone/ofxiphone-Info.plist", folderPath + "ofxiphone-Info.plist" );
+		ofFile::copyFromTo("deploy_iphone/iPhone_Prefix.pch", folderPath + "iPhone_Prefix.pch" );
+		
+		folderPath = ofFilePath::getAbsolutePath(folderPath, false);
+		findandreplace(folderPath, " ", "\\ ");
+		findandreplace(folderName, " ", "");
+		
+		system( string("cd "+folderPath+" ; find . -name \"*.pbxproj*\" -print0 | xargs -0 perl -pi -e 's/emptyExample/"+folderName+"/g'").c_str() );		
 }
 
 //--------------------------------------------------------------
@@ -512,7 +601,7 @@ void testApp::setup(){
 		string folderPath = ofFilePath::getAbsolutePath(examples.getPath(k) + "/");
 		string xcodePath  = folderPath + folderName + ".xcodeproj";
 		
-		copyProjectFiles(folderName, folderPath, xcodePath);
+		copyProjectFilesOSX(folderName, folderPath, xcodePath);
 		checkAddSrcFiles(folderName, xcodePath, folderPath + "/src/");		
 	}
 	
@@ -526,7 +615,7 @@ void testApp::setup(){
 		string folderPath = ofFilePath::getAbsolutePath(advanced.getPath(k) + "/");
 		string xcodePath = advanced.getPath(k) + "/" + folderName + ".xcodeproj";
 												
-		copyProjectFiles(folderName, folderPath, xcodePath);
+		copyProjectFilesOSX(folderName, folderPath, xcodePath);
 		checkAddSrcFiles(folderName, xcodePath, folderPath + "/src/");		
 	}	
 
@@ -541,7 +630,7 @@ void testApp::setup(){
 		string folderPath = ofFilePath::getAbsolutePath(addons.getPath(k) + "/");		
 		string xcodePath = addons.getPath(k) + "/" + folderName + ".xcodeproj";
 				
-		copyProjectFiles(folderName, folderPath, xcodePath);
+		copyProjectFilesOSX(folderName, folderPath, xcodePath);
 		checkAddSrcFiles(folderName, xcodePath, folderPath + "/src/");		
 		
 		if( folderName == "allAddonsExample" ){
@@ -602,6 +691,64 @@ void testApp::setup(){
 			addAddonsFromInstallXML( appsPath + "../addons/ofxXmlSettings/", folderPath, xcodePath);
 		}								
 								
+	}		
+	
+	//IPHONE Examples
+	
+	msgStr << "deploying iphone examples"  << endl;
+	
+	ofDirectory iphoneExamples;
+	iphoneExamples.listDir(appsPath + "iPhoneExamples/");
+	
+	for(int k = 0; k < iphoneExamples.size(); k++){
+		string folderName = iphoneExamples.getName(k);
+		string folderPath = ofFilePath::getAbsolutePath(iphoneExamples.getPath(k) + "/");
+		string xcodePath  = folderPath + folderName + ".xcodeproj";
+		
+		copyProjectFilesiPhone(folderName, folderPath, xcodePath);
+		checkAddSrcFiles(folderName, xcodePath, folderPath + "/src/");		
+	}
+
+	msgStr << "deploying iphone specific examples"  << endl;
+	
+	ofDirectory iphoneSpecificExamples;
+	iphoneSpecificExamples.listDir(appsPath + "iPhoneSpecificExamples/");
+	
+	for(int k = 0; k < iphoneSpecificExamples.size(); k++){
+		string folderName = iphoneSpecificExamples.getName(k);
+		string folderPath = ofFilePath::getAbsolutePath(iphoneSpecificExamples.getPath(k) + "/");
+		string xcodePath  = folderPath + folderName + ".xcodeproj";
+		
+		copyProjectFilesiPhone(folderName, folderPath, xcodePath);
+		checkAddSrcFiles(folderName, xcodePath, folderPath + "/src/");		
+	}
+
+
+	msgStr << "deploying iphone addons examples"  << endl;
+	
+	ofDirectory iphoneAddonsExamples;
+	iphoneAddonsExamples.listDir(appsPath + "iPhoneAddonsExamples/");
+	
+	for(int k = 0; k < iphoneAddonsExamples.size(); k++){
+		string folderName = iphoneAddonsExamples.getName(k);
+		string folderPath = ofFilePath::getAbsolutePath(iphoneAddonsExamples.getPath(k) + "/");
+		string xcodePath  = folderPath + folderName + ".xcodeproj";
+		
+		copyProjectFilesiPhone(folderName, folderPath, xcodePath);
+		checkAddSrcFiles(folderName, xcodePath, folderPath + "/src/");	
+		
+		if( folderName == "opencvExample" || folderName == "opencvFaceExample" ){
+			convertProjectToXML(xcodePath);
+			addAddonsFromInstallXML( appsPath + "../addons/ofxOpenCv/", folderPath, xcodePath, "iphone");
+		}
+		if( folderName == "dirListExample"){
+			convertProjectToXML(xcodePath);
+			addAddonsFromInstallXML( appsPath + "../addons/ofxDirList/", folderPath, xcodePath, "iphone");
+		}
+		if( folderName == "xmlSettingsExample"){
+			convertProjectToXML(xcodePath);
+			addAddonsFromInstallXML( appsPath + "../addons/ofxXmlSettings/", folderPath, xcodePath, "iphone");
+		}							
 	}		
 	
 }

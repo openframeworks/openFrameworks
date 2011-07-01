@@ -893,7 +893,7 @@ void ofBox(float size) {
 			20,22,23
 		};
 		vertexData.addIndices(indices,36);
-		vertexData.setMode(OF_TRIANGLES_MODE);
+		vertexData.setMode(OF_PRIMITIVE_TRIANGLES);
 		renderer->draw(vertexData);
 	} else {
 		ofVec3f vertices[] = {
@@ -928,7 +928,7 @@ void ofBox(float size) {
 		};
 		vertexData.addIndices(indices,24);
 
-		vertexData.setMode(OF_LINES_MODE);
+		vertexData.setMode(OF_PRIMITIVE_LINES);
 		renderer->draw(vertexData);
 	}
 

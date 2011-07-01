@@ -50,7 +50,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\..\..\libs\openFrameworks;..\..\..\libs\openFrameworks\graphics;..\..\..\libs\openFrameworks\app;..\..\..\libs\openFrameworks\sound;..\..\..\libs\openFrameworks\utils;..\..\..\libs\openFrameworks\communication;..\..\..\libs\openFrameworks\video;..\..\..\libs\openFrameworks\events;..\..\..\libs\glut\include;..\..\..\libs\rtAudio\include;..\..\..\libs\quicktime\include;..\..\..\libs\freetype\include;..\..\..\libs\freetype\include\freetype2;..\..\..\libs\freeImage\include;..\..\..\libs\fmodex\include;..\..\..\libs\videoInput\include;..\..\..\libs\glee\include;..\..\..\libs\glu\include;..\..\..\libs\poco\include;..\..\..\addons;..\..\..\addons\ofxNetwork\src;..\..\..\addons\ofxDirList\src;..\..\..\addons\ofxObjLoader\src;..\..\..\addons\ofxOpenCv\src;..\..\..\addons\ofxOpenCv\libs\opencv\include;..\..\..\addons\ofxOsc\src;..\..\..\addons\ofxOsc\libs\oscpack\include\ip;..\..\..\addons\ofxOsc\libs\oscpack\include\osc;..\..\..\addons\ofxThread\src;..\..\..\addons\ofxVectorGraphics\src;..\..\..\addons\ofxVectorGraphics\libs;..\..\..\addons\ofxVectorMath\src;..\..\..\addons\ofxXMLSettings\libs;..\..\..\addons\ofxXMLSettings\src;..\..\..\addons\ofx3DModelLoader\src;..\..\..\addons\ofx3DModelLoader\src\3DS%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\libs\openFrameworks;..\..\..\libs\openFrameworks\graphics;..\..\..\libs\openFrameworks\app;..\..\..\libs\openFrameworks\sound;..\..\..\libs\openFrameworks\utils;..\..\..\libs\openFrameworks\communication;..\..\..\libs\openFrameworks\video;..\..\..\libs\openFrameworks\math;..\..\..\libs\openFrameworks\types;..\..\..\libs\openFrameworks\events;..\..\..\libs\glut\include;..\..\..\libs\rtAudio\include;..\..\..\libs\quicktime\include;..\..\..\libs\freetype\include;..\..\..\libs\freetype\include\freetype2;..\..\..\libs\freeImage\include;..\..\..\libs\fmodex\include;..\..\..\libs\videoInput\include;..\..\..\libs\glew\include\;..\..\..\libs\glu\include;..\..\..\libs\poco\include;..\..\..\addons;..\..\..\libs\openFrameworks\gl;..\..\..\libs\openFrameworks\3d;..\..\..\libs\tess2\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;POCO_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -61,9 +61,9 @@
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>openframeworksLibDebug.lib;OpenGL32.lib;GLu32.lib;kernel32.lib;setupapi.lib;glut32.lib;rtAudioD.lib;videoInput.lib;libfreetype.lib;FreeImage.lib;qtmlClient.lib;dsound.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;GLee.lib;fmodex_vc.lib;glu32.lib;PocoFoundationmtd.lib;PocoNetmtd.lib;PocoUtilmtd.lib;PocoXMLmtd.lib;Ws2_32.lib;..\..\..\addons\ofxOpenCv\libs\opencv\lib\vs2010\cv110d.lib;..\..\..\addons\ofxOpenCv\libs\opencv\lib\vs2010\cvaux110d.lib;..\..\..\addons\ofxOpenCv\libs\opencv\lib\vs2010\cxcore110d.lib;..\..\..\addons\ofxOsc\libs\oscpack\lib\vs2010\oscpackd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>openframeworksLibDebug.lib;OpenGL32.lib;cairo-static.lib;pixman-1.lib;GLu32.lib;kernel32.lib;setupapi.lib;glut32.lib;rtAudioD.lib;videoInput.lib;libfreetype.lib;FreeImage.lib;qtmlClient.lib;dsound.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;glew32s.lib;fmodex_vc.lib;glu32.lib;PocoFoundationmdd.lib;PocoNetmdd.lib;PocoUtilmdd.lib;PocoXMLmdd.lib;tess2.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
-      <AdditionalLibraryDirectories>..\..\..\libs\glut\lib\vs2010;..\..\..\libs\rtAudio\lib\vs2010;..\..\..\libs\FreeImage\lib\vs2010;..\..\..\libs\freetype\lib\vs2010;..\..\..\libs\quicktime\lib\vs2010;..\..\..\libs\fmodex\lib\vs2010;..\..\..\libs\videoInput\lib\vs2010;..\..\..\libs\glee\lib\vs2010;..\..\..\libs\glu\lib\vs2010;..\..\..\libs\Poco\lib\vs2010;..\..\..\libs\openFrameworksCompiled\lib\vs2010;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\..\..\libs\glut\lib\vs2010;..\..\..\libs\rtAudio\lib\vs2010;..\..\..\libs\FreeImage\lib\vs2010;..\..\..\libs\freetype\lib\vs2010;..\..\..\libs\quicktime\lib\vs2010;..\..\..\libs\fmodex\lib\vs2010;..\..\..\libs\videoInput\lib\vs2010;..\..\..\libs\cairo\lib\vs2010;..\..\..\libs\glew\lib\vs2010;..\..\..\libs\glu\lib\vs2010;..\..\..\libs\Poco\lib\vs2010;..\..\..\libs\openFrameworksCompiled\lib\vs2010;..\..\..\libs\tess2\lib\vs2010;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>atlthunk.lib; LIBC.lib; LIBCMT;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>$(TargetDir)$(TargetName)_debugInfo.pdb</ProgramDatabaseFile>
@@ -83,7 +83,7 @@ if not exist "$(ProjectDir)bin\data" mkdir  "$(ProjectDir)bin\data"
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
       <WholeProgramOptimization>false</WholeProgramOptimization>
-      <AdditionalIncludeDirectories>..\..\..\libs\openFrameworks;..\..\..\libs\openFrameworks\graphics;..\..\..\libs\openFrameworks\app;..\..\..\libs\openFrameworks\sound;..\..\..\libs\openFrameworks\utils;..\..\..\libs\openFrameworks\communication;..\..\..\libs\openFrameworks\video;..\..\..\libs\openFrameworks\events;..\..\..\libs\glut\include;..\..\..\libs\rtAudio\include;..\..\..\libs\quicktime\include;..\..\..\libs\freetype\include;..\..\..\libs\freetype\include\freetype2;..\..\..\libs\freeImage\include;..\..\..\libs\fmodex\include;..\..\..\libs\videoInput\include;..\..\..\libs\glee\include;..\..\..\libs\glu\include;..\..\..\libs\poco\include;..\..\..\addons;..\..\..\addons\ofxNetwork\src;..\..\..\addons\ofxDirList\src;..\..\..\addons\ofxObjLoader\src;..\..\..\addons\ofxOpenCv\src;..\..\..\addons\ofxOpenCv\libs\opencv\include;..\..\..\addons\ofxOsc\src;..\..\..\addons\ofxOsc\libs\oscpack\include\ip;..\..\..\addons\ofxOsc\libs\oscpack\include\osc;..\..\..\addons\ofxThread\src;..\..\..\addons\ofxVectorGraphics\src;..\..\..\addons\ofxVectorGraphics\libs;..\..\..\addons\ofxVectorMath\src;..\..\..\addons\ofxXMLSettings\libs;..\..\..\addons\ofxXMLSettings\src;..\..\..\addons\ofx3DModelLoader\src;..\..\..\addons\ofx3DModelLoader\src\3DS%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\libs\openFrameworks;..\..\..\libs\openFrameworks\graphics;..\..\..\libs\openFrameworks\app;..\..\..\libs\openFrameworks\sound;..\..\..\libs\openFrameworks\utils;..\..\..\libs\openFrameworks\communication;..\..\..\libs\openFrameworks\video;..\..\..\libs\openFrameworks\math;..\..\..\libs\openFrameworks\types;..\..\..\libs\openFrameworks\3d;..\..\..\libs\openFrameworks\gl;..\..\..\libs\openFrameworks\events;..\..\..\libs\glut\include;..\..\..\libs\rtAudio\include;..\..\..\libs\quicktime\include;..\..\..\libs\freetype\include;..\..\..\libs\freetype\include\freetype2;..\..\..\libs\freeImage\include;..\..\..\libs\fmodex\include;..\..\..\libs\videoInput\include;..\..\..\libs\glew\include\;..\..\..\libs\glu\include;..\..\..\libs\poco\include;..\..\..\libs\tess2\include;..\..\..\addons;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;POCO_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <PrecompiledHeader>
@@ -93,8 +93,8 @@ if not exist "$(ProjectDir)bin\data" mkdir  "$(ProjectDir)bin\data"
       </DebugInformationFormat>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>openframeworksLib.lib;OpenGL32.lib;GLu32.lib;kernel32.lib;setupapi.lib;glut32.lib;rtAudio.lib;videoInput.lib;libfreetype.lib;FreeImage.lib;qtmlClient.lib;dsound.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;GLee.lib;fmodex_vc.lib;glu32.lib;PocoFoundationmt.lib;PocoNetmt.lib;PocoUtilmt.lib;PocoXMLmt.lib;Ws2_32.lib;..\..\..\addons\ofxOpenCv\libs\opencv\lib\vs2010\cv110.lib;..\..\..\addons\ofxOpenCv\libs\opencv\lib\vs2010\cvaux110.lib;..\..\..\addons\ofxOpenCv\libs\opencv\lib\vs2010\cxcore110.lib;..\..\..\addons\ofxOsc\libs\oscpack\lib\vs2010\oscpack.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\..\..\libs\glut\lib\vs2010;..\..\..\libs\rtAudio\lib\vs2010;..\..\..\libs\FreeImage\lib\vs2010;..\..\..\libs\freetype\lib\vs2010;..\..\..\libs\quicktime\lib\vs2010;..\..\..\libs\fmodex\lib\vs2010;..\..\..\libs\videoInput\lib\vs2010;..\..\..\libs\glee\lib\vs2010;..\..\..\libs\glu\lib\vs2010;..\..\..\libs\Poco\lib\vs2010;..\..\..\libs\openFrameworksCompiled\lib\vs2010;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>openframeworksLib.lib;OpenGL32.lib;cairo-static.lib;pixman-1.lib;GLu32.lib;kernel32.lib;setupapi.lib;glut32.lib;rtAudio.lib;videoInput.lib;libfreetype.lib;FreeImage.lib;qtmlClient.lib;dsound.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;glew32s.lib;fmodex_vc.lib;glu32.lib;PocoFoundationmd.lib;PocoNetmd.lib;PocoUtilmd.lib;PocoXMLmd.lib;tess2.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\..\..\libs\glut\lib\vs2010;..\..\..\libs\rtAudio\lib\vs2010;..\..\..\libs\FreeImage\lib\vs2010;..\..\..\libs\freetype\lib\vs2010;..\..\..\libs\quicktime\lib\vs2010;..\..\..\libs\fmodex\lib\vs2010;..\..\..\libs\videoInput\lib\vs2010;..\..\..\libs\cairo\lib\vs2010;..\..\..\libs\glew\lib\vs2010;..\..\..\libs\glu\lib\vs2010;..\..\..\libs\Poco\lib\vs2010;..\..\..\libs\openFrameworksCompiled\lib\vs2010;..\..\..\libs\tess2\lib\vs2010;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <IgnoreSpecificDefaultLibraries>atlthunk.lib; LIBC.lib; LIBCMT;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <GenerateDebugInformation>false</GenerateDebugInformation>
@@ -111,27 +111,16 @@ if not exist "$(ProjectDir)bin\data" mkdir  "$(ProjectDir)bin\data"
       <Message>adding DLLs and creating data folder</Message>
       <Command>xcopy /e /i /y "$(ProjectDir)\..\..\..\export\vs2010\*.dll" "$(ProjectDir)\bin"
 if not exist "$(ProjectDir)\bin\data" mkdir  "$(ProjectDir)\bin\data"
+
 </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\testApp.cpp" />
-    <ClCompile Include="..\..\..\addons\ofxVectorMath\src\ofxMatrix4x4.cpp" />
-    <ClCompile Include="..\..\..\addons\ofxVectorMath\src\ofxQuaternion.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\testApp.h" />
-    <ClInclude Include="..\..\..\addons\ofxVectorMath\src\ofxMatrix3x3.h" />
-    <ClInclude Include="..\..\..\addons\ofxVectorMath\src\ofxPoint2f.h" />
-    <ClInclude Include="..\..\..\addons\ofxVectorMath\src\ofxPoint3f.h" />
-    <ClInclude Include="..\..\..\addons\ofxVectorMath\src\ofxPoint4f.h" />
-    <ClInclude Include="..\..\..\addons\ofxVectorMath\src\ofxVec2f.h" />
-    <ClInclude Include="..\..\..\addons\ofxVectorMath\src\ofxVec3f.h" />
-    <ClInclude Include="..\..\..\addons\ofxVectorMath\src\ofxVec4f.h" />
-    <ClInclude Include="..\..\..\addons\ofxVectorMath\src\ofxMatrix4x4.h" />
-    <ClInclude Include="..\..\..\addons\ofxVectorMath\src\ofxQuaternion.h" />
-    <ClInclude Include="..\..\..\addons\ofxVectorMath\src\ofxVectorMath.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\libs\openFrameworksCompiled\project\vs2010\openframeworksLib.vcxproj">
