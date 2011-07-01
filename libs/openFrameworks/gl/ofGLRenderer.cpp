@@ -7,6 +7,7 @@
 #include "ofBitmapFont.h"
 #include "ofGLUtils.h"
 #include "ofImage.h"
+#include "ofFbo.h"
 
 //----------------------------------------------------------
 ofGLRenderer::ofGLRenderer(bool useShapeColor){
@@ -15,6 +16,8 @@ ofGLRenderer::ofGLRenderer(bool useShapeColor){
 	linePoints.resize(2);
 	rectPoints.resize(4);
 	triPoints.resize(3);
+
+	currentFbo = NULL;
 }
 
 //----------------------------------------------------------
@@ -203,6 +206,11 @@ void ofGLRenderer::draw(ofShortImage & image, float x, float y, float z, float w
 }
 
 //----------------------------------------------------------
+void ofGLRenderer::setCurrentFBO(ofFbo * fbo){
+	currentFbo = fbo;
+}
+
+//----------------------------------------------------------
 void ofGLRenderer::pushView() {
 	GLint viewport[4];
 	glGetIntegerv(GL_VIEWPORT, viewport);
@@ -244,7 +252,11 @@ void ofGLRenderer::viewport(float x, float y, float width, float height, bool in
 	if(height == 0) height = ofGetWindowHeight();
 
 	if (invertY){
-		y = ofGetWindowHeight() - (y + height);
+		if(currentFbo){
+			y = currentFbo->getHeight() - (y + height);
+		}else{
+			y = ofGetWindowHeight() - (y + height);
+		}
 	}
 	glViewport(x, y, width, height);	
 }

@@ -4,12 +4,18 @@
 #include <stack>
 class ofShapeTessellation;
 class ofMesh;
+class ofFbo;
 
 
 class ofGLRenderer: public ofBaseRenderer{
 public:
 	ofGLRenderer(bool useShapeColor=true);
 	~ofGLRenderer(){}
+
+	string getType(){ return "GL"; }
+
+	void setCurrentFBO(ofFbo * fbo);
+
 	void draw(ofMesh & vertexData);
 	void draw(ofMesh & vertexData, ofPolyRenderMode renderType);
 	void draw(ofPolyline & poly);
@@ -121,5 +127,7 @@ private:
 	ofFillFlag bFilled;
 	bool bSmoothHinted;
 	ofRectMode rectMode;
+
+	ofFbo * currentFbo;
 
 };
