@@ -2,6 +2,7 @@
 #include "ofAppRunner.h"
 #include "ofUtils.h"
 #include "ofGraphics.h"
+#include "ofGLRenderer.h"
 #include <map>
 
 //#ifndef TARGET_OPENGLES
@@ -339,7 +340,7 @@ void ofFbo::checkGLSupport() {
 }
 
 
-void ofFbo::setup(int width, int height, int internalformat, int numSamples) {
+void ofFbo::allocate(int width, int height, int internalformat, int numSamples) {
 
 	settings.width			= width;
 	settings.height			= height;
@@ -348,11 +349,11 @@ void ofFbo::setup(int width, int height, int internalformat, int numSamples) {
 	settings.useDepth		= true;
 	settings.useStencil		= true;
 	
-	setup(settings);
+	allocate(settings);
 }
 
 
-void ofFbo::setup(Settings _settings) {
+void ofFbo::allocate(Settings _settings) {
 	checkGLSupport();
 
 	destroy();
@@ -420,7 +421,7 @@ void ofFbo::setup(Settings _settings) {
 	unbind();
 }
 
-void ofFbo::setupShadow( int width, int height )
+void ofFbo::allocateForShadow( int width, int height )
 {
 //#ifndef TARGET_OPENGLES
 	int old;
@@ -504,6 +505,9 @@ void ofFbo::createAndAttachTexture(GLenum attachmentPoint) {
 void ofFbo::begin() {
 	bind();
 	ofPushView();
+	if(ofGetGLRenderer()){
+		ofGetGLRenderer()->setCurrentFBO(this);
+	}
 	ofViewport(0, 0, getWidth(), getHeight(), false);
 	ofSetupScreenPerspective(getWidth(), getHeight(), ofGetOrientation(), false);
 }
@@ -514,6 +518,9 @@ void ofFbo::begin() {
 
 void ofFbo::end() {
 	unbind();
+	if(ofGetGLRenderer()){
+		ofGetGLRenderer()->setCurrentFBO(NULL);
+	}
 	ofPopView();
 }
 
