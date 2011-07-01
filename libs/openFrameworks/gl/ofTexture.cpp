@@ -86,6 +86,11 @@ string ofGetGlInternalFormatName(int glInternalFormat) {
 void ofGetGlFormatAndType(int glInternalFormat, int& glFormat, int& glType) {
 	switch(glInternalFormat) {
 		// common 8-bit formats: rgba, rgb, grayscale
+		case GL_BGRA:
+			glFormat = GL_BGRA;
+			glType = GL_UNSIGNED_BYTE;
+			break;
+			
 		case GL_RGBA:
 #ifndef TARGET_OPENGLES
 		case GL_RGBA8:
@@ -396,7 +401,7 @@ void ofTexture::loadData(void * data, int w, int h, int glInternalFormat){
 	// 	check "glTexSubImage2D"
 	
 	if(!ofCheckGLTypesEqual(glInternalFormat,texData.glTypeInternal)) {
-		ofLogError() << "ofTexture::loadData() failed to upload internalFormat " <<  ofGetGlInternalFormatName(glInternalFormat) << " data to " << ofGetGlInternalFormatName(texData.glTypeInternal) << " texture";
+		ofLogError() << "ofTexture::loadData() failed to upload internalFormat " <<  ofGetGlInternalFormatName(glInternalFormat) << " data to " << ofGetGlInternalFormatName(texData.glTypeInternal) << " texture" <<endl;
 		return;
 	}
 	
