@@ -243,7 +243,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #	elif defined(ANDROID)
 #		define ASSIMP_BUILD_ARM_32BIT_ARCHITECTURE
 #	else
-#		error unknown architecture
+#		define ASSIMP_BUILD_X86_32BIT_ARCHITECTURE
 #	endif
 #else
 #	error unknown compiler
