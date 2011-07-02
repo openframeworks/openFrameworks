@@ -17,7 +17,7 @@ public:
 
 	void setupOpenGL(int w, int h, int screenMode);
 	void initializeWindow();
-	void runAppViaInfiniteLoop(ofPtr<ofBaseApp> appPtr);
+	void runAppViaInfiniteLoop(ofBaseApp * appPtr);
 	
 	//note if you fail to set a compatible string the app will not launch
 	void setGlutDisplayString(string str);

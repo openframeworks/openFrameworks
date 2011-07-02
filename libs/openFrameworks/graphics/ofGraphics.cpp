@@ -4,6 +4,7 @@
 #include "ofBaseTypes.h"
 #include "ofGLRenderer.h"
 #include "ofPath.h"
+#include "ofRendererCollection.h"
 
 #ifdef TARGET_OSX
 	#include <OpenGL/glu.h>
@@ -51,7 +52,7 @@ static ofPath shape;
 static ofMesh vertexData;
 static ofPtr<ofBaseRenderer> renderer;
 
-void ofSetDefaultRenderer(ofPtr<ofBaseRenderer> renderer_){
+void ofSetCurrentRenderer(ofPtr<ofBaseRenderer> renderer_){
 	renderer = renderer_;
 	renderer->setupGraphicDefaults();
 
@@ -66,10 +67,19 @@ void ofSetDefaultRenderer(ofPtr<ofBaseRenderer> renderer_){
 	ofSetStyle(currentStyle);
 }
 
-ofPtr<ofBaseRenderer> & ofGetDefaultRenderer(){
+ofPtr<ofBaseRenderer> & ofGetCurrentRenderer(){
 	return renderer;
 }
 
+ofPtr<ofGLRenderer> ofGetGLRenderer(){
+	if(ofGetCurrentRenderer()->getType()=="GL"){
+		return (ofPtr<ofGLRenderer>&)ofGetCurrentRenderer();
+	}else if(ofGetCurrentRenderer()->getType()=="collection"){
+		return ((ofPtr<ofRendererCollection>&)ofGetCurrentRenderer())->getGLRenderer();
+	}else{
+		return ofPtr<ofGLRenderer>();
+	}
+}
 
 // opengl specifics
 
@@ -327,7 +337,7 @@ bool ofbClearBg(){
 
 //----------------------------------------------------------
 float * ofBgColorPtr(){
-	return renderer->getBgColor().v;
+	return &renderer->getBgColor().r;
 }
 
 //----------------------------------------------------------
