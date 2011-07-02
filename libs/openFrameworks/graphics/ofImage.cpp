@@ -3,7 +3,6 @@
 #include "ofTypes.h"
 #include "ofURLFileLoader.h"
 #include "ofGraphics.h"
-#include "ofPixelUtils.h"
 #include "FreeImage.h"
 
 #ifdef TARGET_ANDROID
