@@ -11,8 +11,9 @@ void testApp::setup(){
 
 	letter = '$';
 
-	testFont.loadFont("Batang.ttf", 80, true, true, true);
-	testFont2.loadFont("cooperBlack.ttf", 26, true, true, true);
+	testFont.loadFont("Batang.ttf", 60, true, true, true);
+	testFont2.loadFont("cooperBlack.ttf", 18, true, true, true);
+	testChar = testFont.getCharacterAsPoints(letter);
 
 }
 
@@ -23,18 +24,18 @@ void testApp::update(){
 
 //--------------------------------------------------------------
 void testApp::draw(){
-
 	ofSetColor(0, 90, 60);
 	ofFill();
 
 	ofDrawBitmapString("fps: "+ofToString(ofGetFrameRate()), 10, 10);
-	ofDrawBitmapString("slide finger to change letter", 10, 26);
+	ofDrawBitmapString("slide your finger to see a letter as a texture \nand as a vector. ", 10, 24);
 
-	testFont2.drawString("Hello - I am bitmap", 15, 190);
+	testFont2.drawString("Hello - I am bitmap", 15, 230);
+
 	ofFill();
-	testFont2.drawStringAsShapes("Hello - I am vector", 15, 240);
+	testFont2.drawStringAsShapes("Hello - I am vector", 15, 270);
 	ofNoFill();
-	testFont2.drawStringAsShapes("Hello - I am vector", 15, 285);
+	testFont2.drawStringAsShapes("Hello - I am vector", 15, 310);
 
 	//lets draw the key pressed as a tex and a vector both fill and no fill
 	//here we show how easy it is to get
@@ -42,34 +43,20 @@ void testApp::draw(){
 	string str = "";
 	str += char(letter);
 
-	testFont.drawString(str, 10, 140);
+	testFont.drawString(str, 30, ofGetHeight()/2);
 
-	//okay lets get the character back as ofPoints
-	//all curves are calculated for us so all we need to do is draw!
-	ofTTFCharacter testChar;
-	testChar = testFont.getCharacterAsPoints(letter);
-
-	ofFill();
-	ofPushMatrix();
-		ofTranslate(100, 140, 0);
-		ofBeginShape();
-			for(int k = 0; k <testChar.contours.size(); k++){
-				if( k!= 0)ofNextContour(true);
-				for(int i = 0; i < testChar.contours[k].pts.size(); i++){
-					ofVertex(testChar.contours[k].pts[i].x, testChar.contours[k].pts[i].y);
-				}
-			}
-		ofEndShape( true );
-	ofPopMatrix();
+	//okay lets get the character back as shapes
+	testChar.setFilled(true);
+    testChar.draw(130, ofGetHeight()/2);
 
 	ofNoFill();
 	ofPushMatrix();
-		ofTranslate(200, 140, 0);
+		ofTranslate(230,  ofGetHeight()/2, 0);
 		ofBeginShape();
-			for(int k = 0; k <testChar.contours.size(); k++){
-				if( k!= 0)ofNextContour(true);
-				for(int i = 0; i < testChar.contours[k].pts.size(); i++){
-					ofVertex(testChar.contours[k].pts[i].x, testChar.contours[k].pts[i].y);
+			for(int k = 0; k <(int)testChar.getOutline().size(); k++){
+				if( k!= 0)ofNextContour(true) ;
+				for(int i = 0; i < (int)testChar.getOutline()[k].size(); i++){
+					ofVertex(testChar.getOutline()[k].getVertices()[i].x, testChar.getOutline()[k].getVertices()[i].y);
 				}
 			}
 		ofEndShape( true );
@@ -86,6 +73,7 @@ void testApp::touchDown(ofTouchEventArgs &touch){
 void testApp::touchMoved(ofTouchEventArgs &touch){
 	if( touch.id == 0 ){
 		letter = ofMap(touch.x, 10.0, ofGetWidth(), 33, 126, true);
+		testChar = testFont.getCharacterAsPoints(letter);
 	}
 }
 

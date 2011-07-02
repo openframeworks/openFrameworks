@@ -134,7 +134,7 @@ void ofCairoRenderer::draw(vector<ofPoint> & vertexData, ofPrimitiveMode drawMod
 		ofVec3f v = transform(vertexData[0]);
 		ofVec3f v2;
 		cairo_move_to(cr,v.x,v.y);
-		if(drawMode==OF_TRIANGLE_STRIP_MODE){
+		if(drawMode==OF_PRIMITIVE_TRIANGLE_STRIP){
 			v = transform(vertexData[1]);
 			cairo_line_to(cr,v.x,v.y);
 			v = transform(vertexData[2]);
@@ -144,7 +144,7 @@ void ofCairoRenderer::draw(vector<ofPoint> & vertexData, ofPrimitiveMode drawMod
 		for(; i<(int)vertexData.size(); i++){
 			v = transform(vertexData[i]);
 			switch(drawMode){
-			case(OF_TRIANGLES_MODE):
+			case(OF_PRIMITIVE_TRIANGLES):
 				if((i+1)%3==0){
 					cairo_line_to(cr,v.x,v.y);
 					v2 = transform(vertexData[i-2]);
@@ -157,13 +157,13 @@ void ofCairoRenderer::draw(vector<ofPoint> & vertexData, ofPrimitiveMode drawMod
 				}
 
 			break;
-			case(OF_TRIANGLE_STRIP_MODE):
+			case(OF_PRIMITIVE_TRIANGLE_STRIP):
 					v2 = transform(vertexData[i-2]);
 					cairo_line_to(cr,v.x,v.y);
 					cairo_line_to(cr,v2.x,v2.y);
 					cairo_move_to(cr,v.x,v.y);
 			break;
-			case(OF_TRIANGLE_FAN_MODE):
+			case(OF_PRIMITIVE_TRIANGLE_FAN):
 					/*triangles.addIndex((GLuint)0);
 						triangles.addIndex((GLuint)1);
 						triangles.addIndex((GLuint)2);
@@ -204,7 +204,7 @@ void ofCairoRenderer::draw(ofMesh & primitive){
 		ofVec3f v = transform(primitive.getVertex(primitive.getIndex(0)));
 		ofVec3f v2;
 		cairo_move_to(cr,v.x,v.y);
-		if(primitive.getMode()==OF_TRIANGLE_STRIP_MODE){
+		if(primitive.getMode()==OF_PRIMITIVE_TRIANGLE_STRIP){
 			v = transform(primitive.getVertex(primitive.getIndex(1)));
 			cairo_line_to(cr,v.x,v.y);
 			v = transform(primitive.getVertex(primitive.getIndex(2)));
@@ -214,7 +214,7 @@ void ofCairoRenderer::draw(ofMesh & primitive){
 		for(; i<primitive.getNumIndices(); i++){
 			v = transform(primitive.getVertex(primitive.getIndex(i)));
 			switch(primitive.getMode()){
-			case(OF_TRIANGLES_MODE):
+			case(OF_PRIMITIVE_TRIANGLES):
 				if((i+1)%3==0){
 					cairo_line_to(cr,v.x,v.y);
 					v2 = transform(primitive.getVertex(primitive.getIndex(i-2)));
@@ -227,13 +227,13 @@ void ofCairoRenderer::draw(ofMesh & primitive){
 				}
 
 			break;
-			case(OF_TRIANGLE_STRIP_MODE):
+			case(OF_PRIMITIVE_TRIANGLE_STRIP):
 					v2 = transform(primitive.getVertex(primitive.getIndex(i-2)));
 					cairo_line_to(cr,v.x,v.y);
 					cairo_line_to(cr,v2.x,v2.y);
 					cairo_move_to(cr,v.x,v.y);
 			break;
-			case(OF_TRIANGLE_FAN_MODE):
+			case(OF_PRIMITIVE_TRIANGLE_FAN):
 					/*triangles.addIndex((GLuint)0);
 						triangles.addIndex((GLuint)1);
 						triangles.addIndex((GLuint)2);
