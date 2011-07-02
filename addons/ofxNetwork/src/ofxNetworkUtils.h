@@ -101,6 +101,11 @@ inline int ofxNetworkCheckErrno(const string & file, const string & line){
 	case EAGAIN:
 		//ofLog(OF_LOG_VERBOSE,"ofxNetwork:"+file+": " +line+" EAGAIN: try again");
 		break;
+#ifdef TARGET_WIN32
+	case WSAEWOULDBLOCK:
+		// represents "resource temporarily unavailable", can be ignored
+		break;
+#endif
 	default:
 		ofLog(OF_LOG_ERROR,"ofxNetwork:"+file+": " +line+" unknown error: " + ofToString(err) + " see errno.h for description of the error");
 		break;
