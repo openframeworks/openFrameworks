@@ -16,8 +16,8 @@ void addFace(ofMesh& mesh, ofVec3f a, ofVec3f b, ofVec3f c, ofVec3f d) {
 }
 
 ofVec3f get(ofFloatImage& img, int x, int y) {
-	float scaleFactor = 0.5;
-	return ofVec3f(x, y, scaleFactor * img.getColor(x, y).getBrightness());
+	float scaleFactor = 100;
+	return ofVec3f(x, y, 100 * img.getColor(x, y).getBrightness());
 }
 
 //--------------------------------------------------------------
@@ -25,6 +25,7 @@ void testApp::setup(){
 	img.loadImage("nyc-small.exr");
 	
 	light.enable();
+	light.setPosition(+500, 0, 0);
 	
 	mesh.setMode(OF_PRIMITIVE_TRIANGLES);
 	int skip = 1;	
@@ -52,6 +53,7 @@ void testApp::draw(){
 	
 	easyCam.begin();
 	ofScale(1, -1, 1);
+	ofRotateX(60);
 	ofTranslate(-img.getWidth() / 2, -img.getHeight() / 2, 0);
 	ofSetColor(255);
 	glEnable(GL_DEPTH_TEST);
