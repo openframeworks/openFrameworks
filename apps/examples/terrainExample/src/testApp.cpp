@@ -16,7 +16,7 @@ void addFace(ofMesh& mesh, ofVec3f a, ofVec3f b, ofVec3f c, ofVec3f d) {
 }
 
 ofVec3f get(ofFloatImage& img, int x, int y) {
-	float scaleFactor = 100;
+	float scaleFactor = 0.5;
 	return ofVec3f(x, y, scaleFactor * img.getColor(x, y).getBrightness());
 }
 
@@ -26,7 +26,7 @@ void testApp::setup(){
 	
 	light.enable();
 	
-	mesh.setMode(OF_TRIANGLES_MODE);
+	mesh.setMode(OF_PRIMITIVE_TRIANGLES);
 	int skip = 1;	
 	int width = img.getWidth();
 	int height = img.getHeight();
