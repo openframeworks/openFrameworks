@@ -116,9 +116,11 @@ void ofGLRenderer::draw(ofMesh & vertexData, ofPolyRenderMode renderType){
 
 //----------------------------------------------------------
 void ofGLRenderer::draw(vector<ofPoint> & vertexData, ofPrimitiveMode drawMode){
-	glEnableClientState(GL_VERTEX_ARRAY);
-	glVertexPointer(3, GL_FLOAT, sizeof(ofVec3f), &vertexData[0].x);
-	glDrawArrays(ofGetGLPrimitiveMode(drawMode), 0, vertexData.size());
+	if(!vertexData.empty()) {
+		glEnableClientState(GL_VERTEX_ARRAY);
+		glVertexPointer(3, GL_FLOAT, sizeof(ofVec3f), &vertexData[0].x);
+		glDrawArrays(ofGetGLPrimitiveMode(drawMode), 0, vertexData.size());
+	}
 }
 
 //----------------------------------------------------------
