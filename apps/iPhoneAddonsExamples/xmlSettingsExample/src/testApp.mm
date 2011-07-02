@@ -118,7 +118,7 @@ void testApp::draw(){
 	
 	//---------
 	//Lets draw the stroke as a continous line
-	ofSetColor(0x222222);
+	ofSetHexColor(0x222222);
 	ofNoFill();
 	ofBeginShape();
 	for(int i = 0; i < pointCount; i++){
@@ -129,7 +129,7 @@ void testApp::draw(){
     ofFill();
 
 	//the message bars at the top and bottom of the app
-	//ofSetColor(0xDDDDDD);
+	//ofSetHexColor(0xDDDDDD);
 	ofEnableAlphaBlending();
 	ofSetColor(0, 0, 0, 200);
 
@@ -146,99 +146,89 @@ void testApp::draw(){
 }
 
 //--------------------------------------------------------------
-void testApp::keyPressed  (int key){
+void testApp::touchDown(ofTouchEventArgs &touch){
 
-}
+	if( touch.id == 0 ){
+		//we can also add tags with the same name.
+		//here we are just adding an empty tag
+		//and when the user drags their mouse
+		//we will store the pts in this tag
+		lastTagNumber	= XML.addTag("STROKE");
+		xmlStructure	= "<STROKE>\n";
 
-//--------------------------------------------------------------
-void testApp::keyReleased(int key){
-
-}
-
-//--------------------------------------------------------------
-void testApp::mouseMoved(int x, int y ){
-
-}
-
-//--------------------------------------------------------------
-void testApp::mouseDragged(int x, int y, int button){
-
-	//-------
-	//we change the background color based on
-	//the two mouse coords coming in
-	float xpct = (float)x / ofGetWidth();
-	float ypct = (float)y / ofGetHeight();
-	red			= xpct * 255.0;
-	green		= ypct * 255.0;
-	blue		= (int)(red - green) % 255;
-
-
-	//-------------
-	//we also want to record the stroke
-
-	//lets store the drag of the user.
-	//we will push into the most recent
-	//<STROKE> tag - add the mouse points
-	//then pop out
-	if( XML.pushTag("STROKE", lastTagNumber) ){
-
-		//now we will add a pt tag - with two
-		//children - X and Y
-
-		int tagNum = XML.addTag("PT");
-		XML.setValue("PT:X", x, tagNum);
-		XML.setValue("PT:Y", y, tagNum);
-
-		XML.popTag();
-	}
-
-	//-------------
-	//here we make a string of text that looks like how the xml data
-	//is stored in the settings file - this is just so people can
-	//visually see how the data is stored.
-
-	//if the text is about to go off screen
-	if(lineCount > 64){
-		//we find the first <PT> tag with the
-		//x and y data and we remove it from the begining
-		//this way the displayed text always shows the newest data
-		//without going offscreen.
-		int pos = xmlStructure.find("</PT>");
-		xmlStructure = xmlStructure.substr(pos+6);
-	}
-
-	//here we add the most recent point to our fake xml string
-	xmlStructure += "    <PT>\n        <X>"+ofToString(x)+"</X>\n        <Y>"+ofToString(y)+"</Y>\n    </PT>\n";
-	lineCount+=4; //we have added 4 lines so increment by 4
-
-	//------------
-	//we also record the x y points into an array - so we can draw it
-	if(pointCount < NUM_PTS -1){
-		dragPts[pointCount].set(x, y);
-		pointCount++;
+		//We start a new stroke
+		lineCount		= 0;
+		pointCount		= 0;
 	}
 
 }
 
 //--------------------------------------------------------------
-void testApp::mousePressed(int x, int y, int button){
+void testApp::touchMoved(ofTouchEventArgs &touch){
 
-	//we can also add tags with the same name.
-	//here we are just adding an empty tag
-	//and when the user drags their mouse
-	//we will store the pts in this tag
-	lastTagNumber	= XML.addTag("STROKE");
-	xmlStructure	= "<STROKE>\n";
+	if( touch.id == 0 ){
 
-	//We start a new stroke
-	lineCount		= 0;
-	pointCount		= 0;
+		//-------
+		//we change the background color based on
+		//the two mouse coords coming in
+		float xpct = (float)touch.x / ofGetWidth();
+		float ypct = (float)touch.y / ofGetHeight();
+		red			= xpct * 255.0;
+		green		= ypct * 255.0;
+		blue		= (int)(red - green) % 255;
+
+
+		//-------------
+		//we also want to record the stroke
+
+		//lets store the drag of the user.
+		//we will push into the most recent
+		//<STROKE> tag - add the mouse points
+		//then pop out
+		if( XML.pushTag("STROKE", lastTagNumber) ){
+
+			//now we will add a pt tag - with two
+			//children - X and Y
+
+			int tagNum = XML.addTag("PT");
+			XML.setValue("PT:X", touch.x, tagNum);
+			XML.setValue("PT:Y", touch.y, tagNum);
+
+			XML.popTag();
+		}
+
+		//-------------
+		//here we make a string of text that looks like how the xml data
+		//is stored in the settings file - this is just so people can
+		//visually see how the data is stored.
+
+		//if the text is about to go off screen
+		if(lineCount > 64){
+			//we find the first <PT> tag with the
+			//x and y data and we remove it from the begining
+			//this way the displayed text always shows the newest data
+			//without going offscreen.
+			int pos = xmlStructure.find("</PT>");
+			xmlStructure = xmlStructure.substr(pos+6);
+		}
+
+		//here we add the most recent point to our fake xml string
+		xmlStructure += "    <PT>\n        <X>"+ofToString(touch.x)+"</X>\n        <Y>"+ofToString(touch.y)+"</Y>\n    </PT>\n";
+		lineCount+=4; //we have added 4 lines so increment by 4
+
+		//------------
+		//we also record the x y points into an array - so we can draw it
+		if(pointCount < NUM_PTS -1){
+			dragPts[pointCount].set(touch.x, touch.y);
+			pointCount++;
+		}
+	
+	}
 
 }
 
 //--------------------------------------------------------------
-void testApp::mouseReleased(int x, int y, int button){
-
+void testApp::touchUp(ofTouchEventArgs &touch){
 	//update the colors to the XML structure when the mouse is released
 	XML.setValue("BACKGROUND:COLOR:RED", red);
 	XML.setValue("BACKGROUND:COLOR:GREEN", green);
@@ -248,16 +238,15 @@ void testApp::mouseReleased(int x, int y, int button){
 	message = "mySettings.xml saved to app documents folder";
 }
 
-
 //--------------------------------------------------------------
-void testApp::windowResized(int w, int h){
+void testApp::touchDoubleTap(ofTouchEventArgs &touch){
+
 }
-
-
-
 
 //--------------------------------------------------------------
 void testApp::touchCancelled(ofTouchEventArgs& args){
 
 }
+
+
 

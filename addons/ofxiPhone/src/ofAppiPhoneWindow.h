@@ -43,7 +43,7 @@ public:
 	
 	virtual void		setupOpenGL(int w, int h, int screenMode);
 	virtual void		initializeWindow();
-	virtual void		runAppViaInfiniteLoop(ofPtr<ofBaseApp> appPtr);
+	virtual void		runAppViaInfiniteLoop(ofBaseApp * appPtr);
 	
 	virtual void		hideCursor() {};
 	virtual void		showCursor() {};
@@ -53,6 +53,7 @@ public:
 	
 	virtual int			getFrameNum();
 	virtual float		getFrameRate();
+	virtual double		getLastFrameTime();
 	
 	virtual ofPoint		getWindowPosition();
 	virtual ofPoint		getWindowSize();
@@ -96,7 +97,7 @@ protected:
 	ofPoint				windowSize;
 	ofPoint				windowPos;
 	
-	double				timeNow, timeThen, fps;
+	double				timeNow, timeThen, fps, lastFrameTime;
 //	int					nFramesForFPS;
 	int					nFrameCount;
 	bool				bEnableSetupScreen;
