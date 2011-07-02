@@ -718,13 +718,13 @@ void ofImage_<PixelType>::unbind(){
 
 //------------------------------------
 template<typename PixelType>
-ofColor ofImage_<PixelType>::getColor(int x, int y) const {
+ofColor_<PixelType> ofImage_<PixelType>::getColor(int x, int y) const {
 	return pixels.getColor(x, y);
 }
 
 //------------------------------------
 template<typename PixelType>
-void ofImage_<PixelType>::setColor(int x, int y, ofColor color) {
+void ofImage_<PixelType>::setColor(int x, int y, ofColor_<PixelType> color) {
 	pixels.setColor(x, y, color);
 }
 
