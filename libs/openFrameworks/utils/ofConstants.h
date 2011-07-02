@@ -147,11 +147,13 @@ enum ofLoopType{
 
 #ifdef TARGET_OPENGLES
 	#include "glu.h"
-	typedef GLushort ofIndexType ;
+	//typedef GLushort ofIndexType ;
 #else
-	typedef GLuint ofIndexType;
+	//typedef GLuint ofIndexType;
 #endif
 
+#include "tesselator.h"
+typedef TESSindex ofIndexType;
 
 
 #ifndef __MWERKS__
