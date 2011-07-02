@@ -60,16 +60,13 @@ public:
 	
 	int getType();
 	
-	void setAmbientColor(const ofColor& c);
-	void setAmbientColor(float r, float g, float b, float a=255.f);
-	void setDiffuseColor(const ofColor& c);
-	void setDiffuseColor(float r, float g, float b, float a=255.f);
-	void setSpecularColor(const ofColor& c);
-	void setSpecularColor(float r, float g, float b, float a=255.f);
+	void setAmbientColor(const ofFloatColor& c);
+	void setDiffuseColor(const ofFloatColor& c);
+	void setSpecularColor(const ofFloatColor& c);
 	
-	ofColor getAmbientColor() const;
-	ofColor getDiffuseColor() const;
-	ofColor getSpecularColor() const;
+	ofFloatColor getAmbientColor() const;
+	ofFloatColor getDiffuseColor() const;
+	ofFloatColor getSpecularColor() const;
 	
 	int getLightID() const;
 
@@ -85,9 +82,9 @@ public:
 	// this method overrides ofNode to catch the changes and update glLightv(GL_POSITION)
 private:
 
-	ofColor ambientColor;
-	ofColor diffuseColor;
-	ofColor specularColor;
+	ofFloatColor ambientColor;
+	ofFloatColor diffuseColor;
+	ofFloatColor specularColor;
 
 	ofLightType lightType;
 	

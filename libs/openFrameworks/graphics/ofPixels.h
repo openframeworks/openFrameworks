@@ -43,8 +43,8 @@ public:
 	const PixelType * getPixels() const;
 
 	int getPixelIndex(int x, int y) const;
-	ofColor getColor(int x, int y) const;
-	void setColor(int x, int y, ofColor color);
+	ofColor_<PixelType> getColor(int x, int y) const;
+	void setColor(int x, int y, ofColor_<PixelType> color);
 
 	const PixelType& operator[](int pos) const;
 	PixelType& operator[](int pos);
@@ -125,9 +125,9 @@ void ofPixels_<PixelType>::copyFrom(const ofPixels_<SrcType> & mom){
 	if(mom.isAllocated()){
 		allocate(mom.getWidth(),mom.getHeight(),mom.getNumChannels());
 
-		float srcMax = ( (sizeof(SrcType) == sizeof(float) ) ? 1.f : numeric_limits<SrcType>::max() );
-		float dstMax = ( (sizeof(PixelType) == sizeof(float) ) ? 1.f : numeric_limits<PixelType>::max() );
-		float factor = dstMax / srcMax;
+		const float srcMax = ( (sizeof(SrcType) == sizeof(float) ) ? 1.f : numeric_limits<SrcType>::max() );
+		const float dstMax = ( (sizeof(PixelType) == sizeof(float) ) ? 1.f : numeric_limits<PixelType>::max() );
+		const float factor = dstMax / srcMax;
 
 		if(sizeof(SrcType) == sizeof(float)) {
 			// coming from float we need a special case to clamp the values

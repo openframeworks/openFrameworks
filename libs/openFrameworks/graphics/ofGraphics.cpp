@@ -337,7 +337,7 @@ bool ofbClearBg(){
 
 //----------------------------------------------------------
 float * ofBgColorPtr(){
-	return renderer->getBgColor().v;
+	return &renderer->getBgColor().r;
 }
 
 //----------------------------------------------------------
