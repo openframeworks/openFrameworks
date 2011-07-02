@@ -11,8 +11,6 @@
 #include "ofBaseTypes.h"
 #include "ofPath.h"
 
-
-
 class ofCairoRenderer: public ofBaseRenderer{
 public:
 	ofCairoRenderer();
@@ -25,7 +23,7 @@ public:
 		SVG,
 		PNG
 	};
-	void setup(string filename, Type type=ofCairoRenderer::PDF, bool multiPage=true, bool b3D=false);
+	void setup(string filename, Type type=ofCairoRenderer::PDF, bool multiPage=true, bool b3D=false, ofRectangle viewport = ofRectangle(0,0,0,0));
 	void close();
 
 	void draw(ofPath & shape);

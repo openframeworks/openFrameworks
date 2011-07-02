@@ -6,6 +6,7 @@
 #include "ofMesh.h"
 #include "ofImage.h"
 
+//-----------------------------------------------------------------------------------
 void
 helper_quadratic_to (cairo_t *cr,
                      double x1, double y1,
@@ -32,18 +33,22 @@ ofCairoRenderer::~ofCairoRenderer(){
 	close();
 }
 
-void ofCairoRenderer::setup(string filename, Type type, bool multiPage_, bool b3D_){
+void ofCairoRenderer::setup(string filename, Type type, bool multiPage_, bool b3D_, ofRectangle _viewport){
+	if( _viewport.width == 0 || _viewport.height == 0 ){
+		_viewport.set(0, 0, ofGetWidth(), ofGetHeight());
+	}
+	
 	switch(type){
 	case PDF:
-		surface = cairo_pdf_surface_create(ofToDataPath(filename).c_str(),ofGetWidth(),ofGetHeight());
+		surface = cairo_pdf_surface_create(ofToDataPath(filename).c_str(),_viewport.width, _viewport.height);
 		break;
 	case SVG:
-		surface = cairo_svg_surface_create(ofToDataPath(filename).c_str(),ofGetWidth(),ofGetHeight());
+		surface = cairo_svg_surface_create(ofToDataPath(filename).c_str(),_viewport.width, _viewport.height);
 		break;
 	}
 
 	cr = cairo_create(surface);
-	viewportRect.set(0,0,ofGetWidth(),ofGetHeight());
+	viewportRect = _viewport;
 	viewport(viewportRect);
 	page = 0;
 	b3D = b3D_;

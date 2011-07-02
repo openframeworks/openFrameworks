@@ -16,6 +16,10 @@ void ofSetCurrentRenderer(ofPtr<ofBaseRenderer> renderer);
 ofPtr<ofBaseRenderer> & ofGetCurrentRenderer();
 ofPtr<ofGLRenderer> ofGetGLRenderer();
 
+//for pdf screenshot
+void ofBeginSaveScreenAsPDF(string filename, bool bMultipage = false, bool b3D = false, ofRectangle viewport = ofRectangle(0,0,0,0));
+void ofEndSaveScreenAsPDF();
+
 //opengl specifics
 
 //set whether OF uses ARB rectangular texture or the more traditonal GL_TEXTURE_2D
