@@ -14,8 +14,6 @@
 		BBAB23BD13894D2600AA2426 /* GLUT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BBAB23BC13894D2600AA2426 /* GLUT.framework */; };
 		DA48FE77131D85A6000062BC /* ofPolyline.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DA48FE73131D85A6000062BC /* ofPolyline.cpp */; };
 		DA48FE78131D85A6000062BC /* ofPolyline.h in Headers */ = {isa = PBXBuildFile; fileRef = DA48FE74131D85A6000062BC /* ofPolyline.h */; };
-		DA48FE79131D85A6000062BC /* ofPolyUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DA48FE75131D85A6000062BC /* ofPolyUtils.cpp */; };
-		DA48FE7A131D85A6000062BC /* ofPolyUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = DA48FE76131D85A6000062BC /* ofPolyUtils.h */; };
 		DA94C2F01301D32200CCC773 /* ofRendererCollection.h in Headers */ = {isa = PBXBuildFile; fileRef = DA94C2ED1301D32200CCC773 /* ofRendererCollection.h */; };
 		DA97FD3C12F5A61A005C9991 /* ofCairoRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DA97FD3612F5A61A005C9991 /* ofCairoRenderer.cpp */; };
 		DA97FD3D12F5A61A005C9991 /* ofCairoRenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = DA97FD3712F5A61A005C9991 /* ofCairoRenderer.h */; };
@@ -139,8 +137,6 @@
 		BBAB23BC13894D2600AA2426 /* GLUT.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLUT.framework; path = ../../../glut/lib/osx/GLUT.framework; sourceTree = "<group>"; };
 		DA48FE73131D85A6000062BC /* ofPolyline.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofPolyline.cpp; sourceTree = "<group>"; };
 		DA48FE74131D85A6000062BC /* ofPolyline.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofPolyline.h; sourceTree = "<group>"; };
-		DA48FE75131D85A6000062BC /* ofPolyUtils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofPolyUtils.cpp; sourceTree = "<group>"; };
-		DA48FE76131D85A6000062BC /* ofPolyUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofPolyUtils.h; sourceTree = "<group>"; };
 		DA94C2ED1301D32200CCC773 /* ofRendererCollection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofRendererCollection.h; sourceTree = "<group>"; };
 		DA97FD3612F5A61A005C9991 /* ofCairoRenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofCairoRenderer.cpp; sourceTree = "<group>"; };
 		DA97FD3712F5A61A005C9991 /* ofCairoRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofCairoRenderer.h; sourceTree = "<group>"; };
@@ -530,8 +526,6 @@
 				92C55F87132DA7DD00EC2631 /* ofPath.h */,
 				DA48FE73131D85A6000062BC /* ofPolyline.cpp */,
 				DA48FE74131D85A6000062BC /* ofPolyline.h */,
-				DA48FE75131D85A6000062BC /* ofPolyUtils.cpp */,
-				DA48FE76131D85A6000062BC /* ofPolyUtils.h */,
 				DA94C2ED1301D32200CCC773 /* ofRendererCollection.h */,
 				DA97FD3612F5A61A005C9991 /* ofCairoRenderer.cpp */,
 				DA97FD3712F5A61A005C9991 /* ofCairoRenderer.h */,
@@ -604,7 +598,6 @@
 				DA94C2F01301D32200CCC773 /* ofRendererCollection.h in Headers */,
 				53EEEF4B130766EF0027C199 /* ofMesh.h in Headers */,
 				DA48FE78131D85A6000062BC /* ofPolyline.h in Headers */,
-				DA48FE7A131D85A6000062BC /* ofPolyUtils.h in Headers */,
 				DACFA8DB132D09E8008D4B7A /* ofFbo.h in Headers */,
 				DACFA8DD132D09E8008D4B7A /* ofGLRenderer.h in Headers */,
 				DACFA8DE132D09E8008D4B7A /* ofGLUtils.h in Headers */,
@@ -715,7 +708,6 @@
 				DA97FD3C12F5A61A005C9991 /* ofCairoRenderer.cpp in Sources */,
 				53EEEF4C130766EF0027C199 /* ofMesh.cpp in Sources */,
 				DA48FE77131D85A6000062BC /* ofPolyline.cpp in Sources */,
-				DA48FE79131D85A6000062BC /* ofPolyUtils.cpp in Sources */,
 				DACFA8DA132D09E8008D4B7A /* ofFbo.cpp in Sources */,
 				DACFA8DC132D09E8008D4B7A /* ofGLRenderer.cpp in Sources */,
 				DACFA8DF132D09E8008D4B7A /* ofLight.cpp in Sources */,
