@@ -805,6 +805,10 @@ void testApp::setup(){
 			convertProjectToXML(xcodePath);
 			addAddonsFromInstallXML( appsPath + "../addons/ofxXmlSettings/", folderPath, xcodePath, "iphone");
 		}	
+		if( folderName == "assimpExample"){
+			convertProjectToXML(xcodePath);
+			addAddonsFromInstallXML( appsPath + "../addons/ofxAssimpModelLoader/", folderPath, xcodePath, "iphone");
+		}	
 								
 		addiPhoneDataFilesToProject(folderName, xcodePath, folderPath + "bin/data/", "bin/data/", getHashForGroupName(xcodePath, "data"));			
 	}		

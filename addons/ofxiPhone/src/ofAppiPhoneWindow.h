@@ -53,6 +53,7 @@ public:
 	
 	virtual int			getFrameNum();
 	virtual float		getFrameRate();
+	virtual double		getLastFrameTime();
 	
 	virtual ofPoint		getWindowPosition();
 	virtual ofPoint		getWindowSize();
@@ -96,7 +97,7 @@ protected:
 	ofPoint				windowSize;
 	ofPoint				windowPos;
 	
-	double				timeNow, timeThen, fps;
+	double				timeNow, timeThen, fps, lastFrameTime;
 //	int					nFramesForFPS;
 	int					nFrameCount;
 	bool				bEnableSetupScreen;
