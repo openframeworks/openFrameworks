@@ -47,6 +47,7 @@ static int			windowW;
 static int			windowH;
 static int          nFramesSinceWindowResized;
 static ofOrientation	orientation;
+static ofBaseApp *  ofAppPtr;
 
 #ifdef TARGET_WIN32
 
@@ -294,6 +295,7 @@ void ofAppGlutWindow::initializeWindow(){
 
 //------------------------------------------------------------
 void ofAppGlutWindow::runAppViaInfiniteLoop(ofBaseApp * appPtr){
+	ofAppPtr = appPtr;
 
 	ofNotifySetup();
 	ofNotifyUpdate();
