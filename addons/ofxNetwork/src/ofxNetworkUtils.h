@@ -102,7 +102,7 @@ inline int ofxNetworkCheckErrno(const string & file, const string & line){
 		//ofLog(OF_LOG_VERBOSE,"ofxNetwork:"+file+": " +line+" EAGAIN: try again");
 		break;
 	default:
-		ofLog(OF_LOG_ERROR,"ofxNetwork:"+file+": " +line+" unknown error: " + ofToString(errno) + " see errno.h for description of the error");
+		ofLog(OF_LOG_ERROR,"ofxNetwork:"+file+": " +line+" unknown error: " + ofToString(err) + " see errno.h for description of the error");
 		break;
 	}
 
