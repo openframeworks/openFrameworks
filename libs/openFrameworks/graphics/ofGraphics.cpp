@@ -81,6 +81,55 @@ ofPtr<ofGLRenderer> ofGetGLRenderer(){
 	}
 }
 
+#ifndef TARGET_OPENGLES 
+
+//-----------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------------
+#include "ofCairoRenderer.h"
+#include "ofGLRenderer.h"
+
+static ofPtr<ofCairoRenderer> cairoScreenshot;
+static ofPtr<ofBaseRenderer> storedRenderer;
+static ofPtr<ofRendererCollection> rendererCollection;
+static bool bScreenShotStarted = false;
+
+//-----------------------------------------------------------------------------------
+void ofBeginSaveScreenAsPDF(string filename, bool bMultipage, bool b3D, ofRectangle viewport){
+	if( bScreenShotStarted )ofEndSaveScreenAsPDF();
+	
+	storedRenderer = ofGetCurrentRenderer();
+	
+	cairoScreenshot = ofPtr<ofCairoRenderer>(new ofCairoRenderer);
+	cairoScreenshot->setup(filename, ofCairoRenderer::PDF, bMultipage, b3D, viewport); 		
+
+	rendererCollection = ofPtr<ofRendererCollection>(new ofRendererCollection);
+	rendererCollection->renderers.push_back(ofGetGLRenderer());
+	rendererCollection->renderers.push_back(cairoScreenshot);
+	
+	ofSetCurrentRenderer(rendererCollection);
+	bScreenShotStarted = true;
+}
+
+//-----------------------------------------------------------------------------------
+void ofEndSaveScreenAsPDF(){
+	if( bScreenShotStarted ){
+
+		if( cairoScreenshot ){
+			cairoScreenshot->close();
+			rendererCollection.reset();
+			cairoScreenshot.reset();
+		}
+		if( storedRenderer ){
+			ofSetCurrentRenderer(storedRenderer);
+			storedRenderer.reset();
+		}
+		
+		bScreenShotStarted = false;
+	}
+}
+
+#endif
+
 // opengl specifics
 
 bool ofGetUsingNormalizedTexCoords() {

@@ -2,21 +2,10 @@
 
 //--------------------------------------------------------------
 void testApp::setup(){
-	// get the ofPtr to the default gl renderer
-	gl = ofGetGLRenderer();
 
-	// create a cairo renderer and a collection renderer with both cairo and gl
-	cairo = ofPtr<ofCairoRenderer>(new ofCairoRenderer);
-	cairo->setup("flipbook.pdf",ofCairoRenderer::PDF,true);
-
-	rendererCollection = ofPtr<ofRendererCollection>(new ofRendererCollection);
-
-	rendererCollection->renderers.push_back(gl);
-	rendererCollection->renderers.push_back(cairo);
-
-	pdfRendering = false;
 	angle = 0;
 	oneShot = false;
+	pdfRendering = false;
 
 	ofBackground(255,255,255);
 	ofSetVerticalSync(true);
@@ -29,6 +18,11 @@ void testApp::update(){
 
 //--------------------------------------------------------------
 void testApp::draw(){
+
+	if( oneShot ){
+		ofBeginSaveScreenAsPDF("screenshot-"+ofGetTimestampString()+".pdf", false);
+	}
+	
 	ofSetColor(255,0,0);
 	ofSetRectMode(OF_RECTMODE_CENTER);
 	ofPushMatrix();
@@ -44,41 +38,33 @@ void testApp::draw(){
 
 	ofSetColor(0,0,0);
 	if( pdfRendering ){
-		ofDrawBitmapString("press p to stop pdf multipage rendering",20,20);
+		ofDrawBitmapString("press r to stop pdf multipage rendering",20,20);
 	}else{	
-		ofDrawBitmapString("press p to start pdf multipage rendering\npress s to save a single screenshot as pdf to disk",20,20);
+		ofDrawBitmapString("press r to start pdf multipage rendering\npress s to save a single screenshot as pdf to disk",20,20);
 	}
 	
-	ofSav
-	
-	//here we are recording a single frame to disk. 
 	if( oneShot ){
-		cairoTmp->close();
+		ofEndSaveScreenAsPDF();
 		oneShot = false;
-		ofSetCurrentRenderer(gl);
-	}
+	}	
 }
 
 //--------------------------------------------------------------
 void testApp::keyPressed(int key){
-	if(key=='p'){
-		if(pdfRendering){
-			ofSetCurrentRenderer(gl);
-			ofSetFrameRate(60);
-		}else{
-			ofSetCurrentRenderer(rendererCollection);
+	
+	if( key=='r'){
+		pdfRendering = !pdfRendering;	
+		if( pdfRendering ){
 			ofSetFrameRate(12);  // so it doesn't generate tons of pages
+			ofBeginSaveScreenAsPDF("recording-"+ofGetTimestampString()+".pdf", true);
+		}else{
+			ofSetFrameRate(60);
+			ofEndSaveScreenAsPDF();		
 		}
-		pdfRendering = !pdfRendering;
 	}
+	
 	if( !pdfRendering && key == 's' ){
-		cairoTmp.reset();
-		
-		cairoTmp = ofPtr<ofCairoRenderer>(new ofCairoRenderer);
-		cairoTmp->setup(ofGetTimestampString() + ".pdf", ofCairoRenderer::PDF, false); 
-		
-		ofSetCurrentRenderer(cairoTmp);
-		oneShot = true;	
+		oneShot = true;
 	}
 }
 

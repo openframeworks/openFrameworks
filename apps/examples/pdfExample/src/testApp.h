@@ -19,11 +19,6 @@ class testApp : public ofBaseApp{
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
 		
-		ofPtr<ofRendererCollection> rendererCollection;
-		ofPtr<ofCairoRenderer>		cairo;
-		ofPtr<ofGLRenderer>			gl;
-		ofPtr<ofCairoRenderer>		cairoTmp;
-
 		bool						oneShot;
 		bool						pdfRendering;
 
