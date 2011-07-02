@@ -20,17 +20,17 @@ public:
 	ofMaterial();
 	
 	// set colors
-	void setColors(ofColor oDiffuse, ofColor oAmbient, ofColor oSpecular, ofColor emissive);
-	void setDiffuseColor(ofColor oDiffuse);
-	void setAmbientColor(ofColor oAmbient);
-	void setSpecularColor(ofColor oSpecular);
-	void setEmissiveColor(ofColor oEmmisive);
+	void setColors(ofFloatColor oDiffuse, ofFloatColor oAmbient, ofFloatColor oSpecular, ofFloatColor emissive);
+	void setDiffuseColor(ofFloatColor oDiffuse);
+	void setAmbientColor(ofFloatColor oAmbient);
+	void setSpecularColor(ofFloatColor oSpecular);
+	void setEmissiveColor(ofFloatColor oEmmisive);
 	void setShininess(float nShininess);
 
-	ofColor getDiffuseColor();
-	ofColor getAmbientColor();
-	ofColor getSpecularColor();
-	ofColor getEmissiveColor();
+	ofFloatColor getDiffuseColor();
+	ofFloatColor getAmbientColor();
+	ofFloatColor getSpecularColor();
+	ofFloatColor getEmissiveColor();
 	float getShininess();
 	
 	// apply the material
@@ -38,16 +38,16 @@ public:
 	virtual void end();
 	
 private:
-	ofColor diffuse;
-	ofColor ambient;
-	ofColor specular;
-	ofColor emissive;
+	ofFloatColor diffuse;
+	ofFloatColor ambient;
+	ofFloatColor specular;
+	ofFloatColor emissive;
 	float shininess;
 
 
-	ofColor prev_diffuse;
-	ofColor prev_ambient;
-	ofColor prev_specular;
-	ofColor prev_emissive;
+	ofFloatColor prev_diffuse;
+	ofFloatColor prev_ambient;
+	ofFloatColor prev_specular;
+	ofFloatColor prev_emissive;
 	float prev_shininess;
 };

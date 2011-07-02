@@ -30,6 +30,9 @@ public:
 	
 	ofTexture& getTexture(int attachmentPoint = 0);		// get texture at attachment position
 	
+	void readToPixels(ofPixels & pixels, int attachmentPoint = 0);
+	void readToPixels(ofShortPixels & pixels, int attachmentPoint = 0);
+	void readToPixels(ofFloatPixels & pixels, int attachmentPoint = 0);
 
 	// advanced functions
 	void bind();

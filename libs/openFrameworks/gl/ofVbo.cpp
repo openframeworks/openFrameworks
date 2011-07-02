@@ -140,7 +140,7 @@ ofVbo::~ofVbo(){
 //--------------------------------------------------------------
 void ofVbo::setMesh(const ofMesh & mesh, int usage){
 	setVertexData(mesh.getVerticesPointer(),mesh.getNumVertices(),usage,sizeof(ofVec3f));
-	setColorData(mesh.getColorsPointer(),mesh.getNumColors(),usage,sizeof(ofColor));
+	setColorData(mesh.getColorsPointer(),mesh.getNumColors(),usage,sizeof(ofFloatColor));
 	setNormalData(mesh.getNormalsPointer(),mesh.getNumNormals(),usage,sizeof(ofVec3f));
 	setTexCoordData(mesh.getTexCoordsPointer(),mesh.getNumTexCoords(),usage,sizeof(ofVec2f));
 }
@@ -179,8 +179,8 @@ void ofVbo::setVertexData(const float * vert0x, int numCoords, int total, int us
 }
 
 //--------------------------------------------------------------
-void ofVbo::setColorData(const ofColor * colors, int total, int usage) {
-	setColorData(&colors[0].r,total,usage,sizeof(ofColor));
+void ofVbo::setColorData(const ofFloatColor * colors, int total, int usage) {
+	setColorData(&colors[0].r,total,usage,sizeof(ofFloatColor));
 }
 
 //--------------------------------------------------------------
@@ -297,7 +297,7 @@ void ofVbo::updateVertexData(const float * vert0x, int total) {
 }
 
 //--------------------------------------------------------------
-void ofVbo::updateColorData(const ofColor * colors, int total) {
+void ofVbo::updateColorData(const ofFloatColor * colors, int total) {
 	updateColorData(&colors[0].r,total);
 }
 

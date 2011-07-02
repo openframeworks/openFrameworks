@@ -233,8 +233,8 @@ int ofPixels_<PixelType>::getPixelIndex(int x, int y) const {
 }
 
 template<typename PixelType>
-ofColor ofPixels_<PixelType>::getColor(int x, int y) const {
-	ofColor c;
+ofColor_<PixelType> ofPixels_<PixelType>::getColor(int x, int y) const {
+	ofColor_<PixelType> c;
 	int index = getPixelIndex(x, y);
 
 	if( channels == 1 ){
@@ -249,7 +249,7 @@ ofColor ofPixels_<PixelType>::getColor(int x, int y) const {
 }
 
 template<typename PixelType>
-void ofPixels_<PixelType>::setColor(int x, int y, ofColor color) {
+void ofPixels_<PixelType>::setColor(int x, int y, ofColor_<PixelType> color) {
 	int index = getPixelIndex(x, y);
 
 	if( channels == 1 ){

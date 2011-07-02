@@ -551,6 +551,19 @@ ofTexture& ofFbo::getTexture(int attachmentPoint) {
 	return textures[attachmentPoint];
 }
 
+
+void ofFbo::readToPixels(ofPixels & pixels, int attachmentPoint){
+	getTexture(attachmentPoint).readToPixels(pixels);
+}
+
+void ofFbo::readToPixels(ofShortPixels & pixels, int attachmentPoint){
+	getTexture(attachmentPoint).readToPixels(pixels);
+}
+
+void ofFbo::readToPixels(ofFloatPixels & pixels, int attachmentPoint){
+	getTexture(attachmentPoint).readToPixels(pixels);
+}
+
 void ofFbo::updateTexture(int attachmentPoint) {
 	// TODO: flag to see if this is dirty or not
 #ifndef TARGET_OPENGLES
