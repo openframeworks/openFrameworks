@@ -47,10 +47,44 @@ void ofSetupOpenGL(ofAppBaseWindow * windowPtr, int w, int h, int screenMode){
 	ofSetupOpenGL(ofPtr<ofAppBaseWindow>(windowPtr,std::ptr_fun(noopDeleter)),w,h,screenMode);
 }
 
+
+void ofExitCallback();
+
 // the same hack but in this case the shared_ptr will delete, old versions created the testApp as new...
 //--------------------------------------
 void ofRunApp(ofBaseApp * OFSA){
-	ofRunApp ( ofPtr<ofBaseApp>( OFSA ) );
+
+	OFSAptr = ofPtr<ofBaseApp>(OFSA);
+	if(OFSAptr){
+		OFSAptr->mouseX = 0;
+		OFSAptr->mouseY = 0;
+	}
+
+	#ifdef TARGET_OSX
+		//this internally checks the executable path for osx
+		ofSetDataPathRoot("../../../data/");
+	#endif
+
+	atexit(ofExitCallback);
+
+	#ifdef WIN32_HIGH_RES_TIMING
+		timeBeginPeriod(1);		// ! experimental, sets high res time
+								// you need to call timeEndPeriod.
+								// if you quit the app other than "esc"
+								// (ie, close the console, kill the process, etc)
+								// at exit wont get called, and the time will
+								// remain high res, that could mess things
+								// up on your system.
+								// info here:http://www.geisswerks.com/ryan/FAQS/timing.html
+
+	#endif
+
+	window->initializeWindow();
+
+	ofSeedRandom();
+	ofResetElapsedTimeCounter();
+
+	window->runAppViaInfiniteLoop(OFSAptr.get());
 }
 
 //--------------------------------------
@@ -89,7 +123,6 @@ void ofSetupOpenGL(int w, int h, int screenMode){
 // 							currently looking at who to turn off
 //							at the end of the application
 
-void ofExitCallback();
 void ofExitCallback(){
 
 	//------------------------
@@ -150,7 +183,7 @@ void ofRunApp(ofPtr<ofBaseApp> OFSA){
 	ofSeedRandom();
 	ofResetElapsedTimeCounter();
 
-	window->runAppViaInfiniteLoop(OFSAptr);
+	window->runAppViaInfiniteLoop(OFSAptr.get());
 
 
 }

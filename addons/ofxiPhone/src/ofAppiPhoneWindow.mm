@@ -86,7 +86,7 @@ void ofAppiPhoneWindow::initializeWindow() {
 }
 
 
-void  ofAppiPhoneWindow::runAppViaInfiniteLoop(ofPtr<ofBaseApp> appPtr) {
+void  ofAppiPhoneWindow::runAppViaInfiniteLoop(ofBaseApp * appPtr) {
 	ofLog(OF_LOG_VERBOSE, "ofAppiPhoneWindow::runAppViaInfiniteLoop()");
 	
 	NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];

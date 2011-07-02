@@ -385,7 +385,7 @@ void ofTrueTypeFont::loadFont(string filename, int fontsize, bool _bAntiAliased,
 	int w;
 	int h;
 	while(!packed){
-		w = pow(2,floor((alpha/2.f) + 0.5)); // there doesn't seem to be a round in cmath for windows. 
+		w = pow(2,floor((alpha/2.f) + 0.5)); // there doesn't seem to be a round in cmath for windows.
 		//w = pow(2,round(alpha/2.f));
 		h = w;//pow(2,round(alpha - round(alpha/2.f)));
 		int x=0;
@@ -437,7 +437,8 @@ void ofTrueTypeFont::loadFont(string filename, int fontsize, bool _bAntiAliased,
 
 
 	texAtlas.allocate(atlasPixels.getWidth(),atlasPixels.getHeight(),GL_LUMINANCE_ALPHA,false);
-	if(bAntiAlised){
+
+	if(bAntiAlised && fontsize>14){
 		texAtlas.setTextureMinMagFilter(GL_LINEAR,GL_LINEAR);
 	}else{
 		texAtlas.setTextureMinMagFilter(GL_NEAREST,GL_NEAREST);
@@ -638,6 +639,10 @@ float ofTrueTypeFont::stringHeight(string c) {
 
 //=====================================================================
 void ofTrueTypeFont::drawString(string c, float x, float y) {
+
+    /*glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	texAtlas.draw(0,0);*/
 
     if (!bLoadedOk){
     	ofLog(OF_LOG_ERROR,"Error : font not allocated -- line %d in %s", __LINE__,__FILE__);
