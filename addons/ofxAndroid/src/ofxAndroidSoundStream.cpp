@@ -235,11 +235,12 @@ int ofxAndroidSoundStream::androidOutputAudioCallback(JNIEnv*  env, jobject  thi
 	}
 
 
-	for(int i=0;i<bufferSize*inChannels;i++){
-		in_float_buffer[i] = input_buffer.read(0);
+	if(inChannels>0){
+		for(int i=0;i<bufferSize*inChannels;i++){
+			in_float_buffer[i] = input_buffer.read(0);
+		}
+		soundInputPtr->audioIn(in_float_buffer,bufferSize,inChannels,0,tickCount);
 	}
-	soundInputPtr->audioIn(in_float_buffer,bufferSize,inChannels,0,tickCount);
-
 
 	soundOutputPtr->audioOut(out_float_buffer,bufferSize,numChannels,0,tickCount);
 

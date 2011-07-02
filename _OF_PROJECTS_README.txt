@@ -20,7 +20,7 @@ OS X:
 	
 
 iPhone: 
-	is still to be automated but will also use the OS X _DeployExamples app 
+	build and run the _DeployExamples located at: apps/devApps/_DeployExamples/deployExamples.xcodeproj
 
 Windows Codeblocks:
 	install python from http://python.org

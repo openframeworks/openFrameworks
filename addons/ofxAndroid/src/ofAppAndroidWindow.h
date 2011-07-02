@@ -17,7 +17,7 @@ public:
 
 	void setupOpenGL(int w, int h, int screenMode) {}
 	void initializeWindow() {}
-	void runAppViaInfiniteLoop(ofPtr<ofBaseApp> appPtr);
+	void runAppViaInfiniteLoop(ofBaseApp * appPtr);
 
 	void hideCursor() {}
 	void showCursor() {}

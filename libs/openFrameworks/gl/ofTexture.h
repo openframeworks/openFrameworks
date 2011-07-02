@@ -9,6 +9,7 @@ int ofGetGlInternalFormat(const ofPixels& pix);
 int ofGetGlInternalFormat(const ofShortPixels& pix);
 int ofGetGlInternalFormat(const ofFloatPixels& pix);
 void ofGetGlFormatAndType(int glInternalFormat, int& glFormat, int& glType);
+ofImageType ofGetImageTypeFromGLType(int glType);
 
 //Sosolimited: texture compression
 enum ofTexCompression
@@ -83,6 +84,8 @@ class ofTexture : public ofBaseDraws {
 	void loadData(unsigned char* data, int w, int h, int glInternalFormat);
 	void loadData(unsigned short* data, int w, int h, int glInternalFormat);
 	void loadData(ofPixels & pix);		
+	void loadData(ofShortPixels & pix);
+	void loadData(ofFloatPixels & pix);
 	
 	void loadScreenData(int x, int y, int w, int h);
 
@@ -100,6 +103,10 @@ class ofTexture : public ofBaseDraws {
 	void draw(float x, float y);
 	void draw(float x, float y, float z);
 	void draw(ofPoint p1, ofPoint p2, ofPoint p3, ofPoint p4);
+
+	void readToPixels(ofPixels & pixels);
+	void readToPixels(ofShortPixels & pixels);
+	void readToPixels(ofFloatPixels & pixels);
 
 	//for the advanced user who wants to draw textures in their own way
 	void bind();

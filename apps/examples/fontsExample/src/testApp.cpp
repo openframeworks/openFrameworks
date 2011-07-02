@@ -10,7 +10,7 @@ void testApp::setup(){
 	
 	// now load another font, but with extended parameters:
 	// font name, size, anti-aliased, full character set
-	verdana.loadFont("verdana.ttf",8, false, true);
+	verdana.loadFont("verdana.ttf",8, true, true);
 	verdana.setLineHeight(20.0f);
 	
 	counter = 0;

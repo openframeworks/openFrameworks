@@ -98,9 +98,15 @@ void addFilesToProjectXML(string xcodePath, vector <string> filePath, vector <st
 					for(int k = 0; k < filePath.size(); k++){
 					
 						bool addToBuild = true;
-						string fileKind = "sourcecode.cpp.cpp";	
+						string fileKind = "file";	
 						string ext =  ofFilePath::getFileExt(filePath[k]);	
 						
+						if( ext == "cpp" ){
+							fileKind = "sourcecode.cpp.cpp";
+						}
+						if( ext == "c" ){
+							fileKind = "sourcecode.c.c";						
+						}
 						if(ext == "h"){
 							fileKind = "sourcecode.c.h";
 							addToBuild = false;
@@ -378,6 +384,7 @@ void appendToProjectXcconfig(string projectFile, string buildValue, vector <stri
 	ofFile::moveFromTo(projectFile + ".tmp", projectFile, true, true);
 }
 
+
 //
 //--------------------------------------------------------------
 void addAddonsFromInstallXML(string addonPath, string projectFolder, string xcodePath, string platform = "mac"){
@@ -546,6 +553,49 @@ void checkAddSrcFiles(string projectName, string xcodePath, string srcFolderPath
 }
 
 //--------------------------------------------------------------
+void addiPhoneDataFilesToProject(string projectName, string xcodePath, string srcFolderPath, string currentPath, string groupHashToAddTo){
+
+	ofDirectory srcPath;	
+	srcPath.listDir( srcFolderPath );
+	cout << "listing " << srcFolderPath << endl;
+	
+	if( srcPath.size() ){
+		msgStr << "   adding src/ files " << endl;
+		//openProject(xcodePath);
+	
+		vector <string> filePathsToAdd;
+		vector <string> fileNamesToAdd;	
+		vector <string> hashes;
+		for(int j = 0; j < srcPath.size(); j++){
+		
+			if( srcPath.getName(j) != "Default.png" && srcPath.getName(j) != "Icon.png" ){
+								
+				if( ofFile(srcPath.getPath(j)).isDirectory() ){
+					cout << "project: " << projectName << " dir " << srcPath.getName(j) << endl;
+				
+					string dirHash = getHash(srcPath.getPath(j));
+				
+					addGroupToProject(xcodePath, groupHashToAddTo, srcPath.getName(j), dirHash);
+					checkAddSrcFiles(projectName, xcodePath, srcFolderPath + srcPath.getName(j) + "/", currentPath + srcPath.getName(j) + "/", dirHash);
+									
+				}else{
+					cout << "project: " << projectName << " file " << srcPath.getName(j) << endl;
+				
+					filePathsToAdd.push_back( currentPath + srcPath.getName(j) );
+					fileNamesToAdd.push_back( srcPath.getName(j) );
+					hashes.push_back( getHash(srcPath.getPath(j)) );
+				
+				}
+			}
+		}
+		
+		//TODO: get group hash of src/ folder programmatically 
+		addFilesToProjectXML(xcodePath, filePathsToAdd, fileNamesToAdd, hashes, groupHashToAddTo);			
+	}	
+
+}
+
+//--------------------------------------------------------------
 void checkAddSrcFiles(string projectName, string xcodePath, string srcFolderPath ){
 	convertProjectToXML(xcodePath);
 
@@ -557,9 +607,16 @@ void checkAddSrcFiles(string projectName, string xcodePath, string srcFolderPath
 
 //--------------------------------------------------------------
 void copyProjectFilesOSX(string folderName, string folderPath, string xcodePath ){
-
 		msgStr << " " << folderName << endl;
 		ofDirectory::removeDirectory(xcodePath, true);
+		
+		if( !ofDirectory::doesDirectoryExist( folderPath + "bin/data/") ){
+			ofDirectory::createDirectory(folderPath + "bin/data/", true, true);
+		}
+		if( !ofFile::doesFileExist(folderPath + "bin/data/.gitignore" ) ){
+			ofFile::copyFromTo(".gitignore", folderPath + "bin/data/.gitignore");
+		}
+		
 		ofFile::copyFromTo("deploy_osx/OF_template.xcodeproj", xcodePath);
 		ofFile::copyFromTo("deploy_osx/Project.xcconfig", folderPath + "Project.xcconfig" );
 		ofFile::copyFromTo("deploy_osx/openFrameworks-Info.plist", folderPath + "openFrameworks-Info.plist" );
@@ -576,16 +633,26 @@ void copyProjectFilesiPhone(string folderName, string folderPath, string xcodePa
 
 		msgStr << " " << folderName << endl;
 		ofDirectory::removeDirectory(xcodePath, true);
+		
+		if( !ofDirectory::doesDirectoryExist( folderPath + "bin/data/") ){
+			ofDirectory::createDirectory(folderPath + "bin/data/", true, true);
+		}
+		if( !ofFile::doesFileExist(folderPath + "bin/data/.gitignore" ) ){
+			ofFile::copyFromTo(".gitignore", folderPath + "bin/data/.gitignore");
+		}	
+				
 		ofFile::copyFromTo("deploy_iphone/OF_template_iphone.xcodeproj", xcodePath);
 		ofFile::copyFromTo("deploy_iphone/Project.xcconfig", folderPath + "Project.xcconfig" );
 		ofFile::copyFromTo("deploy_iphone/ofxiphone-Info.plist", folderPath + "ofxiphone-Info.plist" );
 		ofFile::copyFromTo("deploy_iphone/iPhone_Prefix.pch", folderPath + "iPhone_Prefix.pch" );
-		
+		ofFile::copyFromTo("deploy_iphone/Default.png", folderPath + "/bin/data/Default.png" );
+		ofFile::copyFromTo("deploy_iphone/Icon.png", folderPath + "/bin/data/Icon.png" );
+					
 		folderPath = ofFilePath::getAbsolutePath(folderPath, false);
 		findandreplace(folderPath, " ", "\\ ");
 		findandreplace(folderName, " ", "");
 		
-		system( string("cd "+folderPath+" ; find . -name \"*.pbxproj*\" -print0 | xargs -0 perl -pi -e 's/emptyExample/"+folderName+"/g'").c_str() );		
+		system( string("cd "+folderPath+" ; find . -name \"*.pbxproj*\" -print0 | xargs -0 perl -pi -e 's/iPhoneEmptyExample/"+folderName+"/g'").c_str() );		
 }
 
 //--------------------------------------------------------------
@@ -707,6 +774,8 @@ void testApp::setup(){
 		
 		copyProjectFilesiPhone(folderName, folderPath, xcodePath);
 		checkAddSrcFiles(folderName, xcodePath, folderPath + "/src/");		
+
+		addiPhoneDataFilesToProject(folderName, xcodePath, folderPath + "bin/data/", "bin/data/", getHashForGroupName(xcodePath, "data"));					
 	}
 
 	msgStr << "deploying iphone specific examples"  << endl;
@@ -720,7 +789,9 @@ void testApp::setup(){
 		string xcodePath  = folderPath + folderName + ".xcodeproj";
 		
 		copyProjectFilesiPhone(folderName, folderPath, xcodePath);
-		checkAddSrcFiles(folderName, xcodePath, folderPath + "/src/");		
+		checkAddSrcFiles(folderName, xcodePath, folderPath + "/src/");	
+		
+		addiPhoneDataFilesToProject(folderName, xcodePath, folderPath + "bin/data/", "bin/data/", getHashForGroupName(xcodePath, "data"));							
 	}
 
 
@@ -748,7 +819,13 @@ void testApp::setup(){
 		if( folderName == "xmlSettingsExample"){
 			convertProjectToXML(xcodePath);
 			addAddonsFromInstallXML( appsPath + "../addons/ofxXmlSettings/", folderPath, xcodePath, "iphone");
-		}							
+		}	
+		if( folderName == "assimpExample"){
+			convertProjectToXML(xcodePath);
+			addAddonsFromInstallXML( appsPath + "../addons/ofxAssimpModelLoader/", folderPath, xcodePath, "iphone");
+		}	
+								
+		addiPhoneDataFilesToProject(folderName, xcodePath, folderPath + "bin/data/", "bin/data/", getHashForGroupName(xcodePath, "data"));			
 	}		
 	
 }

@@ -1,25 +1,36 @@
 #include "testApp.h"
 
+//warning video player doesn't currently work - use live video only
 #define _USE_LIVE_VIDEO
 
 //--------------------------------------------------------------
 void testApp::setup(){	
 	//ofxiPhoneSetOrientation(OFXIPHONE_ORIENTATION_LANDSCAPE_RIGHT);
 
+	capW = 320;
+	capH = 240;
+
 	#ifdef _USE_LIVE_VIDEO
-		vidGrabber.initGrabber(vidGrabber.getWidth(), vidGrabber.getHeight());
-		colorImg.allocate(vidGrabber.getWidth(),vidGrabber.getHeight());
-		grayImage.allocate(vidGrabber.getWidth(),vidGrabber.getHeight());
-		grayBg.allocate(vidGrabber.getWidth(),vidGrabber.getHeight());
-		grayDiff.allocate(vidGrabber.getWidth(),vidGrabber.getHeight());		
+		vidGrabber.initGrabber(capW, capH);
+		capW = vidGrabber.getWidth();
+		capH = vidGrabber.getHeight();
+		
+		colorImg.allocate(capW,capH);
+		grayImage.allocate(capW,capH);
+		grayBg.allocate(capW,capH);
+		grayDiff.allocate(capW,capH);		
 	#else
+	
+		capW = 320;
+		capH = 240;
+	
 		vidPlayer.loadMovie("fingers.m4v");
 		vidPlayer.play();
-		vidGrabber.initGrabber(vidPlayer.getWidth(), vidPlayer.getHeight());
-		colorImg.allocate(vidPlayer.getWidth(),vidPlayer.getHeight());
-		grayImage.allocate(vidPlayer.getWidth(),vidPlayer.getHeight());
-		grayBg.allocate(vidPlayer.getWidth(),vidPlayer.getHeight());
-		grayDiff.allocate(vidPlayer.getWidth(),vidPlayer.getHeight());		
+						
+		colorImg.allocate(capW,capH);
+		grayImage.allocate(capW,capH);
+		grayBg.allocate(capW,capH);
+		grayDiff.allocate(capW,capH);		
 	#endif
 	
 
@@ -43,22 +54,18 @@ void testApp::update(){
         bNewFrame = vidPlayer.isFrameNew();
 	#endif
 
-	//if (bNewFrame){
+	if (bNewFrame){
 	
-		printf("bNewFrame \n");
-
-	#ifdef _USE_LIVE_VIDEO
-		if( vidGrabber.getPixels() != NULL ){
-    #else
-		if( vidPlayer.getPixels() != NULL && vidPlayer.getWidth() > 0 ){
-	#endif
-
-			printf("yo yo \n");
+		#ifdef _USE_LIVE_VIDEO
+			if( vidGrabber.getPixels() != NULL ){
+		#else
+			if( vidPlayer.getPixels() != NULL && capW > 0 ){
+		#endif
 
 			#ifdef _USE_LIVE_VIDEO
-				colorImg.setFromPixels(vidGrabber.getPixels(), vidGrabber.getWidth(),vidGrabber.getHeight());
+				colorImg.setFromPixels(vidGrabber.getPixels(), capW, capH);
 			#else
-				colorImg.setFromPixels(vidPlayer.getPixels(), vidPlayer.getWidth(), vidPlayer.getHeight());
+				colorImg.setFromPixels(vidPlayer.getPixels(), capW, capH);
 			#endif
 
 			grayImage = colorImg;
@@ -73,10 +80,10 @@ void testApp::update(){
 
 			// find contours which are between the size of 20 pixels and 1/3 the w*h pixels.
 			// also, find holes is set to true so we will get interior contours as well....
-			contourFinder.findContours(grayDiff, 20, (340*240)/3, 10, true);	// find holes
+			contourFinder.findContours(grayDiff, 20, (capW*capH)/3, 10, true);	// find holes
 		
 		}
-	//}
+	}
 }
 
 //--------------------------------------------------------------
@@ -85,37 +92,28 @@ void testApp::draw(){
 	ofSetColor(255);
 	ofDrawBitmapString(ofToString(ofGetFrameRate()), 20, 20);
 	
+	ofPushMatrix();
 	ofScale(0.5, 0.5, 1);
 
 	// draw the incoming, the grayscale, the bg and the thresholded difference
 	ofSetHexColor(0xffffff);
-	colorImg.draw(20,20);
-	grayImage.draw(360,20);
-	grayBg.draw(20,280);
-	grayDiff.draw(360,280);
+	grayImage.draw(0,0);
+	grayBg.draw(capW+4, 0);
+	grayDiff.draw(0, capH + 4);
 
-	// then draw the contours:
-
-	ofFill();
-	ofSetHexColor(0x333333);
-	ofRect(360,540,320,240);
-	ofSetHexColor(0xffffff);
-
-	// we could draw the whole contour finder
-	//contourFinder.draw(360,540);
-
-//	// or, instead we can draw each blob individually,
-//	// this is how to get access to them:
+	// lets draw the contours. 
+	// this is how to get access to them:
     for (int i = 0; i < contourFinder.nBlobs; i++){
-        contourFinder.blobs[i].draw(360,540);
+        contourFinder.blobs[i].draw(0, capH + 4);
     }
 
+	ofPopMatrix();
 	// finally, a report:
 
 	ofSetHexColor(0xffffff);
 	char reportStr[1024];
 	sprintf(reportStr, "bg subtraction and blob detection\npress ' ' to capture bg\nthreshold %i (press: +/-)\nnum blobs found %i, fps: %f", threshold, contourFinder.nBlobs, ofGetFrameRate());
-	ofDrawBitmapString(reportStr, 20, 600);
+	ofDrawBitmapString(reportStr, 4, 380);
 }
 
 //--------------------------------------------------------------
