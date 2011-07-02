@@ -60,11 +60,6 @@ void ofSetGlobalAmbientColor(const ofColor& c) {
 }
 
 //----------------------------------------
-void ofSetGlobalAmbientColor(float r, float g, float b, float a) {
-	ofSetGlobalAmbientColor( ofColor(r, g, b, a) );
-}
-
-//----------------------------------------
 bool* getActiveLights(){
 	static bool * lightsActive = new bool[OF_MAX_LIGHTS];
 	static bool lightsActiveInited = false;
@@ -281,11 +276,6 @@ void ofLight::setAmbientColor(const ofFloatColor& c) {
 void ofLight::setDiffuseColor(const ofFloatColor& c) {
 	if(glIndex==-1) return;
 	glLightfv(GL_LIGHT0 + glIndex, GL_DIFFUSE, &diffuseColor.r);
-}
-
-//----------------------------------------
-void ofLight::setDiffuseColor(float r, float g, float b, float a) {
-	setDiffuseColor(ofColor(r, g, b, a));
 }
 
 //----------------------------------------

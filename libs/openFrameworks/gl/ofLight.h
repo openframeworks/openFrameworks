@@ -30,7 +30,6 @@ void ofDisableSeparateSpecularLight();
 bool ofGetLightingEnabled();
 void ofSetSmoothLighting(bool b);
 void ofSetGlobalAmbientColor(const ofColor& c);
-void ofSetGlobalAmbientColor(float r, float g, float b, float a=255.f);
 
 //----------------------------------------
 // Use the public API of ofNode for all transformations
