@@ -49,6 +49,9 @@ void testApp::draw(){
 		ofDrawBitmapString("press p to start pdf multipage rendering\npress s to save a single screenshot as pdf to disk",20,20);
 	}
 	
+	ofSav
+	
+	//here we are recording a single frame to disk. 
 	if( oneShot ){
 		cairoTmp->close();
 		oneShot = false;
