@@ -239,11 +239,11 @@ public:
 	 }; // hex, like web 0xFF0033;
 
 	// bg color
-	ofColor & getBgColor(){
+	ofFloatColor & getBgColor(){
 		 if(renderers.size()){
 			 return renderers[0]->getBgColor();
 		 }else{
-			 static ofColor c;
+			 static ofFloatColor c;
 			 return c;
 		 }
 	}
