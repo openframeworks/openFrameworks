@@ -16,6 +16,7 @@ void testApp::setup(){
 
 	pdfRendering = false;
 	angle = 0;
+	oneShot = false;
 
 	ofBackground(255,255,255);
 	ofSetVerticalSync(true);
@@ -42,7 +43,17 @@ void testApp::draw(){
 	ofPopMatrix();
 
 	ofSetColor(0,0,0);
-	ofDrawBitmapString("press p to swap pdf/gl rendering",20,20);
+	if( pdfRendering ){
+		ofDrawBitmapString("press p to stop pdf multipage rendering",20,20);
+	}else{	
+		ofDrawBitmapString("press p to start pdf multipage rendering\npress s to save a single screenshot as pdf to disk",20,20);
+	}
+	
+	if( oneShot ){
+		cairoTmp->close();
+		oneShot = false;
+		ofSetCurrentRenderer(gl);
+	}
 }
 
 //--------------------------------------------------------------
@@ -56,6 +67,15 @@ void testApp::keyPressed(int key){
 			ofSetFrameRate(12);  // so it doesn't generate tons of pages
 		}
 		pdfRendering = !pdfRendering;
+	}
+	if( !pdfRendering && key == 's' ){
+		cairoTmp.reset();
+		
+		cairoTmp = ofPtr<ofCairoRenderer>(new ofCairoRenderer);
+		cairoTmp->setup(ofGetTimestampString() + ".pdf", ofCairoRenderer::PDF, false); 
+		
+		ofSetCurrentRenderer(cairoTmp);
+		oneShot = true;	
 	}
 }
 

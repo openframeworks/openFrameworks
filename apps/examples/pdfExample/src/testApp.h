@@ -22,7 +22,9 @@ class testApp : public ofBaseApp{
 		ofPtr<ofRendererCollection> rendererCollection;
 		ofPtr<ofCairoRenderer>		cairo;
 		ofPtr<ofGLRenderer>			gl;
+		ofPtr<ofCairoRenderer>		cairoTmp;
 
+		bool						oneShot;
 		bool						pdfRendering;
 
 		float						angle;
