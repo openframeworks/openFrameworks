@@ -607,9 +607,16 @@ void checkAddSrcFiles(string projectName, string xcodePath, string srcFolderPath
 
 //--------------------------------------------------------------
 void copyProjectFilesOSX(string folderName, string folderPath, string xcodePath ){
-
 		msgStr << " " << folderName << endl;
 		ofDirectory::removeDirectory(xcodePath, true);
+		
+		if( !ofDirectory::doesDirectoryExist( folderPath + "bin/data/") ){
+			ofDirectory::createDirectory(folderPath + "bin/data/", true, true);
+		}
+		if( !ofFile::doesFileExist(folderPath + "bin/data/.gitignore" ) ){
+			ofFile::copyFromTo(".gitignore", folderPath + "bin/data/.gitignore");
+		}
+		
 		ofFile::copyFromTo("deploy_osx/OF_template.xcodeproj", xcodePath);
 		ofFile::copyFromTo("deploy_osx/Project.xcconfig", folderPath + "Project.xcconfig" );
 		ofFile::copyFromTo("deploy_osx/openFrameworks-Info.plist", folderPath + "openFrameworks-Info.plist" );
@@ -626,13 +633,21 @@ void copyProjectFilesiPhone(string folderName, string folderPath, string xcodePa
 
 		msgStr << " " << folderName << endl;
 		ofDirectory::removeDirectory(xcodePath, true);
+		
+		if( !ofDirectory::doesDirectoryExist( folderPath + "bin/data/") ){
+			ofDirectory::createDirectory(folderPath + "bin/data/", true, true);
+		}
+		if( !ofFile::doesFileExist(folderPath + "bin/data/.gitignore" ) ){
+			ofFile::copyFromTo(".gitignore", folderPath + "bin/data/.gitignore");
+		}	
+				
 		ofFile::copyFromTo("deploy_iphone/OF_template_iphone.xcodeproj", xcodePath);
 		ofFile::copyFromTo("deploy_iphone/Project.xcconfig", folderPath + "Project.xcconfig" );
 		ofFile::copyFromTo("deploy_iphone/ofxiphone-Info.plist", folderPath + "ofxiphone-Info.plist" );
 		ofFile::copyFromTo("deploy_iphone/iPhone_Prefix.pch", folderPath + "iPhone_Prefix.pch" );
 		ofFile::copyFromTo("deploy_iphone/Default.png", folderPath + "/bin/data/Default.png" );
 		ofFile::copyFromTo("deploy_iphone/Icon.png", folderPath + "/bin/data/Icon.png" );
-		
+					
 		folderPath = ofFilePath::getAbsolutePath(folderPath, false);
 		findandreplace(folderPath, " ", "\\ ");
 		findandreplace(folderName, " ", "");
