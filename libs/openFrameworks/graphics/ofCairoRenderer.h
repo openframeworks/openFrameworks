@@ -18,6 +18,8 @@ public:
 	ofCairoRenderer();
 	~ofCairoRenderer();
 
+	string getType(){ return "cairo"; }
+
 	enum Type{
 		PDF,
 		SVG,
@@ -93,7 +95,7 @@ public:
 	void setHexColor( int hexColor ); // hex, like web 0xFF0033;
 
 	// bg color
-	ofColor & getBgColor();
+	ofFloatColor & getBgColor();
 	bool bClearBg();
 	void background(const ofColor & c);
 	void background(float brightness);
@@ -128,7 +130,7 @@ private:
 	cairo_t * cr;
 	cairo_surface_t * surface;
 	bool bBackgroundAuto;
-	ofColor bgColor;
+	ofFloatColor bgColor;
 
 	stack<cairo_matrix_t> matrixStack;
 	cairo_matrix_t tmpMatrix;

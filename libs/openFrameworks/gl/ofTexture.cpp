@@ -86,6 +86,11 @@ string ofGetGlInternalFormatName(int glInternalFormat) {
 void ofGetGlFormatAndType(int glInternalFormat, int& glFormat, int& glType) {
 	switch(glInternalFormat) {
 		// common 8-bit formats: rgba, rgb, grayscale
+		case GL_BGRA:
+			glFormat = GL_BGRA;
+			glType = GL_UNSIGNED_BYTE;
+			break;
+			
 		case GL_RGBA:
 #ifndef TARGET_OPENGLES
 		case GL_RGBA8:
@@ -199,6 +204,18 @@ static bool ofCheckGLTypesEqual(int type1, int type2){
 	else
 #endif
 		return type1==type2;
+}
+
+
+ofImageType ofGetImageTypeFromGLType(int glType){
+	switch(glType){
+	case GL_LUMINANCE:
+		return OF_IMAGE_GRAYSCALE;
+	case GL_RGB:
+		return OF_IMAGE_COLOR;
+	case GL_RGBA:
+		return OF_IMAGE_COLOR_ALPHA;
+	}
 }
 
 //---------------------------------
@@ -380,6 +397,16 @@ void ofTexture::loadData(ofPixels & pix){
 	loadData(pix.getPixels(), pix.getWidth(), pix.getHeight(), ofGetGlInternalFormat(pix));
 }
 
+//----------------------------------------------------------
+void ofTexture::loadData(ofShortPixels & pix){
+	loadData(pix.getPixels(), pix.getWidth(), pix.getHeight(), ofGetGlInternalFormat(pix));
+}
+
+//----------------------------------------------------------
+void ofTexture::loadData(ofFloatPixels & pix){
+	loadData(pix.getPixels(), pix.getWidth(), pix.getHeight(), ofGetGlInternalFormat(pix));
+}
+
 
 
 
@@ -396,7 +423,7 @@ void ofTexture::loadData(void * data, int w, int h, int glInternalFormat){
 	// 	check "glTexSubImage2D"
 	
 	if(!ofCheckGLTypesEqual(glInternalFormat,texData.glTypeInternal)) {
-		ofLogError() << "ofTexture::loadData() failed to upload internalFormat " <<  ofGetGlInternalFormatName(glInternalFormat) << " data to " << ofGetGlInternalFormatName(texData.glTypeInternal) << " texture";
+		ofLogError() << "ofTexture::loadData() failed to upload internalFormat " <<  ofGetGlInternalFormatName(glInternalFormat) << " data to " << ofGetGlInternalFormatName(texData.glTypeInternal) << " texture" <<endl;
 		return;
 	}
 	
@@ -925,6 +952,45 @@ void ofTexture::draw(float x, float y){
 //----------------------------------------------------------
 void ofTexture::draw(float x, float y, float z){
 	draw(x, y, z, texData.width, texData.height);
+}
+
+//----------------------------------------------------------
+void ofTexture::readToPixels(ofPixels & pixels){
+	pixels.allocate(texData.width,texData.height,ofGetImageTypeFromGLType(texData.glType));
+	bind();
+	glGetTexImage(
+			texData.textureTarget,
+	 0,
+	 texData.glType,
+	 GL_UNSIGNED_BYTE,
+	 pixels.getPixels());
+	unbind();
+}
+
+//----------------------------------------------------------
+void ofTexture::readToPixels(ofShortPixels & pixels){
+	pixels.allocate(texData.width,texData.height,ofGetImageTypeFromGLType(texData.glType));
+	bind();
+	glGetTexImage(
+			texData.textureTarget,
+	 0,
+	 texData.glType,
+	 GL_UNSIGNED_SHORT,
+	 pixels.getPixels());
+	unbind();
+}
+
+//----------------------------------------------------------
+void ofTexture::readToPixels(ofFloatPixels & pixels){
+	pixels.allocate(texData.width,texData.height,ofGetImageTypeFromGLType(texData.glType));
+	bind();
+	glGetTexImage(
+			texData.textureTarget,
+	 0,
+	 texData.glType,
+	 GL_FLOAT,
+	 pixels.getPixels());
+	unbind();
 }
 
 //----------------------------------------------------------
