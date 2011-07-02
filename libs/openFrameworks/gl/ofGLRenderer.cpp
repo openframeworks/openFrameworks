@@ -123,7 +123,7 @@ void ofGLRenderer::draw(vector<ofPoint> & vertexData, ofPrimitiveMode drawMode){
 
 //----------------------------------------------------------
 void ofGLRenderer::draw(ofPolyline & poly){
-	if(poly.getVertices().size() > 0) {
+	if(!poly.getVertices().empty()) {
 		// use smoothness, if requested:
 		if (bSmoothHinted) startSmoothing();
 
