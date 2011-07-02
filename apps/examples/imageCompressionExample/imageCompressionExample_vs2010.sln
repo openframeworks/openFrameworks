@@ -1,6 +1,6 @@
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual C++ Express 2010
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "emptyExample_vs2010", "emptyExample_vs2010.vcxproj", "{7FD42DF7-442E-479A-BA76-D0022F99702A}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "imageCompressionExample_vs2010", "imageCompressionExample_vs2010.vcxproj", "{7FD42DF7-442E-479A-BA76-D0022F99702A}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "openframeworksLib", "..\..\..\libs\openFrameworksCompiled\project\vs2010\openframeworksLib.vcxproj", "{5837595D-ACA9-485C-8E76-729040CE4B0B}"
 EndProject

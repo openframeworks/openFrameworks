@@ -3,244 +3,64 @@
   <ItemGroup>
     <ClCompile Include="src\testApp.cpp" />
     <ClCompile Include="src\main.cpp" />
-    <ClCompile Include="..\..\..\addons\ofxXmlSettings\src\ofxXmlSettings.cpp">
-      <Filter>addons\ofxXmlSettings\src</Filter>
+    <ClCompile Include="..\..\..\addons\ofxSynth\src\ofxSoundEffect.cpp">
+      <Filter>addons\ofxSynth</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\addons\ofxXmlSettings\libs\tinyxml.cpp">
-      <Filter>addons\ofxXmlSettings\libs</Filter>
+    <ClCompile Include="..\..\..\addons\ofxSynth\src\ofxSoundUnit.cpp">
+      <Filter>addons\ofxSynth</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\addons\ofxXmlSettings\libs\tinyxmlparser.cpp">
-      <Filter>addons\ofxXmlSettings\libs</Filter>
+    <ClCompile Include="..\..\..\addons\ofxSynth\src\ofxSynth.cpp">
+      <Filter>addons\ofxSynth</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\addons\ofxXmlSettings\libs\tinyxmlerror.cpp">
-      <Filter>addons\ofxXmlSettings\libs</Filter>
+    <ClCompile Include="..\..\..\addons\ofxSynth\src\ofxSynthDelayLine.cpp">
+      <Filter>addons\ofxSynth</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\addons\ofxVectorGraphics\libs\CreEPS.cpp">
-      <Filter>addons\ofxVectorGraphics\libs</Filter>
+    <ClCompile Include="..\..\..\addons\ofxSynth\src\ofxSynthEnvelope.cpp">
+      <Filter>addons\ofxSynth</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\addons\ofxVectorGraphics\src\ofxVectorGraphics.cpp">
-      <Filter>addons\ofxVectorGraphics\src</Filter>
+    <ClCompile Include="..\..\..\addons\ofxSynth\src\ofxSynthFilter.cpp">
+      <Filter>addons\ofxSynth</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\addons\ofxNetwork\src\ofxTCPClient.cpp">
-      <Filter>addons\ofxNetwork\src</Filter>
+    <ClCompile Include="..\..\..\addons\ofxSynth\src\ofxSynthSampler.cpp">
+      <Filter>addons\ofxSynth</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\addons\ofxNetwork\src\ofxTCPManager.cpp">
-      <Filter>addons\ofxNetwork\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\addons\ofxNetwork\src\ofxTCPServer.cpp">
-      <Filter>addons\ofxNetwork\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\addons\ofxNetwork\src\ofxUDPManager.cpp">
-      <Filter>addons\ofxNetwork\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\addons\ofxOsc\src\ofxOscBundle.cpp">
-      <Filter>addons\ofxOsc\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\addons\ofxOsc\src\ofxOscMessage.cpp">
-      <Filter>addons\ofxOsc\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\addons\ofxOsc\src\ofxOscReceiver.cpp">
-      <Filter>addons\ofxOsc\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\addons\ofxOsc\src\ofxOscSender.cpp">
-      <Filter>addons\ofxOsc\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\addons\ofxOpenCv\src\ofxCvColorImage.cpp">
-      <Filter>addons\ofxOpenCv\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\addons\ofxOpenCv\src\ofxCvContourFinder.cpp">
-      <Filter>addons\ofxOpenCv\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\addons\ofxOpenCv\src\ofxCvFloatImage.cpp">
-      <Filter>addons\ofxOpenCv\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\addons\ofxOpenCv\src\ofxCvGrayscaleImage.cpp">
-      <Filter>addons\ofxOpenCv\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\addons\ofxOpenCv\src\ofxCvImage.cpp">
-      <Filter>addons\ofxOpenCv\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\addons\ofxOpenCv\src\ofxCvShortImage.cpp">
-      <Filter>addons\ofxOpenCv\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\addons\ofx3DModelLoader\src\3DS\model3DS.cpp">
-      <Filter>addons\ofx3dModelLoader\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\addons\ofx3DModelLoader\src\ofx3dModelLoader.cpp">
-      <Filter>addons\ofx3dModelLoader\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\addons\ofx3DModelLoader\src\3DS\texture3DS.cpp">
-      <Filter>addons\ofx3dModelLoader\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\addons\ofxAssimpModelLoader\src\ofxAssimpModelLoader.cpp">
-      <Filter>addons\ofxAssimpLoader\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\addons\ofxThreadedImageLoader\src\ofxThreadedImageLoader.cpp">
-      <Filter>addons\ofxThreadedImageLoader\src</Filter>
+    <ClCompile Include="..\..\..\addons\ofxSynth\src\ofxSynthWaveWriter.cpp">
+      <Filter>addons\ofxSynth</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\testApp.h" />
-    <ClInclude Include="..\..\..\addons\ofxXmlSettings\src\ofxXmlSettings.h">
-      <Filter>addons\ofxXmlSettings\src</Filter>
+    <ClInclude Include="..\..\..\addons\ofxSynth\src\ofxSoundEffect.h">
+      <Filter>addons\ofxSynth</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxXmlSettings\libs\tinyxml.h">
-      <Filter>addons\ofxXmlSettings\libs</Filter>
+    <ClInclude Include="..\..\..\addons\ofxSynth\src\ofxSoundUnit.h">
+      <Filter>addons\ofxSynth</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxVectorGraphics\libs\CreEPS.hpp">
-      <Filter>addons\ofxVectorGraphics\libs</Filter>
+    <ClInclude Include="..\..\..\addons\ofxSynth\src\ofxSynth.h">
+      <Filter>addons\ofxSynth</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxVectorGraphics\src\ofxVectorGraphics.h">
-      <Filter>addons\ofxVectorGraphics\src</Filter>
+    <ClInclude Include="..\..\..\addons\ofxSynth\src\ofxSynthDelayLine.h">
+      <Filter>addons\ofxSynth</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxNetwork\src\ofxUDPManager.h">
-      <Filter>addons\ofxNetwork\src</Filter>
+    <ClInclude Include="..\..\..\addons\ofxSynth\src\ofxSynthEnvelope.h">
+      <Filter>addons\ofxSynth</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxNetwork\src\ofxNetwork.h">
-      <Filter>addons\ofxNetwork\src</Filter>
+    <ClInclude Include="..\..\..\addons\ofxSynth\src\ofxSynthFilter.h">
+      <Filter>addons\ofxSynth</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxNetwork\src\ofxTCPClient.h">
-      <Filter>addons\ofxNetwork\src</Filter>
+    <ClInclude Include="..\..\..\addons\ofxSynth\src\ofxSynthSampler.h">
+      <Filter>addons\ofxSynth</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxNetwork\src\ofxTCPManager.h">
-      <Filter>addons\ofxNetwork\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxNetwork\src\ofxTCPServer.h">
-      <Filter>addons\ofxNetwork\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxOsc\src\ofxOsc.h">
-      <Filter>addons\ofxOsc\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxOsc\src\ofxOscSender.h">
-      <Filter>addons\ofxOsc\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxOsc\src\ofxOscArg.h">
-      <Filter>addons\ofxOsc\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxOsc\src\ofxOscBundle.h">
-      <Filter>addons\ofxOsc\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxOsc\src\ofxOscMessage.h">
-      <Filter>addons\ofxOsc\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxOsc\src\ofxOscReceiver.h">
-      <Filter>addons\ofxOsc\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxOpenCv\src\ofxCvBlob.h">
-      <Filter>addons\ofxOpenCv\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxOpenCv\src\ofxOpenCv.h">
-      <Filter>addons\ofxOpenCv\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxOpenCv\src\ofxCvColorImage.h">
-      <Filter>addons\ofxOpenCv\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxOpenCv\src\ofxCvConstants.h">
-      <Filter>addons\ofxOpenCv\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxOpenCv\src\ofxCvContourFinder.h">
-      <Filter>addons\ofxOpenCv\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxOpenCv\src\ofxCvFloatImage.h">
-      <Filter>addons\ofxOpenCv\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxOpenCv\src\ofxCvGrayscaleImage.h">
-      <Filter>addons\ofxOpenCv\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxOpenCv\src\ofxCvImage.h">
-      <Filter>addons\ofxOpenCv\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxOpenCv\src\ofxCvMain.h">
-      <Filter>addons\ofxOpenCv\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxOpenCv\src\ofxCvShortImage.h">
-      <Filter>addons\ofxOpenCv\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofx3DModelLoader\src\3DS\Vector3DS.h">
-      <Filter>addons\ofx3dModelLoader\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofx3DModelLoader\src\3DS\model3DS.h">
-      <Filter>addons\ofx3dModelLoader\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofx3DModelLoader\src\ofx3DBaseLoader.h">
-      <Filter>addons\ofx3dModelLoader\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofx3DModelLoader\src\ofx3DModelLoader.h">
-      <Filter>addons\ofx3dModelLoader\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofx3DModelLoader\src\3DS\texture3DS.h">
-      <Filter>addons\ofx3dModelLoader\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxAssimpModelLoader\src\ofxAssimpModelLoader.h">
-      <Filter>addons\ofxAssimpLoader\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxAssimpModelLoader\src\ofx3DBaseLoader.h">
-      <Filter>addons\ofxAssimpLoader\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxAssimpModelLoader\src\ofxAssimpMeshHelper.h">
-      <Filter>addons\ofxAssimpLoader\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxThreadedImageLoader\src\ofxThreadedImageLoader.h">
-      <Filter>addons\ofxThreadedImageLoader\src</Filter>
+    <ClInclude Include="..\..\..\addons\ofxSynth\src\ofxSynthWaveWriter.h">
+      <Filter>addons\ofxSynth</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="addons">
       <UniqueIdentifier>{d79abca0-5b91-4000-9e03-3b535f96d5b9}</UniqueIdentifier>
     </Filter>
-    <Filter Include="addons\ofxVectorGraphics">
-      <UniqueIdentifier>{bc41cbd5-9cdc-4132-a2f3-3296b66eb6df}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxOpenCv">
-      <UniqueIdentifier>{41a2b0ca-3ef8-475b-97c2-628cf256ce13}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxOsc">
-      <UniqueIdentifier>{2fd87af0-f487-43df-bd72-856adfbd24b0}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxNetwork">
-      <UniqueIdentifier>{1c7bb1b0-9ed3-4f3b-a662-e17f9aaffbbf}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofx3dModelLoader">
-      <UniqueIdentifier>{ada8fb27-85cb-4972-bf41-4763b23a30d2}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxVectorGraphics\libs">
-      <UniqueIdentifier>{7baf9072-e077-4f20-8ff5-c77ca024a50b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxVectorGraphics\src">
-      <UniqueIdentifier>{c29adf01-929c-488a-905b-4ea5e58a895c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxNetwork\src">
-      <UniqueIdentifier>{526df9d7-c9b8-47b9-a5d8-0bd0f7abfabf}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxOsc\src">
-      <UniqueIdentifier>{4986beaf-605c-471a-8870-91ad7967ce90}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxOpenCv\src">
-      <UniqueIdentifier>{809c12a3-2279-4bd9-bbb6-c3240fd0cb4c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofx3dModelLoader\src">
-      <UniqueIdentifier>{6da16e37-f1fb-485b-bbc8-5020596fb209}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxXmlSettings">
-      <UniqueIdentifier>{58e01360-6f41-4cc9-ba3a-e1e0ffd3e8cb}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxXmlSettings\src">
-      <UniqueIdentifier>{3a0e3e4d-5f79-4a70-acc5-11ccc4383a46}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxXmlSettings\libs">
-      <UniqueIdentifier>{d818a970-759f-4cdc-9543-d175f3988094}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxAssimpLoader">
-      <UniqueIdentifier>{639fdce7-74c9-4f98-8993-aaa7755fb1b6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxAssimpLoader\src">
-      <UniqueIdentifier>{ddf7c392-0ae8-4c9a-a3c3-c6d8edbe7a6c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxThreadedImageLoader">
-      <UniqueIdentifier>{9638235e-886e-4974-a501-72550d8508dd}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxThreadedImageLoader\src">
-      <UniqueIdentifier>{c07b8ca9-988e-4ae0-80c6-77d9dc8767c6}</UniqueIdentifier>
+    <Filter Include="addons\ofxSynth">
+      <UniqueIdentifier>{354c6337-2486-46b3-8d27-8476213800a9}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

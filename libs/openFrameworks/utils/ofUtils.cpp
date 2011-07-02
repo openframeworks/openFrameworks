@@ -472,10 +472,13 @@ vector <string> ofSplitString(const string & source, const string & delimiters, 
 	result.assign(tokens.begin(), tokens.end());
 
 	// poco ignores trailing delimiters, which is inconsistent with everything else
-	string lastCharacter;
-	lastCharacter += source[source.size() - 1];
-	if(ofIsStringInString(delimiters, lastCharacter)) {
-		result.push_back("");
+	int lastPosition = source.size() - 1;
+	if(lastPosition >= 0) {	
+		string lastCharacter;
+		lastCharacter += source[lastPosition];
+		if(ofIsStringInString(delimiters, lastCharacter)) {
+			result.push_back("");
+		}
 	}
 
 	return result;

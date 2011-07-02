@@ -122,22 +122,26 @@ void ofGLRenderer::draw(ofMesh & vertexData, ofPolyRenderMode renderType){
 
 //----------------------------------------------------------
 void ofGLRenderer::draw(vector<ofPoint> & vertexData, ofPrimitiveMode drawMode){
-	glEnableClientState(GL_VERTEX_ARRAY);
-	glVertexPointer(3, GL_FLOAT, sizeof(ofVec3f), &vertexData[0].x);
-	glDrawArrays(ofGetGLPrimitiveMode(drawMode), 0, vertexData.size());
+	if(!vertexData.empty()) {
+		glEnableClientState(GL_VERTEX_ARRAY);
+		glVertexPointer(3, GL_FLOAT, sizeof(ofVec3f), &vertexData[0].x);
+		glDrawArrays(ofGetGLPrimitiveMode(drawMode), 0, vertexData.size());
+	}
 }
 
 //----------------------------------------------------------
 void ofGLRenderer::draw(ofPolyline & poly){
-	// use smoothness, if requested:
-	if (bSmoothHinted) startSmoothing();
+	if(!poly.getVertices().empty()) {
+		// use smoothness, if requested:
+		if (bSmoothHinted) startSmoothing();
 
-	glEnableClientState(GL_VERTEX_ARRAY);
-	glVertexPointer(3, GL_FLOAT, sizeof(ofVec3f), &poly.getVertices()[0].x);
-	glDrawArrays(poly.isClosed()?GL_LINE_LOOP:GL_LINE_STRIP, 0, poly.size());
+		glEnableClientState(GL_VERTEX_ARRAY);
+		glVertexPointer(3, GL_FLOAT, sizeof(ofVec3f), &poly.getVertices()[0].x);
+		glDrawArrays(poly.isClosed()?GL_LINE_LOOP:GL_LINE_STRIP, 0, poly.size());
 
-	// use smoothness, if requested:
-	if (bSmoothHinted) endSmoothing();
+		// use smoothness, if requested:
+		if (bSmoothHinted) endSmoothing();
+	}
 }
 
 //----------------------------------------------------------

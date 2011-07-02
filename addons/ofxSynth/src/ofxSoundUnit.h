@@ -15,6 +15,15 @@
 #include "ofConstants.h"
 #include <vector>
 
+#if (_MSC_VER) || defined (TARGET_ANDROID)
+#ifndef isnan
+#define isnan(a) ((a) != (a))
+#endif
+#ifndef isfinite
+#define isfinite(a) ((a) - (a) == 0)
+#endif
+#endif
+
 class ofxSoundSource;
 
 
@@ -238,7 +247,7 @@ public:
 	/// Return the raw value (the target for declicking)
 	float getRawValue() { return target; }
 	/// Set a new value + rebuild ramp
-	void setValue( float newValue ) { if ( !isnan(newValue)&&finite(newValue) ) { target = newValue; rampNeedsRebuild = true; } }
+	void setValue( float newValue ) { if ( !isnan(newValue) && isfinite(newValue) ) { target = newValue; rampNeedsRebuild = true; } }
 
 	/// Rebuild the ramp, if necessary. Call before processing a block of samples.
 	void rebuildRampIfNecessary() { if ( rampNeedsRebuild ) rebuildRamp(); rampNeedsRebuild = false; }
