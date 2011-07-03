@@ -11,7 +11,6 @@
 
 #include "ofUtils.h"
 #include "ofGraphics.h"
-#include "ofPixelUtils.h"
 
 static bool printVectorInfo = false;
 
