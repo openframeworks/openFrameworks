@@ -14,6 +14,12 @@ addons/**
 #xcode files
 *.pbxuser
 *.perspectivev3
+apps/examples/*/*.xcodeproj
+apps/examples/*/Project.xcconfig
+apps/examples/*/openFrameworks-Info.plist
+apps/addonsExamples/*/*.xcodeproj
+apps/addonsExamples/*/Project.xcconfig
+apps/addonsExamples/*/openFrameworks-Info.plist
 
 #codeblocks files
 apps/*/*/*.layout
