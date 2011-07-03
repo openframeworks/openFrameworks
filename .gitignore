@@ -43,6 +43,11 @@ libs/openFrameworksCompiled/project/*/*.layout
 #linux temporary files
 *~
 
+#vs2010 user files
+*.sdf
+*.opensdf
+*.suo
+
 #eclipse build folders
 #Mac OS X
 addons/Debug Mac OS X

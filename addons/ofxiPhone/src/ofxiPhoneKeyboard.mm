@@ -123,6 +123,19 @@ string ofxiPhoneKeyboard::getText()
 	}
 }
 
+//--------------------------------------------------------------
+string ofxiPhoneKeyboard::getLabelText()
+{
+	if([keyboard getLabelText] == nil)
+	{
+		return "";
+	}
+	else
+	{
+		return string([keyboard getLabelText]);
+	}
+}
+
 void ofxiPhoneKeyboard::openKeyboard()
 {
 	[keyboard openKeyboard];
@@ -263,6 +276,13 @@ void ofxiPhoneKeyboard::updateOrientation()
 - (char *) getText
 {
 	return _ctext;
+}
+
+//--------------------------------------------------------------
+- (const char*) getLabelText
+{
+        NSString *text=[_textField text];
+        return [text UTF8String]; 
 }
 
 //--------------------------------------------------------------

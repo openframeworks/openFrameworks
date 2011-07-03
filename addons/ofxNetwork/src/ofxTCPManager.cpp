@@ -121,7 +121,7 @@ bool ofxTCPManager::Accept(ofxTCPManager& sConnect)
   if (m_hSocket == INVALID_SOCKET) return(false);
 
   if (m_dwTimeoutAccept != NO_TIMEOUT) {
-    fd_set fd= {{1, m_hSocket}};
+    fd_set fd= {1, m_hSocket};
 	  timeval tv= {m_dwTimeoutAccept, 0};
 	  if(select(0, &fd, NULL, NULL, &tv) == 0) {
 		  ofxNetworkCheckError();

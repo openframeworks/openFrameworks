@@ -3,7 +3,7 @@
 
 //--------------------------------------------------------------
 ofMesh::ofMesh(){
-	mode = OF_TRIANGLES_MODE;
+	mode = OF_PRIMITIVE_TRIANGLES;
 	bVertsChanged = true;
 	bColorsChanged = true;
 	bNormalsChanged = true;
@@ -107,19 +107,19 @@ void ofMesh::addVertices(const ofVec3f* verts, int amt){
 }
 
 //--------------------------------------------------------------
-void ofMesh::addColor(const ofColor& c){
+void ofMesh::addColor(const ofFloatColor& c){
 	colors.push_back(c);
 	bColorsChanged = true;
 }
 
 //--------------------------------------------------------------
-void ofMesh::addColors(const vector<ofColor>& cols){
+void ofMesh::addColors(const vector<ofFloatColor>& cols){
 	colors.insert(colors.end(),cols.begin(),cols.end());
 	bColorsChanged = true;
 }
 
 //--------------------------------------------------------------
-void ofMesh::addColors(const ofColor* cols, int amt){
+void ofMesh::addColors(const ofFloatColor* cols, int amt){
 	colors.insert(colors.end(),cols,cols+amt);
 	bColorsChanged = true;
 }
@@ -209,7 +209,7 @@ ofVec3f ofMesh::getNormal(int i){
 }
 
 //--------------------------------------------------------------
-ofColor ofMesh::getColor(int i){
+ofFloatColor ofMesh::getColor(int i){
 	return colors[i];
 }
 
@@ -261,7 +261,7 @@ ofVec3f* ofMesh::getVerticesPointer(){
 }
 
 //--------------------------------------------------------------
-ofColor* ofMesh::getColorsPointer(){
+ofFloatColor* ofMesh::getColorsPointer(){
 	return &colors[0];
 }
 
@@ -310,7 +310,7 @@ vector<ofVec3f> & ofMesh::getVertices(){
 	return vertices;
 }
 
-vector<ofColor> & ofMesh::getColors(){
+vector<ofFloatColor> & ofMesh::getColors(){
 	return colors;
 }
 
@@ -390,7 +390,7 @@ void ofMesh::setNormal(int index, const ofVec3f& n){
 }
 
 //--------------------------------------------------------------
-void ofMesh::setColor(int index, const ofColor& c){
+void ofMesh::setColor(int index, const ofFloatColor& c){
 	colors[index] = c;
 	bColorsChanged = true;
 }
@@ -476,6 +476,6 @@ void ofMesh::draw(){
 
 //--------------------------------------------------------------
 void ofMesh::draw(ofPolyRenderMode renderType){
-	ofGetDefaultRenderer()->draw(*this,renderType);
+	ofGetCurrentRenderer()->draw(*this,renderType);
 }
 

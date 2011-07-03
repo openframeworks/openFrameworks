@@ -8,7 +8,9 @@ To generate them:
 
 
 Linux:
-    execute scripts/linux/generateProjects.py
+    install lxml:
+    sudo apt-get install python-lxml
+    execute scripts/linux/createProjects.py
     without parameters it will generate all the examples and addonsExamples
     the new cbp files depend on Makefiles, if you want old style makefiles execute the script with -n
     the script can also be used to generate new project passing the path as a parameter in the command line
@@ -18,7 +20,7 @@ OS X:
 	
 
 iPhone: 
-	is still to be automated but will also use the OS X _DeployExamples app 
+	build and run the _DeployExamples located at: apps/devApps/_DeployExamples/deployExamples.xcodeproj
 
 Windows Codeblocks:
 	install python from http://python.org

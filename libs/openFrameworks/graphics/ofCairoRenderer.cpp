@@ -6,6 +6,7 @@
 #include "ofMesh.h"
 #include "ofImage.h"
 
+//-----------------------------------------------------------------------------------
 void
 helper_quadratic_to (cairo_t *cr,
                      double x1, double y1,
@@ -32,18 +33,22 @@ ofCairoRenderer::~ofCairoRenderer(){
 	close();
 }
 
-void ofCairoRenderer::setup(string filename, Type type, bool multiPage_, bool b3D_){
+void ofCairoRenderer::setup(string filename, Type type, bool multiPage_, bool b3D_, ofRectangle _viewport){
+	if( _viewport.width == 0 || _viewport.height == 0 ){
+		_viewport.set(0, 0, ofGetWidth(), ofGetHeight());
+	}
+	
 	switch(type){
 	case PDF:
-		surface = cairo_pdf_surface_create(ofToDataPath(filename).c_str(),ofGetWidth(),ofGetHeight());
+		surface = cairo_pdf_surface_create(ofToDataPath(filename).c_str(),_viewport.width, _viewport.height);
 		break;
 	case SVG:
-		surface = cairo_svg_surface_create(ofToDataPath(filename).c_str(),ofGetWidth(),ofGetHeight());
+		surface = cairo_svg_surface_create(ofToDataPath(filename).c_str(),_viewport.width, _viewport.height);
 		break;
 	}
 
 	cr = cairo_create(surface);
-	viewportRect.set(0,0,ofGetWidth(),ofGetHeight());
+	viewportRect = _viewport;
 	viewport(viewportRect);
 	page = 0;
 	b3D = b3D_;
@@ -134,7 +139,7 @@ void ofCairoRenderer::draw(vector<ofPoint> & vertexData, ofPrimitiveMode drawMod
 		ofVec3f v = transform(vertexData[0]);
 		ofVec3f v2;
 		cairo_move_to(cr,v.x,v.y);
-		if(drawMode==OF_TRIANGLE_STRIP_MODE){
+		if(drawMode==OF_PRIMITIVE_TRIANGLE_STRIP){
 			v = transform(vertexData[1]);
 			cairo_line_to(cr,v.x,v.y);
 			v = transform(vertexData[2]);
@@ -144,7 +149,7 @@ void ofCairoRenderer::draw(vector<ofPoint> & vertexData, ofPrimitiveMode drawMod
 		for(; i<(int)vertexData.size(); i++){
 			v = transform(vertexData[i]);
 			switch(drawMode){
-			case(OF_TRIANGLES_MODE):
+			case(OF_PRIMITIVE_TRIANGLES):
 				if((i+1)%3==0){
 					cairo_line_to(cr,v.x,v.y);
 					v2 = transform(vertexData[i-2]);
@@ -157,13 +162,13 @@ void ofCairoRenderer::draw(vector<ofPoint> & vertexData, ofPrimitiveMode drawMod
 				}
 
 			break;
-			case(OF_TRIANGLE_STRIP_MODE):
+			case(OF_PRIMITIVE_TRIANGLE_STRIP):
 					v2 = transform(vertexData[i-2]);
 					cairo_line_to(cr,v.x,v.y);
 					cairo_line_to(cr,v2.x,v2.y);
 					cairo_move_to(cr,v.x,v.y);
 			break;
-			case(OF_TRIANGLE_FAN_MODE):
+			case(OF_PRIMITIVE_TRIANGLE_FAN):
 					/*triangles.addIndex((GLuint)0);
 						triangles.addIndex((GLuint)1);
 						triangles.addIndex((GLuint)2);
@@ -204,7 +209,7 @@ void ofCairoRenderer::draw(ofMesh & primitive){
 		ofVec3f v = transform(primitive.getVertex(primitive.getIndex(0)));
 		ofVec3f v2;
 		cairo_move_to(cr,v.x,v.y);
-		if(primitive.getMode()==OF_TRIANGLE_STRIP_MODE){
+		if(primitive.getMode()==OF_PRIMITIVE_TRIANGLE_STRIP){
 			v = transform(primitive.getVertex(primitive.getIndex(1)));
 			cairo_line_to(cr,v.x,v.y);
 			v = transform(primitive.getVertex(primitive.getIndex(2)));
@@ -214,7 +219,7 @@ void ofCairoRenderer::draw(ofMesh & primitive){
 		for(; i<primitive.getNumIndices(); i++){
 			v = transform(primitive.getVertex(primitive.getIndex(i)));
 			switch(primitive.getMode()){
-			case(OF_TRIANGLES_MODE):
+			case(OF_PRIMITIVE_TRIANGLES):
 				if((i+1)%3==0){
 					cairo_line_to(cr,v.x,v.y);
 					v2 = transform(primitive.getVertex(primitive.getIndex(i-2)));
@@ -227,13 +232,13 @@ void ofCairoRenderer::draw(ofMesh & primitive){
 				}
 
 			break;
-			case(OF_TRIANGLE_STRIP_MODE):
+			case(OF_PRIMITIVE_TRIANGLE_STRIP):
 					v2 = transform(primitive.getVertex(primitive.getIndex(i-2)));
 					cairo_line_to(cr,v.x,v.y);
 					cairo_line_to(cr,v2.x,v2.y);
 					cairo_move_to(cr,v.x,v.y);
 			break;
-			case(OF_TRIANGLE_FAN_MODE):
+			case(OF_PRIMITIVE_TRIANGLE_FAN):
 					/*triangles.addIndex((GLuint)0);
 						triangles.addIndex((GLuint)1);
 						triangles.addIndex((GLuint)2);
@@ -822,13 +827,17 @@ bool ofCairoRenderer::bClearBg(){
 }
 
 //----------------------------------------------------------
-ofColor & ofCairoRenderer::getBgColor(){
+ofFloatColor & ofCairoRenderer::getBgColor(){
 	return bgColor;
 }
 
 //----------------------------------------------------------
 void ofCairoRenderer::background(const ofColor & c){
-	background ( c.r, c.g, c.b);
+	bgColor = c;
+	// if we are in not-auto mode, then clear with a bg call...
+	if (bClearBg() == false){
+		clear(c.r,c.g,c.b,c.a);
+	}
 }
 
 //----------------------------------------------------------
@@ -843,14 +852,7 @@ void ofCairoRenderer::background(int hexColor, float _a){
 
 //----------------------------------------------------------
 void ofCairoRenderer::background(int r, int g, int b, int a){
-	bgColor[0] = (float)r / (float)255.0f;
-	bgColor[1] = (float)g / (float)255.0f;
-	bgColor[2] = (float)b / (float)255.0f;
-	bgColor[3] = (float)a / (float)255.0f;
-	// if we are in not-auto mode, then clear with a bg call...
-	if (bClearBg() == false){
-		clear(r,g,b,a);
-	}
+	background(ofColor(r,g,b,a));
 }
 
 

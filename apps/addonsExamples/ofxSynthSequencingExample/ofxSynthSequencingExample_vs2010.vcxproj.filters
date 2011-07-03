@@ -1,0 +1,66 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="src\testApp.cpp" />
+    <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="..\..\..\addons\ofxSynth\src\ofxSoundEffect.cpp">
+      <Filter>addons\ofxSynth</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\addons\ofxSynth\src\ofxSoundUnit.cpp">
+      <Filter>addons\ofxSynth</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\addons\ofxSynth\src\ofxSynth.cpp">
+      <Filter>addons\ofxSynth</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\addons\ofxSynth\src\ofxSynthDelayLine.cpp">
+      <Filter>addons\ofxSynth</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\addons\ofxSynth\src\ofxSynthEnvelope.cpp">
+      <Filter>addons\ofxSynth</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\addons\ofxSynth\src\ofxSynthFilter.cpp">
+      <Filter>addons\ofxSynth</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\addons\ofxSynth\src\ofxSynthSampler.cpp">
+      <Filter>addons\ofxSynth</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\addons\ofxSynth\src\ofxSynthWaveWriter.cpp">
+      <Filter>addons\ofxSynth</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\testApp.h" />
+    <ClInclude Include="..\..\..\addons\ofxSynth\src\ofxSoundEffect.h">
+      <Filter>addons\ofxSynth</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxSynth\src\ofxSoundUnit.h">
+      <Filter>addons\ofxSynth</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxSynth\src\ofxSynth.h">
+      <Filter>addons\ofxSynth</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxSynth\src\ofxSynthDelayLine.h">
+      <Filter>addons\ofxSynth</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxSynth\src\ofxSynthEnvelope.h">
+      <Filter>addons\ofxSynth</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxSynth\src\ofxSynthFilter.h">
+      <Filter>addons\ofxSynth</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxSynth\src\ofxSynthSampler.h">
+      <Filter>addons\ofxSynth</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxSynth\src\ofxSynthWaveWriter.h">
+      <Filter>addons\ofxSynth</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="addons">
+      <UniqueIdentifier>{d79abca0-5b91-4000-9e03-3b535f96d5b9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxSynth">
+      <UniqueIdentifier>{354c6337-2486-46b3-8d27-8476213800a9}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

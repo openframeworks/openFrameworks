@@ -19,7 +19,8 @@ public:
 
 	ofTrueTypeFont testFont;
 	ofTrueTypeFont testFont2;
-	
+	ofTTFCharacter testChar;
+
 	int letter;
 	
 };

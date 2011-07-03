@@ -38,6 +38,9 @@
 #include "ofFbo.h"
 #include "ofShader.h"
 #include "ofPixels.h"
+#include "ofCairoRenderer.h"
+#include "ofGLRenderer.h"
+#include "ofRendererCollection.h"
 
 //--------------------------
 // app
