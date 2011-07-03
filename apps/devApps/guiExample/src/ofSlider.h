@@ -37,10 +37,12 @@ public:
 	}	
 	
 	virtual void saveToXml(ofxXmlSettings& xml) {
+		cout << "warning we need to check for spaces in a name" << endl;
 		xml.addValue(name, val);
 	}
 	
 	virtual void loadFromXml(ofxXmlSettings& xml) {
+		cout << "warning we need to check for spaces in a name" << endl;
 		val = xml.getValue(name, val);
 	}
 	
