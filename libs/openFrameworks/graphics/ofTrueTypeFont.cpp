@@ -11,9 +11,14 @@
 
 #include "ofUtils.h"
 #include "ofGraphics.h"
-#include "ofPixelUtils.h"
 
 static bool printVectorInfo = false;
+static int ttfGlobalDpi = 96;
+
+//--------------------------------------------------------
+void ofTrueTypeFont::setGlobalDpi(int newDpi){
+	ttfGlobalDpi = newDpi;
+}
 
 //--------------------------------------------------------
 static ofTTFCharacter makeContoursForCharacter(FT_Face &face);
@@ -215,6 +220,9 @@ bool ofTrueTypeFont::loadFont(string filename, int fontsize, bool _bAntiAliased,
 	}
 	//------------------------------------------------
 
+	if( dpi == 0 ){
+		dpi = ttfGlobalDpi;
+	}
 
 	filename = ofToDataPath(filename);
 
@@ -438,7 +446,7 @@ bool ofTrueTypeFont::loadFont(string filename, int fontsize, bool _bAntiAliased,
 
 	texAtlas.allocate(atlasPixels.getWidth(),atlasPixels.getHeight(),GL_LUMINANCE_ALPHA,false);
 
-	if(bAntiAlised && fontsize>14){
+	if(bAntiAliased && fontsize>20){
 		texAtlas.setTextureMinMagFilter(GL_LINEAR,GL_LINEAR);
 	}else{
 		texAtlas.setTextureMinMagFilter(GL_NEAREST,GL_NEAREST);

@@ -2,86 +2,140 @@
 
 //--------------------------------------------------------------
 void testApp::setup(){	 
+	ofBackground(54, 54, 54, 255);
 	
-	// this load font loads the non-full character set
-	// (ie ASCII 33-128), at size "32"
+	//old OF default is 96 - but this results in fonts looking larger than in other programs. 
+	ofTrueTypeFont::setGlobalDpi(72);
+
+	verdana14.loadFont("verdana.ttf", 14, true, true);
+	verdana14.setLineHeight(18.0f);
+	verdana14.setLetterSpacing(1.037);
+
+	verdana30.loadFont("verdana.ttf", 30, true, true);
+	verdana30.setLineHeight(34.0f);
+	verdana30.setLetterSpacing(1.035);
 	
-	franklinBook.loadFont("frabk.ttf", 32);
-	
-	// now load another font, but with extended parameters:
-	// font name, size, anti-aliased, full character set
-	verdana.loadFont("verdana.ttf",8, true, true);
-	verdana.setLineHeight(20.0f);
-	
-	counter = 0;
+	verdana14A.loadFont("frabk.ttf", 14, false);
+	verdana14A.setLineHeight(18.0f);
+	verdana14A.setLetterSpacing(1.037);
+
+	franklinBook14.loadFont("frabk.ttf", 14);
+	franklinBook14.setLineHeight(18.0f);
+	franklinBook14.setLetterSpacing(1.037);
+
+	franklinBook14A.loadFont("frabk.ttf", 14, false);
+	franklinBook14A.setLineHeight(18.0f);
+	franklinBook14A.setLetterSpacing(1.037);
+
+	bFirst  = true;
+	typeStr = "ABCDEFGHIJKLMNOPQRSTUVWXYZ\nabcdefghijklmnopqrstuvwxyz\n0123456789,:&!?";
+
 }
 
 //--------------------------------------------------------------
 void testApp::update(){
-	ofBackground(255,255,255);	
-	counter += 1.0f;
+
 }
 
 //--------------------------------------------------------------
 void testApp::draw(){
+	
+	ofSetColor(225);
+	verdana14.drawString("Font Example - use keyboard to type", 30, 35);
 
-	ofSetHexColor(0x00FF00);
-	franklinBook.drawString("hello, this is franklin book calling\nanyone home?", 100,100);
+	ofSetColor(245, 58, 135);
+	verdana14.drawString("anti aliased", 145, 92);
+	verdana14.drawString("anti aliased", 145, 195);
+	verdana14A.drawString("aliased", 525, 92);
 	
-	ofSetHexColor(0x000000);
-	verdana.drawString("hello, I am aliased verdana -- full character set, see: � ! ", 100,210);
-	
-	ofSetHexColor(0x00FF00);
-	franklinBook.drawString("I can't make an (�) like you", 100,310);
-	
-	ofSetHexColor(0x000000);
-	verdana.drawString("yeah, but I'm not exactly pretty\nthe problem is with freeType library...\napple has a patent on TTF font hints\nso our aliased type via freeType isn't super looking", 100,380);
-	
-	ofSetHexColor(0x00FF00);
-	franklinBook.drawString("you look ok ! don't worry", 100,520);
-	
-	//------------------- bounding rectangle : 
-	char tempString[255];
-	sprintf(tempString,"%i", (int)counter);
-	// ok first job to rotate around the center, is to get the bounding box:
-	ofRectangle rect = franklinBook.getStringBoundingBox(tempString, 0,0);
-	// this is the actual midpt (x + w/2, y + h/2);
-	float centerx = rect.x + rect.width / 2;
-	float centery = rect.y + rect.height / 2;
+	ofSetColor(225);
+	verdana14.drawString("verdana 14pt - ", 30, 92);
+	verdana14.drawString(typeStr, 30, 111);
 
+	verdana14A.drawString("verdana 14pt - ", 422, 92);
+	ofRect(420, 97, 292, 62);
+	ofSetColor(54, 54, 54);	
+	verdana14A.drawString(typeStr, 422, 111);
+	
+
+	ofSetColor(29,29,29);
+	ofLine(30, 169, ofGetWidth()-4, 169);
+
+	ofSetColor(225);
+	verdana14.drawString("verdana 30pt - ", 30, 195);
+	verdana30.drawString(typeStr, 30, 229);
+
+	ofSetColor(29,29,29);
+	ofLine(30, 312, ofGetWidth()-4, 312);
+
+	ofSetColor(245, 58, 135);
+	franklinBook14.drawString("anti aliased", 162, 338);
+	franklinBook14A.drawString("aliased", 555, 338);
+	
+	ofSetColor(225);
+	franklinBook14.drawString("franklin book 14pt - ", 30, 338);
+	franklinBook14.drawString(typeStr, 30, 358);
+
+	franklinBook14A.drawString("franklin book 14pt - ", 422, 338);
+	ofRect(420, 345, 292, 62);
+	ofSetColor(54, 54, 54);	
+	franklinBook14A.drawString(typeStr, 422, 358);
+
+	ofSetColor(29,29,29);
+	ofLine(30, 418, ofGetWidth()-4, 418);
+
+	ofSetColor(225);	
+	verdana14.drawString("ROTATION", 30, 445);
+	verdana14.drawString("SCALE", 422, 445);
+	
 	ofPushMatrix();
-		ofTranslate(100,650,0);
-		ofRotate(counter, 0,0,1);
-		// draw type & rect centered around 0,0 (subtract midpt from both):
-		ofSetHexColor(0xcccccc);
-		ofRect(rect.x - centerx, rect.y - centery, rect.width, rect.height);
-		ofSetHexColor(0xff3399);
-		franklinBook.drawString(tempString, -centerx,-centery);
+		string rotZ = "Rotate Z";
+		ofRectangle bounds = verdana30.getStringBoundingBox(rotZ, 0, 0);
+		
+		ofTranslate(110 + bounds.width/2, 500 + bounds.height / 2, 0);
+		ofRotateZ(ofGetElapsedTimef() * -30.0);
+				
+		verdana30.drawString(rotZ, -bounds.width/2, bounds.height/2 );
 	ofPopMatrix();
 
-	// -------------------------------------
+	ofPushMatrix();
+		string scaleAA = "SCALE AA";
+		bounds = verdana14.getStringBoundingBox(scaleAA, 0, 0);
+		
+		ofTranslate(500 + bounds.width/2, 480 + bounds.height / 2, 0);
+		ofScale(2.0 + sin(ofGetElapsedTimef()), 2.0 + sin(ofGetElapsedTimef()), 1.0);
+				
+		verdana14.drawString(scaleAA, -bounds.width/2, bounds.height/2 );
+	ofPopMatrix();	
 
 	ofPushMatrix();
-		ofTranslate(225,675,0);
-		ofScale(5,5,1);
-		ofSetHexColor(0x333333);
-		verdana.drawString("scale 5x!",0, 0);
-	ofPopMatrix();
-	
-	float size = 2 + 2*sin(counter/300.0f);
-	ofPushMatrix();
-		ofTranslate(520,675,0);
-		ofScale(size,size,1);
-		ofSetHexColor(0x00FF00);
-		franklinBook.drawString("$k@!%",0, 0);
-	ofPopMatrix();
+		string scaleA = "SCALE ALIASED";
+		bounds = verdana14A.getStringBoundingBox(scaleA, 0, 0);
+		
+		ofTranslate(500 + bounds.width/2, 530 + bounds.height / 2, 0);
+		ofScale(2.0 + cos(ofGetElapsedTimef()), 2.0 + cos(ofGetElapsedTimef()), 1.0);
+				
+		verdana14A.drawString(scaleA, -bounds.width/2, bounds.height/2 );
+	ofPopMatrix();	
 	
 }
 
 
 //--------------------------------------------------------------
-void testApp::keyPressed  (int key){ 
-	
+void testApp::keyPressed(int key){ 
+
+	if(key == OF_KEY_DEL || key == OF_KEY_BACKSPACE){
+		typeStr = typeStr.substr(0, typeStr.length()-1);
+	}
+	else if(key == OF_KEY_RETURN ){
+		typeStr += "\n";
+	}else{
+		if( bFirst ){
+			typeStr.clear();
+			bFirst = false;
+		}
+		typeStr.append(1, (char)key);
+	}
 }
 
 //--------------------------------------------------------------

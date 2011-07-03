@@ -35,9 +35,12 @@ public:
 
 	ofTrueTypeFont();
 	virtual ~ofTrueTypeFont();
+	
+	//set the default dpi for all typefaces.
+	static void setGlobalDpi(int newDpi);
 			
 	// 			-- default (without dpi), non-full char set, anti aliased, 96 dpi:
-	bool 		loadFont(string filename, int fontsize, bool _bAntiAliased=true, bool _bFullCharacterSet=false, bool makeContours=false, float simplifyAmt=0.3, int dpi=96);
+	bool 		loadFont(string filename, int fontsize, bool _bAntiAliased=true, bool _bFullCharacterSet=false, bool makeContours=false, float simplifyAmt=0.3, int dpi=0);
 	
 	bool		isLoaded();
 	bool		isAntiAliased();
