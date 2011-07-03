@@ -54,7 +54,7 @@ class ofImage_ : public ofBaseImage_<PixelType>{
 		ofImage_(const ofFile & file);
 		ofImage_(const string & filename);
 
-		// alloation / deallocation routines
+		// allocation / deallocation routines
 		void 				allocate(int w, int h, ofImageType type);
 		void 				clear();
 
@@ -76,7 +76,7 @@ class ofImage_ : public ofBaseImage_<PixelType>{
 		void 				setUseTexture(bool bUse);
 		bool				isUsingTexture();
 
-		//for getting a reference to the texture
+		// for getting a reference to the texture
 		ofTexture & getTextureReference();
 
 		// quick texture binding shortcut
@@ -91,7 +91,7 @@ class ofImage_ : public ofBaseImage_<PixelType>{
 		void 				saveImage(ofBuffer & buffer, ofImageQualityType compressionLevel = OF_IMAGE_QUALITY_BEST);
 		void 				saveImage(const ofFile & file, ofImageQualityType compressionLevel = OF_IMAGE_QUALITY_BEST);
 
-		//Sosolimited: texture compression and mipmaps
+		// Sosolimited: texture compression and mipmaps
 		void				setCompression(ofTexCompression compression);
 
 		// getting the data
@@ -103,7 +103,7 @@ class ofImage_ : public ofBaseImage_<PixelType>{
 		ofColor_<PixelType> getColor(int x, int y) const;
 
 		// alter the image
-		void setColor(int x, int y, ofColor_<PixelType> color);
+		void				setColor(int x, int y, ofColor_<PixelType> color);
 		void 				setFromPixels(const PixelType * pixels, int w, int h, ofImageType type, bool bOrderIsRGB = true);
 		void				setFromPixels(const ofPixels_<PixelType> & pixels);
 		void 				setImageType(ofImageType type);
@@ -126,11 +126,11 @@ class ofImage_ : public ofBaseImage_<PixelType>{
 		// call update() to see a change (move the pixels to the texture)
 		void update();
 
-		//the anchor is the point the image is drawn around.
-		//this can be useful if you want to rotate an image around a particular point.
-        void				setAnchorPercent(float xPct, float yPct);	//set the anchor as a percentage of the image width/height ( 0.0-1.0 range )
-        void				setAnchorPoint(float x, float y);				//set the anchor point in pixels
-        void				resetAnchor();								//resets the anchor to (0, 0)
+		// the anchor is the point the image is drawn around.
+		// this can be useful if you want to rotate an image around a particular point.
+        void				setAnchorPercent(float xPct, float yPct);	// set the anchor as a percentage of the image width/height ( 0.0-1.0 range )
+        void				setAnchorPoint(float x, float y);			// set the anchor point in pixels
+        void				resetAnchor();								// resets the anchor to (0, 0)
 
 		// draw:
 		void 				draw(const ofRectangle & r);
@@ -143,7 +143,9 @@ class ofImage_ : public ofBaseImage_<PixelType>{
 
 		float 				getHeight();
 		float 				getWidth();
-		bool 				bAllocated() {return pixels.isAllocated();};
+		
+		bool 				bAllocated() {return pixels.isAllocated();};	// legacy function
+		bool 				isAllocated() {return pixels.isAllocated();};
 
 		void				reloadTexture();
 
@@ -157,8 +159,8 @@ class ofImage_ : public ofBaseImage_<PixelType>{
 		void				resizePixels(ofPixels_<PixelType> &pix, int newWidth, int newHeight);
 
 		ofPixels_<PixelType>		pixels;
-		bool				bUseTexture;
-		ofTexture			tex;
+		bool						bUseTexture;
+		ofTexture					tex;
 
 };
 
