@@ -199,11 +199,11 @@ void ofTrueTypeFont::unloadTextures(){
 }
 
 void ofTrueTypeFont::reloadTextures(){
-	loadFont(filename,fontSize,bAntiAlised,bFullCharacterSet,false);
+	loadFont(filename, fontSize, bAntiAliased, bFullCharacterSet, false);
 }
 
-//------------------------------------------------------------------
-void ofTrueTypeFont::loadFont(string filename, int fontsize, bool _bAntiAliased, bool _bFullCharacterSet, bool makeContours, float simplifyAmt){
+//-----------------------------------------------------------
+bool ofTrueTypeFont::loadFont(string filename, int fontsize, bool _bAntiAliased, bool _bFullCharacterSet, bool makeContours, float simplifyAmt, int dpi) {
 
 	bMakeContours = makeContours;
 
@@ -219,7 +219,7 @@ void ofTrueTypeFont::loadFont(string filename, int fontsize, bool _bAntiAliased,
 	filename = ofToDataPath(filename);
 
 	bLoadedOk 			= false;
-	bAntiAlised 		= _bAntiAliased;
+	bAntiAliased 		= _bAntiAliased;
 	bFullCharacterSet 	= _bFullCharacterSet;
 	fontSize			= fontsize;
 
@@ -227,15 +227,15 @@ void ofTrueTypeFont::loadFont(string filename, int fontsize, bool _bAntiAliased,
 	FT_Library library;
 	if (FT_Init_FreeType( &library )){
 		ofLog(OF_LOG_ERROR," PROBLEM WITH FT lib");
-		return;
+		return false;
 	}
 
 	FT_Face face;
 	if (FT_New_Face( library, filename.c_str(), 0, &face )) {
-		return;
+		return false;
 	}
 
-	FT_Set_Char_Size( face, fontsize << 6, fontsize << 6, 96, 96);
+	FT_Set_Char_Size( face, fontsize << 6, fontsize << 6, dpi, dpi);
 	lineHeight = fontsize * 1.43f;
 
 	//------------------------------------------------------
@@ -265,7 +265,7 @@ void ofTrueTypeFont::loadFont(string filename, int fontsize, bool _bAntiAliased,
 			ofLog(OF_LOG_ERROR,"error with FT_Load_Glyph %i", i);
 		}
 
-		if (bAntiAlised == true) FT_Render_Glyph(face->glyph, FT_RENDER_MODE_NORMAL);
+		if (bAntiAliased == true) FT_Render_Glyph(face->glyph, FT_RENDER_MODE_NORMAL);
 		else FT_Render_Glyph(face->glyph, FT_RENDER_MODE_MONO);
 
 		//------------------------------------------
@@ -340,7 +340,7 @@ void ofTrueTypeFont::loadFont(string filename, int fontsize, bool _bAntiAliased,
 		expanded_data[i].set(1,0);
 
 
-		if (bAntiAlised == true){
+		if (bAntiAliased == true){
 			ofPixels bitmapPixels;
 			bitmapPixels.setFromExternalPixels(bitmap.buffer,bitmap.width,bitmap.rows,1);
 			expanded_data[i].setChannel(1,bitmapPixels);
@@ -450,6 +450,22 @@ void ofTrueTypeFont::loadFont(string filename, int fontsize, bool _bAntiAliased,
 	FT_Done_Face(face);
 	FT_Done_FreeType(library);
   	bLoadedOk = true;
+	return true;
+}
+
+//-----------------------------------------------------------
+bool ofTrueTypeFont::isLoaded() {
+	return bLoadedOk;
+}
+
+//-----------------------------------------------------------
+bool ofTrueTypeFont::isAntiAliased() {
+	return bAntiAliased;
+}
+
+//-----------------------------------------------------------
+bool ofTrueTypeFont::hasFullCharacterSet() {
+	return bFullCharacterSet;
 }
 
 //-----------------------------------------------------------
@@ -784,4 +800,7 @@ void ofTrueTypeFont::drawStringAsShapes(string c, float x, float y) {
 
 }
 
-
+//-----------------------------------------------------------
+int ofTrueTypeFont::getNumCharacters() {
+	return nCharacters;
+}
