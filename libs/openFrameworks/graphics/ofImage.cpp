@@ -3,7 +3,6 @@
 #include "ofTypes.h"
 #include "ofURLFileLoader.h"
 #include "ofGraphics.h"
-#include "ofPixelUtils.h"
 #include "FreeImage.h"
 
 #ifdef TARGET_ANDROID
@@ -602,25 +601,25 @@ void ofImage_<PixelType>::resetAnchor(){
 //------------------------------------
 template<typename PixelType>
 void ofImage_<PixelType>::draw(const ofRectangle & _r){
-	ofGetDefaultRenderer()->draw(*this,_r.x,_r.y,0,_r.width,_r.height);
+	ofGetCurrentRenderer()->draw(*this,_r.x,_r.y,0,_r.width,_r.height);
 }
 
 //------------------------------------
 template<typename PixelType>
 void ofImage_<PixelType>::draw(const ofPoint & _p, float _w, float _h){
-	ofGetDefaultRenderer()->draw(*this,_p.x,_p.y,_p.z,_w,_h);
+	ofGetCurrentRenderer()->draw(*this,_p.x,_p.y,_p.z,_w,_h);
 }
 
 //------------------------------------
 template<typename PixelType>
 void ofImage_<PixelType>::draw(float _x, float _y, float _w, float _h){
-	ofGetDefaultRenderer()->draw(*this,_x,_y,0,_w,_h);
+	ofGetCurrentRenderer()->draw(*this,_x,_y,0,_w,_h);
 }
 
 //------------------------------------
 template<typename PixelType>
 void ofImage_<PixelType>::draw(float _x, float _y, float _z, float _w, float _h){
-	ofGetDefaultRenderer()->draw(*this,_x,_y,_z,_w,_h);
+	ofGetCurrentRenderer()->draw(*this,_x,_y,_z,_w,_h);
 }
 
 //------------------------------------
@@ -718,13 +717,13 @@ void ofImage_<PixelType>::unbind(){
 
 //------------------------------------
 template<typename PixelType>
-ofColor ofImage_<PixelType>::getColor(int x, int y) const {
+ofColor_<PixelType> ofImage_<PixelType>::getColor(int x, int y) const {
 	return pixels.getColor(x, y);
 }
 
 //------------------------------------
 template<typename PixelType>
-void ofImage_<PixelType>::setColor(int x, int y, ofColor color) {
+void ofImage_<PixelType>::setColor(int x, int y, ofColor_<PixelType> color) {
 	pixels.setColor(x, y, color);
 }
 
@@ -846,7 +845,7 @@ void ofImage_<PixelType>::resize(int newWidth, int newHeight){
 //------------------------------------
 template<typename PixelType>
 void ofImage_<PixelType>::crop(int x, int y, int w, int h){
-	ofPixelUtils::crop(pixels, x,y,w,h);
+	pixels.crop(x,y,w,h);
 	update();
 }
 
@@ -857,7 +856,7 @@ void ofImage_<PixelType>::cropFrom(ofImage_<PixelType> & otherImage, int x, int 
 	int myOldWidth = pixels.getWidth();
 	int myOldHeight = pixels.getHeight();
 
-	ofPixelUtils::cropFromTo(otherImage.pixels,pixels, x,y,w,h);
+	otherImage.pixels.cropTo(pixels, x, y, w, h);
 
 	if (myOldWidth != pixels.getWidth() || myOldHeight != pixels.getHeight()){
 		if (bUseTexture == true){
@@ -874,7 +873,7 @@ template<typename PixelType>
 void ofImage_<PixelType>::rotate90(int nRotations){
 	int myOldWidth = pixels.getWidth();
 	int myOldHeight = pixels.getHeight();
-	ofPixelUtils::rotate90(pixels, nRotations);
+	pixels.rotate90(nRotations);
 	if (myOldWidth != pixels.getWidth() || myOldHeight != pixels.getHeight()){
 		if (bUseTexture == true){
 			tex.clear();
@@ -887,7 +886,7 @@ void ofImage_<PixelType>::rotate90(int nRotations){
 //------------------------------------
 template<typename PixelType>
 void ofImage_<PixelType>::mirror(bool vertical, bool horizontal){
-	ofPixelUtils::mirror(pixels, vertical, horizontal);
+	pixels.mirror(vertical, horizontal);
 	update();
 }
 

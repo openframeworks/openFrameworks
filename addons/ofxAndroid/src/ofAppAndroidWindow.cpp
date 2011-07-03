@@ -48,8 +48,6 @@ static double			lastFrameTime;
 
 static JavaVM *ofJavaVM=0;
 
-
-static ofPtr<ofBaseApp> OFApp;
 static ofxAndroidApp * androidApp;
 
 static ofOrientation orientation = OF_ORIENTATION_DEFAULT;
@@ -103,9 +101,8 @@ ofAppAndroidWindow::~ofAppAndroidWindow() {
 	// TODO Auto-generated destructor stub
 }
 
-void ofAppAndroidWindow::runAppViaInfiniteLoop(ofPtr<ofBaseApp> appPtr){
-	androidApp = dynamic_cast<ofxAndroidApp*>( appPtr.get() );
-	OFApp = appPtr;
+void ofAppAndroidWindow::runAppViaInfiniteLoop(ofBaseApp * appPtr){
+	androidApp = dynamic_cast<ofxAndroidApp*>( appPtr );
 }
 
 ofPoint	ofAppAndroidWindow::getWindowSize(){

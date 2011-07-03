@@ -4,6 +4,7 @@
 #include "ofBaseTypes.h"
 #include "ofGLRenderer.h"
 #include "ofPath.h"
+#include "ofRendererCollection.h"
 
 #ifdef TARGET_OSX
 	#include <OpenGL/glu.h>
@@ -51,7 +52,7 @@ static ofPath shape;
 static ofMesh vertexData;
 static ofPtr<ofBaseRenderer> renderer;
 
-void ofSetDefaultRenderer(ofPtr<ofBaseRenderer> renderer_){
+void ofSetCurrentRenderer(ofPtr<ofBaseRenderer> renderer_){
 	renderer = renderer_;
 	renderer->setupGraphicDefaults();
 
@@ -66,10 +67,68 @@ void ofSetDefaultRenderer(ofPtr<ofBaseRenderer> renderer_){
 	ofSetStyle(currentStyle);
 }
 
-ofPtr<ofBaseRenderer> & ofGetDefaultRenderer(){
+ofPtr<ofBaseRenderer> & ofGetCurrentRenderer(){
 	return renderer;
 }
 
+ofPtr<ofGLRenderer> ofGetGLRenderer(){
+	if(ofGetCurrentRenderer()->getType()=="GL"){
+		return (ofPtr<ofGLRenderer>&)ofGetCurrentRenderer();
+	}else if(ofGetCurrentRenderer()->getType()=="collection"){
+		return ((ofPtr<ofRendererCollection>&)ofGetCurrentRenderer())->getGLRenderer();
+	}else{
+		return ofPtr<ofGLRenderer>();
+	}
+}
+
+#ifndef TARGET_OPENGLES 
+
+//-----------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------------
+#include "ofCairoRenderer.h"
+#include "ofGLRenderer.h"
+
+static ofPtr<ofCairoRenderer> cairoScreenshot;
+static ofPtr<ofBaseRenderer> storedRenderer;
+static ofPtr<ofRendererCollection> rendererCollection;
+static bool bScreenShotStarted = false;
+
+//-----------------------------------------------------------------------------------
+void ofBeginSaveScreenAsPDF(string filename, bool bMultipage, bool b3D, ofRectangle viewport){
+	if( bScreenShotStarted )ofEndSaveScreenAsPDF();
+	
+	storedRenderer = ofGetCurrentRenderer();
+	
+	cairoScreenshot = ofPtr<ofCairoRenderer>(new ofCairoRenderer);
+	cairoScreenshot->setup(filename, ofCairoRenderer::PDF, bMultipage, b3D, viewport); 		
+
+	rendererCollection = ofPtr<ofRendererCollection>(new ofRendererCollection);
+	rendererCollection->renderers.push_back(ofGetGLRenderer());
+	rendererCollection->renderers.push_back(cairoScreenshot);
+	
+	ofSetCurrentRenderer(rendererCollection);
+	bScreenShotStarted = true;
+}
+
+//-----------------------------------------------------------------------------------
+void ofEndSaveScreenAsPDF(){
+	if( bScreenShotStarted ){
+
+		if( cairoScreenshot ){
+			cairoScreenshot->close();
+			rendererCollection.reset();
+			cairoScreenshot.reset();
+		}
+		if( storedRenderer ){
+			ofSetCurrentRenderer(storedRenderer);
+			storedRenderer.reset();
+		}
+		
+		bScreenShotStarted = false;
+	}
+}
+
+#endif
 
 // opengl specifics
 
@@ -327,7 +386,7 @@ bool ofbClearBg(){
 
 //----------------------------------------------------------
 float * ofBgColorPtr(){
-	return renderer->getBgColor().v;
+	return &renderer->getBgColor().r;
 }
 
 //----------------------------------------------------------
@@ -893,7 +952,7 @@ void ofBox(float size) {
 			20,22,23
 		};
 		vertexData.addIndices(indices,36);
-		vertexData.setMode(OF_TRIANGLES_MODE);
+		vertexData.setMode(OF_PRIMITIVE_TRIANGLES);
 		renderer->draw(vertexData);
 	} else {
 		ofVec3f vertices[] = {
@@ -928,7 +987,7 @@ void ofBox(float size) {
 		};
 		vertexData.addIndices(indices,24);
 
-		vertexData.setMode(OF_LINES_MODE);
+		vertexData.setMode(OF_PRIMITIVE_LINES);
 		renderer->draw(vertexData);
 	}
 

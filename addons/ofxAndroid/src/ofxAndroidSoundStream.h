@@ -1,14 +1,16 @@
 #pragma once
 
-#include "ofConstants.h"
-#include "ofBaseSoundStream.h"
 #include <jni.h>
 #include <queue>
+
+#include "ofConstants.h"
+#include "ofBaseSoundStream.h"
+#include "ofxAndroidCircBuffer.h"
 
 class ofxAndroidSoundStream : public ofBaseSoundStream{
 	public:
 		ofxAndroidSoundStream();
-		~ofxAndroidSoundStream();
+		virtual ~ofxAndroidSoundStream();
 		
 		void listDevices();
 		void setDeviceID(int deviceID);
@@ -43,6 +45,8 @@ class ofxAndroidSoundStream : public ofBaseSoundStream{
 		ofBaseSoundInput *  soundInputPtr;
 		ofBaseSoundOutput * soundOutputPtr;
 		
+		ofxAndroidCircBuffer<float> input_buffer;
+
 
 		short * out_buffer, * in_buffer;
 		float * out_float_buffer, * in_float_buffer;

@@ -86,6 +86,11 @@ string ofGetGlInternalFormatName(int glInternalFormat) {
 void ofGetGlFormatAndType(int glInternalFormat, int& glFormat, int& glType) {
 	switch(glInternalFormat) {
 		// common 8-bit formats: rgba, rgb, grayscale
+		case GL_BGRA:
+			glFormat = GL_BGRA;
+			glType = GL_UNSIGNED_BYTE;
+			break;
+			
 		case GL_RGBA:
 #ifndef TARGET_OPENGLES
 		case GL_RGBA8:
@@ -167,6 +172,49 @@ void ofGetGlFormatAndType(int glInternalFormat, int& glFormat, int& glType) {
 			glType = GL_UNSIGNED_BYTE;
 			ofLogError() << "ofGetGlFormatAndType(): glInternalFormat not recognized";
 			break;
+	}
+}
+
+static bool ofCheckGLTypesEqual(int type1, int type2){
+#ifndef TARGET_OPENGLES
+	if(type1==GL_LUMINANCE || type1==GL_LUMINANCE8){
+		if(type2==GL_LUMINANCE || type2==GL_LUMINANCE8){
+			return true;
+		}else{
+			return false;
+		}
+	}
+
+	else if(type1==GL_RGB || type1==GL_RGB8){
+		if(type2==GL_RGB || type2==GL_RGB8){
+			return true;
+		}else{
+			return false;
+		}
+	}
+
+	else if(type1==GL_RGBA || type1==GL_RGBA8){
+		if(type2==GL_RGBA || type2==GL_RGBA8){
+			return true;
+		}else{
+			return false;
+		}
+	}
+
+	else
+#endif
+		return type1==type2;
+}
+
+
+ofImageType ofGetImageTypeFromGLType(int glType){
+	switch(glType){
+	case GL_LUMINANCE:
+		return OF_IMAGE_GRAYSCALE;
+	case GL_RGB:
+		return OF_IMAGE_COLOR;
+	case GL_RGBA:
+		return OF_IMAGE_COLOR_ALPHA;
 	}
 }
 
@@ -349,6 +397,16 @@ void ofTexture::loadData(ofPixels & pix){
 	loadData(pix.getPixels(), pix.getWidth(), pix.getHeight(), ofGetGlInternalFormat(pix));
 }
 
+//----------------------------------------------------------
+void ofTexture::loadData(ofShortPixels & pix){
+	loadData(pix.getPixels(), pix.getWidth(), pix.getHeight(), ofGetGlInternalFormat(pix));
+}
+
+//----------------------------------------------------------
+void ofTexture::loadData(ofFloatPixels & pix){
+	loadData(pix.getPixels(), pix.getWidth(), pix.getHeight(), ofGetGlInternalFormat(pix));
+}
+
 
 
 
@@ -364,8 +422,8 @@ void ofTexture::loadData(void * data, int w, int h, int glInternalFormat){
 	//  but with a "step" size of w?
 	// 	check "glTexSubImage2D"
 	
-	if(glInternalFormat != texData.glTypeInternal) {
-		ofLogError() << "ofTexture::loadData() failed to upload internalFormat " <<  ofGetGlInternalFormatName(glInternalFormat) << " data to " << ofGetGlInternalFormatName(texData.glTypeInternal) << " texture";
+	if(!ofCheckGLTypesEqual(glInternalFormat,texData.glTypeInternal)) {
+		ofLogError() << "ofTexture::loadData() failed to upload internalFormat " <<  ofGetGlInternalFormatName(glInternalFormat) << " data to " << ofGetGlInternalFormatName(texData.glTypeInternal) << " texture" <<endl;
 		return;
 	}
 	
@@ -894,6 +952,51 @@ void ofTexture::draw(float x, float y){
 //----------------------------------------------------------
 void ofTexture::draw(float x, float y, float z){
 	draw(x, y, z, texData.width, texData.height);
+}
+
+//----------------------------------------------------------
+void ofTexture::readToPixels(ofPixels & pixels){
+#ifndef TARGET_OPENGLES 
+	pixels.allocate(texData.width,texData.height,ofGetImageTypeFromGLType(texData.glType));
+	bind();
+	glGetTexImage(
+			texData.textureTarget,
+	 0,
+	 texData.glType,
+	 GL_UNSIGNED_BYTE,
+	 pixels.getPixels());
+	unbind();
+#endif
+}
+
+//----------------------------------------------------------
+void ofTexture::readToPixels(ofShortPixels & pixels){
+#ifndef TARGET_OPENGLES 	
+	pixels.allocate(texData.width,texData.height,ofGetImageTypeFromGLType(texData.glType));
+	bind();
+	glGetTexImage(
+			texData.textureTarget,
+	 0,
+	 texData.glType,
+	 GL_UNSIGNED_SHORT,
+	 pixels.getPixels());
+	unbind();
+#endif
+}
+
+//----------------------------------------------------------
+void ofTexture::readToPixels(ofFloatPixels & pixels){
+#ifndef TARGET_OPENGLES 
+	pixels.allocate(texData.width,texData.height,ofGetImageTypeFromGLType(texData.glType));
+	bind();
+	glGetTexImage(
+			texData.textureTarget,
+	 0,
+	 texData.glType,
+	 GL_FLOAT,
+	 pixels.getPixels());
+	unbind();
+#endif
 }
 
 //----------------------------------------------------------

@@ -2,6 +2,7 @@
 #include "ofAppRunner.h"
 #include "ofUtils.h"
 #include "ofGraphics.h"
+#include "ofGLRenderer.h"
 #include <map>
 
 //#ifndef TARGET_OPENGLES
@@ -339,7 +340,7 @@ void ofFbo::checkGLSupport() {
 }
 
 
-void ofFbo::setup(int width, int height, int internalformat, int numSamples) {
+void ofFbo::allocate(int width, int height, int internalformat, int numSamples) {
 
 	settings.width			= width;
 	settings.height			= height;
@@ -348,11 +349,11 @@ void ofFbo::setup(int width, int height, int internalformat, int numSamples) {
 	settings.useDepth		= true;
 	settings.useStencil		= true;
 	
-	setup(settings);
+	allocate(settings);
 }
 
 
-void ofFbo::setup(Settings _settings) {
+void ofFbo::allocate(Settings _settings) {
 	checkGLSupport();
 
 	destroy();
@@ -420,7 +421,7 @@ void ofFbo::setup(Settings _settings) {
 	unbind();
 }
 
-void ofFbo::setupShadow( int width, int height )
+void ofFbo::allocateForShadow( int width, int height )
 {
 //#ifndef TARGET_OPENGLES
 	int old;
@@ -482,6 +483,7 @@ void ofFbo::createAndAttachTexture(GLenum attachmentPoint) {
 	glBindFramebuffer(GL_FRAMEBUFFER, fboTextures);
 
 	ofTexture tex;
+	tex.texData.bFlipTexture = true;
 	tex.allocate(settings.width, settings.height, settings.internalformat, settings.textureTarget == GL_TEXTURE_2D ? false : true);
 	tex.setTextureWrap(settings.wrapModeHorizontal, settings.wrapModeVertical);
 	tex.setTextureMinMagFilter(settings.minFilter, settings.maxFilter);
@@ -503,6 +505,9 @@ void ofFbo::createAndAttachTexture(GLenum attachmentPoint) {
 void ofFbo::begin() {
 	bind();
 	ofPushView();
+	if(ofGetGLRenderer()){
+		ofGetGLRenderer()->setCurrentFBO(this);
+	}
 	ofViewport(0, 0, getWidth(), getHeight(), false);
 	ofSetupScreenPerspective(getWidth(), getHeight(), ofGetOrientation(), false);
 }
@@ -513,6 +518,9 @@ void ofFbo::begin() {
 
 void ofFbo::end() {
 	unbind();
+	if(ofGetGLRenderer()){
+		ofGetGLRenderer()->setCurrentFBO(NULL);
+	}
 	ofPopView();
 }
 
@@ -529,6 +537,7 @@ void ofFbo::unbind() {
 	if(isBound) {
 		glBindFramebuffer(GL_FRAMEBUFFER, savedFramebuffer);
 		isBound = 0;
+		dirty = true;
 	}
 }
 
@@ -542,10 +551,23 @@ ofTexture& ofFbo::getTexture(int attachmentPoint) {
 	return textures[attachmentPoint];
 }
 
+
+void ofFbo::readToPixels(ofPixels & pixels, int attachmentPoint){
+	getTexture(attachmentPoint).readToPixels(pixels);
+}
+
+void ofFbo::readToPixels(ofShortPixels & pixels, int attachmentPoint){
+	getTexture(attachmentPoint).readToPixels(pixels);
+}
+
+void ofFbo::readToPixels(ofFloatPixels & pixels, int attachmentPoint){
+	getTexture(attachmentPoint).readToPixels(pixels);
+}
+
 void ofFbo::updateTexture(int attachmentPoint) {
 	// TODO: flag to see if this is dirty or not
 #ifndef TARGET_OPENGLES
-	if(fbo != fboTextures) {
+	if(fbo != fboTextures && dirty) {
 		glGetIntegerv( GL_FRAMEBUFFER_BINDING, &savedFramebuffer );
 
 		// save current drawbuffer
@@ -570,6 +592,7 @@ void ofFbo::updateTexture(int attachmentPoint) {
 
 		// restore drawbuffer
 		glPopAttrib();
+		dirty = false;
 
 	}
 #endif

@@ -60,11 +60,6 @@ void ofSetGlobalAmbientColor(const ofColor& c) {
 }
 
 //----------------------------------------
-void ofSetGlobalAmbientColor(float r, float g, float b, float a) {
-	ofSetGlobalAmbientColor( ofColor(r, g, b, a) );
-}
-
-//----------------------------------------
 bool* getActiveLights(){
 	static bool * lightsActive = new bool[OF_MAX_LIGHTS];
 	static bool lightsActiveInited = false;
@@ -80,18 +75,6 @@ bool* getActiveLights(){
 static map<GLuint,int> & getIds(){
 	static map<GLuint,int> * ids = new map<GLuint,int>;
 	return *ids;
-}
-
-//--------------------------------------------------------------
-static void setActiveLight( int id ) {
-	if (id < 0 || id >= OF_MAX_LIGHTS) return;
-	getActiveLights()[id] = true;
-}
-
-//--------------------------------------------------------------
-static void setInactiveLight( int id ) {
-	if (id < 0 || id >= OF_MAX_LIGHTS) return;
-	getActiveLights()[id] = false;
 }
 
 //--------------------------------------------------------------
@@ -146,7 +129,7 @@ ofLight::ofLight(){
 
 //----------------------------------------
 ofLight::~ofLight(){
-	release(*this);
+	destroy();
 }
 
 //----------------------------------------
@@ -284,57 +267,36 @@ int ofLight::getType() {
 }
 
 //----------------------------------------
-void ofLight::setAmbientColor(const ofColor& c) {
+void ofLight::setAmbientColor(const ofFloatColor& c) {
 	if(glIndex==-1) return;
-	ambientColor = c/255.0f;
-	ambientColor.a /= 255.f;
 	glLightfv(GL_LIGHT0 + glIndex, GL_AMBIENT, &ambientColor.r);
 }
 
 //----------------------------------------
-void ofLight::setAmbientColor(float r, float g, float b, float a) {
-	setAmbientColor(r, g, b, a);
-}
-
-//----------------------------------------
-void ofLight::setDiffuseColor(const ofColor& c) {
+void ofLight::setDiffuseColor(const ofFloatColor& c) {
 	if(glIndex==-1) return;
-	diffuseColor = c/255.0f;
-	diffuseColor.a /= 255.f;
 	glLightfv(GL_LIGHT0 + glIndex, GL_DIFFUSE, &diffuseColor.r);
 }
 
 //----------------------------------------
-void ofLight::setDiffuseColor(float r, float g, float b, float a) {
-	setDiffuseColor(ofColor(r, g, b, a));
-}
-
-//----------------------------------------
-void ofLight::setSpecularColor(const ofColor& c) {
+void ofLight::setSpecularColor(const ofFloatColor& c) {
 	if(glIndex==-1) return;
-	specularColor = c/255.0f;
-	specularColor.a /= 255.f;
 	glLightfv(GL_LIGHT0 + glIndex, GL_SPECULAR, &specularColor.r);
 }
 
 //----------------------------------------
-void ofLight::setSpecularColor(float r, float g, float b, float a) {
-	setSpecularColor(ofColor(r, g, b, a));
+ofFloatColor ofLight::getAmbientColor() const {
+	return ambientColor;
 }
 
 //----------------------------------------
-ofColor ofLight::getAmbientColor() const {
-	return ofColor(ambientColor.r * 255.f, ambientColor.g * 255.f, ambientColor.b * 255.f, ambientColor.a * 255.f);
+ofFloatColor ofLight::getDiffuseColor() const {
+	return diffuseColor;
 }
 
 //----------------------------------------
-ofColor ofLight::getDiffuseColor() const {
-	return ofColor(diffuseColor.r * 255.0f, diffuseColor.g * 255.f, diffuseColor.b * 255.f, diffuseColor.a * 255.f);
-}
-
-//----------------------------------------
-ofColor ofLight::getSpecularColor() const {
-	return ofColor(specularColor.r * 255.f, specularColor.g * 255.f, specularColor.b * 255.f, specularColor.a * 255.f);
+ofFloatColor ofLight::getSpecularColor() const {
+	return specularColor;
 }
 
 

@@ -15,9 +15,9 @@ public:
 	ofFbo & operator=(const ofFbo & fbo);
 	virtual ~ofFbo();
 
-	void setup(int width, int height, int internalformat = GL_RGBA, int numSamples = 0);
-	void setupShadow( int width, int height );
-	void setup(Settings settings = Settings());
+	void allocate(int width, int height, int internalformat = GL_RGBA, int numSamples = 0);
+	void allocateForShadow( int width, int height );
+	void allocate(Settings settings = Settings());
 	
 	void draw(float x, float y);
 	void draw(float x, float y, float width, float height);
@@ -30,6 +30,9 @@ public:
 	
 	ofTexture& getTexture(int attachmentPoint = 0);		// get texture at attachment position
 	
+	void readToPixels(ofPixels & pixels, int attachmentPoint = 0);
+	void readToPixels(ofShortPixels & pixels, int attachmentPoint = 0);
+	void readToPixels(ofFloatPixels & pixels, int attachmentPoint = 0);
 
 	// advanced functions
 	void bind();
@@ -83,6 +86,8 @@ private:
 	static int			_maxDrawBuffers;
 	static int			_maxSamples;
 	
+	bool				dirty;
+
 	void destroy();
 	
 	bool checkStatus();

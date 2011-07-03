@@ -175,7 +175,7 @@ ofTrueTypeFont::ofTrueTypeFont(){
 
 	border			= 3;
 	//visibleBorder	= 2;
-	stringQuads.setMode(OF_TRIANGLES_MODE);
+	stringQuads.setMode(OF_PRIMITIVE_TRIANGLES);
 	binded = false;
 }
 
@@ -385,7 +385,7 @@ bool ofTrueTypeFont::loadFont(string filename, int fontsize, bool _bAntiAliased,
 	int w;
 	int h;
 	while(!packed){
-		w = pow(2,floor((alpha/2.f) + 0.5)); // there doesn't seem to be a round in cmath for windows. 
+		w = pow(2,floor((alpha/2.f) + 0.5)); // there doesn't seem to be a round in cmath for windows.
 		//w = pow(2,round(alpha/2.f));
 		h = w;//pow(2,round(alpha - round(alpha/2.f)));
 		int x=0;
@@ -431,13 +431,14 @@ bool ofTrueTypeFont::loadFont(string filename, int fontsize, bool _bAntiAliased,
 		cps[sortedCopy[i].character].v2		= float(y + border)/float(h);
 		cps[sortedCopy[i].character].t1		= float(cps[sortedCopy[i].character].tW + x + border)/float(w);
 		cps[sortedCopy[i].character].v1		= float(cps[sortedCopy[i].character].tH + y + border)/float(h);
-		ofPixelUtils::pasteInto(charPixels,atlasPixels,x+border,y+border);
+		charPixels.pasteInto(atlasPixels,x+border,y+border);
 		x+= sortedCopy[i].tW + border*2;
 	}
 
 
 	texAtlas.allocate(atlasPixels.getWidth(),atlasPixels.getHeight(),GL_LUMINANCE_ALPHA,false);
-	if(bAntiAliased){
+
+	if(bAntiAlised && fontsize>14){
 		texAtlas.setTextureMinMagFilter(GL_LINEAR,GL_LINEAR);
 	}else{
 		texAtlas.setTextureMinMagFilter(GL_NEAREST,GL_NEAREST);
@@ -654,6 +655,10 @@ float ofTrueTypeFont::stringHeight(string c) {
 
 //=====================================================================
 void ofTrueTypeFont::drawString(string c, float x, float y) {
+
+    /*glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	texAtlas.draw(0,0);*/
 
     if (!bLoadedOk){
     	ofLog(OF_LOG_ERROR,"Error : font not allocated -- line %d in %s", __LINE__,__FILE__);

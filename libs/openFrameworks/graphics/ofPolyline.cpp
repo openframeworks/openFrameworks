@@ -91,21 +91,7 @@ vector<ofPoint> & ofPolyline::getVertices(){
 	return points;
 }
 
-
 //----------------------------------------------------------
-float ofPolyline::getPerimeter() const {
-	float perimeter = 0;
-	int lastPosition = points.size() - 1;
-	for(int i = 0; i < lastPosition; i++) {
-		perimeter += points[i].distance(points[i + 1]);
-	}
-	if(bClosed && points.size() > 1) {
-		perimeter += points[points.size() - 1].distance(points[0]);
-	}
-	return perimeter;
-}
-
-
 void ofPolyline::setCircleResolution(int res){
 	if (res > 1 && res != (int)circlePoints.size()){
 		circlePoints.resize(res);
@@ -121,8 +107,7 @@ void ofPolyline::setCircleResolution(int res){
 	}
 }
 
-
-
+//----------------------------------------------------------
 void ofPolyline::bezierTo( const ofPoint & cp1, const ofPoint & cp2, const ofPoint & to, int curveResolution ){
 	// if, and only if poly vertices has points, we can make a bezier
 	// from the last point
@@ -167,6 +152,7 @@ void ofPolyline::bezierTo( const ofPoint & cp1, const ofPoint & cp2, const ofPoi
 	}
 }
 
+//----------------------------------------------------------
 void ofPolyline::quadBezierTo(float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3, int curveResolution){
 	curveVertices.clear();
 	for(int i=0; i <= curveResolution; i++){
@@ -181,6 +167,7 @@ void ofPolyline::quadBezierTo(float x1, float y1, float z1, float x2, float y2, 
 	}
 }
 
+//----------------------------------------------------------
 void ofPolyline::curveTo( const ofPoint & to, int curveResolution ){
 
 	curveVertices.push_back(to);
@@ -230,6 +217,7 @@ void ofPolyline::curveTo( const ofPoint & to, int curveResolution ){
 	}
 }
 
+//----------------------------------------------------------
 void ofPolyline::arc( const ofPoint & center, float radiusX, float radiusY, float angleBegin, float angleEnd, int curveResolution){
 	if(curveResolution==1) curveResolution=2;
 	curveVertices.clear();
@@ -259,6 +247,214 @@ void ofPolyline::arc( const ofPoint & center, float radiusX, float radiusY, floa
 		points.push_back(ofPoint(radiusX*circlePoints[0].x+center.x,radiusY*circlePoints[0].y+center.y,center.z));
 	}
 }
+
+
+//----------------------------------------------------------
+float ofPolyline::getPerimeter() const {
+	float perimeter = 0;
+	int lastPosition = points.size() - 1;
+	for(int i = 0; i < lastPosition; i++) {
+		perimeter += points[i].distance(points[i + 1]);
+	}
+	if(bClosed && points.size() > 1) {
+		perimeter += points[points.size() - 1].distance(points[0]);
+	}
+	return perimeter;
+}
+
+//----------------------------------------------------------
+ofRectangle ofPolyline::getBoundingBox(){
+	ofPolyline & polyline = *this;
+
+	ofRectangle box;
+	int n = polyline.size();
+	if(n > 0) {
+		const ofPoint& first = polyline[0];
+		// inititally, use width and height as max x and max y
+		box.set(first.x, first.y, first.x, first.y);
+		for(int i = 0; i < n; i++) {
+			const ofPoint& cur = polyline[i];
+			if(cur.x < box.x) {
+				box.x = cur.x;
+			}
+			if(cur.x > box.width) {
+				box.width = cur.x;
+			}
+			if(cur.y < box.y) {
+				box.y = cur.y;
+			}
+			if(cur.y > box.height) {
+				box.height = cur.y;
+			}
+		}
+		// later, we make width and height relative
+		box.width -= box.x;
+		box.height -= box.y;
+	}
+	return box;
+}
+
+//----------------------------------------------------------
+ofPolyline ofPolyline::getSmoothed(int smoothingSize, float smoothingShape) {
+	ofPolyline & polyline = *this;
+	ofPolyline result = polyline;
+	
+	if(!polyline.isClosed()) {
+		ofLog( OF_LOG_ERROR, "ofSmooth() currently only supports closed ofPolylines." );
+		return polyline;
+	}
+	
+	// precompute weights and normalization
+	vector<float> weights;
+	weights.resize(smoothingSize+1);
+	float weightSum = 0;
+	weights[0]=1; // center weight
+	// side weights
+	for(int i = 1; i <= smoothingSize; i++) {
+		float curWeight = ofMap(i, 0, smoothingSize, 1, smoothingShape);
+		weights[i]=curWeight;
+		weightSum += curWeight;
+	}
+	float weightNormalization = 1 / (1 + 2 * weightSum);
+	
+	// use weights to make weighted averages of neighbors
+	int n = polyline.size();
+	for(int i = 0; i < n; i++) {
+		for(int j = 1; j <= smoothingSize; j++) {
+			int leftPosition = (n + i - j) % n;
+			int rightPosition = (i + j) % n;
+			const ofPoint& left = polyline[leftPosition];
+			const ofPoint& right = polyline[rightPosition];
+			result[i] += (left + right) * weights[j];
+		}
+		result[i] *= weightNormalization;
+	}
+	
+	return result;
+}
+
+//----------------------------------------------------------
+ofPolyline ofPolyline::getResampledBySpacing(float spacing) {
+	ofPolyline & polyline = *this;
+	ofPolyline result;
+	// if more properties are added to ofPolyline, we need to copy them here
+	result.setClosed(polyline.isClosed());
+
+	float totalLength = 0;
+	int curStep = 0;
+	int lastPosition = polyline.size() - 1;
+	if(polyline.isClosed()) {
+		lastPosition++;
+	}
+	for(int i = 0; i < lastPosition; i++) {
+		bool repeatNext = i == (int) (polyline.size() - 1);
+	
+		const ofPoint& cur = polyline[i];
+		const ofPoint& next = repeatNext ? polyline[0] : polyline[i + 1];
+		ofPoint diff = next - cur;
+		
+		float curSegmentLength = diff.length();
+		totalLength += curSegmentLength;
+		
+		while(curStep * spacing <= totalLength) {
+			float curSample = curStep * spacing;
+			float curLength = curSample - (totalLength - curSegmentLength);
+			float relativeSample = curLength / curSegmentLength;
+			result.addVertex(cur.getInterpolated(next, relativeSample));
+			curStep++;
+		}
+	}
+	
+	return result;
+}
+
+//----------------------------------------------------------
+ofPolyline ofPolyline::getResampledByCount(int count) {
+	float perimeter = getPerimeter();
+	return ofPolyline::getResampledBySpacing(perimeter / count);
+}
+
+//----------------------------------------------------------
+// http://local.wasp.uwa.edu.au/~pbourke/geometry/pointline/
+static ofPoint getClosestPointUtil(const ofPoint& p1, const ofPoint& p2, const ofPoint& p3, float* normalizedPosition) {
+	// if p1 is coincident with p2, there is no line
+	if(p1 == p2) {
+		if(normalizedPosition != NULL) {
+			*normalizedPosition = 0;
+		}
+		return p1;
+	}
+	
+	float u = (p3.x - p1.x) * (p2.x - p1.x);
+	u += (p3.y - p1.y) * (p2.y - p1.y);
+	// perfect place for fast inverse sqrt...
+	float len = (p2 - p1).length();
+	u /= (len * len);
+	
+	// clamp u
+	if(u > 1) {
+		u = 1;
+	} else if(u < 0) {
+		u = 0;
+	}
+	if(normalizedPosition != NULL) {
+		*normalizedPosition = u;
+	}
+	return p1.getInterpolated(p2, u);
+}
+
+//----------------------------------------------------------
+// a much faster but less accurate version would check distances to vertices first,
+// which assumes vertices are evenly spaced
+ofPoint ofPolyline::getClosestPoint(const ofPoint& target, unsigned int* nearestIndex) {
+	ofPolyline & polyline = *this;
+
+	if(polyline.size() < 2) {
+		if(nearestIndex != NULL) {
+			nearestIndex = 0;
+		}
+		return target;
+	}
+	
+	float distance = 0;
+	ofPoint nearestPoint;
+	unsigned int nearest = 0;
+	float normalizedPosition = 0;
+	unsigned int lastPosition = polyline.size() - 1;
+	if(polyline.isClosed()) {
+		lastPosition++;
+	}
+	for(int i = 0; i < (int) lastPosition; i++) {
+		bool repeatNext = i == (int) (polyline.size() - 1);
+		
+		const ofPoint& cur = polyline[i];
+		const ofPoint& next = repeatNext ? polyline[0] : polyline[i + 1];
+		
+		float curNormalizedPosition = 0;
+		ofPoint curNearestPoint = getClosestPointUtil(cur, next, target, &curNormalizedPosition);
+		float curDistance = curNearestPoint.distance(target);
+		if(i == 0 || curDistance < distance) {
+			distance = curDistance;
+			nearest = i;
+			nearestPoint = curNearestPoint;
+			normalizedPosition = curNormalizedPosition;
+		}
+	}
+	
+	if(nearestIndex != NULL) {
+		if(normalizedPosition > .5) {
+			nearest++;
+			if(nearest == polyline.size()) {
+				nearest = 0;
+			}
+		}
+		*nearestIndex = nearest;
+	}
+	
+	return nearestPoint;
+}
+
+
 
 
 //This is for polygon/contour simplification - we use it to reduce the number of points needed in
@@ -378,5 +574,7 @@ void ofPolyline::simplify(float tol){
 }
 
 void ofPolyline::draw(){
-	ofGetDefaultRenderer()->draw(*this);
+	ofGetCurrentRenderer()->draw(*this);
 }
+
+
