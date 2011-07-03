@@ -431,7 +431,7 @@ void ofTrueTypeFont::loadFont(string filename, int fontsize, bool _bAntiAliased,
 		cps[sortedCopy[i].character].v2		= float(y + border)/float(h);
 		cps[sortedCopy[i].character].t1		= float(cps[sortedCopy[i].character].tW + x + border)/float(w);
 		cps[sortedCopy[i].character].v1		= float(cps[sortedCopy[i].character].tH + y + border)/float(h);
-		ofPixelUtils::pasteInto(charPixels,atlasPixels,x+border,y+border);
+		charPixels.pasteInto(atlasPixels,x+border,y+border);
 		x+= sortedCopy[i].tW + border*2;
 	}
 

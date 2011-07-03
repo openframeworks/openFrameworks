@@ -8,11 +8,6 @@ class testApp : public ofBaseApp{
 		void setup();
 		void update();
 		void draw();
-		
-		ofFloatImage img;
-		ofEasyCam easyCam;
-		ofVboMesh mesh;
-		ofLight light;
 
 		void keyPressed  (int key);
 		void keyReleased(int key);
@@ -23,5 +18,9 @@ class testApp : public ofBaseApp{
 		void windowResized(int w, int h);
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
-		
+
+		ofFloatImage img;
+		ofEasyCam easyCam;
+		ofVboMesh mesh;
+		ofLight light;		
 };
