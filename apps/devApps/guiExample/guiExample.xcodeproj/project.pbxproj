@@ -7,12 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		27BBBE5513BD09D600D68E0C /* tinyxml.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 27BBBE4E13BD09D600D68E0C /* tinyxml.cpp */; };
-		27BBBE5613BD09D600D68E0C /* tinyxmlerror.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 27BBBE5013BD09D600D68E0C /* tinyxmlerror.cpp */; };
-		27BBBE5713BD09D600D68E0C /* tinyxmlparser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 27BBBE5113BD09D600D68E0C /* tinyxmlparser.cpp */; };
-		27BBBE5813BD09D600D68E0C /* ofxXmlSettings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 27BBBE5313BD09D600D68E0C /* ofxXmlSettings.cpp */; };
 		BBAB23CB13894F3D00AA2426 /* GLUT.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = BBAB23BE13894E4700AA2426 /* GLUT.framework */; };
-		E4328149138ABC9F0047C5CB /* openFrameworks.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E4328148138ABC890047C5CB /* openFrameworks.a */; };
+		E41612D013BFE7AE0048CC1D /* tinyxml.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E41612C913BFE7AE0048CC1D /* tinyxml.cpp */; };
+		E41612D113BFE7AE0048CC1D /* tinyxmlerror.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E41612CB13BFE7AE0048CC1D /* tinyxmlerror.cpp */; };
+		E41612D213BFE7AE0048CC1D /* tinyxmlparser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E41612CC13BFE7AE0048CC1D /* tinyxmlparser.cpp */; };
+		E41612D313BFE7AE0048CC1D /* ofxXmlSettings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E41612CE13BFE7AE0048CC1D /* ofxXmlSettings.cpp */; };
+		E4328149138ABC9F0047C5CB /* openFrameworksDebug.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E4328148138ABC890047C5CB /* openFrameworksDebug.a */; };
 		E45BE97B0E8CC7DD009D7055 /* AGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E45BE9710E8CC7DD009D7055 /* AGL.framework */; };
 		E45BE97C0E8CC7DD009D7055 /* ApplicationServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E45BE9720E8CC7DD009D7055 /* ApplicationServices.framework */; };
 		E45BE97D0E8CC7DD009D7055 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E45BE9730E8CC7DD009D7055 /* AudioToolbox.framework */; };
@@ -65,14 +65,14 @@
 		27BBBCA113BCEE7400D68E0C /* ofPanel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofPanel.h; sourceTree = "<group>"; };
 		27BBBCA213BCEE9B00D68E0C /* ofSlider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofSlider.h; sourceTree = "<group>"; };
 		27BBBCA313BCEEBA00D68E0C /* ofToggle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofToggle.h; sourceTree = "<group>"; };
-		27BBBE4C13BD09D600D68E0C /* install.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = install.xml; path = ../../../../../../../Users/kyle/Documents/openFrameworks/addons/ofxXmlSettings/install.xml; sourceTree = SOURCE_ROOT; };
-		27BBBE4E13BD09D600D68E0C /* tinyxml.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = tinyxml.cpp; path = ../../../../../../../Users/kyle/Documents/openFrameworks/addons/ofxXmlSettings/libs/tinyxml.cpp; sourceTree = SOURCE_ROOT; };
-		27BBBE4F13BD09D600D68E0C /* tinyxml.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = tinyxml.h; path = ../../../../../../../Users/kyle/Documents/openFrameworks/addons/ofxXmlSettings/libs/tinyxml.h; sourceTree = SOURCE_ROOT; };
-		27BBBE5013BD09D600D68E0C /* tinyxmlerror.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = tinyxmlerror.cpp; path = ../../../../../../../Users/kyle/Documents/openFrameworks/addons/ofxXmlSettings/libs/tinyxmlerror.cpp; sourceTree = SOURCE_ROOT; };
-		27BBBE5113BD09D600D68E0C /* tinyxmlparser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = tinyxmlparser.cpp; path = ../../../../../../../Users/kyle/Documents/openFrameworks/addons/ofxXmlSettings/libs/tinyxmlparser.cpp; sourceTree = SOURCE_ROOT; };
-		27BBBE5313BD09D600D68E0C /* ofxXmlSettings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofxXmlSettings.cpp; path = ../../../../../../../Users/kyle/Documents/openFrameworks/addons/ofxXmlSettings/src/ofxXmlSettings.cpp; sourceTree = SOURCE_ROOT; };
-		27BBBE5413BD09D600D68E0C /* ofxXmlSettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxXmlSettings.h; path = ../../../../../../../Users/kyle/Documents/openFrameworks/addons/ofxXmlSettings/src/ofxXmlSettings.h; sourceTree = SOURCE_ROOT; };
 		BBAB23BE13894E4700AA2426 /* GLUT.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLUT.framework; path = ../../../libs/glut/lib/osx/GLUT.framework; sourceTree = "<group>"; };
+		E41612C713BFE7AE0048CC1D /* install.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = install.xml; sourceTree = "<group>"; };
+		E41612C913BFE7AE0048CC1D /* tinyxml.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tinyxml.cpp; sourceTree = "<group>"; };
+		E41612CA13BFE7AE0048CC1D /* tinyxml.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tinyxml.h; sourceTree = "<group>"; };
+		E41612CB13BFE7AE0048CC1D /* tinyxmlerror.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tinyxmlerror.cpp; sourceTree = "<group>"; };
+		E41612CC13BFE7AE0048CC1D /* tinyxmlparser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tinyxmlparser.cpp; sourceTree = "<group>"; };
+		E41612CE13BFE7AE0048CC1D /* ofxXmlSettings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxXmlSettings.cpp; sourceTree = "<group>"; };
+		E41612CF13BFE7AE0048CC1D /* ofxXmlSettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxXmlSettings.h; sourceTree = "<group>"; };
 		E4328143138ABC890047C5CB /* openFrameworksLib.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = openFrameworksLib.xcodeproj; path = ../../../libs/openFrameworksCompiled/project/osx/openFrameworksLib.xcodeproj; sourceTree = SOURCE_ROOT; };
 		E4400DB413BB82B000902934 /* ofGui.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofGui.h; sourceTree = "<group>"; };
 		E45BE9710E8CC7DD009D7055 /* AGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AGL.framework; path = /System/Library/Frameworks/AGL.framework; sourceTree = "<absolute>"; };
@@ -84,7 +84,7 @@
 		E45BE9770E8CC7DD009D7055 /* CoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreServices.framework; path = /System/Library/Frameworks/CoreServices.framework; sourceTree = "<absolute>"; };
 		E45BE9790E8CC7DD009D7055 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = /System/Library/Frameworks/OpenGL.framework; sourceTree = "<absolute>"; };
 		E45BE97A0E8CC7DD009D7055 /* QuickTime.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuickTime.framework; path = /System/Library/Frameworks/QuickTime.framework; sourceTree = "<absolute>"; };
-		E4B69B5B0A3A1756003C02F2 /* graphicsExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = graphicsExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		E4B69B5B0A3A1756003C02F2 /* graphicsExampleDebug.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = graphicsExampleDebug.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E4B69E1D0A3A1BDC003C02F2 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = main.cpp; path = src/main.cpp; sourceTree = SOURCE_ROOT; };
 		E4B69E1E0A3A1BDC003C02F2 /* testApp.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 30; name = testApp.cpp; path = src/testApp.cpp; sourceTree = SOURCE_ROOT; };
 		E4B69E1F0A3A1BDC003C02F2 /* testApp.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = testApp.h; path = src/testApp.h; sourceTree = SOURCE_ROOT; };
@@ -102,7 +102,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				E4EB6799138ADC1D00A09F29 /* GLUT.framework in Frameworks */,
-				E4328149138ABC9F0047C5CB /* openFrameworks.a in Frameworks */,
+				E4328149138ABC9F0047C5CB /* openFrameworksDebug.a in Frameworks */,
 				E45BE97B0E8CC7DD009D7055 /* AGL.framework in Frameworks */,
 				E45BE97C0E8CC7DD009D7055 /* ApplicationServices.framework in Frameworks */,
 				E45BE97D0E8CC7DD009D7055 /* AudioToolbox.framework in Frameworks */,
@@ -121,43 +121,10 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		27BBBE4B13BD09D600D68E0C /* ofxXmlSettings */ = {
-			isa = PBXGroup;
-			children = (
-				27BBBE4C13BD09D600D68E0C /* install.xml */,
-				27BBBE4D13BD09D600D68E0C /* libs */,
-				27BBBE5213BD09D600D68E0C /* src */,
-			);
-			name = ofxXmlSettings;
-			path = ../../../../../../../Users/kyle/Documents/openFrameworks/addons/ofxXmlSettings;
-			sourceTree = SOURCE_ROOT;
-		};
-		27BBBE4D13BD09D600D68E0C /* libs */ = {
-			isa = PBXGroup;
-			children = (
-				27BBBE4E13BD09D600D68E0C /* tinyxml.cpp */,
-				27BBBE4F13BD09D600D68E0C /* tinyxml.h */,
-				27BBBE5013BD09D600D68E0C /* tinyxmlerror.cpp */,
-				27BBBE5113BD09D600D68E0C /* tinyxmlparser.cpp */,
-			);
-			name = libs;
-			path = ../../../../../../../Users/kyle/Documents/openFrameworks/addons/ofxXmlSettings/libs;
-			sourceTree = SOURCE_ROOT;
-		};
-		27BBBE5213BD09D600D68E0C /* src */ = {
-			isa = PBXGroup;
-			children = (
-				27BBBE5313BD09D600D68E0C /* ofxXmlSettings.cpp */,
-				27BBBE5413BD09D600D68E0C /* ofxXmlSettings.h */,
-			);
-			name = src;
-			path = ../../../../../../../Users/kyle/Documents/openFrameworks/addons/ofxXmlSettings/src;
-			sourceTree = SOURCE_ROOT;
-		};
 		BB4B014C10F69532006C3DED /* addons */ = {
 			isa = PBXGroup;
 			children = (
-				27BBBE4B13BD09D600D68E0C /* ofxXmlSettings */,
+				E41612C613BFE7AE0048CC1D /* ofxXmlSettings */,
 			);
 			name = addons;
 			sourceTree = "<group>";
@@ -189,10 +156,41 @@
 			name = "3rd party frameworks";
 			sourceTree = "<group>";
 		};
+		E41612C613BFE7AE0048CC1D /* ofxXmlSettings */ = {
+			isa = PBXGroup;
+			children = (
+				E41612C713BFE7AE0048CC1D /* install.xml */,
+				E41612C813BFE7AE0048CC1D /* libs */,
+				E41612CD13BFE7AE0048CC1D /* src */,
+			);
+			name = ofxXmlSettings;
+			path = ../../../addons/ofxXmlSettings;
+			sourceTree = SOURCE_ROOT;
+		};
+		E41612C813BFE7AE0048CC1D /* libs */ = {
+			isa = PBXGroup;
+			children = (
+				E41612C913BFE7AE0048CC1D /* tinyxml.cpp */,
+				E41612CA13BFE7AE0048CC1D /* tinyxml.h */,
+				E41612CB13BFE7AE0048CC1D /* tinyxmlerror.cpp */,
+				E41612CC13BFE7AE0048CC1D /* tinyxmlparser.cpp */,
+			);
+			path = libs;
+			sourceTree = "<group>";
+		};
+		E41612CD13BFE7AE0048CC1D /* src */ = {
+			isa = PBXGroup;
+			children = (
+				E41612CE13BFE7AE0048CC1D /* ofxXmlSettings.cpp */,
+				E41612CF13BFE7AE0048CC1D /* ofxXmlSettings.h */,
+			);
+			path = src;
+			sourceTree = "<group>";
+		};
 		E4328144138ABC890047C5CB /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				E4328148138ABC890047C5CB /* openFrameworks.a */,
+				E4328148138ABC890047C5CB /* openFrameworksDebug.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -213,7 +211,7 @@
 				E4EEC9E9138DF44700A80321 /* openFrameworks */,
 				BB4B014C10F69532006C3DED /* addons */,
 				E45BE5980E8CC70C009D7055 /* frameworks */,
-				E4B69B5B0A3A1756003C02F2 /* graphicsExample.app */,
+				E4B69B5B0A3A1756003C02F2 /* graphicsExampleDebug.app */,
 			);
 			sourceTree = "<group>";
 		};
@@ -262,7 +260,7 @@
 			);
 			name = graphicsExample;
 			productName = myOFApp;
-			productReference = E4B69B5B0A3A1756003C02F2 /* graphicsExample.app */;
+			productReference = E4B69B5B0A3A1756003C02F2 /* graphicsExampleDebug.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -272,6 +270,7 @@
 			isa = PBXProject;
 			buildConfigurationList = E4B69B4D0A3A1720003C02F2 /* Build configuration list for PBXProject "guiExample" */;
 			compatibilityVersion = "Xcode 2.4";
+			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				English,
@@ -296,10 +295,10 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		E4328148138ABC890047C5CB /* openFrameworks.a */ = {
+		E4328148138ABC890047C5CB /* openFrameworksDebug.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = openFrameworks.a;
+			path = openFrameworksDebug.a;
 			remoteRef = E4328147138ABC890047C5CB /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
@@ -328,10 +327,10 @@
 			files = (
 				E4B69E200A3A1BDC003C02F2 /* main.cpp in Sources */,
 				E4B69E210A3A1BDC003C02F2 /* testApp.cpp in Sources */,
-				27BBBE5513BD09D600D68E0C /* tinyxml.cpp in Sources */,
-				27BBBE5613BD09D600D68E0C /* tinyxmlerror.cpp in Sources */,
-				27BBBE5713BD09D600D68E0C /* tinyxmlparser.cpp in Sources */,
-				27BBBE5813BD09D600D68E0C /* ofxXmlSettings.cpp in Sources */,
+				E41612D013BFE7AE0048CC1D /* tinyxml.cpp in Sources */,
+				E41612D113BFE7AE0048CC1D /* tinyxmlerror.cpp in Sources */,
+				E41612D213BFE7AE0048CC1D /* tinyxmlparser.cpp in Sources */,
+				E41612D313BFE7AE0048CC1D /* ofxXmlSettings.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
