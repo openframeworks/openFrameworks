@@ -13,8 +13,6 @@
 #include "ofGraphics.h"
 #include "ofPixelUtils.h"
 
-#define DEFAULT_DPI 96
-
 static bool printVectorInfo = false;
 
 //--------------------------------------------------------
@@ -205,12 +203,7 @@ void ofTrueTypeFont::reloadTextures(){
 }
 
 //-----------------------------------------------------------
-bool ofTrueTypeFont::loadFont(string filename, int fontsize, bool _bAntiAliased, bool _bFullCharacterSet, bool makeContours, float simplifyAmt) {
-	return loadFont(filename, fontsize, DEFAULT_DPI, _bAntiAliased, _bFullCharacterSet, makeContours, simplifyAmt);
-}
-
-//------------------------------------------------------------------
-bool ofTrueTypeFont::loadFont(string filename, int fontsize, int dpi, bool _bAntiAliased, bool _bFullCharacterSet, bool makeContours, float simplifyAmt){
+bool ofTrueTypeFont::loadFont(string filename, int fontsize, bool _bAntiAliased, bool _bFullCharacterSet, bool makeContours, float simplifyAmt, int dpi) {
 
 	bMakeContours = makeContours;
 

@@ -36,11 +36,8 @@ public:
 	ofTrueTypeFont();
 	virtual ~ofTrueTypeFont();
 			
-	// 			-- default (without dpi), non-full char set, anti aliased:
-	bool 		loadFont(string filename, int fontsize, bool _bAntiAliased=true, bool _bFullCharacterSet=false, bool makeContours=false, float simplifyAmt=0.3);
-	
-	//			-- default, non-full char set, anti aliased:
-	bool 		loadFont(string filename, int fontsize, int dpi, bool _bAntiAliased=true, bool _bFullCharacterSet=false, bool makeContours=false, float simplifyAmt=0.3);
+	// 			-- default (without dpi), non-full char set, anti aliased, 96 dpi:
+	bool 		loadFont(string filename, int fontsize, bool _bAntiAliased=true, bool _bFullCharacterSet=false, bool makeContours=false, float simplifyAmt=0.3, int dpi=96);
 	
 	bool		isLoaded();
 	bool		isAntiAliased();
