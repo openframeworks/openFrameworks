@@ -15,6 +15,7 @@ public:
 		currentFrame = 0;			
 		bGuiActive = false;
 		bVal = _bVal;
+		checkboxRect.set(1, 1, b.height - 2, b.height - 2);
 		return this;
 	}
 	
@@ -33,10 +34,12 @@ public:
 	}	
 	
 	virtual void saveToXml(ofxXmlSettings& xml) {
+		cout << "warning we need to check for spaces in a name" << endl;	
 		xml.addValue(name, bVal);
 	}
 	
 	virtual void loadFromXml(ofxXmlSettings& xml) {
+		cout << "warning we need to check for spaces in a name" << endl;		
 		bVal = xml.getValue(name, bVal);
 	}
 	
@@ -54,9 +57,7 @@ public:
 		ofRect(b);
 		
 		ofTranslate(b.x, b.y);
-		
-		ofRectangle checkboxRect(1, 1, b.height - 2, b.height - 2);
-		
+				
 		ofFill();
 		ofSetColor(fillColor);
 		ofRect(checkboxRect);
@@ -81,18 +82,25 @@ public:
 	}
 	
 protected:
+	ofRectangle checkboxRect;
 	bool bVal;
 	
 	void setValue(float mx, float my, bool bCheck){
+	
 		if( ofGetFrameNum() - currentFrame > 1 ){
 			bGuiActive = false;
 			return; 
 		}
 		if( bCheck ){
-			if( b.inside(mx, my) ){
+			ofRectangle checkRect = checkboxRect;
+			checkRect.x += b.x;
+			checkRect.y += b.y;
+		
+			if( checkRect.inside(mx, my) ){
 				bGuiActive = true;
 			}else{
 				bGuiActive = false;
+				
 			}
 		}
 		if( bGuiActive ){

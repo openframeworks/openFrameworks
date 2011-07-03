@@ -3,7 +3,6 @@
 #include "ofTypes.h"
 #include "ofURLFileLoader.h"
 #include "ofGraphics.h"
-#include "ofPixelUtils.h"
 #include "FreeImage.h"
 
 #ifdef TARGET_ANDROID
@@ -846,7 +845,7 @@ void ofImage_<PixelType>::resize(int newWidth, int newHeight){
 //------------------------------------
 template<typename PixelType>
 void ofImage_<PixelType>::crop(int x, int y, int w, int h){
-	ofPixelUtils::crop(pixels, x,y,w,h);
+	pixels.crop(x,y,w,h);
 	update();
 }
 
@@ -857,7 +856,7 @@ void ofImage_<PixelType>::cropFrom(ofImage_<PixelType> & otherImage, int x, int 
 	int myOldWidth = pixels.getWidth();
 	int myOldHeight = pixels.getHeight();
 
-	ofPixelUtils::cropFromTo(otherImage.pixels,pixels, x,y,w,h);
+	otherImage.pixels.cropTo(pixels, x, y, w, h);
 
 	if (myOldWidth != pixels.getWidth() || myOldHeight != pixels.getHeight()){
 		if (bUseTexture == true){
@@ -874,7 +873,7 @@ template<typename PixelType>
 void ofImage_<PixelType>::rotate90(int nRotations){
 	int myOldWidth = pixels.getWidth();
 	int myOldHeight = pixels.getHeight();
-	ofPixelUtils::rotate90(pixels, nRotations);
+	pixels.rotate90(nRotations);
 	if (myOldWidth != pixels.getWidth() || myOldHeight != pixels.getHeight()){
 		if (bUseTexture == true){
 			tex.clear();
@@ -887,7 +886,7 @@ void ofImage_<PixelType>::rotate90(int nRotations){
 //------------------------------------
 template<typename PixelType>
 void ofImage_<PixelType>::mirror(bool vertical, bool horizontal){
-	ofPixelUtils::mirror(pixels, vertical, horizontal);
+	pixels.mirror(vertical, horizontal);
 	update();
 }
 
