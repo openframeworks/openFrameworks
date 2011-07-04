@@ -964,45 +964,30 @@ void ofTexture::draw(float x, float y, float z){
 
 //----------------------------------------------------------
 void ofTexture::readToPixels(ofPixels & pixels){
-#ifndef TARGET_OPENGLES 
+#ifndef TARGET_OPENGLES
 	pixels.allocate(texData.width,texData.height,ofGetImageTypeFromGLType(texData.glType));
 	bind();
-	glGetTexImage(
-			texData.textureTarget,
-	 0,
-	 texData.glType,
-	 GL_UNSIGNED_BYTE,
-	 pixels.getPixels());
+	glGetTexImage(texData.textureTarget,0,texData.glType,GL_UNSIGNED_BYTE, pixels.getPixels());
 	unbind();
 #endif
 }
 
 //----------------------------------------------------------
 void ofTexture::readToPixels(ofShortPixels & pixels){
-#ifndef TARGET_OPENGLES 	
+#ifndef TARGET_OPENGLES
 	pixels.allocate(texData.width,texData.height,ofGetImageTypeFromGLType(texData.glType));
 	bind();
-	glGetTexImage(
-			texData.textureTarget,
-	 0,
-	 texData.glType,
-	 GL_UNSIGNED_SHORT,
-	 pixels.getPixels());
+	glGetTexImage(texData.textureTarget,0,texData.glType,GL_UNSIGNED_SHORT,pixels.getPixels());
 	unbind();
 #endif
 }
 
 //----------------------------------------------------------
 void ofTexture::readToPixels(ofFloatPixels & pixels){
-#ifndef TARGET_OPENGLES 
+#ifndef TARGET_OPENGLES
 	pixels.allocate(texData.width,texData.height,ofGetImageTypeFromGLType(texData.glType));
 	bind();
-	glGetTexImage(
-			texData.textureTarget,
-	 0,
-	 texData.glType,
-	 GL_FLOAT,
-	 pixels.getPixels());
+	glGetTexImage(texData.textureTarget,0,texData.glType,GL_FLOAT,pixels.getPixels());
 	unbind();
 #endif
 }
