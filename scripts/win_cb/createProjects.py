@@ -144,6 +144,22 @@ def createCBP(project_path):
     cbp_file = open(os.path.join(project_path,project_name+'.cbp'),mode='w')
     cbp_file.write(etree.tostring(cbp, xml_declaration=True, encoding='UTF-8', pretty_print=True))
     cbp_file.close()
+    
+def createWorkspace(project_path):
+    if os.path.abspath(project_path) == os.path.abspath(templates_path):
+        return
+    project_name = os.path.basename(project_path)
+    ws = objectify.parse(os.path.join(project_path,project_name+'.workspace'))
+    root = ws.getroot()
+    workspace = root.Workspace
+    
+    for project in workspace.Project:
+        if project.get("filename")=="emptyExample.cbp":
+            project.set("filename",project_name+".cbp")
+
+    ws_file = open(os.path.join(project_path,project_name+'.workspace'),mode='w')
+    ws_file.write(etree.tostring(ws, xml_declaration=True, encoding='UTF-8', pretty_print=True))
+    ws_file.close()
 
 def createProject(project_path):
     print 'generating',project_path
@@ -180,6 +196,7 @@ def createProject(project_path):
         os.mkdir(os.path.join(project_path , 'bin','data'))
 
     createCBP(project_path)
+    createWorkspace(project_path)
 
 
 
