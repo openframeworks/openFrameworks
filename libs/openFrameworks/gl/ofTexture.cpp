@@ -86,10 +86,12 @@ string ofGetGlInternalFormatName(int glInternalFormat) {
 void ofGetGlFormatAndType(int glInternalFormat, int& glFormat, int& glType) {
 	switch(glInternalFormat) {
 		// common 8-bit formats: rgba, rgb, grayscale
+#ifndef TARGET_ANDROID
 		case GL_BGRA:
 			glFormat = GL_BGRA;
 			glType = GL_UNSIGNED_BYTE;
 			break;
+#endif
 			
 		case GL_RGBA:
 #ifndef TARGET_OPENGLES
@@ -216,6 +218,7 @@ ofImageType ofGetImageTypeFromGLType(int glType){
 	case GL_RGBA:
 		return OF_IMAGE_COLOR_ALPHA;
 	}
+	return OF_IMAGE_UNDEFINED;
 }
 
 //---------------------------------
