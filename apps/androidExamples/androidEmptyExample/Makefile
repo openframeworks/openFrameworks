@@ -345,6 +345,7 @@ $(OBJ_OUTPUT)%.o: $(USER_SOURCE_DIR)/%.cpp
 	
 $(TARGET): $(OBJS) $(ADDONS_OBJS) $(USER_OBJS) $(TARGET_LIBS) $(LIB_STATIC)
 	@echo 'linking $(TARGET) with $(SED_EXCLUDE_LIBS)'
+	mkdir -p $(@D)
 	$(CXX) -o $@ $(OBJS) $(ADDONS_OBJS) $(USER_OBJS) $(LDFLAGS) $(USER_LDFLAGS) $(TARGET_LIBS) $(ADDONSLIBS) $(USER_LIBS) $(LIB_STATIC) $(LIB_PATHS_FLAGS) $(LIB_SHARED) $(SYSTEMLIBS)
 
 -include $(DEPFILES)
@@ -364,7 +365,7 @@ CleanAndroid:
 
 afterDebugAndroid:$(TARGET)
 	if [ -d libs/armeabi-v7a ]; then rm -r libs/armeabi-v7a; fi
-	mkdir libs/armeabi
+	
 	
 	#create gdb.setup for armeabi
 	echo "set solib-search-path $(PWD)/obj/local/armeabi:$(PWD)/libs/armeabi" > libs/armeabi/gdb.setup
@@ -376,12 +377,10 @@ afterDebugAndroid:$(TARGET)
 	
 	echo "APP_ABI := armeabi" > jni/Application.mk
 	
-	cp $(OF_ROOT)/libs/openFrameworksCompiled/project/android/libneondetection.so libs/armeabi/
 	cp $(NDK_ROOT)/toolchains/arm-linux-androideabi-4.4.3/prebuilt/gdbserver libs/armeabi
 
 afterReleaseAndroid:$(TARGET)
 	if [ -f obj/$(BIN_NAME) ]; then rm obj/$(BIN_NAME); fi
-	mkdir libs/armeabi-v7a
 	
 	cp $(OF_ROOT)/libs/openFrameworksCompiled/project/android/libneondetection.so libs/armeabi-v7a/
 	cp $(NDK_ROOT)/toolchains/arm-linux-androideabi-4.4.3/prebuilt/gdbserver libs/armeabi-v7a
