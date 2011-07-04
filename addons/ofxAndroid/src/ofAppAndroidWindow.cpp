@@ -153,7 +153,10 @@ void ofAppAndroidWindow::setOrientation(ofOrientation _orientation){
 		ofLog(OF_LOG_ERROR,"cannot find OFAndroid setScreenOrientation method");
 		return;
 	}
-	ofGetJNIEnv()->CallStaticObjectMethod(javaClass,setScreenOrientation,orientation);
+	if(orientation==OF_ORIENTATION_UNKNOWN)
+		ofGetJNIEnv()->CallStaticObjectMethod(javaClass,setScreenOrientation,OF_ORIENTATION_UNKNOWN);
+	else
+		ofGetJNIEnv()->CallStaticObjectMethod(javaClass,setScreenOrientation,ofOrientationToDegrees(orientation));
 }
 
 ofOrientation ofAppAndroidWindow::getOrientation(){

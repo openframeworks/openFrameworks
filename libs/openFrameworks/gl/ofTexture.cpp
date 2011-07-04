@@ -86,10 +86,12 @@ string ofGetGlInternalFormatName(int glInternalFormat) {
 void ofGetGlFormatAndType(int glInternalFormat, int& glFormat, int& glType) {
 	switch(glInternalFormat) {
 		// common 8-bit formats: rgba, rgb, grayscale
+#ifndef TARGET_ANDROID
 		case GL_BGRA:
 			glFormat = GL_BGRA;
 			glType = GL_UNSIGNED_BYTE;
 			break;
+#endif
 			
 		case GL_RGBA:
 #ifndef TARGET_OPENGLES
@@ -216,6 +218,7 @@ ofImageType ofGetImageTypeFromGLType(int glType){
 	case GL_RGBA:
 		return OF_IMAGE_COLOR_ALPHA;
 	}
+	return OF_IMAGE_UNDEFINED;
 }
 
 //---------------------------------
@@ -286,6 +289,11 @@ ofTexture& ofTexture::operator=(const ofTexture & mom){
 
 //----------------------------------------------------------
 bool ofTexture::bAllocated(){
+	return texData.bAllocated;
+}
+
+//----------------------------------------------------------
+bool ofTexture::isAllocated(){
 	return texData.bAllocated;
 }
 
@@ -956,45 +964,30 @@ void ofTexture::draw(float x, float y, float z){
 
 //----------------------------------------------------------
 void ofTexture::readToPixels(ofPixels & pixels){
-#ifndef TARGET_OPENGLES 
+#ifndef TARGET_OPENGLES
 	pixels.allocate(texData.width,texData.height,ofGetImageTypeFromGLType(texData.glType));
 	bind();
-	glGetTexImage(
-			texData.textureTarget,
-	 0,
-	 texData.glType,
-	 GL_UNSIGNED_BYTE,
-	 pixels.getPixels());
+	glGetTexImage(texData.textureTarget,0,texData.glType,GL_UNSIGNED_BYTE, pixels.getPixels());
 	unbind();
 #endif
 }
 
 //----------------------------------------------------------
 void ofTexture::readToPixels(ofShortPixels & pixels){
-#ifndef TARGET_OPENGLES 	
+#ifndef TARGET_OPENGLES
 	pixels.allocate(texData.width,texData.height,ofGetImageTypeFromGLType(texData.glType));
 	bind();
-	glGetTexImage(
-			texData.textureTarget,
-	 0,
-	 texData.glType,
-	 GL_UNSIGNED_SHORT,
-	 pixels.getPixels());
+	glGetTexImage(texData.textureTarget,0,texData.glType,GL_UNSIGNED_SHORT,pixels.getPixels());
 	unbind();
 #endif
 }
 
 //----------------------------------------------------------
 void ofTexture::readToPixels(ofFloatPixels & pixels){
-#ifndef TARGET_OPENGLES 
+#ifndef TARGET_OPENGLES
 	pixels.allocate(texData.width,texData.height,ofGetImageTypeFromGLType(texData.glType));
 	bind();
-	glGetTexImage(
-			texData.textureTarget,
-	 0,
-	 texData.glType,
-	 GL_FLOAT,
-	 pixels.getPixels());
+	glGetTexImage(texData.textureTarget,0,texData.glType,GL_FLOAT,pixels.getPixels());
 	unbind();
 #endif
 }

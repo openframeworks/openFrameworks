@@ -5,13 +5,13 @@
 #include <assert.h>
 
 //--------------------------------------------------------------
-static inline ofColor aiColorToOfColor(const aiColor4D& c){
-	return ofColor(255*c.r,255*c.g,255*c.b,255*c.a);
+static inline ofFloatColor aiColorToOfColor(const aiColor4D& c){
+	return ofFloatColor(c.r,c.g,c.b,c.a);
 }
 
 //--------------------------------------------------------------
-static inline ofColor aiColorToOfColor(const aiColor3D& c){
-	return ofColor(255*c.r,255*c.g,255*c.b,255);
+static inline ofFloatColor aiColorToOfColor(const aiColor3D& c){
+	return ofFloatColor(c.r,c.g,c.b,1);
 }
 
 //--------------------------------------------------------------
@@ -813,7 +813,7 @@ void ofxAssimpModelLoader::draw(ofPolyRenderMode renderType)
 			ofxAssimpMeshHelper & meshHelper = modelMeshes.at(i);
 
 			// Texture Binding
-			if(bUsingTextures && meshHelper.texture.bAllocated()){
+			if(bUsingTextures && meshHelper.texture.isAllocated()){
 				meshHelper.texture.bind();
 			}
 

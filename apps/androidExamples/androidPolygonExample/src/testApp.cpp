@@ -1,7 +1,8 @@
 #include "testApp.h"
 
 //--------------------------------------------------------------
-void testApp::setup(){	
+void testApp::setup(){
+
 	// register touch events
 	ofRegisterTouchEvents(this);
 	
