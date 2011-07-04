@@ -345,6 +345,7 @@ $(OBJ_OUTPUT)%.o: $(USER_SOURCE_DIR)/%.cpp
 	
 $(TARGET): $(OBJS) $(ADDONS_OBJS) $(USER_OBJS) $(TARGET_LIBS) $(LIB_STATIC)
 	@echo 'linking $(TARGET) with $(SED_EXCLUDE_LIBS)'
+	mkdir -p $(@D)
 	$(CXX) -o $@ $(OBJS) $(ADDONS_OBJS) $(USER_OBJS) $(LDFLAGS) $(USER_LDFLAGS) $(TARGET_LIBS) $(ADDONSLIBS) $(USER_LIBS) $(LIB_STATIC) $(LIB_PATHS_FLAGS) $(LIB_SHARED) $(SYSTEMLIBS)
 
 -include $(DEPFILES)
@@ -363,12 +364,39 @@ CleanAndroid:
 
 
 afterDebugAndroid:$(TARGET)
-	if [ -f libs/armeabi-v7a/libOFAndroidApp.so ]; then rm libs/armeabi-v7a/libOFAndroidApp.so; fi
-	#touch AndroidManifest.xml
+	@if [ -d libs/armeabi-v7a ]; then rm -r libs/armeabi-v7a; fi
+	
+	@cp $(NDK_ROOT)/toolchains/arm-linux-androideabi-4.4.3/prebuilt/gdbserver libs/armeabi
+	
+	#create gdb.setup for armeabi
+	@echo "set solib-search-path $(PWD)/obj/local/armeabi:$(PWD)/libs/armeabi" > libs/armeabi/gdb.setup
+	@echo "directory $(NDK_ROOT)/platforms/$(NDK_PLATFORM)/arch-arm/usr/include" >> libs/armeabi/gdb.setup
+	@echo "directory $(PWD)/src" >> libs/armeabi/gdb.setup
+	@echo "directory $(NDK_ROOT)/sources/cxx-stl/system" >> libs/armeabi/gdb.setup
+	@echo "directory $(PWD)/libs/armeabi" >> libs/armeabi/gdb.setup 
+	@echo "" >> libs/armeabi/gdb.setup 
+	
+	@if [ ! -d jni ]; then mkdir jni; fi
+	@echo "APP_ABI := armeabi" > jni/Application.mk
+	@echo "#LOCAL_MODULE := OFAndroidApp" > jni/Android.mk
 
 afterReleaseAndroid:$(TARGET)
-	if [ -f obj/$(BIN_NAME) ]; then rm obj/$(BIN_NAME); fi
-	#touch AndroidManifest.xml
+	@if [ -f obj/$(BIN_NAME) ]; then rm obj/$(BIN_NAME); fi
+	
+	@cp $(OF_ROOT)/libs/openFrameworksCompiled/project/android/libneondetection.so libs/armeabi-v7a/
+	@cp $(NDK_ROOT)/toolchains/arm-linux-androideabi-4.4.3/prebuilt/gdbserver libs/armeabi-v7a
+	
+	#create gdb.setup for armeabi-v7a
+	@echo "set solib-search-path $(PWD)/obj/local/armeabi-v7a:$(PWD)/libs/armeabi-v7a" > libs/armeabi-v7a/gdb.setup
+	@echo "directory $(NDK_ROOT)/platforms/$(NDK_PLATFORM)/arch-arm/usr/include" >> libs/armeabi-v7a/gdb.setup
+	@echo "directory $(PWD)/src" >> libs/armeabi-v7a/gdb.setup
+	@echo "directory $(NDK_ROOT)/sources/cxx-stl/system" >> libs/armeabi-v7a/gdb.setup
+	@echo "directory $(PWD)/libs/armeabi-v7a" >> libs/armeabi-v7a/gdb.setup 
+	@echo "" >> libs/armeabi-v7a/gdb.setup 
+	
+	@if [ ! -d jni ]; then mkdir jni; fi
+	@echo "APP_ABI := armeabi armeabi-v7a" > jni/Application.mk
+	@echo "#LOCAL_MODULE := OFAndroidApp" > jni/Android.mk
 
 RESNAME=$(shell echo $(APPNAME)Resources | tr '[A-Z]' '[a-z]')
 

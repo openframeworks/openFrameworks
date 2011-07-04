@@ -662,6 +662,7 @@ bool ofPixels_<PixelType>::resizeTo(ofPixels_<PixelType>& dst, ofInterpolationMe
 		case OF_INTERPOLATE_BILINEAR:
 			// not implemented yet
 			ofLogError(" Bilinear resize not implemented ");
+			break;
 
 			//----------------------------------------
 		case OF_INTERPOLATE_BICUBIC:

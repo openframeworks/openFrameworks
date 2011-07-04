@@ -9,7 +9,7 @@
 
 
 int main(){
-
+	ofSleepMillis(5000);
 #ifdef TARGET_ANDROID
 	ofAppAndroidWindow *window = new ofAppAndroidWindow;
 #else
