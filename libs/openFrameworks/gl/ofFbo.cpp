@@ -553,15 +553,39 @@ ofTexture& ofFbo::getTexture(int attachmentPoint) {
 
 
 void ofFbo::readToPixels(ofPixels & pixels, int attachmentPoint){
+#ifndef TARGET_OPENGLES
 	getTexture(attachmentPoint).readToPixels(pixels);
+#else
+	bind();
+	int format,type;
+	ofGetGlFormatAndType(settings.internalformat,format,type);
+	glReadPixels(0,0,settings.width, settings.height, format, GL_UNSIGNED_BYTE, pixels.getPixels());
+	unbind();
+#endif
 }
 
 void ofFbo::readToPixels(ofShortPixels & pixels, int attachmentPoint){
+#ifndef TARGET_OPENGLES
 	getTexture(attachmentPoint).readToPixels(pixels);
+#else
+	bind();
+	int format,type;
+	ofGetGlFormatAndType(settings.internalformat,format,type);
+	glReadPixels(0,0,settings.width, settings.height, format, GL_UNSIGNED_SHORT, pixels.getPixels());
+	unbind();
+#endif
 }
 
 void ofFbo::readToPixels(ofFloatPixels & pixels, int attachmentPoint){
+#ifndef TARGET_OPENGLES
 	getTexture(attachmentPoint).readToPixels(pixels);
+#else
+	bind();
+	int format,type;
+	ofGetGlFormatAndType(settings.internalformat,format,type);
+	glReadPixels(0,0,settings.width, settings.height, format, GL_FLOAT, pixels.getPixels());
+	unbind();
+#endif
 }
 
 void ofFbo::updateTexture(int attachmentPoint) {
