@@ -266,6 +266,22 @@ int ofGetViewportHeight(){
 }
 
 //----------------------------------------------------------
+int ofOrientationToDegrees(ofOrientation orientation){
+	switch(orientation){
+	case OF_ORIENTATION_DEFAULT:
+		return 0;
+	case OF_ORIENTATION_180:
+		return 180;
+	case OF_ORIENTATION_90_RIGHT:
+		return 270;
+	case OF_ORIENTATION_90_LEFT:
+		return 90;
+	default:
+		return 0;
+	}
+}
+
+//----------------------------------------------------------
 void ofSetCoordHandedness(ofHandednessType handedness) {
 	renderer->setCoordHandedness(handedness);
 }
