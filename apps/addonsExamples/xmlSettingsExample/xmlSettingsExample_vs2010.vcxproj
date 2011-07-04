@@ -115,72 +115,17 @@ if not exist "$(ProjectDir)\bin\data" mkdir  "$(ProjectDir)\bin\data"
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\addons\ofxAssimpModelLoader\src\ofxAssimpModelLoader.cpp" />
-    <ClCompile Include="..\..\..\addons\ofxOpenCv\src\ofxCvHaarFinder.cpp" />
-    <ClCompile Include="..\..\..\addons\ofxThreadedImageLoader\src\ofxThreadedImageLoader.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\testApp.cpp" />
     <ClCompile Include="..\..\..\addons\ofxXmlSettings\src\ofxXmlSettings.cpp" />
     <ClCompile Include="..\..\..\addons\ofxXmlSettings\libs\tinyxml.cpp" />
     <ClCompile Include="..\..\..\addons\ofxXmlSettings\libs\tinyxmlerror.cpp" />
     <ClCompile Include="..\..\..\addons\ofxXmlSettings\libs\tinyxmlparser.cpp" />
-    <ClCompile Include="..\..\..\addons\ofxNetwork\src\ofxTCPClient.cpp" />
-    <ClCompile Include="..\..\..\addons\ofxNetwork\src\ofxTCPManager.cpp" />
-    <ClCompile Include="..\..\..\addons\ofxNetwork\src\ofxTCPServer.cpp" />
-    <ClCompile Include="..\..\..\addons\ofxNetwork\src\ofxUDPManager.cpp" />
-    <ClCompile Include="..\..\..\addons\ofxOsc\src\ofxOscBundle.cpp" />
-    <ClCompile Include="..\..\..\addons\ofxOsc\src\ofxOscMessage.cpp" />
-    <ClCompile Include="..\..\..\addons\ofxOsc\src\ofxOscReceiver.cpp" />
-    <ClCompile Include="..\..\..\addons\ofxOsc\src\ofxOscSender.cpp" />
-    <ClCompile Include="..\..\..\addons\ofxOpenCv\src\ofxCvColorImage.cpp" />
-    <ClCompile Include="..\..\..\addons\ofxOpenCv\src\ofxCvContourFinder.cpp" />
-    <ClCompile Include="..\..\..\addons\ofxOpenCv\src\ofxCvFloatImage.cpp" />
-    <ClCompile Include="..\..\..\addons\ofxOpenCv\src\ofxCvGrayscaleImage.cpp" />
-    <ClCompile Include="..\..\..\addons\ofxOpenCv\src\ofxCvImage.cpp" />
-    <ClCompile Include="..\..\..\addons\ofxOpenCv\src\ofxCvShortImage.cpp" />
-    <ClCompile Include="..\..\..\addons\ofxVectorGraphics\src\ofxVectorGraphics.cpp" />
-    <ClCompile Include="..\..\..\addons\ofxVectorGraphics\libs\CreEPS.cpp" />
-    <ClCompile Include="..\..\..\addons\ofx3DModelLoader\src\ofx3dModelLoader.cpp" />
-    <ClCompile Include="..\..\..\addons\ofx3DModelLoader\src\3DS\model3DS.cpp" />
-    <ClCompile Include="..\..\..\addons\ofx3DModelLoader\src\3DS\texture3DS.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\addons\ofxAssimpModelLoader\src\ofx3DBaseLoader.h" />
-    <ClInclude Include="..\..\..\addons\ofxAssimpModelLoader\src\ofxAssimpMeshHelper.h" />
-    <ClInclude Include="..\..\..\addons\ofxAssimpModelLoader\src\ofxAssimpModelLoader.h" />
-    <ClInclude Include="..\..\..\addons\ofxOpenCv\src\ofxCvHaarFinder.h" />
-    <ClInclude Include="..\..\..\addons\ofxThreadedImageLoader\src\ofxThreadedImageLoader.h" />
     <ClInclude Include="src\testApp.h" />
     <ClInclude Include="..\..\..\addons\ofxXmlSettings\src\ofxXmlSettings.h" />
     <ClInclude Include="..\..\..\addons\ofxXmlSettings\libs\tinyxml.h" />
-    <ClInclude Include="..\..\..\addons\ofxNetwork\src\ofxNetwork.h" />
-    <ClInclude Include="..\..\..\addons\ofxNetwork\src\ofxTCPClient.h" />
-    <ClInclude Include="..\..\..\addons\ofxNetwork\src\ofxTCPManager.h" />
-    <ClInclude Include="..\..\..\addons\ofxNetwork\src\ofxTCPServer.h" />
-    <ClInclude Include="..\..\..\addons\ofxNetwork\src\ofxUDPManager.h" />
-    <ClInclude Include="..\..\..\addons\ofxOsc\src\ofxOsc.h" />
-    <ClInclude Include="..\..\..\addons\ofxOsc\src\ofxOscArg.h" />
-    <ClInclude Include="..\..\..\addons\ofxOsc\src\ofxOscBundle.h" />
-    <ClInclude Include="..\..\..\addons\ofxOsc\src\ofxOscMessage.h" />
-    <ClInclude Include="..\..\..\addons\ofxOsc\src\ofxOscReceiver.h" />
-    <ClInclude Include="..\..\..\addons\ofxOsc\src\ofxOscSender.h" />
-    <ClInclude Include="..\..\..\addons\ofxOpenCv\src\ofxCvBlob.h" />
-    <ClInclude Include="..\..\..\addons\ofxOpenCv\src\ofxCvColorImage.h" />
-    <ClInclude Include="..\..\..\addons\ofxOpenCv\src\ofxCvConstants.h" />
-    <ClInclude Include="..\..\..\addons\ofxOpenCv\src\ofxCvContourFinder.h" />
-    <ClInclude Include="..\..\..\addons\ofxOpenCv\src\ofxCvFloatImage.h" />
-    <ClInclude Include="..\..\..\addons\ofxOpenCv\src\ofxCvGrayscaleImage.h" />
-    <ClInclude Include="..\..\..\addons\ofxOpenCv\src\ofxCvImage.h" />
-    <ClInclude Include="..\..\..\addons\ofxOpenCv\src\ofxCvMain.h" />
-    <ClInclude Include="..\..\..\addons\ofxOpenCv\src\ofxCvShortImage.h" />
-    <ClInclude Include="..\..\..\addons\ofxOpenCv\src\ofxOpenCv.h" />
-    <ClInclude Include="..\..\..\addons\ofxVectorGraphics\src\ofxVectorGraphics.h" />
-    <ClInclude Include="..\..\..\addons\ofxVectorGraphics\libs\CreEPS.hpp" />
-    <ClInclude Include="..\..\..\addons\ofx3DModelLoader\src\ofx3DBaseLoader.h" />
-    <ClInclude Include="..\..\..\addons\ofx3DModelLoader\src\ofx3DModelLoader.h" />
-    <ClInclude Include="..\..\..\addons\ofx3DModelLoader\src\3DS\model3DS.h" />
-    <ClInclude Include="..\..\..\addons\ofx3DModelLoader\src\3DS\texture3DS.h" />
-    <ClInclude Include="..\..\..\addons\ofx3DModelLoader\src\3DS\Vector3DS.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\libs\openFrameworksCompiled\project\vs2010\openframeworksLib.vcxproj">
