@@ -1,3 +1,5 @@
-set solib-search-path /home/arturo/workspace/ofxAndroid/bin/ndk/local/armeabi
-directory /home/arturo/Descargas/android-ndk-r3-crystax/build/platforms/android-5/arch-arm/usr/include
-directory /home/arturo/workspace/ofxAndroid/jni
+set solib-search-path /home/arturo/Desktop/openFrameworks/apps/androidExamples/androidPolygonExample/obj/local/armeabi-v7a:/home/arturo/Desktop/openFrameworks/apps/androidExamples/androidPolygonExample/libs/armeabi-v7a
+directory /home/arturo/Downloads/android-ndk-r5c/platforms/android-8/arch-arm/usr/include
+directory /home/arturo/Desktop/openFrameworks/apps/androidExamples/androidPolygonExample/src
+directory /home/arturo/Downloads/android-ndk-r5c/sources/cxx-stl/system
+directory /home/arturo/Desktop/openFrameworks/apps/androidExamples/androidPolygonExample/libs/armeabi-v7a

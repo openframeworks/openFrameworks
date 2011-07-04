@@ -132,7 +132,7 @@ ifeq ($(ARCH),android)
 else
 	LDFLAGS = -Wl,-rpath=./libs
 	SYSTEMLIBS += $(shell pkg-config  glew gstreamer-0.10 gstreamer-video-0.10 gstreamer-base-0.10 gstreamer-app-0.10 libudev --libs)
-	SYSTEMLIBS += -lglut -lGL -lGLU -lasound -lopenal -lsndfile -lvorbis -lFLAC -logg -lfreeimage
+	SYSTEMLIBS += -lglut -lGL -lasound -lopenal -lsndfile -lvorbis -lFLAC -logg -lfreeimage
 endif
 
 
@@ -364,7 +364,20 @@ CleanAndroid:
 
 afterDebugAndroid:$(TARGET)
 	if [ -f libs/armeabi-v7a/libOFAndroidApp.so ]; then rm libs/armeabi-v7a/libOFAndroidApp.so; fi
-	#touch AndroidManifest.xml
+	
+	#create gdb.setup for armeabi
+	echo "set solib-search-path $(PWD)/obj/local/armeabi:$(PWD)/libs/armeabi" > libs/armeabi/gdb.setup
+	echo "directory $(NDK_ROOT)/platforms/$(NDK_PLATFORM)/arch-arm/usr/include" >> libs/armeabi/gdb.setup
+	echo "directory $(PWD)/src" >> libs/armeabi/gdb.setup
+	echo "directory $(NDK_ROOT)/sources/cxx-stl/system" >> libs/armeabi/gdb.setup
+	echo "directory $(PWD)/libs/armeabi" >> libs/armeabi/gdb.setup 
+	
+	#create gdb.setup for armeabi-v7a
+	echo "set solib-search-path $(PWD)/obj/local/armeabi-v7a:$(PWD)/libs/armeabi-v7a" > libs/armeabi-v7a/gdb.setup
+	echo "directory $(NDK_ROOT)/platforms/$(NDK_PLATFORM)/arch-arm/usr/include" >> libs/armeabi-v7a/gdb.setup
+	echo "directory $(PWD)/src" >> libs/armeabi-v7a/gdb.setup
+	echo "directory $(NDK_ROOT)/sources/cxx-stl/system" >> libs/armeabi-v7a/gdb.setup
+	echo "directory $(PWD)/libs/armeabi-v7a" >> libs/armeabi-v7a/gdb.setup 
 
 afterReleaseAndroid:$(TARGET)
 	if [ -f obj/$(BIN_NAME) ]; then rm obj/$(BIN_NAME); fi
