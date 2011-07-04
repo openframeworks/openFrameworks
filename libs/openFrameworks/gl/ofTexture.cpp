@@ -292,6 +292,11 @@ bool ofTexture::bAllocated(){
 	return texData.bAllocated;
 }
 
+//----------------------------------------------------------
+bool ofTexture::isAllocated(){
+	return texData.bAllocated;
+}
+
 
 //----------------------------------------------------------
 ofTextureData ofTexture::getTextureData(){
