@@ -1,5 +1,0 @@
-set solib-search-path /home/arturo/Desktop/openFrameworks/apps/androidExamples/androidPolygonExample/obj/local/armeabi:/home/arturo/Desktop/openFrameworks/apps/androidExamples/androidPolygonExample/libs/armeabi
-directory /home/arturo/Downloads/android-ndk-r5c/platforms/android-8/arch-arm/usr/include
-directory /home/arturo/Desktop/openFrameworks/apps/androidExamples/androidPolygonExample/src
-directory /home/arturo/Downloads/android-ndk-r5c/sources/cxx-stl/system
-directory /home/arturo/Desktop/openFrameworks/apps/androidExamples/androidPolygonExample/libs/armeabi
