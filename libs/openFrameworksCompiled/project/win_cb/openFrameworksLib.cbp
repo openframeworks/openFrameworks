@@ -285,10 +285,22 @@
 		<Unit filename="..\..\..\openFrameworks\sound\ofBaseSoundPlayer.h">
 			<Option virtualFolder="openframeworks\sound\" />
 		</Unit>
+		<Unit filename="..\..\..\openFrameworks\sound\ofBaseSoundStream.cpp">
+			<Option virtualFolder="openframeworks\sound\" />
+		</Unit>
+		<Unit filename="..\..\..\openFrameworks\sound\ofBaseSoundStream.h">
+			<Option virtualFolder="openframeworks\sound\" />
+		</Unit>
 		<Unit filename="..\..\..\openFrameworks\sound\ofFmodSoundPlayer.cpp">
 			<Option virtualFolder="openframeworks\sound\" />
 		</Unit>
 		<Unit filename="..\..\..\openFrameworks\sound\ofFmodSoundPlayer.h">
+			<Option virtualFolder="openframeworks\sound\" />
+		</Unit>
+		<Unit filename="..\..\..\openFrameworks\sound\ofRtAudioSoundStream.cpp">
+			<Option virtualFolder="openframeworks\sound\" />
+		</Unit>
+		<Unit filename="..\..\..\openFrameworks\sound\ofRtAudioSoundStream.h">
 			<Option virtualFolder="openframeworks\sound\" />
 		</Unit>
 		<Unit filename="..\..\..\openFrameworks\sound\ofSoundPlayer.cpp">
