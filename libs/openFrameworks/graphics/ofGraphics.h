@@ -63,6 +63,7 @@ void ofSetupScreenOrtho(float width = 0, float height = 0, ofOrientation orienta
 ofRectangle ofGetCurrentViewport();
 int ofGetViewportWidth();
 int ofGetViewportHeight();
+int ofOrientationToDegrees(ofOrientation orientation);
 
 void ofSetCoordHandedness(ofHandednessType handedness);
 ofHandednessType ofGetCoordHandedness();

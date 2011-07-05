@@ -16,4 +16,6 @@ int do_extract(
     int opt_overwrite,
     const char* password);
 
+int do_compress(int argc,char * argv[]);
+
 #endif /* MINIUNZ_H_ */
