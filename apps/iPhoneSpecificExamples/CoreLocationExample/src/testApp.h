@@ -25,6 +25,11 @@ public:
 	
 	ofxiPhoneCoreLocation * coreLocation;
 	
+	float heading;
+	
 	bool hasCompass;
 	bool hasGPS;
+	
+	ofImage arrowImg;
+	ofImage compassImg;
 };
