@@ -78,8 +78,9 @@ def addAddon(project,addon):
     if fullCBP:
         if not os.path.exists(os.path.join(of_root,'addons',addon,'libs')):
             return
-            
-        dirpath = os.path.join(of_root,'addons',addon,'libs')
+ 
+        basefolder = os.path.join('addons',addon,'libs');
+        dirpath = os.path.join(of_root,basefolder)
         addCBPIncludePath(project,os.path.join('..','..','..',basefolder))
         for root, dirs, files in os.walk(dirpath):
             for dir in dirs:
