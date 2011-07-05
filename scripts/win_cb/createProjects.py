@@ -33,12 +33,12 @@ def addCBPLibrary(project,libpath):
         etree.SubElement(project,"Linker")
     if project.Linker.find('Add') != None:
         for lib in project.Linker.Add:
-            if str(lib.get("library"))==str(libpath):
+            if str(lib.get("option"))==str(libpath):
                 found=True
                 break
     if not found:
         include = etree.SubElement(project.Linker,"Add")
-        include.set("library",libpath)
+        include.set("option",libpath)
         
 def addCBPUnit(project,filepath,basefolder):
     found=False
@@ -105,7 +105,7 @@ def addAddon(project,addon):
                     for lib in glob.glob(os.path.join(of_root,basefolder,'lib',arch,'*.a')):
                         baselib = lib[len(of_root):]
                         addCBPLibrary(project,os.path.join('..','..','..',baselib))
-                    for lib in glob.glob(os.path.join(of_root,basefolder,'lib',arch,'*.so')):
+                    for lib in glob.glob(os.path.join(of_root,basefolder,'lib',arch,'*.dll')):
                         baselib = lib[len(of_root):]
                         addCBPLibrary(project,os.path.join('..','..','..',baselib))
                         
