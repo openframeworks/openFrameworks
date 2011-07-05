@@ -90,6 +90,14 @@ def addAddon(project,addon):
                         basefolder_addon = root[len(of_root):]
                         dirpath_addon = os.path.join('..','..','..',basefolder_addon,dir)
                         addCBPIncludePath(project,dirpath_addon)
+                        
+            dirpath = os.path.join(of_root,basefolder)
+            addCBPIncludePath(project,os.path.join('..','..','..',basefolder))
+            for root, dirs, files in os.walk(dirpath):
+                for dir in dirs:
+                    basefolder_addon = root[len(of_root):]
+                    dirpath_addon = os.path.join('..','..','..',basefolder_addon,dir)
+                    addCBPIncludePath(project,dirpath_addon)
             
             basefolder = os.path.join('addons',addon,'libs',libdir);
             if os.path.exists(os.path.join(of_root,basefolder,'lib',arch)):
