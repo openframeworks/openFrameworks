@@ -124,6 +124,7 @@ class ofTexture : public ofBaseDraws {
 	void setCompression(ofTexCompression compression);
 
 	bool bAllocated();
+	bool isAllocated();
 
 	ofTextureData getTextureData();
 

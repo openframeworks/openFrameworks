@@ -66,11 +66,14 @@
 			<Add directory="..\..\..\libs\openFrameworks\video" />
 			<Add directory="..\..\..\libs\poco\include" />
 			<Add directory="..\..\..\libs\tess2\include" />
+			<Add directory="..\..\..\libs\cairo\include\cairo" />
 		</Compiler>
 		<Linker>
 			<Add option="../../../libs/FreeImage/lib/win_cb/FreeImage.lib" />
 			<Add option="../../../libs/rtAudio/lib/win_cb/librtaudio.a" />
 			<Add option="../../../libs/quicktime/lib/win_cb/qtmlClient.lib" />
+			<Add option="../../../libs/cairo/lib/win_cb/libcairo.a" />
+			<Add option="../../../libs/cairo/lib/win_cb/libpixman-1.a" />
 			<Add option="../../../libs/freetype/lib/win_cb/libfreetype.a" />
 			<Add option="../../../libs/glut/lib/win_cb/libglut.a" />
 			<Add option="../../../libs/videoInput/lib/win_cb/videoInputLib.a" />
@@ -83,6 +86,8 @@
 			<Add option="../../../libs/poco/lib/win_cb/libPocoFoundationmt.a" />
 			<Add option="../../../libs/tess2/lib/win_cb/libtess2.a" />
 			<Add option="-lopengl32" />
+			<Add option="-lgdi32" />
+			<Add option="-lmsimg32" />
 			<Add option="-lglu32" />
 			<Add option="-ldsound" />
 			<Add option="-lwinmm" />

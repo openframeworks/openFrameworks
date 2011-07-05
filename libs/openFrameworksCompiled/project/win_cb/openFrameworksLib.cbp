@@ -207,22 +207,10 @@
 		<Unit filename="..\..\..\openFrameworks\graphics\ofPath.h">
 			<Option virtualFolder="openframeworks\graphics\" />
 		</Unit>
-		<Unit filename="..\..\..\openFrameworks\graphics\ofPixelUtils.cpp">
-			<Option virtualFolder="openframeworks\graphics\" />
-		</Unit>
-		<Unit filename="..\..\..\openFrameworks\graphics\ofPixelUtils.h">
-			<Option virtualFolder="openframeworks\graphics\" />
-		</Unit>
 		<Unit filename="..\..\..\openFrameworks\graphics\ofPixels.cpp">
 			<Option virtualFolder="openframeworks\graphics\" />
 		</Unit>
 		<Unit filename="..\..\..\openFrameworks\graphics\ofPixels.h">
-			<Option virtualFolder="openframeworks\graphics\" />
-		</Unit>
-		<Unit filename="..\..\..\openFrameworks\graphics\ofPolyUtils.cpp">
-			<Option virtualFolder="openframeworks\graphics\" />
-		</Unit>
-		<Unit filename="..\..\..\openFrameworks\graphics\ofPolyUtils.h">
 			<Option virtualFolder="openframeworks\graphics\" />
 		</Unit>
 		<Unit filename="..\..\..\openFrameworks\graphics\ofPolyline.cpp">
