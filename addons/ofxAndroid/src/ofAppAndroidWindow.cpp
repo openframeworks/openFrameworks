@@ -154,7 +154,7 @@ void ofAppAndroidWindow::setOrientation(ofOrientation _orientation){
 		return;
 	}
 	if(orientation==OF_ORIENTATION_UNKNOWN)
-		ofGetJNIEnv()->CallStaticObjectMethod(javaClass,setScreenOrientation,OF_ORIENTATION_UNKNOWN);
+		ofGetJNIEnv()->CallStaticObjectMethod(javaClass,setScreenOrientation,-1);
 	else
 		ofGetJNIEnv()->CallStaticObjectMethod(javaClass,setScreenOrientation,ofOrientationToDegrees(orientation));
 }
