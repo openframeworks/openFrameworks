@@ -78,7 +78,8 @@ def addAddon(project,addon):
     if fullCBP:
         if not os.path.exists(os.path.join(of_root,'addons',addon,'libs')):
             return
- 
+        
+        # add search path for libs in case theres source in it
         basefolder = os.path.join('addons',addon,'libs');
         dirpath = os.path.join(of_root,basefolder)
         addCBPIncludePath(project,os.path.join('..','..','..',basefolder))
@@ -87,6 +88,15 @@ def addAddon(project,addon):
                 basefolder_addon = root[len(of_root):]
                 dirpath_addon = os.path.join('..','..','..',basefolder_addon,dir)
                 addCBPIncludePath(project,dirpath_addon)
+        
+        # add source in libs
+        for root, dirs, files in os.walk(dirpath):
+            for name in files:
+                basename, extension = os.path.splitext(name)
+                if extension=='.c' or extension=='.cc' or extension=='.cpp' or extension=='.h':
+                    basefolder = root[len(of_root):]
+                    filepath = str(os.path.join('..','..','..',basefolder,name))
+                    addCBPUnit(project,filepath,basefolder)
                 
         for libdir in os.listdir(os.path.join(of_root,'addons',addon,'libs')):
             if not os.path.isdir(os.path.join(of_root,'addons',addon,'libs',libdir)):
