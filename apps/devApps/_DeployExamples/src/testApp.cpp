@@ -718,12 +718,12 @@ void testApp::setup(){
 			addAddonsFromInstallXML( appsPath + "../addons/ofx3DModelLoader/", folderPath, xcodePath);
 		}
 
-		if( folderName ==  "ofxAssimpExample"){
+		if( folderName ==  "assimpExample"){
 			convertProjectToXML(xcodePath);
 			addAddonsFromInstallXML( appsPath + "../addons/ofxAssimpModelLoader/", folderPath, xcodePath);
 		}
 
-		if( folderName ==  "ofxSynthExample" || folderName ==  "ofxSynthSequencingExample" ){
+		if( folderName ==  "synthExample" || folderName ==  "synthSequencingExample" ){
 			convertProjectToXML(xcodePath);
 			addAddonsFromInstallXML( appsPath + "../addons/ofxSynth/", folderPath, xcodePath);
 		}
@@ -738,7 +738,7 @@ void testApp::setup(){
 			addAddonsFromInstallXML( appsPath + "../addons/ofxThreadedImageLoader/", folderPath, xcodePath);
 		}
 
-		if( folderName == "ofxCvHaarFinderExample" || folderName == "opencvExample" ){
+		if( folderName == "opencvHaarFinderExample" || folderName == "opencvExample" ){
 			convertProjectToXML(xcodePath);
 			addAddonsFromInstallXML( appsPath + "../addons/ofxOpenCv/", folderPath, xcodePath);
 		}

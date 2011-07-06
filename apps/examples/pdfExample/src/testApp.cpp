@@ -15,6 +15,8 @@ void testApp::setup(){
 	dropZoneRects.assign(3, ofRectangle());
 	images.assign(3, ofImage());
 	
+	images[0].loadImage("http://www.openframeworks.cc/storage/logos/DSC09316.jpg");
+	
 	for(int k = 0; k < dropZoneRects.size(); k++){
 		dropZoneRects[k] = ofRectangle(32 + k * 310, 200, 300, 200);
 	}
@@ -74,7 +76,7 @@ void testApp::draw(){
 			float tw = 300;
 			float th = 200;
 			
-			if( th > tw ){
+			if( images[j].getWidth() / images[j].getHeight() < tw / th ){
 				tw = th * ( images[j].getWidth() / images[j].getHeight() );
 			}else{
 				th = tw * ( images[j].getHeight() / images[j].getWidth() );			
