@@ -101,6 +101,12 @@ public:
 	bool haveTexCoordsChanged();
 	bool haveIndicesChanged();
 	
+	bool hasVertices();
+	bool hasColors();
+	bool hasNormals();
+	bool hasTexCoords();
+	bool hasIndices();
+
 	friend std::ostream& operator<<(std::ostream& os, ofMesh& data);
 	
 	void drawVertices();
