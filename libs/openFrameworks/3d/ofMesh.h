@@ -79,10 +79,10 @@ public:
 	ofVec2f* getTexCoordsPointer();
 	ofIndexType* getIndexPointer();
 	
-	const float* getVerticesPointer() const;
-	const float* getColorsPointer() const;
-	const float* getNormalsPointer() const;
-	const float* getTexCoordsPointer() const;
+	const ofVec3f* getVerticesPointer() const;
+	const ofFloatColor* getColorsPointer() const;
+	const ofVec3f* getNormalsPointer() const;
+	const ofVec2f* getTexCoordsPointer() const;
 	const ofIndexType* getIndexPointer() const;
 
 	vector<ofVec3f> & getVertices();
