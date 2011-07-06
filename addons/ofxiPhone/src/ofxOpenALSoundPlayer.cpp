@@ -66,7 +66,7 @@ ofxOpenALSoundPlayer::~ofxOpenALSoundPlayer() {
 	{
 		if(soundPlayers[i] == this)
 		{
-			delete soundPlayers[i];
+			soundPlayers.erase(soundPlayers.begin()+i);
 			break;
 		}
 	}

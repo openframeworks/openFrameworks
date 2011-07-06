@@ -19,6 +19,15 @@ class testApp : public ofBaseApp{
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
 		
+		vector <ofImage> frames;
+		ofVideoGrabber grabber; 
+		
+		vector <ofRectangle> dropZoneRects;
+		vector <ofImage> images;
+		vector <ofPoint> boxTrail;
+		
+		ofTrueTypeFont font;
+		
 		bool						oneShot;
 		bool						pdfRendering;
 

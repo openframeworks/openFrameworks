@@ -3,7 +3,7 @@
 //--------------------------------------------------------------
 void testApp::setup(){
 
-	ofBackground(255,255,255);
+	ofBackground(34, 34, 34);
 
 	// 2 output channels,
 	// 0 input channels
@@ -18,8 +18,9 @@ void testApp::setup(){
 	phaseAdderTarget 	= 0.0f;
 	volume				= 0.1f;
 	bNoise 				= false;
-	lAudio = new float[bufferSize];
-	rAudio = new float[bufferSize];
+
+	lAudio.assign(bufferSize, 0.0);
+	rAudio.assign(bufferSize, 0.0);
 	
 	//soundStream.listDevices();
 	
@@ -27,7 +28,7 @@ void testApp::setup(){
 	//soundStream.setDeviceID(1); 	//note some devices are input only and some are output only 
 
 	soundStream.setup(this, 2, 0, sampleRate, bufferSize, 4);
-	
+
 	ofSetFrameRate(60);
 }
 
@@ -40,41 +41,79 @@ void testApp::update(){
 //--------------------------------------------------------------
 void testApp::draw(){
 
+	ofSetColor(225);
+	ofDrawBitmapString("AUDIO OUTPUT EXAMPLE", 32, 32);
+	ofDrawBitmapString("press 's' to unpause the audio\npress 'e' to pause the audio", 31, 92);
+	
+	ofNoFill();
+	
+	// draw the left channel:
+	ofPushStyle();
+		ofPushMatrix();
+		ofTranslate(32, 150, 0);
+			
+		ofSetColor(225);
+		ofDrawBitmapString("Left Channel", 4, 18);
+		
+		ofSetLineWidth(1);	
+		ofRect(0, 0, 900, 200);
 
-	// draw the left:
-	ofSetHexColor(0x333333);
-	ofRect(100,100,256,200);
-	ofSetHexColor(0xFFFFFF);
-	for (int i = 0; i < 256; i++){
-		ofLine(100+i,200,100+i,200+lAudio[i]*100.0f);
+		ofSetColor(245, 58, 135);
+		ofSetLineWidth(3);
+					
+			ofBeginShape();
+			for (int i = 0; i < lAudio.size(); i++){
+				float x =  ofMap(i, 0, lAudio.size(), 0, 900, true);
+				ofVertex(x, 100 -lAudio[i]*180.0f);
+			}
+			ofEndShape(false);
+			
+		ofPopMatrix();
+	ofPopStyle();
+
+	// draw the right channel:
+	ofPushStyle();
+		ofPushMatrix();
+		ofTranslate(32, 350, 0);
+			
+		ofSetColor(225);
+		ofDrawBitmapString("Right Channel", 4, 18);
+		
+		ofSetLineWidth(1);	
+		ofRect(0, 0, 900, 200);
+
+		ofSetColor(245, 58, 135);
+		ofSetLineWidth(3);
+					
+			ofBeginShape();
+			for (int i = 0; i < rAudio.size(); i++){
+				float x =  ofMap(i, 0, rAudio.size(), 0, 900, true);
+				ofVertex(x, 100 -rAudio[i]*180.0f);
+			}
+			ofEndShape(false);
+			
+		ofPopMatrix();
+	ofPopStyle();
+	
+		
+	ofSetColor(225);
+	string reportString = "volume: ("+ofToString(volume, 2)+") modify with -/+ keys\npan: ("+ofToString(pan, 2)+") modify with mouse x\nsynthesis: ";
+	if( !bNoise ){
+		reportString += "sine wave (" + ofToString(targetFrequency, 2) + "hz) modify with mouse y";
+	}else{
+		reportString += "noise";	
 	}
-
-	// draw the right:
-	ofSetHexColor(0x333333);
-	ofRect(600,100,256,200);
-	ofSetHexColor(0xFFFFFF);
-	for (int i = 0; i < 256; i++){
-		ofLine(600+i,200,600+i,200+rAudio[i]*100.0f);
-	}
-
-	ofSetHexColor(0x333333);
-	char reportString[255];
-	sprintf(reportString, "volume: (%f) modify with -/+ keys\npan: (%f)\nsynthesis: %s", volume, pan, bNoise ? "noise" : "sine wave");
-	if (!bNoise) sprintf(reportString, "%s (%fhz)", reportString, targetFrequency);
-
-	ofDrawBitmapString(reportString,80,380);
-	ofDrawBitmapString("press 's' to unpause the audio 'e' to pause the audio", 80, 450);
-	ofDrawBitmapString("ticks: " + ofToString(soundStream.getTickCount()), 80, 480);
+	ofDrawBitmapString(reportString, 32, 579);
 
 }
 
 
 //--------------------------------------------------------------
 void testApp::keyPressed  (int key){
-	if (key == '-'){
+	if (key == '-' || key == '_' ){
 		volume -= 0.05;
 		volume = MAX(volume, 0);
-	} else if (key == '+'){
+	} else if (key == '+' || key == '=' ){
 		volume += 0.05;
 		volume = MIN(volume, 1);
 	}
@@ -125,6 +164,7 @@ void testApp::mouseReleased(int x, int y, int button){
 void testApp::windowResized(int w, int h){
 
 }
+
 //--------------------------------------------------------------
 void testApp::audioOut(float * output, int bufferSize, int nChannels){
 	//pan = 0.5f;
@@ -140,8 +180,8 @@ void testApp::audioOut(float * output, int bufferSize, int nChannels){
 	if ( bNoise == true){
 		// ---------------------- noise --------------
 		for (int i = 0; i < bufferSize; i++){
-			lAudio[i] = output[i*nChannels    ] = ofRandomf() * volume * leftScale;
-			rAudio[i] = output[i*nChannels + 1] = ofRandomf() * volume * rightScale;
+			lAudio[i] = output[i*nChannels    ] = ofRandom(0, 1) * volume * leftScale;
+			rAudio[i] = output[i*nChannels + 1] = ofRandom(0, 1) * volume * rightScale;
 		}
 	} else {
 		phaseAdder = 0.95f * phaseAdder + 0.05f * phaseAdderTarget;
