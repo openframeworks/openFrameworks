@@ -141,7 +141,8 @@ bool ofxAssimpModelLoader::loadModel(string modelName, bool optimize){
 
 
     // Load our new path.
-    filepath = ofToDataPath(modelName);
+    filepath = modelName;
+    string filepath = ofToDataPath(modelName);
 
 	//theo added - so we can have models and their textures in sub folders
 	modelFolder = ofFilePath::getEnclosingDirectory(filepath);
@@ -304,24 +305,16 @@ void ofxAssimpModelLoader::loadGLResources(){
 
         // TODO: handle other aiTextureTypes
         if(AI_SUCCESS == mtl->GetTexture(aiTextureType_DIFFUSE, texIndex, &texPath)){
-            // This is magic. Thanks Kyle.
-
             ofLog(OF_LOG_VERBOSE, "loading image from %s", texPath.data);
-            string modelFolder = ofFilePath::getEnclosingDirectory(filepath);
-
-			if(ofFilePath::isAbsolute(texPath.data) && ofFile::doesFileExist(texPath.data)) {
-				if(!ofLoadImage(meshHelper.texture,texPath.data)){
-					ofLog(OF_LOG_ERROR,string("error loading image ") + texPath.data);
-				}
+            string modelFolder = ofFilePath::getEnclosingDirectory(filepath,false);
+            string relTexPath = ofFilePath::getEnclosingDirectory(texPath.data,false);
+            string texFile = ofFilePath::getFilename(texPath.data);
+            string realPath = modelFolder + relTexPath  + texFile;
+			if(!ofFile::doesFileExist(realPath) || !ofLoadImage(meshHelper.texture,realPath)) {
+                ofLog(OF_LOG_ERROR,string("error loading image ") + filepath + " " +realPath);
+			}else{
+                ofLog(OF_LOG_VERBOSE, "texture width: %f height %f", meshHelper.texture.getWidth(), meshHelper.texture.getHeight());
 			}
-			else {
-				if(!ofLoadImage(meshHelper.texture,modelFolder + texPath.data)){
-					ofLog(OF_LOG_ERROR,"error loading image " + modelFolder + texPath.data);
-				}
-			}
-
-            ofLog(OF_LOG_VERBOSE, "texture width: %f height %f", meshHelper.texture.getWidth(), meshHelper.texture.getHeight());
-
         }
 
         aiColor4D dcolor, scolor, acolor, ecolor;
