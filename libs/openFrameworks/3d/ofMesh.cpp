@@ -86,6 +86,32 @@ bool ofMesh::haveIndicesChanged(){
 	}
 }
 
+
+//--------------------------------------------------------------
+bool ofMesh::hasVertices(){
+	return !vertices.empty();
+}
+
+//--------------------------------------------------------------
+bool ofMesh::hasColors(){
+	return !colors.empty();
+}
+
+//--------------------------------------------------------------
+bool ofMesh::hasNormals(){
+	return !normals.empty();
+}
+
+//--------------------------------------------------------------
+bool ofMesh::hasTexCoords(){
+	return !texCoords.empty();
+}
+
+//--------------------------------------------------------------
+bool ofMesh::hasIndices(){
+	return !indices.empty();
+}
+
 //ADDERS
 
 //--------------------------------------------------------------
