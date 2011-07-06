@@ -207,22 +207,10 @@
 		<Unit filename="..\..\..\openFrameworks\graphics\ofPath.h">
 			<Option virtualFolder="openframeworks\graphics\" />
 		</Unit>
-		<Unit filename="..\..\..\openFrameworks\graphics\ofPixelUtils.cpp">
-			<Option virtualFolder="openframeworks\graphics\" />
-		</Unit>
-		<Unit filename="..\..\..\openFrameworks\graphics\ofPixelUtils.h">
-			<Option virtualFolder="openframeworks\graphics\" />
-		</Unit>
 		<Unit filename="..\..\..\openFrameworks\graphics\ofPixels.cpp">
 			<Option virtualFolder="openframeworks\graphics\" />
 		</Unit>
 		<Unit filename="..\..\..\openFrameworks\graphics\ofPixels.h">
-			<Option virtualFolder="openframeworks\graphics\" />
-		</Unit>
-		<Unit filename="..\..\..\openFrameworks\graphics\ofPolyUtils.cpp">
-			<Option virtualFolder="openframeworks\graphics\" />
-		</Unit>
-		<Unit filename="..\..\..\openFrameworks\graphics\ofPolyUtils.h">
 			<Option virtualFolder="openframeworks\graphics\" />
 		</Unit>
 		<Unit filename="..\..\..\openFrameworks\graphics\ofPolyline.cpp">
@@ -297,10 +285,22 @@
 		<Unit filename="..\..\..\openFrameworks\sound\ofBaseSoundPlayer.h">
 			<Option virtualFolder="openframeworks\sound\" />
 		</Unit>
+		<Unit filename="..\..\..\openFrameworks\sound\ofBaseSoundStream.cpp">
+			<Option virtualFolder="openframeworks\sound\" />
+		</Unit>
+		<Unit filename="..\..\..\openFrameworks\sound\ofBaseSoundStream.h">
+			<Option virtualFolder="openframeworks\sound\" />
+		</Unit>
 		<Unit filename="..\..\..\openFrameworks\sound\ofFmodSoundPlayer.cpp">
 			<Option virtualFolder="openframeworks\sound\" />
 		</Unit>
 		<Unit filename="..\..\..\openFrameworks\sound\ofFmodSoundPlayer.h">
+			<Option virtualFolder="openframeworks\sound\" />
+		</Unit>
+		<Unit filename="..\..\..\openFrameworks\sound\ofRtAudioSoundStream.cpp">
+			<Option virtualFolder="openframeworks\sound\" />
+		</Unit>
+		<Unit filename="..\..\..\openFrameworks\sound\ofRtAudioSoundStream.h">
 			<Option virtualFolder="openframeworks\sound\" />
 		</Unit>
 		<Unit filename="..\..\..\openFrameworks\sound\ofSoundPlayer.cpp">

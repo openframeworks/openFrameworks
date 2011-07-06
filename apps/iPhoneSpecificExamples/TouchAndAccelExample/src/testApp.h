@@ -5,8 +5,6 @@
 #include "ofxiPhoneExtras.h"
 #include "Ball.h"
 
-#define NUM_POINTS				10
-
 class testApp : public ofxiPhoneApp {
 	
 public:
@@ -26,5 +24,9 @@ public:
 	void gotMemoryWarning();
 	void deviceOrientationChanged(int newOrientation);
 	
-	Ball balls[NUM_POINTS];
+	void gotMessage(ofMessage msg);
+	
+	ofImage arrow;
+	
+	vector <Ball> balls;
 };
