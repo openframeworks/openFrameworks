@@ -1,0 +1,109 @@
+////////////////////////////////////////////////////////////////////////////////
+//
+// openFrameworks wizard for Codeblocks on Linux
+// Created By: Pierre Proske pierre@digitalstar.net
+// www.digitalstar.net
+//
+////////////////////////////////////////////////////////////////////////////////
+
+g_selected_addons <- ::wxArrayString();
+g_of_project_dir <- _T("");
+g_of_project_name <- _T("");
+g_of_path_default <- _T("");
+g_full_proj_path <- _T("");
+g_addons_string <- _T("");
+
+function BeginWizard() 
+{                        
+    local of_path_descr = _T("Please select the location of your openFrameworks application directory on your computer.\n" +
+                              "This is the folder where your new app will be created.\n");
+                        
+    Wizard.AddPage(_T("ofProjectName"));
+    Wizard.AddGenericSelectPathPage(_T("OpenFrameworksPath"), of_path_descr, _T("Please select your application directory:"), g_of_path_default);
+	Wizard.AddPage(_T("ofAddons"));
+
+    return true;
+
+}
+
+function OnLeave_ofAddons(forward) {
+	local of_addons_selection = Wizard.GetListboxStringSelections(_T("ofAddonsList"));
+	g_selected_addons = GetArrayFromString(of_addons_selection, _T(";"), false);
+	return true;
+}
+
+function OnLeave_OpenFrameworksPath(bForward)
+{
+    if (bForward)
+    {
+        local dir         = Wizard.GetTextControlValue(_T("txtFolder")); // txtFolder is the text control in GenericSelectPathPage
+        local dir_nomacro = VerifyDirectory(dir);
+
+        if (dir_nomacro.IsEmpty())
+            return false;
+        else {
+			g_of_project_dir = dir_nomacro;
+		}
+
+    }
+    return true;
+}
+
+
+function OnLeave_ofProjectName(bForward)
+{
+	if (bForward) {
+		 g_of_project_name = Wizard.GetTextControlValue(_T("ofProjName"));
+	}
+	return true;
+}
+
+function SetupCustom()
+{
+	local proj = g_of_project_dir + _T("\\") + g_of_project_name + _T("\\") + g_of_project_name + _T(".cbp");	
+	local projdir = g_of_project_dir + _T("\\");
+	
+	// create project
+	g_full_proj_path = g_of_project_dir + _T("\\") + g_of_project_name + _T("\\");
+	local batch_proj_path = g_of_project_dir + _T("\\") + g_of_project_name;
+	local commands_string = g_of_project_dir + _T("\\..\\..\\scripts\\win_cb\\createProjects.py ") + batch_proj_path; 
+	
+	// add Addons		
+	local addon_count = g_selected_addons.GetCount();
+
+	for(local i = 0; i < addon_count; i++) 
+	{
+		local addon_name = g_selected_addons.Item(i);
+		g_addons_string = g_addons_string + addon_name + _T("\n");		
+	}
+
+	// create addons.make file		
+	IO.CreateDirectory(g_full_proj_path,0755);
+	IO.WriteFileContents(g_full_proj_path +_T("\\addons.make"), g_addons_string);
+	local batch_string = g_of_project_dir + _T("\\..\\..\\scripts\\win_cb");
+	IO.WriteFileContents(g_full_proj_path +_T("\\mylaunch.bat"), _T("cd \"") + batch_string + _T("\\") + _T("\"") + _T("\n") + _T("createProjects.py ") + _T("\"")+batch_proj_path+_T("\"")  );
+	
+	// create project 			
+	local outnum = IO.Execute(g_full_proj_path +_T("\\mylaunch.bat"));
+
+	IO.RemoveFile(g_full_proj_path +_T("\\mylaunch.bat"));
+	
+	// load Project
+	if(GetProjectManager().LoadProject(proj,true) == 0)
+	{
+		ShowMessage(_T("project failed to load"));
+	}
+			
+return true;	
+}
+
+
+
+
+
+
+
+
+
+
+
