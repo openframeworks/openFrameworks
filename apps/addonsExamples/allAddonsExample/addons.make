@@ -7,6 +7,5 @@ ofxThread
 ofxVectorGraphics
 ofxVectorMath
 ofxXmlSettings
-ofxSynth
 ofxAssimpModelLoader
 ofxThreadedImageLoader
