@@ -66,11 +66,12 @@ void testApp::draw(){
     ofBackground(50, 50, 50, 0);
     ofSetColor(255, 255, 255, 255);
     
+
     ofPushMatrix();
 		ofTranslate(model.getPosition().x+100, model.getPosition().y, 0);
 		ofRotate(-mouseX, 0, 1, 0);
 		ofTranslate(-model.getPosition().x, -model.getPosition().y, 0);
-    
+
 		model.drawFaces();
             
     ofPopMatrix();
