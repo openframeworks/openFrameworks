@@ -139,10 +139,10 @@ ofVbo::~ofVbo(){
 
 //--------------------------------------------------------------
 void ofVbo::setMesh(const ofMesh & mesh, int usage){
-	setVertexData(mesh.getVerticesPointer(),mesh.getNumVertices(),usage,sizeof(ofVec3f));
-	setColorData(mesh.getColorsPointer(),mesh.getNumColors(),usage,sizeof(ofFloatColor));
-	setNormalData(mesh.getNormalsPointer(),mesh.getNumNormals(),usage,sizeof(ofVec3f));
-	setTexCoordData(mesh.getTexCoordsPointer(),mesh.getNumTexCoords(),usage,sizeof(ofVec2f));
+	setVertexData(mesh.getVerticesPointer(),mesh.getNumVertices(),usage);
+	setColorData(mesh.getColorsPointer(),mesh.getNumColors(),usage);
+	setNormalData(mesh.getNormalsPointer(),mesh.getNumNormals(),usage);
+	setTexCoordData(mesh.getTexCoordsPointer(),mesh.getNumTexCoords(),usage);
 }
 
 //--------------------------------------------------------------

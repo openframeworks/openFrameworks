@@ -33,19 +33,19 @@ void ofVboMesh::draw(ofPolyRenderMode drawMode){
 		}
 	}
 
-	if(haveVertsChanged() && hasVertices()){
+	if(haveVertsChanged()){
 		vbo.updateVertexData(getVerticesPointer(),getNumVertices());
 	}
-	if(haveColorsChanged() && hasColors()){
+	if(haveColorsChanged()){
 		vbo.updateColorData(getColorsPointer(),getNumColors());
 	}
-	if(haveNormalsChanged() && hasNormals()){
+	if(haveNormalsChanged()){
 		vbo.updateNormalData(getNormalsPointer(),getNumNormals());
 	}
-	if(haveTexCoordsChanged() && hasTexCoords()){
+	if(haveTexCoordsChanged()){
 		vbo.updateTexCoordData(getTexCoordsPointer(),getNumTexCoords());
 	}
-	if(haveIndicesChanged() && hasIndices()){
+	if(haveIndicesChanged()){
 		vbo.updateIndexData(getIndexPointer(),getNumIndices());
 	}
 

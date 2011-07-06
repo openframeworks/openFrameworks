@@ -4,11 +4,11 @@
 //--------------------------------------------------------------
 ofMesh::ofMesh(){
 	mode = OF_PRIMITIVE_TRIANGLES;
-	bVertsChanged = true;
-	bColorsChanged = true;
-	bNormalsChanged = true;
-	bTexCoordsChanged = true;
-	bIndicesChanged = true;
+	bVertsChanged = false;
+	bColorsChanged = false;
+	bNormalsChanged = false;
+	bTexCoordsChanged = false;
+	bIndicesChanged = false;
 }
 
 //--------------------------------------------------------------
@@ -283,53 +283,93 @@ int ofPrimitive::getNumIndicesWire(){
 
 //--------------------------------------------------------------
 ofVec3f* ofMesh::getVerticesPointer(){
+#ifdef TARGET_OSX
 	return &vertices[0];
+#else
+	return vertices.data();
+#endif
 }
 
 //--------------------------------------------------------------
 ofFloatColor* ofMesh::getColorsPointer(){
+#ifdef TARGET_OSX
 	return &colors[0];
+#else
+	return colors.data();
+#endif
 }
 
 //--------------------------------------------------------------
 ofVec3f* ofMesh::getNormalsPointer(){
-	return &normals[0];
+#ifdef TARGET_OSX
+		return &normals[0];
+#else
+	return normals.data();
+#endif
 }
 
 //--------------------------------------------------------------
 ofVec2f* ofMesh::getTexCoordsPointer(){
-	return &texCoords[0];
+#ifdef TARGET_OSX
+		return &texCoords[0];
+#else
+	return texCoords.data();
+#endif
 }
 
 //--------------------------------------------------------------
 ofIndexType* ofMesh::getIndexPointer(){
-	return &indices[0];
+#ifdef TARGET_OSX
+		return &indices[0];
+#else
+	return indices.data();
+#endif
 }
 
 
 //--------------------------------------------------------------
-const float* ofMesh::getVerticesPointer() const{
-	return &vertices[0].x;
+const ofVec3f* ofMesh::getVerticesPointer() const{
+#ifdef TARGET_OSX
+	return &vertices[0];
+#else
+	return vertices.data();
+#endif
 }
 
 //--------------------------------------------------------------
-const float* ofMesh::getColorsPointer() const{
-	return &colors[0].r;
+const ofFloatColor* ofMesh::getColorsPointer() const{
+#ifdef TARGET_OSX
+	return &colors[0];
+#else
+	return colors.data();
+#endif
 }
 
 //--------------------------------------------------------------
-const float* ofMesh::getNormalsPointer() const{
-	return &normals[0].x;
+const ofVec3f* ofMesh::getNormalsPointer() const{
+#ifdef TARGET_OSX
+	return &normals[0];
+#else
+	return normals.data();
+#endif
 }
 
 //--------------------------------------------------------------
-const float* ofMesh::getTexCoordsPointer() const{
-	return &texCoords[0].x;
+const ofVec2f* ofMesh::getTexCoordsPointer() const{
+#ifdef TARGET_OSX
+	return &texCoords[0];
+#else
+	return texCoords.data();
+#endif
 }
 
 //--------------------------------------------------------------
 const ofIndexType * ofMesh::getIndexPointer() const{
+#ifdef TARGET_OSX
 	return &indices[0];
+#else
+	return indices.data();
+#endif
 }
 
 vector<ofVec3f> & ofMesh::getVertices(){
