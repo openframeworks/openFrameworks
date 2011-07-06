@@ -41,8 +41,8 @@ an ofxOscSender sends messages to a single host/port
 
 class UdpTransmitSocket;
 #include <string>
-#include "OscTypes.h"
-#include "OscOutboundPacketStream.h"
+#include <oscpack/osc/OscTypes.h>
+#include <oscpack/osc/OscOutboundPacketStream.h>
 
 #include "ofxOscBundle.h"
 #include "ofxOscMessage.h"

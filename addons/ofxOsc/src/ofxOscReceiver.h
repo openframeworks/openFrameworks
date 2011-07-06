@@ -42,9 +42,9 @@
 #endif
 
 // osc
-#include "OscTypes.h"
-#include "OscPacketListener.h"
-#include "UdpSocket.h"
+#include <oscpack/osc/OscTypes.h>
+#include <oscpack/osc/OscPacketListener.h>
+#include <oscpack/ip/UdpSocket.h>
 
 // ofxOsc
 #include "ofxOscMessage.h"
