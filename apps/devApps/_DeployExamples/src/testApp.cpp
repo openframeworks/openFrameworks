@@ -471,7 +471,7 @@ void addAddonsFromInstallXML(string addonPath, string projectFolder, string xcod
 				int numFolders = xml.getNumTags("folder");
 				for(int k = 0; k < numFolders; k++){
 					string folderPath = xml.getAttribute("folder", "name", "null", k);
-					string folderName = ofFilePath::getFilename(folderPath);
+					string folderName = ofFilePath::getFileName(folderPath);
 					
 					cout << "adding folder folderName: " << folderName << endl;
 					
@@ -487,7 +487,7 @@ void addAddonsFromInstallXML(string addonPath, string projectFolder, string xcod
 						
 						for(int d = 0; d < numFiles; d++){
 							filePaths.push_back( xml.getValue("file", "null", d) );
-							fileNames.push_back( ofFilePath::getFilename( filePaths.back() ) );
+							fileNames.push_back( ofFilePath::getFileName( filePaths.back() ) );
 							hashes.push_back( getHash(filePaths.back()) );
 							
 							cout << " adding " << filePaths.back() <<  " " << fileNames.back() << " " << hashes.back() << endl;
