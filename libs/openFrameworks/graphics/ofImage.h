@@ -15,6 +15,45 @@ enum ofImageQualityType {
 	OF_IMAGE_QUALITY_WORST
 };
 
+enum ofImageFormat {
+	OF_IMAGE_FORMAT_BMP		= 0,
+	OF_IMAGE_FORMAT_ICO		= 1,
+	OF_IMAGE_FORMAT_JPEG	= 2,
+	OF_IMAGE_FORMAT_JNG		= 3,
+	OF_IMAGE_FORMAT_KOALA	= 4,
+	OF_IMAGE_FORMAT_LBM		= 5,
+	OF_IMAGE_FORMAT_IFF = OF_IMAGE_FORMAT_LBM,
+	OF_IMAGE_FORMAT_MNG		= 6,
+	OF_IMAGE_FORMAT_PBM		= 7,
+	OF_IMAGE_FORMAT_PBMRAW	= 8,
+	OF_IMAGE_FORMAT_PCD		= 9,
+	OF_IMAGE_FORMAT_PCX		= 10,
+	OF_IMAGE_FORMAT_PGM		= 11,
+	OF_IMAGE_FORMAT_PGMRAW	= 12,
+	OF_IMAGE_FORMAT_PNG		= 13,
+	OF_IMAGE_FORMAT_PPM		= 14,
+	OF_IMAGE_FORMAT_PPMRAW	= 15,
+	OF_IMAGE_FORMAT_RAS		= 16,
+	OF_IMAGE_FORMAT_TARGA	= 17,
+	OF_IMAGE_FORMAT_TIFF	= 18,
+	OF_IMAGE_FORMAT_WBMP	= 19,
+	OF_IMAGE_FORMAT_PSD		= 20,
+	OF_IMAGE_FORMAT_CUT		= 21,
+	OF_IMAGE_FORMAT_XBM		= 22,
+	OF_IMAGE_FORMAT_XPM		= 23,
+	OF_IMAGE_FORMAT_DDS		= 24,
+	OF_IMAGE_FORMAT_GIF     = 25,
+	OF_IMAGE_FORMAT_HDR		= 26,
+	OF_IMAGE_FORMAT_FAXG3	= 27,
+	OF_IMAGE_FORMAT_SGI		= 28,
+	OF_IMAGE_FORMAT_EXR		= 29,
+	OF_IMAGE_FORMAT_J2K		= 30,
+	OF_IMAGE_FORMAT_JP2		= 31,
+	OF_IMAGE_FORMAT_PFM		= 32,
+	OF_IMAGE_FORMAT_PICT	= 33,
+	OF_IMAGE_FORMAT_RAW		= 34
+};
+
 //----------------------------------------------------
 // FreeImage based stuff:
 bool ofLoadImage(ofPixels & pix, string path);
@@ -30,13 +69,13 @@ bool ofLoadImage(ofTexture & tex, string path);
 bool ofLoadImage(ofTexture & tex, const ofBuffer & buffer);
 
 void ofSaveImage(ofPixels & pix, string path, ofImageQualityType qualityLevel = OF_IMAGE_QUALITY_BEST);
-void ofSaveImage(ofPixels & pix, ofBuffer & buffer, ofImageQualityType qualityLevel = OF_IMAGE_QUALITY_BEST);
+void ofSaveImage(ofPixels & pix, ofBuffer & buffer, ofImageFormat format = OF_IMAGE_FORMAT_PNG, ofImageQualityType qualityLevel = OF_IMAGE_QUALITY_BEST);
 
 void ofSaveImage(ofFloatPixels & pix, string path, ofImageQualityType qualityLevel = OF_IMAGE_QUALITY_BEST);
-void ofSaveImage(ofFloatPixels & pix, ofBuffer & buffer, ofImageQualityType qualityLevel = OF_IMAGE_QUALITY_BEST);
+void ofSaveImage(ofFloatPixels & pix, ofBuffer & buffer, ofImageFormat format = OF_IMAGE_FORMAT_PNG, ofImageQualityType qualityLevel = OF_IMAGE_QUALITY_BEST);
 
 void ofSaveImage(ofShortPixels & pix, string path, ofImageQualityType qualityLevel = OF_IMAGE_QUALITY_BEST);
-void ofSaveImage(ofShortPixels & pix, ofBuffer & buffer, ofImageQualityType qualityLevel = OF_IMAGE_QUALITY_BEST);
+void ofSaveImage(ofShortPixels & pix, ofBuffer & buffer, ofImageFormat format = OF_IMAGE_FORMAT_PNG, ofImageQualityType qualityLevel = OF_IMAGE_QUALITY_BEST);
 
 // when we exit, we shut down ofImage
 void ofCloseFreeImage();

@@ -380,28 +380,106 @@ static void saveImage(ofPixels_<PixelType> & pix, string fileName, ofImageQualit
 	}
 }
 
+//----------------------------------------------------------------
 void ofSaveImage(ofPixels & pix, string fileName, ofImageQualityType qualityLevel){
 	saveImage(pix,fileName,qualityLevel);
 }
 
+//----------------------------------------------------------------
 void ofSaveImage(ofFloatPixels & pix, string fileName, ofImageQualityType qualityLevel) {
 	saveImage(pix,fileName,qualityLevel);
 }
 
+//----------------------------------------------------------------
 void ofSaveImage(ofShortPixels & pix, string fileName, ofImageQualityType qualityLevel) {
 	saveImage(pix,fileName,qualityLevel);
 }
 
-void ofSaveImage(ofPixels & pix, ofBuffer & buffer, ofImageQualityType qualityLevel) {
-	ofLog(OF_LOG_ERROR, "ofSaveImage(pix, buffer) is not yet implemented");
+//----------------------------------------------------------------
+template<typename PixelType>
+static void saveImage(ofPixels_<PixelType> & pix, ofBuffer & buffer, ofImageFormat format, ofImageQualityType qualityLevel) {
+	//thanks to alvaro casinelli for the implementation
+
+	ofInitFreeImage();
+
+	if (pix.isAllocated() == false){
+		ofLog(OF_LOG_ERROR,"error saving image - pixels aren't allocated");
+		return;
+	}
+
+	#ifdef TARGET_LITTLE_ENDIAN
+		pix.swapRgb();
+	#endif
+
+	FIBITMAP * bmp	= getBmpFromPixels(pix);
+
+	#ifdef TARGET_LITTLE_ENDIAN
+		pix.swapRgb();
+	#endif
+
+	if (bmp)  // bitmap successfully created
+	{
+		   // (b) open a memory stream to compress the image onto mem_buffer:
+		   //
+		   FIMEMORY *hmem = FreeImage_OpenMemory();
+		   // (c) encode and save the image to the memory (on dib FIBITMAP image):
+		   //
+		   if(FREE_IMAGE_FORMAT(format) == FIF_JPEG) {
+				int quality = JPEG_QUALITYSUPERB;
+				switch(qualityLevel) {
+					case OF_IMAGE_QUALITY_WORST: quality = JPEG_QUALITYBAD; break;
+					case OF_IMAGE_QUALITY_LOW: quality = JPEG_QUALITYAVERAGE; break;
+					case OF_IMAGE_QUALITY_MEDIUM: quality = JPEG_QUALITYNORMAL; break;
+					case OF_IMAGE_QUALITY_HIGH: quality = JPEG_QUALITYGOOD; break;
+					case OF_IMAGE_QUALITY_BEST: quality = JPEG_QUALITYSUPERB; break;
+				}
+				FreeImage_SaveToMemory(FIF_JPEG, bmp, hmem, quality);
+		   }else{
+				FreeImage_SaveToMemory((FREE_IMAGE_FORMAT)format, bmp, hmem);
+		   }
+		   /*
+
+		  NOTE: at this point, hmem contains the entire data in memory stored in fif format. the
+		  amount of space used by the memory is equal to file_size:
+		  long file_size = FreeImage_TellMemory(hmem);
+		  but can also be retrieved by FreeImage_AcquireMemory that retrieves both the
+		  length of the buffer, and the buffer memory address.
+		  */
+
+		   uint32_t size_in_bytes = 0;
+		   // Save compressed data on mem_buffer
+		   // note: FreeImage_AquireMemory allocates space for aux_mem_buffer):
+		   //
+		   unsigned char *mem_buffer = NULL;
+		   if (!FreeImage_AcquireMemory(hmem, &mem_buffer, &size_in_bytes))
+				   cout << "Error aquiring compressed image from memory" << endl;
+
+		   /*
+			  Now, before closing the memory stream, copy the content of mem_buffer
+			  to an auxiliary buffer
+		    */
+
+		   buffer.set((char*)mem_buffer,size_in_bytes);
+
+		   // Finally, close the FIBITMAP object, or we will get a memory leak:
+		   FreeImage_Unload(bmp);
+
+		   // Close the memory stream (otherwise we may get a memory leak).
+		   FreeImage_CloseMemory(hmem);
+	}
 }
 
-void ofSaveImage(ofFloatPixels & pix, ofBuffer & buffer, ofImageQualityType qualityLevel) {
-	ofLog(OF_LOG_ERROR, "ofSaveImage(pix, buffer) is not yet implemented");
+//----------------------------------------------------------------
+void ofSaveImage(ofPixels & pix, ofBuffer & buffer, ofImageFormat format, ofImageQualityType qualityLevel) {
+	saveImage(pix,buffer,format,qualityLevel);
 }
 
-void ofSaveImage(ofShortPixels & pix, ofBuffer & buffer, ofImageQualityType qualityLevel) {
-	ofLog(OF_LOG_ERROR, "ofSaveImage(pix, buffer) is not yet implemented");
+void ofSaveImage(ofFloatPixels & pix, ofBuffer & buffer, ofImageFormat format, ofImageQualityType qualityLevel) {
+	saveImage(pix,buffer,format,qualityLevel);
+}
+
+void ofSaveImage(ofShortPixels & pix, ofBuffer & buffer, ofImageFormat format, ofImageQualityType qualityLevel) {
+	saveImage(pix,buffer,format,qualityLevel);
 }
 
 
