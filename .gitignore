@@ -56,9 +56,9 @@ libs/openFrameworks/Debug Mac OS X
 libs/openFrameworks/Release Mac OS X
 apps/*/*/Debug Mac OS X
 apps/*/*/Release Mac OS X
-.DS_Store
 xcuserdata
 project.xcworkspace
+.DS_Store
 
 #Linux
 addons/Debug Linux
