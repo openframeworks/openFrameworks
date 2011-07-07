@@ -308,7 +308,7 @@ void ofxAssimpModelLoader::loadGLResources(){
             ofLog(OF_LOG_VERBOSE, "loading image from %s", texPath.data);
             string modelFolder = ofFilePath::getEnclosingDirectory(filepath,false);
             string relTexPath = ofFilePath::getEnclosingDirectory(texPath.data,false);
-            string texFile = ofFilePath::getFilename(texPath.data);
+            string texFile = ofFilePath::getFileName(texPath.data);
             string realPath = modelFolder + relTexPath  + texFile;
 			if(!ofFile::doesFileExist(realPath) || !ofLoadImage(meshHelper.texture,realPath)) {
                 ofLog(OF_LOG_ERROR,string("error loading image ") + filepath + " " +realPath);
