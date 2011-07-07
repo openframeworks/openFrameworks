@@ -446,7 +446,7 @@ static void saveImage(ofPixels_<PixelType> & pix, ofBuffer & buffer, ofImageForm
 		  length of the buffer, and the buffer memory address.
 		  */
 
-		   uint32_t size_in_bytes = 0;
+		   unsigned int size_in_bytes = 0;
 		   // Save compressed data on mem_buffer
 		   // note: FreeImage_AquireMemory allocates space for aux_mem_buffer):
 		   //
