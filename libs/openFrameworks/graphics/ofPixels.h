@@ -89,7 +89,7 @@ public:
 	int size() const;
 
 private:
-	float bicubicInterpolate(const PixelType *patch, float x,float y, float x2,float y2, float x3,float y3);
+	float bicubicInterpolate(const float *patch, float x,float y, float x2,float y2, float x3,float y3);
 
 	void copyFrom( const ofPixels_<PixelType>& mom );
 
