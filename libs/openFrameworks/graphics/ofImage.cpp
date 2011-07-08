@@ -445,8 +445,11 @@ static void saveImage(ofPixels_<PixelType> & pix, ofBuffer & buffer, ofImageForm
 		  but can also be retrieved by FreeImage_AcquireMemory that retrieves both the
 		  length of the buffer, and the buffer memory address.
 		  */
-
-		   unsigned int size_in_bytes = 0;
+			#ifdef _MSC_VER
+		   	   DWORD size_in_bytes = 0;
+			#else
+		   	   uint32_t size_in_bytes = 0;
+			#endif
 		   // Save compressed data on mem_buffer
 		   // note: FreeImage_AquireMemory allocates space for aux_mem_buffer):
 		   //
