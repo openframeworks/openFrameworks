@@ -105,6 +105,8 @@ void testApp::draw(){
 
 	ofPopMatrix();
 
+	glPopAttrib();
+
 
     ofDrawBitmapString("fps: "+ofToString(ofGetFrameRate(), 2), 10, 15);
     ofDrawBitmapString("keys 1-5 load models, spacebar to trigger animation", 10, 30);
