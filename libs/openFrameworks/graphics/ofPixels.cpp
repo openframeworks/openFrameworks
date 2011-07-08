@@ -362,11 +362,10 @@ void ofPixels_<PixelType>::setChannel(int channel, const ofPixels_<PixelType> ch
 template<typename PixelType>
 void ofPixels_<PixelType>::crop(int x, int y, int _width, int _height){
 
-	if (_width < 0 || _height < 0){
-		return;
-	}
-
 	if (bAllocated == true){
+
+		_width = ofClamp(_width,1,getWidth());
+		_height = ofClamp(_height,1,getHeight());
 
 		int bytesPerPixel = channels;
 
@@ -406,11 +405,11 @@ void ofPixels_<PixelType>::crop(int x, int y, int _width, int _height){
 template<typename PixelType>
 void ofPixels_<PixelType>::cropTo(ofPixels_<PixelType> &toPix, int x, int y, int _width, int _height){
 
-	if (_width < 0 || _height < 0){
-		return;
-	}
 
 	if (bAllocated == true){
+
+		_width = ofClamp(_width,1,getWidth());
+		_height = ofClamp(_height,1,getHeight());
 
 		int bytesPerPixel = channels;
 
