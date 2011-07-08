@@ -16,6 +16,8 @@ public:
 
 	void setCurrentFBO(ofFbo * fbo);
 
+	void update();
+
 	void draw(ofMesh & vertexData);
 	void draw(ofMesh & vertexData, ofPolyRenderMode renderType);
 	void draw(ofPolyline & poly);
