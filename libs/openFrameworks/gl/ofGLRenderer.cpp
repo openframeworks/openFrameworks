@@ -21,6 +21,11 @@ ofGLRenderer::ofGLRenderer(bool useShapeColor){
 }
 
 //----------------------------------------------------------
+void ofGLRenderer::update(){
+
+}
+
+//----------------------------------------------------------
 void ofGLRenderer::draw(ofMesh & vertexData){
 	if(vertexData.getNumVertices()){
 		glEnableClientState(GL_VERTEX_ARRAY);
