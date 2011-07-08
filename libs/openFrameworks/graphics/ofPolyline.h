@@ -84,6 +84,7 @@ public:
 	size_t size() const;
 	const ofPoint& operator[] (int index) const;
 	ofPoint& operator[] (int index);
+	void resize(size_t size);
 
 	/// closed
 	void setClosed( bool tf );
