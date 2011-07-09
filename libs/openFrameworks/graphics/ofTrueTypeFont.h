@@ -64,6 +64,7 @@ public:
 	int			getNumCharacters();	
 	
 	ofTTFCharacter getCharacterAsPoints(int character);
+	vector<ofTTFCharacter> getStringAsPoints(string str);
 
 	void bind();
 	void unbind();
