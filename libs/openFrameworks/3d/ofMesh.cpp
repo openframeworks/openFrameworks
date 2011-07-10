@@ -1,6 +1,37 @@
 #include "ofMesh.h"
 #include "ofGraphics.h"
 
+
+ofMeshFace::ofMeshFace() 
+{	
+}
+
+ofMeshFace::ofMeshFace(vector<ofVec3f> verts)
+{
+	vertices = verts;
+}
+
+ofMeshFace::ofMeshFace(ofVec3f* verts)
+{
+	ofVec3f* vp = verts[0];
+	while(vp != NULL) {
+		vertices.push_back(*vp);
+		++vp;
+	}
+}
+
+ofMeshFace::ofMeshFace(const ofMeshFace& mom)
+{
+	vertices = mom.getVerts();
+}
+
+ofMeshFace::ofMeshFace & operator=(const ofMeshFace &rhs)
+{
+	vertices = rhs.getVerts();
+}
+
+
+
 //--------------------------------------------------------------
 ofMesh::ofMesh(){
 	mode = OF_TRIANGLES_MODE;
@@ -337,6 +368,44 @@ GLuint* ofPrimitive::getWireIndexPointer(){
 	return &indicesWire[0];
 }
  */
+
+ofMeshFace ofMesh::getFace(int faceNum){
+	ofMeshFace f;
+	switch(mode)
+	{
+		case GL_QUADS:
+			//GL_QUADS
+			f.getVertices().push_back(vectors[indices[faceNum*4+0]]);
+			f.getVertices().push_back(vectors[indices[faceNum*4+1]]);
+			f.getVertices().push_back(vectors[indices[faceNum*4+2]]);
+			f.getVertices().push_back(vectors[indices[faceNum*4+3]]);
+			break;
+			
+		case GL_TRIANGLES:
+			f.getVertices().push_back(vectors[indices[faceNum*3+0]]);
+			f.getVertices().push_back(vectors[indices[faceNum*3+1]]);
+			f.getVertices().push_back(vectors[indices[faceNum*3+2]]);
+			break;
+			
+		case GL_TRIANGLE_FAN:
+			// 1 element per fan
+			f.getVertices().push_back(vectors[indices[0]]);
+			f.getVertices().push_back(vectors[indices[faceNum+1]]);
+			f.getVertices().push_back(vectors[indices[faceNum+2]]);
+			break;
+			
+		case GL_TRIANGLE_STRIP:
+			// 1 element per strip
+			f.getVertices().push_back(vectors[indices[faceNum]]);
+			f.getVertices().push_back(vectors[indices[faceNum+1]]);
+			f.getVertices().push_back(vectors[indices[faceNum+2]]);
+			break;
+		default:
+			break;
+	}
+	return f;
+}
+
 
 /*
 //--------------------------------------------------------------

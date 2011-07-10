@@ -11,6 +11,26 @@
 #include "ofConstants.h"
 #include "ofGLUtils.h"
 
+
+class ofMeshFace {
+
+public:
+	
+	ofMeshFace();
+	ofMeshFace(vector<ofVec3f> verts);
+	ofMeshFace(ofVec3f* verts);
+	ofMeshFace(const ofMeshFace& mom);
+	ofMeshFace & operator=(const ofMeshFace &rhs);
+	
+	vector<ofVec3f>& getVertices() { return vertices; }
+	
+private:
+	
+	vector<ofVec3f> vertices;
+	
+	
+};
+
 class ofMesh{
 public:
 	
