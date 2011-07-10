@@ -561,6 +561,46 @@ void ofTrueTypeFont::drawChar(int c, float x, float y) {
 }
 
 //-----------------------------------------------------------
+vector<ofTTFCharacter> ofTrueTypeFont::getStringAsPoints(string str){
+	vector<ofTTFCharacter> shapes;
+
+	if (!bLoadedOk){
+		ofLog(OF_LOG_ERROR,"Error : font not allocated -- line %d in %s", __LINE__,__FILE__);
+		return shapes;
+	};
+
+	GLint		index	= 0;
+	GLfloat		X		= 0;
+	GLfloat		Y		= 0;
+
+
+	int len = (int)str.length();
+
+	while(index < len){
+		int cy = (unsigned char)str[index] - NUM_CHARACTER_TO_START;
+		if (cy < nCharacters){ 			// full char set or not?
+		  if (str[index] == '\n') {
+
+				Y += (float) lineHeight;
+				X = 0 ; //reset X Pos back to zero
+
+		  }else if (str[index] == ' ') {
+				 int cy = (int)'p' - NUM_CHARACTER_TO_START;
+				 X += cps[cy].width * letterSpacing * spaceSize;
+		  } else {
+			  	shapes.push_back(getCharacterAsPoints(str[index]));
+			  	shapes.back().translate(ofPoint(X,Y));
+
+				X += cps[cy].setWidth * letterSpacing;
+		  }
+		}
+		index++;
+	}
+	return shapes;
+
+}
+
+//-----------------------------------------------------------
 void ofTrueTypeFont::drawCharAsShape(int c, float x, float y) {
 	if (c >= nCharacters){
 		//ofLog(OF_LOG_ERROR,"Error : char (%i) not allocated -- line %d in %s", (c + NUM_CHARACTER_TO_START), __LINE__,__FILE__);

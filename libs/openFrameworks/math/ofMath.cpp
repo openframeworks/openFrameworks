@@ -148,21 +148,28 @@ float ofLerp(float start, float stop, float amt) {
 }
 
 //--------------------------------------------------
-float ofLerpDegrees(float currentAngle, float targetAngle, float pct) {
-    float diff = targetAngle - currentAngle;
-    while(diff > 180.0f)  diff -= 360.0f;
-    while(diff < -180.0f) diff += 360.0f;
+float ofWrapRadians(float angle, float from, float to){
+	while (angle > to ) angle -= TWO_PI;
+	while (angle < from ) angle += TWO_PI;
+	return angle;
+}
 
-    return currentAngle + diff * pct;
+
+float ofWrapDegrees(float angle, float from, float to){
+	while (angle > to ) angle-=360;
+	while (angle < from ) angle+=360;
+	return angle;
+
+}
+
+//--------------------------------------------------
+float ofLerpDegrees(float currentAngle, float targetAngle, float pct) {
+    return currentAngle + ofAngleDifferenceDegrees(currentAngle,targetAngle) * pct;
 }
 
 //--------------------------------------------------
 float ofLerpRadians(float currentAngle, float targetAngle, float pct) {
-    float diff = targetAngle - currentAngle;
-    while(diff > TWO_PI)  diff -= 2*TWO_PI;
-    while(diff < -TWO_PI) diff += 2*TWO_PI;
-
-    return currentAngle + diff * pct;
+	return currentAngle + ofAngleDifferenceRadians(currentAngle,targetAngle) * pct;
 }
 
 //--------------------------------------------------
@@ -317,17 +324,10 @@ ofPoint ofCurveTangent( ofPoint a, ofPoint b, ofPoint c, ofPoint d, float t){
 
 //--------------------------------------------------
 float ofAngleDifferenceDegrees(float currentAngle, float targetAngle) {
-    float diff = targetAngle - currentAngle;
-    while(diff > 180.0f)  diff -= 360.0f;
-    while(diff < -180.0f) diff += 360.0f;
-    return diff;
+	return ofWrapDegrees(targetAngle - currentAngle);
 }
 
 //--------------------------------------------------
 float ofAngleDifferenceRadians(float currentAngle, float targetAngle) {
-    float diff = targetAngle - currentAngle;
-    while(diff > TWO_PI)  diff -= 2*TWO_PI;
-    while(diff < -TWO_PI) diff += 2*TWO_PI;
-    return diff;
+	return  ofWrapRadians(targetAngle - currentAngle);
 }
-

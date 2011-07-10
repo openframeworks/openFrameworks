@@ -33,8 +33,8 @@ ofLogLevel ofGetLogLevel(){
 }
 
 //--------------------------------------------------
-void ofLogToFile(const string & path){
-	ofLog::setChannel(ofPtr<ofFileLoggerChannel>(new ofFileLoggerChannel(path)));
+void ofLogToFile(const string & path, bool append){
+	ofLog::setChannel(ofPtr<ofFileLoggerChannel>(new ofFileLoggerChannel(path,append)));
 }
 
 //--------------------------------------------------
@@ -77,6 +77,10 @@ ofLog::ofLog(ofLogLevel logLevel, const char* format, ...){
 ofLog::~ofLog(){
 	// don't log if we printed in the constructor already
 	if(!bPrinted){
+		if(message.str().empty()){
+			message << module;
+			module = "OF";
+		}
 		_log(level,module,message.str());
 	}
 }
@@ -217,8 +221,8 @@ ofFileLoggerChannel::ofFileLoggerChannel(){
 
 }
 
-ofFileLoggerChannel::ofFileLoggerChannel(const string & path){
-	setFile(path);
+ofFileLoggerChannel::ofFileLoggerChannel(const string & path, bool append){
+	setFile(path,append);
 }
 
 ofFileLoggerChannel::~ofFileLoggerChannel(){
@@ -229,9 +233,11 @@ void ofFileLoggerChannel::close(){
 	file.close();
 }
 
-void ofFileLoggerChannel::setFile(const string & path){
-	file.open(path,ofFile::WriteOnly);
-
+void ofFileLoggerChannel::setFile(const string & path,bool append){
+	file.open(path,append?ofFile::Append:ofFile::WriteOnly);
+	file << endl;
+	file << endl;
+	file << "---------------------------------------  " << ofGetTimestampString() << endl;
 }
 
 void ofFileLoggerChannel::log(ofLogLevel level, const string & module, const string & message){

@@ -18,6 +18,14 @@ public:
 	 }
 
 	 bool rendersPathPrimitives(){return true;}
+
+	 void update(){
+		 for(int i=0;i<(int)renderers.size();i++){
+			 renderers[i]->update();
+		 }
+	 }
+
+
 	 void draw(ofPolyline & poly){
 		 for(int i=0;i<(int)renderers.size();i++){
 			 renderers[i]->draw(poly);

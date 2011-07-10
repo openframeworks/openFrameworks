@@ -445,8 +445,11 @@ static void saveImage(ofPixels_<PixelType> & pix, ofBuffer & buffer, ofImageForm
 		  but can also be retrieved by FreeImage_AcquireMemory that retrieves both the
 		  length of the buffer, and the buffer memory address.
 		  */
-
-		   unsigned int size_in_bytes = 0;
+			#ifdef _MSC_VER
+		   	   DWORD size_in_bytes = 0;
+			#else
+		   	   uint32_t size_in_bytes = 0;
+			#endif
 		   // Save compressed data on mem_buffer
 		   // note: FreeImage_AquireMemory allocates space for aux_mem_buffer):
 		   //
@@ -923,6 +926,9 @@ void ofImage_<PixelType>::resize(int newWidth, int newHeight){
 //------------------------------------
 template<typename PixelType>
 void ofImage_<PixelType>::crop(int x, int y, int w, int h){
+	w = ofClamp(w,1,getWidth());
+	h = ofClamp(h,1,getHeight());
+
 	pixels.crop(x,y,w,h);
 	update();
 }
@@ -930,6 +936,8 @@ void ofImage_<PixelType>::crop(int x, int y, int w, int h){
 //------------------------------------
 template<typename PixelType>
 void ofImage_<PixelType>::cropFrom(ofImage_<PixelType> & otherImage, int x, int y, int w, int h){
+	w = ofClamp(w,1,otherImage.getWidth());
+	h = ofClamp(h,1,otherImage.getHeight());
 
 	int myOldWidth = pixels.getWidth();
 	int myOldHeight = pixels.getHeight();
