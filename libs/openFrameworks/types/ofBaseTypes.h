@@ -273,6 +273,8 @@ public:
 
 	virtual string getType()=0;
 
+	virtual void update()=0;
+
 	virtual void draw(ofPolyline & poly)=0;
 	virtual void draw(ofPath & shape)=0;
 	virtual void draw(ofMesh & vertexData)=0;

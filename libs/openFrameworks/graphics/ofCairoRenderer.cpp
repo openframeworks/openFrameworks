@@ -68,6 +68,21 @@ void ofCairoRenderer::close(){
 	}
 }
 
+void ofCairoRenderer::update(){
+	cairo_surface_flush(surface);
+	if(page==0 || !multiPage){
+		page=1;
+	}else{
+		page++;
+		if(bClearBg()){
+			cairo_show_page(cr);
+		}else{
+			cairo_copy_page(cr);
+		}
+	}
+	ofSetStyle(ofGetStyle());
+}
+
 void ofCairoRenderer::draw(ofPath & shape){
 	cairo_new_path(cr);
 	vector<ofSubPath> & paths = shape.getSubPaths();
@@ -611,18 +626,9 @@ void ofCairoRenderer::viewport(float x, float y, float width, float height, bool
 		y = ofGetWindowHeight() - (y + height);
 	}
 
-	cairo_surface_flush(surface);
+
 	viewportRect.set(x, y, width, height);
-	if(page==0 || !multiPage){
-		page=1;
-	}else{
-		page++;
-		if(bClearBg()){
-			cairo_show_page(cr);
-		}else{
-			cairo_copy_page(cr);
-		}
-	}
+
 	cairo_reset_clip(cr);
 	cairo_new_path(cr);
 	cairo_move_to(cr,viewportRect.x,viewportRect.y);

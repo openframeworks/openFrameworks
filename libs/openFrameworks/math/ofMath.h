@@ -38,6 +38,9 @@ float 		ofLerpDegrees(float currentAngle, float targetAngle, float pct);
 float 		ofLerpRadians(float currentAngle, float targetAngle, float pct);
 float 		ofAngleDifferenceDegrees(float currentAngle, float targetAngle);
 float 		ofAngleDifferenceRadians(float currentAngle, float targetAngle);
+float 		ofAngleSumRadians(float currentAngle, float targetAngle);
+float		ofWrapRadians(float angle, float from = -PI, float to=+PI);
+float		ofWrapDegrees(float angle, float from = -180, float to=+180);
 
 float		ofRandomWidth();
 float		ofRandomHeight();

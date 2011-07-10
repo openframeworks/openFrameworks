@@ -58,12 +58,20 @@ const ofPoint& ofPolyline::operator[] (int index) const {
 
 //----------------------------------------------------------
 ofPoint& ofPolyline::operator[] (int index) {
-	bHasChanged=true; return points[index];
+	bHasChanged=true;
+	return points[index];
+}
+
+//----------------------------------------------------------
+void ofPolyline::resize(size_t size){
+	bHasChanged=true;
+	points.resize(size);
 }
 
 //----------------------------------------------------------
 void ofPolyline::setClosed( bool tf ) {
-	bHasChanged=true; bClosed = tf;
+	bHasChanged=true;
+	bClosed = tf;
 }
 
 //----------------------------------------------------------

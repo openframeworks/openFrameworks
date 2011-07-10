@@ -138,7 +138,7 @@ static void FloatDown( PriorityQHeap *pq, int curr )
 				++child;
 		}
 
-		assert(child <= pq->max);
+		if(child > pq->max) continue;
 
 		hChild = n[child].handle;
 		if( child > pq->size || LEQ( h[hCurr].key, h[hChild].key )) {
@@ -237,7 +237,7 @@ PQhandle pqHeapInsert( TESSalloc* alloc, PriorityQHeap *pq, PQkey keyNew )
 	if( pq->initialized ) {
 		FloatUp( pq, curr );
 	}
-	assert(free != INV_HANDLE);
+	//assert(free != INV_HANDLE);
 	return free;
 }
 
@@ -271,7 +271,7 @@ void pqHeapDelete( PriorityQHeap *pq, PQhandle hCurr )
 	PQhandleElem *h = pq->handles;
 	int curr;
 
-	assert( hCurr >= 1 && hCurr <= pq->max && h[hCurr].key != NULL );
+	if(!( hCurr >= 1 && hCurr <= pq->max && h[hCurr].key != NULL )) return;
 
 	curr = h[hCurr].node;
 	n[curr].handle = n[pq->size].handle;
@@ -324,7 +324,7 @@ PriorityQ *pqNewPriorityQ( TESSalloc* alloc, int size, int (*leq)(PQkey key1, PQ
 /* really tessPqSortDeletePriorityQ */
 void pqDeletePriorityQ( TESSalloc* alloc, PriorityQ *pq )
 {
-	assert(pq != NULL); 
+	if(pq == NULL) return;
 	if (pq->heap != NULL) pqHeapDeletePriorityQ( alloc, pq->heap );
 	if (pq->order != NULL) alloc->memfree( alloc->userData, pq->order );
 	if (pq->keys != NULL) alloc->memfree( alloc->userData, pq->keys );
@@ -445,8 +445,8 @@ PQhandle pqInsert( TESSalloc* alloc, PriorityQ *pq, PQkey keyNew )
 			}
 		}
 	}
-	assert(curr != INV_HANDLE); 
-	pq->keys[curr] = keyNew;
+	if(curr != INV_HANDLE)
+		pq->keys[curr] = keyNew;
 
 	/* Negative handles index the sorted array. */
 	return -(curr+1);
@@ -505,7 +505,7 @@ void pqDelete( PriorityQ *pq, PQhandle curr )
 		return;
 	}
 	curr = -(curr+1);
-	assert( curr < pq->max && pq->keys[curr] != NULL );
+	if(!( curr < pq->max && pq->keys[curr] != NULL )) return;
 
 	pq->keys[curr] = NULL;
 	while( pq->size > 0 && *(pq->order[pq->size-1]) == NULL ) {

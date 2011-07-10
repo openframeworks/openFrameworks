@@ -74,6 +74,10 @@ namespace cv {
 
 using std::vector;
 using std::string;
+
+#ifdef unix
+using std::ptrdiff_t;
+#endif
     
 template<typename _Tp> class CV_EXPORTS Size_;
 template<typename _Tp> class CV_EXPORTS Point_;
