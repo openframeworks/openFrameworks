@@ -445,7 +445,7 @@ static void saveImage(ofPixels_<PixelType> & pix, ofBuffer & buffer, ofImageForm
 		  but can also be retrieved by FreeImage_AcquireMemory that retrieves both the
 		  length of the buffer, and the buffer memory address.
 		  */
-			#ifdef _MSC_VER
+			#ifdef TARGET_WIN32
 		   	   DWORD size_in_bytes = 0;
 			#else
 		   	   uint32_t size_in_bytes = 0;
