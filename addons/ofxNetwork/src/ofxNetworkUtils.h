@@ -12,6 +12,30 @@
 #include "ofConstants.h"
 #include "ofUtils.h"
 
+#ifdef TARGET_WIN32
+#define ENOTCONN        WSAENOTCONN
+#define EWOULDBLOCK     WSAEWOULDBLOCK
+#define ENOBUFS         WSAENOBUFS
+#define ECONNRESET      WSAECONNRESET
+#define ESHUTDOWN       WSAESHUTDOWN
+#define EAFNOSUPPORT    WSAEAFNOSUPPORT
+#define EPROTONOSUPPORT WSAEPROTONOSUPPORT
+#define EINPROGRESS     WSAEINPROGRESS
+#define EISCONN         WSAEISCONN
+#define ENOTSOCK        WSAENOTSOCK
+#define EOPNOTSUPP      WSAEOPNOTSUPP
+#define ETIMEDOUT       WSAETIMEDOUT
+#define EADDRNOTAVAIL   WSAEADDRNOTAVAIL
+#define ECONNREFUSED    WSAECONNREFUSED
+#define ENETUNREACH     WSAENETUNREACH
+#define EADDRINUSE      WSAEADDRINUSE
+#define EADDRINUSE      WSAEADDRINUSE
+#define EALREADY        WSAEALREADY
+#define ENOPROTOOPT     WSAENOPROTOOPT
+#define EMSGSIZE        WSAEMSGSIZE
+#endif
+
+
 #define ofxNetworkCheckError() ofxNetworkCheckErrno(__FILE__,ofToString(__LINE__))
 
 inline int ofxNetworkCheckErrno(const string & file, const string & line){
@@ -101,8 +125,13 @@ inline int ofxNetworkCheckErrno(const string & file, const string & line){
 	case EAGAIN:
 		//ofLog(OF_LOG_VERBOSE,"ofxNetwork:"+file+": " +line+" EAGAIN: try again");
 		break;
+#ifdef TARGET_WIN32
+	case WSAEWOULDBLOCK:
+		// represents "resource temporarily unavailable", can be ignored
+		break;
+#endif
 	default:
-		ofLog(OF_LOG_ERROR,"ofxNetwork:"+file+": " +line+" unknown error: " + ofToString(errno) + " see errno.h for description of the error");
+		ofLog(OF_LOG_ERROR,"ofxNetwork:"+file+": " +line+" unknown error: " + ofToString(err) + " see errno.h for description of the error");
 		break;
 	}
 

@@ -25,7 +25,7 @@ ofLogLevel ofGetLogLevel();
 void ofSetLoggerChannel(ofPtr<ofBaseLoggerChannel> loggerChannel);
 string ofGetLogLevelName(ofLogLevel level);
 
-void ofLogToFile(const string & path);
+void ofLogToFile(const string & path, bool append=false);
 void ofLogToConsole();
 
 //------------------------------------------------------------------------------
@@ -138,6 +138,7 @@ class ofLogFatalError : public ofLog{
 
 class ofBaseLoggerChannel{
 public:
+	virtual ~ofBaseLoggerChannel(){};
 	virtual void log(ofLogLevel level, const string & module, const string & message)=0;
 	virtual void log(ofLogLevel logLevel, const string & module, const char* format, ...)=0;
 	virtual void log(ofLogLevel logLevel, const string & module, const char* format, va_list args)=0;
@@ -145,6 +146,7 @@ public:
 
 class ofConsoleLoggerChannel: public ofBaseLoggerChannel{
 public:
+	virtual ~ofConsoleLoggerChannel(){};
 	void log(ofLogLevel level, const string & module, const string & message);
 	void log(ofLogLevel logLevel, const string & module, const char* format, ...);
 	void log(ofLogLevel logLevel, const string & module, const char* format, va_list args);
@@ -153,10 +155,10 @@ public:
 class ofFileLoggerChannel: public ofBaseLoggerChannel{
 public:
 	ofFileLoggerChannel();
-	ofFileLoggerChannel(const string & path);
-	~ofFileLoggerChannel();
+	ofFileLoggerChannel(const string & path, bool append);
+	virtual ~ofFileLoggerChannel();
 
-	void setFile(const string & path);
+	void setFile(const string & path,bool append=false);
 
 	void log(ofLogLevel level, const string & module, const string & message);
 	void log(ofLogLevel logLevel, const string & module, const char* format, ...);

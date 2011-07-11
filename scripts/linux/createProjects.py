@@ -18,7 +18,7 @@ for uname_str in uname:
         arch = 'linux64'
         
 templates_path = os.path.join(of_root,'apps','devApps',platform)
-template = {'cbp': os.path.join(templates_path , 'emptyExample_' + arch + '.cbp'), 'full_cbp': os.path.join(templates_path , 'emptyExample_' + arch + '_fullCBP.cbp'), 'makefile': os.path.join(templates_path , 'Makefile'), 'config.make': os.path.join(templates_path , 'config.make')}
+template = {'cbp': os.path.join(templates_path , 'emptyExample_' + arch + '.cbp'), 'full_cbp': os.path.join(templates_path , 'emptyExample_' + arch + '_fullCBP.cbp'), 'workspace': os.path.join(templates_path , 'emptyExample_' + arch + '.workspace'),'makefile': os.path.join(templates_path , 'Makefile'), 'config.make': os.path.join(templates_path , 'config.make')}
 
 fullCBP = True
 
@@ -152,6 +152,22 @@ def createCBP(project_path):
     cbp_file = open(os.path.join(project_path,project_name+'.cbp'),mode='w')
     cbp_file.write(etree.tostring(cbp, xml_declaration=True, encoding='UTF-8', pretty_print=True))
     cbp_file.close()
+    
+def createWorkspace(project_path):
+    if os.path.abspath(project_path) == os.path.abspath(templates_path):
+        return
+    project_name = os.path.basename(project_path)
+    ws = objectify.parse(os.path.join(project_path,project_name+'.workspace'))
+    root = ws.getroot()
+    workspace = root.Workspace
+    
+    for project in workspace.Project:
+        if project.get("filename")=="emptyExample.cbp":
+            project.set("filename",project_name+".cbp")
+
+    ws_file = open(os.path.join(project_path,project_name+'.workspace'),mode='w')
+    ws_file.write(etree.tostring(ws, xml_declaration=True, encoding='UTF-8', pretty_print=True))
+    ws_file.close()
 
 def createProject(project_path):
     print 'generating',project_path
@@ -167,6 +183,9 @@ def createProject(project_path):
         shutil.copyfile(template['full_cbp'],os.path.join(project_path,project_name+'.cbp'))
     else:
         shutil.copyfile(template['cbp'],os.path.join(project_path,project_name+'.cbp'))
+        
+    shutil.copyfile(template['workspace'],os.path.join(project_path,project_name+'.workspace'))
+    
     if platform == "linux":
         shutil.copyfile(template['makefile'],os.path.join(project_path,'Makefile'))
 
@@ -185,6 +204,7 @@ def createProject(project_path):
         os.mkdir(os.path.join(project_path , 'bin','data'))
 
     createCBP(project_path)
+    createWorkspace(project_path)
 
 
 

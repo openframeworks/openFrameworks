@@ -36,6 +36,10 @@
 extern "C" {
 #endif
 
+#if defined( __APPLE_CC__)
+	#include <TargetConditionals.h>
+#endif
+
 enum TessWindingRule
 {
 	TESS_WINDING_ODD,
@@ -64,15 +68,17 @@ enum TessElementType
 };
 
 typedef float TESSreal;
-#if defined (TARGET_OS_IPHONE) || defined(ANDROID)
+//note this shouldn't be defined(TARGET_OS_IPHONE) as its always defined either 0 or 1
+#if TARGET_OS_IPHONE || defined(ANDROID)
 typedef unsigned short TESSindex;
 #else
 typedef unsigned int TESSindex;
 #endif
+
 typedef struct TESStesselator TESStesselator;
 typedef struct TESSalloc TESSalloc;
 
-#define TESS_UNDEF (~(TESSindex)0)
+#define TESS_UNDEF ((TESSindex)(~(TESSindex)0))
 
 // Custom memory allocator interface.
 // The internal memory allocator allocates mesh edges, vertices and faces

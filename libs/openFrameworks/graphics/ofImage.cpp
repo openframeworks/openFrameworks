@@ -3,7 +3,6 @@
 #include "ofTypes.h"
 #include "ofURLFileLoader.h"
 #include "ofGraphics.h"
-#include "ofPixelUtils.h"
 #include "FreeImage.h"
 
 #ifdef TARGET_ANDROID
@@ -381,28 +380,109 @@ static void saveImage(ofPixels_<PixelType> & pix, string fileName, ofImageQualit
 	}
 }
 
+//----------------------------------------------------------------
 void ofSaveImage(ofPixels & pix, string fileName, ofImageQualityType qualityLevel){
 	saveImage(pix,fileName,qualityLevel);
 }
 
+//----------------------------------------------------------------
 void ofSaveImage(ofFloatPixels & pix, string fileName, ofImageQualityType qualityLevel) {
 	saveImage(pix,fileName,qualityLevel);
 }
 
+//----------------------------------------------------------------
 void ofSaveImage(ofShortPixels & pix, string fileName, ofImageQualityType qualityLevel) {
 	saveImage(pix,fileName,qualityLevel);
 }
 
-void ofSaveImage(ofPixels & pix, ofBuffer & buffer, ofImageQualityType qualityLevel) {
-	ofLog(OF_LOG_ERROR, "ofSaveImage(pix, buffer) is not yet implemented");
+//----------------------------------------------------------------
+template<typename PixelType>
+static void saveImage(ofPixels_<PixelType> & pix, ofBuffer & buffer, ofImageFormat format, ofImageQualityType qualityLevel) {
+	//thanks to alvaro casinelli for the implementation
+
+	ofInitFreeImage();
+
+	if (pix.isAllocated() == false){
+		ofLog(OF_LOG_ERROR,"error saving image - pixels aren't allocated");
+		return;
+	}
+
+	#ifdef TARGET_LITTLE_ENDIAN
+		pix.swapRgb();
+	#endif
+
+	FIBITMAP * bmp	= getBmpFromPixels(pix);
+
+	#ifdef TARGET_LITTLE_ENDIAN
+		pix.swapRgb();
+	#endif
+
+	if (bmp)  // bitmap successfully created
+	{
+		   // (b) open a memory stream to compress the image onto mem_buffer:
+		   //
+		   FIMEMORY *hmem = FreeImage_OpenMemory();
+		   // (c) encode and save the image to the memory (on dib FIBITMAP image):
+		   //
+		   if(FREE_IMAGE_FORMAT(format) == FIF_JPEG) {
+				int quality = JPEG_QUALITYSUPERB;
+				switch(qualityLevel) {
+					case OF_IMAGE_QUALITY_WORST: quality = JPEG_QUALITYBAD; break;
+					case OF_IMAGE_QUALITY_LOW: quality = JPEG_QUALITYAVERAGE; break;
+					case OF_IMAGE_QUALITY_MEDIUM: quality = JPEG_QUALITYNORMAL; break;
+					case OF_IMAGE_QUALITY_HIGH: quality = JPEG_QUALITYGOOD; break;
+					case OF_IMAGE_QUALITY_BEST: quality = JPEG_QUALITYSUPERB; break;
+				}
+				FreeImage_SaveToMemory(FIF_JPEG, bmp, hmem, quality);
+		   }else{
+				FreeImage_SaveToMemory((FREE_IMAGE_FORMAT)format, bmp, hmem);
+		   }
+		   /*
+
+		  NOTE: at this point, hmem contains the entire data in memory stored in fif format. the
+		  amount of space used by the memory is equal to file_size:
+		  long file_size = FreeImage_TellMemory(hmem);
+		  but can also be retrieved by FreeImage_AcquireMemory that retrieves both the
+		  length of the buffer, and the buffer memory address.
+		  */
+			#ifdef TARGET_WIN32
+		   	   DWORD size_in_bytes = 0;
+			#else
+		   	   uint32_t size_in_bytes = 0;
+			#endif
+		   // Save compressed data on mem_buffer
+		   // note: FreeImage_AquireMemory allocates space for aux_mem_buffer):
+		   //
+		   unsigned char *mem_buffer = NULL;
+		   if (!FreeImage_AcquireMemory(hmem, &mem_buffer, &size_in_bytes))
+				   cout << "Error aquiring compressed image from memory" << endl;
+
+		   /*
+			  Now, before closing the memory stream, copy the content of mem_buffer
+			  to an auxiliary buffer
+		    */
+
+		   buffer.set((char*)mem_buffer,size_in_bytes);
+
+		   // Finally, close the FIBITMAP object, or we will get a memory leak:
+		   FreeImage_Unload(bmp);
+
+		   // Close the memory stream (otherwise we may get a memory leak).
+		   FreeImage_CloseMemory(hmem);
+	}
 }
 
-void ofSaveImage(ofFloatPixels & pix, ofBuffer & buffer, ofImageQualityType qualityLevel) {
-	ofLog(OF_LOG_ERROR, "ofSaveImage(pix, buffer) is not yet implemented");
+//----------------------------------------------------------------
+void ofSaveImage(ofPixels & pix, ofBuffer & buffer, ofImageFormat format, ofImageQualityType qualityLevel) {
+	saveImage(pix,buffer,format,qualityLevel);
 }
 
-void ofSaveImage(ofShortPixels & pix, ofBuffer & buffer, ofImageQualityType qualityLevel) {
-	ofLog(OF_LOG_ERROR, "ofSaveImage(pix, buffer) is not yet implemented");
+void ofSaveImage(ofFloatPixels & pix, ofBuffer & buffer, ofImageFormat format, ofImageQualityType qualityLevel) {
+	saveImage(pix,buffer,format,qualityLevel);
+}
+
+void ofSaveImage(ofShortPixels & pix, ofBuffer & buffer, ofImageFormat format, ofImageQualityType qualityLevel) {
+	saveImage(pix,buffer,format,qualityLevel);
 }
 
 
@@ -602,25 +682,25 @@ void ofImage_<PixelType>::resetAnchor(){
 //------------------------------------
 template<typename PixelType>
 void ofImage_<PixelType>::draw(const ofRectangle & _r){
-	ofGetDefaultRenderer()->draw(*this,_r.x,_r.y,0,_r.width,_r.height);
+	ofGetCurrentRenderer()->draw(*this,_r.x,_r.y,0,_r.width,_r.height);
 }
 
 //------------------------------------
 template<typename PixelType>
 void ofImage_<PixelType>::draw(const ofPoint & _p, float _w, float _h){
-	ofGetDefaultRenderer()->draw(*this,_p.x,_p.y,_p.z,_w,_h);
+	ofGetCurrentRenderer()->draw(*this,_p.x,_p.y,_p.z,_w,_h);
 }
 
 //------------------------------------
 template<typename PixelType>
 void ofImage_<PixelType>::draw(float _x, float _y, float _w, float _h){
-	ofGetDefaultRenderer()->draw(*this,_x,_y,0,_w,_h);
+	ofGetCurrentRenderer()->draw(*this,_x,_y,0,_w,_h);
 }
 
 //------------------------------------
 template<typename PixelType>
 void ofImage_<PixelType>::draw(float _x, float _y, float _z, float _w, float _h){
-	ofGetDefaultRenderer()->draw(*this,_x,_y,_z,_w,_h);
+	ofGetCurrentRenderer()->draw(*this,_x,_y,_z,_w,_h);
 }
 
 //------------------------------------
@@ -718,13 +798,13 @@ void ofImage_<PixelType>::unbind(){
 
 //------------------------------------
 template<typename PixelType>
-ofColor ofImage_<PixelType>::getColor(int x, int y) const {
+ofColor_<PixelType> ofImage_<PixelType>::getColor(int x, int y) const {
 	return pixels.getColor(x, y);
 }
 
 //------------------------------------
 template<typename PixelType>
-void ofImage_<PixelType>::setColor(int x, int y, ofColor color) {
+void ofImage_<PixelType>::setColor(int x, int y, ofColor_<PixelType> color) {
 	pixels.setColor(x, y, color);
 }
 
@@ -846,18 +926,23 @@ void ofImage_<PixelType>::resize(int newWidth, int newHeight){
 //------------------------------------
 template<typename PixelType>
 void ofImage_<PixelType>::crop(int x, int y, int w, int h){
-	ofPixelUtils::crop(pixels, x,y,w,h);
+	w = ofClamp(w,1,getWidth());
+	h = ofClamp(h,1,getHeight());
+
+	pixels.crop(x,y,w,h);
 	update();
 }
 
 //------------------------------------
 template<typename PixelType>
 void ofImage_<PixelType>::cropFrom(ofImage_<PixelType> & otherImage, int x, int y, int w, int h){
+	w = ofClamp(w,1,otherImage.getWidth());
+	h = ofClamp(h,1,otherImage.getHeight());
 
 	int myOldWidth = pixels.getWidth();
 	int myOldHeight = pixels.getHeight();
 
-	ofPixelUtils::cropFromTo(otherImage.pixels,pixels, x,y,w,h);
+	otherImage.pixels.cropTo(pixels, x, y, w, h);
 
 	if (myOldWidth != pixels.getWidth() || myOldHeight != pixels.getHeight()){
 		if (bUseTexture == true){
@@ -874,7 +959,7 @@ template<typename PixelType>
 void ofImage_<PixelType>::rotate90(int nRotations){
 	int myOldWidth = pixels.getWidth();
 	int myOldHeight = pixels.getHeight();
-	ofPixelUtils::rotate90(pixels, nRotations);
+	pixels.rotate90(nRotations);
 	if (myOldWidth != pixels.getWidth() || myOldHeight != pixels.getHeight()){
 		if (bUseTexture == true){
 			tex.clear();
@@ -887,7 +972,7 @@ void ofImage_<PixelType>::rotate90(int nRotations){
 //------------------------------------
 template<typename PixelType>
 void ofImage_<PixelType>::mirror(bool vertical, bool horizontal){
-	ofPixelUtils::mirror(pixels, vertical, horizontal);
+	pixels.mirror(vertical, horizontal);
 	update();
 }
 

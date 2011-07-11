@@ -38,6 +38,8 @@ public:
 	int findHaarObjects(const ofxCvGrayscaleImage& input, ofRectangle& roi,	int minWidth = 0, int minHeight = 0);
 	int findHaarObjects(const ofxCvGrayscaleImage&, int x, int y, int w, int h,	int minWidth = 0, int minHeight = 0);
 
+	int findHaarObjects(ofPixels& input, int minWidth = 0, int minHeight = 0);
+
 	float getWidth();
 	float getHeight();
 	

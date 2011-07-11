@@ -4,7 +4,7 @@
 
 
 //--------------------------------------------------------------------------------
-bool sort_carea_compare( const CvSeq* a, const CvSeq* b) {
+static bool sort_carea_compare( const CvSeq* a, const CvSeq* b) {
 	// use opencv to calc size, then sort based on size
 	float areaa = fabs(cvContourArea(a, CV_WHOLE_SEQ));
 	float areab = fabs(cvContourArea(b, CV_WHOLE_SEQ));

@@ -12,6 +12,7 @@
 #include "ofAppRunner.h"
 #include <deque>
 #include <set>
+#include <jni.h>
 
 static ofxAndroidSoundStream* instance=NULL;
 static bool headphonesConnected;
@@ -234,13 +235,14 @@ int ofxAndroidSoundStream::androidOutputAudioCallback(JNIEnv*  env, jobject  thi
 	}
 
 
-	for(int i=0;i<bufferSize*inChannels;i++){
-		in_float_buffer[i] = input_buffer.read(0);
+	if(inChannels>0){
+		for(int i=0;i<bufferSize*inChannels;i++){
+			in_float_buffer[i] = input_buffer.read(0);
+		}
+		soundInputPtr->audioIn(in_float_buffer,bufferSize,inChannels,0,tickCount);
 	}
-	soundInputPtr->audioIn(in_float_buffer,bufferSize,inChannels,tickCount);
 
-
-	soundOutputPtr->audioOut(out_float_buffer,bufferSize,numChannels,tickCount);
+	soundOutputPtr->audioOut(out_float_buffer,bufferSize,numChannels,0,tickCount);
 
 	for(int i=0;i<bufferSize*numChannels ;i++){
 		float tempf = (out_float_buffer[i] * 32767.5f) - 0.5;

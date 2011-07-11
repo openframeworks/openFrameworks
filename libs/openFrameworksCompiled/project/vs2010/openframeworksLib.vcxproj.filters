@@ -186,13 +186,7 @@
     <ClInclude Include="..\..\..\openFrameworks\graphics\ofPixels.h">
       <Filter>libs\openFrameworks\graphics</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\openFrameworks\graphics\ofPixelUtils.h">
-      <Filter>libs\openFrameworks\graphics</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\openFrameworks\graphics\ofPolyline.h">
-      <Filter>libs\openFrameworks\graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\openFrameworks\graphics\ofPolyUtils.h">
       <Filter>libs\openFrameworks\graphics</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\openFrameworks\graphics\ofRendererCollection.h">
@@ -362,13 +356,7 @@
     <ClCompile Include="..\..\..\openFrameworks\graphics\ofPixels.cpp">
       <Filter>libs\openFrameworks\graphics</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\openFrameworks\graphics\ofPixelUtils.cpp">
-      <Filter>libs\openFrameworks\graphics</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\openFrameworks\graphics\ofPolyline.cpp">
-      <Filter>libs\openFrameworks\graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\openFrameworks\graphics\ofPolyUtils.cpp">
       <Filter>libs\openFrameworks\graphics</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\openFrameworks\graphics\ofTessellator.cpp">

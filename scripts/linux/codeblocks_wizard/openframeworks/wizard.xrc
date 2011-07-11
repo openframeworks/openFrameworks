@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resource>
+
+<object class="wxPanel" name="ofProjectName">
+    <style>wxTAB_TRAVERSAL</style>
+    <object class="wxBoxSizer">
+      <orient>wxVERTICAL</orient>
+      
+	<object class="sizeritem">
+		<option>0</option>
+		<flag>wxALL</flag>
+		<border>8</border>
+		<object class="wxStaticText" name="LabelHeading">
+			<label>
+Welcome to the openFrameworks Project Wizard. This wizard will create a 
+the project file for Code::Blocks with all includes and linker files correctly 
+setup for you.
+			</label>	
+		</object>
+	</object>
+	  
+
+	<object class="sizeritem">
+		<option>0</option>
+		<flag>wxALL</flag>
+		<border>0</border>
+		<object class="wxStaticText" name="m_staticText5">
+			<label>Project Name:</label>
+		</object>
+	</object>
+	
+	<object class="sizeritem">
+		<option>0</option>
+		<flag>wxALL|wxEXPAND</flag>
+		<border>0</border>
+		<object class="wxTextCtrl" name="ofProjName">
+			<value>myTestProject</value>
+			<maxlength>20</maxlength>
+		</object>
+	</object>
+
+	
+	</object>
+</object>
+
+  <object class="wxPanel" name="ofAddons">
+    <style>wxTAB_TRAVERSAL</style>
+    <object class="wxBoxSizer">
+      <orient>wxVERTICAL</orient>
+      <object class="sizeritem">
+        <option>0</option>
+        <flag>wxALL</flag>
+        <border>8</border>
+        <object class="wxStaticText" name="LabelHeading">
+          <label>Please select additional libraries you want to add to project.\n\nPlease Note that Code::Blocks will NOT check for the\nexistence of any Libraries added below.</label>
+        </object>
+      </object>
+      <object class="sizeritem">
+        <object class="wxListBox" name="ofAddonsList">
+          <content>
+            <item>ofxVectorMath</item>
+            <item>ofxXmlSettings</item> 
+            <item>ofxOpenCv</item>
+            <item>ofxOsc</item>  
+            <item>ofxThread</item>   
+            <item>ofx3DUtils</item>
+			<item>ofx3DModelLoader</item>
+			<item>ofxAccelerometer</item>
+			<item>ofxAndroid</item>		
+			<item>ofxAssimpModelLoader</item>
+            <item>ofxDirList</item>		
+			<item>ofxMultiTouch</item>		
+            <item>ofxNetwork</item>
+            <item>ofxSynth</item>
+            <item>ofxThreadedImageLoader</item>            
+            <item>ofxVectorGraphics</item>            
+          </content>
+          <style>wxLB_EXTENDED</style>
+        </object>
+        <flag>wxALL|wxGROW</flag>
+        <border>8</border>
+      </object>
+    </object>
+  </object>
+  
+  
+  
+</resource>

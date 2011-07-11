@@ -27,11 +27,15 @@ class testApp : public ofxiPhoneApp{
 		ofVideoGrabber 		vidGrabber;
 		ofVideoPlayer 		vidPlayer;
 
+		ofTexture tex;
+
         ofxCvColorImage			colorImg;
 
         ofxCvGrayscaleImage 	grayImage;
 		ofxCvGrayscaleImage 	grayBg;
 		ofxCvGrayscaleImage 	grayDiff;
+		
+		float capW, capH;
 
         ofxCvContourFinder 	contourFinder;
 

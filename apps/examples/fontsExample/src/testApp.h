@@ -20,10 +20,15 @@ class testApp : public ofBaseApp{
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);		
 		
-		ofTrueTypeFont  franklinBook;
-		ofTrueTypeFont	verdana;
-		ofTrueTypeFont  franklinBookLarge;
+		bool bFirst;
+		string typeStr;
 		
-		float 			counter;
+		ofTrueTypeFont  franklinBook14;
+		ofTrueTypeFont	verdana14;
+		ofTrueTypeFont	verdana30;
+		
+		ofTrueTypeFont  franklinBook14A;
+		ofTrueTypeFont	verdana14A;
+
 };
 

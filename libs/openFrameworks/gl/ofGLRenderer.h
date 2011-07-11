@@ -1,14 +1,23 @@
 #pragma once
 #include "ofBaseTypes.h"
 #include "ofPolyline.h"
+#include <stack>
 class ofShapeTessellation;
 class ofMesh;
+class ofFbo;
 
 
 class ofGLRenderer: public ofBaseRenderer{
 public:
 	ofGLRenderer(bool useShapeColor=true);
 	~ofGLRenderer(){}
+
+	string getType(){ return "GL"; }
+
+	void setCurrentFBO(ofFbo * fbo);
+
+	void update();
+
 	void draw(ofMesh & vertexData);
 	void draw(ofMesh & vertexData, ofPolyRenderMode renderType);
 	void draw(ofPolyline & poly);
@@ -80,7 +89,7 @@ public:
 	void setHexColor( int hexColor ); // hex, like web 0xFF0033;
 
 	// bg color
-	ofColor & getBgColor();
+	ofFloatColor & getBgColor();
 	bool bClearBg();
 	void background(const ofColor & c);
 	void background(float brightness);
@@ -107,9 +116,9 @@ private:
 	void endSmoothing();
 
 	ofHandednessType coordHandedness;
-	deque <ofRectangle> viewportHistory;
+	stack <ofRectangle> viewportHistory;
 	bool bBackgroundAuto;
-	ofColor bgColor;
+	ofFloatColor bgColor;
 
 	vector<ofPoint> linePoints;
 	vector<ofPoint> rectPoints;
@@ -120,5 +129,7 @@ private:
 	ofFillFlag bFilled;
 	bool bSmoothHinted;
 	ofRectMode rectMode;
+
+	ofFbo * currentFbo;
 
 };
