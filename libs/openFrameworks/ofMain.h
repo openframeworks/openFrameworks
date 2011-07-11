@@ -4,6 +4,7 @@
 // utils
 #include "ofConstants.h"
 #include "ofFileUtils.h"
+#include "ofLog.h"
 #include "ofSystemUtils.h"
 #include "ofThread.h"
 #include "ofURLFileLoader.h"
@@ -30,17 +31,28 @@
 #endif
 
 //--------------------------
-// graphics
+// gl
+#include "ofFbo.h"
+#include "ofGLRenderer.h"
+#include "ofGLUtils.h"
+#include "ofLight.h"
+#include "ofMaterial.h"
+#include "ofShader.h"
 #include "ofTexture.h"
-#include "ofTrueTypeFont.h"
+#include "ofVbo.h"
+#include "ofVboMesh.h"
+
+//--------------------------
+// graphics
+#include "ofCairoRenderer.h"
 #include "ofGraphics.h"
 #include "ofImage.h"
-#include "ofFbo.h"
-#include "ofShader.h"
+#include "ofPath.h"
 #include "ofPixels.h"
-#include "ofCairoRenderer.h"
-#include "ofGLRenderer.h"
+#include "ofPolyline.h"
 #include "ofRendererCollection.h"
+#include "ofTessellator.h"
+#include "ofTrueTypeFont.h"
 
 //--------------------------
 // app
@@ -65,12 +77,9 @@
 
 //--------------------------
 // 3d
-#include "ofVbo.h"
 #include "of3dUtils.h"
-#include "ofNode.h"
 #include "ofCamera.h"
-#include "ofMesh.h"
 #include "ofEasyCam.h"
-#include "ofLight.h"
-#include "ofVboMesh.h"
+#include "ofMesh.h"
+#include "ofNode.h"
 
