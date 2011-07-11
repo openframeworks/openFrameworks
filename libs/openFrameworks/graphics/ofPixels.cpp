@@ -567,47 +567,47 @@ bool ofPixels_<PixelType>::resize(int dstWidth, int dstHeight, ofInterpolationMe
 
 //----------------------------------------------------------------------
 template<typename PixelType>
-float ofPixels_<PixelType>::bicubicInterpolate (const PixelType *patch, float x,float y, float x2,float y2, float x3,float y3) {
+float ofPixels_<PixelType>::bicubicInterpolate (const float *patch, float x,float y, float x2,float y2, float x3,float y3) {
 	// adapted from http://www.paulinternet.nl/?page=bicubic
 	// Note that this code can produce values outside of 0...255, due to cubic overshoot.
 	// The ofClamp() prevents this from happening.
 
-	PixelType p00 = patch[ 0];
-	PixelType p10 = patch[ 4];
-	PixelType p20 = patch[ 8];
-	PixelType p30 = patch[12];
+	float p00 = patch[ 0];
+	float p10 = patch[ 4];
+	float p20 = patch[ 8];
+	float p30 = patch[12];
 
-	PixelType p01 = patch[ 1];
-	PixelType p11 = patch[ 5];
-	PixelType p21 = patch[ 9];
-	PixelType p31 = patch[13];
+	float p01 = patch[ 1];
+	float p11 = patch[ 5];
+	float p21 = patch[ 9];
+	float p31 = patch[13];
 
-	PixelType p02 = patch[ 2];
-	PixelType p12 = patch[ 6];
-	PixelType p22 = patch[10];
-	PixelType p32 = patch[14];
+	float p02 = patch[ 2];
+	float p12 = patch[ 6];
+	float p22 = patch[10];
+	float p32 = patch[14];
 
-	PixelType p03 = patch[ 3];
-	PixelType p13 = patch[ 7];
-	PixelType p23 = patch[11];
-	PixelType p33 = patch[15];
+	float p03 = patch[ 3];
+	float p13 = patch[ 7];
+	float p23 = patch[11];
+	float p33 = patch[15];
 
-	PixelType a00 =    p11;
-	PixelType a01 =   -p10 +   p12;
-	PixelType a02 =  2*p10 - 2*p11 +   p12 -   p13;
-	PixelType a03 =   -p10 +   p11 -   p12 +   p13;
-	PixelType a10 =   -p01 +   p21;
-	PixelType a11 =    p00 -   p02 -   p20 +   p22;
-	PixelType a12 = -2*p00 + 2*p01 -   p02 +   p03 + 2*p20 - 2*p21 +   p22 -   p23;
-	PixelType a13 =    p00 -   p01 +   p02 -   p03 -   p20 +   p21 -   p22 +   p23;
-	PixelType a20 =  2*p01 - 2*p11 +   p21 -   p31;
-	PixelType a21 = -2*p00 + 2*p02 + 2*p10 - 2*p12 -   p20 +   p22 +   p30 -   p32;
-	PixelType a22 =  4*p00 - 4*p01 + 2*p02 - 2*p03 - 4*p10 + 4*p11 - 2*p12 + 2*p13 + 2*p20 - 2*p21 + p22 - p23 - 2*p30 + 2*p31 - p32 + p33;
-	PixelType a23 = -2*p00 + 2*p01 - 2*p02 + 2*p03 + 2*p10 - 2*p11 + 2*p12 - 2*p13 -   p20 +   p21 - p22 + p23 +   p30 -   p31 + p32 - p33;
-	PixelType a30 =   -p01 +   p11 -   p21 +   p31;
-	PixelType a31 =    p00 -   p02 -   p10 +   p12 +   p20 -   p22 -   p30 +   p32;
-	PixelType a32 = -2*p00 + 2*p01 -   p02 +   p03 + 2*p10 - 2*p11 +   p12 -   p13 - 2*p20 + 2*p21 - p22 + p23 + 2*p30 - 2*p31 + p32 - p33;
-	PixelType a33 =    p00 -   p01 +   p02 -   p03 -   p10 +   p11 -   p12 +   p13 +   p20 -   p21 + p22 - p23 -   p30 +   p31 - p32 + p33;
+	float a00 =    p11;
+	float a01 =   -p10 +   p12;
+	float a02 =  2.0f*p10 - 2.0f*p11 +   p12 -   p13;
+	float a03 =   -p10 +   p11 -   p12 +   p13;
+	float a10 =   -p01 +   p21;
+	float a11 =    p00 -   p02 -   p20 +   p22;
+	float a12 = -2.0f*p00 + 2.0f*p01 -   p02 +   p03 + 2.0f*p20 - 2.0f*p21 +   p22 -   p23;
+	float a13 =    p00 -   p01 +   p02 -   p03 -   p20 +   p21 -   p22 +   p23;
+	float a20 =  2.0f*p01 - 2.0f*p11 +   p21 -   p31;
+	float a21 = -2.0f*p00 + 2.0f*p02 + 2.0f*p10 - 2.0f*p12 -   p20 +   p22 +   p30 -   p32;
+	float a22 =  4*p00 - 4*p01 + 2.0f*p02 - 2.0f*p03 - 4*p10 + 4*p11 - 2.0f*p12 + 2.0f*p13 + 2.0f*p20 - 2.0f*p21 + p22 - p23 - 2.0f*p30 + 2.0f*p31 - p32 + p33;
+	float a23 = -2.0f*p00 + 2.0f*p01 - 2.0f*p02 + 2.0f*p03 + 2.0f*p10 - 2.0f*p11 + 2.0f*p12 - 2.0f*p13 -   p20 +   p21 - p22 + p23 +   p30 -   p31 + p32 - p33;
+	float a30 =   -p01 +   p11 -   p21 +   p31;
+	float a31 =    p00 -   p02 -   p10 +   p12 +   p20 -   p22 -   p30 +   p32;
+	float a32 = -2.0f*p00 + 2.0f*p01 -   p02 +   p03 + 2.0f*p10 - 2.0f*p11 +   p12 -   p13 - 2.0f*p20 + 2.0f*p21 - p22 + p23 + 2.0f*p30 - 2.0f*p31 + p32 - p33;
+	float a33 =    p00 -   p01 +   p02 -   p03 -   p10 +   p11 -   p12 +   p13 +   p20 -   p21 + p22 - p23 -   p30 +   p31 - p32 + p33;
 
 	float out =
     a00      + a01 * y      + a02 * y2      + a03 * y3 +
@@ -669,11 +669,11 @@ bool ofPixels_<PixelType>::resizeTo(ofPixels_<PixelType>& dst, ofInterpolationMe
 			float px2, py2;
 			float px3, py3;
 
-			PixelType srcColor;
-			PixelType interpCol;
+			float srcColor;
+			float interpCol;
 			int patchRow;
 			int patchIndex;
-			PixelType patch[16];
+			float patch[16];
 
 			int srcRowBytes = srcWidth*bytesPerPixel;
 			int loIndex = (srcRowBytes)+1;
