@@ -143,6 +143,7 @@ void ofVbo::setMesh(const ofMesh & mesh, int usage){
 	setColorData(mesh.getColorsPointer(),mesh.getNumColors(),usage);
 	setNormalData(mesh.getNormalsPointer(),mesh.getNumNormals(),usage);
 	setTexCoordData(mesh.getTexCoordsPointer(),mesh.getNumTexCoords(),usage);
+	setIndexData(mesh.getIndexPointer(), mesh.getNumIndices(), usage);
 }
 
 //--------------------------------------------------------------
