@@ -11,9 +11,14 @@
 
 #include "ofUtils.h"
 #include "ofGraphics.h"
-#include "ofPixelUtils.h"
 
 static bool printVectorInfo = false;
+static int ttfGlobalDpi = 96;
+
+//--------------------------------------------------------
+void ofTrueTypeFont::setGlobalDpi(int newDpi){
+	ttfGlobalDpi = newDpi;
+}
 
 //--------------------------------------------------------
 static ofTTFCharacter makeContoursForCharacter(FT_Face &face);
@@ -175,7 +180,7 @@ ofTrueTypeFont::ofTrueTypeFont(){
 
 	border			= 3;
 	//visibleBorder	= 2;
-	stringQuads.setMode(OF_TRIANGLES_MODE);
+	stringQuads.setMode(OF_PRIMITIVE_TRIANGLES);
 	binded = false;
 }
 
@@ -199,11 +204,11 @@ void ofTrueTypeFont::unloadTextures(){
 }
 
 void ofTrueTypeFont::reloadTextures(){
-	loadFont(filename,fontSize,bAntiAlised,bFullCharacterSet,false);
+	loadFont(filename, fontSize, bAntiAliased, bFullCharacterSet, false);
 }
 
-//------------------------------------------------------------------
-void ofTrueTypeFont::loadFont(string filename, int fontsize, bool _bAntiAliased, bool _bFullCharacterSet, bool makeContours, float simplifyAmt){
+//-----------------------------------------------------------
+bool ofTrueTypeFont::loadFont(string filename, int fontsize, bool _bAntiAliased, bool _bFullCharacterSet, bool makeContours, float simplifyAmt, int dpi) {
 
 	bMakeContours = makeContours;
 
@@ -215,11 +220,14 @@ void ofTrueTypeFont::loadFont(string filename, int fontsize, bool _bAntiAliased,
 	}
 	//------------------------------------------------
 
+	if( dpi == 0 ){
+		dpi = ttfGlobalDpi;
+	}
 
 	filename = ofToDataPath(filename);
 
 	bLoadedOk 			= false;
-	bAntiAlised 		= _bAntiAliased;
+	bAntiAliased 		= _bAntiAliased;
 	bFullCharacterSet 	= _bFullCharacterSet;
 	fontSize			= fontsize;
 
@@ -227,15 +235,15 @@ void ofTrueTypeFont::loadFont(string filename, int fontsize, bool _bAntiAliased,
 	FT_Library library;
 	if (FT_Init_FreeType( &library )){
 		ofLog(OF_LOG_ERROR," PROBLEM WITH FT lib");
-		return;
+		return false;
 	}
 
 	FT_Face face;
 	if (FT_New_Face( library, filename.c_str(), 0, &face )) {
-		return;
+		return false;
 	}
 
-	FT_Set_Char_Size( face, fontsize << 6, fontsize << 6, 96, 96);
+	FT_Set_Char_Size( face, fontsize << 6, fontsize << 6, dpi, dpi);
 	lineHeight = fontsize * 1.43f;
 
 	//------------------------------------------------------
@@ -265,7 +273,7 @@ void ofTrueTypeFont::loadFont(string filename, int fontsize, bool _bAntiAliased,
 			ofLog(OF_LOG_ERROR,"error with FT_Load_Glyph %i", i);
 		}
 
-		if (bAntiAlised == true) FT_Render_Glyph(face->glyph, FT_RENDER_MODE_NORMAL);
+		if (bAntiAliased == true) FT_Render_Glyph(face->glyph, FT_RENDER_MODE_NORMAL);
 		else FT_Render_Glyph(face->glyph, FT_RENDER_MODE_MONO);
 
 		//------------------------------------------
@@ -340,7 +348,7 @@ void ofTrueTypeFont::loadFont(string filename, int fontsize, bool _bAntiAliased,
 		expanded_data[i].set(1,0);
 
 
-		if (bAntiAlised == true){
+		if (bAntiAliased == true){
 			ofPixels bitmapPixels;
 			bitmapPixels.setFromExternalPixels(bitmap.buffer,bitmap.width,bitmap.rows,1);
 			expanded_data[i].setChannel(1,bitmapPixels);
@@ -385,7 +393,7 @@ void ofTrueTypeFont::loadFont(string filename, int fontsize, bool _bAntiAliased,
 	int w;
 	int h;
 	while(!packed){
-		w = pow(2,floor((alpha/2.f) + 0.5)); // there doesn't seem to be a round in cmath for windows. 
+		w = pow(2,floor((alpha/2.f) + 0.5)); // there doesn't seem to be a round in cmath for windows.
 		//w = pow(2,round(alpha/2.f));
 		h = w;//pow(2,round(alpha - round(alpha/2.f)));
 		int x=0;
@@ -431,13 +439,14 @@ void ofTrueTypeFont::loadFont(string filename, int fontsize, bool _bAntiAliased,
 		cps[sortedCopy[i].character].v2		= float(y + border)/float(h);
 		cps[sortedCopy[i].character].t1		= float(cps[sortedCopy[i].character].tW + x + border)/float(w);
 		cps[sortedCopy[i].character].v1		= float(cps[sortedCopy[i].character].tH + y + border)/float(h);
-		ofPixelUtils::pasteInto(charPixels,atlasPixels,x+border,y+border);
+		charPixels.pasteInto(atlasPixels,x+border,y+border);
 		x+= sortedCopy[i].tW + border*2;
 	}
 
 
 	texAtlas.allocate(atlasPixels.getWidth(),atlasPixels.getHeight(),GL_LUMINANCE_ALPHA,false);
-	if(bAntiAlised){
+
+	if(bAntiAliased && fontsize>20){
 		texAtlas.setTextureMinMagFilter(GL_LINEAR,GL_LINEAR);
 	}else{
 		texAtlas.setTextureMinMagFilter(GL_NEAREST,GL_NEAREST);
@@ -449,6 +458,22 @@ void ofTrueTypeFont::loadFont(string filename, int fontsize, bool _bAntiAliased,
 	FT_Done_Face(face);
 	FT_Done_FreeType(library);
   	bLoadedOk = true;
+	return true;
+}
+
+//-----------------------------------------------------------
+bool ofTrueTypeFont::isLoaded() {
+	return bLoadedOk;
+}
+
+//-----------------------------------------------------------
+bool ofTrueTypeFont::isAntiAliased() {
+	return bAntiAliased;
+}
+
+//-----------------------------------------------------------
+bool ofTrueTypeFont::hasFullCharacterSet() {
+	return bFullCharacterSet;
 }
 
 //-----------------------------------------------------------
@@ -533,6 +558,46 @@ void ofTrueTypeFont::drawChar(int c, float x, float y) {
 	stringQuads.addIndex(firstIndex+2);
 	stringQuads.addIndex(firstIndex+3);
 	stringQuads.addIndex(firstIndex);
+}
+
+//-----------------------------------------------------------
+vector<ofTTFCharacter> ofTrueTypeFont::getStringAsPoints(string str){
+	vector<ofTTFCharacter> shapes;
+
+	if (!bLoadedOk){
+		ofLog(OF_LOG_ERROR,"Error : font not allocated -- line %d in %s", __LINE__,__FILE__);
+		return shapes;
+	};
+
+	GLint		index	= 0;
+	GLfloat		X		= 0;
+	GLfloat		Y		= 0;
+
+
+	int len = (int)str.length();
+
+	while(index < len){
+		int cy = (unsigned char)str[index] - NUM_CHARACTER_TO_START;
+		if (cy < nCharacters){ 			// full char set or not?
+		  if (str[index] == '\n') {
+
+				Y += (float) lineHeight;
+				X = 0 ; //reset X Pos back to zero
+
+		  }else if (str[index] == ' ') {
+				 int cy = (int)'p' - NUM_CHARACTER_TO_START;
+				 X += cps[cy].width * letterSpacing * spaceSize;
+		  } else {
+			  	shapes.push_back(getCharacterAsPoints(str[index]));
+			  	shapes.back().translate(ofPoint(X,Y));
+
+				X += cps[cy].setWidth * letterSpacing;
+		  }
+		}
+		index++;
+	}
+	return shapes;
+
 }
 
 //-----------------------------------------------------------
@@ -638,6 +703,10 @@ float ofTrueTypeFont::stringHeight(string c) {
 
 //=====================================================================
 void ofTrueTypeFont::drawString(string c, float x, float y) {
+
+    /*glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	texAtlas.draw(0,0);*/
 
     if (!bLoadedOk){
     	ofLog(OF_LOG_ERROR,"Error : font not allocated -- line %d in %s", __LINE__,__FILE__);
@@ -779,4 +848,7 @@ void ofTrueTypeFont::drawStringAsShapes(string c, float x, float y) {
 
 }
 
-
+//-----------------------------------------------------------
+int ofTrueTypeFont::getNumCharacters() {
+	return nCharacters;
+}

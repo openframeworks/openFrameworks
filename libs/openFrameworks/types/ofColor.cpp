@@ -1,90 +1,126 @@
 #include "ofColor.h"
 #include "ofConstants.h"
 
-const ofColor ofColor::gray = ofColor( 128,128,128 );
-const ofColor ofColor::white = ofColor( 255,255,255 );
-const ofColor ofColor::red = ofColor( 255,0,0 );
-const ofColor ofColor::green = ofColor( 0,255,0 );
-const ofColor ofColor::blue = ofColor( 0,0,255 );
-const ofColor ofColor::cyan = ofColor( 0,255,255 );
-const ofColor ofColor::magenta = ofColor( 255,0,255 );
-const ofColor ofColor::yellow = ofColor( 255,255,0 );
-const ofColor ofColor::black = ofColor( 0,0,0 );
+template<typename PixelType>
+const ofColor_<PixelType> ofColor_<PixelType>::gray = ofColor( 128,128,128 );
 
-ofColor::ofColor (){
+template<typename PixelType>
+const ofColor_<PixelType> ofColor_<PixelType>::white = ofColor( 255,255,255 );
+
+template<typename PixelType>
+const ofColor_<PixelType> ofColor_<PixelType>::red = ofColor( 255,0,0 );
+
+template<typename PixelType>
+const ofColor_<PixelType> ofColor_<PixelType>::green = ofColor( 0,255,0 );
+
+template<typename PixelType>
+const ofColor_<PixelType> ofColor_<PixelType>::blue = ofColor( 0,0,255 );
+
+template<typename PixelType>
+const ofColor_<PixelType> ofColor_<PixelType>::cyan = ofColor( 0,255,255 );
+
+template<typename PixelType>
+const ofColor_<PixelType> ofColor_<PixelType>::magenta = ofColor( 255,0,255 );
+
+template<typename PixelType>
+const ofColor_<PixelType> ofColor_<PixelType>::yellow = ofColor( 255,255,0 );
+
+template<typename PixelType>
+const ofColor_<PixelType> ofColor_<PixelType>::black = ofColor( 0,0,0 );
+
+template<typename PixelType>
+ofColor_<PixelType>::ofColor_ (){
 	r = 255.0f;
 	g = 255.0f;
 	b = 255.0f;
 	a = 255.0f;
 }
 
-ofColor::~ ofColor (){}
+template<typename PixelType>
+ofColor_<PixelType>::~ofColor_ (){}
 
-ofColor::ofColor (float _r, float _g, float _b, float _a){
+template<typename PixelType>
+ofColor_<PixelType>::ofColor_ (float _r, float _g, float _b, float _a){
 	r = _r;
 	g = _g;
 	b = _b;
 	a = _a;
 }
 
-ofColor::ofColor (ofColor const & color){
+template<typename PixelType>
+ofColor_<PixelType>::ofColor_ (const ofColor_<PixelType> & color){
 	r = color.r;
 	g = color.g;
 	b = color.b;
 	a = color.a;
 }
 
-ofColor::ofColor (ofColor const & color, float _a){
+template<typename PixelType>
+ofColor_<PixelType>::ofColor_ (const ofColor_<PixelType> & color, float _a){
 	r = color.r;
 	g = color.g;
 	b = color.b;
 	a = _a;
 }
 
-ofColor::ofColor (float gray, float _a){
+template<typename PixelType>
+ofColor_<PixelType>::ofColor_ (float gray, float _a){
 	r = g = b = gray;
 	a = _a;
 }
 
-ofColor ofColor::fromHsb (float hue, float saturation, float brightness, float alpha) {
-	ofColor cur;
+template<typename PixelType>
+ofColor_<PixelType> ofColor_<PixelType>::fromHsb (float hue, float saturation, float brightness, float alpha) {
+	ofColor_<PixelType> cur;
 	cur.setHsb(hue, saturation, brightness, alpha);
 	return cur;
 }
 
-ofColor ofColor::fromHex(int hexColor, float alpha) {
-	ofColor cur;
+
+template<typename PixelType>
+ofColor_<PixelType> ofColor_<PixelType>::fromHex(int hexColor, float alpha) {
+	ofColor_<PixelType> cur;
 	cur.setHex(hexColor, alpha);
 	return cur;
 }
 
-void ofColor::set (float _r, float _g, float _b, float _a){
+
+template<typename PixelType>
+void ofColor_<PixelType>::set (float _r, float _g, float _b, float _a){
 	r = _r;
 	g = _g;
 	b = _b;
 	a = _a;
 }
 
-void ofColor::set (float _gray, float _a){
+
+template<typename PixelType>
+void ofColor_<PixelType>::set (float _gray, float _a){
 	r = g = b = _gray;
 	a = _a;
 }
 
-void ofColor::set (ofColor const & color){
+
+template<typename PixelType>
+void ofColor_<PixelType>::set (ofColor_<PixelType> const & color){
 	r = color.r;
 	g = color.g;
 	b = color.b;
 	a = color.a;
 }
 
-void ofColor::setHex (int hexColor, float alpha){
+
+template<typename PixelType>
+void ofColor_<PixelType>::setHex (int hexColor, float alpha){
 	r = (hexColor >> 16) & 0xff;
 	g = (hexColor >> 8) & 0xff;
 	b = (hexColor >> 0) & 0xff;
 	a = alpha;
 }
 
-ofColor& ofColor::clamp (){
+
+template<typename PixelType>
+ofColor_<PixelType>& ofColor_<PixelType>::clamp (){
 	r = CLAMP(r, 0.0f, 255.f);
 	g = CLAMP(g, 0.0f, 255.f);
 	b = CLAMP(b, 0.0f, 255.f);
@@ -92,14 +128,18 @@ ofColor& ofColor::clamp (){
 	return *this;
 }
 
-ofColor& ofColor::invert() {
+
+template<typename PixelType>
+ofColor_<PixelType>& ofColor_<PixelType>::invert() {
 	r = 255.f - r;
 	g = 255.f - g;
 	b = 255.f - b;
 	return *this;
 }
 
-ofColor& ofColor::normalize() {
+
+template<typename PixelType>
+ofColor_<PixelType>& ofColor_<PixelType>::normalize() {
 	float brightness = getBrightness();
 	r = 255.f * (r / brightness);
 	g = 255.f * (g / brightness);
@@ -107,7 +147,9 @@ ofColor& ofColor::normalize() {
 	return *this;
 }
 
-ofColor& ofColor::lerp(const ofColor& target, float amount) {
+
+template<typename PixelType>
+ofColor_<PixelType>& ofColor_<PixelType>::lerp(const ofColor_<PixelType>& target, float amount) {
 	float invAmount = 1.f - amount;
 	r = invAmount * r + amount * target.r;
 	g = invAmount * g + amount * target.g;
@@ -116,38 +158,50 @@ ofColor& ofColor::lerp(const ofColor& target, float amount) {
 	return *this;
 }
 
-ofColor ofColor::getClamped () const {
-	ofColor cur(*this);
+
+template<typename PixelType>
+ofColor_<PixelType> ofColor_<PixelType>::getClamped () const {
+	ofColor_<PixelType> cur(*this);
 	cur.clamp();
 	return cur;
 }
 
-ofColor ofColor::getInverted () const {
-	ofColor cur(*this);
+
+template<typename PixelType>
+ofColor_<PixelType> ofColor_<PixelType>::getInverted () const {
+	ofColor_<PixelType> cur(*this);
 	cur.invert();
 	return cur;
 }
 
-ofColor ofColor::getNormalized () const {
-	ofColor cur(*this);
+
+template<typename PixelType>
+ofColor_<PixelType> ofColor_<PixelType>::getNormalized () const {
+	ofColor_<PixelType> cur(*this);
 	cur.normalize();
 	return cur;
 }
 
-ofColor ofColor::getLerped(const ofColor& target, float amount) const {
-	ofColor cur(*this);
+
+template<typename PixelType>
+ofColor_<PixelType> ofColor_<PixelType>::getLerped(const ofColor_<PixelType>& target, float amount) const {
+	ofColor_<PixelType> cur(*this);
 	cur.lerp(target, amount);
 	return cur;
 }
 
 
-float ofColor::getHue() const {
+
+template<typename PixelType>
+float ofColor_<PixelType>::getHue() const {
 	float hue, saturation, brightness;
 	getHsb(hue, saturation, brightness);
 	return hue;
 }
 
-float ofColor::getSaturation() const {
+
+template<typename PixelType>
+float ofColor_<PixelType>::getSaturation() const {
 	float hue, saturation, brightness;
 	getHsb(hue, saturation, brightness);
 	return saturation;
@@ -158,7 +212,9 @@ float ofColor::getSaturation() const {
 	This is used by Photoshop (HSB) and Processing (HSB).
 	Brightness is also called "value".
 */
-float ofColor::getBrightness() const {
+
+template<typename PixelType>
+float ofColor_<PixelType>::getBrightness() const {
 	float max = r;
 	if(g > max) {
 		max = g;
@@ -173,12 +229,16 @@ float ofColor::getBrightness() const {
 	Lightness is the average of the three color components.
 	This is used by the Lab and HSL color spaces.
 */
-float ofColor::getLightness() const {
+
+template<typename PixelType>
+float ofColor_<PixelType>::getLightness() const {
 	return (r + g + b) / 3.f;
 }
 
 
-void ofColor::getHsb(float& hue, float& saturation, float& brightness) const {	
+
+template<typename PixelType>
+void ofColor_<PixelType>::getHsb(float& hue, float& saturation, float& brightness) const {
 	float max = getBrightness();
 	
 	float min = r;
@@ -211,25 +271,33 @@ void ofColor::getHsb(float& hue, float& saturation, float& brightness) const {
 	brightness = max;
 }
 
-void ofColor::setHue (float hue) {
+
+template<typename PixelType>
+void ofColor_<PixelType>::setHue (float hue) {
 	float oldHue, saturation, brightness;
 	getHsb(oldHue, saturation, brightness);
 	setHsb(hue, saturation, brightness);
 }
 
-void ofColor::setSaturation (float saturation) {
+
+template<typename PixelType>
+void ofColor_<PixelType>::setSaturation (float saturation) {
 	float hue, oldSaturation, brightness;
 	getHsb(hue, oldSaturation, brightness);
 	setHsb(hue, saturation, brightness);
 }
 
-void ofColor::setBrightness (float brightness) {
+
+template<typename PixelType>
+void ofColor_<PixelType>::setBrightness (float brightness) {
 	float hue, saturation, oldBrightness;
 	getHsb(hue, saturation, oldBrightness);
 	setHsb(hue, saturation, brightness);
 }
 
-void ofColor::setHsb(float hue, float saturation, float brightness, float alpha) {
+
+template<typename PixelType>
+void ofColor_<PixelType>::setHsb(float hue, float saturation, float brightness, float alpha) {
 	a = alpha;
 	setHsb(hue, saturation, brightness);
 }
@@ -238,7 +306,9 @@ void ofColor::setHsb(float hue, float saturation, float brightness, float alpha)
 	setHsb() breaks the "always override alpha" model because it's needed by setHue(),
 	setSaturation(), and setBrightness() -- which shouldn't modify the alpha.
 */
-void ofColor::setHsb(float hue, float saturation, float brightness) {
+
+template<typename PixelType>
+void ofColor_<PixelType>::setHsb(float hue, float saturation, float brightness) {
 	if(brightness == 0) { // black
 		set(0);
 	} else if(saturation == 0) { // grays
@@ -286,14 +356,18 @@ void ofColor::setHsb(float hue, float saturation, float brightness) {
 	}
 }
 
-int ofColor::getHex () const {
+
+template<typename PixelType>
+int ofColor_<PixelType>::getHex () const {
 	return
 		((0xff & (unsigned char) r) << 16) |
 		((0xff & (unsigned char) g) << 8) |
 		((0xff & (unsigned char) b));
 }
 
-ofColor & ofColor::operator = (ofColor const & color){
+
+template<typename PixelType>
+ofColor_<PixelType> & ofColor_<PixelType>::operator = (ofColor_<PixelType> const & color){
 	r = color.r;
 	g = color.g;
 	b = color.b;
@@ -301,7 +375,9 @@ ofColor & ofColor::operator = (ofColor const & color){
 	return *this;
 }
 
-ofColor & ofColor::operator = (float const & val){
+
+template<typename PixelType>
+ofColor_<PixelType> & ofColor_<PixelType>::operator = (float const & val){
 	r = val;
 	g = val;
 	b = val;
@@ -309,23 +385,33 @@ ofColor & ofColor::operator = (float const & val){
 	return *this;
 }
 
-bool ofColor::operator == (ofColor const & color){
+
+template<typename PixelType>
+bool ofColor_<PixelType>::operator == (ofColor_<PixelType> const & color){
 	return (r == color.r) && (g == color.g) && (b == color.b);
 }
 
-bool ofColor::operator != (ofColor const & color){
+
+template<typename PixelType>
+bool ofColor_<PixelType>::operator != (ofColor_<PixelType> const & color){
 	return (r != color.r) || (g != color.g) || (b != color.b);
 }
 
-ofColor ofColor::operator + (ofColor const & color) const{
-	return ofColor( r+color.r, g+color.g, b+color.b ).clamp();
+
+template<typename PixelType>
+ofColor_<PixelType> ofColor_<PixelType>::operator + (ofColor_<PixelType> const & color) const{
+	return ofColor_<PixelType>( r+color.r, g+color.g, b+color.b ).clamp();
 }
 
-ofColor ofColor::operator + (float const & val) const{
-	return ofColor( r+val, g+val, b+val ).clamp();
+
+template<typename PixelType>
+ofColor_<PixelType> ofColor_<PixelType>::operator + (float const & val) const{
+	return ofColor_<PixelType>( r+val, g+val, b+val ).clamp();
 }
 
-ofColor & ofColor::operator += (ofColor const & color){
+
+template<typename PixelType>
+ofColor_<PixelType> & ofColor_<PixelType>::operator += (ofColor_<PixelType> const & color){
 	r += color.r;
 	g += color.g;
 	b += color.b;
@@ -333,7 +419,9 @@ ofColor & ofColor::operator += (ofColor const & color){
 	return *this;
 }
 
-ofColor & ofColor::operator += (float const & val){
+
+template<typename PixelType>
+ofColor_<PixelType> & ofColor_<PixelType>::operator += (float const & val){
 	r += val;
 	g += val;
 	b += val;
@@ -341,15 +429,21 @@ ofColor & ofColor::operator += (float const & val){
 	return *this;
 }
 
-ofColor ofColor::operator - (ofColor const & color) const{
-	return ofColor( r-color.r, g-color.g, b-color.b ).clamp();
+
+template<typename PixelType>
+ofColor_<PixelType> ofColor_<PixelType>::operator - (ofColor_<PixelType> const & color) const{
+	return ofColor_<PixelType>( r-color.r, g-color.g, b-color.b ).clamp();
 }
 
-ofColor ofColor::operator - (float const & val) const{
-	return ofColor( r-val, g-val, b-val).clamp();
+
+template<typename PixelType>
+ofColor_<PixelType> ofColor_<PixelType>::operator - (float const & val) const{
+	return ofColor_<PixelType>( r-val, g-val, b-val).clamp();
 }
 
-ofColor & ofColor::operator -= (ofColor const & color){
+
+template<typename PixelType>
+ofColor_<PixelType> & ofColor_<PixelType>::operator -= (ofColor_<PixelType> const & color){
 	r -= color.r;
 	g -= color.g;
 	b -= color.b;
@@ -357,7 +451,9 @@ ofColor & ofColor::operator -= (ofColor const & color){
 	return *this;
 }
 
-ofColor & ofColor::operator -= (float const & val){
+
+template<typename PixelType>
+ofColor_<PixelType> & ofColor_<PixelType>::operator -= (float const & val){
 	r -= val;
 	g -= val;
 	b -= val;
@@ -365,23 +461,31 @@ ofColor & ofColor::operator -= (float const & val){
 	return *this;
 }
 
-ofColor ofColor::operator * (ofColor const & color) const{
-	return ofColor( r*(color.r/255.0f), g*(color.g/255.0f), b*(color.b/255.0f));
+
+template<typename PixelType>
+ofColor_<PixelType> ofColor_<PixelType>::operator * (ofColor_<PixelType> const & color) const{
+	return ofColor_<PixelType>( r*(color.r/255.0f), g*(color.g/255.0f), b*(color.b/255.0f));
 }
 
-ofColor ofColor::operator * (float const & val) const{
+
+template<typename PixelType>
+ofColor_<PixelType> ofColor_<PixelType>::operator * (float const & val) const{
 	float v = CLAMP(val,0.0,1.0);
-	return ofColor( r*v, g*v, b*v).clamp();
+	return ofColor_<PixelType>( r*v, g*v, b*v).clamp();
 }
 
-ofColor & ofColor::operator *= (ofColor const & color){
+
+template<typename PixelType>
+ofColor_<PixelType> & ofColor_<PixelType>::operator *= (ofColor_<PixelType> const & color){
 	r *= (color.r/255.0f);
 	g *= (color.g/255.0f);
 	b *= (color.b/255.0f);
 	return *this;
 }
 
-ofColor & ofColor::operator *= (float const & val){
+
+template<typename PixelType>
+ofColor_<PixelType> & ofColor_<PixelType>::operator *= (float const & val){
 	float v = CLAMP(val,0.0,1.0);
 	r *= v;
 	g *= v;
@@ -389,25 +493,33 @@ ofColor & ofColor::operator *= (float const & val){
 	return *this;
 }
 
-ofColor ofColor::operator / (ofColor const & color) const{
-	return ofColor( color.r!=0.0f ? r/(color.r/255.0f) : r , color.g!=0.0f ? g/(color.g/255.0f) : g, color.b!=0.0f ? b/(color.b/255.0f) : b );
+
+template<typename PixelType>
+ofColor_<PixelType> ofColor_<PixelType>::operator / (ofColor_<PixelType> const & color) const{
+	return ofColor_<PixelType>( color.r!=0.0f ? r/(color.r/255.0f) : r , color.g!=0.0f ? g/(color.g/255.0f) : g, color.b!=0.0f ? b/(color.b/255.0f) : b );
 }
 
-ofColor ofColor::operator / (float const & val) const{
+
+template<typename PixelType>
+ofColor_<PixelType> ofColor_<PixelType>::operator / (float const & val) const{
 	if( val != 0.0f)
-		return ofColor( r/val, g/val, b/val ).clamp();
+		return ofColor_<PixelType>( r/val, g/val, b/val ).clamp();
 	else
 		return *this;
 }
 
-ofColor & ofColor::operator /= (ofColor const & color){
+
+template<typename PixelType>
+ofColor_<PixelType> & ofColor_<PixelType>::operator /= (ofColor_<PixelType> const & color){
 	if (color.r!=0.0f) r /= (color.r/255.0f);
 	if (color.g!=0.0f) g /= (color.g/255.0f);
 	if (color.b!=0.0f) b /= (color.b/255.0f);
 	return *this;
 }
 
-ofColor & ofColor::operator /= (float const & val){
+
+template<typename PixelType>
+ofColor_<PixelType> & ofColor_<PixelType>::operator /= (float const & val){
 	if( val != 0.0f ){
 		r /= val;
 		g /= val;
@@ -419,7 +531,9 @@ ofColor & ofColor::operator /= (float const & val){
 		return *this;
 }
 
-float & ofColor::operator [] (int n){
+
+template<typename PixelType>
+const PixelType & ofColor_<PixelType>::operator [] (int n) const{
 	switch( n ){
 		case 0:
 			return r;
@@ -434,3 +548,24 @@ float & ofColor::operator [] (int n){
 			break;
 	}
 }
+
+template<typename PixelType>
+PixelType & ofColor_<PixelType>::operator [] (int n){
+	switch( n ){
+		case 0:
+			return r;
+		case 1:
+			return g;
+		case 2:
+			return b;
+		case 3:
+			return a;
+		default:
+			return r;
+			break;
+	}
+}
+
+template class ofColor_<unsigned char>;
+template class ofColor_<float>;
+template class ofColor_<unsigned short>;

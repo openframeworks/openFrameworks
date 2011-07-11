@@ -4,9 +4,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
 import cc.openframeworks.OFAndroid;
 
 
@@ -72,7 +70,7 @@ public class OFActivity extends Activity{
     	// This passes the menu option string to OF
     	// you can add additional behavior from java modifying this method
     	// but keep the call to OFAndroid so OF is notified of menu events
-    	if(OFAndroid.menuItemSelected(item)){
+    	if(OFAndroid.menuItemSelected(item.getItemId())){
     		
     		return true;
     	}

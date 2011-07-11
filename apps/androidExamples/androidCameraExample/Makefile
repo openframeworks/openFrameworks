@@ -157,12 +157,14 @@ ifeq ($(findstring addons.make,$(wildcard *.make)),addons.make)
 
 	ifeq ($(findstring libsorder.make,$(shell find $(ADDONS_BIN_LIBS_DIRS) -name libsorder.make 2> /dev/null)),libsorder.make)
 		ADDONS_LIBS_W_ORDER = $(shell cat $(shell find $(ADDONS_BIN_LIBS_DIRS) -name libsorder.make 2> /dev/null))
+		EXCLUDE_LIBS_FILTER = $(addprefix %,$(addsuffix .a,$(ADDONS_LIBS_W_ORDER)))
+		ADDONS_LIBS_STATICS = $(filter-out $(EXCLUDE_LIBS_FILTER), $(shell find $(ADDONS_BIN_LIBS_DIRS) -name *.a))
+	    ADDONS_LIBS_STATICS += $(addprefix -l, $(ADDONS_LIBS_W_ORDER))
+    	ADDONS_LIBS_STATICS += $(addprefix -L, $(shell find $(ADDONS_BIN_LIBS_DIRS) -name libsorder.make 2> /dev/null | sed s/libsorder.make//g))
+	else
+		ADDONS_LIBS_STATICS = $(shell find $(ADDONS_BIN_LIBS_DIRS) -name *.a 2> /dev/null)
 	endif
 
-	SED_EXCLUDE_LIBS = $(addsuffix \|,$(ADDONS_LIBS_W_ORDER))
-	ADDONS_LIBS_STATICS = $(shell find $(ADDONS_BIN_LIBS_DIRS) -name *.a 2> /dev/null | grep -v '$(SED_EXCLUDE_LIBS)')
-	ADDONS_LIBS_STATICS += $(addprefix -l, $(ADDONS_LIBS_W_ORDER))
-	ADDONS_LIBS_STATICS += $(addprefix -L, $(shell find $(ADDONS_BIN_LIBS_DIRS) -name libsorder.make 2> /dev/null | sed s/libsorder.make//g))
 	ADDONS_LIBS_SHARED = $(shell find $(ADDONS_BIN_LIBS_DIRS) -name *.so 2> /dev/null)
 	ADDONSLIBS = $(ADDONS_LIBS_STATICS)
 	ADDONSLIBS += $(ADDONS_LIBS_SHARED)
@@ -223,6 +225,7 @@ ifeq ($(ARCH),android)
 		LDFLAGS += -Wl,--entry=main,--fix-cortex-a8
 	    BIN_NAME = $(APPNAME)
 	    TARGET = obj/$(BIN_NAME)
+		USER_LIBS = $(USER_LIBS_ARM)
 	endif
 else
 	ifeq ($(findstring Debug,$(MAKECMDGOALS)),Debug)
@@ -342,6 +345,7 @@ $(OBJ_OUTPUT)%.o: $(USER_SOURCE_DIR)/%.cpp
 	
 $(TARGET): $(OBJS) $(ADDONS_OBJS) $(USER_OBJS) $(TARGET_LIBS) $(LIB_STATIC)
 	@echo 'linking $(TARGET)'
+	mkdir -p $(@D)
 	$(CXX) -o $@ $(OBJS) $(ADDONS_OBJS) $(USER_OBJS) $(LDFLAGS) $(USER_LDFLAGS) $(TARGET_LIBS) $(ADDONSLIBS) $(USER_LIBS) $(LIB_STATIC) $(LIB_PATHS_FLAGS) $(LIB_SHARED) $(SYSTEMLIBS)
 
 -include $(DEPFILES)
@@ -360,12 +364,39 @@ CleanAndroid:
 
 
 afterDebugAndroid:$(TARGET)
-	if [ -f libs/armeabi-v7a/libOFAndroidApp.so ]; then rm libs/armeabi-v7a/libOFAndroidApp.so; fi
-	#touch AndroidManifest.xml
+	@if [ -d libs/armeabi-v7a ]; then rm -r libs/armeabi-v7a; fi
+	
+	@cp $(NDK_ROOT)/toolchains/arm-linux-androideabi-4.4.3/prebuilt/gdbserver libs/armeabi
+	
+	#create gdb.setup for armeabi
+	@echo "set solib-search-path $(PWD)/obj/local/armeabi:$(PWD)/libs/armeabi" > libs/armeabi/gdb.setup
+	@echo "directory $(NDK_ROOT)/platforms/$(NDK_PLATFORM)/arch-arm/usr/include" >> libs/armeabi/gdb.setup
+	@echo "directory $(PWD)/src" >> libs/armeabi/gdb.setup
+	@echo "directory $(NDK_ROOT)/sources/cxx-stl/system" >> libs/armeabi/gdb.setup
+	@echo "directory $(PWD)/libs/armeabi" >> libs/armeabi/gdb.setup 
+	@echo "" >> libs/armeabi/gdb.setup 
+	
+	@if [ ! -d jni ]; then mkdir jni; fi
+	@echo "APP_ABI := armeabi" > jni/Application.mk
+	@echo "#LOCAL_MODULE := OFAndroidApp" > jni/Android.mk
 
 afterReleaseAndroid:$(TARGET)
-	if [ -f obj/$(BIN_NAME) ]; then rm obj/$(BIN_NAME); fi
-	#touch AndroidManifest.xml
+	@if [ -f obj/$(BIN_NAME) ]; then rm obj/$(BIN_NAME); fi
+	
+	@cp $(OF_ROOT)/libs/openFrameworksCompiled/project/android/libneondetection.so libs/armeabi-v7a/
+	@cp $(NDK_ROOT)/toolchains/arm-linux-androideabi-4.4.3/prebuilt/gdbserver libs/armeabi-v7a
+	
+	#create gdb.setup for armeabi-v7a
+	@echo "set solib-search-path $(PWD)/obj/local/armeabi-v7a:$(PWD)/libs/armeabi-v7a" > libs/armeabi-v7a/gdb.setup
+	@echo "directory $(NDK_ROOT)/platforms/$(NDK_PLATFORM)/arch-arm/usr/include" >> libs/armeabi-v7a/gdb.setup
+	@echo "directory $(PWD)/src" >> libs/armeabi-v7a/gdb.setup
+	@echo "directory $(NDK_ROOT)/sources/cxx-stl/system" >> libs/armeabi-v7a/gdb.setup
+	@echo "directory $(PWD)/libs/armeabi-v7a" >> libs/armeabi-v7a/gdb.setup 
+	@echo "" >> libs/armeabi-v7a/gdb.setup 
+	
+	@if [ ! -d jni ]; then mkdir jni; fi
+	@echo "APP_ABI := armeabi armeabi-v7a" > jni/Application.mk
+	@echo "#LOCAL_MODULE := OFAndroidApp" > jni/Android.mk
 
 RESNAME=$(shell echo $(APPNAME)Resources | tr '[A-Z]' '[a-z]')
 

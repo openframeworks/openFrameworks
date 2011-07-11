@@ -101,12 +101,8 @@
 		E485F73F1360A90000E939D3 /* ofPath.h in Headers */ = {isa = PBXBuildFile; fileRef = E485F6B11360A90000E939D3 /* ofPath.h */; };
 		E485F7401360A90000E939D3 /* ofPixels.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E485F6B21360A90000E939D3 /* ofPixels.cpp */; };
 		E485F7411360A90000E939D3 /* ofPixels.h in Headers */ = {isa = PBXBuildFile; fileRef = E485F6B31360A90000E939D3 /* ofPixels.h */; };
-		E485F7421360A90000E939D3 /* ofPixelUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E485F6B41360A90000E939D3 /* ofPixelUtils.cpp */; };
-		E485F7431360A90000E939D3 /* ofPixelUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = E485F6B51360A90000E939D3 /* ofPixelUtils.h */; };
 		E485F7441360A90000E939D3 /* ofPolyline.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E485F6B61360A90000E939D3 /* ofPolyline.cpp */; };
 		E485F7451360A90000E939D3 /* ofPolyline.h in Headers */ = {isa = PBXBuildFile; fileRef = E485F6B71360A90000E939D3 /* ofPolyline.h */; };
-		E485F7461360A90000E939D3 /* ofPolyUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E485F6B81360A90000E939D3 /* ofPolyUtils.cpp */; };
-		E485F7471360A90000E939D3 /* ofPolyUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = E485F6B91360A90000E939D3 /* ofPolyUtils.h */; };
 		E485F7481360A90000E939D3 /* ofRendererCollection.h in Headers */ = {isa = PBXBuildFile; fileRef = E485F6BA1360A90000E939D3 /* ofRendererCollection.h */; };
 		E485F7491360A90000E939D3 /* ofTessellator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E485F6BB1360A90000E939D3 /* ofTessellator.cpp */; };
 		E485F74A1360A90000E939D3 /* ofTessellator.h in Headers */ = {isa = PBXBuildFile; fileRef = E485F6BC1360A90000E939D3 /* ofTessellator.h */; };
@@ -280,12 +276,8 @@
 		E485F6B11360A90000E939D3 /* ofPath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofPath.h; path = ../../../openFrameworks/graphics/ofPath.h; sourceTree = SOURCE_ROOT; };
 		E485F6B21360A90000E939D3 /* ofPixels.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofPixels.cpp; path = ../../../openFrameworks/graphics/ofPixels.cpp; sourceTree = SOURCE_ROOT; };
 		E485F6B31360A90000E939D3 /* ofPixels.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofPixels.h; path = ../../../openFrameworks/graphics/ofPixels.h; sourceTree = SOURCE_ROOT; };
-		E485F6B41360A90000E939D3 /* ofPixelUtils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofPixelUtils.cpp; path = ../../../openFrameworks/graphics/ofPixelUtils.cpp; sourceTree = SOURCE_ROOT; };
-		E485F6B51360A90000E939D3 /* ofPixelUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofPixelUtils.h; path = ../../../openFrameworks/graphics/ofPixelUtils.h; sourceTree = SOURCE_ROOT; };
 		E485F6B61360A90000E939D3 /* ofPolyline.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofPolyline.cpp; path = ../../../openFrameworks/graphics/ofPolyline.cpp; sourceTree = SOURCE_ROOT; };
 		E485F6B71360A90000E939D3 /* ofPolyline.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofPolyline.h; path = ../../../openFrameworks/graphics/ofPolyline.h; sourceTree = SOURCE_ROOT; };
-		E485F6B81360A90000E939D3 /* ofPolyUtils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofPolyUtils.cpp; path = ../../../openFrameworks/graphics/ofPolyUtils.cpp; sourceTree = SOURCE_ROOT; };
-		E485F6B91360A90000E939D3 /* ofPolyUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofPolyUtils.h; path = ../../../openFrameworks/graphics/ofPolyUtils.h; sourceTree = SOURCE_ROOT; };
 		E485F6BA1360A90000E939D3 /* ofRendererCollection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofRendererCollection.h; path = ../../../openFrameworks/graphics/ofRendererCollection.h; sourceTree = SOURCE_ROOT; };
 		E485F6BB1360A90000E939D3 /* ofTessellator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofTessellator.cpp; path = ../../../openFrameworks/graphics/ofTessellator.cpp; sourceTree = SOURCE_ROOT; };
 		E485F6BC1360A90000E939D3 /* ofTessellator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofTessellator.h; path = ../../../openFrameworks/graphics/ofTessellator.h; sourceTree = SOURCE_ROOT; };
@@ -623,12 +615,8 @@
 				E485F6B11360A90000E939D3 /* ofPath.h */,
 				E485F6B21360A90000E939D3 /* ofPixels.cpp */,
 				E485F6B31360A90000E939D3 /* ofPixels.h */,
-				E485F6B41360A90000E939D3 /* ofPixelUtils.cpp */,
-				E485F6B51360A90000E939D3 /* ofPixelUtils.h */,
 				E485F6B61360A90000E939D3 /* ofPolyline.cpp */,
 				E485F6B71360A90000E939D3 /* ofPolyline.h */,
-				E485F6B81360A90000E939D3 /* ofPolyUtils.cpp */,
-				E485F6B91360A90000E939D3 /* ofPolyUtils.h */,
 				E485F6BA1360A90000E939D3 /* ofRendererCollection.h */,
 				E485F6BB1360A90000E939D3 /* ofTessellator.cpp */,
 				E485F6BC1360A90000E939D3 /* ofTessellator.h */,
@@ -803,9 +791,7 @@
 				E485F73D1360A90000E939D3 /* ofImage.h in Headers */,
 				E485F73F1360A90000E939D3 /* ofPath.h in Headers */,
 				E485F7411360A90000E939D3 /* ofPixels.h in Headers */,
-				E485F7431360A90000E939D3 /* ofPixelUtils.h in Headers */,
 				E485F7451360A90000E939D3 /* ofPolyline.h in Headers */,
-				E485F7471360A90000E939D3 /* ofPolyUtils.h in Headers */,
 				E485F7481360A90000E939D3 /* ofRendererCollection.h in Headers */,
 				E485F74A1360A90000E939D3 /* ofTessellator.h in Headers */,
 				E485F74C1360A90000E939D3 /* ofTrueTypeFont.h in Headers */,
@@ -932,9 +918,7 @@
 				E485F73C1360A90000E939D3 /* ofImage.cpp in Sources */,
 				E485F73E1360A90000E939D3 /* ofPath.cpp in Sources */,
 				E485F7401360A90000E939D3 /* ofPixels.cpp in Sources */,
-				E485F7421360A90000E939D3 /* ofPixelUtils.cpp in Sources */,
 				E485F7441360A90000E939D3 /* ofPolyline.cpp in Sources */,
-				E485F7461360A90000E939D3 /* ofPolyUtils.cpp in Sources */,
 				E485F7491360A90000E939D3 /* ofTessellator.cpp in Sources */,
 				E485F74B1360A90000E939D3 /* ofTrueTypeFont.cpp in Sources */,
 				E485F74D1360A90000E939D3 /* ofMath.cpp in Sources */,

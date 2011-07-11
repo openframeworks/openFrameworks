@@ -17,7 +17,7 @@ USER_CFLAGS =
 # for example libraries like:
 # USER_LD_FLAGS = libs/libawesomelib.a
 
-USER_LD_FLAGS = 
+USER_LDFLAGS = 
 
 
 # use this to add system libraries for example:

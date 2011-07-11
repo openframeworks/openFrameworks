@@ -27,6 +27,7 @@
 - (void) showText;
 - (void) hideText;
 - (char *) getText;
+- (const char*) getLabelText;
 - (void) setText: (NSString *)text;
 - (void) setFontSize: (int)size;
 - (void) setFontColorRed: (int)r green: (int)g blue:(int)b alpha:(int)a;
@@ -65,6 +66,7 @@ public:
 	void setMaxChars(int max);
 	
 	string getText();
+	string getLabelText();
 	bool isKeyboardShowing();
 	
 	
