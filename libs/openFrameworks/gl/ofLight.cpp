@@ -269,18 +269,21 @@ int ofLight::getType() {
 //----------------------------------------
 void ofLight::setAmbientColor(const ofFloatColor& c) {
 	if(glIndex==-1) return;
+	ambientColor = c;
 	glLightfv(GL_LIGHT0 + glIndex, GL_AMBIENT, &ambientColor.r);
 }
 
 //----------------------------------------
 void ofLight::setDiffuseColor(const ofFloatColor& c) {
 	if(glIndex==-1) return;
+	diffuseColor = c;
 	glLightfv(GL_LIGHT0 + glIndex, GL_DIFFUSE, &diffuseColor.r);
 }
 
 //----------------------------------------
 void ofLight::setSpecularColor(const ofFloatColor& c) {
 	if(glIndex==-1) return;
+	specularColor = c;
 	glLightfv(GL_LIGHT0 + glIndex, GL_SPECULAR, &specularColor.r);
 }
 
