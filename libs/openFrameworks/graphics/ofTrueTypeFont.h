@@ -46,6 +46,7 @@ public:
 	bool		isAntiAliased();
 	bool		hasFullCharacterSet();
 
+	int		getSize();
   	float 		getLineHeight();
   	void 		setLineHeight(float height);
 	float 		getLetterSpacing();

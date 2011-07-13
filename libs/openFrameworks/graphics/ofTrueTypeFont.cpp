@@ -486,6 +486,11 @@ bool ofTrueTypeFont::hasFullCharacterSet() {
 }
 
 //-----------------------------------------------------------
+void ofTrueTypeFont::getSize() {
+	return fontSize;
+}
+
+//-----------------------------------------------------------
 void ofTrueTypeFont::setLineHeight(float _newLineHeight) {
 	lineHeight = _newLineHeight;
 }
