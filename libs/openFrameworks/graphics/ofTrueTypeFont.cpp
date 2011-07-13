@@ -486,7 +486,7 @@ bool ofTrueTypeFont::hasFullCharacterSet() {
 }
 
 //-----------------------------------------------------------
-void ofTrueTypeFont::getSize() {
+int ofTrueTypeFont::getSize() {
 	return fontSize;
 }
 
