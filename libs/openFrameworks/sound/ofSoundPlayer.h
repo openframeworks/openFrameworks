@@ -35,14 +35,16 @@ void ofSoundShutdown();
 #include "ofBaseTypes.h"
 #include "ofBaseSoundPlayer.h"
 
-#ifdef TARGET_OF_IPHONE 
-	#define OF_SOUND_PLAYER_IPHONE
-#elif defined TARGET_LINUX
-	#define OF_SOUND_PLAYER_OPENAL
-#elif !defined(TARGET_ANDROID)
-	#define OF_SOUND_PLAYER_FMOD
-#else
-	void ofSoundShutdown(){}
+#if !defined(OF_SOUND_PLAYER_QUICKTIME) && !defined(OF_SOUND_PLAYER_FMOD) && !defined(OF_SOUND_PLAYER_OPENAL)
+  #ifdef TARGET_OF_IPHONE 
+  	#define OF_SOUND_PLAYER_IPHONE
+  #elif defined TARGET_LINUX
+  	#define OF_SOUND_PLAYER_OPENAL
+  #elif !defined(TARGET_ANDROID)
+  	#define OF_SOUND_PLAYER_FMOD
+  #else
+  	void ofSoundShutdown(){}
+  #endif
 #endif
 
 #ifdef OF_SOUND_PLAYER_QUICKTIME
