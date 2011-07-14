@@ -1,12 +1,11 @@
 #pragma once
 
 #include "ofTexture.h"
+#include "ofMain.h"
 
 //#ifndef TARGET_OPENGLES
 
-
-
-class ofFbo {
+class ofFbo : public ofBaseDraws, public ofBaseHasTexture {
 public:
 	struct Settings;
 	
@@ -22,18 +21,27 @@ public:
 	void draw(float x, float y);
 	void draw(float x, float y, float width, float height);
 	
-	int getWidth();
-	int getHeight();
+	void setAnchorPercent(float xPct, float yPct);
+    void setAnchorPoint(float x, float y);
+	void resetAnchor();
+	
+	void setDefaultTextureIndex(int defaultTexture);
+	int getDefaultTextureIndex();
+	
+	ofTexture & getTextureReference();
+	ofTexture & getTextureReference(int attachmentPoint);
+	void setUseTexture(bool bUseTex){ /*irrelevant*/ };
 	
 	void begin();
 	void end();
-	
-	ofTexture& getTexture(int attachmentPoint = 0);		// get texture at attachment position
 	
 	void readToPixels(ofPixels & pixels, int attachmentPoint = 0);
 	void readToPixels(ofShortPixels & pixels, int attachmentPoint = 0);
 	void readToPixels(ofFloatPixels & pixels, int attachmentPoint = 0);
 
+	float getWidth();
+	float getHeight();
+		
 	// advanced functions
 	void bind();
 	void unbind();
@@ -87,7 +95,9 @@ private:
 	static int			_maxSamples;
 	
 	bool				dirty;
-
+	
+	int defaultTextureIndex; //used for getTextureReference
+	
 	void destroy();
 	
 	bool checkStatus();
