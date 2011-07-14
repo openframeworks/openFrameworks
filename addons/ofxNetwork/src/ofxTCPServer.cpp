@@ -82,6 +82,7 @@ bool ofxTCPServer::send(int clientID, string message){
 	}
 	else{
 		TCPConnections[clientID].send(message);
+		if(!TCPConnections[clientID].isConnected()) TCPConnections.erase(clientID);
 		return true;
 	}
 }
@@ -91,9 +92,15 @@ bool ofxTCPServer::sendToAll(string message){
 	if(TCPConnections.size() == 0) return false;
 
 	map<int,ofxTCPClient>::iterator it;
+	vector<int> disconnect;
 	for(it=TCPConnections.begin(); it!=TCPConnections.end(); it++){
-		if(it->second.isConnected())it->second.send(message);
+	    int err = 0;
+		if(it->second.isConnected()) err = it->second.send(message);
+		if(!TCPConnections[it->first].isConnected()) disconnect.push_back(it->first);
 	}
+	for(int i=0; i<(int)disconnect.size(); i++){
+    	TCPConnections.erase(disconnect[i]);
+    }
 	return true;
 }
 
