@@ -892,6 +892,11 @@ void testApp::setup(){
 			convertProjectToXML(xcodePath);
 			addAddonsFromInstallXML( appsPath + "../addons/ofxAssimpModelLoader/", folderPath, xcodePath, "iphone");
 		}	
+		if( folderName.find("osc") != string::npos ){
+			convertProjectToXML(xcodePath);
+			addAddonsFromInstallXML( appsPath + "../addons/ofxOsc/", folderPath, xcodePath, "iphone");
+		}	
+
 								
 		addiPhoneDataFilesToProject(folderName, xcodePath, folderPath + "bin/data/", "bin/data/", getHashForGroupName(xcodePath, "data"));			
 	}		
