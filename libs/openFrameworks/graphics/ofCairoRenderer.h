@@ -11,20 +11,22 @@
 #include "ofBaseTypes.h"
 #include "ofPath.h"
 
-
-
 class ofCairoRenderer: public ofBaseRenderer{
 public:
 	ofCairoRenderer();
 	~ofCairoRenderer();
+
+	string getType(){ return "cairo"; }
 
 	enum Type{
 		PDF,
 		SVG,
 		PNG
 	};
-	void setup(string filename, Type type=ofCairoRenderer::PDF, bool multiPage=true, bool b3D=false);
+	void setup(string filename, Type type=ofCairoRenderer::PDF, bool multiPage=true, bool b3D=false, ofRectangle viewport = ofRectangle(0,0,0,0));
 	void close();
+
+	void update();
 
 	void draw(ofPath & shape);
 	void draw(ofSubPath & path);
@@ -93,7 +95,7 @@ public:
 	void setHexColor( int hexColor ); // hex, like web 0xFF0033;
 
 	// bg color
-	ofColor & getBgColor();
+	ofFloatColor & getBgColor();
 	bool bClearBg();
 	void background(const ofColor & c);
 	void background(float brightness);
@@ -128,7 +130,7 @@ private:
 	cairo_t * cr;
 	cairo_surface_t * surface;
 	bool bBackgroundAuto;
-	ofColor bgColor;
+	ofFloatColor bgColor;
 
 	stack<cairo_matrix_t> matrixStack;
 	cairo_matrix_t tmpMatrix;

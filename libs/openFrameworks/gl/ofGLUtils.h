@@ -9,14 +9,23 @@
 #define OFGLUTILS_H_
 
 enum ofPrimitiveMode{
-	OF_TRIANGLES_MODE,
-	OF_TRIANGLE_STRIP_MODE,
-	OF_TRIANGLE_FAN_MODE,
-	OF_LINES_MODE,
-	OF_LINE_STRIP_MODE,
-	OF_LINE_LOOP_MODE,
-	OF_POINTS_MODE
+	OF_PRIMITIVE_TRIANGLES,
+	OF_PRIMITIVE_TRIANGLE_STRIP,
+	OF_PRIMITIVE_TRIANGLE_FAN,
+	OF_PRIMITIVE_LINES,
+	OF_PRIMITIVE_LINE_STRIP,
+	OF_PRIMITIVE_LINE_LOOP,
+	OF_PRIMITIVE_POINTS
 };
+
+//legacy - 
+#define OF_TRIANGLES_MODE 0
+#define OF_TRIANGLE_STRIP_MODE 1
+#define OF_TRIANGLE_FAN_MODE 2
+#define OF_LINES_MODE 3
+#define OF_LINE_STRIP_MODE 4
+#define OF_LINE_LOOP_MODE 5
+#define OF_POINTS_MODE 6
 
 enum ofPolyRenderMode{
 	OF_MESH_POINTS,
@@ -72,25 +81,25 @@ inline ofPolyRenderMode ofGetOFPolyMode(GLuint m){
 
 inline GLuint ofGetGLPrimitiveMode(ofPrimitiveMode mode){
 	switch(mode){
-		case OF_TRIANGLES_MODE:
+		case OF_PRIMITIVE_TRIANGLES:
 			return GL_TRIANGLES;
 			break;
-		case OF_TRIANGLE_STRIP_MODE:
+		case OF_PRIMITIVE_TRIANGLE_STRIP:
 			return GL_TRIANGLE_STRIP;
 			break;
-		case OF_TRIANGLE_FAN_MODE:
+		case OF_PRIMITIVE_TRIANGLE_FAN:
 			return GL_TRIANGLE_FAN;
 			break;
-		case OF_LINES_MODE:
+		case OF_PRIMITIVE_LINES:
 			return GL_LINES;
 			break;
-		case OF_LINE_STRIP_MODE:
+		case OF_PRIMITIVE_LINE_STRIP:
 			return GL_LINE_STRIP;
 			break;
-		case OF_LINE_LOOP_MODE:
+		case OF_PRIMITIVE_LINE_LOOP:
 			return GL_LINE_LOOP;
 			break;
-		case OF_POINTS_MODE:
+		case OF_PRIMITIVE_POINTS:
 			return GL_POINTS;
 			break;
 		default:
@@ -103,29 +112,29 @@ inline GLuint ofGetGLPrimitiveMode(ofPrimitiveMode mode){
 inline ofPrimitiveMode ofGetOFPrimitiveMode(GLuint mode){
 	switch(mode){
 		case GL_TRIANGLES:
-			return OF_TRIANGLES_MODE;
+			return OF_PRIMITIVE_TRIANGLES;
 			break;
 		case GL_TRIANGLE_STRIP:
-			return OF_TRIANGLE_STRIP_MODE;
+			return OF_PRIMITIVE_TRIANGLE_STRIP;
 			break;
 		case GL_TRIANGLE_FAN:
-			return OF_TRIANGLE_FAN_MODE;
+			return OF_PRIMITIVE_TRIANGLE_FAN;
 			break;
 		case GL_LINES:
-			return OF_LINES_MODE;
+			return OF_PRIMITIVE_LINES;
 			break;
 		case GL_LINE_STRIP:
-			return OF_LINE_STRIP_MODE;
+			return OF_PRIMITIVE_LINE_STRIP;
 			break;
 		case GL_LINE_LOOP:
-			return OF_LINE_LOOP_MODE;
+			return OF_PRIMITIVE_LINE_LOOP;
 			break;
 		case GL_POINTS:
-			return OF_POINTS_MODE;
+			return OF_PRIMITIVE_POINTS;
 			break;
 		default:
-			ofLog(OF_LOG_ERROR,"asked for non existant primitive mode " + ofToString(mode) + " returning OF_TRIANGLES_MODE");
-			return OF_TRIANGLES_MODE;
+			ofLog(OF_LOG_ERROR,"asked for non existant primitive mode " + ofToString(mode) + " returning OF_PRIMITIVE_TRIANGLES");
+			return OF_PRIMITIVE_TRIANGLES;
 			break;
 	}
 }

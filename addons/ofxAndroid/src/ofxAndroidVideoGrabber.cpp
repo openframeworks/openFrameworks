@@ -11,7 +11,6 @@
 #include "ofAppRunner.h"
 #include "ofUtils.h"
 #include "ofVideoGrabber.h"
-#include "ofPixelUtils.h"
 
 static int cameraId;
 static bool newPixels;
@@ -467,7 +466,7 @@ Java_cc_openframeworks_OFAndroidVideoGrabber_newFrame(JNIEnv*  env, jobject  thi
 		buffer = (unsigned char*)env->GetPrimitiveArrayCritical(array, NULL);
 		if(!buffer) return 1;
 
-		static ofPixels aux_buffer;
+		//static ofPixels aux_buffer;
 		ofxAndroidVideoGrabber* grabber = (ofxAndroidVideoGrabber*)instances[cameraId]->getGrabber().get();
 
 		unsigned char * dst = instances[cameraId]->getPixels();
@@ -494,7 +493,7 @@ Java_cc_openframeworks_OFAndroidVideoGrabber_newFrame(JNIEnv*  env, jobject  thi
 		}
 
 		if(int(instances[cameraId]->getWidth())!=width || int(instances[cameraId]->getHeight())!=height){
-			ofPixelUtils::resize(grabber->getAuxBuffer(),instances[cameraId]->getPixelsRef());
+			grabber->getAuxBuffer().resizeTo(instances[cameraId]->getPixelsRef());
 		}
 		/*acc_time += ofGetSystemTime() - time_one_frame;
 		num_frames ++;

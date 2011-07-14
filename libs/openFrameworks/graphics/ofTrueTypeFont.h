@@ -35,13 +35,16 @@ public:
 
 	ofTrueTypeFont();
 	virtual ~ofTrueTypeFont();
-		
-	// 			-- default, non-full char set, anti aliased:
-	void 		loadFont(string filename, int fontsize, bool _bAntiAliased=true, bool _bFullCharacterSet=false, bool makeContours = false, float simplifyAmt = 0.3);
-
-	bool		bLoadedOk;
-	bool 		bAntiAlised;
-	bool 		bFullCharacterSet;
+	
+	//set the default dpi for all typefaces.
+	static void setGlobalDpi(int newDpi);
+			
+	// 			-- default (without dpi), non-full char set, anti aliased, 96 dpi:
+	bool 		loadFont(string filename, int fontsize, bool _bAntiAliased=true, bool _bFullCharacterSet=false, bool makeContours=false, float simplifyAmt=0.3, int dpi=0);
+	
+	bool		isLoaded();
+	bool		isAntiAliased();
+	bool		hasFullCharacterSet();
 
   	float 		getLineHeight();
   	void 		setLineHeight(float height);
@@ -57,14 +60,21 @@ public:
 	void 		drawString(string s, float x, float y);
 	void		drawStringAsShapes(string s, float x, float y);
 	
-	int 		nCharacters;
+	//			get the num chars in the loaded char set
+	int			getNumCharacters();	
 	
 	ofTTFCharacter getCharacterAsPoints(int character);
+	vector<ofTTFCharacter> getStringAsPoints(string str);
 
 	void bind();
 	void unbind();
 
 protected:
+	bool			bLoadedOk;
+	bool 			bAntiAliased;
+	bool 			bFullCharacterSet;
+	int 			nCharacters;
+	
 	vector <ofTTFCharacter> charOutlines;
 
 	float 			lineHeight;

@@ -340,12 +340,12 @@ string ofFile::getExtension() const{
 
 //------------------------------------------------------------------------------------------------------------
 string ofFile::getFileName() const{
-	return ofFilePath::getFilename(path());
+	return ofFilePath::getFileName(path());
 }
 
 //------------------------------------------------------------------------------------------------------------
 string ofFile::getBaseName() const{
-	return ofFilePath::removeExt(ofFilePath::getFilename(path()));
+	return ofFilePath::removeExt(ofFilePath::getFileName(path()));
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -1117,7 +1117,7 @@ string ofFilePath::removeTrailingSlash(string path){
 
 
 //------------------------------------------------------------------------------------------------------------
-string ofFilePath::getFilename(string filePath, bool bRelativeToData){
+string ofFilePath::getFileName(string filePath, bool bRelativeToData){
 	if( bRelativeToData ) filePath = ofToDataPath(filePath);
 
 	string fileName;
@@ -1134,7 +1134,7 @@ string ofFilePath::getFilename(string filePath, bool bRelativeToData){
 
 //------------------------------------------------------------------------------------------------------------
 string ofFilePath::getBaseName(string filePath){
-	return removeExt(getFilename(filePath));
+	return removeExt(getFileName(filePath));
 }
 
 //------------------------------------------------------------------------------------------------------------

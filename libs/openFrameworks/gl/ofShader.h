@@ -19,8 +19,8 @@ public:
 	ofShader();
 	~ofShader();
 	
-	bool setup(string shaderName);
-	bool setup(string vertName, string fragName, string geomName="");
+	bool load(string shaderName);
+	bool load(string vertName, string fragName, string geomName="");
 	
 	
 	

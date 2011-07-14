@@ -7,6 +7,7 @@
 #include "ofBitmapFont.h"
 #include "ofGLUtils.h"
 #include "ofImage.h"
+#include "ofFbo.h"
 
 //----------------------------------------------------------
 ofGLRenderer::ofGLRenderer(bool useShapeColor){
@@ -15,6 +16,13 @@ ofGLRenderer::ofGLRenderer(bool useShapeColor){
 	linePoints.resize(2);
 	rectPoints.resize(4);
 	triPoints.resize(3);
+
+	currentFbo = NULL;
+}
+
+//----------------------------------------------------------
+void ofGLRenderer::update(){
+
 }
 
 //----------------------------------------------------------
@@ -29,7 +37,7 @@ void ofGLRenderer::draw(ofMesh & vertexData){
 	}
 	if(vertexData.getNumColors()){
 		glEnableClientState(GL_COLOR_ARRAY);
-		glColorPointer(4,GL_FLOAT, sizeof(ofColor), &vertexData.getColorsPointer()->r);
+		glColorPointer(4,GL_FLOAT, sizeof(ofFloatColor), &vertexData.getColorsPointer()->r);
 	}
 
 	if(vertexData.getNumTexCoords()){
@@ -75,7 +83,7 @@ void ofGLRenderer::draw(ofMesh & vertexData, ofPolyRenderMode renderType){
 		}
 		if(vertexData.getNumColors()){
 			glEnableClientState(GL_COLOR_ARRAY);
-			glColorPointer(4,GL_FLOAT, sizeof(ofColor), vertexData.getColorsPointer());
+			glColorPointer(4,GL_FLOAT, sizeof(ofFloatColor), vertexData.getColorsPointer());
 		}
 
 		if(vertexData.getNumTexCoords()){
@@ -92,6 +100,9 @@ void ofGLRenderer::draw(ofMesh & vertexData, ofPolyRenderMode renderType){
 			drawMode = GL_LINES;
 			break;
 		case OF_MESH_FILL:
+			drawMode = ofGetGLPrimitiveMode(vertexData.getMode());
+			break;
+		default:
 			drawMode = ofGetGLPrimitiveMode(vertexData.getMode());
 			break;
 		}
@@ -116,22 +127,26 @@ void ofGLRenderer::draw(ofMesh & vertexData, ofPolyRenderMode renderType){
 
 //----------------------------------------------------------
 void ofGLRenderer::draw(vector<ofPoint> & vertexData, ofPrimitiveMode drawMode){
-	glEnableClientState(GL_VERTEX_ARRAY);
-	glVertexPointer(3, GL_FLOAT, sizeof(ofVec3f), &vertexData[0].x);
-	glDrawArrays(ofGetGLPrimitiveMode(drawMode), 0, vertexData.size());
+	if(!vertexData.empty()) {
+		glEnableClientState(GL_VERTEX_ARRAY);
+		glVertexPointer(3, GL_FLOAT, sizeof(ofVec3f), &vertexData[0].x);
+		glDrawArrays(ofGetGLPrimitiveMode(drawMode), 0, vertexData.size());
+	}
 }
 
 //----------------------------------------------------------
 void ofGLRenderer::draw(ofPolyline & poly){
-	// use smoothness, if requested:
-	if (bSmoothHinted) startSmoothing();
+	if(!poly.getVertices().empty()) {
+		// use smoothness, if requested:
+		if (bSmoothHinted) startSmoothing();
 
-	glEnableClientState(GL_VERTEX_ARRAY);
-	glVertexPointer(3, GL_FLOAT, sizeof(ofVec3f), &poly.getVertices()[0].x);
-	glDrawArrays(poly.isClosed()?GL_LINE_LOOP:GL_LINE_STRIP, 0, poly.size());
+		glEnableClientState(GL_VERTEX_ARRAY);
+		glVertexPointer(3, GL_FLOAT, sizeof(ofVec3f), &poly.getVertices()[0].x);
+		glDrawArrays(poly.isClosed()?GL_LINE_LOOP:GL_LINE_STRIP, 0, poly.size());
 
-	// use smoothness, if requested:
-	if (bSmoothHinted) endSmoothing();
+		// use smoothness, if requested:
+		if (bSmoothHinted) endSmoothing();
+	}
 }
 
 //----------------------------------------------------------
@@ -200,19 +215,19 @@ void ofGLRenderer::draw(ofShortImage & image, float x, float y, float z, float w
 }
 
 //----------------------------------------------------------
+void ofGLRenderer::setCurrentFBO(ofFbo * fbo){
+	currentFbo = fbo;
+}
+
+//----------------------------------------------------------
 void ofGLRenderer::pushView() {
 	GLint viewport[4];
 	glGetIntegerv(GL_VIEWPORT, viewport);
 
 	ofRectangle currentViewport;
 	currentViewport.set(viewport[0], viewport[1], viewport[2], viewport[3]);
-	viewportHistory.push_front(currentViewport);
+	viewportHistory.push(currentViewport);
 
-	if( viewportHistory.size() > OF_MAX_VIEWPORT_HISTORY ){
-		viewportHistory.pop_back();
-		//should we warn here?
-		//ofLog(OF_LOG_WARNING, "ofPushView - warning: you have used ofPushView more than %i times without calling ofPopView - check your code!", OF_MAX_VIEWPORT_HISTORY);
-	}
 
 	glMatrixMode(GL_PROJECTION);
 	glPushMatrix();
@@ -224,9 +239,9 @@ void ofGLRenderer::pushView() {
 //----------------------------------------------------------
 void ofGLRenderer::popView() {
 	if( viewportHistory.size() ){
-		ofRectangle viewRect = viewportHistory.front();
+		ofRectangle viewRect = viewportHistory.top();
 		viewport(viewRect.x, viewRect.y, viewRect.width, viewRect.height);
-		viewportHistory.pop_front();
+		viewportHistory.pop();
 	}
 
 	glMatrixMode(GL_PROJECTION);
@@ -246,7 +261,11 @@ void ofGLRenderer::viewport(float x, float y, float width, float height, bool in
 	if(height == 0) height = ofGetWindowHeight();
 
 	if (invertY){
-		y = ofGetWindowHeight() - (y + height);
+		if(currentFbo){
+			y = currentFbo->getHeight() - (y + height);
+		}else{
+			y = ofGetWindowHeight() - (y + height);
+		}
 	}
 	glViewport(x, y, width, height);	
 }
@@ -597,13 +616,18 @@ bool ofGLRenderer::bClearBg(){
 }
 
 //----------------------------------------------------------
-ofColor & ofGLRenderer::getBgColor(){
+ofFloatColor & ofGLRenderer::getBgColor(){
 	return bgColor;
 }
 
 //----------------------------------------------------------
 void ofGLRenderer::background(const ofColor & c){
-	background ( c.r, c.g, c.b, c.a );
+	bgColor = c;
+	// if we are in not-auto mode, then clear with a bg call...
+	if (bClearBg() == false){
+		glClearColor(bgColor[0],bgColor[1],bgColor[2], bgColor[3]);
+		glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	}
 }
 
 //----------------------------------------------------------
@@ -618,15 +642,7 @@ void ofGLRenderer::background(int hexColor, float _a){
 
 //----------------------------------------------------------
 void ofGLRenderer::background(int r, int g, int b, int a){
-	bgColor[0] = (float)r / (float)255.0f;
-	bgColor[1] = (float)g / (float)255.0f;
-	bgColor[2] = (float)b / (float)255.0f;
-	bgColor[3] = (float)a / (float)255.0f;
-	// if we are in not-auto mode, then clear with a bg call...
-	if (bClearBg() == false){
-		glClearColor(bgColor[0],bgColor[1],bgColor[2], bgColor[3]);
-		glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	}
+	background(ofColor(r,g,b,a));
 }
 
 //----------------------------------------------------------
@@ -1037,4 +1053,6 @@ void ofGLRenderer::drawString(string textString, float x, float y, float z, ofDr
 
 	if (hasViewport)
 		ofPopView();
+
+	glBlendFunc(blend_src, blend_dst);
 }

@@ -15,7 +15,7 @@ void testApp::setup(){
 	cairo->setup("paths.pdf",ofCairoRenderer::PDF,true);
 	renderer->renderers.push_back(gl);
 	renderer->renderers.push_back(cairo);
-	ofSetDefaultRenderer(renderer);
+	ofSetCurrentRenderer(renderer);
 	ofSetFrameRate( 12 ); //each frame generates a page so let's keep it low
 #endif
 	

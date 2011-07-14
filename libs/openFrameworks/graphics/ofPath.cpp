@@ -403,8 +403,8 @@ void ofPath::draw(float x, float y){
 
 //----------------------------------------------------------
 void ofPath::draw(){
-	if(ofGetDefaultRenderer()->rendersPathPrimitives()){
-		ofGetDefaultRenderer()->draw(*this);
+	if(ofGetCurrentRenderer()->rendersPathPrimitives()){
+		ofGetCurrentRenderer()->draw(*this);
 	}else{
 		tessellate();
 
@@ -419,7 +419,7 @@ void ofPath::draw(){
 				ofSetColor(fillColor);
 			}
 
-			ofGetDefaultRenderer()->draw(cachedTessellation);
+			ofGetCurrentRenderer()->draw(cachedTessellation);
 
 		}
 
@@ -431,7 +431,7 @@ void ofPath::draw(){
 			ofSetLineWidth( strokeWidth );
 			vector<ofPolyline> & polys = getOutline();
 			for(int i=0;i<(int)polys.size();i++){
-				ofGetDefaultRenderer()->draw(polys[i]);
+				ofGetCurrentRenderer()->draw(polys[i]);
 			}
 			ofSetLineWidth(lineWidth);
 		}
@@ -526,3 +526,86 @@ void ofPath::simplify(float tolerance){
 		polylines[i].simplify(tolerance);
 	}
 }
+
+//----------------------------------------------------------
+void ofPath::translate(const ofPoint & p){
+	if(mode==PATHS){
+		for(int i=0;i<(int)paths.size();i++){
+			for(int j=0;j<(int)paths[i].getCommands().size();j++){
+				paths[i].getCommands()[j].to += p;
+				if(paths[i].getCommands()[j].type==ofSubPath::Command::bezierTo || paths[i].getCommands()[j].type==ofSubPath::Command::quadBezierTo){
+					paths[i].getCommands()[j].cp1 += p;
+					paths[i].getCommands()[j].cp2 += p;
+				}
+			}
+		}
+		hasChanged = true;
+	}else{
+		for(int i=0;i<(int)polylines.size();i++){
+			for(int j=0;j<(int)polylines[i].size();j++){
+				polylines[i][j] += p;
+			}
+		}
+		bNeedsTessellation = true;
+	}
+}
+
+//----------------------------------------------------------
+void ofPath::rotate(float az, const ofVec3f& axis ){
+	if(mode==PATHS){
+		for(int i=0;i<(int)paths.size();i++){
+			for(int j=0;j<(int)paths[i].getCommands().size();j++){
+				paths[i].getCommands()[j].to.rotate(az,axis);
+				if(paths[i].getCommands()[j].type==ofSubPath::Command::bezierTo || paths[i].getCommands()[j].type==ofSubPath::Command::quadBezierTo){
+					paths[i].getCommands()[j].cp1.rotate(az,axis);
+					paths[i].getCommands()[j].cp2.rotate(az,axis);
+				}
+				if(paths[i].getCommands()[j].type==ofSubPath::Command::arc){
+					paths[i].getCommands()[j].angleBegin += az;
+					paths[i].getCommands()[j].angleEnd += az;
+				}
+			}
+		}
+		hasChanged = true;
+	}else{
+		for(int i=0;i<(int)polylines.size();i++){
+			for(int j=0;j<(int)polylines[i].size();j++){
+				polylines[i][j].rotate(az,axis);
+			}
+		}
+		bNeedsTessellation = true;
+	}
+}
+
+
+//----------------------------------------------------------
+void ofPath::scale(float x, float y){
+	if(mode==PATHS){
+		for(int i=0;i<(int)paths.size();i++){
+			for(int j=0;j<(int)paths[i].getCommands().size();j++){
+				paths[i].getCommands()[j].to.x*=x;
+				paths[i].getCommands()[j].to.y*=y;
+				if(paths[i].getCommands()[j].type==ofSubPath::Command::bezierTo || paths[i].getCommands()[j].type==ofSubPath::Command::quadBezierTo){
+					paths[i].getCommands()[j].cp1.x*=x;
+					paths[i].getCommands()[j].cp1.y*=y;
+					paths[i].getCommands()[j].cp2.x*=x;
+					paths[i].getCommands()[j].cp2.y*=y;
+				}
+				if(paths[i].getCommands()[j].type==ofSubPath::Command::arc){
+					paths[i].getCommands()[j].radiusX *= x;
+					paths[i].getCommands()[j].radiusY *= y;
+				}
+			}
+		}
+		hasChanged = true;
+	}else{
+		for(int i=0;i<(int)polylines.size();i++){
+			for(int j=0;j<(int)polylines[i].size();j++){
+				polylines[i][j].x*=x;
+				polylines[i][j].y*=y;
+			}
+		}
+		bNeedsTessellation = true;
+	}
+}
+

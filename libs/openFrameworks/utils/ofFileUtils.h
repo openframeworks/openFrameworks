@@ -67,7 +67,7 @@ public:
 
 	static bool isAbsolute(string path);
 	
-	static string getFilename(string filePath, bool bRelativeToData = true);	
+	static string getFileName(string filePath, bool bRelativeToData = true);	
 	static string getBaseName(string filePath); // filename without extension
 
 	static string getEnclosingDirectory(string filePath, bool bRelativeToData = true);

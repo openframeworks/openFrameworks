@@ -50,7 +50,7 @@ static void Normalize( TESSreal v[3] )
 {
 	TESSreal len = v[0]*v[0] + v[1]*v[1] + v[2]*v[2];
 
-	assert( len > 0 );
+	if( len <= 0 ) return;
 	len = sqrtf( len );
 	v[0] /= len;
 	v[1] /= len;
@@ -317,7 +317,7 @@ int tessMeshTessellateMonoRegion( TESSmesh *mesh, TESSface *face )
 	* be close to the edge we want.
 	*/
 	up = face->anEdge;
-	assert( up->Lnext != up && up->Lnext->Lnext != up );
+	if(!( up->Lnext != up && up->Lnext->Lnext != up )) return 1;
 
 	for( ; VertLeq( up->Dst, up->Org ); up = up->Lprev )
 		;
@@ -353,7 +353,7 @@ int tessMeshTessellateMonoRegion( TESSmesh *mesh, TESSface *face )
 	/* Now lo->Org == up->Dst == the leftmost vertex.  The remaining region
 	* can be tessellated in a fan from this leftmost vertex.
 	*/
-	assert( lo->Lnext != up );
+	if( lo->Lnext == up ) return 1;
 	while( lo->Lnext->Lnext != up ) {
 		TESShalfEdge *tempHalfEdge= tessMeshConnect( mesh, lo->Lnext, lo );
 		if (tempHalfEdge == NULL) return 0;
@@ -568,9 +568,9 @@ void OutputPolymesh( TESStesselator *tess, TESSmesh *mesh, int elementType, int 
 	TESSvertex* v = 0;
 	TESSface* f = 0;
 	TESShalfEdge* edge = 0;
-	int maxFaceCount = 0;
-	int maxVertexCount = 0;
-	int faceVerts, i;
+	TESSindex maxFaceCount = 0;
+	TESSindex maxVertexCount = 0;
+	TESSindex faceVerts, i;
 	TESSindex *elements = 0;
 	TESSreal *vert;
 
@@ -610,7 +610,7 @@ void OutputPolymesh( TESStesselator *tess, TESSmesh *mesh, int elementType, int 
 		}
 		while (edge != f->anEdge);
 		
-		assert( faceVerts <= polySize );
+		if(faceVerts > polySize ) continue;
 
 		f->n = maxFaceCount;
 		++maxFaceCount;
@@ -924,7 +924,7 @@ int tessTesselate( TESStesselator *tess, int windingRule, int elementType,
 	}
 	if (rc == 0) longjmp(tess->env,1);  /* could've used a label */
 
-	tessMeshCheckMesh( mesh );
+	//tessMeshCheckMesh( mesh );
 
 	if (elementType == TESS_BOUNDARY_CONTOURS) {
 		OutputContours( tess, mesh, vertexSize );     /* output contours */

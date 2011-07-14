@@ -158,6 +158,7 @@ void	ofSaveViewport(string filename);
 //--------------------------------------------------
 vector <string> ofSplitString(const string & source, const string & delimiters, bool ignoreEmpty = false, bool trim = false);
 string ofJoinString(vector <string> stringElements, const string & delimiter);
+void ofStringReplace(string& input, string searchStr, string replaceStr);
 bool ofIsStringInString(string haystack, string needle);
 
 string ofToLower(const string & src);
