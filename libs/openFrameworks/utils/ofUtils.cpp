@@ -472,10 +472,15 @@ vector <string> ofSplitString(const string & source, const string & delimiters, 
 	result.assign(tokens.begin(), tokens.end());
 
 	// poco ignores trailing delimiters, which is inconsistent with everything else
-	string lastCharacter;
-	lastCharacter += source[source.size() - 1];
-	if(ofIsStringInString(delimiters, lastCharacter)) {
-		result.push_back("");
+	if(!ignoreEmpty) {
+		int lastPosition = source.size() - 1;
+		if(lastPosition >= 0) {	
+			string lastCharacter;
+			lastCharacter += source[lastPosition];
+			if(ofIsStringInString(delimiters, lastCharacter)) {
+				result.push_back("");
+			}
+		}
 	}
 
 	return result;
@@ -495,6 +500,22 @@ string ofJoinString(vector <string> stringElements, const string & delimiter){
 	}
 
 	return resultString;
+}
+
+//--------------------------------------------------
+void ofStringReplace(string& input, string searchStr, string replaceStr){
+	size_t uPos = 0; 
+	size_t uFindLen = searchStr.length(); 
+	size_t uReplaceLen = replaceStr.length();
+		
+	if( uFindLen == 0 ){
+		return;
+	}
+
+	for( ;(uPos = input.find( searchStr, uPos )) != std::string::npos; ){
+		input.replace( uPos, uFindLen, replaceStr );
+		uPos += uReplaceLen;
+	}	
 }
 
 //--------------------------------------------------

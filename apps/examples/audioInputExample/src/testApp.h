@@ -24,10 +24,15 @@ class testApp : public ofBaseApp{
 				
 		void audioIn(float * input, int bufferSize, int nChannels); 
 	
-		float * left;
-		float * right;
+		vector <float> left;
+		vector <float> right;
+		vector <float> volHistory;
+		
 		int 	bufferCounter;
 		int 	drawCounter;
+		
+		float smoothedVol;
+		float scaledVol;
 		
 		ofSoundStream soundStream;
 };

@@ -5,13 +5,13 @@
 #include <assert.h>
 
 //--------------------------------------------------------------
-static inline ofColor aiColorToOfColor(const aiColor4D& c){
-	return ofColor(255*c.r,255*c.g,255*c.b,255*c.a);
+static inline ofFloatColor aiColorToOfColor(const aiColor4D& c){
+	return ofFloatColor(c.r,c.g,c.b,c.a);
 }
 
 //--------------------------------------------------------------
-static inline ofColor aiColorToOfColor(const aiColor3D& c){
-	return ofColor(255*c.r,255*c.g,255*c.b,255);
+static inline ofFloatColor aiColorToOfColor(const aiColor3D& c){
+	return ofFloatColor(c.r,c.g,c.b,1);
 }
 
 //--------------------------------------------------------------
@@ -34,7 +34,7 @@ static inline vector<ofVec3f> aiVecVecToOfVecVec(const vector<aiVector3D>& v){
 //--------------------------------------------------------------
 static void aiMeshToOfMesh(const aiMesh* aim, ofMesh& ofm){
 	// default to triangle mode
-	ofm.setMode(OF_TRIANGLES_MODE);
+	ofm.setMode(OF_PRIMITIVE_TRIANGLES);
 
 	// copy vertices
 	for (int i=0; i < (int)aim->mNumVertices;i++){
@@ -141,7 +141,8 @@ bool ofxAssimpModelLoader::loadModel(string modelName, bool optimize){
 
 
     // Load our new path.
-    filepath = ofToDataPath(modelName);
+    filepath = modelName;
+    string filepath = ofToDataPath(modelName);
 
 	//theo added - so we can have models and their textures in sub folders
 	modelFolder = ofFilePath::getEnclosingDirectory(filepath);
@@ -284,7 +285,7 @@ void ofxAssimpModelLoader::loadGLResources(){
 
         meshHelper.mesh = mesh;
         aiMeshToOfMesh(mesh,meshHelper.cachedMesh);
-        meshHelper.cachedMesh.setMode(OF_TRIANGLES_MODE);
+        meshHelper.cachedMesh.setMode(OF_PRIMITIVE_TRIANGLES);
         meshHelper.validCache = true;
         meshHelper.hasChanged = false;
 
@@ -304,24 +305,16 @@ void ofxAssimpModelLoader::loadGLResources(){
 
         // TODO: handle other aiTextureTypes
         if(AI_SUCCESS == mtl->GetTexture(aiTextureType_DIFFUSE, texIndex, &texPath)){
-            // This is magic. Thanks Kyle.
-
             ofLog(OF_LOG_VERBOSE, "loading image from %s", texPath.data);
-            string modelFolder = ofFilePath::getEnclosingDirectory(filepath);
-
-			if(ofFilePath::isAbsolute(texPath.data) && ofFile::doesFileExist(texPath.data)) {
-				if(!ofLoadImage(meshHelper.texture,texPath.data)){
-					ofLog(OF_LOG_ERROR,string("error loading image ") + texPath.data);
-				}
+            string modelFolder = ofFilePath::getEnclosingDirectory(filepath,false);
+            string relTexPath = ofFilePath::getEnclosingDirectory(texPath.data,false);
+            string texFile = ofFilePath::getFileName(texPath.data);
+            string realPath = modelFolder + relTexPath  + texFile;
+			if(!ofFile::doesFileExist(realPath) || !ofLoadImage(meshHelper.texture,realPath)) {
+                ofLog(OF_LOG_ERROR,string("error loading image ") + filepath + " " +realPath);
+			}else{
+                ofLog(OF_LOG_VERBOSE, "texture width: %f height %f", meshHelper.texture.getWidth(), meshHelper.texture.getHeight());
 			}
-			else {
-				if(!ofLoadImage(meshHelper.texture,modelFolder + texPath.data)){
-					ofLog(OF_LOG_ERROR,"error loading image " + modelFolder + texPath.data);
-				}
-			}
-
-            ofLog(OF_LOG_VERBOSE, "texture width: %f height %f", meshHelper.texture.getWidth(), meshHelper.texture.getHeight());
-
         }
 
         aiColor4D dcolor, scolor, acolor, ecolor;
@@ -813,7 +806,7 @@ void ofxAssimpModelLoader::draw(ofPolyRenderMode renderType)
 			ofxAssimpMeshHelper & meshHelper = modelMeshes.at(i);
 
 			// Texture Binding
-			if(bUsingTextures && meshHelper.texture.bAllocated()){
+			if(bUsingTextures && meshHelper.texture.isAllocated()){
 				meshHelper.texture.bind();
 			}
 
@@ -883,7 +876,7 @@ int ofxAssimpModelLoader::getNumMeshes(){
 ofMesh ofxAssimpModelLoader::getMesh(string name){
 	ofMesh ofm;
 	// default to triangle mode
-	ofm.setMode(OF_TRIANGLES_MODE);
+	ofm.setMode(OF_PRIMITIVE_TRIANGLES);
 	aiMesh * aim = NULL;
 	for(int i=0; i<(int)scene->mNumMeshes; i++){
 		if(string(scene->mMeshes[i]->mName.data)==name){

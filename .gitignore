@@ -14,6 +14,12 @@ addons/**
 #xcode files
 *.pbxuser
 *.perspectivev3
+apps/examples/*/*.xcodeproj
+apps/examples/*/Project.xcconfig
+apps/examples/*/openFrameworks-Info.plist
+apps/addonsExamples/*/*.xcodeproj
+apps/addonsExamples/*/Project.xcconfig
+apps/addonsExamples/*/openFrameworks-Info.plist
 
 #codeblocks files
 apps/*/*/*.layout
@@ -50,9 +56,9 @@ libs/openFrameworks/Debug Mac OS X
 libs/openFrameworks/Release Mac OS X
 apps/*/*/Debug Mac OS X
 apps/*/*/Release Mac OS X
-.DS_Store
 xcuserdata
 project.xcworkspace
+.DS_Store
 
 #Linux
 addons/Debug Linux

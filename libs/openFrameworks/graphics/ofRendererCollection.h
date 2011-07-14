@@ -6,7 +6,26 @@ class ofRendererCollection: public ofBaseRenderer{
 public:
 	 ~ofRendererCollection(){}
 
+	 string getType(){ return "collection"; }
+
+	 ofPtr<ofGLRenderer> getGLRenderer(){
+		 for(int i=0;i<(int)renderers.size();i++){
+			 if(renderers[i]->getType()=="GL"){
+				 return (ofPtr<ofGLRenderer>&)renderers[i];
+			 }
+		 }
+		 return ofPtr<ofGLRenderer>();
+	 }
+
 	 bool rendersPathPrimitives(){return true;}
+
+	 void update(){
+		 for(int i=0;i<(int)renderers.size();i++){
+			 renderers[i]->update();
+		 }
+	 }
+
+
 	 void draw(ofPolyline & poly){
 		 for(int i=0;i<(int)renderers.size();i++){
 			 renderers[i]->draw(poly);
@@ -228,11 +247,11 @@ public:
 	 }; // hex, like web 0xFF0033;
 
 	// bg color
-	ofColor & getBgColor(){
+	ofFloatColor & getBgColor(){
 		 if(renderers.size()){
 			 return renderers[0]->getBgColor();
 		 }else{
-			 static ofColor c;
+			 static ofFloatColor c;
 			 return c;
 		 }
 	}

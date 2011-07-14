@@ -33,12 +33,12 @@ def addCBPLibrary(project,libpath):
         etree.SubElement(project,"Linker")
     if project.Linker.find('Add') != None:
         for lib in project.Linker.Add:
-            if str(lib.get("library"))==str(libpath):
+            if str(lib.get("option"))==str(libpath):
                 found=True
                 break
     if not found:
         include = etree.SubElement(project.Linker,"Add")
-        include.set("library",libpath)
+        include.set("option",libpath)
         
 def addCBPUnit(project,filepath,basefolder):
     found=False
@@ -78,6 +78,26 @@ def addAddon(project,addon):
     if fullCBP:
         if not os.path.exists(os.path.join(of_root,'addons',addon,'libs')):
             return
+        
+        # add search path for libs in case theres source in it
+        basefolder = os.path.join('addons',addon,'libs');
+        dirpath = os.path.join(of_root,basefolder)
+        addCBPIncludePath(project,os.path.join('..','..','..',basefolder))
+        for root, dirs, files in os.walk(dirpath):
+            for dir in dirs:
+                basefolder_addon = root[len(of_root):]
+                dirpath_addon = os.path.join('..','..','..',basefolder_addon,dir)
+                addCBPIncludePath(project,dirpath_addon)
+        
+        # add source in libs
+        for root, dirs, files in os.walk(dirpath):
+            for name in files:
+                basename, extension = os.path.splitext(name)
+                if extension=='.c' or extension=='.cc' or extension=='.cpp' or extension=='.h':
+                    basefolder = root[len(of_root):]
+                    filepath = str(os.path.join('..','..','..',basefolder,name))
+                    addCBPUnit(project,filepath,basefolder)
+                
         for libdir in os.listdir(os.path.join(of_root,'addons',addon,'libs')):
             if not os.path.isdir(os.path.join(of_root,'addons',addon,'libs',libdir)):
                 continue
@@ -105,7 +125,7 @@ def addAddon(project,addon):
                     for lib in glob.glob(os.path.join(of_root,basefolder,'lib',arch,'*.a')):
                         baselib = lib[len(of_root):]
                         addCBPLibrary(project,os.path.join('..','..','..',baselib))
-                    for lib in glob.glob(os.path.join(of_root,basefolder,'lib',arch,'*.so')):
+                    for lib in glob.glob(os.path.join(of_root,basefolder,'lib',arch,'*.dll')):
                         baselib = lib[len(of_root):]
                         addCBPLibrary(project,os.path.join('..','..','..',baselib))
                         
@@ -144,6 +164,22 @@ def createCBP(project_path):
     cbp_file = open(os.path.join(project_path,project_name+'.cbp'),mode='w')
     cbp_file.write(etree.tostring(cbp, xml_declaration=True, encoding='UTF-8', pretty_print=True))
     cbp_file.close()
+    
+def createWorkspace(project_path):
+    if os.path.abspath(project_path) == os.path.abspath(templates_path):
+        return
+    project_name = os.path.basename(project_path)
+    ws = objectify.parse(os.path.join(project_path,project_name+'.workspace'))
+    root = ws.getroot()
+    workspace = root.Workspace
+    
+    for project in workspace.Project:
+        if project.get("filename")=="emptyExample.cbp":
+            project.set("filename",project_name+".cbp")
+
+    ws_file = open(os.path.join(project_path,project_name+'.workspace'),mode='w')
+    ws_file.write(etree.tostring(ws, xml_declaration=True, encoding='UTF-8', pretty_print=True))
+    ws_file.close()
 
 def createProject(project_path):
     print 'generating',project_path
@@ -180,6 +216,7 @@ def createProject(project_path):
         os.mkdir(os.path.join(project_path , 'bin','data'))
 
     createCBP(project_path)
+    createWorkspace(project_path)
 
 
 

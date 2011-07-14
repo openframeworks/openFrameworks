@@ -14,8 +14,6 @@
 		BBAB23BD13894D2600AA2426 /* GLUT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BBAB23BC13894D2600AA2426 /* GLUT.framework */; };
 		DA48FE77131D85A6000062BC /* ofPolyline.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DA48FE73131D85A6000062BC /* ofPolyline.cpp */; };
 		DA48FE78131D85A6000062BC /* ofPolyline.h in Headers */ = {isa = PBXBuildFile; fileRef = DA48FE74131D85A6000062BC /* ofPolyline.h */; };
-		DA48FE79131D85A6000062BC /* ofPolyUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DA48FE75131D85A6000062BC /* ofPolyUtils.cpp */; };
-		DA48FE7A131D85A6000062BC /* ofPolyUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = DA48FE76131D85A6000062BC /* ofPolyUtils.h */; };
 		DA94C2F01301D32200CCC773 /* ofRendererCollection.h in Headers */ = {isa = PBXBuildFile; fileRef = DA94C2ED1301D32200CCC773 /* ofRendererCollection.h */; };
 		DA97FD3C12F5A61A005C9991 /* ofCairoRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DA97FD3612F5A61A005C9991 /* ofCairoRenderer.cpp */; };
 		DA97FD3D12F5A61A005C9991 /* ofCairoRenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = DA97FD3712F5A61A005C9991 /* ofCairoRenderer.h */; };
@@ -123,8 +121,6 @@
 		E4F3BB1F12F4C752002D19BB /* ofImage.h in Headers */ = {isa = PBXBuildFile; fileRef = E4F3BB0712F4C752002D19BB /* ofImage.h */; };
 		E4F3BB2012F4C752002D19BB /* ofPixels.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BB0812F4C752002D19BB /* ofPixels.cpp */; };
 		E4F3BB2112F4C752002D19BB /* ofPixels.h in Headers */ = {isa = PBXBuildFile; fileRef = E4F3BB0912F4C752002D19BB /* ofPixels.h */; };
-		E4F3BB2212F4C752002D19BB /* ofPixelUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BB0A12F4C752002D19BB /* ofPixelUtils.cpp */; };
-		E4F3BB2312F4C752002D19BB /* ofPixelUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = E4F3BB0B12F4C752002D19BB /* ofPixelUtils.h */; };
 		E4F3BB2A12F4C752002D19BB /* ofTessellator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BB1212F4C752002D19BB /* ofTessellator.cpp */; };
 		E4F3BB2B12F4C752002D19BB /* ofTessellator.h in Headers */ = {isa = PBXBuildFile; fileRef = E4F3BB1312F4C752002D19BB /* ofTessellator.h */; };
 		E4F3BB2E12F4C752002D19BB /* ofTrueTypeFont.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BB1612F4C752002D19BB /* ofTrueTypeFont.cpp */; };
@@ -139,8 +135,6 @@
 		BBAB23BC13894D2600AA2426 /* GLUT.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLUT.framework; path = ../../../glut/lib/osx/GLUT.framework; sourceTree = "<group>"; };
 		DA48FE73131D85A6000062BC /* ofPolyline.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofPolyline.cpp; sourceTree = "<group>"; };
 		DA48FE74131D85A6000062BC /* ofPolyline.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofPolyline.h; sourceTree = "<group>"; };
-		DA48FE75131D85A6000062BC /* ofPolyUtils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofPolyUtils.cpp; sourceTree = "<group>"; };
-		DA48FE76131D85A6000062BC /* ofPolyUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofPolyUtils.h; sourceTree = "<group>"; };
 		DA94C2ED1301D32200CCC773 /* ofRendererCollection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofRendererCollection.h; sourceTree = "<group>"; };
 		DA97FD3612F5A61A005C9991 /* ofCairoRenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofCairoRenderer.cpp; sourceTree = "<group>"; };
 		DA97FD3712F5A61A005C9991 /* ofCairoRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofCairoRenderer.h; sourceTree = "<group>"; };
@@ -265,8 +259,6 @@
 		E4F3BB0712F4C752002D19BB /* ofImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofImage.h; path = ../../../openFrameworks/graphics/ofImage.h; sourceTree = SOURCE_ROOT; };
 		E4F3BB0812F4C752002D19BB /* ofPixels.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofPixels.cpp; path = ../../../openFrameworks/graphics/ofPixels.cpp; sourceTree = SOURCE_ROOT; };
 		E4F3BB0912F4C752002D19BB /* ofPixels.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofPixels.h; path = ../../../openFrameworks/graphics/ofPixels.h; sourceTree = SOURCE_ROOT; };
-		E4F3BB0A12F4C752002D19BB /* ofPixelUtils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofPixelUtils.cpp; path = ../../../openFrameworks/graphics/ofPixelUtils.cpp; sourceTree = SOURCE_ROOT; };
-		E4F3BB0B12F4C752002D19BB /* ofPixelUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofPixelUtils.h; path = ../../../openFrameworks/graphics/ofPixelUtils.h; sourceTree = SOURCE_ROOT; };
 		E4F3BB1212F4C752002D19BB /* ofTessellator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofTessellator.cpp; path = ../../../openFrameworks/graphics/ofTessellator.cpp; sourceTree = SOURCE_ROOT; };
 		E4F3BB1312F4C752002D19BB /* ofTessellator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofTessellator.h; path = ../../../openFrameworks/graphics/ofTessellator.h; sourceTree = SOURCE_ROOT; };
 		E4F3BB1612F4C752002D19BB /* ofTrueTypeFont.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofTrueTypeFont.cpp; path = ../../../openFrameworks/graphics/ofTrueTypeFont.cpp; sourceTree = SOURCE_ROOT; };
@@ -530,8 +522,6 @@
 				92C55F87132DA7DD00EC2631 /* ofPath.h */,
 				DA48FE73131D85A6000062BC /* ofPolyline.cpp */,
 				DA48FE74131D85A6000062BC /* ofPolyline.h */,
-				DA48FE75131D85A6000062BC /* ofPolyUtils.cpp */,
-				DA48FE76131D85A6000062BC /* ofPolyUtils.h */,
 				DA94C2ED1301D32200CCC773 /* ofRendererCollection.h */,
 				DA97FD3612F5A61A005C9991 /* ofCairoRenderer.cpp */,
 				DA97FD3712F5A61A005C9991 /* ofCairoRenderer.h */,
@@ -543,8 +533,6 @@
 				E4F3BB0712F4C752002D19BB /* ofImage.h */,
 				E4F3BB0812F4C752002D19BB /* ofPixels.cpp */,
 				E4F3BB0912F4C752002D19BB /* ofPixels.h */,
-				E4F3BB0A12F4C752002D19BB /* ofPixelUtils.cpp */,
-				E4F3BB0B12F4C752002D19BB /* ofPixelUtils.h */,
 				E4F3BB1212F4C752002D19BB /* ofTessellator.cpp */,
 				E4F3BB1312F4C752002D19BB /* ofTessellator.h */,
 				E4F3BB1612F4C752002D19BB /* ofTrueTypeFont.cpp */,
@@ -597,14 +585,12 @@
 				E4F3BB1D12F4C752002D19BB /* ofGraphics.h in Headers */,
 				E4F3BB1F12F4C752002D19BB /* ofImage.h in Headers */,
 				E4F3BB2112F4C752002D19BB /* ofPixels.h in Headers */,
-				E4F3BB2312F4C752002D19BB /* ofPixelUtils.h in Headers */,
 				E4F3BB2B12F4C752002D19BB /* ofTessellator.h in Headers */,
 				E4F3BB2F12F4C752002D19BB /* ofTrueTypeFont.h in Headers */,
 				DA97FD3D12F5A61A005C9991 /* ofCairoRenderer.h in Headers */,
 				DA94C2F01301D32200CCC773 /* ofRendererCollection.h in Headers */,
 				53EEEF4B130766EF0027C199 /* ofMesh.h in Headers */,
 				DA48FE78131D85A6000062BC /* ofPolyline.h in Headers */,
-				DA48FE7A131D85A6000062BC /* ofPolyUtils.h in Headers */,
 				DACFA8DB132D09E8008D4B7A /* ofFbo.h in Headers */,
 				DACFA8DD132D09E8008D4B7A /* ofGLRenderer.h in Headers */,
 				DACFA8DE132D09E8008D4B7A /* ofGLUtils.h in Headers */,
@@ -709,13 +695,11 @@
 				E4F3BB1C12F4C752002D19BB /* ofGraphics.cpp in Sources */,
 				E4F3BB1E12F4C752002D19BB /* ofImage.cpp in Sources */,
 				E4F3BB2012F4C752002D19BB /* ofPixels.cpp in Sources */,
-				E4F3BB2212F4C752002D19BB /* ofPixelUtils.cpp in Sources */,
 				E4F3BB2A12F4C752002D19BB /* ofTessellator.cpp in Sources */,
 				E4F3BB2E12F4C752002D19BB /* ofTrueTypeFont.cpp in Sources */,
 				DA97FD3C12F5A61A005C9991 /* ofCairoRenderer.cpp in Sources */,
 				53EEEF4C130766EF0027C199 /* ofMesh.cpp in Sources */,
 				DA48FE77131D85A6000062BC /* ofPolyline.cpp in Sources */,
-				DA48FE79131D85A6000062BC /* ofPolyUtils.cpp in Sources */,
 				DACFA8DA132D09E8008D4B7A /* ofFbo.cpp in Sources */,
 				DACFA8DC132D09E8008D4B7A /* ofGLRenderer.cpp in Sources */,
 				DACFA8DF132D09E8008D4B7A /* ofLight.cpp in Sources */,

@@ -2,7 +2,7 @@
 
 //--------------------------------------------------------------
 void testApp::setup(){	
-	ofxiPhoneSetOrientation(OFXIPHONE_ORIENTATION_LANDSCAPE_RIGHT);
+	ofxiPhoneSetOrientation(OFXIPHONE_ORIENTATION_LANDSCAPE_LEFT);
 
 	ofSetFrameRate(20);
 	grabber.setDesiredFrameRate(20);
@@ -36,7 +36,7 @@ void testApp::update(){
 void testApp::draw(){	
 	
 	ofSetColor(255);
-	grabber.draw(0, 0, ofGetWidth(), ofGetHeight());
+	grabber.draw(0, 0);
 	
 	ofPushStyle();
 		ofNoFill();
@@ -46,15 +46,16 @@ void testApp::draw(){
 			ofRect(rect);
 		}
 	ofPopStyle();
+	
+	ofEnableAlphaBlending();
+	ofSetColor(230, 0, 255, 200);
+	ofRect(0, 0, ofGetWidth(), 16);
+	ofSetColor(255, 255, 255);
+	ofDrawBitmapString("face detector: hold this way up", 5, 12);
 }
 
 //--------------------------------------------------------------
 void testApp::touchDown(ofTouchEventArgs &touch){
-
-}
-
-//--------------------------------------------------------------
-void testApp::touchCancelled(ofTouchEventArgs &touch){
 
 }
 

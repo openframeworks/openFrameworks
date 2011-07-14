@@ -1,8 +1,8 @@
 #pragma once
 
-#define BOUNCE_FACTOR			0.5
+#define BOUNCE_FACTOR			0.7
 #define ACCELEROMETER_FORCE		0.2
-#define RADIUS					30
+#define RADIUS					20
 
 
 class Ball {
@@ -10,17 +10,29 @@ public:
 	ofPoint pos;
 	ofPoint vel;
 	ofColor col;
+	ofColor touchCol;
+	bool bDragged;
 	
-	void init() {
+	//----------------------------------------------------------------	
+	void init(int id) {
 		pos.set(ofRandomWidth(), ofRandomHeight(), 0);
 		vel.set(ofRandomf(), ofRandomf(), 0);
 		
-		col.r = ofRandom(0, 255);
-		col.g = ofRandom(0, 255);
-		col.b = ofRandom(0, 255);
-		col.a = ofRandom(0, 255);
+		float val = ofRandom( 30, 100 );
+		col.set( val, val, val, 120 );
+		
+		if( id % 3 == 0  ){
+			touchCol.setHex(0x809d00);
+		}else if(  id % 3 == 1){
+			touchCol.setHex(0x009d88);
+		}else{
+			touchCol.setHex(0xf7941d);
+		}
+		
+		bDragged = false;
 	}
 	
+	//----------------------------------------------------------------	
     void update() {
         vel.x += ACCELEROMETER_FORCE * ofxAccelerometer.getForce().x * ofRandomuf();
         vel.y += -ACCELEROMETER_FORCE * ofxAccelerometer.getForce().y * ofRandomuf();        // this one is subtracted cos world Y is opposite to opengl Y
@@ -46,11 +58,18 @@ public:
 		}
 	}
 	
+	//----------------------------------------------------------------
 	void draw() {
-		ofSetColor(col.r, col.g, col.b, col.a);
-		ofCircle(pos.x, pos.y, 30);
+		if( bDragged ){
+			ofSetColor(touchCol);
+			ofCircle(pos.x, pos.y, 80);
+		}else{
+			ofSetColor(col);		
+			ofCircle(pos.x, pos.y, RADIUS);
+		}
 	}
 	
+	//----------------------------------------------------------------	
 	void moveTo(int x, int y) {
 		pos.set(x, y, 0);
 		vel.set(0, 0, 0);

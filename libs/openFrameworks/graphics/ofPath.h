@@ -98,6 +98,10 @@ public:
 	
 	void tessellate();
 
+	void translate(const ofPoint & p);
+	void rotate(float az, const ofVec3f& axis );
+	void scale(float x, float y);
+
 private:
 
 	ofSubPath & lastPath();

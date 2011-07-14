@@ -7,12 +7,18 @@
 #include "ofRectangle.h"
 #include "ofTypes.h"
 #include "ofBaseTypes.h"
+#include "ofGLRenderer.h"
 
 #define  	CIRC_RESOLUTION		    22				// 22 pts for a circle...
 
 
-void ofSetDefaultRenderer(ofPtr<ofBaseRenderer> renderer);
-ofPtr<ofBaseRenderer> & ofGetDefaultRenderer();
+void ofSetCurrentRenderer(ofPtr<ofBaseRenderer> renderer);
+ofPtr<ofBaseRenderer> & ofGetCurrentRenderer();
+ofPtr<ofGLRenderer> ofGetGLRenderer();
+
+//for pdf screenshot
+void ofBeginSaveScreenAsPDF(string filename, bool bMultipage = false, bool b3D = false, ofRectangle viewport = ofRectangle(0,0,0,0));
+void ofEndSaveScreenAsPDF();
 
 //opengl specifics
 
@@ -57,6 +63,7 @@ void ofSetupScreenOrtho(float width = 0, float height = 0, ofOrientation orienta
 ofRectangle ofGetCurrentViewport();
 int ofGetViewportWidth();
 int ofGetViewportHeight();
+int ofOrientationToDegrees(ofOrientation orientation);
 
 void ofSetCoordHandedness(ofHandednessType handedness);
 ofHandednessType ofGetCoordHandedness();
@@ -224,7 +231,6 @@ void ofBox(float size);
 
 
 // bitmapped type
-// ** note, this uses glDrawPixels and may be S L 0 W on some graphics cards
 void ofSetDrawBitmapMode(ofDrawBitmapMode mode);
 void ofDrawBitmapString(string textString, const ofPoint & p);
 void ofDrawBitmapString(string textString, float x, float y);
