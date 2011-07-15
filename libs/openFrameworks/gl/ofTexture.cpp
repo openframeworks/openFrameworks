@@ -170,9 +170,9 @@ void ofGetGlFormatAndType(int glInternalFormat, int& glFormat, int& glType) {
 			break;
 		
 		default:
-			glFormat = GL_RGB;
+			glFormat = glInternalFormat;
 			glType = GL_UNSIGNED_BYTE;
-			ofLogError() << "ofGetGlFormatAndType(): glInternalFormat not recognized";
+			ofLogError() << "ofGetGlFormatAndType(): glInternalFormat not recognized returning glFormat as glInternalFormat";
 			break;
 	}
 }
