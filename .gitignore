@@ -21,6 +21,17 @@ apps/addonsExamples/*/*.xcodeproj
 apps/addonsExamples/*/Project.xcconfig
 apps/addonsExamples/*/openFrameworks-Info.plist
 
+apps/iphoneAddonsExamples/*/*.xcodeproj
+apps/iphoneAddonsExamples/*/Project.xcconfig
+apps/iPhoneAddonsExamples/*/ofxiphone-Info.plist
+apps/iPhoneAddonsExamples/*/iPhone_Prefix.pch
+
+apps/iphoneExamples/*/*.xcodeproj
+apps/iphoneExamples/*/Project.xcconfig
+apps/iPhoneExamples/*/ofxiphone-Info.plist
+apps/iPhoneExamples/*/iPhone_Prefix.pch
+
+
 #codeblocks files
 apps/*/*/*.layout
 apps/*/*/*.depend
