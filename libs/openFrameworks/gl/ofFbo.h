@@ -15,7 +15,7 @@ public:
 	virtual ~ofFbo();
 
 	void allocate(int width, int height, int internalformat = GL_RGBA, int numSamples = 0);
-	void allocateForShadow( int width, int height );
+	//void allocateForShadow( int width, int height );
 	void allocate(Settings settings = Settings());
 	
 	void draw(float x, float y);
