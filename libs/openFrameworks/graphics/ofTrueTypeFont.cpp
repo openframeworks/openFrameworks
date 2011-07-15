@@ -595,7 +595,7 @@ vector<ofTTFCharacter> ofTrueTypeFont::getStringAsPoints(string str){
 		if (cy < nCharacters){ 			// full char set or not?
 		  if (str[index] == '\n') {
 
-				Y += (float) lineHeight;
+				Y += lineHeight;
 				X = 0 ; //reset X Pos back to zero
 
 		  }else if (str[index] == ' ') {
@@ -666,7 +666,7 @@ ofRectangle ofTrueTypeFont::getStringBoundingBox(string c, float x, float y){
 		int cy = (unsigned char)c[index] - NUM_CHARACTER_TO_START;
  	    if (cy < nCharacters){ 			// full char set or not?
 	       if (c[index] == '\n') {
-				yoffset += (int)lineHeight;
+				yoffset += lineHeight;
 				xoffset = 0 ; //reset X Pos back to zero
 	      } else if (c[index] == ' ') {
 	     		int cy = (int)'p' - NUM_CHARACTER_TO_START;
@@ -743,7 +743,7 @@ void ofTrueTypeFont::drawString(string c, float x, float y) {
 		if (cy < nCharacters){ 			// full char set or not?
 		  if (c[index] == '\n') {
 
-				Y += (float) lineHeight;
+				Y += lineHeight;
 				X = x ; //reset X Pos back to zero
 
 		  }else if (c[index] == ' ') {
