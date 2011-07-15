@@ -423,6 +423,8 @@ void ofFbo::allocate(Settings _settings) {
 	unbind();
 }
 
+/*  removed by now, was crashing on draw
+ *
 void ofFbo::allocateForShadow( int width, int height )
 {
 //#ifndef TARGET_OPENGLES
@@ -463,7 +465,7 @@ void ofFbo::allocateForShadow( int width, int height )
 		printf("Can't use FBOs !\n");
 	
 	glBindFramebuffer( GL_FRAMEBUFFER, old );
-}
+}*/
 
 GLuint ofFbo::createAndAttachRenderbuffer(GLenum internalFormat, GLenum attachmentPoint) {
 	GLuint buffer;
