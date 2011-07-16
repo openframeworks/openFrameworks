@@ -14,22 +14,22 @@
 #include "ofImage.h"
 
 /*
-	there should be three kinds of functions:
-	1 utility functions like imitate and toCv
-	2 wrapper functions that accept Mat and return cv types
-	3 wrapper functions that accept toCv-compatible objects and return toOf objects
-	
-	all type 3 functions should guarantee the size of the output with imitate
-	
-	there should be a ton more const functions, but it's hard because of OF const issues
-	need to print better errors than default opencv errors...?
-*/
+ there should be three kinds of functions:
+ 1 utility functions like imitate and toCv
+ 2 wrapper functions that accept Mat and return cv types
+ 3 wrapper functions that accept toCv-compatible objects and return toOf objects
+ 
+ all type 3 functions should guarantee the size of the output with imitate
+ 
+ there should be a ton more const functions, but it's hard because of OF const issues
+ need to print better errors than default opencv errors...?
+ */
 
 namespace ofxCv {
 	
 	using namespace cv;
 	
-// 1 utility functions
+	// 1 utility functions
 	
 	// imitate() is good for preparing buffers
 	// it's like allocate(), but uses the size and type of the original as a reference
@@ -60,13 +60,13 @@ namespace ofxCv {
 	ofVec3f toOf(Point3f point);
 	ofRectangle toOf(cv::Rect rect);
 	
-// 2 Mat wrappers
+	// 2 Mat wrappers
 	void threshold(Mat src, Mat dst, float thresholdValue, bool invert = false); // threshold out of place
 	void threshold(Mat srcDst, float thresholdValue, bool invert = false); // threshold in place
 	void convertColor(Mat src, Mat dst, int code); // CV_RGB2GRAY, CV_HSV2RGB, etc. with [RGB, BGR, GRAY, HSV, HLS, XYZ, YCrCb, Lab, Luv]
-
-// 3 toCv-compatible wrappers
-
+	
+	// 3 toCv-compatible wrappers
+	
 	template <class SrcType, class DstType>
 	void threshold(SrcType& src, DstType& dst, float thresholdValue, bool invert = false) {
 		return threshold(toCv(src), toCv(dst), thresholdValue, invert);
@@ -81,7 +81,7 @@ namespace ofxCv {
 	void convertColor(SrcType& src, DstType& dst, int code) {
 		return convertColor(toCv(src), toCv(dst), code);
 	}
-
+	
 	// older wrappers, need to be split into two parts
 	// {
 	void invert(ofImage& img);
@@ -102,8 +102,8 @@ namespace ofxCv {
 	void resize(ofImage& source, ofImage& destination, int interpolation = INTER_LINEAR); // options: INTER_NEAREST, INTER_LINEAR, INTER_AREA, INTER_CUBIC, INTER LANCZOS4
 	void resize(ofImage& source, ofImage& destination, float xScale, float yScale, int interpolation = INTER_LINEAR);
 	// }
-
-// 4 misc
+	
+	// 4 misc
 	void loadImage(Mat& mat, string filename);
 	void saveImage(Mat& mat, string filename);
 	

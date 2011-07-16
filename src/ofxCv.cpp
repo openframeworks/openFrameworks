@@ -161,11 +161,11 @@ namespace ofxCv {
 		switch(mat.depth()) {
 			case CV_8U: return numeric_limits<uint8_t>::max();
 			case CV_16U: return numeric_limits<uint16_t>::max();
-			
+				
 			case CV_8S: return numeric_limits<int8_t>::max();
 			case CV_16S: return numeric_limits<int16_t>::max();
 			case CV_32S: return numeric_limits<int32_t>::max();
-			
+				
 			case CV_32F: return 1;
 			case CV_64F: return 1;
 		}

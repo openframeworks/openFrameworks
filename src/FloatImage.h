@@ -39,9 +39,9 @@ namespace ofxCv {
 		Mat pixels;
 		ofTexture texture;
 		
-		#ifdef ZERO_STEP
+#ifdef ZERO_STEP
 		vector<float> data;
-		#endif
+#endif
 	};
 	
 }

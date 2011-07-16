@@ -1,23 +1,23 @@
 #pragma once
 
 /*
-	this class handles per-camera intrinsic calibration and undistortion.
-	given a series of chessboard images, it will calculate the intrinsics.
-	to use it:
-	
-	0 either load() from a yml file (skip to 5),
-	or do the calibration as follows
-	1 set the board and physical square size of the chess board. whatever
-	if your squares are in mm, your focal length will also be in mm.
-	2 add() each image containing a chess board
-	3 when all the images are added, call calibrate()
-	4 now you can save() a yml calibration file 
-	5 now you can undistort() incoming images. 
-	
-	to do inter-camera (extrinsics) calibration, you need to first calibrate
-	each camera individually. then use getTransformation to determine the
-	rotation and translation from camera to another.
-*/
+ this class handles per-camera intrinsic calibration and undistortion.
+ given a series of chessboard images, it will calculate the intrinsics.
+ to use it:
+ 
+ 0 either load() from a yml file (skip to 5),
+ or do the calibration as follows
+ 1 set the board and physical square size of the chess board. whatever
+ if your squares are in mm, your focal length will also be in mm.
+ 2 add() each image containing a chess board
+ 3 when all the images are added, call calibrate()
+ 4 now you can save() a yml calibration file 
+ 5 now you can undistort() incoming images. 
+ 
+ to do inter-camera (extrinsics) calibration, you need to first calibrate
+ each camera individually. then use getTransformation to determine the
+ rotation and translation from camera to another.
+ */
 
 #include "ofxCv.h"
 
@@ -47,7 +47,7 @@ namespace ofxCv {
 	class Calibration {
 	public:	
 		Calibration();
-				
+		
 		void save(string filename, bool absolute = false) const;
 		void load(string filename, bool absolute = false);
 		
@@ -61,9 +61,9 @@ namespace ofxCv {
 		void undistort(Mat img);
 		void undistort(Mat src, Mat dst);
 		
-        ofVec2f undistort(ofVec2f &src);
-        void undistort(vector<ofVec2f> &src, vector<ofVec2f> &dst);
-        
+		ofVec2f undistort(ofVec2f &src);
+		void undistort(vector<ofVec2f> &src, vector<ofVec2f> &dst);
+		
 		void getTransformation(Calibration& dst, Mat& rotation, Mat& translation);
 		
 		float getReprojectionError() const;
@@ -82,8 +82,8 @@ namespace ofxCv {
 		void draw(int i) const;
 		void draw3d() const;
 		void draw3d(int i) const;
-        
-        const bool &isReady;
+		
+		const bool &isReady;
 		
 	protected:
 		vector<vector<Point2f> > imagePoints;
@@ -109,8 +109,8 @@ namespace ofxCv {
 		
 		Intrinsics distortedIntrinsics;
 		Intrinsics undistortedIntrinsics;
-        
-        bool _isReady;
+		
+		bool _isReady;
 	};
 	
 }

@@ -47,7 +47,7 @@ namespace ofxCv {
 	void FloatImage::set(int x, int y, float value) {
 		pixels.at<float>(y, x) = value;
 	}
-		
+	
 	void FloatImage::normalizeToSum() {
 		pixels.convertTo(pixels, CV_32F, 1. / sum(pixels)[0]);
 	}
@@ -59,12 +59,12 @@ namespace ofxCv {
 	}
 	
 	void FloatImage::allocate(int width, int height) {
-		#ifdef ZERO_STEP
+#ifdef ZERO_STEP
 		data.resize(width * height);
 		pixels = Mat(height, width, CV_32FC1, &data[0]);
-		#else
+#else
 		pixels = Mat(height, width, CV_32FC1);
-		#endif
+#endif
 		texture.allocate(width, height, GL_LUMINANCE32F_ARB);
 	}
 	
@@ -99,7 +99,7 @@ namespace ofxCv {
 	float FloatImage::get(int x, int y) {
 		return pixels.at<float>(y, x);
 	}
-		
+	
 	cv::Size FloatImage::getSize() {
 		return pixels.size();
 	}
