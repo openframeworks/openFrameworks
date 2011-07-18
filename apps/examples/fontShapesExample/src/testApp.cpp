@@ -88,7 +88,6 @@ void testApp::draw(){
 void testApp::keyPressed  (int key){
 	testChar = testFont.getCharacterAsPoints(key);
 	letter = key;
-	if( key == 'f')ofToggleFullscreen();
 }
 
 //--------------------------------------------------------------
@@ -124,6 +123,6 @@ void testApp::gotMessage(ofMessage msg){
 }
 
 //--------------------------------------------------------------
-void testApp::dragEvent(ofDragInfo dragInfo){ 
+void testApp::dragEvent(ofDragInfo dragInfo){
 
 }
