@@ -110,6 +110,11 @@ string ofxTCPServer::receive(int clientID){
 		if(verbose)printf("ofxTCPServer: client %i doesn't exist\n", clientID);
 		return "client doesn't exist";
 	}
+	
+	if( !TCPConnections[clientID].isConnected() ){
+		disconnectClient(clientID);
+		return "";
+	}
 
 	return TCPConnections[clientID].receive();
 }
@@ -177,6 +182,11 @@ string ofxTCPServer::getClientIP(int clientID){
 //--------------------------
 int ofxTCPServer::getNumClients(){
 	return TCPConnections.size()-1;
+}
+
+//--------------------------
+int ofxTCPServer::getLastID(){
+	return idCount;
 }
 
 //--------------------------
