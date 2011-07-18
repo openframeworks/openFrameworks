@@ -5,94 +5,168 @@ void testApp::setup(){
 	// register touch events
 	ofRegisterTouchEvents(this);
 		
-	// this load font loads the non-full character set
-	// (ie ASCII 33-128), at size "32"
-	franklinBook.loadFont("frabk.ttf", 64);
+	ofBackground(54, 54, 54, 255);
 	
-	// now load another font, but with extended parameters:
-	// font name, size, anti-aliased, full character set
-	verdana.loadFont("verdana.ttf",16, true, true);
-	verdana.setLineHeight(20.0f);
+	//old OF default is 96 - but this results in fonts looking larger than in other programs. 
+	ofTrueTypeFont::setGlobalDpi(72);
+
+	verdana14.loadFont("verdana.ttf", 14, true, true);
+	verdana14.setLineHeight(18.0f);
+	verdana14.setLetterSpacing(1.037);
+
+	verdana30.loadFont("verdana.ttf", 30, true, true);
+	verdana30.setLineHeight(34.0f);
+	verdana30.setLetterSpacing(1.035);
 	
-	counter = 0;
-	ofBackground(255, 255, 255);
+	verdana14A.loadFont("frabk.ttf", 14, false);
+	verdana14A.setLineHeight(18.0f);
+	verdana14A.setLetterSpacing(1.037);
+
+	franklinBook14.loadFont("frabk.ttf", 14);
+	franklinBook14.setLineHeight(18.0f);
+	franklinBook14.setLetterSpacing(1.037);
+
+	franklinBook14A.loadFont("frabk.ttf", 14, false);
+	franklinBook14A.setLineHeight(18.0f);
+	franklinBook14A.setLetterSpacing(1.037);
+
+	bFirst  = true;
+	typeStr = "ABCDEFGHIJKLMNOPQRSTUVWXYZ\nabcdefghijklmnopqrstuvwxyz\n0123456789,:&!?";
+
+	bDragging = false;
 }
 
 
 //--------------------------------------------------------------
 void testApp::update(){
-	ofBackground(255,255,255);	
-	counter += 1.0f;
+
+	//lets emmulate the snapping action
+	if( !bDragging ){
+		if( drag.x > 0 ){
+			drag.x *= 0.9;
+		}
+		if( drag.y > 0 ){
+			drag.y *= 0.9;
+		}
+		if( drag.x < -450.0f ){
+			drag.x *= 0.9;
+			drag.x += -450.0f * 0.1;
+		}
+		if( drag.y < -300.0f ){
+			drag.y *= 0.9;
+			drag.y += -300.0f * 0.1;			
+		}	
+	}
+
 }
 
 //--------------------------------------------------------------
 void testApp::draw(){
+	
+	ofPushMatrix();
+	ofTranslate(-10 + drag.x, -60 + drag.y, 0);
 
-	ofSetColor(0x00FF00);
-	franklinBook.drawString("hello, this is franklin book calling\nanyone home?", 10,40);
-	
-	ofSetColor(0x000000);
-	verdana.drawString("hello, I am aliased verdana -- full character set,\nsee: \344 ! ", 10,100);
-	
-	ofSetColor(0x00FF00);
-	franklinBook.drawString("I can't make an\n (\344) like you", 10,150);
-	
-	ofSetColor(0x000000);
-	verdana.drawString("yeah, but I'm not exactly pretty\nthe problem is with freeType library...\napple has a patent on TTF font hints\nso our aliased type via freeType isn't super looking", 10,210);
-	
-	ofSetColor(0x00FF00);
-	franklinBook.drawString("you look ok !\n don't worry", 10,300);
-	
-	//------------------- bounding rectangle : 
-	char tempString[255];
-	sprintf(tempString,"%i", (int)counter);
-	// ok first job to rotate around the center, is to get the bounding box:
-	ofRectangle rect = franklinBook.getStringBoundingBox(tempString, 0,0);
-	// this is the actual midpt (x + w/2, y + h/2);
-	float centerx = rect.x + rect.width / 2;
-	float centery = rect.y + rect.height / 2;
-	
-	ofPushMatrix();
-		ofTranslate(50,410,0);
-		ofRotate(counter, 0,0,1);
-		// draw type & rect centered around 0,0 (subtract midpt from both):
-		ofSetColor(0xcccccc);
-		ofRect(rect.x - centerx, rect.y - centery, rect.width, rect.height);
-		ofSetColor(0xff3399);
-		franklinBook.drawString(tempString, -centerx,-centery);
-	ofPopMatrix();
-	
-	// -------------------------------------
-	
-	ofPushMatrix();
-		ofTranslate(50,400,0);
-		ofScale(5,5,1);
-		ofSetColor(0x333333);
-		verdana.drawString("scale 5x!",0, 0);
-	ofPopMatrix();
-	
-	float size = 2 + 1.5*sin(ofGetElapsedTimef());
-	ofPushMatrix();
-		ofTranslate(100,400,0);
-		ofScale(size,size,1);
-		ofSetColor(0x00FF00);
-		franklinBook.drawString("$k@!%",0, 0);
+		ofSetColor(245, 58, 135);
+		verdana14.drawString("anti aliased", 145, 92);
+		verdana14.drawString("anti aliased", 145, 195);
+		verdana14A.drawString("aliased", 525, 92);
+		
+		ofSetColor(225);
+		verdana14.drawString("verdana 14pt - ", 30, 92);
+		verdana14.drawString(typeStr, 30, 111);
+
+		verdana14A.drawString("verdana 14pt - ", 422, 92);
+		ofRect(420, 97, 292, 62);
+		ofSetColor(54, 54, 54);	
+		verdana14A.drawString(typeStr, 422, 111);
+		
+		ofSetColor(29,29,29);
+		ofLine(30, 169, ofGetWidth()-4, 169);
+
+		ofSetColor(225);
+		verdana14.drawString("verdana 30pt - ", 30, 195);
+		verdana30.drawString(typeStr, 30, 229);
+
+		ofSetColor(29,29,29);
+		ofLine(30, 312, ofGetWidth()-4, 312);
+
+		ofSetColor(245, 58, 135);
+		franklinBook14.drawString("anti aliased", 162, 338);
+		franklinBook14A.drawString("aliased", 555, 338);
+		
+		ofSetColor(225);
+		franklinBook14.drawString("franklin book 14pt - ", 30, 338);
+		franklinBook14.drawString(typeStr, 30, 358);
+
+		franklinBook14A.drawString("franklin book 14pt - ", 422, 338);
+		ofRect(420, 345, 292, 62);
+		ofSetColor(54, 54, 54);	
+		franklinBook14A.drawString(typeStr, 422, 358);
+
+		ofSetColor(29,29,29);
+		ofLine(30, 418, ofGetWidth()-4, 418);
+
+		ofSetColor(225);	
+		verdana14.drawString("ROTATION", 30, 445);
+		verdana14.drawString("SCALE", 422, 445);
+		
+		ofPushMatrix();
+			string rotZ = "Rotate Z";
+			ofRectangle bounds = verdana30.getStringBoundingBox(rotZ, 0, 0);
+			
+			ofTranslate(110 + bounds.width/2, 500 + bounds.height / 2, 0);
+			ofRotateZ(ofGetElapsedTimef() * -30.0);
+					
+			verdana30.drawString(rotZ, -bounds.width/2, bounds.height/2 );
+		ofPopMatrix();
+
+		ofPushMatrix();
+			string scaleAA = "SCALE AA";
+			bounds = verdana14.getStringBoundingBox(scaleAA, 0, 0);
+			
+			ofTranslate(500 + bounds.width/2, 480 + bounds.height / 2, 0);
+			ofScale(2.0 + sin(ofGetElapsedTimef()), 2.0 + sin(ofGetElapsedTimef()), 1.0);
+					
+			verdana14.drawString(scaleAA, -bounds.width/2, bounds.height/2 );
+		ofPopMatrix();	
+
+		ofPushMatrix();
+			string scaleA = "SCALE ALIASED";
+			bounds = verdana14A.getStringBoundingBox(scaleA, 0, 0);
+			
+			ofTranslate(500 + bounds.width/2, 530 + bounds.height / 2, 0);
+			ofScale(2.0 + cos(ofGetElapsedTimef()), 2.0 + cos(ofGetElapsedTimef()), 1.0);
+					
+			verdana14A.drawString(scaleA, -bounds.width/2, bounds.height/2 );
+		ofPopMatrix();	
+		
 	ofPopMatrix();
 }
 
 //--------------------------------------------------------------
 void testApp::touchDown(ofTouchEventArgs &touch){
-
+	if( touch.id == 0 ){
+		touchPt.x = touch.x;
+		touchPt.y = touch.y;
+		bDragging = true;
+	}
 }
 
 //--------------------------------------------------------------
 void testApp::touchMoved(ofTouchEventArgs &touch){
-
+	if( touch.id == 0 ){
+		ofPoint pt( touch.x, touch.y );
+		drag += pt - touchPt;
+		
+		touchPt = pt;
+	}
 }
 
 //--------------------------------------------------------------
 void testApp::touchUp(ofTouchEventArgs &touch){
-
+	if( touch.id == 0 ){
+		bDragging = false;
+	}
 }
 
 //--------------------------------------------------------------
