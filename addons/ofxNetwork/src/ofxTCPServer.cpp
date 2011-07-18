@@ -8,6 +8,7 @@ ofxTCPServer::ofxTCPServer(){
 	idCount		= 0;
 	port		= 0;
 	str			= "";
+	strEndMsg = "[/TCP]";
 }
 
 //--------------------------
@@ -37,6 +38,13 @@ bool ofxTCPServer::setup(int _port, bool blocking){
 
 	startThread(true, false);
 	return true;
+}
+
+//--------------------------
+void ofxTCPServer::setStrEndMsg(string message){
+	if(message != ""){
+		strEndMsg = message;
+	}
 }
 
 //--------------------------
@@ -220,6 +228,7 @@ void ofxTCPServer::threadedFunction(){
 			continue;
 		}else{
 			TCPConnections[idCount].setup(idCount, bClientBlocking);
+			TCPConnections[idCount].setStrEndMsg(strEndMsg);
 			if(verbose)printf("ofxTCPServer: client %i connected on port %i\n", idCount, TCPConnections[idCount].getPort());
 			idCount++;
 		}

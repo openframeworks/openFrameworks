@@ -5,8 +5,8 @@
 #include "ofxTCPManager.h"
 
 #define TCP_MAX_MSG_SIZE 512
-#define STR_END_MSG "[/TCP]"
-#define STR_END_MSG_LEN 6
+//#define STR_END_MSG "[/TCP]"
+//#define STR_END_MSG_LEN 6
 
 #ifndef TARGET_WIN32
 	#define TCP_CONNRESET ECONNRESET
@@ -26,8 +26,10 @@ class ofxTCPClient{
 
 		void setVerbose(bool _verbose);
 		bool setup(string ip, int _port, bool blocking = false);
+		void setStrEndMsg(string message);
 		bool close();
 
+	
 		//send data as a string - a short message
 		//is added to the end of the string which is
 		//used to indicate the end of the message to
@@ -79,12 +81,13 @@ class ofxTCPClient{
 		ofxTCPManager	TCPClient;
 
 protected:
+
 		char			tmpBuff[TCP_MAX_MSG_SIZE+1];
 		string			str, tmpStr, ipAddr;
 		int				index, messageSize, port;
 		bool			connected, verbose;
 		string 			partialPrevMsg;
-
+		string			strEndMsg;
 };
 
 #endif

@@ -8,6 +8,7 @@ void testApp::setup(){
 
 	//setup the server to listen on 11999
 	TCP.setup(11999);
+	TCP.setStrEndMsg("\n");
 }
 
 //--------------------------------------------------------------
