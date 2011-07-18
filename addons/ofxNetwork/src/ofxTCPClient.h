@@ -26,7 +26,7 @@ class ofxTCPClient{
 
 		void setVerbose(bool _verbose);
 		bool setup(string ip, int _port, bool blocking = false);
-		void setStrEndMsg(string message);
+		void setMessageDelimiter(string delim);
 		bool close();
 
 	
@@ -87,7 +87,7 @@ protected:
 		int				index, messageSize, port;
 		bool			connected, verbose;
 		string 			partialPrevMsg;
-		string			strEndMsg;
+		string			messageDelimiter;
 };
 
 #endif
