@@ -90,7 +90,7 @@ void HandleFiles(WPARAM wParam)
 
 
     // Here we go through all the files that were drag and dropped then display them
-    for(int i = 0; i < count; i++)
+    /*for(int i = 0; i < count; i++)
     {
         // Grab the name of the file associated with index "i" in the list of files dropped.
         // Be sure you know that the name is attached to the FULL path of the file.
@@ -110,7 +110,21 @@ void HandleFiles(WPARAM wParam)
         // Bring up a message box that displays the current file being processed
         //MessageBox(GetForegroundWindow(), szName, L"Current file received", MB_OK);
     }
+*/
 
+    HDROP hdrop = (HDROP)(wParam);
+	int index, length;
+	count = DragQueryFile(hdrop, 0xFFFFFFFF, NULL, 0);
+	for (index=0; index<count; ++index) {
+	  length = DragQueryFile(hdrop, index, NULL, 0);
+	  if (length > 0) {
+	    TCHAR* lpstr = new TCHAR[length+1];
+	    DragQueryFile(hdrop, index, lpstr, length+1);
+	    string temp = lpstr;
+	    info.files.push_back(temp);
+	    delete[] lpstr;
+	  }
+	}
     // Finally, we destroy the HDROP handle so the extra memory
     // allocated by the application is released.
     DragFinish(hDrop);
