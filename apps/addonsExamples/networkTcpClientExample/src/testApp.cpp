@@ -22,7 +22,8 @@ void testApp::setup(){
 	//are we connected to the server - if this fails we
 	//will check every few seconds to see if the server exists
 	weConnected = tcpClient.setup("127.0.0.1", 11999);
-	tcpClient.setStrEndMsg("\n");
+	//optionally set the delimiter to something else.  The delimter in the client and the server have to be the same
+	tcpClient.setMessageDelimiter("\n");
 	
 	connectTime = 0;
 	deltaTime = 0;
