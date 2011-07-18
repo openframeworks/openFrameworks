@@ -15,7 +15,9 @@ void testApp::update(){
 	ofBackground(20, 20, 20);
 
 	//for each client lets send them a message letting them know what port they are connected on
-	for(int i = 0; i < TCP.getNumClients(); i++){
+	for(int i = 0; i < TCP.getLastID(); i++){
+		if( !TCP.isClientConnected(i) )continue;
+	
 		TCP.send(i, "hello client - you are connected on port - "+ofToString(TCP.getClientPort(i)) );
 	}
 
@@ -33,7 +35,9 @@ void testApp::draw(){
 	ofSetHexColor(0xDDDDDD);
 
 	//for each connected client lets get the data being sent and lets print it to the screen
-	for(int i = 0; i < TCP.getNumClients(); i++){
+	for(int i = 0; i < TCP.getLastID(); i++){
+
+		if( !TCP.isClientConnected(i) )continue;
 
 		//give each client its own color
 		ofSetColor(255 - i*30, 255 - i * 20, 100 + i*40);
