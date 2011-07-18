@@ -806,7 +806,7 @@ void testApp::setup(){
 			addAddonsFromInstallXML( appsPath + "../addons/ofxOpenCv/", folderPath, xcodePath);
 		}
 
-		if( folderName == "network" ){
+		if( folderName.find("Tcp") != string::npos || folderName.find("Udp") != string::npos ){
 			convertProjectToXML(xcodePath);
 			addAddonsFromInstallXML( appsPath + "../addons/ofxNetwork/", folderPath, xcodePath);
 		}
