@@ -79,7 +79,10 @@ function SetupCustom()
 
 	// create addons.make file		
 	IO.CreateDirectory(g_full_proj_path,0755);
-	IO.WriteFileContents(g_full_proj_path +_T("\\addons.make"), g_addons_string);
+	if(addon_count > 0) {
+		IO.WriteFileContents(g_full_proj_path +_T("\\addons.make"), g_addons_string);
+	}
+
 	local batch_string = g_of_project_dir + _T("\\..\\..\\scripts\\win_cb");
 	IO.WriteFileContents(g_full_proj_path +_T("\\mylaunch.bat"), _T("cd \"") + batch_string + _T("\\") + _T("\"") + _T("\n") + _T("createProjects.py ") + _T("\"")+batch_proj_path+_T("\"")  );
 	
