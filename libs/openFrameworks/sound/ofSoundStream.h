@@ -10,6 +10,9 @@
 #elif defined(TARGET_ANDROID)
 	#include "ofxAndroidSoundStream.h"
 	#define OF_SOUND_STREAM_TYPE ofxAndroidSoundStream
+#elif defined(TARGET_LINUX)
+	#include "ofPASoundStream.h"
+	#define OF_SOUND_STREAM_TYPE ofPASoundStream
 #else
 	#include "ofRtAudioSoundStream.h"
 	#define OF_SOUND_STREAM_TYPE ofRtAudioSoundStream
