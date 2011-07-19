@@ -8,6 +8,14 @@
 static bool bTexHackEnabled = true;
 
 //---------------------------------
+template <class T>
+int ofGetGlFormat(const T& pix) {
+	int glFormat, glType;
+	ofGetGlFormatAndType(ofGetGlInternalFormat(pix), glFormat, glType);
+	return glFormat;
+}
+
+//---------------------------------
 int ofGetGlInternalFormat(const ofPixels& pix) {
 	switch(pix.getNumChannels()) {
 		case 3: return GL_RGB;
@@ -446,17 +454,17 @@ void ofTexture::loadData(unsigned short * data, int w, int h, int glFormat){
 
 //----------------------------------------------------------
 void ofTexture::loadData(ofPixels & pix){
-	loadData(pix.getPixels(), pix.getWidth(), pix.getHeight(), ofGetGlInternalFormat(pix));
+	loadData(pix.getPixels(), pix.getWidth(), pix.getHeight(), ofGetGlFormat(pix));
 }
 
 //----------------------------------------------------------
 void ofTexture::loadData(ofShortPixels & pix){
-	loadData(pix.getPixels(), pix.getWidth(), pix.getHeight(), ofGetGlInternalFormat(pix));
+	loadData(pix.getPixels(), pix.getWidth(), pix.getHeight(), ofGetGlFormat(pix));
 }
 
 //----------------------------------------------------------
 void ofTexture::loadData(ofFloatPixels & pix){
-	loadData(pix.getPixels(), pix.getWidth(), pix.getHeight(), ofGetGlInternalFormat(pix));
+	loadData(pix.getPixels(), pix.getWidth(), pix.getHeight(), ofGetGlFormat(pix));
 }
 
 

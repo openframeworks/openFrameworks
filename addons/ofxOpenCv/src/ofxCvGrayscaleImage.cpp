@@ -202,11 +202,10 @@ void ofxCvGrayscaleImage::convertToRange(float min, float max ){
 
 //--------------------------------------------------------------------------------
 void ofxCvGrayscaleImage::threshold( int value, bool invert) {
-	//http://lush.sourceforge.net/lush-manual/01a8321b.html
-	if(invert) cvThreshold( cvImage, cvImageTemp, value, 255, CV_THRESH_BINARY_INV );
-	else cvThreshold( cvImage, cvImageTemp, value, 255, CV_THRESH_BINARY );
-	swapTemp();
-    flagImageChanged();
+	// threshold can be done faster in place
+	int type = invert ? CV_THRESH_BINARY_INV : CV_THRESH_BINARY;
+	cvThreshold(cvImage, cvImage, value, 255, type);
+	flagImageChanged();
 }
 
 //--------------------------------------------------------------------------------
