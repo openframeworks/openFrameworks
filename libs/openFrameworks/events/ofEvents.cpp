@@ -2,6 +2,7 @@
 #include "ofAppRunner.h"
 #include "ofBaseApp.h"
 #include "ofUtils.h"
+#include "ofGraphics.h"
 #include <set>
 
 // core events instance & arguments
@@ -78,6 +79,8 @@ void ofNotifySetup(){
 
 //------------------------------------------
 void ofNotifyUpdate(){
+	ofGetCurrentRenderer()->update();
+
 	ofBaseApp * ofAppPtr = ofGetAppPtr();
 	
 	if(ofAppPtr){

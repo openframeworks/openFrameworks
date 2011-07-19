@@ -117,20 +117,6 @@ function deleteProjectFiles {
     
     #codeblocks
     if [ "$platform" = "linux" ] || [ "$platform" = "linux64" ] || [ "$platform" = "win_cb" ]; then 
-        #delete codeblocks for other platforms and rename
-        cp ${current_example}_$platform.cbp $current_example.newcbp
-        cp ${current_example}_$platform.workspace $current_example.newworkspace
-        rm *.cbp *.workspace
-        mv $current_example.newcbp $current_example.cbp
-        mv $current_example.newworkspace $current_example.workspace
-        perl -pi -e s/${example_name}_${platform}/${example_name}/g $current_example.workspace
-
-        #delete other platform's project files
-        if [ "$platform" = "win_cb" ]; then
-            deleteMakefiles
-        fi
-        deleteXcode
-        deleteVS2008
         deleteVS2010
 	    deleteEclipse
         
@@ -139,9 +125,6 @@ function deleteProjectFiles {
     #osx
     if [ "$platform" = "osx" ]; then
         #delete other platform's project files
-        deleteCodeblocks
-        deleteMakefiles
-        deleteVS2008
         deleteVS2010
 	    deleteEclipse
     fi
@@ -156,10 +139,6 @@ function deleteProjectFiles {
         perl -pi -e s/${example_name}_${platform}/${example_name}/g $current_example.sln
 
         #delete other platform's project files
-	    deleteVS2008
-        deleteCodeblocks
-        deleteMakefiles
-        deleteXcode
 	    deleteEclipse
     fi
 
@@ -174,19 +153,12 @@ function deleteProjectFiles {
 
         #delete other platform's project files
 	    deleteVS2010
-        deleteCodeblocks
-        deleteMakefiles
-        deleteXcode
 	    deleteEclipse	
     fi
 
     #android
     if [ "$platform" = "android" ]; then
         #delete other platform's project files
-        deleteCodeblocks
-        deleteMakefiles
-        deleteXcode
-	    deleteVS2008
         deleteVS2010
     fi
 }
@@ -245,6 +217,18 @@ function createPackage {
 		rm -Rf examples
 		rm -Rf addonsExamples
 	fi 
+	
+	#create project files
+	cd $pkg_ofroot
+    if [ "$platform" = "win_cb" ]; then 
+        scripts/win_cb/createProjects.py        
+   	elif [ "$platform" = "linux" ] || [ "$platform" = "linux64" ]; then 
+        scripts/linux/createProjects.py -p${platform}
+	elif [ "$platform" = "osx" ]; then
+		cd $pkg_ofroot/apps/devApps/_DeployExamples/
+		xcodebuild -configuration Debug -target deployExamples -project deployExamples.xcodeproj
+		./bin/deployExamplesDebug.app/Contents/MacOS/deployExamplesDebug
+	fi
 
     #delete other platform libraries
     if [ "$pkg_platform" = "linux" ]; then
@@ -436,10 +420,10 @@ function createPackage {
     else
         mkdir of_preRelease_v${pkg_version}_${pkg_platform}_FAT
         mv openFrameworks/* of_preRelease_v${pkg_version}_${pkg_platform}_FAT
-        zip -r of_preRelease_v${pkg_version}_${pkg_platform}_FAT.zip of_preRelease_v${pkg_version}_${pkg_platform}_FAT
+        zip -r of_preRelease_v${pkg_version}_${pkg_platform}_FAT.zip of_preRelease_v${pkg_version}_${pkg_platform}_FAT > /dev/null
         mv of_preRelease_v${pkg_version}_${pkg_platform}_FAT of_preRelease_v${pkg_version}_${pkg_platform}        
         rm -Rf of_preRelease_v${pkg_version}_${pkg_platform}/addons of_preRelease_v${pkg_version}_${pkg_platform}/apps/addonsExamples
-        zip -r of_preRelease_v${pkg_version}_${pkg_platform}.zip of_preRelease_v${pkg_version}_${pkg_platform}
+        zip -r of_preRelease_v${pkg_version}_${pkg_platform}.zip of_preRelease_v${pkg_version}_${pkg_platform} > /dev/null
         rm -Rf of_preRelease_v${pkg_version}_${pkg_platform}
     fi
 }

@@ -88,7 +88,7 @@ void HandleFiles(WPARAM wParam)
     // the current file being queried.
     int count = DragQueryFile(hDrop, 0xFFFFFFFF, szName, MAX_PATH);
 
-
+	#ifdef _MSC_VER
     // Here we go through all the files that were drag and dropped then display them
     for(int i = 0; i < count; i++)
     {
@@ -110,6 +110,23 @@ void HandleFiles(WPARAM wParam)
         // Bring up a message box that displays the current file being processed
         //MessageBox(GetForegroundWindow(), szName, L"Current file received", MB_OK);
     }
+#else
+
+    HDROP hdrop = (HDROP)(wParam);
+	int index, length;
+	count = DragQueryFile(hdrop, 0xFFFFFFFF, NULL, 0);
+	for (index=0; index<count; ++index) {
+	  length = DragQueryFile(hdrop, index, NULL, 0);
+	  if (length > 0) {
+	    TCHAR* lpstr = new TCHAR[length+1];
+	    DragQueryFile(hdrop, index, lpstr, length+1);
+	    string temp = lpstr;
+	    info.files.push_back(temp);
+	    delete[] lpstr;
+	  }
+	}
+
+	#endif
 
     // Finally, we destroy the HDROP handle so the extra memory
     // allocated by the application is released.

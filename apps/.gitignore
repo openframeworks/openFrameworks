@@ -4,6 +4,8 @@
 !addonsExamples/**
 !iPhoneExamples
 !iPhoneExamples/**
+!iPhoneAddonsExamples
+!iPhoneAddonsExamples/**
 !androidExamples
 !androidExamples/**
 !androidExamples/*/**

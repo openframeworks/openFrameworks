@@ -37,18 +37,18 @@ ofBuffer::~ofBuffer(){
 //--------------------------------------------------
 bool ofBuffer::set(istream & stream){
 	clear();
-	if(stream.bad()) return false;
+	if( stream.bad() ) return false;
 
 	char aux_buffer[1024];
 	std::streamsize size = 0;
 	stream.read(aux_buffer, 1024);
 	std::streamsize n = stream.gcount();
-	while (n > 0){
+	while( n > 0 ){
 		// we resize to size+1 initialized to 0 to have a 0 at the end for strings
 		buffer.resize(size+n+1,0);
 		memcpy(&(buffer[0])+size,aux_buffer,n);
 		size += n;
-		if (stream){
+		if( stream ){
 			stream.read(aux_buffer, 1024);
 			n = stream.gcount();
 		}
@@ -59,7 +59,7 @@ bool ofBuffer::set(istream & stream){
 
 //--------------------------------------------------
 bool ofBuffer::writeTo(ostream & stream) const{
-	if(stream.bad()) return false;
+	if( stream.bad() ) return false;
 	stream.write(&(buffer[0]),buffer.size()-1);
 	return true;
 }
@@ -86,19 +86,19 @@ void ofBuffer::allocate(long _size){
 
 //--------------------------------------------------
 char * ofBuffer::getBinaryBuffer(){
-	if(buffer.empty()) return NULL;
+	if( buffer.empty() ) return NULL;
 	return &buffer[0];
 }
 
 //--------------------------------------------------
 const char * ofBuffer::getBinaryBuffer() const{
-	if(buffer.empty()) return "";
+	if( buffer.empty() ) return "";
 	return &buffer[0];
 }
 
 //--------------------------------------------------
 string ofBuffer::getText() const{
-	if(buffer.empty()) return "";
+	if( buffer.empty() ) return "";
 	return &buffer[0];
 }
 
@@ -108,30 +108,45 @@ ofBuffer::operator string() const{
 
 //--------------------------------------------------
 long ofBuffer::size() const{
-	if(buffer.empty()) return 0;
+	if( buffer.empty() ) return 0;
 	//we always add a 0 at the end to avoid problems with strings
 	return buffer.size()-1;
 }
 
 //--------------------------------------------------
 string ofBuffer::getNextLine(){
-	if( buffer.empty() || int(buffer.size()-1)==nextLinePos) return "";
+	if( buffer.empty() || (int)(buffer.size()-1) == nextLinePos ) return "";
 	long currentLinePos = nextLinePos;
-	while(nextLinePos<(int)buffer.size()-1 && buffer[nextLinePos]!='\n') nextLinePos++;
+    bool lineEndWasCR = false;
+	while( nextLinePos < (int)buffer.size()-1 && buffer[nextLinePos] != '\n' ) {
+        if( buffer[nextLinePos] != '\r' ) {
+            nextLinePos++;
+        } else {
+            lineEndWasCR = true;
+            break;
+        }
+    }
 	string line(getBinaryBuffer() + currentLinePos,nextLinePos-currentLinePos);
-	if(nextLinePos<(int)buffer.size()-1) nextLinePos++;
+	if( nextLinePos < (int)(buffer.size()-1) ) nextLinePos++;
+    // if lineEndWasCR check for CRLF
+    if( lineEndWasCR && nextLinePos < (int)(buffer.size()-1) && buffer[nextLinePos] == '\n' ) nextLinePos++;
 	return line;
 }
 
 //--------------------------------------------------
 string ofBuffer::getFirstLine(){
-	nextLinePos = 0;
+    resetLineReader();
 	return getNextLine();
 }
 
 //--------------------------------------------------
 bool ofBuffer::isLastLine(){
-	return int(buffer.size()-1)==nextLinePos;
+	return (int)(buffer.size()-1)==nextLinePos;
+}
+
+//--------------------------------------------------
+void ofBuffer::resetLineReader() {
+	nextLinePos = 0;
 }
 
 //--------------------------------------------------
@@ -210,9 +225,9 @@ ofFile & ofFile::operator= (const ofFile & mom){
 
 //-------------------------------------------------------------------------------------------------------------
 void ofFile::copyFrom(const ofFile & mom){
-	if(&mom!=this){
+	if( &mom != this ){
 		Mode new_mode = mom.mode;
-		if(new_mode!= Reference && new_mode!= ReadOnly){
+		if( new_mode != Reference && new_mode!= ReadOnly ){
 			new_mode = ReadOnly;
 			ofLog(OF_LOG_WARNING,"ofFile: trying to copy a write file, opening copy as read only");
 		}
@@ -229,7 +244,7 @@ bool ofFile::openStream(Mode _mode, bool binary){
 		return true;
 		break;
 	case ReadOnly:
-		if(exists()) fstream::open(path().c_str(),ios::in | binary_mode);
+		if( exists() ) fstream::open(path().c_str(),ios::in | binary_mode);
 		break;
 	case WriteOnly:
 		fstream::open(path().c_str(),ios::out | binary_mode);
@@ -253,7 +268,7 @@ bool ofFile::open(string _path, Mode _mode, bool binary){
 
 //-------------------------------------------------------------------------------------------------------------
 bool ofFile::changeMode(Mode _mode, bool binary){
-	if(_mode != mode){
+	if( _mode != mode ){
 		string _path = path();
 		close();
 		myFile = File(_path);
@@ -304,7 +319,7 @@ bool ofFile::writeFromBuffer(ofBuffer & buffer){
 	if( myFile.path() == "" ){
 		return false;
 	} 
-	if(!isWriteMode()){
+	if( !isWriteMode() ){
 		ofLog(OF_LOG_ERROR,"ofFile: trying to a file opened as read only");
 	}
 	*this << buffer;
@@ -320,7 +335,7 @@ filebuf * ofFile::getFileBuffer() const{
 //-- poco wrappers
 //------------------------------------------------------------------------------------------------------------
 bool ofFile::exists() const{
-	if(path().empty()) return false;
+	if( path().empty() ) return false;
 	try{
 		return myFile.exists();
 	}catch(...){
@@ -415,7 +430,7 @@ void ofFile::setExecutable(bool flag = true){
 
 //------------------------------------------------------------------------------------------------------------
 bool ofFile::copyTo(string path, bool bRelativeToData, bool overwrite){
-	if(  path.empty() || !myFile.exists() ){
+	if( path.empty() || !myFile.exists() ){
 		ofLog(OF_LOG_ERROR,"ofFile::copyTo: trying to copy a non existing file");
 		return false;
 	}
@@ -444,7 +459,7 @@ bool ofFile::copyTo(string path, bool bRelativeToData, bool overwrite){
 
 //------------------------------------------------------------------------------------------------------------
 bool ofFile::moveTo(string path, bool bRelativeToData, bool overwrite){
-	if(  path.empty() || !myFile.exists() ){
+	if( path.empty() || !myFile.exists() ){
 		return false;
 	}
 	
@@ -472,7 +487,7 @@ bool ofFile::moveTo(string path, bool bRelativeToData, bool overwrite){
 
 //------------------------------------------------------------------------------------------------------------
 bool ofFile::renameTo(string path, bool bRelativeToData, bool overwrite){
-	if(  path.empty() || !myFile.exists() ){
+	if( path.empty() || !myFile.exists() ){
 		return false;
 	}
 	
@@ -690,7 +705,7 @@ bool ofDirectory::create(bool recursive){
 	
 	if( myDir.path() != "" ){
 		try{
-			if(recursive) myDir.createDirectories();
+			if( recursive ) myDir.createDirectories();
 			else myDir.createDirectory();
 		}catch (Poco::Exception & except){
 			ofLog(OF_LOG_ERROR, "ofDirectory::create - unable to create directory");
@@ -843,7 +858,7 @@ bool ofDirectory::remove(bool recursive){
 
 //------------------------------------------------------------------------------------------------------------
 void ofDirectory::allowExt(string extension){
-	if(extension == "*") {
+	if( extension == "*" ) {
 		ofLog(OF_LOG_WARNING, "ofDirectoryLister::allowExt() the extension * is deprecated");
 	}
 	extensions.push_back(toLower(extension));
@@ -858,7 +873,7 @@ int ofDirectory::listDir(string directory){
 //------------------------------------------------------------------------------------------------------------
 int ofDirectory::listDir(){
 	Path base(path());
-	if(!path().empty() && myDir.exists()) {
+	if( !path().empty() && myDir.exists() ) {
 		// File::list(vector<File>) is broken on windows as of march 23, 2011...
 		// so we need to use File::list(vector<string>) and build a vector<File>
 		// in the future the following can be replaced width: cur.list(files);
@@ -870,11 +885,11 @@ int ofDirectory::listDir(){
 			files.push_back(ofFile(curPath.toString(),ofFile::Reference));
 		}
 
-		if(!showHidden) {
+		if( !showHidden ) {
 			ofRemove(files, hiddenFile);
 		}
 
-		if(!extensions.empty() && !ofContains(extensions, (string) "*")) {
+		if( !extensions.empty() && !ofContains(extensions, (string) "*") ) {
 			ExtensionComparator extensionFilter;
 			extensionFilter.extensions = &extensions;
 			ofRemove(files, extensionFilter);
@@ -969,7 +984,7 @@ bool ofDirectory::createDirectory(string dirPath, bool bRelativeToData, bool rec
 	File file(dirPath);
 	bool success = false;
 	try{
-		if(!recursive){
+		if( !recursive ){
 			success = file.createDirectory();
 		}else{
 			file.createDirectories();
@@ -980,7 +995,7 @@ bool ofDirectory::createDirectory(string dirPath, bool bRelativeToData, bool rec
 		return false;
 	}
 
-	if(!success){
+	if( !success ){
 		ofLog(OF_LOG_WARNING, "createDirectory - directory already exists");
 		success = true;
 	}
@@ -997,7 +1012,7 @@ bool ofDirectory::doesDirectoryExist(string dirPath, bool bRelativeToData){
 
 //------------------------------------------------------------------------------------------------------------
 bool ofDirectory::isDirectoryEmpty(string dirPath, bool bRelativeToData){
-	if( bRelativeToData )dirPath = ofToDataPath(dirPath);
+	if( bRelativeToData ) dirPath = ofToDataPath(dirPath);
 	File file(dirPath);
 	if( !dirPath.empty() && file.exists() && file.isDirectory() ){
 		vector <string> contents;
@@ -1053,8 +1068,8 @@ bool ofDirectory::operator>=(const ofDirectory & dir){
 
 //------------------------------------------------------------------------------------------------------------
 string ofFilePath::addLeadingSlash(string path){
-	if(path.length() > 0){
-		if( path[0] != '/'){
+	if( path.length() > 0 ){
+		if( path[0] != '/' ){
 			path = "/"+path;
 		}
 	}
@@ -1063,7 +1078,7 @@ string ofFilePath::addLeadingSlash(string path){
 
 //------------------------------------------------------------------------------------------------------------
 string ofFilePath::addTrailingSlash(string path){
-	if(path.length() > 0){
+	if( path.length() > 0 ){
 		if( path[path.length()-1] != '/'){
 			path += "/";
 		}
@@ -1077,7 +1092,7 @@ string ofFilePath::getFileExt(string filename){
 	std::string::size_type idx;
 	idx = filename.rfind('.');
 
-	if(idx != std::string::npos){
+	if( idx != std::string::npos ){
 		return filename.substr(idx+1);
 	}
 	else{
@@ -1090,7 +1105,7 @@ string ofFilePath::removeExt(string filename){
 	std::string::size_type idx;
 	idx = filename.rfind('.');
 
-	if(idx != std::string::npos){
+	if( idx != std::string::npos ){
 		return filename.substr(0, idx);
 	}
 	else{

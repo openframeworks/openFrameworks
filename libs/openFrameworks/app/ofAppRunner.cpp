@@ -93,6 +93,7 @@ void ofSetupOpenGL(ofPtr<ofAppBaseWindow> windowPtr, int w, int h, int screenMod
 	window->setupOpenGL(w, h, screenMode);
 	
 #ifndef TARGET_OPENGLES
+	glewExperimental = GL_TRUE;
 	GLenum err = glewInit();
 	if (GLEW_OK != err)
 	{

@@ -23,11 +23,12 @@ class ofTextureData {
 public:
 	ofTextureData() {
 		textureID = 0;
-		textureTarget	= GL_TEXTURE_2D;
 #ifndef TARGET_OPENGLES
 		glTypeInternal = GL_RGB8;
+		textureTarget = GL_TEXTURE_RECTANGLE_ARB;
 #else
 		glTypeInternal = GL_RGB;
+		textureTarget = GL_TEXTURE_2D;
 #endif
 		glType = GL_RGB;
 		pixelType = GL_UNSIGNED_BYTE;
@@ -76,13 +77,14 @@ class ofTexture : public ofBaseDraws {
 
 	// -----------------------------------------------------------------------
 
+	virtual void allocate(const ofTextureData & textureData);
 	virtual void allocate(int w, int h, int glInternalFormat); //uses the currently set OF texture type - default ARB texture
 	virtual void allocate(int w, int h, int glInternalFormat, bool bUseARBExtention); //lets you overide the default OF texture type
 	void clear();
 
-	void loadData(float* data, int w, int h, int glInternalFormat);
-	void loadData(unsigned char* data, int w, int h, int glInternalFormat);
-	void loadData(unsigned short* data, int w, int h, int glInternalFormat);
+	void loadData(float* data, int w, int h, int glFormat);
+	void loadData(unsigned char* data, int w, int h, int glFormat);
+	void loadData(unsigned short* data, int w, int h, int glFormat);
 	void loadData(ofPixels & pix);		
 	void loadData(ofShortPixels & pix);
 	void loadData(ofFloatPixels & pix);
@@ -136,7 +138,7 @@ class ofTexture : public ofBaseDraws {
 	float getWidth();
 
 protected:
-	void loadData(void * data, int w, int h, int glInternalFormat);
+	void loadData(void * data, int w, int h, int glFormat);
 
 	ofPoint anchor;
 	bool bAnchorIsPct;

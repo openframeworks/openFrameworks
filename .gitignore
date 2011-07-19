@@ -21,6 +21,17 @@ apps/addonsExamples/*/*.xcodeproj
 apps/addonsExamples/*/Project.xcconfig
 apps/addonsExamples/*/openFrameworks-Info.plist
 
+apps/iphoneAddonsExamples/*/*.xcodeproj
+apps/iphoneAddonsExamples/*/Project.xcconfig
+apps/iPhoneAddonsExamples/*/ofxiphone-Info.plist
+apps/iPhoneAddonsExamples/*/iPhone_Prefix.pch
+
+apps/iphoneExamples/*/*.xcodeproj
+apps/iphoneExamples/*/Project.xcconfig
+apps/iPhoneExamples/*/ofxiphone-Info.plist
+apps/iPhoneExamples/*/iPhone_Prefix.pch
+
+
 #codeblocks files
 apps/*/*/*.layout
 apps/*/*/*.depend
@@ -56,9 +67,9 @@ libs/openFrameworks/Debug Mac OS X
 libs/openFrameworks/Release Mac OS X
 apps/*/*/Debug Mac OS X
 apps/*/*/Release Mac OS X
-.DS_Store
 xcuserdata
 project.xcworkspace
+.DS_Store
 
 #Linux
 addons/Debug Linux

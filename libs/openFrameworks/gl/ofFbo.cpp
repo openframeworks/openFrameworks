@@ -190,8 +190,10 @@ fbo(0),
 fboTextures(0),
 depthBuffer(0),
 stencilBuffer(0),
-savedFramebuffer(0)
+savedFramebuffer(0),
+defaultTextureIndex(0)
 {
+
 }
 
 ofFbo::ofFbo(const ofFbo & mom){
@@ -316,8 +318,14 @@ static GLboolean CheckExtension( const char *extName ){
 }
 
 
-void ofFbo::checkGLSupport() {
+bool ofFbo::checkGLSupport() {
 #ifndef TARGET_OPENGLES
+	if(CheckExtension("GL_EXT_framebuffer_object")){
+		ofLog(OF_LOG_VERBOSE,"FBO supported");
+	}else{
+		ofLog(OF_LOG_ERROR, "FBO not supported by this graphics card");
+		return false;
+	}
 	glGetIntegerv(GL_MAX_COLOR_ATTACHMENTS, &_maxColorAttachments);
 	glGetIntegerv(GL_MAX_DRAW_BUFFERS, &_maxDrawBuffers);
 	glGetIntegerv(GL_MAX_SAMPLES, &_maxSamples);
@@ -328,15 +336,18 @@ void ofFbo::checkGLSupport() {
 		  "maxSamples: " + ofToString(_maxSamples)
 		  );
 #else
+
 	if(CheckExtension("GL_OES_framebuffer_object")){
 		ofLog(OF_LOG_VERBOSE,"FBO supported");
 	}else{
-		ofLog(OF_LOG_ERROR, "FBO not supported");
+		ofLog(OF_LOG_ERROR, "FBO not supported by this graphics card");
+		return false;
 	}
-
 	string extensions = (char*)glGetString(GL_EXTENSIONS);
 	ofLog(OF_LOG_VERBOSE,extensions);
 #endif
+
+	return true;
 }
 
 
@@ -354,7 +365,7 @@ void ofFbo::allocate(int width, int height, int internalformat, int numSamples) 
 
 
 void ofFbo::allocate(Settings _settings) {
-	checkGLSupport();
+	if(!checkGLSupport()) return;
 
 	destroy();
 
@@ -421,6 +432,8 @@ void ofFbo::allocate(Settings _settings) {
 	unbind();
 }
 
+/*  removed by now, was crashing on draw
+ *
 void ofFbo::allocateForShadow( int width, int height )
 {
 //#ifndef TARGET_OPENGLES
@@ -461,7 +474,7 @@ void ofFbo::allocateForShadow( int width, int height )
 		printf("Can't use FBOs !\n");
 	
 	glBindFramebuffer( GL_FRAMEBUFFER, old );
-}
+}*/
 
 GLuint ofFbo::createAndAttachRenderbuffer(GLenum internalFormat, GLenum attachmentPoint) {
 	GLuint buffer;
@@ -546,15 +559,40 @@ int ofFbo::getNumTextures() {
 	return textures.size();
 }
 
-ofTexture& ofFbo::getTexture(int attachmentPoint) {
+void ofFbo::setDefaultTextureIndex(int defaultTexture)
+{
+	defaultTextureIndex = defaultTexture;
+}
+	
+int ofFbo::getDefaultTextureIndex()
+{
+	return defaultTextureIndex;
+}
+
+ofTexture& ofFbo::getTextureReference() {
+	return getTextureReference(defaultTextureIndex);
+}
+
+ofTexture& ofFbo::getTextureReference(int attachmentPoint) {
 	updateTexture(attachmentPoint);
 	return textures[attachmentPoint];
+}
+void ofFbo::setAnchorPercent(float xPct, float yPct){
+	getTextureReference().setAnchorPercent(xPct, yPct);
+}
+
+void ofFbo::setAnchorPoint(float x, float y){
+	getTextureReference().setAnchorPoint(x, y);
+}
+
+void ofFbo::resetAnchor(){
+	getTextureReference().resetAnchor();
 }
 
 
 void ofFbo::readToPixels(ofPixels & pixels, int attachmentPoint){
 #ifndef TARGET_OPENGLES
-	getTexture(attachmentPoint).readToPixels(pixels);
+	getTextureReference(attachmentPoint).readToPixels(pixels);
 #else
 	bind();
 	int format,type;
@@ -566,7 +604,7 @@ void ofFbo::readToPixels(ofPixels & pixels, int attachmentPoint){
 
 void ofFbo::readToPixels(ofShortPixels & pixels, int attachmentPoint){
 #ifndef TARGET_OPENGLES
-	getTexture(attachmentPoint).readToPixels(pixels);
+	getTextureReference(attachmentPoint).readToPixels(pixels);
 #else
 	bind();
 	int format,type;
@@ -578,7 +616,7 @@ void ofFbo::readToPixels(ofShortPixels & pixels, int attachmentPoint){
 
 void ofFbo::readToPixels(ofFloatPixels & pixels, int attachmentPoint){
 #ifndef TARGET_OPENGLES
-	getTexture(attachmentPoint).readToPixels(pixels);
+	getTextureReference(attachmentPoint).readToPixels(pixels);
 #else
 	bind();
 	int format,type;
@@ -630,7 +668,7 @@ void ofFbo::draw(float x, float y) {
 
 
 void ofFbo::draw(float x, float y, float width, float height) {
-	getTexture(0).draw(x, y, width, height);
+	getTextureReference().draw(x, y, width, height);
 }
 
 
@@ -638,12 +676,12 @@ GLuint ofFbo::getFbo() {
 	return fbo;
 }
 
-int ofFbo::getWidth() {
+float ofFbo::getWidth() {
 	return settings.width;
 }
 
 
-int ofFbo::getHeight() {
+float ofFbo::getHeight() {
 	return settings.height;
 }
 
