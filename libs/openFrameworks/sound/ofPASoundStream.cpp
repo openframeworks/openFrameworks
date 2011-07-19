@@ -82,7 +82,7 @@ bool ofPASoundStream::setup(int outChannels, int inChannels, int _sampleRate, in
 							  &paAudioCallback,
 							  this );
 #ifdef TARGET_LINUX
-	PaAlsa_EnableRealtimeScheduling(&audio,1);
+	//PaAlsa_EnableRealtimeScheduling(&audio,1);
 #endif
 
 	if( err != paNoError ){
