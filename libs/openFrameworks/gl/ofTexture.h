@@ -11,13 +11,6 @@ int ofGetGlInternalFormat(const ofFloatPixels& pix);
 void ofGetGlFormatAndType(int glInternalFormat, int& glFormat, int& glType);
 ofImageType ofGetImageTypeFromGLType(int glType);
 
-template <class T>
-int ofGetGlFormat(const T& pix) {
-	int glFormat, glType;
-	ofGetGlFormatAndType(ofGetGlInternalFormat(pix), glFormat, glType);
-	return glFormat;
-}
-
 //Sosolimited: texture compression
 enum ofTexCompression
 {
