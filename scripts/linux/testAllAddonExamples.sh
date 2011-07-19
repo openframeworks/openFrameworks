@@ -24,7 +24,9 @@ if [ $ret -ne 0 ]; then
 fi
 cd bin
 ./$example
-cd ../../
+cd ..
+make clean
+cd ../
 echo "-----------------------------------------------------------------"
 echo ""
 done
