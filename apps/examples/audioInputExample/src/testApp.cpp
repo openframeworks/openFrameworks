@@ -148,8 +148,8 @@ void testApp::audioIn(float * input, int bufferSize, int nChannels){
 
 	//lets go through each sample and calculate the root mean square which is a rough way to calculate volume	
 	for (int i = 0; i < bufferSize; i++){
-		left[i]		= input[i*2];
-		right[i]	= input[i*2+1];
+		left[i]		= input[i*2]*0.5;
+		right[i]	= input[i*2+1]*0.5;
 
 		curVol += left[i] * left[i];
 		curVol += right[i] * right[i];
