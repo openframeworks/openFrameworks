@@ -250,6 +250,7 @@ endif
 
 ifeq ($(MAKECMDGOALS),clean)
 	TARGET = bin/$(APPNAME)_debug bin/$(APPNAME)
+	TARGET_NAME = Release
 endif
 
 
@@ -275,8 +276,6 @@ Debug: $(TARGET) after
 
 all:
 	$(MAKE) Release
-
-
 
 DebugAndroid: $(TARGET)
 
@@ -353,16 +352,21 @@ $(TARGET): $(OBJS) $(ADDONS_OBJS) $(USER_OBJS) $(TARGET_LIBS) $(LIB_STATIC)
 -include $(DEPFILES)
 
 .PHONY: clean cleanDebug cleanRelease CleanAndroid
+clean:
+	rm -rf $(OBJ_OUTPUT)
+	rm -f $(TARGET)
+	rm -r bin/libs
+	
 $(CLEANTARGET):
-	rm -Rf -v $(OBJ_OUTPUT)
-	rm -f -v $(TARGET)
-	rm -Rf -v bin/libs
+	rm -rf $(OBJ_OUTPUT)
+	rm -f $(TARGET)
+	rm -rf bin/libs
 
 CleanAndroid:
 	rm -Rf obj
-	rm -f -v libs/armeabi-v7a/libOFAndroidApp.so
-	rm -f -v libs/armeabi/libOFAndroidApp.so
-	rm -f -v obj/$(APPNAME)
+	rm -f libs/armeabi-v7a/libOFAndroidApp.so
+	rm -f libs/armeabi/libOFAndroidApp.so
+	rm -f obj/$(APPNAME)
 
 
 afterDebugAndroid:$(TARGET)
