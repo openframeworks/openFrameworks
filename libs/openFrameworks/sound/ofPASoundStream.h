@@ -47,7 +47,7 @@ class ofPASoundStream : public ofBaseSoundStream{
 		        const PaStreamCallbackTimeInfo* streamTime,
 		        PaStreamCallbackFlags status,
 		        void *data);
-
+		static bool initialized;
 };
 
 

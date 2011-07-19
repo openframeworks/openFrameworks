@@ -10,15 +10,28 @@
 	#include "pa_linux_alsa.h"
 #endif
 
+bool ofPASoundStream::initialized=false;
+
 ofPASoundStream::ofPASoundStream(){
 	deviceID		= -1;
 	soundOutputPtr	= NULL;
 	soundInputPtr	= NULL;
 	tickCount= 0;
+
+	if(!initialized){
+		PaError err;
+		err = Pa_Initialize();
+		if( err != paNoError ){
+			ofLog(OF_LOG_ERROR,"PortAudio error: %s\n",Pa_GetErrorText( err ));
+		}else{
+			initialized = true;
+		}
+	}
 }
 
 ofPASoundStream::~ofPASoundStream(){
-	close();
+	stop();
+	//close();
 }
 
 void ofPASoundStream::setInput(ofBaseSoundInput * soundInput){
@@ -38,10 +51,6 @@ bool ofPASoundStream::setup(int outChannels, int inChannels, int _sampleRate, in
 
 
 	PaError err;
-	err = Pa_Initialize();
-	if( err != paNoError )
-		ofLog(OF_LOG_ERROR,"PortAudio error: %s\n",Pa_GetErrorText( err ));
-
 
 	PaStreamParameters inputParameters;
 	if(deviceID>=0){
@@ -67,8 +76,8 @@ bool ofPASoundStream::setup(int outChannels, int inChannels, int _sampleRate, in
 	err = Pa_OpenStream( &audio,
 							  inChannels==0?NULL:&inputParameters,
 							  outChannels==0?NULL:&outputParameters,
-									  sampleRate,
-									  bufferSize,
+							  sampleRate,
+							  bufferSize,
 							  paNoFlag,
 							  &paAudioCallback,
 							  this );
@@ -80,7 +89,7 @@ bool ofPASoundStream::setup(int outChannels, int inChannels, int _sampleRate, in
 		ofLog(OF_LOG_ERROR,"PortAudio error: %s\n",Pa_GetErrorText( err ));
 		return false;
 	}
-//	err = Pa_OpenDefaultStream( &stream,
+//	err = Pa_OpenDefaultStream( &audio,
 //									nInputChannels,          /* no input channels */
 //									nOutputChannels,          /* stereo output */
 //									paFloat32,  /* 64 bit floating point output */
@@ -92,8 +101,8 @@ bool ofPASoundStream::setup(int outChannels, int inChannels, int _sampleRate, in
 //													   paFramesPerBufferUnspecified, which
 //													   tells PortAudio to pick the best,
 //													   possibly changing, buffer size.*/
-//									&receiveAudioBufferAndCallSimpleApp, /* this is your callback function */
-//									NULL ); /*This is a pointer that will be passed to
+//									&paAudioCallback, /* this is your callback function */
+//									this ); /*This is a pointer that will be passed to
 //													   your callback*/
 
 	err = Pa_StartStream( audio );
@@ -149,7 +158,7 @@ int ofPASoundStream::paAudioCallback(const void *inputBuffer,
 	if (instance->nOutputChannels > 0) {
 		memset( fPtrOut, 0, sizeof(float)*bufferSize*instance->nOutputChannels );
 		if(instance->soundOutputPtr){
-			instance->soundOutputPtr->audioRequested( fPtrOut, bufferSize, instance->nOutputChannels );
+			instance->soundOutputPtr->audioOut( fPtrOut, bufferSize, instance->nOutputChannels );
 		}
 	}
 
@@ -175,9 +184,11 @@ void ofPASoundStream::start(){
 
 //---------------------------------------------------------
 void ofPASoundStream::close(){
-	int err = Pa_Terminate();
+	/*int err = Pa_Terminate();
 	if( err != paNoError )
-    	ofLog(OF_LOG_ERROR,"PortAudio error: %s\n",Pa_GetErrorText( err ));
+    	ofLog(OF_LOG_ERROR,"PortAudio error: %s\n",Pa_GetErrorText( err ));*/
+
+	stop();
 }
 
 
