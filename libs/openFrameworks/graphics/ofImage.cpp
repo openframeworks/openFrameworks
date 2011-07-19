@@ -601,7 +601,7 @@ template<typename PixelType>
 void ofImage_<PixelType>::reloadTexture(){
 	if (pixels.isAllocated() && bUseTexture){
 		tex.allocate(pixels.getWidth(), pixels.getHeight(), ofGetGlInternalFormat(pixels));
-		tex.loadData(pixels.getPixels(), pixels.getWidth(), pixels.getHeight(), ofGetGlFormat(pixels));
+		tex.loadData(pixels);
 	}
 }
 
@@ -840,7 +840,7 @@ template<typename PixelType>
 void ofImage_<PixelType>::update(){
 
 	if (pixels.isAllocated() && bUseTexture){
-		tex.loadData(pixels.getPixels(), pixels.getWidth(), pixels.getHeight(), ofGetGlFormat(pixels));
+		tex.loadData(pixels);
 	}
 
 	width	= pixels.getWidth();

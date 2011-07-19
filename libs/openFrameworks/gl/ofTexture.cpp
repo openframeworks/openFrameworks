@@ -446,17 +446,17 @@ void ofTexture::loadData(unsigned short * data, int w, int h, int glFormat){
 
 //----------------------------------------------------------
 void ofTexture::loadData(ofPixels & pix){
-	loadData(pix.getPixels(), pix.getWidth(), pix.getHeight(), ofGetGlInternalFormat(pix));
+	loadData(pix.getPixels(), pix.getWidth(), pix.getHeight(), ofGetGlFormat(pix));
 }
 
 //----------------------------------------------------------
 void ofTexture::loadData(ofShortPixels & pix){
-	loadData(pix.getPixels(), pix.getWidth(), pix.getHeight(), ofGetGlInternalFormat(pix));
+	loadData(pix.getPixels(), pix.getWidth(), pix.getHeight(), ofGetGlFormat(pix));
 }
 
 //----------------------------------------------------------
 void ofTexture::loadData(ofFloatPixels & pix){
-	loadData(pix.getPixels(), pix.getWidth(), pix.getHeight(), ofGetGlInternalFormat(pix));
+	loadData(pix.getPixels(), pix.getWidth(), pix.getHeight(), ofGetGlFormat(pix));
 }
 
 
