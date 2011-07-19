@@ -127,9 +127,9 @@ string ofBuffer::getNextLine(){
         }
     }
 	string line(getBinaryBuffer() + currentLinePos,nextLinePos-currentLinePos);
-	if( nextLinePos < (int)buffer.size()-1 ) nextLinePos++;
+	if( nextLinePos < (int)(buffer.size()-1) ) nextLinePos++;
     // if lineEndWasCR check for CRLF
-    if( lineEndWasCR && nextLinePos < (int)buffer.size()-1 && buffer[nextLinePos] == '\n' ) nextLinePos++;
+    if( lineEndWasCR && nextLinePos < (int)(buffer.size()-1) && buffer[nextLinePos] == '\n' ) nextLinePos++;
 	return line;
 }
 
