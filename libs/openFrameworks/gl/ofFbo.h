@@ -51,7 +51,7 @@ public:
 	GLuint getFbo();	// returns GLuint of Fbo for advanced actions
 	
 	
-	static void	checkGLSupport();
+	static bool	checkGLSupport();
 	static int maxColorAttachments();	// return max color attachments
 	static int maxDrawBuffers();		// return max simultaneous draw buffers
 	static int maxSamples();			// return max MSAA samples
@@ -97,7 +97,7 @@ private:
 	bool				dirty;
 	
 	int defaultTextureIndex; //used for getTextureReference
-	
+
 	void destroy();
 	
 	bool checkStatus();

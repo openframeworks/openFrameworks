@@ -318,8 +318,14 @@ static GLboolean CheckExtension( const char *extName ){
 }
 
 
-void ofFbo::checkGLSupport() {
+bool ofFbo::checkGLSupport() {
 #ifndef TARGET_OPENGLES
+	if(CheckExtension("GL_EXT_framebuffer_object")){
+		ofLog(OF_LOG_VERBOSE,"FBO supported");
+	}else{
+		ofLog(OF_LOG_ERROR, "FBO not supported by this graphics card");
+		return false;
+	}
 	glGetIntegerv(GL_MAX_COLOR_ATTACHMENTS, &_maxColorAttachments);
 	glGetIntegerv(GL_MAX_DRAW_BUFFERS, &_maxDrawBuffers);
 	glGetIntegerv(GL_MAX_SAMPLES, &_maxSamples);
@@ -330,15 +336,18 @@ void ofFbo::checkGLSupport() {
 		  "maxSamples: " + ofToString(_maxSamples)
 		  );
 #else
+
 	if(CheckExtension("GL_OES_framebuffer_object")){
 		ofLog(OF_LOG_VERBOSE,"FBO supported");
 	}else{
-		ofLog(OF_LOG_ERROR, "FBO not supported");
+		ofLog(OF_LOG_ERROR, "FBO not supported by this graphics card");
+		return false;
 	}
-
 	string extensions = (char*)glGetString(GL_EXTENSIONS);
 	ofLog(OF_LOG_VERBOSE,extensions);
 #endif
+
+	return true;
 }
 
 
@@ -356,7 +365,7 @@ void ofFbo::allocate(int width, int height, int internalformat, int numSamples) 
 
 
 void ofFbo::allocate(Settings _settings) {
-	checkGLSupport();
+	if(!checkGLSupport()) return;
 
 	destroy();
 
