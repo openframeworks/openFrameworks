@@ -31,4 +31,5 @@ Windows Codeblocks:
 		;c:\Python27;c:\Python27\Scripts
 	open a console: start > Run... > cmd   and execute
 		easy_install lxml
+	(if easy_install fails, you can download lxml directly from http://pypi.python.org/pypi/lxml/)
 	execute scripts/win_cb/createProjects.py

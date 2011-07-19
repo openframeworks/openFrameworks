@@ -12,7 +12,7 @@ void ofQuaternion::get(ofMatrix4x4& matrix) const {
 
 
 /// Set the elements of the Quat to represent a rotation of angle
-/// (radians) around the axis (x,y,z)
+/// (degrees) around the axis (x,y,z)
 void ofQuaternion::makeRotate( float angle, float x, float y, float z ) {
 	angle = ofDegToRad(angle);
 	
