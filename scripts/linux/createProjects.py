@@ -16,9 +16,6 @@ uname = os.uname()
 for uname_str in uname:
     if uname_str=='x86_64':
         arch = 'linux64'
-        
-templates_path = os.path.join(of_root,'apps','devApps',platform)
-template = {'cbp': os.path.join(templates_path , 'emptyExample_' + arch + '.cbp'), 'full_cbp': os.path.join(templates_path , 'emptyExample_' + arch + '_fullCBP.cbp'), 'workspace': os.path.join(templates_path , 'emptyExample_' + arch + '.workspace'),'makefile': os.path.join(templates_path , 'Makefile'), 'config.make': os.path.join(templates_path , 'config.make')}
 
 fullCBP = True
 
@@ -160,7 +157,10 @@ def createWorkspace(project_path):
     ws = objectify.parse(os.path.join(project_path,project_name+'.workspace'))
     root = ws.getroot()
     workspace = root.Workspace
-    
+
+    if workspace.get("title")=="emptyExample":
+         workspace.set("title",project_name)
+         
     for project in workspace.Project:
         if project.get("filename")=="emptyExample.cbp":
             project.set("filename",project_name+".cbp")
@@ -212,9 +212,14 @@ parser = argparse.ArgumentParser(description='OF linux project generator')
 parser.add_argument('project_path', metavar='project_path', nargs='?')
 parser.add_argument('-n', '--not_mk', dest='not_mk', action='store_const',
         default=False, const=True, help='create cbp not dependent on Makefile')
+parser.add_argument('-p', '--platform', dest='platform', action='store', default=arch, choices=['linux','linux64'], help='choose platform: linux/linux64 if it\'s not specified it\'ll be detected')
 
+arch = parser.parse_args().platform
 project_path = parser.parse_args().project_path
 fullCBP = parser.parse_args().not_mk
+        
+templates_path = os.path.join(of_root,'apps','devApps',platform)
+template = {'cbp': os.path.join(templates_path , 'emptyExample_' + arch + '.cbp'), 'full_cbp': os.path.join(templates_path , 'emptyExample_' + arch + '_fullCBP.cbp'), 'workspace': os.path.join(templates_path , 'emptyExample_' + arch + '.workspace'),'makefile': os.path.join(templates_path , 'Makefile'), 'config.make': os.path.join(templates_path , 'config.make')}
 
 if project_path==None: #parse all examples
     for example in os.listdir(os.path.join(of_root,'apps','examples')):

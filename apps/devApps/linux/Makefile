@@ -131,7 +131,7 @@ ifeq ($(ARCH),android)
 	SYSTEMLIBS += -lstdc++ -lsupc++ -lgcc -lz -lGLESv1_CM -llog -ldl -lm -lc
 else
 	LDFLAGS = -Wl,-rpath=./libs
-	SYSTEMLIBS += $(shell pkg-config  glew gstreamer-0.10 gstreamer-video-0.10 gstreamer-base-0.10 gstreamer-app-0.10 libudev --libs)
+	SYSTEMLIBS += $(shell pkg-config  jack glew gstreamer-0.10 gstreamer-video-0.10 gstreamer-base-0.10 gstreamer-app-0.10 libudev --libs)
 	SYSTEMLIBS += -lglut -lGL -lasound -lopenal -lsndfile -lvorbis -lFLAC -logg -lfreeimage
 endif
 
@@ -143,36 +143,38 @@ ifeq ($(findstring addons.make,$(wildcard *.make)),addons.make)
 		ADDONS = $(shell cat addons.make)
 	endif
 	
-	ADDONS_REL_DIRS = $(addsuffix /src, $(ADDONS))
-	ADDONS_LIBS_REL_DIRS = $(addsuffix /libs, $(ADDONS))
-	ADDONS_DIRS = $(addprefix $(OF_ROOT)/addons/, $(ADDONS_REL_DIRS) )
-	ADDONS_LIBS_DIRS = $(addprefix $(OF_ROOT)/addons/, $(ADDONS_LIBS_REL_DIRS) )
-	ADDONS_BIN_LIBS_DIRS = $(addsuffix /*/lib/$(LIBSPATH), $(ADDONS_LIBS_DIRS) )
+	ifneq ($(strip $(ADDONS)),)
+	    ADDONS_REL_DIRS = $(addsuffix /src, $(ADDONS))
+	    ADDONS_LIBS_REL_DIRS = $(addsuffix /libs, $(ADDONS))
+	    ADDONS_DIRS = $(addprefix $(OF_ROOT)/addons/, $(ADDONS_REL_DIRS) )
+	    ADDONS_LIBS_DIRS = $(addprefix $(OF_ROOT)/addons/, $(ADDONS_LIBS_REL_DIRS) )
+	    ADDONS_BIN_LIBS_DIRS = $(addsuffix /*/lib/$(LIBSPATH), $(ADDONS_LIBS_DIRS) )
 	
-	ADDONS_INCLUDES = $(ADDONS_DIRS)
-	ADDONS_INCLUDES = $(ADDONS_LIBS_DIRS)
-	ADDONS_INCLUDES += $(shell find $(ADDONS_DIRS) -type d 2> /dev/null)
-	ADDONS_INCLUDES += $(shell find $(ADDONS_LIBS_DIRS) -type d 2> /dev/null)
-	ADDONSCFLAGS = $(addprefix -I,$(ADDONS_INCLUDES))
+	    ADDONS_INCLUDES = $(ADDONS_DIRS)
+	    ADDONS_INCLUDES = $(ADDONS_LIBS_DIRS)
+	    ADDONS_INCLUDES += $(shell find $(ADDONS_DIRS) -type d 2> /dev/null)
+	    ADDONS_INCLUDES += $(shell find $(ADDONS_LIBS_DIRS) -type d 2> /dev/null)
+	    ADDONSCFLAGS = $(addprefix -I,$(ADDONS_INCLUDES))
 
-	ifeq ($(findstring libsorder.make,$(shell find $(ADDONS_BIN_LIBS_DIRS) -name libsorder.make 2> /dev/null)),libsorder.make)
-		ADDONS_LIBS_W_ORDER = $(shell cat $(shell find $(ADDONS_BIN_LIBS_DIRS) -name libsorder.make 2> /dev/null))
-		EXCLUDE_LIBS_FILTER = $(addprefix %,$(addsuffix .a,$(ADDONS_LIBS_W_ORDER)))
-		ADDONS_LIBS_STATICS = $(filter-out $(EXCLUDE_LIBS_FILTER), $(shell find $(ADDONS_BIN_LIBS_DIRS) -name *.a))
-	    ADDONS_LIBS_STATICS += $(addprefix -l, $(ADDONS_LIBS_W_ORDER))
-    	ADDONS_LIBS_STATICS += $(addprefix -L, $(shell find $(ADDONS_BIN_LIBS_DIRS) -name libsorder.make 2> /dev/null | sed s/libsorder.make//g))
-	else
-		ADDONS_LIBS_STATICS = $(shell find $(ADDONS_BIN_LIBS_DIRS) -name *.a 2> /dev/null)
+	    ifeq ($(findstring libsorder.make,$(shell find $(ADDONS_BIN_LIBS_DIRS) -name libsorder.make 2> /dev/null)),libsorder.make)
+		    ADDONS_LIBS_W_ORDER = $(shell cat $(shell find $(ADDONS_BIN_LIBS_DIRS) -name libsorder.make 2> /dev/null))
+		    EXCLUDE_LIBS_FILTER = $(addprefix %,$(addsuffix .a,$(ADDONS_LIBS_W_ORDER)))
+		    ADDONS_LIBS_STATICS = $(filter-out $(EXCLUDE_LIBS_FILTER), $(shell find $(ADDONS_BIN_LIBS_DIRS) -name *.a))
+	        ADDONS_LIBS_STATICS += $(addprefix -l, $(ADDONS_LIBS_W_ORDER))
+        	ADDONS_LIBS_STATICS += $(addprefix -L, $(shell find $(ADDONS_BIN_LIBS_DIRS) -name libsorder.make 2> /dev/null | sed s/libsorder.make//g))
+	    else
+		    ADDONS_LIBS_STATICS = $(shell find $(ADDONS_BIN_LIBS_DIRS) -name *.a 2> /dev/null)
+	    endif
+
+	    ADDONS_LIBS_SHARED = $(shell find $(ADDONS_BIN_LIBS_DIRS) -name *.so 2> /dev/null)
+	    ADDONSLIBS = $(ADDONS_LIBS_STATICS)
+	    ADDONSLIBS += $(ADDONS_LIBS_SHARED)
+
+
+	    ADDONS_SOURCES = $(shell find $(ADDONS_DIRS) -name "*.cpp" -or -name "*.c" 2> /dev/null)
+	    ADDONS_SOURCES += $(shell find $(ADDONS_LIBS_DIRS) -name "*.cpp" -or -name "*.c" -or -name "*.cc" 2>/dev/null)
+	    ADDONS_OBJFILES = $(subst $(OF_ROOT)/, ,$(patsubst %.cc,%.o,$(patsubst %.c,%.o,$(patsubst %.cpp,%.o,$(ADDONS_SOURCES)))))
 	endif
-
-	ADDONS_LIBS_SHARED = $(shell find $(ADDONS_BIN_LIBS_DIRS) -name *.so 2> /dev/null)
-	ADDONSLIBS = $(ADDONS_LIBS_STATICS)
-	ADDONSLIBS += $(ADDONS_LIBS_SHARED)
-
-
-	ADDONS_SOURCES = $(shell find $(ADDONS_DIRS) -name "*.cpp" -or -name "*.c" 2> /dev/null)
-	ADDONS_SOURCES += $(shell find $(ADDONS_LIBS_DIRS) -name "*.cpp" -or -name "*.c" -or -name "*.cc" 2>/dev/null)
-	ADDONS_OBJFILES = $(subst $(OF_ROOT)/, ,$(patsubst %.cc,%.o,$(patsubst %.c,%.o,$(patsubst %.cpp,%.o,$(ADDONS_SOURCES)))))
 endif
 
 
@@ -248,6 +250,7 @@ endif
 
 ifeq ($(MAKECMDGOALS),clean)
 	TARGET = bin/$(APPNAME)_debug bin/$(APPNAME)
+	TARGET_NAME = Release
 endif
 
 
@@ -273,8 +276,6 @@ Debug: $(TARGET) after
 
 all:
 	$(MAKE) Release
-
-
 
 DebugAndroid: $(TARGET)
 
@@ -351,16 +352,21 @@ $(TARGET): $(OBJS) $(ADDONS_OBJS) $(USER_OBJS) $(TARGET_LIBS) $(LIB_STATIC)
 -include $(DEPFILES)
 
 .PHONY: clean cleanDebug cleanRelease CleanAndroid
+clean:
+	rm -rf $(OBJ_OUTPUT)
+	rm -f $(TARGET)
+	rm -r bin/libs
+	
 $(CLEANTARGET):
-	rm -Rf -v $(OBJ_OUTPUT)
-	rm -f -v $(TARGET)
-	rm -Rf -v bin/libs
+	rm -rf $(OBJ_OUTPUT)
+	rm -f $(TARGET)
+	rm -rf bin/libs
 
 CleanAndroid:
 	rm -Rf obj
-	rm -f -v libs/armeabi-v7a/libOFAndroidApp.so
-	rm -f -v libs/armeabi/libOFAndroidApp.so
-	rm -f -v obj/$(APPNAME)
+	rm -f libs/armeabi-v7a/libOFAndroidApp.so
+	rm -f libs/armeabi/libOFAndroidApp.so
+	rm -f obj/$(APPNAME)
 
 
 afterDebugAndroid:$(TARGET)

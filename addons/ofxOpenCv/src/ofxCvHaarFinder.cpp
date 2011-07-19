@@ -1,5 +1,16 @@
 #include "ofxCvHaarFinder.h"
 
+
+//--------------------------------------------------------------------------------
+static bool sort_carea_compare( const ofxCvBlob & a, const ofxCvBlob & b) {
+	// use opencv to calc size, then sort based on size
+	float areaa = fabs(a.area);
+	float areab = fabs(b.area);
+
+    //return 0;
+	return (areaa > areab);
+}
+
 ofxCvHaarFinder::ofxCvHaarFinder() {
 	cascade = NULL;
 	scaleHaar = 1.08;
@@ -81,6 +92,25 @@ int ofxCvHaarFinder::findHaarObjects(ofImage& input, int minWidth, int minHeight
 	
 	return findHaarObjects(gray, minWidth, minHeight);
 	
+}
+
+int ofxCvHaarFinder::findHaarObjects(ofPixels& input, int minWidth, int minHeight){
+	ofxCvGrayscaleImage gray;
+	gray.allocate(input.getWidth(), input.getHeight());
+
+	if( input.getImageType() == OF_IMAGE_COLOR ){
+		ofxCvColorImage color;
+		color.allocate(input.getWidth(), input.getHeight());
+		color.setFromPixels(input);
+		gray = color;
+	}else if( input.getImageType() == OF_IMAGE_GRAYSCALE ){
+		gray.setFromPixels(input);
+	}else{
+		ofLog(OF_LOG_ERROR, "ofxCvHaarFinder::findHaarObjects doesn't support OF_IMAGE_RGBA ofImage");
+		return 0;
+	}
+
+	return findHaarObjects(gray, minWidth, minHeight);
 }
 
 int ofxCvHaarFinder::findHaarObjects(const ofxCvGrayscaleImage&  input,
@@ -196,6 +226,11 @@ int ofxCvHaarFinder::findHaarObjects(const ofxCvGrayscaleImage& input,
 			blob.pts.push_back(ofPoint(r->x, r->y + r->height));
 
 			blobs.push_back(blob);
+		}
+
+		// sort the pointers based on size
+		if( blobs.size() > 1 ) {
+			sort( blobs.begin(), blobs.end(), sort_carea_compare );
 		}
 
 		cvReleaseMemStorage(&storage);

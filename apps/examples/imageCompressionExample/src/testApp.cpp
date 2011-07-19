@@ -1,7 +1,7 @@
 #include "testApp.h"
 
 //--------------------------------------------------------------
-void testApp::setup() {	
+void testApp::setup() {
 	quality = OF_IMAGE_QUALITY_WORST;
 	maxSize = 2048;
 	glitchStart = .6;
@@ -22,20 +22,20 @@ void testApp::reset() {
 //--------------------------------------------------------------
 void testApp::update() {
 	string curFilename = "compressed.jpg";
-	
+
 	int size = img.getWidth();
-	
+
 	// keeps the image from getting too big
 	if(size < maxSize) {
 		img.saveImage(curFilename, quality);
-		
+
 		if(ofGetKeyPressed('g')) {
 			// this portion glitches the jpeg file
-			// first loading the file
-			ofBuffer file = ofBufferFromFile(curFilename);
+			// first loading the file (as binary)
+			ofBuffer file = ofBufferFromFile(curFilename, true);
 			int fileSize = file.size();
 			char * buffer = file.getBinaryBuffer();
-			
+
 			// pick a byte offset that is somewhere near the end of the file
 			int whichByte = (int) ofRandom(fileSize * glitchStart, fileSize);
 			// and pick a bit in that byte to turn on
@@ -43,13 +43,13 @@ void testApp::update() {
 			char bitMask = 1 << whichBit;
 			// using the OR operator |, if the bit isn't already on this will turn it on
 			buffer[whichByte] |= bitMask;
-			
+
 			// write the file out like nothing happened
-			ofBufferToFile(curFilename, file);
+			ofBufferToFile(curFilename, file, true);
 			img.loadImage(curFilename);
 		} else {
 			img.loadImage(curFilename);
-			
+
 			// this if switches every other frame
 			// resizing up and down breaks the 8x8 JPEG blocks
 			if(ofGetFrameNum() % 2 == 0) {
@@ -68,7 +68,7 @@ void testApp::update() {
 void testApp::draw() {
 	ofSetColor(255);
 	img.draw(0, 0, ofGetWidth(), ofGetHeight());
-	
+
 	ofSetColor(0);
 	ofRect(5, 5, 290, 45);
 	ofSetColor(255);
@@ -117,6 +117,6 @@ void testApp::gotMessage(ofMessage msg){
 }
 
 //--------------------------------------------------------------
-void testApp::dragEvent(ofDragInfo dragInfo){ 
+void testApp::dragEvent(ofDragInfo dragInfo){
 
 }

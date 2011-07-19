@@ -107,7 +107,7 @@ void ofThread::waitForThread(bool stop){
 		    pthread_join(myThread, NULL);
 		#endif
 		if(verbose)printf("ofThread: thread stopped\n");
-		myThread = NULL;
+		//myThread = NULL;
    }else{
 		if(verbose)printf("ofThread: thread already stopped\n");
 	}

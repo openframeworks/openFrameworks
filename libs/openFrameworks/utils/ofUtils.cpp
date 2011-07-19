@@ -574,9 +574,19 @@ string ofVAArgsToString(const char * format, ...){
 	return retStr;
 }
 
-//--------------------------------------------------
 string ofVAArgsToString(const char * format, va_list args){
-	return "ofVAArgsToString va_list: Not Implemented Yet";
+	// variadic args to string:
+	// http://www.codeproject.com/KB/string/string_format.aspx
+	char aux_buffer[10000];
+	string retStr("");
+	if (NULL != format){
+
+		// Get formatted string length adding one for NULL
+		vsprintf(aux_buffer, format, args);
+		retStr = aux_buffer;
+
+	}
+	return retStr;
 }
 
 //--------------------------------------------------
