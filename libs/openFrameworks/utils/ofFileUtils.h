@@ -33,11 +33,11 @@ public:
 	operator string() const;  // cast to string, to use a buffer as a string
 
 	long size() const;
-
 	string getNextLine();
-	string getFirstLine();
+    string getFirstLine();
 	bool isLastLine();
-
+    void resetLineReader();
+    
 	friend ostream & operator<<(ostream & ostr, const ofBuffer & buf);
 	friend istream & operator>>(istream & istr, ofBuffer & buf);
 
