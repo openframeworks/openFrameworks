@@ -59,7 +59,9 @@ void testApp::update(){
 	if (ballPositionY < 0){
 		ballPositionY = 0;
 		ballVelocityY *= -1;
+		cout << posy << endl;
 		if (!bFullscreen) ofSetWindowPosition(posx, posy-10);
+		cout << ofGetWindowPositionY() << endl;
 	} else if (ballPositionY > ofGetHeight()){
 		ballPositionY = ofGetHeight();
 		ballVelocityY *= -1;

@@ -3,6 +3,7 @@
 //--------------------------------------------------------------
 void testApp::setup(){	 
 	
+	ofSetVerticalSync(true);
 	ofSetCircleResolution(80);
 	ofBackground(54, 54, 54);	
 	
@@ -19,7 +20,6 @@ void testApp::setup(){
 	
 	int bufferSize = 256;
 	
-	soundStream.setup(this, 0, 2, 44100, bufferSize, 4);	
 	
 	left.assign(bufferSize, 0.0);
 	right.assign(bufferSize, 0.0);
@@ -30,13 +30,15 @@ void testApp::setup(){
 	smoothedVol     = 0.0;
 	scaledVol		= 0.0;
 
+	soundStream.setup(this, 0, 2, 44100, bufferSize, 4);
+
 }
 
 //--------------------------------------------------------------
 void testApp::update(){
 	//lets scale the vol up to a 0-1 range 
 	scaledVol = ofMap(smoothedVol, 0.0, 0.17, 0.0, 1.0, true);
-	
+
 	//lets record the volume into an array
 	volHistory.push_back( scaledVol );
 	
@@ -148,9 +150,9 @@ void testApp::audioIn(float * input, int bufferSize, int nChannels){
 	for (int i = 0; i < bufferSize; i++){
 		left[i]		= input[i*2];
 		right[i]	= input[i*2+1];
-		
-		curVol += powf(left[i], 2);
-		curVol += powf(right[i], 2);
+
+		curVol += left[i] * left[i];
+		curVol += right[i] * right[i];
 		numCounted+=2;
 	}
 	

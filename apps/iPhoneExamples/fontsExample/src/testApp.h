@@ -17,10 +17,20 @@ public:
 	void touchDoubleTap(ofTouchEventArgs &touch);
 	void touchCancelled(ofTouchEventArgs &touch);
 	
-	ofTrueTypeFont  franklinBook;
-	ofTrueTypeFont	verdana;
+	bool bFirst;
+	string typeStr;
 	
-	float 			counter;
+	ofTrueTypeFont  franklinBook14;
+	ofTrueTypeFont	verdana14;
+	ofTrueTypeFont	verdana30;
+	
+	ofTrueTypeFont  franklinBook14A;
+	ofTrueTypeFont	verdana14A;
+	
+	ofPoint touchPt;
+	ofPoint drag;
+	bool bDragging;
+	
 };
 
 

@@ -173,6 +173,9 @@ def createWorkspace(project_path):
     root = ws.getroot()
     workspace = root.Workspace
     
+    if workspace.get("title")=="emptyExample":
+         workspace.set("title",project_name)
+    
     for project in workspace.Project:
         if project.get("filename")=="emptyExample.cbp":
             project.set("filename",project_name+".cbp")
