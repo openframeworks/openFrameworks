@@ -222,9 +222,13 @@ function createPackage {
 	cd $pkg_ofroot
     if [ "$platform" = "win_cb" ]; then 
         scripts/win_cb/createProjects.py        
-    elif [ "$platform" = "linux" ] || [ "$platform" = "linux64" ]; then 
+   	elif [ "$platform" = "linux" ] || [ "$platform" = "linux64" ]; then 
         scripts/linux/createProjects.py -p${platform}
-    fi
+	elif [ "$platform" = "osx" ]; then
+		cd $pkg_ofroot/apps/devApps/_DeployExamples/
+		xcodebuild -configuration Debug -target deployExamples -project deployExamples.xcodeproj
+		./bin/deployExamplesDebug.app/Contents/MacOS/deployExamplesDebug
+	fi
 
     #delete other platform libraries
     if [ "$pkg_platform" = "linux" ]; then

@@ -1,5 +1,4 @@
 #include "testApp.h"
-#include "appleScript.h"
 
 #include "Poco/HMACEngine.h"
 #include "Poco/MD5Engine.h"
@@ -40,34 +39,6 @@ string getHash(string input){
 	return digestString;	
 }
 
-//--------------------------------------------------------------
-void addFilesToProjectAS(string projectName, vector <string> filePath, vector <string> fileName, string group){
-
-	string str;
-	str = "tell application \"Xcode\" \n";
-	str += "	tell group \""+group+"\" of project \""+projectName+"\"\n";
-	//str += "	tell root group of project \""+projectName+"\"\n";
-	for(int k = 0; k < filePath.size(); k++){
-		
-		string fileKind = "sourcecode.cpp.cpp";		
-		if( ofFilePath::getFileExt(filePath[k]) == "h" ){
-			fileKind = "sourcecode.cpp.h";
-		}
-		
-		str += "		make new file reference with properties {file kind:\""+fileKind+"\", name:\""+fileName[k]+"\", path type:project relative, path:\""+filePath[k]+"\"}\n";
-	}
-	str += "	end tell\n";
-	str += "end tell\n";
-	
-	cout << endl << str << endl;
-
-	OSStatus err = SimpleRunAppleScript(str.c_str());	
-	if( err == noErr ){
-		cout << " added files! " << endl;
-	}else{
-		cout << " error " << endl;
-	}
-}
 
 
 //--------------------------------------------------------------
