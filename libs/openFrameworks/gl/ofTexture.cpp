@@ -473,11 +473,12 @@ void ofTexture::loadData(void * data, int w, int h, int glFormat){
 	//	int uploadH = MIN(h, tex_h);
 	//  but with a "step" size of w?
 	// 	check "glTexSubImage2D"
+	texData.glType = glFormat;
 	
-	if(glFormat!=texData.glType) {
+	/*if(glFormat!=texData.glType) {
 		ofLogError() << "ofTexture::loadData() failed to upload format " <<  ofGetGlInternalFormatName(glFormat) << " data to " << ofGetGlInternalFormatName(texData.glType) << " texture" <<endl;
 		return;
-	}
+	}*/
 	
 	if(w > texData.tex_w || h > texData.tex_h) {
 		ofLogError() << "ofTexture::loadData() failed to upload " <<  w << "x" << h << " data to " << texData.tex_w << "x" << texData.tex_h << " texture";
