@@ -8,6 +8,14 @@
 static bool bTexHackEnabled = true;
 
 //---------------------------------
+template <class T>
+int ofGetGlFormat(const T& pix) {
+	int glFormat, glType;
+	ofGetGlFormatAndType(ofGetGlInternalFormat(pix), glFormat, glType);
+	return glFormat;
+}
+
+//---------------------------------
 int ofGetGlInternalFormat(const ofPixels& pix) {
 	switch(pix.getNumChannels()) {
 		case 3: return GL_RGB;
