@@ -14,23 +14,17 @@ http://openframeworks.cc/setup/xcode
 
 Creating a new openFrameworks project
 --------------------------------------------------------------------------------
-The easiest way to create a new openFrameworks project is to copy one similar to what you want to do. For example:
+The easiest way to create a new openFrameworks project is to copy one that's similar to what you want to do. For example:
 
-a) Copy apps/examples/emptyExample/ into apps/examples/myApp/
- 
-b) rename the folder, and inside the folder, rename the .xcodeproj file - ie: myExperimentalApp.xcodeproj
+- Make a copy apps/examples/emptyExample/ called apps/examples/myApp/
 
-c) open the project
+- Inside myApp/ rename the .xcodeproj file to myApp.xcodeproj
 
-d) in the sidebar scroll down to Targets and expand it to show the target. ie: emptyExample
+- Open myApp.xcodeproj
 
-e) with the target selected do Get Info ( either right click or Command-i ) 
+- In the sidebar, right click on "emptyExample" and rename it to "myApp"
 
-f) in the General Tab rename the Name text field ie: from emptyExample to myExperimentalApp
-
-e and f alternative ) you can also just do right click on the target -> rename in the sidebar directly
-
-g) after you have renamed the target you should change the build from Debug to Release then back again. This refreshes the target app. 
+- In the sidebar, under "Targets", right click on "emptyExample" and rename it to "myApp"
 
 The difference between Debug and Release mode
 --------------------------------------------------------------------------------
