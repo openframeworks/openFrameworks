@@ -19,6 +19,8 @@ class ofxTCPServer : public ofThread{
 		~ofxTCPServer();
 		void setVerbose(bool _verbose);
 		bool setup(int _port, bool blocking = false);
+		void setMessageDelimiter(string delim);
+	
 		bool close();
 		bool disconnectClient(int clientID);
 
@@ -80,6 +82,7 @@ class ofxTCPServer : public ofThread{
 		string			str;
 		int				idCount, port;
 		bool			bClientBlocking;
+		string			messageDelimiter;
 
 };
 
