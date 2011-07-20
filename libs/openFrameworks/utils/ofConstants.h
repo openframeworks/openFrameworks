@@ -240,8 +240,6 @@ typedef TESSindex ofIndexType;
   	#define OF_SOUND_PLAYER_OPENAL
   #elif !defined(TARGET_ANDROID)
   	#define OF_SOUND_PLAYER_FMOD
-  #else
-  	void ofSoundShutdown(){}
   #endif
 #endif
 
