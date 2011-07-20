@@ -1,7 +1,7 @@
 #include "testApp.h"
 
 //warning video player doesn't currently work - use live video only
-#define _USE_LIVE_VIDEO
+//#define _USE_LIVE_VIDEO
 
 //--------------------------------------------------------------
 void testApp::setup(){	
@@ -59,7 +59,7 @@ void testApp::update(){
 		#ifdef _USE_LIVE_VIDEO
 			if( vidGrabber.getPixels() != NULL ){
 		#else
-			if( vidPlayer.getPixels() != NULL && capW > 0 ){
+			if( vidPlayer.getPixels() != NULL && vidPlayer.getWidth() > 0 ){
 		#endif
 
 			#ifdef _USE_LIVE_VIDEO
