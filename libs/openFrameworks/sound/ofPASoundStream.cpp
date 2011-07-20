@@ -1,6 +1,7 @@
 #include "ofPASoundStream.h"
-#include "ofConstants.h"
-//#ifdef OF_USING_PORTAUDIO
+
+#ifdef OF_SOUNDSTREAM_PORTAUDIO
+
 #include "portaudio.h"
 #include "ofUtils.h"
 #include "ofEvents.h"
@@ -224,4 +225,4 @@ void ofPASoundStream::setDeviceID(int _deviceID){
 long unsigned long ofPASoundStream::getTickCount(){
 	return tickCount;
 }
-//#endif
+#endif

@@ -167,64 +167,82 @@ typedef TESSindex ofIndexType;
 
 
 //------------------------------------------------ capture
-// if are linux
+// check if any video capture system is already defined from the compiler
+#if !defined(OF_VIDEO_CAPTURE_GSTREAMER) && !defined(OF_VIDEO_CAPTURE_QUICKTIME) && !defined(OF_VIDEO_CAPTURE_DIRECTSHOW) && !defined(OF_VIDEO_CAPTURE_ANDROID) && !defined(OF_VIDEO_CAPTURE_IPHONE)
+	#ifdef TARGET_LINUX
 
-#ifdef TARGET_LINUX
-
-
-	// firewire cameras doesn't work yet with gstreamer you can change
-	// to unicap by uncommenting the following define. note that this can make
-	// your app GPL
-
-	// (if you change this, you might need to clean and rebuild, in CB build->rebuild)
-
-	//#define OF_SWITCH_TO_UNICAP_FOR_LINUX_VIDCAP
-
-	#ifdef OF_SWITCH_TO_UNICAP_FOR_LINUX_VIDCAP
-		#define OF_VIDEO_CAPTURE_UNICAP
-    #else
 		#define OF_VIDEO_CAPTURE_GSTREAMER
-	#endif
 
-#elif defined(TARGET_OSX) 
+	#elif defined(TARGET_OSX)
 
-    #define OF_VIDEO_CAPTURE_QUICKTIME
-
-#elif defined (TARGET_WIN32)
-
-    // comment out this following line, if you'd like to use the
-    // quicktime capture interface on windows
-    // if not, we default to videoInput library for
-    // direct show capture...
-
-    #define OF_SWITCH_TO_DSHOW_FOR_WIN_VIDCAP
-
-    #ifdef OF_SWITCH_TO_DSHOW_FOR_WIN_VIDCAP
-		#define OF_VIDEO_CAPTURE_DIRECTSHOW
-    #else
 		#define OF_VIDEO_CAPTURE_QUICKTIME
-    #endif
 
-#elif defined(TARGET_ANDROID)
+	#elif defined (TARGET_WIN32)
 
-	#define OF_VIDEO_CAPTURE_ANDROID
+		// comment out this following line, if you'd like to use the
+		// quicktime capture interface on windows
+		// if not, we default to videoInput library for
+		// direct show capture...
 
-#elif defined(TARGET_OF_IPHONE)
+		#define OF_SWITCH_TO_DSHOW_FOR_WIN_VIDCAP
 
-    #define OF_VIDEO_CAPTURE_IPHONE
+		#ifdef OF_SWITCH_TO_DSHOW_FOR_WIN_VIDCAP
+			#define OF_VIDEO_CAPTURE_DIRECTSHOW
+		#else
+			#define OF_VIDEO_CAPTURE_QUICKTIME
+		#endif
 
+	#elif defined(TARGET_ANDROID)
+
+		#define OF_VIDEO_CAPTURE_ANDROID
+
+	#elif defined(TARGET_OF_IPHONE)
+
+		#define OF_VIDEO_CAPTURE_IPHONE
+
+	#endif
 #endif
 
-
-#ifdef TARGET_LINUX
-	#define OF_VIDEO_PLAYER_GSTREAMER
-#else 
-	#ifdef TARGET_OF_IPHONE
-		#define OF_VIDEO_CAPTURE_IPHONE
-		#define OF_VIDEO_PLAYER_IPHONE
-	#elif !defined(TARGET_ANDROID)
-		#define OF_VIDEO_PLAYER_QUICKTIME
+//------------------------------------------------  video player
+// check if any video player system is already defined from the compiler
+#if !defined(OF_VIDEO_PLAYER_GSTREAMER) && !defined(OF_VIDEO_CAPTURE_IPHONE) && !defined(OF_VIDEO_PLAYER_QUICKTIME)
+	#ifdef TARGET_LINUX
+		#define OF_VIDEO_PLAYER_GSTREAMER
+	#else
+		#ifdef TARGET_OF_IPHONE
+			#define OF_VIDEO_PLAYER_IPHONE
+		#elif !defined(TARGET_ANDROID)
+			#define OF_VIDEO_PLAYER_QUICKTIME
+		#endif
 	#endif
+#endif
+
+//------------------------------------------------ soundstream
+// check if any soundstream api is defined from the compiler
+#if !defined(OF_SOUNDSTREAM_PORTAUDIO) && !defined(OF_SOUNDSTREAM_RTAUDIO) && !defined(OF_SOUNDSTREAM_ANDROID)
+	#ifdef TARGET_LINUX
+		#define OF_SOUNDSTREAM_PORTAUDIO
+	#elif defined(TARGET_WIN32) || defined(TARGET_OSX)
+		#define OF_SOUNDSTREAM_RTAUDIO
+	#elif defined(TARGET_ANDROID)
+		#define OF_SOUNDSTREAM_ANDROID
+	#else
+		#warning we need swappable sound stream api for iphone
+	#endif
+#endif
+
+//------------------------------------------------ soundplayer
+// check if any soundplayer api is defined from the compiler
+#if !defined(OF_SOUND_PLAYER_QUICKTIME) && !defined(OF_SOUND_PLAYER_FMOD) && !defined(OF_SOUND_PLAYER_OPENAL)
+  #ifdef TARGET_OF_IPHONE
+  	#define OF_SOUND_PLAYER_IPHONE
+  #elif defined TARGET_LINUX
+  	#define OF_SOUND_PLAYER_OPENAL
+  #elif !defined(TARGET_ANDROID)
+  	#define OF_SOUND_PLAYER_FMOD
+  #else
+  	void ofSoundShutdown(){}
+  #endif
 #endif
 
 // comment out this line to disable all poco related code

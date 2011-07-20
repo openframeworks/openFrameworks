@@ -5,17 +5,17 @@
 #include "ofBaseApp.h"
 #include "ofTypes.h"
 
-#ifdef OF_TARGET_IPHONE
-	#error we need swappable sound stream api for iphone
-#elif defined(TARGET_ANDROID)
-	#include "ofxAndroidSoundStream.h"
-	#define OF_SOUND_STREAM_TYPE ofxAndroidSoundStream
-#elif defined(TARGET_LINUX)
-	#include "ofPASoundStream.h"
-	#define OF_SOUND_STREAM_TYPE ofPASoundStream
-#else
+#ifdef OF_SOUNDSTREAM_RTAUDIO
 	#include "ofRtAudioSoundStream.h"
 	#define OF_SOUND_STREAM_TYPE ofRtAudioSoundStream
+#elif defined(OF_SOUNDSTREAM_PORTAUDIO)
+	#include "ofPASoundStream.h"
+	#define OF_SOUND_STREAM_TYPE ofPASoundStream
+#elif defined(OF_SOUNDSTREAM_ANDROID)
+	#include "ofxAndroidSoundStream.h"
+	#define OF_SOUND_STREAM_TYPE ofxAndroidSoundStream
+#else
+	// iphone soundstream
 #endif 
 
 void ofSoundStreamSetup(int nOutputChannels, int nInputChannels, ofBaseApp * appPtr = NULL);
