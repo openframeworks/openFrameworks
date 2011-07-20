@@ -1015,7 +1015,7 @@
 			baseConfigurationReference = E41D3E9213B38BE900A75A5D /* Release.xcconfig */;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
-				SDKROOT = iphoneos4.1;
+				SDKROOT = iphoneos;
 			};
 			name = Release;
 		};
