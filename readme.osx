@@ -1,51 +1,39 @@
-1) installing Xcode:
+Welcome to openFrameworks!
 --------------------------------------------------------------------------------
- 
-follow the steps here:
-http://www.openframeworks.cc/setup/xcode 
- 
-Note that xcode 2.4.1 is the minimum required xcode to work with OF.
-In most cases you want the latest xcode from the mac developer site. 
-When installing xcode make sure to check the box in the Customize... section for previous OS's. 
-You can also uncheck the documentation if you wish to save disk space. 
- 
+To use openFrameworks with OSX, you to install Xcode. Then you can run the examples in apps/ by opening the .xcodeproj and clicking the "Build and Run" button.
 
-1) if you want to make a new project:
+Installing Xcode
 --------------------------------------------------------------------------------
- 
-a) copy the folder inside of apps/exampleApps/ and paste in the same directory
- 
-ie: (copy "emptyExample" and paste "copy of emptyExample")
- 
-b) rename the folder, and inside the folder, rename the .xcodeproj file - ie: myExperimentalApp.xcodeproj
+openFrameworks is primarily developed with Xcode 3, but may work with other versions. To install Xcode, you need to register as an Apple developer and download the Xcode disk image from:
 
-c) open the project
+https://connect.apple.com/
 
-d) in the sidebar scroll down to Targets and expand it to show the target. ie: emptyExample
+More detailed instructions are available at:
 
-e) with the target selected do Get Info ( either right click or Command-i ) 
+http://openframeworks.cc/setup/xcode
 
-f) in the General Tab rename the Name text field ie: from emptyExample to myExperimentalApp
-
-e and f alternative ) you can also just do right click on the target -> rename in the sidebar directly
-
-g) after you have renamed the target you should change the build from Debug to Release then back again. This refreshes the target app. 
- 
-
-
-2) Debug, Release, Release Universal.... What does it mean?
+Creating a new openFrameworks project
 --------------------------------------------------------------------------------
-These are different build configurations:
+The easiest way to create a new openFrameworks project is to copy one that's similar to what you want to do. For example:
 
-Debug 		  - Use when developing your project as it will help debugging problems with your app.
-Release 	  - When you done developing and you want a fast optimized version of your app. Note: Release is much harder to Debug
-Release Universal - Same as Release but also compiled for PPC ( or for Intel if you have a PPC machine ).
-		    This app is Fast and most compatible, but takes longest to build and results in a large app. 
+- Make a copy apps/examples/emptyExample/ called apps/examples/myApp/
 
+- Inside myApp/ rename the .xcodeproj file to myApp.xcodeproj
 
-as always if you have issues, check or post on the forum:  http://openframeworks.cc/forum
- 
-have fun! 
- 
- 
- 
+- Open myApp.xcodeproj
+
+- In the sidebar, right click on "emptyExample" and rename it to "myApp"
+
+- In the sidebar, under "Targets", right click on "emptyExample" and rename it to "myApp"
+
+The difference between Debug and Release mode
+--------------------------------------------------------------------------------
+These are two build configurations, "Debug" and "Release".
+
+Debug is useful when developing your project, as it will provide the most information about where and why something crashed.
+
+Release is useful when you're done developing your project. Release will create a smaller, faster app -- but it won't give you much information if it crashes.
+
+openFrameworks resources
+--------------------------------------------------------------------------------
+If you have questions or issues, the best place to look is the opneFrameworks forum: http://forum.openframeworks.cc/
