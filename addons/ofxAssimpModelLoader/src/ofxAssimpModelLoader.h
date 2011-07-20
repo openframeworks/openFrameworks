@@ -85,6 +85,8 @@ class ofxAssimpModelLoader{
 		float          getNormalizedScale();
 		ofPoint        getScale();
 
+        void 		   calculateDimensions();
+
 		const aiScene* getAssimpScene();
     
          
@@ -104,7 +106,6 @@ class ofxAssimpModelLoader{
         void getBoundingBoxWithMinVector(struct aiVector3D* min, struct aiVector3D* max);
         void getBoundingBoxForNode(const struct aiNode* nd,  struct aiVector3D* min, struct aiVector3D* max, struct aiMatrix4x4* trafo);
         
-        void calculateDimensions();
 
         bool hasAnimations;
         int currentAnimation;
