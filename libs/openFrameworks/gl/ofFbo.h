@@ -1,7 +1,6 @@
 #pragma once
 
 #include "ofTexture.h"
-#include "ofMain.h"
 
 //#ifndef TARGET_OPENGLES
 
