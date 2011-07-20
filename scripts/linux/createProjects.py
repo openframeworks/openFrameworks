@@ -218,7 +218,7 @@ arch = parser.parse_args().platform
 project_path = parser.parse_args().project_path
 fullCBP = parser.parse_args().not_mk
         
-templates_path = os.path.join(of_root,'apps','devApps',platform)
+templates_path = os.path.join(of_root,'scripts',platform,'template')
 template = {'cbp': os.path.join(templates_path , 'emptyExample_' + arch + '.cbp'), 'full_cbp': os.path.join(templates_path , 'emptyExample_' + arch + '_fullCBP.cbp'), 'workspace': os.path.join(templates_path , 'emptyExample_' + arch + '.workspace'),'makefile': os.path.join(templates_path , 'Makefile'), 'config.make': os.path.join(templates_path , 'config.make')}
 
 if project_path==None: #parse all examples
