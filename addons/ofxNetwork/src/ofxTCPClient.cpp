@@ -15,7 +15,7 @@ ofxTCPClient::ofxTCPClient(){
 	ipAddr		="000.000.000.000";
 
 	partialPrevMsg = "";
-
+	messageDelimiter = "[/TCP]";
 	memset(tmpBuff,  0, TCP_MAX_MSG_SIZE+1);
 }
 
@@ -87,6 +87,13 @@ bool ofxTCPClient::close(){
 }
 
 //--------------------------
+void ofxTCPClient::setMessageDelimiter(string delim){
+	if(delim != ""){
+		messageDelimiter = delim; 
+	}
+}
+
+//--------------------------
 bool ofxTCPClient::send(string message){
 	// tcp is a stream oriented protocol
 	// so there's no way to be sure were
@@ -98,7 +105,7 @@ bool ofxTCPClient::send(string message){
 		if(verbose)printf("ofxTCPClient: trying to send while not connected\n");
 		return false;
 	}
-	message = partialPrevMsg + message + STR_END_MSG;
+	message = partialPrevMsg + message + messageDelimiter;
 	message += (char)0; //for flash
 	int ret = TCPClient.SendAll( message.c_str(), message.length() );
 	if( ret == 0 ){
@@ -172,7 +179,7 @@ string ofxTCPClient::receive(){
 	str    = "";
 	int length=-2;
 	//only get data from the buffer if we don't have already some complete message
-	if(tmpStr.find(STR_END_MSG)==string::npos){
+	if(tmpStr.find(messageDelimiter)==string::npos){
 		memset(tmpBuff,  0, TCP_MAX_MSG_SIZE+1); //one more so there's always a \0 at the end for string concat
 		length = TCPClient.Receive(tmpBuff, TCP_MAX_MSG_SIZE);
 		if(length>0){ // don't copy the data if there was an error or disconnection
@@ -189,9 +196,9 @@ string ofxTCPClient::receive(){
 	}
 
 	// process any available data
-	if(tmpStr.find(STR_END_MSG)!=string::npos){
-		str=tmpStr.substr(0,tmpStr.find(STR_END_MSG));
-		tmpStr=tmpStr.substr(tmpStr.find(STR_END_MSG)+STR_END_MSG_LEN);
+	if(tmpStr.find(messageDelimiter)!=string::npos){
+		str=tmpStr.substr(0,tmpStr.find(messageDelimiter));
+		tmpStr=tmpStr.substr(tmpStr.find(messageDelimiter)+messageDelimiter.size());
 	}
 	return str;
 }
