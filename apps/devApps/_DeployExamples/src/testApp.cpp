@@ -738,7 +738,7 @@ void testApp::setup(){
 			convertProjectToXML(xcodePath);
 			addAddonsFromInstallXML( appsPath + "../addons/ofx3DModelLoader/", folderPath, xcodePath);
 			addAddonsFromInstallXML( appsPath + "../addons/ofxAssimpModelLoader/", folderPath, xcodePath);					
-			addAddonsFromInstallXML( appsPath + "../addons/ofxSynth/", folderPath, xcodePath);
+//			addAddonsFromInstallXML( appsPath + "../addons/ofxSynth/", folderPath, xcodePath);
 			addAddonsFromInstallXML( appsPath + "../addons/ofxOsc/", folderPath, xcodePath);
 			addAddonsFromInstallXML( appsPath + "../addons/ofxThreadedImageLoader/", folderPath, xcodePath);
 			addAddonsFromInstallXML( appsPath + "../addons/ofxOpenCv/", folderPath, xcodePath);
