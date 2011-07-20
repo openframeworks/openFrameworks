@@ -1,6 +1,8 @@
 #pragma once
 
 #include "ofConstants.h"
+
+#ifdef OF_SOUND_PLAYER_OPENAL
 #include "ofBaseSoundPlayer.h"
 #include "ofEvents.h"
 #include "ofThread.h"
@@ -15,11 +17,9 @@
 
 #include "kiss_fft.h"
 #include "kiss_fftr.h"
-#ifdef TARGET_LINUX
-    #include <sndfile.h>
-    #ifdef OF_USING_MPG123
-        #include <mpg123.h>
-    #endif
+#include <sndfile.h>
+#ifdef OF_USING_MPG123
+	#include <mpg123.h>
 #endif
 
 //		TO DO :
@@ -134,12 +134,10 @@ class ofOpenALSoundPlayer : public ofBaseSoundPlayer, public ofThread {
 		static vector<float> systemBins;
 		static vector<kiss_fft_cpx> systemCx_out;
 
-#ifdef TARGET_LINUX
 		SNDFILE* streamf;
 		size_t stream_samples_read;
 #ifdef OF_USING_MPG123
 		mpg123_handle * mp3streamf;
-#endif
 #endif
 		int stream_encoding;
 		int mp3_buffer_size;
@@ -151,3 +149,4 @@ class ofOpenALSoundPlayer : public ofBaseSoundPlayer, public ofThread {
 		bool stream_end;
 };
 
+#endif
