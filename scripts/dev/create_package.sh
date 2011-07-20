@@ -6,6 +6,8 @@ version=$2
 
 runOSXSLScript=0
 
+hostArch=`uname`
+
 if [ "$platform" = "osxSL" ]; then
     platform="osx"
     runOSXSLScript=1
@@ -70,7 +72,7 @@ function deleteCodeblocks {
 
 function deleteMakefiles {
     #delete makefiles
-    rm makefile
+    rm Makefile
     rm *.make
     rm cb_build_runner.sh
 }
@@ -119,7 +121,9 @@ function deleteProjectFiles {
     if [ "$platform" = "linux" ] || [ "$platform" = "linux64" ] || [ "$platform" = "win_cb" ]; then 
         deleteVS2010
 	    deleteEclipse
-        
+        if [ "$platform" = win_cb ]; then
+            deleteMakefiles
+        fi
     fi
 
     #osx
@@ -127,6 +131,7 @@ function deleteProjectFiles {
         #delete other platform's project files
         deleteVS2010
 	    deleteEclipse
+	    deleteMakefiles
     fi
 
     #visual studio 2010
@@ -140,6 +145,7 @@ function deleteProjectFiles {
 
         #delete other platform's project files
 	    deleteEclipse
+	    deleteMakefiles
     fi
 
 
@@ -154,6 +160,7 @@ function deleteProjectFiles {
         #delete other platform's project files
 	    deleteVS2010
 	    deleteEclipse	
+	    deleteMakefiles
     fi
 
     #android
@@ -225,9 +232,22 @@ function createPackage {
    	elif [ "$platform" = "linux" ] || [ "$platform" = "linux64" ]; then 
         scripts/linux/createProjects.py -p${platform}
 	elif [ "$platform" = "osx" ]; then
-		cd $pkg_ofroot/apps/devApps/_DeployExamples/
-		xcodebuild -configuration Debug -target deployExamples -project deployExamples.xcodeproj
-		./bin/deployExamplesDebug.app/Contents/MacOS/deployExamplesDebug
+	    if [ "$hostArch" = "Linux" ]; then
+	        cd $pkg_ofroot/libs/openFrameworksCompiled/project/linux
+	        make Release
+	        cd $pkg_ofroot
+	        scripts/linux/createProjects.py apps/devApps/_DeployExamples/
+	        cd $pkg_ofroot/apps/devApps/_DeployExamples/
+	        make
+	        cd bin
+	        ./_DeployExamples
+	        cd $pkg_ofroot/libs/openFrameworksCompiled/project/linux
+	        make cleanRelease
+	    else
+    		cd $pkg_ofroot/apps/devApps/_DeployExamples/
+	    	xcodebuild -configuration Debug -target deployExamples -project deployExamples.xcodeproj
+	    	./bin/deployExamplesDebug.app/Contents/MacOS/deployExamplesDebug
+	    fi
 	fi
 
     #delete other platform libraries
