@@ -111,7 +111,8 @@ bool ofiPhoneVideoPlayer::isFrameNew() {
 //----------------------------------------
 
 unsigned char * ofiPhoneVideoPlayer::getPixels() {
-	if(videoPlayer != NULL)
+
+	if(videoPlayer != NULL && isPlaying())
 	{
 		CGImageRef currentFrameRef;
 		
@@ -144,7 +145,7 @@ unsigned char * ofiPhoneVideoPlayer::getPixels() {
 		/*We unlock the  image buffer*/
 		CVPixelBufferUnlockBaseAddress(imageBuffer,0);
 		
-		if(width==0 && widthIn != 0  && pixels != NULL) {
+		if(width==0 && widthIn != 0  && pixels == NULL) {
 			if(internalGLFormat == GL_RGB)
 				pixels = (GLubyte *) malloc(widthIn * heightIn * 3);
 			else
@@ -163,7 +164,7 @@ unsigned char * ofiPhoneVideoPlayer::getPixels() {
 			CGContextRef spriteContext;
 			
 			spriteContext = CGBitmapContextCreate(pixelsTmp, width, height, CGImageGetBitsPerComponent(currentFrameRef), width * 4, CGImageGetColorSpace(currentFrameRef), kCGImageAlphaPremultipliedLast);
-			
+						
 			CGContextDrawImage(spriteContext, CGRectMake(0.0, 0.0, (CGFloat)width, (CGFloat)height), currentFrameRef);
 			
 			CGContextRelease(spriteContext);
@@ -202,13 +203,15 @@ ofTexture * ofiPhoneVideoPlayer::getTexture()
 		uint8_t *bufferPixels = (uint8_t *)CVPixelBufferGetBaseAddress(imageBuffer); 
 		
 		if(width != min(size_t(1024),CVPixelBufferGetWidth(imageBuffer))) {
+			
 			if(videoTexture.bAllocated())
 				videoTexture.clear();
 				
 			int widthIn = min(size_t(1024),CVPixelBufferGetWidth(imageBuffer)); 
 			int heightIn = min(size_t(1024),CVPixelBufferGetHeight(imageBuffer));
 			
-			if( width==0 && widthIn != 0 && pixels != NULL) {
+			if( width==0 && widthIn != 0  && pixels == NULL) {
+								
 				if(internalGLFormat == GL_RGB)
 					pixels = (GLubyte *) malloc(widthIn * heightIn * 3);
 				else
