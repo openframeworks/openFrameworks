@@ -28,7 +28,6 @@ For example:
 - In the sidebar, under "Targets", right click on "emptyExample" and rename it to "myApp"
 
 
-
 The difference between Debug and Release mode:
 --------------------------------------------------------------------------------
 These are two build configurations, "Debug" and "Release".
