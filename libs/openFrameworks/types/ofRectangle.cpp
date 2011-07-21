@@ -13,6 +13,14 @@ ofRectangle::ofRectangle (float _x, float _y, float _w, float _h){
 	height = _h;
 }
 
+ofRectangle::ofRectangle (ofPoint pos, float _w, float _h){
+	x = pos.x;
+	y = pos.y;
+	width = _w;
+	height = _h;
+}
+
+
 ofRectangle::ofRectangle (ofRectangle const & r){
 	x = r.x;
 	y = r.y;
