@@ -31,8 +31,7 @@ ofPASoundStream::ofPASoundStream(){
 }
 
 ofPASoundStream::~ofPASoundStream(){
-	stop();
-	//close();
+	close();
 }
 
 void ofPASoundStream::setInput(ofBaseSoundInput * soundInput){
@@ -185,11 +184,10 @@ void ofPASoundStream::start(){
 
 //---------------------------------------------------------
 void ofPASoundStream::close(){
-	/*int err = Pa_Terminate();
+	int err = Pa_AbortStream(audio);
+	audio = NULL;
 	if( err != paNoError )
-    	ofLog(OF_LOG_ERROR,"PortAudio error: %s\n",Pa_GetErrorText( err ));*/
-
-	stop();
+    	ofLog(OF_LOG_ERROR,"PortAudio error: %s\n",Pa_GetErrorText( err ));
 }
 
 
