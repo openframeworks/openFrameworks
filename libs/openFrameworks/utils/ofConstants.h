@@ -205,7 +205,7 @@ typedef TESSindex ofIndexType;
 
 //------------------------------------------------  video player
 // check if any video player system is already defined from the compiler
-#if !defined(OF_VIDEO_PLAYER_GSTREAMER) && !defined(OF_VIDEO_CAPTURE_IPHONE) && !defined(OF_VIDEO_PLAYER_QUICKTIME)
+#if !defined(OF_VIDEO_PLAYER_GSTREAMER) && !defined(OF_VIDEO_PLAYER_IPHONE) && !defined(OF_VIDEO_PLAYER_QUICKTIME)
 	#ifdef TARGET_LINUX
 		#define OF_VIDEO_PLAYER_GSTREAMER
 	#else
