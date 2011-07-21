@@ -157,7 +157,8 @@ class ofBaseSoundOutput{
 		}
 
 		//legacy
-		virtual void audioRequested( float * output, int bufferSize, int nChannels ){}
+		virtual void audioRequested( float * output, int bufferSize, int nChannels ){
+		}
 };
 
 
