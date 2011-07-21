@@ -227,7 +227,7 @@ typedef TESSindex ofIndexType;
 	#elif defined(TARGET_ANDROID)
 		#define OF_SOUNDSTREAM_ANDROID
 	#else
-		#warning we need swappable sound stream api for iphone
+		#define OF_SOUNDSTREAM_IPHONE
 	#endif
 #endif
 
