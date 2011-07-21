@@ -10,7 +10,7 @@ class testApp : public ofxiPhoneApp{
 		void setup();
 		void update();
 		void draw();
-		void audioRequested( float * output, int bufferSize, int nChannels );
+		void audioOut( float * output, int bufferSize, int nChannels );
 		
 		void touchDown(ofTouchEventArgs &touch);
 		void touchMoved(ofTouchEventArgs &touch);
