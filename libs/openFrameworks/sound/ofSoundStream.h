@@ -4,6 +4,7 @@
 #include "ofBaseTypes.h"
 #include "ofBaseApp.h"
 #include "ofTypes.h"
+#include "ofBaseSoundStream.h"
 
 #ifdef OF_SOUNDSTREAM_RTAUDIO
 	#include "ofRtAudioSoundStream.h"
