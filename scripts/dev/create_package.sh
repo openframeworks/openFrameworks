@@ -122,7 +122,8 @@ function deleteProjectFiles {
         deleteVS2010
 	    deleteEclipse
         if [ "$platform" = win_cb ]; then
-            deleteMakefiles
+            rm Makefile
+            rm config.make
         fi
     fi
 
