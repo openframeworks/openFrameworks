@@ -671,19 +671,22 @@ class OFAndroidWindow implements GLSurfaceView.Renderer {
     		OFAndroid.onSurfaceCreated();
     		return;
     	}
-    	Log.i("OF","initializing app");
-    	OFAndroid.init();
-    	OFAndroid.setup(w,h);
-    	initialized = true;
-    	android.os.Process.setThreadPriority(8);
-    	
-    	if(ETC1Util.isETC1Supported()) Log.i("OF","ETC supported");
-    	else Log.i("OF","ETC not supported");
     	
     }
 
     public void onSurfaceChanged(GL10 gl, int w, int h) {
     	OFAndroid.resize(w, h);
+    	if(!setup){
+        	Log.i("OF","initializing app");
+        	OFAndroid.init();
+        	OFAndroid.setup(w,h);
+        	initialized = true;
+        	setup = false;
+        	android.os.Process.setThreadPriority(8);
+        	
+        	/*if(ETC1Util.isETC1Supported()) Log.i("OF","ETC supported");
+        	else Log.i("OF","ETC not supported");*/
+    	}
 		this.w = w;
 		this.h = h;
     }
@@ -693,5 +696,6 @@ class OFAndroidWindow implements GLSurfaceView.Renderer {
     }
 
     static boolean initialized;
+    static boolean setup;
     int w,h;
 }

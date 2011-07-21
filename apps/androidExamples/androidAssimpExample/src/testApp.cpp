@@ -8,20 +8,10 @@ void testApp::setup(){
     // we need GL_TEXTURE_2D for our models coords.
     ofDisableArbTex();
 
-    if(model.loadModel("astroBoy_walk.dae",true)){
+    loaded = false;
+    if(model.loadModel("astroboy_walk.dae",true)){
     	model.setAnimation(0);
-    	model.setPosition(ofGetWidth()/2, (float)ofGetHeight() * 0.75 , 0);
-    	//model.createLightsFromAiModel();
-    	//model.disableTextures();
-    	//model.disableMaterials();
-
-    	mesh = model.getMesh(0);
-    	position = model.getPosition();
-    	normScale = model.getNormalizedScale();
-    	scale = model.getScale();
-    	sceneCenter = model.getSceneCenter();
-    	material = model.getMaterialForMesh(0);
-        tex = model.getTextureForMesh(0);
+    	model.setPosition(ofGetWidth() * 0.5, ofGetHeight() * 0.5 , 0);
     }
 
     ofEnableBlendMode(OF_BLENDMODE_ALPHA);
@@ -49,15 +39,14 @@ void testApp::update(){
 			animationTime = 0.0;
 		}
 	    model.setNormalizedTime(animationTime);
-		mesh = model.getCurrentAnimatedMesh(0);
 	}
 
 
 	if( bAnimateMouse ){
 	    model.setNormalizedTime(animationTime);
-		mesh = model.getCurrentAnimatedMesh(0);
 	}
 
+	model.setPosition(ofGetWidth()/2, (float)ofGetHeight() * 0.75 , 0);
 
 }
 
@@ -68,7 +57,7 @@ void testApp::draw(){
     
 
     ofPushMatrix();
-		ofTranslate(model.getPosition().x+100, model.getPosition().y, 0);
+		ofTranslate(model.getPosition().x, model.getPosition().y, 0);
 		ofRotate(-mouseX, 0, 1, 0);
 		ofTranslate(-model.getPosition().x, -model.getPosition().y, 0);
 
@@ -78,56 +67,12 @@ void testApp::draw(){
 
 
     ofDrawBitmapString("fps: "+ofToString(ofGetFrameRate(), 2), 10, 15);
-    ofDrawBitmapString("keys 1-5 load models, spacebar to trigger animation", 10, 30);
-    ofDrawBitmapString("drag to control animation with mouseY", 10, 45);
+    ofDrawBitmapString("drag to control animation + rotation", 10, 45);
     ofDrawBitmapString("num animations for this model: " + ofToString(model.getAnimationCount()), 10, 60);
 }
 
 //--------------------------------------------------------------
 void testApp::keyPressed(int key){
-    switch (key) {
-        case '1':
-            model.loadModel("astroBoy_walk.dae");
-            model.setPosition(ofGetWidth()/2, (float)ofGetHeight() * 0.75 , 0);
-            ofEnableSeparateSpecularLight();
-            break;
-        case '2':
-            model.loadModel("TurbochiFromXSI.dae");
-            model.setPosition(ofGetWidth()/2, (float)ofGetHeight() * 0.75 , 0);
-            model.setRotation(0,90,1,0,0);
-            ofEnableSeparateSpecularLight();
-            break;
-        case '3':
-            model.loadModel("dwarf.x");
-            model.setPosition(ofGetWidth()/2, (float)ofGetHeight() * 0.75 , 0);
-            ofDisableSeparateSpecularLight();
-            break;
-        case '4':
-            model.loadModel("monster-animated-character-X.X");
-            model.setPosition(ofGetWidth()/2, (float)ofGetHeight() * 0.75 , 0);
-            ofDisableSeparateSpecularLight();
-            break;
-		case '5':
-			model.loadModel("squirrel/NewSquirrel.3ds");
-		    model.setPosition(ofGetWidth()/2, (float)ofGetHeight() * 0.75 , 0);
-            model.setRotation(0,-90,1,0,0);
-            ofDisableSeparateSpecularLight();
-			break;
-		case ' ':
-			bAnimate = !bAnimate;
-			break;
-        default:
-            break;
-    }
-
-
-	mesh = model.getMesh(0);
-	position = model.getPosition();
-	normScale = model.getNormalizedScale();
-	scale = model.getScale();
-	sceneCenter = model.getSceneCenter();
-	material = model.getMaterialForMesh(0);
-    tex = model.getTextureForMesh(0);
 
 }
 
@@ -144,7 +89,7 @@ void testApp::mouseMoved(int x, int y ){
 //--------------------------------------------------------------
 void testApp::mouseDragged(int x, int y, int button){
 	bAnimateMouse = true;
-	animationTime = float(y)/float(ofGetWidth());
+	animationTime = float(y)/float(ofGetHeight());
 }
 
 //--------------------------------------------------------------
@@ -160,6 +105,8 @@ void testApp::mouseReleased(int x, int y, int button){
 
 //--------------------------------------------------------------
 void testApp::windowResized(int w, int h){
+	model.calculateDimensions();
+	model.setPosition(ofGetWidth() * 0.5, (float)ofGetHeight() * 0.5 , 0);
 
 }
 

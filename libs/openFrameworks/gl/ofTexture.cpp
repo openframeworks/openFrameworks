@@ -65,7 +65,6 @@ int ofGetGlInternalFormat(const ofFloatPixels& pix) {
 string ofGetGlInternalFormatName(int glInternalFormat) {
 	switch(glInternalFormat) {
 		case GL_RGBA: return "GL_RGBA";
-		case GL_BGRA: return "GL_BGRA";
 #ifndef TARGET_OPENGLES
 		case GL_RGBA8: return "GL_RGBA8";
 #endif

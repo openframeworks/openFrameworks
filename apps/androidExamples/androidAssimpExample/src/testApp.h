@@ -26,15 +26,9 @@ class testApp : public ofBaseApp{
 		bool bAnimateMouse;
 		float animationTime;
         ofxAssimpModelLoader model;
-
-        ofVboMesh mesh;
-        ofPoint position;
-        float normScale;
-        ofPoint scale;
-        ofPoint sceneCenter;
-        ofMaterial material;
-        ofTexture tex;
         ofLight	light;
+
+        bool loaded;
 };
 
 #endif
