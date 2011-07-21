@@ -92,10 +92,13 @@ string ofToString(const vector<T>& values) {
 	stringstream out;
 	int n = values.size();
 	out << "{";
-	for(int i = 0; i < n - 1; i++) {
-		out << values[i] << ", ";
+	if(n > 0) {
+		for(int i = 0; i < n - 1; i++) {
+			out << values[i] << ", ";
+		}
+		out << values[n - 1];
 	}
-	out << values[n - 1] << "}";
+	out << "}";
 	return out.str();
 }
 
@@ -156,7 +159,7 @@ void	ofSaveFrame(bool bUseViewport = false);
 void	ofSaveViewport(string filename);
 
 //--------------------------------------------------
-vector <string> ofSplitString(const string & source, const string & delimiters, bool ignoreEmpty = false, bool trim = false);
+vector <string> ofSplitString(const string & source, const string & delimiter, bool ignoreEmpty = false, bool trim = false);
 string ofJoinString(vector <string> stringElements, const string & delimiter);
 void ofStringReplace(string& input, string searchStr, string replaceStr);
 bool ofIsStringInString(string haystack, string needle);
