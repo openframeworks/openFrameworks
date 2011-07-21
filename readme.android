@@ -1,4 +1,4 @@
-Right now thre android distribution of OF uses eclipse as the default IDE. android plugin for eclipse is not yet
+Right now the android distribution of OF uses eclipse as the default IDE. android plugin for eclipse is not yet
 very well prepared for working with native projects ( c/c++ ) so we are using a custom makefile solution. If you are used
 to android development in eclipse, things are a little different check the following instructions to know how to 
 install the development environment and compile/install applications.

@@ -1,7 +1,7 @@
 OF linux CB: 
 
-1) installation
-===============
+a) installation
+---------------
 
 inside the scripts folder you'll find under ubuntu, debian or fedora some
 scripts to install everything you need to use openframeworks. inside that
@@ -19,6 +19,8 @@ for ubuntu:
     cd your_oF_directory/scripts/linux/ubuntu
     sudo ./install_codeblocks.sh
     sudo ./install_dependencies.sh
+    if you want to have support for mp3 and some video codecs:
+    sudo ./install_codecs.sh
 
 for debian:
 
@@ -26,7 +28,9 @@ for debian:
     cd your_oF_directory/scripts/linux/debian
     ./install_codeblocks.sh
     ./install_dependencies.sh
-
+    if you want to have support for mp3 and some video codecs:
+    sudo ./install_codecs.sh
+    
 for fedora
 
     su -
@@ -38,32 +42,7 @@ that's all, now go to the apps folder where you will find the examples
 and have fun!
 
 
-
-2) ofProjectManager
-===================
-
-this is a set of python scripts that will make your life easier when creating
-projects or adding addons to existing ones.
-
-in the scripts folder you will find an `install_project_manager.sh` file.
-double click on it to install the project manager.
-
-this will install python and copy the project manager to
-`/usr/local/ofProjectManager`. at the end of then of the process you will be
-presented with a text file were you need to change the directory where your
-openFrameworks install is. 
-
-once it's installed, to create a new openFrameworks project,
-from a console do:
-
-    ofProject create project_name
-
-or to add an addon to an existing project:
-
-    ofProject add project_name ofxAddonName
-
-
-a) manual install
+b) manual install
 -----------------
 
 if you are using a different distribution than ubuntu, debian or fedora,
@@ -73,7 +52,52 @@ Also if you have problems or manage to install oF in any other distribution
 please post in the forums so we can add it to the next release.
 
 
-b) post build steps:
+c) createProjects.py
+--------------------
+
+this is a python script that will make your life easier when creating
+projects or adding addons to existing ones.
+
+to create a new openFrameworks project, or update an already existing from a 
+console do:
+
+    cd OF_ROOT    (wherever you have uncompressed OF)
+    scripts/linux/createProjects.py project_path
+
+to add addons to a project just add the name of the addon to the addons.make 
+file in the root folder of the project
+
+d) wizard
+---------
+you can also install a codeblocks wizard to create new projects, check the
+instructions in scripts/linux/codeblocks_wizard
+
+
+e) codeblocks
+-------------
+
+codeblocks projects are now using Makefiles to make the configuration easier
+take a look at the next step: d  to know how it works, the only difference is that
+now to add search paths, or libraries you need to edit config.make, if you want 
+to add addons use addons.make
+
+you can also run the createProjects.py script with a -n parameter to generate old 
+style codeblocks projects
+
+f) Makefile
+-----------
+
+every example has a Makefile you can configure it using the files: config.make
+and addons.make
+
+config.make: has options to add search paths, libraries... the syntax is the 
+usual syntax in makefiles, there's help comments inside the file
+
+addons.make: if you want to use an addon inside the addons folder, just add its
+name in a new line in this file.
+
+
+g) post build steps:
 --------------------
 	
 some folks have mentioned trouble with post-build step which copies the export
@@ -99,73 +123,7 @@ so don't open up the project via a symbolic link.
 we will report this to CB forum. 
 
 
-c) running app from within CB:
-------------------------------
-
-from 0.06 this only applies to codeblocks 8.02. if you used the install script
-or installed the svn version manually you shouldn-t need to do this
-
-because of the issue w/ codeblock not being able to run a shell script when you
-click run, we have a hack :)
-
-in the post build step, we call a shell script (`of_build_runner.sh`) and tell
-it to either CD into the directory of the exe and run it, or to launch nautilus
-file browser to that directory so you can click on the shell scripts.
-essentially, we are making build do one of three things:
-
-* build = build
-* build = build + launch nautilus to the folder where the script/exe is
-* build = build + run the exe
-
-this feature is turned off by default. 
-if you want to turn it on, just try either: 
-
-a) changing the custom variables in `project->build options->custom variables`
-(make sure you have selected both targets, not just debug or release). set
-either (not both, I think it wont be worth it) to true.
-
-b) opening up the .cbp file and altering the xml:
-
-    <Environment>
-            <Variable name="nautilusOnBuild" value="false" />
-            <Variable name="runOnBuild" value="false" />
-    </Environment> 
-
-setting to true.
-
-* nautilusOnBuild - pops up the file explorer to the folder where the app is
-* runOnBuild - runs the binary with the correct `LD_LIBRARY_PATH` set, so the app will run
-
-no more searching around to run apps we hope !!
-
-in "scripts" we have scripts that can turn these features on or off in all .cbp
-files in the folder structure. word
-
-d) unicap
----------
-
-from 0.05 we have unicap up and running 
-
-try ucview to test your camera's capability. and please report any bugs on
-the forum!
-
-if you have any issues with cameras (we've noticed a couple) you can go back
-to V4L by commenting out a line in ofConstants.h:
-
-    #define OF_SWITCH_TO_UNICAP_FOR_LINUX_VIDCAP
-
-    #ifdef OF_SWITCH_TO_UNICAP_FOR_LINUX_VIDCAP
-    #define OF_VIDEO_CAPTURE_UNICAP
-    #else
-    #define OF_VIDEO_CAPTURE_V4L
-    #endif
-
-just make the first line commented out, like:
-
-    //#define OF_SWITCH_TO_UNICAP_FOR_LINUX_VIDCA
-
-
-e) scripts
+h) scripts
 ----------
 
 we've created a scripts directory to make everyone life easier, and to get a
@@ -175,17 +133,8 @@ build = build + run system.
 we are hoping that crafty folk will get into scripting, esp. as it relates to
 addons, etc.  please share any helpful scripts on the forum.
 
-e) Makefile
------------
-
-as so many linux guys have asked for, we've included a Makefile for each
-example, the makefiles are autogenerated with a script to convert codeblocks
-projects to Makefiles, done by pix, you can find more info and download the
-latest version of that script 
-
-here: http://pix.test.at/wiki/cbp2makefile
 	
-f) linux info, advice, etc
+i) linux info, advice, etc
 --------------------------
 
 linux version of openFrameworks is in some way different to windows and mac,
