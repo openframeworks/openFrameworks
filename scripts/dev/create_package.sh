@@ -225,6 +225,14 @@ function createPackage {
 		rm -Rf addonsExamples
 	fi 
 	
+	#delete drag & drop example in linux, still not working
+	if [ "$pkg_platform" == "linux" ] || [ "$pkg_platform" == "linux64" ]; then
+	    rm -Rf examples/dragDropExample
+	fi
+	
+	#delete ofxSynth addon, still not stable
+	rm -Rf addons/ofxSynth
+	
 	#create project files
 	cd $pkg_ofroot
     if [ "$platform" = "win_cb" ]; then 
