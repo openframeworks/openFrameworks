@@ -4,6 +4,7 @@
 #include "ofBaseTypes.h"
 #include "ofBaseApp.h"
 #include "ofTypes.h"
+#include "ofBaseSoundStream.h"
 
 #ifdef OF_SOUNDSTREAM_RTAUDIO
 	#include "ofRtAudioSoundStream.h"
@@ -14,8 +15,9 @@
 #elif defined(OF_SOUNDSTREAM_ANDROID)
 	#include "ofxAndroidSoundStream.h"
 	#define OF_SOUND_STREAM_TYPE ofxAndroidSoundStream
-#else
-	// iphone soundstream
+#elif defined(OF_SOUNDSTREAM_IPHONE)
+	#include "ofxiPhoneSoundStream.h"
+	#define OF_SOUND_STREAM_TYPE ofxiPhoneSoundStream
 #endif 
 
 void ofSoundStreamSetup(int nOutputChannels, int nInputChannels, ofBaseApp * appPtr = NULL);

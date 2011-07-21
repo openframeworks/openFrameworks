@@ -205,7 +205,7 @@ typedef TESSindex ofIndexType;
 
 //------------------------------------------------  video player
 // check if any video player system is already defined from the compiler
-#if !defined(OF_VIDEO_PLAYER_GSTREAMER) && !defined(OF_VIDEO_CAPTURE_IPHONE) && !defined(OF_VIDEO_PLAYER_QUICKTIME)
+#if !defined(OF_VIDEO_PLAYER_GSTREAMER) && !defined(OF_VIDEO_PLAYER_IPHONE) && !defined(OF_VIDEO_PLAYER_QUICKTIME)
 	#ifdef TARGET_LINUX
 		#define OF_VIDEO_PLAYER_GSTREAMER
 	#else
@@ -227,7 +227,7 @@ typedef TESSindex ofIndexType;
 	#elif defined(TARGET_ANDROID)
 		#define OF_SOUNDSTREAM_ANDROID
 	#else
-		#warning we need swappable sound stream api for iphone
+		#define OF_SOUNDSTREAM_IPHONE
 	#endif
 #endif
 
