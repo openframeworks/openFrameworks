@@ -3,25 +3,7 @@
 #include "ofConstants.h"
 #include "ofTypes.h"
 
-#if !defined( TARGET_OF_IPHONE ) && !defined(TARGET_ANDROID)
-extern "C" {
-#include "fmod.h"
-#include "fmod_errors.h"
-}
-#endif
 
-//		TO DO :
-//		---------------------------
-// 		-fft via fmod, as in the last time...
-// 		-close fmod if it's up
-//		-loadSoundForStreaming(char * fileName);
-//		---------------------------
-
-// 		interesting:
-//		http://www.compuphase.com/mp3/mp3loops.htm
-
-
-// ---------------------------------------------------------------------------- SOUND SYSTEM FMOD
 // --------------------- global functions:
 
 //TODO: FIX THIS SHIT!!!!!!
@@ -35,17 +17,6 @@ void ofSoundShutdown();
 #include "ofBaseTypes.h"
 #include "ofBaseSoundPlayer.h"
 
-#if !defined(OF_SOUND_PLAYER_QUICKTIME) && !defined(OF_SOUND_PLAYER_FMOD) && !defined(OF_SOUND_PLAYER_OPENAL)
-  #ifdef TARGET_OF_IPHONE 
-  	#define OF_SOUND_PLAYER_IPHONE
-  #elif defined TARGET_LINUX
-  	#define OF_SOUND_PLAYER_OPENAL
-  #elif !defined(TARGET_ANDROID)
-  	#define OF_SOUND_PLAYER_FMOD
-  #else
-  	void ofSoundShutdown(){}
-  #endif
-#endif
 
 #ifdef OF_SOUND_PLAYER_QUICKTIME
 #include "ofQuicktimeSoundPlayer.h"

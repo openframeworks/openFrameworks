@@ -25,9 +25,9 @@
 # edit the following  vars to customize the makefile
 
 include config.make
-include $(OF_ROOT)/libs/openFrameworksCompiled/project/android/paths.make
 
 ifeq ($(findstring Android,$(MAKECMDGOALS)),Android)
+	include $(OF_ROOT)/libs/openFrameworksCompiled/project/android/paths.make
 	ARCH = android
 	ifeq ($(shell uname),Darwin)
 		HOST_PLATFORM = darwin-x86

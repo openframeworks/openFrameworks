@@ -1,6 +1,7 @@
 #include "ofPASoundStream.h"
-#include "ofConstants.h"
-//#ifdef OF_USING_PORTAUDIO
+
+#ifdef OF_SOUNDSTREAM_PORTAUDIO
+
 #include "portaudio.h"
 #include "ofUtils.h"
 #include "ofEvents.h"
@@ -30,8 +31,7 @@ ofPASoundStream::ofPASoundStream(){
 }
 
 ofPASoundStream::~ofPASoundStream(){
-	stop();
-	//close();
+	close();
 }
 
 void ofPASoundStream::setInput(ofBaseSoundInput * soundInput){
@@ -184,11 +184,10 @@ void ofPASoundStream::start(){
 
 //---------------------------------------------------------
 void ofPASoundStream::close(){
-	/*int err = Pa_Terminate();
+	int err = Pa_AbortStream(audio);
+	audio = NULL;
 	if( err != paNoError )
-    	ofLog(OF_LOG_ERROR,"PortAudio error: %s\n",Pa_GetErrorText( err ));*/
-
-	stop();
+    	ofLog(OF_LOG_ERROR,"PortAudio error: %s\n",Pa_GetErrorText( err ));
 }
 
 
@@ -224,4 +223,4 @@ void ofPASoundStream::setDeviceID(int _deviceID){
 long unsigned long ofPASoundStream::getTickCount(){
 	return tickCount;
 }
-//#endif
+#endif

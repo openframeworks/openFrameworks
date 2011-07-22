@@ -9,7 +9,6 @@ HEADER_TESS2 = "$(OF_PATH)/libs/tess2/include"
 HEADER_CAIRO = "$(OF_PATH)/libs/cairo/include/cairo"
 HEADER_RTAUDIO = "$(OF_PATH)/libs/rtaudio/include"
 
-LIB_ASSIMP = "$(OF_PATH)/libs/assimp/lib/osx/assimp.a"
 LIB_FMODEX = "$(OF_PATH)/libs/fmodex/lib/osx/libfmodex.dylib"
 LIB_GLUT = "$(OF_PATH)/libs/glut/lib/osx/GLUT.framework/Versions/A/GLUT"
 LIB_FREEIMAGE = "$(OF_PATH)/libs/FreeImage/lib/osx/freeimage.a"
@@ -25,5 +24,5 @@ LIB_CAIRO1 = "$(OF_PATH)/libs/cairo/lib/osx/cairo-script-interpreter.a"
 LIB_CAIRO2 = "$(OF_PATH)/libs/cairo/lib/osx/cairo.a"
 LIB_CAIRO3 = "$(OF_PATH)/libs/cairo/lib/osx/pixman-1.a"
 
-OF_CORE_LIBS = $(LIB_POCOFOUNDATION) $(LIB_POCONET) $(LIB_POCOXML) $(LIB_POCOUTIL) $(LIB_TESS) $(LIB_GLEW) $(LIB_ASSIMP) $(LIB_CAIRO1) $(LIB_CAIRO2) $(LIB_CAIRO3) $(LIB_FMODEX) $(LIB_RTAUDIO)
+OF_CORE_LIBS = $(LIB_POCOFOUNDATION) $(LIB_POCONET) $(LIB_POCOXML) $(LIB_POCOUTIL) $(LIB_TESS) $(LIB_GLEW) $(LIB_CAIRO1) $(LIB_CAIRO2) $(LIB_CAIRO3) $(LIB_FMODEX) $(LIB_RTAUDIO)
 OF_CORE_HEADERS = $(HEADER_OF) $(HEADER_POCO) $(HEADER_FREETYPE) $(HEADER_FREETYPE2) $(HEADER_FMODEX) $(HEADER_GLEW) $(HEADER_FREEIMAGE) $(HEADER_TESS2) $(HEADER_CAIRO) $(HEADER_RTAUDIO)
