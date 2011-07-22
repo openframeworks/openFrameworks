@@ -108,14 +108,14 @@
 			<Add after='cmd /c if not exist &quot;$(PROJECT_DIR)bin/data&quot; mkdir &quot;$(PROJECT_DIR)bin/data&quot;' />
 			<Mode after="always" />
 		</ExtraCommands>
-		<Unit filename="src\main.cpp">
-			<Option virtualFolder="src\" />
+		<Unit filename="src/main.cpp">
+			<Option virtualFolder="src" />
 		</Unit>
-		<Unit filename="src\testApp.cpp">
-			<Option virtualFolder="src\" />
+		<Unit filename="src/testApp.cpp">
+			<Option virtualFolder="src" />
 		</Unit>
-		<Unit filename="src\testApp.h">
-			<Option virtualFolder="src\" />
+		<Unit filename="src/testApp.h">
+			<Option virtualFolder="src" />
 		</Unit>
 		<Extensions>
 			<code_completion />

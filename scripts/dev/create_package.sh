@@ -4,13 +4,15 @@
 platform=$1
 version=$2
 
-runOSXSLScript=0
+#runOSXSLScript=0
 
-if [ "$platform" = "osxSL" ]; then
-    platform="osx"
-    runOSXSLScript=1
-    echo "will make changes for snow leopard"
-fi
+hostArch=`uname`
+
+#if [ "$platform" = "osxSL" ]; then
+#    platform="osx"
+#    runOSXSLScript=1
+#    echo "will make changes for snow leopard"
+#fi
 
 if [ "$platform" != "win_cb" ] && [ "$platform" != "linux" ] && [ "$platform" != "linux64" ] && [ "$platform" != "vs2008" ] && [ "$platform" != "vs2010" ] && [ "$platform" != "osx" ] && [ "$platform" != "android" ] && [ "$platform" != "iphone" ] && [ "$platform" != "all" ]; then
     echo usage: 
@@ -70,7 +72,7 @@ function deleteCodeblocks {
 
 function deleteMakefiles {
     #delete makefiles
-    rm makefile
+    rm Makefile
     rm *.make
     rm cb_build_runner.sh
 }
@@ -119,7 +121,10 @@ function deleteProjectFiles {
     if [ "$platform" = "linux" ] || [ "$platform" = "linux64" ] || [ "$platform" = "win_cb" ]; then 
         deleteVS2010
 	    deleteEclipse
-        
+        if [ "$platform" = win_cb ]; then
+            rm Makefile
+            rm config.make
+        fi
     fi
 
     #osx
@@ -127,6 +132,7 @@ function deleteProjectFiles {
         #delete other platform's project files
         deleteVS2010
 	    deleteEclipse
+	    deleteMakefiles
     fi
 
     #visual studio 2010
@@ -140,6 +146,7 @@ function deleteProjectFiles {
 
         #delete other platform's project files
 	    deleteEclipse
+	    deleteMakefiles
     fi
 
 
@@ -154,6 +161,7 @@ function deleteProjectFiles {
         #delete other platform's project files
 	    deleteVS2010
 	    deleteEclipse	
+	    deleteMakefiles
     fi
 
     #android
@@ -170,12 +178,12 @@ function createPackage {
     
     #remove previously created package 
     cd $pkg_ofroot/..
-	if [ $runOSXSLScript = 1 ]; then
-		rm -Rf of_preRelease_v${pkg_version}_osxSL*
-	else
+	#if [ $runOSXSLScript = 1 ]; then
+	#	rm -Rf of_preRelease_v${pkg_version}_osxSL*
+	#else
 	    rm -Rf of_preRelease_v${pkg_version}_${pkg_platform}.*
 		rm -Rf of_preRelease_v${pkg_version}_${pkg_platform}_*
-    fi
+    #fi
     echo "creating package $pkg_platform $version in $pkg_ofroot"
     
     #delete other platforms example project files
@@ -218,6 +226,14 @@ function createPackage {
 		rm -Rf addonsExamples
 	fi 
 	
+	#delete drag & drop example in linux, still not working
+	if [ "$pkg_platform" == "linux" ] || [ "$pkg_platform" == "linux64" ]; then
+	    rm -Rf examples/dragDropExample
+	fi
+	
+	#delete ofxSynth addon, still not stable
+	rm -Rf addons/ofxSynth
+	
 	#create project files
 	cd $pkg_ofroot
     if [ "$platform" = "win_cb" ]; then 
@@ -225,9 +241,22 @@ function createPackage {
    	elif [ "$platform" = "linux" ] || [ "$platform" = "linux64" ]; then 
         scripts/linux/createProjects.py -p${platform}
 	elif [ "$platform" = "osx" ]; then
-		cd $pkg_ofroot/apps/devApps/_DeployExamples/
-		xcodebuild -configuration Debug -target deployExamples -project deployExamples.xcodeproj
-		./bin/deployExamplesDebug.app/Contents/MacOS/deployExamplesDebug
+	    if [ "$hostArch" = "Linux" ]; then
+	        cd $pkg_ofroot/libs/openFrameworksCompiled/project/linux
+	        make Release
+	        cd $pkg_ofroot
+	        scripts/linux/createProjects.py apps/devApps/_DeployExamples/
+	        cd $pkg_ofroot/apps/devApps/_DeployExamples/
+	        make
+	        cd bin
+	        ./_DeployExamples
+	        cd $pkg_ofroot/libs/openFrameworksCompiled/project/linux
+	        make cleanRelease
+	    else
+    		cd $pkg_ofroot/apps/devApps/_DeployExamples/
+	    	xcodebuild -configuration Debug -target deployExamples -project deployExamples.xcodeproj
+	    	./bin/deployExamplesDebug.app/Contents/MacOS/deployExamplesDebug
+	    fi
 	fi
 
     #delete other platform libraries
@@ -375,12 +404,12 @@ function createPackage {
 	fi
 
     #if snow leopard change 10.4u to 10.5
-    if [ $runOSXSLScript = 1 ]; then
-        cd $pkg_ofroot
-        echo "replacing 10.4u with 10.5 for snow leopard"
-        find . -name '*.pbxproj' | xargs perl -pi -e 's/10\.4u/10\.5/g'
-        pkg_platform="osxSL"
-    fi
+    #if [ $runOSXSLScript = 1 ]; then
+    #    cd $pkg_ofroot
+    #    echo "replacing 10.4u with 10.5 for snow leopard"
+    #    find . -name '*.pbxproj' | xargs perl -pi -e 's/10\.4u/10\.5/g'
+    #    pkg_platform="osxSL"
+    #fi
     
     #choose readme
     cd $pkg_ofroot
@@ -410,20 +439,15 @@ function createPackage {
     #create compressed package
     cd $pkg_ofroot/..
     if [ "$pkg_platform" = "linux" ] || [ "$pkg_platform" = "linux64" ] || [ "$pkg_platform" = "android" ]; then
-        mkdir of_preRelease_v${pkg_version}_${pkg_platform}_FAT
-        mv openFrameworks/* of_preRelease_v${pkg_version}_${pkg_platform}_FAT
-        tar czf of_preRelease_v${pkg_version}_${pkg_platform}_FAT.tar.gz of_preRelease_v${pkg_version}_${pkg_platform}_FAT
-        mv of_preRelease_v${pkg_version}_${pkg_platform}_FAT of_preRelease_v${pkg_version}_${pkg_platform}
-        rm -Rf of_preRelease_v${pkg_version}_${pkg_platform}/addons of_preRelease_v${pkg_version}_${pkg_platform}/apps/addonsExamples
+        mkdir of_preRelease_v${pkg_version}_${pkg_platform}
+        mv openFrameworks/* of_preRelease_v${pkg_version}_${pkg_platform}
         tar czf of_preRelease_v${pkg_version}_${pkg_platform}.tar.gz of_preRelease_v${pkg_version}_${pkg_platform}
         rm -Rf of_preRelease_v${pkg_version}_${pkg_platform}
     else
-        mkdir of_preRelease_v${pkg_version}_${pkg_platform}_FAT
-        mv openFrameworks/* of_preRelease_v${pkg_version}_${pkg_platform}_FAT
-        zip -r of_preRelease_v${pkg_version}_${pkg_platform}_FAT.zip of_preRelease_v${pkg_version}_${pkg_platform}_FAT > /dev/null
-        mv of_preRelease_v${pkg_version}_${pkg_platform}_FAT of_preRelease_v${pkg_version}_${pkg_platform}        
-        rm -Rf of_preRelease_v${pkg_version}_${pkg_platform}/addons of_preRelease_v${pkg_version}_${pkg_platform}/apps/addonsExamples
+        mkdir of_preRelease_v${pkg_version}_${pkg_platform}
+        mv openFrameworks/* of_preRelease_v${pkg_version}_${pkg_platform}
         zip -r of_preRelease_v${pkg_version}_${pkg_platform}.zip of_preRelease_v${pkg_version}_${pkg_platform} > /dev/null
+        mv of_preRelease_v${pkg_version}_${pkg_platform} of_preRelease_v${pkg_version}_${pkg_platform}        
         rm -Rf of_preRelease_v${pkg_version}_${pkg_platform}
     fi
 }
@@ -441,12 +465,9 @@ if [ "$platform" = "all" ]; then
     
     cd $packageroot
     echo dir: $PWD
-    mkdir of_preRelease_v${version}_all_FAT
-    mv addons apps export libs other scripts $packageroot/of_preRelease_v${version}_all_FAT
-    tar czf of_preRelease_v$version_all_FAT.tar.gz of_preRelease_v${version}_all_FAT
-    mv of_preRelease_v${version}_all_FAT of_preRelease_v${version}_all
-    rm -Rf of_preRelease_v${version}_all/addons of_preRelease_v${version}_all/apps/addonsExamples
-    tar czf of_preRelease_v$version_all.tar.gz of_preRelease_v$version_all
+    mkdir of_preRelease_v${version}_all
+    mv addons apps export libs other scripts $packageroot/of_preRelease_v${version}_all
+    tar czf of_preRelease_v$version_all_FAT.tar.gz of_preRelease_v${version}_all
     rm -Rf of_preRelease_v${version}_all
     mv * $packageroot/..
     #rm -Rf $packageroot

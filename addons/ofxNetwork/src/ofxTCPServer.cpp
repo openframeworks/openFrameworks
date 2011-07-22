@@ -8,6 +8,7 @@ ofxTCPServer::ofxTCPServer(){
 	idCount		= 0;
 	port		= 0;
 	str			= "";
+	messageDelimiter = "[/TCP]";
 }
 
 //--------------------------
@@ -37,6 +38,13 @@ bool ofxTCPServer::setup(int _port, bool blocking){
 
 	startThread(true, false);
 	return true;
+}
+
+//--------------------------
+void ofxTCPServer::setMessageDelimiter(string delim){
+	if(delim != ""){
+		messageDelimiter = delim;
+	}
 }
 
 //--------------------------
@@ -214,8 +222,13 @@ bool ofxTCPServer::isClientConnected(int clientID){
 void ofxTCPServer::threadedFunction(){
 
 	while( isThreadRunning() ){
-
-		if(TCPConnections.size() == TCP_MAX_CLIENTS){
+		
+		int acceptId;
+		for(acceptId = 0; acceptId <= idCount; acceptId++){
+			if(!isClientConnected(acceptId)) break;
+		}
+		
+		if(acceptId == TCP_MAX_CLIENTS){
 			if(verbose)printf("ofxTCPServer: reached max connected clients! \nofxTCPServer: no more connections accepted\n");
 			break;
 		}
@@ -223,15 +236,14 @@ void ofxTCPServer::threadedFunction(){
 		if( !TCPServer.Listen(TCP_MAX_CLIENTS) ){
 			if(verbose)printf("ofxTCPServer: Listen() failed\n");
 		}
-
-
-		if( !TCPServer.Accept(TCPConnections[idCount].TCPClient) ){
+		
+		if( !TCPServer.Accept(TCPConnections[acceptId].TCPClient) ){
 			if(verbose)printf("ofxTCPServer: Accept() failed\n");
-			continue;
 		}else{
-			TCPConnections[idCount].setup(idCount, bClientBlocking);
-			if(verbose)printf("ofxTCPServer: client %i connected on port %i\n", idCount, TCPConnections[idCount].getPort());
-			idCount++;
+			TCPConnections[acceptId].setup(acceptId, bClientBlocking);
+			TCPConnections[acceptId].setMessageDelimiter(messageDelimiter);
+			if(verbose)printf("ofxTCPServer: client %i connected on port %i\n", acceptId, TCPConnections[acceptId].getPort());
+			if(acceptId == idCount) idCount++;
 		}
 	}
 	if(verbose)printf("ofxTCPServer: listen thread ended\n");

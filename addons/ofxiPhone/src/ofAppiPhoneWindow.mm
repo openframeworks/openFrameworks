@@ -155,34 +155,16 @@ ofPoint	ofAppiPhoneWindow::getScreenSize() {
 
 int ofAppiPhoneWindow::getWidth(){
 	if( orientation == OF_ORIENTATION_DEFAULT || orientation == OF_ORIENTATION_180 ){
-		
-		if(retinaEnabled)
-			if ([[UIScreen mainScreen] respondsToSelector:@selector(scale)])
-				return (int)getScreenSize().x * [[UIScreen mainScreen] scale];
-		
 		return (int)getScreenSize().x;
 	}
-	
-	if(retinaEnabled)
-		if ([[UIScreen mainScreen] respondsToSelector:@selector(scale)])
-			return (int)getScreenSize().y * [[UIScreen mainScreen] scale];
 	
 	return (int)getScreenSize().y;
 }
 
 int ofAppiPhoneWindow::getHeight(){
 	if( orientation == OF_ORIENTATION_DEFAULT || orientation == OF_ORIENTATION_180 ){
-		
-		if(retinaEnabled)
-			if ([[UIScreen mainScreen] respondsToSelector:@selector(scale)])
-				return (int)getScreenSize().y * [[UIScreen mainScreen] scale];
-		
 		return (int)getScreenSize().y;
 	}
-	
-	if(retinaEnabled)
-		if ([[UIScreen mainScreen] respondsToSelector:@selector(scale)])
-			return (int)getScreenSize().x * [[UIScreen mainScreen] scale];
 	
 	return (int)getScreenSize().x;
 }

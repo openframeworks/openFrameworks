@@ -6,7 +6,7 @@
       android:installLocation="preferExternal">
     <uses-sdk android:minSdkVersion="8" />
     <application android:label="@string/app_name"
-                 android:debuggable="true" android:icon="@drawable/ofwgreen">
+                 android:debuggable="true" android:icon="@drawable/ofwgreen" android:theme="@android:style/Theme.NoTitleBar.Fullscreen">
         <activity android:name="OFActivity"
                   android:label="@string/app_name" android:configChanges="orientation">
             <intent-filter>

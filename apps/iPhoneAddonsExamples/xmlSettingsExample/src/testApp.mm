@@ -4,6 +4,12 @@
 //--------------------------------------------------------------
 void testApp::setup(){
 
+	// register touch events
+	ofxRegisterMultitouch(this);
+	
+	//iPhoneAlerts will be sent to this.
+	ofxiPhoneAlerts.addListener(this);
+	
 	ofxiPhoneSetOrientation(OFXIPHONE_ORIENTATION_LANDSCAPE_RIGHT);
 
 	ofBackground(255,255,255);
