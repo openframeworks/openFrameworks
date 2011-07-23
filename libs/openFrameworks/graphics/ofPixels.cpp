@@ -669,7 +669,7 @@ bool ofPixels_<PixelType>::resizeTo(ofPixels_<PixelType>& dst, ofInterpolationMe
 			float px2, py2;
 			float px3, py3;
 
-			float srcColor;
+			float srcColor = 0;
 			float interpCol;
 			int patchRow;
 			int patchIndex;

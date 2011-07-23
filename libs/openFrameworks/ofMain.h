@@ -62,9 +62,7 @@
 //--------------------------
 // audio
 #include "ofSoundStream.h"
-#ifndef TARGET_ANDROID
 #include "ofSoundPlayer.h"
-#endif
 
 //--------------------------
 // video

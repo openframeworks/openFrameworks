@@ -1,4 +1,7 @@
 #include "ofOpenALSoundPlayer.h"
+
+#ifdef OF_SOUND_PLAYER_OPENAL
+
 #include "ofUtils.h"
 #include "ofMath.h"
 #include "ofFileUtils.h"
@@ -828,3 +831,5 @@ void ofOpenALSoundPlayer::runWindow(vector<float> & signal){
 	for(int i = 0; i < (int)signal.size(); i++)
 		signal[i] *= window[i];
 }
+
+#endif

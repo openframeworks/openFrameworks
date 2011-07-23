@@ -12,6 +12,8 @@
 
 class ofHttpRequest{
 public:
+	ofHttpRequest(){};
+
 	ofHttpRequest(string url,string name,bool saveTo=false)
 	:url(url)
 	,name(name)
@@ -30,6 +32,8 @@ private:
 
 class ofHttpResponse{
 public:
+	ofHttpResponse(){}
+
 	ofHttpResponse(ofHttpRequest request,const ofBuffer & data,int status, string error)
 	:request(request)
 	,data(data)
@@ -40,6 +44,10 @@ public:
 	:request(request)
 	,status(status)
 	,error(error){}
+
+	operator ofBuffer&(){
+		return data;
+	}
 
 	ofHttpRequest	    request;
 	ofBuffer		    data;

@@ -2,7 +2,7 @@
 
 
 //--------------------------------------------------------------
-void testApp::setup(){	 
+void testApp::setup(){
 	snapCounter = 0;
 	bSnapshot = false;
 	cooper.loadFont("cooperBlack.ttf", 50);
@@ -13,20 +13,20 @@ void testApp::setup(){
 
 //--------------------------------------------------------------
 void testApp::update(){
-	ofBackground(255,255,255);	
+	ofBackground(255,255,255);
 }
 
 
 //--------------------------------------------------------------
 void testApp::draw(){
-	
+
 	phase += 0.35f;
 
 	ofSetHexColor(0xDDDDFF);
 	ofRect(200,200,300,180);
-	
-	
-	
+
+
+
 	ofEnableAlphaBlending();
 	ofSetColor(255,255,255,128);
 	glPushMatrix();
@@ -36,19 +36,19 @@ void testApp::draw(){
 		glScalef(1 + 0.5f * sin(phase/10.0f), 1 + 0.5f * sin(phase/10.0f), 1);
 		cooper.drawString("catch me\nif you can!", -width/2,20);
 	glPopMatrix();
-	
+
 	ofSetColor(255,150,140,128);
 	glPushMatrix();
 		glTranslatef(330,280,0);
 		glRotatef(phase*5, 0,0,1);
 		ofRect(-25,-25,50,50);
 	glPopMatrix();
-	
+
 	ofDisableAlphaBlending();
-	
+
 	ofSetHexColor(0x000000);
 	ofDrawBitmapString("press 'x' to capture screen \n", 200,460);
-	
+
 	if (bSnapshot == true){
 		// grab a rectangle at 200,200, width and height of 300,180
 		img.grabScreen(200,200,300,180);
@@ -59,43 +59,45 @@ void testApp::draw(){
 		snapCounter++;
 		bSnapshot = false;
 	}
-	
+
 	ofDrawBitmapString(snapString, 600,460);
 
-	
+
 	ofSetHexColor(0xFFFFFF);
-	img.draw(600,200,300,180);
-	
-	
+	if(snapCounter > 0) {
+        img.draw(600,200,300,180);
+	}
+
+
 }
 
 
 //--------------------------------------------------------------
-void testApp::keyPressed  (int key){ 
+void testApp::keyPressed  (int key){
 	if (key == 'x'){
 		bSnapshot = true;
 	}
 }
 
 //--------------------------------------------------------------
-void testApp::keyReleased(int key){ 
-	
+void testApp::keyReleased(int key){
+
 }
 
 
 //--------------------------------------------------------------
 void testApp::mouseMoved(int x, int y ){
-	
+
 }
 
 //--------------------------------------------------------------
 void testApp::mouseDragged(int x, int y, int button){
-	
+
 }
 
 //--------------------------------------------------------------
 void testApp::mousePressed(int x, int y, int button){
-	
+
 }
 
 //--------------------------------------------------------------
@@ -114,6 +116,6 @@ void testApp::gotMessage(ofMessage msg){
 }
 
 //--------------------------------------------------------------
-void testApp::dragEvent(ofDragInfo dragInfo){ 
+void testApp::dragEvent(ofDragInfo dragInfo){
 
 }
