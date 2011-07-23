@@ -14,15 +14,14 @@ HEADER_RTAUDIO = "$(OF_PATH)/libs/rtaudio/include"
 HEADER_GLU = "$(OF_PATH)/libs/glu/include_iphone"
 
 LIB_FREEIMAGE = "$(OF_PATH)/libs/FreeImage/lib/osx/freeimage.a"
-LIB_FREETYPE = "$(OF_PATH)/libs/freetype/lib/osx/freetype.a"
+LIB_FREETYPE = "$(OF_PATH)/libs/freetype/lib/iphone/freetype.a"
 LIB_GLEW = "$(OF_PATH)/libs/glew/lib/osx/glew.a"
 LIB_RTAUDIO = "$(OF_PATH)/libs/rtAudio/lib/osx/rtAudio.a"
 LIB_TESS = "$(OF_PATH)/libs/tess2/lib/osx/tess2.a"
 LIB_CAIRO = "$(OF_PATH)/libs/cairo/lib/osx/cairo.a"
 LIB_GLU = "$(OF_PATH)/libs/glu/lib/iphone/glu.a"
 
-LIB_FREEIMAGE_IPHONE = "$(OF_PATH)/libs/FreeImage/lib/iphone/freeimage-iphone.a"
-LIB_FREETYPE_IPHONE = "$(OF_PATH)/libs/freetype/lib/iphone/freetype-iphone.a"
+LIB_FREEIMAGE_IPHONE = "$(OF_PATH)/libs/FreeImage/lib/iphone/freeimage.a"
 LIB_POCOFOUNDATION_IPHONE = "$(OF_PATH)/libs/poco/lib/iphone/PocoFoundation.a"
 LIB_POCONET_IPHONE = "$(OF_PATH)/libs/poco/lib/iphone/PocoNet.a"
 LIB_POCOUTIL_IPHONE = "$(OF_PATH)/libs/poco/lib/iphone/PocoUtil.a"
@@ -32,5 +31,5 @@ LIB_GLU_IPHONE = "$(OF_PATH)/libs/glu/lib/iphone/glu-iphone.a"
 
 MISC_FLAGS = "-ObjC"
 
-OF_CORE_LIBS = $(MISC_FLAGS) $(LIB_FREETYPE) $(LIB_FREETYPE_IPHONE) $(LIB_FREEIMAGE) $(LIB_FREEIMAGE_IPHONE) $(LIB_GLEW) $(LIB_CAIRO) $(LIB_POCOFOUNDATION_IPHONE) $(LIB_POCONET_IPHONE) $(LIB_POCOXML_IPHONE) $(LIB_POCOUTIL_IPHONE) $(LIB_TESS_IPHONE) $(LIB_GLEW_IPHONE) $(LIB_CAIRO_IPHONE) $(LIB_FMODEX_IPHONE) $(LIB_RTAUDIO_IPHONE) $(LIB_GLU) $(LIB_GLU_IPHONE)
+OF_CORE_LIBS = $(MISC_FLAGS) $(LIB_FREETYPE) $(LIB_FREEIMAGE) $(LIB_FREEIMAGE_IPHONE) $(LIB_GLEW) $(LIB_CAIRO) $(LIB_POCOFOUNDATION_IPHONE) $(LIB_POCONET_IPHONE) $(LIB_POCOXML_IPHONE) $(LIB_POCOUTIL_IPHONE) $(LIB_TESS_IPHONE) $(LIB_GLEW_IPHONE) $(LIB_CAIRO_IPHONE) $(LIB_FMODEX_IPHONE) $(LIB_RTAUDIO_IPHONE) $(LIB_GLU) $(LIB_GLU_IPHONE)
 OF_CORE_HEADERS = $(HEADER_OF) $(HEADER_OFXIPHONE) $(HEADER_OFXMULTITOUCH) $(HEADER_OFXACCELEROMETER) $(HEADER_POCO) $(HEADER_FREETYPE) $(HEADER_FREETYPE2) $(HEADER_FMODEX) $(HEADER_GLEW) $(HEADER_FREEIMAGE) $(HEADER_TESS2) $(HEADER_CAIRO) $(HEADER_RTAUDIO) $(HEADER_GLU)

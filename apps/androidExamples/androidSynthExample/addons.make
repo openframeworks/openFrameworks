@@ -1,3 +1,0 @@
-ofxAndroid
-ofxAccelerometer
-ofxSynth

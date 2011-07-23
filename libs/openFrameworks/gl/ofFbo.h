@@ -4,9 +4,7 @@
 
 //#ifndef TARGET_OPENGLES
 
-
-
-class ofFbo {
+class ofFbo : public ofBaseDraws, public ofBaseHasTexture {
 public:
 	struct Settings;
 	
@@ -16,24 +14,33 @@ public:
 	virtual ~ofFbo();
 
 	void allocate(int width, int height, int internalformat = GL_RGBA, int numSamples = 0);
-	void allocateForShadow( int width, int height );
+	//void allocateForShadow( int width, int height );
 	void allocate(Settings settings = Settings());
 	
 	void draw(float x, float y);
 	void draw(float x, float y, float width, float height);
 	
-	int getWidth();
-	int getHeight();
+	void setAnchorPercent(float xPct, float yPct);
+    void setAnchorPoint(float x, float y);
+	void resetAnchor();
+	
+	void setDefaultTextureIndex(int defaultTexture);
+	int getDefaultTextureIndex();
+	
+	ofTexture & getTextureReference();
+	ofTexture & getTextureReference(int attachmentPoint);
+	void setUseTexture(bool bUseTex){ /*irrelevant*/ };
 	
 	void begin();
 	void end();
-	
-	ofTexture& getTexture(int attachmentPoint = 0);		// get texture at attachment position
 	
 	void readToPixels(ofPixels & pixels, int attachmentPoint = 0);
 	void readToPixels(ofShortPixels & pixels, int attachmentPoint = 0);
 	void readToPixels(ofFloatPixels & pixels, int attachmentPoint = 0);
 
+	float getWidth();
+	float getHeight();
+		
 	// advanced functions
 	void bind();
 	void unbind();
@@ -43,7 +50,7 @@ public:
 	GLuint getFbo();	// returns GLuint of Fbo for advanced actions
 	
 	
-	static void	checkGLSupport();
+	static bool	checkGLSupport();
 	static int maxColorAttachments();	// return max color attachments
 	static int maxDrawBuffers();		// return max simultaneous draw buffers
 	static int maxSamples();			// return max MSAA samples
@@ -87,6 +94,8 @@ private:
 	static int			_maxSamples;
 	
 	bool				dirty;
+	
+	int defaultTextureIndex; //used for getTextureReference
 
 	void destroy();
 	

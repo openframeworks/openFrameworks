@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ofConstants.h"
+
 #include "ofBaseSoundStream.h"
 #include "ofTypes.h"
 

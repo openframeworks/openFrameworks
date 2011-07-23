@@ -240,12 +240,17 @@ struct NilType{
 
 };
 
+#if defined( __APPLE_CC__)
+	#include <TargetConditionals.h>
+#endif
 
+#if TARGET_OS_IPHONE || TARGET_IPHONE_SIMULATOR
+	#define IGNORE_NIL_TYPE
+#endif
 
-extern NilType Nil;
-
-
-
+#ifndef IGNORE_NIL_TYPE
+	extern NilType Nil;
+#endif
 
 
 struct InfinitumType{

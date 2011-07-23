@@ -19,10 +19,14 @@ class ofxTCPServer : public ofThread{
 		~ofxTCPServer();
 		void setVerbose(bool _verbose);
 		bool setup(int _port, bool blocking = false);
+		void setMessageDelimiter(string delim);
+	
 		bool close();
 		bool disconnectClient(int clientID);
 
-		int getNumClients();
+		int getNumClients(); //total number of clients - not sutible for iterating through clients with
+		int getLastID(); //this returns the last current id number if you want to loop through with a for loop 
+		
 		int getPort();
 		bool isConnected();
 
@@ -78,6 +82,7 @@ class ofxTCPServer : public ofThread{
 		string			str;
 		int				idCount, port;
 		bool			bClientBlocking;
+		string			messageDelimiter;
 
 };
 

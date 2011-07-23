@@ -145,6 +145,10 @@ ofPoint	ofAppiPhoneWindow::getScreenSize() {
 	if(screenSize.x == NOT_INITIALIZED) {
 		CGSize s = [[UIScreen mainScreen] bounds].size;
 		screenSize.set(s.width, s.height, 0);
+		
+		if(retinaEnabled)
+			if ([[UIScreen mainScreen] respondsToSelector:@selector(scale)])
+				screenSize*=[[UIScreen mainScreen] scale];
 	}
 	return screenSize;
 }
@@ -153,6 +157,7 @@ int ofAppiPhoneWindow::getWidth(){
 	if( orientation == OF_ORIENTATION_DEFAULT || orientation == OF_ORIENTATION_180 ){
 		return (int)getScreenSize().x;
 	}
+	
 	return (int)getScreenSize().y;
 }
 
@@ -160,6 +165,7 @@ int ofAppiPhoneWindow::getHeight(){
 	if( orientation == OF_ORIENTATION_DEFAULT || orientation == OF_ORIENTATION_180 ){
 		return (int)getScreenSize().y;
 	}
+	
 	return (int)getScreenSize().x;
 }
 

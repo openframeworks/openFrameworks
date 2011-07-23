@@ -599,9 +599,9 @@ ofImage_<PixelType>::~ofImage_(){
 //----------------------------------------------------------
 template<typename PixelType>
 void ofImage_<PixelType>::reloadTexture(){
-	if (pixels.isAllocated() == true && bUseTexture == true){
+	if (pixels.isAllocated() && bUseTexture){
 		tex.allocate(pixels.getWidth(), pixels.getHeight(), ofGetGlInternalFormat(pixels));
-		tex.loadData(pixels.getPixels(), pixels.getWidth(), pixels.getHeight(), ofGetGlInternalFormat(pixels));
+		tex.loadData(pixels);
 	}
 }
 
@@ -839,8 +839,8 @@ ofImage_<PixelType> & ofImage_<PixelType>::operator=(ofPixels_<PixelType> & pixe
 template<typename PixelType>
 void ofImage_<PixelType>::update(){
 
-	if (pixels.isAllocated() == true && bUseTexture == true){
-		tex.loadData(pixels.getPixels(), pixels.getWidth(), pixels.getHeight(), ofGetGlInternalFormat(pixels));
+	if (pixels.isAllocated() && bUseTexture){
+		tex.loadData(pixels);
 	}
 
 	width	= pixels.getWidth();
@@ -903,7 +903,6 @@ void ofImage_<PixelType>::grabScreen(int _x, int _y, int _w, int _h){
 template<typename PixelType>
 void ofImage_<PixelType>::setImageType(ofImageType newType){
 	changeTypeOfPixels(pixels, newType);
-	tex.allocate(width, height, ofGetGlInternalFormat(*this));
 	update();
 }
 
@@ -914,7 +913,7 @@ void ofImage_<PixelType>::resize(int newWidth, int newHeight){
 
 	resizePixels(pixels, newWidth, newHeight);
 
-	if (bUseTexture == true){
+	if (bUseTexture){
 		tex.clear();
 		tex.allocate(pixels.getWidth(), pixels.getHeight(), ofGetGlInternalFormat(pixels));
 	}
@@ -945,7 +944,7 @@ void ofImage_<PixelType>::cropFrom(ofImage_<PixelType> & otherImage, int x, int 
 	otherImage.pixels.cropTo(pixels, x, y, w, h);
 
 	if (myOldWidth != pixels.getWidth() || myOldHeight != pixels.getHeight()){
-		if (bUseTexture == true){
+		if (bUseTexture){
 			tex.clear();
 			tex.allocate(pixels.getWidth(), pixels.getHeight(), ofGetGlInternalFormat(pixels));
 		}
@@ -961,7 +960,7 @@ void ofImage_<PixelType>::rotate90(int nRotations){
 	int myOldHeight = pixels.getHeight();
 	pixels.rotate90(nRotations);
 	if (myOldWidth != pixels.getWidth() || myOldHeight != pixels.getHeight()){
-		if (bUseTexture == true){
+		if (bUseTexture){
 			tex.clear();
 			tex.allocate(pixels.getWidth(), pixels.getHeight(), ofGetGlInternalFormat(pixels));
 		}
@@ -1036,9 +1035,11 @@ void ofImage_<PixelType>::changeTypeOfPixels(ofPixels_<PixelType> &pix, ofImageT
 		FreeImage_Unload(convertedBmp);
 	}
 
-	// always reallocate the texture. if ofTexture doesn't need reallocation,
-	// it doesn't have to. but it needs to change the internal format.
-	tex.allocate(pixels.getWidth(), pixels.getHeight(), ofGetGlInternalFormat(pixels));
+	if(bUseTexture){
+		// always reallocate the texture. if ofTexture doesn't need reallocation,
+		// it doesn't have to. but it needs to change the internal format.
+		tex.allocate(pixels.getWidth(), pixels.getHeight(), ofGetGlInternalFormat(pixels));
+	}
 }
 
 //----------------------------------------------------------
@@ -1059,7 +1060,9 @@ float ofImage_<PixelType>::getWidth(){
 template<typename PixelType>
 void ofImage_<PixelType>::setCompression(ofTexCompression compression)
 {
-	tex.setCompression( compression );
+	if(bUseTexture){
+		tex.setCompression( compression );
+	}
 }
 
 template class ofImage_<unsigned char>;

@@ -10,7 +10,7 @@ import glob
 of_root = os.path.realpath(__file__)[0:-(len(os.path.join('scripts','linux','createProject.py'))+2)]
 platform = 'win_cb'
 arch = 'win_cb'
-templates_path = os.path.join(of_root,'apps','devApps','win_cb')
+templates_path = os.path.join(of_root,'scripts',platform,'template')
 template = {'cbp': os.path.join(templates_path , 'emptyExample_' + arch + '.cbp'), 'full_cbp': os.path.join(templates_path , 'emptyExample_' + arch + '.cbp'), 'workspace': os.path.join(templates_path , 'emptyExample_' + arch + '.workspace'), 'makefile': templates_path + 'Makefile', 'config.make': templates_path + 'config.make'}
 fullCBP = True
 
@@ -172,6 +172,9 @@ def createWorkspace(project_path):
     ws = objectify.parse(os.path.join(project_path,project_name+'.workspace'))
     root = ws.getroot()
     workspace = root.Workspace
+    
+    if workspace.get("title")=="emptyExample":
+         workspace.set("title",project_name)
     
     for project in workspace.Project:
         if project.get("filename")=="emptyExample.cbp":
