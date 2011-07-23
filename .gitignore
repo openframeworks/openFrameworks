@@ -76,3 +76,17 @@ apps/addonsExamples/*/config.make
 *.pyc
 
 
+
+/apps/examples/emptyExample/emptyExample.xcodeproj/project.pbxproj
+/apps/examples/eventsExample/eventsExample.xcodeproj/project.pbxproj
+/apps/addonsExamples/ofxCvHaarFinderExample/ofxCvHaarFinderExample.xcodeproj/project.pbxproj
+/apps/addonsExamples/opencvExample/opencvExample.xcodeproj/project.pbxproj
+/apps/examples/polygonExample/polygonExample.xcodeproj/project.pbxproj
+/apps/examples/imageLoaderExample/imageLoaderExample.xcodeproj/project.pbxproj
+/apps/examples/graphicsExample/graphicsExample.xcodeproj/project.pbxproj
+/apps/examples/fontsExample/fontsExample.xcodeproj/project.pbxproj
+/apps/examples/advancedEventsExample/advancedEventsExample.xcodeproj/project.pbxproj
+/apps/devApps/memo3DCameraTestingExample/basic3dExample.xcodeproj/project.pbxproj
+/apps/devApps/_DeployExamples/deployExamples.xcodeproj/project.pbxproj
+/apps/addonsExamples/xmlSettingsExample/xmlSettingsExample.xcodeproj/project.pbxproj
+/apps/addonsExamples/threadedImageLoaderExample/threadedImageLoaderExample.xcodeproj/project.pbxproj
