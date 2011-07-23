@@ -72,10 +72,7 @@ bool ofRectangle::inside (ofPoint p){
 }
 
 bool ofRectangle::inside (float px, float py){
-	if( px > x && py > y && px < x + width && py < y + height ){
-		return true;
-	}
-	return false;
+	return px > x && py > y && px < x + width && py < y + height;
 }
 
 ofRectangle & ofRectangle::operator = (ofRectangle const & rect){
