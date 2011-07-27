@@ -80,7 +80,7 @@ endif
 
 NODEPS = clean
 SED_EXCLUDE_FROM_SRC = $(shell echo  $(EXCLUDE_FROM_SOURCE) | sed s/\,/\\\\\|/g)
-SOURCE_DIRS = $(shell find . -maxdepth 1 -mindepth 1 -type d | grep -v $(SED_EXCLUDE_FROM_SRC) | sed s/.\\///)
+SOURCE_DIRS = $(shell find . -maxdepth 1 -mindepth 1 -type d | grep -v "$(SED_EXCLUDE_FROM_SRC)" | sed s/.\\///)
 SOURCES = $(shell find $(SOURCE_DIRS) -name "*.cpp" -or -name "*.c" -or -name "*.cc")
 OBJFILES = $(patsubst %.c,%.o,$(patsubst %.cpp,%.o,$(patsubst %.cc,%.o,$(SOURCES))))
 
