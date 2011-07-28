@@ -35,7 +35,11 @@ public class OFAndroidVideoGrabber extends OFAndroidObject implements Runnable, 
 		config.setPreviewSize(w, h);
 		config.setPreviewFormat(ImageFormat.NV21);
 		config.setPreviewFrameRate(targetFps);
-		camera.setParameters(config);
+		try{
+			camera.setParameters(config);
+		}catch(Exception e){
+			Log.e("OF","couldn init camera", e);
+		}
 		
 		config = camera.getParameters();
 		width = config.getPreviewSize().width;
