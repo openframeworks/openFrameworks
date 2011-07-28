@@ -38,6 +38,15 @@ for fedora
     ./install_codeblocks_svn.sh
     ./install_dependencies.sh
 
+for archlinux
+
+    su -
+    cd your_oF_directory/scripts/linux/archlinux
+    ./install_codeblocks.sh
+    ./install_dependencies.sh
+    if you want to have support for mp3 and some video codecs:
+    sudo ./install_codecs.sh
+
 that's all, now go to the apps folder where you will find the examples
 and have fun!
 
