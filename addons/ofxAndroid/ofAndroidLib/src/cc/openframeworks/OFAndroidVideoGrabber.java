@@ -7,6 +7,7 @@ import java.util.Map;
 import android.content.Context;
 import android.graphics.ImageFormat;
 import android.hardware.Camera;
+import android.hardware.Camera.Size;
 import android.util.Log;
 import android.view.OrientationEventListener;
 
@@ -30,23 +31,51 @@ public class OFAndroidVideoGrabber extends OFAndroidObject implements Runnable, 
 	void initGrabber(int w, int h, int _targetFps){
 		camera = Camera.open();
 		Camera.Parameters config = camera.getParameters();
+		
+		Log.i("OF","Grabber supported sizes");
+		for(Size s : config.getSupportedPreviewSizes()){
+			Log.i("OF",s.width + " " + s.height);
+		}
+		
+		Log.i("OF","Grabber supported formats");
+		for(Integer i : config.getSupportedPreviewFormats()){
+			Log.i("OF",i.toString());
+		}
+		
+		Log.i("OF","Grabber supported fps");
+		for(Integer i : config.getSupportedPreviewFrameRates()){
+			Log.i("OF",i.toString());
+		}
+		
 		Log.i("OF", "Grabber default format: " + config.getPreviewFormat());
 		Log.i("OF", "Grabber default preview size: " + config.getPreviewSize().width + "," + config.getPreviewSize().height);
 		config.setPreviewSize(w, h);
 		config.setPreviewFormat(ImageFormat.NV21);
-		config.setPreviewFrameRate(targetFps);
 		try{
 			camera.setParameters(config);
 		}catch(Exception e){
 			Log.e("OF","couldn init camera", e);
 		}
-		
+
 		config = camera.getParameters();
 		width = config.getPreviewSize().width;
 		height = config.getPreviewSize().height;
+		if(width!=w || height!=h)  Log.w("OF","camera size different than asked for, resizing (this can slow the app)");
+		
+		
+		if(_targetFps!=-1){
+			config = camera.getParameters();
+			config.setPreviewFrameRate(_targetFps);
+			try{
+				camera.setParameters(config);
+			}catch(Exception e){
+				Log.e("OF","couldn init camera", e);
+			}
+		}
+		
 		targetFps = _targetFps;
 		Log.i("OF","camera settings: " + width + "x" + height);
-		if(width!=w || height!=h)  Log.w("OF","camera size different than asked for, resizing (this can slow the app)");
+		
 		buffer = new byte[width*height*2];
 		
 		orientationListener = new OrientationListener(OFAndroid.getContext());
@@ -76,27 +105,14 @@ public class OFAndroidVideoGrabber extends OFAndroidObject implements Runnable, 
 	
 	@Override
 	public void pause(){
-		if(initialized){
-			Log.i("OF","pausing camera preview");
-			camera.stopPreview();
-			orientationListener.disable();
-		}
+		stop();
 			
 	}
 	
 	@Override
 	public void resume(){
 		if(initialized){
-			switch(state){
-			case Paused:
-				Log.i("OF","camera paused, resuming");
-				camera.startPreview();
-				break;
-			case Stopped:
-				Log.i("OF","camera stopped, reinitializing");
-				initGrabber(width,height,targetFps);
-				break;
-			}
+			initGrabber(width,height,targetFps);
 			orientationListener.enable();
 		}
 	}
@@ -155,19 +171,23 @@ public class OFAndroidVideoGrabber extends OFAndroidObject implements Runnable, 
 		@Override
 		public void onOrientationChanged(int orientation) {
 			if (orientation == ORIENTATION_UNKNOWN) return;
-			Camera.Parameters config = camera.getParameters();
-			/*Camera.CameraInfo info =
-			        new Camera.CameraInfo();*/
-			//Camera.getCameraInfo(camera, info);
-			orientation = (orientation + 45) / 90 * 90;
-			int rotation = orientation % 360;
-			//if (info.facing == CameraInfo.CAMERA_FACING_FRONT) {
-			    //rotation = (info.orientation - orientation + 360) % 360;
-			/*} else {  // back-facing camera
-			    rotation = (info.orientation + orientation) % 360;
-			}*/
-			config.setRotation(rotation);
-			camera.setParameters(config);
+			try{
+				Camera.Parameters config = camera.getParameters();
+				/*Camera.CameraInfo info =
+				        new Camera.CameraInfo();*/
+				//Camera.getCameraInfo(camera, info);
+				orientation = (orientation + 45) / 90 * 90;
+				int rotation = orientation % 360;
+				//if (info.facing == CameraInfo.CAMERA_FACING_FRONT) {
+				    //rotation = (info.orientation - orientation + 360) % 360;
+				/*} else {  // back-facing camera
+				    rotation = (info.orientation + orientation) % 360;
+				}*/
+				config.setRotation(rotation);
+				camera.setParameters(config);
+			}catch(Exception e){
+				
+			}
 		}
 		
 	}
