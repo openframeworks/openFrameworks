@@ -155,6 +155,8 @@ public class OFAndroidSoundStream extends OFAndroidObject implements Runnable, O
 				activity.unregisterReceiver(broadcastReceiver);
 			}catch(Exception e){
 				
+			}finally{
+				broadcastReceiver = null;
 			}
 		}
 		stop();
