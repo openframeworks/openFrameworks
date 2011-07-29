@@ -150,6 +150,13 @@ public class OFAndroidSoundStream extends OFAndroidObject implements Runnable, O
 
 	@Override
 	protected void pause() {
+		if(broadcastReceiver != null){
+			try{
+				activity.unregisterReceiver(broadcastReceiver);
+			}catch(Exception e){
+				
+			}
+		}
 		stop();
 	}
 
