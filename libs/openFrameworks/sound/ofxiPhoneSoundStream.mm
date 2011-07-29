@@ -96,7 +96,6 @@ static OSStatus playbackCallback(void *inRefCon,
 			ioData->mBuffers[i].mDataByteSize = 0;
 		}
 	}
-	
     return noErr;
 	
 }
@@ -168,7 +167,7 @@ void ofxiPhoneSoundStream::setInput(ofBaseSoundInput * soundInput){
 
 //------------------------------------------------------------------------------
 void ofxiPhoneSoundStream::setOutput(ofBaseSoundOutput * soundOutput){
-	soundOutput = soundOutput;
+	soundOutputPtr = soundOutput;
 }
 
 //------------------------------------------------------------------------------
