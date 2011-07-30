@@ -271,6 +271,32 @@ float ofPolyline::getPerimeter() const {
 }
 
 //----------------------------------------------------------
+float ofPolyline::getArea() const{
+	float area = 0;
+	for(int i=0;i<(int)points.size()-1;i++){
+		area += points[i].x * points[i+1].y - points[i+1].x * points[i].y;
+	}
+	area += points[points.size()-1].x * points[0].y - points[0].x * points[points.size()-1].y;
+	return 0.5*area;
+}
+
+//----------------------------------------------------------
+ofPoint ofPolyline::getCentroid2D() const{
+	ofPoint centroid;
+	for(int i=0;i<(int)points.size()-1;i++){
+		centroid.x += (points[i].x + points[i+1].x) * (points[i].x*points[i+1].y - points[i+1].x*points[i].y);
+		centroid.y += (points[i].y + points[i+1].y) * (points[i].x*points[i+1].y - points[i+1].x*points[i].y);
+	}
+	centroid.x += (points[points.size()-1].x + points[0].x) * (points[points.size()-1].x*points[0].y - points[0].x*points[points.size()-1].y);
+	centroid.y += (points[points.size()-1].y + points[0].y) * (points[points.size()-1].x*points[0].y - points[0].x*points[points.size()-1].y);
+
+	float area = getArea();
+	centroid.x /= (6*area);
+	centroid.y /= (6*area);
+	return centroid;
+}
+
+//----------------------------------------------------------
 ofRectangle ofPolyline::getBoundingBox(){
 	ofPolyline & polyline = *this;
 
