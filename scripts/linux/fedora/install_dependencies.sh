@@ -18,6 +18,7 @@ else
 fi
 
 WHO=`sudo who am i`;ID=`echo ${WHO%% *}`
+GROUP_ID=`id --group -n ${ID}`
 cd ../../../libs/openFrameworksCompiled/project/$LIBSPATH
 make Debug
 if [ $? != 0 ]; then
@@ -25,11 +26,11 @@ if [ $? != 0 ]; then
         echo "please report this problem in the forums"
         exit
 fi
-chown -R $ID:$ID obj ../../lib/${LIBSPATH}/*
+chown -R $ID:$GROUP_ID obj ../../lib/${LIBSPATH}/*
 make Release
 if [ $? != 0 ]; then
         echo "there has been a problem compiling Release OF library"
         echo "please report this problem in the forums"
 fi
-chown -R $ID:$ID obj ../../lib/${LIBSPATH}/*
+chown -R $ID:$GROUP_ID obj ../../lib/${LIBSPATH}/*
 
