@@ -96,6 +96,8 @@ public:
 	vector<ofPoint> & getVertices();
 
 	float getPerimeter() const;
+	float getArea() const;
+	ofPoint getCentroid2D() const;
 
 	void draw();		
 
