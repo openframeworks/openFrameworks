@@ -111,7 +111,7 @@ static void releaseJavaObject(){
 
 ofxAndroidVideoGrabber::ofxAndroidVideoGrabber(){
 
-	attemptFramerate = 30;
+	attemptFramerate = -1;
 	newPixels = false;
 	InitConvertTable();
 	bGrabberInited = false;
