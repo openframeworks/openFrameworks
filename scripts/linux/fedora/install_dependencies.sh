@@ -1,6 +1,6 @@
 ## thanks to Claudio for details on packages to install on fedora
 
-yum install freeglut-devel alsa-lib-devel libXmu-devel libXxf86vm-devel gcc-c++ libraw1394-devel gstreamer-devel gstreamer-plugins-base-devel libudev-devel libtheora-devel libvorbis-devel openal-soft-devel libsndfile-devel python-lxml gstreamer-devel glew-devel flac-devel freeimage-devel
+yum install freeglut-devel alsa-lib-devel libXmu-devel libXxf86vm-devel gcc-c++ libraw1394-devel gstreamer-devel gstreamer-plugins-base-devel libudev-devel libtheora-devel libvorbis-devel openal-soft-devel libsndfile-devel python-lxml gstreamer-devel glew-devel flac-devel freeimage-devel cairo-devel jack-audio-connection-kit-devel
 
 ARCH=$(uname -m)
 if [ "$ARCH" = "x86_64" ]; then
