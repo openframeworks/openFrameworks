@@ -1,4 +1,3 @@
 #!/bin/bash
-pacman -Syu
-pacman -S codeblocks xterm
+pacman -Syu --needed codeblocks xterm
 

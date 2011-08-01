@@ -363,17 +363,13 @@ int ofxXmlSettings::writeTag(const string&  tag, const string& valueStr, int whi
 
 //---------------------------------------------------------
 int ofxXmlSettings::setValue(const string& tag, int value, int which){
-	char valueStr[255];
-	sprintf(valueStr, "%i", value);
-	int tagID = writeTag(tag, valueStr, which) -1;
+	int tagID = writeTag(tag, ofToString(value).c_str(), which) -1;
 	return tagID;
 }
 
 //---------------------------------------------------------
 int ofxXmlSettings::setValue(const string& tag, double value, int which){
-	char valueStr[255];
-	sprintf(valueStr, "%f", value);
-	int tagID = writeTag(tag, valueStr, which) -1;
+	int tagID = writeTag(tag, ofToString(value).c_str(), which) -1;
 	return tagID;
 }
 
@@ -385,17 +381,13 @@ int ofxXmlSettings::setValue(const string& tag, const string& value, int which){
 
 //---------------------------------------------------------
 int ofxXmlSettings::addValue(const string& tag, int value){
-	char valueStr[255];
-	sprintf(valueStr, "%i", value);
-	int tagID = writeTag(tag, valueStr, -1) -1;
+	int tagID = writeTag(tag, ofToString(value).c_str(), -1) -1;
 	return tagID;
 }
 
 //---------------------------------------------------------
 int ofxXmlSettings::addValue(const string&  tag, double value){
-	char valueStr[255];
-	sprintf(valueStr, "%f", value);
-	int tagID = writeTag(tag, valueStr, -1) -1;
+	int tagID = writeTag(tag, ofToString(value).c_str(), -1) -1;
 	return tagID;
 }
 
@@ -417,9 +409,7 @@ int ofxXmlSettings::addTag(const string& tag){
 
 //---------------------------------------------------------
 int ofxXmlSettings::addAttribute(const string& tag, const string& attribute, int value, int which){
-	char valueStr[255];
-	sprintf(valueStr, "%i", value);
-	int tagID = writeAttribute(tag, attribute, valueStr, which) -1;
+	int tagID = writeAttribute(tag, attribute, ofToString(value).c_str(), which) -1;
 	return tagID;
 }
 
@@ -430,9 +420,7 @@ int ofxXmlSettings::addAttribute(const string& tag, const string& attribute, int
 
 //---------------------------------------------------------
 int ofxXmlSettings::addAttribute(const string& tag, const string& attribute, double value, int which){
-	char valueStr[255];
-	sprintf(valueStr, "%lf", value);
-	int tagID = writeAttribute(tag, attribute, valueStr, which) -1;
+	int tagID = writeAttribute(tag, attribute, ofToString(value).c_str(), which) -1;
 	return tagID;
 }
 
