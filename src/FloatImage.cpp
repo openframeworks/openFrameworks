@@ -65,11 +65,19 @@ namespace ofxCv {
 #else
 		pixels = Mat(height, width, CV_32FC1);
 #endif
+#ifndef TARGET_OPENGLES
 		texture.allocate(width, height, GL_LUMINANCE32F_ARB);
+#else
+		texture.allocate(width, height, GL_LUMINANCE);
+#endif
 	}
 	
 	void FloatImage::update() {
+#ifndef TARGET_OPENGLES
 		texture.loadData((float*) pixels.data, getWidth(), getHeight(), GL_LUMINANCE32F_ARB);
+#else
+		texture.loadData((float*) pixels.data, getWidth(), getHeight(), GL_LUMINANCE);
+#endif
 	}
 	
 	void FloatImage::draw() {
