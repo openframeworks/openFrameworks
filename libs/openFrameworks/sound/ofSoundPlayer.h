@@ -38,6 +38,10 @@ void ofSoundShutdown();
 #define OF_SOUND_PLAYER_TYPE ofxOpenALSoundPlayer
 #endif
 
+#ifdef TARGET_ANDROID
+inline void ofSoundShutdown(){}
+#endif
+
 //---------------------------------------------
 class ofSoundPlayer : public ofBaseSoundPlayer {
 	
