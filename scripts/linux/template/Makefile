@@ -64,8 +64,6 @@ else
 	else
 		LIBSPATH =android/armeabi
 	endif
-	#NDK_ROOT = $(shell cat $(OF_ROOT)/libs/openFrameworksCompiled/project/android/ndk_path.make)
-	#SDK_ROOT = $(shell cat $(OF_ROOT)/libs/openFrameworksCompiled/project/android/sdk_path.make)
 	TOOLCHAIN=arm-linux-androideabi-4.4.3
 	TOOLCHAIN_PATH=$(NDK_ROOT)/toolchains/$(TOOLCHAIN)/prebuilt/$(HOST_PLATFORM)/bin/
 	ANDROID_PREFIX=arm-linux-androideabi-
@@ -79,9 +77,10 @@ else
 endif
 
 NODEPS = clean
-SED_EXCLUDE_FROM_SRC = $(shell echo  $(EXCLUDE_FROM_SOURCE) | sed s/\,/\\\\\|/g)
-SOURCE_DIRS = $(shell find . -maxdepth 1 -mindepth 1 -type d | grep -v $(SED_EXCLUDE_FROM_SRC) | sed s/.\\///)
-SOURCES = $(shell find $(SOURCE_DIRS) -name "*.cpp" -or -name "*.c" -or -name "*.cc")
+SED_EXCLUDE_FROM_SRC = $(shell echo  $(EXCLUDE_FROM_SOURCE) | sed "s/,\(.*\)/,\1,/g" | sed "s/\([^,]*\),/ .\/\1%/g") 
+ALL_SOURCES_DIRS = $(shell find . -type d)
+SOURCE_DIRS = $(filter-out $(SED_EXCLUDE_FROM_SRC), $(ALL_SOURCES_DIRS))
+SOURCES = $(shell find $(SOURCE_DIRS) -maxdepth 1 -mindepth 1 -name "*.cpp" -or -name "*.c" -or -name "*.cc")
 OBJFILES = $(patsubst %.c,%.o,$(patsubst %.cpp,%.o,$(patsubst %.cc,%.o,$(SOURCES))))
 
 ifneq (,$(USER_SOURCE_DIR))
@@ -116,7 +115,7 @@ else
 endif
 LIB_STATIC = $(shell ls $(OF_ROOT)/libs/*/lib/$(LIBSPATH)/*.a  2> /dev/null | grep -v openFrameworksCompiled | grep -v Poco)
 LIB_SHARED = $(shell ls $(OF_ROOT)/libs/*/lib/$(LIBSPATH)/*.so  2> /dev/null | grep -v openFrameworksCompiled | sed "s/.*\\/lib\([^/]*\)\.so/-l\1/")
-LIB_STATIC += $(OF_ROOT)/libs/poco/lib/$(LIBSPATH)/libPocoNet.a ../../../libs/poco/lib/$(LIBSPATH)/libPocoXML.a ../../../libs/poco/lib/$(LIBSPATH)/libPocoUtil.a ../../../libs/poco/lib/$(LIBSPATH)/libPocoFoundation.a
+LIB_STATIC += $(OF_ROOT)/libs/poco/lib/$(LIBSPATH)/libPocoNet.a $(OF_ROOT)/libs/poco/lib/$(LIBSPATH)/libPocoXML.a $(OF_ROOT)/libs/poco/lib/$(LIBSPATH)/libPocoUtil.a $(OF_ROOT)/libs/poco/lib/$(LIBSPATH)/libPocoFoundation.a
 LIB_PATHS_FLAGS = $(shell ls -d $(OF_ROOT)/libs/*/lib/$(LIBSPATH) | sed "s/\(\.*\)/-L\1/")
 
 CFLAGS += -Wall -fexceptions
@@ -344,8 +343,8 @@ $(OBJ_OUTPUT)%.o: $(USER_SOURCE_DIR)/%.cpp
 	mkdir -p $(@D)
 	$(CXX) $(TARGET_CFLAGS) $(CFLAGS) $(ADDONSCFLAGS) $(USER_CFLAGS) -MMD -MP -MF$(OBJ_OUTPUT)$*.d -MT$(OBJ_OUTPUT)$*.d -o$@ -c $<
 	
-$(TARGET): $(OBJS) $(ADDONS_OBJS) $(USER_OBJS) $(TARGET_LIBS) $(LIB_STATIC)
-	@echo 'linking $(TARGET)'
+$(TARGET): $(OBJS) $(ADDONS_OBJS) $(USER_OBJS) $(TARGET_LIBS) $(LIB_STATIC) Makefile
+	@echo 'linking $(TARGET) $(SOURCE_DIRS)'
 	mkdir -p $(@D)
 	$(CXX) -o $@ $(OBJS) $(ADDONS_OBJS) $(USER_OBJS) $(LDFLAGS) $(USER_LDFLAGS) $(TARGET_LIBS) $(ADDONSLIBS) $(USER_LIBS) $(LIB_STATIC) $(LIB_PATHS_FLAGS) $(LIB_SHARED) $(SYSTEMLIBS)
 
