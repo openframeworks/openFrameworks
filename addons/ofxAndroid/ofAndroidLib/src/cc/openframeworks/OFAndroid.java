@@ -686,24 +686,25 @@ class OFAndroidWindow implements GLSurfaceView.Renderer {
     }
 
     public void onSurfaceChanged(GL10 gl, int w, int h) {
-    	OFAndroid.resize(w, h);
     	if(!setup){
         	Log.i("OF","initializing app");
         	OFAndroid.init();
         	OFAndroid.setup(w,h);
         	initialized = true;
-        	setup = false;
+        	setup = true;
         	android.os.Process.setThreadPriority(8);
         	
         	/*if(ETC1Util.isETC1Supported()) Log.i("OF","ETC supported");
         	else Log.i("OF","ETC not supported");*/
     	}
+    	OFAndroid.resize(w, h);
 		this.w = w;
 		this.h = h;
     }
 
     public void onDrawFrame(GL10 gl) {
-    	OFAndroid.render();
+    	if(setup)
+    		OFAndroid.render();
     }
 
     static boolean initialized;
