@@ -232,24 +232,35 @@ public class OFAndroid {
 	}
 	
 	static public void setMenuItemChecked(String idStr, boolean checked){
-		try {
-			Class<?> menu_ids = Class.forName(packageName+".R$id");
-			Field field = menu_ids.getField(idStr);
-			//ofActivity.getMenuInflater().
-		} catch (Exception e) {
-			Log.w("OF","Trying to get menu items ", e);
-		}
+		final String id = idStr;
+		ofActivity.runOnUiThread(new Runnable(){
+			public void run() {
+				try {
+					Class<?> menu_ids = Class.forName(packageName+".R$id");
+					Field field = menu_ids.getField(id);
+					//ofActivity.getMenuInflater().
+				} catch (Exception e) {
+					Log.w("OF","Trying to get menu items ", e);
+				}
+			}
+		});
 	}
 	
 	static public void setViewItemChecked(String idStr, boolean checked){
-		try {
-			Class<?> menu_ids = Class.forName(packageName+".R$id");
-			Field field = menu_ids.getField(idStr);
-			CompoundButton checkbox = (CompoundButton) ofActivity.findViewById(field.getInt(null));
-			checkbox.setChecked(checked);
-		} catch (Exception e) {
-			Log.w("OF","Trying to get menu items ", e);
-		}
+		final String id = idStr;
+		final boolean fchecked = checked;
+		ofActivity.runOnUiThread(new Runnable(){
+			public void run() {
+				try {
+					Class<?> menu_ids = Class.forName(packageName+".R$id");
+					Field field = menu_ids.getField(id);
+					CompoundButton checkbox = (CompoundButton) ofActivity.findViewById(field.getInt(null));
+					checkbox.setChecked(fchecked);
+				} catch (Exception e) {
+					Log.w("OF","Trying to get menu items ", e);
+				}
+			}
+		});
 	}
 	
 	static public String getStringRes(String idStr){
