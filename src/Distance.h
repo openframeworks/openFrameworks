@@ -2,6 +2,7 @@
 
 #include <string>
 #include <vector>
+#include <cstdlib>
 
 namespace ofxCv {
 	
