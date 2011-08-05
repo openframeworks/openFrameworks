@@ -26,13 +26,14 @@ void ofSoundUpdate(){
 	#endif
 }
 
+#ifndef TARGET_ANDROID
 //--------------------
 void ofSoundShutdown(){
 	#ifdef OF_SOUND_PLAYER_FMOD
 		ofFmodSoundPlayer::closeFmod();
 	#endif
 }
-
+#endif
 
 //--------------------
 float * ofSoundGetSpectrum(int nBands){

@@ -84,7 +84,7 @@ void ofxAndroidPauseApp(){
 		ofLog(OF_LOG_ERROR,"cannot find OFAndroid pauseApp method");
 		return;
 	}
-	ofGetJNIEnv()->CallStaticObjectMethod(javaClass,pauseApp);
+	ofGetJNIEnv()->CallStaticVoidMethod(javaClass,pauseApp);
 }
 
 void ofxAndroidAlertBox(string msg){
@@ -171,7 +171,7 @@ void ofxAndroidToast(string msg){
 		return;
 	}
 	jstring jMsg = ofGetJNIEnv()->NewStringUTF(msg.c_str());
-	ofGetJNIEnv()->CallStaticObjectMethod(javaClass,toast,jMsg);
+	ofGetJNIEnv()->CallStaticVoidMethod(javaClass,toast,jMsg);
 }
 
 void ofxAndroidLockScreenSleep(){
@@ -187,7 +187,7 @@ void ofxAndroidLockScreenSleep(){
 		ofLog(OF_LOG_ERROR,"cannot find OFAndroid lockScreenSleep method");
 		return;
 	}
-	ofGetJNIEnv()->CallStaticObjectMethod(javaClass,lockScreenSleep);
+	ofGetJNIEnv()->CallStaticVoidMethod(javaClass,lockScreenSleep);
 }
 
 void ofxAndroidUnlockScreenSleep(){
@@ -203,5 +203,5 @@ void ofxAndroidUnlockScreenSleep(){
 		ofLog(OF_LOG_ERROR,"cannot find OFAndroid unlockScreenSleep method");
 		return;
 	}
-	ofGetJNIEnv()->CallStaticObjectMethod(javaClass,unlockScreenSleep);
+	ofGetJNIEnv()->CallStaticVoidMethod(javaClass,unlockScreenSleep);
 }
