@@ -13,6 +13,8 @@
 #include "ofConstants.h"
 #include "ofImage.h"
 
+#include "stdint.h"
+
 /*
  there should be three kinds of functions:
  1 utility functions like imitate and toCv
@@ -26,7 +28,7 @@
  */
 
 namespace ofxCv {
-	
+
 	using namespace cv;
 	
 	// 1 utility functions

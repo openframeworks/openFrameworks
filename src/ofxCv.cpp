@@ -1,6 +1,7 @@
 #include "ofxCv.h"
 
 #include "ofMath.h"
+#include "stdint.h"
 
 namespace ofxCv {
 	
@@ -242,12 +243,6 @@ namespace ofxCv {
 		Mat sourceMat = Mat(source, toCv(region));
 		
 		matchTemplate(search, sourceMat, result, CV_TM_CCOEFF_NORMED);
-	}
-	
-	ofPoint matchRegion(ofImage& source, ofRectangle& region, ofImage& search) {
-		FloatImage result;
-		
-		imitate(result, source);
 	}
 	
 	float weightedAverageAngle(const vector<Vec4i>& lines) {
