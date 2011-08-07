@@ -1,7 +1,6 @@
 #include "ofxCv.h"
 
 #include "ofMath.h"
-#include "stdint.h"
 
 namespace ofxCv {
 	
