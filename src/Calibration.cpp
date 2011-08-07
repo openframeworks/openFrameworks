@@ -284,12 +284,14 @@ namespace ofxCv {
 			ofCircle(0, 0, .5);
 			ofPopMatrix();
 		}
-		glBegin(GL_LINE_STRIP);
+
+		ofMesh mesh;
+		mesh.setMode(OF_PRIMITIVE_LINE_STRIP);
 		for(int j = 0; j < objectPoints[i].size(); j++) {
 			ofVec3f cur = toOf(objectPoints[i][j]);
-			glVertex3f(cur.x, cur.y, cur.z);
+			mesh.addVertex(cur);
 		}
-		glEnd();
+		mesh.draw();
 		
 		ofPopMatrix();
 		ofPopStyle();
