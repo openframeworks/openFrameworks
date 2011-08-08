@@ -15,12 +15,12 @@
 #include "stdint.h"
 
 /*
- there should be three kinds of functions:
+ there should be a few kinds of functions:
  1 utility functions like imitate and toCv
- 2 wrapper functions that accept Mat and return cv types
- 3 wrapper functions that accept toCv-compatible objects and return toOf objects // maybe this doesn't make sense, too mutch code...
- 
- all type 3 functions should guarantee the size of the output with imitate
+ 2 wrapper functions that accept toCv-compatible objects
+  
+ all functions should guarantee the size of the output with imitate when necessary
+ all output should be done using function arguments, to keep things flexible
  
  there should be a ton more const functions, but it's hard because of OF const issues
  need to print better errors than default opencv errors...?
@@ -46,7 +46,12 @@ namespace ofxCv {
 	
 	void copy(Mat to, Mat from);
 	
+	// maximum possible values for that depth or matrix
+	float getMaxVal(int depth);
+	float getMaxVal(const Mat& mat);
+	
 	// toCv functions
+	Mat toCv(Mat& mat);
 	Mat toCv(ofPixels& pix);
 	Mat toCv(ofBaseHasPixels& img);
 	Mat toCv(FloatImage& img);
@@ -61,29 +66,33 @@ namespace ofxCv {
 	ofVec3f toOf(Point3f point);
 	ofRectangle toOf(cv::Rect rect);
 	
-	// 2 Mat wrappers
-	void threshold(Mat src, Mat dst, float thresholdValue, bool invert = false); // threshold out of place
-	void threshold(Mat srcDst, float thresholdValue, bool invert = false); // threshold in place
-	void convertColor(Mat src, Mat dst, int code); // CV_RGB2GRAY, CV_HSV2RGB, etc. with [RGB, BGR, GRAY, HSV, HLS, XYZ, YCrCb, Lab, Luv]
+	// 2 toCv-compatible wrappers
 	
-	// 3 toCv-compatible wrappers
-	
+	// threshold out of place
 	template <class SrcType, class DstType>
 	void threshold(SrcType& src, DstType& dst, float thresholdValue, bool invert = false) {
-		return threshold(toCv(src), toCv(dst), thresholdValue, invert);
+		Mat srcMat = toCv(src);
+		Mat dstMat = toCv(dst);
+		int thresholdType = invert ? THRESH_BINARY_INV : THRESH_BINARY;
+		float maxVal = getMaxVal(dstMat);
+		cv::threshold(srcMat, dstMat, thresholdValue, maxVal, thresholdType);
 	}
 	
+	// threshold in place
 	template <class SrcDstType>
 	void threshold(SrcDstType& srcDst, float thresholdValue, bool invert = false) {
-		return threshold(toCv(srcDst), toCv(srcDst), thresholdValue, invert);
+		threshold(srcDst, srcDst, thresholdValue, invert);
 	}
 	
+	// CV_RGB2GRAY, CV_HSV2RGB, etc. with [RGB, BGR, GRAY, HSV, HLS, XYZ, YCrCb, Lab, Luv]
 	template <class SrcType, class DstType>
 	void convertColor(SrcType& src, DstType& dst, int code) {
-		return convertColor(toCv(src), toCv(dst), code);
+		Mat srcMat = toCv(src);
+		Mat dstMat = toCv(dst);
+		cvtColor(srcMat, dstMat, code);
 	}
 	
-	// older wrappers, need to be split into two parts
+	// older wrappers, need to be templated
 	// {
 	void invert(ofImage& img);
 	void rotate(ofImage& source, ofImage& destination, double angle, unsigned char fill = 0, int interpolation = INTER_LINEAR);
@@ -104,7 +113,7 @@ namespace ofxCv {
 	void resize(ofImage& source, ofImage& destination, float xScale, float yScale, int interpolation = INTER_LINEAR);
 	// }
 	
-	// 4 misc
+	// 3 misc
 	void loadImage(Mat& mat, string filename);
 	void saveImage(Mat& mat, string filename);
 	

@@ -63,6 +63,10 @@ namespace ofxCv {
 		from.copyTo(to);
 	}
 	
+	Mat toCv(Mat& mat) {
+		return mat;
+	}
+	
 	Mat toCv(ofBaseHasPixels& img) {
 		return toCv(img.getPixelsRef());
 	}
@@ -157,8 +161,8 @@ namespace ofxCv {
 		glMultMatrixf((GLfloat*) matrix.getPtr());
 	}
 	
-	float getMaxVal(const Mat& mat) {
-		switch(mat.depth()) {
+	float getMaxVal(int depth) {
+		switch(depth) {
 			case CV_8U: return numeric_limits<uint8_t>::max();
 			case CV_16U: return numeric_limits<uint16_t>::max();
 				
@@ -171,18 +175,8 @@ namespace ofxCv {
 		}
 	}
 	
-	void threshold(Mat src, Mat dst, float thresholdValue, bool invert) {
-		int thresholdType = invert ? THRESH_BINARY_INV : THRESH_BINARY;
-		float maxVal = getMaxVal(dst);
-		cv::threshold(src, dst, thresholdValue, maxVal, thresholdType);
-	}
-	
-	void threshold(Mat srcDst, float thresholdValue, bool invert) {
-		threshold(srcDst, srcDst, thresholdValue, invert);
-	}
-	
-	void convertColor(Mat src, Mat dst, int code) {
-		cvtColor(src, dst, code);
+	float getMaxVal(const Mat& mat) {
+		return getMaxVal(mat.depth());
 	}
 	
 	void invert(ofImage& img) {
@@ -211,7 +205,7 @@ namespace ofxCv {
 		Mat threshMat = toCv(thresh);
 		
 		// this might only work on grayscale atm...
-		// if normal thresholding is 400 fps, THRESH_OTSU is 100 fps 
+		// THRESH_OTSU takes 4x as long as normal thresholding
 		int flags = THRESH_OTSU | (invert ? THRESH_BINARY_INV : THRESH_BINARY);
 		threshold(originalMat, threshMat, 0, 255, flags);
 	}
