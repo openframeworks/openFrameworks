@@ -116,6 +116,7 @@ cv::name(xMat, yMat, resultMat);\
 	// also useful for taking the average/mixing two images
 	template <class X, class Y, class R>
 	void lerp(X& x, Y& y, R& result, float amt = .5) {
+		imitate(result, x);
 		Mat xMat = toCv(x);
 		Mat yMat = toCv(y);
 		Mat resultMat = toCv(result);
@@ -125,6 +126,7 @@ cv::name(xMat, yMat, resultMat);\
 	// threshold out of place
 	template <class S, class D>
 	void threshold(S& src, D& dst, float thresholdValue, bool invert = false) {
+		imitate(dst, src);
 		Mat srcMat = toCv(src);
 		Mat dstMat = toCv(dst);
 		int thresholdType = invert ? THRESH_BINARY_INV : THRESH_BINARY;
