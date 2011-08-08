@@ -28,7 +28,12 @@ namespace ofxCv {
 	
 	// toCv functions
 	Mat toCv(Mat& mat);
-	Mat toCv(ofPixels& pix);
+	template <class T> inline Mat toCv(ofPixels_<T>& pix) {
+		return Mat(pix.getHeight(), pix.getWidth(), getCvImageType(pix), pix.getPixels(), 0);
+	}
+	template <class T> inline Mat toCv(ofImage_<T>& img) {
+		return Mat(img.getHeight(), img.getWidth(), getCvImageType(img), img.getPixels(), 0);
+	}
 	Mat toCv(ofBaseHasPixels& img);
 	Mat toCv(ofMesh& mesh);
 	Point2f toCv(ofVec2f& vec);
@@ -121,6 +126,21 @@ cv::name(xMat, yMat, resultMat);\
 		Mat yMat = toCv(y);
 		Mat resultMat = toCv(result);
 		cv::addWeighted(xMat, amt, yMat, 1. - amt, 0., resultMat);
+	}
+	
+	// normalize the min/max to [0, max for this type] out of place
+	template <class S, class D>
+	void normalize(S& src, D& dst) {
+		imitate(dst, src);
+		Mat srcMat = toCv(src);
+		Mat dstMat = toCv(dst);
+		cv::normalize(srcMat, dstMat, 0, getMaxVal(getDepth(dst)), NORM_MINMAX);
+	}
+	
+	// normalize the min/max to [0, max for this type] in place
+	template <class SD>
+	void normalize(SD& srcDst) {
+		normalize(srcDst, srcDst);
 	}
 	
 	// threshold out of place

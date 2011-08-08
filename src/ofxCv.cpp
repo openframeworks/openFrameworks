@@ -36,11 +36,6 @@ namespace ofxCv {
 		return toCv(img.getPixelsRef());
 	}
 	
-	Mat toCv(ofPixels& pix) {
-		int cvType = getCvImageType(pix);
-		return Mat(pix.getHeight(), pix.getWidth(), cvType, pix.getPixels(), 0);
-	}
-	
 	Point2f toCv(ofVec2f& vec) {
 		return Point2f(vec.x, vec.y);
 	}
