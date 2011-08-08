@@ -6,50 +6,6 @@ namespace ofxCv {
 	
 	using namespace cv;
 	
-	void imitate(ofPixels& mirror, ofPixels& original) {
-		int mw = mirror.getWidth();
-		int mh = mirror.getHeight();
-		int ow = original.getWidth();
-		int oh = original.getHeight();
-		ofImageType mt = mirror.getImageType();
-		ofImageType ot = original.getImageType();
-		if(mw != ow || mh != oh || mt != ot) {
-			mirror.allocate(ow, oh, ot);
-		}
-	}
-	
-	void imitate(ofImage& mirror, ofPixels& original) {
-		int mw = mirror.getWidth();
-		int mh = mirror.getHeight();
-		int ow = original.getWidth();
-		int oh = original.getHeight();
-		ofImageType mt = mirror.getPixelsRef().getImageType();
-		ofImageType ot = original.getImageType();
-		if(mw != ow || mh != oh || mt != ot) {
-			mirror.allocate(ow, oh, ot);
-		}
-	}
-	
-	void imitate(FloatImage& mirror, ofPixels& original) {
-		int mw = mirror.getWidth();
-		int mh = mirror.getHeight();
-		int ow = original.getWidth();
-		int oh = original.getHeight();
-		if(mw != ow || mh != oh) {
-			mirror.allocate(ow, oh);
-		}
-	}
-	
-	void imitate(FloatImage& mirror, FloatImage& original) {
-		int mw = mirror.getWidth();
-		int mh = mirror.getHeight();
-		int ow = original.getWidth();
-		int oh = original.getHeight();
-		if(mw != ow || mh != oh) {
-			mirror.allocate(ow, oh);
-		}
-	}
-	
 	int toCv(const ofImageType& ofType) {
 		switch(ofType) {
 			case OF_IMAGE_GRAYSCALE: return CV_8UC1;
@@ -74,10 +30,6 @@ namespace ofxCv {
 	Mat toCv(ofPixels& pix) {
 		int cvImageType = toCv(pix.getImageType());
 		return Mat(pix.getHeight(), pix.getWidth(), cvImageType, pix.getPixels(), 0);
-	}
-	
-	Mat toCv(FloatImage& img) {
-		return img.toCv();
 	}
 	
 	Point2f toCv(ofVec2f& vec) {
@@ -108,7 +60,7 @@ namespace ofxCv {
 	ofRectangle toOf(cv::Rect rect) {
 		return ofRectangle(rect.x, rect.y, rect.width, rect.height);
 	}
-	
+
 	void loadImage(Mat& mat, string filename) {
 		mat = imread(ofToDataPath(filename));
 	}
@@ -213,7 +165,7 @@ namespace ofxCv {
 	void autothreshold(ofImage& img, bool invert) {
 		autothreshold(img, img, invert);
 	}
-	
+	/*
 	void threshold(FloatImage& img, float value, bool invert) {
 		threshold(img, img, value, invert);
 	}
@@ -237,6 +189,7 @@ namespace ofxCv {
 		
 		matchTemplate(search, sourceMat, result, CV_TM_CCOEFF_NORMED);
 	}
+	*/
 	
 	float weightedAverageAngle(const vector<Vec4i>& lines) {
 		float angleSum = 0;
@@ -279,6 +232,7 @@ namespace ofxCv {
 		}
 	}
 	
+	/*
 	// only works with single channel kernels
 	void convolve(ofImage& source, FloatImage& kernel, ofImage& destination) {
 		imitate(destination, source);
@@ -313,6 +267,7 @@ namespace ofxCv {
 	ofVec2f findMaxLocation(FloatImage& img) {
 		return findMaxLocation(img.toCv());
 	}
+	*/
 	
 	ofVec2f findMaxLocation(Mat& mat) {
 		double minVal, maxVal;
@@ -342,11 +297,13 @@ namespace ofxCv {
 		return (x / 2) * 2 + 1;
 	}
 	
+	/*
 	void blur(FloatImage& original, FloatImage& blurred, int size) {
 		size = forceOdd(size);
 		imitate(blurred, original);
 		GaussianBlur(original.toCv(), blurred.toCv(), cv::Size(size, size), 0, 0);
 	}
+	*/
 	
 	void medianBlur(ofImage& img, int size) {
 		size = forceOdd(size);

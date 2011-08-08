@@ -1,18 +1,12 @@
 #pragma once
 
-// OpenCV 2
 #include "opencv2/opencv.hpp"
+#include "ofMain.h"
+#include "stdint.h"
 
 // ofxCv
-#include "FloatImage.h"
 #include "Distance.h"
 #include "Calibration.h"
-
-// openFrameworks
-#include "ofConstants.h"
-#include "ofImage.h"
-
-#include "stdint.h"
 
 /*
  there should be a few kinds of functions:
@@ -32,16 +26,29 @@ namespace ofxCv {
 	
 	// 1 utility functions
 	
+	// if ofImage also had getImageType(), this would be unnecessary
+	template <class T>
+	ofImageType getImageType(ofPixels_<T>& pixels) {
+		return pixels.getImageType();
+	}
+	template <class T>
+	ofImageType getImageType(ofImage_<T>& image) {
+		return getImageType(image.getPixelsRef());
+	}
+	
 	// imitate() is good for preparing buffers
 	// it's like allocate(), but uses the size and type of the original as a reference
-	void imitate(ofPixels& mirror, ofPixels& original);
-	void imitate(ofImage& mirror, ofPixels& original);
-	void imitate(FloatImage& mirror, ofPixels& original);
-	void imitate(FloatImage& mirror, FloatImage& original);
-	
-	template <class T>
-	void imitate(T& mirror, ofBaseHasPixels& original) {
-		imitate(mirror, original.getPixelsRef());
+	template <class MirrorType, class OriginalType>
+	void imitate(MirrorType& mirror, OriginalType& original) {
+		int mw = mirror.getWidth();
+		int mh = mirror.getHeight();
+		int ow = original.getWidth();
+		int oh = original.getHeight();
+		ofImageType mt = getImageType(mirror);
+		ofImageType ot = getImageType(original);
+		if(mw != ow || mh != oh || mt != ot) {
+			mirror.allocate(ow, oh, ot);
+		}
 	}
 	
 	void copy(Mat to, Mat from);
@@ -54,7 +61,6 @@ namespace ofxCv {
 	Mat toCv(Mat& mat);
 	Mat toCv(ofPixels& pix);
 	Mat toCv(ofBaseHasPixels& img);
-	Mat toCv(FloatImage& img);
 	Mat toCv(ofMesh& mesh);
 	Point2f toCv(ofVec2f& vec);
 	Point3f toCv(ofVec3f& vec);
@@ -68,10 +74,10 @@ namespace ofxCv {
 	
 	// 2 toCv-compatible wrappers
 	
-	// wrapThree are functions that operate on three Mat objects. the first two
-	// are inputs, and the third is an output. for example, the min() function:
-	// min(x, y, result) will calculate the per-element min between x and y, and
-	// store it in result.
+	// wrapThree are based on functions that operate on three Mat objects.
+	// the first two are inputs, and the third is an output. for example,
+	// the min() function: min(x, y, result) will calculate the per-element min
+	// between x and y, and store that in result.
 	#define wrapThree(name) \
 	template <class X, class Y, class Result>\
 	void name(X& x, Y& y, Result& result) {\
@@ -131,13 +137,13 @@ namespace ofxCv {
 	void autorotate(ofImage& original, ofImage& thresh, ofImage& output, float* rotation = NULL);
 	void autothreshold(ofImage& original, ofImage& thresh, bool invert = false);
 	void autothreshold(ofImage& original, bool invert = false);
-	void threshold(FloatImage& img, float value, bool invert = false);
-	void threshold(FloatImage& original, FloatImage& thresh, float value, bool invert = false);
-	void matchRegion(ofImage& source, ofRectangle& region, ofImage& search, FloatImage& result);
+	//void threshold(FloatImage& img, float value, bool invert = false);
+	//void threshold(FloatImage& original, FloatImage& thresh, float value, bool invert = false);
+	//void matchRegion(ofImage& source, ofRectangle& region, ofImage& search, FloatImage& result);
 	void matchRegion(Mat& source, ofRectangle& region, Mat& search, Mat& result);
-	void convolve(ofImage& source, FloatImage& kernel, ofImage& destination);
-	void convolve(ofImage& img, FloatImage& kernel);
-	void blur(FloatImage& original, FloatImage& blurred, int size);
+	//void convolve(ofImage& source, FloatImage& kernel, ofImage& destination);
+	//void convolve(ofImage& img, FloatImage& kernel);
+	//void blur(FloatImage& original, FloatImage& blurred, int size);
 	void medianBlur(ofImage& img, int size);
 	void warpPerspective(ofImage& src, ofImage& dst, Mat& m, int flags = 0);
 	void warpPerspective(ofPixels& src, ofPixels& dst, Mat& m, int flags = 0);
@@ -155,7 +161,7 @@ namespace ofxCv {
 	void drawMat(Mat& mat, float x, float y);
 	void drawMat(Mat& mat, float x, float y, float width, float height);
 	
-	ofVec2f findMaxLocation(FloatImage& img);
+	//ofVec2f findMaxLocation(FloatImage& img);
 	ofVec2f findMaxLocation(Mat& mat);
 	
 	void getBoundingBox(ofImage& img, ofRectangle& box, int thresh = 1, bool invert = false);
