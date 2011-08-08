@@ -68,6 +68,29 @@ namespace ofxCv {
 	
 	// 2 toCv-compatible wrappers
 	
+	// wrapThree are functions that operate on three Mat objects. the first two
+	// are inputs, and the third is an output. for example, the min() function:
+	// min(x, y, result) will calculate the per-element min between x and y, and
+	// store it in result.
+	#define wrapThree(name) \
+	template <class X, class Y, class Result>\
+	void name(X& x, Y& y, Result& result) {\
+		Mat xMat = toCv(x);\
+		Mat yMat = toCv(y);\
+		Mat resultMat = toCv(result);\
+		cv::name(xMat, yMat, resultMat);\
+	}
+	wrapThree(max);
+	wrapThree(min);
+	wrapThree(multiply);
+	wrapThree(divide);
+	wrapThree(add);
+	wrapThree(subtract);
+	wrapThree(absdiff);
+	wrapThree(bitwise_and);
+	wrapThree(bitwise_or);
+	wrapThree(bitwise_xor);
+		
 	// threshold out of place
 	template <class SrcType, class DstType>
 	void threshold(SrcType& src, DstType& dst, float thresholdValue, bool invert = false) {
