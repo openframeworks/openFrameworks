@@ -6,12 +6,21 @@ namespace ofxCv {
 	
 	using namespace cv;
 	
-	int toCv(const ofImageType& ofType) {
+	ofImageType getOfImageType(int channels) {
+		switch(channels) {
+			case 1: return OF_IMAGE_GRAYSCALE;
+			case 3: return OF_IMAGE_COLOR;
+			case 4: return OF_IMAGE_COLOR_ALPHA;
+			default: return OF_IMAGE_GRAYSCALE;
+		}
+	}
+	
+	int getChannels(const ofImageType& ofType) {
 		switch(ofType) {
-			case OF_IMAGE_GRAYSCALE: return CV_8UC1;
-			case OF_IMAGE_COLOR: return CV_8UC3;
-			case OF_IMAGE_COLOR_ALPHA: return CV_8UC4;
-			default: return CV_8UC1;
+			case OF_IMAGE_GRAYSCALE: return 1;
+			case OF_IMAGE_COLOR: return 3;
+			case OF_IMAGE_COLOR_ALPHA: return 4;
+			default: return 1;
 		}
 	}
 	
@@ -28,8 +37,8 @@ namespace ofxCv {
 	}
 	
 	Mat toCv(ofPixels& pix) {
-		int cvImageType = toCv(pix.getImageType());
-		return Mat(pix.getHeight(), pix.getWidth(), cvImageType, pix.getPixels(), 0);
+		int cvType = getCvImageType(pix);
+		return Mat(pix.getHeight(), pix.getWidth(), cvType, pix.getPixels(), 0);
 	}
 	
 	Point2f toCv(ofVec2f& vec) {

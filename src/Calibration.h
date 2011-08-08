@@ -45,7 +45,7 @@ namespace ofxCv {
 	};
 	
 	class Calibration {
-	public:	
+	public:
 		Calibration();
 		
 		void save(string filename, bool absolute = false) const;
