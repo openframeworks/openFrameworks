@@ -18,7 +18,7 @@
  there should be three kinds of functions:
  1 utility functions like imitate and toCv
  2 wrapper functions that accept Mat and return cv types
- 3 wrapper functions that accept toCv-compatible objects and return toOf objects
+ 3 wrapper functions that accept toCv-compatible objects and return toOf objects // maybe this doesn't make sense, too mutch code...
  
  all type 3 functions should guarantee the size of the output with imitate
  
