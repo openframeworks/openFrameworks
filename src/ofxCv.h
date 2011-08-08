@@ -90,7 +90,16 @@ namespace ofxCv {
 	wrapThree(bitwise_and);
 	wrapThree(bitwise_or);
 	wrapThree(bitwise_xor);
-		
+	
+	// also useful for taking the average/mixing two images
+	template <class X, class Y, class Result>
+	void lerp(X& x, Y& y, Result& result, float amt = .5) {
+		Mat xMat = toCv(x);
+		Mat yMat = toCv(y);
+		Mat resultMat = toCv(result);
+		cv::addWeighted(xMat, amt, yMat, 1. - amt, 0., resultMat);
+	}
+			
 	// threshold out of place
 	template <class SrcType, class DstType>
 	void threshold(SrcType& src, DstType& dst, float thresholdValue, bool invert = false) {
