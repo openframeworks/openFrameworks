@@ -72,7 +72,7 @@ JNIEnv * ofGetJNIEnv(){
 }
 
 jclass ofGetJavaOFAndroid(){
-	return ofGetJNIEnv()->FindClass("cc.openframeworks.OFAndroid");
+	return ofGetJNIEnv()->FindClass("cc/openframeworks/OFAndroid");
 }
 
 /*void ofRunApp( ofxAndroidApp * app){
@@ -141,7 +141,7 @@ void ofAppAndroidWindow::disableSetupScreen(){
 void ofAppAndroidWindow::setOrientation(ofOrientation _orientation){
 	//if(orientation==_orientation) return;
 	orientation = _orientation;
-	jclass javaClass = ofGetJNIEnv()->FindClass("cc.openframeworks.OFAndroid");
+	jclass javaClass = ofGetJNIEnv()->FindClass("cc/openframeworks/OFAndroid");
 
 	if(javaClass==0){
 		ofLog(OF_LOG_ERROR,"setOrientation: cannot find OFAndroid java class");
@@ -154,9 +154,9 @@ void ofAppAndroidWindow::setOrientation(ofOrientation _orientation){
 		return;
 	}
 	if(orientation==OF_ORIENTATION_UNKNOWN)
-		ofGetJNIEnv()->CallStaticObjectMethod(javaClass,setScreenOrientation,-1);
+		ofGetJNIEnv()->CallStaticVoidMethod(javaClass,setScreenOrientation,-1);
 	else
-		ofGetJNIEnv()->CallStaticObjectMethod(javaClass,setScreenOrientation,ofOrientationToDegrees(orientation));
+		ofGetJNIEnv()->CallStaticVoidMethod(javaClass,setScreenOrientation,ofOrientationToDegrees(orientation));
 }
 
 ofOrientation ofAppAndroidWindow::getOrientation(){
@@ -164,7 +164,7 @@ ofOrientation ofAppAndroidWindow::getOrientation(){
 }
 
 void ofAppAndroidWindow::setFullscreen(bool fullscreen){
-	jclass javaClass = ofGetJNIEnv()->FindClass("cc.openframeworks.OFAndroid");
+	jclass javaClass = ofGetJNIEnv()->FindClass("cc/openframeworks/OFAndroid");
 
 	if(javaClass==0){
 		ofLog(OF_LOG_ERROR,"setFullscreen: cannot find OFAndroid java class");
@@ -176,7 +176,7 @@ void ofAppAndroidWindow::setFullscreen(bool fullscreen){
 		ofLog(OF_LOG_ERROR,"cannot find OFAndroid setFullscreen method");
 		return;
 	}
-	ofGetJNIEnv()->CallStaticObjectMethod(javaClass,setFullscreen,fullscreen);
+	ofGetJNIEnv()->CallStaticVoidMethod(javaClass,setFullscreen,fullscreen);
 }
 
 void ofAppAndroidWindow::toggleFullscreen(){
