@@ -25,7 +25,7 @@ static bool paused=true;
 static jclass getJavaClass(){
 	JNIEnv *env = ofGetJNIEnv();
 
-	jclass javaClass = env->FindClass("cc.openframeworks.OFAndroidVideoGrabber");
+	jclass javaClass = env->FindClass("cc/openframeworks/OFAndroidVideoGrabber");
 
 	if(javaClass==NULL){
 		ofLog(OF_LOG_ERROR,"cannot find OFAndroidVideoGrabber java class");
@@ -162,7 +162,7 @@ bool ofxAndroidVideoGrabber::initGrabber(int w, int h){
 	JNIEnv *env = ofGetJNIEnv();
 	if(!env) return false;
 
-	jclass javaClass = env->FindClass("cc.openframeworks.OFAndroidVideoGrabber");
+	jclass javaClass = env->FindClass("cc/openframeworks/OFAndroidVideoGrabber");
 
 	jobject camera = getCamera(env, javaClass, cameraId);
 	jmethodID javaInitGrabber = env->GetMethodID(javaClass,"initGrabber","(III)V");
