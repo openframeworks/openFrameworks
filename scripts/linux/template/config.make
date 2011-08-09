@@ -31,4 +31,4 @@ USER_LIBS =
 USER_COMPILER_OPTIMIZATION = -march=native -mtune=native -Os
 
 
-EXCLUDE_FROM_SOURCE="bin,.xcodeproj,obj"
+EXCLUDE_FROM_SOURCE="bin,.xcodeproj,obj,.git"
