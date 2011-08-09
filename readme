@@ -2,16 +2,4 @@ This addon represents an alternative approach to wrapping OpenCV for openFramewo
 
 - - --
 
-Here are some things ofxCv aims to solve:
-
-1 Wrap complex things in an easy way. Sometimes this means: providing wrapper functions that require fewer arguments than the real CV functions, providing a smart interface that handles dynamic memory allocation to make things faster for you, or providing in place and out of place alternatives.
-
-2 Making it obvious what you can do with CV. This means naming things in an intuitive way, and, more importantly, providing classes that have methods that transform the data represented by that class. It also means providing demos of CV functions.
-
-3 Making it easy to work directly with CV by providing lightweight conversion functions, and providing wrappers for CV functions that do the conversions for you.
-
-4 Provide clean implementations of all functions in order to provide a stepping stone to direct OpenCV use. This means using function names and variable names that follow the OpenCV documentation, and spending the time to learn proper CV usage so I can explain it clearly to others through code.
-
-- - --
-
 ofxCv was developed with support from YCAM http://ycam.jp/
