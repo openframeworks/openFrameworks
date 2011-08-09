@@ -1,5 +1,0 @@
-This addon represents an alternative approach to wrapping OpenCV for openFrameworks. It is being designed for openFrameworks 007+ compatibility only. My first goal is to have a small but complete substitute for ofxOpenCv, at which point I will start versioning releases. Until then, I don't recommend that anyone use it directly.
-
-- - --
-
-ofxCv was developed with support from YCAM http://ycam.jp/
