@@ -17,7 +17,7 @@ public:
 	void touchDoubleTap(ofTouchEventArgs &touch);
 	void touchCancelled(ofTouchEventArgs &touch);
 
-	void audioReceived( float * input, int bufferSize, int nChannels );
+	void audioIn( float * input, int bufferSize, int nChannels );
 
 	int		initialBufferSize;
 	int		sampleRate;

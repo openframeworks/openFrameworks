@@ -41,7 +41,7 @@ void testApp::setup(){
 	targetFrequency = 444.0;
 	phaseAdderTarget = (targetFrequency / (float) sampleRate) * TWO_PI;
 	
-	ofSoundStreamSetup(2,0,this, sampleRate, initialBufferSize, 4);
+	ofSoundStreamSetup(2, 0, this, sampleRate, initialBufferSize, 4);
 	ofSetFrameRate(60);
 
 }
@@ -88,8 +88,8 @@ void testApp::draw(){
 }
 
 //--------------------------------------------------------------
-void testApp::audioRequested(float * output, int bufferSize, int nChannels){
-		
+void testApp::audioOut( float * output, int bufferSize, int nChannels ){
+			
 	if( initialBufferSize != bufferSize ){
 		ofLog(OF_LOG_ERROR, "your buffer size was set to %i - but the stream needs a buffer size of %i", initialBufferSize, bufferSize);
 		return;
