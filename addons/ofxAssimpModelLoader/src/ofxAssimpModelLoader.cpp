@@ -32,7 +32,8 @@ static inline vector<ofVec3f> aiVecVecToOfVecVec(const vector<aiVector3D>& v){
 }
 
 //--------------------------------------------------------------
-static void aiMeshToOfMesh(const aiMesh* aim, ofMesh& ofm){
+static void aiMeshToOfMesh(const aiMesh* aim, ofMesh& ofm, ofxAssimpMeshHelper * helper = NULL){
+
 	// default to triangle mode
 	ofm.setMode(OF_PRIMITIVE_TRIANGLES);
 
@@ -51,7 +52,12 @@ static void aiMeshToOfMesh(const aiMesh* aim, ofMesh& ofm){
 	// just one for now
 	if(aim->GetNumUVChannels()>0){
 		for (int i=0; i < (int)aim->mNumVertices;i++){
-			ofm.addTexCoord(ofVec2f(aim->mTextureCoords[0][i].x ,aim->mTextureCoords[0][i].y));
+			if( helper != NULL && helper->texture.getWidth() > 0.0 ){
+				ofVec2f texCoord = helper->texture.getCoordFromPercent(aim->mTextureCoords[0][i].x ,aim->mTextureCoords[0][i].y);
+				ofm.addTexCoord(texCoord);
+			}else{
+				ofm.addTexCoord(ofVec2f(aim->mTextureCoords[0][i].x ,aim->mTextureCoords[0][i].y));			
+			}
 		}
 	}
 
@@ -282,41 +288,11 @@ void ofxAssimpModelLoader::loadGLResources(){
         // the current meshHelper we will be populating data into.
         //ofxAssimpMeshHelper & meshHelper = modelMeshes[i];
         ofxAssimpMeshHelper meshHelper;
-
-        meshHelper.mesh = mesh;
-        aiMeshToOfMesh(mesh,meshHelper.cachedMesh);
-        meshHelper.cachedMesh.setMode(OF_PRIMITIVE_TRIANGLES);
-        meshHelper.validCache = true;
-        meshHelper.hasChanged = false;
-
-        meshHelper.animatedPos.resize(mesh->mNumVertices);
-        if(mesh->HasNormals()){
-        	meshHelper.animatedNorm.resize(mesh->mNumVertices);
-        }
+		
+        //meshHelper.texture = NULL;
 
         // Handle material info
         aiMaterial* mtl = scene->mMaterials[mesh->mMaterialIndex];
-
-        // Load Textures
-        int texIndex = 0;
-        aiString texPath;
-
-        //meshHelper.texture = NULL;
-
-        // TODO: handle other aiTextureTypes
-        if(AI_SUCCESS == mtl->GetTexture(aiTextureType_DIFFUSE, texIndex, &texPath)){
-            ofLog(OF_LOG_VERBOSE, "loading image from %s", texPath.data);
-            string modelFolder = ofFilePath::getEnclosingDirectory(filepath,false);
-            string relTexPath = ofFilePath::getEnclosingDirectory(texPath.data,false);
-            string texFile = ofFilePath::getFileName(texPath.data);
-            string realPath = modelFolder + relTexPath  + texFile;
-			if(!ofFile::doesFileExist(realPath) || !ofLoadImage(meshHelper.texture,realPath)) {
-                ofLog(OF_LOG_ERROR,string("error loading image ") + filepath + " " +realPath);
-			}else{
-                ofLog(OF_LOG_VERBOSE, "texture width: %f height %f", meshHelper.texture.getWidth(), meshHelper.texture.getHeight());
-			}
-        }
-
         aiColor4D dcolor, scolor, acolor, ecolor;
 
         if(AI_SUCCESS == aiGetMaterialColor(mtl, AI_MATKEY_COLOR_DIFFUSE, &dcolor)){
@@ -349,7 +325,6 @@ void ofxAssimpModelLoader::loadGLResources(){
 			}
 		}
 
-
         // Culling
         unsigned int max = 1;
         int two_sided;
@@ -357,6 +332,36 @@ void ofxAssimpModelLoader::loadGLResources(){
             meshHelper.twoSided = true;
         else
             meshHelper.twoSided = false;
+
+        // Load Textures
+        int texIndex = 0;
+        aiString texPath;
+
+        // TODO: handle other aiTextureTypes
+        if(AI_SUCCESS == mtl->GetTexture(aiTextureType_DIFFUSE, texIndex, &texPath)){
+            ofLog(OF_LOG_VERBOSE, "loading image from %s", texPath.data);
+            string modelFolder = ofFilePath::getEnclosingDirectory(filepath,false);
+            string relTexPath = ofFilePath::getEnclosingDirectory(texPath.data,false);
+            string texFile = ofFilePath::getFileName(texPath.data);
+            string realPath = modelFolder + relTexPath  + texFile;
+			if(!ofFile::doesFileExist(realPath) || !ofLoadImage(meshHelper.texture,realPath)) {
+                ofLog(OF_LOG_ERROR,string("error loading image ") + filepath + " " +realPath);
+			}else{
+                ofLog(OF_LOG_VERBOSE, "texture width: %f height %f", meshHelper.texture.getWidth(), meshHelper.texture.getHeight());
+			}
+        }
+
+        meshHelper.mesh = mesh;
+        aiMeshToOfMesh(mesh, meshHelper.cachedMesh, &meshHelper);
+        meshHelper.cachedMesh.setMode(OF_PRIMITIVE_TRIANGLES);
+        meshHelper.validCache = true;
+        meshHelper.hasChanged = false;
+
+        meshHelper.animatedPos.resize(mesh->mNumVertices);
+        if(mesh->HasNormals()){
+        	meshHelper.animatedNorm.resize(mesh->mNumVertices);
+        }
+
 
         int usage;
         if(getAnimationCount()){
@@ -369,6 +374,7 @@ void ofxAssimpModelLoader::loadGLResources(){
         	usage = GL_STATIC_DRAW;
 
         }
+
         meshHelper.vbo.setVertexData(&mesh->mVertices[0].x,3,mesh->mNumVertices,usage,sizeof(aiVector3D));
         if(mesh->HasVertexColors(0)){
         	meshHelper.vbo.setColorData(&mesh->mColors[0][0].r,mesh->mNumVertices,GL_STATIC_DRAW,sizeof(aiColor4D));
@@ -376,8 +382,8 @@ void ofxAssimpModelLoader::loadGLResources(){
         if(mesh->HasNormals()){
         	meshHelper.vbo.setNormalData(&mesh->mNormals[0].x,mesh->mNumVertices,usage,sizeof(aiVector3D));
         }
-        if (mesh->HasTextureCoords(0)){
-        	meshHelper.vbo.setTexCoordData(&mesh->mTextureCoords[0][0].x,mesh->mNumVertices,GL_STATIC_DRAW,sizeof(aiVector3D));
+        if (meshHelper.cachedMesh.hasTexCoords()){			
+        	meshHelper.vbo.setTexCoordData(meshHelper.cachedMesh.getTexCoordsPointer()[0].getPtr(),mesh->mNumVertices,GL_STATIC_DRAW,sizeof(ofVec2f));
         }
 
         meshHelper.indices.resize(mesh->mNumFaces * 3);
