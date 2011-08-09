@@ -6,19 +6,19 @@ ofxCv represents an alternative approach to wrapping OpenCV for openFrameworks. 
 
 ofxCv has a few goals driving its development.
 
-## Wrap complex things in a helpful way
+### Wrap complex things in a helpful way
 
 Sometimes this means: providing wrapper functions that require fewer arguments than the real CV functions, providing a smart interface that handles dynamic memory allocation to make things faster for you, or providing in place and out of place alternatives.
 
-## Present the power of OpenCv clearly
+### Present the power of OpenCv clearly
 
 This means naming things in an intuitive way, and, more importantly, providing classes that have methods that transform the data represented by that class. It also means providing demos of CV functions, and generally being more useful than ofxOpenCv.
 
-## Interoperability of openFrameworks and OpenCv
+### Interoperability of openFrameworks and OpenCv
 
 Making it easy to work directly with CV by providing lightweight conversion functions, and providing wrappers for CV functions that do the conversions for you.
 
-## Elegant internal OpenCv code
+### Elegant internal OpenCv code
 
 Provide clean implementations of all functions in order to provide a stepping stone to direct OpenCV use. This means using function names and variable names that follow the OpenCV documentation, and spending the time to learn proper CV usage so I can explain it clearly to others through code. Sometimes there will be heavy templating or other difficult constructs, but these should be avoided as much as possible.
 
