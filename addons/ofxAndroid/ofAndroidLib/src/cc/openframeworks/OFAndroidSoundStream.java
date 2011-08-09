@@ -13,8 +13,7 @@ import android.media.AudioTrack.OnPlaybackPositionUpdateListener;
 import android.media.MediaRecorder;
 import android.util.Log;
 
-
-
+// NOTE: the OFAndroidSoundStream class is controlled from the JNI layer (ofxAndroidSoundStream.cpp / h)
 public class OFAndroidSoundStream extends OFAndroidObject implements Runnable, OnRecordPositionUpdateListener, OnPlaybackPositionUpdateListener{
 	
 	boolean threadRunning;
@@ -64,7 +63,8 @@ public class OFAndroidSoundStream extends OFAndroidObject implements Runnable, O
 			outBuffer[i]=0;
 		}
 		
-		oTrack = new AudioTrack(AudioManager.STREAM_MUSIC, sampleRate, outChannels, AudioFormat.ENCODING_PCM_16BIT, outBufferSize*2, AudioTrack.MODE_STREAM);
+		oTrack = new AudioTrack(AudioManager.STREAM_MUSIC, sampleRate, outChannels, 
+								AudioFormat.ENCODING_PCM_16BIT, outBufferSize*2, AudioTrack.MODE_STREAM);
 		
 		Log.i("OF","sound output setup with buffersize: " + minBufferSize);
 	}
@@ -85,9 +85,9 @@ public class OFAndroidSoundStream extends OFAndroidObject implements Runnable, O
 		
 		inBuffer = new short[inBufferSize*numIns];
 
-		for(int i=0;i<inBuffer.length;i++){
+		/*for(int i=0;i<inBuffer.length;i++){
 			inBuffer[i]=0;
-		}
+		}*/ // http://java.sun.com/docs/books/jls/third_edition/html/typesValues.html#4.12.5
 		
 		Log.i("OF","sound input setup with buffersize: " + minBufferSize);
 	}
@@ -173,7 +173,7 @@ public class OFAndroidSoundStream extends OFAndroidObject implements Runnable, O
 	public void start(){
 		if(iTrack!=null && iTrack.getState()!=AudioRecord.STATE_UNINITIALIZED){
 			if(iTrack.setPositionNotificationPeriod(inBuffer.length/numIns/2)!=AudioRecord.SUCCESS){
-				Log.e("OF","cannot set callback");
+				Log.e("OF","OFAndroidSoundStream: cannot set callback");
 			}else{
 				iTrack.setRecordPositionUpdateListener(this);
 				iTrack.startRecording();
@@ -250,10 +250,10 @@ public class OFAndroidSoundStream extends OFAndroidObject implements Runnable, O
     	public void onReceive(Context context, Intent intent) {
     		
     		if(intent.getIntExtra("state",0)==0){
-    			Log.i("OF","Headphones disconnected" + intent.getIntExtra("state",0));
+    			Log.i("OF","Headphones disconnected " + intent.getIntExtra("state",0));
     			headphonesConnected(false);
     		}else{
-    			Log.i("OF","Headphones connected" + intent.getIntExtra("state",0));
+    			Log.i("OF","Headphones connected " + intent.getIntExtra("state",0));
     			headphonesConnected(true);
     		}
     	}
