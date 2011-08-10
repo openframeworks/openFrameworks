@@ -76,6 +76,32 @@ This creates a wrapper for `img` called `imgMat`. To create a deep copy, use `cl
 * It works with `Mat`, `ofImage`, `ofPixels`, `ofVideoGrabber`, and anything else that extends `ofBaseHasPixels`.
 * It will only reallocate memory if necessary. This means it can be used liberally.
 
+# Working with OpenCv 2
+
+OpenCv 2 is an incredibly well designed API, and ofxCv encourages you to use it directly. Here are some especially hints on using OpenCv.
+
+### OpenCv Types
+
+OpenCv 2 uses the `Mat` class in place of the old `IplImage`. Memory allocation, copying, and deallocation are all handled automatically. `operator=` is a shallow, reference-counted copy. A `Mat` contains a collection of `Scalar` objects. A `Scalar` contains a collection of basic types (unsigned char, bool, double, etc.). `Scalar` is a short vector for representing color or other multidimensional information. The hierarchy is: `Mat` contains `Scalar`, `Scalar` contains basic types.
+
+### Mat operations
+
+Basic mathematical operations on `Mat` objects of the same size and type can be accomplished with matrix expressions. Matrix expressions are a collection of overloaded operators that accept `Mat`, `Scalar`, and basic types. A normal mathematical operation might look like:
+
+	float x, a, b;
+	...
+	x = (a + b) * 10;
+
+A matrix operation looks similar:
+
+	Mat x, a, b;
+	É
+	x = (a + b) * 10;
+
+This will add every element of `a` and `b`, then multiply the results by 10, and finally assign the result to `x`.
+
+Available matrix expressions include mathematical operators `+`, `-`, `/` (per element division), `*` (matrix multiplication), `.mul()` (per-element multiplication). As well as comparison operators `!=`, `==`, `<`, `>`, `>=`, `<=` (useful for thresholding). Binary operators `&`, `|`, `^`, `~`. And a few others like `abs()`, `min()`, and `max()`. For the complete listing see the OpenCv documention or `mat.hpp`.
+
 - - --
 
 ofxCv was developed with support from YCAM http://ycam.jp/
