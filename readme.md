@@ -78,7 +78,7 @@ This creates a wrapper for `img` called `imgMat`. To create a deep copy, use `cl
 
 # Working with OpenCv 2
 
-OpenCv 2 is an incredibly well designed API, and ofxCv encourages you to use it directly. Here are some especially hints on using OpenCv.
+OpenCv 2 is an incredibly well designed API, and ofxCv encourages you to use it directly. Here are some hints on using OpenCv.
 
 ### OpenCv Types
 
@@ -95,7 +95,7 @@ Basic mathematical operations on `Mat` objects of the same size and type can be 
 A matrix operation looks similar:
 
 	Mat x, a, b;
-	É
+	...
 	x = (a + b) * 10;
 
 This will add every element of `a` and `b`, then multiply the results by 10, and finally assign the result to `x`.
@@ -104,4 +104,4 @@ Available matrix expressions include mathematical operators `+`, `-`, `/` (per e
 
 - - --
 
-ofxCv was developed with support from YCAM http://ycam.jp/
+*ofxCv was developed with support from [Yamaguchi Center for Arts and Media](http://ycam.jp/).*
