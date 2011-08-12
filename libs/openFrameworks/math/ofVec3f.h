@@ -41,12 +41,12 @@ public:
     //
     bool operator==( const ofVec3f& vec ) const;
     bool operator!=( const ofVec3f& vec ) const;
-    bool match( const ofVec3f& vec, float tollerance=0.0001 ) const;
+    bool match( const ofVec3f& vec, float tolerance=0.0001 ) const;
     /**
 	 * Checks if vectors look in the same direction.
 	 */
-    bool align( const ofVec3f& vec, float tollerance=0.0001 ) const;
-    bool alignRad( const ofVec3f& vec, float tollerance=0.0001 ) const;
+    bool align( const ofVec3f& vec, float tolerance=0.0001 ) const;
+    bool alignRad( const ofVec3f& vec, float tolerance=0.0001 ) const;
 	
 	
     // Operator overloading for ofVec3f
@@ -275,23 +275,23 @@ inline bool ofVec3f::operator!=( const ofVec3f& vec ) const {
 	return (x != vec.x) || (y != vec.y) || (z != vec.z);
 }
 
-inline bool ofVec3f::match( const ofVec3f& vec, float tollerance ) const{
-	return (fabs(x - vec.x) < tollerance)
-	&& (fabs(y - vec.y) < tollerance)
-	&& (fabs(z - vec.z) < tollerance);
+inline bool ofVec3f::match( const ofVec3f& vec, float tolerance ) const{
+	return (fabs(x - vec.x) < tolerance)
+	&& (fabs(y - vec.y) < tolerance)
+	&& (fabs(z - vec.z) < tolerance);
 }
 
 /**
  * Checks if vectors look in the same direction.
  */
-inline bool ofVec3f::align( const ofVec3f& vec, float tollerance ) const {
+inline bool ofVec3f::align( const ofVec3f& vec, float tolerance ) const {
 	float angle = this->angle( vec );
-	return  angle < tollerance;
+	return  angle < tolerance;
 }
 
-inline bool ofVec3f::alignRad( const ofVec3f& vec, float tollerance ) const {
+inline bool ofVec3f::alignRad( const ofVec3f& vec, float tolerance ) const {
 	float angle = this->angleRad( vec );
-	return  angle < tollerance;
+	return  angle < tolerance;
 }
 
 
