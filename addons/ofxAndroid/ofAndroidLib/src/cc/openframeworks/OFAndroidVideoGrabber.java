@@ -58,8 +58,8 @@ public class OFAndroidVideoGrabber extends OFAndroidObject implements Runnable, 
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				Log.e("OF","Error trying to open specific camera, trying default",e);
+				camera = Camera.open();
 			} 
-			camera = Camera.open();
 		}
 		Camera.Parameters config = camera.getParameters();
 		
