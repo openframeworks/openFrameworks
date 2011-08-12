@@ -39,9 +39,7 @@ namespace cvflann
 {
 
 struct CV_EXPORTS LinearIndexParams : public IndexParams {
-	LinearIndexParams() : IndexParams(LINEAR) {};
-
-	flann_algorithm_t getIndexType() const { return algorithm; }
+	LinearIndexParams() : IndexParams(FLANN_INDEX_LINEAR) {};
 
 	void print() const
 	{
@@ -56,6 +54,9 @@ class LinearIndex : public NNIndex<ELEM_TYPE>
 	const Matrix<ELEM_TYPE> dataset;
 	const LinearIndexParams& index_params;
 
+	LinearIndex(const LinearIndex&);
+	LinearIndex& operator=(const LinearIndex&);
+
 public:
 
 	LinearIndex(const Matrix<ELEM_TYPE>& inputData, const LinearIndexParams& params = LinearIndexParams() ) :
@@ -65,7 +66,7 @@ public:
 
     flann_algorithm_t getType() const
     {
-        return LINEAR;
+        return FLANN_INDEX_LINEAR;
     }
 
 

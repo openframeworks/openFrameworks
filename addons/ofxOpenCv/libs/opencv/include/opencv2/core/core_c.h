@@ -1525,9 +1525,8 @@ CVAPI(void) cvSetIPLAllocators( Cv_iplCreateImageHeader create_header,
 /********************************** High-level functions ********************************/
 
 /* opens existing or creates new file storage */
-CVAPI(CvFileStorage*)  cvOpenFileStorage( const char* filename,
-                                          CvMemStorage* memstorage,
-                                          int flags );
+CVAPI(CvFileStorage*)  cvOpenFileStorage( const char* filename, CvMemStorage* memstorage,
+                                          int flags, const char* encoding CV_DEFAULT(NULL) );
 
 /* closes file storage and deallocates buffers */
 CVAPI(void) cvReleaseFileStorage( CvFileStorage** fs );
@@ -1705,6 +1704,7 @@ CVAPI(double) cvGetTickFrequency( void );
 #define CV_CPU_SSSE3   5
 #define CV_CPU_SSE4_1  6
 #define CV_CPU_SSE4_2  7
+#define CV_CPU_POPCNT  8
 #define CV_CPU_AVX    10
 #define CV_HARDWARE_MAX_FEATURE 255
 

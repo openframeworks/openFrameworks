@@ -43,11 +43,6 @@
 #define __OPENCV_HIGHGUI_H__
 
 #include "opencv2/core/core_c.h"
-#if defined WIN32 || defined _WIN32
-   	#include <windows.h>
-	#undef min
-	#undef max
-#endif
 
 #ifdef __cplusplus
 extern "C" {
@@ -288,7 +283,11 @@ enum
 
 	CV_CAP_DSHOW    =700,   // DirectShow (via videoInput)
 
-	CV_CAP_PVAPI    =800   // PvAPI, Prosilica GigE SDK
+	CV_CAP_PVAPI    =800,   // PvAPI, Prosilica GigE SDK
+
+	CV_CAP_OPENNI   =900,   // OpenNI (for Kinect)
+
+	CV_CAP_ANDROID  =1000   // Android
 };
 
 /* start capturing frames from camera: index = camera_index + domain_offset (CV_CAP_*) */
@@ -313,6 +312,12 @@ CVAPI(void) cvReleaseCapture( CvCapture** capture );
 
 enum
 {
+    // modes of the controlling registers (can be: auto, manual, auto single push, absolute Latter allowed with any other mode)
+    // every feature can have only one mode turned on at a time
+    CV_CAP_PROP_DC1394_OFF         = -4,  //turn the feature off (not controlled manually nor automatically)
+    CV_CAP_PROP_DC1394_MODE_MANUAL = -3, //set automatically when a value of the feature is set by the user
+    CV_CAP_PROP_DC1394_MODE_AUTO = -2,
+    CV_CAP_PROP_DC1394_MODE_ONE_PUSH_AUTO = -1,
 	CV_CAP_PROP_POS_MSEC       =0,
 	CV_CAP_PROP_POS_FRAMES     =1,
 	CV_CAP_PROP_POS_AVI_RATIO  =2,
@@ -330,9 +335,72 @@ enum
 	CV_CAP_PROP_GAIN          =14,
 	CV_CAP_PROP_EXPOSURE      =15,
 	CV_CAP_PROP_CONVERT_RGB   =16,
-	CV_CAP_PROP_WHITE_BALANCE =17,
+    CV_CAP_PROP_WHITE_BALANCE_BLUE_U =17,
 	CV_CAP_PROP_RECTIFICATION =18,
-	CV_CAP_PROP_MONOCROME	  =19
+	CV_CAP_PROP_MONOCROME	  =19,
+    CV_CAP_PROP_SHARPNESS     =20,
+    CV_CAP_PROP_AUTO_EXPOSURE =21, // exposure control done by camera,
+                                   // user can adjust refernce level
+                                   // using this feature
+    CV_CAP_PROP_GAMMA         =22,
+    CV_CAP_PROP_TEMPERATURE   =23,
+    CV_CAP_PROP_TRIGGER       =24,
+    CV_CAP_PROP_TRIGGER_DELAY =25,
+    CV_CAP_PROP_WHITE_BALANCE_RED_V =26,
+    CV_CAP_PROP_MAX_DC1394    =27,
+    CV_CAP_PROP_AUTOGRAB      =1024, // property for highgui class CvCapture_Android only
+    CV_CAP_PROP_SUPPORTED_PREVIEW_SIZES_STRING=1025, // tricky property, returns cpnst char* indeed
+	// OpenNI map generators
+    CV_CAP_OPENNI_DEPTH_GENERATOR = 0,
+    CV_CAP_OPENNI_IMAGE_GENERATOR = 1 << 31,
+    CV_CAP_OPENNI_GENERATORS_MASK = 1 << 31,
+
+    // Properties of cameras available through OpenNI interfaces
+    CV_CAP_PROP_OPENNI_OUTPUT_MODE      = 100,
+    CV_CAP_PROP_OPENNI_FRAME_MAX_DEPTH  = 101, // in mm
+    CV_CAP_PROP_OPENNI_BASELINE         = 102, // in mm
+    CV_CAP_PROP_OPENNI_FOCAL_LENGTH     = 103, // in pixels
+    CV_CAP_PROP_OPENNI_REGISTRATION_ON    = 104, // flag
+    CV_CAP_OPENNI_IMAGE_GENERATOR_OUTPUT_MODE = CV_CAP_OPENNI_IMAGE_GENERATOR + CV_CAP_PROP_OPENNI_OUTPUT_MODE,
+    CV_CAP_OPENNI_DEPTH_GENERATOR_BASELINE = CV_CAP_OPENNI_DEPTH_GENERATOR + CV_CAP_PROP_OPENNI_BASELINE,
+    CV_CAP_OPENNI_DEPTH_GENERATOR_FOCAL_LENGTH = CV_CAP_OPENNI_DEPTH_GENERATOR + CV_CAP_PROP_OPENNI_FOCAL_LENGTH,
+    CV_CAP_OPENNI_DEPTH_GENERATOR_REGISTRATION_ON = CV_CAP_OPENNI_DEPTH_GENERATOR + CV_CAP_PROP_OPENNI_REGISTRATION_ON,
+    
+    // Properties of cameras available through GStreamer interface
+    CV_CAP_GSTREAMER_QUEUE_LENGTH	= 200, // default is 1
+    CV_CAP_PROP_PVAPI_MULTICASTIP       = 300 // ip for anable multicast master mode. 0 for disable multicast
+};
+
+enum
+{
+    // Data given from depth generator.
+    CV_CAP_OPENNI_DEPTH_MAP                 = 0, // Depth values in mm (CV_16UC1)
+    CV_CAP_OPENNI_POINT_CLOUD_MAP           = 1, // XYZ in meters (CV_32FC3)
+    CV_CAP_OPENNI_DISPARITY_MAP             = 2, // Disparity in pixels (CV_8UC1)
+    CV_CAP_OPENNI_DISPARITY_MAP_32F         = 3, // Disparity in pixels (CV_32FC1)
+    CV_CAP_OPENNI_VALID_DEPTH_MASK          = 4, // CV_8UC1
+
+    // Data given from RGB image generator.
+    CV_CAP_OPENNI_BGR_IMAGE                 = 5,
+    CV_CAP_OPENNI_GRAY_IMAGE                = 6
+};
+
+// Supported output modes of OpenNI image generator
+enum
+{
+    CV_CAP_OPENNI_VGA_30HZ     = 0,
+    CV_CAP_OPENNI_SXGA_15HZ    = 1
+};
+
+//supported by Android camera output formats
+enum
+{
+  CV_CAP_ANDROID_COLOR_FRAME_BGR = 0, //BGR
+  CV_CAP_ANDROID_COLOR_FRAME = CV_CAP_ANDROID_COLOR_FRAME_BGR,
+  CV_CAP_ANDROID_GREY_FRAME  = 1,  //Y
+  CV_CAP_ANDROID_COLOR_FRAME_RGB = 2,
+  CV_CAP_ANDROID_COLOR_FRAME_BGRA = 3,
+  CV_CAP_ANDROID_COLOR_FRAME_RGBA = 4
 };
 
 /* retrieve or set capture properties */
@@ -395,9 +463,10 @@ CVAPI(void) cvReleaseVideoWriter( CvVideoWriter** writer );
 
 #if defined WIN32 || defined _WIN32
 
-typedef int (CV_CDECL * CvWin32WindowCallback)(HWND, UINT, WPARAM, LPARAM, int*);
-CVAPI(void) cvSetPreprocessFuncWin32( CvWin32WindowCallback on_preprocess );
-CVAPI(void) cvSetPostprocessFuncWin32( CvWin32WindowCallback on_postprocess );
+CVAPI(void) cvSetPreprocessFuncWin32_(const void* callback);
+CVAPI(void) cvSetPostprocessFuncWin32_(const void* callback);
+#define cvSetPreprocessFuncWin32(callback) cvSetPreprocessFuncWin32_((const void*)(callback))
+#define cvSetPostprocessFuncWin32(callback) cvSetPostprocessFuncWin32_((const void*)(callback))
 
 #endif
 

@@ -94,7 +94,7 @@ public:
 
 	int size() const { return nnIndex->size(); }
 
-	const IndexParams* getIndexParameters() { return nnIndex->getParameters(); }
+	const IndexParams* getIndexParameters() { return nnIndex->getIndexParameters(); }
 
 };
 
@@ -104,7 +104,7 @@ Index_<T>::Index_(const Mat& dataset, const IndexParams& params)
 {
     CV_Assert(dataset.type() == CvType<T>::type());
     CV_Assert(dataset.isContinuous());
-    ::cvflann::Matrix<float> m_dataset((T*)dataset.ptr<T>(0), dataset.rows, dataset.cols);
+    ::cvflann::Matrix<T> m_dataset((T*)dataset.ptr<T>(0), dataset.rows, dataset.cols);
     
     nnIndex = new ::cvflann::Index<T>(m_dataset, params);
     nnIndex->buildIndex();

@@ -345,6 +345,30 @@ inline GpuMat GpuMat::t() const
 
 static inline void swap( GpuMat& a, GpuMat& b ) { a.swap(b); }
 
+inline GpuMat createContinuous(int rows, int cols, int type)
+{
+    GpuMat m;
+    createContinuous(rows, cols, type, m);
+    return m;
+}
+
+inline void createContinuous(Size size, int type, GpuMat& m)
+{
+    createContinuous(size.height, size.width, type, m);
+}
+
+inline GpuMat createContinuous(Size size, int type)
+{
+    GpuMat m;
+    createContinuous(size, type, m);
+    return m;
+}
+
+inline void ensureSizeIsEnough(Size size, int type, GpuMat& m)
+{
+    ensureSizeIsEnough(size.height, size.width, type, m);
+}
+
 
 ///////////////////////////////////////////////////////////////////////
 //////////////////////////////// CudaMem ////////////////////////////////
@@ -381,6 +405,7 @@ inline CudaMem::CudaMem(const Mat& m, int _alloc_type) : flags(0), rows(0), cols
 inline CudaMem::~CudaMem()
 {
     release();
+
 }
 
 inline CudaMem& CudaMem::operator = (const CudaMem& m)
@@ -431,6 +456,40 @@ inline int CudaMem::channels() const { return CV_MAT_CN(flags); }
 inline size_t CudaMem::step1() const { return step/elemSize1(); }
 inline Size CudaMem::size() const { return Size(cols, rows); }
 inline bool CudaMem::empty() const { return data == 0; }
+
+//////////////////////////////////////////////////////////////////////////////
+// Arithmetical operations
+
+inline GpuMat operator ~ (const GpuMat& src)
+{
+    GpuMat dst;
+    bitwise_not(src, dst);
+    return dst;
+}
+
+
+inline GpuMat operator | (const GpuMat& src1, const GpuMat& src2)
+{
+    GpuMat dst;
+    bitwise_or(src1, src2, dst);
+    return dst;
+}
+
+
+inline GpuMat operator & (const GpuMat& src1, const GpuMat& src2)
+{
+    GpuMat dst;
+    bitwise_and(src1, src2, dst);
+    return dst;
+}
+
+
+inline GpuMat operator ^ (const GpuMat& src1, const GpuMat& src2)
+{
+    GpuMat dst;
+    bitwise_xor(src1, src2, dst);
+    return dst;
+}
 
 
 } /* end of namespace gpu */

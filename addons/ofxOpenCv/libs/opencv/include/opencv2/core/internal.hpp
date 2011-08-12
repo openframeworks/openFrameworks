@@ -119,6 +119,18 @@ CV_INLINE IppiSize ippiSize(int width, int height)
 #define CV_SSE3 0
 #endif
 
+#if defined ANDROID && defined __ARM_NEON__
+#include "arm_neon.h"
+#define CV_NEON 1
+
+#define CPU_HAS_NEON_FEATURE (true)
+//TODO: make real check using stuff from "cpu-features.h"
+//((bool)android_getCpuFeatures() & ANDROID_CPU_ARM_FEATURE_NEON)
+#else
+#define CV_NEON 0
+#define CPU_HAS_NEON_FEATURE (false)
+#endif
+
 #ifndef IPPI_CALL
 #define IPPI_CALL(func) CV_Assert((func) >= 0)
 #endif
@@ -127,6 +139,7 @@ CV_INLINE IppiSize ippiSize(int width, int height)
     #include "tbb/tbb_stddef.h"
     #if TBB_VERSION_MAJOR*100 + TBB_VERSION_MINOR >= 202
         #include "tbb/tbb.h"
+        #include "tbb/task.h"
         #undef min
         #undef max
     #else
@@ -134,7 +147,7 @@ CV_INLINE IppiSize ippiSize(int width, int height)
     #endif
 #endif
 
-#ifdef HAVE_EIGEN2
+#ifdef HAVE_EIGEN
     #include <Eigen/Core>
     #include "opencv2/core/eigen.hpp"
 #endif
@@ -184,11 +197,24 @@ CV_INLINE IppiSize ippiSize(int width, int height)
             int _begin, _end, _grainsize;
         };
 
+
+#ifdef HAVE_THREADING_FRAMEWORK 
+#include "threading_framework.hpp"
+
+	template<typename Body> 
+	static void parallel_for( const BlockedRange& range, const Body& body )
+	{
+		tf::parallel_for<Body>(range, body);
+	}
+        typedef tf::ConcurrentVector<Rect> ConcurrentRectVector;
+#else
         template<typename Body> static inline
         void parallel_for( const BlockedRange& range, const Body& body )
         {
-            body(range);
+            body(range); 
         }
+        typedef std::vector<Rect> ConcurrentRectVector;
+#endif
         
         template<typename Iterator, typename Body> static inline
         void parallel_do( Iterator first, Iterator last, const Body& body )
@@ -205,7 +231,6 @@ CV_INLINE IppiSize ippiSize(int width, int height)
             body(range);
         }
         
-        typedef std::vector<Rect> ConcurrentRectVector;
     }
 #endif
 #endif
@@ -265,15 +290,19 @@ CV_INLINE IppiSize ippiSize(int width, int height)
 #ifdef __GNUC__
     #undef alloca
     #define alloca __builtin_alloca
+    #define CV_HAVE_ALLOCA 1
 #elif defined WIN32 || defined _WIN32 || \
       defined WINCE || defined _MSC_VER || defined __BORLANDC__
     #include <malloc.h>
+    #define CV_HAVE_ALLOCA 1
 #elif defined HAVE_ALLOCA_H
     #include <alloca.h>
+    #define CV_HAVE_ALLOCA 1
 #elif defined HAVE_ALLOCA
     #include <stdlib.h>
+    #define CV_HAVE_ALLOCA 1
 #else
-    #error "No alloca!"
+    #undef CV_HAVE_ALLOCA
 #endif
 
 #ifdef __GNUC__
@@ -284,15 +313,9 @@ CV_INLINE IppiSize ippiSize(int width, int height)
 #define CV_DECL_ALIGNED(x)
 #endif
 
+#if CV_HAVE_ALLOCA
 /* ! DO NOT make it an inline function */
 #define cvStackAlloc(size) cvAlignPtr( alloca((size) + CV_MALLOC_ALIGN), CV_MALLOC_ALIGN )
-
-#if defined _MSC_VER || defined __BORLANDC__
-    #define CV_BIG_INT(n)   n##I64
-    #define CV_BIG_UINT(n)  n##UI64
-#else
-    #define CV_BIG_INT(n)   n##LL
-    #define CV_BIG_UINT(n)  n##ULL
 #endif
 
 #ifndef CV_IMPL
@@ -573,11 +596,11 @@ void func_name( T *array, size_t total, user_data_type aux )                    
                     goto insert_sort;                                               \
                 }                                                                   \
                                                                                     \
-                n = CV_MIN( (int)(left1 - left0), (int)(left - left1) );               \
+                n = MIN( (int)(left1 - left0), (int)(left - left1) );               \
                 for( i = 0; i < n; i++ )                                            \
                     CV_SWAP( left0[i], left[i-n], t );                              \
                                                                                     \
-                n = CV_MIN( (int)(right0 - right1), (int)(right1 - right) );           \
+                n = MIN( (int)(right0 - right1), (int)(right1 - right) );           \
                 for( i = 0; i < n; i++ )                                            \
                     CV_SWAP( left[i], right0[i-n+1], t );                           \
                 n = (int)(left - left1);                                            \

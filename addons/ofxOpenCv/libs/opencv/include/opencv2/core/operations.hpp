@@ -73,27 +73,8 @@
   #endif
     
 #elif defined WIN32 || defined _WIN32
-
-  #if defined _MSC_VER && defined _M_IX86
-    static inline int CV_XADD( int* addr, int delta )
-    {
-        int tmp;
-        __asm
-        {
-            mov edx, addr
-            mov eax, delta
-            lock xadd [edx], eax
-            mov tmp, eax
-        }
-        return tmp;
-    }
-  #else
-    #include "windows.h"
-    #undef min
-    #undef max
-    #define CV_XADD(addr,delta) InterlockedExchangeAdd((LONG volatile*)(addr), (delta))
-  #endif
-      
+  #include <intrin.h>
+  #define CV_XADD(addr,delta) _InterlockedExchangeAdd((long volatile*)(addr), (delta))
 #else
 
   template<typename _Tp> static inline _Tp CV_XADD(_Tp* addr, _Tp delta)
@@ -340,7 +321,7 @@ template<typename _Tp, int m, int n> inline
 Matx<_Tp,m,n> Matx<_Tp,m,n>::eye()
 {
     Matx<_Tp,m,n> M;
-    for(int i = 0; i < CV_MIN(m,n); i++)
+    for(int i = 0; i < MIN(m,n); i++)
         M(i,i) = 1;
     return M;
 }
@@ -363,11 +344,11 @@ template<typename _Tp, int m, int n> inline double Matx<_Tp, m, n>::ddot(const M
 
 
 template<typename _Tp, int m, int n> inline
-Matx<_Tp,m,n> Matx<_Tp,m,n>::diag(const Matx<_Tp,CV_MIN(m,n),1>& d)
+Matx<_Tp,m,n> Matx<_Tp,m,n>::diag(const Matx<_Tp,MIN(m,n),1>& d)
 {
     Matx<_Tp,m,n> M;
-    for(int i = 0; i < CV_MIN(m,n); i++)
-        M(i,i) = d[i];
+    for(int i = 0; i < MIN(m,n); i++)
+        M(i,i) = d(i, 0);
     return M;
 }
 
@@ -439,10 +420,10 @@ Matx<_Tp, m, 1> Matx<_Tp, m, n>::col(int j) const
 
     
 template<typename _Tp, int m, int n> inline
-Matx<_Tp, CV_MIN(m,n), 1> Matx<_Tp, m, n>::diag() const
+Matx<_Tp, MIN(m,n), 1> Matx<_Tp, m, n>::diag() const
 {
     diag_type d;
-    for( int i = 0; i < CV_MIN(m, n); i++ )
+    for( int i = 0; i < MIN(m, n); i++ )
         d.val[i] = val[i*n + i];
     return d;
 }
@@ -572,6 +553,7 @@ Matx<_Tp, m, n>& operator *= (Matx<_Tp, m, n>& a, int alpha)
 {
     for( int i = 0; i < m*n; i++ )
         a.val[i] = saturate_cast<_Tp>(a.val[i] * alpha);
+    return a;
 }        
     
 template<typename _Tp, int m, int n> static inline
@@ -579,6 +561,7 @@ Matx<_Tp, m, n>& operator *= (Matx<_Tp, m, n>& a, float alpha)
 {
     for( int i = 0; i < m*n; i++ )
         a.val[i] = saturate_cast<_Tp>(a.val[i] * alpha);
+    return a;
 }    
 
 template<typename _Tp, int m, int n> static inline
@@ -586,6 +569,7 @@ Matx<_Tp, m, n>& operator *= (Matx<_Tp, m, n>& a, double alpha)
 {
     for( int i = 0; i < m*n; i++ )
         a.val[i] = saturate_cast<_Tp>(a.val[i] * alpha);
+    return a;
 }        
 
 template<typename _Tp, int m, int n> static inline
@@ -680,10 +664,10 @@ Matx<_Tp, m, n> Matx<_Tp, m, n>::mul(const Matx<_Tp, m, n>& a) const
 }
 
     
-CV_EXPORTS int LU(float* A, int m, float* b, int n);
-CV_EXPORTS int LU(double* A, int m, double* b, int n);
-CV_EXPORTS bool Cholesky(float* A, int m, float* b, int n);
-CV_EXPORTS bool Cholesky(double* A, int m, double* b, int n);    
+CV_EXPORTS int LU(float* A, size_t astep, int m, float* b, size_t bstep, int n);
+CV_EXPORTS int LU(double* A, size_t astep, int m, double* b, size_t bstep, int n);
+CV_EXPORTS bool Cholesky(float* A, size_t astep, int m, float* b, size_t bstep, int n);
+CV_EXPORTS bool Cholesky(double* A, size_t astep, int m, double* b, size_t bstep, int n);    
 
 
 template<typename _Tp, int m> struct CV_EXPORTS Matx_DetOp
@@ -691,7 +675,7 @@ template<typename _Tp, int m> struct CV_EXPORTS Matx_DetOp
     double operator ()(const Matx<_Tp, m, m>& a) const
     {
         Matx<_Tp, m, m> temp = a;
-        double p = LU(temp.val, m, 0, 0);
+        double p = LU(temp.val, m, m, 0, 0, 0);
         if( p == 0 )
             return p;
         for( int i = 0; i < m; i++ )
@@ -764,9 +748,9 @@ template<typename _Tp, int m> struct CV_EXPORTS Matx_FastInvOp
             b(i, i) = (_Tp)1;
         
         if( method == DECOMP_CHOLESKY )
-            return Cholesky(temp.val, m, b.val, m);
+            return Cholesky(temp.val, m*sizeof(_Tp), m, b.val, m*sizeof(_Tp), m);
         
-        return LU(temp.val, m, b.val, m) != 0;
+        return LU(temp.val, m*sizeof(_Tp), m, b.val, m*sizeof(_Tp), m) != 0;
     }
 };
 
@@ -836,9 +820,9 @@ template<typename _Tp, int m, int n> struct CV_EXPORTS Matx_FastSolveOp
         Matx<_Tp, m, m> temp = a;
         x = b;
         if( method == DECOMP_CHOLESKY )
-            return Cholesky(temp.val, m, x.val, n);
+            return Cholesky(temp.val, m*sizeof(_Tp), m, x.val, n*sizeof(_Tp), n);
         
-        return LU(temp.val, m, x.val, n) != 0;
+        return LU(temp.val, m*sizeof(_Tp), m, x.val, n*sizeof(_Tp), n) != 0;
     }
 };
 
@@ -1128,27 +1112,30 @@ operator - (const Vec<_Tp, cn>& a, const Vec<_Tp, cn>& b)
     return c -= b;
 }
 
-template<typename _Tp> static inline
-Vec<_Tp, 2>& operator *= (Vec<_Tp, 2>& a, _Tp alpha)
+template<typename _Tp, int cn> static inline
+Vec<_Tp, cn>& operator *= (Vec<_Tp, cn>& a, _Tp alpha)
 {
-    a[0] *= alpha; a[1] *= alpha;
+    for( int i = 0; i < cn; i++ )
+        a[i] *= alpha;
     return a;
 }
 
-template<typename _Tp> static inline
-Vec<_Tp, 3>& operator *= (Vec<_Tp, 3>& a, _Tp alpha)
+template<int cn> static inline
+Vec<float, cn>& operator *= (Vec<float, cn>& a, double alpha)
 {
-    a[0] *= alpha; a[1] *= alpha; a[2] *= alpha;
+    for( int i = 0; i < cn; i++ )
+        a[i] *= (float)alpha;
     return a;
 }
 
-template<typename _Tp> static inline
-Vec<_Tp, 4>& operator *= (Vec<_Tp, 4>& a, _Tp alpha)
+template<int cn> static inline
+Vec<float, cn>& operator *= (Vec<float, cn>& a, int alpha)
 {
-    a[0] *= alpha; a[1] *= alpha; a[2] *= alpha; a[3] *= alpha;
+    for( int i = 0; i < cn; i++ )
+        a[i] *= (float)alpha;
     return a;
 }
-
+    
 template<typename _Tp, int cn> static inline Vec<_Tp, cn>
 operator * (const Vec<_Tp, cn>& a, _Tp alpha)
 {
@@ -1159,10 +1146,38 @@ operator * (const Vec<_Tp, cn>& a, _Tp alpha)
 template<typename _Tp, int cn> static inline Vec<_Tp, cn>
 operator * (_Tp alpha, const Vec<_Tp, cn>& a)
 {
-    return a * alpha;
+    Vec<_Tp, cn> c = a;
+    return c *= alpha;
+}
+
+template<int cn> static inline Vec<float, cn>
+operator * (double alpha, const Vec<float, cn>& a)
+{
+    Vec<float, cn> c = a;
+    return c *= (float)alpha;
+}
+
+template<int cn> static inline Vec<float, cn>
+operator * (const Vec<float, cn>& a, double alpha)
+{
+    Vec<float, cn> c = a;
+    return c *= (float)alpha;
+}
+
+template<int cn> static inline Vec<float, cn>
+operator * (int alpha, const Vec<float, cn>& a)
+{
+    Vec<float, cn> c = a;
+    return c *= (float)alpha;
+}
+
+template<int cn> static inline Vec<float, cn>
+operator * (const Vec<float, cn>& a, int alpha)
+{
+    Vec<float, cn> c = a;
+    return c *= (float)alpha;
 }
     
-
 template<typename _Tp> static inline Vec<_Tp, 4>
 operator * (const Vec<_Tp, 4>& a, const Vec<_Tp, 4>& b)
 {
@@ -2239,7 +2254,7 @@ inline RNG::RNG() { state = 0xffffffff; }
 inline RNG::RNG(uint64 _state) { state = _state ? _state : 0xffffffff; }
 inline unsigned RNG::next()
 {
-    state = (uint64)(unsigned)state*A + (unsigned)(state >> 32);
+    state = (uint64)(unsigned)state*CV_RNG_COEFF + (unsigned)(state >> 32);
     return (unsigned)state;
 }
 
@@ -2260,7 +2275,7 @@ inline RNG::operator double()
 }
 inline int RNG::uniform(int a, int b) { return a == b ? a : next()%(b - a) + a; }
 inline float RNG::uniform(float a, float b) { return ((float)*this)*(b - a) + a; }
-inline double RNG::uniform(double a, double b) { return ((float)*this)*(b - a) + a; }
+inline double RNG::uniform(double a, double b) { return ((double)*this)*(b - a) + a; }
 
 inline TermCriteria::TermCriteria() : type(0), maxCount(0), epsilon(0) {}
 inline TermCriteria::TermCriteria(int _type, int _maxCount, double _epsilon)
@@ -2295,10 +2310,17 @@ inline Point LineIterator::pos() const
 /////////////////////////////// AutoBuffer ////////////////////////////////////////
 
 template<typename _Tp, size_t fixed_size> inline AutoBuffer<_Tp, fixed_size>::AutoBuffer()
-: ptr(buf), size(fixed_size) {}
+{
+    ptr = buf;
+    size = fixed_size;
+}
 
 template<typename _Tp, size_t fixed_size> inline AutoBuffer<_Tp, fixed_size>::AutoBuffer(size_t _size)
-: ptr(buf), size(fixed_size) { allocate(_size); }
+{
+    ptr = buf;
+    size = fixed_size;
+    allocate(_size);
+}
 
 template<typename _Tp, size_t fixed_size> inline AutoBuffer<_Tp, fixed_size>::~AutoBuffer()
 { deallocate(); }
@@ -2596,7 +2618,7 @@ template<typename _Tp> static inline void write( FileStorage& fs, const vector<_
 template<typename _Tp> static inline FileStorage&
 operator << ( FileStorage& fs, const vector<_Tp>& vec )
 {
-    VecWriterProxy<_Tp, DataType<_Tp>::fmt != 0> w(&fs);
+    VecWriterProxy<_Tp, DataType<_Tp>::generic_type == 0> w(&fs);
     w(vec);
     return fs;
 }
@@ -2806,7 +2828,10 @@ FileNodeIterator& operator >> (FileNodeIterator& it, vector<_Tp>& vec)
 }
 
 template<typename _Tp> static inline void operator >> (const FileNode& n, _Tp& value)
-{ FileNodeIterator it = n.begin(); it >> value; }
+{ read( n, value, _Tp()); }
+
+template<typename _Tp> static inline void operator >> (const FileNode& n, vector<_Tp>& vec)
+{ FileNodeIterator it = n.begin(); it >> vec; }
 
 static inline bool operator == (const FileNodeIterator& it1, const FileNodeIterator& it2)
 {
@@ -3408,7 +3433,14 @@ public:
     static int isInstance(const void* ptr)
     {
         static _ClsName dummy;
-        return *(const void**)&dummy == *(const void**)ptr;
+        union
+        {
+            const void* p;
+            const void** pp;
+        } a, b;
+        a.p = &dummy;
+        b.p = ptr;
+        return *a.pp == *b.pp;
     }
     static void release(void** dbptr)
     {
@@ -3546,6 +3578,50 @@ template<typename _Tp> static inline std::ostream& operator << (std::ostream& ou
     Formatter::get()->write(out, Mat(vec));
     return out;
 }
+    
+/*template<typename _Tp> struct AlgorithmParamType {};
+template<> struct AlgorithmParamType<int> { enum { type = CV_PARAM_TYPE_INT }; };
+template<> struct AlgorithmParamType<double> { enum { type = CV_PARAM_TYPE_REAL }; };
+template<> struct AlgorithmParamType<string> { enum { type = CV_PARAM_TYPE_STRING }; };
+template<> struct AlgorithmParamType<Mat> { enum { type = CV_PARAM_TYPE_MAT }; };
+    
+template<typename _Tp> _Tp Algorithm::get(int paramId) const
+{
+    _Tp value = _Tp();
+    get_(paramId, AlgorithmParamType<_Tp>::type, &value);
+    return value;
+}
+    
+template<typename _Tp> bool Algorithm::set(int paramId, const _Tp& value)
+{
+    set_(paramId, AlgorithmParamType<_Tp>::type, &value);
+    return value;
+}
+    
+template<typename _Tp> _Tp Algorithm::paramDefaultValue(int paramId) const
+{
+    _Tp value = _Tp();
+    paramDefaultValue_(paramId, AlgorithmParamType<_Tp>::type, &value);
+    return value;
+}
+    
+template<typename _Tp> bool Algorithm::paramRange(int paramId, _Tp& minVal, _Tp& maxVal) const
+{
+    return paramRange_(paramId, AlgorithmParamType<_Tp>::type, &minVal, &maxVal);
+}
+
+template<typename _Tp> void Algorithm::addParam(int propId, _Tp& value, bool readOnly, const string& name,
+                                         const string& help, const _Tp& defaultValue,
+                                         _Tp (Algorithm::*getter)(), bool (Algorithm::*setter)(const _Tp&))
+{
+    addParam_(propId, AlgorithmParamType<_Tp>::type, &value, readOnly, name, help, &defaultValue,
+             (void*)getter, (void*)setter);
+}
+    
+template<typename _Tp> void Algorithm::setParamRange(int propId, const _Tp& minVal, const _Tp& maxVal)
+{
+    setParamRange_(propId, AlgorithmParamType<_Tp>::type, &minVal, &maxVal);
+}*/
     
 }
 
