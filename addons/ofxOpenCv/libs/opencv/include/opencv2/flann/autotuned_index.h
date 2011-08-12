@@ -44,7 +44,7 @@ namespace cvflann
 struct AutotunedIndexParams : public IndexParams {
 	AutotunedIndexParams( float target_precision_ = 0.8, float build_weight_ = 0.01,
 			float memory_weight_ = 0, float sample_fraction_ = 0.1) :
-		IndexParams(AUTOTUNED),
+		IndexParams(FLANN_INDEX_AUTOTUNED),
 		target_precision(target_precision_),
 		build_weight(build_weight_),
 		memory_weight(memory_weight_),
@@ -54,8 +54,6 @@ struct AutotunedIndexParams : public IndexParams {
 	float build_weight;        // build tree time weighting factor
 	float memory_weight;       // index memory weighting factor
     float sample_fraction;     // what fraction of the dataset to use for autotuning
-
-	flann_algorithm_t getIndexType() const { return algorithm; }
 
 	void print() const
 	{
@@ -92,6 +90,9 @@ class AutotunedIndex : public NNIndex<ELEM_TYPE>
      */
     const AutotunedIndexParams& index_params;
 
+	AutotunedIndex& operator=(const AutotunedIndex&);
+	AutotunedIndex(const AutotunedIndex&);
+
 public:
 
     AutotunedIndex(const Matrix<ELEM_TYPE>& inputData, const AutotunedIndexParams& params = AutotunedIndexParams() ) :
@@ -123,13 +124,13 @@ public:
 		logger().info("----------------------------------------------------\n");
     	flann_algorithm_t index_type = bestParams->getIndexType();
     	switch (index_type) {
-    	case LINEAR:
+    	case FLANN_INDEX_LINEAR:
     		bestIndex = new LinearIndex<ELEM_TYPE>(dataset, (const LinearIndexParams&)*bestParams);
     		break;
-    	case KDTREE:
+    	case FLANN_INDEX_KDTREE:
     		bestIndex = new KDTreeIndex<ELEM_TYPE>(dataset, (const KDTreeIndexParams&)*bestParams);
     		break;
-    	case KMEANS:
+    	case FLANN_INDEX_KMEANS:
     		bestIndex = new KMeansIndex<ELEM_TYPE>(dataset, (const KMeansIndexParams&)*bestParams);
     		break;
     	default:
@@ -211,7 +212,7 @@ public:
     */
     virtual flann_algorithm_t getType() const
     {
-    	return AUTOTUNED;
+    	return FLANN_INDEX_AUTOTUNED;
     }
 
 private:
@@ -224,8 +225,8 @@ private:
         float totalCost;
     };
 
-    typedef pair<CostData, KDTreeIndexParams> KDTreeCostData;
-    typedef pair<CostData, KMeansIndexParams> KMeansCostData;
+    typedef std::pair<CostData, KDTreeIndexParams> KDTreeCostData;
+    typedef std::pair<CostData, KMeansIndexParams> KMeansCostData;
 
 
     void evaluate_kmeans(CostData& cost, const KMeansIndexParams& kmeans_params)
@@ -338,7 +339,7 @@ private:
 
         int kmeansParamSpaceSize = ARRAY_LEN(maxIterations)*ARRAY_LEN(branchingFactors);
 
-        vector<KMeansCostData> kmeansCosts(kmeansParamSpaceSize);
+        std::vector<KMeansCostData> kmeansCosts(kmeansParamSpaceSize);
 
 //        CostData* kmeansCosts = new CostData[kmeansParamSpaceSize];
 
@@ -347,7 +348,7 @@ private:
         for (size_t i=0; i<ARRAY_LEN(maxIterations); ++i) {
             for (size_t j=0; j<ARRAY_LEN(branchingFactors); ++j) {
 
-            	kmeansCosts[cnt].second.centers_init = CENTERS_RANDOM;
+            	kmeansCosts[cnt].second.centers_init = FLANN_CENTERS_RANDOM;
             	kmeansCosts[cnt].second.iterations = maxIterations[i];
             	kmeansCosts[cnt].second.branching = branchingFactors[j];
 
@@ -417,7 +418,7 @@ private:
         int testTrees[] = { 1, 4, 8, 16, 32 };
 
         size_t kdtreeParamSpaceSize = ARRAY_LEN(testTrees);
-        vector<KDTreeCostData> kdtreeCosts(kdtreeParamSpaceSize);
+        std::vector<KDTreeCostData> kdtreeCosts(kdtreeParamSpaceSize);
 
         // evaluate kdtree for all parameter combinations
         int cnt = 0;
@@ -484,7 +485,7 @@ private:
     IndexParams* estimateBuildParams()
     {
         int sampleSize = int(index_params.sample_fraction*dataset.rows);
-        int testSampleSize = min(sampleSize/10, 1000);
+        int testSampleSize = std::min(sampleSize/10, 1000);
 
         logger().info("Entering autotuning, dataset size: %d, sampleSize: %d, testSampleSize: %d\n",dataset.rows, sampleSize, testSampleSize);
 
@@ -550,7 +551,7 @@ private:
 
         float speedup = 0;
 
-        int samples = (int)min(dataset.rows/10, SAMPLE_COUNT);
+        int samples = (int)std::min(dataset.rows/10, SAMPLE_COUNT);
         if (samples>0) {
             Matrix<ELEM_TYPE> testDataset = random_sample(dataset,samples);
 
@@ -569,7 +570,7 @@ private:
 
             float searchTime;
             float cb_index;
-            if (bestIndex->getType() == KMEANS) {
+            if (bestIndex->getType() == FLANN_INDEX_KMEANS) {
                 logger().info("KMeans algorithm, estimating cluster border factor\n");
                 KMeansIndex<ELEM_TYPE>* kmeans = (KMeansIndex<ELEM_TYPE>*)bestIndex;
                 float bestSearchTime = -1;
