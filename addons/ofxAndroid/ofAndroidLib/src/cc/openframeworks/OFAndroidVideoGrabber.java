@@ -1,5 +1,7 @@
 package cc.openframeworks;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
@@ -27,9 +29,38 @@ public class OFAndroidVideoGrabber extends OFAndroidObject implements Runnable, 
 		return camera_instances.get(id);
 	}
 	
+	void setDeviceID(int id){
+		deviceID = id;
+	}
 	
 	void initGrabber(int w, int h, int _targetFps){
-		camera = Camera.open();
+		if(deviceID==-1)
+			camera = Camera.open();
+		else{			
+			try {
+				int numCameras = (Integer) Camera.class.getMethod("getNumberOfCameras").invoke(null);
+				Class<?> cameraInfoClass = Class.forName("android.hardware.Camera$CameraInfo");
+				Object cameraInfo = null;
+				Field field = null;
+		        if ( cameraInfoClass != null ) {
+		            cameraInfo = cameraInfoClass.newInstance();
+		        }
+		        if ( cameraInfo != null ) {
+		            field = cameraInfo.getClass().getField( "facing" );
+		        }
+				Method getCameraInfoMethod = Camera.class.getMethod( "getCameraInfo", Integer.TYPE, cameraInfoClass );
+				for(int i=0;i<numCameras;i++){
+					getCameraInfoMethod.invoke( null, i, cameraInfo );
+	                int facing = field.getInt( cameraInfo );
+	                Log.v("OF","Camera " + i + " facing: " + facing);
+				}
+				camera = (Camera) Camera.class.getMethod("open", Integer.TYPE).invoke(null, deviceID);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				Log.e("OF","Error trying to open specific camera, trying default",e);
+			} 
+			camera = Camera.open();
+		}
 		Camera.Parameters config = camera.getParameters();
 		
 		Log.i("OF","Grabber supported sizes");
@@ -158,7 +189,11 @@ public class OFAndroidVideoGrabber extends OFAndroidObject implements Runnable, 
 		
 		//camera.addCallbackBuffer(buffer);
 		//camera.setPreviewCallbackWithBuffer(this);
-		camera.startPreview();
+		try{
+			camera.startPreview();
+		} catch (Exception e) {
+			Log.e("OF","error starting preview",e);
+		}
 	}
 
 	private class OrientationListener extends OrientationEventListener{
@@ -197,6 +232,7 @@ public class OFAndroidVideoGrabber extends OFAndroidObject implements Runnable, 
 	
 
 	private Camera camera;
+	private int deviceID = -1;
 	private byte[] buffer;
 	private int width, height, targetFps;
 	private Thread thread;
