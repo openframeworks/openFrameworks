@@ -103,3 +103,4 @@ apps/*/*/test link
 apps/*/*/obj
 apps/*/*/bin
 .csettings
+paths.make
