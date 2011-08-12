@@ -137,8 +137,8 @@ private:
 
 	//VBO IDs
 	GLuint m_verticesArrayId;
-    GLuint m_normalsArrayId;
-    GLuint m_texcoordsArrayId;
+	GLuint m_normalsArrayId;
+	GLuint m_texcoordsArrayId;
 
 	unsigned int m_drawMode;
 
