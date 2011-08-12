@@ -8,7 +8,5 @@ opencv_video
 opencv_highgui 
 opencv_ml 
 opencv_core 
-opencv_lapack 
 opencv_flann
 opencv_contrib
-zlib 
