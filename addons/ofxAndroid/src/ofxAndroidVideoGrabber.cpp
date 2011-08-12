@@ -182,7 +182,6 @@ bool ofxAndroidVideoGrabber::initGrabber(int w, int h){
 }
 
 void ofxAndroidVideoGrabber::videoSettings(){
-
 }
 
 unsigned char * ofxAndroidVideoGrabber::getPixels(){
@@ -199,6 +198,19 @@ void ofxAndroidVideoGrabber::setVerbose(bool bTalkToMe){
 
 void ofxAndroidVideoGrabber::setDeviceID(int _deviceID){
 
+	JNIEnv *env = ofGetJNIEnv();
+	if(!env) return;
+
+	jclass javaClass = env->FindClass("cc.openframeworks.OFAndroidVideoGrabber");
+
+	jobject camera = getCamera(env, javaClass, cameraId);
+	jmethodID javasetDeviceID = env->GetMethodID(javaClass,"setDeviceID","(I)V");
+	if(camera && javasetDeviceID){
+		env->CallVoidMethod(camera,javasetDeviceID,_deviceID);
+	}else{
+		ofLog(OF_LOG_ERROR, "cannot get OFAndroidVideoGrabber setDeviceID method");
+		return;
+	}
 }
 
 void ofxAndroidVideoGrabber::setDesiredFrameRate(int framerate){
