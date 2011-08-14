@@ -74,6 +74,8 @@ class ofVideoGrabber : public ofBaseVideoGrabber,public ofBaseVideoDraws{
 		float				getHeight();
 		float				getWidth();
 
+		bool				isInitialized();
+
 		//this is kept as legacy to support people accessing width and height directly. 
 		int					height;
 		int					width;
