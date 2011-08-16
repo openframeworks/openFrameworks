@@ -33,20 +33,19 @@ public class OFAndroidSoundPlayer extends OFAndroidObject{
 	
 	void setVolume(float vol){
 		volume = vol;
-		float rightVol=1,leftVol=1;
-		if(pan <= 0.5){
-			leftVol = 1;
-			rightVol = 1 + 2*(pan - 0.5f);  
-		}
-		if(pan >= 0.5){
-			rightVol = 1;
-			leftVol = 1 - 2*(pan - 0.5f);
-		}
+        // calculates left/right volumes from pan-value (constant panning law) 
+        // see: Curtis Roads: Computer Music Tutorial p 460
+		// thanks to jasch
+        float angle = pan * 0.7853981633974483f; // in radians from -45. to +45.
+        float cosAngle = (float) Math.cos(angle);
+        float sinAngle = (float) Math.sin(angle);
+        float leftVol  = (float)((cosAngle - sinAngle) * 0.7071067811865475); // multiplied by sqrt(2)/2
+        float rightVol = (float)((cosAngle + sinAngle) * 0.7071067811865475); // multiplied by sqrt(2)/2
 		player.setVolume(leftVol*vol, rightVol*vol);
 	}
 	
 	void setPan(float vol){
-		pan = vol;
+		pan = vol*2-1;
 		setVolume(volume);
 	}
 	
@@ -78,7 +77,7 @@ public class OFAndroidSoundPlayer extends OFAndroidObject{
 		return 1;
 	}
 	float getPan(){
-		return pan;
+		return pan/2.f+1;
 	}
 
 	@Override
