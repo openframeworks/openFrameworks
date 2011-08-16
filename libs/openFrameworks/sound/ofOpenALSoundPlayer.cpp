@@ -615,21 +615,20 @@ float ofOpenALSoundPlayer::getPosition(){
 //------------------------------------------------------------
 void ofOpenALSoundPlayer::setPan(float p){
 	if(sources.empty()) return;
+	pan = p;
+	p=p*2-1;
 	if(channels==1){
-		p=p*2-1;
 		float pos[3] = {p,0,0};
 		alSourcefv(sources[sources.size()-1],AL_POSITION,pos);
 	}else{
-
-		float rightVol=1,leftVol=1;
-		if(pan <= 0.5){
-			leftVol = 1;
-			rightVol = 1 + 2*(pan - 0.5f);
-		}
-		if(pan >= 0.5){
-			rightVol = 1;
-			leftVol = 1 - 2*(pan - 0.5f);
-		}
+        // calculates left/right volumes from pan-value (constant panning law)
+        // see: Curtis Roads: Computer Music Tutorial p 460
+		// thanks to jasch
+        float angle = p * 0.7853981633974483f; // in radians from -45. to +45.
+        float cosAngle = cos(angle);
+        float sinAngle = sin(angle);
+        float leftVol  = (cosAngle - sinAngle) * 0.7071067811865475; // multiplied by sqrt(2)/2
+        float rightVol = (cosAngle + sinAngle) * 0.7071067811865475; // multiplied by sqrt(2)/2
 		for(int i=0;i<(int)channels;i++){
 			if(i==0){
 				alSourcef(sources[sources.size()-channels+i],AL_GAIN,leftVol*volume);
@@ -638,7 +637,6 @@ void ofOpenALSoundPlayer::setPan(float p){
 			}
 		}
 	}
-	pan = p;
 }
 
 
