@@ -120,7 +120,7 @@ public class OFAndroidVideoGrabber extends OFAndroidObject implements Runnable, 
 	
 	
 	@Override
-	public void stop(){
+	public void appStop(){
 		if(initialized){
 			Log.i("OF","stopping camera");
 			camera.stopPreview();
@@ -135,13 +135,13 @@ public class OFAndroidVideoGrabber extends OFAndroidObject implements Runnable, 
 	}
 	
 	@Override
-	public void pause(){
-		stop();
+	public void appPause(){
+		appStop();
 			
 	}
 	
 	@Override
-	public void resume(){
+	public void appResume(){
 		if(initialized){
 			initGrabber(width,height,targetFps);
 			orientationListener.enable();
