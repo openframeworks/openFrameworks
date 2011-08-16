@@ -620,11 +620,21 @@ void ofOpenALSoundPlayer::setPan(float p){
 		float pos[3] = {p,0,0};
 		alSourcefv(sources[sources.size()-1],AL_POSITION,pos);
 	}else{
+
+		float rightVol=1,leftVol=1;
+		if(pan <= 0.5){
+			leftVol = 1;
+			rightVol = 1 + 2*(pan - 0.5f);
+		}
+		if(pan >= 0.5){
+			rightVol = 1;
+			leftVol = 1 - 2*(pan - 0.5f);
+		}
 		for(int i=0;i<(int)channels;i++){
 			if(i==0){
-				alSourcef(sources[sources.size()-channels+i],AL_GAIN,(1-p)*volume);
+				alSourcef(sources[sources.size()-channels+i],AL_GAIN,leftVol*volume);
 			}else{
-				alSourcef(sources[sources.size()-channels+i],AL_GAIN,p*volume);
+				alSourcef(sources[sources.size()-channels+i],AL_GAIN,rightVol*volume);
 			}
 		}
 	}
