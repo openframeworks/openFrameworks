@@ -39,6 +39,8 @@ void ofSoundShutdown();
 #endif
 
 #ifdef TARGET_ANDROID
+#include "ofxAndroidSoundPlayer.h"
+#define OF_SOUND_PLAYER_TYPE ofxAndroidSoundPlayer
 inline void ofSoundShutdown(){}
 #endif
 
