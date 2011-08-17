@@ -164,7 +164,7 @@ void putBmpIntoPixels(FIBITMAP * bmp, ofPixels_<PixelType> &pix, bool swapForLit
 	}
 
 #ifdef TARGET_LITTLE_ENDIAN
-	if(swapForLittleEndian) {
+	if(swapForLittleEndian && sizeof(PixelType) == 1) {
 		pix.swapRgb();
 	}
 #endif
@@ -324,13 +324,17 @@ static void saveImage(ofPixels_<PixelType> & pix, string fileName, ofImageQualit
 	}
 
 	#ifdef TARGET_LITTLE_ENDIAN
+	if(sizeof(PixelType) == 1) {
 		pix.swapRgb();
+	}
 	#endif
 
 	FIBITMAP * bmp	= getBmpFromPixels(pix);
 
 	#ifdef TARGET_LITTLE_ENDIAN
+	if(sizeof(PixelType) == 1) {
 		pix.swapRgb();
+	}
 	#endif
 	
 	fileName = ofToDataPath(fileName);
@@ -408,13 +412,17 @@ static void saveImage(ofPixels_<PixelType> & pix, ofBuffer & buffer, ofImageForm
 	}
 
 	#ifdef TARGET_LITTLE_ENDIAN
+	if(sizeof(PixelType) == 1) {
 		pix.swapRgb();
+	}
 	#endif
 
 	FIBITMAP * bmp	= getBmpFromPixels(pix);
 
 	#ifdef TARGET_LITTLE_ENDIAN
+	if(sizeof(PixelType) == 1) {
 		pix.swapRgb();
+	}
 	#endif
 
 	if (bmp)  // bitmap successfully created
@@ -815,7 +823,7 @@ void  ofImage_<PixelType>::setFromPixels(const PixelType * newPixels, int w, int
 	allocate(w, h, newType);
 	pixels.setFromPixels(newPixels,w,h,newType);
 
-	if (!bOrderIsRGB){
+	if (!bOrderIsRGB && sizeof(PixelType) == 1){
 		pixels.swapRgb();
 	}
 
