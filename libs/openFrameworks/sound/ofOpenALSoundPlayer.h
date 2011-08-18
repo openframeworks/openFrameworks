@@ -66,6 +66,7 @@ class ofOpenALSoundPlayer : public ofBaseSoundPlayer, public ofThread {
 
 
 		float getPosition();
+		int getPositionMS();
 		bool getIsPlaying();
 		float getSpeed();
 		float getPan();

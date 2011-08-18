@@ -159,6 +159,15 @@ float ofSoundPlayer::getPosition(){
 }
 
 //--------------------------------------------------------------------
+int ofSoundPlayer::getPositionMS(){
+	if( player != NULL ){
+		return player->getPositionMS();
+	} else {
+		return 0;
+	}
+}
+
+//--------------------------------------------------------------------
 bool ofSoundPlayer::getIsPlaying(){
 	if( player != NULL ){
 		return player->getIsPlaying();
