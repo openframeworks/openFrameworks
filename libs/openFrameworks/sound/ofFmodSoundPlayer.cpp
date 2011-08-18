@@ -257,6 +257,12 @@ void ofFmodSoundPlayer::setPosition(float pct){
 	}
 }
 
+void ofFmodSoundPlayer::setPositionMS(int ms);{
+	if (getIsPlaying() == true){
+		FMOD_Channel_SetPosition(channel, ms, FMOD_TIMEUNIT_MS);
+	}
+}
+
 //------------------------------------------------------------
 float ofFmodSoundPlayer::getPosition(){
 	if (getIsPlaying() == true){

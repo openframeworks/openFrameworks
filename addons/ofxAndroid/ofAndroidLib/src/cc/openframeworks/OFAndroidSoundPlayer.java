@@ -63,19 +63,27 @@ public class OFAndroidSoundPlayer extends OFAndroidObject{
 	void setMultiPlay(boolean bMp){
 		;
 	}
+	
 	void setPosition(float pct){
 		player.seekTo((int) (player.getDuration()*pct)); // 0 = start, 1 = end;
+	}
+	
+	void setPosition(int ms){
+		player.seekTo(ms); // 0 = start, 1 = end;
 	}
 	
 	float getPosition(){
 		return ((float)player.getCurrentPosition())/(float)player.getDuration();
 	}
+	
 	boolean getIsPlaying(){
 		return player.isPlaying();
 	}
+	
 	float getSpeed(){
 		return 1;
 	}
+	
 	float getPan(){
 		return pan/2.f+1;
 	}

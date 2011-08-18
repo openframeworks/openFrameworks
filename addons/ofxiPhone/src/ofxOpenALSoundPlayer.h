@@ -78,6 +78,8 @@ public:
 	void	setLoop(bool bLp);
 	void	setMultiPlay(bool bMp);
 	void	setPosition(float pct);
+	void    setPositionMS(int ms);
+
 	float	getPosition();
 	bool	getIsPlaying();
 	float	getPitch();

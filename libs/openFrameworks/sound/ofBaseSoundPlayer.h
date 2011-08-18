@@ -27,6 +27,7 @@ public:
 	virtual void setLoop(bool bLp) = 0;
 	virtual void setMultiPlay(bool bMp) = 0;
 	virtual void setPosition(float pct) = 0; // 0 = start, 1 = end;
+	virtual void setPositionMS(int ms) = 0;
 	
 	virtual float getPosition() = 0;
 	virtual bool getIsPlaying() = 0;
