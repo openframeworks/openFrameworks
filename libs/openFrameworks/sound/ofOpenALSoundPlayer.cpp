@@ -594,6 +594,23 @@ void ofOpenALSoundPlayer::setPosition(float pct){
 	}
 }
 
+void ofOpenALSoundPlayer::setPositionMS(int ms){
+	if(sources.empty()) return;
+#ifdef OF_USING_MPG123
+	if(mp3streamf){
+		mpg123_seek(mp3streamf,float(ms)/1000.f*samplerate*channels,SEEK_SET);
+	}else
+#endif
+	if(streamf){
+		sf_seek(streamf,float(ms)/1000.f*samplerate*channels,SEEK_SET);
+		stream_samples_read = 0;
+	}else{
+		for(int i=0;i<(int)channels;i++){
+			alSourcef(sources[sources.size()-channels+i],AL_SEC_OFFSET,float(ms)/1000.f);
+		}
+	}
+}
+
 //------------------------------------------------------------
 float ofOpenALSoundPlayer::getPosition(){
 	if(duration==0) return 0;

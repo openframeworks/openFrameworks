@@ -52,6 +52,7 @@ class ofFmodSoundPlayer : public ofBaseSoundPlayer {
 		void setLoop(bool bLp);
 		void setMultiPlay(bool bMp);
 		void setPosition(float pct); // 0 = start, 1 = end;
+		void setPositionMS(int ms);
 
 		float getPosition();
 		bool getIsPlaying();

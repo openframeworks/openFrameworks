@@ -235,6 +235,15 @@ void ofxOpenALSoundPlayer::setPosition(float pct) {
 
 //--------------------------------------------------------------
 
+void ofxOpenALSoundPlayer::setPositionMS(int ms){
+	if(iAmAnMp3)
+		cerr<<"error, cannot set position on mp3s in openAL"<<endl;
+	else
+		SoundEngine_SetEffectPosition(myPrimedId, float(ms)/1000.f);
+}
+
+//--------------------------------------------------------------
+
 float ofxOpenALSoundPlayer::getPosition() {
 	if(iAmAnMp3)
 	{

@@ -272,6 +272,28 @@ void ofxAndroidSoundPlayer::setPosition(float pct){
 }
 
 //------------------------------------------------------------
+void ofxAndroidSoundPlayer::setPositionMS(int ms){
+	if(!javaSoundPlayer){
+		ofLogError() << "cannot set positionMS on an unloaded sound player";
+		return;
+	}
+	JNIEnv *env = ofGetJNIEnv();
+	if (!env) {
+		ofLog(OF_LOG_ERROR,"Failed to get the environment using GetEnv()");
+		return;
+	}
+
+	jmethodID javaPositionMethod = env->GetMethodID(javaClass,"setPositionMS","(F)V");
+	if(!javaPositionMethod){
+		ofLog(OF_LOG_ERROR,"Failed to get the java setPositionMS for SoundPlayer");
+		return;
+	}
+
+	env->CallVoidMethod(javaSoundPlayer,javaPositionMethod,ms);
+
+}
+
+//------------------------------------------------------------
 float ofxAndroidSoundPlayer::getPosition(){
 	if(!javaSoundPlayer){
 		ofLogError() << "cannot query position on an unloaded sound player";
