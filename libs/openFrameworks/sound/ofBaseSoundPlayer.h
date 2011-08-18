@@ -30,6 +30,7 @@ public:
 	virtual void setPositionMS(int ms) = 0;
 	
 	virtual float getPosition() = 0;
+	virtual int getPositionMS() = 0;
 	virtual bool getIsPlaying() = 0;
 	virtual float getSpeed() = 0;
 	virtual float getPan() = 0;

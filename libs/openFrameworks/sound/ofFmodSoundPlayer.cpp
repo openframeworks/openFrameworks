@@ -281,6 +281,19 @@ float ofFmodSoundPlayer::getPosition(){
 }
 
 //------------------------------------------------------------
+int ofFmodSoundPlayer::getPositionMS(){
+	if (getIsPlaying() == true){
+		unsigned int sampleImAt;
+
+		FMOD_Channel_GetPosition(channel, &sampleImAt, FMOD_TIMEUNIT_MS);
+
+		return sampleImAt;
+	} else {
+		return 0;
+	}
+}
+
+//------------------------------------------------------------
 void ofFmodSoundPlayer::setPan(float p){
 	if (getIsPlaying() == true){
 		FMOD_Channel_SetPan(channel,p);

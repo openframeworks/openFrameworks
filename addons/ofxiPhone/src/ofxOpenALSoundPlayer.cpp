@@ -257,6 +257,19 @@ float ofxOpenALSoundPlayer::getPosition() {
 
 //--------------------------------------------------------------
 
+int ofxOpenALSoundPlayer::getPositionMS() {
+	if(iAmAnMp3)
+	{
+		cerr<<"error, cannot get position on mp3s in openAL"<<endl;
+	}
+	else
+		return SoundEngine_GetEffectPosition(myPrimedId)*1000.f;
+
+	return 0;
+}
+
+//--------------------------------------------------------------
+
 bool ofxOpenALSoundPlayer::getIsPlaying() {
 	if(iAmAnMp3)
 		stopped = SoundEngine_getBackgroundMusicStopped();

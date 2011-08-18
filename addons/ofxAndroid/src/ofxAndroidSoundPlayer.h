@@ -23,6 +23,7 @@ public:
 	void setPositionMS(int ms);
 
 	float getPosition();
+	int getPositionMS();
 	bool getIsPlaying();
 	float getSpeed();
 	float getPan();

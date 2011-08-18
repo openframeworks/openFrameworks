@@ -76,6 +76,10 @@ public class OFAndroidSoundPlayer extends OFAndroidObject{
 		return ((float)player.getCurrentPosition())/(float)player.getDuration();
 	}
 	
+	int getPositionMS(){
+		return player.getCurrentPosition();
+	}
+	
 	boolean getIsPlaying(){
 		return player.isPlaying();
 	}

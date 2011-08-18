@@ -629,6 +629,25 @@ float ofOpenALSoundPlayer::getPosition(){
 	return pos/duration;
 }
 
+
+//------------------------------------------------------------
+int ofOpenALSoundPlayer::getPositionMS(){
+	if(duration==0) return 0;
+	if(sources.empty()) return 0;
+	float pos;
+#ifdef OF_USING_MPG123
+	if(mp3streamf){
+		pos = float(mpg123_tell(mp3streamf)) / float(channels) / float(samplerate);
+	}else
+#endif
+	if(streamf){
+		pos = float(stream_samples_read) / float(channels) / float(samplerate);
+	}else{
+		alGetSourcef(sources[sources.size()-1],AL_SEC_OFFSET,&pos);
+	}
+	return pos * 1000.f;
+}
+
 //------------------------------------------------------------
 void ofOpenALSoundPlayer::setPan(float p){
 	if(sources.empty()) return;
