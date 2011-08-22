@@ -52,6 +52,7 @@ void  ofUpdateBitmapCharacterTexture();
 void ofxAndroidSoundStreamPause();
 void ofxAndroidSoundStreamResume();
 
+bool ofxAndroidCheckSDCardMounted();
 
 //this is just to fix a problem with undefined symbols
 inline void ofFixSoundStreamInclude(){
