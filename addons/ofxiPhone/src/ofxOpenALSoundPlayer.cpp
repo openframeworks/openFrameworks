@@ -235,6 +235,15 @@ void ofxOpenALSoundPlayer::setPosition(float pct) {
 
 //--------------------------------------------------------------
 
+void ofxOpenALSoundPlayer::setPositionMS(int ms){
+	if(iAmAnMp3)
+		cerr<<"error, cannot set position on mp3s in openAL"<<endl;
+	else
+		SoundEngine_SetEffectPosition(myPrimedId, float(ms)/1000.f);
+}
+
+//--------------------------------------------------------------
+
 float ofxOpenALSoundPlayer::getPosition() {
 	if(iAmAnMp3)
 	{
@@ -243,6 +252,19 @@ float ofxOpenALSoundPlayer::getPosition() {
 	else
 		return (float)SoundEngine_GetEffectPosition(myPrimedId)/length;
 	
+	return 0;
+}
+
+//--------------------------------------------------------------
+
+int ofxOpenALSoundPlayer::getPositionMS() {
+	if(iAmAnMp3)
+	{
+		cerr<<"error, cannot get position on mp3s in openAL"<<endl;
+	}
+	else
+		return SoundEngine_GetEffectPosition(myPrimedId)*1000.f;
+
 	return 0;
 }
 

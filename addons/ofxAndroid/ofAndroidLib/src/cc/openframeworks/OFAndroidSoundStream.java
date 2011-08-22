@@ -122,7 +122,7 @@ public class OFAndroidSoundStream extends OFAndroidObject implements Runnable, O
 	}
 	
 	@Override
-	public void stop(){
+	public void appStop(){
 		if(iTrack!=null){
 			iTrack.stop();
 		}
@@ -149,7 +149,7 @@ public class OFAndroidSoundStream extends OFAndroidObject implements Runnable, O
 	}
 
 	@Override
-	protected void pause() {
+	protected void appPause() {
 		if(broadcastReceiver != null){
 			try{
 				activity.unregisterReceiver(broadcastReceiver);
@@ -159,11 +159,11 @@ public class OFAndroidSoundStream extends OFAndroidObject implements Runnable, O
 				broadcastReceiver = null;
 			}
 		}
-		stop();
+		appStop();
 	}
 
 	@Override
-	protected void resume() {
+	protected void appResume() {
 		if(!started) return;
 		
 		setup(numOuts,numIns,sampleRate,requestedBufferSize,requestedBuffers);
