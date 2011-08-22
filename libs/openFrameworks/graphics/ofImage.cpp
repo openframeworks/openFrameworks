@@ -848,6 +848,19 @@ template<typename PixelType>
 void ofImage_<PixelType>::update(){
 
 	if (pixels.isAllocated() && bUseTexture){
+		if(!tex.isAllocated())
+		{
+			GLint type;
+			if(pixels.getNumChannels() == 1) {
+				type = GL_LUMINANCE;
+			} else if(pixels.getNumChannels() == 3) {
+				type = GL_RGB;
+			} else if(pixels.getNumChannels() == 4) {
+				type = GL_RGBA;
+			}
+			
+			tex.allocate(pixels.getWidth(), pixels.getHeight(), type);
+		}
 		tex.loadData(pixels);
 	}
 
