@@ -58,8 +58,8 @@ public class OFAndroidVideoGrabber extends OFAndroidObject implements Runnable, 
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				Log.e("OF","Error trying to open specific camera, trying default",e);
+				camera = Camera.open();
 			} 
-			camera = Camera.open();
 		}
 		Camera.Parameters config = camera.getParameters();
 		
@@ -120,7 +120,7 @@ public class OFAndroidVideoGrabber extends OFAndroidObject implements Runnable, 
 	
 	
 	@Override
-	public void stop(){
+	public void appStop(){
 		if(initialized){
 			Log.i("OF","stopping camera");
 			camera.stopPreview();
@@ -135,13 +135,13 @@ public class OFAndroidVideoGrabber extends OFAndroidObject implements Runnable, 
 	}
 	
 	@Override
-	public void pause(){
-		stop();
+	public void appPause(){
+		appStop();
 			
 	}
 	
 	@Override
-	public void resume(){
+	public void appResume(){
 		if(initialized){
 			initGrabber(width,height,targetFps);
 			orientationListener.enable();

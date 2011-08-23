@@ -78,7 +78,10 @@ public:
 	void	setLoop(bool bLp);
 	void	setMultiPlay(bool bMp);
 	void	setPosition(float pct);
+	void    setPositionMS(int ms);
+
 	float	getPosition();
+	int		getPositionMS();
 	bool	getIsPlaying();
 	float	getPitch();
 	float	getSpeed(){return getPitch();}; // same as pitch. mapped for ofSoundPlayer compatibility
