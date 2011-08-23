@@ -69,7 +69,7 @@ namespace ofxCv {
 		mat = imread(ofToDataPath(filename));
 	}
 	
-	void saveImage(Mat& mat, string filename) {
+	void saveImage(Mat mat, string filename) {
 		imwrite(ofToDataPath(filename), mat);
 	}
 	

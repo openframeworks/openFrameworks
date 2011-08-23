@@ -102,6 +102,7 @@ namespace ofxCv {
 #define wrapThree(name) \
 template <class X, class Y, class Result>\
 void name(X& x, Y& y, Result& result) {\
+imitate(result, x);\
 Mat xMat = toCv(x);\
 Mat yMat = toCv(y);\
 Mat resultMat = toCv(result);\
@@ -191,7 +192,7 @@ cv::name(xMat, yMat, resultMat);\
 	
 	// 3 misc
 	void loadImage(Mat& mat, string filename);
-	void saveImage(Mat& mat, string filename);
+	void saveImage(Mat mat, string filename);
 	
 	ofMatrix4x4 makeMatrix(Mat rotation, Mat translation);
 	void applyMatrix(const ofMatrix4x4& matrix);

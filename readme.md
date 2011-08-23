@@ -71,10 +71,12 @@ This creates a wrapper for `img` called `imgMat`. To create a deep copy, use `cl
 
 ### imitate()
 
-`imitate()` is primarily used internally by ofxCv. When doing CV work, you regularly want to allocate multiple buffers of similar dimensions and channels. `imitate()` follows a prototype pattern, where you pass a prototype image `original` and the image to be allocated `mirror` to `imitate(mirror, original)`. `imitate()` has two big advantages:
+`imitate()` is primarily used internally by ofxCv. When doing CV, you regularly want to allocate multiple buffers of similar dimensions and channels. `imitate()` follows a kind of prototype pattern, where you pass a prototype image `original` and the image to be allocated `mirror` to `imitate(mirror, original)`. `imitate()` has two big advantages:
 
 * It works with `Mat`, `ofImage`, `ofPixels`, `ofVideoGrabber`, and anything else that extends `ofBaseHasPixels`.
 * It will only reallocate memory if necessary. This means it can be used liberally.
+
+If you are writing a function that returns data, the ofxCv style is to call `imitate()` on the data to be returned from inside the function, allocating it as necessary.
 
 # Working with OpenCv 2
 
