@@ -324,12 +324,14 @@ public class OFAndroid {
 	
 	static public void dismissProgressBox(int id){
 		final ProgressDialog d = progressDialogs.get(id);
-		ofActivity.runOnUiThread(new Runnable(){
-			public void run() {
-				d.dismiss();
-			}
-		});
-		progressDialogs.remove(id);
+		if(d!=null){
+			ofActivity.runOnUiThread(new Runnable(){
+				public void run() {
+					d.dismiss();
+				}
+			});
+			progressDialogs.remove(id);
+		}
 	}
 	
 	static public void okCancelBox(String msg){
@@ -358,6 +360,19 @@ public class OFAndroid {
 				
 			}  
 		});
+	}
+	
+	static public boolean checkSDCardMounted(){
+		boolean canSaveExternal = false;
+
+		String storageState = Environment.getExternalStorageState();
+
+		if (Environment.MEDIA_MOUNTED.equals(storageState))
+			canSaveExternal = true;
+		else
+			canSaveExternal = false;
+		
+		return canSaveExternal;
 	}
 
 	// native methods to call OF c++ callbacks

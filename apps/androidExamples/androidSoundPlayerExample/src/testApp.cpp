@@ -2,6 +2,7 @@
 
 //--------------------------------------------------------------
 void testApp::setup(){	 
+	ofSetOrientation(OF_ORIENTATION_90_LEFT);
 	synth.loadSound("sounds/synth.wav");
 	beats.loadSound("sounds/1085.mp3");
 	vocals.loadSound("sounds/Violet.mp3");
@@ -9,8 +10,8 @@ void testApp::setup(){
 	beats.setVolume(0.75f);
 	vocals.setVolume(0.5f);
 	font.loadFont("Sudbury_Basin_3D.ttf", 32);
-	beats.setMultiPlay(false);
-	vocals.setMultiPlay(true);
+	//beats.setMultiPlay(false);  no multiplay in android yet
+	//vocals.setMultiPlay(true);
 }
 
 //--------------------------------------------------------------
