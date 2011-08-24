@@ -123,12 +123,13 @@ public class OFAndroidSoundStream extends OFAndroidObject implements Runnable, O
 	
 	@Override
 	public void appStop(){
+		threadRunning = false;
+		
 		if(iTrack!=null){
 			iTrack.stop();
 		}
 		
 		try {
-			threadRunning = false;
 			thread.join();
 		} catch (InterruptedException e) {
 			Log.e("OF", "error finishing audio thread ", e);
@@ -172,12 +173,13 @@ public class OFAndroidSoundStream extends OFAndroidObject implements Runnable, O
 	
 	public void start(){
 		if(iTrack!=null && iTrack.getState()!=AudioRecord.STATE_UNINITIALIZED){
-			if(iTrack.setPositionNotificationPeriod(inBuffer.length/numIns/2)!=AudioRecord.SUCCESS){
+			if(iTrack.setPositionNotificationPeriod(inBuffer.length/numIns)!=AudioRecord.SUCCESS){
 				Log.e("OF","OFAndroidSoundStream: cannot set callback");
 			}else{
 				iTrack.setRecordPositionUpdateListener(this);
 				iTrack.startRecording();
 				onPeriodicNotification(iTrack);
+				Log.i("OF","OFAndroidSoundStream: input started");
 			}
 		}else{
 			Log.i("OF","no audio input");
@@ -212,8 +214,25 @@ public class OFAndroidSoundStream extends OFAndroidObject implements Runnable, O
 	}
 
 	public void onPeriodicNotification(AudioRecord recorder) {
-		int samplesRead = recorder.read(inBuffer, 0, inBuffer.length);
-		while(audioIn(inBuffer, numIns, samplesRead/numIns)==1);
+		int samplesRead = 0;
+		
+		while(samplesRead<inBuffer.length && threadRunning ){
+			int err = recorder.read(inBuffer, samplesRead, inBuffer.length - samplesRead);
+			if(err==AudioRecord.ERROR_INVALID_OPERATION){
+				Log.e("OF","AudioRecord error ERROR_INVALID_OPERATION");
+				return;
+			}
+			if(err==AudioRecord.ERROR_BAD_VALUE){
+				Log.e("OF","AudioRecord error ERROR_BAD_VALUE");
+				return;
+			}
+			if(err==0){
+				Log.e("OF","AudioRecord error 0 samples read");
+				return;
+			}
+			samplesRead += err;
+		}
+		if(samplesRead>0) while(audioIn(inBuffer, numIns, samplesRead/numIns)==1);
 	}
 
 	public void onMarkerReached(AudioTrack track) {
