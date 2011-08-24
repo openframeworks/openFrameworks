@@ -22,7 +22,9 @@ void ofxAndroidSoundPlayer::loadSound(string fileName, bool stream){
 		ofLog(OF_LOG_ERROR,"Failed to get the environment using GetEnv()");
 		return;
 	}
-	javaClass = env->FindClass("cc/openframeworks/OFAndroidSoundPlayer");
+	jclass localClass = env->FindClass("cc/openframeworks/OFAndroidSoundPlayer");
+	javaClass = (jclass) env->NewGlobalRef(localClass);
+
 	if(!javaClass){
 		ofLog(OF_LOG_ERROR,"Failed to get the java class for SoundPlayer");
 		return;
