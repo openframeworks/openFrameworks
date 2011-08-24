@@ -51,6 +51,14 @@ class ofDragInfo{
 
 		class ofTouchEventArgs : public ofEventArgs {
 		  public:
+			enum Type{
+				down,
+				up,
+				move,
+				doubleTap,
+				cancel
+			} type;
+
 			int id;
 			int time;
 			float x, y;
