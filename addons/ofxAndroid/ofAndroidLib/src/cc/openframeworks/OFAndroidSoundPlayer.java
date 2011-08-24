@@ -7,11 +7,11 @@ public class OFAndroidSoundPlayer extends OFAndroidObject{
 	OFAndroidSoundPlayer(){
 		pan = 0.5f;
 		volume = 1;
+		player = new MediaPlayer();
 	}
 	
 	void loadSound(String fileName, boolean stream){
 		try {
-			player = new MediaPlayer();
 			player.setDataSource(fileName);
 			player.prepare();
 		} catch (Exception e) {
@@ -53,7 +53,10 @@ public class OFAndroidSoundPlayer extends OFAndroidObject{
 	}
 	
 	void setPaused(boolean bP){
-		player.pause();
+		if(bP)
+			player.pause();
+		else
+			player.start();
 	}
 	
 	void setLoop(boolean bLp){
@@ -68,7 +71,7 @@ public class OFAndroidSoundPlayer extends OFAndroidObject{
 		player.seekTo((int) (player.getDuration()*pct)); // 0 = start, 1 = end;
 	}
 	
-	void setPosition(int ms){
+	void setPositionMS(int ms){
 		player.seekTo(ms); // 0 = start, 1 = end;
 	}
 	
