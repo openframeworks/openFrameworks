@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		27820B4413EE44A100FA3407 /* Calibration.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 27820B3C13EE44A100FA3407 /* Calibration.cpp */; };
 		27820B4513EE44A100FA3407 /* Distance.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 27820B3E13EE44A100FA3407 /* Distance.cpp */; };
-		27820B4613EE44A100FA3407 /* FloatImage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 27820B4013EE44A100FA3407 /* FloatImage.cpp */; };
 		27820B4713EE44A100FA3407 /* ofxCv.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 27820B4213EE44A100FA3407 /* ofxCv.cpp */; };
 		27820C4C13EE44B200FA3407 /* opencv.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 27820BE013EE44B100FA3407 /* opencv.a */; };
 		BBAB23CB13894F3D00AA2426 /* GLUT.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = BBAB23BE13894E4700AA2426 /* GLUT.framework */; };
@@ -66,8 +65,6 @@
 		27820B3D13EE44A100FA3407 /* Calibration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Calibration.h; path = ../../../addons/ofxCv/src/Calibration.h; sourceTree = SOURCE_ROOT; };
 		27820B3E13EE44A100FA3407 /* Distance.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Distance.cpp; path = ../../../addons/ofxCv/src/Distance.cpp; sourceTree = SOURCE_ROOT; };
 		27820B3F13EE44A100FA3407 /* Distance.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Distance.h; path = ../../../addons/ofxCv/src/Distance.h; sourceTree = SOURCE_ROOT; };
-		27820B4013EE44A100FA3407 /* FloatImage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FloatImage.cpp; path = ../../../addons/ofxCv/src/FloatImage.cpp; sourceTree = SOURCE_ROOT; };
-		27820B4113EE44A100FA3407 /* FloatImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FloatImage.h; path = ../../../addons/ofxCv/src/FloatImage.h; sourceTree = SOURCE_ROOT; };
 		27820B4213EE44A100FA3407 /* ofxCv.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofxCv.cpp; path = ../../../addons/ofxCv/src/ofxCv.cpp; sourceTree = SOURCE_ROOT; };
 		27820B4313EE44A100FA3407 /* ofxCv.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxCv.h; path = ../../../addons/ofxCv/src/ofxCv.h; sourceTree = SOURCE_ROOT; };
 		27820B4C13EE44B100FA3407 /* cv.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = cv.h; path = ../../../addons/ofxOpenCv/libs/opencv/include/opencv/cv.h; sourceTree = SOURCE_ROOT; };
@@ -202,8 +199,6 @@
 				27820B3D13EE44A100FA3407 /* Calibration.h */,
 				27820B3E13EE44A100FA3407 /* Distance.cpp */,
 				27820B3F13EE44A100FA3407 /* Distance.h */,
-				27820B4013EE44A100FA3407 /* FloatImage.cpp */,
-				27820B4113EE44A100FA3407 /* FloatImage.h */,
 				27820B4213EE44A100FA3407 /* ofxCv.cpp */,
 				27820B4313EE44A100FA3407 /* ofxCv.h */,
 			);
@@ -619,7 +614,6 @@
 				E4B69E210A3A1BDC003C02F2 /* testApp.cpp in Sources */,
 				27820B4413EE44A100FA3407 /* Calibration.cpp in Sources */,
 				27820B4513EE44A100FA3407 /* Distance.cpp in Sources */,
-				27820B4613EE44A100FA3407 /* FloatImage.cpp in Sources */,
 				27820B4713EE44A100FA3407 /* ofxCv.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -10,3 +10,4 @@ obj/
 bin/
 build/
 !data/
+libs/

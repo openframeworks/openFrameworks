@@ -7,6 +7,7 @@
 // ofxCv
 #include "Distance.h"
 #include "Calibration.h"
+#include "ContourFinder.h"
 
 /*
  there should be a few kinds of functions:
