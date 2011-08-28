@@ -45,10 +45,28 @@ namespace ofxCv {
 		if(autoThreshold) {
 			threshold(thresh, thresholdValue, invert);
 		}
-				
-		contours.clear();
+		
+		vector<vector<cv::Point> > allContours;
 		int simplifyMode = simplify ? CV_CHAIN_APPROX_SIMPLE : CV_CHAIN_APPROX_NONE;
-		cv::findContours(thresh, contours, CV_RETR_EXTERNAL, simplifyMode);
+		cv::findContours(thresh, allContours, CV_RETR_EXTERNAL, simplifyMode);
+		
+		bool needMinFilter = (minArea > 0);
+		bool needMaxFilter = maxAreaNorm ? (maxArea < 1) : (maxArea < numeric_limits<float>::infinity());
+		if(needMinFilter || needMaxFilter) {
+			contours.clear();
+			double imgArea = img.rows * img.cols;
+			double imgMinArea = minAreaNorm ? (minArea * imgArea) : minArea;
+			double imgMaxArea = maxAreaNorm ? (maxArea * imgArea) : maxArea;
+			for(int i = 0; i < allContours.size(); i++) {
+				double curArea = contourArea(Mat(allContours[i]));
+				if((!needMinFilter || curArea >= imgMinArea) &&
+					(!needMaxFilter || curArea <= imgMaxArea)) {
+					contours.push_back(allContours[i]);
+				}
+			}
+		} else {
+			contours = allContours;
+		}
 		
 		polylines.clear();
 		for(int i = 0; i < contours.size(); i++) {
@@ -87,11 +105,11 @@ namespace ofxCv {
 	}
 	
 	void ContourFinder::resetMinArea() {
-		minArea = 0;
+		setMinArea(0);
 	}
 	
 	void ContourFinder::resetMaxArea() {
-		maxArea = numeric_limits<float>::infinity();
+		setMaxArea(numeric_limits<float>::infinity());
 	}
 	
 	void ContourFinder::setMinArea(float minArea) {
@@ -116,12 +134,12 @@ namespace ofxCv {
 	
 	void ContourFinder::setMinAreaNorm(float minAreaNorm) {
 		minArea = minAreaNorm;
-		this->minAreaNorm = minAreaNorm;
+		this->minAreaNorm = true;
 	}
 	
 	void ContourFinder::setMaxAreaNorm(float maxAreaNorm) {
 		maxArea = maxAreaNorm;
-		this->maxAreaNorm = maxAreaNorm;
+		this->maxAreaNorm = true;
 	}
 	
 }

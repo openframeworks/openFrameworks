@@ -2,6 +2,9 @@
 
 void testApp::setup() {
 	cam.initGrabber(640, 480);
+	contourFinder.setMinAreaRadius(10);
+	contourFinder.setMaxAreaRadius(100);
+	//contourFinder.setInvert(true); // find black instead of white
 }
 
 void testApp::update() {
