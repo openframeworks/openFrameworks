@@ -6,7 +6,7 @@ const int startCleaning = 10; // start cleaning outliers after this many samples
 
 void testApp::setup() {
 	ofSetVerticalSync(true);
-	cam.initGrabber(640, 480);ofVideoGrabber
+	cam.initGrabber(640, 480);
 	
 	imitate(undistorted, cam);
 	imitate(previous, cam);
