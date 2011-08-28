@@ -213,6 +213,22 @@ void ofxAndroidVideoGrabber::setDeviceID(int _deviceID){
 	}
 }
 
+bool ofxAndroidVideoGrabber::setAutoFocus(bool autofocus){
+	JNIEnv *env = ofGetJNIEnv();
+	if(!env) return false;
+
+	jclass javaClass = env->FindClass("cc.openframeworks.OFAndroidVideoGrabber");
+
+	jobject camera = getCamera(env, javaClass, cameraId);
+	jmethodID javasetAutoFocus = env->GetMethodID(javaClass,"setAutoFocus","(Z)Z");
+	if(camera && javasetAutoFocus){
+		return env->CallBooleanMethod(camera,javasetAutoFocus,autofocus);
+	}else{
+		ofLog(OF_LOG_ERROR, "cannot get OFAndroidVideoGrabber setAutoFocus method");
+		return false;
+	}
+}
+
 void ofxAndroidVideoGrabber::setDesiredFrameRate(int framerate){
 	attemptFramerate = framerate;
 }
