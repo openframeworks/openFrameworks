@@ -11,8 +11,6 @@
 
 namespace ofxCv {
 	
-	using namespace cv;
-	
 	class ContourFinder {
 	public:
 		ContourFinder();
@@ -21,12 +19,15 @@ namespace ofxCv {
 		void findContours(T& img) {
 			findContours(toCv(img));
 		}
-		void findContours(Mat img);
+		void findContours(cv::Mat img);
 		void setAutoThreshold(bool autoThreshold);
 		void setThreshold(float thresholdValue);
+		void setSimplify(bool simplify);
+		void draw();
 	protected:
-		Mat thresh;
-		bool autoThreshold;
+		cv::Mat thresh;
+		bool autoThreshold, simplify;
 		float thresholdValue;
+		vector<vector<cv::Point> > contours;
 	};	
 }

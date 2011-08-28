@@ -9,15 +9,13 @@ void testApp::update() {
 	cam.update();
 	if(cam.isFrameNew()) {
 		contourFinder.findContours(cam);
-	
+	/*
 		convertColor(cam, thresh, CV_RGB2GRAY);
 		float thresholdValue = ofMap(mouseX, 0, ofGetWidth(), 0, 255);
 		ofxCv::threshold(thresh, thresholdValue);
-		Mat testMat;
-		ofxCv::threshold(testMat, thresholdValue);
 		Mat threshMat = toCv(thresh);
 		findContours(threshMat, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE);
-		thresh.update();
+		thresh.update();*/
 		
 		// to implement in ContourFinder:
 		// drawing
@@ -40,12 +38,5 @@ void testApp::draw() {
 	cam.draw(0, 0);
 	thresh.draw(640, 0);
 	
-	for(int i = 0; i < contours.size(); i++) {
-		ofNoFill();
-		ofBeginShape();
-		for(int j = 0; j < contours[i].size(); j++) {
-			ofVertex(contours[i][j].x, contours[i][j].y);
-		}
-		ofEndShape(true);
-	}
+	contourFinder.draw();
 }

@@ -15,6 +15,10 @@ namespace ofxCv {
 		}
 	}
 	
+	int getCvImageType(int channels, int depth) {
+		return CV_MAKETYPE(depth, channels);
+	}
+	
 	int getChannels(const ofImageType& ofType) {
 		switch(ofType) {
 			case OF_IMAGE_GRAYSCALE: return 1;
@@ -64,7 +68,7 @@ namespace ofxCv {
 	ofRectangle toOf(cv::Rect rect) {
 		return ofRectangle(rect.x, rect.y, rect.width, rect.height);
 	}
-
+	
 	void loadImage(Mat& mat, string filename) {
 		mat = imread(ofToDataPath(filename));
 	}
@@ -170,30 +174,30 @@ namespace ofxCv {
 		autothreshold(img, img, invert);
 	}
 	/*
-	void threshold(FloatImage& img, float value, bool invert) {
-		threshold(img, img, value, invert);
-	}
-	
-	void threshold(FloatImage& original, FloatImage& thresh, float value, bool invert) {
-		threshold(original.toCv(), thresh.toCv(), value, 1, invert ? THRESH_BINARY_INV : THRESH_BINARY);
-	}
-	
-	void matchRegion(ofImage& source, ofRectangle& region, ofImage& search, FloatImage& result) {
-		imitate(search, source);
-		imitate(result, source);
-		
-		Mat sourceMat = toCv(source);
-		Mat searchMat = toCv(search);
-		Mat& resultMat = result.toCv(); // ideally FloatImage is ofImage and we won't need this
-		matchRegion(sourceMat, region, searchMat, resultMat);
-	}
-	
-	void matchRegion(Mat& source, ofRectangle& region, Mat& search, Mat& result) {
-		Mat sourceMat = Mat(source, toCv(region));
-		
-		matchTemplate(search, sourceMat, result, CV_TM_CCOEFF_NORMED);
-	}
-	*/
+	 void threshold(FloatImage& img, float value, bool invert) {
+	 threshold(img, img, value, invert);
+	 }
+	 
+	 void threshold(FloatImage& original, FloatImage& thresh, float value, bool invert) {
+	 threshold(original.toCv(), thresh.toCv(), value, 1, invert ? THRESH_BINARY_INV : THRESH_BINARY);
+	 }
+	 
+	 void matchRegion(ofImage& source, ofRectangle& region, ofImage& search, FloatImage& result) {
+	 imitate(search, source);
+	 imitate(result, source);
+	 
+	 Mat sourceMat = toCv(source);
+	 Mat searchMat = toCv(search);
+	 Mat& resultMat = result.toCv(); // ideally FloatImage is ofImage and we won't need this
+	 matchRegion(sourceMat, region, searchMat, resultMat);
+	 }
+	 
+	 void matchRegion(Mat& source, ofRectangle& region, Mat& search, Mat& result) {
+	 Mat sourceMat = Mat(source, toCv(region));
+	 
+	 matchTemplate(search, sourceMat, result, CV_TM_CCOEFF_NORMED);
+	 }
+	 */
 	
 	float weightedAverageAngle(const vector<Vec4i>& lines) {
 		float angleSum = 0;
@@ -237,41 +241,41 @@ namespace ofxCv {
 	}
 	
 	/*
-	// only works with single channel kernels
-	void convolve(ofImage& source, FloatImage& kernel, ofImage& destination) {
-		imitate(destination, source);
-		
-		Mat sourceMat = toCv(source);
-		Mat kernelMat = kernel.toCv();
-		Mat destinationMat = toCv(destination);
-		
-		flip(kernelMat, kernelMat, -1); // flip both axes
-		// we may need to 'set the anchor position'...?
-		// http://opencv.willowgarage.com/documentation/cpp/imgproc_image_filtering.html?highlight=filter2d#filter2D
-		
-		if(sourceMat.channels() == 1) {
-			filter2D(sourceMat, destinationMat, -1, kernelMat);
-		} else {
-			vector<Mat> mvSource, mvDestination;
-			split(sourceMat, mvSource);
-			split(destinationMat, mvDestination);
-			for(int i = 0; i < mvSource.size(); i++) {
-				filter2D(mvSource[i], mvDestination[i], -1, kernelMat);
-			}
-			merge(mvDestination, destinationMat);
-		}
-		
-		flip(kernelMat, kernelMat, -1); // flip the kernel back
-	}
-	
-	void convolve(ofImage& img, FloatImage& kernel) {
-		convolve(img, kernel, img);
-	}
-	
-	ofVec2f findMaxLocation(FloatImage& img) {
-		return findMaxLocation(img.toCv());
-	}
-	*/
+	 // only works with single channel kernels
+	 void convolve(ofImage& source, FloatImage& kernel, ofImage& destination) {
+	 imitate(destination, source);
+	 
+	 Mat sourceMat = toCv(source);
+	 Mat kernelMat = kernel.toCv();
+	 Mat destinationMat = toCv(destination);
+	 
+	 flip(kernelMat, kernelMat, -1); // flip both axes
+	 // we may need to 'set the anchor position'...?
+	 // http://opencv.willowgarage.com/documentation/cpp/imgproc_image_filtering.html?highlight=filter2d#filter2D
+	 
+	 if(sourceMat.channels() == 1) {
+	 filter2D(sourceMat, destinationMat, -1, kernelMat);
+	 } else {
+	 vector<Mat> mvSource, mvDestination;
+	 split(sourceMat, mvSource);
+	 split(destinationMat, mvDestination);
+	 for(int i = 0; i < mvSource.size(); i++) {
+	 filter2D(mvSource[i], mvDestination[i], -1, kernelMat);
+	 }
+	 merge(mvDestination, destinationMat);
+	 }
+	 
+	 flip(kernelMat, kernelMat, -1); // flip the kernel back
+	 }
+	 
+	 void convolve(ofImage& img, FloatImage& kernel) {
+	 convolve(img, kernel, img);
+	 }
+	 
+	 ofVec2f findMaxLocation(FloatImage& img) {
+	 return findMaxLocation(img.toCv());
+	 }
+	 */
 	
 	ofVec2f findMaxLocation(Mat& mat) {
 		double minVal, maxVal;
@@ -302,12 +306,12 @@ namespace ofxCv {
 	}
 	
 	/*
-	void blur(FloatImage& original, FloatImage& blurred, int size) {
-		size = forceOdd(size);
-		imitate(blurred, original);
-		GaussianBlur(original.toCv(), blurred.toCv(), cv::Size(size, size), 0, 0);
-	}
-	*/
+	 void blur(FloatImage& original, FloatImage& blurred, int size) {
+	 size = forceOdd(size);
+	 imitate(blurred, original);
+	 GaussianBlur(original.toCv(), blurred.toCv(), cv::Size(size, size), 0, 0);
+	 }
+	 */
 	
 	void medianBlur(ofImage& img, int size) {
 		size = forceOdd(size);
@@ -389,4 +393,40 @@ namespace ofxCv {
 		return rowMat;
 	}
 	
+	// for some reason, cvtColor handles this info internally rather than having
+	// a single helper function. so we have to create a helper function to aid
+	// in doing the allocationg ofxCv::convertColor()
+	#define mkcase(x, y) {case x: return y;}
+	int getTargetChannelsFromCode(int conversionCode) {
+		switch(conversionCode) {
+			mkcase(CV_RGB2RGBA,4)	mkcase(CV_RGBA2RGB,3) mkcase(CV_RGB2BGRA,4)
+			mkcase(CV_RGBA2BGR,3) mkcase(CV_BGR2RGB,3) mkcase(CV_BGRA2RGBA,4)
+			mkcase(CV_BGR2GRAY,1) mkcase(CV_RGB2GRAY,1) mkcase(CV_GRAY2RGB,3)
+			mkcase(CV_GRAY2RGBA,4) mkcase(CV_BGRA2GRAY,1) mkcase(CV_RGBA2GRAY,1)
+			mkcase(CV_BGR5652BGR,3) mkcase(CV_BGR5652RGB,3) mkcase(CV_BGR5652BGRA,4)
+			mkcase(CV_BGR5652RGBA,4) mkcase(CV_BGR5652GRAY,1) mkcase(CV_BGR5552BGR,3)
+			mkcase(CV_BGR5552RGB,3) mkcase(CV_BGR5552BGRA,4) mkcase(CV_BGR5552RGBA,4)
+			mkcase(CV_BGR5552GRAY,1) mkcase(CV_BGR2XYZ,3) mkcase(CV_RGB2XYZ,3)
+			mkcase(CV_XYZ2BGR,3) mkcase(CV_XYZ2RGB,3) mkcase(CV_BGR2YCrCb,3)
+			mkcase(CV_RGB2YCrCb,3) mkcase(CV_YCrCb2BGR,3) mkcase(CV_YCrCb2RGB,3)
+			mkcase(CV_BGR2HSV,3) mkcase(CV_RGB2HSV,3) mkcase(CV_BGR2Lab,3)
+			mkcase(CV_RGB2Lab,3) mkcase(CV_BayerGB2BGR,3) mkcase(CV_BayerBG2RGB,3)
+			mkcase(CV_BayerGB2RGB,3) mkcase(CV_BayerRG2RGB,3) mkcase(CV_BGR2Luv,3)
+			mkcase(CV_RGB2Luv,3) mkcase(CV_BGR2HLS,3) mkcase(CV_RGB2HLS,3)
+			mkcase(CV_HSV2BGR,3) mkcase(CV_HSV2RGB,3) mkcase(CV_Lab2BGR,3)
+			mkcase(CV_Lab2RGB,3) mkcase(CV_Luv2BGR,3) mkcase(CV_Luv2RGB,3)
+			mkcase(CV_HLS2BGR,3) mkcase(CV_HLS2RGB,3) mkcase(CV_BayerBG2RGB_VNG,3)
+			mkcase(CV_BayerGB2RGB_VNG,3) mkcase(CV_BayerRG2RGB_VNG,3)
+			mkcase(CV_BayerGR2RGB_VNG,3) mkcase(CV_BGR2HSV_FULL,3)
+			mkcase(CV_RGB2HSV_FULL,3) mkcase(CV_BGR2HLS_FULL,3)
+			mkcase(CV_RGB2HLS_FULL,3) mkcase(CV_HSV2BGR_FULL,3)
+			mkcase(CV_HSV2RGB_FULL,3) mkcase(CV_HLS2BGR_FULL,3)
+			mkcase(CV_HLS2RGB_FULL,3) mkcase(CV_LBGR2Lab,3) mkcase(CV_LRGB2Lab,3)
+			mkcase(CV_LBGR2Luv,3) mkcase(CV_LRGB2Luv,3) mkcase(CV_Lab2LBGR,4)
+			mkcase(CV_Lab2LRGB,4) mkcase(CV_Luv2LBGR,4) mkcase(CV_Luv2LRGB,4)
+			mkcase(CV_BGR2YUV,3) mkcase(CV_RGB2YUV,3) mkcase(CV_YUV2BGR,3)
+			mkcase(CV_YUV2RGB,3)
+			default: return 0;
+		}
+	}
 }

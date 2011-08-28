@@ -19,6 +19,8 @@
  
  there should be a ton more const functions, but it's hard because of OF const issues
  need to print better errors than default opencv errors...?
+ 
+ if it's possible to allocate an unallocated image, ofxCv should allocate it.
  */
 
 namespace ofxCv {
@@ -40,6 +42,20 @@ namespace ofxCv {
 	Point2f toCv(ofVec2f& vec);
 	Point3f toCv(ofVec3f& vec);
 	cv::Rect toCv(const ofRectangle& rect);
+		
+	// toOf functions
+	ofVec2f toOf(Point2f point);
+	ofVec3f toOf(Point3f point);
+	ofRectangle toOf(cv::Rect rect);
+	
+	// these functions are for accessing Mat, ofPixels and ofImage consistently
+	// the number of functions could be reduced and the dependency simplified a little
+	// they're important for imitate(), so essentially:
+	// get width, height, channels, depth, and image type. do allocation.
+	template <class T> inline int getWidth(T& src) {return src.getWidth();}
+	template <class T> inline int getHeight(T& src) {return src.getHeight();}
+	template <> inline int getWidth<Mat>(Mat& src) {return src.cols;}
+	template <> inline int getHeight<Mat>(Mat& src) {return src.rows;}
 	
 	template <class T> inline int getDepth(T& img);
 	template <> inline int getDepth<Mat>(Mat& mat) {return mat.depth();}
@@ -49,32 +65,25 @@ namespace ofxCv {
 	template <> inline int getDepth<ofPixels>(ofPixels& img) {return CV_8U;}
 	template <> inline int getDepth<ofShortPixels>(ofShortPixels& img) {return CV_16U;}
 	template <> inline int getDepth<ofFloatPixels>(ofFloatPixels& img) {return CV_32F;}
-	int getChannels(const ofImageType& ofType);
-		
-	// toOf functions
-	ofVec2f toOf(Point2f point);
-	ofVec3f toOf(Point3f point);
-	ofRectangle toOf(cv::Rect rect);
-	ofImageType toOf(const int channels);
 	
-	// these functions are for accessing Mat, ofPixels and ofImage consistently
+	int getChannels(const ofImageType& ofType);
+	
 	template <class T> inline ofImageType getOfImageType(T& img);
 	template <class T> inline ofImageType getOfImageType(ofPixels_<T>& pixels) {return pixels.getImageType();}
 	template <class T> inline ofImageType getOfImageType(ofImage_<T>& image) {return getOfImageType(image.getPixelsRef());}
 	ofImageType getOfImageType(int channels);
 	template <> inline ofImageType getOfImageType<Mat>(Mat& mat) {return getOfImageType(mat.channels());}
-	template <class T> inline int getCvImageType(T& img) {return CV_MAKETYPE(getDepth(img), getChannels(getOfImageType(img)));}
+	int getCvImageType(int channels, int depth = CV_8U);
+	template <class T> inline int getCvImageType(T& img) {return getCvImageType(getChannels(getOfImageType(img)), getDepth(img));}
 	template <> inline int getCvImageType(Mat& mat) {return mat.type();}
-	template <class T> inline int getWidth(T& src) {return src.getWidth();}
-	template <class T> inline int getHeight(T& src) {return src.getHeight();}
-	template <> inline int getWidth<Mat>(Mat& src) {return src.cols;}
-	template <> inline int getHeight<Mat>(Mat& src) {return src.rows;}
+	
 	template <class T> inline void allocate(T& img, int width, int height, int cvType) {img.allocate(width, height, getOfImageType(cvType));}
-	template <> inline void allocate<Mat>(Mat& img, int width, int height, int cvType) {img = Mat(height, width, cvType);}
+	template <> inline void allocate<Mat>(Mat& img, int width, int height, int cvType) {img.create(height, width, cvType);}
 	
 	// imitate() is good for preparing buffers
 	// it's like allocate(), but uses the size and type of the original as a reference
-	// imitate() assumes that you want your Mat to be unsigned chars
+	// imitate() assumes that you want your mirror Mat to be CV_8U right now
+	// should imitate()'s arguments be switched to mirror every other as src/dst?
 	template <class M, class O> void imitate(M& mirror, O& original) {
 		int mw = getWidth(mirror);
 		int mh = getHeight(mirror);
@@ -88,11 +97,22 @@ namespace ofxCv {
 		}
 	}
 	
-	void copy(Mat to, Mat from);
-	
+	// this version of imitate() is used for copying the size only
+	template <class M, class O> void imitate(M& mirror, O& original, int cvImageType) {
+		int mw = getWidth(mirror);
+		int mh = getHeight(mirror);
+		int ow = getWidth(original);
+		int oh = getHeight(original);
+		int mt = getCvImageType(mirror);
+		if(mw != ow || mh != oh || mt != cvImageType) {
+			allocate(mirror, ow, oh, cvImageType);
+		}
+	}
+
 	// maximum possible values for that depth or matrix
 	float getMaxVal(int depth);
 	float getMaxVal(const Mat& mat);
+	int getTargetChannelsFromCode(int conversionCode);
 	
 	// 2 toCv-compatible wrappers
 	
@@ -165,6 +185,9 @@ cv::name(xMat, yMat, resultMat);\
 	// CV_RGB2GRAY, CV_HSV2RGB, etc. with [RGB, BGR, GRAY, HSV, HLS, XYZ, YCrCb, Lab, Luv]
 	template <class S, class D>
 	void convertColor(S& src, D& dst, int code) {
+		// cvtColor allocates Mat for you, but we need this to handle ofImage etc.
+		int targetChannels = getTargetChannelsFromCode(code);
+		imitate(dst, src, getCvImageType(targetChannels));
 		Mat srcMat = toCv(src);
 		Mat dstMat = toCv(dst);
 		cvtColor(srcMat, dstMat, code);
