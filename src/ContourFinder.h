@@ -10,12 +10,11 @@
  */
 
 // to implement in ContourFinder:
-// drawing
-// holes/no holes
-// autothreshold + OTSU
-// cv::arcLength
-// cv::boundingRect
 // cv::contourArea and filtering
+// holes/no holes
+// cv::boundingRect
+// CV_THRESH_OTSU?
+// cv::arcLength
 // cv::convexHull
 // cv::minAreaRect
 // cv::fitEllipse
@@ -35,6 +34,8 @@ namespace ofxCv {
 			findContours(toCv(img));
 		}
 		void findContours(cv::Mat img);
+		vector<vector<cv::Point> >& getContours();
+		vector<ofPolyline>& getPolylines();
 		
 		void setAutoThreshold(bool autoThreshold);
 		void setThreshold(float thresholdValue);
@@ -48,5 +49,6 @@ namespace ofxCv {
 		bool autoThreshold, invert, simplify;
 		float thresholdValue;
 		vector<vector<cv::Point> > contours;
+		vector<ofPolyline> polylines;
 	};	
 }

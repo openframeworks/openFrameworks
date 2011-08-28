@@ -25,6 +25,23 @@ namespace ofxCv {
 		contours.clear();
 		int simplifyMode = simplify ? CV_CHAIN_APPROX_SIMPLE : CV_CHAIN_APPROX_NONE;
 		cv::findContours(thresh, contours, CV_RETR_EXTERNAL, simplifyMode);
+		
+		polylines.clear();
+		polylines.resize(contours.size());
+		for(int i = 0; i < contours.size(); i++) {
+			for(int j = 0; j < contours[i].size(); j++) {
+				polylines[i].addVertex(toOf(contours[i][j]));
+			}
+			polylines[i].close();
+		}
+	}
+	
+	vector<vector<cv::Point> >& ContourFinder::getContours() {
+		return contours;
+	}
+	
+	vector<ofPolyline>& ContourFinder::getPolylines() {
+		return polylines;
 	}
 	
 	void ContourFinder::setAutoThreshold(bool autoThreshold) {
@@ -44,13 +61,8 @@ namespace ofxCv {
 	}
 	
 	void ContourFinder::draw() {
-		for(int i = 0; i < contours.size(); i++) {
-			ofNoFill();
-			ofBeginShape();
-			for(int j = 0; j < contours[i].size(); j++) {
-				ofVertex(contours[i][j].x, contours[i][j].y);
-			}
-			ofEndShape(true);
+		for(int i = 0; i < polylines.size(); i++) {
+			polylines[i].draw();
 		}
 	}
 }
