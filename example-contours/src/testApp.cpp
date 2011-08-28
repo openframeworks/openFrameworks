@@ -8,9 +8,13 @@ void testApp::setup() {
 void testApp::update() {
 	cam.update();
 	if(cam.isFrameNew()) {
+		contourFinder.findContours(cam);
+	
 		convertColor(cam, thresh, CV_RGB2GRAY);
 		float thresholdValue = ofMap(mouseX, 0, ofGetWidth(), 0, 255);
-		threshold(thresh, thresholdValue);
+		ofxCv::threshold(thresh, thresholdValue);
+		Mat testMat;
+		ofxCv::threshold(testMat, thresholdValue);
 		Mat threshMat = toCv(thresh);
 		findContours(threshMat, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE);
 		thresh.update();
@@ -18,6 +22,7 @@ void testApp::update() {
 		// to implement in ContourFinder:
 		// drawing
 		// holes/no holes
+		// autothreshold + OTSU
 		// cv::arcLength
 		// cv::boundingRect
 		// cv::contourArea and filtering

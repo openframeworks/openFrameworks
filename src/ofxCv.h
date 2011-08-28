@@ -159,7 +159,7 @@ cv::name(xMat, yMat, resultMat);\
 	// threshold in place
 	template <class SD>
 	void threshold(SD& srcDst, float thresholdValue, bool invert = false) {
-		threshold(srcDst, srcDst, thresholdValue, invert);
+		ofxCv::threshold(srcDst, srcDst, thresholdValue, invert);
 	}
 	
 	// CV_RGB2GRAY, CV_HSV2RGB, etc. with [RGB, BGR, GRAY, HSV, HLS, XYZ, YCrCb, Lab, Luv]

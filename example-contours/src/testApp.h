@@ -14,4 +14,6 @@ public:
 	ofVideoGrabber cam;
 	ofImage thresh;
 	vector<vector<cv::Point> > contours;
+	
+	ContourFinder contourFinder;
 };
