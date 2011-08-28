@@ -17,6 +17,7 @@
 
 // to implement in ContourFinder:
 // holes/no holes
+// centroid using moments vs center using bounding box
 // cv::pointPolygonTest - inside, edge, outside
 // cv::matchShapes - similarity between two contours
 

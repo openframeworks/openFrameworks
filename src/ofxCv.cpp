@@ -6,32 +6,6 @@ namespace ofxCv {
 	
 	using namespace cv;
 	
-	ofImageType getOfImageType(int channels) {
-		switch(channels) {
-			case 1: return OF_IMAGE_GRAYSCALE;
-			case 3: return OF_IMAGE_COLOR;
-			case 4: return OF_IMAGE_COLOR_ALPHA;
-			default: return OF_IMAGE_GRAYSCALE;
-		}
-	}
-	
-	int getCvImageType(int channels, int depth) {
-		return CV_MAKETYPE(depth, channels);
-	}
-	
-	int getChannels(const ofImageType& ofType) {
-		switch(ofType) {
-			case OF_IMAGE_GRAYSCALE: return 1;
-			case OF_IMAGE_COLOR: return 3;
-			case OF_IMAGE_COLOR_ALPHA: return 4;
-			default: return 1;
-		}
-	}
-	
-	void copy(Mat to, Mat from) {
-		from.copyTo(to);
-	}
-	
 	Mat toCv(Mat& mat) {
 		return mat;
 	}
@@ -422,6 +396,15 @@ namespace ofxCv {
 			rowMat.row(i) = sum(mat.row(i));
 		}
 		return rowMat;
+	}
+	
+	void drawHighlightString(string text, int x, int y, ofColor background, ofColor foreground) {
+		int textWidth =  10 + text.length() * 8;
+		ofSetColor(background);
+		ofFill();
+		ofRect(x - 5, y - 12, textWidth, 20);
+		ofSetColor(foreground);
+		ofDrawBitmapString(text, x, y);
 	}
 	
 	// for some reason, cvtColor handles this info internally rather than having

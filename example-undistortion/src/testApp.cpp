@@ -6,7 +6,7 @@ const int startCleaning = 10; // start cleaning outliers after this many samples
 
 void testApp::setup() {
 	ofSetVerticalSync(true);
-	cam.initGrabber(640, 480);
+	cam.initGrabber(640, 480);ofVideoGrabber
 	
 	imitate(undistorted, cam);
 	imitate(previous, cam);
@@ -46,15 +46,6 @@ void testApp::update() {
 			undistorted.update();
 		}
 	}
-}
-
-void drawHighlightString(string text, int x, int y, ofColor background = ofColor::black, ofColor foreground = ofColor::white) {
-	int textWidth =  10 + text.length() * 8;
-	ofSetColor(background);
-	ofFill();
-	ofRect(x - 5, y - 12, textWidth, 20);
-	ofSetColor(foreground);
-	ofDrawBitmapString(text, x, y);
 }
 
 void testApp::draw() {

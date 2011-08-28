@@ -15,7 +15,6 @@ public:
 	ofPixels previous;
 	ofImage diff;
 	
-	// a scalar is like an ofVec4f
-	// but it's normally used for storing color information
+	// a scalar is like an ofVec4f but normally used for storing color information
 	Scalar diffMean;
 };

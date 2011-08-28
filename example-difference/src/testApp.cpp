@@ -6,27 +6,22 @@ void testApp::setup() {
 	
 	// imitate() will set up previous and diff
 	// so they have the same size and type as cam
-	imitate(previous, cam.getPixelsRef());;
-	imitate(diff, cam.getPixelsRef());
+	imitate(previous, cam);
+	imitate(diff, cam);
 }
 
 void testApp::update() {
 	cam.update();
 	if(cam.isFrameNew()) {
-		Mat camMat = toCv(cam.getPixelsRef());
-		Mat prevMat = toCv(previous);
-		Mat diffMat = toCv(diff);
-		
-		// take the absolute difference of prev and cam
-		// and save it inside diff
-		absdiff(prevMat, camMat, diffMat);
+		// take the absolute difference of prev and cam and save it inside diff
+		absdiff(previous, cam, diff);
 		diff.update();
 		
-		// like ofSetPixels, but more concise
-		camMat.copyTo(prevMat);
+		// like ofSetPixels, but more concise and cross-toolkit
+		ofxCv::copy(cam, previous);
 		
-		// mean() returns a Scalar
-		diffMean = mean(diffMat);
+		// mean() returns a Scalar. it's a cv:: function so we have to pass a Mat
+		diffMean = mean(toCv(diff));
 		
 		// you can only do math between Scalars,
 		// but it's easy to make a Scalar from an int (shown here)
