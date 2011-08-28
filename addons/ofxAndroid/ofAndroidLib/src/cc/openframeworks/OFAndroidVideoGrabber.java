@@ -117,13 +117,46 @@ public class OFAndroidVideoGrabber extends OFAndroidObject implements Runnable, 
 		initialized = true;
 	}
 	
+	public boolean setAutoFocus(boolean autofocus){
+		
+		if(initialized){
+			while(initialized && !previewStarted){
+				try {
+					Thread.sleep(10);
+				} catch (InterruptedException e) {
+				}
+			}
+		}
+		try{
+			if(autofocus){
+				camera.autoFocus(autoFocusCB);
+			}else{
+				camera.cancelAutoFocus();
+			}
+		}catch(Exception e){
+			Log.e("OF","couldn't (de)activate autofocus", e);
+			return false;
+		}
+		return true;
+	}
 	
+	private class AutoFocusCB implements Camera.AutoFocusCallback{
+
+		public void onAutoFocus(boolean success, Camera camera) {
+			// TODO Auto-generated method stub
+			
+		}
+		
+	}
+	
+	private AutoFocusCB autoFocusCB = new AutoFocusCB();
 	
 	@Override
 	public void appStop(){
 		if(initialized){
 			Log.i("OF","stopping camera");
 			camera.stopPreview();
+			previewStarted = false;
 			try {
 				thread.join();
 			} catch (InterruptedException e) {
@@ -191,6 +224,7 @@ public class OFAndroidVideoGrabber extends OFAndroidObject implements Runnable, 
 		//camera.setPreviewCallbackWithBuffer(this);
 		try{
 			camera.startPreview();
+			previewStarted = true;
 		} catch (Exception e) {
 			Log.e("OF","error starting preview",e);
 		}
@@ -240,6 +274,7 @@ public class OFAndroidVideoGrabber extends OFAndroidObject implements Runnable, 
 	private static int nextId=0;
 	public static Map<Integer,OFAndroidVideoGrabber> camera_instances = new HashMap<Integer,OFAndroidVideoGrabber>();
 	private boolean initialized = false;
+	private boolean previewStarted = false;
 	private Method addBufferMethod;
 	private OrientationListener orientationListener;
 	
