@@ -42,11 +42,23 @@ namespace ofxCv {
 	Point2f toCv(ofVec2f& vec);
 	Point3f toCv(ofVec3f& vec);
 	cv::Rect toCv(const ofRectangle& rect);
+	vector<cv::Point2f> toCv(const ofPolyline& polyline);
 		
 	// toOf functions
 	ofVec2f toOf(Point2f point);
 	ofVec3f toOf(Point3f point);
 	ofRectangle toOf(cv::Rect rect);
+	ofPolyline toOf(cv::RotatedRect& rect);
+	template <class T> inline ofPolyline toOf(const vector<cv::Point_<T> >& contour) {
+		ofPolyline polyline;
+		polyline.resize(contour.size());
+		for(int i = 0; i < contour.size(); i++) {
+			polyline[i].x = contour[i].x;
+			polyline[i].y = contour[i].y;
+		}
+		polyline.close();
+		return polyline;
+	}
 	
 	// these functions are for accessing Mat, ofPixels and ofImage consistently
 	// the number of functions could be reduced and the dependency simplified a little
@@ -195,6 +207,14 @@ cv::name(xMat, yMat, resultMat);\
 	
 	// older wrappers, need to be templated
 	// {
+	
+	// for contourArea()/arcLength(), see ofPolyline::getArea()/getPerimiter()
+	// not sure if these three need to be templated. convexHull returning an
+	// ofPolyline when given an ofPolyline is the key factor...
+	ofPolyline convexHull(ofPolyline& polyline);
+	cv::RotatedRect minAreaRect(ofPolyline& polyline);
+	cv::RotatedRect fitEllipse(ofPolyline& polyline);
+	
 	void invert(ofImage& img);
 	void rotate(ofImage& source, ofImage& destination, double angle, unsigned char fill = 0, int interpolation = INTER_LINEAR);
 	void autorotate(ofImage& original, ofImage& thresh, ofImage& output, float* rotation = NULL);
@@ -212,6 +232,7 @@ cv::name(xMat, yMat, resultMat);\
 	void warpPerspective(ofPixels& src, ofPixels& dst, Mat& m, int flags = 0);
 	void resize(ofImage& source, ofImage& destination, int interpolation = INTER_LINEAR); // options: INTER_NEAREST, INTER_LINEAR, INTER_AREA, INTER_CUBIC, INTER LANCZOS4
 	void resize(ofImage& source, ofImage& destination, float xScale, float yScale, int interpolation = INTER_LINEAR);
+	
 	// }
 	
 	// 3 misc

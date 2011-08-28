@@ -16,21 +16,15 @@
  */
 
 // to implement in ContourFinder:
-// cv::contourArea and filtering
 // holes/no holes
-// cv::boundingRect
-// CV_THRESH_OTSU?
-// cv::arcLength
-// cv::convexHull
-// cv::minAreaRect
-// cv::fitEllipse
-// cv::pointPolygonTest
+// cv::pointPolygonTest - inside, edge, outside
+// cv::matchShapes - similarity between two contours
 
-// cv::matchShapes?
 // cv::estimateRigidTransform? subdivision-based estimation for outline-flow?
+// CV_THRESH_OTSU?
 
 namespace ofxCv {
-	
+
 	class ContourFinder {
 	public:
 		ContourFinder();
@@ -42,6 +36,17 @@ namespace ofxCv {
 		void findContours(cv::Mat img);
 		vector<vector<cv::Point> >& getContours();
 		vector<ofPolyline>& getPolylines();
+		
+		unsigned int size() const;
+		vector<cv::Point>& getContour(unsigned int i);
+		ofPolyline& getPolyline(unsigned int i);
+		
+		cv::Rect getBoundingRect(unsigned int i) const;
+		double getContourArea(unsigned int i) const;
+		double getArcLength(unsigned int i) const;
+		vector<cv::Point> getConvexHull(unsigned int i) const;
+		cv::RotatedRect getMinAreaRect(unsigned int i) const;
+		cv::RotatedRect getFitEllipse(unsigned int i) const;
 		
 		void setAutoThreshold(bool autoThreshold);
 		void setThreshold(float thresholdValue);
@@ -71,6 +76,4 @@ namespace ofxCv {
 		vector<ofPolyline> polylines;
 	};	
 	
-	ofPolyline toOf(vector<cv::Point>& contour);
-	vector<cv::Point> toCv(ofPolyline& polyline);
 }

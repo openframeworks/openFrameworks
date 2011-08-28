@@ -3,28 +3,6 @@
 namespace ofxCv {
 	using namespace cv;
 	
-	// it would be better if these were shallow copies
-	// but ofPolyline is 3d while cv::Point is 2d
-	ofPolyline toOf(vector<cv::Point>& contour) {
-		ofPolyline polyline;
-		polyline.resize(contour.size());
-		for(int i = 0; i < contour.size(); i++) {
-			polyline[i].x = contour[i].x;
-			polyline[i].y = contour[i].y;
-		}
-		polyline.close();
-		return polyline;
-	}
-	
-	vector<cv::Point> toCv(ofPolyline& polyline) {
-		vector<cv::Point> contour(polyline.size());
-		for(int i = 0; i < polyline.size(); i++) {
-			contour[i].x = polyline[i].x;
-			contour[i].y = polyline[i].y;
-		}
-		return contour;		
-	}
-	
 	ContourFinder::ContourFinder()
 	:autoThreshold(true)
 	,thresholdValue(128.)
@@ -73,13 +51,51 @@ namespace ofxCv {
 			polylines.push_back(toOf(contours[i]));
 		}
 	}
-	
+
 	vector<vector<cv::Point> >& ContourFinder::getContours() {
 		return contours;
 	}
 	
 	vector<ofPolyline>& ContourFinder::getPolylines() {
 		return polylines;
+	}
+	
+	unsigned int ContourFinder::size() const {
+		return contours.size();
+	}
+	
+	vector<cv::Point>& ContourFinder::getContour(unsigned int i) {
+		return contours[i];
+	}
+	
+	ofPolyline& ContourFinder::getPolyline(unsigned int i) {
+		return polylines[i];
+	}
+	
+	cv::Rect ContourFinder::getBoundingRect(unsigned int i) const {
+		return boundingRect(Mat(contours[i]));
+	}
+	
+	double ContourFinder::getContourArea(unsigned int i) const {
+		return contourArea(Mat(contours[i]));
+	}
+	
+	double ContourFinder::getArcLength(unsigned int i) const {
+		return arcLength(Mat(contours[i]), true);
+	}
+	
+	vector<cv::Point> ContourFinder::getConvexHull(unsigned int i) const {
+		vector<cv::Point> hull;
+		convexHull(Mat(contours[i]), hull);
+		return hull;
+	}
+	
+	cv::RotatedRect ContourFinder::getMinAreaRect(unsigned int i) const {
+		return minAreaRect(Mat(contours[i]));
+	}
+	
+	cv::RotatedRect ContourFinder::getFitEllipse(unsigned int i) const {
+		return fitEllipse(Mat(contours[i]));
 	}
 	
 	void ContourFinder::setAutoThreshold(bool autoThreshold) {
