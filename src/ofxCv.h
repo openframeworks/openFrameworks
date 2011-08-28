@@ -106,6 +106,9 @@ namespace ofxCv {
 	}
 	
 	// image type
+	inline int getCvImageType(int channels, int depth = CV_8U) {
+		return CV_MAKETYPE(depth, channels);
+	}
 	inline int getCvImageType(ofImageType imageType, int depth = CV_8U) {
 		return CV_MAKETYPE(depth, getChannels(imageType));
 	}
@@ -249,7 +252,7 @@ cv::name(xMat, yMat, resultMat);\
 	void convertColor(S& src, D& dst, int code) {
 		// cvtColor allocates Mat for you, but we need this to handle ofImage etc.
 		int targetChannels = getTargetChannelsFromCode(code);
-		imitate(dst, src, getCvImageType(targetChannels));
+		imitate(dst, src, getCvImageType(targetChannels, getDepth(src)));
 		Mat srcMat = toCv(src);
 		Mat dstMat = toCv(dst);
 		cvtColor(srcMat, dstMat, code);
