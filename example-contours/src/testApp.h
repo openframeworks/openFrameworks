@@ -11,9 +11,6 @@ public:
 	void update();
 	void draw();
 	
-	ofVideoGrabber cam;
-	ofImage thresh;
-	vector<vector<cv::Point> > contours;
-	
+	ofVideoGrabber cam;	
 	ContourFinder contourFinder;
 };

@@ -20,7 +20,7 @@ Making it easy to work directly with CV by providing lightweight conversion func
 
 ### Elegant internal OpenCv code
 
-Provide clean implementations of all functions in order to provide a stepping stone to direct OpenCV use. This means using function names and variable names that follow the OpenCV documentation, and spending the time to learn proper CV usage so I can explain it clearly to others through code. Sometimes there will be heavy templating or other difficult constructs, but these should be avoided as much as possible.
+Provide clean implementations of all functions in order to provide a stepping stone to direct OpenCV use. This means using function names and variable names that follow the OpenCV documentation, and spending the time to learn proper CV usage so I can explain it clearly to others through code. Sometimes there will be heavy templating in order to make OF interoperable with OpenCV, but this should be avoided in favor of using straight OpenCV as often as possible.
 
 # Usage
 
