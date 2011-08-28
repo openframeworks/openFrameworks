@@ -15,4 +15,5 @@ void testApp::update() {
 void testApp::draw() {
 	cam.draw(0, 0);	
 	contourFinder.draw();
+	ofDrawBitmapString(ofToString((int) ofGetFrameRate()), 10, 20);
 }

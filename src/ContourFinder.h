@@ -7,6 +7,12 @@
  also convert non-grayscale images to grayscale before thresholding. if you
  want to disable this, setAutoThreshold(false). by default the threshold is
  128. to change this, use setThreshold().
+ 
+ by default, the results are unfiltered by size. to filter by size use one of
+ set(Min/Max)(Area/Radius/Norm) functions. set(Min/Max)Area is in pixels.
+ set(Min/Max)Radius uses the area of a circle with the given radius for a more
+ "linear" feeling. set(Min/Max)Norm uses values between (0-1) and multiplies
+ by the input image area. to reset the min/max area call reset(Min/Max)Area.
  */
 
 // to implement in ContourFinder:
@@ -41,6 +47,15 @@ namespace ofxCv {
 		void setThreshold(float thresholdValue);
 		void setInvert(bool invert);
 		
+		void resetMinArea();
+		void resetMaxArea();
+		void setMinArea(float minArea);
+		void setMaxArea(float maxArea);
+		void setMinAreaRadius(float minAreaRadius);
+		void setMaxAreaRadius(float maxAreaRadius);
+		void setMinAreaNorm(float minAreaNorm);
+		void setMaxAreaNorm(float maxAreaNorm);
+		
 		void setSimplify(bool simplify);
 		
 		void draw();
@@ -48,7 +63,14 @@ namespace ofxCv {
 		cv::Mat thresh;
 		bool autoThreshold, invert, simplify;
 		float thresholdValue;
+		
+		float minArea, maxArea;
+		bool minAreaNorm, maxAreaNorm;
+		
 		vector<vector<cv::Point> > contours;
 		vector<ofPolyline> polylines;
 	};	
+	
+	ofPolyline toOf(vector<cv::Point>& contour);
+	vector<cv::Point> toCv(ofPolyline& polyline);
 }

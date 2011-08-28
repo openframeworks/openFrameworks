@@ -3,11 +3,35 @@
 namespace ofxCv {
 	using namespace cv;
 	
+	// it would be better if these were shallow copies
+	// but ofPolyline is 3d while cv::Point is 2d
+	ofPolyline toOf(vector<cv::Point>& contour) {
+		ofPolyline polyline;
+		polyline.resize(contour.size());
+		for(int i = 0; i < contour.size(); i++) {
+			polyline[i].x = contour[i].x;
+			polyline[i].y = contour[i].y;
+		}
+		polyline.close();
+		return polyline;
+	}
+	
+	vector<cv::Point> toCv(ofPolyline& polyline) {
+		vector<cv::Point> contour(polyline.size());
+		for(int i = 0; i < polyline.size(); i++) {
+			contour[i].x = polyline[i].x;
+			contour[i].y = polyline[i].y;
+		}
+		return contour;		
+	}
+	
 	ContourFinder::ContourFinder()
 	:autoThreshold(true)
 	,thresholdValue(128.)
 	,invert(false)
 	,simplify(true) {
+		resetMinArea();
+		resetMaxArea();
 	}
 	
 	void ContourFinder::findContours(Mat img) {
@@ -27,12 +51,8 @@ namespace ofxCv {
 		cv::findContours(thresh, contours, CV_RETR_EXTERNAL, simplifyMode);
 		
 		polylines.clear();
-		polylines.resize(contours.size());
 		for(int i = 0; i < contours.size(); i++) {
-			for(int j = 0; j < contours[i].size(); j++) {
-				polylines[i].addVertex(toOf(contours[i][j]));
-			}
-			polylines[i].close();
+			polylines.push_back(toOf(contours[i]));
 		}
 	}
 	
@@ -65,4 +85,43 @@ namespace ofxCv {
 			polylines[i].draw();
 		}
 	}
+	
+	void ContourFinder::resetMinArea() {
+		minArea = 0;
+	}
+	
+	void ContourFinder::resetMaxArea() {
+		maxArea = numeric_limits<float>::infinity();
+	}
+	
+	void ContourFinder::setMinArea(float minArea) {
+		this->minArea = minArea;
+		minAreaNorm = false;
+	}
+	
+	void ContourFinder::setMaxArea(float maxArea) {
+		this->maxArea = maxArea;
+		maxAreaNorm = false;
+	}
+	
+	void ContourFinder::setMinAreaRadius(float minAreaRadius) {
+		minArea = PI * minAreaRadius * minAreaRadius;
+		minAreaNorm = false;
+	}
+	
+	void ContourFinder::setMaxAreaRadius(float maxAreaRadius) {
+		maxArea = PI * maxAreaRadius * maxAreaRadius;
+		maxAreaNorm = false;
+	}
+	
+	void ContourFinder::setMinAreaNorm(float minAreaNorm) {
+		minArea = minAreaNorm;
+		this->minAreaNorm = minAreaNorm;
+	}
+	
+	void ContourFinder::setMaxAreaNorm(float maxAreaNorm) {
+		maxArea = maxAreaNorm;
+		this->maxAreaNorm = maxAreaNorm;
+	}
+	
 }
