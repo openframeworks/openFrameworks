@@ -3,22 +3,27 @@
 #include "ofxCv.h"
 
 /*
- the contour finder is with automatically threshold your image for you. it will
+ the contour finder will automatically threshold your image for you. it will
  also convert non-grayscale images to grayscale before thresholding. if you
  want to disable this, setAutoThreshold(false). by default the threshold is
  128. to change this, use setThreshold().
  
- by default, the results are unfiltered by size. to filter by size use one of
+ by default, the results are unfiltered by area. to filter by area use one of
  set(Min/Max)(Area/Radius/Norm) functions. set(Min/Max)Area is in pixels.
  set(Min/Max)Radius uses the area of a circle with the given radius for a more
  "linear" feeling. set(Min/Max)Norm uses values between (0-1) and multiplies
  by the input image area. to reset the min/max area call reset(Min/Max)Area.
+ 
+ keeping with the ofxCv philosophy, no new objects (a la ofxCvBlob) are used.
+ you can get contours as vector<cv::Point> or ofPolyline. for other features,
+ you can use methods of ofPolyline (getArea(), getPerimiter()) or cv methods
+ by asking ContourFinder (getContourArea(), getArcLength()).
  */
 
 // to implement in ContourFinder:
-// color tracking? or just a color tracking demo?
-// holes/no holes
+// color tracking (RGB/HSV)
 // centroid using moments vs center using bounding box
+// holes/no holes
 // cv::pointPolygonTest - inside, edge, outside
 // cv::matchShapes - similarity between two contours
 
@@ -44,6 +49,10 @@ namespace ofxCv {
 		ofPolyline& getPolyline(unsigned int i);
 		
 		cv::Rect getBoundingRect(unsigned int i) const;
+		cv::Point2f getCenter(unsigned int i) const; // center of bounding box (most stable)
+		cv::Point2f getCentroid(unsigned int i) const; // center of mass (less stable)
+		cv::Point2f getAverage(unsigned int i) const; // average of contour vertices (least stable)
+		cv::Vec2f getBalance(unsigned int i) const; // centroid - center
 		double getContourArea(unsigned int i) const;
 		double getArcLength(unsigned int i) const;
 		vector<cv::Point> getConvexHull(unsigned int i) const;

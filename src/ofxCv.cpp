@@ -14,15 +14,15 @@ namespace ofxCv {
 		return toCv(img.getPixelsRef());
 	}
 	
-	Point2f toCv(ofVec2f& vec) {
+	Point2f toCv(ofVec2f vec) {
 		return Point2f(vec.x, vec.y);
 	}
 	
-	Point3f toCv(ofVec3f& vec) {
+	Point3f toCv(ofVec3f vec) {
 		return Point3f(vec.x, vec.y, vec.z);
 	}
 	
-	cv::Rect toCv(ofRectangle& rect) {
+	cv::Rect toCv(ofRectangle rect) {
 		return cv::Rect(rect.x, rect.y, rect.width, rect.height);
 	}
 	
@@ -52,7 +52,7 @@ namespace ofxCv {
 		return ofRectangle(rect.x, rect.y, rect.width, rect.height);
 	}
 	
-	ofPolyline toOf(cv::RotatedRect& rect) {
+	ofPolyline toOf(cv::RotatedRect rect) {
 		vector<cv::Point2f> corners(4);
 		rect.points(&corners[0]);
 		ofPolyline polyline = toOf(corners);
@@ -398,13 +398,19 @@ namespace ofxCv {
 		return rowMat;
 	}
 	
+	void drawHighlightString(string text, ofPoint position, ofColor background, ofColor foreground) {
+		drawHighlightString(text, position.x, position.y, background, foreground);
+	}
+	
 	void drawHighlightString(string text, int x, int y, ofColor background, ofColor foreground) {
+		ofPushStyle();
 		int textWidth =  10 + text.length() * 8;
 		ofSetColor(background);
 		ofFill();
 		ofRect(x - 5, y - 12, textWidth, 20);
 		ofSetColor(foreground);
 		ofDrawBitmapString(text, x, y);
+		ofPopStyle();
 	}
 	
 	// for some reason, cvtColor handles this info internally rather than having

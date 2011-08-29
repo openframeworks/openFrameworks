@@ -55,11 +55,11 @@ void testApp::draw() {
 	
 	stringstream intrinsics;
 	intrinsics << "fov: " << toOf(calibration.getDistortedIntrinsics().getFov()) << " distCoeffs: " << calibration.getDistCoeffs();
-	drawHighlightString(intrinsics.str(), 10, 20, ofColor::fromHex(0xffee00), ofColor(0));
-	drawHighlightString("movement: " + ofToString(diffMean), 10, 40, ofColor::fromHex(0x00abec));
-	drawHighlightString("reproj error: " + ofToString(calibration.getReprojectionError()) + " from " + ofToString(calibration.size()), 10, 60, ofColor::fromHex(0xec008c));
+	drawHighlightString(intrinsics.str(), 10, 20, yellowPrint, ofColor(0));
+	drawHighlightString("movement: " + ofToString(diffMean), 10, 40, cyanPrint);
+	drawHighlightString("reproj error: " + ofToString(calibration.getReprojectionError()) + " from " + ofToString(calibration.size()), 10, 60, magentaPrint);
 	for(int i = 0; i < calibration.size(); i++) {
-		drawHighlightString(ofToString(i) + ": " + ofToString(calibration.getReprojectionError(i)), 10, 80 + 16 * i, ofColor::fromHex(0xec008c));
+		drawHighlightString(ofToString(i) + ": " + ofToString(calibration.getReprojectionError(i)), 10, 80 + 16 * i, magentaPrint);
 	}
 }
 

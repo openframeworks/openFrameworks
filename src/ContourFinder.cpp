@@ -76,6 +76,25 @@ namespace ofxCv {
 		return boundingRect(Mat(contours[i]));
 	}
 	
+	cv::Point2f ContourFinder::getCenter(unsigned int i) const {
+		cv::Rect box = getBoundingRect(i);
+		return cv::Point2f(box.x + box.width / 2, box.y + box.height / 2);
+	}
+	
+	cv::Point2f ContourFinder::getCentroid(unsigned int i) const {
+		Moments m = moments(Mat(contours[i]));
+		return cv::Point2f(m.m10 / m.m00, m.m01 / m.m00);
+	}
+	
+	cv::Point2f ContourFinder::getAverage(unsigned int i) const {
+		Scalar average = mean(Mat(contours[i]));
+		return cv::Point2f(average[0], average[1]);
+	}
+	
+	cv::Vec2f ContourFinder::getBalance(unsigned int i) const {
+		return cv::Vec2f(getCentroid(i) - getCenter(i));
+	}
+	
 	double ContourFinder::getContourArea(unsigned int i) const {
 		return contourArea(Mat(contours[i]));
 	}

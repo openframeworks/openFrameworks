@@ -28,6 +28,14 @@ namespace ofxCv {
 	using namespace cv;
 	
 	// 1 utility functions
+	// for toCv/toOf the function signature reveals the behavior:
+	// 1       Type& argument // shallow copy of the data
+	// 2 const Type& argument // deep copy of the data
+	// 3       Type  argument // deep copy of the data
+	// style 1 is used when possible (for Mat conversion). style 2 is used when
+	// dealing with a lot of data that can't/shouldn't be shallow copied. style 3
+	// is used for small objects where the compiler can optimize the copying if
+	// necessary. the reference is avoided to make inline toCv/toOf use easier.
 	
 	// toCv functions
 	Mat toCv(Mat& mat);
@@ -39,16 +47,16 @@ namespace ofxCv {
 	}
 	Mat toCv(ofBaseHasPixels& img);
 	Mat toCv(ofMesh& mesh);
-	Point2f toCv(ofVec2f& vec);
-	Point3f toCv(ofVec3f& vec);
-	cv::Rect toCv(const ofRectangle& rect);
+	Point2f toCv(ofVec2f vec);
+	Point3f toCv(ofVec3f vec);
+	cv::Rect toCv(ofRectangle rect);
 	vector<cv::Point2f> toCv(const ofPolyline& polyline);
 		
 	// toOf functions
 	ofVec2f toOf(Point2f point);
 	ofVec3f toOf(Point3f point);
 	ofRectangle toOf(cv::Rect rect);
-	ofPolyline toOf(cv::RotatedRect& rect);
+	ofPolyline toOf(cv::RotatedRect rect);
 	template <class T> inline ofPolyline toOf(const vector<cv::Point_<T> >& contour) {
 		ofPolyline polyline;
 		polyline.resize(contour.size());
@@ -314,7 +322,11 @@ cv::name(xMat, yMat, resultMat);\
 	
 	float weightedAverageAngle(const vector<Vec4i>& lines);
 	
+	static const ofColor cyanPrint = ofColor::fromHex(0x00abec);
+	static const ofColor magentaPrint = ofColor::fromHex(0xec008c);
+	static const ofColor yellowPrint = ofColor::fromHex(0xffee00);
 	
+	void drawHighlightString(string text, ofPoint position, ofColor background = ofColor::black, ofColor foreground = ofColor::white);
 	void drawHighlightString(string text, int x, int y, ofColor background = ofColor::black, ofColor foreground = ofColor::white);
 }
 
