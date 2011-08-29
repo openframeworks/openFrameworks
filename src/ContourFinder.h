@@ -16,6 +16,7 @@
  */
 
 // to implement in ContourFinder:
+// color tracking? or just a color tracking demo?
 // holes/no holes
 // centroid using moments vs center using bounding box
 // cv::pointPolygonTest - inside, edge, outside
