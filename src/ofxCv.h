@@ -8,6 +8,7 @@
 #include "Distance.h"
 #include "Calibration.h"
 #include "ContourFinder.h"
+#include "Tracker.h"
 
 /*
  there should be a few kinds of functions:

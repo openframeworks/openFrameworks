@@ -12,6 +12,7 @@
 		2718093C13D217B3009139D3 /* ofxCv.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2718093613D217B3009139D3 /* ofxCv.cpp */; };
 		27180A4213D217C7009139D3 /* opencv.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 271809D513D217C6009139D3 /* opencv.a */; };
 		27807A2F1408F7F0002D48A7 /* ContourFinder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 27807A2E1408F7F0002D48A7 /* ContourFinder.cpp */; };
+		27AB13F5140BFF0900C3BCE3 /* Tracker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 27AB13F4140BFF0900C3BCE3 /* Tracker.cpp */; };
 		BBAB23CB13894F3D00AA2426 /* GLUT.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = BBAB23BE13894E4700AA2426 /* GLUT.framework */; };
 		E4328149138ABC9F0047C5CB /* openFrameworks.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E4328148138ABC890047C5CB /* openFrameworks.a */; };
 		E45BE97B0E8CC7DD009D7055 /* AGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E45BE9710E8CC7DD009D7055 /* AGL.framework */; };
@@ -137,6 +138,8 @@
 		271809D513D217C6009139D3 /* opencv.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = opencv.a; path = ../../ofxOpenCv/libs/opencv/lib/osx/opencv.a; sourceTree = SOURCE_ROOT; };
 		27807A2D1408F7F0002D48A7 /* ContourFinder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContourFinder.h; sourceTree = "<group>"; };
 		27807A2E1408F7F0002D48A7 /* ContourFinder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ContourFinder.cpp; sourceTree = "<group>"; };
+		27AB13F3140BFF0900C3BCE3 /* Tracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Tracker.h; sourceTree = "<group>"; };
+		27AB13F4140BFF0900C3BCE3 /* Tracker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Tracker.cpp; sourceTree = "<group>"; };
 		BBAB23BE13894E4700AA2426 /* GLUT.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLUT.framework; path = ../../../libs/glut/lib/osx/GLUT.framework; sourceTree = "<group>"; };
 		E4328143138ABC890047C5CB /* openFrameworksLib.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = openFrameworksLib.xcodeproj; path = ../../../libs/openFrameworksCompiled/project/osx/openFrameworksLib.xcodeproj; sourceTree = SOURCE_ROOT; };
 		E45BE9710E8CC7DD009D7055 /* AGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AGL.framework; path = /System/Library/Frameworks/AGL.framework; sourceTree = "<absolute>"; };
@@ -206,6 +209,8 @@
 				2718093713D217B3009139D3 /* ofxCv.h */,
 				27807A2D1408F7F0002D48A7 /* ContourFinder.h */,
 				27807A2E1408F7F0002D48A7 /* ContourFinder.cpp */,
+				27AB13F3140BFF0900C3BCE3 /* Tracker.h */,
+				27AB13F4140BFF0900C3BCE3 /* Tracker.cpp */,
 			);
 			name = src;
 			path = ../src;
@@ -621,6 +626,7 @@
 				2718093A13D217B3009139D3 /* Distance.cpp in Sources */,
 				2718093C13D217B3009139D3 /* ofxCv.cpp in Sources */,
 				27807A2F1408F7F0002D48A7 /* ContourFinder.cpp in Sources */,
+				27AB13F5140BFF0900C3BCE3 /* Tracker.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
