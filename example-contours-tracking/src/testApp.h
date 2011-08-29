@@ -13,6 +13,7 @@ class Pair {
 public:
 	Key key;
 	Value value;
+	Pair() {}
 	Pair(Key key, Value value) : key(key), value(value) {}
 	struct byKey {
 		bool operator()(Pair<Key, Value> const &a, Pair<Key, Value> const &b) { 
@@ -26,23 +27,9 @@ public:
 	};
 };
 
-typedef Pair<int, float> LabelPair;
+typedef Pair<int, int> LabelMatch;
+typedef Pair<LabelMatch, float> MatchDistance;
 
-// better, a (little) slower, global minimization would be:
-// 1 get the distance matrix
-// 2 sort the columns in each row by dist
-// 3 sort the rows by the min dist
-// 4 match the first row with the first col
-// 5 next row: if the first col is matched, remove and resort remaining rows
-// 6 repeat 5 until the first col is unmatched
-
-// one more that is O(n^2 + n^2 log n^2)
-// relies on sort being fast
-// 1 get distance matrix O(n^2)
-// 2 sort all the results by distance
-// 3 step through and match each pair that isn't already matched
-// 4 when done, label any new pairs with new labels
-			
 template <class T>
 class Tracker_ {
 protected:
@@ -58,60 +45,47 @@ public:
 	}
 	vector<int>& track(vector<T>& objects) {
 		int m = previous.size();
-		int n = objects.size();
+		int n = objects.size();	
+		int nm = n * m;
 		
-		labels.clear();
-		labels.resize(n, 0);
-		
-		if(m == 0) {
-			// generate labels if there aren't any previous tracked objects
-			for(int i = 0; i < n; i++) {
-				labels[i] = getNewLabel();
-			}
-		} else if(n > 0) {
-			// build dist between new and old objects
-			Mat_<float> dist(n, m, CV_32FC1);
-			for(int i = 0; i < n; i++) { // objects
-				for(int j = 0; j < m; j++) { // previous
-					dist(i, j) = trackingDistance(objects[i], previous[j]);
-				}
-			}
-			
-			Mat_<float> minDistance = minRows(dist);
-			vector<LabelPair> diff;
-			for(int i = 0; i < n; i++) {
-				diff.push_back(LabelPair(i, minDistance(i)));
-			}
-			sort(diff.begin(), diff.end(), LabelPair::byValue());
-				
-			cout << "sorted: ";
-			for(int i = 0; i < n; i++) {
-				cout << "(" << diff[i].key << "," << diff[i].value << ")";
-			}	
-			cout << endl;
-			
-			vector<bool> labeled(m, false);
-			for(int i = 0; i < n; i++) {
-				float bestDist;
-				int bestPosition = -1;
-				for(int j = 0; j < m; j++) {
-					if(!labeled[j] && (bestPosition == -1 || dist(i, j) < bestDist)) {
-						bestDist = dist(i, j);
-						bestPosition = j;
-					}
-				}
-				if(bestPosition == -1) {
-					labels[i] = getNewLabel();
-				} else {
-					labels[i] = previousLabels[bestPosition];
-					labeled[bestPosition] = true;
-				}
+		vector<MatchDistance> all(nm);
+		int k = 0;
+		for(int i = 0; i < n; i++) { // objects
+			for(int j = 0; j < m; j++) { // previous
+				all[k].key = LabelMatch(i, j);
+				all[k].value = trackingDistance(objects[i], previous[j]);
+				k++;
 			}
 		}
+		
+		sort(all.begin(), all.end(), MatchDistance::byValue());
+		
+		labels.clear();
+		labels.resize(n);
+		vector<bool> labeledObjects(n, false);
+		vector<bool> labeledPrevious(m, false);
+		for(int i = 0; i < nm; i++) {
+			LabelMatch& cur = all[i].key;
+			int i = cur.key;
+			int j = cur.value;
+			if(!labeledObjects[i] && !labeledPrevious[j]) {
+				labeledObjects[i] = true;
+				labeledPrevious[j] = true;
+				labels[i] = previousLabels[j];
+			}
+		}
+		
+		for(int i = 0; i < n; i++) {
+			if(!labeledObjects[i]) {
+				labels[i] = getNewLabel();
+			}
+		}
+		
 		for(int i = 0; i < n; i++) {
 			cout << "(" << objects[i].x << "," << objects[i].y << " " << labels[i] << ")";
 		}
 		cout << endl;
+		
 		previous = objects;
 		previousLabels = labels;
 		return labels;

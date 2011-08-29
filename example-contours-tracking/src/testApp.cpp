@@ -20,16 +20,6 @@ void testApp::setup() {
 	movie.loadMovie("video.mov");
 	movie.play();
 	
-	int n = 32;
-	vector<float> bigList(n*n);
-	for(int i = 0; i < n*n; i++) {
-		bigList[i] = ofRandom(0, 100);
-	}
-	unsigned long start = ofGetElapsedTimeMicros();
-	std::sort(bigList.begin(), bigList.end());
-	unsigned long stop = ofGetElapsedTimeMicros();
-	cout << (stop - start) << endl;
-	
 	contourFinder.setMinAreaRadius(1);
 	contourFinder.setMaxAreaRadius(100);
 	contourFinder.setThreshold(15);
