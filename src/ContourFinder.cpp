@@ -7,27 +7,38 @@ namespace ofxCv {
 	:autoThreshold(true)
 	,thresholdValue(128.)
 	,invert(false)
-	,simplify(true) {
+	,simplify(true)
+	,useTargetColor(false) {
 		resetMinArea();
 		resetMaxArea();
 	}
 	
 	void ContourFinder::findContours(Mat img) {
-		if(img.channels() == 1) {
-			thresh = img.clone();
-		} else if(img.channels() == 3) {
-			cvtColor(img, thresh, CV_RGB2GRAY);
-		} else if(img.channels() == 4) {
-			cvtColor(img, thresh, CV_RGBA2GRAY);
-		}
-		if(autoThreshold) {
-			threshold(thresh, thresholdValue, invert);
+		// threshold the image
+		if(useTargetColor) {
+			float r = thresholdValue / 2.;
+			Scalar offset(r, r, r);
+			Scalar base = toCv(targetColor);
+			inRange(img, base - offset, base + offset, thresh);
+		} else {
+			if(img.channels() == 1) {
+				thresh = img.clone();
+			} else if(img.channels() == 3) {
+				cvtColor(img, thresh, CV_RGB2GRAY);
+			} else if(img.channels() == 4) {
+				cvtColor(img, thresh, CV_RGBA2GRAY);
+			}
+			if(autoThreshold) {
+				threshold(thresh, thresholdValue, invert);
+			}
 		}
 		
+		// run the contour finder
 		vector<vector<cv::Point> > allContours;
 		int simplifyMode = simplify ? CV_CHAIN_APPROX_SIMPLE : CV_CHAIN_APPROX_NONE;
 		cv::findContours(thresh, allContours, CV_RETR_EXTERNAL, simplifyMode);
 		
+		// filter the contours
 		bool needMinFilter = (minArea > 0);
 		bool needMaxFilter = maxAreaNorm ? (maxArea < 1) : (maxArea < numeric_limits<float>::infinity());
 		if(needMinFilter || needMaxFilter) {
@@ -46,6 +57,7 @@ namespace ofxCv {
 			contours = allContours;
 		}
 		
+		// generate polylines from the contours
 		polylines.clear();
 		for(int i = 0; i < contours.size(); i++) {
 			polylines.push_back(toOf(contours[i]));
@@ -127,6 +139,12 @@ namespace ofxCv {
 	
 	void ContourFinder::setInvert(bool invert) {
 		this->invert = invert;
+	}
+	
+	void ContourFinder::setTargetColor(ofColor targetColor, bool useHsv) {
+		useTargetColor = true;
+		this->targetColor = targetColor;
+		this->useHsv = useHsv;
 	}
 	
 	void ContourFinder::setSimplify(bool simplify) {

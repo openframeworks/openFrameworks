@@ -40,6 +40,10 @@ namespace ofxCv {
 		return contour;		
 	}
 	
+	Scalar toCv(ofColor color) {
+		return Scalar(color.r, color.g, color.b, color.a);
+	}
+	
 	ofVec2f toOf(Point2f point) {
 		return ofVec2f(point.x, point.y);
 	}

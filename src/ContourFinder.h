@@ -22,11 +22,9 @@
 
 // to implement in ContourFinder:
 // color tracking (RGB/HSV)
-// centroid using moments vs center using bounding box
 // holes/no holes
 // cv::pointPolygonTest - inside, edge, outside
 // cv::matchShapes - similarity between two contours
-
 // cv::estimateRigidTransform? subdivision-based estimation for outline-flow?
 // CV_THRESH_OTSU?
 
@@ -63,6 +61,11 @@ namespace ofxCv {
 		void setThreshold(float thresholdValue);
 		void setInvert(bool invert);
 		
+		// should accept an ofColor or a cv::Scalar?
+		// TRACK_RGB, TRACK_HSV, TRACK_HUE
+		// use inRange() to do the thresholding (no need for distance calculation)
+		void setTargetColor(ofColor targetColor, bool useHsv = false);
+		
 		void resetMinArea();
 		void resetMaxArea();
 		void setMinArea(float minArea);
@@ -79,6 +82,10 @@ namespace ofxCv {
 		cv::Mat thresh;
 		bool autoThreshold, invert, simplify;
 		float thresholdValue;
+		
+		bool useTargetColor;
+		bool useHsv;
+		ofColor targetColor;
 		
 		float minArea, maxArea;
 		bool minAreaNorm, maxAreaNorm;
