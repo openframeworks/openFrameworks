@@ -11,8 +11,10 @@ namespace ofxCv {
 	public:
 		Key key;
 		Value value;
-		Pair() {}
-		Pair(Key key, Value value) : key(key), value(value) {}
+		Pair(Key key = Key(), Value value = Value())
+		:key(key)
+		,value(value) {
+		}
 		struct byKey {
 			bool operator()(Pair<Key, Value> const &a, Pair<Key, Value> const &b) { 
 				return a.key < b.key;

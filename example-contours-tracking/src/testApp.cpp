@@ -1,6 +1,8 @@
 #include "testApp.h"
 
 void testApp::setup() {
+	ofSetVerticalSync(true);
+	
 	movie.loadMovie("video.mov");
 	movie.play();
 	
@@ -29,6 +31,6 @@ void testApp::draw() {
 	contourFinder.draw();
 	for(int i = 0; i < contourFinder.size(); i++) {
 		ofPoint center = toOf(contourFinder.getCenter(i));
-		drawHighlightString(ofToString(rectTracker.getLabels()[i]), center);
+		ofDrawBitmapString(ofToString(rectTracker.getLabels()[i]), center);
 	}
 }
