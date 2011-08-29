@@ -14,12 +14,26 @@ namespace ofxCv {
 	}
 	
 	void ContourFinder::findContours(Mat img) {
-		// threshold the image
+		// threshold the image using a tracked color or just binary grayscale
 		if(useTargetColor) {
-			float r = thresholdValue / 2.;
-			Scalar offset(r, r, r);
+			Scalar offset(thresholdValue, thresholdValue, thresholdValue);
 			Scalar base = toCv(targetColor);
-			inRange(img, base - offset, base + offset, thresh);
+			if(trackingColorMode == TRACK_COLOR_RGB) {
+				inRange(img, base - offset, base + offset, thresh);
+			} else {
+				if(TRACK_COLOR_H) {
+					offset[1] = 255;
+					offset[2] = 255;
+				}
+				if(TRACK_COLOR_HS) {
+					offset[2] = 255;
+				}
+				cvtColor(img, hsvBuffer, CV_RGB2HSV);
+				base = toCv(convertColor(targetColor, CV_RGB2HSV));
+				Scalar lowerb = base - offset;
+				Scalar upperb = base + offset;
+				inRange(hsvBuffer, lowerb, upperb, thresh);
+			}
 		} else {
 			if(img.channels() == 1) {
 				thresh = img.clone();
@@ -141,10 +155,10 @@ namespace ofxCv {
 		this->invert = invert;
 	}
 	
-	void ContourFinder::setTargetColor(ofColor targetColor, bool useHsv) {
+	void ContourFinder::setTargetColor(ofColor targetColor, TrackingColorMode trackingColorMode) {
 		useTargetColor = true;
 		this->targetColor = targetColor;
-		this->useHsv = useHsv;
+		this->trackingColorMode = trackingColorMode;
 	}
 	
 	void ContourFinder::setSimplify(bool simplify) {

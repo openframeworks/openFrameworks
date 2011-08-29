@@ -257,6 +257,7 @@ cv::name(xMat, yMat, resultMat);\
 	}
 	
 	// CV_RGB2GRAY, CV_HSV2RGB, etc. with [RGB, BGR, GRAY, HSV, HLS, XYZ, YCrCb, Lab, Luv]
+	// you can convert whole images...
 	template <class S, class D>
 	void convertColor(S& src, D& dst, int code) {
 		// cvtColor allocates Mat for you, but we need this to handle ofImage etc.
@@ -266,6 +267,9 @@ cv::name(xMat, yMat, resultMat);\
 		Mat dstMat = toCv(dst);
 		cvtColor(srcMat, dstMat, code);
 	}
+	// ...or single colors.
+	Vec3b convertColor(Vec3b color, int code);
+	ofColor convertColor(ofColor color, int code);
 	
 	// older wrappers, need to be templated
 	// {

@@ -133,6 +133,19 @@ namespace ofxCv {
 		return getMaxVal(mat.depth());
 	}
 	
+	Vec3b convertColor(Vec3b color, int code) {
+		Mat_<Vec3b> mat(1, 1, CV_8UC3);
+		mat(0, 0) = color;
+		cvtColor(mat, mat, code);
+		return mat(0, 0);
+	}
+	
+	ofColor convertColor(ofColor color, int code) {
+		Vec3b cvColor(color.r, color.g, color.b);
+		Vec3b result = convertColor(cvColor, code);
+		return ofColor(result[0], result[1], result[2], color.a);
+	}	
+	
 	ofPolyline convexHull(ofPolyline& polyline) {
 		vector<cv::Point2f> contour = toCv(polyline);
 		vector<cv::Point2f> hull;
