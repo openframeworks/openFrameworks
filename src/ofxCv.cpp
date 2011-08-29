@@ -327,14 +327,6 @@ namespace ofxCv {
 		return (x / 2) * 2 + 1;
 	}
 	
-	/*
-	 void blur(FloatImage& original, FloatImage& blurred, int size) {
-	 size = forceOdd(size);
-	 imitate(blurred, original);
-	 GaussianBlur(original.toCv(), blurred.toCv(), cv::Size(size, size), 0, 0);
-	 }
-	 */
-	
 	void medianBlur(ofImage& img, int size) {
 		size = forceOdd(size);
 		Mat mat = toCv(img);
@@ -411,6 +403,46 @@ namespace ofxCv {
 		Mat rowMat(mat.rows, 1, CV_32FC1);
 		for(int i = 0; i < mat.rows; i++) {
 			rowMat.row(i) = sum(mat.row(i));
+		}
+		return rowMat;
+	}
+	
+	Mat minCols(const Mat& mat) {
+		Mat colMat(mat.cols, 1, CV_32FC1);
+		double minVal, maxVal;
+		for(int i = 0; i < mat.cols; i++) {
+			minMaxLoc(mat.col(i), &minVal, &maxVal); 
+			colMat.row(i) = minVal;
+		}	
+		return colMat;
+	}
+	
+	Mat minRows(const Mat& mat) {
+		Mat rowMat(mat.rows, 1, CV_32FC1);
+		double minVal, maxVal;
+		for(int i = 0; i < mat.rows; i++) {
+			minMaxLoc(mat.row(i), &minVal, &maxVal); 
+			rowMat.row(i) = minVal;
+		}
+		return rowMat;
+	}
+	
+	Mat maxCols(const Mat& mat) {
+		Mat colMat(mat.cols, 1, CV_32FC1);
+		double minVal, maxVal;
+		for(int i = 0; i < mat.cols; i++) {
+			minMaxLoc(mat.col(i), &minVal, &maxVal); 
+			colMat.row(i) = maxVal;
+		}	
+		return colMat;
+	}
+	
+	Mat maxRows(const Mat& mat) {
+		Mat rowMat(mat.rows, 1, CV_32FC1);
+		double minVal, maxVal;
+		for(int i = 0; i < mat.rows; i++) {
+			minMaxLoc(mat.row(i), &minVal, &maxVal); 
+			rowMat.row(i) = maxVal;
 		}
 		return rowMat;
 	}

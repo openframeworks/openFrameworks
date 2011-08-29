@@ -52,7 +52,7 @@ namespace ofxCv {
 	cv::Rect toCv(ofRectangle rect);
 	vector<cv::Point2f> toCv(const ofPolyline& polyline);
 	Scalar toCv(ofColor color); // might need more for other color types?
-		
+	
 	// toOf functions
 	ofVec2f toOf(Point2f point);
 	ofVec3f toOf(Point3f point);
@@ -146,6 +146,8 @@ namespace ofxCv {
 	inline void allocate(Mat& img, int width, int height, int cvType) {
 		img.create(height, width, cvType);
 	}
+	inline void allocate(ofVideoPlayer& img, int width, int height, int cvType) {}
+	inline void allocate(ofVideoGrabber& img, int width, int height, int cvType) {}
 	
 	// imitate() is good for preparing buffers
 	// it's like allocate(), but uses the size and type of the original as a reference
@@ -182,7 +184,7 @@ namespace ofxCv {
 		Mat dstMat = toCv(dst);
 		srcMat.copyTo(dstMat);
 	}
-
+	
 	// maximum possible values for that depth or matrix
 	float getMaxVal(int depth);
 	float getMaxVal(const Mat& mat);
@@ -271,6 +273,24 @@ cv::name(xMat, yMat, resultMat);\
 	Vec3b convertColor(Vec3b color, int code);
 	ofColor convertColor(ofColor color, int code);
 	
+	int forceOdd(int x);
+	
+	// Gaussian blur
+	template <class S, class D>
+	void blur(S& src, D& dst, int size) {
+		imitate(dst, src);
+		size = forceOdd(size);
+		Mat srcMat = toCv(src);
+		Mat dstMat = toCv(dst);
+		GaussianBlur(srcMat, dstMat, cv::Size(size, size), 0, 0);
+	}
+	
+	// in-place Gaussian blur
+	template <class SD>
+	void blur(SD& srcDst, int size) {
+		ofxCv::blur(srcDst, srcDst, size);
+	}
+	
 	// older wrappers, need to be templated
 	// {
 	
@@ -292,7 +312,6 @@ cv::name(xMat, yMat, resultMat);\
 	void matchRegion(Mat& source, ofRectangle& region, Mat& search, Mat& result);
 	//void convolve(ofImage& source, FloatImage& kernel, ofImage& destination);
 	//void convolve(ofImage& img, FloatImage& kernel);
-	//void blur(FloatImage& original, FloatImage& blurred, int size);
 	void medianBlur(ofImage& img, int size);
 	void warpPerspective(ofImage& src, ofImage& dst, Mat& m, int flags = 0);
 	void warpPerspective(ofPixels& src, ofPixels& dst, Mat& m, int flags = 0);
@@ -324,6 +343,11 @@ cv::name(xMat, yMat, resultMat);\
 	Mat meanRows(const Mat& mat);
 	Mat sumCols(const Mat& mat);
 	Mat sumRows(const Mat& mat);
+	
+	Mat minCols(const Mat& mat);
+	Mat minRows(const Mat& mat);
+	Mat maxCols(const Mat& mat);
+	Mat maxRows(const Mat& mat);
 	
 	float weightedAverageAngle(const vector<Vec4i>& lines);
 	
