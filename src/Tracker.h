@@ -43,60 +43,62 @@ namespace ofxCv {
 		Tracker_<T>()
 		:curLabel(0) {
 		}
-		vector<int>& track(vector<T>& objects) {
-			int m = previous.size();
-			int n = objects.size();	
-			int nm = n * m;
-			
-			vector<MatchDistance> all(nm);
-			int k = 0;
-			for(int i = 0; i < n; i++) {
-				for(int j = 0; j < m; j++) {
-					all[k].key = LabelMatch(i, j);
-					all[k].value = trackingDistance(objects[i], previous[j]);
-					k++;
-				}
-			}
-			
-			sort(all.begin(), all.end(), MatchDistance::byValue());
-			
-			labels.clear();
-			labels.resize(n);
-			vector<bool> labeledObjects(n, false);
-			vector<bool> labeledPrevious(m, false);
-			for(int i = 0; i < nm; i++) {
-				LabelMatch& cur = all[i].key;
-				int i = cur.key;
-				int j = cur.value;
-				if(!labeledObjects[i] && !labeledPrevious[j]) {
-					labeledObjects[i] = true;
-					labeledPrevious[j] = true;
-					labels[i] = previousLabels[j];
-				}
-			}
-			
-			for(int i = 0; i < n; i++) {
-				if(!labeledObjects[i]) {
-					labels[i] = getNewLabel();
-				}
-			}
-			/*
-			 for(int i = 0; i < n; i++) {
-			 cout << "(" << objects[i].x << "," << objects[i].y << " " << labels[i] << ")";
-			 }
-			 cout << endl;
-			 */
-			previous = objects;
-			previousLabels = labels;
-			return labels;
-		}
+		vector<int>& track(vector<T>& objects);
 		const vector<int>& getLabels() const {
 			return labels;
 		}
 		bool exists(int label) {
-			
 		}
 	};
+	
+	template <class T>
+	vector<int>& Tracker_<T>::track(vector<T>& objects) {
+		int m = previous.size();
+		int n = objects.size();	
+		int nm = n * m;
+		
+		vector<MatchDistance> all(nm);
+		int k = 0;
+		for(int i = 0; i < n; i++) {
+			for(int j = 0; j < m; j++) {
+				all[k].key = LabelMatch(i, j);
+				all[k].value = trackingDistance(objects[i], previous[j]);
+				k++;
+			}
+		}
+		
+		sort(all.begin(), all.end(), MatchDistance::byValue());
+		
+		labels.clear();
+		labels.resize(n);
+		vector<bool> labeledObjects(n, false);
+		vector<bool> labeledPrevious(m, false);
+		for(int i = 0; i < nm; i++) {
+			LabelMatch& cur = all[i].key;
+			int i = cur.key;
+			int j = cur.value;
+			if(!labeledObjects[i] && !labeledPrevious[j]) {
+				labeledObjects[i] = true;
+				labeledPrevious[j] = true;
+				labels[i] = previousLabels[j];
+			}
+		}
+		
+		for(int i = 0; i < n; i++) {
+			if(!labeledObjects[i]) {
+				labels[i] = getNewLabel();
+			}
+		}
+		/*
+		 for(int i = 0; i < n; i++) {
+		 cout << "(" << objects[i].x << "," << objects[i].y << " " << labels[i] << ")";
+		 }
+		 cout << endl;
+		 */
+		previous = objects;
+		previousLabels = labels;
+		return labels;
+	}
 	
 	float trackingDistance(const cv::Rect& a, const cv::Rect& b);
 	float trackingDistance(const cv::Point2f& a, const cv::Point2f& b);
