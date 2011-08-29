@@ -52,7 +52,7 @@ namespace ofxCv {
 		cv::Point2f getCenter(unsigned int i) const; // center of bounding box (most stable)
 		cv::Point2f getCentroid(unsigned int i) const; // center of mass (less stable)
 		cv::Point2f getAverage(unsigned int i) const; // average of contour vertices (least stable)
-		cv::Vec2f getBalance(unsigned int i) const; // centroid - center
+		cv::Vec2f getBalance(unsigned int i) const; // difference between centroid and center
 		double getContourArea(unsigned int i) const;
 		double getArcLength(unsigned int i) const;
 		vector<cv::Point> getConvexHull(unsigned int i) const;

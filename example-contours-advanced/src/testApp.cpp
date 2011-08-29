@@ -1,7 +1,6 @@
 #include "testApp.h"
 
 void testApp::setup() {
-	ofSetVerticalSync(true);
 	cam.initGrabber(640, 480);
 	contourFinder.setMinAreaRadius(10);
 	contourFinder.setMaxAreaRadius(80);
@@ -11,7 +10,8 @@ void testApp::setup() {
 void testApp::update() {
 	cam.update();
 	if(cam.isFrameNew()) {
-		contourFinder.setThreshold(ofMap(mouseX, 0, ofGetWidth(), 0, 255));
+		threshold = ofMap(mouseX, 0, ofGetWidth(), 0, 255);
+		contourFinder.setThreshold(threshold);
 		contourFinder.findContours(cam);
 	}
 }
@@ -20,20 +20,18 @@ void testApp::draw() {
 	ofSetColor(255);
 	cam.draw(0, 0);	
 	
-	ofSetColor(255);
+	ofSetLineWidth(2);
 	contourFinder.draw();
 	
 	ofNoFill();
-	ofSetLineWidth(2);
 	int n = contourFinder.size();
 	for(int i = 0; i < n; i++) {
-		ofSetColor(0);
-		ofRect(toOf(contourFinder.getBoundingRect(i)));
-		
+		// smallest rectangle that fits the contour
 		ofSetColor(cyanPrint);
 		ofPolyline minAreRect = toOf(contourFinder.getMinAreaRect(i));
 		minAreRect.draw();
 		
+		// ellipse that best fits the contour
 		ofSetColor(magentaPrint);
 		cv::RotatedRect ellipse = contourFinder.getFitEllipse(i);
 		ofPushMatrix();
@@ -44,17 +42,15 @@ void testApp::draw() {
 		ofEllipse(0, 0, ellipseSize.x, ellipseSize.y);
 		ofPopMatrix();
 		
+		// convex hull of the contour
 		ofSetColor(yellowPrint);
 		ofPolyline convexHull = toOf(contourFinder.getConvexHull(i));
 		convexHull.draw();
 		
+		// some different styles of contour centers
 		ofVec2f centroid = toOf(contourFinder.getCentroid(i));
 		ofVec2f average = toOf(contourFinder.getAverage(i));
 		ofVec2f center = toOf(contourFinder.getCenter(i));
-		double area = contourFinder.getContourArea(i);
-		double length = contourFinder.getArcLength(i);
-		drawHighlightString(ofToString((int) area) + "/" + ofToString((int) length), centroid);
-		
 		ofSetColor(cyanPrint);
 		ofCircle(centroid, 1);
 		ofSetColor(magentaPrint);
@@ -62,6 +58,14 @@ void testApp::draw() {
 		ofSetColor(yellowPrint);
 		ofCircle(center, 1);
 		
+		// you can also get the area and perimeter using ofPolyline:
+		// ofPolyline::getArea() and ofPolyline::getPerimeter()
+		double area = contourFinder.getContourArea(i);
+		double length = contourFinder.getArcLength(i);		
+		
+		// balance is useful for detecting when a shape has an "arm" sticking out
+		// if balance.length() is small, the shape is more symmetric: like I, O, X...
+		// if balance.length() is large, the shape is less symmetric: like L, P, F...
 		ofVec2f balance = toOf(contourFinder.getBalance(i));
 		ofPushMatrix();
 		ofTranslate(centroid.x, centroid.y);
@@ -69,7 +73,8 @@ void testApp::draw() {
 		ofLine(0, 0, balance.x, balance.y);
 		ofPopMatrix();
 	}
-	
+
 	ofSetColor(255);
-	drawHighlightString(ofToString((int) ofGetFrameRate()), 10, 20);
+	drawHighlightString(ofToString((int) ofGetFrameRate()) + " fps", 10, 20);
+	drawHighlightString(ofToString((int) threshold) + " threshold", 10, 40);
 }

@@ -38,7 +38,7 @@ namespace ofxCv {
 			for(int i = 0; i < allContours.size(); i++) {
 				double curArea = contourArea(Mat(allContours[i]));
 				if((!needMinFilter || curArea >= imgMinArea) &&
-					(!needMaxFilter || curArea <= imgMaxArea)) {
+					 (!needMaxFilter || curArea <= imgMaxArea)) {
 					contours.push_back(allContours[i]);
 				}
 			}
@@ -51,7 +51,7 @@ namespace ofxCv {
 			polylines.push_back(toOf(contours[i]));
 		}
 	}
-
+	
 	vector<vector<cv::Point> >& ContourFinder::getContours() {
 		return contours;
 	}
@@ -134,9 +134,13 @@ namespace ofxCv {
 	}
 	
 	void ContourFinder::draw() {
+		ofPushStyle();
+		ofNoFill();
 		for(int i = 0; i < polylines.size(); i++) {
 			polylines[i].draw();
+			ofRect(toOf(getBoundingRect(i)));
 		}
+		ofPopStyle();
 	}
 	
 	void ContourFinder::resetMinArea() {
