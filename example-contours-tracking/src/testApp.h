@@ -26,18 +26,50 @@ public:
 	};
 };
 
-typedef Pair<unsigned int, float> LabelPair;
+typedef Pair<int, float> LabelPair;
 
+// better, a (little) slower, global minimization would be:
+// 1 get the distance matrix
+// 2 sort the columns in each row by dist
+// 3 sort the rows by the min dist
+// 4 match the first row with the first col
+// 5 next row: if the first col is matched, remove and resort remaining rows
+// 6 repeat 5 until the first col is unmatched
+
+// one more that is O(n^2 + n^2 log n^2)
+// relies on sort being fast
+// 1 get distance matrix O(n^2)
+// 2 sort all the results by distance
+// 3 step through and match each pair that isn't already matched
+// 4 when done, label any new pairs with new labels
+			
 template <class T>
 class Tracker_ {
 protected:
 	vector<T> previous;
-	vector<unsigned int> labels;
+	vector<int> labels, previousLabels;
+	int curLabel;
+	int getNewLabel() {
+		return curLabel++;
+	}
 public:
-	vector<unsigned int>& track(vector<T>& objects) {
+	Tracker_<T>()
+	:curLabel(0) {
+	}
+	vector<int>& track(vector<T>& objects) {
 		int m = previous.size();
 		int n = objects.size();
-		if(m > 0 && n > 0) {
+		
+		labels.clear();
+		labels.resize(n, 0);
+		
+		if(m == 0) {
+			// generate labels if there aren't any previous tracked objects
+			for(int i = 0; i < n; i++) {
+				labels[i] = getNewLabel();
+			}
+		} else if(n > 0) {
+			// build dist between new and old objects
 			Mat_<float> dist(n, m, CV_32FC1);
 			for(int i = 0; i < n; i++) { // objects
 				for(int j = 0; j < m; j++) { // previous
@@ -51,25 +83,40 @@ public:
 				diff.push_back(LabelPair(i, minDistance(i)));
 			}
 			sort(diff.begin(), diff.end(), LabelPair::byValue());
-			/*
+				
+			cout << "sorted: ";
 			for(int i = 0; i < n; i++) {
-				cout << "(" << labelDifficulty[i].key << "," << labelDifficulty[i].value << ")";
-			}
+				cout << "(" << diff[i].key << "," << diff[i].value << ")";
+			}	
 			cout << endl;
-			*/
 			
-			// sorted.
-			// now create a vector of bools for the ones that are taken.
-			// clear labels.
-			// start with the first one in diff and find it's min.
-			// mark that one as 'taken', add to labels, and move on to the next one.
-			
-			// then go back through the code and add conditions for age: adding and removing labels
+			vector<bool> labeled(m, false);
+			for(int i = 0; i < n; i++) {
+				float bestDist;
+				int bestPosition = -1;
+				for(int j = 0; j < m; j++) {
+					if(!labeled[j] && (bestPosition == -1 || dist(i, j) < bestDist)) {
+						bestDist = dist(i, j);
+						bestPosition = j;
+					}
+				}
+				if(bestPosition == -1) {
+					labels[i] = getNewLabel();
+				} else {
+					labels[i] = previousLabels[bestPosition];
+					labeled[bestPosition] = true;
+				}
+			}
 		}
+		for(int i = 0; i < n; i++) {
+			cout << "(" << objects[i].x << "," << objects[i].y << " " << labels[i] << ")";
+		}
+		cout << endl;
 		previous = objects;
+		previousLabels = labels;
 		return labels;
 	}
-	bool exists(unsigned int label) {
+	bool exists(int label) {
 		
 	}
 };
