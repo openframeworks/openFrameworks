@@ -50,8 +50,8 @@ public:
 		
 		vector<MatchDistance> all(nm);
 		int k = 0;
-		for(int i = 0; i < n; i++) { // objects
-			for(int j = 0; j < m; j++) { // previous
+		for(int i = 0; i < n; i++) {
+			for(int j = 0; j < m; j++) {
 				all[k].key = LabelMatch(i, j);
 				all[k].value = trackingDistance(objects[i], previous[j]);
 				k++;
@@ -80,14 +80,17 @@ public:
 				labels[i] = getNewLabel();
 			}
 		}
-		
+		/*
 		for(int i = 0; i < n; i++) {
 			cout << "(" << objects[i].x << "," << objects[i].y << " " << labels[i] << ")";
 		}
 		cout << endl;
-		
+		*/
 		previous = objects;
 		previousLabels = labels;
+		return labels;
+	}
+	const vector<int>& getLabels() const {
 		return labels;
 	}
 	bool exists(int label) {

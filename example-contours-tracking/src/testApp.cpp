@@ -7,7 +7,7 @@ float trackingDistance(const cv::Rect& a, const cv::Rect& b) {
 	float dh = a.height - b.height;
 	float pd = sqrtf(dx * dx + dy * dy);
 	float sd = sqrtf(dw * dw + dh * dh);
-	return pd;// + sd;
+	return pd + sd;
 }
 
 float trackingDistance(const cv::Point2f& a, const cv::Point2f& b) {
@@ -34,7 +34,7 @@ void testApp::update() {
 		vector<cv::Rect> boundingBoxes;
 		for(int i = 0; i < contourFinder.size(); i++) {
 			boundingBoxes.push_back(contourFinder.getBoundingRect(i));
-		} 
+		}
 		rectTracker.track(boundingBoxes);
 	}
 }
@@ -43,4 +43,8 @@ void testApp::draw() {
 	ofSetColor(255);
 	movie.draw(0, 0);
 	contourFinder.draw();
+	for(int i = 0; i < contourFinder.size(); i++) {
+		ofPoint center = toOf(contourFinder.getCenter(i));
+		drawHighlightString(ofToString(rectTracker.getLabels()[i]), center);
+	}
 }
