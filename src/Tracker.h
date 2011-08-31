@@ -9,29 +9,15 @@ namespace ofxCv {
 	
 	using namespace cv;
 	
-	template <class Key, class Value>
-	class Pair {
-	public:
-		Key key;
-		Value value;
-		Pair(Key key = Key(), Value value = Value())
-		:key(key)
-		,value(value) {
+	struct bySecond {
+		template <class First, class Second>
+		bool operator()(pair<First, Second> const &a, pair<First, Second> const &b) { 
+			return a.second < b.second;
 		}
-		struct byKey {
-			bool operator()(Pair<Key, Value> const &a, Pair<Key, Value> const &b) { 
-				return a.key < b.key;
-			}
-		};
-		struct byValue {
-			bool operator()(Pair<Key, Value> const &a, Pair<Key, Value> const &b) { 
-				return a.value < b.value;
-			}
-		};
 	};
 	
-	typedef Pair<int, int> LabelMatch;
-	typedef Pair<LabelMatch, float> MatchDistance;
+	typedef pair<int, int> LabelMatch;
+	typedef pair<LabelMatch, float> MatchDistance;
 	
 	template <class T>
 	class Tracker_ {
@@ -64,22 +50,22 @@ namespace ofxCv {
 		int k = 0;
 		for(int i = 0; i < n; i++) {
 			for(int j = 0; j < m; j++) {
-				all[k].key = LabelMatch(i, j);
-				all[k].value = trackingDistance(objects[i], previous[j]);
+				all[k].first = LabelMatch(i, j);
+				all[k].second = trackingDistance(objects[i], previous[j]);
 				k++;
 			}
 		}
 		
-		sort(all.begin(), all.end(), MatchDistance::byValue());
+		sort(all.begin(), all.end(), bySecond());
 		
 		labels.clear();
-		labels.resize(n);
+		labels.resize(n); 
 		vector<bool> labeledObjects(n, false);
 		vector<bool> labeledPrevious(m, false);
 		for(int i = 0; i < nm; i++) {
-			LabelMatch& cur = all[i].key;
-			int i = cur.key;
-			int j = cur.value;
+			LabelMatch& cur = all[i].first;
+			int i = cur.first;
+			int j = cur.second;
 			if(!labeledObjects[i] && !labeledPrevious[j]) {
 				labeledObjects[i] = true;
 				labeledPrevious[j] = true;
