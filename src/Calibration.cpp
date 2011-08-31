@@ -1,8 +1,9 @@
 #include "Calibration.h"
-
 #include "ofFileUtils.h"
+#include "Helpers.h"
 
 namespace ofxCv {
+
 	using namespace cv;
 	
 	void Intrinsics::setup(Mat cameraMatrix, cv::Size imageSize, cv::Size sensorSize) {

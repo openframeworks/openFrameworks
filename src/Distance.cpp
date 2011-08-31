@@ -1,9 +1,8 @@
 #include "Distance.h"
-
 #include <string.h>
 
 namespace ofxCv {
-	
+
 	using namespace std;
 	
 	// http://www.merriampark.com/ld.htm

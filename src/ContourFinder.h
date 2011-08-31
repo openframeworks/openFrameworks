@@ -1,7 +1,3 @@
-#pragma once
-
-#include "ofxCv.h"
-
 /* 
  the contour finder will automatically convert and threshold your image for you.
  by default, it finds bright regions. to find dark regions call setInvert(true).
@@ -10,7 +6,7 @@
  to change the threshold value, use setThreshold(). by default, the threshold is
  128. when finding bright regions, 128 is halfway between white and black. when
  tracking a color, 0 means "exactly similar" and 255 is "all colors".
-  
+ 
  by default, the results are unfiltered by area. to filter by area use one of
  set(Min/Max)(Area/Radius/Norm) functions. set(Min/Max)Area is in pixels.
  set(Min/Max)Radius uses the area of a circle with the given radius for a more
@@ -31,10 +27,15 @@
 // cv::estimateRigidTransform? subdivision-based estimation for outline-flow?
 // CV_THRESH_OTSU?
 
+#pragma once
+
+#include "Utilities.h"
+#include "Tracker.h"
+
 namespace ofxCv {
-
+	
 	enum TrackingColorMode {TRACK_COLOR_RGB, TRACK_COLOR_HSV, TRACK_COLOR_H, TRACK_COLOR_HS};
-
+	
 	class ContourFinder {
 	public:
 		ContourFinder();
@@ -95,6 +96,8 @@ namespace ofxCv {
 		
 		vector<vector<cv::Point> > contours;
 		vector<ofPolyline> polylines;
+		
+		RectTracker tracker;
 	};	
 	
 }

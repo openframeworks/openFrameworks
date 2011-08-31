@@ -14,5 +14,5 @@ public:
 	float threshold;
 	ofVideoPlayer movie;	
 	ContourFinder contourFinder;
-	RectTracker rectTracker;
+	RectTracker tracker;
 };

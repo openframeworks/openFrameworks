@@ -5,7 +5,7 @@
 #include <cstdlib>
 
 namespace ofxCv {
-	
+
 	using namespace std;
 	
 	// edit distance is the number of transformations required to turn one string into another
@@ -13,5 +13,4 @@ namespace ofxCv {
 	
 	// cross correlation using edit distance gives the most representative string from a set
 	const string& mostRepresentative(const vector<string>& strs);
-	
 }

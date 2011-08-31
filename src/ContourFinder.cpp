@@ -1,6 +1,8 @@
 #include "ContourFinder.h"
+#include "Wrappers.h"
 
 namespace ofxCv {
+
 	using namespace cv;
 	
 	ContourFinder::ContourFinder()
@@ -73,9 +75,16 @@ namespace ofxCv {
 		
 		// generate polylines from the contours
 		polylines.clear();
-		for(int i = 0; i < contours.size(); i++) {
+		for(int i = 0; i < size(); i++) {
 			polylines.push_back(toOf(contours[i]));
 		}
+		
+		// generate bounding boxes from the contours
+		vector<cv::Rect> boundingBoxes;
+		for(int i = 0; i < size(); i++) {
+			boundingBoxes.push_back(getBoundingRect(i));
+		}
+		tracker.track(boundingBoxes);
 	}
 	
 	vector<vector<cv::Point> >& ContourFinder::getContours() {

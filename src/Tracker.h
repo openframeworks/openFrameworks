@@ -1,7 +1,3 @@
-#pragma once
-
-#include "ofxCv.h"
-
 /*
  the tracker is used for tracking the identities of a collection of objects that
  change slightly over time. example applications are in contour tracking and
@@ -11,9 +7,10 @@
  maximumDistance determines how far an object can move until the tracker
  considers it a new object.
  
- the default trackers are for cv::Rect and cv::Point2f. to create a new kind of
- tracker, you need to add a trackingDistance() function that returns the
- distance between two tracked objects.
+ the default trackers are for cv::Rect and cv::Point2f (RectTracker and
+ PointTracker). to create a new kind of tracker, you need to add a
+ trackingDistance() function that returns the distance between two tracked
+ objects.
  
  the tracking algorithm calls the distance function approximately n^2 times.
  it then filters the distances using maximumDistance, which can significantly
@@ -29,6 +26,10 @@
  also fails to model the data, so two objects might be swapped if they cross
  paths quickly.
  */
+
+#pragma once
+
+#include "opencv2/opencv.hpp"
 
 namespace ofxCv {
 	
@@ -235,7 +236,6 @@ namespace ofxCv {
 	float trackingDistance(const cv::Rect& a, const cv::Rect& b);
 	float trackingDistance(const cv::Point2f& a, const cv::Point2f& b);
 	
-	typedef Tracker<cv::Point2f> PointTracker;
 	typedef Tracker<cv::Rect> RectTracker;
-	
+	typedef Tracker<cv::Point2f> PointTracker;
 }

@@ -18,13 +18,6 @@ void testApp::update() {
 	if(movie.isFrameNew()) {
 		blur(movie, 10);
 		contourFinder.findContours(movie);
-		
-		// this should be happening inside the contour finder
-		vector<cv::Rect> boundingBoxes;
-		for(int i = 0; i < contourFinder.size(); i++) {
-			boundingBoxes.push_back(contourFinder.getBoundingRect(i));
-		}
-		rectTracker.track(boundingBoxes);
 	}
 }
 
@@ -32,6 +25,7 @@ void testApp::draw() {
 	ofSetColor(255);
 	//movie.draw(0, 0);
 	//contourFinder.draw();
+	/*
 	vector<unsigned int>& labels = rectTracker.getCurrentLabels();
 	for(int i = 0; i < contourFinder.size(); i++) {
 		ofPoint center = toOf(contourFinder.getCenter(i));
@@ -48,5 +42,5 @@ void testApp::draw() {
 				previous.x + previous.width / 2, previous.y + previous.height / 2,
 				current.x + current.width / 2, current.y + current.height / 2);
 		}
-	}
+	}*/
 }

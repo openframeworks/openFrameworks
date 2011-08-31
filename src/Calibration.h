@@ -1,5 +1,3 @@
-#pragma once
-
 /*
  this class handles per-camera intrinsic calibration and undistortion.
  given a series of chessboard images, it will calculate the intrinsics.
@@ -18,11 +16,13 @@
  each camera individually. then use getTransformation to determine the
  rotation and translation from camera to another.
  */
+ 
+#pragma once
 
 #include "ofxCv.h"
 
 namespace ofxCv {
-	
+
 	using namespace cv;
 	
 	class Intrinsics {

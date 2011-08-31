@@ -1,0 +1,140 @@
+/*
+ wrappers provide an easy-to-use interface to OpenCv functions when using data
+ from openFrameworks.
+ */
+
+#pragma once
+
+#include "ofMain.h"
+#include "opencv2/opencv.hpp"
+#include "Utilities.h"
+
+namespace ofxCv {
+	
+	using namespace cv;
+	
+	// wrapThree are based on functions that operate on three Mat objects.
+	// the first two are inputs, and the third is an output. for example,
+	// the min() function: min(x, y, result) will calculate the per-element min
+	// between x and y, and store that in result.
+#define wrapThree(name) \
+template <class X, class Y, class Result>\
+void name(X& x, Y& y, Result& result) {\
+imitate(result, x);\
+Mat xMat = toCv(x);\
+Mat yMat = toCv(y);\
+Mat resultMat = toCv(result);\
+cv::name(xMat, yMat, resultMat);\
+}
+	wrapThree(max);
+	wrapThree(min);
+	wrapThree(multiply);
+	wrapThree(divide);
+	wrapThree(add);
+	wrapThree(subtract);
+	wrapThree(absdiff);
+	wrapThree(bitwise_and);
+	wrapThree(bitwise_or);
+	wrapThree(bitwise_xor);
+	
+	// also useful for taking the average/mixing two images
+	template <class X, class Y, class R>
+	void lerp(X& x, Y& y, R& result, float amt = .5) {
+		imitate(result, x);
+		Mat xMat = toCv(x);
+		Mat yMat = toCv(y);
+		Mat resultMat = toCv(result);
+		cv::addWeighted(xMat, amt, yMat, 1. - amt, 0., resultMat);
+	}
+	
+	// normalize the min/max to [0, max for this type] out of place
+	template <class S, class D>
+	void normalize(S& src, D& dst) {
+		imitate(dst, src);
+		Mat srcMat = toCv(src);
+		Mat dstMat = toCv(dst);
+		cv::normalize(srcMat, dstMat, 0, getMaxVal(getDepth(dst)), NORM_MINMAX);
+	}
+	
+	// normalize the min/max to [0, max for this type] in place
+	template <class SD>
+	void normalize(SD& srcDst) {
+		normalize(srcDst, srcDst);
+	}
+	
+	// threshold out of place
+	template <class S, class D>
+	void threshold(S& src, D& dst, float thresholdValue, bool invert = false) {
+		imitate(dst, src);
+		Mat srcMat = toCv(src);
+		Mat dstMat = toCv(dst);
+		int thresholdType = invert ? THRESH_BINARY_INV : THRESH_BINARY;
+		float maxVal = getMaxVal(dstMat);
+		cv::threshold(srcMat, dstMat, thresholdValue, maxVal, thresholdType);
+	}
+	
+	// threshold in place
+	template <class SD>
+	void threshold(SD& srcDst, float thresholdValue, bool invert = false) {
+		ofxCv::threshold(srcDst, srcDst, thresholdValue, invert);
+	}
+	
+	// CV_RGB2GRAY, CV_HSV2RGB, etc. with [RGB, BGR, GRAY, HSV, HLS, XYZ, YCrCb, Lab, Luv]
+	// you can convert whole images...
+	template <class S, class D>
+	void convertColor(S& src, D& dst, int code) {
+		// cvtColor allocates Mat for you, but we need this to handle ofImage etc.
+		int targetChannels = getTargetChannelsFromCode(code);
+		imitate(dst, src, getCvImageType(targetChannels, getDepth(src)));
+		Mat srcMat = toCv(src);
+		Mat dstMat = toCv(dst);
+		cvtColor(srcMat, dstMat, code);
+	}
+	// ...or single colors.
+	Vec3b convertColor(Vec3b color, int code);
+	ofColor convertColor(ofColor color, int code);
+	
+	int forceOdd(int x);
+	
+	// Gaussian blur
+	template <class S, class D>
+	void blur(S& src, D& dst, int size) {
+		imitate(dst, src);
+		size = forceOdd(size);
+		Mat srcMat = toCv(src);
+		Mat dstMat = toCv(dst);
+		GaussianBlur(srcMat, dstMat, cv::Size(size, size), 0, 0);
+	}
+	
+	// in-place Gaussian blur
+	template <class SD>
+	void blur(SD& srcDst, int size) {
+		ofxCv::blur(srcDst, srcDst, size);
+	}
+	
+	// older wrappers, need to be templated..	
+	// for contourArea()/arcLength(), see ofPolyline::getArea()/getPerimiter()
+	// not sure if these three need to be templated. convexHull returning an
+	// ofPolyline when given an ofPolyline is the key factor...
+	ofPolyline convexHull(ofPolyline& polyline);
+	cv::RotatedRect minAreaRect(ofPolyline& polyline);
+	cv::RotatedRect fitEllipse(ofPolyline& polyline);
+	
+	void invert(ofImage& img);
+	void rotate(ofImage& source, ofImage& destination, double angle, unsigned char fill = 0, int interpolation = INTER_LINEAR);
+	void autorotate(ofImage& original, ofImage& thresh, ofImage& output, float* rotation = NULL);
+	void autothreshold(ofImage& original, ofImage& thresh, bool invert = false);
+	void autothreshold(ofImage& original, bool invert = false);
+	//void threshold(FloatImage& img, float value, bool invert = false);
+	//void threshold(FloatImage& original, FloatImage& thresh, float value, bool invert = false);
+	//void matchRegion(ofImage& source, ofRectangle& region, ofImage& search, FloatImage& result);
+	void matchRegion(Mat& source, ofRectangle& region, Mat& search, Mat& result);
+	//void convolve(ofImage& source, FloatImage& kernel, ofImage& destination);
+	//void convolve(ofImage& img, FloatImage& kernel);
+	void medianBlur(ofImage& img, int size);
+	void warpPerspective(ofImage& src, ofImage& dst, Mat& m, int flags = 0);
+	void warpPerspective(ofPixels& src, ofPixels& dst, Mat& m, int flags = 0);
+	void resize(ofImage& source, ofImage& destination, int interpolation = INTER_LINEAR); // options: INTER_NEAREST, INTER_LINEAR, INTER_AREA, INTER_CUBIC, INTER LANCZOS4
+	void resize(ofImage& source, ofImage& destination, float xScale, float yScale, int interpolation = INTER_LINEAR);
+	
+}
