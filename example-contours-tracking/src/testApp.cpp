@@ -32,7 +32,7 @@ void testApp::draw() {
 	ofSetColor(255);
 	//movie.draw(0, 0);
 	//contourFinder.draw();
-	vector<unsigned int>& labels = rectTracker.getLabels();
+	vector<unsigned int>& labels = rectTracker.getCurrentLabels();
 	for(int i = 0; i < contourFinder.size(); i++) {
 		ofPoint center = toOf(contourFinder.getCenter(i));
 		//ofDrawBitmapString(ofToString(labels[i]), center);
