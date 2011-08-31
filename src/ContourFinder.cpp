@@ -139,6 +139,12 @@ namespace ofxCv {
 		return minAreaRect(Mat(contours[i]));
 	}
 	
+	cv::Point2f ContourFinder::getMinEnclosingCircle(unsigned int i, float& radius) const {
+		cv::Point2f center;
+		minEnclosingCircle(Mat(contours[i]), center, radius);
+		return center;
+	}
+		
 	cv::RotatedRect ContourFinder::getFitEllipse(unsigned int i) const {
 		return fitEllipse(Mat(contours[i]));
 	}

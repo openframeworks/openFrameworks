@@ -17,6 +17,7 @@ void testApp::update() {
 		blur(movie, 10);
 		contourFinder.findContours(movie);
 		
+		// this should be happening inside the contour finder
 		vector<cv::Rect> boundingBoxes;
 		for(int i = 0; i < contourFinder.size(); i++) {
 			boundingBoxes.push_back(contourFinder.getBoundingRect(i));

@@ -2,6 +2,9 @@
 
 #include "ofxCv.h"
 
+// if an object has an age > a certain amount, remove it
+// if an object is > distance than a certain amount, add new id anyway
+
 namespace ofxCv {
 	
 	using namespace cv;

@@ -43,6 +43,12 @@ void testApp::draw() {
 		ofEllipse(0, 0, ellipseSize.x, ellipseSize.y);
 		ofPopMatrix();
 		
+		// minimum area circle that encloses the contour
+		ofSetColor(cyanPrint);
+		float circleRadius;
+		ofVec2f circleCenter = toOf(contourFinder.getMinEnclosingCircle(i, circleRadius));
+		ofCircle(circleCenter, circleRadius);
+		
 		// convex hull of the contour
 		ofSetColor(yellowPrint);
 		ofPolyline convexHull = toOf(contourFinder.getConvexHull(i));
