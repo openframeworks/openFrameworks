@@ -22,6 +22,12 @@
  function. in practical terms, the tracker can become non-realtime when
  tracking more than a few hundred objects. to optimize the tracker, consider
  avoiding usage of sqrt() in the trackingDistance() function.
+ 
+ this tracker doesn't find a global minimum, but a local minimum. for example,
+ when a dense set of points moves farther than the average point-to-point radius
+ (like a line of points 5 pixels apart moving up and to the right 5 pixels). it
+ also fails to model the data, so two objects might be swapped if they cross
+ paths quickly.
  */
 
 namespace ofxCv {
