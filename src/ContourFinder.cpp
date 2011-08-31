@@ -80,9 +80,9 @@ namespace ofxCv {
 		}
 		
 		// generate bounding boxes from the contours
-		vector<cv::Rect> boundingBoxes;
+		boundingBoxes.clear();
 		for(int i = 0; i < size(); i++) {
-			boundingBoxes.push_back(getBoundingRect(i));
+			boundingBoxes.push_back(boundingRect(Mat(contours[i])));
 		}
 		tracker.track(boundingBoxes);
 	}
@@ -108,7 +108,7 @@ namespace ofxCv {
 	}
 	
 	cv::Rect ContourFinder::getBoundingRect(unsigned int i) const {
-		return boundingRect(Mat(contours[i]));
+		return boundingBoxes[i];
 	}
 	
 	cv::Point2f ContourFinder::getCenter(unsigned int i) const {

@@ -98,6 +98,7 @@ namespace ofxCv {
 		vector<ofPolyline> polylines;
 		
 		RectTracker tracker;
+		vector<cv::Rect> boundingBoxes;
 	};	
 	
 }
