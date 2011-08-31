@@ -2,9 +2,6 @@
 
 #include "ofxCv.h"
 
-#define TRACKER_MAX_AGE (6)
-#define TRACKER_MAX_DISTANCE (50.)
-
 namespace ofxCv {
 	
 	using namespace cv;
@@ -45,13 +42,6 @@ namespace ofxCv {
 		}
 	};
 	
-	struct isOld {
-		template <class T>
-		bool operator()(TrackedObject<T> const &object) { 
-			return object.getAge() > TRACKER_MAX_AGE;
-		}
-	};
-	
 	template <class T>
 	class Tracker {
 	protected:
@@ -59,9 +49,12 @@ namespace ofxCv {
 		typedef pair<int, int> MatchPair;
 		typedef pair<MatchPair, float> MatchDistancePair;
 		
-		vector<TrackedObject<T> > previous;
+		vector<TrackedObject<T> > previous, current;
 		vector<unsigned int> labels;
+		map<unsigned int, T*> previousLabelMap, currentLabelMap;
 		
+		float maximumDistance;
+		unsigned int maximumAge;
 		unsigned int curLabel;
 		unsigned int getNewLabel() {
 			return curLabel++;
@@ -69,18 +62,33 @@ namespace ofxCv {
 				
 	public:
 		Tracker<T>()
-		:curLabel(0) {
+		:curLabel(0)
+		,maximumAge(4)
+		,maximumDistance(32) {
 		}
+		void setMaximumAge(unsigned int maximumAge);
+		void setMaximumDistance(float maximumDistance);
 		vector<unsigned int>& track(const vector<T>& objects);
-		vector<unsigned int>& getLabels() {
-			return labels;
-		}
+		vector<unsigned int>& getLabels();
+		T& getPrevious(unsigned int label);
+		T& getCurrent(unsigned int label);
+		bool existsCurrent(unsigned int label) const;
+		bool existsPrevious(unsigned int label) const;
 	};
 	
 	template <class T>
+	void Tracker<T>::setMaximumAge(unsigned int maximumAge) {
+		this->maximumAge = maximumAge;
+	}
+	
+	template <class T>
+	void Tracker<T>::setMaximumDistance(float maximumDistance) {
+		this->maximumDistance = maximumDistance;
+	}
+	
+	template <class T>
 	vector<unsigned int>& Tracker<T>::track(const vector<T>& objects) {
-		ofRemove(previous, isOld());
-		
+		previous = current;
 		int n = objects.size();
 		int m = previous.size();
 		int nm = n * m;
@@ -101,15 +109,15 @@ namespace ofxCv {
 		
 		labels.clear();
 		labels.resize(n);
-		vector<TrackedObject<T> > current;
+		current.clear();
 		vector<bool> matchedObjects(n, false);
 		vector<bool> matchedPrevious(m, false);
 		// walk through matches in order
-		for(k = 0; k < nm && all[k].second < TRACKER_MAX_DISTANCE; k++) {
+		for(k = 0; k < nm && all[k].second < maximumDistance; k++) {
 			MatchPair& match = all[k].first;
 			int i = match.first;
 			int j = match.second;
-			// only use match if both objects are unmatched (age is reset to 0)
+			// only use match if both objects are unmatched, age is reset to 0
 			if(!matchedObjects[i] && !matchedPrevious[j]) {
 				matchedObjects[i] = true;
 				matchedPrevious[j] = true;
@@ -118,7 +126,7 @@ namespace ofxCv {
 			}
 		}
 		
-		// create new labels for new unmatched objects (age is 0)
+		// create new labels for new unmatched objects, age is set to 0
 		for(int i = 0; i < n; i++) {
 			if(!matchedObjects[i]) {
 				current.push_back(TrackedObject<T>(objects[i], getNewLabel()));
@@ -126,16 +134,52 @@ namespace ofxCv {
 			}
 		}
 		
-		// copy old unmatched objects (age is increased)
+		// copy old unmatched objects if young enough, age is increased
 		for(int j = 0; j < m; j++) {
-			if(!matchedPrevious[j]) {
+			if(!matchedPrevious[j] && previous[j].getAge() < maximumAge) {
 				current.push_back(previous[j]);
 				current.back().timeStep();
 			}
 		}
 		
-		previous = current;
+		// build label maps
+		currentLabelMap.clear();
+		for(int i = 0; i < current.size(); i++) {
+			unsigned int label = current[i].getLabel();
+			currentLabelMap[label] = &(current[i].object);
+		}
+		previousLabelMap.clear();
+		for(int i = 0; i < previous.size(); i++) {
+			unsigned int label = previous[i].getLabel();
+			previousLabelMap[label] = &(previous[i].object);
+		}
+				
 		return labels;
+	}
+		
+	template <class T>
+	vector<unsigned int>& Tracker<T>::getLabels() {
+		return labels;
+	}
+	
+	template <class T>
+	T& Tracker<T>::getPrevious(unsigned int label) {
+		return *(previousLabelMap[label]);
+	}
+	
+	template <class T>
+	T& Tracker<T>::getCurrent(unsigned int label) {
+		return *(currentLabelMap[label]);
+	}
+	
+	template <class T>
+	bool Tracker<T>::existsCurrent(unsigned int label) const {
+		return currentLabelMap.count(label) > 0;
+	}
+	
+	template <class T>
+	bool Tracker<T>::existsPrevious(unsigned int label) const {
+		return previousLabelMap.count(label) > 0;
 	}
 	
 	float trackingDistance(const cv::Rect& a, const cv::Rect& b);
