@@ -38,20 +38,28 @@ namespace ofxCv {
 	template <class T>
 	class TrackedObject {
 	protected:
-		unsigned int age;
-		unsigned int label;
+		unsigned int age, label;
+		int index;
 	public:
 		T object;
 		
-		TrackedObject(const T& object, unsigned int label)
+		TrackedObject(const T& object, unsigned int label, int index)
 		:object(object)
 		,label(label)
+		,index(index)
 		,age(0) {
 		}
-		TrackedObject(const T& object, const TrackedObject<T>& previous)
+		TrackedObject(const T& object, const TrackedObject<T>& previous, int index)
 		:object(object)
 		,label(previous.label)
+		,index(index)
 		,age(0) {
+		}
+		TrackedObject(const TrackedObject<T>& old)
+		:object(old.object)
+		,label(old.label)
+		,index(-1)
+		,age(old.age) {
 		}
 		void timeStep() {
 			age++;
@@ -61,6 +69,9 @@ namespace ofxCv {
 		}
 		unsigned int getLabel() const {
 			return label;
+		}
+		int getIndex() const {
+			return index;
 		}
 	};
 	
@@ -98,6 +109,8 @@ namespace ofxCv {
 		vector<unsigned int>& getPreviousLabels();
 		vector<unsigned int>& getNewLabels();
 		vector<unsigned int>& getDeadLabels();
+		unsigned int getLabelFromIndex(unsigned int i) const;
+		int getIndexFromLabel(unsigned int label) const;
 		T& getPrevious(unsigned int label);
 		T& getCurrent(unsigned int label);
 		bool existsCurrent(unsigned int label) const;
@@ -151,7 +164,8 @@ namespace ofxCv {
 			if(!matchedObjects[i] && !matchedPrevious[j]) {
 				matchedObjects[i] = true;
 				matchedPrevious[j] = true;
-				current.push_back(TrackedObject<T>(objects[i], previous[j]));
+				int index = current.size();
+				current.push_back(TrackedObject<T>(objects[i], previous[j], index));
 				currentLabels[i] = current.back().getLabel();
 			}
 		}
@@ -161,7 +175,8 @@ namespace ofxCv {
 		for(int i = 0; i < n; i++) {
 			if(!matchedObjects[i]) {
 				int curLabel = getNewLabel();
-				current.push_back(TrackedObject<T>(objects[i], curLabel));
+				int index = current.size();
+				current.push_back(TrackedObject<T>(objects[i], curLabel, index));
 				currentLabels[i] = curLabel;
 				newLabels.push_back(curLabel);
 			}
@@ -211,6 +226,16 @@ namespace ofxCv {
 	template <class T>
 	vector<unsigned int>& Tracker<T>::getDeadLabels() {
 		return deadLabels;
+	}
+
+	template <class T>
+	unsigned int Tracker<T>::getLabelFromIndex(unsigned int i) const {
+		return currentLabels[i];
+	}
+	
+	template <class T>
+	int Tracker<T>::getIndexFromLabel(unsigned int label) const {
+		return getCurrent(label).getIndex();
 	}
 	
 	template <class T>

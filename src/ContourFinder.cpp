@@ -84,6 +84,8 @@ namespace ofxCv {
 		for(int i = 0; i < size(); i++) {
 			boundingBoxes.push_back(boundingRect(Mat(contours[i])));
 		}
+		
+		// track bounding boxes
 		tracker.track(boundingBoxes);
 	}
 	
@@ -156,6 +158,10 @@ namespace ofxCv {
 		
 	cv::RotatedRect ContourFinder::getFitEllipse(unsigned int i) const {
 		return fitEllipse(Mat(contours[i]));
+	}
+	
+	RectTracker& ContourFinder::getTracker() {
+		return tracker;
 	}
 	
 	void ContourFinder::setAutoThreshold(bool autoThreshold) {
