@@ -2,10 +2,8 @@
 
 #include "ofxCv.h"
 
-#define TRACKER_MAX_AGE (2)
+#define TRACKER_MAX_AGE (6)
 #define TRACKER_MAX_DISTANCE (50.)
-
-// if an object is > distance than a certain amount, add new id anyway
 
 namespace ofxCv {
 	
@@ -87,17 +85,6 @@ namespace ofxCv {
 		int m = previous.size();
 		int nm = n * m;
 		
-		cout << previous.size() << " previous: ";
-		for(int j = 0; j < m; j++) {
-			cout << "(" << previous[j].object.x << "," << previous[j].object.y << "@" << previous[j].getAge() << ")";
-		}
-		cout << endl;
-		cout << previous.size() << " objects: ";
-		for(int i = 0; i < n; i++) {
-			cout << "(" << objects[i].x << "," << objects[i].y << ")";
-		}
-		cout << endl;
-		
 		// build NxM distance matrix
 		vector<MatchDistancePair> all(nm);
 		int k = 0;
@@ -111,18 +98,6 @@ namespace ofxCv {
 		
 		// sort all possible matches by distance
 		sort(all.begin(), all.end(), bySecond());
-		
-		cout << "sorted matches: ";
-		for(k = 0; k < nm; k++) {
-			MatchPair& match = all[k].first;
-			float distance = all[k].second;
-			int i = match.first;
-			int j = match.second;
-			cout << "(" << objects[i].x << "," << objects[i].y << ")~";
-			cout << "(" << previous[j].object.x << "," << previous[j].object.y << "@" << previous[j].getAge() << "/" << previous[j].getLabel() << ")";
-			cout << "=" << distance << " ";
-		}
-		cout << endl;
 		
 		labels.clear();
 		labels.resize(n);
@@ -138,20 +113,16 @@ namespace ofxCv {
 			if(!matchedObjects[i] && !matchedPrevious[j]) {
 				matchedObjects[i] = true;
 				matchedPrevious[j] = true;
-				TrackedObject<T> updatedTrackedObject(objects[i], previous[j]);
-				current.push_back(updatedTrackedObject);
+				current.push_back(TrackedObject<T>(objects[i], previous[j]));
 				labels[i] = current.back().getLabel();
-				cout << "added obejct at " << i << "," << j << ": (" << updatedTrackedObject.object.x << "," << updatedTrackedObject.object.y << ")" << endl;
 			}
 		}
-		cout << "quit after " << k << "/" << nm << " checks" << endl;
 		
 		// create new labels for new unmatched objects (age is 0)
 		for(int i = 0; i < n; i++) {
 			if(!matchedObjects[i]) {
-				int curLabel = getNewLabel();
-				current.push_back(TrackedObject<T>(objects[i], curLabel));
-				labels[i] = curLabel;
+				current.push_back(TrackedObject<T>(objects[i], getNewLabel()));
+				labels[i] = current.back().getLabel();
 			}
 		}
 		
@@ -162,19 +133,6 @@ namespace ofxCv {
 				current.back().timeStep();
 			}
 		}
-		
-		cout << objects.size() << " new: ";
-		for(int i = 0; i < n; i++) {
-			cout << labels[i] << "(" << objects[i].x << "," << objects[i].y << ")/";
-			for(int j = 0; j < m; j++) {
-				if(labels[i] == previous[j].getLabel()) {
-				cout << "(" << previous[j].object.x << "," << previous[j].object.y << "@" << previous[j].getAge() << ")";
-				}
-			}
-			cout << " ";
-		}
-		cout << endl;
-		cout << endl;
 		
 		previous = current;
 		return labels;
