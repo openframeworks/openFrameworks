@@ -16,83 +16,115 @@ namespace ofxCv {
 		}
 	};
 	
-	typedef pair<int, int> LabelMatch;
-	typedef pair<LabelMatch, float> MatchDistance;
-	
 	template <class T>
-	class Tracker_ {
-	protected:
-		vector<T> previous;
-		vector<int> labels, previousLabels;
-		int curLabel;
-		int getNewLabel() {
-			return curLabel++;
-		}
+	class TrackedObject {
 	public:
-		Tracker_<T>()
-		:curLabel(0) {
+		T object;
+		unsigned int age;
+		int label;
+		
+		TrackedObject(const T& object, int label)
+		:object(object)
+		,label(label)
+		,age(0) {
 		}
-		vector<int>& track(vector<T>& objects);
-		const vector<int>& getLabels() const {
-			return labels;
-		}
-		bool exists(int label) {
+		TrackedObject(const T& object, const TrackedObject<T>& previous)
+		:object(object)
+		,label(previous.label)
+		,age(previous.age) {
 		}
 	};
 	
 	template <class T>
-	vector<int>& Tracker_<T>::track(vector<T>& objects) {
+	class Tracker {
+	protected:
+	
+		typedef pair<int, int> MatchPair;
+		typedef pair<MatchPair, float> MatchDistancePair;
+		
+		vector<TrackedObject<T> > previous;
+		vector<int> labels;
+		
+		int curLabel;
+		int getNewLabel() {
+			return curLabel++;
+		}
+		
+	public:
+		Tracker<T>()
+		:curLabel(0) {
+		}
+		vector<int>& track(const vector<T>& objects);
+		vector<int>& getLabels() {
+			return labels;
+		}
+	};
+	
+	template <class T>
+	vector<int>& Tracker<T>::track(const vector<T>& objects) {
+		int n = objects.size();
 		int m = previous.size();
-		int n = objects.size();	
 		int nm = n * m;
 		
-		vector<MatchDistance> all(nm);
+		// build NxM distance matrix
+		vector<MatchDistancePair> all(nm);
 		int k = 0;
 		for(int i = 0; i < n; i++) {
 			for(int j = 0; j < m; j++) {
-				all[k].first = LabelMatch(i, j);
-				all[k].second = trackingDistance(objects[i], previous[j]);
+				all[k].first = MatchPair(i, j);
+				all[k].second = trackingDistance(objects[i], previous[j].object);
 				k++;
 			}
 		}
 		
+		// sort all possible matches by distance
 		sort(all.begin(), all.end(), bySecond());
 		
-		labels.clear();
-		labels.resize(n); 
-		vector<bool> labeledObjects(n, false);
-		vector<bool> labeledPrevious(m, false);
+		vector<TrackedObject<T> > current;
+		vector<bool> matchedObjects(n, false);
+		vector<bool> matchedPrevious(m, false);
+		// walk through matches in order
 		for(int i = 0; i < nm; i++) {
-			LabelMatch& cur = all[i].first;
+			MatchPair& cur = all[i].first;
 			int i = cur.first;
 			int j = cur.second;
-			if(!labeledObjects[i] && !labeledPrevious[j]) {
-				labeledObjects[i] = true;
-				labeledPrevious[j] = true;
-				labels[i] = previousLabels[j];
+			// only use match if both objects are unmatched
+			if(!matchedObjects[i] && !matchedPrevious[j]) {
+				matchedObjects[i] = true;
+				matchedPrevious[j] = true;
+				current.push_back(TrackedObject<T>(objects[i], previous[j]));
 			}
 		}
 		
+		// create new labels for new unmatched objects
 		for(int i = 0; i < n; i++) {
-			if(!labeledObjects[i]) {
-				labels[i] = getNewLabel();
+			if(!matchedObjects[i]) {
+				current.push_back(TrackedObject<T>(objects[i], getNewLabel()));
 			}
 		}
-		/*
-		 for(int i = 0; i < n; i++) {
-		 cout << "(" << objects[i].x << "," << objects[i].y << " " << labels[i] << ")";
-		 }
-		 cout << endl;
-		 */
-		previous = objects;
-		previousLabels = labels;
+		
+		// copy old labels for old unmatched objects
+		for(int j = 0; j < m; j++) {
+			if(!matchedPrevious[j]) {
+				current.push_back(previous[j]);
+			}
+		}
+		
+		// save labels only
+		labels.clear();
+		labels.resize(n);
+		for(int i = 0; i < n; i++) {
+			labels[i] = current[i].label;
+		}
+		
+		previous = current;
 		return labels;
 	}
 	
 	float trackingDistance(const cv::Rect& a, const cv::Rect& b);
 	float trackingDistance(const cv::Point2f& a, const cv::Point2f& b);
 	
-	typedef Tracker_<cv::Point2f> PointTracker;
-	typedef Tracker_<cv::Rect> RectTracker;
+	typedef Tracker<cv::Point2f> PointTracker;
+	typedef Tracker<cv::Rect> RectTracker;
 	
 }
