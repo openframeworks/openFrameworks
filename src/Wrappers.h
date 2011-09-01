@@ -1,6 +1,14 @@
 /*
  wrappers provide an easy-to-use interface to OpenCv functions when using data
  from openFrameworks.
+ 
+ in ofxOpenCv, these were methods of ofxCvImage. for completeness, we need:
+ ROI methods (set, get, reset)
+ pixel manipulation (set, +, -, *, /)
+ filtering (erode, dilate, blur, gaussian, invert, stretch contrast, range)
+ transform (resize, mirror, translate, rotate, scale, abritrary combo)
+ undistort, remap, warp perspective, warp into me
+ count nonzero pixels
  */
 
 #pragma once

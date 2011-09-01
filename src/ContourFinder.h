@@ -21,11 +21,10 @@
 
 // to implement in ContourFinder:
 // holes/no holes
-// contour tracking
+// CV_THRESH_OTSU?
 // cv::pointPolygonTest - inside, edge, outside
 // cv::matchShapes - similarity between two contours
 // cv::estimateRigidTransform? subdivision-based estimation for outline-flow?
-// CV_THRESH_OTSU?
 
 #pragma once
 
