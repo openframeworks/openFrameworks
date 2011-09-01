@@ -105,14 +105,18 @@ namespace ofxCv {
 		void setMaximumAge(unsigned int maximumAge);
 		void setMaximumDistance(float maximumDistance);
 		vector<unsigned int>& track(const vector<T>& objects);
+		
+		// organized in the order received by track()
 		vector<unsigned int>& getCurrentLabels();
 		vector<unsigned int>& getPreviousLabels();
 		vector<unsigned int>& getNewLabels();
 		vector<unsigned int>& getDeadLabels();
 		unsigned int getLabelFromIndex(unsigned int i) const;
+		
+		// organized by label
 		int getIndexFromLabel(unsigned int label) const;
-		T& getPrevious(unsigned int label);
-		T& getCurrent(unsigned int label);
+		T& getPrevious(unsigned int label) const;
+		T& getCurrent(unsigned int label) const;
 		bool existsCurrent(unsigned int label) const;
 		bool existsPrevious(unsigned int label) const;
 	};
@@ -239,13 +243,13 @@ namespace ofxCv {
 	}
 	
 	template <class T>
-	T& Tracker<T>::getPrevious(unsigned int label) {
-		return *(previousLabelMap[label]);
+	T& Tracker<T>::getPrevious(unsigned int label) const {
+		return *(previousLabelMap.find(label)->second);
 	}
 	
 	template <class T>
-	T& Tracker<T>::getCurrent(unsigned int label) {
-		return *(currentLabelMap[label]);
+	T& Tracker<T>::getCurrent(unsigned int label) const {
+		return *(currentLabelMap.find(label)->second);
 	}
 	
 	template <class T>

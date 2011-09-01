@@ -10,9 +10,10 @@ public:
 	void setup();
 	void update();
 	void draw();
+	void keyPressed(int key);
 	
 	float threshold;
 	ofVideoPlayer movie;	
 	ContourFinder contourFinder;
-	RectTracker tracker;
+	bool showLabels;
 };

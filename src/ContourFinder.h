@@ -63,8 +63,10 @@ namespace ofxCv {
 		cv::RotatedRect getMinAreaRect(unsigned int i) const;
 		cv::Point2f getMinEnclosingCircle(unsigned int i, float& radius) const;
 		cv::RotatedRect getFitEllipse(unsigned int i) const;
+		cv::Vec2f getVelocity(unsigned int i) const;
 		
 		RectTracker& getTracker();
+		unsigned int getLabel(unsigned int i);
 		
 		void setThreshold(float thresholdValue);
 		void setAutoThreshold(bool autoThreshold);
