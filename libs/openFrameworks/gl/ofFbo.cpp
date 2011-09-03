@@ -2,6 +2,7 @@
 #include "ofAppRunner.h"
 #include "ofUtils.h"
 #include "ofGraphics.h"
+#include "ofGLRenderer.h"
 #include <map>
 
 //#ifndef TARGET_OPENGLES
@@ -189,8 +190,10 @@ fbo(0),
 fboTextures(0),
 depthBuffer(0),
 stencilBuffer(0),
-savedFramebuffer(0)
+savedFramebuffer(0),
+defaultTextureIndex(0)
 {
+
 }
 
 ofFbo::ofFbo(const ofFbo & mom){
@@ -315,8 +318,14 @@ static GLboolean CheckExtension( const char *extName ){
 }
 
 
-void ofFbo::checkGLSupport() {
+bool ofFbo::checkGLSupport() {
 #ifndef TARGET_OPENGLES
+	if(CheckExtension("GL_EXT_framebuffer_object")){
+		ofLog(OF_LOG_VERBOSE,"FBO supported");
+	}else{
+		ofLog(OF_LOG_ERROR, "FBO not supported by this graphics card");
+		return false;
+	}
 	glGetIntegerv(GL_MAX_COLOR_ATTACHMENTS, &_maxColorAttachments);
 	glGetIntegerv(GL_MAX_DRAW_BUFFERS, &_maxDrawBuffers);
 	glGetIntegerv(GL_MAX_SAMPLES, &_maxSamples);
@@ -327,19 +336,22 @@ void ofFbo::checkGLSupport() {
 		  "maxSamples: " + ofToString(_maxSamples)
 		  );
 #else
+
 	if(CheckExtension("GL_OES_framebuffer_object")){
 		ofLog(OF_LOG_VERBOSE,"FBO supported");
 	}else{
-		ofLog(OF_LOG_ERROR, "FBO not supported");
+		ofLog(OF_LOG_ERROR, "FBO not supported by this graphics card");
+		return false;
 	}
-
 	string extensions = (char*)glGetString(GL_EXTENSIONS);
 	ofLog(OF_LOG_VERBOSE,extensions);
 #endif
+
+	return true;
 }
 
 
-void ofFbo::setup(int width, int height, int internalformat, int numSamples) {
+void ofFbo::allocate(int width, int height, int internalformat, int numSamples) {
 
 	settings.width			= width;
 	settings.height			= height;
@@ -348,12 +360,12 @@ void ofFbo::setup(int width, int height, int internalformat, int numSamples) {
 	settings.useDepth		= true;
 	settings.useStencil		= true;
 	
-	setup(settings);
+	allocate(settings);
 }
 
 
-void ofFbo::setup(Settings _settings) {
-	checkGLSupport();
+void ofFbo::allocate(Settings _settings) {
+	if(!checkGLSupport()) return;
 
 	destroy();
 
@@ -420,7 +432,9 @@ void ofFbo::setup(Settings _settings) {
 	unbind();
 }
 
-void ofFbo::setupShadow( int width, int height )
+/*  removed by now, was crashing on draw
+ *
+void ofFbo::allocateForShadow( int width, int height )
 {
 //#ifndef TARGET_OPENGLES
 	int old;
@@ -460,7 +474,7 @@ void ofFbo::setupShadow( int width, int height )
 		printf("Can't use FBOs !\n");
 	
 	glBindFramebuffer( GL_FRAMEBUFFER, old );
-}
+}*/
 
 GLuint ofFbo::createAndAttachRenderbuffer(GLenum internalFormat, GLenum attachmentPoint) {
 	GLuint buffer;
@@ -482,6 +496,7 @@ void ofFbo::createAndAttachTexture(GLenum attachmentPoint) {
 	glBindFramebuffer(GL_FRAMEBUFFER, fboTextures);
 
 	ofTexture tex;
+	tex.texData.bFlipTexture = true;
 	tex.allocate(settings.width, settings.height, settings.internalformat, settings.textureTarget == GL_TEXTURE_2D ? false : true);
 	tex.setTextureWrap(settings.wrapModeHorizontal, settings.wrapModeVertical);
 	tex.setTextureMinMagFilter(settings.minFilter, settings.maxFilter);
@@ -503,6 +518,9 @@ void ofFbo::createAndAttachTexture(GLenum attachmentPoint) {
 void ofFbo::begin() {
 	bind();
 	ofPushView();
+	if(ofGetGLRenderer()){
+		ofGetGLRenderer()->setCurrentFBO(this);
+	}
 	ofViewport(0, 0, getWidth(), getHeight(), false);
 	ofSetupScreenPerspective(getWidth(), getHeight(), ofGetOrientation(), false);
 }
@@ -513,6 +531,9 @@ void ofFbo::begin() {
 
 void ofFbo::end() {
 	unbind();
+	if(ofGetGLRenderer()){
+		ofGetGLRenderer()->setCurrentFBO(NULL);
+	}
 	ofPopView();
 }
 
@@ -529,6 +550,7 @@ void ofFbo::unbind() {
 	if(isBound) {
 		glBindFramebuffer(GL_FRAMEBUFFER, savedFramebuffer);
 		isBound = 0;
+		dirty = true;
 	}
 }
 
@@ -537,15 +559,77 @@ int ofFbo::getNumTextures() {
 	return textures.size();
 }
 
-ofTexture& ofFbo::getTexture(int attachmentPoint) {
+void ofFbo::setDefaultTextureIndex(int defaultTexture)
+{
+	defaultTextureIndex = defaultTexture;
+}
+	
+int ofFbo::getDefaultTextureIndex()
+{
+	return defaultTextureIndex;
+}
+
+ofTexture& ofFbo::getTextureReference() {
+	return getTextureReference(defaultTextureIndex);
+}
+
+ofTexture& ofFbo::getTextureReference(int attachmentPoint) {
 	updateTexture(attachmentPoint);
 	return textures[attachmentPoint];
+}
+void ofFbo::setAnchorPercent(float xPct, float yPct){
+	getTextureReference().setAnchorPercent(xPct, yPct);
+}
+
+void ofFbo::setAnchorPoint(float x, float y){
+	getTextureReference().setAnchorPoint(x, y);
+}
+
+void ofFbo::resetAnchor(){
+	getTextureReference().resetAnchor();
+}
+
+
+void ofFbo::readToPixels(ofPixels & pixels, int attachmentPoint){
+#ifndef TARGET_OPENGLES
+	getTextureReference(attachmentPoint).readToPixels(pixels);
+#else
+	bind();
+	int format,type;
+	ofGetGlFormatAndType(settings.internalformat,format,type);
+	glReadPixels(0,0,settings.width, settings.height, format, GL_UNSIGNED_BYTE, pixels.getPixels());
+	unbind();
+#endif
+}
+
+void ofFbo::readToPixels(ofShortPixels & pixels, int attachmentPoint){
+#ifndef TARGET_OPENGLES
+	getTextureReference(attachmentPoint).readToPixels(pixels);
+#else
+	bind();
+	int format,type;
+	ofGetGlFormatAndType(settings.internalformat,format,type);
+	glReadPixels(0,0,settings.width, settings.height, format, GL_UNSIGNED_SHORT, pixels.getPixels());
+	unbind();
+#endif
+}
+
+void ofFbo::readToPixels(ofFloatPixels & pixels, int attachmentPoint){
+#ifndef TARGET_OPENGLES
+	getTextureReference(attachmentPoint).readToPixels(pixels);
+#else
+	bind();
+	int format,type;
+	ofGetGlFormatAndType(settings.internalformat,format,type);
+	glReadPixels(0,0,settings.width, settings.height, format, GL_FLOAT, pixels.getPixels());
+	unbind();
+#endif
 }
 
 void ofFbo::updateTexture(int attachmentPoint) {
 	// TODO: flag to see if this is dirty or not
 #ifndef TARGET_OPENGLES
-	if(fbo != fboTextures) {
+	if(fbo != fboTextures && dirty) {
 		glGetIntegerv( GL_FRAMEBUFFER_BINDING, &savedFramebuffer );
 
 		// save current drawbuffer
@@ -570,6 +654,7 @@ void ofFbo::updateTexture(int attachmentPoint) {
 
 		// restore drawbuffer
 		glPopAttrib();
+		dirty = false;
 
 	}
 #endif
@@ -583,7 +668,7 @@ void ofFbo::draw(float x, float y) {
 
 
 void ofFbo::draw(float x, float y, float width, float height) {
-	getTexture(0).draw(x, y, width, height);
+	getTextureReference().draw(x, y, width, height);
 }
 
 
@@ -591,12 +676,12 @@ GLuint ofFbo::getFbo() {
 	return fbo;
 }
 
-int ofFbo::getWidth() {
+float ofFbo::getWidth() {
 	return settings.width;
 }
 
 
-int ofFbo::getHeight() {
+float ofFbo::getHeight() {
 	return settings.height;
 }
 

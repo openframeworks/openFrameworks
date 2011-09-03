@@ -31,7 +31,8 @@ ofEasyCam::ofEasyCam(){
 
 //----------------------------------------
 ofEasyCam::~ofEasyCam(){
-	disableMouseInput();
+	//this causes a crash on exit - not needed anymore?
+	//disableMouseInput();
 }
 
 //----------------------------------------

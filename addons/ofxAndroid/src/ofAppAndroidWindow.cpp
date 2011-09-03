@@ -48,8 +48,6 @@ static double			lastFrameTime;
 
 static JavaVM *ofJavaVM=0;
 
-
-static ofPtr<ofBaseApp> OFApp;
 static ofxAndroidApp * androidApp;
 
 static ofOrientation orientation = OF_ORIENTATION_DEFAULT;
@@ -92,87 +90,7 @@ void ofxRegisterMultitouch(ofxAndroidApp * app){
 }
 
 
-void ofxAndroidPauseApp(){
-	jclass javaClass = ofGetJavaOFAndroid();
 
-	if(javaClass==0){
-		ofLog(OF_LOG_ERROR,"cannot find OFAndroid java class");
-		return;
-	}
-
-	jmethodID pauseApp = ofGetJNIEnv()->GetStaticMethodID(javaClass,"pauseApp","()V");
-	if(!pauseApp){
-		ofLog(OF_LOG_ERROR,"cannot find OFAndroid pauseApp method");
-		return;
-	}
-	ofGetJNIEnv()->CallStaticObjectMethod(javaClass,pauseApp);
-}
-
-void ofxAndroidAlertBox(string msg){
-	jclass javaClass = ofGetJavaOFAndroid();
-
-	if(javaClass==0){
-		ofLog(OF_LOG_ERROR,"cannot find OFAndroid java class");
-		return;
-	}
-
-	jmethodID alertBox = ofGetJNIEnv()->GetStaticMethodID(javaClass,"alertBox","(Ljava/lang/String;)V");
-	if(!alertBox){
-		ofLog(OF_LOG_ERROR,"cannot find OFAndroid alertBox method");
-		return;
-	}
-	jstring jMsg = ofGetJNIEnv()->NewStringUTF(msg.c_str());
-	ofGetJNIEnv()->CallStaticObjectMethod(javaClass,alertBox,jMsg);
-}
-
-void ofxAndroidToast(string msg){
-	jclass javaClass = ofGetJavaOFAndroid();
-
-	if(javaClass==0){
-		ofLog(OF_LOG_ERROR,"cannot find OFAndroid java class");
-		return;
-	}
-
-	jmethodID toast = ofGetJNIEnv()->GetStaticMethodID(javaClass,"toast","(Ljava/lang/String;)V");
-	if(!toast){
-		ofLog(OF_LOG_ERROR,"cannot find OFAndroid toast method");
-		return;
-	}
-	jstring jMsg = ofGetJNIEnv()->NewStringUTF(msg.c_str());
-	ofGetJNIEnv()->CallStaticObjectMethod(javaClass,toast,jMsg);
-}
-
-void ofxAndroidLockScreenSleep(){
-	jclass javaClass = ofGetJavaOFAndroid();
-
-	if(javaClass==0){
-		ofLog(OF_LOG_ERROR,"cannot find OFAndroid java class");
-		return;
-	}
-
-	jmethodID lockScreenSleep = ofGetJNIEnv()->GetStaticMethodID(javaClass,"lockScreenSleep","()V");
-	if(!lockScreenSleep){
-		ofLog(OF_LOG_ERROR,"cannot find OFAndroid lockScreenSleep method");
-		return;
-	}
-	ofGetJNIEnv()->CallStaticObjectMethod(javaClass,lockScreenSleep);
-}
-
-void ofxAndroidUnlockScreenSleep(){
-	jclass javaClass = ofGetJavaOFAndroid();
-
-	if(javaClass==0){
-		ofLog(OF_LOG_ERROR,"cannot find OFAndroid java class");
-		return;
-	}
-
-	jmethodID unlockScreenSleep = ofGetJNIEnv()->GetStaticMethodID(javaClass,"unlockScreenSleep","()V");
-	if(!unlockScreenSleep){
-		ofLog(OF_LOG_ERROR,"cannot find OFAndroid unlockScreenSleep method");
-		return;
-	}
-	ofGetJNIEnv()->CallStaticObjectMethod(javaClass,unlockScreenSleep);
-}
 
 ofAppAndroidWindow::ofAppAndroidWindow() {
 	// TODO Auto-generated constructor stub
@@ -183,9 +101,8 @@ ofAppAndroidWindow::~ofAppAndroidWindow() {
 	// TODO Auto-generated destructor stub
 }
 
-void ofAppAndroidWindow::runAppViaInfiniteLoop(ofPtr<ofBaseApp> appPtr){
-	androidApp = dynamic_cast<ofxAndroidApp*>( appPtr.get() );
-	OFApp = appPtr;
+void ofAppAndroidWindow::runAppViaInfiniteLoop(ofBaseApp * appPtr){
+	androidApp = dynamic_cast<ofxAndroidApp*>( appPtr );
 }
 
 ofPoint	ofAppAndroidWindow::getWindowSize(){
@@ -236,7 +153,10 @@ void ofAppAndroidWindow::setOrientation(ofOrientation _orientation){
 		ofLog(OF_LOG_ERROR,"cannot find OFAndroid setScreenOrientation method");
 		return;
 	}
-	ofGetJNIEnv()->CallStaticObjectMethod(javaClass,setScreenOrientation,orientation);
+	if(orientation==OF_ORIENTATION_UNKNOWN)
+		ofGetJNIEnv()->CallStaticObjectMethod(javaClass,setScreenOrientation,-1);
+	else
+		ofGetJNIEnv()->CallStaticObjectMethod(javaClass,setScreenOrientation,ofOrientationToDegrees(orientation));
 }
 
 ofOrientation ofAppAndroidWindow::getOrientation(){
@@ -311,6 +231,8 @@ Java_cc_openframeworks_OFAndroid_setAppDataDir( JNIEnv*  env, jobject  thiz, jst
 			chdir(ofToDataPath("",true).c_str());
 			do_extract(zip,0,1,NULL);
 			chdir(current_dir);
+
+			resources.remove();
 		}
     }
 }
@@ -528,6 +450,24 @@ Java_cc_openframeworks_OFAndroid_onMenuItemSelected( JNIEnv*  env, jobject  thiz
 	const char *menu_id_str = env->GetStringUTFChars(menu_id, &iscopy);
 	if(androidApp) return androidApp->menuItemSelected(menu_id_str);
 	else return false;
+}
+
+jboolean
+Java_cc_openframeworks_OFAndroid_onMenuItemChecked( JNIEnv*  env, jobject  thiz, jstring menu_id, jboolean checked){
+	jboolean iscopy;
+	const char *menu_id_str = env->GetStringUTFChars(menu_id, &iscopy);
+	if(androidApp && menu_id_str) return androidApp->menuItemChecked(menu_id_str,checked);
+	else return false;
+}
+
+void
+Java_cc_openframeworks_OFAndroid_okPressed( JNIEnv*  env, jobject  thiz ){
+	if(androidApp) androidApp->okPressed();
+}
+
+void
+Java_cc_openframeworks_OFAndroid_cancelPressed( JNIEnv*  env, jobject  thiz ){
+	if(androidApp) androidApp->cancelPressed();
 }
 }
 

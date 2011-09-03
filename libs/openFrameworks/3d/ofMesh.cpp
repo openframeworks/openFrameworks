@@ -3,12 +3,12 @@
 
 //--------------------------------------------------------------
 ofMesh::ofMesh(){
-	mode = OF_TRIANGLES_MODE;
-	bVertsChanged = true;
-	bColorsChanged = true;
-	bNormalsChanged = true;
-	bTexCoordsChanged = true;
-	bIndicesChanged = true;
+	mode = OF_PRIMITIVE_TRIANGLES;
+	bVertsChanged = false;
+	bColorsChanged = false;
+	bNormalsChanged = false;
+	bTexCoordsChanged = false;
+	bIndicesChanged = false;
 }
 
 //--------------------------------------------------------------
@@ -86,6 +86,32 @@ bool ofMesh::haveIndicesChanged(){
 	}
 }
 
+
+//--------------------------------------------------------------
+bool ofMesh::hasVertices(){
+	return !vertices.empty();
+}
+
+//--------------------------------------------------------------
+bool ofMesh::hasColors(){
+	return !colors.empty();
+}
+
+//--------------------------------------------------------------
+bool ofMesh::hasNormals(){
+	return !normals.empty();
+}
+
+//--------------------------------------------------------------
+bool ofMesh::hasTexCoords(){
+	return !texCoords.empty();
+}
+
+//--------------------------------------------------------------
+bool ofMesh::hasIndices(){
+	return !indices.empty();
+}
+
 //ADDERS
 
 //--------------------------------------------------------------
@@ -107,19 +133,19 @@ void ofMesh::addVertices(const ofVec3f* verts, int amt){
 }
 
 //--------------------------------------------------------------
-void ofMesh::addColor(const ofColor& c){
+void ofMesh::addColor(const ofFloatColor& c){
 	colors.push_back(c);
 	bColorsChanged = true;
 }
 
 //--------------------------------------------------------------
-void ofMesh::addColors(const vector<ofColor>& cols){
+void ofMesh::addColors(const vector<ofFloatColor>& cols){
 	colors.insert(colors.end(),cols.begin(),cols.end());
 	bColorsChanged = true;
 }
 
 //--------------------------------------------------------------
-void ofMesh::addColors(const ofColor* cols, int amt){
+void ofMesh::addColors(const ofFloatColor* cols, int amt){
 	colors.insert(colors.end(),cols,cols+amt);
 	bColorsChanged = true;
 }
@@ -209,7 +235,7 @@ ofVec3f ofMesh::getNormal(int i){
 }
 
 //--------------------------------------------------------------
-ofColor ofMesh::getColor(int i){
+ofFloatColor ofMesh::getColor(int i){
 	return colors[i];
 }
 
@@ -257,60 +283,100 @@ int ofPrimitive::getNumIndicesWire(){
 
 //--------------------------------------------------------------
 ofVec3f* ofMesh::getVerticesPointer(){
+#ifdef TARGET_OSX
 	return &vertices[0];
+#else
+	return vertices.data();
+#endif
 }
 
 //--------------------------------------------------------------
-ofColor* ofMesh::getColorsPointer(){
+ofFloatColor* ofMesh::getColorsPointer(){
+#ifdef TARGET_OSX
 	return &colors[0];
+#else
+	return colors.data();
+#endif
 }
 
 //--------------------------------------------------------------
 ofVec3f* ofMesh::getNormalsPointer(){
-	return &normals[0];
+#ifdef TARGET_OSX
+		return &normals[0];
+#else
+	return normals.data();
+#endif
 }
 
 //--------------------------------------------------------------
 ofVec2f* ofMesh::getTexCoordsPointer(){
-	return &texCoords[0];
+#ifdef TARGET_OSX
+		return &texCoords[0];
+#else
+	return texCoords.data();
+#endif
 }
 
 //--------------------------------------------------------------
 ofIndexType* ofMesh::getIndexPointer(){
-	return &indices[0];
+#ifdef TARGET_OSX
+		return &indices[0];
+#else
+	return indices.data();
+#endif
 }
 
 
 //--------------------------------------------------------------
-const float* ofMesh::getVerticesPointer() const{
-	return &vertices[0].x;
+const ofVec3f* ofMesh::getVerticesPointer() const{
+#ifdef TARGET_OSX
+	return &vertices[0];
+#else
+	return vertices.data();
+#endif
 }
 
 //--------------------------------------------------------------
-const float* ofMesh::getColorsPointer() const{
-	return &colors[0].r;
+const ofFloatColor* ofMesh::getColorsPointer() const{
+#ifdef TARGET_OSX
+	return &colors[0];
+#else
+	return colors.data();
+#endif
 }
 
 //--------------------------------------------------------------
-const float* ofMesh::getNormalsPointer() const{
-	return &normals[0].x;
+const ofVec3f* ofMesh::getNormalsPointer() const{
+#ifdef TARGET_OSX
+	return &normals[0];
+#else
+	return normals.data();
+#endif
 }
 
 //--------------------------------------------------------------
-const float* ofMesh::getTexCoordsPointer() const{
-	return &texCoords[0].x;
+const ofVec2f* ofMesh::getTexCoordsPointer() const{
+#ifdef TARGET_OSX
+	return &texCoords[0];
+#else
+	return texCoords.data();
+#endif
 }
 
 //--------------------------------------------------------------
 const ofIndexType * ofMesh::getIndexPointer() const{
+#ifdef TARGET_OSX
 	return &indices[0];
+#else
+	return indices.data();
+#endif
 }
 
 vector<ofVec3f> & ofMesh::getVertices(){
 	return vertices;
 }
 
-vector<ofColor> & ofMesh::getColors(){
+vector<ofFloatColor> & ofMesh::getColors(){
 	return colors;
 }
 
@@ -390,7 +456,7 @@ void ofMesh::setNormal(int index, const ofVec3f& n){
 }
 
 //--------------------------------------------------------------
-void ofMesh::setColor(int index, const ofColor& c){
+void ofMesh::setColor(int index, const ofFloatColor& c){
 	colors[index] = c;
 	bColorsChanged = true;
 }
@@ -476,6 +542,6 @@ void ofMesh::draw(){
 
 //--------------------------------------------------------------
 void ofMesh::draw(ofPolyRenderMode renderType){
-	ofGetDefaultRenderer()->draw(*this,renderType);
+	ofGetCurrentRenderer()->draw(*this,renderType);
 }
 

@@ -5,7 +5,6 @@
 #include "ofAppRunner.h"
 
 #include "Poco/String.h"
-#include "Poco/StringTokenizer.h"
 #include "Poco/LocalDateTime.h"
 #include "Poco/DateTimeFormatter.h"
 
@@ -455,29 +454,27 @@ string ofBinaryToString(const string& value) {
 }
 
 //--------------------------------------------------
-vector <string> ofSplitString(const string & source, const string & delimiters, bool ignoreEmpty, bool trim) {
-	using namespace Poco;
-
-	int flags = 0;
-	if(ignoreEmpty) {
-		flags |= StringTokenizer::TOK_IGNORE_EMPTY;
-	}
-	if(trim) {
-		flags |= StringTokenizer::TOK_TRIM;
-	}
-
-	// tokenize the sring using poco
-	StringTokenizer tokens(source, delimiters, flags);
+vector <string> ofSplitString(const string & source, const string & delimiter, bool ignoreEmpty, bool trim) {
 	vector<string> result;
-	result.assign(tokens.begin(), tokens.end());
-
-	// poco ignores trailing delimiters, which is inconsistent with everything else
-	string lastCharacter;
-	lastCharacter += source[source.size() - 1];
-	if(ofIsStringInString(delimiters, lastCharacter)) {
-		result.push_back("");
+	if (delimiter.empty()) {
+		result.push_back(source);
+		return result;
 	}
-
+	string::const_iterator substart = source.begin(), subend;
+	while (true) {
+		subend = search(substart, source.end(), delimiter.begin(), delimiter.end());
+		string sub(substart, subend);
+		if(trim) {
+			Poco::trimInPlace(sub);
+		}
+		if (!ignoreEmpty || !sub.empty()) {
+			result.push_back(sub);
+		}
+		if (subend == source.end()) {
+			break;
+		}
+		substart = subend + delimiter.size();
+	}
 	return result;
 }
 
@@ -495,6 +492,22 @@ string ofJoinString(vector <string> stringElements, const string & delimiter){
 	}
 
 	return resultString;
+}
+
+//--------------------------------------------------
+void ofStringReplace(string& input, string searchStr, string replaceStr){
+	size_t uPos = 0; 
+	size_t uFindLen = searchStr.length(); 
+	size_t uReplaceLen = replaceStr.length();
+		
+	if( uFindLen == 0 ){
+		return;
+	}
+
+	for( ;(uPos = input.find( searchStr, uPos )) != std::string::npos; ){
+		input.replace( uPos, uFindLen, replaceStr );
+		uPos += uReplaceLen;
+	}	
 }
 
 //--------------------------------------------------
@@ -553,9 +566,19 @@ string ofVAArgsToString(const char * format, ...){
 	return retStr;
 }
 
-//--------------------------------------------------
 string ofVAArgsToString(const char * format, va_list args){
-	return "ofVAArgsToString va_list: Not Implemented Yet";
+	// variadic args to string:
+	// http://www.codeproject.com/KB/string/string_format.aspx
+	char aux_buffer[10000];
+	string retStr("");
+	if (NULL != format){
+
+		// Get formatted string length adding one for NULL
+		vsprintf(aux_buffer, format, args);
+		retStr = aux_buffer;
+
+	}
+	return retStr;
 }
 
 //--------------------------------------------------

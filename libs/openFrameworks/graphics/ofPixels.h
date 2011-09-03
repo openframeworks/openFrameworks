@@ -6,6 +6,13 @@
 #include "ofMath.h"
 #include <limits>
 
+//---------------------------------------
+enum ofInterpolationMethod {
+	OF_INTERPOLATE_NEAREST_NEIGHBOR =1,
+	OF_INTERPOLATE_BILINEAR			=2,
+	OF_INTERPOLATE_BICUBIC			=3
+};
+
 template <typename PixelType>
 class ofPixels_ {
 
@@ -35,6 +42,20 @@ public:
 	void setFromExternalPixels(PixelType * newPixels,int w, int h, int channels);
 	void setFromAlignedPixels(const PixelType * newPixels, int width, int height, int channels, int stride);
 
+	//From ofPixelsUtils
+	// crop to a new width and height, this reallocates memory.
+	void crop(int x, int y, int width, int height);
+	// not in place
+	
+	void cropTo(ofPixels_<PixelType> &toPix, int x, int y, int _width, int _height);
+
+	// crop to a new width and height, this reallocates memory.
+	void rotate90(int nClockwiseRotations);
+	void mirror(bool vertically, bool horizontal);
+	bool resize(int dstWidth, int dstHeight, ofInterpolationMethod interpMethod=OF_INTERPOLATE_NEAREST_NEIGHBOR);	
+	bool resizeTo(ofPixels_<PixelType> & dst, ofInterpolationMethod interpMethod=OF_INTERPOLATE_NEAREST_NEIGHBOR);
+	bool pasteInto(ofPixels_<PixelType> &dst, int x, int y);
+
 	void swapRgb();
 
 	void clear();
@@ -43,8 +64,8 @@ public:
 	const PixelType * getPixels() const;
 
 	int getPixelIndex(int x, int y) const;
-	ofColor getColor(int x, int y) const;
-	void setColor(int x, int y, ofColor color);
+	ofColor_<PixelType> getColor(int x, int y) const;
+	void setColor(int x, int y, ofColor_<PixelType> color);
 
 	const PixelType& operator[](int pos) const;
 	PixelType& operator[](int pos);
@@ -68,6 +89,7 @@ public:
 	int size() const;
 
 private:
+	float bicubicInterpolate(const float *patch, float x,float y, float x2,float y2, float x3,float y3);
 
 	void copyFrom( const ofPixels_<PixelType>& mom );
 
@@ -125,9 +147,9 @@ void ofPixels_<PixelType>::copyFrom(const ofPixels_<SrcType> & mom){
 	if(mom.isAllocated()){
 		allocate(mom.getWidth(),mom.getHeight(),mom.getNumChannels());
 
-		float srcMax = ( (sizeof(SrcType) == sizeof(float) ) ? 1.f : numeric_limits<SrcType>::max() );
-		float dstMax = ( (sizeof(PixelType) == sizeof(float) ) ? 1.f : numeric_limits<PixelType>::max() );
-		float factor = dstMax / srcMax;
+		const float srcMax = ( (sizeof(SrcType) == sizeof(float) ) ? 1.f : numeric_limits<SrcType>::max() );
+		const float dstMax = ( (sizeof(PixelType) == sizeof(float) ) ? 1.f : numeric_limits<PixelType>::max() );
+		const float factor = dstMax / srcMax;
 
 		if(sizeof(SrcType) == sizeof(float)) {
 			// coming from float we need a special case to clamp the values

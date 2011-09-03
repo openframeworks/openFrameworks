@@ -343,7 +343,7 @@ ofFileDialogResult ofSystemLoadDialog(string windowTitle, bool bFolderSelection)
 
 	if( results.filePath.length() > 0 ){
 		results.bSuccess = true;
-		results.fileName = ofFilePath::getFilename(results.filePath);
+		results.fileName = ofFilePath::getFileName(results.filePath);
 	}
 
 	return results;
@@ -492,7 +492,7 @@ ofFileDialogResult ofSystemSaveDialog(string defaultName, string messageName){
 
 	if( results.filePath.length() > 0 ){
 		results.bSuccess = true;
-		results.fileName = ofFilePath::getFilename(results.filePath);
+		results.fileName = ofFilePath::getFileName(results.filePath);
 	}
 
 	return results;

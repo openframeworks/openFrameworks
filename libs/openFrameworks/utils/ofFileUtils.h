@@ -33,11 +33,11 @@ public:
 	operator string() const;  // cast to string, to use a buffer as a string
 
 	long size() const;
-
 	string getNextLine();
-	string getFirstLine();
+    string getFirstLine();
 	bool isLastLine();
-
+    void resetLineReader();
+    
 	friend ostream & operator<<(ostream & ostr, const ofBuffer & buf);
 	friend istream & operator>>(istream & istr, ofBuffer & buf);
 
@@ -67,7 +67,7 @@ public:
 
 	static bool isAbsolute(string path);
 	
-	static string getFilename(string filePath, bool bRelativeToData = true);	
+	static string getFileName(string filePath, bool bRelativeToData = true);	
 	static string getBaseName(string filePath); // filename without extension
 
 	static string getEnclosingDirectory(string filePath, bool bRelativeToData = true);

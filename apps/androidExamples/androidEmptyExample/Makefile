@@ -25,9 +25,9 @@
 # edit the following  vars to customize the makefile
 
 include config.make
-include $(OF_ROOT)/libs/openFrameworksCompiled/project/android/paths.make
 
 ifeq ($(findstring Android,$(MAKECMDGOALS)),Android)
+	include $(OF_ROOT)/libs/openFrameworksCompiled/project/android/paths.make
 	ARCH = android
 	ifeq ($(shell uname),Darwin)
 		HOST_PLATFORM = darwin-x86
@@ -131,7 +131,7 @@ ifeq ($(ARCH),android)
 	SYSTEMLIBS += -lstdc++ -lsupc++ -lgcc -lz -lGLESv1_CM -llog -ldl -lm -lc
 else
 	LDFLAGS = -Wl,-rpath=./libs
-	SYSTEMLIBS += $(shell pkg-config  glew gstreamer-0.10 gstreamer-video-0.10 gstreamer-base-0.10 gstreamer-app-0.10 libudev --libs)
+	SYSTEMLIBS += $(shell pkg-config  jack glew gstreamer-0.10 gstreamer-video-0.10 gstreamer-base-0.10 gstreamer-app-0.10 libudev --libs)
 	SYSTEMLIBS += -lglut -lGL -lasound -lopenal -lsndfile -lvorbis -lFLAC -logg -lfreeimage
 endif
 
@@ -143,34 +143,38 @@ ifeq ($(findstring addons.make,$(wildcard *.make)),addons.make)
 		ADDONS = $(shell cat addons.make)
 	endif
 	
-	ADDONS_REL_DIRS = $(addsuffix /src, $(ADDONS))
-	ADDONS_LIBS_REL_DIRS = $(addsuffix /libs, $(ADDONS))
-	ADDONS_DIRS = $(addprefix $(OF_ROOT)/addons/, $(ADDONS_REL_DIRS) )
-	ADDONS_LIBS_DIRS = $(addprefix $(OF_ROOT)/addons/, $(ADDONS_LIBS_REL_DIRS) )
-	ADDONS_BIN_LIBS_DIRS = $(addsuffix /*/lib/$(LIBSPATH), $(ADDONS_LIBS_DIRS) )
+	ifneq ($(strip $(ADDONS)),)
+	    ADDONS_REL_DIRS = $(addsuffix /src, $(ADDONS))
+	    ADDONS_LIBS_REL_DIRS = $(addsuffix /libs, $(ADDONS))
+	    ADDONS_DIRS = $(addprefix $(OF_ROOT)/addons/, $(ADDONS_REL_DIRS) )
+	    ADDONS_LIBS_DIRS = $(addprefix $(OF_ROOT)/addons/, $(ADDONS_LIBS_REL_DIRS) )
+	    ADDONS_BIN_LIBS_DIRS = $(addsuffix /*/lib/$(LIBSPATH), $(ADDONS_LIBS_DIRS) )
 	
-	ADDONS_INCLUDES = $(ADDONS_DIRS)
-	ADDONS_INCLUDES = $(ADDONS_LIBS_DIRS)
-	ADDONS_INCLUDES += $(shell find $(ADDONS_DIRS) -type d 2> /dev/null)
-	ADDONS_INCLUDES += $(shell find $(ADDONS_LIBS_DIRS) -type d 2> /dev/null)
-	ADDONSCFLAGS = $(addprefix -I,$(ADDONS_INCLUDES))
+	    ADDONS_INCLUDES = $(ADDONS_DIRS)
+	    ADDONS_INCLUDES = $(ADDONS_LIBS_DIRS)
+	    ADDONS_INCLUDES += $(shell find $(ADDONS_DIRS) -type d 2> /dev/null)
+	    ADDONS_INCLUDES += $(shell find $(ADDONS_LIBS_DIRS) -type d 2> /dev/null)
+	    ADDONSCFLAGS = $(addprefix -I,$(ADDONS_INCLUDES))
 
-	ifeq ($(findstring libsorder.make,$(shell find $(ADDONS_BIN_LIBS_DIRS) -name libsorder.make 2> /dev/null)),libsorder.make)
-		ADDONS_LIBS_W_ORDER = $(shell cat $(shell find $(ADDONS_BIN_LIBS_DIRS) -name libsorder.make 2> /dev/null))
+	    ifeq ($(findstring libsorder.make,$(shell find $(ADDONS_BIN_LIBS_DIRS) -name libsorder.make 2> /dev/null)),libsorder.make)
+		    ADDONS_LIBS_W_ORDER = $(shell cat $(shell find $(ADDONS_BIN_LIBS_DIRS) -name libsorder.make 2> /dev/null))
+		    EXCLUDE_LIBS_FILTER = $(addprefix %,$(addsuffix .a,$(ADDONS_LIBS_W_ORDER)))
+		    ADDONS_LIBS_STATICS = $(filter-out $(EXCLUDE_LIBS_FILTER), $(shell find $(ADDONS_BIN_LIBS_DIRS) -name *.a))
+	        ADDONS_LIBS_STATICS += $(addprefix -l, $(ADDONS_LIBS_W_ORDER))
+        	ADDONS_LIBS_STATICS += $(addprefix -L, $(shell find $(ADDONS_BIN_LIBS_DIRS) -name libsorder.make 2> /dev/null | sed s/libsorder.make//g))
+	    else
+		    ADDONS_LIBS_STATICS = $(shell find $(ADDONS_BIN_LIBS_DIRS) -name *.a 2> /dev/null)
+	    endif
+
+	    ADDONS_LIBS_SHARED = $(shell find $(ADDONS_BIN_LIBS_DIRS) -name *.so 2> /dev/null)
+	    ADDONSLIBS = $(ADDONS_LIBS_STATICS)
+	    ADDONSLIBS += $(ADDONS_LIBS_SHARED)
+
+
+	    ADDONS_SOURCES = $(shell find $(ADDONS_DIRS) -name "*.cpp" -or -name "*.c" 2> /dev/null)
+	    ADDONS_SOURCES += $(shell find $(ADDONS_LIBS_DIRS) -name "*.cpp" -or -name "*.c" -or -name "*.cc" 2>/dev/null)
+	    ADDONS_OBJFILES = $(subst $(OF_ROOT)/, ,$(patsubst %.cc,%.o,$(patsubst %.c,%.o,$(patsubst %.cpp,%.o,$(ADDONS_SOURCES)))))
 	endif
-
-	SED_EXCLUDE_LIBS = $(addsuffix \|,$(ADDONS_LIBS_W_ORDER))
-	ADDONS_LIBS_STATICS = $(shell find $(ADDONS_BIN_LIBS_DIRS) -name *.a 2> /dev/null | grep -v '$(SED_EXCLUDE_LIBS)')
-	ADDONS_LIBS_STATICS += $(addprefix -l, $(ADDONS_LIBS_W_ORDER))
-	ADDONS_LIBS_STATICS += $(addprefix -L, $(shell find $(ADDONS_BIN_LIBS_DIRS) -name libsorder.make 2> /dev/null | sed s/libsorder.make//g))
-	ADDONS_LIBS_SHARED = $(shell find $(ADDONS_BIN_LIBS_DIRS) -name *.so 2> /dev/null)
-	ADDONSLIBS = $(ADDONS_LIBS_STATICS)
-	ADDONSLIBS += $(ADDONS_LIBS_SHARED)
-
-
-	ADDONS_SOURCES = $(shell find $(ADDONS_DIRS) -name "*.cpp" -or -name "*.c" 2> /dev/null)
-	ADDONS_SOURCES += $(shell find $(ADDONS_LIBS_DIRS) -name "*.cpp" -or -name "*.c" -or -name "*.cc" 2>/dev/null)
-	ADDONS_OBJFILES = $(subst $(OF_ROOT)/, ,$(patsubst %.cc,%.o,$(patsubst %.c,%.o,$(patsubst %.cpp,%.o,$(ADDONS_SOURCES)))))
 endif
 
 
@@ -191,28 +195,39 @@ ifeq ($(ARCH),android)
 		TARGET = libs/armeabi/libOFAndroidApp.so
 		TARGET_LIBS = $(OF_ROOT)/libs/openFrameworksCompiled/lib/$(ARCH)/libopenFrameworksDebug.a
 		LDFLAGS += -Wl,--fix-cortex-a8 -shared
+		USER_LIBS = $(USER_LIBS_ARM)
 	endif
 
 	ifeq ($(findstring Release,$(MAKECMDGOALS)),Release)
 	    TARGET = libs/armeabi/libOFAndroidApp.so
 		TARGET_LIBS = $(OF_ROOT)/libs/openFrameworksCompiled/lib/$(ARCH)/libopenFrameworks.a
 		LDFLAGS += -Wl,--fix-cortex-a8 -shared
+		USER_LIBS = $(USER_LIBS_ARM)
 	endif
 
 	ifeq ($(findstring Release_arm7,$(MAKECMDGOALS)),Release_arm7)
 		TARGET_NAME = Release_arm7
-		TARGET_CFLAGS += -march=armv7-a -mfloat-abi=softfp -mfpu=neon
+		TARGET_CFLAGS += -march=armv7-a -mfloat-abi=softfp -mthumb
 	    TARGET = libs/armeabi-v7a/libOFAndroidApp.so
 		TARGET_LIBS = $(OF_ROOT)/libs/openFrameworksCompiled/lib/$(ARCH)/libopenFrameworks_arm7.a
-		#LDFLAGS += -shared  already included through Release
+		USER_LIBS = $(USER_LIBS_ARM7)
 	endif
 
+	ifeq ($(findstring Release_neon,$(MAKECMDGOALS)),Release_neon)
+		TARGET_NAME = Release_neon
+		TARGET_CFLAGS += -march=armv7-a -mfloat-abi=softfp -mfpu=neon
+	    TARGET = libs/armeabi-v7a/libOFAndroidApp_neon.so
+		TARGET_LIBS = $(OF_ROOT)/libs/openFrameworksCompiled/lib/$(ARCH)/libopenFrameworks_neon.a
+		USER_LIBS = $(USER_LIBS_NEON)
+	endif
+	
 	ifeq ($(findstring TestLink,$(MAKECMDGOALS)),TestLink)
 		TARGET_NAME = Debug
 		TARGET_LIBS = $(OF_ROOT)/libs/openFrameworksCompiled/lib/$(ARCH)/libopenFrameworksDebug.a
 		LDFLAGS += -Wl,--entry=main,--fix-cortex-a8
 	    BIN_NAME = $(APPNAME)
 	    TARGET = obj/$(BIN_NAME)
+		USER_LIBS = $(USER_LIBS_ARM)
 	endif
 else
 	ifeq ($(findstring Debug,$(MAKECMDGOALS)),Debug)
@@ -235,6 +250,7 @@ endif
 
 ifeq ($(MAKECMDGOALS),clean)
 	TARGET = bin/$(APPNAME)_debug bin/$(APPNAME)
+	TARGET_NAME = Release
 endif
 
 
@@ -261,13 +277,13 @@ Debug: $(TARGET) after
 all:
 	$(MAKE) Release
 
-
-
 DebugAndroid: $(TARGET)
 
 ReleaseAndroid: $(TARGET)
 
-Release_arm7Android: $(TARGET) afterReleaseAndroid
+Release_arm7Android: $(TARGET)
+
+Release_neonAndroid: $(TARGET) afterReleaseAndroid
 
 TestLinkAndroid: $(TARGET) afterDebugAndroid
 
@@ -278,6 +294,7 @@ AndroidDebug:
 AndroidRelease:
 	$(MAKE) ReleaseAndroid
 	$(MAKE) Release_arm7Android
+	$(MAKE) Release_neonAndroid
 
 
 #This rule does the compilation
@@ -329,30 +346,63 @@ $(OBJ_OUTPUT)%.o: $(USER_SOURCE_DIR)/%.cpp
 	
 $(TARGET): $(OBJS) $(ADDONS_OBJS) $(USER_OBJS) $(TARGET_LIBS) $(LIB_STATIC)
 	@echo 'linking $(TARGET)'
+	mkdir -p $(@D)
 	$(CXX) -o $@ $(OBJS) $(ADDONS_OBJS) $(USER_OBJS) $(LDFLAGS) $(USER_LDFLAGS) $(TARGET_LIBS) $(ADDONSLIBS) $(USER_LIBS) $(LIB_STATIC) $(LIB_PATHS_FLAGS) $(LIB_SHARED) $(SYSTEMLIBS)
 
 -include $(DEPFILES)
 
 .PHONY: clean cleanDebug cleanRelease CleanAndroid
+clean:
+	rm -rf $(OBJ_OUTPUT)
+	rm -f $(TARGET)
+	rm -r bin/libs
+	
 $(CLEANTARGET):
-	rm -Rf -v $(OBJ_OUTPUT)
-	rm -f -v $(TARGET)
-	rm -Rf -v bin/libs
+	rm -rf $(OBJ_OUTPUT)
+	rm -f $(TARGET)
+	rm -rf bin/libs
 
 CleanAndroid:
 	rm -Rf obj
-	rm -f -v libs/armeabi-v7a/libOFAndroidApp.so
-	rm -f -v libs/armeabi/libOFAndroidApp.so
-	rm -f -v obj/$(APPNAME)
+	rm -f libs/armeabi-v7a/libOFAndroidApp.so
+	rm -f libs/armeabi/libOFAndroidApp.so
+	rm -f obj/$(APPNAME)
 
 
 afterDebugAndroid:$(TARGET)
-	if [ -f libs/armeabi-v7a/libOFAndroidApp.so ]; then rm libs/armeabi-v7a/libOFAndroidApp.so; fi
-	#touch AndroidManifest.xml
+	@if [ -d libs/armeabi-v7a ]; then rm -r libs/armeabi-v7a; fi
+	
+	@cp $(NDK_ROOT)/toolchains/arm-linux-androideabi-4.4.3/prebuilt/gdbserver libs/armeabi
+	
+	#create gdb.setup for armeabi
+	@echo "set solib-search-path $(PWD)/obj/local/armeabi:$(PWD)/libs/armeabi" > libs/armeabi/gdb.setup
+	@echo "directory $(NDK_ROOT)/platforms/$(NDK_PLATFORM)/arch-arm/usr/include" >> libs/armeabi/gdb.setup
+	@echo "directory $(PWD)/src" >> libs/armeabi/gdb.setup
+	@echo "directory $(NDK_ROOT)/sources/cxx-stl/system" >> libs/armeabi/gdb.setup
+	@echo "directory $(PWD)/libs/armeabi" >> libs/armeabi/gdb.setup 
+	@echo "" >> libs/armeabi/gdb.setup 
+	
+	@if [ ! -d jni ]; then mkdir jni; fi
+	@echo "APP_ABI := armeabi" > jni/Application.mk
+	@echo "#LOCAL_MODULE := OFAndroidApp" > jni/Android.mk
 
 afterReleaseAndroid:$(TARGET)
-	if [ -f obj/$(BIN_NAME) ]; then rm obj/$(BIN_NAME); fi
-	#touch AndroidManifest.xml
+	@if [ -f obj/$(BIN_NAME) ]; then rm obj/$(BIN_NAME); fi
+	
+	@cp $(OF_ROOT)/libs/openFrameworksCompiled/project/android/libneondetection.so libs/armeabi-v7a/
+	@cp $(NDK_ROOT)/toolchains/arm-linux-androideabi-4.4.3/prebuilt/gdbserver libs/armeabi-v7a
+	
+	#create gdb.setup for armeabi-v7a
+	@echo "set solib-search-path $(PWD)/obj/local/armeabi-v7a:$(PWD)/libs/armeabi-v7a" > libs/armeabi-v7a/gdb.setup
+	@echo "directory $(NDK_ROOT)/platforms/$(NDK_PLATFORM)/arch-arm/usr/include" >> libs/armeabi-v7a/gdb.setup
+	@echo "directory $(PWD)/src" >> libs/armeabi-v7a/gdb.setup
+	@echo "directory $(NDK_ROOT)/sources/cxx-stl/system" >> libs/armeabi-v7a/gdb.setup
+	@echo "directory $(PWD)/libs/armeabi-v7a" >> libs/armeabi-v7a/gdb.setup 
+	@echo "" >> libs/armeabi-v7a/gdb.setup 
+	
+	@if [ ! -d jni ]; then mkdir jni; fi
+	@echo "APP_ABI := armeabi armeabi-v7a" > jni/Application.mk
+	@echo "#LOCAL_MODULE := OFAndroidApp" > jni/Android.mk
 
 RESNAME=$(shell echo $(APPNAME)Resources | tr '[A-Z]' '[a-z]')
 
@@ -373,6 +423,7 @@ AndroidInstall:
 	$(SDK_ROOT)/platform-tools/adb install -r bin/$(APPNAME).apk;
 	#fi
 	$(SDK_ROOT)/platform-tools/adb shell am start -a android.intent.action.MAIN -n cc.openframeworks.$(APPNAME)/cc.openframeworks.$(APPNAME).OFActivity
+
 
 after:$(TARGET)
 	cp -r $(OF_ROOT)/export/$(LIBSPATH)/libs bin/

@@ -1,4 +1,7 @@
 #include "ofOpenALSoundPlayer.h"
+
+#ifdef OF_SOUND_PLAYER_OPENAL
+
 #include "ofUtils.h"
 #include "ofMath.h"
 #include "ofFileUtils.h"
@@ -73,8 +76,8 @@ void ofOpenALSoundPlayer::createWindow(int size){
 		windowSum = 0;
 		window.resize(size);
 		// hanning window
-		for(int i = 0; i < 511*2; i++){
-			window[i] = .54 - .46 * cos((TWO_PI * i) / (511*2 - 1));
+		for(int i = 0; i < size; i++){
+			window[i] = .54 - .46 * cos((TWO_PI * i) / (size - 1));
 			windowSum += window[i];
 		}
 	}
@@ -828,3 +831,5 @@ void ofOpenALSoundPlayer::runWindow(vector<float> & signal){
 	for(int i = 0; i < (int)signal.size(); i++)
 		signal[i] *= window[i];
 }
+
+#endif

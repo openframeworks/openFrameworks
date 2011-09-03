@@ -47,7 +47,9 @@ void ofSoundStreamListDevices(){
 
 //------------------------------------------------------------
 ofSoundStream::ofSoundStream(){
-	setSoundStream( ofPtr<OF_SOUND_STREAM_TYPE>(new OF_SOUND_STREAM_TYPE) );
+	#ifdef OF_SOUND_STREAM_TYPE
+		setSoundStream( ofPtr<OF_SOUND_STREAM_TYPE>(new OF_SOUND_STREAM_TYPE) );
+	#endif
 }
 
 //------------------------------------------------------------

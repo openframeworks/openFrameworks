@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 import os
 from lxml import etree
 from lxml import objectify
@@ -16,9 +16,6 @@ uname = os.uname()
 for uname_str in uname:
     if uname_str=='x86_64':
         arch = 'linux64'
-        
-templates_path = os.path.join(of_root,'apps','devApps',platform)
-template = {'cbp': os.path.join(templates_path , 'emptyExample_' + arch + '.cbp'), 'full_cbp': os.path.join(templates_path , 'emptyExample_' + arch + '_fullCBP.cbp'), 'makefile': os.path.join(templates_path , 'Makefile'), 'config.make': os.path.join(templates_path , 'config.make')}
 
 fullCBP = True
 
@@ -152,6 +149,25 @@ def createCBP(project_path):
     cbp_file = open(os.path.join(project_path,project_name+'.cbp'),mode='w')
     cbp_file.write(etree.tostring(cbp, xml_declaration=True, encoding='UTF-8', pretty_print=True))
     cbp_file.close()
+    
+def createWorkspace(project_path):
+    if os.path.abspath(project_path) == os.path.abspath(templates_path):
+        return
+    project_name = os.path.basename(project_path)
+    ws = objectify.parse(os.path.join(project_path,project_name+'.workspace'))
+    root = ws.getroot()
+    workspace = root.Workspace
+
+    if workspace.get("title")=="emptyExample":
+         workspace.set("title",project_name)
+         
+    for project in workspace.Project:
+        if project.get("filename")=="emptyExample.cbp":
+            project.set("filename",project_name+".cbp")
+
+    ws_file = open(os.path.join(project_path,project_name+'.workspace'),mode='w')
+    ws_file.write(etree.tostring(ws, xml_declaration=True, encoding='UTF-8', pretty_print=True))
+    ws_file.close()
 
 def createProject(project_path):
     print 'generating',project_path
@@ -167,6 +183,9 @@ def createProject(project_path):
         shutil.copyfile(template['full_cbp'],os.path.join(project_path,project_name+'.cbp'))
     else:
         shutil.copyfile(template['cbp'],os.path.join(project_path,project_name+'.cbp'))
+        
+    shutil.copyfile(template['workspace'],os.path.join(project_path,project_name+'.workspace'))
+    
     if platform == "linux":
         shutil.copyfile(template['makefile'],os.path.join(project_path,'Makefile'))
 
@@ -185,6 +204,7 @@ def createProject(project_path):
         os.mkdir(os.path.join(project_path , 'bin','data'))
 
     createCBP(project_path)
+    createWorkspace(project_path)
 
 
 
@@ -192,9 +212,14 @@ parser = argparse.ArgumentParser(description='OF linux project generator')
 parser.add_argument('project_path', metavar='project_path', nargs='?')
 parser.add_argument('-n', '--not_mk', dest='not_mk', action='store_const',
         default=False, const=True, help='create cbp not dependent on Makefile')
+parser.add_argument('-p', '--platform', dest='platform', action='store', default=arch, choices=['linux','linux64'], help='choose platform: linux/linux64 if it\'s not specified it\'ll be detected')
 
+arch = parser.parse_args().platform
 project_path = parser.parse_args().project_path
 fullCBP = parser.parse_args().not_mk
+        
+templates_path = os.path.join(of_root,'scripts',platform,'template')
+template = {'cbp': os.path.join(templates_path , 'emptyExample_' + arch + '.cbp'), 'full_cbp': os.path.join(templates_path , 'emptyExample_' + arch + '_fullCBP.cbp'), 'workspace': os.path.join(templates_path , 'emptyExample_' + arch + '.workspace'),'makefile': os.path.join(templates_path , 'Makefile'), 'config.make': os.path.join(templates_path , 'config.make')}
 
 if project_path==None: #parse all examples
     for example in os.listdir(os.path.join(of_root,'apps','examples')):

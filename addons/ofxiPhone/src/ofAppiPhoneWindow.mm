@@ -54,6 +54,10 @@ ofAppiPhoneWindow::ofAppiPhoneWindow() {
 	if(_instance == NULL) _instance = this;
 	else ofLog(OF_LOG_ERROR, "Instanciating ofAppiPhoneWindow more than once! how come?");
 	nFrameCount = 0;
+	lastFrameTime = 0;
+	fps = frameRate = 60.0f;
+	timeNow = 0.0;
+	timeThen = 0.0;
 	bEnableSetupScreen = true;
 	
 	windowPos.set(NOT_INITIALIZED, NOT_INITIALIZED);
@@ -86,7 +90,7 @@ void ofAppiPhoneWindow::initializeWindow() {
 }
 
 
-void  ofAppiPhoneWindow::runAppViaInfiniteLoop(ofPtr<ofBaseApp> appPtr) {
+void  ofAppiPhoneWindow::runAppViaInfiniteLoop(ofBaseApp * appPtr) {
 	ofLog(OF_LOG_VERBOSE, "ofAppiPhoneWindow::runAppViaInfiniteLoop()");
 	
 	NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
@@ -141,6 +145,10 @@ ofPoint	ofAppiPhoneWindow::getScreenSize() {
 	if(screenSize.x == NOT_INITIALIZED) {
 		CGSize s = [[UIScreen mainScreen] bounds].size;
 		screenSize.set(s.width, s.height, 0);
+		
+		if(retinaEnabled)
+			if ([[UIScreen mainScreen] respondsToSelector:@selector(scale)])
+				screenSize*=[[UIScreen mainScreen] scale];
 	}
 	return screenSize;
 }
@@ -149,6 +157,7 @@ int ofAppiPhoneWindow::getWidth(){
 	if( orientation == OF_ORIENTATION_DEFAULT || orientation == OF_ORIENTATION_180 ){
 		return (int)getScreenSize().x;
 	}
+	
 	return (int)getScreenSize().y;
 }
 
@@ -156,6 +165,7 @@ int ofAppiPhoneWindow::getHeight(){
 	if( orientation == OF_ORIENTATION_DEFAULT || orientation == OF_ORIENTATION_180 ){
 		return (int)getScreenSize().y;
 	}
+	
 	return (int)getScreenSize().x;
 }
 
@@ -174,6 +184,10 @@ void ofAppiPhoneWindow::setFrameRate(float targetRate) {
 
 int	ofAppiPhoneWindow::getFrameNum() {
 	return nFrameCount;
+}
+
+double ofAppiPhoneWindow::getLastFrameTime() {
+	return lastFrameTime;
 }
 
 void ofAppiPhoneWindow::setWindowTitle(string title) {
@@ -336,15 +350,15 @@ void ofAppiPhoneWindow::timerLoop() {
 	
 	
 	
-	// -------------- fps calculation:
 	timeNow = ofGetElapsedTimef();
-    double diff = timeNow-timeThen;
-	if( diff  > 0.0f ) {
-		fps = 1.0 / diff;
-		frameRate *= 0.9f;
-        frameRate += 0.1f*fps;
-	}
-	timeThen = timeNow;
+	double diff = timeNow-timeThen;
+	if( diff  > 0.00001 ){
+		fps			= 1.0 / diff;
+		frameRate	*= 0.9f;
+		frameRate	+= 0.1f*fps;
+	 }
+	 lastFrameTime	= diff;
+	 timeThen		= timeNow;
   	// --------------
 	
 	nFrameCount++;		// increase the overall frame count

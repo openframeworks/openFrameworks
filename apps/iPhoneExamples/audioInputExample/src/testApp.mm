@@ -43,14 +43,14 @@ void testApp::draw(){
 	ofTranslate(0, -50, 0);
 
 	// draw the input:
-	ofSetColor(0x333333);
+	ofSetHexColor(0x333333);
 	ofRect(70,100,256,200);
-	ofSetColor(0xFFFFFF);
+	ofSetHexColor(0xFFFFFF);
 	for (int i = 0; i < initialBufferSize; i++){
 		ofLine(70+i,200,70+i,200+buffer[i]*100.0f);
 	}
 
-	ofSetColor(0x333333);
+	ofSetHexColor(0x333333);
 	drawCounter++;
 	char reportString[255];
 	sprintf(reportString, "buffers received: %i\ndraw routines called: %i\n", bufferCounter,drawCounter);
@@ -59,7 +59,7 @@ void testApp::draw(){
 }
 
 //--------------------------------------------------------------
-void testApp::audioReceived(float * input, int bufferSize, int nChannels){
+void testApp::audioIn(float * input, int bufferSize, int nChannels){
 			
 	if( initialBufferSize != bufferSize ){
 		ofLog(OF_LOG_ERROR, "your buffer size was set to %i - but the stream needs a buffer size of %i", initialBufferSize, bufferSize);

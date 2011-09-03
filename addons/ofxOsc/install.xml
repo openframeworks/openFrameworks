@@ -36,6 +36,8 @@
 			<lib os="linux" compiler="codeblocks, makefile">../../../addons/ofxOsc/libs/oscpack/lib/linux/liboscpack.a</lib>
 			<lib os="linux64" compiler="codeblocks, makefile">../../../addons/ofxOsc/libs/oscpack/lib/linux64/liboscpack.a</lib>
 			<lib os="mac"   compiler="xcode">../../../addons/ofxOsc/libs/oscpack/lib/osx/osc.a</lib>
+			<lib os="iphone"   compiler="xcode">../../../addons/ofxOsc/libs/oscpack/lib/iphone/osc.a</lib>
+			<lib os="iphone"   compiler="xcode">../../../addons/ofxOsc/libs/oscpack/lib/osx/osc.a</lib>
 		</link>
 
 	</add>
