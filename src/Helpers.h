@@ -14,6 +14,8 @@ namespace ofxCv {
 
 	void loadImage(Mat& mat, string filename);
 	void saveImage(Mat mat, string filename);
+	void loadMat(Mat& mat, string filename);
+	void saveMat(Mat mat, string filename);
 	
 	ofMatrix4x4 makeMatrix(Mat rotation, Mat translation);
 	void applyMatrix(const ofMatrix4x4& matrix);

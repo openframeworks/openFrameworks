@@ -28,4 +28,7 @@
 #include "ContourFinder.h"
 #include "Tracker.h"
 
+using namespace ofxCv;
+using namespace cv;
+
 // <3 kyle

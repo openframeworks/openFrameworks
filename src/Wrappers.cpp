@@ -169,4 +169,22 @@ namespace ofxCv {
 	 return findMaxLocation(img.toCv());
 	 }
 	 */
+	 
+	void medianBlur(ofImage& img, int size) {
+		size = forceOdd(size);
+		Mat mat = toCv(img);
+		medianBlur(mat, mat, size);
+	}
+	
+	void resize(ofImage& source, ofImage& destination, int interpolation) {
+		Mat sourceMat = toCv(source);
+		Mat destinationMat = toCv(destination);
+		resize(sourceMat, destinationMat, destinationMat.size(), 0, 0, interpolation);
+	}
+	
+	void resize(ofImage& source, ofImage& destination, float xScale, float yScale, int interpolation) {
+		ofImageType sourceType = source.getPixelsRef().getImageType();
+		destination.allocate(source.getWidth() * xScale, source.getHeight() * yScale, sourceType);
+		resize(source, destination, interpolation);
+	}
 }

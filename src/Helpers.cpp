@@ -13,6 +13,16 @@ namespace ofxCv {
 		imwrite(ofToDataPath(filename), mat);
 	}
 	
+	void loadMat(Mat& mat, string filename) {
+		FileStorage fs(ofToDataPath(filename), FileStorage::READ);
+		fs["Mat"] >> mat;
+	}
+	
+	void saveMat(Mat mat, string filename) {
+		FileStorage fs(ofToDataPath(filename), FileStorage::WRITE);
+		fs << "Mat" << mat;
+	}
+	
 	ofMatrix4x4 makeMatrix(Mat rotation, Mat translation) {
 		Mat rot3x3;
 		if(rotation.rows == 3 && rotation.cols == 3) {
@@ -83,36 +93,6 @@ namespace ofxCv {
 	
 	int forceOdd(int x) {
 		return (x / 2) * 2 + 1;
-	}
-	
-	void medianBlur(ofImage& img, int size) {
-		size = forceOdd(size);
-		Mat mat = toCv(img);
-		medianBlur(mat, mat, size);
-	}
-	
-	void warpPerspective(ofImage& src, ofImage& dst, Mat& m, int flags) {
-		Mat srcMat = toCv(src);
-		Mat dstMat = toCv(dst);
-		warpPerspective(srcMat, dstMat, m, dstMat.size(), flags);
-	}
-	
-	void warpPerspective(ofPixels& src, ofPixels& dst, Mat& m, int flags) {
-		Mat srcMat = toCv(src);
-		Mat dstMat = toCv(dst);
-		warpPerspective(srcMat, dstMat, m, dstMat.size(), flags);
-	}
-	
-	void resize(ofImage& source, ofImage& destination, int interpolation) {
-		Mat sourceMat = toCv(source);
-		Mat destinationMat = toCv(destination);
-		resize(sourceMat, destinationMat, destinationMat.size(), 0, 0, interpolation);
-	}
-	
-	void resize(ofImage& source, ofImage& destination, float xScale, float yScale, int interpolation) {
-		ofImageType sourceType = source.getPixelsRef().getImageType();
-		destination.allocate(source.getWidth() * xScale, source.getHeight() * yScale, sourceType);
-		resize(source, destination, interpolation);
 	}
 	
 	int findFirst(const Mat& arr, unsigned char target) {

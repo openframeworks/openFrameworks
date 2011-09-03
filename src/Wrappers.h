@@ -120,6 +120,38 @@ cv::name(xMat, yMat, resultMat);\
 		ofxCv::blur(srcDst, srcDst, size);
 	}
 	
+	// dst does not imitate src
+	template <class S, class D>
+	void warpPerspective(S& src, D& dst, vector<cv::Point2f>& dstPoints, int flags = INTER_LINEAR) {
+		Mat srcMat = toCv(src);
+		Mat dstMat = toCv(dst);
+		
+		int w = srcMat.cols;
+		int h = srcMat.rows;
+		vector<cv::Point2f> srcPoints;
+		srcPoints.push_back(cv::Point2f(0, 0));
+		srcPoints.push_back(cv::Point2f(w, 0));
+		srcPoints.push_back(cv::Point2f(w, h));
+		srcPoints.push_back(cv::Point2f(0, h));
+		
+		Mat transform = getPerspectiveTransform(&srcPoints[0], &dstPoints[0]);
+		warpPerspective(srcMat, dstMat, transform, dstMat.size(), flags);
+	}
+	
+	// dst does not imitate src
+	template <class S, class D>
+	void unwarpPerspective(S& src, D& dst, vector<cv::Point2f>& dstPoints, int flags = INTER_LINEAR) {
+		warpPerspective(src, dst, dstPoints, flags | WARP_INVERSE_MAP);
+	}
+	
+	// dst does not imitate src
+	template <class S, class D>
+	void warpPerspective(S& src, D& dst, Mat& transform, int flags = INTER_LINEAR) {
+		Mat srcMat = toCv(src);
+		Mat dstMat = toCv(dst);
+		warpPerspective(srcMat, dstMat, transform, dstMat.size(), flags);
+	}
+	
 	// older wrappers, need to be templated..	
 	// for contourArea()/arcLength(), see ofPolyline::getArea()/getPerimiter()
 	// not sure if these three need to be templated. convexHull returning an
@@ -140,8 +172,6 @@ cv::name(xMat, yMat, resultMat);\
 	//void convolve(ofImage& source, FloatImage& kernel, ofImage& destination);
 	//void convolve(ofImage& img, FloatImage& kernel);
 	void medianBlur(ofImage& img, int size);
-	void warpPerspective(ofImage& src, ofImage& dst, Mat& m, int flags = 0);
-	void warpPerspective(ofPixels& src, ofPixels& dst, Mat& m, int flags = 0);
 	void resize(ofImage& source, ofImage& destination, int interpolation = INTER_LINEAR); // options: INTER_NEAREST, INTER_LINEAR, INTER_AREA, INTER_CUBIC, INTER LANCZOS4
 	void resize(ofImage& source, ofImage& destination, float xScale, float yScale, int interpolation = INTER_LINEAR);
 	
