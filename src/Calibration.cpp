@@ -96,6 +96,15 @@ namespace ofxCv {
 		vector<Point2f> pointBuf;
 		
 		// find corners
+		bool found = findBoard(img, pointBuf, true);
+		
+		if (found)
+			imagePoints.push_back(pointBuf);
+		else
+			ofLog(OF_LOG_ERROR, "Calibration::add() failed, maybe your boardSize is wrong or the image has poor lighting?");
+		return found;
+	}
+	bool Calibration::findBoard(Mat img, vector<Point2f> &pointBuf, bool refine) {
 		// no CV_CALIB_CB_FAST_CHECK, because it breaks on dark images (e.g., dark IR images from kinect)
 		int chessFlags = CV_CALIB_CB_ADAPTIVE_THRESH;// | CV_CALIB_CB_NORMALIZE_IMAGE;
 		bool found = findChessboardCorners(img, boardSize, pointBuf, chessFlags);
@@ -112,11 +121,10 @@ namespace ofxCv {
 			// in other words, if your smallest square is 11x11 pixels, then set this to 11x11
 			cornerSubPix(grayMat, pointBuf, cv::Size(11, 11),  cv::Size(-1,-1), TermCriteria(CV_TERMCRIT_EPS + CV_TERMCRIT_ITER, 30, 0.1 ));
 			
-			imagePoints.push_back(pointBuf);
+			return true;
 		} else {
-			ofLog(OF_LOG_ERROR, "Calibration::add() failed, maybe your boardSize is wrong or the image has poor lighting?");
+			return false;
 		}
-		return found;
 	}
 	bool Calibration::clean(float minReprojectionError) {
 		int removed = 0;
@@ -147,7 +155,6 @@ namespace ofxCv {
 		int calibFlags = 0;
     float rms = calibrateCamera(objectPoints, imagePoints, addedImageSize, cameraMatrix, distCoeffs, boardRotations, boardTranslations, calibFlags);
     ofLog(OF_LOG_VERBOSE, "calibrateCamera() reports RMS error of " + ofToString(rms));
-		cout << "should be printing..." << endl;
 		
     bool ok = checkRange(cameraMatrix) && checkRange(distCoeffs);
 		
@@ -249,7 +256,7 @@ namespace ofxCv {
 	int Calibration::size() const {
 		return imagePoints.size();
 	}
-	void Calibration::draw() const {
+	void Calibration::customDraw() {
 		for(int i = 0; i < size(); i++) {
 			draw(i);
 		}

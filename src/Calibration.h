@@ -44,7 +44,7 @@ namespace ofxCv {
 		Point2d principalPoint;
 	};
 	
-	class Calibration {
+	class Calibration : public ofNode {
 	public:
 		Calibration();
 		
@@ -57,7 +57,8 @@ namespace ofxCv {
 		bool clean(float minReprojectionError = 2.f);
 		bool calibrate();
 		bool calibrateFromDirectory(string directory);
-		
+		bool findBoard(Mat img, vector<Point2f> &pointBuf, bool refine=true);
+										  
 		void undistort(Mat img);
 		void undistort(Mat src, Mat dst);
 		
@@ -78,7 +79,7 @@ namespace ofxCv {
 		
 		int size() const;
 		
-		void draw() const;
+		void customDraw();
 		void draw(int i) const;
 		void draw3d() const;
 		void draw3d(int i) const;
