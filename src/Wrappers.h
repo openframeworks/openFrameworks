@@ -122,25 +122,25 @@ cv::name(xMat, yMat, resultMat);\
 	
 	// dst does not imitate src
 	template <class S, class D>
-	void warpPerspective(S& src, D& dst, vector<cv::Point2f>& dstPoints, int flags = INTER_LINEAR) {
+	void warpPerspective(S& src, D& dst, Point2f dstPoints[], int flags = INTER_LINEAR) {
 		Mat srcMat = toCv(src);
 		Mat dstMat = toCv(dst);
 		
 		int w = srcMat.cols;
 		int h = srcMat.rows;
-		vector<cv::Point2f> srcPoints;
-		srcPoints.push_back(cv::Point2f(0, 0));
-		srcPoints.push_back(cv::Point2f(w, 0));
-		srcPoints.push_back(cv::Point2f(w, h));
-		srcPoints.push_back(cv::Point2f(0, h));
+		Point2f srcPoints[4];
+		srcPoints[0] = Point2f(0, 0);
+		srcPoints[1] = Point2f(w, 0);
+		srcPoints[2] = Point2f(w, h);
+		srcPoints[3] = Point2f(0, h);
 		
-		Mat transform = getPerspectiveTransform(&srcPoints[0], &dstPoints[0]);
+		Mat transform = getPerspectiveTransform(srcPoints, dstPoints);
 		warpPerspective(srcMat, dstMat, transform, dstMat.size(), flags);
 	}
 	
 	// dst does not imitate src
 	template <class S, class D>
-	void unwarpPerspective(S& src, D& dst, vector<cv::Point2f>& dstPoints, int flags = INTER_LINEAR) {
+	void unwarpPerspective(S& src, D& dst, Point2f dstPoints[], int flags = INTER_LINEAR) {
 		warpPerspective(src, dst, dstPoints, flags | WARP_INVERSE_MAP);
 	}
 	
