@@ -155,7 +155,6 @@ namespace ofxCv {
 		int calibFlags = 0;
     float rms = calibrateCamera(objectPoints, imagePoints, addedImageSize, cameraMatrix, distCoeffs, boardRotations, boardTranslations, calibFlags);
     ofLog(OF_LOG_VERBOSE, "calibrateCamera() reports RMS error of " + ofToString(rms));
-		cout << "should be printing..." << endl;
 		
     bool ok = checkRange(cameraMatrix) && checkRange(distCoeffs);
 		
@@ -257,7 +256,7 @@ namespace ofxCv {
 	int Calibration::size() const {
 		return imagePoints.size();
 	}
-	void Calibration::customDraw() const {
+	void Calibration::customDraw() {
 		for(int i = 0; i < size(); i++) {
 			draw(i);
 		}

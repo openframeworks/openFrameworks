@@ -79,11 +79,7 @@ namespace ofxCv {
 		
 		int size() const;
 		
-		void customDraw() {
-			ofBox(10);
-			ofDrawAxis(20);
-		}
-		void customDraw() const;
+		void customDraw();
 		void draw(int i) const;
 		void draw3d() const;
 		void draw3d(int i) const;
