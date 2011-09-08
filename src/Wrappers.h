@@ -52,7 +52,13 @@ cv::name(xMat, yMat, resultMat);\
 		Mat xMat = toCv(x);
 		Mat yMat = toCv(y);
 		Mat resultMat = toCv(result);
-		cv::addWeighted(xMat, amt, yMat, 1. - amt, 0., resultMat);
+		if(yMat.cols == 0) {
+			copy(x, result);
+		} else if(xMat.cols == 0) {
+			copy(y, result);
+		} else {
+			cv::addWeighted(xMat, amt, yMat, 1. - amt, 0., resultMat);
+		}
 	}
 	
 	// normalize the min/max to [0, max for this type] out of place

@@ -69,7 +69,7 @@ namespace ofxCv {
 	}
 	template <class T> inline int getDepth(ofPixels_<T>& pixels) {
 		switch(pixels.getBytesPerChannel()) {
-			case 3: return CV_32F;
+			case 4: return CV_32F;
 			case 2: return CV_16U;
 			case 1: default: return CV_8U;
 		}
@@ -161,17 +161,22 @@ namespace ofxCv {
 		}
 	}
 	
-	// cross-toolkit copying
+	// maximum possible values for that depth or matrix
+	float getMaxVal(int depth);
+	float getMaxVal(const Mat& mat);
+	int getTargetChannelsFromCode(int conversionCode);
+	
+	// cross-toolkit, cross-bitdepth copying
 	template <class S, class D>
 	void copy(S& src, D& dst) {
 		imitate(dst, src);
 		Mat srcMat = toCv(src);
 		Mat dstMat = toCv(dst);
-		srcMat.copyTo(dstMat);
+		if(srcMat.type() == dstMat.type()) {
+			srcMat.copyTo(dstMat);
+		} else {
+			double alpha = getMaxVal(dstMat) / getMaxVal(srcMat);
+			srcMat.convertTo(dstMat, dstMat.depth(), alpha);
+		}
 	}
-	
-	// maximum possible values for that depth or matrix
-	float getMaxVal(int depth);
-	float getMaxVal(const Mat& mat);
-	int getTargetChannelsFromCode(int conversionCode);
 }
