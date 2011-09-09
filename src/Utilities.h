@@ -167,6 +167,8 @@ namespace ofxCv {
 	int getTargetChannelsFromCode(int conversionCode);
 	
 	// cross-toolkit, cross-bitdepth copying
+	// should this do conversion? or should be handle conversion in convertColor?
+	// or convert that handles color or bitdepth?
 	template <class S, class D>
 	void copy(S& src, D& dst) {
 		imitate(dst, src);

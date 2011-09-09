@@ -78,6 +78,10 @@ This creates a wrapper for `img` called `imgMat`. To create a deep copy, use `cl
 
 If you are writing a function that returns data, the ofxCv style is to call `imitate()` on the data to be returned from inside the function, allocating it as necessary.
 
+### copy()
+
+`copy()` is helpful for copying pixels between toolkits, including any data types supported by `toCv()`.
+
 # Working with OpenCv 2
 
 OpenCv 2 is an incredibly well designed API, and ofxCv encourages you to use it directly. Here are some hints on using OpenCv.

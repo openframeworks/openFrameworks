@@ -27,6 +27,7 @@
 #include "Calibration.h"
 #include "ContourFinder.h"
 #include "Tracker.h"
+#include "RunningBackground.h"
 
 using namespace ofxCv;
 using namespace cv;
