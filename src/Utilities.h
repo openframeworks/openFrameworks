@@ -136,7 +136,7 @@ namespace ofxCv {
 	
 	// imitate() is good for preparing buffers
 	// it's like allocate(), but uses the size and type of the original as a reference
-	// should imitate()'s arguments be switched to mirror every other as src/dst?
+	// like allocate(), the image being allocated is the first argument
 	template <class M, class O> void imitate(M& mirror, O& original) {
 		int mw = getWidth(mirror);
 		int mh = getHeight(mirror);

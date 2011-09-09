@@ -26,12 +26,12 @@
  learningTime, so it's safe to under-shoot.
  
  to do:
- - use hsb, or sb, space for differencing (like ContourFinder)
+ - use hsb space, or sb space for differencing (like ContourFinder)
  */
 
 #pragma once
 
-#include "opencv2/opencv.hpp"
+#include "Utilities.h"
 
 namespace ofxCv {
 	class RunningBackground {
@@ -42,6 +42,13 @@ namespace ofxCv {
 		bool useLearningTime, needToReset;
 	public:
 		RunningBackground();
+		template <class F, class T> 
+		void update(F& frame, T& thresholded) {
+			ofxCv::imitate(thresholded, frame, CV_8UC1);
+			cv::Mat frameMat = toCv(frame);
+			cv::Mat thresholdedMat = toCv(thresholded);
+			update(frameMat, thresholdedMat);
+		}
 		void update(cv::Mat frame, cv::Mat& thresholded);
 		cv::Mat& getBackground();
 		cv::Mat& getForeground();
