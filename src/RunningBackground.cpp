@@ -6,6 +6,7 @@ namespace ofxCv {
 	,learningTime(900.0)
 	,useLearningTime(false)
 	,thresholdValue(26)
+	,ignoreForeground(false)
 	,needToReset(false) {
 	}
 	void RunningBackground::update(cv::Mat frame, cv::Mat& thresholded) {
@@ -17,13 +18,19 @@ namespace ofxCv {
 		accumulator.convertTo(background, CV_8U);
 		cv::absdiff(background, frame, foreground);
 		cv::cvtColor(foreground, foregroundGray, CV_RGB2GRAY);
-		cv::threshold(foregroundGray, thresholded, thresholdValue, 255, cv::THRESH_BINARY);
+		int thresholdMode = ignoreForeground ? cv::THRESH_BINARY_INV : cv::THRESH_BINARY;
+		cv::threshold(foregroundGray, thresholded, thresholdValue, 255, thresholdMode);
 		
 		float curLearningRate = learningRate;
 		if(useLearningTime) {
 			curLearningRate = 1. - powf(1. - (thresholdValue / 255.), 1. / learningTime);
 		}
-		cv::accumulateWeighted(frame, accumulator, curLearningRate);
+		if(ignoreForeground) {
+			cv::accumulateWeighted(frame, accumulator, curLearningRate, thresholded);
+			cv::bitwise_not(thresholded, thresholded);
+		} else {
+			cv::accumulateWeighted(frame, accumulator, curLearningRate);
+		}
 	}
 	cv::Mat& RunningBackground::getBackground() {
 		return background;
@@ -41,6 +48,9 @@ namespace ofxCv {
 	void RunningBackground::setLearningTime(double learningTime) {
 		this->learningTime = learningTime;
 		useLearningTime = true;
+	}
+	void RunningBackground::setIgnoreForeground(bool ignoreForeground) {
+		this->ignoreForeground = ignoreForeground;
 	}
 	void RunningBackground::reset() {
 		needToReset = true;

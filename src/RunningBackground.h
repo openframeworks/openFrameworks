@@ -7,9 +7,9 @@
  
  this class only implements the running average technique. this technique is
  also described in the opencv 2 cookbook in chapter 10, under "extracting the
- foreground objects in video". this class does not replicate the example, which
- ignores foreground objects during accumulation, as this can lead to counter-
- intuitive artifacts.
+ foreground objects in video". the example ignores foreground pixels during
+ accumulation. this class uses all pixels by default, but can be set to ignore
+ foreground pixels by calling setIgnoreForeground(true).
  
  learningRate determines how quickly the background is learned. a smaller value
  means the background takes longer to learn. default the learningRate is .0001
@@ -39,7 +39,7 @@ namespace ofxCv {
 		cv::Mat accumulator, background, foreground, foregroundGray;
 		double learningRate, learningTime;
 		unsigned int thresholdValue;
-		bool useLearningTime, needToReset;
+		bool useLearningTime, needToReset, ignoreForeground;
 	public:
 		RunningBackground();
 		template <class F, class T> 
@@ -55,6 +55,7 @@ namespace ofxCv {
 		void setThresholdValue(unsigned int thresholdValue);
 		void setLearningRate(double learningRate);
 		void setLearningTime(double learningTime);
+		void setIgnoreForeground(bool ignoreForeground);
 		void reset();
 	};	
 }
