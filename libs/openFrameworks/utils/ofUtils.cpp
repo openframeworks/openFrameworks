@@ -213,6 +213,8 @@ void ofDisableDataPath(){
 	static string dataPathRoot = "data/";
 #endif
 
+static bool isDataPathSet = false;
+
 //--------------------------------------------------
 void ofSetDataPathRoot(string newRoot){
 	string newPath = "";
@@ -248,11 +250,17 @@ void ofSetDataPathRoot(string newRoot){
 			}
 		#endif
 	#endif
+	
 	dataPathRoot = newRoot;
+	isDataPathSet = true;
 }
 
 //--------------------------------------------------
 string ofToDataPath(string path, bool makeAbsolute){
+	
+	if (!isDataPathSet)
+		ofSetDataPathRoot(dataPathRoot);
+	
 	if( enableDataPath ){
 
 		//check if absolute path has been passed or if data path has already been applied
