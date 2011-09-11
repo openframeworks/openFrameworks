@@ -60,11 +60,6 @@ void ofRunApp(ofBaseApp * OFSA){
 		OFSAptr->mouseY = 0;
 	}
 
-	#ifdef TARGET_OSX
-		//this internally checks the executable path for osx
-		ofSetDataPathRoot("../../../data/");
-	#endif
-
 	atexit(ofExitCallback);
 
 	#ifdef WIN32_HIGH_RES_TIMING
@@ -159,11 +154,6 @@ void ofRunApp(ofPtr<ofBaseApp> OFSA){
 		OFSAptr->mouseX = 0;
 		OFSAptr->mouseY = 0;
 	}
-
-	#ifdef TARGET_OSX 
-		//this internally checks the executable path for osx
-		ofSetDataPathRoot("../../../data/");
-	#endif
 
 	atexit(ofExitCallback);
 
