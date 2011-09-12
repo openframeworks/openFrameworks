@@ -24,16 +24,15 @@ void testApp::update() {
 			while(quads[i].size() > 4 || quads[i].empty()) {
 				approxPolyDP(Mat(convexHull), quads[i], epsilon++, true);
 			}
+			
+			// opencv contours start at the bottom right, so rotate the data
 			rotate(quads[i].begin(), quads[i].end() - 2, quads[i].end());
-			if(quads[i].size() == 4) {
-				// quads[i] is full of integer cv::Points because they come from image
-				// coordinates. we need to convert to floating point for the unwarp.
-				Mat warpMat; // we'll build a floating point Mat
-				Mat(quads[i]).convertTo(warpMat, CV_32FC2); // converts int to float
-				vector<Point2f> warpPoints = (vector<Point2f>) warpMat; // convert Mat to vector
-				unwarpPerspective(cam, unwarped, warpPoints);
-				unwarped.update();
-			}
+			
+			// convert integer image coordinates Point2i to unwarp positions Point2f
+			vector<Point2f> warpPoints;
+			copy(quads[i].begin(), quads[i].end(), back_inserter(warpPoints));
+			unwarpPerspective(cam, unwarped, warpPoints);
+			unwarped.update();
 		}
 	}
 }
