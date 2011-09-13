@@ -22,7 +22,9 @@ void ofxAndroidSoundPlayer::loadSound(string fileName, bool stream){
 		ofLog(OF_LOG_ERROR,"Failed to get the environment using GetEnv()");
 		return;
 	}
-	javaClass = env->FindClass("cc/openframeworks/OFAndroidSoundPlayer");
+	jclass localClass = env->FindClass("cc/openframeworks/OFAndroidSoundPlayer");
+	javaClass = (jclass) env->NewGlobalRef(localClass);
+
 	if(!javaClass){
 		ofLog(OF_LOG_ERROR,"Failed to get the java class for SoundPlayer");
 		return;
@@ -272,6 +274,28 @@ void ofxAndroidSoundPlayer::setPosition(float pct){
 }
 
 //------------------------------------------------------------
+void ofxAndroidSoundPlayer::setPositionMS(int ms){
+	if(!javaSoundPlayer){
+		ofLogError() << "cannot set positionMS on an unloaded sound player";
+		return;
+	}
+	JNIEnv *env = ofGetJNIEnv();
+	if (!env) {
+		ofLog(OF_LOG_ERROR,"Failed to get the environment using GetEnv()");
+		return;
+	}
+
+	jmethodID javaPositionMethod = env->GetMethodID(javaClass,"setPositionMS","(I)V");
+	if(!javaPositionMethod){
+		ofLog(OF_LOG_ERROR,"Failed to get the java setPositionMS for SoundPlayer");
+		return;
+	}
+
+	env->CallVoidMethod(javaSoundPlayer,javaPositionMethod,ms);
+
+}
+
+//------------------------------------------------------------
 float ofxAndroidSoundPlayer::getPosition(){
 	if(!javaSoundPlayer){
 		ofLogError() << "cannot query position on an unloaded sound player";
@@ -290,6 +314,27 @@ float ofxAndroidSoundPlayer::getPosition(){
 	}
 
 	return env->CallFloatMethod(javaSoundPlayer,javaPositionMethod);
+}
+
+//------------------------------------------------------------
+int ofxAndroidSoundPlayer::getPositionMS(){
+	if(!javaSoundPlayer){
+		ofLogError() << "cannot query positionMS on an unloaded sound player";
+		return 0;
+	}
+	JNIEnv *env = ofGetJNIEnv();
+	if (!env) {
+		ofLog(OF_LOG_ERROR,"Failed to get the environment using GetEnv()");
+		return 0;
+	}
+
+	jmethodID javaPositionMethod = env->GetMethodID(javaClass,"getPositionMS","()I");
+	if(!javaPositionMethod){
+		ofLog(OF_LOG_ERROR,"Failed to get the java getPositionMS for SoundPlayer");
+		return 0;
+	}
+
+	return env->CallIntMethod(javaSoundPlayer,javaPositionMethod);
 
 }
 

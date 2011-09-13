@@ -594,6 +594,23 @@ void ofOpenALSoundPlayer::setPosition(float pct){
 	}
 }
 
+void ofOpenALSoundPlayer::setPositionMS(int ms){
+	if(sources.empty()) return;
+#ifdef OF_USING_MPG123
+	if(mp3streamf){
+		mpg123_seek(mp3streamf,float(ms)/1000.f*samplerate*channels,SEEK_SET);
+	}else
+#endif
+	if(streamf){
+		sf_seek(streamf,float(ms)/1000.f*samplerate*channels,SEEK_SET);
+		stream_samples_read = 0;
+	}else{
+		for(int i=0;i<(int)channels;i++){
+			alSourcef(sources[sources.size()-channels+i],AL_SEC_OFFSET,float(ms)/1000.f);
+		}
+	}
+}
+
 //------------------------------------------------------------
 float ofOpenALSoundPlayer::getPosition(){
 	if(duration==0) return 0;
@@ -610,6 +627,25 @@ float ofOpenALSoundPlayer::getPosition(){
 		alGetSourcef(sources[sources.size()-1],AL_SEC_OFFSET,&pos);
 	}
 	return pos/duration;
+}
+
+
+//------------------------------------------------------------
+int ofOpenALSoundPlayer::getPositionMS(){
+	if(duration==0) return 0;
+	if(sources.empty()) return 0;
+	float pos;
+#ifdef OF_USING_MPG123
+	if(mp3streamf){
+		pos = float(mpg123_tell(mp3streamf)) / float(channels) / float(samplerate);
+	}else
+#endif
+	if(streamf){
+		pos = float(stream_samples_read) / float(channels) / float(samplerate);
+	}else{
+		alGetSourcef(sources[sources.size()-1],AL_SEC_OFFSET,&pos);
+	}
+	return pos * 1000.f;
 }
 
 //------------------------------------------------------------

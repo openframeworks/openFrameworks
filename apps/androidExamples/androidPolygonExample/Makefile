@@ -253,6 +253,9 @@ ifeq ($(MAKECMDGOALS),clean)
 	TARGET_NAME = Release
 endif
 
+ifeq ($(MAKECMDGOALS),AndroidInstall)
+	TARGET_NAME = Install
+endif
 
 OBJ_OUTPUT = obj/$(ARCH)$(TARGET_NAME)/
 CLEANTARGET = clean$(TARGET_NAME)
@@ -417,6 +420,12 @@ AndroidInstall:
 	if [ -f obj/$(BIN_NAME) ]; then rm obj/$(BIN_NAME); fi
 	#touch AndroidManifest.xml
 	$(SDK_ROOT)/tools/android update project --target $(NDK_PLATFORM) --path $(PROJECT_PATH)
+	if [ -d bin/classes ]; then rm -r bin/classes; fi
+	if [ -d bin/classes.dex ]; then rm bin/classes.dex; fi
+	if [ -d bin/OFActivity.ap_ ]; then rm bin/OFActivity.ap_; fi
+	if [ -d bin/OFActivity-debug.apk ]; then rm bin/OFActivity-debug.apk; fi
+	if [ -d bin/OFActivity-debug-unaligned.apk ]; then rm bin/OFActivity-debug-unaligned.apk; fi
+	if [ -d bin/$(APPNAME).apk ]; then rm bin/$(APPNAME).apk; fi
 	ant debug
 	cp bin/OFActivity-debug.apk bin/$(APPNAME).apk
 	#if [ "$(shell $(SDK_ROOT)/platform-tools/adb get-state)" = "device" ]; then
