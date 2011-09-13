@@ -264,12 +264,12 @@ Java_cc_openframeworks_OFAndroid_onPause( JNIEnv*  env, jobject  thiz ){
 void
 Java_cc_openframeworks_OFAndroid_onResume( JNIEnv*  env, jobject  thiz ){
 
-	reloadTextures();
+	/*reloadTextures();
 	if(androidApp){
 		androidApp->resume();
 		androidApp->reloadTextures();
 	}
-	paused = false;
+	paused = false;*/
 	ofxAndroidSoundStreamResume();
 }
 

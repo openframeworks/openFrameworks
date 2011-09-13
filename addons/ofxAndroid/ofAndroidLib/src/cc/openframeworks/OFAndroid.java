@@ -475,15 +475,16 @@ public class OFAndroid {
 			public void run() {
 				new AlertDialog.Builder(ofActivity)  
 					.setMessage(alertMsg)  
-					.setTitle("OF")  
+					.setTitle("")  
 					.setCancelable(false)  
 					.setNeutralButton(android.R.string.ok,  
 							new DialogInterface.OnClickListener() {  
-						public void onClick(DialogInterface dialog, int whichButton){}
+						public void onClick(DialogInterface dialog, int whichButton){
+							OFAndroid.okPressed();
+						}
 	
 				  	})  
-				  	.show();    
-				
+				  	.show();
 			}  
 		});
 	}
