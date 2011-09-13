@@ -51,6 +51,11 @@ static JavaVM *ofJavaVM=0;
 static ofxAndroidApp * androidApp;
 
 static ofOrientation orientation = OF_ORIENTATION_DEFAULT;
+
+static queue<ofTouchEventArgs> touchEventArgsQueue;
+static ofMutex mutex;
+static bool threadedTouchEvents = false;
+
 //static ofAppAndroidWindow window;
 
 JavaVM * ofGetJavaVMPtr(){
@@ -189,6 +194,10 @@ void ofAppAndroidWindow::setFrameRate(float _targetRate){
 	bFrameRateSet = true;
 }
 
+void ofAppAndroidWindow::setThreadedEvents(bool threadedEvents){
+	threadedTouchEvents = threadedEvents;
+}
+
 void reloadTextures(){
 	ofUpdateBitmapCharacterTexture();
 	ofReloadAllImageTextures();
@@ -255,12 +264,12 @@ Java_cc_openframeworks_OFAndroid_onPause( JNIEnv*  env, jobject  thiz ){
 void
 Java_cc_openframeworks_OFAndroid_onResume( JNIEnv*  env, jobject  thiz ){
 
-	reloadTextures();
+	/*reloadTextures();
 	if(androidApp){
 		androidApp->resume();
 		androidApp->reloadTextures();
 	}
-	paused = false;
+	paused = false;*/
 	ofxAndroidSoundStreamResume();
 }
 
@@ -330,7 +339,29 @@ Java_cc_openframeworks_OFAndroid_render( JNIEnv*  env, jclass  thiz )
 	int beginFrameMillis = ofGetElapsedTimeMillis();
 
 	if(paused) return;
-	//LOGI("update");
+
+	if(!threadedTouchEvents){
+		mutex.lock();
+		while(!touchEventArgsQueue.empty()){
+			switch(touchEventArgsQueue.front().type){
+			case ofTouchEventArgs::down:
+				ofNotifyEvent(ofEvents.touchDown,touchEventArgsQueue.front());
+				break;
+			case ofTouchEventArgs::up:
+				ofNotifyEvent(ofEvents.touchUp,touchEventArgsQueue.front());
+				break;
+			case ofTouchEventArgs::move:
+				ofNotifyEvent(ofEvents.touchMoved,touchEventArgsQueue.front());
+				break;
+			case ofTouchEventArgs::doubleTap:
+				ofNotifyEvent(ofEvents.touchDoubleTap,touchEventArgsQueue.front());
+				break;
+			}
+			touchEventArgsQueue.pop();
+		}
+		mutex.unlock();
+	}
+
 	ofNotifyUpdate();
 
 
@@ -390,7 +421,14 @@ Java_cc_openframeworks_OFAndroid_onTouchDown(JNIEnv*  env, jclass  thiz, jint id
 	touch.x = x;
 	touch.y = y;
 	touch.pressure = pressure;
-	ofNotifyEvent(ofEvents.touchDown,touch);
+	touch.type = ofTouchEventArgs::down;
+	if(threadedTouchEvents){
+		ofNotifyEvent(ofEvents.touchDown,touch);
+	}else{
+		mutex.lock();
+		touchEventArgsQueue.push(touch);
+		mutex.unlock();
+	}
 }
 
 void
@@ -401,7 +439,14 @@ Java_cc_openframeworks_OFAndroid_onTouchUp(JNIEnv*  env, jclass  thiz, jint id,j
 	touch.x = x;
 	touch.y = y;
 	touch.pressure = pressure;
-	ofNotifyEvent(ofEvents.touchUp,touch);
+	touch.type = ofTouchEventArgs::up;
+	if(threadedTouchEvents){
+		ofNotifyEvent(ofEvents.touchUp,touch);
+	}else{
+		mutex.lock();
+		touchEventArgsQueue.push(touch);
+		mutex.unlock();
+	}
 }
 
 void
@@ -413,7 +458,14 @@ Java_cc_openframeworks_OFAndroid_onTouchMoved(JNIEnv*  env, jclass  thiz, jint i
 	touch.x = x;
 	touch.y = y;
 	touch.pressure = pressure;
-	ofNotifyEvent(ofEvents.touchMoved,touch);
+	touch.type = ofTouchEventArgs::move;
+	if(threadedTouchEvents){
+		ofNotifyEvent(ofEvents.touchMoved,touch);
+	}else{
+		mutex.lock();
+		touchEventArgsQueue.push(touch);
+		mutex.unlock();
+	}
 }
 
 void
@@ -424,7 +476,14 @@ Java_cc_openframeworks_OFAndroid_onTouchDoubleTap(JNIEnv*  env, jclass  thiz, ji
 	touch.x = x;
 	touch.y = y;
 	touch.pressure = pressure;
-	ofNotifyEvent(ofEvents.touchDoubleTap,touch);
+	touch.type = ofTouchEventArgs::doubleTap;
+	if(threadedTouchEvents){
+		ofNotifyEvent(ofEvents.touchDoubleTap,touch);
+	}else{
+		mutex.lock();
+		touchEventArgsQueue.push(touch);
+		mutex.unlock();
+	}
 }
 
 void
