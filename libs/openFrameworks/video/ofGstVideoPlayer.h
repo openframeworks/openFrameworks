@@ -68,5 +68,6 @@ private:
 	guint64				nFrames;
 	int 				fps_n, fps_d;
 	bool				bIsStream;
+	bool				bIsAllocated;
 	ofGstVideoUtils		videoUtils;
 };
