@@ -8,7 +8,7 @@
 */
 
 void testApp::setup() {
-	classifier.load(ofToDataPath("haarcascade_frontalface_default.xml"));
+	classifier.load(ofToDataPath("haarcascade_frontalface_alt2.xml"));
 	
 	scaleFactor = .25;
 	cam.initGrabber(640, 480);
