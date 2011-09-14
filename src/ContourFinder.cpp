@@ -2,7 +2,7 @@
 #include "Wrappers.h"
 
 namespace ofxCv {
-
+	
 	using namespace cv;
 	
 	ContourFinder::ContourFinder()
@@ -155,9 +155,45 @@ namespace ofxCv {
 		minEnclosingCircle(Mat(contours[i]), center, radius);
 		return center;
 	}
-		
+	
 	cv::RotatedRect ContourFinder::getFitEllipse(unsigned int i) const {
 		return fitEllipse(Mat(contours[i]));
+	}
+	
+	vector<cv::Point> ContourFinder::getFitQuad(unsigned int i) const {
+		vector<cv::Point> convexHull = getConvexHull(i);		
+		vector<cv::Point> quad = convexHull;
+		
+		static const unsigned int targetPoints = 4;
+		static const unsigned int maxIterations = 16;
+		static const double infinity = numeric_limits<double>::infinity();
+		double minEpsilon = 0;
+		double maxEpsilon = infinity;
+		double curEpsilon = 16; // good initial guess
+		
+		// unbounded binary search to simplify the convex hull until it's 4 points
+		if(quad.size() > 4) {
+			for(int i = 0; i < maxIterations; i++) {
+				approxPolyDP(Mat(convexHull), quad, curEpsilon, true);
+				if(quad.size() == targetPoints) {
+					break;
+				}
+				if(quad.size() > targetPoints) {
+					minEpsilon = curEpsilon;
+					if(maxEpsilon == infinity) {
+						curEpsilon = curEpsilon *  2;
+					} else {
+						curEpsilon = (maxEpsilon + minEpsilon) / 2;
+					}
+				}
+				if(quad.size() < targetPoints) {
+					maxEpsilon = curEpsilon;
+					curEpsilon = (maxEpsilon + minEpsilon) / 2;
+				}
+			}
+		}
+		
+		return quad;
 	}
 	
 	cv::Vec2f ContourFinder::getVelocity(unsigned int i) const {

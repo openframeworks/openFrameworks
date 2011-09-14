@@ -18,15 +18,7 @@ void testApp::update() {
 		quads.clear();
 		quads.resize(n);
 		for(int i = 0; i < n; i++) {
-			vector<cv::Point> convexHull = contourFinder.getConvexHull(i);			
-			// simplify the convex hull until it's only 4 points
-			double epsilon = 1;
-			while(quads[i].size() > 4 || quads[i].empty()) {
-				approxPolyDP(Mat(convexHull), quads[i], epsilon++, true);
-			}
-			
-			// opencv contours start at the bottom right, so rotate the data
-			rotate(quads[i].begin(), quads[i].end() - 2, quads[i].end());
+			quads[i] = contourFinder.getFitQuad(i);
 			
 			// convert integer image coordinates Point2i to unwarp positions Point2f
 			vector<Point2f> warpPoints;

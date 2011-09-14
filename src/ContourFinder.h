@@ -62,6 +62,7 @@ namespace ofxCv {
 		cv::RotatedRect getMinAreaRect(unsigned int i) const;
 		cv::Point2f getMinEnclosingCircle(unsigned int i, float& radius) const;
 		cv::RotatedRect getFitEllipse(unsigned int i) const;
+		vector<cv::Point> getFitQuad(unsigned int i) const;
 		cv::Vec2f getVelocity(unsigned int i) const;
 		
 		RectTracker& getTracker();
