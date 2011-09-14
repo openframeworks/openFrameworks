@@ -20,7 +20,7 @@
  tracking more than a few hundred objects. to optimize the tracker, consider
  avoiding usage of sqrt() in the trackingDistance() function.
  
- this tracker doesn't find a global minimum, but a local minimum. for example,
+ this tracker doesn't find a global minimum, but a local minimum. for example:
  when a dense set of points moves farther than the average point-to-point radius
  (like a line of points 5 pixels apart moving up and to the right 5 pixels). it
  also fails to model the data, so two objects might be swapped if they cross
@@ -30,6 +30,8 @@
 #pragma once
 
 #include "opencv2/opencv.hpp"
+#include <utility>
+#include <map>
 
 namespace ofxCv {
 	
@@ -77,7 +79,7 @@ namespace ofxCv {
 	
 	struct bySecond {
 		template <class First, class Second>
-		bool operator()(pair<First, Second> const &a, pair<First, Second> const &b) { 
+		bool operator()(std::pair<First, Second> const &a, std::pair<First, Second> const &b) { 
 			return a.second < b.second;
 		}
 	};
@@ -87,7 +89,7 @@ namespace ofxCv {
 	protected:		
 		vector<TrackedObject<T> > previous, current;
 		vector<unsigned int> currentLabels, previousLabels, newLabels, deadLabels;
-		map<unsigned int, T*> previousLabelMap, currentLabelMap;
+		std::map<unsigned int, T*> previousLabelMap, currentLabelMap;
 		
 		float maximumDistance;
 		unsigned int maximumAge;
@@ -138,8 +140,8 @@ namespace ofxCv {
 		int m = previous.size();
 		
 		// build NxM distance matrix
-		typedef pair<int, int> MatchPair;
-		typedef pair<MatchPair, float> MatchDistancePair;
+		typedef std::pair<int, int> MatchPair;
+		typedef std::pair<MatchPair, float> MatchDistancePair;
 		vector<MatchDistancePair> all;
 		for(int i = 0; i < n; i++) {
 			for(int j = 0; j < m; j++) {
