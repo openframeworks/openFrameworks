@@ -69,6 +69,17 @@ This creates a wrapper for `img` called `imgMat`. To create a deep copy, use `cl
 
 	Mat imgMatClone = toCv(img).clone();
 
+`toCv()` is similar to ofxOpenCv's `ofxCvImage::getCvImage()` method, which returns an `IplImage*`. The biggest difference, besides being a `Mat`, is that you can't always use `toCv()` "in place" when calling OpenCv code directly. In other words, you should write this:
+
+	Mat imgMat = toCv(img);
+	cv::someFunction(imgMat, ...);
+
+But you shouldn't expect this to work:
+
+	cv::someFunction(toCv(img), ...);
+
+Unless you understand the difference between a function that takes a `Mat` argument and one that takes a `Mat&`.
+
 ### imitate()
 
 `imitate()` is primarily used internally by ofxCv. When doing CV, you regularly want to allocate multiple buffers of similar dimensions and channels. `imitate()` follows a kind of prototype pattern, where you pass a prototype image `original` and the image to be allocated `mirror` to `imitate(mirror, original)`. `imitate()` has two big advantages:

@@ -7,7 +7,7 @@
  pixel manipulation (set, +, -, *, /)
  filtering (erode, dilate, blur, gaussian, invert, stretch contrast, range)
  transform (resize, mirror, translate, rotate, scale, abritrary combo)
- undistort, remap, warp perspective, warp into me
+ undistort, remap
  count nonzero pixels
  */
 

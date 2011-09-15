@@ -7,7 +7,8 @@ namespace ofxCv {
 	,useLearningTime(false)
 	,thresholdValue(26)
 	,ignoreForeground(false)
-	,needToReset(false) {
+	,needToReset(false)
+	,differenceMode(ABSOLUTE) {
 	}
 	void RunningBackground::update(cv::Mat frame, cv::Mat& thresholded) {
 		if(needToReset || accumulator.empty()) {
@@ -16,7 +17,11 @@ namespace ofxCv {
 		}
 		
 		accumulator.convertTo(background, CV_8U);
-		cv::absdiff(background, frame, foreground);
+		switch(differenceMode) {
+			case ABSOLUTE: cv::absdiff(background, frame, foreground); break;
+			case BRIGHTER: cv::subtract(frame, background, foreground); break;
+			case DARKER: cv::subtract(background, frame, foreground); break;
+		}
 		cv::cvtColor(foreground, foregroundGray, CV_RGB2GRAY);
 		int thresholdMode = ignoreForeground ? cv::THRESH_BINARY_INV : cv::THRESH_BINARY;
 		cv::threshold(foregroundGray, thresholded, thresholdValue, 255, thresholdMode);
@@ -51,6 +56,9 @@ namespace ofxCv {
 	}
 	void RunningBackground::setIgnoreForeground(bool ignoreForeground) {
 		this->ignoreForeground = ignoreForeground;
+	}
+	void RunningBackground::setDifferenceMode(DifferenceMode differenceMode) {
+		this->differenceMode = differenceMode;
 	}
 	void RunningBackground::reset() {
 		needToReset = true;

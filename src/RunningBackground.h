@@ -35,12 +35,9 @@
 
 namespace ofxCv {
 	class RunningBackground {
-	protected:
-		cv::Mat accumulator, background, foreground, foregroundGray;
-		double learningRate, learningTime;
-		unsigned int thresholdValue;
-		bool useLearningTime, needToReset, ignoreForeground;
 	public:
+		enum DifferenceMode {ABSOLUTE, BRIGHTER, DARKER};
+				
 		RunningBackground();
 		template <class F, class T> 
 		void update(F& frame, T& thresholded) {
@@ -56,6 +53,13 @@ namespace ofxCv {
 		void setLearningRate(double learningRate);
 		void setLearningTime(double learningTime);
 		void setIgnoreForeground(bool ignoreForeground);
+		void setDifferenceMode(DifferenceMode differenceMode);
 		void reset();
-	};	
+	protected:
+		cv::Mat accumulator, background, foreground, foregroundGray;
+		double learningRate, learningTime;
+		unsigned int thresholdValue;
+		bool useLearningTime, needToReset, ignoreForeground;
+		DifferenceMode differenceMode;
+	};
 }
