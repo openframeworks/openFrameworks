@@ -26,7 +26,7 @@ Provide clean implementations of all functions in order to provide a stepping st
 
 Notes on using ofxCv with your project.
 
-## Important files
+## Project setup
 
 Using ofxCv requires:
 
@@ -40,16 +40,18 @@ Your linker will also need to know where the OpenCv headers are. In XCode this m
 
 ## Including ofxCv
 
-Inside your testApp.h you will need:
+Inside your testApp.h you will need one include:
 
 	#include "ofxCv.h"
 
-There is only one include. You can also make your code shorter by adding:
+OpenCv uses the `cv` namespace, and ofxCv uses the `ofxCv` namespace. The example code does not mention these namespaces because `ofxCv.h` automatically imports them for you:
 
 	using namespace cv;
 	using namespace ofxCv;
 
-This way, instead of writing `ofxCv::toCv()` you can just write `toCv()`. Likewise, if you're using OpenCv directly, instead of saying `cv::blur()` you can just say `blur()`. Sometimes a function or object might be ambiguous, and you'll need to say `cv::` or `ofxCv::` anyway to disambiguate. For example, `cv::Point`.
+But if you look inside the ofxCv source, you'll find lots of cases of `ofxCv::` and `cv::`. In some rare cases, you'll need to write `cv::` in your code. For example, on OSX `Rect` and `Point` are defined by OpenCv, but also `MacTypes.h`. So if you're using an OpenCv `Rect` or `Point` you'll need to say so explicitly with `cv::Rect` or `cv::Point`.
+
+ofxCv takes advantage of namespaces by using overloaded function names. This means that the ofxCv wrapper for `cv::Canny()` is also called `ofxCv::Canny()`. When you write `Canny()`, the correct function will be chosen based on the arguments you pass.
 
 ## Working with ofxCv
 

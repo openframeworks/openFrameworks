@@ -5,8 +5,6 @@
 #include "ofxAutoControlPanel.h"
 
 #include "ofxCv.h"
-using namespace ofxCv;
-using namespace cv;
 
 class testApp : public ofBaseApp{
 public:
