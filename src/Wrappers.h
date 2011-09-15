@@ -126,6 +126,15 @@ cv::name(xMat, yMat, resultMat);\
 		ofxCv::blur(srcDst, srcDst, size);
 	}
 	
+	// Canny edge detection assumes your input and output are grayscale 8-bit
+	template <class S, class D>
+	void Canny(S& src, D& dst, double threshold1, double threshold2, int apertureSize=3, bool L2gradient=false) {
+		imitate(dst, src, CV_8UC1);
+		Mat srcMat = toCv(src);
+		Mat dstMat = toCv(dst);
+		cv::Canny(srcMat, dstMat, threshold1, threshold2, apertureSize, L2gradient);
+	}	
+	
 	// dst does not imitate src
 	template <class S, class D>
 	void warpPerspective(S& src, D& dst, vector<Point2f>& dstPoints, int flags = INTER_LINEAR) {
