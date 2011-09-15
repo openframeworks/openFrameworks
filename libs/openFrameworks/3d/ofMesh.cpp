@@ -373,22 +373,47 @@ const ofIndexType * ofMesh::getIndexPointer() const{
 }
 
 vector<ofVec3f> & ofMesh::getVertices(){
+	bVertsChanged = true;
 	return vertices;
 }
 
 vector<ofFloatColor> & ofMesh::getColors(){
+	bColorsChanged = true;
 	return colors;
 }
 
 vector<ofVec3f> & ofMesh::getNormals(){
+	bNormalsChanged = true;
 	return normals;
 }
 
 vector<ofVec2f> & ofMesh::getTexCoords(){
+	bTexCoordsChanged = true;
 	return texCoords;
 }
 
 vector<ofIndexType> & ofMesh::getIndices(){
+	bIndicesChanged = true;
+	return indices;
+}
+
+const vector<ofVec3f> & ofMesh::getVertices() const{
+	return vertices;
+}
+
+const vector<ofFloatColor> & ofMesh::getColors() const{
+	return colors;
+}
+
+const vector<ofVec3f> & ofMesh::getNormals() const{
+	return normals;
+}
+
+const vector<ofVec2f> & ofMesh::getTexCoords() const{
+	return texCoords;
+}
+
+const vector<ofIndexType> & ofMesh::getIndices() const{
 	return indices;
 }
 
