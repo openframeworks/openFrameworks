@@ -91,6 +91,12 @@ public:
 	vector<ofVec2f> & getTexCoords();
 	vector<ofIndexType> & getIndices();
 
+	const vector<ofVec3f> & getVertices() const;
+	const vector<ofFloatColor> & getColors() const;
+	const vector<ofVec3f> & getNormals() const;
+	const vector<ofVec2f> & getTexCoords() const;
+	const vector<ofIndexType> & getIndices() const;
+
 	vector<int>& getFace(int faceId);
 	
 	void setName(string name_);
