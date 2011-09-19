@@ -640,7 +640,7 @@ void ofSetStyle(ofStyle style){
 	}
 
 	//blending
-	ofEnableBlendMode(currentStyle.blendingMode);
+	ofEnableBlendMode(style.blendingMode);
 	
 	//bitmap draw mode
 	ofSetDrawBitmapMode(style.drawBitmapMode);
