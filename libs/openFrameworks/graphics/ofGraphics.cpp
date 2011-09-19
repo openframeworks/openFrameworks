@@ -65,6 +65,7 @@ void ofSetCurrentRenderer(ofPtr<ofBaseRenderer> renderer_){
 	shape.setUseShapeColor(false);
 
 	ofSetStyle(currentStyle);
+	ofBackground(currentStyle.bgColor);
 }
 
 ofPtr<ofBaseRenderer> & ofGetCurrentRenderer(){
@@ -426,6 +427,26 @@ void ofBackground(int r, int g, int b, int a){
 	renderer->background(r,g,b,a);
 }
 
+//----------------------------------------------------------
+void ofSetBackgroundColor(int brightness, int alpha) {
+	ofSetBackgroundColor(brightness, brightness, brightness, alpha);
+}
+
+//----------------------------------------------------------
+void ofSetBackgroundColor(const ofColor & c){
+	ofSetBackgroundColor ( c.r, c.g, c.b, c.a);
+}
+
+//----------------------------------------------------------
+void ofSetBackgroundColorHex(int hexColor, int alpha){
+	ofSetBackgroundColor ( (hexColor >> 16) & 0xff, (hexColor >> 8) & 0xff, (hexColor >> 0) & 0xff, alpha);
+}
+
+//----------------------------------------------------------
+void ofSetBackgroundColor(int r, int g, int b, int a){
+	currentStyle.bgColor.set(r,g,b,a);
+}
+
 // end background functions
 //----------------------------------------------------------
 
@@ -607,7 +628,7 @@ void ofSetStyle(ofStyle style){
 	ofSetColor((int)style.color.r, (int)style.color.g, (int)style.color.b, (int)style.color.a);
 
 	//bg color
-	ofBackground(style.bgColor);
+	ofSetBackgroundColor(style.bgColor);
 
 	//circle resolution - don't worry it only recalculates the display list if the res has changed
 	ofSetCircleResolution(style.circleResolution);
