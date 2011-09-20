@@ -55,11 +55,11 @@ ofxCv takes advantage of namespaces by using overloaded function names. This mea
 
 ## Working with ofxCv
 
-Unlike ofxOpenCv, ofxCv encourages you to use either native openFrameworks types or native OpenCv types rather than introducing a third type (e.g., ofxCvGrayscaleImage). To work with OF and OpenCv types in a fluid way, ofxCv includes the `toCv()` and `toOf()` functions. They provide the ability to convert openFrameworks data to OpenCv data and vice versa. For large data, like images, this is done by wrapping the data rather than copying it. For small data, like vectors, this is done by copying the data.
+Unlike ofxOpenCv, ofxCv encourages you to use either native openFrameworks types or native OpenCv types, rather than introducing a third type like `ofxCvImage`. To work with OF and OpenCv types in a fluid way, ofxCv includes the `toCv()` and `toOf()` functions. They provide the ability to convert openFrameworks data to OpenCv data and vice versa. For large data, like images, this is done by wrapping the data rather than copying it. For small data, like vectors, this is done by copying the data.
 
 The rest of ofxCv is mostly helper functions (for example, `threshold()`) and wrapper classes (for example, `Calibration`).
 
-### toCv()
+### toCv() and copy()
 
 `toCv()` is used to convert openFrameworks data to OpenCv data. For example:
 
@@ -71,16 +71,21 @@ This creates a wrapper for `img` called `imgMat`. To create a deep copy, use `cl
 
 	Mat imgMatClone = toCv(img).clone();
 
-`toCv()` is similar to ofxOpenCv's `ofxCvImage::getCvImage()` method, which returns an `IplImage*`. The biggest difference, besides being a `Mat`, is that you can't always use `toCv()` "in place" when calling OpenCv code directly. In other words, you should write this:
+Or `copy()`, which works with any type supported by `toCv()`:
+
+	Mat imgCopy;
+	copy(img, imgCopy);
+
+`toCv()` is similar to ofxOpenCv's `ofxCvImage::getCvImage()` method, which returns an `IplImage*`. The biggest difference is that you can't always use `toCv()` "in place" when calling OpenCv code directly. In other words, you can always write this:
 
 	Mat imgMat = toCv(img);
 	cv::someFunction(imgMat, ...);
 
-But you shouldn't expect this to work:
+But you should avoid using `toCv()` like this:
 
 	cv::someFunction(toCv(img), ...);
 
-Unless you understand the difference between a function that takes a `Mat` argument and one that takes a `Mat&`.
+Because there are cases where in place usage will cause a compile error. More specifically, calling `toCv()` in place will fail if the function requires a non-const reference for that parameter.
 
 ### imitate()
 
@@ -91,10 +96,6 @@ Unless you understand the difference between a function that takes a `Mat` argum
 
 If you are writing a function that returns data, the ofxCv style is to call `imitate()` on the data to be returned from inside the function, allocating it as necessary.
 
-### copy()
-
-`copy()` is helpful for copying pixels between toolkits, including any data types supported by `toCv()`.
-
 # Working with OpenCv 2
 
 OpenCv 2 is an incredibly well designed API, and ofxCv encourages you to use it directly. Here are some hints on using OpenCv.
@@ -102,6 +103,12 @@ OpenCv 2 is an incredibly well designed API, and ofxCv encourages you to use it 
 ### OpenCv Types
 
 OpenCv 2 uses the `Mat` class in place of the old `IplImage`. Memory allocation, copying, and deallocation are all handled automatically. `operator=` is a shallow, reference-counted copy. A `Mat` contains a collection of `Scalar` objects. A `Scalar` contains a collection of basic types (unsigned char, bool, double, etc.). `Scalar` is a short vector for representing color or other multidimensional information. The hierarchy is: `Mat` contains `Scalar`, `Scalar` contains basic types.
+
+### Mat creation
+
+If you're working with `Mat` directly, it's important to remember that OpenCv talks about `rows` and `cols` rather than `width` and `height`. This means that the arguments are "backwards" when they appear in the `Mat` constructor. Here's an example of creating a `Mat` wrapper for some grayscale `unsigned char* pixels` for which we know the `width` and `height`:
+
+	Mat mat = Mat(height, width, CV_8UC1, pixels, 0);
 
 ### Mat operations
 

@@ -175,6 +175,15 @@ cv::name(xMat, yMat, resultMat);\
 		warpPerspective(srcMat, dstMat, transform, dstMat.size(), flags);
 	}
 	
+	template <class D>
+	void fillPoly(vector<cv::Point>& points, D& dst) {
+		cv::Mat dstMat = toCv(dst);
+		const cv::Point* ppt[1] = { &(points[0]) };
+		int npt[] = { points.size() };
+		dstMat.setTo(Scalar(0));
+		fillPoly(dstMat, ppt, npt, 1, Scalar(255));
+	}
+	
 	// older wrappers, need to be templated..	
 	// for contourArea()/arcLength(), see ofPolyline::getArea()/getPerimiter()
 	// not sure if these three need to be templated. convexHull returning an

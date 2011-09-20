@@ -102,7 +102,7 @@ namespace ofxCv {
 		Tracker<T>()
 		:curLabel(0)
 		,maximumAge(4)
-		,maximumDistance(32) {
+		,maximumDistance(64) {
 		}
 		void setMaximumAge(unsigned int maximumAge);
 		void setMaximumDistance(float maximumDistance);
