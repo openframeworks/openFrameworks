@@ -179,8 +179,11 @@
     <ClCompile Include="..\..\..\openFrameworks\math\ofMatrix3x3.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\math\ofMatrix4x4.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\math\ofQuaternion.cpp" />
+<<<<<<< HEAD
+=======
     <ClCompile Include="..\..\..\openFrameworks\math\ofVec2f.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\math\ofVec4f.cpp" />
+>>>>>>> fca449d348cf33803609a837311fa07450706750
     <ClCompile Include="..\..\..\openFrameworks\sound\ofBaseSoundPlayer.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\sound\ofBaseSoundStream.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\sound\ofFmodSoundPlayer.cpp" />

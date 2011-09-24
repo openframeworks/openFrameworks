@@ -222,6 +222,12 @@
     <ClInclude Include="..\..\..\openFrameworks\utils\ofUtils.h">
       <Filter>libs\openFrameworks\utils</Filter>
     </ClInclude>
+<<<<<<< HEAD
+    <ClInclude Include="..\..\..\openFrameworks\sound\ofFmodSoundPlayer.h">
+      <Filter>libs\openFrameworks\sound</Filter>
+    </ClInclude>
+=======
+>>>>>>> fca449d348cf33803609a837311fa07450706750
     <ClInclude Include="..\..\..\openFrameworks\sound\ofRtAudioSoundStream.h">
       <Filter>libs\openFrameworks\sound</Filter>
     </ClInclude>
@@ -231,6 +237,8 @@
     <ClInclude Include="..\..\..\openFrameworks\sound\ofBaseSoundStream.h">
       <Filter>libs\openFrameworks\sound</Filter>
     </ClInclude>
+<<<<<<< HEAD
+=======
     <ClInclude Include="..\..\..\openFrameworks\sound\ofFmodSoundPlayer.h">
       <Filter>libs\openFrameworks\sound</Filter>
     </ClInclude>
@@ -240,6 +248,7 @@
     <ClInclude Include="..\..\..\openFrameworks\video\ofQuickTimeGrabber.h">
       <Filter>libs\openFrameworks\video</Filter>
     </ClInclude>
+>>>>>>> fca449d348cf33803609a837311fa07450706750
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\openFrameworks\app\ofAppGlutWindow.cpp">
@@ -383,6 +392,20 @@
     <ClCompile Include="..\..\..\openFrameworks\utils\ofUtils.cpp">
       <Filter>libs\openFrameworks\utils</Filter>
     </ClCompile>
+<<<<<<< HEAD
+    <ClCompile Include="..\..\..\openFrameworks\sound\ofFmodSoundPlayer.cpp">
+      <Filter>libs\openFrameworks\sound</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\openFrameworks\sound\ofRtAudioSoundStream.cpp">
+      <Filter>libs\openFrameworks\sound</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\openFrameworks\sound\ofBaseSoundPlayer.cpp">
+      <Filter>libs\openFrameworks\sound</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\openFrameworks\sound\ofBaseSoundStream.cpp">
+      <Filter>libs\openFrameworks\sound</Filter>
+    </ClCompile>
+=======
     <ClCompile Include="..\..\..\openFrameworks\sound\ofBaseSoundPlayer.cpp">
       <Filter>libs\openFrameworks\sound</Filter>
     </ClCompile>
@@ -407,5 +430,6 @@
     <ClCompile Include="..\..\..\openFrameworks\video\ofQuickTimePlayer.cpp">
       <Filter>libs\openFrameworks\video</Filter>
     </ClCompile>
+>>>>>>> fca449d348cf33803609a837311fa07450706750
   </ItemGroup>
 </Project>
