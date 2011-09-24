@@ -27,6 +27,10 @@ void ofCamera::setFov(float f) {
 	fov = f;
 }
 
+float ofCamera::getFov(){
+	return fov;
+}
+
 //----------------------------------------
 void ofCamera::setNearClip(float f) {
 	nearClip = f;
