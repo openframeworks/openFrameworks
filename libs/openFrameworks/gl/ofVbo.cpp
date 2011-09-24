@@ -45,22 +45,22 @@ ofVbo::ofVbo()
 	bUsingColors = false;
 	bUsingNormals = false;
 	bUsingIndices = false;
-
+    
 	vertSize		= -1;
 	vertStride      = 0;
-
+    
 	vertUsage		= -1;
 	colorUsage		= -1;
 	normUsage		= -1;
 	texUsage		= -1;
-
+    
 	vertId     = 0;
 	normalId   = 0;
 	colorId    = 0;
 	texCoordId = 0;
 	indexId    = 0;
-
-
+    
+    
 	bAllocated		= false;
 }
 
@@ -70,18 +70,18 @@ ofVbo::ofVbo(const ofVbo & mom){
 	bUsingColors = mom.bUsingColors;
 	bUsingNormals = mom.bUsingNormals;
 	bUsingIndices = mom.bUsingIndices;
-
+    
 	vertSize		= mom.vertSize;
 	vertStride      = mom.vertStride;
 	colorStride		= mom.colorStride;
 	normalStride    = mom.normalStride;
 	texCoordStride  = mom.texCoordStride;
-
+    
 	vertUsage		= mom.vertUsage;
 	colorUsage		= mom.colorUsage;
 	normUsage		= mom.normUsage;
 	texUsage		= mom.texUsage;
-
+    
 	vertId     = mom.vertId;
 	retain(vertId);
 	normalId   = mom.normalId;
@@ -92,8 +92,8 @@ ofVbo::ofVbo(const ofVbo & mom){
 	retain(texCoordId);
 	indexId    = mom.indexId;
 	retain(indexId);
-
-
+    
+    
 	bAllocated		= mom.bAllocated;
 }
 
@@ -104,18 +104,18 @@ ofVbo & ofVbo::operator=(const ofVbo& mom){
 	bUsingColors = mom.bUsingColors;
 	bUsingNormals = mom.bUsingNormals;
 	bUsingIndices = mom.bUsingIndices;
-
+    
 	vertSize		= mom.vertSize;
 	vertStride      = mom.vertStride;
 	colorStride		= mom.colorStride;
 	normalStride    = mom.normalStride;
 	texCoordStride  = mom.texCoordStride;
-
+    
 	vertUsage		= mom.vertUsage;
 	colorUsage		= mom.colorUsage;
 	normUsage		= mom.normUsage;
 	texUsage		= mom.texUsage;
-
+    
 	vertId     = mom.vertId;
 	retain(vertId);
 	normalId   = mom.normalId;
@@ -126,8 +126,8 @@ ofVbo & ofVbo::operator=(const ofVbo& mom){
 	retain(texCoordId);
 	indexId    = mom.indexId;
 	retain(indexId);
-
-
+    
+    
 	bAllocated		= mom.bAllocated;
 	return *this;
 }
@@ -168,7 +168,7 @@ void ofVbo::setVertexData(const float * vert0x, int numCoords, int total, int us
 		glGenBuffers(1, &(vertId));
 		retain(vertId);
 	}
-
+    
 	vertUsage = usage;
 	vertSize = numCoords;
 	vertStride = stride;
@@ -406,10 +406,10 @@ GLuint ofVbo::getIndexId(){
 //--------------------------------------------------------------
 void ofVbo::bind(){
 	
-//#ifndef TARGET_OPENGLES
-//	glPushAttrib(GL_ALL_ATTRIB_BITS);
-//	glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
-//#endif
+    //#ifndef TARGET_OPENGLES
+    //	glPushAttrib(GL_ALL_ATTRIB_BITS);
+    //	glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
+    //#endif
 	
 	if(bUsingVerts){
 		glEnableClientState(GL_VERTEX_ARRAY);		
@@ -438,16 +438,16 @@ void ofVbo::bind(){
 
 //--------------------------------------------------------------
 void ofVbo::unbind() {
-//	if(bUsingVerts)  glDisableClientState(GL_VERTEX_ARRAY);
+    //	if(bUsingVerts)  glDisableClientState(GL_VERTEX_ARRAY);
 	if(bUsingColors) glDisableClientState(GL_COLOR_ARRAY);
 	if(bUsingNormals) glDisableClientState(GL_NORMAL_ARRAY);
 	if(bUsingTexCoords) glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 	//glDisableClientState(GL_EDGE_FLAG_ARRAY);
 	
-//#ifndef	TARGET_OPENGLES
-//	glPopClientAttrib();
-//	glPopAttrib();	
-//#endif
+    //#ifndef	TARGET_OPENGLES
+    //	glPopClientAttrib();
+    //	glPopAttrib();	
+    //#endif
 	
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
