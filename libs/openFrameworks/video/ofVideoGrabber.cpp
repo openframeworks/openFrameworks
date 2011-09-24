@@ -249,3 +249,8 @@ float ofVideoGrabber::getWidth(){
 	}
 	return (float)width;
 }
+
+//----------------------------------------------------------
+bool ofVideoGrabber::isInitialized(){
+	return bInitialized;
+}
