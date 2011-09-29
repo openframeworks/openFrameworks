@@ -25,17 +25,24 @@ ofRtAudioSoundStream::~ofRtAudioSoundStream(){
 	close();
 }
 
-//------------------------------------------------------------------------------
-void ofRtAudioSoundStream::listDevices(){	
-	ofPtr<RtAudio> audioTemp;
+//---------------------------------------------------------
+vector<ofStreamDeviceInfo> ofRtAudioSoundStream::listDevices(){
+
+    vector<ofStreamDeviceInfo> deviceVec;
+
+	RtAudio *audioTemp = 0;
+
 	try {
-		audioTemp = ofPtr<RtAudio>(new RtAudio());
+		audioTemp = new RtAudio();
 	} catch (RtError &error) {
 		error.printMessage();
-		return;
 	}
+
  	int devices = audioTemp->getDeviceCount();
+
 	RtAudio::DeviceInfo info;
+	ofStreamDeviceInfo deviceInfo;
+
 	for (int i=0; i< devices; i++) {
 		try {
 			info = audioTemp->getDeviceInfo(i);
@@ -43,18 +50,53 @@ void ofRtAudioSoundStream::listDevices(){
 			error.printMessage();
 			break;
 		}
-		std::cout << "device = " << i << " (" << info.name << ")\n";
-		if (info.isDefaultInput) std::cout << "----* default ----* \n";
-		std::cout << "maximum output channels = " << info.outputChannels << "\n";
-		std::cout << "maximum input channels = " << info.inputChannels << "\n";
-		std::cout << "-----------------------------------------\n";
+
+		deviceInfo.probed = info.probed;
+        deviceInfo.name = info.name;
+        deviceInfo.inputChannels = info.inputChannels;
+        deviceInfo.outputChannels = info.outputChannels;
+        deviceInfo.duplexChannels = info.duplexChannels;
+        deviceInfo.isDefaultOutput = info.isDefaultOutput;
+        deviceInfo.isDefaultInput = info.isDefaultInput;
+        deviceInfo.sampleRates = info.sampleRates;
+        //deviceInfo.nativeFormats = info.nativeFormats;
+
+		deviceVec.push_back(deviceInfo);
+
+		ofLog(OF_LOG_NOTICE) << "device = " << i << " (" << info.name << ")";
+		if (info.isDefaultInput) ofLog(OF_LOG_NOTICE) << "----* default ----*";
+		ofLog(OF_LOG_NOTICE) << "maximum output channels = " << info.outputChannels;
+		ofLog(OF_LOG_NOTICE) << "maximum input channels = " << info.inputChannels;
+		ofLog(OF_LOG_NOTICE) << "-----------------------------------------";
 
 	}
+
+	delete audioTemp;
+	return deviceVec;
+
 }
 
 //------------------------------------------------------------------------------
 void ofRtAudioSoundStream::setDeviceID(int _deviceID){
 	deviceID = _deviceID;
+	// TODO: return true or false on success and issue log notice and error where appropriate
+}
+
+//------------------------------------------------------------------------------
+bool ofRtAudioSoundStream::setDeviceID(string _deviceName){
+    vector<ofStreamDeviceInfo> deviceVec = listDevices(); //TODO: make the list store in a var and only do listing if it's not already done
+
+    for(int i = 0; i < deviceVec.size(); i++) {
+        ofStreamDeviceInfo deviceInfo = deviceVec[i];
+        if (deviceInfo.name == _deviceName) {
+            deviceID = i;
+            ofLog(OF_LOG_NOTICE) << "Succesfully set device to: device " << deviceID << deviceInfo.name;
+            return true;
+        }
+    }
+
+    ofLog(OF_LOG_ERROR) << "Failed to set device to: " << _deviceName;
+    return false;
 }
 
 //------------------------------------------------------------------------------
@@ -135,7 +177,7 @@ bool ofRtAudioSoundStream::setup(ofBaseApp * app, int outChannels, int inChannel
 //------------------------------------------------------------------------------
 void ofRtAudioSoundStream::start(){
 	if( audio == NULL ) return;
-	
+
 	try{
 		audio->startStream();
 	} catch (RtError &error) {
@@ -146,7 +188,7 @@ void ofRtAudioSoundStream::start(){
 //------------------------------------------------------------------------------
 void ofRtAudioSoundStream::stop(){
 	if( audio == NULL ) return;
-	
+
 	try {
 		if(audio->isStreamRunning()) {
     		audio->stopStream();
@@ -159,7 +201,7 @@ void ofRtAudioSoundStream::stop(){
 //------------------------------------------------------------------------------
 void ofRtAudioSoundStream::close(){
 	if( audio == NULL ) return;
-	
+
 	try {
 		if(audio->isStreamOpen()) {
     		audio->closeStream();
@@ -184,13 +226,13 @@ int ofRtAudioSoundStream::getNumInputChannels(){
 
 //------------------------------------------------------------------------------
 int ofRtAudioSoundStream::getNumOutputChannels(){
-	return nOutputChannels;		
+	return nOutputChannels;
 }
 
 //------------------------------------------------------------------------------
 int ofRtAudioSoundStream::rtAudioCallback(void *outputBuffer, void *inputBuffer, unsigned int bufferSize, double streamTime, RtAudioStreamStatus status, void *data){
 	ofRtAudioSoundStream * rtStreamPtr = (ofRtAudioSoundStream *)data;
-	
+
 	if ( status ) std::cout << "Stream over/underflow detected." << std::endl;
 
 	// 	rtAudio uses a system by which the audio
@@ -203,7 +245,7 @@ int ofRtAudioSoundStream::rtAudioCallback(void *outputBuffer, void *inputBuffer,
 	// this is because of how rtAudio works: duplex w/ one callback
 	// you need to cut in the middle. if the simpleApp
 	// doesn't produce audio, we pass silence instead of duplex...
-	
+
 	int nInputChannels = rtStreamPtr->getNumInputChannels();
 	int nOutputChannels = rtStreamPtr->getNumOutputChannels();
 
@@ -220,7 +262,7 @@ int ofRtAudioSoundStream::rtAudioCallback(void *outputBuffer, void *inputBuffer,
 			rtStreamPtr->soundOutputPtr->audioOut((float*)outputBuffer, bufferSize, nOutputChannels, rtStreamPtr->deviceID, rtStreamPtr->tickCount);
 		}
 	}
-	
+
 	// increment tick count
 	rtStreamPtr->tickCount++;
 

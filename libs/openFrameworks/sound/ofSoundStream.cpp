@@ -2,7 +2,7 @@
 #include "ofAppRunner.h"
 
 ofSoundStream soundStreamInput;
-ofSoundStream soundStreamOutput;	
+ofSoundStream soundStreamOutput;
 
 //------------------------------------------------------------
 void ofSoundStreamSetup(int nOutputChannels, int nInputChannels, ofBaseApp * appPtr){
@@ -41,8 +41,8 @@ void ofSoundStreamClose(){
 }
 
 //------------------------------------------------------------
-void ofSoundStreamListDevices(){
-	soundStreamOutput.listDevices();
+vector<ofStreamDeviceInfo> ofSoundStreamListDevices(){
+	return soundStreamOutput.listDevices();
 }
 
 //------------------------------------------------------------
@@ -63,9 +63,9 @@ ofPtr<ofBaseSoundStream> ofSoundStream::getSoundStream(){
 }
 
 //------------------------------------------------------------
-void ofSoundStream::listDevices(){
+vector<ofStreamDeviceInfo> ofSoundStream::listDevices(){
 	if( soundStream ){
-		soundStream->listDevices();
+		return soundStream->listDevices();
 	}
 }
 
@@ -73,7 +73,14 @@ void ofSoundStream::listDevices(){
 void ofSoundStream::setDeviceID(int deviceID){
 	if( soundStream ){
 		soundStream->setDeviceID(deviceID);
-	}	
+	}
+}
+
+//------------------------------------------------------------
+bool ofSoundStream::setDeviceID(string deviceName){
+	if( soundStream ){
+		return soundStream->setDeviceID(deviceName);
+	}
 }
 
 //------------------------------------------------------------

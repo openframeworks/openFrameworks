@@ -10,7 +10,7 @@ void testApp::setup(){
 	// 22050 samples per second
 	// 512 samples per buffer
 	// 4 num buffers (latency)
-	
+
 	int bufferSize		= 512;
 	sampleRate 			= 44100;
 	phase 				= 0;
@@ -21,11 +21,13 @@ void testApp::setup(){
 
 	lAudio.assign(bufferSize, 0.0);
 	rAudio.assign(bufferSize, 0.0);
-	
+
+	//ofSetLogLevel(OF_LOG_NOTICE);
 	//soundStream.listDevices();
-	
+
 	//if you want to set the device id to be different than the default
-	//soundStream.setDeviceID(1); 	//note some devices are input only and some are output only 
+	//soundStream.setDeviceID(1); 	//note some devices are input only and some are output only
+    //soundStream.setDeviceID("Realtek HD"); // use a string to set device by names -> remember to change "Realtek HD" to your device
 
 	soundStream.setup(this, 2, 0, sampleRate, bufferSize, 4);
 
@@ -44,30 +46,30 @@ void testApp::draw(){
 	ofSetColor(225);
 	ofDrawBitmapString("AUDIO OUTPUT EXAMPLE", 32, 32);
 	ofDrawBitmapString("press 's' to unpause the audio\npress 'e' to pause the audio", 31, 92);
-	
+
 	ofNoFill();
-	
+
 	// draw the left channel:
 	ofPushStyle();
 		ofPushMatrix();
 		ofTranslate(32, 150, 0);
-			
+
 		ofSetColor(225);
 		ofDrawBitmapString("Left Channel", 4, 18);
-		
-		ofSetLineWidth(1);	
+
+		ofSetLineWidth(1);
 		ofRect(0, 0, 900, 200);
 
 		ofSetColor(245, 58, 135);
 		ofSetLineWidth(3);
-					
+
 			ofBeginShape();
 			for (int i = 0; i < lAudio.size(); i++){
 				float x =  ofMap(i, 0, lAudio.size(), 0, 900, true);
 				ofVertex(x, 100 -lAudio[i]*180.0f);
 			}
 			ofEndShape(false);
-			
+
 		ofPopMatrix();
 	ofPopStyle();
 
@@ -75,33 +77,33 @@ void testApp::draw(){
 	ofPushStyle();
 		ofPushMatrix();
 		ofTranslate(32, 350, 0);
-			
+
 		ofSetColor(225);
 		ofDrawBitmapString("Right Channel", 4, 18);
-		
-		ofSetLineWidth(1);	
+
+		ofSetLineWidth(1);
 		ofRect(0, 0, 900, 200);
 
 		ofSetColor(245, 58, 135);
 		ofSetLineWidth(3);
-					
+
 			ofBeginShape();
 			for (int i = 0; i < rAudio.size(); i++){
 				float x =  ofMap(i, 0, rAudio.size(), 0, 900, true);
 				ofVertex(x, 100 -rAudio[i]*180.0f);
 			}
 			ofEndShape(false);
-			
+
 		ofPopMatrix();
 	ofPopStyle();
-	
-		
+
+
 	ofSetColor(225);
 	string reportString = "volume: ("+ofToString(volume, 2)+") modify with -/+ keys\npan: ("+ofToString(pan, 2)+") modify with mouse x\nsynthesis: ";
 	if( !bNoise ){
 		reportString += "sine wave (" + ofToString(targetFrequency, 2) + "hz) modify with mouse y";
 	}else{
-		reportString += "noise";	
+		reportString += "noise";
 	}
 	ofDrawBitmapString(reportString, 32, 579);
 
@@ -117,15 +119,15 @@ void testApp::keyPressed  (int key){
 		volume += 0.05;
 		volume = MIN(volume, 1);
 	}
-	
+
 	if( key == 's' ){
 		soundStream.start();
 	}
-	
+
 	if( key == 'e' ){
 		soundStream.stop();
 	}
-	
+
 }
 
 //--------------------------------------------------------------
@@ -201,6 +203,6 @@ void testApp::gotMessage(ofMessage msg){
 }
 
 //--------------------------------------------------------------
-void testApp::dragEvent(ofDragInfo dragInfo){ 
+void testApp::dragEvent(ofDragInfo dragInfo){
 
 }

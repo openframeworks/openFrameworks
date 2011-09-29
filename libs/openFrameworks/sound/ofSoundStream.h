@@ -18,7 +18,7 @@
 #elif defined(OF_SOUNDSTREAM_IPHONE)
 	#include "ofxiPhoneSoundStream.h"
 	#define OF_SOUND_STREAM_TYPE ofxiPhoneSoundStream
-#endif 
+#endif
 
 void ofSoundStreamSetup(int nOutputChannels, int nInputChannels, ofBaseApp * appPtr = NULL);
 void ofSoundStreamSetup(int nOutputChannels, int nInputChannels, int sampleRate, int bufferSize, int nBuffers);
@@ -26,31 +26,32 @@ void ofSoundStreamSetup(int nOutputChannels, int nInputChannels, ofBaseApp * app
 void ofSoundStreamStop();
 void ofSoundStreamStart();
 void ofSoundStreamClose();
-void ofSoundStreamListDevices();
+vector<ofStreamDeviceInfo> ofSoundStreamListDevices();
 
 class ofSoundStream{
 	public:
 		ofSoundStream();
-		
+
 		void setSoundStream(ofPtr<ofBaseSoundStream> soundStreamPtr);
 		ofPtr<ofBaseSoundStream> getSoundStream();
 
-		void listDevices();
-	
+		vector<ofStreamDeviceInfo> listDevices();
+
 		void setDeviceID(int deviceID);
+		bool setDeviceID(string deviceName);
 
 		bool setup(ofBaseApp * app, int outChannels, int inChannels, int sampleRate, int bufferSize, int nBuffers);
 		void setInput(ofBaseSoundInput * soundInput);
 		void setOutput(ofBaseSoundOutput * soundOutput);
 		bool setup(int outChannels, int inChannels, int sampleRate, int bufferSize, int nBuffers);
-		
+
 		void start();
 		void stop();
 		void close();
-		
+
 		long unsigned long getTickCount();
-		
+
 	protected:
-		
+
 		ofPtr<ofBaseSoundStream> soundStream;
 };

@@ -10,6 +10,54 @@
 #endif
 
 //----------------------------------------------------------
+// ofStreamDeviceInfo
+//----------------------------------------------------------
+// essentially this is a copy of RTAudio::DeviceInfo
+// to be used for returning more meaningful info when
+// using listDevices() on ofBaseSoundStream
+class ofStreamDeviceInfo {
+public:
+
+    ofStreamDeviceInfo(string _name,
+                       bool _probed,
+                       int _inputChannels,
+                       int _outputChannels,
+                       int _duplexChannels,
+                       bool _isDefaultOutput,
+                       bool _isDefaultInput,
+                       vector<unsigned int> _sampleRates) {
+        name = _name;
+        probed = _probed;
+        inputChannels = _inputChannels;
+        outputChannels = _outputChannels;
+        duplexChannels = _duplexChannels;
+        isDefaultOutput = _isDefaultOutput;
+        isDefaultInput = _isDefaultInput;
+        sampleRates = _sampleRates;
+    };
+
+    ofStreamDeviceInfo() {
+        name = "device undefined";
+        probed = false;
+        inputChannels = -1;
+        outputChannels = -1;
+        duplexChannels = -1;
+        isDefaultOutput = false;
+        isDefaultInput = false;
+    };
+
+    string  name;
+    bool    probed;
+    int     inputChannels;
+    int     outputChannels;
+    int     duplexChannels;
+    bool    isDefaultOutput;
+    bool    isDefaultInput;
+    vector<unsigned int> sampleRates;
+    //RtAudioFormat nativeFormats;
+};
+
+//----------------------------------------------------------
 // ofDeviceInfo
 //----------------------------------------------------------
 class ofSerial;
