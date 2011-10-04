@@ -190,13 +190,37 @@ namespace ofxCv {
 	}
 	
 	void drawHighlightString(string text, int x, int y, ofColor background, ofColor foreground) {
+		vector<string> lines = ofSplitString(text, "\n");
+		int textLength = 0;
+		for(int i = 0; i < lines.size(); i++) {
+			// tabs are not rendered
+			int tabs = count(lines[i].begin(), lines[i].end(), '\t');
+			int curLength = lines[i].length() - tabs;
+			// after the first line, everything is indented with one space
+			if(i > 0) {
+				curLength++;
+			}
+			if(curLength > textLength) {
+				textLength = curLength;
+			}
+		}
+		
+		int padding = 5;
+		int fontSize = 8;
+		float leading = 1.7;
+		int height = lines.size() * fontSize * leading;
+		int width = textLength * fontSize;
+	
 		ofPushStyle();
-		int textWidth =  10 + text.length() * 8;
 		ofSetColor(background);
 		ofFill();
-		ofRect(x - 5, y - 12, textWidth, 20);
+		ofRect(x, y, width + 2 * padding, height + 2 * padding);
 		ofSetColor(foreground);
-		ofDrawBitmapString(text, x, y);
+		ofNoFill();
+		ofPushMatrix();
+		ofTranslate(padding, padding);
+		ofDrawBitmapString(text, x + 1, y + fontSize + 2);
+		ofPopMatrix();
 		ofPopStyle();
 	}
 

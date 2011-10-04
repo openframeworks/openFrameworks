@@ -24,10 +24,16 @@ namespace ofxCv {
 	// wrapThree are based on functions that operate on three Mat objects.
 	// the first two are inputs, and the third is an output. for example,
 	// the min() function: min(x, y, result) will calculate the per-element min
-	// between x and y, and store that in result.
+	// between x and y, and store that in result. both y and result need to
+	// match x in dimensions and type. while wrapThree functions will use
+	// imitate() to make sure your data is allocated correctly, you shouldn't
+	// epect the function to behave properly if you haven't already allocated
+	// your y argument. in general, OF images contain noise when newly allocated
+	// so the result will also contain that noise.
 #define wrapThree(name) \
 template <class X, class Y, class Result>\
 void name(X& x, Y& y, Result& result) {\
+imitate(y, x);\
 imitate(result, x);\
 Mat xMat = toCv(x);\
 Mat yMat = toCv(y);\
@@ -117,13 +123,29 @@ cv::name(xMat, yMat, resultMat);\
 		size = forceOdd(size);
 		Mat srcMat = toCv(src);
 		Mat dstMat = toCv(dst);
-		GaussianBlur(srcMat, dstMat, cv::Size(size, size), 0, 0);
+		cv::GaussianBlur(srcMat, dstMat, cv::Size(size, size), 0, 0);
 	}
 	
 	// in-place Gaussian blur
 	template <class SD>
 	void blur(SD& srcDst, int size) {
 		ofxCv::blur(srcDst, srcDst, size);
+	}
+	
+	// Median blur
+	template <class S, class D>
+	void medianBlur(S& src, D& dst, int size) {
+		imitate(dst, src);
+		size = forceOdd(size);
+		Mat srcMat = toCv(src);
+		Mat dstMat = toCv(dst);
+		cv::medianBlur(srcMat, dstMat, size);
+	}
+	
+	// in-place Median blur
+	template <class SD>
+	void medianBlur(SD& srcDst, int size) {
+		ofxCv::medianBlur(srcDst, srcDst, size);
 	}
 	
 	// Canny edge detection assumes your input and output are grayscale 8-bit
@@ -203,7 +225,6 @@ cv::name(xMat, yMat, resultMat);\
 	void matchRegion(Mat& source, ofRectangle& region, Mat& search, Mat& result);
 	//void convolve(ofImage& source, FloatImage& kernel, ofImage& destination);
 	//void convolve(ofImage& img, FloatImage& kernel);
-	void medianBlur(ofImage& img, int size);
 	void resize(ofImage& source, ofImage& destination, int interpolation = INTER_LINEAR); // options: INTER_NEAREST, INTER_LINEAR, INTER_AREA, INTER_CUBIC, INTER LANCZOS4
 	void resize(ofImage& source, ofImage& destination, float xScale, float yScale, int interpolation = INTER_LINEAR);
 	

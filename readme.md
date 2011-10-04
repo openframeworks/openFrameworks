@@ -104,6 +104,12 @@ OpenCv 2 is an incredibly well designed API, and ofxCv encourages you to use it 
 
 OpenCv 2 uses the `Mat` class in place of the old `IplImage`. Memory allocation, copying, and deallocation are all handled automatically. `operator=` is a shallow, reference-counted copy. A `Mat` contains a collection of `Scalar` objects. A `Scalar` contains a collection of basic types (unsigned char, bool, double, etc.). `Scalar` is a short vector for representing color or other multidimensional information. The hierarchy is: `Mat` contains `Scalar`, `Scalar` contains basic types.
 
+Different functions accept `Mat` in different ways:
+
+* `Mat` will create a lightweight copy of the underlying data. It's easy to write, and it allows you to use `toCv()` "in-place" when passing arguments to the function.
+* `Mat&` allows the function to modify the header passed in. This means the function can allocate if necessary.
+* `const Mat&` means that the function isn't going to modify the underlying data. This should be used instead of `Mat` when possible. It also allows "in-place" `toCv()` usage.
+
 ### Mat creation
 
 If you're working with `Mat` directly, it's important to remember that OpenCv talks about `rows` and `cols` rather than `width` and `height`. This means that the arguments are "backwards" when they appear in the `Mat` constructor. Here's an example of creating a `Mat` wrapper for some grayscale `unsigned char* pixels` for which we know the `width` and `height`:

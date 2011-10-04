@@ -156,20 +156,17 @@ namespace ofxCv {
     float rms = calibrateCamera(objectPoints, imagePoints, addedImageSize, cameraMatrix, distCoeffs, boardRotations, boardTranslations, calibFlags);
     ofLog(OF_LOG_VERBOSE, "calibrateCamera() reports RMS error of " + ofToString(rms));
 		
-    bool ok = checkRange(cameraMatrix) && checkRange(distCoeffs);
+    bool _isReady = checkRange(cameraMatrix) && checkRange(distCoeffs);
 		
-		if(!ok) {
+		if(!_isReady) {
 			ofLog(OF_LOG_ERROR, "Calibration::calibrate() failed to calibrate the camera");
 		}
 		
-		if (ok)
-			_isReady = true;
-    
 		distortedIntrinsics.setup(cameraMatrix, addedImageSize);
 		updateReprojectionError();
 		updateUndistortion();
 		
-		return ok;
+		return _isReady;
 	}
 	bool Calibration::calibrateFromDirectory(string directory) {
 		ofDirectory dirList;

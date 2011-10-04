@@ -170,12 +170,6 @@ namespace ofxCv {
 	 }
 	 */
 	 
-	void medianBlur(ofImage& img, int size) {
-		size = forceOdd(size);
-		Mat mat = toCv(img);
-		medianBlur(mat, mat, size);
-	}
-	
 	void resize(ofImage& source, ofImage& destination, int interpolation) {
 		Mat sourceMat = toCv(source);
 		Mat destinationMat = toCv(destination);

@@ -53,6 +53,10 @@ namespace ofxCv {
 		polyline.close();
 		return polyline;
 	}
+	template <class T>
+	void toOf(Mat mat, ofPixels_<T>& pixels) {
+		pixels.setFromExternalPixels(mat.ptr<T>(), mat.cols, mat.rows, mat.channels());
+	}
 	
 	// these functions are for accessing Mat, ofPixels and ofImage consistently.
 	// they're very important for imitate().
@@ -136,29 +140,23 @@ namespace ofxCv {
 	
 	// imitate() is good for preparing buffers
 	// it's like allocate(), but uses the size and type of the original as a reference
-	// like allocate(), the image being allocated is the first argument
-	template <class M, class O> void imitate(M& mirror, O& original) {
+	// like allocate(), the image being allocated is the first argument	
+	
+	// this version copies size, but manually specifies image type
+	template <class M, class O> void imitate(M& mirror, O& original, int originalCvImageType) {
 		int mw = getWidth(mirror);
 		int mh = getHeight(mirror);
 		int ow = getWidth(original);
 		int oh = getHeight(original);
 		int mt = getCvImageType(mirror);
-		int ot = getCvImageType(original);
-		if(mw != ow || mh != oh || mt != ot) {
-			allocate(mirror, ow, oh, ot);
+		if(mw != ow || mh != oh || mt != originalCvImageType) {
+			allocate(mirror, ow, oh, originalCvImageType);
 		}
 	}
 	
-	// this version of imitate() is used for copying the size only
-	template <class M, class O> void imitate(M& mirror, O& original, int targetCvImageType) {
-		int mw = getWidth(mirror);
-		int mh = getHeight(mirror);
-		int ow = getWidth(original);
-		int oh = getHeight(original);
-		int mt = getCvImageType(mirror);
-		if(mw != ow || mh != oh || mt != targetCvImageType) {
-			allocate(mirror, ow, oh, targetCvImageType);
-		}
+	// this version copies size and image type
+	template <class M, class O> void imitate(M& mirror, O& original) {
+		imitate(mirror, original, getCvImageType(original));
 	}
 	
 	// maximum possible values for that depth or matrix
