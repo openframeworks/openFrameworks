@@ -1,6 +1,6 @@
-#include "Calibration.h"
+#include "ofxCv/Calibration.h"
+#include "ofxCv/Helpers.h"
 #include "ofFileUtils.h"
-#include "Helpers.h"
 
 namespace ofxCv {
 

@@ -1,4 +1,4 @@
-#include "Wrappers.h"
+#include "ofxCv/Wrappers.h"
 
 namespace ofxCv {
 	

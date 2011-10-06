@@ -1,4 +1,4 @@
-#include "Distance.h"
+#include "ofxCv/Distance.h"
 #include <string.h>
 
 namespace ofxCv {

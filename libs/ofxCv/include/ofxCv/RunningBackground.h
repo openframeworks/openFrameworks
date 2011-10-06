@@ -31,7 +31,7 @@
 
 #pragma once
 
-#include "Utilities.h"
+#include "ofxCv/Utilities.h"
 
 namespace ofxCv {
 	class RunningBackground {

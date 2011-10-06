@@ -1,4 +1,4 @@
-#include "RunningBackground.h"
+#include "ofxCv/RunningBackground.h"
 
 namespace ofxCv {
 	RunningBackground::RunningBackground()

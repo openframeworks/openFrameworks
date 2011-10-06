@@ -28,8 +28,8 @@
 
 #pragma once
 
-#include "Utilities.h"
-#include "Tracker.h"
+#include "ofxCv/Utilities.h"
+#include "ofxCv/Tracker.h"
 
 namespace ofxCv {
 	

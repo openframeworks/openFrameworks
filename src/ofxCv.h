@@ -20,17 +20,14 @@
 #include "opencv2/opencv.hpp"
 
 // ofxCv
-#include "Utilities.h"
-#include "Wrappers.h"
-#include "Helpers.h"
+#include "ofxCv/Utilities.h"
+#include "ofxCv/Wrappers.h"
+#include "ofxCv/Helpers.h"
 
-#include "Distance.h"
-#include "Calibration.h"
-#include "ContourFinder.h"
-#include "Tracker.h"
-#include "RunningBackground.h"
-
-using namespace ofxCv;
-using namespace cv;
+#include "ofxCv/Distance.h"
+#include "ofxCv/Calibration.h"
+#include "ofxCv/ContourFinder.h"
+#include "ofxCv/Tracker.h"
+#include "ofxCv/RunningBackground.h"
 
 // <3 kyle

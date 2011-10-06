@@ -1,5 +1,5 @@
-#include "ContourFinder.h"
-#include "Wrappers.h"
+#include "ofxCv/ContourFinder.h"
+#include "ofxCv/Wrappers.h"
 
 namespace ofxCv {
 	

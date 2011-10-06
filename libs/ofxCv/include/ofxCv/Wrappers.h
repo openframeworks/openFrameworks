@@ -15,7 +15,7 @@
 
 #include "ofMain.h"
 #include "opencv2/opencv.hpp"
-#include "Utilities.h"
+#include "ofxCv/Utilities.h"
 
 namespace ofxCv {
 	

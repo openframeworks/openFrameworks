@@ -1,5 +1,5 @@
-#include "Helpers.h"
-#include "Utilities.h"
+#include "ofxCv/Helpers.h"
+#include "ofxCv/Utilities.h"
 
 namespace ofxCv {
 
