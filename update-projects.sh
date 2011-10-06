@@ -11,5 +11,8 @@ do
 		replace="s/EmptyExample/"$projectName"/g"
 		cp example-empty/EmptyExample.xcodeproj/project.pbxproj $projectFile
 		sed -i "" -e $replace $projectFile
+
+		xcconfigFile=$cur"/../Project.xcconfig"
+		cp example-empty/Project.xcconfig $xcconfigFile
 	fi
 done
