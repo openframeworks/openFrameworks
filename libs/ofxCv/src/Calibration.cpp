@@ -42,6 +42,29 @@ namespace ofxCv {
 		return principalPoint;
 	}
 	
+	void Intrinsics::loadProjectionMatrix(float nearDist, float farDist) const {
+		int viewport[4];
+		int startx = principalPoint.x - imageSize.width / 2.;
+		int starty = principalPoint.y - imageSize.height / 2.;
+		viewport[0] = startx;
+		viewport[1] = -starty;
+		viewport[2] = imageSize.width;
+		viewport[3] = imageSize.height;
+		glViewport(viewport[0], viewport[1], viewport[2], viewport[3]) ;
+		
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
+		float aspect = (float) imageSize.width / imageSize.height;
+		gluPerspective(fov.y, aspect, nearDist, farDist);
+		
+		glMatrixMode(GL_MODELVIEW);
+		glLoadIdentity();
+		gluLookAt(
+			0, 0, 0,
+			0, 0, 1,
+			0, -1, 0);
+	}
+	
 	Calibration::Calibration() :
 	patternSize(cv::Size(10, 7)), squareSize(2.5), // based on Chessboard_A4.pdf, assuming world units are centimeters
 	fillFrame(true),
@@ -81,7 +104,7 @@ namespace ofxCv {
 		
 		_isReady = true;
 	}
-	void Calibration::setBoardSize(int xCount, int yCount) {
+	void Calibration::setPatternSize(int xCount, int yCount) {
 		patternSize = cv::Size(xCount, yCount);
 	}
 	void Calibration::setSquareSize(float squareSize) {
@@ -253,6 +276,12 @@ namespace ofxCv {
 	int Calibration::size() const {
 		return imagePoints.size();
 	}
+	cv::Size Calibration::getPatternSize() const {
+		return patternSize;
+	}
+	float Calibration::getSquareSize() const {
+		return squareSize;
+	}
 	void Calibration::customDraw() {
 		for(int i = 0; i < size(); i++) {
 			draw(i);
@@ -302,7 +331,7 @@ namespace ofxCv {
 		ofPopStyle();
 	}
 	void Calibration::updateObjectPoints() {
-		vector<Point3f> points = calcBoardCornerPositions(patternSize, squareSize, CHESSBOARD);
+		vector<Point3f> points = createObjectPoints(patternSize, squareSize, CHESSBOARD);
 		objectPoints.resize(imagePoints.size(), points);
 	}
 	void Calibration::updateReprojectionError() {
@@ -333,7 +362,7 @@ namespace ofxCv {
 		undistortedIntrinsics.setup(undistortedCameraMatrix, distortedIntrinsics.getImageSize());
 	}
 	
-	vector<Point3f> calcBoardCornerPositions(cv::Size patternSize, float squareSize, CalibrationPattern patternType) {
+	vector<Point3f> Calibration::createObjectPoints(cv::Size patternSize, float squareSize, CalibrationPattern patternType) {
 		vector<Point3f> corners;
 		switch(patternType) {
 			case CHESSBOARD:

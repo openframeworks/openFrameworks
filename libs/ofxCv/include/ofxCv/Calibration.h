@@ -36,6 +36,7 @@ namespace ofxCv {
 		double getFocalLength() const;
 		double getAspectRatio() const;
 		Point2d getPrincipalPoint() const;
+		void loadProjectionMatrix(float nearDist = 10., float farDist = 10000.) const;
 	protected:
 		Mat cameraMatrix;
 		cv::Size imageSize, sensorSize;
@@ -53,7 +54,7 @@ namespace ofxCv {
 		void save(string filename, bool absolute = false) const;
 		void load(string filename, bool absolute = false);
 		
-		void setBoardSize(int xCount, int yCount);
+		void setPatternSize(int xCount, int yCount);
 		void setSquareSize(float squareSize);
 		bool add(Mat img);
 		bool clean(float minReprojectionError = 2.f);
@@ -80,6 +81,9 @@ namespace ofxCv {
 		void setFillFrame(bool fillFrame);
 		
 		int size() const;
+		cv::Size getPatternSize() const;
+		float getSquareSize() const;
+		static vector<Point3f> createObjectPoints(cv::Size patternSize, float squareSize, CalibrationPattern patternType);
 		
 		void customDraw();
 		void draw(int i) const;
@@ -87,7 +91,6 @@ namespace ofxCv {
 		void draw3d(int i) const;
 		
 		const bool &isReady;
-		
 		vector<vector<Point2f> > imagePoints;
 		
 	protected:
@@ -116,7 +119,5 @@ namespace ofxCv {
 		
 		bool _isReady;
 	};
-	
-	vector<Point3f> calcBoardCornerPositions(cv::Size patternSize, float squareSize, CalibrationPattern patternType);
 	
 }
