@@ -44,6 +44,31 @@ namespace ofxCv {
 	
 	float weightedAverageAngle(const vector<Vec4i>& lines);
 	
+	// (nearest point) to the two given lines
+	template <class T>
+	Point3_<T> intersectLineLine(Point3_<T> lineStart1, Point3_<T> lineEnd1, Point3_<T> lineStart2, Point3_<T> lineEnd2) {
+		Point3_<T> v1(lineEnd1 - lineStart1), v2(lineEnd2 - lineStart2);
+		T v1v1 = v1.dot(v1), v2v2 = v2.dot(v2), v1v2 = v1.dot(v2), v2v1 = v2.dot(v1);
+		Mat_<T> lambda = (1. / (v1v1 * v2v2 - v1v2 * v1v2))
+			* ((Mat_<T>(2, 2) << v2v2, v1v2, v2v1, v1v1)
+			 * (Mat_<T>(2, 1) << v1.dot(lineStart2 - lineStart1), v2.dot(lineStart1 - lineStart2)));
+		return (1./2) * ((lineStart1 + v1 * lambda(0)) + (lineStart2 + v2 * lambda(1)));
+	}
+
+	// (nearest point on a line) to the given point
+	template <class T>
+	Point3_<T> intersectPointLine(Point3_<T> point, Point3_<T> lineStart, Point3_<T> lineEnd) {
+		Point3_<T> ray = lineEnd - lineStart;
+		T u = (point - lineStart).dot(ray) / ray.dot(ray);
+		return lineStart + u * ray;
+	}
+
+	// (nearest point on a ray) to the given point
+	template <class T>
+	Point3_<T> intersectPointRay(Point3_<T> point, Point3_<T> ray) {
+		return ray * (point.dot(ray) / ray.dot(ray));
+	}
+	
 	static const ofColor cyanPrint = ofColor::fromHex(0x00abec);
 	static const ofColor magentaPrint = ofColor::fromHex(0xec008c);
 	static const ofColor yellowPrint = ofColor::fromHex(0xffee00);

@@ -13,7 +13,7 @@ public:
 	ofxCv::Calibration calibration;
 	vector<cv::Point3f> objectPoints;
 	vector<cv::Point2f> imagePoints;
-	ofMatrix4x4 model;
+	ofMatrix4x4 modelMatrix;
 	bool found;
 	cv::Size patternSize;
 	ofLight light;
