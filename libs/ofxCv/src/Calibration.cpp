@@ -43,20 +43,23 @@ namespace ofxCv {
 	}
 	
 	void Intrinsics::loadProjectionMatrix(float nearDist, float farDist) const {
-		int viewport[4];
-		int startx = principalPoint.x - imageSize.width / 2.;
-		int starty = principalPoint.y - imageSize.height / 2.;
-		viewport[0] = startx;
-		viewport[1] = -starty;
-		viewport[2] = imageSize.width;
-		viewport[3] = imageSize.height;
-		glViewport(viewport[0], viewport[1], viewport[2], viewport[3]) ;
-		
+		glViewport(0, 0, imageSize.width, imageSize.height);
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
-		float aspect = (float) imageSize.width / imageSize.height;
-		gluPerspective(fov.y, aspect, nearDist, farDist);
-		
+		float fx = ofDegToRad(fov.x);
+		float fy = ofDegToRad(fov.y);
+		float cx = principalPoint.x / imageSize.width;
+		float cy = principalPoint.y / imageSize.height;
+		float dfx = tan(fx * (cx - .5));
+		float dfy = -tan(fy * (cy - .5));
+		float left = -tan(fx / 2) - dfx;
+		float right = tan(fx / 2) - dfx;
+		float bottom = -tan(fy / 2) - dfy;
+		float top = tan(fy / 2) - dfy;
+		glFrustum(
+			nearDist * left, nearDist * right,
+			nearDist * bottom, nearDist * top,
+			nearDist, farDist);
 		glMatrixMode(GL_MODELVIEW);
 		glLoadIdentity();
 		gluLookAt(
