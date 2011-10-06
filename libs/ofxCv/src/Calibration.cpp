@@ -43,7 +43,7 @@ namespace ofxCv {
 	}
 	
 	Calibration::Calibration() :
-	boardSize(cv::Size(10, 7)), squareSize(2.5), // based on Chessboard_A4.pdf, assuming world units are centimeters
+	patternSize(cv::Size(10, 7)), squareSize(2.5), // based on Chessboard_A4.pdf, assuming world units are centimeters
 	fillFrame(true),
 	isReady(_isReady),
 	_isReady(false) {
@@ -82,7 +82,7 @@ namespace ofxCv {
 		_isReady = true;
 	}
 	void Calibration::setBoardSize(int xCount, int yCount) {
-		boardSize = cv::Size(xCount, yCount);
+		patternSize = cv::Size(xCount, yCount);
 	}
 	void Calibration::setSquareSize(float squareSize) {
 		this->squareSize = squareSize;
@@ -101,13 +101,13 @@ namespace ofxCv {
 		if (found)
 			imagePoints.push_back(pointBuf);
 		else
-			ofLog(OF_LOG_ERROR, "Calibration::add() failed, maybe your boardSize is wrong or the image has poor lighting?");
+			ofLog(OF_LOG_ERROR, "Calibration::add() failed, maybe your patternSize is wrong or the image has poor lighting?");
 		return found;
 	}
 	bool Calibration::findBoard(Mat img, vector<Point2f> &pointBuf, bool refine) {
 		// no CV_CALIB_CB_FAST_CHECK, because it breaks on dark images (e.g., dark IR images from kinect)
 		int chessFlags = CV_CALIB_CB_ADAPTIVE_THRESH;// | CV_CALIB_CB_NORMALIZE_IMAGE;
-		bool found = findChessboardCorners(img, boardSize, pointBuf, chessFlags);
+		bool found = findChessboardCorners(img, patternSize, pointBuf, chessFlags);
 		
 		// improve corner accuracy
 		if(found) {
@@ -220,7 +220,7 @@ namespace ofxCv {
 			ofLog(OF_LOG_ERROR, "getTransformation() requires both Calibration objects to have just been calibrated");
 			return;
 		}
-		if(imagePoints.size() != dst.imagePoints.size() || boardSize != dst.boardSize) {
+		if(imagePoints.size() != dst.imagePoints.size() || patternSize != dst.patternSize) {
 			ofLog(OF_LOG_ERROR, "getTransformation() requires both Calibration objects to be trained simultaneously on the same board");
 			return;
 		}
@@ -302,16 +302,8 @@ namespace ofxCv {
 		ofPopStyle();
 	}
 	void Calibration::updateObjectPoints() {
-		objectPoints.resize(1); // start with one vector<Point3f>
-		objectPoints[0].resize(0); // make sure its 0 length
-    for(int i = 0; i < boardSize.height; i++) {
-			for(int j = 0; j < boardSize.width; j++) {
-				// fill it up with a bunch of Point3fs for each grid point
-				objectPoints[0].push_back(Point3f(float(j * squareSize), float(i * squareSize), 0));
-			}
-		}
-		// then resize the vector<vector<Point3f> >, duplicating the first item
-    objectPoints.resize(imagePoints.size(), objectPoints[0]);
+		vector<Point3f> points = calcBoardCornerPositions(patternSize, squareSize, CHESSBOARD);
+		objectPoints.resize(imagePoints.size(), points);
 	}
 	void Calibration::updateReprojectionError() {
 		vector<Point2f> imagePoints2;
@@ -339,5 +331,23 @@ namespace ofxCv {
 		Mat undistortedCameraMatrix = getOptimalNewCameraMatrix(distortedIntrinsics.getCameraMatrix(), distCoeffs, distortedIntrinsics.getImageSize(), fillFrame ? 0 : 1);
 		initUndistortRectifyMap(distortedIntrinsics.getCameraMatrix(), distCoeffs, Mat(), undistortedCameraMatrix, distortedIntrinsics.getImageSize(), CV_16SC2, undistortMapX, undistortMapY);
 		undistortedIntrinsics.setup(undistortedCameraMatrix, distortedIntrinsics.getImageSize());
+	}
+	
+	vector<Point3f> calcBoardCornerPositions(cv::Size patternSize, float squareSize, CalibrationPattern patternType) {
+		vector<Point3f> corners;
+		switch(patternType) {
+			case CHESSBOARD:
+			case CIRCLES_GRID:
+				for(int i = 0; i < patternSize.height; i++)
+					for(int j = 0; j < patternSize.width; j++)
+						corners.push_back(Point3f(float(j * squareSize), float(i * squareSize), 0));
+				break;
+			case ASYMMETRIC_CIRCLES_GRID:
+				for(int i = 0; i < patternSize.height; i++)
+					for(int j = 0; j < patternSize.width; j++)
+						corners.push_back(Point3f(float(((2 * j) + (i % 2)) * squareSize), float(i * squareSize), 0));
+				break;
+		}
+		return corners;
 	}
 }	

@@ -44,6 +44,8 @@ namespace ofxCv {
 		Point2d principalPoint;
 	};
 	
+	enum CalibrationPattern {CHESSBOARD, CIRCLES_GRID, ASYMMETRIC_CIRCLES_GRID};
+	
 	class Calibration : public ofNode {
 	public:
 		Calibration();
@@ -89,7 +91,7 @@ namespace ofxCv {
 		vector<vector<Point2f> > imagePoints;
 		
 	protected:
-		cv::Size boardSize, addedImageSize;
+		cv::Size patternSize, addedImageSize;
 		float squareSize;
 		Mat grayMat;
 		
@@ -114,5 +116,7 @@ namespace ofxCv {
 		
 		bool _isReady;
 	};
+	
+	vector<Point3f> calcBoardCornerPositions(cv::Size patternSize, float squareSize, CalibrationPattern patternType);
 	
 }

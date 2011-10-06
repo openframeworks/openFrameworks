@@ -205,10 +205,10 @@ namespace ofxCv {
 			}
 		}
 		
-		int padding = 5;
+		int padding = 4;
 		int fontSize = 8;
 		float leading = 1.7;
-		int height = lines.size() * fontSize * leading;
+		int height = lines.size() * fontSize * leading - 1;
 		int width = textLength * fontSize;
 	
 		ofPushStyle();
