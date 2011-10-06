@@ -12,6 +12,6 @@ public:
 	
 	float threshold;
 	ofVideoPlayer movie;	
-	ContourFinder contourFinder;
+	ofxCv::ContourFinder contourFinder;
 	bool showLabels;
 };

@@ -1,5 +1,8 @@
 #include "testApp.h"
 
+using namespace ofxCv;
+using namespace cv;
+
 void testApp::setup() {
 	cam.initGrabber(640, 480);
 	background.setLearningTime(900);

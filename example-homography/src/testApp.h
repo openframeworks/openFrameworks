@@ -21,5 +21,5 @@ public:
 	bool saveMatrix;
 	bool homographyReady;
 	
-	Mat homography;
+	cv::Mat homography;
 };

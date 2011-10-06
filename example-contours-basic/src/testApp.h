@@ -10,5 +10,5 @@ public:
 	void draw();
 	
 	ofVideoGrabber cam;	
-	ContourFinder contourFinder;
+	ofxCv::ContourFinder contourFinder;
 };

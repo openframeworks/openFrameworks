@@ -12,6 +12,6 @@ public:
 	void keyPressed(int key);
 	
 	ofVideoGrabber cam;
-	RunningBackground background;
+	ofxCv::RunningBackground background;
 	ofImage thresholded;
 };

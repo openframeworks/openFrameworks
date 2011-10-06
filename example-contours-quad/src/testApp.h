@@ -12,7 +12,7 @@ public:
 	void keyPressed(int key);
 	
 	ofVideoGrabber cam;	
-	ContourFinder contourFinder;
+	ofxCv::ContourFinder contourFinder;
 	vector< vector<cv::Point> > quads;
 	float threshold;
 	ofColor targetColor;

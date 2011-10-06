@@ -1,5 +1,8 @@
 #include "testApp.h"
 
+using namespace ofxCv;
+using namespace cv;
+
 void testApp::setup() {
 	camera.initGrabber(320, 240);
 	prev.allocate(camera.getWidth(), camera.getHeight(), OF_IMAGE_GRAYSCALE);

@@ -14,5 +14,5 @@ public:
 	ofImage diff;
 	
 	// a scalar is like an ofVec4f but normally used for storing color information
-	Scalar diffMean;
+	cv::Scalar diffMean;
 };

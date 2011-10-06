@@ -1,5 +1,8 @@
 #include "testApp.h"
 
+using namespace cv;
+using namespace ofxCv;
+
 void testApp::setup() {
 	cam.initGrabber(640, 480);
 	thresh.allocate(640, 480, OF_IMAGE_GRAYSCALE);

@@ -1,9 +1,7 @@
 #pragma once
 
 #include "ofMain.h"
-
 #include "ofxAutoControlPanel.h"
-
 #include "ofxCv.h"
 
 class testApp : public ofBaseApp{
@@ -16,9 +14,9 @@ public:
 	
 	ofImage prev, next;
 	
-	Mat flow;
+	cv::Mat flow;
 	
-	vector<Point2f> prevPts, nextPts;
+	vector<cv::Point2f> prevPts, nextPts;
 	
 	ofxAutoControlPanel panel;
 };

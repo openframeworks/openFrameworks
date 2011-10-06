@@ -1,5 +1,8 @@
 #include "testApp.h"
 
+using namespace ofxCv;
+using namespace cv;
+
 void testApp::setup() {
 	ofSetVerticalSync(true);
 	cam.initGrabber(320, 240);
@@ -18,7 +21,7 @@ void testApp::update() {
 		diff.update();
 		
 		// like ofSetPixels, but more concise and cross-toolkit
-		ofxCv::copy(cam, previous);
+		copy(cam, previous);
 		
 		// mean() returns a Scalar. it's a cv:: function so we have to pass a Mat
 		diffMean = mean(toCv(diff));

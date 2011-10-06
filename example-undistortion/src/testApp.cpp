@@ -1,5 +1,8 @@
 #include "testApp.h"
 
+using namespace ofxCv;
+using namespace cv;
+
 const float diffThreshold = 2.5; // maximum amount of movement
 const float timeThreshold = 1; // minimum time between snapshots
 const int startCleaning = 10; // start cleaning outliers after this many samples

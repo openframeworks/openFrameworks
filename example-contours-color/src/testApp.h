@@ -12,8 +12,8 @@ public:
 	void keyPressed(int key);
 	
 	ofVideoGrabber cam;	
-	ContourFinder contourFinder;
+	ofxCv::ContourFinder contourFinder;
 	float threshold;
-	TrackingColorMode trackingColorMode;
+	ofxCv::TrackingColorMode trackingColorMode;
 	ofColor targetColor;
 };

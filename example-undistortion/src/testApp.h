@@ -19,5 +19,5 @@ public:
 	float lastTime;
 	bool active;
 	
-	Calibration calibration;
+	ofxCv::Calibration calibration;
 };

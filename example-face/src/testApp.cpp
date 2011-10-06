@@ -1,5 +1,8 @@
 #include "testApp.h"
 
+using namespace ofxCv;
+using namespace cv;
+
 /*
 	A classifier helper should handle the initial resizing for you. It should
 	have two "preset" modes for very accurate face finding and very fast.
