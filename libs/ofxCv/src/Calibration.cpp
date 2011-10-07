@@ -46,19 +46,15 @@ namespace ofxCv {
 		glViewport(0, 0, imageSize.width, imageSize.height);
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
-		float fx = ofDegToRad(fov.x);
-		float fy = ofDegToRad(fov.y);
-		float cx = principalPoint.x / imageSize.width;
-		float cy = principalPoint.y / imageSize.height;
-		float dfx = tan(fx * (cx - .5));
-		float dfy = -tan(fy * (cy - .5));
-		float left = -tan(fx / 2) - dfx;
-		float right = tan(fx / 2) - dfx;
-		float bottom = -tan(fy / 2) - dfy;
-		float top = tan(fy / 2) - dfy;
+		float w = imageSize.width;
+		float h = imageSize.height;
+		float fx = cameraMatrix.at<double>(0, 0);
+		float fy = cameraMatrix.at<double>(1, 1);
+		float cx = principalPoint.x;
+		float cy = principalPoint.y;
 		glFrustum(
-			nearDist * left, nearDist * right,
-			nearDist * bottom, nearDist * top,
+			nearDist * (-cx) / fx, nearDist * (w - cx) / fx,
+			nearDist * (cy - h) / fy,	nearDist * (cy) / fy,
 			nearDist, farDist);
 		glMatrixMode(GL_MODELVIEW);
 		glLoadIdentity();

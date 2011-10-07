@@ -211,6 +211,8 @@ namespace ofxCv {
 		int height = lines.size() * fontSize * leading - 1;
 		int width = textLength * fontSize;
 	
+		glPushAttrib(GL_DEPTH_BUFFER_BIT);
+		glDisable(GL_DEPTH_TEST);
 		ofPushStyle();
 		ofSetColor(background);
 		ofFill();
@@ -222,6 +224,7 @@ namespace ofxCv {
 		ofDrawBitmapString(text, x + 1, y + fontSize + 2);
 		ofPopMatrix();
 		ofPopStyle();
+		glPopAttrib();
 	}
 
 }
