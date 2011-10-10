@@ -142,7 +142,7 @@ void ofxXmlSettings::removeTag(const string& tag, int which){
 int ofxXmlSettings::getValue(const string& tag, int defaultValue, int which){
     TiXmlHandle valHandle(NULL);
 	if (readTag(tag, valHandle, which)){
-		return strtol(valHandle.ToText()->Value(), NULL, 0);
+		return ofToInt(valHandle.ToText()->Value());
 	}
 	return defaultValue;
 }
@@ -151,7 +151,7 @@ int ofxXmlSettings::getValue(const string& tag, int defaultValue, int which){
 double ofxXmlSettings::getValue(const string& tag, double defaultValue, int which){
     TiXmlHandle valHandle(NULL);
 	if (readTag(tag, valHandle, which)){
-		return strtod(valHandle.ToText()->Value(),  NULL);
+		return ofToFloat(valHandle.ToText()->Value());
 	}
 	return defaultValue;
 }
