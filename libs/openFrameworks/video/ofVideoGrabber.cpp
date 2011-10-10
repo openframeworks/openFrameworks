@@ -19,6 +19,7 @@ ofVideoGrabber::ofVideoGrabber(){
 	bInitialized		= false;
 	RequestedDeviceID	= -1;
 	internalPixelFormat = OF_PIXELS_RGB;
+	desiredFramerate 	= -1;
 
 #ifdef TARGET_ANDROID
 	if(!ofxAndroidInitGrabber(this)) return;
@@ -62,6 +63,10 @@ bool ofVideoGrabber::initGrabber(int w, int h, bool setUseTexture){
 	}
 
 	grabber->setPixelFormat(internalPixelFormat);
+
+	if( desiredFramerate!=-1 ){
+		grabber->setDesiredFrameRate(desiredFramerate);
+	}
 
 	bool bOk = grabber->initGrabber(w, h);
 	width	 = (int)grabber->getWidth();
@@ -118,6 +123,7 @@ void ofVideoGrabber::setDeviceID(int _deviceID){
 
 //--------------------------------------------------------------------
 void ofVideoGrabber::setDesiredFrameRate(int framerate){
+	desiredFramerate = framerate;
 	if(	grabber != NULL ){
 		grabber->setDesiredFrameRate(framerate);
 	}
