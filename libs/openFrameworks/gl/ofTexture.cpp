@@ -979,7 +979,7 @@ void ofTexture::draw(ofPoint p1, ofPoint p2, ofPoint p3, ofPoint p4){
 		p1.x, p1.y,
 		p2.x, p2.y,
 		p3.x, p3.y,
-		p4.x, p4.x
+		p4.x, p4.y
 	};
 	
 	glEnableClientState( GL_TEXTURE_COORD_ARRAY );
