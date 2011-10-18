@@ -237,14 +237,14 @@ namespace ofxCv {
 		
 	}
 	
-	void Calibration::getTransformation(Calibration& dst, Mat& rotation, Mat& translation) {
+	bool Calibration::getTransformation(Calibration& dst, Mat& rotation, Mat& translation) {
 		if(imagePoints.size() == 0 || dst.imagePoints.size() == 0) {
 			ofLog(OF_LOG_ERROR, "getTransformation() requires both Calibration objects to have just been calibrated");
-			return;
+			return false;
 		}
 		if(imagePoints.size() != dst.imagePoints.size() || patternSize != dst.patternSize) {
 			ofLog(OF_LOG_ERROR, "getTransformation() requires both Calibration objects to be trained simultaneously on the same board");
-			return;
+			return false;
 		}
 		Mat fundamentalMatrix, essentialMatrix;
 		Mat cameraMatrix = distortedIntrinsics.getCameraMatrix();
@@ -255,7 +255,8 @@ namespace ofxCv {
 										cameraMatrix, distCoeffs,
 										dstCameraMatrix, dst.distCoeffs,
 										distortedIntrinsics.getImageSize(), rotation, translation,
-										essentialMatrix, fundamentalMatrix);			
+										essentialMatrix, fundamentalMatrix);
+		return true;
 	}		
 	float Calibration::getReprojectionError() const {
 		return reprojectionError;
