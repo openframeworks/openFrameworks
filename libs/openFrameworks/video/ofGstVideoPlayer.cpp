@@ -25,6 +25,7 @@ void ofGstVideoPlayer::setPixelFormat(ofPixelFormat pixelFormat){
 }
 
 bool ofGstVideoPlayer::loadMovie(string name){
+	close();
 	if( name.find( "://",0 ) == string::npos){
 		name 			= "file://"+ofToDataPath(name,true);
 		bIsStream		= false;
@@ -91,13 +92,15 @@ bool ofGstVideoPlayer::loadMovie(string name){
 
 
 bool ofGstVideoPlayer::allocate(){
+	if(bIsAllocated) return true;
+
 	guint64 durationNanos = videoUtils.getDurationNanos();
 
 	nFrames		  = 0;
 	if(GstPad* pad = gst_element_get_static_pad(videoUtils.getSink(), "sink")){
 		int width,height,bpp=24;
 		if(gst_video_get_size(GST_PAD(pad), &width, &height)){
-			videoUtils.allocate(width,height,bpp);
+			if(!videoUtils.allocate(width,height,bpp)) return false;
 		}else{
 			ofLog(OF_LOG_ERROR,"GStreamer: cannot query width and height");
 			return false;
@@ -116,15 +119,17 @@ bool ofGstVideoPlayer::allocate(){
 			ofLog(OF_LOG_WARNING,"Gstreamer: cannot get framerate, frame seek won't work");
 		}
 		gst_object_unref(GST_OBJECT(pad));
-		return true;
+		bIsAllocated = true;
 	}else{
 		ofLog(OF_LOG_ERROR,"GStreamer: cannot get sink pad");
-		return false;
+		bIsAllocated = false;
 	}
+
+	return bIsAllocated;
 }
 
 void ofGstVideoPlayer::on_stream_prepared(){
-	allocate();
+	if(!bIsAllocated) allocate();
 }
 
 int	ofGstVideoPlayer::getCurrentFrame(){
@@ -237,6 +242,7 @@ void ofGstVideoPlayer::setSpeed(float speed){
 }
 
 void ofGstVideoPlayer::close(){
+	bIsAllocated = false;
 	videoUtils.close();
 }
 

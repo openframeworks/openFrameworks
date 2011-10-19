@@ -840,10 +840,7 @@ ofFloatColor & ofCairoRenderer::getBgColor(){
 //----------------------------------------------------------
 void ofCairoRenderer::background(const ofColor & c){
 	bgColor = c;
-	// if we are in auto mode, then clear with a bg call...
-	if (bClearBg()){
-		clear(c.r,c.g,c.b,c.a);
-	}
+	clear(c.r,c.g,c.b,c.a);
 }
 
 //----------------------------------------------------------

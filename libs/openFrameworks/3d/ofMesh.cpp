@@ -188,7 +188,7 @@ void ofMesh::addTexCoords(const ofVec2f* tCoords, int amt){
 }
 
 //--------------------------------------------------------------
-ofIndexType ofMesh::getIndex(int i){
+ofIndexType ofMesh::getIndex(int i) const{
 	return indices[i];
 }
 
@@ -225,22 +225,22 @@ ofPrimitiveMode ofMesh::getMode() const{
 }
 
 //--------------------------------------------------------------
-ofVec3f ofMesh::getVertex(int i){
+ofVec3f ofMesh::getVertex(int i) const{
 	return vertices[i];
 }
 
 //--------------------------------------------------------------
-ofVec3f ofMesh::getNormal(int i){
+ofVec3f ofMesh::getNormal(int i) const{
 	return normals[i];
 }
 
 //--------------------------------------------------------------
-ofFloatColor ofMesh::getColor(int i){
+ofFloatColor ofMesh::getColor(int i) const{
 	return colors[i];
 }
 
 //--------------------------------------------------------------
-ofVec2f ofMesh::getTexCoord(int i){
+ofVec2f ofMesh::getTexCoord(int i) const{
 	return texCoords[i];
 }
 
@@ -373,22 +373,47 @@ const ofIndexType * ofMesh::getIndexPointer() const{
 }
 
 vector<ofVec3f> & ofMesh::getVertices(){
+	bVertsChanged = true;
 	return vertices;
 }
 
 vector<ofFloatColor> & ofMesh::getColors(){
+	bColorsChanged = true;
 	return colors;
 }
 
 vector<ofVec3f> & ofMesh::getNormals(){
+	bNormalsChanged = true;
 	return normals;
 }
 
 vector<ofVec2f> & ofMesh::getTexCoords(){
+	bTexCoordsChanged = true;
 	return texCoords;
 }
 
 vector<ofIndexType> & ofMesh::getIndices(){
+	bIndicesChanged = true;
+	return indices;
+}
+
+const vector<ofVec3f> & ofMesh::getVertices() const{
+	return vertices;
+}
+
+const vector<ofFloatColor> & ofMesh::getColors() const{
+	return colors;
+}
+
+const vector<ofVec3f> & ofMesh::getNormals() const{
+	return normals;
+}
+
+const vector<ofVec2f> & ofMesh::getTexCoords() const{
+	return texCoords;
+}
+
+const vector<ofIndexType> & ofMesh::getIndices() const{
 	return indices;
 }
 
