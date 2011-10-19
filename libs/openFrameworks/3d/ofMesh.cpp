@@ -460,6 +460,17 @@ vector<int>& ofPrimitive::getFace(int faceNum){
 }
  */
 
+
+//--------------------------------------------------------------
+ofVec3f ofMesh::getCentroid() const {
+	ofVec3f runningAverage = vertices[0];
+	for(unsigned long int v = 1; v < (unsigned long int)vertices.size(); v++){
+		unsigned long int contributingVertexCount = v + 1;
+		runningAverage = runningAverage * float(v) / float(contributingVertexCount) + vertices[v] * 1.0 / float(contributingVertexCount);
+	}
+	return runningAverage;
+}
+
 //SETTERS
 //--------------------------------------------------------------
 void ofMesh::setMode(ofPrimitiveMode m){
