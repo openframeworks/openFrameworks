@@ -133,15 +133,15 @@ void ofEndSaveScreenAsPDF(){
 
 // opengl specifics
 
-bool ofGetUsingNormalizedTexCoords() {
+bool ofGetUsingNormalizedTexCoords(){
 	return bUsingNormalizedTexCoords;
 }
 
-void ofEnableNormalizedTexCoords() {
+void ofEnableNormalizedTexCoords(){
 	bUsingNormalizedTexCoords = true;
 }
 
-void ofDisableNormalizedTexCoords() {
+void ofDisableNormalizedTexCoords(){
 	bUsingNormalizedTexCoords = false;
 }
 
@@ -152,7 +152,7 @@ void ofDisableNormalizedTexCoords() {
 static bool bUseCustomTextureWrap = false;
 
 //----------------------------------------------------------
-void ofSetTextureWrap(GLfloat wrapS, GLfloat wrapT) {
+void ofSetTextureWrap(GLfloat wrapS, GLfloat wrapT){
 	bUseCustomTextureWrap = true;
 	GLenum textureTarget = GL_TEXTURE_2D;
 #ifndef TARGET_OPENGLES
@@ -165,12 +165,12 @@ void ofSetTextureWrap(GLfloat wrapS, GLfloat wrapT) {
 }
 
 //----------------------------------------------------------
-bool ofGetUsingCustomTextureWrap() {
+bool ofGetUsingCustomTextureWrap(){
 	return bUseCustomTextureWrap;
 }
 
 //----------------------------------------------------------
-void ofRestoreTextureWrap() {
+void ofRestoreTextureWrap(){
 	bUseCustomTextureWrap = false;
 }
 
@@ -178,7 +178,7 @@ void ofRestoreTextureWrap() {
 
 static bool bUseCustomMinMagFilters = false;
 //----------------------------------------------------------
-void ofSetMinMagFilters(GLfloat minFilter, GLfloat maxFilter) {
+void ofSetMinMagFilters(GLfloat minFilter, GLfloat maxFilter){
 	bUseCustomMinMagFilters = true;
 	GLenum textureTarget = GL_TEXTURE_2D;
 #ifndef TARGET_OPENGLES
@@ -191,12 +191,12 @@ void ofSetMinMagFilters(GLfloat minFilter, GLfloat maxFilter) {
 }
 
 //----------------------------------------------------------
-bool ofGetUsingCustomMinMagFilters() {
+bool ofGetUsingCustomMinMagFilters(){
 	return bUseCustomMinMagFilters;
 }
 
 //----------------------------------------------------------
-void ofRestoreMinMagFilters() {
+void ofRestoreMinMagFilters(){
 	bUseCustomMinMagFilters = false;
 }
 
@@ -232,12 +232,12 @@ void ofDisableArbTex(){
 // transformation matrix related functions
 
 //----------------------------------------------------------
-void ofPushView() {
+void ofPushView(){
 	renderer->pushView();
 }
 
 //----------------------------------------------------------
-void ofPopView() {
+void ofPopView(){
 	renderer->popView();
 }
 
@@ -247,7 +247,7 @@ void ofViewport(ofRectangle viewport){
 }
 
 //----------------------------------------------------------
-void ofViewport(float x, float y, float width, float height, bool invertY) {
+void ofViewport(float x, float y, float width, float height, bool invertY){
 	renderer->viewport(x,y,width,height,invertY);
 }
 
@@ -283,22 +283,22 @@ int ofOrientationToDegrees(ofOrientation orientation){
 }
 
 //----------------------------------------------------------
-void ofSetCoordHandedness(ofHandednessType handedness) {
+void ofSetCoordHandedness(ofHandednessType handedness){
 	renderer->setCoordHandedness(handedness);
 }
 
 //----------------------------------------------------------
-ofHandednessType ofGetCoordHandedness() {
+ofHandednessType ofGetCoordHandedness(){
 	return renderer->getCoordHandedness();
 }
 
 //----------------------------------------------------------
-void ofSetupScreenPerspective(float width, float height, ofOrientation orientation, bool vFlip, float fov, float nearDist, float farDist) {
+void ofSetupScreenPerspective(float width, float height, ofOrientation orientation, bool vFlip, float fov, float nearDist, float farDist){
 	renderer->setupScreenPerspective(width,height, orientation, vFlip,fov,nearDist,farDist);
 }
 
 //----------------------------------------------------------
-void ofSetupScreenOrtho(float width, float height, ofOrientation orientation, bool vFlip, float nearDist, float farDist) {
+void ofSetupScreenOrtho(float width, float height, ofOrientation orientation, bool vFlip, float nearDist, float farDist){
 	renderer->setupScreenOrtho(width,height,orientation,vFlip,nearDist,farDist);
 }
 
@@ -377,17 +377,17 @@ void ofRotate(float degrees){
 // background functions
 
 //----------------------------------------------------------
-void ofClear(float r, float g, float b, float a) {
+void ofClear(float r, float g, float b, float a){
 	renderer->clear(r,g,b,a);
 }
 
 //----------------------------------------------------------
-void ofClear(float brightness, float a) {
+void ofClear(float brightness, float a){
 	renderer->clear(brightness, brightness, brightness, a);
 }
 
 //----------------------------------------------------------
-void ofClearAlpha() {
+void ofClearAlpha(){
 	renderer->clearAlpha();
 }	
 
@@ -407,7 +407,7 @@ float * ofBgColorPtr(){
 }
 
 //----------------------------------------------------------
-void ofBackground(int brightness, int alpha) {
+void ofBackground(int brightness, int alpha){
 	ofBackground(brightness, brightness, brightness, alpha);
 }
 
@@ -428,7 +428,7 @@ void ofBackground(int r, int g, int b, int a){
 }
 
 //----------------------------------------------------------
-void ofSetBackgroundColor(int brightness, int alpha) {
+void ofSetBackgroundColor(int brightness, int alpha){
 	ofSetBackgroundColor(brightness, brightness, brightness, alpha);
 }
 
@@ -503,7 +503,7 @@ void ofSetCurveResolution(int res){
 }
 
 //----------------------------------------
-void ofSetSphereResolution(int res) {
+void ofSetSphereResolution(int res){
 	currentStyle.sphereResolution = res;
 }
 
@@ -571,18 +571,17 @@ void ofEnableBlendMode(ofBlendMode blendMode){
 }
 
 //----------------------------------------------------------
-void ofEnablePointSprites() {
+void ofEnablePointSprites(){
 	renderer->enablePointSprites();
 }
 
 //----------------------------------------------------------
-void ofDisablePointSprites() {
+void ofDisablePointSprites(){
 	renderer->disablePointSprites();
 }
 
 //----------------------------------------------------------
-void ofDisableBlendMode()
-{
+void ofDisableBlendMode(){
     glDisable(GL_BLEND);
 	currentStyle.blendingMode = OF_BLENDMODE_DISABLED;
 }
@@ -618,7 +617,7 @@ void ofSetPolyMode(ofPolyWindingMode mode){
 }
 
 //----------------------------------------
-void ofSetDrawBitmapMode(ofDrawBitmapMode mode) {
+void ofSetDrawBitmapMode(ofDrawBitmapMode mode){
 	currentStyle.drawBitmapMode = mode;
 }
 
@@ -839,7 +838,7 @@ void ofVertex(float x, float y, float z){
 }
 
 //---------------------------------------------------
-void ofVertex(ofPoint & p) {
+void ofVertex(ofPoint & p){
 	shape.lineTo(p);
 }
 
@@ -863,7 +862,7 @@ void ofCurveVertexes( const vector <ofPoint> & curvePoints){
 }
 
 //---------------------------------------------------
-void ofCurveVertex(ofPoint & p) {
+void ofCurveVertex(ofPoint & p){
 	shape.curveTo(p);
 }
 
@@ -908,17 +907,17 @@ void ofEndShape(bool bClose){
 // 3d primitives
 
 //----------------------------------------
-void ofSphere(float x, float y, float z, float radius) {
+void ofSphere(float x, float y, float z, float radius){
 	ofSphere(ofPoint(x, y, z), radius);
 }
 
 //----------------------------------------
-void ofSphere(float x, float y, float radius) {
+void ofSphere(float x, float y, float radius){
 	ofSphere(x, y, 0, radius);
 }
 
 //----------------------------------------
-void ofSphere(const ofPoint& position, float radius) {
+void ofSphere(const ofPoint& position, float radius){
 	ofPushMatrix();
 	ofTranslate(position);
 	ofSphere(radius);
@@ -926,7 +925,7 @@ void ofSphere(const ofPoint& position, float radius) {
 }
 
 //----------------------------------------
-void ofSphere(float radius) {
+void ofSphere(float radius){
 	// TODO: add an implementation using ofMesh
 #ifndef TARGET_OPENGLES
 	// this needs to be swapped out with non-glut code
@@ -939,7 +938,7 @@ void ofSphere(float radius) {
 	
 	ofPushMatrix();
 	ofRotateX(90);
-	if(ofGetStyle().bFill) {
+	if(ofGetStyle().bFill){
 		glutSolidSphere(radius, 2 * currentStyle.sphereResolution, currentStyle.sphereResolution);
 	} else {
 		glutWireSphere(radius, 2 * currentStyle.sphereResolution, currentStyle.sphereResolution);
@@ -949,17 +948,17 @@ void ofSphere(float radius) {
 }
 
 //----------------------------------------
-void ofBox(float x, float y, float z, float size) {
+void ofBox(float x, float y, float z, float size){
 	ofBox(ofPoint(x, y, z), size);
 }
 
 //----------------------------------------
-void ofBox(float x, float y, float size) {
+void ofBox(float x, float y, float size){
 	ofBox(x, y, 0, size);
 }
 
 //----------------------------------------
-void ofBox(const ofPoint& position, float size) {
+void ofBox(const ofPoint& position, float size){
 	ofPushMatrix();
 	ofTranslate(position);
 	ofBox(size);
@@ -967,16 +966,16 @@ void ofBox(const ofPoint& position, float size) {
 }
 
 //----------------------------------------
-void ofBox(float size) {
+void ofBox(float size){
 	ofPushMatrix();
-	if(ofGetCoordHandedness() == OF_LEFT_HANDED) {
+	if(ofGetCoordHandedness() == OF_LEFT_HANDED){
 		ofScale(1, 1, -1);
 	}
 
 	float h = size * .5;
 	
 	vertexData.clear();
-	if(ofGetStyle().bFill) {
+	if(ofGetStyle().bFill){
 		ofVec3f vertices[] = {
 			ofVec3f(+h,-h,+h), ofVec3f(+h,-h,-h), ofVec3f(+h,+h,-h), ofVec3f(+h,+h,+h),
 			ofVec3f(+h,+h,+h), ofVec3f(+h,+h,-h), ofVec3f(-h,+h,-h), ofVec3f(-h,+h,+h),
