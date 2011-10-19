@@ -794,12 +794,30 @@ void ofCurve(float x0, float y0, float x1, float y1, float x2, float y2, float x
 	shape.draw();
 }
 
+//----------------------------------------------------------
+void ofCurve(float x0, float y0, float z0, float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3){
+	shape.clear();
+	shape.curveTo(x0,y0,z0);
+	shape.curveTo(x1,y1,z1);
+	shape.curveTo(x2,y2,z2);
+	shape.curveTo(x3,y3,z3);
+	shape.draw();
+}
+
 
 //----------------------------------------------------------
 void ofBezier(float x0, float y0, float x1, float y1, float x2, float y2, float x3, float y3){
 	shape.clear();
 	shape.moveTo(x0,y0);
 	shape.bezierTo(x1,y1,x2,y2,x3,y3);
+	shape.draw();
+}
+
+//----------------------------------------------------------
+void ofBezier(float x0, float y0, float z0, float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3){
+	shape.clear();
+	shape.moveTo(x0,y0,z0);
+	shape.bezierTo(x1,y1,z1,x2,y2,z2,x3,y3,z3);
 	shape.draw();
 }
 
@@ -811,6 +829,12 @@ void ofBeginShape(){
 //----------------------------------------------------------
 void ofVertex(float x, float y){
 	shape.lineTo(x,y);
+
+}
+
+//----------------------------------------------------------
+void ofVertex(float x, float y, float z){
+	shape.lineTo(x,y,z);
 
 }
 
@@ -846,6 +870,15 @@ void ofCurveVertex(ofPoint & p) {
 //---------------------------------------------------
 void ofBezierVertex(float x1, float y1, float x2, float y2, float x3, float y3){
 	shape.bezierTo(x1,y1,x2,y2,x3,y3);
+}
+
+void ofBezierVertex(const ofPoint & p1, const ofPoint & p2, const ofPoint & p3){
+	shape.bezierTo(p1, p2, p3);
+}
+
+//---------------------------------------------------
+void ofBezierVertex(float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3){
+	shape.bezierTo(x1,y1,z1,x2,y2,z2,x3,y3,z3);
 }
 
 //----------------------------------------------------------
