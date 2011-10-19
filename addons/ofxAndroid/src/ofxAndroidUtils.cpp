@@ -205,3 +205,21 @@ void ofxAndroidUnlockScreenSleep(){
 	}
 	ofGetJNIEnv()->CallStaticVoidMethod(javaClass,unlockScreenSleep);
 }
+
+bool ofxAndroidCheckSDCardMounted(){
+	jclass javaClass = ofGetJavaOFAndroid();
+
+	if(javaClass==0){
+		ofLog(OF_LOG_ERROR,"cannot find OFAndroid java class");
+		return false;
+	}
+
+	jmethodID unlockScreenSleep = ofGetJNIEnv()->GetStaticMethodID(javaClass,"checkSDCardMounted","()Z");
+	if(!unlockScreenSleep){
+		ofLog(OF_LOG_ERROR,"cannot find OFAndroid checkSDCardMounted method");
+		return false;
+	}
+	return ofGetJNIEnv()->CallStaticBooleanMethod(javaClass,unlockScreenSleep);
+
+}
+

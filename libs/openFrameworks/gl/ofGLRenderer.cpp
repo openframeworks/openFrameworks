@@ -623,11 +623,8 @@ ofFloatColor & ofGLRenderer::getBgColor(){
 //----------------------------------------------------------
 void ofGLRenderer::background(const ofColor & c){
 	bgColor = c;
-	// if we are in not-auto mode, then clear with a bg call...
-	if (bClearBg() == false){
-		glClearColor(bgColor[0],bgColor[1],bgColor[2], bgColor[3]);
-		glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	}
+	glClearColor(bgColor[0],bgColor[1],bgColor[2], bgColor[3]);
+	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
 //----------------------------------------------------------

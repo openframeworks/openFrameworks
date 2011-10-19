@@ -155,6 +155,11 @@ void ofBackground(int brightness, int alpha = 255);
 void ofBackground(const ofColor & c);
 void ofBackgroundHex(int hexColor, int alpha = 255);
 
+void ofSetBackgroundColor(int r, int g, int b, int a=255);
+void ofSetBackgroundColor(int brightness, int alpha = 255);
+void ofSetBackgroundColor(const ofColor & c);
+void ofSetBackgroundColorHex(int hexColor, int alpha = 255);
+
 // user's access to settings (bgAuto, corner mode):
 void 	ofSetBackgroundAuto(bool bManual);		// default is true
 

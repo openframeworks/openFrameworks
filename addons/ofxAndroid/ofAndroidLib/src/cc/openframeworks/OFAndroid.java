@@ -361,6 +361,19 @@ public class OFAndroid {
 			}  
 		});
 	}
+	
+	static public boolean checkSDCardMounted(){
+		boolean canSaveExternal = false;
+
+		String storageState = Environment.getExternalStorageState();
+
+		if (Environment.MEDIA_MOUNTED.equals(storageState))
+			canSaveExternal = true;
+		else
+			canSaveExternal = false;
+		
+		return canSaveExternal;
+	}
 
 	// native methods to call OF c++ callbacks
     public static native void setAppDataDir(String data_dir,String app_name);
@@ -462,15 +475,16 @@ public class OFAndroid {
 			public void run() {
 				new AlertDialog.Builder(ofActivity)  
 					.setMessage(alertMsg)  
-					.setTitle("OF")  
+					.setTitle("")  
 					.setCancelable(false)  
 					.setNeutralButton(android.R.string.ok,  
 							new DialogInterface.OnClickListener() {  
-						public void onClick(DialogInterface dialog, int whichButton){}
+						public void onClick(DialogInterface dialog, int whichButton){
+							OFAndroid.okPressed();
+						}
 	
 				  	})  
-				  	.show();    
-				
+				  	.show();
 			}  
 		});
 	}
