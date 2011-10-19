@@ -12,6 +12,7 @@ namespace ofxCv {
 		this->sensorSize = sensorSize;
 		calibrationMatrixValues(cameraMatrix, imageSize, sensorSize.width, sensorSize.height,
 														fov.x, fov.y, focalLength, principalPoint, aspectRatio);
+
 	}
 	
 	Mat Intrinsics::getCameraMatrix() const {
@@ -65,30 +66,46 @@ namespace ofxCv {
 	}
 	
 	Calibration::Calibration() :
-	patternSize(cv::Size(10, 7)), squareSize(2.5), // based on Chessboard_A4.pdf, assuming world units are centimeters
-	fillFrame(true),
-	isReady(_isReady),
-	_isReady(false) {
+		patternSize(cv::Size(10, 7)), squareSize(2.5), // based on Chessboard_A4.pdf, assuming world units are centimeters
+		fillFrame(true),
+		_isReady(false)
+	{
+		
 	}
+	
 	void Calibration::save(string filename, bool absolute) const {
-    FileStorage fs(ofToDataPath(filename, absolute), FileStorage::WRITE);
+		if(!_isReady){
+			ofLog(OF_LOG_ERROR, "Calibration::save() failed, because your calibration isn't ready yet!");
+		}
+		FileStorage fs(ofToDataPath(filename, absolute), FileStorage::WRITE);
 		cv::Size imageSize = distortedIntrinsics.getImageSize();
 		cv::Size sensorSize = distortedIntrinsics.getSensorSize();
 		Mat cameraMatrix = distortedIntrinsics.getCameraMatrix();
-		
-    fs << "cameraMatrix" << cameraMatrix;
+		fs << "cameraMatrix" << cameraMatrix;
 		fs << "imageSize_width" << imageSize.width;
 		fs << "imageSize_height" << imageSize.height;
 		fs << "sensorSize_width" << sensorSize.width;
 		fs << "sensorSize_height" << sensorSize.height;
-    fs << "distCoeffs" << distCoeffs;
+		fs << "distCoeffs" << distCoeffs;
 		fs << "reprojectionError" << reprojectionError;
+		fs << "features" << "[";
+		for(int i = 0; i < imagePoints.size(); i++) {
+			fs << "{:" << "points" << "[:"; 
+			for( int j = 0; j < imagePoints[i].size(); j++ ){
+				fs << imagePoints[i][j].x << imagePoints[i][j].y;
+			}
+			fs << "]" << "}";
+		}
+		fs << "]";
 	}
+	
 	void Calibration::load(string filename, bool absolute) {
+		imagePoints.clear();
 		FileStorage fs(ofToDataPath(filename, absolute), FileStorage::READ);
 		cv::Size imageSize, sensorSize;
 		Mat cameraMatrix;
-		
+		int pointCount;
+		FileNode features;
 		fs["cameraMatrix"] >> cameraMatrix;
 		fs["imageSize_width"] >> imageSize.width;
 		fs["imageSize_height"] >> imageSize.height;
@@ -96,12 +113,21 @@ namespace ofxCv {
 		fs["sensorSize_height"] >> sensorSize.height;
 		fs["distCoeffs"] >> distCoeffs;
 		fs["reprojectionError"] >> reprojectionError;
-		
-		distortedIntrinsics.setup(cameraMatrix, imageSize, sensorSize);
-		
-		updateUndistortion();
-		
-		_isReady = true;
+		vector<float> points;		
+		features = fs["features"];
+		int idx = 0;
+
+		for(FileNodeIterator it = features.begin(); it != features.end(); it++) {
+			idx++;
+			(*it)["points"] >> points;
+			vector<Point2f> featureset;
+			for(int i = 0; i < points.size(); i+=2){
+				featureset.push_back(Point2f(points[i], points[i+1]));
+			}
+			imagePoints.push_back(featureset); // technique 1
+		}
+		addedImageSize = imageSize;
+		calibrate();		
 	}
 	void Calibration::setPatternSize(int xCount, int yCount) {
 		patternSize = cv::Size(xCount, yCount);
@@ -170,16 +196,16 @@ namespace ofxCv {
 	}
 	bool Calibration::calibrate() {
 		Mat cameraMatrix = Mat::eye(3, 3, CV_64F);
-    distCoeffs = Mat::zeros(8, 1, CV_64F);
+		distCoeffs = Mat::zeros(8, 1, CV_64F);
     
 		updateObjectPoints();
 		
 		int calibFlags = 0;
-    float rms = calibrateCamera(objectPoints, imagePoints, addedImageSize, cameraMatrix, distCoeffs, boardRotations, boardTranslations, calibFlags);
-    ofLog(OF_LOG_VERBOSE, "calibrateCamera() reports RMS error of " + ofToString(rms));
-		
-    bool _isReady = checkRange(cameraMatrix) && checkRange(distCoeffs);
-		
+		float rms = calibrateCamera(objectPoints, imagePoints, addedImageSize, cameraMatrix, distCoeffs, boardRotations, boardTranslations, calibFlags);
+		ofLog(OF_LOG_VERBOSE, "calibrateCamera() reports RMS error of " + ofToString(rms));
+
+		_isReady = checkRange(cameraMatrix) && checkRange(distCoeffs);
+	
 		if(!_isReady) {
 			ofLog(OF_LOG_ERROR, "Calibration::calibrate() failed to calibrate the camera");
 		}
@@ -190,6 +216,11 @@ namespace ofxCv {
 		
 		return _isReady;
 	}
+	
+	bool Calibration::isReady(){
+		return _isReady;
+	}
+	
 	bool Calibration::calibrateFromDirectory(string directory) {
 		ofDirectory dirList;
 		ofImage cur;
@@ -238,7 +269,8 @@ namespace ofxCv {
 	}
 	
 	bool Calibration::getTransformation(Calibration& dst, Mat& rotation, Mat& translation) {
-		if(imagePoints.size() == 0 || dst.imagePoints.size() == 0) {
+		//if(imagePoints.size() == 0 || dst.imagePoints.size() == 0) {
+		if(!_isReady) {
 			ofLog(OF_LOG_ERROR, "getTransformation() requires both Calibration objects to have just been calibrated");
 			return false;
 		}
