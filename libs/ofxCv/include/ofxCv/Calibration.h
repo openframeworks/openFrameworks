@@ -90,7 +90,8 @@ namespace ofxCv {
 		void draw3d() const;
 		void draw3d(int i) const;
 		
-		const bool &isReady;
+		//const bool &isReady;
+		bool isReady();
 		vector<vector<Point2f> > imagePoints;
 		
 	protected:
