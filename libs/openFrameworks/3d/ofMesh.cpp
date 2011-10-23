@@ -463,6 +463,11 @@ vector<int>& ofPrimitive::getFace(int faceNum){
 
 //--------------------------------------------------------------
 ofVec3f ofMesh::getCentroid() const {
+	if(vertices.size() == 0) {
+		ofLogWarning() << "Called ofMesh::getCentroid() on mesh with zero vertices, returned ofPoint(0, 0, 0)";
+		return ofPoint(0, 0, 0);
+	}
+
 	ofVec3f runningAverage = vertices[0];
 	for(unsigned long int v = 1; v < (unsigned long int)vertices.size(); v++){
 		unsigned long int contributingVertexCount = v + 1;
