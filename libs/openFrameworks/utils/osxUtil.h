@@ -1,0 +1,2 @@
+void CreateNSAutoreleasePool();
+void DrainNSAutoreleasePool();
