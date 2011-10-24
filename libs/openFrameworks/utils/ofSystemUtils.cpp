@@ -18,6 +18,9 @@
 #ifdef TARGET_OSX
 	#include <Carbon/Carbon.h>
 	#include <sys/param.h> // for MAXPATHLEN
+	extern "C" {
+		#include "osxUtil.h"
+	};
 #endif
 
 #ifdef TARGET_WIN32
@@ -136,11 +139,15 @@ void ofSystemAlertDialog(string errorMessage){
 
 
 	#ifdef TARGET_OSX
+		CreateNSAutoreleasePool();  // The StandardAlert requires a NSAutoreleasePool to avoid memory leaks
+	
 		CFStringRef msgStrRef = CFStringCreateWithCString(NULL, errorMessage.c_str(), kCFStringEncodingASCII);
 		DialogRef theItem;
 		DialogItemIndex itemIndex;
 		CreateStandardAlert(kAlertNoteAlert, msgStrRef, NULL, NULL, &theItem);
 		RunStandardAlert(theItem, NULL, &itemIndex);
+		
+		DrainNSAutoreleasePool();
 	#endif
 
 	#if defined( TARGET_LINUX ) && defined (OF_USING_GTK)
