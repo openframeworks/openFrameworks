@@ -16,11 +16,15 @@
 #endif
 
 #ifdef TARGET_OSX
+	// ofSystemUtils.cpp is configured to build as 
+	// objective-c++ so as able to use NSAutoreleasePool.
+	// This is done with this compiler flag
+	//		-x objective-c++ 
+	// http://www.yakyak.org/viewtopic.php?p=1475838&sid=1e9dcb5c9fd652a6695ac00c5e957822#p1475838
+
 	#include <Carbon/Carbon.h>
 	#include <sys/param.h> // for MAXPATHLEN
-	extern "C" {
-		#include "osxUtil.h"
-	};
+	#include <Cocoa/Cocoa.h>  // for NSAutoreleasePool
 #endif
 
 #ifdef TARGET_WIN32
@@ -139,15 +143,15 @@ void ofSystemAlertDialog(string errorMessage){
 
 
 	#ifdef TARGET_OSX
-		CreateNSAutoreleasePool();  // The StandardAlert requires a NSAutoreleasePool to avoid memory leaks
+		NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];  // The StandardAlert requires a NSAutoreleasePool to avoid memory leaks
 	
 		CFStringRef msgStrRef = CFStringCreateWithCString(NULL, errorMessage.c_str(), kCFStringEncodingASCII);
 		DialogRef theItem;
 		DialogItemIndex itemIndex;
 		CreateStandardAlert(kAlertNoteAlert, msgStrRef, NULL, NULL, &theItem);
 		RunStandardAlert(theItem, NULL, &itemIndex);
-		
-		DrainNSAutoreleasePool();
+
+		[pool drain];
 	#endif
 
 	#if defined( TARGET_LINUX ) && defined (OF_USING_GTK)
