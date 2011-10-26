@@ -31,6 +31,8 @@ ifeq ($(findstring Android,$(MAKECMDGOALS)),Android)
 	ARCH = android
 	ifeq ($(shell uname),Darwin)
 		HOST_PLATFORM = darwin-x86
+	else ifeq ($(shell uname),MINGW32_NT-6.1)
+		HOST_PLATFORM = windows
 	else
 		HOST_PLATFORM = linux-x86
 	endif
@@ -39,6 +41,7 @@ endif
 ifeq ($(ARCH),android)
 	COMPILER_OPTIMIZATION = $(ANDROID_COMPILER_OPTIMIZATION)
 	NDK_PLATFORM = android-8
+	SDK_PLATFORM = android-8
 else
 	COMPILER_OPTIMIZATION = $(USER_COMPILER_OPTIMIZATION)
 endif
@@ -116,7 +119,7 @@ else
 endif
 LIB_STATIC = $(shell ls $(OF_ROOT)/libs/*/lib/$(LIBSPATH)/*.a  2> /dev/null | grep -v openFrameworksCompiled | grep -v Poco)
 LIB_SHARED = $(shell ls $(OF_ROOT)/libs/*/lib/$(LIBSPATH)/*.so  2> /dev/null | grep -v openFrameworksCompiled | sed "s/.*\\/lib\([^/]*\)\.so/-l\1/")
-LIB_STATIC += $(OF_ROOT)/libs/poco/lib/$(LIBSPATH)/libPocoNet.a ../../../libs/poco/lib/$(LIBSPATH)/libPocoXML.a ../../../libs/poco/lib/$(LIBSPATH)/libPocoUtil.a ../../../libs/poco/lib/$(LIBSPATH)/libPocoFoundation.a
+LIB_STATIC += $(OF_ROOT)/libs/poco/lib/$(LIBSPATH)/libPocoNet.a $(OF_ROOT)/libs/poco/lib/$(LIBSPATH)/libPocoXML.a $(OF_ROOT)/libs/poco/lib/$(LIBSPATH)/libPocoUtil.a $(OF_ROOT)/libs/poco/lib/$(LIBSPATH)/libPocoFoundation.a
 LIB_PATHS_FLAGS = $(shell ls -d $(OF_ROOT)/libs/*/lib/$(LIBSPATH) | sed "s/\(\.*\)/-L\1/")
 
 CFLAGS += -Wall -fexceptions
@@ -419,14 +422,22 @@ AndroidInstall:
 	fi 
 	if [ -f obj/$(BIN_NAME) ]; then rm obj/$(BIN_NAME); fi
 	#touch AndroidManifest.xml
-	$(SDK_ROOT)/tools/android update project --target $(NDK_PLATFORM) --path $(PROJECT_PATH)
+	if [ "$(shell uname)" = "MINGW32_NT-6.1" ]; then \
+	cmd //c $(SDK_ROOT)/tools/android.bat update project --target $(SDK_PLATFORM) --path $(PROJECT_PATH); \
+	else \
+	$(SDK_ROOT)/tools/android update project --target $(SDK_PLATFORM) --path $(PROJECT_PATH); \
+	fi
 	if [ -d bin/classes ]; then rm -r bin/classes; fi
 	if [ -d bin/classes.dex ]; then rm bin/classes.dex; fi
 	if [ -d bin/OFActivity.ap_ ]; then rm bin/OFActivity.ap_; fi
 	if [ -d bin/OFActivity-debug.apk ]; then rm bin/OFActivity-debug.apk; fi
 	if [ -d bin/OFActivity-debug-unaligned.apk ]; then rm bin/OFActivity-debug-unaligned.apk; fi
 	if [ -d bin/$(APPNAME).apk ]; then rm bin/$(APPNAME).apk; fi
-	ant debug
+	if [ "$(shell uname)" = "MINGW32_NT-6.1" ]; then \
+	$(ANT_BIN)/ant debug; \
+	else \
+	ant debug; \
+	fi
 	cp bin/OFActivity-debug.apk bin/$(APPNAME).apk
 	#if [ "$(shell $(SDK_ROOT)/platform-tools/adb get-state)" = "device" ]; then
 	$(SDK_ROOT)/platform-tools/adb install -r bin/$(APPNAME).apk;
