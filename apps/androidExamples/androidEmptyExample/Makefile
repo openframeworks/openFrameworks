@@ -31,6 +31,8 @@ ifeq ($(findstring Android,$(MAKECMDGOALS)),Android)
 	ARCH = android
 	ifeq ($(shell uname),Darwin)
 		HOST_PLATFORM = darwin-x86
+	else ifeq ($(shell uname),MINGW32_NT-6.1)
+		HOST_PLATFORM = windows
 	else
 		HOST_PLATFORM = linux-x86
 	endif
@@ -39,6 +41,7 @@ endif
 ifeq ($(ARCH),android)
 	COMPILER_OPTIMIZATION = $(ANDROID_COMPILER_OPTIMIZATION)
 	NDK_PLATFORM = android-8
+	SDK_PLATFORM = android-8
 else
 	COMPILER_OPTIMIZATION = $(USER_COMPILER_OPTIMIZATION)
 endif
@@ -416,8 +419,13 @@ AndroidInstall:
 	fi 
 	if [ -f obj/$(BIN_NAME) ]; then rm obj/$(BIN_NAME); fi
 	#touch AndroidManifest.xml
-	$(SDK_ROOT)/tools/android update project --target $(NDK_PLATFORM) --path $(PROJECT_PATH)
-	ant debug
+	if [ "$(shell uname)" = "MINGW32_NT-6.1" ]; then \
+	cmd //c $(SDK_ROOT)/tools/android.bat update project --target $(SDK_PLATFORM) --path $(PROJECT_PATH); \
+	$(ANT_BIN)/ant debug; \
+	else \
+	$(SDK_ROOT)/tools/android update project --target $(SDK_PLATFORM) --path $(PROJECT_PATH); \
+	ant debug; \
+	fi
 	cp bin/OFActivity-debug.apk bin/$(APPNAME).apk
 	#if [ "$(shell $(SDK_ROOT)/platform-tools/adb get-state)" = "device" ]; then
 	$(SDK_ROOT)/platform-tools/adb install -r bin/$(APPNAME).apk;
