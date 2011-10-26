@@ -91,7 +91,7 @@ class ofColor_{
 			return os;
 		}
 
-		friend istream& operator>>(istream& is, const ofColor_<PixelType>& color) {
+		friend istream& operator>>(istream& is, ofColor_<PixelType>& color) {
 			is >> color.r;
 			is.ignore(2);
 			is >> color.g;
