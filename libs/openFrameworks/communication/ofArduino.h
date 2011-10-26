@@ -88,7 +88,7 @@
 
 // board settings
 #define ARD_TOTAL_DIGITAL_PINS							22 // total number of pins currently supported
-#define ARD_TOTAL_ANALOG_PINS							8
+#define ARD_TOTAL_ANALOG_PINS							6
 #define ARD_TOTAL_PORTS                                 3 // total number of ports for the board
 // pin modes
 #define ARD_INPUT                                       0x00
@@ -132,8 +132,8 @@
 
 #define OF_ARDUINO_DELAY_LENGTH					4.0
 
-// use to check if firmware version uploaded to arduino is >= 2.2 (22)
 #define FIRMWARE2_2								22
+#define FIRMWARE2_3                             23
 
 
 /**
@@ -334,6 +334,9 @@ class ofArduino{
 
 		protected:
 				bool _initialized;
+    
+                void initPins();
+                int _totalDigitalPins;
 
 				void sendDigitalPinReporting(int pin, int mode);
 				// sets pin reporting to ARD_ON or ARD_OFF
