@@ -99,8 +99,10 @@ public:
 
 	vector<int>& getFace(int faceId);
 	
+	ofVec3f getCentroid() const;
+
 	void setName(string name_);
-	
+
 	bool haveVertsChanged();
 	bool haveColorsChanged();
 	bool haveNormalsChanged();
