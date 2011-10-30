@@ -8,6 +8,7 @@
 #endif
 
 #include "ofNoise.h"
+#include "ofPolyline.h"
 
 //--------------------------------------------------
 int ofNextPow2(int a){
@@ -223,38 +224,13 @@ float ofSignedNoise(float x, float y, float z, float w){
 }
 
 //--------------------------------------------------
-bool ofInsidePoly(const ofPoint & p, const vector<ofPoint> & poly){
-	return ofInsidePoly(p.x,p.y,poly);
+bool ofInsidePoly(float x, float y, const vector<ofPoint> & polygon){
+    return ofPolyline::inside(x,y, ofPolyline(polygon));
 }
 
 //--------------------------------------------------
-bool ofInsidePoly(float x, float y, const vector<ofPoint> & polygon){
-	int counter = 0;
-	int i;
-	double xinters;
-	ofPoint p1,p2;
-
-	int N = polygon.size();
-
-	p1 = polygon[0];
-	for (i=1;i<=N;i++) {
-		p2 = polygon[i % N];
-		if (y > MIN(p1.y,p2.y)) {
-		  if (y <= MAX(p1.y,p2.y)) {
-			if (x <= MAX(p1.x,p2.x)) {
-			  if (p1.y != p2.y) {
-				xinters = (y-p1.y)*(p2.x-p1.x)/(p2.y-p1.y)+p1.x;
-				if (p1.x == p2.x || x <= xinters)
-				  counter++;
-			  }
-			}
-		  }
-		}
-		p1 = p2;
-	}
-
-	if (counter % 2 == 0) return false;
-	else return true;
+bool ofInsidePoly(const ofPoint & p, const vector<ofPoint> & poly){
+    return ofPolyline::inside(p.x,p.y, ofPolyline(poly));
 }
 
 //--------------------------------------------------
