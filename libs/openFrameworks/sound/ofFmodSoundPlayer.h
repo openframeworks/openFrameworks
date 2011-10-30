@@ -2,7 +2,6 @@
 
 #include "ofConstants.h"
 
-#ifdef OF_SOUND_PLAYER_FMOD
 
 #include "ofBaseSoundPlayer.h"
 
@@ -52,8 +51,10 @@ class ofFmodSoundPlayer : public ofBaseSoundPlayer {
 		void setLoop(bool bLp);
 		void setMultiPlay(bool bMp);
 		void setPosition(float pct); // 0 = start, 1 = end;
+		void setPositionMS(int ms);
 
 		float getPosition();
+		int getPositionMS();
 		bool getIsPlaying();
 		float getSpeed();
 		float getPan();
@@ -77,4 +78,3 @@ class ofFmodSoundPlayer : public ofBaseSoundPlayer {
 		FMOD_SOUND * sound;
 };
 
-#endif

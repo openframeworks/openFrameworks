@@ -39,6 +39,10 @@ public:
 	void setPixelFormat(ofPixelFormat pixelFormat);
 	ofPixelFormat getPixelFormat();
 
+	// specifics android
+
+	bool setAutoFocus(bool autofocus);
+
 	ofEvent<ofPixels> newFrameE;
 
 	// only to be used internally to resize;
