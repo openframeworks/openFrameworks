@@ -77,6 +77,10 @@ public:
 	// find the closest point 'target' on a polyline
 	// optionally pass a pointer to/address of an unsigned int to get the index of the closest vertex
 	ofPoint getClosestPoint(const ofPoint& target, unsigned int* nearestIndex = NULL);
+	
+	// check wheteher a point is inside the area enclosed by the polyline
+	static bool inside(float x, float y, const ofPolyline & polyline);
+	static bool inside(const ofPoint & p, const ofPolyline & polyline);
 
 	void simplify(float tolerance=0.3);
 
