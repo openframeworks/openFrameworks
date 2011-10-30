@@ -34,9 +34,11 @@ bool ofVideoPlayer::loadMovie(string name){
 	width	 = player->getWidth();
 	height	 = player->getHeight();
 	
-	if( bOk && bUseTexture )
-		if(width!=0 && height!=0)
-			tex.allocate(width, height, GL_RGB);
+	if( bOk && bUseTexture ){
+		if(width!=0 && height!=0) {
+			tex.allocate(width, height, ofGetGLTypeFromPixelFormat(internalPixelFormat));
+		}
+	}
 	
 	return bOk;
 }
@@ -108,11 +110,11 @@ void ofVideoPlayer::update(){
 						if(tex.bAllocated())
 							tex.clear();
 					
-						tex.allocate(width, height, GL_RGB);
-						tex.loadData(pxls, tex.getWidth(), tex.getHeight(), GL_RGB);
+						tex.allocate(width, height, ofGetGLTypeFromPixelFormat(internalPixelFormat));
+						tex.loadData(pxls, tex.getWidth(), tex.getHeight(), ofGetGLTypeFromPixelFormat(internalPixelFormat));
 					}
 				}else{
-					tex.loadData(pxls, tex.getWidth(), tex.getHeight(), GL_RGB);
+					tex.loadData(pxls, tex.getWidth(), tex.getHeight(), ofGetGLTypeFromPixelFormat(internalPixelFormat));
 				}
 			}
 		}

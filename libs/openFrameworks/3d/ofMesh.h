@@ -25,7 +25,7 @@ public:
 
 	void setupIndicesAuto();
 	
-	ofVec3f getVertex(int i);
+	ofVec3f getVertex(int i) const;
 	void addVertex(const ofVec3f& v);
 	void addVertices(const vector<ofVec3f>& verts);
 	void addVertices(const ofVec3f* verts, int amt);
@@ -33,7 +33,7 @@ public:
 	void setVertex(int index, const ofVec3f& v);
 	void clearVertices();
 	
-	ofVec3f getNormal(int i);
+	ofVec3f getNormal(int i) const;
 	void addNormal(const ofVec3f& n);
 	void addNormals(const vector<ofVec3f>& norms);
 	void addNormals(const ofVec3f* norms, int amt);
@@ -41,7 +41,7 @@ public:
 	void setNormal(int index, const ofVec3f& n);
 	void clearNormals();
 	
-	ofFloatColor getColor(int i);
+	ofFloatColor getColor(int i) const;
 	void addColor(const ofFloatColor& c);
 	void addColors(const vector<ofFloatColor>& cols);
 	void addColors(const ofFloatColor* cols, int amt);
@@ -49,7 +49,7 @@ public:
 	void setColor(int index, const ofFloatColor& c);
 	void clearColors();
 	
-	ofVec2f getTexCoord(int i);
+	ofVec2f getTexCoord(int i) const;
 	void addTexCoord(const ofVec2f& t);
 	void addTexCoords(const vector<ofVec2f>& tCoords);
 	void addTexCoords(const ofVec2f* tCoords, int amt);
@@ -57,7 +57,7 @@ public:
 	void setTexCoord(int index, const ofVec2f& t);
 	void clearTexCoords();
 	
-	ofIndexType getIndex(int i);
+	ofIndexType getIndex(int i) const;
 	void addIndex(ofIndexType i);
 	void addIndices(const vector<ofIndexType>& inds);
 	void addIndices(const ofIndexType* inds, int amt);
@@ -91,10 +91,18 @@ public:
 	vector<ofVec2f> & getTexCoords();
 	vector<ofIndexType> & getIndices();
 
+	const vector<ofVec3f> & getVertices() const;
+	const vector<ofFloatColor> & getColors() const;
+	const vector<ofVec3f> & getNormals() const;
+	const vector<ofVec2f> & getTexCoords() const;
+	const vector<ofIndexType> & getIndices() const;
+
 	vector<int>& getFace(int faceId);
 	
+	ofVec3f getCentroid() const;
+
 	void setName(string name_);
-	
+
 	bool haveVertsChanged();
 	bool haveColorsChanged();
 	bool haveNormalsChanged();

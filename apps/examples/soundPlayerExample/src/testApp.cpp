@@ -108,7 +108,7 @@ void testApp::mousePressed(int x, int y, int button){
 	} else {
 		vocals.play();
 		vocals.setSpeed( 0.1f + ((float)(ofGetHeight() - y) / (float)ofGetHeight())*3);
-		vocals.setPan((float)x / (float)ofGetWidth());	
+		vocals.setPan((float)(x - widthStep*2) / (float)widthStep);
 	}
 }
 
