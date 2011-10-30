@@ -81,6 +81,10 @@ public:
 	// check wheteher a point is inside the area enclosed by the polyline
 	static bool inside(float x, float y, const ofPolyline & polyline);
 	static bool inside(const ofPoint & p, const ofPolyline & polyline);
+    
+    // non-static versions
+    bool inside(float x, float y);
+    bool inside(const ofPoint & p);
 
 	void simplify(float tolerance=0.3);
 

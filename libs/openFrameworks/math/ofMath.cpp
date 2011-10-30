@@ -8,6 +8,7 @@
 #endif
 
 #include "ofNoise.h"
+#include "ofPolyline.h"
 
 //--------------------------------------------------
 int ofNextPow2(int a){
@@ -220,6 +221,16 @@ float ofSignedNoise(float x, float y, float z){
 //--------------------------------------------------
 float ofSignedNoise(float x, float y, float z, float w){
 	return _slang_library_noise4(x,y,z,w);
+}
+
+//--------------------------------------------------
+bool ofInsidePoly(float x, float y, const vector<ofPoint> & polygon){
+    return ofPolyline::inside(x,y, ofPolyline(polygon));
+}
+
+//--------------------------------------------------
+bool ofInsidePoly(const ofPoint & p, const vector<ofPoint> & poly){
+    return ofPolyline::inside(p.x,p.y, ofPolyline(poly));
 }
 
 //--------------------------------------------------
