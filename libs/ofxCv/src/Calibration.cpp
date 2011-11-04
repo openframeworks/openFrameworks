@@ -66,15 +66,15 @@ namespace ofxCv {
 	}
 	
 	Calibration::Calibration() :
+		patternType(CHESSBOARD),
 		patternSize(cv::Size(10, 7)), squareSize(2.5), // based on Chessboard_A4.pdf, assuming world units are centimeters
 		fillFrame(true),
-		_isReady(false)
-	{
+		ready(false) {
 		
 	}
 	
 	void Calibration::save(string filename, bool absolute) const {
-		if(!_isReady){
+		if(!ready){
 			ofLog(OF_LOG_ERROR, "Calibration::save() failed, because your calibration isn't ready yet!");
 		}
 		FileStorage fs(ofToDataPath(filename, absolute), FileStorage::WRITE);
@@ -129,6 +129,9 @@ namespace ofxCv {
 		addedImageSize = imageSize;
 		calibrate();		
 	}
+	void Calibration::setPatternType(CalibrationPattern patternType) {
+		this->patternType = patternType;
+	}
 	void Calibration::setPatternSize(int xCount, int yCount) {
 		patternSize = cv::Size(xCount, yCount);
 	}
@@ -144,7 +147,7 @@ namespace ofxCv {
 		vector<Point2f> pointBuf;
 		
 		// find corners
-		bool found = findBoard(img, pointBuf, true);
+		bool found = findBoard(img, pointBuf);
 		
 		if (found)
 			imagePoints.push_back(pointBuf);
@@ -152,27 +155,30 @@ namespace ofxCv {
 			ofLog(OF_LOG_ERROR, "Calibration::add() failed, maybe your patternSize is wrong or the image has poor lighting?");
 		return found;
 	}
-	bool Calibration::findBoard(Mat img, vector<Point2f> &pointBuf, bool refine) {
-		// no CV_CALIB_CB_FAST_CHECK, because it breaks on dark images (e.g., dark IR images from kinect)
-		int chessFlags = CV_CALIB_CB_ADAPTIVE_THRESH;// | CV_CALIB_CB_NORMALIZE_IMAGE;
-		bool found = findChessboardCorners(img, patternSize, pointBuf, chessFlags);
-		
-		// improve corner accuracy
-		if(found) {
-			if(img.type() != CV_8UC1) {
-				cvtColor(img, grayMat, CV_RGB2GRAY);
-			} else {
-				grayMat = img;
+	bool Calibration::findBoard(Mat img, vector<Point2f> &pointBuf) {
+		bool found;
+		if(patternType == CHESSBOARD) {
+			// no CV_CALIB_CB_FAST_CHECK, because it breaks on dark images (e.g., dark IR images from kinect)
+			int chessFlags = CV_CALIB_CB_ADAPTIVE_THRESH;// | CV_CALIB_CB_NORMALIZE_IMAGE;
+			found = findChessboardCorners(img, patternSize, pointBuf, chessFlags);
+			
+			// improve corner accuracy
+			if(found) {
+				if(img.type() != CV_8UC1) {
+					cvtColor(img, grayMat, CV_RGB2GRAY);
+				} else {
+					grayMat = img;
+				}
+				
+				// the 11x11 dictates the smallest image space square size allowed
+				// in other words, if your smallest square is 11x11 pixels, then set this to 11x11
+				cornerSubPix(grayMat, pointBuf, cv::Size(11, 11),  cv::Size(-1,-1), TermCriteria(CV_TERMCRIT_EPS + CV_TERMCRIT_ITER, 30, 0.1 ));
 			}
-			
-			// the 11x11 dictates the smallest image space square size allowed
-			// in other words, if your smallest square is 11x11 pixels, then set this to 11x11
-			cornerSubPix(grayMat, pointBuf, cv::Size(11, 11),  cv::Size(-1,-1), TermCriteria(CV_TERMCRIT_EPS + CV_TERMCRIT_ITER, 30, 0.1 ));
-			
-			return true;
 		} else {
-			return false;
+			int flags = (patternType == CIRCLES_GRID ? CALIB_CB_SYMMETRIC_GRID : CALIB_CB_ASYMMETRIC_GRID); // + CALIB_CB_CLUSTERING
+			found = findCirclesGrid(img, patternSize, pointBuf, flags);
 		}
+		return found;
 	}
 	bool Calibration::clean(float minReprojectionError) {
 		int removed = 0;
@@ -204,9 +210,9 @@ namespace ofxCv {
 		float rms = calibrateCamera(objectPoints, imagePoints, addedImageSize, cameraMatrix, distCoeffs, boardRotations, boardTranslations, calibFlags);
 		ofLog(OF_LOG_VERBOSE, "calibrateCamera() reports RMS error of " + ofToString(rms));
 
-		_isReady = checkRange(cameraMatrix) && checkRange(distCoeffs);
+		ready = checkRange(cameraMatrix) && checkRange(distCoeffs);
 	
-		if(!_isReady) {
+		if(!ready) {
 			ofLog(OF_LOG_ERROR, "Calibration::calibrate() failed to calibrate the camera");
 		}
 		
@@ -214,11 +220,11 @@ namespace ofxCv {
 		updateReprojectionError();
 		updateUndistortion();
 		
-		return _isReady;
+		return ready;
 	}
 	
 	bool Calibration::isReady(){
-		return _isReady;
+		return ready;
 	}
 	
 	bool Calibration::calibrateFromDirectory(string directory) {
@@ -270,7 +276,7 @@ namespace ofxCv {
 	
 	bool Calibration::getTransformation(Calibration& dst, Mat& rotation, Mat& translation) {
 		//if(imagePoints.size() == 0 || dst.imagePoints.size() == 0) {
-		if(!_isReady) {
+		if(!ready) {
 			ofLog(OF_LOG_ERROR, "getTransformation() requires both Calibration objects to have just been calibrated");
 			return false;
 		}
@@ -363,7 +369,7 @@ namespace ofxCv {
 		ofPopStyle();
 	}
 	void Calibration::updateObjectPoints() {
-		vector<Point3f> points = createObjectPoints(patternSize, squareSize, CHESSBOARD);
+		vector<Point3f> points = createObjectPoints(patternSize, squareSize, patternType);
 		objectPoints.resize(imagePoints.size(), points);
 	}
 	void Calibration::updateReprojectionError() {

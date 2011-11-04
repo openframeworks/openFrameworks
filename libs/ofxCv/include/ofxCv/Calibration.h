@@ -54,13 +54,14 @@ namespace ofxCv {
 		void save(string filename, bool absolute = false) const;
 		void load(string filename, bool absolute = false);
 		
+		void setPatternType(CalibrationPattern patternType);
 		void setPatternSize(int xCount, int yCount);
 		void setSquareSize(float squareSize);
 		bool add(Mat img);
 		bool clean(float minReprojectionError = 2.f);
 		bool calibrate();
 		bool calibrateFromDirectory(string directory);
-		bool findBoard(Mat img, vector<Point2f> &pointBuf, bool refine=true);
+		bool findBoard(Mat img, vector<Point2f> &pointBuf);
 										  
 		void undistort(Mat img);
 		void undistort(Mat src, Mat dst);
@@ -90,11 +91,11 @@ namespace ofxCv {
 		void draw3d() const;
 		void draw3d(int i) const;
 		
-		//const bool &isReady;
 		bool isReady();
 		vector<vector<Point2f> > imagePoints;
 		
 	protected:
+		CalibrationPattern patternType;
 		cv::Size patternSize, addedImageSize;
 		float squareSize;
 		Mat grayMat;
@@ -118,7 +119,7 @@ namespace ofxCv {
 		Intrinsics distortedIntrinsics;
 		Intrinsics undistortedIntrinsics;
 		
-		bool _isReady;
+		bool ready;
 	};
 	
 }
