@@ -68,7 +68,7 @@ namespace ofxCv {
 		ofVec2f undistort(ofVec2f &src);
 		void undistort(vector<ofVec2f> &src, vector<ofVec2f> &dst);
 		
-		void getTransformation(Calibration& dst, Mat& rotation, Mat& translation);
+		bool getTransformation(Calibration& dst, Mat& rotation, Mat& translation);
 		
 		float getReprojectionError() const;
 		float getReprojectionError(int i) const;
@@ -90,7 +90,8 @@ namespace ofxCv {
 		void draw3d() const;
 		void draw3d(int i) const;
 		
-		const bool &isReady;
+		//const bool &isReady;
+		bool isReady();
 		vector<vector<Point2f> > imagePoints;
 		
 	protected:
