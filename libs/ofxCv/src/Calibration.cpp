@@ -54,7 +54,7 @@ namespace ofxCv {
 		float cy = principalPoint.y;
 		glFrustum(
 			nearDist * (-cx) / fx, nearDist * (w - cx) / fx,
-			nearDist * (cy - h) / fy,	nearDist * (cy) / fy,
+			nearDist * (cy - h) / fy, nearDist * (cy) / fy,
 			nearDist, farDist);
 		glMatrixMode(GL_MODELVIEW);
 		glLoadIdentity();

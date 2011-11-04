@@ -44,9 +44,9 @@ namespace ofxCv {
 			} else if(img.channels() == 4) {
 				cvtColor(img, thresh, CV_RGBA2GRAY);
 			}
-			if(autoThreshold) {
-				threshold(thresh, thresholdValue, invert);
-			}
+		}
+		if(autoThreshold) {
+			threshold(thresh, thresholdValue, invert);
 		}
 		
 		// run the contour finder

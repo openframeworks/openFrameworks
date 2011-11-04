@@ -11,6 +11,14 @@ void testApp::setup() {
 	ofSetVerticalSync(true);
 	cam.initGrabber(640, 480);
 	
+	FileStorage settings(ofToDataPath("settings.yml"), FileStorage::READ);
+	if(settings.isOpened()) {
+		int xCount = settings["xCount"], yCount = settings["yCount"];
+		float squareSize = settings["squareSize"];
+		calibration.setPatternSize(xCount, yCount);
+		calibration.setSquareSize(squareSize);
+	}
+	
 	imitate(undistorted, cam);
 	imitate(previous, cam);
 	imitate(diff, cam);
