@@ -143,7 +143,7 @@ namespace ofxCv {
 			ofLog(OF_LOG_ERROR, "Calibration::add() failed, maybe your patternSize is wrong or the image has poor lighting?");
 		return found;
 	}
-	bool Calibration::findBoard(Mat img, vector<Point2f> &pointBuf) {
+	bool Calibration::findBoard(Mat img, vector<Point2f>& pointBuf) {
 		bool found;
 		if(patternType == CHESSBOARD) {
 			// no CV_CALIB_CB_FAST_CHECK, because it breaks on dark images (e.g., dark IR images from kinect)
@@ -235,31 +235,20 @@ namespace ofxCv {
 		remap(src, dst, undistortMapX, undistortMapY, INTER_LINEAR);
 	}
 	
-	ofVec2f Calibration::undistort(ofVec2f &src)
-	{
+	ofVec2f Calibration::undistort(ofVec2f& src) const {
 		ofVec2f dst;
-		
 		Mat matSrc = Mat(1, 1, CV_32FC2, &src.x);
 		Mat matDst = Mat(1, 1, CV_32FC2, &dst.x);;
-		
 		undistortPoints(matSrc, matDst, distortedIntrinsics.getCameraMatrix(), distCoeffs);
-		
 		return dst;
-		
 	}
 	
-	void Calibration::undistort(vector<ofVec2f> &src, vector<ofVec2f> &dst)
-	{
-		int nPoints = src.size();
-		
-		if (dst.size() != nPoints)
-			dst.resize(src.size());
-		
-		Mat matSrc = Mat(nPoints, 1, CV_32FC2, &src[0].x);
-		Mat matDst = Mat(nPoints, 1, CV_32FC2, &dst[0].x);
-		
+	void Calibration::undistort(vector<ofVec2f>& src, vector<ofVec2f>& dst) const {
+		int n = src.size();
+		dst.resize(n);
+		Mat matSrc = Mat(n, 1, CV_32FC2, &src[0].x);
+		Mat matDst = Mat(n, 1, CV_32FC2, &dst[0].x);
 		undistortPoints(matSrc, matDst, distortedIntrinsics.getCameraMatrix(), distCoeffs);
-		
 	}
 	
 	bool Calibration::getTransformation(Calibration& dst, Mat& rotation, Mat& translation) {
@@ -321,6 +310,26 @@ namespace ofxCv {
 			ofCircle(toOf(imagePoints[i][j]), 5);
 		}
 		ofPopStyle();
+	}
+	// this won't work until undistort() is in pixel coordinates
+	void Calibration::drawUndistortion() const {
+		vector<ofVec2f> src, dst;
+		cv::Point2i divisions(32, 24);
+		for(int y = 0; y < divisions.y; y++) {
+			for(int x = 0; x < divisions.x; x++) {
+				src.push_back(ofVec2f(
+					ofMap(x, -1, divisions.x, 0, addedImageSize.width),
+					ofMap(y, -1, divisions.y, 0, addedImageSize.height)));
+			}
+		}
+		undistort(src, dst);
+		ofMesh mesh;
+		mesh.setMode(OF_PRIMITIVE_LINES);
+		for(int i = 0; i < src.size(); i++) {
+			mesh.addVertex(src[i]);
+			mesh.addVertex(dst[i]);
+		}
+		mesh.draw();
 	}
 	void Calibration::draw3d() const {
 		for(int i = 0; i < size(); i++) {

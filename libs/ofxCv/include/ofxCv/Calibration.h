@@ -66,8 +66,8 @@ namespace ofxCv {
 		void undistort(Mat img);
 		void undistort(Mat src, Mat dst);
 		
-		ofVec2f undistort(ofVec2f &src);
-		void undistort(vector<ofVec2f> &src, vector<ofVec2f> &dst);
+		ofVec2f undistort(ofVec2f& src) const;
+		void undistort(vector<ofVec2f>& src, vector<ofVec2f>& dst) const;
 		
 		bool getTransformation(Calibration& dst, Mat& rotation, Mat& translation);
 		
@@ -88,6 +88,7 @@ namespace ofxCv {
 		
 		void customDraw();
 		void draw(int i) const;
+		//void drawUndistortion() const;
 		void draw3d() const;
 		void draw3d(int i) const;
 		
