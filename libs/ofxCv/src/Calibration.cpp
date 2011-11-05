@@ -312,6 +312,7 @@ namespace ofxCv {
 		ofPopStyle();
 	}
 	// this won't work until undistort() is in pixel coordinates
+	/*
 	void Calibration::drawUndistortion() const {
 		vector<ofVec2f> src, dst;
 		cv::Point2i divisions(32, 24);
@@ -331,6 +332,7 @@ namespace ofxCv {
 		}
 		mesh.draw();
 	}
+	*/
 	void Calibration::draw3d() const {
 		for(int i = 0; i < size(); i++) {
 			draw3d(i);
