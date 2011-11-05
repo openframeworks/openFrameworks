@@ -90,11 +90,7 @@ namespace ofxCv {
 		fs << "reprojectionError" << reprojectionError;
 		fs << "features" << "[";
 		for(int i = 0; i < imagePoints.size(); i++) {
-			fs << "{:" << "points" << "[:"; 
-			for( int j = 0; j < imagePoints[i].size(); j++ ){
-				fs << imagePoints[i][j].x << imagePoints[i][j].y;
-			}
-			fs << "]" << "}";
+			fs << "[:" << imagePoints[i] << "]";
 		}
 		fs << "]";
 	}
@@ -105,7 +101,6 @@ namespace ofxCv {
 		cv::Size imageSize, sensorSize;
 		Mat cameraMatrix;
 		int pointCount;
-		FileNode features;
 		fs["cameraMatrix"] >> cameraMatrix;
 		fs["imageSize_width"] >> imageSize.width;
 		fs["imageSize_height"] >> imageSize.height;
@@ -113,18 +108,11 @@ namespace ofxCv {
 		fs["sensorSize_height"] >> sensorSize.height;
 		fs["distCoeffs"] >> distCoeffs;
 		fs["reprojectionError"] >> reprojectionError;
-		vector<float> points;		
-		features = fs["features"];
-		int idx = 0;
-
+		FileNode features = fs["features"];
 		for(FileNodeIterator it = features.begin(); it != features.end(); it++) {
-			idx++;
-			(*it)["points"] >> points;
-			vector<Point2f> featureset;
-			for(int i = 0; i < points.size(); i+=2){
-				featureset.push_back(Point2f(points[i], points[i+1]));
-			}
-			imagePoints.push_back(featureset); // technique 1
+			vector<Point2f> cur;
+			(*it) >> cur;
+			imagePoints.push_back(cur);
 		}
 		addedImageSize = imageSize;
 		calibrate();		
