@@ -127,7 +127,6 @@ namespace ofxCv {
 			imagePoints.push_back(featureset); // technique 1
 		}
 		addedImageSize = imageSize;
-		calibrate();		
 	}
 	void Calibration::setPatternSize(int xCount, int yCount) {
 		patternSize = cv::Size(xCount, yCount);
