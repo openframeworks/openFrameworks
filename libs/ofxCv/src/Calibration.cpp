@@ -115,7 +115,6 @@ namespace ofxCv {
 			imagePoints.push_back(cur);
 		}
 		addedImageSize = imageSize;
-		calibrate();		
 	}
 	void Calibration::setPatternType(CalibrationPattern patternType) {
 		this->patternType = patternType;
