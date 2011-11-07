@@ -36,19 +36,11 @@ ifeq ($(findstring Android,$(MAKECMDGOALS)),Android)
 	endif
 endif
 
-ifndef ARCH
-	ARCH=$(shell uname -m)
-endif
-
 ifeq ($(ARCH),android)
 	COMPILER_OPTIMIZATION = $(ANDROID_COMPILER_OPTIMIZATION)
 	NDK_PLATFORM = android-8
 else
-	ifeq ($(ARCH),armv7l)
-		COMPILER_OPTIMIZATION = -march=armv7-a -mtune=cortex-a8 -finline-functions -funroll-all-loops  -O3 -funsafe-math-optimizations -mfpu=neon -ftree-vectorize -mfloat-abi=softfp 
-	else
-		COMPILER_OPTIMIZATION = $(USER_COMPILER_OPTIMIZATION)
-	endif
+	COMPILER_OPTIMIZATION = $(USER_COMPILER_OPTIMIZATION)
 endif
 
 
@@ -60,14 +52,11 @@ endif
 SHELL =  /bin/sh
 ifneq ($(ARCH),android)
 	CXX =  g++
+	ARCH = $(shell uname -m)
 	ifeq ($(ARCH),x86_64)
 		LIBSPATH=linux64
 	else
-		ifeq ($(ARCH),armv7l)
-			LIBSPATH=linuxarmv7l
-		else
-			LIBSPATH=linux
-		endif
+		LIBSPATH=linux
 	endif
 else
 	ifeq ($(findstring Release_arm7,$(MAKECMDGOALS)),Release_arm7)
@@ -127,7 +116,7 @@ else
 endif
 LIB_STATIC = $(shell ls $(OF_ROOT)/libs/*/lib/$(LIBSPATH)/*.a  2> /dev/null | grep -v openFrameworksCompiled | grep -v Poco)
 LIB_SHARED = $(shell ls $(OF_ROOT)/libs/*/lib/$(LIBSPATH)/*.so  2> /dev/null | grep -v openFrameworksCompiled | sed "s/.*\\/lib\([^/]*\)\.so/-l\1/")
-LIB_STATIC += $(OF_ROOT)/libs/poco/lib/$(LIBSPATH)/libPocoNet.a ../../../libs/poco/lib/$(LIBSPATH)/libPocoXML.a ../../../libs/poco/lib/$(LIBSPATH)/libPocoUtil.a ../../../libs/poco/lib/$(LIBSPATH)/libPocoFoundation.a
+LIB_STATIC += $(OF_ROOT)/libs/poco/lib/$(LIBSPATH)/libPocoNet.a $(OF_ROOT)/libs/poco/lib/$(LIBSPATH)/libPocoXML.a $(OF_ROOT)/libs/poco/lib/$(LIBSPATH)/libPocoUtil.a $(OF_ROOT)/libs/poco/lib/$(LIBSPATH)/libPocoFoundation.a
 LIB_PATHS_FLAGS = $(shell ls -d $(OF_ROOT)/libs/*/lib/$(LIBSPATH) | sed "s/\(\.*\)/-L\1/")
 
 CFLAGS += -Wall -fexceptions
@@ -143,7 +132,7 @@ ifeq ($(ARCH),android)
 else
 	LDFLAGS = -Wl,-rpath=./libs
 	SYSTEMLIBS += $(shell pkg-config  glew gstreamer-0.10 gstreamer-video-0.10 gstreamer-base-0.10 gstreamer-app-0.10 libudev --libs)
-	SYSTEMLIBS += -lglut -lGL -lasound -lopenal -lsndfile -lvorbis -lFLAC -logg -lfreeimage
+	SYSTEMLIBS += -lglut -lGL -lGLU -lasound -lopenal -lsndfile -lvorbis -lFLAC -logg -lfreeimage
 endif
 
 
@@ -240,25 +229,17 @@ else
 		TARGET_NAME = Release
 	    BIN_NAME = $(APPNAME)
 		TARGET = bin/$(BIN_NAME)
-		TARGET_CFLAGS = $(COMPILER_OPTIMIZATION)
 		TARGET_LIBS = $(OF_ROOT)/libs/openFrameworksCompiled/lib/$(LIBSPATH)/libopenFrameworks.a
 	endif
 endif
 
-ifeq ($(MAKECMDGOALS),cleanDebug)
-	TARGET = bin/$(APPNAME)_debug
-	TARGET_NAME = Debug
-	CLEANTARGET = cleanDebug
-endif
-
-ifeq ($(MAKECMDGOALS),cleanRelease)
-	TARGET = bin/$(APPNAME)
-	TARGET_NAME = Release
-	CLEANTARGET = cleanRelease
+ifeq ($(MAKECMDGOALS),clean)
+	TARGET = bin/$(APPNAME)_debug bin/$(APPNAME)
 endif
 
 
 OBJ_OUTPUT = obj/$(ARCH)$(TARGET_NAME)/
+CLEANTARGET = clean$(TARGET_NAME)
 
 OBJS = $(addprefix $(OBJ_OUTPUT), $(OBJFILES))
 DEPFILES = $(patsubst %.o,%.d,$(OBJS))
@@ -352,12 +333,7 @@ $(TARGET): $(OBJS) $(ADDONS_OBJS) $(USER_OBJS) $(TARGET_LIBS) $(LIB_STATIC)
 
 -include $(DEPFILES)
 
-.PHONY: clean CleanAndroid cleanRelease cleanDebug
-
-clean:
-	$(MAKE) cleanRelease
-	$(MAKE) cleanDebug
-
+.PHONY: clean cleanDebug cleanRelease CleanAndroid
 $(CLEANTARGET):
 	rm -Rf -v $(OBJ_OUTPUT)
 	rm -f -v $(TARGET)
