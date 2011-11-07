@@ -308,7 +308,7 @@ bool ofSerial::setup(string portName, int baud){
 	    ofLog(OF_LOG_NOTICE,"ofSerialInit: opening port %s @ %d bps", portName.c_str(), baud);
 		fd = open(portName.c_str(), O_RDWR | O_NOCTTY | O_NONBLOCK);
 		if(fd == -1){
-			ofLog(OF_LOG_ERROR,"ofSerial: unable to open port %s", portName.c_str());
+			ofLog(OF_LOG_ERROR,"ofSerial: unable to open port %s: err %i %s", portName.c_str(), errno, strerror(errno) );
 			return false;
 		}
 
