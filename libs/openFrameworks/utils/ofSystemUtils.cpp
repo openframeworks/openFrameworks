@@ -248,12 +248,12 @@ ofFileDialogResult ofSystemLoadDialog(string windowTitle, bool bFolderSelection)
 
 		char fileUrl[kBufferSize];
 		Boolean bool1 = CFStringGetCString(cfString,fileUrl,kBufferSize,kCFStringEncodingMacRoman);
-
+			
 		//char fileName[kBufferSize];
 		//Boolean bool2 = CFStringGetCString(reply.saveFileName,fileName,kBufferSize,kCFStringEncodingMacRoman);
 
 		// append strings together
-
+		CFRelease(cfString);
 		results.filePath = fileUrl;
 	}
 
