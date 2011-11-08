@@ -155,12 +155,18 @@ ofxiPhoneSoundStream::~ofxiPhoneSoundStream(){
 }
 
 //------------------------------------------------------------------------------
-void ofxiPhoneSoundStream::listDevices(){	
-	
+vector<ofStreamDeviceInfo> ofxiPhoneSoundStream::listDevices(){	
+	ofLogWarning() << "ofxiPhoneSoundStream::listDevices NOT IMPLIMENTED";
 }
 
 //------------------------------------------------------------------------------
-void ofxiPhoneSoundStream::setDeviceID(int _deviceID){
+bool ofxiPhoneSoundStream::setDeviceID(int _deviceID){
+    ofLogWarning() << "ofxiPhoneSoundStream::setDeviceID NOT IMPLIMENTED";
+}
+
+//------------------------------------------------------------------------------
+bool ofxiPhoneSoundStream::setDeviceID(string _deviceID){
+    ofLogWarning() << "ofxiPhoneSoundStream::setDeviceID NOT IMPLIMENTED";
 }
 
 //------------------------------------------------------------------------------

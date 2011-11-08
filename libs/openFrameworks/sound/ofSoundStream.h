@@ -37,7 +37,7 @@ class ofSoundStream{
 
 		vector<ofStreamDeviceInfo> listDevices();
 
-		void setDeviceID(int deviceID);
+		bool setDeviceID(int deviceID);
 		bool setDeviceID(string deviceName);
 
 		bool setup(ofBaseApp * app, int outChannels, int inChannels, int sampleRate, int bufferSize, int nBuffers);

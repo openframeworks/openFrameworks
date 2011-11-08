@@ -10,7 +10,7 @@ class ofBaseSoundStream{
 		virtual ~ofBaseSoundStream(){}
 
 		virtual vector<ofStreamDeviceInfo> listDevices() = 0;
-		virtual void setDeviceID(int deviceID) = 0;
+		virtual bool setDeviceID(int deviceID) = 0;
 		virtual bool setDeviceID(string deviceName) = 0;
 		virtual bool setup(int outChannels, int inChannels, int sampleRate, int bufferSize, int nBuffers)=0;
 		virtual bool setup(ofBaseApp * app, int outChannels, int inChannels, int sampleRate, int bufferSize, int nBuffers)=0;

@@ -70,9 +70,9 @@ vector<ofStreamDeviceInfo> ofSoundStream::listDevices(){
 }
 
 //------------------------------------------------------------
-void ofSoundStream::setDeviceID(int deviceID){
+bool ofSoundStream::setDeviceID(int deviceID){
 	if( soundStream ){
-		soundStream->setDeviceID(deviceID);
+		return soundStream->setDeviceID(deviceID);
 	}
 }
 

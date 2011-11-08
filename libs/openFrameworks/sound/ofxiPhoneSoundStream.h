@@ -11,8 +11,10 @@ class ofxiPhoneSoundStream : public ofBaseSoundStream{
 		ofxiPhoneSoundStream();
 		~ofxiPhoneSoundStream();
 		
-		void listDevices();
-		void setDeviceID(int deviceID);
+		vector<ofStreamDeviceInfo> listDevices();
+		
+        bool setDeviceID(int deviceID);
+        bool setDeviceID(string deviceName);
 
 		void setInput(ofBaseSoundInput * soundInput);
 		void setOutput(ofBaseSoundOutput * soundOutput);
