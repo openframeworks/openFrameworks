@@ -139,4 +139,16 @@ inline ofPrimitiveMode ofGetOFPrimitiveMode(GLuint mode){
 	}
 }
 
+inline int ofGetGLTypeFromPixelFormat(ofPixelFormat pixelFormat){
+	switch(pixelFormat){
+	case OF_PIXELS_BGRA:
+		return GL_RGBA;
+	case OF_PIXELS_MONO:
+		return GL_LUMINANCE;
+	case OF_PIXELS_RGB:
+		return GL_RGB;
+	case OF_PIXELS_RGBA:
+		return GL_RGBA;
+	}
+}
 #endif /* OFGLUTILS_H_ */

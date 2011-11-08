@@ -89,6 +89,7 @@ class ofVideoGrabber : public ofBaseVideoGrabber,public ofBaseVideoDraws{
 		int RequestedDeviceID;
 		
 		ofPixelFormat internalPixelFormat;
+		int desiredFramerate;
 };
 
 
