@@ -77,8 +77,9 @@ vector<ofStreamDeviceInfo> ofRtAudioSoundStream::listDevices(){
 }
 
 //------------------------------------------------------------------------------
-void ofRtAudioSoundStream::setDeviceID(int _deviceID){
+bool ofRtAudioSoundStream::setDeviceID(int _deviceID){
 	deviceID = _deviceID;
+    return true;
 	// TODO: return true or false on success and issue log notice and error where appropriate
 }
 

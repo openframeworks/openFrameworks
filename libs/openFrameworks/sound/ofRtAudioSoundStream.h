@@ -15,7 +15,7 @@ class ofRtAudioSoundStream : public ofBaseSoundStream{
 
 		vector<ofStreamDeviceInfo> listDevices();
 
-		void setDeviceID(int deviceID);
+		bool setDeviceID(int deviceID);
         bool setDeviceID(string deviceName);
 
 		void setInput(ofBaseSoundInput * soundInput);
