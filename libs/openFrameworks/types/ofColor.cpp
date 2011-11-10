@@ -245,7 +245,7 @@ void ofColor_<PixelType>::getHsb(float& hue, float& saturation, float& brightnes
 	if(max == min) { // grays
 		hue = 0.f;
 		saturation = 0.f;
-		brightness = limit() * max;
+		brightness = max;
 		return;
 	}
 	
@@ -302,6 +302,8 @@ void ofColor_<PixelType>::setHsb(float hue, float saturation, float brightness, 
 
 template<typename PixelType>
 void ofColor_<PixelType>::setHsb(float hue, float saturation, float brightness) {
+	saturation = ofClamp(saturation, 0, limit());
+	brightness = ofClamp(brightness, 0, limit());
 	if(brightness == 0) { // black
 		set(0);
 	} else if(saturation == 0) { // grays
