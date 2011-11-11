@@ -250,17 +250,17 @@ void ofSetDataPathRoot(string newRoot){
 			}
 		#endif
 	#endif
-	
+
 	dataPathRoot = newRoot;
 	isDataPathSet = true;
 }
 
 //--------------------------------------------------
 string ofToDataPath(string path, bool makeAbsolute){
-	
+
 	if (!isDataPathSet)
 		ofSetDataPathRoot(dataPathRoot);
-	
+
 	if( enableDataPath ){
 
 		//check if absolute path has been passed or if data path has already been applied
@@ -295,6 +295,26 @@ string ofToDataPath(string path, bool makeAbsolute){
 
 	}
 	return path;
+}
+
+//----------------------------------------
+bool ofGetModifierKeyAlt(){
+    return (glutGetModifiers() & GLUT_ACTIVE_ALT);
+}
+
+//----------------------------------------
+bool ofGetModifierKeyShift(){
+    return (glutGetModifiers() & GLUT_ACTIVE_SHIFT);
+}
+
+//----------------------------------------
+bool ofGetModifierKeyControl(){
+    return (glutGetModifiers() & GLUT_ACTIVE_CTRL);
+}
+
+//----------------------------------------
+int ofGetModifierKey(){
+    return glutGetModifiers();
 }
 
 //----------------------------------------
@@ -504,10 +524,10 @@ string ofJoinString(vector <string> stringElements, const string & delimiter){
 
 //--------------------------------------------------
 void ofStringReplace(string& input, string searchStr, string replaceStr){
-	size_t uPos = 0; 
-	size_t uFindLen = searchStr.length(); 
+	size_t uPos = 0;
+	size_t uFindLen = searchStr.length();
 	size_t uReplaceLen = replaceStr.length();
-		
+
 	if( uFindLen == 0 ){
 		return;
 	}
@@ -515,7 +535,7 @@ void ofStringReplace(string& input, string searchStr, string replaceStr){
 	for( ;(uPos = input.find( searchStr, uPos )) != std::string::npos; ){
 		input.replace( uPos, uFindLen, replaceStr );
 		uPos += uReplaceLen;
-	}	
+	}
 }
 
 //--------------------------------------------------

@@ -9,6 +9,17 @@
 	#include <shellapi.h>
 #endif
 
+#ifdef TARGET_WIN32
+	#define GLUT_BUILDING_LIB
+	#include "glut.h"
+#endif
+#ifdef TARGET_OSX
+	#include "../../../libs/glut/lib/osx/GLUT.framework/Versions/A/Headers/glut.h"
+	#include <Carbon/Carbon.h>
+#endif
+#ifdef TARGET_LINUX
+	#include <GL/glut.h>
+#endif
 
 int 	ofNextPow2(int input);
 
@@ -28,7 +39,7 @@ unsigned int ofGetUnixTime();
 unsigned long ofGetSystemTime( );			// system time in milliseconds;
 unsigned long ofGetSystemTimeMicros( );			// system time in microseconds;
 
-		//returns 
+		//returns
 string ofGetTimestampString();
 string ofGetTimestampString(string timestampFormat);
 
@@ -43,6 +54,11 @@ void 	ofLaunchBrowser(string url);
 void	ofEnableDataPath();
 void	ofDisableDataPath();
 string 	ofToDataPath(string path, bool absolute=false);
+
+bool ofGetModifierKeyAlt();     // return glutModifierKey ALT
+bool ofGetModifierKeyShift();   // return glutModifierKey SHIFT
+bool ofGetModifierKeyControl(); // return glutModifierKey CONTROL
+int ofGetModifierKey();         // returns 0 (for none), 1 (GLUT_ACTIVE_SHIFT), 2 (GLUT_ACTIVE_CTRL) or 4 (GLUT_ACTIVE_ALT)
 
 template<class T>
 void ofRandomize(vector<T>& values) {
