@@ -297,6 +297,7 @@ string ofToDataPath(string path, bool makeAbsolute){
 	return path;
 }
 
+#if !defined( TARGET_OF_IPHONE) & !defined(TARGET_ANDROID)
 //----------------------------------------
 bool ofGetModifierKeyAlt(){
     return (glutGetModifiers() & GLUT_ACTIVE_ALT);
@@ -316,6 +317,7 @@ bool ofGetModifierKeyControl(){
 int ofGetModifierKey(){
     return glutGetModifiers();
 }
+#endif
 
 //----------------------------------------
 template <>

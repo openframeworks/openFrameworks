@@ -55,10 +55,12 @@ void	ofEnableDataPath();
 void	ofDisableDataPath();
 string 	ofToDataPath(string path, bool absolute=false);
 
+#if !defined( TARGET_OF_IPHONE) & !defined(TARGET_ANDROID)
 bool ofGetModifierKeyAlt();     // return glutModifierKey ALT
 bool ofGetModifierKeyShift();   // return glutModifierKey SHIFT
 bool ofGetModifierKeyControl(); // return glutModifierKey CONTROL
 int ofGetModifierKey();         // returns 0 (for none), 1 (GLUT_ACTIVE_SHIFT), 2 (GLUT_ACTIVE_CTRL) or 4 (GLUT_ACTIVE_ALT)
+#endif
 
 template<class T>
 void ofRandomize(vector<T>& values) {
