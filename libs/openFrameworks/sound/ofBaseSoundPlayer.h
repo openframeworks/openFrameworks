@@ -34,6 +34,5 @@ public:
 	virtual bool getIsPlaying() = 0;
 	virtual float getSpeed() = 0;
 	virtual float getPan() = 0;
-	virtual float getVolume();// = 0; xcode is being weird here and not compiling ofOpenALSoundPlayer maybe? Keep getting cant allocate abstract type errors if I leave this in despite having defined getVolume in ofOpenALSoundPlayer...WTF?!?
-
+	virtual float getVolume() = 0;
 };
