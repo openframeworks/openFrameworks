@@ -419,7 +419,7 @@ Java_cc_openframeworks_OFAndroid_render( JNIEnv*  env, jclass  thiz )
 	}
 	frames++;
 	int frameMillis = currTime - beginFrameMillis;
-	lastFrameTime = double(frameMillis)/1000.;
+	lastFrameTime = double(currTime - previousFrameMillis)/1000.;
 
 	previousFrameMillis = currTime;
 
