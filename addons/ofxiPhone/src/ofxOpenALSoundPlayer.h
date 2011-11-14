@@ -85,7 +85,8 @@ public:
 	bool	getIsPlaying();
 	float	getPitch();
 	float	getSpeed(){return getPitch();}; // same as pitch. mapped for ofSoundPlayer compatibility
-	
+	float   getVolume();
+    
 	float	getPan();
 	
 	// IPHONE EXTRA FUNCTIONS
