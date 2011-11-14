@@ -224,6 +224,7 @@ void ofxiPhoneKeyboard::updateOrientation()
 				 break;
 				
 			case OFXIPHONE_ORIENTATION_PORTRAIT:
+                _x = _xOriginal;
 				_y = _h;
 				break;
 		}
@@ -268,6 +269,7 @@ void ofxiPhoneKeyboard::updateOrientation()
 			break;
 			
 		case OFXIPHONE_ORIENTATION_PORTRAIT:
+            _x = _xOriginal;
 			_y = _h;
 			break;
 	}
