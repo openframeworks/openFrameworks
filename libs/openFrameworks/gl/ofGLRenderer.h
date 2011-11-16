@@ -1,6 +1,8 @@
 #pragma once
 #include "ofBaseTypes.h"
 #include "ofPolyline.h"
+#include "ofMatrix4x4.h"
+
 #include <stack>
 class ofShapeTessellation;
 class ofMesh;
@@ -117,6 +119,8 @@ private:
 
 	ofHandednessType coordHandedness;
 	stack <ofRectangle> viewportHistory;
+	stack <ofMatrix4x4> modelViewStack;
+	stack <ofMatrix4x4> projectionStack;
 	bool bBackgroundAuto;
 	ofFloatColor bgColor;
 
