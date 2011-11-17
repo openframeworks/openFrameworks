@@ -200,7 +200,7 @@ void ofPixels_<PixelType>::swapRgb(){
 	if (channels >= 3){
 		int sizePixels = width*height*channels;
 		for (int i=0; i< sizePixels; i+=channels){
-			std::swap(pixels[0],pixels[2]);
+			std::swap(pixels[i],pixels[i+2]);
 		}
 	}
 }
