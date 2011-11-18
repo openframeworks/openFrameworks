@@ -10,6 +10,7 @@ namespace ofxCv {
 		this->cameraMatrix = cameraMatrix;
 		this->imageSize = imageSize;
 		this->sensorSize = sensorSize;
+		
 		calibrationMatrixValues(cameraMatrix, imageSize, sensorSize.width, sensorSize.height,
 														fov.x, fov.y, focalLength, principalPoint, aspectRatio);
 
@@ -67,8 +68,10 @@ namespace ofxCv {
 	
 	Calibration::Calibration() :
 		patternSize(cv::Size(10, 7)), squareSize(2.5), // based on Chessboard_A4.pdf, assuming world units are centimeters
+		subpixelSize(cv::Size(11,11)),
 		fillFrame(true),
-		_isReady(false)
+		_isReady(false),
+		reprojectionError(0.0)
 	{
 		
 	}
