@@ -56,12 +56,15 @@ namespace ofxCv {
 		
 		void setPatternSize(int xCount, int yCount);
 		void setSquareSize(float squareSize);
+		/// set this to the pixel size of your smallest square. default is 11
+		void setSubpixelSize(int subpixelSize);
+
 		bool add(Mat img);
 		bool clean(float minReprojectionError = 2.f);
 		bool calibrate();
 		bool calibrateFromDirectory(string directory);
 		bool findBoard(Mat img, vector<Point2f> &pointBuf, bool refine=true);
-										  
+				  
 		void undistort(Mat img);
 		void undistort(Mat src, Mat dst);
 		
@@ -76,6 +79,7 @@ namespace ofxCv {
 		const Intrinsics& getDistortedIntrinsics() const;
 		const Intrinsics& getUndistortedIntrinsics() const;
 		Mat getDistCoeffs() const;
+		
 		
 		// if you want a wider fov, say setFillFrame(false) before load() or calibrate()
 		void setFillFrame(bool fillFrame);
@@ -95,7 +99,7 @@ namespace ofxCv {
 		vector<vector<Point2f> > imagePoints;
 		
 	protected:
-		cv::Size patternSize, addedImageSize;
+		cv::Size patternSize, addedImageSize, subpixelSize;
 		float squareSize;
 		Mat grayMat;
 		
