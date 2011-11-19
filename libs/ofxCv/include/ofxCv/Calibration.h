@@ -57,6 +57,9 @@ namespace ofxCv {
 		void setPatternType(CalibrationPattern patternType);
 		void setPatternSize(int xCount, int yCount);
 		void setSquareSize(float squareSize);
+		/// set this to the pixel size of your smallest square. default is 11
+		void setSubpixelSize(int subpixelSize);
+
 		bool add(Mat img);
 		bool clean(float minReprojectionError = 2.f);
 		bool calibrate();
@@ -88,7 +91,6 @@ namespace ofxCv {
 		
 		void customDraw();
 		void draw(int i) const;
-		//void drawUndistortion() const;
 		void draw3d() const;
 		void draw3d(int i) const;
 		
@@ -97,7 +99,7 @@ namespace ofxCv {
 		
 	protected:
 		CalibrationPattern patternType;
-		cv::Size patternSize, addedImageSize;
+		cv::Size patternSize, addedImageSize, subpixelSize;
 		float squareSize;
 		Mat grayMat;
 		
