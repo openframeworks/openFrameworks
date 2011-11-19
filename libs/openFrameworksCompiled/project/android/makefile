@@ -30,7 +30,7 @@ ifeq ($(ARCH),android)
 else
 	COMPILER_OPTIMIZATION = -march=native -mtune=native -finline-functions -funroll-all-loops  -Os
 endif
-USER_CFLAGS = 
+USER_CFLAGS = -DGL_GLEXT_PROTOTYPES=1
 
 
 
