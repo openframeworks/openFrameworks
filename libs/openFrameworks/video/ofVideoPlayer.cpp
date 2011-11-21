@@ -34,9 +34,11 @@ bool ofVideoPlayer::loadMovie(string name){
 	width	 = player->getWidth();
 	height	 = player->getHeight();
 	
-	if( bOk && bUseTexture )
-		if(width!=0 && height!=0)
-			tex.allocate(width, height, GL_RGB);
+	if( bOk && bUseTexture ){
+		if(width!=0 && height!=0) {
+			tex.allocate(width, height, ofGetGLTypeFromPixelFormat(internalPixelFormat));
+		}
+	}
 	
 	return bOk;
 }
@@ -74,7 +76,12 @@ ofPixelsRef ofVideoPlayer::getPixelsRef(){
 //---------------------------------------------------------------------------
 //for getting a reference to the texture
 ofTexture & ofVideoPlayer::getTextureReference(){
-	return tex;
+	if(playerTex == NULL){
+		return tex;
+	}
+	else{
+		return *playerTex;
+	}
 }
 
 
@@ -108,11 +115,11 @@ void ofVideoPlayer::update(){
 						if(tex.bAllocated())
 							tex.clear();
 					
-						tex.allocate(width, height, GL_RGB);
-						tex.loadData(pxls, tex.getWidth(), tex.getHeight(), GL_RGB);
+						tex.allocate(width, height, ofGetGLTypeFromPixelFormat(internalPixelFormat));
+						tex.loadData(pxls, tex.getWidth(), tex.getHeight(), ofGetGLTypeFromPixelFormat(internalPixelFormat));
 					}
 				}else{
-					tex.loadData(pxls, tex.getWidth(), tex.getHeight(), GL_RGB);
+					tex.loadData(pxls, tex.getWidth(), tex.getHeight(), ofGetGLTypeFromPixelFormat(internalPixelFormat));
 				}
 			}
 		}
@@ -273,55 +280,37 @@ void ofVideoPlayer::setUseTexture(bool bUse){
 
 //----------------------------------------------------------
 void ofVideoPlayer::setAnchorPercent(float xPct, float yPct){
-	tex.setAnchorPercent(xPct, yPct);
+	getTextureReference().setAnchorPercent(xPct, yPct);
 }
 
 //----------------------------------------------------------
 void ofVideoPlayer::setAnchorPoint(float x, float y){
-	tex.setAnchorPoint(x, y);
+	getTextureReference().setAnchorPoint(x, y);
 }
 
 //----------------------------------------------------------
 void ofVideoPlayer::resetAnchor(){
-	tex.resetAnchor();
+	getTextureReference().resetAnchor();
 }
 
 //------------------------------------
 void ofVideoPlayer::draw(float _x, float _y, float _w, float _h){
-	if(playerTex == NULL)
-		tex.draw(_x, _y, _w, _h);
-	else
-		playerTex->draw(_x, _y, _w, _h);
+	getTextureReference().draw(_x, _y, _w, _h);	
 }
 
 //------------------------------------
 void ofVideoPlayer::draw(float _x, float _y){
-	if(playerTex == NULL)
-		tex.draw(_x, _y);
-	else
-	{
-		playerTex->draw(_x,_y);
-	}
+	getTextureReference().draw(_x, _y);
 }
 
 //------------------------------------
 void ofVideoPlayer::draw(const ofPoint & p){
-	if(playerTex == NULL)
-		tex.draw(p);
-	else
-	{
-		playerTex->draw(p);
-	}
+	getTextureReference().draw(p);
 }
 
 //------------------------------------
 void ofVideoPlayer::draw(const ofRectangle & r){
-	if(playerTex == NULL)
-		tex.draw(r);
-	else
-	{
-		playerTex->draw(r);
-	}
+	getTextureReference().draw(r);
 }
 
 //------------------------------------

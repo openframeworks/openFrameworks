@@ -1,15 +1,15 @@
 #include "ofColor.h"
 #include "ofConstants.h"
 
-template<typename PixelType> const ofColor_<PixelType> ofColor_<PixelType>::gray = ofColor(128, 128, 128);
-template<typename PixelType> const ofColor_<PixelType> ofColor_<PixelType>::white = ofColor(255, 255, 255);
-template<typename PixelType> const ofColor_<PixelType> ofColor_<PixelType>::red = ofColor(255, 0, 0);
-template<typename PixelType> const ofColor_<PixelType> ofColor_<PixelType>::green = ofColor(0, 255, 0);
-template<typename PixelType> const ofColor_<PixelType> ofColor_<PixelType>::blue = ofColor(0, 0, 255);
-template<typename PixelType> const ofColor_<PixelType> ofColor_<PixelType>::cyan = ofColor(0, 255, 255);
-template<typename PixelType> const ofColor_<PixelType> ofColor_<PixelType>::magenta = ofColor(255, 0, 255);
-template<typename PixelType> const ofColor_<PixelType> ofColor_<PixelType>::yellow = ofColor(255, 255, 0);
-template<typename PixelType> const ofColor_<PixelType> ofColor_<PixelType>::black = ofColor(0, 0, 0);
+template<typename PixelType> const ofColor_<PixelType> ofColor_<PixelType>::gray(limit() / 2, limit() / 2, limit() / 2);
+template<typename PixelType> const ofColor_<PixelType> ofColor_<PixelType>::white(limit(), limit(), limit());
+template<typename PixelType> const ofColor_<PixelType> ofColor_<PixelType>::red(limit(), 0, 0);
+template<typename PixelType> const ofColor_<PixelType> ofColor_<PixelType>::green(0, limit(), 0);
+template<typename PixelType> const ofColor_<PixelType> ofColor_<PixelType>::blue(0, 0, limit());
+template<typename PixelType> const ofColor_<PixelType> ofColor_<PixelType>::cyan(0, limit(), limit());
+template<typename PixelType> const ofColor_<PixelType> ofColor_<PixelType>::magenta(limit(), 0, limit());
+template<typename PixelType> const ofColor_<PixelType> ofColor_<PixelType>::yellow(limit(), limit(), 0);
+template<typename PixelType> const ofColor_<PixelType> ofColor_<PixelType>::black(0, 0, 0);
 
 template<typename PixelType>
 float ofColor_<PixelType>::limit() {
@@ -245,7 +245,7 @@ void ofColor_<PixelType>::getHsb(float& hue, float& saturation, float& brightnes
 	if(max == min) { // grays
 		hue = 0.f;
 		saturation = 0.f;
-		brightness = limit() * max;
+		brightness = max;
 		return;
 	}
 	
@@ -302,6 +302,8 @@ void ofColor_<PixelType>::setHsb(float hue, float saturation, float brightness, 
 
 template<typename PixelType>
 void ofColor_<PixelType>::setHsb(float hue, float saturation, float brightness) {
+	saturation = ofClamp(saturation, 0, limit());
+	brightness = ofClamp(brightness, 0, limit());
 	if(brightness == 0) { // black
 		set(0);
 	} else if(saturation == 0) { // grays

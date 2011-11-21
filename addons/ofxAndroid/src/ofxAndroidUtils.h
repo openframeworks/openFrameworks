@@ -15,6 +15,7 @@
 JavaVM * ofGetJavaVMPtr();
 JNIEnv * ofGetJNIEnv();
 jclass ofGetJavaOFAndroid();
+jobject ofGetOFActivityObject();
 
 //void ofRunApp( ofxAndroidApp * app);
 
