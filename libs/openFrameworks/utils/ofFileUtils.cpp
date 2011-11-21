@@ -909,6 +909,11 @@ int ofDirectory::listDir(){
 }
 
 //------------------------------------------------------------------------------------------------------------
+string ofDirectory::getOriginalDirectory(){
+	return originalDirectory;
+}
+
+//------------------------------------------------------------------------------------------------------------
 string ofDirectory::getName(unsigned int position){
 	Path cur(files.at(position).path());
 	return cur.getFileName();
