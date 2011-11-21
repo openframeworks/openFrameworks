@@ -37,11 +37,11 @@ static bool bSetupScreen = true;
 static float frameRate = 60;
 
 static int frames = 0;
-static int onesec = 0;
-static int previousFrameMillis = 0;
+static unsigned long onesec = 0;
+static unsigned long previousFrameMicros = 0;
 static int nFrameCount = 0;
 static float targetRate = 60;
-static int oneFrameTime = 0;
+static unsigned long oneFrameTime = 0;
 static bool bFrameRateSet = false;
 
 static double			lastFrameTime;
@@ -78,6 +78,22 @@ JNIEnv * ofGetJNIEnv(){
 
 jclass ofGetJavaOFAndroid(){
 	return ofGetJNIEnv()->FindClass("cc/openframeworks/OFAndroid");
+}
+
+jobject ofGetOFActivityObject(){
+	JNIEnv * env = ofGetJNIEnv();
+	if(!env) return NULL;
+
+	jclass OFAndroid = ofGetJavaOFAndroid();
+	if(!OFAndroid) return NULL;
+
+	jfieldID ofActivityID = env->GetStaticFieldID(OFAndroid,"ofActivity","Landroid/app/Activity;");
+	if(!ofActivityID){
+		ofLogError() << "Failed to get field ID for ofActivity";
+		return NULL;
+	}
+
+	return env->GetStaticObjectField(OFAndroid,ofActivityID);
 }
 
 /*void ofRunApp( ofxAndroidApp * app){
@@ -190,7 +206,7 @@ void ofAppAndroidWindow::toggleFullscreen(){
 
 void ofAppAndroidWindow::setFrameRate(float _targetRate){
 	targetRate = _targetRate;
-	oneFrameTime = 1000.f/targetRate;
+	oneFrameTime = 1000000.f/targetRate;
 	bFrameRateSet = true;
 }
 
@@ -336,9 +352,13 @@ Java_cc_openframeworks_OFAndroid_exit( JNIEnv*  env, jclass  thiz )
 void
 Java_cc_openframeworks_OFAndroid_render( JNIEnv*  env, jclass  thiz )
 {
-	int beginFrameMillis = ofGetElapsedTimeMillis();
+	unsigned long beginFrameMicros = ofGetElapsedTimeMicros();
 
 	if(paused) return;
+
+	lastFrameTime = double(beginFrameMicros - previousFrameMicros)/1000000.;
+
+	previousFrameMicros = beginFrameMicros;
 
 	if(!threadedTouchEvents){
 		mutex.lock();
@@ -384,32 +404,19 @@ Java_cc_openframeworks_OFAndroid_render( JNIEnv*  env, jclass  thiz )
 	if(bSetupScreen) ofSetupScreen();
 	ofNotifyDraw();
 
-	/*timeNow = ofGetElapsedTimef();
-	double diff = timeNow-timeThen;
-	if( diff  > 0.00001 ){
-		fps			= 1.0 / diff;
-		frameRate	*= 0.9f;
-		frameRate	+= 0.1f*fps;
-	 }
-	 lastFrameTime	= diff;
-	 timeThen		= timeNow;*/
-	// --------------
+	unsigned long currTime = ofGetElapsedTimeMicros();
+	unsigned long frameMicros = currTime - beginFrameMicros;
 
-	int currTime = ofGetElapsedTimeMillis();
-	if(currTime - onesec>=1000){
+	nFrameCount++;		// increase the overall frame count*/
+	frames++;
+
+	if(currTime - onesec>=1000000){
 		frameRate = frames;
 		frames = 0;
 		onesec = currTime;
 	}
-	frames++;
-	int frameMillis = currTime - beginFrameMillis;
-	lastFrameTime = double(frameMillis)/1000.;
 
-	previousFrameMillis = currTime;
-
-	nFrameCount++;		// increase the overall frame count*/
-
-	if(bFrameRateSet && frameMillis<oneFrameTime) ofSleepMillis(oneFrameTime-frameMillis);
+	if(bFrameRateSet && frameMicros<oneFrameTime) usleep(oneFrameTime-frameMicros);
 
 }
 

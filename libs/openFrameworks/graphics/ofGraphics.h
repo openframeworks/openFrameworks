@@ -155,6 +155,11 @@ void ofBackground(int brightness, int alpha = 255);
 void ofBackground(const ofColor & c);
 void ofBackgroundHex(int hexColor, int alpha = 255);
 
+void ofSetBackgroundColor(int r, int g, int b, int a=255);
+void ofSetBackgroundColor(int brightness, int alpha = 255);
+void ofSetBackgroundColor(const ofColor & c);
+void ofSetBackgroundColorHex(int hexColor, int alpha = 255);
+
 // user's access to settings (bgAuto, corner mode):
 void 	ofSetBackgroundAuto(bool bManual);		// default is true
 
@@ -198,12 +203,15 @@ void ofRect(const ofPoint & p,float w,float h);
 void ofRect(float x,float y,float z,float w,float h);
 
 void ofCurve(float x0, float y0, float x1, float y1, float x2, float y2, float x3, float y3);
+void ofCurve(float x0, float y0, float z0, float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3);
 void ofBezier(float x0, float y0, float x1, float y1, float x2, float y2, float x3, float y3);
+void ofBezier(float x0, float y0, float z0, float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3);
 
 
 // for polygons
 void ofBeginShape();
 void ofVertex(float x, float y);
+void ofVertex(float x, float y, float z);
 void ofVertex(ofPoint & p);
 void ofVertexes(const vector <ofPoint> & polyPoints);
 
@@ -213,6 +221,8 @@ void ofCurveVertex(ofPoint & p);
 void ofCurveVertexes(const vector <ofPoint> & curvePoints);
 
 void ofBezierVertex(float x1, float y1, float x2, float y2, float x3, float y3);
+void ofBezierVertex(const ofPoint & p1, const ofPoint & p2, const ofPoint & p3);
+void ofBezierVertex(float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3);
 
 void ofEndShape(bool bClose = false);
 void ofNextContour(bool bClose = false);  // for multi contour shapes!

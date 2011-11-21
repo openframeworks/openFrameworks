@@ -108,6 +108,7 @@ ofFbo::Settings::Settings() {
 	numColorbuffers			= 1;
 	useDepth				= false;
 	useStencil				= false;
+	depthAsTexture			= false;
 #ifndef TARGET_OPENGLES
 	textureTarget			= GL_TEXTURE_RECTANGLE_ARB;
 #else
@@ -393,8 +394,27 @@ void ofFbo::allocate(Settings _settings) {
 	{
 		// if we want a depth buffer, create it, and attach to our main fbo
 		if(settings.useDepth){
-			depthBuffer = createAndAttachRenderbuffer(GL_DEPTH_COMPONENT, GL_DEPTH_ATTACHMENT);
-			retainRB(depthBuffer);
+			if(!settings.depthAsTexture){
+				depthBuffer = createAndAttachRenderbuffer(GL_DEPTH_COMPONENT, GL_DEPTH_ATTACHMENT);
+				retainRB(depthBuffer);
+			}else{
+				glGenTextures(1, &depthBuffer);
+				//retainRB(depthBuffer);
+				glBindTexture(GL_TEXTURE_2D, depthBuffer);
+
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+			#ifndef TARGET_OPENGLES
+				glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP );
+				glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP );
+			#else
+				glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE );
+				glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE );
+			#endif
+				glTexImage2D( GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, settings.width, settings.height, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_BYTE, 0 );
+				glBindTexture( GL_TEXTURE_2D, 0 );
+				glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,GL_TEXTURE_2D, depthBuffer, 0);
+			}
 		}
 
 		// if we want a stencil buffer, create it, and attach to our main fbo
@@ -515,14 +535,16 @@ void ofFbo::createAndAttachTexture(GLenum attachmentPoint) {
 }
 
 
-void ofFbo::begin() {
-	bind();
+void ofFbo::begin(bool setupScreen) {
 	ofPushView();
 	if(ofGetGLRenderer()){
 		ofGetGLRenderer()->setCurrentFBO(this);
 	}
 	ofViewport(0, 0, getWidth(), getHeight(), false);
-	ofSetupScreenPerspective(getWidth(), getHeight(), ofGetOrientation(), false);
+	if(setupScreen){
+		ofSetupScreenPerspective(getWidth(), getHeight(), ofGetOrientation(), false);
+	}
+	bind();
 }
 
 //void ofViewport(float x = 0, float y = 0, float width = 0, float height = 0, bool invertY = true);
