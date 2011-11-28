@@ -535,14 +535,16 @@ void ofFbo::createAndAttachTexture(GLenum attachmentPoint) {
 }
 
 
-void ofFbo::begin() {
-	bind();
+void ofFbo::begin(bool setupScreen) {
 	ofPushView();
 	if(ofGetGLRenderer()){
 		ofGetGLRenderer()->setCurrentFBO(this);
 	}
 	ofViewport(0, 0, getWidth(), getHeight(), false);
-	ofSetupScreenPerspective(getWidth(), getHeight(), ofGetOrientation(), false);
+	if(setupScreen){
+		ofSetupScreenPerspective(getWidth(), getHeight(), ofGetOrientation(), false);
+	}
+	bind();
 }
 
 //void ofViewport(float x = 0, float y = 0, float width = 0, float height = 0, bool invertY = true);
