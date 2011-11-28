@@ -353,7 +353,7 @@ void ofGstUtils::close(){
 	ofRemoveListener(ofEvents.update,this,&ofGstUtils::update);
 }
 
-string getName(GstState state){
+static string getName(GstState state){
 	switch(state){
 	case   GST_STATE_VOID_PENDING:
 		return "void pending";
@@ -388,7 +388,7 @@ void ofGstUtils::gstHandleMessage(){
 				gint pctBuffered;
 				gst_message_parse_buffering(msg,&pctBuffered);
 				ofLog(OF_LOG_VERBOSE,"GStreamer: buffering %i\%", pctBuffered);
-				if(isStream && !bLoaded && appsink){
+				if(isStream && appsink){
 					appsink->on_stream_prepared();
 				}
 				if(pctBuffered<100){
