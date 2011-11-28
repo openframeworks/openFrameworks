@@ -31,7 +31,7 @@ public:
 	ofTexture & getTextureReference(int attachmentPoint);
 	void setUseTexture(bool bUseTex){ /*irrelevant*/ };
 	
-	void begin();
+	void begin(bool setupScreen=true);
 	void end();
 	
 	void readToPixels(ofPixels & pixels, int attachmentPoint = 0);
@@ -96,7 +96,7 @@ private:
 	
 	bool				dirty;
 	
-	int defaultTextureIndex; //used for getTextureReference
+	int 				defaultTextureIndex; //used for getTextureReference
 
 	void destroy();
 	
