@@ -180,8 +180,6 @@ $(TARGET) : $(OBJS)
 -include $(DEPFILES)
 
 #.PHONY: clean cleanDebug cleanRelease
-cleanDebug:
-	@echo $(CLEANTARGET)
 	
 clean:
 	rm -Rf obj
