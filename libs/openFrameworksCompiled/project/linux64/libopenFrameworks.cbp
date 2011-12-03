@@ -293,8 +293,7 @@
 		</Unit>
 		<Unit filename="../../../openFrameworks/sound/ofSoundStream.h">
 			<Option virtualFolder="openFrameworks/sound/" />
-		</Unit>
-		</Unit>		
+		</Unit>	
 		<Unit filename="../../../openFrameworks/types/ofBaseTypes.cpp">
 			<Option virtualFolder="openFrameworks/types/" />
 		</Unit>		
@@ -337,7 +336,7 @@
 		<Unit filename="../../../openFrameworks/utils/ofLog.h">
 			<Option virtualFolder="openFrameworks/utils/" />
 		</Unit>			
-		<Unit filename="../../../openFrameworks/utils/Noise.h">
+		<Unit filename="../../../openFrameworks/utils/ofNoise.h">
 			<Option virtualFolder="openFrameworks/utils/" />
 		</Unit>		
 		<Unit filename="../../../openFrameworks/utils/ofSystemUtils.cpp">
@@ -357,6 +356,7 @@
 		</Unit>
 		<Unit filename="../../../openFrameworks/utils/ofURLFileLoader.h">
 			<Option virtualFolder="openFrameworks/utils/" />
+		</Unit>			
 		<Unit filename="../../../openFrameworks/utils/ofUtils.cpp">
 			<Option virtualFolder="openFrameworks/utils/" />
 		</Unit>
