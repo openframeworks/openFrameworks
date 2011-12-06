@@ -115,7 +115,7 @@ ifeq ($(findstring Release,$(MAKECMDGOALS)),Release)
 endif
 
 ifeq ($(findstring Release_arm7,$(MAKECMDGOALS)),Release_arm7)
-	TARGET_CFLAGS += -march=armv7-a -mfloat-abi=softfp -mthumb
+	TARGET_CFLAGS += -march=armv7-a -mfloat-abi=softfp 
 	TARGET = ../../lib/$(LIBSPATH)/libopenFrameworks_arm7.a
 endif
 
@@ -171,7 +171,8 @@ android:
 $(OBJ_OUTPUT)%.o: ../../../%.cpp 
 	@echo "compiling object for " $<
 	mkdir -p $(@D)
-	$(CXX) $(TARGET_CFLAGS) $(CFLAGS) $(USER_CFLAGS) -MMD -MP -MF$(OBJ_OUTPUT)$*.d -MT$(OBJ_OUTPUT)$*.d -o $@ -c $<
+	$(CXX) $(TARGET_CFLAGS) $(CFLAGS) $(USER_CFLAGS) -MMD -MP -MF$(OBJ_OUTPUT)$*.d -MT$(OBJ_OUTPUT)$*.o -o $@ -c $<
+
 
 $(TARGET) : $(OBJS) 
 	echo "creating " $(TARGET)

@@ -84,7 +84,9 @@ static OSStatus playbackCallback(void *inRefCon,
 			} else {	
 				
 				// get floats from openframeworks
-				if(soundOutputPtr!=NULL) soundOutputPtr->audioRequested(tempBuffer, ioData->mBuffers[i].mDataByteSize/(ioData->mBuffers[i].mNumberChannels*2), ioData->mBuffers[i].mNumberChannels);
+				if(soundOutputPtr!=NULL){
+					soundOutputPtr->audioOut(tempBuffer, ioData->mBuffers[i].mDataByteSize/(ioData->mBuffers[i].mNumberChannels*2), ioData->mBuffers[i].mNumberChannels);
+				}
 				
 				// truncate to 16bit fixed point data
 				int len = ioData->mBuffers[i].mDataByteSize/2;
@@ -138,7 +140,7 @@ static OSStatus recordingCallback(void *inRefCon,
 			
 		}
 		done = true;
-		if(soundInputPtr!=NULL) soundInputPtr->audioReceived(tempBuffer, ioData->mBuffers[i].mDataByteSize/2, 1);
+		if(soundInputPtr!=NULL) soundInputPtr->audioIn(tempBuffer, ioData->mBuffers[i].mDataByteSize/2, 1);
 		
 	}
 	return noErr;
@@ -168,7 +170,7 @@ void ofxiPhoneSoundStream::setInput(ofBaseSoundInput * soundInput){
 
 //------------------------------------------------------------------------------
 void ofxiPhoneSoundStream::setOutput(ofBaseSoundOutput * soundOutput){
-	soundOutput = soundOutput;
+	soundOutputPtr = soundOutput;
 }
 
 //------------------------------------------------------------------------------

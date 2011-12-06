@@ -4,8 +4,8 @@
 # make Debug:  makes the application with debug symbols
 # make Release: makes the app with optimizations
 # make: the same as make Release
-# make CleanDebug: cleans the Debug target
-# make CleanRelease: cleans the Release target
+# make cleanDebug: cleans the Debug target
+# make cleanRelease: cleans the Release target
 # make clean: cleans everything
 #
 # edit the following  vars to customize the makefile
@@ -129,16 +129,24 @@ ifeq ($(MAKECMDGOALS),clean)
 	TARGET = ../../lib/$(LIBSPATH)/libopenFrameworks.a ../../lib/$(LIBSPATH)/libopenFrameworksDebug.a
 endif
 
-ifeq ($(MAKECMDGOALS),CleanAndroid)
+ifeq ($(MAKECMDGOALS),cleanAndroid)
 	TARGET = ../../lib/$(LIBSPATH)/libopenFrameworks.a ../../lib/$(LIBSPATH)/libopenFrameworksDebug.a ../../lib/$(LIBSPATH)/libopenFrameworks_arm7.a
 endif
 
-CLEANTARGET = $(addprefix Clean,$(TARGET_NAME))
+ifeq ($(MAKECMDGOALS),cleanDebug)
+	TARGET_NAME = Debug
+endif
+
+ifeq ($(MAKECMDGOALS),cleanRelease)
+	TARGET_NAME = Release
+endif
+
+CLEANTARGET = $(addprefix clean,$(TARGET_NAME))
 OBJ_OUTPUT = obj/$(TARGET_NAME)/
 DEPFILES = $(addprefix $(OBJ_OUTPUT),$(patsubst ../../../%.cpp,%.d,$(SOURCES)))
 OBJS = $(addprefix $(OBJ_OUTPUT), $(OBJFILES))
 
-.PHONY: all Debug Release after clean CleanDebug CleanRelease help DebugAndroid ReleaseAndroid Release_arm7Android CleanAndroid
+.PHONY: all Debug Release after clean cleanDebug cleanRelease help DebugAndroid ReleaseAndroid Release_arm7Android cleanAndroid
 
 Release: $(TARGET) 
 
@@ -163,7 +171,7 @@ android:
 $(OBJ_OUTPUT)%.o: ../../../%.cpp 
 	@echo "compiling object for " $<
 	mkdir -p $(@D)
-	$(CXX) $(TARGET_CFLAGS) $(CFLAGS) $(USER_CFLAGS) -MMD -MP -MF$(OBJ_OUTPUT)$*.d -MT$(OBJ_OUTPUT)$*.d -o $@ -c $<
+	$(CXX) $(TARGET_CFLAGS) $(CFLAGS) $(USER_CFLAGS) -MMD -MP -MF$(OBJ_OUTPUT)$*.d -MT$(OBJ_OUTPUT)$*.o -o $@ -c $<
 
 $(TARGET) : $(OBJS) 
 	echo "creating " $(TARGET)
@@ -171,7 +179,7 @@ $(TARGET) : $(OBJS)
 
 -include $(DEPFILES)
 
-#.PHONY: clean CleanDebug CleanRelease
+#.PHONY: clean cleanDebug cleanRelease
 clean:
 	rm -Rf obj
 	rm -f -v $(TARGET)
@@ -180,7 +188,7 @@ $(CLEANTARGET):
 	rm -Rf -v $(OBJ_OUTPUT)
 	rm -f -v $(TARGET)
 	
-CleanAndroid:
+cleanAndroid:
 	rm -Rf obj
 	rm -f -v $(TARGET)
 
@@ -195,7 +203,7 @@ help:
 	@echo "make Release:		builds the library with optimizations"
 	@echo "make:			= make Release"
 	@echo "make all:		= make Debug + make Release"
-	@echo "make CleanDebug:	cleans the Debug target"
-	@echo "make CleanRelease:	cleans the Release target"
+	@echo "make cleanDebug:	cleans the Debug target"
+	@echo "make cleanRelease:	cleans the Release target"
 	@echo "make clean:		cleans everything"
 	@echo

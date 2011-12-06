@@ -232,24 +232,35 @@ public class OFAndroid {
 	}
 	
 	static public void setMenuItemChecked(String idStr, boolean checked){
-		try {
-			Class<?> menu_ids = Class.forName(packageName+".R$id");
-			Field field = menu_ids.getField(idStr);
-			//ofActivity.getMenuInflater().
-		} catch (Exception e) {
-			Log.w("OF","Trying to get menu items ", e);
-		}
+		final String id = idStr;
+		ofActivity.runOnUiThread(new Runnable(){
+			public void run() {
+				try {
+					Class<?> menu_ids = Class.forName(packageName+".R$id");
+					Field field = menu_ids.getField(id);
+					//ofActivity.getMenuInflater().
+				} catch (Exception e) {
+					Log.w("OF","Trying to get menu items ", e);
+				}
+			}
+		});
 	}
 	
 	static public void setViewItemChecked(String idStr, boolean checked){
-		try {
-			Class<?> menu_ids = Class.forName(packageName+".R$id");
-			Field field = menu_ids.getField(idStr);
-			CompoundButton checkbox = (CompoundButton) ofActivity.findViewById(field.getInt(null));
-			checkbox.setChecked(checked);
-		} catch (Exception e) {
-			Log.w("OF","Trying to get menu items ", e);
-		}
+		final String id = idStr;
+		final boolean fchecked = checked;
+		ofActivity.runOnUiThread(new Runnable(){
+			public void run() {
+				try {
+					Class<?> menu_ids = Class.forName(packageName+".R$id");
+					Field field = menu_ids.getField(id);
+					CompoundButton checkbox = (CompoundButton) ofActivity.findViewById(field.getInt(null));
+					checkbox.setChecked(fchecked);
+				} catch (Exception e) {
+					Log.w("OF","Trying to get menu items ", e);
+				}
+			}
+		});
 	}
 	
 	static public String getStringRes(String idStr){
@@ -313,12 +324,14 @@ public class OFAndroid {
 	
 	static public void dismissProgressBox(int id){
 		final ProgressDialog d = progressDialogs.get(id);
-		ofActivity.runOnUiThread(new Runnable(){
-			public void run() {
-				d.dismiss();
-			}
-		});
-		progressDialogs.remove(id);
+		if(d!=null){
+			ofActivity.runOnUiThread(new Runnable(){
+				public void run() {
+					d.dismiss();
+				}
+			});
+			progressDialogs.remove(id);
+		}
 	}
 	
 	static public void okCancelBox(String msg){
@@ -675,24 +688,25 @@ class OFAndroidWindow implements GLSurfaceView.Renderer {
     }
 
     public void onSurfaceChanged(GL10 gl, int w, int h) {
-    	OFAndroid.resize(w, h);
     	if(!setup){
         	Log.i("OF","initializing app");
         	OFAndroid.init();
         	OFAndroid.setup(w,h);
         	initialized = true;
-        	setup = false;
+        	setup = true;
         	android.os.Process.setThreadPriority(8);
         	
         	/*if(ETC1Util.isETC1Supported()) Log.i("OF","ETC supported");
         	else Log.i("OF","ETC not supported");*/
     	}
+    	OFAndroid.resize(w, h);
 		this.w = w;
 		this.h = h;
     }
 
     public void onDrawFrame(GL10 gl) {
-    	OFAndroid.render();
+    	if(setup)
+    		OFAndroid.render();
     }
 
     static boolean initialized;
