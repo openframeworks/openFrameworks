@@ -274,7 +274,7 @@ int ofxTCPManager::SendAll(const char* pBuff, const int iSize)
 		if (GetTickCount() - timestamp > m_dwTimeoutSend * 1000) return SOCKET_TIMEOUT;
 	}
 
-	if(err == EPIPE || err == ECONNRESET){ Close(); return 0; }
+	if(err == EPIPE || err == ECONNRESET || err == ECONNABORTED ){ Close(); return 0; }
 
 	return ret==-1 && bytesleft == iSize?SOCKET_ERROR:total;
 }

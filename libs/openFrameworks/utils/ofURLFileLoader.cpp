@@ -148,7 +148,7 @@ ofHttpResponse ofURLFileLoader::handleRequest(ofHttpRequest request) {
 		if(!request.saveTo){
 			return ofHttpResponse(request,rs,res.getStatus(),res.getReason());
 		}else{
-			ofFile saveTo(request.name,ofFile::WriteOnly);
+			ofFile saveTo(request.name,ofFile::WriteOnly,true);
 			char aux_buffer[1024];
 			rs.read(aux_buffer, 1024);
 			std::streamsize n = rs.gcount();

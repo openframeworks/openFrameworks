@@ -456,7 +456,7 @@ jboolean
 Java_cc_openframeworks_OFAndroid_onMenuItemChecked( JNIEnv*  env, jobject  thiz, jstring menu_id, jboolean checked){
 	jboolean iscopy;
 	const char *menu_id_str = env->GetStringUTFChars(menu_id, &iscopy);
-	if(androidApp) return androidApp->menuItemChecked(menu_id_str,checked);
+	if(androidApp && menu_id_str) return androidApp->menuItemChecked(menu_id_str,checked);
 	else return false;
 }
 
