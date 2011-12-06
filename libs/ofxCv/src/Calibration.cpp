@@ -102,7 +102,6 @@ namespace ofxCv {
 		FileStorage fs(ofToDataPath(filename, absolute), FileStorage::READ);
 		cv::Size imageSize, sensorSize;
 		Mat cameraMatrix;
-		int pointCount;
 		fs["cameraMatrix"] >> cameraMatrix;
 		fs["imageSize_width"] >> imageSize.width;
 		fs["imageSize_height"] >> imageSize.height;
@@ -117,6 +116,8 @@ namespace ofxCv {
 			imagePoints.push_back(cur);
 		}
 		addedImageSize = imageSize;
+		distortedIntrinsics.setup(cameraMatrix, imageSize, sensorSize);
+		updateUndistortion();
 	}
 	void Calibration::setPatternType(CalibrationPattern patternType) {
 		this->patternType = patternType;
