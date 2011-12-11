@@ -280,7 +280,7 @@ string ofToDataPath(string path, bool makeAbsolute){
 			#else
 
 				char currDir[1024];
-				path = "\\bin\\"+path;
+				path = "\\"+path;
 				path = _getcwd(currDir, 1024)+path;
 
 			#endif
