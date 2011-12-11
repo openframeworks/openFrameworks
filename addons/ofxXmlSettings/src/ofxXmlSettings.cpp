@@ -70,7 +70,7 @@ void ofxXmlSettings::clear(){
 //---------------------------------------------------------
 bool ofxXmlSettings::loadFile(const string& xmlFile){
 
-	string fullXmlFile = ofToDataPath(xmlFile);
+	string fullXmlFile = ofToDataPath(xmlFile, true);
 
 	bool loadOkay = doc.LoadFile(fullXmlFile);
 

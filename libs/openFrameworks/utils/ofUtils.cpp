@@ -282,8 +282,6 @@ string ofToDataPath(string path, bool makeAbsolute){
 				char currDir[1024];
 				path = "\\"+path;
 				path = _getcwd(currDir, 1024)+path;
-				std::replace( path.begin(), path.end(), '/', '\\' ); // fix any unixy paths...
-
 
 			#endif
 
@@ -292,6 +290,10 @@ string ofToDataPath(string path, bool makeAbsolute){
 				//do we need iphone specific code here?
 			#endif
 		}
+
+		#ifdef TARGET_WIN32
+		std::replace( path.begin(), path.end(), '/', '\\' ); // fix any unixy paths...
+		#endif
 
 	}
 	return path;
