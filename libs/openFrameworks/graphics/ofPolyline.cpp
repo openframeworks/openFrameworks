@@ -272,6 +272,8 @@ float ofPolyline::getPerimeter() const {
 
 //----------------------------------------------------------
 float ofPolyline::getArea() const{
+	if(points.size()<2) return 0;
+
 	float area = 0;
 	for(int i=0;i<(int)points.size()-1;i++){
 		area += points[i].x * points[i+1].y - points[i+1].x * points[i].y;
