@@ -1,12 +1,12 @@
 ---------------------------------------------------------------
 
-      :::::::       :::::::   ::::::::    :::
-    :+:   :+:     :+:   :+: :+:    :+: :+:+:
-   +:+   +:+     +:+   +:+ +:+          +:+
-  +#+   +:+     +#+   +:+ +#++:++#+    +#+
- +#+   +#+     +#+   +#+ +#+    +#+   +#+
-#+#   #+# #+# #+#   #+# #+#    #+#   #+#
-#######  ###  #######   ########  #######     
+	      :::::::       :::::::   ::::::::    :::
+	    :+:   :+:     :+:   :+: :+:    :+: :+:+:
+	   +:+   +:+     +:+   +:+ +:+          +:+
+	  +#+   +:+     +#+   +:+ +#++:++#+    +#+
+	 +#+   +#+     +#+   +#+ +#+    +#+   +#+
+	#+#   #+# #+# #+#   #+# #+#    #+#   #+#
+	#######  ###  #######   ########  #######     
 
 OF 0.061 Pre-release, changelog:
 
@@ -50,7 +50,7 @@ linux:
 + changed the linux default videograbber to gstreamer
 - remove ofV4lUtils
 / smarter makefiles
-/ modified install scripts to fix karmic problems &#038; build OF compile on install
+/ modified install scripts to fix karmic problems &amp; build OF compile on install
 
 examples: 
 
@@ -65,10 +65,10 @@ app:
 / closing the window on PC now exits the application properly.
 / ofAppGlutWindow - frameRate is now set to 60.0 at the start - before it was un-initialized.
 + ofGetLastFrameTime - to get the elapsed time of the last frame.
-/ fixes for ofGetWidth() &#038; ofGetHeight() being super slow, we now store them in vars and change on windowResize
+/ fixes for ofGetWidth() &amp; ofGetHeight() being super slow, we now store them in vars and change on windowResize
 + ofGetAppPtr(), returns a pointer to the baseApp.
 + glutInitDisplayString option for initializing glut with a unique string, useful for FSAA or altering the setup.
-/ fixed vertical sync for linux: http://www.openframeworks.cc/forum/viewtopic.php?f=7&#038;t=561&#038;p=10683#p10683
+/ fixed vertical sync for linux: http://www.openframeworks.cc/forum/viewtopic.php?f=7&amp;t=561&amp;p=10683#p10683
 + ofBaseVideo added isFrameNew()
 
 utils: 
@@ -77,20 +77,20 @@ utils:
 + ofBaseHasTexture now has ofSetUseTexture ( to enable / disable use of the texture )
 + ofBaseImage and ofBaseVideo have the same inheritance base
 / ofMap - now has a clamp argument, defaults to false
-/ ofMap - added kyle's solution for division by 0 in ofMap: http://www.openframeworks.cc/forum/viewtopic.php?f=6&#038;t=1413&#038;view=unread#unread
+/ ofMap - added kyle's solution for division by 0 in ofMap: http://www.openframeworks.cc/forum/viewtopic.php?f=6&amp;t=1413&amp;view=unread#unread
 / detect C:/ as a root path in ofToDataPath
 / fixed ofPoint warnings
 
 events: 
 
-/ fixed vs2008 intellisense doesn't like using Poco::delegate; in ofEventUtils: http://www.openframeworks.cc/forum/viewtopic.php?f=9&#038;t=1877
+/ fixed vs2008 intellisense doesn't like using Poco::delegate; in ofEventUtils: http://www.openframeworks.cc/forum/viewtopic.php?f=9&amp;t=1877
 
 graphics: 
 
 / ofImage - Loading a corrupted image in linux made the app crash, fixed now.
 / ofImage setImageType now should properly alter the texture if we need to.
 + ofTexture - get texPoint / texPercent, should help for doing texCoordinate stuff without knowing the target of the texture (ie, RECTANGLE_2D or ARB)
-+ ofTexture - setTextureWrap &#038; setMinMagFilters
++ ofTexture - setTextureWrap &amp; setMinMagFilters
 + ofTexture - ofTexture float *, char *, short * -- added ability to make floating point textures, or upload float data.
 / ofTrueTypeFont - fixed TTF mem leak - http://www.openframeworks.cc/forum/viewtopic.php?p=10178&#p10178
 / ofImage fixed resize color bug
@@ -105,15 +105,15 @@ communication:
 / merged ofStandardFirmata into ofArduino, and removed ofStandardFirmata files from all projects.
 / fixed Linux serial issues with device number.
 / fixed firmata connect inconsistency: http://www.openframeworks.cc/forum/viewtopic.php?t=1765
-/ serial enumerateDevices is doing ofLog so not always printing out: http://www.openframeworks.cc/forum/posting.php?mode=reply&#038;f=6&#038;t=1860
-/ fix for ofArduino: http://www.openframeworks.cc/forum/viewtopic.php?f=8&#038;t=3042&#038;p=16425#p16425
+/ serial enumerateDevices is doing ofLog so not always printing out: http://www.openframeworks.cc/forum/posting.php?mode=reply&amp;f=6&amp;t=1860
+/ fix for ofArduino: http://www.openframeworks.cc/forum/viewtopic.php?f=8&amp;t=3042&amp;p=16425#p16425
 
 video: 
 
 + add setFrameRate for ofVideoGrabber
 / update the quicktime settings dialog so that PS3 eye panel shows up.
 / ofVideoPlayer and ofVideoGrabber on OS X Intel now using k24RGBPixelFormat - this has a huge speed improvement.
-/ ofVideoGrabber on mac seems to not list devices unless log level is verbose http://www.openframeworks.cc/forum/viewtopic.php?f=9&#038;t=1799&#038;view=unread#unread
+/ ofVideoGrabber on mac seems to not list devices unless log level is verbose http://www.openframeworks.cc/forum/viewtopic.php?f=9&amp;t=1799&amp;view=unread#unread
 / ofVideoPlayer uninitialized bool
 / ofVideoPlayer - pause delay
 / ofUCUtils - PIX_FMT_YUV422 won't exist anymore on future ffmpeg versions
@@ -175,13 +175,13 @@ ofxNetwork:
 
 ---------------------------------------------------------------
 
-  .oooo.         .oooo.       .ooo
- d8P'`Y8b       d8P'`Y8b    .88'
-888    888     888    888  d88'
-888    888     888    888 d888P"Ybo.
-888    888     888    888 Y88[   ]88
-`88b  d88' .o. `88b  d88' `Y88   88P
- `Y8bd8P'  Y8P  `Y8bd8P'   `88bod8'  
+	  .oooo.         .oooo.       .ooo
+	 d8P'`Y8b       d8P'`Y8b    .88'
+	888    888     888    888  d88'
+	888    888     888    888 d888P"Ybo.
+	888    888     888    888 Y88[   ]88
+	`88b  d88' .o. `88b  d88' `Y88   88P
+	 `Y8bd8P'  Y8P  `Y8bd8P'   `88bod8'  
 
 OF 0.06 Pre-release, changelog:
 
@@ -336,13 +336,13 @@ http://www.openframeworks.cc/forum/viewtopic.php?p=7221#7221
 
 ---------------------------------------------------------------
 
-  .oooo.         .oooo.     oooooooo
- d8P'`Y8b       d8P'`Y8b   dP"""""""
-888    888     888    888 d88888b.
-888    888     888    888     `Y88b
-888    888     888    888       ]88
-`88b  d88' .o. `88b  d88' o.   .88P
- `Y8bd8P'  Y8P  `Y8bd8P'  `8bd88P'   
+	  .oooo.         .oooo.     oooooooo
+	 d8P'`Y8b       d8P'`Y8b   dP"""""""
+	888    888     888    888 d88888b.
+	888    888     888    888     `Y88b
+	888    888     888    888       ]88
+	`88b  d88' .o. `88b  d88' o.   .88P
+	 `Y8bd8P'  Y8P  `Y8bd8P'  `8bd88P'   
 
 OF 0.05 Pre-release, changelog:
 
@@ -368,7 +368,7 @@ app
 + ofAppRunner - recording of the screens original position
 / ofAppRunner - jorge's fix for idle / setFrameRate()
 
-http://www.openframeworks.cc/forum/viewtopic.php?t=515&#038;highlight=frame+rate
+http://www.openframeworks.cc/forum/viewtopic.php?t=515&amp;highlight=frame+rate
 
 / ofAppRunner - mac hide cursor
 
@@ -424,13 +424,13 @@ video
 
 ---------------------------------------------------------------
 
-  .oooo.         .oooo.         .o
- d8P'`Y8b       d8P'`Y8b      .d88
-888    888     888    888   .d'888
-888    888     888    888 .d'  888
-888    888     888    888 88ooo888oo
-`88b  d88' .o. `88b  d88'      888
- `Y8bd8P'  Y8P  `Y8bd8P'      o888o  
+	  .oooo.         .oooo.         .o
+	 d8P'`Y8b       d8P'`Y8b      .d88
+	888    888     888    888   .d'888
+	888    888     888    888 .d'  888
+	888    888     888    888 88ooo888oo
+	`88b  d88' .o. `88b  d88'      888
+	 `Y8bd8P'  Y8P  `Y8bd8P'      o888o  
 
 OF 0.04 Pre-release, changelog:
 
@@ -489,13 +489,13 @@ other changes:
 
 ---------------------------------------------------------------
 
-  .oooo.         .oooo.     .oooo.
- d8P'`Y8b       d8P'`Y8b  .dP""Y88b
-888    888     888    888       ]8P'
-888    888     888    888     &lt;88b.
-888    888     888    888      `88b.
-`88b  d88' .o. `88b  d88' o.   .88P
- `Y8bd8P'  Y8P  `Y8bd8P'  `8bd88P'   
+	  .oooo.         .oooo.     .oooo.
+	 d8P'`Y8b       d8P'`Y8b  .dP""Y88b
+	888    888     888    888       ]8P'
+	888    888     888    888     <88b.
+	888    888     888    888      `88b.
+	`88b  d88' .o. `88b  d88' o.   .88P
+	 `Y8bd8P'  Y8P  `Y8bd8P'  `8bd88P'   
 
 OF 0.03 Pre-release, changelog:
 
@@ -551,13 +551,13 @@ other changes:
 
 ---------------------------------------------------------------
 
-  .oooo.         .oooo.     .oooo.
- d8P'`Y8b       d8P'`Y8b  .dP""Y88b
-888    888     888    888       ]8P'
-888    888     888    888     .d8P'
-888    888     888    888   .dP'
-`88b  d88' .o. `88b  d88' .oP     .o
- `Y8bd8P'  Y8P  `Y8bd8P'  8888888888 
+	  .oooo.         .oooo.     .oooo.
+	 d8P'`Y8b       d8P'`Y8b  .dP""Y88b
+	888    888     888    888       ]8P'
+	888    888     888    888     .d8P'
+	888    888     888    888   .dP'
+	`88b  d88' .o. `88b  d88' .oP     .o
+	 `Y8bd8P'  Y8P  `Y8bd8P'  8888888888 
 
 OF 0.02 Pre-release, changelog:
 
