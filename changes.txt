@@ -1,5 +1,28 @@
 ---------------------------------------------------------------
+	      0000             0000        7777777777777777/========___________
+	   00000000         00000000      7777^^^^^^^7777/ || ||   ___________
+	  000    000       000    000     777       7777/=========//
+	 000      000     000      000             7777// ((     //
+	0000      0000   0000      0000           7777//   \\   //
+	0000      0000   0000      0000          7777//========//
+	0000      0000   0000      0000         7777
+	0000      0000   0000      0000        7777
+	 000      000     000      000        7777
+	  000    000       000    000       77777
+	   00000000         00000000       7777777
+	     0000             0000        777777777
+OF 007, changelog:
 
+key:
++ = added
+- = subtracted
+/ = modified
+
+---------------------------------------------------------------
+
+
+
+---------------------------------------------------------------
 	      :::::::       :::::::   ::::::::    :::
 	    :+:   :+:     :+:   :+: :+:    :+: :+:+:
 	   +:+   +:+     +:+   +:+ +:+          +:+
@@ -7,8 +30,7 @@
 	 +#+   +#+     +#+   +#+ +#+    +#+   +#+
 	#+#   #+# #+# #+#   #+# #+#    #+#   #+#
 	#######  ###  #######   ########  #######     
-
-OF 0.061 Pre-release, changelog:
+OF 0061 Pre-release, changelog:
 
 key:
 + = added
@@ -18,15 +40,15 @@ key:
 ---------------------------------------------------------------
 major changes:
 
-- In this release we've moved to a *compiled* openframeworks library as opposed to un-compiled.  a few motivations:  cutting down on directory size of OF, reducing redundant compiles, making compile times faster and making development of OF easier.   This changes quite a bit the organization of projects but it should lead to a much easier to use and maintain OF.
+- In this release we've moved to a *compiled* openFrameworks library as opposed to un-compiled.  a few motivations:  cutting down on directory size of OF, reducing redundant compiles, making compile times faster and making development of OF easier.   This changes quite a bit the organization of projects but it should lead to a much easier to use and maintain OF.
 
-- we've moved from svn to git / github, and now have an automated system of building the OF package.  This should also greatly ease our development of openframeworks.  Before we had separate SVNs for the OF lib, the OF examples, and the core addons.  Now, we've got one major place where changes and development of OF can be tracked.   see http://github.com/openframeworks/openFrameworks.
+- we've moved from svn to git / github, and now have an automated system of building the OF package.  This should also greatly ease our development of openFrameworks.  Before we had separate SVNs for the OF lib, the OF examples, and the core addons.  Now, we've got one major place where changes and development of OF can be tracked.   see http://github.com/openFrameworks/openFrameworks.
 
-- To encourage faster releases, we've moved to a major / minor release schedule, with minor releases (0.061, 0.062) relating to bug fixes and major releases (0.07, 0.08) relating to major features.  
+- To encourage faster releases, we've moved to a major / minor release schedule, with minor releases (0061, 0062) relating to bug fixes and major releases (007, 008) relating to major features.  
 
 core: 
 
-/ folder structure is now changed so that all ide/packages can share one directory structure. Download the 0.061 all release to check it out.
+/ folder structure is now changed so that all ide/packages can share one directory structure. Download the 0061 all release to check it out.
 - core addons now don't have libs from other platforms
 - core addons now don't have example project in the addons folder
 / core FreeImage.h -> move BOOL typedefs etc to #defines and do #undef at the end
@@ -68,7 +90,7 @@ app:
 / fixes for ofGetWidth() &amp; ofGetHeight() being super slow, we now store them in vars and change on windowResize
 + ofGetAppPtr(), returns a pointer to the baseApp.
 + glutInitDisplayString option for initializing glut with a unique string, useful for FSAA or altering the setup.
-/ fixed vertical sync for linux: http://www.openframeworks.cc/forum/viewtopic.php?f=7&amp;t=561&amp;p=10683#p10683
+/ fixed vertical sync for linux: http://www.openframeworks/forum/viewtopic.php?f=7&amp;t=561&amp;p=10683#p10683
 + ofBaseVideo added isFrameNew()
 
 utils: 
@@ -77,13 +99,13 @@ utils:
 + ofBaseHasTexture now has ofSetUseTexture ( to enable / disable use of the texture )
 + ofBaseImage and ofBaseVideo have the same inheritance base
 / ofMap - now has a clamp argument, defaults to false
-/ ofMap - added kyle's solution for division by 0 in ofMap: http://www.openframeworks.cc/forum/viewtopic.php?f=6&amp;t=1413&amp;view=unread#unread
+/ ofMap - added kyle's solution for division by 0 in ofMap: http://www.openframeworks/forum/viewtopic.php?f=6&amp;t=1413&amp;view=unread#unread
 / detect C:/ as a root path in ofToDataPath
 / fixed ofPoint warnings
 
 events: 
 
-/ fixed vs2008 intellisense doesn't like using Poco::delegate; in ofEventUtils: http://www.openframeworks.cc/forum/viewtopic.php?f=9&amp;t=1877
+/ fixed vs2008 intellisense doesn't like using Poco::delegate; in ofEventUtils: http://www.openframeworks/forum/viewtopic.php?f=9&amp;t=1877
 
 graphics: 
 
@@ -92,7 +114,7 @@ graphics:
 + ofTexture - get texPoint / texPercent, should help for doing texCoordinate stuff without knowing the target of the texture (ie, RECTANGLE_2D or ARB)
 + ofTexture - setTextureWrap &amp; setMinMagFilters
 + ofTexture - ofTexture float *, char *, short * -- added ability to make floating point textures, or upload float data.
-/ ofTrueTypeFont - fixed TTF mem leak - http://www.openframeworks.cc/forum/viewtopic.php?p=10178&#p10178
+/ ofTrueTypeFont - fixed TTF mem leak - http://www.openframeworks/forum/viewtopic.php?p=10178&#p10178
 / ofImage fixed resize color bug
 / ofImage inline functions cause problems with inhereited classes that want to use them in CB. Switch inline -> static fixes this issue.
 / ofGraphics - numCirclePts was being stored on ofPushStyle but not used, fixed now.
@@ -104,16 +126,16 @@ communication:
 
 / merged ofStandardFirmata into ofArduino, and removed ofStandardFirmata files from all projects.
 / fixed Linux serial issues with device number.
-/ fixed firmata connect inconsistency: http://www.openframeworks.cc/forum/viewtopic.php?t=1765
-/ serial enumerateDevices is doing ofLog so not always printing out: http://www.openframeworks.cc/forum/posting.php?mode=reply&amp;f=6&amp;t=1860
-/ fix for ofArduino: http://www.openframeworks.cc/forum/viewtopic.php?f=8&amp;t=3042&amp;p=16425#p16425
+/ fixed firmata connect inconsistency: http://www.openframeworks/forum/viewtopic.php?t=1765
+/ serial enumerateDevices is doing ofLog so not always printing out: http://www.openframeworks/forum/posting.php?mode=reply&amp;f=6&amp;t=1860
+/ fix for ofArduino: http://www.openframeworks/forum/viewtopic.php?f=8&amp;t=3042&amp;p=16425#p16425
 
 video: 
 
 + add setFrameRate for ofVideoGrabber
 / update the quicktime settings dialog so that PS3 eye panel shows up.
 / ofVideoPlayer and ofVideoGrabber on OS X Intel now using k24RGBPixelFormat - this has a huge speed improvement.
-/ ofVideoGrabber on mac seems to not list devices unless log level is verbose http://www.openframeworks.cc/forum/viewtopic.php?f=9&amp;t=1799&amp;view=unread#unread
+/ ofVideoGrabber on mac seems to not list devices unless log level is verbose http://www.openframeworks/forum/viewtopic.php?f=9&amp;t=1799&amp;view=unread#unread
 / ofVideoPlayer uninitialized bool
 / ofVideoPlayer - pause delay
 / ofUCUtils - PIX_FMT_YUV422 won't exist anymore on future ffmpeg versions
@@ -171,10 +193,6 @@ ofxNetwork:
 
 ---------------------------------------------------------------
 
-+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + 
-
----------------------------------------------------------------
-
 	  .oooo.         .oooo.       .ooo
 	 d8P'`Y8b       d8P'`Y8b    .88'
 	888    888     888    888  d88'
@@ -183,7 +201,7 @@ ofxNetwork:
 	`88b  d88' .o. `88b  d88' `Y88   88P
 	 `Y8bd8P'  Y8P  `Y8bd8P'   `88bod8'  
 
-OF 0.06 Pre-release, changelog:
+OF 006 Pre-release, changelog:
 
 key:
 + = added
@@ -244,7 +262,7 @@ list - faster!
 + ofGraphics - ofSetLineWidth
 / ofGraphics - fixed a bug with projection vs modelview matrix order -
 
-http://www.openframeworks.cc/forum/viewtopic.php?p=5213#5213
+http://www.openframeworks/forum/viewtopic.php?p=5213#5213
 
 + ofGraphics - changed immediate mode to vertex arrays for compatibility with opengl es
 + ofGraphics / ofBitmapFont - wrapped the glut bitmapped font as a separate file, so that ofDrawBitmapString can be used in non glut windowing kits.
@@ -255,13 +273,13 @@ http://www.openframeworks.cc/forum/viewtopic.php?p=5213#5213
 + ofTexture - bUseARBExtention is controllable on allocate (and also, controllable globally), which can help make shaders work better
 / ofImage - restructured for cleaner code -- freeImage moved to only a few places
 / ofImage - grayscale saveImage bug fixed
-/ ofImage - grayscale setFromPixels fix -- http://www.openframeworks.cc/forum/viewtopic.php?t=929
-/ ofImage - allocate now calls update -- http://www.openframeworks.cc/forum/viewtopic.php?t=835
-/ ofImage - 8bpp fix - http://www.openframeworks.cc/forum/viewtopic.php?t=712
-/ ofImage - grayscale save fix - http://www.openframeworks.cc/forum/viewtopic.php?t=943
+/ ofImage - grayscale setFromPixels fix -- http://www.openframeworks/forum/viewtopic.php?t=929
+/ ofImage - allocate now calls update -- http://www.openframeworks/forum/viewtopic.php?t=835
+/ ofImage - 8bpp fix - http://www.openframeworks/forum/viewtopic.php?t=712
+/ ofImage - grayscale save fix - http://www.openframeworks/forum/viewtopic.php?t=943
 / ofImage - fixed loadImage() not returning true if successful
 / ofImage - added setAnchorPercent / setAnchorPoint
-/ ofImage - fixed resize color swap problem - http://www.openframeworks.cc/forum/viewtopic.php?t=1242
+/ ofImage - fixed resize color swap problem - http://www.openframeworks/forum/viewtopic.php?t=1242
 
 events
 
@@ -278,7 +296,7 @@ video
 / ofVideoGrabber - (windows) using new video input library (0.1995)
 + ofVideoPlayer - (quicktime) added rtsp for quicktime -
 
-http://www.openframeworks.cc/forum/viewtopic.php?p=7665#7665
+http://www.openframeworks/forum/viewtopic.php?p=7665#7665
 
 + ofVideoPlayer - added a frame selection system, ie, goToFrame(x), getNumFrames(), goToFirstFrame(), getCurrentFrame(), goToNextFrame(), goToPreviousFrame()
 + ofVideoPlayer - added getIsMovieDone() - let's you know if the movie hit the end
@@ -312,10 +330,10 @@ now, we just include the main .h file per addon.
 / ofxThread - Applied the fix for startThread checking it is already
 running and moving mutex creation -
 
-http://www.openframeworks.cc/forum/viewtopic.php?p=7221#7221
+http://www.openframeworks/forum/viewtopic.php?p=7221#7221
 
-+ ofxVectorMath - add copy constructor - http://www.openframeworks.cc/forum/viewtopic.php?t=617
-/ ofxVectorMath - fixed ofxVec2f::perpendicular bug, http://www.openframeworks.cc/forum/viewtopic.php?t=4835
++ ofxVectorMath - add copy constructor - http://www.openframeworks/forum/viewtopic.php?t=617
+/ ofxVectorMath - fixed ofxVec2f::perpendicular bug, http://www.openframeworks/forum/viewtopic.php?t=4835
 / ofxVectorMath - fixed /= operator
 + ofxVectorMath - added some better names for functions (for example, getRotated() instead of rotated()).  All "d" names, ie rotated, normalized are deprecated for the next release)
 
@@ -323,16 +341,12 @@ http://www.openframeworks.cc/forum/viewtopic.php?p=7221#7221
 / ofxOpenCv - ofxContourFinder fixed getBlob(), which existed only in .h before
 / ofxOpenCv - consolidated ofxCvImage - most functionality now across all image types
 / ofxOpenCv - operator overloading changed to const
-/ ofxOpenCv - scaleIntoMe bug is fixed, http://www.openframeworks.cc/forum/viewtopic.php?t=828
-/ ofxOpenCv - reallocation bug fixed, http://www.openframeworks.cc/forum/viewtopic.php?t=935
+/ ofxOpenCv - scaleIntoMe bug is fixed, http://www.openframeworks/forum/viewtopic.php?t=828
+/ ofxOpenCv - reallocation bug fixed, http://www.openframeworks/forum/viewtopic.php?t=935
 / ofxOpenCv - warns on non odd valued blur param
 
 + ofxOsc - now supports bundles
 + ofxOsc - better error handling
-
----------------------------------------------------------------
-
-+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + 
 
 ---------------------------------------------------------------
 
@@ -344,7 +358,7 @@ http://www.openframeworks.cc/forum/viewtopic.php?p=7221#7221
 	`88b  d88' .o. `88b  d88' o.   .88P
 	 `Y8bd8P'  Y8P  `Y8bd8P'  `8bd88P'   
 
-OF 0.05 Pre-release, changelog:
+OF 005 Pre-release, changelog:
 
 key:
 + = added
@@ -368,7 +382,7 @@ app
 + ofAppRunner - recording of the screens original position
 / ofAppRunner - jorge's fix for idle / setFrameRate()
 
-http://www.openframeworks.cc/forum/viewtopic.php?t=515&amp;highlight=frame+rate
+http://www.openframeworks/forum/viewtopic.php?t=515&amp;highlight=frame+rate
 
 / ofAppRunner - mac hide cursor
 
@@ -400,7 +414,7 @@ utils
 + ofConstants - added some std stuff, like iostream and vector
 / ofConstants - backspace vs del fixes for OSX
 
-http://www.openframeworks.cc/forum/viewtopic.php?t=494
+http://www.openframeworks/forum/viewtopic.php?t=494
 
 + ofUtils - added ofGetYear, ofGetMonth,ofGetDay(),ofGetWeekDay()
 
@@ -419,11 +433,6 @@ video
 / ofVideoPlayer - fix for bHavePixelsChanged on QT (isFrameNew returning true) 
 
 ---------------------------------------------------------------
-
-+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + 
-
----------------------------------------------------------------
-
 	  .oooo.         .oooo.         .o
 	 d8P'`Y8b       d8P'`Y8b      .d88
 	888    888     888    888   .d'888
@@ -432,7 +441,7 @@ video
 	`88b  d88' .o. `88b  d88'      888
 	 `Y8bd8P'  Y8P  `Y8bd8P'      o888o  
 
-OF 0.04 Pre-release, changelog:
+OF 004 Pre-release, changelog:
 
 key:
 + = added
@@ -483,9 +492,6 @@ other changes:
 + 	ofAddons - is the place where addons will go
 + 	ofCore - is the what ofMain was, all the "core" OF code  (internal and addons should include "core" not main to avoid recursive linking)
 / 	movie grabber example - win32 / fixed an issue where some of the code was commented out.
----------------------------------------------------------------
-
-+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + 
 
 ---------------------------------------------------------------
 
@@ -497,7 +503,7 @@ other changes:
 	`88b  d88' .o. `88b  d88' o.   .88P
 	 `Y8bd8P'  Y8P  `Y8bd8P'  `8bd88P'   
 
-OF 0.03 Pre-release, changelog:
+OF 003 Pre-release, changelog:
 
 key:
 + = added
@@ -547,10 +553,6 @@ other changes:
 
 ---------------------------------------------------------------
 
-+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + 
-
----------------------------------------------------------------
-
 	  .oooo.         .oooo.     .oooo.
 	 d8P'`Y8b       d8P'`Y8b  .dP""Y88b
 	888    888     888    888       ]8P'
@@ -559,7 +561,7 @@ other changes:
 	`88b  d88' .o. `88b  d88' .oP     .o
 	 `Y8bd8P'  Y8P  `Y8bd8P'  8888888888 
 
-OF 0.02 Pre-release, changelog:
+OF 002 Pre-release, changelog:
 
 key:
 + = added
