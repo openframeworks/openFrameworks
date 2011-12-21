@@ -1,4 +1,26 @@
+
 ---------------------------------------------------------------
+	  .oooo.     .oooo.    ooooooooo   .o  
+	 d8P'`Y8b   d8P'`Y8b  d"""""""8' o888  
+	888    888 888    888       .8'   888  
+	888    888 888    888      .8'    888  
+	888    888 888    888     .8'     888  
+	`88b  d88' `88b  d88'    .8'      888  
+	 `Y8bd8P'   `Y8bd8P'    .8'      o888o 
+
+OF 0071, changelog:
+
+key:
++ = added
+- = subtracted
+/ = modified
+
+---------------------------------------------------------------
+
+0071 is in currently progress on the develop branch in GitHub.
+
+---------------------------------------------------------------
+
 	      0000             0000        7777777777777777/========___________
 	   00000000         00000000      7777^^^^^^^7777/ || ||   ___________
 	  000    000       000    000     777       7777/=========//
@@ -22,54 +44,79 @@ key:
 
 This is the biggest release yet. There are a ton of changes. The 0062 core was 624KB over 49 files. The 007 core is 1.12MB, 148 files. In other words, the core of OF has basically doubled.
 
-+ multiple versions of ofxShader, ofxVbo and ofxFbo have been brought into the core as ofShader, ofVbo, and ofFbo
-+ besides ofDirectory, ofFile and ofBuffer have also been added for working with the filesystem
-+ android support
-+ ofPixels and ofImage have getColor() which returns an ofColor, and setColor(x,y,ofColor)
-+ cross-platform file dialog and alert dialog, ofSystemAlertDialog(), ofSystemLoadDialog(), ofSystemSaveDialog()
+Some of the favorite changes to OF include:
+* PDF and SVG export with cairo
+* ofMesh, ofPolyline utils and ofPath tessellation
+* advanced ofColor support, like fromHex() and fromHsb()
+* web-based resource and image loading
+* advanced ofPixels power like getColor(x, y)
+* the new Assimp addon
+* advanced logging capabilities
+* the ofPtr shared pointer, and shallow copy semantics: it's now safe to copy ofTexture
+* moving ofxVectorMath, ofxDirList, ofxThread, and the previously unofficial ofxShader, ofxFbo, ofxVbo all into the core
+
+Here's a fairly complete list of the changes.
+
+core changes
++ drag and drop support in applications (except in linux)
++ ofPtr for shared pointers, is actually std::tr1::shared_ptr and will be std::shared_ptr when c++11 is supported
+/ ofVideoGrabber, ofVideoPlayer, ofSoundPlayer and ofSoundStream use "swappable apis". so does rendering, which means you can use cairo and output to PDFs or SVG for 2d and 3d.
+/ new fps counting technique that works a little better across platforms
+/ ofApp*Window have been refactored so now all the common functionality is in ofEvents which makes easier to create new windows and maintain the current ones
+/ easier registering of core events with the new ofRegister*Events functions
+/ all the classes with opengl resources have shallow copy + shared pointer semantics so textureA = textureB makes textureB point to the same texture in the graphics card as textureA, and the texture is released when the last copy is destroyed
+/ all swappable api objects (ofVideoGrabber, ofVideoPlayer, ofSoundPlayer and ofSoundStream) have shallow copy + shared pointer semantics too
+/ all memory structures (ofPixels, ofImage, ofBuffer, ofMesh...) have deep copy semantics, so pixelsA = pixelsB makes b a full new copy of pixelsA
+
+video and cv
++ ofxCvHaarFinder is brought into the core ofxOpenCv addon
+/ openCV is updated to 2.2
+/ better gstreamer support on linux
+
+2d
++ ofImage uses new web-based loading
++ ofPath and ofPolyline wraps all the 2d drawing functionality previously supported by OF, and adds more. ofPolyline has some new advanced methods like getResampledBySpacing(), getClosestPoint(), simplify()
 + ofSetOrientation() allows you to rotate the entire OF drawing space
-+ working towards a sound synthesis addon, ofxSynth
-+ ofColor has constants for basic colors, like ofColor::magenta
-+ ofxAssimpModelLoader for loading a huge variety of 3d formats
++ ofPixels and ofImage have getColor() which returns an ofColor, and setColor(x,y,ofColor)
 + ofEnableBlendMode() supports additive, subtractive, alpha, etc. blending
-+ ofxThreadedImageLoader addon
++ ofColor has constants for 8 basic colors (cmy, rgb, bw), for example ofColor::magenta
++ ofColor finally adds HSB support. ofColor is always an RGB color, but you can get and set its hue, saturation and lightness via getHue()/setHue() etc. it also distinguishes lightness (value) from brightness. to create a color using HSB values, use ofColor::fromHsb(h,s,b,a). to set from hex, use ofColor::fromHex(hex)
+/ ofColor, ofPixels and ofImage are now templated classes with support for 8bit, 16bit and 32bit and easy conversion between them using the = operator
+/ ofDrawBitmapString() has been massively refactored to support all the different 3d drawing cases you can imagine via ofSetDrawBitmapMode()
+/ ofPixels is now a fully-formed class that is used by a variety of classes
+/ ofSetColor(int) is now interpreted as a grayscale value, ofSetHexColor(int) if you want to use hex values
+/ ofTrueTypeFont, now generates a texture atlas when loading a font instead of a texture per char. It also has bind()/unbind() functions that allow to bind the texture only once to render several texts, making font rendering much faster.
+/ ofTrueTypeFont getShapes uses ofPath
+/ new ofTessellator class used internally in OF by ofPath and ofBegin/EndShape bassed on the tess2 library (with some modifications so it also works on openGL ES) which is faster and has a cleaner api than the previous one from GLU
+
+3d
 + ofMesh, ofVbo and ofVboMesh provide a clean interface for drawing, and for gpu-accelerated drawing
 + ofNode is a new 3d node class with position and orientation that can be manipulated with methods like truck() and tilt()
 + ofCamera extends ofNode, is a new camera class for representing a camera position, orientation, and other parameters
 + ofEasyCam wraps ofCamera with automatic mouse binding that resembles processing's PeasyCam
 + ofLight also extends ofNode, provides a simple interface for placing and describing opengl lighting
-+ ofPath and ofPolyline wraps all the 2d drawing functionality previously supported by OF, and adds more. ofPolyline has some new advanced methods like getResampledBySpacing(), getClosestPoint(), simplify()
-+ ofColor finally adds HSB support. ofColor is always an RGB color, but you can get and set its hue, saturation and lightness via getHue()/setHue() etc. it also distinguishes lightness (value) from brightness. to create a color using HSB values, use ofColor::fromHsb(h,s,b,a). to set from hex, use ofColor::fromHex(hex)
 + ofBox and ofSphere draw the respective 3d shapes
++ multiple versions of ofxShader, ofxVbo and ofxFbo have been brought into the core as ofShader, ofVbo, and ofFbo
++ ofxAssimpModelLoader for loading a huge variety of 3d formats
+
+utils
++ functions and classes to load resources from the web to memory, or save to disk. using HTTP, either synchronously and asynchronously: ofSaveURLTo(), ofSaveURLAsync()
++ added the ofxThreadedImageLoader addon
++ cross-platform file dialog and alert dialog, ofSystemAlertDialog(), ofSystemLoadDialog(), ofSystemSaveDialog()
 + a ton of conversion methods have been added: ofToHex, ofToBinary, ofToString, ofHexToInt, ofHexToFloat, etc. they're all inside ofUtils.h
-+ new logging system with support for << operator, logging per module, logging to file and logging channels which makes it easier to redirect the logging output
-+ functions and classes to load online resources to memory or disk using http both synchronous and asynchronously
-+ ofImage directly supports loading images from the web
-+ ofxCvHaarFinder is brought into the core ofxOpenCv addon
-+ drag and drop support in applications (except in linux)
-+ ofPtr for shared pointers, is actually std::tr1::shared_ptr and will be std::shared_ptr when c++11 is supported
-/ ofVideoGrabber, ofVideoPlayer, ofSoundPlayer and ofSoundStream use "swappable apis". so does rendering, which means you can use cairo and output to PDFs or SVG for 2d and 3d.
-/ ofDrawBitmapString() has been massively refactored to support all the different 3d drawing cases you can imagine via ofSetDrawBitmapMode()
-/ ofLog() now supports streaming, for example: ofLogVerbose() << "some message";
-/ better iPhone video and camera support
-/ ofPixels is now a fully-formed class that is used by a variety of classes
-/ better gstreamer support on linux
-/ new fps counting technique that works a little better across platforms
-/ slowly transitioning away from fmod toward openal for sound support
++ ofFile and ofBuffer have also been added for working with the filesystem
 / the core addons ofxVectorMath, ofxThread, and ofxDirList have been turned into ofVectorMath, ofThread and ofDirectory
-/ ofSetColor(int) is now interpreted as a grayscale value, ofSetHexColor(int) if you want to use hex values
+/ new logging system with support for << operator, for example: ofLogVerbose() << "some message", logging to file and logging channels which makes it easier to redirect the logging output
+
+sound
++ working towards a sound synthesis addon, ofxSynth
+/ slowly transitioning away from fmod toward openal for sound support
 / ofSoundStream has been converted to an object oriented api, and now is possible to open several devices and choose which device you want to use.
-/ ofTrueTypeFont, now generates a texture atlas when loading a font instead of a texture per char. It also has bind()/unbind() functions that allow to bind the texture only once to render several texts, making font rendering much faster.
-/ ofTrueTypeFont getShapes uses ofPath
-/ new ofTessellator class used internally in OF by ofPath and ofBegin/EndShape bassed on the tess2 library (with some modifications so it also works on openGL ES) which is faster and has a cleaner api than the previous one from GLU
-/ openCV is updated to 2.2
-/ ofColor, ofPixels and ofImage are now templated classes with support for 8bit, 16bit and 32bit and easy conversion between them using the = operator
-/ ofApp*Window have been refactored so now all the common functionality is in ofEvents which makes easier to create new windows and mantain the current ones
-/ easier registering of core events with the new ofRegister*Events functions
-/ all the classes with opengl resources have shallow copy + shared pointer semantics so textureA = textureB makes textureB point to the same texture in the graphics card as textureA, and the texture is released when the last copy is destroyed
-/ all swappable api objects (ofVideoGrabber, ofvideoPlayer, ofSoundPlayer and ofSoundStream) have shallow copy + shared pointer semantics too
-/ all memory structures (ofPixels, ofImage, ofBuffer, ofMesh...) have deep copy semantics, so pixelsA = pixelsB makes b a full new copy of pixelsA
-- Linux has no dependencies with any not free library (FMOD mainly)
+- FMOD is removed on linux, so there are no dependencies with any non-free library
+
+mobile
++ android support
+/ better iPhone video and camera support
 
 ---------------------------------------------------------------
 	  .oooo.     .oooo.       .ooo     .oooo.   
@@ -690,4 +737,8 @@ clearing (works for fullscreen)
 through commenting in a #define and recompiling
 + ofConstants - ability for win32 to choose quicktime or directshow (videoInput)
 through #define
+---------------------------------------------------------------
+
+most ascii art generated with http://patorjk.com/software/taag/ using the font 'roman'
+
 ---------------------------------------------------------------
