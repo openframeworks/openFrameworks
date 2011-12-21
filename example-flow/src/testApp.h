@@ -3,6 +3,10 @@
 #include "ofMain.h"
 #include "ofxAutoControlPanel.h"
 #include "ofxCv.h"
+#include "Flow.h"
+
+using namespace ofxCv;
+using namespace cv;
 
 class testApp : public ofBaseApp{
 public:
@@ -12,12 +16,10 @@ public:
 	
 	ofVideoGrabber camera;
 	
-	ofImage prev, next;
-	
-	cv::Mat flow;
-	
-	vector<cv::Point2f> prevPts, nextPts;
-	
+	FlowFarneback farneback;
+	FlowPyrLK pyrLk;
+	Flow* curFlow;
+		
 	ofxAutoControlPanel panel;
 };
 
