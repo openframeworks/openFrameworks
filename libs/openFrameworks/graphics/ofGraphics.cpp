@@ -38,10 +38,6 @@
 #endif
 
 
-//----------------------------------------------------------
-// static
-static bool		bUsingArbTex		= true;
-static bool		bUsingNormalizedTexCoords = false;
 
 //style stuff - new in 006
 static ofStyle currentStyle;
@@ -130,101 +126,6 @@ void ofEndSaveScreenAsPDF(){
 }
 
 #endif
-
-// opengl specifics
-
-bool ofGetUsingNormalizedTexCoords(){
-	return bUsingNormalizedTexCoords;
-}
-
-void ofEnableNormalizedTexCoords(){
-	bUsingNormalizedTexCoords = true;
-}
-
-void ofDisableNormalizedTexCoords(){
-	bUsingNormalizedTexCoords = false;
-}
-
-
-
-//***** add global functions to override texture settings
-//----------------------------------------------------------
-static bool bUseCustomTextureWrap = false;
-
-//----------------------------------------------------------
-void ofSetTextureWrap(GLfloat wrapS, GLfloat wrapT){
-	bUseCustomTextureWrap = true;
-	GLenum textureTarget = GL_TEXTURE_2D;
-#ifndef TARGET_OPENGLES
-	if (ofGetUsingArbTex() && GL_ARB_texture_rectangle){
-		textureTarget = GL_TEXTURE_RECTANGLE_ARB;
-	};
-#endif
-	glTexParameterf(textureTarget, GL_TEXTURE_WRAP_S, wrapS);
-	glTexParameterf(textureTarget, GL_TEXTURE_WRAP_T, wrapT);
-}
-
-//----------------------------------------------------------
-bool ofGetUsingCustomTextureWrap(){
-	return bUseCustomTextureWrap;
-}
-
-//----------------------------------------------------------
-void ofRestoreTextureWrap(){
-	bUseCustomTextureWrap = false;
-}
-
-
-
-static bool bUseCustomMinMagFilters = false;
-//----------------------------------------------------------
-void ofSetMinMagFilters(GLfloat minFilter, GLfloat maxFilter){
-	bUseCustomMinMagFilters = true;
-	GLenum textureTarget = GL_TEXTURE_2D;
-#ifndef TARGET_OPENGLES
-	if (ofGetUsingArbTex() && GL_ARB_texture_rectangle){
-		textureTarget = GL_TEXTURE_RECTANGLE_ARB;
-	};
-#endif
-	glTexParameterf(textureTarget, GL_TEXTURE_MIN_FILTER, minFilter);
-	glTexParameterf(textureTarget, GL_TEXTURE_MAG_FILTER, maxFilter);
-}
-
-//----------------------------------------------------------
-bool ofGetUsingCustomMinMagFilters(){
-	return bUseCustomMinMagFilters;
-}
-
-//----------------------------------------------------------
-void ofRestoreMinMagFilters(){
-	bUseCustomMinMagFilters = false;
-}
-
-//***** global functions to override texture settings
-
-
-//----------------------------------------------------------
-bool ofGetUsingArbTex(){
-	return bUsingArbTex;
-}
-
-//----------------------------------------------------------
-void ofEnableArbTex(){
-	bUsingArbTex = true;
-}
-
-//----------------------------------------------------------
-void ofDisableArbTex(){
-	bUsingArbTex = false;
-}
-
-//end opengl specifics
-
-
-
-
-
-
 
 
 

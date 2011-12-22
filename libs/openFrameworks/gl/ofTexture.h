@@ -11,6 +11,27 @@ int ofGetGlInternalFormat(const ofFloatPixels& pix);
 void ofGetGlFormatAndType(int glInternalFormat, int& glFormat, int& glType);
 ofImageType ofGetImageTypeFromGLType(int glType);
 
+//set whether OF uses ARB rectangular texture or the more traditonal GL_TEXTURE_2D
+bool ofGetUsingArbTex();
+void ofEnableArbTex();
+void ofDisableArbTex();
+
+
+bool ofGetUsingNormalizedTexCoords();
+void ofEnableNormalizedTexCoords();
+void ofDisableNormalizedTexCoords();
+
+
+//***** add global functions to override texture settings
+void ofSetTextureWrap(GLfloat wrapS = GL_CLAMP_TO_EDGE, GLfloat wrapT = GL_CLAMP_TO_EDGE);
+bool ofGetUsingCustomTextureWrap();
+void ofRestoreTextureWrap();
+
+void ofSetMinMagFilters(GLfloat minFilter = GL_LINEAR, GLfloat maxFilter = GL_LINEAR);
+bool ofGetUsingCustomMinMagFilters();
+void ofRestoreMinMagFilters();
+//*****
+
 //Sosolimited: texture compression
 enum ofTexCompression
 {
