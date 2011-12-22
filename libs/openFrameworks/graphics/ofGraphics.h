@@ -20,33 +20,6 @@ ofPtr<ofGLRenderer> ofGetGLRenderer();
 void ofBeginSaveScreenAsPDF(string filename, bool bMultipage = false, bool b3D = false, ofRectangle viewport = ofRectangle(0,0,0,0));
 void ofEndSaveScreenAsPDF();
 
-//opengl specifics
-
-//set whether OF uses ARB rectangular texture or the more traditonal GL_TEXTURE_2D
-bool ofGetUsingArbTex();
-void ofEnableArbTex();
-void ofDisableArbTex();
-
-
-bool ofGetUsingNormalizedTexCoords();
-void ofEnableNormalizedTexCoords();
-void ofDisableNormalizedTexCoords();
-
-
-//***** add global functions to override texture settings
-void ofSetTextureWrap(GLfloat wrapS = GL_CLAMP_TO_EDGE, GLfloat wrapT = GL_CLAMP_TO_EDGE);
-bool ofGetUsingCustomTextureWrap();
-void ofRestoreTextureWrap();
-
-void ofSetMinMagFilters(GLfloat minFilter = GL_LINEAR, GLfloat maxFilter = GL_LINEAR);
-bool ofGetUsingCustomMinMagFilters();
-void ofRestoreMinMagFilters();
-//*****
-
-//end opengl specifics
-
-
-
 
 // transformations
 // push and pop all matrices and viewport
