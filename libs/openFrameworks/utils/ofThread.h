@@ -2,6 +2,7 @@
 
 #include "ofConstants.h"
 #include "ofTypes.h"
+#include "ofLog.h"
 
 #ifdef TARGET_WIN32
 	#include <process.h>

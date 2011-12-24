@@ -103,7 +103,7 @@ void ofThread::waitForThread(bool stop){
 			WaitForSingleObject(myThread, INFINITE);
 			CloseHandle(myThread);
 		#else
-			if(pthread_self()==myThread) printf("ofThread: error, waitForThread should only be called from outside the thread");
+			if(pthread_self()==myThread) ofLog(OF_LOG_ERROR,"ofThread: error, waitForThread should only be called from outside the thread");
 		    pthread_join(myThread, NULL);
 		#endif
 		if(verbose)printf("ofThread: thread stopped\n");
