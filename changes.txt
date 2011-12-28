@@ -1,4 +1,3 @@
-
 ---------------------------------------------------------------
 	  .oooo.     .oooo.    ooooooooo   .o  
 	 d8P'`Y8b   d8P'`Y8b  d"""""""8' o888  
@@ -67,6 +66,7 @@ core changes
 / all the classes with opengl resources have shallow copy + shared pointer semantics so textureA = textureB makes textureB point to the same texture in the graphics card as textureA, and the texture is released when the last copy is destroyed
 / all swappable api objects (ofVideoGrabber, ofVideoPlayer, ofSoundPlayer and ofSoundStream) have shallow copy + shared pointer semantics too
 / all memory structures (ofPixels, ofImage, ofBuffer, ofMesh...) have deep copy semantics, so pixelsA = pixelsB makes b a full new copy of pixelsA
+/ Poco library is changed from 1.3.3 to 1.4 
 
 video and cv
 + ofxCvHaarFinder is brought into the core ofxOpenCv addon
