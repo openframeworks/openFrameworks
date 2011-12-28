@@ -11,6 +11,7 @@
 //--------------------------------------------------
 ofBuffer::ofBuffer(){
 	nextLinePos = 0;
+	buffer.resize(1);
 }
 
 //--------------------------------------------------
@@ -74,7 +75,7 @@ void ofBuffer::set(const char * _buffer, int _size){
 
 //--------------------------------------------------
 void ofBuffer::clear(){
-	buffer.clear();
+	buffer.resize(1);
 	nextLinePos = 0;
 }
 
