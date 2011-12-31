@@ -27,9 +27,12 @@ class ofThread{
 	protected:
 
 		//-------------------------------------------------
-		//you need to overide this with the function you want to thread
+		//you need to override this with the function you want to thread
+		//TODO: I think the following should better be implemented with a pure virtual function declaration
 		virtual void threadedFunction(){
-			if(verbose)printf("ofThread: overide threadedFunction with your own\n");
+			if(verbose){
+				ofLog(OF_LOG_ERROR, "ofThread: you need to override threadedFunction with your own!");
+			}
 		}
 
 		//-------------------------------------------------
