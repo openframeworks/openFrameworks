@@ -17,6 +17,8 @@ ifeq ($(findstring Android,$(MAKECMDGOALS)),Android)
 	ARCH = android
 	ifeq ($(shell uname),Darwin)
 		HOST_PLATFORM = darwin-x86
+	else ifeq ($(shell uname),MINGW32_NT-6.1)
+		HOST_PLATFORM = windows
 	else
 		HOST_PLATFORM = linux-x86
 	endif
@@ -28,7 +30,7 @@ ifeq ($(ARCH),android)
 else
 	COMPILER_OPTIMIZATION = -march=native -mtune=native -finline-functions -funroll-all-loops  -Os
 endif
-USER_CFLAGS = 
+USER_CFLAGS = -DGL_GLEXT_PROTOTYPES=1
 
 
 
