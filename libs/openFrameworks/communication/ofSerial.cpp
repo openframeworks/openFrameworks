@@ -232,7 +232,7 @@ void ofSerial::buildDeviceList(){
 void ofSerial::listDevices(){
 	buildDeviceList();
 	for(int k = 0; k < (int)devices.size(); k++){
-		ofLog(OF_LOG_NOTICE,"[" + devices[k].getDeviceID() + "] = " + devices[k].getDeviceName().c_str());
+		ofLog(OF_LOG_NOTICE, "[%i] = %s", devices[k].getDeviceID(), devices[k].getDeviceName().c_str());
 	}
 }
 
