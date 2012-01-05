@@ -6,7 +6,7 @@
 		<Option makefile="makefile" />
 		<Option pch_mode="2" />
 		<Option compiler="gcc" />
-		<Option virtualFolders="addons\;src\;addons\ofxCv\;addons\ofxCv\libs\;addons\ofxCv\libs\opencv\include\opencv2\core\;addons\ofxCv\libs\opencv\include\opencv2\flann\;addons\ofxCv\libs\opencv\include\opencv2\highgui\;addons\ofxCv\libs\opencv\include\opencv2\imgproc\;addons\ofxCv\libs\opencv\include\opencv\;" />
+		<Option virtualFolders="addons\;src\;addons\ofxCv\;addons\ofxCv\libs\;addons\ofxCv\libs\opencv\include\opencv2\core\;addons\ofxCv\libs\opencv\include\opencv2\flann\;addons\ofxCv\libs\opencv\include\opencv2\highgui\;addons\ofxCv\libs\opencv\include\opencv2\imgproc\;addons\ofxCv\libs\opencv\include\opencv\;addons\ofxCv\libs\ofxCv\;addons\ofxCv\libs\ofxCv\include\;addons\ofxCv\libs\ofxCv\src\;addons\ofxCv\libs\ofxCv\include\ofxCv\;addons\ofxCv\src\;" />
 		<Build>
 			<Target title="release">
 				<Option output="bin\$(PROJECT_NAME)" prefix_auto="1" extension_auto="1" />
@@ -153,6 +153,23 @@
 			<Add after='cmd /c if not exist &quot;$(PROJECT_DIR)bin/data&quot; mkdir &quot;$(PROJECT_DIR)bin/data&quot;' />
 			<Mode after="always" />
 		</ExtraCommands>
+		<Unit filename="..\..\ofxCv\libs\ofxCv\include\ofxCv\Calibration.h" />
+		<Unit filename="..\..\ofxCv\libs\ofxCv\include\ofxCv\ContourFinder.h" />
+		<Unit filename="..\..\ofxCv\libs\ofxCv\include\ofxCv\Distance.h" />
+		<Unit filename="..\..\ofxCv\libs\ofxCv\include\ofxCv\Helpers.h" />
+		<Unit filename="..\..\ofxCv\libs\ofxCv\include\ofxCv\RunningBackground.h" />
+		<Unit filename="..\..\ofxCv\libs\ofxCv\include\ofxCv\Tracker.h" />
+		<Unit filename="..\..\ofxCv\libs\ofxCv\include\ofxCv\Utilities.h" />
+		<Unit filename="..\..\ofxCv\libs\ofxCv\include\ofxCv\Wrappers.h" />
+		<Unit filename="..\..\ofxCv\libs\ofxCv\src\Calibration.cpp" />
+		<Unit filename="..\..\ofxCv\libs\ofxCv\src\ContourFinder.cpp" />
+		<Unit filename="..\..\ofxCv\libs\ofxCv\src\Distance.cpp" />
+		<Unit filename="..\..\ofxCv\libs\ofxCv\src\Helpers.cpp" />
+		<Unit filename="..\..\ofxCv\libs\ofxCv\src\RunningBackground.cpp" />
+		<Unit filename="..\..\ofxCv\libs\ofxCv\src\Tracker.cpp" />
+		<Unit filename="..\..\ofxCv\libs\ofxCv\src\Utilities.cpp" />
+		<Unit filename="..\..\ofxCv\libs\ofxCv\src\Wrappers.cpp" />
+		<Unit filename="..\..\ofxCv\src\ofxCv.h" />
 		<Unit filename="src\main.cpp">
 			<Option virtualFolder="src\" />
 		</Unit>
@@ -162,23 +179,6 @@
 		<Unit filename="src\testApp.h">
 			<Option virtualFolder="src\" />
 		</Unit>
-		<Unit filename="..\libs\ofxCv\include\ofxCv\Calibration.h" />
-		<Unit filename="..\libs\ofxCv\include\ofxCv\ContourFinder.h" />
-		<Unit filename="..\libs\ofxCv\include\ofxCv\Distance.h" />
-		<Unit filename="..\libs\ofxCv\include\ofxCv\Helpers.h" />
-		<Unit filename="..\libs\ofxCv\include\ofxCv\RunningBackground.h" />
-		<Unit filename="..\libs\ofxCv\include\ofxCv\Tracker.h" />
-		<Unit filename="..\libs\ofxCv\include\ofxCv\Utilities.h" />
-		<Unit filename="..\libs\ofxCv\include\ofxCv\Wrappers.h" />
-		<Unit filename="..\libs\ofxCv\src\Calibration.cpp" />
-		<Unit filename="..\libs\ofxCv\src\ContourFinder.cpp" />
-		<Unit filename="..\libs\ofxCv\src\Distance.cpp" />
-		<Unit filename="..\libs\ofxCv\src\Helpers.cpp" />
-		<Unit filename="..\libs\ofxCv\src\RunningBackground.cpp" />
-		<Unit filename="..\libs\ofxCv\src\Tracker.cpp" />
-		<Unit filename="..\libs\ofxCv\src\Utilities.cpp" />
-		<Unit filename="..\libs\ofxCv\src\Wrappers.cpp" />
-		<Unit filename="..\src\ofxCv.h" />
 		<Unit filename="..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\core\core_c.h">
 			<Option virtualFolder="addons\ofxCv\libs\opencv\include\opencv2\core\" />
 		</Unit>
