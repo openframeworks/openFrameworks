@@ -8,24 +8,24 @@ namespace ofxCv {
 	,thresholdValue(26)
 	,ignoreForeground(false)
 	,needToReset(false)
-	,differenceMode(ABSOLUTE) {
+	,differenceMode(ABSDIFF) {
 	}
 	void RunningBackground::update(cv::Mat frame, cv::Mat& thresholded) {
 		if(needToReset || accumulator.empty()) {
 			needToReset = false;
 			frame.convertTo(accumulator, CV_32F);
 		}
-		
+
 		accumulator.convertTo(background, CV_8U);
 		switch(differenceMode) {
-			case ABSOLUTE: cv::absdiff(background, frame, foreground); break;
+			case ABSDIFF: cv::absdiff(background, frame, foreground); break;
 			case BRIGHTER: cv::subtract(frame, background, foreground); break;
 			case DARKER: cv::subtract(background, frame, foreground); break;
 		}
 		cv::cvtColor(foreground, foregroundGray, CV_RGB2GRAY);
 		int thresholdMode = ignoreForeground ? cv::THRESH_BINARY_INV : cv::THRESH_BINARY;
 		cv::threshold(foregroundGray, thresholded, thresholdValue, 255, thresholdMode);
-		
+
 		float curLearningRate = learningRate;
 		if(useLearningTime) {
 			curLearningRate = 1. - powf(1. - (thresholdValue / 255.), 1. / learningTime);
