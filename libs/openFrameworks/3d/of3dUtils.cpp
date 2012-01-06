@@ -20,33 +20,81 @@ void ofDrawAxis(float size) {
 	ofPopStyle();
 }
 
-void ofDrawGrid(float size) {
+//--------------------------------------------------------------
+void ofDrawGrid(float scale, float ticks, bool labels, bool x, bool y, bool z) {
 	
-	
-	const float lineCountMajor = 3;
-	const float lineCountMinor = lineCountMajor*3;
-	const float lineStepMajor = size / lineCountMajor;
-	const float lineStepMinor = size / lineCountMinor;
-	
+	ofColor c = ofGetStyle().color;
 	
 	ofPushStyle();
 	
-	//draw major lines
-	ofSetLineWidth(3);
-	for (float s=-size; s<=size; s+=lineStepMajor)
-	{
-		ofLine(-size, s, size, s);
-		ofLine(s, -size, s, size);		
+	if (x) {
+		c.setHue(0.0f);
+		ofSetColor(c);
+		ofDrawGridPlane(scale, ticks, labels);
 	}
-	
-	//draw minor lines
-	ofSetLineWidth(1);
-	for (float s=-size; s<=size; s+=lineStepMinor)
-	{
-		ofLine(-size, s, size, s);
-		ofLine(s, -size, s, size);		
+	if (y) {
+		c.setHue(255.0f / 3.0f);
+		ofSetColor(c);
+		ofPushMatrix();
+		ofRotate(90, 0, 0, 1);
+		ofDrawGridPlane(scale, ticks, labels);
+		ofPopMatrix();
+	}
+	if (z) {
+		c.setHue(255.0f * 2.0f / 3.0f);
+		ofSetColor(c);
+		ofPushMatrix();
+		ofRotate(90, 0, 1, 0);
+		ofDrawGridPlane(scale, ticks, labels);
+		ofPopMatrix();
 	}
 	
 	ofPopStyle();
+}
+
+
+//--------------------------------------------------------------
+void drawGridPlane(float scale, float ticks, bool labels) {
+	
+	float minor = scale / ticks;
+	float major =  minor * 2.0f;
+	
+	ofPushStyle();
+	for (int iDimension=0; iDimension<2; iDimension++)
+	{
+		for (float yz=-scale; yz<=scale; yz+= minor)
+		{
+			//major major
+			if (fabs(yz) == scale || yz == 0)
+				ofSetLineWidth(4);
+			
+			//major
+			else if (yz / major == floor(yz / major) )
+				ofSetLineWidth(2);
+			
+			//minor
+			else
+				ofSetLineWidth(1);
+			if (iDimension==0)
+				ofLine(0, yz, -scale, 0, yz, scale);
+			else
+				ofLine(0, -scale, yz, 0, scale, yz);
+		}
+	}
+	ofPopStyle();
+	
+	if (labels) {
+		//draw numbers on axes
+		ofPushStyle();
+		ofSetColor(255, 255, 255);
+		
+		ofSetDrawBitmapMode(OF_BITMAPMODE_MODEL_BILLBOARD);
+		for (float yz = -scale; yz<=scale; yz+=minor)
+		{
+			ofDrawBitmapString(ofToString(yz, 0), 0, yz, 0);
+			ofDrawBitmapString(ofToString(yz, 0), 0, 0, yz);		
+		}
+		ofPopStyle();
+	}
 	
 }
