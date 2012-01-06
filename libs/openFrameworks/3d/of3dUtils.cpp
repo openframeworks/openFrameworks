@@ -24,6 +24,8 @@ void ofDrawAxis(float size) {
 void ofDrawGrid(float scale, float ticks, bool labels, bool x, bool y, bool z) {
 	
 	ofColor c = ofGetStyle().color;
+	if (c == ofColor::white)
+		c = ofColor(255,0,0);
 	
 	ofPushStyle();
 	
@@ -54,7 +56,7 @@ void ofDrawGrid(float scale, float ticks, bool labels, bool x, bool y, bool z) {
 
 
 //--------------------------------------------------------------
-void drawGridPlane(float scale, float ticks, bool labels) {
+void ofDrawGridPlane(float scale, float ticks, bool labels) {
 	
 	float minor = scale / ticks;
 	float major =  minor * 2.0f;
