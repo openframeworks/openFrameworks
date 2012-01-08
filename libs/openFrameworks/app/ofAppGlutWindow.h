@@ -51,7 +51,9 @@ public:
 
 	void		enableSetupScreen();
 	void		disableSetupScreen();
-
+    
+    static void recordKeyboardModifiers(void);
+    
 	static void display(void);
 	static void mouse_cb(int button, int state, int x, int y);
 	static void motion_cb(int x, int y);
@@ -65,6 +67,5 @@ public:
 	static void entry_cb(int state);
 	static void dragEvent(char ** fileNames, int howManyFiles, int dragX, int dragY);
 	string displayString;
-		 
 };
 
