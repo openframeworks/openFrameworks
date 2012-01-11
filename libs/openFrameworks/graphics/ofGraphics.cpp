@@ -872,7 +872,7 @@ void ofSphere(const ofPoint& position, float radius) {
 }
 
 //----------------------------------------
-void ofSphere(float radius) {
+void ofGLUTSphere(float radius) {
 	// TODO: add an implementation using ofMesh
 #ifndef TARGET_OPENGLES
 	// this needs to be swapped out with non-glut code
@@ -892,6 +892,121 @@ void ofSphere(float radius) {
 	}
 	ofPopMatrix();
 #endif
+}
+
+//----------------------------------------
+void ofSphere(float radius){
+	// TODO: add an implementation using ofMesh
+	//#ifndef TARGET_OPENGLES
+	// this needs to be swapped out with non-glut code
+	// for good references see cinder's implementation from paul bourke:
+	// https://github.com/cinder/Cinder/blob/master/src/cinder/gl/gl.cpp
+	// void drawSphere( const Vec3f &center, float radius, int segments )
+	// and processing's implementation of icospheres:
+	// https://code.google.com/p/processing/source/browse/trunk/processing/core/src/processing/core/PGraphics.java?r=7543
+	// public void sphere(float r)
+	
+	
+	/*
+	 Original code by Paul Bourke
+	 A more efficient contribution by Federico Dosil (below)
+	 Draw a point for zero radius spheres
+	 Use CCW facet ordering
+	 http://paulbourke.net/texture_colour/texturemap/
+	 */
+	// renderer->drawCircle(x,y,z,radius);
+	
+	ofPushMatrix();
+	float theta2 = TWO_PI;
+	float phi1 = -HALF_PI;
+	float phi2 = HALF_PI;
+	int n = currentStyle.sphereResolution * 2;
+	
+	int i, j;
+	float jdivn,j1divn,idivn,dosdivn,unodivn=1/(float)n,ndiv2=(float)n/2,t1,t2,t3,cost1,cost2,cte1,cte3;
+	cte3 = (theta2)/n;
+	cte1 = (phi2-phi1)/ndiv2;
+	dosdivn = 2*unodivn;
+	ofVec3f e,p,e2,p2;
+	
+	// Handle special cases //
+	if (radius < 0)
+		radius = -radius;
+	if (n < 0){
+		n = -n;
+		ndiv2 = -ndiv2;
+	}
+	if (n < 4 || radius <= 0) {
+		glBegin(GL_POINTS);
+		glVertex3f( 0, 0, 0);
+		glEnd();
+		return;
+	}
+	
+	t2=phi1;
+	cost2=cos(phi1);
+	j1divn=0;
+	
+	int stripVerts = (n*2);
+	
+	ofVec3f verts[stripVerts];
+	ofVec2f tcoords[stripVerts];
+	ofVec3f norms[stripVerts];
+	
+	int cindex = 0; // current index //
+	
+	glEnableClientState(GL_VERTEX_ARRAY);
+	glVertexPointer(3, GL_FLOAT, 0, &verts[0]);
+	glEnableClientState(GL_NORMAL_ARRAY);
+	glNormalPointer(3, GL_FLOAT, &norms[0]);
+	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+	glTexCoordPointer(2, GL_FLOAT, 0, &tcoords[0]);
+	
+	for (j=0;j<ndiv2;j++) {
+		t1 = t2;
+		t2 += cte1;
+		t3 = -cte3;
+		cost1 = cost2;
+		cost2 = cos(t2);
+		e.y = sin(t1);
+		e2.y = sin(t2);
+		p.y = radius * e.y;
+		p2.y = radius * e2.y;
+		
+		idivn=0;
+		jdivn=j1divn;
+		j1divn+=dosdivn;
+		for (i=0;i<=n;i++) {
+			t3 += cte3;
+			e.x = cost1 * cos(t3);
+			e.z = cost1 * sin(t3);
+			p.x = radius * e.x;
+			p.z = radius * e.z;
+			
+			cindex = (i*2);
+			tcoords[cindex].set(idivn,jdivn);
+			verts[cindex].set(p.x,p.y,p.z);
+			norms[cindex].set(e.x,e.y,e.z);
+			
+			e2.x = cost2 * cos(t3);
+			e2.z = cost2 * sin(t3);
+			p2.x = radius * e2.x;
+			p2.z = radius * e2.z;
+			cindex = (i*2)+1;
+			tcoords[cindex].set(idivn,j1divn);
+			verts[cindex].set(p2.x,p2.y,p2.z);
+			norms[cindex].set(e2.x,e2.y,e2.z);
+			
+			idivn += unodivn;
+		}
+		glDrawArrays(GL_TRIANGLE_STRIP, 0, stripVerts);
+	}
+	glDisableClientState( GL_VERTEX_ARRAY );
+	glDisableClientState( GL_NORMAL_ARRAY );
+	glDisableClientState( GL_TEXTURE_COORD_ARRAY );
+	
+	ofPopMatrix();
+	//#endif
 }
 
 //----------------------------------------
