@@ -29,7 +29,7 @@ void ofBaseVideoGrabber::videoSettings(){
 
 //---------------------------------------------------------------------------
 void ofBaseVideoGrabber::setPixelFormat(ofPixelFormat pixelFormat){
-	ofLog(OF_LOG_WARNING, "ofBaseVideoGrabber::setPixelFormat not implemented");
+	//ofLog(OF_LOG_WARNING, "ofBaseVideoGrabber::setPixelFormat not implemented");
 }
 
 ofPixelFormat ofBaseVideoGrabber::getPixelFormat(){
@@ -133,5 +133,5 @@ void ofBaseVideoPlayer::previousFrame(){
 }
 //---------------------------------------------------------------------------
 void ofBaseVideoPlayer::setPixelFormat(ofPixelFormat pixelFormat){
-	ofLog(OF_LOG_WARNING, "ofBaseVideoPlayer::setPixelFormat not implemented");
+	//ofLog(OF_LOG_WARNING, "ofBaseVideoPlayer::setPixelFormat not implemented");
 }
