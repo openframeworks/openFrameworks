@@ -79,7 +79,7 @@ class ofURLFileLoader : public ofThread  {
 
     public:
 
-        ofURLFileLoader();
+        ofURLFileLoader();	
         ofHttpResponse get(string url);
         int getAsync(string url, string name=""); // returns id
         ofHttpResponse saveTo(string url, string path);
