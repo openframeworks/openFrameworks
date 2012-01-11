@@ -828,7 +828,7 @@ void ofSphere(const ofPoint& position, float radius){
 //----------------------------------------
 void ofSphere(float radius){
 	// TODO: add an implementation using ofMesh
-#ifndef TARGET_OPENGLES
+//#ifndef TARGET_OPENGLES
 	// this needs to be swapped out with non-glut code
 	// for good references see cinder's implementation from paul bourke:
 	// https://github.com/cinder/Cinder/blob/master/src/cinder/gl/gl.cpp
@@ -837,15 +837,117 @@ void ofSphere(float radius){
 	// https://code.google.com/p/processing/source/browse/trunk/processing/core/src/processing/core/PGraphics.java?r=7543
 	// public void sphere(float r)
 	
+	
+	/*
+	 Original code by Paul Bourke
+	 A more efficient contribution by Federico Dosil (below)
+	 Draw a point for zero radius spheres
+	 Use CCW facet ordering
+	 http://paulbourke.net/texture_colour/texturemap/
+	 */
+	
 	ofPushMatrix();
-	ofRotateX(90);
-	if(ofGetStyle().bFill){
-		glutSolidSphere(radius, 2 * currentStyle.sphereResolution, currentStyle.sphereResolution);
-	} else {
-		glutWireSphere(radius, 2 * currentStyle.sphereResolution, currentStyle.sphereResolution);
+	double theta2 = TWO_PI;
+	double phi1 = -HALF_PI;
+	double phi2 = HALF_PI;
+	int n = currentStyle.sphereResolution* 2;
+	
+	int i, j;
+	double jdivn,j1divn,idivn,dosdivn,unodivn=1/(double)n,ndiv2=(double)n/2,t1,t2,t3,cost1,cost2,cte1,cte3;
+	cte3 = (theta2)/n;
+	cte1 = (phi2-phi1)/ndiv2;
+	dosdivn = 2*unodivn;
+	ofVec3f e,p,e2,p2;
+	
+	// Handle special cases //
+	if (radius < 0)
+		radius = -radius;
+	if (n < 0){
+		n = -n;
+		ndiv2 = -ndiv2;
 	}
+	if (n < 4 || radius <= 0) {
+		glBegin(GL_POINTS);
+		glVertex3f( 0, 0, 0);
+		glEnd();
+		return;
+	}
+	
+	t2=phi1;
+	cost2=cos(phi1);
+	j1divn=0;
+	
+	int stripVerts = (n*2);
+	
+	ofVec3f verts[stripVerts];
+	ofVec2f tcoords[stripVerts];
+	ofVec3f norms[stripVerts];
+	int cindex = 0; // current index //
+	
+	for (j=0;j<ndiv2;j++) {
+		t1 = t2;
+		t2 += cte1;
+		t3 = -cte3;
+		cost1 = cost2;
+		cost2 = cos(t2);
+		e.y = sin(t1);
+		e2.y = sin(t2);
+		p.y = radius * e.y;
+		p2.y = radius * e2.y;
+		
+		vertexData.clear();
+		
+		// currently there is no OF mesh support for QUAD_STRIP
+		//if (method == 0) {
+		//vertexData.setMode( GL_QUAD_STRIP);
+		//} else {
+		vertexData.setMode( OF_PRIMITIVE_TRIANGLE_STRIP );
+		//glBegin(GL_TRIANGLE_STRIP);
+		//}
+		
+		idivn=0;
+		jdivn=j1divn;
+		j1divn+=dosdivn;
+		for (i=0;i<=n;i++) {
+			t3 += cte3;
+			e.x = cost1 * cos(t3);
+			e.z = cost1 * sin(t3);
+			p.x = radius * e.x;
+			p.z = radius * e.z;
+			
+			cindex = (i*2);
+			tcoords[cindex].set(idivn,jdivn);
+			verts[cindex].set(p.x,p.y,p.z);
+			norms[cindex].set(e.x,e.y,e.z);
+			
+			e2.x = cost2 * cos(t3);
+			e2.z = cost2 * sin(t3);
+			p2.x = radius * e2.x;
+			p2.z = radius * e2.z;
+			cindex = (i*2)+1;
+			tcoords[cindex].set(idivn,j1divn);
+			verts[cindex].set(p2.x,p2.y,p2.z);
+			norms[cindex].set(e2.x,e2.y,e2.z);
+			
+			idivn += unodivn;
+		}
+		
+		vertexData.addVertices( verts, stripVerts );
+		vertexData.addNormals( norms, stripVerts );
+		vertexData.addTexCoords( tcoords, stripVerts);
+		
+		
+		if(ofGetStyle().bFill) {
+			//vertexData.draw();
+			renderer->draw(vertexData, OF_MESH_FILL);
+		} else {
+			renderer->draw(vertexData, OF_MESH_WIREFRAME);
+			//vertexData.drawWireframe();
+		}
+	}
+	
 	ofPopMatrix();
-#endif
+//#endif
 }
 
 //----------------------------------------
