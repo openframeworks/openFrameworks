@@ -872,6 +872,29 @@ void ofSphere(const ofPoint& position, float radius) {
 }
 
 //----------------------------------------
+void ofGLUTSphere(float radius) {
+	// TODO: add an implementation using ofMesh
+#ifndef TARGET_OPENGLES
+	// this needs to be swapped out with non-glut code
+	// for good references see cinder's implementation from paul bourke:
+	// https://github.com/cinder/Cinder/blob/master/src/cinder/gl/gl.cpp
+	// void drawSphere( const Vec3f &center, float radius, int segments )
+	// and processing's implementation of icospheres:
+	// https://code.google.com/p/processing/source/browse/trunk/processing/core/src/processing/core/PGraphics.java?r=7543
+	// public void sphere(float r)
+	
+	ofPushMatrix();
+	ofRotateX(90);
+	if(ofGetStyle().bFill) {
+		glutSolidSphere(radius, 2 * currentStyle.sphereResolution, currentStyle.sphereResolution);
+	} else {
+		glutWireSphere(radius, 2 * currentStyle.sphereResolution, currentStyle.sphereResolution);
+	}
+	ofPopMatrix();
+#endif
+}
+
+//----------------------------------------
 void ofSphere(float radius){
 	// TODO: add an implementation using ofMesh
 	//#ifndef TARGET_OPENGLES
@@ -891,15 +914,16 @@ void ofSphere(float radius){
 	 Use CCW facet ordering
 	 http://paulbourke.net/texture_colour/texturemap/
 	 */
+	// renderer->drawCircle(x,y,z,radius);
 	
 	ofPushMatrix();
-	double theta2 = TWO_PI;
-	double phi1 = -HALF_PI;
-	double phi2 = HALF_PI;
-	int n = currentStyle.sphereResolution* 2;
+	float theta2 = TWO_PI;
+	float phi1 = -HALF_PI;
+	float phi2 = HALF_PI;
+	int n = currentStyle.sphereResolution * 2;
 	
 	int i, j;
-	double jdivn,j1divn,idivn,dosdivn,unodivn=1/(double)n,ndiv2=(double)n/2,t1,t2,t3,cost1,cost2,cte1,cte3;
+	float jdivn,j1divn,idivn,dosdivn,unodivn=1/(float)n,ndiv2=(float)n/2,t1,t2,t3,cost1,cost2,cte1,cte3;
 	cte3 = (theta2)/n;
 	cte1 = (phi2-phi1)/ndiv2;
 	dosdivn = 2*unodivn;
@@ -928,7 +952,15 @@ void ofSphere(float radius){
 	ofVec3f verts[stripVerts];
 	ofVec2f tcoords[stripVerts];
 	ofVec3f norms[stripVerts];
+	
 	int cindex = 0; // current index //
+	
+	glEnableClientState(GL_VERTEX_ARRAY);
+	glVertexPointer(3, GL_FLOAT, 0, &verts[0]);
+	glEnableClientState(GL_NORMAL_ARRAY);
+	glNormalPointer(3, GL_FLOAT, &norms[0]);
+	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+	glTexCoordPointer(2, GL_FLOAT, 0, &tcoords[0]);
 	
 	for (j=0;j<ndiv2;j++) {
 		t1 = t2;
@@ -940,16 +972,6 @@ void ofSphere(float radius){
 		e2.y = sin(t2);
 		p.y = radius * e.y;
 		p2.y = radius * e2.y;
-		
-		vertexData.clear();
-		
-		// currently there is no OF mesh support for QUAD_STRIP
-		//if (method == 0) {
-		//vertexData.setMode( GL_QUAD_STRIP);
-		//} else {
-		vertexData.setMode( OF_PRIMITIVE_TRIANGLE_STRIP );
-		//glBegin(GL_TRIANGLE_STRIP);
-		//}
 		
 		idivn=0;
 		jdivn=j1divn;
@@ -977,20 +999,11 @@ void ofSphere(float radius){
 			
 			idivn += unodivn;
 		}
-		
-		vertexData.addVertices( verts, stripVerts );
-		vertexData.addNormals( norms, stripVerts );
-		vertexData.addTexCoords( tcoords, stripVerts);
-		
-		
-		if(ofGetStyle().bFill) {
-			//vertexData.draw();
-			renderer->draw(vertexData, OF_MESH_FILL);
-		} else {
-			renderer->draw(vertexData, OF_MESH_WIREFRAME);
-			//vertexData.drawWireframe();
-		}
+		glDrawArrays(GL_TRIANGLE_STRIP, 0, stripVerts);
 	}
+	glDisableClientState( GL_VERTEX_ARRAY );
+	glDisableClientState( GL_NORMAL_ARRAY );
+	glDisableClientState( GL_TEXTURE_COORD_ARRAY );
 	
 	ofPopMatrix();
 	//#endif

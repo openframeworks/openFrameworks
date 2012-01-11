@@ -223,6 +223,7 @@ void ofSphere(float x, float y, float z, float radius);
 void ofSphere(float x, float y, float radius);
 void ofSphere(const ofPoint& position, float radius);
 void ofSphere(float radius);
+void ofGLUTSphere(float radius);
 
 void ofBox(float x, float y, float z, float size);
 void ofBox(float x, float y, float size);
