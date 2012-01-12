@@ -986,11 +986,15 @@ void ofGLRenderer::drawSphere(float x, float y, float z, float radius) {
 	//glTexCoordPointer(2, GL_FLOAT, 0, &tcoords[0]);
 	int i, j;
 	for (j=0;j<ndiv2;j++) {
+	#ifdef TARGET_OPENGLES
+		glDrawArrays(GL_TRIANGLE_STRIP, j * ((n+1)*2), (n+1)*2);
+	#else
 		if(bFilled) {
 			glDrawArrays(GL_TRIANGLE_STRIP, j * ((n+1)*2), (n+1)*2);
 		} else {
 			glDrawArrays(GL_QUAD_STRIP, j * ((n+1)*2), (n+1)*2);
 		}
+	#endif
 	}
 	glDisableClientState( GL_VERTEX_ARRAY );
 	glDisableClientState( GL_NORMAL_ARRAY );
