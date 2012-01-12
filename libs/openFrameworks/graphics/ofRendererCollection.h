@@ -395,6 +395,12 @@ public:
 			 renderers[i]->drawCircle(x,y,z,radius);
 		 }
 	}
+	
+	void drawSphere(float x, float y, float z, float radius) {
+		for(int i=0;i<(int)renderers.size();i++){
+			renderers[i]->drawSphere(x,y,z,radius);
+		}
+	}
 
 	void drawEllipse(float x, float y, float z, float width, float height){
 		 for(int i=0;i<(int)renderers.size();i++){
