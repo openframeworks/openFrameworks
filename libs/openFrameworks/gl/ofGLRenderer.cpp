@@ -981,7 +981,7 @@ void ofGLRenderer::drawSphere(float x, float y, float z, float radius) {
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glVertexPointer(3, GL_FLOAT, 0, &sphereVerts[0]);
 	glEnableClientState(GL_NORMAL_ARRAY);
-	glNormalPointer(3, GL_FLOAT, &sphereVerts[0]);
+	glNormalPointer(GL_FLOAT, 0, &sphereVerts[0]);
 	//glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 	//glTexCoordPointer(2, GL_FLOAT, 0, &tcoords[0]);
 	int i, j;
