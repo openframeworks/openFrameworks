@@ -483,7 +483,7 @@ ofFileDialogResult ofSystemSaveDialog(string defaultName, string messageName){
 	//----------------------------------------------------------------------------------------
 #if defined( TARGET_LINUX ) && defined (OF_USING_GTK)
 
-	gtkFileDialog(GTK_FILE_CHOOSER_ACTION_SAVE, messageName,defaultName);
+	results.filePath = gtkFileDialog(GTK_FILE_CHOOSER_ACTION_SAVE, messageName,defaultName);
 
 #endif
 	//----------------------------------------------------------------------------------------
