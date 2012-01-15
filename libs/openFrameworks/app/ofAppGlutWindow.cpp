@@ -295,6 +295,7 @@ void ofAppGlutWindow::initializeWindow(){
     glutSpecialUpFunc(special_key_up_cb);
 
     glutReshapeFunc(resize_cb);
+	glutEntryFunc(entry_cb);
 
 #ifdef TARGET_OSX
 	glutDragEventFunc(dragEvent);
@@ -729,4 +730,10 @@ void ofAppGlutWindow::resize_cb(int w, int h) {
 	ofNotifyWindowResized(w, h);
 
 	nFramesSinceWindowResized = 0;
+}
+
+void ofAppGlutWindow::entry_cb( int state ) {
+	
+	ofNotifyWindowEntry( state );
+	
 }
