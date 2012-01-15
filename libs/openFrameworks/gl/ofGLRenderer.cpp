@@ -229,10 +229,19 @@ void ofGLRenderer::pushView() {
 	viewportHistory.push(currentViewport);
 
 
-	glMatrixMode(GL_PROJECTION);
+	/*glMatrixMode(GL_PROJECTION);
 	glPushMatrix();
 	glMatrixMode(GL_MODELVIEW);
-	glPushMatrix();
+	glPushMatrix();*/
+
+
+	// done like this cause i was getting GL_STACK_UNDERFLOW
+	// should ofPush/PopMatrix work the same way, what if it's mixed with glPush/PopMatrix
+	ofMatrix4x4 m;
+	glGetFloatv(GL_PROJECTION_MATRIX,m.getPtr());
+	projectionStack.push(m);
+	glGetFloatv(GL_MODELVIEW_MATRIX,m.getPtr());
+	modelViewStack.push(m);
 }
 
 
@@ -240,14 +249,23 @@ void ofGLRenderer::pushView() {
 void ofGLRenderer::popView() {
 	if( viewportHistory.size() ){
 		ofRectangle viewRect = viewportHistory.top();
-		viewport(viewRect.x, viewRect.y, viewRect.width, viewRect.height);
+		viewport(viewRect.x, viewRect.y, viewRect.width, viewRect.height,false);
 		viewportHistory.pop();
 	}
 
-	glMatrixMode(GL_PROJECTION);
+	/*glMatrixMode(GL_PROJECTION);
 	glPopMatrix();
 	glMatrixMode(GL_MODELVIEW);
-	glPopMatrix();
+	glPopMatrix();*/
+
+	// done like this cause i was getting GL_STACK_UNDERFLOW
+	// should ofPush/PopMatrix work the same way, what if it's mixed with glPush/PopMatrix
+	glMatrixMode(GL_PROJECTION);
+	glLoadMatrixf(projectionStack.top().getPtr());
+	glMatrixMode(GL_MODELVIEW);
+	glLoadMatrixf(modelViewStack.top().getPtr());
+	projectionStack.pop();
+	modelViewStack.pop();
 }
 
 //----------------------------------------------------------
@@ -623,11 +641,8 @@ ofFloatColor & ofGLRenderer::getBgColor(){
 //----------------------------------------------------------
 void ofGLRenderer::background(const ofColor & c){
 	bgColor = c;
-	// if we are in not-auto mode, then clear with a bg call...
-	if (bClearBg() == false){
-		glClearColor(bgColor[0],bgColor[1],bgColor[2], bgColor[3]);
-		glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	}
+	glClearColor(bgColor[0],bgColor[1],bgColor[2], bgColor[3]);
+	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
 //----------------------------------------------------------

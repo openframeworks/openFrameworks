@@ -288,6 +288,18 @@ void ofShader::setUniformTexture(const char* name, ofBaseHasTexture& img, int te
 }
 
 //--------------------------------------------------------------
+void ofShader::setUniformTexture(const char* name, int textureTarget, GLint textureID, int textureLocation){
+	if(bLoaded) {
+		glActiveTexture(GL_TEXTURE0 + textureLocation);
+		glEnable(textureTarget);
+		glBindTexture(textureTarget, textureID);
+		glDisable(textureTarget);
+		setUniform1i(name, textureLocation);
+		glActiveTexture(GL_TEXTURE0);
+	}
+}
+
+//--------------------------------------------------------------
 void ofShader::setUniformTexture(const char* name, ofTexture& tex, int textureLocation) {
 	if(bLoaded) {
 		ofTextureData texData = tex.getTextureData();
