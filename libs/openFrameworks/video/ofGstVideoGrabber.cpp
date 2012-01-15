@@ -394,7 +394,7 @@ static void get_device_data (ofGstDevice &webcam_device, int desired_framerate)
 
 	// TODO: try to lower seconds,
     // Start the pipeline and wait for max. 10 seconds for it to start up
-	gst_element_set_state (pipeline, GST_STATE_PLAYING);
+	gst_element_set_state (pipeline, GST_STATE_READY);
 	GstStateChangeReturn ret = gst_element_get_state (pipeline, NULL, NULL, 10 * GST_SECOND);
 
 	// Check if any error messages were posted on the bus
