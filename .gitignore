@@ -4,6 +4,7 @@
 *.pbxuser
 *.app*
 *.DS_*
+*.xcworkspacedata
 
 .svn/
 obj/

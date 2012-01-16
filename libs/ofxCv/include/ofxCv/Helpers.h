@@ -32,6 +32,9 @@ namespace ofxCv {
 	
 	// sometimes you want a different datatype returned than the one you pass in
 	// but the same number of channels. with mean and sum, you *probably* want floating point.
+	// it's kind of weird that mean returns the same datatype as the input, but sum/min/max
+	// all return floating point. there should be an optional type argument for the
+	// desired return format.
 	Mat meanCols(const Mat& mat);
 	Mat meanRows(const Mat& mat);
 	Mat sumCols(const Mat& mat);

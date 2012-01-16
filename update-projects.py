@@ -28,16 +28,16 @@ for example in examples:
 		targetProjectName = upper + "Example"
 		
 		# windows code::blocks
-		targetCbp = "{}/{}.cbp".format(example, targetProjectName)
-		targetWorkspace = "{}/{}.workspace".format(example, targetProjectName)
+		targetCbp = "{0}/{1}.cbp".format(example, targetProjectName)
+		targetWorkspace = "{0}/{1}.workspace".format(example, targetProjectName)
 		shutil.copy(sourceCbp, targetCbp)
 		shutil.copy(sourceWorkspace, targetWorkspace)
 		replaceInFile(targetCbp, sourceProjectName, targetProjectName)
 		replaceInFile(targetWorkspace, sourceProjectName, targetProjectName)
 
 		# xcode osx
-		targetXcodeproj = "{}/{}.xcodeproj".format(example, targetProjectName)
-		targetPbxproj = "{}/project.pbxproj".format(targetXcodeproj)
+		targetXcodeproj = "{0}/{1}.xcodeproj".format(example, targetProjectName)
+		targetPbxproj = "{0}/project.pbxproj".format(targetXcodeproj)
 		shutil.copy(sourceXcconfig, example)
 		shutil.copy(sourcePlist, example)
 		if not os.path.exists(targetXcodeproj):
