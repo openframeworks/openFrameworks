@@ -61,6 +61,7 @@ int ofxCvContourFinder::findContours( ofxCvGrayscaleImage&  input,
     // 320x240 image better to make two ofxCvContourFinder objects then to use
     // one, because you will get penalized less.
 
+    inputCopy.setUseTexture(false);
 	if( inputCopy.getWidth() == 0 ) {
 		inputCopy.allocate( _width, _height );
 	} else if( inputCopy.getWidth() != _width || inputCopy.getHeight() != _height ) {
