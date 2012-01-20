@@ -291,6 +291,9 @@ static void add_video_format (ofGstDevice &webcam_device,
 			if(new_framerate > curr_framerate) {
 				ofLog(OF_LOG_VERBOSE,"higher framerate replacing existing format\n");
 				webcam_device.video_formats[i] = video_format;
+			}else if(webcam_device.video_formats[i].mimetype != "video/x-raw-yuv" && webcam_device.video_formats[i].mimetype != "video/x-raw-rgb" && new_framerate == curr_framerate){
+				ofLog(OF_LOG_VERBOSE,"non compressed format with same framerate, replacing existing format\n");
+				webcam_device.video_formats[i] = video_format;
 			}else{
 				ofLog(OF_LOG_VERBOSE,"already added, skipping\n");
 			}
