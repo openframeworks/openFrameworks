@@ -327,12 +327,9 @@ static bool		bBitmapTexturePrepared = false;
 ofTexture		glesBitmappedFontTexture;
 unsigned char	myLetterPixels[16*16 * 16*16 * 2];			// letter size:8x14pixels, texture size:16x8letters, gl_luminance_alpha: 2bytes/1pixel
 
-#ifdef TARGET_ANDROID
-//---------------------------------------------------------------------
 void ofUpdateBitmapCharacterTexture(){
 	bBitmapTexturePrepared = false;
 }
-#endif
 
 //static GLfloat tex_coords[8];
 //static GLfloat verts[8];
