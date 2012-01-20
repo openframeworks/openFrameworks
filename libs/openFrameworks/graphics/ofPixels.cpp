@@ -464,32 +464,33 @@ void ofPixels_<PixelType>::rotate90To(ofPixels_<PixelType> & dst, int nClockwise
 	}
 
 	// otherwise, we will need to do some new allocaiton.
-	int bytesPerPixel = channels;
-	PixelType * oldPixels = pixels;
+	int strideSrc = width * channels;
+	int strideDst = dst.width * channels;
+
 	dst.allocate(height,width,getImageType());
-	PixelType * newPixels = dst.getPixels();
 
 	if(rotation == 1){
-		for (int i = 0; i < width; i++){
-			for (int j = 0; j < height; j++){
-
-				int pixela = (j*width + i);
-				int pixelb = ((i) * height + (height - j - 1));
-				for (int k = 0; k < bytesPerPixel; k++){
-					newPixels[pixelb*bytesPerPixel + k] = oldPixels[pixela*bytesPerPixel + k];
+		PixelType * srcPixels = pixels;
+		for (int i = 0; i < height; i++){
+			PixelType * dstPixels = dst.getPixels() + (strideDst - channels*(i+1));
+			for (int j = 0; j < width; j++){
+				for (int k = 0; k < channels; k++){
+					dstPixels[k] = srcPixels[k];
 				}
-
+				srcPixels += channels;
+				dstPixels += strideDst;
 			}
 		}
 	} else if(rotation == 3){
-		for (int i = 0; i < width; i++){
-			for (int j = 0; j < height; j++){
-
-				int pixela = (j*width + i);
-				int pixelb = ((width-i-1) * height + j);
-				for (int k = 0; k < bytesPerPixel; k++){
-					newPixels[pixelb*bytesPerPixel + k] = oldPixels[pixela*bytesPerPixel + k];
+		PixelType * dstPixels = dst.pixels;
+		for (int i = 0; i < dst.height; i++){
+			PixelType * srcPixels = pixels + (strideSrc - channels*(i+1));
+			for (int j = 0; j < dst.width; j++){
+				for (int k = 0; k < channels; k++){
+					dstPixels[k] = srcPixels[k];
 				}
+				srcPixels += strideSrc;
+				dstPixels += channels;
 			}
 		}
 	}
