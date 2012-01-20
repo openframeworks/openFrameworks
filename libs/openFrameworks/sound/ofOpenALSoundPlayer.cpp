@@ -566,6 +566,11 @@ float ofOpenALSoundPlayer::getPan(){
 }
 
 //------------------------------------------------------------
+float ofOpenALSoundPlayer::getVolume(){
+	return volume;
+}
+
+//------------------------------------------------------------
 void ofOpenALSoundPlayer::setVolume(float vol){
 	volume = vol;
 	if(sources.empty()) return;
