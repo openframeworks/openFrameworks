@@ -241,6 +241,11 @@ float ofFmodSoundPlayer::getPan(){
 }
 
 //------------------------------------------------------------
+float ofFmodSoundPlayer::getVolume(){
+	return volume;
+}
+
+//------------------------------------------------------------
 void ofFmodSoundPlayer::setVolume(float vol){
 	if (getIsPlaying() == true){
 		FMOD_Channel_SetVolume(channel, vol);

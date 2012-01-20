@@ -46,19 +46,19 @@ inline void ofSoundShutdown(){}
 
 //---------------------------------------------
 class ofSoundPlayer : public ofBaseSoundPlayer {
-	
+
 	public:
-		
+
 		ofSoundPlayer();
-		
+
 		void setPlayer(ofPtr<ofBaseSoundPlayer> newPlayer);
 		ofPtr<ofBaseSoundPlayer> getPlayer();
-		
+
 		void loadSound(string fileName, bool stream = false);
 		void unloadSound();
 		void play();
 		void stop();
-		
+
 		void setVolume(float vol);
 		void setPan(float vol);
 		void setSpeed(float spd);
@@ -68,17 +68,18 @@ class ofSoundPlayer : public ofBaseSoundPlayer {
 		void setPosition(float pct); // 0 = start, 1 = end;
 		void setPositionMS(int ms);
 		int getPositionMS();
-		
+
 		float getPosition();
 		bool getIsPlaying();
 		float getSpeed();
 		float getPan();
-		
-		
+		float getVolume();
+
+
 	protected:
-		
+
 		ofPtr<ofBaseSoundPlayer> player;
-	
-	
+
+
 };
 
