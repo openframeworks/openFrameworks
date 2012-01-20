@@ -159,7 +159,7 @@ void ofxVectorGraphics::beginEPS(string fileName, int x, int y, int w, int h){
 	//this works fine as long
 	//as the window doesn't change size 
 	//while we are capturing!!!				
-	creeps.applyTranslation(0, ofGetHeight());
+	creeps.applyTranslation(0, h);
 	creeps.applyScaling(1, -1);
 }
 
