@@ -67,7 +67,7 @@ class ofFmodSoundPlayer : public ofBaseSoundPlayer {
 		bool bLoop;
 		bool bLoadedOk;
 		bool bPaused;
-		float pan; // 0 - 1
+		float pan; // -1 to 1
 		float volume; // 0 - 1
 		float internalFreq; // 44100 ?
 		float speed; // -n to n, 1 = normal, -1 backwards
