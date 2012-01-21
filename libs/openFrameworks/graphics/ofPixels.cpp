@@ -525,8 +525,9 @@ void ofPixels_<PixelType>::rotate90(int nClockwiseRotations){
 	rotate90To(newPixels,nClockwiseRotations);
 	delete [] pixels;
 	pixels = newPixels.pixels;
-	newPixels.bAllocated = false;
-	newPixels.pixels = NULL;
+	width = newPixels.width;
+	height = newPixels.height;
+	newPixels.pixelsOwner = false;
 
 }
 
