@@ -521,42 +521,12 @@ void ofPixels_<PixelType>::rotate90(int nClockwiseRotations){
 		return;
 	}
 
-	// otherwise, we will need to do some new allocaiton.
-	int bytesPerPixel = channels;
-	PixelType * oldPixels = pixels;
-	int newWidth = height;
-	int newHeight = width;
-	PixelType * newPixels = new PixelType[newWidth*newHeight*bytesPerPixel];
-
-	if(rotation == 1){
-		for (int i = 0; i < width; i++){
-			for (int j = 0; j < height; j++){
-
-				int pixela = (j*width + i);
-				int pixelb = ((i) * newWidth + (height - j - 1));
-				for (int k = 0; k < bytesPerPixel; k++){
-					newPixels[pixelb*bytesPerPixel + k] = oldPixels[pixela*bytesPerPixel + k];
-				}
-
-			}
-		}
-	} else if(rotation == 3){
-		for (int i = 0; i < width; i++){
-			for (int j = 0; j < height; j++){
-
-				int pixela = (j*width + i);
-				int pixelb = ((width-i-1) * newWidth + j);
-				for (int k = 0; k < bytesPerPixel; k++){
-					newPixels[pixelb*bytesPerPixel + k] = oldPixels[pixela*bytesPerPixel + k];
-				}
-			}
-		}
-	}
-
+	ofPixels_<PixelType> newPixels;
+	rotate90To(newPixels,nClockwiseRotations);
 	delete [] pixels;
-	pixels = newPixels;
-	width = newWidth;
-	height = newHeight;
+	pixels = newPixels.pixels;
+	newPixels.bAllocated = false;
+	newPixels.pixels = NULL;
 
 }
 
