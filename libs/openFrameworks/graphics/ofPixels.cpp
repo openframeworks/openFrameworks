@@ -446,6 +446,11 @@ void ofPixels_<PixelType>::rotate90To(ofPixels_<PixelType> & dst, int nClockwise
 		return;
 	}
 
+	if(&dst == this){
+		rotate90(nClockwiseRotations);
+		return;
+	}
+
 	// first, figure out which type of rotation we have
 	int rotation = nClockwiseRotations;
 	while (rotation < 0){
@@ -572,6 +577,10 @@ void ofPixels_<PixelType>::mirror(bool vertically, bool horizontal){
 //----------------------------------------------------------------------
 template<typename PixelType>
 void ofPixels_<PixelType>::mirrorTo(ofPixels_<PixelType> & dst, bool vertically, bool horizontal){
+	if(&dst == this){
+		mirror(vertically,horizontal);
+		return;
+	}
 
 	if (!vertically && !horizontal){
 		dst = *this;
@@ -679,6 +688,9 @@ float ofPixels_<PixelType>::bicubicInterpolate (const float *patch, float x,floa
 //----------------------------------------------------------------------
 template<typename PixelType>
 bool ofPixels_<PixelType>::resizeTo(ofPixels_<PixelType>& dst, ofInterpolationMethod interpMethod){
+	if(&dst == this){
+		return true;
+	}
 
 	if (!(isAllocated()) || !(dst.isAllocated()) || getBytesPerPixel() != dst.getBytesPerPixel()) return false;
 
