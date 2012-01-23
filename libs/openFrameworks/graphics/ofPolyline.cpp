@@ -247,7 +247,7 @@ void ofPolyline::arc( const ofPoint & center, float radiusX, float radiusY, floa
 		angle=-(PI*2.0*begin);
 		sinus = sin(angle);
 		cosinus = cos(angle);
-		points.push_back(ofPoint(radiusX*sinus+center.x,radiusY*cosinus+center.y));
+		points.push_back(ofPoint(radiusX*cosinus+center.x,radiusY*sinus+center.y));
 	}else{
 		for(int i=0;i<(int)circlePoints.size();i++){
 			points.push_back(ofPoint(radiusX*circlePoints[i].x+center.x,radiusY*circlePoints[i].y+center.y,center.z));
