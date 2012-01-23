@@ -237,18 +237,23 @@ void ofPolyline::arc( const ofPoint & center, float radiusX, float radiusY, floa
 
 	if(size<1){
 		const int segments = curveResolution*size;
-		float angle,sinus,cosinus;
+		float angle = 0;
+        float sinus = 0;
+        float cosinus = 0;
 		float segment_size = PI*2.0*size/(float)segments;
 		angle=-(PI*2.0*begin);
 		for( int i=0; i<segments; i++){
-			points.push_back(ofPoint(radiusX*circlePoints[i].x+center.x,radiusY*circlePoints[i].y+center.y));
+			points.push_back(ofPoint(radiusX*circlePoints[i].x+center.x,
+                                     radiusY*circlePoints[i].y+center.y));
 			angle-=segment_size ;
 		}
-		angle=-(PI*2.0*begin);
-		sinus = sin(angle);
+        
+        angle = PI*2.0*angleEnd/360.0f;
+        sinus = sin(angle);
 		cosinus = cos(angle);
 		points.push_back(ofPoint(radiusX*cosinus+center.x,radiusY*sinus+center.y));
-	}else{
+        
+        }else{
 		for(int i=0;i<(int)circlePoints.size();i++){
 			points.push_back(ofPoint(radiusX*circlePoints[i].x+center.x,radiusY*circlePoints[i].y+center.y,center.z));
 		}
