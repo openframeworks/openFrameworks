@@ -749,7 +749,7 @@ std::istream& operator>>(std::istream& is, ofMesh& data){
 			continue;
 		}
 
-		if(state==VertexDef && (line.find("property float r")==0 || line.find("property float g")==0 || line.find("property float b") || line.find("property float a")==0)){
+		if(state==VertexDef && (line.find("property float r")==0 || line.find("property float g")==0 || line.find("property float b")==0 || line.find("property float a")==0)){
 			colorCompsFound++;
 			data.getColors().resize(data.getVertices().size());
 			continue;
