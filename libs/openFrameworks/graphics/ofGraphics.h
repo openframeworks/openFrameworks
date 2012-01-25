@@ -212,6 +212,10 @@ void ofBox(float x, float y, float size);
 void ofBox(const ofPoint& position, float size);
 void ofBox(float size);
 
+void ofCone(float x, float y, float z, float radius, float height);
+void ofCone(float x, float y, float radius, float height);
+void ofCone(const ofPoint& position, float radius, float height);
+void ofCone(float radius, float height);
 
 // bitmapped type
 void ofSetDrawBitmapMode(ofDrawBitmapMode mode);
