@@ -586,3 +586,308 @@ void ofMesh::draw(ofPolyRenderMode renderType){
 	ofGetCurrentRenderer()->draw(*this,renderType);
 }
 
+
+//--------------------------------------------------------------
+std::ostream& operator<<(std::ostream& os, ofMesh& data) {
+	os << "ply" << endl;
+	os << "format ascii 1.0" << endl;
+
+	if(data.getNumVertices()){
+		os << "element vertex " << data.getNumVertices() << endl;
+		os << "property float x" << endl;
+		os << "property float y" << endl;
+		os << "property float z" << endl;
+		if(data.getNumColors()){
+			os << "property float r" << endl;
+			os << "property float g" << endl;
+			os << "property float b" << endl;
+		}
+		if(data.getNumTexCoords()){
+			os << "property float u" << endl;
+			os << "property float v" << endl;
+		}
+	}
+
+	if(data.getNumNormals()){
+		os << "element normal " << data.getNumNormals() << endl;
+		os << "property float x" << endl;
+		os << "property float y" << endl;
+		os << "property float z" << endl;
+	}
+
+	if(data.getNumIndices()){
+		os << "element face " << data.getNumIndices()/3 << endl;
+		os << "property list uchar int vertex_index " << endl;
+	}
+
+	os << "end_header" << endl;
+
+	for(int i=0;i<data.getNumVertices(); i++){
+		os << data.getVertex(i).x << " " << data.getVertex(i).y << " " << data.getVertex(i).z << " ";
+		if(data.getNumColors()){
+			os << data.getColor(i).r << " " << data.getColor(i).g << " " << data.getColor(i).b << " " << " " << data.getColor(i).a;
+		}
+		if(data.getNumTexCoords()){
+			os << data.getTexCoord(i).x << " " << data.getTexCoord(i).y;
+		}
+		os  << endl;
+	}
+
+	for(int i=0;i<data.getNumIndices(); i+=3){
+		os << 3 << " " << data.getIndex(i) << " " << data.getIndex(i+1) << " " << data.getIndex(i+2) << endl;
+	}
+
+	return os;
+	//TODO: update when ofMesh/primitives has been worked out
+	/*os << "Vertices" << std::endl << "--------------------" << std::endl;
+	for(int i = 0; i < data.getNumVertices(); ++i) {
+		os << data.getVertex(i) << std::endl;
+	}
+	os << std::endl << std::endl;
+
+	os << "Normals" << std::endl << "--------------------" << std::endl;
+	for(int i = 0; i < data.getNumNormals(); ++i) {
+		os << data.getNormal(i) << std::endl;
+	}
+	os << std::endl << std::endl;
+
+	os << "TexCoords" << std::endl << "--------------------" << std::endl;
+	for(int i = 0; i < data.getNumTexCoords(); ++i) {
+		os << data.getTexCoord(i) << std::endl;
+	}
+	os << std::endl << std::endl;
+
+	os << "Colors" << std::endl << "--------------------" << std::endl;
+	for(int i = 0; i < data.getNumVertices(); ++i) {
+		os << data.getVertex(i) << std::endl;
+	}
+	os << std::endl << std::endl;
+
+	return os;*/
+}
+
+
+std::istream& operator>>(std::istream& is, ofMesh& data){
+	string line;
+	string error;
+	ofMesh backup = data;
+	ofBuffer buffer(is);
+
+	int orderVertices=-1;
+	int orderIndices=-1;
+	int orderNormals=-1;
+
+	int vertexCoordsFound=0;
+	int colorCompsFound=0;
+	int texCoordsFound=0;
+	int normalsCoordsFound=0;
+
+	int currentVertex = 0;
+	int currentNormal = 0;
+	int currentFace = 0;
+
+	enum State{
+		Header,
+		VertexDef,
+		NormalDef,
+		FaceDef,
+		Vertices,
+		Normals,
+		Faces
+	};
+
+	data.clear();
+	State state = Header;
+
+	int lineNum = 0;
+
+	line = buffer.getFirstLine();
+	lineNum++;
+	if(line!="ply"){
+		error = "wrong format, expecting 'ply'";
+		goto clean;
+	}
+
+	line = buffer.getNextLine();
+	lineNum++;
+	if(line!="format ascii 1.0"){
+		error = "wrong format, expecting 'format ascii 1.0'";
+		goto clean;
+	}
+
+	while(!buffer.isLastLine()){
+		line = buffer.getNextLine();
+		lineNum++;
+		if(line.find("comment")==0){
+			continue;
+		}
+
+		if((state==Header || state==NormalDef || state==FaceDef) && line.find("element vertex")==0){
+			state = VertexDef;
+			orderVertices = MAX(orderIndices, orderNormals)+1;
+			cout << "num vertices" << line.substr(15) << endl;
+			data.getVertices().resize(ofToInt(line.substr(15)));
+			continue;
+		}
+
+		if((state==Header || state==VertexDef || state==FaceDef) && line.find("element normal")==0){
+			state = NormalDef;
+			orderNormals = MAX(orderIndices, orderVertices)+1;
+			data.getNormals().resize(ofToInt(line.substr(15)));
+			continue;
+		}
+
+		if((state==Header || state==NormalDef || state==VertexDef) && line.find("element face")==0){
+			state = FaceDef;
+			orderIndices = MAX(orderVertices, orderNormals)+1;
+			data.getIndices().resize(ofToInt(line.substr(13))*3);
+			continue;
+		}
+
+		if(state==VertexDef && (line.find("property")==0)){
+			vertexCoordsFound++;
+			continue;
+		}
+
+		if(state==VertexDef && (line.find("property")==0)){
+			colorCompsFound++;
+			data.getColors().resize(data.getVertices().size());
+			continue;
+		}
+
+		if(state==VertexDef && (line.find("property")==0)){
+			texCoordsFound++;
+			data.getTexCoords().resize(data.getVertices().size());
+			continue;
+		}
+
+		if(state==NormalDef && (line.find("property")==0)){
+			normalsCoordsFound++;
+			continue;
+		}
+
+		if(state==FaceDef && line.find("property list")!=0 && line!="end_header"){
+			error = "wrong face definition";
+			goto clean;
+		}
+
+		if(line=="end_header"){
+			if(data.hasColors() && colorCompsFound!=3 && colorCompsFound!=4){
+				error =  "data has color coordiantes but not correct number of components. Found " + ofToString(colorCompsFound) + " expecting 3 or 4";
+				goto clean;
+			}
+			if(data.hasNormals() && colorCompsFound!=3 && colorCompsFound!=4){
+				error = "data has color coordiantes but not correct number of components. Found " + ofToString(colorCompsFound) + " expecting 3 or 4";
+				goto clean;
+			}
+			if(!data.hasVertices()){
+				ofLogWarning() << "mesh without vertices";
+			}
+			if(orderVertices==-1) orderVertices=9999;
+			if(orderNormals==-1) orderNormals=9999;
+			if(orderIndices==-1) orderIndices=9999;
+
+			if(orderVertices<orderNormals && orderVertices<orderIndices){
+				state = Vertices;
+			}else if(orderNormals<orderVertices && orderNormals<orderIndices){
+				state = Normals;
+			}else if(orderIndices<orderVertices && orderIndices<orderNormals){
+				state = Faces;
+			}
+			continue;
+		}
+
+		if(state==Vertices){
+			stringstream sline;
+			sline.str(line);
+			ofVec3f v;
+			sline >> v.x;
+			sline >> v.y;
+			if(vertexCoordsFound>2) sline >> v.z;
+			data.getVertices()[currentVertex] = v;
+
+			if(colorCompsFound>0){
+				ofColor c;
+				sline >> c.r;
+				sline >> c.g;
+				sline >> c.b;
+				if(colorCompsFound>3) sline >> c.a;
+				data.getColors()[currentVertex] = c;
+			}
+
+			if(texCoordsFound>0){
+				ofVec2f uv;
+				sline >> uv.x;
+				sline >> uv.y;
+				data.getTexCoords()[currentVertex] = uv;
+			}
+			currentVertex++;
+			if(currentVertex==data.getNumVertices()){
+				if(orderNormals<orderIndices){
+					state = Normals;
+				}else{
+					state = Faces;
+				}
+			}
+			continue;
+		}
+
+		if(state==Normals){
+			stringstream sline;
+			sline.str(line);
+			ofVec3f v;
+			sline >> v.x;
+			sline >> v.y;
+			sline >> v.z;
+			data.getNormals()[currentNormal] = v;
+
+			currentNormal++;
+			if(currentNormal==data.getNumNormals()){
+				if(orderVertices<orderIndices){
+					state = Vertices;
+				}else{
+					state = Faces;
+				}
+			}
+			continue;
+		}
+
+		if(state==Faces){
+			stringstream sline;
+			sline.str(line);
+			int numV;
+			sline >> numV;
+			if(numV!=3){
+				error = "face not a triangle";
+				goto clean;
+			}
+			int i;
+			sline >> i;
+			data.getIndices()[currentFace*3] = i;
+			sline >> i;
+			data.getIndices()[currentFace*3+1] = i;
+			sline >> i;
+			data.getIndices()[currentFace*3+2] = i;
+
+			currentFace++;
+			if(currentFace==data.getNumIndices()/3){
+				if(orderVertices<orderNormals){
+					state = Vertices;
+				}else{
+					state = Normals;
+				}
+			}
+			continue;
+		}
+	}
+
+
+	return is;
+
+	clean:
+	ofLogError() << lineNum << ":" << error;
+	ofLogError() << "\"" << line << "\"";
+	data = backup;
+	return is;
+
+}
