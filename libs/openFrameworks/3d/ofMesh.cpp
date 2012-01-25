@@ -744,24 +744,24 @@ std::istream& operator>>(std::istream& is, ofMesh& data){
 			continue;
 		}
 
-		if(state==VertexDef && (line.find("property")==0)){
+		if(state==VertexDef && (line.find("property float x")==0 || line.find("property float y")==0 || line.find("property float z")==0)){
 			vertexCoordsFound++;
 			continue;
 		}
 
-		if(state==VertexDef && (line.find("property")==0)){
+		if(state==VertexDef && (line.find("property float r")==0 || line.find("property float g")==0 || line.find("property float b") || line.find("property float a")==0)){
 			colorCompsFound++;
 			data.getColors().resize(data.getVertices().size());
 			continue;
 		}
 
-		if(state==VertexDef && (line.find("property")==0)){
+		if(state==VertexDef && (line.find("property float u")==0 || line.find("property float v")==0)){
 			texCoordsFound++;
 			data.getTexCoords().resize(data.getVertices().size());
 			continue;
 		}
 
-		if(state==NormalDef && (line.find("property")==0)){
+		if(state==NormalDef && (line.find("property float x")==0 || line.find("property float y")==0 || line.find("property float z")==0)){
 			normalsCoordsFound++;
 			continue;
 		}
