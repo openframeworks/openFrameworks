@@ -958,6 +958,40 @@ void ofBox(float size){
 	ofPopMatrix();
 }
 
+//----------------------------------------
+void ofCone(float x, float y, float z, float radius, float height) {
+	ofCone(ofPoint(x, y, z), radius, height);
+}
+
+//----------------------------------------
+void ofCone(float x, float y, float radius, float height) {
+	ofCone(x, y, 0, radius, height);
+}
+
+//----------------------------------------
+void ofCone(const ofPoint& position, float radius, float height) {
+	ofPushMatrix();
+	ofTranslate(position);
+	ofCone(radius, height);
+	ofPopMatrix();
+}
+
+//----------------------------------------
+void ofCone(float radius, float height) {
+	// TODO: add an implementation using ofMesh
+#ifndef TARGET_OPENGLES
+	// this needs to be swapped out with non-glut code
+	// see ofSphere above
+	
+	if(ofGetStyle().bFill) {
+		glutSolidCone(radius, height, currentStyle.circleResolution, 1);
+	} else {
+		glutWireCone(radius, height, currentStyle.circleResolution, 1);
+	}
+#endif
+}
+
+
 // end 3d primitives
 //--------------------------------------------------
 
