@@ -29,6 +29,7 @@ public:
 	
 	ofTexture & getTextureReference();
 	ofTexture & getTextureReference(int attachmentPoint);
+	ofTexture & getDepthTexture();
 	void setUseTexture(bool bUseTex){ /*irrelevant*/ };
 	
 	void begin(bool setupScreen=true);
@@ -89,6 +90,7 @@ private:
 
 	vector<GLuint>		colorBuffers;	// only used if using MSAA
 	vector<ofTexture>	textures;
+	ofTexture			depthBufferTex;
 
 	static int			_maxColorAttachments;
 	static int			_maxDrawBuffers;

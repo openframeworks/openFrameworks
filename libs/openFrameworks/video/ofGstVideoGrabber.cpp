@@ -291,6 +291,9 @@ static void add_video_format (ofGstDevice &webcam_device,
 			if(new_framerate > curr_framerate) {
 				ofLog(OF_LOG_VERBOSE,"higher framerate replacing existing format\n");
 				webcam_device.video_formats[i] = video_format;
+			}else if(webcam_device.video_formats[i].mimetype != "video/x-raw-yuv" && webcam_device.video_formats[i].mimetype != "video/x-raw-rgb" && new_framerate == curr_framerate){
+				ofLog(OF_LOG_VERBOSE,"non compressed format with same framerate, replacing existing format\n");
+				webcam_device.video_formats[i] = video_format;
 			}else{
 				ofLog(OF_LOG_VERBOSE,"already added, skipping\n");
 			}
@@ -394,7 +397,7 @@ static void get_device_data (ofGstDevice &webcam_device, int desired_framerate)
 
 	// TODO: try to lower seconds,
     // Start the pipeline and wait for max. 10 seconds for it to start up
-	gst_element_set_state (pipeline, GST_STATE_PLAYING);
+	gst_element_set_state (pipeline, GST_STATE_READY);
 	GstStateChangeReturn ret = gst_element_get_state (pipeline, NULL, NULL, 10 * GST_SECOND);
 
 	// Check if any error messages were posted on the bus
