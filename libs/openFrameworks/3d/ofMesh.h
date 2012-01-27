@@ -116,6 +116,7 @@ public:
 	bool hasIndices();
 
 	friend std::ostream& operator<<(std::ostream& os, ofMesh& data);
+	friend std::istream& operator>>(std::istream& is, ofMesh& data);
 	
 	void drawVertices();
 	void drawWireframe();
@@ -138,35 +139,3 @@ private:
 	
 //	ofMaterial *mat;
 };
-
-
-inline std::ostream& operator<<(std::ostream& os, ofMesh data) {
-
-	//TODO: update when ofMesh/primitives has been worked out
-	os << "Vertices" << std::endl << "--------------------" << std::endl;
-	for(int i = 0; i < data.getNumVertices(); ++i) {
-		os << data.getVertex(i) << std::endl;
-	}
-	os << std::endl << std::endl;
-	
-	os << "Normals" << std::endl << "--------------------" << std::endl;
-	for(int i = 0; i < data.getNumNormals(); ++i) {
-		os << data.getNormal(i) << std::endl;
-	}
-	os << std::endl << std::endl;
-		
-	os << "TexCoords" << std::endl << "--------------------" << std::endl;
-	for(int i = 0; i < data.getNumTexCoords(); ++i) {
-		os << data.getTexCoord(i) << std::endl;
-	}
-	os << std::endl << std::endl;
-		
-	os << "Colors" << std::endl << "--------------------" << std::endl;
-	for(int i = 0; i < data.getNumVertices(); ++i) {
-		os << data.getVertex(i) << std::endl;
-	}
-	os << std::endl << std::endl;
-
-	return os;
-}
-
