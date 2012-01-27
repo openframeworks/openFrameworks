@@ -517,6 +517,94 @@ void ofGLRenderer::setCircleResolution(int res){
 	}
 }
 
+//----------------------------------------------------------
+void ofGLRenderer::setSphereResolution(int res) {
+	int n = res * 2;
+	float ndiv2=(float)n/2;
+	int stripVerts = (ndiv2*((n+1)*2));
+	
+	if((int)sphereVerts.size() != stripVerts ) {
+		sphereVerts.clear();
+		sphereVerts.resize( (ndiv2*((n+1)*2)) );
+	} else {
+		return;
+	}
+	
+	/*
+	 Original code by Paul Bourke
+	 A more efficient contribution by Federico Dosil (below)
+	 Draw a point for zero radius spheres
+	 Use CCW facet ordering
+	 http://paulbourke.net/texture_colour/texturemap/
+	 */
+	
+	float theta2 = TWO_PI;
+	float phi1 = -HALF_PI;
+	float phi2 = HALF_PI;
+	float radius = 1.f; // normalize the verts //
+	
+	int i, j;
+	float jdivn,j1divn,idivn,dosdivn,unodivn=1/(float)n,t1,t2,t3,cost1,cost2,cte1,cte3;
+	cte3 = (theta2)/n;
+	cte1 = (phi2-phi1)/ndiv2;
+	dosdivn = 2*unodivn;
+	ofVec3f e,p,e2,p2;
+	
+	// Handle special cases //
+	if (n < 0){
+		n = -n;
+		ndiv2 = -ndiv2;
+	}
+	if (n < 4) {
+		ofLogWarning() << "ofGLRenderer::setSphereResolution(): sphere resolution is too low!";
+	}
+	
+	t2=phi1;
+	cost2=cos(phi1);
+	j1divn=0;
+	
+	int cindex = 0; // current index //
+	
+	for (j=0;j<ndiv2;j++) {
+		t1 = t2;
+		t2 += cte1;
+		t3 = -cte3;
+		cost1 = cost2;
+		cost2 = cos(t2);
+		e.y = sin(t1);
+		e2.y = sin(t2);
+		p.y = radius * e.y;
+		p2.y = radius * e2.y;
+		
+		idivn=0;
+		jdivn=j1divn;
+		j1divn+=dosdivn;
+		for (i=0;i<=n;i++) {
+			t3 += cte3;
+			e.x = cost1 * cos(t3);
+			e.z = cost1 * sin(t3);
+			p.x = radius * e.x;
+			p.z = radius * e.z;
+			
+			cindex = (j * (n+1) + i) * 2;
+			//tcoords[cindex].set(idivn,jdivn);
+			sphereVerts[cindex].set(p.x,p.y,p.z);
+			//norms[cindex].set(e.x,e.y,e.z);
+			
+			e2.x = cost2 * cos(t3);
+			e2.z = cost2 * sin(t3);
+			p2.x = radius * e2.x;
+			p2.z = radius * e2.z;
+			cindex = (j * (n+1) + i) * 2 + 1;
+			//tcoords[cindex].set(idivn,j1divn);
+			sphereVerts[cindex].set(p2.x,p2.y,p2.z);
+			//norms[cindex].set(e2.x,e2.y,e2.z);
+			
+			idivn += unodivn;
+		}
+	}
+}
+
 //our openGL wrappers
 //----------------------------------------------------------
 void ofGLRenderer::pushMatrix(){
@@ -874,6 +962,48 @@ void ofGLRenderer::drawCircle(float x, float y, float z,  float radius){
 	// use smoothness, if requested:
 	if (bSmoothHinted && bFilled == OF_OUTLINE) endSmoothing();
 
+}
+
+//----------------------------------------------------------
+void ofGLRenderer::drawSphere(float x, float y, float z, float radius) {
+	int n = ofGetStyle().sphereResolution * 2;
+	float ndiv2=(float)n/2;
+	int stripVerts = (ndiv2*((n+1)*2));
+	
+#ifndef TARGET_OPENGLES
+	glPushAttrib(GL_POLYGON_BIT); 
+	glPolygonMode(GL_FRONT_AND_BACK, bFilled == true ? ofGetGLPolyMode(OF_MESH_FILL) : ofGetGLPolyMode(OF_MESH_WIREFRAME));
+#endif
+	
+	glPushMatrix();
+	glScalef(radius, radius, radius);
+	
+	glEnableClientState(GL_VERTEX_ARRAY);
+	glVertexPointer(3, GL_FLOAT, 0, &sphereVerts[0]);
+	glEnableClientState(GL_NORMAL_ARRAY);
+	glNormalPointer(GL_FLOAT, 0, &sphereVerts[0]);
+	//glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+	//glTexCoordPointer(2, GL_FLOAT, 0, &tcoords[0]);
+	int i, j;
+	for (j=0;j<ndiv2;j++) {
+	#ifdef TARGET_OPENGLES
+		glDrawArrays(GL_TRIANGLE_STRIP, j * ((n+1)*2), (n+1)*2);
+	#else
+		if(bFilled) {
+			glDrawArrays(GL_TRIANGLE_STRIP, j * ((n+1)*2), (n+1)*2);
+		} else {
+			glDrawArrays(GL_QUAD_STRIP, j * ((n+1)*2), (n+1)*2);
+		}
+	#endif
+	}
+	glDisableClientState( GL_VERTEX_ARRAY );
+	glDisableClientState( GL_NORMAL_ARRAY );
+	
+	glPopMatrix();
+	//glDisableClientState( GL_TEXTURE_COORD_ARRAY );
+#ifndef TARGET_OPENGLES
+	glPopAttrib();
+#endif
 }
 
 //----------------------------------------------------------
