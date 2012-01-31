@@ -241,7 +241,7 @@ void ofPolyline::curveTo( const ofPoint & to, int curveResolution ){
 }
 
 //----------------------------------------------------------
-void ofPolyline::arc(const ofPoint & center, //float centerX, float centerY, float centerZ, 
+void ofPolyline::arc(const ofPoint & center,
                      float radiusX, float radiusY, 
                      float angleBegin, float angleEnd, 
                      bool clockwise, 
