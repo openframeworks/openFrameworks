@@ -211,6 +211,15 @@ void ofPath::quadBezierTo(float cx1, float cy1, float cz1, float cx2, float cy2,
 }
 
 //----------------------------------------------------------
+void ofPath::arc(const ofPoint & centre, float radiusX, float radiusY, float angleBegin, float angleEnd, bool clockwise){
+    if(clockwise) {
+        arc(centre,radiusX,radiusY,angleBegin,angleEnd);
+    } else {
+        arcNegative(centre,radiusX,radiusY,angleBegin,angleEnd);
+    }
+}
+
+//----------------------------------------------------------
 void ofPath::arc(const ofPoint & centre, float radiusX, float radiusY, float angleBegin, float angleEnd){
 	if(mode==PATHS){
 		lastPath().addCommand(ofSubPath::Command(ofSubPath::Command::arc,centre,radiusX,radiusY,angleBegin,angleEnd));
@@ -229,6 +238,27 @@ void ofPath::arc(float x, float y, float radiusX, float radiusY, float angleBegi
 //----------------------------------------------------------
 void ofPath::arc(float x, float y, float z, float radiusX, float radiusY, float angleBegin, float angleEnd){
 	arc(ofPoint(x,y,z),radiusX,radiusY,angleBegin,angleEnd);
+}
+
+//----------------------------------------------------------
+void ofPath::arcNegative(const ofPoint & centre, float radiusX, float radiusY, float angleBegin, float angleEnd){
+	if(mode==PATHS){
+		lastPath().addCommand(ofSubPath::Command(ofSubPath::Command::arcNegative,centre,radiusX,radiusY,angleBegin,angleEnd));
+		hasChanged = true;
+	}else{
+		lastPolyline().arcNegative(centre,radiusX,radiusY,angleBegin,angleEnd,arcResolution);
+		bNeedsTessellation = true;
+	}
+}
+
+//----------------------------------------------------------
+void ofPath::arcNegative(float x, float y, float radiusX, float radiusY, float angleBegin, float angleEnd){
+	arcNegative(ofPoint(x,y,0),radiusX,radiusY,angleBegin,angleEnd);
+}
+
+//----------------------------------------------------------
+void ofPath::arcNegative(float x, float y, float z, float radiusX, float radiusY, float angleBegin, float angleEnd){
+	arcNegative(ofPoint(x,y,z),radiusX,radiusY,angleBegin,angleEnd);
 }
 
 //----------------------------------------------------------
@@ -336,7 +366,6 @@ void ofPath::generatePolylinesFromPaths(){
 
 			for(int i=0; i<(int)commands.size();i++){
 				switch(commands[i].type){
-
 				case ofSubPath::Command::lineTo:
 					polylines[j].addVertex(commands[i].to);
 					break;
@@ -352,6 +381,9 @@ void ofPath::generatePolylinesFromPaths(){
 				case ofSubPath::Command::arc:
 					polylines[j].arc(commands[i].to,commands[i].radiusX,commands[i].radiusY,commands[i].angleBegin,commands[i].angleEnd, arcResolution);
 					break;
+                case ofSubPath::Command::arcNegative:
+                    polylines[j].arcNegative(commands[i].to,commands[i].radiusX,commands[i].radiusY,commands[i].angleBegin,commands[i].angleEnd, arcResolution);
+                    break;
 				}
 			}
 			polylines[j].setClosed(paths[j].isClosed());
@@ -560,7 +592,7 @@ void ofPath::rotate(float az, const ofVec3f& axis ){
 					paths[i].getCommands()[j].cp1.rotate(az,axis);
 					paths[i].getCommands()[j].cp2.rotate(az,axis);
 				}
-				if(paths[i].getCommands()[j].type==ofSubPath::Command::arc){
+				if(paths[i].getCommands()[j].type==ofSubPath::Command::arc || paths[i].getCommands()[j].type==ofSubPath::Command::arcNegative){
 					paths[i].getCommands()[j].angleBegin += az;
 					paths[i].getCommands()[j].angleEnd += az;
 				}
@@ -591,7 +623,7 @@ void ofPath::scale(float x, float y){
 					paths[i].getCommands()[j].cp2.x*=x;
 					paths[i].getCommands()[j].cp2.y*=y;
 				}
-				if(paths[i].getCommands()[j].type==ofSubPath::Command::arc){
+				if(paths[i].getCommands()[j].type==ofSubPath::Command::arc || paths[i].getCommands()[j].type==ofSubPath::Command::arcNegative){
 					paths[i].getCommands()[j].radiusX *= x;
 					paths[i].getCommands()[j].radiusY *= y;
 				}
