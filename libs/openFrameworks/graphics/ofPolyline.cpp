@@ -105,7 +105,7 @@ void ofPolyline::setCircleResolution(int res){
 		circlePoints.resize(res);
 
 		float angle = 0.0f;
-		float angleAdder = M_TWO_PI / (float)res;
+		const float angleAdder = M_TWO_PI / (float)res;
 		for (int i = 0; i < res; i++){
 			circlePoints[i].x = cos(angle);
 			circlePoints[i].y = sin(angle);
@@ -113,6 +113,21 @@ void ofPolyline::setCircleResolution(int res){
 			angle += angleAdder;
 		}
 	}
+}
+
+//----------------------------------------------------------
+// wraps any radian angle -FLT_MAX to +FLT_MAX into 0->2PI range.
+// TODO, make angle treatment consistent across all functions
+// should always be radians?  or should this take degrees?
+// used internally, so perhaps not as important
+float ofPolyline::wrapAngle(float angleRadians) {
+    if(angleRadians < 0) {
+        return -1.0f * (angleRadians + M_TWO_PI) * floor(angleRadians/M_TWO_PI);
+    } else if(angleRadians > M_TWO_PI) {
+        return         (angleRadians - M_TWO_PI) * floor(angleRadians/M_TWO_PI);
+    } else {
+        return angleRadians;
+    }
 }
 
 //----------------------------------------------------------
@@ -203,7 +218,7 @@ void ofPolyline::curveTo( const ofPoint & to, int curveResolution ){
 			t 	=  (float)i / (float)(curveResolution-1);
 			t2 	= t * t;
 			t3 	= t2 * t;
-
+            
 			x = 0.5f * ( ( 2.0f * x1 ) +
 			( -x0 + x2 ) * t +
 			( 2.0f * x0 - 5.0f * x1 + 4 * x2 - x3 ) * t2 +
@@ -226,41 +241,108 @@ void ofPolyline::curveTo( const ofPoint & to, int curveResolution ){
 }
 
 //----------------------------------------------------------
-void ofPolyline::arc( const ofPoint & center, float radiusX, float radiusY, float angleBegin, float angleEnd, int curveResolution){
-	if(curveResolution==1) curveResolution=2;
-	curveVertices.clear();
-	setCircleResolution(curveResolution);
-	points.reserve(points.size()+curveResolution);
+void ofPolyline::arc(const ofPoint & center, //float centerX, float centerY, float centerZ, 
+                     float radiusX, float radiusY, 
+                     float angleBegin, float angleEnd, 
+                     bool clockwise, 
+                     int curveResolution)
+{
+    
+    if(curveResolution<=1) curveResolution=2;
+    setCircleResolution(curveResolution);
+    points.reserve(points.size()+curveResolution);
 
-	float size = (angleEnd - angleBegin)/360.0f;
-	float begin = angleBegin/360.0f;
+    const float epsilon = 0.0001f;
+    
+    const int nCirclePoints = (int)circlePoints.size();
+    float segmentArcSize  = M_TWO_PI / (float)nCirclePoints;
+    
+    // convert angles to radians and wrap them into the range 0-M_TWO_PI and 
+    float angleBeginRad = wrapAngle(ofDegToRad(angleBegin));
+    float angleEndRad =   wrapAngle(ofDegToRad(angleEnd));
 
-	if(size<1){
-		const int segments = curveResolution*size;
-		float angle = 0;
-        float sinus = 0;
-        float cosinus = 0;
-		float segment_size = PI*2.0*size/(float)segments;
-		angle=-(PI*2.0*begin);
-		for( int i=0; i<segments; i++){
-			points.push_back(ofPoint(radiusX*circlePoints[i].x+center.x,
-                                     radiusY*circlePoints[i].y+center.y));
-			angle-=segment_size ;
-		}
+    while(angleBeginRad >= angleEndRad) angleEndRad += M_TWO_PI;
+
+    // determine the directional angle delta
+    float d = clockwise ? angleEndRad - angleBeginRad : angleBeginRad - angleEndRad;
+    // find the shortest angle delta, clockwise delta direction yeilds POSITIVE values
+    float deltaAngle = atan2(sin(d),cos(d));
+    
+    // establish the remaining angle that we have to work through
+    float remainingAngle = deltaAngle;
+    
+    // if the delta angle is in the CCW direction OR the start and stop angles are 
+    // effectively the same adjust the remaining angle to be a be a full rotation
+    if(deltaAngle < 0 || abs(deltaAngle) < epsilon) remainingAngle += M_TWO_PI;
+    
+    ofPoint radii(radiusX,radiusY);
+    ofPoint point;
+    
+    int currentLUTIndex = 0;
+    bool isFirstPoint = true; // special case for the first point
+    
+    while(remainingAngle > 0) {
+        if(isFirstPoint) {
+            // TODO: should this be the exact point on the circle or
+            // should it be an intersecting point on the line that connects two
+            // surrounding LUT points?
+            //
+            // get the EXACT first point requested (for points that 
+            // don't fall precisely on a LUT entry)
+            point = ofPoint(cos(angleBeginRad),sin(angleBeginRad));
+            // set up the get any in between points from the LUT
+            float ratio = angleBeginRad / M_TWO_PI * (float)nCirclePoints;
+            currentLUTIndex = clockwise ? (int)ceil(ratio) : (int)floor(ratio);
+            float lutAngleAtIndex = currentLUTIndex * segmentArcSize;
+            // the angle between the beginning angle and the next angle in the LUT table
+            float d = clockwise ? (lutAngleAtIndex - angleBeginRad) : (angleBeginRad - lutAngleAtIndex);
+            float firstPointDelta = atan2(sin(d),cos(d)); // negative is in the clockwise direction
+            
+            // if the are "equal", get the next one CCW
+            if(abs(firstPointDelta) < epsilon) {
+                currentLUTIndex = clockwise ? (currentLUTIndex + 1) : (currentLUTIndex - 1);
+                firstPointDelta = segmentArcSize; // we start at the next lut point
+            }
+            
+            // start counting from the offset
+            remainingAngle -= firstPointDelta;
+            isFirstPoint = false;
+        } else {
+            point = ofPoint(circlePoints[currentLUTIndex].x,circlePoints[currentLUTIndex].y);
+            if(clockwise) {
+                currentLUTIndex++; // go to the next LUT point
+                remainingAngle -= segmentArcSize; // account for next point 
+                // if the angle overshoots, then the while loop will fail next time
+            } else {
+                currentLUTIndex--; // go to the next LUT point
+                remainingAngle -= segmentArcSize; // account for next point 
+                // if the angle overshoots, then the while loop will fail next time
+            }
+        }
         
-        angle = PI*2.0*angleEnd/360.0f;
-        sinus = sin(angle);
-		cosinus = cos(angle);
-		points.push_back(ofPoint(radiusX*cosinus+center.x,radiusY*sinus+center.y));
+        // keep the current lut index in range
+        if(clockwise) {
+            currentLUTIndex = currentLUTIndex % nCirclePoints;
+        } else {
+            if(currentLUTIndex < 0) currentLUTIndex = nCirclePoints + currentLUTIndex;
+        }
         
-        }else{
-		for(int i=0;i<(int)circlePoints.size();i++){
-			points.push_back(ofPoint(radiusX*circlePoints[i].x+center.x,radiusY*circlePoints[i].y+center.y,center.z));
-		}
-		points.push_back(ofPoint(radiusX*circlePoints[0].x+center.x,radiusY*circlePoints[0].y+center.y,center.z));
-	}
+        
+        // add the point to the poly line
+        point = point * radii + center;
+        points.push_back(point);
+        
+        // if the next LUT point moves us past the end angle then 
+        // add a a point a the exact end angle and call it finished 
+        if(remainingAngle < epsilon) {
+            point = ofPoint(cos(angleEndRad),sin(angleEndRad));
+            point = point * radii + center;
+            points.push_back(point);
+            remainingAngle = 0; // call it finished, the next while loop test will fail
+        }
+    }    
+    
 }
-
 
 //----------------------------------------------------------
 float ofPolyline::getPerimeter() const {
