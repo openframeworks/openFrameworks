@@ -1135,6 +1135,9 @@ void ofGLRenderer::drawString(string textString, float x, float y, float z, ofDr
 			view[0] = 0; view[1] = 0; //we're already drawing within viewport
 			gluProject(x, y, z, modelview, projection, view, &dScreenX, &dScreenY, &dScreenZ);
 
+			if (dScreenZ >= 1)
+				return;
+			
 			rViewport = ofGetCurrentViewport();
 
 			hasProjection = true;
