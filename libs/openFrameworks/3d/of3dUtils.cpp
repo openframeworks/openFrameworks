@@ -100,7 +100,7 @@ void ofDrawGridPlane(float scale, float ticks, bool labels) {
 		ofPushStyle();
 		ofSetColor(255, 255, 255);
 		
-		float accuracy = ceil(-log(scale/ticks)/log(10));
+		float accuracy = ceil(-log(scale/ticks)/log(10.0f));
 		
 		ofSetDrawBitmapMode(OF_BITMAPMODE_MODEL_BILLBOARD);
 		for (float yz = -scale; yz<=scale; yz+=minor)
