@@ -725,7 +725,6 @@ std::istream& operator>>(std::istream& is, ofMesh& data){
 		if((state==Header || state==NormalDef || state==FaceDef) && line.find("element vertex")==0){
 			state = VertexDef;
 			orderVertices = MAX(orderIndices, orderNormals)+1;
-			cout << "num vertices" << line.substr(15) << endl;
 			data.getVertices().resize(ofToInt(line.substr(15)));
 			continue;
 		}
@@ -890,4 +889,15 @@ std::istream& operator>>(std::istream& is, ofMesh& data){
 	data = backup;
 	return is;
 
+}
+
+
+void ofMesh::load(string path){
+	ofFile meshFile(path);
+	meshFile >> *this;
+}
+
+void ofMesh::save(string path){
+	ofFile meshFile(path,ofFile::WriteOnly);
+	meshFile << *this;
 }
