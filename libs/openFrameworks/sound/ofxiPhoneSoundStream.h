@@ -19,6 +19,7 @@ class ofxiPhoneSoundStream : public ofBaseSoundStream{
 		void setOutput(ofBaseSoundOutput * soundOutput);
 		
 		/// currently, the number of buffers is always 1 on iOS and setting nBuffers has no effect
+		/// the max buffersize is 4096 
 		bool setup(int outChannels, int inChannels, int sampleRate, int bufferSize, int nBuffers);
 		bool setup(ofBaseApp * app, int outChannels, int inChannels, int sampleRate, int bufferSize, int nBuffers);
 		
