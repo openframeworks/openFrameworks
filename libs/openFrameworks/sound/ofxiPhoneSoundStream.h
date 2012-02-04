@@ -11,11 +11,14 @@ class ofxiPhoneSoundStream : public ofBaseSoundStream{
 		ofxiPhoneSoundStream();
 		~ofxiPhoneSoundStream();
 		
+		/// these are not implemented on iOS
 		void listDevices();
 		void setDeviceID(int deviceID);
 
 		void setInput(ofBaseSoundInput * soundInput);
 		void setOutput(ofBaseSoundOutput * soundOutput);
+		
+		/// currently, the number of buffers is always 1 on iOS and setting nBuffers has no effect
 		bool setup(int outChannels, int inChannels, int sampleRate, int bufferSize, int nBuffers);
 		bool setup(ofBaseApp * app, int outChannels, int inChannels, int sampleRate, int bufferSize, int nBuffers);
 		
@@ -23,7 +26,8 @@ class ofxiPhoneSoundStream : public ofBaseSoundStream{
 		void stop();
 		void close();
 		
-		long unsigned long getTickCount();		 // always returns 0. not implemented on iphone
+		// not implemented on iOS, always returns 0
+		long unsigned long getTickCount();
 	
 		int getNumInputChannels();
 		int getNumOutputChannels();
