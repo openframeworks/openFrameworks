@@ -30,7 +30,7 @@ static ofBaseSoundInput *			soundInputPtr	= NULL;
 static ofBaseSoundOutput *			soundOutputPtr	= NULL;
 
 // intermediate buffer for sample scaling
-#define MAX_BUFFER_SIZE 8192
+#define MAX_BUFFER_SIZE 4096
 float scaleBuffer[MAX_BUFFER_SIZE];
 
 #define kOutputBus	0
