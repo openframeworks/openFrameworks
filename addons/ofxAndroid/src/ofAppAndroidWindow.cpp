@@ -37,11 +37,11 @@ static bool bSetupScreen = true;
 static float frameRate = 60;
 
 static int frames = 0;
-static int onesec = 0;
-static int previousFrameMillis = 0;
+static unsigned long onesec = 0;
+static unsigned long previousFrameMicros = 0;
 static int nFrameCount = 0;
 static float targetRate = 60;
-static int oneFrameTime = 0;
+static unsigned long oneFrameTime = 0;
 static bool bFrameRateSet = false;
 
 static double			lastFrameTime;
@@ -51,6 +51,11 @@ static JavaVM *ofJavaVM=0;
 static ofxAndroidApp * androidApp;
 
 static ofOrientation orientation = OF_ORIENTATION_DEFAULT;
+
+static queue<ofTouchEventArgs> touchEventArgsQueue;
+static ofMutex mutex;
+static bool threadedTouchEvents = false;
+
 //static ofAppAndroidWindow window;
 
 JavaVM * ofGetJavaVMPtr(){
@@ -72,7 +77,23 @@ JNIEnv * ofGetJNIEnv(){
 }
 
 jclass ofGetJavaOFAndroid(){
-	return ofGetJNIEnv()->FindClass("cc.openframeworks.OFAndroid");
+	return ofGetJNIEnv()->FindClass("cc/openframeworks/OFAndroid");
+}
+
+jobject ofGetOFActivityObject(){
+	JNIEnv * env = ofGetJNIEnv();
+	if(!env) return NULL;
+
+	jclass OFAndroid = ofGetJavaOFAndroid();
+	if(!OFAndroid) return NULL;
+
+	jfieldID ofActivityID = env->GetStaticFieldID(OFAndroid,"ofActivity","Landroid/app/Activity;");
+	if(!ofActivityID){
+		ofLogError() << "Failed to get field ID for ofActivity";
+		return NULL;
+	}
+
+	return env->GetStaticObjectField(OFAndroid,ofActivityID);
 }
 
 /*void ofRunApp( ofxAndroidApp * app){
@@ -141,7 +162,7 @@ void ofAppAndroidWindow::disableSetupScreen(){
 void ofAppAndroidWindow::setOrientation(ofOrientation _orientation){
 	//if(orientation==_orientation) return;
 	orientation = _orientation;
-	jclass javaClass = ofGetJNIEnv()->FindClass("cc.openframeworks.OFAndroid");
+	jclass javaClass = ofGetJNIEnv()->FindClass("cc/openframeworks/OFAndroid");
 
 	if(javaClass==0){
 		ofLog(OF_LOG_ERROR,"setOrientation: cannot find OFAndroid java class");
@@ -154,9 +175,9 @@ void ofAppAndroidWindow::setOrientation(ofOrientation _orientation){
 		return;
 	}
 	if(orientation==OF_ORIENTATION_UNKNOWN)
-		ofGetJNIEnv()->CallStaticObjectMethod(javaClass,setScreenOrientation,-1);
+		ofGetJNIEnv()->CallStaticVoidMethod(javaClass,setScreenOrientation,-1);
 	else
-		ofGetJNIEnv()->CallStaticObjectMethod(javaClass,setScreenOrientation,ofOrientationToDegrees(orientation));
+		ofGetJNIEnv()->CallStaticVoidMethod(javaClass,setScreenOrientation,ofOrientationToDegrees(orientation));
 }
 
 ofOrientation ofAppAndroidWindow::getOrientation(){
@@ -164,7 +185,7 @@ ofOrientation ofAppAndroidWindow::getOrientation(){
 }
 
 void ofAppAndroidWindow::setFullscreen(bool fullscreen){
-	jclass javaClass = ofGetJNIEnv()->FindClass("cc.openframeworks.OFAndroid");
+	jclass javaClass = ofGetJNIEnv()->FindClass("cc/openframeworks/OFAndroid");
 
 	if(javaClass==0){
 		ofLog(OF_LOG_ERROR,"setFullscreen: cannot find OFAndroid java class");
@@ -176,7 +197,7 @@ void ofAppAndroidWindow::setFullscreen(bool fullscreen){
 		ofLog(OF_LOG_ERROR,"cannot find OFAndroid setFullscreen method");
 		return;
 	}
-	ofGetJNIEnv()->CallStaticObjectMethod(javaClass,setFullscreen,fullscreen);
+	ofGetJNIEnv()->CallStaticVoidMethod(javaClass,setFullscreen,fullscreen);
 }
 
 void ofAppAndroidWindow::toggleFullscreen(){
@@ -185,8 +206,12 @@ void ofAppAndroidWindow::toggleFullscreen(){
 
 void ofAppAndroidWindow::setFrameRate(float _targetRate){
 	targetRate = _targetRate;
-	oneFrameTime = 1000.f/targetRate;
+	oneFrameTime = 1000000.f/targetRate;
 	bFrameRateSet = true;
+}
+
+void ofAppAndroidWindow::setThreadedEvents(bool threadedEvents){
+	threadedTouchEvents = threadedEvents;
 }
 
 void reloadTextures(){
@@ -255,12 +280,12 @@ Java_cc_openframeworks_OFAndroid_onPause( JNIEnv*  env, jobject  thiz ){
 void
 Java_cc_openframeworks_OFAndroid_onResume( JNIEnv*  env, jobject  thiz ){
 
-	reloadTextures();
+	/*reloadTextures();
 	if(androidApp){
 		androidApp->resume();
 		androidApp->reloadTextures();
 	}
-	paused = false;
+	paused = false;*/
 	ofxAndroidSoundStreamResume();
 }
 
@@ -327,10 +352,36 @@ Java_cc_openframeworks_OFAndroid_exit( JNIEnv*  env, jclass  thiz )
 void
 Java_cc_openframeworks_OFAndroid_render( JNIEnv*  env, jclass  thiz )
 {
-	int beginFrameMillis = ofGetElapsedTimeMillis();
+	unsigned long beginFrameMicros = ofGetElapsedTimeMicros();
 
 	if(paused) return;
-	//LOGI("update");
+
+	lastFrameTime = double(beginFrameMicros - previousFrameMicros)/1000000.;
+
+	previousFrameMicros = beginFrameMicros;
+
+	if(!threadedTouchEvents){
+		mutex.lock();
+		while(!touchEventArgsQueue.empty()){
+			switch(touchEventArgsQueue.front().type){
+			case ofTouchEventArgs::down:
+				ofNotifyEvent(ofEvents.touchDown,touchEventArgsQueue.front());
+				break;
+			case ofTouchEventArgs::up:
+				ofNotifyEvent(ofEvents.touchUp,touchEventArgsQueue.front());
+				break;
+			case ofTouchEventArgs::move:
+				ofNotifyEvent(ofEvents.touchMoved,touchEventArgsQueue.front());
+				break;
+			case ofTouchEventArgs::doubleTap:
+				ofNotifyEvent(ofEvents.touchDoubleTap,touchEventArgsQueue.front());
+				break;
+			}
+			touchEventArgsQueue.pop();
+		}
+		mutex.unlock();
+	}
+
 	ofNotifyUpdate();
 
 
@@ -353,32 +404,19 @@ Java_cc_openframeworks_OFAndroid_render( JNIEnv*  env, jclass  thiz )
 	if(bSetupScreen) ofSetupScreen();
 	ofNotifyDraw();
 
-	/*timeNow = ofGetElapsedTimef();
-	double diff = timeNow-timeThen;
-	if( diff  > 0.00001 ){
-		fps			= 1.0 / diff;
-		frameRate	*= 0.9f;
-		frameRate	+= 0.1f*fps;
-	 }
-	 lastFrameTime	= diff;
-	 timeThen		= timeNow;*/
-	// --------------
+	unsigned long currTime = ofGetElapsedTimeMicros();
+	unsigned long frameMicros = currTime - beginFrameMicros;
 
-	int currTime = ofGetElapsedTimeMillis();
-	if(currTime - onesec>=1000){
+	nFrameCount++;		// increase the overall frame count*/
+	frames++;
+
+	if(currTime - onesec>=1000000){
 		frameRate = frames;
 		frames = 0;
 		onesec = currTime;
 	}
-	frames++;
-	int frameMillis = currTime - beginFrameMillis;
-	lastFrameTime = double(frameMillis)/1000.;
 
-	previousFrameMillis = currTime;
-
-	nFrameCount++;		// increase the overall frame count*/
-
-	if(bFrameRateSet && frameMillis<oneFrameTime) ofSleepMillis(oneFrameTime-frameMillis);
+	if(bFrameRateSet && frameMicros<oneFrameTime) usleep(oneFrameTime-frameMicros);
 
 }
 
@@ -390,7 +428,14 @@ Java_cc_openframeworks_OFAndroid_onTouchDown(JNIEnv*  env, jclass  thiz, jint id
 	touch.x = x;
 	touch.y = y;
 	touch.pressure = pressure;
-	ofNotifyEvent(ofEvents.touchDown,touch);
+	touch.type = ofTouchEventArgs::down;
+	if(threadedTouchEvents){
+		ofNotifyEvent(ofEvents.touchDown,touch);
+	}else{
+		mutex.lock();
+		touchEventArgsQueue.push(touch);
+		mutex.unlock();
+	}
 }
 
 void
@@ -401,7 +446,14 @@ Java_cc_openframeworks_OFAndroid_onTouchUp(JNIEnv*  env, jclass  thiz, jint id,j
 	touch.x = x;
 	touch.y = y;
 	touch.pressure = pressure;
-	ofNotifyEvent(ofEvents.touchUp,touch);
+	touch.type = ofTouchEventArgs::up;
+	if(threadedTouchEvents){
+		ofNotifyEvent(ofEvents.touchUp,touch);
+	}else{
+		mutex.lock();
+		touchEventArgsQueue.push(touch);
+		mutex.unlock();
+	}
 }
 
 void
@@ -413,7 +465,14 @@ Java_cc_openframeworks_OFAndroid_onTouchMoved(JNIEnv*  env, jclass  thiz, jint i
 	touch.x = x;
 	touch.y = y;
 	touch.pressure = pressure;
-	ofNotifyEvent(ofEvents.touchMoved,touch);
+	touch.type = ofTouchEventArgs::move;
+	if(threadedTouchEvents){
+		ofNotifyEvent(ofEvents.touchMoved,touch);
+	}else{
+		mutex.lock();
+		touchEventArgsQueue.push(touch);
+		mutex.unlock();
+	}
 }
 
 void
@@ -424,7 +483,14 @@ Java_cc_openframeworks_OFAndroid_onTouchDoubleTap(JNIEnv*  env, jclass  thiz, ji
 	touch.x = x;
 	touch.y = y;
 	touch.pressure = pressure;
-	ofNotifyEvent(ofEvents.touchDoubleTap,touch);
+	touch.type = ofTouchEventArgs::doubleTap;
+	if(threadedTouchEvents){
+		ofNotifyEvent(ofEvents.touchDoubleTap,touch);
+	}else{
+		mutex.lock();
+		touchEventArgsQueue.push(touch);
+		mutex.unlock();
+	}
 }
 
 void

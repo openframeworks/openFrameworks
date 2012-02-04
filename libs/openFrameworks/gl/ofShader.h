@@ -40,6 +40,7 @@ public:
 	// set a texture reference
 	void setUniformTexture(const char* name, ofBaseHasTexture& img, int textureLocation);
 	void setUniformTexture(const char* name, ofTexture& img, int textureLocation);
+	void setUniformTexture(const char* name, int textureTarget, GLint textureID, int textureLocation);
 	
 	// set a single uniform value
 	void setUniform1i(const char* name, int v1);
