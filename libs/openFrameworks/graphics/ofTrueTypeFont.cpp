@@ -236,14 +236,17 @@ bool ofTrueTypeFont::loadFont(string filename, int fontsize, bool _bAntiAliased,
     FT_Error err;
     
     FT_Library library;
-    if (err = FT_Init_FreeType( &library )){
+    
+    err = FT_Init_FreeType( &library );
+    if (err){
 		ofLog(OF_LOG_ERROR,"ofTrueTypeFont::loadFont - Error initializing freetype lib: FT_Error = %d", err);
 		return false;
 	}
 
 	FT_Face face;
-     
-	if (err = FT_New_Face( library, filename.c_str(), 0, &face )) {
+    
+    err = FT_New_Face( library, filename.c_str(), 0, &face );
+	if (err) {
         // simple error table in lieu of full table (see fterrors.h)
         string errorString = "unknown freetype";
         if(err == 1) errorString = "INVALID FILENAME";
@@ -277,7 +280,8 @@ bool ofTrueTypeFont::loadFont(string filename, int fontsize, bool _bAntiAliased,
 	for (int i = 0 ; i < nCharacters; i++){
 
 		//------------------------------------------ anti aliased or not:
-		if(err = FT_Load_Glyph( face, FT_Get_Char_Index( face, (unsigned char)(i+NUM_CHARACTER_TO_START) ), FT_LOAD_DEFAULT )){
+		err = FT_Load_Glyph( face, FT_Get_Char_Index( face, (unsigned char)(i+NUM_CHARACTER_TO_START) ), FT_LOAD_DEFAULT );
+        if(err){
 			ofLog(OF_LOG_ERROR,"ofTrueTypeFont::loadFont - Error with FT_Load_Glyph %i: FT_Error = %d", i, err);
                         
 		}
