@@ -22,7 +22,6 @@
 // math
 #include "ofMath.h"
 #include "ofVectorMath.h"
-#include "ofTween.h"
 
 //--------------------------
 // communication
