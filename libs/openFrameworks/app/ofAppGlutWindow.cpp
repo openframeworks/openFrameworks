@@ -28,6 +28,7 @@ static int			nFramesForFPS;
 static int			nFrameCount;
 static int			buttonInUse;
 static bool			bEnableSetupScreen;
+static int          ofKeyboardModifiers;
 
 
 static bool			bFrameRateSet;
@@ -197,6 +198,7 @@ ofAppGlutWindow::ofAppGlutWindow(){
 	nFramesSinceWindowResized = 0;
 	nFrameCount			= 0;
 	buttonInUse			= 0;
+    ofKeyboardModifiers = 0;
 	bEnableSetupScreen	= true;
 	bFrameRateSet		= false;
 	millisForFrame		= 0;
@@ -472,6 +474,20 @@ void ofAppGlutWindow::disableSetupScreen(){
 	bEnableSetupScreen = false;
 }
 
+//------------------------------------------------------------
+// recordKeyboardModifiers() (i.e. glutGetModifiers() in particular)
+// can only be called from inside the core input callbacks
+// http://developer.apple.com/library/mac/#documentation/Darwin/Reference/ManPages/man3/glutGetModifiers.3.html
+// when called elsewhere it will throw warnings.
+// glut does not provide stand alone keyUp/down events for modifer keys
+void ofAppGlutWindow::recordKeyboardModifiers(void) {
+    int glutKeyModifiers = glutGetModifiers();
+    ofKeyboardModifiers = 0; // reset them
+    // record them -- leaving room for future redefinitions of the OF_KEY_* defs
+    ofKeyboardModifiers |= (glutKeyModifiers & GLUT_ACTIVE_SHIFT) ? OF_KEY_SHIFT : 0;
+    ofKeyboardModifiers |= (glutKeyModifiers & GLUT_ACTIVE_CTRL)  ? OF_KEY_CTRL  : 0;
+    ofKeyboardModifiers |= (glutKeyModifiers & GLUT_ACTIVE_ALT)   ? OF_KEY_ALT   : 0;
+}
 
 //------------------------------------------------------------
 void ofAppGlutWindow::display(void){
@@ -576,7 +592,6 @@ void ofAppGlutWindow::display(void){
 	//setFrameNum(nFrameCount); // get this info to ofUtils for people to access
 
 }
-
 //------------------------------------------------------------
 void rotateMouseXY(ofOrientation orientation, int &x, int &y) {
 	int savedY;
@@ -606,13 +621,15 @@ void rotateMouseXY(ofOrientation orientation, int &x, int &y) {
 
 //------------------------------------------------------------
 void ofAppGlutWindow::mouse_cb(int button, int state, int x, int y) {
+    recordKeyboardModifiers();
+    
 	rotateMouseXY(orientation, x, y);
 
 	if (nFrameCount > 0){
 		if (state == GLUT_DOWN) {
-			ofNotifyMousePressed(x, y, button);
+			ofNotifyMousePressed(x, y, button, ofKeyboardModifiers);
 		} else if (state == GLUT_UP) {
-			ofNotifyMouseReleased(x, y, button);
+			ofNotifyMouseReleased(x, y, button, ofKeyboardModifiers);
 		}
 
 		buttonInUse = button;
@@ -621,20 +638,24 @@ void ofAppGlutWindow::mouse_cb(int button, int state, int x, int y) {
 
 //------------------------------------------------------------
 void ofAppGlutWindow::motion_cb(int x, int y) {
+    // we cannot record keymodifiers here via glut
+    
 	rotateMouseXY(orientation, x, y);
 
 	if (nFrameCount > 0){
-		ofNotifyMouseDragged(x, y, buttonInUse);
+		ofNotifyMouseDragged(x, y, buttonInUse, ofKeyboardModifiers);
 	}
 
 }
 
 //------------------------------------------------------------
 void ofAppGlutWindow::passive_motion_cb(int x, int y) {
+    // we cannot record keymodifiers here via glut
+
 	rotateMouseXY(orientation, x, y);
 
 	if (nFrameCount > 0){
-		ofNotifyMouseMoved(x, y);
+		ofNotifyMouseMoved(x, y, ofKeyboardModifiers);
 	}
 }
 
@@ -704,22 +725,26 @@ void ofAppGlutWindow::idle_cb(void) {
 
 //------------------------------------------------------------
 void ofAppGlutWindow::keyboard_cb(unsigned char key, int x, int y) {
-	ofNotifyKeyPressed(key);
+    recordKeyboardModifiers();
+    ofNotifyKeyPressed(key, ofKeyboardModifiers);
 }
 
 //------------------------------------------------------------
 void ofAppGlutWindow::keyboard_up_cb(unsigned char key, int x, int y){
-	ofNotifyKeyReleased(key);
+    recordKeyboardModifiers();
+	ofNotifyKeyReleased(key, ofKeyboardModifiers);
 }
 
 //------------------------------------------------------
 void ofAppGlutWindow::special_key_cb(int key, int x, int y) {
-	ofNotifyKeyPressed(key | OF_KEY_MODIFIER);
+    recordKeyboardModifiers();
+	ofNotifyKeyPressed(key | OF_KEY_MODIFIER, ofKeyboardModifiers);
 }
 
 //------------------------------------------------------------
 void ofAppGlutWindow::special_key_up_cb(int key, int x, int y) {
-	ofNotifyKeyReleased(key | OF_KEY_MODIFIER);
+    recordKeyboardModifiers();
+	ofNotifyKeyReleased(key | OF_KEY_MODIFIER, ofKeyboardModifiers);
 }
 
 //------------------------------------------------------------

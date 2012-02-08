@@ -58,7 +58,7 @@ public:
 	
 	ofRectangle    getStringBoundingBox(string s, float x, float y);
 	
-	void 		drawString(string s, float x, float y);
+	void 		drawString(string s, float x, float y, bool drawAsShapes = false);
 	void		drawStringAsShapes(string s, float x, float y);
 	
 	//			get the num chars in the loaded char set
@@ -87,7 +87,7 @@ protected:
 	int				fontSize;
 	bool			bMakeContours;
 
-	void 			drawChar(int c, float x, float y);
+	void 			drawChar(int c, float x, float y, bool drawAsShapes = false);
 	void			drawCharAsShape(int c, float x, float y);
 	
 	int				border;//, visibleBorder;

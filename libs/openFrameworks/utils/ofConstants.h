@@ -412,12 +412,21 @@ enum ofHandednessType {OF_LEFT_HANDED, OF_RIGHT_HANDED};
 // 	letters.. now they will be 256 + 104, 256 + 105....)
 
 
-	#define OF_KEY_MODIFIER 	0x0100
+    
+
+	#define OF_KEY_MODIFIER 	0x0100 // may conflict with 
 	#define OF_KEY_RETURN		13
 	#define OF_KEY_ESC			27
-	#define OF_KEY_CTRL			0x0200
-	#define OF_KEY_ALT			0x0300
-	#define OF_KEY_SHIFT		0x0400
+    
+    #define OF_KEY_SHIFT		1
+	#define OF_KEY_CTRL			2
+    #define OF_KEY_META         4 // not implemented in glut
+	#define OF_KEY_ALT			8
+
+    #define OF_SHIFT_DOWN_MASK  64
+    #define OF_CTRL_DOWN_MASK   128
+    #define OF_META_DOWN_MASK   256 // not implemented in glut
+    #define OF_ALT_DOWN_MASK	512
 
 	// http://www.openframeworks.cc/forum/viewtopic.php?t=494
 	// some issues with keys across platforms:

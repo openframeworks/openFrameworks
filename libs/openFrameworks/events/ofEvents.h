@@ -6,6 +6,7 @@
 //-------------------------- mouse/key query
 bool		ofGetMousePressed(int button=-1); //by default any button
 bool		ofGetKeyPressed(int key=-1); //by default any key
+bool        ofGetModifierPressed(int modifer=-1);
 
 int			ofGetMouseX();
 int			ofGetMouseY();
@@ -254,16 +255,18 @@ void ofNotifySetup();
 void ofNotifyUpdate();
 void ofNotifyDraw();
 
-void ofNotifyKeyPressed(int key);
-void ofNotifyKeyReleased(int key);
+void ofNotifyKeyPressed(int key, int modifiers);
+void ofNotifyKeyReleased(int key, int modifiers);
 
-void ofNotifyMousePressed(int x, int y, int button);
-void ofNotifyMouseReleased(int x, int y, int button);
-void ofNotifyMouseDragged(int x, int y, int button);
-void ofNotifyMouseMoved(int x, int y);
+void ofNotifyMousePressed(int x, int y, int button, int modifiers);
+void ofNotifyMouseReleased(int x, int y, int button, int modifiers);
+void ofNotifyMouseDragged(int x, int y, int button, int modifiers);
+void ofNotifyMouseMoved(int x, int y, int modifiers);
 
 void ofNotifyExit();
 void ofNotifyWindowResized(int width, int height);
 void ofNotifyWindowEntry(int state);
 
 void ofNotifyDragEvent(ofDragInfo info);
+
+

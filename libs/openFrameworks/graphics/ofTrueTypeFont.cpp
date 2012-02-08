@@ -214,7 +214,6 @@ bool ofTrueTypeFont::loadFont(string filename, int fontsize, bool _bAntiAliased,
 
 	//------------------------------------------------
 	if (bLoadedOk == true){
-
 		// we've already been loaded, try to clean up :
 		unloadTextures();
 	}
@@ -236,14 +235,17 @@ bool ofTrueTypeFont::loadFont(string filename, int fontsize, bool _bAntiAliased,
     FT_Error err;
     
     FT_Library library;
-    if (err = FT_Init_FreeType( &library )){
+    
+    err = FT_Init_FreeType( &library );
+    if (err){
 		ofLog(OF_LOG_ERROR,"ofTrueTypeFont::loadFont - Error initializing freetype lib: FT_Error = %d", err);
 		return false;
 	}
 
 	FT_Face face;
-     
-	if (err = FT_New_Face( library, filename.c_str(), 0, &face )) {
+    
+    err = FT_New_Face( library, filename.c_str(), 0, &face );
+	if (err) {
         // simple error table in lieu of full table (see fterrors.h)
         string errorString = "unknown freetype";
         if(err == 1) errorString = "INVALID FILENAME";
@@ -277,7 +279,8 @@ bool ofTrueTypeFont::loadFont(string filename, int fontsize, bool _bAntiAliased,
 	for (int i = 0 ; i < nCharacters; i++){
 
 		//------------------------------------------ anti aliased or not:
-		if(err = FT_Load_Glyph( face, FT_Get_Char_Index( face, (unsigned char)(i+NUM_CHARACTER_TO_START) ), FT_LOAD_DEFAULT )){
+		err = FT_Load_Glyph( face, FT_Get_Char_Index( face, (unsigned char)(i+NUM_CHARACTER_TO_START) ), FT_LOAD_DEFAULT );
+        if(err){
 			ofLog(OF_LOG_ERROR,"ofTrueTypeFont::loadFont - Error with FT_Load_Glyph %i: FT_Error = %d", i, err);
                         
 		}
@@ -329,14 +332,12 @@ bool ofTrueTypeFont::loadFont(string filename, int fontsize, bool _bAntiAliased,
 		cps[i].tW				= width;
 		cps[i].tH				= height;
 
+		int fheight	= cps[i].height;
+		int bwidth	= cps[i].width;
+		int top		= cps[i].topExtent - cps[i].height;
+		int lextent	= cps[i].leftExtent;
 
-
-		GLint fheight	= cps[i].height;
-		GLint bwidth	= cps[i].width;
-		GLint top		= cps[i].topExtent - cps[i].height;
-		GLint lextent	= cps[i].leftExtent;
-
-		GLfloat	corr, stretch;
+		float	corr, stretch;
 
 		//this accounts for the fact that we are showing 2*visibleBorder extra pixels
 		//so we make the size of each char that many pixels bigger
@@ -535,43 +536,51 @@ ofTTFCharacter ofTrueTypeFont::getCharacterAsPoints(int character){
 }
 
 //-----------------------------------------------------------
-void ofTrueTypeFont::drawChar(int c, float x, float y) {
+void ofTrueTypeFont::drawChar(int c, float x, float y, bool drawAsShapes) {
 
 	if (c >= nCharacters){
 		//ofLog(OF_LOG_ERROR,"Error : char (%i) not allocated -- line %d in %s", (c + NUM_CHARACTER_TO_START), __LINE__,__FILE__);
 		return;
 	}
+    
+    if(drawAsShapes) {
+        int cu = c;
+        ofTTFCharacter & charRef = charOutlines[cu];
+        charRef.setFilled(ofGetStyle().bFill);
+        charRef.draw(x,y);
+    } else {
+        float	x1, y1, x2, y2;
+        float   t1, v1, t2, v2;
+        t2		= cps[c].t2;
+        v2		= cps[c].v2;
+        t1		= cps[c].t1;
+        v1		= cps[c].v1;
+        
+        x1		= cps[c].x1+x;
+        y1		= cps[c].y1+y;
+        x2		= cps[c].x2+x;
+        y2		= cps[c].y2+y;
+        
+        int firstIndex = stringQuads.getVertices().size();
+        
+        stringQuads.addVertex(ofVec3f(x1,y1));
+        stringQuads.addVertex(ofVec3f(x2,y1));
+        stringQuads.addVertex(ofVec3f(x2,y2));
+        stringQuads.addVertex(ofVec3f(x1,y2));
+        
+        stringQuads.addTexCoord(ofVec2f(t1,v1));
+        stringQuads.addTexCoord(ofVec2f(t2,v1));
+        stringQuads.addTexCoord(ofVec2f(t2,v2));
+        stringQuads.addTexCoord(ofVec2f(t1,v2));
+        
+        stringQuads.addIndex(firstIndex);
+        stringQuads.addIndex(firstIndex+1);
+        stringQuads.addIndex(firstIndex+2);
+        stringQuads.addIndex(firstIndex+2);
+        stringQuads.addIndex(firstIndex+3);
+        stringQuads.addIndex(firstIndex);
 
-	GLfloat	x1, y1, x2, y2;
-	GLfloat t1, v1, t2, v2;
-	t2		= cps[c].t2;
-	v2		= cps[c].v2;
-	t1		= cps[c].t1;
-	v1		= cps[c].v1;
-
-	x1		= cps[c].x1+x;
-	y1		= cps[c].y1+y;
-	x2		= cps[c].x2+x;
-	y2		= cps[c].y2+y;
-
-	int firstIndex = stringQuads.getVertices().size();
-
-	stringQuads.addVertex(ofVec3f(x1,y1));
-	stringQuads.addVertex(ofVec3f(x2,y1));
-	stringQuads.addVertex(ofVec3f(x2,y2));
-	stringQuads.addVertex(ofVec3f(x1,y2));
-
-	stringQuads.addTexCoord(ofVec2f(t1,v1));
-	stringQuads.addTexCoord(ofVec2f(t2,v1));
-	stringQuads.addTexCoord(ofVec2f(t2,v2));
-	stringQuads.addTexCoord(ofVec2f(t1,v2));
-
-	stringQuads.addIndex(firstIndex);
-	stringQuads.addIndex(firstIndex+1);
-	stringQuads.addIndex(firstIndex+2);
-	stringQuads.addIndex(firstIndex+2);
-	stringQuads.addIndex(firstIndex+3);
-	stringQuads.addIndex(firstIndex);
+    }
 }
 
 //-----------------------------------------------------------
@@ -583,49 +592,36 @@ vector<ofTTFCharacter> ofTrueTypeFont::getStringAsPoints(string str){
 		return shapes;
 	};
 
-	GLint		index	= 0;
-	GLfloat		X		= 0;
-	GLfloat		Y		= 0;
-
+	int         index	= 0;
+	float		X       = 0.0f;
+	float		Y       = 0.0f;
 
 	int len = (int)str.length();
 
 	while(index < len){
-		int cy = (unsigned char)str[index] - NUM_CHARACTER_TO_START;
+        int cy = (unsigned char)str[index] - NUM_CHARACTER_TO_START;
 		if (cy < nCharacters){ 			// full char set or not?
-		  if (str[index] == '\n') {
+            if (str[index] == '\n') {
+                Y += lineHeight;
+                X = 0 ; //reset X Pos back to zero
+            } else if (str[index] == ' ') {
+                int cy = (int)'p' - NUM_CHARACTER_TO_START;
+                X += cps[cy].width * letterSpacing * spaceSize;
+            } else {
+                shapes.push_back(getCharacterAsPoints(str[index]));
+                shapes.back().translate(ofPoint(X,Y));
 
-				Y += lineHeight;
-				X = 0 ; //reset X Pos back to zero
-
-		  }else if (str[index] == ' ') {
-				 int cy = (int)'p' - NUM_CHARACTER_TO_START;
-				 X += cps[cy].width * letterSpacing * spaceSize;
-		  } else {
-			  	shapes.push_back(getCharacterAsPoints(str[index]));
-			  	shapes.back().translate(ofPoint(X,Y));
-
-				X += cps[cy].setWidth * letterSpacing;
-		  }
-		}
+                X += cps[cy].setWidth * letterSpacing;
+            }
+        }
 		index++;
 	}
 	return shapes;
-
 }
 
 //-----------------------------------------------------------
 void ofTrueTypeFont::drawCharAsShape(int c, float x, float y) {
-	if (c >= nCharacters){
-		//ofLog(OF_LOG_ERROR,"Error : char (%i) not allocated -- line %d in %s", (c + NUM_CHARACTER_TO_START), __LINE__,__FILE__);
-		return;
-	}
-	//-----------------------
-
-	int cu = c;
-	ofTTFCharacter & charRef = charOutlines[cu];
-	charRef.setFilled(ofGetStyle().bFill);
-	charRef.draw(x,y);
+    drawChar(c,x,y,true);
 }
 
 //-----------------------------------------------------------
@@ -634,7 +630,7 @@ float ofTrueTypeFont::stringWidth(string c) {
     return rect.width;
 }
 
-
+//-----------------------------------------------------------
 ofRectangle ofTrueTypeFont::getStringBoundingBox(string c, float x, float y){
 
     ofRectangle myRect;
@@ -644,66 +640,47 @@ ofRectangle ofTrueTypeFont::getStringBoundingBox(string c, float x, float y){
     	return myRect;
     }
 
-	GLint		index	= 0;
-	GLfloat		xoffset	= 0;
-	GLfloat		yoffset	= 0;
-    int         len     = (int)c.length();
-    float       minx    = -1;
-    float       miny    = -1;
-    float       maxx    = -1;
-    float       maxy    = -1;
+    if ( c.empty() || cps.empty() ) return myRect;
 
-    if ( len < 1 || cps.empty() ){
-        myRect.x        = 0;
-        myRect.y        = 0;
-        myRect.width    = 0;
-        myRect.height   = 0;
-        return myRect;
-    }
+	int         index	= 0;
+	float		X       = 0.0f;
+	float		Y       = 0.0f;
 
-    bool bFirstCharacter = true;
-	while(index < len){
-		int cy = (unsigned char)c[index] - NUM_CHARACTER_TO_START;
- 	    if (cy < nCharacters){ 			// full char set or not?
-	       if (c[index] == '\n') {
-				yoffset += lineHeight;
-				xoffset = 0 ; //reset X Pos back to zero
-	      } else if (c[index] == ' ') {
-	     		int cy = (int)'p' - NUM_CHARACTER_TO_START;
-				 xoffset += cps[cy].width * letterSpacing * spaceSize;
-				 // zach - this is a bug to fix -- for now, we don't currently deal with ' ' in calculating string bounding box
-		  } else {
-                GLint height	= cps[cy].height;
-            	GLint bwidth	= cps[cy].width * letterSpacing;
-            	GLint top		= cps[cy].topExtent - cps[cy].height;
-            	GLint lextent	= cps[cy].leftExtent;
-            	float	x1, y1, x2, y2, corr, stretch;
-            	stretch = 0;//(float)visibleBorder * 2;
-				corr = (float)(((fontSize - height) + top) - fontSize);
-				x1		= (x + xoffset + lextent + bwidth + stretch);
-            	y1		= (y + yoffset + height + corr + stretch);
-            	x2		= (x + xoffset + lextent);
-            	y2		= (y + yoffset + -top + corr);
-				xoffset += cps[cy].setWidth * letterSpacing;
-				if (bFirstCharacter == true){
-                    minx = x2;
-                    miny = y2;
-                    maxx = x1;
-                    maxy = y1;
-                    bFirstCharacter = false;
-                } else {
-                    if (x2 < minx) minx = x2;
-                    if (y2 < miny) miny = y2;
-                    if (x1 > maxx) maxx = x1;
-                    if (y1 > maxy) maxy = y1;
+    int len = (int)c.length();
+    
+    float minx, miny, maxx, maxy;
+    miny = minx =  numeric_limits<float>::max();
+    maxx = maxy = -numeric_limits<float>::max();
+    
+    while(index < len) {
+        int cy = (unsigned char)c[index] - NUM_CHARACTER_TO_START;
+        if (cy < nCharacters){ 			// full char set or not?
+            if (c[index] == '\n') {
+                Y += lineHeight;
+                X = 0 ; //reset X Pos back to zero
+            } else if (c[index] == ' ') {
+                int cy = (int)'p' - NUM_CHARACTER_TO_START;
+                X += cps[cy].width * letterSpacing * spaceSize;
+                // zach - this is a bug to fix -- for now, we don't currently deal with ' ' in calculating string bounding box
+            } else {
+                float x1 = (X + cps[cy].x1); // max x
+                float y1 = (Y + cps[cy].y1); // max y
+                float x2 = (X + cps[cy].x2); // min x
+                float y2 = (Y + cps[cy].y2); // min y
+
+                minx = MIN(minx,x2);
+                miny = MIN(miny,y2);
+                maxx = MAX(maxx,x1);
+                maxy = MAX(maxy,y1);
+                
+                X += cps[cy].setWidth * letterSpacing;
             }
-		  }
-	  	}
-    	index++;
+        }
+        index++;
     }
 
-    myRect.x        = minx;
-    myRect.y        = miny;
+    myRect.x        = x + minx;
+    myRect.y        = y + miny;
     myRect.width    = maxx-minx;
     myRect.height   = maxy-miny;
     return myRect;
@@ -716,7 +693,7 @@ float ofTrueTypeFont::stringHeight(string c) {
 }
 
 //=====================================================================
-void ofTrueTypeFont::drawString(string c, float x, float y) {
+void ofTrueTypeFont::drawString(string c, float x, float y, bool drawAsShapes) {
 
     /*glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -727,39 +704,51 @@ void ofTrueTypeFont::drawString(string c, float x, float y) {
     	return;
     };
 
-	GLint		index	= 0;
-	GLfloat		X		= x;
-	GLfloat		Y		= y;
-
-
-	bool alreadyBinded = binded;
-
-	if(!alreadyBinded) bind();
-
-	int len = (int)c.length();
-
-	while(index < len){
-		int cy = (unsigned char)c[index] - NUM_CHARACTER_TO_START;
-		if (cy < nCharacters){ 			// full char set or not?
-		  if (c[index] == '\n') {
-
-				Y += lineHeight;
-				X = x ; //reset X Pos back to zero
-
-		  }else if (c[index] == ' ') {
-				 int cy = (int)'p' - NUM_CHARACTER_TO_START;
-				 X += cps[cy].width * letterSpacing * spaceSize;
-		  } else {
-				drawChar(cy, X, Y);
-				X += cps[cy].setWidth * letterSpacing;
-		  }
-		}
-		index++;
+    //----------------------- error checking
+	if (drawAsShapes && !bMakeContours){
+		ofLog(OF_LOG_ERROR,"ofTrueTypeFont::drawStringAsShapes - Error : contours not created for this font - call loadFont with makeContours set to true");
+		return;
 	}
 
-	if(!alreadyBinded) unbind();
+	int         index	= 0;
+	float		X       = 0.0f;
+	float		Y       = 0.0f;
+
+    bool alreadyBinded = binded;
+    if(!drawAsShapes && !alreadyBinded) bind();
+
+    ofPushMatrix();
+    ofTranslate(x,y);
+    int len = (int)c.length();
+    
+    while(index < len){
+        int cy = (unsigned char)c[index] - NUM_CHARACTER_TO_START;
+        if (cy < nCharacters){ 			// full char set or not?
+            if (c[index] == '\n') {
+                Y += lineHeight;
+                X = 0.0f; //reset X Pos back to zero
+            } else if (c[index] == ' ') {
+                int cy = (int)'p' - NUM_CHARACTER_TO_START;
+                X += cps[cy].width * letterSpacing * spaceSize;
+            } else {
+                drawChar(cy, X, Y, drawAsShapes);
+                X += cps[cy].setWidth * letterSpacing;
+            }
+        }
+        index++;
+    }
+    
+    ofPopMatrix();
+
+    if(!drawAsShapes && !alreadyBinded) unbind();
 
 }
+
+//=====================================================================
+void ofTrueTypeFont::drawStringAsShapes(string c, float x, float y) {
+    drawString(c,x,y,true);
+}
+
 
 //-----------------------------------------------------------
 void ofTrueTypeFont::bind(){
@@ -815,52 +804,6 @@ void ofTrueTypeFont::unbind(){
 	}
 }
 
-//=====================================================================
-void ofTrueTypeFont::drawStringAsShapes(string c, float x, float y) {
-
-    if (!bLoadedOk){
-    	ofLog(OF_LOG_ERROR,"ofTrueTypeFont::drawStringAsShapes - Error : font not allocated -- line %d in %s", __LINE__,__FILE__);
-    	return;
-    };
-
-	//----------------------- error checking
-	if (!bMakeContours){
-		ofLog(OF_LOG_ERROR,"ofTrueTypeFont::drawStringAsShapes - Error : contours not created for this font - call loadFont with makeContours set to true");
-		return;
-	}
-
-	GLint		index	= 0;
-	GLfloat		X		= 0;
-	GLfloat		Y		= 0;
-
-	ofPushMatrix();
-	ofTranslate(x, y);
-	int len = (int)c.length();
-
-	while(index < len){
-		int cy = (unsigned char)c[index] - NUM_CHARACTER_TO_START;
-		if (cy < nCharacters){ 			// full char set or not?
-		  if (c[index] == '\n') {
-
-				Y += lineHeight;
-				X = 0 ; //reset X Pos back to zero
-
-		  }else if (c[index] == ' ') {
-				 int cy = (int)'p' - NUM_CHARACTER_TO_START;
-				 X += cps[cy].width;
-				 //glTranslated(cps[cy].width, 0, 0);
-		  } else {
-				drawCharAsShape(cy, X, Y);
-				X += cps[cy].setWidth;
-				//glTranslated(cps[cy].setWidth, 0, 0);
-		  }
-		}
-		index++;
-	}
-
-	ofPopMatrix();
-
-}
 
 //-----------------------------------------------------------
 int ofTrueTypeFont::getNumCharacters() {
