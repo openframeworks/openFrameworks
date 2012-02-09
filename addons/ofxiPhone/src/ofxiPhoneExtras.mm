@@ -101,7 +101,7 @@ void ofxiPhoneSendGLViewToBack() {
 
 //--------------------------------------------------------------
 void ofxiPhoneSetGLViewTransparent(bool b) {
-	ofxiPhoneGetGLView().opaque = !b;
+	ofxiPhoneGetGLView().layer.opaque = !b;
 }
 
 
