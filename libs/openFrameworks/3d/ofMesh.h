@@ -123,6 +123,10 @@ public:
 	void drawFaces();
 	void draw();
 
+
+	void load(string path);
+	void save(string path);
+
 protected:
 	virtual void draw(ofPolyRenderMode renderType);
 
