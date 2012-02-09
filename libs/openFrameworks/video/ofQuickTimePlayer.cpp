@@ -165,8 +165,16 @@ void ofQuickTimePlayer::update(){
 		//--------------------------------------------------------------
 		#ifdef OF_VIDEO_PLAYER_QUICKTIME
 		//--------------------------------------------------------------
-
-            MoviesTask(moviePtr,0);
+			
+			// is this necessary on windows with quicktime?
+			#ifdef TARGET_OSX 
+				// call MoviesTask if we're not on the main thread
+				if ( CFRunLoopGetCurrent() != CFRunLoopGetMain() )
+				{
+					//ofLog( OF_LOG_NOTICE, "not on the main loop, calling MoviesTask") ;
+					MoviesTask(moviePtr,0);
+				}
+			#endif
 
 		//--------------------------------------------------------------
 		#endif
