@@ -114,9 +114,6 @@ public:
 	bool hasNormals();
 	bool hasTexCoords();
 	bool hasIndices();
-
-	friend std::ostream& operator<<(std::ostream& os, ofMesh& data);
-	friend std::istream& operator>>(std::istream& is, ofMesh& data);
 	
 	void drawVertices();
 	void drawWireframe();
@@ -125,7 +122,7 @@ public:
 
 
 	void load(string path);
-	void save(string path);
+	void save(string path, bool useBinary = false);
 
 protected:
 	virtual void draw(ofPolyRenderMode renderType);
