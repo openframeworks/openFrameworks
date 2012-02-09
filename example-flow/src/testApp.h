@@ -5,9 +5,6 @@
 #include "ofxCv.h"
 #include "Flow.h"
 
-using namespace ofxCv;
-using namespace cv;
-
 class testApp : public ofBaseApp{
 public:
 	void setup();
@@ -16,9 +13,10 @@ public:
 	
 	ofVideoGrabber camera;
 	
-	FlowFarneback farneback;
-	FlowPyrLK pyrLk;
-	Flow* curFlow;
+	ofxCv::FlowFarneback farneback;
+	ofxCv::FlowPyrLK pyrLk;
+	
+	ofxCv::Flow* curFlow;
 		
 	ofxAutoControlPanel panel;
 };
