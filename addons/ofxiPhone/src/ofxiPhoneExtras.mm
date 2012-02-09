@@ -145,7 +145,7 @@ void ofxiPhoneEnableLoopInThread() {
 
 //--------------------------------------------------------------
 void ofxiPhoneSetOrientation(ofOrientation orientation) {
-	ofxiPhoneGetOFWindow()->setOrientation(orientation);
+	if (orientation != OF_ORIENTATION_UNKNOWN) ofxiPhoneGetOFWindow()->setOrientation(orientation);
 }
 
 
