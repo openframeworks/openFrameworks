@@ -40,7 +40,9 @@ static ofTTFCharacter makeContoursForCharacter(FT_Face &face){
 			}
 			int endPos = face->glyph->outline.contours[k]+1;
 
-			if( printVectorInfo )printf("--NEW CONTOUR\n\n");
+			if(printVectorInfo){
+				ofLog(OF_LOG_NOTICE, "--NEW CONTOUR\n");
+			}
 
 			//vector <ofPoint> testOutline;
 			ofPoint lastPoint;
@@ -49,15 +51,21 @@ static ofTTFCharacter makeContoursForCharacter(FT_Face &face){
 
 				if( FT_CURVE_TAG(tags[j]) == FT_CURVE_TAG_ON ){
 					lastPoint.set((float)vec[j].x, (float)-vec[j].y, 0);
-					if( printVectorInfo )printf("flag[%i] is set to 1 - regular point - %f %f \n", j, lastPoint.x, lastPoint.y);
+					if(printVectorInfo){
+						ofLog(OF_LOG_NOTICE, "flag[%i] is set to 1 - regular point - %f %f", j, lastPoint.x, lastPoint.y);
+					}
 					//testOutline.push_back(lastPoint);
 					charOutlines.lineTo(lastPoint/64);
 
 				}else{
-					if( printVectorInfo )printf("flag[%i] is set to 0 - control point \n", j);
+					if(printVectorInfo){
+						ofLog(OF_LOG_NOTICE, "flag[%i] is set to 0 - control point", j);
+					}
 
 					if( FT_CURVE_TAG(tags[j]) == FT_CURVE_TAG_CUBIC ){
-						if( printVectorInfo )printf("- bit 2 is set to 2 - CUBIC\n");
+						if(printVectorInfo){
+							ofLog(OF_LOG_NOTICE, "- bit 2 is set to 2 - CUBIC");
+						}
 
 						int prevPoint = j-1;
 						if( j == 0){
@@ -87,8 +95,10 @@ static ofTTFCharacter makeContoursForCharacter(FT_Face &face){
 
 						ofPoint conicPoint( (float)vec[j].x,  -(float)vec[j].y );
 
-						if( printVectorInfo )printf("- bit 2 is set to 0 - conic- \n");
-						if( printVectorInfo )printf("--- conicPoint point is %f %f \n", conicPoint.x, conicPoint.y);
+						if(printVectorInfo){
+							ofLog(OF_LOG_NOTICE, "- bit 2 is set to 0 - conic- ");
+							ofLog(OF_LOG_NOTICE, "--- conicPoint point is %f %f", conicPoint.x, conicPoint.y);
+						}
 
 						//If the first point is connic and the last point is connic then we need to create a virutal point which acts as a wrap around
 						if( j == startPos ){
@@ -98,8 +108,10 @@ static ofTTFCharacter makeContoursForCharacter(FT_Face &face){
 								ofPoint lastConnic((float)vec[endPos - 1].x, (float)-vec[endPos - 1].y);
 								lastPoint = (conicPoint + lastConnic) / 2;
 
-								if( printVectorInfo )	printf("NEED TO MIX WITH LAST\n");
-								if( printVectorInfo )printf("last is %f %f \n", lastPoint.x, lastPoint.y);
+								if(printVectorInfo){
+									ofLog(OF_LOG_NOTICE, "NEED TO MIX WITH LAST");
+									ofLog(OF_LOG_NOTICE, "last is %f %f", lastPoint.x, lastPoint.y);
+								}
 							}
 						}
 
@@ -112,16 +124,22 @@ static ofTTFCharacter makeContoursForCharacter(FT_Face &face){
 
 						ofPoint nextPoint( (float)vec[nextIndex].x,  -(float)vec[nextIndex].y );
 
-						if( printVectorInfo )printf("--- last point is %f %f \n", lastPoint.x, lastPoint.y);
+						if(printVectorInfo){
+							ofLog(OF_LOG_NOTICE, "--- last point is %f %f", lastPoint.x, lastPoint.y);
+						}
 
 						bool nextIsConnic = (  FT_CURVE_TAG( tags[nextIndex] ) != FT_CURVE_TAG_ON ) && ( FT_CURVE_TAG( tags[nextIndex]) != FT_CURVE_TAG_CUBIC );
 
 						//create a 'virtual on point' if we have two connic points
 						if( nextIsConnic ){
 							nextPoint = (conicPoint + nextPoint) / 2;
-							if( printVectorInfo )printf("|_______ double connic!\n");
+							if(printVectorInfo){
+								ofLog(OF_LOG_NOTICE, "|_______ double connic!");
+							}
 						}
-						if( printVectorInfo )printf("--- next point is %f %f \n", nextPoint.x, nextPoint.y);
+						if(printVectorInfo){
+							ofLog(OF_LOG_NOTICE, "--- next point is %f %f", nextPoint.x, nextPoint.y);
+						}
 
 						//quad_bezier(testOutline, lastPoint.x, lastPoint.y, conicPoint.x, conicPoint.y, nextPoint.x, nextPoint.y, 8);
 						charOutlines.quadBezierTo(lastPoint.x/64, lastPoint.y/64, conicPoint.x/64, conicPoint.y/64, nextPoint.x/64, nextPoint.y/64);
@@ -303,7 +321,9 @@ bool ofTrueTypeFont::loadFont(string filename, int fontsize, bool _bAntiAliased,
 
 
 		if(bMakeContours){
-			if( printVectorInfo )printf("\n\ncharacter %c: \n", char( i+NUM_CHARACTER_TO_START ) );
+			if(printVectorInfo){
+				ofLog(OF_LOG_NOTICE, "\n\ncharacter %c:", char(i+NUM_CHARACTER_TO_START));
+			}
 
 			//int character = i + NUM_CHARACTER_TO_START;
 			charOutlines[i] = makeContoursForCharacter( face );
