@@ -561,6 +561,13 @@ PixelType & ofColor_<PixelType>::operator [] (int n){
 	}
 }
 
+template class ofColor_<char>;
 template class ofColor_<unsigned char>;
-template class ofColor_<float>;
+template class ofColor_<short>;
 template class ofColor_<unsigned short>;
+template class ofColor_<int>;
+template class ofColor_<unsigned int>;
+template class ofColor_<long>;
+template class ofColor_<unsigned long>;
+template class ofColor_<float>;
+template class ofColor_<double>;
