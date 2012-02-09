@@ -30,7 +30,9 @@ class ofBaseApp : public ofBaseSoundInput, public ofBaseSoundOutput{
 		virtual void mouseReleased(int x, int y, int button ){}
 		
 		virtual void dragEvent(ofDragInfo dragInfo) { }
-		virtual void gotMessage(ofMessage msg){ }		
+		virtual void gotMessage(ofMessage msg){ }
+	
+		virtual void windowEntry ( int state ) { }
 		
 		int mouseX, mouseY;			// for processing heads
 };
