@@ -406,6 +406,7 @@ void ofSetCurveResolution(int res){
 //----------------------------------------
 void ofSetSphereResolution(int res){
 	currentStyle.sphereResolution = res;
+	renderer->setSphereResolution(res);
 }
 
 //----------------------------------------------------------
@@ -809,7 +810,10 @@ void ofEndShape(bool bClose){
 
 //----------------------------------------
 void ofSphere(float x, float y, float z, float radius){
-	ofSphere(ofPoint(x, y, z), radius);
+	ofPushMatrix();
+	ofTranslate(x, y, z);
+	ofSphere(radius);
+	ofPopMatrix();
 }
 
 //----------------------------------------
@@ -819,33 +823,22 @@ void ofSphere(float x, float y, float radius){
 
 //----------------------------------------
 void ofSphere(const ofPoint& position, float radius){
-	ofPushMatrix();
-	ofTranslate(position);
-	ofSphere(radius);
-	ofPopMatrix();
+	ofSphere(position.x,position.y,position.z,radius);
 }
 
 //----------------------------------------
 void ofSphere(float radius){
-	// TODO: add an implementation using ofMesh
-#ifndef TARGET_OPENGLES
-	// this needs to be swapped out with non-glut code
-	// for good references see cinder's implementation from paul bourke:
-	// https://github.com/cinder/Cinder/blob/master/src/cinder/gl/gl.cpp
-	// void drawSphere( const Vec3f &center, float radius, int segments )
-	// and processing's implementation of icospheres:
-	// https://code.google.com/p/processing/source/browse/trunk/processing/core/src/processing/core/PGraphics.java?r=7543
-	// public void sphere(float r)
-	
+	renderer->drawSphere(0,0,0,radius);
+	/*
 	ofPushMatrix();
 	ofRotateX(90);
-	if(ofGetStyle().bFill){
+	if(ofGetStyle().bFill) {
 		glutSolidSphere(radius, 2 * currentStyle.sphereResolution, currentStyle.sphereResolution);
 	} else {
 		glutWireSphere(radius, 2 * currentStyle.sphereResolution, currentStyle.sphereResolution);
 	}
 	ofPopMatrix();
-#endif
+	 */
 }
 
 //----------------------------------------
