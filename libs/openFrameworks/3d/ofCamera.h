@@ -41,6 +41,7 @@ public:
 	void enableOrtho();
 	void disableOrtho();
 	bool getOrtho() const;
+	float getFov();
 	
 	float getImagePlaneDistance(ofRectangle viewport = ofGetCurrentViewport()) const;
 	

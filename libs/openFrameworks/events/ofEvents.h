@@ -37,6 +37,11 @@ class ofDragInfo{
 
 		class ofEventArgs{};
 
+		class ofEntryEventArgs : public ofEventArgs {
+		public:
+			int state;
+		};
+
 		class ofKeyEventArgs : public ofEventArgs {
 		  public:
 			int key;
@@ -51,6 +56,14 @@ class ofDragInfo{
 
 		class ofTouchEventArgs : public ofEventArgs {
 		  public:
+			enum Type{
+				down,
+				up,
+				move,
+				doubleTap,
+				cancel
+			} type;
+
 			int id;
 			int time;
 			float x, y;
@@ -94,6 +107,8 @@ class ofDragInfo{
 		ofEvent<ofEventArgs> 		update;
 		ofEvent<ofEventArgs> 		draw;
 		ofEvent<ofEventArgs> 		exit;
+		
+		ofEvent<ofEntryEventArgs>	windowEntered;
 		ofEvent<ofResizeEventArgs> 	windowResized;
 
 		ofEvent<ofKeyEventArgs> 	keyPressed;
@@ -249,5 +264,6 @@ void ofNotifyMouseMoved(int x, int y);
 
 void ofNotifyExit();
 void ofNotifyWindowResized(int width, int height);
+void ofNotifyWindowEntry(int state);
 
 void ofNotifyDragEvent(ofDragInfo info);

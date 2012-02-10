@@ -6,8 +6,8 @@
 //--------------------------------------------------------------------------------
 static bool sort_carea_compare( const CvSeq* a, const CvSeq* b) {
 	// use opencv to calc size, then sort based on size
-	float areaa = fabs(cvContourArea(a, CV_WHOLE_SEQ));
-	float areab = fabs(cvContourArea(b, CV_WHOLE_SEQ));
+	float areaa = cvContourArea(a, CV_WHOLE_SEQ);
+	float areab = cvContourArea(b, CV_WHOLE_SEQ);
 
     //return 0;
 	return (areaa > areab);
@@ -61,6 +61,7 @@ int ofxCvContourFinder::findContours( ofxCvGrayscaleImage&  input,
     // 320x240 image better to make two ofxCvContourFinder objects then to use
     // one, because you will get penalized less.
 
+    inputCopy.setUseTexture(false);
 	if( inputCopy.getWidth() == 0 ) {
 		inputCopy.allocate( _width, _height );
 	} else if( inputCopy.getWidth() != _width || inputCopy.getHeight() != _height ) {
@@ -84,7 +85,7 @@ int ofxCvContourFinder::findContours( ofxCvGrayscaleImage&  input,
 
 	// put the contours from the linked list, into an array for sorting
 	while( (contour_ptr != NULL) ) {
-		float area = fabs( cvContourArea(contour_ptr, CV_WHOLE_SEQ) );
+		float area = cvContourArea(contour_ptr, CV_WHOLE_SEQ);
 		if( (area > minArea) && (area < maxArea) ) {
             cvSeqBlobs.push_back(contour_ptr);
 		}
@@ -102,7 +103,7 @@ int ofxCvContourFinder::findContours( ofxCvGrayscaleImage&  input,
     // cvSeqBlobs let's get the data out and into our structures that we like
 	for( int i = 0; i < MIN(nConsidered, (int)cvSeqBlobs.size()); i++ ) {
 		blobs.push_back( ofxCvBlob() );
-		float area = cvContourArea( cvSeqBlobs[i], CV_WHOLE_SEQ );
+		float area = cvContourArea( cvSeqBlobs[i], CV_WHOLE_SEQ, true ); // oriented=true for holes
 		CvRect rect	= cvBoundingRect( cvSeqBlobs[i], 0 );
 		cvMoments( cvSeqBlobs[i], myMoments );
 
