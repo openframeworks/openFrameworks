@@ -297,14 +297,14 @@ void ofQuickTimeGrabber::listDevices(){
 						memcpy(pascalNameInput, inputNameRec.name, sizeof(char) * 64);
 					}
 
-					ofLog(OF_LOG_NOTICE, "device[" + deviceCount + "] " + p2cstr(pascalName) + " - " + p2cstr(pascalNameInput));
+					ofLogNotice() << "device[" << deviceCount << "] " << p2cstr(pascalName) << " - " << p2cstr(pascalNameInput);
 
 					//we count this way as we need to be able to distinguish multiple inputs as devices
 					deviceCount++;
 				}
 
 			}else{
-				ofLog(OF_LOG_NOTICE, "(unavailable) device[" + deviceCount + "] " + p2cstr(pascalName));
+				ofLogNotice() << "(unavailable) device[" << deviceCount << "] " << p2cstr(pascalName);
 				deviceCount++;
 			}
 		}
