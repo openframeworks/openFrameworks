@@ -292,7 +292,7 @@ bool ofQuickTimePlayer::loadMovie(string name){
 				width 	= movieRect.right;
 				height 	= movieRect.bottom;
 				pixels.clear();
-				delete(offscreenGWorldPixels);
+				delete [] offscreenGWorldPixels;
 				if ((offscreenGWorld)) DisposeGWorld((offscreenGWorld));
 				createImgMemAndGWorld();
 			}
