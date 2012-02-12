@@ -588,90 +588,14 @@ void ofMesh::draw(ofPolyRenderMode renderType){
 
 
 //--------------------------------------------------------------
-std::ostream& operator<<(std::ostream& os, ofMesh& data) {
-	os << "ply" << endl;
-	os << "format ascii 1.0" << endl;
-
-	if(data.getNumVertices()){
-		os << "element vertex " << data.getNumVertices() << endl;
-		os << "property float x" << endl;
-		os << "property float y" << endl;
-		os << "property float z" << endl;
-		if(data.getNumColors()){
-			os << "property float r" << endl;
-			os << "property float g" << endl;
-			os << "property float b" << endl;
-		}
-		if(data.getNumTexCoords()){
-			os << "property float u" << endl;
-			os << "property float v" << endl;
-		}
-	}
-
-	if(data.getNumNormals()){
-		os << "element normal " << data.getNumNormals() << endl;
-		os << "property float x" << endl;
-		os << "property float y" << endl;
-		os << "property float z" << endl;
-	}
-
-	if(data.getNumIndices()){
-		os << "element face " << data.getNumIndices()/3 << endl;
-		os << "property list uchar int vertex_index " << endl;
-	}
-
-	os << "end_header" << endl;
-
-	for(int i=0;i<data.getNumVertices(); i++){
-		os << data.getVertex(i).x << " " << data.getVertex(i).y << " " << data.getVertex(i).z << " ";
-		if(data.getNumColors()){
-			os << data.getColor(i).r << " " << data.getColor(i).g << " " << data.getColor(i).b << " " << " " << data.getColor(i).a;
-		}
-		if(data.getNumTexCoords()){
-			os << data.getTexCoord(i).x << " " << data.getTexCoord(i).y;
-		}
-		os  << endl;
-	}
-
-	for(int i=0;i<data.getNumIndices(); i+=3){
-		os << 3 << " " << data.getIndex(i) << " " << data.getIndex(i+1) << " " << data.getIndex(i+2) << endl;
-	}
-
-	return os;
-	//TODO: update when ofMesh/primitives has been worked out
-	/*os << "Vertices" << std::endl << "--------------------" << std::endl;
-	for(int i = 0; i < data.getNumVertices(); ++i) {
-		os << data.getVertex(i) << std::endl;
-	}
-	os << std::endl << std::endl;
-
-	os << "Normals" << std::endl << "--------------------" << std::endl;
-	for(int i = 0; i < data.getNumNormals(); ++i) {
-		os << data.getNormal(i) << std::endl;
-	}
-	os << std::endl << std::endl;
-
-	os << "TexCoords" << std::endl << "--------------------" << std::endl;
-	for(int i = 0; i < data.getNumTexCoords(); ++i) {
-		os << data.getTexCoord(i) << std::endl;
-	}
-	os << std::endl << std::endl;
-
-	os << "Colors" << std::endl << "--------------------" << std::endl;
-	for(int i = 0; i < data.getNumVertices(); ++i) {
-		os << data.getVertex(i) << std::endl;
-	}
-	os << std::endl << std::endl;
-
-	return os;*/
-}
-
-
-std::istream& operator>>(std::istream& is, ofMesh& data){
+void ofMesh::load(string path){
+	ofFile is(path, ofFile::WriteOnly);
+	ofMesh& data = *this;
+	
 	string line;
 	string error;
-	ofMesh backup = data;
 	ofBuffer buffer(is);
+	ofMesh backup = data;
 
 	int orderVertices=-1;
 	int orderIndices=-1;
@@ -879,25 +803,116 @@ std::istream& operator>>(std::istream& is, ofMesh& data){
 			continue;
 		}
 	}
-
-
-	return is;
-
+	
 	clean:
 	ofLogError() << lineNum << ":" << error;
 	ofLogError() << "\"" << line << "\"";
 	data = backup;
-	return is;
-
 }
 
+void ofMesh::save(string path, bool useBinary){
+	ofFile os(path, ofFile::WriteOnly);
+	ofMesh& data = *this;
 
-void ofMesh::load(string path){
-	ofFile meshFile(path);
-	meshFile >> *this;
-}
+	os << "ply" << endl;
+	if(useBinary) {
+		os << "format binary_little_endian 1.0" << endl;
+	} else {
+		os << "format ascii 1.0" << endl;
+	}
 
-void ofMesh::save(string path){
-	ofFile meshFile(path,ofFile::WriteOnly);
-	meshFile << *this;
+	if(data.getNumVertices()){
+		os << "element vertex " << data.getNumVertices() << endl;
+		os << "property float x" << endl;
+		os << "property float y" << endl;
+		os << "property float z" << endl;
+		if(data.getNumColors()){
+			os << "property uchar red" << endl;
+			os << "property uchar green" << endl;
+			os << "property uchar blue" << endl;
+			os << "property uchar alpha" << endl;
+		}
+		if(data.getNumTexCoords()){
+			os << "property float u" << endl;
+			os << "property float v" << endl;
+		}
+		if(data.getNumNormals()){
+			os << "property float nx" << endl;
+			os << "property float ny" << endl;
+			os << "property float nz" << endl;
+		}
+	}
+	
+	unsigned char faceSize = 3;
+	if(data.getNumIndices()){
+		os << "element face " << data.getNumIndices() / faceSize << endl;
+		os << "property list uchar int vertex_indices" << endl;
+	} else if(data.getMode() == OF_PRIMITIVE_TRIANGLES) {
+		os << "element face " << data.getNumVertices() / faceSize << endl;
+		os << "property list uchar int vertex_indices" << endl;
+	}
+
+	os << "end_header" << endl;
+	
+	for(int i = 0; i < data.getNumVertices(); i++){
+		if(useBinary) {
+			os.write((char*) &data.getVertices()[i], sizeof(ofVec3f));
+		} else {
+			os << data.getVertex(i).x << " " << data.getVertex(i).y << " " << data.getVertex(i).z;
+		}
+		if(data.getNumColors()){
+			// VCG lib / MeshLab don't support float colors, so we have to cast
+			ofColor cur = data.getColors()[i];
+			if(useBinary) {
+				os.write((char*) &cur, sizeof(ofColor));
+			} else {
+				os << " " << (int) cur.r << " " << (int) cur.g << " " << (int) cur.b << " " << (int) cur.a;
+			}
+		}
+		if(data.getNumTexCoords()){
+			if(useBinary) {
+				os.write((char*) &data.getTexCoords()[i], sizeof(ofVec2f));
+			} else {
+				os << " " << data.getTexCoord(i).x << " " << data.getTexCoord(i).y;
+			}
+		}
+		if(data.getNumNormals()){
+			if(useBinary) {
+				os.write((char*) &data.getNormals()[i], sizeof(ofVec3f));
+			} else {
+				os << " " << data.getNormal(i).x << " " << data.getNormal(i).y << " " << data.getNormal(i).z;
+			}
+		}
+		if(!useBinary) {
+			os << endl;
+		}
+	}
+
+	if(data.getNumIndices()) {
+		for(int i = 0; i < data.getNumIndices(); i += faceSize) {
+			if(useBinary) {
+				os.write((char*) &faceSize, sizeof(unsigned char));
+				for(int j = 0; j < faceSize; j++) {
+					int curIndex = data.getIndex(i + j);
+					os.write((char*) &curIndex, sizeof(int));
+				}
+			} else {
+				os << (int) faceSize << " " << data.getIndex(i) << " " << data.getIndex(i+1) << " " << data.getIndex(i+2) << endl;
+			}
+		}
+	} else if(data.getMode() == OF_PRIMITIVE_TRIANGLES) {
+		for(int i = 0; i < data.getNumVertices(); i += faceSize) {
+			int indices[] = {i, i + 1, i + 2};
+			if(useBinary) {
+				os.write((char*) &faceSize, sizeof(unsigned char));
+				for(int j = 0; j < faceSize; j++) {
+					os.write((char*) &indices[j], sizeof(int));
+				}
+			} else {
+				os << (int) faceSize << " " << indices[0] << " " << indices[1] << " " << indices[2] << endl;
+			}
+		}
+	}
+
+	//TODO: add index generation for other OF_PRIMITIVE cases
 }

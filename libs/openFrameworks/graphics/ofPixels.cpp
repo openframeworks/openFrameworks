@@ -818,6 +818,13 @@ bool ofPixels_<PixelType>::pasteInto(ofPixels_<PixelType> &dst, int xTo, int yTo
 	return true;
 }
 
+template class ofPixels_<char>;
 template class ofPixels_<unsigned char>;
-template class ofPixels_<float>;
+template class ofPixels_<short>;
 template class ofPixels_<unsigned short>;
+template class ofPixels_<int>;
+template class ofPixels_<unsigned int>;
+template class ofPixels_<long>;
+template class ofPixels_<unsigned long>;
+template class ofPixels_<float>;
+template class ofPixels_<double>;
