@@ -246,7 +246,7 @@ void ofQuickTimeGrabber::listDevices(){
 			}
 		}
 
-		printf("-------------------------------------\n");
+		ofLog(OF_LOG_NOTICE,"-------------------------------------");
 
 		/*
 			//input selection stuff (ie multiple webcams)
@@ -297,18 +297,18 @@ void ofQuickTimeGrabber::listDevices(){
 						memcpy(pascalNameInput, inputNameRec.name, sizeof(char) * 64);
 					}
 
-					printf( "device[%i] %s - %s\n",  deviceCount, p2cstr(pascalName), p2cstr(pascalNameInput) );
+					ofLogNotice() << "device[" << deviceCount << "] " << p2cstr(pascalName) << " - " << p2cstr(pascalNameInput);
 
 					//we count this way as we need to be able to distinguish multiple inputs as devices
 					deviceCount++;
 				}
 
 			}else{
-				printf( "(unavailable) device[%i] %s\n",  deviceCount, p2cstr(pascalName) );
+				ofLogNotice() << "(unavailable) device[" << deviceCount << "] " << p2cstr(pascalName);
 				deviceCount++;
 			}
 		}
-		printf( "-------------------------------------\n");
+		ofLog(OF_LOG_NOTICE,"-------------------------------------");
 
 		//if we initialized the grabbing component then close it
 		if( bNeedToInitGrabberFirst ){
