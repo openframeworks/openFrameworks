@@ -462,11 +462,11 @@ void ofFbo::allocate(Settings _settings) {
 				glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE );
 				glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE );
 			#endif
-				glTexImage2D( GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT32, settings.width, settings.height, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, 0 );
+				glTexImage2D( GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, settings.width, settings.height, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, 0 );
 				glBindTexture( GL_TEXTURE_2D, 0 );
 
 				// allocate depthBufferTex as depth buffer;
-				depthBufferTex.texData.glTypeInternal = GL_DEPTH_COMPONENT32;
+				depthBufferTex.texData.glTypeInternal = GL_DEPTH_COMPONENT;
 				depthBufferTex.texData.glType = GL_DEPTH_COMPONENT;
 				depthBufferTex.texData.pixelType = GL_UNSIGNED_INT;
 				depthBufferTex.texData.textureTarget = GL_TEXTURE_2D;
