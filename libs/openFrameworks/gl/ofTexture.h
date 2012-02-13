@@ -54,6 +54,7 @@ public:
 		glType = GL_RGB;
 		pixelType = GL_UNSIGNED_BYTE;
 		
+
 		tex_t = 0;
 		tex_u = 0;
 		tex_w = 0;
@@ -68,7 +69,7 @@ public:
 
 	unsigned int textureID;
 	int textureTarget;
-	int glTypeInternal; // internalFormat, e.g., GL_RGB8. should be named glInternalFormat
+	int glTypeInternal; // internalFormat, e.g., GL_RGB8.
 	int glType; // format, e.g., GL_RGB. should be named glFormat
 	int pixelType;  // type, e.g., GL_UNSIGNED_BYTE. should be named glType
 	
