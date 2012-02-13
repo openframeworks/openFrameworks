@@ -446,7 +446,7 @@ void ofFbo::allocate(Settings _settings) {
 		// if we want a depth buffer, create it, and attach to our main fbo
 		if(settings.useDepth){
 			if(!settings.depthAsTexture){
-				depthBuffer = createAndAttachRenderbuffer(GL_DEPTH_COMPONENT32, GL_DEPTH_ATTACHMENT);
+				depthBuffer = createAndAttachRenderbuffer(GL_DEPTH_COMPONENT, GL_DEPTH_ATTACHMENT);
 				retainRB(depthBuffer);
 			}else{
 				glGenTextures(1, &depthBufferTex.texData.textureID);
