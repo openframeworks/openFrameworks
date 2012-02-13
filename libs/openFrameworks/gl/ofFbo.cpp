@@ -115,6 +115,7 @@ ofFbo::Settings::Settings() {
 	textureTarget			= GL_TEXTURE_2D;
 #endif
 	internalformat			= GL_RGBA;
+	dethInternalFormat		= GL_DEPTH_COMPONENT;
 	wrapModeHorizontal		= GL_CLAMP_TO_EDGE;
 	wrapModeVertical		= GL_CLAMP_TO_EDGE;
 	minFilter				= GL_LINEAR;
@@ -445,8 +446,22 @@ void ofFbo::allocate(Settings _settings) {
 	{
 		// if we want a depth buffer, create it, and attach to our main fbo
 		if(settings.useDepth){
+			GLint depthPixelType = GL_UNSIGNED_INT;
+			if(settings.dethInternalFormat==GL_DEPTH_COMPONENT){
+				depthPixelType = GL_UNSIGNED_INT;
+			}
+			#ifndef TARGET_OPENGL_ES
+			else if(settings.dethInternalFormat==GL_DEPTH_COMPONENT16){
+				depthPixelType = GL_UNSIGNED_SHORT;
+			}else if(settings.dethInternalFormat==GL_DEPTH_COMPONENT24){
+				depthPixelType = GL_UNSIGNED_INT;
+			}else if(settings.dethInternalFormat==GL_DEPTH_COMPONENT32){
+				depthPixelType = GL_UNSIGNED_INT;
+			}
+			#endif
+
 			if(!settings.depthAsTexture){
-				depthBuffer = createAndAttachRenderbuffer(GL_DEPTH_COMPONENT, GL_DEPTH_ATTACHMENT);
+				depthBuffer = createAndAttachRenderbuffer(settings.dethInternalFormat, GL_DEPTH_ATTACHMENT);
 				retainRB(depthBuffer);
 			}else{
 				glGenTextures(1, &depthBufferTex.texData.textureID);
@@ -462,13 +477,15 @@ void ofFbo::allocate(Settings _settings) {
 				glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE );
 				glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE );
 			#endif
-				glTexImage2D( GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, settings.width, settings.height, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, 0 );
+
+
+				glTexImage2D( GL_TEXTURE_2D, 0, settings.dethInternalFormat, settings.width, settings.height, 0, GL_DEPTH_COMPONENT, depthPixelType, 0 );
 				glBindTexture( GL_TEXTURE_2D, 0 );
 
 				// allocate depthBufferTex as depth buffer;
-				depthBufferTex.texData.glTypeInternal = GL_DEPTH_COMPONENT;
+				depthBufferTex.texData.glTypeInternal = settings.dethInternalFormat;
 				depthBufferTex.texData.glType = GL_DEPTH_COMPONENT;
-				depthBufferTex.texData.pixelType = GL_UNSIGNED_INT;
+				depthBufferTex.texData.pixelType = depthPixelType;
 				depthBufferTex.texData.textureTarget = GL_TEXTURE_2D;
 				depthBufferTex.texData.bFlipTexture = false;
 				depthBufferTex.texData.tex_w = settings.width;
