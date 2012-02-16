@@ -32,29 +32,17 @@
 #pragma once
 
 #import <UIKit/UIKit.h>
+#import "ofxiPhoneViewController.h"
 
-#import "EAGLView.h"
-#import "ofAppiPhoneWindow.h"
+@interface ofxiPhoneAppDelegate : NSObject <UIApplicationDelegate> 
 
-@interface ofxiPhoneAppDelegate : NSObject <UIApplicationDelegate> {
-	NSTimer				*animationTimer;
-    BOOL				animating;
-    BOOL				displayLinkSupported;
-    float				animationFrameInterval;
-    id					displayLink;
-	
-	EAGLView			*glView;
+@property (nonatomic, retain) UIWindow                 *window;
+@property (nonatomic, retain) ofxiPhoneViewController  *glViewController;
 
-	NSLock				*glLock;
-}
+-(BOOL) application : (UIApplication*) application 
+      handleOpenURL : (NSURL*) url;
 
-- (BOOL)application:(UIApplication *)application handleOpenURL:(NSURL *)url;
--(void) receivedRotate:(NSNotification*)notification;
--(void) setFrameRate:(float)frameRate;
--(EAGLView*) getGLView;
-
--(void)lockGL;
--(void)unlockGL;
+-(void) receivedRotate : (NSNotification*) notification;
 
 @end
 
