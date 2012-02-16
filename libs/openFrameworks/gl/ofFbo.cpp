@@ -450,7 +450,7 @@ void ofFbo::allocate(Settings _settings) {
 			if(settings.dethInternalFormat==GL_DEPTH_COMPONENT){
 				depthPixelType = GL_UNSIGNED_INT;
 			}
-			#ifndef TARGET_OPENGL_ES
+			#ifndef TARGET_OPENGLES
 			else if(settings.dethInternalFormat==GL_DEPTH_COMPONENT16){
 				depthPixelType = GL_UNSIGNED_SHORT;
 			}else if(settings.dethInternalFormat==GL_DEPTH_COMPONENT24){
