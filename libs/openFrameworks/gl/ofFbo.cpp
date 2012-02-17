@@ -446,9 +446,9 @@ void ofFbo::allocate(Settings _settings) {
 	{
 		// if we want a depth buffer, create it, and attach to our main fbo
 		if(settings.useDepth){
-			GLint depthPixelType = GL_UNSIGNED_INT;
+			GLint depthPixelType = GL_UNSIGNED_BYTE;
 			if(settings.dethInternalFormat==GL_DEPTH_COMPONENT){
-				depthPixelType = GL_UNSIGNED_INT;
+				depthPixelType = GL_UNSIGNED_BYTE;
 			}
 			#ifndef TARGET_OPENGLES
 			else if(settings.dethInternalFormat==GL_DEPTH_COMPONENT16){
