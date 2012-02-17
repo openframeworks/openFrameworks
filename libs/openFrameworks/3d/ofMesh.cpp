@@ -589,7 +589,7 @@ void ofMesh::draw(ofPolyRenderMode renderType){
 
 //--------------------------------------------------------------
 void ofMesh::load(string path){
-	ofFile is(path, ofFile::WriteOnly);
+	ofFile is(path, ofFile::ReadOnly);
 	ofMesh& data = *this;
 	
 	string line;
