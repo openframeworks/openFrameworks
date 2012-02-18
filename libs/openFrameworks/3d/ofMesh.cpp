@@ -804,6 +804,8 @@ void ofMesh::load(string path){
 		}
 	}
 	
+
+	return;
 	clean:
 	ofLogError() << lineNum << ":" << error;
 	ofLogError() << "\"" << line << "\"";
