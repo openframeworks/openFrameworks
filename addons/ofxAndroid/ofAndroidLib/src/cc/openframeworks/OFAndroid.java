@@ -37,6 +37,65 @@ import android.widget.Toast;
 
 public class OFAndroid {
 	
+	static private String tryExternalStorageDirectory(final String path)
+	{	
+		File SDCardDir = new File(path);		
+    	if(SDCardDir.exists())
+    	{    		    		
+    		if(SDCardDir.canWrite())
+    		{
+    			Log.d("OF", "Found writable location: " + path);
+    			return path;
+    		}
+    	}
+    	
+    	return "false";
+	}
+	
+	static public String getRealExternalStorageDirectory()
+	{				
+		// Check special cases (Priority top to bottom)
+		String case1 = tryExternalStorageDirectory("/mnt/sdcard-ext");
+		String case2 = tryExternalStorageDirectory("/mnt/sdcard/external_sd");
+		String case3 = tryExternalStorageDirectory("/sdcard/sd");
+		String case4 = tryExternalStorageDirectory("/mnt/external_sd");
+		String case5 = tryExternalStorageDirectory("/emmc");
+		String case6 = tryExternalStorageDirectory("/mnt/sdcard/bpemmctest");
+		String case7 = tryExternalStorageDirectory("/mnt/sdcard/_ExternalSD"); 
+		String case8 = tryExternalStorageDirectory("/mnt/Removable/MicroSD");
+		String case9 = tryExternalStorageDirectory("/Removable/MicroSD");
+		String case10 = tryExternalStorageDirectory("/mnt/external1");
+				
+		String externalPath = "";
+		
+		if(!case1.equals("false"))
+			externalPath = case1;
+		else if(!case2.equals("false"))			
+			externalPath = case2;
+		else if(!case3.equals("false"))
+			externalPath = case3;
+		else if(!case4.equals("false"))
+			externalPath = case4;
+		else if(!case5.equals("false"))
+			externalPath = case5;
+		else if(!case6.equals("false"))
+			externalPath = case6;
+		else if(!case7.equals("false"))
+			externalPath = case7;
+		else if(!case8.equals("false"))
+			externalPath = case8;
+		else if(!case9.equals("false"))
+			externalPath = case9;
+		else if(!case10.equals("false"))
+			externalPath = case10;		
+		else
+			externalPath = Environment.getExternalStorageDirectory().getAbsolutePath(); // If none of the locations exist, use default method.
+		
+		Log.d("OF", "ExternalStorageDirectory: " + externalPath);		
+		
+		return externalPath;
+	}
+	
 	public OFAndroid(String packageName, Activity ofActivity){
 		//Log.i("OF","external files dir: "+ ofActivity.getApplicationContext().getExternalFilesDir(null));
 		OFAndroid.packageName = packageName;
@@ -53,7 +112,8 @@ public class OFAndroid {
 	        
 	        dataPath="";
     		try{
-    			dataPath = Environment.getExternalStorageDirectory().getAbsolutePath();
+    			//dataPath = Environment.getExternalStorageDirectory().getAbsolutePath();
+    			dataPath = getRealExternalStorageDirectory();
     			dataPath += "/"+packageName;
     			Log.i("OF","creating app directory: " + dataPath);
 				try{
