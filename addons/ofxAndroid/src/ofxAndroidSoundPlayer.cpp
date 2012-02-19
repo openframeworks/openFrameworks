@@ -405,6 +405,23 @@ float ofxAndroidSoundPlayer::getPan(){
 }
 
 //------------------------------------------------------------
+float ofxAndroidSoundPlayer::getVolume(){
+	if(!javaSoundPlayer){
+		ofLogError() << "cannot query pan on an unloaded sound player";
+		return 0;
+	}
+	JNIEnv *env = ofGetJNIEnv();
+	if (!env) {
+		ofLog(OF_LOG_ERROR,"Failed to get the environment using GetEnv()");
+		return 0;
+	}
+	
+	// TODO: Implement this method and add a method to OFAndroidSoundPlayer.java
+	
+	return 0;
+}
+
+//------------------------------------------------------------
 bool ofxAndroidSoundPlayer::getIsPaused(){
 	if(!javaSoundPlayer){
 		ofLogError() << "cannot query paused on an unloaded sound player";
