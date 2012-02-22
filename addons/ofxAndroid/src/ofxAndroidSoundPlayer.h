@@ -28,6 +28,7 @@ public:
 	float getSpeed();
 	float getPan();
 	bool getIsPaused();
+	float getVolume();
 
 private:
 	jobject javaSoundPlayer;
