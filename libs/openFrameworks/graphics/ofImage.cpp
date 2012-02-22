@@ -148,7 +148,7 @@ void putBmpIntoPixels(FIBITMAP * bmp, ofPixels_<PixelType> &pix, bool swapForLit
 	unsigned int bpp = FreeImage_GetBPP(bmp);
 	unsigned int channels = (bpp / sizeof(PixelType)) / 8;
 	unsigned int pitch = FreeImage_GetPitch(bmp);
-	
+
 	// ofPixels are top left, FIBITMAP is bottom left
 	FreeImage_FlipVertical(bmp);
 	
@@ -177,7 +177,6 @@ static bool loadImage(ofPixels_<PixelType> & pix, string fileName){
 		return ofLoadImage(pix, ofLoadURL(fileName).data);
 	}
 	
-	int width, height, bpp;
 	fileName = ofToDataPath(fileName);
 	bool bLoaded = false;
 	FIBITMAP * bmp = NULL;
@@ -200,8 +199,6 @@ static bool loadImage(ofPixels_<PixelType> & pix, string fileName){
 
 	if ( bLoaded ){
 		putBmpIntoPixels(bmp,pix);
-	} else {
-		width = height = bpp = 0;
 	}
 
 	if (bmp != NULL){
@@ -622,13 +619,14 @@ bool ofImage_<PixelType>::loadImage(const ofFile & file){
 //----------------------------------------------------------
 template<typename PixelType>
 bool ofImage_<PixelType>::loadImage(string fileName){
-	bool bLoadedOk = false;
-	bLoadedOk = ofLoadImage(pixels, fileName);
-	if (bLoadedOk && pixels.isAllocated() && bUseTexture){
-		tex.allocate(pixels.getWidth(), pixels.getHeight(), ofGetGlInternalFormat(pixels));
-	}
+	bool bLoadedOk = ofLoadImage(pixels, fileName);
 	if (!bLoadedOk) {
 		ofLog(OF_LOG_ERROR, "Couldn't load image from " + fileName);
+		clear();
+		return false;
+	}
+	if (bLoadedOk && pixels.isAllocated() && bUseTexture){
+		tex.allocate(pixels.getWidth(), pixels.getHeight(), ofGetGlInternalFormat(pixels));
 	}
 	update();
 	return bLoadedOk;
@@ -636,13 +634,14 @@ bool ofImage_<PixelType>::loadImage(string fileName){
 
 template<typename PixelType>
 bool ofImage_<PixelType>::loadImage(const ofBuffer & buffer){
-	bool bLoadedOk = false;
-	bLoadedOk = ofLoadImage(pixels, buffer);
-	if (bLoadedOk && pixels.isAllocated() && bUseTexture){
-		tex.allocate(pixels.getWidth(), pixels.getHeight(), ofGetGlInternalFormat(pixels));
-	}
+	bool bLoadedOk = ofLoadImage(pixels, buffer);
 	if (!bLoadedOk) {
 		ofLog(OF_LOG_ERROR, "Couldn't load image from buffer.");
+		clear();
+		return false;
+	}
+	if (bLoadedOk && pixels.isAllocated() && bUseTexture){
+		tex.allocate(pixels.getWidth(), pixels.getHeight(), ofGetGlInternalFormat(pixels));
 	}
 	update();
 	return bLoadedOk;
