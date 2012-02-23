@@ -7,39 +7,38 @@ void testApp::setup(){
     
     setOFRoot("../../../../../");
 
-    
-    ofDirectory dir;
-    dir.listDir("../../../../../examples/basicExamples");
-    for (int i = 0; i < dir.size(); i++){
-        xcProject.setup();
-        cout << "making xcode project at " << dir.getPath(i) << endl;
-        xcProject.create(dir.getPath(i));
-        vector < string > addons;
-        parseAddonsDotMake(xcProject.getPath() + "addons.make", addons);
-        for (int i = 0; i < addons.size(); i++){
-            ofAddon addon;
-            addon.fromFS(getOFRoot()+ "/addons/" + addons[i],"osx");
-            xcProject.addAddon(addon);
-        }
-    }
-    
-    dir.listDir("../../../../../examples/addonsExamples");
-    for (int i = 0; i < dir.size(); i++){
-        xcProject.setup();
-        xcProject.create(dir.getPath(i));
-        vector < string > addons;
-        parseAddonsDotMake(xcProject.getPath() + "addons.make", addons);
-        for (int i = 0; i < addons.size(); i++){
-            
-            printf("---> adding addon %s \n", addons[i].c_str());
-                   
-            ofAddon addon;
-            addon.fromFS(getOFRoot()+ "/addons/" + addons[i],"osx");
-            xcProject.addAddon(addon);
-        }
-    }
+    printf("generating examples \n");
+    generateExamples();
+    printf("finished generating examples \n");
     
 
+}
+
+void testApp::generateExamples(){
+    
+    ofDirectory dir;
+    dir.listDir("../../../../../examples");
+    
+    for (int i = 0; i < dir.size(); i++){
+        
+        if (dir.getName(i) == "android" || dir.getName(i) == "ios") continue;
+        
+        ofDirectory subdir;
+        subdir.listDir(dir.getPath(i));
+        
+        for (int j = 0; j < subdir.size(); j++){
+            xcProject.setup();
+            xcProject.create(subdir.getPath(j));
+            vector < string > addons;
+            parseAddonsDotMake(xcProject.getPath() + "addons.make", addons);
+            for (int i = 0; i < addons.size(); i++){
+                ofAddon addon;
+                addon.fromFS(getOFRoot()+ "/addons/" + addons[i],"osx");
+                xcProject.addAddon(addon);
+            }
+        }
+    }
+    
 }
 
 
