@@ -34,6 +34,8 @@ public:
 	void setNearClip(float f);
 	void setFarClip(float f);
 	
+	void setupPerspective(bool vFlip = true, float fov = 60, float nearDist = 0, float farDist = 0);
+
 	void enableOrtho();
 	void disableOrtho();
 	bool getOrtho() const;
