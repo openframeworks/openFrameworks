@@ -43,8 +43,8 @@ void testApp::setup(){
 			mainMesh.addIndex(x+(y+1)*width);			// 10
 			
 			mainMesh.addIndex((x+1)+y*width);			// 1
-			mainMesh.addIndex(x+(y+1)*width);			// 10
 			mainMesh.addIndex((x+1)+(y+1)*width);		// 11
+			mainMesh.addIndex(x+(y+1)*width);			// 10
 		}
 	}
 	
