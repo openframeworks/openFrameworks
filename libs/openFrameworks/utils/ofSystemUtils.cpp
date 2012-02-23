@@ -1,5 +1,6 @@
 
 #include "ofConstants.h"
+#include "ofLog.h"
 #include "ofSystemUtils.h"
 #include "ofFileUtils.h"
 
@@ -375,16 +376,11 @@ ofFileDialogResult ofSystemSaveDialog(string defaultName, string messageName){
 	options.saveFileName = CFStringCreateWithCString(NULL, defaultName.c_str(), kCFStringEncodingASCII);
 	NavDialogRef dialog;
 
-	err = NavCreatePutFileDialog(&options, '.mov', 'Moov', NULL, NULL, &dialog);
-
-	//printf("NavCreatePutFileDialog returned %i\n", err );
-
-	err = NavDialogRun(dialog);
-	//printf("NavDialogRun returned %i\n", err );
+	NavCreatePutFileDialog(&options, '.mov', 'Moov', NULL, NULL, &dialog);
+	NavDialogRun(dialog);
 
 	NavUserAction action;
 	action = NavDialogGetUserAction( dialog );
-	//printf("got action %i\n", action);
 	if (action == kNavUserActionNone || action == kNavUserActionCancel) {
 
 		return results;
@@ -396,10 +392,10 @@ ofFileDialogResult ofSystemSaveDialog(string defaultName, string messageName){
 	if ( err != noErr )
 		return results;
 
-	if ( reply.replacing )
-	{
-		printf("need to replace\n");
-	}
+//	if ( reply.replacing )
+//	{
+//		ofLog(OF_LOG_NOTICE, "need to replace");
+//	}
 
 	AEKeyword keyword;
 	DescType actual_type;
@@ -407,8 +403,6 @@ ofFileDialogResult ofSystemSaveDialog(string defaultName, string messageName){
 	FSRef output_dir;
 	err = AEGetNthPtr(&(reply.selection), 1, typeFSRef, &keyword, &actual_type,
 					  &output_dir, sizeof(output_file), &actual_size);
-
-	//printf("AEGetNthPtr returned %i\n", err );
 
 
 	CFURLRef cfUrl = CFURLCreateFromFSRef( kCFAllocatorDefault, &output_dir );
@@ -435,8 +429,6 @@ ofFileDialogResult ofSystemSaveDialog(string defaultName, string messageName){
 	string finalURL = url1 + "/" + url2;
 
 	results.filePath = finalURL.c_str();
-
-	//printf("url %s\n", finalURL.c_str());
 
 	// cleanup dialog
 	NavDialogDispose(dialog);

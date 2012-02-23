@@ -200,7 +200,7 @@ bool ofQuickTimeGrabber::initGrabber(int w, int h){
 		}
 		
 		ofLog(OF_LOG_NOTICE,"end setup ofQuickTimeGrabber");
-		ofLog(OF_LOG_NOTICE,"-------------------------------------\n");
+		ofLog(OF_LOG_NOTICE,"-------------------------------------");
 
 		// we are done
 		return true;
@@ -210,7 +210,7 @@ bool ofQuickTimeGrabber::initGrabber(int w, int h){
 		bail:
 
 			ofLog(OF_LOG_ERROR, "***** ofQuickTimeGrabber error *****");
-			ofLog(OF_LOG_ERROR, "-------------------------------------\n");
+			ofLog(OF_LOG_ERROR, "-------------------------------------");
 
 			//if we don't close this - it messes up the next device!
 			if(bSgInited) qtCloseSeqGrabber();
@@ -246,7 +246,7 @@ void ofQuickTimeGrabber::listDevices(){
 			}
 		}
 
-		printf("-------------------------------------\n");
+		ofLog( OF_LOG_NOTICE, "-------------------------------------" );
 
 		/*
 			//input selection stuff (ie multiple webcams)
@@ -297,18 +297,18 @@ void ofQuickTimeGrabber::listDevices(){
 						memcpy(pascalNameInput, inputNameRec.name, sizeof(char) * 64);
 					}
 
-					printf( "device[%i] %s - %s\n",  deviceCount, p2cstr(pascalName), p2cstr(pascalNameInput) );
+					ofLog( OF_LOG_NOTICE, "device[%i] %s - %s",  deviceCount, p2cstr(pascalName), p2cstr(pascalNameInput) );
 
 					//we count this way as we need to be able to distinguish multiple inputs as devices
 					deviceCount++;
 				}
 
 			}else{
-				printf( "(unavailable) device[%i] %s\n",  deviceCount, p2cstr(pascalName) );
+				ofLog( OF_LOG_NOTICE, "(unavailable) device[%i] %s",  deviceCount, p2cstr(pascalName) );
 				deviceCount++;
 			}
 		}
-		printf( "-------------------------------------\n");
+		ofLog( OF_LOG_NOTICE, "-------------------------------------" );
 
 		//if we initialized the grabbing component then close it
 		if( bNeedToInitGrabberFirst ){
