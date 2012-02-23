@@ -52,8 +52,8 @@ void ofLogToConsole();
 /// \author Dan Wilcox <danomatika@gmail.com> danomatika.com
 ///
 class ofLog{
-    public:
-
+	public:
+	
 		/// log at notice level
 		ofLog();
 		
@@ -63,48 +63,48 @@ class ofLog{
 		/// the legacy ofLog interfaces
 		ofLog(ofLogLevel logLevel, const string & message);
 		ofLog(ofLogLevel logLevel, const char* format, ...);
-
-        /// does the actual printing when the ostream is done
-        virtual ~ofLog();
-
-        /// catch the << ostream with a template class to read any type of data
-        template <class T> 
-		ofLog& operator<<(const T& value){
-            message << value << padding;
-            return *this;
-        }
-
-        /// catch the << ostream function pointers such as std::endl and std::hex
-        ofLog& operator<<(std::ostream& (*func)(std::ostream&)){
+		
+		/// does the actual printing when the ostream is done
+		virtual ~ofLog();
+		
+		/// catch the << ostream with a template class to read any type of data
+		template <class T> 
+			ofLog& operator<<(const T& value){
+			message << value << padding;
+			return *this;
+		}
+		
+		/// catch the << ostream function pointers such as std::endl and std::hex
+		ofLog& operator<<(std::ostream& (*func)(std::ostream&)){
 			func(message);
-            return *this;
-        }
-        
+			return *this;
+		}
+		
 		/// put a space between stream operator calls?
 		static void setAutoSpace(bool autoSpace);
 		
 		/// set the logging channel destinations for messages
 		static void setChannel(ofPtr<ofBaseLoggerChannel> channel);
-		
+	
 	protected:
 		ofLogLevel level;			///< log level
 		bool bPrinted;				///< has the msg been printed in the constructor? 
 		string module;				///< the destination module for this message
-	
+		
 		/// print a log line
 		void _log(ofLogLevel level, const string & module, const string & message);
 		bool checkLog(ofLogLevel level, const string & module);
-
+	
 	private:
-        std::ostringstream message;	///< temp buffer
+		std::ostringstream message;	///< temp buffer
 		
 		static bool bAutoSpace;		///< add a space between messages? 
 		
 		ofLog(ofLog const&) {}        					// not defined, not copyable
-        ofLog& operator=(ofLog& from) {return *this;}	// not defined, not assignable
-
-        static ofPtr<ofBaseLoggerChannel> channel;		///< the message destination
-        static string padding;							///< the padding between ostream calls
+		ofLog& operator=(ofLog& from) {return *this;}	// not defined, not assignable
+		
+		static ofPtr<ofBaseLoggerChannel> channel;	///< the message destination
+		static string padding;						///< the padding between ostream calls
 };
 
 //--------------------------------------------------------------
