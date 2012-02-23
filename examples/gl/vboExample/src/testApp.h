@@ -2,7 +2,7 @@
 
 #include "ofMain.h"
 
-class ofApp : public ofBaseApp {
+class testApp : public ofBaseApp {
 public:
 	void setup();
 	void update();
