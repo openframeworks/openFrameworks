@@ -54,7 +54,7 @@ void ofLogToConsole();
 class ofLog{
     public:
 
-		/// use the default log level
+		/// log at notice level
 		ofLog();
 		
 		/// set the log level
@@ -70,7 +70,7 @@ class ofLog{
         /// catch the << ostream with a template class to read any type of data
         template <class T> 
 		ofLog& operator<<(const T& value){
-            message << value << " ";
+            message << value;
             return *this;
         }
 
