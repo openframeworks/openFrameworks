@@ -1,4 +1,4 @@
-#include "ofApp.h"
+#include "testApp.h"
 
 /*
  This code demonstrates the difference between using an ofMesh and an ofVboMesh.
@@ -47,7 +47,7 @@ ofVec3f getVertexFromImg(ofImage& img, int x, int y) {
 	}
 }
 
-void ofApp::setup() {
+void testApp::setup() {
 	img.loadImage("linzer.png");
 	
 	// OF_PRIMITIVE_TRIANGLES means every three vertices create a triangle
@@ -86,11 +86,11 @@ void ofApp::setup() {
 	glEnable(GL_DEPTH_TEST);
 }
 
-void ofApp::update() {
+void testApp::update() {
 	
 }
 
-void ofApp::draw() {
+void testApp::draw() {
 	ofBackground(0);
 	cam.begin();
 	
