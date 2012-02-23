@@ -27,7 +27,6 @@ public:
     
     pugi::xml_node findOrMakeFolderSet( pugi::xml_node nodeToAddTo, vector < string > & folders, string pathForHash);
     
-    
 	string getName();
 	string getPath();
 
@@ -42,11 +41,10 @@ public:
     
     string projectDir, projectName;
     vector<ofAddon> addons;
-    void parseAddons();
     static string LOG_NAME;
     
     
-   bool findArrayForUUID(string UUID, pugi::xml_node & nodeMe);
+    bool findArrayForUUID(string UUID, pugi::xml_node & nodeMe);
     
 };
 
