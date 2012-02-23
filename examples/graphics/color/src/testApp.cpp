@@ -62,15 +62,9 @@ void testApp::draw(){
     // step through horizontally
     for ( int i=0; i<ofGetWidth(); i+=step )
     {
-        // iPercent moves between 0 and 1 as we go from left to right
-        float iPercent = float(i)/ofGetWidth();
-        
         // step through vertically
         for ( int j=0; j<ofGetHeight(); j+=step )
         {
-            // jPercent moves from 1 to 0 as we go from top to bottom
-            float jPercent = 1.0f-float(j)/ofGetHeight();
-            
             // set HSB using our hue value that changes over time, saturation from the X position (i), 
             // and brightness from the Y position (j). we also invert the Y value since it looks 
             // nicer if the dark/black colors are along the bottom.
