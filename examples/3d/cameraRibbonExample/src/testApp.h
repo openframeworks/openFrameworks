@@ -1,3 +1,14 @@
+/**
+ *
+ * OFDevCon Example Code Sprint
+ * Camera Ribbon example
+ * This example generates ribbons along the mouse trail that descend in space
+ * When you click space bar, you can
+ *
+ * Created by James George for openFrameworks workshop at Waves Festival Vienna sponsored by Lichterloh and Pratersauna
+ * Adapted during ofDevCon on 2/23/2012
+ */
+
 #pragma once
 
 #include "ofMain.h"
