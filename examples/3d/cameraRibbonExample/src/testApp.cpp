@@ -46,6 +46,7 @@ void testApp::draw(){
         camera.begin();
     }
     
+	ofSetColor(0);
 	//do the same thing from the first example...
     ofMesh mesh;
 	mesh.setMode(OF_PRIMITIVE_TRIANGLE_STRIP); 
