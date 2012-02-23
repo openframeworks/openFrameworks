@@ -122,8 +122,8 @@ bool xcodeProject::create(string path){
     projectDir = ofFilePath::addTrailingSlash(path);
 	projectName = ofFilePath::getFileName(path);
 	
-    cout << "project dir:" << projectDir;
-    cout << "project name:" << projectName;
+    //cout << "project dir:" << projectDir;
+    //cout << "project name:" << projectName;
     
     bool bDoesDirExist = false;
     
@@ -161,7 +161,6 @@ bool xcodeProject::create(string path){
         vector < string > fileNames;
        
         getFilesRecursively(projectDir + "src", fileNames);
-        cout << fileNames.size() << endl;
         
         ofFile::copyFromTo(templatePath + "/emptyExample.xcodeproj", projectDir);
         ofFile::copyFromTo(templatePath + "/openFrameworks-Info.plist", projectDir);
@@ -188,12 +187,10 @@ bool xcodeProject::create(string path){
             // last is now something like " /src/main.cpp"
             // drop the trailing slash;
             last.erase(last.begin());
-            //cout << first << " ----- " << last << endl;
             
             string fileName = last;
             splitFromLast(fileName,"/", first, last);  
             
-            //cout << "adding " << fileName<< " " <<first << endl;
             if (fileName != "src/testApp.cpp" &&
                 fileName != "src/testApp.h" &&
                 fileName != "src/main.cpp"){
@@ -288,7 +285,6 @@ pugi::xml_node xcodeProject::findOrMakeFolderSet(pugi::xml_node nodeToAddTo, vec
     pugi::xml_node nodeWithThisName;
     string name = folders[0];
     
-    cout << "trying to find name " << name << endl;
     
     for (pugi::xpath_node_set::const_iterator it = array.begin(); it != array.end(); ++it){
         
@@ -320,9 +316,7 @@ pugi::xml_node xcodeProject::findOrMakeFolderSet(pugi::xml_node nodeToAddTo, vec
         
     }
     
-    //cout << bAnyNodeWithThisName << endl;
-    
-
+   
     
     // now, if we have a pbxgroup with the right name, pop this name off the folder set, and keep going. 
     // else, let's add a folder set, boom. 
@@ -335,8 +329,6 @@ pugi::xml_node xcodeProject::findOrMakeFolderSet(pugi::xml_node nodeToAddTo, vec
         pathForHash += "/" + folders[0];
         
         string UUID = generateUUID(pathForHash);
-        
-        printf("adding new node %s -- %s \n", pathForHash.c_str(), UUID.c_str());
         
         // add a new node
         string PBXGroupStr = string(PBXGroup);
@@ -351,8 +343,6 @@ pugi::xml_node xcodeProject::findOrMakeFolderSet(pugi::xml_node nodeToAddTo, vec
         doc.select_single_node("/plist[1]/dict[1]/dict[2]").node().prepend_copy(pbxDoc.first_child()); 
         
         
-        //printf(".......  ? \n");
-        //nodeWithThisName.print(std::cout);
         
         // add to array
         char queryArray[255];
@@ -503,7 +493,6 @@ void xcodeProject::addSrc(string srcFile, string folder){
                 pugi::xml_node node = doc.select_single_node("//key[contains(.,'BB4B014C10F69532006C3DED')]/following-sibling::node()[1]").node();
                 pugi::xml_node nodeToAddTo = findOrMakeFolderSet( node, folders, "addons");
                 
-                cout << "adding addon folder " << folder << endl;
                 nodeToAddTo.child("array").append_child("string").append_child(pugi::node_pcdata).set_value(UUID.c_str());
                 
             } else {
@@ -542,7 +531,6 @@ void xcodeProject::addInclude(string includeName){
     pugi::xpath_node_set headerArray = doc.select_nodes(query);
 
     if (headerArray.size() > 0){
-        //cout << "adding header " << endl;
         
         for (pugi::xpath_node_set::const_iterator it = headerArray.begin(); it != headerArray.end(); ++it){
             pugi::xpath_node node = *it;
@@ -592,20 +580,16 @@ void xcodeProject::addLibrary(string libraryName){
     
     
     if (headerArray.size() > 0){
-        //cout << "adding library! " << endl;
         
         for (pugi::xpath_node_set::const_iterator it = headerArray.begin(); it != headerArray.end(); ++it){
             
             pugi::xpath_node node = *it;
-            //cout << node.node() << endl;
-            //node.node().print(std::cout);
             node.node().append_child("string").append_child(pugi::node_pcdata).set_value(libraryName.c_str());
-            //node.node().print(std::cout);
         }
         
     } else {
         
-        printf("we don't have OTHER_LDFLAGS, so we're adding them... and calling this function again \n");
+        //printf("we don't have OTHER_LDFLAGS, so we're adding them... and calling this function again \n");
         query[255];
         sprintf(query, "//key[contains(.,'baseConfigurationReference')]/parent::node()//key[contains(.,'buildSettings')]/following-sibling::node()[1]");
         
@@ -637,28 +621,15 @@ void xcodeProject::addLibrary(string libraryName){
 void xcodeProject::addAddon(ofAddon & addon){
     
     for(int i=0;i<(int)addon.includePaths.size();i++){
-		printf("---> adding include path %s \n", addon.includePaths[i].c_str());
-        addInclude(addon.includePaths[i]);
+		addInclude(addon.includePaths[i]);
 	}
     
 	for(int i=0;i<(int)addon.libs.size();i++){
-        
-        
-        //cout << "addLibrary " << addon.libs[i] << endl;
-        printf("---> adding lib %s \n", addon.libs[i].c_str());
-        
 		addLibrary(addon.libs[i]);
-       
 	}
     
 	for(int i=0;i< addon.srcFiles.size(); i++){
-        
-        //cout << "addSrc " << addon.srcFiles[i] << " " << addon.filesToFolders[addon.srcFiles[i]] << endl;
-        
-        printf("---> adding src %s (%s) \n", addon.srcFiles[i].c_str(), addon.filesToFolders[addon.srcFiles[i]].c_str());
-        
-        
-		addSrc(addon.srcFiles[i],addon.filesToFolders[addon.srcFiles[i]]);
+        addSrc(addon.srcFiles[i],addon.filesToFolders[addon.srcFiles[i]]);
 	}
 }
 
