@@ -36,7 +36,8 @@ public:
 	static string LOG_NAME;
 
 private:
-	void parseAddons();
+	
+    //void parseAddons();
 
 	pugi::xml_document doc;
 	string projectDir, projectName;
