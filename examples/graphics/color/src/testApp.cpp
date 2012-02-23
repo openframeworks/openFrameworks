@@ -42,8 +42,9 @@ void testApp::draw(){
     // in ofColor all the values are specified as 0..255 .
     
     // for example, to specify an orange color that is strong and bright, you start by specifying the 
-    // hue for the orange you need , then the saturation (180 to 255 for high saturation) 
-    // and the brightness (180 to 255 for bright).
+    // hue for the orange you want (a number from 15-30, 15 is more red and 30 is more yellow), then 
+    // the saturation (something between 180 and 255 for high saturation) and the brightness (180 to 
+    // 255 for bright).
     
     // for grays (and black and white) you can use any value for hue, set the saturation to 0 and 
     // control the level of gray with the brightness value: 255 is white, 0 is black, 128 is 50% gray.    
@@ -69,7 +70,7 @@ void testApp::draw(){
             // and brightness from the Y position (j). we also invert the Y value since it looks 
             // nicer if the dark/black colors are along the bottom.
             ofColor c;
-            // the range of each of the arguments is here is 0..255 so we map i and j to that range.
+            // the range of each of the arguments here is 0..255 so we map i and j to that range.
             c.setHsb( hue, ofMap(i, 0,ofGetWidth(), 0,255), ofMap(j, ofGetHeight(),0, 0,255 ) );
             
             // assign the color and draw a rectangle
