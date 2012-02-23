@@ -1,10 +1,6 @@
 #pragma once
 
 #include "ofMain.h"
-#include "CBLinuxProject.h"
-#include "CBWinProject.h"
-#include "visualStudioProject.h"
-#include "xcodeProject.h"
 
 class testApp : public ofBaseApp{
 
@@ -23,11 +19,9 @@ class testApp : public ofBaseApp{
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
 		
-		CBLinuxProject linuxProject;
-		CBWinProject winProject;
-		visualStudioProject vsProject;
-		xcodeProject xcProject;
-    
-        void generateExamples();
-    
+		ofVec3f previous, current;
+		ofEasyCam easyCam;
+		
+		deque<ofVec3f> pathVertices;
+		ofMesh pathLines;
 };
