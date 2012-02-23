@@ -27,4 +27,7 @@ class testApp : public ofBaseApp{
 		CBWinProject winProject;
 		visualStudioProject vsProject;
 		xcodeProject xcProject;
+    
+        void generateExamples();
+    
 };
