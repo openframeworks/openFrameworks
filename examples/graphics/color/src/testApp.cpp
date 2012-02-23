@@ -29,10 +29,10 @@ void testApp::draw(){
     
     // HSB allows colors to be specified in a way that is perhaps more natural to the understanding
     // of color that we have through language, using numerical values to describe 'hue', 
-    // 'saturation' and 'brightness'.
+    // 'saturation' and 'brightness'. 
     
-    // 'hue' refers to the 'color' in the rainbow sense, moving from red through orange through
-    //   green through blue through purple through red, then looping around again.
+    // 'hue' refers to the 'color' in the rainbow sense, moving from red through yellow through
+    //   green through blue through purple through red, looping around again.
     // 'saturation' refers to the intensity of the color. high saturation means intense color,
     //   low saturation means washed out or black and white.    
     // 'brightness' refers to how light or dark the color is. high brightness means a bright color,
@@ -71,12 +71,12 @@ void testApp::draw(){
             // jPercent moves from 1 to 0 as we go from top to bottom
             float jPercent = 1.0f-float(j)/ofGetHeight();
             
-            // set HSB using our hue value that changes over time, saturation from the
-            // x position (iPercent), and brightness from the y position (jPercent)
+            // set HSB using our hue value that changes over time, saturation from the X position (i), 
+            // and brightness from the Y position (j). we also invert the Y value since it looks 
+            // nicer if the dark/black colors are along the bottom.
             ofColor c;
-            
-            // the range of each of the arguments is here is 0..255
-            c.setHsb( hue, iPercent*255, jPercent*255 );
+            // the range of each of the arguments is here is 0..255 so we map i and j to that range.
+            c.setHsb( hue, ofMap(i, 0,ofGetWidth(), 0,255), ofMap(j, ofGetHeight(),0, 0,255 ) );
             
             // assign the color and draw a rectangle
             ofSetColor( c );
@@ -86,11 +86,12 @@ void testApp::draw(){
     
     // now we will draw a larger rectangle taking the color under the mouse
     
-    // find the color under the mouse, using the same calculations as when drawing the grid, 
-    // using mouseX and mouseY in place of i and j
-    ofColor color;
-    color.setHsb( hue, float(mouseX)/ofGetWidth()*255, (1.0f-float(mouseY)/ofGetHeight())*255 );
-    // set the color and draw the rectangle
+    // calculate the color under the mouse, using the same calculations as when drawing the grid, 
+    // using mouseX and mouseY in place of i and j; draw a rectangle with this color. here we use 
+    // ofColor::fromHsb which allows us to set the HSB color in a single line of code.
+    ofColor color = ofColor::fromHsb(hue, 
+                                     ofMap( mouseX, 0,ofGetWidth(), 0,255 ), 
+                                     ofMap( mouseY, ofGetHeight(),0, 0,255 ) );
     ofSetColor( color );
     ofFill();
     ofRect( mouseX, mouseY, 100, 100 );
@@ -107,12 +108,10 @@ void testApp::draw(){
     ofDrawBitmapString("HSB: "+ofToString(int(hue))+
                        " "+ofToString(int(color.getSaturation()))+
                        " "+ofToString(int(color.getBrightness())),
-                       //mouseX-40, mouseY-10 );
                        10, ofGetHeight()-13 );
     ofDrawBitmapString("RGB: "+ofToString(int(color.r))+
                        " "+ofToString(int(color.g))+
                        " "+ofToString(int(color.b)), 
-                       //mouseX-40,mouseY+25 );
                        200, ofGetHeight()-13 );
     
 }
