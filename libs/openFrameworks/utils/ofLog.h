@@ -70,7 +70,7 @@ class ofLog{
         /// catch the << ostream with a template class to read any type of data
         template <class T> 
 		ofLog& operator<<(const T& value){
-            message << value;
+            message << value << padding;
             return *this;
         }
 
@@ -79,14 +79,17 @@ class ofLog{
 			func(message);
             return *this;
         }
-
-        static void setChannel(ofPtr<ofBaseLoggerChannel> channel);
+        
+		/// put a space between stream operator calls?
+		static void setAutoSpace(bool autoSpace);
+		
+		/// set the logging channel destinations for messages
+		static void setChannel(ofPtr<ofBaseLoggerChannel> channel);
 		
 	protected:
 		ofLogLevel level;			///< log level
 		bool bPrinted;				///< has the msg been printed in the constructor? 
-		string module;
-
+		string module;				///< the destination module for this message
 	
 		/// print a log line
 		void _log(ofLogLevel level, const string & module, const string & message);
@@ -95,10 +98,13 @@ class ofLog{
 	private:
         std::ostringstream message;	///< temp buffer
 		
+		static bool bAutoSpace;		///< add a space between messages? 
+		
 		ofLog(ofLog const&) {}        					// not defined, not copyable
         ofLog& operator=(ofLog& from) {return *this;}	// not defined, not assignable
 
-        static ofPtr<ofBaseLoggerChannel> channel;
+        static ofPtr<ofBaseLoggerChannel> channel;		///< the message destination
+        static string padding;							///< the padding between ostream calls
 };
 
 //--------------------------------------------------------------

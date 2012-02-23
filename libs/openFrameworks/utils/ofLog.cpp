@@ -4,6 +4,10 @@
 #include <map>
 
 static ofLogLevel currentLogLevel =  OF_LOG_NOTICE;
+
+bool ofLog::bAutoSpace = false;
+string ofLog::padding = "";
+
 static map<string,ofLogLevel> & getModules(){
 	static map<string,ofLogLevel> * modules = new map<string,ofLogLevel>;
 	return *modules;
@@ -71,6 +75,17 @@ ofLog::ofLog(ofLogLevel logLevel, const char* format, ...){
 		va_end( args );
 	}
 	bPrinted = true;
+}
+
+//--------------------------------------------------
+void ofLog::setAutoSpace(bool autoSpace) {
+	bAutoSpace = autoSpace;
+	if(bAutoSpace) {
+		padding = " ";
+	}
+	else {
+		padding = "";
+	}
 }
 
 //-------------------------------------------------------
