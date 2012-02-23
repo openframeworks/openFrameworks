@@ -41,36 +41,6 @@ void ofCamera::setFarClip(float f) {
 	farClip = f;
 }
 
-void ofCamera::setupPerspective(bool vFlip, float fov, float nearDist, float farDist){
-	float width = ofGetWidth();
-	float height = ofGetHeight();
-
-	float viewW = ofGetViewportWidth();
-	float viewH = ofGetViewportHeight();
-
-	float eyeX = viewW / 2;
-	float eyeY = viewH / 2;
-	float halfFov = PI * fov / 360;
-	float theTan = tanf(halfFov);
-	float dist = eyeY / theTan;
-
-	if(nearDist == 0) nearDist = dist / 10.0f;
-	if(farDist == 0) farDist = dist * 10.0f;
-
-	setFov(fov);
-	setNearClip(nearDist);
-	setFarClip(farDist);
-
-	setPosition(eyeX,eyeY,dist);
-	lookAt(ofVec3f(eyeX,eyeY,0),ofVec3f(0,1,0));
-
-
-	if(vFlip){
-		setScale(1,-1,1);
-	}
-}
-
-
 //----------------------------------------
 void ofCamera::enableOrtho() {
 	isOrtho = true;
