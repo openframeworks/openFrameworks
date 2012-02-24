@@ -14,22 +14,11 @@ addons/**
 #xcode files
 *.pbxuser
 *.perspectivev3
-examples/examples/*/*.xcodeproj
-examples/examples/*/Project.xcconfig
-examples/examples/*/openFrameworks-Info.plist
-examples/addonsExamples/*/*.xcodeproj
-examples/addonsExamples/*/Project.xcconfig
-examples/addonsExamples/*/openFrameworks-Info.plist
-
-examples/iphoneAddonsExamples/*/*.xcodeproj
-examples/iphoneAddonsExamples/*/Project.xcconfig
-examples/iPhoneAddonsExamples/*/ofxiphone-Info.plist
-examples/iPhoneAddonsExamples/*/iPhone_Prefix.pch
-
-examples/iphoneExamples/*/*.xcodeproj
-examples/iphoneExamples/*/Project.xcconfig
-examples/iPhoneExamples/*/ofxiphone-Info.plist
-examples/iPhoneExamples/*/iPhone_Prefix.pch
+examples/*/*/*.xcodeproj
+examples/*/*/Project.xcconfig
+examples/*/*/openFrameworks-Info.plist
+examples/*/*/ofxiphone-Info.plist
+examples/*/*/iPhone_Prefix.pch
 
 
 #codeblocks files
@@ -38,10 +27,13 @@ examples/*/*/*.depend
 examples/*/*/bin/clickToLaunch*
 examples/*/*/bin/libs
 examples/*/*/obj
-examples/examples/*/*.cbp
-examples/examples/*/*.workspace
-examples/addonsExamples/*/*.cbp
-examples/addonsExamples/*/*.workspace
+examples/*/*/*.cbp
+examples/*/*/*.workspace
+
+#vs files
+examples/*/*/*.sln
+examples/*/*/*.vcxproj
+examples/*/*/*.vcxproj.user
 
 #rule to avoid non-official examples going into git
 #see examples/.gitignore

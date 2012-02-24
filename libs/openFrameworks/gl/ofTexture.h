@@ -150,7 +150,8 @@ class ofTexture : public ofBaseDraws {
 	bool bAllocated();
 	bool isAllocated();
 
-	ofTextureData getTextureData();
+	ofTextureData& getTextureData();
+	const ofTextureData& getTextureData() const;
 
 	// reference to the actual textureData inside the smart pointer
 	// for backwards compatibility
