@@ -1188,3 +1188,6 @@ string ofFilePath::getCurrentWorkingDirectory(){
 	return Path::current();
 }
 
+string ofFilePath::join(string path1,string path2){
+	return removeTrailingSlash(path1) + addLeadingSlash(path2);
+}
