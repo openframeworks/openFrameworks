@@ -42,6 +42,8 @@ public:
 	 * Checks if vectors look in the same direction.
 	 * Tolerance is specified in degree.
 	 */
+    bool isAligned( const ofVec2f& vec, float tolerance=0.0001 ) const;
+    bool isAlignedRad( const ofVec2f& vec, float tolerance=0.0001 ) const;
     bool align( const ofVec2f& vec, float tolerance=0.0001 ) const;
     bool alignRad( const ofVec2f& vec, float tolerance=0.0001 ) const;
 	
@@ -263,12 +265,18 @@ inline bool ofVec2f::match( const ofVec2f& vec, float tolerance ) const {
  * Checks if vectors look in the same direction.
  * Tolerance is specified in degree.
  */
-inline bool ofVec2f::align( const ofVec2f& vec, float tolerance ) const {
+inline bool ofVec2f::isAligned( const ofVec2f& vec, float tolerance ) const { 
 	return  fabs( this->angle( vec ) ) < tolerance;
 }
+inline bool ofVec2f::align( const ofVec2f& vec, float tolerance ) const {
+    return isAligned( vec, tolerance );
+}
 
-inline bool ofVec2f::alignRad( const ofVec2f& vec, float tolerance ) const {
+inline bool ofVec2f::isAlignedRad( const ofVec2f& vec, float tolerance ) const {
 	return  fabs( this->angleRad( vec ) ) < tolerance;
+}
+inline bool ofVec2f::alignRad( const ofVec2f& vec, float tolerance ) const {
+    return isAlignedRad( vec, tolerance );
 }
 
 
