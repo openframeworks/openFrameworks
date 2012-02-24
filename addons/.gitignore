@@ -27,5 +27,8 @@
 !ofxAndroid/**
 !ofxAssimpModelLoader
 !ofxAssimpModelLoader/**
+!ofxGui
+!ofxGui/**
+!ofxGui/*/**
 ofxAndroid/ofAndroidLib/bin
 ofxAndroid/ofAndroidLib/gen

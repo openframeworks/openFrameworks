@@ -14,9 +14,10 @@
 class ofAddon {
 
 public:
-	ofAddon();
-	ofAddon(string path, string platform);
-
+	
+    ofAddon();
+	
+    
 	void fromFS(string path, string platform);
 	void fromXML(string installXmlName);
 	void clear();
@@ -28,7 +29,12 @@ public:
     vector < string > srcFiles;
     vector < string > libs;
     vector < string > includePaths;
+    
     string name;
+    
+    
+    string pathToAddons;
+
 };
 
 #endif /* OFADDON_H_ */
