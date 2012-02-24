@@ -127,13 +127,24 @@ void testApp::draw(){
 	ofDrawBitmapString("Angle cosine: " + ofToString(cosine), 0, -radius *2 -20);
 	ofDrawBitmapString("cosine x radius: " + ofToString(cosine * radius), 0, -radius *2 -5 );
 	
+	ofDrawBitmapString("Click and drag over the yellow circle to control the angle", 30, ofGetHeight() - center.y -20);
+	
 }
 //--------------------------------------------------------------
-void testApp::keyPressed(int key){}
+void testApp::keyPressed(int key){
+
+}
+
 //--------------------------------------------------------------
-void testApp::keyReleased(int key){}
+void testApp::keyReleased(int key){
+
+}
+
 //--------------------------------------------------------------
-void testApp::mouseMoved(int x, int y ){}
+void testApp::mouseMoved(int x, int y ){
+
+}
+
 //--------------------------------------------------------------
 void testApp::mouseDragged(int x, int y, int button){
 	ofVec2f mousePos(x-center.x, y-center.y);
@@ -144,6 +155,7 @@ void testApp::mouseDragged(int x, int y, int button){
 		}
 	}	
 }
+
 //--------------------------------------------------------------
 void testApp::mousePressed(int x, int y, int button){
 	ofVec2f mousePos(x-center.x, y-center.y);
@@ -155,4 +167,6 @@ void testApp::mousePressed(int x, int y, int button){
 	}
 }
 //--------------------------------------------------------------
-void testApp::mouseReleased(int x, int y, int button){}
+void testApp::mouseReleased(int x, int y, int button){
+
+}
