@@ -30,6 +30,8 @@ public:
 	string getName();
 	string getPath();
 
+    void saveWorkspaceXML();
+    void saveScheme();
     
     pugi::xml_node insertPoint;         // where are we inserting items (at the second dict tag,
                                         // /plist[1]/dict[1]/dict[2])
