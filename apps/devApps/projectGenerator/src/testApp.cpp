@@ -52,6 +52,7 @@ void testApp::setup(){
 void testApp::generateExamples(){
     
     ofDirectory dir;
+    //../../../../../
     dir.listDir("../../../../../examples");
     
     for (int i = 0; i < dir.size(); i++){
@@ -73,7 +74,6 @@ void testApp::generateExamples(){
             }
         }
     }
-    
 }
 
 void testApp::makeNewProjectViaDialog(){
@@ -125,6 +125,7 @@ void testApp::makeNewProjectViaDialog(){
     xcProject.create(res.filePath);
     
     if (relPath != "../../../"){
+        cout << "switching relPath " << endl;
         findandreplaceInTexfile(res.filePath + "/" + res.fileName + ".xcodeproj/project.pbxproj", "../../../", relPath);
         findandreplaceInTexfile(res.filePath + "/" + "Project.xcconfig", "../../../", relPath);
         string relPath2 = relPath;
