@@ -91,6 +91,18 @@ STRINGIFY(
           
 );
 
+const char workspace[] = 
+STRINGIFY(
+          
+          <?xml version="1.0" encoding="UTF-8"?>
+          <Workspace version = "1.0">
+              <FileRef
+                location = "self:PROJECTNAME.xcodeproj">
+              </FileRef>
+          </Workspace>
+          
+);
+
 
 string xcodeProject::LOG_NAME = "xcodeProject";
 
@@ -116,6 +128,40 @@ void xcodeProject::setup(){
 //		}
 //	}
 //}
+
+void xcodeProject::saveScheme(){
+    ofDirectory dir(projectDir + projectName + ".xcodeproj" + "/xcshareddata/xcschemes/");
+    dir.create(true);
+    
+     string schemeTo = projectDir  + projectName + ".xcodeproj" + "/xcshareddata/xcschemes/" + projectName + ".xcscheme";
+    
+    ofFile::copyFromTo(templatePath + "emptyExample.xcodeproj/xcshareddata/xcschemes/emptyExample.xcscheme", schemeTo);
+    
+    cout << "trying to copy " << projectDir + projectName + ".xcodeproj" + "/xcshareddata/xcschemes/emptyExample.xcscheme" << " ------ > " << schemeTo <<endl;
+    findandreplaceInTexfile(schemeTo, "emptyExample", projectName);
+    
+    
+}
+
+
+void xcodeProject::saveWorkspaceXML(){
+    
+    
+    string xcodeProjectWorkspace = projectDir + projectName + ".xcodeproj" + "/project.xcworkspace/contents.xcworkspacedata";
+    
+    
+    ofDirectory dir(projectDir + projectName + ".xcodeproj" + "/project.xcworkspace/");
+    dir.create(true);
+    
+    cout << "trying copy " << templatePath + "emptyExample.xcodeproj/project.xcworkspace/contents.xcworkspacedata" << " -----> " << xcodeProjectWorkspace <<endl;
+    
+    
+    ofFile::copyFromTo(templatePath + "/emptyExample.xcodeproj/project.xcworkspace/contents.xcworkspacedata", xcodeProjectWorkspace);
+    
+    findandreplaceInTexfile(xcodeProjectWorkspace, "PROJECTNAME", projectName);
+    
+}
+
 
 bool xcodeProject::create(string path){
     
@@ -147,11 +193,14 @@ bool xcodeProject::create(string path){
             ofFile::copyFromTo(templatePath + "/Project.xcconfig", projectDir);
             load(projectDir + "emptyExample.xcodeproj/project.pbxproj");
             renameProject();
-            string xcodeProject = projectDir + "/" + projectName + ".xcodeproj";
+            string xcodeProject = projectDir +  projectName + ".xcodeproj";
             ofDirectory xcodeDir(xcodeProject);
             xcodeDir.create(true);
-            save(projectDir + "/" + projectName + ".xcodeproj" + "/project.pbxproj");
+            save(projectDir +  projectName + ".xcodeproj" + "/project.pbxproj");
             ofDirectory::removeDirectory(projectDir + "/emptyExample.xcodeproj", true);
+            saveWorkspaceXML();
+            saveScheme();
+            
         } else {
             // this exists, what to do now?  (load and parse?)
         }
@@ -169,15 +218,18 @@ bool xcodeProject::create(string path){
         load(projectDir + "emptyExample.xcodeproj/project.pbxproj");
         renameProject();
         
-        string xcodeProject = projectDir + "/" + projectName + ".xcodeproj";
+        string xcodeProject = projectDir + projectName + ".xcodeproj";
         ofDirectory xcodeDir(xcodeProject);
         xcodeDir.create(true);
-        save(projectDir + "/" + projectName + ".xcodeproj" + "/project.pbxproj");
+        save(projectDir + projectName + ".xcodeproj" + "/project.pbxproj");
         
         
         if (projectName != "emptyExample"){
             ofDirectory::removeDirectory(projectDir + "/emptyExample.xcodeproj", true);
         }
+        
+        saveWorkspaceXML();
+        saveScheme();
         
         for (int i = 0; i < fileNames.size(); i++){
             
