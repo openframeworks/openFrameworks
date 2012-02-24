@@ -423,6 +423,11 @@ void ofTexture::allocate(int w, int h, int internalGlDataType){
 }
 
 //----------------------------------------------------------
+void ofTexture::allocate(const ofPixels& pix){
+	allocate(pix.getWidth(), pix.getHeight(), ofGetGlFormat(pix), ofGetUsingArbTex());
+}
+
+//----------------------------------------------------------
 void ofTexture::allocate(int w, int h, int internalGlDataType, bool bUseARBExtention){
 	//our graphics card might not support arb so we have to see if it is supported.
 #ifndef TARGET_OPENGLES
@@ -533,32 +538,32 @@ void ofTexture::allocate(const ofTextureData & textureData){
 }
 
 //----------------------------------------------------------
-void ofTexture::loadData(unsigned char * data, int w, int h, int glFormat){
+void ofTexture::loadData(const unsigned char * data, int w, int h, int glFormat){
 	loadData( (void *)data, w, h, glFormat);
 }
 
 //----------------------------------------------------------
-void ofTexture::loadData(float * data, int w, int h, int glFormat){
+void ofTexture::loadData(const unsigned short * data, int w, int h, int glFormat){
 	loadData( (void *)data, w, h, glFormat);
 }
 
 //----------------------------------------------------------
-void ofTexture::loadData(unsigned short * data, int w, int h, int glFormat){
+void ofTexture::loadData(const float * data, int w, int h, int glFormat){
 	loadData( (void *)data, w, h, glFormat);
 }
 
 //----------------------------------------------------------
-void ofTexture::loadData(ofPixels & pix){
+void ofTexture::loadData(const ofPixels & pix){
 	loadData(pix.getPixels(), pix.getWidth(), pix.getHeight(), ofGetGlFormat(pix));
 }
 
 //----------------------------------------------------------
-void ofTexture::loadData(ofShortPixels & pix){
+void ofTexture::loadData(const ofShortPixels & pix){
 	loadData(pix.getPixels(), pix.getWidth(), pix.getHeight(), ofGetGlFormat(pix));
 }
 
 //----------------------------------------------------------
-void ofTexture::loadData(ofFloatPixels & pix){
+void ofTexture::loadData(const ofFloatPixels & pix){
 	loadData(pix.getPixels(), pix.getWidth(), pix.getHeight(), ofGetGlFormat(pix));
 }
 
