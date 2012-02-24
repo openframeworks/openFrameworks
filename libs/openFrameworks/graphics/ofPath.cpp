@@ -419,7 +419,7 @@ void ofPath::draw(){
 				ofSetColor(fillColor);
 			}
 
-			ofGetCurrentRenderer()->draw(cachedTessellation);
+			ofGetCurrentRenderer()->draw(cachedTessellation,bUseShapeColor,false,false);
 
 		}
 

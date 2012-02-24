@@ -1,0 +1,173 @@
+#include "testApp.h"
+
+//--------------------------------------------------------------
+void testApp::setup(){
+    
+    radius = 400;
+    max = 60;
+    
+    glEnable(GL_DEPTH_TEST); //make sure we test depth for 3d
+    
+    ofEnableLighting();
+    ofEnableAlphaBlending();
+    ofEnableSmoothing();
+    ofEnableBlendMode(ofBlendMode(OF_BLENDMODE_ALPHA));
+    
+    mesh.addVertex(ofPoint(0,0,0)); // add center vertex
+    mesh.addColor(ofColor(137,137,140,255)); // center is same as bg
+    mesh.addNormal(ofVec3f(0,0,1)); // center normal points up
+    
+    zfreq = 3.;
+    zamt = .3;
+    
+    //loop around and make verts in a circle, with a bit of a z-wave
+    for (int i = 0; i < max; i++){
+        // radians around circle
+        float theta = i*2*PI/max;  // step size
+        float prevTheta = theta - 2*PI/max; //one step back
+        float nextTheta = theta + 2*PI/max; // one step forward
+        
+        // create vertices in polar coordinates, plus a sine wave for z
+        ofVec3f p(radius*cos(theta),radius*sin(theta), radius*zamt*sin(zfreq*theta) );
+        // add this vertex
+        mesh.addVertex(p);
+        
+        // we need these for calculating normals
+        ofVec3f prev(radius*cos(prevTheta),radius*sin(prevTheta),radius*zamt*sin(zfreq*prevTheta) );        
+        ofVec3f next(radius*cos(nextTheta),radius*sin(nextTheta),radius*zamt*sin(zfreq*nextTheta) );
+        
+        // our normals for each triangle face is the cross product of the two vectors making up that sliver 
+        ofVec3f previousFaceNormal = prev.crossed(p);
+        ofVec3f nextFaceNormal = p.crossed(next);
+        
+        /* notice here we go in the same direction: previous->current,current->next;
+           we could similarly go next->current,current-prev, which would flip all of our normals;
+           this might not be the best idea, but its certainly better than going previous->current,next->current, which would end up being quite awful.
+           This is the concept of an "orientable mesh" or "face winding order", to be googled for more information.
+         */
+        
+        // since we want smooth normals, we'll sum the two adjacent face normals, then normalize (since usually, only the direction and not the magnitude of the normal is what matters)
+        mesh.addNormal((previousFaceNormal + nextFaceNormal).normalize());
+        
+        //add a color too
+        ofColor c;
+        c.setHsb(40 + 30*sin(2*theta+PI),255,255,255);        
+        mesh.addColor(c);
+    }
+    
+    //index our verts/normals/colors as a triangle fan
+    for (int i=0, j = max-1; i < max; j=i++){
+        mesh.addIndex(0);
+        mesh.addIndex(i+1);
+        mesh.addIndex(j+1);
+    }
+    
+    // light the scene to show off why normals are important
+    light.enable();
+    light.setPointLight();
+    light.setPosition(0,0,300);
+    
+}
+
+//--------------------------------------------------------------
+void testApp::update(){
+}
+
+//--------------------------------------------------------------
+void testApp::draw(){
+    ofEnableLighting();
+    ofBackgroundGradient(ofColor(65,62,50),ofColor(25,22,10) );
+    
+    // disable normals if a key is pressed
+    if(ofGetKeyPressed()){
+        mesh.disableNormals();
+    }else{
+        mesh.enableNormals();
+    }
+    
+    cam.begin();
+    mesh.enableColors();
+    mesh.drawWireframe();
+    mesh.disableColors();
+    ofSetColor(137,137,140);
+    ofFill();
+
+    glEnable(GL_POLYGON_OFFSET_LINE);
+    glPolygonOffset(-1,-1);
+
+    mesh.drawFaces();
+    ofSetColor(255,255,255);
+    light.customDraw();
+    
+    
+    // draw our normals, and show that they are perpendicular to the vector from the center to the vertex
+    vector<ofVec3f> n = mesh.getNormals();
+    vector<ofVec3f> v = mesh.getVertices();
+    float normalLength = 50.;
+    
+    if(!ofGetKeyPressed()){
+        ofDisableLighting();
+        ofSetColor(255,255,255,70);         
+        for(int i=0; i < n.size() ;i++){
+            ofLine(v[i].x,v[i].y,v[i].z,
+                   v[i].x+n[i].x*normalLength,v[i].y+n[i].y*normalLength,v[i].z+n[i].z*normalLength);
+
+            ofLine(.98*v[i].x,.98*v[i].y,.98*v[i].z,
+                   .98*v[i].x+n[i].x*normalLength*.2,.98*v[i].y+n[i].y*normalLength*.2,.98*v[i].z+n[i].z*normalLength*.2);
+            ofLine(.98*v[i].x+n[i].x*normalLength*.2,.98*v[i].y+n[i].y*normalLength*.2,.98*v[i].z+n[i].z*normalLength*.2,
+                   v[i].x+n[i].x*normalLength*.2,v[i].y+n[i].y*normalLength*.2,v[i].z+n[i].z*normalLength*.2);
+        }
+    }
+               
+
+    cam.end();
+
+    ofSetColor(255,255,255);
+    ofDrawBitmapString("press any key to disable mesh normals", 20,20);
+    ofDrawBitmapString("light", cam.worldToScreen(light.getGlobalPosition()) + ofPoint(10,0));
+}
+
+//--------------------------------------------------------------
+void testApp::keyPressed(int key){
+
+}
+
+//--------------------------------------------------------------
+void testApp::keyReleased(int key){
+
+}
+
+//--------------------------------------------------------------
+void testApp::mouseMoved(int x, int y ){
+
+}
+
+//--------------------------------------------------------------
+void testApp::mouseDragged(int x, int y, int button){
+
+}
+
+//--------------------------------------------------------------
+void testApp::mousePressed(int x, int y, int button){
+
+}
+
+//--------------------------------------------------------------
+void testApp::mouseReleased(int x, int y, int button){
+
+}
+
+//--------------------------------------------------------------
+void testApp::windowResized(int w, int h){
+
+}
+
+//--------------------------------------------------------------
+void testApp::gotMessage(ofMessage msg){
+
+}
+
+//--------------------------------------------------------------
+void testApp::dragEvent(ofDragInfo dragInfo){ 
+
+}
