@@ -8,8 +8,14 @@ void testApp::setup(){
     dstImg.loadImage("B.jpg");
     brushImg.loadImage("brush.png");
     
-    maskFbo.allocate(1024,768);
-    multiTextFbo.allocate(1024,768);
+    int width = srcImg.getWidth();
+    int height = srcImg.getHeight();
+    
+    maskFbo.allocate(width,height);
+    multiTextFbo.allocate(width,height);
+    
+    ofSetWindowShape(width, height);
+    
     
     // There are 3 of ways of loading a shader:
     //
@@ -40,17 +46,38 @@ void testApp::setup(){
     multiTextShader.setupShaderFromSource(GL_FRAGMENT_SHADER, multiTexturingShaderProgram);
     multiTextShader.linkProgram(); 
     
-    bBrushDown = false;
- 
+
+    // In order to pass the three textures and draw a new one on the FBO 
+    // we are going to make a mesh that will work as a frame
+    // What«s it«s importat here it«s to set the correct texCoords
+    //
+    frame.setMode(OF_PRIMITIVE_TRIANGLE_FAN);
+    frame.addTexCoord(ofVec2f(0,0));
+    frame.addVertex(ofVec3f(0,0,0));
+    frame.addTexCoord(ofVec2f(width,0));
+    frame.addVertex(ofVec3f(width,0,0));
+    frame.addTexCoord(ofVec2f(width,height));
+    frame.addVertex(ofVec3f(width,height,0));
+    frame.addTexCoord(ofVec2f(0,height));
+    frame.addVertex(ofVec3f(0,height,0));
+    frame.addTexCoord(ofVec2f(0,0));
+    frame.addVertex(ofVec3f(0,0,0));
+    
+    // Let«s clear the FBO«s
+    // otherwise it will bring some junk with it from the memory    
     maskFbo.begin();
     ofClear(0,0,0,255);
     maskFbo.end();
+    
+    multiTextFbo.begin();
+    ofClear(0,0,0,255);
+    multiTextFbo.end();
+    
+    bBrushDown = false;
 }
 
 //--------------------------------------------------------------
 void testApp::update(){
-    int width = ofGetWindowWidth();
-    int height = ofGetWindowHeight();
     
     // MASK (frame buffer object)
     //
@@ -66,17 +93,10 @@ void testApp::update(){
     ofClear(0, 0, 0,0);
     multiTextShader.begin();
     multiTextShader.setUniformTexture("tex0", srcImg , 0 );
-    multiTextShader.setUniformTexture("tex0", dstImg, 1 );
+    multiTextShader.setUniformTexture("tex1", dstImg, 1 );
     multiTextShader.setUniformTexture("maskTex", maskFbo.getTextureReference(), 2 );
     
-    // This is simply a frame where the shader can put the pixels on 
-    // that«s why it have the glTexCoord2f()
-    glBegin(GL_QUADS);
-    glTexCoord2f(0, 0); glVertex3f(0, 0, 0);
-    glTexCoord2f(width, 0); glVertex3f(width, 0, 0);
-    glTexCoord2f(width, height); glVertex3f(width, height, 0);
-    glTexCoord2f(0,height);  glVertex3f(0,height, 0);
-    glEnd();
+    frame.draw();
 
     multiTextShader.end();
     multiTextFbo.end();
