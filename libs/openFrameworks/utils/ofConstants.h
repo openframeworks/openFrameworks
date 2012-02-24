@@ -381,6 +381,13 @@ enum ofOrientation{
     OF_ORIENTATION_UNKNOWN = 5
 };
 
+// gradient modes when using ofBackgroundGradient
+enum ofGradientMode {
+	OF_GRADIENT_LINEAR = 0,
+	OF_GRADIENT_CIRCULAR,
+	OF_GRADIENT_BAR
+};
+
 // these are straight out of glu, but renamed and included here
 // for convenience
 //

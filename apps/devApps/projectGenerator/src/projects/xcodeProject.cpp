@@ -100,22 +100,22 @@ void xcodeProject::setup(){
 }
 
 
-void xcodeProject::parseAddons(){
-	addons.clear();
-	ofFile addonsmake(projectDir+"addons.make");
-	if(!addonsmake.exists()){
-		addonsmake.create();
-		addonsmake.open(projectDir+"addons.make");
-	}
-	ofBuffer addonsmakebuff;
-	addonsmake >> addonsmakebuff;
-	while(!addonsmakebuff.isLastLine() && addonsmakebuff.size() > 0){
-		string line = addonsmakebuff.getNextLine();
-		if(line!=""){
-			addons.push_back(ofAddon(getOFRoot()+"/addons/"+line,"xcode"));
-		}
-	}
-}
+//void xcodeProject::parseAddons(){
+//	addons.clear();
+//	ofFile addonsmake(projectDir+"addons.make");
+//	if(!addonsmake.exists()){
+//		addonsmake.create();
+//		addonsmake.open(projectDir+"addons.make");
+//	}
+//	ofBuffer addonsmakebuff;
+//	addonsmake >> addonsmakebuff;
+//	while(!addonsmakebuff.isLastLine() && addonsmakebuff.size() > 0){
+//		string line = addonsmakebuff.getNextLine();
+//		if(line!=""){
+//			addons.push_back(ofAddon(getOFRoot()+"/addons/"+line,"xcode"));
+//		}
+//	}
+//}
 
 bool xcodeProject::create(string path){
     

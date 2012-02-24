@@ -1,11 +1,6 @@
 #pragma once
 
 #include "ofMain.h"
-#include "CBLinuxProject.h"
-#include "CBWinProject.h"
-#include "visualStudioProject.h"
-#include "xcodeProject.h"
-#include <Poco/Path.h>
 
 class testApp : public ofBaseApp{
 
@@ -24,13 +19,6 @@ class testApp : public ofBaseApp{
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
 		
-		CBLinuxProject linuxProject;
-		CBWinProject winProject;
-		visualStudioProject vsProject;
-		xcodeProject xcProject;
-    
-        void generateExamples();
-        void makeNewProjectViaDialog();
-    
-        Poco::Path path;     
+		ofMesh mesh;
+		ofEasyCam cam;
 };
