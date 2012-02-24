@@ -10,6 +10,16 @@ enum ofLoopType{
 	OF_LOOP_PALINDROME=0x02,
 	OF_LOOP_NORMAL=0x03
 };
+
+enum ofTargetPlatform{
+	OF_TARGET_OSX,
+	OF_TARGET_WINGCC,
+	OF_TARGET_WINVS,
+	OF_TARGET_IPHONE,
+	OF_TARGET_ANDROID,
+	OF_TARGET_LINUX,
+	OF_TARGET_LINUX64
+};
 //-------------------------------
 //  find the system type --------
 //-------------------------------
@@ -22,7 +32,7 @@ enum ofLoopType{
 #elif defined( __APPLE_CC__)
 	#include <TargetConditionals.h>
 
-	#if (TARGET_OF_IPHONE_SIMULATOR) || (TARGET_OS_IPHONE) || (TARGET_IPHONE)
+	#if (TARGET_OS_IPHONE_SIMULATOR) || (TARGET_OS_IPHONE) || (TARGET_IPHONE)
 		#define TARGET_OF_IPHONE
 		#define TARGET_OPENGLES
 	#else
