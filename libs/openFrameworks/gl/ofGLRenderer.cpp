@@ -67,32 +67,33 @@ void ofGLRenderer::draw(ofMesh & vertexData){
 
 //----------------------------------------------------------
 void ofGLRenderer::draw(ofMesh & vertexData, ofPolyRenderMode renderType){
+	if (bSmoothHinted) startSmoothing();
 #ifndef TARGET_OPENGLES
-		glPushAttrib(GL_POLYGON_BIT);
-		glPolygonMode(GL_FRONT_AND_BACK, ofGetGLPolyMode(renderType));
-		draw(vertexData);
-		glPopAttrib(); //TODO: GLES doesnt support polygon mode, add renderType to gl renderer?
+	glPushAttrib(GL_POLYGON_BIT);
+	glPolygonMode(GL_FRONT_AND_BACK, ofGetGLPolyMode(renderType));
+	draw(vertexData);
+	glPopAttrib(); //TODO: GLES doesnt support polygon mode, add renderType to gl renderer?
 #else
-		if(vertexData.getNumVertices()){
-			glEnableClientState(GL_VERTEX_ARRAY);
-			glVertexPointer(3, GL_FLOAT, sizeof(ofVec3f), vertexData.getVerticesPointer());
-		}
-		if(vertexData.getNumNormals()){
-			glEnableClientState(GL_NORMAL_ARRAY);
-			glNormalPointer(GL_FLOAT, 0, vertexData.getNormalsPointer());
-		}
-		if(vertexData.getNumColors()){
-			glEnableClientState(GL_COLOR_ARRAY);
-			glColorPointer(4,GL_FLOAT, sizeof(ofFloatColor), vertexData.getColorsPointer());
-		}
-
-		if(vertexData.getNumTexCoords()){
-			glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-			glTexCoordPointer(2, GL_FLOAT, 0, vertexData.getTexCoordsPointer());
-		}
-
-		GLenum drawMode;
-		switch(renderType){
+	if(vertexData.getNumVertices()){
+		glEnableClientState(GL_VERTEX_ARRAY);
+		glVertexPointer(3, GL_FLOAT, sizeof(ofVec3f), vertexData.getVerticesPointer());
+	}
+	if(vertexData.getNumNormals()){
+		glEnableClientState(GL_NORMAL_ARRAY);
+		glNormalPointer(GL_FLOAT, 0, vertexData.getNormalsPointer());
+	}
+	if(vertexData.getNumColors()){
+		glEnableClientState(GL_COLOR_ARRAY);
+		glColorPointer(4,GL_FLOAT, sizeof(ofFloatColor), vertexData.getColorsPointer());
+	}
+	
+	if(vertexData.getNumTexCoords()){
+		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+		glTexCoordPointer(2, GL_FLOAT, 0, vertexData.getTexCoordsPointer());
+	}
+	
+	GLenum drawMode;
+	switch(renderType){
 		case OF_MESH_POINTS:
 			drawMode = GL_POINTS;
 			break;
@@ -105,32 +106,34 @@ void ofGLRenderer::draw(ofMesh & vertexData, ofPolyRenderMode renderType){
 		default:
 			drawMode = ofGetGLPrimitiveMode(vertexData.getMode());
 			break;
-		}
-
-		if(vertexData.getNumIndices()){
-			glDrawElements(drawMode, vertexData.getNumIndices(),GL_UNSIGNED_SHORT,vertexData.getIndexPointer());
-		}else{
-			glDrawArrays(drawMode, 0, vertexData.getNumVertices());
-		}
-		if(vertexData.getNumColors()){
-			glDisableClientState(GL_COLOR_ARRAY);
-		}
-		if(vertexData.getNumNormals()){
-			glDisableClientState(GL_NORMAL_ARRAY);
-		}
-		if(vertexData.getNumTexCoords()){
-			glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-		}
+	}
+	
+	if(vertexData.getNumIndices()){
+		glDrawElements(drawMode, vertexData.getNumIndices(),GL_UNSIGNED_SHORT,vertexData.getIndexPointer());
+	}else{
+		glDrawArrays(drawMode, 0, vertexData.getNumVertices());
+	}
+	if(vertexData.getNumColors()){
+		glDisableClientState(GL_COLOR_ARRAY);
+	}
+	if(vertexData.getNumNormals()){
+		glDisableClientState(GL_NORMAL_ARRAY);
+	}
+	if(vertexData.getNumTexCoords()){
+		glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+	}
 #endif
-
+	if (bSmoothHinted) endSmoothing();
 }
 
 //----------------------------------------------------------
 void ofGLRenderer::draw(vector<ofPoint> & vertexData, ofPrimitiveMode drawMode){
 	if(!vertexData.empty()) {
+		if (bSmoothHinted) startSmoothing();
 		glEnableClientState(GL_VERTEX_ARRAY);
 		glVertexPointer(3, GL_FLOAT, sizeof(ofVec3f), &vertexData[0].x);
 		glDrawArrays(ofGetGLPrimitiveMode(drawMode), 0, vertexData.size());
+		if (bSmoothHinted) endSmoothing();
 	}
 }
 
