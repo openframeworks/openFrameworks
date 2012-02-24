@@ -329,6 +329,58 @@ void ofBackground(int r, int g, int b, int a){
 }
 
 //----------------------------------------------------------
+void ofBackgroundGradient(const ofColor& start, const ofColor& end, ofGradientMode mode) {
+	float w = ofGetWidth(), h = ofGetHeight();
+	ofMesh mesh;
+	mesh.setMode(OF_PRIMITIVE_TRIANGLE_FAN);
+	if(mode == OF_GRADIENT_CIRCULAR) {
+		// this could be optimized by building a single mesh once, then copying
+		// it and just adding the colors whenever the function is called.
+		ofVec2f center(w / 2, h / 2);
+		mesh.addVertex(center);
+		mesh.addColor(start);
+		int n = 32; // circular gradient resolution
+		float angleBisector = TWO_PI / (n * 2);
+		float smallRadius = ofDist(0, 0, w / 2, h / 2);
+		float bigRadius = smallRadius / cos(angleBisector);
+		for(int i = 0; i <= n; i++) {
+			float theta = i * TWO_PI / n;
+			mesh.addVertex(center + ofVec2f(sin(theta), cos(theta)) * bigRadius);
+			mesh.addColor(end);
+		}
+	} else if(mode == OF_GRADIENT_LINEAR) {
+		mesh.addVertex(ofVec2f(0, 0));
+		mesh.addVertex(ofVec2f(w, 0));
+		mesh.addVertex(ofVec2f(w, h));
+		mesh.addVertex(ofVec2f(0, h));
+		mesh.addColor(start);
+		mesh.addColor(start);
+		mesh.addColor(end);
+		mesh.addColor(end);
+	} else if(mode == OF_GRADIENT_BAR) {
+		mesh.addVertex(ofVec2f(w / 2, h / 2));
+		mesh.addVertex(ofVec2f(0, h / 2));
+		mesh.addVertex(ofVec2f(0, 0));
+		mesh.addVertex(ofVec2f(w, 0));
+		mesh.addVertex(ofVec2f(w, h / 2));
+		mesh.addVertex(ofVec2f(w, h));
+		mesh.addVertex(ofVec2f(0, h));
+		mesh.addVertex(ofVec2f(0, h / 2));
+		mesh.addColor(start);
+		mesh.addColor(start);
+		mesh.addColor(end);
+		mesh.addColor(end);
+		mesh.addColor(start);
+		mesh.addColor(end);
+		mesh.addColor(end);
+		mesh.addColor(start);
+	}
+	glDepthMask(false);
+	mesh.draw();
+	glDepthMask(true);
+}
+
+//----------------------------------------------------------
 void ofSetBackgroundColor(int brightness, int alpha){
 	ofSetBackgroundColor(brightness, brightness, brightness, alpha);
 }
