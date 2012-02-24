@@ -52,6 +52,7 @@ void testApp::setup(){
 void testApp::generateExamples(){
     
     ofDirectory dir;
+    //../../../../../
     dir.listDir("../../../../../examples");
     
     for (int i = 0; i < dir.size(); i++){
@@ -73,7 +74,6 @@ void testApp::generateExamples(){
             }
         }
     }
-    
 }
 
 void testApp::makeNewProjectViaDialog(){
@@ -83,7 +83,7 @@ void testApp::makeNewProjectViaDialog(){
     if (res.fileName == "" || res.filePath == "") return;
     Poco::Path base(true);
     base.parse(res.filePath);
-    base.pushDirectory(res.fileName);   // somehow an extra things here helps?
+    //base.pushDirectory(res.fileName);   // somehow an extra things here helps?
 
     
     
@@ -97,7 +97,7 @@ void testApp::makeNewProjectViaDialog(){
         
         bool bRunOut = false;
         bool bChanged = false;
-        if (i < base.depth() && i < path.depth()){
+        if (i <= base.depth() && i <= path.depth()){
             if (base.directory(i) == path.directory(i)){
                 
             } else {
@@ -107,20 +107,25 @@ void testApp::makeNewProjectViaDialog(){
             bRunOut = true;
         }
         if (bRunOut == true || bChanged == true){
-            for (int j = i; j < base.depth(); j++){
+            for (int j = i; j <= base.depth(); j++){
                 relPath += "../";
             }
-            for (int j = i; j < path.depth()-1; j++){
+            for (int j = i; j <= path.depth(); j++){
                 relPath += path.directory(j) + "/";
             }
             break;
         }
     }
     
+    
+    relPath.erase(relPath.end()-1);
+    
+    
     xcProject.setup();
     xcProject.create(res.filePath);
     
     if (relPath != "../../../"){
+        cout << "switching relPath " << endl;
         findandreplaceInTexfile(res.filePath + "/" + res.fileName + ".xcodeproj/project.pbxproj", "../../../", relPath);
         findandreplaceInTexfile(res.filePath + "/" + "Project.xcconfig", "../../../", relPath);
         string relPath2 = relPath;
