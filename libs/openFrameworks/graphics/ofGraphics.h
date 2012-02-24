@@ -127,6 +127,7 @@ void ofBackground(int r, int g, int b, int a=255);
 void ofBackground(int brightness, int alpha = 255);
 void ofBackground(const ofColor & c);
 void ofBackgroundHex(int hexColor, int alpha = 255);
+void ofBackgroundGradient(const ofColor& start, const ofColor& end, ofGradientMode mode = OF_GRADIENT_CIRCULAR);
 
 void ofSetBackgroundColor(int r, int g, int b, int a=255);
 void ofSetBackgroundColor(int brightness, int alpha = 255);
