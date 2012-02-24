@@ -72,6 +72,7 @@ public:
 
 	static string getEnclosingDirectory(string filePath, bool bRelativeToData = true);
 	static string getCurrentWorkingDirectory();
+	static string join(string path1,string path2);
 	
 };
 
