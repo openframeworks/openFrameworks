@@ -389,13 +389,14 @@ bool ofTexture::isAllocated(){
 
 
 //----------------------------------------------------------
-ofTextureData ofTexture::getTextureData(){
+ofTextureData& ofTexture::getTextureData(){
 	if(!texData.bAllocated){
 		ofLog(OF_LOG_ERROR, "getTextureData() - texture has not been allocated");
 	}
 	
 	return texData;
 }
+
 
 //----------------------------------------------------------
 ofTexture::~ofTexture(){
