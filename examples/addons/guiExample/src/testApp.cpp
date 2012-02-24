@@ -13,9 +13,21 @@ void testApp::setup(){
 	gui.add(b.setup( "blue", 140.0f, 0, 255 ));
 	gui.add(circleResolution.setup("circle res", 5, 3, 90));
 	gui.add(twoCircles.setup("twoCircles"));
+	gui.add(ringButton.setup("ring"));
 	
+	ringButton.addListener(this,&testApp::ringButtonPressed);
+
 	bHide = true;
 
+	//ring.loadSound("ring.wav");
+}
+
+void testApp::exit(){
+	ringButton.removeListener(this,&testApp::ringButtonPressed);
+}
+
+void testApp::ringButtonPressed(bool & pressed){
+	if(pressed) ring.play();
 }
 
 //--------------------------------------------------------------
@@ -25,7 +37,7 @@ void testApp::update(){
 
 //--------------------------------------------------------------
 void testApp::draw(){
-	
+	ofBackgroundGradient(ofColor::white,ofColor(100),OF_GRADIENT_CIRCULAR);
 	if( filled ){
 		ofFill();
 	}else{
