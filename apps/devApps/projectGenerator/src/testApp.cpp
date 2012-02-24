@@ -1,7 +1,7 @@
 #include "testApp.h"
 #include "Utils.h"
 
-#include <Poco/Path.h>
+
 
 //--------------------------------------------------------------
 void testApp::setup(){
@@ -9,9 +9,10 @@ void testApp::setup(){
     
     setOFRoot("../../../../../");
 
-        
     
-    
+    path.parse(Poco::Path::current() + "/" + "data/" + getOFRoot());
+    path.makeAbsolute();
+
         
     
 
@@ -46,8 +47,6 @@ void testApp::generateExamples(){
 
 void testApp::makeNewProjectViaDialog(){
     
-    Poco::Path path(true);
-    path.parse(Poco::Path::current() + "/" + "data/" + getOFRoot());
     
     ofFileDialogResult res = ofSystemSaveDialog("newProjectName", "choose a folder for a new OF project :)");
     if (res.fileName == "" || res.filePath == "") return;
