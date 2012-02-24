@@ -1,5 +1,20 @@
 #include "testApp.h"
 #include "Utils.h"
+#include <stdio.h>
+
+
+
+#ifdef TARGET_WIN32
+    #include <direct.h>
+    #define GetCurrentDir _getcwd
+#elif TARGET_LINUX
+    #include <unistd.h>
+    #define GetCurrentDir getcwd
+#else
+    #include <mach-o/dyld.h>	/* _NSGetExecutablePath */
+    #include <limits.h>		/* PATH_MAX */
+#endif
+
 
 
 
@@ -10,10 +25,26 @@ void testApp::setup(){
     setOFRoot("../../../../../");
 
     
-    path.parse(Poco::Path::current() + "/" + "data/" + getOFRoot());
-    path.makeAbsolute();
-
-        
+    #ifdef TARGET_OSX
+        char pathOSX[1024];
+        uint32_t size = sizeof(pathOSX);
+        if (_NSGetExecutablePath(pathOSX, &size) == 0)
+            printf("executable path is %s\n", pathOSX);
+        else
+            printf("buffer too small; need size %u\n", size);
+        string pathOSXnonApp = string(pathOSX);
+        string first, last;
+        splitFromLast(pathOSXnonApp, "/", first, last);
+        path.parse( first + "/" + ofToDataPath("") + getOFRoot() + "/");
+        path.makeAbsolute();
+        cout <<first + "/" + ofToDataPath("") + getOFRoot() + "/" <<endl;
+        cout << path.toString() << endl;
+    #else
+        char cCurrentPath[FILENAME_MAX];
+        cCurrentPath[sizeof(cCurrentPath) - 1] = '\0'; /* not really required */
+        printf ("The current working directory is %s", cCurrentPath);
+        path.parse( string(cCurrentPath) + getOFRoot() + "/");
+    #endif
     
 
 }
@@ -52,7 +83,7 @@ void testApp::makeNewProjectViaDialog(){
     if (res.fileName == "" || res.filePath == "") return;
     Poco::Path base(true);
     base.parse(res.filePath);
-    base.pushDirectory(res.fileName);   // somehow an extra things here helps?
+    //base.pushDirectory(res.fileName);   // somehow an extra things here helps?
 
     
     
@@ -66,7 +97,7 @@ void testApp::makeNewProjectViaDialog(){
         
         bool bRunOut = false;
         bool bChanged = false;
-        if (i < base.depth() && i < path.depth()){
+        if (i <= base.depth() && i <= path.depth()){
             if (base.directory(i) == path.directory(i)){
                 
             } else {
@@ -76,15 +107,19 @@ void testApp::makeNewProjectViaDialog(){
             bRunOut = true;
         }
         if (bRunOut == true || bChanged == true){
-            for (int j = i; j < base.depth(); j++){
+            for (int j = i; j <= base.depth(); j++){
                 relPath += "../";
             }
-            for (int j = i; j < path.depth()-1; j++){
+            for (int j = i; j <= path.depth(); j++){
                 relPath += path.directory(j) + "/";
             }
             break;
         }
     }
+    
+    
+    relPath.erase(relPath.end()-1);
+    
     
     xcProject.setup();
     xcProject.create(res.filePath);
@@ -114,6 +149,8 @@ void testApp::update(){
 void testApp::draw(){
 
     ofDrawBitmapString("press 'm' to make all files\npress ' ' to make a specific file", ofPoint(30,30));
+    
+     ofDrawBitmapString(path.toString(), ofPoint(30,60));
 }
 
 //--------------------------------------------------------------
