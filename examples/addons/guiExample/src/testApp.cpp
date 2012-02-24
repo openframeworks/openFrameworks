@@ -19,7 +19,7 @@ void testApp::setup(){
 
 	bHide = true;
 
-	//ring.loadSound("ring.wav");
+	ring.loadSound("ring.wav");
 }
 
 void testApp::exit(){
