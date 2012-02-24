@@ -21,6 +21,9 @@ void setOFRoot(string path);
 
 void findandreplace( std::string& tInput, std::string tFind, std::string tReplace );
 
+void findandreplaceInTexfile (string fileName, string tFind, string tReplace );
+
+
 bool doesTagAndAttributeExist(pugi::xml_document & doc, string tag, string attribute, string newValue);
 pugi::xml_node appendValue(pugi::xml_document & doc, string tag, string attribute, string newValue);
 
@@ -29,8 +32,6 @@ pugi::xml_node appendValue(pugi::xml_document & doc, string tag, string attribut
 void getFoldersRecursively(const string & path, vector < string > & folderNames);
 void getFilesRecursively(const string & path, vector < string > & fileNames);
 void getLibsRecursively(const string & path, vector < string > & libFiles, vector < string > & libLibs, string platform="" );
-
-
 
 void splitFromLast(string toSplit, string deliminator, string & first, string & second);
 void splitFromFirst(string toSplit, string deliminator, string & first, string & second);
