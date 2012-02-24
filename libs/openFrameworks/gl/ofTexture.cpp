@@ -397,7 +397,7 @@ ofTextureData& ofTexture::getTextureData(){
 	return texData;
 }
 
-const ofTextureData& getTextureData() const {
+const ofTextureData& ofTexture::getTextureData() const {
 	if(!texData.bAllocated){
 		ofLog(OF_LOG_ERROR, "getTextureData() - texture has not been allocated");
 	}
