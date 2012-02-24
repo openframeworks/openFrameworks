@@ -219,6 +219,8 @@ void ofSetDrawBitmapMode(ofDrawBitmapMode mode);
 void ofDrawBitmapString(string textString, const ofPoint & p);
 void ofDrawBitmapString(string textString, float x, float y);
 void ofDrawBitmapString(string textString, float x, float y, float z);
+void ofDrawBitmapStringHighlight(string text, const ofPoint& position, const ofColor& background = ofColor::black, const ofColor& foreground = ofColor::white);
+void ofDrawBitmapStringHighlight(string text, int x, int y, const ofColor& background = ofColor::black, const ofColor& foreground = ofColor::white);
 
 
 // end primitives
