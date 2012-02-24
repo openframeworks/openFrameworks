@@ -37,7 +37,9 @@ void testApp::update(){
 
 //--------------------------------------------------------------
 void testApp::draw(){
-	ofBackgroundGradient(ofColor::white,ofColor(100),OF_GRADIENT_CIRCULAR);
+
+    ofBackgroundGradient(ofColor::white, ofColor::gray);
+    
 	if( filled ){
 		ofFill();
 	}else{
