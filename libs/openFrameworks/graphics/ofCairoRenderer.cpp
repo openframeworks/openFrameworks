@@ -213,7 +213,7 @@ ofVec3f ofCairoRenderer::transform(ofVec3f vec){
 	return vec;
 }
 
-void ofCairoRenderer::draw(ofMesh & primitive){
+void ofCairoRenderer::draw(ofMesh & primitive, bool useColors, bool useTextures, bool useNormals){
 	if(primitive.getNumVertices()==0) return;
 	pushMatrix();
 	cairo_matrix_init_identity(getCairoMatrix());
@@ -276,8 +276,11 @@ void ofCairoRenderer::draw(ofMesh & primitive){
 	popMatrix();
 }
 
-void ofCairoRenderer::draw(ofMesh & vertexData, ofPolyRenderMode mode){
-	draw(vertexData);
+void ofCairoRenderer::draw(ofMesh & vertexData, ofPolyRenderMode mode, bool useColors, bool useTextures, bool useNormals){
+    if(useColors || useTextures || useNormals){
+        ofLog(OF_LOG_WARNING,"Cairo rendering for meshes doesn't support colors, textures, or normals. drawing wireframe...");
+    }
+	draw(vertexData,false,false,false);
 }
 
 void ofCairoRenderer::draw(ofSubPath & path){
