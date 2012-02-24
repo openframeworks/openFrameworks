@@ -13,7 +13,6 @@ public:
 	void keyPressed(int key);
 	void mousePressed(int x, int y, int button);
 	
-	ofEasyCam cam;
 	vector<ofVec2f> points;
 	ofMesh cloud;
 	float t;
