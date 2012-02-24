@@ -26,6 +26,8 @@ void testApp::update(){
 //--------------------------------------------------------------
 void testApp::draw(){
 	
+    ofBackgroundGradient(ofColor::white, ofColor::gray);
+    
 	if( filled ){
 		ofFill();
 	}else{
