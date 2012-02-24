@@ -59,11 +59,11 @@ std::string LoadFileAsString(const std::string & fn)
 
 void findandreplaceInTexfile (string fileName, std::string tFind, std::string tReplace ){
    
-    printf("replacing %s w %s \n", tFind.c_str(), tReplace.c_str());
-    std::ifstream ifile(fileName.c_str(),std::ios::binary);
+    
+    std::ifstream ifile(ofToDataPath(fileName).c_str(),std::ios::binary);
 	ifile.seekg(0,std::ios_base::end);
 	long s=ifile.tellg();
-	char *buffer=new char[s];
+    char *buffer=new char[s];
 	ifile.seekg(0);
 	ifile.read(buffer,s);
 	ifile.close();
@@ -73,7 +73,7 @@ void findandreplaceInTexfile (string fileName, std::string tFind, std::string tR
 	
     findandreplace(txt, tFind, tReplace);
     
-    std::ofstream ofile(fileName.c_str());
+    std::ofstream ofile(ofToDataPath(fileName).c_str());
 	ofile.write(txt.c_str(),txt.size());
 	//return 0;
     
