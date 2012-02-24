@@ -606,7 +606,7 @@ void ofFbo::createAndAttachTexture(GLenum attachmentPoint) {
 
 	ofTexture tex;
 	tex.allocate(settings.width, settings.height, settings.internalformat, settings.textureTarget == GL_TEXTURE_2D ? false : true);
-	tex.texData.bFlipTexture = true;
+	//tex.texData.bFlipTexture = true;
 	tex.setTextureWrap(settings.wrapModeHorizontal, settings.wrapModeVertical);
 	tex.setTextureMinMagFilter(settings.minFilter, settings.maxFilter);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + attachmentPoint, tex.texData.textureTarget, tex.texData.textureID, 0);
@@ -629,9 +629,9 @@ void ofFbo::begin(bool setupScreen) {
 	if(ofGetGLRenderer()){
 		ofGetGLRenderer()->setCurrentFBO(this);
 	}
-	ofViewport(0, 0, getWidth(), getHeight());
+	ofViewport(0, 0, getWidth(), getHeight(), false);
 	if(setupScreen){
-		ofSetupScreenPerspective(getWidth(), getHeight(), ofGetOrientation());
+		ofSetupScreenPerspective(getWidth(), getHeight(), ofGetOrientation(), false);
 	}
 	bind();
 }

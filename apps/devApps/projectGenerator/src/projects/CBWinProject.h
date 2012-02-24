@@ -38,8 +38,8 @@ public:
 	static string LOG_NAME;
 
 private:
-	void parseAddons();
-
+	
+    
 	pugi::xml_document doc;
 	string projectDir, projectName;
 	vector<ofAddon> addons;
