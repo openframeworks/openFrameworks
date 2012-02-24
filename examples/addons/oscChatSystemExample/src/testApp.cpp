@@ -158,13 +158,10 @@ void testApp::keyPressed(int key){
 			}
 		};
 	}
-
 	// hit Return, time to send the osc message
 	else{
-
 		// to send a string, create an ofxOscMessage object, give it an address
 		// and add a string argument to the object
-
 		ofxOscMessage m;
 		m.setAddress("/typing");
 		m.addStringArg(clientTyping);
@@ -225,14 +222,18 @@ string testApp::getOscMsgAsString(ofxOscMessage m){
 		msg_string += " " + m.getArgTypeName(i);
 		msg_string += ":";
 		// display the argument - make sure we get the right type
-		if(m.getArgType(i) == OFXOSC_TYPE_INT32)
+		if(m.getArgType(i) == OFXOSC_TYPE_INT32){
 			msg_string += ofToString(m.getArgAsInt32(i));
-		else if(m.getArgType(i) == OFXOSC_TYPE_FLOAT)
+		}
+		else if(m.getArgType(i) == OFXOSC_TYPE_FLOAT){
 			msg_string += ofToString(m.getArgAsFloat(i));
-		else if(m.getArgType(i) == OFXOSC_TYPE_STRING)
+		}
+		else if(m.getArgType(i) == OFXOSC_TYPE_STRING){
 			msg_string += m.getArgAsString(i);
-		else
+		}
+		else{
 			msg_string += "unknown";
+		}
 	}
 	return msg_string;
 }
@@ -250,8 +251,7 @@ void testApp::broadcastReceivedMessage(string chatmessage){
 		serverSender.setup(knownClients[i], serverRecvPort + 1);
 		m.setRemoteEndpoint(knownClients[i], serverRecvPort + 1);
 		serverSender.sendMessage(m);
-		ofLogVerbose(
-				"Server broadcast message " + m.getArgAsString(0) + " to " + m.getRemoteIp() + ":"
-						+ ofToString(m.getRemotePort()));
+		ofLogVerbose("Server broadcast message " + m.getArgAsString(0) + " to " + m.getRemoteIp()
+					+ ":" + ofToString(m.getRemotePort()));
 	}
 }
