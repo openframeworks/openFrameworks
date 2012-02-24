@@ -11,6 +11,14 @@
 #include <Poco/DirectoryIterator.h>
 #include <Poco/DateTimeFormatter.h>
 #include <Poco/LocalDateTime.h>
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <algorithm>
+#include <iostream>
+#include <fstream>
+#include <string>
+
 
 using namespace Poco;
 
@@ -32,6 +40,47 @@ void findandreplace( std::string& tInput, std::string tFind, std::string tReplac
 	}	
     
 }
+
+
+std::string LoadFileAsString(const std::string & fn)
+{
+    std::ifstream fin(fn.c_str());
+    
+    if(!fin)
+    {
+        // throw exception
+    }
+    
+    std::ostringstream oss;
+    oss << fin.rdbuf();
+    
+    return oss.str();
+}
+
+void findandreplaceInTexfile (string fileName, std::string tFind, std::string tReplace ){
+   
+    printf("replacing %s w %s \n", tFind.c_str(), tReplace.c_str());
+    std::ifstream ifile(fileName.c_str(),std::ios::binary);
+	ifile.seekg(0,std::ios_base::end);
+	long s=ifile.tellg();
+	char *buffer=new char[s];
+	ifile.seekg(0);
+	ifile.read(buffer,s);
+	ifile.close();
+	
+    std::string txt(buffer,s);
+	delete[] buffer;
+	
+    findandreplace(txt, tFind, tReplace);
+    
+    std::ofstream ofile(fileName.c_str());
+	ofile.write(txt.c_str(),txt.size());
+	//return 0;
+    
+    
+}
+
+
 
 
 bool doesTagAndAttributeExist(pugi::xml_document & doc, string tag, string attribute, string newValue){

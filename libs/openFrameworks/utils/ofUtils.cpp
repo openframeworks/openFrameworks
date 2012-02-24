@@ -9,12 +9,10 @@
 #include "Poco/DateTimeFormatter.h"
 
 #include <cctype> // for toupper
-#include <algorithm>
 
 
 
 #ifdef TARGET_WIN32
-	#include <algorithm> // for std::replace
 	#ifndef _MSC_VER
         #include <unistd.h> // this if for MINGW / _getcwd
     #endif
@@ -671,3 +669,43 @@ void ofSaveFrame(bool bUseViewport){
 	saveImageCounter++;
 }
 
+//--------------------------------------------------
+string ofSystem(string command){
+	FILE * ret = popen(command.c_str(),"r");
+	string strret;
+	char c;
+
+	if (ret == NULL){
+		ofLogError() << "ofSystem: error opening return file";
+	}else{
+		do {
+		      c = fgetc (ret);
+		      strret += c;
+		} while (c != EOF);
+		fclose (ret);
+	}
+
+	return strret;
+}
+
+//--------------------------------------------------
+ofTargetPlatform ofGetTargetPlatform(){
+#ifdef TARGET_LINUX
+	if(ofSystem("uname -m").find("x86_64")==0)
+		return OF_TARGET_LINUX64;
+	else
+		return OF_TARGET_LINUX;
+#elif defined(TARGET_OSX)
+	return OF_TARGET_OSX;
+#elif defined(TARGET_WIN32)
+	#if (_MSC_VER)
+		return OF_TARGET_WINVS;
+	#else
+		return OF_TARGET_WINGCC;
+	#endif
+#elif defined(TARGET_ANDROID)
+	return OF_TARGET_ANDROID;
+#elif defined(TARGET_OF_IPHONE)
+	return OF_TARGET_IPHONE;
+#endif
+}
