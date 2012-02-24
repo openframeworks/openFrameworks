@@ -3,10 +3,11 @@
 #include "ofMain.h"
 
 struct Link {
-    Link(int _x, int _y):pos(_x,_y),previus(NULL){}; //Constructor
+    Link(int _x, int _y):pos(_x,_y),prev(NULL),next(NULL){}; //Constructor
     
-    ofVec2f pos;        // Position
-    Link * previus;     // a pointer to the previus link
+    ofVec2f pos;    // Position
+    Link * prev;    // a pointer to the previus link
+    Link * next;    // a pointer to the next link
 };
 
 class testApp : public ofBaseApp{
@@ -24,10 +25,18 @@ public:
     void windowResized(int w, int h);
     void dragEvent(ofDragInfo dragInfo);
     void gotMessage(ofMessage msg);
-		
+	
+	void createNew(int _x, int _y);
+    void deleteLast();
+    void deleteAll();
+    
+    void drawArrow(ofPoint from, ofPoint to, float size);
+    
     vector<Link*> chain;
     
     Link * last;
     
-    bool bDrawArrows;
+    int blink;
+    int time;
+    bool bArrowToPrev;
 };
