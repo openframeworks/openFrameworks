@@ -1,12 +1,13 @@
 #pragma once
 
-#include "ofPanel.h"
+#include "ofParameter.h"
+#include "ofxBaseGui.h"
 
-class ofToggle : public ofBaseGui{
+class ofxToggle : public ofxBaseGui{
 	friend class ofPanel;
 	
 public:
-	ofToggle* setup(string toggleName, bool _bVal, float width = defaultWidth, float height = defaultHeight){
+	ofxToggle * setup(string toggleName, ofxParameter<bool> _bVal, float width = defaultWidth, float height = defaultHeight){
 		name = toggleName;
 		b.x = 0;
 		b.y = 0;
@@ -14,11 +15,12 @@ public:
 		b.height = height;
 		currentFrame = 0;			
 		bGuiActive = false;
-		bVal = _bVal;
+		value = _bVal;
 		checkboxRect.set(1, 1, b.height - 2, b.height - 2);
 		return this;
 	}
 	
+
 	virtual void mouseMoved(ofMouseEventArgs & args){
 	}
 	
@@ -34,17 +36,15 @@ public:
 	}	
 	
 	virtual void saveToXml(ofxXmlSettings& xml) {
-		cout << "warning we need to check for spaces in a name" << endl;	
-		xml.addValue(name, bVal);
+		string xmlName = name;
+		ofStringReplace(xmlName," ","_");
+		xml.setValue(xmlName, value);
 	}
 	
 	virtual void loadFromXml(ofxXmlSettings& xml) {
-		cout << "warning we need to check for spaces in a name" << endl;		
-		bVal = xml.getValue(name, bVal);
-	}
-	
-	bool getValue(){
-		return bVal;
+		string xmlName = name;
+		ofStringReplace(xmlName," ","_");
+		value = xml.getValue(xmlName, value);
 	}
 	
 	void draw(){
@@ -62,7 +62,7 @@ public:
 		ofSetColor(fillColor);
 		ofRect(checkboxRect);
 		
-		if( bVal ){			
+		if( value ){
 			ofSetColor(textColor);
 			ofLine(checkboxRect.x, checkboxRect.y, checkboxRect.x + checkboxRect.width, checkboxRect.y + checkboxRect.height);
 			ofLine(checkboxRect.x, checkboxRect.y+ checkboxRect.height, checkboxRect.x + checkboxRect.width, checkboxRect.y);
@@ -74,16 +74,36 @@ public:
 		ofSetColor(textColor);		
 		ofTranslate(0, b.height / 2 + 4);
 		ofDrawBitmapString(name, textPadding + checkboxRect.width, 0);
-		string valStr = bVal ? "true" : "false";		
+		string valStr = value ? "true" : "false";
 		ofDrawBitmapString(valStr, b.width - textPadding - valStr.length() * 8, 0);
 		
 		ofPopMatrix();
 		ofPopStyle();
 	}
-	
+
+	template<class ListenerClass>
+	void addListener(ListenerClass * listener, void ( ListenerClass::*method )(bool&)){
+		ofAddListener(value.changedE,listener,method);
+	}
+
+	template<class ListenerClass>
+	void removeListener(ListenerClass * listener, void ( ListenerClass::*method )(bool&)){
+		ofRemoveListener(value.changedE,listener,method);
+	}
+
+
+	double operator=(bool v){
+		value = v;
+		return v;
+	}
+
+	operator bool & (){
+		return value;
+	}
+
+	ofxParameter<bool> value;
 protected:
 	ofRectangle checkboxRect;
-	bool bVal;
 	
 	void setValue(float mx, float my, bool bCheck){
 	
@@ -104,7 +124,7 @@ protected:
 			}
 		}
 		if( bGuiActive ){
-			bVal = !bVal;
+			value = !value;
 		}
 	}
 	

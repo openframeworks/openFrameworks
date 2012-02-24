@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ofMain.h"
+#include "ofxGui.h"
 
 class testApp : public ofBaseApp{
 	
@@ -18,6 +19,16 @@ public:
 	void windowResized(int w, int h);
 	void dragEvent(ofDragInfo dragInfo);
 	void gotMessage(ofMessage msg);		
-	
+
+	bool bHide;
+
+	ofxFloatSlider radius;
+	ofxIntSlider r, g, b;
+	ofxIntSlider circleResolution;
+	ofxToggle filled;
+	ofxButton twoCircles;
+
+	ofxPanel gui;
+
 };
 
