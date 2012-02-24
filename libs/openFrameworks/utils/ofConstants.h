@@ -280,6 +280,7 @@ typedef ofBaseApp ofSimpleApp;
 #include <sstream>  //for ostringsream
 #include <iomanip>  //for setprecision
 #include <fstream>
+#include <algorithm>
 using namespace std;
 
 #ifndef PI

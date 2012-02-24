@@ -72,11 +72,14 @@ examples/*/*/Debug Linux
 examples/*/*/Release Linux
 examples/*/*/Debug Linux64
 examples/*/*/Release Linux64
-examples/examples/*/Makefile
-examples/examples/*/config.make
-examples/addonsExamples/*/Makefile
-examples/addonsExamples/*/config.make
+examples/*/*/Makefile
+examples/*/*/config.make
 *.pyc
+
+#eclipse
+examples/*/*/.cproject
+examples/*/*/.project
+examples/*/*/.settings
 
 #Android
 addons/Debug Android
@@ -95,3 +98,6 @@ examples/*/*/test link
 examples/*/*/obj
 .csettings
 paths.make
+!examples/android/*/.cproject
+!examples/android/*/.project
+!examples/android/*/.settings
