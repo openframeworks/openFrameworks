@@ -1,8 +1,10 @@
 #pragma once
 
-#include "ofBaseGui.h"
+#include "ofxBaseGui.h"
+#include "ofConstants.h"
+#include "ofxXmlSettings.h"
 
-string saveStencilToHex(ofImage& img) {
+inline string saveStencilToHex(ofImage& img) {
 	stringstream strm;
 	int width = img.getWidth();
 	int height = img.getHeight();
@@ -30,7 +32,7 @@ string saveStencilToHex(ofImage& img) {
 	return strm.str();
 }
 
-void loadStencilFromHex(ofImage& img, unsigned char* data) {
+inline void loadStencilFromHex(ofImage& img, unsigned char* data) {
 	int width = img.getWidth();
 	int height = img.getHeight();
 	int i = 0;
@@ -48,61 +50,48 @@ void loadStencilFromHex(ofImage& img, unsigned char* data) {
 	img.update();
 }
 
-class ofPanel : public ofBaseGui{
+class ofxPanel : public ofxBaseGui{
 public:
-	
-	void setup(float x = 10, float y = 10) {
-		setup("", x, y);
+	virtual ~ofxPanel(){
+		ofUnregisterMouseEvents(this);
 	}
 	
-	void setup(string collectionName, float x = 10, float y = 10){
+	void setup(string collectionName="", string _filename="settings.xml", float x = 10, float y = 10){
 		name = collectionName;
 		b.x = x;
 		b.y = y;
 		header = defaultHeight;
 		spacing  = 1;
-		currentY = header + spacing;
 		b.width = defaultWidth;
-		b.height = 100; // weird to start out with something arbitrary like this
-		filename = "settings.xml";
+		b.height = header + spacing; // weird to start out with something arbitrary like this
+		filename = _filename;
 		ofRegisterMouseEvents(this);
-				
-		unsigned char loadIconData[] = {0x38,0x88,0xa,0x6,0x7e,0x60,0x50,0x11,0x1c};
-		unsigned char saveIconData[] = {0xff,0x4a,0x95,0xea,0x15,0xa8,0x57,0xa9,0x7f};
-		loadIcon.allocate(9, 8, OF_IMAGE_COLOR_ALPHA);
-		saveIcon.allocate(9, 8, OF_IMAGE_COLOR_ALPHA);
-		loadStencilFromHex(loadIcon, loadIconData);
-		loadStencilFromHex(saveIcon, saveIconData);
-		int iconSpacing = 6;
-		loadBox.x = b.width - (loadIcon.getWidth() + saveIcon.getWidth() + iconSpacing + textPadding);
-		loadBox.y = header / 2 - loadIcon.getHeight() / 2;
-		loadBox.width = loadIcon.getWidth();
-		loadBox.height = loadIcon.getHeight();
-		saveBox.set(loadBox);
-		saveBox.x += loadIcon.getWidth() + iconSpacing;
 	}
 	
 	virtual void saveToXml(ofxXmlSettings& xml) {
-		for(int i = 0; i < collection.size(); i++){
+		for(int i = 0; i < (int)collection.size(); i++){
 			collection[i]->saveToXml(xml);
 		}
 	}
 	
 	virtual void loadFromXml(ofxXmlSettings& xml) {
-		for(int i = 0; i < collection.size(); i++){
+		for(int i = 0; i < (int)collection.size(); i++){
 			collection[i]->loadFromXml(xml);
 		}
 	}
 	
-	void add(ofBaseGui * element){
+	void add(ofxBaseGui * element){
 		collection.push_back( element );
 		
-		element->b.y = currentY;
+		element->b.y = b.height;
 		element->b.x = 0;
-		currentY += element->b.height + spacing;
-		
-		if( currentY >= b.height ){
-			b.height += 40;
+		b.height += element->b.height + spacing;
+		if(b.width<element->b.width) b.width = element->b.width;
+
+		ofxPanel * subpanel = dynamic_cast<ofxPanel*>(element);
+		if(subpanel!=NULL){
+			ofUnregisterMouseEvents(subpanel);
+			subpanel->filename = filename;
 		}
 	}
 	
@@ -114,7 +103,7 @@ public:
 		ofMouseEventArgs a = args;
 		a.x -= b.x;
 		a.y -= b.y;		
-		for(int i = 0; i < collection.size(); i++){
+		for(int i = 0; i < (int)collection.size(); i++){
 			collection[i]->mouseMoved(a);
 		}		
 	}
@@ -125,19 +114,19 @@ public:
 			ofMouseEventArgs a = args;
 			a.x -= b.x;
 			a.y -= b.y;
-			for(int i = 0; i < collection.size(); i++){
+			for(int i = 0; i < (int)collection.size(); i++){
 				collection[i]->mousePressed(a);
 			}
 		}
 	}
 	
 	virtual void mouseDragged(ofMouseEventArgs & args){
-		setValue(args.x, args.y, false);	
+		setValue(args.x, args.y, false);
 		if( bGuiActive ){
 			ofMouseEventArgs a = args;
 			a.x -= b.x;
 			a.y -= b.y;			
-			for(int i = 0; i < collection.size(); i++){
+			for(int i = 0; i < (int)collection.size(); i++){
 				collection[i]->mouseDragged(a);
 			}
 		}
@@ -145,7 +134,7 @@ public:
 	
 	virtual void mouseReleased(ofMouseEventArgs & args){
 		bGuiActive = false;
-		for(int k = 0; k < collection.size(); k++){
+		for(int k = 0; k < (int)collection.size(); k++){
 			ofMouseEventArgs a = args;
 			a.x -= b.x;
 			a.y -= b.y;			
@@ -154,6 +143,24 @@ public:
 	}		
 	
 	void draw(){
+		if(!loadIcon.isAllocated() || !saveIcon.isAllocated()){
+			unsigned char loadIconData[] = {0x38,0x88,0xa,0x6,0x7e,0x60,0x50,0x11,0x1c};
+			unsigned char saveIconData[] = {0xff,0x4a,0x95,0xea,0x15,0xa8,0x57,0xa9,0x7f};
+			loadIcon.allocate(9, 8, OF_IMAGE_COLOR_ALPHA);
+			saveIcon.allocate(9, 8, OF_IMAGE_COLOR_ALPHA);
+			loadStencilFromHex(loadIcon, loadIconData);
+			loadStencilFromHex(saveIcon, saveIconData);
+		}
+
+
+		int iconSpacing = 6;
+		loadBox.x = b.width - (loadIcon.getWidth() + saveIcon.getWidth() + iconSpacing + textPadding);
+		loadBox.y = header / 2 - loadIcon.getHeight() / 2;
+		loadBox.width = loadIcon.getWidth();
+		loadBox.height = loadIcon.getHeight();
+		saveBox.set(loadBox);
+		saveBox.x += loadIcon.getWidth() + iconSpacing;
+
 		ofPushStyle();
 		ofPushMatrix();
 		
@@ -173,7 +180,7 @@ public:
 		saveIcon.draw(saveBox.x, saveBox.y);
 		ofPopMatrix();
 		
-		for(int i = 0; i < collection.size(); i++){
+		for(int i = 0; i < (int)collection.size(); i++){
 			collection[i]->draw();
 		}
 		
@@ -214,14 +221,15 @@ protected:
 		}
 	}		
 	
+private:
 	ofPoint grabPt;
 	bool bGrabbed;
-	float currentY;
 	float spacing;
 	float header;
-	vector <ofBaseGui *> collection;
+	vector <ofxBaseGui *> collection;
 	
 	string filename;
-	ofImage loadIcon, saveIcon;
 	ofRectangle loadBox, saveBox;
+	static ofImage loadIcon, saveIcon;
 };
+

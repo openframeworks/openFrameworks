@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ofxXmlSettings.h"
+#include "ofConstants.h"
 
 const ofColor
 headerBackgroundColor(64),
@@ -12,12 +13,14 @@ const int textPadding = 4;
 const int defaultWidth = 200;
 const int defaultHeight = 16;
 
-class ofBaseGui{
+class ofxBaseGui{
 public:
-	ofBaseGui(){
+	ofxBaseGui(){
 		bGuiActive = false;
 	}
 	
+	virtual ~ofxBaseGui(){}
+
 	virtual void mouseMoved(ofMouseEventArgs & args) = 0;
 	virtual void mousePressed(ofMouseEventArgs & args) = 0;
 	virtual void mouseDragged(ofMouseEventArgs & args) = 0;
@@ -28,6 +31,7 @@ public:
 	
 	void saveToFile(string filename) {
 		ofxXmlSettings xml;
+		xml.loadFile(filename);
 		saveToXml(xml);
 		xml.saveFile(filename);
 	}

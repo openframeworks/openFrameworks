@@ -127,6 +127,7 @@ void ofBackground(int r, int g, int b, int a=255);
 void ofBackground(int brightness, int alpha = 255);
 void ofBackground(const ofColor & c);
 void ofBackgroundHex(int hexColor, int alpha = 255);
+void ofBackgroundGradient(const ofColor& start, const ofColor& end, ofGradientMode mode = OF_GRADIENT_CIRCULAR);
 
 void ofSetBackgroundColor(int r, int g, int b, int a=255);
 void ofSetBackgroundColor(int brightness, int alpha = 255);
@@ -218,6 +219,8 @@ void ofSetDrawBitmapMode(ofDrawBitmapMode mode);
 void ofDrawBitmapString(string textString, const ofPoint & p);
 void ofDrawBitmapString(string textString, float x, float y);
 void ofDrawBitmapString(string textString, float x, float y, float z);
+void ofDrawBitmapStringHighlight(string text, const ofPoint& position, const ofColor& background = ofColor::black, const ofColor& foreground = ofColor::white);
+void ofDrawBitmapStringHighlight(string text, int x, int y, const ofColor& background = ofColor::black, const ofColor& foreground = ofColor::white);
 
 
 // end primitives
