@@ -30,8 +30,8 @@ public:
 	void draw(ofPath & shape);
 	void draw(ofSubPath & path);
 	void draw(ofPolyline & poly);
-	void draw(ofMesh & vertexData);
-	void draw(ofMesh & vertexData, ofPolyRenderMode mode);
+	void draw(ofMesh & vertexData, bool useColors=true, bool useTextures=true, bool useNormals=true);
+	void draw(ofMesh & vertexData, ofPolyRenderMode mode, bool useColors = false, bool useTextures = false, bool useNormals = false);
 	void draw(vector<ofPoint> & vertexData, ofPrimitiveMode drawMode);
 	void draw(ofImage & img, float x, float y, float z, float w, float h);
 	void draw(ofFloatImage & image, float x, float y, float z, float w, float h);
