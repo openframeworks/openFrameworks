@@ -34,12 +34,13 @@ public:
 	void setNearClip(float f);
 	void setFarClip(float f);
 	
-	void setupPerspective(bool vFlip = true, float fov = 60, float nearDist = 0, float farDist = 0);
-
+	float getFov() const { return fov; };
+	float getNearClip() const { return nearClip; };
+	float getFarClip() const { return farClip; };
+	
 	void enableOrtho();
 	void disableOrtho();
 	bool getOrtho() const;
-	float getFov();
 	
 	float getImagePlaneDistance(ofRectangle viewport = ofGetCurrentViewport()) const;
 	
@@ -60,7 +61,7 @@ public:
 	ofVec3f cameraToWorld(ofVec3f CameraXYZ, ofRectangle viewport = ofGetCurrentViewport());
 	
 	
-private:
+protected:
 	void calcClipPlanes(ofRectangle viewport);
 	
 	bool isOrtho;
