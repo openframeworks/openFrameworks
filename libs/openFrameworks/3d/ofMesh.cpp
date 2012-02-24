@@ -9,6 +9,10 @@ ofMesh::ofMesh(){
 	bNormalsChanged = false;
 	bTexCoordsChanged = false;
 	bIndicesChanged = false;
+    useColors = true;
+    useTextures = true;
+    useNormals = true;
+    
 }
 
 //--------------------------------------------------------------
@@ -583,7 +587,52 @@ void ofMesh::draw(){
 
 //--------------------------------------------------------------
 void ofMesh::draw(ofPolyRenderMode renderType){
-	ofGetCurrentRenderer()->draw(*this,renderType);
+	ofGetCurrentRenderer()->draw(*this,renderType,useColors,useTextures,useNormals);
+}
+
+//--------------------------------------------------------------
+void ofMesh::enableColors(){
+    useColors = true;
+}
+
+//--------------------------------------------------------------
+void ofMesh::enableTextures(){
+    useTextures = true;    
+}
+
+//--------------------------------------------------------------
+void ofMesh::enableNormals(){
+    useNormals = true;
+}
+
+//--------------------------------------------------------------
+void ofMesh::disableColors(){
+    useColors = false;
+}
+
+//--------------------------------------------------------------
+void ofMesh::disableTextures(){
+    useTextures = false;
+}
+
+//--------------------------------------------------------------
+void ofMesh::disableNormals(){
+    useNormals = false;
+}
+
+//--------------------------------------------------------------
+bool ofMesh::usingColors(){
+    return useColors;
+}
+
+//--------------------------------------------------------------
+bool ofMesh::usingTextures(){
+    return useTextures;
+}
+
+//--------------------------------------------------------------
+bool ofMesh::usingNormals(){
+    return useNormals;
 }
 
 
