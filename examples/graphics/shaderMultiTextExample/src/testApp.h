@@ -29,6 +29,7 @@ public:
     ofFbo       multiTextFbo;
     
     ofShader    multiTextShader;
+    ofMesh      frame;
     
     bool        bBrushDown;
 };
