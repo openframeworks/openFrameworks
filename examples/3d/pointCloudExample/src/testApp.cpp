@@ -24,10 +24,8 @@ void testApp::setup() {
 			}
 		}
 	}
-	
-	// even points can overlap with each other, let's avoid that
-	glEnable(GL_DEPTH_TEST);
 
+	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_POINT_SMOOTH); // use circular points instead of square points
 	glPointSize(3); // make the points bigger
 }
@@ -37,7 +35,9 @@ void testApp::update() {
 }
 
 void testApp::draw() {
-	ofBackground(0);
+	ofBackgroundGradient(ofColor::gray, ofColor::black, OF_GRADIENT_CIRCULAR);
+	
+	// even points can overlap with each other, let's avoid that
 	cam.begin();
 	ofScale(2, -2, 2); // flip the y axis and zoom in a bit
 	ofTranslate(-img.getWidth() / 2, -img.getHeight() / 2);
