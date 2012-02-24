@@ -1,12 +1,17 @@
 #pragma once
 
-#define WEBCAM
-
 #include "ofMain.h"
+
+struct Link {
+    Link(int _x, int _y):pos(_x,_y),prev(NULL),next(NULL){}; //Constructor
+    
+    ofVec2f pos;    // Position
+    Link * prev;    // a pointer to the previus link
+    Link * next;    // a pointer to the next link
+};
 
 class testApp : public ofBaseApp{
 public:
-    
     void setup();
     void update();
     void draw();
@@ -21,15 +26,17 @@ public:
     void dragEvent(ofDragInfo dragInfo);
     void gotMessage(ofMessage msg);
 	
-    ofImage     srcImg;
-    ofImage     dstImg;
-    ofImage     brushImg;
+	void createNew(int _x, int _y);
+    void deleteLast();
+    void deleteAll();
     
-    ofFbo       maskFbo;
-    ofFbo       multiTextFbo;
+    void drawArrow(ofPoint from, ofPoint to, float size);
     
-    ofShader    multiTextShader;
-    ofMesh      frame;
+    vector<Link*> chain;
     
-    bool        bBrushDown;
+    Link * last;
+    
+    int blink;
+    int time;
+    bool bArrowToPrev;
 };
