@@ -45,7 +45,9 @@ public:
     /**
 	 * Checks if vectors look in the same direction.
 	 */
+    bool isAligned( const ofVec3f& vec, float tolerance=0.0001 ) const;
     bool align( const ofVec3f& vec, float tolerance=0.0001 ) const;
+    bool isAlignedRad( const ofVec3f& vec, float tolerance=0.0001 ) const;
     bool alignRad( const ofVec3f& vec, float tolerance=0.0001 ) const;
 	
 	
@@ -284,14 +286,20 @@ inline bool ofVec3f::match( const ofVec3f& vec, float tolerance ) const{
 /**
  * Checks if vectors look in the same direction.
  */
-inline bool ofVec3f::align( const ofVec3f& vec, float tolerance ) const {
+inline bool ofVec3f::isAligned( const ofVec3f& vec, float tolerance ) const {
 	float angle = this->angle( vec );
 	return  angle < tolerance;
 }
+inline bool ofVec3f::align( const ofVec3f& vec, float tolerance ) const {
+    return isAligned( vec, tolerance );
+}
 
-inline bool ofVec3f::alignRad( const ofVec3f& vec, float tolerance ) const {
+inline bool ofVec3f::isAlignedRad( const ofVec3f& vec, float tolerance ) const {
 	float angle = this->angleRad( vec );
 	return  angle < tolerance;
+}
+inline bool ofVec3f::alignRad( const ofVec3f& vec, float tolerance ) const {
+    return isAlignedRad( vec, tolerance );
 }
 
 
