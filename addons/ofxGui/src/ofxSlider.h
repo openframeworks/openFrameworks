@@ -1,14 +1,16 @@
 #pragma once
 
-#include "ofPanel.h"
+#include "ofxBaseGui.h"
+#include "ofParameter.h"
 
-class ofSlider : public ofBaseGui{
+template<typename Type>
+class ofxSlider : public ofxBaseGui{
 	friend class ofPanel;
 	
 public:	
-	ofSlider* setup(string sliderName, double _val, double _min, double _max, bool _bInt = false, float width = defaultWidth, float height = defaultHeight){
+	ofxSlider* setup(string sliderName, ofxParameter<Type> _val, Type _min, Type _max, float width = defaultWidth, float height = defaultHeight){
 		name = sliderName;
-		val = _val;
+		value = _val;
 		min = _min;
 		max = _max;
 		b.x = 0;
@@ -17,7 +19,6 @@ public:
 		b.height = height;
 		currentFrame = 0;			
 		bGuiActive = false;
-		bInt = _bInt;
 		return this;
 	}
 	
@@ -29,7 +30,7 @@ public:
 	}
 	
 	virtual void mouseDragged(ofMouseEventArgs & args){
-		setValue(args.x, args.y, false);			
+		setValue(args.x, args.y, false);
 	}
 	
 	virtual void mouseReleased(ofMouseEventArgs & args){
@@ -37,22 +38,37 @@ public:
 	}	
 	
 	virtual void saveToXml(ofxXmlSettings& xml) {
-		cout << "warning we need to check for spaces in a name" << endl;
-		xml.addValue(name, val);
+		string xmlName = name;
+		ofStringReplace(xmlName," ","_");
+		xml.setValue(xmlName, value);
 	}
 	
 	virtual void loadFromXml(ofxXmlSettings& xml) {
-		cout << "warning we need to check for spaces in a name" << endl;
-		val = xml.getValue(name, val);
+		string xmlName = name;
+		ofStringReplace(xmlName," ","_");
+		value = xml.getValue(xmlName, value);
 	}
-	
-	double getValue(){
-		if( bInt ){
-			return (int)val;
-		}	
-		return val;
+
+	template<class ListenerClass>
+	void addListener(ListenerClass * listener, void ( ListenerClass::*method )(Type&)){
+		ofAddListener(value.changedE,listener,method);
 	}
-	
+
+	template<class ListenerClass>
+	void removeListener(ListenerClass * listener, void ( ListenerClass::*method )(Type&)){
+		ofRemoveListener(value.changedE,listener,method);
+	}
+
+
+	double operator=(Type v){
+		value = v;
+		return v;
+	}
+
+	operator Type & (){
+		return value;
+	}
+
 	void draw(){
 		ofPushStyle();
 		ofPushMatrix();
@@ -63,7 +79,7 @@ public:
 		ofRect(b);
 		
 		ofTranslate(b.x, b.y);		
-		float valAsPct = ofMap( val, min, max, 0, b.width-2, true );
+		float valAsPct = ofMap( value, min, max, 0, b.width-2, true );
 		ofEnableAlphaBlending();
 		ofSetColor(fillColor);		
 		ofRect(1, 1, valAsPct, b.height-2);
@@ -71,16 +87,17 @@ public:
 		ofTranslate(0, b.height / 2 + 4);
 		ofSetColor(textColor);
 		ofDrawBitmapString(name, textPadding, 0);
-		string valStr = ofToString(val, bInt ? 0 : 2);
+		string valStr = ofToString(value.getValue());
 		ofDrawBitmapString(valStr, b.width - textPadding - valStr.length() * 8, 0);
 		
 		ofPopMatrix();
 		ofPopStyle();
 	}
 	
+	ofxParameter<Type> value;
+
 protected:
-	double val, min, max;
-	bool bInt;
+	Type min, max;
 	
 	void setValue(float mx, float my, bool bCheck){
 		if( ofGetFrameNum() - currentFrame > 1 ){
@@ -95,7 +112,10 @@ protected:
 			}
 		}
 		if( bGuiActive ){
-			val = ofMap(mx, b.x, b.x + b.width, min, max, true);
+			value = ofMap(mx, b.x, b.x + b.width, min, max, true);
 		}
 	}
 };
+
+typedef ofxSlider<float> ofxFloatSlider;
+typedef ofxSlider<int> ofxIntSlider;
