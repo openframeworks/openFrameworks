@@ -2,9 +2,17 @@
 
 #include "ofMain.h"
 
-class testApp : public ofBaseApp{
+class URLImage : public ofImage {
+public:
+    bool    bDoneLoading;
+    string  url;
+};
+
+
+class ofApp : public ofBaseApp{
     
 public:
+    
     void setup();
     void update();
     void draw();
@@ -19,7 +27,9 @@ public:
     void dragEvent(ofDragInfo dragInfo);
     void gotMessage(ofMessage msg);
     
-    string rawData;
-    
-    
+    void              searchGoogleImages();
+    int               page;
+    string            rawData;
+    vector <string>   urls;
+    vector <URLImage> images;
 };
