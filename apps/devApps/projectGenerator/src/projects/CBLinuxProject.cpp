@@ -21,22 +21,22 @@ CBLinuxProject::CBLinuxProject() {
 
 }
 
-void CBLinuxProject::parseAddons(){
-	addons.clear();
-	ofFile addonsmake(projectDir+"addons.make");
-	if(!addonsmake.exists()){
-		addonsmake.create();
-		addonsmake.open(projectDir+"addons.make");
-	}
-	ofBuffer addonsmakebuff;
-	addonsmake >> addonsmakebuff;
-	while(!addonsmakebuff.isLastLine()){
-		string line = addonsmakebuff.getNextLine();
-		if(line!=""){
-			addons.push_back(ofAddon(getOFRoot()+"/addons/"+line,"linux"));
-		}
-	}
-}
+//void CBLinuxProject::parseAddons(){
+//	addons.clear();
+//	ofFile addonsmake(projectDir+"addons.make");
+//	if(!addonsmake.exists()){
+//		addonsmake.create();
+//		addonsmake.open(projectDir+"addons.make");
+//	}
+//	ofBuffer addonsmakebuff;
+//	addonsmake >> addonsmakebuff;
+//	while(!addonsmakebuff.isLastLine()){
+//		string line = addonsmakebuff.getNextLine();
+//		if(line!=""){
+//			//addons.push_back(ofAddon(getOFRoot()+"/addons/"+line,"linux"));
+//		}
+//	}
+//}
 
 
 bool CBLinuxProject::load(string path){
@@ -47,7 +47,7 @@ bool CBLinuxProject::load(string path){
 		ofLogError(LOG_NAME) << "error loading" << path << "doesn't exist";
 		return false;
 	}
-	parseAddons();
+	//parseAddons();
 	pugi::xml_parse_result result = doc.load(project);
 	bLoaded =result.status==pugi::status_ok;
 	return bLoaded;
@@ -71,8 +71,10 @@ bool CBLinuxProject::create(string path){
 		ofFile::copyFromTo(getOFRoot()+"/scripts/linux/template/bin",projectDir);
 		project.open(projectDir + projectName + ".cbp");
 	}
-	parseAddons();
-	pugi::xml_parse_result result = doc.load(project);
+	
+    //parseAddons();
+	
+    pugi::xml_parse_result result = doc.load(project);
 	if(result.status==pugi::status_ok){
         pugi::xpath_node_set title = doc.select_nodes("//Option[@title]");
         if(!title.empty()){
