@@ -29,5 +29,5 @@ class testApp : public ofBaseApp{
 		xcodeProject xcProject;
     
         void generateExamples();
-    
+        void makeNewProjectViaDialog();
 };
