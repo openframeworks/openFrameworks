@@ -5,6 +5,7 @@
 #include "CBWinProject.h"
 #include "visualStudioProject.h"
 #include "xcodeProject.h"
+#include <Poco/Path.h>
 
 class testApp : public ofBaseApp{
 
@@ -30,4 +31,6 @@ class testApp : public ofBaseApp{
     
         void generateExamples();
         void makeNewProjectViaDialog();
+    
+        Poco::Path path;     
 };
