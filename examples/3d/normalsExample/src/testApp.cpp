@@ -22,10 +22,11 @@ void testApp::setup(){
     
     //loop around and make verts in a circle, with a bit of a z-wave
     for (int i = 0; i < max; i++){
-        // radians around circle
-        float theta = i*2*PI/max;  // step size
-        float prevTheta = theta - 2*PI/max; //one step back
-        float nextTheta = theta + 2*PI/max; // one step forward
+        float step = 2*PI/max; // step size around circle
+        float theta = ofMap(i, 0, max-1, 0, 2*PI - step); //map i as circle divisions to actual radian values around the circle (note we don't go quite all the way around by one step, because it will be the same as where we started, so we'll just index that starting vertex when we make faces)
+ 
+        float prevTheta = theta - step; //one step back
+        float nextTheta = theta + step; // one step forward
         
         // create vertices in polar coordinates, plus a sine wave for z
         ofVec3f p(radius*cos(theta),radius*sin(theta), radius*zamt*sin(zfreq*theta) );
@@ -66,6 +67,8 @@ void testApp::setup(){
     light.enable();
     light.setPointLight();
     light.setPosition(0,0,300);
+    
+    cam.cacheMatrices();
     
 }
 
