@@ -1,3 +1,10 @@
+/*  of Detroit DevCon 2012
+ date: 2012/02/24 10:00:00
+ summary: simple example how to mix tree textures into one using a RGB mask with shaders
+ author: Patricio Gonzalez Vivo
+ author_site: http://patriciogonzalezvivo.com
+ */
+
 #pragma once
 
 #define WEBCAM
@@ -21,14 +28,12 @@ public:
     void dragEvent(ofDragInfo dragInfo);
     void gotMessage(ofMessage msg);
 	
-    ofImage     srcImg;
-    ofImage     dstImg;
-    ofImage     brushImg;
+    ofImage     logoImg;
+    ofImage     multimaskImg;
+    ofVideoPlayer 		fingerMovie;
+    ofVideoGrabber 		vidGrabber;
     
-    ofFbo       maskFbo;
     ofFbo       fbo;
-    
+    ofFbo       maskFbo;
     ofShader    shader;
-    
-    bool        bBrushDown;
 };
