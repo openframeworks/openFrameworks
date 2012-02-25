@@ -13,12 +13,26 @@
 string CBLinuxProject::LOG_NAME = "CBLinuxProject";
 
 
-void CBLinuxProject::setup() {
-    
-}
 
 CBLinuxProject::CBLinuxProject() {
+	arch = Linux;
+}
 
+CBLinuxProject::CBLinuxProject(Arch _arch){
+	arch = _arch;
+}
+
+void CBLinuxProject::setArch(Arch _arch){
+	arch = _arch;
+}
+
+void CBLinuxProject::setup(string _ofRoot) {
+	if(arch==Linux)
+		templatePath = ofFilePath::join(getOFRoot(),"scripts/linux/template/linux");
+	else
+		templatePath = ofFilePath::join(getOFRoot(),"scripts/linux/template/linux64");
+
+    ofRoot = _ofRoot;
 }
 
 //void CBLinuxProject::parseAddons(){
@@ -58,18 +72,19 @@ bool CBLinuxProject::create(string path){
 	ofLogVerbose(LOG_NAME) << "project dir:" << projectDir;
 	projectName = ofFilePath::getFileName(path);
 	ofLogVerbose(LOG_NAME) << "project name:" << projectName;
-	ofFile project(projectDir + projectName + ".cbp");
+	ofFile project(ofFilePath::join(projectDir, projectName + ".cbp"));
 	if(!project.exists()){
 		ofLogVerbose(LOG_NAME) << "creating non existent project";
 		ofDirectory dir(projectDir);
 		dir.create(true);
-		ofFile::copyFromTo(getOFRoot()+"/scripts/linux/template/emptyExample_linux.cbp",project.path());
-		ofFile::copyFromTo(getOFRoot()+"/scripts/linux/template/emptyExample_linux.workspace",projectDir + projectName + ".workspace");
-		ofFile::copyFromTo(getOFRoot()+"/scripts/linux/template/Makefile",projectDir);
-		ofFile::copyFromTo(getOFRoot()+"/scripts/linux/template/config.make",projectDir);
-		ofFile::copyFromTo(getOFRoot()+"/scripts/linux/template/src",projectDir);
-		ofFile::copyFromTo(getOFRoot()+"/scripts/linux/template/bin",projectDir);
-		project.open(projectDir + projectName + ".cbp");
+		ofFile::copyFromTo(ofFilePath::join(templatePath,"emptyExample_linux.cbp"),project.path());
+		ofFile::copyFromTo(ofFilePath::join(templatePath,"emptyExample_linux.workspace"),ofFilePath::join(projectDir, projectName + ".workspace"));
+		ofFile::copyFromTo(ofFilePath::join(templatePath,"Makefile"),projectDir);
+		ofFile::copyFromTo(ofFilePath::join(templatePath,"config.make"),projectDir);
+		ofFile::copyFromTo(ofFilePath::join(templatePath,"src"),projectDir);
+		ofFile::copyFromTo(ofFilePath::join(templatePath,"bin"),projectDir);
+		project.open(ofFilePath::join(projectDir , projectName + ".cbp"));
+		findandreplaceInTexfile(ofFilePath::join(projectDir , projectName + ".workspace"),"emptyExample",projectName);
 	}
 	
     //parseAddons();

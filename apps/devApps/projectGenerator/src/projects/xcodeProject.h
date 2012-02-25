@@ -13,7 +13,7 @@ public:
     xcodeProject(){};
     
     
-    void setup();
+    void setup(string ofRoot= "../../../");
     
     bool load(string path);
     bool create(string path); // not done yet. 
@@ -30,6 +30,8 @@ public:
 	string getName();
 	string getPath();
 
+    void saveWorkspaceXML();
+    void saveScheme();
     
     pugi::xml_node insertPoint;         // where are we inserting items (at the second dict tag,
                                         // /plist[1]/dict[1]/dict[2])
@@ -39,7 +41,7 @@ public:
     
     
     
-    string projectDir, projectName;
+    string projectDir, projectName, ofRoot;
     vector<ofAddon> addons;
     static string LOG_NAME;
     

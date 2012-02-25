@@ -58,6 +58,10 @@ template<class T>
 void ofSort(vector<T>& values) {
 	sort(values.begin(), values.end());
 }
+template<class T, class BoolFunction>
+void ofSort(vector<T>& values, BoolFunction compare) {
+	sort(values.begin(), values.end(), compare);
+}
 
 template <class T>
 unsigned int ofFind(const vector<T>& values, const T& target) {

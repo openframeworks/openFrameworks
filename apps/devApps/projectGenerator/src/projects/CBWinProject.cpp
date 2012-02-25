@@ -13,8 +13,9 @@
 string CBWinProject::LOG_NAME = "CBWinProject";
 
 
-void CBWinProject::setup(){
-    
+void CBWinProject::setup(string _ofRoot){
+    ofRoot = _ofRoot;
+    templatePath = ofFilePath::join(getOFRoot(),"scripts/win_cb/template");
 }
 
 CBWinProject::CBWinProject() {
@@ -63,11 +64,12 @@ bool CBWinProject::create(string path){
 		ofLogVerbose(LOG_NAME) << "creating non existent project";
 		ofDirectory dir(projectDir);
 		dir.create(true);
-		ofFile::copyFromTo(getOFRoot()+"/scripts/win_cb/template/emptyExample_win_cb.cbp",project.path());
-		ofFile::copyFromTo(getOFRoot()+"/scripts/win_cb/template/emptyExample_win_cb.workspace",projectDir + projectName + ".workspace");
-		ofFile::copyFromTo(getOFRoot()+"/scripts/linux/template/src",projectDir);
-		ofFile::copyFromTo(getOFRoot()+"/scripts/linux/template/bin",projectDir);
-		project.open(projectDir + projectName + ".cbp");
+		ofFile::copyFromTo(ofFilePath::join(templatePath,"emptyExample_win_cb.cbp"),project.path());
+		ofFile::copyFromTo(ofFilePath::join(templatePath,"emptyExample_win_cb.workspace"),ofFilePath::join(projectDir, projectName + ".workspace"));
+		ofFile::copyFromTo(ofFilePath::join(templatePath,"src"),projectDir);
+		ofFile::copyFromTo(ofFilePath::join(templatePath,"bin"),projectDir);
+		project.open(ofFilePath::join(projectDir , projectName + ".cbp"));
+		findandreplaceInTexfile(ofFilePath::join(projectDir , projectName + ".workspace"),"emptyExample",projectName);
 	}
 	
     //parseAddons();

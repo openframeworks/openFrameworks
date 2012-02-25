@@ -11,12 +11,13 @@ void testApp::setup(){
 	vidGrabber.setVerbose(true);
 	vidGrabber.initGrabber(camWidth,camHeight);
 
-    font.loadFont("Courier New Bold.ttf", 15);
+    font.loadFont("Courier New Bold.ttf", 9);
     
     // this set of characters comes from processing: 
     //http://processing.org/learning/library/asciivideo.html
     
-    asciiCharacters =  string(" .`-_':,;^=+/\"|)\\<>)iv%xclrs{*}I?!][1taeo7zjLunT#JCwfy325Fp6mqSghVd4EgXPGZbYkOA&8U$@KHDBWNMR0Q");
+	//changed order slightly to work better for mapping
+    asciiCharacters =  string("  ..,,,'''``--_:;^^**""=+<>iv%&xclrs)/){}I?!][1taeo7zjLunT#@JCwfy325Fp6mqSghVd4EgXPGZbYkOA8U$KHDBWNMR0Q");
 	
     ofEnableAlphaBlending();
 }
@@ -47,24 +48,21 @@ void testApp::draw(){
     char temp;
     string tempStr;
 
-    for (int i = 0; i < camWidth; i+= 12){
-        for (int j = 0; j < camHeight; j+= 15){
+    for (int i = 0; i < camWidth; i+= 7){
+        for (int j = 0; j < camHeight; j+= 9){
              brightness = (pixels[(j*camWidth + i) * 3] +     
                               pixels[(j*camWidth + i) * 3 + 1] + 
                               pixels[(j*camWidth + i) * 3 + 2]) / 3;
-             character = ofMap(brightness, 0,255, 0, asciiCharacters.size());
+							  
+			//we do powf to do a curved rather than a linear mapping of the values 
+             character = powf( ofMap(brightness, 0,255, 0, 1), 2.5) * (float)asciiCharacters.size();
              temp = asciiCharacters[character];
              tempStr = "";
              tempStr += temp;
              font.drawString(tempStr, i, j);
-            //ofDrawBitmapString(tempStr, ofPoint(i*10, j*10));
         }
     }
     
-    
-    //unsigned char * pixels = vidGrabber.getPixels();
-		
-
 }
 
 

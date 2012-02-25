@@ -59,11 +59,11 @@ std::string LoadFileAsString(const std::string & fn)
 
 void findandreplaceInTexfile (string fileName, std::string tFind, std::string tReplace ){
    
-    printf("replacing %s w %s \n", tFind.c_str(), tReplace.c_str());
-    std::ifstream ifile(fileName.c_str(),std::ios::binary);
+    
+    std::ifstream ifile(ofToDataPath(fileName).c_str(),std::ios::binary);
 	ifile.seekg(0,std::ios_base::end);
 	long s=ifile.tellg();
-	char *buffer=new char[s];
+    char *buffer=new char[s];
 	ifile.seekg(0);
 	ifile.read(buffer,s);
 	ifile.close();
@@ -73,7 +73,7 @@ void findandreplaceInTexfile (string fileName, std::string tFind, std::string tR
 	
     findandreplace(txt, tFind, tReplace);
     
-    std::ofstream ofile(fileName.c_str());
+    std::ofstream ofile(ofToDataPath(fileName).c_str());
 	ofile.write(txt.c_str(),txt.size());
 	//return 0;
     
@@ -264,6 +264,48 @@ void setOFRoot(string path){
 	OFRoot = path;
 }
 
+string getOFRelPath(string from){
+    Poco::Path base(true);
+    base.parse(from);
+
+    Poco::Path path;
+    path.parse( getOFRoot() );
+    path.makeAbsolute();
+
+	string relPath;
+	if (path.toString() == base.toString()){
+		// do something.
+	}
+
+	int maxx = MAX(base.depth(), path.depth());
+	for (int i = 0; i < maxx; i++){
+
+		bool bRunOut = false;
+		bool bChanged = false;
+		if (i <= base.depth() && i <= path.depth()){
+			if (base.directory(i) == path.directory(i)){
+
+			} else {
+				bChanged = true;
+			}
+		} else {
+			bRunOut = true;
+		}
+		if (bRunOut == true || bChanged == true){
+			for (int j = i; j <= base.depth(); j++){
+				relPath += "../";
+			}
+			for (int j = i; j <= path.depth(); j++){
+				relPath += path.directory(j) + "/";
+			}
+			break;
+		}
+	}
+
+	relPath.erase(relPath.end()-1);
+	return relPath;
+}
+
 void parseAddonsDotMake(string path, vector < string > & addons){
     
     addons.clear();
@@ -281,4 +323,28 @@ void parseAddonsDotMake(string path, vector < string > & addons){
 			addons.push_back(line);
 		}
 	}
+}
+
+bool checkConfigExists(){
+	ofFile config(ofFilePath::join(ofFilePath::getUserHomeDir(),".ofprojectgenerator/config"));
+	return config.exists();
+}
+
+bool askOFRoot(){
+	ofFileDialogResult res = ofSystemLoadDialog("OF project generator", "choose the folder of your OF install");
+	if (res.fileName == "" || res.filePath == "") return false;
+
+	ofDirectory config(ofFilePath::join(ofFilePath::getUserHomeDir(),".ofprojectgenerator"));
+	config.create(true);
+	ofFile configFile(ofFilePath::join(ofFilePath::getUserHomeDir(),".ofprojectgenerator/config"),ofFile::WriteOnly);
+	configFile << res.filePath;
+	return true;
+}
+
+string getOFRootFromConfig(){
+	if(!checkConfigExists()) return "";
+	ofFile configFile(ofFilePath::join(ofFilePath::getUserHomeDir(),".ofprojectgenerator/config"),ofFile::ReadOnly);
+	string filePath;
+	configFile >> filePath;
+	return filePath;
 }

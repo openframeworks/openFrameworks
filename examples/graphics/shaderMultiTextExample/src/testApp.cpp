@@ -1,21 +1,26 @@
 #include "testApp.h"
 
+#define STRINGIFY(A) #A
+
 //--------------------------------------------------------------
 void testApp::setup(){
     ofEnableAlphaBlending();
+    int camWidth 		= 320;	// try to grab at this size. 
+	int camHeight 		= 240;
     
-    srcImg.loadImage("A.jpg");
-    dstImg.loadImage("B.jpg");
-    brushImg.loadImage("brush.png");
+    vidGrabber.setVerbose(true);
+	vidGrabber.initGrabber(camWidth,camHeight);
     
-    int width = srcImg.getWidth();
-    int height = srcImg.getHeight();
+    fingerMovie.loadMovie("fingers.mov");
+	fingerMovie.play();
     
-    maskFbo.allocate(width,height);
-    multiTextFbo.allocate(width,height);
+    logoImg.loadImage("logo.jpg");
+    multimaskImg.loadImage("mask.jpg");
     
-    ofSetWindowShape(width, height);
+    fbo.allocate(camWidth,camHeight);
+    maskFbo.allocate(camWidth,camHeight);
     
+    ofSetWindowShape(camWidth, camHeight*2);
     
     // There are 3 of ways of loading a shader:
     //
@@ -26,94 +31,83 @@ void testApp::setup(){
     //      Ex.: shader.load( "myShader.vert","myShader.frag");
     //
     //  3 - And the third one it«s passing the shader programa on a single string;
-    //
-    string multiTexturingShaderProgram = "#version 120\n \
-    #extension GL_ARB_texture_rectangle : enable\n \
-    \
-    uniform sampler2DRect tex0;\
-    uniform sampler2DRect tex1;\
-    uniform sampler2DRect maskTex;\
-    \
-    void main (void){\
-        vec2 pos = gl_TexCoord[0].st;\
-        \
-        vec4 src = texture2DRect(tex0, pos);\
-        vec4 dst = texture2DRect(tex1, pos);\
-        vec4 mask = texture2DRect(maskTex, pos);\
-        \
-        gl_FragColor = vec4( mix(src , dst , mask.r) );\
-    }";
-    multiTextShader.setupShaderFromSource(GL_FRAGMENT_SHADER, multiTexturingShaderProgram);
-    multiTextShader.linkProgram(); 
-    
+    //      In this particular explample we are usin STRINGIFY witch it«s a handy macro
+    string shaderProgram = STRINGIFY(
+                                     uniform sampler2DRect tex0;
+                                     uniform sampler2DRect tex1;
+                                     uniform sampler2DRect tex2;
+                                     uniform sampler2DRect maskTex;
 
-    // In order to pass the three textures and draw a new one on the FBO 
-    // we are going to make a mesh that will work as a frame
-    // What«s it«s importat here it«s to set the correct texCoords
-    //
-    frame.setMode(OF_PRIMITIVE_TRIANGLE_FAN);
-    frame.addTexCoord(ofVec2f(0,0));
-    frame.addVertex(ofVec3f(0,0,0));
-    frame.addTexCoord(ofVec2f(width,0));
-    frame.addVertex(ofVec3f(width,0,0));
-    frame.addTexCoord(ofVec2f(width,height));
-    frame.addVertex(ofVec3f(width,height,0));
-    frame.addTexCoord(ofVec2f(0,height));
-    frame.addVertex(ofVec3f(0,height,0));
-    frame.addTexCoord(ofVec2f(0,0));
-    frame.addVertex(ofVec3f(0,0,0));
+                                     void main (void){
+                                         vec2 pos = gl_TexCoord[0].st;
+                                         
+                                         vec4 rTxt = texture2DRect(tex0, pos);
+                                         vec4 gTxt = texture2DRect(tex1, pos);
+                                         vec4 bTxt = texture2DRect(tex2, pos);
+                                         vec4 mask = texture2DRect(maskTex, pos);
+                                         
+                                         vec4 color = rTxt;
+                                         color = mix(color, gTxt, mask.g );
+                                         color = mix(color, bTxt, mask.b );
+                                         
+                                         gl_FragColor = color;
+                                     }
+                                     );
+    
+    shader.setupShaderFromSource(GL_FRAGMENT_SHADER, shaderProgram);
+    shader.linkProgram(); 
     
     // Let«s clear the FBO«s
     // otherwise it will bring some junk with it from the memory    
+    fbo.begin();
+    ofClear(0,0,0,255);
+    fbo.end();
+    
     maskFbo.begin();
     ofClear(0,0,0,255);
     maskFbo.end();
-    
-    multiTextFbo.begin();
-    ofClear(0,0,0,255);
-    multiTextFbo.end();
-    
-    bBrushDown = false;
 }
 
 //--------------------------------------------------------------
 void testApp::update(){
-    
-    // MASK (frame buffer object)
-    //
+    vidGrabber.grabFrame();
+    fingerMovie.idleMovie();
+        
     maskFbo.begin();
-    if (bBrushDown){
-        brushImg.draw(mouseX-25,mouseY-25,50,50);
-    }
+    ofClear(255, 0, 0,255);
+    multimaskImg.draw( mouseX-multimaskImg.getWidth()*0.5, 0 );
     maskFbo.end();
     
     // MULTITEXTURE MIXING FBO
     //
-    multiTextFbo.begin();
-    ofClear(0, 0, 0,0);
-    multiTextShader.begin();
-    multiTextShader.setUniformTexture("tex0", srcImg , 0 );
-    multiTextShader.setUniformTexture("tex1", dstImg, 1 );
-    multiTextShader.setUniformTexture("maskTex", maskFbo.getTextureReference(), 2 );
+    fbo.begin();
+    ofClear(0, 0, 0,255);
+    shader.begin();
+    shader.setUniformTexture("tex0", logoImg, 1 );
+    shader.setUniformTexture("tex1", vidGrabber.getTextureReference() , 2 );
+    shader.setUniformTexture("tex2", fingerMovie.getTextureReference() , 3 );
+    shader.setUniformTexture("maskTex", maskFbo.getTextureReference() , 4 );
+    logoImg.draw(0,0);
     
-    frame.draw();
-
-    multiTextShader.end();
-    multiTextFbo.end();
+    shader.end();
+    fbo.end();
 
 }
 
 //--------------------------------------------------------------
 void testApp::draw(){
     ofSetColor(255,255);
-    multiTextFbo.draw(0,0);
+    
+    maskFbo.draw(0,0);
+    ofDrawBitmapString("multiTexture mask", 15, 15);
+    
+    fbo.draw(0,240);
+    ofDrawBitmapString("Final mix", 15,255);
 }
 
 //--------------------------------------------------------------
 void testApp::keyPressed(int key){
-    maskFbo.begin();
-    ofClear(0,0,0,255);
-    maskFbo.end();
+    
 }
 
 //--------------------------------------------------------------
@@ -133,12 +127,12 @@ void testApp::mouseDragged(int x, int y, int button){
 
 //--------------------------------------------------------------
 void testApp::mousePressed(int x, int y, int button){
-    bBrushDown = true;
+
 }
 
 //--------------------------------------------------------------
 void testApp::mouseReleased(int x, int y, int button){
-    bBrushDown = false;
+
 }
 
 //--------------------------------------------------------------
