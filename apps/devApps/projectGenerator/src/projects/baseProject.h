@@ -16,7 +16,7 @@ class baseProject {
     };
     virtual ~baseProject(){};
     
-    virtual void setup() = 0;
+    virtual void setup(string ofRoot= "../../../") = 0;
     
     virtual bool create(string path) = 0;
     virtual bool load(string path) = 0;
@@ -31,6 +31,7 @@ class baseProject {
 
 	virtual string getName() = 0;
 	virtual string getPath() = 0;
+
     //private: 
 
     pugi::xml_document doc;

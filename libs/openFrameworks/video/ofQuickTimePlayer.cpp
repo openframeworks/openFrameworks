@@ -134,7 +134,8 @@ ofQuickTimePlayer::ofQuickTimePlayer (){
 ofQuickTimePlayer::~ofQuickTimePlayer(){
 
 	closeMovie();
-
+    clearMemory();
+    
 	//--------------------------------------
 	#ifdef OF_VIDEO_PLAYER_QUICKTIME
 	//--------------------------------------
@@ -216,14 +217,12 @@ void ofQuickTimePlayer::closeMovie(){
 
 		moviePtr = NULL;
         
-        width = height = 0;
     }
 
    	//--------------------------------------
 	#endif
     //--------------------------------------
 
-	clearMemory();
 	bLoaded = false;
 
 }
@@ -293,7 +292,7 @@ bool ofQuickTimePlayer::loadMovie(string name){
 				width 	= movieRect.right;
 				height 	= movieRect.bottom;
 				pixels.clear();
-				delete(offscreenGWorldPixels);
+				delete [] offscreenGWorldPixels;
 				if ((offscreenGWorld)) DisposeGWorld((offscreenGWorld));
 				createImgMemAndGWorld();
 			}

@@ -198,6 +198,8 @@ void ofDisableDataPath(){
 	static string dataPathRoot = "../../../data/";
 #elif defined TARGET_ANDROID
 	static string dataPathRoot = "sdcard/";
+#elif defined(TARGET_LINUX)
+	static string dataPathRoot = ofFilePath::join(ofFilePath::getCurrentExeDir(),  "data/");
 #else
 	static string dataPathRoot = "data/";
 #endif
@@ -671,7 +673,13 @@ void ofSaveFrame(bool bUseViewport){
 
 //--------------------------------------------------
 string ofSystem(string command){
-	FILE * ret = popen(command.c_str(),"r");
+	FILE * ret = NULL;
+#ifdef TARGET_WIN32
+	 ret = _popen(command.c_str(),"r");
+#else 
+	ret = popen(command.c_str(),"r");
+#endif;
+	
 	string strret;
 	char c;
 
