@@ -108,7 +108,8 @@ string xcodeProject::LOG_NAME = "xcodeProject";
 
 
 void xcodeProject::setup(string _ofRoot){
-    templatePath = ofToDataPath("xcode/template/",true);
+    templatePath = ofFilePath::join(getOFRoot(),"scripts/osx/template/");
+    //templatePath = ofToDataPath("xcode/template/",true);
     ofRoot = _ofRoot;
 }
 
@@ -204,8 +205,13 @@ bool xcodeProject::create(string path){
             string xcodeProject = ofFilePath::join(projectDir , projectName + ".xcodeproj");
             ofDirectory xcodeDir(xcodeProject);
             xcodeDir.create(true);
-            save(ofFilePath::join(projectDir , projectName + ".xcodeproj" + "/project.pbxproj"));
+            saveFile(ofFilePath::join(projectDir , projectName + ".xcodeproj" + "/project.pbxproj"));
             ofDirectory::removeDirectory(ofFilePath::join(projectDir, "emptyExample.xcodeproj"), true);
+            saveWorkspaceXML();
+            saveScheme();
+            
+            
+            
         } else {
             // this exists, what to do now?  (load and parse?)
         }
@@ -226,7 +232,7 @@ bool xcodeProject::create(string path){
         string xcodeProject = ofFilePath::join(projectDir , projectName + ".xcodeproj");
         ofDirectory xcodeDir(xcodeProject);
         xcodeDir.create(true);
-        save(ofFilePath::join(projectDir , projectName + ".xcodeproj" + "/project.pbxproj"));
+        saveFile(ofFilePath::join(projectDir , projectName + ".xcodeproj" + "/project.pbxproj"));
         
         
         if (projectName != "emptyExample"){
@@ -256,13 +262,6 @@ bool xcodeProject::create(string path){
         }
     }
 
-    if (ofRoot != "../../../"){
-        findandreplaceInTexfile(projectDir + projectName + ".xcodeproj/project.pbxproj", "../../../", ofRoot);
-        findandreplaceInTexfile(projectDir + "Project.xcconfig", "../../../", ofRoot);
-        string relPath2 = ofRoot;
-        relPath2.erase(relPath2.end()-1);
-        findandreplaceInTexfile(projectDir + "Project.xcconfig", "../../..", ofRoot);
-    }
     return bLoaded;
     
     
@@ -292,8 +291,23 @@ bool xcodeProject::load(string path){
 }  
 
 
+void xcodeProject::saveFile(string fileName){
+    doc.save_file(ofToDataPath(fileName).c_str());
+}
+
 bool xcodeProject::save(string fileName){
-    return doc.save_file(ofToDataPath(fileName).c_str());
+    
+    if (ofRoot != "../../../"){
+            string relPath2 = ofRoot;
+            relPath2.erase(relPath2.end()-1);
+            findandreplaceInTexfile(projectDir + projectName + ".xcodeproj/project.pbxproj", "../../..", relPath2);
+            findandreplaceInTexfile(projectDir + "Project.xcconfig", "../../../", ofRoot);
+            findandreplaceInTexfile(projectDir + "Project.xcconfig", "../../..", relPath2);
+        
+    }
+    return true;
+
+
 }  
 
 
@@ -578,7 +592,7 @@ void xcodeProject::addSrc(string srcFile, string folder){
     
     
     
-    save(projectDir + "/" + projectName + ".xcodeproj" + "/project.pbxproj");
+    saveFile(projectDir + "/" + projectName + ".xcodeproj" + "/project.pbxproj");
 } 
 
 
@@ -625,7 +639,7 @@ void xcodeProject::addInclude(string includeName){
         addInclude(includeName);
     }
     
-    save(projectDir + "/" + projectName + ".xcodeproj" + "/project.pbxproj");
+    saveFile(projectDir + "/" + projectName + ".xcodeproj" + "/project.pbxproj");
 
 }  
         
@@ -676,7 +690,7 @@ void xcodeProject::addLibrary(string libraryName){
         addLibrary(libraryName);
     }
     
-    save(projectDir + "/" + projectName + ".xcodeproj" + "/project.pbxproj");
+    saveFile(projectDir + "/" + projectName + ".xcodeproj" + "/project.pbxproj");
 }
 
 void xcodeProject::addAddon(ofAddon & addon){
