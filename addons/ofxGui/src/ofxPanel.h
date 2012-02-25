@@ -137,6 +137,7 @@ public:
 	
 	virtual void mouseReleased(ofMouseEventArgs & args){
 		bGuiActive = false;
+		bGrabbed = false;
 		for(int k = 0; k < (int)collection.size(); k++){
 			ofMouseEventArgs a = args;
 			a.x -= b.x;
