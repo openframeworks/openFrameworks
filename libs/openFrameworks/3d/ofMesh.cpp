@@ -12,7 +12,7 @@ ofMesh::ofMesh(){
     useColors = true;
     useTextures = true;
     useNormals = true;
-    
+
 }
 
 //--------------------------------------------------------------
@@ -32,7 +32,7 @@ void ofMesh::clear(){
 	bNormalsChanged = true;
 	bTexCoordsChanged = true;
 	bIndicesChanged = true;
-	
+
 	vertices.clear();
 	colors.clear();
 	normals.clear();
@@ -219,6 +219,57 @@ void ofMesh::addTriangle(ofIndexType index1, ofIndexType index2, ofIndexType ind
     addIndex(index1);
     addIndex(index2);
     addIndex(index3);
+}
+
+//REMOVERS
+//--------------------------------------------------------------
+void ofMesh::removeVertex(int index){
+  if(index >= vertices.size()){
+    ofLog(OF_LOG_ERROR,"Trying to remove vertex out of range of this mesh. Taking no action.");
+  }else{
+    vertices.erase(vertices.begin() + index);
+    bVertsChanged = true;
+  }
+}
+
+//--------------------------------------------------------------
+void ofMesh::removeNormal(int index){
+  if(index >= vertices.size()){
+    ofLog(OF_LOG_ERROR,"Trying to remove normal out of range of this mesh. Taking no action.");
+  }else{
+    normals.erase(normals.begin() + index);
+    bNormalsChanged = true;
+  }
+}
+
+//--------------------------------------------------------------
+void ofMesh::removeColor(int index){
+  if(index >= vertices.size()){
+    ofLog(OF_LOG_ERROR,"Trying to remove color out of range of this mesh. Taking no action.");
+  }else{
+    colors.erase(colors.begin() + index);
+    bColorsChanged = true;
+  }
+}
+
+//--------------------------------------------------------------
+void ofMesh::removeTexCoord(int index){
+  if(index >= vertices.size()){
+    ofLog(OF_LOG_ERROR,"Trying to remove texCoord out of range of this mesh. Taking no action.");
+  }else{
+    texCoords.erase(texCoords.begin() + index);
+    bTexCoordsChanged = true;
+  }
+}
+
+//--------------------------------------------------------------
+void ofMesh::removeIndex(int index){
+  if(index >= vertices.size()){
+    ofLog(OF_LOG_ERROR,"Trying to remove index out of range of this mesh. Taking no action.");
+  }else{
+    indices.erase(indices.begin() + index);
+    bIndicesChanged = true;
+  }
 }
 
 
@@ -597,7 +648,7 @@ void ofMesh::enableColors(){
 
 //--------------------------------------------------------------
 void ofMesh::enableTextures(){
-    useTextures = true;    
+    useTextures = true;
 }
 
 //--------------------------------------------------------------
@@ -640,7 +691,7 @@ bool ofMesh::usingNormals(){
 void ofMesh::load(string path){
 	ofFile is(path, ofFile::ReadOnly);
 	ofMesh& data = *this;
-	
+
 	string line;
 	string error;
 	ofBuffer buffer(is);
@@ -852,7 +903,7 @@ void ofMesh::load(string path){
 			continue;
 		}
 	}
-	
+
 
 	return;
 	clean:
@@ -893,7 +944,7 @@ void ofMesh::save(string path, bool useBinary){
 			os << "property float nz" << endl;
 		}
 	}
-	
+
 	unsigned char faceSize = 3;
 	if(data.getNumIndices()){
 		os << "element face " << data.getNumIndices() / faceSize << endl;
@@ -904,7 +955,7 @@ void ofMesh::save(string path, bool useBinary){
 	}
 
 	os << "end_header" << endl;
-	
+
 	for(int i = 0; i < data.getNumVertices(); i++){
 		if(useBinary) {
 			os.write((char*) &data.getVertices()[i], sizeof(ofVec3f));
