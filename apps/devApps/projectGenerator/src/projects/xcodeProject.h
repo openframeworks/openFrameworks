@@ -13,7 +13,7 @@ public:
     xcodeProject(){};
     
     
-    void setup();
+    void setup(string ofRoot= "../../../");
     
     bool load(string path);
     bool create(string path); // not done yet. 
@@ -41,7 +41,7 @@ public:
     
     
     
-    string projectDir, projectName;
+    string projectDir, projectName, ofRoot;
     vector<ofAddon> addons;
     static string LOG_NAME;
     

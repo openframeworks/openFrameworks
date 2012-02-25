@@ -41,4 +41,11 @@ void parseAddonsDotMake(string path, vector < string > & addons);
 void fixSlashOrder(string & toFix);
 string unsplitString (vector < string > strings, string deliminator );
 
+string getOFRelPath(string from);
+
+bool checkConfigExists();
+bool askOFRoot();
+string getOFRootFromConfig();
+
+
 #endif /* UTILS_H_ */
