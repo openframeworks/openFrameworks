@@ -13,7 +13,7 @@
 #include <list>
 
 ofAddon::ofAddon(){
-    pathToAddons = "../../..";
+    pathToOF = "../../..";
 }
 
 void ofAddon::fromFS(string path, string platform){
@@ -32,7 +32,7 @@ void ofAddon::fromFS(string path, string platform){
     	int init = srcFiles[i].find("/")+1;
     	int end = srcFiles[i].rfind("/") - srcFiles[i].find("/");
     	string folder = srcFiles[i].substr(init,end);
-    	srcFiles[i] = pathToAddons + srcFiles[i];
+    	srcFiles[i] = pathToOF + srcFiles[i];
     	filesToFolders[srcFiles[i]] = folder;
     }
 
@@ -49,14 +49,14 @@ void ofAddon::fromFS(string path, string platform){
     	int init = libFiles[i].find("/")+1;
     	int end = libFiles[i].rfind("/") - libFiles[i].find("/");
     	string folder = libFiles[i].substr(init,end);
-    	libFiles[i] = pathToAddons + libFiles[i];
+    	libFiles[i] = pathToOF + libFiles[i];
         srcFiles.push_back(libFiles[i]);
     	filesToFolders[libFiles[i]] = folder;
     }
 
     for (int i = 0; i < (int)libs.size(); i++){
     	libs[i].erase (libs[i].begin(), libs[i].begin()+getOFRoot().length());
-    	libs[i] = pathToAddons + libs[i];
+    	libs[i] = pathToOF + libs[i];
     }
 
     
@@ -79,13 +79,13 @@ void ofAddon::fromFS(string path, string platform){
     
     for (int i = 0; i < libFolders.size(); i++){
         libFolders[i].erase (libFolders[i].begin(), libFolders[i].begin()+getOFRoot().length());
-        libFolders[i] = pathToAddons + libFolders[i];
+        libFolders[i] = pathToOF + libFolders[i];
         paths.push_back(libFolders[i]);
     }
     
     for (int i = 0; i < srcFolders.size(); i++){
         srcFolders[i].erase (srcFolders[i].begin(), srcFolders[i].begin()+getOFRoot().length());
-        srcFolders[i] = pathToAddons + srcFolders[i];
+        srcFolders[i] = pathToOF + srcFolders[i];
         paths.push_back(srcFolders[i]);
     }
     
