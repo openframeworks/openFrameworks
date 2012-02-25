@@ -54,6 +54,7 @@ void testApp::setup(){
             addon.fromFS(ofFilePath::join(ofFilePath::join(getOFRoot(), "addons"), addons[i]),platform);
             project->addAddon(addon);
         }
+        project->save(projectPath);
         std::exit(0);
     }
 
@@ -85,7 +86,7 @@ void testApp::generateExamples(){
     
     ofDirectory dir;
     
-    dir.listDir(ofFilePath::join(getOFRoot(),"apps/examples"));
+    dir.listDir(ofFilePath::join(getOFRoot(),"examples"));
 
     for (int i = 0; i < dir.size(); i++){
         
@@ -101,9 +102,11 @@ void testApp::generateExamples(){
             parseAddonsDotMake(project->getPath() + "addons.make", addons);
             for (int i = 0; i < addons.size(); i++){
                 ofAddon addon;
+                addon.pathToOF = getOFRelPath(subdir.getPath(j));
                 addon.fromFS(ofFilePath::join(ofFilePath::join(getOFRoot(), "addons"), addons[i]),platform);
                 project->addAddon(addon);
             }
+            project->save(subdir.getPath(j));
         }
     }
 }
@@ -120,10 +123,15 @@ ofFileDialogResult testApp::makeNewProjectViaDialog(){
 		ofxToggle toggle = panelAddons.getToggle(addonsToggles[i]);
 		if(toggle){
 			ofAddon addon;
+            addon.pathToOF = getOFRelPath(res.filePath);
 			addon.fromFS(ofFilePath::join(ofFilePath::join(getOFRoot(), "addons"), addonsToggles[i]),platform);
-			project->addAddon(addon);
+			printf("adding %s addons \n", addonsToggles[i].c_str());
+            project->addAddon(addon);
+            
 		}
 	}
+    project->save(res.filePath);
+    
     return res;
 }
 

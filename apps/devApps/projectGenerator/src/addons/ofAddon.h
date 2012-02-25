@@ -33,7 +33,7 @@ public:
     string name;
     
     
-    string pathToAddons;
+    string pathToOF;
 
 };
 
