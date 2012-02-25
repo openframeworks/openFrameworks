@@ -342,6 +342,24 @@ void ofCairoRenderer::draw(ofSubPath & path){
 				cairo_arc(cr,commands[i].to.x,commands[i].to.y,commands[i].radiusX,commands[i].angleBegin*DEG_TO_RAD,commands[i].angleEnd*DEG_TO_RAD);
 			}
 			break;
+
+        case ofSubPath::Command::arcNegative:
+            curvePoints.clear();
+            // elliptic arcs not directly supported in cairo, lets scale y
+            if(commands[i].radiusX!=commands[i].radiusY){
+                float ellipse_ratio = commands[i].radiusY/commands[i].radiusX;
+                pushMatrix();
+                translate(0,-commands[i].to.y*ellipse_ratio);
+                scale(1,ellipse_ratio);
+                translate(0,commands[i].to.y/ellipse_ratio);
+                cairo_arc_negative(cr,commands[i].to.x,commands[i].to.y,commands[i].radiusX,commands[i].angleBegin*DEG_TO_RAD,commands[i].angleEnd*DEG_TO_RAD);
+                //cairo_set_matrix(cr,&stored_matrix);
+                popMatrix();
+            }else{
+                cairo_arc_negative(cr,commands[i].to.x,commands[i].to.y,commands[i].radiusX,commands[i].angleBegin*DEG_TO_RAD,commands[i].angleEnd*DEG_TO_RAD);
+            }
+        break;
+
 		}
 	}
 
