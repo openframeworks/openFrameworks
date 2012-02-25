@@ -198,6 +198,8 @@ void ofDisableDataPath(){
 	static string dataPathRoot = "../../../data/";
 #elif defined TARGET_ANDROID
 	static string dataPathRoot = "sdcard/";
+#elif defined(TARGET_LINUX)
+	static string dataPathRoot = ofFilePath::join(ofFilePath::getCurrentExeDir(),  "data/");
 #else
 	static string dataPathRoot = "data/";
 #endif
