@@ -201,7 +201,7 @@ bool ofQuickTimeGrabber::initGrabber(int w, int h){
 		}
 		
 		ofLog(OF_LOG_NOTICE,"end setup ofQuickTimeGrabber");
-		ofLog(OF_LOG_NOTICE,"-------------------------------------");
+		ofLog(OF_LOG_NOTICE,"-------------------------------------\n");
 
 		// we are done
 		return true;
@@ -211,7 +211,7 @@ bool ofQuickTimeGrabber::initGrabber(int w, int h){
 		bail:
 
 			ofLog(OF_LOG_ERROR, "***** ofQuickTimeGrabber error *****");
-			ofLog(OF_LOG_ERROR, "-------------------------------------");
+			ofLog(OF_LOG_ERROR, "-------------------------------------\n");
 
 			//if we don't close this - it messes up the next device!
 			if(bSgInited) qtCloseSeqGrabber();
