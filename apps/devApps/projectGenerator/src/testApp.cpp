@@ -53,7 +53,7 @@ void testApp::generateExamples(){
     
     ofDirectory dir;
     //../../../../../
-    dir.listDir("../../../../../examples");
+    dir.listDir("../../../../../test");
     
     for (int i = 0; i < dir.size(); i++){
         
