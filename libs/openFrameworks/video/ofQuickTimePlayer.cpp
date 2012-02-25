@@ -174,6 +174,9 @@ void ofQuickTimePlayer::update(){
 					//ofLog( OF_LOG_NOTICE, "not on the main loop, calling MoviesTask") ;
 					MoviesTask(moviePtr,0);
 				}
+			#else
+				// on windows we always call MoviesTask
+				MoviesTask(moviePtr,0);
 			#endif
 
 		//--------------------------------------------------------------
