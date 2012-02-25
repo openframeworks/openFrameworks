@@ -10,16 +10,16 @@ void testApp::setup() {
 	radius		= 100.f;
 	center.set(ofGetWidth()*.5, ofGetHeight()*.5, 0);
 	
-	pointLight.setDiffuseColor( 0, 255, 0);
-	pointLight.setSpecularColor(255, 255, 255);
+	pointLight.setDiffuseColor(ofColor::green);
+	pointLight.setSpecularColor(ofColor::white);
 	pointLight.setPointLight();
 	
-	spotLight.setDiffuseColor(255, 0, 0);
-	spotLight.setSpecularColor(255, 255, 255);
+	spotLight.setDiffuseColor(ofColor::red);
+	spotLight.setSpecularColor(ofColor::white);
 	spotLight.setSpotlight(40, 6);
 	
-	directionalLight.setDiffuseColor(0, 0, 255);
-	directionalLight.setSpecularColor(255, 255, 255);
+	directionalLight.setDiffuseColor(ofColor::blue);
+	directionalLight.setSpecularColor(ofColor::white);
 	directionalLight.setDirectional();
 	directionalLight.setOrientation( ofVec3f(0, 90, 0) );
 	
