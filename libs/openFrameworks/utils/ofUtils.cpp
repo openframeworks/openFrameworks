@@ -673,7 +673,13 @@ void ofSaveFrame(bool bUseViewport){
 
 //--------------------------------------------------
 string ofSystem(string command){
-	FILE * ret = popen(command.c_str(),"r");
+	FILE * ret = NULL;
+#ifdef TARGET_WIN32
+	 ret = _popen(command.c_str(),"r");
+#else 
+	ret = popen(command.c_str(),"r");
+#endif;
+	
 	string strret;
 	char c;
 
