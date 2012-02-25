@@ -9,7 +9,7 @@ public:
 };
 
 
-class ofApp : public ofBaseApp{
+class testApp : public ofBaseApp{
     
 public:
     

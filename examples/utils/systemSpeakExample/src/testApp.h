@@ -3,7 +3,7 @@
 
 
 // ---------------------------------------------
-class ofApp : public ofBaseApp {
+class testApp : public ofBaseApp, public ofThread {
 	
 public:
     
@@ -11,6 +11,8 @@ public:
     void update();
     void draw();
     void keyPressed(int key);
+    void threadedFunction();
+    
     
     ofTrueTypeFont  font;
     vector <string> words;

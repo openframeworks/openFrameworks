@@ -1,4 +1,4 @@
-#include "ofApp.h"
+#include "testApp.h"
 
 
 // we need to include the RegularExpression
@@ -16,7 +16,7 @@ using Poco::RegularExpression;
 
 
 //--------------------------------------------------------------
-void ofApp::setup() {
+void testApp::setup() {
     ofBackground(0);
     page = 0;
     searchGoogleImages();
@@ -24,7 +24,7 @@ void ofApp::setup() {
 
 
 //--------------------------------------------------------------
-void ofApp::searchGoogleImages() {
+void testApp::searchGoogleImages() {
     
     // clear old imges    
     images.clear();
@@ -112,7 +112,7 @@ void ofApp::searchGoogleImages() {
 }
 
 //--------------------------------------------------------------
-void ofApp::update(){
+void testApp::update(){
     for(int i=0; i<images.size(); i++) {
         if(!images[i].bDoneLoading) {
             images[i].loadImage(images[i].url);
@@ -123,7 +123,7 @@ void ofApp::update(){
 }
 
 //--------------------------------------------------------------
-void ofApp::draw() {
+void testApp::draw() {
     
     // draw the raw data from google
     ofSetColor(255);
@@ -158,7 +158,7 @@ void ofApp::draw() {
 }
 
 //--------------------------------------------------------------
-void ofApp::keyPressed(int key){
+void testApp::keyPressed(int key){
     
     page += 22;
     searchGoogleImages();
@@ -166,41 +166,41 @@ void ofApp::keyPressed(int key){
 }
 
 //--------------------------------------------------------------
-void ofApp::keyReleased(int key){
+void testApp::keyReleased(int key){
     
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseMoved(int x, int y ){
+void testApp::mouseMoved(int x, int y ){
     
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseDragged(int x, int y, int button){
+void testApp::mouseDragged(int x, int y, int button){
     
 }
 
 //--------------------------------------------------------------
-void ofApp::mousePressed(int x, int y, int button){
+void testApp::mousePressed(int x, int y, int button){
     
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseReleased(int x, int y, int button){
+void testApp::mouseReleased(int x, int y, int button){
     
 }
 
 //--------------------------------------------------------------
-void ofApp::windowResized(int w, int h){
+void testApp::windowResized(int w, int h){
     
 }
 
 //--------------------------------------------------------------
-void ofApp::gotMessage(ofMessage msg){
+void testApp::gotMessage(ofMessage msg){
     
 }
 
 //--------------------------------------------------------------
-void ofApp::dragEvent(ofDragInfo dragInfo){ 
+void testApp::dragEvent(ofDragInfo dragInfo){ 
     
 }
