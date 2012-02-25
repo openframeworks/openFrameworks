@@ -1,5 +1,7 @@
 #include "ofFileUtils.h"
+#ifndef TARGET_WIN32
 #include <pwd.h>
+#endif
 
 #include "ofUtils.h"
 
@@ -1224,9 +1226,10 @@ string ofFilePath::getCurrentExePath(){
 	if (_NSGetExecutablePath(path, &size) == 0)
         ofLogError() << "buffer too small; need size " <<  size;
 	return path;
-#elif defined(TARGET_WINDOWS)
+#elif defined(TARGET_WIN32)
 	ofLogError() << "getCurrentExePath() not implemented";
 #endif
+	return "";
 }
 
 string ofFilePath::getCurrentExeDir(){
@@ -1234,11 +1237,12 @@ string ofFilePath::getCurrentExeDir(){
 }
 
 string ofFilePath::getUserHomeDir(){
-#ifndef TARGET_WINDOWS
+#ifndef TARGET_WIN32
 	struct passwd *pw = getpwuid(getuid());
 
 	return pw->pw_dir;
 #else
 	ofLogError() << "getUserHomeDir() not implemented";
 #endif
+	return "";
 }
