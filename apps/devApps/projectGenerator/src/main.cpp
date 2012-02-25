@@ -3,9 +3,12 @@
 #include "ofAppGlutWindow.h"
 #include "ofAppNoWindow.h"
 
+
 //========================================================================
 int main(  int argc, char *argv[]  ){
 
+   
+#ifdef TARGET_LINUX
 	if(argc==1){
 		ofAppGlutWindow window;
 		ofSetupOpenGL(&window, 1024,768, OF_WINDOW);
@@ -18,5 +21,12 @@ int main(  int argc, char *argv[]  ){
 		cout << argv[0] << endl;
 		ofRunApp( app );
 	}
-
+#else 
+    ofAppGlutWindow window;
+    ofSetupOpenGL(&window, 1024,768, OF_WINDOW);
+    ofRunApp( new testApp());
+    
+#endif
+    
+    
 }
