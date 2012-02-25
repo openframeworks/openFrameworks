@@ -32,7 +32,7 @@ public:
 	ofVbo		billboardVbo;
 	ofVec3f		billboardVerts[NUM_BILLBOARDS];
 	ofVec3f		billboardVels[NUM_BILLBOARDS];
-	ofColor		billboardColor[NUM_BILLBOARDS];
+	ofFloatColor		billboardColor[NUM_BILLBOARDS];
 	
 };
 
