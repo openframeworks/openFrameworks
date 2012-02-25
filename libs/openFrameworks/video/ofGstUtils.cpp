@@ -518,6 +518,27 @@ void ofGstUtils::setSinkListener(ofGstAppSink * appsink_){
 	appsink = appsink_;
 }
 
+unsigned long ofGstUtils::getMinLatencyNanos(){
+	GstClockTime minlat, maxlat;
+	GstQuery * q = gst_query_new_latency();
+	if (gst_element_query (gstPipeline, q)) {
+		 gboolean live;
+		 gst_query_parse_latency (q, &live, &minlat, &maxlat);
+	}
+	gst_query_unref (q);
+	return minlat;
+}
+
+unsigned long ofGstUtils::getMaxLatencyNanos(){
+	GstClockTime minlat, maxlat;
+	GstQuery * q = gst_query_new_latency();
+	if (gst_element_query (gstPipeline, q)) {
+		 gboolean live;
+		 gst_query_parse_latency (q, &live, &minlat, &maxlat);
+	}
+	gst_query_unref (q);
+	return maxlat;
+}
 
 
 
@@ -688,4 +709,5 @@ void ofGstVideoUtils::eos_cb(){
 	ofEventArgs args;
 	ofNotifyEvent(eosEvent,args);
 }
+
 #endif

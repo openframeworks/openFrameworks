@@ -246,7 +246,7 @@ void ofQuickTimeGrabber::listDevices(){
 			}
 		}
 
-		ofLog( OF_LOG_NOTICE, "-------------------------------------" );
+		ofLog(OF_LOG_NOTICE,"-------------------------------------");
 
 		/*
 			//input selection stuff (ie multiple webcams)
@@ -308,7 +308,7 @@ void ofQuickTimeGrabber::listDevices(){
 				deviceCount++;
 			}
 		}
-		ofLog( OF_LOG_NOTICE, "-------------------------------------" );
+		ofLog(OF_LOG_NOTICE,"-------------------------------------");
 
 		//if we initialized the grabbing component then close it
 		if( bNeedToInitGrabberFirst ){

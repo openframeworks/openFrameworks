@@ -98,6 +98,10 @@ void ofPixels_<PixelType>::setFromExternalPixels(PixelType * newPixels,int w, in
 
 template<typename PixelType>
 void ofPixels_<PixelType>::setFromAlignedPixels(const PixelType * newPixels, int width, int height, int channels, int stride) {
+	if(width*channels==stride){
+		setFromPixels(newPixels,width,height,channels);
+		return;
+	}
 	allocate(width, height, channels);
 	int dstStride = width * getBytesPerPixel();
 	const unsigned char* src = (unsigned char*) newPixels;
@@ -814,6 +818,13 @@ bool ofPixels_<PixelType>::pasteInto(ofPixels_<PixelType> &dst, int xTo, int yTo
 	return true;
 }
 
+template class ofPixels_<char>;
 template class ofPixels_<unsigned char>;
-template class ofPixels_<float>;
+template class ofPixels_<short>;
 template class ofPixels_<unsigned short>;
+template class ofPixels_<int>;
+template class ofPixels_<unsigned int>;
+template class ofPixels_<long>;
+template class ofPixels_<unsigned long>;
+template class ofPixels_<float>;
+template class ofPixels_<double>;
