@@ -91,8 +91,6 @@ void testApp::draw() {
         frameIndex = ofGetFrameNum() % images.size();
     }
     
-    
-    
     // draw the image sequence at the new frame count
     ofSetColor(255);
     images[frameIndex].draw(256, 36);
