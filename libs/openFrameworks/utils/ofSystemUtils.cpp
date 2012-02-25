@@ -2,6 +2,7 @@
 #include "ofConstants.h"
 #include "ofSystemUtils.h"
 #include "ofFileUtils.h"
+#include "ofLog.h"
 
 #ifdef TARGET_WIN32
 #include <winuser.h>
@@ -396,9 +397,8 @@ ofFileDialogResult ofSystemSaveDialog(string defaultName, string messageName){
 	if ( err != noErr )
 		return results;
 
-	if ( reply.replacing )
-	{
-		printf("need to replace\n");
+	if ( reply.replacing ) {
+		ofLog(OF_LOG_WARNING, "ofSystemSaveDialog: need to replace");
 	}
 
 	AEKeyword keyword;
