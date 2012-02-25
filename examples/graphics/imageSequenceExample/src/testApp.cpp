@@ -67,6 +67,13 @@ void testApp::update() {
 //--------------------------------------------------------------
 void testApp::draw() {
     
+    // we need some images if not return
+    if((int)images.size() <= 0) {
+        ofSetColor(255);
+        ofDrawBitmapString("No Images...", 150, ofGetHeight()/2);
+        return;
+    }
+    
     // this is the total time of the animation based on fps
     float totalTime = images.size() / sequenceFPS;  
     
