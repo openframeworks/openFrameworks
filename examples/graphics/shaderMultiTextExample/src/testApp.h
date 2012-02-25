@@ -21,15 +21,12 @@ public:
     void dragEvent(ofDragInfo dragInfo);
     void gotMessage(ofMessage msg);
 	
-    ofImage     srcImg;
-    ofImage     dstImg;
-    ofImage     brushImg;
+    ofImage     logoImg;
+    ofImage     multimaskImg;
+    ofVideoPlayer 		fingerMovie;
+    ofVideoGrabber 		vidGrabber;
     
+    ofFbo       fbo;
     ofFbo       maskFbo;
-    ofFbo       multiTextFbo;
-    
-    ofShader    multiTextShader;
-    ofMesh      frame;
-    
-    bool        bBrushDown;
+    ofShader    shader;
 };
