@@ -2,7 +2,7 @@
 #include "ofMain.h"
 #include "ofVbo.h"
 
-#define	NUM_BILLBOARDS	8000
+#define NUM_BILLBOARDS 10000
 
 class testApp : public ofBaseApp {
 	
@@ -20,14 +20,14 @@ public:
 	void mouseReleased(int x, int y, int button);
 	void windowResized(int w, int h);
 	
-	ofVbo		vbo;
-	ofShader	shader;
-	ofImage		texture;
-	ofVec2f		pos[NUM_BILLBOARDS];
-	ofVec2f		vel[NUM_BILLBOARDS];
-	ofVec2f		home[NUM_BILLBOARDS];
-	float		pointSizes[NUM_BILLBOARDS];
-	float		rotations[NUM_BILLBOARDS];
+	ofVbo vbo;
+	ofShader shader;
+	ofImage texture;
+	ofVec2f pos[NUM_BILLBOARDS];
+	ofVec2f vel[NUM_BILLBOARDS];
+	ofVec2f home[NUM_BILLBOARDS];
+	float pointSizes[NUM_BILLBOARDS];
+	float rotations[NUM_BILLBOARDS];
 };
 
 
