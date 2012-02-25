@@ -6,6 +6,7 @@
 #include "visualStudioProject.h"
 #include "xcodeProject.h"
 #include <Poco/Path.h>
+#include "ofxGui.h"
 
 class testApp : public ofBaseApp{
 
@@ -23,14 +24,20 @@ class testApp : public ofBaseApp{
 		void windowResized(int w, int h);
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
-		
-		CBLinuxProject linuxProject;
-		CBWinProject winProject;
-		visualStudioProject vsProject;
-		xcodeProject xcProject;
     
         void generateExamples();
-        void makeNewProjectViaDialog();
+        ofFileDialogResult makeNewProjectViaDialog();
+
+        void createProjectPressed(bool & pressed);
+        void createAndOpenPressed(bool & pressed);
+        void changeOFRootPressed(bool & pressed);
+
+		baseProject * project;
     
-        Poco::Path path;     
+        string projectPath;
+        string platform;
+
+        ofxPanel panelAddons, panelOptions;
+        ofxButton createProject, createAndOpen, changeOFRoot;
+
 };
