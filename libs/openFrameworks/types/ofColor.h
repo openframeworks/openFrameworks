@@ -52,8 +52,7 @@ class ofColor_{
 		void setHue (float hue);
 		void setSaturation (float saturation);
 		void setBrightness (float brightness);
-		void setHsb(float hue, float saturation, float brightness, float alpha);
-		void setHsb(float hue, float saturation, float brightness);
+		void setHsb(float hue, float saturation, float brightness, float alpha = limit() );
 		
 		ofColor_<PixelType> & operator = (ofColor_<PixelType> const & color);
 

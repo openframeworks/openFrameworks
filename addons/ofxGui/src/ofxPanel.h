@@ -3,6 +3,9 @@
 #include "ofxBaseGui.h"
 #include "ofConstants.h"
 #include "ofxXmlSettings.h"
+#include "ofxSlider.h"
+#include "ofxButton.h"
+#include "ofxToggle.h"
 
 inline string saveStencilToHex(ofImage& img) {
 	stringstream strm;
@@ -52,6 +55,11 @@ inline void loadStencilFromHex(ofImage& img, unsigned char* data) {
 
 class ofxPanel : public ofxBaseGui{
 public:
+	ofxPanel(){
+		bGuiActive = false;
+		bGrabbed = false;
+	}
+
 	virtual ~ofxPanel(){
 		ofUnregisterMouseEvents(this);
 	}
@@ -65,6 +73,7 @@ public:
 		b.width = defaultWidth;
 		b.height = header + spacing; // weird to start out with something arbitrary like this
 		filename = _filename;
+
 		ofRegisterMouseEvents(this);
 	}
 	
@@ -134,6 +143,7 @@ public:
 	
 	virtual void mouseReleased(ofMouseEventArgs & args){
 		bGuiActive = false;
+		bGrabbed = false;
 		for(int k = 0; k < (int)collection.size(); k++){
 			ofMouseEventArgs a = args;
 			a.x -= b.x;
@@ -188,6 +198,29 @@ public:
 		ofPopStyle();
 	}
 	
+	vector<string> getControlNames(){
+		vector<string> names;
+		for(int i=0; i<collection.size(); i++){
+			names.push_back(collection[i]->name);
+		}
+		return names;
+	}
+
+	ofxIntSlider getIntSlider(string name){
+		return getControl<ofxIntSlider>(name);
+	}
+
+	ofxFloatSlider getFloatSlider(string name){
+		return getControl<ofxFloatSlider>(name);
+	}
+
+	ofxToggle getToggle(string name){
+		return getControl<ofxToggle>(name);
+	}
+
+	ofxButton getButton(string name){
+		return getControl<ofxButton>(name);
+	}
 protected:
 	
 	void setValue(float mx, float my, bool bCheck){
@@ -220,7 +253,18 @@ protected:
 			b.y = my - grabPt.y;
 		}
 	}		
-	
+
+
+	template<class ControlType>
+	ControlType getControl(string name){
+		for(int i=0; i<collection.size(); i++){
+			if(collection[i]->name==name){
+				ControlType * control = dynamic_cast<ControlType*>(collection[i]);
+				if(control)	return *control;
+			}
+		}
+		return ControlType();
+	}
 private:
 	ofPoint grabPt;
 	bool bGrabbed;
