@@ -55,6 +55,11 @@ inline void loadStencilFromHex(ofImage& img, unsigned char* data) {
 
 class ofxPanel : public ofxBaseGui{
 public:
+	ofxPanel(){
+		bGuiActive = false;
+		bGrabbed = false;
+	}
+
 	virtual ~ofxPanel(){
 		ofUnregisterMouseEvents(this);
 	}
@@ -68,6 +73,7 @@ public:
 		b.width = defaultWidth;
 		b.height = header + spacing; // weird to start out with something arbitrary like this
 		filename = _filename;
+
 		ofRegisterMouseEvents(this);
 	}
 	
