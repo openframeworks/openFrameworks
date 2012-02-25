@@ -107,8 +107,9 @@ STRINGIFY(
 string xcodeProject::LOG_NAME = "xcodeProject";
 
 
-void xcodeProject::setup(){
-    templatePath = "xcode/template/";
+void xcodeProject::setup(string _ofRoot){
+    templatePath = ofToDataPath("xcode/template/",true);
+    ofRoot = _ofRoot;
 }
 
 
@@ -193,21 +194,18 @@ bool xcodeProject::create(string path){
             ofLogVerbose(LOG_NAME) << "creating non existent project";
             ofDirectory dir(projectDir);
             dir.create(true);
-            ofFile::copyFromTo(templatePath + "/src",projectDir);
-            ofFile::copyFromTo(templatePath + "/bin",projectDir);
-            ofFile::copyFromTo(templatePath + "/emptyExample.xcodeproj", projectDir);
-            ofFile::copyFromTo(templatePath + "/openFrameworks-Info.plist", projectDir);
-            ofFile::copyFromTo(templatePath + "/Project.xcconfig", projectDir);
-            load(projectDir + "emptyExample.xcodeproj/project.pbxproj");
+    		ofFile::copyFromTo(ofFilePath::join(templatePath,"emptyExample.xcodeproj"),projectDir);
+    		ofFile::copyFromTo(ofFilePath::join(templatePath,"openFrameworks-Info.plist"),projectDir);
+    		ofFile::copyFromTo(ofFilePath::join(templatePath,"Project.xcconfig"),projectDir);
+    		ofFile::copyFromTo(ofFilePath::join(templatePath,"src"),projectDir);
+    		ofFile::copyFromTo(ofFilePath::join(templatePath,"bin"),projectDir);
+            load(ofFilePath::join(projectDir, "emptyExample.xcodeproj/project.pbxproj"));
             renameProject();
-            string xcodeProject = projectDir +  projectName + ".xcodeproj";
+            string xcodeProject = ofFilePath::join(projectDir , projectName + ".xcodeproj");
             ofDirectory xcodeDir(xcodeProject);
             xcodeDir.create(true);
-            save(projectDir +  projectName + ".xcodeproj" + "/project.pbxproj");
-            ofDirectory::removeDirectory(projectDir + "/emptyExample.xcodeproj", true);
-            saveWorkspaceXML();
-            saveScheme();
-            
+            save(ofFilePath::join(projectDir , projectName + ".xcodeproj" + "/project.pbxproj"));
+            ofDirectory::removeDirectory(ofFilePath::join(projectDir, "emptyExample.xcodeproj"), true);
         } else {
             // this exists, what to do now?  (load and parse?)
         }
@@ -217,22 +215,22 @@ bool xcodeProject::create(string path){
         vector < string > fileNames;
        
         getFilesRecursively(projectDir + "src", fileNames);
-        
-        ofFile::copyFromTo(templatePath + "/emptyExample.xcodeproj", projectDir);
-        ofFile::copyFromTo(templatePath + "/openFrameworks-Info.plist", projectDir);
-        ofFile::copyFromTo(templatePath + "/Project.xcconfig", projectDir);
-        
-        load(projectDir + "emptyExample.xcodeproj/project.pbxproj");
+
+		ofFile::copyFromTo(ofFilePath::join(templatePath,"emptyExample.xcodeproj"),projectDir);
+		ofFile::copyFromTo(ofFilePath::join(templatePath,"openFrameworks-Info.plist"),projectDir);
+		ofFile::copyFromTo(ofFilePath::join(templatePath,"Project.xcconfig"),projectDir);
+
+        load(ofFilePath::join(projectDir, "emptyExample.xcodeproj/project.pbxproj"));
         renameProject();
-        
-        string xcodeProject = projectDir + projectName + ".xcodeproj";
+
+        string xcodeProject = ofFilePath::join(projectDir , projectName + ".xcodeproj");
         ofDirectory xcodeDir(xcodeProject);
         xcodeDir.create(true);
-        save(projectDir + projectName + ".xcodeproj" + "/project.pbxproj");
+        save(ofFilePath::join(projectDir , projectName + ".xcodeproj" + "/project.pbxproj"));
         
         
         if (projectName != "emptyExample"){
-            ofDirectory::removeDirectory(projectDir + "/emptyExample.xcodeproj", true);
+            ofDirectory::removeDirectory(ofFilePath::join(projectDir, "emptyExample.xcodeproj"), true);
         }
         
         saveWorkspaceXML();
@@ -256,10 +254,14 @@ bool xcodeProject::create(string path){
                     addSrc(fileName, first);
             }
         }
-        
-        
-        
-        
+    }
+
+    if (ofRoot != "../../../"){
+        findandreplaceInTexfile(projectDir + projectName + ".xcodeproj/project.pbxproj", "../../../", ofRoot);
+        findandreplaceInTexfile(projectDir + "Project.xcconfig", "../../../", ofRoot);
+        string relPath2 = ofRoot;
+        relPath2.erase(relPath2.end()-1);
+        findandreplaceInTexfile(projectDir + "Project.xcconfig", "../../..", ofRoot);
     }
     return bLoaded;
     
