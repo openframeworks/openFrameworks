@@ -17,6 +17,7 @@ static int	previousMouseX=0, previousMouseY=0;
 static bool		bPreMouseNotSet;
 static set<int> pressedMouseButtons;
 static set<int> pressedKeys;
+static int      pressedModifiers;
 
 static bool bEscQuits = true;
 
@@ -31,6 +32,11 @@ bool ofGetMousePressed(int button){ //by default any button
 bool ofGetKeyPressed(int key){
 	if(key==-1) return pressedKeys.size();
 	return pressedKeys.find(key)!=pressedKeys.end();
+}
+
+//--------------------------------------
+bool ofGetModifierPressed(int modifer) {
+    return (pressedModifiers & modifer);
 }
 
 //--------------------------------------
@@ -62,8 +68,6 @@ void exitApp(){
 	ofLog(OF_LOG_VERBOSE,"OF app is being terminated!");
 	OF_EXIT_APP(0);
 }
-
-
 
 //------------------------------------------
 void ofNotifySetup(){
@@ -104,11 +108,13 @@ void ofNotifyDraw(){
 }
 
 //------------------------------------------
-void ofNotifyKeyPressed(int key){
+void ofNotifyKeyPressed(int key, int modifiers){
 	ofBaseApp * ofAppPtr = ofGetAppPtr();
 	static ofKeyEventArgs keyEventArgs;
 
-	pressedKeys.insert(key);
+    pressedModifiers = modifiers;
+    
+    pressedKeys.insert(key);
 
 	if(ofAppPtr){
 		ofAppPtr->keyPressed(key);
@@ -124,14 +130,15 @@ void ofNotifyKeyPressed(int key){
 		exitApp();
 	}
 	
-	
 }
 
 //------------------------------------------
-void ofNotifyKeyReleased(int key){
+void ofNotifyKeyReleased(int key, int modifiers){
 	ofBaseApp * ofAppPtr = ofGetAppPtr();
 	static ofKeyEventArgs keyEventArgs;
 
+    pressedModifiers = modifiers;
+    
 	pressedKeys.erase(key);
 
 	if(ofAppPtr){
@@ -142,11 +149,15 @@ void ofNotifyKeyReleased(int key){
 		keyEventArgs.key = key;
 		ofNotifyEvent( ofEvents.keyReleased, keyEventArgs );
 	#endif
+    
 }
 
 //------------------------------------------
-void ofNotifyMousePressed(int x, int y, int button){
+void ofNotifyMousePressed(int x, int y, int button, int modifiers){
 	ofBaseApp * ofAppPtr = ofGetAppPtr();
+    
+    pressedModifiers = modifiers;
+    
 	static ofMouseEventArgs mouseEventArgs;
 	
 	pressedMouseButtons.insert(button);
@@ -166,8 +177,11 @@ void ofNotifyMousePressed(int x, int y, int button){
 }
 
 //------------------------------------------
-void ofNotifyMouseReleased(int x, int y, int button){
+void ofNotifyMouseReleased(int x, int y, int button, int modifiers){
 	ofBaseApp * ofAppPtr = ofGetAppPtr();
+
+    pressedModifiers = modifiers;
+    
 	static ofMouseEventArgs mouseEventArgs;
 
 	if( bPreMouseNotSet ){
@@ -199,9 +213,12 @@ void ofNotifyMouseReleased(int x, int y, int button){
 }
 
 //------------------------------------------
-void ofNotifyMouseDragged(int x, int y, int button){
+void ofNotifyMouseDragged(int x, int y, int button, int modifiers){
 	ofBaseApp * ofAppPtr = ofGetAppPtr();
-	static ofMouseEventArgs mouseEventArgs;
+
+    pressedModifiers = modifiers;
+
+    static ofMouseEventArgs mouseEventArgs;
 
 	if( bPreMouseNotSet ){
 		previousMouseX	= x;
@@ -230,9 +247,12 @@ void ofNotifyMouseDragged(int x, int y, int button){
 }
 
 //------------------------------------------
-void ofNotifyMouseMoved(int x, int y){
+void ofNotifyMouseMoved(int x, int y, int modifiers){
 	ofBaseApp * ofAppPtr = ofGetAppPtr();
-	static ofMouseEventArgs mouseEventArgs;
+
+    pressedModifiers = modifiers;
+	
+    static ofMouseEventArgs mouseEventArgs;
 	if( bPreMouseNotSet ){
 		previousMouseX	= x;
 		previousMouseY	= y;
@@ -330,3 +350,10 @@ void ofNotifyWindowEntry( int state ) {
 #endif
 	
 }
+
+//------------------------------------------
+void ofProcessModifers(int modifers) {
+    
+}
+
+
