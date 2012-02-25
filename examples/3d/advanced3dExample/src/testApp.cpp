@@ -73,17 +73,6 @@ void testApp::setup(){
 	camLeft.pan(-90);
 	cameras[3] = &camLeft;
 	
-	//since we're going to be accessing
-	//the matricies for this camera
-	//every frame, let's cache them
-	//for speed
-	for (int i=0; i<N_CAMERAS; i++)
-		cameras[i]->cacheMatrices();
-	
-	//
-	/////////////////////
-	
-	
 	
 	/////////////////////
 	// DEFINE VIEWPORTS
