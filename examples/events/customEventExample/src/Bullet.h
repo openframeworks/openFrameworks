@@ -1,14 +1,21 @@
-//
-//  Bullets.h
-//  customEventExample
-//
-//  Created by Todd Vanderlin on 2/24/12.
-//  Copyright (c) 2012 vanderlin.cc. All rights reserved.
-//
+#pragma once
+#include "ofMain.h"
 
-#ifndef customEventExample_Bullets_h
-#define customEventExample_Bullets_h
+class Bullet {
 
-
-
-#endif
+public:
+    
+    ofVec2f pos, vel;
+    bool    bRemove;
+    
+    void update() {
+        pos += vel;
+        vel *= 0.99; // slowdown in a long time
+    }
+    
+    void draw() {
+        ofSetColor(20);
+        ofCircle(pos, 2);
+    }
+    
+};

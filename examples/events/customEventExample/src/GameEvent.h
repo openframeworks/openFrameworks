@@ -1,9 +1,21 @@
-//
-//  CustomEvent.cpp
-//  customEventExample
-//
-//  Created by Todd Vanderlin on 2/24/12.
-//  Copyright (c) 2012 vanderlin.cc. All rights reserved.
-//
+#pragma once
+#include "ofMain.h"
+#include "Bug.h"
+#include "Bullet.h"
 
-#include <iostream>
+class GameEvent : public ofEventArgs {
+    
+public:
+
+    Bullet * bullet;
+    Bug    * bug;
+    string   message;
+    
+    GameEvent() {
+        bullet = NULL;
+        bug    = NULL;
+    }
+    
+    static ofEvent <GameEvent> events;
+};
+
