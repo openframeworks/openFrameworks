@@ -24,6 +24,8 @@ void ofDrawAxis(float size) {
 void ofDrawGrid(float scale, float ticks, bool labels, bool x, bool y, bool z) {
 	
 	ofColor c = ofGetStyle().color;
+	if (c == ofColor::white)
+		c = ofColor(255,0,0);
 	
 	ofPushStyle();
 	
@@ -36,7 +38,7 @@ void ofDrawGrid(float scale, float ticks, bool labels, bool x, bool y, bool z) {
 		c.setHue(255.0f / 3.0f);
 		ofSetColor(c);
 		ofPushMatrix();
-		ofRotate(90, 0, 0, 1);
+		ofRotate(90, 0, 0, -1);
 		ofDrawGridPlane(scale, ticks, labels);
 		ofPopMatrix();
 	}
@@ -49,6 +51,16 @@ void ofDrawGrid(float scale, float ticks, bool labels, bool x, bool y, bool z) {
 		ofPopMatrix();
 	}
 	
+	if (labels) {
+		ofPushStyle();
+		ofSetColor(255, 255, 255);
+		float labelPos = scale * (1.0f + 0.5f / ticks);
+		ofSetDrawBitmapMode(OF_BITMAPMODE_MODEL_BILLBOARD);
+		ofDrawBitmapString("x", labelPos, 0, 0);
+		ofDrawBitmapString("y", 0, labelPos, 0);
+		ofDrawBitmapString("z", 0, 0, labelPos);
+		ofPopStyle();
+	}
 	ofPopStyle();
 }
 
@@ -88,13 +100,32 @@ void ofDrawGridPlane(float scale, float ticks, bool labels) {
 		ofPushStyle();
 		ofSetColor(255, 255, 255);
 		
+		float accuracy = ceil(-log(scale/ticks)/log(10.0f));
+		
 		ofSetDrawBitmapMode(OF_BITMAPMODE_MODEL_BILLBOARD);
 		for (float yz = -scale; yz<=scale; yz+=minor)
 		{
-			ofDrawBitmapString(ofToString(yz, 0), 0, yz, 0);
-			ofDrawBitmapString(ofToString(yz, 0), 0, 0, yz);		
+			ofDrawBitmapString(ofToString(yz, accuracy), 0, yz, 0);
+			ofDrawBitmapString(ofToString(yz, accuracy), 0, 0, yz);		
 		}
 		ofPopStyle();
 	}
 	
+}
+
+//--------------------------------------------------------------
+void ofDrawArrow(const ofVec3f& start, const ofVec3f& end, float headSize) {
+	
+	//draw line
+	ofLine(start, end);
+	
+	//draw cone
+	ofMatrix4x4 mat;
+	mat.makeRotationMatrix(ofVec3f(0,0,1), end - start);
+	ofPushMatrix();
+	ofTranslate(end);
+	glMultMatrixf(mat.getPtr());
+	ofTranslate(0,0,-headSize);
+	ofCone(headSize, headSize);	
+	ofPopMatrix();
 }
