@@ -1,16 +1,22 @@
 #pragma once
 
-#define WEBCAM
-
 #include "ofMain.h"
 
+class URLImage : public ofImage {
+public:
+    bool    bDoneLoading;
+    string  url;
+};
+
+
 class testApp : public ofBaseApp{
+    
 public:
     
     void setup();
     void update();
     void draw();
-
+    
     void keyPressed  (int key);
     void keyReleased(int key);
     void mouseMoved(int x, int y );
@@ -20,13 +26,10 @@ public:
     void windowResized(int w, int h);
     void dragEvent(ofDragInfo dragInfo);
     void gotMessage(ofMessage msg);
-	
-    ofImage     logoImg;
-    ofImage     multimaskImg;
-    ofVideoPlayer 		fingerMovie;
-    ofVideoGrabber 		vidGrabber;
     
-    ofFbo       fbo;
-    ofFbo       maskFbo;
-    ofShader    shader;
+    void              searchGoogleImages();
+    int               page;
+    string            rawData;
+    vector <string>   urls;
+    vector <URLImage> images;
 };
