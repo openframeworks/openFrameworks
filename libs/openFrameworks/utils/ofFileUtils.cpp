@@ -1,4 +1,6 @@
 #include "ofFileUtils.h"
+#include <pwd.h>
+
 #include "ofUtils.h"
 
 
@@ -1185,9 +1187,51 @@ bool ofFilePath::isAbsolute(string path) {
  
  //------------------------------------------------------------------------------------------------------------
 string ofFilePath::getCurrentWorkingDirectory(){
+#ifdef TARGET_OSX
+    char pathOSX[FILENAME_MAX];
+    uint32_t size = sizeof(pathOSX);
+    if (_NSGetExecutablePath(pathOSX, &size) != 0)
+        ofLogError() << "buffer too small; need size " <<  size;
+    string pathOSXnonApp = string(pathOSX);
+    string first, last;
+    splitFromLast(pathOSXnonApp, "/", first, last);
+    return first;
+#else
 	return Path::current();
+#endif
 }
 
 string ofFilePath::join(string path1,string path2){
 	return removeTrailingSlash(path1) + addLeadingSlash(path2);
+}
+
+string ofFilePath::getCurrentExePath(){
+#if defined( TARGET_LINUX ) || defined (TARGET_ANDROID)
+	char buff[FILENAME_MAX];
+	readlink("/proc/self/exe",buff,FILENAME_MAX);
+	cout << buff << endl;
+	return buff;
+#elif defined(TARGET_OSX) || defined(TARGET_OF_IPHONE)
+	char path[FILENAME_MAX];
+	uint32_t size = sizeof(path);
+	if (_NSGetExecutablePath(path, &size) == 0)
+        ofLogError() << "buffer too small; need size " <<  size;
+	return path;
+#elif defined(TARGET_WINDOWS)
+	ofLogError() << "getCurrentExePath() not implemented";
+#endif
+}
+
+string ofFilePath::getCurrentExeDir(){
+	return getEnclosingDirectory(getCurrentExePath(),false);
+}
+
+string ofFilePath::getUserHomeDir(){
+#ifndef TARGET_WINDOWS
+	struct passwd *pw = getpwuid(getuid());
+
+	return pw->pw_dir;
+#else
+	ofLogError() << "getUserHomeDir() not implemented";
+#endif
 }
