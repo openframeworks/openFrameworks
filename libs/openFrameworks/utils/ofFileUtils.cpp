@@ -4,6 +4,12 @@
 #include "ofUtils.h"
 
 
+#ifdef TARGET_OSX
+    #include <mach-o/dyld.h>	/* _NSGetExecutablePath */
+    #include <limits.h>		/* PATH_MAX */
+#endif
+
+
 //------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------
 // -- ofBuffer
@@ -1192,10 +1198,11 @@ string ofFilePath::getCurrentWorkingDirectory(){
     uint32_t size = sizeof(pathOSX);
     if (_NSGetExecutablePath(pathOSX, &size) != 0)
         ofLogError() << "buffer too small; need size " <<  size;
-    string pathOSXnonApp = string(pathOSX);
-    string first, last;
-    splitFromLast(pathOSXnonApp, "/", first, last);
-    return first;
+    string pathOSXStr = string(pathOSX);
+    string pathWithoutApp;
+    size_t found = pathOSXStr.find_last_of("/");
+    pathWithoutApp = pathOSXStr.substr(0,found);
+    return pathWithoutApp;
 #else
 	return Path::current();
 #endif
