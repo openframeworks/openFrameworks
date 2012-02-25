@@ -264,6 +264,48 @@ void setOFRoot(string path){
 	OFRoot = path;
 }
 
+string getOFRelPath(string from){
+    Poco::Path base(true);
+    base.parse(from);
+
+    Poco::Path path;
+    path.parse( getOFRoot() );
+    path.makeAbsolute();
+
+	string relPath;
+	if (path.toString() == base.toString()){
+		// do something.
+	}
+
+	int maxx = MAX(base.depth(), path.depth());
+	for (int i = 0; i < maxx; i++){
+
+		bool bRunOut = false;
+		bool bChanged = false;
+		if (i <= base.depth() && i <= path.depth()){
+			if (base.directory(i) == path.directory(i)){
+
+			} else {
+				bChanged = true;
+			}
+		} else {
+			bRunOut = true;
+		}
+		if (bRunOut == true || bChanged == true){
+			for (int j = i; j <= base.depth(); j++){
+				relPath += "../";
+			}
+			for (int j = i; j <= path.depth(); j++){
+				relPath += path.directory(j) + "/";
+			}
+			break;
+		}
+	}
+
+	relPath.erase(relPath.end()-1);
+	return relPath;
+}
+
 void parseAddonsDotMake(string path, vector < string > & addons){
     
     addons.clear();
@@ -281,4 +323,28 @@ void parseAddonsDotMake(string path, vector < string > & addons){
 			addons.push_back(line);
 		}
 	}
+}
+
+bool checkConfigExists(){
+	ofFile config(ofFilePath::join(ofFilePath::getUserHomeDir(),".ofprojectgenerator/config"));
+	return config.exists();
+}
+
+bool askOFRoot(){
+	ofFileDialogResult res = ofSystemLoadDialog("OF project generator", "choose the folder of your OF install");
+	if (res.fileName == "" || res.filePath == "") return false;
+
+	ofDirectory config(ofFilePath::join(ofFilePath::getUserHomeDir(),".ofprojectgenerator"));
+	config.create(true);
+	ofFile configFile(ofFilePath::join(ofFilePath::getUserHomeDir(),".ofprojectgenerator/config"),ofFile::WriteOnly);
+	configFile << res.filePath;
+	return true;
+}
+
+string getOFRootFromConfig(){
+	if(!checkConfigExists()) return "";
+	ofFile configFile(ofFilePath::join(ofFilePath::getUserHomeDir(),".ofprojectgenerator/config"),ofFile::ReadOnly);
+	string filePath;
+	configFile >> filePath;
+	return filePath;
 }
