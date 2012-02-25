@@ -1,5 +1,6 @@
 #include "testApp.h"
 
+//--------------------------------------------------------------
 void splitTest(string splitInput, string delimeter) {
 	cout << "splitting '" << splitInput << "' with '" << delimeter << "'" << endl;
 	cout << "ignoreEmpty:false trim:false " << ofToString(ofSplitString(splitInput, delimeter, false, false)) << endl;
@@ -9,6 +10,7 @@ void splitTest(string splitInput, string delimeter) {
 	cout << endl;
 }
 
+//--------------------------------------------------------------
 void testApp::setup() {
 	string splitInput = " a,,b,c,";
 	splitTest(" a,,b, c , ", ",");
@@ -105,30 +107,42 @@ void testApp::setup() {
 	 cout << endl;
 }
 
+//--------------------------------------------------------------
 void testApp::update() {
 }
 
+//--------------------------------------------------------------
 void testApp::draw() {
+	ofBackground(0);
+	ofSetColor(255);
+	ofDrawBitmapString("See the console for output.", 10, 20);
 }
 
+//--------------------------------------------------------------
 void testApp::keyPressed(int key) {
 }
 
+//--------------------------------------------------------------
 void testApp::keyReleased(int key) {
 }
 
+//--------------------------------------------------------------
 void testApp::mouseMoved(int x, int y) {
 }
 
+//--------------------------------------------------------------
 void testApp::mouseDragged(int x, int y, int button) {
 }
 
+//--------------------------------------------------------------
 void testApp::mousePressed(int x, int y, int button) {
 }
 
+//--------------------------------------------------------------
 void testApp::mouseReleased(int x, int y, int button) {
 }
 
+//--------------------------------------------------------------
 void testApp::windowResized(int w, int h) {
 }
 

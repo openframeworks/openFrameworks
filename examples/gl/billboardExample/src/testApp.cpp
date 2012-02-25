@@ -31,7 +31,7 @@ void testApp::setup() {
 	// load the bilboard shader 
 	// this is used to change the
 	// size of the particle
-	billboardShader.setup("Billboard");
+	billboardShader.load("Billboard");
 	
 	// we need to disable ARB textures
 	// because we are binding ourselfs
