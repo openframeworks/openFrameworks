@@ -15,10 +15,18 @@
 
 class CBLinuxProject: public baseProject {
 public:
-	
-    void setup();
-    
+
+	enum Arch{
+		Linux,
+		Linux64
+	};
+
+    CBLinuxProject(Arch arch);
     CBLinuxProject();
+
+    void setArch(Arch arch);
+	
+    void setup(string ofRoot= "../../../");
 
 	bool load(string path);
 	bool create(string path);
@@ -42,6 +50,8 @@ private:
 	pugi::xml_document doc;
 	string projectDir, projectName;
 	vector<ofAddon> addons;
+	string ofRoot;
+	Arch arch;
 };
 
 #endif /* CBLINUXPROJECT_H_ */
