@@ -2,8 +2,8 @@
 #include "ofCamera.h"
 //#include "ofMeshNode.h"
 
-#define kMoveInc		10
-#define kRotInc			5
+#define kMoveInc 10
+#define kRotInc 5
 
 // reset all transformations and options to defaults
 //--------------------------------------------------------------
@@ -17,8 +17,8 @@ void testApp::reset() {
 		cam[i].resetTransform();
 		cam[i].setFov(60);
 		cam[i].clearParent();
-		lookatIndex[i] = -1;	// don't lookat at any node
-		parentIndex[i] = -1;	// don't parent to any node
+		lookatIndex[i] = -1; // don't lookat at any node
+		parentIndex[i] = -1; // don't parent to any node
 		doMouseOrbit[i] = false;
 	}
 	
@@ -26,17 +26,19 @@ void testApp::reset() {
 	doMouseOrbit[0] = true;
 	
 	cam[1].setPosition(80, 40, 30);
-	lookatIndex[1]	= kNumTestNodes-1;	// look at smallest node
+	lookatIndex[1] = kNumTestNodes-1; // look at smallest node
 }
 
 
 //--------------------------------------------------------------
 void testApp::setup(){
 	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_CULL_FACE);
-	glEnable(GL_LIGHT0);
 	ofSetVerticalSync(true);
 	ofEnableLighting();
+	
+	for(int i = 0; i < kNumLights; i++) {
+		light[i].enable();
+	}
 	
 	reset();
 	
@@ -69,8 +71,45 @@ void testApp::update(){
 
 //--------------------------------------------------------------
 void testApp::draw(){
-//	printf("%i %i\n", mouseX, mouseY);
+	ofBackground(0);
 	
+	string s = string("") + 
+	"\n" + 
+	"Purple boxes (4 of them) are generic nodes with simple circular motion, linked in a hierarchy (with ofNode::setParent).\n" + 
+	"Yellow boxes (2 of them) are cameras. You are looking through one of them so can only see one box on screen.\n" + 
+	"\n" + 
+	"KEYS:\n" + 
+	"\n" + 
+	"z reset transforms\n" + 
+	"\n" + 
+	"v switch camera to view: " + ofToString(camToView) + "\n" +
+	"\n" + 
+	
+	"o toggle mouse orbit for cam\n" + 
+	
+	"\n" + 
+	"c switch camera to configure: " + ofToString(camToConfigure) + "\n" +
+	" t cycle lookat\n" + 
+	" p cycle parent\n" +
+	" LEFT pan left\n" + 
+	" RIGHT pan right\n" + 
+	" UP tilt up\n" + 
+	" DOWN tilt down\n" + 
+	" , roll left\n" + 
+	" . roll right\n" + 
+	" a truck left\n" + 
+	" d truck right\n" + 
+	" w dolly forward\n" + 
+	" s dolly backward\n" + 
+	" r boom up\n" + 
+	" f boom down\n";
+	glDisable(GL_CULL_FACE);
+	ofSetColor(255);
+	ofDisableLighting();
+	ofDrawBitmapString(s, ofPoint(20, 20));
+	
+	glEnable(GL_CULL_FACE);
+	ofEnableLighting();
 	// update camera transforms
 	for(int i=0; i<kNumCameras; i++) {
 		
@@ -92,10 +131,7 @@ void testApp::draw(){
 			}
 		}
 		
-	}
-	
-	ofEnableLighting();
-	
+	} 
 	
 	// activate camera
 	cam[camToView].begin();
@@ -140,43 +176,6 @@ void testApp::draw(){
 	
 	// restore view to previous state (default openFrameworks view)
 	cam[camToView].end();
-	
-	
-	ofSetColor(0, 0, 0);
-	string s = string("") + 
-	"\n" + 
-	"Purple boxes (4 of them) are generic nodes with simple circular motion, linked in a hierarchy (with ofNode::setParent).\n" + 
-	"Yellow boxes (2 of them) are cameras. You are looking through one of them so can only see one box on screen.\n" + 
-	"\n" + 
-	"KEYS:\n" + 
-	"\n" + 
-	"z      reset transforms\n" + 
-	"\n" + 
-	"v      switch camera to view: " + ofToString(camToView) + "\n" +
-	"\n" + 
-	
-	"o      toggle mouse orbit for cam\n" + 
-//	"O      toggle auto orbit for cam\n" + 
-	
-	"\n" + 
-	"c      switch camera to configure: " + ofToString(camToConfigure) + "\n" +
-	" t      cycle lookat\n" + 
-	" p      cycle parent\n" +
-	" LEFT   pan left\n" + 
-	" RIGHT  pan right\n" + 
-	" UP     tilt up\n" + 
-	" DOWN   tilt down\n" + 
-	" ,      roll left\n" + 
-	" .      roll right\n" + 
-	" a      truck left\n" + 
-	" d      truck right\n" + 
-	" w      dolly forward\n" + 
-	" s      dolly backward\n" + 
-	" r      boom up\n" + 
-	" f      boom down\n";
-	
-	ofDisableLighting();
-	ofDrawBitmapString(s, ofPoint(20, 20));
 }
 
 //--------------------------------------------------------------
@@ -217,18 +216,18 @@ void testApp::keyPressed(int key){
 			doMouseOrbit[camToConfigure] ^= true;
 			break;
 			
-//		case 'O':
-//			doMouseOrbit = false;
-//			doAutoOrbit ^= true;
-//			break;
-//			
-//			//			if(cam[camToView].getOrtho()) {
-//			//				cam[camToView].disableOrtho();
-//			//			} else {
-//			//				cam[camToView].enableOrtho();
-//			//			}
-//			break;
-//			
+			// case 'O':
+			// doMouseOrbit = false;
+			// doAutoOrbit ^= true;
+			// break;
+			// 
+			// // if(cam[camToView].getOrtho()) {
+			// // cam[camToView].disableOrtho();
+			// // } else {
+			// // cam[camToView].enableOrtho();
+			// // }
+			// break;
+			// 
 		case 'z':
 			reset();
 			break;
@@ -237,16 +236,16 @@ void testApp::keyPressed(int key){
 			lookatIndex[camToConfigure]++ ; 
 			if(lookatIndex[camToConfigure]>=kNumTestNodes) {
 				lookatIndex[camToConfigure] = -1;
-//				cam[camToConfigure].disableTarget();
-//			} else {
-//				cam[camToConfigure].setTarget(testNodes[parentIndex[camToConfigure]]);
+				// cam[camToConfigure].disableTarget();
+				// } else {
+				// cam[camToConfigure].setTarget(testNodes[parentIndex[camToConfigure]]);
 			}
 			break;
 			
 		case 'p':
 			parentIndex[camToConfigure]++ ; 
-			ofVec3f oldP		= cam[camToConfigure].getGlobalPosition();
-			ofQuaternion oldQ	= cam[camToConfigure].getGlobalOrientation();
+			ofVec3f oldP = cam[camToConfigure].getGlobalPosition();
+			ofQuaternion oldQ = cam[camToConfigure].getGlobalOrientation();
 			if(parentIndex[camToConfigure]>=kNumTestNodes) {
 				parentIndex[camToConfigure] = -1;
 				cam[camToConfigure].clearParent();
@@ -280,10 +279,10 @@ void testApp::mouseMoved(int x, int y ){
 //--------------------------------------------------------------
 void testApp::mouseDragged(int x, int y, int button){
 	static float px = -1;
-//	if(doMouseOrbit) {
-//		if(px>=0) orbitRadius += x - px;
-//		px = x;
-//	}
+	// if(doMouseOrbit) {
+	// if(px>=0) orbitRadius += x - px;
+	// px = x;
+	// }
 }
 
 //--------------------------------------------------------------
@@ -303,10 +302,10 @@ void testApp::windowResized(int w, int h){
 
 //--------------------------------------------------------------
 void testApp::gotMessage(ofMessage msg){
-
+	
 }
 
 //--------------------------------------------------------------
 void testApp::dragEvent(ofDragInfo dragInfo){ 
-
+	
 }
