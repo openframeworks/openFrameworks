@@ -327,11 +327,11 @@ void ofBackground(int r, int g, int b, int a){
 	currentStyle.bgColor.set(r,g,b,a);
 	renderer->background(r,g,b,a);
 }
+
 //----------------------------------------------------------
 void ofBackgroundGradient(const ofColor& start, const ofColor& end, ofGradientMode mode) {
 	float w = ofGetWidth(), h = ofGetHeight();
 	ofMesh mesh;
-	
 	mesh.setMode(OF_PRIMITIVE_TRIANGLE_FAN);
 	if(mode == OF_GRADIENT_CIRCULAR) {
 		// this could be optimized by building a single mesh once, then copying
