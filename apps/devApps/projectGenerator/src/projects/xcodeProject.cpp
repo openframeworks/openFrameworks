@@ -142,6 +142,13 @@ void xcodeProject::saveScheme(){
     findandreplaceInTexfile(schemeTo, "emptyExample", projectName);
     
     
+    string xcsettings = projectDir  + projectName + ".xcodeproj" + "/xcshareddata/WorkspaceSettings.xcsettings";
+    ofFile::copyFromTo(templatePath + "emptyExample.xcodeproj/xcshareddata/WorkspaceSettings.xcsettings", xcsettings);
+    
+    
+    //xcshareddata/WorkspaceSettings.xcsettings
+    
+    
 }
 
 
