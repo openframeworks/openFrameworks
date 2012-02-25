@@ -352,7 +352,7 @@ bool ofSerial::setup(string portName, int baud){
 
 			default:	cfsetispeed(&options,B9600);
 						cfsetospeed(&options,B9600);
-						ofLog(OF_LOG_ERROR,"ofSerialInit: cannot set %i baud setting baud to 9600\n", baud);
+						ofLog(OF_LOG_ERROR,"ofSerialInit: cannot set %i baud setting baud to 9600", baud);
 						break;
 		}
 
