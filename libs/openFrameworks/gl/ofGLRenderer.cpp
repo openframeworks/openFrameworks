@@ -67,6 +67,7 @@ void ofGLRenderer::draw(ofMesh & vertexData, bool useColors, bool useTextures, b
 
 //----------------------------------------------------------
 void ofGLRenderer::draw(ofMesh & vertexData, ofPolyRenderMode renderType, bool useColors, bool useTextures, bool useNormals){
+		if (bSmoothHinted) startSmoothing();
 #ifndef TARGET_OPENGLES
 		glPushAttrib(GL_POLYGON_BIT);
 		glPolygonMode(GL_FRONT_AND_BACK, ofGetGLPolyMode(renderType));
@@ -122,15 +123,17 @@ void ofGLRenderer::draw(ofMesh & vertexData, ofPolyRenderMode renderType, bool u
 			glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 		}
 #endif
-
+		if (bSmoothHinted) endSmoothing();
 }
 
 //----------------------------------------------------------
 void ofGLRenderer::draw(vector<ofPoint> & vertexData, ofPrimitiveMode drawMode){
 	if(!vertexData.empty()) {
+		if (bSmoothHinted) startSmoothing();
 		glEnableClientState(GL_VERTEX_ARRAY);
 		glVertexPointer(3, GL_FLOAT, sizeof(ofVec3f), &vertexData[0].x);
 		glDrawArrays(ofGetGLPrimitiveMode(drawMode), 0, vertexData.size());
+		if (bSmoothHinted) endSmoothing();
 	}
 }
 
