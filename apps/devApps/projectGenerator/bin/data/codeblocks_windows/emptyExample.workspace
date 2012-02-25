@@ -1,0 +1,9 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<CodeBlocks_workspace_file>
+  <Workspace title="Workspace">
+    <Project filename="emptyExample.cbp" active="1">
+      <Depends filename="..\..\..\libs\openFrameworksCompiled\project\win_cb\openFrameworksLib.cbp"/>
+    </Project>
+    <Project filename="..\..\..\libs\openFrameworksCompiled\project\win_cb\openFrameworksLib.cbp"/>
+  </Workspace>
+</CodeBlocks_workspace_file>

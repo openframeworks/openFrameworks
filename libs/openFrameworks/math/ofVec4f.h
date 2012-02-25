@@ -38,7 +38,7 @@ public:
     //
     bool operator==( const ofVec4f& vec ) const;
     bool operator!=( const ofVec4f& vec ) const;
-    bool match( const ofVec4f& vec, float tollerance=0.0001) const;
+    bool match( const ofVec4f& vec, float tolerance=0.0001) const;
 	
 	
     // Additions and Subtractions.
@@ -199,11 +199,11 @@ inline bool ofVec4f::operator!=( const ofVec4f& vec ) const {
 	return (x != vec.x) || (y != vec.y) || (z != vec.z) || (w != vec.w);
 }
 
-inline bool ofVec4f::match( const ofVec4f& vec, float tollerance) const {
-	return (fabs(x - vec.x) < tollerance)
-	&& (fabs(y - vec.y) < tollerance)
-	&& (fabs(z - vec.z) < tollerance)
-	&& (fabs(w - vec.w) < tollerance);
+inline bool ofVec4f::match( const ofVec4f& vec, float tolerance) const {
+	return (fabs(x - vec.x) < tolerance)
+	&& (fabs(y - vec.y) < tolerance)
+	&& (fabs(z - vec.z) < tolerance)
+	&& (fabs(w - vec.w) < tolerance);
 }
 
 

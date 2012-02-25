@@ -5,7 +5,12 @@
 #include "ofPixels.h"
 #include <map>
 
+//----------------------------------------------------------
+// static
 static bool bTexHackEnabled = true;
+static bool	bUsingArbTex		= true;
+static bool bUsingNormalizedTexCoords = false;
+static bool bUseCustomMinMagFilters = false;
 
 //---------------------------------
 template <class T>
@@ -233,6 +238,89 @@ void ofDisableTextureEdgeHack(){
 	bTexHackEnabled = false;
 }
 
+bool ofGetUsingNormalizedTexCoords(){
+	return bUsingNormalizedTexCoords;
+}
+
+void ofEnableNormalizedTexCoords(){
+	bUsingNormalizedTexCoords = true;
+}
+
+void ofDisableNormalizedTexCoords(){
+	bUsingNormalizedTexCoords = false;
+}
+
+
+
+//***** add global functions to override texture settings
+//----------------------------------------------------------
+static bool bUseCustomTextureWrap = false;
+
+//----------------------------------------------------------
+void ofSetTextureWrap(GLfloat wrapS, GLfloat wrapT){
+	bUseCustomTextureWrap = true;
+	GLenum textureTarget = GL_TEXTURE_2D;
+#ifndef TARGET_OPENGLES
+	if (ofGetUsingArbTex() && GL_ARB_texture_rectangle){
+		textureTarget = GL_TEXTURE_RECTANGLE_ARB;
+	};
+#endif
+	glTexParameterf(textureTarget, GL_TEXTURE_WRAP_S, wrapS);
+	glTexParameterf(textureTarget, GL_TEXTURE_WRAP_T, wrapT);
+}
+
+//----------------------------------------------------------
+bool ofGetUsingCustomTextureWrap(){
+	return bUseCustomTextureWrap;
+}
+
+//----------------------------------------------------------
+void ofRestoreTextureWrap(){
+	bUseCustomTextureWrap = false;
+}
+
+//----------------------------------------------------------
+void ofSetMinMagFilters(GLfloat minFilter, GLfloat maxFilter){
+	bUseCustomMinMagFilters = true;
+	GLenum textureTarget = GL_TEXTURE_2D;
+#ifndef TARGET_OPENGLES
+	if (ofGetUsingArbTex() && GL_ARB_texture_rectangle){
+		textureTarget = GL_TEXTURE_RECTANGLE_ARB;
+	};
+#endif
+	glTexParameterf(textureTarget, GL_TEXTURE_MIN_FILTER, minFilter);
+	glTexParameterf(textureTarget, GL_TEXTURE_MAG_FILTER, maxFilter);
+}
+
+//----------------------------------------------------------
+bool ofGetUsingCustomMinMagFilters(){
+	return bUseCustomMinMagFilters;
+}
+
+//----------------------------------------------------------
+void ofRestoreMinMagFilters(){
+	bUseCustomMinMagFilters = false;
+}
+
+//***** global functions to override texture settings
+
+
+//----------------------------------------------------------
+bool ofGetUsingArbTex(){
+	return bUsingArbTex;
+}
+
+//----------------------------------------------------------
+void ofEnableArbTex(){
+	bUsingArbTex = true;
+}
+
+//----------------------------------------------------------
+void ofDisableArbTex(){
+	bUsingArbTex = false;
+}
+
+
 static map<GLuint,int> & getTexturesIndex(){
 	static map<GLuint,int> * textureReferences = new map<GLuint,int>;
 	return *textureReferences;
@@ -301,7 +389,15 @@ bool ofTexture::isAllocated(){
 
 
 //----------------------------------------------------------
-ofTextureData ofTexture::getTextureData(){
+ofTextureData& ofTexture::getTextureData(){
+	if(!texData.bAllocated){
+		ofLog(OF_LOG_ERROR, "getTextureData() - texture has not been allocated");
+	}
+	
+	return texData;
+}
+
+const ofTextureData& ofTexture::getTextureData() const {
 	if(!texData.bAllocated){
 		ofLog(OF_LOG_ERROR, "getTextureData() - texture has not been allocated");
 	}
@@ -324,6 +420,11 @@ void ofTexture::clear(){
 //----------------------------------------------------------
 void ofTexture::allocate(int w, int h, int internalGlDataType){
 	allocate(w, h, internalGlDataType, ofGetUsingArbTex());
+}
+
+//----------------------------------------------------------
+void ofTexture::allocate(const ofPixels& pix){
+	allocate(pix.getWidth(), pix.getHeight(), ofGetGlFormat(pix), ofGetUsingArbTex());
 }
 
 //----------------------------------------------------------
@@ -437,32 +538,32 @@ void ofTexture::allocate(const ofTextureData & textureData){
 }
 
 //----------------------------------------------------------
-void ofTexture::loadData(unsigned char * data, int w, int h, int glFormat){
+void ofTexture::loadData(const unsigned char * data, int w, int h, int glFormat){
 	loadData( (void *)data, w, h, glFormat);
 }
 
 //----------------------------------------------------------
-void ofTexture::loadData(float * data, int w, int h, int glFormat){
+void ofTexture::loadData(const unsigned short * data, int w, int h, int glFormat){
 	loadData( (void *)data, w, h, glFormat);
 }
 
 //----------------------------------------------------------
-void ofTexture::loadData(unsigned short * data, int w, int h, int glFormat){
+void ofTexture::loadData(const float * data, int w, int h, int glFormat){
 	loadData( (void *)data, w, h, glFormat);
 }
 
 //----------------------------------------------------------
-void ofTexture::loadData(ofPixels & pix){
+void ofTexture::loadData(const ofPixels & pix){
 	loadData(pix.getPixels(), pix.getWidth(), pix.getHeight(), ofGetGlFormat(pix));
 }
 
 //----------------------------------------------------------
-void ofTexture::loadData(ofShortPixels & pix){
+void ofTexture::loadData(const ofShortPixels & pix){
 	loadData(pix.getPixels(), pix.getWidth(), pix.getHeight(), ofGetGlFormat(pix));
 }
 
 //----------------------------------------------------------
-void ofTexture::loadData(ofFloatPixels & pix){
+void ofTexture::loadData(const ofFloatPixels & pix){
 	loadData(pix.getPixels(), pix.getWidth(), pix.getHeight(), ofGetGlFormat(pix));
 }
 

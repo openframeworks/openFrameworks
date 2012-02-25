@@ -233,21 +233,28 @@ void ofPolyline::arc( const ofPoint & center, float radiusX, float radiusY, floa
 	points.reserve(points.size()+curveResolution);
 
 	float size = (angleEnd - angleBegin)/360.0f;
-	float begin = angleBegin/360.0f;
+	const int begin = curveResolution * angleBegin/360.0f;
 
 	if(size<1){
 		const int segments = curveResolution*size;
+		/*
 		float angle,sinus,cosinus;
 		float segment_size = PI*2.0*size/(float)segments;
 		angle=-(PI*2.0*begin);
-		for( int i=0; i<segments; i++){
+		//*/
+		for( int i=begin; i<segments + begin; i++){
 			points.push_back(ofPoint(radiusX*circlePoints[i].x+center.x,radiusY*circlePoints[i].y+center.y));
-			angle-=segment_size ;
+			//angle-=segment_size ;
 		}
+		points.push_back(center);
+		points.push_back(ofPoint(radiusX*circlePoints[begin].x+center.x,radiusY*circlePoints[begin].y+center.y));
+		
+		/*
 		angle=-(PI*2.0*begin);
 		sinus = sin(angle);
 		cosinus = cos(angle);
 		points.push_back(ofPoint(radiusX*sinus+center.x,radiusY*cosinus+center.y));
+		//*/
 	}else{
 		for(int i=0;i<(int)circlePoints.size();i++){
 			points.push_back(ofPoint(radiusX*circlePoints[i].x+center.x,radiusY*circlePoints[i].y+center.y,center.z));
@@ -268,6 +275,34 @@ float ofPolyline::getPerimeter() const {
 		perimeter += points[points.size() - 1].distance(points[0]);
 	}
 	return perimeter;
+}
+
+//----------------------------------------------------------
+float ofPolyline::getArea() const{
+	if(points.size()<2) return 0;
+
+	float area = 0;
+	for(int i=0;i<(int)points.size()-1;i++){
+		area += points[i].x * points[i+1].y - points[i+1].x * points[i].y;
+	}
+	area += points[points.size()-1].x * points[0].y - points[0].x * points[points.size()-1].y;
+	return 0.5*area;
+}
+
+//----------------------------------------------------------
+ofPoint ofPolyline::getCentroid2D() const{
+	ofPoint centroid;
+	for(int i=0;i<(int)points.size()-1;i++){
+		centroid.x += (points[i].x + points[i+1].x) * (points[i].x*points[i+1].y - points[i+1].x*points[i].y);
+		centroid.y += (points[i].y + points[i+1].y) * (points[i].x*points[i+1].y - points[i+1].x*points[i].y);
+	}
+	centroid.x += (points[points.size()-1].x + points[0].x) * (points[points.size()-1].x*points[0].y - points[0].x*points[points.size()-1].y);
+	centroid.y += (points[points.size()-1].y + points[0].y) * (points[points.size()-1].x*points[0].y - points[0].x*points[points.size()-1].y);
+
+	float area = getArea();
+	centroid.x /= (6*area);
+	centroid.y /= (6*area);
+	return centroid;
 }
 
 //----------------------------------------------------------
@@ -462,8 +497,51 @@ ofPoint ofPolyline::getClosestPoint(const ofPoint& target, unsigned int* nearest
 	return nearestPoint;
 }
 
+//--------------------------------------------------
+bool ofPolyline::inside(const ofPoint & p, const ofPolyline & polyline){
+	return ofPolyline::inside(p.x,p.y,polyline);
+}
 
+//--------------------------------------------------
+bool ofPolyline::inside(float x, float y, const ofPolyline & polyline){
+	int counter = 0;
+	int i;
+	double xinters;
+	ofPoint p1,p2;
+    
+	int N = polyline.size();
+    
+	p1 = polyline[0];
+	for (i=1;i<=N;i++) {
+		p2 = polyline[i % N];
+		if (y > MIN(p1.y,p2.y)) {
+            if (y <= MAX(p1.y,p2.y)) {
+                if (x <= MAX(p1.x,p2.x)) {
+                    if (p1.y != p2.y) {
+                        xinters = (y-p1.y)*(p2.x-p1.x)/(p2.y-p1.y)+p1.x;
+                        if (p1.x == p2.x || x <= xinters)
+                            counter++;
+                    }
+                }
+            }
+		}
+		p1 = p2;
+	}
+    
+	if (counter % 2 == 0) return false;
+	else return true;
+}
 
+//--------------------------------------------------
+bool ofPolyline::inside(float x, float y){
+    return ofPolyline::inside(x, y, *this);
+
+}
+
+//--------------------------------------------------
+bool ofPolyline::inside(const ofPoint & p){
+    return ofPolyline::inside(p, *this);
+}
 
 //This is for polygon/contour simplification - we use it to reduce the number of points needed in
 //representing the letters as openGL shapes - will soon be moved to ofGraphics.cpp

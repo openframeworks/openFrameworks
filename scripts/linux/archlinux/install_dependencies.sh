@@ -1,4 +1,4 @@
-pacman -Syu --needed make pkg-config gcc openal python-lxml glew freeglut freeimage jack gstreamer0.10-good-plugins gstreamer0.10-bad-plugins
+pacman -Sy --needed make pkg-config gcc openal python-lxml glew freeglut freeimage jack gstreamer0.10-good-plugins gstreamer0.10-bad-plugins
 
 ARCH=$(uname -m)
 if [ "$ARCH" = "x86_64" ]; then
@@ -24,4 +24,4 @@ if [ $? != 0 ]; then
         echo "please report this problem in the forums"
 fi
 chown -R $ID:$GROUP_ID obj ../../lib/${LIBSPATH}/*
-# libpoco-dev 
+# libpoco-dev

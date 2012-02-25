@@ -148,7 +148,7 @@ void putBmpIntoPixels(FIBITMAP * bmp, ofPixels_<PixelType> &pix, bool swapForLit
 	unsigned int bpp = FreeImage_GetBPP(bmp);
 	unsigned int channels = (bpp / sizeof(PixelType)) / 8;
 	unsigned int pitch = FreeImage_GetPitch(bmp);
-	
+
 	// ofPixels are top left, FIBITMAP is bottom left
 	FreeImage_FlipVertical(bmp);
 	
@@ -164,7 +164,7 @@ void putBmpIntoPixels(FIBITMAP * bmp, ofPixels_<PixelType> &pix, bool swapForLit
 	}
 
 #ifdef TARGET_LITTLE_ENDIAN
-	if(swapForLittleEndian) {
+	if(swapForLittleEndian && sizeof(PixelType) == 1) {
 		pix.swapRgb();
 	}
 #endif
@@ -177,7 +177,6 @@ static bool loadImage(ofPixels_<PixelType> & pix, string fileName){
 		return ofLoadImage(pix, ofLoadURL(fileName).data);
 	}
 	
-	int width, height, bpp;
 	fileName = ofToDataPath(fileName);
 	bool bLoaded = false;
 	FIBITMAP * bmp = NULL;
@@ -200,8 +199,6 @@ static bool loadImage(ofPixels_<PixelType> & pix, string fileName){
 
 	if ( bLoaded ){
 		putBmpIntoPixels(bmp,pix);
-	} else {
-		width = height = bpp = 0;
 	}
 
 	if (bmp != NULL){
@@ -324,13 +321,17 @@ static void saveImage(ofPixels_<PixelType> & pix, string fileName, ofImageQualit
 	}
 
 	#ifdef TARGET_LITTLE_ENDIAN
+	if(sizeof(PixelType) == 1) {
 		pix.swapRgb();
+	}
 	#endif
 
 	FIBITMAP * bmp	= getBmpFromPixels(pix);
 
 	#ifdef TARGET_LITTLE_ENDIAN
+	if(sizeof(PixelType) == 1) {
 		pix.swapRgb();
+	}
 	#endif
 	
 	fileName = ofToDataPath(fileName);
@@ -408,13 +409,17 @@ static void saveImage(ofPixels_<PixelType> & pix, ofBuffer & buffer, ofImageForm
 	}
 
 	#ifdef TARGET_LITTLE_ENDIAN
+	if(sizeof(PixelType) == 1) {
 		pix.swapRgb();
+	}
 	#endif
 
 	FIBITMAP * bmp	= getBmpFromPixels(pix);
 
 	#ifdef TARGET_LITTLE_ENDIAN
+	if(sizeof(PixelType) == 1) {
 		pix.swapRgb();
+	}
 	#endif
 
 	if (bmp)  // bitmap successfully created
@@ -614,13 +619,14 @@ bool ofImage_<PixelType>::loadImage(const ofFile & file){
 //----------------------------------------------------------
 template<typename PixelType>
 bool ofImage_<PixelType>::loadImage(string fileName){
-	bool bLoadedOk = false;
-	bLoadedOk = ofLoadImage(pixels, fileName);
-	if (bLoadedOk && pixels.isAllocated() && bUseTexture){
-		tex.allocate(pixels.getWidth(), pixels.getHeight(), ofGetGlInternalFormat(pixels));
-	}
+	bool bLoadedOk = ofLoadImage(pixels, fileName);
 	if (!bLoadedOk) {
 		ofLog(OF_LOG_ERROR, "Couldn't load image from " + fileName);
+		clear();
+		return false;
+	}
+	if (bLoadedOk && pixels.isAllocated() && bUseTexture){
+		tex.allocate(pixels.getWidth(), pixels.getHeight(), ofGetGlInternalFormat(pixels));
 	}
 	update();
 	return bLoadedOk;
@@ -628,13 +634,14 @@ bool ofImage_<PixelType>::loadImage(string fileName){
 
 template<typename PixelType>
 bool ofImage_<PixelType>::loadImage(const ofBuffer & buffer){
-	bool bLoadedOk = false;
-	bLoadedOk = ofLoadImage(pixels, buffer);
-	if (bLoadedOk && pixels.isAllocated() && bUseTexture){
-		tex.allocate(pixels.getWidth(), pixels.getHeight(), ofGetGlInternalFormat(pixels));
-	}
+	bool bLoadedOk = ofLoadImage(pixels, buffer);
 	if (!bLoadedOk) {
 		ofLog(OF_LOG_ERROR, "Couldn't load image from buffer.");
+		clear();
+		return false;
+	}
+	if (bLoadedOk && pixels.isAllocated() && bUseTexture){
+		tex.allocate(pixels.getWidth(), pixels.getHeight(), ofGetGlInternalFormat(pixels));
 	}
 	update();
 	return bLoadedOk;
@@ -815,7 +822,7 @@ void  ofImage_<PixelType>::setFromPixels(const PixelType * newPixels, int w, int
 	allocate(w, h, newType);
 	pixels.setFromPixels(newPixels,w,h,newType);
 
-	if (!bOrderIsRGB){
+	if (!bOrderIsRGB && sizeof(PixelType) == 1){
 		pixels.swapRgb();
 	}
 
@@ -840,17 +847,16 @@ template<typename PixelType>
 void ofImage_<PixelType>::update(){
 
 	if (pixels.isAllocated() && bUseTexture){
-		if(!tex.isAllocated())
+		GLint type = GL_RGB;
+		if(pixels.getNumChannels() == 1) {
+			type = GL_LUMINANCE;
+		} else if(pixels.getNumChannels() == 3) {
+			type = GL_RGB;
+		} else if(pixels.getNumChannels() == 4) {
+			type = GL_RGBA;
+		}
+		if(!tex.isAllocated() || tex.getWidth()!=pixels.getWidth() || tex.getHeight()!=pixels.getWidth() || type != tex.getTextureData().glTypeInternal)
 		{
-			GLint type;
-			if(pixels.getNumChannels() == 1) {
-				type = GL_LUMINANCE;
-			} else if(pixels.getNumChannels() == 3) {
-				type = GL_RGB;
-			} else if(pixels.getNumChannels() == 4) {
-				type = GL_RGBA;
-			}
-			
 			tex.allocate(pixels.getWidth(), pixels.getHeight(), type);
 		}
 		tex.loadData(pixels);

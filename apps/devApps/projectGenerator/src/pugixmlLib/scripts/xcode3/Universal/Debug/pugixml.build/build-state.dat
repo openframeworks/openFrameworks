@@ -1,0 +1,195 @@
+Tpugixml
+v4
+r1
+cCheck dependencies
+cCompileC xcode3/Universal/Debug/pugixml.build/Objects-normal/x86_64/pugixml.o /Users/molmol/Desktop/projectGenerator/of_preRelease_v007_osx/apps/OF_projectGenerator/projectGenerator/src/pugixmlLib/scripts/../src/pugixml.cpp normal x86_64 c++ com.apple.compilers.llvmgcc42
+cCompileC xcode3/Universal/Debug/pugixml.build/Objects-normal/i386/pugixml.o /Users/molmol/Desktop/projectGenerator/of_preRelease_v007_osx/apps/OF_projectGenerator/projectGenerator/src/pugixmlLib/scripts/../src/pugixml.cpp normal i386 c++ com.apple.compilers.llvmgcc42
+cLibtool /Users/molmol/Desktop/projectGenerator/of_preRelease_v007_osx/apps/OF_projectGenerator/projectGenerator/src/pugixmlLib/scripts/xcode3/Universal/Debug/pugixml.build/Objects-normal/x86_64/libpugixml_d.a normal x86_64
+cLibtool /Users/molmol/Desktop/projectGenerator/of_preRelease_v007_osx/apps/OF_projectGenerator/projectGenerator/src/pugixmlLib/scripts/xcode3/Universal/Debug/pugixml.build/Objects-normal/i386/libpugixml_d.a normal i386
+cCreateUniversalBinary /Users/molmol/Desktop/projectGenerator/of_preRelease_v007_osx/apps/OF_projectGenerator/projectGenerator/src/pugixmlLib/scripts/xcode3/libpugixml_d.a normal "x86_64 i386"
+
+N/Developer/usr/llvm-gcc-4.2/lib/gcc/i686-apple-darwin11/4.2.1/include/float.h
+c000000004EB300DF0000000000001538
+t1320354015
+s5432
+
+N/Developer/usr/llvm-gcc-4.2/lib/gcc/i686-apple-darwin11/4.2.1/include/stddef.h
+c000000004EB300E00000000000003197
+t1320354016
+s12695
+i<machine/ansi.h>
+i<sys/_types.h>
+
+N/Users/molmol/Desktop/projectGenerator/of_preRelease_v007_osx/apps/OF_projectGenerator/projectGenerator/src/pugixmlLib/scripts/../src/pugixml.cpp
+c000000004EFE0542000000000003A418
+t1325270338
+s238616
+i"pugixml.hpp"
+i<stdlib.h>
+i<stdio.h>
+i<string.h>
+i<assert.h>
+i<setjmp.h>
+i<wchar.h>
+i<math.h>
+i<float.h>
+i<istream>
+i<ostream>
+i<string>
+i<new>
+i<stdint.h>
+
+N/Users/molmol/Desktop/projectGenerator/of_preRelease_v007_osx/apps/OF_projectGenerator/projectGenerator/src/pugixmlLib/scripts/xcode3/Universal/Debug/pugixml.build/Objects-normal/i386/libpugixml_d.a
+t1325270424
+s687272
+
+N/Users/molmol/Desktop/projectGenerator/of_preRelease_v007_osx/apps/OF_projectGenerator/projectGenerator/src/pugixmlLib/scripts/xcode3/Universal/Debug/pugixml.build/Objects-normal/i386/pugixml.o
+t1325270424
+s672956
+
+N/Users/molmol/Desktop/projectGenerator/of_preRelease_v007_osx/apps/OF_projectGenerator/projectGenerator/src/pugixmlLib/scripts/xcode3/Universal/Debug/pugixml.build/Objects-normal/i386/pugixml_d.LinkFileList
+c000000004EFE059600000000000000C2
+t1325270422
+s194
+
+N/Users/molmol/Desktop/projectGenerator/of_preRelease_v007_osx/apps/OF_projectGenerator/projectGenerator/src/pugixmlLib/scripts/xcode3/Universal/Debug/pugixml.build/Objects-normal/x86_64/libpugixml_d.a
+t1325270424
+s793360
+
+N/Users/molmol/Desktop/projectGenerator/of_preRelease_v007_osx/apps/OF_projectGenerator/projectGenerator/src/pugixmlLib/scripts/xcode3/Universal/Debug/pugixml.build/Objects-normal/x86_64/pugixml.o
+t1325270424
+s779044
+
+N/Users/molmol/Desktop/projectGenerator/of_preRelease_v007_osx/apps/OF_projectGenerator/projectGenerator/src/pugixmlLib/scripts/xcode3/Universal/Debug/pugixml.build/Objects-normal/x86_64/pugixml_d.LinkFileList
+c000000004EFE059600000000000000C4
+t1325270422
+s196
+
+N/Users/molmol/Desktop/projectGenerator/of_preRelease_v007_osx/apps/OF_projectGenerator/projectGenerator/src/pugixmlLib/scripts/xcode3/libpugixml_d.a
+t1325270424
+s1480680
+
+N/Users/molmol/Desktop/projectGenerator/of_preRelease_v007_osx/apps/OF_projectGenerator/projectGenerator/src/pugixmlLib/src/pugiconfig.hpp
+c000000004EFE054200000000000009A6
+t1325270338
+s2470
+
+N/Users/molmol/Desktop/projectGenerator/of_preRelease_v007_osx/apps/OF_projectGenerator/projectGenerator/src/pugixmlLib/src/pugixml.hpp
+c000000004EFE0542000000000000A010
+t1325270338
+s40976
+i"pugiconfig.hpp"
+i<exception>
+i<stddef.h>
+
+N/usr/include/assert.h
+c000000004E360D4B0000000000000F6E
+t1312165195
+s3950
+
+N/usr/include/math.h
+c000000004DDD287300000000000004F1
+t1306339443
+s1265
+
+N/usr/include/setjmp.h
+c000000004E360D4B0000000000000438
+t1312165195
+s1080
+
+N/usr/include/stdint.h
+c000000004E360D4B00000000000018EF
+t1312165195
+s6383
+
+N/usr/include/stdio.h
+c000000004E360D4E0000000000004763
+t1312165198
+s18275
+
+N/usr/include/stdlib.h
+c000000004E360D4E00000000000030A7
+t1312165198
+s12455
+
+N/usr/include/string.h
+c000000004E360D4E0000000000001A3A
+t1312165198
+s6714
+
+N/usr/include/sys/_types.h
+c000000004E41FFF40000000000001845
+t1312948212
+s6213
+
+N/usr/include/wchar.h
+c000000004E360D4E0000000000002A2B
+t1312165198
+s10795
+
+CBuild AST from /Users/molmol/Desktop/projectGenerator/of_preRelease_v007_osx/apps/OF_projectGenerator/projectGenerator/src/pugixmlLib/scripts/../src/pugixml.cpp
+r0
+
+CCheck dependencies
+r0
+lSLF04#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection18"Check dependencies9357431a3daeb441^70264a1a3daeb441^---0#1#0#--18"Check dependencies36"06D4C850-2A50-42B3-B326-05FD3DF707CF-
+
+CCompileC xcode3/Universal/Debug/pugixml.build/Objects-normal/i386/pugixml.o /Users/molmol/Desktop/projectGenerator/of_preRelease_v007_osx/apps/OF_projectGenerator/projectGenerator/src/pugixmlLib/scripts/../src/pugixml.cpp normal i386 c++ com.apple.compilers.llvmgcc42
+s346963222.401178
+e346963224.044516
+r1
+xCompileC
+xxcode3/Universal/Debug/pugixml.build/Objects-normal/i386/pugixml.o
+x/Users/molmol/Desktop/projectGenerator/of_preRelease_v007_osx/apps/OF_projectGenerator/projectGenerator/src/pugixmlLib/scripts/../src/pugixml.cpp
+xnormal
+xi386
+xc++
+xcom.apple.compilers.llvmgcc42
+lSLF04#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection153"Compile /Users/molmol/Desktop/projectGenerator/of_preRelease_v007_osx/apps/OF_projectGenerator/projectGenerator/src/pugixmlLib/scripts/../src/pugixml.cpp3ecc66163daeb441^34650b183daeb441^---0#0#0#-19%DVTDocumentLocation2@161"file://localhost/Users/molmol/Desktop/projectGenerator/of_preRelease_v007_osx/apps/OF_projectGenerator/projectGenerator/src/pugixmlLib/scripts/../src/pugixml.cpp0000000000000000^2284"CompileC xcode3/Universal/Debug/pugixml.build/Objects-normal/i386/pugixml.o ../src/pugixml.cpp normal i386 c++ com.apple.compilers.llvmgcc42    cd /Users/molmol/Desktop/projectGenerator/of_preRelease_v007_osx/apps/OF_projectGenerator/projectGenerator/src/pugixmlLib/scripts    setenv LANG en_US.US-ASCII    /Developer/usr/bin/llvm-gcc-4.2 -x c++ -arch i386 -fmessage-length=0 -pipe -Wno-trigraphs -fpascal-strings -O0 -Wreturn-type -Wunused-variable -D_DEBUG -fasm-blocks -gdwarf-2 -iquote /Users/molmol/Desktop/projectGenerator/of_preRelease_v007_osx/apps/OF_projectGenerator/projectGenerator/src/pugixmlLib/scripts/xcode3/Universal/Debug/pugixml.build/pugixml_d-generated-files.hmap -I/Users/molmol/Desktop/projectGenerator/of_preRelease_v007_osx/apps/OF_projectGenerator/projectGenerator/src/pugixmlLib/scripts/xcode3/Universal/Debug/pugixml.build/pugixml_d-own-target-headers.hmap -I/Users/molmol/Desktop/projectGenerator/of_preRelease_v007_osx/apps/OF_projectGenerator/projectGenerator/src/pugixmlLib/scripts/xcode3/Universal/Debug/pugixml.build/pugixml_d-all-target-headers.hmap -iquote /Users/molmol/Desktop/projectGenerator/of_preRelease_v007_osx/apps/OF_projectGenerator/projectGenerator/src/pugixmlLib/scripts/xcode3/Universal/Debug/pugixml.build/pugixml_d-project-headers.hmap -I/Users/molmol/Desktop/projectGenerator/of_preRelease_v007_osx/apps/OF_projectGenerator/projectGenerator/src/pugixmlLib/scripts/xcode3/include -I/Users/molmol/Desktop/projectGenerator/of_preRelease_v007_osx/apps/OF_projectGenerator/projectGenerator/src/pugixmlLib/scripts/xcode3/Universal/Debug/pugixml.build/DerivedSources/i386 -I/Users/molmol/Desktop/projectGenerator/of_preRelease_v007_osx/apps/OF_projectGenerator/projectGenerator/src/pugixmlLib/scripts/xcode3/Universal/Debug/pugixml.build/DerivedSources -F/Users/molmol/Desktop/projectGenerator/of_preRelease_v007_osx/apps/OF_projectGenerator/projectGenerator/src/pugixmlLib/scripts/xcode3 -c /Users/molmol/Desktop/projectGenerator/of_preRelease_v007_osx/apps/OF_projectGenerator/projectGenerator/src/pugixmlLib/scripts/../src/pugixml.cpp -o /Users/molmol/Desktop/projectGenerator/of_preRelease_v007_osx/apps/OF_projectGenerator/projectGenerator/src/pugixmlLib/scripts/xcode3/Universal/Debug/pugixml.build/Objects-normal/i386/pugixml.o36"7171138A-A1F2-4D7B-8F1F-81D6B2ED6516-
+
+CCompileC xcode3/Universal/Debug/pugixml.build/Objects-normal/x86_64/pugixml.o /Users/molmol/Desktop/projectGenerator/of_preRelease_v007_osx/apps/OF_projectGenerator/projectGenerator/src/pugixmlLib/scripts/../src/pugixml.cpp normal x86_64 c++ com.apple.compilers.llvmgcc42
+s346963222.401182
+e346963224.100422
+r1
+xCompileC
+xxcode3/Universal/Debug/pugixml.build/Objects-normal/x86_64/pugixml.o
+x/Users/molmol/Desktop/projectGenerator/of_preRelease_v007_osx/apps/OF_projectGenerator/projectGenerator/src/pugixmlLib/scripts/../src/pugixml.cpp
+xnormal
+xx86_64
+xc++
+xcom.apple.compilers.llvmgcc42
+lSLF04#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection153"Compile /Users/molmol/Desktop/projectGenerator/of_preRelease_v007_osx/apps/OF_projectGenerator/projectGenerator/src/pugixmlLib/scripts/../src/pugixml.cpp8dd166163daeb441^feb419183daeb441^---0#0#0#-19%DVTDocumentLocation2@161"file://localhost/Users/molmol/Desktop/projectGenerator/of_preRelease_v007_osx/apps/OF_projectGenerator/projectGenerator/src/pugixmlLib/scripts/../src/pugixml.cpp0000000000000000^2294"CompileC xcode3/Universal/Debug/pugixml.build/Objects-normal/x86_64/pugixml.o ../src/pugixml.cpp normal x86_64 c++ com.apple.compilers.llvmgcc42    cd /Users/molmol/Desktop/projectGenerator/of_preRelease_v007_osx/apps/OF_projectGenerator/projectGenerator/src/pugixmlLib/scripts    setenv LANG en_US.US-ASCII    /Developer/usr/bin/llvm-gcc-4.2 -x c++ -arch x86_64 -fmessage-length=0 -pipe -Wno-trigraphs -fpascal-strings -O0 -Wreturn-type -Wunused-variable -D_DEBUG -fasm-blocks -gdwarf-2 -iquote /Users/molmol/Desktop/projectGenerator/of_preRelease_v007_osx/apps/OF_projectGenerator/projectGenerator/src/pugixmlLib/scripts/xcode3/Universal/Debug/pugixml.build/pugixml_d-generated-files.hmap -I/Users/molmol/Desktop/projectGenerator/of_preRelease_v007_osx/apps/OF_projectGenerator/projectGenerator/src/pugixmlLib/scripts/xcode3/Universal/Debug/pugixml.build/pugixml_d-own-target-headers.hmap -I/Users/molmol/Desktop/projectGenerator/of_preRelease_v007_osx/apps/OF_projectGenerator/projectGenerator/src/pugixmlLib/scripts/xcode3/Universal/Debug/pugixml.build/pugixml_d-all-target-headers.hmap -iquote /Users/molmol/Desktop/projectGenerator/of_preRelease_v007_osx/apps/OF_projectGenerator/projectGenerator/src/pugixmlLib/scripts/xcode3/Universal/Debug/pugixml.build/pugixml_d-project-headers.hmap -I/Users/molmol/Desktop/projectGenerator/of_preRelease_v007_osx/apps/OF_projectGenerator/projectGenerator/src/pugixmlLib/scripts/xcode3/include -I/Users/molmol/Desktop/projectGenerator/of_preRelease_v007_osx/apps/OF_projectGenerator/projectGenerator/src/pugixmlLib/scripts/xcode3/Universal/Debug/pugixml.build/DerivedSources/x86_64 -I/Users/molmol/Desktop/projectGenerator/of_preRelease_v007_osx/apps/OF_projectGenerator/projectGenerator/src/pugixmlLib/scripts/xcode3/Universal/Debug/pugixml.build/DerivedSources -F/Users/molmol/Desktop/projectGenerator/of_preRelease_v007_osx/apps/OF_projectGenerator/projectGenerator/src/pugixmlLib/scripts/xcode3 -c /Users/molmol/Desktop/projectGenerator/of_preRelease_v007_osx/apps/OF_projectGenerator/projectGenerator/src/pugixmlLib/scripts/../src/pugixml.cpp -o /Users/molmol/Desktop/projectGenerator/of_preRelease_v007_osx/apps/OF_projectGenerator/projectGenerator/src/pugixmlLib/scripts/xcode3/Universal/Debug/pugixml.build/Objects-normal/x86_64/pugixml.o36"70CB8848-9FED-41BD-BBA2-2A3B410F051F-
+
+CCreateUniversalBinary /Users/molmol/Desktop/projectGenerator/of_preRelease_v007_osx/apps/OF_projectGenerator/projectGenerator/src/pugixmlLib/scripts/xcode3/libpugixml_d.a normal "x86_64 i386"
+s346963224.126917
+e346963224.159814
+r1
+xCreateUniversalBinary
+x/Users/molmol/Desktop/projectGenerator/of_preRelease_v007_osx/apps/OF_projectGenerator/projectGenerator/src/pugixmlLib/scripts/xcode3/libpugixml_d.a
+xnormal
+xx86_64 i386
+lSLF04#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection172"Create universal binary /Users/molmol/Desktop/projectGenerator/of_preRelease_v007_osx/apps/OF_projectGenerator/projectGenerator/src/pugixmlLib/scripts/xcode3/libpugixml_d.a978f20183daeb441^64e828183daeb441^---0#0#0#-19%DVTDocumentLocation2@164"file://localhost/Users/molmol/Desktop/projectGenerator/of_preRelease_v007_osx/apps/OF_projectGenerator/projectGenerator/src/pugixmlLib/scripts/xcode3/libpugixml_d.a00f4dc60dfffdf42^790"CreateUniversalBinary xcode3/libpugixml_d.a normal "x86_64 i386"    cd /Users/molmol/Desktop/projectGenerator/of_preRelease_v007_osx/apps/OF_projectGenerator/projectGenerator/src/pugixmlLib/scripts    /Developer/usr/bin/libtool -static /Users/molmol/Desktop/projectGenerator/of_preRelease_v007_osx/apps/OF_projectGenerator/projectGenerator/src/pugixmlLib/scripts/xcode3/Universal/Debug/pugixml.build/Objects-normal/x86_64/libpugixml_d.a /Users/molmol/Desktop/projectGenerator/of_preRelease_v007_osx/apps/OF_projectGenerator/projectGenerator/src/pugixmlLib/scripts/xcode3/Universal/Debug/pugixml.build/Objects-normal/i386/libpugixml_d.a -o /Users/molmol/Desktop/projectGenerator/of_preRelease_v007_osx/apps/OF_projectGenerator/projectGenerator/src/pugixmlLib/scripts/xcode3/libpugixml_d.a36"297A14F3-A9E5-4B79-85DF-664EEEC9E27E-
+
+CLibtool /Users/molmol/Desktop/projectGenerator/of_preRelease_v007_osx/apps/OF_projectGenerator/projectGenerator/src/pugixmlLib/scripts/xcode3/Universal/Debug/pugixml.build/Objects-normal/i386/libpugixml_d.a normal i386
+s346963224.051203
+e346963224.070129
+r1
+xLibtool
+x/Users/molmol/Desktop/projectGenerator/of_preRelease_v007_osx/apps/OF_projectGenerator/projectGenerator/src/pugixmlLib/scripts/xcode3/Universal/Debug/pugixml.build/Objects-normal/i386/libpugixml_d.a
+xnormal
+xi386
+lSLF04#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection91"Libtool xcode3/Universal/Debug/pugixml.build/Objects-normal/i386/libpugixml_d.a normal i3866b2c0d183daeb441^5ef411183daeb441^---0#0#0#--836"Libtool xcode3/Universal/Debug/pugixml.build/Objects-normal/i386/libpugixml_d.a normal i386    cd /Users/molmol/Desktop/projectGenerator/of_preRelease_v007_osx/apps/OF_projectGenerator/projectGenerator/src/pugixmlLib/scripts    /Developer/usr/bin/libtool -static -arch_only i386 -L/Users/molmol/Desktop/projectGenerator/of_preRelease_v007_osx/apps/OF_projectGenerator/projectGenerator/src/pugixmlLib/scripts/xcode3 -filelist /Users/molmol/Desktop/projectGenerator/of_preRelease_v007_osx/apps/OF_projectGenerator/projectGenerator/src/pugixmlLib/scripts/xcode3/Universal/Debug/pugixml.build/Objects-normal/i386/pugixml_d.LinkFileList -o /Users/molmol/Desktop/projectGenerator/of_preRelease_v007_osx/apps/OF_projectGenerator/projectGenerator/src/pugixmlLib/scripts/xcode3/Universal/Debug/pugixml.build/Objects-normal/i386/libpugixml_d.a36"F0AE78CD-5386-4DAE-8B4F-6AF209C58106-
+
+CLibtool /Users/molmol/Desktop/projectGenerator/of_preRelease_v007_osx/apps/OF_projectGenerator/projectGenerator/src/pugixmlLib/scripts/xcode3/Universal/Debug/pugixml.build/Objects-normal/x86_64/libpugixml_d.a normal x86_64
+s346963224.107929
+e346963224.120072
+r1
+xLibtool
+x/Users/molmol/Desktop/projectGenerator/of_preRelease_v007_osx/apps/OF_projectGenerator/projectGenerator/src/pugixmlLib/scripts/xcode3/Universal/Debug/pugixml.build/Objects-normal/x86_64/libpugixml_d.a
+xnormal
+xx86_64
+lSLF04#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection95"Libtool xcode3/Universal/Debug/pugixml.build/Objects-normal/x86_64/libpugixml_d.a normal x86_64e6b01b183daeb441^94bc1e183daeb441^---0#0#0#--846"Libtool xcode3/Universal/Debug/pugixml.build/Objects-normal/x86_64/libpugixml_d.a normal x86_64    cd /Users/molmol/Desktop/projectGenerator/of_preRelease_v007_osx/apps/OF_projectGenerator/projectGenerator/src/pugixmlLib/scripts    /Developer/usr/bin/libtool -static -arch_only x86_64 -L/Users/molmol/Desktop/projectGenerator/of_preRelease_v007_osx/apps/OF_projectGenerator/projectGenerator/src/pugixmlLib/scripts/xcode3 -filelist /Users/molmol/Desktop/projectGenerator/of_preRelease_v007_osx/apps/OF_projectGenerator/projectGenerator/src/pugixmlLib/scripts/xcode3/Universal/Debug/pugixml.build/Objects-normal/x86_64/pugixml_d.LinkFileList -o /Users/molmol/Desktop/projectGenerator/of_preRelease_v007_osx/apps/OF_projectGenerator/projectGenerator/src/pugixmlLib/scripts/xcode3/Universal/Debug/pugixml.build/Objects-normal/x86_64/libpugixml_d.a36"1F6C428C-56B6-435E-9718-80136554AC38-
+
+CLibtool /Users/molmol/Desktop/projectGenerator/of_preRelease_v007_osx/apps/OF_projectGenerator/projectGenerator/src/pugixmlLib/scripts/xcode3/libpugixml_d.a normal x86_64
+r0
+
