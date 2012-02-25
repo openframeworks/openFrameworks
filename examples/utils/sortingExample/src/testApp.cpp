@@ -1,28 +1,28 @@
-#include "ofApp.h"
+#include "testApp.h"
 
 
 // sort on abc's
 //--------------------------------------------------------------
-bool ofApp::sortOnABC(const LyricWord &a, const LyricWord &b) {
+bool testApp::sortOnABC(const LyricWord &a, const LyricWord &b) {
     return a.word < b.word;
 }
 
 // sort on word length
 //--------------------------------------------------------------
-bool ofApp::sortOnLength(const LyricWord &a, const LyricWord &b) {
+bool testApp::sortOnLength(const LyricWord &a, const LyricWord &b) {
     return (int)a.word.size() > (int)b.word.size();
 }
 
 // sort on occurrences
 //--------------------------------------------------------------
-bool ofApp::sortOnOccurrences(const LyricWord &a, const LyricWord &b) {
+bool testApp::sortOnOccurrences(const LyricWord &a, const LyricWord &b) {
     return a.occurrences > b.occurrences;
 }
 
 
 // remove runction
 //--------------------------------------------------------------
-bool ofApp::removeWordIf(LyricWord &wrd) {
+bool testApp::removeWordIf(LyricWord &wrd) {
     
     bool bRemove = false;
     static string ignoreWords[11] = {"the", "to", "of", "a", "and", "i", "it", "if", "is", "in", "be"};
@@ -42,7 +42,7 @@ bool ofApp::removeWordIf(LyricWord &wrd) {
 }
 
 //--------------------------------------------------------------
-void ofApp::setup() {
+void testApp::setup() {
     
     // load the font
     font.loadFont("Helvetica.dfont", 9);
@@ -109,18 +109,18 @@ void ofApp::setup() {
     words = tempWord;
     
     // remove word we do not want
-    ofRemove(words, ofApp::removeWordIf);
+    ofRemove(words, testApp::removeWordIf);
 
 }
 
 
 //--------------------------------------------------------------
-void ofApp::update() {
+void testApp::update() {
 	
 }
 
 //--------------------------------------------------------------
-void ofApp::draw() {
+void testApp::draw() {
     
     
     ofPushMatrix();
@@ -158,7 +158,7 @@ void ofApp::draw() {
 }
 
 //--------------------------------------------------------------
-void ofApp::keyPressed  (int key){
+void testApp::keyPressed  (int key){
  
     // sort raw 
     if(key == '1')     {
@@ -169,44 +169,44 @@ void ofApp::keyPressed  (int key){
     // sort alphabetically
     if(key == '2') {
         sortTypeInfo = "sorting alphabetically";
-        ofSort(words, ofApp::sortOnABC);
+        ofSort(words, testApp::sortOnABC);
     }
     
     // sort by length of word
     if(key == '3')     {
         sortTypeInfo = "sorting on word length";
-        ofSort(words, ofApp::sortOnLength);
+        ofSort(words, testApp::sortOnLength);
     }
     
     // sort by length of word
     if(key == '4')     {
         sortTypeInfo = "sorting on word occurrences";
-        ofSort(words, ofApp::sortOnOccurrences);
+        ofSort(words, testApp::sortOnOccurrences);
     }
     
 }
 
 //--------------------------------------------------------------
-void ofApp::keyReleased  (int key){
+void testApp::keyReleased  (int key){
     
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseMoved(int x, int y ){
+void testApp::mouseMoved(int x, int y ){
     
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseDragged(int x, int y, int button){
+void testApp::mouseDragged(int x, int y, int button){
     
 }
 
 //--------------------------------------------------------------
-void ofApp::mousePressed(int x, int y, int button){
+void testApp::mousePressed(int x, int y, int button){
 	
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseReleased(int x, int y, int button){
+void testApp::mouseReleased(int x, int y, int button){
     
 }

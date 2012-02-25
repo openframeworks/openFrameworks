@@ -1,10 +1,10 @@
-#include "ofApp.h"
+#include "testApp.h"
 
 static string voices[24] = {"Agnes", "Albert", "Alex", "Bad News", "Bahh", "Bells", "Boing", "Bruce", "Bubbles", "Cellos", "Deranged", "Fred", "Good News", "Hysterical", "Junior", "Kathy", "Pipe Organ", "Princess", "Ralph", "Trinoids", "Vicki", "Victoria", "Whisper", "Zarvox"};
 
 //--------------------------------------------------------------
-void ofApp::setup() {
-
+void testApp::setup() {
+    
     font.loadFont("verdana.ttf", 34);
     voice        = "Cellos";                  
     bRandomVoice = false;
@@ -14,13 +14,36 @@ void ofApp::setup() {
     string lyrics = ofBufferFromFile("lyrics.txt").getText();
     step  = 0;
     words = ofSplitString(lyrics, " ");
+    
+    // we are running the systems commands
+    // in a sperate thread so that it does
+    // not block the drawing
+    startThread();
 }
 
+//--------------------------------------------------------------
+void testApp::threadedFunction() {
+    
+    while (isThreadRunning()) {
+        
+        // call the system command say
+        float rate = 400;
+        string cmd = "say -v "+voice+" -r "+ofToString(rate)+" "+words[step]+" ";   // create the command
+        system(cmd.c_str());
+        
+        // step to the next word
+        step ++;
+        step %= words.size();
+        
+        // slowdown boy
+        ofSleepMillis(10);
+    }
+}
 
 //--------------------------------------------------------------
-void ofApp::update() {
+void testApp::update() {
 	
-     // get a random voice
+    // get a random voice
     if(bRandomVoice) {
         voice = voices[(int)ofRandom(24)];                  
     }
@@ -28,31 +51,23 @@ void ofApp::update() {
 
 
 //--------------------------------------------------------------
-void ofApp::draw() {
-  
+void testApp::draw() {
     
- 
+    
     // center the word on the screen
     float x = (ofGetWidth() - font.stringWidth(words[step])) / 2;
     float y = ofGetHeight() / 2;
     
-    // call the system command say
-    float rate = 400;
-    string cmd = "say -v "+voice+" -r "+ofToString(rate)+" "+words[step]+" ";   // create the command
-    system(cmd.c_str());
-    
     // draw the word
     ofSetColor(0);
     font.drawString(words[step], x, y);
-        
-    // step to the next word
-    step ++;
-    step %= words.size();
+    
+    
     
 }
 
 //--------------------------------------------------------------
-void ofApp::keyPressed(int key) {
+void testApp::keyPressed(int key) {
     if(key == 'r') {
         bRandomVoice = !bRandomVoice;
     }
