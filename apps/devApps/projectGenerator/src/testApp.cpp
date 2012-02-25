@@ -4,16 +4,6 @@
 
 
 
-#ifdef TARGET_WIN32
-    #include <direct.h>
-    #define GetCurrentDir _getcwd
-#elif defined(TARGET_LINUX)
-    #include <unistd.h>
-    #define GetCurrentDir getcwd
-#else
-    #include <mach-o/dyld.h>	/* _NSGetExecutablePath */
-    #include <limits.h>		/* PATH_MAX */
-#endif
 
 
 
@@ -94,9 +84,9 @@ void testApp::setup(){
 void testApp::generateExamples(){
     
     ofDirectory dir;
-    //../../../../../
-    dir.listDir(ofFilePath::join(getOFRoot(),"apps/examples"));
     
+    dir.listDir(ofFilePath::join(getOFRoot(),"apps/examples"));
+
     for (int i = 0; i < dir.size(); i++){
         
         if (dir.getName(i) == "android" || dir.getName(i) == "ios") continue;
@@ -171,8 +161,10 @@ void testApp::update(){
 
 //--------------------------------------------------------------
 void testApp::draw(){
-	ofBackgroundGradient(ofColor::gray,ofColor::black);
-	panelAddons.draw();
+	
+    //ofBackgroundGradient(ofColor::gray,ofColor::black);
+	
+    panelAddons.draw();
 	panelOptions.draw();
 
 	ofSetColor(0,0,0,100);

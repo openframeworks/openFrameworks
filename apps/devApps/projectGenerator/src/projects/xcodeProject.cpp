@@ -455,7 +455,7 @@ void xcodeProject::addSrc(string srcFile, string folder){
     string fileKind = "";
     bool bAddFolder = true;
     
-    if( ext == "cpp" ){
+    if( ext == "cpp" || ext == "cc"){
         fileKind = "sourcecode.cpp.cpp";
         addToResources = false;													
     }
@@ -681,17 +681,23 @@ void xcodeProject::addLibrary(string libraryName){
 
 void xcodeProject::addAddon(ofAddon & addon){
     
+    printf("adding addon ---------------------------- \n");
     for(int i=0;i<(int)addon.includePaths.size();i++){
-		addInclude(addon.includePaths[i]);
+		cout << "include path: " << addon.includePaths[i] << endl;
+        addInclude(addon.includePaths[i]);
 	}
     
 	for(int i=0;i<(int)addon.libs.size();i++){
+        cout << "libs : " << addon.libs[i] << endl;
 		addLibrary(addon.libs[i]);
 	}
     
 	for(int i=0;i< addon.srcFiles.size(); i++){
+        cout << "src : " << addon.srcFiles[i] << "(" << addon.filesToFolders[addon.srcFiles[i]] << ")" << endl;
         addSrc(addon.srcFiles[i],addon.filesToFolders[addon.srcFiles[i]]);
 	}
+    printf("done adding addon ---------------------------- \n");
+    
 }
 
 string xcodeProject::getName(){
