@@ -20,6 +20,19 @@
 #include <string>
 
 
+
+#ifdef TARGET_WIN32
+#include <direct.h>
+#define GetCurrentDir _getcwd
+#elif defined(TARGET_LINUX)
+#include <unistd.h>
+#define GetCurrentDir getcwd
+#else
+#include <mach-o/dyld.h>	/* _NSGetExecutablePath */
+#include <limits.h>		/* PATH_MAX */
+#endif
+
+
 using namespace Poco;
 
 #include "ofUtils.h"
@@ -59,7 +72,7 @@ std::string LoadFileAsString(const std::string & fn)
 
 void findandreplaceInTexfile (string fileName, std::string tFind, std::string tReplace ){
    
-    
+    printf("findandreplaceInTexfile %s %s %s \n", fileName.c_str(), tFind.c_str(), tReplace.c_str());
     std::ifstream ifile(ofToDataPath(fileName).c_str(),std::ios::binary);
 	ifile.seekg(0,std::ios_base::end);
 	long s=ifile.tellg();
@@ -272,13 +285,16 @@ string getOFRelPath(string from){
     path.parse( getOFRoot() );
     path.makeAbsolute();
 
+    
+    cout << "getOFRelPath " << base.toString() << " " << path.toString() << endl;
+    
 	string relPath;
 	if (path.toString() == base.toString()){
 		// do something.
 	}
 
 	int maxx = MAX(base.depth(), path.depth());
-	for (int i = 0; i < maxx; i++){
+	for (int i = 0; i <= maxx; i++){
 
 		bool bRunOut = false;
 		bool bChanged = false;
@@ -301,9 +317,11 @@ string getOFRelPath(string from){
 			break;
 		}
 	}
-
-	relPath.erase(relPath.end()-1);
-	return relPath;
+    
+    cout << relPath << " ---- " << endl;
+    
+    
+    return relPath;
 }
 
 void parseAddonsDotMake(string path, vector < string > & addons){
