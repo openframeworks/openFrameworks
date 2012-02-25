@@ -52,7 +52,7 @@ void testApp::setup() {
     
     bFire = false;
     bugsKilled = 0;
-    maxBullets = 100;
+    maxBullets = 30;
     
     // add some random holes for the bugs to come out
     int nHoldes = 10;
