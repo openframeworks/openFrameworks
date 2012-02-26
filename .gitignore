@@ -101,3 +101,5 @@ paths.make
 !examples/android/*/.cproject
 !examples/android/*/.project
 !examples/android/*/.settings
+
+apps/devApps/AdvancedImageLoading/.DS_Store
