@@ -33,6 +33,9 @@ public:
 	void setFov(float f);
 	void setNearClip(float f);
 	void setFarClip(float f);
+    
+    float getNearClip() const;
+    float getFarClip() const;
 	
 	void enableOrtho();
 	void disableOrtho();
