@@ -213,7 +213,7 @@ ofVec3f ofCairoRenderer::transform(ofVec3f vec){
 	return vec;
 }
 
-void ofCairoRenderer::draw(ofMesh & primitive){
+void ofCairoRenderer::draw(ofMesh & primitive, bool useColors, bool useTextures, bool useNormals){
 	if(primitive.getNumVertices()==0) return;
 	pushMatrix();
 	cairo_matrix_init_identity(getCairoMatrix());
@@ -276,8 +276,11 @@ void ofCairoRenderer::draw(ofMesh & primitive){
 	popMatrix();
 }
 
-void ofCairoRenderer::draw(ofMesh & vertexData, ofPolyRenderMode mode){
-	draw(vertexData);
+void ofCairoRenderer::draw(ofMesh & vertexData, ofPolyRenderMode mode, bool useColors, bool useTextures, bool useNormals){
+    if(useColors || useTextures || useNormals){
+        ofLog(OF_LOG_WARNING,"Cairo rendering for meshes doesn't support colors, textures, or normals. drawing wireframe...");
+    }
+	draw(vertexData,false,false,false);
 }
 
 void ofCairoRenderer::draw(ofSubPath & path){
@@ -339,6 +342,24 @@ void ofCairoRenderer::draw(ofSubPath & path){
 				cairo_arc(cr,commands[i].to.x,commands[i].to.y,commands[i].radiusX,commands[i].angleBegin*DEG_TO_RAD,commands[i].angleEnd*DEG_TO_RAD);
 			}
 			break;
+
+        case ofSubPath::Command::arcNegative:
+            curvePoints.clear();
+            // elliptic arcs not directly supported in cairo, lets scale y
+            if(commands[i].radiusX!=commands[i].radiusY){
+                float ellipse_ratio = commands[i].radiusY/commands[i].radiusX;
+                pushMatrix();
+                translate(0,-commands[i].to.y*ellipse_ratio);
+                scale(1,ellipse_ratio);
+                translate(0,commands[i].to.y/ellipse_ratio);
+                cairo_arc_negative(cr,commands[i].to.x,commands[i].to.y,commands[i].radiusX,commands[i].angleBegin*DEG_TO_RAD,commands[i].angleEnd*DEG_TO_RAD);
+                //cairo_set_matrix(cr,&stored_matrix);
+                popMatrix();
+            }else{
+                cairo_arc_negative(cr,commands[i].to.x,commands[i].to.y,commands[i].radiusX,commands[i].angleBegin*DEG_TO_RAD,commands[i].angleEnd*DEG_TO_RAD);
+            }
+        break;
+
 		}
 	}
 

@@ -133,10 +133,14 @@ ofColor_<PixelType>& ofColor_<PixelType>::invert() {
 
 template<typename PixelType>
 ofColor_<PixelType>& ofColor_<PixelType>::normalize() {
-	float brightness = getBrightness();
-	r = limit() * (r / brightness);
-	g = limit() * (g / brightness);
-	b = limit() * (b / brightness);
+	float brightness = getBrightness(); 
+    // avoid division by 0
+    if ( brightness > 0 ) 
+    {
+        r = limit() * (r / brightness);
+        g = limit() * (g / brightness);
+        b = limit() * (b / brightness);
+    }
 	return *this;
 }
 
@@ -269,7 +273,7 @@ template<typename PixelType>
 void ofColor_<PixelType>::setHue (float hue) {
 	float oldHue, saturation, brightness;
 	getHsb(oldHue, saturation, brightness);
-	setHsb(hue, saturation, brightness);
+	setHsb(hue, saturation, brightness, a );
 }
 
 
@@ -277,7 +281,7 @@ template<typename PixelType>
 void ofColor_<PixelType>::setSaturation (float saturation) {
 	float hue, oldSaturation, brightness;
 	getHsb(hue, oldSaturation, brightness);
-	setHsb(hue, saturation, brightness);
+	setHsb(hue, saturation, brightness, a );
 }
 
 
@@ -285,23 +289,12 @@ template<typename PixelType>
 void ofColor_<PixelType>::setBrightness (float brightness) {
 	float hue, saturation, oldBrightness;
 	getHsb(hue, saturation, oldBrightness);
-	setHsb(hue, saturation, brightness);
+	setHsb(hue, saturation, brightness, a );
 }
 
 
 template<typename PixelType>
-void ofColor_<PixelType>::setHsb(float hue, float saturation, float brightness, float alpha) {
-	a = alpha;
-	setHsb(hue, saturation, brightness);
-}
-
-/*
-	setHsb() breaks the "always override alpha" model because it's needed by setHue(),
-	setSaturation(), and setBrightness() -- which shouldn't modify the alpha.
-*/
-
-template<typename PixelType>
-void ofColor_<PixelType>::setHsb(float hue, float saturation, float brightness) {
+void ofColor_<PixelType>::setHsb(float hue, float saturation, float brightness, float alpha ) {
 	saturation = ofClamp(saturation, 0, limit());
 	brightness = ofClamp(brightness, 0, limit());
 	if(brightness == 0) { // black
@@ -349,6 +342,9 @@ void ofColor_<PixelType>::setHsb(float hue, float saturation, float brightness) 
 				break;
 		}
 	}
+    
+    // finally assign the alpha
+    a = alpha;
 }
 
 
@@ -561,6 +557,13 @@ PixelType & ofColor_<PixelType>::operator [] (int n){
 	}
 }
 
+template class ofColor_<char>;
 template class ofColor_<unsigned char>;
-template class ofColor_<float>;
+template class ofColor_<short>;
 template class ofColor_<unsigned short>;
+template class ofColor_<int>;
+template class ofColor_<unsigned int>;
+template class ofColor_<long>;
+template class ofColor_<unsigned long>;
+template class ofColor_<float>;
+template class ofColor_<double>;

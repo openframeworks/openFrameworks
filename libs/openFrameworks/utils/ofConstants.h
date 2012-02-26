@@ -10,6 +10,16 @@ enum ofLoopType{
 	OF_LOOP_PALINDROME=0x02,
 	OF_LOOP_NORMAL=0x03
 };
+
+enum ofTargetPlatform{
+	OF_TARGET_OSX,
+	OF_TARGET_WINGCC,
+	OF_TARGET_WINVS,
+	OF_TARGET_IPHONE,
+	OF_TARGET_ANDROID,
+	OF_TARGET_LINUX,
+	OF_TARGET_LINUX64
+};
 //-------------------------------
 //  find the system type --------
 //-------------------------------
@@ -22,7 +32,7 @@ enum ofLoopType{
 #elif defined( __APPLE_CC__)
 	#include <TargetConditionals.h>
 
-	#if (TARGET_OF_IPHONE_SIMULATOR) || (TARGET_OS_IPHONE) || (TARGET_IPHONE)
+	#if (TARGET_OS_IPHONE_SIMULATOR) || (TARGET_OS_IPHONE) || (TARGET_IPHONE)
 		#define TARGET_OF_IPHONE
 		#define TARGET_OPENGLES
 	#else
@@ -270,6 +280,7 @@ typedef ofBaseApp ofSimpleApp;
 #include <sstream>  //for ostringsream
 #include <iomanip>  //for setprecision
 #include <fstream>
+#include <algorithm>
 using namespace std;
 
 #ifndef PI
@@ -364,11 +375,18 @@ enum ofBlendMode{
 //this is done to match the iPhone defaults 
 //we don't say landscape, portrait etc becuase iPhone apps default to portrait while desktop apps are typically landscape
 enum ofOrientation{
-	OF_ORIENTATION_UNKNOWN = 0,
 	OF_ORIENTATION_DEFAULT = 1,	
 	OF_ORIENTATION_180 = 2,
-	OF_ORIENTATION_90_RIGHT = 3,
-	OF_ORIENTATION_90_LEFT = 4,
+    OF_ORIENTATION_90_LEFT = 3,
+	OF_ORIENTATION_90_RIGHT = 4,
+    OF_ORIENTATION_UNKNOWN = 5
+};
+
+// gradient modes when using ofBackgroundGradient
+enum ofGradientMode {
+	OF_GRADIENT_LINEAR = 0,
+	OF_GRADIENT_CIRCULAR,
+	OF_GRADIENT_BAR
 };
 
 // these are straight out of glu, but renamed and included here

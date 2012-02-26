@@ -511,16 +511,16 @@ bool ofGstVideoGrabber::initGrabber(int w, int h){
 
 	const char * decodebin = "";
 	if(format.mimetype == "video/x-raw-bayer")
-		decodebin = "bayer2rgb !";
+		decodebin = "! bayer2rgb ";
 	else if(format.mimetype != "video/x-raw-yuv" && format.mimetype != "video/x-raw-rgb")
-		decodebin = "decodebin2 !";
+		decodebin = "! decodebin2 ";
 
-	const char * scale = "ffmpegcolorspace ";
-	if( w!=format.width || h!=format.height )	scale = "ffvideoscale method=2 !";
+	const char * scale = "! ffmpegcolorspace ";
+	if( w!=format.width || h!=format.height )	scale = "! ffvideoscale method=2 ";
 
 
-	string format_str_pipeline = string("%s name=video_source device=%s ! ") +
-								 "%s,width=%d,height=%d,framerate=%d/%d ! " +
+	string format_str_pipeline = "%s name=video_source device=%s ! "
+								 "%s,width=%d,height=%d,framerate=%d/%d "
 								 "%s %s ";
 
 	gchar* pipeline_string =g_strdup_printf (
@@ -532,8 +532,7 @@ bool ofGstVideoGrabber::initGrabber(int w, int h){
 				      format.height,
 				      format.choosen_framerate.numerator,
 				      format.choosen_framerate.denominator,
-				      decodebin, scale,
-				      w,h);
+				      decodebin, scale);
 
 	int bpp;
 	switch(internalPixelFormat){
