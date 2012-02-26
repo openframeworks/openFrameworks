@@ -42,13 +42,13 @@ void testApp::update() {
 			
 			// add the cur polyline to all these vector<ofPolyline>
 			polylines.push_back(cur);
-			smoothed.push_back(ofGetSmoothed(cur, 8));
-			resampled.push_back(ofGetSmoothed(ofGetResampledCount(cur, 100), 8));
+			smoothed.push_back(cur.getSmoothed(8));
+			resampled.push_back(cur.getResampledByCount(100).getSmoothed(8));
 			
-			boundingBoxes.push_back(ofGetBoundingBox(cur));
+			boundingBoxes.push_back(cur.getBoundingBox());
 			
 			unsigned int index;
-			closestPoints.push_back(ofGetClosestPoint(resampled.back(), target, &index));
+			closestPoints.push_back(resampled.back().getClosestPoint(target, &index));
 			closestIndices.push_back(index);
 		}
 	}
@@ -107,6 +107,7 @@ void testApp::draw() {
 	ofSetColor(255, 0, 0);	
 	ofDrawBitmapString(ofToString((int) ofGetFrameRate()) + " fps", 10, 20);
 	ofDrawBitmapString("Click and drag to set a new threshold.", 10, 40);
+	ofDrawBitmapString("Hold down any key to invert the thresholding.", 10, 60);
 }
 
 void testApp::keyPressed(int key) {
