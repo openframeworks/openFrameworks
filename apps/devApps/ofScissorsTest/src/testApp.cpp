@@ -4,20 +4,15 @@
 void testApp::setup() {
     
     img.loadImage("photo.jpg");
-    
     bToggleCenterMode = false;
+    bToggleFBO        = false;
+    fbo.allocate(ofGetWidth(), ofGetHeight());
 }
 
 //--------------------------------------------------------------
-void testApp::update() {
-    
-}
-
-//--------------------------------------------------------------
-void testApp::draw() {
+void testApp::drawScissor() {
     
     ofEnableAlphaBlending();
-    
     
     // draw it normally
     ofSetRectMode(OF_RECTMODE_CORNER);
@@ -28,7 +23,7 @@ void testApp::draw() {
     // toggle the rect mode
     if(bToggleCenterMode) ofSetRectMode(OF_RECTMODE_CENTER);
     else                  ofSetRectMode(OF_RECTMODE_CORNER);
-
+    
     
     // the masking rectangle
     ofRectangle rec(ofGetMouseX(), ofGetMouseY(), 100, 100);
@@ -48,14 +43,35 @@ void testApp::draw() {
     ofNoFill();
     ofSetColor(0, 255, 255);
     ofRect(rec);
+}
+
+//--------------------------------------------------------------
+void testApp::update() {
     
+    if(bToggleFBO) {
+        fbo.begin();
+        ofClear(0, 0, 0);
+        drawScissor();
+        fbo.end();
+    }
+}
+
+//--------------------------------------------------------------
+void testApp::draw() {
     
-    
+    if(bToggleFBO) {
+        ofSetColor(255);
+        ofSetRectMode(OF_RECTMODE_CORNER);
+        fbo.draw(0, 0);
+    }
+    else drawScissor();
+
 }
 
 //--------------------------------------------------------------
 void testApp::keyPressed(int key) {
-    bToggleCenterMode = !bToggleCenterMode;
+    if(key == 'c') bToggleCenterMode = !bToggleCenterMode;
+    if(key == 'f') bToggleFBO = !bToggleFBO;
     
 }
 
