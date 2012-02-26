@@ -674,8 +674,9 @@ void ofGLRenderer::beginScissor(ofPoint &p, float w, float h) {
 //----------------------------------------------------------
 void ofGLRenderer::beginScissor(float x, float y, float w, float h) {
     glEnable(GL_SCISSOR_TEST);
-    
     float flipY = ofGetHeight()-y;
+    if(currentFbo) flipY = y+h;
+    
     if(ofGetRectMode()==OF_RECTMODE_CORNER) {
         glScissor(x, flipY-h, w, h);
     }
