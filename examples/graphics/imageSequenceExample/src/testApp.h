@@ -21,11 +21,8 @@ public:
     void gotMessage(ofMessage msg);
     
     int   appFPS;
-    int   frameCount;
-    float timeSinceLastFrame;
-    bool  bReverse;
-    float frameSpeed;
-    
+    float sequenceFPS;
+    bool  bFrameIndependent;
     vector <ofImage> images;
     
 };
