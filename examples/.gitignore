@@ -1,0 +1,19 @@
+*/.metadata
+android/*/Debug
+android/*/Release
+android/*/Release_arm7
+android/*/test link
+android/*/bin
+android/*/obj
+android/*/gen
+android/*/local.properties
+android/*/.settings
+android/*/.externalToolBuilders
+android/*/res/raw
+libOFAndroidApp.so
+libOFAndroidApp_neon.so
+gdbserver
+gdb.setup
+libneondetection.so
+Application.mk
+Android.mk

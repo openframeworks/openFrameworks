@@ -114,14 +114,27 @@ public:
 	bool hasNormals();
 	bool hasTexCoords();
 	bool hasIndices();
-
-	friend std::ostream& operator<<(std::ostream& os, ofMesh& data);
-	friend std::istream& operator>>(std::istream& is, ofMesh& data);
 	
 	void drawVertices();
 	void drawWireframe();
 	void drawFaces();
 	void draw();
+
+	void load(string path);
+	void save(string path, bool useBinary = false);
+    
+    void enableColors();
+    void enableTextures();
+    void enableNormals();
+    
+    void disableColors();
+    void disableTextures();
+    void disableNormals();
+    
+    bool usingColors();
+    bool usingTextures();
+    bool usingNormals();
+    
 
 protected:
 	virtual void draw(ofPolyRenderMode renderType);
@@ -136,6 +149,10 @@ private:
 	bool bVertsChanged, bColorsChanged, bNormalsChanged, bTexCoordsChanged, bIndicesChanged;
 	ofPrimitiveMode mode;
 	string name;
+    
+    bool useColors;
+    bool useTextures;
+    bool useNormals;
 	
 //	ofMaterial *mat;
 };
