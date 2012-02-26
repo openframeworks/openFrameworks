@@ -103,3 +103,4 @@ paths.make
 !examples/android/*/.settings
 
 apps/devApps/AdvancedImageLoading/.DS_Store
+apps/devApps/SimpleLightExample/bin
