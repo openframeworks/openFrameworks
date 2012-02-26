@@ -69,13 +69,7 @@ public:
 	
 	int getLightID() const;
 
-	void customDraw() {
-		ofPushMatrix();
-		ofTranslate(getPosition());
-		ofBox(10);
-		ofDrawAxis(20);
-		ofPopMatrix();
-	}
+	void customDraw();
 	
 	
 	// this method overrides ofNode to catch the changes and update glLightv(GL_POSITION)
