@@ -1,8 +1,6 @@
 #pragma once
 
 #include "ofMain.h"
-#include "ofShape.h"
-#include "ofShapeUtils.h"
 #include "ofxOpenCv.h"
 
 class testApp : public ofBaseApp {
