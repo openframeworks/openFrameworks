@@ -18,7 +18,7 @@ public:
 	
     
     //
-    void setup();
+    void setup(string ofRoot= "../../../");
     
     CBWinProject();
 
@@ -43,6 +43,7 @@ private:
 	pugi::xml_document doc;
 	string projectDir, projectName;
 	vector<ofAddon> addons;
+	string ofRoot;
 };
 
 #endif /* CBLINUXPROJECT_H_ */
