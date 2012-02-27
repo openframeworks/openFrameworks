@@ -31,14 +31,29 @@ public:
 	// if the arc doesn't start at the same point
 	// the last vertex finished a straight line will
 	// be created to join both
-	void arc( const ofPoint & center, float radiusX, float radiusY, float angleBegin, float angleEnd, int curveResolution=20 );
+    
+    void arc(const ofPoint & center, float radiusX, float radiusY, float angleBegin, float angleEnd, bool clockwise, int curveResolution = 20);
+    
+	void arc(const ofPoint & center, float radiusX, float radiusY, float angleBegin, float angleEnd, int curveResolution=20) {
+        arc(center, radiusX,  radiusY,  angleBegin,  angleEnd, true,  curveResolution);
+    }
 	void arc(float x, float y, float radiusX, float radiusY, float angleBegin, float angleEnd, int curveResolution=20){
-		arc(ofPoint(x,y),radiusX,radiusY,angleBegin,angleEnd,curveResolution);
+		arc(ofPoint(x, y), radiusX, radiusY, angleBegin, angleEnd, true, curveResolution);
 	}
 	void arc(float x, float y, float z, float radiusX, float radiusY, float angleBegin, float angleEnd, int curveResolution=20){
-		arc(ofPoint(x,y,z),radiusX,radiusY,angleBegin,angleEnd,curveResolution);
+		arc(ofPoint(x, y, z), radiusX, radiusY, angleBegin, angleEnd, true, curveResolution);
 	}
-
+    void arcNegative(const ofPoint & center, float radiusX, float radiusY, float angleBegin, float angleEnd, int curveResolution=20) {
+        arc(center, radiusX, radiusY, angleBegin, angleEnd, false, curveResolution);
+    }
+	void arcNegative(float x, float y, float radiusX, float radiusY, float angleBegin, float angleEnd, int curveResolution=20){
+        arc(ofPoint(x,y), radiusX, radiusY, angleBegin, angleEnd, false, curveResolution);
+    }
+	void arcNegative(float x, float y, float z, float radiusX, float radiusY, float angleBegin, float angleEnd, int curveResolution=20){
+		arc(ofPoint(x, y, z), radiusX, radiusY, angleBegin, angleEnd, false, curveResolution);
+    }
+    
+    
 	// catmull-rom curve
 	void curveTo( const ofPoint & to, int curveResolution=16 );
 	void curveTo(float x, float y, float z=0,  int curveResolution=16 ){
@@ -77,6 +92,14 @@ public:
 	// find the closest point 'target' on a polyline
 	// optionally pass a pointer to/address of an unsigned int to get the index of the closest vertex
 	ofPoint getClosestPoint(const ofPoint& target, unsigned int* nearestIndex = NULL);
+	
+	// check wheteher a point is inside the area enclosed by the polyline
+	static bool inside(float x, float y, const ofPolyline & polyline);
+	static bool inside(const ofPoint & p, const ofPolyline & polyline);
+    
+    // non-static versions
+    bool inside(float x, float y);
+    bool inside(const ofPoint & p);
 
 	void simplify(float tolerance=0.3);
 
@@ -96,11 +119,15 @@ public:
 	vector<ofPoint> & getVertices();
 
 	float getPerimeter() const;
+	float getArea() const;
+	ofPoint getCentroid2D() const;
 
 	void draw();		
 
 private:
 	void setCircleResolution(int res);
+    float wrapAngle(float angleRad);
+
 	vector<ofPoint> points;
 
 	deque<ofPoint> curveVertices;

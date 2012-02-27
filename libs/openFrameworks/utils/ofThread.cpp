@@ -20,7 +20,9 @@ bool ofThread::isThreadRunning(){
 //------------------------------------------------- 
 void ofThread::startThread(bool _blocking, bool _verbose){ 
    if( threadRunning ){ 
-      if(verbose)printf("ofThread: thread already running\n"); 
+      if(verbose){
+    	  ofLog(OF_LOG_NOTICE, "ofThread: thread already running");
+      }
       return; 
    } 
 
@@ -46,18 +48,24 @@ bool ofThread::lock(){
 
 	if ( blocking )
 	{
-		if(verbose)printf("ofThread: waiting till mutex is unlocked\n"); 
+		if(verbose){
+			ofLog(OF_LOG_NOTICE, "ofThread: waiting till mutex is unlocked");
+		}
 		mutex.lock();
 	}
 	else
 	{
 		if ( !mutex.tryLock() )
 		{
-            if(verbose)printf("ofThread: mutex is busy - already locked\n"); 
+            if(verbose){
+            	ofLog(OF_LOG_NOTICE, "ofThread: mutex is busy - already locked");
+            }
 			return false; 
 		}
 	}
-	if(verbose)printf("ofThread: we are in -- mutex is now locked \n"); 
+	if(verbose){
+		ofLog(OF_LOG_NOTICE, "ofThread: we are in -- mutex is now locked");
+	}
 	
 	return true; 
 } 
@@ -66,7 +74,9 @@ bool ofThread::lock(){
 bool ofThread::unlock(){ 
 
 	mutex.unlock();
-	if(verbose)printf("ofThread: we are out -- mutex is now unlocked \n"); 
+	if(verbose){
+		ofLog(OF_LOG_NOTICE, "ofThread: we are out -- mutex is now unlocked");
+	}
 
    return true; 
 } 
@@ -82,10 +92,14 @@ void ofThread::stopThread(bool close){
 				pthread_detach(myThread);
 			#endif
 		}
-		if(verbose)printf("ofThread: thread stopped\n");
+		if(verbose){
+			ofLog(OF_LOG_NOTICE, "ofThread: thread stopped");
+		}
 		threadRunning = false;
 	}else{
-		if(verbose)printf("ofThread: thread already stopped\n");
+		if(verbose){
+			ofLog(OF_LOG_NOTICE, "ofThread: thread already stopped");
+		}
 	}
 }
 
@@ -95,20 +109,28 @@ void ofThread::waitForThread(bool stop){
 		// Reset the thread state
 		if(stop){
 			threadRunning = false;
-			if(verbose)printf("ofThread: stopping thread\n");
+			if(verbose){
+				ofLog(OF_LOG_NOTICE, "ofThread: stopping thread");
+			}
 		}
-		if(verbose)printf("ofThread: waiting for thread to stop\n");
+		if(verbose){
+			ofLog(OF_LOG_NOTICE, "ofThread: waiting for thread to stop");
+		}
 		// Wait for the thread to finish
 		#ifdef TARGET_WIN32
 			WaitForSingleObject(myThread, INFINITE);
 			CloseHandle(myThread);
 		#else
-			if(pthread_self()==myThread) printf("ofThread: error, waitForThread should only be called from outside the thread");
+			if(pthread_self()==myThread) ofLog(OF_LOG_ERROR,"ofThread: error, waitForThread should only be called from outside the thread");
 		    pthread_join(myThread, NULL);
 		#endif
-		if(verbose)printf("ofThread: thread stopped\n");
+		if(verbose){
+			ofLog(OF_LOG_NOTICE, "ofThread: thread stopped");
+		}
 		//myThread = NULL;
    }else{
-		if(verbose)printf("ofThread: thread already stopped\n");
+		if(verbose){
+			ofLog(OF_LOG_NOTICE, "ofThread: thread already stopped");
+		}
 	}
 }

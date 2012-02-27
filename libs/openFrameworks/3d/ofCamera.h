@@ -21,8 +21,6 @@
 #include "ofAppRunner.h"
 #include "ofNode.h"
 
-#define OF_CAMERA_MATRIX_CACHE_WARNING ofLog(OF_LOG_WARNING, "ofCamera::getXXXXMatrix : If you want to call this function a lot, then make sure ofCamera::cacheMatrices = true, then we'll cache the data from the draw loop");
-
 // Use the public API of ofNode for all transformations
 //class ofCamera : public ofNodeWithTarget {
 class ofCamera : public ofNode {
@@ -41,6 +39,7 @@ public:
 	void enableOrtho();
 	void disableOrtho();
 	bool getOrtho() const;
+	float getFov();
 	
 	float getImagePlaneDistance(ofRectangle viewport = ofGetCurrentViewport()) const;
 	
@@ -49,7 +48,6 @@ public:
 	virtual void end();
 	
 	// for hardcore peeps, access to the projection matrix
-	void cacheMatrices(bool cache=true);
 	ofMatrix4x4 getProjectionMatrix(ofRectangle viewport = ofGetCurrentViewport());	
 	ofMatrix4x4 getModelViewMatrix();
 	ofMatrix4x4 getModelViewProjectionMatrix(ofRectangle viewport = ofGetCurrentViewport());
@@ -69,11 +67,5 @@ protected:
 	float nearClip;
 	float farClip;
 	bool isActive;
-	
-	bool hasStoredMatrices;
-	ofMatrix4x4 matProjection;
-	ofMatrix4x4 matModelView;
-
-	bool bCacheMatrices;
 };
 

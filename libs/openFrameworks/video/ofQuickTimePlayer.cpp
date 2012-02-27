@@ -134,7 +134,8 @@ ofQuickTimePlayer::ofQuickTimePlayer (){
 ofQuickTimePlayer::~ofQuickTimePlayer(){
 
 	closeMovie();
-
+    clearMemory();
+    
 	//--------------------------------------
 	#ifdef OF_VIDEO_PLAYER_QUICKTIME
 	//--------------------------------------
@@ -164,8 +165,17 @@ void ofQuickTimePlayer::update(){
 		//--------------------------------------------------------------
 		#ifdef OF_VIDEO_PLAYER_QUICKTIME
 		//--------------------------------------------------------------
-
-			#if defined(TARGET_WIN32) || defined(QT_USE_MOVIETASK)
+			
+			// is this necessary on windows with quicktime?
+			#ifdef TARGET_OSX 
+				// call MoviesTask if we're not on the main thread
+				if ( CFRunLoopGetCurrent() != CFRunLoopGetMain() )
+				{
+					//ofLog( OF_LOG_NOTICE, "not on the main loop, calling MoviesTask") ;
+					MoviesTask(moviePtr,0);
+				}
+			#else
+				// on windows we always call MoviesTask
 				MoviesTask(moviePtr,0);
 			#endif
 
@@ -215,13 +225,13 @@ void ofQuickTimePlayer::closeMovie(){
 		DisposeMovieDrawingCompleteUPP(myDrawCompleteProc);
 
 		moviePtr = NULL;
+        
     }
 
    	//--------------------------------------
 	#endif
     //--------------------------------------
 
-	clearMemory();
 	bLoaded = false;
 
 }
@@ -291,7 +301,7 @@ bool ofQuickTimePlayer::loadMovie(string name){
 				width 	= movieRect.right;
 				height 	= movieRect.bottom;
 				pixels.clear();
-				delete(offscreenGWorldPixels);
+				delete [] offscreenGWorldPixels;
 				if ((offscreenGWorld)) DisposeGWorld((offscreenGWorld));
 				createImgMemAndGWorld();
 			}

@@ -1,5 +1,15 @@
 #include "ofFileUtils.h"
+#ifndef TARGET_WIN32
+#include <pwd.h>
+#endif
+
 #include "ofUtils.h"
+
+
+#ifdef TARGET_OSX
+    #include <mach-o/dyld.h>	/* _NSGetExecutablePath */
+    #include <limits.h>		/* PATH_MAX */
+#endif
 
 
 //------------------------------------------------------------------------------------------------------------
@@ -11,6 +21,7 @@
 //--------------------------------------------------
 ofBuffer::ofBuffer(){
 	nextLinePos = 0;
+	buffer.resize(1);
 }
 
 //--------------------------------------------------
@@ -74,7 +85,7 @@ void ofBuffer::set(const char * _buffer, int _size){
 
 //--------------------------------------------------
 void ofBuffer::clear(){
-	buffer.clear();
+	buffer.resize(1);
 	nextLinePos = 0;
 }
 
@@ -909,6 +920,11 @@ int ofDirectory::listDir(){
 }
 
 //------------------------------------------------------------------------------------------------------------
+string ofDirectory::getOriginalDirectory(){
+	return originalDirectory;
+}
+
+//------------------------------------------------------------------------------------------------------------
 string ofDirectory::getName(unsigned int position){
 	Path cur(files.at(position).path());
 	return cur.getFileName();
@@ -1179,6 +1195,54 @@ bool ofFilePath::isAbsolute(string path) {
  
  //------------------------------------------------------------------------------------------------------------
 string ofFilePath::getCurrentWorkingDirectory(){
+#ifdef TARGET_OSX
+    char pathOSX[FILENAME_MAX];
+    uint32_t size = sizeof(pathOSX);
+    if (_NSGetExecutablePath(pathOSX, &size) != 0)
+        ofLogError() << "buffer too small; need size " <<  size;
+    string pathOSXStr = string(pathOSX);
+    string pathWithoutApp;
+    size_t found = pathOSXStr.find_last_of("/");
+    pathWithoutApp = pathOSXStr.substr(0,found);
+    return pathWithoutApp;
+#else
 	return Path::current();
+#endif
 }
 
+string ofFilePath::join(string path1,string path2){
+	return removeTrailingSlash(path1) + addLeadingSlash(path2);
+}
+
+string ofFilePath::getCurrentExePath(){
+#if defined( TARGET_LINUX ) || defined (TARGET_ANDROID)
+	char buff[FILENAME_MAX];
+	readlink("/proc/self/exe",buff,FILENAME_MAX);
+	cout << buff << endl;
+	return buff;
+#elif defined(TARGET_OSX) || defined(TARGET_OF_IPHONE)
+	char path[FILENAME_MAX];
+	uint32_t size = sizeof(path);
+	if (_NSGetExecutablePath(path, &size) == 0)
+        ofLogError() << "buffer too small; need size " <<  size;
+	return path;
+#elif defined(TARGET_WIN32)
+	ofLogError() << "getCurrentExePath() not implemented";
+#endif
+	return "";
+}
+
+string ofFilePath::getCurrentExeDir(){
+	return getEnclosingDirectory(getCurrentExePath(),false);
+}
+
+string ofFilePath::getUserHomeDir(){
+#ifndef TARGET_WIN32
+	struct passwd *pw = getpwuid(getuid());
+
+	return pw->pw_dir;
+#else
+	ofLogError() << "getUserHomeDir() not implemented";
+#endif
+	return "";
+}

@@ -36,15 +36,15 @@ public:
 			 renderers[i]->draw(shape);
 		 }
 	 }
-	 void draw(ofMesh & vertexData){
+	 void draw(ofMesh & vertexData, bool useColors, bool useTextures, bool useNormals){
 		 for(int i=0;i<(int)renderers.size();i++){
-			 renderers[i]->draw(vertexData);
+			 renderers[i]->draw(vertexData,useColors, useTextures, useNormals);
 		 }
 	 }
 
-	 void draw(ofMesh & vertexData, ofPolyRenderMode mode){
+	 void draw(ofMesh & vertexData, ofPolyRenderMode mode, bool useColors, bool useTextures, bool useNormals){
 		 for(int i=0;i<(int)renderers.size();i++){
-			 renderers[i]->draw(vertexData,mode);
+			 renderers[i]->draw(vertexData,mode,useColors,useTextures,useNormals);
 		 }
 	 }
 
@@ -394,6 +394,12 @@ public:
 		 for(int i=0;i<(int)renderers.size();i++){
 			 renderers[i]->drawCircle(x,y,z,radius);
 		 }
+	}
+	
+	void drawSphere(float x, float y, float z, float radius) {
+		for(int i=0;i<(int)renderers.size();i++){
+			renderers[i]->drawSphere(x,y,z,radius);
+		}
 	}
 
 	void drawEllipse(float x, float y, float z, float width, float height){

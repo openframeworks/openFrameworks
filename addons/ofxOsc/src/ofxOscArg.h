@@ -71,8 +71,10 @@ subclasses for each possible argument type
 */
 
 #if defined TARGET_WIN32 && defined _MSC_VER
-// required because MSVC isn't ANSI-C compliant
-typedef long int32_t;
+	#if _MSC_VER < 1600 // 1600 = VS2010
+		// required because MSVC < VS2010 aren't ANSI-C compliant
+		typedef long int32_t;
+	#endif
 #endif
 
 class ofxOscArgInt32 : public ofxOscArg

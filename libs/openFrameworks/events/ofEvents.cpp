@@ -314,3 +314,19 @@ void ofSendMessage(string messageString){
 	ofMessage msg(messageString);
 	ofSendMessage(msg);
 }
+
+void ofNotifyWindowEntry( int state ) {
+	
+	static ofEntryEventArgs entryArgs;
+
+	ofBaseApp * ofAppPtr = ofGetAppPtr();
+	if(ofAppPtr){
+		ofAppPtr->windowEntry(state);
+	}
+	
+#ifdef OF_USING_POCO
+	entryArgs.state = state;
+	ofNotifyEvent(ofEvents.windowEntered, entryArgs);
+#endif
+	
+}
