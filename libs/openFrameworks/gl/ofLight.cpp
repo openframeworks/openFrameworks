@@ -125,6 +125,22 @@ ofLight::ofLight(){
 	glIndex			= -1;
 	isEnabled		= false;
 	setPointLight();
+    
+    if(glIndex==-1){
+		bool bLightFound = false;
+		// search for the first free block
+		for(int i=0; i<OF_MAX_LIGHTS; i++) {
+			if(getActiveLights()[i] == false) {
+				glIndex = i;
+				retain(glIndex);
+				bLightFound = true;
+				break;
+			}
+		}
+		if( !bLightFound ){
+			ofLog(OF_LOG_ERROR, "ofLight : Trying to create too many lights: " + ofToString(glIndex));
+		}
+	}
 }
 
 //----------------------------------------
@@ -169,22 +185,7 @@ ofLight & ofLight::operator=(const ofLight & mom){
 
 //----------------------------------------
 void ofLight::enable() {
-	if(glIndex==-1){
-		bool bLightFound = false;
-		// search for the first free block
-		for(int i=0; i<OF_MAX_LIGHTS; i++) {
-			if(getActiveLights()[i] == false) {
-				glIndex = i;
-				retain(glIndex);
-				bLightFound = true;
-				break;
-			}
-		}
-		if( !bLightFound ){
-			ofLog(OF_LOG_ERROR, "ofLight : Trying to create too many lights: " + ofToString(glIndex));
-		}
-	}
-	
+    onPositionChanged(); // update the position // 
 	ofEnableLighting();
 	glEnable(GL_LIGHT0 + glIndex);
 }
@@ -300,6 +301,21 @@ ofFloatColor ofLight::getDiffuseColor() const {
 //----------------------------------------
 ofFloatColor ofLight::getSpecularColor() const {
 	return specularColor;
+}
+
+//----------------------------------------
+void ofLight::customDraw() {
+    ofPushMatrix();
+    glMultMatrixf(getGlobalTransformMatrix().getPtr());
+    if(getIsPointLight()) {
+        ofSphere( 0,0,0, 10);
+    } else if (getIsSpotlight()) {
+        ofCone(0, 0, -10, 8, 20);
+    } else {
+        ofBox(10);
+    }
+    ofDrawAxis(20);
+    ofPopMatrix();
 }
 
 
