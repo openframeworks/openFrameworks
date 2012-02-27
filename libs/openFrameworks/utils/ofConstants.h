@@ -355,7 +355,9 @@ enum ofPixelFormat{
 	OF_PIXELS_RGB,
 	OF_PIXELS_RGBA,
 	OF_PIXELS_BGRA,
+#ifndef TARGET_OS_IPHONE
 	OF_PIXELS_RGB565
+#endif
 };
 
 #define		OF_MAX_STYLE_HISTORY	32
