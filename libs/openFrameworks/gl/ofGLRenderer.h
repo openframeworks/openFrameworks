@@ -131,7 +131,7 @@ private:
 	vector<ofPoint> circlePoints;
 	ofPolyline circlePolyline;
 	
-	vector<ofPoint> sphereVerts;
+	ofMesh sphereMesh;
 
 	ofFillFlag bFilled;
 	bool bSmoothHinted;
