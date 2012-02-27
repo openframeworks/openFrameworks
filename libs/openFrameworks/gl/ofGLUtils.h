@@ -149,6 +149,8 @@ inline int ofGetGLTypeFromPixelFormat(ofPixelFormat pixelFormat){
 		return GL_RGB;
 	case OF_PIXELS_RGBA:
 		return GL_RGBA;
+    case OF_PIXELS_RGB565:
+        return GL_RGB5;
 	}
 }
 #endif /* OFGLUTILS_H_ */

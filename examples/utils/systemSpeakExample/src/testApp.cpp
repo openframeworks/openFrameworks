@@ -27,8 +27,7 @@ void testApp::threadedFunction() {
     while (isThreadRunning()) {
         
         // call the system command say
-        float rate = 400;
-        string cmd = "say -v "+voice+" -r "+ofToString(rate)+" "+words[step]+" ";   // create the command
+        string cmd = "say -v "+voice+" "+words[step]+" ";   // create the command
         system(cmd.c_str());
         
         // step to the next word
