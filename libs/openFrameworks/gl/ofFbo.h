@@ -47,6 +47,9 @@ public:
 	void unbind();
 	
 	int	getNumTextures();
+    
+    void activateAllTextures();
+    bool setActiveTexture(int i);
 
 	GLuint getFbo();	// returns GLuint of Fbo for advanced actions
 	
@@ -89,8 +92,9 @@ private:
 
 	GLint				savedFramebuffer;	// save bound framebuffer before switching
 
-	vector<GLuint>		colorBuffers;	// only used if using MSAA
+	vector<GLuint>		colorBuffers;	// only used if using MSAA...maybe...what about MRT?
 	vector<ofTexture>	textures;
+
 	ofTexture			depthBufferTex;
 
 	static int			_maxColorAttachments;
@@ -110,7 +114,6 @@ private:
 	// if using MSAA, we will have rendered into a colorbuffer, not directly into the texture
 	// call this to blit from the colorbuffer into the texture so we can use the results for rendering, or input to a shader etc.
 	void updateTexture(int attachmentPoint);
-
 };
 
 //#endif
