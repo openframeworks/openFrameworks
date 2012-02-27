@@ -665,9 +665,31 @@ void ofFbo::unbind() {
 	}
 }
 
-
 int ofFbo::getNumTextures() {
 	return textures.size();
+}
+
+//TODO: by "active" or "activate" we mean "being drawn to" ... can we disambiguate this more? Should we also check against card's max attachments or can we assume that's taken care of in texture setup?
+void ofFbo::activateAllTextures(){
+    vector<GLenum> attachments;
+    for(int i=0; i < getNumTextures(); i++){
+        if (i < getNumTextures()){
+            GLenum e = GL_COLOR_ATTACHMENT0_EXT + i;
+            attachments.push_back(e);
+        }else{
+            ofLog(OF_LOG_WARNING,"trying to activate texture "+ofToString(i) + " for drawing that is out of the range (0->" + ofToString(getNumTextures()) + ") of allocated textures for this fbo.");
+        }
+    }
+    glDrawBuffers(attachments.size(),&attachments[0]);
+}
+
+bool ofFbo::setActiveTexture(int i){
+    if (i < getNumTextures()){
+        GLenum e = GL_COLOR_ATTACHMENT0_EXT + i;
+        glDrawBuffer(e);
+    }else{
+        ofLog(OF_LOG_WARNING,"trying to activate texture "+ofToString(i) + " for drawing that is out of the range (0->" + ofToString(getNumTextures()) + ") of allocated textures for this fbo.");
+    }
 }
 
 void ofFbo::setDefaultTextureIndex(int defaultTexture)

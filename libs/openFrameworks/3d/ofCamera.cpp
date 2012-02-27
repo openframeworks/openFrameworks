@@ -40,6 +40,16 @@ void ofCamera::setFarClip(float f) {
 }
 
 //----------------------------------------
+float ofCamera::getNearClip() const{
+	return nearClip;
+}
+
+//----------------------------------------
+float ofCamera::getFarClip() const{
+	return farClip;
+}
+
+//----------------------------------------
 void ofCamera::enableOrtho() {
 	isOrtho = true;
 }
