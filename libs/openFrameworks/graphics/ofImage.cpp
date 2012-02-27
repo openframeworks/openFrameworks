@@ -5,7 +5,7 @@
 #include "ofGraphics.h"
 #include "FreeImage.h"
 
-#ifdef TARGET_ANDROID
+#if defined(TARGET_ANDROID) || defined(TARGET_OF_IPHONE)
 #include <set>
 	// android destroys the opengl context on screen orientation change
 	// or when the application runs in the background so we need to reload
@@ -513,7 +513,7 @@ ofImage_<PixelType>::ofImage_(){
 	//----------------------- init free image if necessary
 	ofInitFreeImage();
 
-#ifdef TARGET_ANDROID
+#if defined(TARGET_ANDROID) || defined(TARGET_OF_IPHONE)
 	registerImage(this);
 #endif
 }
@@ -530,7 +530,7 @@ ofImage_<PixelType>::ofImage_(const ofPixels_<PixelType> & pix){
 	//----------------------- init free image if necessary
 	ofInitFreeImage();
 
-#ifdef TARGET_ANDROID
+#if defined(TARGET_ANDROID) || defined(TARGET_OF_IPHONE)
 	registerImage(this);
 #endif
 
@@ -548,7 +548,7 @@ ofImage_<PixelType>::ofImage_(const ofFile & file){
 	//----------------------- init free image if necessary
 	ofInitFreeImage();
 
-#ifdef TARGET_ANDROID
+#if defined(TARGET_ANDROID) || defined(TARGET_OF_IPHONE)
 	registerImage(this);
 #endif
 
@@ -566,7 +566,7 @@ ofImage_<PixelType>::ofImage_(const string & filename){
 	//----------------------- init free image if necessary
 	ofInitFreeImage();
 
-#ifdef TARGET_ANDROID
+#if defined(TARGET_ANDROID) || defined(TARGET_OF_IPHONE)
 	registerImage(this);
 #endif
 
@@ -595,7 +595,7 @@ template<typename PixelType>
 ofImage_<PixelType>::~ofImage_(){
 	clear();
 
-#ifdef TARGET_ANDROID
+#if defined(TARGET_ANDROID) || defined(TARGET_OF_IPHONE)
 	unregisterImage(this);
 #endif
 }
