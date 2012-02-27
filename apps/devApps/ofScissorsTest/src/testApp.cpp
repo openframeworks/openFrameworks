@@ -6,6 +6,8 @@ void testApp::setup() {
     img.loadImage("photo.jpg");
     bToggleCenterMode = false;
     bToggleFBO        = false;
+    bSavePDF          = false;
+    
     fbo.allocate(ofGetWidth(), ofGetHeight());
 }
 
@@ -17,7 +19,7 @@ void testApp::drawScissor() {
     // draw it normally
     ofSetRectMode(OF_RECTMODE_CORNER);
     ofSetColor(255, 20);
-    img.draw((ofGetWidth()-img.getWidth())/2, (ofGetHeight()-img.getHeight())/2);
+    //img.draw((ofGetWidth()-img.getWidth())/2, (ofGetHeight()-img.getHeight())/2);
     
     
     // toggle the rect mode
@@ -37,6 +39,11 @@ void testApp::drawScissor() {
     ofBeginScissor(rec);
     ofSetColor(255);
     img.draw(center);
+    
+    ofFill();
+    ofSetColor(255, 0, 0);
+    ofRect(center.x, center.y, 200, 200);
+    
     ofEndScissor();
     
     // the rect
@@ -64,14 +71,24 @@ void testApp::draw() {
         ofSetRectMode(OF_RECTMODE_CORNER);
         fbo.draw(0, 0);
     }
-    else drawScissor();
-
+    else {
+        drawScissor();
+    }
+    
+    // save out a pdf
+    if(bSavePDF) {
+        ofBeginSaveScreenAsPDF("ofScissorTest.pdf");
+        drawScissor();
+        ofEndSaveScreenAsPDF();
+        bSavePDF = false;
+    }
 }
 
 //--------------------------------------------------------------
 void testApp::keyPressed(int key) {
     if(key == 'c') bToggleCenterMode = !bToggleCenterMode;
     if(key == 'f') bToggleFBO = !bToggleFBO;
+    if(key == 's') bSavePDF = !bSavePDF;
     
 }
 

@@ -15,6 +15,8 @@ public:
     
     bool    bToggleCenterMode;
     bool    bToggleFBO;
+    bool    bSavePDF;
     ofImage img;
     ofFbo   fbo;
+    
 };
