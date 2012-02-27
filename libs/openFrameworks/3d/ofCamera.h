@@ -7,7 +7,7 @@
  *
  */
 
-// TODO: 
+// TODO:
 // add off-axis projection options (eventually tile render support)
 // fix ortho projection
 // add toWorld, toScreen methods
@@ -26,45 +26,42 @@
 class ofCamera : public ofNode {
 public:
 	ofCamera();
-	
+
 	// projection properties:
 	void setFov(float f);
 	void setNearClip(float f);
 	void setFarClip(float f);
-    
-    float getNearClip() const;
-    float getFarClip() const;
-	
+
 	float getFov() const { return fov; };
 	float getNearClip() const { return nearClip; };
 	float getFarClip() const { return farClip; };
-	
+
 	void enableOrtho();
 	void disableOrtho();
 	bool getOrtho() const;
 	float getFov();
-	
+
 	float getImagePlaneDistance(ofRectangle viewport = ofGetCurrentViewport()) const;
-	
+
 	// set the matrices
 	virtual void begin(ofRectangle viewport = ofGetCurrentViewport());
 	virtual void end();
-	
+
 	// for hardcore peeps, access to the projection matrix
-	ofMatrix4x4 getProjectionMatrix(ofRectangle viewport = ofGetCurrentViewport());	
+	ofMatrix4x4 getProjectionMatrix(ofRectangle viewport = ofGetCurrentViewport());
 	ofMatrix4x4 getModelViewMatrix();
 	ofMatrix4x4 getModelViewProjectionMatrix(ofRectangle viewport = ofGetCurrentViewport());
-	
+
 	// convert between spaces
-	ofVec3f worldToScreen(ofVec3f WorldXYZ, ofRectangle viewport = ofGetCurrentViewport()); 
+	ofVec3f worldToScreen(ofVec3f WorldXYZ, ofRectangle viewport = ofGetCurrentViewport());
 	ofVec3f screenToWorld(ofVec3f ScreenXYZ, ofRectangle viewport = ofGetCurrentViewport());
 	ofVec3f worldToCamera(ofVec3f WorldXYZ, ofRectangle viewport = ofGetCurrentViewport());
 	ofVec3f cameraToWorld(ofVec3f CameraXYZ, ofRectangle viewport = ofGetCurrentViewport());
-	
-	
+
+
 protected:
 	void calcClipPlanes(ofRectangle viewport);
-	
+
 	bool isOrtho;
 	float fov;
 	float nearClip;

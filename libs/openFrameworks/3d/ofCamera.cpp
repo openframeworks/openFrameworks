@@ -40,16 +40,6 @@ void ofCamera::setFarClip(float f) {
 }
 
 //----------------------------------------
-float ofCamera::getNearClip() const{
-	return nearClip;
-}
-
-//----------------------------------------
-float ofCamera::getFarClip() const{
-	return farClip;
-}
-
-//----------------------------------------
 void ofCamera::enableOrtho() {
 	isOrtho = true;
 }
@@ -73,28 +63,28 @@ float ofCamera::getImagePlaneDistance(ofRectangle viewport) const {
 void ofCamera::begin(ofRectangle viewport) {
 	if(!isActive) ofPushView();
 	isActive = true;
-	
+
 	ofSetCoordHandedness(OF_RIGHT_HANDED);
-	
+
 	// autocalculate near/far clip planes if not set by user
 	calcClipPlanes(viewport);
-	
+
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	if(isOrtho) {
 		//			if(vFlip) glOrtho(0, width, height, 0, nearDist, farDist);
-		//			else 
+		//			else
 #ifndef TARGET_OPENGLES
 		glOrtho(0, viewport.width, 0, viewport.height, nearClip, farClip);
 #else
 		ofMatrix4x4 ortho;
 		ortho.makeOrthoMatrix(0, viewport.width, 0, viewport.height, nearClip, farClip);
 		glLoadMatrixf(ortho.getPtr());
-#endif		
+#endif
 	} else {
 		gluPerspective(fov, viewport.width/viewport.height, nearClip, farClip);
 	}
-	
+
 	glMatrixMode(GL_MODELVIEW);
 	glLoadMatrixf(ofMatrix4x4::getInverseOf(getGlobalTransformMatrix()).getPtr());
 	ofViewport(viewport);
@@ -127,34 +117,34 @@ ofMatrix4x4 ofCamera::getModelViewProjectionMatrix(ofRectangle viewport) {
 }
 //----------------------------------------
 ofVec3f ofCamera::worldToScreen(ofVec3f WorldXYZ, ofRectangle viewport) {
-	
+
 	ofVec3f CameraXYZ = WorldXYZ * getModelViewProjectionMatrix();
 	ofVec3f ScreenXYZ;
-	
+
 	ScreenXYZ.x = (CameraXYZ.x + 1.0f) / 2.0f * viewport.width + viewport.x;
 	ScreenXYZ.y = (1.0f - CameraXYZ.y) / 2.0f * viewport.height + viewport.y;
-	
+
 	ScreenXYZ.z = CameraXYZ.z;
-	
+
 	return ScreenXYZ;
-	
+
 }
 //----------------------------------------
 ofVec3f ofCamera::screenToWorld(ofVec3f ScreenXYZ, ofRectangle viewport) {
-	
+
 	//convert from screen to camera
 	ofVec3f CameraXYZ;
 	CameraXYZ.x = 2.0f * (ScreenXYZ.x - viewport.x) / viewport.width - 1.0f;
 	CameraXYZ.y = 1.0f - 2.0f *(ScreenXYZ.y - viewport.y) / viewport.height;
 	CameraXYZ.z = ScreenXYZ.z;
-	
+
 	//get inverse camera matrix
 	ofMatrix4x4 inverseCamera;
 	inverseCamera.makeInvertOf(getModelViewProjectionMatrix(viewport));
-	
+
 	//convert camera to world
 	return CameraXYZ * inverseCamera;
-	
+
 }
 //----------------------------------------
 ofVec3f ofCamera::worldToCamera(ofVec3f WorldXYZ, ofRectangle viewport) {
@@ -162,10 +152,10 @@ ofVec3f ofCamera::worldToCamera(ofVec3f WorldXYZ, ofRectangle viewport) {
 }
 //----------------------------------------
 ofVec3f ofCamera::cameraToWorld(ofVec3f CameraXYZ, ofRectangle viewport) {
-	
+
 	ofMatrix4x4 inverseCamera;
 	inverseCamera.makeInvertOf(getModelViewProjectionMatrix(viewport));
-	
+
 	return CameraXYZ * inverseCamera;
 }
 //----------------------------------------
