@@ -43,10 +43,15 @@ public:
 	void quadBezierTo(float cx1, float cy1, float cx2, float cy2, float x, float y);
 	void quadBezierTo(float cx1, float cy1, float cz1, float cx2, float cy2, float cz2, float x, float y, float z);
 
+    void arc(const ofPoint & centre, float radiusX, float radiusY, float angleBegin, float angleEnd, bool clockwise);
+
 	void arc(const ofPoint & centre, float radiusX, float radiusY, float angleBegin, float angleEnd);
 	void arc(float x, float y, float radiusX, float radiusY, float angleBegin, float angleEnd);
 	void arc(float x, float y, float z, float radiusX, float radiusY, float angleBegin, float angleEnd);
 
+	void arcNegative(const ofPoint & centre, float radiusX, float radiusY, float angleBegin, float angleEnd);
+	void arcNegative(float x, float y, float radiusX, float radiusY, float angleBegin, float angleEnd);
+	void arcNegative(float x, float y, float z, float radiusX, float radiusY, float angleBegin, float angleEnd);
 
 	void setPolyWindingMode(ofPolyWindingMode mode);
 	void setFilled(bool hasFill); // default true
@@ -157,6 +162,7 @@ public:
 			bezierTo,
 			quadBezierTo,
 			arc,
+            arcNegative,
 		};
 
 		/// for lineTo and curveTo
