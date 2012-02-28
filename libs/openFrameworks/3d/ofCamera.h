@@ -36,6 +36,8 @@ public:
 	float getNearClip() const { return nearClip; };
 	float getFarClip() const { return farClip; };
 	
+	void setupPerspective(bool vFlip = true, float fov = 60, float nearDist = 0, float farDist = 0);
+
 	void enableOrtho();
 	void disableOrtho();
 	bool getOrtho() const;
