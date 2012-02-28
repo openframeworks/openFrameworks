@@ -524,7 +524,7 @@ void ofOpenALSoundPlayer::update(ofEventArgs & args){
 
 //------------------------------------------------------------
 void ofOpenALSoundPlayer::unloadSound(){
-	ofRemoveListener(ofEvents.update,this,&ofOpenALSoundPlayer::update);
+	ofRemoveListener(ofEvents().update,this,&ofOpenALSoundPlayer::update);
 	alDeleteBuffers(buffers.size(),&buffers[0]);
 	alDeleteSources(sources.size(),&sources[0]);
 	streamf = 0;
@@ -722,9 +722,9 @@ void ofOpenALSoundPlayer::setMultiPlay(bool bMp){
 	bMultiPlay = bMp;		// be careful with this...
 	if(sources.empty()) return;
 	if(bMultiPlay){
-		ofAddListener(ofEvents.update,this,&ofOpenALSoundPlayer::update);
+		ofAddListener(ofEvents().update,this,&ofOpenALSoundPlayer::update);
 	}else{
-		ofRemoveListener(ofEvents.update,this,&ofOpenALSoundPlayer::update);
+		ofRemoveListener(ofEvents().update,this,&ofOpenALSoundPlayer::update);
 	}
 }
 
@@ -762,7 +762,7 @@ void ofOpenALSoundPlayer::play(){
 	alSourcePlayv(channels,&sources[sources.size()-channels]);
 
 	if(bMultiPlay){
-		ofAddListener(ofEvents.update,this,&ofOpenALSoundPlayer::update);
+		ofAddListener(ofEvents().update,this,&ofOpenALSoundPlayer::update);
 	}
 	if(isStreaming){
 		setPosition(0);

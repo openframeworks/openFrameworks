@@ -52,4 +52,7 @@ protected:
 	static const int textPadding;
 	static const int defaultWidth;
 	static const int defaultHeight;
+
+	static string saveStencilToHex(ofImage& img);
+	static void loadStencilFromHex(ofImage& img, unsigned char* data) ;
 }; 
