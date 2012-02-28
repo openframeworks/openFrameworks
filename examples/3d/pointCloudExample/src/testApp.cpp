@@ -40,6 +40,7 @@ void testApp::draw() {
 	// even points can overlap with each other, let's avoid that
 	cam.begin();
 	ofScale(2, -2, 2); // flip the y axis and zoom in a bit
+	ofRotateY(90);
 	ofTranslate(-img.getWidth() / 2, -img.getHeight() / 2);
 	mesh.draw();
 	cam.end();

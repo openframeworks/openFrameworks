@@ -27,8 +27,10 @@ class testApp : public ofBaseApp{
     
         void generateExamples();
         ofFileDialogResult makeNewProjectViaDialog();
+        ofFileDialogResult updateProjectViaDialog();
 
         void createProjectPressed(bool & pressed);
+        void updateProjectPressed(bool & pressed);
         void createAndOpenPressed(bool & pressed);
         void changeOFRootPressed(bool & pressed);
 
@@ -38,6 +40,6 @@ class testApp : public ofBaseApp{
         string platform;
 
         ofxPanel panelAddons, panelOptions;
-        ofxButton createProject, createAndOpen, changeOFRoot;
+        ofxButton createProject, updateProject, createAndOpen, changeOFRoot;
 
 };
