@@ -2,12 +2,13 @@
 
 //--------------------------------------------------------------
 void testApp::setup(){
-    
+		
     radius = 400;
     max = 60;
     
     glEnable(GL_DEPTH_TEST); //make sure we test depth for 3d
     
+		ofSetVerticalSync(true);
     ofEnableLighting();
     ofEnableAlphaBlending();
     ofEnableSmoothing();
@@ -67,9 +68,7 @@ void testApp::setup(){
     light.enable();
     light.setPointLight();
     light.setPosition(0,0,300);
-    
-    cam.cacheMatrices();
-    
+		
 }
 
 //--------------------------------------------------------------
