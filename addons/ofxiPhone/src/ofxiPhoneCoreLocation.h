@@ -57,6 +57,9 @@
 - (bool) startLocation;
 - (void) stopLocation;
 
+- (bool) startSignificantLocationChanges;
+- (void) stopSignificantLocationChanges;
+
 - (void)locationManager:(CLLocationManager *)manager
 	didUpdateToLocation:(CLLocation *)newLocation
 		   fromLocation:(CLLocation *)oldLocation;
@@ -79,7 +82,10 @@ class ofxiPhoneCoreLocation
 		
 		bool startLocation();
 		void stopLocation();
-		
+  
+    bool startTrackingLargeChanges();
+    void stopTrackingLargeChanges();	
+  
 		double getLatitude();
 		double getLongitude();
 		double getLocationAccuracy();
