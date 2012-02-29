@@ -149,6 +149,7 @@ inline int ofGetGLTypeFromPixelFormat(ofPixelFormat pixelFormat){
 		return GL_RGB;
 	case OF_PIXELS_RGBA:
 		return GL_RGBA;
+#ifndef TARGET_OS_IPHONE
     case OF_PIXELS_RGB565:
 #ifdef TARGET_ANDROID
     	return GL_RGB;
