@@ -93,8 +93,8 @@ void ofAppNoWindow::runAppViaInfiniteLoop(ofBaseApp * appPtr){
 	#endif
 
 	#ifdef OF_USING_POCO
-		ofNotifyEvent( ofEvents.setup, voidEventArgs );
-		ofNotifyEvent( ofEvents.update, voidEventArgs );
+		ofNotifyEvent( ofEvents().setup, voidEventArgs );
+		ofNotifyEvent( ofEvents().update, voidEventArgs );
 	#endif
 
     ofLogNotice()<<	"***\n***\n*** ofAppNoWindow running a headerless openFrameworks app\n"
@@ -151,7 +151,7 @@ void ofAppNoWindow::runAppViaInfiniteLoop(ofBaseApp * appPtr){
             ofAppPtr->update();
 
 		#ifdef OF_USING_POCO
-		ofNotifyEvent( ofEvents.update, voidEventArgs);
+		ofNotifyEvent( ofEvents().update, voidEventArgs);
 		#endif
 
 

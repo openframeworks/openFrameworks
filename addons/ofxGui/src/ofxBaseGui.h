@@ -3,23 +3,12 @@
 #include "ofxXmlSettings.h"
 #include "ofConstants.h"
 
-const ofColor
-headerBackgroundColor(64),
-backgroundColor(0),
-textColor(255),
-fillColor(128);
-
-const int textPadding = 4;
-const int defaultWidth = 200;
-const int defaultHeight = 16;
 
 class ofxBaseGui{
 public:
-	ofxBaseGui(){
-		bGuiActive = false;
-	}
+	ofxBaseGui();
 	
-	virtual ~ofxBaseGui(){}
+	virtual ~ofxBaseGui();
 
 	virtual void mouseMoved(ofMouseEventArgs & args) = 0;
 	virtual void mousePressed(ofMouseEventArgs & args) = 0;
@@ -29,24 +18,41 @@ public:
 	virtual void setValue(float mx, float my, bool bCheckBounds) = 0;
 	virtual void draw() = 0;
 	
-	void saveToFile(string filename) {
-		ofxXmlSettings xml;
-		xml.loadFile(filename);
-		saveToXml(xml);
-		xml.saveFile(filename);
-	}
-	
-	void loadFromFile(string filename) {
-		ofxXmlSettings xml;
-		xml.loadFile(filename);
-		loadFromXml(xml);
-	}
+	void saveToFile(string filename);
+	void loadFromFile(string filename);
 	
 	virtual void saveToXml(ofxXmlSettings& xml) = 0;
 	virtual void loadFromXml(ofxXmlSettings& xml) = 0;
 	
+	string getName();
+	void setName(string name);
+
+	void setPosition(ofPoint p);
+	void setPosition(float x, float y);
+	void setSize(float w, float h);
+	void setShape(ofRectangle r);
+	void setShape(float x, float y, float w, float h);
+
+	ofPoint getPosition();
+	ofRectangle getShape();
+	float getWidth();
+	float getHeight();
+
+protected:
 	string name;
 	unsigned long currentFrame;			
 	ofRectangle b;
 	bool bGuiActive;
+
+	static const ofColor headerBackgroundColor;
+	static const ofColor backgroundColor;
+	static const ofColor textColor;
+	static const ofColor fillColor;
+
+	static const int textPadding;
+	static const int defaultWidth;
+	static const int defaultHeight;
+
+	static string saveStencilToHex(ofImage& img);
+	static void loadStencilFromHex(ofImage& img, unsigned char* data) ;
 }; 
