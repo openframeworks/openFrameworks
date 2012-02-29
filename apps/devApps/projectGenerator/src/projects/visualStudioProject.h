@@ -7,7 +7,7 @@ class visualStudioProject : public baseProject {
     
 public: 
     
-    void setup();
+    void setup(string ofRoot= "../../../");
     
     bool load(string path);
     bool create(string path);
@@ -25,5 +25,5 @@ public:
 	static string LOG_NAME;
 
 private:
-	string projectDir, projectName;
+	string projectDir, projectName, ofRoot;
 };

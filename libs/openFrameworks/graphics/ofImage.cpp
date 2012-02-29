@@ -5,47 +5,57 @@
 #include "ofGraphics.h"
 #include "FreeImage.h"
 
-#ifdef TARGET_ANDROID
+#if defined(TARGET_ANDROID) || defined(TARGET_OF_IPHONE)
 #include <set>
 	// android destroys the opengl context on screen orientation change
 	// or when the application runs in the background so we need to reload
 	// all the textures when the context is created again.
 	// keeping a pointer to all the images we can tell them to reload from a static method
-	static set<ofImage *> all_images;
-	static set<ofFloatImage *> all_float_images;
-	static set<ofShortImage *> all_short_images;
+	static set<ofImage *> & all_images(){
+		static set<ofImage *> images = new set<ofImage *>;
+		return *images;
+	}
+	static set<ofFloatImage *> & all_float_images(){
+		static set<ofFloatImage *> images = new set<ofImage *>;
+		return *images;
+	}
+
+	static set<ofShortImage *> & all_short_images(){
+		static set<ofShortImage *> images = new set<ofImage *>;
+		return *images;
+	}
 
 	static void registerImage(ofImage * img){
-		all_images.insert(img);
+		all_images().insert(img);
 	}
 
 	static void registerImage(ofFloatImage * img){
-		all_float_images.insert(img);
+		all_float_images().insert(img);
 	}
 
 	static void registerImage(ofShortImage * img){
-		all_short_images.insert(img);
+		all_short_images().insert(img);
 	}
 
 	static void unregisterImage(ofImage * img){
-		all_images.erase(img);
+		all_images().erase(img);
 	}
 
 	static void unregisterImage(ofFloatImage * img){
-		all_float_images.erase(img);
+		all_float_images().erase(img);
 	}
 
 	static void unregisterImage(ofShortImage * img){
-		all_short_images.erase(img);
+		all_short_images().erase(img);
 	}
 
 	void ofReloadAllImageTextures(){
 		set<ofImage *>::iterator it;
-		for(it=all_images.begin(); it!=all_images.end(); it++){
+		for(it=all_images().begin(); it!=all_images().end(); it++){
 			(*it)->reloadTexture();
 		}
 		set<ofFloatImage *>::iterator f_it;
-		for(f_it=all_float_images.begin(); f_it!=all_float_images.end(); f_it++){
+		for(f_it=all_float_images().begin(); f_it!=all_float_images().end(); f_it++){
 			(*f_it)->reloadTexture();
 		}
 	}
@@ -513,7 +523,7 @@ ofImage_<PixelType>::ofImage_(){
 	//----------------------- init free image if necessary
 	ofInitFreeImage();
 
-#ifdef TARGET_ANDROID
+#if defined(TARGET_ANDROID) || defined(TARGET_OF_IPHONE)
 	registerImage(this);
 #endif
 }
@@ -530,7 +540,7 @@ ofImage_<PixelType>::ofImage_(const ofPixels_<PixelType> & pix){
 	//----------------------- init free image if necessary
 	ofInitFreeImage();
 
-#ifdef TARGET_ANDROID
+#if defined(TARGET_ANDROID) || defined(TARGET_OF_IPHONE)
 	registerImage(this);
 #endif
 
@@ -548,7 +558,7 @@ ofImage_<PixelType>::ofImage_(const ofFile & file){
 	//----------------------- init free image if necessary
 	ofInitFreeImage();
 
-#ifdef TARGET_ANDROID
+#if defined(TARGET_ANDROID) || defined(TARGET_OF_IPHONE)
 	registerImage(this);
 #endif
 
@@ -566,7 +576,7 @@ ofImage_<PixelType>::ofImage_(const string & filename){
 	//----------------------- init free image if necessary
 	ofInitFreeImage();
 
-#ifdef TARGET_ANDROID
+#if defined(TARGET_ANDROID) || defined(TARGET_OF_IPHONE)
 	registerImage(this);
 #endif
 
@@ -595,7 +605,7 @@ template<typename PixelType>
 ofImage_<PixelType>::~ofImage_(){
 	clear();
 
-#ifdef TARGET_ANDROID
+#if defined(TARGET_ANDROID) || defined(TARGET_OF_IPHONE)
 	unregisterImage(this);
 #endif
 }

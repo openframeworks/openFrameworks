@@ -7,8 +7,9 @@
 string visualStudioProject::LOG_NAME = "visualStudioProjectFile";
 
 
-void visualStudioProject::setup(){
-    
+void visualStudioProject::setup(string _ofRoot){
+    ofRoot = _ofRoot;
+    templatePath = ofFilePath::join(getOFRoot(),"scripts/vs2010/template");
 }
 
 bool visualStudioProject::load(string path){
@@ -41,12 +42,13 @@ bool visualStudioProject::create(string path){
 		ofLogVerbose(LOG_NAME) << "creating non existent project";
 		ofDirectory dir(projectDir);
 		dir.create(true);
-		ofFile::copyFromTo(getOFRoot()+"/scripts/vs2010/template/emptyExample_vs2010.vcxproj",project.path());
-		ofFile::copyFromTo(getOFRoot()+"/scripts/vs2010/template/emptyExample_vs2010.vcxproj.user",projectDir + projectName + ".vcxproj.user");
-		ofFile::copyFromTo(getOFRoot()+"/scripts/vs2010/template/emptyExample_vs2010.sln",projectDir + projectName + ".sln");
-		ofFile::copyFromTo(getOFRoot()+"/scripts/vs2010/template/src",projectDir);
-		ofFile::copyFromTo(getOFRoot()+"/scripts/vs2010/template/bin",projectDir);
-		project.open(projectDir + projectName + ".vcxproj");
+		ofFile::copyFromTo(ofFilePath::join(templatePath,"emptyExample_vs2010.vcxproj"),project.path());
+		ofFile::copyFromTo(ofFilePath::join(templatePath,"emptyExample_vs2010.vcxproj.user"),ofFilePath::join(projectDir, projectName + ".vcxproj.user"));
+		ofFile::copyFromTo(ofFilePath::join(templatePath,"emptyExample_vs2010.sln"),ofFilePath::join(projectDir, projectName + ".sln"));
+		ofFile::copyFromTo(ofFilePath::join(templatePath,"src"),projectDir);
+		ofFile::copyFromTo(ofFilePath::join(templatePath,"bin"),projectDir);
+		project.open(ofFilePath::join(projectDir , projectName + ".vcxproj"));
+		findandreplaceInTexfile(ofFilePath::join(projectDir , projectName + ".sln"),"emptyExample",projectName);
 	}
 
 	pugi::xml_parse_result result = doc.load(project);
