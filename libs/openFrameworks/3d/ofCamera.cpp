@@ -39,6 +39,7 @@ void ofCamera::setFarClip(float f) {
 	farClip = f;
 }
 
+//----------------------------------------
 void ofCamera::setupPerspective(bool vFlip, float fov, float nearDist, float farDist){
 	float width = ofGetWidth();
 	float height = ofGetHeight();
@@ -67,7 +68,6 @@ void ofCamera::setupPerspective(bool vFlip, float fov, float nearDist, float far
 		setScale(1,-1,1);
 	}
 }
-
 
 //----------------------------------------
 void ofCamera::enableOrtho() {

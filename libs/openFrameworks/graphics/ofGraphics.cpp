@@ -968,7 +968,7 @@ void ofBox(float size){
 		};
 		vertexData.addIndices(indices,36);
 		vertexData.setMode(OF_PRIMITIVE_TRIANGLES);
-		renderer->draw(vertexData);
+		renderer->draw(vertexData,vertexData.usingColors(),vertexData.usingTextures(),vertexData.usingNormals());
 	} else {
 		ofVec3f vertices[] = {
 			ofVec3f(+h,+h,+h),
@@ -1003,12 +1003,46 @@ void ofBox(float size){
 		vertexData.addIndices(indices,24);
 
 		vertexData.setMode(OF_PRIMITIVE_LINES);
-		renderer->draw(vertexData);
+		renderer->draw(vertexData, vertexData.usingColors(),vertexData.usingTextures(),vertexData.usingNormals());
 	}
 
 
 	ofPopMatrix();
 }
+
+//----------------------------------------
+void ofCone(float x, float y, float z, float radius, float height) {
+	ofCone(ofPoint(x, y, z), radius, height);
+}
+
+//----------------------------------------
+void ofCone(float x, float y, float radius, float height) {
+	ofCone(x, y, 0, radius, height);
+}
+
+//----------------------------------------
+void ofCone(const ofPoint& position, float radius, float height) {
+	ofPushMatrix();
+	ofTranslate(position);
+	ofCone(radius, height);
+	ofPopMatrix();
+}
+
+//----------------------------------------
+void ofCone(float radius, float height) {
+	// TODO: add an implementation using ofMesh
+#ifndef TARGET_OPENGLES
+	// this needs to be swapped out with non-glut code
+	// see ofSphere above
+	
+	if(ofGetStyle().bFill) {
+		glutSolidCone(radius, height, currentStyle.circleResolution, 1);
+	} else {
+		glutWireCone(radius, height, currentStyle.circleResolution, 1);
+	}
+#endif
+}
+
 
 // end 3d primitives
 //--------------------------------------------------

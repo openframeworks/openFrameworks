@@ -4,56 +4,92 @@
 
 
 
-#ifdef TARGET_WIN32
-    #include <direct.h>
-    #define GetCurrentDir _getcwd
-#elif TARGET_LINUX
-    #include <unistd.h>
-    #define GetCurrentDir getcwd
-#else
-    #include <mach-o/dyld.h>	/* _NSGetExecutablePath */
-    #include <limits.h>		/* PATH_MAX */
-#endif
 
 
 
 
 //--------------------------------------------------------------
 void testApp::setup(){
-	
-    
-    setOFRoot("../../../../../");
 
-    
-    #ifdef TARGET_OSX
-        char pathOSX[1024];
-        uint32_t size = sizeof(pathOSX);
-        if (_NSGetExecutablePath(pathOSX, &size) == 0)
-            printf("executable path is %s\n", pathOSX);
-        else
-            printf("buffer too small; need size %u\n", size);
-        string pathOSXnonApp = string(pathOSX);
-        string first, last;
-        splitFromLast(pathOSXnonApp, "/", first, last);
-        path.parse( first + "/" + ofToDataPath("") + getOFRoot() + "/");
-        path.makeAbsolute();
-        cout <<first + "/" + ofToDataPath("") + getOFRoot() + "/" <<endl;
-        cout << path.toString() << endl;
-    #else
-        char cCurrentPath[FILENAME_MAX];
-        cCurrentPath[sizeof(cCurrentPath) - 1] = '\0'; /* not really required */
-        printf ("The current working directory is %s", cCurrentPath);
-        path.parse( string(cCurrentPath) + getOFRoot() + "/");
-    #endif
-    
+	while(!checkConfigExists()){
+		askOFRoot();
+	}
 
+	setOFRoot(getOFRootFromConfig());
+
+    switch(ofGetTargetPlatform()){
+    case OF_TARGET_OSX:
+    	project = new xcodeProject;
+    	platform = "osx";
+    	break;
+    case OF_TARGET_WINGCC:
+    	project = new CBWinProject;
+    	platform = "wincb";
+    	break;
+    case OF_TARGET_WINVS:
+    	project = new visualStudioProject;
+    	platform = "vs2010";
+    	break;
+    case OF_TARGET_IPHONE:
+    	break;
+    case OF_TARGET_ANDROID:
+    	break;
+    case OF_TARGET_LINUX:
+    	project = new CBLinuxProject;
+    	platform = "linux";
+    	break;
+    case OF_TARGET_LINUX64:
+    	project = new CBLinuxProject;
+    	platform = "linux64";
+    	break;
+    }
+
+    if(projectPath!=""){
+        project->setup(getOFRelPath(projectPath));
+        project->create(projectPath);
+        vector < string > addons;
+        parseAddonsDotMake(project->getPath() + "addons.make", addons);
+        for (int i = 0; i < addons.size(); i++){
+            ofAddon addon;
+            addon.fromFS(ofFilePath::join(ofFilePath::join(getOFRoot(), "addons"), addons[i]),platform);
+            project->addAddon(addon);
+        }
+        project->save(projectPath);
+        std::exit(0);
+    }
+
+    panelAddons.setup("addons");
+    ofDirectory addons(ofFilePath::join(getOFRoot(),"addons"));
+    addons.listDir();
+    for(int i=0;i<(int)addons.size();i++){
+    	string addon = addons.getName(i);
+    	if(addon.find("ofx")==0){
+    		ofxToggle * toggle = new ofxToggle();
+    		panelAddons.add(toggle->setup(addon,false,300));
+    	}
+    }
+
+    panelOptions.setup("","settings.xml",ofGetWidth()-panelAddons.getWidth()-10,120);
+    panelOptions.add(createProject.setup("create project",300));
+    panelOptions.add(updateProject.setup("update project",300));
+    panelOptions.add(createAndOpen.setup("create and open project",300));
+    panelOptions.add(changeOFRoot.setup("change OF path",300));
+
+    createProject.addListener(this,&testApp::createProjectPressed);
+    updateProject.addListener(this,&testApp::updateProjectPressed);
+    createAndOpen.addListener(this,&testApp::createAndOpenPressed);
+    changeOFRoot.addListener(this,&testApp::changeOFRootPressed);
+
+    ofSetVerticalSync(true);
+    ofEnableAlphaBlending();
 }
 
 void testApp::generateExamples(){
     
     ofDirectory dir;
-    dir.listDir("../../../../../examples");
     
+    dir.listDir(ofFilePath::join(getOFRoot(),"examples"));
+
     for (int i = 0; i < dir.size(); i++){
         
         if (dir.getName(i) == "android" || dir.getName(i) == "ios") continue;
@@ -62,79 +98,95 @@ void testApp::generateExamples(){
         subdir.listDir(dir.getPath(i));
         
         for (int j = 0; j < subdir.size(); j++){
-            xcProject.setup();
-            xcProject.create(subdir.getPath(j));
+            project->setup();
+            project->create(subdir.getPath(j));
             vector < string > addons;
-            parseAddonsDotMake(xcProject.getPath() + "addons.make", addons);
+            parseAddonsDotMake(project->getPath() + "addons.make", addons);
             for (int i = 0; i < addons.size(); i++){
                 ofAddon addon;
-                addon.fromFS(getOFRoot()+ "/addons/" + addons[i],"osx");
-                xcProject.addAddon(addon);
+                addon.pathToOF = getOFRelPath(subdir.getPath(j));
+                addon.fromFS(ofFilePath::join(ofFilePath::join(getOFRoot(), "addons"), addons[i]),platform);
+                project->addAddon(addon);
             }
+            project->save(subdir.getPath(j));
         }
     }
-    
 }
 
-void testApp::makeNewProjectViaDialog(){
-    
-    
+ofFileDialogResult testApp::makeNewProjectViaDialog(){
     ofFileDialogResult res = ofSystemSaveDialog("newProjectName", "choose a folder for a new OF project :)");
-    if (res.fileName == "" || res.filePath == "") return;
-    Poco::Path base(true);
-    base.parse(res.filePath);
+    if (res.fileName == "" || res.filePath == "") return res;
+    //base.pushDirectory(res.fileName);   // somehow an extra things here helps?
+    
+    project->setup(getOFRelPath(res.filePath));
+    project->create(res.filePath);
+    vector<string> addonsToggles = panelAddons.getControlNames();
+	for (int i = 0; i < addonsToggles.size(); i++){
+		ofxToggle toggle = panelAddons.getToggle(addonsToggles[i]);
+		if(toggle){
+			ofAddon addon;
+            addon.pathToOF = getOFRelPath(res.filePath);
+			addon.fromFS(ofFilePath::join(ofFilePath::join(getOFRoot(), "addons"), addonsToggles[i]),platform);
+			printf("adding %s addons \n", addonsToggles[i].c_str());
+            project->addAddon(addon);
+            
+		}
+	}
+    project->save(res.filePath);
+    
+    return res;
+}
+
+ofFileDialogResult testApp::updateProjectViaDialog(){
+    ofFileDialogResult res = ofSystemLoadDialog("choose a folder to update an OF project :)",true);
+    if (res.fileName == "" || res.filePath == "") return res;
     //base.pushDirectory(res.fileName);   // somehow an extra things here helps?
 
-    
-    
-    string relPath;
-    if (path.toString() == base.toString()){
-        // do something.
-    }
+    project->setup(getOFRelPath(res.filePath));
+	project->create(res.filePath);
+	vector<string> addonsToggles = panelAddons.getControlNames();
+	for (int i = 0; i < addonsToggles.size(); i++){
+		ofxToggle toggle = panelAddons.getToggle(addonsToggles[i]);
+		if(toggle){
+			ofAddon addon;
+			addon.pathToOF = getOFRelPath(res.filePath);
+			addon.fromFS(ofFilePath::join(ofFilePath::join(getOFRoot(), "addons"), addonsToggles[i]),platform);
+			printf("adding %s addons \n", addonsToggles[i].c_str());
+			project->addAddon(addon);
 
-    int maxx = MAX(base.depth(), path.depth());
-    for (int i = 0; i < maxx; i++){
-        
-        bool bRunOut = false;
-        bool bChanged = false;
-        if (i <= base.depth() && i <= path.depth()){
-            if (base.directory(i) == path.directory(i)){
-                
-            } else {
-                bChanged = true;
-            }
-        } else {
-            bRunOut = true;
-        }
-        if (bRunOut == true || bChanged == true){
-            for (int j = i; j <= base.depth(); j++){
-                relPath += "../";
-            }
-            for (int j = i; j <= path.depth(); j++){
-                relPath += path.directory(j) + "/";
-            }
-            break;
-        }
-    }
-    
-    
-    relPath.erase(relPath.end()-1);
-    
-    
-    xcProject.setup();
-    xcProject.create(res.filePath);
-    
-    if (relPath != "../../../"){
-        findandreplaceInTexfile(res.filePath + "/" + res.fileName + ".xcodeproj/project.pbxproj", "../../../", relPath);
-        findandreplaceInTexfile(res.filePath + "/" + "Project.xcconfig", "../../../", relPath);
-        string relPath2 = relPath;
-        relPath2.erase(relPath2.end()-1);
-        findandreplaceInTexfile(res.filePath + "/" + "Project.xcconfig", "../../..", relPath2);
-        
-    }
-    
+		}
+	}
+	project->save(res.filePath);
+
+	return res;
 }
 
+void testApp::createProjectPressed(bool & pressed){
+	if(!pressed) makeNewProjectViaDialog();
+}
+
+void testApp::updateProjectPressed(bool & pressed){
+	if(!pressed) updateProjectViaDialog();
+}
+
+void testApp::createAndOpenPressed(bool & pressed){
+	if(!pressed){
+		ofFileDialogResult res = makeNewProjectViaDialog();
+		if(res.bSuccess){
+			#ifdef TARGET_LINUX
+				system(("/usr/bin/codeblocks " + ofFilePath::join(res.filePath, res.fileName+".workspace ") + "&").c_str());
+			#elif defined(TARGET_OSX)
+				system(("open " + ofFilePath::join(res.filePath, res.fileName+".xcodeproj ") + "&").c_str());
+			#elif defined(TARGET_WIN32)
+				system(("open " + ofFilePath::join(res.filePath, res.fileName+".workspace ") + "&").c_str());
+			#endif
+		}
+	}
+}
+
+void testApp::changeOFRootPressed(bool & pressed){
+	if(!pressed) askOFRoot();
+}
 
 
 
@@ -147,10 +199,18 @@ void testApp::update(){
 
 //--------------------------------------------------------------
 void testApp::draw(){
+	
+    //ofBackgroundGradient(ofColor::gray,ofColor::black);
+	
+    panelAddons.draw();
+	panelOptions.draw();
 
-    ofDrawBitmapString("press 'm' to make all files\npress ' ' to make a specific file", ofPoint(30,30));
-    
-     ofDrawBitmapString(path.toString(), ofPoint(30,60));
+	ofSetColor(0,0,0,100);
+	ofRect(ofGetWidth()-410,10,400,100);
+
+    /*ofDrawBitmapString("press 'm' to make all files\npress ' ' to make a specific file", ofPoint(30,30));*/
+	ofSetColor(255);
+    ofDrawBitmapString("OF path: " + getOFRoot(), ofPoint(ofGetWidth() - 390,30));
 }
 
 //--------------------------------------------------------------

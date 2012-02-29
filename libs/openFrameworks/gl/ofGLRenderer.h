@@ -19,9 +19,8 @@ public:
 	void setCurrentFBO(ofFbo * fbo);
 
 	void update();
-
-	void draw(ofMesh & vertexData);
-	void draw(ofMesh & vertexData, ofPolyRenderMode renderType);
+	void draw(ofMesh & vertexData, bool useColors=true, bool useTextures=true, bool useNormals = true);
+	void draw(ofMesh & vertexData, ofPolyRenderMode renderType, bool useColors=true, bool useTextures = true, bool useNormals=true);
 	void draw(ofPolyline & poly);
 	void draw(ofPath & path);
 	void draw(vector<ofPoint> & vertexData, ofPrimitiveMode drawMode);
@@ -132,7 +131,7 @@ private:
 	vector<ofPoint> circlePoints;
 	ofPolyline circlePolyline;
 	
-	vector<ofPoint> sphereVerts;
+	ofMesh sphereMesh;
 
 	ofFillFlag bFilled;
 	bool bSmoothHinted;
