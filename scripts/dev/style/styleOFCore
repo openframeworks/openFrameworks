@@ -5,6 +5,9 @@
 # 2012 Dan Wilcox <danomatika@gmail.com> for openFrameworks
 #
 
+# exit this script on an error
+#set -e
+
 # get the current working dir
 WD=$(dirname $0)
 
@@ -14,5 +17,5 @@ WD=$(dirname $0)
 cd $WD
 
 # run styler
-./ofStyler ../../../libs/openFrameworks cpp
 ./ofStyler ../../../libs/openFrameworks h
+./ofStyler ../../../libs/openFrameworks cpp
