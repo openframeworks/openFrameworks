@@ -150,7 +150,11 @@ inline int ofGetGLTypeFromPixelFormat(ofPixelFormat pixelFormat){
 	case OF_PIXELS_RGBA:
 		return GL_RGBA;
     case OF_PIXELS_RGB565:
+#ifdef TARGET_ANDROID
+    	return GL_RGB;
+#else
         return GL_RGB5;
+#endif
 	}
 }
 #endif /* OFGLUTILS_H_ */
