@@ -10,52 +10,6 @@
 ofImage ofxPanel::loadIcon;
 ofImage ofxPanel::saveIcon;
 
-static string saveStencilToHex(ofImage& img) {
-	stringstream strm;
-	int width = img.getWidth();
-	int height = img.getHeight();
-	int n = width * height;
-	unsigned char cur = 0;
-	int shift = 0;
-	strm << "{";
-	for(int i = 0; i < n;) {
-		if(img.getPixels()[i * 4 + 3] > 0) {
-			cur |= 1 << shift;
-		}
-		i++;
-		if(i % 8 == 0) {
-			strm << "0x" << hex << (unsigned int) cur;
-			cur = 0;
-			shift = 0;
-			if(i < n) {
-				strm << ",";
-			}
-		} else {
-			shift++;
-		}
-	}
-	strm << "}";
-	return strm.str();
-}
-
-static void loadStencilFromHex(ofImage& img, unsigned char* data) {
-	int width = img.getWidth();
-	int height = img.getHeight();
-	int i = 0;
-	ofColor on(255, 255);
-	ofColor off(255, 0);
-	for(int y = 0; y < height; y++) {
-		for(int x = 0; x < width; x++) {
-			int shift = i % 8;
-			int offset = i / 8;
-			bool cur = (data[offset] >> shift) & 1;
-			img.setColor(x, y, cur ? on : off);
-			i++;
-		}
-	}
-	img.update();
-}
-
 ofxPanel::ofxPanel(){
 	bGuiActive = false;
 	bGrabbed = false;
@@ -64,7 +18,7 @@ ofxPanel::ofxPanel(){
 ofxPanel::~ofxPanel(){
 }
 
-void ofxPanel::setup(string collectionName, string _filename, float x, float y){
+ofxPanel * ofxPanel::setup(string collectionName, string _filename, float x, float y){
 	name = collectionName;
 	b.x = x;
 	b.y = y;
@@ -75,6 +29,8 @@ void ofxPanel::setup(string collectionName, string _filename, float x, float y){
 	filename = _filename;
 
 	ofRegisterMouseEvents(this);
+
+	return this;
 }
 
 void ofxPanel::saveToXml(ofxXmlSettings& xml) {
@@ -208,19 +164,28 @@ vector<string> ofxPanel::getControlNames(){
 }
 
 ofxIntSlider ofxPanel::getIntSlider(string name){
-	return getControl<ofxIntSlider>(name);
+	return getControlType<ofxIntSlider>(name);
 }
 
 ofxFloatSlider ofxPanel::getFloatSlider(string name){
-	return getControl<ofxFloatSlider>(name);
+	return getControlType<ofxFloatSlider>(name);
 }
 
 ofxToggle ofxPanel::getToggle(string name){
-	return getControl<ofxToggle>(name);
+	return getControlType<ofxToggle>(name);
 }
 
 ofxButton ofxPanel::getButton(string name){
-	return getControl<ofxButton>(name);
+	return getControlType<ofxButton>(name);
+}
+
+ofxBaseGui * ofxPanel::getControl(string name){
+	for(int i=0; i<(int)collection.size(); i++){
+		if(collection[i]->getName()==name){
+			return collection[i];
+		}
+	}
+	return NULL;
 }
 
 void ofxPanel::setValue(float mx, float my, bool bCheck){
@@ -252,4 +217,16 @@ void ofxPanel::setValue(float mx, float my, bool bCheck){
 		b.x = mx - grabPt.x;
 		b.y = my - grabPt.y;
 	}
+}
+
+
+int ofxPanel::getNumControls(){
+	return collection.size();
+}
+
+ofxBaseGui * ofxPanel::getControl(int num){
+	if(num<(int)collection.size())
+		return collection[num];
+	else
+		return NULL;
 }

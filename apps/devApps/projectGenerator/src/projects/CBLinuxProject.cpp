@@ -77,12 +77,20 @@ bool CBLinuxProject::create(string path){
 		ofLogVerbose(LOG_NAME) << "creating non existent project";
 		ofDirectory dir(projectDir);
 		dir.create(true);
+
 		ofFile::copyFromTo(ofFilePath::join(templatePath,"emptyExample_linux.cbp"),project.path());
 		ofFile::copyFromTo(ofFilePath::join(templatePath,"emptyExample_linux.workspace"),ofFilePath::join(projectDir, projectName + ".workspace"));
 		ofFile::copyFromTo(ofFilePath::join(templatePath,"Makefile"),projectDir);
-		ofFile::copyFromTo(ofFilePath::join(templatePath,"config.make"),projectDir);
-		ofFile::copyFromTo(ofFilePath::join(templatePath,"src"),projectDir);
-		ofFile::copyFromTo(ofFilePath::join(templatePath,"bin"),projectDir);
+
+		ofFile config(ofFilePath::join(projectDir,"config.make"));
+		if(!config.exists()) ofFile::copyFromTo(ofFilePath::join(templatePath,"config.make"),projectDir);
+
+		ofDirectory src(ofFilePath::join(projectDir,"src"));
+		if(!src.exists()) ofFile::copyFromTo(ofFilePath::join(templatePath,"src"),projectDir);
+
+		ofDirectory bin(ofFilePath::join(projectDir,"bin"));
+		if(!bin.exists()) ofFile::copyFromTo(ofFilePath::join(templatePath,"bin"),projectDir);
+
 		project.open(ofFilePath::join(projectDir , projectName + ".cbp"));
 		findandreplaceInTexfile(ofFilePath::join(projectDir , projectName + ".workspace"),"emptyExample",projectName);
 	}
