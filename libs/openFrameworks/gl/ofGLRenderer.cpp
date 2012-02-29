@@ -977,21 +977,16 @@ void ofGLRenderer::drawCircle(float x, float y, float z,  float radius){
 //----------------------------------------------------------
 void ofGLRenderer::drawSphere(float x, float y, float z, float radius) {
     
-    ofMesh tempMesh;
-    tempMesh        = sphereMesh;
-    
-    ofVec3f* verts  = tempMesh.getVerticesPointer();
-    int numVerts    = sphereMesh.getNumVertices();
-    
-    for(int i = 0; i < numVerts; i++) {
-        verts[i] = verts[i] * radius;
-    }
-    
+    glEnable(GL_NORMALIZE);
+    glPushMatrix();
+    glScalef(radius, radius, radius);
     if(bFilled) {
-        tempMesh.draw();
+        sphereMesh.draw();
     } else {
-        tempMesh.drawWireframe();
+        sphereMesh.drawWireframe();
     }
+    glPopMatrix();
+    glDisable(GL_NORMALIZE);
     
 }
 
