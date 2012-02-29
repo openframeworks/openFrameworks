@@ -1220,7 +1220,7 @@ string ofFilePath::getCurrentExePath(){
 	readlink("/proc/self/exe",buff,FILENAME_MAX);
 	cout << buff << endl;
 	return buff;
-#elif defined(TARGET_OSX) || defined(TARGET_OF_IPHONE)
+#elif defined(TARGET_OSX)
 	char path[FILENAME_MAX];
 	uint32_t size = sizeof(path);
 	if (_NSGetExecutablePath(path, &size) == 0)
