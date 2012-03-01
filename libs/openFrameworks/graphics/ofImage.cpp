@@ -12,16 +12,16 @@
 	// all the textures when the context is created again.
 	// keeping a pointer to all the images we can tell them to reload from a static method
 	static set<ofImage *> & all_images(){
-		static set<ofImage *> images = new set<ofImage *>;
+		static set<ofImage *> * images = new set<ofImage *>;
 		return *images;
 	}
 	static set<ofFloatImage *> & all_float_images(){
-		static set<ofFloatImage *> images = new set<ofImage *>;
+		static set<ofFloatImage *> * images = new set<ofFloatImage *>;
 		return *images;
 	}
 
 	static set<ofShortImage *> & all_short_images(){
-		static set<ofShortImage *> images = new set<ofImage *>;
+		static set<ofShortImage *> * images = new set<ofShortImage *>;
 		return *images;
 	}
 

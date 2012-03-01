@@ -130,8 +130,8 @@
 	ofGetAppPtr()->setup();
 	
 #ifdef OF_USING_POCO
-	ofNotifyEvent( ofEvents.setup, voidEventArgs );
-	ofNotifyEvent( ofEvents.update, voidEventArgs );
+	ofNotifyEvent( ofEvents().setup, voidEventArgs );
+	ofNotifyEvent( ofEvents().update, voidEventArgs );
 #endif
 	
 	
