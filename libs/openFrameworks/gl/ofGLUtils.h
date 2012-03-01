@@ -155,6 +155,9 @@ inline int ofGetGLTypeFromPixelFormat(ofPixelFormat pixelFormat){
 #else
         return GL_RGB5;
 #endif
+	default:
+		ofLogError("ofGLUtils") << "Unknown GL type for this ofPixelFormat" << pixelFormat << "returning GL_LUMINANCE";
+		return GL_LUMINANCE;
 	}
 }
 #endif /* OFGLUTILS_H_ */
