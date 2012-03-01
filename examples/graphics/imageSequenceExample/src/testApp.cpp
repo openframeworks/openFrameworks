@@ -115,7 +115,7 @@ void testApp::draw() {
     info += ofToString(sequenceFPS)+" Sequence fps\n\n";
     info += "Keys:\nup & down arrows to\nchange app fps\n\n";
     info += "left & right arrows to\nchange sequence fps";
-    info += "\n\n'b' to toggle\nframe independent("+ofToString(bFrameIndependent)+")";
+    info += "\n\n't' to toggle\nframe independent("+ofToString(bFrameIndependent)+")";
     
     ofDrawBitmapString(info, 15, 20);
 }

@@ -314,7 +314,7 @@ void ofAppiPhoneWindow::timerLoop() {
 	ofGetAppPtr()->update();
 		
 	#ifdef OF_USING_POCO
-		ofNotifyEvent( ofEvents.update, voidEventArgs);
+		ofNotifyEvent( ofEvents().update, voidEventArgs);
 	#endif
 	
 	[ofxiPhoneGetAppDelegate() lockGL];
@@ -338,7 +338,7 @@ void ofAppiPhoneWindow::timerLoop() {
 	
 	ofGetAppPtr()->draw();
 	#ifdef OF_USING_POCO
-		ofNotifyEvent( ofEvents.draw, voidEventArgs );
+		ofNotifyEvent( ofEvents().draw, voidEventArgs );
 	#endif
 	
 	[ofxiPhoneGetGLView() finishRender];
