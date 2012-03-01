@@ -69,12 +69,14 @@ void testApp::setup(){
     	}
     }
 
-    panelOptions.setup("","settings.xml",ofGetWidth()-panelAddons.b.width-10,120);
-    panelOptions.add(createProject.setup("create/update project",300));
+    panelOptions.setup("","settings.xml",ofGetWidth()-panelAddons.getWidth()-10,120);
+    panelOptions.add(createProject.setup("create project",300));
+    panelOptions.add(updateProject.setup("update project",300));
     panelOptions.add(createAndOpen.setup("create and open project",300));
     panelOptions.add(changeOFRoot.setup("change OF path",300));
 
     createProject.addListener(this,&testApp::createProjectPressed);
+    updateProject.addListener(this,&testApp::updateProjectPressed);
     createAndOpen.addListener(this,&testApp::createAndOpenPressed);
     changeOFRoot.addListener(this,&testApp::changeOFRootPressed);
 
@@ -135,8 +137,36 @@ ofFileDialogResult testApp::makeNewProjectViaDialog(){
     return res;
 }
 
+ofFileDialogResult testApp::updateProjectViaDialog(){
+    ofFileDialogResult res = ofSystemLoadDialog("choose a folder to update an OF project :)",true);
+    if (res.fileName == "" || res.filePath == "") return res;
+    //base.pushDirectory(res.fileName);   // somehow an extra things here helps?
+
+    project->setup(getOFRelPath(res.filePath));
+	project->create(res.filePath);
+	vector<string> addonsToggles = panelAddons.getControlNames();
+	for (int i = 0; i < addonsToggles.size(); i++){
+		ofxToggle toggle = panelAddons.getToggle(addonsToggles[i]);
+		if(toggle){
+			ofAddon addon;
+			addon.pathToOF = getOFRelPath(res.filePath);
+			addon.fromFS(ofFilePath::join(ofFilePath::join(getOFRoot(), "addons"), addonsToggles[i]),platform);
+			printf("adding %s addons \n", addonsToggles[i].c_str());
+			project->addAddon(addon);
+
+		}
+	}
+	project->save(res.filePath);
+
+	return res;
+}
+
 void testApp::createProjectPressed(bool & pressed){
 	if(!pressed) makeNewProjectViaDialog();
+}
+
+void testApp::updateProjectPressed(bool & pressed){
+	if(!pressed) updateProjectViaDialog();
 }
 
 void testApp::createAndOpenPressed(bool & pressed){

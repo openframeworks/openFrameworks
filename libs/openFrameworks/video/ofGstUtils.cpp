@@ -193,7 +193,7 @@ bool ofGstUtils::startPipeline(){
 
 	setSpeed(1.0);
 
-	ofAddListener(ofEvents.update,this,&ofGstUtils::update);
+	ofAddListener(ofEvents().update,this,&ofGstUtils::update);
 
 	return true;
 }
@@ -350,7 +350,7 @@ void ofGstUtils::close(){
 	}
 
 	bLoaded = false;
-	ofRemoveListener(ofEvents.update,this,&ofGstUtils::update);
+	ofRemoveListener(ofEvents().update,this,&ofGstUtils::update);
 }
 
 static string getName(GstState state){

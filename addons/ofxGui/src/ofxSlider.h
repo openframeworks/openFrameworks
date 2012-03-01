@@ -8,46 +8,15 @@ class ofxSlider : public ofxBaseGui{
 	friend class ofPanel;
 	
 public:	
-	ofxSlider* setup(string sliderName, ofxParameter<Type> _val, Type _min, Type _max, float width = defaultWidth, float height = defaultHeight){
-		name = sliderName;
-		value = _val;
-		min = _min;
-		max = _max;
-		b.x = 0;
-		b.y = 0;
-		b.width = width;
-		b.height = height;
-		currentFrame = 0;			
-		bGuiActive = false;
-		return this;
-	}
+	ofxSlider* setup(string sliderName, ofxParameter<Type> _val, Type _min, Type _max, float width = defaultWidth, float height = defaultHeight);
 	
-	virtual void mouseMoved(ofMouseEventArgs & args){
-	}
+	virtual void mouseMoved(ofMouseEventArgs & args);
+	virtual void mousePressed(ofMouseEventArgs & args);
+	virtual void mouseDragged(ofMouseEventArgs & args);
+	virtual void mouseReleased(ofMouseEventArgs & args);
 	
-	virtual void mousePressed(ofMouseEventArgs & args){
-		setValue(args.x, args.y, true);
-	}
-	
-	virtual void mouseDragged(ofMouseEventArgs & args){
-		setValue(args.x, args.y, false);
-	}
-	
-	virtual void mouseReleased(ofMouseEventArgs & args){
-		bGuiActive = false;		
-	}	
-	
-	virtual void saveToXml(ofxXmlSettings& xml) {
-		string xmlName = name;
-		ofStringReplace(xmlName," ","_");
-		xml.setValue(xmlName, value);
-	}
-	
-	virtual void loadFromXml(ofxXmlSettings& xml) {
-		string xmlName = name;
-		ofStringReplace(xmlName," ","_");
-		value = xml.getValue(xmlName, value);
-	}
+	virtual void saveToXml(ofxXmlSettings& xml);
+	virtual void loadFromXml(ofxXmlSettings& xml);
 
 	template<class ListenerClass>
 	void addListener(ListenerClass * listener, void ( ListenerClass::*method )(Type&)){
@@ -60,61 +29,17 @@ public:
 	}
 
 
-	double operator=(Type v){
-		value = v;
-		return v;
-	}
+	double operator=(Type v);
+	operator Type & ();
 
-	operator Type & (){
-		return value;
-	}
-
-	void draw(){
-		ofPushStyle();
-		ofPushMatrix();
-	
-		currentFrame = ofGetFrameNum();
-		ofFill();
-		ofSetColor(backgroundColor);
-		ofRect(b);
-		
-		ofTranslate(b.x, b.y);		
-		float valAsPct = ofMap( value, min, max, 0, b.width-2, true );
-		ofEnableAlphaBlending();
-		ofSetColor(fillColor);		
-		ofRect(1, 1, valAsPct, b.height-2);
-		
-		ofTranslate(0, b.height / 2 + 4);
-		ofSetColor(textColor);
-		ofDrawBitmapString(name, textPadding, 0);
-		string valStr = ofToString(value.getValue());
-		ofDrawBitmapString(valStr, b.width - textPadding - valStr.length() * 8, 0);
-		
-		ofPopMatrix();
-		ofPopStyle();
-	}
+	void draw();
 	
 	ofxParameter<Type> value;
 
 protected:
 	Type min, max;
 	
-	void setValue(float mx, float my, bool bCheck){
-		if( ofGetFrameNum() - currentFrame > 1 ){
-			bGuiActive = false;
-			return; 
-		}
-		if( bCheck ){
-			if( b.inside(mx, my) ){
-				bGuiActive = true;
-			}else{
-				bGuiActive = false;
-			}
-		}
-		if( bGuiActive ){
-			value = ofMap(mx, b.x, b.x + b.width, min, max, true);
-		}
-	}
+	void setValue(float mx, float my, bool bCheck);
 };
 
 typedef ofxSlider<float> ofxFloatSlider;
