@@ -85,7 +85,7 @@ protected:
 		char			tmpBuff[TCP_MAX_MSG_SIZE+1];
 		string			str, tmpStr, ipAddr;
 		int				index, messageSize, port;
-		bool			connected, verbose;
+		bool			connected;
 		string 			partialPrevMsg;
 		string			messageDelimiter;
 };
