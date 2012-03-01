@@ -14,30 +14,94 @@
 #set -e
 
 # the uncrustify style file
-CONFIG_FILE=openFrameworks_style.cfg
+OF_CONFIG_FILE=openFrameworks_style.cfg
+
+# the config file to use
+CONFIG_FILE=$OF_CONFIG_FILE
+
+# a temp config file for adding options
+TEMP_CONFIG=""
+
+# the header file to use
+HEADER=""
 
 # comment this for debug output
 QUIET=-q
 
-###
+# usage text
+HELP="
+ Usage: ofStyler [options] file/dir [filesuffix]
+     ofStyler filename
+     ofStyler dirname filesuffix
 
-function printUsage() {
-	echo
-	echo "Usage:"
-	echo "	ofStyler dirname filesuffix"
-	echo "	ofStyler filename"
-	echo
-	echo "Example:"
-	echo "	ofStyler ../../../libs/openFrameworks cpp"
-	echo "	ofStyler myFile.cpp"
-	echo
-}
+ Format a source code file or directory of files according
+ to the OF style guidelines using uncrustify.
 
+ Options:
+ -v   print uncrustify log messages (for debugging)
+ -a   add a comment header to files,
+      does not overwrite existing header
+ -h   this usage guide
+ 
+ Example:
+     ofStyler ../../../libs/openFrameworks cpp
+     ofStyler myFile.cpp
+     ofStyle -a example_header_template.txt myHeaderlessFile.h
+"
+
+#### BEGIN commandline parsing
+# from http://stackoverflow.com/questions/402377/using-getopts-in-bash-shell-script-to-get-long-and-short-command-line-options
+
+# We need TEMP as the `eval set --' would nuke the return value of getopt.
+TEMP=`getopt hva: "$@"`
+
+if [ $? != 0 ] ; then echo "$HELP" >&2 ; exit 1 ; fi
+
+# Note the quotes around `$TEMP': they are essential!
+eval set -- "$TEMP"
+
+while true ; do
+	case "$1" in
+		-v|--verbose)	# set verbosity
+			QUIET="" ;  shift 2 ;;
+		-a|--add-header) # add a header
+			HEADER="$2" ; shift 2 ;;
+		-h|--help)	# print help and exit
+			echo "$HELP"; exit 0 ;;
+		--) shift ; break ;;	# do nothing
+		*) break ;;
+	esac
+done
+
+# check commandline
+if [ "$1" == "" ] ; then
+	echo "$HELP"
+	exit 1
+fi
+
+#### Functions
+
+# does a command exist?
+# returns bool
 function commandExists() {
 	hash "$1" 2>&-
 }
 
-###
+# create a temp config with a given header to add
+function createConfigWithHeader() {
+	TEMP_CONFIG=$SCRIPT_DIR/config_with_header.cfg
+	
+	# load tmp cfg with current cfg values
+	cat $CONFIG_FILE > $TEMP_CONFIG
+	
+	# append uncrustify header file option
+	echo "cmt_insert_file_header=$HEADER" >> $TEMP_CONFIG
+	
+	# use temp script
+	CONFIG_FILE=$TEMP_CONFIG
+}
+
+#### Run
 
 # is uncrustify installed?
 if ! commandExists uncrustify ; then
@@ -59,16 +123,17 @@ fi
 # get the current working dir
 SCRIPT_DIR=$(dirname $0)
 
-# got any options?
-if [ ! -n "$1" ]; then
-	printUsage
-	exit 1
-fi
+# are we adding a header?
+if [ "$HEADER" != "" ] ; then
 
-# simple check for help flags
-if [ "$1" == "-h" -o "$1" == "--help" ]; then
-	printUsage
-	exit 0
+	# does the given file exist?
+	if [ ! -e $HEADER ] ; then
+		echo "ERROR: header $HEADER could not be found"
+		exit 1
+	fi
+	
+	# create a temp config file
+	createConfigWithHeader
 fi
 
 # recurse through a dir
@@ -94,12 +159,16 @@ else
 	
 	# style a single given file
 	if [ -f "$1" ]; then
-		echo "Styling one file $1"
+		echo "Styling file $1"
 		uncrustify $QUIET "$1" -c $SCRIPT_DIR/$CONFIG_FILE --no-backup
 	else
 		echo
 		echo "ERROR: directory or file $1 does not exist!"
-		printUsage
 		exit 1
 	fi
+fi
+
+# clean up temp header
+if [ "$HEADER" != "" ] ; then
+	rm -f $TEMP_CONFIG
 fi

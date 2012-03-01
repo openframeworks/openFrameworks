@@ -13,7 +13,7 @@ Install it to your standard path for the scripts to work:
 * Ubuntu
 	* sudo apt-get install uncrustify
 
-The files currently formatted are .h & .cpp, although Obj-C support may be added in the future.
+The files currently formatted are .h & .cpp, although Obj-C/C++ support may be added in the future.
 
 ## openFrameworks_style.cfg
 

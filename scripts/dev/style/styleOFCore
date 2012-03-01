@@ -17,5 +17,5 @@ WD=$(dirname $0)
 cd $WD
 
 # run styler
-./ofStyler ../../../libs/openFrameworks h
-./ofStyler ../../../libs/openFrameworks cpp
+./ofStyler -a core_header.txt ../../../libs/openFrameworks h
+./ofStyler -a core_header.txt ../../../libs/openFrameworks cpp
