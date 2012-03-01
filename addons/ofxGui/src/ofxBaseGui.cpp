@@ -77,3 +77,49 @@ float ofxBaseGui::getWidth(){
 float ofxBaseGui::getHeight(){
 	return b.height;
 }
+
+string ofxBaseGui::saveStencilToHex(ofImage& img) {
+	stringstream strm;
+	int width = img.getWidth();
+	int height = img.getHeight();
+	int n = width * height;
+	unsigned char cur = 0;
+	int shift = 0;
+	strm << "{";
+	for(int i = 0; i < n;) {
+		if(img.getPixels()[i * 4 + 3] > 0) {
+			cur |= 1 << shift;
+		}
+		i++;
+		if(i % 8 == 0) {
+			strm << "0x" << hex << (unsigned int) cur;
+			cur = 0;
+			shift = 0;
+			if(i < n) {
+				strm << ",";
+			}
+		} else {
+			shift++;
+		}
+	}
+	strm << "}";
+	return strm.str();
+}
+
+void ofxBaseGui::loadStencilFromHex(ofImage& img, unsigned char* data) {
+	int width = img.getWidth();
+	int height = img.getHeight();
+	int i = 0;
+	ofColor on(255, 255);
+	ofColor off(255, 0);
+	for(int y = 0; y < height; y++) {
+		for(int x = 0; x < width; x++) {
+			int shift = i % 8;
+			int offset = i / 8;
+			bool cur = (data[offset] >> shift) & 1;
+			img.setColor(x, y, cur ? on : off);
+			i++;
+		}
+	}
+	img.update();
+}
