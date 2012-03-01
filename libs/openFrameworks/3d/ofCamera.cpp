@@ -16,9 +16,7 @@ isOrtho(false),
 fov(60),
 nearClip(0),
 farClip(0),
-isActive(false),
-hasStoredMatrices(false),
-bCacheMatrices(false)
+isActive(false)
 {
 }
 
@@ -39,6 +37,36 @@ void ofCamera::setNearClip(float f) {
 //----------------------------------------
 void ofCamera::setFarClip(float f) {
 	farClip = f;
+}
+
+//----------------------------------------
+void ofCamera::setupPerspective(bool vFlip, float fov, float nearDist, float farDist){
+	float width = ofGetWidth();
+	float height = ofGetHeight();
+
+	float viewW = ofGetViewportWidth();
+	float viewH = ofGetViewportHeight();
+
+	float eyeX = viewW / 2;
+	float eyeY = viewH / 2;
+	float halfFov = PI * fov / 360;
+	float theTan = tanf(halfFov);
+	float dist = eyeY / theTan;
+
+	if(nearDist == 0) nearDist = dist / 10.0f;
+	if(farDist == 0) farDist = dist * 10.0f;
+
+	setFov(fov);
+	setNearClip(nearDist);
+	setFarClip(farDist);
+
+	setPosition(eyeX,eyeY,dist);
+	lookAt(ofVec3f(eyeX,eyeY,0),ofVec3f(0,1,0));
+
+
+	if(vFlip){
+		setScale(1,-1,1);
+	}
 }
 
 //----------------------------------------
@@ -90,15 +118,6 @@ void ofCamera::begin(ofRectangle viewport) {
 	glMatrixMode(GL_MODELVIEW);
 	glLoadMatrixf(ofMatrix4x4::getInverseOf(getGlobalTransformMatrix()).getPtr());
 	ofViewport(viewport);
-	
-	//store current matrices
-	if (bCacheMatrices)
-	{
-		glGetFloatv(GL_PROJECTION_MATRIX, matProjection.getPtr());
-		glGetFloatv(GL_MODELVIEW_MATRIX, matModelView.getPtr());
-		hasStoredMatrices = true;
-	}
-	
 }
 
 // if begin(); pushes first, then we need an end to pop
@@ -112,29 +131,15 @@ void ofCamera::end() {
 }
 //----------------------------------------
 ofMatrix4x4 ofCamera::getProjectionMatrix(ofRectangle viewport) {
-	
-	if (bCacheMatrices)
-		return matProjection;
-	else
-	{
-		OF_CAMERA_MATRIX_CACHE_WARNING
-		matProjection.makePerspectiveMatrix(fov, viewport.width/viewport.height, nearClip, farClip);
-		return matProjection;
-	}
-
+	ofMatrix4x4 matProjection;
+	matProjection.makePerspectiveMatrix(fov, viewport.width/viewport.height, nearClip, farClip);
+	return matProjection;
 }
 //----------------------------------------
 ofMatrix4x4 ofCamera::getModelViewMatrix() {
-
-	if (bCacheMatrices)
-		return matModelView;
-	else
-	{
-		OF_CAMERA_MATRIX_CACHE_WARNING
-		matModelView.makeInvertOf(getGlobalTransformMatrix());
-		return matModelView;
-	}
-
+	ofMatrix4x4 matModelView;
+	matModelView.makeInvertOf(getGlobalTransformMatrix());
+	return matModelView;
 }
 //----------------------------------------
 ofMatrix4x4 ofCamera::getModelViewProjectionMatrix(ofRectangle viewport) {
@@ -192,9 +197,4 @@ void ofCamera::calcClipPlanes(ofRectangle viewport)
 		nearClip = (nearClip == 0) ? dist / 100.0f : nearClip;
 		farClip = (farClip == 0) ? dist * 10.0f : farClip;
 	}
-}
-
-
-void ofCamera::cacheMatrices(bool cache){
-	bCacheMatrices = cache;
 }

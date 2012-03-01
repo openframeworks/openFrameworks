@@ -68,6 +68,7 @@ void model3DS::loadModel(const char* filename, float scale){
 	}
 	m_drawMode = DRAW_VERTEX_ARRAY;
 
+
 	// Initialise bounding box to min & max 4-byte float values
 	m_boundingBox.minX = m_boundingBox.minY = m_boundingBox.minZ = 3.4e+38f;
 	m_boundingBox.maxX = m_boundingBox.maxY = m_boundingBox.maxZ = 3.4e-38f;
@@ -103,6 +104,7 @@ void model3DS::readChunk(std::ifstream *modelFile, const int objectStart, const 
 	unsigned long offset;
     ushort numVertices;
 	ushort usTemp;
+	ushort usTemp1, usTemp2, usTemp3;
 	unsigned int uiTemp;
 	float vertexX,vertexY,vertexZ;
     int v;
@@ -161,24 +163,35 @@ void model3DS::readChunk(std::ifstream *modelFile, const int objectStart, const 
 
             case CHUNK_VERTICES:
                 modelFile->read((char*)&numVertices,2);
+
                 for(v=0; v < numVertices*3; v+=3){
                     modelFile->read((char*)&vertexX,4);
 					modelFile->read((char*)&vertexY,4);
 					modelFile->read((char*)&vertexZ,4);
+
 					// 3DS Max has different axes to OpenGL
 					vertexX *= m_scale;
 					vertexY *= m_scale;
 					vertexZ *= m_scale;
+
                     m_currentMesh->addVertex(vertexX);// x
-                    m_currentMesh->addVertex(vertexZ);// y
-                    m_currentMesh->addVertex(-vertexY);// z
+                    m_currentMesh->addVertex(vertexY);// y
+                    m_currentMesh->addVertex(vertexZ);// z
+					
 					// Update bounding box
-					if(vertexX < m_boundingBox.minX)m_boundingBox.minX = vertexX;
-					if(vertexZ < m_boundingBox.minY)m_boundingBox.minY = vertexZ;
-					if(-vertexY < m_boundingBox.minZ)m_boundingBox.minZ = -vertexY;
-					if(vertexX > m_boundingBox.maxX)m_boundingBox.maxX = vertexX;
-					if(vertexZ > m_boundingBox.maxY)m_boundingBox.maxY = vertexZ;
-					if(-vertexY > m_boundingBox.maxZ)m_boundingBox.maxZ = -vertexY;
+					if(vertexX < m_boundingBox.minX)
+						m_boundingBox.minX = vertexX;
+					if(vertexY < m_boundingBox.minY)
+						m_boundingBox.minY = vertexY;
+					if(vertexZ < m_boundingBox.minZ)
+						m_boundingBox.minZ = vertexZ;
+
+					if(vertexX > m_boundingBox.maxX)
+						m_boundingBox.maxX = vertexX;
+					if(vertexY > m_boundingBox.maxY)
+						m_boundingBox.maxY = vertexY;
+					if(vertexZ > m_boundingBox.maxZ)
+						m_boundingBox.maxZ = vertexZ;
                 }
                 break;
 
@@ -196,9 +209,13 @@ void model3DS::readChunk(std::ifstream *modelFile, const int objectStart, const 
                 modelFile->read((char*)&m_tempUshort,2);
 
                 for(v=0; v < m_tempUshort*3; v+=3){
-                    modelFile->read((char*)&usTemp,2);m_currentMesh->addFaceIndex(usTemp);
-					modelFile->read((char*)&usTemp,2);m_currentMesh->addFaceIndex(usTemp);
-					modelFile->read((char*)&usTemp,2);m_currentMesh->addFaceIndex(usTemp);
+                    modelFile->read((char*)&usTemp1,2);
+					modelFile->read((char*)&usTemp2,2);
+					modelFile->read((char*)&usTemp3,2);
+					m_currentMesh->addFaceIndex(usTemp1);
+					m_currentMesh->addFaceIndex(usTemp2);
+					m_currentMesh->addFaceIndex(usTemp3);
+
 					modelFile->read((char*)&usTemp,2); //face flags
                 }
 
@@ -496,8 +513,11 @@ void mesh3DS::draw(){
 
 		// Bind texture map (if any)
 		bool hasTextureMap = currentMaterial.hasTextureMap();
-		if(hasTextureMap) glBindTexture(GL_TEXTURE_2D, currentMaterial.getTextureMapId());
-		else glBindTexture(GL_TEXTURE_2D, 0);
+		if(hasTextureMap) {
+			glBindTexture(GL_TEXTURE_2D, currentMaterial.getTextureMapId());
+		}
+		else 
+			glBindTexture(GL_TEXTURE_2D, 0);
 
 		const GLfloat *specular = currentMaterial.getSpecularColor();
 		float shininess = currentMaterial.getShininess();
@@ -585,7 +605,24 @@ void mesh3DS::draw(){
 
 				break;
 
+
 			case DRAW_VBO:
+
+				glGenBuffers( 1 , &m_verticesArrayId );
+				glBindBuffer( GL_ARRAY_BUFFER , m_verticesArrayId );
+				glBufferData( GL_ARRAY_BUFFER , m_vertices.size() * sizeof( float ) , &m_vertices[0] , GL_STATIC_DRAW );
+
+				glGenBuffers( 1 , &m_normalsArrayId );
+				glBindBuffer( GL_ARRAY_BUFFER , m_normalsArrayId );
+				glBufferData( GL_ARRAY_BUFFER , m_normals.size() * sizeof( float ) , &m_normals[0] , GL_STATIC_DRAW );
+
+				if(hasTextureMap){
+					glGenBuffers( 1 , &m_texcoordsArrayId );
+					glBindBuffer( GL_ARRAY_BUFFER , m_texcoordsArrayId );
+					glBufferData( GL_ARRAY_BUFFER , m_texcoords.size() * sizeof( float ) , &m_texcoords[0] , GL_STATIC_DRAW );
+				}
+
+				//vPos = getAttribLocation( 
 
 				break;
 
@@ -598,17 +635,10 @@ void mesh3DS::draw(){
 	}
 }
 
+
 void model3DS::draw(){
-
-
 	std::vector<mesh3DS>::iterator meshIter;
-
-	glPushMatrix();
-		glTranslatef(-m_centerX,-m_centerY,-m_centerZ);
-
-		for(meshIter = m_meshes.begin(); meshIter != m_meshes.end(); meshIter++){
-			meshIter->draw();
-		}
-	glPopMatrix();
+	for(meshIter = m_meshes.begin(); meshIter != m_meshes.end(); meshIter++)
+		meshIter->draw( );
 }
 

@@ -26,21 +26,21 @@ void ofGLRenderer::update(){
 }
 
 //----------------------------------------------------------
-void ofGLRenderer::draw(ofMesh & vertexData){
+void ofGLRenderer::draw(ofMesh & vertexData, bool useColors, bool useTextures, bool useNormals){
 	if(vertexData.getNumVertices()){
 		glEnableClientState(GL_VERTEX_ARRAY);
 		glVertexPointer(3, GL_FLOAT, sizeof(ofVec3f), &vertexData.getVerticesPointer()->x);
 	}
-	if(vertexData.getNumNormals()){
+	if(vertexData.getNumNormals() && useNormals){
 		glEnableClientState(GL_NORMAL_ARRAY);
 		glNormalPointer(GL_FLOAT, sizeof(ofVec3f), &vertexData.getNormalsPointer()->x);
 	}
-	if(vertexData.getNumColors()){
+	if(vertexData.getNumColors() && useColors){
 		glEnableClientState(GL_COLOR_ARRAY);
 		glColorPointer(4,GL_FLOAT, sizeof(ofFloatColor), &vertexData.getColorsPointer()->r);
 	}
 
-	if(vertexData.getNumTexCoords()){
+	if(vertexData.getNumTexCoords() && useTextures){
 		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 		glTexCoordPointer(2, GL_FLOAT, sizeof(ofVec2f), &vertexData.getTexCoordsPointer()->x);
 	}
@@ -66,27 +66,28 @@ void ofGLRenderer::draw(ofMesh & vertexData){
 }
 
 //----------------------------------------------------------
-void ofGLRenderer::draw(ofMesh & vertexData, ofPolyRenderMode renderType){
+void ofGLRenderer::draw(ofMesh & vertexData, ofPolyRenderMode renderType, bool useColors, bool useTextures, bool useNormals){
+		if (bSmoothHinted) startSmoothing();
 #ifndef TARGET_OPENGLES
 		glPushAttrib(GL_POLYGON_BIT);
 		glPolygonMode(GL_FRONT_AND_BACK, ofGetGLPolyMode(renderType));
-		draw(vertexData);
+		draw(vertexData,useColors,useTextures,useNormals);
 		glPopAttrib(); //TODO: GLES doesnt support polygon mode, add renderType to gl renderer?
 #else
 		if(vertexData.getNumVertices()){
 			glEnableClientState(GL_VERTEX_ARRAY);
 			glVertexPointer(3, GL_FLOAT, sizeof(ofVec3f), vertexData.getVerticesPointer());
 		}
-		if(vertexData.getNumNormals()){
+		if(vertexData.getNumNormals() && useNormals){
 			glEnableClientState(GL_NORMAL_ARRAY);
 			glNormalPointer(GL_FLOAT, 0, vertexData.getNormalsPointer());
 		}
-		if(vertexData.getNumColors()){
+		if(vertexData.getNumColors() && useColors){
 			glEnableClientState(GL_COLOR_ARRAY);
 			glColorPointer(4,GL_FLOAT, sizeof(ofFloatColor), vertexData.getColorsPointer());
 		}
 
-		if(vertexData.getNumTexCoords()){
+		if(vertexData.getNumTexCoords() && useTextures){
 			glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 			glTexCoordPointer(2, GL_FLOAT, 0, vertexData.getTexCoordsPointer());
 		}
@@ -112,25 +113,27 @@ void ofGLRenderer::draw(ofMesh & vertexData, ofPolyRenderMode renderType){
 		}else{
 			glDrawArrays(drawMode, 0, vertexData.getNumVertices());
 		}
-		if(vertexData.getNumColors()){
+		if(vertexData.getNumColors() && useColors){
 			glDisableClientState(GL_COLOR_ARRAY);
 		}
-		if(vertexData.getNumNormals()){
+		if(vertexData.getNumNormals() && useNormals){
 			glDisableClientState(GL_NORMAL_ARRAY);
 		}
-		if(vertexData.getNumTexCoords()){
+		if(vertexData.getNumTexCoords() && useTextures){
 			glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 		}
 #endif
-
+		if (bSmoothHinted) endSmoothing();
 }
 
 //----------------------------------------------------------
 void ofGLRenderer::draw(vector<ofPoint> & vertexData, ofPrimitiveMode drawMode){
 	if(!vertexData.empty()) {
+		if (bSmoothHinted) startSmoothing();
 		glEnableClientState(GL_VERTEX_ARRAY);
 		glVertexPointer(3, GL_FLOAT, sizeof(ofVec3f), &vertexData[0].x);
 		glDrawArrays(ofGetGLPrimitiveMode(drawMode), 0, vertexData.size());
+		if (bSmoothHinted) endSmoothing();
 	}
 }
 
@@ -521,14 +524,10 @@ void ofGLRenderer::setCircleResolution(int res){
 void ofGLRenderer::setSphereResolution(int res) {
 	int n = res * 2;
 	float ndiv2=(float)n/2;
-	int stripVerts = (ndiv2*((n+1)*2));
-	
-	if((int)sphereVerts.size() != stripVerts ) {
-		sphereVerts.clear();
-		sphereVerts.resize( (ndiv2*((n+1)*2)) );
-	} else {
-		return;
-	}
+    
+    if(ofGetUsingArbTex()) {
+        
+    }
 	
 	/*
 	 Original code by Paul Bourke
@@ -541,40 +540,43 @@ void ofGLRenderer::setSphereResolution(int res) {
 	float theta2 = TWO_PI;
 	float phi1 = -HALF_PI;
 	float phi2 = HALF_PI;
-	float radius = 1.f; // normalize the verts //
-	
+	float r = 1.f; // normalize the verts //
+    
+	sphereMesh.clear();
+    sphereMesh.setMode(OF_PRIMITIVE_TRIANGLE_STRIP);
+    
 	int i, j;
+    float theta1 = 0.f;
 	float jdivn,j1divn,idivn,dosdivn,unodivn=1/(float)n,t1,t2,t3,cost1,cost2,cte1,cte3;
-	cte3 = (theta2)/n;
+	cte3 = (theta2-theta1)/n;
 	cte1 = (phi2-phi1)/ndiv2;
 	dosdivn = 2*unodivn;
 	ofVec3f e,p,e2,p2;
-	
-	// Handle special cases //
+    
 	if (n < 0){
 		n = -n;
 		ndiv2 = -ndiv2;
 	}
-	if (n < 4) {
-		ofLogWarning() << "ofGLRenderer::setSphereResolution(): sphere resolution is too low!";
-	}
+	if (n < 4) {n = 4; ndiv2=(float)n/2;}
+    if(r <= 0) r = 1;
 	
 	t2=phi1;
 	cost2=cos(phi1);
 	j1divn=0;
-	
-	int cindex = 0; // current index //
+    
+    ofVec3f vert, normal;
+    ofVec2f tcoord;
 	
 	for (j=0;j<ndiv2;j++) {
 		t1 = t2;
 		t2 += cte1;
-		t3 = -cte3;
+		t3 = theta1 - cte3;
 		cost1 = cost2;
 		cost2 = cos(t2);
 		e.y = sin(t1);
 		e2.y = sin(t2);
-		p.y = radius * e.y;
-		p2.y = radius * e2.y;
+		p.y = r * e.y;
+		p2.y = r * e2.y;
 		
 		idivn=0;
 		jdivn=j1divn;
@@ -583,24 +585,32 @@ void ofGLRenderer::setSphereResolution(int res) {
 			t3 += cte3;
 			e.x = cost1 * cos(t3);
 			e.z = cost1 * sin(t3);
-			p.x = radius * e.x;
-			p.z = radius * e.z;
+			p.x = r * e.x;
+			p.z = r * e.z;
 			
-			cindex = (j * (n+1) + i) * 2;
-			//tcoords[cindex].set(idivn,jdivn);
-			sphereVerts[cindex].set(p.x,p.y,p.z);
-			//norms[cindex].set(e.x,e.y,e.z);
+            normal.set( e.x, e.y, e.z );
+            tcoord.set( idivn, jdivn );
+            vert.set( p.x, p.y, p.z );
+            
+            sphereMesh.addNormal(normal);
+            sphereMesh.addTexCoord(tcoord);
+            sphereMesh.addVertex(vert);
 			
 			e2.x = cost2 * cos(t3);
 			e2.z = cost2 * sin(t3);
-			p2.x = radius * e2.x;
-			p2.z = radius * e2.z;
-			cindex = (j * (n+1) + i) * 2 + 1;
-			//tcoords[cindex].set(idivn,j1divn);
-			sphereVerts[cindex].set(p2.x,p2.y,p2.z);
-			//norms[cindex].set(e2.x,e2.y,e2.z);
-			
+			p2.x = r * e2.x;
+			p2.z = r * e2.z;
+            
+            normal.set(e2.x, e2.y, e2.z);
+            tcoord.set(idivn, j1divn);
+            vert.set(p2.x, p2.y, p2.z);
+            
+            sphereMesh.addNormal(normal);
+            sphereMesh.addTexCoord(tcoord);
+            sphereMesh.addVertex(vert);
+            
 			idivn += unodivn;
+			
 		}
 	}
 }
@@ -966,44 +976,18 @@ void ofGLRenderer::drawCircle(float x, float y, float z,  float radius){
 
 //----------------------------------------------------------
 void ofGLRenderer::drawSphere(float x, float y, float z, float radius) {
-	int n = ofGetStyle().sphereResolution * 2;
-	float ndiv2=(float)n/2;
-	int stripVerts = (ndiv2*((n+1)*2));
-	
-#ifndef TARGET_OPENGLES
-	glPushAttrib(GL_POLYGON_BIT); 
-	glPolygonMode(GL_FRONT_AND_BACK, bFilled == true ? ofGetGLPolyMode(OF_MESH_FILL) : ofGetGLPolyMode(OF_MESH_WIREFRAME));
-#endif
-	
-	glPushMatrix();
-	glScalef(radius, radius, radius);
-	
-	glEnableClientState(GL_VERTEX_ARRAY);
-	glVertexPointer(3, GL_FLOAT, 0, &sphereVerts[0]);
-	glEnableClientState(GL_NORMAL_ARRAY);
-	glNormalPointer(GL_FLOAT, 0, &sphereVerts[0]);
-	//glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-	//glTexCoordPointer(2, GL_FLOAT, 0, &tcoords[0]);
-	int i, j;
-	for (j=0;j<ndiv2;j++) {
-	#ifdef TARGET_OPENGLES
-		glDrawArrays(GL_TRIANGLE_STRIP, j * ((n+1)*2), (n+1)*2);
-	#else
-		if(bFilled) {
-			glDrawArrays(GL_TRIANGLE_STRIP, j * ((n+1)*2), (n+1)*2);
-		} else {
-			glDrawArrays(GL_QUAD_STRIP, j * ((n+1)*2), (n+1)*2);
-		}
-	#endif
-	}
-	glDisableClientState( GL_VERTEX_ARRAY );
-	glDisableClientState( GL_NORMAL_ARRAY );
-	
-	glPopMatrix();
-	//glDisableClientState( GL_TEXTURE_COORD_ARRAY );
-#ifndef TARGET_OPENGLES
-	glPopAttrib();
-#endif
+    
+    glEnable(GL_NORMALIZE);
+    glPushMatrix();
+    glScalef(radius, radius, radius);
+    if(bFilled) {
+        sphereMesh.draw();
+    } else {
+        sphereMesh.drawWireframe();
+    }
+    glPopMatrix();
+    glDisable(GL_NORMALIZE);
+    
 }
 
 //----------------------------------------------------------
@@ -1135,6 +1119,9 @@ void ofGLRenderer::drawString(string textString, float x, float y, float z, ofDr
 			view[0] = 0; view[1] = 0; //we're already drawing within viewport
 			gluProject(x, y, z, modelview, projection, view, &dScreenX, &dScreenY, &dScreenZ);
 
+			if (dScreenZ >= 1)
+				return;
+			
 			rViewport = ofGetCurrentViewport();
 
 			hasProjection = true;

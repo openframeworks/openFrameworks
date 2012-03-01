@@ -102,14 +102,15 @@ class ofTexture : public ofBaseDraws {
 	virtual void allocate(const ofTextureData & textureData);
 	virtual void allocate(int w, int h, int glInternalFormat); //uses the currently set OF texture type - default ARB texture
 	virtual void allocate(int w, int h, int glInternalFormat, bool bUseARBExtention); //lets you overide the default OF texture type
+	virtual void allocate(const ofPixels& pix);
 	void clear();
 
-	void loadData(float* data, int w, int h, int glFormat);
-	void loadData(unsigned char* data, int w, int h, int glFormat);
-	void loadData(unsigned short* data, int w, int h, int glFormat);
-	void loadData(ofPixels & pix);		
-	void loadData(ofShortPixels & pix);
-	void loadData(ofFloatPixels & pix);
+	void loadData(const unsigned char* const data, int w, int h, int glFormat);
+	void loadData(const unsigned short* data, int w, int h, int glFormat);
+	void loadData(const float* data, int w, int h, int glFormat);
+	void loadData(const ofPixels & pix);		
+	void loadData(const ofShortPixels & pix);
+	void loadData(const ofFloatPixels & pix);
 	
 	void loadScreenData(int x, int y, int w, int h);
 
@@ -150,7 +151,8 @@ class ofTexture : public ofBaseDraws {
 	bool bAllocated();
 	bool isAllocated();
 
-	ofTextureData getTextureData();
+	ofTextureData& getTextureData();
+	const ofTextureData& getTextureData() const;
 
 	// reference to the actual textureData inside the smart pointer
 	// for backwards compatibility

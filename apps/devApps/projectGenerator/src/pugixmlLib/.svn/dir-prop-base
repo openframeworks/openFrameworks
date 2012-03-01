@@ -1,0 +1,12 @@
+K 10
+svn:ignore
+V 17
+old
+build
+*.gcov
+
+K 13
+svn:mergeinfo
+V 25
+/branches/unicode:251-382
+END
