@@ -57,7 +57,7 @@ void testApp::setup(){
     posPingPong.allocate(textureRes, textureRes,GL_RGB32F);
     posPingPong.src->getTextureReference().loadData(pos, textureRes, textureRes, GL_RGB);
     posPingPong.dst->getTextureReference().loadData(pos, textureRes, textureRes, GL_RGB);
-    delete pos;    // Delete the array
+    delete [] pos;    // Delete the array
     
     
     // 2. Making arrays of float pixels with velocity information and the load it to a texture
@@ -71,7 +71,7 @@ void testApp::setup(){
     velPingPong.allocate(textureRes, textureRes,GL_RGB32F);
     velPingPong.src->getTextureReference().loadData(vel, textureRes, textureRes, GL_RGB);
     velPingPong.dst->getTextureReference().loadData(vel, textureRes, textureRes, GL_RGB);
-    delete vel; // Delete the array
+    delete [] vel; // Delete the array
     
     // Loading and setings of the variables of the textures of the particles
     sparkImg.loadImage("spark.png");

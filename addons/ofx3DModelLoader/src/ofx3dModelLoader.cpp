@@ -30,7 +30,7 @@ void ofx3DModelLoader::loadModel(string modelName, float scale){
 	string ext = getExtension( modelName );
 	if( ext == "3ds" || ext == "3DS" ){	
 		model = new model3DS();
-		printf("`\nLoading Model %s \n" , modelName.c_str() );
+        ofLog(OF_LOG_VERBOSE, "ofx3DModelLoader: Loading Model " + modelName);
 		model->loadModel( modelName.c_str(), scale);
 	}
 	
