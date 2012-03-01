@@ -44,6 +44,10 @@ public class OFAndroidSoundPlayer extends OFAndroidObject{
 		player.setVolume(leftVol*vol, rightVol*vol);
 	}
 	
+	float getVolume(){
+		return volume;
+	}
+	
 	void setPan(float vol){
 		pan = vol*2-1;
 		setVolume(volume);

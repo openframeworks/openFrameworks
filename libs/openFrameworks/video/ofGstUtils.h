@@ -48,6 +48,8 @@ public:
 
 	GstElement 	* getPipeline();
 	GstElement 	* getSink();
+	unsigned long getMinLatencyNanos();
+	unsigned long getMaxLatencyNanos();
 
 	virtual void close();
 
