@@ -51,7 +51,9 @@ public:
 	void setSpotlight( float spotCutOff=45.f, float exponent=0.f );
 	bool getIsSpotlight();
 	void setSpotlightCutOff( float spotCutOff );
+    float getSpotlightCutOff();
 	void setSpotConcentration( float exponent );
+    float getSpotConcentration();
 	
 	void setPointLight();
 	bool getIsPointLight();
@@ -69,13 +71,7 @@ public:
 	
 	int getLightID() const;
 
-	void customDraw() {
-		ofPushMatrix();
-		ofTranslate(getPosition());
-		ofBox(10);
-		ofDrawAxis(20);
-		ofPopMatrix();
-	}
+	void customDraw();
 	
 	
 	// this method overrides ofNode to catch the changes and update glLightv(GL_POSITION)
@@ -91,6 +87,8 @@ private:
 	int isEnabled;
 	bool isDirectional;
 	bool isSpotlight;
+    float spotCutOff;
+    float exponent;
 	
 	// update opengl light 
 	virtual void onPositionChanged();

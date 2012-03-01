@@ -125,6 +125,22 @@ ofLight::ofLight(){
 	glIndex			= -1;
 	isEnabled		= false;
 	setPointLight();
+    
+    if(glIndex==-1){
+		bool bLightFound = false;
+		// search for the first free block
+		for(int i=0; i<OF_MAX_LIGHTS; i++) {
+			if(getActiveLights()[i] == false) {
+				glIndex = i;
+				retain(glIndex);
+				bLightFound = true;
+				break;
+			}
+		}
+		if( !bLightFound ){
+			ofLog(OF_LOG_ERROR, "ofLight : Trying to create too many lights: " + ofToString(glIndex));
+		}
+	}
 }
 
 //----------------------------------------
@@ -169,22 +185,7 @@ ofLight & ofLight::operator=(const ofLight & mom){
 
 //----------------------------------------
 void ofLight::enable() {
-	if(glIndex==-1){
-		bool bLightFound = false;
-		// search for the first free block
-		for(int i=0; i<OF_MAX_LIGHTS; i++) {
-			if(getActiveLights()[i] == false) {
-				glIndex = i;
-				retain(glIndex);
-				bLightFound = true;
-				break;
-			}
-		}
-		if( !bLightFound ){
-			ofLog(OF_LOG_ERROR, "ofLight : Trying to create too many lights: " + ofToString(glIndex));
-		}
-	}
-	
+    onPositionChanged(); // update the position // 
 	ofEnableLighting();
 	glEnable(GL_LIGHT0 + glIndex);
 }
@@ -234,12 +235,30 @@ bool ofLight::getIsSpotlight() {
 
 //----------------------------------------
 void ofLight::setSpotlightCutOff( float spotCutOff ) {
-	glLightf(GL_LIGHT0 + glIndex, GL_SPOT_CUTOFF, CLAMP(spotCutOff, 0, 90) );
+    this->spotCutOff = CLAMP(spotCutOff, 0, 90);
+	glLightf(GL_LIGHT0 + glIndex, GL_SPOT_CUTOFF, this->spotCutOff );
+}
+
+//----------------------------------------
+float ofLight::getSpotlightCutOff() {
+    if(!getIsSpotlight()) {
+        ofLog(OF_LOG_WARNING, "ofLight :: getSpotlightCutOff : this light is not a spot light");
+    }
+    return spotCutOff;
 }
 
 //----------------------------------------
 void ofLight::setSpotConcentration( float exponent ) {
-	glLightf(GL_LIGHT0 + glIndex, GL_SPOT_EXPONENT, exponent);
+    this->exponent = CLAMP(exponent, 0, 128);
+	glLightf(GL_LIGHT0 + glIndex, GL_SPOT_EXPONENT, this->exponent);
+}
+
+//----------------------------------------
+float ofLight::getSpotConcentration() {
+    if(!getIsSpotlight()) {
+        ofLog(OF_LOG_WARNING, "ofLight :: getSpotConcentration : this light is not a spot light");
+    }
+    return exponent;
 }
 
 //----------------------------------------
@@ -300,6 +319,23 @@ ofFloatColor ofLight::getDiffuseColor() const {
 //----------------------------------------
 ofFloatColor ofLight::getSpecularColor() const {
 	return specularColor;
+}
+
+//----------------------------------------
+void ofLight::customDraw() {
+    ofPushMatrix();
+    glMultMatrixf(getGlobalTransformMatrix().getPtr());
+    if(getIsPointLight()) {
+        ofSphere( 0,0,0, 10);
+    } else if (getIsSpotlight()) {
+        float coneHeight = (sin(spotCutOff*DEG_TO_RAD) * 30.f) + 1;
+        float coneRadius = (cos(spotCutOff*DEG_TO_RAD) * 30.f) + 8;
+        ofCone(0, 0, -(coneHeight*.5), coneHeight, coneRadius);
+    } else {
+        ofBox(10);
+    }
+    ofDrawAxis(20);
+    ofPopMatrix();
 }
 
 
