@@ -17,6 +17,8 @@ void testApp::setup(){
 	radius		= 300.f;
 	center.set(ofGetWidth()*.5, ofGetHeight()*.5, 0);
     
+    // call the setup function to init the light in openGL
+    pointLight.setup();
     // Point lights emit light in all directions //
     // set the diffuse color, color reflected from the light source //
     pointLight.setDiffuseColor( ofColor(0.f, 255.f, 0.f));

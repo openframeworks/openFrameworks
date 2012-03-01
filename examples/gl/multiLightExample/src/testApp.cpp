@@ -19,6 +19,9 @@ void testApp::setup(){
 	radius		= 180.f;
 	center.set(ofGetWidth()*.5, ofGetHeight()*.5, 0);
     
+    // call the setup function to init the light in openGL //
+    // must be called on each light to work properly //
+    pointLight.setup();
     // Point lights emit light in all directions //
     // set the diffuse color, color reflected from the light source //
     pointLight.setDiffuseColor( ofColor(0.f, 255.f, 0.f));
@@ -28,7 +31,7 @@ void testApp::setup(){
 	pointLight.setPointLight();
 	
 	
-    
+    spotLight.setup();
     spotLight.setDiffuseColor( ofColor(255.f, 0.f, 0.f));
 	spotLight.setSpecularColor( ofColor(255.f, 255.f, 255.f));
     
@@ -44,7 +47,7 @@ void testApp::setup(){
     spotLight.setSpotConcentration( 45 );
     
 	
-    
+    directionalLight.setup();
     // Directional Lights emit light based on their orientation, regardless of their position //
 	directionalLight.setDiffuseColor(ofColor(0.f, 0.f, 255.f));
 	directionalLight.setSpecularColor(ofColor(255.f, 255.f, 255.f));
