@@ -33,10 +33,10 @@ void ofxTCPClient::setVerbose(bool _verbose){
 bool ofxTCPClient::setup(string ip, int _port, bool blocking){
 
 	if( !TCPClient.Create() ){
-		if(verbose)printf("ofxTCPClient: Create() failed\n");
+		if(verbose) ofLog(OF_LOG_VERBOSE, "ofxTCPClient: Create() failed");
 		return false;
 	}else if( !TCPClient.Connect((char *)ip.c_str(), _port) ){
-		if(verbose)printf("ofxTCPClient: Connect(%s, %i) failed\n", ip.c_str(), _port);
+		if(verbose) ofLog(OF_LOG_VERBOSE, "ofxTCPClient: Connect(" + ip + ofToString( _port) + ") failed");
 		TCPClient.Close(); //we free the connection
 		return false;
 	}
@@ -75,7 +75,7 @@ bool ofxTCPClient::close(){
 	if( connected ){
 
 		if( !TCPClient.Close() ){
-			if(verbose)printf("ofxTCPClient: Close() failed\n");
+			if(verbose)ofLog(OF_LOG_VERBOSE, "ofxTCPClient: Close() failed");
 			return false;
 		}else{
 			connected = false;
@@ -102,18 +102,18 @@ bool ofxTCPClient::send(string message){
 	// if sending from here and receiving from receiveRaw or
 	// other applications
 	if(!connected){
-		if(verbose)printf("ofxTCPClient: trying to send while not connected\n");
+		if(verbose) ofLog(OF_LOG_VERBOSE, "ofxTCPClient: trying to send while not connected");
 		return false;
 	}
 	message = partialPrevMsg + message + messageDelimiter;
 	message += (char)0; //for flash
 	int ret = TCPClient.SendAll( message.c_str(), message.length() );
 	if( ret == 0 ){
-		if(verbose)printf("ofxTCPClient: other side disconnected\n");
+		if(verbose) ofLog(OF_LOG_VERBOSE, "ofxTCPClient: other side disconnected");
 		close();
 		return false;
 	}else if(ret<0){
-		if(verbose)printf("ofxTCPClient: sendAll() failed\n");
+		if(verbose) ofLog(OF_LOG_VERBOSE, "ofxTCPClient: sendAll() failed");
 		return false;
 	}else if(ret<(int)message.length()){
 		// in case of partial send, store the
@@ -133,7 +133,7 @@ bool ofxTCPClient::sendRaw(string message){
 	if( message.length() == 0) return false;
 
 	if( !TCPClient.SendAll(message.c_str(), message.length()) ){
-		if(verbose)printf("ofxTCPClient: sendRawBytes() failed\n");
+		if(verbose) ofLog(OF_LOG_VERBOSE, "ofxTCPClient: sendRawBytes() failed");
 		close();
 		return false;
 	}else{
@@ -146,7 +146,7 @@ bool ofxTCPClient::sendRawBytes(const char* rawBytes, const int numBytes){
 	if( numBytes <= 0) return false;
 
 	if( !TCPClient.SendAll(rawBytes, numBytes) ){
-		if(verbose)printf("ofxTCPClient: sendRawBytes() failed\n");
+		if(verbose) ofLog(OF_LOG_VERBOSE, "ofxTCPClient: sendRawBytes() failed");
 		close();
 		return false;
 	}else{
