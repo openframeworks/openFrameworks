@@ -372,7 +372,7 @@ void ofFbo::allocate(int width, int height, int internalformat, int numSamples) 
 	settings.numSamples		= numSamples;
 	settings.useDepth		= true;
 	settings.useStencil		= true;
-	
+
 	allocate(settings);
 }
 
@@ -536,7 +536,7 @@ void ofFbo::allocate(Settings _settings) {
 
 	// check everything is ok with this fbo
 	checkStatus();
-	
+
 	// unbind it
 	unbind();
 }
@@ -548,14 +548,14 @@ void ofFbo::allocateForShadow( int width, int height )
 //#ifndef TARGET_OPENGLES
 	int old;
 	glGetIntegerv( GL_FRAMEBUFFER_BINDING, &old );
-	
+
 	settings.width = width;
 	settings.height = height;
-	
+
 	glGenTextures(1, &depthBuffer);
 	retainRB(depthBuffer);
 	glBindTexture(GL_TEXTURE_2D, depthBuffer);
-	
+
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 #ifndef TARGET_OPENGLES
@@ -567,21 +567,21 @@ void ofFbo::allocateForShadow( int width, int height )
 #endif
 	glTexImage2D( GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, settings.width, settings.height, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_BYTE, 0 );
 	glBindTexture( GL_TEXTURE_2D, 0 );
-	
+
 	glGenFramebuffers( 1, &fbo );
 	retainFB(fbo);
 	glBindFramebuffer( GL_FRAMEBUFFER, fbo );
-	
+
 #ifndef TARGET_OPENGLES
 	glDrawBuffer( GL_NONE );
 	glReadBuffer( GL_NONE );
 #endif
 
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,GL_TEXTURE_2D, depthBuffer, 0);
-	
+
 	if( glCheckFramebufferStatus( GL_FRAMEBUFFER ) != GL_FRAMEBUFFER_COMPLETE )
 		printf("Can't use FBOs !\n");
-	
+
 	glBindFramebuffer( GL_FRAMEBUFFER, old );
 }*/
 
@@ -669,8 +669,31 @@ int ofFbo::getNumTextures() {
 	return textures.size();
 }
 
-//TODO: by "active" or "activate" we mean "being drawn to" ... can we disambiguate this more? Should we also check against card's max attachments or can we assume that's taken care of in texture setup?
-void ofFbo::activateAllTextures(){
+//TODO: Should we also check against card's max attachments or can we assume that's taken care of in texture setup? Still need to figure out MSAA in conjunction with MRT
+bool ofFbo::setActiveDrawBuffer(int i){
+    if (i < getNumTextures()){
+        GLenum e = GL_COLOR_ATTACHMENT0_EXT + i;
+        glDrawBuffer(e);
+    }else{
+        ofLog(OF_LOG_WARNING,"trying to activate texture "+ofToString(i) + " for drawing that is out of the range (0->" + ofToString(getNumTextures()) + ") of allocated textures for this fbo.");
+    }
+}
+
+void ofFbo::setActiveDrawBuffers(const vector<int>& ids){
+    vector<GLenum> attachments;
+    for(int i=0; i < ids.size(); i++){
+      int id = ids[i];
+        if (id < getNumTextures()){
+            GLenum e = GL_COLOR_ATTACHMENT0_EXT + id;
+            attachments.push_back(e);
+        }else{
+            ofLog(OF_LOG_WARNING,"trying to activate texture "+ofToString(id) + " for drawing that is out of the range (0->" + ofToString(getNumTextures()) + ") of allocated textures for this fbo.");
+        }
+    }
+    glDrawBuffers(attachments.size(),&attachments[0]);
+}
+
+void ofFbo::activateAllDrawBuffers(){
     vector<GLenum> attachments;
     for(int i=0; i < getNumTextures(); i++){
         if (i < getNumTextures()){
@@ -683,20 +706,12 @@ void ofFbo::activateAllTextures(){
     glDrawBuffers(attachments.size(),&attachments[0]);
 }
 
-bool ofFbo::setActiveTexture(int i){
-    if (i < getNumTextures()){
-        GLenum e = GL_COLOR_ATTACHMENT0_EXT + i;
-        glDrawBuffer(e);
-    }else{
-        ofLog(OF_LOG_WARNING,"trying to activate texture "+ofToString(i) + " for drawing that is out of the range (0->" + ofToString(getNumTextures()) + ") of allocated textures for this fbo.");
-    }
-}
 
 void ofFbo::setDefaultTextureIndex(int defaultTexture)
 {
 	defaultTextureIndex = defaultTexture;
 }
-	
+
 int ofFbo::getDefaultTextureIndex()
 {
 	return defaultTextureIndex;
