@@ -78,7 +78,7 @@ class ofxTCPServer : public ofThread{
 		map<int,ofxTCPClient>	TCPConnections;
 
 	protected:
-		bool			connected, verbose;
+		bool			connected;
 		string			str;
 		int				idCount, port;
 		bool			bClientBlocking;
