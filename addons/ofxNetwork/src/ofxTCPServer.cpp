@@ -4,7 +4,6 @@
 
 //--------------------------
 ofxTCPServer::ofxTCPServer(){
-	verbose		= true;
 	connected	= false;
 	idCount		= 0;
 	port		= 0;
@@ -19,17 +18,17 @@ ofxTCPServer::~ofxTCPServer(){
 
 //--------------------------
 void ofxTCPServer::setVerbose(bool _verbose){
-	verbose = _verbose;
+	ofLog(OF_LOG_WARNING, "ofxTCPClient: setVerbose is deprecated replaced for OF_LOG_WARNING and OF_LOG_ERROR");
 }
 
 //--------------------------
 bool ofxTCPServer::setup(int _port, bool blocking){
 	if( !TCPServer.Create() ){
-		if(verbose)ofLog(OF_LOG_VERBOSE,"ofxTCPServer: create() failed");
+		ofLog(OF_LOG_ERROR,"ofxTCPServer: create() failed");
 		return false;
 	}
 	if( !TCPServer.Bind(_port) ){
-		if(verbose)ofLog(OF_LOG_VERBOSE,"ofxTCPServer: bind(port = " + ofToString(_port) + ") failed");
+		ofLog(OF_LOG_ERROR,"ofxTCPServer: bind(port = " + ofToString(_port) + ") failed");
 		return false;
 	}
 
@@ -62,7 +61,7 @@ bool ofxTCPServer::close(){
 	stopThread(); //stop the thread
 
 	if( !TCPServer.Close() ){
-		if(verbose)ofLog(OF_LOG_VERBOSE, "ofxTCPServer: unable to close connection");
+		ofLog(OF_LOG_WARNING, "ofxTCPServer: unable to close connection");
 		return false;
 	}else{
 		connected = false;
@@ -73,7 +72,7 @@ bool ofxTCPServer::close(){
 //--------------------------
 bool ofxTCPServer::disconnectClient(int clientID){
 	if( !isClientSetup(clientID) ){
-		if(verbose)ofLog(OF_LOG_VERBOSE, "ofxTCPServer: client " + ofToString(clientID) + " doesn't exist");
+		ofLog(OF_LOG_WARNING, "ofxTCPServer: client " + ofToString(clientID) + " doesn't exist");
 		return false;
 	}
 	else if(TCPConnections[clientID].close()){
@@ -86,7 +85,7 @@ bool ofxTCPServer::disconnectClient(int clientID){
 //--------------------------
 bool ofxTCPServer::send(int clientID, string message){
 	if( !isClientSetup(clientID) ){
-		if(verbose)ofLog(OF_LOG_VERBOSE, "ofxTCPServer: client " + ofToString(clientID) + " doesn't exist\n");
+		ofLog(OF_LOG_WARNING, "ofxTCPServer: client " + ofToString(clientID) + " doesn't exist\n");
 		return false;
 	}
 	else{
@@ -116,7 +115,7 @@ bool ofxTCPServer::sendToAll(string message){
 //--------------------------
 string ofxTCPServer::receive(int clientID){
 	if( !isClientSetup(clientID) ){
-		if(verbose) ofLog(OF_LOG_VERBOSE, "ofxTCPServer: client " + ofToString(clientID) + " doesn't exist");
+		ofLog(OF_LOG_WARNING, "ofxTCPServer: client " + ofToString(clientID) + " doesn't exist");
 		return "client doesn't exist";
 	}
 	
@@ -131,7 +130,7 @@ string ofxTCPServer::receive(int clientID){
 //--------------------------
 bool ofxTCPServer::sendRawBytes(int clientID, const char * rawBytes, const int numBytes){
 	if( !isClientSetup(clientID) ){
-		if(verbose)ofLog(OF_LOG_VERBOSE, "ofxTCPServer: client " + ofToString(clientID)+ " doesn't exist");
+		ofLog(OF_LOG_WARNING, "ofxTCPServer: client " + ofToString(clientID)+ " doesn't exist");
 		return false;
 	}
 	else{
@@ -153,7 +152,7 @@ bool ofxTCPServer::sendRawBytesToAll(const char * rawBytes, const int numBytes){
 //--------------------------
 int ofxTCPServer::getNumReceivedBytes(int clientID){
 	if( !isClientSetup(clientID) ){
-		if(verbose)ofLog(OF_LOG_VERBOSE, "ofxTCPServer: client " + ofToString(clientID)+ " doesn't exist");
+		ofLog(OF_LOG_WARNING, "ofxTCPServer: client " + ofToString(clientID)+ " doesn't exist");
 		return 0;
 	}
 
@@ -163,7 +162,7 @@ int ofxTCPServer::getNumReceivedBytes(int clientID){
 //--------------------------
 int ofxTCPServer::receiveRawBytes(int clientID, char * receiveBytes,  int numBytes){
 	if( !isClientSetup(clientID) ){
-		if(verbose) ofLog(OF_LOG_VERBOSE, "ofxTCPServer: client " + ofToString(clientID) + " doesn't exist");
+		ofLog(OF_LOG_WARNING, "ofxTCPServer: client " + ofToString(clientID) + " doesn't exist");
 		return 0;
 	}
 
@@ -173,7 +172,7 @@ int ofxTCPServer::receiveRawBytes(int clientID, char * receiveBytes,  int numByt
 //--------------------------
 int ofxTCPServer::getClientPort(int clientID){
 	if( !isClientSetup(clientID) ){
-		if(verbose) ofLog(OF_LOG_VERBOSE, "ofxTCPServer: client " + ofToString(clientID)+ " doesn't exist");
+		ofLog(OF_LOG_WARNING, "ofxTCPServer: client " + ofToString(clientID)+ " doesn't exist");
 		return 0;
 	}
 	else return TCPConnections[clientID].getPort();
@@ -182,7 +181,7 @@ int ofxTCPServer::getClientPort(int clientID){
 //--------------------------
 string ofxTCPServer::getClientIP(int clientID){
 	if( !isClientSetup(clientID) ){
-		if(verbose) ofLog(OF_LOG_VERBOSE, "ofxTCPServer: client " + ofToString(clientID) + " doesn't exist");
+		ofLog(OF_LOG_WARNING, "ofxTCPServer: client " + ofToString(clientID) + " doesn't exist");
 		return "000.000.000.000";
 	}
 	else return TCPConnections[clientID].getIP();
@@ -230,24 +229,24 @@ void ofxTCPServer::threadedFunction(){
 		}
 		
 		if(acceptId == TCP_MAX_CLIENTS){
-			if(verbose) ofLog(OF_LOG_VERBOSE, "ofxTCPServer: reached max connected clients! \nofxTCPServer: no more connections accepted");
+			ofLog(OF_LOG_WARNING, "ofxTCPServer: reached max connected clients! \nofxTCPServer: no more connections accepted");
 			break;
 		}
 
 		if( !TCPServer.Listen(TCP_MAX_CLIENTS) ){
-			if(verbose) ofLog(OF_LOG_VERBOSE, "ofxTCPServer: Listen() failed");
+			ofLog(OF_LOG_ERROR, "ofxTCPServer: Listen() failed");
 		}
 		
 		if( !TCPServer.Accept(TCPConnections[acceptId].TCPClient) ){
-			if(verbose) ofLog(OF_LOG_VERBOSE, "ofxTCPServer: Accept() failed\n");
+			ofLog(OF_LOG_ERROR, "ofxTCPServer: Accept() failed\n");
 		}else{
 			TCPConnections[acceptId].setup(acceptId, bClientBlocking);
 			TCPConnections[acceptId].setMessageDelimiter(messageDelimiter);
-			if(verbose) ofLog(OF_LOG_VERBOSE, "ofxTCPServer: client " + ofToString(acceptId) + " connected on port " + ofToString(TCPConnections[acceptId].getPort()) );
+			ofLog(OF_LOG_VERBOSE, "ofxTCPServer: client " + ofToString(acceptId) + " connected on port " + ofToString(TCPConnections[acceptId].getPort()) );
 			if(acceptId == idCount) idCount++;
 		}
 	}
-	if(verbose) ofLog(OF_LOG_VERBOSE, "ofxTCPServer: listen thread ended");
+	ofLog(OF_LOG_VERBOSE, "ofxTCPServer: listen thread ended");
 }
 
 
