@@ -211,6 +211,10 @@ ofMatrix3x3 ofMatrix3x3::operator*(float scalar) {
 
 
 void ofMatrix3x3::operator*=(const ofMatrix3x3& B) {
+  *this = *this*B;
+}
+
+ofMatrix3x3 ofMatrix3x3::entrywiseTimes(const ofMatrix3x3& B){
 	a *= B.a;
 	b *= B.b;
 	c *= B.c;
@@ -298,24 +302,24 @@ ostream& operator<<(ostream& os, const ofMatrix3x3& M) {
 	int w = 8;
 	os	<< setw(w)
 		<< M.a << ", " << setw(w)
-		<< M.b << ", " << setw(w) 
+		<< M.b << ", " << setw(w)
 		<< M.c << std::endl;
-	
+
 	os	<< setw(w)
 		<< M.d << ", " << setw(w)
-		<< M.e << ", " << setw(w) 
+		<< M.e << ", " << setw(w)
 		<< M.f << std::endl;
-	
+
 	os	<< setw(w)
-		<< M.g << ", " << setw(w) 
-		<< M.h << ", " << setw(w) 
+		<< M.g << ", " << setw(w)
+		<< M.h << ", " << setw(w)
 		<< M.i;
 	return os;
 }
 
 istream& operator>>(istream& is, ofMatrix3x3& M) {
 	is >> M.a; is.ignore(2);
-	is >> M.b; is.ignore(2);	
+	is >> M.b; is.ignore(2);
 	is >> M.c; is.ignore(1);
 	is >> M.d; is.ignore(2);
 	is >> M.e; is.ignore(2);
