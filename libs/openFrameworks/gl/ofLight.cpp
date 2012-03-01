@@ -125,22 +125,6 @@ ofLight::ofLight(){
 	glIndex			= -1;
 	isEnabled		= false;
 	setPointLight();
-    
-    if(glIndex==-1){
-		bool bLightFound = false;
-		// search for the first free block
-		for(int i=0; i<OF_MAX_LIGHTS; i++) {
-			if(getActiveLights()[i] == false) {
-				glIndex = i;
-				retain(glIndex);
-				bLightFound = true;
-				break;
-			}
-		}
-		if( !bLightFound ){
-			ofLog(OF_LOG_ERROR, "ofLight : Trying to create too many lights: " + ofToString(glIndex));
-		}
-	}
 }
 
 //----------------------------------------
@@ -184,7 +168,27 @@ ofLight & ofLight::operator=(const ofLight & mom){
 }
 
 //----------------------------------------
+void ofLight::setup() {
+    if(glIndex==-1){
+		bool bLightFound = false;
+		// search for the first free block
+		for(int i=0; i<OF_MAX_LIGHTS; i++) {
+			if(getActiveLights()[i] == false) {
+				glIndex = i;
+				retain(glIndex);
+				bLightFound = true;
+				break;
+			}
+		}
+		if( !bLightFound ){
+			ofLog(OF_LOG_ERROR, "ofLight : Trying to create too many lights: " + ofToString(glIndex));
+		}
+	}
+}
+
+//----------------------------------------
 void ofLight::enable() {
+    setup();
     onPositionChanged(); // update the position // 
 	ofEnableLighting();
 	glEnable(GL_LIGHT0 + glIndex);

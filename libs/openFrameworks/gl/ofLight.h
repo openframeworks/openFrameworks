@@ -41,6 +41,7 @@ public:
 	virtual ~ofLight();
 	void destroy();
 	
+    void setup();
 	void enable();
 	void disable();
 	bool getIsEnabled() const;
