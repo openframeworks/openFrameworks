@@ -14,7 +14,7 @@ public:
 
 	virtual ~ofxPanel();
 	
-	void setup(string collectionName="", string _filename="settings.xml", float x = 10, float y = 10);
+	ofxPanel * setup(string collectionName="", string _filename="settings.xml", float x = 10, float y = 10);
 	
 	virtual void saveToXml(ofxXmlSettings& xml);
 	virtual void loadFromXml(ofxXmlSettings& xml);
@@ -31,17 +31,21 @@ public:
 	void draw();
 	
 	vector<string> getControlNames();
+	int getNumControls();
 
 	ofxIntSlider getIntSlider(string name);
 	ofxFloatSlider getFloatSlider(string name);
 	ofxToggle getToggle(string name);
 	ofxButton getButton(string name);
 
+	ofxBaseGui * getControl(string name);
+	ofxBaseGui * getControl(int num);
+
 protected:
 	void setValue(float mx, float my, bool bCheck);
 
 	template<class ControlType>
-	ControlType getControl(string name);
+	ControlType getControlType(string name);
 
 private:
 	ofPoint grabPt;
@@ -56,12 +60,8 @@ private:
 };
 
 template<class ControlType>
-ControlType ofxPanel::getControl(string name){
-	for(int i=0; i<(int)collection.size(); i++){
-		if(collection[i]->getName()==name){
-			ControlType * control = dynamic_cast<ControlType*>(collection[i]);
-			if(control)	return *control;
-		}
-	}
-	return ControlType();
+ControlType ofxPanel::getControlType(string name){
+	ControlType * control = dynamic_cast<ControlType*>(getControl(name));
+	if(control) return *control;
+	else return ControlType();
 }

@@ -230,11 +230,13 @@ clean:
 	rm -rf $(OBJ_OUTPUT)
 	rm -f $(TARGET)
 	rm -r bin/libs
-	
-$(CLEANTARGET):
-	rm -rf $(OBJ_OUTPUT)
-	rm -f $(TARGET)
-	rm -rf bin/libs
+
+ifneq ($(CLEANTARGET),clean)
+	$(CLEANTARGET):
+		rm -rf $(OBJ_OUTPUT)
+		rm -f $(TARGET)
+		rm -rf bin/libs
+endif
 
 
 after:$(TARGET)
