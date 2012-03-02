@@ -58,7 +58,10 @@ public:
 	
 	void setPointLight();
 	bool getIsPointLight();
-	void setAttenuation( float constant=2.f, float linear=1.f, float quadratic=0.5f );
+	void setAttenuation( float constant=1.f, float linear=0.f, float quadratic=0.f );
+    float getAttenuationConstant();
+    float getAttenuationLinear();
+    float getAttenuationQuadratic();
 	
 	int getType();
 	
@@ -81,6 +84,10 @@ private:
 	ofFloatColor ambientColor;
 	ofFloatColor diffuseColor;
 	ofFloatColor specularColor;
+    
+    float attenuation_constant;
+    float attenuation_linear;
+    float attenuation_quadratic;
 
 	ofLightType lightType;
 	
