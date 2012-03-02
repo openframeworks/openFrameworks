@@ -124,7 +124,13 @@ static void release(ofLight & light){
 ofLight::ofLight(){
 	glIndex			= -1;
 	isEnabled		= false;
+    setAmbientColor(ofColor(0,0,0));
+    setDiffuseColor(ofColor(255,255,255));
+    setSpecularColor(ofColor(255,255,255));
 	setPointLight();
+    
+    // assume default attenuation factors //
+    setAttenuation(1.f,0.f,0.f);
 }
 
 //----------------------------------------
@@ -183,6 +189,21 @@ void ofLight::setup() {
 		if( !bLightFound ){
 			ofLog(OF_LOG_ERROR, "ofLight : Trying to create too many lights: " + ofToString(glIndex));
 		}
+        if(bLightFound) {
+            // run this the first time, since it was not found before //
+            onPositionChanged();
+            setAmbientColor( getAmbientColor() );
+            setDiffuseColor( getDiffuseColor() );
+            setSpecularColor( getSpecularColor() );
+            setAttenuation( getAttenuationConstant(), getAttenuationLinear(), getAttenuationQuadratic() );
+            if(getIsSpotlight()) {
+                setSpotlightCutOff(getSpotlightCutOff());
+                setSpotConcentration(getSpotConcentration());
+            }
+            if(getIsSpotlight() || getIsDirectional()) {
+                onOrientationChanged();
+            }
+        }
 	}
 }
 
@@ -279,9 +300,30 @@ bool ofLight::getIsPointLight() {
 
 //----------------------------------------
 void ofLight::setAttenuation( float constant, float linear, float quadratic ) {
-	glLightf(GL_LIGHT0 + glIndex, GL_CONSTANT_ATTENUATION, constant);
-	glLightf(GL_LIGHT0 + glIndex, GL_LINEAR_ATTENUATION, linear);
-	glLightf(GL_LIGHT0 + glIndex, GL_QUADRATIC_ATTENUATION, quadratic);
+    // falloff = 0 -> 1, 0 being least amount of fallof, 1.0 being most //
+    attenuation_constant    = constant;
+    attenuation_linear      = linear; 
+    attenuation_quadratic   = quadratic;
+    
+    if(glIndex==-1) return;
+	glLightf(GL_LIGHT0 + glIndex, GL_CONSTANT_ATTENUATION, attenuation_constant);
+	glLightf(GL_LIGHT0 + glIndex, GL_LINEAR_ATTENUATION, attenuation_linear);
+	glLightf(GL_LIGHT0 + glIndex, GL_QUADRATIC_ATTENUATION, attenuation_quadratic);
+}
+
+//----------------------------------------
+float ofLight::getAttenuationConstant() {
+    return attenuation_constant;
+}
+
+//----------------------------------------
+float ofLight::getAttenuationLinear() {
+    return attenuation_linear;
+}
+
+//----------------------------------------
+float ofLight::getAttenuationQuadratic() {
+    return attenuation_quadratic;
 }
 
 //----------------------------------------
@@ -291,22 +333,22 @@ int ofLight::getType() {
 
 //----------------------------------------
 void ofLight::setAmbientColor(const ofFloatColor& c) {
-	if(glIndex==-1) return;
 	ambientColor = c;
+    if(glIndex==-1) return;
 	glLightfv(GL_LIGHT0 + glIndex, GL_AMBIENT, &ambientColor.r);
 }
 
 //----------------------------------------
 void ofLight::setDiffuseColor(const ofFloatColor& c) {
-	if(glIndex==-1) return;
 	diffuseColor = c;
+    if(glIndex==-1) return;
 	glLightfv(GL_LIGHT0 + glIndex, GL_DIFFUSE, &diffuseColor.r);
 }
 
 //----------------------------------------
 void ofLight::setSpecularColor(const ofFloatColor& c) {
-	if(glIndex==-1) return;
 	specularColor = c;
+    if(glIndex==-1) return;
 	glLightfv(GL_LIGHT0 + glIndex, GL_SPECULAR, &specularColor.r);
 }
 
