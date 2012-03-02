@@ -17,17 +17,13 @@ void testApp::setup(){
 	radius		= 300.f;
 	center.set(ofGetWidth()*.5, ofGetHeight()*.5, 0);
     
-    // call the setup function to init the light in openGL
-    pointLight.setup();
     // Point lights emit light in all directions //
     // set the diffuse color, color reflected from the light source //
     pointLight.setDiffuseColor( ofColor(0.f, 255.f, 0.f));
     
     // specular color, the highlight/shininess color //
 	pointLight.setSpecularColor( ofColor(255.f, 255.f, 255.f));
-	
-	pointLight.enable();
-    
+    pointLight.setPosition(center.x, center.y, 0);
     
     // shininess is a value between 0 - 128, 128 being the most shiny //
 	material.setShininess( 64 );
@@ -74,6 +70,9 @@ void testApp::draw() {
     
     // enable lighting //
     ofEnableLighting();
+    // the position of the light must be updated every frame, 
+    // call enable() so that it can update itself //
+    pointLight.enable();
     material.begin();
     
     if(bDrawWireframe) ofNoFill();
