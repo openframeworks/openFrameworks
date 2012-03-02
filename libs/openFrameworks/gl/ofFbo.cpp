@@ -671,15 +671,18 @@ int ofFbo::getNumTextures() {
 
 //TODO: Should we also check against card's max attachments or can we assume that's taken care of in texture setup? Still need to figure out MSAA in conjunction with MRT
 bool ofFbo::setActiveDrawBuffer(int i){
+#ifndef TARGET_OPENGLES 
     if (i < getNumTextures()){
         GLenum e = GL_COLOR_ATTACHMENT0_EXT + i;
         glDrawBuffer(e);
     }else{
         ofLog(OF_LOG_WARNING,"trying to activate texture "+ofToString(i) + " for drawing that is out of the range (0->" + ofToString(getNumTextures()) + ") of allocated textures for this fbo.");
     }
+#endif
 }
 
 void ofFbo::setActiveDrawBuffers(const vector<int>& ids){
+#ifndef TARGET_OPENGLES 
     vector<GLenum> attachments;
     for(int i=0; i < ids.size(); i++){
       int id = ids[i];
@@ -691,9 +694,11 @@ void ofFbo::setActiveDrawBuffers(const vector<int>& ids){
         }
     }
     glDrawBuffers(attachments.size(),&attachments[0]);
+#endif
 }
 
 void ofFbo::activateAllDrawBuffers(){
+#ifndef TARGET_OPENGLES 
     vector<GLenum> attachments;
     for(int i=0; i < getNumTextures(); i++){
         if (i < getNumTextures()){
@@ -704,6 +709,7 @@ void ofFbo::activateAllDrawBuffers(){
         }
     }
     glDrawBuffers(attachments.size(),&attachments[0]);
+#endif
 }
 
 
