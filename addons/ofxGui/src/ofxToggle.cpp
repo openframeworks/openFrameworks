@@ -40,6 +40,7 @@ void ofxToggle::saveToXml(ofxXmlSettings& xml) {
 	ofStringReplace(xmlName,",","_");
 	ofStringReplace(xmlName,"(","_");
 	ofStringReplace(xmlName,")","_");
+	ofStringReplace(xmlName,"/","_");
 	xml.setValue(xmlName, value);
 }
 
@@ -49,6 +50,7 @@ void ofxToggle::loadFromXml(ofxXmlSettings& xml) {
 	ofStringReplace(xmlName,",","_");
 	ofStringReplace(xmlName,"(","_");
 	ofStringReplace(xmlName,")","_");
+	ofStringReplace(xmlName,"/","_");
 	value = xml.getValue(xmlName, value);
 }
 
