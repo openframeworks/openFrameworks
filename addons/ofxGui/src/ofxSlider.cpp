@@ -48,6 +48,7 @@ void ofxSlider<Type>::saveToXml(ofxXmlSettings& xml) {
 	ofStringReplace(xmlName,",","_");
 	ofStringReplace(xmlName,"(","_");
 	ofStringReplace(xmlName,")","_");
+	ofStringReplace(xmlName,"/","_");
 	xml.setValue(xmlName, value);
 }
 
@@ -58,6 +59,7 @@ void ofxSlider<Type>::loadFromXml(ofxXmlSettings& xml) {
 	ofStringReplace(xmlName,",","_");
 	ofStringReplace(xmlName,"(","_");
 	ofStringReplace(xmlName,")","_");
+	ofStringReplace(xmlName,"/","_");
 	value = xml.getValue(xmlName, value);
 }
 
