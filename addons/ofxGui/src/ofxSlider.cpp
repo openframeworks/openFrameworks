@@ -1,6 +1,11 @@
 #include "ofxSlider.h"
 
 template<typename Type>
+ofxSlider<Type>::ofxSlider(string sliderName, ofxParameter<Type> _val, Type _min, Type _max, float width, float height){
+	setup(sliderName,_val,_min,_max,width,height);
+}
+
+template<typename Type>
 ofxSlider<Type>* ofxSlider<Type>::setup(string sliderName, ofxParameter<Type> _val, Type _min, Type _max, float width, float height){
 	name = sliderName;
 	value = _val;
