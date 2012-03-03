@@ -1026,7 +1026,12 @@
 			baseConfigurationReference = E41D3E9113B38BE900A75A5D /* Debug.xcconfig */;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				GCC_WARN_CHECK_SWITCH_STATEMENTS = NO;
 				SDKROOT = iphoneos;
+				WARNING_CFLAGS = (
+					"-Wno-non-virtual-dtor",
+					"-Wno-overloaded-virtual",
+				);
 			};
 			name = Debug;
 		};
@@ -1035,7 +1040,12 @@
 			baseConfigurationReference = E41D3E9213B38BE900A75A5D /* Release.xcconfig */;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				GCC_WARN_CHECK_SWITCH_STATEMENTS = NO;
 				SDKROOT = iphoneos;
+				WARNING_CFLAGS = (
+					"-Wno-non-virtual-dtor",
+					"-Wno-overloaded-virtual",
+				);
 			};
 			name = Release;
 		};

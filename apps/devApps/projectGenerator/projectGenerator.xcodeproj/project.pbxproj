@@ -20,6 +20,10 @@
 		113CAA7414F88F4200D3906E /* tinyxmlerror.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 113CAA6E14F88F4200D3906E /* tinyxmlerror.cpp */; };
 		113CAA7514F88F4200D3906E /* tinyxmlparser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 113CAA6F14F88F4200D3906E /* tinyxmlparser.cpp */; };
 		113CAA7614F88F4200D3906E /* ofxXmlSettings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 113CAA7114F88F4200D3906E /* ofxXmlSettings.cpp */; };
+		2D786179150137420086071C /* ofxBaseGui.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D786175150137420086071C /* ofxBaseGui.cpp */; };
+		2D78617A150137420086071C /* ofxButton.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D786176150137420086071C /* ofxButton.cpp */; };
+		2D78617B150137420086071C /* ofxSlider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D786177150137420086071C /* ofxSlider.cpp */; };
+		2D78617C150137420086071C /* ofxToggle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D786178150137420086071C /* ofxToggle.cpp */; };
 		BBAB23CB13894F3D00AA2426 /* GLUT.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = BBAB23BE13894E4700AA2426 /* GLUT.framework */; };
 		E4328149138ABC9F0047C5CB /* openFrameworksDebug.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E4328148138ABC890047C5CB /* openFrameworksDebug.a */; };
 		E45BE97B0E8CC7DD009D7055 /* AGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E45BE9710E8CC7DD009D7055 /* AGL.framework */; };
@@ -104,6 +108,10 @@
 		113CAA7214F88F4200D3906E /* ofxXmlSettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxXmlSettings.h; sourceTree = "<group>"; };
 		119B95D714A65CA0001E1E20 /* pugiconfig.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = pugiconfig.hpp; sourceTree = "<group>"; };
 		119B95D814A65CA0001E1E20 /* pugixml.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = pugixml.hpp; sourceTree = "<group>"; };
+		2D786175150137420086071C /* ofxBaseGui.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxBaseGui.cpp; sourceTree = "<group>"; };
+		2D786176150137420086071C /* ofxButton.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxButton.cpp; sourceTree = "<group>"; };
+		2D786177150137420086071C /* ofxSlider.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxSlider.cpp; sourceTree = "<group>"; };
+		2D786178150137420086071C /* ofxToggle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxToggle.cpp; sourceTree = "<group>"; };
 		BBAB23BE13894E4700AA2426 /* GLUT.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLUT.framework; path = ../../../libs/glut/lib/osx/GLUT.framework; sourceTree = "<group>"; };
 		E4328143138ABC890047C5CB /* openFrameworksLib.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = openFrameworksLib.xcodeproj; path = ../../../libs/openFrameworksCompiled/project/osx/openFrameworksLib.xcodeproj; sourceTree = SOURCE_ROOT; };
 		E45BE9710E8CC7DD009D7055 /* AGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AGL.framework; path = /System/Library/Frameworks/AGL.framework; sourceTree = "<absolute>"; };
@@ -192,6 +200,10 @@
 		113CAA5E14F88F2500D3906E /* src */ = {
 			isa = PBXGroup;
 			children = (
+				2D786175150137420086071C /* ofxBaseGui.cpp */,
+				2D786176150137420086071C /* ofxButton.cpp */,
+				2D786177150137420086071C /* ofxSlider.cpp */,
+				2D786178150137420086071C /* ofxToggle.cpp */,
 				113CAA5F14F88F2500D3906E /* ofOscParameter.h */,
 				113CAA6014F88F2500D3906E /* ofParameter.h */,
 				113CAA6114F88F2500D3906E /* ofxBaseGui.h */,
@@ -450,6 +462,10 @@
 				113CAA7414F88F4200D3906E /* tinyxmlerror.cpp in Sources */,
 				113CAA7514F88F4200D3906E /* tinyxmlparser.cpp in Sources */,
 				113CAA7614F88F4200D3906E /* ofxXmlSettings.cpp in Sources */,
+				2D786179150137420086071C /* ofxBaseGui.cpp in Sources */,
+				2D78617A150137420086071C /* ofxButton.cpp in Sources */,
+				2D78617B150137420086071C /* ofxSlider.cpp in Sources */,
+				2D78617C150137420086071C /* ofxToggle.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
