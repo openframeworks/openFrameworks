@@ -43,6 +43,10 @@ namespace ofxCv {
 	cv::Mat& RunningBackground::getForeground() {
 		return foreground;
 	}
+	float RunningBackground::getPresence() const {
+		// this could be memoized to improve speed
+		return cv::mean(foreground)[0] / 255.;
+	}
 	void RunningBackground::setThresholdValue(unsigned int thresholdValue) {
 		this->thresholdValue = thresholdValue;
 	}

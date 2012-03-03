@@ -49,6 +49,7 @@ namespace ofxCv {
 		void update(cv::Mat frame, cv::Mat& thresholded);
 		cv::Mat& getBackground();
 		cv::Mat& getForeground();
+		float getPresence() const;
 		void setThresholdValue(unsigned int thresholdValue);
 		void setLearningRate(double learningRate);
 		void setLearningTime(double learningTime);
