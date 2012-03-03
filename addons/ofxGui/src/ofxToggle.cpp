@@ -37,12 +37,18 @@ void ofxToggle::mouseReleased(ofMouseEventArgs & args){
 void ofxToggle::saveToXml(ofxXmlSettings& xml) {
 	string xmlName = name;
 	ofStringReplace(xmlName," ","_");
+	ofStringReplace(xmlName,",","_");
+	ofStringReplace(xmlName,"(","_");
+	ofStringReplace(xmlName,")","_");
 	xml.setValue(xmlName, value);
 }
 
 void ofxToggle::loadFromXml(ofxXmlSettings& xml) {
 	string xmlName = name;
 	ofStringReplace(xmlName," ","_");
+	ofStringReplace(xmlName,",","_");
+	ofStringReplace(xmlName,"(","_");
+	ofStringReplace(xmlName,")","_");
 	value = xml.getValue(xmlName, value);
 }
 

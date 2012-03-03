@@ -45,6 +45,9 @@ template<typename Type>
 void ofxSlider<Type>::saveToXml(ofxXmlSettings& xml) {
 	string xmlName = name;
 	ofStringReplace(xmlName," ","_");
+	ofStringReplace(xmlName,",","_");
+	ofStringReplace(xmlName,"(","_");
+	ofStringReplace(xmlName,")","_");
 	xml.setValue(xmlName, value);
 }
 
@@ -52,6 +55,9 @@ template<typename Type>
 void ofxSlider<Type>::loadFromXml(ofxXmlSettings& xml) {
 	string xmlName = name;
 	ofStringReplace(xmlName," ","_");
+	ofStringReplace(xmlName,",","_");
+	ofStringReplace(xmlName,"(","_");
+	ofStringReplace(xmlName,")","_");
 	value = xml.getValue(xmlName, value);
 }
 
