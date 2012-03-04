@@ -45,48 +45,48 @@ void testApp::draw(){
 	}
 
 	
+	// Title "PDF OUTPUT EXAMPLE"
 	ofSetColor(255, 0, 0); // red
 	ofFill(); 
-		
-	
-	// -------------------------------------------------- Title "PDF OUTPUT EXAMPLE"
 	ofDrawBitmapString("PDF OUTPUT EXAMPLE", 20, 20); // 20px from the left, 20px from the top
 	
 	
-	// -------------------------------------------------- draw fonts
+	// draw fonts
 	ofSetColor(0, 0, 255); // blue
 	ofFill(); 
 	// Font as shapes is always not antialiased on the screen, but will be fine in the pdf"
-	myFont.drawStringAsShapes("Font as shapes: looks good in pdf, looks bad on screen (always)",  20, 100); // TTF myFont embdedded into pdf as vector shapes
-	myFont.drawString("Font as images: looks good on screen, looks bad in pdf",  20, 150); // TTF myFont embdedded into pdf as bitmap image
+	myFont.drawStringAsShapes("Font as shapes: looks good on screen, (see comment \n"
+							  "in main.cpp), looks good in pdf",  20, 100); // TTF myFont embdedded into pdf as vector shapes
+	myFont.drawString("Font as images: looks good on screen, looks bad in pdf",  20, 200); // TTF myFont embdedded into pdf as bitmap image
 	
-	// -------------------------------------------------- Title "images can also be embedded into pdf"
+	
+	// Title "images can also be embedded into pdf"
 	ofSetColor(0, 0, 0); // black
-	ofDrawBitmapString("images can also be embedded into pdf", 20, 200);
+	ofDrawBitmapString("images can also be embedded into pdf", 20, 300);
 	
-	// -------------------------------------------------- draw the image
+	
+	// draw the image
 	ofSetColor(255, 255, 255); // a color needs to be set for the image as well, white will draw the image as it is.
-	myImage.draw(20, 250, myImage.getWidth(), myImage.getHeight());
+	myImage.draw(20, 320, myImage.getWidth(), myImage.getHeight());
 	
 	
-	
-	// -------------------------------------------------- draw the rectangle
+	// draw the rectangle
 	ofSetColor(0, 0, 255, 20); // blue with an alpha value of 20
 	ofFill();
 	ofRect(x, y, 10, 10);
 	
 	
-	// -------------------------------------------------- instructions on the bottom on which key to press
+	// instructions on the bottom on which key to press
 	ofSetColor(255, 0, 0); // red
 	ofFill();
 	
 	if( pdfRecordMultipleFrames ){
-		ofDrawBitmapString("press r or a to stop pdf recording", 20, ofGetHeight()-100); // 20px from the left, -100 from the bottom
+		ofDrawBitmapString("press r or a to stop pdf recording", 20, ofGetHeight()-80); // 20px from the left, -80px from the bottom
 	}else{	
 		ofDrawBitmapString("press r to start pdf recording: outputMultiFramesToMultiPages \n"
 						   "press a to start pdf recording: outputMultiFramesToSinglePage \n"
 						   "press s to save a single screenshot as pdf to disk"
-						   , 20, ofGetHeight()-100); // 20px from the left, -100 from the bottom
+						   , 20, ofGetHeight()-80); // 20px from the left, -80px from the bottom
 	}
 	
 	
@@ -131,7 +131,6 @@ void testApp::keyPressed(int key){
 			// but we want to see all of the frames: the rectangle will leave trails on the screen this way
 			// IMPORTANT: the font in the pdf will just _look_ BAD in a preview programme, because it is drawn in the same location on top of itself multiple times (many many times!)
 			ofSetBackgroundAuto(false);
-
 			
 			ofBeginSaveScreenAsPDF("outputMultiFramesToSinglePage-"+ofGetTimestampString()+".pdf", false); // Multipage: false ===> everything goes into one page
 			pdfRecordMultipleFrames = true;
