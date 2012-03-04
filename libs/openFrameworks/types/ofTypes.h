@@ -58,6 +58,13 @@ class ofSerialDeviceInfo{
 typedef Poco::FastMutex ofMutex;
 
 //----------------------------------------------------------
+// ofSemaphore
+//----------------------------------------------------------
+
+#include "Poco/Semaphore.h"
+typedef Poco::Semaphore ofSemaphore;
+
+//----------------------------------------------------------
 // ofStyle
 //----------------------------------------------------------
 
