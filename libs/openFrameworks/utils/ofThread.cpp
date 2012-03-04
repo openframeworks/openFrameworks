@@ -40,12 +40,12 @@ void ofThread::startThread(bool blocking, bool verbose){
 
 	// have to put this here because the thread can be running 
 	// before the call to create it returns 
-	threadRunning   = true; 
+	threadRunning = true; 
 
 	thread.start(*this);
 	this->blocking = blocking;
-	
 	this->verbose = verbose;
+	
 	if(verbose){
 		ofSetLogLevel(thread.name(), OF_LOG_VERBOSE);
 	}
@@ -147,8 +147,8 @@ void ofThread::yield(){
 
 //-------------------------------------------------
 ofThread * ofThread::getCurrentThread(){
-	// assumes all created threads are ofThreads ... might be dangerous
-	// if people are using Poco::Threads directly
+	// assumes all created threads are ofThreads ...
+	// might be dangerous if people are using Poco::Threads directly
 	return (ofThread *) Poco::Thread::current();
 }
 

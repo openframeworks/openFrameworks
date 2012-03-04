@@ -9,7 +9,7 @@
 /// a thread base class with a built in mutex
 ///
 /// derive this class and implement threadedFunction()
-class ofThread : protected Poco::Runnable {
+class ofThread : protected Poco::Runnable{
 
 	public:
 	
@@ -46,16 +46,17 @@ class ofThread : protected Poco::Runnable {
 		
 		/// unlock the mutex
 		///
-		/// only unlocks the mutex if the calling thread had previosuly locked
-		/// it
+		/// only unlocks the mutex if it had been locked previously by the
+		/// calling thread
 		void unlock();
 		
 		/// stop the thread
 		///
 		/// set close to true if you want the thread to exit immediately
 		///
-		/// set close to false if you want to signal the thread to exit, then
-		/// wait for it to finish with waitForThread()
+		/// set close to false if you want to signal the thread to exit but not
+		/// have it stop immediately, you will need to wait for it to finish
+		/// manually by calling waitForThread()
 		void stopThread(bool close = true);
 		
 		/// wait for the thread to exit
@@ -107,7 +108,7 @@ class ofThread : protected Poco::Runnable {
 		///
 		/// this function is similar to sleep() and can be used in the same way,
 		/// the main difference is that 1 ms is a long time on modern processors
-		/// and yeild() simply gives up processing time to the next thread
+		/// and yield() simply gives up processing time to the next thread
 		/// instead of waiting for a certain amount of time
 		///
 		/// this can be faster in some circumstances
@@ -164,9 +165,9 @@ class ofThread : protected Poco::Runnable {
 		/// the internal mutex called through lock() & unlock()
 		ofMutex mutex;
 
-		bool threadRunning;	///< is the thread running?
-		bool blocking;		///< should the mutex block?
-		bool verbose;		///< print detailed run/mutex info?
+		bool threadRunning; ///< is the thread running?
+		bool blocking; ///< should the mutex block?
+		bool verbose; ///< print detailed run/mutex info?
 	
 	private:
 	
