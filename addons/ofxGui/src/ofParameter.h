@@ -20,7 +20,26 @@ public:
 	void setName(string name);
 	string getName();
 
-	ofEvent<ParameterType> changedE;
+	template<class ListenerClass>
+	void addListener(ListenerClass * listener, void ( ListenerClass::*method )(ParameterType&)){
+		ofAddListener(obj->changedE,listener,method);
+	}
+
+	template<class ListenerClass>
+	void removeListener(ListenerClass * listener, void ( ListenerClass::*method )(ParameterType&)){
+		ofRemoveListener(obj->changedE,listener,method);
+	}
+
+	template<class ListenerClass>
+	void addListener(ListenerClass * listener, void ( ListenerClass::*method )(const void*, ParameterType&)){
+		ofAddListener(obj->changedE,listener,method);
+	}
+
+	template<class ListenerClass>
+	void removeListener(ListenerClass * listener, void ( ListenerClass::*method )(const void*, ParameterType&)){
+		ofRemoveListener(obj->changedE,listener,method);
+	}
+
 private:
 	class Value{
 	public:
@@ -35,6 +54,7 @@ private:
 
 		ParameterType value;
 		string name;
+		ofEvent<ParameterType> changedE;
 	};
 	ofPtr<Value> obj;
 };
@@ -65,11 +85,21 @@ ParameterType ofxParameter<ParameterType>::getValue(){
 
 template<typename ParameterType>
 void ofxParameter<ParameterType>::setValue(ParameterType v){
-	ofNotifyEvent(changedE,v);
+	ofNotifyEvent(obj->changedE,v,this);
 	obj->value = v;
 }
 
 template<typename ParameterType>
 ofxParameter<ParameterType>::operator ParameterType & (){
 	return obj->value;
+}
+
+template<typename ParameterType>
+void ofxParameter<ParameterType>::setName(string _name){
+	obj->name = _name;
+}
+
+template<typename ParameterType>
+string ofxParameter<ParameterType>::getName(){
+	return obj->name;
 }
