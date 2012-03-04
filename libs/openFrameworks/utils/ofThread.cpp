@@ -42,16 +42,16 @@ void ofThread::startThread(bool blocking, bool verbose){
 	// before the call to create it returns 
 	threadRunning = true; 
 
-	thread.start(*this);
 	this->blocking = blocking;
 	this->verbose = verbose;
-	
 	if(verbose){
 		ofSetLogLevel(thread.name(), OF_LOG_VERBOSE);
 	}
 	else{
 		ofSetLogLevel(thread.name(), OF_LOG_NOTICE);
 	}
+
+	thread.start(*this);
 } 
 
 //------------------------------------------------- 
