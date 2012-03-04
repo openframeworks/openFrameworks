@@ -44,6 +44,7 @@ void ofThread::startThread(bool blocking, bool verbose){
 
 	this->blocking = blocking;
 	this->verbose = verbose;
+	
 	if(verbose){
 		ofSetLogLevel(thread.name(), OF_LOG_VERBOSE);
 	}
