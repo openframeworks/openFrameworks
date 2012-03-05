@@ -45,8 +45,12 @@ bool visualStudioProject::create(string path){
 		ofFile::copyFromTo(ofFilePath::join(templatePath,"emptyExample_vs2010.vcxproj"),project.path());
 		ofFile::copyFromTo(ofFilePath::join(templatePath,"emptyExample_vs2010.vcxproj.user"),ofFilePath::join(projectDir, projectName + ".vcxproj.user"));
 		ofFile::copyFromTo(ofFilePath::join(templatePath,"emptyExample_vs2010.sln"),ofFilePath::join(projectDir, projectName + ".sln"));
-		ofFile::copyFromTo(ofFilePath::join(templatePath,"src"),projectDir);
-		ofFile::copyFromTo(ofFilePath::join(templatePath,"bin"),projectDir);
+		
+		ofDirectory src(ofFilePath::join(projectDir,"src"));
+		if(!src.exists()) ofFile::copyFromTo(ofFilePath::join(templatePath,"src"),projectDir);
+		ofDirectory bin(ofFilePath::join(projectDir,"bin"));
+		if(!bin.exists()) ofFile::copyFromTo(ofFilePath::join(templatePath,"bin"),projectDir);
+		
 		project.open(ofFilePath::join(projectDir , projectName + ".vcxproj"));
 		findandreplaceInTexfile(ofFilePath::join(projectDir , projectName + ".sln"),"emptyExample",projectName);
 	}
