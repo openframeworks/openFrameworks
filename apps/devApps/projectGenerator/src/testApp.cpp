@@ -2,12 +2,6 @@
 #include "Utils.h"
 #include <stdio.h>
 
-
-
-
-
-
-
 //--------------------------------------------------------------
 void testApp::setup(){
 
@@ -17,10 +11,14 @@ void testApp::setup(){
 
 	setOFRoot(getOFRootFromConfig());
 
-    switch(ofGetTargetPlatform()){
+	int plat = ofGetTargetPlatform();
+	plat = OF_TARGET_IPHONE;
+	
+    switch(plat){
     case OF_TARGET_OSX:
     	project = new xcodeProject;
     	platform = "osx";
+		((xcodeProject *)project)->setupForPlatform(platform);
     	break;
     case OF_TARGET_WINGCC:
     	project = new CBWinProject;
@@ -31,6 +29,9 @@ void testApp::setup(){
     	platform = "vs2010";
     	break;
     case OF_TARGET_IPHONE:
+		project = new xcodeProject();
+    	platform = "ios";		
+		((xcodeProject *)project)->setupForPlatform(platform);		
     	break;
     case OF_TARGET_ANDROID:
     	break;
@@ -85,15 +86,19 @@ void testApp::setup(){
 }
 
 void testApp::generateExamples(){
-    
+    	
     ofDirectory dir;
     
     dir.listDir(ofFilePath::join(getOFRoot(),"examples"));
 
     for (int i = 0; i < dir.size(); i++){
         
-        if (dir.getName(i) == "android" || dir.getName(i) == "ios") continue;
-        
+		if( platform == "ios" ){
+			if( dir.getName(i) != "ios" ) continue;
+		}else{
+			if (dir.getName(i) == "android" || dir.getName(i) == "ios") continue;
+        }
+		
         ofDirectory subdir;
         subdir.listDir(dir.getPath(i));
         
