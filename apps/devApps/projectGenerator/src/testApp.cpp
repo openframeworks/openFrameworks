@@ -12,7 +12,7 @@ void testApp::setup(){
 	setOFRoot(getOFRootFromConfig());
 
 	int plat = ofGetTargetPlatform();
-	plat = OF_TARGET_IPHONE;
+	//plat = OF_TARGET_IPHONE;
 	
     switch(plat){
     case OF_TARGET_OSX:
