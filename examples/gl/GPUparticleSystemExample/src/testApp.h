@@ -1,6 +1,4 @@
-/*  of Detroit DevCon 2012
- *  date: 2012/02/26 10:00:00
- *
+/*  
  *  summary:Example of how to use GPU for data processing. The data it«s going to be stored
  *          on the color channels of the FBO«s textures. In this case we are going to use just
  *          RED and GREEN channels on two textures. One for the position and the other one for
@@ -10,10 +8,6 @@
  *          After updating this information, we are going to use the textures allocated on GPU memory
  *          for moving some vertex and then multiplied them in order to make little frames that hold 
  *          a texture of a spark of light.
- *
- *
- *  author: Patricio Gonzalez Vivo
- *  author_site: http://patriciogonzalezvivo.com
  */
 
 #pragma once
