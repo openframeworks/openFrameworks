@@ -31,11 +31,11 @@ void ofxSimpleSlider::setup (float inx, float iny, float inw, float inh, float l
 	
 	labelString = ""; 
 	
-	ofAddListener(ofEvents.draw, this, &ofxSimpleSlider::draw);
-	ofAddListener(ofEvents.mouseMoved, this, &ofxSimpleSlider::mouseMoved);
-	ofAddListener(ofEvents.mousePressed, this, &ofxSimpleSlider::mousePressed);
-	ofAddListener(ofEvents.mouseReleased, this, &ofxSimpleSlider::mouseReleased);
-	ofAddListener(ofEvents.mouseDragged, this, &ofxSimpleSlider::mouseDragged);
+	ofAddListener(ofEvents().draw, this, &ofxSimpleSlider::draw);
+	ofAddListener(ofEvents().mouseMoved, this, &ofxSimpleSlider::mouseMoved);
+	ofAddListener(ofEvents().mousePressed, this, &ofxSimpleSlider::mousePressed);
+	ofAddListener(ofEvents().mouseReleased, this, &ofxSimpleSlider::mouseReleased);
+	ofAddListener(ofEvents().mouseDragged, this, &ofxSimpleSlider::mouseDragged);
 }
 
 
