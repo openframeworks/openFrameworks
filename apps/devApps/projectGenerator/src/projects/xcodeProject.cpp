@@ -492,7 +492,7 @@ void xcodeProject::addSrc(string srcFile, string folder){
     
     bool addToResources = true;
     bool addToBuild = true;
-    string fileKind = "";
+    string fileKind = "file";
     bool bAddFolder = true;
     
     if( ext == "cpp" || ext == "cc"){
@@ -513,7 +513,8 @@ void xcodeProject::addSrc(string srcFile, string folder){
         fileKind = "sourcecode.cpp.objcpp";
     }
     if(ext == "xib"){
-        addToBuild	= false;
+		fileKind = "file";
+        addToBuild	= true;
     }
     if (folder == "src"){
         bAddFolder = false;
