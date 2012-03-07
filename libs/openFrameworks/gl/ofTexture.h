@@ -124,6 +124,7 @@ class ofTexture : public ofBaseDraws {
 	void draw(const ofPoint & p, float w, float h);
 	void draw(float x, float y, float w, float h);
 	void draw(float x, float y, float z, float w, float h);
+	void draw(float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh);
 	void draw(const ofPoint & p);
 	void draw(float x, float y);
 	void draw(float x, float y, float z);
