@@ -32,13 +32,13 @@ for example in examples:
 		upper = re.sub("-([a-z])", toUpper, sansExample)
 		targetProjectName = upper + "Example"
 		
-        #linux
+		#linux
 		targetDir = "{0}/".format(example, targetProjectName)
 		emptyDir = "example-empty"
- 		print "copy " + sourceMakefile + " in " + targetDir
- 		shutil.copy(sourceMakefile, targetDir)
- 		shutil.copy(sourceConfigs, targetDir)
- 		shutil.copy(sourceAddons, targetDir)
+		print "copy " + sourceMakefile + " in " + targetDir
+		shutil.copy(sourceMakefile, targetDir)
+		shutil.copy(sourceConfigs, targetDir)
+		shutil.copy(sourceAddons, targetDir)
 
 		# windows code::blocks
 		targetCbp = "{0}/{1}.cbp".format(example, targetProjectName)
