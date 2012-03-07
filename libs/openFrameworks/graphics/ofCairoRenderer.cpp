@@ -371,7 +371,7 @@ void ofCairoRenderer::draw(ofSubPath & path){
 }
 
 //--------------------------------------------
-void ofCairoRenderer::draw(ofImage & img, float x, float y, float z, float w, float h){
+void ofCairoRenderer::draw(ofImage & img, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh){
 	ofPixelsRef pix = img.getPixelsRef();
 	pushMatrix();
 	translate(x,y,z);
@@ -447,15 +447,15 @@ void ofCairoRenderer::draw(ofImage & img, float x, float y, float z, float w, fl
 }
 
 //--------------------------------------------
-void ofCairoRenderer::draw(ofFloatImage & image, float x, float y, float z, float w, float h){
+void ofCairoRenderer::draw(ofFloatImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh){
 	ofImage tmp = image;
-	draw(tmp,x,y,z,w,h);
+	draw(tmp,x,y,z,w,h,sx,sy,sw,sh);
 }
 
 //--------------------------------------------
-void ofCairoRenderer::draw(ofShortImage & image, float x, float y, float z, float w, float h){
+void ofCairoRenderer::draw(ofShortImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh){
 	ofImage tmp = image;
-	draw(tmp,x,y,z,w,h);
+	draw(tmp,x,y,z,w,h,sx,sy,sw,sh);
 }
 
 //--------------------------------------------
