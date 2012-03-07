@@ -19,17 +19,16 @@ class testApp : public ofBaseApp{
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
 		
-		vector <ofImage> frames;
-		ofVideoGrabber grabber; 
 		
-		vector <ofRectangle> dropZoneRects;
-		vector <ofImage> images;
-		vector <ofPoint> boxTrail;
+		ofImage myImage;  // we want one image
+		ofTrueTypeFont myFont; // we want some font
+	   		
+		bool	pdfGrabOneFrame;
+		bool	pdfRecordMultipleFrames;
+	
+		float x, y; // for the positioning of the rectangle
+	
+	
 		
-		ofTrueTypeFont font;
-		
-		bool						oneShot;
-		bool						pdfRendering;
 
-		float						angle;
 };
