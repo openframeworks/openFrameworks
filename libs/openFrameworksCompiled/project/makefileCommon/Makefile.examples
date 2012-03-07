@@ -88,10 +88,12 @@ CFLAGS += $(CORE_INCLUDE_FLAGS)
 
 ifeq ($(findstring Debug,$(TARGET_NAME)),Debug)
 	CFLAGS += -g3
+	TARGET_LIBS = $(OF_ROOT)/libs/openFrameworksCompiled/lib/$(LIBSPATH)/libopenFrameworksDebug.a
 endif
 
 ifeq ($(findstring Release,$(TARGET_NAME)),Release)
 	CFLAGS += $(COMPILER_OPTIMIZATION)
+	TARGET_LIBS = $(OF_ROOT)/libs/openFrameworksCompiled/lib/$(LIBSPATH)/libopenFrameworks.a
 endif
 
 
