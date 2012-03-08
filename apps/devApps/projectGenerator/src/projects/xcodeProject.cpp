@@ -108,9 +108,22 @@ string xcodeProject::LOG_NAME = "xcodeProject";
 
 
 void xcodeProject::setup(string _ofRoot){
-    templatePath = ofFilePath::join(getOFRoot(),"scripts/osx/template/");
-    //templatePath = ofToDataPath("xcode/template/",true);
-    ofRoot = _ofRoot;
+    templatePath	= ofFilePath::join(getOFRoot(),"scripts/"+target+"/template/");
+    //templatePath	= ofToDataPath("xcode/template/",true);
+    ofRoot			= _ofRoot;
+}
+
+void xcodeProject::setupForPlatform(string targetPlatform){
+	target				= targetPlatform;
+	if( target == "osx" ){	
+		srcUUID			= "E4B69E1C0A3A1BDC003C02F2";
+		addonUUID		= "BB4B014C10F69532006C3DED"; 
+		buildPhaseUUID	= "E4B69E200A3A1BDC003C02F2";
+	}else{
+		srcUUID			= "E4D8936A11527B74007E1F53";
+		addonUUID		= "BB16F26B0F2B646B00518274"; 
+		buildPhaseUUID	= "E4D8936E11527B74007E1F53";
+	}
 }
 
 
@@ -195,11 +208,19 @@ bool xcodeProject::create(string path){
             ofLogVerbose(LOG_NAME) << "creating non existent project";
             ofDirectory dir(projectDir);
             dir.create(true);
-    		ofFile::copyFromTo(ofFilePath::join(templatePath,"emptyExample.xcodeproj"),projectDir);
-    		ofFile::copyFromTo(ofFilePath::join(templatePath,"openFrameworks-Info.plist"),projectDir);
+			
+			ofFile::copyFromTo(ofFilePath::join(templatePath,"emptyExample.xcodeproj"),projectDir);
     		ofFile::copyFromTo(ofFilePath::join(templatePath,"Project.xcconfig"),projectDir);
     		ofFile::copyFromTo(ofFilePath::join(templatePath,"src"),projectDir);
-    		ofFile::copyFromTo(ofFilePath::join(templatePath,"bin"),projectDir);
+    		ofFile::copyFromTo(ofFilePath::join(templatePath,"bin"),projectDir);		
+			
+			if( target == "osx" ){
+				ofFile::copyFromTo(ofFilePath::join(templatePath,"openFrameworks-Info.plist"),projectDir);
+			}else{
+				ofFile::copyFromTo(ofFilePath::join(templatePath,"ofxiphone-Info.plist"),projectDir);
+				ofFile::copyFromTo(ofFilePath::join(templatePath,"iPhone_Prefix.pch"),projectDir);
+			}
+			
             load(ofFilePath::join(projectDir, "emptyExample.xcodeproj/project.pbxproj"));
             renameProject();
             string xcodeProject = ofFilePath::join(projectDir , projectName + ".xcodeproj");
@@ -223,8 +244,15 @@ bool xcodeProject::create(string path){
         getFilesRecursively(projectDir + "src", fileNames);
 
 		ofFile::copyFromTo(ofFilePath::join(templatePath,"emptyExample.xcodeproj"),projectDir);
-		ofFile::copyFromTo(ofFilePath::join(templatePath,"openFrameworks-Info.plist"),projectDir);
 		ofFile::copyFromTo(ofFilePath::join(templatePath,"Project.xcconfig"),projectDir);
+
+		if( target == "osx" ){
+			ofFile::copyFromTo(ofFilePath::join(templatePath,"openFrameworks-Info.plist"),projectDir);
+		}else{
+			ofFile::copyFromTo(ofFilePath::join(templatePath,"ofxiphone-Info.plist"),projectDir);
+			ofFile::copyFromTo(ofFilePath::join(templatePath,"iPhone_Prefix.pch"),projectDir);
+    		ofFile::copyFromTo(ofFilePath::join(templatePath,"bin"),projectDir);			
+		}
 
         load(ofFilePath::join(projectDir, "emptyExample.xcodeproj/project.pbxproj"));
         renameProject();
@@ -252,12 +280,14 @@ bool xcodeProject::create(string path){
             last.erase(last.begin());
             
             string fileName = last;
-            splitFromLast(fileName,"/", first, last);  
+            splitFromLast(fileName, "/", first, last);  
             
             if (fileName != "src/testApp.cpp" &&
                 fileName != "src/testApp.h" &&
-                fileName != "src/main.cpp"){
-                    addSrc(fileName, first);
+                fileName != "src/main.cpp" && 
+				fileName != "src/testApp.mm" &&
+				fileName != "src/main.mm"){
+					addSrc(fileName, first);
             }
         }
     }
@@ -444,13 +474,9 @@ pugi::xml_node xcodeProject::findOrMakeFolderSet(pugi::xml_node nodeToAddTo, vec
 
 
 
-
-
-
 void xcodeProject::addSrc(string srcFile, string folder){
     
-    
-    
+	
     string buildUUID;
     
     //-----------------------------------------------------------------
@@ -466,7 +492,7 @@ void xcodeProject::addSrc(string srcFile, string folder){
     
     bool addToResources = true;
     bool addToBuild = true;
-    string fileKind = "";
+    string fileKind = "file";
     bool bAddFolder = true;
     
     if( ext == "cpp" || ext == "cc"){
@@ -487,7 +513,8 @@ void xcodeProject::addSrc(string srcFile, string folder){
         fileKind = "sourcecode.cpp.objcpp";
     }
     if(ext == "xib"){
-        addToBuild	= false;
+		fileKind = "file";
+        addToBuild	= true;
     }
     if (folder == "src"){
         bAddFolder = false;
@@ -531,7 +558,7 @@ void xcodeProject::addSrc(string srcFile, string folder){
         
         // add it to the build array. 
         pugi::xml_node array;
-        findArrayForUUID("E4B69E200A3A1BDC003C02F2", array);    // this is the build array (all build refs get added here)
+        findArrayForUUID(buildPhaseUUID, array);    // this is the build array (all build refs get added here)
         array.append_child("string").append_child(pugi::node_pcdata).set_value(buildUUID.c_str());
     }
     
@@ -556,23 +583,26 @@ void xcodeProject::addSrc(string srcFile, string folder){
         
         if (folders.size() > 1){
             if (folders[0] == "src"){
-                
+                string xmlStr = "//key[contains(.,'"+srcUUID+"')]/following-sibling::node()[1]";
+				
                 folders.erase(folders.begin());
-                pugi::xml_node node = doc.select_single_node("//key[contains(.,'E4B69E1C0A3A1BDC003C02F2')]/following-sibling::node()[1]").node();
+                pugi::xml_node node = doc.select_single_node(xmlStr.c_str()).node();
                 pugi::xml_node nodeToAddTo = findOrMakeFolderSet( node, folders, "src");
                 nodeToAddTo.child("array").append_child("string").append_child(pugi::node_pcdata).set_value(UUID.c_str());
                 
             } else if (folders[0] == "addons"){
-                
+                string xmlStr = "//key[contains(.,'"+addonUUID+"')]/following-sibling::node()[1]";
+
                 folders.erase(folders.begin());
-                pugi::xml_node node = doc.select_single_node("//key[contains(.,'BB4B014C10F69532006C3DED')]/following-sibling::node()[1]").node();
+                pugi::xml_node node = doc.select_single_node(xmlStr.c_str()).node();
                 pugi::xml_node nodeToAddTo = findOrMakeFolderSet( node, folders, "addons");
                 
                 nodeToAddTo.child("array").append_child("string").append_child(pugi::node_pcdata).set_value(UUID.c_str());
                 
             } else {
-                
-                pugi::xml_node node = doc.select_single_node("//key[contains(.,'E4B69E1C0A3A1BDC003C02F2')]/following-sibling::node()[1]").node();
+                string xmlStr = "//key[contains(.,'"+srcUUID+"')]/following-sibling::node()[1]";
+
+                pugi::xml_node node = doc.select_single_node(xmlStr.c_str()).node();
                 
                 // I'm not sure the best way to proceed;
                 // we should maybe find the rootest level and add it there. 
@@ -584,14 +614,13 @@ void xcodeProject::addSrc(string srcFile, string folder){
         
         
         pugi::xml_node array;
-        pugi::xml_node node = doc.select_single_node("//key[contains(.,'E4B69E1C0A3A1BDC003C02F2')]/following-sibling::node()[1]").node();
+		string xmlStr = "//key[contains(.,'"+srcUUID+"')]/following-sibling::node()[1]";
+        pugi::xml_node node = doc.select_single_node(xmlStr.c_str()).node();
         node.child("array").append_child("string").append_child(pugi::node_pcdata).set_value(UUID.c_str());
         //nodeToAddTo.child("array").append_child("string").append_child(pugi::node_pcdata).set_value(UUID.c_str());
         
     }
-    
-    
-    
+        
     saveFile(projectDir + "/" + projectName + ".xcodeproj" + "/project.pbxproj");
 } 
 

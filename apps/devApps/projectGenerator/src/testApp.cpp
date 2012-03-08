@@ -2,47 +2,20 @@
 #include "Utils.h"
 #include <stdio.h>
 
-
-
-
-
-
-
 //--------------------------------------------------------------
 void testApp::setup(){
-
+	project = NULL;
+	
 	while(!checkConfigExists()){
 		askOFRoot();
 	}
 
 	setOFRoot(getOFRootFromConfig());
 
-    switch(ofGetTargetPlatform()){
-    case OF_TARGET_OSX:
-    	project = new xcodeProject;
-    	platform = "osx";
-    	break;
-    case OF_TARGET_WINGCC:
-    	project = new CBWinProject;
-    	platform = "wincb";
-    	break;
-    case OF_TARGET_WINVS:
-    	project = new visualStudioProject;
-    	platform = "vs2010";
-    	break;
-    case OF_TARGET_IPHONE:
-    	break;
-    case OF_TARGET_ANDROID:
-    	break;
-    case OF_TARGET_LINUX:
-    	project = new CBLinuxProject;
-    	platform = "linux";
-    	break;
-    case OF_TARGET_LINUX64:
-    	project = new CBLinuxProject;
-    	platform = "linux64";
-    	break;
-    }
+	int plat = ofGetTargetPlatform();
+	//plat = OF_TARGET_IPHONE;
+	
+    setupForPlatform(plat);
 
     if(projectPath!=""){
         project->setup(getOFRelPath(projectPath));
@@ -79,21 +52,94 @@ void testApp::setup(){
     updateProject.addListener(this,&testApp::updateProjectPressed);
     createAndOpen.addListener(this,&testApp::createAndOpenPressed);
     changeOFRoot.addListener(this,&testApp::changeOFRootPressed);
+	
+	examplesPanel.setup("generate examples", "examples.xml", 400, 10);
+	examplesPanel.add(generateButton.setup("<--Generate"));
+	examplesPanel.add(wincbToggle.setup("win CB projects",false));
+	examplesPanel.add(winvsToggle.setup("win VS projects", false));
+	examplesPanel.add(linuxcbToggle.setup("linux CB projects",false));
+	examplesPanel.add(osxToggle.setup("osx projects",false));
+	examplesPanel.add(iosToggle.setup("ios projects",false));
+	
+	generateButton.addListener(this,&testApp::generateExamplesCB);
 
     ofSetVerticalSync(true);
     ofEnableAlphaBlending();
+	ofSetFrameRate(60);
+}
+
+void testApp::setupForPlatform(int plat){
+	if(project){
+		delete project;
+	}
+	
+	switch(plat){
+    case OF_TARGET_OSX:
+    	project = new xcodeProject;
+    	platform = "osx";
+		((xcodeProject *)project)->setupForPlatform(platform);
+    	break;
+    case OF_TARGET_WINGCC:
+    	project = new CBWinProject;
+    	platform = "wincb";
+    	break;
+    case OF_TARGET_WINVS:
+    	project = new visualStudioProject;
+    	platform = "vs2010";
+    	break;
+    case OF_TARGET_IPHONE:
+		project = new xcodeProject();
+    	platform = "ios";		
+		((xcodeProject *)project)->setupForPlatform(platform);		
+    	break;
+    case OF_TARGET_ANDROID:
+    	break;
+    case OF_TARGET_LINUX:
+    	project = new CBLinuxProject;
+    	platform = "linux";
+    	break;
+    case OF_TARGET_LINUX64:
+    	project = new CBLinuxProject;
+    	platform = "linux64";
+    	break;
+    }
+}
+
+void testApp::generateExamplesCB(bool & pressed){
+
+	vector <int> platformsToMake;
+	if( osxToggle )		platformsToMake.push_back(OF_TARGET_OSX);
+	if( iosToggle )		platformsToMake.push_back(OF_TARGET_IPHONE);
+	if( wincbToggle )	platformsToMake.push_back(OF_TARGET_WINGCC);
+	if( winvsToggle )	platformsToMake.push_back(OF_TARGET_WINVS);
+	if( linuxcbToggle )	platformsToMake.push_back(OF_TARGET_LINUX);
+	
+	if( platformsToMake.size() == 0 ){
+		cout << "Error: generateExamplesCB - must specifiy a project to generate " <<endl;
+	}
+
+	for(int i = 0; i < platformsToMake.size(); i++){
+		setupForPlatform(platformsToMake[i]);
+		generateExamples();
+	}
+	
+	int plat = ofGetTargetPlatform();	
+    setupForPlatform(plat);
 }
 
 void testApp::generateExamples(){
-    
     ofDirectory dir;
     
     dir.listDir(ofFilePath::join(getOFRoot(),"examples"));
 
     for (int i = 0; i < dir.size(); i++){
         
-        if (dir.getName(i) == "android" || dir.getName(i) == "ios") continue;
-        
+		if( platform == "ios" ){
+			if( dir.getName(i) != "ios" ) continue;
+		}else{
+			if (dir.getName(i) == "android" || dir.getName(i) == "ios") continue;
+        }
+		
         ofDirectory subdir;
         subdir.listDir(dir.getPath(i));
         
@@ -204,7 +250,8 @@ void testApp::draw(){
 	
     panelAddons.draw();
 	panelOptions.draw();
-
+	examplesPanel.draw();
+	
 	ofSetColor(0,0,0,100);
 	ofRect(ofGetWidth()-410,10,400,100);
 
