@@ -127,6 +127,14 @@
 		E4F3BB2B12F4C752002D19BB /* ofTessellator.h in Headers */ = {isa = PBXBuildFile; fileRef = E4F3BB1312F4C752002D19BB /* ofTessellator.h */; };
 		E4F3BB2E12F4C752002D19BB /* ofTrueTypeFont.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BB1612F4C752002D19BB /* ofTrueTypeFont.cpp */; };
 		E4F3BB2F12F4C752002D19BB /* ofTrueTypeFont.h in Headers */ = {isa = PBXBuildFile; fileRef = E4F3BB1712F4C752002D19BB /* ofTrueTypeFont.h */; };
+		FA356379150909C8006D81D2 /* ofWindowManager.h in Headers */ = {isa = PBXBuildFile; fileRef = FA356377150909C8006D81D2 /* ofWindowManager.h */; };
+		FA35637A150909C8006D81D2 /* ofWindowManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FA356378150909C8006D81D2 /* ofWindowManager.cpp */; };
+		FA35637D150909D9006D81D2 /* ofWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = FA35637B150909D9006D81D2 /* ofWindow.h */; };
+		FA35637E150909D9006D81D2 /* ofWindow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FA35637C150909D9006D81D2 /* ofWindow.cpp */; };
+		FA35638515090A21006D81D2 /* ofWindowCocoa.h in Headers */ = {isa = PBXBuildFile; fileRef = FA35638315090A21006D81D2 /* ofWindowCocoa.h */; };
+		FA35638615090A21006D81D2 /* ofWindowCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = FA35638415090A21006D81D2 /* ofWindowCocoa.mm */; };
+		FA3563EC15090FF2006D81D2 /* ofWindowManagerCocoa.h in Headers */ = {isa = PBXBuildFile; fileRef = FA3563EA15090FF2006D81D2 /* ofWindowManagerCocoa.h */; };
+		FA3563ED15090FF2006D81D2 /* ofWindowManagerCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = FA3563EB15090FF2006D81D2 /* ofWindowManagerCocoa.mm */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -267,6 +275,14 @@
 		E4F3BB1312F4C752002D19BB /* ofTessellator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofTessellator.h; path = ../../../openFrameworks/graphics/ofTessellator.h; sourceTree = SOURCE_ROOT; };
 		E4F3BB1612F4C752002D19BB /* ofTrueTypeFont.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofTrueTypeFont.cpp; path = ../../../openFrameworks/graphics/ofTrueTypeFont.cpp; sourceTree = SOURCE_ROOT; };
 		E4F3BB1712F4C752002D19BB /* ofTrueTypeFont.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofTrueTypeFont.h; path = ../../../openFrameworks/graphics/ofTrueTypeFont.h; sourceTree = SOURCE_ROOT; };
+		FA356377150909C8006D81D2 /* ofWindowManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofWindowManager.h; sourceTree = "<group>"; };
+		FA356378150909C8006D81D2 /* ofWindowManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofWindowManager.cpp; sourceTree = "<group>"; };
+		FA35637B150909D9006D81D2 /* ofWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofWindow.h; sourceTree = "<group>"; };
+		FA35637C150909D9006D81D2 /* ofWindow.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofWindow.cpp; sourceTree = "<group>"; };
+		FA35638315090A21006D81D2 /* ofWindowCocoa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofWindowCocoa.h; sourceTree = "<group>"; };
+		FA35638415090A21006D81D2 /* ofWindowCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ofWindowCocoa.mm; sourceTree = "<group>"; };
+		FA3563EA15090FF2006D81D2 /* ofWindowManagerCocoa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofWindowManagerCocoa.h; sourceTree = "<group>"; };
+		FA3563EB15090FF2006D81D2 /* ofWindowManagerCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ofWindowManagerCocoa.mm; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -360,6 +376,14 @@
 				E4B27AAF10CBE92A00536013 /* ofAppRunner.cpp */,
 				E4B27AB010CBE92A00536013 /* ofAppRunner.h */,
 				E4B27AB110CBE92A00536013 /* ofBaseApp.h */,
+				FA356377150909C8006D81D2 /* ofWindowManager.h */,
+				FA356378150909C8006D81D2 /* ofWindowManager.cpp */,
+				FA3563EA15090FF2006D81D2 /* ofWindowManagerCocoa.h */,
+				FA3563EB15090FF2006D81D2 /* ofWindowManagerCocoa.mm */,
+				FA35637B150909D9006D81D2 /* ofWindow.h */,
+				FA35637C150909D9006D81D2 /* ofWindow.cpp */,
+				FA35638315090A21006D81D2 /* ofWindowCocoa.h */,
+				FA35638415090A21006D81D2 /* ofWindowCocoa.mm */,
 			);
 			name = app;
 			path = ../../../openFrameworks/app;
@@ -610,6 +634,10 @@
 				E4C5E387131AC1B10050F992 /* ofRtAudioSoundStream.h in Headers */,
 				E4C5E38B131AC1BE0050F992 /* ofBaseSoundStream.h in Headers */,
 				772BDF74146928600030F0EE /* ofOpenALSoundPlayer.h in Headers */,
+				FA356379150909C8006D81D2 /* ofWindowManager.h in Headers */,
+				FA35637D150909D9006D81D2 /* ofWindow.h in Headers */,
+				FA35638515090A21006D81D2 /* ofWindowCocoa.h in Headers */,
+				FA3563EC15090FF2006D81D2 /* ofWindowManagerCocoa.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -640,7 +668,6 @@
 			isa = PBXProject;
 			buildConfigurationList = E4B69B4D0A3A1720003C02F2 /* Build configuration list for PBXProject "openFrameworksLib" */;
 			compatibilityVersion = "Xcode 2.4";
-			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				English,
@@ -718,6 +745,10 @@
 				92C55F88132DA7DD00EC2631 /* ofPath.cpp in Sources */,
 				E4C5E388131AC1B10050F992 /* ofRtAudioSoundStream.cpp in Sources */,
 				772BDF73146928600030F0EE /* ofOpenALSoundPlayer.cpp in Sources */,
+				FA35637A150909C8006D81D2 /* ofWindowManager.cpp in Sources */,
+				FA35637E150909D9006D81D2 /* ofWindow.cpp in Sources */,
+				FA35638615090A21006D81D2 /* ofWindowCocoa.mm in Sources */,
+				FA3563ED15090FF2006D81D2 /* ofWindowManagerCocoa.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
