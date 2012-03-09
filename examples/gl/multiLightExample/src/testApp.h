@@ -2,15 +2,8 @@
 
 #include "ofMain.h"
 
-struct Link {
-    Link(int _x, int _y):pos(_x,_y),prev(NULL),next(NULL){}; //Constructor
-    
-    ofVec2f pos;    // Position
-    Link * prev;    // a pointer to the previus link
-    Link * next;    // a pointer to the next link
-};
-
 class testApp : public ofBaseApp{
+
 public:
     void setup();
     void update();
@@ -25,18 +18,19 @@ public:
     void windowResized(int w, int h);
     void dragEvent(ofDragInfo dragInfo);
     void gotMessage(ofMessage msg);
+    
+    ofLight pointLight;
+	ofLight spotLight;
+	ofLight directionalLight;
 	
-	void createNew(int _x, int _y);
-    void deleteLast();
-    void deleteAll();
-    
-    void drawArrow(ofPoint from, ofPoint to, float size);
-    
-    vector<Link*> chain;
-    
-    Link * last;
-    
-    int blink;
-    int time;
-    bool bArrowToPrev;
+	ofMaterial material;
+    ofImage ofLogoImage;
+	
+	float radius;
+	ofVec3f center;
+	bool bShiny;
+    bool bSmoothLighting;
+	bool bPointLight, bSpotLight, bDirLight;
+    bool bUseTexture;
+		
 };

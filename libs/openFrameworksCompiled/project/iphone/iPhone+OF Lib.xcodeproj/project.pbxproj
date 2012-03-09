@@ -195,7 +195,7 @@
 		772C251B146927A400DDAAE6 /* ofFmodSoundPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofFmodSoundPlayer.h; sourceTree = "<group>"; };
 		BB16EBD10F2B2A9500518274 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
 		BB16EBD80F2B2AB500518274 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
-		BB24DED610DA7A3F00E9C588 /* libofxiPhone_iphoneos_Debug.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libofxiPhone_iphoneos_Debug.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		BB24DED610DA7A3F00E9C588 /* libofxiPhone_iphonesimulator_Debug.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libofxiPhone_iphonesimulator_Debug.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		BB24E01D10DA7C6100E9C588 /* changelog.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = changelog.txt; sourceTree = "<group>"; };
 		BB24E01E10DA7C6100E9C588 /* install.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = install.xml; sourceTree = "<group>"; };
 		BB24E01F10DA7C6100E9C588 /* LICENSE.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE.txt; sourceTree = "<group>"; };
@@ -383,7 +383,7 @@
 		19C28FACFE9D520D11CA2CBB /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				BB24DED610DA7A3F00E9C588 /* libofxiPhone_iphoneos_Debug.a */,
+				BB24DED610DA7A3F00E9C588 /* libofxiPhone_iphonesimulator_Debug.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -867,7 +867,7 @@
 			);
 			name = "iPhone+OF Static Library";
 			productName = "Static Library";
-			productReference = BB24DED610DA7A3F00E9C588 /* libofxiPhone_iphoneos_Debug.a */;
+			productReference = BB24DED610DA7A3F00E9C588 /* libofxiPhone_iphonesimulator_Debug.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 /* End PBXNativeTarget section */
@@ -1027,7 +1027,7 @@
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				GCC_WARN_CHECK_SWITCH_STATEMENTS = NO;
-				SDKROOT = iphoneos;
+				SDKROOT = iphonesimulator4.1;
 				WARNING_CFLAGS = (
 					"-Wno-non-virtual-dtor",
 					"-Wno-overloaded-virtual",
@@ -1041,7 +1041,7 @@
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				GCC_WARN_CHECK_SWITCH_STATEMENTS = NO;
-				SDKROOT = iphoneos;
+				SDKROOT = iphonesimulator4.1;
 				WARNING_CFLAGS = (
 					"-Wno-non-virtual-dtor",
 					"-Wno-overloaded-virtual",
