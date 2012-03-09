@@ -115,22 +115,37 @@ class ofThread : protected Poco::Runnable{
 		///
 		void yield();
 		
-		/// get the current thread, returns 0 if in the main app thread
+		/// in multithreaded situations, it can be useful to know which thread
+		/// is currently running some code in order to make sure only certain
+		/// threads can do certain things ...
 		///
-		/// this is useful for checking which thread a function is currently
-		/// running in:
+		/// this is especially useful with graphics as resources must
+		/// be allocated and updated inside the main app thread only:
 		///
-		/// if(ofThread::getCurrentThread() == &myThread){
-		///	    // we are myThread, do something
+		/// if(myThread.isCurrentThread()){
+		///		// do some myThread things, keep your hands off my resources!
+		/// }
+		/// else if(ofThread::isMainThread()){
+		///    // pheew! ok, update those graphics resources
 		/// }
 		///
-		/// or:
+		
+		/// returns true if this the currently active thread
+		bool isCurrentThread();
+		
+		/// returns true if the main app thread is the currently active thread
+		static bool isMainThread();
+		
+		/// get the current thread, returns NULL if in the main app thread
 		///
-		/// if(ofThread::getCurrentThread() != 0){
-		///     // we are in a thread
+		/// this is useful if you want to access the currently active thread:
+		///
+		/// ofThread* myThread = ofThread::getCurrentThread();
+		/// if(myThread != NULL){
+		///		ofLog() << "Current thread is " << myThread->getThreadName();
 		/// }
-		/// else {
-		///     // we are in the main app thread
+		/// else{
+		///		ofLog() << "Current thread is the main app thread";
 		/// }
 		///
 		static ofThread * getCurrentThread();
