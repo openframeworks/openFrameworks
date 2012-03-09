@@ -1,10 +1,13 @@
 package cc.openframeworks;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.lang.reflect.Field;
+import java.nio.IntBuffer;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -14,16 +17,24 @@ import javax.microedition.khronos.opengles.GL10;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.IntentSender.SendIntentException;
 import android.content.pm.ActivityInfo;
+import android.graphics.Bitmap;
+import android.graphics.Bitmap.CompressFormat;
 import android.hardware.SensorManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.opengl.ETC1Util;
 import android.opengl.GLSurfaceView;
 import android.os.Environment;
 import android.os.PowerManager;
+import android.provider.MediaStore;
+import android.provider.MediaStore.Images;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.GestureDetector;
@@ -32,6 +43,7 @@ import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.webkit.MimeTypeMap;
 import android.widget.CompoundButton;
 import android.widget.Toast;
 
@@ -469,6 +481,12 @@ public class OFAndroid {
 		gps.stopGPS();
 	}
 	
+	public static void screenGrab() {
+		
+		ofActivity.getGLContentView().setScreenGrab(true);
+		
+	}
+	
 	public static void alertBox(String msg){  
 		final String alertMsg = msg;
 		ofActivity.runOnUiThread(new Runnable(){
@@ -666,13 +684,13 @@ class OFGestureListener extends SimpleOnGestureListener implements OnClickListen
 class OFGLSurfaceView extends GLSurfaceView{
 	public OFGLSurfaceView(Context context) {
         super(context);
-        mRenderer = new OFAndroidWindow(getWidth(),getHeight());
+        mRenderer = new OFAndroidWindow(getWidth(),getHeight(), getContext());
         setRenderer(mRenderer);
     }
 	
 	public OFGLSurfaceView(Context context,AttributeSet attributes) {
         super(context,attributes);
-        mRenderer = new OFAndroidWindow(getWidth(),getHeight());
+        mRenderer = new OFAndroidWindow(getWidth(),getHeight(), getContext());
         setRenderer(mRenderer);
     }
 
@@ -688,9 +706,12 @@ class OFGLSurfaceView extends GLSurfaceView{
 
 class OFAndroidWindow implements GLSurfaceView.Renderer {
 	
-	public OFAndroidWindow(int w, int h){ 
+	private boolean getScreenGrab = false;
+	
+	public OFAndroidWindow(int w, int h, Context context){ 
 		this.w = w;
 		this.h = h;
+		this.context = context;
 	}
 	
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
@@ -721,9 +742,67 @@ class OFAndroidWindow implements GLSurfaceView.Renderer {
     public void onDrawFrame(GL10 gl) {
     	if(setup)
     		OFAndroid.render();
+    	
+    	if (getScreenGrab)
+    	{
+    		getScreenGrab = false;
+
+    		int[] bufferData = new int[w*h];
+    		int[] bufferFlipped = new int[w*h];
+    		IntBuffer buffer = IntBuffer.wrap(bufferData);
+    		gl.glReadPixels(0, 0, w, h, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, buffer);
+
+    		for(int y = 0; y < h; y++) {
+    			// 4 here is sizeof(int)
+    			for(int x = 0; x < w * 4; x++) {
+    				bufferFlipped[(int)((h - 1 - y) * w * 4 + x)] =
+    						bufferData[(int)(y * 4 * w + x)];
+    			}
+    		}
+
+    		Bitmap bitmap = Bitmap.createBitmap(bufferData, w, h, Bitmap.Config.ARGB_8888);
+    		ContentValues values = new ContentValues();
+    		
+    		values.put(Images.Media.MIME_TYPE, "image/jpeg");
+    		Uri uri = context.getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+    				values);
+    		OutputStream outputStream = null;
+    		try
+    		{
+    			try {
+    				outputStream = context.getContentResolver().openOutputStream(uri);
+    				bitmap.compress(CompressFormat.JPEG, 85, outputStream);
+
+    			} catch (FileNotFoundException e) {
+    				Log.e("OF", "File not found: " + e.toString());
+    			}
+    			finally
+    			{
+    				if (outputStream != null)
+    				{
+    					outputStream.close();
+    				}
+    			}
+    		}
+    		catch (IOException e)
+    		{
+    			Log.e("OF", "Error closing outputStream: " + e.toString());
+    		}
+    		
+    		// tell device that there's a new image to look for
+    		context.sendBroadcast(new Intent(Intent.ACTION_MEDIA_MOUNTED, Uri.parse("file://"+ Environment.getExternalStorageDirectory())));
+    	}
+    }
+    
+    public void setScreenGrab(boolean b) {
+    	getScreenGrab = b;
     }
 
-    static boolean initialized;
-    static boolean setup;
-    int w,h;
+    
+    
+    private static boolean initialized;
+    private static boolean setup;
+    private int w,h;
+    private final Context context;
+    
 }

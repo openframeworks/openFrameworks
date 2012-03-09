@@ -223,3 +223,6 @@ bool ofxAndroidCheckSDCardMounted(){
 
 }
 
+void ofxAndroidScreenGrab() {
+  
+}
