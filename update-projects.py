@@ -20,6 +20,11 @@ sourceXcconfig = "example-empty/Project.xcconfig"
 sourcePlist = "example-empty/openFrameworks-Info.plist"
 sourcePbxproj = "example-empty/EmptyExample.xcodeproj/project.pbxproj"
 
+# linux
+sourceMakefile = "example-empty/Makefile"
+sourceConfigs = "example-empty/config.make"
+sourceAddons = "example-empty/addons.make"
+
 examples = glob.glob("example*")
 for example in examples:
 	if example != "example-empty":
@@ -27,6 +32,14 @@ for example in examples:
 		upper = re.sub("-([a-z])", toUpper, sansExample)
 		targetProjectName = upper + "Example"
 		
+		#linux
+		targetDir = "{0}/".format(example, targetProjectName)
+		emptyDir = "example-empty"
+		print "copy " + sourceMakefile + " in " + targetDir
+		shutil.copy(sourceMakefile, targetDir)
+		shutil.copy(sourceConfigs, targetDir)
+		shutil.copy(sourceAddons, targetDir)
+
 		# windows code::blocks
 		targetCbp = "{0}/{1}.cbp".format(example, targetProjectName)
 		targetWorkspace = "{0}/{1}.workspace".format(example, targetProjectName)
