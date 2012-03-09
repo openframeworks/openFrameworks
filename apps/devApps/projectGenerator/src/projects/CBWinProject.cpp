@@ -66,8 +66,12 @@ bool CBWinProject::create(string path){
 		dir.create(true);
 		ofFile::copyFromTo(ofFilePath::join(templatePath,"emptyExample_win_cb.cbp"),project.path());
 		ofFile::copyFromTo(ofFilePath::join(templatePath,"emptyExample_win_cb.workspace"),ofFilePath::join(projectDir, projectName + ".workspace"));
-		ofFile::copyFromTo(ofFilePath::join(templatePath,"src"),projectDir);
-		ofFile::copyFromTo(ofFilePath::join(templatePath,"bin"),projectDir);
+		
+		ofDirectory src(ofFilePath::join(projectDir,"src"));
+		if(!src.exists()) ofFile::copyFromTo(ofFilePath::join(templatePath,"src"),projectDir);
+		ofDirectory bin(ofFilePath::join(projectDir,"bin"));
+		if(!bin.exists()) ofFile::copyFromTo(ofFilePath::join(templatePath,"bin"),projectDir);
+		
 		project.open(ofFilePath::join(projectDir , projectName + ".cbp"));
 		findandreplaceInTexfile(ofFilePath::join(projectDir , projectName + ".workspace"),"emptyExample",projectName);
 	}
