@@ -77,19 +77,19 @@ class ofThread : protected Poco::Runnable{
 		/// this is useful inside the threadedFunction() when a thread is
 		/// waiting for input to process:
 		///
-		/// void myClass::threadedFunction() {
+		/// void myClass::threadedFunction(){
 		///
 		///		// start
 		///
-		///		while(isThreadRunning()) {
+		///		while(isThreadRunning()){
 		///
-		///			if(bReadyToProcess == true) {
+		///			if(bReadyToProcess == true){
 		///
 		///				// do some time intensive processing
 		///
 		///				bReadyToProcess = false;
 		///			}
-		///			else {
+		///			else{
 		///				
 		///				// sleep the thread to give up some cpu
 		///				sleep(20);
@@ -163,11 +163,11 @@ class ofThread : protected Poco::Runnable{
 		/// if you want the thread to run until you signal it to stop, use a 
 		/// while loop inside that checks if the thread is should keep running:
 		///
-		/// void myClass::threadedFunction() {
+		/// void myClass::threadedFunction(){
 		///
 		///		// start
 		///
-		///		while(isThreadRunning()) {
+		///		while(isThreadRunning()){
 		///
 		///			// do stuff
 		///		}
