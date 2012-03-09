@@ -275,14 +275,14 @@
 		E4F3BB1312F4C752002D19BB /* ofTessellator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofTessellator.h; path = ../../../openFrameworks/graphics/ofTessellator.h; sourceTree = SOURCE_ROOT; };
 		E4F3BB1612F4C752002D19BB /* ofTrueTypeFont.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofTrueTypeFont.cpp; path = ../../../openFrameworks/graphics/ofTrueTypeFont.cpp; sourceTree = SOURCE_ROOT; };
 		E4F3BB1712F4C752002D19BB /* ofTrueTypeFont.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofTrueTypeFont.h; path = ../../../openFrameworks/graphics/ofTrueTypeFont.h; sourceTree = SOURCE_ROOT; };
-		FA356377150909C8006D81D2 /* ofWindowManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofWindowManager.h; sourceTree = "<group>"; };
-		FA356378150909C8006D81D2 /* ofWindowManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofWindowManager.cpp; sourceTree = "<group>"; };
-		FA35637B150909D9006D81D2 /* ofWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofWindow.h; sourceTree = "<group>"; };
-		FA35637C150909D9006D81D2 /* ofWindow.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofWindow.cpp; sourceTree = "<group>"; };
-		FA35638315090A21006D81D2 /* ofWindowCocoa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofWindowCocoa.h; sourceTree = "<group>"; };
-		FA35638415090A21006D81D2 /* ofWindowCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ofWindowCocoa.mm; sourceTree = "<group>"; };
-		FA3563EA15090FF2006D81D2 /* ofWindowManagerCocoa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofWindowManagerCocoa.h; sourceTree = "<group>"; };
-		FA3563EB15090FF2006D81D2 /* ofWindowManagerCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ofWindowManagerCocoa.mm; sourceTree = "<group>"; };
+		FA356377150909C8006D81D2 /* ofWindowManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofWindowManager.h; path = ../app/ofWindowManager.h; sourceTree = "<group>"; };
+		FA356378150909C8006D81D2 /* ofWindowManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofWindowManager.cpp; path = ../app/ofWindowManager.cpp; sourceTree = "<group>"; };
+		FA35637B150909D9006D81D2 /* ofWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofWindow.h; path = ../app/ofWindow.h; sourceTree = "<group>"; };
+		FA35637C150909D9006D81D2 /* ofWindow.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofWindow.cpp; path = ../app/ofWindow.cpp; sourceTree = "<group>"; };
+		FA35638315090A21006D81D2 /* ofWindowCocoa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofWindowCocoa.h; path = ../app/ofWindowCocoa.h; sourceTree = "<group>"; };
+		FA35638415090A21006D81D2 /* ofWindowCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ofWindowCocoa.mm; path = ../app/ofWindowCocoa.mm; sourceTree = "<group>"; };
+		FA3563EA15090FF2006D81D2 /* ofWindowManagerCocoa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofWindowManagerCocoa.h; path = ../app/ofWindowManagerCocoa.h; sourceTree = "<group>"; };
+		FA3563EB15090FF2006D81D2 /* ofWindowManagerCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ofWindowManagerCocoa.mm; path = ../app/ofWindowManagerCocoa.mm; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -362,6 +362,7 @@
 				E4F3BACF12F4C73C002D19BB /* types */,
 				E4F3BAE212F4C745002D19BB /* utils */,
 				E4B27AD510CBE92A00536013 /* video */,
+				FA4DCF5C150A3D8B002D51A0 /* window */,
 			);
 			name = openFrameworks;
 			path = ../../../openFrameworks;
@@ -376,14 +377,6 @@
 				E4B27AAF10CBE92A00536013 /* ofAppRunner.cpp */,
 				E4B27AB010CBE92A00536013 /* ofAppRunner.h */,
 				E4B27AB110CBE92A00536013 /* ofBaseApp.h */,
-				FA356377150909C8006D81D2 /* ofWindowManager.h */,
-				FA356378150909C8006D81D2 /* ofWindowManager.cpp */,
-				FA3563EA15090FF2006D81D2 /* ofWindowManagerCocoa.h */,
-				FA3563EB15090FF2006D81D2 /* ofWindowManagerCocoa.mm */,
-				FA35637B150909D9006D81D2 /* ofWindow.h */,
-				FA35637C150909D9006D81D2 /* ofWindow.cpp */,
-				FA35638315090A21006D81D2 /* ofWindowCocoa.h */,
-				FA35638415090A21006D81D2 /* ofWindowCocoa.mm */,
 			);
 			name = app;
 			path = ../../../openFrameworks/app;
@@ -571,6 +564,21 @@
 			name = graphics;
 			path = ../../../openFrameworks/graphics;
 			sourceTree = SOURCE_ROOT;
+		};
+		FA4DCF5C150A3D8B002D51A0 /* window */ = {
+			isa = PBXGroup;
+			children = (
+				FA356377150909C8006D81D2 /* ofWindowManager.h */,
+				FA356378150909C8006D81D2 /* ofWindowManager.cpp */,
+				FA3563EA15090FF2006D81D2 /* ofWindowManagerCocoa.h */,
+				FA3563EB15090FF2006D81D2 /* ofWindowManagerCocoa.mm */,
+				FA35637B150909D9006D81D2 /* ofWindow.h */,
+				FA35637C150909D9006D81D2 /* ofWindow.cpp */,
+				FA35638315090A21006D81D2 /* ofWindowCocoa.h */,
+				FA35638415090A21006D81D2 /* ofWindowCocoa.mm */,
+			);
+			path = window;
+			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 

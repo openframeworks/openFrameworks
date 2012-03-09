@@ -11,9 +11,19 @@ public:
 	ofWindowManager();
 	~ofWindowManager();
 	
+	virtual void init() = 0;
 	virtual ofWindow* createWindow() = 0;
+	virtual void processEvents()=0;
+	
+	void setupOpenGL(int w, int h, int screenMode);
+	void runAppViaInfiniteLoop(ofBaseApp * appPtr);
+	void update();
+	
 protected:
 	void addWindow(ofWindow* win);
 private:
 	ofWindowList windows;
 };
+
+
+ofWindowManager* ofGetWindowManager();

@@ -11,5 +11,6 @@ public:
 	bool open();
 protected:
 private:
-	NSWindow* windowPtr;
+	NSWindow* nsWindow;
+	NSOpenGLView* openGLView;
 };
