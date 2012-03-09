@@ -61,10 +61,10 @@ bool ofThread::lock(){
 	if(blocking){
 		if(verbose){
 			if(Poco::Thread::current() == &thread){
-				ofLogVerbose(thread.name()) << "thread waiting for mutex to be unlocked";
+				ofLogVerbose(thread.name()) << "thread waiting for own mutex to be unlocked";
 			}
 			else{
-				ofLogVerbose(thread.name()) << "waiting for mutex to be unlocked";
+				ofLogVerbose(thread.name()) << "external waiting for thread mutex to be unlocked";
 			}
 		}
 		mutex.lock();
@@ -78,10 +78,10 @@ bool ofThread::lock(){
 	
 	if(verbose){
 		if(Poco::Thread::current() == &thread){
-			ofLogVerbose(thread.name()) << "thread locked mutex";
+			ofLogVerbose(thread.name()) << "thread locked own mutex";
 		}
 		else{
-			ofLogVerbose(thread.name()) << "mutex locked";
+			ofLogVerbose(thread.name()) << "external locked thread mutex";
 		}
 	}
 	
@@ -94,10 +94,10 @@ void ofThread::unlock(){
 	
 	if(verbose){
 		if(Poco::Thread::current() == &thread){
-			ofLogVerbose(thread.name()) << "thread unlocked mutex";
+			ofLogVerbose(thread.name()) << "thread unlocked own mutex";
 		}
 		else{
-			ofLogVerbose(thread.name()) << "mutex unlocked";
+			ofLogVerbose(thread.name()) << "external unlocked thread mutex";
 		}
 	}
 	return; 
