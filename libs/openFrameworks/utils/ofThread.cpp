@@ -144,6 +144,20 @@ void ofThread::yield(){
 }
 
 //-------------------------------------------------
+bool ofThread::isCurrentThread(){
+	if(ofThread::getCurrentThread() == this)
+		return true;
+	return false;
+}
+
+//-------------------------------------------------
+bool ofThread::isMainThread(){
+	if(Poco::Thread::current() == NULL)
+		return true;
+	return false;
+}
+
+//-------------------------------------------------
 ofThread * ofThread::getCurrentThread(){
 	// assumes all created threads are ofThreads ...
 	// might be dangerous if people are using Poco::Threads directly
