@@ -22,42 +22,6 @@ namespace ofxCv {
 	// is used for small objects where the compiler can optimize the copying if
 	// necessary. the reference is avoided to make inline toCv/toOf use easier.
 	
-	// toCv functions
-	Mat toCv(Mat& mat);
-	template <class T> inline Mat toCv(ofPixels_<T>& pix) {
-		return Mat(pix.getHeight(), pix.getWidth(), getCvImageType(pix), pix.getPixels(), 0);
-	}
-	template <class T> inline Mat toCv(ofImage_<T>& img) {
-		return Mat(img.getHeight(), img.getWidth(), getCvImageType(img), img.getPixels(), 0);
-	}
-	Mat toCv(ofBaseHasPixels& img);
-	Mat toCv(ofMesh& mesh);
-	Point2f toCv(ofVec2f vec);
-	Point3f toCv(ofVec3f vec);
-	cv::Rect toCv(ofRectangle rect);
-	vector<cv::Point2f> toCv(const ofPolyline& polyline);
-	Scalar toCv(ofColor color); // might need more for other color types?
-	
-	// toOf functions
-	ofVec2f toOf(Point2f point);
-	ofVec3f toOf(Point3f point);
-	ofRectangle toOf(cv::Rect rect);
-	ofPolyline toOf(cv::RotatedRect rect);
-	template <class T> inline ofPolyline toOf(const vector<cv::Point_<T> >& contour) {
-		ofPolyline polyline;
-		polyline.resize(contour.size());
-		for(int i = 0; i < contour.size(); i++) {
-			polyline[i].x = contour[i].x;
-			polyline[i].y = contour[i].y;
-		}
-		polyline.close();
-		return polyline;
-	}
-	template <class T>
-	void toOf(Mat mat, ofPixels_<T>& pixels) {
-		pixels.setFromExternalPixels(mat.ptr<T>(), mat.cols, mat.rows, mat.channels());
-	}
-	
 	// these functions are for accessing Mat, ofPixels and ofImage consistently.
 	// they're very important for imitate().
 	
@@ -178,5 +142,41 @@ namespace ofxCv {
 			double alpha = getMaxVal(dstMat) / getMaxVal(srcMat);
 			srcMat.convertTo(dstMat, dstMat.depth(), alpha);
 		}
+	}
+	
+	// toCv functions
+	Mat toCv(Mat& mat);
+	template <class T> inline Mat toCv(ofPixels_<T>& pix) {
+		return Mat(pix.getHeight(), pix.getWidth(), getCvImageType(pix), pix.getPixels(), 0);
+	}
+	template <class T> inline Mat toCv(ofImage_<T>& img) {
+		return Mat(img.getHeight(), img.getWidth(), getCvImageType(img), img.getPixels(), 0);
+	}
+	Mat toCv(ofBaseHasPixels& img);
+	Mat toCv(ofMesh& mesh);
+	Point2f toCv(ofVec2f vec);
+	Point3f toCv(ofVec3f vec);
+	cv::Rect toCv(ofRectangle rect);
+	vector<cv::Point2f> toCv(const ofPolyline& polyline);
+	Scalar toCv(ofColor color); // might need more for other color types?
+	
+	// toOf functions
+	ofVec2f toOf(Point2f point);
+	ofVec3f toOf(Point3f point);
+	ofRectangle toOf(cv::Rect rect);
+	ofPolyline toOf(cv::RotatedRect rect);
+	template <class T> inline ofPolyline toOf(const vector<cv::Point_<T> >& contour) {
+		ofPolyline polyline;
+		polyline.resize(contour.size());
+		for(int i = 0; i < contour.size(); i++) {
+			polyline[i].x = contour[i].x;
+			polyline[i].y = contour[i].y;
+		}
+		polyline.close();
+		return polyline;
+	}
+	template <class T>
+	void toOf(Mat mat, ofPixels_<T>& pixels) {
+		pixels.setFromExternalPixels(mat.ptr<T>(), mat.cols, mat.rows, mat.channels());
 	}
 }

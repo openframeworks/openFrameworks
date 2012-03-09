@@ -37,6 +37,9 @@ namespace ofxCv {
 	
 	using namespace cv;
 	
+	float trackingDistance(const cv::Rect& a, const cv::Rect& b);
+	float trackingDistance(const cv::Point2f& a, const cv::Point2f& b);
+	
 	template <class T>
 	class TrackedObject {
 	protected:
@@ -263,9 +266,6 @@ namespace ofxCv {
 	bool Tracker<T>::existsPrevious(unsigned int label) const {
 		return previousLabelMap.count(label) > 0;
 	}
-	
-	float trackingDistance(const cv::Rect& a, const cv::Rect& b);
-	float trackingDistance(const cv::Point2f& a, const cv::Point2f& b);
 	
 	typedef Tracker<cv::Rect> RectTracker;
 	typedef Tracker<cv::Point2f> PointTracker;
