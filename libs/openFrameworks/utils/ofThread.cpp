@@ -107,11 +107,8 @@ void ofThread::unlock(){
 void ofThread::stopThread(bool close){
 	if(thread.isRunning()) {
 		threadRunning = false;
-		
 		if(close && thread.isRunning()){
-			if(!thread.tryJoin(0)){
-				ofLogError(thread.name()) << "thread not stopping";
-			}
+			thread.tryJoin(0);
 		}
 	}
 }
