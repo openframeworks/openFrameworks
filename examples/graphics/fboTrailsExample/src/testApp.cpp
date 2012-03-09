@@ -29,11 +29,11 @@ void testApp::setup(){
 	// nonFloatingPointFbo_GL_RGBA.allocate(s);
 	
 	// or we can use the second way
-	nonFloatingPointFbo_GL_RGBA.allocate(400, 200, GL_RGBA); // with alpha, 32 bits red, 32 bits green, 32 bits blue, from 0 to 1 in 'infinite' steps
+	nonFloatingPointFbo_GL_RGBA.allocate(400, 200, GL_RGBA); // with alpha, 8 bits red, 8 bits green, 8 bits blue, 8 bits alpha, from 0 to 255 in 256 steps
 	
     // here we create another two fbos with different internal formats using the second way:
-	floatingPointFbo_GL_RGB32F_ARB.allocate(400, 200, GL_RGB32F_ARB); // without alpha
-	floatingPointFbo_GL_RGBA32F_ARB.allocate(400, 200, GL_RGBA32F_ARB); // with alpha
+	floatingPointFbo_GL_RGB32F_ARB.allocate(400, 200, GL_RGB32F_ARB); // without alpha, 32 bits red, 32 bits green, 32 bits blue, from 0 to 1 in 'infinite' steps
+	floatingPointFbo_GL_RGBA32F_ARB.allocate(400, 200, GL_RGBA32F_ARB); // with alpha, 32 bits red, 32 bits green, 32 bits blue, 32 bits alpha, from 0 to 1 in 'infinite' steps
 	
     // we have to clear all the fbos so that we don't see any artefacts
 	// the clearing color does not matter here, as the alpha value is 0, that means the fbo is cleared from all colors
