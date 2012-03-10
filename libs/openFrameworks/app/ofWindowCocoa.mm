@@ -113,32 +113,15 @@ ofWindowCocoa::~ofWindowCocoa(){
 bool ofWindowCocoa::open(){
 	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 	
-	
-	NSRect windowRect = NSMakeRect(10.0f, 10.0f, 800.0f, 600.0f);
-	
-	NSWindow *window = [[NSWindow alloc] initWithContentRect:windowRect 
-												styleMask:( NSResizableWindowMask | NSClosableWindowMask | NSTitledWindowMask) 
-												backing:NSBackingStoreBuffered defer:NO];
-	
-	[window makeKeyAndOrderFront:nil];
-	
-	cout << "OPENING WINDOW " << endl;
-	
-	/*
-	
-	NSRect rect;
-	rect.size.width = 500;
-	rect.size.height = 500;
+	NSRect rect = NSMakeRect(10.0f, 10.0f, 800.0f, 600.0f);
 	
 	nsWindow = [[CocoaWindow alloc] initWithContentRect:rect
-											  styleMask:NSTitledWindowMask | NSClosableWindowMask | NSResizableWindowMask | NSMiniaturizableWindowMask
-												backing:NSBackingStoreBuffered defer:NO];
+									styleMask: (NSTitledWindowMask | NSClosableWindowMask | NSResizableWindowMask | NSMiniaturizableWindowMask)
+									backing:NSBackingStoreBuffered defer:NO];
 	
 	CocoaWindowDelegate *windowDelegate = [[CocoaWindowDelegate alloc] init];
-	[nsWindow setDelegate:windowDelegate];
-	
-	[nsWindow setLevel : NSNormalWindowLevel ];
-	
+	[nsWindow makeKeyAndOrderFront:nil];
+		
 	NSOpenGLPixelFormat *nsglFormat;
 	
     NSOpenGLPixelFormatAttribute attr[] = 
@@ -156,7 +139,12 @@ bool ofWindowCocoa::open(){
 	openGLView = [[NSOpenGLView alloc] initWithFrame:rect pixelFormat:nsglFormat];
 	
 	[nsWindow setContentView:openGLView];
-*/
-	
+
+	[pool drain];
+}
+
+void ofWindowCocoa::enableContext(){
+	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+	[[openGLView openGLContext] makeCurrentContext];
 	[pool drain];
 }

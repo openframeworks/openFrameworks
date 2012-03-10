@@ -572,10 +572,10 @@
 				FA356378150909C8006D81D2 /* ofWindowManager.cpp */,
 				FA3563EA15090FF2006D81D2 /* ofWindowManagerCocoa.h */,
 				FA3563EB15090FF2006D81D2 /* ofWindowManagerCocoa.mm */,
-				FA35637B150909D9006D81D2 /* ofWindow.h */,
-				FA35637C150909D9006D81D2 /* ofWindow.cpp */,
 				FA35638315090A21006D81D2 /* ofWindowCocoa.h */,
 				FA35638415090A21006D81D2 /* ofWindowCocoa.mm */,
+				FA35637B150909D9006D81D2 /* ofWindow.h */,
+				FA35637C150909D9006D81D2 /* ofWindow.cpp */,
 			);
 			path = window;
 			sourceTree = "<group>";

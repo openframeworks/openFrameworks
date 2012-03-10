@@ -9,6 +9,7 @@ public:
       ~ofWindowCocoa();
 	
 	bool open();
+	void enableContext();
 protected:
 private:
 	NSWindow* nsWindow;
