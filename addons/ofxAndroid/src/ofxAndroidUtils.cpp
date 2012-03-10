@@ -234,7 +234,7 @@ void ofxAndroidScreenGrab() {
 	jmethodID screenGrab = ofGetJNIEnv()->GetStaticMethodID(javaClass, "screenGrab", "()V");
 	if (!screenGrab) {
 		ofLog(OF_LOG_ERROR, "cannot find OFAndroid screenGrab");
-		return false;
+		return;
 	}
 	
 	ofGetJNIEnv()->CallStaticVoidMethod(javaClass, screenGrab);
