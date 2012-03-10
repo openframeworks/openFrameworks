@@ -3,6 +3,7 @@
 
 //--------------------------------------------------------------
 void testApp::setup(){
+
 	ofBackground(255,255,255);
 	ofSetLogLevel(OF_LOG_NOTICE);
 	ofSetOrientation(OF_ORIENTATION_90_LEFT);
@@ -31,6 +32,7 @@ void testApp::draw(){
 	ofSetHexColor(0xFFFFFF);
 	grabber.draw(20,20);
 	ofSetHexColor(0x000000);
+	ofDrawBitmapString("tap screen to take screenshot", 20, 330);
 	ofDrawBitmapString("fps: " + ofToString(ofGetFrameRate()),20,350);
 	ofDrawBitmapString("camera fps: " + ofToString(camera_fps),20,370);
 }
@@ -56,7 +58,8 @@ void testApp::mouseDragged(int x, int y, int button){
 
 //--------------------------------------------------------------
 void testApp::mousePressed(int x, int y, int button){
-
+	ofxAndroidScreenGrab();
+	ofxAndroidToast("Picture taken! Check your gallery for your picture.");
 }
 
 //--------------------------------------------------------------
