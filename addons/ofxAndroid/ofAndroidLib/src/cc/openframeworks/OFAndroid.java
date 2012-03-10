@@ -759,14 +759,13 @@ class OFAndroidWindow implements GLSurfaceView.Renderer {
 
     		// flip pixels vertically
     		for(int y = 0; y < h; y++) {
-    			// 4 here is sizeof(int)
-    			for(int x = 0; x < w * 4; x++) {
-    				bufferFlipped[(int)((h - 1 - y) * w * 4 + x)] =
-    						bufferData[(int)(y * 4 * w + x)];
+    			for(int x = 0; x < w; x++) {
+    				bufferFlipped[(int)((h - 1 - y) * w + x)] =
+    						convertBGRToRGB(bufferData[(int)(y * w + x)]);
     			}
     		}
 
-    		Bitmap bitmap = Bitmap.createBitmap(bufferData, w, h, Bitmap.Config.ARGB_8888);
+    		Bitmap bitmap = Bitmap.createBitmap(bufferFlipped, w, h, Bitmap.Config.ARGB_8888);
     		ContentValues values = new ContentValues();
     		
     		values.put(Images.Media.MIME_TYPE, "image/jpeg");
@@ -803,7 +802,12 @@ class OFAndroidWindow implements GLSurfaceView.Renderer {
     	}
     }
     
-    private static boolean initialized;
+    private int convertBGRToRGB(int i) {
+		int ret = ((i & 0xff) << 16) | (i & 0xff00) | ((i & 0xff0000) >> 16) | (i & 0xff000000);
+		return ret;
+	}
+
+	private static boolean initialized;
     private static boolean setup;
     private int w,h;
 }
