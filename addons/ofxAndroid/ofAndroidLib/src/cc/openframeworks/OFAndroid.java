@@ -481,9 +481,12 @@ public class OFAndroid {
 		gps.stopGPS();
 	}
 	
+	/**
+	 * Grab a screenshot next frame
+	 */
 	public static void screenGrab() {
 		
-		ofActivity.getGLContentView().setScreenGrab(true);
+		getScreenGrab = true;
 		
 	}
 	
@@ -549,6 +552,11 @@ public class OFAndroid {
 	private static String packageName;
 	private static String dataPath;
 	private static PowerManager.WakeLock wl;
+
+	/**
+	 * Set to true to grab a screenshot next chance you get. 
+	 */
+	public static boolean getScreenGrab;
 
     public static native boolean hasNeon();
 	 
@@ -684,13 +692,13 @@ class OFGestureListener extends SimpleOnGestureListener implements OnClickListen
 class OFGLSurfaceView extends GLSurfaceView{
 	public OFGLSurfaceView(Context context) {
         super(context);
-        mRenderer = new OFAndroidWindow(getWidth(),getHeight(), getContext());
+        mRenderer = new OFAndroidWindow(getWidth(),getHeight());
         setRenderer(mRenderer);
     }
 	
 	public OFGLSurfaceView(Context context,AttributeSet attributes) {
         super(context,attributes);
-        mRenderer = new OFAndroidWindow(getWidth(),getHeight(), getContext());
+        mRenderer = new OFAndroidWindow(getWidth(),getHeight());
         setRenderer(mRenderer);
     }
 
@@ -705,13 +713,9 @@ class OFGLSurfaceView extends GLSurfaceView{
 }
 
 class OFAndroidWindow implements GLSurfaceView.Renderer {
-	
-	private boolean getScreenGrab = false;
-	
-	public OFAndroidWindow(int w, int h, Context context){ 
+	public OFAndroidWindow(int w, int h){ 
 		this.w = w;
 		this.h = h;
-		this.context = context;
 	}
 	
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
@@ -743,15 +747,17 @@ class OFAndroidWindow implements GLSurfaceView.Renderer {
     	if(setup)
     		OFAndroid.render();
     	
-    	if (getScreenGrab)
+    	// take screenshot
+    	if (OFAndroid.getScreenGrab)
     	{
-    		getScreenGrab = false;
+    		OFAndroid.getScreenGrab = false;
 
     		int[] bufferData = new int[w*h];
     		int[] bufferFlipped = new int[w*h];
     		IntBuffer buffer = IntBuffer.wrap(bufferData);
     		gl.glReadPixels(0, 0, w, h, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, buffer);
 
+    		// flip pixels vertically
     		for(int y = 0; y < h; y++) {
     			// 4 here is sizeof(int)
     			for(int x = 0; x < w * 4; x++) {
@@ -764,9 +770,12 @@ class OFAndroidWindow implements GLSurfaceView.Renderer {
     		ContentValues values = new ContentValues();
     		
     		values.put(Images.Media.MIME_TYPE, "image/jpeg");
+    		Context context = OFAndroid.getContext();
     		Uri uri = context.getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
     				values);
     		OutputStream outputStream = null;
+    		
+    		// take pixels, compress as jpeg, send to gallery
     		try
     		{
     			try {
@@ -794,15 +803,7 @@ class OFAndroidWindow implements GLSurfaceView.Renderer {
     	}
     }
     
-    public void setScreenGrab(boolean b) {
-    	getScreenGrab = b;
-    }
-
-    
-    
     private static boolean initialized;
     private static boolean setup;
     private int w,h;
-    private final Context context;
-    
 }

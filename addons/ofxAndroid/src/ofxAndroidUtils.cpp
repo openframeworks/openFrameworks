@@ -224,5 +224,18 @@ bool ofxAndroidCheckSDCardMounted(){
 }
 
 void ofxAndroidScreenGrab() {
-  
+	jclass javaClass = ofGetJavaOFAndroid();
+
+	if (javaClass == 0) {
+		ofLog(OF_LOG_ERROR, "cannot find OFAndroid java class");
+		return;
+	}
+
+	jmethodID screenGrab = ofGetJNIEnv()->GetStaticMethodID(javaClass, "screenGrab", "()V");
+	if (!screenGrab) {
+		ofLog(OF_LOG_ERROR, "cannot find OFAndroid screenGrab");
+		return false;
+	}
+	
+	ofGetJNIEnv()->CallStaticVoidMethod(javaClass, screenGrab);
 }
