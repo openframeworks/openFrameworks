@@ -13,7 +13,9 @@ public:
 	void initializeWindow();
 
 private:
-	Window* window;
+	Window window;
+	GLXContext glxContext;
+	Display* display;
 };
 
 #endif // OFWINDOWX11_H

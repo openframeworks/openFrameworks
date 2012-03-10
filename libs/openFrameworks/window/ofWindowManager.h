@@ -18,11 +18,14 @@ public:
 	void setupOpenGL(int w, int h, int screenMode);
 	void runAppViaInfiniteLoop(ofBaseApp * appPtr);
 	void update();
-	
+	void draw();
+	ofWindow* getLastCreatedWindow();
+
 protected:
 	void addWindow(ofWindow* win);
 private:
 	ofWindowList windows;
+	ofWindow* mainWindow;
 };
 
 

@@ -13,7 +13,6 @@ ofWindowManagerX11::~ofWindowManagerX11()
 ofWindow* ofWindowManagerX11::createWindow()
 {
 	ofWindow* win = new ofWindowX11();
-	win->initializeWindow();
 	addWindow(win);
 	return win;
 }

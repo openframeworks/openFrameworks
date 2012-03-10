@@ -6,6 +6,7 @@
  *  Copyright 2012 undef.ch. All rights reserved.
  *
  */
+#include <ofEvents.h>
 #include "ofWindowManager.h"
 #include "ofConstants.h"
 
@@ -57,13 +58,22 @@ ofWindowManager::~ofWindowManager() {
 };
 void ofWindowManager::addWindow(ofWindow* win) {
 	windows.push_back(ofWindowPtr(win));
+	win->initializeWindow();
+	win->setup();
 }
 void ofWindowManager::setupOpenGL(int w, int h, int screenMode) {
-	createWindow();
+	mainWindow = createWindow();
 }
+
 void ofWindowManager::runAppViaInfiniteLoop(ofBaseApp * appPtr) {
+	//wrap the base app to a window listener
+	mainWindow->addListener(new ofWindowToOfBaseApp(appPtr));
+	appPtr->setup();
+
+	//run the main loop
 	while (true) {
 		update();
+		draw();
 	}
 }
 void ofWindowManager::update() {
@@ -102,5 +112,14 @@ void ofWindowManager::update() {
 	timeThen		= timeNow;
 	// --------------
 	processEvents();
-	//ofNotifyUpdate();
+	ofNotifyUpdate();
+}
+
+void ofWindowManager::draw(){
+	ofNotifyDraw();
+}
+
+ofWindow* ofWindowManager::getLastCreatedWindow()
+{
+	return windows.back().get();
 }
