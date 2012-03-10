@@ -3251,6 +3251,6 @@
 		</cconfiguration>
 	</storageModule>
 	<storageModule moduleId="cdtBuildSystem" version="4.0.0">
-		<project id="androidCameraExample.null.1611732315" name="androidCameraExample"/>
+		<project id="androidScreenGrabExample.null.1611732315" name="androidCameraExample"/>
 	</storageModule>
 </cproject>
