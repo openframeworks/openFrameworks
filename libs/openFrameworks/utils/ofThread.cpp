@@ -1,136 +1,184 @@
 #include "ofThread.h" 
 
+#include "ofLog.h"
+#include "ofUtils.h"
+
 //------------------------------------------------- 
 ofThread::ofThread(){ 
-   threadRunning = false; 
+   threadRunning = false;
    verbose = false;
+   thread.setName("Thread "+ofToString(thread.id()));
 } 
 
 //------------------------------------------------- 
 ofThread::~ofThread(){ 
-   stopThread(); 
+   stopThread(true);
 } 
 
 //------------------------------------------------- 
 bool ofThread::isThreadRunning(){ 
-   //should be thread safe - no writing of vars here 
-   return threadRunning; 
+   return threadRunning;
+}
+
+//------------------------------------------------- 
+int ofThread::getThreadId(){
+	return thread.id();
+}
+
+//------------------------------------------------- 
+string ofThread::getThreadName(){
+	return thread.name();
+}
+
+//------------------------------------------------- 
+void ofThread::startThread(bool blocking, bool verbose){
+
+	if(thread.isRunning()){ 
+		ofLogWarning(thread.name()) << "cannot start, thread already running";
+		return; 
+	} 
+
+	// have to put this here because the thread can be running 
+	// before the call to create it returns 
+	threadRunning = true; 
+
+	this->blocking = blocking;
+	this->verbose = verbose;
+	
+	if(verbose){
+		ofSetLogLevel(thread.name(), OF_LOG_VERBOSE);
+	}
+	else{
+		ofSetLogLevel(thread.name(), OF_LOG_NOTICE);
+	}
+
+	thread.start(*this);
 } 
 
 //------------------------------------------------- 
-void ofThread::startThread(bool _blocking, bool _verbose){ 
-   if( threadRunning ){ 
-      if(verbose){
-    	  ofLog(OF_LOG_NOTICE, "ofThread: thread already running");
-      }
-      return; 
-   } 
-
-   //have to put this here because the thread can be running 
-   //before the call to create it returns 
-   threadRunning   = true; 
-
-   #ifdef TARGET_WIN32 
-      //InitializeCriticalSection(&critSec); 
-      myThread = (HANDLE)_beginthreadex(NULL, 0, this->thread,  (void *)this, 0, NULL); 
-   #else 
-      //pthread_mutex_init(&myMutex, NULL); 
-      pthread_create(&myThread, NULL, thread, (void *)this); 
-   #endif 
-
-   blocking      =   _blocking; 
-   verbose         = _verbose; 
-} 
-
-//------------------------------------------------- 
-//returns false if it can't lock 
 bool ofThread::lock(){ 
 
-	if ( blocking )
-	{
+	if(blocking){
 		if(verbose){
-			ofLog(OF_LOG_NOTICE, "ofThread: waiting till mutex is unlocked");
+			if(Poco::Thread::current() == &thread){
+				ofLogVerbose(thread.name()) << "thread waiting for own mutex to be unlocked";
+			}
+			else{
+				ofLogVerbose(thread.name()) << "external waiting for thread mutex to be unlocked";
+			}
 		}
 		mutex.lock();
 	}
-	else
-	{
-		if ( !mutex.tryLock() )
-		{
-            if(verbose){
-            	ofLog(OF_LOG_NOTICE, "ofThread: mutex is busy - already locked");
-            }
+	else{
+		if(!mutex.tryLock()){
+			ofLogVerbose(thread.name()) << "mutex is busy - already locked"; 
 			return false; 
 		}
 	}
+	
 	if(verbose){
-		ofLog(OF_LOG_NOTICE, "ofThread: we are in -- mutex is now locked");
+		if(Poco::Thread::current() == &thread){
+			ofLogVerbose(thread.name()) << "thread locked own mutex";
+		}
+		else{
+			ofLogVerbose(thread.name()) << "external locked thread mutex";
+		}
 	}
 	
 	return true; 
 } 
 
 //------------------------------------------------- 
-bool ofThread::unlock(){ 
-
+void ofThread::unlock(){ 
 	mutex.unlock();
+	
 	if(verbose){
-		ofLog(OF_LOG_NOTICE, "ofThread: we are out -- mutex is now unlocked");
+		if(Poco::Thread::current() == &thread){
+			ofLogVerbose(thread.name()) << "thread unlocked own mutex";
+		}
+		else{
+			ofLogVerbose(thread.name()) << "external unlocked thread mutex";
+		}
 	}
-
-   return true; 
+	return; 
 } 
 
 //------------------------------------------------- 
 void ofThread::stopThread(bool close){
-	if(threadRunning){
-		if(close){
-			#ifdef TARGET_WIN32
-				CloseHandle(myThread);
-			#else
-				//pthread_mutex_destroy(&myMutex);
-				pthread_detach(myThread);
-			#endif
-		}
-		if(verbose){
-			ofLog(OF_LOG_NOTICE, "ofThread: thread stopped");
-		}
+	if(thread.isRunning()) {
 		threadRunning = false;
-	}else{
-		if(verbose){
-			ofLog(OF_LOG_NOTICE, "ofThread: thread already stopped");
+		if(close && thread.isRunning()){
+			thread.tryJoin(0);
 		}
 	}
 }
 
 //-------------------------------------------------
 void ofThread::waitForThread(bool stop){
-	if (threadRunning){
-		// Reset the thread state
+	if(thread.isRunning()){
+		
+		// tell thread to stop
 		if(stop){
 			threadRunning = false;
-			if(verbose){
-				ofLog(OF_LOG_NOTICE, "ofThread: stopping thread");
-			}
+			ofLogVerbose(thread.name()) << "signaled to stop";
 		}
-		if(verbose){
-			ofLog(OF_LOG_NOTICE, "ofThread: waiting for thread to stop");
+		
+		// wait for the thread to finish
+		ofLogVerbose(thread.name()) << "waiting to stop";
+		if(Poco::Thread::current() == &thread){
+			ofLogWarning(thread.name()) << "waitForThread should only be called from outside the thread";
+			return;
 		}
-		// Wait for the thread to finish
-		#ifdef TARGET_WIN32
-			WaitForSingleObject(myThread, INFINITE);
-			CloseHandle(myThread);
-		#else
-			if(pthread_self()==myThread) ofLog(OF_LOG_ERROR,"ofThread: error, waitForThread should only be called from outside the thread");
-		    pthread_join(myThread, NULL);
-		#endif
-		if(verbose){
-			ofLog(OF_LOG_NOTICE, "ofThread: thread stopped");
-		}
-		//myThread = NULL;
-   }else{
-		if(verbose){
-			ofLog(OF_LOG_NOTICE, "ofThread: thread already stopped");
-		}
-	}
+		thread.join();
+   }
+}
+
+//-------------------------------------------------
+void ofThread::sleep(int sleepMS){
+	Poco::Thread::sleep(sleepMS);
+}
+
+//-------------------------------------------------
+void ofThread::yield(){
+	Poco::Thread::yield();
+}
+
+//-------------------------------------------------
+bool ofThread::isCurrentThread(){
+	if(ofThread::getCurrentThread() == this)
+		return true;
+	return false;
+}
+
+//-------------------------------------------------
+bool ofThread::isMainThread(){
+	if(Poco::Thread::current() == NULL)
+		return true;
+	return false;
+}
+
+//-------------------------------------------------
+ofThread * ofThread::getCurrentThread(){
+	// assumes all created threads are ofThreads ...
+	// might be dangerous if people are using Poco::Threads directly
+	return (ofThread *) Poco::Thread::current();
+}
+
+// PROTECTED
+//-------------------------------------------------
+void ofThread::threadedFunction(){
+	ofLogWarning(thread.name()) << "override threadedFunction with your own";
+}
+
+// PRIVATE
+//-------------------------------------------------
+void ofThread::run(){
+	
+	ofLogVerbose(thread.name()) << "started";
+	
+	// user function
+	threadedFunction();
+	
+	threadRunning = false;
+	ofLogVerbose(thread.name()) << "stopped";
 }
