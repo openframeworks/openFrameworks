@@ -78,7 +78,7 @@
         ofxiPhoneViewController *viewController;
         viewController = [[[ofxiPhoneViewController alloc] initWithFrame:[[UIScreen mainScreen] bounds] 
                                                                      app:ofGetAppPtr()] autorelease];
-        [self.window setRootViewController: viewController];
+        [self.window insertSubview:viewController.view atIndex:0];  // make sure it is the bottom most view.
     }
 }
 
