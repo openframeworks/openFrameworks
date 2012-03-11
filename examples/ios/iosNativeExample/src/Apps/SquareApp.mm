@@ -1,9 +1,11 @@
 #include "SquareApp.h"
 
+//--------------------------------------------------------------
 SquareApp :: SquareApp () {
     cout << "creating SquareApp" << endl;
 }
 
+//--------------------------------------------------------------
 SquareApp :: ~SquareApp () {
     cout << "destroying SquareApp" << endl;
 }

@@ -1,9 +1,11 @@
 #include "CircleApp.h"
 
+//--------------------------------------------------------------
 CircleApp :: CircleApp () {
     cout << "creating CircleApp" << endl;
 }
 
+//--------------------------------------------------------------
 CircleApp :: ~CircleApp () {
     cout << "destroying CircleApp" << endl;
 }
