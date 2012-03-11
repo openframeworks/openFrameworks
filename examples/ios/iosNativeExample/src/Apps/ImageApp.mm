@@ -1,9 +1,11 @@
 #include "ImageApp.h"
 
+//--------------------------------------------------------------
 ImageApp :: ImageApp () {
     cout << "creating ImageApp" << endl;
 }
 
+//--------------------------------------------------------------
 ImageApp :: ~ImageApp () {
     cout << "destroying ImageApp" << endl;
 }

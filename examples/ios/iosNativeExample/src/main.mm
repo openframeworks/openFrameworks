@@ -1,11 +1,11 @@
 #include "ofMain.h"
 #include "SquareApp.h"
 
-int main()
-{
+int main(){
+
     bool bUseNative = true;
     
-    if (bUseNative) {
+    if (bUseNative){
         /**
          *
          *  Below is how you start using a native ios setup.

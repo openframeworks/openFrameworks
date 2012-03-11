@@ -1,9 +1,11 @@
 #include "TriangleApp.h"
 
+//--------------------------------------------------------------
 TriangleApp :: TriangleApp () {
     cout << "creating TriangleApp" << endl;
 }
 
+//--------------------------------------------------------------
 TriangleApp :: ~TriangleApp () {
     cout << "destroying TriangleApp" << endl;
 }
