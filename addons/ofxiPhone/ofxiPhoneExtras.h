@@ -101,6 +101,8 @@ ofAppiPhoneWindow* ofxiPhoneGetOFWindow();
 // return application delegate
 ofxiPhoneAppDelegate *ofxiPhoneGetAppDelegate();
 
+// return iphone view controller.
+ofxiPhoneViewController *ofxiPhoneGetViewController();
 
 // brings the OpenGL view to the front of any other UIViews
 // the OpenGL view will receive touchXXXXX events, but other UIViews will not
@@ -198,6 +200,7 @@ string ofxiPhoneGetDocumentsDirectory();
 #define iPhoneGetGLView ofxiPhoneGetGLView
 #define iPhoneGetOFWindow ofxiPhoneGetOFWindow
 #define iPhoneGetAppDelegate ofxiPhoneGetAppDelegate
+#define iPhoneGetViewController ofxiPhoneGetViewController
 #define iPhoneSendGLViewToFront ofxiPhoneSendGLViewToFront
 #define iPhoneSendGLViewToBack ofxiPhoneSendGLViewToBack
 #define iPhoneSetGLViewTransparent ofxiPhoneSetGLViewTransparent
