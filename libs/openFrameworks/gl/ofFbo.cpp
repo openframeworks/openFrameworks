@@ -670,7 +670,7 @@ int ofFbo::getNumTextures() {
 }
 
 //TODO: Should we also check against card's max attachments or can we assume that's taken care of in texture setup? Still need to figure out MSAA in conjunction with MRT
-bool ofFbo::setActiveDrawBuffer(int i){
+void ofFbo::setActiveDrawBuffer(int i){
     if (i < getNumTextures()){
         GLenum e = GL_COLOR_ATTACHMENT0_EXT + i;
         glDrawBuffer(e);
