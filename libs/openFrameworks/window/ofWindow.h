@@ -181,10 +181,14 @@ public:
 	void addListener(ofWindowListener* listener);
 
 	void setup();
+
+	virtual void processEvents() = 0;
+
 	void update(ofEventArgs& e);
 	void update();
 	void draw(ofEventArgs& e);
 	void draw();
+
 protected:
 private:
 	ofWindowListenerList listeners;

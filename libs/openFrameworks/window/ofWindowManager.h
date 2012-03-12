@@ -14,6 +14,7 @@ public:
 	virtual void init() = 0;
 	virtual ofWindow* createWindow() = 0;
 	virtual void processEvents()=0;
+	void initializeWindow();
 	
 	void setupOpenGL(int w, int h, int screenMode);
 	void runAppViaInfiniteLoop(ofBaseApp * appPtr);
@@ -21,11 +22,16 @@ public:
 	void draw();
 	ofWindow* getLastCreatedWindow();
 
+	void setFrameRate(float targetRate);
+
+	void setActiveWindow(ofWindow* win);
+
 protected:
 	void addWindow(ofWindow* win);
 private:
 	ofWindowList windows;
 	ofWindow* mainWindow;
+	ofWindow* activeWindow;
 };
 
 

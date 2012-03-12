@@ -53,16 +53,23 @@ ofWindowManager::ofWindowManager() {
 	millisForFrame		= 0;
 	prevMillis			= 0;
 	diffMillis			= 0;
+	setFrameRate(60);
 };
 ofWindowManager::~ofWindowManager() {
 };
 void ofWindowManager::addWindow(ofWindow* win) {
 	windows.push_back(ofWindowPtr(win));
-	win->initializeWindow();
-	win->setup();
 }
 void ofWindowManager::setupOpenGL(int w, int h, int screenMode) {
 	mainWindow = createWindow();
+	addWindow(mainWindow);
+	mainWindow->initializeWindow();
+	activeWindow = mainWindow;
+}
+
+void ofWindowManager::initializeWindow()
+{
+	mainWindow->setup();
 }
 
 void ofWindowManager::runAppViaInfiniteLoop(ofBaseApp * appPtr) {
@@ -72,6 +79,15 @@ void ofWindowManager::runAppViaInfiniteLoop(ofBaseApp * appPtr) {
 
 	//run the main loop
 	while (true) {
+		//process window events
+		ofWindowList::iterator it = windows.begin();
+		while(it != windows.end()){
+			(*it)->processEvents();
+			it++;
+		}
+		//process app specific events
+		processEvents();
+
 		update();
 		draw();
 	}
@@ -122,4 +138,28 @@ void ofWindowManager::draw(){
 ofWindow* ofWindowManager::getLastCreatedWindow()
 {
 	return windows.back().get();
+}
+
+void ofWindowManager::setFrameRate(float targetRate){
+	// given this FPS, what is the amount of millis per frame
+	// that should elapse?
+
+	// --- > f / s
+
+	if (targetRate == 0){
+		bFrameRateSet = false;
+		return;
+	}
+
+	bFrameRateSet 			= true;
+	float durationOfFrame 	= 1.0f / (float)targetRate;
+	millisForFrame 			= (int)(1000.0f * durationOfFrame);
+
+	frameRate				= targetRate;
+
+}
+
+void ofWindowManager::setActiveWindow(ofWindow* win)
+{
+	activeWindow = win;
 }

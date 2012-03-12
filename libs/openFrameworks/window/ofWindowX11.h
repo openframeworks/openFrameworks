@@ -11,6 +11,7 @@ public:
 	~ofWindowX11();
 	virtual void enableContext();
 	void initializeWindow();
+	void processEvents();
 
 private:
 	Window window;
