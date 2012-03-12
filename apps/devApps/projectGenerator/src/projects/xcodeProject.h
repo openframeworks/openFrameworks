@@ -11,9 +11,9 @@ class xcodeProject : public baseProject {
 public: 
     
     xcodeProject(){};
-    
-    
+	
     void setup(string ofRoot= "../../../");
+	void setupForPlatform(string targetPlatform);
     
     bool load(string path);
     bool create(string path); // not done yet. 
@@ -49,8 +49,12 @@ public:
     vector<ofAddon> addons;
     static string LOG_NAME;
     
+	string target;
+	string srcUUID;
+	string addonUUID;
+	string buildPhaseUUID;  
     
-    bool findArrayForUUID(string UUID, pugi::xml_node & nodeMe);
+	bool findArrayForUUID(string UUID, pugi::xml_node & nodeMe);
     
 };
 

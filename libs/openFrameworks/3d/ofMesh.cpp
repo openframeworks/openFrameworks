@@ -27,17 +27,27 @@ ofMesh::~ofMesh(){
 
 //--------------------------------------------------------------
 void ofMesh::clear(){
-	bVertsChanged = true;
-	bColorsChanged = true;
-	bNormalsChanged = true;
-	bTexCoordsChanged = true;
-	bIndicesChanged = true;
+	if(!vertices.empty()){
+		bVertsChanged = true;
+		vertices.clear();
+	}
+	if(!colors.empty()){
+		bColorsChanged = true;
+		colors.clear();
+	}
+	if(!normals.empty()){
+		bNormalsChanged = true;
+		normals.clear();
+	}
+	if(!texCoords.empty()){
+		bTexCoordsChanged = true;
+		texCoords.clear();
+	}
+	if(!indices.empty()){
+		bIndicesChanged = true;
+		indices.clear();
+	}
 
-	vertices.clear();
-	colors.clear();
-	normals.clear();
-	texCoords.clear();
-	indices.clear();
 }
 
 //--------------------------------------------------------------

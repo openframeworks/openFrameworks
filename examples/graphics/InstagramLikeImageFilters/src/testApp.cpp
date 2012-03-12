@@ -62,37 +62,27 @@ void testApp::draw(){
 void testApp::loadLUT(string path){
 	LUTloaded=false;
 	
-	ofBuffer buffer = ofBufferFromFile(path);
-	for (int i=0; i<5; i++) {
-		cout << "Skipped line: " << buffer.getNextLine()<<endl;
+	ofFile file(path);
+	string line;
+	for(int i = 0; i < 5; i++) {
+		getline(file, line);
+		ofLog() << "Skipped line: " << line;	
 	}
-	
 	for(int z=0; z<32; z++){
 		for(int y=0; y<32; y++){
 			for(int x=0; x<32; x++){
-				string content = buffer.getNextLine();
-				
-				vector <string> splitString = ofSplitString(content, " ", true, true);
-				if (splitString.size() >=3) {
-					lut[x][y][z] = ofVec3f(ofToFloat(splitString[0]),ofToFloat(splitString[1]), ofToFloat(splitString[2]));
-					cout << lut[x][y][z] << endl;	
-				}
-				
-				if (buffer.isLastLine()) {
-					cout << "ofxLUT load finished" << endl;
-					
-					return;
-				}
+				ofVec3f cur;
+				file >> cur.x >> cur.y >> cur.z;
+				lut[x][y][z] = cur;
 			}
 		}
-	}    
+	}
+	
 	LUTloaded = true;
 }
 //--------------------------------------------------------------
 void testApp::applyLUT(ofPixelsRef pix){
 	if (LUTloaded) {
-		
-		ofPixelsRef pixels = pix;
 		
 		for(int y = 0; y < pix.getHeight(); y++){
 			for(int x = 0; x < pix.getWidth(); x++){
@@ -101,25 +91,26 @@ void testApp::applyLUT(ofPixelsRef pix){
 				
 				int lutPos [3];
 				for (int m=0; m<3; m++) {
-					lutPos [m] = floor(color[m]/8.0f);
+					lutPos[m] = color[m] / 8;
 					if (lutPos[m]==31) {
 						lutPos[m]=30;
 					}
 				}
 				
-				ofVec3f temp = lut[lutPos[0]][lutPos[1]][lutPos[2]];
-				ofVec3f temp2 =lut[lutPos[0]+1][lutPos[1]+1][lutPos[2]+1]; 
+				ofVec3f start = lut[lutPos[0]][lutPos[1]][lutPos[2]];
+				ofVec3f end = lut[lutPos[0]+1][lutPos[1]+1][lutPos[2]+1]; 
 				
 				for (int k=0; k<3; k++) {
-					color[k]= ( temp[k] + ((color[k]%8)/8.0f)* (temp2[k] - temp[k]))*255 ;
+					float amount = (color[k] % 8) / 8.0f;
+					color[k]= (start[k] + amount * (end[k] - start[k])) * 255;
 				}
 				
-				pixels.setColor(x, y, color);
+				lutImg.setColor(x, y, color);
 				
-			}
-			lutImg.setFromPixels(pixels);
-			
+			}			
 		}
+		
+		lutImg.update();
 	}
 }
 

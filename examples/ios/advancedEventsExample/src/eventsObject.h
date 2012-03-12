@@ -18,11 +18,11 @@ public:
 	}
 
 	void enable(){
-	    ofAddListener(ofEvents.update, this, &eventsObject::update);
+	    ofAddListener(ofEvents().update, this, &eventsObject::update);
 	}
 
 	void disable(){
-	    ofRemoveListener(ofEvents.update, this, &eventsObject::update);
+	    ofRemoveListener(ofEvents().update, this, &eventsObject::update);
 	}
 
 	void update(ofEventArgs & args){
