@@ -25,6 +25,9 @@ void ofWindowX11::initializeWindow()
 	glXMakeCurrent(disp, window, glxContext);
 
 	display = disp;
+
+	XFlush(display);
+
 }
 
 void ofWindowX11::enableContext()
@@ -51,5 +54,9 @@ void ofWindowX11::processEvents()
             mousePressed(event.xbutton.x, event.xbutton.y, event.xbutton.button);
         }*/
     }
+}
+
+void ofWindowX11::postDraw(){
+	glXSwapBuffers(display, window);
 }
 

@@ -14,6 +14,7 @@ public:
 	virtual void init() = 0;
 	virtual ofWindow* createWindow() = 0;
 	virtual void processEvents()=0;
+	virtual void postDraw(){};
 	void initializeWindow();
 	
 	void setupOpenGL(int w, int h, int screenMode);

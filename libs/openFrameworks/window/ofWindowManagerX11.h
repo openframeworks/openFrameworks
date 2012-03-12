@@ -12,6 +12,7 @@ public:
 	ofWindow* createWindow();
 	void init();
 	void processEvents();
+	void postDraw();
 };
 
 #endif // OFWINDOWMANAGERX11_H

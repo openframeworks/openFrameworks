@@ -23,3 +23,8 @@ void ofWindowManagerX11::processEvents()
 {
 
 }
+
+void ofWindowManagerX11::postDraw()
+{
+	        //glXSwapBuffers(display, window);
+}

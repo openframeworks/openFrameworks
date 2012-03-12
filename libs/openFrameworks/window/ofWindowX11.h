@@ -12,6 +12,7 @@ public:
 	virtual void enableContext();
 	void initializeWindow();
 	void processEvents();
+	void postDraw();
 
 private:
 	Window window;

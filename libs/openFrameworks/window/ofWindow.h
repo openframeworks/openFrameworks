@@ -177,6 +177,7 @@ public:
     
 	virtual void enableContext() = 0;
 	virtual void initializeWindow() = 0;
+	virtual void postDraw(){};
 
 	void addListener(ofWindowListener* listener);
 
@@ -188,6 +189,7 @@ public:
 	void update();
 	void draw(ofEventArgs& e);
 	void draw();
+
 
 protected:
 private:

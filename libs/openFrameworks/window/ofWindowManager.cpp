@@ -133,6 +133,7 @@ void ofWindowManager::update() {
 
 void ofWindowManager::draw(){
 	ofNotifyDraw();
+	postDraw();
 }
 
 ofWindow* ofWindowManager::getLastCreatedWindow()
