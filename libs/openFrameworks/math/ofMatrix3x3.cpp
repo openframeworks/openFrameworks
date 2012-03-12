@@ -215,15 +215,17 @@ void ofMatrix3x3::operator*=(const ofMatrix3x3& B) {
 }
 
 ofMatrix3x3 ofMatrix3x3::entrywiseTimes(const ofMatrix3x3& B){
-	a *= B.a;
-	b *= B.b;
-	c *= B.c;
-	d *= B.d;
-	e *= B.e;
-	f *= B.f;
-	g *= B.g;
-	h *= B.h;
-	i *= B.i;
+  ofMatrix3x3 C = *this;
+	C.a *= B.a;
+	C.b *= B.b;
+	C.c *= B.c;
+	C.d *= B.d;
+	C.e *= B.e;
+	C.f *= B.f;
+	C.g *= B.g;
+	C.h *= B.h;
+	C.i *= B.i;
+  return C;
 }
 
 void ofMatrix3x3::operator*=(float scalar) {

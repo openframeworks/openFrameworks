@@ -71,26 +71,26 @@ std::string LoadFileAsString(const std::string & fn)
 }
 
 void findandreplaceInTexfile (string fileName, std::string tFind, std::string tReplace ){
-   
-    printf("findandreplaceInTexfile %s %s %s \n", fileName.c_str(), tFind.c_str(), tReplace.c_str());
-    std::ifstream ifile(ofToDataPath(fileName).c_str(),std::ios::binary);
-	ifile.seekg(0,std::ios_base::end);
-	long s=ifile.tellg();
-    char *buffer=new char[s];
-	ifile.seekg(0);
-	ifile.read(buffer,s);
-	ifile.close();
-	
-    std::string txt(buffer,s);
-	delete[] buffer;
-	
-    findandreplace(txt, tFind, tReplace);
-    
-    std::ofstream ofile(ofToDataPath(fileName).c_str());
-	ofile.write(txt.c_str(),txt.size());
-	//return 0;
-    
-    
+   if( ofFile::doesFileExist(fileName) ){
+		printf("findandreplaceInTexfile %s %s %s \n", fileName.c_str(), tFind.c_str(), tReplace.c_str());
+		std::ifstream ifile(ofToDataPath(fileName).c_str(),std::ios::binary);
+		ifile.seekg(0,std::ios_base::end);
+		long s=ifile.tellg();
+		cout << "size of s is " << s << endl; 
+		char *buffer=new char[s];
+		ifile.seekg(0);
+		ifile.read(buffer,s);
+		ifile.close();
+		
+		std::string txt(buffer,s);
+		delete[] buffer;
+		
+		findandreplace(txt, tFind, tReplace);
+		
+		std::ofstream ofile(ofToDataPath(fileName).c_str());
+		ofile.write(txt.c_str(),txt.size());
+		//return 0;
+    }
 }
 
 
