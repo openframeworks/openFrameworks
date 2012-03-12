@@ -48,7 +48,7 @@ public:
 
 	int	getNumTextures();
 
-  bool setActiveDrawBuffer(int i);
+  void setActiveDrawBuffer(int i);
   void setActiveDrawBuffers(const vector<int>& i);
   void activateAllDrawBuffers();
 
