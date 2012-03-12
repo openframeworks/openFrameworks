@@ -57,11 +57,21 @@ ofWindowManager::ofWindowManager() {
 };
 ofWindowManager::~ofWindowManager() {
 };
+
+ofWindow* ofWindowManager::createWindow()
+{
+	ofWindow* win = createSystemWindow();
+	addWindow(win);
+	win->initializeWindow();
+	win->setup();
+}
+
 void ofWindowManager::addWindow(ofWindow* win) {
 	windows.push_back(ofWindowPtr(win));
 }
+
 void ofWindowManager::setupOpenGL(int w, int h, int screenMode) {
-	mainWindow = createWindow();
+	mainWindow = createSystemWindow();
 	addWindow(mainWindow);
 	mainWindow->initializeWindow();
 	activeWindow = mainWindow;
@@ -164,3 +174,4 @@ void ofWindowManager::setActiveWindow(ofWindow* win)
 {
 	activeWindow = win;
 }
+

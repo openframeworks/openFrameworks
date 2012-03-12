@@ -9,7 +9,7 @@ public:
 	ofWindowManagerX11();
 	~ofWindowManagerX11();
 
-	ofWindow* createWindow();
+	ofWindow* createSystemWindow();
 	void init();
 	void processEvents();
 	void postDraw();

@@ -12,7 +12,8 @@ public:
 	~ofWindowManager();
 	
 	virtual void init() = 0;
-	virtual ofWindow* createWindow() = 0;
+	ofWindow* createWindow();
+	virtual ofWindow* createSystemWindow() = 0;
 	virtual void processEvents()=0;
 	virtual void postDraw(){};
 	void initializeWindow();
