@@ -173,3 +173,23 @@ void ofWindowCocoa::postDraw(){
 NSWindow* ofWindowCocoa::getNSWindow(){
 	return nsWindow;
 }
+
+void ofWindowCocoa::setWindowShape(int w, int h){
+	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+	NSRect frame = nsWindow.frame;
+	frame.size.width = w;
+	frame.size.height = h;
+	[nsWindow setFrame:frame display:TRUE];
+	resized(w, h);
+	[pool drain];
+}
+
+void ofWindowCocoa::setWindowPosition(int x, int y){
+	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+	NSRect frame = nsWindow.frame;
+	frame.origin.x = x;
+	frame.origin.y = y;
+	[nsWindow setFrame:frame display:TRUE];
+	moved(x, y);
+	[pool drain];
+}

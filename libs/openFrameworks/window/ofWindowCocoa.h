@@ -8,6 +8,8 @@ public:
 	void initializeWindow();
 	void enableContext();
 	void processEvents();
+	void setWindowPosition(int x, int y);
+	void setWindowShape(int w, int h);
 	
 	NSWindow* getNSWindow();
 protected:

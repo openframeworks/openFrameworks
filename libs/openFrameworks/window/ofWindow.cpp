@@ -79,11 +79,19 @@ void ofWindow::draw()
 }
 
 void ofWindow::moved(int _x, int _y){
+	if(x == _x && y == _y)
+		return;
+	previousShape.x = x;
+	previousShape.y = y;
 	x = _x;
 	y = _y;
 };
 
 void ofWindow::resized(int w, int h){
+	if(width == w && height == h)
+		return;
+	previousShape.width = width;
+	previousShape.height = height;
 	width = w;
 	height = h;
 };

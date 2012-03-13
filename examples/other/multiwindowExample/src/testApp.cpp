@@ -6,6 +6,7 @@ int i = 0;
 void testApp::setup(){
 	ofSetBackgroundColor(255, 100, 100);
 	//ofCreateWindow(0, 0, 100, 100);
+	ofGetMainWindow()->setWindowPosition(200, 200);
 }
 
 //--------------------------------------------------------------

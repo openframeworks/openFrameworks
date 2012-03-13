@@ -22,7 +22,8 @@ public:
 	void update();
 	void draw();
 	ofWindow* getLastCreatedWindow();
-
+	ofWindow* getMainWindow();
+	
 	void setFrameRate(float targetRate);
 
 	void setActiveWindow(ofWindow* win);
@@ -47,3 +48,5 @@ private:
 
 ofWindowManager* ofGetWindowManager();
 ofWindow* ofCreateWindow(int x=0, int y=0, int width=800, int height=600);
+ofWindow* ofGetMainWindow();
+ofWindow* ofGetLastCreatedWindow();

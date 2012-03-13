@@ -215,6 +215,6 @@ protected:
 	
 private:
 	ofWindowListenerList listeners;
-	
+	ofRectangle previousShape;
 	bool isFocused;
 };

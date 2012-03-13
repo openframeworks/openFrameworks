@@ -25,7 +25,7 @@ ofWindowManager* ofGetWindowManager() {
 #ifdef TARGET_LINUX
 		windowManager = new ofWindowManagerX11();
 #endif
-
+		
 #ifdef TARGET_OSX
 		windowManager = new ofWindowManagerCocoa();
 #endif
@@ -38,6 +38,15 @@ ofWindowManager* ofGetWindowManager() {
 ofWindow* ofCreateWindow(int x, int y, int width, int height){
 	return ofGetWindowManager()->createWindow(x, y, width, height);
 }
+
+ofWindow* ofGetMainWindow(){
+	return ofGetWindowManager()->getMainWindow();
+}
+
+ofWindow* ofGetLastCreatedWindow(){
+	return ofGetWindowManager()->getLastCreatedWindow();
+}
+
 
 
 /////////////////////////////////////////////////////////////////////////
@@ -93,7 +102,7 @@ void ofWindowManager::runAppViaInfiniteLoop(ofBaseApp * appPtr) {
 	//wrap the base app to a window listener
 	mainWindow->addListener(new ofWindowToOfBaseApp(appPtr));
 	appPtr->setup();
-
+	
 	//run the main loop
 	while (true) {
 		//process window events
@@ -104,7 +113,7 @@ void ofWindowManager::runAppViaInfiniteLoop(ofBaseApp * appPtr) {
 		}
 		//process app specific events
 		processEvents();
-
+		
 		update();
 		draw();
 	}
@@ -126,9 +135,9 @@ void ofWindowManager::update() {
 		}
 	}
 	prevMillis = ofGetElapsedTimeMillis(); // you have to measure here
-	// -------------- fps calculation:
-	// theo - now moved from display to idle_cb
-	// discuss here: http://github.com/openframeworks/openFrameworks/issues/labels/0062#issue/187
+										   // -------------- fps calculation:
+										   // theo - now moved from display to idle_cb
+										   // discuss here: http://github.com/openframeworks/openFrameworks/issues/labels/0062#issue/187
 	//
 	//
 	// theo - please don't mess with this without letting me know.
@@ -158,23 +167,29 @@ ofWindow* ofWindowManager::getLastCreatedWindow()
 	return windows.back().get();
 }
 
+
+ofWindow* ofWindowManager::getMainWindow()
+{
+	return mainWindow;
+}
+
 void ofWindowManager::setFrameRate(float targetRate){
 	// given this FPS, what is the amount of millis per frame
 	// that should elapse?
-
+	
 	// --- > f / s
-
+	
 	if (targetRate == 0){
 		bFrameRateSet = false;
 		return;
 	}
-
+	
 	bFrameRateSet 			= true;
 	float durationOfFrame 	= 1.0f / (float)targetRate;
 	millisForFrame 			= (int)(1000.0f * durationOfFrame);
-
+	
 	frameRate				= targetRate;
-
+	
 }
 
 void ofWindowManager::setActiveWindow(ofWindow* win)
