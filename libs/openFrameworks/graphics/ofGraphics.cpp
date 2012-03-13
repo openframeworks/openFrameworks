@@ -457,14 +457,14 @@ void ofSetCurveResolution(int res){
 
 //----------------------------------------
 void ofSetSphereResolution(int res){
-	currentStyle.sphereResolution = res;
 	renderer->setSphereResolution(res);
+	currentStyle.sphereResolution = res;
 }
 
 //----------------------------------------------------------
 void ofSetCircleResolution(int res){
-	currentStyle.circleResolution = res;
 	renderer->setCircleResolution(res);
+	currentStyle.circleResolution = res;
 }
 
 //----------------------------------------------------------
