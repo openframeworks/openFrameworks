@@ -4,13 +4,12 @@
 #include <Cocoa/Cocoa.h>
 
 class ofWindowCocoa: public ofWindow{
-public:
-      ofWindowCocoa();
-      ~ofWindowCocoa();
-	
+public:	
 	void initializeWindow();
 	void enableContext();
 	void processEvents();
+	
+	NSWindow* getNSWindow();
 protected:
 	void postDraw();
 private:

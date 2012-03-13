@@ -5,7 +5,7 @@
 
 class ofWindow;
 
-class windowEvents
+class ofWindowEvents
 {
 public:
 	ofEvent<ofEventArgs> 		setup;
@@ -170,13 +170,15 @@ typedef std::vector<ofWindowListener*> ofWindowListenerList;
 / WINDOW
 *******************/
 
-class ofWindow: public ofAppBaseWindow, public ofRectangle{
+class ofWindow: public ofAppBaseWindow, protected ofRectangle{
 public:
 	ofWindow();
 	~ofWindow();  
     
 	virtual void enableContext() = 0;
 	virtual void initializeWindow() = 0;
+	
+	void setWindowPositionAndShape(int x, int y, int width, int height); 
 
 	void addListener(ofWindowListener* listener);
 
@@ -196,17 +198,23 @@ public:
 	int getHeight();
 	//ofPoint	getScreenSize();
 
-protected:
-	virtual void postDraw(){};
-	
 	void moved(int x, int y);
 	void resized(int width, int height);
-	void gotFocus();
-	void lostFocus();
+	void focused();
+	void unfocused();
 	void closed();
+	
+	ofWindowEvents events;
+	
+	static int lastWindowID;
+	
+protected:
+	virtual void postDraw(){};
+	bool isInitialized;
+	int id;
 	
 private:
 	ofWindowListenerList listeners;
 	
-	bool focused;
+	bool isFocused;
 };

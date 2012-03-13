@@ -12,9 +12,11 @@
 #include "ofWindow.h"
 #include "ofWindowManager.h"
 
+int ofWindow::lastWindowID = 0;
 
-ofWindow::ofWindow(){
-
+ofWindow::ofWindow():isFocused(false){
+	id = lastWindowID;
+	lastWindowID++;
 };
 
 ofWindow::~ofWindow(){
@@ -61,11 +63,11 @@ void ofWindow::draw()
 	ofGetWindowManager()->setActiveWindow(this);
 
 	float * bgPtr = ofBgColorPtr();
-	ofViewport(0, 0, 800, 600, false);		// used to be glViewport( 0, 0, width, height );
+	ofViewport(0, 0, width, height, false);		// used to be glViewport( 0, 0, width, height );
    	ofClear(bgPtr[0]*255,bgPtr[1]*255,bgPtr[2]*255, bgPtr[3]*255);
 
 	//ofGetCurrentRenderer()->setupScreenPerspective(800, 600);
-	ofSetupScreenPerspective(800, 600, OF_ORIENTATION_DEFAULT);
+	ofSetupScreenPerspective(width, height, OF_ORIENTATION_DEFAULT);
 
 	ofWindowListenerList::iterator it=listeners.begin();
 	while(it!=listeners.end()) {
@@ -86,12 +88,12 @@ void ofWindow::resized(int w, int h){
 	height = h;
 };
 
-void ofWindow::gotFocus(){
-	focused = true;
+void ofWindow::focused(){
+	isFocused = true;
 };
 
-void ofWindow::lostFocus(){
-	focused = false;
+void ofWindow::unfocused(){
+	isFocused = false;
 };
 
 void ofWindow::closed(){};
@@ -101,3 +103,15 @@ ofPoint	ofWindow::getWindowSize(){return ofPoint(width, height); }
 
 int ofWindow::getWidth(){return width;}
 int ofWindow::getHeight(){return height;}
+
+void ofWindow::setWindowPositionAndShape(int _x, int _y, int w, int h){
+	if (!isInitialized) {
+		x = _x;
+		y = _y;
+		width = w;
+		height = h;
+	}else{
+		setWindowPosition(_x, _y);
+		setWindowShape(_x, _y);
+	}
+}

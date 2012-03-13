@@ -66,7 +66,7 @@ ofWindowManager::~ofWindowManager() {
 ofWindow* ofWindowManager::createWindow(int x, int y, int width, int height)
 {
 	ofWindow* win = createSystemWindow();
-	win->set(x, y, width, height);
+	win->setWindowPositionAndShape(x, y, width, height);
 	addWindow(win);
 	win->initializeWindow();
 	win->setup();
@@ -78,7 +78,7 @@ void ofWindowManager::addWindow(ofWindow* win) {
 
 void ofWindowManager::setupOpenGL(int w, int h, int screenMode) {
 	mainWindow = createSystemWindow();
-	mainWindow->set(0, 0, w, h);
+	mainWindow->setWindowPositionAndShape(0, 0, w, h);
 	addWindow(mainWindow);
 	mainWindow->initializeWindow();
 	activeWindow = mainWindow;

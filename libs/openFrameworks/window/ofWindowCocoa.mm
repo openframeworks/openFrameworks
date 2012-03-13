@@ -11,10 +11,15 @@
 
 //WINDOW DELEGATE
 
-@interface CocoaWindowDelegate : NSWindowController <NSWindowDelegate>
+@interface CocoaWindowDelegate : NSObject 
+#ifdef MAC_OS_X_VERSION_10_6
+<NSWindowDelegate>
+#endif
 {
+	ofWindowCocoa *window;
 }
 
+- (void)setOfWindow:(ofWindowCocoa*)window;
 - (void)windowWillClose:(NSNotification *)notification;
 - (void)windowDidBecomeKey:(NSNotification *)notification;
 - (void)windowDidResignKey:(NSNotification *)notification;
@@ -25,18 +30,23 @@
 @end
 
 @implementation CocoaWindowDelegate
+-(void)setOfWindow:(ofWindowCocoa *)win
+{
+	window = win;
+}
+
 - (void)windowWillClose:(NSNotification *)notification
 {
 }
 
 - (void)windowDidBecomeKey:(NSNotification *)notification
 {
-	cout << "I AM KEY!" << endl;
+	window->focused();
 }
 
 - (void)windowDidResignKey:(NSNotification *)notification
 {
-	
+	window->unfocused();
 }
 
 - (void)windowDidExpose:(NSNotification *)notification
@@ -45,16 +55,17 @@
 
 - (void)windowDidMove:(NSNotification *)notification
 {
-	
+	//window->moved(window->)
 }
 
 - (void)windowWillMove:(NSNotification *)notification
 {
+	window->resized(window->getNSWindow().frame.origin.x, window->getNSWindow().frame.origin.y);
 }
 
 - (void)windowDidResize:(NSNotification *)notification
 {
-
+	window->resized(window->getNSWindow().frame.size.width, window->getNSWindow().frame.size.height);
 }
 @end
 
@@ -106,17 +117,13 @@
 @end
 
 
-ofWindowCocoa::ofWindowCocoa(){
-
-};
-
-ofWindowCocoa::~ofWindowCocoa(){
-
-};
+////////////////////////////
+/****
+///*/
 
 void ofWindowCocoa::initializeWindow(){
 	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-	
+		
 	NSRect rect = NSMakeRect(x, y, width, height);
 	
 	nsWindow = [[CocoaWindow alloc] initWithContentRect:rect
@@ -124,6 +131,7 @@ void ofWindowCocoa::initializeWindow(){
 									backing:NSBackingStoreBuffered defer:NO];
 	
 	CocoaWindowDelegate *windowDelegate = [[CocoaWindowDelegate alloc] init];
+	[windowDelegate setOfWindow:this];
 	[nsWindow setDelegate:windowDelegate];
 		
 	NSOpenGLPixelFormat *nsglFormat;
@@ -160,4 +168,8 @@ void ofWindowCocoa::postDraw(){
 	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 	[[openGLView openGLContext] flushBuffer]; 
 	[pool drain];
+}
+
+NSWindow* ofWindowCocoa::getNSWindow(){
+	return nsWindow;
 }
