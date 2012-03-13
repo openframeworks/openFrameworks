@@ -127,14 +127,14 @@
 		E4F3BB2B12F4C752002D19BB /* ofTessellator.h in Headers */ = {isa = PBXBuildFile; fileRef = E4F3BB1312F4C752002D19BB /* ofTessellator.h */; };
 		E4F3BB2E12F4C752002D19BB /* ofTrueTypeFont.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BB1612F4C752002D19BB /* ofTrueTypeFont.cpp */; };
 		E4F3BB2F12F4C752002D19BB /* ofTrueTypeFont.h in Headers */ = {isa = PBXBuildFile; fileRef = E4F3BB1712F4C752002D19BB /* ofTrueTypeFont.h */; };
-		FA356379150909C8006D81D2 /* ofWindowManager.h in Headers */ = {isa = PBXBuildFile; fileRef = FA356377150909C8006D81D2 /* ofWindowManager.h */; };
-		FA35637A150909C8006D81D2 /* ofWindowManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FA356378150909C8006D81D2 /* ofWindowManager.cpp */; };
-		FA35637D150909D9006D81D2 /* ofWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = FA35637B150909D9006D81D2 /* ofWindow.h */; };
-		FA35637E150909D9006D81D2 /* ofWindow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FA35637C150909D9006D81D2 /* ofWindow.cpp */; };
-		FA35638515090A21006D81D2 /* ofWindowCocoa.h in Headers */ = {isa = PBXBuildFile; fileRef = FA35638315090A21006D81D2 /* ofWindowCocoa.h */; };
-		FA35638615090A21006D81D2 /* ofWindowCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = FA35638415090A21006D81D2 /* ofWindowCocoa.mm */; };
-		FA3563EC15090FF2006D81D2 /* ofWindowManagerCocoa.h in Headers */ = {isa = PBXBuildFile; fileRef = FA3563EA15090FF2006D81D2 /* ofWindowManagerCocoa.h */; };
-		FA3563ED15090FF2006D81D2 /* ofWindowManagerCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = FA3563EB15090FF2006D81D2 /* ofWindowManagerCocoa.mm */; };
+		FA23B644150F7FB600E6C3E1 /* ofWindow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FA23B638150F7FB600E6C3E1 /* ofWindow.cpp */; };
+		FA23B645150F7FB600E6C3E1 /* ofWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = FA23B639150F7FB600E6C3E1 /* ofWindow.h */; };
+		FA23B646150F7FB600E6C3E1 /* ofWindowCocoa.h in Headers */ = {isa = PBXBuildFile; fileRef = FA23B63A150F7FB600E6C3E1 /* ofWindowCocoa.h */; };
+		FA23B647150F7FB600E6C3E1 /* ofWindowCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = FA23B63B150F7FB600E6C3E1 /* ofWindowCocoa.mm */; };
+		FA23B648150F7FB600E6C3E1 /* ofWindowManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FA23B63C150F7FB600E6C3E1 /* ofWindowManager.cpp */; };
+		FA23B649150F7FB600E6C3E1 /* ofWindowManager.h in Headers */ = {isa = PBXBuildFile; fileRef = FA23B63D150F7FB600E6C3E1 /* ofWindowManager.h */; };
+		FA23B64A150F7FB600E6C3E1 /* ofWindowManagerCocoa.h in Headers */ = {isa = PBXBuildFile; fileRef = FA23B63E150F7FB600E6C3E1 /* ofWindowManagerCocoa.h */; };
+		FA23B64B150F7FB600E6C3E1 /* ofWindowManagerCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = FA23B63F150F7FB600E6C3E1 /* ofWindowManagerCocoa.mm */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -275,14 +275,14 @@
 		E4F3BB1312F4C752002D19BB /* ofTessellator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofTessellator.h; path = ../../../openFrameworks/graphics/ofTessellator.h; sourceTree = SOURCE_ROOT; };
 		E4F3BB1612F4C752002D19BB /* ofTrueTypeFont.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofTrueTypeFont.cpp; path = ../../../openFrameworks/graphics/ofTrueTypeFont.cpp; sourceTree = SOURCE_ROOT; };
 		E4F3BB1712F4C752002D19BB /* ofTrueTypeFont.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofTrueTypeFont.h; path = ../../../openFrameworks/graphics/ofTrueTypeFont.h; sourceTree = SOURCE_ROOT; };
-		FA356377150909C8006D81D2 /* ofWindowManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofWindowManager.h; path = ../app/ofWindowManager.h; sourceTree = "<group>"; };
-		FA356378150909C8006D81D2 /* ofWindowManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofWindowManager.cpp; path = ../app/ofWindowManager.cpp; sourceTree = "<group>"; };
-		FA35637B150909D9006D81D2 /* ofWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofWindow.h; path = ../app/ofWindow.h; sourceTree = "<group>"; };
-		FA35637C150909D9006D81D2 /* ofWindow.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofWindow.cpp; path = ../app/ofWindow.cpp; sourceTree = "<group>"; };
-		FA35638315090A21006D81D2 /* ofWindowCocoa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofWindowCocoa.h; path = ../app/ofWindowCocoa.h; sourceTree = "<group>"; };
-		FA35638415090A21006D81D2 /* ofWindowCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ofWindowCocoa.mm; path = ../app/ofWindowCocoa.mm; sourceTree = "<group>"; };
-		FA3563EA15090FF2006D81D2 /* ofWindowManagerCocoa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofWindowManagerCocoa.h; path = ../app/ofWindowManagerCocoa.h; sourceTree = "<group>"; };
-		FA3563EB15090FF2006D81D2 /* ofWindowManagerCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ofWindowManagerCocoa.mm; path = ../app/ofWindowManagerCocoa.mm; sourceTree = "<group>"; };
+		FA23B638150F7FB600E6C3E1 /* ofWindow.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofWindow.cpp; sourceTree = "<group>"; };
+		FA23B639150F7FB600E6C3E1 /* ofWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofWindow.h; sourceTree = "<group>"; };
+		FA23B63A150F7FB600E6C3E1 /* ofWindowCocoa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofWindowCocoa.h; sourceTree = "<group>"; };
+		FA23B63B150F7FB600E6C3E1 /* ofWindowCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ofWindowCocoa.mm; sourceTree = "<group>"; };
+		FA23B63C150F7FB600E6C3E1 /* ofWindowManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofWindowManager.cpp; sourceTree = "<group>"; };
+		FA23B63D150F7FB600E6C3E1 /* ofWindowManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofWindowManager.h; sourceTree = "<group>"; };
+		FA23B63E150F7FB600E6C3E1 /* ofWindowManagerCocoa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofWindowManagerCocoa.h; sourceTree = "<group>"; };
+		FA23B63F150F7FB600E6C3E1 /* ofWindowManagerCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ofWindowManagerCocoa.mm; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -568,14 +568,14 @@
 		FA4DCF5C150A3D8B002D51A0 /* window */ = {
 			isa = PBXGroup;
 			children = (
-				FA356377150909C8006D81D2 /* ofWindowManager.h */,
-				FA356378150909C8006D81D2 /* ofWindowManager.cpp */,
-				FA3563EA15090FF2006D81D2 /* ofWindowManagerCocoa.h */,
-				FA3563EB15090FF2006D81D2 /* ofWindowManagerCocoa.mm */,
-				FA35638315090A21006D81D2 /* ofWindowCocoa.h */,
-				FA35638415090A21006D81D2 /* ofWindowCocoa.mm */,
-				FA35637B150909D9006D81D2 /* ofWindow.h */,
-				FA35637C150909D9006D81D2 /* ofWindow.cpp */,
+				FA23B638150F7FB600E6C3E1 /* ofWindow.cpp */,
+				FA23B639150F7FB600E6C3E1 /* ofWindow.h */,
+				FA23B63A150F7FB600E6C3E1 /* ofWindowCocoa.h */,
+				FA23B63B150F7FB600E6C3E1 /* ofWindowCocoa.mm */,
+				FA23B63C150F7FB600E6C3E1 /* ofWindowManager.cpp */,
+				FA23B63D150F7FB600E6C3E1 /* ofWindowManager.h */,
+				FA23B63E150F7FB600E6C3E1 /* ofWindowManagerCocoa.h */,
+				FA23B63F150F7FB600E6C3E1 /* ofWindowManagerCocoa.mm */,
 			);
 			path = window;
 			sourceTree = "<group>";
@@ -642,10 +642,10 @@
 				E4C5E387131AC1B10050F992 /* ofRtAudioSoundStream.h in Headers */,
 				E4C5E38B131AC1BE0050F992 /* ofBaseSoundStream.h in Headers */,
 				772BDF74146928600030F0EE /* ofOpenALSoundPlayer.h in Headers */,
-				FA356379150909C8006D81D2 /* ofWindowManager.h in Headers */,
-				FA35637D150909D9006D81D2 /* ofWindow.h in Headers */,
-				FA35638515090A21006D81D2 /* ofWindowCocoa.h in Headers */,
-				FA3563EC15090FF2006D81D2 /* ofWindowManagerCocoa.h in Headers */,
+				FA23B645150F7FB600E6C3E1 /* ofWindow.h in Headers */,
+				FA23B646150F7FB600E6C3E1 /* ofWindowCocoa.h in Headers */,
+				FA23B649150F7FB600E6C3E1 /* ofWindowManager.h in Headers */,
+				FA23B64A150F7FB600E6C3E1 /* ofWindowManagerCocoa.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -753,10 +753,10 @@
 				92C55F88132DA7DD00EC2631 /* ofPath.cpp in Sources */,
 				E4C5E388131AC1B10050F992 /* ofRtAudioSoundStream.cpp in Sources */,
 				772BDF73146928600030F0EE /* ofOpenALSoundPlayer.cpp in Sources */,
-				FA35637A150909C8006D81D2 /* ofWindowManager.cpp in Sources */,
-				FA35637E150909D9006D81D2 /* ofWindow.cpp in Sources */,
-				FA35638615090A21006D81D2 /* ofWindowCocoa.mm in Sources */,
-				FA3563ED15090FF2006D81D2 /* ofWindowManagerCocoa.mm in Sources */,
+				FA23B644150F7FB600E6C3E1 /* ofWindow.cpp in Sources */,
+				FA23B647150F7FB600E6C3E1 /* ofWindowCocoa.mm in Sources */,
+				FA23B648150F7FB600E6C3E1 /* ofWindowManager.cpp in Sources */,
+				FA23B64B150F7FB600E6C3E1 /* ofWindowManagerCocoa.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -14,7 +14,7 @@
 class ofWindowManagerCocoa: public ofWindowManager{
 public:
 	void init();
-	ofWindow* createWindow();
+	ofWindow* createSystemWindow();
 	void processEvents();
 protected:
 private:

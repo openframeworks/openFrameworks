@@ -8,9 +8,11 @@ public:
       ofWindowCocoa();
       ~ofWindowCocoa();
 	
-	bool open();
+	void initializeWindow();
 	void enableContext();
+	void processEvents();
 protected:
+	void postDraw();
 private:
 	NSWindow* nsWindow;
 	NSOpenGLView* openGLView;

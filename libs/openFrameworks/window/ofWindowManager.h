@@ -12,8 +12,7 @@ public:
 	~ofWindowManager();
 	
 	virtual void init() = 0;
-	ofWindow* createWindow();
-	virtual ofWindow* createSystemWindow() = 0;
+	ofWindow* createWindow(int x=0, int y=0, int width=800, int height=600);
 	virtual void processEvents()=0;
 	virtual void postDraw(){};
 	void initializeWindow();
@@ -30,6 +29,8 @@ public:
 
 protected:
 	void addWindow(ofWindow* win);
+	virtual ofWindow* createSystemWindow() = 0;
+
 private:
 	ofWindowList windows;
 	ofWindow* mainWindow;

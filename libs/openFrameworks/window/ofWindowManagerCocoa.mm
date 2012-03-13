@@ -60,15 +60,13 @@ void ofWindowManagerCocoa::init(){
 	[pool drain];
 }
 
-ofWindow* ofWindowManagerCocoa::createWindow(){
-	ofWindow* win = new ofWindowCocoa();
-	win->open();
-	addWindow(win);
-	cout << "MAKING A WINDOW" << endl;
-	return win;
+ofWindow* ofWindowManagerCocoa::createSystemWindow(){
+	return new ofWindowCocoa();
 }
 
 void ofWindowManagerCocoa::processEvents(){
+	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+
 	NSEvent *event =
 	[NSApp
 	 nextEventMatchingMask:NSAnyEventMask
@@ -78,4 +76,5 @@ void ofWindowManagerCocoa::processEvents(){
 	
 	[NSApp sendEvent:event];
 	[NSApp updateWindows];
+	[pool drain];
 }

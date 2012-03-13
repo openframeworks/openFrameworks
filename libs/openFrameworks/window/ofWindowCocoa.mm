@@ -9,6 +9,8 @@
 
 #include "ofWindowCocoa.h"
 
+//WINDOW DELEGATE
+
 @interface CocoaWindowDelegate : NSObject
 {
 }
@@ -110,10 +112,10 @@ ofWindowCocoa::~ofWindowCocoa(){
 
 };
 
-bool ofWindowCocoa::open(){
+void ofWindowCocoa::initializeWindow(){
 	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 	
-	NSRect rect = NSMakeRect(10.0f, 10.0f, 800.0f, 600.0f);
+	NSRect rect = NSMakeRect(x, y, width, height);
 	
 	nsWindow = [[CocoaWindow alloc] initWithContentRect:rect
 									styleMask: (NSTitledWindowMask | NSClosableWindowMask | NSResizableWindowMask | NSMiniaturizableWindowMask)
@@ -124,13 +126,11 @@ bool ofWindowCocoa::open(){
 		
 	NSOpenGLPixelFormat *nsglFormat;
 	
-    NSOpenGLPixelFormatAttribute attr[] = 
+	NSOpenGLPixelFormatAttribute attr[] =
 	{
-        NSOpenGLPFADoubleBuffer,
-		NSOpenGLPFAAccelerated,
-		NSOpenGLPFAColorSize, 32,
+		NSOpenGLPFADoubleBuffer,
 		NSOpenGLPFADepthSize, 32,
-        0
+		0
 	};
 	
 	nsglFormat = [[NSOpenGLPixelFormat alloc] initWithAttributes:attr];
@@ -139,12 +139,23 @@ bool ofWindowCocoa::open(){
 	openGLView = [[NSOpenGLView alloc] initWithFrame:rect pixelFormat:nsglFormat];
 	
 	[nsWindow setContentView:openGLView];
-
+	[nsWindow makeKeyAndOrderFront:nsWindow];
+	[openGLView display];
 	[pool drain];
 }
 
 void ofWindowCocoa::enableContext(){
 	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 	[[openGLView openGLContext] makeCurrentContext];
+	[pool drain];
+}
+
+void ofWindowCocoa::processEvents(){
+
+}
+
+void ofWindowCocoa::postDraw(){
+	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+	[[openGLView openGLContext] flushBuffer]; 
 	[pool drain];
 }

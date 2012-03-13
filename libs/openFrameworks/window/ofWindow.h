@@ -170,14 +170,13 @@ typedef std::vector<ofWindowListener*> ofWindowListenerList;
 / WINDOW
 *******************/
 
-class ofWindow: public ofAppBaseWindow{
+class ofWindow: public ofAppBaseWindow, public ofRectangle{
 public:
 	ofWindow();
 	~ofWindow();  
     
 	virtual void enableContext() = 0;
 	virtual void initializeWindow() = 0;
-	virtual void postDraw(){};
 
 	void addListener(ofWindowListener* listener);
 
@@ -192,6 +191,8 @@ public:
 
 
 protected:
+	virtual void postDraw(){};
+	
 private:
 	ofWindowListenerList listeners;
 };
