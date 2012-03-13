@@ -66,15 +66,15 @@ ofWindow* ofWindowManagerCocoa::createSystemWindow(){
 
 void ofWindowManagerCocoa::processEvents(){
 	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-
 	NSEvent *event =
 	[NSApp
 	 nextEventMatchingMask:NSAnyEventMask
-	 untilDate:[NSDate distantFuture]
+	 untilDate:[NSDate distantPast]
 	 inMode:NSDefaultRunLoopMode
 	 dequeue:YES];
-	
-	[NSApp sendEvent:event];
+	if (event != nil) {
+		[NSApp sendEvent:event];
+	}
 	[NSApp updateWindows];
 	[pool drain];
 }

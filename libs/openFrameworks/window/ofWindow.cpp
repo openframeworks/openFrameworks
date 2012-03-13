@@ -90,6 +90,8 @@ void ofWindow::moved(int _x, int _y){
 void ofWindow::resized(int w, int h){
 	if(width == w && height == h)
 		return;
+	if (w<=0) w = 1;
+	if (h<=0) h = 1;
 	previousShape.width = width;
 	previousShape.height = height;
 	width = w;

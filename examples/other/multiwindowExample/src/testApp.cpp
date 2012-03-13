@@ -17,7 +17,7 @@ void testApp::update(){
 //--------------------------------------------------------------
 void testApp::draw(){
 	ofSetColor(255, 0, 0);
-	ofRect(i, 100, 100, 100);
+	ofRect(i%ofGetWidth(), 100, 100, 100);
 	i++;
 }
 
