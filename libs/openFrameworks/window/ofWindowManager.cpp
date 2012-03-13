@@ -35,6 +35,11 @@ ofWindowManager* ofGetWindowManager() {
 }
 
 
+ofWindow* ofCreateWindow(int x, int y, int width, int height){
+	return ofGetWindowManager()->createWindow(x, y, width, height);
+}
+
+
 /////////////////////////////////////////////////////////////////////////
 static float		timeNow, timeThen, fps;
 static int			nFramesForFPS;
@@ -177,3 +182,10 @@ void ofWindowManager::setActiveWindow(ofWindow* win)
 	activeWindow = win;
 }
 
+ofPoint	ofWindowManager::getWindowPosition() {return activeWindow->getWindowPosition(); }
+ofPoint	ofWindowManager::getWindowSize(){return activeWindow->getWindowSize(); }
+//ofPoint	ofWindowManager::getScreenSize(){return ofPoint(); }
+
+//this is used by ofGetWidth and now determines the window width based on orientation
+int	ofWindowManager::getWidth(){ return activeWindow->getWidth(); }
+int	ofWindowManager::getHeight(){ return activeWindow->getHeight(); }

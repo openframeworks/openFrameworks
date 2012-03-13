@@ -11,7 +11,7 @@
 
 //WINDOW DELEGATE
 
-@interface CocoaWindowDelegate : NSObject
+@interface CocoaWindowDelegate : NSWindowController <NSWindowDelegate>
 {
 }
 
@@ -24,18 +24,19 @@
 - (void)windowWillMove:(NSNotification *)notification;
 @end
 
-@implementation CocoaWindowDelegate : NSObject
-
+@implementation CocoaWindowDelegate
 - (void)windowWillClose:(NSNotification *)notification
 {
 }
 
 - (void)windowDidBecomeKey:(NSNotification *)notification
 {
+	cout << "I AM KEY!" << endl;
 }
 
 - (void)windowDidResignKey:(NSNotification *)notification
 {
+	
 }
 
 - (void)windowDidExpose:(NSNotification *)notification
@@ -44,6 +45,7 @@
 
 - (void)windowDidMove:(NSNotification *)notification
 {
+	
 }
 
 - (void)windowWillMove:(NSNotification *)notification
@@ -122,7 +124,7 @@ void ofWindowCocoa::initializeWindow(){
 									backing:NSBackingStoreBuffered defer:NO];
 	
 	CocoaWindowDelegate *windowDelegate = [[CocoaWindowDelegate alloc] init];
-	[nsWindow makeKeyAndOrderFront:nil];
+	[nsWindow setDelegate:windowDelegate];
 		
 	NSOpenGLPixelFormat *nsglFormat;
 	
@@ -139,8 +141,8 @@ void ofWindowCocoa::initializeWindow(){
 	openGLView = [[NSOpenGLView alloc] initWithFrame:rect pixelFormat:nsglFormat];
 	
 	[nsWindow setContentView:openGLView];
-	[nsWindow makeKeyAndOrderFront:nsWindow];
-	[openGLView display];
+	
+	[nsWindow makeKeyAndOrderFront:nil];
 	[pool drain];
 }
 

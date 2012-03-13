@@ -76,4 +76,28 @@ void ofWindow::draw()
 	postDraw();
 }
 
+void ofWindow::moved(int _x, int _y){
+	x = _x;
+	y = _y;
+};
 
+void ofWindow::resized(int w, int h){
+	width = w;
+	height = h;
+};
+
+void ofWindow::gotFocus(){
+	focused = true;
+};
+
+void ofWindow::lostFocus(){
+	focused = false;
+};
+
+void ofWindow::closed(){};
+
+ofPoint	ofWindow::getWindowPosition() {return ofPoint(x, y); }
+ofPoint	ofWindow::getWindowSize(){return ofPoint(width, height); }
+
+int ofWindow::getWidth(){return width;}
+int ofWindow::getHeight(){return height;}

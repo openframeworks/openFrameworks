@@ -188,11 +188,25 @@ public:
 	void update();
 	void draw(ofEventArgs& e);
 	void draw();
-
+	
+	ofPoint	getWindowPosition();
+	ofPoint	getWindowSize();
+	
+	int getWidth();
+	int getHeight();
+	//ofPoint	getScreenSize();
 
 protected:
 	virtual void postDraw(){};
 	
+	void moved(int x, int y);
+	void resized(int width, int height);
+	void gotFocus();
+	void lostFocus();
+	void closed();
+	
 private:
 	ofWindowListenerList listeners;
+	
+	bool focused;
 };

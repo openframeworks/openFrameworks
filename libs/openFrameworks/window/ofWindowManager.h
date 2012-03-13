@@ -26,6 +26,13 @@ public:
 	void setFrameRate(float targetRate);
 
 	void setActiveWindow(ofWindow* win);
+	
+	ofPoint	getWindowPosition();
+	ofPoint	getWindowSize();
+	//ofPoint	getScreenSize(){return ofPoint(); }
+	
+	int		getWidth();
+	int		getHeight();
 
 protected:
 	void addWindow(ofWindow* win);
@@ -39,3 +46,4 @@ private:
 
 
 ofWindowManager* ofGetWindowManager();
+ofWindow* ofCreateWindow(int x=0, int y=0, int width=800, int height=600);
