@@ -153,6 +153,7 @@
 		}
 		
 		ofTouchEventArgs touchArgs;
+        touchArgs.numTouches = [[event touchesForView:self] count];
 		touchArgs.x = touchPoint.x;
 		touchArgs.y = touchPoint.y;
 		touchArgs.id = touchIndex;
