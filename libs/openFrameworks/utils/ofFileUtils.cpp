@@ -449,8 +449,8 @@ bool ofFile::copyTo(string path, bool bRelativeToData, bool overwrite){
 	if( bRelativeToData ){
 		path = ofToDataPath(path);
 	}
-	if( overwrite ){
-		if( ofFile::doesFileExist(path) ){
+	if( ofFile::doesFileExist(path) ){
+		if( overwrite ){
 			ofFile::removeFile(path);
 		}else{
 			ofLog(OF_LOG_WARNING, "ofFile::copyTo dest file already exists, use bool overwrite to overwrite dest file");
@@ -477,8 +477,8 @@ bool ofFile::moveTo(string path, bool bRelativeToData, bool overwrite){
 	if( bRelativeToData ){
 		path = ofToDataPath(path);
 	}
-	if( overwrite ){
-		if( ofFile::doesFileExist(path) ){
+	if( ofFile::doesFileExist(path) ){
+		if( overwrite ){
 			ofFile::removeFile(path);
 		}else{
 			ofLog(OF_LOG_WARNING, "ofFile::moveTo dest file already exists, use bool overwrite to overwrite dest file");
@@ -505,8 +505,8 @@ bool ofFile::renameTo(string path, bool bRelativeToData, bool overwrite){
 	if( bRelativeToData ){
 		path = ofToDataPath(path);
 	}
-	if( overwrite ){
-		if( ofFile::doesFileExist(path) ){
+	if( ofFile::doesFileExist(path) ){
+		if( overwrite ){
 			ofFile::removeFile(path);
 		}else{
 			ofLog(OF_LOG_WARNING, "ofFile::renameTo dest file already exists, use bool overwrite to overwrite dest file");
@@ -616,8 +616,8 @@ bool ofFile::moveFromTo(string pathSrc, string pathDst, bool bRelativeToData, bo
 		return false;
 	}
 
-	if( overwrite ){
-		if( ofFile::doesFileExist(pathDst) ){
+	if(  ofFile::doesFileExist(pathDst) ){
+		if( overwrite ){
 			ofFile::removeFile(pathDst);
 		}else{
 			ofLog(OF_LOG_WARNING, "ofFile::moveFromTo destination file/folder exists, use bool overwrite if you want to overwrite destination file/folder");
@@ -776,8 +776,8 @@ bool ofDirectory::copyTo(string path, bool bRelativeToData, bool overwrite){
 	if( bRelativeToData ){
 		path = ofToDataPath(path);
 	}
-	if( overwrite ){
-		if( ofDirectory::doesDirectoryExist(path) ){
+	if( ofDirectory::doesDirectoryExist(path) ){
+		if( overwrite ){
 			ofDirectory::removeDirectory(path, true);
 		}else{
 			ofLog(OF_LOG_WARNING, "ofDirectory::copyTo dest folder already exists, use bool overwrite to overwrite dest folder");
@@ -804,8 +804,8 @@ bool ofDirectory::moveTo(string path,  bool bRelativeToData, bool overwrite){
 	if( bRelativeToData ){
 		path = ofToDataPath(path);
 	}
-	if( overwrite ){
-		if( ofDirectory::doesDirectoryExist(path) ){
+	if( ofDirectory::doesDirectoryExist(path) ){
+		if( overwrite ){
 			ofDirectory::removeDirectory(path, true);
 		}else{
 			ofLog(OF_LOG_WARNING, "ofDirectory::moveTo dest folder already exists, use bool overwrite to overwrite dest folder");
@@ -832,8 +832,8 @@ bool ofDirectory::renameTo(string path, bool bRelativeToData, bool overwrite){
 	if( bRelativeToData ){
 		path = ofToDataPath(path);
 	}
-	if( overwrite ){
-		if( ofDirectory::doesDirectoryExist(path) ){
+	if( ofDirectory::doesDirectoryExist(path) ){
+		if( overwrite ){
 			ofDirectory::removeDirectory(path, true);
 		}else{
 			ofLog(OF_LOG_WARNING, "ofDirectory::renameTo dest folder already exists, use bool overwrite to overwrite dest folder");
