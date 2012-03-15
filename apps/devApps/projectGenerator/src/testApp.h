@@ -25,7 +25,7 @@ class testApp : public ofBaseApp{
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
  
-		void setupForPlatform(int plat);
+		void setupForTarget(int targ);
         void generateExamplesCB(bool & pressed); //stupid as its a button 
 		void generateExamples();
 		
@@ -40,7 +40,7 @@ class testApp : public ofBaseApp{
 		baseProject * project;
     
         string projectPath;
-        string platform;
+        string target;
 
         ofxPanel panelAddons, panelOptions;
         ofxButton createProject, updateProject, createAndOpen, changeOFRoot;
